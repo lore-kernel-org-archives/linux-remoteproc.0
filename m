@@ -1,138 +1,250 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62465433C8
-	for <linux-remoteproc@vger.kernel.org>; Mon,  8 Sep 2025 04:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8857B2EA47F
+	for <linux-remoteproc@vger.kernel.org>; Mon,  8 Sep 2025 08:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757306650; cv=none; b=WDAWttYtDR69EzZWDCplzhrlrMByJ8kJOFk5C4a0VwZVD25AW2q9uIpJKW9SCXUOownlKIRn3J4Egf2MtVODkftOGjPETcrSx9x0FK6XNA2r6Xq7WVVYHnkibxtLPYo9CWnGZCf0HuEKEqmIN5iJsaNkahlSH5rwkFJk2PgV+sQ=
+	t=1757319820; cv=none; b=hoVO/IJJt6fhZCJWX3LYoIwM5ya255eu5oAdJiYw9aefoq+7qs9a5QiCneZ+Kui2vbT8KGbMuMkKaRyTJs3f+03szjs9hZWMudC6jxeyqHih4OjHPAsmnbqXnZd21avRGC0IgZstmjhKm5MWOdl1Fkp2JieX4ybVVTHniskLrLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757306650; c=relaxed/simple;
-	bh=fiTshjH0OpRnli85QCvwaBeHrIw83h8O238HTJIpU/Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mv3izt2lRYlbbrkerqKRh1SHOpj6MyxPyDhtZqSTmgTHDcI1t/YFLcs6M3QT6zFkoT730ApuLWCvAPQj7MLyNNx+3wMk57EfEa5H3hs6THht5LZvn67mxp7xgaOTsrFztSKd+QpmCfn7+zDJswNpNKH5rQYttCKoleCZDE9U8fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kj+OdWpP; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1757319820; c=relaxed/simple;
+	bh=8+by6ZAZyD9xbPWaBU25LhFVjdbedeOp3cHD4UKqC7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d0SlYEK59v0JGXMooL3SHpgnsdrD6P7tqPBz9Nctls7ixeKKAgxNpNmtESCb2dckE0SgrnH2oh6gSUEZm6YBjhFbzyM6caw5r3wWKJ05HSjBbum9V4VokfnbgrlTSi5U7IMGvW0Ji8GLiCT5fl/URZk51BwRkLXAJfcg3Q8K9j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UNzXTYPp; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kj+OdWpP"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b47173749dbso2642911a12.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 07 Sep 2025 21:44:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNzXTYPp"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae31caso688027166b.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Sep 2025 01:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757306649; x=1757911449; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xbE3C5wFV+o/JT6/YEPlxnk3f9fN47mPZGkai6aV5E=;
-        b=kj+OdWpPMQfMU/ZxCqmlDMAvylFD4/v8g2G+wTC6Cc8IPYKPNKwJzylza/AZw1Oy1i
-         iq9TdEEKk4vKd/sz52ns1IKEr9mtI4u61+E9i23JixvBkCPS8IYDcOICDfOte/0HyY4C
-         SrTxh3JMo67Dw4GlcNEhfilcLr/lhYrjmeQ0U=
+        d=linaro.org; s=google; t=1757319817; x=1757924617; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IDsLfEl3Bc3ynxxzuRcTJTa1XuYIkbwYHFFTkbC2BKM=;
+        b=UNzXTYPp6kw5BAm9damKV+DRrLJ0NK9TA0JJVRH+CfacI/kRgDe7XT9D154CXJ3sGL
+         tUnftpVVjLpX5xj2ScpQS2aWmnMD+QOVpeldWUqzXmtYhaXP/BQURIMj2uVPMNS3EU1y
+         UksQnssC65lXYnRcZPvV9m26R/P7d6wK009Aagp0MXtznMwPxhjakQAttKHQSYDk6HH8
+         BZA9U+yiDUEsnZmLdQ0BvC+s/i9I4Qo+E3o26jfYt0dbmbYVLB9LWSwjeRiCgwn0uPyZ
+         o+Q/Epq2CHkT58eoyKz7NZpQiSC1RmOnBwZzckJajZvl+pFzc+OXe06FC8fduekd0q/j
+         DpdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757306649; x=1757911449;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+xbE3C5wFV+o/JT6/YEPlxnk3f9fN47mPZGkai6aV5E=;
-        b=KDgKYQSfFliIoXI/UCRCUxb6uRy4de5EZxpExzzqfuVKsTtDt5Y42rVy01YcJx1Yw0
-         aeXkJQUlBD21NYVyzSpEAoHWLx9YmM0oP9nE6ufnhqB7Hhpizs4bG2SAyImcLOzUHvxd
-         lC5aF5eZw8IQIBO7k2NYGN3FFGS0eRMZVAd0mw6VTxtPIQPMoc6hJmZaNEyicf74LxGV
-         Cx7boZCADmGBPfq3m4rnCrTaXO2ChK4WH3pHJhBlHpAckX9ybOVvxkPFB04LY0Ypsoo9
-         hZ+AoH6F1VoFSoHxosF0CgEW//3XK36VUygeAAVkzBObrOT+8EVSQT1aR7XwlZCERD3H
-         jjdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4aTcLYMI6K58X1oCH4QT9L8Gy6rsIm84y2EE9fixN+DtHqY+Cy82zO7/6d6BHB79ATO4h2uMjOvSa134eErri@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgJ12eOjLKhpgp8Zne9V2NNcp8jp83xBmICEzNQVSqGUa1scNF
-	NS4b0V99b4jWAZr5SOo9luKncujb76TOA4fwHP806lor2hA6n+9iO6oI9wgtP48wXA==
-X-Gm-Gg: ASbGncvKylIXUAX5MrEMmWTVAiJ7V1i/FLX0BVAsH9oHb021dJPjXHrrEmjZO6sdSsU
-	GgwUmJf0lDZ1GHoTlh8EUgC8FeUbs6r3PNeiPxsfc8dHYJR5U5JWGianj84O5pRuRZt0+xO6RV/
-	mcD9TJ1qoQEVEiD6YD+xqlhGSrMZTcCyGWWsUhK1vZKGgfbs+aN0iNzkByW1jlwEdTWrULQEOHN
-	wn60kjpD+DQ8PGZx9Q9idBJNqH96cvug28rpsIRplVBqrieSztheggOS5j2kLgmmYGAUvMm65eN
-	vY9oiFnWCBmzn1F+owB42gzR01AOBzMg6vaHFX+mW0EkdvwujPCw5JPK5S80XUp4QOWMJYbr6th
-	uQcug6NYTICnwmYhvCzFW1f4vKKS+lhUlMhdxxCyThNBk4QIXutQzZsPpffLCMlP3aJpjTvWQ0Q
-	zHbDoHj5zTcwcJqUAnkYYJ5G4b
-X-Google-Smtp-Source: AGHT+IF6EqSsNgeRlOG14nqU9rpBfRr7iTBMf+lspK57Oo06mCVbJuf9Ry2wvH4TilganydG5n2WLA==
-X-Received: by 2002:a17:903:f8b:b0:24c:d342:7616 with SMTP id d9443c01a7336-25173118d31mr75029465ad.57.1757306648632;
-        Sun, 07 Sep 2025 21:44:08 -0700 (PDT)
-Received: from fshao-p620.tpe.corp.google.com ([2a00:79e0:201d:8:d9c6:a89:402f:11c7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24b1ba1718bsm153320605ad.39.2025.09.07.21.44.06
+        d=1e100.net; s=20230601; t=1757319817; x=1757924617;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IDsLfEl3Bc3ynxxzuRcTJTa1XuYIkbwYHFFTkbC2BKM=;
+        b=CDzIU9Mo+5yBklqIg52gXBlici9JZINYbFg0SD58SGb7eOKKvbX0lZVVfMFhXYnx7g
+         4DqxFFUSVtJ+3u/NDQvVZVqNkTBdWitR7wpwWG7vblQY3ZCeJB2P7V4COtZXKE2tYsHl
+         P1UNbF051b3dHbU8VwEhdkEJvvaRh8UAD5nZQMeh6FV8QZi1XC6AD59OHqfGeO096LQE
+         QZQRRiRsNvWFyjuTzf8WscYtAVcf2yC1PsNI8z6p2FefwvVZOK7hte5scpvXbtBWXUOj
+         oJY1JE11ONHSXbE6Z68kGDu9/TLhi491pH1YTBYLvQnvUc/WjPG0jx75UeAKsysqFFjw
+         c3WA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWy9OIObOZNDTGxgvBkC1+rBQyjEROMRGxzB5ww5B8bg9oZiiqZUfFZcTluc2WNRRBFdO/YIRHWgH/x0RQo2CJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3TOYMrcht842Z/1iq/ihYqXM9ukHN8K4GY759dJMmbYojqCxD
+	zZ8XRugdIhhVjOG0tcNn/aIsYIeTLHg7gNeD63r6f+pTlRo5nsdA5Ai4Z5OaOq+/a7w=
+X-Gm-Gg: ASbGnctFD+oYg2RNufoJge1l1qsTzv5H5RtzOxTWBY6rIGNeH3v5zPUV5M8ZBU+q2zq
+	F7t6HJUi6+uBQfChi/uKvYAaqdKphV9vdLUpxDr9kPRY162eKdr9pWvznI6/b2B7bPcXDFXKGvu
+	ecBX5TxLm+x4CnVtEJVQBgLIW12M6CTs+BAgKaw0zypem2mK5R5/kkb8+qXfRU6fbIrAA+cgBvO
+	037t29eNTlQEAZkEiQ6Lw+98EOmfLRHYnrhj6usSz9DnEPvbXNA599FwQzQWd9KSEgw3M5Rtdd4
+	JZFBz6AxFlz4KoB4zBOw562/nBzT2btvoeyhZRqR/kHsCis1ApT1AKlQh738hLxGONktYjd10zw
+	yRaQvk45NmEIkHqBdq9mWvULvS3CqFQ9lbbg4jyd89kw=
+X-Google-Smtp-Source: AGHT+IEjmfbXaJR5mLb1vcxyiOuJ52qP/GEvZfS0Ot7eygHk2Y+MfbGgHZLHivzhbxmGCa3WJs3+ag==
+X-Received: by 2002:a17:907:3cd5:b0:b04:a1ec:d06f with SMTP id a640c23a62f3a-b04b140a6a9mr731498366b.25.1757319816823;
+        Mon, 08 Sep 2025 01:23:36 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:1f60:42e1:1e1b:d240])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b041800e89esm1998366766b.30.2025.09.08.01.23.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 07 Sep 2025 21:44:08 -0700 (PDT)
-From: Fei Shao <fshao@chromium.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Fei Shao <fshao@chromium.org>,
+        Mon, 08 Sep 2025 01:23:36 -0700 (PDT)
+Date: Mon, 8 Sep 2025 10:23:31 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Vikash Garodia <quic_vgarodia@quicinc.com>,
 	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH] remoteproc: mediatek: Use for_each_available_child_of_node_scoped()
-Date: Mon,  8 Sep 2025 12:43:25 +0800
-Message-ID: <20250908044348.2402981-1-fshao@chromium.org>
-X-Mailer: git-send-email 2.51.0.355.g5224444f11-goog
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] media: iris: Enable Secure PAS support with
+ IOMMU managed by Linux
+Message-ID: <aL6Sg9dExKfepRKM@linaro.org>
+References: <aKWLZwYVPJBABhRI@linaro.org>
+ <20250820115659.kkngraove46wemxv@hu-mojha-hyd.qualcomm.com>
+ <aKXQAoXZyR6SRPAA@linaro.org>
+ <f25b6cb4-666d-e3e1-0540-b2d7fad86407@quicinc.com>
+ <aKguXNGneBWqSMUe@linaro.org>
+ <20250822150611.ryixx2qeuhyk72u3@hu-mojha-hyd.qualcomm.com>
+ <aKiaKwkpdKHSH9YS@linaro.org>
+ <20250822164030.6gubbs24raeg6kbx@hu-mojha-hyd.qualcomm.com>
+ <aKooCFoV3ZYwOMRx@linaro.org>
+ <20250825111956.5x4dn3uguo4xmtss@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250825111956.5x4dn3uguo4xmtss@hu-mojha-hyd.qualcomm.com>
 
-Use scoped for_each_available_child_of_node_scoped() to remove manual
-of_node_put() calls from early returns.
+On Mon, Aug 25, 2025 at 04:49:56PM +0530, Mukesh Ojha wrote:
+> On Sat, Aug 23, 2025 at 10:43:52PM +0200, Stephan Gerhold wrote:
+> > On Fri, Aug 22, 2025 at 10:10:30PM +0530, Mukesh Ojha wrote:
+> > > On Fri, Aug 22, 2025 at 06:26:19PM +0200, Stephan Gerhold wrote:
+> > > > On Fri, Aug 22, 2025 at 08:36:11PM +0530, Mukesh Ojha wrote:
+> > > > > On Fri, Aug 22, 2025 at 10:46:20AM +0200, Stephan Gerhold wrote:
+> > > > > > On Fri, Aug 22, 2025 at 09:56:49AM +0530, Vikash Garodia wrote:
+> > > > > > > On 8/20/2025 7:09 PM, Stephan Gerhold wrote:
+> > > > > > > >>>> +int iris_fw_init(struct iris_core *core)
+> > > > > > > >>>> +{
+> > > > > > > >>>> +	struct platform_device_info info;
+> > > > > > > >>>> +	struct iommu_domain *iommu_dom;
+> > > > > > > >>>> +	struct platform_device *pdev;
+> > > > > > > >>>> +	struct device_node *np;
+> > > > > > > >>>> +	int ret;
+> > > > > > > >>>> +
+> > > > > > > >>>> +	np = of_get_child_by_name(core->dev->of_node, "video-firmware");
+> > > > > > > >>>> +	if (!np)
+> > > > > > > >>>> +		return 0;
+> > > > > > > >>> You need a dt-bindings change for this as well. This is documented only
+> > > > > > > >>> for Venus.
+> > > > > > > >> You are right, wanted to send device tree and binding support separately.
+> > > > > > > >> But if required, will add with the series in the next version.
+> > > > > > > >>
+> > > > > > > > You can send device tree changes separately, but dt-binding changes
+> > > > > > > > always need to come before the driver changes.
+> > > > > > > 
+> > > > > > > Do you mean to update the examples section[1] with the firmware subnode,
+> > > > > > > something similar to venus schema[2] ?
+> > > > > > > 
+> > > > > > 
+> > > > > > Sorry, I missed the fact that the "video-firmware" subnode is already
+> > > > > > documented for iris as well through qcom,venus-common.yaml (which is
+> > > > > > included for qcom,sm8550-iris). I don't think it's strictly required to
+> > > > > > add every possibility to the examples of the schema, since we'll also
+> > > > > > have the actual DTBs later to test this part of the schema.
+> > > > > > 
+> > > > > > I would recommend to extend the description of the "video-firmware" node
+> > > > > > in qcom,venus-common.yaml a bit. You do use the reset functionality of
+> > > > > > TrustZone, so the description there doesn't fit for your use case.
+> > > > > > 
+> > > > > > I think we will also have to figure out how to handle the old
+> > > > > > "ChromeOS"/"non_tz" use case (that resets Iris directly with the
+> > > > > > registers) vs the EL2 PAS use case (that resets Iris in TZ but still
+> > > > > > handles IOMMU from Linux). Simply checking for the presence of the
+> > > > > > "video-firmware" node is not enough, because that doesn't tell us if the
+> > > > > > PAS support is present in TZ.
+> > > > > > 
+> > > > > > I have been experimenting with a similar patch that copies the "non_tz"
+> > > > > > code paths from Venus into Iris. We need this to upstream the Iris DT
+> > > > > > patch for X1E without regressing the community-contributed x1-el2.dtso,
+> > > > > > which doesn't have functional PAS when running in EL2.
+> > > > > > 
+> > > > > > Perhaps we could check for __qcom_scm_is_call_available() with the new
+> > > > > > QCOM_SCM_PIL_PAS_GET_RSCTABLE to choose between invoking reset via PAS
+> > > > > > or directly with the registers. I don't have a device with the new
+> > > > > > firmware to verify if that works.
+> > > > > 
+> > > > > You can check QCOM_SCM_PIL_PAS_GET_RSCTABLE with __qcom_scm_is_call_available() 
+> > > > > but there is a possibility that QCOM_SCM_PIL_PAS_GET_RSCTABLE SMC call will be
+> > > > > used even for Gunyah. So, I believe, __qcom_scm_is_call_available() and
+> > > > > video-firmware's iommu property is also important.
+> > > > > 
+> > > > 
+> > > > Yeah, this sounds good.
+> > > > 
+> > > > > > 
+> > > > > > I'll try to send out my patch soon, so you can better see the context.
+> > > > > 
+> > > > > Are you saying that you are going to send patch to support IRIS on
+> > > > > x1-el2.dtso in non-secure way i.e., non-PAS way.
+> > > > > 
+> > > > 
+> > > > The background is the following: I have a pending patch to add iris to
+> > > > x1e80100.dtsi, but that currently breaks x1-el2.dtso. My original plan
+> > > > was to disable &iris in x1-el2.dtso (because the PAS way seems to be
+> > > > just broken), but then I saw that e.g. sc7180-el2.dtso does have working
+> > > > Venus with the "video-firmware" node. Copy-pasting the "no_tz"(/non-PAS)
+> > > > code as-is from venus into iris works just fine for x1-el2.dtso, so
+> > > > disabling &iris in x1-el2.dtso just because the "no_tz" code is
+> > > > currently missing in iris doesn't sound right.
+> > > > 
+> > > > As far as I understand the approach you use in this series does not work
+> > > > without the TZ changes for older platforms like X1E(?), so adding that
+> > > > code in iris seems to be the best way to move forward.
+> > > 
+> > > Yes, this series has dependency on firmware and will not work for older
+> > > platforms.
+> > > 
+> > > > 
+> > > > I started working on a patch for this a while ago, it just needs a bit
+> > > > more cleanup. I'll try to finish it up and post it so we can discuss it
+> > > > further. I think the IOMMU management in my patch would even work as-is
+> > > > for you, you would just need to toggle a boolean to use the PAS instead
+> > > > of accessing the registers directly.
+> > > 
+> > > Sounds like a plan.
+> > > Thanks, please cc me when you send the patches; So, I could test along
+> > > with my changes and make dependency on it.
+> > > 
+> > 
+> > Krzysztof raised the concern that we shouldn't model the IOMMU specifier
+> > for the firmware using a "video-firmware" subnode [1], similar to the
+> > discussion for the "non-pixel" subnode recently [2].
+> > 
+> > I mostly finished up the cleanup of my patch, but I don't see any point
+> > in posting it without an alternative proposal for the dt-bindings. For
+> > this case, I think a simple property like
+> > 
+> > 	firmware-iommus = <&apps_smmu ...>;
+> > 
+> > instead of
+> > 
+> > 	video-firmware {
+> > 		iommus = <&apps_smmu ...>;
+> > 	};
+> > 
+> > could perhaps work. (XYZ-iommus isn't standardized at the moment, but I
+> > think something like XYZ-gpios would make sense in this case. There are
+> > many other possible approaches as well though.)
+> > 
+> > Unfortunately, I won't have enough time in the next weeks to fully
+> > implement and propose an alternative. I'm assuming you still have
+> > ongoing work for supporting the "non-pixel" IOMMU, perhaps your new
+> > approach can be adapted for video-firmware as well?
+> 
+> I believe, non-pixel case a bit different and thats not depends on whether
+> it is PAS or non-PAS.
+> 
+> However, I liked the idea about introducing something similar to -gpios
+> for -iommus as could pottentially solves at least this issue. Here, we need
+> to create a platform device and its domain based on firmware-iommu
+> property.
+> 
+> So, its required change in device link to put supplier/consumer dependency
+> and addition of firmware-iommu binding for IRIS and little of changes
+> over your existing changes.
+> 
+> But I have doubt, whether @Krzysztof would be fine with it ?
+> 
 
-Signed-off-by: Fei Shao <fshao@chromium.org>
----
+Krzysztof isn't on Cc here so I wouldn't expect him to reply. :-)
+I'm not sure if it's helpful to add him in the middle of the discussion
+either (at least without proper summary of the problem description).
 
- drivers/remoteproc/mtk_scp.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+I think it would be best to prepare a patch series with the motivation
+properly described. If making the actual implementation (to create the
+platform device etc) is too much work it could also be sent as RFC with
+only the dt-bindings.
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 8206a1766481..b123698feb52 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1234,7 +1234,6 @@ static int scp_add_multi_core(struct platform_device *pdev,
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev_of_node(dev);
- 	struct platform_device *cpdev;
--	struct device_node *child;
- 	struct list_head *scp_list = &scp_cluster->mtk_scp_list;
- 	const struct mtk_scp_of_data **cluster_of_data;
- 	struct mtk_scp *scp, *temp;
-@@ -1243,11 +1242,10 @@ static int scp_add_multi_core(struct platform_device *pdev,
- 
- 	cluster_of_data = (const struct mtk_scp_of_data **)of_device_get_match_data(dev);
- 
--	for_each_available_child_of_node(np, child) {
-+	for_each_available_child_of_node_scoped(np, child) {
- 		if (!cluster_of_data[core_id]) {
- 			ret = -EINVAL;
- 			dev_err(dev, "Not support core %d\n", core_id);
--			of_node_put(child);
- 			goto init_fail;
- 		}
- 
-@@ -1255,7 +1253,6 @@ static int scp_add_multi_core(struct platform_device *pdev,
- 		if (!cpdev) {
- 			ret = -ENODEV;
- 			dev_err(dev, "Not found platform device for core %d\n", core_id);
--			of_node_put(child);
- 			goto init_fail;
- 		}
- 
-@@ -1264,14 +1261,12 @@ static int scp_add_multi_core(struct platform_device *pdev,
- 		if (IS_ERR(scp)) {
- 			ret = PTR_ERR(scp);
- 			dev_err(dev, "Failed to initialize core %d rproc\n", core_id);
--			of_node_put(child);
- 			goto init_fail;
- 		}
- 
- 		ret = rproc_add(scp->rproc);
- 		if (ret) {
- 			dev_err(dev, "Failed to add rproc of core %d\n", core_id);
--			of_node_put(child);
- 			scp_free(scp);
- 			goto init_fail;
- 		}
--- 
-2.51.0.355.g5224444f11-goog
+Have you continued working on this to unblock adding the IOMMU needed
+for the IRIS firmware?
 
+Thanks,
+Stephan
