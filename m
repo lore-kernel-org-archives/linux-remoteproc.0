@@ -1,79 +1,82 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C3F224AF3
-	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Sep 2025 16:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B076268C40
+	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Sep 2025 03:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757434556; cv=none; b=pk94nCNCrkHkfTGZqciMuDQzl/nh4hht55Q/clsVY2dt9A5vBUK9IsbOFRLOM8rR1/M+ByD1wrvTzWv2VUwDsP/4K5cjK2YsxFdSAuF3L2jg0GRyfFaKYeU/57sCr21T2HxVwxPIGnXewRm+sJtFR8hwIJ5R3psscxFiG1lpvUs=
+	t=1757476171; cv=none; b=nu7KJqcbYb6U/eFMwopMukQWva5bK3XS6kVKi/KpT6LtlXtTslsqamG3EomxIXcxuEVQ+7HcbuwWUCQz1jVEUDaZp4glJfU3WQvoU+lmK95UMo3D+DoM3pEkTDK8vxWuFwPyESDwFAax9u3rB5Kpz6KIRgZ97urUwW8+ymRaVWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757434556; c=relaxed/simple;
-	bh=7Z15smc22BjF1dnNwqHWT4Q61K0HQySupMCHoRvenSs=;
+	s=arc-20240116; t=1757476171; c=relaxed/simple;
+	bh=YBv0CW4QbT5Ix1E4QULXQ9Bl3KYGoXwI2sr7c1YlKVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kAMdlHHmM9Ie3kKf87s5L3LLU60ySlhz55n09WA3WLQ9RlxsTnD6Knd2WH61GAdZtyzLYarHnqjYvNU+5pNIVG5ZXpPsk+G4b8jdtabVuH1xcDv8S1Tq8iA5pWTyxwVCwqGRMR2SkuukF/NSj5ebc5/SvzEPtAIwJWAKC0pcHPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I3LwDB0Q; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=uIT8LkQkGWrX1wrXCSOLlvD8pCEnrCnUGf/YCnPs76IVv+CVkxve/MSQyIiCbEvZ8ZLlMxi6wVAlgzMo6k9Ad0ZX8Qkr/2T95w+mnYcA+Ym0w5Lfw2wkUdGOUXcgIlY1QqP5WKegccAEwnWLiNQ6rxUk9ZxFQnr75tQxUkkfDPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RvutWUmn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I3LwDB0Q"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso3674821a12.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Sep 2025 09:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757434554; x=1758039354; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UEiPxhZen3QXZAobK2Ga2iD+ttNiESa3yuRWHgPHltc=;
-        b=I3LwDB0Qzi0uGuLnQyQtPfVEx9YiDFuI4WQIRjMOdomvaW041DvsHdPmRcYWPu56RG
-         U5WvJQ/3gCecxBhH+SmCeXF64KpCJzbREGmTlNEn9fWYyflsXfLLTO5TrlHfChNrTF28
-         djwm36YQiqAy2zPCDcoRmb3YeLVsiOn9dtc4VfEhMuG5eDVptuHmT6S/cTZNoy1c9d1r
-         E+Ikh42AZPqGbFdY5hoJQj34w0ghNTG0UAzhmbwIsP/Ckg3JKdorzn5/jJZ8wbX/WaX2
-         fCGHrSX4XFGxaJRvuisjfY65oPFniU+PylvX1UIz2VsasuSL1N5PLz56UGTqVXFANUPN
-         /86g==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RvutWUmn"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 589HV0ix000698
+	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Sep 2025 03:49:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=jc+OrgV18zTR9+MeCEMWVPIQ
+	oOTOsoNv5lyc0iyheDY=; b=RvutWUmnXniH9YLZ3AMy+wjZNJeA5TybiCsnfyqO
+	utT5tGiXxakyy4B0AftdGXKCZ+cXNRIq4VnMaS1uDCvAv8gfP6F8ao05NhFVyR5W
+	cMixFSnKAsgrEj+4bbi/d1Uf5OnBI5gQWdyDwJf7p1mcStBjTgyaKRfRFhklpAJ9
+	iOTNusScYYLpaEYchbjyNXKqU91e57IuaI+yxZa6WAtRy51Rq+zO7BB7u83arObu
+	63/ZljKeu+fcXJxX3RTVE6akCl2Wlc5G04VUKFcqNwgcIQW0gcvLgB9T/M0ljCI2
+	pw0cBUoIKh6YTfpeaLFjJ7QQNoN/NlpQ27uFozQjsXHjfA==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e4m2ch7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Sep 2025 03:49:29 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-725d32eaa99so201248826d6.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Sep 2025 20:49:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757434554; x=1758039354;
+        d=1e100.net; s=20230601; t=1757476168; x=1758080968;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UEiPxhZen3QXZAobK2Ga2iD+ttNiESa3yuRWHgPHltc=;
-        b=ld+2su+N99uZGbID9jWdneRyrdssXPiOKESK1rV0tz1gnuE2DFRo7K/wskWzQJnTAn
-         qcR/2n05W15/RgvjJA9ij8IAxXf5ihdnvYfAtkPdDwYH8tH0aNJHFRcB5K+CXhlp31go
-         roOqIF+4RnQt9CAxF45J7M91S7OvsGqlf4ILhjxBNGA0m1ke/gZEvj0a+sJ7B04eobjY
-         Xgj1roDS3jShtofPQXp+IMC11ZtuVo9ubgrUIpnAYeUR2AikF2kT+QuWrUVqOMLquly5
-         amoyY9Ve2zaRxsUC3D0VyHYUd2K7wA929O2oihzzTu6sHwVzYICzhIWKA6BCt0Yu5axs
-         DjwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwalJNlSATzY8SRL6OuZwpM9PQvsAoNCJeK8nzzX7jEPxfkJ02+Nyt04/L7/uPW1T5lJ0Y9g0LBGrnXKanB4Ol@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmPGrwtrD/PbGhHLQYyam97agEJ08JmQdXuYdeEZ/Nu3rJYjBR
-	fn/FPw2Aby1WgzwgRG/2q6asq1whydyw4nDEt1FJTyewa8XX7ZHIC9IFf9JGUohzQ6c=
-X-Gm-Gg: ASbGncu6uMkWFsWdgdk/9tREKzxIWQdlrZ7ags/tM6iW4QDcb6QPk3sC1ZyJb4wQfha
-	29PmSn5SYS/RN6RC/FqV35ogq0LkMvgB8b2p5O6nZ+SRJK/izdo+r84fAX2M/qiQT8n2oANMUrn
-	rAUQo+Vlg1xAhxh590/3HH+/mSovb8ibG5tICeMl4UWfzLGiGNLDy0DA1l+mfd0qI+Iw1MRrPyx
-	8a8sm1RqZj9ui7X3KCx4hDckV4OrIls82oeExFfwp+SvNdQdQ84kKxpwudlxFhfBavc87ub+AHi
-	0fw+/M9k7cMXk04x3kXHm59XPIjfu+1i1PyxJrSUOOQpI2INErvg64JpxgOFnJpuwTD4bZ/hitb
-	WF+JDQGl2S0KY+ZrPBHA2zKrtxQlmY5dc1O15qd7+L3H1eXvZu/r8z3Ym21znejdG2CZjOyyDNR
-	xtIiqUItwXahJ6puWxEKJt5u9FuLvK04hkYLo=
-X-Google-Smtp-Source: AGHT+IH55jBXQuGrRFWB7QFDwp0aHH2LNHjhqhfqYbAFcay2HL31leHRvKu+CE2zXWHS10Yrl/LklQ==
-X-Received: by 2002:a17:902:e884:b0:248:811e:f873 with SMTP id d9443c01a7336-25170f37b15mr169800035ad.36.1757434554322;
-        Tue, 09 Sep 2025 09:15:54 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:e31e:18ea:d6c1:d90e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25a27def96esm2062685ad.55.2025.09.09.09.15.52
+        bh=jc+OrgV18zTR9+MeCEMWVPIQoOTOsoNv5lyc0iyheDY=;
+        b=XYUTdp1kUjQINS1GE6208bRjKOFukZU4Uav8UFnCFtU77xaZAvNuuWkmDVjKtBrWc4
+         9M9yxQehEZ4CF+Wpq7s3P9zAYN7HMuscz0Lyb8QcejIfneY36WuLIyk0aJKOTzCacB8M
+         xQzwMiRJEK1PaJG0UN5NFSc7IJVa4qHSpmA+7A3z1VPit2afeR8R4BO5ZRjF8bN/2n3R
+         h248G2ktAURsDp5+EXxM9LCwAG7bhZy13agGfw86cOprLMrAK6KBCF0gCwraOng+RIdz
+         ESxU5D41gs/MqtCLG/vA+2tiJRMaoZNDXeo9kNQn9UXEBmuzKVzObKdjfF+qWJkVVthg
+         zjVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYzbxdEoH4mTlJKrKRBERdxdYP+pS6qsYsGwFu01hTMoF4jC2HyRkxs9F1UFElLISHHB/ZKtEVX1pWaYydiixl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5eiQYibHTvqcKpmKT7r3OlFLHnyPSOKkLucf1bQexdv3mccst
+	8MDB5/ZflZQ6yn4vc6yCscwnMBCW+3rM6vaDun1n+xFRgqsh2iXjwnpixTqwFdseIM56W/hUMhb
+	dPl10q4oRdQBdeHPZAoh1szQkhVkzB7SaEjJoZrbEDzazpr0HOB+BMtnOVV1yu+9XmRbkjLYT
+X-Gm-Gg: ASbGncu2Lfl5GcfCpmV4thCLsGeias9419ZksktE+WPpYdGFnz0vx4yeJ/yKvKASEei
+	VzW6qicfqRHVIkqF93p8RXX71EYTWsamsrDFm++U5+g9VPNIG6TRFd4V3TkgpalnhFFL3LGh62O
+	++ads5Ca7aJpat8RAo8ARxO1UYn5vlUi4pPFsVXXmwBVnJTyq0qniK0SQNmIfRBDem1P/9KW32M
+	c6cyAFp8ie2FMFGpKIHyeTTnYFOw5f/vn/vcA46d6eDFnIb5ikzTnHKDMQJvHEr7hVVhc33Ag4H
+	MLbxwxv56FTZaPjXi7oqtWc9u8wWlpmy+PcBaxgUS1nIzLaGRNek/3bIAWpexyUjFat741ABDPp
+	9abmkcyqnO482txrxXkuPnT9/wYPNLKhL1/NTqbDXwUE20N5cCUi9
+X-Received: by 2002:a05:6214:cc4:b0:715:94ad:6acb with SMTP id 6a1803df08f44-7393ca9ac9emr142266046d6.42.1757476168192;
+        Tue, 09 Sep 2025 20:49:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE41GdM3QXQSMAuSTL1V5Hrzte1YNWgWub/X0ZUvpjvQT3VvLXj5jdJKN9BtiAgDBHFRBXV+A==
+X-Received: by 2002:a05:6214:cc4:b0:715:94ad:6acb with SMTP id 6a1803df08f44-7393ca9ac9emr142265846d6.42.1757476167740;
+        Tue, 09 Sep 2025 20:49:27 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-337f5032caasm44137561fa.35.2025.09.09.20.49.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Sep 2025 09:15:53 -0700 (PDT)
-Date: Tue, 9 Sep 2025 10:15:50 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>, Frank Li <frank.li@nxp.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] remoteproc: imx_rproc: Clean up after ops
- introduction
-Message-ID: <aMBStih6Wi_isn2N@p14s>
-References: <20250908-imx-rproc-cleanup-v1-0-e838cb14436c@nxp.com>
- <20250908-imx-rproc-cleanup-v1-6-e838cb14436c@nxp.com>
+        Tue, 09 Sep 2025 20:49:25 -0700 (PDT)
+Date: Wed, 10 Sep 2025 06:49:22 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v4] remoteproc: qcom_q6v5_mss: support loading MBN file
+ on msm8974
+Message-ID: <ksnxdmxdxe2o3yffvpsxoyzqbqqsstiwkzudwxxv5nrd7ezkyp@7t67vswmkxu4>
+References: <20250706-msm8974-fix-mss-v4-1-630907dbd898@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -82,91 +85,63 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250908-imx-rproc-cleanup-v1-6-e838cb14436c@nxp.com>
+In-Reply-To: <20250706-msm8974-fix-mss-v4-1-630907dbd898@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOCBTYWx0ZWRfX7qSNO76y9S2N
+ WP1Y8vKtF709MYJcSTwx+GigiXWCoe6QIkMILKWVhvzl5nIWy5/Zw46K1rKeTzfeUotxOoFKs66
+ OV23liDTg1tJ+lCawwJS+U9Cejp3wN01VGhI/wQSTRkWQDAKmPtLzdZ0sAQZPJzGrCTNujMulxB
+ fp14gvr3yb27u6nfFjQXBnOzCJfzDVMrbujKy72JVOMYJEuyRQM+4t0k/d/PMDS4OT2mhgp9ZY/
+ rSKbSngMWb+r44THNGFU9W5w3FkI0I5mo18wmG4fECDH6FcJNo+EaGYjc0aly15q4vwFgo6toqD
+ Ig4fgvt6Z80pnww5FA4gWxAR+21okfsR3DwgwsbHMNaU54oo6/sukrG3nOzldcTWHHTX+HAvxOQ
+ fcgyYExY
+X-Authority-Analysis: v=2.4 cv=J66q7BnS c=1 sm=1 tr=0 ts=68c0f549 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=OCLVXrEKwRfTRf4533IA:9 a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: VNb7hBIEhddTWlKkDnpP62S5GnTQlBBs
+X-Proofpoint-ORIG-GUID: VNb7hBIEhddTWlKkDnpP62S5GnTQlBBs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-09_03,2025-09-08_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060038
 
-On Mon, Sep 08, 2025 at 09:07:39PM +0800, Peng Fan wrote:
-> With the switch-case in imx_rproc_{start,stop}{} removed, simplify
-> the code logic by removing 'goto'. The last switch-case in
-> imx_rproc_detect_mode() are no longer needed and can be removed.
+On Sun, Jul 06, 2025 at 05:47:08PM +0300, Dmitry Baryshkov wrote:
+> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > 
-> This cleanup improves code readability and aligns with the new ops-based
-> design.
+> On MSM8974 / APQ8074, MSM8226 and MSM8926 the MSS requires loading raw
+> MBA image instead of the ELF file. Skip the ELF headers if mba.mbn was
+> specified as the firmware image.
 > 
-> No functional changes.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Fixes: a5a4e02d083d ("remoteproc: qcom: Add support for parsing fw dt bindings")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  drivers/remoteproc/imx_rproc.c | 25 +++++++------------------
->  1 file changed, 7 insertions(+), 18 deletions(-)
+> Changes in v4:
+> - Expanded to cover MSM8226 and MSM8926.
+> - Link to v3: https://lore.kernel.org/r/20250706-msm8974-fix-mss-v3-1-8b5ae61c86a9@oss.qualcomm.com
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 5fa729f4286f6ac939357c32fef41d7d97e5f860..ed8395b097d07d02e5323550ff497819f9b95ad6 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -323,14 +323,11 @@ static int imx_rproc_start(struct rproc *rproc)
->  	if (ret)
->  		return ret;
->  
-> -	if (dcfg->ops && dcfg->ops->start) {
-> +	if (dcfg->ops && dcfg->ops->start)
->  		ret = dcfg->ops->start(rproc);
-> -		goto start_ret;
-> -	}
-> -
-> -	return -EOPNOTSUPP;
-> +	else
-> +		return -EOPNOTSUPP;
-
-
-Here I would simply refactor this to:
-
-        if (!dcfg->ops || !dcfg->ops_start)
-                return -EONOTSUPP;
-
-Otherwise this patchset is going in the right direction.
-
-Thanks,
-Mathieu
-
->  
-> -start_ret:
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
->  
-> @@ -380,14 +377,11 @@ static int imx_rproc_stop(struct rproc *rproc)
->  	struct device *dev = priv->dev;
->  	int ret;
->  
-> -	if (dcfg->ops && dcfg->ops->stop) {
-> +	if (dcfg->ops && dcfg->ops->stop)
->  		ret = dcfg->ops->stop(rproc);
-> -		goto stop_ret;
-> -	}
-> -
-> -	return -EOPNOTSUPP;
-> +	else
-> +		return -EOPNOTSUPP;
->  
-> -stop_ret:
->  	if (ret)
->  		dev_err(dev, "Failed to stop remote core\n");
->  	else
-> @@ -1000,13 +994,8 @@ static int imx_rproc_detect_mode(struct imx_rproc *priv)
->  	if (dcfg->ops && dcfg->ops->detect_mode)
->  		return dcfg->ops->detect_mode(priv->rproc);
->  
-> -	switch (dcfg->method) {
-> -	case IMX_RPROC_NONE:
-> +	if (dcfg->method == IMX_RPROC_NONE)
->  		priv->rproc->state = RPROC_DETACHED;
-> -		return 0;
-> -	default:
-> -		break;
-> -	}
->  
->  	return 0;
->  }
+> Changes in v3:
+> - Reverted back to the simple patch from v1
+> - Added define for 0x1000 (Konrad)
+> - Added MBA firmware size check
+> - Corrected the Fixes tag to point to the commit adding firmware-name
+>   support
+> - Link to v2: https://lore.kernel.org/r/20230508153524.2371795-1-dmitry.baryshkov@linaro.org
 > 
-> -- 
-> 2.37.1
+> Changes in v2:
+> - Replace fixed offset 0x1000 with the value obtained from ELF headers
+> - Implement ELF validity checks
+> - Link to v1: https://lore.kernel.org/r/20230507172041.2320279-1-dmitry.baryshkov@linaro.org
+> ---
+>  drivers/remoteproc/qcom_q6v5_mss.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 > 
+And gracious ping...
+
+-- 
+With best wishes
+Dmitry
