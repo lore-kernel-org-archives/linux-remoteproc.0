@@ -1,115 +1,208 @@
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC7C2206A7
-	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Sep 2025 08:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89966322A3B;
+	Thu, 11 Sep 2025 14:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757580265; cv=none; b=Z3ZwI9gzpnxTnvAE/7pCNaWTroElYwg5xPLyap/QBrDxJqez/5PLUXB8MB4mV7a3ywv+lyDqs6vEvCTsxX8qgMeavl4O8s4Gx68sy0a4G6Iy2YlG9DBcAGcL3pkFx75YpalNKudq1b1eOGv4SZ/Kj6i4mfPk2FlgBRT73ct6I5k=
+	t=1757599253; cv=none; b=Ih8AljBqU9LtF/fE8B6Lasjjn2ncZ3XgvZDGQKOVUvW6VDkeTRrcbFwgelpFw3xyBfQtJe2D5TEzXNNr9ZmWeCaTBLpNMJLuHagmw/vhVe9eP2P3VNw1HWjVVnEnebytJTjTEg0pJPvRfV0MSzMX78h6D47I+N0BGcbxWSqoALA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757580265; c=relaxed/simple;
-	bh=1K49ZJm2cjVDd4VuqrRdstuQEPhQ6l2n2BOtJAelo0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZJCmRfXQnq9uxPXDBoqkwBpw1alH3n1hqJd2Pr9BscWyvUfR4A2JvYAM2gOwqcF1HV8nj9UJQyr5lB8+0+vLhh0e8p88m/pj4ds+jOkx1QOI/5Cw+/zr1t8v2+vfRHEWoYuIHRPRoHJSWp4Tl4mrv8+OQqL5/n2d0UfTEsdZzCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XnUQwasN; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1757599253; c=relaxed/simple;
+	bh=YZgir26I9tEMrliPJqpACHa6ZwxQisNAKsIviQDd448=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BoNM6NyREfi1WrLFez8l4et9QZ0jjqvXMRmCdLLPaCxPoNPjAeOd4d9c2fChfzWvLo668M81cd/l5wyABAuYXFfcYeBJ5kDSDZg9+1w2ADRBQ8sIMYmBP2nU0kncZgtmd1dBfdg0BuwsbTASBDP6YQWnRWtli4SQ7Nq+ZbA061k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ptIWOqlj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XnUQwasN"
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-8960d3a6c2fso240887241.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Sep 2025 01:44:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757580262; x=1758185062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RuBL8uqFp6SRqtjWGK32//PnPpBAxLJ8lgwayga7/Cw=;
-        b=XnUQwasNTu9+h4/n9MAE+OBV8h8PTAtVF3osot9KrsOdCstd94jvh4f78TWW6CMRy5
-         +m5sZaWyDaZrWUnGZVru2wMVzWUQUN2J1ffBTqpv67TwMR0OYHY2JUV81zGWfP0HhVZr
-         Q/vtkCI2tvEiADlalCunzLqT48G1FskLDKs/0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757580262; x=1758185062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RuBL8uqFp6SRqtjWGK32//PnPpBAxLJ8lgwayga7/Cw=;
-        b=dVa4lb4DLaM0oNs2jOhE+aaWKjxM+So6tqdzoFFj0Ri/RZO4RGoREqwUtjZzJXCKs2
-         OwSn58w8YVDFMQ6acnS+P0nDt4kqkiXmqOjPD0+e0TgHs6/CtXc+yGgrYw/imNdU0Y2N
-         yFFGNrhaI5Y8JHN3Tg/PUhGkcB8Yz2lgslDOvl/NbnJ8DTy5yxiirwdwZP1TEFFZe3zC
-         PMrRGLQgBzczrF9FN76jqAt+5f/99EajcfFt+WtrGpZgJ8Own1oWIO6U6hIbUSWFrjLP
-         qBFRbc9AP7xBBYEOYf/Tb8a4jM2iXiJYFdQQgiwDiLaTAgdkaEZpaerXO0X9W5nN/0Mu
-         Sezg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDjY4oXVBmP0EFOvNH3czNBHtTlk1ue4O9ZKPymzgCCOePjCdaIN83Xi6v+VMnxAZsywHT9uXObgUtnlG8F8zq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZxjTFKhDzjygs0X5P7T50LubIKTrHMpiz/wntqZvIFx2pZGbl
-	oyiwHp12SsSRQD/j2mm6F2o1azGhn8jZzWVEB/Fym7d+dPanwwN1yVOQTf5/PU+tEja1z+k45KC
-	xHgU=
-X-Gm-Gg: ASbGncvxTzNDROEcrt+lGY8AWcHENtnfEdGRKZfDJ5M0VfNlPDaWDNGre8N3jRc42A4
-	MvuxG9SlnsgsAdOR2XbM84J440sZdOrprOU31XFrin8Cdr5QkJo2Z/yuDwNBMcp7Zwlwuqttdbe
-	2lphzK6SwqaGNibDQ9I0Tcf+wxfCJr3qFy6w82Yi16Q4Ov6JeBHX3/m4Gl9kLVp7lRgu0QfVoju
-	6v9wLh1oUh+bW/N3LgP4SQfzbry1mMWCPqfmT0A0m3SeH7090CCdghffB/Txi7EC3Hen7lKfcia
-	rGusHuoqiVpgVicSKqm1HZE2jv9zb1iLgxigILIwfT3WlMDh+E7XqHMUxqjc/G3hhnD+OkK/rOE
-	bVHPw9Lp4PN5Eh5bLU7PRmB0lSDM0VUVz9wukiGHXr4Sq9Z7S/tDrky/CjkxL9QylrbRV
-X-Google-Smtp-Source: AGHT+IGuXEFP/xuyWS+8nRZQEbPsVddCzJhCnwEBc3OaTvahNoSiFs7mWuKPd0dQACYkzfycEI1tRw==
-X-Received: by 2002:a05:6102:5983:b0:537:f1db:76b2 with SMTP id ada2fe7eead31-55209add315mr1033365137.15.1757580262518;
-        Thu, 11 Sep 2025 01:44:22 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5537062c9c5sm217438137.5.2025.09.11.01.44.21
-        for <linux-remoteproc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 01:44:21 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8960a3fb405so1222093241.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Sep 2025 01:44:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUQb31LmYOhNSgjjkCBwp3WwFKR80lSNQfuGUxrkI5JzleBF9vVDQyv6WDFGKURfOOciaj2BbWVXNvHYwi0TFIg@vger.kernel.org
-X-Received: by 2002:a05:6102:5086:b0:4e2:a235:24d1 with SMTP id
- ada2fe7eead31-552065728bcmr950644137.4.1757580261120; Thu, 11 Sep 2025
- 01:44:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ptIWOqlj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757599249;
+	bh=YZgir26I9tEMrliPJqpACHa6ZwxQisNAKsIviQDd448=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ptIWOqljayKuQNx+9DWJiytF129iv9cMbyC6IdhX4Gi4Gkgv0nIqG0gNaawlWJw0g
+	 9jTWQoOPjbQTMbBHbde7s+3+jfA6uy4sViuuWRKdG9/TBuq3G8L64p5/inX/5i5rUN
+	 js2/xRXCUUlse7g6FaWx1jsxyOnDTgfavwGyNRBiKn8cXknyIlYpeml5jhbtZhm/F8
+	 UhJE+6O4hI8NGp9dqT4xmDHraZtYPgG1TVpE/36HMz2EHAJLGKLKyRdqHRN7omTIlQ
+	 5/WsEAuSTwweO9T7kkfiT+GZJYIhZP7GAWvVsRE3mBYI7JRQuUrcSmDMMxcBcA9x78
+	 jw9FpY0sy1o2Q==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 406D417E00EC;
+	Thu, 11 Sep 2025 16:00:49 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: linux-remoteproc@vger.kernel.org
+Cc: arnd@arndb.de,
+	andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	wenst@chromium.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com
+Subject: [PATCH] remoteproc: mtk_scp: Construct FW path if firmware-name not present
+Date: Thu, 11 Sep 2025 16:00:43 +0200
+Message-ID: <20250911140043.190801-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908044348.2402981-1-fshao@chromium.org> <20250910115508.0000785e@huawei.com>
-In-Reply-To: <20250910115508.0000785e@huawei.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Thu, 11 Sep 2025 16:43:45 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nhDRQFVBDydTq=fmC=jz8e941aPwzg+cY1ZQDqWppx+fQ@mail.gmail.com>
-X-Gm-Features: AS18NWDats_rTOk_H5DcYgtjHSlZm8cS5lY_RPdvAh5_wYx68w1LGLEaew8wQCg
-Message-ID: <CAC=S1nhDRQFVBDydTq=fmC=jz8e941aPwzg+cY1ZQDqWppx+fQ@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: mediatek: Use for_each_available_child_of_node_scoped()
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 6:55=E2=80=AFPM Jonathan Cameron
-<jonathan.cameron@huawei.com> wrote:
->
-> On Mon,  8 Sep 2025 12:43:25 +0800
-> Fei Shao <fshao@chromium.org> wrote:
->
-> > Use scoped for_each_available_child_of_node_scoped() to remove manual
-> > of_node_put() calls from early returns.
->
-> There aren't any early returns here.
->
-> This runs into some of the stuff that cleanup.h docs suggest we shouldn't
-> do which is combining gotos and __free() magic.
-> I think this case is actually fine despite that but in general worth
-> thinking about the code structure and whether that can be avoided.
->
-> One option would be to factor out the loop into another function then use
-> and error return from that to call the stuff under the init_free label.
+After a reply on the mailing lists [1] it emerged that the DT
+property "firmware-name" should not be relied on because of
+possible issues with firmware versions.
+For MediaTek SCP, there has never been any firmware version vs
+driver version desync issue but, regardless, the firmwares are
+always using the same name and they're always located in a path
+with a specific pattern.
 
-Fair point, I can send a v2 with that.
+Instead of unconditionally always relying on the firmware-name
+devicetree property to get a path to the SCP FW file, drivers
+should construct a name based on what firmware it knows and
+what hardware it is running on.
 
-Thanks,
-Fei
+In order to do that, add a `scp_get_default_fw_path()` function
+that constructs the path and filename based on two of the infos
+that the driver can get:
+ 1. The compatible string with the highest priority (so, the
+    first one at index 0); and
+ 2. The type of SCP HW - single-core or multi-core.
 
->
-> Jonathan
->
+This means that the default firmware path is generated as:
+ - Single core SCP: mediatek/(soc_model)/scp.img
+   for example:     mediatek/mt8183/scp.img;
+
+ - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
+   for example:     mediatek/mt8188/scp_c0.img for Core 0, and
+                    mediatek/mt8188/scp_c1.img for Core 1.
+
+Note that the generated firmware path is being used only if the
+"firmware-name" devicetree property is not present in the SCP
+node or in the SCP Core node(s).
+
+[1 - Reply regarding firmware-name property]
+Link: https://lore.kernel.org/all/7e8718b0-df78-44a6-a102-89529d6abcce@app.fastmail.com/
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ drivers/remoteproc/mtk_scp.c | 64 ++++++++++++++++++++++++++++++++----
+ 1 file changed, 58 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 8206a1766481..80fcb4b053b3 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -16,6 +16,7 @@
+ #include <linux/remoteproc.h>
+ #include <linux/remoteproc/mtk_scp.h>
+ #include <linux/rpmsg/mtk_rpmsg.h>
++#include <linux/string.h>
+ 
+ #include "mtk_common.h"
+ #include "remoteproc_internal.h"
+@@ -1093,22 +1094,73 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+ 	}
+ }
+ 
++/**
++ * scp_get_default_fw_path() - Get default SCP firmware path
++ * @dev:     SCP Device
++ * @core_id: SCP Core number
++ *
++ * This function generates a path based on the following format:
++ *     mediatek/(soc_model)/scp(_cX).img; for multi-core or
++ *     mediatek/(soc_model)/scp.img for single core SCP HW
++ *
++ * Return: A devm allocated string containing the full path to
++ *         a SCP firmware or an error pointer
++ */
++static const char *scp_get_default_fw_path(struct device *dev, int core_id)
++{
++	struct device_node *np = core_id < 0 ? dev->of_node : dev->parent->of_node;
++	char scp_fw_file[7] = "scp_cX";
++	const char *compatible, *soc;
++	int ret;
++
++	/* Use only the first compatible string */
++	ret = of_property_read_string_index(np, "compatible", 0, &compatible);
++	if (ret)
++		return ERR_PTR(ret);
++
++	/* If the compatible string's length is implausible bail out early */
++	if (strlen(compatible) < strlen("mediatek,mtXXXX-scp"))
++		return ERR_PTR(-EINVAL);
++
++	/* If the compatible string starts with "mediatek,mt" assume that it's ok */
++	if (!str_has_prefix(compatible, "mediatek,mt"))
++		return ERR_PTR(-EINVAL);
++
++	if (core_id >= 0)
++		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
++	else
++		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
++	if (ret <= 0)
++		return ERR_PTR(ret);
++
++	soc = &compatible[strlen("mediatek,")];
++
++	return devm_kasprintf(dev, GFP_KERNEL, "mediatek/%.*s/%s.img",
++			      (int)strlen("mtXXXX"), soc, scp_fw_file);
++}
++
+ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
+ 				      struct mtk_scp_of_cluster *scp_cluster,
+-				      const struct mtk_scp_of_data *of_data)
++				      const struct mtk_scp_of_data *of_data,
++				      int core_id)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	struct mtk_scp *scp;
+ 	struct rproc *rproc;
+ 	struct resource *res;
+-	const char *fw_name = "scp.img";
++	const char *fw_name;
+ 	int ret, i;
+ 	const struct mtk_scp_sizes_data *scp_sizes;
+ 
+ 	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+-	if (ret < 0 && ret != -EINVAL)
+-		return ERR_PTR(ret);
++	if (ret) {
++		fw_name = scp_get_default_fw_path(dev, core_id);
++		if (IS_ERR(fw_name)) {
++			dev_err(dev, "Cannot get firmware path: %ld\n", PTR_ERR(fw_name));
++			return ERR_CAST(fw_name);
++		}
++	}
+ 
+ 	rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
+ 	if (!rproc) {
+@@ -1212,7 +1264,7 @@ static int scp_add_single_core(struct platform_device *pdev,
+ 	struct mtk_scp *scp;
+ 	int ret;
+ 
+-	scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev));
++	scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev), -1);
+ 	if (IS_ERR(scp))
+ 		return PTR_ERR(scp);
+ 
+@@ -1259,7 +1311,7 @@ static int scp_add_multi_core(struct platform_device *pdev,
+ 			goto init_fail;
+ 		}
+ 
+-		scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id]);
++		scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id], core_id);
+ 		put_device(&cpdev->dev);
+ 		if (IS_ERR(scp)) {
+ 			ret = PTR_ERR(scp);
+-- 
+2.51.0
+
