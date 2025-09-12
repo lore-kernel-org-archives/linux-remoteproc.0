@@ -1,152 +1,177 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A07D313E0A
-	for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 14:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9162FE04F
+	for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 14:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686490; cv=none; b=Jj/wU36t5avIHvk/wb8MDyapfP0wzufc7jH8iCK7mTh6Rnder5A2dwx89KBU1WS6Nskzwz/HH7nEe1eAtA3mJLeiG06QLqHe0dU3jLST7fFHcUPlK3l2u+JWVLgWBRxC0QUEL3QlgmxfOAecbLl5wQW/bmjaSRm4hOuc1LApIJU=
+	t=1757686809; cv=none; b=PrwttMjCUMKcSonNsjyJ1Ij5eVgMB0EOQBcxSRSlO5Cr7835S3T+sWl19GoVzE7I5PLabvVDvBR+1GUaT141C5ALpPGUmhAhjJgf4sH3sNZWQ+5BqzLj5WM4kKrfcKmgjvKnRWBj4i1zpbMqjpnXAPkeSpSJeWgJYV3blvgnebc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686490; c=relaxed/simple;
-	bh=9sLEUiKxs4kaq/+VDmR5+jYAXaH2kN70zH8R7UU9LhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bnF5GM5F78UlwQ4pdm+oAGE9+Ap0YqpoyHM9r6ryoF5kxsBBxuLQWYwiDRO21Du3bJLLGCNxSrPZEEkIlhOV1SkoTg5+Zhlb1b9PY5s/UUteAp1N3Di4PkPF/XnQYfQ+hlLTd9CxnzpsOEeaya0yotsPAKaEx42ZyZCCllCv8dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y7erqBjg; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1757686809; c=relaxed/simple;
+	bh=3l449HK5NMkexamVRNEtGUCkmphtfcrXtQXq+LiZQeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FU3GhsSh3NPnfrvSY/EJpODs/TRxjiuEIQNB9R5omIqBKaTDes6Llfs2ajkCIlzWhL0DmK7kp0z8CimL9cjMj5TVGlLAAjxqQ4c66BrjXrg/yAeqn26kz7tg1k4UhSR9zHhsJflsJ4B/EpXEUAilLYAKiH6ZcdQcnLXTLMUY394=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gmEeiPsu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y7erqBjg"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24cdd95c422so12789425ad.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 07:14:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gmEeiPsu"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dfb6cadf3so17820345e9.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 07:20:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757686488; x=1758291288; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGHsIb+AKMqGJwrQY3RDFxGfsX+pej5gKpzkWT00FLc=;
-        b=Y7erqBjgyfxCjtd1qGzlxnU5oJsSa4wkaXB9XUxMTJLWjRfd3XsLsZhJWdFhm6O0n1
-         YzycUNRaPCpuwbeHVNxi7RzozIC9mhgXDUZB4cjhbVzQ1VZ4XjBlnqmRQx91dX0n7Kl3
-         kNttUnPFXDNW+8Y0G6TSQ7onSaB9A/8AV8OImG45+WCJYh1otwWD0f6YeGczlUoshhCM
-         zZloA1hCevk/mfZUnC+TJk+/pddDORt6afIc/n4gEyStmSzJF++BHY64d0oZwMR5xqmD
-         49zoEu294Hu/WcUJM1RRgmEX4NhyNu1pyN9DAO3IL7nDwiaCsChLTKw8dVJCy1lZDNol
-         g4LQ==
+        d=gmail.com; s=20230601; t=1757686805; x=1758291605; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=SmChZKjhh7WfaCiO6qYrnubA4AUjkq4py7dLEKKsD0M=;
+        b=gmEeiPsu0A2ECPHnslD6nMU7a8HpEImCAT2kADomDXZ3Qo0/HU3Lhwxx/c8r3Ir2UF
+         PDKiQMvH/UiMi6sQx0+kQxaOLMqLA4V5z/Ejv6DUUnE6LEv0+NO4X2K1A1ndc0MkKJ+j
+         ZnyxeHzoU1W2d75gU95FC1LTAxxayDbhtf/77BsniFKx7aQTho9bMvYcYbyhNa9/g9nQ
+         abkQFvttfvr++m8W7unHXUviB6UJ81GaLg/fF+lw8MfptZnanIemXWo4/w34CC+/mUSA
+         nCjkfQ3z80/EOK5bpe4Dw+ghV4HTkb6XAevsL2MYPzbezhXc02TrzJmm5RRW3oRt+bxh
+         LHZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757686488; x=1758291288;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1757686805; x=1758291605;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KGHsIb+AKMqGJwrQY3RDFxGfsX+pej5gKpzkWT00FLc=;
-        b=l5+RrxK8iMOIsPuc22ZuzKfUl+zk8FRnnTWHOKspguFvcQqF3TJ0rrv50uDja51WLY
-         LgfEfJTG1bIVwWhQlpltfZ6mZQdfqxm6/18pcM7T/PqmVRkz6BFJ9yXRf/49xFW3nKe0
-         lQ9+Mv4T9URnu0hJM6wJK9j0F+dIp4rIdppjGrkYKTQSSFmuSXQito3OyN6LrBDlHirD
-         t6aiAhEaR02BqCT8uFZwy0OWag8uOMSvWdWf7w2Y0mgHDJ8d3sTzsiGYogKJg/FbEWs1
-         Hw/J2+Wkr2q+JXakJiv9dQDF61GBCPqf/t8KjpkjO7c1VMUA9hzusVreHyaVAZOfauf2
-         i+yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXr1nuftsg6mY1z9iUU25djQ++yDMvjZQfJMweOBcGVjMbHXED8uuAwmGadqt4ai4fNwcvqeKCQ3vNkcDef7UZK@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqYmYI9sHts+oHEQSjbet0QqqQKH6jdZpkeeBZ19L+3X/NePlM
-	BmjGT1WUKyrCutkiOBdSLfFiCUFL+S/f2qrSzM65xyZpCPcO1DSQ+gfj4IHW6T0YNoc=
-X-Gm-Gg: ASbGncvHSbETwwhtkqykvdfuFq1Rad4rXnZy0qsbbdxVl8C6u6ipagktbSFVuv92Fae
-	ShdzGAeNV12nZ0PNzjOsWDp5fR+3JHnOo6PKjDbZBB/4IBKgDGXbyMcBONdDJxpoEDush5s4Xp9
-	/AMUoN7xLvyGqYtKiSSnAPstJTyVKT5mOzNsYapZWlrSX29gme7cFcMni2cPvvC3ZKsFRADF7LE
-	2JRCRaLQNkFUyXr2vJB/g4V9t2St7xdm6rpMj4s4nCz62HL5VKiG6QOMynSyzAEEbExfAxwoCIx
-	7AbjNQ7jWraC6l3oLoJknCpmYo0QtR9ZF4dg0S2UZR5GqHFrg9Brbo9Qf+XdJYATiNfwDDvEjEj
-	yrqAZejShOr+lwVatmj5COMKoldVsrT4nwd4QHsgdNG2zlYhOnB0RwOSYM68kxc93yulK+DV0tj
-	YL9E6Iti/+El1s1rObNOsI2rpqQGXoGNWasA==
-X-Google-Smtp-Source: AGHT+IHHdJciNdadW46V/rsCGh0pPpDDjeLfRRykUe33Y24roFNgOG8c9J3Qxo6W5bSrO6GUGaOkXA==
-X-Received: by 2002:a17:902:ce89:b0:25c:5747:4491 with SMTP id d9443c01a7336-25d26c4ab81mr39777925ad.46.1757686488456;
-        Fri, 12 Sep 2025 07:14:48 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:650:9892:cdf9:70db])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b304f76sm49226035ad.130.2025.09.12.07.14.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 07:14:47 -0700 (PDT)
-Date: Fri, 12 Sep 2025 08:14:45 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Frank Li <frank.li@nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 6/6] remoteproc: imx_rproc: Clean up after ops
- introduction
-Message-ID: <aMQq1SABdOMba_jB@p14s>
-References: <20250910-imx-rproc-cleanup-v2-0-10386685b8a9@nxp.com>
- <20250910-imx-rproc-cleanup-v2-6-10386685b8a9@nxp.com>
- <aMGe/gwmFqjoFszg@lizhi-Precision-Tower-5810>
- <PAXPR04MB8459CABA152B6C1C122B35F28809A@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <20250912061120.GA27864@nxa18884-linux.ap.freescale.net>
+        bh=SmChZKjhh7WfaCiO6qYrnubA4AUjkq4py7dLEKKsD0M=;
+        b=U4gHWV/Aedy7Q+1poCBrqhK9Av+fb6g58s17EqC77vWlsOBfXUgoOInVRVpOBLgvyT
+         I3xM9fYiTXUS6jQjroPdHIGCfnUJ9owNdg/qcMbSqjWqmnElnvEuiCRNuRANmPt1sQYU
+         zCU1zxX0g6GX74CUyU6fcGldlQjB8QvdhaT9At5CNZcmXnPv2Jxth8oTHwMpcMiiBuor
+         DKKn19iH5w0fvJHDWr38I7kyilic6ofwh5AUvv56ApXUkTjzljq6X0aPIdygY8VwXBj3
+         Lk6Zwxn10huPQZkpq4WjsEMv4rk3Qgd+OejXlMzt7yUx6iaURdB8OKJEtJr0Y4obIGhx
+         rThQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnT/wtWs5ry6kVTKXOdHsOPWH2bJmpk16E10cCkFgblp2RdnW8YuCzDN54jv1nNdbmfeRVoIF3Xnp2mquYhVZQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUTqlBqhhPF4GHzbGhbzMpVooxFxlX6ERzfngsNfILwFGh5rS+
+	NVzCg3vSH5S+feJDnkOQWeN3Y5sf7KCfdipj5vE/3DoVB4DbW2JTetwp
+X-Gm-Gg: ASbGncvtg0BSsY/9rCbT7vbUoXi9fCIkONjnS8LmMRbW81o8bOFL3HezIpc0pEwikSV
+	n/i+6PkVY7RMUl5ctZwUXtB5479jQ54QbnSjc+hCyck0JiC5pfpTfL02dO2oetPBRuQA+nQigYZ
+	bhM7f4gEIplMB93SCNhDoI0AVZn+bubRhmoB2F2ORdH4ZFl7lCORs5eizbG08zeBwyh++BQvpYh
+	OJgm/BgKRjXmZrRAg6i2zNmrlcngDH1DAZLWeF0NsOsnbqCZnl5gJtEpSZKSFB7667dF2Afyg/2
+	yBi1IQhCq4WKahFvjhte1bgdPszy5SMGZzemfWAv16knsYXHSc+iXi6VKTkuXdVPV/ehKk5zN+Z
+	CrxeEs6SwJ2rFwYEPExtt5jp1LWYQWNHhPvjmFKphAA==
+X-Google-Smtp-Source: AGHT+IEKyinmwbN3yHvqC2TBvEPXOSoCWcr50U1b0sgHZon43u3EkY1RVzIl5661xTla3PsOT681zA==
+X-Received: by 2002:a05:600c:5254:b0:45d:f55d:3478 with SMTP id 5b1f17b1804b1-45f211e610fmr36884815e9.17.1757686804707;
+        Fri, 12 Sep 2025 07:20:04 -0700 (PDT)
+Received: from [192.168.2.177] ([91.116.220.47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0372b983sm63475385e9.9.2025.09.12.07.20.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 07:20:03 -0700 (PDT)
+Message-ID: <c3d9cdfb-6cfe-41ea-830b-3ab0f6ebcd5f@gmail.com>
+Date: Fri, 12 Sep 2025 16:08:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912061120.GA27864@nxa18884-linux.ap.freescale.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 20/38] arm64: dts: mediatek: mt6795-xperia-m5: Fix mmc0
+ latch-ck value
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-mediatek@lists.infradead.org, robh@kernel.org
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
+ airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
+ mchehab@kernel.org, chunfeng.yun@mediatek.com, vkoul@kernel.org,
+ kishon@kernel.org, sean.wang@kernel.org, linus.walleij@linaro.org,
+ lgirdwood@gmail.com, broonie@kernel.org, andersson@kernel.org,
+ mathieu.poirier@linaro.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
+ atenart@kernel.org, jitao.shi@mediatek.com, ck.hu@mediatek.com,
+ houlong.wei@mediatek.com, kyrie.wu@mediatek.corp-partner.google.com,
+ andy.teng@mediatek.com, tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
+ shane.chien@mediatek.com, olivia.wen@mediatek.com, granquet@baylibre.com,
+ eugen.hristev@linaro.org, arnd@arndb.de, sam.shih@mediatek.com,
+ jieyy.yang@mediatek.com, frank-w@public-files.de, mwalle@kernel.org,
+ fparent@baylibre.com, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-sound@vger.kernel.org
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-21-angelogioacchino.delregno@collabora.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20250724083914.61351-21-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025 at 02:11:20PM +0800, Peng Fan wrote:
-> On Thu, Sep 11, 2025 at 01:13:59AM +0000, Peng Fan wrote:
-> >Hi Frank,
-> >> 
-> >> Can you remove 'method' in data struct also?
-> >
-> >The method is used in other places and other purpose, imx_rproc_detach
-> >imx_rproc_put_scu, imx_rproc_remove, it is also referred 
-> >imx_dsp_rproc.c.
-> >
-> >Could we keep it for now?
-> 
-> The method could not be removed from the data structure, because it is also
-> used in imx_dsp_rproc.c.
-> 
-> I have a few more patches to do further cleanup, but that would make
-> the patchset a bit larger. I would like to see Mathieu's view.
-> 
-> Mathieu,
-> 
-> Do you expect me to add more patches in V3 to cleanup other parts or
-> we could keep the patchset size as it is, with further cleanup in
-> a standalone new patchset?
->
 
-I think there is enough in this set.  I will look at it next week.
- 
-> Thanks,
-> Peng.
+
+On 24/07/2025 10:38, AngeloGioacchino Del Regno wrote:
+> Change the latch-ck value from 0x14 to 4: as only bits [0-3] are
+> actually used, the final value that gets written to the register
+> field for DAT_LATCH_CK_SEL is just 0x4.
 > 
+> This also fixes dtbs_check warnings.
 > 
-> >
-> >Thanks,
-> >Peng.
-> >
-> >> 
-> >> Frank
-> >> > -	case IMX_RPROC_NONE:
-> >> > +	/*
-> >> > +	 * To i.MX{7,8} ULP, Linux is under control of RTOS, no need
-> >> > +	 * dcfg->ops or dcfg->ops->detect_mode, it is state
-> >> RPROC_DETACHED.
-> >> > +	 */
-> >> > +	if (!dcfg->ops || !dcfg->ops->detect_mode) {
-> >> >  		priv->rproc->state = RPROC_DETACHED;
-> >> >  		return 0;
-> >> > -	default:
-> >> > -		break;
-> >> >  	}
-> >> >
-> >> > -	return 0;
-> >> > +	return dcfg->ops->detect_mode(priv->rproc);
-> >> >  }
-> >> >
-> >> >  static int imx_rproc_clk_enable(struct imx_rproc *priv)
-> >> >
-> >> > --
-> >> > 2.37.1
-> >> >
+> Fixes: 5a65dcccf483 ("arm64: dts: mediatek: mt6795-xperia-m5: Add eMMC, MicroSD slot, SDIO")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Applied, thanks
+
+> ---
+>   arch/arm64/boot/dts/mediatek/mt6795-sony-xperia-m5.dts | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt6795-sony-xperia-m5.dts b/arch/arm64/boot/dts/mediatek/mt6795-sony-xperia-m5.dts
+> index 91de920c2245..03cc48321a3f 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt6795-sony-xperia-m5.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt6795-sony-xperia-m5.dts
+> @@ -212,7 +212,7 @@ proximity@48 {
+>   
+>   &mmc0 {
+>   	/* eMMC controller */
+> -	mediatek,latch-ck = <0x14>; /* hs400 */
+> +	mediatek,latch-ck = <4>; /* hs400 */
+>   	mediatek,hs200-cmd-int-delay = <1>;
+>   	mediatek,hs400-cmd-int-delay = <1>;
+>   	mediatek,hs400-ds-dly3 = <0x1a>;
+
