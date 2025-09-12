@@ -1,66 +1,66 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72A9281371
-	for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 12:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1033090CA
+	for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 12:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678821; cv=none; b=twngUKXSyGWUVUmOqoDZImFQufXd0THHSQNHHAmsuQJwHaOBIKACjsugtiXhmXRaFHGgxw6Zv44nTA+vNjeF5ilU+SSl1MTLAfgrWnrzRWHP+HwD6Qce8pLrFoEmzZ35flKt86XMBvbZCkiHO/suwho0pjsw9/kXxHFQY3WSpdU=
+	t=1757678960; cv=none; b=OFfWnha0DBuCTIAplTau8iCbMJJWSWbQo38RaoDhDtvrU31kYjaNjaFKAlNy5NEhlxFdi181SSdNeQp3dRevW8+M/ugGFUsaUyYXNV4nNmyA9rIB1n1iKDrOedONJMo4O0KWnJntyhi9fbKKpndDRmL1TaYxqmORUCORQUdBx8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678821; c=relaxed/simple;
-	bh=7tLsPQ56GHykSvGu2h/RP8o92u88h3vhaDOKuu5gNK4=;
+	s=arc-20240116; t=1757678960; c=relaxed/simple;
+	bh=BRA/+TiAa+jylYRMu0d0pEm4hwFsAV/e70+/iYUAFh0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kV9KsNSodOXIJCW0wnCjjUyJYkXGwLNyCnaKPgGyDXaTKVvK8oPsThSpgl+mxYQtTqayWWUJCvkbFqOMIe9H5cQ4AzetaqyDMpWkc5tJ5TLla/T92HtvqsMwRVXXr2tTPXJySRG06lzxzYWhKbTi7eSK8QEYcgoPEQAZ9gISRJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epwqyXdn; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:Content-Type; b=VjHnuZY0G0x7r4XtbEPnyzia8aKVb/VuALI91R3HceO0bGGX+MFmr30zCcNaSI6UzriatItYZdQofykh7N2CIhlNC74Ow0wHW69mvwcARQHl6BkoluwlLT48NOz6F/bQWtQ2c7BQ/N0HnFvYc2A+apLJ//uF9Ati3b0oKmP+Kb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j9lcvkfw; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epwqyXdn"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3dcce361897so1283240f8f.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 05:06:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9lcvkfw"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45df7ca2955so8975775e9.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Sep 2025 05:09:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757678817; x=1758283617; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757678955; x=1758283755; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CE95xq6ZgnpOLnyTR/eAjFT0tRmq5j5KNZb4KBSgErs=;
-        b=epwqyXdnnAMuWqdFrWmyTklhrzltxKBEXEibAYGbDKc4Lmun9qqEi1Qfed9WsYQXf3
-         pt27wud0vU2YGi0DaYp+sYBGQgHvBZ6lsS2xxcy7wvUD+3X6EruDIRyGcB7djWZpiyvq
-         sAR1sPJrP3blN0F1TWq40Eua7+oOF+lmWTVEutp3tzRCj93V5IWxTw7FxkmXi1Sa/RoJ
-         xVj6HR9biwRMnGVB6ILhkpVlDhXOkmwjDGSTZtojHbMeQq7YSSxPBLB2F/6FZ79Exw7l
-         bgdnPKRgDhKKVQwXI3FGt/x7xdola+RtvgXaX0spAW9P5Vzl2e6B2/7ypvMEdmDnF+eO
-         DlbA==
+        bh=luNlPT2x65V+KjVmCaFP6TTppyN73fwYQbrYbkkLiGU=;
+        b=j9lcvkfwnA3xW6xinlXY/hZbbVEEr2aTDossedSV22KKbr+sNqVbgZ9x3FlBdUSg1j
+         mtZy0GwA0Zz3wEMhPyUBN4i41oUqqC/zVrxWg1vAoZ0oOMS5V+3F+zY1fvBfBybF24lL
+         kURxQ4wmfhljf9NPsy59EBqD6ipchNIVKSnjD8I31u98il2iHio43sFiBYvLvEfP8DG+
+         hz8k7ZsXpXtLIRgb1S96PAS8HqmanhrLshsOQa3vgeZmFvNgRJaZ9fcMZr6JCHWpZwO9
+         9aJi7K/biT1DCznTl7pVaVEr/CetzBgbKXhfkZgVgOpLC5z09R0rSKwjorn/AQSEzfgS
+         k4rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757678817; x=1758283617;
+        d=1e100.net; s=20230601; t=1757678955; x=1758283755;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CE95xq6ZgnpOLnyTR/eAjFT0tRmq5j5KNZb4KBSgErs=;
-        b=axkyn4RNv4GwsJAVrjpDXknAxG/2bCGlXneCmcIJq1EFFuZAvUl+teVkl0jWQrqA/p
-         o9sVbnd9VaEGZRyvIXUzCdZgRjMpK0xE+CCVj0IHIzM4p/GONyjMFWW7s4/Acr+Fp9yf
-         jYWj9sXskdy9W7Jt6tD5NPGmBVBaIMpBsw8L5gic425IUVGLi/vOMza2Akd+1KXuJ6ED
-         /6ovGaem98HbnXu1z+3j2NsNQPTJLX6EhwR7WlAyT2ZESxSDlEOZa2eA6klbqGuI3ynL
-         asiYmvvJI6eitR6BaUbPJDiwz99StQACELa/UUnlvIqR+o67SLwECIb/fxxY5tVsyiFP
-         Mo9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXTmY1z8eZDnhJ4ODT5hDjGn6SoEbseXsVBFYOjZiItlBpeNBRaME++gg0cEGgELoqsXBsVwY5BEqE8MdowLhMk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmMpkAcUl9WToXuWx42JNb1/ZDsW5+EpwQKHKgbXYiVvt1ewpn
-	+PBCW2n0Xb2TIGVPTOQa5L2RZjMQmW3Q86MZMLwiwuJM3lZjKZH2XZ1f
-X-Gm-Gg: ASbGnct3WF1RA+EzoMNOY0E/b2BqpOSUU50rb05TTyUrwpz1wzMo7v4OqoBw9pa3nds
-	JQ/nmK6HWbpqmiAeyHQ1qhpo2+tIPqOhJwDBcP9SLTf2ZgLAtrGlVm4W1n/XgOTptDBGE3vM8iJ
-	Atk9UrOk3uOrX4q9jojbm8y0mZbKKZY+IuBecdO3o6Ax17v3X1SOYMOjcA3q2Am9I84IpP1MUTq
-	5h2+mJ1BXuYGwkVZe744k9G/2OC4nW2EMMOI4/3OHh4ZZgoiTwSvyMJrNK+ZAqVEMqThn51U7LA
-	Fy51AU7YTZA8fzMTdeCn24H1bXXbtDRk1MQxOk8VNxDZYqvC85FXhNsGMudDaH5nX/nnT2LL4UJ
-	kn7Vr2iUC4A8E01qdTkP7o0yS7vFmFYE=
-X-Google-Smtp-Source: AGHT+IETh19o0d8FqUptONExUhi8XbDE/+I2zw2k77iRDOfZ4p95STnqI67o6JmXlfRcZZ+LQx9RNQ==
-X-Received: by 2002:a05:6000:2f87:b0:3e4:8163:b6f9 with SMTP id ffacd0b85a97d-3e765796c6bmr2563890f8f.14.1757678816740;
-        Fri, 12 Sep 2025 05:06:56 -0700 (PDT)
+        bh=luNlPT2x65V+KjVmCaFP6TTppyN73fwYQbrYbkkLiGU=;
+        b=k+39HLYdnHMTm3aol68J+x6Vli39OppH4t1wBMhPgCgNjeTBWQeocuROc4Qfsez20O
+         W00m6i2SHCL593ix9lO5O7hNHCOe/6wTPyZGNazflhDpr+h040aOkusZWYDz4oeq/IDN
+         5b4PXez3E+bCd2zfTQBy2mXPULui50wui2N/Z3Vicps0VDNEvWqzDknHAW78TzEWTQ5C
+         7vQAl5OPx8dwqHQmE3cSRpHWq4YcruIl7TteOkTM7lAqO2GqNaBKjfDJlJPecp90scky
+         RT8Nl3XuPwhazetUEi9TPOr9M+fNgN3q8JC7H68MmQ78WpDGdXnDffSjoRDgNCHcV633
+         xdLA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9GGwKFgMBtdfjtQu14I7PP0aNHlcuXGy1r5FDYnlMhwkxS3EBR84C8GFH6X7D/IJ6iLyzqb4RNLm5/bk6yPIl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2xMEWd4cbwRshVG8LsenAflFiFmkRmGHolc3qjqUUbnPwlZGr
+	lpVPfgzT/GaCEDBDiP+yrV6HyoUDZYLkKZWaqOk08QEh9VY3rPMs/BoN
+X-Gm-Gg: ASbGncvfO/L6lP9hzlLqwtfVhHHvFoDf3lvPUecoepH8Z7q+BDA1rsijtDUBk04lnRs
+	LGVPv1qcsdvM4Ow7xIuGPWtX4pTPcTKogqtHPXaGXdZgX6J6QA1jSPutE0MRXBf8JCVpqQDqdF6
+	GErkQOfrW1kztsajDwB7X6haQyPPO1//Li7sc301EVPT97QzWFBWEOfgO8flC+g117aEuGLLgzH
+	cGwQziRIcMRdnqE19omu8Rvm366ohAW4KjJ3CUdAdX01jr8G8FxZ0EAYds+UqlMuq4en9wIQTt+
+	DL0f2guvj5HpGtxQZw/r2cqsj6BctskvWN3nxV4Y9oLzW5k0fA6n6816rRY8r1FbC917O8smv/k
+	w3x9lGtuTffCMwL+vqaWFBBPX/JAobYw=
+X-Google-Smtp-Source: AGHT+IEPx8/fQkGIVkJR+qz2UY7c6jEyUpO4Z9A3UsVNdqLYapE/RWg0OlQAjc/yFqkAVGNWgJ1CZQ==
+X-Received: by 2002:a05:600c:1c9d:b0:45b:6275:42cc with SMTP id 5b1f17b1804b1-45f211ffafbmr24614525e9.28.1757678955113;
+        Fri, 12 Sep 2025 05:09:15 -0700 (PDT)
 Received: from [192.168.2.177] ([91.116.220.47])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e76078fe3bsm6411847f8f.28.2025.09.12.05.06.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017c1455sm62768935e9.24.2025.09.12.05.09.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 05:06:55 -0700 (PDT)
-Message-ID: <cfc03953-7c00-4164-bf91-cab0c24f0fde@gmail.com>
-Date: Fri, 12 Sep 2025 14:06:51 +0200
+        Fri, 12 Sep 2025 05:09:14 -0700 (PDT)
+Message-ID: <04e75c1a-7040-403a-84be-82ff2d9f2544@gmail.com>
+Date: Fri, 12 Sep 2025 14:09:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -68,8 +68,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/38] dt-bindings: mailbox: mediatek,gce-mailbox: Make
- clock-names optional
+Subject: Re: [PATCH 04/38] ASoC: dt-bindings: mt8192-afe-pcm: Fix clocks and
+ clock-names
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
  linux-mediatek@lists.infradead.org, robh@kernel.org
 Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
@@ -93,7 +93,7 @@ Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
  linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  linux-sound@vger.kernel.org
 References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
- <20250724083914.61351-4-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-5-angelogioacchino.delregno@collabora.com>
 Content-Language: en-US, ca-ES, es-ES
 From: Matthias Brugger <matthias.bgg@gmail.com>
 Autocrypt: addr=matthias.bgg@gmail.com; keydata=
@@ -139,47 +139,150 @@ Autocrypt: addr=matthias.bgg@gmail.com; keydata=
  +zFJv9fVUpo/bjePOL4PMP1y+PYrp4PmPmRwoklBpy1ep8m8XURv46fGUHUEIsTwPWs2Q87k
  7vjYyrcyAOarX2X5pvMQvpAMADGf2Z3wrCsDdG25w2HztweUNd9QEprtJG8GNNzMOD4cQ82T
  a7eGvPWPeXauWJDLVR9jHtWT9Ot3BQgmApLxACvwvD1a69jaFKov28SPHxUCQ9Y1Y/Ct
-In-Reply-To: <20250724083914.61351-4-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20250724083914.61351-5-angelogioacchino.delregno@collabora.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 24/07/2025 10:38, AngeloGioacchino Del Regno wrote:
-> The GCE Mailbox needs only one clock and the clock-names can be
-> used only by the driver (which, for instance, does not use it),
-> and this is true for all of the currently supported MediaTek SoCs.
-> 
-> Stop requiring to specify clock-names on all non-MT8195 GCEs.
+> Both clocks and clock-names are missing (a lot of) entries: add
+> all the used audio clocks and their description and also fix the
+> example node.
+
+You forgot to fix the example node.
+
+Matthias
+
 > 
 > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-
 > ---
->   .../bindings/mailbox/mediatek,gce-mailbox.yaml        | 11 -----------
->   1 file changed, 11 deletions(-)
+>   .../bindings/sound/mt8192-afe-pcm.yaml        | 106 +++++++++++++++++-
+>   1 file changed, 104 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-> index 73d6db34d64a..587126d03fc6 100644
-> --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-> @@ -60,17 +60,6 @@ required:
->     - interrupts
->     - clocks
+> diff --git a/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml b/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
+> index 8ddf49b0040d..96ee0a47360d 100644
+> --- a/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
+> +++ b/Documentation/devicetree/bindings/sound/mt8192-afe-pcm.yaml
+> @@ -47,16 +47,118 @@ properties:
+>         - description: AFE clock
+>         - description: ADDA DAC clock
+>         - description: ADDA DAC pre-distortion clock
+> -      - description: audio infra sys clock
+> -      - description: audio infra 26M clock
+> +      - description: ADDA ADC clock
+> +      - description: ADDA6 ADC clock
+> +      - description: Audio low-jitter 22.5792m clock
+> +      - description: Audio low-jitter 24.576m clock
+> +      - description: Audio PLL1 tuner clock
+> +      - description: Audio PLL2 tuner clock
+> +      - description: Audio Time-Division Multiplexing interface clock
+> +      - description: ADDA ADC Sine Generator clock
+> +      - description: audio Non-LE clock
+> +      - description: Audio DAC High-Resolution clock
+> +      - description: Audio High-Resolution ADC clock
+> +      - description: Audio High-Resolution ADC SineGen clock
+> +      - description: Audio ADDA6 High-Resolution ADC clock
+> +      - description: Tertiary ADDA DAC clock
+> +      - description: Tertiary ADDA DAC pre-distortion clock
+> +      - description: Tertiary ADDA DAC Sine Generator clock
+> +      - description: Tertiary ADDA DAC High-Resolution clock
+> +      - description: Audio infra sys clock
+> +      - description: Audio infra 26M clock
+> +      - description: Mux for audio clock
+> +      - description: Mux for audio internal bus clock
+> +      - description: Mux main divider by 4
+> +      - description: Primary audio mux
+> +      - description: Primary audio PLL
+> +      - description: Secondary audio mux
+> +      - description: Secondary audio PLL
+> +      - description: Primary audio en-generator clock
+> +      - description: Primary PLL divider by 4 for IEC
+> +      - description: Secondary audio en-generator clock
+> +      - description: Secondary PLL divider by 4 for IEC
+> +      - description: Mux selector for I2S port 0
+> +      - description: Mux selector for I2S port 1
+> +      - description: Mux selector for I2S port 2
+> +      - description: Mux selector for I2S port 3
+> +      - description: Mux selector for I2S port 4
+> +      - description: Mux selector for I2S port 5
+> +      - description: Mux selector for I2S port 6
+> +      - description: Mux selector for I2S port 7
+> +      - description: Mux selector for I2S port 8
+> +      - description: Mux selector for I2S port 9
+> +      - description: APLL1 and APLL2 divider for I2S port 0
+> +      - description: APLL1 and APLL2 divider for I2S port 1
+> +      - description: APLL1 and APLL2 divider for I2S port 2
+> +      - description: APLL1 and APLL2 divider for I2S port 3
+> +      - description: APLL1 and APLL2 divider for I2S port 4
+> +      - description: APLL1 and APLL2 divider for IEC
+> +      - description: APLL1 and APLL2 divider for I2S port 5
+> +      - description: APLL1 and APLL2 divider for I2S port 6
+> +      - description: APLL1 and APLL2 divider for I2S port 7
+> +      - description: APLL1 and APLL2 divider for I2S port 8
+> +      - description: APLL1 and APLL2 divider for I2S port 9
+> +      - description: Top mux for audio subsystem
+> +      - description: 26MHz clock for audio subsystem
 >   
-> -allOf:
-> -  - if:
-> -      not:
-> -        properties:
-> -          compatible:
-> -            contains:
-> -              const: mediatek,mt8195-gce
-> -    then:
-> -      required:
-> -        - clock-names
-> -
->   additionalProperties: false
+>     clock-names:
+>       items:
+>         - const: aud_afe_clk
+>         - const: aud_dac_clk
+>         - const: aud_dac_predis_clk
+> +      - const: aud_adc_clk
+> +      - const: aud_adda6_adc_clk
+> +      - const: aud_apll22m_clk
+> +      - const: aud_apll24m_clk
+> +      - const: aud_apll1_tuner_clk
+> +      - const: aud_apll2_tuner_clk
+> +      - const: aud_tdm_clk
+> +      - const: aud_tml_clk
+> +      - const: aud_nle
+> +      - const: aud_dac_hires_clk
+> +      - const: aud_adc_hires_clk
+> +      - const: aud_adc_hires_tml
+> +      - const: aud_adda6_adc_hires_clk
+> +      - const: aud_3rd_dac_clk
+> +      - const: aud_3rd_dac_predis_clk
+> +      - const: aud_3rd_dac_tml
+> +      - const: aud_3rd_dac_hires_clk
+>         - const: aud_infra_clk
+>         - const: aud_infra_26m_clk
+> +      - const: top_mux_audio
+> +      - const: top_mux_audio_int
+> +      - const: top_mainpll_d4_d4
+> +      - const: top_mux_aud_1
+> +      - const: top_apll1_ck
+> +      - const: top_mux_aud_2
+> +      - const: top_apll2_ck
+> +      - const: top_mux_aud_eng1
+> +      - const: top_apll1_d4
+> +      - const: top_mux_aud_eng2
+> +      - const: top_apll2_d4
+> +      - const: top_i2s0_m_sel
+> +      - const: top_i2s1_m_sel
+> +      - const: top_i2s2_m_sel
+> +      - const: top_i2s3_m_sel
+> +      - const: top_i2s4_m_sel
+> +      - const: top_i2s5_m_sel
+> +      - const: top_i2s6_m_sel
+> +      - const: top_i2s7_m_sel
+> +      - const: top_i2s8_m_sel
+> +      - const: top_i2s9_m_sel
+> +      - const: top_apll12_div0
+> +      - const: top_apll12_div1
+> +      - const: top_apll12_div2
+> +      - const: top_apll12_div3
+> +      - const: top_apll12_div4
+> +      - const: top_apll12_divb
+> +      - const: top_apll12_div5
+> +      - const: top_apll12_div6
+> +      - const: top_apll12_div7
+> +      - const: top_apll12_div8
+> +      - const: top_apll12_div9
+> +      - const: top_mux_audio_h
+> +      - const: top_clk26m_clk
 >   
->   examples:
+>   required:
+>     - compatible
 
