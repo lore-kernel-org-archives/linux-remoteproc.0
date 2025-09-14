@@ -1,155 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6951FB3;
-	Sun, 14 Sep 2025 13:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0BB1D7E4A;
+	Sun, 14 Sep 2025 21:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757856653; cv=none; b=HU/H1B/RTQa1RIIFCrgp4haR/XgO8tUYjXOd3FGbiSzVqloto68IZTQ6B4F+4QlLY1XvoJ5Ni7PCF1NVppJEl24i6yenNF3hUcm0EIBpwcHJfOhR60J05iLC0Noxd1butTTuMBkQHoTLd58bMveZbBwX62/v081QR0RxAjR7qQs=
+	t=1757887059; cv=none; b=YgCmCA+Vn8IfmOWifkYrbKJxdqGLrvaAVFviM964kdh0fkd0ZUra+QFoU4GEJfrQuSrsqGkmLNyYvjQOU8cj/Z0ecETZoPwSXIuZiAdWZwdhLMJYZQRfwG6MxWyGe3XrTO8jpfNNnn4o/i8qMXXx2H9kPECDYqe38tk7+3+fIrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757856653; c=relaxed/simple;
-	bh=znUg6TmwCXJATYx0iPaI3iat1yH0r9iU0Zft+BHEagk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9Ehj8KDFa0BUv2J46Mcc5gCXqkze0fRPrW25SITyKfT4jURH2Z2SP61TW/FnKyFkSJwAEYPpmC8K0woZrA48q6BtDHaW8hh6MU3QzAziksK78iIuBEl0c+4gmfMQ02ZPTrG0vIJroCHZPdzG4CVi7E2GN+fdnVOiWPu9Wqn7yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baqE8Tmw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757887059; c=relaxed/simple;
+	bh=UzomXMO2OVf/W47Q+4CtX5NoW3MYQVWQvopO9CDJOjc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=J+JQgt09/sGyhMJTI1aZZLJgGMCqJDtAvZA620D7e0V+a1mGYXymOIZO3A9FmOx/MHqEzfNSZ7huDzhcQdvgk3p0bDF5DX9VyyO/DpqoSiFKIBcVV69x3ldQbmw1X3aIxp3FDD86vgBiMYF1v3ZemwebeDzMF781C2A/PeTQNjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIfT072Z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baqE8Tmw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163C1C4CEF0;
-	Sun, 14 Sep 2025 13:30:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIfT072Z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 651FEC4CEF0;
+	Sun, 14 Sep 2025 21:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757856653;
-	bh=znUg6TmwCXJATYx0iPaI3iat1yH0r9iU0Zft+BHEagk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=baqE8Tmw5jzjbX+OxiuIb1oUVXf+JLqFmB0EsxDO9KwDEJheOQ8Qb84WJlbmTq37f
-	 yOZBsWLQGi4Z4LValk/cUYvjPV4sO170/U0ASG+wy8RFhs2eKDjXeC5fXXinmBj7jq
-	 gnaAEX5bcarDtT3Gy3DtHosPmC1GuObCHhNNqxC4ba2VQkPUKBn31qtaIW3TiH6/dK
-	 wf+6+RqJJeUkBssb12DbPUTJHgmSv0xmaz1F0yfIlZv/JQLRqSNfhvQE03thEaEzls
-	 MI3vvl+ZLhLRYn6upjgqQU6JinUAS8hRL5znZu4MzBne2Tlvvth+5HT76QM149QJxp
-	 2Pjg9klzP9x+A==
-Message-ID: <4ef0e813-310d-4ca7-b946-32d7f436c20b@kernel.org>
-Date: Sun, 14 Sep 2025 15:30:48 +0200
+	s=k20201202; t=1757887059;
+	bh=UzomXMO2OVf/W47Q+4CtX5NoW3MYQVWQvopO9CDJOjc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=DIfT072ZUKWuwafbT+XzNyblKmtqMiLwjIe2LsTqvzKFVgkD24Hil6F9doh8y3HN5
+	 RBiGg4uRdZK3CtZiPyKr5uVsP6N/LDKF+FzhiurEBJM+4hxaYkS2POFMncjxOiKEIE
+	 k8hKs8rKCaxqjEpT+EZAyTbDij3gjHnyvxFxXe5T2BkLt6NhBGurpnWhLp4oppvUZK
+	 xLMk0HIWgRlKr1CTpkx6w7zI8YC7HsSBfyDX7rgGRYwdpCJiK3GM7SK7X6oN0X1Fzu
+	 +b1HnZhGitHed6KFpMgxJusg5De/AlcTNy8iezumCH1hA1lwQ+X94hSDfgqttsqCSU
+	 LNHOBCO5hj25g==
+Date: Sun, 14 Sep 2025 16:57:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] remoterpoc: mediatek: vcp: Add ipi-mbox
- communication
-To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Jjian Zhou <Jjian.Zhou@mediatek.com>,
- Hailong Fan <Hailong.Fan@mediatek.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Jjian Zhou <Jjian.Zhou@mediatek.com>, 
+ Xiangzhi Tang <Xiangzhi.Tang@mediatek.com>, 
+ linux-mediatek@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hailong Fan <Hailong.Fan@mediatek.com>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+In-Reply-To: <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
 References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
- <20250914122943.10412-4-xiangzhi.tang@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250914122943.10412-4-xiangzhi.tang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 14/09/2025 14:29, Xiangzhi Tang wrote:
->  
-> +/**
-> + * vcp_get_ipidev() - get a vcp ipi device struct to reference vcp ipi.
-> + *
-> + * @vcp: mtk_vcp_device structure from vcp_get().
-> + *
-> + **/
-> +struct mtk_ipi_device *vcp_get_ipidev(struct mtk_vcp_device *vcp)
-> +{
-> +	return vcp->ipi_dev;
-> +}
-> +EXPORT_SYMBOL_GPL(vcp_get_ipidev);
-
-NAK, there is no user of this.
-
-I did not check the rest but I assume the same pattern in other places.
-
-> +
->  static int mtk_vcp_start(struct rproc *rproc)
->  {
->  	struct mtk_vcp_device *vcp = (struct mtk_vcp_device *)rproc->priv;
->  	struct arm_smccc_res res;
-> +	int ret;
-> +
-> +	ret = vcp->ipi_ops->ipi_register(vcp->ipi_dev, IPI_IN_VCP_READY_0,
-> +					 (void *)vcp_A_ready_ipi_handler,
-> +					 vcp, &vcp->vcp_cluster->msg_vcp_ready0);
-> +	if (ret) {
-> +		dev_err(vcp->dev, "Failed to register IPI_IN_VCP_READY_0\n");
-> +		goto vcp0_ready_ipi_unregister;
-> +	}
-> +
-> +	ret = vcp->ipi_ops->ipi_register(vcp->ipi_dev, IPI_IN_VCP_READY_1,
-> +					 (void *)vcp_A_ready_ipi_handler,
-> +					 vcp, &vcp->vcp_cluster->msg_vcp_ready1);
-> +	if (ret) {
-> +		dev_err(vcp->dev, "Failed to register IPI_IN_VCP_READY_1\n");
-> +		goto vcp1_ready_ipi_unregister;
-> +	}
->  
->  	/* core 0 */
->  	arm_smccc_smc(MTK_SIP_TINYSYS_VCP_CONTROL,
-> @@ -82,7 +112,14 @@ static int mtk_vcp_start(struct rproc *rproc)
->  		dev_info(vcp->dev, "bootup successfully\n");
->  	}
->  
-> -	return 0;
-> +	return ret;
-
-This make sno sense, why are you doing this?
+ <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
+Message-Id: <175788697866.1955455.17302760216827607004.robh@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add VCP support for
+ mt8196
 
 
-Best regards,
-Krzysztof
+On Sun, 14 Sep 2025 20:29:24 +0800, Xiangzhi Tang wrote:
+> Add the new binding document for MediaTek Video Companion
+> Processor(VCP) on MediaTek mt8196.
+> 
+> Signed-off-by: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+> ---
+>  .../remoteproc/mediatek,mt8196-vcp.yaml       | 165 ++++++++++++++++++
+>  1 file changed, 165 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml: patternProperties:^vcp@[a-f0-9]+$:properties:mtk,vcp-core-twohart: 'anyOf' conditional failed, one must be fixed:
+	'description' is a dependency of '$ref'
+	'/schemas/types.yaml#/definitions/uint32' does not match '^#/(definitions|\\$defs)/'
+		hint: A vendor property can have a $ref to a a $defs schema
+	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
+	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dts:26:18: fatal error: dt-bindings/power/mt8196-power.h: No such file or directory
+   26 |         #include <dt-bindings/power/mt8196-power.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250914122943.10412-2-xiangzhi.tang@mediatek.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
