@@ -1,144 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DC88460;
-	Sat, 13 Sep 2025 14:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80214438B;
+	Sun, 14 Sep 2025 12:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757775273; cv=none; b=nwN7NBBkqWrd2XpBlC7LuC36GNr9fqieFY/dMhtgCN7h/ZKeu8kSvjgBvgOUSEvCGfy73nxfg/lzY9aoGciNpnGTkD7dqJzNbmcO7ot/Bvvlgnkd4RJelv5tVq0xRDAGVFooIcnnqWVU0ma04zJpsZtT5H5n5AAJijshGZRMnHU=
+	t=1757853033; cv=none; b=Y0OJ72I09iB4n+O6vxo4W9JiBSAG7lh3MNmNy+ylWoihFo2Q4UHVdpjdoBYFGooh3/L6US+LMoNiiEkbBLz7WsAtr9KO6YkYNFblovI0vJCHS3065q4odUBh0E/786nmVrTm+qpE1Z+YvHJuyXylPNWqoKqWNvbvfj9J5RVqZ1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757775273; c=relaxed/simple;
-	bh=deph2n7EsQq+rZQVBJI1J9VmYk8+NHBuBRjSCjvpYrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sA+os+UhSD9i2S1RmqJDtT6fBCVUn8hEREAmyF1oWzsBLRuijLgvkeOaQ+56+G7Wv5BPTnq0jerWb8CabiQyzUhLklGv0wBJVbFAfXw5zR/ZwRVyMQ/ub2++LIG+TKH+KYv3MtsPfepbk9oQdHbA/f6B+nLT4WaU098aXD0WupM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4/BJusI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1757853033; c=relaxed/simple;
+	bh=jYSXKlsgfN4x80fjVe8fDpEouCHKUGV+Gbl5lYfi5IU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ogb5aMW//suaHusEXw7KXYmJ5+MYCafMmyVZdzUtoRVxcBjVZBX1YTPO0RlcPsUsjaDuPAr/YMD7EVZZz4u2SrT3+1C/Kj6Ex4nFkttRcn0HTOe+IH6Ke+8p1o9T1OazFV/yhtJ6SSojjLywTlokUFP9jMy/mB+pTWDiKytNxj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lxZsVIyJ; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4/BJusI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DD94C4CEEB;
-	Sat, 13 Sep 2025 14:54:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757775272;
-	bh=deph2n7EsQq+rZQVBJI1J9VmYk8+NHBuBRjSCjvpYrc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I4/BJusIJfB3pe8YGxSjg9oW/C9M4REAfsLM2Y8PJg8Q3yZJg3rAPKqiDeEuNM1/D
-	 I1TU8l0hH+njdNS0GK9mzJUgxT31dbgKs3xS2VmyybN1DA+z7GGdGbBRaksK2yY1Kx
-	 eymbFLKeePLkKeJ98oW47cKo+9F/D4AQouCoO0jaZfsRx4ym+MO+J0CVvcX0XEvAcd
-	 2/p7G0TgpXyl1fqkfe9jx3Sop+89zQJUOoaetPdT8CX1NIswz2IgwHY1bewV8a0kK4
-	 vD38TMlMLOe+BcB+9pxJwNqKmLEdIxEERzsqekI8bajBPfDthS1g59bYexnWaaZPyS
-	 3iQD+G6oQ2mJQ==
-Message-ID: <91181e2d-e595-42e7-a782-9ee654682036@kernel.org>
-Date: Sat, 13 Sep 2025 15:54:26 +0100
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lxZsVIyJ"
+X-UUID: 924cf46a916611f0bd5779446731db89-20250914
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=8EG6l//2RPlmpS9c/r6hvNChHCCIsYeYKWB2oaD0rvg=;
+	b=lxZsVIyJPGc2u1FsNpdnSBW81wqvPAkhjwCwUK5WAK4FyuKwmgshYVtGYsFPUNkeRhhiKaVh46+OS66RGg5QsqLYnX6J8Om5ysiyS7WedistLECO/hcBKW+edgf5IpX90SLlfF7TmP9at/CG8BZukF18fZwMdLr6kxNDme+tnA4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:1104c8da-20c5-4939-9cf6-bc8f8687d6e2,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:c3be46f8-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|102,TC:-5,Content:0|15|50,EDM:-3,
+	IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 924cf46a916611f0bd5779446731db89-20250914
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <xiangzhi.tang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 19579633; Sun, 14 Sep 2025 20:30:17 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Sun, 14 Sep 2025 20:30:13 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Sun, 14 Sep 2025 20:30:12 +0800
+From: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Xiangzhi Tang
+	<Xiangzhi.Tang@mediatek.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Jjian Zhou <Jjian.Zhou@mediatek.com>,
+	Hailong Fan <Hailong.Fan@mediatek.com>, Xiangzhi Tang
+	<xiangzhi.tang@mediatek.com>
+Subject: [PATCH v2 0/4] ASoC: mediatek: Add support of VCP on Mediatek mt8196 SoC.
+Date: Sun, 14 Sep 2025 20:29:23 +0800
+Message-ID: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] firmware: qcom_scm: Introduce PAS context
- initialization helper
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-References: <20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com>
- <XZzG2CzCeL2c_o0VF9cgreULVU7nO6oDduio5EO50shVXg90DhDFECfckmvcrvT5ALpQb-UB5y9c-0KOT1VB0w==@protonmail.internalid>
- <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20250819165447.4149674-2-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 19/08/2025 17:54, Mukesh Ojha wrote:
-> Currently, remoteproc and non-remoteproc subsystems use different
-> variants of the MDT loader helper API, primarily due to the handling of
-> the metadata context. Remoteproc subsystems retain this context until
-> authentication and reset, while non-remoteproc subsystems (e.g., video,
-> graphics) do not require it.
+Add support MediaTek's Video Companion Processor(VCP) host driver to
+control the MediaTek VCP Risc-V coprocessor.
+
+> This series is based on linux-next, tag: next-20250912.
 > 
-> Unify the metadata loading process for both remoteproc and
-> non-remoteproc subsystems by introducing a dedicated PAS context
-> initialization function.
-> 
-> By introducing qcom_scm_pas_ctx_init(), we can standardize the API usage
-> across subsystems and reduce the number of parameters passed to MDT
-> loader functions, improving code clarity and maintainability.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->   drivers/firmware/qcom/qcom_scm.c       | 26 ++++++++++++++++++++++++++
->   include/linux/firmware/qcom/qcom_scm.h | 11 +++++++++++
->   2 files changed, 37 insertions(+)
-> 
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 96d5cf40a74c..33187d4f4aef 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -558,6 +558,32 @@ static void qcom_scm_set_download_mode(u32 dload_mode)
->   		dev_err(__scm->dev, "failed to set download mode: %d\n", ret);
->   }
-> 
-> +void *qcom_scm_pas_ctx_init(struct device *dev, u32 peripheral, phys_addr_t mem_phys,
-> +			    size_t mem_size, bool save_mdt_ctx)
-> +{
-> +	struct qcom_scm_pas_ctx *ctx;
-> +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return NULL;
-> +
-> +	ctx->dev = dev;
-> +	ctx->peripheral = peripheral;
+> Changes in v2:
+> - Refactor: split vcp driver patch to mult diff
+> - Fix reviewer's comments
+> This series patches dependent on:
+> [1]
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20250623120154.109429-2-angelogioacchino.delregno@collabora.com/
+> [2]
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20250822021217.1598-3-jjian.zhou@mediatek.com/
 
-One things that is confusing here is renaming this variable to peripheral.
+Xiangzhi Tang (4):
+  dt-bindings: remoteproc: Add VCP support for mt8196
+  remoterpoc: mediatek: vcp: Add vcp remoteproc driver
+  remoterpoc: mediatek: vcp: Add ipi-mbox communication
+  remoterpoc: mediatek: vcp: Add vcp suspned and resume feature
 
-It gets initialised from a thing called "pas_id" and then gets sent into 
-other functions which name the incoming variable as pas_id.
+ .../remoteproc/mediatek,mt8196-vcp.yaml       |  165 +++
+ drivers/remoteproc/Kconfig                    |   12 +
+ drivers/remoteproc/Makefile                   |    3 +
+ drivers/remoteproc/mtk_vcp_common.c           | 1015 +++++++++++++++++
+ drivers/remoteproc/mtk_vcp_common.h           |  284 +++++
+ drivers/remoteproc/mtk_vcp_rproc.c            |  544 +++++++++
+ drivers/remoteproc/mtk_vcp_rproc.h            |   93 ++
+ include/linux/remoteproc/mtk_vcp_public.h     |  141 +++
+ include/linux/soc/mediatek/mtk_sip_svc.h      |    3 +
+ 9 files changed, 2260 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+ create mode 100644 drivers/remoteproc/mtk_vcp_common.c
+ create mode 100644 drivers/remoteproc/mtk_vcp_common.h
+ create mode 100644 drivers/remoteproc/mtk_vcp_rproc.c
+ create mode 100644 drivers/remoteproc/mtk_vcp_rproc.h
+ create mode 100644 include/linux/remoteproc/mtk_vcp_public.h
 
-i.e. you will want to do
--       ret = qcom_mdt_pas_init(pas->dev, pas->firmware, 
-rproc->firmware, pas->pas_id,
--                               pas->mem_phys, &pas->pas_metadata);
--       if (ret)
--               goto disable_px_supply;
--
--       ret = qcom_mdt_load_no_init(pas->dev, pas->firmware, 
-rproc->firmware, pas->pas_id,
--                                   pas->mem_region, pas->mem_phys, 
-pas->mem_size,
--                                   &pas->mem_reloc);
-+       ret = qcom_mdt_pas_load(pas->pas_ctx, pas->firmware, 
-rproc->firmware,
-  -                              pas->mem_region, &pas->dtb_mem_reloc);
-++                              pas->pas_id, pas->mem_region, 
-&pas->dtb_mem_reloc);
+-- 
+2.46.0
 
-and
-
--       return __qcom_mdt_load(ctx->dev, fw, firmware, mem_region, 
-ctx->mem_phys,
-+       return __qcom_mdt_load(ctx->dev, fw, firmware, ctx->peripheral, 
-mem_region, ctx->mem_phys,
-                                ctx->mem_size, reloc_base);
-
-But it should be ctx->pas_id to be consistent and make it obvious what 
-data is being passed.
-
-Can you stick to the established naming convention and stick with pas_id 
-here ?
-
-Even if the above fixups on 6.17 aren't right the point is it only adds 
-confusion to randomly change variable names for no reason.
-
-Please stick to the established naming convention.
-
---
-bod
