@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713B52C9D;
-	Sun, 14 Sep 2025 13:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC6719DFA2;
+	Sun, 14 Sep 2025 13:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757855771; cv=none; b=D4mNLydI1++ccKI60CFiDCuPUtFtQtLb6NC5vkfH84e5DXQV3reOmaSN8NJc1YTJLnMBXlNGBiBE1DSbo5UbPvMqYuTWZv0ksWA1YzkiN73/WoUqu5FHrK7H82xbSSe20t2w1z0ljEdZHa++Mc5l8oOha+Ui1qA4Z1rj6HZ6ODA=
+	t=1757855932; cv=none; b=nmzZ5rrW010f3oBfFj8woTegDwz3CdcSMb0j5o1bPcyaPtNLqHQkJylp+sQSJ0kE75km9JHzAP2mfovjkWSsryCqJ1at/KRHD5Pc/7sasVvOuAp1MBkWCiG7qPqmUeyF2Vgg3Dl9gK+QD41uxmKOVd8GHONZ+byBRKfS29J8swY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757855771; c=relaxed/simple;
-	bh=Qfy7zc1tXyunTXwjXB0ZZi9xv2Y5vexlpBPP06F4wrE=;
+	s=arc-20240116; t=1757855932; c=relaxed/simple;
+	bh=GYQGq8ZRUIg4jPb+ttgHqt1oRMoD7ap6I05Leawf6qc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f1Er4Yj4SWSBuQLyECzNFhV9rzuAv74OWFJMxrbJ9MpANwuTUChtp5Qq0IAFnrS9MmsxMpQBlsSYuArRk6WL0FKbsoYwZdxvJ73xBjyCjyiXK4VFIa6g34No5NB6+6e6GbU7R3yFVvTroBsjCLGbvrJ+AObWX/i0iTfj39kfT4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prEH72Yo; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=nYiWXwptcZg0BsT1eezhOoWzWSYN0nCB5QL3GUkDo4gZElyNKJB3QxBP2GFR7ZTcfonz3HdPGkIYiDDRUHkVV0QAY+Y4D7VaIhTC3KLyiUCTvZ4MmbjqgUosp9jqwVEbCL0edps1yc+LhdqTZLVEDymrH4LIM9FFHPoS/2gM0OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pt3L1W63; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prEH72Yo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89984C4CEF0;
-	Sun, 14 Sep 2025 13:16:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pt3L1W63"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2344CC4CEF0;
+	Sun, 14 Sep 2025 13:18:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757855770;
-	bh=Qfy7zc1tXyunTXwjXB0ZZi9xv2Y5vexlpBPP06F4wrE=;
+	s=k20201202; t=1757855931;
+	bh=GYQGq8ZRUIg4jPb+ttgHqt1oRMoD7ap6I05Leawf6qc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=prEH72YobiBueg4ccHs9oN4i7Xr/7EYzW91MR3BSgcqOPxH9K5emOLnsvwu8x39k5
-	 UClHj/X6dROo2n6V+5DTY9X/7xfOT0w565sfN4zpKKGZFcze0mgbUXZ8r0lpaG43Lx
-	 WhCItjCBmfQwakpFmA8zn4eiQtj3fCDcG+PAFipMBWd9fuDHBa7i9Y9Qtf74Y1DzNc
-	 tnRvI31fOyIDOx8JyOgsht1rtzibE+Pt24jbYvG659caY+lvIpd9AGoTrJYYOFQxmw
-	 CIzyg9YpnJYmYC/AnV9GPW6XbVtp2l9P2Qa3gI4B7/38dfkmJTIahQLZFA8+wnaQFt
-	 YUxABonb3UBtw==
-Message-ID: <535478d3-d1ed-4caa-ad15-64f99324f7d6@kernel.org>
-Date: Sun, 14 Sep 2025 15:16:05 +0200
+	b=Pt3L1W63ofLSiHwowu/Dq+jUchLoz6DOmofmYB9eY7v0+hOzDIQvmamz6tWUKQzH0
+	 gnsAwhKXEFlfpUW3YQf9t+Jdlo+FdweW/zc18NpHNdxg9G9AN5y0H0EQUMVaRZEt2H
+	 TuGFrSVebI5Z7dS+YKrbterEPB115f47JCN3h2DmtRUmA9B43UYehCzM4w4v8cfdA/
+	 ph+b4Q6kd2ZCKIXLFcvIumALeXm9MyiU6mlLbWNBxi70a6i6ufGkZm3NIBa7xChorJ
+	 bAqUpkccKy3WBnFS+RNmYHUzjG4YTcbD5tyexIj41+huCdzqWYNrn2Ij30PaF1yCVi
+	 ML+oS1rAeXKJg==
+Message-ID: <c67f60e5-2f3e-48ba-9e3d-97826c7ecae9@kernel.org>
+Date: Sun, 14 Sep 2025 15:18:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] ASoC: mediatek: Add support of VCP on Mediatek
- mt8196 SoC.
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add VCP support for
+ mt8196
 To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
@@ -48,6 +48,7 @@ Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-mediatek@lists.infradead.org, Jjian Zhou <Jjian.Zhou@mediatek.com>,
  Hailong Fan <Hailong.Fan@mediatek.com>
 References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+ <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,30 +94,82 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+In-Reply-To: <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/09/2025 14:29, Xiangzhi Tang wrote:
-> Add support MediaTek's Video Companion Processor(VCP) host driver to
-> control the MediaTek VCP Risc-V coprocessor.
+> Add the new binding document for MediaTek Video Companion
+> Processor(VCP) on MediaTek mt8196.
 > 
->> This series is based on linux-next, tag: next-20250912.
->>
->> Changes in v2:
->> - Refactor: split vcp driver patch to mult diff
->> - Fix reviewer's comments
+> Signed-off-by: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+> ---
+>  .../remoteproc/mediatek,mt8196-vcp.yaml       | 165 ++++++++++++++++++
+>  1 file changed, 165 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml b/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> new file mode 100644
+> index 000000000000..71a55943843b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> @@ -0,0 +1,165 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/mediatek,mt8196-vcp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Video Companion Processor (VCP)
+> +
+> +maintainers:
+> +  - Xiangzhi Tang <Xiangzhi.Tang@mediatek.com>
+> +
+> +description:
+> +  The MediaTek VCP enables the SoC control the MediaTek Video Companion Risc-V coprocessor.
 
-What exactly changed? That's too vague.
+You keep ignoring comments.
 
->> This series patches dependent on:
->> [1]
->> https://patchwork.kernel.org/project/linux-mediatek/patch/20250623120154.109429-2-angelogioacchino.delregno@collabora.com/
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt8196-vcp
+> +
+> +  reg:
+> +    items:
+> +      - description: sram base
+> +      - description: cfg group IO
+> +      - description: cfg core group IO
+> +      - description: cfg sec group IO
+> +      - description: vcp rdy group IO
+> +
+> +  reg-names:
+> +    items:
+> +      - const: sram
 
-Why? This received clear feedback that needs changes, so why would you
-now send something based on obsolete patchset?
+Why would sram be the first, main address of this device? Not the
+address space responsible for configuring it?
 
+> +      - const: cfg
+> +      - const: cfg_core
+> +      - const: cfg_sec
+> +      - const: vcp_vlp_ao_rsvd7
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  mboxes:
+> +    maxItems: 5
+> +
+> +  mbox-names:
+> +    maxItems: 5
 
+Not much improved, more ignored comments and since the changelog is so
+vague I am afraid you just skimmed through the comments and you just
+ignored many of them.
+
+Implement entire feedback and provide detailed changelog.
 
 Best regards,
 Krzysztof
