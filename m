@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C359D19D087;
-	Sun, 14 Sep 2025 13:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6951FB3;
+	Sun, 14 Sep 2025 13:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757856516; cv=none; b=UrM4kxzJKKvcF5dAP+4KVz5HSZkqrzGPTmsh/YQMvtqE4OOJK+EhAPQaekw2Slk3kPF0JSK63pVbPKgl6NNIhGwsHZ+H7FxTrV7JnORlpMwEHz63utgMSs/1EYzFskOTMrVomXentxEaoh0tsB4C1JrQMe9yfQ4cF0DrhWzJRHY=
+	t=1757856653; cv=none; b=HU/H1B/RTQa1RIIFCrgp4haR/XgO8tUYjXOd3FGbiSzVqloto68IZTQ6B4F+4QlLY1XvoJ5Ni7PCF1NVppJEl24i6yenNF3hUcm0EIBpwcHJfOhR60J05iLC0Noxd1butTTuMBkQHoTLd58bMveZbBwX62/v081QR0RxAjR7qQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757856516; c=relaxed/simple;
-	bh=bi2EiYLS+A8f/w7jCWkTyo4nLGGJbpc175iFxjzkCG8=;
+	s=arc-20240116; t=1757856653; c=relaxed/simple;
+	bh=znUg6TmwCXJATYx0iPaI3iat1yH0r9iU0Zft+BHEagk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sIc1RDzIKsnHWNEMHYgGvhp9VTslLBiVP0Mc5m+ZL4C7CU/Rq69mRw1PIcHJcD6d7SyNofvpVJLPzuhXJIKcdfPcNmJ5GqEZDKAO8Pa7cvaOukXBsckUg01pYV0Wl5rSWfeDCcWxolO1Zk61djPRfnVNVBxzriuQZsQpfDZcH+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjjIl8rx; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=V9Ehj8KDFa0BUv2J46Mcc5gCXqkze0fRPrW25SITyKfT4jURH2Z2SP61TW/FnKyFkSJwAEYPpmC8K0woZrA48q6BtDHaW8hh6MU3QzAziksK78iIuBEl0c+4gmfMQ02ZPTrG0vIJroCHZPdzG4CVi7E2GN+fdnVOiWPu9Wqn7yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baqE8Tmw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjjIl8rx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB6EC4CEF0;
-	Sun, 14 Sep 2025 13:28:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baqE8Tmw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163C1C4CEF0;
+	Sun, 14 Sep 2025 13:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757856516;
-	bh=bi2EiYLS+A8f/w7jCWkTyo4nLGGJbpc175iFxjzkCG8=;
+	s=k20201202; t=1757856653;
+	bh=znUg6TmwCXJATYx0iPaI3iat1yH0r9iU0Zft+BHEagk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gjjIl8rxHh/A+Rj5iCmVil4FvhlqvxqSjvzIrrX+iGIg5tLPjjBVIembnsVoZvzQp
-	 5be5fGB3/gB+x3bDN63Kka9CVZCQ6zJIc0m1Oyqu/79rd540xp8gPZM0GRF/XhN33K
-	 IBcBrWJ5f40VSBavkO4PuVHxXiSlQSthFe9ZWugpGn0VyifkWMXEh6ijxVx0nu1h3i
-	 +g/KsRkNBX3IeAX+sc6Br/XeFeE4GBTqrBwxipi/OcuN5sQ2ZaaaW2SzzuQJgGSzXu
-	 phUufiwv89X6n0xUsfTqzVCS+LEwnUiocUJaxjhoKDCqor6uE79NB2hxGHex5ljzRb
-	 VW59hY8cxFLYw==
-Message-ID: <8c298465-893a-4a18-9955-4769288ec010@kernel.org>
-Date: Sun, 14 Sep 2025 15:28:29 +0200
+	b=baqE8Tmw5jzjbX+OxiuIb1oUVXf+JLqFmB0EsxDO9KwDEJheOQ8Qb84WJlbmTq37f
+	 yOZBsWLQGi4Z4LValk/cUYvjPV4sO170/U0ASG+wy8RFhs2eKDjXeC5fXXinmBj7jq
+	 gnaAEX5bcarDtT3Gy3DtHosPmC1GuObCHhNNqxC4ba2VQkPUKBn31qtaIW3TiH6/dK
+	 wf+6+RqJJeUkBssb12DbPUTJHgmSv0xmaz1F0yfIlZv/JQLRqSNfhvQE03thEaEzls
+	 MI3vvl+ZLhLRYn6upjgqQU6JinUAS8hRL5znZu4MzBne2Tlvvth+5HT76QM149QJxp
+	 2Pjg9klzP9x+A==
+Message-ID: <4ef0e813-310d-4ca7-b946-32d7f436c20b@kernel.org>
+Date: Sun, 14 Sep 2025 15:30:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,27 +35,20 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] remoterpoc: mediatek: vcp: Add vcp remoteproc
- driver
+Subject: Re: [PATCH v2 3/4] remoterpoc: mediatek: vcp: Add ipi-mbox
+ communication
 To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "irving.ch.lin" <irving-ch.lin@mediatek.com>,
- =?UTF-8?B?VmluY2UtV0wgTGl1ICjlionmlofpvo0p?= <vince-wl.liu@mediatek.com>,
- =?UTF-8?B?SmggSHN1ICjoqLHluIzlrZwp?= <jh.hsu@mediatek.com>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <sirius.wang@mediatek.com>
-Cc: Rob Herring <robh@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-mediatek@lists.infradead.org, Jjian Zhou <Jjian.Zhou@mediatek.com>,
  Hailong Fan <Hailong.Fan@mediatek.com>
 References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
- <20250914122943.10412-3-xiangzhi.tang@mediatek.com>
+ <20250914122943.10412-4-xiangzhi.tang@mediatek.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,117 +94,62 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250914122943.10412-3-xiangzhi.tang@mediatek.com>
+In-Reply-To: <20250914122943.10412-4-xiangzhi.tang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/09/2025 14:29, Xiangzhi Tang wrote:
-> +
-> +static const struct rproc_ops mtk_vcp_ops = {
-> +	.load		= mtk_vcp_load,
-> +	.start		= mtk_vcp_start,
-> +	.stop		= mtk_vcp_stop,
-> +};
-> +
-> +static int vcp_multi_core_init(struct platform_device *pdev,
-> +			       struct mtk_vcp_of_cluster *vcp_cluster,
-> +			       enum vcp_core_id core_id)
+>  
+> +/**
+> + * vcp_get_ipidev() - get a vcp ipi device struct to reference vcp ipi.
+> + *
+> + * @vcp: mtk_vcp_device structure from vcp_get().
+> + *
+> + **/
+> +struct mtk_ipi_device *vcp_get_ipidev(struct mtk_vcp_device *vcp)
 > +{
-> +	int ret;
-> +
-> +	ret = of_property_read_u32(pdev->dev.of_node, "mtk,vcp-core-twohart",
-> +				   &vcp_cluster->twohart[core_id]);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to twohart property\n");
-> +		return ret;
-> +	}
-> +	ret = of_property_read_u32(pdev->dev.of_node, "mtk,core-sram-offset",
-
-Undocumented ABI, if you ever bothered to test your DTS you would see
-clear warning.
-
-> +				   &vcp_cluster->sram_offset[core_id]);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "failed to sram-offset property\n");
-> +		return ret;
-> +	}
-> +
-> +	return ret;
+> +	return vcp->ipi_dev;
 > +}
+> +EXPORT_SYMBOL_GPL(vcp_get_ipidev);
+
+NAK, there is no user of this.
+
+I did not check the rest but I assume the same pattern in other places.
+
 > +
-> +static struct mtk_vcp_device *vcp_rproc_init(struct platform_device *pdev,
-> +					     struct mtk_vcp_of_cluster *vcp_cluster)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev_of_node(dev);
-> +	struct device_node *child;
-> +	struct platform_device *cpdev;
-> +	struct mtk_vcp_device *vcp;
-> +	struct rproc *rproc;
-> +	const struct mtk_vcp_of_data *vcp_of_data;
-> +	u32 core_id;
+>  static int mtk_vcp_start(struct rproc *rproc)
+>  {
+>  	struct mtk_vcp_device *vcp = (struct mtk_vcp_device *)rproc->priv;
+>  	struct arm_smccc_res res;
 > +	int ret;
 > +
-> +	vcp_of_data = of_device_get_match_data(dev);
-> +	rproc = devm_rproc_alloc(dev, np->name, &mtk_vcp_ops,
-> +				 vcp_of_data->platdata.fw_name,
-> +				 sizeof(struct mtk_vcp_device));
-> +	if (!rproc) {
-> +		dev_err(dev, "unable to allocate remoteproc\n");
-
-No, you never do this.
-
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	vcp  = rproc->priv;
-> +	vcp->rproc = rproc;
-> +	vcp->pdev = pdev;
-> +	vcp->dev = dev;
-> +	vcp->ops = &vcp_of_data->ops;
-> +	vcp->platdata = &vcp_of_data->platdata;
-> +	vcp->vcp_cluster = vcp_cluster;
-> +
-> +	rproc->auto_boot = vcp_of_data->platdata.auto_boot;
-> +	rproc->sysfs_read_only = vcp_of_data->platdata.sysfs_read_only;
-> +	mutex_init(&vcp->vcp_cluster->vcp_feature_mutex);
-> +	mutex_init(&vcp->vcp_cluster->vcp_pw_clk_mutex);
-> +	platform_set_drvdata(pdev, vcp);
-> +
-> +	ret = vcp_reserve_memory_ioremap(vcp);
+> +	ret = vcp->ipi_ops->ipi_register(vcp->ipi_dev, IPI_IN_VCP_READY_0,
+> +					 (void *)vcp_A_ready_ipi_handler,
+> +					 vcp, &vcp->vcp_cluster->msg_vcp_ready0);
 > +	if (ret) {
-> +		dev_err(dev, "vcp_reserve_memory_ioremap failed ret = %d\n", ret);
-> +		return ERR_PTR(ret);
+> +		dev_err(vcp->dev, "Failed to register IPI_IN_VCP_READY_0\n");
+> +		goto vcp0_ready_ipi_unregister;
 > +	}
 > +
-> +	core_id = 0;
-> +	for_each_available_child_of_node(np, child) {
-> +		if (of_device_is_compatible(child, "mediatek,vcp-core")) {
-> +			cpdev = of_find_device_by_node(child);
-> +			if (!cpdev) {
-> +				ret = -ENODEV;
-> +				dev_err(dev, "Not found platform device for core\n");
+> +	ret = vcp->ipi_ops->ipi_register(vcp->ipi_dev, IPI_IN_VCP_READY_1,
+> +					 (void *)vcp_A_ready_ipi_handler,
+> +					 vcp, &vcp->vcp_cluster->msg_vcp_ready1);
+> +	if (ret) {
+> +		dev_err(vcp->dev, "Failed to register IPI_IN_VCP_READY_1\n");
+> +		goto vcp1_ready_ipi_unregister;
+> +	}
+>  
+>  	/* core 0 */
+>  	arm_smccc_smc(MTK_SIP_TINYSYS_VCP_CONTROL,
+> @@ -82,7 +112,14 @@ static int mtk_vcp_start(struct rproc *rproc)
+>  		dev_info(vcp->dev, "bootup successfully\n");
+>  	}
+>  
+> -	return 0;
+> +	return ret;
 
-1. That's probe path, so why are you using this old style? The syntax is
-return dev_err_probe and I am dissapointed that your internal review did
-not ask for that.
+This make sno sense, why are you doing this?
 
-2. You just leak here everywhere device.
-
-This patchset has trivial errors, which should be spotted easily by
-internal review. Plus your other patch ignored EXITING feedback, so what
-is even point of posting this if you are just going to ignore us?
-
-Please confirm that you received extensive internal review before
-posting this?
-
-Mediatek posts so many patches, I complained so many times about poor
-quality, things a bit improved two years ago and for a year the quality
-deteriorated and Mediatek posts poor code again. It's huge company with
-huge resources, so I do not understand why trivial bugs like this cannot
-be found inside first, to offload the community reviewers.
-
-NAK
 
 Best regards,
 Krzysztof
