@@ -1,150 +1,333 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1A62FE592
-	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 11:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB18B192D97
+	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 15:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757934940; cv=none; b=klKkn8vcXKIKhreNdE30D0IpHhkP39QNx74tWqYGatmnQcz8ESHtAAI1x0fR+pVxNrHeHQe79MN1ikRaaHmWf3lBXVdwKSRt3iyfNRtJL9gUCeJrR5EyrxTkgO5i2GZ9ZF+SdN4U2wFOD2NSmjrwacmEstT8Uud4W6BLnFyrgaE=
+	t=1757950625; cv=none; b=GorVFiB/LovbYy6HRyukcV5EYZJyaHZ47iHQWHVULWGiGyL7NIC8m3RngmdE8vPUQZmB+iNzpdgvWJmu/AoBmYYljsEAMc4P0VUxyMFMXdRQ0eab6petuGgFjG29v4M25C0h+WpebRvaqMDnuFAvppl+xSbvk7zdd9nnFMMld8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757934940; c=relaxed/simple;
-	bh=+N860jjILz9WjHBmzobR6cwMMc5hddgDbocup4wZWZU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tqhM3ZTWQUlRotBWaw0iOetDSJxNOB6Gl87IOuy5AdqL15yUoQ6tWtP1IkoOTTPINdnUT5RP1jTlcSkeSxYsHpd97qU3mrBywof0EuZM72VH36llP1LByiqpHSeFICP8yGQx1TfcJfg0Fem0TLriVVrAGJao22Z/g0Zq8wUxuA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=MWK5OpOa; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1757950625; c=relaxed/simple;
+	bh=SNQX9jVuudWNKsVENtOK6ohBfS9ZpG3Y9l8Z5BV1MXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KqL+8ocRqjVj6GtnKGa7Atqfxt/PL/wW9vpQh8HiOGCZXjeO51tx4jFAaUpGtgPEj0wsTrWSWxOodHxb2XgtArGkzf9GKPXMlU2Ei7RUNjqlfv2qiwJl2hhneNMCuE7MCPficD8YmoZdGrElWMbEWXq5HtLsTL+8ZI6t4CUCl40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xaoJU7gO; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="MWK5OpOa"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62f0411577aso3656707a12.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 04:15:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xaoJU7gO"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62f261a128cso2657164a12.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 08:37:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1757934936; x=1758539736; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0bwrK+W/kVJgy2ql0Fi6gGVV6KZbMNKdsTPaoo3b7DQ=;
-        b=MWK5OpOaIlc1OEADg7O9mJxX2UG99rpTo5ip+3avrMeahnidtn6WmAdYPmNRQRSwqq
-         zlwBwS5Yz38B6ragbRRG33mNEAXvOg6C+lmpeoK4qhscaqzezgITxvZ4uRe+zbUBfmPi
-         9HJR1o4FOuFEoRMVM1CB0qmbUBc7ZjWa7DuBcX+M1ClRYQEP0r5d7CIEB5lyel+NFtA/
-         4n5uGaAPSN73J8zR8uQp0vsiwKfQA++wcsa0LvohFmOuNiTd47Qoo5NCEnZ7+OpUwd2M
-         MM1nJ+LNljPBlyaoR/j8MwGf4wZT1xnHnrwlskI5idfdGELMoAlmbeQr8AIjS4drUx6H
-         q2xw==
+        d=linaro.org; s=google; t=1757950621; x=1758555421; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/mHjWPU/zmI6VFe0ygBMZ/McjnLYznpUmAATZGQRdx4=;
+        b=xaoJU7gOkMw+8vMGjBvbzG+BoslneTupIiUTZg9mSd3UkOfxlU/82UDfAncrwm9rpy
+         cUge8A0PNdYlbyV8Ya01Es4n9lRPGgY537i9cRNuTUxS2v7O1mr8Y7PxIpPaXt2iqBPY
+         apLuaAIx3j6Zyp0o6Hv9J+XqC5ZJNy8kQpY1lETtxyPMu+mkVIkiYahkuG755qMheFMx
+         59w9JR4Y3VGrRWcNQruTh1uwU4yjIdf5Aop4T67jaZFEtyhogsVlAE9Oj0PqBK5LiF/R
+         NvQWRNH1YekBmk+QkM6A6rQHKgnOB3Ltv8sX1g43URIw2cIJoB+C/OhsIgZLBn0bXbRe
+         DARg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757934936; x=1758539736;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0bwrK+W/kVJgy2ql0Fi6gGVV6KZbMNKdsTPaoo3b7DQ=;
-        b=RhskVI3Wv+NufxWMwYSCqsPAMxTTDUTeCtrtn+DL90+tu6pXq33AAnUccxw+KxIdUM
-         dH/702zZ6zMNhjaHs8V9Runx1v/g009D6IgHAlaYYatbryJf9u3MXh5bCPs2kw50603T
-         E3/ga5+5IIYTDdHC0EdQaoZSeyGYgz0oTepT9KY65Ef/eAX78j22QVd+M2hGFiAiD80K
-         PecE7XaGs9LJQAZLJXJ2IGvb19Zx65mLINVQ+JIfTDLxRyucxPWdxoTWqAF+8x9MhxzL
-         a7mohrERp2311htNZhJ+DsxaFnc4kg3jTyNnZqGZz0ensxc+ANqURTiiBuiHNZaV/PlY
-         Z2og==
-X-Forwarded-Encrypted: i=1; AJvYcCX+m08GuES/nkX/o4IL8vzXGWRNqxpqda7ooyudkhWtT/d2HalqpPJSWrxHeA3y3zco8N7bJiJwfH3If9Go3N3e@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLbh2ypCRPALkErsWBxbCpmgHaOAfXvWUHOfJvrgKr6AX1qTaQ
-	b3EzFQYQc+fa+kzHgfvQM3odV9CMj7nYAY7WMxtCwnX+cU2sSCJefkdTQi/cVE/ejno=
-X-Gm-Gg: ASbGnctuM0jZIIZRnMIp9Jgo27/4EsPYvHTEqHhr/Rqbx+M27C055WkRYgsZniWbXwZ
-	LKIQO6ZiEdAP6grmNZjsda/OJlqBUI3NKiFZlezrAJkPKt1RmnnsQeBf6g4BjKUtUvQkVbde55m
-	IBdPvxUrGNrQ3G7kSS8ZS6mp1TMU7Ip0f9BkDB4+A4OPz16mRes9gPJKrtJgtzUM6R/ZIHY1+c5
-	NEgDvu8qHtbYfYXzdpbYOufDL2cTQMBvfWDMiF+DokOFsfVCxdmUuHkzGX9cAEB7ICl6FnW5dM7
-	xtnn+fMKYSyXXNtu9tVx/ZfvJm/WlIfFGHjDJXTQ5jyNWK9HRcKje21fkfq/KrryrlfBq2D+vYK
-	YwWqZ4FHwh7zqdRkBd5OEqkeIw8i+tMHaL9bl1UDK9sGrj6N0/nU7oVEZJarUy1Rtc7ItPNbG7r
-	7UriuI
-X-Google-Smtp-Source: AGHT+IEmXxvaJJ9Thsbd/yEZn6zSBCmcT2cqQGQCUUMD42XZdQIGQ90LE23Fm93l8b7j1T6PqUPG3g==
-X-Received: by 2002:a17:907:983:b0:b0c:a265:c02c with SMTP id a640c23a62f3a-b0ca265c314mr699765966b.12.1757934936083;
-        Mon, 15 Sep 2025 04:15:36 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07d9e18c24sm561851366b.61.2025.09.15.04.15.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 04:15:35 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Mon, 15 Sep 2025 13:15:19 +0200
-Subject: [PATCH v5 2/2] remoteproc: qcom: pas: Add Milos remoteproc support
+        d=1e100.net; s=20230601; t=1757950621; x=1758555421;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/mHjWPU/zmI6VFe0ygBMZ/McjnLYznpUmAATZGQRdx4=;
+        b=vkuLh0Rrvmyo2A6DbZOEJgEYaXSjYI5tV8zq9/X9NMFHqzXtG/5CvEG+RgHvA4uuCN
+         9icbaWUfc5zp2OJcaALRABp68oNt4B39AhzoVNvcz3OC5RXwxmGR1OXuIkeVxVlJLmRH
+         stLBwm7E9lIhwneHRphnt6NYeYIZ340fKh3EYxfORsRyVNh/vO1gA6MxsS2iv9XaBSKL
+         8yDAugiWGR9rpVIlNZjUwvAQ4uvWAQTpkfu1Y727NXiEQXVgQNedfJvUdA3PLDNYHGxD
+         bWJfyJE6eNhyuSc0pRAHgjsgBFMeNTVdPnHlfkoV+9vAaf9cCKbDtmFfh5ex601BnKep
+         hA4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU4/ZmHgX9A17KYxo/v9w8TlSdv/gps8wtjgAwWe1E0DnKkQbqRpo8FTuW7Jw44kHA7DKgefbekcSMiG7/ocsgu@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOsRkDSpAmJ0DRaFKnLvaWKS1V9xeasbkndY4Fj1XqbADERmwp
+	Q4qeR/ksNHL8xkOdPCR3MYJOyrd74NQl+nKjRbbITD1yCOXYL2YOgY8Y/T4gbFVdTvk66JV6rfC
+	vN4p2sGTNSLxdCS0ukaO/hZWH6o54rppph5rdKwkqIQ==
+X-Gm-Gg: ASbGncvJF/ok6mnkJqV34ZFupagH8QDvkpq5De2x4/uvnQkEemEmGkP4D5gl6e+xR5A
+	UIdH6JmA2XPSw1qUOuyAGmZBSvpxtesRDUnisXUBWy7zL+2nShbIMYsyIXBc4lpOdyi8yeIY4f8
+	iXkErqbPph+bX64LEZfbeP/dWJGWjxt0gm0LKB2HC87k6qsH6qmg9fMnBlXRbHQiKcMeZ6NVdrw
+	/P3Ge9r9eIIL1JtLMzB2OBSCUzow4K7kdSo3PNhXNV+PhMtFPZxLOCZy+tVLY8KT1Ldru+Lndex
+	eDY8vgayQm42ZSxLo70I0Juzc0aHS7oE7uvnaQUEkMReE4VAcA==
+X-Google-Smtp-Source: AGHT+IHaCGR4bJP0zk6dQyNjvAMqOj83vg1/N6S59DAb5aM9KrE92htEXPWeBR2BYJio9XOPDSBuQKHMC8DpDsz6s6c=
+X-Received: by 2002:a05:6402:21d1:b0:61e:c42e:825f with SMTP id
+ 4fb4d7f45d1cf-62ed825a71cmr11238844a12.2.1757950621239; Mon, 15 Sep 2025
+ 08:37:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250915-sm7635-remoteprocs-v5-2-96526cac59c6@fairphone.com>
-References: <20250915-sm7635-remoteprocs-v5-0-96526cac59c6@fairphone.com>
-In-Reply-To: <20250915-sm7635-remoteprocs-v5-0-96526cac59c6@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757934933; l=2001;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=+N860jjILz9WjHBmzobR6cwMMc5hddgDbocup4wZWZU=;
- b=wAZfi6x3+OqVADm1Ao+uS/Jrnveeo2PlNBkQppNDqF9qOMZo9JF1bMv9l3fr+CP7PWOz1RDX1
- PXsvGtR/STLDD+3hxmpvTuZpyv1TDlU4uNIyCwOSNjyvtA+yloZOjtS
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+References: <20250609151531.22621-1-dawei.li@linux.dev>
+In-Reply-To: <20250609151531.22621-1-dawei.li@linux.dev>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 15 Sep 2025 09:36:48 -0600
+X-Gm-Features: AS18NWCAJ6Emz8XYDyjxhwrpmsWu02aESGwF6JloSGyRuZtGrxXg5HjO3xltCzU
+Message-ID: <CANLsYkxLXxj9=+TvsLNmO7c41_hzay2oe-4njkVU=4kmJrmccQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+To: Dawei Li <dawei.li@linux.dev>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add the different remoteprocs found on the Milos SoC: ADSP, CDSP, MPSS
-and WPSS.
+On Mon, 9 Jun 2025 at 09:15, Dawei Li <dawei.li@linux.dev> wrote:
+>
+> Hi,
+>
+> This is V4 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+> for rpmsg subsystem.
+>
+> Current uAPI implementation for rpmsg ctrl & char device manipulation is
+> abstracted in procedures below:
+> - fd = open("/dev/rpmsg_ctrlX")
+> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+>   generated.
+> - fd_ep = open("/dev/rpmsgY", O_RDWR)
+> - operations on fd_ep(write, read, poll ioctl)
+> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+> - close(fd_ep)
+> - close(fd)
+>
+> This /dev/rpmsgY abstraction is less favorable for:
+> - Performance issue: It's time consuming for some operations are
+> invovled:
+>   - Device node creation.
+>     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+>     overhead is based on coordination between DEVTMPFS and userspace
+>     tools such as udev and mdev.
+>
+>   - Extra kernel-space switch cost.
+>
+>   - Other major costs brought by heavy-weight logic like device_add().
+>
+> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
+>     that a dynamically created device node can be opened only once.
+>
+> - For some container application such as docker, a client can't access
+>   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+>   is generated dynamically and whose existence is unknown for clients in
+>   advance, this uAPI based on device node doesn't fit well.
+>
+> An anonymous inode based approach is introduced to address the issues above.
+> Rather than generating device node and opening it, rpmsg code just creates
+> an anonymous inode representing eptdev and return the fd to userspace.
+>
+> # Performance demo
+>
+> An simple C application is tested to verify performance of new uAPI.
+>
+> $ cat test.c
+>
+> #include <linux/rpmsg.h>
+>
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <sys/ioctl.h>
+> #include <fcntl.h>
+> #include <string.h>
+> #include <stdio.h>
+> #include <unistd.h>
+> #include <stdlib.h>
+> #include <errno.h>
+> #include <sys/time.h>
+>
+> #define N (1 << 20)
+>
+> int main(int argc, char *argv[])
+> {
+>         int ret, fd, ep_fd, loop;
+>         struct rpmsg_endpoint_info info;
+>         struct rpmsg_endpoint_fd_info fd_info;
+>         struct timeval start, end;
+>         int i = 0;
+>         double t1, t2;
+>
+>         fd = -1;
+>         ep_fd = -1;
+>         loop = N;
+>
+>         if (argc == 1) {
+>                 loop = N;
+>         } else if (argc > 1) {
+>                 loop = atoi(argv[1]);
+>         }
+>
+>         printf("loop[%d]\n", loop);
+>
+>         strcpy(info.name, "epx");
+>         info.src = -1;
+>         info.dst = -1;
+>
+>         strcpy(fd_info.name, "epx");
+>         fd_info.src = -1;
+>         fd_info.dst = -1;
+>         fd_info.fd = -1;
+>
+>         while (fd < 0) {
+>                 fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+>                 if (fd < 0) {
+>                         printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+>                 }
+>         }
+>
+>         gettimeofday(&start, NULL);
+>
+>         while (loop--) {
+>                 ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+>                 if (ret < 0) {
+>                         printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed, ret[%d]\n", ret);
+>                 }
+>
+>                 ep_fd = -1;
+>                 i = 0;
+>
+>                 while (ep_fd < 0) {
+>                         ep_fd = open("/dev/rpmsg0", O_RDWR);
+>                         if (ep_fd < 0) {
+>                                 i++;
+>                                 printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+>                         }
+>                 }
+>
+>                 //printf("Number of open failed[%d]\n", i);
+>
+>                 ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+>                 if (ret < 0) {
+>                         printf("old ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d], errno[%d]\n", ret, errno);
+>                 }
+>
+>                 close(ep_fd);
+>         }
+>
+>         gettimeofday(&end, NULL);
+>
+>         printf("time for old way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+>         t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+>
+>         if (argc == 1) {
+>                 loop = N;
+>         } else if (argc > 1) {
+>                 loop = atoi(argv[1]);
+>         }
+>
+>         printf("loop[%d]\n", loop);
+>
+>         gettimeofday(&start, NULL);
+>
+>         while (loop--) {
+>                 fd_info.fd = -1;
+>                 fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
+>                 ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+>                 if (ret < 0 || fd_info.fd < 0) {
+>                         printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+>                 }
+>
+>                 ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+>                 if (ret < 0) {
+>                         printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+>                 }
+>
+>                 close(fd_info.fd);
+>         }
+>
+>         gettimeofday(&end, NULL);
+>
+>         printf("time for new way: [%ld] us\n", 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+>         t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+>
+>         printf("t1(old) / t2(new) = %f\n", t1 / t2);
+>
+>         close(fd);
+> }
+>
+> # Performance benchmark
+>
+> - Legacy means benchmark based on old uAPI
+> - New means benchmark based on new uAPI(the one this series introduce)
+> - Time are in units of us(10^-6 s)
+>
+> Test    loops   Total time(legacy)      Total time(new) legacy/new
+> 1       1000    218472                  2445            89.354601
+> 2       1000    223435                  2419            92.366680
+> 3       1000    224263                  2487            90.174105
+> 4       1000    218982                  2465            88.836511
+> 5       1000    209640                  2574            81.445221
+> 6       1000    203816                  2509            81.233958
+> 7       1000    203266                  2458            82.695688
+> 8       1000    222842                  2835            78.603880
+> 9       1000    209590                  2719            77.083487
+> 10      1000    194558                  2621            74.230446
+>
+> 11      10000   2129021                 31239           68.152662
+> 12      10000   2081722                 27997           74.355181
+> 13      10000   2077086                 31724           65.473648
+> 14      10000   2073547                 28290           73.296112
+> 15      10000   2055153                 26957           76.238194
+> 16      10000   2022767                 29809           67.857593
+> 17      10000   2054562                 25884           79.375753
+> 18      10000   2036320                 28511           71.422258
+> 19      10000   2062547                 28725           71.803203
+> 20      10000   2110498                 26740           78.926627
+>
+> 21      100000  20802565                260392          79.889417
+> 22      100000  20373178                259836          78.407834
+> 23      100000  20361077                256404          79.410138
+> 24      100000  20207000                256759          78.700260
+> 25      100000  20220358                268118          75.415892
+> 26      100000  20711593                259130          79.927423
+> 27      100000  20301064                258545          78.520428
+> 28      100000  20393203                256070          79.639173
+> 29      100000  20162830                259942          77.566649
+> 30      100000  20471632                259291          78.952343
+>
+> # Changelog:
+>
+> Changes in v4:
+> - Build warning of copy_to_user (Dan).
+> - ioctl() branches reorder (Beleswar).
+> - Remove local variable fd and pass &ept_fd_info.fd to rpmsg_anonymous_eptdev_create().
+> - Link to v3: https://lore.kernel.org/all/20250519150823.62350-1-dawei.li@linux.dev/
+>
+> Changes in v3:
+> - s/anon/anonymous (Mathieu)
+>
+> - API naming adjustment (Mathieu)
+>   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
+>   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
+>
+> - Add parameter 'flags' to uAPI so user can specify file flags
+>   explicitly on creating anonymous inode.
+> - Link to v2: https://lore.kernel.org/all/20250509155927.109258-1-dawei.li@linux.dev/
+>
+> Changes in v2:
+> - Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
+> - Link to v1: https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
+>
+> Dawei Li (3):
+>   rpmsg: char: Reuse eptdev logic for anonymous device
+>   rpmsg: char: Implement eptdev based on anonymous inode
+>   rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+>
+>  drivers/rpmsg/rpmsg_char.c | 129 ++++++++++++++++++++++++++++++-------
+>  drivers/rpmsg/rpmsg_char.h |  23 +++++++
+>  drivers/rpmsg/rpmsg_ctrl.c |  35 ++++++++--
+>  include/uapi/linux/rpmsg.h |  27 +++++++-
+>  4 files changed, 182 insertions(+), 32 deletions(-)
+>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/remoteproc/qcom_q6v5_pas.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+I intend to merge this when 6.18-rc1 is released in 3 or 4 weeks.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 55a7da801183d54569452dbb48041fdc52bf9234..be4edd0c3eeefb80d3b25a48f6dfe0b7590bc624 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1255,6 +1255,26 @@ static const struct qcom_pas_data sdx55_mpss_resource = {
- 	.ssctl_id = 0x22,
- };
- 
-+static const struct qcom_pas_data milos_cdsp_resource = {
-+	.crash_reason_smem = 601,
-+	.firmware_name = "cdsp.mbn",
-+	.dtb_firmware_name = "cdsp_dtb.mbn",
-+	.pas_id = 18,
-+	.dtb_pas_id = 0x25,
-+	.minidump_id = 7,
-+	.auto_boot = true,
-+	.proxy_pd_names = (char*[]){
-+		"cx",
-+		"mx",
-+		NULL
-+	},
-+	.load_state = "cdsp",
-+	.ssr_name = "cdsp",
-+	.sysmon_name = "cdsp",
-+	.ssctl_id = 0x17,
-+	.smem_host_id = 5,
-+};
-+
- static const struct qcom_pas_data sm8450_mpss_resource = {
- 	.crash_reason_smem = 421,
- 	.firmware_name = "modem.mdt",
-@@ -1429,6 +1449,10 @@ static const struct qcom_pas_data sm8750_mpss_resource = {
- };
- 
- static const struct of_device_id qcom_pas_of_match[] = {
-+	{ .compatible = "qcom,milos-adsp-pas", .data = &sm8550_adsp_resource},
-+	{ .compatible = "qcom,milos-cdsp-pas", .data = &milos_cdsp_resource},
-+	{ .compatible = "qcom,milos-mpss-pas", .data = &sm8450_mpss_resource},
-+	{ .compatible = "qcom,milos-wpss-pas", .data = &sc7280_wpss_resource},
- 	{ .compatible = "qcom,msm8226-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
- 	{ .compatible = "qcom,msm8974-adsp-pil", .data = &adsp_resource_init},
+Thanks,
+Mathieu
 
--- 
-2.51.0
-
+> ---
+> base-commit: 92a09c47464d040866cf2b4cd052bc60555185fb
+>
+> Thanks,
+>
+>         Dawei
+> --
+> 2.25.1
+>
