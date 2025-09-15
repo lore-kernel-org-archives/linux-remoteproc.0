@@ -1,66 +1,68 @@
-Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9104207A
-	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 11:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE7B2FE587
+	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 11:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757934938; cv=none; b=qQXw38i2UvPe92BZG8BKAvk9nNxc0eN1y5+GW0KcaU/9zs2GLK0hLvXImqnFRbo2odZ9Mqy5vi46IQMMHDCJzJ1DSHPMvalHUh/LyqqDyIf86Z+4YebbCKontiy3RGY+VfGWUXh83cx2IBQu/fH5PW/PIbYBofFSj0sCjt5nFqs=
+	t=1757934939; cv=none; b=Wjz0eE+45AeOGLQ7crvt2g4urExZr/xofzO1XlYf1qreDSklVvcufc42a45YcvmuvSo/4heM4tq88r6BTf3q5qaFXLScZsgtTTR/7JZ+aPCgHWzKQtDObz1a4QuYGUeyeS/pgpTQEDvtL35w0Gw1BreJtpXUySVjwPEnfcJUxr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757934938; c=relaxed/simple;
-	bh=hyJFbE9CxuOjX45Et2d7t+4UbbjB8uE8hXZbBtpCcl4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F9BzOTtVa5FefjOidhouN43Zth4diiF34WQ/K5GxVM+ksRF4KV1QOhmdc1d80MoWe5moGIc1jX1Ka0wCbABdEb3OhJO8Cbfvbgmr3c8AszOQMQgfxCAdfV9DILLuNxJjTeAqpncTVE6ymlypMU7hTlFAyYWw9KD9tjuMFIIQPFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=nsHYZiSD; arc=none smtp.client-ip=209.85.218.66
+	s=arc-20240116; t=1757934939; c=relaxed/simple;
+	bh=o2SanjqHk6qnDd+wWkKmHcO5t3xD1dkqEcdLpfu6ivU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=tSDSR3j0MMhfKKzGrykN4VMZ/wzRM+SqrnCt4viiUlEYKrcR70FgA4hZ5+YEaRNN4xb0fRlRxtSSsxP4THbfH7iUdbf+K0Y/F8JVQSI9L3cA7/UgCPxp7X7oCiEEmBIf3PoLupagyi4w6IqgDyZESL2n+m3u5b5OCgA/S+EhAiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=UGO9NLVl; arc=none smtp.client-ip=209.85.218.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="nsHYZiSD"
-Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-afcb7a16441so603895266b.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 04:15:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="UGO9NLVl"
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b042cc39551so681469266b.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Sep 2025 04:15:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fairphone.com; s=fair; t=1757934935; x=1758539735; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSDSpRxe7vhx8m0cBW/hKeYQFhJF6BvlymOlPqDP5xE=;
-        b=nsHYZiSDMinw/quwYpCkR609GCnDiT+7h8Cjr5TkgBArIbWL1fm/fJSQZLJEqgYHeU
-         K/APOt2QHHp+NhCqafbO5GS+fGbISEJ4s90cZE7YAeFDVJSkHSAIgnH9Nv7k5VrjttXf
-         /sKXCKCUucmZx3AuJsTJitCcwLh77vzkLsHbe2YY068ftFsqDtB8sZ8LxgfSAmp+Kwgc
-         xwq/ZV+/V8nwwAyKpgk6GHBGRHDiqX3GN/kFeof+ZHCx4RNPyFTbAlXg9xscioGrwQCN
-         HRy/Fh5i5LNKs8l6YI5ktsSRDnZHVlZ/+2Dz7gWL9sM+foKQT+OmjEoBBlHib1ICI+WK
-         E/vQ==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xjVlm8rsC6PwMG44HWGJ9be5u9oyUBg4g4pdS6rOhs4=;
+        b=UGO9NLVl4fTpiolqtVUSEUkwRbM+zcX6Det8rioyj1Eo0SC3CdUheQbMIgZiEHABAR
+         tnMLibVcnM+Si0hjQr0BoZPzUeDvp4/mCtzo8n75GXkJlV+72/rdiElcQ9dA2EyQIxF8
+         7/0btAKWczFPX/ppP71XQ4NYvgTAi9erPWd/JLSPIolxhkrP4wPy8IvGTDEcB0Aq88q4
+         C9eXMWRrQyITJR+etEGWRsZRDSWvd3O6ieMBxzdDrAn2661lYZSxtItrjR8uEHokon8M
+         H1hqVDNXVyEhUWTY9sKu2bD+7JrMGuq0+85fjXPwOspp+quPnNlcRacsT14SxH8HuzpZ
+         jctA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1757934935; x=1758539735;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WSDSpRxe7vhx8m0cBW/hKeYQFhJF6BvlymOlPqDP5xE=;
-        b=jU1je7WsXHTNSwSV3CKbhNpsQjoXtT2+8GOkji5C8506l0Cfp62hAn7GLT9avq+O82
-         LEBdWYoxIDavgdSmhP9o2mr8FEF5OFtiYR7FUBtFDj5vqFYuKwwSE7KlZMQN4MPbnHtK
-         8YoRwZuXjvRWfGJrp1AvRlDKflPajxGvT5LbVapBEaSBlfwmpXvoG3BEBomi3SC7Jerd
-         pnsr2j41SF4OPtSGWr0w8XwLI3W4Dm1CIefdKacyPNj1S1fmNS5V4r65VcyIucIB+x3O
-         CUqoNUAhvnlEc/WB66CThWJPP9BvgFBoeK8Y45DSOWqz2t05h21PG9CCvAD7zYShJccv
-         bsjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6kbUmOKE2lbFtJ+kdEJIGd7oEBOLeBMbTqRWEDGWzVRLFA7w2LS1niGHqRRTNM+3ONKjyhoI1rzgm2OIGvy0b@vger.kernel.org
-X-Gm-Message-State: AOJu0YxA1ENievyzXKAbhGtL96vAWovtvFVuCIG7zlQrLvZdZP+4hvPI
-	+CknDlcUvItzj/Peu2zfoUCj+GoxaBUePBy2+tiK7x4W8YX1HzqoBF0j0qoCvweEwXE=
-X-Gm-Gg: ASbGncuSnbhHPa60LfZqztljMx8EPj0V0XyFno6lXjA3UIg4krSc/UlmuFmLHgOOAM/
-	4qsyn6CloZWjRaYj/he0Dog/0FkxVCguWq+5qYYfO1Rh8B+ev1hm7aVuENh4gorXt1ouDTmtq+Y
-	sV5fS5+I3M844G3gn1R/vTLtFc5Ql1QvLRF4/ZK7LiTwEwNi+2cmhT7kz7M6SL97EbZdAmwsBg/
-	s2kSeNyWAiWBt/Cw6ZQxiDiztOy+jh4FT+0OihWF96bfzBur7lm711YVyqHEDlKry6LXA1emoqg
-	uisGK9/QuGWX89O7gNm+oeaIz0SjueU4GlU+DUDp50E8fvD1f0iYVIN4EARQtYzDRP5wR+iA5CP
-	qYOYIm1eIwAAoUbbe0qQs3y1vfAI7zv220Q4ndntz48K4g9bk2TLheLatzaisu5ZU5+pSjYIIaj
-	97hGwj
-X-Google-Smtp-Source: AGHT+IGywulimHhQJlO4Rta/TnERJN68O5wo9pU23FIpHxPwMOlZqSlAaI08bgPpXbveZOPsK2ZKVg==
-X-Received: by 2002:a17:906:d554:b0:b04:5895:fe8e with SMTP id a640c23a62f3a-b07c35fb500mr1263150466b.36.1757934934697;
-        Mon, 15 Sep 2025 04:15:34 -0700 (PDT)
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xjVlm8rsC6PwMG44HWGJ9be5u9oyUBg4g4pdS6rOhs4=;
+        b=tEmEuRqAmtrv1MBHqT9LPvooVciQGM84uDVIxbl99c90PiciSKQ1Ys8RqsAC8xp1oJ
+         YzcW0Brr+38JXXFyHAVwRkTnxEB4KNqSyR+iffQDVYeZ92Uin4Ro16EouTv35eZVFM2n
+         ntx5CfAnZF7X32y2moJrFhKsiHCK7A8ycYEYBQGMW5Sb/fI4iQBLJjaiLld60ihQOxaJ
+         aR/eFWb6Vb2tiikjBq8EE8NXxZbku/YW21L9KMm0RM2SCCKM2sY9lPjqlZqzTrVGKk2k
+         WPczDuzbDynXmioDEggFMHMSu43TIm6Ny5vZOh++Cm07fMlqfKWHbpz23lt6uA+EXLPY
+         rxdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqKYJw5eqxi0jWgfIqa3qBzX6BDpDsALvu2M0GupBjqFggzv0IffPEmGZbGI3HknIEafSsyAdLyz7YwT1/KjF3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHo3J2RRemUj450Fm3gTyEf9BlJB3biwiD1lUwpsaL5CmGoWWP
+	VGCooYlySTaHZQj0IfB50FelRpaO1jrrjmfz5v3WEVz9OhyhnPQaEmdgZECpH1lYSUc=
+X-Gm-Gg: ASbGncvYpGXpSSONv+6x8KzzIbUTYvoHZHQOuQfDQinoA5gG17oZWJMjk7OmRu9d13p
+	42MC8elsFkWFPwA1t2vEQZV8RiYRkOL3Yx9Bmxfib182HcB6CbjK1yqSQ1eyKxehsgIjykWEqFK
+	ZBSe5s6uzIQmVhMktASqDg3d+A7uWqlmixRtjSUM1o1zQ72rptiXiy76PNDc7oXVoiQMds8I483
+	TP3ENM6yFYN6C48SoaYpbhzMl9aEeqyCkHmRMu0guHtHVHgu+FBNUQGAcJkCJ4Mslt3ji1FtpQG
+	5dqnvoG8ldSDt659U+8JS1ZvMekqaCa/4JsMYLlmxgovlDxh0zvSAmpDOm77IlZmc/u3etSPDYb
+	04hHES8+Po6depxZuHn2Xtn+D4YM6FFmCXvQzoAzDqVU93Gnbg1D/kv/PqDokBU1r9JBrRdEvuf
+	uyeKh1T6aIlxWkIyI=
+X-Google-Smtp-Source: AGHT+IG9t6wQqC94huNHEO0i/ACIuWHJplvCU1nOmVnPcfbVmlAzB9rL2asGA/AjFNU8hP8sFfknxA==
+X-Received: by 2002:a17:907:2d0b:b0:b10:f70b:c0c9 with SMTP id a640c23a62f3a-b10f70bc355mr294908566b.55.1757934935266;
+        Mon, 15 Sep 2025 04:15:35 -0700 (PDT)
 Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07d9e18c24sm561851366b.61.2025.09.15.04.15.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07d9e18c24sm561851366b.61.2025.09.15.04.15.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Sep 2025 04:15:34 -0700 (PDT)
+        Mon, 15 Sep 2025 04:15:35 -0700 (PDT)
 From: Luca Weiss <luca.weiss@fairphone.com>
-Subject: [PATCH v5 0/2] Add support for remoteprocs on Milos SoC
-Date: Mon, 15 Sep 2025 13:15:17 +0200
-Message-Id: <20250915-sm7635-remoteprocs-v5-0-96526cac59c6@fairphone.com>
+Date: Mon, 15 Sep 2025 13:15:18 +0200
+Subject: [PATCH v5 1/2] dt-bindings: remoteproc: qcom,milos-pas: Document
+ remoteprocs
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -69,12 +71,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEX1x2gC/23RS27DIBAG4KtYrEsFmGdWvUfVBeChZmHjALVSR
- bl7SawqVcXyZzTfaIYrKpAjFHQarijDHktMawviZUB+tusn4Di1jBhhgkhGcFmUHAXOsKQKW06
- +YMrNZCUnmjuNWuOWIcTLA33/aHmOpab8/Zix0/vrLyd63E4xwWokk3SCKgrwFmzM25xWePVpQ
- XdyZ38Z1WVYY0iwguqgXZBTjxmfjCKmy4yN8YaPDoySVJMew5+MIf2leGMMMB7Aece4/M/cjsN
- lOH+1T6jH9ZCzBXCrL7GehhUuFR9DKGsdtx8HjPknvgEAAA==
-X-Change-ID: 20250620-sm7635-remoteprocs-149da64084b8
+Message-Id: <20250915-sm7635-remoteprocs-v5-1-96526cac59c6@fairphone.com>
+References: <20250915-sm7635-remoteprocs-v5-0-96526cac59c6@fairphone.com>
+In-Reply-To: <20250915-sm7635-remoteprocs-v5-0-96526cac59c6@fairphone.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -82,56 +81,229 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
  linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+ Luca Weiss <luca.weiss@fairphone.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757934933; l=1536;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757934933; l=6132;
  i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=hyJFbE9CxuOjX45Et2d7t+4UbbjB8uE8hXZbBtpCcl4=;
- b=c9kaWiVTeM6gjqdm4+aAditUZF6OlBbcBbQU6dznmaG93q+yetGzBY6GLz/EwKawOeAs452re
- KixgzXs73GxB0d6gfYIlWLzquRRv7+LJVBcBqc4HeWMmGYzlmGMt/0e
+ bh=o2SanjqHk6qnDd+wWkKmHcO5t3xD1dkqEcdLpfu6ivU=;
+ b=nuUGmYNwcFoDkaD0+pIVa7hhOkPQCTJEF3uYYpFC0kh0Vns4RDXWE2SmpnqfX2vSJIJLA0iF7
+ hsbA+bU+k/tCGVyWKJzjAX2QC2uyeu4n8sN/Ut+ZNar1GPnb4HlGtzV
 X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
  pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-Add the bindings and driver for the ADSP, CDSP, MPSS and WPSS on the
-Milos SoC.
+Document the bindings for the ADSP, CDSP, MPSS and WPSS PAS on the Milos
+(e.g. SM7635) SoC.
 
 Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 ---
-Changes in v5:
-- dt-bindings: Drop firmware-name ref, and maxItems for
-  memory-region & firmware-name
-- Pick up tags
-- Link to v4: https://lore.kernel.org/r/20250905-sm7635-remoteprocs-v4-0-9e24febcb246@fairphone.com
-
-Changes in v4:
-- Rebase on linux-next to fix conflicts
-- Link to v3: https://lore.kernel.org/r/20250709-sm7635-remoteprocs-v3-0-c943be976180@fairphone.com
-
-Changes in v3:
-- Rebrand SM7635 to Milos as requested: https://lore.kernel.org/linux-arm-msm/aGMI1Zv6D+K+vWZL@hu-bjorande-lv.qualcomm.com/
-- Replace additions to two different bindings by one new binding yaml
-- Pick up tags
-- Link to v2: https://lore.kernel.org/r/20250627-sm7635-remoteprocs-v2-0-0fa518f8bf6d@fairphone.com
-
-Changes in v2:
-- Update default firmware names from .mdt to .mbn
-- Link to v1: https://lore.kernel.org/r/20250625-sm7635-remoteprocs-v1-0-730d6b5171ee@fairphone.com
-
----
-Luca Weiss (2):
-      dt-bindings: remoteproc: qcom,milos-pas: Document remoteprocs
-      remoteproc: qcom: pas: Add Milos remoteproc support
-
  .../bindings/remoteproc/qcom,milos-pas.yaml        | 198 +++++++++++++++++++++
- drivers/remoteproc/qcom_q6v5_pas.c                 |  24 +++
- 2 files changed, 222 insertions(+)
----
-base-commit: 51095600e8c19d53729a7fbd273abc4435a25e9b
-change-id: 20250620-sm7635-remoteprocs-149da64084b8
+ 1 file changed, 198 insertions(+)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..c47d97004b33034be92f849c03c8cd457c8d9339
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml
+@@ -0,0 +1,198 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/qcom,milos-pas.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Milos SoC Peripheral Authentication Service
++
++maintainers:
++  - Luca Weiss <luca.weiss@fairphone.com>
++
++description:
++  Qualcomm Milos SoC Peripheral Authentication Service loads and boots firmware
++  on the Qualcomm DSP Hexagon cores.
++
++properties:
++  compatible:
++    enum:
++      - qcom,milos-adsp-pas
++      - qcom,milos-cdsp-pas
++      - qcom,milos-mpss-pas
++      - qcom,milos-wpss-pas
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: XO clock
++
++  clock-names:
++    items:
++      - const: xo
++
++  interrupts:
++    minItems: 6
++    maxItems: 6
++
++  interrupt-names:
++    minItems: 6
++    maxItems: 6
++
++  qcom,qmp:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: Reference to the AOSS side-channel message RAM.
++
++  smd-edge: false
++
++  firmware-name:
++    minItems: 1
++    items:
++      - description: Firmware name of the Hexagon core
++      - description: Firmware name of the Hexagon Devicetree
++
++  memory-region:
++    minItems: 1
++    items:
++      - description: Memory region for core Firmware authentication
++      - description: Memory region for Devicetree Firmware authentication
++
++required:
++  - compatible
++  - reg
++  - memory-region
++
++allOf:
++  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,milos-adsp-pas
++            - qcom,milos-cdsp-pas
++    then:
++      properties:
++        memory-region:
++          minItems: 2
++        firmware-name:
++          minItems: 2
++    else:
++      properties:
++        memory-region:
++          maxItems: 1
++        firmware-name:
++          maxItems: 1
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - qcom,milos-adsp-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: LCX power domain
++            - description: LMX power domain
++        power-domain-names:
++          items:
++            - const: lcx
++            - const: lmx
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,milos-cdsp-pas
++            - qcom,milos-wpss-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MX power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mx
++
++  - if:
++      properties:
++        compatible:
++          enum:
++            - qcom,milos-mpss-pas
++    then:
++      properties:
++        power-domains:
++          items:
++            - description: CX power domain
++            - description: MSS power domain
++        power-domain-names:
++          items:
++            - const: cx
++            - const: mss
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/interconnect/qcom,icc.h>
++    #include <dt-bindings/interconnect/qcom,milos-rpmh.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/mailbox/qcom-ipcc.h>
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++
++    remoteproc@3000000 {
++        compatible = "qcom,milos-adsp-pas";
++        reg = <0x03000000 0x10000>;
++
++        interrupts-extended = <&pdc 6 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>,
++                              <&smp2p_adsp_in 7 IRQ_TYPE_EDGE_RISING>;
++        interrupt-names = "wdog",
++                          "fatal",
++                          "ready",
++                          "handover",
++                          "stop-ack",
++                          "shutdown-ack";
++
++        clocks = <&rpmhcc RPMH_CXO_CLK>;
++        clock-names = "xo";
++
++        power-domains = <&rpmhpd RPMHPD_LCX>,
++                        <&rpmhpd RPMHPD_LMX>;
++        power-domain-names = "lcx",
++                             "lmx";
++
++        interconnects = <&lpass_ag_noc MASTER_LPASS_PROC QCOM_ICC_TAG_ALWAYS
++                         &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
++
++        memory-region = <&adspslpi_mem>, <&q6_adsp_dtb_mem>;
++
++        firmware-name = "qcom/milos/vendor/device/adsp.mbn",
++                        "qcom/milos/vendor/device/adsp_dtb.mbn";
++
++        qcom,qmp = <&aoss_qmp>;
++
++        qcom,smem-states = <&smp2p_adsp_out 0>;
++        qcom,smem-state-names = "stop";
++
++        glink-edge {
++            interrupts-extended = <&ipcc IPCC_CLIENT_LPASS
++                                         IPCC_MPROC_SIGNAL_GLINK_QMP
++                                         IRQ_TYPE_EDGE_RISING>;
++            mboxes = <&ipcc IPCC_CLIENT_LPASS
++                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
++
++            label = "lpass";
++            qcom,remote-pid = <2>;
++
++            /* ... */
++        };
++    };
+
 -- 
-Luca Weiss <luca.weiss@fairphone.com>
+2.51.0
 
