@@ -1,221 +1,363 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013000.outbound.protection.outlook.com [40.107.159.0])
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F203161AD;
-	Wed, 17 Sep 2025 13:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2610328984;
+	Wed, 17 Sep 2025 13:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758115216; cv=fail; b=RL0PVYcQnnJkss3czEcK/x9u+sis1lx/b0bTUQ0H1t3q8U4vFYd7LkGmfvQKXYVdOo0XaJc8QPUlhVzuZsK+AA+0cEn293pGWON4tcesNub86uHJap+f9hDU1tnInsFjU8/F9+6eVkqal1Hz4DyrNlqhlp+xE5x/Gus3LvapsW4=
+	t=1758116926; cv=fail; b=gELXWDaW4t0bQYwaufnIEi9nLpdiF0YKS8cfELCTM8joLuR4Xl4jDdCTBvpCs56DO/Z61t2bwwysIHns/Iq8LIf7Z+K/bAtTt05i15H5VDe43sJNKA39yI0bovwuu4FQP3vjlribiQlEbl7x9SKlxcIRj5vtzUDw/tiWymGELy8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758115216; c=relaxed/simple;
-	bh=Uv5HmboUetc4ez8TfIwkqJtZysoxuBak7oX6CJuhJPQ=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=N2/MG/uzV8ON9RGQa+MjvFFsZmI92eFWEkdrKxWM2AC3W2X1B9j92aHvGXYipGKgjYNwQ4BBx5R/au2NCFse+wrp2Ob+XCSh1Swru2NRXHWl74G7Op8rS8r7ZyW2sKXtrbgnGgXL7AB+VqtID+EtvPMklYkra6j2FygIvrG/uQY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=nUMyK/v6; arc=fail smtp.client-ip=40.107.159.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1758116926; c=relaxed/simple;
+	bh=9KbqDb6JiT02zWiniWmcj2NOXyRD8DC6lvfKIXhQJ+o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FOB4/cXYrCe5eQiIlDmOdguLB/Rjzu2rOUZQLHgrffMh/KZ6ytLw7wJqNkqVkUmSr9p8dEmM/jfY7WMYLN66TqxWlDPqQyU/Xfi8UaY20ASGhYbJf19eAX2gSIZhOBm3VUQp6zfWQUQ4wrvO2S73SZUgBPVLLaTolZMm14ZpJJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Oeg1blQt; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="nUMyK/v6"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Oeg1blQt"
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58HB7AXr022993;
+	Wed, 17 Sep 2025 15:48:15 +0200
+Received: from duzpr83cu001.outbound.protection.outlook.com (mail-northeuropeazon11012026.outbound.protection.outlook.com [52.101.66.26])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 497fxuv2ts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Sep 2025 15:48:15 +0200 (MEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dHXRQF1UOnoF08iUwDTyz82e0h/DtCSSt+OAxOjibXzsAxLYtnNDiV+ECxdBWf4Uw+mNkJ8SZtD0Z7DJet731OaNIYUmO9n7K4V+sW7aFPs4OXan6OprQw5cXPhpTlieOGmc1D6Bgf+xqUcVwDHD5QVjDPGgHqA5E/iOs2ZF5xA/SHo8oaGFqa7qga76vyckpSLzl+658bbPLwXKZbffDfmAcW0f5UhBzOezQg7Oki2Kmj2yNQ0FrWOWfU3INA/BB2YJAuYcRhoTDYvQG9F28JYK75aOxaa3W0krF6DBhpAb8n8xMJUGHz4sjH7xcR233dgPXbsUhD9Jq4X/Zvtw3w==
+ b=VbHTUIaFkoXoDaT58eKhiHJhvYkaJhhm/NEEfDx3qxbgy/KF+BboZ6ThI0UmoOKhbmHSn/wJVeAWwMU2hYfq9NZRkL45UOjysc2GqjaNb5254EfpdKA0q9ahmq7F5sfSoAJfijUCgeVnuyvbLA73dOWdXkOkETZi9Z/pQVOLQJJwj0NuPLQaQuQhmzyQQkYPOc0Ni8RmGKFm3TmNT1/q22zI6NYouzzuKzn581QLm+yukuAcEOviBhRmCiCz4x1DcxxnvtEEYyFuk2YFyKRJUA/33HyLIqs859rlUdRo69a2NQTZ0s8fvS7uGMm8X5Sjizzeo/UQWZbJAnWlSiMr9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ytNhmwKoq2hoUcrJyT9B+jeayMs1ISQPC5QX7UeAkc8=;
- b=BRlR8dSCSuG/7ojjF3I8WpD6OtJt+qkiFILbTBx+P2eAfedcN5U+FcnUp3WQ/AH6YnedJncw0Ekuhs28j8MgO4c81bbTXp70oQfpL1L0NoPQwUOnsOTQYpGzquZ4/dpKhep3jWdyDDaQC6vP8NCii7Jz1oaoW6Qquplp6f3BsT3vkvcBL5ws1K35CHS00cCkmaisBijXPRbheNd9snrYTnwCvz3dvEjRghBaAWfnC6rI/o24/sNl5Ac+tjXNy9H9b6uG7eYh6PwOyVKX6Dg0l8HxDoNAPtoKsKgI+Fn4Aex/0+ei/BCdy6ksiVc0cC0Vylcc0B4uKRPgRrCYkCA41Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=+7QlJx5YkaYf4BSoOsr67PuqI+N1OPJZr4jBrjlAJhU=;
+ b=rUOeY7F86Vbt1kSve2gGgcS5WKezDwWFalUe24OWEM6Rp8ZB5LTPRBha0pkLvjcsppSVssA5lUSWFldSYO537RZIRAz34T38tdsV1YQg4EHaGEpFxNZrg41L01ZUYWZlULMdtisUglzspTkqDL4D7gLu0AOVjfG67hRLkHh5CiizNhxQr9sOSGcHr+ioWIZfMyTCWsBv+KuOLxspeZHQMNRoPi6K/F7cL529ClZiPuRrputqf1nD9ikwqDlz8VuBzr48rNjoIzngFVaXg2PY6CtpnqQg7QTdiYh9IAB9JRNftDXk4otSM6Drk5EqUN6vIZi1Oj/VKrHK86Go/ZE4vQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.43) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ytNhmwKoq2hoUcrJyT9B+jeayMs1ISQPC5QX7UeAkc8=;
- b=nUMyK/v6FbbRRYpr58UGNnAdQEzON9aWJGsz/AedpVnRokmEoNj5fGgM6eow99fcmtRTrdvHbMPxjCU6QpbsMvRDBT7NSwypFcDdVDBsVU6WrlSznZk37CWYjB3UVNJcGQ03COHxUu7Wja4QXTbsmIr6iPK6qgFlVG/GQUTCVmE1jbNhJ6bBqZvRwK58rHwekN95RIXAEGD4Yhkucu5XGiiT/ubrtM/2vQFI3qdRktSaW78nQ/R/WZCXheFxUI0Gpy+75w0GJuZToqECeSua597rdbi2fSlGOYI5gCMptI4osXyWdWzArcBtdUyNQb92fnxX7XZ03BGeHUCzd96dow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DB9PR04MB9751.eurprd04.prod.outlook.com (2603:10a6:10:4ce::5) with
+ bh=+7QlJx5YkaYf4BSoOsr67PuqI+N1OPJZr4jBrjlAJhU=;
+ b=Oeg1blQtEuD4v/Sx7j+b18PYNtXeHa25YoLCDDOxU7E+Ttx8rRb/IKd+aPWf3v5M1yNX4b7QDw3XE+uJPqNR1mUW9J3w/Px1MOM6TZrKdkAFGHWmRxDZR9Nu11K+gRqQ1SZwDLaZSOlgWjvIYfXx/FXW1BOO8AYCSu4u4EUtyDEiFUb7PvVuewMJ5tqlwsQ89WP2Pspi+OgO+0S8VwPJBlwWX067oBSVsQbmA1VSNpjpeX5Sfp//7p+ctQCNYOVA8OGnknSPLq7ec6xzIBPp9E8rnF0z1FUZM4uLEXVQn2lVICdNJQvdghI23K42vF38C4Tgr1g61EKhSaf0I12xkQ==
+Received: from DB9PR05CA0019.eurprd05.prod.outlook.com (2603:10a6:10:1da::24)
+ by GV1PR10MB5914.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:59::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.11; Wed, 17 Sep
- 2025 13:20:05 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9137.012; Wed, 17 Sep 2025
- 13:20:05 +0000
-From: Peng Fan <peng.fan@nxp.com>
-Date: Wed, 17 Sep 2025 21:19:18 +0800
-Subject: [PATCH 6/6] remoteproc: imx_rproc: Use devm_rproc_add() helper
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250917-imx_rproc_c2-v1-6-00ce23dc9c6e@nxp.com>
-References: <20250917-imx_rproc_c2-v1-0-00ce23dc9c6e@nxp.com>
-In-Reply-To: <20250917-imx_rproc_c2-v1-0-00ce23dc9c6e@nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Hiago De Franco <hiago.franco@toradex.com>
-Cc: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758115170; l=1592;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=Uv5HmboUetc4ez8TfIwkqJtZysoxuBak7oX6CJuhJPQ=;
- b=0GRlqZycCm3A43/FuD2r8GcNKCrBED4QMiz+Bp8cA7aEBh6FOaYn1xROj/38IaUUbP2IjO99p
- bemMyBzJ9/ZAP0dVVEJ70j6UFyjiu0Ic02bdpbOXIkfnR5/1L8PqbWA
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SG3P274CA0016.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::28)
- To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.13; Wed, 17 Sep
+ 2025 13:48:04 +0000
+Received: from DB5PEPF00014B9E.eurprd02.prod.outlook.com
+ (2603:10a6:10:1da:cafe::8d) by DB9PR05CA0019.outlook.office365.com
+ (2603:10a6:10:1da::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.13 via Frontend Transport; Wed,
+ 17 Sep 2025 13:48:03 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.43)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.43 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.43; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.43) by
+ DB5PEPF00014B9E.mail.protection.outlook.com (10.167.8.171) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9137.12 via Frontend Transport; Wed, 17 Sep 2025 13:48:03 +0000
+Received: from SHFDAG1NODE2.st.com (10.75.129.70) by smtpO365.st.com
+ (10.250.44.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 17 Sep
+ 2025 15:45:18 +0200
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 17 Sep
+ 2025 15:47:42 +0200
+Received: from [10.48.87.127] (10.48.87.127) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Wed, 17 Sep
+ 2025 15:47:41 +0200
+Message-ID: <8d385f2e-6470-4d66-be0b-a2a448a81fa4@foss.st.com>
+Date: Wed, 17 Sep 2025 15:47:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 4/6] dt-bindings: remoteproc: Add compatibility for
+ TEE support
+To: Sumit Garg <sumit.garg@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Rob
+ Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+ <20250625094028.758016-5-arnaud.pouliquen@foss.st.com>
+ <aMkqifHSdlCs4VjA@sumit-X1>
+ <62bdb238-7440-451b-84ef-79f846b10ba0@foss.st.com>
+ <aMqIhFdIqp5auH22@sumit-X1>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <aMqIhFdIqp5auH22@sumit-X1>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB9PR04MB9751:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a87671b-7754-43f7-5467-08ddf5ecea71
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B9E:EE_|GV1PR10MB5914:EE_
+X-MS-Office365-Filtering-Correlation-Id: b473709f-9fb0-47d9-f832-08ddf5f0d2bd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|19092799006|7416014|38350700014;
+	BCL:0;ARA:13230040|36860700013|376014|7416014|1800799024|82310400026|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L2JPOHppQURVOHdHeWtNSjMxRncybHZsbWJITHNQVitXRGVFbHNoTnRva0FN?=
- =?utf-8?B?MXIrNTEyNG1YSkthWk8zK2VML2xSRmtoN0pab3RDTDBHWmlpWm4zUTNXTk5D?=
- =?utf-8?B?Z2h2ZmlFaE5aNVlialJFRWhDb0lCZDdBa0I4dUNyV0Q2Nks1dVI2SnFpeEgy?=
- =?utf-8?B?WmhvdlBUN1RDVGlqMjNxdnZIeTFGNTYvb2NFa3NsS0lZTkY3d1hPOFNlcW1S?=
- =?utf-8?B?Q29PVG1TYjdHRC9Fcmp3ckpGYnRZM25jVHlvcFowOXRtaU1JaVJ6d3U5MTls?=
- =?utf-8?B?YVlad2JEcW1JMzhLYTBvSkNuTG5aenQxcWZybWlLOVhoWlhoQzUxeGIzSUgv?=
- =?utf-8?B?N1VDVTJyY24wd1hBZ3dlTG5ZVEpXeEltU2FtVDA0Y3RhL2h3eFI1dFpKSURl?=
- =?utf-8?B?L2plS29rM09XUjJEUmZqSmNJYjRnSW1tY0liNlJ4ZVErcjVpQlc3bjJmZWM0?=
- =?utf-8?B?RFpYTEg2RDR4S3JxbDd1S0JmaSttT0h1eGtxSE9VTG4vTm1FU2N0a1E2WHYx?=
- =?utf-8?B?d01KbkltMnp5QUxGTEE2M1RsQmQwNmJlbWFrUU5YaEpmdlpJdHVvQVlmd0xr?=
- =?utf-8?B?QkhnRmhGQ3lVNmU3NUJpQy8vMU5oNlcvZHZyQldiK2pxZFYvRUZZL2w2Q3k3?=
- =?utf-8?B?K2o1OHhTblJoLyt1V1NQYWVDMDM5T2FjV2JYSGFJUGJmaWgyVWRKMS9nN2Nw?=
- =?utf-8?B?MG04UUl5WUhkdWpUNG5aZlQrSWU5RWJCbUd5TUNqYnNsZHlkL2U0TmtnMkR5?=
- =?utf-8?B?aTc5WXRnWFBYNjRNUUs0bWFlTCtqOEZvRVo0L3JSVXhuZ2RkOFBVdGRRT3pU?=
- =?utf-8?B?NHlFa0l6N3VZbS9rNGZtemZkVG9aUGMzYnhUNS9zSkgwcFJEaDNXUGI2cENp?=
- =?utf-8?B?cHVWQ2kzeXZ3c2Q2UHNJdHJtQXVoSXJrQ0w3MEVwM2xIeEZISXh1cGdVOU93?=
- =?utf-8?B?T1A2UXlaY1NEVDdSNWthSG9SNzR1bVpCbGkxU0YwQlhKbGhGQWlTL1Z1Wkcy?=
- =?utf-8?B?OXltakpKUUJ6cWFWSHN0RHE4V2FjTXk5RzFnMU9GakhFeVJnS2krQ00rRDVs?=
- =?utf-8?B?ZEhqUGYxY3Y1czJpK29ibVNuZlBRcjJ3R0FXVVVRTFg4V0NJanRsdCtoY3JS?=
- =?utf-8?B?S1EvTUU2clNseW1sUEJUU1gyb3c0U0ZGeTludnFCelpGMGQ5Vm5KQ0EzUnhN?=
- =?utf-8?B?Mk1lOHdRZmNrK3diWHFWVWdBbzAxaVkwYUIxZXpsTitqNTE3RXBJQzZaeTN0?=
- =?utf-8?B?eG9XdVdTb0NRUFNXdHpuVXZCVVI1SytkV1E4YUFFOUJQR0dKWURoNHhuT1ZS?=
- =?utf-8?B?OUM5dTQwQWlQbytPL2FZdmFWWlVabEo3ZEpyT3VjcDZTVGVNNGVYcmxzUWx0?=
- =?utf-8?B?S3lPT0VyblVKZmVqL2pWV0REYUh6ZWp4M1pndFlLbFlOSHRYS3VxV3ZNNEZQ?=
- =?utf-8?B?c2xjWlUvbjhOTVZ5eTFlS3UvVy90TzZFVFNEc20yQjBZYUhmUG9uNDVORWZ3?=
- =?utf-8?B?bTNPdFp2c1o3Q21IOWkwTVZFVmRYVWFzSHZJcUQ2ZlJRQVJWTk5WVGFuaTJj?=
- =?utf-8?B?NnZ5TklOcnVYY1pQWDRmNDNUVFZsemptZjVtUFhBa1BaaWRVQlVIZ2hKYkNV?=
- =?utf-8?B?NXNPU3RQVUlCMlowVUdWQzc1V05vb1IvR2s2T2ZrYmxSWHlKUnRER2ZMUERv?=
- =?utf-8?B?cDRNTnNESXlrVEdiRWozaDBrY2pvTEJxMkhFaDBUdTZEQXhlekJUb2FMblNs?=
- =?utf-8?B?SHc1dDZ1ZG5ZdW15cFZoaGxpYnVoaFBOeSsxRjNUQVJrNFZneFdkdVdsMGYr?=
- =?utf-8?B?K29LWS9NeWEwR1RCQllUWDNWUkFuQUV2TU5MdmFFZ3llR1VkS1ZFVThNaFNv?=
- =?utf-8?B?T0JwRFhITmcyZGZRTjNtc1oxYk9RN0MzMWI2UFlmanBsRnUxeGxZY2RsaTlm?=
- =?utf-8?B?bW5KVWJzOUhLdVlVMkZidkQ2bUNwUWxKd0tLdFFtaTNhWnpzcTMzVW03b2JH?=
- =?utf-8?B?L1ZFU0l4MGdBPT0=?=
+	=?utf-8?B?NkhFeW9ubVlIekJjdWVGSXFSdVhtU0ozNGorZzJXRTJMTjY4QTlqOWt1Rkla?=
+ =?utf-8?B?VGpoZGQ4VVI1M2wzU3lCbXBEQ1NSNFZja0MvckQvSmovNzRVM3h1YnRaS1li?=
+ =?utf-8?B?TVhQT0RqOHVJWklmK1FvMjZkZVF4S1V5TzgyT1pycHZUL1VMSU1KWktVM2cy?=
+ =?utf-8?B?cVlwMTY1VDRLYXFaSld3Nnhrek42UFlmVHlOdUloTXdHZ3VSNlJseVMzcEpQ?=
+ =?utf-8?B?QTY4VDNocEc0VE5vYmNDakJMQlBWRE1XYnZHVkM4dGhqa2ZTUWdxQlFmU1dN?=
+ =?utf-8?B?RW1uNHVyeWczdDhtckttU2IzUHMxY3ptUnNVQlhIcVZEYkd0cjNDa2hhRGZP?=
+ =?utf-8?B?bHVqRVYrUUhXRnlRSzRxRTgxUkdMWWludUpLUzV3K0wraWtzQjZWWmtzNGh4?=
+ =?utf-8?B?ckZiQVpxZkppaTFOdGplMXpOTkJ3ZDBBRjlLU05scXNSeW1palRYYitwakJC?=
+ =?utf-8?B?b1ZabXZCVVNwMFQ5N0NNdnJOV1ZacFVvdnBOR29zVzJWWHE3RU5pN0xyZzRU?=
+ =?utf-8?B?WVk1Ylo3eS8yVklYR1FKdXdHUndGVU50RTE2bXFVZWZSempuVkxkRUcvaDVS?=
+ =?utf-8?B?YUw1QlQyQ2lkQjA1ZWlwUVg4U3Z1c05VeTd4YnhsVDdvL2twb0NqZ2ZuSnEw?=
+ =?utf-8?B?MEUxUmZoN3BmVDgrMTFTYjBFZFpoRWEwbnB0OWlSSXBtYTgrRzRGN3lFTGF6?=
+ =?utf-8?B?WHg1bC82aW5iTk1qMVZOcTJuaEsxQUJvcFQ3WFkxZlBLeTZBSFpMT25XUHR4?=
+ =?utf-8?B?cGNYUGFNNDVjTHBReTJjWmtFNm93NllrU2FnTE5pRjd6ZTdXdWJXWXFMcm1k?=
+ =?utf-8?B?VC9WS0F0UG1BWjdNOEFkbXF6SGJpQU9oTXRSZTBtcHZOOHoyYkd2K1ZhN0V0?=
+ =?utf-8?B?dDRuYVFIZ2tpWnk5MkpWK1Ezd29HN2tUb1phdDV1alNjeUtJZmxjOGx1eGVj?=
+ =?utf-8?B?Nm5VL2swMWMxVE8xamhuekZ4YjZNckpDMEI1eVI4QmY5eHdBbjE1YjZ0Vm1W?=
+ =?utf-8?B?b3BSZnRPN2NHRGo4c1Fwa0o3TGFDMzVJdXpoTkUwMU1pS3VmYjlkaXRLMnd1?=
+ =?utf-8?B?aW5Xa01ieTVQcWhKcWJ3S2hsTllIQ0UvYWRDQjNoVmN1clVMUDA1aGRQZVBq?=
+ =?utf-8?B?TzVVQmhhMlY3ZFJWaGN1RU53WFAzNVljempOUTF2bW52Z1JjV1NWMGVrY3RO?=
+ =?utf-8?B?SUxnT2pzaFg2S093ejl5Und2Y3htdTU2UW5NOUh0ZHBVRmlZakNtNldzR2Fz?=
+ =?utf-8?B?WThBR2xSU1ZVblFDNGlBVmo5VXRRT2NDVzZRZWErNm5NL2ZDL0hBdlRpNHdX?=
+ =?utf-8?B?bWxzMExIeWJ2aWJxVklGaURlS3V4a3ZsL3ZBVHNxcFNuQW12dkFuaTQ0Y0NU?=
+ =?utf-8?B?ejRGVHVlcUg1Q1Y5UFRXMUJkL2xmbVJmSGhWTG81RjVCdDdwK3h1eTI3QUZh?=
+ =?utf-8?B?Nnhld1FtK2VvdGw1SEZNSTFocUltSFFaaW44dWI0MzNWOFAvS0ZmQ09PcUVO?=
+ =?utf-8?B?cmpwMzF6aDdrd2FzamhZUzZVNTdGZUxuSHlKSWp6VlVmRysxeHZaTXV0YzVG?=
+ =?utf-8?B?YVFSN0I1Sy9vMGxSa0V1OWQzNUVBY1Z4cWI4ejdzL205WWdtZlgzTE5mVkJk?=
+ =?utf-8?B?cFJ6d3RRdEhKUkprN0JKcFpidlpHZTZhanBucW5rSkxLMHhnYlNGSlpJVkl1?=
+ =?utf-8?B?Tm1xeWRjTVNEeUxyaGNLY3dMbWVPYmM2NjhTdWhrMVJ6dVRaMllvZ3A5c2lI?=
+ =?utf-8?B?RDA0OTJsNDV3VTU3SjJGWjd3RVdyQitWRW1aaWF1MmhzOVIwUHUzV1lCbDFm?=
+ =?utf-8?B?WVBzdWExcktwOW0yNFo4VlRnMTZtWHd1YVBlazZlaTJxaVpOa0FQZUJtRkZy?=
+ =?utf-8?B?c0Fsajk2QktwQ0FuczZMdlViUTVaQzNQMkpBdkhrYVV4Mi9IY3U4SWJycVJC?=
+ =?utf-8?B?NUxpVGNHUW16d3RkbWV3a0NvZ3ZLZk4xNHhOYWUxU1Y1bFFRZ09sa2tpbkp0?=
+ =?utf-8?B?a1Nuam9td1lBPT0=?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(19092799006)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WkRMMjhRbzhSRzg2T3R2UE11S3FiSklIRVZwVUFONzdsaGt1a3FtRENnQW84?=
- =?utf-8?B?elhxaUhwNjBMTEJFakc0c0RHV1Z0ZHBWV0psRXl3R01RcERxbjlMTG1VbDhi?=
- =?utf-8?B?c0hSMHA4RTliWVNPUW8razBHNGV5MWdSNVRDWFJ3NjArdk1udzdlb2VpbHZj?=
- =?utf-8?B?NFJJUy9xQ1lIRFpPRmtZK2swcHVhM0JjMzFadERHaXk2T0xhYXhISzNGVjJV?=
- =?utf-8?B?RE04bENURjVOVGl5UVN1N1FUK3cxMWlKMDNkaEkzQ0Ntdi9aV3RhdG43bElm?=
- =?utf-8?B?WkU1SWN1a2ZHV1ZGc1dhd3ZRUE54WWJSSUd5T1kySldNZFJDYzgzT0pYekRj?=
- =?utf-8?B?Mk1XSVZSa0M4RFJYdC9oekl6Q2YxLzRpOVRuei91WlhKMmhIOW9LZWZ4eEg5?=
- =?utf-8?B?UWtLeEFlciszRXZtUytDSUphQkpUM0I1cS9DTWJTQytTOWs0VVVMeXczb25t?=
- =?utf-8?B?Si8vOEc5T29GbTFHb2owUlVzVE4yckFvd1pGYmNreW5xTGZnd3dvNzJKTXE4?=
- =?utf-8?B?REg0TnZPU1hLTmdMYnkwUnlub3VWaUhxUVRiZzcvelR6MnlibmZQUmQwNEdo?=
- =?utf-8?B?TnIzdVRIOVo0RFZJSWhtU3J2MlA5SWhYTWtQRTQyWHRTVGdCdXdqSmdhNDFr?=
- =?utf-8?B?UnZxcTVzYXZwVXNTKzNjTFpQRnQyZHorODNQVGhIL1cvenFOM0tJSWt6c3Iw?=
- =?utf-8?B?N2N2ejlyTks2ZFpoOUNzNzZoc3doaFFKajM1WVNCcW9XS05Ob2lwWFg1VHJa?=
- =?utf-8?B?YnlMS09SdklkTlg2Z3c5aDd5MlhWM1VOa3VMamdSYzZoSWhOa3k4akR4cDZL?=
- =?utf-8?B?ekpLdXdZUzc3ZzdlZzdmYzFyem95R2FCeGtzT3p6M3JkUEpmWHVja3liaHh6?=
- =?utf-8?B?N1RMYmU2Vjl4blVSTDJaNTVpVU5hVnpTQkxGS0dHTklKM2pPQnNVcEdBNXMv?=
- =?utf-8?B?Ukk3SitZdXBPTjdwWXNOSzNrdmU2VkFQRVBWUzhjczY2M05qNjZqUkwxYUYz?=
- =?utf-8?B?NVIyMVFMb0FybEJ4ZVVrVjRTWTZRUGRJZHdWcklxR0lnMlhFb1BXR0JDQXo2?=
- =?utf-8?B?L0xiT0xidWlyaTdUZGR3VmJBMnp0M2t6QURadFVNdytIK1RJNWFNb3J5bWNX?=
- =?utf-8?B?c2tLT014VmRobGxjaUtoa0VUWWJRQ1NNSkFuYUgyZVcxNW1FeENpcytjZU5S?=
- =?utf-8?B?cTg1bUpkamZVWEllM2dKbEJpRHRtQXdXT3BqVHg1V2FIVU5PeGFvdjlQcW9v?=
- =?utf-8?B?RlA5YTRmRHVlN2N0empIRS9Jb2MwMFp5cGc3LzIrVVN2eEVkY1c5Y0FxRlVu?=
- =?utf-8?B?NVJ5bFZ6R0kyT0ZzdWlLMmJEZmVPZWo1cXBZWjc3YjhSM05DUlh5UG9XU0xS?=
- =?utf-8?B?Nk5TMnBiUUdueDlVK2d3cEJxZm5EOWQ2Nkw0anF1M3lEVWowTmppRUdmTCtK?=
- =?utf-8?B?N3dKcUZnSnVENUVwVmlKZkIwMDJFZmhhRDZFV3BVaXV4QUxMbzRmem5HUDZt?=
- =?utf-8?B?VzlOTS80R0lyNjFad2thcWhua0VVMlRXT1RLY0RCQjBPanZhazFyYmFsYlg4?=
- =?utf-8?B?QnZ3R094amFtQzJoTnJuckkrTHdRM1UyREhCdy9DbitFakpuK0V0eXJrMG1F?=
- =?utf-8?B?MVlZYnBZYmdhZmNpeHlmcGE4NTYwd3g2MU55enNDOEllbEVFa1ZkRVR6MTc5?=
- =?utf-8?B?UDJkR3QvVnR2bm9tOWZyQlB3L2FQTmRENU14N2xSNjl5MzBDWWNseGtZSXFU?=
- =?utf-8?B?Z05UQmRrV04zZHdxMTUwOU5UbUFoMTdxUGVDZTBnN3diUzFtaG9zVklHQnAw?=
- =?utf-8?B?WEw0OVdDb3pPZU03WGZpQlNuRG1SeExPNjczNngySDcyNUtmWGpJQ2xZaGIy?=
- =?utf-8?B?M21uOHBDMCt3UkduTThoT3VRQVlycWFLMTVCRnhwOHduTFZwUDArYThCdFpQ?=
- =?utf-8?B?d2NReGk4OW5pR0cycnREeTI2VENMVmZma25NUEFnUkFVQjhzUHl5UTFhOEZr?=
- =?utf-8?B?UEphR29iYkU4c0trc2NmQ0ZyYUR3VHRoc3AwemlhVE5LNTl4b2c4YlJmWExr?=
- =?utf-8?B?NzEvWWhkYTI3b0w4M3VUaFRVN0ZuZ1JudXN3NVdoQ3ViUlg5Ty9SWmJPT2tq?=
- =?utf-8?Q?PQ6EgteCGNEXmsRok2HDfZfpO?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a87671b-7754-43f7-5467-08ddf5ecea71
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 13:20:05.2577
+	CIP:164.130.1.43;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2025 13:48:03.1819
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: P4kPr5r5KqFn+x3FTYaJbzDP/ymCSLBPFjY7hYUhsfv4x/t/sG0r5Z7sDGePB4VFyp3PRTmRAQVCr4E4fQbL/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9751
+X-MS-Exchange-CrossTenant-Network-Message-Id: b473709f-9fb0-47d9-f832-08ddf5f0d2bd
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.43];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B9E.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB5914
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwMiBTYWx0ZWRfXyBTHGch09Etv MAa1JAVo5K65Tfbbzqeo6hNM7rq5D9XbrKqcoFRaARzc+ptn3nkpADeATEZa77t5tRRRcmvlboX B8gUtaSrwN/oodfScda6wXwDJljYS9+p7NCqtY7VDaItZEn20KgjadFVWNlN/kzLZjVj5uxg5ai
+ 0stBY/4aWuayywUwRYIgYckUlZDRQTt8VW2rP5Dmi5buYQf+h4SOeBCSQezFbhnL3KraJh9rOQ7 iuMzuZ/SvTEqBmiLf9Ycmf2WhKAeXZP+7LrR7qXZpYsZrrGaex8TAUZR/ZWXFzfhmcmTWYXMsnK QfvKyfr8k9bt6wFE4QcaLs5+sb0EFGJABh5Xpwa7nWP3kwUnMTbYOVhmuMGcNZk+yymzZKImrAN pA/j+ng4
+X-Authority-Analysis: v=2.4 cv=TtLmhCXh c=1 sm=1 tr=0 ts=68cabc1f cx=c_pps a=+fiFqpvOFuJZRCDDiTTDmA==:117 a=peP7VJn1Wk7OJvVWh4ABVQ==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=h8e1o3o8w34MuCiiGQrqVE4VwXA=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=FOPVHIcnkjUA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10 a=P-IC7800AAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=8b9GpE9nAAAA:8 a=k1Nz3SOlCHzJLuWz7wEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=d3PnA9EDa4IxuAV0gXij:22 a=T3LWEMljR5ZiDmsYVIUa:22
+X-Proofpoint-ORIG-GUID: sVL-Eb20qOgTUsL_9fhgv9HuYCwjTAi9
+X-Proofpoint-GUID: sVL-Eb20qOgTUsL_9fhgv9HuYCwjTAi9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-17_01,2025-09-17_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ bulkscore=0 priorityscore=1501 classifier=typeunknown authscore=0 authtc=
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509160202
 
-Replace manual rproc_add() and cleanup logic with devm_rproc_add(), which
-ties the remoteproc lifecycle to the device's lifecycle. This simplifies
-error handling and ensures proper cleanup.
 
-With no need to invoke rproc_del(), the remove() ops could be removed.
 
-No functional changes.
+On 9/17/25 12:08, Sumit Garg wrote:
+> On Tue, Sep 16, 2025 at 03:26:47PM +0200, Arnaud POULIQUEN wrote:
+>> Hello Sumit,
+>>
+>> On 9/16/25 11:14, Sumit Garg wrote:
+>>> Hi Arnaud,
+>>>
+>>> First of all apologies for such a late review comment as previously I
+>>> wasn't CCed or involved in the review of this patch-set. In case any of
+>>> my following comments have been discussed in the past then feel free to
+>>> point me at relevant discussions.
+>> No worries, there are too many versions of this series to follow all the
+>> past discussions. I sometimes have difficulty remembering all the
+>> discussions myself :)
+>>
+>>> On Wed, Jun 25, 2025 at 11:40:26AM +0200, Arnaud Pouliquen wrote:
+>>>> The "st,stm32mp1-m4-tee" compatible is utilized in a system configuration
+>>>> where the Cortex-M4 firmware is loaded by the Trusted Execution Environment
+>>>> (TEE).
+>>> Having a DT based compatible for a TEE service to me just feels like it
+>>> is redundant here. I can see you have also used a TEE bus based device
+>>> too but that is not being properly used. I know subsystems like
+>>> remoteproc, SCMI and others heavily rely on DT to hardcode properties of
+>>> system firmware which are rather better to be discovered dynamically.
+>>>
+>>> So I have an open question for you and the remoteproc subsystem
+>>> maintainers being:
+>>>
+>>> Is it feasible to rather leverage the benefits of a fully discoverable
+>>> TEE bus rather than relying on platform bus/ DT to hardcode firmware
+>>> properties?
+>> The discoverable TEE bus does not works if the remoteproc is probed
+>> before the OP-TEE bus, in such case  no possibility to know if the TEE
+>> TA is not yet available or not available at all.
+>> This point is mentioned in a comment in rproc_tee_register().
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/imx_rproc.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+For the discussion, it’s probably better if I provide more details on the
+current OP-TEE implementation and the stm32mp processors.
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index a53ff186d218f54123e1ce740b0277a6fe95a902..694fbbb2f34061de22a3a815f8a6114159585f9e 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -1149,20 +1149,13 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 			return dev_err_probe(dev, ret, "Failed to add devm disable pm action\n");
- 	}
- 
--	ret = rproc_add(rproc);
-+	ret = devm_rproc_add(dev, rproc);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "rproc_add failed\n");
- 
- 	return 0;
- }
- 
--static void imx_rproc_remove(struct platform_device *pdev)
--{
--	struct rproc *rproc = platform_get_drvdata(pdev);
--
--	rproc_del(rproc);
--}
--
- static const struct imx_rproc_plat_ops imx_rproc_ops_arm_smc = {
- 	.start		= imx_rproc_arm_smc_start,
- 	.stop		= imx_rproc_arm_smc_stop,
-@@ -1288,7 +1281,6 @@ MODULE_DEVICE_TABLE(of, imx_rproc_of_match);
- 
- static struct platform_driver imx_rproc_driver = {
- 	.probe = imx_rproc_probe,
--	.remove = imx_rproc_remove,
- 	.driver = {
- 		.name = "imx-rproc",
- 		.of_match_table = imx_rproc_of_match,
+1) STM32MP topology:
+   - STM32MP1: only a Cortex-M4 remote processor
+   -  STM32MP2x: a Cortex-M33 and a Cortex-M0 remote processors
+   At this stage, only the STM32MP15 is upstreamed; the STM32MP25 is waiting
+   for this series to be merged.
 
--- 
-2.37.1
+2) OP-TEE architecture:
+- A platform-agnostic Trusted Application (TA) handles the bus service.[1]
+   This TA supports managing multiple remote processors. It can be embedded
+   regardless of the number of remote processors managed in OP-TEE.
+   The decision to embed this service is made at build time based on the
+   presence of the remoteproc driver, so it is not device tree dependent.
+   - STM32MP15: TA activated only if the remoteproc OP-TEE driver is probed
+   - STM32MP2x: TA always activated as the OP-TEE remoteproc driver is 
+always probed
+
+- A pseudo Trusted Application implements the platform porting[2],
+   relying on registered remoteproc platform drivers.
+
+- Platform driver(s) manage the remote processors.[3][4]
+   - If remoteproc is managed by OP-TEE: manages the remoteproc lifecycle
+   - If remoteproc is managed by Linux: provides access rights to Linux 
+to manage
+     the remoteproc
+
+   - STM32MP15: driver probed only if the remoteproc is managed in OP-TEE
+   - STM32MP2x: driver probed in both cases for the Cortex-M33
+     For the STM32MP25, the TA is always present and queries the driver 
+to check
+     if it supports secure loading.
+
+
+[1] https://elixir.bootlin.com/op-tee/4.7.0/source/ta/remoteproc
+[2] 
+https://elixir.bootlin.com/op-tee/4.7.0/source/core/pta/stm32mp/remoteproc_pta.c
+[3]https://elixir.bootlin.com/op-tee/4.7.0/source/core/drivers/remoteproc/stm32_remoteproc.c
+[4]https://github.com/STMicroelectronics/optee_os/blob/4.0.0-stm32mp/core/drivers/remoteproc/stm32_remoteproc.c 
+
+> The reason here is that you are mixing platform and TEE bus for remoteproc
+> driver. For probe, you rely on platform bus and then try to migrate to
+> TEE bus via rproc_tee_register() is the problem here. Instead you should
+> rather probe remoteproc device on TEE bus from the beginning.
+
+The approach is interesting, but how can we rely on Device Tree (DT) for
+hardware configuration in this case?
+At a minimum, I need to define memory regions and mailboxes.
+
+ From my perspective, I would still need a driver probed by DT that 
+registers
+a driver on the TEE bus. Therefore, I still need a mechanism to decide
+whether the remote firmware is managed by the secure or non-secure context.
+
+Another issue would be to be able to share the remoteproc TEE service 
+between
+several platform remoteproc drivers, in case of multi remote processor 
+support.
+
+>
+>> Then, it is not only a firmware property in our case. Depending on the
+>> compatible string, we manage the hardware differently. The same compatibles
+>> are used in both OP-TEE and Linux. Based on the compatible, we can assign
+>> memories, clocks, and resets to either the secure or non-secure context.
+>> This approach is implemented on the STM32MP15 and STM32MP2x platforms.
+> You should have rather used the DT property "secure-status" [1] to say
+> the remoteproc device is being managed by OP-TEE instead of Linux. Then
+> the Linux driver will solely rely on TEE bus to have OP-TEE mediated
+> remoteproc device.
+>
+> [1] https://github.com/devicetree-org/dt-schema/blob/4b28bc79fdc552f3e0b870ef1362bb711925f4f3/dtschema/schemas/dt-core.yaml#L52
+
+My issue with this property is that this would break the compatibility with
+legacy DT that only support loading by Linux
+As specified in [5] :If "secure-status" is not specified it defaults to 
+the same value as "status"; [5] 
+https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/secure.txt
+
+>> More details are available in the ST WIKI:
+>> https://wiki.st.com/stm32mpu/wiki/OP-TEE_remoteproc_framework_overview#Device_tree_configuration
+>> https://wiki.st.com/stm32mpu/wiki/Linux_remoteproc_framework_overview#Device_tree_configuration
+>>
+>>>> For instance, this compatible is used in both the Linux and OP-TEE device
+>>>> trees:
+>>>> - In OP-TEE, a node is defined in the device tree with the
+>>>>     "st,stm32mp1-m4-tee" compatible to support signed remoteproc firmware.
+>>>>     Based on DT properties, the OP-TEE remoteproc framework is initiated to
+>>>>     expose a trusted application service to authenticate and load the remote
+>>>>     processor firmware provided by the Linux remoteproc framework, as well
+>>>>     as to start and stop the remote processor.
+>>>> - In Linux, when the compatibility is set, the Cortex-M resets should not
+>>>>     be declared in the device tree. In such a configuration, the reset is
+>>>>     managed by the OP-TEE remoteproc driver and is no longer accessible from
+>>>>     the Linux kernel.
+>>>>
+>>>> Associated with this new compatible, add the "st,proc-id" property to
+>>>> identify the remote processor. This ID is used to define a unique ID,
+>>>> common between Linux, U-Boot, and OP-TEE, to identify a coprocessor.
+>>> This "st,proc-id" is just one such property which can rather be directly
+>>> probed from the TEE/OP-TEE service rather than hardcoding it in DT here.
+>> Do you mean a topology discovery mechanism through the TEE remoteproc
+>> service?
+>>
+>> For the STM32MP15, it could work since we have only one remote processor.
+>> However, this is not the case for the STM32MP25, which embeds both a
+>> Cortex-M33 and a Cortex-M0.
+> I rather mean here whichever properties you can currently dicovering via
+> DT can rather be discovered by invoke command taking property name as input
+> and value as output.
+
+That would means services to get system resources such as memory region
+mailbox, right?
+
+>
+>> Could you please elaborate on how you see the support of multiple remote
+>> processors without using an hardcoded identifier?
+> By multiple remote processors, do you mean there can be multiple
+> combinations of which remote processor gets managed via OP-TEE or not?
+
+On stm32mp25 we have 2 remote processors a cortex-M33 and a cortex-M0
+We should be able to manage them using the proc_idAnother point is that 
+We should allow an other Secure OS could implement the TEE remoteproc 
+service managing the remote processors with different proc_id values, to 
+avoid to specify somewhere an unique proc ID per remote processor.
+
+>>> I think the same will apply to other properties as well.
+>> Could you details the other properties you have in mind?
+> I think the memory regions including the resource table can also be
+> probed directly from the TEE service too. Is there any other DT property
+> you rely upon when remoteproc is managed via OP-TEE?
+
+The memory regions that include the resource table are already declared
+in OP-TEE. The memory regions defined in the Linux device tree are for
+RPMsg (IPC). These memories are registered by the Linux remoteproc driver
+in the Linux rproc core.
+
+Thanks,
+Arnaud
+
+>
+> -Sumit
 
