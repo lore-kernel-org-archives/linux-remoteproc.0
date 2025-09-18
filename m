@@ -1,72 +1,72 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019C83594E
-	for <linux-remoteproc@vger.kernel.org>; Thu, 18 Sep 2025 12:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E619226CF7
+	for <linux-remoteproc@vger.kernel.org>; Thu, 18 Sep 2025 12:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758198858; cv=none; b=IBLYBoE+GLmdmBl6B/rtvIuOIaudSV6cXGHm9wL5wjIvz6YwiOhp/VnWcfZpzAGznN9ubcACH6mqJ1H3Bg8vh12DouJD85EllXfSHDHceiX30WJhx6xPVZy8nESB9gbmRBmD3tpnVcmGwTX+Au03KTfkIm7yNc/KyCuG/hFR4pU=
+	t=1758198914; cv=none; b=c5+N3icK0o7OLC9w//3tF6KkhanwBYIi2/Yniyu7/22B+6ec6ObteOPwRmc3hgmRZDuA32UAGfd1xh14VIdGeFiPth+UfKYMCb4uwP4o4CONd6qCCYXR2dX6HKxV76ioR1PW8R6tQunMYBCX/k5X44VGIfuTtujp+znXgMASRws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758198858; c=relaxed/simple;
-	bh=o6qpj5dO6JqT1sJImilQ9anmY7mh64RJpsBsVZ2KLxU=;
+	s=arc-20240116; t=1758198914; c=relaxed/simple;
+	bh=WmwG2u+A6lb0Y98jTWbQ8dh86e4JAc3PFQPA4/aVVM4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6755iYD1zFm7W6NTyVDRf6aJKUCG321/eWCapIFBY+q5BU+QVpNEiA7Rx0YYRduI2cjLj4yNoIfQkbvfyCu4LJ8a7lyydHRQmtCzJ/r0zdQBruyMdgjB6ClQVQop8AH05lDOflGtldDYGAfbaAEKDE+dliuPMeYnLTasjYmCgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBc7eqQX; arc=none smtp.client-ip=209.85.214.179
+	 To:Cc:Content-Type; b=HGvnTnh87Um0s20Xn4IwE4LvsBA6obvcDjxWxfDwnCcSo0NqT6371pQvo4APkisSuzZWi8chosPlar2liyy07FBa3xpWvvC6XI11qfLTrOah+o58Z34fsxXuHkS9JS85zA9VMuGI1ozCG8xMsSO2YK9vp/ohzeqNzGgwlLh8FUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hzWDkdph; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBc7eqQX"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-26799bf6a2eso9111025ad.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Sep 2025 05:34:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzWDkdph"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b551350adfaso140928a12.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Sep 2025 05:35:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758198855; x=1758803655; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758198913; x=1758803713; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o6qpj5dO6JqT1sJImilQ9anmY7mh64RJpsBsVZ2KLxU=;
-        b=hBc7eqQXSs8wv9tjBfVgCkJafljF/8kvDAEdmvAl5aLS0TdJxDbCpmCgTmuXFkCNw2
-         5b4UTTsEavMzTY24Cu5bClb2IQG8LHnO5VDuxwmCs8Zw7bNMlOvV2U+yOIpvpZNlg1xU
-         6Vo1TSCOHpSghn2ATdinrkyQezdyyo+htiJT/08YvA6iPEmrrbc6K6aun392fzqpp2BZ
-         01IuLUsY9KiY6Scvb8QHfdcNiNxtUFNcZnuw2q02MyermtEfQyxNbM4JZ/Y8Q6EnJsO1
-         vpan/z5Mg+jjvLqVUrI4bgfE6P5eE6NowSv+pgI7+Zt37P8w/WEtMGGgXNswiKJpNX6X
-         SC1w==
+        bh=WmwG2u+A6lb0Y98jTWbQ8dh86e4JAc3PFQPA4/aVVM4=;
+        b=hzWDkdphmuKi7LxqGR08LsiHUgoOI//Ptp6VKBbmLRhr354iYdCD5TOfwo3hYLxGeR
+         ePhQHST9O4IR8+7bklAPnnkeBAhDP5q/BvJXGhYkFPbV2kucCSuSBQ71PENNxNZ07+hm
+         HlGEp57yN3zOdKe82xkPXqTbeslx0774NagsHa29sr9+4qYTep0i4mE7rUCPpyFX4/I8
+         PrxlfXNYrWEhMf92iSe+5E02+EDsDkD5EwhYQi9W8N2Xyo6kc3shrBEU3a7ZTFhP1qTf
+         /inup2uapqBPfHOAYEbH8z9QuFrCRCIn2mdfVJ+y5Dd3He6iTE7sGZrXieEcPaoGhBSQ
+         SzGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758198855; x=1758803655;
+        d=1e100.net; s=20230601; t=1758198913; x=1758803713;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=o6qpj5dO6JqT1sJImilQ9anmY7mh64RJpsBsVZ2KLxU=;
-        b=QQWm7UA48Yy8k6vKj/7z7PTBuRnCPGDXl/6EQkYZt5tpc/sc8vxV9oRIg/qna6bvGA
-         lwjo4yrzX/iodtiXgXPeJD49lBtJ5MuycC5dXk8e7aNY6a44uwIqkrxU17OHSrztBsGJ
-         uKd0svOW781iT1HSvZUkpLTwu1S4MsoFWFaFsVtcws7PuEPrhb1cc1mte8hw1nXH03Gf
-         vqjBns+LHDFqdS1gKaa86zV1mueFiJKjhFR706eSiE2jmoS1W7JGXMnij+v3x36dCI0Q
-         30zdDEADndiVyRAbTCxCUZnj0TcSbhpsJGLdt5Vvp2t7pHSx9Ql7LqyPOILTHWgXJ4cZ
-         p38w==
-X-Forwarded-Encrypted: i=1; AJvYcCVzF/fTgw6r1ujzF1N5xsZhHNegjcQX1XgdXxvDS6+CNRT9n+fXr1eiWxRe2rJ4K3KRYKjv6kkrSZhcCXyveFuw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXRlEnGa9zcO48kayvl5TrLTsUg91xGHm6Sp6koCq38COvaUkq
-	/9BOQvSqxzeRiSwvl1wQCP7FRcEVjBUBGrFnezzDiLBUzc42No8sfudNmQ7lFaK98P6pdbElbYn
-	z+M7MX5GyOqoACL4CrSm8f9ID1l4H1Us=
-X-Gm-Gg: ASbGncup8p9LLqsSqPyf+v/gU7rfA9irqp2B3Ogg5A6pLH+2o+cOSv5nuXOsnJ/1UWu
-	IlsxDDARSZzQxy3Z4ja3ZWeg9CsE1HCWH2vBNOkY69uHgRxIc20SSV9i0kkitHx/j2VJ+xEv625
-	OwIGJuHogvAP6Dn7/SLRyyNSlXFExJbwqZ20NwH++4JpId0YLNxTye3ZWeQd2FxmlIoO1IFxspl
-	txix3v0BJ8vyY/WWoUiH0Lr7QuzNIqdYm+BJ/S9qQkzMZNE2iQlz/w+S11cMzvmGw==
-X-Google-Smtp-Source: AGHT+IGnwyZAzgewsFS8BUxGi1+hNmSjaadWufVUdwqAGCS8aqyS2HM8fO6whTlbN/7oWRWldmq3iDfdXt1FIzoF+PM=
-X-Received: by 2002:a17:903:3c2f:b0:24c:f589:661 with SMTP id
- d9443c01a7336-268118b963emr75488845ad.11.1758198855204; Thu, 18 Sep 2025
- 05:34:15 -0700 (PDT)
+        bh=WmwG2u+A6lb0Y98jTWbQ8dh86e4JAc3PFQPA4/aVVM4=;
+        b=OF6wLJ/YKqXgPobJHMvzCDTPqmyZTY8uDyjrDYkpNyPCIOBgd9mu2jdscZZlp4fqJ0
+         bW23sdge1XJSlbPIcbOzQfnpYtd8xiVMsynH5FcoLSLK0K+/gAToRCVls9YH1UF8lFgs
+         siZO3AZpE6s9wJWE0Sv2fwVzp2GvGKU3qTF4BInNI80A6X/kJKsVazT1iNewjFseZci4
+         3Zj1uhwqUOzqF9e0PXCVmPhz9v13bSHcMJsSlp3lzFZWBIE9zvFE5N1Cm0koY1kmI4Kh
+         tH1TzWkz+Y4XW6DiqMKLULXlKNPPy7uWXxg3MA4ZdpjK4vveatxjuFS7csJZTyqK7O1A
+         r6pg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1Py5nmBFiLo+BWB/Wa5JIFji0MnUeQ3J3Dvhr+8Yz77tsjSQJFMHakrCKhHjgLjojmLaMaT4c9nHbdt3f1caC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeAHca6DN/HRAqv4b1LMDjqqV1b3i8EI77JZIBEzX/ajgZzvZQ
+	XkB0jv+/F0e4aH/+Vu95O+RwlmGBRgfyMqfR4YR2AivkkubT3tpT1hUMxTGJU3t0IYvH/X/Z9dZ
+	ZIZHRkSZCRnrFsDby/ah02RIB+h+K4YA=
+X-Gm-Gg: ASbGncsmL0eomdJUnpnOaOpzg2CAsY1p0zrkg7OH6s2VHVIc5sMQaroJVgbtTmvnjjY
+	YypWsVyzyFJcZiePAwS4qn9c98RDsMKr5vd4ckDqPvQyxPsJXBE3rQgC7KRJ40HwRCVFN+UCEos
+	VKxiKQJkPpvt5u/vdCWMFRSyaCVmLST/XDvoYauYO8j3NbJewo3g3EZ0nzEfXYqDDp2tmT0ogq2
+	uNymykWBRJKIpOqv0hS5I5eYJ06KTlyAe1IvF6/5dWg3iVpBPH92bU=
+X-Google-Smtp-Source: AGHT+IF5CLHJIp92USkA4+4XS9SnflXRFNFA4KNQ8mQvZFJgKz7NDJudA8HZO2hgaQ+oWxgXz4tBfw4gYVeBO4KbAgs=
+X-Received: by 2002:a17:902:ce91:b0:24b:182b:7144 with SMTP id
+ d9443c01a7336-268118b4708mr79285865ad.7.1758198912690; Thu, 18 Sep 2025
+ 05:35:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250918-imx_rproc_c2-v1-0-deec8183185f@nxp.com> <20250918-imx_rproc_c2-v1-2-deec8183185f@nxp.com>
-In-Reply-To: <20250918-imx_rproc_c2-v1-2-deec8183185f@nxp.com>
+References: <20250918-imx_rproc_c2-v1-0-deec8183185f@nxp.com> <20250918-imx_rproc_c2-v1-3-deec8183185f@nxp.com>
+In-Reply-To: <20250918-imx_rproc_c2-v1-3-deec8183185f@nxp.com>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 18 Sep 2025 15:36:33 +0300
-X-Gm-Features: AS18NWDAzLMXylSrWYdgmw06GR6oKayTLcqLKRKndzdOYMuF8YWkd9yOlAi8pkU
-Message-ID: <CAEnQRZD9XGSzYBYMF+0G9RtDo4y-RtX2n=5M9p8Osk3csYrbLA@mail.gmail.com>
-Subject: Re: [PATCH 2/5] remoteproc: imx_rproc: Make detach operation platform-specific
+Date: Thu, 18 Sep 2025 15:37:31 +0300
+X-Gm-Features: AS18NWAc8U_p2z0I7kb8DWdQ86uq1YFFMY1dQTrBWLLBGeNxnk_fylcKHlj3yqM
+Message-ID: <CAEnQRZDZ+unzySHbvMZaAfjecxWYCicCKbiW+Oth8JL-tZpeCQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] remoteproc: imx_rproc: Enable PM runtime support unconditionally
 To: Peng Fan <peng.fan@nxp.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
 	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
@@ -79,20 +79,10 @@ Content-Transfer-Encoding: quoted-printable
 
 On Thu, Sep 18, 2025 at 2:52=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
 >
-> Refactor the detach logic to support platform-specific implementations vi=
-a
-> the dcfg->ops->detach callback. Allow finer control over detach behavior
-> depending on the remote processor management method, and make it easier
-> to add detach support for new SoCs.
->
-> The previous hardcoded SCU API detach logic is now moved into a dedicated
-> imx_rproc_scu_api_detach() function, and registered via the plat ops
-> structure. The generic imx_rproc_detach() now delegates to the
-> platform-specific handler if available.
->
-> Also, the dcfg->method check with IMX_RPROC_SCU_API is removed.
->
-> No functional changes.
+> PM runtime support is safe and applicable across all i.MX platforms, not
+> just those using the SCU API. Remove the conditional check and enable PM
+> runtime unconditionally to simplify the code and ensure consistent power
+> management behavior.
 >
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
