@@ -1,41 +1,70 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451442F29;
-	Sun, 21 Sep 2025 03:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2F218BBAE;
+	Sun, 21 Sep 2025 07:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758423651; cv=none; b=qzJb2NT8z5f2UMEEnKNR0ck4M1BOrAYfqQaHKtd24a7snuyvKl4YvjJx3qvxJBLqx+fiwfiJLG4aEqJ8prfzwm5E3F/r+APMGvMaEpR8vlHYhH/aLrVIRTM8NvO1zNjHES758Z1cXrmfC/ncBYkEtk6Dt3Ak90HNNmbBUrEsqok=
+	t=1758439887; cv=none; b=Hd1i2ufE3xZUK89ZnjXp4z8ydaAwCWXJ0oaxRTiA0tsbhmS0WEDb3Bd5ppEdwK5jw6PF/4w6p8HeHs0WDOm5EdDvg+sZuV9e+H1I8f3rVqDTwjWQVtq6YoyL8/RA3dDOWukNmc8eLMuy6jWxYsbDz0+P4DvqwhwbHoQyn0yloFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758423651; c=relaxed/simple;
-	bh=7Sqew7VnB4Jph6FHKh9b5Kf91xZLXtkgSSFLTMlmuhU=;
+	s=arc-20240116; t=1758439887; c=relaxed/simple;
+	bh=Zx2s38jOkZMSCTI4ObaRdGYcXjsynTIZirrNLaJlpYI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GE91L4MW4mFJftiWlvasqfqzJ5xkMImV8627feywPBvV3BI4ppZrwFBioaztmceHhesfLWg5xFoGgv9XQVUFy9O4EuqoiRsxWEA4g7/vrjmCX/cwjja6kIUefShu+0eTQpkovG2Twoar5anNL95b9HX+R9cStGj0lFDOpUJ7EwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bH+tA6DI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIJMUQa77+8VAEtolC+0OeKRox4qPZI7QQ6xbrPO13iPaWHNEm+QswI370Z3ht/F8YsRJ7/vkL4opqIGbP1EHFZTxfsQdtTnb2jCrzrKHExxOMbA1YrmiF5R2EaMT2rEgRpM+AXjZ6uDGGEqHrg9cwNYhHW6GweHzsUtFtYGbxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BIBbm+BK; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bH+tA6DI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B79EC113CF;
-	Sun, 21 Sep 2025 03:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758423650;
-	bh=7Sqew7VnB4Jph6FHKh9b5Kf91xZLXtkgSSFLTMlmuhU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bH+tA6DIaYzJMI9SIwvY/pl891+2rbdH8J3JMlfI6LqZ3RYUp1H0K/KMfP7vAnSDK
-	 rWNPdIMfjNQMsy88LSUcp/K5nrnX7w+TN8d7sUibVHDB7RlpBkG6eaRJYHxWz+ul2N
-	 +uz7MIsXZ7ODBPoGt4TozN6KyNuWQfWgOuAL4AGTu6A2iEQhT1C6feS+P9Aj+qRf6/
-	 4qUmXjACsFA+wtv2pzgbXkC8yvgTGXc6bycyrKQGERclvSru5paepTIn+KAhA/SYKI
-	 cwIAM/fuS+dDiRiYdPRA7IN0hD9ezCqfnrNNIH4NwYbP8oBcnD+qO5LuaOsvFV2yBV
-	 xQGS7w+J8kXgw==
-Date: Sat, 20 Sep 2025 22:00:48 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Souradeep Chowdhury <souradeep.chowdhury@oss.qualcomm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Souradeep Chowdhury <quic_schowdhu@quicnc.com>, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: Re: [PATCH v7] remoteproc: Add device awake calls in rproc boot and
- shutdown path
-Message-ID: <ud4nodcdhxr4pux6nsvqzaclqrnmct6ehjr5bmsxdgjby5xs4k@4c23gunpbf4z>
-References: <20250828092615.2114183-1-souradeep.chowdhury@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BIBbm+BK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758439886; x=1789975886;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zx2s38jOkZMSCTI4ObaRdGYcXjsynTIZirrNLaJlpYI=;
+  b=BIBbm+BKDYCDibTBqNS52ETGSEw4dLR8+3S+GS+xjQefKdB2YEtbA98u
+   E48FXnWeEjC0B5tvMkYi8mFG7ltK84zzJ2I3R1Z0qrDOndH+ak7pEDomH
+   bqkvwX1wfGB2gIuHdggdfBhRgotGVMlMDRiB+qEb1FPwRaI0fhfiTVHC7
+   FBdTKnfxJCG9BzcHboKUYb5q8yasnjGgvv4Bb63MI4hRvZzPL+F36g9uH
+   XTD8XF9vUOjB6t8SZtLBTqs0L0Z7L58HpVEQ0kbpFA0MXH2j5fDczWZSX
+   4ha4O4Qi6mp5M9CQMpMhyaI/yuFPom7/H9Ug83M8cJ2pimOHRSFFLs4t3
+   A==;
+X-CSE-ConnectionGUID: T/8vmloFTSm5/ZfnCRRpDw==
+X-CSE-MsgGUID: aj9/JyfIQh+0XnpcIr0q8g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11559"; a="60622166"
+X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
+   d="scan'208";a="60622166"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Sep 2025 00:31:25 -0700
+X-CSE-ConnectionGUID: lWtdmAeGSQO/zSzivUP1iQ==
+X-CSE-MsgGUID: yEXdxvB4RzWxZ2t5A3StgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,282,1751266800"; 
+   d="scan'208";a="175814344"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 21 Sep 2025 00:31:21 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v0EXM-0000YT-1T;
+	Sun, 21 Sep 2025 07:31:11 +0000
+Date: Sun, 21 Sep 2025 15:31:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: Re: [PATCH v3 04/12] soc: qcom: mdtloader: Add context aware
+ qcom_mdt_pas_load() helper
+Message-ID: <202509211544.9DSw3dBc-lkp@intel.com>
+References: <20250921-kvm_rproc_pas-v3-4-458f09647920@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -44,109 +73,45 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828092615.2114183-1-souradeep.chowdhury@oss.qualcomm.com>
+In-Reply-To: <20250921-kvm_rproc_pas-v3-4-458f09647920@oss.qualcomm.com>
 
-On Thu, Aug 28, 2025 at 02:56:15PM +0530, Souradeep Chowdhury wrote:
-> If an user stops and starts rproc by using the sysfs interface, then on
-> pm suspension the firmware fails to load as the request_firmware call
-> under adsp_load relies on usermodehelper process via firmware_fallback_sysfs 
-> which gets frozen on pm suspension.
+Hi Mukesh,
 
-How does it fail? Is the firmware load aborted? Does it time out while
-we're suspended?
+kernel test robot noticed the following build warnings:
 
-The usermodehelper is optional, adsp_load() doesn't rely on
-usermodehelper, it relies on the firmware class, which might perform
-usermodehelper.
+[auto build test WARNING on 846bd2225ec3cfa8be046655e02b9457ed41973e]
 
-Please describe how and why it fail, so that help educate others (me
-included) about what the actual problem you're seeing is.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Ojha/dt-bindings-remoteproc-qcom-pas-Add-iommus-property/20250921-041055
+base:   846bd2225ec3cfa8be046655e02b9457ed41973e
+patch link:    https://lore.kernel.org/r/20250921-kvm_rproc_pas-v3-4-458f09647920%40oss.qualcomm.com
+patch subject: [PATCH v3 04/12] soc: qcom: mdtloader: Add context aware qcom_mdt_pas_load() helper
+config: x86_64-buildonly-randconfig-006-20250921 (https://download.01.org/0day-ci/archive/20250921/202509211544.9DSw3dBc-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250921/202509211544.9DSw3dBc-lkp@intel.com/reproduce)
 
-> Currently pm_awake calls are present 
-> in the recovery path, add the same in start and stop path of rproc for 
-> proper loading of the firmware in non-recovery path.  
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509211544.9DSw3dBc-lkp@intel.com/
 
-I would expect/hope that the git log tells us that the pm_stay_awake()
-in the recovery path is there to prevent the system from being suspended
-while we're restarting the remotproc, as this is expected to lead to
-functional degradation and suboptimal low power state.
+All warnings (new ones prefixed by >>):
 
-"They call this function over there" is not sufficient motivation.
+   In file included from drivers/media/platform/qcom/iris/iris_firmware.c:10:
+>> include/linux/soc/qcom/mdt_loader.h:59:5: warning: no previous prototype for 'qcom_mdt_pas_load' [-Wmissing-prototypes]
+      59 | int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
+         |     ^~~~~~~~~~~~~~~~~
 
 
-But just to be clear, I'm not saying that this patch is wrong. I'm
-saying I don't understand your problem/motivation.
+vim +/qcom_mdt_pas_load +59 include/linux/soc/qcom/mdt_loader.h
 
-> 
-> Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicnc.com>
-> Signed-off-by: Souradeep Chowdhury <souradeep.chowdhury@oss.qualcomm.com>
+    58	
+  > 59	int qcom_mdt_pas_load(struct qcom_scm_pas_ctx *ctx, const struct firmware *fw,
+    60			      const char *firmware, void *mem_region, phys_addr_t *reloc_base)
+    61	{
+    62		return -ENODEV;
+    63	}
+    64	
 
-This is both you, no need to carry both.
-
-> Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
-> Changes in v7
-> 
-> *Justify this fix by adding more details in commit message
-
-Please start use b4, so we get proper links to old submissions here.
- 
-Regards,
-Bjorn
-
-> Changes in v6
-> 
-> *Add some correction to commit message
-> 
-> Changes in v5
-> 
-> *Added more details to commit description
-> 
-> Changes in v4
-> 
-> *Remove stability from mailing list
-> *Remove the extra tab in v3
-> *Change the commit description
-> 
->  drivers/remoteproc/remoteproc_core.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c2cf0d277729..5d6c4e694b4c 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
->  		return -EINVAL;
->  	}
->  
-> +	pm_stay_awake(rproc->dev.parent);
->  	dev = &rproc->dev;
->  
->  	ret = mutex_lock_interruptible(&rproc->lock);
-> @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
->  		atomic_dec(&rproc->power);
->  unlock_mutex:
->  	mutex_unlock(&rproc->lock);
-> +	pm_relax(rproc->dev.parent);
->  	return ret;
->  }
->  EXPORT_SYMBOL(rproc_boot);
-> @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
->  	struct device *dev = &rproc->dev;
->  	int ret = 0;
->  
-> +	pm_stay_awake(rproc->dev.parent);
->  	ret = mutex_lock_interruptible(&rproc->lock);
->  	if (ret) {
->  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-> @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
->  	rproc->table_ptr = NULL;
->  out:
->  	mutex_unlock(&rproc->lock);
-> +	pm_relax(rproc->dev.parent);
->  	return ret;
->  }
->  EXPORT_SYMBOL(rproc_shutdown);
-> -- 
-> 2.34.1
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
