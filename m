@@ -1,89 +1,80 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF642441A0
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Sep 2025 06:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907DE2FCC1B
+	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Sep 2025 08:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758521535; cv=none; b=Xw7fv097ro1AkTquhPRDFxz9+5DLtIfIgvLQmB9lPT/eWcNSzVehlaoanZrXXk4Np/nkCj275OyNwgW2Y/jqkFff6VWYgupKx50TJ52+LlMQfbrdhkTE0rejw36/p6mm5qhE4irM0jdScPXAaXrNNEh2hCmxLCjYH6TxnCuwmvI=
+	t=1758528652; cv=none; b=Bt8QN8hKdYwrJbc56Z2r8DBC+ZwopoK1JPVscsJA2LHn0UXBPjo+6eHD+M+NX+bixHBaCypmSste7LGtI8AxK3NMbjZ4LZ+bGTU3lNLvsB4WBm8wwL+6KeybcqNz3Yl6s0nH/ztM/fl8i0ZA8quwJFufw762M8rzJP8QEmNzt7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758521535; c=relaxed/simple;
-	bh=nUaaLVJ/1LgBoxTs7G6/f0cHxlBwhNPfXAKXcdI9o7E=;
+	s=arc-20240116; t=1758528652; c=relaxed/simple;
+	bh=s7UO2fKhfUCI4YhH5MtiSmIjIIKO8XsVSeOX4a7lczA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZZqPNPNhB16hDnQkDyA1Z9W9nr36EwHiB7WufVB4JZ2T5nfTIDo8Bc61PXVF5W27SXo3rGwMQKd98q3yIBxdHnJC7or/mFhqVRw/UlJYdmeGSTm2vIUlu2kwAAHsM8i2BOzDrro4Bgf7u+eIoq8uvclai+AiZUfenaFhUXNJmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ICPzq+KD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=IvGqoIBlvZk+lbR11h2w+fQyYGWdBchS0qrKCSAsRt9MaCGWDaBrkdZVE/V/JY11ayZpp0Aj+cglnKUexC9B/IoJxs7iaph5CVn2V8a7Erp8kFMkmov7iNdBkvDIDLzkbayhJxF9khqe5GjEyy7gCA3fiN1k9MAkRSNLi28u370=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HebjR3Og; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ICPzq+KD"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58LJg6rj032343
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Sep 2025 06:12:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o7H8DyNUkWtjkF6osxewsi7ALk1W2IFcqymZvnfULzM=; b=ICPzq+KD4bNZzj0K
-	/gTMTSlhL9MZj3uXSzPrWCBzSNO0R1gcXVQpeKXuoA83pky0GuP2HJojuNiIq+1y
-	Zh9jYILRe/aABQBxSRwzhFSdQSE3J6MbsqMwgN3I+yCX4oF+adUSkrxqZ9TPZqCI
-	yZAUbNFf4BFquDcg/xthLUtGsDt+hYmy5ZOdKOxFAb3ksntLNMOvJ/kecBpdc9yz
-	SBtcIi7ve2QXTuB/D2mA5oKXG6RFHUD/9p97EIaxKz6xtox164rXSTETBL1PCca/
-	kj8dSxJ85bcT96eIbblJlemBAJZC0XTF/0ZsAX0aV/0QkTi+7NQmpdku5tYWAVxf
-	iBAYig==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 499mn7bhuc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Sep 2025 06:12:12 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-77f14f6a553so1786991b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 21 Sep 2025 23:12:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HebjR3Og"
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-46b7580f09eso6385285e9.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Sep 2025 01:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1758528649; x=1759133449; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=q6oR8Fo0jD+wRtkqL3niLJ+D52o9GcW+sR1rF3CUjoI=;
+        b=HebjR3OgoR37YQlUjIACWF6/9uWGr2CTLWFY4PwC8whzo8fJWI9dAdpPCEEIWblKpB
+         FK5JwUY40AdAai5FFHCjf+QcJ6SzxvUVprelnLWEIKiOzkaDkHNuC6tsUV0ckBnHVoNF
+         jQ8OeLILc2MPRipVjjVw0qCWHXBG9kaRqUVA4HWyFSn2kHTKEtwmLVTJwTgFxJkwVUVi
+         G2nVX5z/kJnpZPaNdl2CHUpe/pvNSlGZCqITTcoalLbUht8Z/JvD5T7zqAm5sS1d7zut
+         iWm5X6vmrP/RbsY8qr9CNVco7lzT+rt5tl6aTRYYgibD/XBaJ3+ZsUQI9V+6EIxsPfQx
+         I3IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758521531; x=1759126331;
+        d=1e100.net; s=20230601; t=1758528649; x=1759133449;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o7H8DyNUkWtjkF6osxewsi7ALk1W2IFcqymZvnfULzM=;
-        b=uAi7IOrs87vRTxOS/ElBwtiDW14WavWZZ9jaaAn9fBQYyYDa7ftwEo7iTQoEykAZ6u
-         5F2bKlTg+EXwUsNk8AUXkeNhCeH9qMwc3KC6FIwh6QLeJK3pSEtTGTczbEHcm+DL4qp+
-         uQh9fGpforo/REKpq5XjHPuuSIk1YijPHD7FRoBtWFhDeAx1bpXBgs9qD40S545tODkh
-         dGI74Wtk1xPXx26oDpgMRncZApD17t4dtVpDrrRh8MkCCe2tsxf0VAuhGT+F3N7Rnt6e
-         AdXd3PDlVpjFx+0HJ9PB24IS1WHRw/KUn0I0prVYkwz+dW4Tue2IMxn3mfQoeuIy6CKS
-         4Lrg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Uqo4lv8+l2NfVcyB7X/xz5BbU4P+bK03X8+SGhSqXNLeYDNVow8eBGCVUD4ybjucKFVDRYuy0oamjCH/apjC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxjO3F+np22S3qHKzONCBpe4LZONZRXjooY3yvkwLtyc94t6na
-	E4cZhK//ajDvjNb3QcgiJOre5uHGyifBntlqITU7B4qsCENdADVRP3P44RsIoVz/L3L16lIJUax
-	imbI2amcPpK8azDckwT4WDFG+kJluzE4avp13eI3Bdn5rnGFhovB5I9UEwzI8TUY8/5X/VmuS
-X-Gm-Gg: ASbGncvChStB8ILu33Xh7FzEBJ8dfMxkdusbieKvOZZSad+EcVgTqOQtwCvw1kJHKSz
-	/5K10nUxJDKUHC7WjC9QD5EW3Uf07tYNNb336STO+QTcBOR+ruOxMVqCEVRuo77/skChkUwXpcw
-	h8BXKKwvxO5cXPOUJ9/pl53Wbj+zsTlq8oBtd9WAaMKj3SCXwg9IoGWXNZW46aahlAXL2hcfpZN
-	aKx+jtMFSP3vKJGid9yVcKcN1Z/cTyOhfHcg0JrbIKsfEL9doRUMuKjnxeCr8fPHlidYlUoMEUb
-	/yd+ViLqJJUT1AC4C0rBIcHSHAvRVfAB5XOkmC7LckKfJ5rQnBe+wHdR4rmYa1goKvY=
-X-Received: by 2002:a05:6a00:984:b0:77f:23fb:dacd with SMTP id d2e1a72fcca58-77f23fbdbd4mr5698806b3a.11.1758521530601;
-        Sun, 21 Sep 2025 23:12:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjBKGgouPe2xNmu4wT0QNnfhVsYmbAcO36Rc2l1qP4kx8vtHeTRXhMQmRGVf7tplPlSusoog==
-X-Received: by 2002:a05:6a00:984:b0:77f:23fb:dacd with SMTP id d2e1a72fcca58-77f23fbdbd4mr5698781b3a.11.1758521529823;
-        Sun, 21 Sep 2025 23:12:09 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77d8c3adfd4sm10702304b3a.82.2025.09.21.23.12.06
+        bh=q6oR8Fo0jD+wRtkqL3niLJ+D52o9GcW+sR1rF3CUjoI=;
+        b=bh4Dyd4lUSmP9a2AhfRMlVYlRIq8dc5gKU9bWHAAo1h13xp/WmrUT1xXFLr0Ob16km
+         DXuCb1bHZdlZO7zL6jl0ER34nGxyBJOCiDSIPgOxuSR5Dkazi9smlwmw3KhtTfE2IMhi
+         4e1NfFnWdwdSdgMgLjeG2sB9Lr5Txtt5+d0PjHBmDC2MKGYDcHusIHtjqs4o60/GiSn8
+         r90lajUvOQOgKSQfz5cOXtWON7nGe9IwtAeuIhqnET3kJ/GFCxLEKIQJWSQUwqNbrm+T
+         lN4YWDZOdvURfB8c/E5XWqzDc01dneMd9FmIl3Qn0CfzBjZZDff3/6SkVieAUtSPTlXM
+         jOpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfV4NPYAf2YsD2U6dyy2kJeRiXwDjSs74DOMIM6mB37IOoUOFHD/WscHEzxd0VmxQSm81Eh7mviDTLZRzIkeD5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOyOWdrfEFrgeyH1cjV3s4CogFcd6GBye+pSzt+w+2qExfrs5S
+	KIgHi2ZmUrlBBpepf49ZpWvHYE/iS6F2rwqCiQsWP/zcqslzMjIsy/SccuJpAq/ef94=
+X-Gm-Gg: ASbGncuJ1qBpwTmMCVaDULL4dW3C7K9bw/vyhtxnUaJvubM8ndxArC3rE1FfWb6pVDs
+	VR3cLDZ61RFWLV4pQLhFXT3lPSqDBcE5W0q+qGT1D2iDnPsnT5mnW50lyC/XzlHZCUjZjmOhdS0
+	QBMeDm+wy6KfNOr8tgHGvbTb6xCDD1Sh8W16AFjOB76s7D+eHKRdC733RJQJnws23GvyWKIznwR
+	mwfr8Ul4clXkc3e5WGM6qtoNDjua8bR+vE+NVX2JNhRvlEgAKNKZ1F+Rxpm8kjcm0XZ4WixTSVS
+	SqKLD92jtHYMdNMaWJ1Yqx1R9vve3yfWCKJF5gp45WbLs5Y8YI/6hDbui4Ill/yXWxiWEatf8Yq
+	j1Xg6Rw0BP4wAW+jDf6pqGdL3/lDaubfv
+X-Google-Smtp-Source: AGHT+IGdrKT0myFfqU5UTIGGqRLFLmRn7oXJe/NQIiIiBcxhj9xZ+01ud7wQJESCIUyS8bhQf9QZTg==
+X-Received: by 2002:a05:600c:3b20:b0:45b:9912:9f30 with SMTP id 5b1f17b1804b1-467ead6730bmr93561975e9.6.1758528648740;
+        Mon, 22 Sep 2025 01:10:48 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:c61f:42e4:1d2c:1992])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3f88de2ced0sm7345719f8f.33.2025.09.22.01.10.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Sep 2025 23:12:09 -0700 (PDT)
-Date: Mon, 22 Sep 2025 11:42:03 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bryan O'Donoghue <bod@kernel.org>
+        Mon, 22 Sep 2025 01:10:48 -0700 (PDT)
+Date: Mon, 22 Sep 2025 10:10:42 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 06/12] firmware: qcom_scm: Add a prep version of
- auth_and_reset function
-Message-ID: <20250922061203.l3qkdrjwakqcphf3@hu-mojha-hyd.qualcomm.com>
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v3 00/12] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+Message-ID: <aNEEglLZTJuR1sLi@linaro.org>
 References: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
- <_EY7CMwY6zRmzmm13Bo2V7im-VNhJRkSEhPkwo3PQnrA6Gxd5fVTyT_wRbBbN0VB7Nt8DKXVU88AwGEi0OYEvw==@protonmail.internalid>
- <20250921-kvm_rproc_pas-v3-6-458f09647920@oss.qualcomm.com>
- <591289e2-a5e3-4941-b8d4-85edac281013@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -93,162 +84,79 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <591289e2-a5e3-4941-b8d4-85edac281013@kernel.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIwMDAzMyBTYWx0ZWRfX0WF791aAJkcd
- ntxfgH9OFZFHf5xwVVRsnFP8sOasYNE0KO8oDb+Yk/3BUjM5K7mu5WH/+n8q2l0fcL/JWG96I/E
- Mht7JeCFsZmiPY1/+7jhxHVeiFqq/ukm8KEULk7yrnU3c5fSo0aA4lRA057LVunGju5FeqeoLZk
- grI8jNZeXEOnlXe9eyVUfFnwO36ahbNMdn8FREjg+sgCD2LV6ZuPwzFF7XX13rIRFpZ4R1jI6Mc
- qKeJ/tP6q4OsYxOe1g/BOlaR2KL3q9kKbk032vlHuv5HIkR8pAq5C+oPWEzCz1kls6119J7Qeyy
- WnILAbpj7y+DeziL5I5aM/3Dx2z85EsxfuTSbHFino7v73wZzkhh22v+XBqcoixqS6GXithN45y
- kmB0Lpbb
-X-Proofpoint-GUID: 2QhkkuJA-kcwwozuVJOPb8rTP4MmwoxC
-X-Proofpoint-ORIG-GUID: 2QhkkuJA-kcwwozuVJOPb8rTP4MmwoxC
-X-Authority-Analysis: v=2.4 cv=EZrIQOmC c=1 sm=1 tr=0 ts=68d0e8bc cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=LOAonp52TIAqIygTTBcA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-21_10,2025-09-19_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 phishscore=0 suspectscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 spamscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509200033
+In-Reply-To: <20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com>
 
-On Sun, Sep 21, 2025 at 11:23:41PM +0100, Bryan O'Donoghue wrote:
-> On 20/09/2025 20:41, Mukesh Ojha wrote:
-> > Qualcomm SoCs running with QHEE (Qualcomm Hypervisor Execution
-> > Environment—a library present in the Gunyah hypervisor) utilize the
-> > Peripheral Authentication Service (PAS) from TrustZone (TZ) firmware to
-> > securely authenticate and reset remote processors via a sequence of SMC
-> > calls such as qcom_scm_pas_init_image(), qcom_scm_pas_mem_setup(), and
-> > qcom_scm_pas_auth_and_reset().
-> > 
-> > For memory passed to Qualcomm TrustZone, it must either be part of a
-> > pool registered with TZ or be directly registered via SHMbridge SMC
-> > calls. When QHEE is present, PAS SMC calls from Linux running at EL1 are
-> > trapped by QHEE (running at EL2), which then creates or retrieves memory
-> > from the SHMbridge for both metadata and remoteproc carveout memory
-> > before passing them to TZ. However, when the SoC runs with a
-> > non-QHEE-based hypervisor, Linux must create the SHM bridge for both
-> > metadata (before it is passed to TZ in qcom_scm_pas_init_image()) and
-> > for remoteproc memory (before the call is made to TZ in
-> > qcom_scm_pas_auth_and_reset()).
-> > 
-> > For auth_and_reset() call, first it need to register remoteproc carveout
-> > memory with TZ via SHMbridge SMC call and then it can trigger
-> > auth_and_reset SMC call and once the call returns, remoteproc carveout
-> > memory can be deregisterd with TZ.
-> > 
-> > Add qcom_scm_pas_prepare_and_auth_reset() function which does prepare
-> > the SHMbridge over carveout memory and call auth_and_reset SMC call.
-> > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> >   drivers/firmware/qcom/qcom_scm.c       | 46 ++++++++++++++++++++++++++++++++++
-> >   include/linux/firmware/qcom/qcom_scm.h |  2 ++
-> >   2 files changed, 48 insertions(+)
-> > 
-> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> > index 917341308873..7a86b27ea666 100644
-> > --- a/drivers/firmware/qcom/qcom_scm.c
-> > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > @@ -790,6 +790,52 @@ int qcom_scm_pas_auth_and_reset(u32 pas_id)
-> >   }
-> >   EXPORT_SYMBOL_GPL(qcom_scm_pas_auth_and_reset);
-> > 
-> > +/**
-> > + * qcom_scm_pas_prepare_and_auth_reset() - Prepare, authenticate, and reset the remote processor
-> > + *
-> > + * @ctx:	Context saved during call to qcom_scm_pas_ctx_init()
-> > + *
-> > + * This function performs the necessary steps to prepare a PAS subsystem,
-> > + * authenticate it using the provided metadata, and initiate a reset sequence.
-> > + *
-> > + * It should be used when Linux is in control setting up the IOMMU hardware
-> > + * for remote subsystem during secure firmware loading processes. The preparation
-> > + * step sets up a shmbridge over the firmware memory before TrustZone accesses the
-> > + * firmware memory region for authentication. The authentication step verifies
-> > + * the integrity and authenticity of the firmware or configuration using secure
-> > + * metadata. Finally, the reset step ensures the subsystem starts in a clean and
-> > + * sane state.
-> > + *
-> > + * Return: 0 on success, negative errno on failure.
-> > + */
-> > +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx)
-> > +{
-> > +	u64 handle;
-> > +	int ret;
-> > +
-> > +	if (!ctx->has_iommu)
-> > +		return qcom_scm_pas_auth_and_reset(ctx->pas_id);
-> > +
-> > +	/*
-> > +	 * When Linux running at EL1, Gunyah(EL2) traps auth_and_reset call and creates
-> > +	 * shmbridge on remote subsystem memory region before it passes the call to
-> > +	 * TrustZone to authenticate it while when Linux runs at EL2, it needs to create
-> > +	 * shmbridge before this call goes to TrustZone.
-> > +	 */
+On Sun, Sep 21, 2025 at 01:10:58AM +0530, Mukesh Ojha wrote:
+> A few months ago, we discussed the challenges at Linaro Connect 2025 [1] 
+> related to Secure PAS remoteproc enablement when Linux is running at EL2.
 > 
-> "When Linux runs @ EL1 the Hypervision Gunyah running @ EL2 traps the
-> auth_and_reset call(). Gunyah create an shmbridge on the remote subsystem
-> memory and then invokes a call to TrustZone to authenticate. When Linux runs
-> @ EL2 Linux must create the shmbridge itself and then subsequently invoke
-> TrustZone itself."
+> [1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
 > 
-> Please fix the commit log too.
-
-Thanks.,
-
-Will fix the typo Hypervision and fix the commit log.
-
+> Below, is the summary of the discussion.
 > 
-> > +	ret = qcom_tzmem_shm_bridge_create(ctx->mem_phys, ctx->mem_size, &handle);
-> > +	if (ret) {
-> > +		dev_err(__scm->dev, "Failed to create shmbridge ret=%d %u\n",
-> > +			ret, ctx->pas_id);
-> > +		return ret;
-> > +	}
-> > +
-> > +	ret = qcom_scm_pas_auth_and_reset(ctx->pas_id);
-> > +	qcom_tzmem_shm_bridge_delete(handle);
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(qcom_scm_pas_prepare_and_auth_reset);
-> > +
-> >   /**
-> >    * qcom_scm_pas_shutdown() - Shut down the remote processor
-> >    * @pas_id:	peripheral authentication service id
-> > diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-> > index 9ca3218f0948..1774584ff5e3 100644
-> > --- a/include/linux/firmware/qcom/qcom_scm.h
-> > +++ b/include/linux/firmware/qcom/qcom_scm.h
-> > @@ -78,6 +78,7 @@ struct qcom_scm_pas_ctx {
-> >   	phys_addr_t mem_phys;
-> >   	size_t mem_size;
-> >   	struct qcom_scm_pas_metadata *metadata;
-> > +	bool has_iommu;
-> >   };
-> > 
-> >   void *qcom_scm_pas_ctx_init(struct device *dev, u32 pas_id, phys_addr_t mem_phys,
-> > @@ -90,6 +91,7 @@ int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
-> >   int qcom_scm_pas_auth_and_reset(u32 pas_id);
-> >   int qcom_scm_pas_shutdown(u32 pas_id);
-> >   bool qcom_scm_pas_supported(u32 pas_id);
-> > +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_ctx *ctx);
-> > 
-> >   int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
-> >   int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
-> > 
-> > --
-> > 2.50.1
-> > 
-> > 
+> Qualcomm is working to enable remote processors on the SA8775p SoC with
+> a Linux host running at EL2. In doing so, it has encountered several
+> challenges related to how the remoteproc framework is handled when Linux
+> runs at EL1.
 > 
-> ---
-> bod
+> One of the main challenges arises from differences in how IOMMU
+> translation is currently managed on SoCs running the Qualcomm EL2
+> hypervisor (QHEE), where IOMMU translation for any device is entirely
+> owned by the hypervisor. Additionally, the firmware for remote
+> processors does not contain a resource table, which would typically
+> include the necessary IOMMU configuration settings.
+> 
+> Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
+> Authentication Service (PAS) from TrustZone (TZ) firmware to securely
+> authenticate and reset remote processors via a single SMC call,
+> _auth_and_reset_. This call is first trapped by QHEE, which then invokes
+> TZ for authentication. Once authentication is complete, the call returns
+> to QHEE, which sets up the IOMMU translation scheme for the remote
+> processors and subsequently brings them out of reset. The design of the
+> Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+> is not permitted to configure IOMMU translation for remote processors,
+> and only a single-stage translation is configured.
+> 
+> To make the remote processor bring-up (PAS) sequence
+> hypervisor-independent, the auth_and_reset SMC call is now handled
+> entirely by TZ. However, the issue of IOMMU configuration remains
+> unresolved, for example a scenario, when KVM host at EL2 has no
+> knowledge of the remote processors’ IOMMU settings.  This is being
+> addressed by overlaying the IOMMU properties when the SoC runs a Linux
+> host at EL2. SMC call is being provided from the TrustZone firmware to
+> retrieve the resource table for a given subsystem.
+> 
+> There are also remote processors such as those for video, camera, and
+> graphics that do not use the remoteproc framework to manage their
+> lifecycle. Instead, they rely on the Qualcomm PAS service to
+> authenticate their firmware. These processors also need to be brought
+> out of reset when Linux is running at EL2. The client drivers for these
+> processors use the MDT loader function to load and authenticate
+> firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
+> to retrieve the resource table, create a shared memory bridge
+> (shmbridge), and map the resources before bringing the processors out of
+> reset.
+> 
+> This series has dependency on below series for creating SHMbridge over
+> carveout memory. It seems to be merged on linux-next and pushed for 6.18.
+> 
+> https://lore.kernel.org/lkml/20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-0-17f07a942b8d@oss.qualcomm.com/
+> 
+> It is based on next-20250919 where above series is already merged
+> and tested on SA8775p which is now called Lemans IOT platform and
+> does not addresses DMA problem discussed at [1] which is future
+> scope of the series.
+> 
 
--- 
--Mukesh Ojha
+When testing your series on Lemans, what happens with the additional
+SIDs from the peripherals assigned to the remoteproc ("DMA masters" in
+your talk)? Are these running in bypass because the previous firmware
+component (Gunyah?) had allocated SMMU SMRs for these?
+
+It would be worth mentioning this in the cover letter (and perhaps as
+part of the EL2 overlay patch as well), since it is unclear otherwise
+why your series does not result in crashes the first time a remoteproc
+tries to use one of these DMA-capable peripherals.
+
+Thanks,
+Stephan
