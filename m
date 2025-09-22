@@ -1,47 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE8A19F111;
-	Mon, 22 Sep 2025 14:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE3319E97B;
+	Mon, 22 Sep 2025 14:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549630; cv=none; b=Sfq+wPSjmAk3Sm1Ej62OU6Mf2YJIPPvfEz3LpUfmePkXeAVMXXjELGd5405kjYw99KEjsWfwjer53tEcBfJB05fKo2Z1h+Id4+d5EztZkFO4Dr6JaD6b7inGIi2ZUMJXDN+ysFq05ulTMJhcSTP1WposRH2xE1aWq9mBEHSgdQ0=
+	t=1758549630; cv=none; b=gDc0mdKspMAdZvkIyY74q3yYc5x61FDc5RGvoAnse+AKWqUjaV52yFz3rpKm3YFstfxU4Y01wlubGfMSBYeXoxrHQAsMTHM0eN2Ztuu+Y1EFBwbGOceCqBszMjrhGqSj/+17VDowJdTaVv8N82rflbUFzzeEpxDHoqBMT3ugGuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1758549630; c=relaxed/simple;
-	bh=QM4Xe+Ere+bNd5tqXHknQgb0b4fotLoTht1uGvK9hSc=;
+	bh=9+X8lOiOtYMbUbFdpAmI3p+yU7sWK/FSC3XDXhVkqzo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RyNqOJt8D09BGoVUKomwVZdCadjS5ac+1XutzCNfsjWbhNPT56i3uzPRk7fd+SXVGY7npfkNuRSewpx4mvVqE1mbkGa112W4Li8FpJYVZTJck6FvR/KCbNPy4gf4jUkD3BogHPEG5KkYcos9x9r3nQuxZzdGqQrZcARa/OzOrmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eln0plRe; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Taw/RgPLycYdVTB3FFy9Q4U7dv3bqyUAJOcvf/4llEQwBgoUI9w2xlkdXbhjFcCYWX0+uy1OHdhZ6j6pD+wht4pUm1Ri/ua2MunfYRUZl3Lhz/LSPyQQpIQlg7wxU9icsqh7vLGIdgXLg4UqXEWV4dyziuWP3ybMKjLqkHhNbc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dNaNZVod; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eln0plRe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A008C4CEF0;
-	Mon, 22 Sep 2025 14:00:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dNaNZVod"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 710A9C113D0;
+	Mon, 22 Sep 2025 14:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758549630;
-	bh=QM4Xe+Ere+bNd5tqXHknQgb0b4fotLoTht1uGvK9hSc=;
+	s=k20201202; t=1758549628;
+	bh=9+X8lOiOtYMbUbFdpAmI3p+yU7sWK/FSC3XDXhVkqzo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Eln0plRe+pAFA8SgXSlmm54EpxKcIi+paMDG3JraQCQqeKv3kfkI7aSh8KyYEeT5P
-	 qtkL7OJanS5YXSbdSHZ0Fh+2Fdj63MuLvlJNG99uPGnrRz93f/Cjap5OvPdBh5LbcL
-	 PkAA3kTGUlM12FjXf0ko2N3EfJfmi1tGS5CSIZrlvMC0fn4saeWl7qmrpfMfBnPOj0
-	 RAAUaaNBPRCn7TEqkctkGM9Y79NyJmLNB7vwGd3pbf4fGT1ZyWzlLYJ8pde+YUUGJ9
-	 bIZ4ENYXMho7+iofDPesxH/IJYXB8W25YzlT4aXPKz81dnLT2CgNh0yepgscJhR2r4
-	 GJENzJXwDe+2A==
+	b=dNaNZVodysfX1Axn+pXuGlkBpDyAa21j3nHRs24l5efSBBUSgEG2bg4aR18zxnzZQ
+	 gA15wFNwSLUp9OVPsEO3dqfQ2AjAqopr/hx5PJqWWYhBnXur4718I+vamM4sR5jYXm
+	 L3le/utpvozKsjYXKA5wOf8buQXY5klXU6teTXX7QHc6q2RCaIk/ydazsJ6TBKAv4D
+	 JNjBzA3gYse1h5PAIBm4vLxIKqEOUBu9aolyhuOPjmnuXDlSwU51Y0AK4oVDvtoEa3
+	 u5wkmEQ1Rwe5XJrxcKHuhlZ06q1jAt9NlJRETiQISOtEpvyr1/4MscxtMy/x2s/awW
+	 hW+cv5D91yMeg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/4] remoteproc: qcom_q6v5: Misc fixes to prepare for reusing the "lite" ADSP FW
-Date: Mon, 22 Sep 2025 09:00:23 -0500
-Message-ID: <175854961651.817693.12196182147383570806.b4-ty@kernel.org>
+	Dmitry Baryshkov <lumag@kernel.org>
+Subject: Re: [PATCH v4] remoteproc: qcom_q6v5_mss: support loading MBN file on msm8974
+Date: Mon, 22 Sep 2025 09:00:21 -0500
+Message-ID: <175854961646.817693.9374579634970777125.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
-References: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
+In-Reply-To: <20250706-msm8974-fix-mss-v4-1-630907dbd898@oss.qualcomm.com>
+References: <20250706-msm8974-fix-mss-v4-1-630907dbd898@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -52,26 +50,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 20 Aug 2025 18:02:32 +0200, Stephan Gerhold wrote:
-> On X1E, the boot firmware already loads a "lite" ADSP firmware that
-> provides essential functionality such as charging, battery status and USB-C
-> detection. Only the audio functionality is missing. Since the full ADSP
-> firmware is device-specific and needs to be manually copied by the user, it
-> would be useful if we could provide the basic functionality even without
-> having the full firmware present.
+On Sun, 06 Jul 2025 17:47:08 +0300, Dmitry Baryshkov wrote:
+> On MSM8974 / APQ8074, MSM8226 and MSM8926 the MSS requires loading raw
+> MBA image instead of the ELF file. Skip the ELF headers if mba.mbn was
+> specified as the firmware image.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/4] remoteproc: qcom_q6v5: Avoid disabling handover IRQ twice
-      commit: 110be46f5afe27b66caa2d12473a84cd397b1925
-[2/4] remoteproc: qcom_q6v5: Avoid handling handover twice
-      commit: 54898664e1eb6b5b3e6cdd9343c6eb15da776153
-[3/4] remoteproc: qcom_q6v5_pas: Shutdown lite ADSP DTB on X1E
-      commit: 142964960c7c35de5c5f7bdd61c32699de693630
-[4/4] remoteproc: qcom_q6v5_pas: Drop redundant assignment to ret
-      commit: 1ae4e2dbf4cbf7c1ab2bdc89af1dc1a6af4106b3
+[1/1] remoteproc: qcom_q6v5_mss: support loading MBN file on msm8974
+      commit: 581e3dea0ece4b59cf714c9dfe195a178d3ae13b
 
 Best regards,
 -- 
