@@ -1,49 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB744AEE2;
-	Mon, 22 Sep 2025 14:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE8A19F111;
+	Mon, 22 Sep 2025 14:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758549627; cv=none; b=JGrVE0W51MWqp3RyEreU+/vukPKtc+musRlVYNXvrXWNeaB0pqmjRPJelIHS3Juiuy6Zmp+VTpupKTOGWUA/5cP0CS9pyLBkipjAeSSs6yDAK+8uXjNT1NnyE83OQ1qhOEDkvxhTlQ+LiBi9LOtpt7UPlyyvma/46/d9FsrF6ko=
+	t=1758549630; cv=none; b=Sfq+wPSjmAk3Sm1Ej62OU6Mf2YJIPPvfEz3LpUfmePkXeAVMXXjELGd5405kjYw99KEjsWfwjer53tEcBfJB05fKo2Z1h+Id4+d5EztZkFO4Dr6JaD6b7inGIi2ZUMJXDN+ysFq05ulTMJhcSTP1WposRH2xE1aWq9mBEHSgdQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758549627; c=relaxed/simple;
-	bh=E3sdM+sVgc4gPEGHLFWWB3ONFSYLIUVewf4FnPVnNko=;
+	s=arc-20240116; t=1758549630; c=relaxed/simple;
+	bh=QM4Xe+Ere+bNd5tqXHknQgb0b4fotLoTht1uGvK9hSc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sWvcmW0wT2bcqLCDsYkO3RUBto+Yh43i9xJqZYzD1pMABCZkvL+9MAz91W/LuUEdQ41+7ZvVmWk4hVYm6+JrRreEIPMTnMcZzkKv7mdiaejWTiNgLog6Pzc7yTZSsIPkNJEhlRf8tj0niNX+S37dboqAHZ19uIni5K07wuWdN4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCx1AkCv; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=RyNqOJt8D09BGoVUKomwVZdCadjS5ac+1XutzCNfsjWbhNPT56i3uzPRk7fd+SXVGY7npfkNuRSewpx4mvVqE1mbkGa112W4Li8FpJYVZTJck6FvR/KCbNPy4gf4jUkD3BogHPEG5KkYcos9x9r3nQuxZzdGqQrZcARa/OzOrmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eln0plRe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCx1AkCv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9D8C4CEF0;
-	Mon, 22 Sep 2025 14:00:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eln0plRe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A008C4CEF0;
+	Mon, 22 Sep 2025 14:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758549627;
-	bh=E3sdM+sVgc4gPEGHLFWWB3ONFSYLIUVewf4FnPVnNko=;
+	s=k20201202; t=1758549630;
+	bh=QM4Xe+Ere+bNd5tqXHknQgb0b4fotLoTht1uGvK9hSc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VCx1AkCvfPyrVhShnCv/SFwo0rbnut3TO4KhIXnqKOrGlriQAPyOFpACn+ipGnbuV
-	 jtialiB8qyI52fU2nWl1UKuKxf3y2bPFvHJEz0RG2E1plv3aSVnq0lNirIy5jckzkO
-	 Z7UuC5bbpRpB5sug0AhLN+rbtks6yRJ62rCEUwTmXJ4+sAyh7APVK8071uYX7hDa86
-	 8pa3HnCeDdZ4B+mICbtGdR6vnWi4XGzWnBiQVUNwxv4kwA2LqMo54PdH2mGWa0pM2s
-	 Y6PJ81QkgYZxJ06WNXacCkaqpkSp8So6ma4W0W7M7QKZunyLYQuG5ZQ0LMD8VyeBaR
-	 pSQAScWU9rOSQ==
+	b=Eln0plRe+pAFA8SgXSlmm54EpxKcIi+paMDG3JraQCQqeKv3kfkI7aSh8KyYEeT5P
+	 qtkL7OJanS5YXSbdSHZ0Fh+2Fdj63MuLvlJNG99uPGnrRz93f/Cjap5OvPdBh5LbcL
+	 PkAA3kTGUlM12FjXf0ko2N3EfJfmi1tGS5CSIZrlvMC0fn4saeWl7qmrpfMfBnPOj0
+	 RAAUaaNBPRCn7TEqkctkGM9Y79NyJmLNB7vwGd3pbf4fGT1ZyWzlLYJ8pde+YUUGJ9
+	 bIZ4ENYXMho7+iofDPesxH/IJYXB8W25YzlT4aXPKz81dnLT2CgNh0yepgscJhR2r4
+	 GJENzJXwDe+2A==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: linux-arm-msm@vger.kernel.org,
+	Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Luca Weiss <luca@lucaweiss.eu>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Subject: Re: [PATCH v2] rpmsg: qcom_smd: Fix fallback to qcom,ipc parse
-Date: Mon, 22 Sep 2025 09:00:20 -0500
-Message-ID: <175854961645.817693.1581014950745950581.b4-ty@kernel.org>
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/4] remoteproc: qcom_q6v5: Misc fixes to prepare for reusing the "lite" ADSP FW
+Date: Mon, 22 Sep 2025 09:00:23 -0500
+Message-ID: <175854961651.817693.12196182147383570806.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250725-fix-qcom-smd-v2-1-e4e43613f874@mainlining.org>
-References: <20250725-fix-qcom-smd-v2-1-e4e43613f874@mainlining.org>
+In-Reply-To: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
+References: <20250820-rproc-qcom-q6v5-fixes-v2-0-910b1a3aff71@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -54,18 +52,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 25 Jul 2025 22:02:58 +0200, Barnabás Czémán wrote:
-> mbox_request_channel() returning value was changed in case of error.
-> It uses returning value of of_parse_phandle_with_args().
-> It is returning with -ENOENT instead of -ENODEV when no mboxes property
-> exists.
+On Wed, 20 Aug 2025 18:02:32 +0200, Stephan Gerhold wrote:
+> On X1E, the boot firmware already loads a "lite" ADSP firmware that
+> provides essential functionality such as charging, battery status and USB-C
+> detection. Only the audio functionality is missing. Since the full ADSP
+> firmware is device-specific and needs to be manually copied by the user, it
+> would be useful if we could provide the basic functionality even without
+> having the full firmware present.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] rpmsg: qcom_smd: Fix fallback to qcom,ipc parse
-      commit: 09390ed9af37ed612dd0967ff2b0d639872b8776
+[1/4] remoteproc: qcom_q6v5: Avoid disabling handover IRQ twice
+      commit: 110be46f5afe27b66caa2d12473a84cd397b1925
+[2/4] remoteproc: qcom_q6v5: Avoid handling handover twice
+      commit: 54898664e1eb6b5b3e6cdd9343c6eb15da776153
+[3/4] remoteproc: qcom_q6v5_pas: Shutdown lite ADSP DTB on X1E
+      commit: 142964960c7c35de5c5f7bdd61c32699de693630
+[4/4] remoteproc: qcom_q6v5_pas: Drop redundant assignment to ret
+      commit: 1ae4e2dbf4cbf7c1ab2bdc89af1dc1a6af4106b3
 
 Best regards,
 -- 
