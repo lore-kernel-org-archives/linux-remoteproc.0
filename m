@@ -1,120 +1,77 @@
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-m155115.qiye.163.com (mail-m155115.qiye.163.com [101.71.155.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9D926CE15
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Sep 2025 05:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967012EAB61;
+	Tue, 23 Sep 2025 08:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758604948; cv=none; b=RoTa8F6wtxdLMewOzBzaTl/KnqRmN0Jfi4eqnRGqfIWLPeKG4Sp//fZK91HKBO+374DDp4UzNzqKOmH6YTPRz5N0cmTUeUvQq1kn1x4YZi6KV02WjIg1ev8AyiW/wJBkEcpBW6YTlgyH8AMjkE5M6PdfBwFL10c5AzMsIqpFZqg=
+	t=1758617055; cv=none; b=VOayQkGkxIncpV0ASv5VyaSpwfJZepso+VdBgjoTO2DUnWe0wb1q3Gz+Q0PZGp1wRxk81n0GqS4dIGEyUa73PJP3SnImzL0iV0pO9THKCMjtxCo1nhoSsfXna7vjLlpdBOJp5E/VBfO0VvgFNS2EqCPxELWGGsGc5K1fq9m5JqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758604948; c=relaxed/simple;
-	bh=lGHX5iqtB9RFLRtL8dGgqDLJYcyVFasgYEy9aB83oIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lU698lBlmB0IK6Xix6nIgzSkuxmebhWiAB8y5sE1oNcw36ojeZjOlb8MP+6He90QdUpFFdAxry2mhKGAiZ2KhWryltPrQ+9WqfG3KGWg3+hd4tbqCv0peQhMXGV2jUYrcDMeW2Vt2tHLaJ5bXeOjlu1HSd0TrVKiRQqONyizXiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0sZbfYB; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0sZbfYB"
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-32df5cae0b1so5816855a91.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Sep 2025 22:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758604946; x=1759209746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4dmt/sXOh8gCfdLN/NRWF2le0DpBMuP58ZmmKHufhPw=;
-        b=f0sZbfYBjf6e6NQgv8F16fBNLIMk0ake5l6VmvVXgvNfoc5G7pcl2oOOrWLZIOom98
-         lekmfpEAECpyrZxY+djxJDRmxqINi+R5heIQ1h+v+NOoJwiC5WQ7I1r1VEwFlGeELCt2
-         QXqSz0sEX1hi88XbAFpg75cz81Sd7dLCkeJM2o3XD/fhdChPOUN22ogIxTZQ1GUkKlAh
-         Vdo7cuuAzXWRLwvQMDpWhKt8ivmjrw8YOVKKhZD240Wp8D1EehEyShJTknz8vMQwlv5T
-         MmymV0JTDqlVHomCbpgASU6447jPzM7OyXcasRBnBesCaPpsyX/NBuSx0Ifx0qwsSiZr
-         L2lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758604946; x=1759209746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4dmt/sXOh8gCfdLN/NRWF2le0DpBMuP58ZmmKHufhPw=;
-        b=NumkMRd/zUtazyUzc+SEDKzZUd+pEcwjBeSVU0uWZg3pw35KWZ+OOH1CmVrt0IEHNj
-         tEJWIao7fen2YJkQR2YLH39vDajWqsJQXTvuWWKWfiKTqihqjTjLGn31nq6OdInmWufW
-         GDn6fJiLwtq1YMwrlp5McsbnXQ8V88HEcRwsn3+KeyxCDdIwRT3Z6nyiqaFJLGt0Px2I
-         tHRVVWSND5LdA6ZZwqnX5Q/Ve3Uh26ductjXOteXzN6oWOhou2giZcGXLY3/SD5XnVQp
-         G6wbUuTEK8SdsWvKE2TdFrpRUJSKjz1UShJc9JOO0ekgn2P0W2uG7qQJd3N+7+wH6YkY
-         adaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnWxLsRXVwqeq53AfNGZX+kGtHltfDcXChW/zNOTChi3WMTHL6823szyt2xVSnT9VdLUzuRk4BIJF6Lvr1PN6O@vger.kernel.org
-X-Gm-Message-State: AOJu0YzptKf7lmGpCJAJnYdrhVAujhjxEJDsgJVyXv1ug73x2oJLUGEI
-	jCexHdqAjBmi9QpDABx0I1OsCB4Fm41NLOllfYB8Zg6q/y9iObaPqWMLB4HEKwGfyt5F1RM+JmB
-	aZDSrdK/VarEteGI9wKkD4wPjDrS0PPU=
-X-Gm-Gg: ASbGnctk2ISdYO5Nobu4OtQgqgJhUYQsmdpa8/G2A2t7wIkmWntp8mW5EP6UIiMFN0W
-	/ftS1IY5ROLhGrHo4T9f6GQXJeU+H2NJFWEGLlUxMk2ta1TQYAxbv09vf+ZQIEZuJAC06gTr0tz
-	EsvC6Qso6ICHO3+S+lTnYTnqpbKTQCW/F0cS34QBEAwWRRfrXQUbWhEv13DXjN0mwqWKjYdSxBU
-	vsKhiw=
-X-Google-Smtp-Source: AGHT+IHjWF0OdvwVEBZ2nx87jdr7LoutqHAGG2hOFlgZ3AbCfU9cADrnOPszTGryVxRnY5J5JPGYaDNmdz6D3L0+UhQ=
-X-Received: by 2002:a17:90b:3d0b:b0:32e:18b2:5a45 with SMTP id
- 98e67ed59e1d1-332a92decfcmr1741778a91.5.1758604946515; Mon, 22 Sep 2025
- 22:22:26 -0700 (PDT)
+	s=arc-20240116; t=1758617055; c=relaxed/simple;
+	bh=4mj6jOy0kC86zUWfpRH30od4C+M8eCeDVWnZV/Tz+kk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jo9CKr9klqnMWpvw/tYWxBpyHAnjAk+vboYcZniw+0Hb4SUqeIvwjZxNbf/W6q2Kgbkn/yyIIiEUq6fvfxo4fgZ4vSaDkOoUpaCwUHWy97h93wD819gSQcbaoFbuyJNh24l8D4lWUuCio3FNsW68EetP8ifAnueXg2/NB4Sv8sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=101.71.155.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
+Received: from localhost.localdomain (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 109f1fcda;
+	Tue, 23 Sep 2025 16:38:58 +0800 (GMT+08:00)
+From: Zhen Ni <zhen.ni@easystack.cn>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	Zhen Ni <zhen.ni@easystack.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] remoteproc: Fix potential null pointer dereference in pru_rproc_set_ctable()
+Date: Tue, 23 Sep 2025 16:38:48 +0800
+Message-Id: <20250923083848.1147347-1-zhen.ni@easystack.cn>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250920-imx_rproc_c2-v2-0-3351c4c96df5@nxp.com> <20250920-imx_rproc_c2-v2-5-3351c4c96df5@nxp.com>
-In-Reply-To: <20250920-imx_rproc_c2-v2-5-3351c4c96df5@nxp.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Tue, 23 Sep 2025 13:22:12 +0800
-X-Gm-Features: AS18NWCk-cLOeEky62DrDgsGiwmbzQDyczljQVACaIeDqm4vgeh4qeeeuazbSbY
-Message-ID: <CAA+D8APwkqsAEz=xgaZ9h_4NbFemMoACEJ=xXjVkGhd4mTxmEg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] MAINTAINERS: Add an entry for i.MX remoteproc driver
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9975b9d95d0229kunm8693f78fdd34a
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSh1OVkIZHktPGBofTUgdHVYVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0JKVUpLS1
+	VLWQY+
 
-On Sat, Sep 20, 2025 at 9:16=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
->
-> Add an entry for the i.MX remoteproc driver
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+pru_rproc_set_ctable() accessed rproc->priv before the IS_ERR_OR_NULL
+check, which could lead to a null pointer dereference. Move the pru
+assignment, ensuring we never dereference a NULL rproc pointer.
 
-Acked-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Fixes: 102853400321 ("remoteproc: pru: Add pru_rproc_set_ctable() function")
+Cc: stable@vger.kernel.org
+Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
+---
+ drivers/remoteproc/pru_rproc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Best regards
-Shengjiu wang
-> ---
->  MAINTAINERS | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index df319f9762b369a2746ee7f41334be9b57e7bf9b..c25aad1ad4386623065058d1a=
-7cf92e1555ec7fe 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -18508,6 +18508,15 @@ F:     Documentation/devicetree/bindings/clock/*=
-imx*
->  F:     drivers/clk/imx/
->  F:     include/dt-bindings/clock/*imx*
->
-> +NXP i.MX REMOTEPROC DRIVERS
-> +M:     Peng Fan <peng.fan@nxp.com>
-> +M:     Daniel Baluta <daniel.baluta@nxp.com>
-> +M:     Shengjiu Wang <shengjiu.wang@nxp.com>
-> +L:     linux-remoteproc@vger.kernel.org
-> +L:     imx@lists.linux.dev
-> +S:     Maintained
-> +F:     drivers/remoteproc/imx*
-> +
->  NXP NETC TIMER PTP CLOCK DRIVER
->  M:     Wei Fang <wei.fang@nxp.com>
->  M:     Clark Wang <xiaoning.wang@nxp.com>
->
-> --
-> 2.37.1
->
->
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index 842e4b6cc5f9..5e3eb7b86a0e 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -340,7 +340,7 @@ EXPORT_SYMBOL_GPL(pru_rproc_put);
+  */
+ int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
+ {
+-	struct pru_rproc *pru = rproc->priv;
++	struct pru_rproc *pru;
+ 	unsigned int reg;
+ 	u32 mask, set;
+ 	u16 idx;
+@@ -352,6 +352,7 @@ int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
+ 	if (!rproc->dev.parent || !is_pru_rproc(rproc->dev.parent))
+ 		return -ENODEV;
+ 
++	pru = rproc->priv;
+ 	/* pointer is 16 bit and index is 8-bit so mask out the rest */
+ 	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
+ 
+-- 
+2.20.1
+
