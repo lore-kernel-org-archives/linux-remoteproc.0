@@ -1,73 +1,60 @@
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A52528A1E6
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Sep 2025 18:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D9578F58;
+	Tue, 23 Sep 2025 21:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758650516; cv=none; b=RlcRI5txF0QzqF4Cz8OqzzWF+0aZiU8IUtVVJHq0Jg0T9TgnAM9xVRDu4hJ64eon5m5g/TudV3YXtUm8z6shvnLL9tuXP73V2YHcSTJbcGE0Us6m5ZCt5OyQRXKfhKpi/5bHXomuu/tB9VMHt6kNvqUvqQFxPFUrvzDS74BnaN8=
+	t=1758663443; cv=none; b=hWaQILhlsNLMI/aSUs7rgYf5LeeOUdCgygitarhcwgC+fMUdA11wBXIiUVKc7iEQlg2fdPcGQflYHCgFwSLZOqoPHsv+Bet4OBpROKLAeqPpI5qEoz67SIUtmz0u2x7WOxt8WfpoRkJImHyEYS1tQ/W0XRG42xe7LqjMik1KW0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758650516; c=relaxed/simple;
-	bh=tEXaouI0MQFxLgn7NnEkdk7xivByJDQ2TC4JxchAi/g=;
+	s=arc-20240116; t=1758663443; c=relaxed/simple;
+	bh=AmT7pTT/bQK4h7VloFIIhchliPgyZojTf54MF0QHREo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwGfps3SbPQyiNk6MkDrYMDXnEr5Z2fGzIRiGPmSEg7cwZ4uFDLEa+Z4AT8OAztvHBJI4yfHaOKQe/rfqwlZPu/MHOtKEu5P/nG4SffCFDXlyr78gzT+nb8FA2B2KOOvIZ6mVcAbvWWTc2NcCrGyL5sPfk3DUSErktVwFnq8mtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R6Z7jsdK; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=DigyDuCykUZUYuYfeuzzwtc5v4QSCTd1qLSLUqhXnzEb8fr460UozrZD93NDsb0+MV9eaTDc0ptjoyGD7tncUBCz52g92l26QKenYgiqUY/0/JhQORtsKCcb1vrMj/2XowCnxGPHJGTY/TbFuc0/nFBpYC7UKilW/qr34WUH2gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a55I2Dre; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R6Z7jsdK"
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77dedf198d4so6483949b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Sep 2025 11:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758650514; x=1759255314; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CVCnZnhC/iJw/eHP2Tq/7o3gN4lfNQT30rEnkFKHPLE=;
-        b=R6Z7jsdKCZTGikl/oFHgz0Qetv2dckJlOUM3AEdwhL/lENxEOmH8dl1bfftK7o9r6D
-         C9p3bkOwh6AGy56f/nKS4W7AZRfs8GTe+t9vYh3dQjK9RUI8+DnQR0lf8V7uKmHj4lRL
-         pgwO+ZfXMZCI0L0+1bMMrUobKu8bd1Ah481geXrQE5hcMf6oz6Lv0MByuBHx6E8ZFm6r
-         99m8p3v1t3f2kQmMXuE6gN99KWquuWiEcunOtj1Jy0YIZf8AIeMv5sPON4ZyCng3Y+Ym
-         tqhOBO8i0mNJK6N4qESB3q9rPXZCQBgyJA1WKJKwtMr9J+yrwvJ6ppK0M/E9ZqyNI7vy
-         vj+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758650514; x=1759255314;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CVCnZnhC/iJw/eHP2Tq/7o3gN4lfNQT30rEnkFKHPLE=;
-        b=bJKBy0JgNuYy3KiIGF1csRyCkBQ6Qq8frYcI984VmyvJfPHFV9NhrbtXSIZxu/v/QK
-         AQBCAUl97f5TWn7g2Kqp3krk2zT/DVgVW4/Bp+xs119JHmZfPcqP9HB8QhiaeUE+Hdh3
-         64YKmrsS8Je6EGgY/5UuBSIIBY7LngUT9xgI/11hGdSMtv4q1L7mfI/2Nujeb0HRauKt
-         VUiiSa/RzxqR6HhnkYVFUea/Occl7uwlSQmGpYiu1O6rZWt2huEhtgWqPxZA25iVa6mM
-         Fi7EwBBlcytAZgGSv8uylZxSdN/6XwRLfGRRTzC/OUVSSdum2pyKCbLTycVZLncNdClO
-         6kWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkiv3liOjGgViMzsQnK9eyYPiOcTeGWOf6eEzWTEzqr6UVmpkjJtPuwt89b7RlTvE1VBrbZzUFy2O/XpSRbG+q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6LHmeovv4TZA3YtM3HOWD9s1mq4aoPsQHsyBbkx5zrOufdXXD
-	LlBde0xLesSufxIZqtoUYLegImarYg+eZhFi6RU+3DUpTdAzUqYmkAcNPDCIs8e/YFU=
-X-Gm-Gg: ASbGncvAfseoKhXO9AI8ac2pezC3W3Cu3PwRsxNpYmu3HBmLZ1UNtw6trRSvdSUC0Jc
-	EOHK43osULI/RcfXRB0ctMHVb5i9yDe76tKw/AMD249hSzhparcVJf18lt72j010h7peLCp+7L+
-	x0Vc2+GMgeamrg63pu4m94yObKb2xzMWYJqch53sA8ulveu3AcPox2aQsSwL1hLtROXSd5V9NFm
-	6JRad1vtCizuUKTOASTfRsEKYH78b5Mo1SrB44gVrniROAOboBerUPep/aBoRCYlqZTko7zcyKz
-	4albQ4r85N+3k/2XE0lHIt9lKnqKoswak/ouTGrnl48B/cqGmTglTv1SC1r8tCSrHPzdTJ3T+zI
-	Avx/raTZQmHf3V9LqhpwVJuMthagPTbx4exHxhxsz5FGHoREnwN3dihkAe95WZIO9dmzFeNoUIg
-	sKOSQCU2dwz7O+8GMSPXPkjqY+
-X-Google-Smtp-Source: AGHT+IFjLlhraiDIPC6DXDrYq4fvv/nZOvvL3T1wFQpFeNsBdDOHpuuAX/nL8T3cbxqFx2Sgp/+lrw==
-X-Received: by 2002:a05:6a00:9189:b0:77f:620f:45ac with SMTP id d2e1a72fcca58-77f620f746dmr1459597b3a.2.1758650514295;
-        Tue, 23 Sep 2025 11:01:54 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:e369:98ec:1aa1:e6ce])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfbb7ab8bsm16511273b3a.11.2025.09.23.11.01.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Sep 2025 11:01:53 -0700 (PDT)
-Date: Tue, 23 Sep 2025 12:01:51 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Zhen Ni <zhen.ni@easystack.cn>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: pru: Fix potential NULL pointer
- dereference in pru_rproc_set_ctable()
-Message-ID: <aNLgj49Gm9-j4wbe@p14s>
-References: <20250923083848.1147347-1-zhen.ni@easystack.cn>
- <20250923112109.1165126-1-zhen.ni@easystack.cn>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a55I2Dre"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE44C4CEF5;
+	Tue, 23 Sep 2025 21:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758663443;
+	bh=AmT7pTT/bQK4h7VloFIIhchliPgyZojTf54MF0QHREo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a55I2Drexre9bmk9zOM6IHzQLXlQLZh5HwWP9Px8aa/1hUS7J58IX7JJ3YDzCuSEM
+	 PAS3UJCrtAIueVROmkX4i4/LE8CnJ4xggv/HzM6XkXuZUCxXuwrOA/v6g8Y2f0uku/
+	 f0ijwgCPwX5/BC3M3TGHhGSBZsK1PD0rxU7lsZr5CX9FWDXzMlOrlUQMTXiYaxcO0D
+	 skyJYWG9BJlwnI2a0btE2FNr6ra9N0dWRB6zll1TTr5tpxaUDyhp6C6gLAYOk8Mmtl
+	 jxKtO5V+Vycuwt7yWcI4UnHje3zc3L22NfIckDsJKK8yanMDnkXkmCavEDVeL+Tcsl
+	 68jmOmlZAVZmQ==
+Date: Tue, 23 Sep 2025 16:37:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, herbert@gondor.apana.org.au,
+	davem@davemloft.net, krzk+dt@kernel.org, conor+dt@kernel.org,
+	chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
+	mchehab@kernel.org, matthias.bgg@gmail.com,
+	chunfeng.yun@mediatek.com, vkoul@kernel.org, kishon@kernel.org,
+	sean.wang@kernel.org, linus.walleij@linaro.org, lgirdwood@gmail.com,
+	broonie@kernel.org, andersson@kernel.org,
+	mathieu.poirier@linaro.org, daniel.lezcano@linaro.org,
+	tglx@linutronix.de, atenart@kernel.org, jitao.shi@mediatek.com,
+	ck.hu@mediatek.com, houlong.wei@mediatek.com,
+	kyrie.wu@mediatek.corp-partner.google.com, andy.teng@mediatek.com,
+	tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
+	shane.chien@mediatek.com, olivia.wen@mediatek.com,
+	granquet@baylibre.com, eugen.hristev@linaro.org, arnd@arndb.de,
+	sam.shih@mediatek.com, jieyy.yang@mediatek.com,
+	frank-w@public-files.de, mwalle@kernel.org, fparent@baylibre.com,
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 00/38] MediaTek devicetree/bindings warnings sanitization
+Message-ID: <20250923213721.GA91441-robh@kernel.org>
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -76,51 +63,44 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250923112109.1165126-1-zhen.ni@easystack.cn>
+In-Reply-To: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
 
-On Tue, Sep 23, 2025 at 07:21:09PM +0800, Zhen Ni wrote:
-> pru_rproc_set_ctable() accessed rproc->priv before the IS_ERR_OR_NULL
-> check, which could lead to a null pointer dereference. Move the pru
-> assignment, ensuring we never dereference a NULL rproc pointer.
+On Thu, Jul 24, 2025 at 10:38:36AM +0200, AngeloGioacchino Del Regno wrote:
+> As Rob pointed out, MediaTek devicetrees are *poor* in the dtbs_check
+> tests, and got an infinite load of warnings.
 > 
-> Fixes: 102853400321 ("remoteproc: pru: Add pru_rproc_set_ctable() function")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
-
-Applied.
-
-Thanks,
-Mathieu
-
-> ---
-> v2:
-> - Changed "null" to "NULL"
-> - Added " pru:" prefix
-> ---
->  drivers/remoteproc/pru_rproc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> This series starts attacking this situation.
 > 
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> index 842e4b6cc5f9..5e3eb7b86a0e 100644
-> --- a/drivers/remoteproc/pru_rproc.c
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -340,7 +340,7 @@ EXPORT_SYMBOL_GPL(pru_rproc_put);
->   */
->  int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
->  {
-> -	struct pru_rproc *pru = rproc->priv;
-> +	struct pru_rproc *pru;
->  	unsigned int reg;
->  	u32 mask, set;
->  	u16 idx;
-> @@ -352,6 +352,7 @@ int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
->  	if (!rproc->dev.parent || !is_pru_rproc(rproc->dev.parent))
->  		return -ENODEV;
->  
-> +	pru = rproc->priv;
->  	/* pointer is 16 bit and index is 8-bit so mask out the rest */
->  	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
->  
-> -- 
-> 2.20.1
+> I didn't really count how many warnings I have resolved - it's a lot
+> of them anyway - and I think that this is a good start in any case.
 > 
+> More will come, but I'll be on a long holiday soon, so not from me
+> (or anyway not before I come back anyway), but most probably from
+> someone else (in August...!).
+> 
+> Cheers!
+> Angelo
+> 
+> AngeloGioacchino Del Regno (38):
+>   dt-bindings: display: mediatek: dpi: Allow specifying resets
+>   dt-bindings: display: mediatek,dp: Allow DisplayPort AUX bus
+>   dt-bindings: mailbox: mediatek,gce-mailbox: Make clock-names optional
+>   ASoC: dt-bindings: mt8192-afe-pcm: Fix clocks and clock-names
+>   dt-bindings: crypto: inside-secure,safexcel: Mandate only ring IRQs
+>   dt-bindings: timer: mediatek: Add compatible for MT6795 GP Timer
+>   dt-bindings: pinctrl: mediatek,mt7622-pinctrl: Add missing pwm_ch7_2
+>   dt-bindings: pinctrl: mediatek,mt7622-pinctrl: Add missing base reg
+>   dt-bindings: pinctrl: mt6779: Allow common MediaTek pinctrl node names
+>   dt-bindings: regulator: mediatek,mt6332-regulator: Add missing
+>     compatible
+>   dt-bindings: regulator: mediatek,mt6331: Fix various regulator names
+>   dt-bindings: regulator: mediatek,mt6331: Add missing compatible
+>   dt-bindings: remoteproc: mediatek: Remove l1tcm MMIO from MT8188 dual
+>   dt-bindings: media: mediatek,mt8195-jpeg: Allow range number in node
+>     address
+>   dt-bindings: phy: mediatek,hdmi-phy: Fix clock output names for MT8195
+
+As we are close to the merge window, I applied patches 1, 3, 6, 7, 8, 
+10, 11, 12 and 14.
+
+Rob
