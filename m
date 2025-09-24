@@ -1,141 +1,129 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE2C30BB94
-	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Sep 2025 17:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265441FDD
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Sep 2025 18:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758733848; cv=none; b=duCWQP87m5goU5484xzD61Tig1LNlxvAXrUr0q6Ig5Ap/zshGwVEHswC4mUSCcNQUfmZYmFjV884zmryGs8FDdXnqCnVjANNxeD6c3D6HIqJd21kjotLMZHPOhwgPml6CBMiiv9Ls2YwuWWCUrTbk0h5o5qbE9oxof9E/URBTWY=
+	t=1758739078; cv=none; b=e/GNNvT/xgZTG5SzTWxli1vja+dUnTwn5kOoQFlU6yqsrnUQbUWbFpHOogIFD/zJxQsgG/lWxQO6tJLozqJHSFyuVE2h3b/+e6vFDVn3pPqhJmaH2kHa5jg7x4BA2D8UFheZZlwq2aW4QRY1DtLRnzUuwuENDtBGLIo+g8WX1x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758733848; c=relaxed/simple;
-	bh=HYExp4oXUsQAT4HO6WQsgWUuJ0hNRivj9oi+MVWi8Cw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pZ0oKE4gHM461wxy0SVWE0ROWOyKPDPR3zehxERn456aI+Xcx1rkx+FE3qkQC4AgcdOkwzD2aflk77Whi8Dx72ZrkoE2yZRDBtDNA8mYrWvmLkfegs9NFedhtqV5FQrJCwVJwzrwRG0x589Iz2bnbHUcqyhMtO83ur5FUaWMbt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KBl6wunw; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1758739078; c=relaxed/simple;
+	bh=mzcBpIew28uM32FyQmevqMPECn+YhIPoaGvu5PHcgPM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nPbwZ3uvnJ6cd2ubCJC+8v6KgrV2pUujv3VKz1PVlM7oHKrurCVZ6tiNY12MDLUxtZVCooXqECNSm5IxUW1RtV9t98BM/g3JkmJYURx8Iv3Gqt3uBP46RDMaoDH0xxEwDPZ6Hiu/WAVoxSXFhSJx3kvoL95tIL3zftVYMtAilMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CY1gpxMA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KBl6wunw"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-62fa8d732daso11260866a12.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Sep 2025 10:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758733845; x=1759338645; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d5p9OhedmlgnqtH6MtrKzkYKSqLa11Xwu0UHh8KLtW4=;
-        b=KBl6wunw+4EA/FhnKCiGh3Pe911aEGb5RwLEQyEoyMZ/hDLfCT1T2xs1JTgbE/EEwH
-         nrXaTRMZ0FQci8kQnfiQvKtawKWOSCaUVL+8QVYp04Azkw5LIVQNpntF3VAfc2PZZIOL
-         g4ED/gDlLiWufK9vWLbdpwQppZzUu3e2Jzd7/gEA+qiRcDWWetWtgSvftfkFPmsdJ8Lm
-         zhYgsZAT+Klz+qjcYuSOyjxNu+KoCmICh05SWANc0TMHrYiT+JVTQBYaXS4mNoVGSPCZ
-         B1GXwDGXK0jjrXJX5aQjsy+K2CFGRrXrKPoF3Zn57bKdr3/5nzko/ZJL3n+OG3vrDDNq
-         fz2g==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CY1gpxMA"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58OCx2XW016659
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Sep 2025 18:37:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=2YJp0AJoPJela+qIoEKQr2oyB8xKumCAl4d
+	Z3LNuFmg=; b=CY1gpxMA5Wirdr3GLCnE+1AEoi9PX0us9Fyf8LxOeRDJzqekzc6
+	PbyyDitdDPaPEv2406hToa/CCclZ/S3erCFVNfad1V6FwSD934rgkJNiyOYgiSiU
+	0QiU8DkqEKWOk+QrIHzN7e9SUuiUFC7KZsSIopfxQ/gx8BkSFFkc3WQ10BdDEX6B
+	FZzYZ78OWCgmH7eIYfTrEtYxfFuyNDEu3jSAGaqxwbggYgWJe+sxcRxwkLqqcOJZ
+	mLtzjWPJ3t+Huo6hBSRTiOXlHR39sC6G2TsfevRNRlFkSiPsbSXUFK834U3UR/kr
+	hHt7TrXlufUv9avDC1arHMVk2yHaXDVnreA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49b3nyh8bq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Sep 2025 18:37:55 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b55443b4110so46846a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Sep 2025 11:37:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758733845; x=1759338645;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1758739074; x=1759343874;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=d5p9OhedmlgnqtH6MtrKzkYKSqLa11Xwu0UHh8KLtW4=;
-        b=qylDOwh6I28b/U8aQC7wXMoV0XA2cmQQh/HJ2ZJxry0iIgqVH2lM9aDzoWpqmX+iMy
-         bV9ORwLTJRafg6lf1D9dFcwwgl+chYLvQ/yit9ZP2xXXa5r5LujhQId6e95a4sZNHC+m
-         dhUZgtZiFbQswNbd5HjiydNGCrkgEBk0eeNAdx+FSthtO7Ih/yIdbHyevTKSY37FM4rw
-         KhtVlwcoH//7k5QBAehCtkIp4SjB+u+UndQc1pwB8CkXQe/1YLTmiUkynZpBDokHrhh+
-         ubqnme1NjKz5Jt2rWVHYBQKHa2FElMYb2YAiLhhhvtnzNl6OPGp3A64RZNTgX15MMfk4
-         7YVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9srBGI6R1q8Bc0gCEUIFxuZIKSb4r2HsjJHWKeKoNMCYln43ajGQvjkx9z0dgxNVVNgBtyRTCeDjVXmezusYJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOO0wGbYb1a4+rABDiIWdj8o8tNeO+v9prIfwZyPFE5GnvqJEZ
-	2PQl67JZp5U9/Zed/BEPLu3PAGTxf5V9n/JE1pL2IDo04WQ15lURbWC4q59pookZbgcYT5dT5ct
-	/OHF/pYmdK9C27+LptCAJLnkdtTQF+9Z9QdECj5VDuA==
-X-Gm-Gg: ASbGncvjIb63SodgkZgXvNCdmADsY20vcX8LkcVbTm5X2XjfMIf2yt7h0AL3HWVLKY0
-	qLf8GWg3+ZNZ5CdVH7lY3rsdA0CuJwluO6SjWCa+KU3sTNzhJnoQt2oYASe0XxYLE86tXJayQkD
-	WnWSY34Ob6gMdG6KTa2RCCTO9KnD8DopuJmzBuQAc5WyYvawy8CpIwsfYDeSk3YJ/I7FXJ5ZbtF
-	8iQRVh+X0lq6h8YInOE+0XDFZsoK1l0i1bh3Cp9It0jR5X2xPjSuqJMIguMzjy+PpTwlI+MwMsr
-	R0W5QukPy96ceC2RPReyxSY2d3Y+7SkoG26TBt8S
-X-Google-Smtp-Source: AGHT+IHZl+DbJWqzsW4usvg5XU8XG95/QBxRsXHVNuqnHskrM2O5sL7CTEM1KL/dJojrWYwbNX3q4vepU43szuZh3Cg=
-X-Received: by 2002:a05:6402:5612:b0:634:66c8:9e7d with SMTP id
- 4fb4d7f45d1cf-6349faa3493mr143723a12.36.1758733845069; Wed, 24 Sep 2025
- 10:10:45 -0700 (PDT)
+        bh=2YJp0AJoPJela+qIoEKQr2oyB8xKumCAl4dZ3LNuFmg=;
+        b=m7kQDIMoXtld+cWL3Y3Kz4pEXt9+BzlbDgaFyN4by8WqlkvyCKiOFFcyt0lPYBrAnF
+         l7aEqpSSMNoB4kprAcjFJU743qJRJrCTbnJMbpS+gN3DQ6pNOBTvq1IW5Otg5euF3MIA
+         ikVv0W9px4Xm0Y8yIQPxv8CHkPAR76gr66zfJEKrPL7ihJyNFQp0LxaH3qg50cVHOLfO
+         z8I1wNMD01125YAlXGcWoNmiPVq/3l6628Ha1ELUAmDUXHW6wqE9v+1iCiPx0xb6/rxZ
+         H0oqPcIg2CUP6No1iVy6bYZ/mwWzul5YLUo46A7w5+5oss8Z8/adWvoMjdWpTK7VGnpV
+         Vxqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPjO3aLu+SwcmOMrYWX6khjBP5spnrUCKcZwaTq+k3zOZ0L6vOEdmSiLCQET2EJI9rzmJ0XfGyrW/8zPeqQDcz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq7YWvud8ZBWtWqc6baaplOkRzJRpk2TO0ylA3/hJIZYd55+cd
+	4L1fkMcK8iUUn1y0JWZeW3FQ9d/PwIR0eoEOksSDSzQ7BuZ3GADdmd/0KGbqoaX4R8p/Z0LjhsT
+	+3M1Y9YnPse9dqyBxb/FjJsWjL7CKKdZet2FyuIfuytMoj+hCy/GCwwpr1ryCqHqxprCvFSzo
+X-Gm-Gg: ASbGncvLWr9vOyGgoxxMCOVWU5BgNqXCpOXJwWJ5M8DHErSPa4PV7Xf+Q+P91uLcSI0
+	MbNfiX9XShSFO0d6qfrf/6nGPmtjd/3yocYXdO/S8563BEGz178OCU3+vojQPLHXA0UGMtg/c5a
+	3MiPTSDyID7TT9x3QjQI+rfrDm8ToxmQMnJGobVAUT4q4WaSQJhpIINQPyGU1Vdz2cv67r5ReFG
+	vthuYE89kUWHmG720s95jt/tsN02v+HmUDmbC4E4p26lvdnSGK4sHME1LVh3Dn6fsRs4J/EBUVV
+	H0WwoKTvOFhWHvVtsZumXbHLhwiyw8OUit44s/dFDmsrLVXxWUUEL7UdrSYdm6fvZGeSkYS2kou
+	Rst0n8h3t2fVvbwGnxDX+oa0dNlJdzjjO4zmykVxBfch9GA0F0Ktg8wA=
+X-Received: by 2002:a05:6a20:7348:b0:245:fc8e:ef5b with SMTP id adf61e73a8af0-2e78f003672mr806187637.5.1758739074409;
+        Wed, 24 Sep 2025 11:37:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEJgBc1x8MlTWvXGM1116gCob5y5IWdsvIyBP1B7OfN0lEnpPv4P9NKMSOaFxcOpNFSOkokkA==
+X-Received: by 2002:a05:6a20:7348:b0:245:fc8e:ef5b with SMTP id adf61e73a8af0-2e78f003672mr806160637.5.1758739073966;
+        Wed, 24 Sep 2025 11:37:53 -0700 (PDT)
+Received: from hu-sibis-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b555adca754sm6523412a12.16.2025.09.24.11.37.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Sep 2025 11:37:53 -0700 (PDT)
+From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+To: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, mani@kernel.org, andersson@kernel.org,
+        mathieu.poirier@linaro.org, konradybcio@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: [PATCH 0/5] dt-bindings: remoteproc: Document Glymur ADSP/CDSP PAS
+Date: Thu, 25 Sep 2025 00:07:21 +0530
+Message-Id: <20250924183726.509202-1-sibi.sankar@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com> <20250924164650.GA2711@nxa18884-linux.ap.freescale.net>
-In-Reply-To: <20250924164650.GA2711@nxa18884-linux.ap.freescale.net>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 24 Sep 2025 11:10:33 -0600
-X-Gm-Features: AS18NWBF6pgBTDh35FbgLrsaT57uZ-qc2vyxmLVdoUBaK9TLl5St00uV6e6iIsQ
-Message-ID: <CANLsYkzWQEWKM-_iff7wY-sk_OERFiAMSrXP6Cyf8vJfXqunjg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] remoteproc: imx_rproc: Use device managed API to
- clean up the driver
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Hiago De Franco <hiago.franco@toradex.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=EuPSrTcA c=1 sm=1 tr=0 ts=68d43a83 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=_X9-DzOTpKYA3bgxq-AA:9
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: yMHqjfLiiky0rz6VYgvlt9U2iE4smv9k
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTIyMDA5MCBTYWx0ZWRfX471cXpdyIPPY
+ dYjDOsJtEdcRKYQgywYX/ceAkGB+deMhcjXJ5Ol1mX7ugJ9+Db/y4dAQrYFR34+Uua35noGvylL
+ CfDUOhYiNEEg06SfwrBxN8NifQnHJcMNW103VvAxma/MRIkyudPRaZg7EDfXNhhqkj/N5aWH7bu
+ ptgTWlU/QafHQ6f33vwMogSzmYVCr85Ygi7n8Y8Cu3YT6KQVNoZbGsXXb5RlTYWFqmCv2mCDupo
+ IFRrYtT4c0KUTx3wXaLXvgvPu+/pUSqYMtEuq3a0YL06w1WkqoqDmt6biaNa6rvgvtOv2G81rDg
+ E1ePTdZuS1p4nYuGqI18gexCSMz0G60WgwjOocJkgfgX6Z8dYyt17uNOWAnYQY4tqjkcpjYWNBK
+ +J3E3slU
+X-Proofpoint-ORIG-GUID: yMHqjfLiiky0rz6VYgvlt9U2iE4smv9k
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-24_04,2025-09-24_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 malwarescore=0 spamscore=0 adultscore=0
+ clxscore=1011 priorityscore=1501 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509220090
 
-On Wed, 24 Sept 2025 at 09:35, Peng Fan <peng.fan@oss.nxp.com> wrote:
->
-> Hi Mathieu, Bjorn
->
-> On Tue, Sep 23, 2025 at 01:16:32PM +0800, Peng Fan wrote:
-> >This is the 2nd series to cleanup the driver.
-> >
-> >---
-> >Changes in v2:
-> >- Address a build warning in patch 4/6
-> >- Add R-b from Frank and Daniel
-> >- Link to v1: https://lore.kernel.org/r/20250917-imx_rproc_c2-v1-0-00ce23dc9c6e@nxp.com
-> >
-> >---
-> >Peng Fan (6):
-> >      remoteproc: imx_rproc: Fix runtime PM cleanup order and error handling
-> >      remoteproc: imx_rproc: Use devm_add_action_or_reset() for workqueue cleanup
-> >      remoteproc: imx_rproc: Use devm_add_action_or_reset() for mailbox cleanup
-> >      remoteproc: imx_rproc: Use devm_clk_get_enabled() and simplify cleanup
-> >      remoteproc: imx_rproc: Use devm_add_action_or_reset() for scu cleanup
-> >      remoteproc: imx_rproc: Use devm_rproc_add() helper
->
->
-> Sorry for early ping - I just wanted to check if there's any chance for this
-> patchset to be included in 6.18, along with the other cleanup patchset [1].
+The series documents the AOSS, IPCC and ADSP/CDSP remoteproc bindings
+required to add initial support for ADSP/CDSP remoteprocs on Glymur SoCs.
 
-It seems very unlikely.  I am currently looking into how the PM
-runtime framework behaves to address my own questions about this patch
-[1].  Furthermore, I am worried about the usage of the device
-management framework when it comes to freeing memory.  I will get back
-to you with comments on that front when I know we are doing the right
-thing with the PM runtime framework.
+Dependencies:
+Peripheral Image Loader support for Qualcomm SoCs running Linux host at EL2:
+https://patchwork.kernel.org/project/linux-arm-msm/cover/20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com/
+Patches 4/5 have a dependency on the iommu binding added in ^^ series.
 
-I dropped the 3rd cleanup patchset.  More than once I asked you to
-submit only one patchset at a time and you still refuse to take notice
-of my request.
+Sibi Sankar (5):
+  dt-bindings: mailbox: qcom-ipcc: Document the Glymur IPCC
+  dt-bindings: mailbox: qcom-ipcc: Document Glymur physical client IDs
+  dt-bindings: soc: qcom,aoss-qmp: Document the Glymur AOSS side channel
+  dt-bindings: remoteproc: qcom,sm8550-pas: Document Glymur ADSP
+  dt-bindings: remoteproc: qcom,sm8550-pas: Document Glymur CDSP
 
-Mathieu
+ .../bindings/mailbox/qcom-ipcc.yaml           |  1 +
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml  | 22 ++++++-
+ .../bindings/soc/qcom/qcom,aoss-qmp.yaml      |  1 +
+ include/dt-bindings/mailbox/qcom-ipcc.h       | 61 +++++++++++++++++++
+ 4 files changed, 84 insertions(+), 1 deletion(-)
 
-[1]. "remoteproc: imx_rproc: Fix runtime PM cleanup order and error handling"
+-- 
+2.34.1
 
->
-> Both patchsets have received Reviewed-by tags, have been tested, and
-> successfully passed builds (arm64 gcc) with each patch applied incrementally.
->
-> [1] https://lore.kernel.org/linux-remoteproc/20250920-imx_rproc_c2-v2-0-3351c4c96df5@nxp.com/T/#ma16bb8a38300f6eb333ee04f00d57805aee3c114
->
-> Thanks
-> Peng
->
-> >
-> > drivers/remoteproc/imx_rproc.c | 128 ++++++++++++++++++-----------------------
-> > 1 file changed, 57 insertions(+), 71 deletions(-)
-> >---
-> >base-commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
-> >change-id: 20250916-imx_rproc_c2-2b9ad7882f4d
-> >
-> >Best regards,
-> >--
-> >Peng Fan <peng.fan@nxp.com>
-> >
