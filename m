@@ -1,106 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D9578F58;
-	Tue, 23 Sep 2025 21:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C63A28B3E7;
+	Wed, 24 Sep 2025 08:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758663443; cv=none; b=hWaQILhlsNLMI/aSUs7rgYf5LeeOUdCgygitarhcwgC+fMUdA11wBXIiUVKc7iEQlg2fdPcGQflYHCgFwSLZOqoPHsv+Bet4OBpROKLAeqPpI5qEoz67SIUtmz0u2x7WOxt8WfpoRkJImHyEYS1tQ/W0XRG42xe7LqjMik1KW0s=
+	t=1758703472; cv=none; b=PfaN6Tw7gbz1Z80mGeVvPXmEWj18dz75iRTVhnbENxwoJPSKzXHzFYwi6TCA+dhRw5A1ivEZJFsOV2DrLy7+r1R4XrXgqzMZupj1Hpfa7TP/IWz/53kyBuH2X/EJuBTWftAWHKyp0mNEHhwq7r0jghX5ZcgRRi0BwGXsznDEzZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758663443; c=relaxed/simple;
-	bh=AmT7pTT/bQK4h7VloFIIhchliPgyZojTf54MF0QHREo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DigyDuCykUZUYuYfeuzzwtc5v4QSCTd1qLSLUqhXnzEb8fr460UozrZD93NDsb0+MV9eaTDc0ptjoyGD7tncUBCz52g92l26QKenYgiqUY/0/JhQORtsKCcb1vrMj/2XowCnxGPHJGTY/TbFuc0/nFBpYC7UKilW/qr34WUH2gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a55I2Dre; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1758703472; c=relaxed/simple;
+	bh=/FC2XFlapuWI95y2e7FrTZ+yg3mTJn8rYH76JlgtMSc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mPLfe39BGUMBtwRbFneJGbgIMabXVjcAFay7/UIbuj3uH0KWlOnXHwkBnNy9Skf233pF3/qrYFnSynYt2uRxA7qgnaEuJMF8JQEu1OONiE9BgQpvRIMNGJiv/qVQERcKBFsVZVJd/DQUlmdF3Lzlx4ncPXM2Kx1J6C5XBFyomyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=AUeMTNuU; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a55I2Dre"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE44C4CEF5;
-	Tue, 23 Sep 2025 21:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1758663443;
-	bh=AmT7pTT/bQK4h7VloFIIhchliPgyZojTf54MF0QHREo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a55I2Drexre9bmk9zOM6IHzQLXlQLZh5HwWP9Px8aa/1hUS7J58IX7JJ3YDzCuSEM
-	 PAS3UJCrtAIueVROmkX4i4/LE8CnJ4xggv/HzM6XkXuZUCxXuwrOA/v6g8Y2f0uku/
-	 f0ijwgCPwX5/BC3M3TGHhGSBZsK1PD0rxU7lsZr5CX9FWDXzMlOrlUQMTXiYaxcO0D
-	 skyJYWG9BJlwnI2a0btE2FNr6ra9N0dWRB6zll1TTr5tpxaUDyhp6C6gLAYOk8Mmtl
-	 jxKtO5V+Vycuwt7yWcI4UnHje3zc3L22NfIckDsJKK8yanMDnkXkmCavEDVeL+Tcsl
-	 68jmOmlZAVZmQ==
-Date: Tue, 23 Sep 2025 16:37:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, herbert@gondor.apana.org.au,
-	davem@davemloft.net, krzk+dt@kernel.org, conor+dt@kernel.org,
-	chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
-	mchehab@kernel.org, matthias.bgg@gmail.com,
-	chunfeng.yun@mediatek.com, vkoul@kernel.org, kishon@kernel.org,
-	sean.wang@kernel.org, linus.walleij@linaro.org, lgirdwood@gmail.com,
-	broonie@kernel.org, andersson@kernel.org,
-	mathieu.poirier@linaro.org, daniel.lezcano@linaro.org,
-	tglx@linutronix.de, atenart@kernel.org, jitao.shi@mediatek.com,
-	ck.hu@mediatek.com, houlong.wei@mediatek.com,
-	kyrie.wu@mediatek.corp-partner.google.com, andy.teng@mediatek.com,
-	tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
-	shane.chien@mediatek.com, olivia.wen@mediatek.com,
-	granquet@baylibre.com, eugen.hristev@linaro.org, arnd@arndb.de,
-	sam.shih@mediatek.com, jieyy.yang@mediatek.com,
-	frank-w@public-files.de, mwalle@kernel.org, fparent@baylibre.com,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 00/38] MediaTek devicetree/bindings warnings sanitization
-Message-ID: <20250923213721.GA91441-robh@kernel.org>
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="AUeMTNuU"
+X-UUID: ad2a774e992211f08d9e1119e76e3a28-20250924
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=PFuPLTdWH67tX0oh7ejew8sf/DWLeKIxmgCUYj8rnI8=;
+	b=AUeMTNuU8mESewvD/6TspUB7ttXJd/6/FklSDo91dOizitck7Rg6g9ByCFpWi0gslQzc+fZXFeiwFbMZr/T+xn8jqx/e2YKPonTvHDliZ1vP2o2vL48ppA5GVHHk+DN4G/8aXMR+O/H0+xI+nOD642ZwKx2rTEQC8blygfuCHI8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:d0c0b270-7880-4498-8156-67ac9abbc5d9,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:cb99e46c-8443-424b-b119-dc42e68239b0,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: ad2a774e992211f08d9e1119e76e3a28-20250924
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <huayu.zong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1217855027; Wed, 24 Sep 2025 16:44:26 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 24 Sep 2025 16:44:24 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Wed, 24 Sep 2025 16:44:23 +0800
+From: Huayu Zong <huayu.zong@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Tinghan Shen
+	<tinghan.shen@mediatek.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Huayu Zong
+	<huayu.zong@mediatek.com>
+Subject: [PATCH v2 0/2] Add support for MT8189 SCP and device tree bindings
+Date: Wed, 24 Sep 2025 16:44:16 +0800
+Message-ID: <20250924084422.4604-1-huayu.zong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, Jul 24, 2025 at 10:38:36AM +0200, AngeloGioacchino Del Regno wrote:
-> As Rob pointed out, MediaTek devicetrees are *poor* in the dtbs_check
-> tests, and got an infinite load of warnings.
-> 
-> This series starts attacking this situation.
-> 
-> I didn't really count how many warnings I have resolved - it's a lot
-> of them anyway - and I think that this is a good start in any case.
-> 
-> More will come, but I'll be on a long holiday soon, so not from me
-> (or anyway not before I come back anyway), but most probably from
-> someone else (in August...!).
-> 
-> Cheers!
-> Angelo
-> 
-> AngeloGioacchino Del Regno (38):
->   dt-bindings: display: mediatek: dpi: Allow specifying resets
->   dt-bindings: display: mediatek,dp: Allow DisplayPort AUX bus
->   dt-bindings: mailbox: mediatek,gce-mailbox: Make clock-names optional
->   ASoC: dt-bindings: mt8192-afe-pcm: Fix clocks and clock-names
->   dt-bindings: crypto: inside-secure,safexcel: Mandate only ring IRQs
->   dt-bindings: timer: mediatek: Add compatible for MT6795 GP Timer
->   dt-bindings: pinctrl: mediatek,mt7622-pinctrl: Add missing pwm_ch7_2
->   dt-bindings: pinctrl: mediatek,mt7622-pinctrl: Add missing base reg
->   dt-bindings: pinctrl: mt6779: Allow common MediaTek pinctrl node names
->   dt-bindings: regulator: mediatek,mt6332-regulator: Add missing
->     compatible
->   dt-bindings: regulator: mediatek,mt6331: Fix various regulator names
->   dt-bindings: regulator: mediatek,mt6331: Add missing compatible
->   dt-bindings: remoteproc: mediatek: Remove l1tcm MMIO from MT8188 dual
->   dt-bindings: media: mediatek,mt8195-jpeg: Allow range number in node
->     address
->   dt-bindings: phy: mediatek,hdmi-phy: Fix clock output names for MT8195
+  This patch series adds support for the System Companion
+Processor (SCP) on MediaTek MT8189, including device tree
+bindings and driver support.
 
-As we are close to the merge window, I applied patches 1, 3, 6, 7, 8, 
-10, 11, 12 and 14.
+Huayu Zong (2):
+  dt-bindings: remoteproc: mediatek: Add binding for mt8189 scp
+  remoteproc: mediatek: Support MT8189 SCP
 
-Rob
+ .../bindings/remoteproc/mtk,scp.yaml          |  2 ++
+ drivers/remoteproc/mtk_common.h               | 10 +++++++
+ drivers/remoteproc/mtk_scp.c                  | 29 +++++++++++++++++--
+ 3 files changed, 39 insertions(+), 2 deletions(-)
+
+-- 
+2.45.2
+
