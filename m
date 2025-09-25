@@ -1,218 +1,215 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAC22A1CA;
-	Thu, 25 Sep 2025 06:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758781462; cv=fail; b=KlZ1mqkDgauptxh4nPt/gOhPnKfW5k8r1AYKSidFFOISgB3zHegIqS253Xa3xxKqcgZ0iRQqVEGB3eLERsBa4VBOuUKwTd7uoY+wV8psuwoe4cnUiLm0nGqneq9rbdHgsDxdWpHE25T+5YAsPIve0T6Z4VYo/n4AKXWkUAHgY1I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758781462; c=relaxed/simple;
-	bh=haAwUiWfFvPt8TmOUxSyF6zZ6RRJrC0V90yl/oTOOyk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qcne/Hwk+1yTHoB+Bq9qaVQqkfet3YYY9r8AzjmDPydynei2C0C7rIf/By+dLg5EYKeizbezdOnZnntlgSh+/FbHbjH9UkV2yGfUsIbqbjP3wgdH9s/FdUzwe9WCR2ACApTmNl9+UBwuCvIAWep7CL357rn+ElxXSfqoHGtDRsY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Le5WB+1y; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=vVXc+wmG; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7F92EA737
+	for <linux-remoteproc@vger.kernel.org>; Thu, 25 Sep 2025 10:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758795558; cv=none; b=ANOREqjSIfUhIDbsDgQF6ISJRfCSzNZhzfwT/S6WcT4nW/zBFwyde+oFEA1uc8GliR7A5AUozqcIUKAbPPBy0Y6Sho4/4BEZq3oY60az2WuTOi2QSjsWLIFmHESR65ieKYs5YxOcSux0Kwi/nwTZh7zsjyFkuZaVm2jM9h+xYTo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758795558; c=relaxed/simple;
+	bh=dgLH66wmZN+5x92SJlx2bPunxAKU/QVWJ2EghvU0KZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fVctPpMm+/awHPrEkze9mj6yzii7lWnvx8kDXfYLZlSsOoM/y3XUp+n79zGMHlRCzUx95paKBUUI0CDc9igTd+UhDCzzYMErbCxRBYWlp9U9QbxJ7/PTYYac8kpunQgb97NCXn6Ho3aoFvSabSJh2IiApaqFtfgHlLSDS+GCQ6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SFpsh1/g; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Le5WB+1y";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="vVXc+wmG"
-X-UUID: 3f9956ee99d811f0b33aeb1e7f16c2b6-20250925
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=haAwUiWfFvPt8TmOUxSyF6zZ6RRJrC0V90yl/oTOOyk=;
-	b=Le5WB+1yi72RtgwGVdGnxmw5g04qgUG2e19LlHMWASgvWxvEZZ0oQxzoC8xRAf1VcGVZtNFiZcwzgn/m9ywzv7dSBfQhH375pWFKubWSpxDO7Q9UGiaDMjt7ee79Fwb+69iXRw027eGjgf9rKLCD/dedfRadGRqm0wMZ7p87bXo=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:e8c1e1d9-d522-49c1-b0fd-3fd110d3cab0,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:4e2aaae9-2ff9-4246-902c-2e3f7acb03c4,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111|836|888|898,
-	TC:-5,Content:0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 3f9956ee99d811f0b33aeb1e7f16c2b6-20250925
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <huayu.zong@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1746305061; Thu, 25 Sep 2025 14:24:10 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 25 Sep 2025 14:24:08 +0800
-Received: from SG2PR04CU009.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Thu, 25 Sep 2025 14:24:09 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K5/C7ntvZY+/mnS4qzTG1tvwDWeV+KXkYiOuL4I8dVs0ZRJ1oucDFZhk/my4qV7YZGiQ64PgMyGGhXNGDWx2brnRyOvpnfvIcxSPD93xYKorHpxPu62cn+maBvREe7aqnAo3o3fssU0FhrepTTJEFGA09zfXvDmEVQ4f0GLhLyZmVQdBK5JeKdKJQCM7UjwVQqeir1EJlJCk38xqR9UCrScakAdUCaulCx/aYEJ8xQzd22E/+Iex6TJEuIhLCpxeF6RPpPwQdAt5HQkI7OyDXSZVI8GXUu07M32HwHAu6OZKgC6S94LuEFm34bszc5fpO3Jol9jZukjEYnwTbd4Vrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=haAwUiWfFvPt8TmOUxSyF6zZ6RRJrC0V90yl/oTOOyk=;
- b=LxFC1chYsZfZnvYbDPNba9pv8oe4OcmjNdb99IBA1hwfwvj3cE9im9yytbhnJFtQVyE54td15RK4dBc2NO0XxQFfZo6uzRMgcdEWR/Uf2U60wdSm25DaBaGwSMcEs3pCZi8UYN9nsqCdMBUOft4kByqRkxIWN29Xrxggmb1ROr2L95byQ/j/8W1BcV9ql+A4YdY6Fdg+krvX8X+KBx2wwU0TDlfnGlL3RQLHgXp2FPLbw+maMDXxTZoJH9xuPoJ6a7wzzkZQ7LMpz/7LqUQS//gas4ojC4YmzxjKCFXknkqEq19gXRvVLarVr2xqKFrtVds47wP9A5bO0dO2x4P+Vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SFpsh1/g"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-74625f748a0so6971377b3.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Sep 2025 03:19:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=haAwUiWfFvPt8TmOUxSyF6zZ6RRJrC0V90yl/oTOOyk=;
- b=vVXc+wmGctUVUbb9DoneQvsk8UsDPRQGWTQu4FBNq1c7MTIGmvvLnSaVrbV7nYS+ZLYxLf6JrcsLl6D+z/O0srT373OleaA33Fwgml8pdX+Ybl9vrgzMlij+DHLmwFsDdooOMYMlUKHsKDIYMYPveM4xvWtEgR8PRRlanDp+knU=
-Received: from KL1PR03MB5808.apcprd03.prod.outlook.com (2603:1096:820:81::12)
- by KL1PR03MB8571.apcprd03.prod.outlook.com (2603:1096:820:13d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.9; Thu, 25 Sep
- 2025 06:23:30 +0000
-Received: from KL1PR03MB5808.apcprd03.prod.outlook.com
- ([fe80::b75c:b0c5:893b:193]) by KL1PR03MB5808.apcprd03.prod.outlook.com
- ([fe80::b75c:b0c5:893b:193%3]) with mapi id 15.20.9160.008; Thu, 25 Sep 2025
- 06:23:30 +0000
-From: =?utf-8?B?SHVheXUgWm9uZyAo57q15Y2O5a6HKQ==?= <Huayu.Zong@mediatek.com>
-To: =?utf-8?B?VGluZ0hhbiBTaGVuICjmsojlu7fnv7Ap?= <TingHan.Shen@mediatek.com>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "andersson@kernel.org"
-	<andersson@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, "mathieu.poirier@linaro.org"
-	<mathieu.poirier@linaro.org>
-CC: "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, Project_Global_Chrome_Upstream_Group
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: Re: [PATCH v2 2/2] remoteproc: mediatek: Support MT8189 SCP
-Thread-Topic: [PATCH v2 2/2] remoteproc: mediatek: Support MT8189 SCP
-Thread-Index: AQHcLS+qmZTg4na6UkeM2diZ0nOlwLSiHSAAgAFSUYA=
-Date: Thu, 25 Sep 2025 06:23:30 +0000
-Message-ID: <8440e84b5e1c49025e677aefae96710a7461f477.camel@mediatek.com>
-References: <20250924084422.4604-1-huayu.zong@mediatek.com>
-	 <20250924084422.4604-3-huayu.zong@mediatek.com>
-	 <30a75332-a7f9-41ed-a4e8-520b1e7c9bfe@collabora.com>
-In-Reply-To: <30a75332-a7f9-41ed-a4e8-520b1e7c9bfe@collabora.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: KL1PR03MB5808:EE_|KL1PR03MB8571:EE_
-x-ms-office365-filtering-correlation-id: ce478698-be2e-4ee0-f42a-08ddfbfc0b9c
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?bFFwaU4zUVZNREhOeVpybDRreFhTWmNNeE1PTGd6UTI1Wjk4OWhmRUtTS1JF?=
- =?utf-8?B?NDJwRzhhazdkT1p4UlNQWGI2S1MvSE1KZmpobWdmVmF6NzRNUWg3eXpqN1FQ?=
- =?utf-8?B?K0JRR1hBT3VnSWhaSkM0aUgweldoT0Y0VGRSdGpjc2NlRTdZMTJOYmRWT2Na?=
- =?utf-8?B?ZnhUc0c4cUdpci95SXB5OTNFWnl0VjVsaytyZ0c5cDRxWDU0d2kwSCtPdUhO?=
- =?utf-8?B?Q0V6NnY2Y2FzczA0b25WbUhyR3hHaXZ0ZitWM3pyTVNYcXpKR1JIcXlMUldh?=
- =?utf-8?B?eklwbFZCK3FxaWIzN0NjM3k3ZHJSdzY5MkFhWnJ5T2NuV2dQUXVGTWR2dWNo?=
- =?utf-8?B?ZlRtNWcrd201RVZqT0NaS3ViNEdiTzg1U3JTUG1CQkJtOXNnd1UyRzVnVWFY?=
- =?utf-8?B?STNFcFBicHFGVXZvQTIzNU9aNGEvMXpVbFJEUkRaa1VqN0s2ZHl5aEllaDho?=
- =?utf-8?B?cTU3R1lFTmQ0c3NtUlR2R292OUt0VHdOamtqbHNNRzRGeXZCNjJPNU5zYlMx?=
- =?utf-8?B?TjdHL1ltVzB3S3JDdGFkVGpNODB4Z3F0TkVMMHUranV2UzM3TkxNbHhwS2RZ?=
- =?utf-8?B?RVl5TE83eGJSVTduUHdkcDZJdnNXYXIwSjBEKy9lVCtvZjIvVTRCUzVUWFJU?=
- =?utf-8?B?VU44NVN5eEtpdDJiVDcydzUxNFl0cnlmaGhYbGlWazJTWU1NSmNSNjdoV1lu?=
- =?utf-8?B?dE5JWFhKYTJualJIWFlOWmlXK0orNld0NWE5ZGprcW1HeDhsVHZUVlp4aEZn?=
- =?utf-8?B?R0UzdWJIakdUMFFGcU5PYzNEMjhtN0VjKzhSTlVGYWF1b2ZhcjNJbXBQNEk5?=
- =?utf-8?B?cXloU0FDeHZsbGtYSU5CYW5pbnB6bGpqeW1hdUNTdTNxTDdZckVlOUhDN3h2?=
- =?utf-8?B?QytZRVZvZVMyazR3V001dWd6Vm1LL0cwOVdlcFR0Mk1JU0ZlWmxMeVEzeFIz?=
- =?utf-8?B?amoyUzhaVWlsc0ZwVXR6Ylk5Y2llUWJQRzJHckVlSXRONFJKTmowVHZpMlF1?=
- =?utf-8?B?Tk5qTUwxN0RWYkozbVNkdFVBTzR2VkoyOG1XMGxmM3dKQ0pjUDdGeXVER1Fh?=
- =?utf-8?B?d3QvVlRmZzZXeHRFL3h5OWsxejlXMUtnRDAwVUFvZ21GbFB5Q2llMVk3eGdN?=
- =?utf-8?B?VWswWjUwU3JrR0dTdkM1RXFhNG5YRndyQ2NheDNSdHRoRTlmc1FOcGlOalRC?=
- =?utf-8?B?RVJ5c1lQZzZvUDdUSGYrRTRyNy9TQy96VWxIR2VJOHV4S2ZyNmFHYjdib202?=
- =?utf-8?B?U2dKL3cvUU9NdFhkT3U5V0JRZGIzMVJ5RWo2ZHVJVVBtb28vSk40WCtDZlUx?=
- =?utf-8?B?ZE5zbFUreEpRamR0NHhDaW4xYWt3VXdYQktVeUgzZWROZU5QTlRkdjJVclV6?=
- =?utf-8?B?b3p4VFpMUTYvdDc0TTIxNmRSOUd1azNhZWR5Q3pqYUtNVXdRaVNuM3BrZWN1?=
- =?utf-8?B?Q1FNSHh3SitiVEMxTEZiTTd2R1V0TVg3c1ZHRndzRXRYcHRrclh6S0NwNlVT?=
- =?utf-8?B?bXN4ZW1DTUVJZ1U0ak9jTFFaRDU2VnFMdDJNeWRBUHFjejQ4Z0RMTnd3N2tp?=
- =?utf-8?B?UVloREtBYjNwQ2pXV3ZuTkFOQVI4TGQ3eCtqa3dmSzF2QU1COGZzdTIvYm1M?=
- =?utf-8?B?Wk55ZGJwbTViSGs1K2RQTGM3eXdneVpHZTFKUFo3NUxRYlI3RUdlTkZkcWJE?=
- =?utf-8?B?ZVJUeGRZa1ZZcVdhaW9QK3ExZitKbkJJN0VVQ1lRME5XMzFZR3VmWDJRbXNE?=
- =?utf-8?B?UGdURUJDRW9lcGtNZnFwWjJLTjA2dlc2dVhsNE93QUcySk1FaGp6Wkx0VGFq?=
- =?utf-8?B?VEt3NU8yZmkwYnl2WGp3bjFNZUJ6bGk1RVNkOS8wWDMyZk5ha3hiQkp5OEl3?=
- =?utf-8?B?MHdWUkd0RWZFK1l4ZHlEVFl4WDBvclV1MkZpUy9pOGdZdEhjUmw1MDVaaWp2?=
- =?utf-8?B?YklDT1dxYUhraWVubkcwY0tzdllQT1dQYmlsTDRGVm5OUkV2TWpMam9KalJz?=
- =?utf-8?B?VlN5TWZoWncwUFpmVDA0UlJCeGZEVGx2alFPMWlwNVR4eTJnVU55OFJLT0hk?=
- =?utf-8?Q?KOQEym?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5808.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aWRhMW9JMzdlbnpkN2FSV3o3dzNQbkVISS8wQXNuQzU5ZjVtZmsrMXBFUFd2?=
- =?utf-8?B?bTh1TGdSNS9IelBUMG8wQXNodXZuUll4NXdIc3VnUzBiMFRZcWdSVzFERkVJ?=
- =?utf-8?B?UXVBcmFjL0VaS3oyS2RGNG4xeURYTTFZbitFaXRrK1ZwQ0FWWEdteTY3dW1D?=
- =?utf-8?B?amVaSlhiakpvTi9FVnhWN05GazhIbWEra21KQ0p2bmR5WU9hNTJ2OUVMeVB5?=
- =?utf-8?B?MWtpVUxjUFRvcXdYZzRRMUpvVzJzbmFRbDhrSWFOSXFFQUdEZVJ0MUkzRHpn?=
- =?utf-8?B?SzJ2S2JTNU96WEtEdWZzeUx3MitnQmtsYjFHOGJGNTl1UWRoSXRxREhGdGlh?=
- =?utf-8?B?TS9EWXdnd3RXUFlYY1kvZFJvdDNydThTYlAzeXBNRDViR0dHdElXclRjQ3ZL?=
- =?utf-8?B?eXhkcE1rM1oxRGhjUndRR1dDUS9hK0k5STFoWUNqQnprUEVnVWZub21RaVNh?=
- =?utf-8?B?bHQ2MWVEVzh2c1pPRzVxbUVaNnpKRnZXczgrTDdnc3RkSGhZUi9tdkhNS29r?=
- =?utf-8?B?SCsrZXJEOC9PS1lxYWhad2N2NUJmRitLa25oT0dOUGk0TGYrTElQVUlGdDVn?=
- =?utf-8?B?SkZVTHZxd1VsMTRhcUFKbnZYTEdKM1hUbVRDM1RMa1A5cU50TElyK3dCS1pN?=
- =?utf-8?B?YXIvVFhMQnVWQ01mRHBrL3VVOHgyQU5EZElrT3RmT09tOHM1K2VqL0tXNG0x?=
- =?utf-8?B?SnkvcXUxSzFvcWpydk1jbThhYkZHNnREY20rUTIwYVpQTGlIYVJvaTErTXlK?=
- =?utf-8?B?VXZFY0RvYnAxaVh5ZzBjVUExNEI5T1ZuWGxIcU9CYXpTTkZWcEVJeFNMcThr?=
- =?utf-8?B?VXBHSzlqeGVKT1pCYXBYV3pVZmw1UytSTDFwcVpDam8ySVlEQ1NINWI0WGVz?=
- =?utf-8?B?Y3ZyV0NzbFhKMXVOOWh0QnJZcE1MZ1MxSkpkamdnTDFvdUhDQ0JFMUI2Skpm?=
- =?utf-8?B?bkVHMTdCSGo0akVlMWxaOTkzNlVCRUdhVlg3cDEyQkJQdGJhTDNMbzk3cTFh?=
- =?utf-8?B?THB6cHZFdkRNZ3lGYzl0YTU4d1N6b0hQK3NHL0R1ZEVCdWhCNGVNbmd2Y0hs?=
- =?utf-8?B?aXZnczkzdXNXaFliL1ZaYjN5K0lMVzk2RFZLNzY1UVh0NFlORDJuY3FXTWlI?=
- =?utf-8?B?UTFFQXhzclJqMkJRdkxrR2tGWE9ERjB4QUFDNzBnc1ZJY2hoNE5KMUFNSnFt?=
- =?utf-8?B?d1hSM3BUMHNzblpwajhuR1ZNa0tTTDJLak9DMzBZblFhNXNzUERaK1VDSmV4?=
- =?utf-8?B?dEtVS0R4WnNqWnYzT2orRlNEVUVUSkUzbnRraHdUNit5dzUxaWpMMEV4L1VT?=
- =?utf-8?B?SVlXRXFhT2Nncnc2SlNNZVhUNmFEVkdXSmFUdmtzb1hqazJNY0VCZ2E5dGlX?=
- =?utf-8?B?VUswanM1aGt6NE9kOHBjOHhHdFcyYW56MklQcVRLMXZtOFpvMkJVN3R6ZTA0?=
- =?utf-8?B?eHNYQXpjaUpHYmhZL2hFenBzeExHQk5YbXIyM1k1dEZob09VZkdVa1hJbno4?=
- =?utf-8?B?c3prSWVSNG9RUk9TNUhjNDJIRVJnNlBRdVRySytmNjNyWVh5VHRGZHhRMnJX?=
- =?utf-8?B?cFlSU3N3Q3B4b1lkanZpNEpLaHEwZDM2WkFEKzE3c1pOeUEwR2lDNkd2cHdw?=
- =?utf-8?B?Vmh4Y2lHMFhkVVVCeEx3UTFqMFM0Kytxdi9XOGp5ajhDVUU5UG5KbEcwVmRi?=
- =?utf-8?B?WjJSVHNmUkpvN1Rsa2xNWm5zUFZiNWFQQndiSXJHWTFmN1dzaU0zdHVUdk1N?=
- =?utf-8?B?SzFNRTZ1cklISlRSWWF1YUkxNFJpQjFsT01JekVIL1JVSUFwYmYwdkgzWURq?=
- =?utf-8?B?VzczWUtxU1NlS0pCUlpRWTZ6bWVUQitzU0g3Q0JwdkJnbDFYemxGWVpiWmU2?=
- =?utf-8?B?ZHBaUUpYWDBhYU5XMXZhZWNSeUpLSzMxUE5BTkhtR25lQXVPZ2huZlo2bkww?=
- =?utf-8?B?aVdQa2lmVkxRVitXS2VlSTJ4Vi96U3dUaUdEZ0U1SVAzR2FmWHoxVFZodmN5?=
- =?utf-8?B?TndLa2lEOURrMStHTGk1Q2p5YmVsT3lKdjk4NU9tMjdacmdjMEYwZDZDcjNY?=
- =?utf-8?B?ZzNEWHhNd3RMVnZKMUIrdUY2dE44Q2VNemRnU0E2aHlRdVF0TlZwL0J5UFdy?=
- =?utf-8?B?OVYvdkJTR2VHS0h0SmV0cVY3OVFRb3JCNkIxeFdLOURrZVhHRnYvWEVDaDg0?=
- =?utf-8?B?NHc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0DD95D4E099B4845BB2D8666C9C436D7@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google; t=1758795556; x=1759400356; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tfJ32hMp/SXase9EIClmjehsriaoWao+oyHfJjiFbug=;
+        b=SFpsh1/gVf9IP+ka122JUYDKbb6gKDnEBLhVtetm+IiEMq+YLhV2MLQ4cL3ZERFm9E
+         RERbqQI+7OjT07lFpL+neAp6blOBSP2hu3azFFVNWUDBGaxS2VgD2yjNXNBxaqdXKG5Z
+         g+CrLqyFITYNV6qqRss44X3/DzTALD1rHSHX3SQoPah4u7QLa93S6CYV8srbnThbhbdk
+         dg1GI3aemW+8/uF8su0oXe7Dh33ISEfwnB4IgP8/Fylj845dKgmN6vrYX9hU3D+jqpGn
+         DALYAsFP0rAHLeQF/z3JtKomf8RzTcaCiT32hNBhHrIrprU+EXbVQvdrpEPtolWXt29A
+         +H4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758795556; x=1759400356;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tfJ32hMp/SXase9EIClmjehsriaoWao+oyHfJjiFbug=;
+        b=DSF0nDYa7rW9vYHl89Fmn6IJeewE2GSKJ+ElIl3G9FT1RJpluqSQ6Yo4oHVD9MdKIy
+         vj4wwpoKgjNL1MQPEUEoUfs/ADsECSvLffpw8Q6v9arp7Brq+b5EpS6wL9zwfJUPbAI/
+         Fo2I/am0ifH0mIAKHQ6Q7dj8zyR4i4ystChGFJ0q1cCvRXbsQVyJnaK5fCUgnaoiYDTd
+         WQSC4w8Ep5skyccNUB2f4FlPNl76CzQ/MhkZ92w/nYpf4IbJTQObEJqgOdGz7HGRIw9F
+         yGliGGVFcKluoohxHkBK1vS8ZDCkB+6eS60oEAHVTYu8wQIsnOXFFeoQhBOsOjfFr8aC
+         mfiw==
+X-Forwarded-Encrypted: i=1; AJvYcCUl9EspXOFUKTfmpSm/0+AQK4TkaeKoenrBcRsSgACRheR5r6FFSN7lwvqMAqYM04fQuLqEIsMy3GojGlbI9CuW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydg/aIEGWEMsGNTCa9LC0oPDuY78wKdeQ0XDzcSQTAEPo2R9Be
+	/PsAfWL1C7lia5YdwWgy+ZW0BVqa2iAI8sCZuxGwGKAegZBAhFavUPgGyFhnQsSeI3X/bWFeN1d
+	YI6+3hTuyRopIKfEauP2QorS21m3KyIoioiH+o8YC2g==
+X-Gm-Gg: ASbGnctDxUhm7NCvJ7UpyOZz4XwYRt6ixtNWbxqkOvbiNGLqVaDEMFAGN/fjYZbqIvw
+	5fO53swXDEXaZWejgk4+LYfKImtXnLfF0HLrJgxPQCnssxxzQUqhgXUO1aCG02LDa+wA0+FWrob
+	D8eC1303gt0VHGt4ll5hqWchYeXffTXioNg+YY7dTDRi7CKyLNEyY9uvJJxxF8/AL/AdT3crmoN
+	nodKOXp
+X-Google-Smtp-Source: AGHT+IFqegPV4dsBkr5tbUoAw3Bm05qqiJTdfJDLdA6jeqSgBdmgnNcHPAYMQZGNKgLNwd05Ndo4qwVQgs+KcKU2zhM=
+X-Received: by 2002:a05:690c:61c8:b0:750:bb77:4433 with SMTP id
+ 00721157ae682-764f444f932mr17758937b3.19.1758795555565; Thu, 25 Sep 2025
+ 03:19:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5808.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce478698-be2e-4ee0-f42a-08ddfbfc0b9c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Sep 2025 06:23:30.1420
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: O9f81LCgVpucSzr0Ax8Zca+kWyU1N/o2ArcF2JAswcjKhcf/nVAtqA9JltADzACPgSJA+H/rGQ03FWbwn6o/lg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8571
+References: <20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com> <20250923-imx_rproc_c2-v2-1-d31c437507e5@nxp.com>
+In-Reply-To: <20250923-imx_rproc_c2-v2-1-d31c437507e5@nxp.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 25 Sep 2025 12:18:39 +0200
+X-Gm-Features: AS18NWBVvi4sa4FYZSi9ELVd8mD6lGopH5aCYkeAuSPCLUa8dQJVAPN_Zi7EgaQ
+Message-ID: <CAPDyKFpjP07826FXh8XveXiH7ta+N=upYaowf7r6gyNWPSFfqA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] remoteproc: imx_rproc: Fix runtime PM cleanup
+ order and error handling
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Hiago De Franco <hiago.franco@toradex.com>, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 
-T24gV2VkLCAyMDI1LTA5LTI0IGF0IDEyOjEyICswMjAwLCBBbmdlbG9HaW9hY2NoaW5vIERlbCBS
-ZWdubyB3cm90ZToNCj4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtz
-IG9yIG9wZW4gYXR0YWNobWVudHMgdW50aWwNCj4geW91IGhhdmUgdmVyaWZpZWQgdGhlIHNlbmRl
-ciBvciB0aGUgY29udGVudC4NCj4gDQo+IA0KPiBJbCAyNC8wOS8yNSAxMDo0NCwgSHVheXUgWm9u
-ZyBoYSBzY3JpdHRvOg0KPiA+IEFkZCBTQ1Agc3VwcG9ydCBmb3IgbXQ4MTg5Lg0KPiA+IA0KPiAN
-Cj4gUGxlYXNlIHNwbGl0IHRoaXMgaW4gYXQgbGVhc3QgdHdvIGNvbW1pdHMsIHdpdGggdGhlIGxh
-c3Qgb25lIGFkZGluZw0KPiBvbmx5IHRoZQ0KPiBNVDgxODkgcGxhdGZvcm0gZGF0YSBhbmQgY29t
-cGF0aWJsZS4NCj4gDQo+IEFsc28sIHBsZWFzZSBjbGVhcmx5IGRlc2NyaWJlIHRoZSBuZXcgc2Nw
-X3NlY3VyZV9kb21haW5fcmVnIHdyaXRlLCBhcw0KPiB0aGUgY3VycmVudA0KPiBjb21tZW50IGlz
-IG5vdCBjbGVhciBhdCBhbGwuDQo+IA0KPiBBbnl3YXkgLSB0aGUgY29kZSBsb29rcyBnb29kIG92
-ZXJhbGwuDQo+IA0KPiBDaGVlcnMsDQo+IEFuZ2Vsbw0KPiANCg0KVGhhbmtzLg0KDQpJIHdpbGwg
-c3BsaXQgdGhpcyBjb21taXQgaW4gMiBjb21taXRzLCBvbmUgaXMgcGxhdGZvcm0gZGF0YSAgKG10
-a19zY3AuYw0KJiBtdGtfY29tbW9uLmggZmlsZSkgYW5kIHRoZSBvdGhlciBjb21taXQgaW5jbHVk
-ZSBzdHJjdXQgZWxlbWVudA0KZGVmaW5lLCBmdW5jdGlvbiBtb2RpZmljYXRpb24uDQoNCkkgd2ls
-bCBhZGQgbW9yZSBhYm91dCBzY3Bfc2VjdXJlX2RvbWFpbiBjb21tZW50Lg0KDQo+ID4gU2lnbmVk
-LW9mZi1ieTogSHVheXUgWm9uZyA8aHVheXUuem9uZ0BtZWRpYXRlay5jb20+DQo=
+On Tue, 23 Sept 2025 at 07:17, Peng Fan <peng.fan@nxp.com> wrote:
+>
+> The order of runtime PM API calls in the remove path is wrong.
+> pm_runtime_put() should be called before pm_runtime_disable(), per the
+> runtime PM guidelines. Calling pm_runtime_disable() prematurely can
+> lead to incorrect reference counting and improper device suspend behavior.
+
+This isn't entirely correct as it depends a bit more on the runtime PM
+deployment.
+
+More importantly, even if you would call pm_runtime_put() before the
+call to pm_runtime_disable() doesn't necessarily mean that the device
+becomes runtime suspended, as it can be prevented by user-space for
+example, assuming that is the goal.
+
+To make sure the device is put back into a low power-state, this is
+the typical pattern that is deployed in a driver's ->remove()
+callback.
+
+*) Call pm_runtime_get_sync(), to make sure the device gets the runtime resumed.
+Not needed in this case, as the runtime PM usage count was increased
+during ->probe() and not dropped).
+
+*) Turn off resources that correspond to what the runtime PM callbacks
+in the driver are managing.
+Not needed, as there are no runtime PM callbacks for the driver.
+
+*) Call pm_runtime_disable() and then pm_runtime_put_noidle(). This
+makes sure that when ->remove() is completed, the device is in a low
+power-state and the runtime PM usage count has been restored.
+
+*) If there are PM domains, those are turned off by calling
+dev_pm_domain_detach_list(), or from the driver core (after the
+->remove() callback has been completed) for the single PM domain case.
+
+That said, one could consider converting the pm_runtime_put() here
+into a pm_runtime_put_noidle(), to make it clear that this is only
+about restoring the usage count, but I don't think it's a big deal.
+
+>
+> Additionally, proper cleanup should be done when rproc_add() fails by
+> invoking both pm_runtime_put() and pm_runtime_disable() to avoid leaving
+> the device in an inconsistent power state.
+
+Right, this deserved to be fixed.
+
+>
+> With using devm_pm_runtime_enable() for automatic resource management and
+> introducing a devres-managed cleanup action imx_rproc_pm_runtime_put() to
+> enforce correct PM API usage and simplify error paths, the upper two
+> issues could be fixed. Also print out error log in case of error.
+
+I really don't want to encourage people to use
+devm_pm_runtime_enable(), simply because it's not always a good fit
+when making sure things get turned off in the correct sequence. In
+particular, as it's just about saving one/two lines of code, this
+doesn't make sense to me.
+
+I suggest you follow the similar pattern as I explained above for
+->remove(), for the error path in ->probe() too. So, calling
+pm_runtime_disable() and pm_runtime_put_noidle() should do the trick
+for this too, I think.
+
+>
+> Fixes: a876a3aacc43 ("remoteproc: imx_rproc: detect and attach to pre-booted remote cores")
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Hiago De Franco <hiago.franco@toradex.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+
+Kind regards
+Uffe
+
+> ---
+>  drivers/remoteproc/imx_rproc.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index bb25221a4a8987ff427d68e2a5535f0e156b0097..12305f36552fb5265b0953a099ea0d561880e3ff 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -1046,6 +1046,13 @@ static int imx_rproc_sys_off_handler(struct sys_off_data *data)
+>         return NOTIFY_DONE;
+>  }
+>
+> +static void imx_rproc_pm_runtime_put(void *data)
+> +{
+> +       struct device *dev = data;
+> +
+> +       pm_runtime_put(dev);
+> +}
+> +
+>  static int imx_rproc_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev = &pdev->dev;
+> @@ -1125,12 +1132,23 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>         }
+>
+>         if (dcfg->method == IMX_RPROC_SCU_API) {
+> -               pm_runtime_enable(dev);
+> +               ret = devm_pm_runtime_enable(dev);
+> +               if (ret) {
+> +                       dev_err(dev, "Failed to enable runtime PM, %d\n", ret);
+> +                       goto err_put_clk;
+> +               }
+> +
+>                 ret = pm_runtime_resume_and_get(dev);
+>                 if (ret) {
+>                         dev_err(dev, "pm_runtime get failed: %d\n", ret);
+>                         goto err_put_clk;
+>                 }
+> +
+> +               ret = devm_add_action_or_reset(dev, imx_rproc_pm_runtime_put, dev);
+> +               if (ret) {
+> +                       dev_err(dev, "Failed to add devm disable pm action: %d\n", ret);
+> +                       goto err_put_clk;
+> +               }
+>         }
+>
+>         ret = rproc_add(rproc);
+> @@ -1158,10 +1176,6 @@ static void imx_rproc_remove(struct platform_device *pdev)
+>         struct rproc *rproc = platform_get_drvdata(pdev);
+>         struct imx_rproc *priv = rproc->priv;
+>
+> -       if (priv->dcfg->method == IMX_RPROC_SCU_API) {
+> -               pm_runtime_disable(priv->dev);
+> -               pm_runtime_put(priv->dev);
+> -       }
+>         clk_disable_unprepare(priv->clk);
+>         rproc_del(rproc);
+>         imx_rproc_put_scu(rproc);
+>
+> --
+> 2.37.1
+>
