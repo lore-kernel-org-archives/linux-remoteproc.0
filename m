@@ -1,186 +1,205 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010060.outbound.protection.outlook.com [52.101.61.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953BF20ED
-	for <linux-remoteproc@vger.kernel.org>; Thu, 25 Sep 2025 15:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758813934; cv=none; b=nZrhkPPxSEoH3UlzG0Zoke9Lg3GutOgmfar8TiR0EQs/SAaPcbfBzmk/ijXM+V9SODqJr7UHiq3Jdm4oHl94RWPy88LSdivjtR49VcroPLBBa1muZ78M0C5aLa5YSA16QsDR/0xWRRTDM9Isb4Ip5bJx3AzOE8/+AkraObcA1pU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758813934; c=relaxed/simple;
-	bh=Sfnu02sWQqqJf145CrIFLmP+gKZbUM6UT9GMZg+gyLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJ9Dr8/5eUlgGuYQMiOnw07yrgOrx9Fd6eLTua0LpulwIPxEZsRm2uyU2zNcVpSMvHPTwvSNrRX7lgJ4id27Ck85J05M+JWLA9psxpZ+Q12Nu7kmeZUaUxp6vG/C1E/aPqE5/UM1oBWK/fExflJhj6xnFcwzuMlTQ3ud1hLqPSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jh7rPgUO; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5311D2F2601;
+	Thu, 25 Sep 2025 18:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758826287; cv=fail; b=pRLVb22WFUeqpDiNkPOO3N8zeyGXe77NAIJlHrCb/52Xo1MTmOQI2kJThe2J3D3EVQBcVH1FDdZmmruzklW7dFAETTdpPxqFoRgrs64sLgxpmj6yxXkN+zsyjzsWErctuYz90xmidErW5csCyY2t7yqjXV8SEGQrAhpoc9IglxY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758826287; c=relaxed/simple;
+	bh=kzNG6VJt5arn1jIQ3E8u+iaEEFEzqFCKl5kXsMsSWz8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mRDr/B4v3WLG/rkIKd7XDTR0e/r1XvVP33YyiY6HSVMOGPwwZ6xTXx6YOgHI+Q4ccFt+v6SIOh67yzYGRXcBnlnEsBQ+hUwtXBEzUcWAnFO7Kis67i7nFhQFV3G+XG8GIrCyf8dr2XSwFYNCXHHl73JyaxwhTuMuyyA1ct3rdrc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GGuq2NkN; arc=fail smtp.client-ip=52.101.61.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jh7rPgUO"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-279e2554c8fso11064665ad.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Sep 2025 08:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1758813932; x=1759418732; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfAVQsJMCa+08II6sZx8nLAvAG7+m2m1wBLI5CKcaxE=;
-        b=jh7rPgUOlXeCa8LZlCgifXnIrDWM7wHLotwLy81jP4GAN7rF0YCOvrvtjyp6gwYJzC
-         C8QxIyaI3/jitsbR1IkCKO1BxA06m6ylQb5EAYtM/kGnkTf/dKU/d35R+B939ugfn6mT
-         hyyXTVcpk3BRv0mkZqLh7aCqZko1Mf4LdEzHu+oQ09nVPkaSZqQeaXCwQ/lyOBAWfWFa
-         /4ppII+2vZjpJCu18DDMasG05CI7xbq0FYXYtTCSp/8EiQlvyYLRNQw/cZvwTpbAyZux
-         WScC49PNIgwSdz5Kem/Ouc6f++LaZTFHXwmN5HclD7lyxZx2STfdcRUgoanB6e1NJmpY
-         iUOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758813932; x=1759418732;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pfAVQsJMCa+08II6sZx8nLAvAG7+m2m1wBLI5CKcaxE=;
-        b=gXUOxG/Cosc+NY/+vn7eRM7PwXcqTIkQ1WSdCY46MTXTQH+BFUB6eK3APT7DgR38gF
-         P4qltiEsoiqsrWRMj8Loq/LrtNVtjZppVliQFte+pFg0ORWB2Fc3nImcGDGKvWSz2q5S
-         8Mcsp5LKfoOWOqKoAP9raqfIynGR5yIhQs+uyLIxdZ5v0nDnkantYXgpXNM1qiFYMzQz
-         JM/ZmbChH2xhoKmchoLwb9UBF5sKewQpCRTwQIbue/prrV106i7RiMKjTahBkFPoT4iT
-         Atdd3kYXKIhA3CpYXXpUKOXxUIO9zEO0vojQjQXvq7AtLeaQgWUFCj2OSasyEv3WsQ24
-         zKGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV86nlQFXecFnNiC3ld8UBqikspWVEJfQeZEllNvON2EQrkgVAR+J32Z0Xil387gFPkBqnwy9W2thxPpuucE0LL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxn5avdemhI+MnTnGCSN4JRkbERvuzlypyTVqllEXCjMkGSgN9
-	qy0Ia6ypaJkBYAhDPQoq166lCRjfC8K9pPjk9RRPygYbkg7hqIkgdq/dEuN4L8wrmmc=
-X-Gm-Gg: ASbGncsiB0vz0i1Ke2tfl87+XN3J3y1lbGWrP4F1dJvy2om8ZEQ/EiDBFEhsXWQACmO
-	q+00Ub4wcM+1V/2O6XI6YL3wBcp6240IWZ+CI5/KgsZM20zt7EDhX04mRwRNFXcU2Nm63bPsQyr
-	BygQgrYUzT6p79aFqRqKSIYKUGN7WTfgNWvAyX03ScuNB4gTV7ELuVkhEc4r5AXmGOgGkO+h8Kn
-	al2A7/GsWv6/zuVbBns9xH28I+pm+2csOYVj/MuLUVB2ZtC/REN+XpH8fkukW2jpASNmvJwoSgy
-	7QOO0rzY3bSIkgkjS95UgSNH2DLNHLv/vr5Y90YJWBqoRBrym8EvBWwWtsXwodhmjHIEXeVmfqq
-	QUIsBX8xfOwqJmF3JB5rWraspgb61xNVsxqmMPnnsFHG+h1bOI+m9Zql1e8/Dh1MD8nNmlX4fXT
-	KR8dAkE9P6BVDEjKZGAofph5M=
-X-Google-Smtp-Source: AGHT+IFaUWm0IMFuhwxwZ6ZVuoRzGDUplyarDIAkk4+v9ajtIq9wSLIjRgUT3UbBtMTnindWS3TDDQ==
-X-Received: by 2002:a17:903:19ef:b0:274:3db8:e755 with SMTP id d9443c01a7336-27ed4a7ec49mr43070925ad.30.1758813931703;
-        Thu, 25 Sep 2025 08:25:31 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:491a:5e5:2a2d:1b96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d37casm28336435ad.8.2025.09.25.08.25.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 08:25:31 -0700 (PDT)
-Date: Thu, 25 Sep 2025 09:25:28 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
-Subject: Re: [PATCH v2 0/6] remoteproc: imx_rproc: Use device managed API to
- clean up the driver
-Message-ID: <aNVe6MG2HiWNJZQP@p14s>
-References: <20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com>
- <20250924164650.GA2711@nxa18884-linux.ap.freescale.net>
- <CANLsYkzWQEWKM-_iff7wY-sk_OERFiAMSrXP6Cyf8vJfXqunjg@mail.gmail.com>
- <20250924203115.GB2711@nxa18884-linux.ap.freescale.net>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GGuq2NkN"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G2b7EQ4IeEoPWvIgz4+tJZjczEofLD5C5W5SK96LABFW7RAzyf15NKc5iU52eYxINJiTPusZmecV6opquQL75B0568m6QwjtnWIfRe+2F6VJVnvucJ2vtHCYILNBGQsDsvARXbTA76KdXKTAf8UYKgbJhkkwTcSvgrMyIgBN00AztQ4KoMMZgeovUlfKzBUFzELsPCXjGXcmdLrNJ84gdOwKfgsK/cSYX9cWi76+lFid3jX2seJB1B+FErVi7In2Qy1uCqGlBCqldBaIOcEbO6us/v1b7Zk3nfGFle/hY8aTWlisEZyvKRgnkac/QVxIpk1OyCu0IDwEPpdL+lq2Fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z0L074OFUENNVrp5nE3+MG5ndfmvT7gttmSZT47I6Fk=;
+ b=pvWuAYJjUs5iWlXwdHIKJGL0KHvrZVKUMQiPtRB7OLC0JTwoJwBUaOebY//rukVwbwdsXTDV12iTUwzP8im5nJ5L8DVyUY6t75KPFmew/90aQe9RJ38lsvco6Ws+H8BhN8LTuy1Hy4hmkaa1+RIBSnFZwS9/OzMnJDlfFlvjQtHi0qEglZMauf7nhx868TebbY9OhbQY1cYR7O5/UKQ4a0Ty5mAOBaXCPygGx0OGPAh1ZdmzCObeuw9aN7IEx7ka8B78bCEBifdoMLj4TbS7q2UkSnEp4p/eDCDq7RHVJqIs7vtbEK404vyw66dCd2JRsrKm4Rpc0rTtL7RMSCM/MQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z0L074OFUENNVrp5nE3+MG5ndfmvT7gttmSZT47I6Fk=;
+ b=GGuq2NkN8yW8r6rUqyeZJrmeo5ZQonRiLceqeX8fmNN7GU4V/LcJ7WFE92NiGSviip6FbBHT5QvDr50g6/MCOxe2nvlPgZYPmh6mPmAm7UkUny4+LhT+6y9ntIViht6u0KOjA81d49HvUjbfGkdOHIHHmkZF+sQVKXTN2HmUYjs=
+Received: from SJ0PR03CA0126.namprd03.prod.outlook.com (2603:10b6:a03:33c::11)
+ by MW3PR12MB4458.namprd12.prod.outlook.com (2603:10b6:303:5d::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.11; Thu, 25 Sep
+ 2025 18:51:22 +0000
+Received: from SJ1PEPF000023CF.namprd02.prod.outlook.com
+ (2603:10b6:a03:33c:cafe::ac) by SJ0PR03CA0126.outlook.office365.com
+ (2603:10b6:a03:33c::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.10 via Frontend Transport; Thu,
+ 25 Sep 2025 18:51:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SJ1PEPF000023CF.mail.protection.outlook.com (10.167.244.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Thu, 25 Sep 2025 18:51:21 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 25 Sep
+ 2025 11:51:18 -0700
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 25 Sep 2025 11:51:18 -0700
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <jassisinghbrar@gmail.com>, <andersson@kernel.org>,
+	<mathieu.poirier@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+	"Tanmay Shah" <tanmay.shah@amd.com>
+Subject: [PATCH] mailbox: check mailbox queue is full or not
+Date: Thu, 25 Sep 2025 11:50:44 -0700
+Message-ID: <20250925185043.3013388-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924203115.GB2711@nxa18884-linux.ap.freescale.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CF:EE_|MW3PR12MB4458:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9eaaad04-c824-49ec-52bf-08ddfc648546
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fn3kYqxGp6bPqYqQRCVNwz/s7FnnKVnjH920znjDyHtxkLECB45XmJyCVSdo?=
+ =?us-ascii?Q?3AB1pkOf3W82sSTAEjFe63dGdjRvJY1VM9D6cb+iOyhgEf3UsLms4nZTZKbl?=
+ =?us-ascii?Q?kh8ND4xARF64bGqW6OLNzTMMYIteGsQ4/ie+R9Ay5i6T+frO/xtp3Qfx6/TA?=
+ =?us-ascii?Q?afx3cuG69xi/c2NMRLp8VKV3fYSbkCkHlYkhiY8QJXsCOHCbg8o1URkF8QeG?=
+ =?us-ascii?Q?qVsdsim8E2cDvIxEiOg4df4RDh2EnnwafDghag7VojjkezctnMOuuiLhexIK?=
+ =?us-ascii?Q?X+wrWg6IzyQ/lJTu71UUliFFzMeQOx+9uZprh1hz5+OhKedmntXeGjPqn36r?=
+ =?us-ascii?Q?33HHuIrN8g9LUMZgD0OqAwZmmfvm8bSUOxYn81TGhT49ix9Lyxdyx8zKsYrL?=
+ =?us-ascii?Q?ktR5fzW4+ZHgR31I/k6QGJH/jukjxKhOw/yC1F6YRVFILyfoZe85KeH6HM8C?=
+ =?us-ascii?Q?0e5gPPfLG8maZT+QRMH1CGFtiiIqTIDW+OcfyTfPGnptz2KPt7rakSW5NdL5?=
+ =?us-ascii?Q?2LtvVCTWWg3hYtasWE8/Vkr41IiB2KZGIbLWhbcWRT5pN/KsiqQQEH6MGgUR?=
+ =?us-ascii?Q?j4Ers40+GnC/vHt97GgFgWcRboDdgcwaZD/o0hqJvLSMlRxl75FWywfcP0lX?=
+ =?us-ascii?Q?L90yeUU1eZO8WKHIL40F1n3t35j3LnxeXhDUpfJZxS+Iep6uEpbQOD8RLuhU?=
+ =?us-ascii?Q?dm92i56PWm+SwAmLS6DqL+bS9IfrdXi+cpMwA4I89So/90/d0wVECcb67L53?=
+ =?us-ascii?Q?+x3sOPujmTRscI8SfBPt94hq7TDORaWlHRIUzBTrz5xqwInN+fIzGVEXULK3?=
+ =?us-ascii?Q?pDr4mGQJFYA0m+25lR3tPG31XJDIPw7Azo2uXULGynfPi3vJf0RyciJ6CXSP?=
+ =?us-ascii?Q?IYvLGWWaUW8VVvGKqsFgQTVGX9tjsG5jGodTTQOsU6DGJsICzu7AfqQfv3rF?=
+ =?us-ascii?Q?KwUtX4f803xnGVdmIknra6jz0I8B2qtpzKXBMGIXmR8nygDChnxiOj/QLPFD?=
+ =?us-ascii?Q?1ZlG3nx8W0vvWkfMr8HnTPbjG21+FobVM3mxXEU+lyAmOZhGExOansqcH8iN?=
+ =?us-ascii?Q?P8uBq1Xr6WwOhEG6RBlxBhdTcn6cCVxB0cOHH7Ex3V5WTCppNMbM3R+EST+t?=
+ =?us-ascii?Q?X6tjdUrqOjsd3PbF1iLj7Vbg0DTUU5vpuJYEQDfEl5/VLv72fTI1JkoA1YtP?=
+ =?us-ascii?Q?3PB5pDKE6zFnjruPuYVddpwdpu0NFleba8MjAFVaYGT816Nv9tGzwqhLSGr3?=
+ =?us-ascii?Q?5RxpzoOT6JJBu2Cgnv3s3QHE+Q39A1/QXjlcQbnObKl8Z4dPll/C/AmRWnl6?=
+ =?us-ascii?Q?acCzT6UJlXVhdLhhS1NVXM+NdSfvqP9ryeypYSdhJGutG5nMVdvbJX1SUqkq?=
+ =?us-ascii?Q?QtAzb3x+E4qBUilrS5FAT5Tig63ss2FOW5FivNWr3wzpJR4pdwLmCFNL8VKJ?=
+ =?us-ascii?Q?CHU4u5YZ5/XPDMpb2x3VC8cqnAXUMXisAgP+IpRY+7F6ELMgbjABcXKdCJgB?=
+ =?us-ascii?Q?cYZMrtS7QavQ0FMY377MKALQhJMFU7to704C?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2025 18:51:21.8039
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9eaaad04-c824-49ec-52bf-08ddfc648546
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023CF.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4458
 
-On Thu, Sep 25, 2025 at 04:31:15AM +0800, Peng Fan wrote:
-> On Wed, Sep 24, 2025 at 11:10:33AM -0600, Mathieu Poirier wrote:
-> >On Wed, 24 Sept 2025 at 09:35, Peng Fan <peng.fan@oss.nxp.com> wrote:
-> >>
-> ...
-> >> Sorry for early ping - I just wanted to check if there's any chance for this
-> >> patchset to be included in 6.18, along with the other cleanup patchset [1].
-> >
-> >It seems very unlikely.  I am currently looking into how the PM
-> >runtime framework behaves to address my own questions about this patch
-> >[1].  Furthermore, I am worried about the usage of the device
-> >management framework when it comes to freeing memory.  I will get back
-> >to you with comments on that front when I know we are doing the right
-> >thing with the PM runtime framework.
-> 
-> I see. Not sure Ulf could help clarify or review, then you might take less
-> time.
->
+Sometimes clients need to know if mailbox queue is full or not before
+posting new message via mailbox. If mailbox queue is full clients can
+choose not to post new message. This doesn't mean current queue length
+should be increased, but clients may want to wait till previous Tx is
+done. This API can help avoid false positive warning from mailbox
+framework "Try increasing MBOX_TX_QUEUE_LEN".
 
-It is fortunate that time was taken to understand the problem and fix it
-correctly.  Otherwise we'd still have a problem and more patches, possibly
-wrong as well, would have been needed.
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
+ drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
+ drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+ include/linux/mailbox_client.h          |  1 +
+ 3 files changed, 29 insertions(+)
+
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 5cd8ae222073..7afdb2c9006d 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
+ }
+ EXPORT_SYMBOL_GPL(mbox_client_peek_data);
  
-> >
-> >I dropped the 3rd cleanup patchset.  More than once I asked you to
-> >submit only one patchset at a time and you still refuse to take notice
-> >of my request.
-> 
-> I apologize - I now recall your earlier request to hold off on submitting
-> further patches until the table_sz clearing patch was clarified. I
-> misunderstood and appreciate your patience.
-> 
-> Could you please clarify whether there's a general rule in remoteproc that
-> developers should only have one patchset or patch under review at a time? If
-> so, would it be possible to document this guideline in the kernel documentation?
-> That would help avoid confusion for contributors.
->
-
-Most people tend to address one problem at a time, especially when subsequent
-patchsets have dependencies on the previous ones.  I'm not sure there is a need
-to document something like that.
++/**
++ * mbox_queue_full - check if mailbox queue is full or not
++ * @chan: Mailbox channel assigned to this client.
++ *
++ * Clients can choose not to send new msg if mbox queue is full.
++ *
++ * Return: true if queue is full else false. < 0 for error
++ */
++int mbox_queue_full(struct mbox_chan *chan)
++{
++	unsigned long flags;
++	int res;
++
++	if (!chan)
++		return -EINVAL;
++
++	spin_lock_irqsave(&chan->lock, flags);
++	res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
++	spin_unlock_irqrestore(&chan->lock, flags);
++
++	return res;
++}
++EXPORT_SYMBOL_GPL(mbox_queue_full);
++
+ /**
+  * mbox_send_message -	For client to submit a message to be
+  *				sent to the remote.
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 0b7b173d0d26..b3262de8a3ac 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -335,6 +335,10 @@ static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
+ 	if (!ipi)
+ 		return;
  
-> I ask because I have other patches queued that are independent of the current
-> series, such as:
->  - Reintroducing the table_sz clearing
->  - Misc cleanup in remoteproc core
-
-I'm fine with those, as long as you address just one proble at any given time.
-
-> 
-> I understand you may be busy and have limited bandwidth. Would it be feasible
-> to offload part of the review work to Bjorn? I rarely see Bjorn reviewing i.MX
-> patches. Alternatively, could we consider bringing in a third maintainer to
-> help accelerate the review process?
->
-
-How fast do you want to go?  By and large, I reply to patchsets within a week,
-sometimes two when things are busy.  And when I can't meet those standards, I
-send out an email to the mailing list with the review order of the patches in
-my queue.  What else are you expecting?
-
-Bjorn is maintaining over a dozen subsystems - I stepped forward to maintain
-remoteproc/rpmsg to help with the volume.
-
++	/* Do not need new kick as already many kick interrupts are pending. */
++	if (mbox_queue_full(ipi->tx_chan) == true)
++		return;
++
+ 	mb_msg = (struct zynqmp_ipi_message *)ipi->tx_mc_buf;
+ 	memcpy(mb_msg->data, &vqid, sizeof(vqid));
+ 	mb_msg->len = sizeof(vqid);
+diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+index c6eea9afb943..4a19800af96f 100644
+--- a/include/linux/mailbox_client.h
++++ b/include/linux/mailbox_client.h
+@@ -46,5 +46,6 @@ int mbox_flush(struct mbox_chan *chan, unsigned long timeout);
+ void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
+ bool mbox_client_peek_data(struct mbox_chan *chan); /* atomic */
+ void mbox_free_channel(struct mbox_chan *chan); /* may sleep */
++int mbox_queue_full(struct mbox_chan *chan);
  
-> Thanks again for your time and guidance.
-> 
-> Thanks,
-> Peng
-> 
-> >
-> >Mathieu
-> >
-> >[1]. "remoteproc: imx_rproc: Fix runtime PM cleanup order and error handling"
-> >
-> >>
-> >> Both patchsets have received Reviewed-by tags, have been tested, and
-> >> successfully passed builds (arm64 gcc) with each patch applied incrementally.
-> >>
-> >> [1] https://lore.kernel.org/linux-remoteproc/20250920-imx_rproc_c2-v2-0-3351c4c96df5@nxp.com/T/#ma16bb8a38300f6eb333ee04f00d57805aee3c114
-> >>
-> >> Thanks
-> >> Peng
-> >>
-> >> >
-> >> > drivers/remoteproc/imx_rproc.c | 128 ++++++++++++++++++-----------------------
-> >> > 1 file changed, 57 insertions(+), 71 deletions(-)
-> >> >---
-> >> >base-commit: c3067c2c38316c3ef013636c93daa285ee6aaa2e
-> >> >change-id: 20250916-imx_rproc_c2-2b9ad7882f4d
-> >> >
-> >> >Best regards,
-> >> >--
-> >> >Peng Fan <peng.fan@nxp.com>
-> >> >
-> >
+ #endif /* __MAILBOX_CLIENT_H */
+
+base-commit: 56d030ea3330ab737fe6c05f89d52f56208b07ac
+-- 
+2.34.1
+
