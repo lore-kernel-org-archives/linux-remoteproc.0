@@ -1,213 +1,237 @@
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011068.outbound.protection.outlook.com [52.101.70.68])
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013061.outbound.protection.outlook.com [40.93.196.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98312ECD13;
-	Fri, 26 Sep 2025 12:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE57B215F7D;
+	Fri, 26 Sep 2025 15:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.61
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758890052; cv=fail; b=XIASoQWIHHGSHmNTnf2ezX4C+ZuFZ7J/b9rdQxg57/IGcAWDEj1sYthFwHO9sPSILEySOiAjLajmNRQOo+5oCwtpLt66OvrhFDxQRZBnO1LB6ervRMj1K6cLR8WoaDltPdtuHnuPwHhWTDJeamYHCuUj+pIA+QENHJbS/CRIH0o=
+	t=1758901225; cv=fail; b=awGiHKvoJRwIasACNsoMcmVpZ2B6VAuBnfKKJcAFWX6M5cjTymD4rUYHNFo+vVjnVNFjY0/k+eY69OsJIKWIqoDAJhSZak60+W5isqCnNTO7Zzci6csFkRS5OuccR4smq5+lcTLVuLb8PY1UkosAXydHMKJT3+B3VE97Egpa9Fk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758890052; c=relaxed/simple;
-	bh=T3yV4D5WDQGzqryCNC4B8NU4PrZDdZgkt6+KEo4gt9M=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=oQa7Hjw/f9B0fZlreeTggWuJDmJL645VAL+zr1ZdpBGHSEM3gI94yKE1eezyjrY8RYd3pd1mhKd5AsNA19k/nYQADITKgQfTplAygiMUoj15oLY+CE+MsRDXKCibn+jGfBW9rMc2OYPrS/CDLfRIPfpfU4JIwK1MWCY1DHrBfZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jnBhhHrT; arc=fail smtp.client-ip=52.101.70.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1758901225; c=relaxed/simple;
+	bh=axlluGkzl9ympWkRVSLlDukkrX2jer17DhWxguVyOgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qYOoShFahtqfzXwF9EiFdrgJMCdjxJ8cLBJSkGeE9S/qu57LBPCea0A/JXsyrPIPm5EAcg1vR7ZKrR04ei3rbtOieVkI8XCCzcjXXXy6k39WXFHtQJQ30E5QMMbhERisuP5fGg4MqPcaRCQz3QBa5OnIgS6Ar/F1d9F4atlpboA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=THxOKElK; arc=fail smtp.client-ip=40.93.196.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jnBhhHrT"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="THxOKElK"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XBrE2Bgh6/ChI9DpJG4+wyPGpaIL/CmgJz3Ec79X+H7GRema3dJqJcXjP4UKju1iOjnCfFXXdKfIAoG9/ZKXwKTzL1YeTYMTtF1wks1OQY0/MfPYLvFg+pV4FT9H08O6SfJ01xmR51z3y7VmdZhS9AvG+NSkz/7xjISLrv3AJMsgky9N9fOZ1cdgSqVN/P9WeWCOUQRsCZyTGOTZtqlYBwZMDdbjvG9SL2iTUxOhnng2srwaBSjiZXs/OS0/0571oj4Wu6VLeE31YyNtn7jgJlewsCBtyLS4tXv+aNOE5TimF6hnleV1iJTyqchDygL/WFWxK7jkZGSndrmhED393Q==
+ b=gZN3rVZjWGYlf/h0ZQNGNL7/YDqyoaLFAFkqZmMmtTmNHf7+3gu+rWSv69Ku7dwe1MOvu3zNxqvkK574v+m4uK/2u1HLgGvJ5PZxgvdVv5OAi4p8S/3Q3akl6d/W0eu3VBAUQoT4ozJO9K3ZQ86vdtmJ/j8RCAvsakFyc39+k8MQCRsoYiJBEEiEi6wkrxahobcUpG2kT0m1PxMnsb0rDdG+SilzqXO0owdk9SEj8i/jOb++8Uxvv0rgPhOvDd1rw+vw2Fr5Jp0S64vFsTWv9ViIxpGdSBgHOkMJ1usGKmtPbnsZsFOmbczI94A+TPQqWGU8SbmaWzAtVgmxR3GR1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JVkK3LV9sVyjvekRsIOBE/54F2PgxKOpYxxesSxfaUo=;
- b=GjZqp13lnuL0iLvgoEDbbNy2ESmwMHNz0Bo9Ud01lzb3oM43HJW4wYEfkM3+rJqbtTRiHyXF/lYLcogty+JG153Rglvp6Mx8gIiQDfTfFIMaK7xcX/jompOsPzMTy2ncR9MQJVfkh71bddKeVYQlHSq+9fsC0wvkI4xJBZ3cv/6QepSWujuMS0zKydivbKm5KMWYsy9xYaNpadkfNLK+1jviZcyQWkHk91Prqvl60TliulU6EGYaK7NS0n3hmuBTmg55mFgItLcQfDLxPj470ukT3P+Uhu+3OjVtXqQRsz5gjgq4Aqe0pckiXruBA+nLfYRof0xp5c1ovJxFNQ7CKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ bh=6ISpOY3zORb6YJvKGa72bTmNY+805q/wQsN7zUJh5i8=;
+ b=oF27LiONmtFTn6EL4NEeqzg8Wm2ovLhenqiK1ZGhXKMDORU+tiNegAamFR7BGdlG3voLnu8tHnD0aJpOxz1Gcvqo5m+yTzoYBj6920KCMaEhF5bxS6NbX/Y6u7Z+jJNonC/ovsza0LQhKEYWKD5jRlLrSEimANXLV2GzV0j0/mIIARe3lr2f469FrKS7TWfVQ/68CZ6GdK44S3IizgsMqPuUzf+Bs558W7iCZTQ0YHINTPacZgI6DJTs/ytzzzGEpNEJ5/jsvHcQkzdKduLix6gHMzY7N0x67W4ZAn/DSTaaQraAdoUK/tFVaAybcprJ1VEsLyFdFZXbQagJqa0Uvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JVkK3LV9sVyjvekRsIOBE/54F2PgxKOpYxxesSxfaUo=;
- b=jnBhhHrTOqYKaOBmFVB7TTfjQOdn3n06iXTiaGeZRH1Qj/z3T6Idin0wwjX2aquJaQ1jBCkFmeWmSYXcOPvxaIuCJ4PqRim76aTnmV5ExIEfE6YyAj+AUwApMEtzl6lXJMynNwdnKLDWJVpjvH0/1slLPCB6YMlW5VJZ6XsIfWXpTG1I6ox7YdhFs1psWvcuz5i+A3DkfkQV47O98jE5eAnXM98bIAk4o+NuLEHDixTlbLqS7NxumoUqhsrCvJSkyyl9v8qFTlQd+yWNylgpifbJeyjPyDdwOJleMtkPxO9FwQjZv/xye9U+d5zqtK3KtZY0A81RVxCGu9BYRkZGrQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by DB9PR04MB9646.eurprd04.prod.outlook.com (2603:10a6:10:30a::20) with
+ bh=6ISpOY3zORb6YJvKGa72bTmNY+805q/wQsN7zUJh5i8=;
+ b=THxOKElKTVfEh0dddNNlbZ8DHtbYn7vr6WV9DEobQiWfKnlaJYiYUspBqJHSr2o6NpaRyGGaarZRGnd6j9jtKbOydYkpfIISgxP4Wu07aCLKTtzUWPZdVtjX37whc297IxmkAMwzHJ+SwdDkpLB008rvQwxf7q03qOeEYicYepE=
+Received: from CH3P221CA0026.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:1e7::27)
+ by IA4PR12MB9761.namprd12.prod.outlook.com (2603:10b6:208:550::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.13; Fri, 26 Sep
- 2025 12:34:08 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9160.010; Fri, 26 Sep 2025
- 12:34:08 +0000
-From: Peng Fan <peng.fan@nxp.com>
-Date: Fri, 26 Sep 2025 20:33:20 +0800
-Subject: [PATCH v3 6/6] remoteproc: imx_rproc: Use devm_rproc_add() helper
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250926-imx_rproc_v3-v3-6-4c0ec279cc5f@nxp.com>
-References: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
-In-Reply-To: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Hiago De Franco <hiago.franco@toradex.com>, Frank Li <Frank.Li@nxp.com>, 
- Daniel Baluta <daniel.baluta@nxp.com>
-Cc: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1758890010; l=1342;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=T3yV4D5WDQGzqryCNC4B8NU4PrZDdZgkt6+KEo4gt9M=;
- b=4pRAoluDJixQLoot2L3KBMqEqQYxsXajlGaB65PvaT2QqXKJhrHIYqtSagU4cPSZ+Hhyk1sIB
- eeoXkSybMpuB54klQrB+HanskJ6Dd0YZV8PQSo/+EnyFgIkjt4SFU6m
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SG2PR03CA0115.apcprd03.prod.outlook.com
- (2603:1096:4:91::19) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+ 2025 15:40:19 +0000
+Received: from DS3PEPF000099D7.namprd04.prod.outlook.com
+ (2603:10b6:610:1e7:cafe::bc) by CH3P221CA0026.outlook.office365.com
+ (2603:10b6:610:1e7::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.14 via Frontend Transport; Fri,
+ 26 Sep 2025 15:40:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS3PEPF000099D7.mail.protection.outlook.com (10.167.17.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.9 via Frontend Transport; Fri, 26 Sep 2025 15:40:19 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 26 Sep
+ 2025 08:40:11 -0700
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 26 Sep 2025 08:40:10 -0700
+Message-ID: <e93f0ee7-687a-4f47-a847-90cc1ea87290@amd.com>
+Date: Fri, 26 Sep 2025 10:40:09 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
+To: Peng Fan <peng.fan@oss.nxp.com>
+CC: <jassisinghbrar@gmail.com>, <andersson@kernel.org>,
+	<mathieu.poirier@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<linux-remoteproc@vger.kernel.org>
+References: <20250925185043.3013388-1-tanmay.shah@amd.com>
+ <20250926073735.GD8204@nxa18884-linux.ap.freescale.net>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <20250926073735.GD8204@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB9PR04MB9646:EE_
-X-MS-Office365-Filtering-Correlation-Id: 933e23a4-d885-41c3-ff22-08ddfcf8fcb0
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D7:EE_|IA4PR12MB9761:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc87d304-f412-4241-adb8-08ddfd12ff4f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|52116014|7416014|376014|1800799024|921020|38350700014;
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NXNSR2JDZGRDeXBXR3MxWHVRQysvNlVGQTdVenJxN0tuanBsR0JlZVBBaWtC?=
- =?utf-8?B?YXVNTGRYNFZKMlRvaGRNMlluc2FQcmo2dGJrUjVlc0JOSU4wLzlISkw0MzNF?=
- =?utf-8?B?Q3kyZy9STnRodUpteFRLREhmU3Y1N3NhcEorc3FrTEJ3RzdIbW9GY2hBeUJq?=
- =?utf-8?B?cFY5QmdnRituVUhiVVN2TkFOV1hPcTdkSTRRU3lsbWlGR2Q0Sm1XOFFYSjJC?=
- =?utf-8?B?N0djSG5LUS9Kam1ONVN0cFpNWlRkVFdMU1BWRmxpRkRuUDRyRHhIK1lJcTNa?=
- =?utf-8?B?RG1ZUy9xdWZRQTZuSlBEOTQraDdmL2xtdjFwVU5lSURFZ3RGazFHSGdWWnQv?=
- =?utf-8?B?amd3cFV5Nk1lME9GRmZhWnFNT2E4SWdWMWdFMFJOdDVBa1pUOCtSTzhGdG5L?=
- =?utf-8?B?VUJ5RmRNWUdiRERxc2dsdDgrVXB5cERUYXp2Zi9Sby9iUjhVYVp1L2poRnBz?=
- =?utf-8?B?UENVMzF5L0wzMW1JN25jQzlheVBiN1hZYThUVmZ6ZFBoTm5NVXYzK0FLZEJZ?=
- =?utf-8?B?VDV0SW81K0RQbVRycGk5bFFSMHB3Yk5XVEI2aGlCMmJrWFFBWmlQSjFtTWp2?=
- =?utf-8?B?MXpBVlVHK09hZGJiV3o0d0Y0ek1vZjlnZEhFTW5FY1lOWHRxNHpoeUZCZkJP?=
- =?utf-8?B?c041NWI5OEttc2t0bEhJa1lFZ0t2VGgwcFR0d1VTY3BBanc2NkFkWGkzTjMw?=
- =?utf-8?B?RURMZ3M4U0RXTnNqblhLaWF2czFsSnozTlFmWktDNmhwcTBQSllHVmZ0b0dk?=
- =?utf-8?B?aHpSUTY2VHE4U1FNOWdnay9JOVAxV1ZBQ3lKMWJDS1RScXlTa0s3SGFpSDEr?=
- =?utf-8?B?TTV5RnFjTnpFYUtscmF2Sm5wc3A1aWZSYVVQN0IxKzc2QmNncXM3OGJreXRi?=
- =?utf-8?B?bE1NdWswOFc2b0hSMVltL3MyKys2N0xvOVloZ2NWR1VYTC9Vc3pYa05KbGds?=
- =?utf-8?B?QnlqeWtiSElqUk9tYTk5dTlWd0c1ZzBKb0tzbEY3TjcyNkJOaE12OXFZZ2Zh?=
- =?utf-8?B?SldobmVOcHpueWlOWDY1Qy84SEJsdWRuU2xmektwN2d1Zi9SZUFYNzkyd0c5?=
- =?utf-8?B?SDdZR1owRXppZXpyYzVSWDJVUFVDQVRod1M5VE5vRmVmWXhwR3IzQmpybmp2?=
- =?utf-8?B?MnNMTnNOTkRGQlhRY0NZUFdjc1dxK2NPcGlaTnhBZmRSbk1jS3YwVlJZY0RE?=
- =?utf-8?B?NldiVjliSzlVaEVnWGJLR3prdnU3ZzFRcVBESGQzWGhFTWx2ODVRc3Z5bUtu?=
- =?utf-8?B?Mnk0cFNQdkxPVktlSDkxaGg5VmY4Z25xTDNZR3R2bDhuZXV1ajVXVUNTWWYr?=
- =?utf-8?B?anZ6VEpGVEFnWnlUUU1jT3hpRnRuK3Rnb1hGUnF4bzl4cCtXU1dUN2dmaWRo?=
- =?utf-8?B?eEpmRGVXaThqLy8rQ0JQWTRDSUZJSlpxZU1VUGt1NlRxR0dhMUpQZGhwMjhv?=
- =?utf-8?B?cm5HOTRxRzdiZDZNeStiUEltYlYyZisrSDFhMytFKzNsZVNPRitDRDN3elhK?=
- =?utf-8?B?bHdhQkJWTXNTUmQ4T3JZYytQVzlUVWZoVVc0UlBUSDUxUFVDVUNuUFdYMlBQ?=
- =?utf-8?B?bDc3d3QvQkNFUXlBN1U5UTFuTmZaK0QyNnNPb1JjeDIzMWpVR0FxWUQweDlP?=
- =?utf-8?B?MDBRRjZVc0FBbmtsZTN2VkxKeTNKVnBzOFBuTU1STUlCajhUWW9UZ0xlb3pJ?=
- =?utf-8?B?YWlVMk16NkZsenFhci9tYlB0NnhCSGQyNXNKQW00dFVtcTRGVXNzS0hUWnRt?=
- =?utf-8?B?ZEJBbE1jWGwybFY0djVWdWpJQXR3SDZRMmJjRTNsSW5aWUNxNzIrNkg3dUM2?=
- =?utf-8?B?cFlybEJYVzJsK0VScUhMV1NTZmJiaDE3QUNtVXBDcHFXb3JPdCt5VzBRTm1q?=
- =?utf-8?B?Q0hHcXdGby9kdE9qKzFiSTljdlIyNXFwR3htNzNHMlVzVFFLZDlBTVVsbnJv?=
- =?utf-8?B?QXJxRUlZVmx6b1VUa0FoRVF6dnRGZ1lyUDB6TFFsNGtybkdVcmIyZ3lYeEJy?=
- =?utf-8?B?YlMyN2NtWWlwdTB6V055djdUNlFsQytaQlVSa0gzSzBkMFZZMWZrZHAwOERi?=
- =?utf-8?B?dllzcks2MmJsYTRqR3l4VVdsZEloREduZ3FhZz09?=
+	=?utf-8?B?QWJjcE9xcEhJQ2xoREZ5TThOYjgyUCtheEp5Y0hSN29nUklhWkFhVDczaWV0?=
+ =?utf-8?B?N0JSaW82MC83L1ozcEpVZGxKeTVqa1VqZ0RhaTMxc1p4MUsxVmp4VGNhL1JS?=
+ =?utf-8?B?S2JrVDZJQlQ3UjlaYkxDOEdjR0hkNGVSN3J4Q1lOMHIzNFZTa2x2WVlaVzUz?=
+ =?utf-8?B?TEc4Ty9TOWRlVi85RjBSVyt4WHRKallQdTUrVmdia1Rsaks3Y2ZEVHB2eXdI?=
+ =?utf-8?B?ZEZFeFRwVk9TYnhRSUEzVGlIcnFnZjA4cjRzUWtzS2JaQlM0Yk5TeWhsWUJ6?=
+ =?utf-8?B?V0RqSzNtclFPdjlTcUZkYzV2ck04MnlXWWVRRGZEeExyelpNY1pKcjI3d2xy?=
+ =?utf-8?B?K0tiVFB6TDRPMTNraTBSaitnaWhpQ2NlR0dXRXY3QW5ITjFRZnFzRDduY3hv?=
+ =?utf-8?B?c3U0cXZCWjkvOTNQRmgwUVpZQWJUVkRXd2syQWV6NHVHc2wxSW0rQmcxdVh4?=
+ =?utf-8?B?L1JvNldyWnpkbDdWa3dKWUNTSUNJTDc2ZE1xaHZ5UUhMTmFGVFkxeC8vQks3?=
+ =?utf-8?B?TEhMUWxnNHp2UnZSSlpxMGwvazJkZVB3V3V3TExycC8vVlQxOWZsSGt2OVFa?=
+ =?utf-8?B?TUo4eFNzK3dFQVRoMWl4bWprMi92WXQ1dVFIVGUzdFd4alBzTEFJaXhqS21F?=
+ =?utf-8?B?WEZoQTRRZXBIUGhEVVpsb08xYi83YWdRRDUyNG5lQzBkV2JwZkNmS0F3NlNK?=
+ =?utf-8?B?LzFHRDdhM2wzMG0zN3dwSkxkRGRJWGk0cHNsVldZa2lIMjRBVlJDMS9kZ0lS?=
+ =?utf-8?B?Qk9wMGFZSTlNalRiNEFwZWk2QTR1aVFaR2pDS2FENEliUE5qQWRoV28zZmlV?=
+ =?utf-8?B?RFprN2FCQk1xd0doa24zM3JsMjdRaXlDa0dBaEZOVlpjdEQ1V1pEcEc5TG1E?=
+ =?utf-8?B?aTZNUGFZNHI3blZtdGwzRkg0OVJrMnJZeStxRFUzYlExZWhYTDlwNmk1NTIy?=
+ =?utf-8?B?QXJ0OVBOc3R0cW0yOGY4VzFuYjlCWkVyRTVrZWkrWlBvY1VYY1ppVzRqT3RR?=
+ =?utf-8?B?UlJpODY3aVlvSmUvWmZtalU0cXVUVmF0QlgwazEyL1ExSW45cXlPK2ZqVWs3?=
+ =?utf-8?B?L1Bxa29kVEFnUkhSem9tUVRCd0IrVEYrcmFJemk3VnFSbDR2d1BqdksvR2ls?=
+ =?utf-8?B?dktPUVVGOU5xbCtwbDRDK1VuNkx6QkJWVldiK1NMOWtWRG9YS3hTR3h3S2s2?=
+ =?utf-8?B?ZGNsR0V2U0RVVjd4RkYvSlNnd3FRWEliL2NrR2dOUTltOGpub3pOY3lpUXFn?=
+ =?utf-8?B?UzRUZnVqaG84dk9VL1I2RDB0TFlvdldyNS9kdlFCcWVEcEhSSDdSSW42YWZz?=
+ =?utf-8?B?eUFyaGJOeHovRUM2NVlrRkhhRWVXMTU4QjY2NU9uQVFXTHJ0QVo5cmhXQjhR?=
+ =?utf-8?B?TURGSU00a1Y3YkhkbTJvNFc2SXBHVVhacFFkQjFKclVSVW8wQ2w1eWpkNG80?=
+ =?utf-8?B?a2N6ekNqbUp1UE9NS2x5RjZFUEhHejNLQVZ3M1UvdkptMDd5YjBJWTVycjd3?=
+ =?utf-8?B?d3BRdHNUNzJldHVqMm5nMk8rZGlnSXhKVFBMVWI0RDQxWEMrNkhjdE9pSFJH?=
+ =?utf-8?B?UDE0bGVFZTArVWRVYkxaWDBodHpCTzJXdXAzWlkvSFFlZm1aR29PbU16TXRp?=
+ =?utf-8?B?UTZyR2thajB5SGlvYnNodnlYSHJlNXZPSzZzYU02TUlYYkwybUZpMEtJM3lP?=
+ =?utf-8?B?NGZRaTZNTUJZb1gxSXRHUG1TbnBvZkt3d3UzbkVHYVRVelJwdWFYU3hUczU0?=
+ =?utf-8?B?amNnZ3RGM0JrdFpwREEyMktZZ25ybTdyTVFxZm1yb1pEQU00TDRvTGsrb0tU?=
+ =?utf-8?B?MnJBeXZReG1TVlVuWXNuazBSTXZTLy9jUzJEVWFmU0MxYUYwSWdHMTB0c2wr?=
+ =?utf-8?B?V2NDQ0llQkdkVmhsaTlPN3BNcVpqM3lYaFhTeGxQZzFTM3NrSTNMRGs0ZWdR?=
+ =?utf-8?B?Z2tNeWlJVVAxaUVWQytqUm5RODJYelpCZHhONlZnZndJdDZ6MjhWTDFTd3NH?=
+ =?utf-8?B?ZFVhcVp1ajBGT1lIKytVRUM5Yk5MSDVQS0YxL0ZGejFWTnFqZ3lhUHJBNURa?=
+ =?utf-8?B?MnBrMEdCN2Zua1hwczVSYWp4VkFUVlFLb2xiR2xTSmlYN1dMSWhId3BiRDh2?=
+ =?utf-8?Q?XXUg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(52116014)(7416014)(376014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGpHa1dTdEJTVUU4TGNjQjFHV1VEcHFtdVoxRTFnWS9haVhiYUhOU0VEL2t0?=
- =?utf-8?B?cjdSOTV2cVlMVUYzaDV4dmxOdUhvY0x0bDREZzEwTEpLL0RBTHc3MnFXdTAx?=
- =?utf-8?B?RWhPOUdNMElQQjdmSm40TFJwdjZjZC9DY2k0dTNKN2tGR3JhamZKcld0Wk9x?=
- =?utf-8?B?RTVTUXc2RDJ1aWU5TlFIbUJaT21mZ3MxVmJzbzhndUhOR3gwb2x0bGR1YkxN?=
- =?utf-8?B?QTFLcStxeEEwRWhMa0liTGM3Mjh6cWtKZllEWGJ1TGVNeWhrcER1WGxPL3Y2?=
- =?utf-8?B?SVg2NzZ6TFlXS1lBYjdndzNCSU9hWVlEbnc3U2w4THE0RHVjSkgvbmRuREsr?=
- =?utf-8?B?WE53NTZQN0RWelNDR3AyZ3NIaXNROGZLRitoVmZJcEpnenkyVnZuanhkVkZR?=
- =?utf-8?B?QjViakVFdjJscHFUWXdZSmFjQmFQUnlqRVBVL1dPd1JNK0tJdlZmNWp2OUtp?=
- =?utf-8?B?REZuaVNFbTRkNU1ZS2taTHk5T25iaDljT1J5aEdac1NrTkhNWXdUVW9VejlW?=
- =?utf-8?B?ZEtlbE1vcWhwZXc4SWFCaDl6bmRVSUdtZ3ZneGJOTThjWEoxcDZGbFVGajhl?=
- =?utf-8?B?b0lKUUk0TXNEdlNZTmlqSDFqM0hXZmh5UDRoQU9sQkw1dW5lN2FxNk9Ga1JE?=
- =?utf-8?B?Y1I0dnpTSUI1UVlQdjVpZjlpWEYrbCt2bWtTVndkTzBpc0hZNVZQVnNFd2tE?=
- =?utf-8?B?MGV5RXNtT2M2c3lmMWN6aldWOW5ac1d4LzZLUStycW14cTE0TGNFRGxQWUpH?=
- =?utf-8?B?Y1FpcUE2L2V2c3l5aW50TThWZEFkS2orcEhxdGZ4ak5PZ24wMnNWUkdJRjRH?=
- =?utf-8?B?MHdMb2FjdFNvOHlnR3kxbjU5R0huWmpOUXRlSTFEWXdaNWpHWDhxTzVhalEw?=
- =?utf-8?B?M1REeTEzd0lWRlYraS9kNGtRSVlYbWlkdEUvOVYrZ1B3THpES1cvamxyUEJS?=
- =?utf-8?B?UlJFcnRJdU8vZElhQ3g5Z3lmbVRLbVFJWFpTT2JrbHJZU21Wc0JmRnUzc1J2?=
- =?utf-8?B?VHhWNVlUQnE5MjAwYzZWTE9BUUZxUDVlL1NnMUtQS0xZaHNsZ3V0OUlpSmd6?=
- =?utf-8?B?NFhJTVM5YW5MYXU1T3prTnFrdHFsdnFkdHZtL2tIUllIV2xCQUZJQW83d0Yv?=
- =?utf-8?B?SVhVdkFiVlhnTTQ0aHlqOUUzUmZvZUxuVWE4TmJuNy9oQVphTFlOY0d3VktE?=
- =?utf-8?B?bUJDQjJTNldGTDVsenZjV29KMy9QRks5NklVL3lhaE5WUlN2STlEVUhTMHFO?=
- =?utf-8?B?c3R0WUpLTU9ERDlWUkErVFJPM2VyVFF0T2RnZVE2V1VDaEM5L2p6YVFKdGNB?=
- =?utf-8?B?cEl4Mnh6dzY5Qk9XY2xLMUtjdTdsdFM3eC9WeWN0SEJUbHVuYnlWaFZ6SHRX?=
- =?utf-8?B?U2NsMk5TZGNCSSs2UEhvbW13cEFqT1JYZngvcVNtaFdQTitpME5JMTJjQlZr?=
- =?utf-8?B?OFRxZkZiK2ZmbFlQTnc1d1h3YXVucjRwbTlWd3N0RlR0Y0F5eXRPVHZ5Y0tH?=
- =?utf-8?B?ZFAyVWlrdTQyNnVEYmxVZlpwR2E2eVl6R1VESDFCdTZZbVExUjArclo1OGRi?=
- =?utf-8?B?bytSNTVURExTRjJkWktlaUdHaVd5YkozZVFxdzM2TVh6S1NrRkdHL01nVS9q?=
- =?utf-8?B?aTZzZitqSUR6ZTVQTDl5YjNCVm4wUW55MnBCVm9wU1IvNGltZzVLV0g4UWFU?=
- =?utf-8?B?YmkrUnF0K3l3SytORXk5Szg1NC9ZeVg2YXA3RzRYUTdFV1dncTVvS01kZ2o3?=
- =?utf-8?B?Rm45NVJFcGNIbkdwOW9wZk5lYUpsZ1ZuM3V3eENmendYRjZMd0tidjd3U2Qz?=
- =?utf-8?B?aWhUMjBFSkx2WDBHeDhSYWFYL1liVHF1d2QrbjZsTXZEbjE1alRIMFdOemJP?=
- =?utf-8?B?SnZKK1k1d3FZNGxMWFF1Mm9vRkc2VkxWaTdnQ1hxSForYUducGhuak5SSDVC?=
- =?utf-8?B?WUxOdXVzUW1OdENLVDFMajZ0RlpiekV2ZlYwdTFPMHI2TEVId2F5WXFLekFz?=
- =?utf-8?B?RnJDbFNGajFlMGxCMXBkcmJteGEvM0dkZ1BKbHNSMXVodk4vc1hUeHNnNXRh?=
- =?utf-8?B?VEhiblAyYU10WlltK21NdUsxOFM0alM3TVdZSERGbUxJV3E1Q0l0dzBiaUhY?=
- =?utf-8?Q?W/MzDEgsATVj0/AMwlYE0diqU?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 933e23a4-d885-41c3-ff22-08ddfcf8fcb0
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 12:34:08.2677
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Sep 2025 15:40:19.0323
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uJkPQ3EyAtDx3UhWnoruXU/MGUASre1aYJCxQQ/msb9FstBlsVW02JOdKZUgyp26LORpcqhe+sqsdCTyk3EXyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9646
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc87d304-f412-4241-adb8-08ddfd12ff4f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9761
 
-Replace manual rproc_add() and cleanup logic with devm_rproc_add(), which
-ties the remoteproc lifecycle to the device's lifecycle. This simplifies
-error handling and ensures proper cleanup.
+Hi Peng,
 
-With no need to invoke rproc_del(), the remove() ops could be removed.
+Thanks for reviews. Please find my comments below.
 
-No functional changes.
+On 9/26/25 2:37 AM, Peng Fan wrote:
+> Hi Tanmay,
+> 
+> On Thu, Sep 25, 2025 at 11:50:44AM -0700, Tanmay Shah wrote:
+>> Sometimes clients need to know if mailbox queue is full or not before
+>> posting new message via mailbox. If mailbox queue is full clients can
+>> choose not to post new message. This doesn't mean current queue length
+>> should be increased, but clients may want to wait till previous Tx is
+>> done. This API can help avoid false positive warning from mailbox
+>> framework "Try increasing MBOX_TX_QUEUE_LEN".
+>>
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>> drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
+>> drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+>> include/linux/mailbox_client.h          |  1 +
+> 
+> The mailbox and remoteproc should be separated.
+> 
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/imx_rproc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Mailbox framework is introducing new API. I wanted the use case to be in 
+the same patch-set, otherwise we might see unused API warning.
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 76feda868cb619b79922bcee4c6fdb3e16fc81e3..68e01b647b66910627fb2256c96c152f3c22c83b 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -1135,7 +1135,7 @@ static int imx_rproc_probe(struct platform_device *pdev)
- 			return dev_err_probe(dev, ret, "pm_runtime get failed\n");
- 	}
- 
--	ret = rproc_add(rproc);
-+	ret = devm_rproc_add(dev, rproc);
- 	if (ret) {
- 		dev_err(dev, "rproc_add failed\n");
- 		goto err_put_pm;
-@@ -1161,7 +1161,6 @@ static void imx_rproc_remove(struct platform_device *pdev)
- 		pm_runtime_disable(priv->dev);
- 		pm_runtime_put_noidle(priv->dev);
- 	}
--	rproc_del(rproc);
- }
- 
- static const struct imx_rproc_plat_ops imx_rproc_ops_arm_smc = {
+Hence, both in the same patch makes more sense. If maintainers prefer, I 
+will separate them.
 
--- 
-2.37.1
+>> 3 files changed, 29 insertions(+)
+>>
+>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+>> index 5cd8ae222073..7afdb2c9006d 100644
+>> --- a/drivers/mailbox/mailbox.c
+>> +++ b/drivers/mailbox/mailbox.c
+>> @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
+>> }
+>> EXPORT_SYMBOL_GPL(mbox_client_peek_data);
+>>
+>> +/**
+>> + * mbox_queue_full - check if mailbox queue is full or not
+>> + * @chan: Mailbox channel assigned to this client.
+>> + *
+>> + * Clients can choose not to send new msg if mbox queue is full.
+>> + *
+>> + * Return: true if queue is full else false. < 0 for error
+>> + */
+>> +int mbox_queue_full(struct mbox_chan *chan)
+>> +{
+>> +	unsigned long flags;
+>> +	int res;
+>> +
+>> +	if (!chan)
+>> +		return -EINVAL;
+>> +
+>> +	spin_lock_irqsave(&chan->lock, flags);
+> 
+> Use scoped_guard.
+
+Other APIs use spin_lock_irqsave. Probably scoped_guard should be 
+introduced in a different patch for all APIs in the mailbox.
+
+> 
+>> +	res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
+>> +	spin_unlock_irqrestore(&chan->lock, flags);
+>> +
+>> +	return res;
+>> +}
+>> +EXPORT_SYMBOL_GPL(mbox_queue_full);
+> 
+> add_to_rbuf is able to return ENOBUFS when call mbox_send_message.
+> Does checking mbox_send_message return value works for you?
+> 
+
+That is the problem. mbox_send_message uses add_to_rbuf and fails. But 
+during failure, it prints warning message:
+
+dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
+
+In some cases there are lot of such messages on terminal. Functionally 
+nothing is wrong and everything is working but user keeps getting false 
+positive warning about increasing mbox tx queue length. That is why we 
+need API to check if mbox queue length is full or not before doing 
+mbox_send_message. Not all clients need to use it, but some cane make 
+use of it.
+
+
+>> +
+>> /**
+>>   * mbox_send_message -	For client to submit a message to be
+>>   *				sent to the remote.
+> 
+> Regards
+> Peng
 
