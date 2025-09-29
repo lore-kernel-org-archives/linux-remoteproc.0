@@ -1,196 +1,277 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011014.outbound.protection.outlook.com [52.101.70.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B3930B508
-	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Sep 2025 14:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759157113; cv=none; b=H89U4izI9cf+b8FvSZBIVoBumUygD6/hYEUR1FaIAdXf6ZO9dkoEvgeqqM7vSN1McZLfhJcYb9ZHoi03B742Iu7lSL5IVdNfJBZu2WdgYJh6FzjdJy6oTNA1lae6FIYAmbbC2hGb38xZJVtqUfy5hPpflXa9yqK65MA9acxFZTI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759157113; c=relaxed/simple;
-	bh=bjxqZJBkr2pejLReLGp57GQuP/FODmdpY+jwUhgh3aQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ocmJageGHBuURmvGD12e31owGv9BezEtDxJjLTatbhPJd0HNYwTVPJrxZkDU7qH1QpAEXPCPodHDKF+jm4xQzumDdhsqYRoX5UEKQBfA9aOhfG0LYmG31WKKF6lAup+1iVJT+lvjcJP+hgm4h04dwLUhJeB0wkU2TtL2nYx3sFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jfD6KdNS; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A66130AD14;
+	Mon, 29 Sep 2025 15:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759158004; cv=fail; b=ibetiYeqDGCQXIxU+HvTqlyKUNFrKL/9Hxo5Mb4P81UwCZFwL/NOX/ys+CchVDb6nTcurS/EHYZM1D9s5Zhcdqt8/JnR9of2JUoygZrAwRko0MLBbHWXyNl6aNFmfDdTg9y32Qp16q+k/1EGTpOlPozXppy2GCxPQoEN/uGX3Dc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759158004; c=relaxed/simple;
+	bh=PUzhr8RQFAeUCbb7T2i9rfONWPKXjDxRWBZUvR6aK5w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qv4Zd1clojoI7EbsHgghwDlEhsS+j9Dn02LK9McYyuD4ZktchYHuxhM77aCkKYLqyReU9vF5DHW2TYuT8HGNFSftpDBtvAlyUVgOi1q/V7DfbuqqxJ3prkdoiIkgxyotXBEsuvO9kAVMGSxj3SK9IVXoIfzpdfUl0KkqRFOEBDE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RoVFwGUL; arc=fail smtp.client-ip=52.101.70.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jfD6KdNS"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27edcbcd158so46272215ad.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Sep 2025 07:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759157110; x=1759761910; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PDJrNu/87oxhFdV5g2mGhCBxbl9CU/Oxx1V95f1k0Lc=;
-        b=jfD6KdNSWevOBFhVdANpOGnAFFHTBhIB1bWh0bLPFgPFFQA2SCqSZlqmhITzEKd/Qf
-         KN4Az6HyDKlg04hxp9O6Czh36FOKXDT8fvuk3KbSKRUUkN9RQ87YbTA9/6dJ7FjqlC18
-         TMxqSQhY2Rf9kP/iWbHJvNq1+oJd0ONKKuwmzuhAE8movg6IAGjsNOsVbkv45+jYFQ7a
-         ChUPHZR0Y59hoKvqBMvS9ocxxUMaoMRZDOEH9ids5TPCOgnhy3gb95vVf6nMR/Zph+uz
-         kyIS4n0cme4QuTiIFg9d9ZpCgnt59NttE6BamMCU8xZGQKXKyFpjagNpJuaEkRW3ycW/
-         BEJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759157110; x=1759761910;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PDJrNu/87oxhFdV5g2mGhCBxbl9CU/Oxx1V95f1k0Lc=;
-        b=bMDJbNTu+dV5/fQAgK4+pE8Ns3XAb2bGF2N7GKp8R0tkZY9/AA8tZwa5yLPc/wsADT
-         oHBsVxveTp2t7WYev2TYJADx80ylHQHORtMuRUWsOhDhalTgqJiG8I44LUutgUelT5nF
-         z/jK7A1cjJxkDN8LUIBB+rOA8onXeBi6JwqYMV1i4N0uBhuZELgY2fAjRu6p8QpbZRv0
-         68Sh7Bjksb0C/MGmPrPKJ4kaJr5XQMHwTOQRKKXItm7TfF5Z8NEt0lkZ9xozvur21X+e
-         BjtMKeR9EinYjnZSgbY/iw1H5wXEKpDrN3uFX5/dIgiK+nFF1MAjFBQ5icVJnJE4qCn5
-         qbAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1wnhsnQMY+7N+c+7Q6jmBULhkdfFt2HzPIVr0i/9gEtZ3wSTqs2xgX354W2Wy3DtaX5UWxsyfzM2xqH7+0Bsx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgyn0EhRzAJgHT6irM2gkiescjhczFTeUMAw8hdgCwS4axAvEn
-	QFJ4mZNPVgm1ohl68vcBn+2AkPPqz0gaaklVyuUyKZS8GQe7rsoUXNwpKT9ysZP9QUk=
-X-Gm-Gg: ASbGncs6jq8z+XacZx60YLMYpUVO62OeH4eAV+6/1+m8kDFfnX1bNpagK37b30Vz9VM
-	Fssx8ei5QLZL1p0ggsw4+yHu4PZtBVf1EH7CHKzo+xFQzkHIhZ+YXRSphNj2EAuXzs1pA6mrphR
-	YbSIKwkn8dGS9WmfXDOzAXzpim2l0XDqvVrLqwipZ/I+ZIHeYE1KgSlaH2+QHKgOjw9ZDfEVWEc
-	5OfsT8GUY25+QoNyDSG0W8QOhp00MZur95NfqYFeYOfYjR9BMgYJy8RxC3WiO8nWgmDADX7Eu59
-	JPOhnWG/kbcKmbNYGqfyIHZaYs+S/xMphy9X5elDOW0AMzKzid0YLlnGVSgmOFnfCppDXKNvjpv
-	fnoQVQxBrRSmdWM2y4pfnbsQM8lznNul6fdQKGmRRotNPDqxj61soaIWa9i6621T4t28irMtAlv
-	WpcOOMAdGadKOgGS1XabcoGbdX
-X-Google-Smtp-Source: AGHT+IGStDkVMSVVTnzQVSh3FuJHIMb8NmKtFl3BQOoTbaB7Lrsqqm0cwlWfm9TkpnyXcPEyZALIpA==
-X-Received: by 2002:a17:903:faf:b0:27e:f16f:61a3 with SMTP id d9443c01a7336-27ef16f627cmr117331725ad.23.1759157110103;
-        Mon, 29 Sep 2025 07:45:10 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:385c:dafa:52d5:8bf8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53cb975sm11720855a12.18.2025.09.29.07.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Sep 2025 07:45:09 -0700 (PDT)
-Date: Mon, 29 Sep 2025 08:45:07 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Tanmay Shah <tanmay.shah@amd.com>, jassisinghbrar@gmail.com,
-	andersson@kernel.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
-Message-ID: <aNqbc5Q_tVStXkhI@p14s>
-References: <20250925185043.3013388-1-tanmay.shah@amd.com>
- <20250926073735.GD8204@nxa18884-linux.ap.freescale.net>
- <e93f0ee7-687a-4f47-a847-90cc1ea87290@amd.com>
- <20250928075641.GA29690@nxa18884-linux.ap.freescale.net>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RoVFwGUL"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i1qhF4psyI71Wds9fEvNqPpwQLnwiJaGTSZ2es/h1rbo1GZxKLfcKawbTdZF2YDgH9TJJq5vgZFKnBnss+9N3n27J4gcYFnrgU/ZUlVjz5p2p+XphpY6YkRifmV8/bWFW963zTCPr8tpOuy2WFm/QK2PmgM/p9oVfoYwZIPFNluq2Mq4gzDvz+s+9khrLhe08TDuqmRWnu74ieH/SMuSxN8QFgubt4JCl45uvDJDchCA2b1lW8Poj+A28NsR6Gb/N19/Zih8lJqC/k80iptRHhCl6KSMPTHgBXrlU6jNdZk+7SwqTDqBJBs08d8NNetRs87AcM7LiO+dtHF0GS2T9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s54dWxUBcO+5ROxgAPakUJtFjBVA0gMIfismE6hXwjQ=;
+ b=Yc8JdL1vm9dWAWm58QkY1NQi4c7VlKGH5nIvURurNbi3N/SKiEQikZfOj7YsiQMX6RffeysYkyVsM7bvr28+qHk6i8yAreo/8bT5Lv7oj651AXYXGAtDx6WAgnsLsFTOKLkj53hBzJQPkm0CembfpUzJApbzKzaLWcV2yB+Fy7FEmIMbylp7ODPTlOR8/A4CcAuqh0xd9dIG8hnrwg4xI+a/FnwNANoP6oXdjhRpATFxN3NwsvjoHXAdLaP9Hr+asXPc3l1kDjWO37cRD0S3q+/D0hmqwqq7vZfz053hxlKs4ZkDqSwkUaLArBNzTrBp9AVapTdITgMd8Dj2Ua2Lzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s54dWxUBcO+5ROxgAPakUJtFjBVA0gMIfismE6hXwjQ=;
+ b=RoVFwGULShZpWwaAA7Ll7JjGJsv/Tq8FAvQNU9t/bamQ58t2LJKnzxI5ALo44sKEjeaH5f37uNCfiiJYWacsR4wVYOmRph6VxYbTmVVDkMbPY5l8arsbIWABC5A3IIK9aUlCjwRJQ9eUwUzj37is/dQG0E8DgwPwyCLuDoP69C0V6vN6aKheUB9z6GULisBtazLFN8tWJIZ/vnSlT0A8SJ/+nwRwaPxfDfhHFWLyX8wrkVzj+mu8woI2uHsjynJFECjCmyPWC7zT//siDI+w29Zgf08pQ+TmdkGwRsgsVO/Q+oBsR/Uz5unijMMTTA4yH+8zSA87xgLOM021Yy/Ztg==
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by DBBPR04MB7500.eurprd04.prod.outlook.com (2603:10a6:10:1f4::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Mon, 29 Sep
+ 2025 14:59:56 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::21bf:975e:f24d:1612%4]) with mapi id 15.20.9160.015; Mon, 29 Sep 2025
+ 14:59:56 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Linus Walleij
+	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng
+ Fan <peng.fan@nxp.com>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH v2 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+Thread-Topic: [PATCH v2 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+Thread-Index: AQHcK/wx2iUEcIZWSkSwbhQhQayDwbSpjLeAgAC7MhA=
+Date: Mon, 29 Sep 2025 14:59:56 +0000
+Message-ID:
+ <PAXPR04MB9185CD0AC1396865AE82BF77891BA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+References: <20250922200413.309707-1-shenwei.wang@nxp.com>
+ <20250922200413.309707-4-shenwei.wang@nxp.com>
+ <20250929033713.GC29690@nxa18884-linux.ap.freescale.net>
+In-Reply-To: <20250929033713.GC29690@nxa18884-linux.ap.freescale.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|DBBPR04MB7500:EE_
+x-ms-office365-filtering-correlation-id: 58bd7e1d-d571-4a4d-c0f2-08ddff68da93
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|19092799006|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?0LQtxkT14e6bQYfe+j8g/aigniPLPl8m+BJgoHTSWYOOjOC/CUp58yGJVFW4?=
+ =?us-ascii?Q?67ZJhu6zjNnahdELLGgwZASAzfg7zSD33oEvh/niwsqGVP1aQ3gwM/Li8Ftd?=
+ =?us-ascii?Q?QDcwvDdyq00jMQrJ4rVtG+nhZwV9qUJoPwidlicM3XA0loJMd9A7iiDy/GXm?=
+ =?us-ascii?Q?VIP6Yu4ZPExTtclReEALafzO/bhCSPNFZ30UX9UsNf+W8IGIpZUBdS/7Z0+U?=
+ =?us-ascii?Q?H7mUGZUymQhR3ORR/shwCKi11nTUpr2e/remWbGMMsvjqaAljWJCDJ3Yv6yf?=
+ =?us-ascii?Q?jGWOYMSsDzoM3zL2Fk1WBsdC9d3kV4HMzpVVvHnkDv2IOqSAeLh50GVykqiH?=
+ =?us-ascii?Q?DrCFftyZkF7LdJ/kMnHhyXQRnNkPik5YUgqMkk66hvX0LXzSw4JEiUZ3DlKy?=
+ =?us-ascii?Q?8GgsjG6kzdOzYddjorTjNe7UWyB7ZK9SA/zILqECe8aCp1q8cajIwuv0AhH3?=
+ =?us-ascii?Q?yPO1ZkBZmzwo9x3ZA/g5aZNWhIDZ4Ex8PlmIiDT4LAq36yEFxjkedtjEP709?=
+ =?us-ascii?Q?KTm3xdtlLqre4vM19icCCG1nTIrT5cknExsVBWBt3q2YoPQY3wthBG9AQPt4?=
+ =?us-ascii?Q?fgxW3lJNRyteqqSvTptyWmasZa1rUWocdZcX/dtH0BsnRHbzyvTLxAaYU3Jq?=
+ =?us-ascii?Q?bvJjCWxOOIoRHlyypt0vloKcyOHkDCYAqZELXlm9gzMY3E5R2ZBpztr/FqfZ?=
+ =?us-ascii?Q?W8PHXmD8/vE3CTtAt4mekSiGhEW+JWaWBO6g4wYCgaTXW48TheJvfcmc11+8?=
+ =?us-ascii?Q?0J8iKUUtSVmopntiYbXnyaeO+Ki+b5nn7FXK7a4rsZznKI10nrofdeVAQoYY?=
+ =?us-ascii?Q?bXS3JaCZpIMLIPaSBbKuJtqOwfhOgUwytbuNxDCXlQ2kASs8fmj9ksCr1ynu?=
+ =?us-ascii?Q?IhRgw9fnyTEB8vLBHQRP/oBBQE8xe46lcGVfAhKhzgYM1TCKHt2wOmwFUAez?=
+ =?us-ascii?Q?cqI0WEM92B8vRX33nf3GgMHIifhUimKUNcSUd8bLH1Q6dpzcu0q4Wjd+Sdb4?=
+ =?us-ascii?Q?0/d//LMFO4BrB8sBRg6D9h3vRT/PL1EStm4GDS02p+K159aRjaVabsHao9Vu?=
+ =?us-ascii?Q?+OPp+XGKv/oCBeuvYmpRpuwrvTy7qVoMoOfJCz9cFl+zB8730LJzeUz73JbL?=
+ =?us-ascii?Q?GgMNx2MwRwJZVBJkUpKWcALzd82nz2lDqSgHJM3Y0arZGj0xEFzlbah4W0dT?=
+ =?us-ascii?Q?OOfemDR2tf/hpeihvJI36H4h8Xh/UK6YoiVOVOHDQD3a1q+8hryw9q+bbG/t?=
+ =?us-ascii?Q?eJXvyZ4PczfCrLFl2kLr25iBPa5pmfvaRR4H+8hAlxkL/Y36P9IZK3CztSw5?=
+ =?us-ascii?Q?THBrB0q8H66wxxwbHnE5+8OVmRNrTxANHfgSp/8jxrs9LaIcQk60qah/Uy04?=
+ =?us-ascii?Q?t2vFgzT+GQoTUFV0ndMWX636a5BopE4WPnaF3BdCuqKQ94CSOWZrPqGUvFCI?=
+ =?us-ascii?Q?T9xJfeM/534lBPxkldq0b9Y1v+ZjffclDct5lNid3YkrompOeXYE+Vvszw+/?=
+ =?us-ascii?Q?ubCxkiYMk/vJgvWtmgeoIsjKhVn6h8/7e8ZM?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(19092799006)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?zMeoCMLxiUFspYH2awHtniGy6hmWXvg8hn60JnK6p+RiMEFj4PVzNgyHbGke?=
+ =?us-ascii?Q?RwYu0WGFPtZXTP7moVsGie9mtgUtSRhv5Ne9KR+MDGcDziLEDMWiflli/Yv3?=
+ =?us-ascii?Q?v4UZSc90dx9juyOZsiiFqjy68VHpxtr5kM0QT+PQGquUFDw9NkVH8qmyC1mT?=
+ =?us-ascii?Q?A8HaCND+UilZVEcPLpet4xsTWKobAQUqWW/nTUKwbHjRGwQnn6+ozF192VGx?=
+ =?us-ascii?Q?U3VBrgKvSZcxmMQjsz4gN44uUmshav/UuNhd/EHT52WlPOkdpLNjRYekW8Ol?=
+ =?us-ascii?Q?c3eZ2ltfzgjy2MQ2CqC5cDREIo0MrbafYBPspATM1KDdpZmAPXPvfbBlzt1f?=
+ =?us-ascii?Q?RpRDAqo6MT0DTH6pNzSUD5Glxnjc7DHR4VT4kSs79ZN5dLIvsJE4btGw38Pb?=
+ =?us-ascii?Q?eygnNoZLSOKnbKwMNH7KjrfxKHEpTagOfRTXyBYnMsF5LdBmEwuLzpdwziye?=
+ =?us-ascii?Q?ki1APa6u8t8wiu8tuL/wEIhiIodaMl4oQw5dFJ8o5dYAaqzdN8nUBaWGmwi3?=
+ =?us-ascii?Q?di33LJid/we1oI7zL8H5nHCtHVGSEDtfQsz8/BCPO7Cuv8ucCqaZ7eUUhbv2?=
+ =?us-ascii?Q?mjgkPpeQkkyjSfaqWSAr0pZ97FCNSqz1/+1dyM/XtBchXMyZGrr3YZ/0XCzq?=
+ =?us-ascii?Q?MvKI3+5xzIMLpWMw8s8Fe/ZSOqKvBQVhSuVgzE1KEvd0dpmr/J9iEwbbsk7c?=
+ =?us-ascii?Q?E84uVpxEBNgS4ZaE3PZHbEw680TsMnDgxKLrk4YfPPksQS7TWQ9y0i6nf+AI?=
+ =?us-ascii?Q?mSiNyYfIKksfI186oUV5zm74y3dyjg8EK4iYN2Cu8A2x4EZvpfPKEyCEMO3v?=
+ =?us-ascii?Q?WOZOgOaE+OuO6E37A8Du9cdCIJwwoGmn9dhsBf86WoH0X7nVS4lJSvkrTUFQ?=
+ =?us-ascii?Q?rQ1EFyHr1EJamjG/GeWyxXRc8rneSr0gt6TBD4iS2oVKxr/BAiS2701AKylX?=
+ =?us-ascii?Q?tue0s81eLm8Ddi2jIMmSaxWZdEaydXQ8I2caq/M4+sI1lZ25UxEVUzP/ups3?=
+ =?us-ascii?Q?xDCvYFU1n6xBQBzH5faVU2xui8bFIfhM3lMR3WzQpDU0YtLMsnFq+tsJuAy+?=
+ =?us-ascii?Q?LUAQkvr4L42ZhhokoOgRHnigE2f4WZT6/xQAwrg8gBAjZXr3Z8ur1OYqsXBW?=
+ =?us-ascii?Q?+/YkifUu5I7BshBthWktjpFiluOeP1/OIypy/izPdX2fWZN1s4w+NkzkWorl?=
+ =?us-ascii?Q?X4YLBLSiw0JIurqKIQtj3Q7r19hjQw7VQu+D2DBjDipiAcnJxYW0aWgDlMtY?=
+ =?us-ascii?Q?+6Ohmwylcin+Jypd+44ynlEUwmYPVEOkVTzhWwlKx9nbb/nwFIoaaPSt1ouK?=
+ =?us-ascii?Q?xeMbBCjkW35AkS6bzhq5nj1UF0dxxNhv9kjHPndJxuA8oUElqBcwUUK2mKFL?=
+ =?us-ascii?Q?PaTGBNtAUOsv6wZBYzjTMi52F+2w20nmS2Ljq8DOLiUanrArEvondnBEmr7I?=
+ =?us-ascii?Q?Mjf+f/01MzVm7JnZs6tLEu5lf/7exXXWaWSU8/9tSW5EREmQ4wCAJZwIRzYQ?=
+ =?us-ascii?Q?5kmzEZtdWJdhMkTqwMDTjUz/22zcvgG0atizhF6tqGQpC8ag+4eBBbmANL2R?=
+ =?us-ascii?Q?FzBk5enbYrPFdyloosIrJKAfvo0nehLrfn98+DI6?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250928075641.GA29690@nxa18884-linux.ap.freescale.net>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58bd7e1d-d571-4a4d-c0f2-08ddff68da93
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2025 14:59:56.4656
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4zVcUjuk3OcGGKHh8Je4cFt8nzm+ck1Erx/aG/F9j6aGO5mhZTITOW7Vn7AX9PMSSMeU+78FI5fGlAltH5QRKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7500
 
-On Sun, Sep 28, 2025 at 03:56:41PM +0800, Peng Fan wrote:
-> Hi,
-> 
-> On Fri, Sep 26, 2025 at 10:40:09AM -0500, Tanmay Shah wrote:
-> >> > ---
-> >> > drivers/mailbox/mailbox.c               | 24 ++++++++++++++++++++++++
-> >> > drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
-> >> > include/linux/mailbox_client.h          |  1 +
-> >> 
-> >> The mailbox and remoteproc should be separated.
-> >> 
-> >
-> >Mailbox framework is introducing new API. I wanted the use case to be in the
-> >same patch-set, otherwise we might see unused API warning.
-> 
-> I mean two patches in one patchset.
->
 
-Agreed
- 
-> >
-> >Hence, both in the same patch makes more sense. If maintainers prefer, I will
-> >separate them.
-> >
-> >> > 3 files changed, 29 insertions(+)
-> >> > 
-> >> > diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> >> > index 5cd8ae222073..7afdb2c9006d 100644
-> >> > --- a/drivers/mailbox/mailbox.c
-> >> > +++ b/drivers/mailbox/mailbox.c
-> >> > @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
-> >> > }
-> >> > EXPORT_SYMBOL_GPL(mbox_client_peek_data);
-> >> > 
-> >> > +/**
-> >> > + * mbox_queue_full - check if mailbox queue is full or not
-> >> > + * @chan: Mailbox channel assigned to this client.
-> >> > + *
-> >> > + * Clients can choose not to send new msg if mbox queue is full.
-> >> > + *
-> >> > + * Return: true if queue is full else false. < 0 for error
-> >> > + */
-> >> > +int mbox_queue_full(struct mbox_chan *chan)
-> >> > +{
-> >> > +	unsigned long flags;
-> >> > +	int res;
-> >> > +
-> >> > +	if (!chan)
-> >> > +		return -EINVAL;
-> >> > +
-> >> > +	spin_lock_irqsave(&chan->lock, flags);
-> >> 
-> >> Use scoped_guard.
-> >
-> >Other APIs use spin_lock_irqsave. Probably scoped_guard should be introduced
-> >in a different patch for all APIs in the mailbox.
-> 
-> Your code base seems not up to date.
-> 
 
-Agreed
+> -----Original Message-----
+> From: Peng Fan (OSS) <peng.fan@oss.nxp.com>
+> Sent: Sunday, September 28, 2025 10:37 PM
+> To: Shenwei Wang <shenwei.wang@nxp.com>
+> Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
+> <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
+> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
+> Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>; Linus
+> Walleij <linus.walleij@linaro.org>; Bartosz Golaszewski <brgl@bgdev.pl>;
+> Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>; linux-
+> remoteproc@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.d=
+ev;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; dl-li=
+nux-imx
+> >+	if (!port)
+> >+		return -ENODEV;
+> >+
+> >+	if (msg->header.type =3D=3D GPIO_RPMSG_REPLY) {
+> >+		port->info.reply_msg =3D msg;
+> >+		complete(&port->info.cmd_complete);
+> >+	} else if (msg->header.type =3D=3D GPIO_RPMSG_NOTIFY) {
+> >+		port->info.notify_msg =3D msg;
+> >+		local_irq_save(flags);
+>=20
+> Would you explain a bit on why need to disable IRQ on current core.
+>=20
 
-> >
-> >> 
-> >> > +	res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
+The generic_handle_domain_irq is required to be called in an IRQ context.  =
+Seems it can=20
+be replaced with the generic_handle_domain_irq_safe here.
 
-Please have a look at this condition again - the implementation of
-addr_to_rbuf() [1] is checking for space differently.
+Thanks,
+Shenwei
 
-[1]. https://elixir.bootlin.com/linux/v6.17/source/drivers/mailbox/mailbox.c#L32
-
-> >> > +	spin_unlock_irqrestore(&chan->lock, flags);
-> >> > +
-> >> > +	return res;
-> >> > +}
-> >> > +EXPORT_SYMBOL_GPL(mbox_queue_full);
-> >> 
-> >> add_to_rbuf is able to return ENOBUFS when call mbox_send_message.
-> >> Does checking mbox_send_message return value works for you?
-> >> 
-> >
-> >That is the problem. mbox_send_message uses add_to_rbuf and fails. But during
-> >failure, it prints warning message:
-> >
-> >dev_err(chan->mbox->dev, "Try increasing MBOX_TX_QUEUE_LEN\n");
-> >
-> >In some cases there are lot of such messages on terminal. Functionally
-> >nothing is wrong and everything is working but user keeps getting false
-> >positive warning about increasing mbox tx queue length. That is why we need
-> >API to check if mbox queue length is full or not before doing
-> >mbox_send_message. Not all clients need to use it, but some cane make use of
-> >it.
-> 
-> I think check whether mbox_send_message returns -ENOBUFS or not should
-> work for you. If the "Try increasing MBOX_TX_QUEUE_LEN" message
-> bothers you, it could be update to dev_dbg per my understanding.
-> 
-
-This new API is trying to avoid calling mbox_send_message(), no checking if it
-succeeded or not.  Moving dev_err() nto dev_dbg() is also the wrong approach.
-
-> Regards,
+> >+		generic_handle_domain_irq(port->gc.irq.domain, msg->pin_idx);
+> >+		local_irq_restore(flags);
+> >+	} else
+> >+		dev_err(&rpdev->dev, "wrong command type!\n");
+> >+
+> >+	return 0;
+> >+}
+> >+
+> >+static void imx_rpmsg_gpio_remove_action(void *data) {
+> >+	struct imx_rpmsg_gpio_port *port =3D data;
+> >+
+> >+	port->info.port_store[port->idx] =3D 0; }
+> >+
+> >+static int imx_rpmsg_gpio_probe(struct platform_device *pdev) {
+> >+	struct imx_rpmsg_driver_data *pltdata =3D pdev->dev.platform_data;
+> >+	struct device_node *np =3D pdev->dev.of_node;
+> >+	struct imx_rpmsg_gpio_port *port;
+> >+	struct gpio_irq_chip *girq;
+> >+	struct gpio_chip *gc;
+> >+	int ret;
+> >+
+> >+	if (!pltdata)
+> >+		return -EPROBE_DEFER;
+> >+
+> >+	port =3D devm_kzalloc(&pdev->dev, sizeof(*port), GFP_KERNEL);
+> >+	if (!port)
+> >+		return -ENOMEM;
+> >+
+> >+	ret =3D of_property_read_u32(np, "reg", &port->idx);
+>=20
+> "device_property_read_u32" should be better.
+>=20
+> >+	if (ret)
+> >+		return ret;
+> >+
+> >+	if (port->idx > MAX_DEV_PER_CHANNEL)
+> >+		return -EINVAL;
+> >+
+> >+	mutex_init(&port->info.lock);
+> >+	init_completion(&port->info.cmd_complete);
+> >+	port->info.rpdev =3D pltdata->rpdev;
+> >+	port->info.port_store =3D pltdata->channel_devices;
+> >+	port->info.port_store[port->idx] =3D port;
+> >+	if (!pltdata->rx_callback)
+> >+		pltdata->rx_callback =3D imx_rpmsg_gpio_callback;
+> >+
+> >+	gc =3D &port->gc;
+> >+	gc->owner =3D THIS_MODULE;
+> >+	gc->parent =3D &pltdata->rpdev->dev;
+> >+	gc->label =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s-gpio%d",
+> >+				   pltdata->rproc_name, port->idx);
+> >+	gc->ngpio =3D IMX_RPMSG_GPIO_PER_PORT;
+> >+	gc->base =3D -1;
+> >+
+> >+	gc->direction_input =3D imx_rpmsg_gpio_direction_input;
+> >+	gc->direction_output =3D imx_rpmsg_gpio_direction_output;
+> >+	gc->get =3D imx_rpmsg_gpio_get;
+> >+	gc->set =3D imx_rpmsg_gpio_set;
+> >+
+> >+	platform_set_drvdata(pdev, port);
+> >+	girq =3D &gc->irq;
+> >+	gpio_irq_chip_set_chip(girq, &imx_rpmsg_irq_chip);
+> >+	girq->parent_handler =3D NULL;
+> >+	girq->num_parents =3D 0;
+> >+	girq->parents =3D NULL;
+> >+	girq->chip->name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s-
+> gpio%d",
+> >+				 pltdata->rproc_name, port->idx);
+>=20
+> Align pltdata->rproc_name with the upper line '('.
+>=20
+> >+
+> >+	devm_add_action_or_reset(&pdev->dev,
+> imx_rpmsg_gpio_remove_action,
+> >+port);
+>=20
+> return value should be checked.
+>=20
+> >+
+> >+	return devm_gpiochip_add_data(&pdev->dev, gc, port); }
+> >+
+>=20
+> Thanks,
 > Peng
-> 
-> >
-> >
-> >> > +
-> >> > /**
-> >> >   * mbox_send_message -	For client to submit a message to be
-> >> >   *				sent to the remote.
-> >> 
-> >> Regards
-> >> Peng
-> >
