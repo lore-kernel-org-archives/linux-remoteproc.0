@@ -1,178 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4C9257AC2;
-	Tue,  7 Oct 2025 21:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260893C1F
+	for <linux-remoteproc@vger.kernel.org>; Tue,  7 Oct 2025 22:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759874175; cv=none; b=LN5chIHE5UIFcdPBWKO6SLTako+eJ6MyPMNV0H8yyx2QtO45VJBr8WGC6N7b4z5q1Lba8AQCBINqyBKHZ/BGRPlaqgbg0+dqpTdifKQh43AJuM+bx+c9wunXRkFy1HLv/BW4gWCxhz3j0jngx68Ptx3OMHI8JuW/5Rs1vHLMQ2w=
+	t=1759875394; cv=none; b=SNgQCnavqmHjvMrXtkm6+7CAWHIxHUtMwSMCwXTT22P4MDbEHvxzGaIntw7CRDcD7hZ0xbq5LWiDGJ7FABGs88sz5S9m3/a7QURAWE/dw24AnslTGLtkWZyRwY1bZTLlJGBn1g60iCLfhC+CgJyUo4bKmZYf4/4A5ro50N9YXEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759874175; c=relaxed/simple;
-	bh=NcwVv1ub+OE7gxZbKY0ceQmTVMBaNOwjC2SkplBnkSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eEFdRpx3+Umftxao59guMPzf+9Wivgmb46YKY+AiFKK//qBoyl4xCSjay/enjH92MqP/4T1tU9GEuetFW/H2uCQ70hAypadjzLJE5xGmOf4G6UXQlVtLK97D5gbTcA7W82kwLjmDmLQSq63XN6znBdhn5gGDbk0uXpZVYpS87y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SG039+EF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1759875394; c=relaxed/simple;
+	bh=pMHeIuQx2q4EHNUQvUoEFemD+88dJQKlLGcjt4nVQGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=chnvj/yCW2CLBS1l0TrNNTA3djmRpP9H7K3gd3cX46/iJWdgGJp+9WQGaPiWF8O9Fd4ip6Mm55ogc54OtdVzNZ9dbboYGEkrYiwXiEdytFdPF1tlg8DWR4aZ4G+WtENOp+grVZo19Cl/6DLgZ8rmRp7Z6C1iX88ZkBG2TaMRfFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kAj2GqOl; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SG039+EF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8AE7C4CEF1;
-	Tue,  7 Oct 2025 21:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759874174;
-	bh=NcwVv1ub+OE7gxZbKY0ceQmTVMBaNOwjC2SkplBnkSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SG039+EFWmtmH7WGHxM8o7zn4S4eS4ALELXVv2+QcUoOFDilNdeQEQ7bZvRQ4oSPz
-	 XP1GJG+3OJPEX/OmqixHP3Y3nvWOpQRm8a28tGmq1xwx/Jfr+iLvdfbEBscuSVIHWT
-	 eGlUnvAuW8ZUoSdj4OLXsklWXyO7jC/uaU6jVTShZ7GtFAcx3SQBRd7bUZJEClNT78
-	 xB3u43J2CfA/JKBWL9BoKHLtc3i3/Wm2BsRCpJVgJfXEGIIZkXPXRtjfBDN0dNVGNa
-	 hG0EP8iPa7boGxLoBCarGJSJXfnk4V9yZeB5+UUDD5AXd7OeLEnHXh5IwdG60+n2jn
-	 R/BkVajC21byg==
-Date: Tue, 7 Oct 2025 14:56:13 -0700
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v4 00/12] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-Message-ID: <b6akgk6nymtaxqak2procz4gkq6hrj2ao2yaw3axo6yjn7ekuk@g66xx5vd3fcp>
-References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kAj2GqOl"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b4aed12cea3so721187766b.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 07 Oct 2025 15:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759875390; x=1760480190; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bjhcAIDF8/EQN2DtNJznmQGOwXEZTQMeZUXrCuISBG4=;
+        b=kAj2GqOl6HhgV5mNBcoTW4pypt842MkO02/gULfWx/Kr4vpxUhL5oxbndpxCS5B7Xq
+         3nfxJgz6PJF8AAqveUym2jFM28rAAnfY0IsQDZBe1OD4jG3U16IheEvyIcu8TlYJmSnW
+         dFRRaO80CQwx8ViXQeF3Z6sSFdJHZeEu86oEQhCxwDbgSpklQsUGM85rhi+oypbItX6W
+         ZW4nfuq+P1KddlbJbgGvxN4Wy8UuHwk5JhhiA9a7jRK+3+xpdDrJFK+JNoQQ5tjlCWM6
+         aSsdlqBL3ulipU04pkfh0axr5HCg69ZqVxnftNG/FcfiCcvFCWp+uFhhAQ/q7AaBdHcY
+         67zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759875390; x=1760480190;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjhcAIDF8/EQN2DtNJznmQGOwXEZTQMeZUXrCuISBG4=;
+        b=hFmyvTCQcCqkyUZux77KivJyCIbTKt2i1H2TqDoFBMLURszZC6c9YcrE9ip6/u1i32
+         MvVaz0/1JX0LXqzj1UeU5A2FSC1cBdw47oDd0Lb6pEoG8qac2b9s82kJVwkof9aXKsjT
+         t+IGNaytd+QTtqt8bFhAHN+qUluef6VBs815XHJiWhvpmTcD2VOX4trN8gdm3on9VTLb
+         wTLB9aEPKV8/r6KRR02GmXTyXWp61Q7ADHSlwarEFBr84cGHtpl1hadUT9uG4a/rqFpP
+         oXLxuEOooRO86hJSc1EMj7DjpF1M5IDPBqzgvVdH6LnOYLIa/w6cMAEZY0zJzZzBUbpx
+         qx1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVVAqQx5gcI2YtbsYYn6hQLkdzTwiUpy2u/LoFd58SNOvGc7I23VrsXA+iXFPN3iJHGuU5veJa3qH2PEO3CE//V@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo96JGQf8/OQvHkWc8iXEupfIeZQyeY0+JYYJXcVyAT0vJF9mR
+	kfVqWNfvtClNGximRcojEHqFm9PhAq1xa59FVA1TOiHg+i1lLQYSQ1qrFvMa7ipHfx0=
+X-Gm-Gg: ASbGncvDpWD+H4LrnbLqDEygH2hd84wbhDZZoz+wrltkuO/UZIe5PBijpAG0q14Fjy8
+	ES2EOqgaQsefbhnvsS6Cp9CdqYwGQ5UAVT8IX0Z4ngdrOMQK7KsVd9tGL4VALFDvztrEUMs36UD
+	byg8lqd9odLVNhdq4zm8jUlRp2QMkldX7W10tDWYWdhGzL+bY7Ej3zez2a50OPmPu2l8qhOubHy
+	iRePtkTZ1mWVIq7xuadayn/MUbxU9dm+RG2HSvft2Jqgb4qrUP1IomMqWGjU+18LJFivpADFZpH
+	xK7DTkHPz9odVLcAsbcN4G8plS9wKY3lLDLxXJcZ5UbW7K7mLgnMyjRP8sIHREazqLTHo36Ar3z
+	sJktNMMg/nzipmO6dQ23rNpgdPrL1cW7VLdbGD9wN8yGlx1I7owe9DgQTcUO3e3k6/oCoko2Cwg
+	gjxYk5A37Cg+iaI9v5
+X-Google-Smtp-Source: AGHT+IGYcPbzACIE/5EMswc0+sjA3tFOGQiH/oXWXnWgAeZoMqEYeVqq1umjaIwNpexDiKcPAtxL+w==
+X-Received: by 2002:a17:907:c02:b0:b2e:6b3b:fbe7 with SMTP id a640c23a62f3a-b50a73c4cd7mr128513066b.0.1759875390421;
+        Tue, 07 Oct 2025 15:16:30 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b32bsm1530188666b.50.2025.10.07.15.16.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 15:16:29 -0700 (PDT)
+Message-ID: <45eb9c5b-bc8e-4866-bbaf-5afaed9fda21@linaro.org>
+Date: Tue, 7 Oct 2025 23:16:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/12] firmware: qcom_scm: Introduce PAS context
+ initialization and destroy helper
+To: Manivannan Sadhasivam <mani@kernel.org>,
+ Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <20251007-kvm_rprocv4_next-20251007-v4-3-de841623af3c@oss.qualcomm.com>
+ <qqjynnzjhpe6elglh3xb4ghbtesfkr4ssxyq5flhcy7a5jp6ym@3viy7jyesamq>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <qqjynnzjhpe6elglh3xb4ghbtesfkr4ssxyq5flhcy7a5jp6ym@3viy7jyesamq>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 07, 2025 at 10:18:45PM +0530, Mukesh Ojha wrote:
-> A few months ago, we discussed the challenges at Linaro Connect 2025 [1] 
-> related to Secure PAS remoteproc enablement when Linux is running at EL2.
-> 
-> [1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
-> 
-> Below, is the summary of the discussion.
-> 
-> Qualcomm is working to enable remote processors on the SA8775p SoC with
-> a Linux host running at EL2. In doing so, it has encountered several
-> challenges related to how the remoteproc framework is handled when Linux
-> runs at EL1.
-> 
-> One of the main challenges arises from differences in how IOMMU
-> translation is currently managed on SoCs running the Qualcomm EL2
-> hypervisor (QHEE), where IOMMU translation for any device is entirely
-> owned by the hypervisor. Additionally, the firmware for remote
-> processors does not contain a resource table, which would typically
-> include the necessary IOMMU configuration settings.
-> 
-> Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
-> Authentication Service (PAS) from TrustZone (TZ) firmware to securely
-> authenticate and reset remote processors via a single SMC call,
-> _auth_and_reset_. This call is first trapped by QHEE, which then invokes
-> TZ for authentication. Once authentication is complete, the call returns
-> to QHEE, which sets up the IOMMU translation scheme for the remote
-> processors and subsequently brings them out of reset. The design of the
-> Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
-> is not permitted to configure IOMMU translation for remote processors,
-> and only a single-stage translation is configured.
-> 
-> To make the remote processor bring-up (PAS) sequence
-> hypervisor-independent, the auth_and_reset SMC call is now handled
-> entirely by TZ. However, the issue of IOMMU configuration remains
-> unresolved, for example a scenario, when KVM host at EL2 has no
-> knowledge of the remote processors’ IOMMU settings.  This is being
-> addressed by overlaying the IOMMU properties when the SoC runs a Linux
-> host at EL2. SMC call is being provided from the TrustZone firmware to
-> retrieve the resource table for a given subsystem.
-> 
-> There are also remote processors such as those for video, camera, and
-> graphics that do not use the remoteproc framework to manage their
-> lifecycle. Instead, they rely on the Qualcomm PAS service to
-> authenticate their firmware. These processors also need to be brought
-> out of reset when Linux is running at EL2. The client drivers for these
-> processors use the MDT loader function to load and authenticate
-> firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
-> to retrieve the resource table, create a shared memory bridge
-> (shmbridge), and map the resources before bringing the processors out of
-> reset.
-> 
-> It is based on next-20251007 and tested on SA8775p which is now called
->  Lemans IOT platform and does not addresses DMA problem discussed at
-> [1] which is future scope of the series.
-> 
+On 07/10/2025 22:23, Manivannan Sadhasivam wrote:
+>> +void qcom_scm_pas_context_destroy(struct qcom_scm_pas_context *ctx)
+>> +{
+>> +	kfree(ctx->metadata);
+>> +	ctx->metadata = NULL;
+>> +	ctx->dev = NULL;
+>> +	ctx->pas_id = 0;
+>> +	ctx->mem_phys = 0;
+>> +	ctx->mem_size = 0;
+> Why do you need to zero initialize these fields before freeing? Are they
+> carrying any sensitive data that warrants zero initialization?
 
-Could you please add a link to the modified TZ firmware for Lemans, required to
-make use this patchset?
+Mukesh, have to say I don't think adding my RB to this patch is really 
+warranted.
 
-- Mani
+I gave review feedback that the above looked odd.
 
-> Changes in v4: https://lore.kernel.org/lkml/20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com/
->  - Fixed kernel robot warning/errors.
->  - Reworded some of the commit log, code comment as per suggestion from Bryan.
->  - Added support of gpdsp0 and gpdsp1 and disabled iris node.
->  - Add R-b tag to some of the reviewed patches.
->  - Rename struct qcom_scm_pas_cxt to qcom_scm_pas_context.
-> 
-> Changes in v3: https://lore.kernel.org/lkml/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/
->  - Dropped video subsystem enablement for now, could add it in future
->    or on a separate series.
->  - Addressed most of the suggestion from Stephen and Bryan like some
->    remoteproc code checking resource table presence or right error
->    code propagation above the layer.
->  - Added leman-el2 overlay file.
->  - Added missed iommus binding which was missed last series.
->  - Separated qcom_mdt_pas_load() patch and its usage.
->  - Patch numbering got changed compared to last version
-> 
-> Changes in v2: https://lore.kernel.org/lkml/20241004212359.2263502-1-quic_mojha@quicinc.com/
->  - A lot has changed from the V1 and a fresh look would be preferred.
->  - Removed approach where device tree contain devmem resources in
->    remoteproc node.
->  - SHMbridge need to created for both carveout and metadata memory
->    shared to TZ in a new way.
->  - Now, resource table would be given by SMC call which need to mapped
->    along with carveout before triggering _auth_and_reset_.
->  - IOMMU properties need to be added to firmware devices tree node when Linux
->    control IOMMU.
-> 
-> ---
-> Mukesh Ojha (12):
->       dt-bindings: remoteproc: qcom,pas: Add iommus property
->       firmware: qcom_scm: Rename peripheral as pas_id
->       firmware: qcom_scm: Introduce PAS context initialization and destroy helper
->       soc: qcom: mdtloader: Add PAS context aware qcom_mdt_pas_load() function
->       remoteproc: pas: Replace metadata context with PAS context structure
->       firmware: qcom_scm: Add a prep version of auth_and_reset function
->       firmware: qcom_scm: Simplify qcom_scm_pas_init_image()
->       firmware: qcom_scm: Add SHM bridge handling for PAS when running without QHEE
->       firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get resource table
->       remoteproc: pas: Extend parse_fw callback to fetch resources via SMC call
->       remoteproc: qcom: pas: Enable Secure PAS support with IOMMU managed by Linux
->       arm64: dts: qcom: Add EL2 overlay for Lemans
-> 
->  .../bindings/remoteproc/qcom,pas-common.yaml       |   3 +
->  arch/arm64/boot/dts/qcom/Makefile                  |   7 +-
->  arch/arm64/boot/dts/qcom/lemans-el2.dtso           |  41 ++
->  drivers/firmware/qcom/qcom_scm.c                   | 415 ++++++++++++++++++---
->  drivers/firmware/qcom/qcom_scm.h                   |   1 +
->  drivers/remoteproc/qcom_q6v5_pas.c                 | 187 ++++++++--
->  drivers/soc/qcom/mdt_loader.c                      |  32 +-
->  include/linux/firmware/qcom/qcom_scm.h             |  36 +-
->  include/linux/soc/qcom/mdt_loader.h                |  16 +-
->  9 files changed, 635 insertions(+), 103 deletions(-)
-> ---
-> base-commit: 68842969e138d9ad3e3aa2bbd65d514df1581b5c
-> change-id: 20251007-kvm_rprocv4_next-20251007-5e4ea5a978da
-> 
-> Best regards,
-> -- 
-> -Mukesh Ojha
-> 
+https://lore.kernel.org/linux-arm-msm/9139706a-708c-4be6-a994-120cce0cd0e6@linaro.org
 
--- 
-மணிவண்ணன் சதாசிவம்
+Could you please drop my RB here, and fix the above in your next version.
+
+Also please add me to the cc list for the whole series.
+
+---
+bod
