@@ -1,173 +1,196 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010048.outbound.protection.outlook.com [52.101.61.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774BB25DB0A
-	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Oct 2025 12:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759924823; cv=none; b=lIlmeSqYFtKnrWtJHNf8VyHBRMgXxvzCwxlmuHi3NnIxIJSsgp1Vo2Sd351NG8uyRfyamzupEmaQHQoJKtHqU+NLaftrlpl7ZLuhfHAcizMrP7/TtjZTimTppkz/nGq+NuvVQXzt2HLh4dnTTQaTZK3HA4gBiBRv6Y9J0+FbcRg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759924823; c=relaxed/simple;
-	bh=4vMQxz8vJDFJ7PyFDHhD7SxqVaewjjy4uYlnHVW2M4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uoTEIU4UHnLElkCNXcWQ4QLwgK6MaSJkiJEekTY3FXy2dI2SLaaA7KnYer6c6BlesqjYd97AZuhP2oJEc/7jpg5z8ddj6NBa08AhuEyVYczDfQzS/BIfg6c7V56MPedJcnUkwZ/1QCGHZ0Q64H72hJKHQZ5WST2ywOmtDExRknk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D17arv5Z; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7AB1FF1AD;
+	Wed,  8 Oct 2025 15:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759938961; cv=fail; b=A6+F2tXkqjulCn8dnHeXcs7pq5E2nz8n8vqr3umjIhCF4WKFQrI4PIJB/O09NdrJMk5XcJ51kMjKsgMCBGXGCaUx8tMtagTRp9HPXf+3h4OiOnbaK9g/gRliqvzYFutpJXNu94PmNhzI+hb9e6/E5+2khUuBeKVnR1o9PRhWcJM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759938961; c=relaxed/simple;
+	bh=0bEjxj0l3jsFynVn06M3sJsgngl9GzhsKmSDCDd6VEU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MbmCGt1+umgvqlLnkCxjvp0AOhF2qiE9Ys9tiPwVazsd6JR6h+laIVo5sIrfvRIxFN/AGHYeOMCVDVSkNrZWDZo93FrMCEjADDxhxZJrLKZTB2tZZeczRTGG4eL0sXGkmCywrU4wqRPw6GSoH8u/XZ++OsxmJPZ32QHz7L0EdvY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VcHF921T; arc=fail smtp.client-ip=52.101.61.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D17arv5Z"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890PDf028805
-	for <linux-remoteproc@vger.kernel.org>; Wed, 8 Oct 2025 12:00:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=uLhdPwh176J3u3H4+MR9RBj7
-	7/mlh5xjbvtuKbEqChI=; b=D17arv5ZdJZ6Qh4h4YtBT5rktlFlwB5RSg50OzLx
-	bo/10mGSmD5ZOMtheohUoQA+x0+u/sV0Yi6R/oOBu2F+2C3jyC3foYN58xopGVJU
-	L+Cx87wWk36FxetmlWo+ZAvoR12AxPWfEzaGoxBzCihmbJeqLRrFV48ru0Hv89yW
-	yN9PiOdTRkKUKvIEz9vAR7yeZc3K1jo2sh++w1hMu7YH7Y3r0q1KPr5LMoz6fl4Z
-	tOI40Cg6mSnqXD9AQId5wYlO9y1Gfv4FPgeeuTbliNQwrDmdDSnIeRx3cI7XEEQS
-	cDZg4kmbMKp3w2FMkKXNEI3pz9Xjn/8ocd5lb7oZ5Clv2w==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtwgtb2a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 08 Oct 2025 12:00:20 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-780f82484faso5449560b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Oct 2025 05:00:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759924819; x=1760529619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uLhdPwh176J3u3H4+MR9RBj77/mlh5xjbvtuKbEqChI=;
-        b=O8NkXpqPe/zii+raKAhZ2xTd8saptMe55eB4on9Y46m9qxYu8EU6Ey4CSc37IWNpuu
-         kQlajDv7e69WuAt6T4gDJwbEFXz+Oa7LbrQ4ixxL+9ziRHCIDs/TH6zbsP6y1xLN+xAE
-         q/quw4oC9PV58X7303TTXWr9oEldQQsAbjT2xvz2KULqy3k8O0rT8XT0DwMZ1/UBwbZz
-         kB5hm31iQKeZCZmsHDrQqlJebtffD3+q0hgxiRbRTsMFs+7KsXflpWKpoT0OYTwJtmGE
-         kmozWm/CyHF/NpjhBZ9D2CFZHk3Er50IkstUvl4NloPSKB6b/2ygTTFzDVOBpPYQXPf3
-         +WNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoWogB8i9XCAkVMYeDImkZ9kerCbfuJ+7HSi3496PXUhadW1X3yoOZJ7ZgfgdLQkhhgOZOoI07sSqENHmeld4+@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjmePQSb8m5pJoaBo4gy1hMaZxsfkectI00A5K3xykWQanCEcd
-	QuRQGJgyen8nPN14BLIjCK+iusbvPLrxPScJxI0PuCb1R/91+ENL0eUqt9uANL+05wn6aHoUaW6
-	mO0zP744LBEpM25aWIiJdy4VfUfjRftYgeIvxyupY6aTZ95/IwUSHwFQAZXrqi69OglMboKyx
-X-Gm-Gg: ASbGncvr06GejxmsuWWC67TVQLMzLQhUeYoHbTIOOZ7smHh+/NEbzM9Qw1VS2bhVkgT
-	paMxDvMguDRXHFckmS16x6vxLwvKXc2tmf7y22rLth7R9DQlruTOIEfIwlC9xAzXfG4ai70xA7t
-	PO5KIvxr3nHbzQ0blNUjwCzOn4NyObN2+i6nNjPqakRfwvS7dFRRcUlzPGr7ydD2ryp8vkpUeqL
-	lNTMXKMoM+WcGRrHX+ycY7FNuiRp102k7aBL5qHAapqQIk/IAURsG6W2pE89QLGWfQ6/v4fLBcv
-	NeH1K3Sit1lfP1PYHyPvA5JW1XclNyME5VfjgVj22vazODtpgysOVzimfNUAfBVwJePMhBdA
-X-Received: by 2002:a05:6a21:e083:b0:2fa:52a0:e838 with SMTP id adf61e73a8af0-32da83e39ddmr4358396637.36.1759924818351;
-        Wed, 08 Oct 2025 05:00:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKO7wqlSvx59P2vS6UzWzJ//dvnD3o/iZtvddrv03NuT9ONGsnUOVru90lpyPYje4cnIJpKA==
-X-Received: by 2002:a05:6a21:e083:b0:2fa:52a0:e838 with SMTP id adf61e73a8af0-32da83e39ddmr4358306637.36.1759924817502;
-        Wed, 08 Oct 2025 05:00:17 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01faf086sm18623699b3a.23.2025.10.08.05.00.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 05:00:16 -0700 (PDT)
-Date: Wed, 8 Oct 2025 17:30:10 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/12] remoteproc: qcom: pas: Enable Secure PAS
- support with IOMMU managed by Linux
-Message-ID: <20251008120010.kygbso4vw2ouwlzu@hu-mojha-hyd.qualcomm.com>
-References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
- <20251007-kvm_rprocv4_next-20251007-v4-11-de841623af3c@oss.qualcomm.com>
- <65e6d61a-7648-4125-8550-8a8c6d476b0a@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VcHF921T"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jEorFwCvBEkVcJRpmx9YH96nJSNcHDMWUMg6M5DNYGArGdOAIiARP+mFwvmFrxINmCTRqyUmVk+KCTx5BCxuPxGtiB0CLjCUaCZCkX+QGEiDUTUi0/Nn99LB2LRDtnn8X3hDnBc5IzWnwrg8PQDGTJQexkVap22+p7okOnWyN8Xa5VlrzA76JPrDSfU2UO0wj+aVOGHAXP6v6ttdDN3S49h7dQLC3PlmQDt80OA+9amhz5uRjvUFcM6tS15FgwJ7FXV2OsaSgDYLjzpzJSK8uS7zwICtnGpG+AUnd92FpXmHnoEkTgNlIyNJH+ks4skfHOvXWfvQrrFihJXyb10BcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7PvVw3jduBSJoTQBvS1pGLga7wepmG79uX9d75F53NA=;
+ b=CfFF79J5WkwYrv0EDotvdEcSmoNmq8y/13vLTIcA5Spj2MgbzBqy5FHUEdhAuKsDty37kbZG+ME+W0UiDehNyvhO9/joEgK/rkkBhJqStMqXdOSfLcApN/nHk86tQWRwzoG30+gJesU4iyUXHLEX9qTrVfu7MtmJVclzqHq84M2FEBRFG3JAZIOiAUeHDGr9QG0+hsN+be3ca0irKSBco4PShsTr+LhzjroeS0Rmh0R3ES74OB0fuRBqoQ79poY7gft6H7GMSbQVg55zJ/sNWk9Ppva3kyk2Y5epla5XaKnA3rqbWQvcVmOHBZATaNnDNXgjlxA0B/XFSNY8DIFqgQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7PvVw3jduBSJoTQBvS1pGLga7wepmG79uX9d75F53NA=;
+ b=VcHF921TarLtA7e9vC0tithR9/WWEEHqXk41IcC3iMGI/uOGTctA7IDZucdbt12u8CoavKqiGjoA6GBdz4aTDd3aR441QpBWqV+I/g79lZZgB1YLdjqx7gP4vzxNsspm9MXnz6kS+H2HFCAxst1c0CgfD/kxNDlqeqF7Kry7xyk=
+Received: from CH2PR20CA0011.namprd20.prod.outlook.com (2603:10b6:610:58::21)
+ by DM4PR12MB7671.namprd12.prod.outlook.com (2603:10b6:8:104::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
+ 2025 15:55:57 +0000
+Received: from CH2PEPF00000143.namprd02.prod.outlook.com
+ (2603:10b6:610:58:cafe::40) by CH2PR20CA0011.outlook.office365.com
+ (2603:10b6:610:58::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Wed, 8
+ Oct 2025 15:55:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CH2PEPF00000143.mail.protection.outlook.com (10.167.244.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Wed, 8 Oct 2025 15:55:57 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 8 Oct
+ 2025 08:55:56 -0700
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 8 Oct 2025 08:55:56 -0700
+Message-ID: <a5b03f04-9add-4adc-abe8-95024d05b9b9@amd.com>
+Date: Wed, 8 Oct 2025 10:55:56 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <65e6d61a-7648-4125-8550-8a8c6d476b0a@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOSBTYWx0ZWRfX3daoh6vkRsvO
- oV7egym+SUCUxW9GaUOmIVTrm4bYe6o3mpIZPI9bc4X6L9uVA6hyizClf7kurMNpd0JgGxtqQpx
- PZFR+aTLWkG/yjyfGfSwNkIzXo7PdSYShH9gNJQvR1xCuzOe5zXzXeYzKMZogHtIsHqo/Kx83uj
- Zy/fDp9PKVyWDGJrlfQtwCbIK1exCF0Mu/mxD3moIXWRVT6VsP65qrt5YEeWIC9BEK/TEeyOZP1
- GeDB41J8ZOQomzUHEJwQdx22JVbJJBgunnoTo7DNa+slL4IJyiL+4fRStvaXAyOXDbqIosV/Ci2
- aZ4IMWu+3eZlWBRcY4TCLyCTC08pbVrZagLWPfBkWd5ytoFq/L/JaizQSD25iKuaihPTHpDYIBx
- 4Xhz0eVclmAlXKwqpCOOTeR7H2kJCw==
-X-Authority-Analysis: v=2.4 cv=B6O0EetM c=1 sm=1 tr=0 ts=68e65254 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=qxcRfBPHBTAMjdSr2WsA:9
- a=CjuIK1q_8ugA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-GUID: jCym81e7vj07JQFmIm8GtS9F2T09G6cu
-X-Proofpoint-ORIG-GUID: jCym81e7vj07JQFmIm8GtS9F2T09G6cu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040019
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH v2 1/2] mailbox: check mailbox queue is full or not
+To: Jassi Brar <jassisinghbrar@gmail.com>
+CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20251007151828.1527105-1-tanmay.shah@amd.com>
+ <20251007151828.1527105-2-tanmay.shah@amd.com>
+ <CABb+yY0m_Whm1F7d2ub+vhn0eTb47UC9g=JvpLnWh-2E1oo52A@mail.gmail.com>
+Content-Language: en-US
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <CABb+yY0m_Whm1F7d2ub+vhn0eTb47UC9g=JvpLnWh-2E1oo52A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000143:EE_|DM4PR12MB7671:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4fcbfaae-daff-4d5f-bcc4-08de06832b85
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3ppN0xscTN3MVdCdWdDc1VDVmpHdFU3NUFpeXpmRFJPM2NGdmhKZ3lFYnQx?=
+ =?utf-8?B?T0p3TXZMc1JRNkZIMXduWnBxTExzSVk5NWJ2Y1BLMnZ5bS9TREhmVVMxYzhy?=
+ =?utf-8?B?WlZ5bVN2KzlDRnZVSmFFL0YrdERBOWx2S291aDFmbmc0SEMrWFdWTmNZSGQz?=
+ =?utf-8?B?WHVub2lndUQ5YTZPMUdId3dJR29oZE5sdVNvUVN4YXgrUEYya0dSSnFJa2lG?=
+ =?utf-8?B?azlFVWtEckhpVG9kcmNHc0s5Lzhtdmpaa0tjbVNaL1V3K2VqTHZsUzBET0tM?=
+ =?utf-8?B?M3FJT2htV3ZWZDQ1ZEh3RnZMbHhrZTJheGxYb1B3S0FHaGVEcU9jS0tqYTFQ?=
+ =?utf-8?B?RmNUeDZ1azhaQ1hrQ3dMMEdodHQ0UDZzUTJiNEFBZ0hpQUFuRm1Oc3JiMFVo?=
+ =?utf-8?B?aUtKaHlKbG9tcnJoUjE1cEJpZnF0YldHZVlZb1hRb2NMSVpYNWZWWTlKN2Zm?=
+ =?utf-8?B?L3E5UytRNThFMEhPZmJId0t2YlJwcmhYUEZlOERVTC8xbEJoNkp1QkZSU1Nr?=
+ =?utf-8?B?YWRyb2tzTmZRQTdSVHlZdnJDdHlQOUk1dVcvWDgzMUJ1ZE9CaUVoT0FmNy8r?=
+ =?utf-8?B?WlUydEdKUXlzaGM2eEw1dFdTOGI5NnkrR25wKzR5NXpROXFycHVhWmZmczlm?=
+ =?utf-8?B?U0I3dlkxTFpIa1dic2hEVDR5bnRhNStNR2JWcWcyUy9Ya3lZY04zS1JuQjRY?=
+ =?utf-8?B?ZkpaZytvbXpWa1NvbFVtalZzSkdKYWdENUJMYUZJSUszcXdnTzRua2VoVThF?=
+ =?utf-8?B?dHlLV3BnalNLVEcrQURzRVZYUG1YaHZuY2FvSmRsK3BNdnhoRTdKZmtNZTJw?=
+ =?utf-8?B?aDU4TXVJMTFUaUlpNExDTUhJSzBmY2VjejBGWDhodFNzQjlXVUQvMXNza1JG?=
+ =?utf-8?B?bGlobXRGNG50ZDQ5Rko4TzI3cGJDRXI3S0RkUXUxcVQzRE9YWXVTMlA0ZnA5?=
+ =?utf-8?B?OTk2Q0FuUU1WSjJ0MnlISGMyYWdTT0hvWlhQSGlLQkJqcVV3RU9PU3NsbEdC?=
+ =?utf-8?B?c0hSYVV3VktMS3BDVUxESE81bitQWWoyUnFRdDdkUDR4NFB1QWFrZnBuSEw2?=
+ =?utf-8?B?WlZxYXBFM3hXWXR0ei8vdW4vcS9oTWticjZMQXNYTTFGK3lkdDIxaWhudmJI?=
+ =?utf-8?B?RkFzUXRlaExHTGpSejY0aEJMd0hxWWMxZU4rMDBocjdlQTV4YmNUMUpUQVk4?=
+ =?utf-8?B?dFRPK0hKRkRFRldMbkJ5RjdVR1RJWkNpa2U5c1MrR25YM05jOVF0VkFoZWtD?=
+ =?utf-8?B?dEdlVXBuMEtnMlFpcmVrYUVmcG5PTmVEWitxc29HZ09TNVFJdis5Ky9JYXVr?=
+ =?utf-8?B?ZE8wZzFJcFY1QlRNQUZrNlRibmlCZHpyY1VjOWJ3dUpWMjkxcnVORkRYTita?=
+ =?utf-8?B?c1N1dTVITXlhd2s5NVFYbFU3Y3Q2OWJaMGRIWUo4Tm1DZEZsdWlab2JFekg4?=
+ =?utf-8?B?NUZzOVBVcXE4UHNLaTA0aHJzMkNlUFdJbm9iZnN2RXkyMVpHRmR1cElwRis2?=
+ =?utf-8?B?THZVSlFRREpSN1ZDLzFFd0ROMER2bHF4MzJkaWZKUEltM1RwU0YrUUc4R2cr?=
+ =?utf-8?B?VUh1a1JTcjRyY2h1Zy85RGFiV1A2cFV4U1ZveUVBblF3dWkzczBBamN6TUd1?=
+ =?utf-8?B?S2NiVmhIa2RtT2YzdW8yVUpxQTdDOFBFOWNRRFVwU0tQaHdQelgyWDVKd080?=
+ =?utf-8?B?VlFoQUxzOWN6S01XYkxQWi9jM3ZzV2toOUxFNmdZSFl4QU82cFhYTmF6WFJ0?=
+ =?utf-8?B?UzNLUXRJaUZQVzNialM5RVdRV1ZkTExOSWVqdE16UGtMVzVGZHBvd21kOVdY?=
+ =?utf-8?B?SUpDckxLeTJ4a1JWVzF1VSt3amZNd2tHWVg5UHRadUZFSU5YYWd1OFFNQUhn?=
+ =?utf-8?B?R0xwcHZ3c2xYRXhXaDQ0aEloaUx2RGZKUktNL3h1NU1nUDM2ZWJrNFRrN3BR?=
+ =?utf-8?B?dnNKdlRubFV3cnBGWUZDM2pxanN6cDArdGxZdklSVUtDY3VNUkRpcEZjZVRC?=
+ =?utf-8?B?NmVRSlpvQjhLanlQUVpMVW9SQ01VZWlLazJpcTJqNDdQRWFMNGtjOVVHbmVa?=
+ =?utf-8?B?S0RNMEFQRHcwV3F1NVdtK0t5RWN3eFljRFdOK2tiT0ZpNkp0WWFGVzljS1A5?=
+ =?utf-8?Q?Wr1E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 15:55:57.3321
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fcbfaae-daff-4d5f-bcc4-08de06832b85
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000143.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7671
 
-On Wed, Oct 08, 2025 at 11:19:32AM +0200, Konrad Dybcio wrote:
-> On 10/7/25 6:48 PM, Mukesh Ojha wrote:
-> > Most Qualcomm platforms feature Gunyah hypervisor, which typically
-> > handles IOMMU configuration. This includes mapping memory regions and
-> > device memory resources for remote processors by intercepting
-> > qcom_scm_pas_auth_and_reset() calls. These mappings are later removed
-> > during teardown. Additionally, SHM bridge setup is required to enable
-> > memory protection for both remoteproc metadata and its memory regions.
-> > When the aforementioned hypervisor is absent, the operating system must
-> > perform these configurations instead.
-> > 
-> > When Linux runs as the hypervisor (@ EL2) on a SoC, it will have its
-> > own device tree overlay file that specifies the firmware stream ID now
-> > managed by Linux for a particular remote processor. If the iommus
-> > property is specified in the remoteproc device tree node, it indicates
-> > that IOMMU configuration must be handled by Linux. In this case, the
-> > has_iommu flag is set for the remote processor, which ensures that the
-> > resource table, carveouts, and SHM bridge are properly configured before
-> > memory is passed to TrustZone for authentication. Otherwise, the
-> > has_iommu flag remains unset, which indicates default behavior.
-> > 
-> > Enables Secure PAS support for remote processors when IOMMU configuration
-> > is managed by Linux.
-> > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> 
-> [...]
-> 
-> > +	if (of_property_present(pdev->dev.of_node, "iommus")) {
-> > +		struct of_phandle_args args;
-> > +
-> > +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus",
-> > +						 "#iommu-cells", 0, &args);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +
-> > +		rproc->has_iommu = true;
-> > +		of_node_put(args.np);
-> > +	} else {
-> > +		rproc->has_iommu = false;
-> > +	}
-> 
-> I think the above is a little heavy-handed..
-> 
-> rproc->has_iommu = of_property_present(...)
-> 
-> should suffice.. if the developer puts something that isn't a #xxx-cells
-> -marked provider in xxx = <>, that's on them
 
-Sure.
 
+On 10/7/25 2:58 PM, Jassi Brar wrote:
+> On Tue, Oct 7, 2025 at 10:19 AM Tanmay Shah <tanmay.shah@amd.com> wrote:
+>>
+>> Sometimes clients need to know if mailbox queue is full or not before
+>> posting new message via mailbox. If mailbox queue is full clients can
+>> choose not to post new message. This doesn't mean current queue length
+>> should be increased, but clients may want to wait till previous Tx is
+>> done. Introduce variable per channel to track available msg slots.
+>> Clients can check this variable and decide not to send new message if
+>> it is 0. This  can help avoid false positive warning from mailbox
+>> framework "Try increasing MBOX_TX_QUEUE_LEN".
+>>
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>>
+>> v2:
+>>    - Separate patch for remoteproc subsystem.
+>>    - Change design and introduce msg_slot_ro field for each channel
+>>      instead of API. Clients can use this variable directly.
+>>    - Remove mbox_queue_full API
+>>
+>>   drivers/mailbox/mailbox.c          | 3 +++
+>>   include/linux/mailbox_controller.h | 2 ++
+>>   2 files changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+>> index 5cd8ae222073..c2e187aa5d22 100644
+>> --- a/drivers/mailbox/mailbox.c
+>> +++ b/drivers/mailbox/mailbox.c
+>> @@ -35,6 +35,7 @@ static int add_to_rbuf(struct mbox_chan *chan, void *mssg)
+>>          idx = chan->msg_free;
+>>          chan->msg_data[idx] = mssg;
+>>          chan->msg_count++;
+>> +       chan->msg_slot_ro = (MBOX_TX_QUEUE_LEN - chan->msg_count);
+>>
+>>          if (idx == MBOX_TX_QUEUE_LEN - 1)
+>>                  chan->msg_free = 0;
+>> @@ -70,6 +71,7 @@ static void msg_submit(struct mbox_chan *chan)
+>>                  if (!err) {
+>>                          chan->active_req = data;
+>>                          chan->msg_count--;
+>> +                       chan->msg_slot_ro = (MBOX_TX_QUEUE_LEN - chan->msg_count);
+>>
+> No, I had suggested adding this info in client structure.
+> There is no point in carrying msg_count and msg_slot_ro in mbox_chan.
+> The client needs this info but can/should not access the chan internals.
 > 
-> Konrad
 
--- 
--Mukesh Ojha
+Sure, that makes sense. Will change in v3.
+
+> thanks
+> jassi
+
