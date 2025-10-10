@@ -1,80 +1,107 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FE072625;
-	Thu,  9 Oct 2025 22:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C758528E;
+	Fri, 10 Oct 2025 02:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760050728; cv=none; b=SLUPS1UY4TBfkaAo9Bts6WwzxweLUfrRxiMJp6gI8mOV1SnCcXVxEm8H7xIIPueXivYGx8eq2SbD9ewt4+v/Yqtv1wpeCoh6vXaOEcbZdLC4zflsghAF0ZhnOa0QeymP6BGS6qE1f/CJZogDuYQoC+ol1DvB7OxP+s3ZZ3Xy4WU=
+	t=1760061618; cv=none; b=LSTDy6fet6piFOeUYy7EVHot5Ua+c+0zSfaW1uP0xDOM17d40d3ShA8MWt9L5VKqOf251KVc4dL0vYH6Lbxhxk6gsW53Y5zIjf6qvsY/hnYHvObOQKWGGw7cnYdCDutbEOL2Nar9imOU8fKPpq8uVjuUumBaRkkZ6xpeXDsrQUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760050728; c=relaxed/simple;
-	bh=+TjM9Esl2EGZ9SogEgKHjaYZvKO6EnnlHlRkwk3aL9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OIPWnj+ARHcUKboZ2XU7HsPHzZlQ4BIJ2cQJYDERkZqDcJ+WcamTikOUcmadVSiz+N0DgClBtnGsX3CgFY5QxjPiEjspeak47prE/pCFyJv1Vce61KCytq7OtCcVLkJ/D+OdckIMAuUV3WNa7vxIb8Go6XR1SiiQ0lghZW+/WEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=a8ct4zO2; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1760061618; c=relaxed/simple;
+	bh=bKb2+LWn+9bFo0JvyMz+IuBawvd4IewFiapgoPwhJDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bRTAI2uSE+V6aQGeizoVT+57KXsxZIWxr7UuR/LFQ+7VQSeqmA5lWM903YuQFTwd0G9ahtQM5PeJPnSR0SL5WELDgzLyEPgcsvYjonq1a/9ncLjsMZmP6HAOEs+ahNmrSs1ONN9ak0T3He+1T+97htWNHtxYLQ/LInJskRMtPvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZ5uhXEo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="a8ct4zO2"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YZgk97je7BvnBwtTZvJvAprknS458qImb1v2YAT0hgU=; b=a8ct4zO2EH1bTh8uSTZ0eRMk29
-	ClMuYBzuXEm/xC2ak0GE5naZl7uE8puV28N6Ru0JgmNQRpmNN8N3t49LKKCYEyF+oPoVHlVIVQVAR
-	dNFG2Hr4SzTKZpsLQwCpyBmpcZqDsA/5gpTOM9O50vqjzaa70fIiSDxNXXYf2oc29c6s=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v6zao-00AYxZ-PI; Fri, 10 Oct 2025 00:58:38 +0200
-Date: Fri, 10 Oct 2025 00:58:38 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-imx@nxp.com
-Subject: Re: [PATCH v3 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
-Message-ID: <eb99d9a8-eb96-445d-899a-6e1d9b6f6c69@lunn.ch>
-References: <20251009222716.394806-1-shenwei.wang@nxp.com>
- <20251009222716.394806-4-shenwei.wang@nxp.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZ5uhXEo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8B2C4CEE7;
+	Fri, 10 Oct 2025 02:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760061617;
+	bh=bKb2+LWn+9bFo0JvyMz+IuBawvd4IewFiapgoPwhJDY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EZ5uhXEoFwIigR89ZDxpuiMJjV9tImylj7s191qm0WMCHwWJEDHZhfwPLEnCSN3QH
+	 FZ0SJJAnIg+OWIdX/eILZaJoD7pLii01fGS49y6IFAwmkjeYjfINwMQVc602rdpWuc
+	 iHVzGw0Yn/yidtKyTbS60g10UkVGEuB4JcGMEzXsN9DdqtrHHljHHetaKWH/6+Y2nq
+	 r7lk1HZoX3yr+9v7/OLDJBG+KRLb0Dru5HkuZiRFYALrjGkPUhNWQx9ONI5G08aVCo
+	 VVbxE02hyMT1h708EIfzLjzHEBXuT38aGZ7Ujk4hjRGj/Xdz2ElziLwTUHHWHNhV6U
+	 CdDWfA6WYsTgg==
+Message-ID: <3791aa93-c1c0-4fc9-9706-91f3f62743a3@kernel.org>
+Date: Fri, 10 Oct 2025 04:00:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009222716.394806-4-shenwei.wang@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock
+ support
+To: Kamal Dasu <kamal.dasu@broadcom.com>, peng.fan@oss.nxp.com,
+ andersson@kernel.org, baolin.wang@linux.alibaba.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, florian.fainelli@broadcom.com
+Cc: bcm-kernel-feedback-list@broadcom.com, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251009212003.2714447-1-kamal.dasu@broadcom.com>
+ <20251009212003.2714447-2-kamal.dasu@broadcom.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251009212003.2714447-2-kamal.dasu@broadcom.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 09, 2025 at 05:27:15PM -0500, Shenwei Wang wrote:
-> On i.MX SoCs, the system may include two processors:
-> 	- An MCU running an RTOS
-> 	- An MPU running Linux
-> 
-> These processors communicate via the RPMSG protocol.
-> The driver implements the standard GPIO interface, allowing
-> the Linux side to control GPIO controllers which reside in
-> the remote processor via RPMSG protocol.
+On 09/10/2025 23:20, Kamal Dasu wrote:
+> The broadcom settop SoCs have hardware semaphores as part of "sundry"
+> IP block which has other controls that do not belong anywhere else.
+> e.g. pin/mux controls, SoC identification, drive strength, reset controls,
+> and other misc bits are part of this block.
 
-I've not seen the discussion on earlier versions of this patchset, so
-i might be asking something already asked and answered. Sorry if i am.
+This does not explain why this has to be a separate block. Rob comment
+stays valid - this belongs to parent node.
 
-Is there anything IMX specific in here? This appears to be the first
-RPMSG GPIO driver. Do we have the opportunity here to define a
-protocol for all future RPMSG GPIO drivers, which any/all vendors
-should follow, so we don't have lots of different implementations of
-basically they same thing? So this would become gpio-rpmsg.c and a
-Document somewhere describing the protocol?
-
-	Andrew
+Best regards,
+Krzysztof
