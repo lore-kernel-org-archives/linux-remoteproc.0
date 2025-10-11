@@ -1,48 +1,48 @@
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B441B7F4;
-	Sat, 11 Oct 2025 00:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388B71B808;
+	Sat, 11 Oct 2025 02:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760143043; cv=none; b=P3JRpnRn+y217skN1ndRnB+aWtKXMKvgWsI7HucBMvUlr+IYbgDOT5b81gqb+qbVs0QLszxKsX4WhPysJ/n8DCesqRMr+7lrABYN7+gmO07NMuBW+P8kBLHseUbWa2SPEPUcBIn05n6+9q6ajt+dKcgmyuLyIWg5RUx248IGB+o=
+	t=1760148201; cv=none; b=lcVUdg6KR+55e4cLNkrjrNHhl6ZY0EnaziOYC5Yx5dJHcpIDEJf/9SA+iJD4z5s7LrKjs1l1oUDe840jMzu1ZRpKKBtHrfWjyytIDIdVCforDQAY/y/eyvOO+V8F+MDIHirNcaySddQVfm8eVIgpL55JmhlBHJUskFGKyr20DfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760143043; c=relaxed/simple;
-	bh=wWWoNKqd1WZclB1vnpw47sOsVVoho92DECZhaYUk1LQ=;
+	s=arc-20240116; t=1760148201; c=relaxed/simple;
+	bh=GrPho5mpv+WG9xhQRayz6jHKJ2NNy1c82XO+RaTRQeI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KEaZtlz/4gbHsGRze39po871RL617zD50E4SQDHo/PpMDdx4gEI6rj4o3yMjZ16dob8ILBOuB0DD/i8/cFA/HRmymbicFQpkPzLXSr2xxYHwNULBfXVqX4K5d4gh5Dr2pufB08fvX7BSuUdWxoOcIfvwaeSY+z6U1m2rJKWdqfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QkxgyWIa; arc=none smtp.client-ip=198.47.19.246
+	 In-Reply-To:Content-Type; b=k2aAlcZ3wN416O9twzmG3n11hmLE4iLcgm8MBB4XBV0Kn5FoJT7naZ062dc+KOUN66J4ODfkDGFoZj5LuGCgQ/vRlinmhK0/0rUYrULTWaW8G0pb4P60iy+8UKFh2QtPUC6J2np1Jk731CvaW6fHzhlxwlHLvd4NgaKjbfa8PxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Prfsbbn1; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QkxgyWIa"
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59B0b836795424;
-	Fri, 10 Oct 2025 19:37:08 -0500
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Prfsbbn1"
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59B0MFRB424348;
+	Fri, 10 Oct 2025 19:22:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1760143028;
-	bh=+k+COF52/ba7uZqIJw0ehSJIMeIAIDeTRZdD5yW7+nw=;
+	s=ti-com-17Q1; t=1760142135;
+	bh=eKb9jUwwbVlUbudwbqKG+Yy11LCDL3Kf+uy2j4nmRg8=;
 	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=QkxgyWIamorUE/lAzTHBzagcI3Ukmwy123YlAU2GPyiqjWncHCQpCJBd6FHzPqmsb
-	 wyOX5kwUkvhwhCrMOWsBo87J32/UzKtCM1Q6kTEuKONmJELIY6fNRYJXf7XAgJWSaq
-	 Ew/R9dC6N5+m9P4rWRbUiexKJTWQD1UPHUckynTY=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59B0b71v2582664
+	b=Prfsbbn1eKgqMa1qzk0SRZswF7vxW3iXYPk6YV+XjWjzIEVx9WZKdVoX+V5BRBiUX
+	 xRC7GjSDv8/EZGFmpxUqMe8UzfPbIlHY83R1TxW0gRvm+ZYxqhfdgDZX+CoNQ7XHZO
+	 1PZYT//uru6IQTTexfY/HW5AZuUsATQVry2zbrTU=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59B0MFro2042203
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 10 Oct 2025 19:37:07 -0500
-Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 10 Oct 2025 19:22:15 -0500
+Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 10
- Oct 2025 19:37:06 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2025 19:22:15 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE204.ent.ti.com
+ (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 10 Oct 2025 19:37:06 -0500
+ Transport; Fri, 10 Oct 2025 19:22:15 -0500
 Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59B0b6Y72679702;
-	Fri, 10 Oct 2025 19:37:06 -0500
-Message-ID: <c12e9758-bf30-4380-9486-cdd8a5d578be@ti.com>
-Date: Fri, 10 Oct 2025 19:37:06 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59B0MFVE2428990;
+	Fri, 10 Oct 2025 19:22:15 -0500
+Message-ID: <d02fb70a-205a-48c8-a972-0d8a43b61d64@ti.com>
+Date: Fri, 10 Oct 2025 19:22:14 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] remoteproc: stm32: Avoid directly taking address
- of auto_boot
+Subject: Re: [PATCH v2 1/7] remoteproc: core: Drop redundant initialization of
+ 'ret' in rproc_shutdown()
 To: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Arnaud Pouliquen
@@ -65,59 +65,41 @@ CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-arm-kernel@lists.infradead.org>
 References: <20251010-remoteproc-cleanup-v2-0-7cecf1bfd81c@nxp.com>
- <20251010-remoteproc-cleanup-v2-6-7cecf1bfd81c@nxp.com>
+ <20251010-remoteproc-cleanup-v2-1-7cecf1bfd81c@nxp.com>
 Content-Language: en-US
 From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20251010-remoteproc-cleanup-v2-6-7cecf1bfd81c@nxp.com>
+In-Reply-To: <20251010-remoteproc-cleanup-v2-1-7cecf1bfd81c@nxp.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 On 10/10/25 7:24 AM, Peng Fan wrote:
-> The rproc->auto_boot field is going to be defined as a bit-field, which
-
-One of the pitfalls of bit-fields :)
-
-I'm assuming if you drop the next patch you will drop this patch too.
-
-Andrew
-
-> makes it illegal to take its address in C.
+> The variable ret is immediately assigned the return value of
+> mutex_lock_interruptible(), making its prior initialization to zero
+> unnecessary. Remove the redundant assignment
 > 
-> To avoid build issue, a temporary boolean variable is introduced in
-> stm32_rproc_probe() to hold the parsed value from the device tree.
-> The value is then assigned to rproc->auto_boot after parsing.
+> No functional changes.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->   drivers/remoteproc/stm32_rproc.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
+
+Acked-by: Andrew Davis <afd@ti.com>
+
+>   drivers/remoteproc/remoteproc_core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 431648607d53ae58a9a556d53f17b1bf924bcd80..b28907c240125cdcf73867e2704eaa974d5e1401 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -838,6 +838,7 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->   	const char *fw_name;
->   	struct rproc *rproc;
->   	unsigned int state;
-> +	bool auto_boot;
->   	int ret;
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 82567210052893a501e7591204af1feb07befb22..29bbaa349e340eedd122fb553004f7e6a5c46e55 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1989,7 +1989,7 @@ EXPORT_SYMBOL(rproc_boot);
+>   int rproc_shutdown(struct rproc *rproc)
+>   {
+>   	struct device *dev = &rproc->dev;
+> -	int ret = 0;
+> +	int ret;
 >   
->   	ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> @@ -857,10 +858,12 @@ static int stm32_rproc_probe(struct platform_device *pdev)
->   
->   	rproc_coredump_set_elf_info(rproc, ELFCLASS32, EM_NONE);
->   
-> -	ret = stm32_rproc_parse_dt(pdev, ddata, &rproc->auto_boot);
-> +	ret = stm32_rproc_parse_dt(pdev, ddata, &auto_boot);
->   	if (ret)
->   		goto free_rproc;
->   
-> +	rproc->auto_boot = auto_boot;
-> +
->   	ret = stm32_rproc_of_memory_translations(pdev, ddata);
->   	if (ret)
->   		goto free_rproc;
+>   	ret = mutex_lock_interruptible(&rproc->lock);
+>   	if (ret) {
 > 
 
