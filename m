@@ -1,186 +1,209 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013056.outbound.protection.outlook.com [52.101.72.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F4E2BE64F
-	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Oct 2025 08:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760431190; cv=none; b=XznaqUGzRuwyBFnVuAphLRPzqwg1UYFc6oyewiBHKPB7VKhgdVBjF3dY/7+62XwWpZ4ZyrvJj05q1ebFG2YML9JtTvDXCYH4bSDvcOQymVzV6efktJC+fx7zNNeMsRazWd8D9iLZS+5dFktUuGKPuqcnFzHTtLCOzfx/f2MxbJY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760431190; c=relaxed/simple;
-	bh=hoQgCpk0WoxOoFSs/WuXrmbPtqn324Nd1OaXF4bX8iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=O6szmBRoEqUEx/80/u7tWjejzu7HuD3dJaljH4k2plzD43JLlSGb8lh0nG5OBd2HmK7z5wtz+pST9k6A/3B7V6uUbuIzFS3YIPM5nF0EJLW0mt9xcims13GIvEyNDAyP+JQOYpZfu16VtZAEfW5EeukhItVUK3ssQ/HHCJPg9L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKiWRSTq; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5077C258CDF;
+	Tue, 14 Oct 2025 09:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760434391; cv=fail; b=XpiiilD2wsvV4PGUGVx2dnZYGpFI/VVtQ+Mh+zDyLPp4LqFfSPPCd1nCuXllBwnMKKa0RRtzyrS+AfUpq2g61A5d29tJQmVrI5iemjsTyu56PX7+/lHh6TixBn9T9DafNK0LMyYCQ01zSHbOIGrGotu7G+z8akbeTsPge2hCGnI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760434391; c=relaxed/simple;
+	bh=GxNpgViIlvOolgiT6SCLkjXmmYJbEVXZ1/zC3hlamd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Vj453eljZjBlxhl4cyPOogO8Iwf6nO28r/tksYxNpv7M37zZ/QPoXEYIuGFO0al+N1J5puzfNb2ywhXOdLlLMJmbypheKQtCF8YimeReZ0XyqL38UPPWjle0vdAnFbEgsfZvmJmJLu0YuEoHkUffIGsDJgu8bQa3VU/eQhYJqRY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Zyiu/FyM; arc=fail smtp.client-ip=52.101.72.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKiWRSTq"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee130237a8so4003075f8f.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Oct 2025 01:39:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760431186; x=1761035986; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YFWOuvnUfMwybXOtMoOd4svMVvGqzTx63g0iMz9e+aA=;
-        b=SKiWRSTq7uaM8DykeikPzuVJd68LbyzZVKqyB1S3hWokRr/lSUzFBapG2OCVdy2jfv
-         487LmatTnJVEw8P4xOm5mHknSy0z5Ay6Pr6jmo3sG1wv/UD70iUhuctAE8ZY/U60M4AE
-         dTnwDh1gSogKBKQYrVB0yD2FFDbshsr+6Uj3m5Jnlwq0QEGCOD2gM2fFW2w51Mi8f145
-         y3IoXACjQu+Et5shll3mPOtAI/AX1ZL1GXys2/alU/xAd+hu6xFTWgXa5K/2G1sKiqhN
-         pYX333D0nNggtfRY05b4rutdjkFRbtSprIL3ognbfokMXCgpS31GFYtwBOAWzGvjDgOj
-         EA3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760431186; x=1761035986;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YFWOuvnUfMwybXOtMoOd4svMVvGqzTx63g0iMz9e+aA=;
-        b=GNd7HI1IB3QCmHwDx/8oxUVJ2rrUfCcBwVs1M8c2S+gGndZYfTZ1tOs1ZkoFManbu0
-         3Ao8PIltRn2QpTyUG5igKN8PswvfCjdTNYAQY8vQ3g4+3mij57Rj0FbpKYzSY92pK8Pp
-         GHpaPzo24lTGRAEuoGjgZLsw/A4HEU3aZe8WhSv6GarBVAdUztXNYA0Lvs/NI2lRoFWD
-         aAD8p/P0QwAFC79ktWac6VJZyn46UU/ZQU70t7yzkgo+vXhb+3cFcYBUxLTcc6ksjjvB
-         EERvuvWXvfevUVX3BmUQ7dZ2gCKe9ijpDptLHNDd2uwL9j+eM3Fmg5RFFiDW2lXJb1OR
-         HDHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwKe9YTqFECeeiLByHIizjGwszeoSyXXfQNAb0CZ0z02CjhS8U4pGSQ1Rm88zyaun23toetMU8u3lnLUOgKboE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx51CAxsLJRdGkiP5fv8DuWIU56RPwM197meXnuyZ1zat1JNLjv
-	WKGDoY0EB7QRsVxQEnLJRt+AeDAPNjSEDXx2vrqYaCT5R8RZkKyfOAIMNEp19FipE4k=
-X-Gm-Gg: ASbGnctlDdhn6lxlvv6edIkYkBudKaitLdU/tb++MCUJD9gSE9s8WXi5/ndnNOfU9HT
-	L0Qm/4DOpV8bYS/6hDNh4mFDR84NN2g4tKG3MaWPDwVOQ0Z3K6v3s72m3y7fCXzywWRgyKTt1zE
-	eV2ufW1xQnpseU55vvXwPl4YaGYgBqH6r9QZwA8wdUImvK0J7j/wHBb+knTkW52/sneJRMDnL+B
-	iYGK21NaVwWiFiKPJseCvJ9H63EbbJMYyZNb4JwQUu5c/1ToN3TIFtNbkMEtEo5lHboXUszceDT
-	/iI8hitzPRyC0yoNjfBsms22rGQUwOc426Av6kRNYMp1262wPsIzWmObb3GulnxskccvYZDGPLR
-	+28adcMb9dIdRK+C7rwGr28v7cYPEdYfpXxrv2DDhya7AuEVoNy8Y+9+bTafemg==
-X-Google-Smtp-Source: AGHT+IFDjuNxGsj9w5KIK44evH4nW82BXa1kd591GncY0F3Cb/1CX97GoQ+hu6emUu0ZcgJJ0c1fpA==
-X-Received: by 2002:a05:6000:40da:b0:3f8:8aa7:465d with SMTP id ffacd0b85a97d-4266e7d4580mr13949163f8f.30.1760431185690;
-        Tue, 14 Oct 2025 01:39:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-426ce5e8a06sm22476317f8f.55.2025.10.14.01.39.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 01:39:45 -0700 (PDT)
-Date: Tue, 14 Oct 2025 11:39:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Zyiu/FyM"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=STceudTEPotplc3tYbCMRjLSaioatGH8IdWi4rOfbDjgw1twcQJWJnfiPq/rMtCL4HI0ttl+O/XqDcEfPYenolbowTcbLCyjOHk9+cilh47aPNqNOaiL9nPUpNenDIEDP4h/Ck26wSRPjhtrMugJO17dvoVHg0gq9VLy8uYT40Z9QHNwttFioZJ4Wdg7E93N+CkAXlWatUc/8XgAKpBl1sXv4hEAE8UP1+YfHVZt47THcz1R2Ci8Y5l8O0kvn9fhA24kfLwSXXIBN8sO10lpkOfqKGpvwd2NTIFRCYEvYBrdCRx4rYb2d1Am7dMWAV4JN9xaIWVAPbMrP+HY+Agijw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TCCXIM5T0TOqfqKvegOHXMkLhGmMz0hMvJSxOkBBqzQ=;
+ b=ruIc6NCfrHLECuYxN9pVno92iON04IxY3DEiTpnn+3ZZDyK1Wutalb/drM9E0RT31E4Fp3sfPMD/XFpR1FzS6TnuLMCNO3B54tApL1AQN0FR0aRBb5j2lHCLLYnv0icgjtC256rsYpRw2wQVF1u1O0x/nk2nDCvrOsJPOhIbAKWTKpDkyB2es26YtNY4DertGdIIgGjBBVs17ibtVs028E0TJ7fuvi9Uxd3Yw6g3khYEZZ/hIBorDTOP+y8ubU+Fh1bIzU/hjJgwhPYoqeOuvInIcq1OFHSNOFRijS9eGeR0nsQM7X6k9pCF0pHdqVzxUvscY63xQYatHYHPHcaznA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TCCXIM5T0TOqfqKvegOHXMkLhGmMz0hMvJSxOkBBqzQ=;
+ b=Zyiu/FyMlk4qcJwoo/hXAfz9LmBVCAzbWN/tHWCQHTvLauqVIgRWkkydt1y+wzE+ukddWfhu+wwc8uyzRnCEBrVPFT0svZTWGFz8KJaD7Hm2Ae6oxXxRIzSg0HpISISQHDby7uyKDmnSpoXL6Jo+VJ0kOXG5ifHQTNe5TYHBLHIjxwdjFRaXuqNUD9nzxS15d0vtd8tSVJudQBKCBwWhloljf8ERTBMs9beL49wm0F+wvk+ejhD5HlXSyc4cSYrIWQOwblOab3xpNrOojUpjedKl8D2Q7AqT60Yhd5b5x7X0nNTZZ91OsTooeOBZJYC4Zm4UfbnShdTurr6/YWsSdA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by FRWPR04MB11174.eurprd04.prod.outlook.com (2603:10a6:d10:172::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.13; Tue, 14 Oct
+ 2025 09:33:00 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9203.009; Tue, 14 Oct 2025
+ 09:33:00 +0000
+Date: Tue, 14 Oct 2025 18:45:11 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Andrew Davis <afd@ti.com>,
 	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
 	Daniel Baluta <daniel.baluta@nxp.com>,
 	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, lkp@intel.com,
+	oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+	linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to
  simplify lock handling
-Message-ID: <202510121908.7aduLIkw-lkp@intel.com>
+Message-ID: <20251014104511.GA14479@nxa18884-linux.ap.freescale.net>
+References: <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
+ <202510121908.7aduLIkw-lkp@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202510121908.7aduLIkw-lkp@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2PR06CA0009.apcprd06.prod.outlook.com
+ (2603:1096:4:186::17) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|FRWPR04MB11174:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd3c19ca-3b81-4341-0c68-08de0b04aa62
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|52116014|376014|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?AADaUHozjHEwJO3gpab0tYvIi4K6rzxskWSRDuTGSWdK1NYf1Jq/Xkgc0Viu?=
+ =?us-ascii?Q?cnA8iztmyH0vYUxrg8H7LA8SboPJV7WPzb2pI76QSYQhPoBZBJ4Nf9QZmduv?=
+ =?us-ascii?Q?PmI/PGmZXoxmCzVcDRzbhy9c617YiTvTLkBj9dB81fSNNGDQTkAuAjH121wX?=
+ =?us-ascii?Q?7SP44ca3IO+LGXNA+/9T7aMfp2X7L51rAz6G0vmIiJxi821Y3wBA3c/1HcIv?=
+ =?us-ascii?Q?tU70sKCmnpSYjASW783fxfdik8mkjrgTIjntucV8A2DzjDRw9d/NKwsZKYQs?=
+ =?us-ascii?Q?H8D6gVQ1v0grL7oMO2vE4oCzZPB6pkJHBuVCYu2f8wkC7zDqIQ+KskkhnRKq?=
+ =?us-ascii?Q?8kPzfd094HhXUeuEAlH7kW+M4CAYF/TakvuTVu0p9SRCcVaGPn9fCdYwRexb?=
+ =?us-ascii?Q?ltWxAyCGOGxB5r6DfEAM2bUc23F58W21f/BMSIFSsYf5eWH+TnJYKogj2q7v?=
+ =?us-ascii?Q?8adAf/jEWh6vRQHsjSp5tdci8qLRQewYLIG31c+sClZ3uBK607BlyisIMuVF?=
+ =?us-ascii?Q?aHCvcPeFlcbk4+faGe7fDjyIk0R3VL8/PxIuPhZAksrxIMyf0Sqms2POZOD/?=
+ =?us-ascii?Q?2tYyamJsTht6sxP9jjMQI8HsksrshvA/dyIlbHcCvkpg9oaMgRFvfCXcFuVX?=
+ =?us-ascii?Q?y7+vbFJ43LlpDE54Cwx6nGGsCZc2hUGHf/COejCYOz4cCnIxNMLf6dVg2Sj4?=
+ =?us-ascii?Q?t5falaRAgtpsE7nHTHD57tvQPSZpaJ5inY9h7i5YG4I6hTPWt4tM0uZBKGgl?=
+ =?us-ascii?Q?f8MYMZLX/sMYMEeHkZw7L/z8921k0KCBlG/WqE4DXLf2/kVQxPRX+hGDSlYz?=
+ =?us-ascii?Q?dy4u7xW+jDrp2PItA/Og2WUWzKmzMyRRSeYikqg661perMK8IJwClRgakq/8?=
+ =?us-ascii?Q?a9CGRHWOK9/5+HQMsLOMmNNyG+9G/4bP6lxQ/i8HVjvTddGvR8zvFsrk84IW?=
+ =?us-ascii?Q?JYE/OTb4ccTCjyWQzGEqrdTZ1tjtS8I37diIDq9mXumO+7KDYOrzl6gViVHM?=
+ =?us-ascii?Q?5EdfgELV5J2lSlvuqTSTBmswABmJob1GlCDj2r2SoKZNZ6Cv9wq0ZJTgIpj+?=
+ =?us-ascii?Q?5wbUHisw3RT8ckIPG+Qwqs18PexVSM3Mo9g6b41Kv/Fg8heU8QT3aukCwrmL?=
+ =?us-ascii?Q?T2DCOtUN6jDZmxP8UZmBwY/+YicYxHI2WVuoHY0zmqdEo7qN3O87fNma1Dmp?=
+ =?us-ascii?Q?AR4aqKkkid9AxmeGfZCgir6kT8glTatPmatnmnPx9ooezJuMCf2YrozCWuRF?=
+ =?us-ascii?Q?p47138TRmQaSpqYP3wsHslQjr0STmKgYHc4ntjVTIzCy8s4y77Ky8KyrKv+c?=
+ =?us-ascii?Q?Jj7EvKZlegShYk88a+PI8mh2FJPMUOBkKqTv6cQqeevfjPzjjTs4lftxxo8v?=
+ =?us-ascii?Q?0mOEmj6N8qm+wqFmxcsVT0ULdO66M5fqsn7cRW6jaDXAMeuVoa51p0C2L300?=
+ =?us-ascii?Q?oZCWXAwBikMAOSD5NlW3MjUevV5ZOrzDZ7kHz7YY4BaiOEyNN0w05PfPY6+i?=
+ =?us-ascii?Q?zeYznTFdv/9sNjiVPQ7aSgTDZ6NtpcR6gm0q?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(52116014)(376014)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?2bq+rDXYVQGHNBmHHomg86LUd7J64ZIYgOaHLYKGAWwBUObjAGGqa3SkjcVj?=
+ =?us-ascii?Q?isUIuxdnGGN/c62REkXvallpq7GqcoHxzW3Uwc8H0o8K7/nadnvz/RQFKNWw?=
+ =?us-ascii?Q?hfWPwslBv64aJxACCnUqb2gz1Er4e13qPMbTxpvRAhgeRd+X4QArRQZqwhGN?=
+ =?us-ascii?Q?GUrIABB2N8m6m/FpRsV6iugbg6v5xT1t6X3Dv/JpTQtxkdT1AzrUyt9rf6kF?=
+ =?us-ascii?Q?l2U3whjTQIh4nsUFhkYTGHnHDPxJp8FvL1aj1s/kzou4+uyQh+H9f9xE6BY4?=
+ =?us-ascii?Q?+EERPkkWhD5nCWw3Quzen5r664fP6b4KhATLVo0SEGculY6Y9DO2TTgStBMh?=
+ =?us-ascii?Q?yMOdTAziRPdEmV1R2HgSIDzOnXTcMS9KWBaefQKgNrtq7OKOz3tqiM8AtH/v?=
+ =?us-ascii?Q?2+3GZTf0iJE4GyahtROIFScaaZLtLwfE+bIawWnYGCsxpaJVnMfgfw4Ez+44?=
+ =?us-ascii?Q?0IDtbShnvOs/b1SHkMMu7y4KP8bRMdwqd5x71pPQg+7tkIuoIXNUPGnoaDt9?=
+ =?us-ascii?Q?BnKEPtugnrawaaadZvtsylYfx/THCWiNPalG3W9rR6QLs1Q8pWJGGNKlROUC?=
+ =?us-ascii?Q?oRmkHlVFUH0i4qnLLoqNbaoMGVCug/UiSL/DT9CmOV2iyLUBfXu0YK00qYna?=
+ =?us-ascii?Q?GRYAAvfG5FnFH8TMoP1JpuWYWumjBAMVX2SK5JIiriXLeN1ZiVCqKCQbB2xD?=
+ =?us-ascii?Q?CJk4KRNbZZWPbZ0nmWhzfDd5qOemhsdzWGE1lTPaUfgTBuSSAMm3cvHGdcpW?=
+ =?us-ascii?Q?K8MKK2HeNp8NdAYryR6f2sqeEoMpF+CyzTpy7bRrj6iJqV+f5cLFnoyRzsRL?=
+ =?us-ascii?Q?8b5T4kP6bh94sVoqENBrUvIIbyVv/imms5YI60NTj8KVjiDJIsVujXeuyiJf?=
+ =?us-ascii?Q?BG3YwL/5vajCGEvw0bXL4NZr3KnBDOTpfwdVJdz4VTrwdZPYg64wBahuU1O0?=
+ =?us-ascii?Q?2G/TCcntYMzZ3LeLDFjykWG/6buGoCqkvq3wSI6qviubeIDZXffD4t5zhZAr?=
+ =?us-ascii?Q?vF7Lf8eH+giG1z/CzC/CdrcT9lNXHUJo+cSbUBXu4L2/1Almba1DwZsRsw9V?=
+ =?us-ascii?Q?jP63qLz6lwdT6gIjo5tnUgCxLwxGgNubz1kn2IpmEQPoSavTnpYj8qw9WYdU?=
+ =?us-ascii?Q?xN8gIGn9Ud32GS9e5Fe+hzmdVBuPFfsK/36gP12kO4Pb2c8eOZkA6qnGLafv?=
+ =?us-ascii?Q?XFGnn0Q87WMoPWHivtliX5/I5kt7d8Xv+zPt5aj4N+e4JD04YLXV82kPAhLT?=
+ =?us-ascii?Q?12ky5wucq2cj1yiJHfWaM8CVhX8GUmUwCIGkipeA6wRZfBMZgxwnS3bJMQP9?=
+ =?us-ascii?Q?SbuAw1qvZsHkh53NLjPOYqp4F/PQPTCfKD7PPvlIGfho5CSeCIBpI58FkrWU?=
+ =?us-ascii?Q?XbmrB5+3BCRgxcgJqge6bKp1gZegoxbPJogCVFE55FEk70B6MxBAt72wIyAN?=
+ =?us-ascii?Q?3Pb/7NUU+CVq+8vHo1tdAw1ELS0Ac5V5IVov7abo4PbEh+ME7Wd1jlJIwan5?=
+ =?us-ascii?Q?qr2Cu+wUu5JfWrunZPXnTLc6OfNWewlLtaVINTVLbxBBNfHe+v6EcO+FUDzd?=
+ =?us-ascii?Q?2S2j+dryFJgLtcyosudcIcBRhyyVuIuj2Odx4HEt?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd3c19ca-3b81-4341-0c68-08de0b04aa62
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2025 09:33:00.2369
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nfiyguPahPqP1WKMX8Js2iJ0lB//cpLRv/TpJKE9f0PG79DrH+DUJLXOjYGsM73rarjYEu4HiJZM5a47cL5zcw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRWPR04MB11174
 
-Hi Peng,
+Hi Dan,
 
-kernel test robot noticed the following build warnings:
+I am not sure, Is this false alarm?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/remoteproc-core-Drop-redundant-initialization-of-ret-in-rproc_shutdown/20251010-202737
-base:   3b9b1f8df454caa453c7fb07689064edb2eda90a
-patch link:    https://lore.kernel.org/r/20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c%40nxp.com
-patch subject: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to simplify lock handling
-config: i386-randconfig-141-20251012 (https://download.01.org/0day-ci/archive/20251012/202510121908.7aduLIkw-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+On Tue, Oct 14, 2025 at 11:39:41AM +0300, Dan Carpenter wrote:
+>Hi Peng,
+>
+>
+>vim +/ret +1841 drivers/remoteproc/remoteproc_core.c
+>
+>70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1829  int rproc_trigger_recovery(struct rproc *rproc)
+>70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1830  {
+>7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1831  	struct device *dev = &rproc->dev;
+>7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1832  	int ret;
+>7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1833  
+>c42baf6f84c7694 Peng Fan             2025-10-10  1834  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+>c42baf6f84c7694 Peng Fan             2025-10-10  1835  	ret = ACQUIRE_ERR(mutex_intr, &lock);
+>7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1836  	if (ret)
+>7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1837  		return ret;
+>7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1838  
+>0b145574b6cd2b3 Alex Elder           2020-02-28  1839  	/* State could have changed before we got the mutex */
+>0b145574b6cd2b3 Alex Elder           2020-02-28  1840  	if (rproc->state != RPROC_CRASHED)
+>c42baf6f84c7694 Peng Fan             2025-10-10 @1841  		return ret;
+>
+>Please change this to either "return 0;" or "return -ERRORCODE;"
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202510121908.7aduLIkw-lkp@intel.com/
+ACQUIRE_ERR should already returns 0. This change does not change the
+assignment to ret as my understanding. Please help to see if this is false
+alarm or I miss something?
 
-smatch warnings:
-drivers/remoteproc/remoteproc_core.c:1841 rproc_trigger_recovery() warn: missing error code? 'ret'
-drivers/remoteproc/remoteproc_core.c:1993 rproc_shutdown() warn: missing error code? 'ret'
+>
+>400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1980  
+>c42baf6f84c7694 Peng Fan             2025-10-10  1981  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
+>c42baf6f84c7694 Peng Fan             2025-10-10  1982  	ret = ACQUIRE_ERR(mutex_intr, &lock);
+>400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1983  	if (ret) {
+>400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1984  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
+>c13b780c4597e1e Suman Anna           2022-02-13  1985  		return ret;
+>400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1986  	}
+>400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1987  
+>c42baf6f84c7694 Peng Fan             2025-10-10  1988  	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED)
+>c42baf6f84c7694 Peng Fan             2025-10-10  1989  		return -EINVAL;
+>5e6a0e05270e3a4 Shengjiu Wang        2022-03-28  1990  
+>400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1991  	/* if the remote proc is still needed, bail out */
+>400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1992  	if (!atomic_dec_and_test(&rproc->power))
+>c42baf6f84c7694 Peng Fan             2025-10-10 @1993  		return ret;
+>
+>Same.
 
-vim +/ret +1841 drivers/remoteproc/remoteproc_core.c
+Same as above.
 
-70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1829  int rproc_trigger_recovery(struct rproc *rproc)
-70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1830  {
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1831  	struct device *dev = &rproc->dev;
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1832  	int ret;
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1833  
-c42baf6f84c7694 Peng Fan             2025-10-10  1834  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
-c42baf6f84c7694 Peng Fan             2025-10-10  1835  	ret = ACQUIRE_ERR(mutex_intr, &lock);
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1836  	if (ret)
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1837  		return ret;
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1838  
-0b145574b6cd2b3 Alex Elder           2020-02-28  1839  	/* State could have changed before we got the mutex */
-0b145574b6cd2b3 Alex Elder           2020-02-28  1840  	if (rproc->state != RPROC_CRASHED)
-c42baf6f84c7694 Peng Fan             2025-10-10 @1841  		return ret;
-
-Please change this to either "return 0;" or "return -ERRORCODE;"
-
-0b145574b6cd2b3 Alex Elder           2020-02-28  1842  
-0b145574b6cd2b3 Alex Elder           2020-02-28  1843  	dev_err(dev, "recovering %s\n", rproc->name);
-0b145574b6cd2b3 Alex Elder           2020-02-28  1844  
-ba194232edc032b Peng Fan             2022-09-28  1845  	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
-ba194232edc032b Peng Fan             2022-09-28  1846  		ret = rproc_attach_recovery(rproc);
-ba194232edc032b Peng Fan             2022-09-28  1847  	else
-ba194232edc032b Peng Fan             2022-09-28  1848  		ret = rproc_boot_recovery(rproc);
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1849  
-7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1850  	return ret;
-70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1851  }
-
-[ snip ]
-
-c13b780c4597e1e Suman Anna           2022-02-13  1976  int rproc_shutdown(struct rproc *rproc)
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1977  {
-b5ab5e24e960b9f Ohad Ben-Cohen       2012-05-30  1978  	struct device *dev = &rproc->dev;
-ee3d85da617a065 Peng Fan             2025-10-10  1979  	int ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1980  
-c42baf6f84c7694 Peng Fan             2025-10-10  1981  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
-c42baf6f84c7694 Peng Fan             2025-10-10  1982  	ret = ACQUIRE_ERR(mutex_intr, &lock);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1983  	if (ret) {
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1984  		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-c13b780c4597e1e Suman Anna           2022-02-13  1985  		return ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1986  	}
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1987  
-c42baf6f84c7694 Peng Fan             2025-10-10  1988  	if (rproc->state != RPROC_RUNNING && rproc->state != RPROC_ATTACHED)
-c42baf6f84c7694 Peng Fan             2025-10-10  1989  		return -EINVAL;
-5e6a0e05270e3a4 Shengjiu Wang        2022-03-28  1990  
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1991  	/* if the remote proc is still needed, bail out */
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1992  	if (!atomic_dec_and_test(&rproc->power))
-c42baf6f84c7694 Peng Fan             2025-10-10 @1993  		return ret;
-
-Same.
-
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1994  
-fcd58037f28bf70 Arnaud Pouliquen     2018-04-10  1995  	ret = rproc_stop(rproc, false);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1996  	if (ret) {
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1997  		atomic_inc(&rproc->power);
-c42baf6f84c7694 Peng Fan             2025-10-10  1998  		return ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  1999  	}
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2000  
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2001  	/* clean up all acquired resources */
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2002  	rproc_resource_cleanup(rproc);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2003  
-33467ac3c8dc805 Loic Pallardy        2020-04-16  2004  	/* release HW resources if needed */
-33467ac3c8dc805 Loic Pallardy        2020-04-16  2005  	rproc_unprepare_device(rproc);
-33467ac3c8dc805 Loic Pallardy        2020-04-16  2006  
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2007  	rproc_disable_iommu(rproc);
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2008  
-988d204cdaf604c Bjorn Andersson      2016-08-11  2009  	/* Free the copy of the resource table */
-a0c10687ec9506b Bjorn Andersson      2016-12-30  2010  	kfree(rproc->cached_table);
-a0c10687ec9506b Bjorn Andersson      2016-12-30  2011  	rproc->cached_table = NULL;
-988d204cdaf604c Bjorn Andersson      2016-08-11  2012  	rproc->table_ptr = NULL;
-c42baf6f84c7694 Peng Fan             2025-10-10  2013  
-c13b780c4597e1e Suman Anna           2022-02-13  2014  	return ret;
-400e64df6b237eb Ohad Ben-Cohen       2011-10-20  2015  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+Thanks,
+Peng
+>
