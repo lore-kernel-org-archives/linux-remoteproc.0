@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6563A1FC3;
-	Tue, 14 Oct 2025 21:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B569E1A83F9;
+	Tue, 14 Oct 2025 21:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760478376; cv=none; b=EV5SmEH51cdwN72WH/jIRBC4Pe0Zx9ZbXaUCimPLs2axMfNR4QzF3xyQXJQcP98vY4Z3iHIhM5KNWt8pfYr3q4FgUpmSnxO+FMpwOLJBRaGy2vbxIzNAQAWwe83gd0PFIivwaCw23RdjBWXbKByATZ8oyKFNXz2qboGjadFMJbM=
+	t=1760479040; cv=none; b=IuxUMtnyOXf68r1zsMMJz7MZwP2nCGu8FOEOulbgNsP0sDBfeIitx7msfSvItAlfv24MoJ15+P2RxkeT6XUiCLPV2f16TPcXJmcDXgkJeDJREjw1j6hRtAZVRktF9EiAGsuuRS6vXvfBD/EurVQsdROI1d95Z4VzKzXhEWVWru8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760478376; c=relaxed/simple;
-	bh=D/+aB4xzK+jOG+egPBSyFHOisu385vxxMxSIuKeVqIY=;
+	s=arc-20240116; t=1760479040; c=relaxed/simple;
+	bh=v/qGyRBZSbCkLwbyD4B4HL5F+00L8KSG4+V9sExxzPI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zv3uob0zHrBknwkGaLGwbTfkvprS0c/wjxleLCvhRAWHeTFUM1o9WGvu4HWUSSAe1rEmqc+3a1sMFrQz/xiZHGQYNTENg3t8F28jDZdK6F5rw1e7iVIEzwYBXBZFLTdlqzlBTh7PzqPhaCrI02hNAx83i5jhdObC/mAw4bz0k3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sMMSYbLO; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=iFoA+eoC0TRj6TUxVyfivXS+r6s7NQHTjxl6bOdn/EM77QhEM2QlB74TbWKPj6VlFztMC2GnD7dOO1+8wbcmNyr0qQH7+VkxMJv8vaKM34d8WEZK2nKVYCeAdGdQMpTu09HasxtJkZUDQdK+gV4sSBMp2UpK7UCqQLuw7MLUK5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcSnHc7Y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sMMSYbLO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99CDC4CEE7;
-	Tue, 14 Oct 2025 21:46:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcSnHc7Y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 228E3C4CEE7;
+	Tue, 14 Oct 2025 21:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760478375;
-	bh=D/+aB4xzK+jOG+egPBSyFHOisu385vxxMxSIuKeVqIY=;
+	s=k20201202; t=1760479040;
+	bh=v/qGyRBZSbCkLwbyD4B4HL5F+00L8KSG4+V9sExxzPI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sMMSYbLOLmS35+EDvOBHwpRp8xMYeIInsPNlv4pPfOStT0OGgnQUfCvIg3zCX5WPG
-	 JPczoYBjE8f8+rS2vMV3tvhLaFgU8A0OJo+jUL8tw1VyAxe+lcnyJzdnNh9M18z08H
-	 r5hUJmfNVyT74++eW+nn3zRwZKmiTqmubVqYDbUEXdiqqFYa/Itggm8GcQx4ylKrxI
-	 A1oDqcHZ7FqAm8QbBgUvBVcT+27Ylv9UO9aEY9VfpLvybhpos8C8z8e+Xk9++tNxjL
-	 ySCfTGtx1KVvKRvfmsRyWoAQOVdMEtZ8Xh+oZLsQKX0dRDVrHCNzKp01sWocc8pGP8
-	 SzneRLY999ZHQ==
-Message-ID: <c6b68ec7-9195-4961-86dc-802a7cc55e38@kernel.org>
-Date: Tue, 14 Oct 2025 23:46:09 +0200
+	b=AcSnHc7YiPSLw+8L56cuExZ0Jto79hkkNYuB/MQzsD3ctNbIOjUcW0+arThVxMtrA
+	 V+A/ZMU701qF5Om3cr+Se476zUbWxI4kq9s8x2pugGNRI94VQUZd+4a9CfuwxLevE8
+	 XVWwbV9QE1e7i8bN/XbOX/OEbayzFu+OvpK1RglkHtSmppom70l22ajWCzBHid6vEL
+	 +zO+4UOC+nwSlPTrZMl+8w0ysl0g47YSAVYkQJfWZ+4dOUvJhGmjbecKtGGxW1acSO
+	 0hRC/vgpEwvRIvK17IThGtf1wNuoKOccLw2xz0vCzw3sbUcLj+/rM+gfwstP6p4Ylq
+	 1Rgxr7apKEqsQ==
+Message-ID: <861b6ede-f168-44e6-85bd-10cf04dbcec7@kernel.org>
+Date: Tue, 14 Oct 2025 23:57:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,19 +35,24 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock
- support
-To: Kamal Dasu <kamal.dasu@broadcom.com>
-Cc: peng.fan@oss.nxp.com, andersson@kernel.org,
- baolin.wang@linux.alibaba.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, florian.fainelli@broadcom.com,
- bcm-kernel-feedback-list@broadcom.com, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20251009212003.2714447-1-kamal.dasu@broadcom.com>
- <20251009212003.2714447-2-kamal.dasu@broadcom.com>
- <3791aa93-c1c0-4fc9-9706-91f3f62743a3@kernel.org>
- <CAKekbeuDux1oOOOKK8Pq-jYRzScCDOEXw1w=JBodaUQ4PU2=cA@mail.gmail.com>
+Subject: Re: [PATCH 4/6] dt-bindings: remoteproc: qcom,pas: Document pas for
+ Kaanapali SoCCP
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
+References: <20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com>
+ <20250924-knp-remoteproc-v1-4-611bf7be8329@oss.qualcomm.com>
+ <a8796335-bec3-4c1f-afea-b5b7909d8ba3@kernel.org>
+ <e9813a47-c40b-475a-8faf-de0811c9066e@oss.qualcomm.com>
+ <40af8d13-1bee-49f7-946e-043b920d83fe@kernel.org>
+ <0f0969e8-8668-411e-8ddb-a124703c9584@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,33 +98,76 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAKekbeuDux1oOOOKK8Pq-jYRzScCDOEXw1w=JBodaUQ4PU2=cA@mail.gmail.com>
+In-Reply-To: <0f0969e8-8668-411e-8ddb-a124703c9584@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 14/10/2025 17:40, Kamal Dasu wrote:
-> On Thu, Oct 9, 2025 at 10:00 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 14/10/2025 07:30, Jingyi Wang wrote:
+> 
+> 
+> On 10/14/2025 12:47 PM, Krzysztof Kozlowski wrote:
+>> On 14/10/2025 06:28, Jingyi Wang wrote:
+>>>
+>>>
+>>> On 10/9/2025 6:27 PM, Krzysztof Kozlowski wrote:
+>>>> On 25/09/2025 08:37, Jingyi Wang wrote:
+>>>>> +
+>>>>> +  glink-edge:
+>>>>> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+>>>>> +    unevaluatedProperties: false
+>>>>> +    description: |
+>>>>
+>>>> Drop |
+>>>>
+>>>>
+>>>
+>>> Will fix
+>>>
+>>>>> +      Qualcomm G-Link subnode which represents communication edge, channels
+>>>>> +      and devices related to the Remoteproc.
+>>>>> +
+>>>>> +required:
+>>>>> +  - compatible
+>>>>> +  - reg
+>>>>> +  - memory-region
+>>>>> +  - clocks
+>>>>> +  - clock-names
+>>>>> +  - interrupts
+>>>>> +  - interrupt-names
+>>>>> +  - qcom,smem-states
+>>>>> +  - qcom,smem-state-names
+>>>>> +
+>>>>> +unevaluatedProperties: false
+>>>>
+>>>> That's wrong in this context. But if you add missing (and corrected
+>>>> pas-common) then it would make sense.
+>>>>
+>>>
+>>> Sorry I didn't get this point, could you make it more clear?
+>>>
+>>> The property for Kaanapali SoCCP doesn't follow qcom,pas-common.yaml
+>>> (the interrupts are different) so it was not included here, like
+>>> "qcom,qcs404-cdsp-pil.yaml"
 >>
->> On 09/10/2025 23:20, Kamal Dasu wrote:
->>> The broadcom settop SoCs have hardware semaphores as part of "sundry"
->>> IP block which has other controls that do not belong anywhere else.
->>> e.g. pin/mux controls, SoC identification, drive strength, reset controls,
->>> and other misc bits are part of this block.
 >>
->> This does not explain why this has to be a separate block. Rob comment
->> stays valid - this belongs to parent node.
+>> It should follow. We want the common properties to be common. You cannot
+>> have new binding not using common properties, because you duplicate
+>> property definition.
+>>
+>>>
+>>> So I think just adding the missing "power-domains","power-domain-names"
+>>> under "required" will be okay?
+>>
+>>
+>> You need to adjust pas-common.yaml, all other bindings and this binding
+>> so there is a common part.
 >>
 > 
-> We do not have a separate parent node where this will fit in. We have
+> Do you mean remove the interrupts property from the pas-common.yaml then
+> define it in separate bindings?
 
-
-So what is the parent? simple bus?
-
-> the DWORD aligned  register defined here as organized in the SUNDRY
-> block.
-
-
-I don't know what SUNDRY is.
+They should rather stay in pas-common and be extended to oneOf for two
+versions - old and Kaanapali one.
 
 Best regards,
 Krzysztof
