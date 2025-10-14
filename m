@@ -1,83 +1,72 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EF930E823
-	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Oct 2025 11:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0FB2FDC51
+	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Oct 2025 14:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760441513; cv=none; b=O1w8QY80CBH3tC0KsT33up5yNfasr9xwOfDboJ12XcZ5aXHQy+Z02eQl4+USmvuOVxdyZ+MX6/LvtlA3CnKKp6C+m4bboALjDKR43fE47MjlMkodLTaS+swxlx9YX3fR+xfEjYiHBzMD76g8YgWcSdGyO4ex82M8tr5WfD5g3/A=
+	t=1760453283; cv=none; b=AmPX/iVoi7IZnp4xZeAt4rnbj/fs+MY/bGTiXIstqDJ9mK63+/dNJ/OCJGlT4B5GB+aQCiqbzDcEPJ26d5cYPVhTI9I9jYxuJbJD42ONDb/jfL5oEbmrH6vidGd5jvv+jMBYaqv+ZmT/dhvQ2T2M3VKJdKOfw8mEs7ZP2r4HwkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760441513; c=relaxed/simple;
-	bh=3w4nQi9hgenkrHPxz75XSwpRlBt74vHGiJuFZQ2tndI=;
+	s=arc-20240116; t=1760453283; c=relaxed/simple;
+	bh=t3JeelhavgJlvR1ZwyHoapB3tFs5Z7kTAMrAmctRWGw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o67FiuIsOj01hIumw/o4ipHGC4+nJLinyhTu9jvbgQxMyYwk21tgKWaaugdxBapcdKUoDlgkxbM3ifJuaWZ7cSvmyB6THjOCcFHrVQFrjJ4yLXLyNCZ1ns2ap76o5ZRJ+/kqGiPxNdAEfQGrmqxx4G8zmzMY+IlsfDkGTSNPGuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BufL00nZ; arc=none smtp.client-ip=209.85.221.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlojYvDhKWbr1LSQhwW4pu2QAJCB3QZ2ZPXRZxHwHxlcl6+EskPP8FGV0quM6u2d5XDzUc7Dtns69/+CsMnQIG1pRNAmTYUcktL30pELsq7wFjSG2Qdculn9e4h0OqVhOtNdJoLixRilzTdOltMqIoWw/kJZ1lfoHFgSelY3zSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vV3Uoitp; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BufL00nZ"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4257aafab98so4417271f8f.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Oct 2025 04:31:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vV3Uoitp"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-780fc3b181aso3228515b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Oct 2025 07:47:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760441509; x=1761046309; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1760453279; x=1761058079; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ofkJNulQu/wtU9ucbaTHhfLlEv5BRzrjhZDncPD/y2M=;
-        b=BufL00nZh9qhuBc5qgR5Gi7wrEyoyBJ2aCnu38k6xzJqx5c4e7Ofc2nWW7Ckquh4hU
-         TffDOrnCd0DEUCpmC/7BZMK89drnwfWoi8CAsatcHK3dkzbLvzHZ0dtRa3KICIqnxJPP
-         DE2+mYd4h2gqbI10/7LJwE6YYmeJEOoPq/6M5Gi7W+wqP1WOJjmnYhtgIw4EjEjR6aTP
-         f0pxTpmOMWezUCQ4DWxmuFqrEG5MD1Wlb8KTc41UJWNlVHaSY5JXpC0VU6YivRWfvlyM
-         PqSsf9u8hBO+wPzxbNtuiwBEReUeNO8ftTLCMFWK/xoA6rjrcAUoZyIGAVtJyLDSF+8x
-         n4zA==
+        bh=1VMcv/WwJNqD/h/B11jXsfWcJyNALBVGkv849SpavMk=;
+        b=vV3Uoitp8Aukhu2RowZJIq6s+IAG5Y+PTgMLAjaKbJ4biLMW/kXde6ttjAV1VurSyz
+         N+gJazeUU35ZC2MtK8QD59MXFqP7aF7XCkwDd4YO0/IUSMNqeay5nLSyewcCrpEGlvsf
+         GAwqDwQcdXXQ8x5NjH0aykL6LxDeCSctr+FlIl49zAqI3qXciGGRyfZdGzlGHQm7MtTQ
+         rzfeT2BmgFP7JUiD/aowXOdvWvtjysSkhlf9SYQ1t1YnHXpRnbHMMVy84zHeMlPVhMg9
+         8RWArdNiJWrvBsj1eqwe4BupPtA5wkG1HcQi0PtM15Z/yb7WQc/wl1K3c8FKJmiwZhW8
+         fZFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760441509; x=1761046309;
+        d=1e100.net; s=20230601; t=1760453279; x=1761058079;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ofkJNulQu/wtU9ucbaTHhfLlEv5BRzrjhZDncPD/y2M=;
-        b=ak2ioxElqwN/AHR7XSXo7xgWeBzjGHLa+sQzGUk1fN9kp9miJg6qgNp/JVrOk3Vzvk
-         JcNpZ0SLp72rdpKMzUN+DIugkZRC1Y0bBaTQdVICSr44M2eIEeLNIPEZRbuN6VNmdlJA
-         XaB7KbvfVNHI4iHRpNsGKFGwfndzX0gvNzWTiBAuEpcJAfsaCKEBh/ZPDZpfxsWdBc+z
-         2pq5bzYxgQPkdhKFsYbBP4R52rYTzY2tUT70Kmh8/0zEW36oBAzngRHz47CnctyDbtgS
-         rcDY2vvi0XM0TJhs9HeK/IN4k+1aQttV/H8Rb8vbrXoTAoo3u2Vywl1dtv9fUy7E2xL+
-         qqPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2B3juQ20nsKKot/I+yClvLoCXJ4k+Un7jT6QVXztILBE8iLS3t+4HHYWML1HQBcMj5KWWLkd6sssLxFv6byCn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx6a81uwh973AGgG5WPE7tzEdNT8RK/7EelU9yWS66LylsO/ZJ
-	0Q4yF8Vdc3hDPcaE3C9JlqFqnJUaTFRv3SToOXi9lbG9MixlojZmYgx1b4Ta12vlFc8=
-X-Gm-Gg: ASbGncv/f2ud+olstWK5t5ocGDccBni4AlDuaECS+zgv3w/UnfUNsYY+o6VHrSYdJzD
-	7gtDvbrNY+MxDB8fdRMZwDDp29BLb1ZRwLGNzk1zJHW+rfRdemCOCj2hkOxqbtcu8TdzGjOaaaP
-	gRLNNj5uoZl/O42I3hG2d4YIKhQcKXfp3MUdxyvudQsCW493pWQsfm7TuunJ/Tzz99sdrebuhDT
-	VEBA+zxyVAQ76PZxpdm7siVtA3x/GYYdP3b8qz9cdBkqfqpgtRxhWfGsOdmLjuEEoAa6dkKH71o
-	9bTewNNNuOxgJ/SPnlWG4TcUE0vhN9RmOiHiJfaIeIrahghXpQiANA8o6LFaK5Dqsoncj2gOq5M
-	NJul+heDcGcyoCNYUMzipSvGeEpIpFAi6jkCqZYXowP5hWDgZS3U=
-X-Google-Smtp-Source: AGHT+IE7JRJVgX/0XRZqqgOQ0IMTJn2bfv2E4RS1BB14d24blTgxq9Or2UqVDIrAHI/wbElOafShvQ==
-X-Received: by 2002:a05:6000:43c7:20b0:426:f355:7c9a with SMTP id ffacd0b85a97d-426f3557ce6mr628338f8f.25.1760441509084;
-        Tue, 14 Oct 2025 04:31:49 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fb49c4027sm234419565e9.17.2025.10.14.04.31.48
+        bh=1VMcv/WwJNqD/h/B11jXsfWcJyNALBVGkv849SpavMk=;
+        b=OqPE6Ni0Sur1Uanr91XBaUV1Ne+kZrTmD4t+TrWDRf3LcLwB6A7xJekYVOfdqnbxdN
+         gLKsPRNDKq2HWWAOUjhmGeuYHXkYxlYdYkS+h9iqbnSR6XAACczlljcT3dzhZmPeE0GN
+         154kM49eoDTBC1l0RMOwOl8F9WiwkCC5to7OHDntPOZJ6ANDfdpqUrcztWU0QpEBfv8i
+         jXWPM5+oQHW6kwmr1/U19LfRMkpKG4gdIJVHIh+Il62fG6w6eLaDUbN0Q8TwMeY08lXT
+         HrVZmakWhSeXgPO1noOyBYzjBAjxV+DAmTc3Rt7XVjgw3V2E5KcOrZXNCM/f3nUGp2yv
+         qQPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsHDXf98GIfGQOWCTjSReasIC4MhzrwhWWs227D4lKyIfiRJEnK3b9lvIQKWGD9T4JlLz/bnXCT++4/zFinRo0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlwtKvCo38kUdsgFgYeqwR0sLDYKMKlExjc+jsnGjOETuvsZgy
+	IvwAYMGevgaQnT0PKZFlxT1Gdr9jIf7ttWWOpT9kYl2FDJYHJ9p1wEv0m5/Ketxg4MA=
+X-Gm-Gg: ASbGncsCiEItax6Xz1E/5nK/buJW6vWOfrtp/vqYMiNEoLNJisnytGRvbU/jbNBgPPJ
+	4BuBGTeA63oX6d4kct5+s67kt3mjNqiuWlz13myQOXrCbM2lWDeV5Yw7gsB7OffMiW4AYT4cLn1
+	XYnNOQBlH2irONpCy7SN5mXGypQ05P55sEqg7g3WGVB2Ooj8uzZPooCxOCaLlFLCjUD32fZ6uHb
+	hcprb6rafvgt3uXUQ8b4nP2m6wxrBLMU3G6ewjq41l93Vr+wHZT2MW7ejqJmVCuOME0PMSzN3J7
+	NYkxY3vCZ2xEjT/q/nU/XoBxzT4cQ7tmv/AQcSTBbV+xEOXQPO25CaqcaXy5DABo+GH2E5rRIn5
+	guSg45E1ZGbLnmtgYuLA9VI0I67zq0aKgyB20j3TwkH0oUsv5
+X-Google-Smtp-Source: AGHT+IE531tDBs5FFqjRlBMygQj0EV+WwZcvk7j9g7oDPATu+ePcqqw7IhSErv/dNjmnMcH6Dc3ZYQ==
+X-Received: by 2002:a05:6a00:1956:b0:781:15b0:beb4 with SMTP id d2e1a72fcca58-79387242fd1mr28404032b3a.21.1760453278868;
+        Tue, 14 Oct 2025 07:47:58 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:68ce:31e8:3a83:30af])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d0966d7sm15310465b3a.40.2025.10.14.07.47.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Oct 2025 04:31:48 -0700 (PDT)
-Date: Tue, 14 Oct 2025 14:31:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: oe-kbuild@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Andrew Davis <afd@ti.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 4/7] remoteproc: core: Use cleanup.h macros to
- simplify lock handling
-Message-ID: <aO40oQkj9sT78bMV@stanley.mountain>
-References: <20251010-remoteproc-cleanup-v2-4-7cecf1bfd81c@nxp.com>
- <202510121908.7aduLIkw-lkp@intel.com>
- <20251014104511.GA14479@nxa18884-linux.ap.freescale.net>
+        Tue, 14 Oct 2025 07:47:58 -0700 (PDT)
+Date: Tue, 14 Oct 2025 08:47:56 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Dawei Li <dawei.li@linux.dev>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
+Subject: Re: [PATCH v4 1/3] rpmsg: char: Reuse eptdev logic for anonymous
+ device
+Message-ID: <aO5inFRpD_aVxtxD@p14s>
+References: <20250609151531.22621-1-dawei.li@linux.dev>
+ <20250609151531.22621-2-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -86,47 +75,239 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251014104511.GA14479@nxa18884-linux.ap.freescale.net>
+In-Reply-To: <20250609151531.22621-2-dawei.li@linux.dev>
 
-On Tue, Oct 14, 2025 at 06:45:11PM +0800, Peng Fan wrote:
-> Hi Dan,
-> 
-> I am not sure, Is this false alarm?
-> 
-> On Tue, Oct 14, 2025 at 11:39:41AM +0300, Dan Carpenter wrote:
-> >Hi Peng,
-> >
-> >
-> >vim +/ret +1841 drivers/remoteproc/remoteproc_core.c
-> >
-> >70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1829  int rproc_trigger_recovery(struct rproc *rproc)
-> >70b85ef83ce3523 Fernando Guzman Lugo 2012-08-30  1830  {
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1831  	struct device *dev = &rproc->dev;
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1832  	int ret;
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1833  
-> >c42baf6f84c7694 Peng Fan             2025-10-10  1834  	ACQUIRE(mutex_intr, lock)(&rproc->lock);
-> >c42baf6f84c7694 Peng Fan             2025-10-10  1835  	ret = ACQUIRE_ERR(mutex_intr, &lock);
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1836  	if (ret)
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1837  		return ret;
-> >7e83cab824a8670 Sarangdhar Joshi     2017-05-26  1838  
-> >0b145574b6cd2b3 Alex Elder           2020-02-28  1839  	/* State could have changed before we got the mutex */
-> >0b145574b6cd2b3 Alex Elder           2020-02-28  1840  	if (rproc->state != RPROC_CRASHED)
-> >c42baf6f84c7694 Peng Fan             2025-10-10 @1841  		return ret;
-> >
-> >Please change this to either "return 0;" or "return -ERRORCODE;"
-> 
-> ACQUIRE_ERR should already returns 0. This change does not change the
-> assignment to ret as my understanding. Please help to see if this is false
-> alarm or I miss something?
-> 
+Hi,
 
-I guess if this was already merged then it's fine.  But "return ret" looks
-like an error path where "return 0;" is obvious.  This code will always
-trigger a Smatch warning, and I always tell people that old code has been
-reviewed so all the warnings are false positives, still someone will
-eventually change this to "return -EINVAL;" because it looks so much like
-a mistake.
+On Mon, Jun 09, 2025 at 11:15:29PM +0800, Dawei Li wrote:
+> Current uAPI implementation for rpmsg ctrl & char device manipulation is
+> abstracted in procedures below:
+> - fd = open("/dev/rpmsg_ctrlX")
+> - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+>   generated.
+> - fd_ep = open("/dev/rpmsgY", O_RDWR)
+> - operations on fd_ep(write, read, poll ioctl)
+> - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+> - close(fd_ep)
+> - close(fd)
+> 
+> This /dev/rpmsgY abstraction is less favorable for:
+> - Performance issue: It's time consuming for some operations are involved:
+>   - Device node creation.
+>     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+>     overhead is based on coordination between DEVTMPFS and userspace
+>     tools such as udev and mdev.
+> 
+>   - Extra kernel-space switch cost.
+> 
+>   - Other major costs brought by heavy-weight logic like device_add().
+> 
+> - /dev/rpmsgY node can be opened only once. It doesn't make much sense
+>     that a dynamically created device node can be opened only once.
+> 
+> - For some container application such as docker, a client can't access
+>   host's device node unless specified explicitly. But in case of
+>   /dev/rpmsgY, which is generated dynamically and whose existence is
+>   unknown for clients in advance, this uAPI based on device node doesn't
+>   fit well.
+> 
+> An anonymous inode based approach is introduced to address the issues above.
 
-regards,
-dan carpenter
+The above line is too long and gives me a checkpatch warning.  Please refactor
+and send again.
 
+Thanks,
+Mathieu
+
+> Rather than generating device node and opening it, rpmsg code just creates
+> an anonymous inode representing eptdev and return the fd to userspace.
+> 
+> The legacy abstraction based on struct dev and struct cdev is honored
+> for:
+> - Avoid legacy uAPI break(RPMSG_CREATE_EPT_IOCTL)
+> - Reuse existing logic:
+>   -- dev_err() and friends.
+>   -- Life cycle management of struct device.
+> 
+> Signed-off-by: Dawei Li <dawei.li@linux.dev>
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 80 ++++++++++++++++++++++++++------------
+>  1 file changed, 56 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index eec7642d2686..6c19f2146698 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -91,7 +91,8 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+>  	/* wake up any blocked readers */
+>  	wake_up_interruptible(&eptdev->readq);
+>  
+> -	cdev_device_del(&eptdev->cdev, &eptdev->dev);
+> +	if (eptdev->dev.devt)
+> +		cdev_device_del(&eptdev->cdev, &eptdev->dev);
+>  	put_device(&eptdev->dev);
+>  
+>  	return 0;
+> @@ -132,21 +133,17 @@ static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable
+>  	return 0;
+>  }
+>  
+> -static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+> +static int __rpmsg_eptdev_open(struct rpmsg_eptdev *eptdev)
+>  {
+> -	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+>  	struct rpmsg_endpoint *ept;
+>  	struct rpmsg_device *rpdev = eptdev->rpdev;
+>  	struct device *dev = &eptdev->dev;
+>  
+> -	mutex_lock(&eptdev->ept_lock);
+>  	if (eptdev->ept) {
+> -		mutex_unlock(&eptdev->ept_lock);
+>  		return -EBUSY;
+>  	}
+>  
+>  	if (!eptdev->rpdev) {
+> -		mutex_unlock(&eptdev->ept_lock);
+>  		return -ENETRESET;
+>  	}
+>  
+> @@ -164,21 +161,32 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  	if (!ept) {
+>  		dev_err(dev, "failed to open %s\n", eptdev->chinfo.name);
+>  		put_device(dev);
+> -		mutex_unlock(&eptdev->ept_lock);
+>  		return -EINVAL;
+>  	}
+>  
+>  	ept->flow_cb = rpmsg_ept_flow_cb;
+>  	eptdev->ept = ept;
+> -	filp->private_data = eptdev;
+> -	mutex_unlock(&eptdev->ept_lock);
+>  
+>  	return 0;
+>  }
+>  
+> -static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+> +static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+>  {
+>  	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+> +	int ret;
+> +
+> +	mutex_lock(&eptdev->ept_lock);
+> +	ret = __rpmsg_eptdev_open(eptdev);
+> +	if (!ret)
+> +		filp->private_data = eptdev;
+> +	mutex_unlock(&eptdev->ept_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+> +{
+> +	struct rpmsg_eptdev *eptdev = filp->private_data;
+>  	struct device *dev = &eptdev->dev;
+>  
+>  	/* Close the endpoint, if it's not already destroyed by the parent */
+> @@ -400,12 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+>  	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+>  
+>  	ida_free(&rpmsg_ept_ida, dev->id);
+> -	ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+> +	if (eptdev->dev.devt)
+> +		ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+>  	kfree(eptdev);
+>  }
+>  
+> -static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
+> -						      struct device *parent)
+> +static struct rpmsg_eptdev *rpmsg_eptdev_alloc(struct rpmsg_device *rpdev,
+> +					       struct device *parent, bool cdev)
+>  {
+>  	struct rpmsg_eptdev *eptdev;
+>  	struct device *dev;
+> @@ -428,33 +437,50 @@ static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev
+>  	dev->groups = rpmsg_eptdev_groups;
+>  	dev_set_drvdata(dev, eptdev);
+>  
+> -	cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
+> -	eptdev->cdev.owner = THIS_MODULE;
+> +	if (cdev) {
+> +		cdev_init(&eptdev->cdev, &rpmsg_eptdev_fops);
+> +		eptdev->cdev.owner = THIS_MODULE;
+> +	}
+>  
+>  	return eptdev;
+>  }
+>  
+> -static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
+> +static struct rpmsg_eptdev *rpmsg_chrdev_eptdev_alloc(struct rpmsg_device *rpdev,
+> +						      struct device *parent)
+> +{
+> +	return rpmsg_eptdev_alloc(rpdev, parent, true);
+> +}
+> +
+> +static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+> +			    struct rpmsg_channel_info chinfo, bool cdev)
+>  {
+>  	struct device *dev = &eptdev->dev;
+>  	int ret;
+>  
+>  	eptdev->chinfo = chinfo;
+>  
+> -	ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+> -	if (ret < 0)
+> -		goto free_eptdev;
+> -	dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+> +	if (cdev) {
+> +		ret = ida_alloc_max(&rpmsg_minor_ida, RPMSG_DEV_MAX - 1, GFP_KERNEL);
+> +		if (ret < 0)
+> +			goto free_eptdev;
+>  
+> +		dev->devt = MKDEV(MAJOR(rpmsg_major), ret);
+> +	}
+> +
+> +	/* Anonymous inode device still need device name for dev_err() and friends */
+>  	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
+>  	if (ret < 0)
+>  		goto free_minor_ida;
+>  	dev->id = ret;
+>  	dev_set_name(dev, "rpmsg%d", ret);
+>  
+> -	ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
+> -	if (ret)
+> -		goto free_ept_ida;
+> +	ret = 0;
+> +
+> +	if (cdev) {
+> +		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
+> +		if (ret)
+> +			goto free_ept_ida;
+> +	}
+>  
+>  	/* We can now rely on the release function for cleanup */
+>  	dev->release = rpmsg_eptdev_release_device;
+> @@ -464,7 +490,8 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
+>  free_ept_ida:
+>  	ida_free(&rpmsg_ept_ida, dev->id);
+>  free_minor_ida:
+> -	ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+> +	if (cdev)
+> +		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+>  free_eptdev:
+>  	put_device(dev);
+>  	kfree(eptdev);
+> @@ -472,6 +499,11 @@ static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_cha
+>  	return ret;
+>  }
+>  
+> +static int rpmsg_chrdev_eptdev_add(struct rpmsg_eptdev *eptdev, struct rpmsg_channel_info chinfo)
+> +{
+> +	return rpmsg_eptdev_add(eptdev, chinfo, true);
+> +}
+> +
+>  int rpmsg_chrdev_eptdev_create(struct rpmsg_device *rpdev, struct device *parent,
+>  			       struct rpmsg_channel_info chinfo)
+>  {
+> -- 
+> 2.25.1
+> 
