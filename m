@@ -1,215 +1,308 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010050.outbound.protection.outlook.com [52.101.69.50])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED88226B0AE;
-	Wed, 15 Oct 2025 14:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760538563; cv=fail; b=MvGismh+p/6B2BkaQIUW7s4XjftXF09x/bZeLHYQ/WyQclY2/L9hg2l3S7T6N9iTclC3xfbCQEV//dOGFzkPjKsLozl8hE7jQOFCzXVaoekUONiHdB+rgxHaEHYMP4R1avyCkBzntuF4iyp67/2Y/xD53LXhXEKEAJS2KCyPxCI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760538563; c=relaxed/simple;
-	bh=suodhhftYa9cj0/v3tpHh3qaDiiPCgZgOPO6osHOiEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fyfp3QTkaogM+GGDP1DyM/1F5WT625HB3a7lQaPAEThnofeKLqzrEfSkxyTrXVeTnsjV5NbXzIFUy/1+eiADimSO0GTLxy2VBWx7ue7fXY+CQLlduszplqXlle9c2ww9ZVjsaJ8HBuICqEGcwzwju1i+yAQUUR6uUN2ouwPKS/A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ddYTooCl; arc=fail smtp.client-ip=52.101.69.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4227D2F7AC3
+	for <linux-remoteproc@vger.kernel.org>; Wed, 15 Oct 2025 15:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760541486; cv=none; b=ZCykdsKsFnKWt5THfH9tw2DsVijtFI//TqKr331WJ9aEyOJ1oPCLftz9i5gsLCsK4JCHc310W0iTrvJJyK28hfM1+/k+of3UlD2Y823vBZk38pgA1PSZoVIbu0muc93aJG/8+dMoyUuBVmdK6eaMZdag9f/8XnMXdPjWDcNFvDE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760541486; c=relaxed/simple;
+	bh=BBthzJlG1S9QuR5dqjQLzn2VsJIYqJ0Gs9k13mwBVb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c1TZeNfeTsjd52jXtnGLnWc1YJN7rJHQhphHsaM6HCnm6jwVqn9U0gUtWLqb0udkz4c0xNjJ+eugg5MSUOCed9nSE8bkknoCpBGTFRb7CelzhbwKACvqnZSthoeABLjjPjqwLd98xkGI2NI0N/N0UyDkOxxsSGGLXN4ox75KQRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VhqjmL+T; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ddYTooCl"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GBhQvp6iAS11csffU7rCg4FYOmzEJOff2sutJn9saUCgURorrGM2WCNPslU+tgo8X7rfLdHkTd2qX2R814RwXld1pA3C4aQeysbbD/FZNJIvPUtGd1JBXcNXTAfU8QbIkhcSR7c0ci/XBSTtwCD5BOerEBhIZlSsjBUXPPrIUCYpC5zpYjjuHcyL9tWo572nSx0/9/Z1dedFQMw3Qgw7mpHjRdZN/kEMHpDSIWooPHUGUmRh/VBqLOP4tYajzXtJ3e1nqY1SKaYO3OrorkqI3DOoLr/28NSi0BroVTa0ULpj3RorEI5M5GUwaEyJRnIEaZdTz7k7eiEHuqIX2rJJtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rBX85pcrmWSf7IliCyruC0L01OYBr/nl5JzKfnFYqSE=;
- b=k4mKqigEc5wHO+p6ICpaGABh59zQB4eHVGP9EIhqes+R34DBQvZMawW9GZPIIGo/ocWhhfJNfl9CqjuVuqiiVkQ1+uRFl61rg6YyWUtBxPhmvKkvT+cSGHgkvEoI2sWXXqlGu5B9sp1IxP7XrhIJo+4rE/lMPj9iO8Ga+JNR7sdhxmUlyUlv8aeZwtymu4RM7wVdj6HLzxzHw/UFY1rtmfCEBdR0X9tSZRcLqt1t9RLKHUWbla4DobBRjZmvZ6kovnNpZAu7AidegZ004+aOPvJN2fEArhMetWV7faSdW6fsDbFFaP/yjwgETq000mGNTjqvOPUY87IA80JuF8CCtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rBX85pcrmWSf7IliCyruC0L01OYBr/nl5JzKfnFYqSE=;
- b=ddYTooClrLoWdh+lX33QU9fOG1/lZjXS0wRNWxJ0MYNHd2pTuo9xq6vHN8DGWdDz+zz2M1OeAqRwgeWeu2/wCFzDp5JZl5oaLYM0y7J62BKB4lL2WJv8W8zW3d6TaNfse8+e3YBxttdqu7TVMhFJEaD5yXHIzKEkwGyhx7T+OcHeu4v0AEaPXX1DPZyvfwciUXe9tNZkxsUaBVaJmO3VlU3aNMgWfp1Cgj6mk3sxoZawx62SZZONIY0uRpWDEDMsPZNSS+ri61onkohNsfxFuQmq+pKTUI0bArDhU7EardTOxa/cZmIdSWOigg2x6KaO1yzwuTLWq6IoU4MeJURMSA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by OSKPR04MB11416.eurprd04.prod.outlook.com (2603:10a6:e10:9b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.11; Wed, 15 Oct
- 2025 14:29:16 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9228.010; Wed, 15 Oct 2025
- 14:29:09 +0000
-Date: Wed, 15 Oct 2025 10:28:59 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] remoteproc: imx_rproc: Enable PM runtime support
- unconditionally
-Message-ID: <aO+vqzxE90vHWrjW@lizhi-Precision-Tower-5810>
-References: <20251015-imx-rproc-c3_1-v3-0-b4baa247358d@nxp.com>
- <20251015-imx-rproc-c3_1-v3-3-b4baa247358d@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251015-imx-rproc-c3_1-v3-3-b4baa247358d@nxp.com>
-X-ClientProxiedBy: SJ0PR05CA0066.namprd05.prod.outlook.com
- (2603:10b6:a03:332::11) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VhqjmL+T"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760541470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2iZ3yeqP3iO4fyCc4gvNNfQvklKuJyhYyfIm61BR4OE=;
+	b=VhqjmL+TpC1LilskqL8fT7kxl/Bb8NvKMehb+R7sAaAPSKNQHC+u8/YhNCWbvM0C9paq6V
+	2z6xDXbhEcQ14yPm8VwQMIl4Gl6wylwKBXGqN6nC0BM9KnXJ9Wi8PhM4QOp+dp9NLgbW/C
+	hH6VIVFKrBo1/RwX9p1VEfhfRU8LaX4=
+From: Dawei Li <dawei.li@linux.dev>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dawei.li@linux.dev,
+	set_pte_at@outlook.com
+Subject: [PATCH v5 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Date: Wed, 15 Oct 2025 23:17:15 +0800
+Message-Id: <20251015151718.3927-1-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|OSKPR04MB11416:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b42786f-7ef4-445f-d8d5-08de0bf733db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|1800799024|7416014|19092799006|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?qzTLjVcBQj47/3ixYQayXQgyCljVpL67YleogE2bA2kpPiSimud0ytiuhLdl?=
- =?us-ascii?Q?vje/HTZ6BtKy+VLTFzAJkTedWvBurHsxzFbCXXWKKDitnL92XUvdxzs6tGgI?=
- =?us-ascii?Q?ZwbTYgzryHGarr4yHFvwvbHkwOWUfx2yuQHrdnYHTls4tb0vfO4f+pEwWXai?=
- =?us-ascii?Q?0Z85rSyFXP9RcapJ9+ujnVx0qy8fKxsK9AtjTnIVZgyYl4zR2IvVjJlJPAlG?=
- =?us-ascii?Q?oGgp3F5GWdOBXO3hRJCxdUkUO2DSESZ3wS1PxAEESaXln7Mx88MaCj9ZTOnm?=
- =?us-ascii?Q?IpdTKI7KRo2b5/TTSC5gd30wmaQ2KHRVJ/23GtyxdnRJAj7xvfseYkfbk592?=
- =?us-ascii?Q?APusZpiRmb5tGAK1GzjCfT6JDeyWei6oG3OzYn0SrsT1RQrD0J5R4HoTfWmW?=
- =?us-ascii?Q?Kwg+1yp3wqAQHks5Hk2RfPjZ1OJkMeicV8/BLn9yjIBhRtS/rZez6D7QOOhv?=
- =?us-ascii?Q?dwSeL5IyNwdmBD8+WPAao1obtyjvx6iR6PGk+e0e65Xt2wpUI8u8Q26/k4g+?=
- =?us-ascii?Q?9QAPrP0/IyociyImFWbEDJJ/VqwtCcIF+qlk4gUMOyYF8w3WClx2TsAkB9BS?=
- =?us-ascii?Q?DE/G8NV7WgpJRv2ADTfg1QjVpEXnu5886W3GQvCenCDCt15Gm8/xQZTVo8XM?=
- =?us-ascii?Q?8KhskRgkhT3Z4f9HFCHdg1uOei8mrwqgw7w0KQFe3NH86Nnt/LrJ6OIgM3+E?=
- =?us-ascii?Q?BzW07ejbV5emRbWk6eSpa1+2GhvTqQxwNHCGfcKMIGcfDYds4aBDs7iNWXIa?=
- =?us-ascii?Q?RNrYwEb5deydAvjW3QPw8stoEaRfiuQEFMajkI84ebio7+YZOAbmtJ3zAb0T?=
- =?us-ascii?Q?5K1J9UHtaIZE/0EJEOJKqjsnX2CPvBhyo6GjzCMDpFqk0wQo2OhLoEXYEu/q?=
- =?us-ascii?Q?3+4w65y+EfXrYRg0IfqTmEZy1Kxr6cmZgLXmCHpjHIJm12nSw1FAmA6o4+jh?=
- =?us-ascii?Q?NcrVZcMMh7saVesqAqJPhJWsxuIp28s1JQqb9/RpSrom66XP0znEfELnpOC/?=
- =?us-ascii?Q?4xK4DY7487q4qKdH7yzEhshcDGm+InPPLImc6u9438X6sBYqlrvBYrYUoq2p?=
- =?us-ascii?Q?8QnYmSnEAzifYqo1qS4VMU7Jo/ldJt6ye7uRpv4e40ilA49g+musqcGI88VD?=
- =?us-ascii?Q?zCDvt2d6TkAX46RYnxci15EE4WHOVIW2jiwArapiyEttnNXo8+FdA2zUrEMo?=
- =?us-ascii?Q?B23fYiW51C7CnmNtCN3YBTJ696Unrv6FzCgcB8nqf7VDAhewM49KVX9hNbtQ?=
- =?us-ascii?Q?eOAAy3OId8ws7PXOxLoXspSK7BghL41WYs84ky91sqUm9FZb7tTKhW2nu0wD?=
- =?us-ascii?Q?L/Rb6Qtn0CPUUp5ysB79yADH32khtBEsXew+dC6eJQXUy2R+QstKfKZvzK44?=
- =?us-ascii?Q?77pc/9ecFV1qxUhU0378rfLuHiX7U76SzMP+sl38uViJIH6PgVBQ7ohww+U6?=
- =?us-ascii?Q?Am4ODe8g01/WnTgBlmn8B+Nayt1FHAAqGJ1zWTHKrhONgnF5IfRJyeSIAMTi?=
- =?us-ascii?Q?zXl/AH08RzORD5Sg3KcGNaO4sCuYqRT9sPFD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(1800799024)(7416014)(19092799006)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?03rLI2v6xQZx8JRWwHV59CqJde/o6c5DHyEizrorC/TRbMgnrwbsSgJMDFpF?=
- =?us-ascii?Q?fO1fiBaE8pgDiswyqLSF+rP01iYvEVZMwEsBRSsCZOwGO3YaN5IN0lrkgfW1?=
- =?us-ascii?Q?wq8YLnEkFXl2Xv92eO6QvlDuGHIndu7TvEpdVGnv1H2V5hLM1tGxnAJYsgFD?=
- =?us-ascii?Q?/AP/oHH/YvGaevMVxi6M8lU4/MBsS5IVnKwu8HJ4lFgOqwyzbZNARzNxDVT4?=
- =?us-ascii?Q?usFY5N+6qYdJFgEbudSZS0JOTuUIC7b7cYcdSTDIJTseVPiKo2dNuVWHIDSa?=
- =?us-ascii?Q?D6hZrOYEd29du5z3c7R8FF7aN6Zn6E9FnjAjWbIK4IQYIIF4W4NzkHaEoDSq?=
- =?us-ascii?Q?Rha7sDE17yvTkhVqkNZaGL9e9lN1o+eKQCYgGaWT8mwBcG9AUka+E8v3LBxQ?=
- =?us-ascii?Q?aq3fQoHa2AdDp4OxF8dS7RMw3gUZDxKm+UjMQgeFzkIO1nFP3kWYNgtd3SDX?=
- =?us-ascii?Q?aMyFo0Pyctm5s/eSDF/NtZpEw9xlghEbkGELpG1M6KYGyA0J/xgRmxq86f+k?=
- =?us-ascii?Q?ngMcZlDhVzi1k92znAeF9zdujngsL4b23OgDgJD78BnT9Tp2nsIc91Njlrkj?=
- =?us-ascii?Q?eU1mGqVylfqdSP2pLytV1vJKTLPmaSBe61xW4O9QfojQXgWK0ojPcsCB5YNA?=
- =?us-ascii?Q?xR9KDhAtimRfufKFNrJtfaL0hnqhjLlAcFHo4Fj9WjuUXQ2EirJTVD2fU7S5?=
- =?us-ascii?Q?FMJuYpYq6ZgnY31r1xlPCpUvAwljnMvgxT0vhYbD3jPyV5KpikwTliGTG0uZ?=
- =?us-ascii?Q?CKQp6h/64cs2Jfzm9boMPuJdzBz+hz1MB0Y63whyVGeuk8Wf530SFnhwWjqv?=
- =?us-ascii?Q?ukblo9EtUXBV2khJllt/SoVEMeaHdfK0lIhZgCM3CG0WAK1GGTD/AluGEeWO?=
- =?us-ascii?Q?bYmgxPHETvnEZadom+Y80u7abF2umSpoPx8kbBPC62T3B2pSuDv8x/VrJhLf?=
- =?us-ascii?Q?s0u/qx36k79bhuYxutPQ4+zGuPhZGd7nVa9/U5UPGNooCgSGdB9bSzf/P7Dn?=
- =?us-ascii?Q?AjA5Eb65rWX/+gbqJSKVlQ+Kk7136uSCToilzGbHu9kL/65hAGl6FSDExB07?=
- =?us-ascii?Q?4JE8tajhkLkLFDSKNLsnq30YSyJ43S2k8FIHmNbS3UdLsfxfi26eelPLZFNX?=
- =?us-ascii?Q?JnWC8kQyVuYsEpJDcBvYdha8fcM7EolPVeGKEjSjUoDUX5ivyXz+J6eDxdZt?=
- =?us-ascii?Q?XjpcUPWxP1ITQdJX7bSDIsvfPBvW+6Uz++w5DR0a5vGB66AGoj+/PppGbLZn?=
- =?us-ascii?Q?SzL92j5t3QfR4Xv1Y8xFRkCAeMcgUpinSX0Umopp8Kww8o4DUYnfTFGq7iZF?=
- =?us-ascii?Q?z9dREMYWfo+01Xc6KS1tf3Rh9ami6E7Ox355z+0/IVjMiku+AFw4wRSxnXen?=
- =?us-ascii?Q?/827nbeqzAXU8uSY81CkS8BjZhjPPAyFkRUOILl+KhVBdlrjj407FVqbp8eT?=
- =?us-ascii?Q?g5Ek4Se54arvepWgECTMKdBAtUC+dfm/sMgVy45qBAvX65qYbBbArhE1nF7l?=
- =?us-ascii?Q?ky2EpVQnNDSu6teEUYr2OsV2hw+hKPnWvD8PCwh16nWdU8KxqSU35TH0Uwsd?=
- =?us-ascii?Q?HXR/b2+mqFWpdyBZ+Lco+VOfnmnc2nC3R0QjMG1h?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b42786f-7ef4-445f-d8d5-08de0bf733db
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2025 14:29:08.9387
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9Y6AZ4q2FAL7ML6I9GmKTwic4MgCYRqwa8lC5XHrcGSvhxT2QXBL+iiJsORnhoiIjiw5p6+mjNXfg/kYqb8Ezw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSKPR04MB11416
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 15, 2025 at 09:52:57PM +0800, Peng Fan wrote:
-> PM runtime support is safe and applicable across all i.MX platforms, not
-> just those using the SCU API. Remove the conditional check and enable PM
-> runtime unconditionally to simplify the code and ensure consistent power
-> management behavior.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+Hi,
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+This is V5 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+for rpmsg subsystem.
 
->  drivers/remoteproc/imx_rproc.c | 22 ++++++++--------------
->  1 file changed, 8 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 820b0cd5adbb17ce5665e7ec2786bca23f1a67ea..25f5cb4d414eabed7a166eb2a8ae5e20b6b4f667 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -1119,12 +1119,10 @@ static int imx_rproc_probe(struct platform_device *pdev)
->  			return dev_err_probe(dev, ret, "register restart handler failure\n");
->  	}
->
-> -	if (dcfg->method == IMX_RPROC_SCU_API) {
-> -		pm_runtime_enable(dev);
-> -		ret = pm_runtime_resume_and_get(dev);
-> -		if (ret)
-> -			return dev_err_probe(dev, ret, "pm_runtime get failed\n");
-> -	}
-> +	pm_runtime_enable(dev);
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "pm_runtime get failed\n");
->
->  	ret = devm_rproc_add(dev, rproc);
->  	if (ret) {
-> @@ -1135,10 +1133,8 @@ static int imx_rproc_probe(struct platform_device *pdev)
->  	return 0;
->
->  err_put_pm:
-> -	if (dcfg->method == IMX_RPROC_SCU_API) {
-> -		pm_runtime_disable(dev);
-> -		pm_runtime_put_noidle(dev);
-> -	}
-> +	pm_runtime_disable(dev);
-> +	pm_runtime_put_noidle(dev);
->
->  	return ret;
->  }
-> @@ -1148,10 +1144,8 @@ static void imx_rproc_remove(struct platform_device *pdev)
->  	struct rproc *rproc = platform_get_drvdata(pdev);
->  	struct imx_rproc *priv = rproc->priv;
->
-> -	if (priv->dcfg->method == IMX_RPROC_SCU_API) {
-> -		pm_runtime_disable(priv->dev);
-> -		pm_runtime_put_noidle(priv->dev);
-> -	}
-> +	pm_runtime_disable(priv->dev);
-> +	pm_runtime_put_noidle(priv->dev);
->  }
->
->  static const struct imx_rproc_plat_ops imx_rproc_ops_arm_smc = {
->
-> --
-> 2.37.1
->
+Current uAPI implementation for rpmsg ctrl & char device manipulation is
+abstracted in procedures below:
+- fd = open("/dev/rpmsg_ctrlX")
+- ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+  generated.
+- fd_ep = open("/dev/rpmsgY", O_RDWR)
+- operations on fd_ep(write, read, poll ioctl)
+- ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+- close(fd_ep)
+- close(fd)
+
+This /dev/rpmsgY abstraction is less favorable for:
+- Performance issue: It's time consuming for some operations are
+involved:
+  - Device node creation.
+    Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+    overhead is based on coordination between DEVTMPFS and userspace
+    tools such as udev and mdev.
+  - Extra kernel-userspace switch cost.
+  - Other major costs brought by heavy-weight logic like device_add().
+
+- /dev/rpmsgY node can be opened only once. It doesn't make much sense
+    that a dynamically created device node can be opened only once.
+
+- For some container application such as docker, a client can't access
+  host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+  is generated dynamically and whose existence is unknown for clients in
+  advance, this uAPI based on device node doesn't fit well.
+
+An anonymous inode based approach is introduced to address the issues
+above. Rather than generating device node and opening it, rpmsg code just
+creates an anonymous inode representing eptdev and return the fd to
+userspace.
+
+Performance demo
+
+A simple C application is tested to verify performance of new uAPI.
+Please be noted that all '#' in code are preceded with space to suppress
+checkpatch complaints.
+
+$ cat test.c
+
+ #include <linux/rpmsg.h>
+
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+ #include <fcntl.h>
+ #include <string.h>
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <sys/time.h>
+
+ #define N (1 << 20)
+
+int main(int argc, char *argv[])
+{
+	int ret, fd, ep_fd, loop;
+	struct rpmsg_endpoint_info info;
+	struct rpmsg_endpoint_fd_info fd_info;
+	struct timeval start, end;
+	int i = 0;
+	double t1, t2;
+
+	fd = -1;
+	ep_fd = -1;
+	loop = N;
+
+	if (argc == 1) {
+		loop = N;
+	} else if (argc > 1) {
+		loop = atoi(argv[1]);
+	}
+
+	printf("loop[%d]\n", loop);
+
+	strcpy(info.name, "epx");
+	info.src = -1;
+	info.dst = -1;
+
+	strcpy(fd_info.name, "epx");
+	fd_info.src = -1;
+	fd_info.dst = -1;
+	fd_info.fd = -1;
+
+	while (fd < 0) {
+		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+		if (fd < 0) {
+			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+		}
+	}
+
+	gettimeofday(&start, NULL);
+
+	while (loop--) {
+		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed,
+			ret[%d]\n", ret);
+		}
+
+		ep_fd = -1;
+		i = 0;
+
+		while (ep_fd < 0) {
+			ep_fd = open("/dev/rpmsg0", O_RDWR);
+			if (ep_fd < 0) {
+				i++;
+				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+			}
+		}
+
+		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("old RPMSG_DESTROY_EPT_IOCTL failed, ret[%d], errno[%d]\n",
+			ret, errno);
+		}
+
+		close(ep_fd);
+	}
+	
+	gettimeofday(&end, NULL);
+
+	printf("time for old way: [%ld] us\n",
+		1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+
+	if (argc == 1) {
+		loop = N;
+	} else if (argc > 1) {
+		loop = atoi(argv[1]);
+	}
+
+	printf("loop[%d]\n", loop);
+
+	gettimeofday(&start, NULL);
+
+	while (loop--) {
+		fd_info.fd = -1;
+		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
+		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+		if (ret < 0 || fd_info.fd < 0) {
+			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+		if (ret < 0) {
+			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+		}
+
+		close(fd_info.fd);
+	}
+	
+	gettimeofday(&end, NULL);
+
+	printf("time for new way: [%ld] us\n",
+	1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+
+	printf("t1(old) / t2(new) = %f\n", t1 / t2);
+
+	close(fd);
+}
+
+Performance benchmark
+
+- Legacy means benchmark based on old uAPI
+- New means benchmark based on new uAPI(the one this series introduce)
+- Time are in units of us(10^-6 s)
+
+Test	loops	Total time(legacy)	Total time(new)	legacy/new	
+1	1000	148362			1153		128.674761	
+2	1000	145640			1121		129.919715	
+3	1000	145303			1174		123.767462	
+4	1000	150294			1142		131.605954	
+5	1000	160877			1175		136.916596	
+6	1000	154400			1134		136.155203	
+7	1000	143252			1163		123.174549	
+8	1000	148758			1161		128.129199
+9	1000	149044			1112		134.032374
+10	1000	146895			1192		123.234060
+11	10000	1428967			11627		122.900748
+12	10000	1367015			10557		129.488965
+13	10000	1371919			11663		117.630027
+14	10000	1358447			11080		122.603520
+15	10000	1375463			11245		122.317741
+16	10000	1364901			11153		122.379718
+17	10000	1352665			10735		126.005123
+18	10000	1400873			11341		123.522882
+19	10000	1391276			10892		127.733750
+20	10000	1394367			11110		125.505581
+21	100000	14069671		115569		121.742604
+22	100000	13663364		117074		116.707074
+23	100000	13735740		115638		118.782234
+24	100000	13714441		119362		114.897882
+25	100000	13904366		118282		117.552679
+26	100000	13870560		117717		117.829710
+27	100000	13713605		118312		115.910516
+28	100000	13872852		114347		121.322396
+29	100000	13777964		119072		115.711200
+30	100000	13725654		116296		118.023440
+
+Changelog:
+
+Changes in v5:
+- Rebased on v6.18.rc1.
+- Fix checkpatch warning on commit msg on patch[1/3].
+- Other minor commit msg tweaks.
+- Update performance testing results.
+- Link to v4:
+  https://lore.kernel.org/all/20250609151531.22621-1-dawei.li@linux.dev/
+
+Changes in v4:
+- Build warning of copy_to_user (Dan).
+- ioctl() branches reorder (Beleswar).
+- Remove local variable fd and pass &ept_fd_info.fd to
+  rpmsg_anonymous_eptdev_create().
+- Link to v3:
+  https://lore.kernel.org/all/20250519150823.62350-1-dawei.li@linux.dev/
+
+Changes in v3:
+- s/anon/anonymous (Mathieu)
+- API naming adjustment (Mathieu)
+  - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
+  - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
+- Add parameter 'flags' to uAPI so user can specify file flags
+  explicitly on creating anonymous inode.
+- Link to v2:
+  https://lore.kernel.org/all/20250509155927.109258-1-dawei.li@linux.dev/
+
+Changes in v2:
+- Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
+- Link to v1:
+  https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
+
+Dawei Li (3):
+  rpmsg: char: Reuse eptdev logic for anonymous device
+  rpmsg: char: Implement eptdev based on anonymous inode
+  rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+
+ drivers/rpmsg/rpmsg_char.c | 129 ++++++++++++++++++++++++++++++-------
+ drivers/rpmsg/rpmsg_char.h |  23 +++++++
+ drivers/rpmsg/rpmsg_ctrl.c |  35 ++++++++--
+ include/uapi/linux/rpmsg.h |  27 +++++++-
+ 4 files changed, 182 insertions(+), 32 deletions(-)
+
+---
+
+Thanks,
+
+	Dawei
+
+-- 
+2.25.1
+
