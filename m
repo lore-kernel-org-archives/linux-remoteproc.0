@@ -1,239 +1,369 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39782D8DA8
-	for <linux-remoteproc@vger.kernel.org>; Thu, 16 Oct 2025 19:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C10032E142
+	for <linux-remoteproc@vger.kernel.org>; Fri, 17 Oct 2025 14:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760642728; cv=none; b=DtAnStV6EciCBzQCCZ7BKx6gujgnpKEJUJh6B+APICgNQUBPbCOk0kqg8Y6iUOLHm69rzdI5sb3hmMz9iO/Rsi7QrW7zhswhpSQHc7+Hv6+eLAt+5UWG+bGBy4N+M1tEgXspii9DL4fS/OwmvR20txZmKmNUd+lXVMtvnXDI7nE=
+	t=1760712482; cv=none; b=Q7fg0bEzV8b1qfFNzrFHGlEAdJhkOUg6dbC36xW0QbZacIEwgP1kC/yz3A93JmjhZNY4sj4iSoHCMPDhr6dHj8cL7Y5Mbm1to73ZoLBREvBDbO9/Efchw2jOk4tPFfTbG7IbjR48uASoScJrlguUbgBeqAsUuQIPEIR+9huyiHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760642728; c=relaxed/simple;
-	bh=CCU56jKMu+W55jmMpGsIbLiO2g/PG9wAmlqXGv4sgIU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tvRkNljkf7SAivcnxxk8hfekhPTr0pprt/paVgp7b1LcSP82b2+TVDK6JhENyVqQRPpMrH714210QBMRTNQ6n91pEVwuBeBIpDtLbHd9bVhUunmQaCQeSwGLru16Zi2+c5oW1TZhhznMMlX28LIxhNLE5207CVd2tvYI0uWSyWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AIQe20Pl; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1760712482; c=relaxed/simple;
+	bh=HJplxAoLXGiZQF9kf+B/09KOCU0GgE9brxiuiplLdIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LAm/Tp7/gpHfuDy+aEdMsk5DsLVzUYJfb72/CGBRM4xijSijXeA6n6DYwQmPpjoll33qisdF9NshPHIF6/4s1S0payBxbLf2Iprh6xB3bAot41/vzB7Tb33eVG88+E/M5uSInTOHdl4aq2JFQohs9kBWqYbPnAFdK8Hb6EOFH2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w/OoGnv5; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AIQe20Pl"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59GA4gZ8022883
-	for <linux-remoteproc@vger.kernel.org>; Thu, 16 Oct 2025 19:25:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Lbh0JZUshYKiyc2lneuG2hdFrLCFasxqkus6jGm8OCY=; b=AIQe20PlpmoybnSU
-	ukzX03DVDUzqJL5AdIcly90DY9QpfCnyeVv/dW3xW/asKIpJJp9bb0yyfDqZIytg
-	JFZ5ZLaZpNfihgTv99P2PCuX558LGOUQo1Y3RWruYYW1Y+1w038bxs1EcfZJehDu
-	11DFbfbqQXKNFO0pi+zjzcc3JwlKvuma6Nr0VO2TYydz0CRYk441+HeBj5+XovyZ
-	BJb0qArAi7JhVh6ECAwJ95GDwaB8z12UEnSgqIMnXcgapZirrvEHKPMlQlF/6po0
-	WN2lMYTcL8RpDjHupDnNNxAqW7v9jAmQCVJPzVgL7sjhNeeB7iba6RDsVQ75xMLv
-	DmV+QQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49tqvpjvfn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 16 Oct 2025 19:25:25 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-28a5b8b12bbso23412325ad.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 16 Oct 2025 12:25:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w/OoGnv5"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-339c9bf3492so2535452a91.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Oct 2025 07:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760712479; x=1761317279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tz8UYunYEGaNriyw6WiQDuHxIstZZ889aQV5Kr6HI54=;
+        b=w/OoGnv57NnvXDelt1RdKoY4MWMlWZ0NfIEoIWEnXtxvudbUowiKxSVkhHRW3ZSR7J
+         rOdr7qkWO+S5Mm5/84C4rjNcpa9d6RXVF/AHJEz38EdepCdC/x7rvwBbF3jFux1JLF8T
+         4s0OtA48xnYgmi7NX15zhBVFI0fPYH8xbbi5U5RJsQAH47j9ZMUh57YpG1GcsTaY6yaJ
+         HvZ30XVnxzxx+HAKqYZQA4vuRjAGr3nUtwYauHR3EWexTimQOKK5NAdGUF2Hi+PpB1Mi
+         9cSFu3ON9QGoN/pC4wUID3VxreoYPH47A6xPYSrurZZvrdKdOUE3yhFdhhHVqlYixSHy
+         YmUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760642724; x=1761247524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lbh0JZUshYKiyc2lneuG2hdFrLCFasxqkus6jGm8OCY=;
-        b=rmURWKidUaaKvxAcTjWK1b/cURxgCHu4DZI9tcyvl/B7wwx+ZQoKHBgPK/G0Axnx3C
-         Cj7NkF//OJGRz9/0oCgM/E3cBZdiOKNfYYgIZ41yO+vHlAqRBYwsAuWkuzpJ9F0EkT+B
-         ue9WJOeNX8uYj4ptdbsDf0gwyS595EBrtnwkTocx0YzDgiH8F0QkbmZdonycrZIWCY/5
-         rpO/q8D9GjGK4fjtWzxlmFaPjSPEbhaAGjjp68YgHcs9Bvp7rBNVHSDW6VcSd7Cxax2G
-         ItmW82LZ/OPouDO7xyZhejvLvKjEMjVmSVbNUmi8s5iK7NctwOWzv6XKndJSHChyiwpM
-         U28Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUWrJBo1ERWKcnkpZYEWhmX4KIQhl9G87l7yTksA9INSV1l6upQyUnzo3Itli+3zJmuSTXtrz9226HIe8oZ6K/q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyuq34esopoGdCEJGbuwaGn0KYpHbtXkdVFQsQNulsK1AeutTwG
-	SIwT9lmyplD4J/QIH7Rl6IXh5gGaUuZ7gahpOEtpPb2fHIcLt6nYuc/QgftaCB/NxO2Tn1hmgXS
-	YSa2afuKFuHLsm0QEGz0NlNu8NZ2RepgFLPwv1ahQEvIRXjV7Um2+P+aGI9De41fojWquUVF2ID
-	UKM6xief0AZtQDTR4P4jNzrebVPDYHarsHFjV70ntJmg3+o8k=
-X-Gm-Gg: ASbGncuOR3LzQHSAMTD324MqB9KmQIIksD4QkW/wZLyKkhypL54lN65g7wfvWL/Bdym
-	tnxReNFM6rrtdYAlhKK0Fpxs+6xPM5bYpmW8FtovAFNbSagxx9of8tZjQI5Cx3bDqSFCLVb0BgH
-	psWA3tFIg22jz1SEVx+wgYQ74TZ7Ix+Is8jhgiYXOXpSeAuSEN8wo5NlIe
-X-Received: by 2002:a17:903:15c7:b0:269:b2ff:5c0e with SMTP id d9443c01a7336-290cbb49964mr12082105ad.46.1760642724458;
-        Thu, 16 Oct 2025 12:25:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUo1sf7y9UCTcepHJ9i7RqY5zJv2p9Jgs22z3Q/2raqaie7S0KERNQ0h0ERxNG35cN3dlT3qcKoE/W74pbahw=
-X-Received: by 2002:a17:903:15c7:b0:269:b2ff:5c0e with SMTP id
- d9443c01a7336-290cbb49964mr12081735ad.46.1760642723824; Thu, 16 Oct 2025
- 12:25:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760712479; x=1761317279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tz8UYunYEGaNriyw6WiQDuHxIstZZ889aQV5Kr6HI54=;
+        b=jHg4aVIJCpm2XI+m3h7Esk5JrRqj0wFUb9+d77ICVu1Q2rEp0Q92KO84uTwJQXepNN
+         61iCVZ63dMS4h3zIa5vFoKqx+2eXl4nrk8lMIgeTnUd5/KjS2D5GBmgaOJF+WuwyjQV+
+         nKgre5M5AXa23X7gETtqXXFVhI4XLbrM533n3ogF4bQ3zpbpkbSFyj7KgDkY6TrjBTJh
+         LVqXL3KptoE/PxJUBzTT9JnS6sUSP1uGzfqd1Al7yxR9uPLYKIWOOYWi5TssPiBeTFVL
+         vi1PQbkaKf0AixYC7J9Xyt4w+CAeIjHtoO52IAdlX5Rr/YEX4b4lVghPxfeyz5qYlSxZ
+         QGug==
+X-Forwarded-Encrypted: i=1; AJvYcCV9e7IDn0q6J22uxTzzjuyBIRtG05SSPrxphbuDNbVEx+XbwJuenTqle/uR3GSkU9RbRJmZqZxVurOXLsYu1Oy/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze+dTAh0KIDlQp/Oh/37q9NZupQz9AuWqI7h66Cx26XzP3cmCu
+	VzMNHLi99ysFi+lQ+W67N/oNTclvSPvs5xl4VoL5MDhjJ0ffV56p/tTG2Zk7YN1LSEU=
+X-Gm-Gg: ASbGncsO0W/wurGstU1tvQ7cMjzClQ8JnOS2i8dN13ul9y2HqI5H0Ic5ciccK3sbdRn
+	+U+PhfnOm9n7C8nfG6Ue3YVKgJwL1ATfPW4Aec7wuGv2fVKyHs9bgB+SfARKFdZNx2yBQNkVJdh
+	NS7JWjF8YqXwzt7czzbuR5I3ctla24xZWKQRtQuevRkgXFP+L4swVY0BLPoGj26kqDdZ+K2L5Gz
+	BULz8c3dT9292nj5z7/0b6h6KtcM/JefP6Te83mqPh0hlhDwuPDsAPIsjsiWj4A6lbIkOax9nAc
+	3+BhpBL25mW3SAnklYONuQRpqKSZwveZqAq2aWAmvoJesPQLSgsPKEzV9LpuYuGrNoKrL3cBa85
+	1SkCoR1O6PZNA8pmUEhsVXhsYsUu3r3UrjvHp4zpvoUNYy2YzVZZlL6YsPMcCr2ylFcJAf+Z5GJ
+	SVg6XtfnSKB2mGDw==
+X-Google-Smtp-Source: AGHT+IFFv67bzyQb985R+6jllClmrOMayTWiNbjhxT/kqbV+V00yKrZ2LAKj91q+RwNLrzPymSKT2w==
+X-Received: by 2002:a17:90b:4f41:b0:32d:17ce:49d5 with SMTP id 98e67ed59e1d1-33bcf8ec618mr5302922a91.23.1760712478687;
+        Fri, 17 Oct 2025 07:47:58 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a70a:89e5:9a8a:630f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33bb6298651sm5788314a91.0.2025.10.17.07.47.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Oct 2025 07:47:58 -0700 (PDT)
+Date: Fri, 17 Oct 2025 08:47:56 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Dawei Li <dawei.li@linux.dev>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, set_pte_at@outlook.com
+Subject: Re: [PATCH v5 0/3] rpmsg: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+Message-ID: <aPJXHCRWiN9bm54D@p14s>
+References: <20251015151718.3927-1-dawei.li@linux.dev>
+ <aPEP9EdZ8tIAVwyE@p14s>
+ <20251016162844.GA2725@wendao-VirtualBox>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828092615.2114183-1-souradeep.chowdhury@oss.qualcomm.com> <ud4nodcdhxr4pux6nsvqzaclqrnmct6ehjr5bmsxdgjby5xs4k@4c23gunpbf4z>
-In-Reply-To: <ud4nodcdhxr4pux6nsvqzaclqrnmct6ehjr5bmsxdgjby5xs4k@4c23gunpbf4z>
-From: Souradeep Chowdhury <souradeep.chowdhury@oss.qualcomm.com>
-Date: Fri, 17 Oct 2025 00:55:12 +0530
-X-Gm-Features: AS18NWA_vFJNl8vztBLwAevewl0Ft1SgCKgxPX-aaUmsnifQALtgx3ww5dEy5Q4
-Message-ID: <CAJek3sLVvd_wqHddsuc_n-Ob6Mm1Yyas0RqvZ-Mopy5m6rVidg@mail.gmail.com>
-Subject: Re: [PATCH v7] remoteproc: Add device awake calls in rproc boot and
- shutdown path
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Souradeep Chowdhury <quic_schowdhu@quicnc.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Authority-Analysis: v=2.4 cv=aPD9aL9m c=1 sm=1 tr=0 ts=68f146a5 cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=jGnfN1tMAAAA:8 a=EUspDBNiAAAA:8
- a=c8bG8LX2rWeYhf_pb54A:9 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
- a=6MwZEyB11foWsxG17m01:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDE2MDAxNyBTYWx0ZWRfX/4MUHH7vwjM+
- WA6FrwEcdhrnUHRMk03QyEFTk+RTUjiVqUPQu3hRrCZ1yHiKmbMStwai6XJehD8y8shsrqN3tI1
- 8G/i9ehSnq6qMqL0a74km4QsVajCZOGFxTab8peRaq44wW+cwJbJp3YccmjJAZmnwi8VRqXq7Q8
- b20PZuD5iGFg/Z/xJNQOdpKI+1v9XMuTFz4HEEYQaoCMXDL+DzIXTnMTyVYNPp9PCK/aVNU2/by
- Dn1+NXTkKTMxxwX1KXqlsWcOJSimviyE7/rq53AIjVR5TdtxIo5qjNY2SyxScJJjgG9R3VrXDIc
- aAsjWYy6VvXTEs8UVyHzeVc8KZMPmXRHQLTPaKP2Bn+oJDE6wF3ZRyhBss38mC0tm4Be9tLNEZp
- Z+q1ij8loxC2w6TvtAGWTIPv2S031Q==
-X-Proofpoint-ORIG-GUID: oSs73xsxgmS8kwsO-O3sj5xwkKEMQJOL
-X-Proofpoint-GUID: oSs73xsxgmS8kwsO-O3sj5xwkKEMQJOL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-16_04,2025-10-13_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- bulkscore=0 suspectscore=0 malwarescore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510160017
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251016162844.GA2725@wendao-VirtualBox>
 
-On Sun, Sep 21, 2025 at 8:30=E2=80=AFAM Bjorn Andersson <andersson@kernel.o=
-rg> wrote:
->
-> On Thu, Aug 28, 2025 at 02:56:15PM +0530, Souradeep Chowdhury wrote:
-> > If an user stops and starts rproc by using the sysfs interface, then on
-> > pm suspension the firmware fails to load as the request_firmware call
-> > under adsp_load relies on usermodehelper process via firmware_fallback_=
-sysfs
-> > which gets frozen on pm suspension.
->
-> How does it fail? Is the firmware load aborted? Does it time out while
-> we're suspended?
+On Fri, Oct 17, 2025 at 12:28:44AM +0800, Dawei Li wrote:
+> Hi, Mathieu, 
+> 
+> On Thu, Oct 16, 2025 at 09:32:04AM -0600, Mathieu Poirier wrote:
+> > I have applied this set.
+> > 
+> > Thanks,
+> > Mathieu
+> 
+> It seems that it is v4 being applied? [1]
 
-Firmware load is aborted due to failure from usermodehelper_read_trylock().
-It returns an error and there is no timeout.
+I don't know how it came to that but it is fixed now.
 
->
-> The usermodehelper is optional, adsp_load() doesn't rely on
-> usermodehelper, it relies on the firmware class, which might perform
-> usermodehelper.
+Thanks for bringing this to my attention,
+Mathieu
 
-yes in this usecase usermodehelper is being used.
-
->
-> Please describe how and why it fail, so that help educate others (me
-> included) about what the actual problem you're seeing is.
-
-Sure, will include further details in next version.
->
-> > Currently pm_awake calls are present
-> > in the recovery path, add the same in start and stop path of rproc for
-> > proper loading of the firmware in non-recovery path.
->
-> I would expect/hope that the git log tells us that the pm_stay_awake()
-> in the recovery path is there to prevent the system from being suspended
-> while we're restarting the remotproc, as this is expected to lead to
-> functional degradation and suboptimal low power state.
-
-Yes,this was merged as a part of the following patch:
-[PATCH] remoteproc: core: Prevent system suspend during remoteproc
-recovery - Rishabh Bhatnagar
-
->
-> "They call this function over there" is not sufficient motivation.
->
->
-> But just to be clear, I'm not saying that this patch is wrong. I'm
-> saying I don't understand your problem/motivation.
-
-I have elaborated further, hope this clarifies the issue.
-
->
-> >
-> > Signed-off-by: Souradeep Chowdhury <quic_schowdhu@quicnc.com>
-> > Signed-off-by: Souradeep Chowdhury <souradeep.chowdhury@oss.qualcomm.co=
-m>
->
-> This is both you, no need to carry both.
-
-Ack
->
-> > Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> > Changes in v7
-> >
-> > *Justify this fix by adding more details in commit message
->
-> Please start use b4, so we get proper links to old submissions here.
-
-Ack
->
-> Regards,
-> Bjorn
->
-> > Changes in v6
-> >
-> > *Add some correction to commit message
-> >
-> > Changes in v5
-> >
-> > *Added more details to commit description
-> >
-> > Changes in v4
-> >
-> > *Remove stability from mailing list
-> > *Remove the extra tab in v3
-> > *Change the commit description
-> >
-> >  drivers/remoteproc/remoteproc_core.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/=
-remoteproc_core.c
-> > index c2cf0d277729..5d6c4e694b4c 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1917,6 +1917,7 @@ int rproc_boot(struct rproc *rproc)
-> >               return -EINVAL;
-> >       }
-> >
-> > +     pm_stay_awake(rproc->dev.parent);
-> >       dev =3D &rproc->dev;
-> >
-> >       ret =3D mutex_lock_interruptible(&rproc->lock);
-> > @@ -1961,6 +1962,7 @@ int rproc_boot(struct rproc *rproc)
-> >               atomic_dec(&rproc->power);
-> >  unlock_mutex:
-> >       mutex_unlock(&rproc->lock);
-> > +     pm_relax(rproc->dev.parent);
-> >       return ret;
-> >  }
-> >  EXPORT_SYMBOL(rproc_boot);
-> > @@ -1991,6 +1993,7 @@ int rproc_shutdown(struct rproc *rproc)
-> >       struct device *dev =3D &rproc->dev;
-> >       int ret =3D 0;
-> >
-> > +     pm_stay_awake(rproc->dev.parent);
-> >       ret =3D mutex_lock_interruptible(&rproc->lock);
-> >       if (ret) {
-> >               dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, re=
-t);
-> > @@ -2027,6 +2030,7 @@ int rproc_shutdown(struct rproc *rproc)
-> >       rproc->table_ptr =3D NULL;
-> >  out:
-> >       mutex_unlock(&rproc->lock);
-> > +     pm_relax(rproc->dev.parent);
-> >       return ret;
-> >  }
-> >  EXPORT_SYMBOL(rproc_shutdown);
-> > --
-> > 2.34.1
-> >
+> 
+> The only difference between v4 and v5 is commit message, though.
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/commit/?h=rpmsg-next&id=00af63201cbb7903e5deb2a9fdebd97f979492e5
+> 
+> > 
+> > On Wed, Oct 15, 2025 at 11:17:15PM +0800, Dawei Li wrote:
+> > > Hi,
+> > > 
+> > > This is V5 of series which introduce new uAPI(RPMSG_CREATE_EPT_FD_IOCTL)
+> > > for rpmsg subsystem.
+> > > 
+> > > Current uAPI implementation for rpmsg ctrl & char device manipulation is
+> > > abstracted in procedures below:
+> > > - fd = open("/dev/rpmsg_ctrlX")
+> > > - ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info); /dev/rpmsgY devnode is
+> > >   generated.
+> > > - fd_ep = open("/dev/rpmsgY", O_RDWR)
+> > > - operations on fd_ep(write, read, poll ioctl)
+> > > - ioctl(fd_ep, RPMSG_DESTROY_EPT_IOCTL)
+> > > - close(fd_ep)
+> > > - close(fd)
+> > > 
+> > > This /dev/rpmsgY abstraction is less favorable for:
+> > > - Performance issue: It's time consuming for some operations are
+> > > involved:
+> > >   - Device node creation.
+> > >     Depends on specific config, especially CONFIG_DEVTMPFS, the overall
+> > >     overhead is based on coordination between DEVTMPFS and userspace
+> > >     tools such as udev and mdev.
+> > >   - Extra kernel-userspace switch cost.
+> > >   - Other major costs brought by heavy-weight logic like device_add().
+> > > 
+> > > - /dev/rpmsgY node can be opened only once. It doesn't make much sense
+> > >     that a dynamically created device node can be opened only once.
+> > > 
+> > > - For some container application such as docker, a client can't access
+> > >   host's dev unless specified explicitly. But in case of /dev/rpmsgY, which
+> > >   is generated dynamically and whose existence is unknown for clients in
+> > >   advance, this uAPI based on device node doesn't fit well.
+> > > 
+> > > An anonymous inode based approach is introduced to address the issues
+> > > above. Rather than generating device node and opening it, rpmsg code just
+> > > creates an anonymous inode representing eptdev and return the fd to
+> > > userspace.
+> > > 
+> > > Performance demo
+> > > 
+> > > A simple C application is tested to verify performance of new uAPI.
+> > > Please be noted that all '#' in code are preceded with space to suppress
+> > > checkpatch complaints.
+> > > 
+> > > $ cat test.c
+> > > 
+> > >  #include <linux/rpmsg.h>
+> > > 
+> > >  #include <sys/types.h>
+> > >  #include <sys/stat.h>
+> > >  #include <sys/ioctl.h>
+> > >  #include <fcntl.h>
+> > >  #include <string.h>
+> > >  #include <stdio.h>
+> > >  #include <unistd.h>
+> > >  #include <stdlib.h>
+> > >  #include <errno.h>
+> > >  #include <sys/time.h>
+> > > 
+> > >  #define N (1 << 20)
+> > > 
+> > > int main(int argc, char *argv[])
+> > > {
+> > > 	int ret, fd, ep_fd, loop;
+> > > 	struct rpmsg_endpoint_info info;
+> > > 	struct rpmsg_endpoint_fd_info fd_info;
+> > > 	struct timeval start, end;
+> > > 	int i = 0;
+> > > 	double t1, t2;
+> > > 
+> > > 	fd = -1;
+> > > 	ep_fd = -1;
+> > > 	loop = N;
+> > > 
+> > > 	if (argc == 1) {
+> > > 		loop = N;
+> > > 	} else if (argc > 1) {
+> > > 		loop = atoi(argv[1]);
+> > > 	}
+> > > 
+> > > 	printf("loop[%d]\n", loop);
+> > > 
+> > > 	strcpy(info.name, "epx");
+> > > 	info.src = -1;
+> > > 	info.dst = -1;
+> > > 
+> > > 	strcpy(fd_info.name, "epx");
+> > > 	fd_info.src = -1;
+> > > 	fd_info.dst = -1;
+> > > 	fd_info.fd = -1;
+> > > 
+> > > 	while (fd < 0) {
+> > > 		fd = open("/dev/rpmsg_ctrl0", O_RDWR);
+> > > 		if (fd < 0) {
+> > > 			printf("open rpmsg_ctrl0 failed, fd[%d]\n", fd);
+> > > 		}
+> > > 	}
+> > > 
+> > > 	gettimeofday(&start, NULL);
+> > > 
+> > > 	while (loop--) {
+> > > 		ret = ioctl(fd, RPMSG_CREATE_EPT_IOCTL, &info);
+> > > 		if (ret < 0) {
+> > > 			printf("ioctl[RPMSG_CREATE_EPT_IOCTL] failed,
+> > > 			ret[%d]\n", ret);
+> > > 		}
+> > > 
+> > > 		ep_fd = -1;
+> > > 		i = 0;
+> > > 
+> > > 		while (ep_fd < 0) {
+> > > 			ep_fd = open("/dev/rpmsg0", O_RDWR);
+> > > 			if (ep_fd < 0) {
+> > > 				i++;
+> > > 				printf("open rpmsg0 failed, epfd[%d]\n", ep_fd);
+> > > 			}
+> > > 		}
+> > > 
+> > > 		ret = ioctl(ep_fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> > > 		if (ret < 0) {
+> > > 			printf("old RPMSG_DESTROY_EPT_IOCTL failed, ret[%d], errno[%d]\n",
+> > > 			ret, errno);
+> > > 		}
+> > > 
+> > > 		close(ep_fd);
+> > > 	}
+> > > 	
+> > > 	gettimeofday(&end, NULL);
+> > > 
+> > > 	printf("time for old way: [%ld] us\n",
+> > > 		1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> > > 	t1 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> > > 
+> > > 	if (argc == 1) {
+> > > 		loop = N;
+> > > 	} else if (argc > 1) {
+> > > 		loop = atoi(argv[1]);
+> > > 	}
+> > > 
+> > > 	printf("loop[%d]\n", loop);
+> > > 
+> > > 	gettimeofday(&start, NULL);
+> > > 
+> > > 	while (loop--) {
+> > > 		fd_info.fd = -1;
+> > > 		fd_info.flags = O_RDWR | O_CLOEXEC | O_NONBLOCK;
+> > > 		ret = ioctl(fd, RPMSG_CREATE_EPT_FD_IOCTL, &fd_info);
+> > > 		if (ret < 0 || fd_info.fd < 0) {
+> > > 			printf("ioctl[RPMSG_CREATE_EPT_FD_IOCTL] failed, ret[%d]\n", ret);
+> > > 		}
+> > > 
+> > > 		ret = ioctl(fd_info.fd, RPMSG_DESTROY_EPT_IOCTL, &info);
+> > > 		if (ret < 0) {
+> > > 			printf("new ioctl[RPMSG_DESTROY_EPT_IOCTL] failed, ret[%d]\n", ret);
+> > > 		}
+> > > 
+> > > 		close(fd_info.fd);
+> > > 	}
+> > > 	
+> > > 	gettimeofday(&end, NULL);
+> > > 
+> > > 	printf("time for new way: [%ld] us\n",
+> > > 	1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+> > > 	t2 = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+> > > 
+> > > 	printf("t1(old) / t2(new) = %f\n", t1 / t2);
+> > > 
+> > > 	close(fd);
+> > > }
+> > > 
+> > > Performance benchmark
+> > > 
+> > > - Legacy means benchmark based on old uAPI
+> > > - New means benchmark based on new uAPI(the one this series introduce)
+> > > - Time are in units of us(10^-6 s)
+> > > 
+> > > Test	loops	Total time(legacy)	Total time(new)	legacy/new	
+> > > 1	1000	148362			1153		128.674761	
+> > > 2	1000	145640			1121		129.919715	
+> > > 3	1000	145303			1174		123.767462	
+> > > 4	1000	150294			1142		131.605954	
+> > > 5	1000	160877			1175		136.916596	
+> > > 6	1000	154400			1134		136.155203	
+> > > 7	1000	143252			1163		123.174549	
+> > > 8	1000	148758			1161		128.129199
+> > > 9	1000	149044			1112		134.032374
+> > > 10	1000	146895			1192		123.234060
+> > > 11	10000	1428967			11627		122.900748
+> > > 12	10000	1367015			10557		129.488965
+> > > 13	10000	1371919			11663		117.630027
+> > > 14	10000	1358447			11080		122.603520
+> > > 15	10000	1375463			11245		122.317741
+> > > 16	10000	1364901			11153		122.379718
+> > > 17	10000	1352665			10735		126.005123
+> > > 18	10000	1400873			11341		123.522882
+> > > 19	10000	1391276			10892		127.733750
+> > > 20	10000	1394367			11110		125.505581
+> > > 21	100000	14069671		115569		121.742604
+> > > 22	100000	13663364		117074		116.707074
+> > > 23	100000	13735740		115638		118.782234
+> > > 24	100000	13714441		119362		114.897882
+> > > 25	100000	13904366		118282		117.552679
+> > > 26	100000	13870560		117717		117.829710
+> > > 27	100000	13713605		118312		115.910516
+> > > 28	100000	13872852		114347		121.322396
+> > > 29	100000	13777964		119072		115.711200
+> > > 30	100000	13725654		116296		118.023440
+> > > 
+> > > Changelog:
+> > > 
+> > > Changes in v5:
+> > > - Rebased on v6.18.rc1.
+> > > - Fix checkpatch warning on commit msg on patch[1/3].
+> > > - Other minor commit msg tweaks.
+> > > - Update performance testing results.
+> > > - Link to v4:
+> > >   https://lore.kernel.org/all/20250609151531.22621-1-dawei.li@linux.dev/
+> > > 
+> > > Changes in v4:
+> > > - Build warning of copy_to_user (Dan).
+> > > - ioctl() branches reorder (Beleswar).
+> > > - Remove local variable fd and pass &ept_fd_info.fd to
+> > >   rpmsg_anonymous_eptdev_create().
+> > > - Link to v3:
+> > >   https://lore.kernel.org/all/20250519150823.62350-1-dawei.li@linux.dev/
+> > > 
+> > > Changes in v3:
+> > > - s/anon/anonymous (Mathieu)
+> > > - API naming adjustment (Mathieu)
+> > >   - __rpmsg_chrdev_eptdev_alloc ->  rpmsg_eptdev_alloc
+> > >   - __rpmsg_chrdev_eptdev_add ->  rpmsg_eptdev_add
+> > > - Add parameter 'flags' to uAPI so user can specify file flags
+> > >   explicitly on creating anonymous inode.
+> > > - Link to v2:
+> > >   https://lore.kernel.org/all/20250509155927.109258-1-dawei.li@linux.dev/
+> > > 
+> > > Changes in v2:
+> > > - Fix compilation error for !CONFIG_RPMSG_CHAR config(Test robot).
+> > > - Link to v1:
+> > >   https://lore.kernel.org/all/20250507141712.4276-1-dawei.li@linux.dev/
+> > > 
+> > > Dawei Li (3):
+> > >   rpmsg: char: Reuse eptdev logic for anonymous device
+> > >   rpmsg: char: Implement eptdev based on anonymous inode
+> > >   rpmsg: ctrl: Introduce RPMSG_CREATE_EPT_FD_IOCTL uAPI
+> > > 
+> > >  drivers/rpmsg/rpmsg_char.c | 129 ++++++++++++++++++++++++++++++-------
+> > >  drivers/rpmsg/rpmsg_char.h |  23 +++++++
+> > >  drivers/rpmsg/rpmsg_ctrl.c |  35 ++++++++--
+> > >  include/uapi/linux/rpmsg.h |  27 +++++++-
+> > >  4 files changed, 182 insertions(+), 32 deletions(-)
+> > > 
+> > > ---
+> > > 
+> > > Thanks,
+> > > 
+> > > 	Dawei
+> > > 
+> > > -- 
+> > > 2.25.1
+> > > 
+> 
+> Thanks,
+> 
+> 	Dawei
