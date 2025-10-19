@@ -1,42 +1,102 @@
-Received: from mail.pickup.hu (mail.pickup.hu [89.251.32.12])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B961262D0C
-	for <linux-remoteproc@vger.kernel.org>; Sat, 18 Oct 2025 18:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.251.32.12
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488781D7999;
+	Sun, 19 Oct 2025 14:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760812064; cv=none; b=haAFapL03NGnAF6sFwREtujRq/tgSxisHDnahUKgalKf+fRyk46cv82zf9uUAK7nxB8zgRrpKF36cmqa+Llm2YwCfkIblZnw9/9qqnSENHZfCEXDcyIfEH0GQ/UYMH0HL4YpkNi0ZLKQWDPFlcAh2h1ukVweIy0lSmPvTBCgQaU=
+	t=1760883640; cv=none; b=HPof1sN/lC71YsJZmz0Na69LyitPJO0VzftWDhthfdWwAEdEgbEEQ99NOhYwfPRbAEn5UA4njXHIgzEaX8BBavdsccVcgWuKjp2dvQv5nUFsdG79C/nYjvWMqB9m35KTv6FRET1gwahge4FY7un4kjQilydnze17jnruefK1dyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760812064; c=relaxed/simple;
-	bh=Ktx2dnctFouS4GNNCXke8A7G9DPNh45BF3KaXzOW/3Y=;
-	h=Content-Type:MIME-Version:Subject:To:From:Date:Message-Id; b=ZyVtXR1s8lsLGsLo/yh7J+gpEXUOSnSFD8ILXTTZiBtjZzC92O14t9jR40Xd8OCWxh+x4aMKz2ZcmKdJ6t4EPwKA0lop4iKCxOHucCByqquMVHLCqrWJpcJJ8eJtODsMR1Kl9kNMX5b6eaMgaYYpN212EEpnTgJhfi2oBcRW9Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pickup.hu; spf=pass smtp.mailfrom=pickup.hu; arc=none smtp.client-ip=89.251.32.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pickup.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pickup.hu
-Received: from IP-223-57.dataclub.eu (unknown [89.251.44.254])
-	by mail.pickup.hu (pickup.hu 1. eMail Server) with ESMTP id 5BC68CF97D7
-	for <linux-remoteproc@vger.kernel.org>; Sat, 18 Oct 2025 20:27:39 +0200 (CEST)
-Content-Type: text/plain; charset="iso-8859-1"
+	s=arc-20240116; t=1760883640; c=relaxed/simple;
+	bh=r1Ky16GNS/1SNPO/T5Wa25B3QlhNW664d/vil/k3XvM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=o94GgSjUwATiaQ9YWidi2TMp/dC2snwiuw3XSAu4q9EOTHxZjk9OCmkn8ENZBumJfcqNQ2lXF8JjhjrGyJj4E25FHlJ+/zhJ4s+bXex/YoQB7V4rFEj81fWjXJXTeNAHRBWb2EcX8p9dkeDVI6GhZb3iaSWZWyF9UgYVKKNUayE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=qihzwUvV; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=KE0ywus/; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="qihzwUvV";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="KE0ywus/"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1760883623; bh=uYnRvMOH1QB75jnXAbXFe5a
+	IUf8OiZovJ64DYJn4+sg=; b=qihzwUvVtja/UGBy485S/o1I5w8a5pFyew8de7AvracY6MK3xr
+	AnOyXPjEQVfni0jBCNoOTxzj6aeLrcTNMAWq4nSA97PhfxTuLsVnC5161yPn9Z7gHyU7BfREejH
+	mmrW8L8NpNvdpXMHo7uOejCwfTbiVQNA/3wk5VxxqQk9fensJLwha7ZhOAoO7Q9ImhpTTTUE6T0
+	3w4SReNdvdb1+VdQvOOqNgpbYBSGalqICbiqVDMwLjg9hNfbdRkpgljvgIu3iWGqTFQDzlSjSbp
+	+3JZvwy5+9hf+yNp0TcWJLhutSgkhWTngSjFYn0B54xxQyVl64To9PXqWXrrzmT1PNA==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=To:Message-Id:Subject:Date:From; t=1760883623; bh=uYnRvMOH1QB75jnXAbXFe5a
+	IUf8OiZovJ64DYJn4+sg=; b=KE0ywus/XONLm+i8QVm0gD4jKJope6UAbYTQSfvdYa+zRZmyla
+	Wgd0eVebRXT+6uOIvQYBahjziIZtVvZMVEAA==;
+From: Nickolay Goppen <setotau@mainlining.org>
+Date: Sun, 19 Oct 2025 17:20:19 +0300
+Subject: [PATCH v2 1/3] dt-bindings: remoteproc: qcom: adsp: Add missing
+ constrains for SDM660 ADSP
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Family December trip 
-To: linux-remoteproc@vger.kernel.org
-From: "Pina Alvarez" <zoliedit@pickup.hu>
-Date: Sat, 18 Oct 2025 21:27:40 +0300
-Reply-To: pinaalvarez@igeneraltradingllc.com
-Message-Id: <20251018182740.5BC68CF97D7@mail.pickup.hu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251019-qcom-sdm660-cdsp-v2-1-0d3bcb468de0@mainlining.org>
+References: <20251019-qcom-sdm660-cdsp-v2-0-0d3bcb468de0@mainlining.org>
+In-Reply-To: <20251019-qcom-sdm660-cdsp-v2-0-0d3bcb468de0@mainlining.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, 
+ Nickolay Goppen <setotau@mainlining.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760883621; l=1476;
+ i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
+ bh=r1Ky16GNS/1SNPO/T5Wa25B3QlhNW664d/vil/k3XvM=;
+ b=6TOG3taOwgX2xNtH9+beNf2aiXwyb7yjUrZexB3VBQ8MtPbSTdNfaNrB7EztBKefUOFyk7QRh
+ XgLr/9rX+5GCyk7SWbaLXQI+2MCe3eUT/VMKkmaGRxLaDkg+xz0Rgzl
+X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
+ pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-Hello,
+Since SDM660 ADSP node uses "xo" clock, interrupts and "cx" power domain
+properties add corresponding constrains for SDM660 ADSP.
 
-I was wondering if you received the email I sent last week regarding the
-December trip, I would hope you can plan for myself and my family of 14
-(10 Adults & 4 Children)
+Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
+---
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-am attaching an itinerary also for you to take a look
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+index 661c2b425da3..c48561aae3a6 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+@@ -69,6 +69,7 @@ allOf:
+               - qcom,msm8996-slpi-pil
+               - qcom,msm8998-adsp-pas
+               - qcom,msm8998-slpi-pas
++              - qcom,sdm660-adsp-pas
+               - qcom,sdm845-adsp-pas
+               - qcom,sdm845-cdsp-pas
+               - qcom,sdm845-slpi-pas
+@@ -93,6 +94,7 @@ allOf:
+               - qcom,msm8996-slpi-pil
+               - qcom,msm8998-adsp-pas
+               - qcom,msm8998-slpi-pas
++              - qcom,sdm660-adsp-pas
+               - qcom,sdm845-adsp-pas
+               - qcom,sdm845-cdsp-pas
+               - qcom,sdm845-slpi-pas
+@@ -122,6 +124,7 @@ allOf:
+               - qcom,msm8953-adsp-pil
+               - qcom,msm8996-adsp-pil
+               - qcom,msm8998-adsp-pas
++              - qcom,sdm660-adsp-pas
+     then:
+       properties:
+         power-domains:
 
-thank you
-Pina Alvarez
+-- 
+2.51.1
+
