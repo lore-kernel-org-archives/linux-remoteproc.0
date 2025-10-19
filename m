@@ -1,37 +1,36 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488781D7999;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5030F267B92;
 	Sun, 19 Oct 2025 14:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760883640; cv=none; b=HPof1sN/lC71YsJZmz0Na69LyitPJO0VzftWDhthfdWwAEdEgbEEQ99NOhYwfPRbAEn5UA4njXHIgzEaX8BBavdsccVcgWuKjp2dvQv5nUFsdG79C/nYjvWMqB9m35KTv6FRET1gwahge4FY7un4kjQilydnze17jnruefK1dyE=
+	t=1760883641; cv=none; b=uWP2ggIQV/QZ8SSjEhwcdTzBX4VL+cS8CrfXduicarWGTqeyddZTKoHWssWxzLNR1N/5jSzYD7KgRDF4fMPbk/W4ulErKEuua5leheb3QDzThmqYNts/ONt0dNVl0YKxQiLAFw0qP49gF0tP21Wl62Zkj1l7d+MoRuaBFeNGzVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760883640; c=relaxed/simple;
-	bh=r1Ky16GNS/1SNPO/T5Wa25B3QlhNW664d/vil/k3XvM=;
+	s=arc-20240116; t=1760883641; c=relaxed/simple;
+	bh=iD6vzCEKqD9/blvaX0pltngk9iLZD/71WkAAjntvyNw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o94GgSjUwATiaQ9YWidi2TMp/dC2snwiuw3XSAu4q9EOTHxZjk9OCmkn8ENZBumJfcqNQ2lXF8JjhjrGyJj4E25FHlJ+/zhJ4s+bXex/YoQB7V4rFEj81fWjXJXTeNAHRBWb2EcX8p9dkeDVI6GhZb3iaSWZWyF9UgYVKKNUayE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=qihzwUvV; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=KE0ywus/; arc=none smtp.client-ip=5.75.144.95
+	 In-Reply-To:To:Cc; b=bJL8CRNQ3Zc83ejCy03ezCZag8MiYWzUfP9YQbeqiN0Q3tKX0BYaDSMhe68l8VcbweeHiW/JXgZjm08qhw+fq//8L7QAbKd2VH9PCOKq/nuIy8okdFD6CifAc4awxAjaxCQsLUpOxQEUE07wsWnkyGjVe3vuv8MfIYp4ahz1BTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=JuRLif0V; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=fvQLU1nQ; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="qihzwUvV";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="KE0ywus/"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="JuRLif0V";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="fvQLU1nQ"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1760883623; bh=uYnRvMOH1QB75jnXAbXFe5a
-	IUf8OiZovJ64DYJn4+sg=; b=qihzwUvVtja/UGBy485S/o1I5w8a5pFyew8de7AvracY6MK3xr
-	AnOyXPjEQVfni0jBCNoOTxzj6aeLrcTNMAWq4nSA97PhfxTuLsVnC5161yPn9Z7gHyU7BfREejH
-	mmrW8L8NpNvdpXMHo7uOejCwfTbiVQNA/3wk5VxxqQk9fensJLwha7ZhOAoO7Q9ImhpTTTUE6T0
-	3w4SReNdvdb1+VdQvOOqNgpbYBSGalqICbiqVDMwLjg9hNfbdRkpgljvgIu3iWGqTFQDzlSjSbp
-	+3JZvwy5+9hf+yNp0TcWJLhutSgkhWTngSjFYn0B54xxQyVl64To9PXqWXrrzmT1PNA==;
+	h=To:Message-Id:Subject:Date:From; t=1760883624; bh=wyy0OTjbsKEFvHHWVmPxVpL
+	n6rghtweg89hM4ugVKjM=; b=JuRLif0VVyCZksnB8YkfvzejcIN/BCoVSIzPIoEcqqZAN5mRHu
+	wNZW1+VYZ+Y0cdQYayiFs2pVmjRqSdjyc5B0fWbez02wRf0TefMtmdfNH3yy3xbeHj7BwohNTCa
+	NAVKdJKyHtC30fGC8fSjt1MrIRDfMHI2X+8pEX44WKA1HJ0bPSVWeVgyD4btC5CQ/Y9ZtmPuZ45
+	rGQiDkZaCskvhkP358gxRTfxj7m61hM1KosfuCvCZ1cUKm2voGUdOjT9FetQqPVWyN2sAbS5AyC
+	6u8K3CxO88TB4Wish3HHnMbfO/RRrXhp3YujIlLppdUP3UzCUnn8sP/7uLqZs2QYRcA==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1760883623; bh=uYnRvMOH1QB75jnXAbXFe5a
-	IUf8OiZovJ64DYJn4+sg=; b=KE0ywus/XONLm+i8QVm0gD4jKJope6UAbYTQSfvdYa+zRZmyla
-	Wgd0eVebRXT+6uOIvQYBahjziIZtVvZMVEAA==;
+	h=To:Message-Id:Subject:Date:From; t=1760883624; bh=wyy0OTjbsKEFvHHWVmPxVpL
+	n6rghtweg89hM4ugVKjM=; b=fvQLU1nQBgCWXb4t99uxf4ccXsbrvxVj3nCDbPNKNfPjzaT6rQ
+	WqSpSSs2v1Kw4lS2QEnufp6nBt1NvkT618BA==;
 From: Nickolay Goppen <setotau@mainlining.org>
-Date: Sun, 19 Oct 2025 17:20:19 +0300
-Subject: [PATCH v2 1/3] dt-bindings: remoteproc: qcom: adsp: Add missing
- constrains for SDM660 ADSP
+Date: Sun, 19 Oct 2025 17:20:21 +0300
+Subject: [PATCH v2 3/3] remoteproc: qcom: pas: Add support for SDM660 CDSP
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -40,7 +39,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251019-qcom-sdm660-cdsp-v2-1-0d3bcb468de0@mainlining.org>
+Message-Id: <20251019-qcom-sdm660-cdsp-v2-3-0d3bcb468de0@mainlining.org>
 References: <20251019-qcom-sdm660-cdsp-v2-0-0d3bcb468de0@mainlining.org>
 In-Reply-To: <20251019-qcom-sdm660-cdsp-v2-0-0d3bcb468de0@mainlining.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -52,50 +51,34 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, 
  Nickolay Goppen <setotau@mainlining.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760883621; l=1476;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760883621; l=1074;
  i=setotau@mainlining.org; s=20250815; h=from:subject:message-id;
- bh=r1Ky16GNS/1SNPO/T5Wa25B3QlhNW664d/vil/k3XvM=;
- b=6TOG3taOwgX2xNtH9+beNf2aiXwyb7yjUrZexB3VBQ8MtPbSTdNfaNrB7EztBKefUOFyk7QRh
- XgLr/9rX+5GCyk7SWbaLXQI+2MCe3eUT/VMKkmaGRxLaDkg+xz0Rgzl
+ bh=iD6vzCEKqD9/blvaX0pltngk9iLZD/71WkAAjntvyNw=;
+ b=iYFjKZ4ijHDA1IL94IFqk0b3ZAJR9VHPDBennopFQ1IBRPCMbp7upM+NwMQz5bwOD4POWDdb/
+ AGNF9NFWiSWDisjYARZZEjuatjFfsZhqiR+4mW6WMp3tWjlqd2+Ci9d
 X-Developer-Key: i=setotau@mainlining.org; a=ed25519;
  pk=Og7YO6LfW+M2QfcJfjaUaXc8oOr5zoK8+4AtX5ICr4o=
 
-Since SDM660 ADSP node uses "xo" clock, interrupts and "cx" power domain
-properties add corresponding constrains for SDM660 ADSP.
+Compute DSP in SDM660 is compatible with generic cdsp_resource_init
+descriptor.
 
 Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index 661c2b425da3..c48561aae3a6 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -69,6 +69,7 @@ allOf:
-               - qcom,msm8996-slpi-pil
-               - qcom,msm8998-adsp-pas
-               - qcom,msm8998-slpi-pas
-+              - qcom,sdm660-adsp-pas
-               - qcom,sdm845-adsp-pas
-               - qcom,sdm845-cdsp-pas
-               - qcom,sdm845-slpi-pas
-@@ -93,6 +94,7 @@ allOf:
-               - qcom,msm8996-slpi-pil
-               - qcom,msm8998-adsp-pas
-               - qcom,msm8998-slpi-pas
-+              - qcom,sdm660-adsp-pas
-               - qcom,sdm845-adsp-pas
-               - qcom,sdm845-cdsp-pas
-               - qcom,sdm845-slpi-pas
-@@ -122,6 +124,7 @@ allOf:
-               - qcom,msm8953-adsp-pil
-               - qcom,msm8996-adsp-pil
-               - qcom,msm8998-adsp-pas
-+              - qcom,sdm660-adsp-pas
-     then:
-       properties:
-         power-domains:
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 158bcd6cc85c..781eac6aa6bf 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1488,6 +1488,7 @@ static const struct of_device_id qcom_pas_of_match[] = {
+ 	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource},
+ 	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource},
+ 	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
++	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init},
+ 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
+ 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
+ 	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init},
 
 -- 
 2.51.1
