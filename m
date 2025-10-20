@@ -1,108 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA74C1D63D8;
-	Sun, 19 Oct 2025 16:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13E62F83B4
+	for <linux-remoteproc@vger.kernel.org>; Mon, 20 Oct 2025 10:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760892651; cv=none; b=CgVskSy6Ki5/y3drRDgEB5kg+pdmZB4mVEGfFJb/ixubiMyWwfBdJrz7ShkwIbVcTOdTtUrvQMvWsm6J4FWiafGhPuMUFMDYUfzmwFC35eeFlRkgoFqrl+2MiopIKZOgpXA5JY7LEqxf0ldpEKBKrq8aaEc8/Nt8CIoYfw+BbwM=
+	t=1760954892; cv=none; b=tj4Z0Ps6yvbNYyh4VQbj0Z9HgEdZGPAt8zKxCr5yRnemsiMbGbVUIlN0vNxaFlNsBvbC4G/5lh6kZ56d3F8ZJSZtlz+fh0iUD1A8Noa2PgSPziJ6aFqPAEV2IOJR2oDrNlfUFXtwkGEkWb8ohBMG+v1/lSbT+zU9epT5ioZcJwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760892651; c=relaxed/simple;
-	bh=D8IOfkJIFuCmakZ8zwJubM8ycAYWmXIGTJLnWYh2HZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OIfFaBaPHJSuDjQ0d8E+Osc/dfHwkgn6vNvSG7x77E7dL+lmxStOfWDGQ0loZmHJ6j9YFpZ2P2B1hGWebo/mzGIvzj5nah8b1omcVHHZJO1c57yD+JydXNlpVa+kO4hUiTGOFlZIuc3RUChiMEubWZJjjm8x3kwOlMBXjJUFYKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8ukShRh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1760954892; c=relaxed/simple;
+	bh=IthgwRg6yJ7su7+hxwU0G1XvJdmaJcprtOIDD6R14Co=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=l6abppB4AprOIDQp2/fi2lECIxiRBAfJXT4OD9Nx2aaH1TRQYzpVi0omB2owLTDznVCAB4hEFmV7gMhveeYPMwjpSojCG32Tr4aP7p3z+w1n0BxlJif2kupRlRWJNOh7KFLsk0Ay9zfTy/rJlTIwj05QNxAayGZJNwPC9dWaH10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iaTmQs8s; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8ukShRh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8449CC4CEE7;
-	Sun, 19 Oct 2025 16:50:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760892651;
-	bh=D8IOfkJIFuCmakZ8zwJubM8ycAYWmXIGTJLnWYh2HZ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i8ukShRh4rDoIWmy/eeDesOkfvi6x/onQFM9FMUInyqJi5iCdwSUThGnQACgNdX2X
-	 ZbzReqkUeiyHMh2lvG+Ox41rX4M8eqPlnmzTz2ZkvcNc0gmemdB/HpAAwgcvZk8GjE
-	 OIkQr229Sm9CL/RzFlF0DeUxEJ10OlMlobqBD83oyH6i2Z2/RqNgnSDSNq8AWxy/DE
-	 M+y719B67qxiSViXEeCwPdxZ/CBXNWAE2+v7xKQReopRmP6QR1Vz3TrsYxme8XkNJ3
-	 5we8xjfjajmwn+2F92/e0lDzuow0G6Hn8vs9GbBIJcv1Yj1XeFK9t1IfJt+x3HAKR8
-	 4eqzTAruSWIvQ==
-Message-ID: <af73c70b-7180-427d-9f52-558685093613@kernel.org>
-Date: Sun, 19 Oct 2025 18:50:46 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iaTmQs8s"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b4557950d23so81079666b.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 20 Oct 2025 03:08:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760954889; x=1761559689; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ELGhRwkcey/M8p9/NQ4xSZezxHFCzELpwhxQQJfRai4=;
+        b=iaTmQs8sGobgcCnAwOGcT2JMt3hGcDM2rPSWUTW1hga8LZ9R+75zYPYjbX7jjgpoK6
+         xxGGF0MoeP29S5daUFe6Y7UMZZGOCjnYK7CZjFioe/glBogpjdOLXq/xKJ/A7/pIgFPw
+         r/K1Z94H9ICDSPJyHI+itNbBjKgacdeL30X0uxDgGHWtJj9oeJd7uabpph0gOjivglKw
+         2e7pZFgFSs1OTsh5lhftQBRx/MPk/ZM5/8l+nordHY7nbjIE62hJhtKA7yAkbxQ5ZKg7
+         P4VAYVGV3s0WMixyh4q5nz1FImVxR5IKFGSBMJwNdC12Ui24JOq9cnKwMDoymEYFFJCL
+         nZuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760954889; x=1761559689;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ELGhRwkcey/M8p9/NQ4xSZezxHFCzELpwhxQQJfRai4=;
+        b=MJQ9cmlnDf6Fg/7Mv3BtyTI8KxSVbjNKJWFQKBkSnD/Wq08cRYarHyxvhWtfBAnk9r
+         +SNx37VuXMtBMhzngUwIyW64LK3OjuyoeNxltkXBGNCNe3Jg6ZF/gUFcrJSsSHphckrC
+         3JPuuhJwLllw+mKHEz27smS/y1rHyfJdpxk7Xqd7bUTUaFhBftWq04mtwKKkFaBxLkET
+         6FfFb+rsfWplv0eCdh0iRywI1Y7Ttj8XsNSIVYrJV4dRAPgiNgSgg3yDbQGJRB+yYahW
+         vo8RpzPM69kVN8CG0OOt1nTrqrnM3HAi+fjA3nBS/3WK6LPvB69skGAnKx0qLxMy5+Hs
+         EFwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwTjAYDap4AZRgorNU6CtXIUNWt5VS9YsvZz0W/UqxRgen8hQMVkItOm31BzqFHULieJprhjf2f2/mYUK9/zbU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA907iCmwgz24eizNk4gTjuZjiXHeLCN/tl+Sl6GsM+RZc3nM8
+	nIQigkFR9P+5ddmM1ZEtogoOTiAm6Rh/Ms45MnnmQ7t6RSkgymYLNAyHEVIpRVv88ns=
+X-Gm-Gg: ASbGncvmaIc1Wy4jJjBjY0rtQemgg6KQehxFQH9lqqB+Psmbr7dCAr7gOP8sHRWbXyB
+	HOUap9BrlVGC/ByGwa0I0m59GWheqzIStJvOL02g5TpJpEdmFK8ewsFrGsU8tMOiQYDKgMX1AKD
+	TaCOK0KD0/1fhp0XE68P5cIodHYSmVBI3TZ56nwDIjI6+U+rsPlf2RK8gohaN8RU4iOEkeFupPx
+	AgvNNCfCenRzNyYT9xSfrY2jJr0FOHrxyS92VlyV0kyBGz3mAWkyt+tRGfP+bbdx1vmq/44hNN6
+	noMWz7ZNGgYIwcg6wbIOFrHU02lAYfAnga+SWdaYZadC5DgaqMGeonmPrpEUfV/pAEhA+GbUFYr
+	LXXV+ojTUrI0z7epQP0+FGHqy7OHzxiUXSvVAhexmRLrlBPgwmXf1oueDNE3/mT4H3VsQRTdjGC
+	Hr9bILB+jGywYlR9o16aolHJu7Mkg=
+X-Google-Smtp-Source: AGHT+IHb4qKarfFb2e6yhqx9qlyNVzUbEwguNDAebFS+BWqgt85Rblg9ZZAJ2S/IaUQJYck+aE3lyw==
+X-Received: by 2002:a17:907:3e98:b0:b50:5956:482b with SMTP id a640c23a62f3a-b6474b2e281mr817509466b.7.1760954889230;
+        Mon, 20 Oct 2025 03:08:09 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b65eb036846sm740987066b.54.2025.10.20.03.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Oct 2025 03:08:08 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-imx@nxp.com
+In-Reply-To: <20251009222716.394806-2-shenwei.wang@nxp.com>
+References: <20251009222716.394806-1-shenwei.wang@nxp.com>
+ <20251009222716.394806-2-shenwei.wang@nxp.com>
+Subject: Re: (subset) [PATCH v3 1/4] dt-bindings: remoteproc: imx_rproc:
+ Add "rpmsg" subnode support
+Message-Id: <176095488745.45867.896865155474758901.b4-ty@linaro.org>
+Date: Mon, 20 Oct 2025 12:08:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: remoteproc: qcom: adsp: Add SDM660
- CDSP compatible
-To: Nickolay Goppen <setotau@mainlining.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
-References: <20251019-qcom-sdm660-cdsp-v2-0-0d3bcb468de0@mainlining.org>
- <20251019-qcom-sdm660-cdsp-v2-2-0d3bcb468de0@mainlining.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251019-qcom-sdm660-cdsp-v2-2-0d3bcb468de0@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-On 19/10/2025 16:20, Nickolay Goppen wrote:
-> Add compatible for the compute DSP remoteproc found in SDM660.
+
+On Thu, 09 Oct 2025 17:27:13 -0500, Shenwei Wang wrote:
+> Remote processors may announce multiple devices (e.g., I2C, GPIO) over
+> an RPMSG channel. These devices may require corresponding device tree
+> nodes, especially when acting as providers, to supply phandles for their
+> consumers.
 > 
-> Signed-off-by: Nickolay Goppen <setotau@mainlining.org>
-> ---
+> Define an RPMSG node to work as a container for a group of RPMSG channels
+> under the imx_rproc node.
+> 
+> [...]
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Applied, thanks!
+
+[1/4] dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+      (no commit info)
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
