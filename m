@@ -1,338 +1,281 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011021.outbound.protection.outlook.com [52.101.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C0E30498F
-	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Oct 2025 21:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761170378; cv=none; b=G5NYWxe6iG5VRMYkW/wQm0Bimaifq6JwjEjjVz21AF5PhDeptawFazmCEpT4C+Ii2/Zc6dsfE/Ns7l6QuNUfvRL3ja+yCzaGnhUb9ps8SNmYFiWQby8L1YUGcQsWdZxMRVqjzdcFWNBti33Ls26ntVqSrsyKmBKmolLuygN0q8g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761170378; c=relaxed/simple;
-	bh=6Lmdl/d0XVsaLCtwsi28T4Xf4eBIpeWsW0jUCw4uO0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bVQQ43BNknMbTCTD78X16yl9FBl0E1lI+AGiUiXvnjXZkTrKwg6/dyspG1Tx3n327o6E0muEz13TurItdsYN3JdurGMWWCmRtQoUx0vQ19iyAxKf7ISLdPCAMf3+yQacQIXNTytH6o5IsFWBmC/nR0+yt0pRW/u4BSJctHO7OXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uy7hFFhq; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899B8272E72;
+	Thu, 23 Oct 2025 03:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761191950; cv=fail; b=BeBn0bjoudolnbI6qiDAgBQsPZjCjCqC74XRFxWtnOw7DcjVzV61YdoEX10Fays5k1ekL8wXH1au1Cal/hwVzyUJFlLNZztiTA5oCvyn7SNqSZniOUyta2jpxqBl66PiV95P66Ld5r88BPZSli004Ep5CyXaMfsKsq/dEGfDfTY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761191950; c=relaxed/simple;
+	bh=NSGGk0oeoiIlAEifl6JPfaouP7jPn/gUqM4APWQM/P4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HZjGcp+HtCoBjoF2MIgCf+18ljKiNeDQeSJqW9lQMXBIjdPIs723fHH9uQKkQk/8/42oCo7eTh7JH2zK/+qC6jQSRYDjUdzgNEgU431UWJlUtQDOvTkoYYUTq6g/s/0QPCZKkGojsaQzFXvoTCqdO3PgZJfsaTj9Bj0mE+rYHkY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=fail (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=GTSLtmzA reason="signature verification failed"; arc=fail smtp.client-ip=52.101.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uy7hFFhq"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-63d6ee383bdso135261a12.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Oct 2025 14:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761170374; x=1761775174; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CqXQ9PbkvyGKWuYBFnVQlduNwYkc8UtO5Zh7UNPzjHQ=;
-        b=Uy7hFFhqvPxuHFQcV/+sBaaGlz6HFIpEn207w4gDx3RwIxutVPxlwgepS+ta06mxmx
-         /p7QpHqDu870rnKxVTnEY+02X1PV4FbfyUFHzVcOKRICAJ6nu5iO4T1qTDN+swHZDeOk
-         Nl1cafyGqqGHBQ/irTp3/f6v3Ah3woefDEJpymwLXt0G1JxmLAYXUMCKVLOqRfwmNWuZ
-         8wfkzQqYaIbyT+qeWAApcbA1WPipdGthK+9gC00FvMW7dvvXQPWUJOwOP2EEuhslYbA1
-         kroozj9xMCN98P6QOSVpHGaMmJHKDuZPT4J+pXzkOST/VYXXisFfRpN2ZszaRLQ3EzDi
-         OnRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761170374; x=1761775174;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CqXQ9PbkvyGKWuYBFnVQlduNwYkc8UtO5Zh7UNPzjHQ=;
-        b=EXNW3JNMR+SypXKBebB1/+clrNiMvh//kwLVXuQ6cOT/K/yey+ckh15RgwVBZ8JRXL
-         d38Dn8frPlZ+7vmENcg90rv77IwfQUWcn8UtKwNXVa2iZ7uKgZuk3dMT4V4SKhj9E3PR
-         38evSLhL490VsBlwYCwiCb+TCb8k15q8iLw6a5XFWCnfRAOBFZU/EGFIsdrv1bRWS13T
-         PAQEokptuK5beQXbGbdFsOm1vdt4MNLqLd29NhtXoRJ4hVCOKs0FJPTAXqxwshmtn3z7
-         2DN81ESqWlRhqAIWa97zNGJHTjw9k4uQ2J5eLEFuPEHG0sGb4ZKqO+3kdL562qFiSQ2p
-         v/Iw==
-X-Gm-Message-State: AOJu0Yw+QaswCxIgU2fJD1FHBx51oeT6st6kVGV1b/5TzkneAXN1jPsN
-	6i26hA0R31HzWTsHzX0Fysyk9Cf5MKM7h2Kb6TivGkHHb8bMGcdAi76F2BWbPv5FYT7bxM4hbpv
-	13QtRj8lWxiiqvj2FndlfRFv/Q1rexeE=
-X-Gm-Gg: ASbGncvInOQI/SmkHb7GijCxKaV83h+Em6ksHYdPrMx7sTX56LwaqnpHInoW9OlYn7I
-	Q2iT5R4CGev1wMktT56QLd1E+T7e8Sfu/kU/XfqKusBDDuvFLevn9YMHQRG4qpt6KGFQGqj6MgC
-	bmwXUDOErKl3UALJ3dkpW9QdbZGFM8P5eA/QIH1IdyHUe9qb7EWgkrtH/fT3ar8YgsJxm23dYrn
-	a+uhtRktYdE/fTZJf72ljiy5qoyYj32x4cej/OBVEcZULSksmmtwNshgb4PAcf+/ZsJICsNq0p1
-	22YEvPFk/4QbsoDKtc8qHTQDptMGBILdrs1w3QMjhEEwAg==
-X-Google-Smtp-Source: AGHT+IG7rSSjfegV5q8spfsx5GQsR+z24DaVkeLHuOfA6MeCjT4uCSP7m5n89u2kYrb7q6AodLQT3LCzQnL3TEQHMBs=
-X-Received: by 2002:a05:6402:2787:b0:63b:efa7:b0a9 with SMTP id
- 4fb4d7f45d1cf-63c1f633e3dmr22375791a12.9.1761170374240; Wed, 22 Oct 2025
- 14:59:34 -0700 (PDT)
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="GTSLtmzA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hIxKGQ3bWwR2guIl7XDKAfLk5HhzLHEbUOK8DrvPLj6SdxvydhDKcevif7Geknlc9DmO7z1+z4RXsSgGg0rkPg5MwEq7xWw1axTTeUHWhEN9ssXUTOoZxkSas8wE9rRXQX1xrqiIeyBNjjO/ugWojHpSxITY8o1SCwvlWom5vPNFRA1GOlPKLP9pEWXEMg+O2x4MfwK4FtQzu6g1AiJx11Tl0CQFORnbK5SHflKBb/qkMAAg7+E2suTmZ/PaW0RaLwBd3A8y0yzf5kVpaVZRqVLQmXNkISDM51q4RAaqOc+VEgULaVD0+bR+8GExkamrZ+d8JyL6y66B5LiAeqE/WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Vuj/nMOhBqwvhSZYtCDXMZCy1G/ifzlaibi2b0rwBoc=;
+ b=e8HaGQ4p0C0Uo/C9iOg422yhoM/H1Ao7pJqZomYLuyFMpfEuaCyK/ITGQ8v/MpSc9ZwuNef7fbTWkSEo0auZNiPtpJyJmsdloTHAwS8MuBSwuiYgygMk5vLkRayN6zMKacZRCDFhWsj88eAQUaxbzsmAS81kXwSjVIAmtnoyz/25ICpbhHBkhVz3DTuEc4QeJ3eIH0kxasDC9+1J3FnbqooxKpkBMudNR49PwF28pbyQYIMJfPccQHcT4g/KB/k/fP+4SdKZbxg8s7LqGyVkl1/k2xX5l3B3i75GrfsjtliiT5HH/mFANtdn9vEtIWDBMEbj7HOTMKP79o6wj8wwcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vuj/nMOhBqwvhSZYtCDXMZCy1G/ifzlaibi2b0rwBoc=;
+ b=GTSLtmzAKf0jyG/hJuD/ssH/wIpM7DV9hQJGbfXKMt9XO1h8+0I9kOyYTFW0afcarQ88gtZu9vkC6N218fZGKYFZZgQ+csPjwI8N+wYWo18uhGYcxJt+pUCG93q7WYLd7GD0MqsjDfaH/8UsalYsWgiJ+8wLlFXfWpSX+xKeYboMo05/2obbeShaFsAkqh8zE6SeWMLlX9IX+MROAJI/BeE/dUqKCAGqpoVDdrB8YqupQXgO2vHcZtcgUtizpVNYTzA+empSIEVqhurX0HQInbZQkxnW5C2hO8p9MsIWsOy7m4xyP0PDd1Cm602cExkvsfCdOqZ9LRlwLKt79hrGRA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DU4PR04MB10646.eurprd04.prod.outlook.com (2603:10a6:10:58e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.12; Thu, 23 Oct
+ 2025 03:59:05 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9253.011; Thu, 23 Oct 2025
+ 03:59:05 +0000
+Date: Thu, 23 Oct 2025 13:11:11 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Peng Fan <peng.fan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] MAINTAINERS: Add an entry for i.MX remoteproc
+ driver
+Message-ID: <20251023051111.GA25716@nxa18884-linux.ap.freescale.net>
+References: <20251015-imx-rproc-c3_1-v3-0-b4baa247358d@nxp.com>
+ <20251015-imx-rproc-c3_1-v3-5-b4baa247358d@nxp.com>
+ <aPkXRy7TsPCrq_s-@p14s>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aPkXRy7TsPCrq_s-@p14s>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-ClientProxiedBy: SI2PR02CA0019.apcprd02.prod.outlook.com
+ (2603:1096:4:195::13) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022032817.320378-1-patrick.oppenlander@gmail.com> <7acb046d-5c16-46c1-a034-a128f66e6502@oss.qualcomm.com>
-In-Reply-To: <7acb046d-5c16-46c1-a034-a128f66e6502@oss.qualcomm.com>
-From: Patrick Oppenlander <patrick.oppenlander@gmail.com>
-Date: Thu, 23 Oct 2025 08:59:22 +1100
-X-Gm-Features: AS18NWBrmaHgFWMnD7vXLEBvWHIqZrKdZwVDq1a0VXoCSqqNwalH_BweendZ89c
-Message-ID: <CAEg67GkKoM6L6Cz63SY_7nd_XdTMC6wTCWj5W5yR43oNf4AsOg@mail.gmail.com>
-Subject: Re: [PATCH] rpmsg: virtio: EPOLLOUT support
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-Cc: linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org, 
-	andersson@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DU4PR04MB10646:EE_
+X-MS-Office365-Filtering-Correlation-Id: d25e9df9-b378-4831-7475-08de11e88218
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|19092799006|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?rWaXqhCEnqzrPJ68jgjFIUEfmX3o0Edj6ad9BvnO0Vw/bnhKGO52Lf/t1r?=
+ =?iso-8859-1?Q?Q2xAKiL2axMJld/29rkRqFYB9XFfr7ms5z5PRa9lXPYwjoogf2SigV8miQ?=
+ =?iso-8859-1?Q?34TPtkZ0h+hvLABRXnn+aMgvsqVqXc5pMKTWu6RdzKngnekArJv0m9mg1G?=
+ =?iso-8859-1?Q?yphlMOPh/FRIzjcpjvNG+hP07GM7J1IFrh4arRjE3YFjp3NQiUnkj7+LM7?=
+ =?iso-8859-1?Q?6EskgwcarA14wAT6nURKTlNRk1MH05r7vAs6RDOcyQ0bu+dr0V8UxO0q5T?=
+ =?iso-8859-1?Q?bP5lq8JhaxpaeeWVI/Ybg9mC52fonTQ3l6Dl3B9TWDRoHjInudc1xwKm8D?=
+ =?iso-8859-1?Q?48pwxjK53BjY445sg2x+3xEMnwN0tXo+k35rgvo+Mo4w2k8OzVi9ZsH5GG?=
+ =?iso-8859-1?Q?OZaObMFf8Ebc5HQer3V38n2zJ/Dz25fD21TuS2u6pyk/xZXg0K9Z3kQ0hV?=
+ =?iso-8859-1?Q?CrPrlBJlvJkgIPD5LCtDlyjyDsP4DiAQLANnemXjmgBILo2DPbRWE2U+w9?=
+ =?iso-8859-1?Q?H1P0cTAyzAP3i+LXjinFo0Zl50DW+Eqdl0xo93JmTb5ppeuwgyCzHuqgG8?=
+ =?iso-8859-1?Q?7WWpr6afA/peO96QrUG0KJb74b8ZsW/KraMjbPRCd2fkdzs3KFZWRV2CAy?=
+ =?iso-8859-1?Q?dXYdpgKd9Un/QiSvBFMRS+ES/MlTD/pf0Bn3kwSUIcqgInAoXll3ozSO9U?=
+ =?iso-8859-1?Q?ZYrsL+OGK5aRMGwKSdSVFPCDb8SltEmA28D9rEf49/f6Y+AWIsGLkWEMWs?=
+ =?iso-8859-1?Q?YjpG9jy+VNIBb/Zw8Cd0JxyMyi/AFGrdIlXRZO5PINhix71K92YmoMQddi?=
+ =?iso-8859-1?Q?17Ajiy2hEO37+s/HUyA3epMeIIlr1oC+OJmPO9zAj6mNCCe/Be/FIjATSG?=
+ =?iso-8859-1?Q?YxDj8+uiQPCbsa3P1Qao7Dxlc4REFFRNnV2AD1RnhnD5FNa8ajsudrhf7N?=
+ =?iso-8859-1?Q?JiLIvLcmScdRKW73rh/VsbGQkqV0gkq7VJPo7q4BQR74jlXaf7TvOM99wi?=
+ =?iso-8859-1?Q?DM/w59S+0wRXAC0joqcYvZk5Q2l61qaBwEnICa2rBCPQUzMwGhf5vQ2pFj?=
+ =?iso-8859-1?Q?WoJFVba5rXrOesK9v7kC94BfJd492sD98eiXjEdwVlTjN7mk6Bjmnz8ilo?=
+ =?iso-8859-1?Q?ejvTW9bhApibeE/7Pv0H76TLwHjogiiNw2UbEEDpiqR2r6LlBIWI5odk12?=
+ =?iso-8859-1?Q?TukkXFocangE64vBq0+fPL15ojsWjnKPs3npCOv49Zs897vUk7J8Q88QTQ?=
+ =?iso-8859-1?Q?DgJ/iIivcCh6ZYiyfyGsMxmZHccAd09MfJd2J/w6MhcM6oZmfWMmJOisaN?=
+ =?iso-8859-1?Q?smeNVRm7oHhTmtDeD44aH5oyF8ziWU3b12zLAfi+RF1m5EPCrMDsL6/POM?=
+ =?iso-8859-1?Q?UfCYL+RXDtvYQ91f/WTmEGB+OzFBUEpLopcVaga24d6f9TPBlvHqG+O/CC?=
+ =?iso-8859-1?Q?R7vQj0Z+3reOpYJnrtcZOTrIG2ZhJlhPLHkBeFM/Y3uK0EFRWrIUIlWHIn?=
+ =?iso-8859-1?Q?hUmqfB8NkM+xb3I+3Hq6xqkGNPlTBttifCrUvgmUgGsssX/U7/wTrrSy+z?=
+ =?iso-8859-1?Q?+iDKVnc9TjP4NPEn7mrDKpILZ0C1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(19092799006)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?mCQn4S9H0pzSQpq89UHKvmKMvU2c+IZtwH44Q/3djmtjXr1ZYfe73bHn3Q?=
+ =?iso-8859-1?Q?HENU28uaUK0dxNDuYs9Ox4TVrxj0Bzei9FX5ezOVl5M3k4+3jxE9K6lXiF?=
+ =?iso-8859-1?Q?ndwnBcoqIbKIh3Y1vJ7bN56Q7P5oQ0eC6uWRS8L9ZqUPSo5wqce8wuin0H?=
+ =?iso-8859-1?Q?zZOYvTR004wJ4mubk9LrJAEFfAoTv5heVpa0l9zDbFaPwmWCEy3w77ruEO?=
+ =?iso-8859-1?Q?YDZX9JB0yDsAyzEeW56IcmZ3QOsDUUcIwaZwrrsLJ4wozbuwRRqNIfnIGk?=
+ =?iso-8859-1?Q?+MBb0TJ2HhtIzS590KaVoEGgpHuEI9lEe8BkaVzUnGrU1m0oi9ippUEs6w?=
+ =?iso-8859-1?Q?vO+UCCMIV1m6OO4yq9wToz0wKTlMzhNYhxtj4+aOAH3sKnR2X6Y4Kg8Hkw?=
+ =?iso-8859-1?Q?u4zqBhI8Zxj9FLFSPmo0dvZaN6eYFOApxc6D/WwEcKB4cEEU2bYXThPy0w?=
+ =?iso-8859-1?Q?hpznLf+vvjo23M5lsPluuuaRDBaKDDzf85qaf9w+MD2G6LWMdsGdr+OCR3?=
+ =?iso-8859-1?Q?GH6Obh61NplBm33ksnq690kHL4VLKpUFGfG0gsCzC5Fkx2mtjnc8kM341m?=
+ =?iso-8859-1?Q?35rRxfsXu5UDjw0QibL6iX4OhZ8i3QFvvbtxWlg/qWTf5C9MStXdyEK1Rw?=
+ =?iso-8859-1?Q?HANj4AZgvq6DuS6M0hiOIyLMoBOthRP5uuNVr20fML/SkKUhNxbqsuxb9l?=
+ =?iso-8859-1?Q?MxlAJCY22Nw8WwUKf8o2TWzDW7WMtImvDZ5RsKBT4KIkJG40rxye2gklcq?=
+ =?iso-8859-1?Q?AVw1XDt9MVCGHcRW7liTA1+i9ukEkBKQb4x7qW99TdSBvOfp+gIpJS8QeM?=
+ =?iso-8859-1?Q?UD3kCODVHwq8+1bui9OJr+Ah/daN3vDg9rQLFIGdIvc9fIs8YijFaJC4QY?=
+ =?iso-8859-1?Q?aGsqQUdTG7bw61RLAaKqLekxetmVM15CtxZW53iv/q8m60s87JzpnUdksA?=
+ =?iso-8859-1?Q?/ManQbP6HmlKNiA9CQ3O92Z5ie8nHidpAwvi5V0AdixMKGYn62p5+f4H3G?=
+ =?iso-8859-1?Q?BL64eGR5u2CwVndA0WR+fY3hfnmDWQcWey9Fj/Ak80YfrFpWP61FPHN883?=
+ =?iso-8859-1?Q?4GG7YSYVt7hOpBjXD8o+z4CaWwOimYMmp5WhPK0ymC2keA68+429sABl/b?=
+ =?iso-8859-1?Q?CROOiewtFf0mY/zo6gg+QktukDXv+AR1aJUSW25hjL1h2yVSmf5YyjVh4Z?=
+ =?iso-8859-1?Q?QXeKa05IlWKwt+iJgKli6jkcAKaz4ZKVqjubGPyI2GNQ1ls9c34AlMs9ZT?=
+ =?iso-8859-1?Q?RI2dlT5bEYpInQVIxQc3JtfvHF2Xu1T7oswKDHu38o6IRqdEtEqpjruaBt?=
+ =?iso-8859-1?Q?TS+/4I70oQ2DULGI31iCjGRJmgF8zAXNpxAJzyDpFxqI7cRMzVdsstZdUW?=
+ =?iso-8859-1?Q?mlj5wJ6HrqiQR50yJxzgkUE3d5ojfbGCi8x3qa1PF+YwZPEdOW1A1ZciyX?=
+ =?iso-8859-1?Q?OmuVdiUaXm9dLiGWBRXc5DcDTylr+QDKbY9H16JLDJpkI954M37PRCuzJb?=
+ =?iso-8859-1?Q?jN0HI20XoG/NCfcfAPSPHLuP4U9n8gkwK0sPrPQNEwanzh3qrAB86kfrlK?=
+ =?iso-8859-1?Q?OFCwD36N+vZbJSB6X91rwd6czGttRLqmMkBWLciUZWImNZhEj+o2Ea9xlh?=
+ =?iso-8859-1?Q?efBuep0AI4UrBxXGbG/QFnGAUhDf3ToVhF?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d25e9df9-b378-4831-7475-08de11e88218
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2025 03:59:04.9733
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gO5jROT+DZzosFXF4JF6qOhFe7vv5ENfQ0sgBtol0y2yf1DMCbW4NU9O5T5uznoRWMw2kMhKZTDQIhHAkFLZDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10646
 
-On Thu, 23 Oct 2025 at 00:35, Zhongqiu Han
-<zhongqiu.han@oss.qualcomm.com> wrote:
+Hi Mathieu,
+
+On Wed, Oct 22, 2025 at 11:41:27AM -0600, Mathieu Poirier wrote:
+>On Wed, Oct 15, 2025 at 09:52:59PM +0800, Peng Fan wrote:
+>>  
+>> +NXP i.MX REMOTEPROC DRIVERS
+>> +M:	Peng Fan <peng.fan@nxp.com>
+>> +M:	Daniel Baluta <daniel.baluta@nxp.com>
+>> +M:	Shengjiu Wang <shengjiu.wang@nxp.com>
+>> +L:	linux-remoteproc@vger.kernel.org
+>> +L:	imx@lists.linux.dev
+>> +S:	Maintained
+>> +F:	drivers/remoteproc/imx*
+>> +
 >
-> On 10/22/2025 11:28 AM, patrick.oppenlander@gmail.com wrote:
-> > From: Patrick Oppenlander <patrick.oppenlander@gmail.com>
-> >
-> > Previously, polling an rpmsg endpoint (e.g. /dev/ttyRPMSGx) would
-> > generate EPOLLIN events but no EPOLLOUT events.
-> >
-> > Unfortunately, poll support means that we can no longer disable
-> > tx-complete interrupts as there is no way to know whether a poller is
-> > waiting in sendq, so we always need notifications.
-> >
-> > Signed-off-by: Patrick Oppenlander <patrick.oppenlander@gmail.com>
-> > ---
-> >   drivers/rpmsg/virtio_rpmsg_bus.c | 101 ++++++++++---------------------
-> >   1 file changed, 32 insertions(+), 69 deletions(-)
-> >
-> > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > index 484890b4a6a74..79d983055b4d6 100644
-> > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> > @@ -41,13 +41,12 @@
-> >    * @buf_size:   size of one rx or tx buffer
-> >    * @last_sbuf:      index of last tx buffer used
-> >    * @bufs_dma:       dma base addr of the buffers
-> > - * @tx_lock: protects svq, sbufs and sleepers, to allow concurrent senders.
-> > + * @tx_lock: protects svq and sbufs, to allow concurrent senders.
-> >    *          sending a message might require waking up a dozing remote
-> >    *          processor, which involves sleeping, hence the mutex.
-> >    * @endpoints:      idr of local endpoints, allows fast retrieval
-> >    * @endpoints_lock: lock of the endpoints set
-> >    * @sendq:  wait queue of sending contexts waiting for a tx buffers
-> > - * @sleepers:        number of senders that are waiting for a tx buffer
-> >    *
-> >    * This structure stores the rpmsg state of a given virtio remote processor
-> >    * device (there might be several virtio proc devices for each physical
-> > @@ -65,7 +64,6 @@ struct virtproc_info {
-> >       struct idr endpoints;
-> >       struct mutex endpoints_lock;
-> >       wait_queue_head_t sendq;
-> > -     atomic_t sleepers;
-> >   };
-> >
-> >   /* The feature bitmap for virtio rpmsg */
-> > @@ -144,6 +142,8 @@ static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
-> >   static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
-> >   static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
-> >                                 int len, u32 dst);
-> > +static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-> > +                               poll_table *wait);
-> >   static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
-> >   static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
-> >                                                  struct rpmsg_channel_info *chinfo);
-> > @@ -154,6 +154,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
-> >       .sendto = virtio_rpmsg_sendto,
-> >       .trysend = virtio_rpmsg_trysend,
-> >       .trysendto = virtio_rpmsg_trysendto,
-> > +     .poll = virtio_rpmsg_poll,
-> >       .get_mtu = virtio_rpmsg_get_mtu,
-> >   };
-> >
-> > @@ -436,7 +437,6 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
-> >       unsigned int len;
-> >       void *ret;
-> >
-> > -     /* support multiple concurrent senders */
-> >       mutex_lock(&vrp->tx_lock);
-> >
-> >       /*
-> > @@ -454,62 +454,6 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
-> >       return ret;
-> >   }
-> >
-> > -/**
-> > - * rpmsg_upref_sleepers() - enable "tx-complete" interrupts, if needed
-> > - * @vrp: virtual remote processor state
-> > - *
-> > - * This function is called before a sender is blocked, waiting for
-> > - * a tx buffer to become available.
-> > - *
-> > - * If we already have blocking senders, this function merely increases
-> > - * the "sleepers" reference count, and exits.
-> > - *
-> > - * Otherwise, if this is the first sender to block, we also enable
-> > - * virtio's tx callbacks, so we'd be immediately notified when a tx
-> > - * buffer is consumed (we rely on virtio's tx callback in order
-> > - * to wake up sleeping senders as soon as a tx buffer is used by the
-> > - * remote processor).
-> > - */
-> > -static void rpmsg_upref_sleepers(struct virtproc_info *vrp)
-> > -{
-> > -     /* support multiple concurrent senders */
-> > -     mutex_lock(&vrp->tx_lock);
-> > -
-> > -     /* are we the first sleeping context waiting for tx buffers ? */
-> > -     if (atomic_inc_return(&vrp->sleepers) == 1)
-> > -             /* enable "tx-complete" interrupts before dozing off */
-> > -             virtqueue_enable_cb(vrp->svq);
-> > -
-> > -     mutex_unlock(&vrp->tx_lock);
-> > -}
-> > -
-> > -/**
-> > - * rpmsg_downref_sleepers() - disable "tx-complete" interrupts, if needed
-> > - * @vrp: virtual remote processor state
-> > - *
-> > - * This function is called after a sender, that waited for a tx buffer
-> > - * to become available, is unblocked.
-> > - *
-> > - * If we still have blocking senders, this function merely decreases
-> > - * the "sleepers" reference count, and exits.
-> > - *
-> > - * Otherwise, if there are no more blocking senders, we also disable
-> > - * virtio's tx callbacks, to avoid the overhead incurred with handling
-> > - * those (now redundant) interrupts.
-> > - */
-> > -static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
-> > -{
-> > -     /* support multiple concurrent senders */
-> > -     mutex_lock(&vrp->tx_lock);
-> > -
-> > -     /* are we the last sleeping context waiting for tx buffers ? */
-> > -     if (atomic_dec_and_test(&vrp->sleepers))
-> > -             /* disable "tx-complete" interrupts */
-> > -             virtqueue_disable_cb(vrp->svq);
-> > -
-> > -     mutex_unlock(&vrp->tx_lock);
-> > -}
-> > -
+>Here I am suggesting:
 >
-> Hi Patrick,
->
-> I'd like to go over a few aspects of this patch, please feel free to
-> correct me if there is any misunderstanding.
+>M:	Daniel Baluta <daniel.baluta@nxp.com>
+>R:	Peng Fan <peng.fan@nxp.com>
+>R:	Shengjiu Wang <shengjiu.wang@nxp.com>
 
-Hi, thanks for the review, I'll address your comments below.
+Thanks for your feedback.
 
-> >   /**
-> >    * rpmsg_send_offchannel_raw() - send a message across to the remote processor
-> >    * @rpdev: the rpmsg channel
-> > @@ -582,9 +526,6 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
-> >
-> >       /* no free buffer ? wait for one (but bail after 15 seconds) */
-> >       while (!msg) {
-> > -             /* enable "tx-complete" interrupts, if not already enabled */
-> > -             rpmsg_upref_sleepers(vrp);
-> > -
-> >               /*
-> >                * sleep until a free buffer is available or 15 secs elapse.
-> >                * the timeout period is not configurable because there's
-> > @@ -595,9 +536,6 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
-> >                                       (msg = get_a_tx_buf(vrp)),
-> >                                       msecs_to_jiffies(15000));
-> >
-> > -             /* disable "tx-complete" interrupts if we're the last sleeper */
-> > -             rpmsg_downref_sleepers(vrp);
->
-> 1.The original code dynamically disabled tx-complete interrupts during
-> normal operation and only enabled them when waiting for buffers. This
-> patch removes all virtqueue_disable_cb() calls, meaning interrupts are
-> always enabled. For high-frequency messaging, could this significantly
-> increase interrupt overhead, even irq storm? May I know do you have
-> performance data showing the interrupt frequency increase?
+I'd like to clarify the roles and contributions regarding the i.MX REMOTEPROC
+drivers:
 
-I mentioned this in the commit message.
+- I (Peng Fan) authored most of the code in imx_rproc.c, contributed 
+  most of the patches [1].
+- Shengjiu Wang is the original author of imx_dsp_rproc.c [2].
+- Daniel Baluta also has done excellent work reviewing and coordinating.
 
-The problem is that the poller can be removed at any time by
-poll_freewait, and there is no notification of this happening. The
-simplest solution to this is what I have proposed in this patch, i.e.
-always leave callbacks enabled.
+Given this, I believe it's more appropriate to keep all three of us as
+'M:' maintainers in the MAINTAINERS file. This reflects the actual ownership
+and ongoing maintenance responsibilities and matches the rule regarding
+selecting the maintainer in
+https://docs.kernel.org/maintainer/feature-and-driver-maintainers.html
 
-There is an alternate solution, but it comes with a possibly
-significant caveat. We could add a check along the lines of:
+We all actively maintain and support the driver, and having multiple
+maintainers ensures better coverage and responsiveness.
 
-if wq_has_sleeper(vrp->sendq) {
-        virtqueue_disable_cb(vrp->svq);
-}
+In this patch, I use drivers/remoteproc/imx* to match imx_rproc.c and
+imx_dsp_rproc.c, if you prefer, I could just add entry for imx_rproc.c:
+M: Peng Fan ..
+M: Daniel Baluta ..
+F: drivers/remoteproc/imx_rproc[c.h]
 
-But this is not guaranteed to work as expected as poll_freewait can
-remove the poller at any time (i.e. after we've performed this check),
-meaning that the callbacks will sometimes remain enabled regardless.
+Let me know your thoughts.
 
-In terms of performance, I have not measured a difference in my workload.
+[1] patch author:
+git log --pretty=format:"%an" -- drivers/remoteproc/imx_rproc.c | sort | uniq -c | sort -nr
+     45 Peng Fan
+      5 Christophe JAILLET
+      4 Dong Aisheng
+      2 Wei Yongjun
+      2 Uwe Kleine-König
+      2 Linus Torvalds
+      2 Hiago De Franco
+      2 Aleksandr Mishin
+      1 Ulf Hansson
+      1 Thomas Gleixner
+      1 Shengjiu Wang
+      1 Rob Herring (Arm)
+      1 Rob Herring
+      1 Oleksij Rempel
+      1 Miaoqian Lin
+      1 Mathieu Poirier
+      1 Marek Vasut
+      1 Fabio Estevam
+      1 Dan Carpenter
+      1 Clement Leger
+      1 Andrew Davis
+[2]
+patch author:
+git log --pretty=format:"%an" -- drivers/remoteproc/imx_dsp_rproc.c | sort | uniq -c | sort -nr
+      5 Shengjiu Wang
+      4 Iuliana Prodan
+      3 Daniel Baluta
+      2 Uwe Kleine-König
+      2 Mathieu Poirier
+      2 Arnd Bergmann
+      1 Ulf Hansson
+      1 Rob Herring (Arm)
+      1 Rob Herring
+      1 Peng Fan
+      1 Markus Elfring
+      1 Linus Torvalds
+      1 Andrew Davis
 
-> > -
-> >               /* timeout ? */
-> >               if (!err) {
-> >                       dev_err(dev, "timeout waiting for a tx buffer\n");
-> > @@ -676,6 +614,34 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
-> >       return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
-> >   }
-> >
-> > +static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
-> > +                               poll_table *wait)
-> > +{
-> > +     struct rpmsg_device *rpdev = ept->rpdev;
-> > +     struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
-> > +     struct virtproc_info *vrp = vch->vrp;
-> > +     __poll_t mask = 0;
-> > +
-> > +     poll_wait(filp, &vrp->sendq, wait);
-> > +
-> > +     /* support multiple concurrent senders */
-> > +     mutex_lock(&vrp->tx_lock);
-> > +
-> > +     /*
-> > +      * check for a free buffer, either:
-> > +      * - we haven't used all of the available transmit buffers (half of the
-> > +      *   allocated buffers are used for transmit, hence num_bufs / 2), or,
-> > +      * - we ask the virtqueue if there's a buffer available
-> > +      */
-> > +     if (vrp->last_sbuf < vrp->num_bufs / 2 ||
-> > +         !virtqueue_enable_cb(vrp->svq))
-> > +             mask |= EPOLLOUT;
-> > +
->
-> 2.The virtio_rpmsg_poll() calls virtqueue_enable_cb() but seems never
-> disables it. Once any process polls the device, interrupts remain
-> permanently enabled even after poll completes?
+Reviewed-by count:
+git log --pretty=format:"%b" -- drivers/remoteproc/imx_rproc.c | grep "Reviewed-by:" | cut -d':' -f2 | cut
+-d'<' -f1 | sort | uniq -c | sort -nr
+     21  Mathieu Poirier
+     17  Daniel Baluta
+     10  Frank Li
+      6  Peng Fan
+      5  Iuliana Prodan
+      4  Richard Zhu
+      3  Ulf Hansson
+      3  Oleksij Rempel
+      3  Bjorn Andersson
+      1  Kate Stewart
+      1  Enrico Weigelt
+      1  Allison Randal
 
-virtio_rpmsg_poll returns immediately after registering the poller and
-checking whether there are any free buffers. poll_wait does not block,
-so there's no way to know that poll has completed.
+git log --pretty=format:"%b" -- drivers/remoteproc/imx_dsp_rproc.c | grep "Reviewed-by:" | cut -d':' -f2 |
+cut -d'<' -f1 | sort | uniq -c | sort -nr
+      4  Iuliana Prodan
+      3  Daniel Baluta
+      2  Peng Fan
+      1  Mukesh Ojha
+      1  Mathieu Poirier
+      1  Frank Li
 
-With this change callbacks are always enabled (they're enabled by the
-virtqueue initialisation if a callback is registered). Calling
-virtqueue_enable_cb here doesn't actually enable callbacks. We call it
-because its return value tells us whether there's any pending buffers
-in the queue. I'm not aware of another virtqueue API which can perform
-this check.
-
-We could propose a new virtqueue_buf_pending() or something along
-those lines if necessary, but, looking at the implementation of
-virtqueue_enable_cb(), we'd effectively be causing a bunch of code
-churn to avoid a couple of if tests. Given that we'd be the only
-consumer of this new API it didn't seem worth it to me?
-
-Kind regards,
-
-Patrick
-
-> > +     mutex_unlock(&vrp->tx_lock);
-> > +
-> > +     return mask;
-> > +}
-> > +
-> >   static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
-> >   {
-> >       struct rpmsg_device *rpdev = ept->rpdev;
-> > @@ -922,9 +888,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
-> >               WARN_ON(err); /* sanity check; this can't really happen */
-> >       }
-> >
-> > -     /* suppress "tx-complete" interrupts */
-> > -     virtqueue_disable_cb(vrp->svq);
-> > -
-> >       vdev->priv = vrp;
-> >
-> >       rpdev_ctrl = rpmsg_virtio_add_ctrl_dev(vdev);
+Best regards,
+Peng
 >
 >
-> --
-> Thx and BRs,
-> Zhongqiu Han
+>>  NXP NETC TIMER PTP CLOCK DRIVER
+>>  M:	Wei Fang <wei.fang@nxp.com>
+>>  M:	Clark Wang <xiaoning.wang@nxp.com>
+>> 
+>> -- 
+>> 2.37.1
+>> 
