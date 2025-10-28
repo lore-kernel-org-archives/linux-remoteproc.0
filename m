@@ -1,276 +1,238 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012015.outbound.protection.outlook.com [40.107.209.15])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013021.outbound.protection.outlook.com [52.101.72.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE31220B81B;
-	Tue, 28 Oct 2025 05:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BB02D7DED;
+	Tue, 28 Oct 2025 08:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761627688; cv=fail; b=jglQ0SFjeyGWawxGk1T+2iGtejhMS6zpBqCGw9KRbP7zK+tzun1ExiBlPxamdTVa/OlT61F9Gw+f9LMFiwHwWg6jAtLCeuNr5ucgv6+A2fcHKWb8wy8glcqfvOJmr96Z0RzTA7n9YVB1oI0CZsUx7hb6+IOMUBcy8AEtx9mE+ss=
+	t=1761639515; cv=fail; b=rT8FznqrDGZ0vKMoDnwockePgcDjnr4POM0lana3C3aq1kucj8lXdMVp1yfnH+llSj3B4DmUS9/jTvs53z+UCgMesl7zZi525hi+g0/B5a8Dnt74M8VLfWXOpKg/9GQ2jDbGtWTb3RLSS0pCnBcEqRF1LxvG+bgPjJ+vb7FH+lM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761627688; c=relaxed/simple;
-	bh=Rx4qvEe8hEJXW4EKUZMF3oj6ForuDTjWIz99HyvaU04=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L4YzyX9nK4XU424chTw4o5/rLFyQlqrcllNNWl0p70U9XbJQh5482ADbAClX19T5OC23m/vaXmmQ2Cz3fVAHFjbye4f3RspRmmbHG4Xy9pCM7v07beiqaqac8NIblsENQcT5tn9IxZBzICAS3KcuwnwsDoJplr0rH+q6Jvo02wI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IL7li3RG; arc=fail smtp.client-ip=40.107.209.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1761639515; c=relaxed/simple;
+	bh=xHK/S60PS6KNOnfKoUQfhlXjqB+AWb/fdKDyp5XO5yM=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=AHMdngFpfwcdMLvFYDJMCpLDs7SX2bdFG/n1nDzz6qkz3frxc1Y9W/IQNgSVLatYNxNDAweB/dIz+cDpN7IcVzts1posnsrQPTXz/7tyS+/4fLJfdOxfem3/QIn/wUYy759W7BOUbTYYT1vEnYALAM9w3xIe0YPh4qGprO08W9I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ewiOMTgY; arc=fail smtp.client-ip=52.101.72.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IL7li3RG"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ewiOMTgY"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tWgMOPu9b42iJ41YnOe7FkZiR0lAoyQR1IQ77rTqKbVHtr4pWVe0HqPqFKFN7lDavLAbcXCotMUWt6qiq3jF/PIBYQVgc6wYmWDZGVGmaeYV7SpU4VHXat4APTGTNTHH2DD86ZcEiLPVkKfdOxYBtPCNLO/Btzu94BFOiILSnMr6RrZymP/dr9vOWiJdxjBXizz83LGnECHIsme78l1YKHBqNEyb3uBJn8NVg8WM797tlgasVqj3aYcd4l0xfwW8N43K230Vnuz9LgHnmewjmLOzAisv6L7vwb32CYI+aIwYUjgs1z4Ksdl6l6YZTn4Vu+4c4z93fUvQvIoIHr9bxA==
+ b=um0MWWqhh/aK7eXHs7L+SNvkcbZYbVkUJ/PAkqJXcWL09QoOrFBI/4FA+1N40co0tmwMSWij3boG3JRxIq3XHoUoOsF/D7dlQLOlcz8FJxnKxGILWQWnT31M3ZnLT+lZMPCIk9+99d5QmUh9y/K70B+Y/QJICUAG/yD3yXvoDPY+4wpFyx8DYP7UvOQUOc1JhyVpvkn767muoHPuODdLVgPSsdNIf+Y4987MTKZPiBIXNsNDKjlHkZVKk3FJjFLTXvsPXfkqJv9ncnyLOQv+TNud+0KaDnyO1N+Lc7tGr7dH8VuB0KBQdXqgVhfBML5IXBGjaCXh2K+dtuRqN2FnGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XM7YJlwu6Ixp7olWFGAxjpEFRylKjr6aFTrp1IOVTo4=;
- b=GHkjQZSFVLhYOhgxtjQylSzxC2VrmqdUN2l4FhilvrGhfq/edLWbdQgbj1pHpmgBYMUdUXCHr6wCR+tnzAeMkU4jjROJ5RKaMTxtUxS/BkZZOOYH1rzLI4yts8+bBZn04PCiX9glVb4M5uLPlmaSXYo7EFcE8EuW6P6/Cc0VLpXHl3lbGbgJ0lLLfVDD5jVbrb4O0NRMoDCTtzmOgTX1PRiQSd5Mp0TdvE81vTUuZ5pX5B3YoffVn12MDDNlGBTI/P3zXGqejGdCtLmAADLI714vRRJ7b0tF0BQ4X5XEmo/ZAhFr2lGRPn+/E+SaW9u9UE2GZINLg4EyVqjmMvA0aQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=2N8AOpZtXL90kxMW408k7sDHUVRifvBajw+0G3SRJog=;
+ b=HjwzqNzM1M8PStWmq9ruS0P3+WablTSulWCJmF1pKd3luH9/Mb7k4rH10aBMg+Jn3ExjtNXAmo9JqPsnOCU3wr0m917UpVDWhzwh3lvIWK7FBOvqy5rLXedO4yPAh2bH5KNAB3TnBJWQSJ8MIBVmOae/vxc/BgQCF4oh6nVGeibM8FfhfoultKKH7eb6PD+ZOFig9x3KlNvDPW5IfHQH3YJetqqnEB7rvC0bg+O69p8ELe5nyONaTrYV3SzagJCceMKbGoFrNHLwLKMg7zbrDjyBdC2qKeGSEWIsmpydwIfOM6mirEquOSGagJWaFq5TmoWnUmN7nU0KA+Wsr+EtvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XM7YJlwu6Ixp7olWFGAxjpEFRylKjr6aFTrp1IOVTo4=;
- b=IL7li3RG5Onzm5W3jPq8Pa53e2AhoMQ1Ul7A7COa2PKlAZ93YJHgQOzsz/0KgJ7SQ4OmKtUmf12X/iWp8TqnUvPmGVSy05vjn2dVCXR9ELpVe//nJ7xV3a2LM83pqvuxpi35AOe7npoe2qT6Q8RwzvcUHRvQnf0dAr0/NPZKy74=
-Received: from CH0PR03CA0359.namprd03.prod.outlook.com (2603:10b6:610:11a::19)
- by SA1PR12MB6894.namprd12.prod.outlook.com (2603:10b6:806:24d::13) with
+ bh=2N8AOpZtXL90kxMW408k7sDHUVRifvBajw+0G3SRJog=;
+ b=ewiOMTgYqDIYa9Bs6LBw7pu554ZSsBdtrJDwFzz9KLVv3n+jGkrVKOlqT/XKUxWpjJxxAIP5GMfe8nvvMAjnjPV6JX0BPdqdzyiflv7PvMn1PQrbrMvXoFOdHwgVijiTesZ/VjicLYItN5RE+pr/0NT+AgjGZT2KxuRYiHf1dMDbOVIC/YA0ra03Yrxl/DbSATncFjb8xQpYCN6q6Jdh0yt6fSiIJiGl2W39k0TulauL0w1PNA2qv/iOfK8BZmPf5+ImwrOtu57CjtIU3oEYZiLuEsrbKEnv5888F8XPCo0ke5BeY3c+5GjMcskljfOLTzbzz0g0HSgydYp7UXijPQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by DB8PR04MB7020.eurprd04.prod.outlook.com (2603:10a6:10:126::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 05:01:21 +0000
-Received: from CH1PEPF0000A345.namprd04.prod.outlook.com
- (2603:10b6:610:11a:cafe::46) by CH0PR03CA0359.outlook.office365.com
- (2603:10b6:610:11a::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.19 via Frontend Transport; Tue,
- 28 Oct 2025 05:01:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH1PEPF0000A345.mail.protection.outlook.com (10.167.244.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Tue, 28 Oct 2025 05:01:21 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 27 Oct
- 2025 22:01:21 -0700
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 27 Oct 2025 22:01:20 -0700
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>
-Subject: [PATCH 3/3] remoteproc: xlnx: add crash detection mechanism
-Date: Mon, 27 Oct 2025 21:57:31 -0700
-Message-ID: <20251028045730.1622685-4-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251028045730.1622685-1-tanmay.shah@amd.com>
-References: <20251028045730.1622685-1-tanmay.shah@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 08:18:30 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9253.018; Tue, 28 Oct 2025
+ 08:18:30 +0000
+From: Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/4] remoteproc: imx_rproc: Support i.MX95
+Date: Tue, 28 Oct 2025 16:18:00 +0800
+Message-Id: <20251028-imx95-rproc-2025-10-28-v1-0-ce9e7db9edcb@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADh8AGkC/x2MSQqAMAwAvyI5G2iK+1fEg9ioOaglBSkU/271O
+ AMzCQKrcIChSKB8S5DrzEBlAcs+nxujuMxgja3J2A7liH2N6vVa8JNIBrOeG+valpuKmCDHXnm
+ V+I/H6XleHmwiDGgAAAA=
+X-Change-ID: 20251028-imx95-rproc-2025-10-28-a62d77e641e1
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+ Frank Li <frank.li@nxp.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761639500; l=2716;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=xHK/S60PS6KNOnfKoUQfhlXjqB+AWb/fdKDyp5XO5yM=;
+ b=0HGfU6XmWHz9hKkwgwYqfnMGQo5vLbBmuUEdZmJ7v2AlCsgIPo1YyNhQ/Fu77JQU/ac/3anyJ
+ YU2maoiiGiYBwnvpMSeyxF4UnoSbSZFuJnaN8FGmJzsuiY9hD9EquDB
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI1PR02CA0035.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::8) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A345:EE_|SA1PR12MB6894:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb00c6e0-9778-4363-0736-08de15df0977
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|DB8PR04MB7020:EE_
+X-MS-Office365-Filtering-Correlation-Id: bfc280f3-eeda-4737-4018-08de15fa9410
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|19092799006|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+O2NsPUGPi/q/4facbEJ8qKFpTYSFpB7wjl5kz6btGyWD80tITdJTi0cIU0L?=
- =?us-ascii?Q?Z2gvq8Oz7r+6PVcjgR3uFDi97NNNBx1PPDQ1OVfVV65dFJ+1Ugdwc+Di4jc2?=
- =?us-ascii?Q?fGeDxbMlIfSLawPstkgVxXgDsnb44l91GNGKyc/seCwW5gZpCbtQiNPMyVHU?=
- =?us-ascii?Q?HPe2muqwCp04eNQD7kMFmgLPvOVGQ5+LnrhzDdjKIbrSHsc5GiyibabRuYNz?=
- =?us-ascii?Q?Jj8Q00qX5D2Bp7wKfqZl35CugXTs8WwxOzEyIT4fAVBDKtq8eQRrVc9NydaY?=
- =?us-ascii?Q?68H5SYO+WapKhQR5y2nnRo4AJ3oogS/q2S6jSLMPoKMre8KmlD6ltRkAullC?=
- =?us-ascii?Q?QVmI4h5XDp48asWW9TWnurx7UzvVX3htB5AzgsFyFqwaqZakdRR/ecgbS+ka?=
- =?us-ascii?Q?K16RQ6d1yNT7ANp9Vykh+3GfWZnV27jy2ePD+674Zo5ydU8nYqssnMzJAjqm?=
- =?us-ascii?Q?+NEGXneX+TmJBU0AigeywUzW0eVV8nE/9XJMQBlr0X71Aj5gDwPELymnQC+j?=
- =?us-ascii?Q?O2XLAruA9eA7CNZnshSNGOHciLOB1ZNF/sacqsIQI1wmo5Jp76K3eYZjFcbC?=
- =?us-ascii?Q?U/TU6t+9mSZa3xl/ocEDaLL9yDK06lOccyCADRJSQ4MIdJr5b224rvoEDCjy?=
- =?us-ascii?Q?T4Rnc7qIh7375l+iVSQGSKV+IQ5JCm5Ya2wg7SkcVACqmXfRnoaFZn7CzwUq?=
- =?us-ascii?Q?uDQWE4lndwHO4Zmg50CforQvA4rKnihwdgjkw5584OV96acUWRQr3pxfT3eP?=
- =?us-ascii?Q?zP0cAYlTw15GaynQ6yiiy+KnHGPCk2MncrkIIg/4ozfMZwj5Ut1JqdqHLBJg?=
- =?us-ascii?Q?rdZK7hiTRHbEoBq3rqQ/qhkVdjq8Sp+W2Ph9sS0sPmKLeW6muXsBNqyKvE31?=
- =?us-ascii?Q?oL8rPHz8+wNscbPKAOuMNpnQJqTVAtoXJJJiRnLOyux7b0wBt9FZUrgVOEtP?=
- =?us-ascii?Q?S07kMjkfAEShubENJXOowaZLxZk/nl3fUg3pdp42MXTa8TyB/zLgWrzkdEQU?=
- =?us-ascii?Q?Eac5JbZDWHtqOkGJukYw6ue1lX2e12l7cXFaPWW/RyTfIqw69Z5bHp9WRmgt?=
- =?us-ascii?Q?yETEi93N9drRmUW2kfLVFJf+DnFfGY+rcFlqU3APmcSOUdmUoxgrkLTfuGY0?=
- =?us-ascii?Q?AkM8rBYRV0eoonfFvPn3uGyuqY0FpSAnEm1Nzg9xn+g9HfGYqt0d1h5fYhQn?=
- =?us-ascii?Q?fEaXdYDhmq2Wn43xs3pIgKsk6RSXAnaoojPItwkyZMupwbmkubP4v6fd1dXN?=
- =?us-ascii?Q?XrSrPBYEDLSiSurk0rbgRI1ReWiJswmJsRnZxlRLkfASAOAVXxOKd/S0mPX/?=
- =?us-ascii?Q?BvzoSnXcz4fgkY0LRlmkgZNOWcul4uZSnVG4g4Skt2JvnPLjtspv+EQiFHjf?=
- =?us-ascii?Q?Co0cx3FOXU2H6b3G3YfgTzXga0qtVfXD1QbbWaTDSl4gKUra3XeoXvmcHJOg?=
- =?us-ascii?Q?dCveYabZ2DQgsd3Vcr37WJDRVtPyC6qTR//4Bbi69+ixUi0QlmsY1+GjNMMM?=
- =?us-ascii?Q?+9/waUvgmQ2k5jANIjT9XACYWF+65lj0ujsUuif0evzft08+oPn1WOPsHXSX?=
- =?us-ascii?Q?bGuNZc3tkEg6BL2z6Uo=3D?=
+	=?utf-8?B?aVNTMXJBenUyVEZqUFdNa3l6Vm1kZVN6L2pVNTdDa0NnUkJoVFlCZ3lyZHFC?=
+ =?utf-8?B?Q0pZSThGUFg2QlpSMEV1TGk0RGpiOS9heW5tVElMbzdVS3ZvSUNwNzdORkRU?=
+ =?utf-8?B?T3lNL294cm1VMGRDZFgyUDdmYm5Wc3FJR0RLNTNuZjMya2J1QWRDclRwSEl1?=
+ =?utf-8?B?TDhHTUdCbzU1elNJM0ZxNW4vTnQ4ZFFwOEJlN2ZhMVdEY2d3SjRHdEJBbGZF?=
+ =?utf-8?B?QklodEN6Z0NQeVlrc1hyL0lKZE51TC9DOWFPMlNSS0RvOG9KTlJmWWV5czJj?=
+ =?utf-8?B?a2pCTmlGRW9kb0RoREFnQkhvbEpCUHJUU2FLckltdUhKS0J1cURsSjNwRG8y?=
+ =?utf-8?B?Zy9jNHRwNDM1bmtUTTREOFcyNW1lUkl4VVBWRjdmb25tNitsb21jWm1KQ0NH?=
+ =?utf-8?B?OStPblFpbzZ1SmNiWkhabTNDdjR3QW1tMDBUWWhrOEJuaUc4U0k3ZVJzb3ds?=
+ =?utf-8?B?WVpFdmg5RkE4ZVNsNWJpbXlsRHBoY0RiSlNPU1FtZUJyT2ZSUUt5N0Rxcmtx?=
+ =?utf-8?B?NjdJSWwvb1NlSGMvZWVWLzJXNmNjOXd1RFo1aEdzMFlSWDQvN1E0dlBFZmF6?=
+ =?utf-8?B?YW1LdHpQcFd1dzJFSnlEQzVwMG1GSlM1YzRlczNldUdWMDd1MlJINTBsMjg5?=
+ =?utf-8?B?ajRYQ1plR29qR1pDMGJqNXNIaGxYaEVLdHdxYWIvTkFhVStkeVlTa2N2cmtl?=
+ =?utf-8?B?ampnN2kzY1IzUUtGdjNTb3Y3MmpDQm11NnZMQ0szSlNIa29GMUFGWnRlQ2Y5?=
+ =?utf-8?B?YkFNZVNYS1J6dUpsMEVpd1p2YmdqL3pmQ2dQVHR1NW1UYmJWeFU0VmpqYXdJ?=
+ =?utf-8?B?NkN5aUhGZ1lZdlhMWGVYNm9OVTZ0WnVGRi9LREYvWksybGk4Zy9kYXUzVjF3?=
+ =?utf-8?B?aURuU3RyQ0JqTFpBR0JBQkpxMjhGRmhTQ1lINHQ5Q0VnalEwRFQvMzRGdDJs?=
+ =?utf-8?B?VUN5Z2p2S1NYRmN1Ti9HM05rbVJtSVdUdGluT21nb2ZFb0RmMTFneDdFb2Vs?=
+ =?utf-8?B?clVnMlZ1bE9tYk51ZTZFYUxRSk94SEtmNFdzUVdXaXp6TWVRK01BYjR5d1gz?=
+ =?utf-8?B?RUcyU1BZTjI3UDdRTldmRHc0NFE3blVjSm1CY2tySEVBS3BoQzNYeGZoY1k5?=
+ =?utf-8?B?NzRveFpESzBlY2dJMDQ3WEhHVC9aL3ZhWmg4NU81N29NMjBuNTMzOGY0Rll0?=
+ =?utf-8?B?WE8yK2dYWWhuanp2ZnpiNlArdURwaWlySW9HQ2pkd3p0SmFrVTZORkhXb2Nt?=
+ =?utf-8?B?Nk5qQ3lzUE1RKytpUVNTM0JpWHdSOER6NytuUkNOSHZ0UEdvTklOV05ZTWY1?=
+ =?utf-8?B?cE5YRGdGNW42VlliQ3libDI5RGdaR3prbGpNTGlwakVuSVVseGg4dDVqZnAw?=
+ =?utf-8?B?cUlzUjR0aVlJMEJDVHdXdHZiWjBsbFNyRUx1bWxIclUvUlFETlZ4WXZoTWFp?=
+ =?utf-8?B?d1pHYW5mVEQ0d002cGFjekgrVTBZNjlMbkx3R3VsVXo5QzFtY21CbU5td3ha?=
+ =?utf-8?B?bWV5QUJBV2h6TEFjMVhYS0hjTDVBTWFmY0VpL1M0M2l4Mk5jdXp4anhNVStD?=
+ =?utf-8?B?ek9OcnBsZ3FBaGlwblE4Y1lmeEFuMW9WTllUZ3NqaWhHdjR5L2MvV3cyTFRr?=
+ =?utf-8?B?RmJCYWNuRFJJRW93am5zc1JYTU9GTS9MZHJLcjRtb21oYUdsQmxLalpyVVkz?=
+ =?utf-8?B?bTdJaG91a2NHelN6dmpYU1ZiRzVqaUFaSlBuYVFWcm9kTXZHYUE3MEVSb1Zp?=
+ =?utf-8?B?anJ6Wkk0bXFveWp4OENMNDRwT2FEcjQ0YllaUXVzOVQzOEdyRzFtM1lGai84?=
+ =?utf-8?B?OUEvbUtEbGF0OGtBMlBqUUJXV043Tk9QQlV3TmZWenp0V1pVSVlOYkNqSjg5?=
+ =?utf-8?B?UFdYdEF5SE5Qend2Sno5eG9wSURNTjNzOUpvb0J1cjBDT01Xb0k1QW1xSlNT?=
+ =?utf-8?B?MzdLYU93aVJMeHFMdjZyRjRLTHNPTkRDSXNPcHNuektqbElRVFBPQUZFUGhR?=
+ =?utf-8?Q?qD+wzWdBVckPH02QHSC46/u8OvBLgo=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 05:01:21.3342
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aVZnaWZBOUZzOXZlSmIwbk05b29vM0hSblZvZVUyUlRDMGxGWElsWEZvQ3Ew?=
+ =?utf-8?B?WTlVMjRkOVcvWGlKSG9WdDR5RFJ5S21pb2cxVkFSSUsya0hiekJpMUZ0TmxZ?=
+ =?utf-8?B?U2Z5UnZ5UFdsU3kwQmdPWkxlZTlkNElVN1VrVEJLWGxHZmI2SERvSWVFd2Nu?=
+ =?utf-8?B?OFAvNENtQkZjc0JoUmxZclVyclVkaHhBUXluVUR5aUo0dE9wZ1J2aDY4MVFo?=
+ =?utf-8?B?NlNFVDIzQTlvTEZ3TXYva09zUUFMVlJzNVhra3VZNDBMYndoQkRSWG82Rnk1?=
+ =?utf-8?B?QWVPaWI2MDBKd2QvTG9EV1FoaDBLeVVkc0xxcW8vVFY0YkZoT0U0UjI0QXVi?=
+ =?utf-8?B?MVAxdk40ZXFMYnVNenpQVEZTeFFhVjRzT1g0NjA0UVhXK29OOENuR3ZCYUxu?=
+ =?utf-8?B?TnJmZlNYY0tIbE5aQUM1VkVFcVRkTXcxR3VsRG51ejVyRUlHMk1CWC91SDRa?=
+ =?utf-8?B?azVNaHp0T0VQZTVvclZOQ0JXS1JJQ3NWQUM4eUFLTHhRalZlWVlzZkF5U0dT?=
+ =?utf-8?B?R0E1cVRzb0NzYTM2UTBRY1owaE9UbTliSlVhTFd4c0lxNGdTOG42TVZ4cC93?=
+ =?utf-8?B?cWpPOHIwaTRPQ2tMLzBiWXRiaGF1V2U0dXl1elRtbndXdXcxMU9TQzdMWUdz?=
+ =?utf-8?B?bnlTa2xaNXZSSjlneUFtL2RHVSt5bjFMVXhWRXZHbXdqeDlxUGRQaWJnbDF1?=
+ =?utf-8?B?QVBGOTVQdzM2alRUaVUwMHUrNXcyNHl2TitKbGZ4ejZMWVBpTXRPblpEY2JQ?=
+ =?utf-8?B?YnBqcHYyWEdRZlNMaTZBZHFxZ29hdDN6M21Tb0dOcVVRQzBCNytEYS9mazhp?=
+ =?utf-8?B?emlycDNWV2V1NzNibE9jbTk1UTdKZU1LaDBlSlh2OVN5bE9LN29heWh0aDBQ?=
+ =?utf-8?B?bXZtazRhY0hUYTIwY25GSTFIalV3MGh2RFluYU9QRVVYeXh2Z0Q5ZGFVRjI1?=
+ =?utf-8?B?eGFjdGwwRUlvSXhjdUVQZWN6TDAxbDJRaXVIbHh2ckg0a3F0b2xaS3ZGcTRY?=
+ =?utf-8?B?Mk9FZ09ySlhoN002dFptcDBNQVo1TGtqSTY0YzZPbnRTbnpDYWZtekZkZ0cv?=
+ =?utf-8?B?d0dWZE40QThXb2xJVW9UaTZrbXg4cVFxaEJCLzRTZWpxTEEvTHNtTHR0ZzBs?=
+ =?utf-8?B?bFZWV1Vnb1F4Y3FyYUhNZkdNM2Nva281UXpsZ1hYcmVXc1ZtZFBxNnBDa1FY?=
+ =?utf-8?B?dHMyaGNhdjNHZmJoSVZ6QTZ5alR0R2Zxa2FSZ28zRXA0bXFtdElLbXByN3Rz?=
+ =?utf-8?B?cFBjend0bWJ3SG8xd1psUG90Y1AxQjd0QzNoT0tSenhES29wR3N6c2lqVXB1?=
+ =?utf-8?B?ZmFmV0YrSnk4VjkrY0VzRzRZcStIL3hFd3VrNXdmZkZQZ0hEbEJFZDNZTmN1?=
+ =?utf-8?B?Y1crUktFRHdHUGFFOWF1NG1XOWJrdHJDcWRBMzM2RWFrSWpFQlEzTXYzTnRh?=
+ =?utf-8?B?d2I5NFRNRUpaQVhzVXdqS0lERUdDVlk0UEMzZVMzWDNiVUd6SSs3YzlQbFlh?=
+ =?utf-8?B?YkRQbzRtclNYajNSVjZDbmZ1eGhXK3hIdjBKbzRORlVxWnNYSk92OEpBZk0r?=
+ =?utf-8?B?WWdDeXRzVWFRbUJ2NVlYT1VKSTZhSVFYWjhJZk5kNlJLdFp6NGdqL09XTHFu?=
+ =?utf-8?B?VlR1V0p4bGNIanpWTHI5d3dGa0VoVmpDa21mc1NucEl5b09MNCtkcmpKYjgw?=
+ =?utf-8?B?Y25xYVYyRXdreG1YSFFXazA0N3o5WGxieXZsRUNYdDQ1SG5CMDBRZUI1Nks4?=
+ =?utf-8?B?WGx3UFVOYWY3WFZaZUV6TjNlYjMwNGo3U0xnaXNKYjE4QlYyVkJ2RFdRNGNN?=
+ =?utf-8?B?RWxXMmlHckFLbkp1TUd6UmVaSUs4dGxPYmQ5eUI5S0wxRDF1dFRFcDFWTGhV?=
+ =?utf-8?B?QzNVeE0wbWZ0SndMNEM0SFQ2RHd3ZHNBYWc3SEpySCtQbkRRTVdnRGFvTk5p?=
+ =?utf-8?B?cENvT0xJWlRWRkQ2ZDQ0QU1oYVNqQXR3WE9oTVErTG5rZWN2NmplZ0NFVDlj?=
+ =?utf-8?B?OTZGQ3BNcEtOMUt2OXl1cWZGVDJIMnBVblY4V1JXRjJ2bkJ6d1RUakxLUmhS?=
+ =?utf-8?B?MjZGL3NqWTNOSUZ0SkhCdmhXc084ckw4b3pXV2tRRnprbncrUGRtWHY3OTFF?=
+ =?utf-8?Q?QXIm5mvFegdtEORzJUWagMHtw?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfc280f3-eeda-4737-4018-08de15fa9410
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 08:18:30.4996
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb00c6e0-9778-4363-0736-08de15df0977
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A345.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6894
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: voG3AQak/GBWT2RTQDeIynO8DW8z+J/rBrq3lZ+KeX+n9e0Dm3DbBfAAE9D40EmSSz96S0PqWtSasRyLOaX4cg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7020
 
-Remote processor will report the crash reason via the resource table
-and notify the host via kick. The host checks this crash reason on
-every kick notification from the remote and report to the core
-framework. Then the rproc core framework will start the recovery
-process.
+This patchset is pick up a previous patchset [1] with rebased on
+next-20251027, and some changes applied.
+ - Add runtime ops to separate cpu ops and lmm ops
+ - added more comments
+ - moved some check imx_sm_rproc_detect_mode() from imx_rproc_sm_prepare().
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+No changes to the dt-binding patch, so R-b/A-b are kept.
+More info could be found in commit message of each patch and below.
+
+[1]https://lore.kernel.org/linux-remoteproc/20250821-imx95-rproc-1-v5-0-e93191dfac51@nxp.com/
+
+i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
+one Cortex-M7 core. The System Control Management Interface(SCMI)
+firmware runs on the M33 core. The i.MX95 SCMI firmware named System
+Manager(SM) includes vendor extension protocols, Logical Machine
+Management(LMM) protocol and CPU protocol and etc.
+
+There are three cases for M7:
+Management(LMM) protocol and CPU protocol and etc.
+
+There are three cases for M7:
+(1) M7 in a separate Logical Machine(LM) that Linux couldn't control it.
+(2) M7 in a separate Logical Machine that Linux could control it using
+    LMM protocol
+(3) M7 runs in same Logical Machine as A55, so Linux could control it
+    using CPU protocol
+
+In patch 3, Use LMM and CPU protocol to manage M7. More info could be
+found in the patch commit log
+
+Current setup relies on pre-Linux software(U-Boot) to do
+M7 TCM ECC initialization. In future, we could add the support in Linux
+to decouple U-Boot and Linux.
+
+Patchset was tested with below boot images when the patchset based on next-20251027:
+imx-boot-variant-rpmsg-imx95-19x19-lpddr5-evk-sd.bin-flash_lpboot_sm_a55 (Use LMM protocol)
+imx-boot-variant-alt-imx95-19x19-lpddr5-evk-sd.bin-flash_alt (Use CPU protocol)
+imx-boot-imx95-19x19-lpddr5-evk-sd.bin-flash_a55 (M7 not under A55 control)
+imx-boot-imx95-19x19-lpddr5-evk-sd.bin-flash_all (M7 not under A55 control)
+
+Also tested i.MX8MP-EVK.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/remoteproc/xlnx_r5_remoteproc.c | 58 ++++++++++++++++++++++++-
- 1 file changed, 57 insertions(+), 1 deletion(-)
+Peng Fan (4):
+      dt-bindings: remoteproc: fsl,imx-rproc: Add support for i.MX95
+      remoteproc: imx_rproc: Add runtime ops copy to support dynamic behavior
+      remoteproc: imx_rproc: Add support for System Manager API
+      remoteproc: imx_rproc: Add support for i.MX95
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 8677b732ad14..9c6b5f751824 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -108,6 +108,10 @@ struct rsc_tbl_data {
- 	const uintptr_t rsc_tbl;
- } __packed;
- 
-+enum fw_vendor_rsc {
-+	FW_RSC_VENDOR_CRASH_REASON = RSC_VENDOR_START,
-+};
-+
- /*
-  * Hardcoded TCM bank values. This will stay in driver to maintain backward
-  * compatibility with device-tree that does not have TCM information.
-@@ -127,9 +131,21 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
- 	{0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
- };
- 
-+/**
-+ * struct xlnx_rproc_crash_report - resource to know crash status and reason
-+ *
-+ * @crash_state: if true, the rproc is notifying crash, time to recover
-+ * @crash_reason: reason of crash
-+ */
-+struct xlnx_rproc_crash_report {
-+	u32 crash_state;
-+	u32 crash_reason;
-+} __packed;
-+
- /**
-  * struct zynqmp_r5_core - remoteproc core's internal data
-  *
-+ * @crash_report: rproc crash state and reason
-  * @rsc_tbl_va: resource table virtual address
-  * @sram: Array of sram memories assigned to this core
-  * @num_sram: number of sram for this core
-@@ -143,6 +159,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-  * @ipi: pointer to mailbox information
-  */
- struct zynqmp_r5_core {
-+	struct xlnx_rproc_crash_report *crash_report;
- 	void __iomem *rsc_tbl_va;
- 	struct zynqmp_sram_bank *sram;
- 	int num_sram;
-@@ -227,10 +244,14 @@ static void handle_event_notified(struct work_struct *work)
- static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
- {
- 	struct zynqmp_ipi_message *ipi_msg, *buf_msg;
-+	struct zynqmp_r5_core *r5_core;
-+	struct rproc *rproc;
- 	struct mbox_info *ipi;
- 	size_t len;
- 
- 	ipi = container_of(cl, struct mbox_info, mbox_cl);
-+	r5_core = ipi->r5_core;
-+	rproc = r5_core->rproc;
- 
- 	/* copy data from ipi buffer to r5_core */
- 	ipi_msg = (struct zynqmp_ipi_message *)msg;
-@@ -244,6 +265,13 @@ static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
- 	buf_msg->len = len;
- 	memcpy(buf_msg->data, ipi_msg->data, len);
- 
-+	/* Check for crash only if rproc crash is expected */
-+	if (rproc->state == RPROC_ATTACHED || rproc->state == RPROC_RUNNING) {
-+		if (r5_core->crash_report->crash_state)
-+			rproc_report_crash(rproc,
-+					   r5_core->crash_report->crash_reason);
-+	}
-+
- 	/* received and processed interrupt ack */
- 	if (mbox_send_message(ipi->rx_chan, NULL) < 0)
- 		dev_err(cl->dev, "ack failed to mbox rx_chan\n");
-@@ -394,9 +422,14 @@ static int zynqmp_r5_rproc_start(struct rproc *rproc)
- 
- 	ret = zynqmp_pm_request_wake(r5_core->pm_domain_id, 1,
- 				     bootmem, ZYNQMP_PM_REQUEST_ACK_NO);
--	if (ret)
-+	if (ret) {
- 		dev_err(r5_core->dev,
- 			"failed to start RPU = 0x%x\n", r5_core->pm_domain_id);
-+		return ret;
-+	}
-+
-+	clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
-+
- 	return ret;
- }
- 
-@@ -874,6 +907,8 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
- 
- static int zynqmp_r5_attach(struct rproc *rproc)
- {
-+	rproc_set_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
-+
- 	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
- 
- 	return 0;
-@@ -896,6 +931,26 @@ static void zynqmp_r5_coredump(struct rproc *rproc)
- 	(void)rproc;
- }
- 
-+static int zynqmp_r5_handle_crash_rsc(struct rproc *rproc, void *rsc,
-+				      int offset, int avail)
-+{
-+	struct zynqmp_r5_core *r5_core = rproc->priv;
-+
-+	r5_core->crash_report =
-+		(struct xlnx_rproc_crash_report *)(r5_core->rsc_tbl_va + offset);
-+
-+	return RSC_HANDLED;
-+}
-+
-+static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
-+				int offset, int avail)
-+{
-+	if (rsc_type == FW_RSC_VENDOR_CRASH_REASON)
-+		return zynqmp_r5_handle_crash_rsc(rproc, rsc, offset, avail);
-+
-+	return RSC_IGNORED;
-+}
-+
- static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.prepare	= zynqmp_r5_rproc_prepare,
- 	.unprepare	= zynqmp_r5_rproc_unprepare,
-@@ -911,6 +966,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.attach		= zynqmp_r5_attach,
- 	.detach		= zynqmp_r5_detach,
- 	.coredump	= zynqmp_r5_coredump,
-+	.handle_rsc	= zynqmp_r5_handle_rsc,
- };
- 
- /**
+ .../bindings/remoteproc/fsl,imx-rproc.yaml         |   1 +
+ drivers/remoteproc/Kconfig                         |   2 +
+ drivers/remoteproc/imx_rproc.c                     | 243 +++++++++++++++++++--
+ drivers/remoteproc/imx_rproc.h                     |   3 +
+ 4 files changed, 235 insertions(+), 14 deletions(-)
+---
+base-commit: f7d2388eeec24966fc4d5cf32d706f0514f29ac5
+change-id: 20251028-imx95-rproc-2025-10-28-a62d77e641e1
+
+Best regards,
 -- 
-2.34.1
+Peng Fan <peng.fan@nxp.com>
 
