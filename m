@@ -1,46 +1,46 @@
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012018.outbound.protection.outlook.com [40.107.209.18])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010023.outbound.protection.outlook.com [52.101.201.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04122877EA;
-	Tue, 28 Oct 2025 05:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CA9298CCF;
+	Tue, 28 Oct 2025 05:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.23
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761627684; cv=fail; b=DlYH0Q9trJKW3AJsUCUcujtCl3cKDJgiuN84eiIGeH86EG/FZJ4xH2Vpw1o6MNnR+L+3jBbMS2ZesxuwPKezACpCsZ2nZrgfiE80j1SC0QpeH4fFGtnnEaXsTLncjYxfjupHZ5XSz0jdFUgG6yR9EkbRkIBEr2uNJa4O8IAqnA4=
+	t=1761627685; cv=fail; b=h9ErCsm9PWqjYklfLm+KpfIb3bZ+awkRq1aqaSPZ5kAYY9QvNJUvxG4ASETNpTn+YOrkjbbPoH72GXrKCfwIx00W6cXQp6JRkCySt4jB7SwXHNSORe1tiBAukjOrSs0NiRbXK7TxseLLGdsuqthrBzmgetap29mJpx78TVf2yBM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761627684; c=relaxed/simple;
-	bh=H/Bf5lVVpb0cCp1D1u85yfU0hn7X2x8+9OpRlX5ScbI=;
+	s=arc-20240116; t=1761627685; c=relaxed/simple;
+	bh=F5WPM+6o/qWaqQaAVk3VlCvXgL0zNxFlRif0+jkAT+c=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ozl2XyTLDCf8pt62W6MkTox5CzMT/G0c0RG1AA09cJymP3AkGik0xvHGzHFTwIXcOqxr5TnDlAimq8SY4ZGBfAveSOCfJP+mdz6qoIBXbISnpigR4TpgbRQ11viGJkp4thdC9VMU8Ii41CSqb1U1HFrmeRzGE4tKn53sf7pqbMY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jftdzfHT; arc=fail smtp.client-ip=40.107.209.18
+	 MIME-Version:Content-Type; b=C/ozl7ng120ZzNfYFBmljldyjh0LUhMw1yW2tImDm1OzM46SrhywzSLOXzRySbcPi/xRmGx/XgDM7o0m5kNW8KRNMjCZGo55h8V6lE6w7Nt/BknUzb/40Hx9jF2XFCLZFgBN2sXSwgVO/t+M5zpdLUUQcFlT/pYGOqV2QGpZzJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aL0Fmeiv; arc=fail smtp.client-ip=52.101.201.23
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jftdzfHT"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aL0Fmeiv"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RKxVhWm2EmtpdJfDgknLA0xmAnmNa7LpYxtNk9TPtca6sVAw6i31tVBxnhQEfP8VAJPLn95zp7VwhAPGeej44dDenEoBAcVEmHPXmA3J1MmLbHzvMcaX+31IlIXq23D6g7DrhbZ/Dfo+F8QIMeUskgBJT2lawmz+/kONFegCOF3XakJHuvzeByXNPWW+ECnOkpY8N7qfXDFyLWYzthvGxxm0ipaB2hd2QIGoXzY9KD/Z4KL+bH2O3K5w0wAxyEOLVLePs5DW8oDXY/Ci9R5HUWuWq/GhDOExvh+iCn+ESoggt0hEfwAb2q43gR0dzi4Eh6m9tFVS9SUPmVn1KcnbnA==
+ b=CXUmISw91iawVCZk9SiHNr7Eof16zF/stiLlL/TEZAVuDvy3+SYEkQ7j1SojJp7y3O0G9YeNhh6omOlm/KcQMERhgGf5CFZ8kiG196zABGpouGiBwvPfqHGQug2Hf5AvKxd/PJxtWeiAtDvH9/L+WjRrnZfio8Pob/Hg4OIdyRjSwCQTKLrlE9/8eeMBxpBJpPdjyRv/JBnciAMyOVliEf5+Q+xi2z1JWQvkz5CNuzbV5+VHnWdojJdkt95KMC1zo1OU3FHjsFIshbzxz2MwlAP1QFs0J3qZtGAG85DolJmIdtSNnkzqN/BiQb2Mgp6alO1XCxW6EQYAAQUURi22Mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wg58zOMJp3ycszdzXmtF9KIFKaFcIuG7Z8KqkRG/qgg=;
- b=C2MtGUw4k6cChilzD5qIYZBF7KM4FTJ+TkZfpB4zJaUKqfuHn078xHvHx4Z/zvELYI6XvLF/DLKpHLen6LlNUCfbYC02bKyA4wxQoYYqrY9feo5ch1x23s/84EVtPGUBOtIPWDvwaQ8JhjU3szOT3P4C/U77yVbcOkJsW6o1TzJM7NgejTtJPtWrT1vfJvNcVbAGnFOcCJL04lLw2Og9HTL5r1z8jDSsMpOYGmL+RtgpCSKYC2mUzr14k9eyOl4lK6QPf97lRV3zfa87ZfMVecb5IoiePdfXXkFeG2L+Tx+56yYubyFQkmKKkFk8k4zEEF1sA83nPTZJsaAIXyrORg==
+ bh=dWx6v7leH/IVtDS//DjyFH+dourmPuIFkVT/asyqVls=;
+ b=yZ3q7entdA7L92Y7Pz1d0+eD2K8r7z/mlhMHpByUwMIV1zP+bmNz3F0YYUNHM0ABMV/ERXUJVfqrfcb7/LnR1D90tNvMBUnYRMBPSHq7bECFIq0/ceg2HmkA9uFlkX2np/jWVv7WV4g1W7fBY2bPPxWJR+ozrIKVwe9gaxi4UN79dJHJeADBN044IQZUr6aspep2ww/hcSH50NLG3QxxsPmgTgfLEXS2XFmC0PtP00fMaudZQYcjpkTZbLg8dSlFqixjdmnRXDH00XmAXouqeZfxfWPE1JCNSEFZDM7vLcVD1eFyBZwPdkV2Ck0yjzEvbjMVq9bt8XuMef8oDucExA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wg58zOMJp3ycszdzXmtF9KIFKaFcIuG7Z8KqkRG/qgg=;
- b=jftdzfHTdmn/p2myzgdNPFvx5xyvYHzaoY10LdKDLXhoPXC/0vhDKuLHDMqyEOjcTgVlKB/hy3WZ/4MUg85XXNYemNS+WoKIdEKiM0FnhIdjqHV5kxOUQf1f5RsYSy74bEUMIS6NlrxOEfaudv12aHqwqTOr4OXJwzUOZrIU7rw=
-Received: from CH3P221CA0028.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:1e7::13)
- by CY3PR12MB9606.namprd12.prod.outlook.com (2603:10b6:930:102::10) with
+ bh=dWx6v7leH/IVtDS//DjyFH+dourmPuIFkVT/asyqVls=;
+ b=aL0Fmeiv4oSKvBgMTXsOWFx+357lmPYnH5YhRhBu+xywC9yV7SIAKeGH9GjJXLrfXM8b3aJ9GmN9fJqEmpGejKa+YYeUlsL+1lwh1KDAPN8vOrliIKgjMXV3YuoFfePPyqx/6LwHjAYwiFKNatA2b2D65e6pbpGzXhCdYeicVIo=
+Received: from CH3P221CA0018.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:1e7::30)
+ by SA3PR12MB7858.namprd12.prod.outlook.com (2603:10b6:806:306::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 05:01:20 +0000
+ 2025 05:01:21 +0000
 Received: from CH1PEPF0000A34B.namprd04.prod.outlook.com
- (2603:10b6:610:1e7:cafe::95) by CH3P221CA0028.outlook.office365.com
- (2603:10b6:610:1e7::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.16 via Frontend Transport; Tue,
- 28 Oct 2025 05:01:20 +0000
+ (2603:10b6:610:1e7:cafe::93) by CH3P221CA0018.outlook.office365.com
+ (2603:10b6:610:1e7::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.15 via Frontend Transport; Tue,
+ 28 Oct 2025 05:01:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -50,7 +50,7 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from satlexmb07.amd.com (165.204.84.17) by
  CH1PEPF0000A34B.mail.protection.outlook.com (10.167.244.10) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Tue, 28 Oct 2025 05:01:20 +0000
+ 15.20.9275.10 via Frontend Transport; Tue, 28 Oct 2025 05:01:21 +0000
 Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 27 Oct
@@ -58,17 +58,17 @@ Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
 Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
  (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 28 Oct
- 2025 00:01:19 -0500
+ 2025 00:01:20 -0500
 Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 27 Oct 2025 22:01:19 -0700
+ Transport; Mon, 27 Oct 2025 22:01:20 -0700
 From: Tanmay Shah <tanmay.shah@amd.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
  Shah <tanmay.shah@amd.com>
-Subject: [PATCH 1/3] remoteproc: xlnx: enable boot recovery
-Date: Mon, 27 Oct 2025 21:57:29 -0700
-Message-ID: <20251028045730.1622685-2-tanmay.shah@amd.com>
+Subject: [PATCH 2/3] remoteproc: core: full attach detach during recovery
+Date: Mon, 27 Oct 2025 21:57:30 -0700
+Message-ID: <20251028045730.1622685-3-tanmay.shah@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20251028045730.1622685-1-tanmay.shah@amd.com>
 References: <20251028045730.1622685-1-tanmay.shah@amd.com>
@@ -84,98 +84,138 @@ Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
  permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A34B:EE_|CY3PR12MB9606:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f5bb202-8ca5-45c3-a0d3-08de15df090b
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A34B:EE_|SA3PR12MB7858:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e3e3d4c-5fb6-40cc-0b24-08de15df0951
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?n1PM7SNcVe6ruNCZGap6h44aWtymRJ6BOT/jp9yJuHxTp8gff6DrGThm2X8q?=
- =?us-ascii?Q?GikwgmuOEQqBoHkEsvYafOhWNlYMAbMZTTwMhu3192dBXQxdO19spjnSY+k2?=
- =?us-ascii?Q?kWquCCikMvyzP7FWkIZhoJ7/7Mwptnwy+O6ICzlsJFQF+A1Qdb6AjKvfWsZ7?=
- =?us-ascii?Q?lyMfjKGatj+gS+bSqpMtD+xUNMNZqEkePT50f7l0+Wi4vou28bRwJArDVRpK?=
- =?us-ascii?Q?BsYwwvgiUPKcHLhhA9/ngfsfC+UiimJmSGQ7A+AHyn+O+6aEc2IPA0Wxivn/?=
- =?us-ascii?Q?CA+oRDFau0/W+mkyuFQkTOn8hynjU0/++q1G3H64jh73CCYUGiw105f0jHn6?=
- =?us-ascii?Q?deC5xkzWqhzeS0NQobwmTFa0hoS6zBlOheXJrx58qxGlOYVl6sRbLcEgySNO?=
- =?us-ascii?Q?2nnayEHH0br8HoTrRBnIQc/IMRovc+kt6g0V9TkhiPlNEUDRy9QzsCXNgGEd?=
- =?us-ascii?Q?i0gN9Bje4OhKsPabZPb+jhgC+ZYFrjDmXxP2j1oSkklZbEAUghhVShksb/5S?=
- =?us-ascii?Q?xgMgUmXk+eFymvK7f8v6Uno/iuZ8nOWOHwQ2+lVVFYxWpBfBwXKqwX28eUAP?=
- =?us-ascii?Q?W7Nm6ZJJywW4MXk8QekN/gvSnK9GqsRLZIXkGQmqfCyuy2HDasHQaZEu5b/U?=
- =?us-ascii?Q?YqRo6uBHW9uBbY2MWs63l23IDsN4ARJCtcdKhrGN2ytsP8cOWmu2Rc43ch8f?=
- =?us-ascii?Q?uXbStXovvOavBpGbZRqbxJNL9N7HPl0ONQWEInnHelKMWg+LkL42sJZaBgOk?=
- =?us-ascii?Q?g5eB1vLmSS5A0IjfqM8hRIpA+7tjSVdP/yC58JJrFot68CRpezpb4JjrJm3g?=
- =?us-ascii?Q?0OiSC7Z8ghJ0IYYWqymrZ4ti528mk2D75WrHyIyuPqtSZJbiQ88bL2iehyis?=
- =?us-ascii?Q?H+Pi0joTuW0PEPh/TnzN+Fb3QwteEg1ZwLbi0s6shInv2205ryeh5fNY+JlX?=
- =?us-ascii?Q?61yIMlaOxYRVvt0TzwsKxi+nC/l550LzAEmUsM/kzHhyl+UB2KWsdO+NCJMj?=
- =?us-ascii?Q?JwYCklQYdKqu8E7q7CKlQDjf+jZNOaU3gagw+Usnycsh9bTY63N5VzlLWvS7?=
- =?us-ascii?Q?GrBsV8ehzevpGi6m7PAyk3iAiBdD0QytloYxmpn5DHu6Ava6vvi4cGkwUMT4?=
- =?us-ascii?Q?9YlNV63yVrHt/MuWFKBoe3fNGRavu585rgf8ndgJJzB7hes+mFhWpo5bZcCE?=
- =?us-ascii?Q?jBwB1U5GB6+EaF9ZQtENeMlkARBv9PzMO7yV1GL3vaHIxBsXabZb6q/rzDHz?=
- =?us-ascii?Q?7GmObBiwZ/Mz9HatGN0+qAZlvx3srpFwXtEo0GWtkOvWkSqyG4ozJEhgZTu5?=
- =?us-ascii?Q?qv/6tpSP4EcdedfhHskhhzVgY9HY5vFmanAO3ztHP34+Xx6JzdNLvKtMbUb0?=
- =?us-ascii?Q?+nBYCzU1XHKaZpRn4pvneRHtEhh/rQrKmDGoDQ5szNHMk2Bp/+dizSr8OsRo?=
- =?us-ascii?Q?rRjnDwq+3gUG+8hPg9uBvIn55PD2Hbo6QODZN24S4Ux0VCqNwfaatlYN78vy?=
- =?us-ascii?Q?SmmcCZWi+oB7XeE8dh+8LmwA6T2njFfBsKgC5mvSNFy2JCTUIMbEhnu0N/Bn?=
- =?us-ascii?Q?32Xf4tkFKqenGRbmcAE=3D?=
+	=?us-ascii?Q?vKFU1L83yXHo4zZwIAwB1GxT73Ti86lxpWdYDJMzz6jy0KJQVKalnuOTTYJY?=
+ =?us-ascii?Q?qTCghsu3maWa9paMAGU2tG5aPE/oEAfO1POaCqFmIMHc1ArZRPPZsgRppmdM?=
+ =?us-ascii?Q?IkJWEUjNjOOs2uejGcuUSxO/gHA/dex7xlSmDk2kZatdmuDg7utJCL7MZljq?=
+ =?us-ascii?Q?W6lGQWayY8LEoRUvG0T6e7AiLOwojJl4ketREBZuWSe1YE84+X4Ug8Xm2NFK?=
+ =?us-ascii?Q?aX/zWoV8RVI3ChrzfCkl2J1Z73q+z9PvutiE8venTiWZRzWKzvLQlrKAgRbm?=
+ =?us-ascii?Q?QrtxoJehcHDLyMhI3RcXdzzl3Xvlcw5gibWjkJRGK8kyTZKbmkW80OpADG17?=
+ =?us-ascii?Q?g8nE4w5bvZR9oi+1u9l2+9CxglvaTDuiRcZg9/LG9T6D57kGemT4VxrKIf+r?=
+ =?us-ascii?Q?Y2pzWgt5qENzvLUrP0jnz6pFcf2ymjEfustgJWUdkbSBebDFHPzWfIfZ4Zq/?=
+ =?us-ascii?Q?XwyvZwpGFKq6qDXvx2ple86b7vPiY4bVCuGhCKhSEHN5rSwhVK4JoerQHUUU?=
+ =?us-ascii?Q?N5ShwpsRFxIZEX6GdAaBO3BjFYbfymShJn3NC77nR72nITfZtPXdqPMtvJuP?=
+ =?us-ascii?Q?TzihXq3wBgHUK47nZcuxRiSIapbdqmF5IvXJvwX3lp0icOlJBAccwg7bYIPQ?=
+ =?us-ascii?Q?s/i6+CfkJoJlnhJXLinCE0d8L4vUumlRppMPHqKFMixX9/gbA5D0T6WNmYHW?=
+ =?us-ascii?Q?gz6y7OI+RMhywBv2Mk5GcHMb0w9pmyvdViudpZ8FQUJbpnmV6tugQEfVTud3?=
+ =?us-ascii?Q?6hJLOzYX97U/Gvu1twySWiYM/ZltoK2QQkroTNnbZ779mZBliUF1KsI5dIBB?=
+ =?us-ascii?Q?fxrxi17DnaFL0oIm6MNYZ8th9ZcQAmxgwmAuqm4ggR0FnQ8BmjyHKBu/JTRI?=
+ =?us-ascii?Q?cmAmfSfxrae/u4IKccvVyGyy36z+IbgDSRlkVJNk7gztjrV7A6fq28w4clYQ?=
+ =?us-ascii?Q?l+cM6O5aQ3sNcFoWL0bUNnUzj+wCrrktDCtSyufwhEo31Rn2cXXGrZVYtQjZ?=
+ =?us-ascii?Q?lNSm3SL2FzPm/CJhlr6gRfzNBTYVQUiglZ+mk4cNYRLXWjHj/hzsrJHch4tC?=
+ =?us-ascii?Q?LkfRIuSc/UNAm4ZGOceaDP1gzSrG0SmyPHpVa1o0JvPRDFUiyjhRwLSfNVc/?=
+ =?us-ascii?Q?Au2/7XcAc6ktjoCPMDWfTSTVbDyoLyHUSCpXuZLOTgtJEAhgK+Yh+KfwzSJG?=
+ =?us-ascii?Q?GTGeM6MDWCvsLUciRMup67Jq9vbOToYF6YZQbPx+Iu81Mmhu2+qjPZZTqCEh?=
+ =?us-ascii?Q?P05Ad20PXy82OZbRv9RWGn728mVoo4Fprgq4AdFHr9gXC96xu6WBVMCmjVTK?=
+ =?us-ascii?Q?e7mKeCK7vhqQcGa1T4MYyrdw2HH/wkfNLzdjGqt3oRKXGEv7ORTwi/2pNBe3?=
+ =?us-ascii?Q?BC9jR5WsaZVEfa/Nn+UwvJN17hteJwFwTrRziWyUVvBpRZbh+J8NHfagkMm3?=
+ =?us-ascii?Q?zbHLy+3E5idkSU25r4PziogK8wxn+bvdpO5BKLpnCyGS7DxPc7b4N/Q4Jh36?=
+ =?us-ascii?Q?m149dogNwIpm4mUjkKXZxqT+v5Kim38OoadKs7qGXXaSLtxG91W5EtmjTUOR?=
+ =?us-ascii?Q?zwlF0LTKROM6SYvtSaU=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 05:01:20.6253
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 05:01:21.0837
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f5bb202-8ca5-45c3-a0d3-08de15df090b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e3e3d4c-5fb6-40cc-0b24-08de15df0951
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	CH1PEPF0000A34B.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9606
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7858
 
-This is the default method to recover the remote processor from crash.
-During this recovery the Linux will stop the remote, load the same
-firmware again and start the remote processor. As of now, coredump
-callback doest not contain any useful implementation, but this can be
-changed as required
+Current attach on recovery mechanism loads the clean resource table
+during recovery, but doesn't re-allocate the resources. RPMsg
+communication will fail after recovery due to this. Fix this
+incorrect behavior by doing the full detach and attach of remote
+processor during the recovery. This will load the clean resource table
+and re-allocate all the resources, which will set up correct vring
+information in the resource table.
 
 Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 ---
- drivers/remoteproc/xlnx_r5_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 0b7b173d0d26..8677b732ad14 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -891,6 +891,11 @@ static int zynqmp_r5_detach(struct rproc *rproc)
- 	return 0;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index aada2780b343..f5b078fe056a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1777,11 +1777,11 @@ static int rproc_attach_recovery(struct rproc *rproc)
+ {
+ 	int ret;
+ 
+-	ret = __rproc_detach(rproc);
++	ret = rproc_detach(rproc);
+ 	if (ret)
+ 		return ret;
+ 
+-	return __rproc_attach(rproc);
++	return rproc_attach(rproc);
  }
  
-+static void zynqmp_r5_coredump(struct rproc *rproc)
-+{
-+	(void)rproc;
-+}
+ static int rproc_boot_recovery(struct rproc *rproc)
+@@ -1829,6 +1829,9 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	struct device *dev = &rproc->dev;
+ 	int ret;
+ 
++	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
++		return rproc_attach_recovery(rproc);
 +
- static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.prepare	= zynqmp_r5_rproc_prepare,
- 	.unprepare	= zynqmp_r5_rproc_unprepare,
-@@ -905,6 +910,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
- 	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
- 	.attach		= zynqmp_r5_attach,
- 	.detach		= zynqmp_r5_detach,
-+	.coredump	= zynqmp_r5_coredump,
- };
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+ 	if (ret)
+ 		return ret;
+@@ -1839,10 +1842,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
  
- /**
-@@ -938,7 +944,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+ 	dev_err(dev, "recovering %s\n", rproc->name);
  
- 	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+-	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
+-		ret = rproc_attach_recovery(rproc);
+-	else
+-		ret = rproc_boot_recovery(rproc);
++	ret = rproc_boot_recovery(rproc);
  
--	r5_rproc->recovery_disabled = true;
-+	r5_rproc->recovery_disabled = false;
- 	r5_rproc->has_iommu = false;
- 	r5_rproc->auto_boot = false;
- 	r5_core = r5_rproc->priv;
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
+@@ -1860,6 +1860,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
+ {
+ 	struct rproc *rproc = container_of(work, struct rproc, crash_handler);
+ 	struct device *dev = &rproc->dev;
++	int ret;
+ 
+ 	dev_dbg(dev, "enter %s\n", __func__);
+ 
+@@ -1883,8 +1884,11 @@ static void rproc_crash_handler_work(struct work_struct *work)
+ 
+ 	mutex_unlock(&rproc->lock);
+ 
+-	if (!rproc->recovery_disabled)
+-		rproc_trigger_recovery(rproc);
++	if (!rproc->recovery_disabled) {
++		ret = rproc_trigger_recovery(rproc);
++		if (ret)
++			dev_warn(dev, "rproc recovery failed, err %d\n", ret);
++	}
+ 
+ out:
+ 	pm_relax(rproc->dev.parent);
+@@ -2057,7 +2061,7 @@ int rproc_detach(struct rproc *rproc)
+ 		return ret;
+ 	}
+ 
+-	if (rproc->state != RPROC_ATTACHED) {
++	if (rproc->state != RPROC_ATTACHED && rproc->state != RPROC_CRASHED) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 -- 
 2.34.1
 
