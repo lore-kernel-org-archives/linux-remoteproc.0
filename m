@@ -1,229 +1,283 @@
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010005.outbound.protection.outlook.com [52.101.69.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66F828A701;
-	Tue, 28 Oct 2025 16:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668538; cv=fail; b=qS8D/tAJQDbqoL+lSy3Rys3o736DvdSuJNZoUKvd0lrhzU+aDMDJSW6Py5eiriJ6OlRxleIwyXi4ITfXIYBQljdq08UOMtp8SzGpvMrM1tO0amxgSRTX7hyEPEiICCuVnzyYEMC0AmW1wGKbc1SxEpIVA6WeC55XHNBBXd/QEyE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668538; c=relaxed/simple;
-	bh=7qSKTEvQbzEe6Cyq2s3RLGyX7Z3RvMsc8ZQcNPk3vU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=h1ax+QvYiogxoYeyf+QYNxZiRodJBKCzGstFCxGoQEFK63dDxkpTHChPF2CozXj0VDUCZiSonUkEUp0vGxbspKmWK0l2jh6k5XYYbRpigY62vOQ//9vVmRlNQLZmOmkujQoGPxYB1pNhW5b6udBPFR8eEFOlCXg1m2RHJxlvQTE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Haci8Xnj; arc=fail smtp.client-ip=52.101.69.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6710B3093BF
+	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Oct 2025 17:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761670868; cv=none; b=kgwTOEFI46NJ/3SY/8qexbrRPHfI+W3SzYBY1RXiyDy4VlzQPPkpt9nc5IvVvEfgnEg6EIN4in3GPFs6N4JCbbm+f5fSiXGSFtLgPafDkkAp6WZ9S0YMO0zUpDQ5Kwe6jzCQ3QKQT2OK0deb+bC3SLLs48TO3NdNgDDRrlGhnIk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761670868; c=relaxed/simple;
+	bh=9/XMTbvlXywS/DcenRxLoC7j/4TQ9N4aQCMUUzCSo70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dw6XUPExtalnb3bEasS/Bi5wowPlupwWC7/DqaRYyRFvMxidGFQ5ZIEfTDf3ZCO7yZoNIl5X+QOOMOIXh3dfwY74n96pgWnKe28lhlNpL6nRTaDpR4Wihf1ph4IEiCyk64ni5ius7n9c+2jOMTiUC9+x+wdaXowtBMLS45fsRJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ux8mggcP; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Haci8Xnj"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hq9AoLGU3F88Nzp0RaOwmyJeaZjz3hjJGSUO7gpa/jNtFvULf3ensBSPOzSJmyQjo/6mwkJ3U+em3sChKJFLWg5qHS1nxk0m5dN/YnUKN+9tCT8hlgNoueVFjLhNC3ZgHFZRkafq8NV2x0EVA+/DHgYAkXQZXGlifSZaITTs+whJHnjQUi84PKh5jRHmIoxOpeGbwAMTeqdsiv8GDO/6runhRB7OKaAlhlY8r63ht8gy8UhEBpPG0aPn9iaOI6s8PeBUi70TvKHZz/0TV8JFcJOBhl5LnMbsnppgpgAmFjWXqvGP4z8SzJHTZmnAynL6H3D1LfS8r052YNJQvSLiJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VfCzmifD2gI6DqXBuuvrTPAoM0UdjpNExZiVyd+TV3E=;
- b=pI5FnD+vl38wxhH1b5GUGeYIXEKzJxUR51r0ZYJ1sbd2sOovqwnRB8DOFeH+lwanmqCjriCuBnboz1yKPiSsdWTL5DptHnTgen1+ITxKbD9bdgbtfzZVVOP2xG7DfuHSynOAtUFwe4kah2lIWFkvvRcBEsS5ySR++NKIerwXaPVgFXNvsZHLlDrkubCjjz3HWxesgslkV9nkCX89Ahfh7qK9BVxIyKJI5hTXDSX42ab6izvjgDB+22Xbw2DA9QfPZrgsiN1MkM0c9b3lVvBUlNlD82jMp+NUqVFiSSym0ylGcBFF8oq/EU3vmHqr2a3X+j/SUadWC1DyCPOSCCyHpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VfCzmifD2gI6DqXBuuvrTPAoM0UdjpNExZiVyd+TV3E=;
- b=Haci8XnjNrd3NMXzX+JjC0qU9hyUrHKHIW6y/gwUt4LKrBX82wlFFQXWOOMkF4pkrzuYYDwGdODpoq2DMChN94fNEK+9u/8j8Y+j8ne8K+4ftophYcdVfG4S0fKV4qtP5Dv1u4Y4Rgmiuyd7KOXwezAxf8thrXbG0/4gzk6wCRAqlzWzHp3dmCHTgGUppqphumbAtDBla2fMxCCqPVP4w2CE4VlmYhqb6KMpJ4AaEFc6+HcOZ60y2e/6kOk1knYzgj90ZmenufzwhICyNX20HGt91MYoq660bsD0GWYK1iT+CHTyrji4yfWm/b7ZzM8lBHDoeXpdPfX9bKoYa7cdfA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by AM0PR04MB7076.eurprd04.prod.outlook.com (2603:10a6:208:19a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
- 2025 16:22:11 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
- 16:22:11 +0000
-Date: Tue, 28 Oct 2025 12:22:02 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] remoteproc: imx_rproc: Add support for i.MX95
-Message-ID: <aQDtqounSfCqPGek@lizhi-Precision-Tower-5810>
-References: <20251028-imx95-rproc-2025-10-28-v1-0-ce9e7db9edcb@nxp.com>
- <20251028-imx95-rproc-2025-10-28-v1-4-ce9e7db9edcb@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028-imx95-rproc-2025-10-28-v1-4-ce9e7db9edcb@nxp.com>
-X-ClientProxiedBy: BYAPR05CA0106.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::47) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ux8mggcP"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7833765433cso7848765b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Oct 2025 10:01:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761670864; x=1762275664; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xh+KegoBGdPPiYbRlSIsN4lAtHSpa38Na2kFLLm0qs0=;
+        b=ux8mggcPfU8IPuLjVvsnkbHXCtTcNRX/uf0DefNCwpJhjUzZFnnhby0pY4rirrLkgf
+         qNZj0trgDhcWaKvRRNvaDmggylmHIdFi8CNx3JNLU+OxKzzyPbuvBMRHjFIBac3ekKn8
+         K4nvj58KWYeteqbvt5hM1tCaGJ9yPRWl6kQQ8I1s9P5pL5y8TLTo/K1bJAWLwWWafPnW
+         kq0YxjrvOtTWsLfa9LnhmG2jH/a3En0NvW2/6PTbeQuKwMxx20nbFmDKPStSznHRU9fx
+         oXqS+nxASs9+tjzHeRuhLeUpWoFIglrOWGSSUBKNbMROdUazIF5T2sUz8lwJNV2bmaou
+         pYow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761670864; x=1762275664;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xh+KegoBGdPPiYbRlSIsN4lAtHSpa38Na2kFLLm0qs0=;
+        b=bIIjMtPxqLbU2uFK9g1ogc8wM0pp5/ooO7Ihd3fxyeBEAycfRXc9hCgieCbCYnXwCj
+         sTEjeAPRLToL7wP82vvwEQkXHjkQGx0xWczb94sh7fCVc6xaGORvDrWOP+MyUF2DKP5V
+         GdpILPKR7XQQvk+HpOVsV3th1tj46F9Mzta2bM70BDLy4SThDC/+WzusKanzGb1JlzuP
+         /spVe5IuZpvN6pdAprKA4wWS6vDfCmWSvwCCwWP2kpbgDQNDUVmdX4a0Ms5UFf6hNuTv
+         avQCxQeCX81usgtSbt87om9u9ytaoXgGGnp1XGP1LVGC+Co9dSQyrYgINOAoOVXsb68i
+         i9lA==
+X-Gm-Message-State: AOJu0YxHttzgFSBFwNjD6Tk2H+C8C+Yj5MIj6ruBwArgodU8UL25Tdb1
+	tdwn/fQP0xbOA0BJXt6gg28sDufsSvE87ITKGJJPhW8WgUf9FDPYesZg/yJGrDHosA0+9h7nGOh
+	9dTEapA8=
+X-Gm-Gg: ASbGncs/hOqd120e0fBzOTBvkuTOvd9pPGhqj3ivc1itcAeDRVTByLeyb+9NbuPfJa4
+	IwE/l1gQ3vF90K/a/BDx7ss8V2sA5YrC+zXFqk469SUDi7BHE3BnC4F03gL15Zm1kIR5J1RezhM
+	+uMyL0+88MxILSUxw/T3me4GkN/iwtqGHEzjdWdvIF15ULlvoaEJUy1Z9QX7SHSPl8ExMbp5Jc0
+	bBLF9646OnLojgNrB1GXGtfcyVXDDMF+CR6Zv0XBGv85AnaCHGKjIsFrR5NiiUpz2DIg99P9od/
+	NHTzyaUPuuAljPO3DR5ghoITmREGkUmASDeg/JDB+z9nZb93QHTcuEiprxWg+ZlNl4IaIIF2tDX
+	DPww9dzvbIjSsny4W8r1+EqBeZFJ822CIa+Wxuon4Du3U83DbsZxgkYDaQnR9c8MygMraIPPdpL
+	JNlg==
+X-Google-Smtp-Source: AGHT+IFxPMXOAGRAzDOF0oYanNqXaB5DEBm0FGndhpCJjlPMrHfTBru7rdh6Nd1V3RyjWAFRvENfYA==
+X-Received: by 2002:a05:6a00:a08:b0:7a2:7610:364d with SMTP id d2e1a72fcca58-7a441c3268fmr5565074b3a.15.1761670863234;
+        Tue, 28 Oct 2025 10:01:03 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:1c4b:7a89:a51:c6f7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414087cdbsm12299203b3a.64.2025.10.28.10.01.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 10:01:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:00:59 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: patrick.oppenlander@gmail.com
+Cc: linux-remoteproc@vger.kernel.org, andersson@kernel.org
+Subject: Re: [PATCH] rpmsg: virtio: EPOLLOUT support
+Message-ID: <aQD2y5fgodWM8kOl@p14s>
+References: <20251022032817.320378-1-patrick.oppenlander@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM0PR04MB7076:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3adb4082-0624-4f0e-de88-08de163e25ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TOr6purMs9+fZJVGn0gc4wW0HXdTkLp1ZCpQshpoQ+WDgL2CDf0aJN9DHxp1?=
- =?us-ascii?Q?vhCCLR6B/VcJi5JfGbZcQcb45eJUKkZsFuuz+padqpy8vB1zy2UFNdKRf/tg?=
- =?us-ascii?Q?eUIP62LGo6hxAkdOkqaZBg8hJAtz2W2ybeIRv1Dp0vOJ64E4f37kyfUuM/7T?=
- =?us-ascii?Q?fqVs1I2EfAKE8+3RB5z/qiwphbKPcxI7ZJEJQA9oeCuZbKkaA5ye+I+njYp7?=
- =?us-ascii?Q?qaIMEH2OAL01zGZuy91Etsd9nTdQFjibSUsifsjfqJGIGLuaRmYqUkb4+9Kg?=
- =?us-ascii?Q?D9G45+4E+A1ap7x0ML2Gh5jWuD8F+xK+dG9Ed6Niwf8knPsWBCnmDxjdmCIj?=
- =?us-ascii?Q?x7Fs5zkzabjcMUEt6ln/F5Eml96VLxq3lgGf9SMwB5RV9ctNTqgDwXJO5rev?=
- =?us-ascii?Q?FBTGe6gooOTNLVIR3I5IOGTrVVo0Rza2xoPP0eh/1BvEr5z5nfqqDOC7qJOb?=
- =?us-ascii?Q?czGf0gTHzxqGmFE2RbvoavGI0zjPsXsiYsJtnOV3271aS0gvHZYS9HS/8KUe?=
- =?us-ascii?Q?6LCkAcZ2VqfHOWEyPr+Gr6lLk8L1uByhankqyhmbdUf64a7qLTF0iPMIJX4d?=
- =?us-ascii?Q?HX2CYEQvFjN3K0LnhV0GFiZQP206y+tSQv43+L/XuKXQrQpoDIozMKDC6CVF?=
- =?us-ascii?Q?o7BGvJmdO2SjGU1aoF+6gJ6vec8cIGwMrzzJj8AlWtqPF5Yk4jXAlHbYBQk5?=
- =?us-ascii?Q?8zHib7wPCElpRN0y+j/A9GKOuyNCDquXQSRU0T0/pbc7RDEitUbJ0PmASPfx?=
- =?us-ascii?Q?cdUyhd1/0LZNX01VvxRnoNFKeZk7G34DzAxaK9rsDPzmuC/KRDHAu/Ogg/zk?=
- =?us-ascii?Q?jf8F9WkVIMPz+z9O18UzPX9Cf16HZBJzlbIcsQOM1SnyV14FsS9it+OZSxRm?=
- =?us-ascii?Q?EklmONWOXgU6f4vcNQkkEv/WhL6jdtQwj11ktRTce7+utrk6r2wEibAmHK8w?=
- =?us-ascii?Q?1nTtME4/rZVcgQLO0y2fh1IUTV5CNmynlIlFTH1DIZyLSFxBc7axwEwX4wnR?=
- =?us-ascii?Q?Ry23AUBlu7d6jfIZuUnHDR13BN5yygblrITL2cHh+3ne4SDmJ5F2iBW7p9vM?=
- =?us-ascii?Q?CKcV50b9hBAGoNZV0GjAPNjcxlifaji8w/9pPwSe98aTOL8p29IdrnMD8pgm?=
- =?us-ascii?Q?RHzaqHqk1RwE93MtvJOMz9/vymSfgz5WrHL1je/43CGAiKsRix1zPsgEzs4I?=
- =?us-ascii?Q?z2fWe45rff/z0yd82gM1mebqPO6mTIUrswZaO10jF32npgg7ZCrrauWJ4g15?=
- =?us-ascii?Q?pcxdy9RTCY9/EDIe0hG9ik4NX7UI3kablEJzsSD/ECG3ZlRyrJw1uo6HyeZr?=
- =?us-ascii?Q?Mtfk9LZL6XjhQztTQyInq/d0QtON8wyXkmcjYVvAYdHBuV13YdwsMa7+GwSP?=
- =?us-ascii?Q?CCGB4VQZguJmNB3oXB/OYqme5WjGIo5b3ht2rIJbV9u/T5ohVcCqRPhr1Fzh?=
- =?us-ascii?Q?cm2OCFRK8oRA0btNKTp6CY0CXcxmp84+eDk2eOOGjW5zF8B0uHR4op0AjB4/?=
- =?us-ascii?Q?9OaZUhDmbdsi/L1tV64vFkBOjw6eUvwliueP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RFiWeElQCYNqWyNPRtfQbCPULMtQMcmyY9NomGIErIDe49G17tlqpKo9AQXc?=
- =?us-ascii?Q?KYwCRLNk0T/8qVSAg4YBykgJuZ7/8v/CndPg1JSN0NVq68fIPWP+cRqjTsdE?=
- =?us-ascii?Q?MDdGTFxsh6J0jWLvzIAmQe7NW+d8dzz/Z8zkXHn27hz6aoZLOGq7/Ux+f6kU?=
- =?us-ascii?Q?hnkj+cuTEjWvKOMzzU/MBnjHxwTPUfalLbOyiJTtU1wi4Y0riVA1MlAtE2tB?=
- =?us-ascii?Q?p8utV8bbx4a8OLl3G5iRZmVnZpM/A7Kw7267o1kmLzL/DCzxfmYRHMh8aXhe?=
- =?us-ascii?Q?besWQW9g5NSUMv5rcIgghIlbTDNW2hV4SA693Qd/W8Li2NqTr5YIKHxMxHs7?=
- =?us-ascii?Q?6sNnoQHs9og+k6QLRwkLGroT2DUmw/kVKv71dbW4O2hg2atltKJszTh4XreF?=
- =?us-ascii?Q?EZFgQA7HOEDCnpdkAODO2ig/qlTAVTB4dv4+4xat89EbBLAo87AL3vWhDnOm?=
- =?us-ascii?Q?XW8rBVuYzI//+J0QpBBj5NpKMNRCg1jW3dpZHNgtC/x8RN30RnZwwc23Q81T?=
- =?us-ascii?Q?okxSWv/odjmfNPp7fw25nbUJ5W3ydWYIAPkeDLSrfMJ4lwLkx4MvWVtEND3H?=
- =?us-ascii?Q?9KoAvIEwNvVLDuS09P8pT3UXJTUm6leVZ64f27PYbj770piMhh+gNZKcsCLK?=
- =?us-ascii?Q?xaP/+U39NTyFC+qh+Ys0zk5XdH29Rt00JnTeK0GbQ/rIfZik5BuOwHDdmf/q?=
- =?us-ascii?Q?TvLmzx+8DbvSY1qqVY5nG5Ct9RlqgLgiYqDbyfwtAtmKWWHqeOXBfCBhiMFf?=
- =?us-ascii?Q?6/6dW+5QOMpHZyBTIiG7KwNSFfdjHb1gQZQXQr6aV2+jjAc4vdVUvvtLb8j5?=
- =?us-ascii?Q?fJEqF+VyKHyxhrwb7Y3GkI+Qv9MnBKo701npWVwj/PocYa0wxyqRjdUsCs+E?=
- =?us-ascii?Q?/oITkbIoIXTCETVxofdR5LxebmkPSzRoegCJJ+OuhQsGV4ZxVG1A4jevAZLa?=
- =?us-ascii?Q?2+R+p9vjg77YGu8f1ktu9ZoxO8ic0ZN/FWWdnmr+WJIj/y/VungZ91lCsfG4?=
- =?us-ascii?Q?DU1317V9IBG29g2VgIFE83caVi+3ewooHalkbdlgmZ1FtqGmdOVNV/KZf1Ln?=
- =?us-ascii?Q?2mqYc79PBFsDGFXZp96/tgZRWjkMx1nSOYnA6cgXbEe4jYlyy6cdVZXC0699?=
- =?us-ascii?Q?4N1A/yy66HDSFavQD9DbJ35bBpuyI9CczIoFMkjBVFEygUp7I4fWejlySXdj?=
- =?us-ascii?Q?NdUaDIXEQFhKOGp9J6tL3eyVdFR+orn10EYyMECoO5qfXmuvP61lETSjisrB?=
- =?us-ascii?Q?1NnS/kVHH/gPnGNQnv/4LC67BGqXc0VVmyHVFn9RWqI+Te8hQaYEgk/gzsq/?=
- =?us-ascii?Q?ifiu03s0ZUV57TlnrEElJ7xQn4iKSGZNA0/AakbaEn3G6CUsYHETaGlzm4kE?=
- =?us-ascii?Q?TGoftP4YRJQvTbTpkuCUEL7MkFWFankbTfVlMRUNgQy7VAiMLN7YV5MX7FVW?=
- =?us-ascii?Q?kmPlej1UlscunaGbrm1HQEcaP9e3JmtYYlAGiuA5xpiGYUhR7yDedD40zJRz?=
- =?us-ascii?Q?GeD3iIXJJjuqCIL4eAMSKmp4eP07PYPPfp8J4NqUVuQVYUcL4cesMH/djPw/?=
- =?us-ascii?Q?efI3V0R2MFTRoTWgcvgJu5Gsk2xOve6j1P6rARjW?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3adb4082-0624-4f0e-de88-08de163e25ef
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 16:22:11.4713
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bvU7/oOFisqgpWJb8AHY2WyU0c0xbc3OlbzXImGR9x0lmmUXL0ftskWOsQwDzj/74n43yMyQU0u/2PfW15HYaA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7076
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022032817.320378-1-patrick.oppenlander@gmail.com>
 
-On Tue, Oct 28, 2025 at 04:18:04PM +0800, Peng Fan wrote:
-> Add imx_rproc_cfg_imx95_m7 and address(TCM and DDR) mapping.
-> Add i.MX95 of_device_id entry.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Hi Patrick,
+
+I started reviewing this patch.  Despite the short amount of code, it will take
+me a few days to understand the ramifications of your proposal.
+
+Thanks,
+Mathieu
+
+On Wed, Oct 22, 2025 at 02:28:17PM +1100, patrick.oppenlander@gmail.com wrote:
+> From: Patrick Oppenlander <patrick.oppenlander@gmail.com>
+> 
+> Previously, polling an rpmsg endpoint (e.g. /dev/ttyRPMSGx) would
+> generate EPOLLIN events but no EPOLLOUT events.
+> 
+> Unfortunately, poll support means that we can no longer disable
+> tx-complete interrupts as there is no way to know whether a poller is
+> waiting in sendq, so we always need notifications.
+> 
+> Signed-off-by: Patrick Oppenlander <patrick.oppenlander@gmail.com>
 > ---
->  drivers/remoteproc/imx_rproc.c | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 8ecf95c81b598bbe38b721808878e5427339a08e..45eeb5d61d43c9ce72e840611e93af067a4296e7 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -74,6 +74,10 @@
->
->  #define IMX_SC_IRQ_GROUP_REBOOTED	5
->
-> +/* Must align with System Manager Firmware */
-> +#define IMX95_M7_CPUID			1
-> +#define IMX95_M7_LMID			1
-> +
-
-Only use once, you can put 1 to imx_rproc_cfg_imx95_m7
-
-     /* Must align with System Manager Firmware */
-     .cpuid          = 1,
-     .lmid           = 1,
-
-Frank
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 101 ++++++++++---------------------
+>  1 file changed, 32 insertions(+), 69 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 484890b4a6a74..79d983055b4d6 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -41,13 +41,12 @@
+>   * @buf_size:   size of one rx or tx buffer
+>   * @last_sbuf:	index of last tx buffer used
+>   * @bufs_dma:	dma base addr of the buffers
+> - * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
+> + * @tx_lock:	protects svq and sbufs, to allow concurrent senders.
+>   *		sending a message might require waking up a dozing remote
+>   *		processor, which involves sleeping, hence the mutex.
+>   * @endpoints:	idr of local endpoints, allows fast retrieval
+>   * @endpoints_lock: lock of the endpoints set
+>   * @sendq:	wait queue of sending contexts waiting for a tx buffers
+> - * @sleepers:	number of senders that are waiting for a tx buffer
+>   *
+>   * This structure stores the rpmsg state of a given virtio remote processor
+>   * device (there might be several virtio proc devices for each physical
+> @@ -65,7 +64,6 @@ struct virtproc_info {
+>  	struct idr endpoints;
+>  	struct mutex endpoints_lock;
+>  	wait_queue_head_t sendq;
+> -	atomic_t sleepers;
+>  };
+>  
+>  /* The feature bitmap for virtio rpmsg */
+> @@ -144,6 +142,8 @@ static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+>  static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+>  static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>  				  int len, u32 dst);
+> +static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+> +				  poll_table *wait);
+>  static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+>  static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
+>  						   struct rpmsg_channel_info *chinfo);
+> @@ -154,6 +154,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>  	.sendto = virtio_rpmsg_sendto,
+>  	.trysend = virtio_rpmsg_trysend,
+>  	.trysendto = virtio_rpmsg_trysendto,
+> +	.poll = virtio_rpmsg_poll,
+>  	.get_mtu = virtio_rpmsg_get_mtu,
+>  };
+>  
+> @@ -436,7 +437,6 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  	unsigned int len;
+>  	void *ret;
+>  
+> -	/* support multiple concurrent senders */
+>  	mutex_lock(&vrp->tx_lock);
+>  
+>  	/*
+> @@ -454,62 +454,6 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  	return ret;
+>  }
+>  
+> -/**
+> - * rpmsg_upref_sleepers() - enable "tx-complete" interrupts, if needed
+> - * @vrp: virtual remote processor state
+> - *
+> - * This function is called before a sender is blocked, waiting for
+> - * a tx buffer to become available.
+> - *
+> - * If we already have blocking senders, this function merely increases
+> - * the "sleepers" reference count, and exits.
+> - *
+> - * Otherwise, if this is the first sender to block, we also enable
+> - * virtio's tx callbacks, so we'd be immediately notified when a tx
+> - * buffer is consumed (we rely on virtio's tx callback in order
+> - * to wake up sleeping senders as soon as a tx buffer is used by the
+> - * remote processor).
+> - */
+> -static void rpmsg_upref_sleepers(struct virtproc_info *vrp)
+> -{
+> -	/* support multiple concurrent senders */
+> -	mutex_lock(&vrp->tx_lock);
+> -
+> -	/* are we the first sleeping context waiting for tx buffers ? */
+> -	if (atomic_inc_return(&vrp->sleepers) == 1)
+> -		/* enable "tx-complete" interrupts before dozing off */
+> -		virtqueue_enable_cb(vrp->svq);
+> -
+> -	mutex_unlock(&vrp->tx_lock);
+> -}
+> -
+> -/**
+> - * rpmsg_downref_sleepers() - disable "tx-complete" interrupts, if needed
+> - * @vrp: virtual remote processor state
+> - *
+> - * This function is called after a sender, that waited for a tx buffer
+> - * to become available, is unblocked.
+> - *
+> - * If we still have blocking senders, this function merely decreases
+> - * the "sleepers" reference count, and exits.
+> - *
+> - * Otherwise, if there are no more blocking senders, we also disable
+> - * virtio's tx callbacks, to avoid the overhead incurred with handling
+> - * those (now redundant) interrupts.
+> - */
+> -static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
+> -{
+> -	/* support multiple concurrent senders */
+> -	mutex_lock(&vrp->tx_lock);
+> -
+> -	/* are we the last sleeping context waiting for tx buffers ? */
+> -	if (atomic_dec_and_test(&vrp->sleepers))
+> -		/* disable "tx-complete" interrupts */
+> -		virtqueue_disable_cb(vrp->svq);
+> -
+> -	mutex_unlock(&vrp->tx_lock);
+> -}
+> -
 >  /**
->   * struct imx_rproc_mem - slim internal memory structure
->   * @cpu_addr: MPU virtual address of the memory region
-> @@ -131,6 +135,18 @@ struct imx_rproc {
->  	u32				flags;
->  };
->
-> +static const struct imx_rproc_att imx_rproc_att_imx95_m7[] = {
-> +	/* dev addr , sys addr  , size	    , flags */
-> +	/* TCM CODE NON-SECURE */
-> +	{ 0x00000000, 0x203C0000, 0x00040000, ATT_OWN | ATT_IOMEM },
+>   * rpmsg_send_offchannel_raw() - send a message across to the remote processor
+>   * @rpdev: the rpmsg channel
+> @@ -582,9 +526,6 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  
+>  	/* no free buffer ? wait for one (but bail after 15 seconds) */
+>  	while (!msg) {
+> -		/* enable "tx-complete" interrupts, if not already enabled */
+> -		rpmsg_upref_sleepers(vrp);
+> -
+>  		/*
+>  		 * sleep until a free buffer is available or 15 secs elapse.
+>  		 * the timeout period is not configurable because there's
+> @@ -595,9 +536,6 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  					(msg = get_a_tx_buf(vrp)),
+>  					msecs_to_jiffies(15000));
+>  
+> -		/* disable "tx-complete" interrupts if we're the last sleeper */
+> -		rpmsg_downref_sleepers(vrp);
+> -
+>  		/* timeout ? */
+>  		if (!err) {
+>  			dev_err(dev, "timeout waiting for a tx buffer\n");
+> @@ -676,6 +614,34 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>  	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+>  }
+>  
+> +static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+> +				  poll_table *wait)
+> +{
+> +	struct rpmsg_device *rpdev = ept->rpdev;
+> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+> +	struct virtproc_info *vrp = vch->vrp;
+> +	__poll_t mask = 0;
 > +
-> +	/* TCM SYS NON-SECURE*/
-> +	{ 0x20000000, 0x20400000, 0x00040000, ATT_OWN | ATT_IOMEM },
+> +	poll_wait(filp, &vrp->sendq, wait);
 > +
-> +	/* DDR */
-> +	{ 0x80000000, 0x80000000, 0x50000000, 0 },
-> +};
+> +	/* support multiple concurrent senders */
+> +	mutex_lock(&vrp->tx_lock);
 > +
->  static const struct imx_rproc_att imx_rproc_att_imx93[] = {
->  	/* dev addr , sys addr  , size	    , flags */
->  	/* TCM CODE NON-SECURE */
-> @@ -1440,6 +1456,14 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx93 = {
->  	.flags		= IMX_RPROC_NEED_CLKS,
->  };
->
-> +static const struct imx_rproc_dcfg imx_rproc_cfg_imx95_m7 = {
-> +	.att		= imx_rproc_att_imx95_m7,
-> +	.att_size	= ARRAY_SIZE(imx_rproc_att_imx95_m7),
-> +	.ops		= &imx_rproc_ops_sm,
-> +	.cpuid		= IMX95_M7_CPUID,
-> +	.lmid		= IMX95_M7_LMID,
-> +};
+> +	/*
+> +	 * check for a free buffer, either:
+> +	 * - we haven't used all of the available transmit buffers (half of the
+> +	 *   allocated buffers are used for transmit, hence num_bufs / 2), or,
+> +	 * - we ask the virtqueue if there's a buffer available
+> +	 */
+> +	if (vrp->last_sbuf < vrp->num_bufs / 2 ||
+> +	    !virtqueue_enable_cb(vrp->svq))
+> +		mask |= EPOLLOUT;
 > +
->  static const struct of_device_id imx_rproc_of_match[] = {
->  	{ .compatible = "fsl,imx7ulp-cm4", .data = &imx_rproc_cfg_imx7ulp },
->  	{ .compatible = "fsl,imx7d-cm4", .data = &imx_rproc_cfg_imx7d },
-> @@ -1454,6 +1478,7 @@ static const struct of_device_id imx_rproc_of_match[] = {
->  	{ .compatible = "fsl,imx8qm-cm4", .data = &imx_rproc_cfg_imx8qm },
->  	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
->  	{ .compatible = "fsl,imx93-cm33", .data = &imx_rproc_cfg_imx93 },
-> +	{ .compatible = "fsl,imx95-cm7", .data = &imx_rproc_cfg_imx95_m7 },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, imx_rproc_of_match);
->
-> --
-> 2.37.1
->
+> +	mutex_unlock(&vrp->tx_lock);
+> +
+> +	return mask;
+> +}
+> +
+>  static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>  {
+>  	struct rpmsg_device *rpdev = ept->rpdev;
+> @@ -922,9 +888,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  		WARN_ON(err); /* sanity check; this can't really happen */
+>  	}
+>  
+> -	/* suppress "tx-complete" interrupts */
+> -	virtqueue_disable_cb(vrp->svq);
+> -
+>  	vdev->priv = vrp;
+>  
+>  	rpdev_ctrl = rpmsg_virtio_add_ctrl_dev(vdev);
+> -- 
+> 2.51.1.dirty
+> 
