@@ -1,124 +1,101 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6361E5B70;
-	Wed, 29 Oct 2025 11:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B8932F757;
+	Wed, 29 Oct 2025 11:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761735938; cv=none; b=XfShl0A24QI2ELx5x4f4p9atgjrd4wJPmg/l8hyqTmq6vg7Ztp98cKi7V0zqMe1goAZl+D6olxlrBT4Om8QVCs/K2HCOBO+HEXHIIC+JoxHlm4tHfTLscdwEv7n1bP4MfEJfBximjox5J3bRln5Kslqb91kRs160b4oyvCDcu2w=
+	t=1761737329; cv=none; b=JetBpWOTV1O+2ptBhKWLgh+SQfdimn1yxxnDXfvBx26ap7lMSEfO6KOoygUv2ab8410gimW7nvmFuY0DDF+BDdmh7Q6VU0i3m5fmDEuUkmGqHOfn2f2/bzLdjvBjpdeSBVYNqa3Ei/0d4nvkcy7PHossCTIDDr7LCyDAUSK8DxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761735938; c=relaxed/simple;
-	bh=mUg1Il3vEFNsxJBIHBHWg1fUx+lCuD7mOLuml/XS/kA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YnbSPi/y1mEacbqn/MvKidc6Ll3dlE+M/lwVCqGZT8tEVxQ/kCSsT/srXjTNbOXjRVfdnF1CK+V34bM5ae0qQx0W9NMY0A+SzdodWAH75Rm3jbx5Sr52H5SraYU8ffa7AwotnHhrxsf4uXJXvMI4jCfKjLvpBsX4PSMd5JSUyoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eRfHB5ns; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1761737329; c=relaxed/simple;
+	bh=10LKGFEI693cxXXD+Q/n/vKAUuZe+EZS+v/Zx/82cLs=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=rEoGoFZAQGv8hBochZFBsK5+HynoicF/KVGhFrlkEG4AzXmX0nVELnG3MBhl1B5OuaHES6NZAuq2ZiJl3ecebLK9IPG2pw4xJuqLHrUEcn4e+o/AFLKZUwOXB28lhIRwzVEvA8OWODv+Fh/r10cJQu0tGgIplwM/FKFgBtYd1Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmNN9tZY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eRfHB5ns"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761735934;
-	bh=mUg1Il3vEFNsxJBIHBHWg1fUx+lCuD7mOLuml/XS/kA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eRfHB5nsrIx60bM6lSYTUZqKtS5Pa1OP6sGcYsJddJ0b05Uodu+JnvDDIS6sACk99
-	 50QDCdU8GShKx6PB8udgn8h1R5GvWHl/Mda9iQ97OTt3saA0BRGWK4Zlv5DknpJNti
-	 7DdaYDPP+5pJRotYCu9a03ChBbPmnENIsYaWfcDb+DzywBoKUYaG9YRtp/AnBPd3zG
-	 XOAC6jemBWGFUMxkXcmuOZNYu1yLpMSWMGtTmyhvX2yQy3dcaGGFKtzX/QlZVs6iJ9
-	 0pPhc7W1jsX/4H7ghLo8Wr1/+hB6RaMfTRjf0NR8n7CsExfF5IdhPYQ7yjkGp/aqc/
-	 ftDzSawq8J3lQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C0BA117E00AC;
-	Wed, 29 Oct 2025 12:05:33 +0100 (CET)
-Message-ID: <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
-Date: Wed, 29 Oct 2025 12:05:33 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmNN9tZY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72EBC4CEF7;
+	Wed, 29 Oct 2025 11:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761737328;
+	bh=10LKGFEI693cxXXD+Q/n/vKAUuZe+EZS+v/Zx/82cLs=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=AmNN9tZYkUIiLFcRKQKF+NOQO9fsqTZ1BgIylisUSgz0m0j9stL/ovFoUEo6e+ubR
+	 TjmmRSbueIs6plJUoEcGIkW8vysc0AFsEeTJ5KOaplzvM80Zu7doLEGAoPS9ij9RQx
+	 RmqwztsruC2Ai5MjUE9SWt36ox5DB+an6CjxqLDYrOtSw5wRJBF21VNIgtb5zg3M/G
+	 JA2fbf7edMago8YXJRFmVB44cAI1f5rDUMSHaBcAdrlxdIWY3GWipSbhOkfAJSPXIj
+	 NsOipgcu3NUBKDnxMA8kUuN7bEqF60NcbotWpsNCjnI3m5ENcV3/9cC0j0OyME+Whl
+	 sj0+Z+/IQjihw==
+Date: Wed, 29 Oct 2025 06:28:46 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
- firmware-name not present
-To: Chen-Yu Tsai <wenst@chromium.org>, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, arnd@arndb.de, andersson@kernel.org,
- matthias.bgg@gmail.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com
-References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, trilok.soni@oss.qualcomm.com, 
+ Bjorn Andersson <andersson@kernel.org>, yijie.yang@oss.qualcomm.com, 
+ linux-kernel@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Sibi Sankar <sibi.sankar@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com, 
+ tingwei.zhang@oss.qualcomm.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
+References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
+ <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
+Message-Id: <176173731073.226348.14173297054891268954.robh@kernel.org>
+Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom,pas: Document pas
+ for SoCCP on Kaanapali and Glymur platforms
 
-Il 29/10/25 10:14, Chen-Yu Tsai ha scritto:
-> On Wed, Oct 15, 2025 at 4:41 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> After a reply on the mailing lists [1] it emerged that the DT
->> property "firmware-name" should not be relied on because of
->> possible issues with firmware versions.
->> For MediaTek SCP, there has never been any firmware version vs
->> driver version desync issue but, regardless, the firmwares are
->> always using the same name and they're always located in a path
->> with a specific pattern.
->>
->> Instead of unconditionally always relying on the firmware-name
->> devicetree property to get a path to the SCP FW file, drivers
->> should construct a name based on what firmware it knows and
->> what hardware it is running on.
->>
->> In order to do that, add a `scp_get_default_fw_path()` function
->> that constructs the path and filename based on two of the infos
->> that the driver can get:
->>   1. The compatible string with the highest priority (so, the
->>      first one at index 0); and
->>   2. The type of SCP HW - single-core or multi-core.
->>
->> This means that the default firmware path is generated as:
->>   - Single core SCP: mediatek/(soc_model)/scp.img
->>     for example:     mediatek/mt8183/scp.img;
->>
->>   - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
->>     for example:     mediatek/mt8188/scp_c0.img for Core 0, and
->>                      mediatek/mt8188/scp_c1.img for Core 1.
+
+On Wed, 29 Oct 2025 01:05:41 -0700, Jingyi Wang wrote:
+> Document the component used to boot SoCCP on Kaanapali SoC and add
+> compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
+> the "qcom,smem-states" and "qcom,smem-state-names" properties and
+> add conditions for the "interrupts" and "interrupt-names" properties
+> in the pas-common.
 > 
-> I know this patch has been applied, but this scheme doesn't actually
-> follow what is already in the linux-firmware repository.
+> Co-developed-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 134 +++++++++++++++++++++
+>  .../bindings/remoteproc/qcom,pas-common.yaml       |  83 +++++++++----
+>  2 files changed, 194 insertions(+), 23 deletions(-)
 > 
-> For all the supported platforms, the first core, even for multi core SCP,
-> already have their firmware uploaded as just "scp.img". Multicore SCP
-> is seen in MT8195 and MT8188.
 
-The only one that is affected is MT8188, which needs a rename or a symlink in
-linux-firmware.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-MT8195 is not affected by this change, because the SCP is used as single-core,
-hence this code will look for scp.img and not for scp_c0.img.
+yamllint warnings/errors:
 
-> 
-> I guess I can send a followup patch?
+dtschema/dtc warnings/errors:
+Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:67.46-62 Unexpected 'IPCC_MPROC_SOCCP'
+Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:70.33-49 Unexpected 'IPCC_MPROC_SOCCP'
+FATAL ERROR: Syntax error parsing input tree
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1547: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
 
-The only followup patch that I deem to be necessary is one adding a symlink
-or renaming for MT8188's SCP and nothing else.
+doc reference errors (make refcheckdocs):
 
-Please remember that some of those SoCs (including MT8195) allow the SCP to be
-configured as *either* single-core *or* dual-core - and usually firmwares for
-single-core configurations are not compatible with dual-core ones, because of
-the SRAM carveout/usage.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com
 
-Cheers,
-Angelo
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-> 
-> 
-> ChenYu
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
+pip3 install dtschema --upgrade
 
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
