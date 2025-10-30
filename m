@@ -1,69 +1,86 @@
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013019.outbound.protection.outlook.com [40.107.201.19])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA22221721;
-	Wed, 29 Oct 2025 23:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761781919; cv=fail; b=mwdX+7EUayyAJHbQ50Qbwc2OzHYMOiBcjTp/55AXvYp30UcUIhjQUUvy5U87Y3it+hekpjSndbM5vZq3W5rqjILzX5F/u3Q2DaXoL7U5kJNieKfCcIT7nzGILUv8FTHmcW3AwdOTtVh1D2uMi9dE/kVxzIq4eXqJcmvSuN9CO4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761781919; c=relaxed/simple;
-	bh=Hlor3HQDGIDgJe/6EAfwzd8gx2l/nw5fyoAgwS7bk0I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=jDRe9FuD1zjSAn5TI5ilGHunYYREZS3eAY7bDDNPPJuiO/IPI/lD3bkEyq/P3JqHBH5WmS3PDzg8Ufo9J4g/MPaxDzvA+9yoY9wMX7lQP+3/ZO4iHoA0LuAV36Zl6tr8trKmGrH73Nde5QA1Cp3q5Ny83V51dUnPqSqpucnqgwE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=KNd1loKx; arc=fail smtp.client-ip=40.107.201.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993F0286D7D
+	for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 02:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761790266; cv=none; b=lsWbnSXmFnaoEqOCMMJRpu72Ohd9kKP2uHhhcpYEHs91zKdFOfob/CBBygItuK0ikz1w7TyGd0eLkTzbzG5CZoKixskMWRH3VNp9+2xcyv196fDPBCKtTrxu/NydGEoKHGopQPsdJHT1DEJB+YYdt+ihSy6y2Zb3zVwaWEJR27w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761790266; c=relaxed/simple;
+	bh=shYbqVkuLNtiI53CreU8QZTbiYYqgXW7xVc9VY9PI0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A2W+unXveeZMcXTwBgTLry1M8EbcMLc10LEceWatvcEyvw1HtIGoKO+qFyknxLcHUTvclGQOqexrJpNDnZMwjEl69izidtsrMuJyaKOKCpQkikHehqVc+CCVPN35FrnErQ6Ku3hkfsUNJdb4a5fN6iiObL74Ns3bprmkMhBdI1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=d2T51kls; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hSrP6yRB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="KNd1loKx"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VlAW4ryDqUcS27jirIViJC7eUVcdRIQyEAh+ABfAknOGQxT9B2GTEqNCT1fZDDIT5m94xrZwpyc7qWbpkwHe/gKj1H5QC3eXmw7SnZppmV8tb6f+VOxnPFNJVO//1DDkgVbU3SMacJL//LnilCxs/jB6WyzNu8rBH5Xt1/RMHX9yBJ08QZnUIxVpUw3yCspcFqVcp6zzjm+svzO82uREQxdM8GWrPdV8EcZNLZy7SiQyPicWEU/ALWb1lOoGQBKUBrlpbvs1Z33uSRNCNY/TjTpaCdaMdWq9xhlw0XhCS2RvLnJiv1lXnwPG87NUBwkmvltCEmknJiM5BnBzcDxm5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MTaOVVnHtGZZWoXe5ttWNLISj+GvZLDZ+Hemtcuf2fI=;
- b=LDbrb1Wjj41mEhqZMreKATKrAEx7SbqKi1ALA2pd0cPz27IX8Ky3ksafNG87ysHudcixnNFYDrkMJB4ePHscVuJl9uxhdK93zAhAY2EyRQhZmWuY4BvGCdGVAyOl5WbmlnxJGwBCBaTc6k+hmMk+b/PZ5UJ8XRcdrRVba0toTH41R9pYeYtZf8w9xPfvqAFrMwOtYyuGrYp3s9dLutR6cdcinvgcv+5UevaR1FKZPGQE5TjgCEclKojTE+YC4Aq2lG0FosVriNRc/iElgwPgU53lRPHnoJNM/cnd4crxJqhCrTFJUwVQ9sy1c7uu6l/MgAAqR7gsvm/r90V+qTF8dA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MTaOVVnHtGZZWoXe5ttWNLISj+GvZLDZ+Hemtcuf2fI=;
- b=KNd1loKxkqDmDLLbnhhIGVv76HqTylEvFmunn8SwDZx07y96mzNDusMtornKtJpkTXR6tUtV0pwiz88sGEEqPaircRzqfxqJnA3z6+dPFzAQ784hv3oHsSojeRdg94PiJLTYyYpr751YUCB00d90Bf+TUDZHzkgimcXohFdE0qY=
-Received: from PH1PEPF00013301.namprd07.prod.outlook.com (2603:10b6:518:1::f)
- by IA1PR12MB9740.namprd12.prod.outlook.com (2603:10b6:208:465::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 23:51:54 +0000
-Received: from CY4PEPF0000EE3D.namprd03.prod.outlook.com
- (2a01:111:f403:f910::2) by PH1PEPF00013301.outlook.office365.com
- (2603:1036:903:47::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Wed,
- 29 Oct 2025 23:51:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CY4PEPF0000EE3D.mail.protection.outlook.com (10.167.242.15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 23:51:53 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 29 Oct
- 2025 16:51:52 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 29 Oct
- 2025 16:51:52 -0700
-Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 29 Oct 2025 16:51:52 -0700
-Message-ID: <1bb3a121-614d-4040-9cbe-505ccb7a7fcc@amd.com>
-Date: Wed, 29 Oct 2025 18:51:51 -0500
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="d2T51kls";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hSrP6yRB"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U0ibH81995212
+	for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 02:11:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Z3iJpVuXX3j99GeKbgFiZof6JOIHOivPLoo01x4NiCM=; b=d2T51klsW1sj5z92
+	5vDcJNzrei0myoE3xHRF9OrvueJ57LQAAOnmXz9kGQPf/3DbLFkwDmlkdBkkqut9
+	+0/WjCJYPz8n5Ve82PAwrmjqajc+aSbgfVBXLW96J1KyAMw3NJ92iSjskyz64Lbd
+	AgCclwGE6dKK/W7TqKspLtFNfUyjYROBUj3a/Ge6ELacnebRIjqT2R6MKxQ3xgGM
+	mY1Hib6h6ZjuDjRy9VXDD6grfTUNtfO9gAcFZDmf1ro2yFazMwfpfV7zFOkSX6jV
+	Wdw88J/H+95qf1OL6sXDH73xDwRRxdAz6DrfQjribFsS6fa6ZpxM0hOvj0T5lyQL
+	4JoPIw==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3wr7067h-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 02:11:02 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-33bb4d11f5eso567140a91.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 29 Oct 2025 19:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761790261; x=1762395061; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3iJpVuXX3j99GeKbgFiZof6JOIHOivPLoo01x4NiCM=;
+        b=hSrP6yRBzkNa6kX7MtjIvb3jboRa9uJ6KlhfWHW/9sdvfhBcvCgKL5yQPcM8QKUN3T
+         hS/mLqSeoYVHhwbiSMhm2w0VjR5cHOFct1yt2hn5GLGJ/ezPfJkromjxcTxGzpmpG/WU
+         Y2CrOp9X90YYtCtWo/9EdfbFQf80xtNgss/ZQR2aZyjaDj60HFYdvwYKF4GWGatJepzy
+         BEHHMpsT8q13uRJ4miLJYMUN0wT9qjU8WUNA3TAt58TfZAy2i64zciv31vxkXlxBdT/3
+         0XadKS4WJWGFK0nK+301af2ACpz6PdTUBQBGckZPIi2gbMv6vUYLYfKSSfh1aR295tTS
+         EKog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761790261; x=1762395061;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3iJpVuXX3j99GeKbgFiZof6JOIHOivPLoo01x4NiCM=;
+        b=mwpD3YR/EOPblhqZ0u4fTutuxML4vZ9t7Oe054ni6HmKC2YBkrdToA92AVUPV5xP12
+         +sd6rHk1Bx2KVdT5d0G0wcaxBsweHa/Lu5kLcU3ESfLDhQELkxwnpMzNnCAoVPKfqiRg
+         cBLsMy+KppyO0SC3SHisZQf7OqN0Wp2KpQwxGHeuIg8bINKMWrZGXDh5ueHadjmIjvER
+         DowpC5mGcBw3u+C/d2my98M9FI0bAfBZw8JhGlN5S8KjooFjoP6NesDdjF/CE1fpOIpa
+         YK8IDjW9LON2YxF8B4QI+2mhNreCKCZ/MKLiEIICABwlcmGVAzDHo4+bY0b4s4e4k+/s
+         5ahQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMh4lheRmEDzKAtK9GHNFvZ2VZt6blqtmTgqtwNxo3OUI/9z43HogOD98WBlzLhK3yF2DldjiVAT3bXHcKwmOx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj3+wxj7gpiGJqeT0OPsf5qk+QCb202BxCilMu/++rCvQmH5ky
+	tjNcmNo93b7rTTQPvndHoCLIaMJ6DyTmtwD5A3TFLVDLfdKNduDspbxw2pci/4P8GsmYxaKHmu9
+	X8B28Xmv8tu1zIM1S7d0ZrVbOeAGTYGBp0vu5HsuWIDqPH1QlrCLtKd9xA1lmwcKnT2qbSWi4
+X-Gm-Gg: ASbGncs2ssf9f1VbylTD+z9G+ItoJkzqN9xmZM6BKoL25TJBIy0wqxIjN9bNW6Lk+F8
+	qE9ePqSThUVSGuGmRXC8T+cmL2VpmoYsWr3tZfiXRcXjQM1jON2/UyG57x9L250jWvdnHgC6bz4
+	DSk9vZ0qkBumk/vb6nYFgQ4+mMafeoBTDn9s4VK0qtXsVJ/PIQ+YXdGjwJiGT5gSkszep4qzJUZ
+	00CmHQj2DCoYkDdVhoakiKY7ybXUMFQlbq4afEvjFx1YuipWHMO+o7zQrXQrpFqWygzm1eAPZoo
+	kAfRHKFH0D001lZkUxZBXctEOqZHrEsLoeUHs1dzpxRERGa0iIu8U1frA7ponzpTwFqRmzTpRcL
+	FVVtt2FNM5zGs0bFfV7DXm+M0n8UmUFO9PCerfrWEoGRLkDdgO9SIYMumyfWoV+9G5Spc
+X-Received: by 2002:a17:90b:3907:b0:32b:a2b9:b200 with SMTP id 98e67ed59e1d1-3404c41c74bmr1567845a91.13.1761790261372;
+        Wed, 29 Oct 2025 19:11:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHj+R3WSmUGG6kffdX4nhUtyKII1fP8kB2aIG3NI3dVQuvVgPVLuOXt0D6O52gUK2tjrBHApw==
+X-Received: by 2002:a17:90b:3907:b0:32b:a2b9:b200 with SMTP id 98e67ed59e1d1-3404c41c74bmr1567808a91.13.1761790260667;
+        Wed, 29 Oct 2025 19:11:00 -0700 (PDT)
+Received: from [10.133.33.37] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3402a528e81sm3939736a91.4.2025.10.29.19.10.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 19:11:00 -0700 (PDT)
+Message-ID: <554b2053-db21-46fa-b5b0-3d548c1e182d@oss.qualcomm.com>
+Date: Thu, 30 Oct 2025 10:10:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -71,228 +88,104 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH 0/3] remoteproc: xlnx: remote crash recovery
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20251028045730.1622685-1-tanmay.shah@amd.com>
- <20251029032422.GA7297@nxa18884-linux.ap.freescale.net>
- <b9ce8b9c-6391-47fd-b7b5-be5cddf9cd4e@amd.com>
+Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom,pas: Document pas
+ for SoCCP on Kaanapali and Glymur platforms
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, trilok.soni@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>, yijie.yang@oss.qualcomm.com,
+        linux-kernel@vger.kernel.org, Manivannan Sadhasivam <mani@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
+ <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
+ <176173731073.226348.14173297054891268954.robh@kernel.org>
 Content-Language: en-US
-In-Reply-To: <b9ce8b9c-6391-47fd-b7b5-be5cddf9cd4e@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3D:EE_|IA1PR12MB9740:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2b0733d-493d-4434-5ca5-08de174622ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MDJmVWhoOEIxNUtxWlRhMXBSajhwTnJUZExzQWo2QlBDaDdvbERwTWtXTnJw?=
- =?utf-8?B?a2tySXpnc200K3JlWVBIeEpoK0RIMUZVaXpBNCtFQVA0WHRkYXIwWmdFbXM2?=
- =?utf-8?B?MXA0MTZlY2RlYm4xOFRSZTdyMXY2Ym5IR0JwQ3g4T3NNaGNGYjd5Mi81dllH?=
- =?utf-8?B?R0QyRVBXaHEwaG1pdHBlVDkrSzBHb2UxTkZ3aGNZekNWNElWRnVrWXE3ZUc4?=
- =?utf-8?B?N0pzaUdubGZFLzFMY21zVmh1KzhJRmU5OGZEeE1yRW1RbmFPNzcxNDl5OXVP?=
- =?utf-8?B?UVN0dVZkeWtLYngrYXFSalJkRGZpU0UzMUlCSm5TU3dDais2VFRhMzcwZmVr?=
- =?utf-8?B?UU5sd3pESTJ2WENhL2t2OEpyR3JJNFh1dVA5TFRHOE1CdThBRE5FT1lWZjBJ?=
- =?utf-8?B?dkNyQ09NYVRBRTFaRHlsQjVXUVNwU3g0b1Bwa1VOck9HUW5UV2dRemxiVFpE?=
- =?utf-8?B?T2oyMk90amh4SGFpM3J5L2FhSkpkOUorNVFzQzNEMVdwQnk2SFM2N3RoWWV4?=
- =?utf-8?B?UURyVmcyWjBoWnNESURSdGtGYWduYXQzcjNOVDN4akZ4S29Oa0NGaFZMQTF0?=
- =?utf-8?B?S0FPVG1kVnpzNEk0c2QwU3RaMHMyL3pVZWhPS2dHWXBUcUFpWlhpdEVPdGVF?=
- =?utf-8?B?OGNodHJHbXVLY3ZjQkJsQ1grdjRyaGt1OWhVRnQ4NEYyVDRTWmE1cWxjZ296?=
- =?utf-8?B?Y0ExeEJ2Y01BRlB4Ym9CWmdCZEY3VkNvM1FHZmlXRzJxbVhFdmFjVTB3SHAr?=
- =?utf-8?B?RTQvV2Z1K3lqU1BFWXlmcTFoTVhCUXFJNmhYdlh1SkpCZzdyajV5bCtGZ2VQ?=
- =?utf-8?B?V0N0RWtvdWtNaE40NC92WUFQSWxKN2FjcFY0VTMrWXBzWUEwWC9HTjREenlE?=
- =?utf-8?B?NU9jT3o3WUROc0I2anU0TnlQS253eDNGaXFpQzJ3SGRnTURGZHpRVjBobFNZ?=
- =?utf-8?B?cXJJdjdIb3hUWG1COXhETmhzcERUOGI5OGtIWUFzbXVtcFZNdnp3UVBmUENl?=
- =?utf-8?B?N1hKaHA3RXNITm1sT0VjK2c2eTA2bW5CVUVIMU9PS1VkQW9HWHlTa1J5M0RZ?=
- =?utf-8?B?ckNzYVUwYmtUc1RQR29BNEhXUFNhMGI4YmVTckhQZERsOGM2WkdPS2Z0aFJL?=
- =?utf-8?B?WUZTS0hNaFZna0tJTXRTZVpEa2lLVnlxaDRra05WNnNuRE8wbVJOZHBmOG4w?=
- =?utf-8?B?SFVjdnhhL2NPd01HUEI2Y0ZhdXZ3dFR1ZDBHREpkTDN1UW55bFd2dzdVWWFy?=
- =?utf-8?B?VmlBY054ZTFHcklhRllpMHJyMVF4Qk5FQWpOdm1jc2RsVkJkOVNlcDBSRmFO?=
- =?utf-8?B?Nm9zNU5BU3lseU9WcVROb3lwT3RDRHpneFBSTGphQUo0a3BPb3dxYXRzN0gr?=
- =?utf-8?B?bElnUWFlR25yTW55UjdvNHg3bE1yMXg4Z0tNSmJCaFRFT3hIaU5tZGhDT3pX?=
- =?utf-8?B?N2lpRDU4cVlPckZMZnFucU1VYW02SnVzZmRuMkJKVWJ6NlM2YmpRQ0VMQkRQ?=
- =?utf-8?B?YlhhOVYveEFFWGxleEdQeTd6SnVVdnBWdFZxTGg5b2hrcW1sbjNZc0s1OXdn?=
- =?utf-8?B?UUpyY2hrdkN1YUNXdDJERUxkZjIxUHp2b1ozNmxqQm1YbjhpTjFFaWozY0I0?=
- =?utf-8?B?eXFhUGUyVHFZbVRjbnFIMkp5MlJrcFFPM3pDR04rYTZiK0o2Lzg2cTlnUlhn?=
- =?utf-8?B?R1c4Zlo0NmcxTFVoeFlwbDl3YTRwc29sbjNOMTJIZ05YeHpjS1hCUGovRmhV?=
- =?utf-8?B?aUFXenJLR0ozTlNKQjJoVDBQbEtaSTV3TzMwK1h0VnoveStHU2lQT1RmaTRx?=
- =?utf-8?B?T3dualFPeU5SSzVYN05PVzlRODFGdC9IVHdwN3ZRWFc2MVIxM0lldW1LRVA0?=
- =?utf-8?B?TnYyR3JYZUttWTcyN1k5OUxGQ0pBUnlJZldMKysyclBISitwdVk2ZVRkNjg0?=
- =?utf-8?B?MEVndlpoL1psMGF2TVNYNHlOZWZkbkhVNGFFRjdGUzh5QmFXdStTWE9IRU1v?=
- =?utf-8?B?TTc4TERrbkpCVFFJTEtQU0t3S3IzZHRTVHdHcmRYZHN0V0RiTFNSVDBXZXdn?=
- =?utf-8?B?Tnc1U0J3M1lIMEM1cTJWS1lQUVdCSXYvOERXMXlPUU10SEpET3dSeUh6RU1v?=
- =?utf-8?Q?LVxE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 23:51:53.3248
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2b0733d-493d-4434-5ca5-08de174622ea
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3D.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9740
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <176173731073.226348.14173297054891268954.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDAxNSBTYWx0ZWRfXw4JIrpiKkG6l
+ VFhUpplquXxbFP1mlLt7Mx5KB5dJ9hIkLDcEvowqYCxA12BuWKmEb6rlOvdO/zwVS2ruR4ccKsU
+ iiLkmuYsrk0SOUn0vw2akQGmdCUFzmUFEFMdoGRtz1EHgPujBoUuOp/nvz78xLDgpLvpKXWp0Rk
+ 9VOIfBjeBW2u9yN4a1gq37yVlNzPSxAQY3Taa92PjaftGai3Jobj/oN+YNUKLuCA8wG5pbsVl4s
+ Br01txZiUjutUGAeJYVVJByrXuRIOPDOV8rdLfBwIQihdLa3SLgBHCT0D3anWWPofBgvq9OmvuQ
+ glww5VK/Vdq9+m1NZt6pd75CsRQt6/1ti7XpuW5y5JZbsKHG0tKIhO5V52nNqijKHmrxgl7Hzqn
+ 09N9eDtNBqMJ6Q9qFdVEYSvMhAWPQg==
+X-Authority-Analysis: v=2.4 cv=P+Y3RyAu c=1 sm=1 tr=0 ts=6902c936 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=voM4FWlXAAAA:8 a=EUspDBNiAAAA:8
+ a=VXIIVhnlSoNZEwAaSBwA:9 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+ a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-ORIG-GUID: C1gbgJ6iSy9i4STLrvVzSXQmspohRTKs
+X-Proofpoint-GUID: C1gbgJ6iSy9i4STLrvVzSXQmspohRTKs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-30_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510300015
 
 
 
-On 10/28/25 11:15 PM, Tanmay Shah wrote:
+On 10/29/2025 7:28 PM, Rob Herring (Arm) wrote:
 > 
-> 
-> On 10/28/25 10:24 PM, Peng Fan wrote:
->> Hi Tanmay,
+> On Wed, 29 Oct 2025 01:05:41 -0700, Jingyi Wang wrote:
+>> Document the component used to boot SoCCP on Kaanapali SoC and add
+>> compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
+>> the "qcom,smem-states" and "qcom,smem-state-names" properties and
+>> add conditions for the "interrupts" and "interrupt-names" properties
+>> in the pas-common.
 >>
->> On Mon, Oct 27, 2025 at 09:57:28PM -0700, Tanmay Shah wrote:
->>> Remote processor can crash or hang during normal execution. Linux
->>> remoteproc framework supports different mechanisms to recover the
->>> remote processor and re-establish the RPMsg communication in such case.
->>>
->>> Crash reporting:
->>>
->>> 1) Using debugfs node
->>>
->>> User can report the crash to the core framework via debugfs node using
->>> following command:
->>>
->>> echo 1 > /sys/kernel/debug/remoteproc/remoteproc0/crash
->>>
->>> 2) Remoteproc notify to the host about crash state and crash reason
->>> via the resource table
->>>
->>> This is a platform specific method where the remote firmware contains
->>> vendor specific resource to update the crash state and the crash
->>> reason. Then the remote notifies the crash to the host via mailbox
->>> notification. The host then will check this resource on every mbox
->>> notification and reports the crash to the core framework if needed.
->>>
->>> Crash recovery mechanism:
->>>
->>> There are two mechanisms available to recover the remote processor from
->>> the crash. 1) boot recovery, 2) attach on recovery
->>>
->>> Remoteproc core framework will choose proper mechanism based on the
->>> rproc features set by the platform driver.
->>>
->>> 1) Boot recovery
->>>
->>> This is the default mechanism to recover the remote processor.
->>> In this method core framework will first stop the remote processor,
->>> load the firmware again and then starts the remote processor. On
->>> AMD-Xilinx platforms this method is supported. The coredump callback in
->>> the platform driver isn't implemented so far, but that shouldn't cause
->>> the recovery failure.
->>>
->>> 2) Attach on recovery
->>>
->>> If RPROC_ATTACH_ON_RECOVERY feature is enabled by the platform driver,
->>> then the core framework will choose this method for recovery.
->>>
->>> On zynqmp platform following is the sequence of events expected during
->>> remoteproc crash and attach on recovery:
->>>
->>> a) rproc attach/detach flow is working, and RPMsg comm is established
->>> b) Remote processor (RPU) crashed (crash not reported yet)
->>> c) Platform management controller stops and reloads elf on inactive
->>>    remote processor before reboot
->>> d) platform management controller reboots the remote processor
->>> e) Remote processor boots again, and detects previous crash (platform
->>>    specific mechanism to detect the crash)
->>> f) Remote processor Reports crash to the Linux (Host) and wait for
->>>    the recovery.
->>> g) Linux performs full detach and reattach to remote processor.
->>> h) Normal RPMsg communication is established.
->>>
->>> It is required to destroy all RPMsg related resource and re-create them
->>> during recovery to establish successful RPMsg communication. To achieve
->>> this complete rproc_detach followed by rproc_attach calls are needed.
->>>
->>>
->>> Tanmay Shah (3):
->>>   remoteproc: xlnx: enable boot recovery
->>>   remoteproc: core: full attach detach during recovery
->>>   remoteproc: xlnx: add crash detection mechanism
->>>
->>
->> I gave a test on i.MX8QM-MEK, there are failures, 1st test pass, 2nd 
->> test fail.
->> Without this patch, I not see failures.
->> root@imx8qmmek:~#
->> remoteproc remoteproc0: crash detected in imx-rproc: type watchdog
->> Partition3 reset!
->> remoteproc remoteproc0: handling crash #1 in imx-rproc
->> remoteproc remoteproc0: detached remote processor imx-rproc
->> rproc-virtio rproc-virtio.1.auto: assigned reserved memory node 
->> vdevbuffer@90400000
->> virtio_rpmsg_bus virtio0: rpmsg host is online
->> rproc-virtio rproc-virtio.1.auto: registered virtio0 (type 7)
->> rproc-virtio rproc-virtio.2.auto: assigned reserved memory node 
->> vdevbuffer@90400000
->> virtio_rpmsg_bus virtio1: rpmsg host is online
->> rproc-virtio rproc-virtio.2.auto: registered virtio1 (type 7)
->> remoteproc remoteproc0: remote processor imx-rproc is now attached
->> virtio_rpmsg_bus virtio1: creating channel rpmsg-openamp-demo-channel 
->> addr 0x1e
->>
->> remoteproc remoteproc0: crash detected in imx-rproc: type watchdog
->> Partition3 reset!
->> remoteproc remoteproc0: handling crash #2 in imx-rproc
->> rproc-virtio rproc-virtio.1.auto: assigned reserved memory node 
->> vdevbuffer@90400000
->> virtio_rpmsg_bus virtio4: probe with driver virtio_rpmsg_bus failed 
->> with error -12
->> rproc-virtio rproc-virtio.1.auto: registered virtio4 (type 7)
->> rproc-virtio rproc-virtio.2.auto: assigned reserved memory node 
->> vdevbuffer@90400000
->> virtio_rpmsg_bus virtio5: probe with driver virtio_rpmsg_bus failed 
->> with error -12
->> rproc-virtio rproc-virtio.2.auto: registered virtio5 (type 7)
->> rproc-virtio rproc-virtio.5.auto: assigned reserved memory node 
->> vdevbuffer@90400000
->> virtio_rpmsg_bus virtio6: probe with driver virtio_rpmsg_bus failed 
->> with error -12
->> rproc-virtio rproc-virtio.5.auto: registered virtio6 (type 7)
->> rproc-virtio rproc-virtio.6.auto: assigned reserved memory node 
->> vdevbuffer@90400000
->> virtio_rpmsg_bus virtio7: probe with driver virtio_rpmsg_bus failed 
->> with error -12
->> rproc-virtio rproc-virtio.6.auto: registered virtio7 (type 7)
->> remoteproc remoteproc0: remote processor imx-rproc is now attached
+>> Co-developed-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+>> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 134 +++++++++++++++++++++
+>>  .../bindings/remoteproc/qcom,pas-common.yaml       |  83 +++++++++----
+>>  2 files changed, 194 insertions(+), 23 deletions(-)
 >>
 > 
-> Hi Peng,
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
-> I don't understand why it should fail. The patch simply implements 
-> rproc_detach() -> rproc_attach() sequence.
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:67.46-62 Unexpected 'IPCC_MPROC_SOCCP'
+> Lexical error: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dts:70.33-49 Unexpected 'IPCC_MPROC_SOCCP'
+> FATAL ERROR: Syntax error parsing input tree
+> make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.example.dtb] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1547: dt_binding_check] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
 > 
 
-Hi Peng,
-
-Thanks for testing the patch. I appreciate your quick response. I think 
-rproc_boot() should be used instead of rproc_attach(). That should 
-probably solve the issue you are facing. I will send v2 with this change 
-for you to try.
+Will add dependency in next version for the include files in example.
 
 Thanks,
-Tanmay
-
-> In your case, when you do detach -> attach via sysfs that sequence 
-> works? If that works, then crash recovery should work as well.
-> 
-> Could you give steps how do you generate the crash?
-> 
-> Thanks,
-> Tanmay
-> 
->> Thanks,
->> Peng
-> 
+Jingyi
 
