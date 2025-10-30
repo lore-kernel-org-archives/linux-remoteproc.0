@@ -1,213 +1,157 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E555D338598
-	for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 07:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D63E25CC4D
+	for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 08:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761810658; cv=none; b=rSoEZwxtdnUV4vvH+D2ZUec2PDLQFOtcd4edwHsEQgL6FC3CI22CI5bHPXJhLBx92e8r9j3Xu2dCexDJArkCAwPWhMsldx9F41woXwuw9PLC/auxWtUPaNQC+wvH5nBN4ITAg/Or08vwSwmg8XP9Y2E/ZtIVGei7dtuMhwATKf4=
+	t=1761812511; cv=none; b=kKSXJOu7vdmVxSzv6JPruIBLy6zbz3tT9zuKIFwxqElXrh6jcqhx1b8qiT5L2jbE5+h4tEkw9r89B0xeALNzAA8hjdl3WQiCZ92Br/2wOB8uyeNEk1aWFWXkQ3hWbZcij6evmVa6Bm3Zy388x7Vd+oCqWJOnUGKGNeiqyAZ+y8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761810658; c=relaxed/simple;
-	bh=pXjnDfOPXpQAncHdHfuPL6JFTlWW9bZTNDuiEUQ4R70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tl/dYcj4lhaZzzL8vVBZoO324E5shYJ+YQpTG0n7l0Ugdw4ID9Ub6b6jms4qob+UbPDmb6Wx1HEGFPvZfOfxHkpishXiwil21gXB4BB/+yCXJBO0q4/xtE2TnzUvAmw2PhUTpT/1FRVZtv03YQnwKlUXotw5M0fzOaUsbSX1ejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=doq3994X; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WETNeMV6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1761812511; c=relaxed/simple;
+	bh=aP9gHKvvsd3H8WS+/h9myuYFkwe72MjPQfocSC/zCe4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pLM6NvJfzD/azi4qtbzKEZt54ITZgasJfra7va//Mm5TOrKR7HIb7nD3S8w3lKJUIqw0B98a/ILJ9PWR/PkY7zoHA281U/z91/cNUjJz3rA+S+zd6rBsyuEl4R/h4o5IQMbBbwUDtJxXAlZe77gQwJ9/M0J0H3kG8cAmfawfAds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JPYBX++E; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="doq3994X";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WETNeMV6"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59U0iI7a1994489
-	for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 07:50:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B27lwA289hOVFDD03ZYundVjCw8IiiBblmiysgXXmQk=; b=doq3994XaUhaE0rB
-	KLEq6rcU08BZueNFtgYcY6bT68ZJXcagqL21OVCozmGfUSFEBCWAMrIREmyQ9OkE
-	71HYXBO3JRL+x1ECWXIwnQp35IQY0k87LZetNKSWyAGB5oU6Dfrcl7sF2TZOIDga
-	ZC5ZTS7XGKaYiBEiY0UEXbJFo90yLKa4r+A7HPr8ZsIVWlomwSbmJIcMVrbGa0uj
-	BVYNlL3H+vxLbj04/Ef575ZiwGu55SZ86vnUvYQDkx5l5avGrWntLF3PqES3JC8c
-	dwJUEmMTV9gXKgyU07T+x+0UK4O2vnJfelznZEa4J1qxVvpETxk9HhlmKOzy18iD
-	doV4Ag==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3wr70yrf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 07:50:55 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-33da1f30fdfso1669707a91.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 00:50:55 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JPYBX++E"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-592f3630b69so906924e87.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 30 Oct 2025 01:21:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761810655; x=1762415455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B27lwA289hOVFDD03ZYundVjCw8IiiBblmiysgXXmQk=;
-        b=WETNeMV6Mezk7WMGo0bJbTinpEQq77lANZ0w0u88/2tuyIAhNrTRiviQUcThfJMk0l
-         yavfEniJLo5vLWL5bch95v+ARVySIdYc7DVjxLMwBCOt1KySUx4ph3NA4zgn0DfMz16v
-         IhSUacxdolEdbedjaTwzT6/dBldf/d0aQ29yop8rzmqBneg07ZedSAdkMbQR/9ihYQ8o
-         bbLKtfst8zMzs30gg7Os6W2MVVvMKcbEDt1VfIPLMqSLxxI2j97TRt1QzZ7BRgpt9YOT
-         mJ188mSrsJpIlRCdgv+7l5psKO4FHGQh4JjALdiZ9hg9AKdTdKkFkukUILhRlDlfQ/4R
-         uKvw==
+        d=chromium.org; s=google; t=1761812508; x=1762417308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+RRQ3mnvpw4ptRfYD4hKfaf3ngNiZ/ZLRKANhoAh4Ck=;
+        b=JPYBX++ECkIxjuSrUWSo58Ov3fPsSVpfQWzxTlw/gIo26r8hMaKM3Gi+coQMGoOnf+
+         /IHArEYmiuJK/1hIzUxK1CmcffCEfJcLfy5pq7YcPvTNHd0iwoPC58lxhKpGWMXLdjHN
+         x+q9rfEzF6HgaIVxm6qhhB9edQjJfTxGmPYM4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761810655; x=1762415455;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B27lwA289hOVFDD03ZYundVjCw8IiiBblmiysgXXmQk=;
-        b=AdhFpFkUHoYfR8owCtikUnZoYuyDhDg01xRsMgCEi+tpzrV0keachvZUX4kVclku4K
-         Dn//XSS3Hrgh3xdsNS/x/PNEpyC7U6gnxs81rXiXWb4AV4yjcdKe4X/LEaGBHYTOwYt9
-         Kj1gw8GLJg4/G2E+e2bUAhppNLkEOouW+MABQsGqv45Dos3PqyCFswCW2GF+IbcpFKuF
-         5P2xpR8trFWUzoVnGI3/i4uy6XFscCyJrNQxWaM+vld/N6WeSqeoMgpThLsELYMgiEwC
-         G9YrIG3KP9VkvD21hhBwoPxsKExosoPn9cYGfdxIL8fpduHUssZNDdMxb79tpOhKI8Hz
-         zHHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoiCe2dG9KhPdiuDYwlxk6GuhzkZrFOP9phDfJhjGiHyh/lp1+xdQizKB7H8PvXKj89cXAb5JvqDgR1LPpo+xV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNs/sSs6uDQx86f0uj7kimHrzvHyg8ZUMFuefcfZYOI/DP7WxZ
-	WnewMvQGZ1WdvGieB3wgTLIkXtGvplUacz7kFTy8+H2Uxk4DiRzFNNF57qQLK6PnAOKmoiOcbnZ
-	KHmWkcm27Qlf5qyj0RO234jJgkX04Gt8lmsHyqVEQ62OjnCq+1Bh820qnCFh//Ggwqzdx3Zvw
-X-Gm-Gg: ASbGncvkokaHbSC/45oRjDCbvDhL1NVcINQ7ppNFF+hALm1iFH6UxCtPoBnwk9DmEOo
-	2ZwvCYvZQg6u+DCNb6xHkEPYcdQli0MimC91u0knUYUySjgmlGd1LgNkh6JxRGu50Afga/YuF7w
-	ZmdHdt1xyl1JXjNQ1cZB8j7wzm7zY8XRBoy5Zl9qcVbn8/26rNuVrSlOkFRamhp0picMrp08kdH
-	YDaym9iG4lUaJk+DU2wUymKWCitptj1K9Vl6qw9PJPyg6fhZt7SdMo8PrBv4s6r0vcSy1huazP0
-	aTlu9dSOssTNWTadFrvEAnPcm1lk6HiJpscJjS7yI/h8bAU2ISAGLeBVUwVTyGTJXlX2JkM0pzp
-	1uG5AxLf3hyxE2JKQBvFrDt04WcRKR7NFsBbZGPt/2Pe/a2BAERD4vJajfxRWCI89mX8w
-X-Received: by 2002:a05:6a20:1588:b0:334:8ac9:bc5 with SMTP id adf61e73a8af0-34786a1374bmr3111388637.36.1761810654542;
-        Thu, 30 Oct 2025 00:50:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4wdEqcvhO7xoUpldckKiNV9ktmOba6appBpb+kPac+Z78FjRfyPLDIShGA0wr9QQDPS9J5Q==
-X-Received: by 2002:a05:6a20:1588:b0:334:8ac9:bc5 with SMTP id adf61e73a8af0-34786a1374bmr3111348637.36.1761810654011;
-        Thu, 30 Oct 2025 00:50:54 -0700 (PDT)
-Received: from [10.133.33.37] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a41408757csm17590625b3a.59.2025.10.30.00.50.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 00:50:53 -0700 (PDT)
-Message-ID: <2f0b6ed4-046c-4257-9cb2-8c7403736bd3@oss.qualcomm.com>
-Date: Thu, 30 Oct 2025 15:50:48 +0800
+        d=1e100.net; s=20230601; t=1761812508; x=1762417308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+RRQ3mnvpw4ptRfYD4hKfaf3ngNiZ/ZLRKANhoAh4Ck=;
+        b=Bg9+HmZmxcwARDOhnw3c1ZZGd8iMhLzGHWS7DmhaFuA1gktT/1eUE2BLTor3HMougK
+         RzNZLnNWBPE9NP+6V9aNuRzpg38FaMs1WbGn4aP2XDUw2ZboFSdU6Vj+ca4iVLlPznQd
+         OaNnEJdYsPAUyDkmbLR1riqxfR+AkdLbHWZwcHMP1PGqavUm06AhTCFl60UX6SZ8/E1U
+         G8dx2aK89d5ePAxQ7fAI/UJqKDEay7g9sbHL8WNM+OnFexQGxvv1gVhZJa6xpGNSQ+HD
+         iY/Jlxtnawp448aa1z2Gkb7pbRRY5cGUfJddeN5ibFeysvkG939ja+7QeFNhwe3U4IPI
+         /ggw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW666wU5ZkJTFTFqFnfl4jiLJD3ZaestcQpsMgUlh3p/d3wKrEChV5plXTxWAvUAPTPV8slyOy3x8+/3crUab5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdT2XoeR+YEXEUpZfOuWY58v6FdDFMeqNQ5k5/pliyAOgp7tob
+	uRf3FSSnm3+kjKq7jZ/US0H16m32yJqJ9DpeRTpWFu3czn4oq+dxvVw4npoFklrxd2ztHcaHh92
+	7n8UqsOcV5VnRw47dOEgQmz39P3v5c2K/8aR5Nh7c
+X-Gm-Gg: ASbGncs/pnU7MTAJjYH/TFzKh4p10zM/dU8qzItHrWQ5L7PhQWOW9b/BgRcl5jJiehj
+	jd+5X1BsZKUY8GZJx1W6bGXujyrFI1aM3HOIsqaqcnzfozPtTHc3IEYw4uED4IUVzwnL86T7/Wh
+	SDPrnre1fAiqsLKSNEt5cVNRHb7PAGop428GW87kFMuagr20yCjT6dYSYQrz4aBAlY7CffxmCi3
+	66DxsDFymC8f9a/1DLp4McROBEAwZGcTLNiHpIR0Mg+vmMdBlILWrFQp2DrLcoM0HO9XorqoPD6
+	UXIgDJwCOVLAz4k=
+X-Google-Smtp-Source: AGHT+IFU82eFD7KyMUajMtRnh3g0OAFBir+9otZR0HYwHlQYMDmXZxQQJ8cv/9zylVMsVzxv/6PO4ARJDSX3YbcKhTo=
+X-Received: by 2002:a05:6512:ad6:b0:592:fe0f:d9e with SMTP id
+ 2adb3069b0e04-594128655a1mr1896419e87.7.1761812507765; Thu, 30 Oct 2025
+ 01:21:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] dt-bindings: remoteproc: qcom,pas: Document pas
- for SoCCP on Kaanapali and Glymur platforms
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
- <20251029-knp-remoteproc-v2-3-6c81993b52ea@oss.qualcomm.com>
- <20251030-venomous-apricot-falcon-b3fd64@kuoka>
-Content-Language: en-US
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-In-Reply-To: <20251030-venomous-apricot-falcon-b3fd64@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMwMDA2MiBTYWx0ZWRfXxiqa1rjD39xn
- rCdCjy0ymTS9TM6u+nsho+NtTsByVEjdMyjH4IxcNxge0F8EKGkXjpJ3KiApMZjY6WFrirPWvbm
- 4UL6RM+QN5Xvuq4rp+IiiqeehFvoqIk+wgSGUUz4nnIYZLMijrQAvK7u4PejIOzchyNidP1Za5r
- 2ZZ5lSm4PQUBUVsVLpEAUPVhi43XE5h49if1g4t5s68G9YoaRvb66TpvA11RgD72FlbYhWTbrBK
- aGaVtMZLLCHu6ljTwFtAKkgbzYHmJz0GHcCvXoaAhW870EHWpJHq1UpdpJkG510CtbrdDgP+32/
- 4PrLr1tu5BLmW9qAEAWvjn3s4ECisXQKETqAest+0qzvxCBv4U1UFbpSInoIVsvgm1fQz9dXWT0
- x6QU/sx4dCC5FDYT6T9BU19aCuNvZA==
-X-Authority-Analysis: v=2.4 cv=P+Y3RyAu c=1 sm=1 tr=0 ts=690318df cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=86O0OiZcg5MvzqARIlQA:9 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-ORIG-GUID: 5_39KPJddXLnFTLda0TxBg2q9nWimHO1
-X-Proofpoint-GUID: 5_39KPJddXLnFTLda0TxBg2q9nWimHO1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-30_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 spamscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2510300062
+References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
+ <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com> <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
+In-Reply-To: <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 30 Oct 2025 16:21:35 +0800
+X-Gm-Features: AWmQ_bmkpHdrIvgnJ7LYrPcYtpiVGscoJE_DrNSX0WTZVJCZr-WNnyLSiVAsWFM
+Message-ID: <CAGXv+5Ge-uZHKATOvqQF25DRTcHFJkopUk-JUXDtpEen=BwCiA@mail.gmail.com>
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
+ firmware-name not present
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
+	arnd@arndb.de, andersson@kernel.org, matthias.bgg@gmail.com, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 29, 2025 at 7:05=E2=80=AFPM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 29/10/25 10:14, Chen-Yu Tsai ha scritto:
+> > On Wed, Oct 15, 2025 at 4:41=E2=80=AFPM AngeloGioacchino Del Regno
+> > <angelogioacchino.delregno@collabora.com> wrote:
+> >>
+> >> After a reply on the mailing lists [1] it emerged that the DT
+> >> property "firmware-name" should not be relied on because of
+> >> possible issues with firmware versions.
+> >> For MediaTek SCP, there has never been any firmware version vs
+> >> driver version desync issue but, regardless, the firmwares are
+> >> always using the same name and they're always located in a path
+> >> with a specific pattern.
+> >>
+> >> Instead of unconditionally always relying on the firmware-name
+> >> devicetree property to get a path to the SCP FW file, drivers
+> >> should construct a name based on what firmware it knows and
+> >> what hardware it is running on.
+> >>
+> >> In order to do that, add a `scp_get_default_fw_path()` function
+> >> that constructs the path and filename based on two of the infos
+> >> that the driver can get:
+> >>   1. The compatible string with the highest priority (so, the
+> >>      first one at index 0); and
+> >>   2. The type of SCP HW - single-core or multi-core.
+> >>
+> >> This means that the default firmware path is generated as:
+> >>   - Single core SCP: mediatek/(soc_model)/scp.img
+> >>     for example:     mediatek/mt8183/scp.img;
+> >>
+> >>   - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
+> >>     for example:     mediatek/mt8188/scp_c0.img for Core 0, and
+> >>                      mediatek/mt8188/scp_c1.img for Core 1.
+> >
+> > I know this patch has been applied, but this scheme doesn't actually
+> > follow what is already in the linux-firmware repository.
+> >
+> > For all the supported platforms, the first core, even for multi core SC=
+P,
+> > already have their firmware uploaded as just "scp.img". Multicore SCP
+> > is seen in MT8195 and MT8188.
+>
+> The only one that is affected is MT8188, which needs a rename or a symlin=
+k in
+> linux-firmware.
+>
+> MT8195 is not affected by this change, because the SCP is used as single-=
+core,
+> hence this code will look for scp.img and not for scp_c0.img.
+>
+> >
+> > I guess I can send a followup patch?
+>
+> The only followup patch that I deem to be necessary is one adding a symli=
+nk
+> or renaming for MT8188's SCP and nothing else.
+
+The firmware was uploaded in March of 2025, and is packaged in Debian
+Trixie, and was also backported to Bookworm. Either adding a symlink or
+renaming it won't trickle down to users for some time. So this seems
+like a possible ABI break, where the ABI is the file name.
+
+Or maybe you don't consider it as such because SCP hasn't been enabled
+in the kernel in any release yet?
+
+> Please remember that some of those SoCs (including MT8195) allow the SCP =
+to be
+> configured as *either* single-core *or* dual-core - and usually firmwares=
+ for
+> single-core configurations are not compatible with dual-core ones, becaus=
+e of
+> the SRAM carveout/usage.
+
+For MT8188, whether the current blob is dual core compatible needs to be
+checked. The blob upstreamed to linux-firmware was built locally by
+MediaTek engineers and is not what we ship with ChromeOS devices.
 
 
-
-On 10/30/2025 2:27 PM, Krzysztof Kozlowski wrote:
-> On Wed, Oct 29, 2025 at 01:05:41AM -0700, Jingyi Wang wrote:
->> Document the component used to boot SoCCP on Kaanapali SoC and add
->> compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
->> the "qcom,smem-states" and "qcom,smem-state-names" properties and
->> add conditions for the "interrupts" and "interrupt-names" properties
->> in the pas-common.
-> 
-> "extend" and "add conditions" but your patch:
-> 
-> 
->> -  interrupts:
->> -    minItems: 5
->> -    items:
->> -      - description: Watchdog interrupt
->> -      - description: Fatal interrupt
->> -      - description: Ready interrupt
->> -      - description: Handover interrupt
->> -      - description: Stop acknowledge interrupt
->> -      - description: Shutdown acknowledge interrupt
->> -
->> -  interrupt-names:
->> -    minItems: 5
->> -    items:
->> -      - const: wdog
->> -      - const: fatal
->> -      - const: ready
->> -      - const: handover
->> -      - const: stop-ack
->> -      - const: shutdown-ack
-> 
-> ...removes them. So no interrupts anymore :/
-> 
-> That looks surprising if not wrong. You cannot remove properties when
-> you want to add grow them. See writing schema as well.
-> 
-> Best regards,
-> Krzysztof
-> 
-
-There might be some misunderstanding on your comments for v1, so I removed
-it to allOf part and add "if-else".
-
-If it is changed here, we need to release the constraints like:
-
-  interrupts:
-    minItems: 5
-    items:
-      - description: Watchdog interrupt
-      - description: Fatal interrupt
-      - description: Ready interrupt
-      - description: Handover interrupt
-      - description: Stop acknowledge interrupt
-      - description: Shutdown acknowledge interrupt
-      - description: Pong interrupt
-      - description: Wake acknowledge interrupt
-
-  interrupt-names:
-    minItems: 5
-    maxItems: 7
-    items:
-      enum:
-        - wdog
-        - fatal
-        - ready
-        - handover
-        - stop-ack
-        - shutdown-ack
-        - pong
-        - wake-ack
-
-
-Thanks,
-Jingyi
+ChenYu
