@@ -1,531 +1,254 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0D8248F66;
-	Sat,  1 Nov 2025 18:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D05C212FB3
+	for <linux-remoteproc@vger.kernel.org>; Sun,  2 Nov 2025 08:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762021898; cv=none; b=aMan/JKAfOxfD9cugkhsEcHN2tiTUPn6E/gvwQGrAnSg7OhZNfxITq4S/2vfHjq6T8kPrRn3wKy9rfImzy/iSdhwczbLCxhl6WGw83nA6vlkFSPikZTnCkSpV1oDkwm1t4HW70GHYYVIbZ6Nq8QYdZC41mttyv59KwoyuRcXWWo=
+	t=1762073662; cv=none; b=oag6vOQ2HcOTZ79s2IudjmXQHGOs3lmqV0Icr4SIOYdkAveSgedYuh7Roy7u4tat4PMAzluhmkb1UW98PiU9wY5ojPi4f2lMTXi37reFvpKb/s6QwrYq0BZP2ksSlpnXvIRiEiqTL7LB6tzHf87hehZNnrPwmYk2g/xYOFBj+D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762021898; c=relaxed/simple;
-	bh=EFgABRO8KaGc/QXjGGJ5u7eNMgLakdjZ5WI+UwYzbeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khcSKsoHNwEKS3zcX482QTpzF2Ro98yjbz7rwDpYIZW3GC/qIYZPiMA1ylqdoBo4tjM9XjaJbUhl9vOC2QmYeHsa5qxF7p6DPk3BDZrDEMosDO1wq2JOqD1Hg/7UT4//GtPxlVwnqtU2vi116CqxcXze+qPOt1GFLDxm9P+jdBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fKOGXujQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762073662; c=relaxed/simple;
+	bh=VrNlJEdA6rL2TZX1jR3KmoWIGVLhADuUudrCvlc+GWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfvG9RrCXGKo1CmHDiTlaiXauhc7dOBrcR98QNJ+soaPi0Vt9z+ITz7r1UcED37bHEVXIHdCQ0ee1fqnVKqrpadGfvYOTGpqhSym0o2cntOJD7roe6yLZ5ocB9hzSOxvXHXmKf5JGGhcoD3kw0rUBhb5tYVLraCu/801ryiNM8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kGE/DL6+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JV/ad32a; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fKOGXujQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81953C4CEF1;
-	Sat,  1 Nov 2025 18:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762021897;
-	bh=EFgABRO8KaGc/QXjGGJ5u7eNMgLakdjZ5WI+UwYzbeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fKOGXujQaO5QnGJ4s1hV3x4NGE7onOXNQaW/fj98pA7z4r6crCwXpToZ9HGb+3VBT
-	 T2+7hC2Lx9TtWomij1s53daKKZ92t5nNr50mZH+Li7KgIM7GIrmcFl6569TEjotfQE
-	 NPzE6GTchkIrh/v31K/DZ1/++GCs59JFzBE92uEvX1yQRPkldOWCIyTloCtZkcvK+d
-	 /ERmTznf002CUxX3k2RxsatRRCgc7EHwjvbMNL46hMwV3TvqdpYlXOXRpI9LHya4vN
-	 t9PASjy1v1FsfsPUoac6SpCoeK3uNic8Z/yhN6oeRFfNZVhEafSFbmZa7OHwkew+4E
-	 16JIQqLpXgnDg==
-Date: Sat, 1 Nov 2025 13:34:56 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
-	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
-Subject: Re: [PATCH v2 4/7] remoteproc: qcom: pas: Add late attach support
- for subsystems
-Message-ID: <qfls6xlvfppqw7p6rjpmzqesh6sbob4myfc6dz47qh3jywqrjk@5xiutkbybk5d>
-References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
- <20251029-knp-remoteproc-v2-4-6c81993b52ea@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kGE/DL6+";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JV/ad32a"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A25U2OD3633525
+	for <linux-remoteproc@vger.kernel.org>; Sun, 2 Nov 2025 08:54:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L2+v1vemn1Hxq/ITjyHmZWjTEsWZxpFs6I6d2XkunfU=; b=kGE/DL6+wje6WKpp
+	sQCv5/lGwP7px7M8d4iYUq32aNQ8l5P7+dL4GLXJiIoAQdyjbD7F809ha4aXs8HF
+	VT1hkept1mbEM8DaMXcmsRKOM16k+jDP2pNDYO7WhX7vV8QAOTYEaKFJ4BdygXM6
+	99OanfE1X8UVDbocnPwaG+ZNuDwxouysPNE6dpmczF1p3DmoDfxHmGvGUt7ioCDU
+	s+lIphY8ccxL/oAb711zbtGRfQcYRuXydqemdUqxUUbSyiWcU8TTgbRzSVP0LpxO
+	zu8SzBQzbJjuzshR26b8splglojY4cb+LooI/+pMXigaWfVlQmiOZP0oKuptTLnd
+	x2K4OA==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a57jn23dc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Sun, 02 Nov 2025 08:54:19 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-79e43c51e6fso2443870b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Sun, 02 Nov 2025 01:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762073658; x=1762678458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L2+v1vemn1Hxq/ITjyHmZWjTEsWZxpFs6I6d2XkunfU=;
+        b=JV/ad32adYpU1CciJM0ti8Yx5NHjTYdBBpLI1OGCLPFVfJOoVVWjfYATV68w51vIBf
+         tJLtT8yOBahCWbMiTkiPowTosm0EbdRKEbDidJW9ZGAH0w27ZatjpjrfmGUHdy6t1tnP
+         tL5EjumlsuE0HGcYvH+wXB27Itde4q0f2AL7+8c2H0DXQ7oNJeJytDoA5YiX5n3H8FVH
+         8kV6gz/YDrEPxXFGvXXhAyeaJRcEIG8lPEjUsu1wNr4a1ZDeWvrlpNua9hJHQfxFe9xS
+         pLDU3hRHtCsDwVFZnYnqdLsw0ul6rRjTOod5h/mzxwLcHdUEQNQBE7Lgcn7qQWMcKe0s
+         X2mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762073658; x=1762678458;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L2+v1vemn1Hxq/ITjyHmZWjTEsWZxpFs6I6d2XkunfU=;
+        b=iVPKjBVI16XpEsqG4/Yneyj8V/WT/cp1hL7bQpjvUI4iJmIOS6vwjxITLRWFxwYy5f
+         /GD/OyeiIa75e7kuFBzWC0smk9sdKhXhENaFgX9KNnEyPNJj6WkaNzE6mIP1vQsuuufJ
+         SsDv7ifbSkvUO/i+G4tpGUIr+Xeq9qTqKxS05PyNVl1cK1nxYu3q/oamfqyibmGDuLjw
+         NYlh0nxU/SwnQIU2167PYP4a3Mmb8lQZL9emPEEfBMSjfrgYcVG/yosM9cs0Cfg3W8cI
+         jkpMR0xMEdY1QaXP8Drf88if4m4+n3OjrB/gf/4on8dNKEVCBtYpMK88EVpY7/jVXkLC
+         JHSA==
+X-Gm-Message-State: AOJu0YyzZrY4GQNKx+OinpKzXZIQs786xhJcR4PNzbRCOhTitGOOAb2e
+	8mcz5uQAf2XsSXNiMEA0dEgcWJIWRiCkF5jzOWu49U5oXI2nOfCBSq7tutE9eQlGrWyKwSQLdCO
+	v5UPa1nyAaw8d6QpXgpD5x1Cv7LdrB7Qnty66kFYqO17pyoL8Uf2crp0zASm4wgTowj6d7+KR
+X-Gm-Gg: ASbGncuvvaEJrDkeFJNxIqVdlROJrTV1mJpq9yBvHdqI4X5mXGCeIfH4osR1QnnFukD
+	xYJgPIb03/JmHbbIMpl81HBipazsmQv//mWWgmblLX6AWQiCppEk2vI/hXwN6qsNdQpguvtYZgu
+	Q+uxmYxt3b/XLZ8TULRU28/OcDB7770zv62L0FVE+vHZVxebQr46YCRemZ2C9s9mI3gONX3Hc3k
+	YqvOsgmr4v/ZLpjx5+4DhgnnKkXnBPUpta+P8WoPrSiBgJKa2AhFt5seCjnSfa8OGF4nWZ7zxUQ
+	9OjSQSfDbrT6RW/OmUd9eEHcOy/FiUXM4k6DaP1PP445KqFew77uharQlEL392YA+3SeT2w2xlq
+	YmDqSam3AF045mC0VRYjC/LIEl3R/PPCg1//phQkQT0OOLsL95GyUZYPtdO1oFato71IWRA==
+X-Received: by 2002:a05:6a20:3948:b0:343:8069:7568 with SMTP id adf61e73a8af0-348bca42eacmr11549747637.27.1762073658141;
+        Sun, 02 Nov 2025 01:54:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHcZHpOHrhBxtjI//Pk7j/FPcy3ZEApsrl6eYmcz/8uYFMlhk1bTXELb1q3SmhnvkBjFri9VA==
+X-Received: by 2002:a05:6a20:3948:b0:343:8069:7568 with SMTP id adf61e73a8af0-348bca42eacmr11549726637.27.1762073657547;
+        Sun, 02 Nov 2025 01:54:17 -0700 (PDT)
+Received: from [10.133.33.69] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93b8c8eb03sm6870727a12.15.2025.11.02.01.54.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Nov 2025 01:54:17 -0700 (PDT)
+Message-ID: <e3e2f821-4585-4eb3-8e5c-af4d6ab29234@oss.qualcomm.com>
+Date: Sun, 2 Nov 2025 16:54:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-knp-remoteproc-v2-4-6c81993b52ea@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] remoteproc: core: full attach detach during recovery
+To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
+        mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhongqiu.han@oss.qualcomm.com
+References: <20251028045730.1622685-1-tanmay.shah@amd.com>
+ <20251028045730.1622685-3-tanmay.shah@amd.com>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20251028045730.1622685-3-tanmay.shah@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=StidKfO0 c=1 sm=1 tr=0 ts=69071c3b cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=zd2uoN0lAAAA:8 a=n-E3Dk61l7d4xf_k7bcA:9
+ a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: QcRCxeqwHRODJc-FZij5qBcNh4kf-d21
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAyMDA4MiBTYWx0ZWRfX/kXmEII1XOB0
+ hLUjsqLxkny9foYdKjMqUrNYRsDdg+y3oZya/GEIMmkujgTDahUYyijUZDBdsa+v/+1pdGww0o9
+ Jka+gNp0zipKpYjExV4sw4s+jzxyLi+GIobnJ3POzQocAxul0awhvfJKBEzle0uOT/yv1Hb+G2J
+ mWEA0aG9/Jx226/3dOGv+ZRVKqqBe9bm1kqGxNB8X5BG26R+heSX5g4Tx1fA58WB1diJv5qAV5C
+ ghP2Q4gYKguYapdNfqmcCjclGxJmcxoegtEfGI8YFVmsedOUzbWY6+373mUZeh0QyaVNow2hkWY
+ rnQEa94GuCjYuQjnmW7v5rWuDBS2x7NuoAfNMfleC4Midw2Agb/K/8JTQ4fiV/10JAE86YiJM4f
+ 6QqP9nMKtqNFYDxH36eQ1Emw6KotSg==
+X-Proofpoint-ORIG-GUID: QcRCxeqwHRODJc-FZij5qBcNh4kf-d21
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 adultscore=0 malwarescore=0 impostorscore=0
+ spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511020082
 
-On Wed, Oct 29, 2025 at 01:05:42AM -0700, Jingyi Wang wrote:
-> From: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
+On 10/28/2025 12:57 PM, Tanmay Shah wrote:
+> Current attach on recovery mechanism loads the clean resource table
+> during recovery, but doesn't re-allocate the resources. RPMsg
+> communication will fail after recovery due to this. Fix this
+> incorrect behavior by doing the full detach and attach of remote
+> processor during the recovery. This will load the clean resource table
+> and re-allocate all the resources, which will set up correct vring
+> information in the resource table.
 > 
-> Subsystems can be brought out of reset by entities such as
-> bootloaders.
-
-Good start of the commit message.
-
-> Before attaching such subsystems, it is important to
-> check the state of the subsystem.
-
-Why?
-
-I see three possible outcomes:
-1) The subsystem was booted and is still running just fine.
-2) The subsystem hit fatal error and flagged this in smp2p
-3) The subsystem hit a wdog and I presume there would be a interrupt
-   waiting for us as soon as we register a handler?
-
-Perhaps I'm wrong about the semantics of #3? If so this should be
-clearly documented in the commit message.
-
-
-Also, at this point in the commit message you've established the
-problem, the remainder is a description of how you're addressing the
-problem. A paragraph break would be suitable.
-
-> This patch adds support to attach
-> to a subsystem by ensuring that the subsystem is in a sane state by
-> reading SMP2P bits and pinging the subsystem.
-> 
-> Signed-off-by: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
-
-I would prefer email addresses to be all lowercase, but more
-importantly, you lost the tail end of that address (same with author).
-
-> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 > ---
->  drivers/remoteproc/qcom_q6v5.c      | 89 ++++++++++++++++++++++++++++++++++++-
->  drivers/remoteproc/qcom_q6v5.h      | 14 +++++-
->  drivers/remoteproc/qcom_q6v5_adsp.c |  2 +-
->  drivers/remoteproc/qcom_q6v5_mss.c  |  2 +-
->  drivers/remoteproc/qcom_q6v5_pas.c  | 63 +++++++++++++++++++++++++-
->  5 files changed, 165 insertions(+), 5 deletions(-)
+>   drivers/remoteproc/remoteproc_core.c | 22 +++++++++++++---------
+>   1 file changed, 13 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-> index 58d5b85e58cd..4ce9e43fc5c7 100644
-> --- a/drivers/remoteproc/qcom_q6v5.c
-> +++ b/drivers/remoteproc/qcom_q6v5.c
-> @@ -94,6 +94,9 @@ static irqreturn_t q6v5_wdog_interrupt(int irq, void *data)
->  	size_t len;
->  	char *msg;
->  
-> +	if (q6v5->early_boot)
-> +		complete(&q6v5->subsys_booted);
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index aada2780b343..f5b078fe056a 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1777,11 +1777,11 @@ static int rproc_attach_recovery(struct rproc *rproc)
+>   {
+>   	int ret;
+>   
+> -	ret = __rproc_detach(rproc);
+> +	ret = rproc_detach(rproc);
+>   	if (ret)
+>   		return ret;
+>   
+> -	return __rproc_attach(rproc);
+> +	return rproc_attach(rproc);
+>   }
+>   
+>   static int rproc_boot_recovery(struct rproc *rproc)
+> @@ -1829,6 +1829,9 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>   	struct device *dev = &rproc->dev;
+>   	int ret;
+>   
+> +	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
+> +		return rproc_attach_recovery(rproc);
 > +
->  	/* Sometimes the stop triggers a watchdog rather than a stop-ack */
->  	if (!q6v5->running) {
->  		complete(&q6v5->stop_done);
-> @@ -118,6 +121,9 @@ static irqreturn_t q6v5_fatal_interrupt(int irq, void *data)
->  	size_t len;
->  	char *msg;
->  
-> +	if (q6v5->early_boot)
-> +		complete(&q6v5->subsys_booted);
-> +
->  	if (!q6v5->running)
->  		return IRQ_HANDLED;
->  
-> @@ -139,6 +145,9 @@ static irqreturn_t q6v5_ready_interrupt(int irq, void *data)
->  
->  	complete(&q6v5->start_done);
->  
-> +	if (q6v5->early_boot)
-> +		complete(&q6v5->subsys_booted);
-> +
->  	return IRQ_HANDLED;
->  }
->  
-> @@ -172,6 +181,9 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
->  	if (q6v5->handover)
->  		q6v5->handover(q6v5);
->  
-> +	if (q6v5->early_boot)
-> +		complete(&q6v5->subsys_booted);
-> +
->  	icc_set_bw(q6v5->path, 0, 0);
->  
->  	q6v5->handover_issued = true;
-> @@ -234,6 +246,77 @@ unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
->  }
->  EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
->  
-> +static irqreturn_t q6v5_pong_interrupt(int irq, void *data)
-> +{
-> +	struct qcom_q6v5 *q6v5 = data;
-> +
-> +	complete(&q6v5->ping_done);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5)
-> +{
+>   	ret = mutex_lock_interruptible(&rproc->lock);
+
+Hi Tanmay,
+
+I have a concern about this patch, specifically regarding the locking
+behavior and potential race conditions introduced by the early return in
+rproc_trigger_recovery(), by calling rproc_attach_recovery() directly
+and bypassing the original mutex_lock_interruptible() in
+rproc_trigger_recovery(), the recovery flow now executes rproc_attach()
+without holding rproc->lock.
+
+This could potentially lead to race conditions if other threads are
+accessing or modifying shared resources concurrently.For example, one
+possible scenario is:
+
+
+state_store/rproc_trigger_auto_boot
+-->rproc_boot
+    -->ret = mutex_lock_interruptible(&rproc->lock);    <--(4)
+    -->if (rproc->state == RPROC_DETACHED) {
+        -->ret = rproc_attach(rproc);                   <--(5)
+       }
+    -->mutex_unlock(&rproc->lock);
+	
+
+rproc_trigger_recovery
+-->rproc_attach_recovery
+    -->rproc_detach
+       -->ret = mutex_lock_interruptible(&rproc->lock); <--(1)
+       -->ret = __rproc_detach(rproc);
+       -->rproc->state = RPROC_DETACHED;                <--(2)
+       -->mutex_unlock(&rproc->lock);                   <--(3)
+   -->return rproc_attach(rproc);                       <--(6)
+
+As shown in stack (5) and (6), two threads may simultaneously
+execute the rproc_attach() function, which could lead to a race
+condition.
+
+Please feel free to correct me, thanks~
+
+
+>   	if (ret)
+>   		return ret;
+> @@ -1839,10 +1842,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>   
+>   	dev_err(dev, "recovering %s\n", rproc->name);
+>   
+> -	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
+> -		ret = rproc_attach_recovery(rproc);
+> -	else
+> -		ret = rproc_boot_recovery(rproc);
+> +	ret = rproc_boot_recovery(rproc);
+>   
+>   unlock_mutex:
+>   	mutex_unlock(&rproc->lock);
+> @@ -1860,6 +1860,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>   {
+>   	struct rproc *rproc = container_of(work, struct rproc, crash_handler);
+>   	struct device *dev = &rproc->dev;
 > +	int ret;
-> +	int ping_failed = 0;
-> +
-> +	reinit_completion(&q6v5->ping_done);
-> +
-> +	/* Set master kernel Ping bit */
-> +	ret = qcom_smem_state_update_bits(q6v5->ping_state,
-> +					  BIT(q6v5->ping_bit), BIT(q6v5->ping_bit));
-> +	if (ret) {
-> +		dev_err(q6v5->dev, "Failed to update ping bits\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = wait_for_completion_timeout(&q6v5->ping_done, msecs_to_jiffies(PING_TIMEOUT));
-> +	if (!ret) {
-> +		ping_failed = -ETIMEDOUT;
-> +		dev_err(q6v5->dev, "Failed to get back pong\n");
-> +	}
-> +
-> +	/* Clear ping bit master kernel */
-> +	ret = qcom_smem_state_update_bits(q6v5->ping_state, BIT(q6v5->ping_bit), 0);
-> +	if (ret) {
-> +		pr_err("Failed to clear master kernel bits\n");
-
-Two dev_err and one pr_err?
-
-> +		return ret;
-> +	}
-> +
-> +	if (ping_failed)
-> +		return ping_failed;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem);
-> +
-> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev)
-> +{
-> +	int ret = -ENODEV;
-> +
-> +	q6v5->ping_state = devm_qcom_smem_state_get(&pdev->dev, "ping", &q6v5->ping_bit);
-> +	if (IS_ERR(q6v5->ping_state)) {
-> +		dev_err(&pdev->dev, "failed to acquire smem state %ld\n",
-> +			PTR_ERR(q6v5->ping_state));
-> +		return ret;
-> +	}
-> +
-> +	q6v5->pong_irq = platform_get_irq_byname(pdev, "pong");
-> +	if (q6v5->pong_irq < 0)
-> +		return q6v5->pong_irq;
-> +
-> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->pong_irq, NULL,
-> +					q6v5_pong_interrupt, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-> +					"q6v5 pong", q6v5);
-> +	if (ret)
-> +		dev_err(&pdev->dev, "failed to acquire pong IRQ\n");
-> +
-> +	init_completion(&q6v5->ping_done);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem_init);
-> +
->  /**
->   * qcom_q6v5_init() - initializer of the q6v5 common struct
->   * @q6v5:	handle to be initialized
-> @@ -247,7 +330,7 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
->   */
->  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->  		   struct rproc *rproc, int crash_reason, const char *load_state,
-> -		   void (*handover)(struct qcom_q6v5 *q6v5))
-> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5))
->  {
->  	int ret;
->  
-> @@ -255,10 +338,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->  	q6v5->dev = &pdev->dev;
->  	q6v5->crash_reason = crash_reason;
->  	q6v5->handover = handover;
-> +	q6v5->early_boot = early_boot;
->  
->  	init_completion(&q6v5->start_done);
->  	init_completion(&q6v5->stop_done);
->  
-> +	if (early_boot)
-> +		init_completion(&q6v5->subsys_booted);
-> +
->  	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
->  	if (q6v5->wdog_irq < 0)
->  		return q6v5->wdog_irq;
-> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
-> index 5a859c41896e..8a227bf70d7e 100644
-> --- a/drivers/remoteproc/qcom_q6v5.h
-> +++ b/drivers/remoteproc/qcom_q6v5.h
-> @@ -12,27 +12,35 @@ struct rproc;
->  struct qcom_smem_state;
->  struct qcom_sysmon;
->  
-> +#define PING_TIMEOUT 500 /* in milliseconds */
-> +#define PING_TEST_WAIT 500 /* in milliseconds */
-> +
->  struct qcom_q6v5 {
->  	struct device *dev;
->  	struct rproc *rproc;
->  
->  	struct qcom_smem_state *state;
-> +	struct qcom_smem_state *ping_state;
->  	struct qmp *qmp;
->  
->  	struct icc_path *path;
->  
->  	unsigned stop_bit;
-> +	unsigned int ping_bit;
->  
->  	int wdog_irq;
->  	int fatal_irq;
->  	int ready_irq;
->  	int handover_irq;
->  	int stop_irq;
-> +	int pong_irq;
->  
->  	bool handover_issued;
->  
->  	struct completion start_done;
->  	struct completion stop_done;
-> +	struct completion subsys_booted;
-> +	struct completion ping_done;
->  
->  	int crash_reason;
->  
-> @@ -40,11 +48,13 @@ struct qcom_q6v5 {
->  
->  	const char *load_state;
->  	void (*handover)(struct qcom_q6v5 *q6v5);
-> +
-> +	bool early_boot;
->  };
->  
->  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
->  		   struct rproc *rproc, int crash_reason, const char *load_state,
-> -		   void (*handover)(struct qcom_q6v5 *q6v5));
-> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5));
->  void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
->  
->  int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
-> @@ -52,5 +62,7 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
->  int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon);
->  int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
->  unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
-> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5);
-> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev);
->  
->  #endif
-> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-> index e98b7e03162c..1576b435b921 100644
-> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
-> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-> @@ -717,7 +717,7 @@ static int adsp_probe(struct platform_device *pdev)
->  		goto disable_pm;
->  
->  	ret = qcom_q6v5_init(&adsp->q6v5, pdev, rproc, desc->crash_reason_smem,
-> -			     desc->load_state, qcom_adsp_pil_handover);
-> +			     desc->load_state, false, qcom_adsp_pil_handover);
->  	if (ret)
->  		goto disable_pm;
->  
-> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-> index 3087d895b87f..ee9bf048820a 100644
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -2165,7 +2165,7 @@ static int q6v5_probe(struct platform_device *pdev)
->  	qproc->has_mba_logs = desc->has_mba_logs;
->  
->  	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM, "modem",
-> -			     qcom_msa_handover);
-> +			     false, qcom_msa_handover);
->  	if (ret)
->  		goto detach_proxy_pds;
->  
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 158bcd6cc85c..b667c11aadb5 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -35,6 +35,8 @@
->  
->  #define MAX_ASSIGN_COUNT 3
->  
-> +#define EARLY_BOOT_RETRY_INTERVAL_MS 5000
-
-"retry" makes it sounds like we're doing something in a loop, but as far
-as I can tell this is the "attach timeout".
-
-> +
->  struct qcom_pas_data {
->  	int crash_reason_smem;
->  	const char *firmware_name;
-> @@ -59,6 +61,7 @@ struct qcom_pas_data {
->  	int region_assign_count;
->  	bool region_assign_shared;
->  	int region_assign_vmid;
-> +	bool early_boot;
->  };
->  
->  struct qcom_pas {
-> @@ -409,6 +412,8 @@ static int qcom_pas_stop(struct rproc *rproc)
->  	if (pas->smem_host_id)
->  		ret = qcom_smem_bust_hwspin_lock_by_host(pas->smem_host_id);
->  
-> +	pas->q6v5.early_boot = false;
-
-
-
-> +
->  	return ret;
->  }
->  
-> @@ -434,6 +439,51 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
->  	return qcom_q6v5_panic(&pas->q6v5);
->  }
->  
-> +static int qcom_pas_attach(struct rproc *rproc)
-> +{
-> +	int ret;
-> +	struct qcom_pas *adsp = rproc->priv;
-
-Why is this variable named "adsp"?
-
-> +	bool ready_state;
-> +	bool crash_state;
-> +
-> +	if (!adsp->q6v5.early_boot)
-
-This would imply that rproc->state == RPROC_DETACHED for a subsystem
-with !early_boot. That shouldn't be possible, I think you should be more
-vocal about this. E.g. by making this:
-	if (WARN_ON(!adsp->q6v5.early_boot))
-
-Or just decide that it's too defensive and drop the check.
-
-> +		return -EINVAL;
-> +
-> +	ret = irq_get_irqchip_state(adsp->q6v5.fatal_irq,
-> +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
-> +
-> +	if (crash_state) {
-> +		dev_err(adsp->dev, "Sub system has crashed before driver probe\n");
-> +		adsp->rproc->state = RPROC_CRASHED;
-
-We're attaching to a running subsystem, we conclude that it has crashed,
-and we're doing nothing?
-
-Why don't we call rproc_report_crash() here?
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = irq_get_irqchip_state(adsp->q6v5.ready_irq,
-> +				    IRQCHIP_STATE_LINE_LEVEL, &ready_state);
-> +
-> +	if (ready_state) {
-> +		dev_info(adsp->dev, "Sub system has boot-up before driver probe\n");
-
-What does this mean? Success?
-
-> +		adsp->rproc->state = RPROC_DETACHED;
-
-Why do we just put it back in RPROC_DETACHED? What will happen now?
-Isn't this the point where we should mark it as RPROC_RUNNING?
-
-> +	} else {
-
-/*
- * The early-boot subsystem has not crashed, nor signalled that it's
- * ready, wait for 5 more seconds in case it's late.
- */
-
-That said, this begs the questions: can this really happen and why 5
-seconds?
-
-> +		ret = wait_for_completion_timeout(&adsp->q6v5.subsys_booted,
-> +						  msecs_to_jiffies(EARLY_BOOT_RETRY_INTERVAL_MS));
-> +		if (!ret) {
-> +			dev_err(adsp->dev, "Timeout on waiting for subsystem interrupt\n");
-
-So, we gave the subsystem timeof(kernel-boot) + 5 seconds to show sign
-of life, and it didn't show up.
-
-To me there are two possible reasons:
-1) The bootloader never started the subsystem
-2) The bootloader started it, it somehow ended up in a faulty scenario
-   and we're failing to detect that.
-
-#1 seems like a perfectly reasonable scenario e.g. during bringup and/or
-development, and the path out of it seems to be to start the subsystem.
-
-#2 would be a faulty scenario that we want to debug, but the user
-probably want their subsystem (re)booted in the meantime.
-
-> +			return -ETIMEDOUT;
-> +		}
-
-We didn't time out, the subsystem did tell us something happen. There
-are four sources of this event, one of those correspond to our
-"start_done" state during normal startup. Should we really treat all
-four sources the same way here?
-
-For two of the events, we can immediately attempt a recovery, no need to
-ping the subsystem and wait for the timeout.
-
-> +	}
-> +
-> +	ret = qcom_q6v5_ping_subsystem(&adsp->q6v5);
-> +	if (ret) {
-> +		dev_err(adsp->dev, "Failed to ping subsystem, assuming device crashed\n");
-> +		rproc->state = RPROC_CRASHED;
-
-As above, you mark it as crashed...and then what?
-
-> +		return ret;
-> +	}
-> +
-> +	adsp->q6v5.running = true;
-> +	return ret;
-> +}
-> +
->  static const struct rproc_ops qcom_pas_ops = {
->  	.unprepare = qcom_pas_unprepare,
->  	.start = qcom_pas_start,
-> @@ -442,6 +492,7 @@ static const struct rproc_ops qcom_pas_ops = {
->  	.parse_fw = qcom_register_dump_segments,
->  	.load = qcom_pas_load,
->  	.panic = qcom_pas_panic,
-> +	.attach = qcom_pas_attach,
->  };
->  
->  static const struct rproc_ops qcom_pas_minidump_ops = {
-> @@ -765,7 +816,7 @@ static int qcom_pas_probe(struct platform_device *pdev)
->  	pas->proxy_pd_count = ret;
->  
->  	ret = qcom_q6v5_init(&pas->q6v5, pdev, rproc, desc->crash_reason_smem,
-> -			     desc->load_state, qcom_pas_handover);
-> +			     desc->load_state, desc->early_boot, qcom_pas_handover);
->  	if (ret)
->  		goto detach_proxy_pds;
->  
-> @@ -779,6 +830,16 @@ static int qcom_pas_probe(struct platform_device *pdev)
->  	}
->  
->  	qcom_add_ssr_subdev(rproc, &pas->ssr_subdev, desc->ssr_name);
-> +
-> +	if (pas->q6v5.early_boot) {
-> +		ret = qcom_q6v5_ping_subsystem_init(&pas->q6v5, pdev);
+>   
+>   	dev_dbg(dev, "enter %s\n", __func__);
+>   
+> @@ -1883,8 +1884,11 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>   
+>   	mutex_unlock(&rproc->lock);
+>   
+> -	if (!rproc->recovery_disabled)
+> -		rproc_trigger_recovery(rproc);
+> +	if (!rproc->recovery_disabled) {
+> +		ret = rproc_trigger_recovery(rproc);
 > +		if (ret)
-> +			dev_err(&pdev->dev,
-> +				"Unable to find ping/pong bits, falling back to firmware load\n");
-
-You already printed more specific errors in
-qcom_q6v5_ping_subsystem_init(), no need to print once more here.
-
-Regards,
-Bjorn
-
-> +		else
-> +			pas->rproc->state = RPROC_DETACHED;
+> +			dev_warn(dev, "rproc recovery failed, err %d\n", ret);
 > +	}
-> +
->  	ret = rproc_add(rproc);
->  	if (ret)
->  		goto remove_ssr_sysmon;
-> 
-> -- 
-> 2.25.1
-> 
+>   
+>   out:
+>   	pm_relax(rproc->dev.parent);
+> @@ -2057,7 +2061,7 @@ int rproc_detach(struct rproc *rproc)
+>   		return ret;
+>   	}
+>   
+> -	if (rproc->state != RPROC_ATTACHED) {
+> +	if (rproc->state != RPROC_ATTACHED && rproc->state != RPROC_CRASHED) {
+>   		ret = -EINVAL;
+>   		goto out;
+>   	}
+
+
+-- 
+Thx and BRs,
+Zhongqiu Han
