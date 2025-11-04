@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3E320298C;
-	Tue,  4 Nov 2025 01:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496241D5174;
+	Tue,  4 Nov 2025 01:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762220257; cv=none; b=kqzMVFsT8QPwNyT5iYQlSc6M2eeDKr5FRBiYtch+j+W9Olz+d97xroSGc8zMOLvqdau6exA0qEw8DLSLQZJQbfoIc27e7P21g0deHy8ob8jR7zV/HUOvzlp9DaOT5QInWgfEVo+qSjdbRdT5P8UZUwKHt4IBaVMSz6prRMc2YBc=
+	t=1762221495; cv=none; b=TrWNIR91mRS8TWj2oW+ca7CdZDacjEbTm1QpTr84nJDtjgR3lHlyOnUji95GMt9CqQuu0i0mRknheCchUl68Wo3vm6flV2+5vTMjAbGEoUn3vFNX/H3nz47Vrr32eVJgaBsjaQN+Gw6pCrmVOI3niINBkZi1y4qldYwNKQL7wjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762220257; c=relaxed/simple;
-	bh=OWIXlyAFbcAS5vVCWf3qdc5NXhyWrM2dBdDvEB1KwC4=;
+	s=arc-20240116; t=1762221495; c=relaxed/simple;
+	bh=RFluSH2c/tQO9Nj2HIMedshSeLvwcgAN0h1uOkZGxOc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5OP314aLxEsc1IEtsKkKF1yQFeHXecgC99ixgpZeKuPRwcPVcOcYMWhCRIjauzGUd5UgBuZ+2mGIJTSpfQPbHFwRJE8Oe+4mED43yabUEwadWVwS+nCK+vLmbFTutHHRFZI7+s5tCjbEzBWld594X7T0e+aA10Kr+cyGTb/8Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGucJtVY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=jM+HWGTV2m8L1Wgn8IOxkmcih/+BAJQ7QLMmKQd9pjO4+nUyBK7P435ddTzsEKbr/GASdnr2USEa7iOwGb8j7gB2izlWIIhvXUHZBKmv5THeZuafhhJcGWXFHkGC7K1eriT15M9N+cvrxtQ03xzRLQ5Z9DB2KjYl6O2QMeRqxy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtqJFlWx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGucJtVY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AF5C4CEE7;
-	Tue,  4 Nov 2025 01:37:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtqJFlWx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237BEC4CEE7;
+	Tue,  4 Nov 2025 01:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762220257;
-	bh=OWIXlyAFbcAS5vVCWf3qdc5NXhyWrM2dBdDvEB1KwC4=;
+	s=k20201202; t=1762221494;
+	bh=RFluSH2c/tQO9Nj2HIMedshSeLvwcgAN0h1uOkZGxOc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PGucJtVYtW9xNg9XCfHCLOtgBzpcVrd8s/p3u2a8UVj4dkOO/JxCT/5AhEZN2gMO+
-	 3jorV97iSbdbPCaMRY4XkYHSdmG+5c5pPFew9TlVqUtmLvKY7maklHczFHlIn0ll9j
-	 AiDYan1UpEGd49ZiEFweOSH5cDX8APGJVHkngi/oIVjfyTsaJu3wB7joNzKnrFq0QQ
-	 63I459Rh/E+oPsKRC8uB6m6YGKBHyXrTeBdsqp+wCeytSgFCujEgpeggGNVGfoTp60
-	 5Z+X6z2Zj0WHM2G3YazoGiKTF27s90Meqryb+EW9sH2GrwTRBqRI8BdSa58GhvaB4f
-	 XGdEAIT5ifgpw==
-Date: Mon, 3 Nov 2025 19:41:09 -0600
+	b=UtqJFlWxN48EHZ6m4Vs71XABqkqSHNA+J9xKtZE/yJvhxrW22GvuoB+canVe3T2Fp
+	 gGCqludTo3AtiS0EpSWULM1b5KCAF4uMUYYhrHbAYmi5117Fuu1XppAp9o1QoLzUP0
+	 eu8/RtHN6ajUFY01QeHnQhXP7jsPBeicbmM99gW2/QJYx574Ldt1xS5ifXgdw0jsT2
+	 U6h6k0e9pNPHMy1vxQVeHP3EY1KdQlvcXd6/3VD4W8gF8qt41Na5qj03amZU3KMF96
+	 W5Z5srpRXZadHdsDYG2t8+sZ9Ap/P+i/ttUEJXLvdgSOh/0XXxfnT1OUWzKZHpyrrs
+	 o3SAfpTJ3NS8A==
+Date: Mon, 3 Nov 2025 20:01:46 -0600
 From: Bjorn Andersson <andersson@kernel.org>
 To: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
 Cc: chris.lew@oss.qualcomm.com, konradybcio@kernel.org, 
 	jingyi.wang@oss.qualcomm.com, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
 	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] soc: qcom: smp2p: Add irqchip state support
-Message-ID: <5xhvxnqkvuy6lthzpyk64pm6v3zovcftfb3a2jep3oulrtohpd@o6whhdwevi5h>
+Subject: Re: [PATCH V2 2/2] soc: qcom: smp2p: Add support for smp2p v2
+Message-ID: <d6vx4owncfgnpnujfepavtxeg76pt6rzlxf4fhhd6uwwtrfl3v@6rnc2llvoo26>
 References: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
- <20251103152929.2434911-2-deepak.singh@oss.qualcomm.com>
+ <20251103152929.2434911-3-deepak.singh@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -44,166 +44,172 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251103152929.2434911-2-deepak.singh@oss.qualcomm.com>
+In-Reply-To: <20251103152929.2434911-3-deepak.singh@oss.qualcomm.com>
 
-On Mon, Nov 03, 2025 at 08:59:28PM +0530, Deepak Kumar Singh wrote:
+On Mon, Nov 03, 2025 at 08:59:29PM +0530, Deepak Kumar Singh wrote:
 > From: Chris Lew <chris.lew@oss.qualcomm.com>
 > 
-> A remoteproc booted during earlier boot stages such as UEFI or the
-> bootloader, may need to be attached to without restarting the remoteproc
-> hardware. To do this the remoteproc will need to check the ready and
-> handover states in smp2p without an interrupt notification.
-> 
+> Some remoteproc need smp2p v2 support, mirror the version written by the
+> remote if the remote supports v2.
 
-The structure of the commit message is really good. But we don't _need_
-any of this in order to attach to a remoteproc without restarting it.
+I don't think they _need_ v2 support. The subsystem might implement v2
+and only support v2...
 
-We _need_ this stuff to determine if a remoteproc was started by the
-bootloader, and to determine if it has crashed.
+> This is needed if the remote does not have backwards compatibility
+> with v1.
 
-> Add support for the .irq_get_irqchip_state callback so remoteproc can
-> read the current state of the fatal, ready and handover bits.
+I guess this retroactively amends the previous sentence to make it
+valid? Please rewrite these two sentences.
+
+> And reset entry last value on SSR for smp2p v2.
+
+The first two sentences described a problem and a "solution" to that
+problem, here you're just throwing in a fact.
+
+Please document what version 2 actually is and make it clear why
+resetting "entry last value on SSR".
+
 > 
 > Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
 > Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
 > ---
->  drivers/soc/qcom/smp2p.c | 61 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
+>  drivers/soc/qcom/smp2p.c | 41 +++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 38 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index cb515c2340c1..39628df36745 100644
+> index 39628df36745..c35ca7535c14 100644
 > --- a/drivers/soc/qcom/smp2p.c
 > +++ b/drivers/soc/qcom/smp2p.c
-> @@ -48,6 +48,9 @@
->  #define SMP2P_MAGIC 0x504d5324
->  #define SMP2P_ALL_FEATURES	SMP2P_FEATURE_SSR_ACK
+> @@ -36,6 +36,10 @@
+>   * The driver uses the Linux GPIO and interrupt framework to expose a virtual
+>   * GPIO for each outbound entry and a virtual interrupt controller for each
+>   * inbound entry.
+> + *
+> + * Driver supports two versions:
+> + * V1 - For processor that start after local host
+> + * V2 - For processor that start in early boot sequence
+>   */
 >  
-> +#define ONE 1
-> +#define TWO 2
-
-You forgot "#define PLEASE_DONT true"...
-
-Sorry if I wasn't expressing myself clearly enough, we're using defines
-of magic values to make the code easier to read, follow, and understand.
-
-Giving trivial integer version numbers a "human readable" name doesn't
-meet this criteria. Use 1 and 2 in the code.
-
-> +
+>  #define SMP2P_MAX_ENTRY 16
+> @@ -50,11 +54,12 @@
+>  
+>  #define ONE 1
+>  #define TWO 2
+> +#define MAX_VERSION TWO
+>  
 >  /**
 >   * struct smp2p_smem_item - in memory communication structure
 >   * @magic:		magic number
-> @@ -222,6 +225,42 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
+> - * @version:		version - must be 1
+> + * @version:		version
+>   * @features:		features flag - currently unused
+>   * @local_pid:		processor id of sending end
+>   * @remote_pid:		processor id of receiving end
+> @@ -183,14 +188,23 @@ static void qcom_smp2p_kick(struct qcom_smp2p *smp2p)
+>  static bool qcom_smp2p_check_ssr(struct qcom_smp2p *smp2p)
+>  {
+>  	struct smp2p_smem_item *in = smp2p->in;
+> +	struct smp2p_entry *entry;
+>  	bool restart;
+>  
+>  	if (!smp2p->ssr_ack_enabled)
+>  		return false;
+>  
+>  	restart = in->flags & BIT(SMP2P_FLAGS_RESTART_DONE_BIT);
+> +	restart = restart != smp2p->ssr_ack;
+
+This is hard to read, please try to avoid the immediate reassignment.
+
+> +	if (restart && in->version > ONE) {
+> +		list_for_each_entry(entry, &smp2p->inbound, node) {
+> +			if (!entry->value)
+> +				continue;
+> +			entry->last_value = 0;
+
+Why do we only do this for version 2+?
+
+> +		}
+> +	}
+>  
+> -	return restart != smp2p->ssr_ack;
+> +	return restart;
+>  }
+>  
+>  static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
+> @@ -225,6 +239,20 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
 >  	}
 >  }
 >  
-> +static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
+> +static int qcom_smp2p_in_version(struct qcom_smp2p *smp2p)
 > +{
 > +	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
 > +	unsigned int pid = smp2p->remote_pid;
-> +	char buf[SMP2P_MAX_ENTRY_NAME];
 > +	struct smp2p_smem_item *in;
-> +	struct smp2p_entry *entry;
 > +	size_t size;
-> +	int i;
 > +
 > +	in = qcom_smem_get(pid, smem_id, &size);
 > +	if (IS_ERR(in))
-> +		return;
+> +		return 0;
 > +
-> +	smp2p->in = in;
-> +
-> +	/* Check if version is initialized and set to v2.
-
-Newline after the /* in multi-line comments please.
-
-> +	 * Early enumeration of inbound entries is required only
-> +	 * for early boot processors which have smp2p version 2.
-
-"required only for early boot processors which have smp2p version 2",
-does "version 2" imply "early boot processor"?
-
-Does "required" imply that we could do this for other subsystems as
-well, but we choose not do do so? This comment should be sufficient for
-me not to feel the urge of removing the condition 3 months from now.
-
-
-Also, isn't it the case that for all non-early-boot subsystems, they
-haven't been running yet, so qcom_smem_get() above will fail?
-
-
-Please start over, and rewrite this comment from the angle of describing
-how this fits into the handling of early boot systems.
-
-> +	 */
-> +	if (in->version != TWO)
-> +		return;
-> +
-> +	for (i = smp2p->valid_entries; i < in->valid_entries; i++) {
-> +		list_for_each_entry(entry, &smp2p->inbound, node) {
-> +			memcpy(buf, in->entries[i].name, sizeof(buf));
-> +			if (!strcmp(buf, entry->name)) {
-> +				entry->value = &in->entries[i].value;
-> +				entry->last_value = readl(entry->value);
-> +				break;
-> +			}
-> +		}
-> +	}
-> +	smp2p->valid_entries = i;
-
-Why don't we just call qcom_smp2p_notify_in() instead of all this?
-
+> +	return in->version;
 > +}
 > +
->  static void qcom_smp2p_notify_in(struct qcom_smp2p *smp2p)
+>  static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
 >  {
->  	struct smp2p_smem_item *in;
-> @@ -368,12 +407,31 @@ static void smp2p_irq_print_chip(struct irq_data *irqd, struct seq_file *p)
->  	seq_printf(p, "%8s", dev_name(entry->smp2p->dev));
->  }
+>  	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
+> @@ -522,6 +550,7 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
+>  	struct smp2p_smem_item *out;
+>  	unsigned smem_id = smp2p->smem_items[SMP2P_OUTBOUND];
+>  	unsigned pid = smp2p->remote_pid;
+> +	u8 in_version;
+>  	int ret;
 >  
-> +static int smp2p_irq_get_irqchip_state(struct irq_data *irqd, enum irqchip_irq_state which,
-> +				       bool *state)
-> +{
-> +	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
-> +	u32 val;
-> +
-> +	if (which != IRQCHIP_STATE_LINE_LEVEL)
-> +		return -EINVAL;
-> +
-> +	if (!entry->value)
-> +		return -ENODEV;
-> +
-> +	val = readl(entry->value);
-> +	*state = !!(val & BIT(irqd_to_hwirq(irqd)));
-> +
-> +	return 0;
-> +}
-> +
->  static struct irq_chip smp2p_irq_chip = {
->  	.name           = "smp2p",
->  	.irq_mask       = smp2p_mask_irq,
->  	.irq_unmask     = smp2p_unmask_irq,
->  	.irq_set_type	= smp2p_set_irq_type,
->  	.irq_print_chip = smp2p_irq_print_chip,
-> +	.irq_get_irqchip_state = smp2p_irq_get_irqchip_state,
+>  	ret = qcom_smem_alloc(pid, smem_id, sizeof(*out));
+> @@ -543,12 +572,18 @@ static int qcom_smp2p_alloc_outbound_item(struct qcom_smp2p *smp2p)
+>  	out->valid_entries = 0;
+>  	out->features = SMP2P_ALL_FEATURES;
+>  
+> +	in_version = qcom_smp2p_in_version(smp2p);
 
-This part looks good.
+This is a bit obfuscated in my view, and doesn't seem complete.
+
+We're calling qcom_smp2p_alloc_outbound_item() during probe(), at which
+time any non-early booted subsystem will yet to have been launched and
+hence they haven't allocated their SMP2P SMEM item.
+
+So in_version will be 0, which is less than 2, so therefor we're running
+version 1.
+
+If the subsystem is then brought out of reset and it implements version
+2 (we intended it to be launched by bootloader, but it wasn't - this
+shouldn't be a problem), we will have a version "mismatch".
+
+Upon first interrupt from the remote we will determine in
+qcom_smp2p_negotiate() that we're version 1 and they are version 2, so
+we will not complete the negotiation - and thereby not deliver
+interrupts.
+
+> +	if (in_version > MAX_VERSION) {
+> +		dev_err(smp2p->dev, "Unsupported smp2p version\n");
+
+I think we can afford ourself to add "...: %d\n", in_version); here. It
+would make the error print directly actionable the day we hit it (or
+make it obvious if we hit this error due to a bogus in_version).
 
 Regards,
 Bjorn
 
->  };
->  
->  static int smp2p_irq_map(struct irq_domain *d,
-> @@ -618,6 +676,9 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	/* Check inbound entries in the case of early boot processor */
-> +	qcom_smp2p_start_in(smp2p);
+> +		return -EINVAL;
+> +	}
 > +
->  	/* Kick the outgoing edge after allocating entries */
+>  	/*
+>  	 * Make sure the rest of the header is written before we validate the
+>  	 * item by writing a valid version number.
+>  	 */
+>  	wmb();
+> -	out->version = 1;
+> +	out->version = (in_version) ? in_version : 1;
+>  
 >  	qcom_smp2p_kick(smp2p);
 >  
 > -- 
