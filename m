@@ -1,120 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2037C34D3B9;
-	Wed,  5 Nov 2025 07:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875501C8631
+	for <linux-remoteproc@vger.kernel.org>; Wed,  5 Nov 2025 08:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762327040; cv=none; b=ea13nFYrBnbbH+aIXG+MSWYRd4nSfNpLArkeIBmEHMT7TbEMXzhAE8Xx3vnXgQUVSvC8/pmlvVgKE7Z7M7OYVjKtYPCtWhwer32uy+jDURL31dXskw1ml4uac5Lt2JyhVj3Qcg7XjwOJHTG3A94XuvXxep/IhGeHvhRNY+hKdFM=
+	t=1762329879; cv=none; b=MuDQqtKbQvV3HuPH7uVkfyy7N3+q7f/RyXPIFSi7/tiTihgmaE8+zKhYg+bD2LcAa2s2acx4YSOENzYSOSMXfbKchUg26yA7J+BgrcL2t184bG36V7CYQDKpU9/RhNrupl5HxdJdcrn62EORZqWqhDDQU3gviRvAw0WRndMF37M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762327040; c=relaxed/simple;
-	bh=M7tMkYTWiCdwe38qzTslPdBkq5O8fsXakxhQCCBfrlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wi5P5xUDgJAq4tfCq9ZQShn5SNA1ZZwWcRCr2o7ZgOBzxT1N9ThbhsNQiUHwisTPKPDXocTp6Xl/ynpuNoqsKMMMbUwhSzG7GuZtgUmCBB9eiwjq2Bri3Eacq9YgYM0QP/gR/5mTxa6PHiT8OVciPd+OwEv8rMfNMepdG7bonJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/QBF14b; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762329879; c=relaxed/simple;
+	bh=LsTjAm09M/yGM5svcRs8AIkfB2f/URAn2Y/ln47haPc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BzUQgr3aLvsKJfxBgB0SH83LDmhIr4Hqk7RH75B/oTWYmb7Z8adBJ+FkuSOLD1TY4XUbL6k52+nlDLKyHxqUVydhiNC0x43avd0E+zF3tiwL0vTKdjF4rwwEbKzj4vrIuOMF00xuUvNr77ZkM4gf4onLZnOTy5jzRfjjKi/NnTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQTA1yDQ; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/QBF14b"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC3FC116B1;
-	Wed,  5 Nov 2025 07:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762327039;
-	bh=M7tMkYTWiCdwe38qzTslPdBkq5O8fsXakxhQCCBfrlQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S/QBF14bPtG+sof0XDN3JtbP4h682cMYVM3j2Z7cO3uPvNMMfoPOplisB7ovgpZlH
-	 p+imlmHWGCVaYwf4e+XqpCUk6ydxgRo0jeWm2nzSvS0wGNpipNlodsx67pUvZWIQV8
-	 vAMYLWrdfX9JWhKOlQRdk0SH6aSX2uQM47+cV0FoVOab/4fodi6940VdvaR86u30VV
-	 K10va7d4bPdmY2A75tYqvZFsv80oX1X+bFX6nQ33O98DxZ/dlselz/8UiXLd0GqYvV
-	 f+257t07fqH+vImtGktLMZ0dw8wyEoak9gGhNAVrIBbGb8EOSFH4M/tdqxqkW+QIRP
-	 HVUvmZ9SFxBcg==
-Message-ID: <0608ca9b-083c-4929-a4e5-7d76b2590637@kernel.org>
-Date: Wed, 5 Nov 2025 08:17:14 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQTA1yDQ"
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-3418ac74bffso976087a91.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 05 Nov 2025 00:04:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762329877; x=1762934677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GDe6kRSygVEphf3RSRGt9HkF/eyEhvziT45X27VBXsM=;
+        b=SQTA1yDQURc4KmPIgZSpUjvkM/w8kK/AL+NAd3a+3FyoHZ7MG4JHelmoMB3lzar3Rs
+         slXHx9aLOYeu927i8hsKL8gLgT3Q9+53k/B4Z8zdDGYQNpvm3ueG89r+OeQFtH4AkCMb
+         LLNnsTNAiK/34gqKGoVLBEQ+hj02mlqmgD4XK/RoR+QoqqQ1GQ9CvbYG3PJkphKuw6R0
+         2piOgVOjg8gXcWaHpxemgl0jHh/29DVweisrn5FbTIjxeLymJK0/UwPpKgYNQpKNolqe
+         O94iL/zVwkTjaFzEfjMv5frjtn2ubkh89p+QFaRG5ZiO1shJqt+TfQRP/lbC+NE3hXQc
+         gaOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762329877; x=1762934677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GDe6kRSygVEphf3RSRGt9HkF/eyEhvziT45X27VBXsM=;
+        b=uhqS0Pv6dJt2wYSIV5LHAGRKoui0rrax4jLegOsV5LU3TD16jctfoeCPKjdC96lL/G
+         Moiz6cpgOLZW6RaKNRDeiLULMHczRg6JM0KjXRlN93n5xD74fEFg40jqxOzZWZI0YTtj
+         WDzhXAKn07oZQgmrCAft1CGWOgIMQTlQsARkyjG20JvwbWKTfCyeHPvq+oLxxYMkJ/Yo
+         PF16v2Kqp9/yUNUdCpwbg8JU/E0/pstPO+/AyDv7aKPcLSq1hjGnLU7KuwXWAeznRCdY
+         On819q1g2WVedHxPAS4MphWwIQ/j6Ve3TMEpSFZT/cKGsBn2olh4QlHGRUZSXpzoGEa8
+         u3Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUpCgobu570s6bg9TONWJSEHU1UPr8TZ+/yV4nah5swxNHWtSwYbM02VTyRrfImPITsoipYhVPfpU4kGmWzUfbM@vger.kernel.org
+X-Gm-Message-State: AOJu0YygslSuXXd5+NreAIU0uLUCdD2FcF8/HoQDMyDbUrsQ4F2Tw6vS
+	kFD4tb49WEbI2n61aU5br3CxtVBHyUSqRtAZrJLGvhe8qhWrRWY8crS31TZSbbZW6xEhsbml/gz
+	kB3jtUBhaHzb/5Td9tQtLm8U+owt8k24=
+X-Gm-Gg: ASbGncvzFoufoJSKlVJetlTtqS/8QNyPdB+yfopMXEkzG5hotZFvm58tbdG7sKa9YMe
+	tGllWlvu0c5Gi3kH+yvbjpVcRmMu0DWGeiRmHtpulM83CD0PvmjktCpkQrDGhdDYWDwU4zH0tev
+	UX28iOerXXpUBPuAPW5kAt4JNhrFkEa9ZvktqcBzYAORT1PVhzFUrfLI1Fy81u330CEU69FtJhm
+	IsQSZe4Q0cQxY5fA8O2ijl/nvbFQb9ZnH6bB3TJyDpxDaA2qhosSsZ8PM98C8JteZ++4vw=
+X-Google-Smtp-Source: AGHT+IE3kiYdO6A81tH3ocwujCNPCljvOzypJY9CyERGKSeoHzPi5nZ+xfnpKr+voNC9lIaFIPYuRWd+eHWQF6ZoNDQ=
+X-Received: by 2002:a17:90b:582e:b0:32e:6fae:ba52 with SMTP id
+ 98e67ed59e1d1-341a6c1e406mr2591161a91.6.1762329876771; Wed, 05 Nov 2025
+ 00:04:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/14] dt-bindings: remoteproc: qcom,pas: Add iommus
- property
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20251104-kvm_rproc_v6-v6-0-7017b0adc24e@oss.qualcomm.com>
- <20251104-kvm_rproc_v6-v6-1-7017b0adc24e@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251104-kvm_rproc_v6-v6-1-7017b0adc24e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251031-imx-dsp-2025-10-31-v1-0-282f66f55804@nxp.com>
+In-Reply-To: <20251031-imx-dsp-2025-10-31-v1-0-282f66f55804@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 5 Nov 2025 16:04:23 +0800
+X-Gm-Features: AWmQ_bka9Xr4B-LvpKHRbIbtt5BkAdNQKoTwEnWv8Ppu3FZE5Ou4N-m9M6c5JNE
+Message-ID: <CAA+D8AMgXCcQuH3SWh2UU5ib0h3EqdJOdXTkwyFx4duv7qL2Ug@mail.gmail.com>
+Subject: Re: [PATCH 00/11] remoteproc: imx_dsp_rproc: Refactor to use new ops
+ and remove switch-case logic
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
+	Frank Li <frank.li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/11/2025 08:35, Mukesh Ojha wrote:
-> Most Qualcomm platforms feature Gunyah hypervisor which handles IOMMU
+On Fri, Oct 31, 2025 at 5:14=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> This patchset aligns imx_dsp_rproc with the cleanup and modernization
+> previously applied to imx_rproc.c. The goal is to simplify the driver by
+> transitioning to the new ops-based method, eliminating the legacy
+> switch-case logic for a cleaner and more maintainable design.
+>
+> Patches 1=E2=80=935: General cleanup, including code simplification and a=
+doption
+>              of the devres API.
+> Patches 6=E2=80=9310: Transition to the new ops-based approach, removing =
+the
+>               switch-case structure.
+> Patch 11: Remove the obsolete enum imx_rproc_method.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-I don't think that's true. Washn't Gunyah something new? Like since
-SM8550? Look how many Qualcomm platforms we have in the arm/qcom.yaml
-bindings - for sure most of them are not post SM8550.
+Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-> configuration for remote processor and when it is not present, the
-> operating system must perform these configurations instead and for that
-> firmware stream should be presented to the operating system. Hence, add
-> iommus property as optional property for PAS supported devices.
-
-So which platforms actually need to do this?
-
-I really do not understand why you are adding this to SDX55 and several
-others.
-
-
-
-Best regards,
-Krzysztof
+Best regards
+Shengjiu wang
+> ---
+> Peng Fan (11):
+>       remoteproc: imx_dsp_rproc: simplify power domain attach and error h=
+andling
+>       remoteproc: imx_dsp_rproc: Use devm_rproc_add() helper
+>       remoteproc: imx_dsp_rproc: Use devm_pm_runtime_enable() helper
+>       remoteproc: imx_dsp_rproc: Use dev_err_probe() for firmware and mod=
+e errors
+>       remoteproc: imx_dsp_rproc: Drop extra space
+>       remoteproc: imx_dsp_rproc: Use start/stop/detect_mode ops from imx_=
+rproc_dcfg
+>       remoteproc: imx_dsp_rproc: Move imx_dsp_rproc_dcfg closer to imx_ds=
+p_rproc_of_match
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_MMIO switch case
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_SCU_API switch case
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_RESET_CONTROLLER swit=
+ch case
+>       remoteproc: imx_rproc: Remove enum imx_rproc_method
+>
+>  drivers/remoteproc/imx_dsp_rproc.c | 344 ++++++++++++++++++++-----------=
+------
+>  drivers/remoteproc/imx_rproc.h     |  14 --
+>  2 files changed, 184 insertions(+), 174 deletions(-)
+> ---
+> base-commit: 131f3d9446a6075192cdd91f197989d98302faa6
+> change-id: 20251031-imx-dsp-2025-10-31-260b2b979258
+>
+> Best regards,
+> --
+> Peng Fan <peng.fan@nxp.com>
+>
+>
