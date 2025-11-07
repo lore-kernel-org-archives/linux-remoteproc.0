@@ -1,401 +1,341 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010039.outbound.protection.outlook.com [52.101.84.39])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DCF30E82D;
-	Fri,  7 Nov 2025 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C81C1C3314;
+	Fri,  7 Nov 2025 17:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.93
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762523366; cv=fail; b=ax93oahYSV/aLoI1XPKvx34PVlv+IdoUK7TP512Qoox7Cckj6LHY4iLWTUQ8oQbq92P5bgAWBnVoM3+qlUllSl+3sm1dJLOQ+XYF3nbfJ4a/27dMmSk0C1ItNqbD/mFOPu8417cltxzZoEOaT0gKqhcj4V3zcROBVUs9QOqzZvY=
+	t=1762535931; cv=fail; b=uzq+uGLTN0rfJuuQmXO3+UyBzO4ehvRriRIZo/BBZVbrcnbfGraFkakCk+fNuQfmY7KjF9zmi9sOvTnq6Cw2ir5n+AUE/fC6PJor1d30qK4n1KH5/M42aQYfPUorMs907EUh3vA9BqYjeGPNmNeRv9itFC/6WEVwFGGf4f+YBjc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762523366; c=relaxed/simple;
-	bh=ztGz+c8b6HiFHYvaxyk9qfCca6SqD6M9QF0BE8lDY0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DzzafVKsIGG7MLQDhVUjqd1LfppHlsZhBgWOtZGcaIHf+KGgnAOitDBnGHktaRXPKda9P9qoWRO/q7Do9a4UCt5IIVH85tTAk/yk3yXWeygZa3mKHgLCm/nXFpXiD2/4/7MAljyESvQioghugD0LisOk9cQIM73BUCErCQF4Rec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=ksbk2fHn; arc=fail smtp.client-ip=52.101.84.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1762535931; c=relaxed/simple;
+	bh=Qrtxomsdt10ToLqj7IFx7BjFWFMcVNw3JF9WGA+m+3Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jg0Y2V41GGH6Dd8IW7fK/1SoVOhQBcaqY4oDOdKLYpOhxJwH5FTy/7v81bOS5zJnBVwEttJyLCEYtIdfbSEfpyuTZzwTCEokF6RB3i6903IEbx08C1Pdj/e1JWgjC/idKkaJTFVz4zItxb2+36o2JlQmplBTjnv0Fv4wBTUjSNI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=HZFRCpqU; arc=fail smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="ksbk2fHn"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="HZFRCpqU"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A7H7nYV613495;
+	Fri, 7 Nov 2025 18:18:03 +0100
+Received: from pa4pr04cu001.outbound.protection.outlook.com (mail-francecentralazon11013053.outbound.protection.outlook.com [40.107.162.53])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4a8e5818jw-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 07 Nov 2025 18:18:03 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=agxKUwNUmpy0e82iyEknNIirOe5ra9Dh6yFphdmK44CxChfzlZ9pWYwlYlgULi9jHtQt96uJMScBnNckMAXkSFzI6iJjLfotXcH0W+J6wZoA63Rx1CbPL8almmeXgfdBiivd/wmh6t4wT/5Nh39U8gjF2xTmmbdziBF6VJiq0a+KYtyrcWMwKNH5MFGyNGFlz0huKCiD0kD6gin/e4HFghIzZYFjqGT2reotxPCzCHaILfNqbL4Os3KbYLLOdbIOun5rF9a9hVRSvqNrt3+InMp/9o3eqcql9eBuhAVbn01ldbAcQzkEu2VSlb1/KRfvMyWP80M5RAijWgCiTHIbCg==
+ b=ye3gCN2InVpRqtQrKismp6rUBL/8BRg2JwSfk92uUlizlKYotqrclXpktDPdg4Zr33m4A9NcIs6BvrupTYL0tNTzCLXr+74lQndFktq0wheKhLytiWR+uGXViF8u3OKKOpUiYbqFKQLBcaynstYfWbuw6JSBDIL4Y1SsohkfAXy/U6wRgypn/8LxJjDFbGJTZOv7CQ8n2ROP9/9ZCcRqQJXxYBk07E6qRxi5zNyn4GuXaMZpRE8byO6Xd9wu/HsGyXfkTo5Ca5wqb3nqJE0WmxiCeRWalHLV265zuHo1bZq+jICpSkTk9c+2Mt1kQQK8Nra2yezBaK+qMml49q+Ucg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4BdVlvxhGlVnRXtQcVzaOSTinLPPLBtr52U6+tCOpSw=;
- b=NhcH0YdOxT8wTIpWdtbsjgmtEVY9I1yx4sbi/8W4eg3ltPQyjVR3a3DSfWXz6AnxwPTiDnQvFOlJgKjLdT/rtSsBWASZlnsxAeQi2fJiFHyO1yKwEAI7M9UirnFu0XiPnKWHfAFZroDDDNbzFRjdqpztsLev9ciLzjJhtHG3uqjNwI7ArAGEfmO5Sw25RV8ceM5gNfPcVaa0fMvc+fIMaC9c6jqF347gKj/QL93RAr8vK4e7kTl6SEE0J+JxPWWidrvmZwum+hfMdFWxzisCjnNqisZO3FhRu8vNdcoaENUYWtdoEucPzMWREdpn9cCcG7hwQBbuPy50aLtXFxLrGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
+ bh=AW79ZD/FbkkktiQ9UllVxny9QSCXfvdhm+ZitVGQL4M=;
+ b=IrRrkqyWJUpju0bbeR6M23T9E4FCy/kEvT8l6Qrn4WtoPQwzKTTPd+3t1vzvuZik7Gc2ZlPAYz0bxM+RlqgChZ5A6HrH2wdavsM6mdWHDSJweGXLX50QDozgEHtnIN2sutOhs1v2iG4UPZCoxrHvE1k8WYX0L/NjLdcJmVf36iXfrDeskyA9ORvX1k50gtmCrBqj38slWrux1emkg7ywsIaRypE9QqVatbT/Dip8tYCi9ntG59f5FqTnxIec9+qeZ8Q1sm/Bq6nSvFnQVUqMeRGCHQJ/F/cKLwgpZ/jYIuuYM0eVekOq/K3/QGz+iDdrgvpu5K3w/QyL4EXIOpG4Ig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.60) smtp.rcpttodomain=nxp.com smtp.mailfrom=foss.st.com; dmarc=fail
+ (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4BdVlvxhGlVnRXtQcVzaOSTinLPPLBtr52U6+tCOpSw=;
- b=ksbk2fHnsPTHP8rhPO0LQia0ryzkTQSVpW3LEyxlyHCDWwrfoCnyI62WSR83l6hlW3amhlARZEq1qdKDmqrGvgo+hxheySSXBZ+6pyKghjlDfYkJm40PeceYUbOf/+E+N17F/SUOZKXsu0HZZuKb4bXhg6ucz04yFYxZt8As2zzcDpN4cem5eSq549P9ndIJtVufawdaNin8VPmEVghIv98vxM/5baUuSEMfpJus3mm7L4Ogw94mKh/050Wpidcsq/VC93X3z4YYMT61wHBHseGGVHmesZqn4OAoyVFzece/m3oXj2bZ9ysAiucAkmv2TROfToejaq8XSwS9OvYpxQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PR3PR04MB7420.eurprd04.prod.outlook.com (2603:10a6:102:93::6) with
+ bh=AW79ZD/FbkkktiQ9UllVxny9QSCXfvdhm+ZitVGQL4M=;
+ b=HZFRCpqUQSNLj/V1e5RoFaLNJVjQIg2mmT1jkQNxsEPeiI9WHMAvc4BLf8jNzkZogdNt42iNmkobKzyRksFFozLPIgAr1xiixqb1YJEvBxxfHaot3/zBW9B5Ob/mN5gj3cv10zak6M1WMkpcNsAvwBBRGJQLmRNtScT3I0zLPsGQe4fPL0Fx8YE/3Skc1IJRtWrTDV7wMQ4dCBypRZu2Av+r1yZ9khVBcvsXrdZusexcsoSG2pJmknIqtcXYtxCYshLjYbsb3rP5Qm878IBWvFyECZpumnUPg185XgN6pwud3LGCSM0BvjNejGftg1gV2JqTZ+SIxklHn5pFrOxD5A==
+Received: from DU6P191CA0070.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::18)
+ by DB5PR10MB7823.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:4a4::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.12; Fri, 7 Nov
- 2025 13:49:19 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9298.010; Fri, 7 Nov 2025
- 13:49:19 +0000
-Date: Fri, 7 Nov 2025 21:49:58 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>, Frank Li <frank.li@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] remoteproc: imx_rproc: Add support for System
- Manager API
-Message-ID: <aQ35BvxIwMetA5fm@shlinux89>
-References: <20251031-imx95-rproc-2025-10-31-v2-0-758b2e547a55@nxp.com>
- <20251031-imx95-rproc-2025-10-31-v2-4-758b2e547a55@nxp.com>
- <CAEnQRZC8PTbzNM056WUSR-kYqdf4Sgkr88z3S87ZFk+rc=q3=Q@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEnQRZC8PTbzNM056WUSR-kYqdf4Sgkr88z3S87ZFk+rc=q3=Q@mail.gmail.com>
-X-ClientProxiedBy: SG2PR01CA0184.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::9) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9298.9; Fri, 7 Nov
+ 2025 17:18:00 +0000
+Received: from DU6PEPF0000A7DE.eurprd02.prod.outlook.com
+ (2603:10a6:10:53e:cafe::28) by DU6P191CA0070.outlook.office365.com
+ (2603:10a6:10:53e::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.12 via Frontend Transport; Fri,
+ 7 Nov 2025 17:17:56 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.60; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.60) by
+ DU6PEPF0000A7DE.mail.protection.outlook.com (10.167.8.38) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Fri, 7 Nov 2025 17:18:00 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
+ (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 7 Nov
+ 2025 18:18:07 +0100
+Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 7 Nov
+ 2025 18:17:58 +0100
+Message-ID: <734f830c-947c-495b-ac9f-98d439e821f2@foss.st.com>
+Date: Fri, 7 Nov 2025 18:17:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+To: Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Jonathan
+ Corbet <corbet@lwn.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Bartosz
+ Golaszewski" <brgl@bgdev.pl>
+CC: Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam
+	<festevam@gmail.com>,
+        "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "imx@lists.linux.dev" <imx@lists.linux.dev>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Randy Dunlap
+	<rdunlap@infradead.org>, Andrew Lunn <andrew@lunn.ch>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+References: <20251104203315.85706-1-shenwei.wang@nxp.com>
+ <PAXPR04MB8459C54EAF106184E7A378D888C5A@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <05a0c630-3bd5-4307-8b94-1889ba191c33@foss.st.com>
+ <PAXPR04MB91858EA1057672295ECF793889C5A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <aff734de-0d61-4239-9e67-78a4ab258c30@foss.st.com>
+ <PAXPR04MB918581030A9FC05E13874BDB89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <PAXPR04MB918581030A9FC05E13874BDB89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PR3PR04MB7420:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b28fea7-89a8-404d-ae50-08de1e0472e7
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7DE:EE_|DB5PR10MB7823:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08bd935b-86ec-4221-3129-08de1e219a4b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|366016|19092799006|1800799024|38350700014;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013|13003099007|921020|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nbdvnwNSakdQqTqrIkB4J9jbKnQ1ten0+eqgGKhYlPofDiPTIP3hzEafOrII?=
- =?us-ascii?Q?UKJNTea5MU5n1lyYHu5SfCKYEedXq5ixm5PUiIlbtbFyL55LyVNQ8oVUiqmE?=
- =?us-ascii?Q?BliaDKtN4JFLQANBzVjOFY6qR4tjRkmJ18RCltIfgwSBMjAwcmcyffhCxlLW?=
- =?us-ascii?Q?v/KdJMIVfMOzK7EG6qjKRm02jatIJItdT3/HlUHhHQLKZdyZv47JsJjKRumg?=
- =?us-ascii?Q?XXFFDCjmP1urFlhT6lrRNUzef7Yvk5h5sq+k0Ud92FOYE/GmCBewGt+8Z1Q/?=
- =?us-ascii?Q?IL3wWQMy5mzP7UY4RlCbH5pmv9eezJ8BekBbVnzE6QA1lF7DSVoyuohKxjsU?=
- =?us-ascii?Q?Xd9G3Gux847bRruHaNL8b9SqJfB6naXhksMz07Sy/o3RvIypGB5LD4oOB1Q5?=
- =?us-ascii?Q?MGEpzKkxc5ccHZv3oUODciqCZFdSD2r0kmLp96Nox/ipTA/V//3qVZg8qU4N?=
- =?us-ascii?Q?B7OBw46Q+MI0u3+Ip2Z8gx6v4feGD6PwY++tGe5Hcjl+CtlcThGitmcnGWFJ?=
- =?us-ascii?Q?crInz66o+CKlpAGBhW1i61spucGuu+BsNEA5xfTFbJY7rN7p5yVdyllYyH8D?=
- =?us-ascii?Q?6CFXVcSZsBCEyn6YOxrm7Dg6q3MNDcjsVwe8T1y4NnJwZe9we2OeOxALBbCx?=
- =?us-ascii?Q?umb2eY2/Z168/NTxD22JHbSxtZsXgUpX9RbWkvN+kTMkkJWN46lzojVS4n5U?=
- =?us-ascii?Q?DlgshIRQRCfMtnRK76FNs8nXuMc1Ek8QeSxItDCKun1RZu87iqKyiX1NxDf5?=
- =?us-ascii?Q?YLpyuVKci1PLU0I4c0mWeMwgCySfQGUqo+hhOyK9oFn2nhMVCLhAOgk19txQ?=
- =?us-ascii?Q?nE4exGKKNOFdk7eEEZ3gPaglE59TseMpRRea/VUnY4dWJAyiaAGB88kJ02Fn?=
- =?us-ascii?Q?I5nSfBjfV+TeDgRUcf1QgYSgaojIUcaAJ0HDx8DB4ZVp0h2cX9tkVrVBthdP?=
- =?us-ascii?Q?DH24dIoE6mL/UW9zdRRUhG0aHw+nCy1GDDxFeT01WU3enrEKUNKd2V3fBmjA?=
- =?us-ascii?Q?jHA53dcGf5UyEysHtqL4/+KDtDlfqwAeVL0KRlQwBHsM9jpnaXvfFMItYOIQ?=
- =?us-ascii?Q?f3aWHCV33YFKw1XqQ6BiFFtjsHfHYP099BEfldvZBHB1LvRifEwpGCXptnKq?=
- =?us-ascii?Q?vZ+PHM1O70ogndiZBhJgGRgd7lBE/3B7nxcFJnkthz94IDomV9VRSP88jhbK?=
- =?us-ascii?Q?7NOOxL22SKHTJKpinE8V5xT2i879UBYNLddO4jsZomgV2Ka3Mja11IZqsloB?=
- =?us-ascii?Q?+6ZsU380PMreAAwwzQp5R2G6qw0yHBUG+e17qWCT+yfNIWRvcs71K8umGMqZ?=
- =?us-ascii?Q?y6wt7LjLLOgNAqDvdW1/jh7G11DY4E//j7y/0ipV/NZuIZv25pc+i1xAAMV6?=
- =?us-ascii?Q?scwVcd+p5uKumpIjxb0fDaXNkhq+TVoNTfdiHbt4+2wgF3oa9Za3BBjMqhcV?=
- =?us-ascii?Q?gaJiBbZ9nc0Y65P0D3lJGKqf4CWFCsLADz2duHpaGCYMmsJmOsR830bSEZbu?=
- =?us-ascii?Q?5CJjkYJ2SOIVDGswy+5kJlMQBnu2e1YM4trO?=
+	=?utf-8?B?UDFLZDB5Vi9tcG1ZeDJDaHBEQ2pkb3dxR01JbG05YkdaWTM3ZWZLdk5MYWNE?=
+ =?utf-8?B?TjFxVEY1R1dXaUFiSURRR0k0dExOemF4R1dzdTBrU3l1eVFoKzRyVG1MUm5H?=
+ =?utf-8?B?K0Z6a251NXVYU01jQTFBa0lkTlp3QURJeHRTUlk1Mk5MQ2c1bWdRRHRhZkZ0?=
+ =?utf-8?B?c1RZK09TanVhbGU5Y0p1a01ueDkxTldDVXdwMzN6MXVpNWZueUdWcGZPY25z?=
+ =?utf-8?B?aGpTcGRDa3gyUWJlaTg4ejFNTmd1dUt5aWJMVlFWRTZjY3hGakY5OTdpMVYz?=
+ =?utf-8?B?RGJWaHZKbGY1cmxyZ0dWcm5jNFc2MlY3MWdjS0xhdDhGYkxZM1lTaEZ4VHFa?=
+ =?utf-8?B?WU5zWkhrcWFleHZEYTZxd05QQm1EVmNySlR2ZkVpZVJqZGtReW8zcEJhMzhu?=
+ =?utf-8?B?elVUMVRnN013bnd5N1JlMUNvZmJjelgwR1NIa2FqRkROdVBlelNwRHRwTU53?=
+ =?utf-8?B?NEh5RVNnQ2Z4OE1VMWE5bU1BOUcyaXA0cWxKQW5MaTU3YkRla3RwbmdiTHFs?=
+ =?utf-8?B?T1ZzOFZaeENyNVpLRkViMTR6NUhKRzhZTkdYbE92VTNKbEtvREFXeExKcG9k?=
+ =?utf-8?B?WDZZVm9SbWI2TU5QWWlDT3o5RXZMVzM1N1lRMW04akQ4RTQ4cFFYaDVFUlRw?=
+ =?utf-8?B?T3pQSGd3STZLZjhsZWMrZnVYcmFaNFNVNm9zYmlRdFViNWhZcE5RVlFZNS9w?=
+ =?utf-8?B?TjdOQURoRzRVUkJUTjBMZVJoTXIwSGk5RENrVldlekRpYTFUMS9wejdHMVFT?=
+ =?utf-8?B?bjIycjArbzNOcE50enlnYm8wRWVWNFl0SERTejlveFBDTVBqcmVWU3Blem1W?=
+ =?utf-8?B?dlJWRHp4TGtIMC9PbVZ6RW9KeGg0M2FMSzcxMC9tV0lWK3NKOU9ZN1Z0WHhM?=
+ =?utf-8?B?R0habHpPcGNIY2hVZm55clJzNXVOcDYrWHdSRVN1TjV4c2lSdVZPbmtIejRj?=
+ =?utf-8?B?TjBXSndJVHhRdWxGejQxZGtZZGp3QXVwcjZTSXRqWFVnUnVBS3M5UHNHTlJs?=
+ =?utf-8?B?R2ltbm54bnZkamNHUnhkUktxTGlLV2M4K1BRaVhGRW82bVRDSzRDd2lGK24w?=
+ =?utf-8?B?YnJIR0VwNEVydVUyRXdUMnlkbzhDcVhXc2xYRlUrRGVNZUVkbTZKYnNsQUxu?=
+ =?utf-8?B?ZzVvZ2o3UVBzUGZJMUZUSTlsVDVQQ0FQOVpIR1RkMjBFRGszcElpYkxpYzFw?=
+ =?utf-8?B?WTd3YTZlbDNEZVRLRTFtcUtvWUlnRENKb0NiWGVKV1A5UFhMd1hHZHpiL3R4?=
+ =?utf-8?B?RkIwOXlOVnprZjlSbUgxOW01RDA5djUrSEJVTlYzOFBFU1pyT2pxT3BvKzFT?=
+ =?utf-8?B?Q1lJTlpFVHo1QlFhYllpYkpzU3VYY215M1hCSWRPM0I3NEw4V3lPWC9EZEVG?=
+ =?utf-8?B?aFJZdlMreUh2SzBtY3VPQ3MrY2RkVjIybnZXZGR1Vk1GeXprNWpuZ0tPdDZr?=
+ =?utf-8?B?SmZsMnArOUt4Q1pNR210anFaeTJ6OVloWnIycW5HSmNHNWRINW1ob2lPRGJQ?=
+ =?utf-8?B?OWtoT3pPR0s3QUN4NVN1RVRRVXBkaGdiUzBUc0RQb3FHUmZiOHhqWWlWU1FD?=
+ =?utf-8?B?c2RQbVlET3ZBSDJ1cWZzOFE1MlF1eUFyYlZaWmk1SWlCQ2ZjZjUrUmpDUXU2?=
+ =?utf-8?B?dFFQNHVRYnFTcVZXOHRFdFhYaTZ2a0NjamYrRnFPb2EyZC9FNWRBRTRiYlcv?=
+ =?utf-8?B?UFduTFcreVRYNFJKWEhpanVsOGRKdFdXZmhPbWF4MVlSd2VuQ3BGUmpKeWVY?=
+ =?utf-8?B?R2IwR3BLcHN6QjNaZzA1NWlBLy8wNWw1RHJYVkFhTG1UNlJiem9HVkpJdjVm?=
+ =?utf-8?B?ZVdGeVM3WDVDWnFlNGtZcnkvdGFYS1dZSWJsODZNa2pVdnRQV25YdEkrelZ0?=
+ =?utf-8?B?VUQ2SDZLTDR6Y2laREowVk8zVDJiZFpWa1ZOd3BCem5ESW1ibUNzNSt2ZTBM?=
+ =?utf-8?B?cXR3aHc1dGJIWTRWNGJab0ttWC9kSm1LOXpSbFh2d2Ziek5kZGc5RTN6WUFq?=
+ =?utf-8?B?dFQ1MFJHVW1meDNGMnFIRElPM2ZMOXdNQmJFU2xWWWU5SEVrOE1OVSt1ZUpw?=
+ =?utf-8?B?NHBRQ3pBdHpUM0pTZkJERU5MN09QTEdHdFRNT1hldjdDbkRrUTdxellFYXdT?=
+ =?utf-8?Q?PU8SvH50vvGec0RF056Z4JO76?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(19092799006)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pNKvJ2kgy+4rrwVFiMQL0WuHG94P+pd+EKgARbhJE5gfgap4wKn5980clJGH?=
- =?us-ascii?Q?T8xx1OEwSRViwVFBV/lXWKhVyDgWZ6COTAyw3D6kocfyU3bGlvF0oXXAUyu+?=
- =?us-ascii?Q?aGmtLVc3Y9ME+De7wrxIcdwxyF+94GAhrie5PkZQnmB1/gpwVTC+tvemk66e?=
- =?us-ascii?Q?69J63LiN60ex/OIpzeXyaPP+4mtPq4bfAlT9kaSsv6EvrYonjKpjFC7Ra+pi?=
- =?us-ascii?Q?L6ZKd4MP6H0PjBAl50OjsmK4RjptsHU1NafSR6z1IO/2BU7PwZpCPfremhkz?=
- =?us-ascii?Q?zd19p89t1Dy/xaD8NX7ut/WoMFcFCb8YR7azNNfLLAFu/VQ4bmcEoelGJadY?=
- =?us-ascii?Q?mFL/2DERFwPsTlbjv5RWeLad5IkjvrlXmU+IW20ttTcWQdytBw4zMdw0O4Ib?=
- =?us-ascii?Q?BHD1qX5uemU6A97phYnbhrTi5hw8Prv7zASqzQ5SpjZDeGYIKd60IJ5rFVt4?=
- =?us-ascii?Q?1GZgkTT3RR64N8UMCEbaetd9kx9q5g+OgYS1lhB6Y1aFLGWPEgm9vQlDCbmY?=
- =?us-ascii?Q?Pgmq/vj8p7M6B9UUeAuzxNG6xEcwfZoJw2orkIMF3I0CDhbVRojVtxm8HJ42?=
- =?us-ascii?Q?Yfq/vIFe/By+CTPpCMLdRIIW/njyr3Ks6F8MzWaauNvjs0j0tnRoZ88XJh1Z?=
- =?us-ascii?Q?Liw1IsQt1WX3gykFGJykzVMvMSaxMyvaLcN5a5Gi2O6mLUsQFm64Q5u49hdK?=
- =?us-ascii?Q?B95YkaNv5uBPn3EAO7+EknWR2825QI4R43J6E5BBEzSsAPOxLYhBOJkpHGKa?=
- =?us-ascii?Q?vI9UwRLN5vSjRxkhz9UY9wtLXWW4gQ5rMiAQtvu6+Ihj/zKgz3uZd+IVasud?=
- =?us-ascii?Q?X++TY1mTEayDrfR8FgFHx3InHJrpMzqFkEXCzcl6X+ovoVLYvwEfQC8ht4Rs?=
- =?us-ascii?Q?BVx53iwbMRBRt60lwlNo9q+BpPqB+vZEDsP6r5dB03hOWzr8gH6ejv159gye?=
- =?us-ascii?Q?E/s7RZZkDO93m0ZkgGgIOn7Q/xHnqI/AUYXingahyv2YYXbKtn6VT4fUEFhQ?=
- =?us-ascii?Q?M8k2rpw3WVI2C1z7pSDKW05o7Dnz28AJZqLYLHkeJnflQey9rHYrsvgNKVLc?=
- =?us-ascii?Q?VtuYBQIrP3NukyssTagW/GNMPQWC5kayxfBms+7s5t7hmE8YPBSpTPSOV+ix?=
- =?us-ascii?Q?pCCLA0Zf6tdnvS8f8MrdtYmH9J/NlWenXk9CFzVzlYdPtPaU8sodEWB8mk9R?=
- =?us-ascii?Q?OA/W8tAxJ3B0ctwNZk//67eJoWDLN0AXwqBJOwE3Ptnmyw+o21FkQXVRyw+P?=
- =?us-ascii?Q?G/ixsNL0pvqEqQ/s0QOMIe7OoBea6EJzDy4ebVqcCAxK8b3EJ3S1unGTp7Jp?=
- =?us-ascii?Q?vEuIrJLU5/xKq/qtd340m6dXmRPFD3UCxvTBLcY6z7MGU8grQIOqufs+g2Iq?=
- =?us-ascii?Q?ZgG3hj1QGH1OvyPlxahwJbKDuKM1s9G04zmHhIcpzyEi9vvNCnx8BS9Hsj7g?=
- =?us-ascii?Q?XCEM/7YIW/xk8RsdIB0jQtFrgvbJEeYk9ad4/j8Ht865ySBroJpAnuTo9TxD?=
- =?us-ascii?Q?o/p8zVZvjGBuMiojazJSJkohLey9xj4p6vL89c9b0lYBRusRttEQ87vBFWd/?=
- =?us-ascii?Q?yxl0SFRU68TDv70G66rSlwBWBeGQtlqEuaLli+I5?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b28fea7-89a8-404d-ae50-08de1e0472e7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 13:49:19.2701
+	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013)(13003099007)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2025 17:18:00.3496
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QS8VyRcim40y9gvJDQYknWD75hJTQDv/7rR7TAaAk8s4iFbNsq8LU32zpnN7Sx10D0Gekg4EECMpxjRcPJMe8g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7420
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08bd935b-86ec-4221-3129-08de1e219a4b
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000A7DE.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR10MB7823
+X-Proofpoint-ORIG-GUID: RXcPG9rDqH30y6nXnblajuK1qsFiKTAL
+X-Proofpoint-GUID: RXcPG9rDqH30y6nXnblajuK1qsFiKTAL
+X-Authority-Analysis: v=2.4 cv=QuRTHFyd c=1 sm=1 tr=0 ts=690e29cb cx=c_pps
+ a=u/VjwGDIQwVVfJn6M+ag/w==:117 a=uCuRqK4WZKO1kjFMGfU4lQ==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=FOPVHIcnkjUA:10 a=IkcTkHD0fZMA:10
+ a=6UeiqGixMTsA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=JfrnYn6hAAAA:8 a=8b9GpE9nAAAA:8 a=8AirrxEcAAAA:8
+ a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=07d9gI8wAAAA:8 a=pGLkceISAAAA:8
+ a=CVH9J4VzQPHUzZAsogMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=a37Z7SghD2UA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=T3LWEMljR5ZiDmsYVIUa:22
+ a=ST-jHhOKWsTCqRlWije3:22 a=cvBusfyB2V15izCimMoJ:22 a=e2CUPOnPG4QKp8I52DXD:22
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTA3MDE0MyBTYWx0ZWRfX8aRb0+4GAgvl
+ 0oIdoBuEN98KCYL3lxeMhHUlEzwFkeIWkPranaKQ91iRuKZiDy1cfc07dST5St1sDt2/QY1Tk1R
+ I0NHr2Ejmr642RxWROLBRtMLrw8YYf78nkVD90QWrTW8xpIhNbyTRI+jfRDebolns8UJ7xoiVOS
+ QbJoPLuSfUwnVO4fXR/33+cmU+8NVdH2g1Dn0oUFIz7ZNbBE/0KJFUnL08ctKyAkrhcDmGY5ZIO
+ kMfgSmoexJ7dwJ4wtqg2v9qDOmPXer6OkjXw2IWHjVfSOCIGRLf1VuBEKmU20cHHLpn7ggZXv0O
+ YbNb9eYp3LJofw2rINKpONtf5mOCzCLMoqP1mkZMtqpLkcX+Km5z3SaZiyRo8n7KVTmN8M+116s
+ isyjIfuXqUsNcLfiKzLkMC9G8EvGDQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-07_04,2025-11-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015
+ spamscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 phishscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511070143
 
-Hi Daniel,
+hi Shenwei
 
-On Fri, Nov 07, 2025 at 11:10:15AM +0200, Daniel Baluta wrote:
->> There are three cases for M7:
->
->Here we should specify how M7 gets into these three situations, is it
->via the ATF configuration?
-
-It is not ATF configuration. This is configured in System Manager.
-
->
->e.g
->
->Depending on ATF configuration, M7 can be used as follows:
-
-I will use:
-"Depending on System Manager configuration, M7 can be used as follows:"
-
->
->>  (1) M7 in a separate Logical Machine(LM) that Linux can't control it.
->
->Here we should make it clear from who is M7 separate.
->
->e.g
->
->(1) M7 in a separate Logical Machine (LM) from A55 cores, that Linux
->can't control
->
->>  (2) M7 in a separate Logical Machine that Linux can control it using
->>      LMM protocol
->
->(2) M7 in a separate LM from A55 cores that Linux can control using
->LMM protocol.
->
->>  (3) M7 runs in same Logical Machine as A55, so Linux can control it
->>      using CPU protocol
+On 11/6/25 17:26, Shenwei Wang wrote:
+> Hi Arnaud,
+> 
+>> -----Original Message-----
+>> From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+>> Sent: Thursday, November 6, 2025 4:17 AM
+>> To: Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
+>> Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
+>> <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
+>> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
+>> Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
+>> Jonathan Corbet <corbet@lwn.net>; Linus Walleij <linus.walleij@linaro.org>;
+>> Bartosz Golaszewski <brgl@bgdev.pl>
+>> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+>> <festevam@gmail.com>; linux-remoteproc@vger.kernel.org;
+>> devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+>> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+>> doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; Randy Dunlap
+>> <rdunlap@infradead.org>; Andrew Lunn <andrew@lunn.ch>; linux-
+>> gpio@vger.kernel.org
+>> Subject: [EXT] Re: [PATCH v5 0/5] Enable Remote GPIO over RPMSG on i.MX
+>> Platform
 >>
->
->
->> So extend the driver to using LMM and CPU protocol to manage the M7 core.
->
->
->>  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(the ID
->>    is fixed as 1 in SM firmware if M7 is in a seprate LM),
->
->s/seprate/separate
->
->One question here: Is it OK to call scmi_imx_lmm_info no matter the
->context are we in?
-
-Yes. With LMM_ID_DISCOVER as parameter, this API will not fail in permission
-check. It will always return current LM ID.
-
->
->If this call fails is it safe to assume that we are in the case (1)
->describe above? E.g Linux
->cannot reach the M7 core through LMM protocol  or CPU protocol?
-
-Sadly no. See above.
-
->
->
+>> Hi Shenwei,
 >>
-...
->> +static const struct imx_rproc_plat_ops imx_rproc_ops_sm = {
->
->I think this should be called imx_rproc_ops_sm_lmm.
+>> On 11/5/25 15:12, Shenwei Wang wrote:
+>>> Hi Arnaud,
+>>>
+>>>> -----Original Message-----
+>>>>
+>>>> On 11/5/25 02:12, Peng Fan wrote:
+>>>>> Hi Shenwei
+>>>>>
+>>>>>> Subject: [PATCH v5 0/5] Enable Remote GPIO over RPMSG on i.MX
+>>>>>> Platform
+>>>>>>
+>>>>>> Support the remote devices on the remote processor via the RPMSG
+>>>>>> bus on i.MX platform.
+>>>>>>
+>>>>>
+>>>>> I have not look into the details of new version, but before that,
+>>>>> just want to check, have we agreed on what Arnaud suggested?
+>>>>> or continue to proceed to be this as i.MX specific?
+>>>>
+>>>> Thanks, Peng, for pointing this out. Regarding the V3 discussions, it
+>>>> seems that I am not the only one suggesting a generic driver.
+>>>>
+>>>
+>>> As I mentioned before, the only i.MX-specific part is the transport protocol over
+>> the RPMSG bus.
+>>> In this v5 patches, we’ve included detailed documentation for the
+>>> protocol in a separate file. Any platform that follows the same protocol should
+>> work right out of the box.
+>>>
+>>> If you spot anything that could be improved, please let me know!
+>>
+>> My concerns remain the same as those shared previously:
+>>
+>> 1) The simpler one: gpio-imx-rpmsg.c should be renamed to gpio-rpmsg.c.
+>>
+> 
+> Agree. Will fix it in the next version.
+> 
+>> 2) The more complex one: the driver should be independent of the remoteproc
+>> driver. The rpmsg protocol relies on virtio and can be used in contexts other than
+>> remoteproc. In other words, the struct rpmsg_driver and its associated
+>> operations should be defined within the rpmsg-gpio driver, not in the remoteproc
+>> driver.
+>>
+> 
+> The GPIO driver operates independently of the remoteproc driver. 
 
-ok.
+The channel_device_map table in imx_rproc.c would give me the opposite 
+feeling
 
->
->> +       .detect_mode    = imx_rproc_sm_detect_mode,
->> +       .prepare        = imx_rproc_sm_lmm_prepare,
->> +       .start          = imx_rproc_sm_lmm_start,
->> +       .stop           = imx_rproc_sm_lmm_stop,
->> +};
->> +
-...
->> +       /*
->> +        * Use power on to do permission check. If rproc is in different LM,
->> +        * and linux has permission to handle the LM, set IMX_RPROC_FLAGS_SM_LMM_AVAIL.
->> +        */
->> +       ret = scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_POWER_ON, 0);
->
->I wonder if there is a better call to check if Linux has permissions
->to handle to other LMM. This is a bit
->strange but if no other option we can go witi it.
+It functions based
+> on the defined GPIO-RPMSG transport protocol. Any remoteproc that supports
+> this protocol can exchange data with the GPIO driver via the underlying rpmsg bus.
+> Placing the rpmsg_driver (which manages the rpmsg channel) within the remoteproc
+> driver is more logical, as rpmsg channels run on the rpmsg bus. This bus is defined inside
+> the remoteproc device tree node and is populated by the corresponding remoteproc driver.
 
-Per doc drivers/firmware/arm_scmi/vendors/imx95.rst, this is the only one
-that could be used for runtime detection.
 
->> +       if (ret != 0) {
->> +               if (ret == -EACCES) {
->> +                       /* Not under Linux Control, so only do IPC between rproc and Linux */
->> +                       dev_info(dev, "lmm(%d) not under Linux Control\n", dcfg->lmid);
->
->Would this be an error? So if Linux cannot interact with the other LMM
->via LMM API how IPC is possible?
->via CPU protocol?
+Regarding imx_of_rpmsg_node_init(), It seems you rely on device tree in 
+the rproc platform to register rpmsg drivers. This implies you are 
+creating drivers based on a device description. To me, this does not 
+appear to be a valid implementation, but perhaps such an approach 
+already exists in the Linux kernel?
 
-When M7 is in a different LM, this means it is booted by ROM/SM, so
-there is only IPC between M7 and Linux.
 
->
->Maybe we need a better explanation here.
+For your information, I'm facing a similar issue with my remoteproc_tee 
+series [1]. The advice I received was to look at the PCIe DT 
+implementation (I haven't had time to explore it yet). This advice also 
+seems relevant to your series.
 
-"RPROC LM is booted before Linux and not under Linux Control, so only
-do IPC between RPROC and Linux, not return failure"
+Do you also have a look to rpmsg_virtio_bus ? it seems a good candidate 
+to match the device tree properties with the rpmsg device?
 
->
->
->> +                       return 0;
->> +               }
->> +       /* else shutdown the LM to save power */
+In the end, this is my point of view. Perhaps it is better to wait for 
+others before deciding on the direction...
 
-...
+Thanks,
+Arnaud
 
->> +       ret = scmi_imx_lmm_operation(dcfg->lmid, SCMI_IMX_LMM_SHUTDOWN, 0);
->> +       if (ret) {
->> +               dev_err(dev, "shutdown lmm(%d) failed: %d\n", dcfg->lmid, ret);
->
->do we care to restore the flags field here on case of error?
+[1]https://lists.infradead.org/pipermail/linux-arm-kernel/2025-October/1069154.html
 
-keep or clear, both should be fine. But restore the flags should be better
-code practice. I will add that.
-
->
->> +               return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->> +static int imx_rproc_sm_detect_mode(struct rproc *rproc)
->> +{
->
-><snip>
->
->> +
->> +       ret = scmi_imx_cpu_started(dcfg->cpuid, &started);
->
->Is this CPU protocol call?
-
-Yes.
-
->So we can still use this even if Host core
->and remote core are in different LMMs?
-
-Yes. SM supports this.
-
->
->> +       if (ret) {
->> +               dev_err(dev, "Failed to detect cpu(%d) status: %d\n", dcfg->cpuid, ret);
->> +               return ret;
->> +       }
->> +
->> +       if (started)
->> +               priv->rproc->state = RPROC_DETACHED;
->> +
->> +       /* Get current Linux Logical Machine ID */
->> +       ret = scmi_imx_lmm_info(LMM_ID_DISCOVER, &info);
->> +       if (ret) {
->> +               dev_err(dev, "Failed to get current LMM ID err: %d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       /*
->> +        * Check whether remote processor is in same Logical Machine as Linux.
->
->Is in same -> is in the same. We need to always try to be consistent.
->
->Remote processor is a hardware part while Linux is a software part.
->
->So always use the same object types: e.g /*check whether remote
->processor is in the same LM as host core (running Linux) */
->
->> +        * If yes, use CPU protocol API to manage remote processor.
->> +        * If no, use Logical Machine API to manage remote processor.
->> +        */
->> +       is_cpu_ops = dcfg->lmid == info.lmid;
->
->No need for is_cpu_ops.
->
->Just go if(dcfg->lmid == info.lmid)
-
-ok.
-
->
->
->> +
->> +       if (is_cpu_ops) {
->> +               priv->ops = &imx_rproc_ops_sm_cpu;
->> +               dev_info(dev, "Using CPU Protocol OPS\n");
->
->I'm not sure we want to go with dev_info here. It it pollute the log
->and at least confuse people.
->But if you feel a strong need for this you can keep it.
->
->Also, shouldn't be here an else case where priv->ops gets set to LMM ops?
-
-Frank has same comment :)
-This LMM ops is assigned to dcfg->ops, see patch 5.
-
-But since both of you asked, adding else seems make it clear.
-
->
->> +               return 0;
->> +       }
->> +
->> +       dev_info(dev, "Using LMM Protocol OPS\n");
->> +
->> +       return imx_rproc_sm_lmm_check(rproc, started);
->
->If this check fails is the info message above still valid? It will
->confuse people.
-
-I prefer to keep the message above, imx_rproc_sm_lmm_check() will
-print out error message if there are any failures.
-
->
-><snip>
->
->> @@ -52,6 +52,9 @@ struct imx_rproc_dcfg {
->>         enum imx_rproc_method           method;
->>         u32                             flags;
->>         const struct imx_rproc_plat_ops *ops;
->> +       /* For System Manager(SM) based SoCs, the IDs are from SM firmware */
->
->Keep here:
->
->/* For System Manager(SM) based SoCs */
->
->Then comment for each of the fields:
->> +       u32                             cpuid; /* TODO.... CPU Id of the remote core? */
->
->> +       u32                             lmid;
->
->But how these fields are set? Are they the cpuid and lmid of the
->remote core or local core (a55)?
-
-Both are for remote core. These fields are hard-coded in System Manager.
-
-Thanks
-Peng
+> 
+> Thanks,
+> Shenwei
+> 
+>>
+>> Thanks,
+>> Arnaud
+>>
+>>>
+>>> Thanks,
+>>> Shenwei
+>>>
+>>>> Thanks,
+>>>> Arnaud
+>>>>
+>>>>>
+>>>>> Thanks
+>>>>> Peng.
+>>>
+> 
 
