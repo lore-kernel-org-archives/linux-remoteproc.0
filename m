@@ -1,75 +1,65 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A402BDC32
-	for <linux-remoteproc@vger.kernel.org>; Mon, 10 Nov 2025 17:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4992E7BA0;
+	Mon, 10 Nov 2025 17:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762796626; cv=none; b=Ckk2PjrqydV146doo9noovQgIAZOn412akWbD46yr40ArerQYYU9e6e1jdvl7T1ohWvVLJUJ75420MO05I/8XYgdQSGWasFpcOCZtg+FLwkdPVRI6PZF1PjchhJPlLd9BMoF3iECjt9hxw7tbNKPGeR70IHtwO5H0dew7PFJN/4=
+	t=1762797513; cv=none; b=PyN7Dq7Cv9DYENhwCSP0VpCRExX5mFL6FcMlJWmbxKfoKRV8BDVArX9of+pt7ysHG3Cwtexmc0AI5Nf/UugEQ9ItIwX0anI6u8K7ERjFBzLVWf1iCAdrZmWkvVsYP+IKFVpBqEhoRwzlzi9KD4xt6ZQd8+Mtsf6/cTQC8vUMBI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762796626; c=relaxed/simple;
-	bh=S4tg3Dr4FAR1CV10xXnkKduKxsDv65SRP68os3+k4kw=;
+	s=arc-20240116; t=1762797513; c=relaxed/simple;
+	bh=7z2IDwtyS4Ys9cw/VTpUa7QzwCJw3FQZivCVne2NoeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFxLPpXYvfRrN+/G2uRyaHkssqmv5aUKOzK25DuXme/682MVQGJ9glJE1vdUzgYH8yt/5uSejP4d2KSTeheJNCWCUVnTIXg0JtCdbYXgTgimBJHKGPBxviSPoEFxWWAObozshI5UKVGZNlyvhlUGwGUPl+iK3mMdXDVa4n22Mdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ABXtOHJb; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+sZ9A8Loeu4EF5PdDZ/CfGuYELtxarZRPnO1C7NURMmALeObXy2WvSoVdbLK8V7F6DaRlSR9vImtWf20RBzj2Fm+a05rCrY5bbPSpKlbdVI42827wlUYKtc5vqZZKZQxguu4UHm3Kd3pQSypG6lacIHNIgaywU3ilkUO+cHqBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BP9aovPS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ABXtOHJb"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-298145fe27eso16042875ad.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Nov 2025 09:43:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762796624; x=1763401424; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
-        b=ABXtOHJbLr+PXUmEvGomTywTdyDRQpTkFas3NmIaBDWZkYPiDy+bJB6IDy7KAzGen5
-         saYkzIYZX7ZvkQfW0b16beMLxJdpuwlug0qqUQwzaXK7sgAptpoYDEXsIzZ6SLeXmMZu
-         Cos3BrcLCiMfjgafyBKOMPpTtgNXNiKcyKENofdEuwTdauFjSmRFcSBTdc4Hu1z6UDPR
-         6prjvLZe/6m1Z39u8+4gxIIlo6oQN3/rGCaVmQ/lFHCzdqhdXxR03TZcwmeWb4IkCKt9
-         0pqR2kBaBLEMtGdHy39Pa7j9WfbqN1mj9/mVSvlFn+FXa3nM9RpIYVnI7WDcXWSzwNfm
-         Q6Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762796624; x=1763401424;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
-        b=i+YvuC4JEDn3XOvhmBg/ugD7kOu6+NXBX8tO/FnnomPxRybb2m4lic2IHVj+akjUIq
-         YLS5Ln02B4Xamox7eeCeWQ+93LVM/0rrjI8nfKlBZtS67J36mm5JHrzwxCJyHyJvSpjc
-         Xsfnh8rg2PnJbpLKoh1y5Ov8X9ukmu8RchsiQvygQ2GziqQFOXIRiHP8DSAIgrFV/kXC
-         yumGEyY1SYZnU2akR3OX5jfD2iU0EYUYHGr+O1Jb3SGiwHMZeeY7KN2N0Tpl8Ev+jnAD
-         IsVDISevaAsvooCyGVEuh7fDmyXu1RqAtGtv5q3H7Be0k6BZBkhZ3DRRlAq0je8SXVsZ
-         HSKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFIDIcflU1VdMC47u1rWLssWDGXKSv3ylp/MG9Ac9nVQ6/nu5P0Isek097AG4/9ogSlrdsFqfmqKYg/h4diT4W@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrcPULBouAU0sADeFfRv17Bvo0xY7HgE/yeVuFgPNalnbXfm4g
-	ndzKHWxxfm01kxYWhYmz0hEogeP4wUa2VJMLmNYVKyALKeBU8NbGpFP+RnflebJTPwE=
-X-Gm-Gg: ASbGnct1WyZ5mdXE0EmCQ0hD36bu9m651WefKeW5is9ZoBuL4xQra6KS9bFMSMNF9PT
-	/WjMf0YsiWprlV4sfJL2ph83KiR/AhTDLD4KLeAqxfQrDDOVvK83Bfkj40fkbxSqBkV8ZfVw2Nu
-	X4EUbKf8tTPaVrN2nnzHmlbJKe7FtFBOvpgXHXsqo9Jcz85w+VHlr6twcxPsso7QBf3/mDfsuqV
-	Bv9fcGCzwxFPKveh1t390cZHph9hbyGPLGnvSJ1q479XRaBXduBXFAJNr1LqkA3uk9CPJ//ZFln
-	AykPYRxCxuTjUdGd1QcgYiCUBnLjBlmEHxiZ6hNT7AlE4mL41Oz4dlsSe4D9Skz2hWph3MtBtKi
-	WJCF2X2L2zVa6OSp1OkWzkdRCWRNa9y81etJYd3JNPBSAKJBLqqAfZrFuvKajREXOnsmd6AZ0v+
-	XpG87pVtGFfqZP
-X-Google-Smtp-Source: AGHT+IH9KL6qJufmaDst932E6GsFJgG2DPRvV0ZpXeCS06v9BXdY1k3lpKtvHXKr+tDgIwa14Fuucw==
-X-Received: by 2002:a17:902:e545:b0:26a:8171:dafa with SMTP id d9443c01a7336-297e564cef9mr133819655ad.21.1762796624024;
-        Mon, 10 Nov 2025 09:43:44 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:e689:789c:c35:41e7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c747d1sm151325125ad.63.2025.11.10.09.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Nov 2025 09:43:43 -0800 (PST)
-Date: Mon, 10 Nov 2025 10:43:41 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BP9aovPS"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=yku6WYi/8Aqkl37bHVgVbeJ2RCQUTyTa2qVprr48KAc=; b=BP9aovPSNEiNKGTIp6YUewi+yn
+	C5jAHl8nmr2MHoydLlxOaWX41eEVGf82n/s2cAWhZoWn3AXf/n5J6puHPzg6UeqmEBybxpqcUAWLE
+	qjBYO0pLlcjeEyhDalWg7OOBG12eJPummzij/22XfHrknSTOp4LzTq8hJrIV8pAYPSQk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vIW9n-00DY2T-5G; Mon, 10 Nov 2025 18:58:23 +0100
+Date: Mon, 10 Nov 2025 18:58:23 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Shenwei Wang <shenwei.wang@nxp.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
-Message-ID: <aRIkTV8C9gjSyH-o@p14s>
-References: <aP8agyKj73bLZrTQ@stanley.mountain>
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+Message-ID: <01edc2c2-fd1e-479d-8f65-a07b0ed634e1@lunn.ch>
+References: <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
+ <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
+ <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
+ <PAXPR04MB9185E2C3E50D365F64F10E3A89C3A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <0980eb35-b3fd-4383-af86-433769a4fd97@lunn.ch>
+ <PAXPR04MB9185156672C7B334E717F11789CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <638dac3d-ddcb-4d53-b06d-e0bd3d9077c3@lunn.ch>
+ <PAXPR04MB9185F5CC1FEE1557B6AD320889CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -78,63 +68,53 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aP8agyKj73bLZrTQ@stanley.mountain>
+In-Reply-To: <PAXPR04MB9185F5CC1FEE1557B6AD320889CEA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-On Mon, Oct 27, 2025 at 10:08:51AM +0300, Dan Carpenter wrote:
-> The snprintf() calls here work but they have several minor style issues:
+On Mon, Nov 10, 2025 at 04:30:29PM +0000, Shenwei Wang wrote:
 > 
-> 1) It uses ARRAY_SIZE() which is the number of elements in an array.
->    Since were talking about char that works, but it's more common to
->    use sizeof() which is the number of bytes.
-> 2) The printf format is "%1d".  The "1" ensures we always print at
->    least 1 character but since numbers all have at least 1 digit this
->    can be removed.
-> 3) The kernel implementation of snprintf() cannot return negative error
->    codes.  Also these particular calls to snprintf() can't return zero
->    and the code to handle that zero return is sort of questionable.
-> 4) In the current kernel the only "core_id" we print is "0" but if it
->    was more than 9 then the output would be truncated so GCC complains.
->    Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
 > 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: The v1 introduced a W=1 warning because of the truncation issue.
->     It's a false positive because GCC assumes that "core_id" can be
->     every possible value of int but actually it can only be zero.  And
->     also generally, in the kernel, truncating is fine and it is fine
->     here too.
+> > -----Original Message-----
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > Sent: Monday, November 10, 2025 9:59 AM
+> > To: Shenwei Wang <shenwei.wang@nxp.com>
+> > Cc: Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
+> > <mathieu.poirier@linaro.org>; Rob Herring <robh@kernel.org>; Krzysztof
+> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Shawn
+> > Guo <shawnguo@kernel.org>; Sascha Hauer <s.hauer@pengutronix.de>;
+> > Jonathan Corbet <corbet@lwn.net>; Linus Walleij <linus.walleij@linaro.org>;
+> > Bartosz Golaszewski <brgl@bgdev.pl>; Pengutronix Kernel Team
+> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
+> > <peng.fan@nxp.com>; linux-remoteproc@vger.kernel.org;
+> > devicetree@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+> > doc@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
+> > Subject: [EXT] Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+> > > The remote firmware does not need to know whether Linux is asleep. The
+> > > GPIO is not used to wake Linux directly; instead, it serves as a
+> > > wake-up source for the remote firmware if configured accordingly. Once
+> > > the remote firmware is awake, it sends a notification message to Linux. This
+> > notification is the actual event that wakes Linux.
+> > >
+> > > This works because there is always a physical interface connecting Linux and
+> > the remote firmware.
+> > > On i.MX platforms, this interface is the MU block. When the remoteproc
+> > > driver is running, the MU block is automatically configured as a
+> > > wake-up source for Linux by default. As a result, the notification message can
+> > wake the Linux system if it is asleep.
+> > 
+> > You need to add a lot more documentation to the specification to make this
+> > clear. As you said, the firmware and Linux have different sleep/wake life cycles.
+> > How does the firmware know it is safe to go to sleep, if it has no idea Linux is
+> > running or suspended?
+> > 
 > 
->     But let's use that as an opportunity to do more cleanups.
-> 
->  drivers/remoteproc/mtk_scp.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index 10e3f9eb8cd2..db8fd045468d 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
->  		return ERR_PTR(-EINVAL);
->  
->  	if (core_id >= 0)
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
->  	else
-> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
-> -	if (ret <= 0)
-> -		return ERR_PTR(ret);
-> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
-> +	if (ret >= sizeof(scp_fw_file))
-> +		return ERR_PTR(-ENAMETOOLONG);
->
+> The remoteproc driver is responsible for managing the remote firmware. The GPIO driver 
+> operates independently of this process and functions transparently on top of it. 
+> So the GPIO driver does not require to know the firmware's running states.
 
-Applied.
+Great. Just document this. Document what are the
+expectations/assumptions about the channel. The specification needs to
+be clear enough that somebody can implement it. At the moment, i doubt
+anybody would get this correct from the specification alone.
 
-Thanks,
-Mathieu
-  
->  	/* Not using strchr here, as strlen of a const gets optimized by compiler */
->  	soc = &compatible[strlen("mediatek,")];
-> -- 
-> 2.51.0
-> 
+	Andrew
