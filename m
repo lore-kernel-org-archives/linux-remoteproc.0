@@ -1,136 +1,85 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B372557A;
-	Sat,  8 Nov 2025 17:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ED8305064;
+	Mon, 10 Nov 2025 10:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762623958; cv=none; b=EgLyucr2tkTsJA12loV1z+Syi9hBaH6jZYZxmsxxEYCrMFUQjUEFBzZ9PkKzNom9S/H16XjsJDJBRUFgjNGAL8uqT2WG1ptxzluY4hI4svlIABMtXXc2etNMyud0QZEFzmRFAJXVy3IqSxkW9ZovklFZmMI3R6ySwZz3OES2X/w=
+	t=1762769636; cv=none; b=N+2K5JI6ctvIprlF04UyCBzqkvjCgKOMyWRFWactZe+HmFJhET+XQSVFbN45W4+6yObWo8JIxEXVTcxN+YyGXroYcsZ4ZW/YuCiepVO0pNPRtehPohouHsptzTj6NPvcPB/s9EqaQCSVMR+7VJmHNI7fvql//SD/it9bSePHd54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762623958; c=relaxed/simple;
-	bh=h55D+lP2GX+jwsy3UaeykKcNMiEK8XbrLBMFZ4c2xOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmP35LQ8645He4xaSvT1GE/VU8Qa6V7SDIQusmPXXPtcDaOH1Cuqj+/tw5wktuj84RgvBXMQdlthgTa+MUbF6McLq+wXwZqgmr3UjfPKuuE6wbebdVfo/l+skWHUAi1LTYJwbcdZQPd/nW8ZhLaBgNsPQslzXs70gNz3zKoTqEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JZRzBBIK; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1762769636; c=relaxed/simple;
+	bh=32LJX2VLqXeDA+NwDzryxUK5OVfSIb04Y5pgFBaY5Fo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GA+NNkCeomFPh1+cfXiAYy35vANt6lPhv4u2i/0NyQmXTEs2M+HMQZ1I6QzYJJzjOzXTfDRg1U7S3/ZFKTbPYzd1yOoUvpKeh5clJMWxHK/Tx4hQygkuaWahJAtWfgvI9yCpBSfEtRrroDFr1RyPb40lmReap4pHvOR/gVrTcjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pk5Rwci9; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JZRzBBIK"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=MWJj2IKmfkjlDaYikKg3q12CWfCVWJj+lx+cL84vUVE=; b=JZRzBBIK66o7ZHzuevluHIKnZM
-	BNfmpmQTzA2Ht1mPskilZBX+DsNdzqvtxLB5MzMnUKIDInB/YAnlUjAE942hjlVzBFtZmeu/Fj33a
-	5m/BxcNbyWHd35gB2ecqg+aT1PDKZQK6w2sURgQV17WUU9c0b97WuJD9pWEuzze3CZFo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vHn0U-00DOYO-NZ; Sat, 08 Nov 2025 18:45:46 +0100
-Date: Sat, 8 Nov 2025 18:45:46 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-Message-ID: <0980eb35-b3fd-4383-af86-433769a4fd97@lunn.ch>
-References: <20251104203315.85706-1-shenwei.wang@nxp.com>
- <20251104203315.85706-4-shenwei.wang@nxp.com>
- <9fd8ccd9-560a-43b4-a48d-f7a3eaa07eb1@lunn.ch>
- <PAXPR04MB9185C4A4B91F863CFD49718E89C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <0be8c911-3c31-40da-b431-e5a24339c0f9@lunn.ch>
- <PAXPR04MB9185D9EBE8F46715FD114A2989C2A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <cadcbbc7-2024-413a-8e9b-bde5fa233df5@lunn.ch>
- <PAXPR04MB9185E2C3E50D365F64F10E3A89C3A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pk5Rwci9"
+X-UUID: f287af12be1d11f08ac0a938fc7cd336-20251110
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=EoD/aHhTgmIXFon5njzMGTKFSwgtLbPy4kqkBH4hVb4=;
+	b=pk5Rwci9z/+wDZH7jcJxxiN06ix9Q966gnCL4gWDuL56TJBlJUBtjWT/eitMpLgAMHltN98gPyRPv2mJKv3+t9vuyB4wN2Bz5VqIiPrE4PkJCydtziNiGC4j6PgBkqTeRfQQPFIvVCss4Y+bu6AtfwCkYssIhzFX13fX0LvIj7k=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:7be6c4e7-cd3d-45d8-9d9a-a32ec0374101,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:40eaa1ba-0c02-41a0-92a3-94dc7dc7eeca,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
+	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f287af12be1d11f08ac0a938fc7cd336-20251110
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <huayu.zong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1033637022; Mon, 10 Nov 2025 18:13:48 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 10 Nov 2025 18:13:46 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Mon, 10 Nov 2025 18:13:45 +0800
+From: Huayu Zong <huayu.zong@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Huayu Zong
+	<huayu.zong@mediatek.com>
+Subject: [PATCH v3 0/3] Add support for MT8189 SCP and device tree bindings
+Date: Mon, 10 Nov 2025 18:13:28 +0800
+Message-ID: <20251110101342.24261-1-huayu.zong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB9185E2C3E50D365F64F10E3A89C3A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-> > > The power state of the remote GPIO controller is entirely managed by the
-> > remote firmware.
-> > > The remote firmware operates as an independent system from Linux, with
-> > > its own power states and policies for transitioning between modes. The
-> > > wakeup field is solely intended to inform the remote firmware whether the
-> > GPIO line should be used as a wakeup source for the Linux system.
-> > 
-> > O.K. How does the firmware use this information? How should it change its
-> > behaviour?
-> > 
-> 
-> The remote system should always aim to stay in a power-efficient state by shutting down 
-> or clock-gating any blocks that aren't in use. In this wakeup scenario, if no GPIO lines are 
-> requested or marked as wakeup sources for Linux, the remote firmware should put the 
-> GPIO controller into a low-power state.
+  This patch series adds support for the System Companion Processor (SCP)
+on MediaTek MT8189, including device tree bindings and driver support.
 
-There are no messages defined to tell the GPIO controller Linux is
-suspended.
+Huayu Zong (3):
+  remoteproc: mediatek: Support platform reg offsets in mtk_scp_of_data
+  remoteproc: mediatek: Add MT8189 SCP platform data
+  dt-bindings: remoteproc: mediatek: Add MT8189 SCP binding
 
-Since the firmware has no idea Linux is asleep, the firmware is
-performing all the usual processing, driving output pins, monitoring
-input pins, delivering interrupt notifications. If no pins are marked
-as wakeup, it can then enter some sort of low-power state, which
-allows it to do all this work, plus save power? How?
+ .../bindings/remoteproc/mtk,scp.yaml          |  2 ++
+ drivers/remoteproc/mtk_common.h               | 10 ++++++
+ drivers/remoteproc/mtk_scp.c                  | 36 +++++++++++++++++--
+ 3 files changed, 46 insertions(+), 2 deletions(-)
 
-I've also been thinking about what a wake up source actually
-means. I've been looking at this from one use case i know, an Ethernet
-PHY performing Wake on LAN? What normally happens is that Linux
-suspends, but leaves the main SoC interrupt controller enabled, and
-parts of the GPIO controller. The GPIO controller has a hard wired
-connection to the interrupt controller. When the PHY indicated WoL by
-driving its output pin low, triggering an interrupt, the GPIO triggers
-the main interrupt controller, which wakes the CPU.
+-- 
+2.45.2
 
-How does this work here, in a message passing system? Linux is
-asleep. While asleep, does it still process all remote proc messages?
-How? Does it wake up for each message and go back to sleep once it
-finds it is a non wake notification? Since the firmware does not know
-Linux is asleep, it will still be sending notifications for non-wake
-interrupts. How does Linux actually know to wake up? Do you require
-that the low level remote proc mechanism is also wake capable? So in
-effect, Linux needs to go up the device chain and enable wake source
-not only in the GPIO layer but also the remote proc layer? And
-whatever mechanism that is based on, until you get to an interrupt
-which can actually wake the system?
-
-> Okay. To fully simulate a level-triggered interrupt, a notification reply message is required.
-
-I would not word it like that. All you currently have is edge. To
-simulate level triggered interrupts you need a notification reply
-message.
-
-> Remote firmware sequence:
-> Receive the level-triggered GPIO interrupt.
-> Mask the interrupt for the corresponding line.
-> Send a notification message to Linux.
-> Wait for the notification reply, then unmask the interrupt for the line.
-> 
-> Linux sequence:
-> Receive the notification message.
-> Invoke the interrupt handler for the line.
-> Send a notification reply to the remote firmware to indicate End of Interrupt (EOI).
-
-That sounds more reasonable.
-
-	Andrew
