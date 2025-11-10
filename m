@@ -1,191 +1,140 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E332EA470
-	for <linux-remoteproc@vger.kernel.org>; Mon, 10 Nov 2025 17:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A402BDC32
+	for <linux-remoteproc@vger.kernel.org>; Mon, 10 Nov 2025 17:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762794360; cv=none; b=QMw+eC7N0wGq7EQ/OL62YOL5arZajUJR3eKNxHJXKq9uqUOlTr8zUR7XdWbsXv9iGImUKZ0a4h8jLngGTgIzGZ8ccItjmsDDZZFvhy2ZPdYaJiBxNmFhDs76uv9pcQg3J3LuBme/78O/sKIjb+Vqet1gZeUu1ETIhC0NqSWQ8Ks=
+	t=1762796626; cv=none; b=Ckk2PjrqydV146doo9noovQgIAZOn412akWbD46yr40ArerQYYU9e6e1jdvl7T1ohWvVLJUJ75420MO05I/8XYgdQSGWasFpcOCZtg+FLwkdPVRI6PZF1PjchhJPlLd9BMoF3iECjt9hxw7tbNKPGeR70IHtwO5H0dew7PFJN/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762794360; c=relaxed/simple;
-	bh=SwPfq4XVATHpg/rsIBivRM8hAbVGmSP69CnapnVBRRo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E1ObjBme3VMUJyB48M8159tvhJn+cT00CUuYUK5ba61jDRpcMD1xyFwMFg1ed3knh5WouOfm6cdxhJBSh8M/+Z6xbuX6Vz8/6kcVEU+TeeMZ528eXOnypLnYgV1VcQ9eyCdWufM85BhZGd+cmHDMQR095Z2CGRlkr1n4wQNysz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kc8KlaY5; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1762796626; c=relaxed/simple;
+	bh=S4tg3Dr4FAR1CV10xXnkKduKxsDv65SRP68os3+k4kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFxLPpXYvfRrN+/G2uRyaHkssqmv5aUKOzK25DuXme/682MVQGJ9glJE1vdUzgYH8yt/5uSejP4d2KSTeheJNCWCUVnTIXg0JtCdbYXgTgimBJHKGPBxviSPoEFxWWAObozshI5UKVGZNlyvhlUGwGUPl+iK3mMdXDVa4n22Mdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ABXtOHJb; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kc8KlaY5"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-640ace5f283so4012515a12.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Nov 2025 09:05:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ABXtOHJb"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-298145fe27eso16042875ad.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 10 Nov 2025 09:43:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762794356; x=1763399156; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7nKKuy5eatvN3IlbHUDmrbG7HsD+TQPilZ2Qs0TemHM=;
-        b=kc8KlaY5AUi4D1GP7x0HDZf14hudhEMVUgW9NgLnMaST4nry87kxZ7gwkiV7EmnmuA
-         bHznJI8g1JEkUGwZegGcsJUSCSCIZHlaYCrg5H/5MqW8/WNDsWrc54L9LRXDzeLAb22C
-         ndHQHXsCk0gRzhRBUNZt0GiRl/bNpmMUom5nhJ/Gfc5XzTdqpGKj1PYvamGNkxtXDNlU
-         0V6N73Vt+kLmm4kWrI+5dBYFbGNj7gq3BE8lXbOknJpyRgfImGM+jR0JsWY5m8gkj9v/
-         BWtkHGkp9YcQpzhJ99k10GDXmqWmAkW3fTKC5keKh1Cg9OY6+k8W4WEmNSPHAUfwsNtx
-         JImg==
+        d=linaro.org; s=google; t=1762796624; x=1763401424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
+        b=ABXtOHJbLr+PXUmEvGomTywTdyDRQpTkFas3NmIaBDWZkYPiDy+bJB6IDy7KAzGen5
+         saYkzIYZX7ZvkQfW0b16beMLxJdpuwlug0qqUQwzaXK7sgAptpoYDEXsIzZ6SLeXmMZu
+         Cos3BrcLCiMfjgafyBKOMPpTtgNXNiKcyKENofdEuwTdauFjSmRFcSBTdc4Hu1z6UDPR
+         6prjvLZe/6m1Z39u8+4gxIIlo6oQN3/rGCaVmQ/lFHCzdqhdXxR03TZcwmeWb4IkCKt9
+         0pqR2kBaBLEMtGdHy39Pa7j9WfbqN1mj9/mVSvlFn+FXa3nM9RpIYVnI7WDcXWSzwNfm
+         Q6Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762794356; x=1763399156;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7nKKuy5eatvN3IlbHUDmrbG7HsD+TQPilZ2Qs0TemHM=;
-        b=vB1Q3Ndc4lO3ex1sCjjPSKtmdLn3ub8mai0P0+hWoWar4cr7ZadXLSdWpNZmWK0RZh
-         z8Ce/LP45EUMazNAeq3j0o6HKA0PqKl++Rgz7NLBjR54d5gCalOSBPCeFFVvXT1VA8Dq
-         M2jK55441evOCrm2PuURbLo/ZKpsdgEtJfLwj7jXNQ46DPkz0kLtI2aNS0lriJ61bwZ9
-         vLcVCwkDgSJKBRGOkjNcHd15KYw6dBN/AGCmQ3+QoAmSZmImazmrhIkQ+6OJoKQbkf5k
-         FhHHC3MLtuN8FoiWimwFxDd/+0LD7svskaod2560WNiJKGN1071N/dvtXKNAm+Jc1bi9
-         DGTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpNTajjpwpm0vF3WgJCjxQDeWnj70nKoY5jxUxkROPGyMKRSudKzKOfyx5TzNL5Xkw6MDJzSaPasWZnC8I4Kos@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW3gVhff9emv7/5CVgituNv7zJToFyN99d3yuwBh2TSFFz7tmQ
-	lG7T0iCyBL4/COLM7khw72R1fhMNTjR6KTcQUBvj5ge6jjegr82AWC/287cHYVuTHhf4G+zDZ4r
-	xdMfUGwIbyiKJ7H0tbBqUorqeMfKL2aBuYxARr+s+EYBaRzkbJ6HE0Es=
-X-Gm-Gg: ASbGncvEIqiGF7YNJKZLRhw/guj3LWhvXZ3FJRJ95zxoHM9YBvcLS41NYzsxmD/6Gl7
-	6Kl/eTSs7IpIhqOlrMnzC4MJoVGAB1WV7Pr9Iy9tZKmVmLn7/SiUkzg5iMPy9rmy8HmEMlijdmw
-	1Yfwu1Toh30EVfvkYDVrbGT9gqSzje0qTLlEtrOOPr1QOn6/1VQSJsK3kUf7DDM9GWhFjg9UypN
-	WdxDuAsVYuD9VF9HkKwvH8YOsORcWdSQS4R40eeMXBVsF4uvwAipkwhhMdJMnuD0lSaREtLoyQP
-	2CdkxD2Ug935JfivmBnjEDBOgPdy
-X-Google-Smtp-Source: AGHT+IGpbBMLtksrHj65H9tFeOfmCnbh9cDZ/wlQ0na+YR2kPLFhpwHiejQ1X0v8Pq3fvqF3zlshhC75nM30E8UoXWs=
-X-Received: by 2002:a05:6402:4619:20b0:640:fb1f:e934 with SMTP id
- 4fb4d7f45d1cf-6415e80dbd6mr6249320a12.32.1762794356419; Mon, 10 Nov 2025
- 09:05:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762796624; x=1763401424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oBBN9infbPjez6qdJxMptt1hzq/iyvX0xcfU9jpmlSE=;
+        b=i+YvuC4JEDn3XOvhmBg/ugD7kOu6+NXBX8tO/FnnomPxRybb2m4lic2IHVj+akjUIq
+         YLS5Ln02B4Xamox7eeCeWQ+93LVM/0rrjI8nfKlBZtS67J36mm5JHrzwxCJyHyJvSpjc
+         Xsfnh8rg2PnJbpLKoh1y5Ov8X9ukmu8RchsiQvygQ2GziqQFOXIRiHP8DSAIgrFV/kXC
+         yumGEyY1SYZnU2akR3OX5jfD2iU0EYUYHGr+O1Jb3SGiwHMZeeY7KN2N0Tpl8Ev+jnAD
+         IsVDISevaAsvooCyGVEuh7fDmyXu1RqAtGtv5q3H7Be0k6BZBkhZ3DRRlAq0je8SXVsZ
+         HSKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFIDIcflU1VdMC47u1rWLssWDGXKSv3ylp/MG9Ac9nVQ6/nu5P0Isek097AG4/9ogSlrdsFqfmqKYg/h4diT4W@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrcPULBouAU0sADeFfRv17Bvo0xY7HgE/yeVuFgPNalnbXfm4g
+	ndzKHWxxfm01kxYWhYmz0hEogeP4wUa2VJMLmNYVKyALKeBU8NbGpFP+RnflebJTPwE=
+X-Gm-Gg: ASbGnct1WyZ5mdXE0EmCQ0hD36bu9m651WefKeW5is9ZoBuL4xQra6KS9bFMSMNF9PT
+	/WjMf0YsiWprlV4sfJL2ph83KiR/AhTDLD4KLeAqxfQrDDOVvK83Bfkj40fkbxSqBkV8ZfVw2Nu
+	X4EUbKf8tTPaVrN2nnzHmlbJKe7FtFBOvpgXHXsqo9Jcz85w+VHlr6twcxPsso7QBf3/mDfsuqV
+	Bv9fcGCzwxFPKveh1t390cZHph9hbyGPLGnvSJ1q479XRaBXduBXFAJNr1LqkA3uk9CPJ//ZFln
+	AykPYRxCxuTjUdGd1QcgYiCUBnLjBlmEHxiZ6hNT7AlE4mL41Oz4dlsSe4D9Skz2hWph3MtBtKi
+	WJCF2X2L2zVa6OSp1OkWzkdRCWRNa9y81etJYd3JNPBSAKJBLqqAfZrFuvKajREXOnsmd6AZ0v+
+	XpG87pVtGFfqZP
+X-Google-Smtp-Source: AGHT+IH9KL6qJufmaDst932E6GsFJgG2DPRvV0ZpXeCS06v9BXdY1k3lpKtvHXKr+tDgIwa14Fuucw==
+X-Received: by 2002:a17:902:e545:b0:26a:8171:dafa with SMTP id d9443c01a7336-297e564cef9mr133819655ad.21.1762796624024;
+        Mon, 10 Nov 2025 09:43:44 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:e689:789c:c35:41e7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29651c747d1sm151325125ad.63.2025.11.10.09.43.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Nov 2025 09:43:43 -0800 (PST)
+Date: Mon, 10 Nov 2025 10:43:41 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: mtk_scp: change the snprintf() checking
+Message-ID: <aRIkTV8C9gjSyH-o@p14s>
+References: <aP8agyKj73bLZrTQ@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aPi6gPZE2_ztOjIW@stanley.mountain> <20251022155351.GA59635@wendao-VirtualBox>
- <CANLsYkzQ9qFWw5MAaWt20WdmUdNweoPvX7rspp7WZxnvM96V7Q@mail.gmail.com>
-In-Reply-To: <CANLsYkzQ9qFWw5MAaWt20WdmUdNweoPvX7rspp7WZxnvM96V7Q@mail.gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 10 Nov 2025 10:05:44 -0700
-X-Gm-Features: AWmQ_blglMMG9axl19Ge3D6CD9GCMvY_8OonWbI7FnSoglIfhXVBXRV1JHAImxo
-Message-ID: <CANLsYkxTqz3QnuO3MEJoDx=ad43YbUNKiU_xtEzfiV+XAaGbdA@mail.gmail.com>
-Subject: Re: [bug report] rpmsg: char: Implement eptdev based on anonymous inode
-To: Dawei Li <dawei.li@linux.dev>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-remoteproc@vger.kernel.org, 
-	andersson@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP8agyKj73bLZrTQ@stanley.mountain>
 
-On Wed, 22 Oct 2025 at 10:41, Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
+On Mon, Oct 27, 2025 at 10:08:51AM +0300, Dan Carpenter wrote:
+> The snprintf() calls here work but they have several minor style issues:
+> 
+> 1) It uses ARRAY_SIZE() which is the number of elements in an array.
+>    Since were talking about char that works, but it's more common to
+>    use sizeof() which is the number of bytes.
+> 2) The printf format is "%1d".  The "1" ensures we always print at
+>    least 1 character but since numbers all have at least 1 digit this
+>    can be removed.
+> 3) The kernel implementation of snprintf() cannot return negative error
+>    codes.  Also these particular calls to snprintf() can't return zero
+>    and the code to handle that zero return is sort of questionable.
+> 4) In the current kernel the only "core_id" we print is "0" but if it
+>    was more than 9 then the output would be truncated so GCC complains.
+>    Add an "a >= sizeof(scp_fw_file)" check for output which is too long.
+> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> v2: The v1 introduced a W=1 warning because of the truncation issue.
+>     It's a false positive because GCC assumes that "core_id" can be
+>     every possible value of int but actually it can only be zero.  And
+>     also generally, in the kernel, truncating is fine and it is fine
+>     here too.
+> 
+>     But let's use that as an opportunity to do more cleanups.
+> 
+>  drivers/remoteproc/mtk_scp.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 10e3f9eb8cd2..db8fd045468d 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -1127,11 +1127,11 @@ static const char *scp_get_default_fw_path(struct device *dev, int core_id)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	if (core_id >= 0)
+> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp_c%d", core_id);
+>  	else
+> -		ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
+> -	if (ret <= 0)
+> -		return ERR_PTR(ret);
+> +		ret = snprintf(scp_fw_file, sizeof(scp_fw_file), "scp");
+> +	if (ret >= sizeof(scp_fw_file))
+> +		return ERR_PTR(-ENAMETOOLONG);
 >
-> On Wed, 22 Oct 2025 at 09:54, Dawei Li <dawei.li@linux.dev> wrote:
-> >
-> > Hi Dan,
-> >
-> > Thanks for the report.
-> >
-> > On Wed, Oct 22, 2025 at 02:05:36PM +0300, Dan Carpenter wrote:
-> > > Hello Dawei Li,
-> > >
-> > > Commit 2410558f5f11 ("rpmsg: char: Implement eptdev based on
-> > > anonymous inode") from Oct 15, 2025 (linux-next), leads to the
-> > > following Smatch static checker warning:
-> > >
-> > >       drivers/rpmsg/rpmsg_char.c:548 rpmsg_anonymous_eptdev_create()
-> > >       error: dereferencing freed memory 'eptdev' (line 546)
-> > >
-> > > drivers/rpmsg/rpmsg_char.c
-> > >     538         /* Anonymous inode only supports these file flags */
-> > >     539         if (flags & ~(O_ACCMODE | O_NONBLOCK | O_CLOEXEC))
-> > >     540                 return -EINVAL;
-> > >     541
-> > >     542         eptdev = rpmsg_eptdev_alloc(rpdev, parent, false);
-> > >     543         if (IS_ERR(eptdev))
-> > >     544                 return PTR_ERR(eptdev);
-> > >     545
-> > >     546         ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
-> > >     547         if (ret) {
-> > > --> 548                 dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-> > >                                  ^^^^^^                             ^^^^^^
-> > > The rpmsg_eptdev_add() function frees "eptdev" on error.
-> > >
-> > >     549                 return ret;
-> > >     550         }
-> > >     551
-> > >     552         fd = anon_inode_getfd("rpmsg-eptdev", &rpmsg_anonymous_eptdev_fops, eptdev, flags);
-> > >     553         if (fd < 0) {
-> > >     554                 put_device(&eptdev->dev);
-> > >     555                 return fd;
-> > >     556         }
-> > >     557
-> > >     558         mutex_lock(&eptdev->ept_lock);
-> > >     559         ret = __rpmsg_eptdev_open(eptdev);
-> > >
-> > > Should we free eptdev if __rpmsg_eptdev_open() fails?
-> > >
-> > >     560         mutex_unlock(&eptdev->ept_lock);
-> > >     561
-> > >     562         if (!ret)
-> > >     563                 *pfd = fd;
-> > >     564
-> > >     565         return ret;
-> > >     566 }
-> > >
-> > > regards,
-> > > dan carpenter
-> >
-> > Diff below should do the trick.
-> >
-> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> > index 34b35ea74aab..c322df56394f 100644
-> > --- a/drivers/rpmsg/rpmsg_char.c
-> > +++ b/drivers/rpmsg/rpmsg_char.c
-> > @@ -494,6 +494,7 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
-> >         if (cdev)
-> >                 ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> >  free_eptdev:
-> > +       dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-> >         put_device(dev);
-> >         kfree(eptdev);
-> >
-> > @@ -545,7 +546,6 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
-> >
-> >         ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
-> >         if (ret) {
-> > -               dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
-> >                 return ret;
-> >         }
-> >
-> > @@ -561,6 +561,8 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
-> >
-> >         if (!ret)
-> >                 *pfd = fd;
-> > +       else
-> > +               put_device(&eptdev->dev);
-> >
-> >         return ret;
-> >  }
-> >
-> > Mathieu, Bjorn,
-> >
-> > What do you expect me to do about it?
-> > 1. Send an independent fix patch.
-> > 2. Squash the fix patch into previous ones and resend series again.
-> > 3. Wait for other (if any) bug reports and fix them in a whole.
-> >
-> > I am fine with all of them.
-> >
->
-> Please send another patch I can apply on top.
 
-I haven't received a fix for this yet.  After looking into this bug
-report with more scrutiny I am of the opinion that @eptdev should be
-free'd in rpmsg_anonymous_eptdev_create() where it was allocated.
-Furthermore, if function anon_inode_getfd() in
-rpmsg_anonymous_eptdev_create() fails, function
-rpmsg_eptdev_release_device() will be called but I don't see a call to
-cdev_device_del() in there.  Am I missing something?
+Applied.
 
->
-> > Thanks,
-> >
-> >         Dawei
-> >
+Thanks,
+Mathieu
+  
+>  	/* Not using strchr here, as strlen of a const gets optimized by compiler */
+>  	soc = &compatible[strlen("mediatek,")];
+> -- 
+> 2.51.0
+> 
