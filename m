@@ -1,127 +1,191 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF95634EF01
-	for <linux-remoteproc@vger.kernel.org>; Tue, 11 Nov 2025 10:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170293AA1A8
+	for <linux-remoteproc@vger.kernel.org>; Tue, 11 Nov 2025 12:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762857352; cv=none; b=CDnklai3yh0gFykEXdPfzIzKC/uOFGa/XCDjpFecuYBMC5G0bQzs09cDqPpFe2gZ2sPlYdhuEpr6vBzE41RkueDZA9m6RyGem6W7lGjPcf1srUKDngPM6+2RVaSPtfLDidudrelE5++a57hDqQe59XP+/zaGNgp8jpe2ZOO1dz8=
+	t=1762865592; cv=none; b=SJxa5uLJuaCh0AdkNrNu9JKDqWLlqtVIwv7zmILqL0tKhUWRwnHiMby2Pg5EsgdqYJYEBLrT6iVGEUZnjqCfvoT9XMLnR+acKumSLVx4sbQJEa0gs0nyYNW/wQ3DgIl5O9YQJ013Tg4PlHDf8glGuEQKJwyBNKUEOpLg14BFomI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762857352; c=relaxed/simple;
-	bh=b5cTARWnCH0O+wzlNreNZEZCG3YtR/z+aB364cLgDRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OOcEOI70nvOykIZ0xuf15XXA3u4I/hOlqN8SGpvIeBp0nbA2zdOHCQP3EdbC03cxPSKO/tgy0i9rIV5mi5/KIn/l1/dxXcdS3PJsrkL5VSHy5oecQFjZIpikG6RlTG2Jg5klCvq5OgnsGcmOm/ME05wWsgrQDvxb/5yIk4vejB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A5K3Vj1c; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1762865592; c=relaxed/simple;
+	bh=fT3bnusM2NvS3KE+sLCfsFOKIa01BdAc38ni8ocv33E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6K/kjJgMYp1IwP0jgx750FikSyf5bfDO/AHmr1YVV/c0B4ZlM+lZVRLghxz7XBWjR9zjrVfthLCCp2BaBNpxsJIqeUNmXg3AlXreWh8ZePTKMO8MHVWDPihlm4vnL4l637P8gmtAGO6rOLDNwvNAYqboMpEwo0+S1w8oV133l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NuGaXHvR; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A5K3Vj1c"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-37a875e3418so16131301fa.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 11 Nov 2025 02:35:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762857349; x=1763462149; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b5cTARWnCH0O+wzlNreNZEZCG3YtR/z+aB364cLgDRc=;
-        b=A5K3Vj1cV3ibGiIR+o5kYeDkP1LkFeJkJQ2AYzJ7Ueyiwmtcr2ywQVaykLSnAeMCgj
-         EPqy2hQoLPARSunxPZsKJUddW/N/u34Y+LUskmmXxR/pr+8BN/MVMBB79PzKlZGgIsBF
-         qAz20kgVN/CARA1DsNTJQzLAv6Mj1oepbEhxcK03bRTInIYMy05xLTiHsuTOCFSm5So2
-         0xwf6tCRutJ8t289wOT9kF/akxV3GfJcPvtvY3qJUoEA0TgFNE0ZcM8Vhqfy3zaXX+pN
-         eF8Lk9aHYKL9aXRObdVCeBBNDJEwVilstRk2D7oSVt8Oyd0PSIj750vIt30jb6UL/gKZ
-         ClWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762857349; x=1763462149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=b5cTARWnCH0O+wzlNreNZEZCG3YtR/z+aB364cLgDRc=;
-        b=K6IqkReXZ4XO1eX4mqo9rmeKv1RfbpNSdzBURQEq1phEZO8Go4PkAeRkSchJQ+ygq2
-         52q+CDqU6hy8iq3gTPpLBgDzBV0uDB06cyGD/AYU3GxCRQVqxEAR/pdmSMtBRg53BCR8
-         +ADsOQJgV116UzCYMgqMd6/qOmbd3KteavabJYsWhpkvAghtJ/imMutMfyvHfNswqWBc
-         Sk4TCDWc/Wezm0vwg3bcxcRcSPnyN0FXsRCQ1rUCWUmSml2o78kzSD+v2CnuLi0orWEl
-         Zr7DgfDQqv3iJQQrJssJI6C5ihTgvR879f2OLqLbaUY6QWz+nU545ZNpT1BqwulmtE2j
-         SHWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVm4UJpTbcRWtyJ9RKjtVPp62izsQjHHAJ0PmgbSyVSFIsssYtqGHrVNSYzMPFIFdu0idt71yvTBIXZ2cY3VdAX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDSsWXeXV4bNO5zOiED3cixH+CAkn0GR5Hf9Xop/Mc0ffI/kgW
-	Ueh+EScTYejDveCLkk3UKAP9hk6Vrz8HzP4RPWli5mqsRBrl9lRA6YaPsEHdVR3m9zRv3XlKhpC
-	FAkFjCakfnutH5Y2VFglrkpeaK9HjDpD99zp45ZlQdw==
-X-Gm-Gg: ASbGncsU3IW3oIwE7LBejOEtuNTaVow1vK8s788vLTpbYxbXRF68XhptQQDrVFGFs2R
-	wI+kJPvRHZpX0GBkmRajVvWvOU33ZhquxFZZcOSC8n1TbRlbNt+0xaJ9edZq4ND/phQPyppw9AJ
-	AgKmT2mkhmBv0aiqAtlqVDmQsIYgquXWWMwTqko2lLp28aTYjbCcXaLKBrM4ohsgfuiIKxkIoBP
-	q9tC44eI0F9TALwG0ulsaps0bGJ/hfMwzp2D+hTyt7ghFhv6vTO6LDbDobk01H08rOSaGA=
-X-Google-Smtp-Source: AGHT+IHiG+EjsNieo0IH9vKGvPYVnnnJhmFUXHoDPqz54BHP96ylxBdjlT/JInKjKxLz/khK4ncylVpRxXU4D16MeYo=
-X-Received: by 2002:a2e:95d2:0:b0:37a:2f0b:ef24 with SMTP id
- 38308e7fff4ca-37a7b1995e0mr22288641fa.16.1762857349004; Tue, 11 Nov 2025
- 02:35:49 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NuGaXHvR"
+Date: Tue, 11 Nov 2025 20:53:02 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762865587;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=giX7yvWfx4mnNj0ve/8srrjYpJOji6XS2pPoBtueDto=;
+	b=NuGaXHvRo3J9IuhiUCtq4hRwTiky6dM8XSU8Nk/7/ScR4NnnH7TjxCXk7PmApAb34gLi1r
+	6/UWKiIVr9Nw0PnGhexuXuO0oc887NmOGugpmEIstiNK1gmRZmXoSaOl9UW7MraRjiewl5
+	OnBCRhOfj5qB/JWm7mAK6DhAeRqFrDI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dawei Li <dawei.li@linux.dev>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-remoteproc@vger.kernel.org, andersson@kernel.org,
+	dawei.li@linux.dev
+Subject: Re: [bug report] rpmsg: char: Implement eptdev based on anonymous
+ inode
+Message-ID: <20251111125302.GA183476@wendao-VirtualBox>
+References: <aPi6gPZE2_ztOjIW@stanley.mountain>
+ <20251022155351.GA59635@wendao-VirtualBox>
+ <CANLsYkzQ9qFWw5MAaWt20WdmUdNweoPvX7rspp7WZxnvM96V7Q@mail.gmail.com>
+ <CANLsYkxTqz3QnuO3MEJoDx=ad43YbUNKiU_xtEzfiV+XAaGbdA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251104203315.85706-1-shenwei.wang@nxp.com> <20251104203315.85706-4-shenwei.wang@nxp.com>
-In-Reply-To: <20251104203315.85706-4-shenwei.wang@nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Nov 2025 11:35:37 +0100
-X-Gm-Features: AWmQ_bnM-SUasW3cn2Gm4EW3aePYZpGnjIZZVnW89VcDCfJSgNXVTHUcuXdKqUo
-Message-ID: <CACRpkdZR2C=+ssYOKnF=hyOqTakGjVxzp5_qz=3-uYRpzaZgNQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
-To: Shenwei Wang <shenwei.wang@nxp.com>, Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Jonathan Corbet <corbet@lwn.net>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-imx@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkxTqz3QnuO3MEJoDx=ad43YbUNKiU_xtEzfiV+XAaGbdA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Shenwei,
+Hi Mathieu, 
 
-thanks for your patch!
+On Mon, Nov 10, 2025 at 10:05:44AM -0700, Mathieu Poirier wrote:
+> On Wed, 22 Oct 2025 at 10:41, Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+> >
+> > On Wed, 22 Oct 2025 at 09:54, Dawei Li <dawei.li@linux.dev> wrote:
 
-Also, a big thanks for working on improving the standardization of rpmsg
-so we can get some order here. This is very important work.
+[...]
 
-On Tue, Nov 4, 2025 at 9:34=E2=80=AFPM Shenwei Wang <shenwei.wang@nxp.com> =
-wrote:
+> > > >     546         ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
+> > > >     547         if (ret) {
+> > > > --> 548                 dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
+> > > >                                  ^^^^^^                             ^^^^^^
+> > > > The rpmsg_eptdev_add() function frees "eptdev" on error.
+> > > >
+> > > >     549                 return ret;
+> > > >     550         }
 
-> +- **Major**: Major version number.
-> +
-> +- **Minor**: Minor version number.
+[...]
 
-I'm not contesting these if they come from similar fields in other rpmsg
-devices.
+> > > >     558         mutex_lock(&eptdev->ept_lock);
+> > > >     559         ret = __rpmsg_eptdev_open(eptdev);
+> > > >
+> > > > Should we free eptdev if __rpmsg_eptdev_open() fails?
+> > > >
+> > > >     560         mutex_unlock(&eptdev->ept_lock);
 
-What I'm thinking is that the driver will eventually have to quirk around
-bugs in the responding rpmsg CPU, and there will be bugs. This can end
-up with this situation:
+> > >
+> > > Diff below should do the trick.
+> > >
+> > > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> > > index 34b35ea74aab..c322df56394f 100644
+> > > --- a/drivers/rpmsg/rpmsg_char.c
+> > > +++ b/drivers/rpmsg/rpmsg_char.c
+> > > @@ -494,6 +494,7 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+> > >         if (cdev)
+> > >                 ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+> > >  free_eptdev:
+> > > +       dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
+> > >         put_device(dev);
+> > >         kfree(eptdev);
+> > >
+> > > @@ -545,7 +546,6 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+> > >
+> > >         ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
+> > >         if (ret) {
+> > > -               dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
+> > >                 return ret;
+> > >         }
+> > >
+> > > @@ -561,6 +561,8 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+> > >
+> > >         if (!ret)
+> > >                 *pfd = fd;
+> > > +       else
+> > > +               put_device(&eptdev->dev);
+> > >
+> > >         return ret;
+> > >  }
+> > >
 
-major,minor =3D (1,2) NXP implementation, no bug
-major,minor =3D (1,2) Sharp implementation, no bug
-major,minor =3D (1,2) Sony implementation, ooops this has a bug
+[...]
 
-What is the driver going to do here to work around that bug?
+> >
+> > Please send another patch I can apply on top.
+> 
+> I haven't received a fix for this yet.  After looking into this bug
 
-The scheme kind of suppose that all vendors use the same codebase
-and they don't.
+Sorry about the late response.
 
-I would rather have:
+> report with more scrutiny I am of the opinion that @eptdev should be
+> free'd in rpmsg_anonymous_eptdev_create() where it was allocated.
 
-**Vendor**: Vendor ID number (such as the PCI or USB ID)
+Yes, and it's exactly what diff above is doing.
 
-**Version**: Vendor-specific version number (such as SW release)
+> Furthermore, if function anon_inode_getfd() in
+> rpmsg_anonymous_eptdev_create() fails, function
+> rpmsg_eptdev_release_device() will be called but I don't see a call to
+> cdev_device_del() in there.  Am I missing something?
 
-This will make it possible to identify buggy firmware and apply
-quirks.
+1. rpmsg_anonymous_eptdev_create() does _not_ create cdev, so it's not
+   supposed to call cdev_device_del().
+   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c?h=rpmsg-next#n546
 
-My apologies if the rpmsg community has already thought about
-this.
+2. So I assume you mean "what about epdev based on chardev?". It's
+   simply because cdev cleanup job is on rpmsg_chrdev_eptdev_destroy(),
+   _not_ rpmsg_eptdev_release_device().
 
-Bjorns input would be appreciated!
+So my proposed fix patch still holds, IIUC:
 
-Yours,
-Linus Walleij
+Author: Dawei Li <dawei.li@linux.dev>
+Date:   Sun Oct 26 23:18:06 2025 +0800
+
+    rpmsg: char: Fix UAF and memory leak
+
+    Potential UAF and memory leak exsit in exception handling paths for
+    rpmsg_anonymous_eptdev_create(), fix them.
+
+    Fixes: 2410558f5f11 ("rpmsg: char: Implement eptdev based on anonymous inode")
+    Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+    Closes: https://lore.kernel.org/all/aPi6gPZE2_ztOjIW@stanley.mountain/
+    Signed-off-by: Dawei Li <dawei.li@linux.dev>
+
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 34b35ea74aab..c322df56394f 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -494,6 +494,7 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+        if (cdev)
+                ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+ free_eptdev:
++       dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
+        put_device(dev);
+        kfree(eptdev);
+
+@@ -545,7 +546,6 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+
+        ret =  rpmsg_eptdev_add(eptdev, chinfo, false);
+        if (ret) {
+-               dev_err(&eptdev->dev, "failed to add %s\n", eptdev->chinfo.name);
+                return ret;
+        }
+
+@@ -561,6 +561,8 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+
+        if (!ret)
+                *pfd = fd;
++       else
++               put_device(&eptdev->dev);
+
+        return ret;
+ }
+
+I will send the fix patch if you find it not offending.
+
+Thanks,
+
+	Dawei
