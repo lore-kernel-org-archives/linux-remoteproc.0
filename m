@@ -1,177 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9DB34253C
-	for <linux-remoteproc@vger.kernel.org>; Wed, 12 Nov 2025 16:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3402874ED;
+	Wed, 12 Nov 2025 21:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762966795; cv=none; b=p3Qiu9Iam+pKf1TbXxJoreocNLq72Yg6HPN+bivU9pyFRVEyqukhWVGEfwYd9YIkwGvi66HCnUZvCKhz2DreHFEwPa4BAtO2fBnQhqfOFUYMd+90KbTifnfsWbu7FogE6kAcl29OfcAdRapn/SJP//8/qmRJTyhc5GxQuxYeRfQ=
+	t=1762982296; cv=none; b=m9g66A1OJjgnMqmvCDYXqDck0RUJGG1qg442pkhHDNS0tc4ugNfWnyoEC2/elubCobxG2gA9HDArf/GWPNli7WRA7pJWCssQcY/3cYRmXPVBdX0F31TfMvhjYFJ91tcwPq+cNG+lz2ep6NrscCBZBFLdtL0KKIP0wl7GiGCsgso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762966795; c=relaxed/simple;
-	bh=RVOBomhYRdwmTIvo3d1upFxr9xv6m2ioRcySu2Zct+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sc0CLqxGZ68bgUbkgsvU24PcDEoHXrSRbTVwEhuMdXTNpIdjL8qxZGd9PffwUQnbRJpcXlOnMgQu9gF3OnpsiAcaYvhlC0eOVc7whHB0fVkO+VIhGlVGikkhQXOj5qzI9UHmoA24BVC2SOXPThjEXORb06Coomq2LdHLsC/AcTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XxxxjSUN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1762982296; c=relaxed/simple;
+	bh=cw8aLLstIpkNY61VL2Zf1icBfgfy27WtaHcCKq84PYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iJ67RAnxvmIxgn6Aib4R+L09MQx6znFDAdny/ambkxnM4xYqM86wVuCoQ5g+ISan/EZ+nqokfbojMw5JLEQCXy82lhtcJO7+2GtmHgJ9nYYPp60/m2bRKv4KW+n9C4oPNZaU6POhC+wb8I9uqJUwfYG1RpCAztiyIkBQyZ+8q50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G1lxgetf; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XxxxjSUN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44589C2BC86
-	for <linux-remoteproc@vger.kernel.org>; Wed, 12 Nov 2025 16:59:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762966795;
-	bh=RVOBomhYRdwmTIvo3d1upFxr9xv6m2ioRcySu2Zct+c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XxxxjSUNde86wmg/dcnOrvIfN2jepikxpY7GV4lYOLhagr1EawmOpBYrVV2HAdtyO
-	 3TUYFKqPEPkY1rdnnXhBeoPa2xNa0hRO7yO1zs7ZhIVNnGwrszehllb7MZvKJSI+AF
-	 uMKxv9JnbGqVlPiq5Py5LSOsJpDK+jw9LCdAbRWbGK5UddHigpNjs2JQWovpDwxDMr
-	 SC6Bd8xvqKR5FbdKSYdtaX5S0iq5ObFngQn+ArfsBJw4HLkKHHe438BTi8m43lqaQJ
-	 W4DENohKvqRFDeQMktCHwYehTOpkJbeMA8rq58HHHrJFxIJsWMjthzdqM4TcXtCWYA
-	 ODaKBn0IoFE+Q==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b71397df721so170947866b.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 12 Nov 2025 08:59:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWJjPtLSU6nqPaIsz1FYecd1vNF88D6+2//bp9ddgZAwFRowbBoe46qen4HHIGfgLP/8HktpBUueWPomtlsAT75@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBOu2x5o0FkiA6aL5a2XdpbU7HUCEoex4W8h+ZSgtKVXAeAJ9L
-	UAVr9UB+PdD0U0nBuSJsX0O6+3sVnfVh6DBH4kF9ZJxggP7UtgD+6RDOFhsi8nx8oA/8Ks6+l/v
-	7el0KSBnlRXZf4dnknNhnbhWN0kdudg==
-X-Google-Smtp-Source: AGHT+IEOqt/wJY8Cvt+ACAz7CBaI8+ZUOPnH6TL37Ek0ZSDGOQg0lL8OZ1nhy6LAM/AdjuxvzXmeIb2YLoCTlRThoLE=
-X-Received: by 2002:a17:907:3fa8:b0:b70:b077:b957 with SMTP id
- a640c23a62f3a-b733198f04fmr406767266b.15.1762966793516; Wed, 12 Nov 2025
- 08:59:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G1lxgetf"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=gdSVwVNFWa3UDXoRV1/YfYWA8WTDmQgTkzVuCwG7akc=; b=G1lxgetfC7Zd7s86zg/08QZrTc
+	Whr63hWvH1OMA9Foe7hxbzxeXVZSGhbueF4cV72JQ9GqPqt1rBcPr0gS7ZxMaM28pYZKoTeLgJcoC
+	WWiRgCfgri/C042sU1nOHCQMFC/knOU+VZcNYYN5KFNbFTCO3FABOTnrxAJpFgsA2kgz3jvE1CUZL
+	/WTVNDygkdnn3dsUdKeslaluUKlvWoGYfUeoYnVP7QBkl6QQuDIg36L/uu1yVsXz2ykCe0pNSmDCT
+	ptfdh+XcpjW02zTXN/Wx8a2+fNSh8OUjHgwYxmgJhQ3jrDSZT/yRlbsWBopkYKcU/SW5CiHMHkGzq
+	pMwA29iw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vJIEB-00000009Wvw-0PB3;
+	Wed, 12 Nov 2025 21:18:07 +0000
+Message-ID: <1dd236fc-26f7-4c02-b183-c3fc13d24767@infradead.org>
+Date: Wed, 12 Nov 2025 13:18:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031175926.1465360-1-robh@kernel.org> <aRN0fdOAV0B728qo@p14s>
- <20251111195923.GA3629535-robh@kernel.org> <CANLsYkwcbrTaKASdr5fj0m9ARS4xUgzVH8iWQKwTCvEsoZDDsQ@mail.gmail.com>
-In-Reply-To: <CANLsYkwcbrTaKASdr5fj0m9ARS4xUgzVH8iWQKwTCvEsoZDDsQ@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 12 Nov 2025 10:59:42 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL7HcDkPgJjcqJSagdN=gH2rv6noVS57QMGNRp0YCxUBw@mail.gmail.com>
-X-Gm-Features: AWmQ_bmxZCkzBm3PwPqC-n2_BEF69Zs3agW7isLAr86xc9rjwe66yE2yHIz-vl4
-Message-ID: <CAL_JsqL7HcDkPgJjcqJSagdN=gH2rv6noVS57QMGNRp0YCxUBw@mail.gmail.com>
-Subject: Re: [PATCH v6] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] docs: staging: gpio-rpmsg: gpio over rpmsg bus
+To: Daniel Baluta <daniel.baluta@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Shenwei Wang <shenwei.wang@nxp.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-imx@nxp.com
+References: <20251104203315.85706-1-shenwei.wang@nxp.com>
+ <20251104203315.85706-4-shenwei.wang@nxp.com>
+ <20251112125741.GB1319094-robh@kernel.org>
+ <CAEnQRZB4ymvSERKhJW=PAk5xA2JYD=i4wzkbumj_g5S8BjONjg@mail.gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <CAEnQRZB4ymvSERKhJW=PAk5xA2JYD=i4wzkbumj_g5S8BjONjg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 12, 2025 at 9:43=E2=80=AFAM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> On Tue, 11 Nov 2025 at 12:59, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Tue, Nov 11, 2025 at 10:38:05AM -0700, Mathieu Poirier wrote:
-> > > Hi Rob,
-> > >
-> > > Please see may comment for st_remoteproc.c
-> > >
-> > > On Fri, Oct 31, 2025 at 12:59:22PM -0500, Rob Herring (Arm) wrote:
-> > > > Use the newly added of_reserved_mem_region_to_resource() and
-> > > > of_reserved_mem_region_count() functions to handle "memory-region"
-> > > > properties.
 
-[...]
 
-> > > > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remotepro=
-c/st_remoteproc.c
-> > > > index e6566a9839dc..043348366926 100644
-> > > > --- a/drivers/remoteproc/st_remoteproc.c
-> > > > +++ b/drivers/remoteproc/st_remoteproc.c
-> > > > @@ -120,40 +120,37 @@ static int st_rproc_parse_fw(struct rproc *rp=
-roc, const struct firmware *fw)
-> > > >     struct device *dev =3D rproc->dev.parent;
-> > > >     struct device_node *np =3D dev->of_node;
-> > > >     struct rproc_mem_entry *mem;
-> > > > -   struct reserved_mem *rmem;
-> > > > -   struct of_phandle_iterator it;
-> > > > -   int index =3D 0;
-> > > > -
-> > > > -   of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
-> > > > -   while (of_phandle_iterator_next(&it) =3D=3D 0) {
-> > > > -           rmem =3D of_reserved_mem_lookup(it.node);
-> > > > -           if (!rmem) {
-> > > > -                   of_node_put(it.node);
-> > > > -                   dev_err(dev, "unable to acquire memory-region\n=
-");
-> > > > -                   return -EINVAL;
-> > > > -           }
-> > > > +   int index =3D 0, mr =3D 0;
-> > > > +
-> > > > +   while (1) {
-> > > > +           struct resource res;
-> > > > +           int ret;
-> > > > +
-> > > > +           ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
-es);
-> > > > +           if (ret)
-> > > > +                   return 0;
-> > >
-> > > The original code calls rproc_elf_load_rsc_table() [1] after iteratin=
-g through
-> > > the memory region, something that won't happen with the above.
-> >
-> > Indeed. it needs the following incremental change. It is slightly
-> > different in that rproc_elf_load_rsc_table() is not called if
-> > 'memory-region' is missing, but the binding says that's required.
-> >
-> > 8<--------------------------------------------------
-> >
-> > diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st=
-_remoteproc.c
-> > index 043348366926..cb09c244fdb5 100644
-> > --- a/drivers/remoteproc/st_remoteproc.c
-> > +++ b/drivers/remoteproc/st_remoteproc.c
-> > @@ -120,15 +120,19 @@ static int st_rproc_parse_fw(struct rproc *rproc,=
- const struct firmware *fw)
-> >         struct device *dev =3D rproc->dev.parent;
-> >         struct device_node *np =3D dev->of_node;
-> >         struct rproc_mem_entry *mem;
-> > -       int index =3D 0, mr =3D 0;
-> > +       int index =3D 0;
-> >
-> >         while (1) {
-> >                 struct resource res;
-> >                 int ret;
-> >
-> > -               ret =3D of_reserved_mem_region_to_resource(np, mr++, &r=
-es);
-> > -               if (ret)
-> > -                       return 0;
-> > +               ret =3D of_reserved_mem_region_to_resource(np, index, &=
-res);
-> > +               if (ret) {
-> > +                       if (index)
-> > +                               break;
-> > +                       else
-> > +                               return ret;
-> > +               }
->
-> This looks brittle and I'm not sure it would work.
->
-> Going back to the original implementation, the only time we want to
-> "break" is when @index is equal to the amount of memory regions _and_
-> ret is -EINVAL.  Any other condition should return.
+On 11/12/25 5:35 AM, Daniel Baluta wrote:
+> On Wed, Nov 12, 2025 at 2:59 PM Rob Herring <robh@kernel.org> wrote:
+>>
+>> On Tue, Nov 04, 2025 at 02:33:13PM -0600, Shenwei Wang wrote:
+>>> Describes the gpio rpmsg transport protocol over the rpmsg bus between
+>>> the cores.
+>>>
+>>> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+>>> ---
+>>>  Documentation/staging/gpio-rpmsg.rst | 202 +++++++++++++++++++++++++++
+>>>  Documentation/staging/index.rst      |   1 +
+>>
+>> Why is this in staging when none of the drivers are?
+> 
+> I guess that's because remoteproc.rst and rpmsg.rst are in Documentation/staging
+> and that's because when converting them from .txt to .rst the author
+> didn't know a
+> good place where to move them.
+> 
+> Would Documentation/driver-api be a good place for these doc files? I
+> can move them
+> and then Shenwei place the gpio-rpmsg.rst in the Documentation/driver-api also
 
-@index equal to number of entries returns -ENODEV, so that condition
-is impossible. We can simply it to this:
+Documentation/driver-api/gpio/ if its driver documentation.
+Documentation/userspace-api/gpio/ if it user API docs
+There is also gpio documentation in Documentation/admin-guide/gpio/ which could
+also be appropriate depending on the nature of the document.
 
-if (ret =3D=3D -ENODEV && index)
-    break;
-else
-    return ret;
+-- 
+~Randy
 
-If you want to keep the prior behavior when 'memory-region' is
-missing, then '&& index' can be removed, but I think that was wrong
-behavior.
-
-Rob
