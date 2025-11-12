@@ -1,30 +1,30 @@
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0E630ACED
-	for <linux-remoteproc@vger.kernel.org>; Wed, 12 Nov 2025 14:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FF233AD83
+	for <linux-remoteproc@vger.kernel.org>; Wed, 12 Nov 2025 15:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762957744; cv=none; b=CyCahKXGB31IT/ZyC3w7yGEUaPqwQGlNtRnC5JiYcEU1ef2V5GiWhghuQJJIudlXS7NfNzQ4hK5v58f8SRP2qFixlTNENZT9TJHPL+or2zfwx4Nngojk1SCMiwJag2SrGcW63ZTjOkZyY2LOi+XdI86c7cG67Pk7LY1N+dlPqEU=
+	t=1762959688; cv=none; b=kWyrtCkDwKT2nnlN1EyMx8lCo9Gat9N45I/FQcXPVjp6sBlg9zwGP4S85eweQIgULF0UZAPJA5MepUsZGrZDEy190KudhQRGeEMgynT++PQ5S445bZWGkUNOLx5PzDQzDT/+fx9VOQ1Fc5kxYPA1Y7lyEbwH5KpmP5pvJESXBCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762957744; c=relaxed/simple;
-	bh=bsmVsurDKipEK3ow1y8v56g6adjah5ne+JnB35ffBj4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AUsJLYi1N3tGQU/uE6NFEHS7QC0mx8GrVi5NLeiVhhHZZAJUFXryArRaApFp2/2C0VhTqte/M4y4RbKSKwtTbSGgWXacbR2VzyrJmM0+s7wb6mz6RrEfTssxl+m+wqd/iXD3sEyiqYKm3P/eYbLIHDHa5E0Zst4t7PUDUx68VWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fmuM8RK3; arc=none smtp.client-ip=95.215.58.176
+	s=arc-20240116; t=1762959688; c=relaxed/simple;
+	bh=XcxgyKREtfSK0Qerbht6rng2nQw4VJv6f57Csc+Lg3A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i9M0izZHfRFlke9Z+vCFBvX9OcnMCsTTD8xjhD1ZvTNeuFoY2MUZEn8f12Cw6P2aJotaw0tvxCCb2woud1zfLsxTyPYOt1KGccztq+9lsI9wXj1BC9Ebi5IGIpVdHzkd3qmq4sa8jMNMqXIiomLTQ1BaUArU4YOPTzJr5081p+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=npjiijVL; arc=none smtp.client-ip=91.218.175.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fmuM8RK3"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="npjiijVL"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762957737;
+	t=1762959684;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=M5kzMwnuDpvtZtEb2YwAi5QfpkarTs3peCLKZz+pyoo=;
-	b=fmuM8RK3rMDOYKgzjwLkR1p9PI38cZ8uYTP0d3CN1TiPkBRJabXWqsND51F97s+5EFG3Td
-	u/c6PVYjz5CR6fDf9wdGNvHvVnBnD/IhHxJX6XRuZ78Edy0yCJmQHkxZo1o335x7FEOPLd
-	iR4E4Zg1qR/nh+5acpqK/dLdyFJRzho=
+	bh=VgAq0OR+HKlnOZWkDINJ+EDXWhYqn2eiGSxWCbtEhPQ=;
+	b=npjiijVLvH6oKmsUi8excf8ZjSL/k7EcdmW/os+TzeYRS50wQ62HRfgVuFOFIu5wOi0uVc
+	Kf5IVcQ6C/Q30tTa7xr34BST5UL12eyVX2UWgP7JgcZMD01HoZoUmzXm/hksFxO3a0/cYo
+	nHw1j32LZaixQwlDKx/yaXJ7bup5RNI=
 From: Dawei Li <dawei.li@linux.dev>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org
@@ -33,9 +33,9 @@ Cc: linux-remoteproc@vger.kernel.org,
 	dawei.li@linux.dev,
 	set_pte_at@outlook.com,
 	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] rpmsg: char: Fix UAF and memory leak
-Date: Wed, 12 Nov 2025 22:28:13 +0800
-Message-Id: <20251112142813.33708-1-dawei.li@linux.dev>
+Subject: [PATCH v2] rpmsg: char: Fix UAF and memory leak
+Date: Wed, 12 Nov 2025 23:01:08 +0800
+Message-Id: <20251112150108.49017-1-dawei.li@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -57,11 +57,17 @@ Closes: https://lore.kernel.org/all/aPi6gPZE2_ztOjIW@stanley.mountain/
 
 Signed-off-by: Dawei Li <dawei.li@linux.dev>
 ---
- drivers/rpmsg/rpmsg_char.c | 59 +++++++++++++++++++++-----------------
- 1 file changed, 32 insertions(+), 27 deletions(-)
+Change for v2:
+- Add put_device() when __rpmsg_eptdev_open() failed.
+
+Link to v1:
+https://lore.kernel.org/all/20251112142813.33708-1-dawei.li@linux.dev/
+---
+ drivers/rpmsg/rpmsg_char.c | 61 +++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 34b35ea74aab..de058a8b99ff 100644
+index 34b35ea74aab..92c176e9b0e4 100644
 --- a/drivers/rpmsg/rpmsg_char.c
 +++ b/drivers/rpmsg/rpmsg_char.c
 @@ -460,44 +460,34 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
@@ -155,7 +161,16 @@ index 34b35ea74aab..de058a8b99ff 100644
  		return ret;
  	}
  
-@@ -571,6 +571,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+@@ -561,6 +561,8 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+ 
+ 	if (!ret)
+ 		*pfd = fd;
++	else
++		put_device(&eptdev->dev);
+ 
+ 	return ret;
+ }
+@@ -571,6 +573,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
  	struct rpmsg_channel_info chinfo;
  	struct rpmsg_eptdev *eptdev;
  	struct device *dev = &rpdev->dev;
@@ -163,7 +178,7 @@ index 34b35ea74aab..de058a8b99ff 100644
  
  	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
  	chinfo.src = rpdev->src;
-@@ -589,7 +590,11 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+@@ -589,7 +592,11 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
  	 */
  	eptdev->default_ept->priv = eptdev;
  
