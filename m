@@ -1,230 +1,267 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012070.outbound.protection.outlook.com [40.93.195.70])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010060.outbound.protection.outlook.com [52.101.193.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE9C2FCC04;
-	Thu, 13 Nov 2025 15:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B482580F3;
+	Thu, 13 Nov 2025 21:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.60
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763048703; cv=fail; b=fSokDsDVkY3fbq8GkRQYwFVfigwFCdvMwx8n1mR5GIHrgbmWHgxfg++SYdOBVWRue1O0fNd69RyrfkB9CCRrinrb68Y8QN9qkQ7ivZShuoNJyqNGs8Gawa8v39XOnHt/TRaoV+qLMvjHxN9+KbIizE+kbNHown4uh2Ngro24RAA=
+	t=1763068936; cv=fail; b=RXBzGRBbiwwHv9gTYPTqqsPSxWylb/QI5fF8acUAh77L+tlV+0zqRyDF3PBR74bF9kV44kfW/RF4KrjNMYv7bShq2PENFC2t4x5P7cNKKVS2P4DD4dCI/oKtxuNEiJ+Gus1ReKhL31b2PfBxa7f8yrNKkQ1sxsXmWXoe885ZXCQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763048703; c=relaxed/simple;
-	bh=GTXbKP1WkWX0W9ArC54hpCfv1N1vAGqsmGlbCHaWL+M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EfRGhfJg3ZXrYILrDhxiEGGw/3WMBX/pMpFg3UPJ0xRlOn2tjaiRZe1zj29Ga6NuMjqgPu106N5AbUmyyb3oSiaCcdBSZ8c82ltZWDyOTbUOjxjgtebO81etG9N6L181q3ozRLVYbINQMty8ZTa12KZ9kH4dxBOOnjk7mRtIFPU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=s55C+8EK; arc=fail smtp.client-ip=40.93.195.70
+	s=arc-20240116; t=1763068936; c=relaxed/simple;
+	bh=AuBl9slciZsQ1n5/UGmbJ/YO9J+ko37Q6/6E10Cai0M=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Xm3Xbs24+vhzT1CnpaPA9sgVnCLxCOWRHp+zZRxnqhbKBVRe1sff8ezNTpfrcO+IdHnzH6mRkkxNANuJFvFWTeJ47oo4+Hqwbo3ByL7my0DoUo5Cwg+7S7S8VWMkvBPj8XzCc/BfrB93hDqxwCy3ygWaX5kaLtMhgQGESMMf+ME=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NFLW4Vh+; arc=fail smtp.client-ip=52.101.193.60
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="s55C+8EK"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NFLW4Vh+"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gUKYK6bo+xaPH7E7k4esXWPH2WM1tDP8Y/8QCv7aUpYTzP9nzh19ZSt/Tb+tqF129Xsnybc8PRT1eMAjdEP4xOWyHQTBre/BqxqCtmTF7iHHDiDQpgM8EAarCaVV44C38a3j69qkfhNTl9fkbztuHc6ZLWetfiURKqQ4rQP63ysf0oRFsl/vDR+lDszlT3AhwN2QeFE2CLETTM9Re8Y/ZddaK860d1dTjWvAGRHh6IKnLH1+l9tako9s7s6W7m+8wgpjr9h0d+v+lpCdFy4qVFxdKVE4NqBvr1T3Uxs39fZRxDU9CBaRH5YJ3LKcq94E2LNGT2gqJJrwSvGRRbsSrA==
+ b=Ls+m1NEpyVPnwJD3bduWFZ7ATzqfKMxJNZDbKM6JfIj2MrVQQ7kvf6EmJF+Mh87Atul/+831f96V7kp3WzxEmSdkU98Jg8/8akyVWC2dNvqef4xv4Y1/wgrMmTJXFalR/cw9AD6cSO2BNaSVQcMmTrl7kpSJlA39/tVQr4Ry2YK71CCt2AvBLxm4O6RJit7yfdjnKjttV18OOM/v0wXeBQQKHjKk3vrW0US6cuSW+Kbxg16mhsj1xP2WE8n3/o0h1utSg8Om2/mIXSlVS3XPQ0Gsbir3D4msm6lIF22XFmqbFh1wSWC9ev4Q8M8qppiCkv4qQIZ3bzzPAjTzQMZuAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hT6hViAtAsHDG+y4pGGGptgnW4Ritz0bkM9k1/nNhsY=;
- b=UFkuiP0KBPqA2qO/LwnscOehyWgWJ9H/b+zlQqpUl/gQcjikj/EFsB2HU3h9Sp5Jf0eDXa0RDzJ3fNOm28Deovf/UepxBBs4nkkSZ2plajoUTFTegDyReybsZUAHtwmAtzV2EUYPpPNPCTmHoVIA4gVchVZKdMk6wUdI35p76AwpfvkXvIJOewXC/X2sgnfkiFdQyARs5HLTvZsp/Peb1jJWXG+op8M9Vyf8LwePlKnXyZRfA5q+/Cq00/s/TEUSsmVGw2XbZ55+8y+BSB+zJz6XWqUC+SIWCxpr+JByzTZLTgO6dgo9g+Rx7gBq7T07C9tDjObvXnvHpwdLVT+Y+g==
+ bh=yoNfeF+UBZO89SAUaa5BcJlGImi70LwwENhKhYA1EQs=;
+ b=jHwLwtmWJHQe7/8y4l9c7AGMy78k/6qXRBURHjvvIiIhOPRo8Otx+57MTPxPMsLzSKM5ctHBav9LKRuMOqaMu11nNxldcx2E7r8oHxOh5uYR03xSnxOcCdgKpBvn+6StrhyHS0u4jnh8vAkhN9WUvBBbb82uGbTscYaTziGAZp0Daq4RV6td6LDDozesRY1zVA+QvToYWFmb5eeObcejQodhVvbxb6UxOGKu1m1I5H0RMe3Ru0/8b6zkyH1x53fxYP8JkaoN6eCds+tv+wKoo6FB3uqTD7CDgIg5OKe3FuHpwtJoSFt6XzzAmd9ETR9uNm4xCcFP5jWveH1PVO3nlA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hT6hViAtAsHDG+y4pGGGptgnW4Ritz0bkM9k1/nNhsY=;
- b=s55C+8EK9LZbelCSa+GoVq9nYpAIay3TFL4s44rYdJryjBqJ4EWJgnVHckxwPZBF8kUWsKTSZVHQOsEqytU0JPPmNnVETu8EAmfGMcciXB99uHfe5geq+pPWiMuHlBV0nlF4BnbIr+I581VxRHwnnklf/86DuAfOSTPwi/V6eQw=
-Received: from PH7P220CA0027.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:326::33)
- by CH3PR12MB8994.namprd12.prod.outlook.com (2603:10b6:610:171::7) with
+ bh=yoNfeF+UBZO89SAUaa5BcJlGImi70LwwENhKhYA1EQs=;
+ b=NFLW4Vh+kcs2O4hpobWU0W0oiu2H3KKi50YEPtZ690aCZqm5Sc+JgLEWDl4hwbNDZx7aBY/TnV/yfVLrMltFCUPs3OwnLfcYvtNtiJQ5GIMCruoPOELScbVS1YVxeMj18Uz95fHGwlha7nbn9t937TTVa50LkOimAAVeuw7MBZE=
+Received: from SA9PR13CA0064.namprd13.prod.outlook.com (2603:10b6:806:23::9)
+ by LV8PR12MB9270.namprd12.prod.outlook.com (2603:10b6:408:205::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.16; Thu, 13 Nov
- 2025 15:44:58 +0000
-Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
- (2603:10b6:510:326:cafe::69) by PH7P220CA0027.outlook.office365.com
- (2603:10b6:510:326::33) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.17 via Frontend Transport; Thu,
- 13 Nov 2025 15:44:56 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Thu, 13 Nov
+ 2025 21:22:12 +0000
+Received: from SN1PEPF0002BA4E.namprd03.prod.outlook.com
+ (2603:10b6:806:23:cafe::c8) by SA9PR13CA0064.outlook.office365.com
+ (2603:10b6:806:23::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.15 via Frontend Transport; Thu,
+ 13 Nov 2025 21:22:12 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SN1PEPF0002BA4E.mail.protection.outlook.com (10.167.242.71) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 15:44:57 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 13 Nov
- 2025 07:44:54 -0800
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 13 Nov
- 2025 09:44:54 -0600
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ 15.20.9320.13 via Frontend Transport; Thu, 13 Nov 2025 21:22:11 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 13 Nov
+ 2025 13:22:02 -0800
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 13 Nov
+ 2025 13:22:01 -0800
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
  (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 13 Nov 2025 07:44:53 -0800
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
- Shah <tanmay.shah@amd.com>
-Subject: [PATCH v2 2/3] remoteproc: core: full attach detach during recovery
-Date: Thu, 13 Nov 2025 07:44:03 -0800
-Message-ID: <20251113154403.2454319-3-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251113154403.2454319-1-tanmay.shah@amd.com>
-References: <20251113154403.2454319-1-tanmay.shah@amd.com>
+ Transport; Thu, 13 Nov 2025 13:22:01 -0800
+Message-ID: <6691892e-dc55-49bc-9c86-eac12756d681@amd.com>
+Date: Thu, 13 Nov 2025 15:22:00 -0600
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH v2 1/2] mailbox: check mailbox queue is full or not
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+	<linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20251007151828.1527105-1-tanmay.shah@amd.com>
+ <20251007151828.1527105-2-tanmay.shah@amd.com>
+ <CABb+yY0m_Whm1F7d2ub+vhn0eTb47UC9g=JvpLnWh-2E1oo52A@mail.gmail.com>
+ <aa1ff206-d505-433b-9715-56d866a5f675@amd.com>
+ <33edad1d-08b9-4fe4-8525-a1f50a898e2f@amd.com>
+Content-Language: en-US
+In-Reply-To: <33edad1d-08b9-4fe4-8525-a1f50a898e2f@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|CH3PR12MB8994:EE_
-X-MS-Office365-Filtering-Correlation-Id: 093cc14c-8ec1-47ba-55fa-08de22cb9912
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4E:EE_|LV8PR12MB9270:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3edf3e56-81ac-4cd5-c23e-08de22fab58c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2NExrX3Rfpx8R3bqc1nsfoXQW8mARiB+1UMQNhInWpg9b4XvAypENpAsBy+r?=
- =?us-ascii?Q?agiW8E3zu5TmY1O5YFCrK+M+KwzPzfNRA6VEGCUtwmF2824R3sTC1IhgF7Mo?=
- =?us-ascii?Q?nSEBQTOs2nWF0NOeh81+eJcOBJoawGWm4tApSUtrs0WHl/26Dde0QgtSmmlh?=
- =?us-ascii?Q?ZyY47YGDXkDm8Dsu2JR8CNZNBNry8wAqIcE8TyJjsqDvB8W9/3ObRsdf1izh?=
- =?us-ascii?Q?WY9yX3/k90Wgo95Np06+ryBEPV859Rx0jid7per5MVxiR0TZfn/9Ks2Onjkf?=
- =?us-ascii?Q?vxtcSreE0prq2SoBmOchA21KSJgfq9iA+K4nzN4p3bcgjuQEBIctwAYle86H?=
- =?us-ascii?Q?5+Bt9eGyQJrEqv+V7LGwWJ+UQRX55Qjz1Cw21XueI3jfPHZaCwZ3oHEfEpv7?=
- =?us-ascii?Q?ph714XXNajwCE/ODAaannVhjzZAbCc+8nXqvlNtgCRl27w1yMfkj6kLpOQop?=
- =?us-ascii?Q?2Sz5SSd0F3s8wfSZ9ygBcLOseHcnd4rt7Pz8tZWgndjXb2Xv96irJcCdcSyt?=
- =?us-ascii?Q?Tv+4qFeHK9pDIyH6sCpXV6Q/1DcCEvXCLeafqWgOM6dAgLN2WpEj57a9jha3?=
- =?us-ascii?Q?vIXsX9mx9rSCeYICoogYbDbO09a6DvId7SgeWrm1JxJyHYldIJysBUhWCjMg?=
- =?us-ascii?Q?BndiLiPpaci3rKhkDmMFkPMgkzCoE3iYHshWADgPvV36jMFFRm2E+p+A9DAn?=
- =?us-ascii?Q?EZTDXAHSs6wYC8Xb27gvQzTD4MxNDXVVnkai1HjE+yZwpIjjZzCJ43+jXopQ?=
- =?us-ascii?Q?aw4HowO29nvBQY/KGiPp+7YyjtNByMGvpCLnMSQHFID1ga79ZFpzZWKCSmaf?=
- =?us-ascii?Q?lSeG8X+a6MN7UtWkFviFrxRFjh9I3GY2dhpE9Dy0R6W40AaSUu2WylCgHSIy?=
- =?us-ascii?Q?CJtOPXRU2rq/OrmzsbOX1KKgQmVXdr/hzrNuTpKNbV+hWfXJOz5ZQsLK6ZVX?=
- =?us-ascii?Q?7/SycTgIA0/WQwQ0TeT+6zPT83gYqeIEANjBhMBku9XBDIr+tNk3Pc54S/Ns?=
- =?us-ascii?Q?yFARO/2aa1Pa1hYKoXi+9K0CFhunhrJGEjpfLCfHXznqO6dhP1FGiz2k5zwe?=
- =?us-ascii?Q?ucFlYK4w25uAqOFqGHj1dtQ3VgsMQ/ObrZBgcxTGorT3yE2Pl55MplS4c/x1?=
- =?us-ascii?Q?C/WnHMhCJUB570f5MDjtDeglGjEp1Z0BSroTIm0wAUlmc+sovNNIZY+/ZUZn?=
- =?us-ascii?Q?6e/bNwI2mt7jDswU+CqfYEKiK9epXKbP5AjKXY1ksys0LEWeNdZqJwZlOjAX?=
- =?us-ascii?Q?u7QyTD/iAfLdWcomiperZM87vR+q2tmEWT1DXQ8uDRVdHxc6pU3n1vEIuGmB?=
- =?us-ascii?Q?PanrKCBzFZaBgqE0qwouOa+Vdevp3HhMwdPEdf6iaBMRNMvjQN1GcyhJbavR?=
- =?us-ascii?Q?jayML4rVMnaXZEdyd52epEWUdG6LyIOLFBX3M1PrCnTSKtNyqwaroQ7OiB7J?=
- =?us-ascii?Q?XsedS2pMsXJMfN6yliJoKhb8WDyfLZFYByJY4tis26IOYiLA8RZN5JtUlLL2?=
- =?us-ascii?Q?Qrc4ApfSD4LAXh8le8zcWqDOHsgpUTdR5X5jH+asRJoojsj4L1UcxqT+q10c?=
- =?us-ascii?Q?/322fSHKT+4w6RpO0QM=3D?=
+	=?utf-8?B?Z2thSWNoY011VHJSYURXWVBPVDhpU0tncHZQQzVQQzAxekFXN1dLZzhpdnBP?=
+ =?utf-8?B?VjJGMW40U2VzdDB6NnIrMjNJc1M1Unc4Tmo0Um5CdXVQbFV3RmJaTytkcmRz?=
+ =?utf-8?B?S3BRTHdsQUE1QW5SeGJwZjUvWTlKV09kUm9BZmJQVkY2QkVwWVVJeDlGUHg2?=
+ =?utf-8?B?UlBpTkgyT1JDTDFzSHR6bmdhSVJyRm9vQXlubnhBK2RhdnprcHVCTDN0a0to?=
+ =?utf-8?B?bDdUcENjUVJzZlU1a3FtSXV3TzBLT1BpTnF4N2JDMTYrL2grUk9mMjQ1U1Mw?=
+ =?utf-8?B?ZXFQMHVReUQ0Rnc2MXRUSk5MRlhIcjMvV2R1Uy9YZktKTGtkaHFGRGk0L01S?=
+ =?utf-8?B?ZzFDSkZNY2Izc20xMUhoZnFtMXRlRWY5amptakdQTUVOMkVscG53MGczK25O?=
+ =?utf-8?B?SWdXZXF1cUw3ZjVPS211anp0UCtyYkpxNDI1WUlvaG54MXpvMUhqTTc5bitn?=
+ =?utf-8?B?OVNzSWw1d1YrNi9ERXB6TFJlUmJ4SVZGVVF1T2RTRCtJNzIzT0l2TnZHd0dh?=
+ =?utf-8?B?WWpremZ3bnJhR1p4TWluUUtCazFJY1JoYmNGbm5wbVFic2tWNGt1QTdlSWxK?=
+ =?utf-8?B?cVMvc043WFI3SVBqYUpCbzlYUmw3RGI5MW9QUlNHS0Jmb0Y3N0N4UlhCbkp4?=
+ =?utf-8?B?MTQ4a0dPbWY1Q0JTVm11Y29XVWcvcGU5L3VydFU5dWtIbFVyNi8reUlYMFJn?=
+ =?utf-8?B?bmRydXhqRlZJZnNwM3hCdkJWS25rQ1FCdjVUV2VXeFpOYVA5WUVBTTVUWTFX?=
+ =?utf-8?B?ZHNkUzZYOXVLOEJVVE96KzU1STkzSU9QZHlyMk50VGJpWVZaeWFrNE94bjgy?=
+ =?utf-8?B?QVhOdHRWb0NhU0tkalV5djVhYzVuNE1YMkJOTG9HU1BVNktYVTY2Y2xhNnht?=
+ =?utf-8?B?ei8zcmloQVVhZk1lYTI1UTBVSE9jMVJ5UG5mSVRiUmR5dklBZUtpRDBpTVdy?=
+ =?utf-8?B?T0NCK0crV0JlNndGUnM4TFVmbnRSZFAvb2FzMmowVlFKQkM5b2d3ckoxdXpr?=
+ =?utf-8?B?dlVhOS92RU9ORjk4ck91MGhkYnhxaHgyZ0htWE1lYlhKTm1TeWovellDdG5l?=
+ =?utf-8?B?ckJoY3ltUTlKRW91QnRzOXU4YTR2MVI4dmxheVNsOW1FREpYeUFaTHd6RlQx?=
+ =?utf-8?B?QXR2aDQvUElRblJsNzF5N3hSTnd2RzhVaS9yN1pqYUg4YWxPV3BXNjVEUnVN?=
+ =?utf-8?B?bDZRdmVkNEZmQkNxM0lLYzZIblFkU3dWRFpGUEE0clRRTWdIYWxUa1B4cUEz?=
+ =?utf-8?B?akVPT1I5ekVSdzgwekg4TGl6cWJqN1I4dkU3MHVzdUNWV1VXTmhpQnZRczJ1?=
+ =?utf-8?B?STgzN3JXdll6UEZSL1c0WGsyMGYrSWI5ZTMvc2p6WHBzemQzWHBkeGxaOVhz?=
+ =?utf-8?B?VnRqaWRnWG5UcENNTFhCbzJRY3FzaHBkbkFvbmEzM2dCQ0tPU0hJYjdEM1N4?=
+ =?utf-8?B?bE9xRWoyTHlOZUxhS0Frd05LOW1LZEZXUTVyZmUwOHVEalFJd01sdmhqUHl5?=
+ =?utf-8?B?enUzUFo0cGZXOEEzclZ4aWUvTkNkUTNubE90ZVhHdVpSMFFPN1dqREp6NDM5?=
+ =?utf-8?B?V0Q3VHJUQlpyaXBVOFV5WkNUdnBIMUZtL25hL2FrRHZEeU5YNy9UTVVtMmY4?=
+ =?utf-8?B?ckV5T0FxSnNWc2gvcThIQUtWREVvUnFkS0dwVFRHMDQ2NXZ0cnRKMXVjKzRw?=
+ =?utf-8?B?RDhLK0s2Z2tQQXZoSzJlNmIvU0s3SnRwK2FlYUlFRHF4THRpMTNJRWpuOEVl?=
+ =?utf-8?B?dGN6OVBuSEUwaTc3OUx4Zk1qUlFWTy9QQ0lYTkZGOHVZSlg5RlRsRmxWVHdo?=
+ =?utf-8?B?Z3I2VXFOc0MxOFVqbmdEdkVNQ0xsbXc0dDRQOHg5VWxjTDFodDE2V1pnT0xR?=
+ =?utf-8?B?LzRsVG1hZEJGTUVJSkZDU1VUVDVDbWIvQVpPbjZuNHFBUXBmQk5UMno4ajUy?=
+ =?utf-8?B?ckswL2p5TjVEbVM0NXZPOEVsb2k5YUZaZGZ0aDdXbWVDempoejE2aUYwdVMw?=
+ =?utf-8?B?MTlCcW4yTkdzZXYxUmJZWUx6WWNvdHNKbjhZTkZ0UktiT0JGdTBsR1Y2WURI?=
+ =?utf-8?Q?+oz+Ov?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026)(13003099007);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 15:44:57.4129
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2025 21:22:11.5577
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 093cc14c-8ec1-47ba-55fa-08de22cb9912
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3edf3e56-81ac-4cd5-c23e-08de22fab58c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE30.namprd05.prod.outlook.com
+	SN1PEPF0002BA4E.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8994
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9270
 
-Current attach on recovery mechanism loads the clean resource table
-during recovery, but doesn't re-allocate the resources. RPMsg
-communication will fail after recovery due to this. Fix this
-incorrect behavior by doing the full detach and attach of remote
-processor during the recovery. This will load the clean resource table
-and re-allocate all the resources, which will set up correct vring
-information in the resource table.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
 
-Changes in v2:
-  - use rproc_boot instead of rproc_attach
-  - move debug message early in the function
+On 10/15/25 10:26 AM, Tanmay Shah wrote:
+> 
+> 
+> On 10/8/25 11:49 AM, Tanmay Shah wrote:
+>>
+>>
+>> On 10/7/25 2:58 PM, Jassi Brar wrote:
+>>> On Tue, Oct 7, 2025 at 10:19 AM Tanmay Shah <tanmay.shah@amd.com> wrote:
+>>>>
+>>>> Sometimes clients need to know if mailbox queue is full or not before
+>>>> posting new message via mailbox. If mailbox queue is full clients can
+>>>> choose not to post new message. This doesn't mean current queue length
+>>>> should be increased, but clients may want to wait till previous Tx is
+>>>> done. Introduce variable per channel to track available msg slots.
+>>>> Clients can check this variable and decide not to send new message if
+>>>> it is 0. This  can help avoid false positive warning from mailbox
+>>>> framework "Try increasing MBOX_TX_QUEUE_LEN".
+>>>>
+>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>>>> ---
+>>>>
+>>>> v2:
+>>>>    - Separate patch for remoteproc subsystem.
+>>>>    - Change design and introduce msg_slot_ro field for each channel
+>>>>      instead of API. Clients can use this variable directly.
+>>>>    - Remove mbox_queue_full API
+>>>>
+>>>>   drivers/mailbox/mailbox.c          | 3 +++
+>>>>   include/linux/mailbox_controller.h | 2 ++
+>>>>   2 files changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+>>>> index 5cd8ae222073..c2e187aa5d22 100644
+>>>> --- a/drivers/mailbox/mailbox.c
+>>>> +++ b/drivers/mailbox/mailbox.c
+>>>> @@ -35,6 +35,7 @@ static int add_to_rbuf(struct mbox_chan *chan, 
+>>>> void *mssg)
+>>>>          idx = chan->msg_free;
+>>>>          chan->msg_data[idx] = mssg;
+>>>>          chan->msg_count++;
+>>>> +       chan->msg_slot_ro = (MBOX_TX_QUEUE_LEN - chan->msg_count);
+>>>>
+>>>>          if (idx == MBOX_TX_QUEUE_LEN - 1)
+>>>>                  chan->msg_free = 0;
+>>>> @@ -70,6 +71,7 @@ static void msg_submit(struct mbox_chan *chan)
+>>>>                  if (!err) {
+>>>>                          chan->active_req = data;
+>>>>                          chan->msg_count--;
+>>>> +                       chan->msg_slot_ro = (MBOX_TX_QUEUE_LEN - 
+>>>> chan->msg_count);
+>>>>
+>>> No, I had suggested adding this info in client structure.
+>>> There is no point in carrying msg_count and msg_slot_ro in mbox_chan.
+>>> The client needs this info but can/should not access the chan internals.
+>>>
+>>
+>> Hi Jassi,
+>>
+>> If I move msg_slot_ro to mbox_client that means, each channel needs 
+>> its own client structure. But it is possible to map single client to 
+>> multiple channels.
+>>
+>> How about if I rename msg_slot_ro to msg_slot_tx_ro -> that says this 
+>> field should be used only for "tx" channel.
+>>
+>> Or is it must to map unique client data structure to each channel? If 
+>> so, can I update mbox_client structure documentation ?
+>>
+> 
+> Hi Jassi,
+> 
+> I looked into this further. Looks like it's not possible to introduce 
+> msg_slot_ro in the client data structure as of today. Because multiple 
+> drivers are sharing same client for "tx" and "rx" both channels. 
+> [references: 1, 2, 3]
+> 
+> so, msg_slot_ro won't be calculated correctly I believe.
+> 
+> I can change architecture for xlnx driver i.e. assign separate clients 
+> for each channel, but still it won't work for other platforms. Please 
+> let me know how to proceed further.
+> 
+> Can we provide API that does (MBOX_TX_QUEUE_LEN - chan->msg_count) == 0?
+> 
+> I am not sure if I should attempt to change the architecture of other 
+> platform's drivers.
+> 
+> 
+> References:
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/ 
+> linux.git/tree/drivers/remoteproc/imx_rproc.c?h=for-next#n768
+> 
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/ 
+> linux.git/tree/drivers/remoteproc/xlnx_r5_remoteproc.c?h=for-next#n280
+> 
+> [3] https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/ 
+> linux.git/tree/drivers/remoteproc/st_remoteproc.c?h=for-next#n386
+> 
+> Thank you.
+> 
+> 
 
- drivers/remoteproc/remoteproc_core.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+Hello Jassi,
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index aada2780b343..f65e8bc2d1e1 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1777,11 +1777,11 @@ static int rproc_attach_recovery(struct rproc *rproc)
- {
- 	int ret;
- 
--	ret = __rproc_detach(rproc);
-+	ret = rproc_detach(rproc);
- 	if (ret)
- 		return ret;
- 
--	return __rproc_attach(rproc);
-+	return rproc_boot(rproc);
- }
- 
- static int rproc_boot_recovery(struct rproc *rproc)
-@@ -1829,6 +1829,11 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	struct device *dev = &rproc->dev;
- 	int ret;
- 
-+	dev_err(dev, "recovering %s\n", rproc->name);
-+
-+	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
-+		return rproc_attach_recovery(rproc);
-+
- 	ret = mutex_lock_interruptible(&rproc->lock);
- 	if (ret)
- 		return ret;
-@@ -1837,12 +1842,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
- 	if (rproc->state != RPROC_CRASHED)
- 		goto unlock_mutex;
- 
--	dev_err(dev, "recovering %s\n", rproc->name);
--
--	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
--		ret = rproc_attach_recovery(rproc);
--	else
--		ret = rproc_boot_recovery(rproc);
-+	ret = rproc_boot_recovery(rproc);
- 
- unlock_mutex:
- 	mutex_unlock(&rproc->lock);
-@@ -1860,6 +1860,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
- {
- 	struct rproc *rproc = container_of(work, struct rproc, crash_handler);
- 	struct device *dev = &rproc->dev;
-+	int ret;
- 
- 	dev_dbg(dev, "enter %s\n", __func__);
- 
-@@ -1883,8 +1884,11 @@ static void rproc_crash_handler_work(struct work_struct *work)
- 
- 	mutex_unlock(&rproc->lock);
- 
--	if (!rproc->recovery_disabled)
--		rproc_trigger_recovery(rproc);
-+	if (!rproc->recovery_disabled) {
-+		ret = rproc_trigger_recovery(rproc);
-+		if (ret)
-+			dev_warn(dev, "rproc recovery failed, err %d\n", ret);
-+	}
- 
- out:
- 	pm_relax(rproc->dev.parent);
-@@ -2057,7 +2061,7 @@ int rproc_detach(struct rproc *rproc)
- 		return ret;
- 	}
- 
--	if (rproc->state != RPROC_ATTACHED) {
-+	if (rproc->state != RPROC_ATTACHED && rproc->state != RPROC_CRASHED) {
- 		ret = -EINVAL;
- 		goto out;
- 	}
--- 
-2.34.1
+Gentle reminder on this matter. I am waiting for your input on above.
+
+Thank You,
+Tanmay
+
+>> Thanks,
+>> Tanmay.
+>>
+>>> thanks
+>>> jassi
+>>
+> 
+> 
 
