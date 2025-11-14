@@ -1,44 +1,82 @@
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D5322DCB
-	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 14:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8441532E6A9
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 15:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763130229; cv=none; b=I/c66nymHejpma0Mi6BY1kZ+FS1hTZu7VIRa0T9At0B3hpZA5O84bzZn8RMTtY5GBHplgKzUsvTzKM+p+m1XciqYcZS/TFDALxS/Yb1YisikhlWgGRQMaWKGZvmhsfz1CBlITuTUqEi91sA2lNlsIVF3DBz6P0HKNSLJosWJFnA=
+	t=1763134776; cv=none; b=PGPhxM0JGKFTpFITA7OJT4QS0R+Los7C3xVY7sV6qI92PKqZuTd7GqNxYmubT9hClAzF8RRJsuLfsamBmGterFuXruWSUWpVRSNPeq92dUpPguOaxXPgQOfyypOzPB0TVFq593gqr4BNqcpqSsyihiHIMtpa0rIfhh6ArqnN27k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763130229; c=relaxed/simple;
-	bh=2HghHUrkl5db0zEbNZE3HDsjkTGa1InKkbx0W70I7zE=;
+	s=arc-20240116; t=1763134776; c=relaxed/simple;
+	bh=RGmra2lFC9P9lNK/GL9ZldkH3tN7480aSv8fVUblrX0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hY3TvXphQ/HO6lhnDQhWXlue/dKjlcOwfyeONFw1TyK7wHfmxIxaJqYw4/gPer+3meNPB4iPR/fVj8Y4hRlV86IITbsjfS5XbrkG7YdfzDev4t03DchQih8z6AsZ9ohFUVtFJRNifGRBU4VDEW8H0xAWK6+LqhCKdxxLAwREv/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rBqOsu4X; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=mr/yI6JXmq9EnvznK8OJXa/EhLefBl5wNsQOoXunT9TZS/DaUud5tPvEfhQmi5fvj0WhciSVPLGQtZ2SEJznbVyIUfKZAZvcNzOUOsBs7LIrlghkORUG2nLLCQYu6ZnQsfHrlyj4RTa3Fvkgk7mh/sVJlgTZnfYETZ2Q3YuXXK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rkkjzn0F; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rBqOsu4X"
-Date: Fri, 14 Nov 2025 22:23:29 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1763130215;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=edbg6kSgtlnvu7vls6v+XLyNrvXdah8IKPMkEwyjJUo=;
-	b=rBqOsu4XzAKoovKNoPXeQ8Tln72B1IHrM3BHp9bcLAqbJBScFvu28TB7M4lVWu7caqN1Sg
-	t9GAUMRhTCeGYZIPmf7RG6C2pZfNIebinnNAgZLusE+Nb0dGTcTApdnR19rTf9jGSb4L0v
-	9vbcSFnSwysxAl5Vxb2FuAE3+evtqnw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dawei Li <dawei.li@linux.dev>
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	set_pte_at@outlook.com, stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] rpmsg: char: Remove put_device() in
- rpmsg_eptdev_add()
-Message-ID: <20251114142329.GA5858@wendao-VirtualBox>
-References: <20251113153909.3789-1-dawei.li@linux.dev>
- <20251113153909.3789-2-dawei.li@linux.dev>
- <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rkkjzn0F"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2953ad5517dso25127695ad.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 07:39:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1763134774; x=1763739574; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GRAMmO6N0Ms4VG4KlIicRsHqLBZGgrqgz9sU8YWYtnE=;
+        b=Rkkjzn0F6AjTEBgrbVD4GD+32/lk6CaeTIzI0FmzYWePBbilPJwuh0WRyl6y+eO1DG
+         Dsgz6nYToBuJrTLsm+Mkr1FYdJ3/iAUH6a2pIpgING8v+Ym68Qsf11ILQPpElYOJ6GoL
+         +ErFGAffC+/87BCaM4DGIry7v7wf0ZUy4bn8Bz/UZ+4ZUi+0j+mP3jcTWTXXCqPmrBCp
+         6Ol2YczQF/MgQcN4N9/sa15hdzEq5jwszaCBLknkXKbxqjxdOrstE1kEchQcu2eWGnmT
+         nMUbVPRrp3MICxELAUbSeSjzoptKvQJ3JLCGYaAZ+QXAA2ix2dlOVwtzj9gY05uzQBKQ
+         W1rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763134774; x=1763739574;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GRAMmO6N0Ms4VG4KlIicRsHqLBZGgrqgz9sU8YWYtnE=;
+        b=nChZFdERV6ZKSyleeuyXoF+cMjzg0DPmghBL9dY8hdxrj6S9cZvZu9QhNmXeUPn6jM
+         77winXBlp+5nn6ZMFqGQWH9BhvwpEJxlobpLQuLOSanBNREO54mbvP3RW8u4m2ZodCCJ
+         YS/QFXmb0FV9z0Gt/FSMEuxppwZ3oJefDMuFp8VZDneoWXFOGaYU32+/ErbtKx0VU6vV
+         m8XEa3N1xyTeqvA+oCSiQqlYb+Rig1he6Wha7b6r31XyXAwcv0MOCsQxVpfcKzwusg+o
+         LJlPzcMY3mth9LZRZgdR4Ymab9w8jUHwresVqVxycZOEevJgplz6t4M5vRUnuJfHqq/C
+         rcHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwDOnw3QtNHIWZDZovlwtUBUOm1x1Xm/UnwGKrLfQfmluehKfFBhKPNOp14HfERuF+VSYA/KKvAbTraASjWDm7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9Ayjz3fZ+xm6dmVlBFxuFIi4HxFIUD7C+DYhQCCWHLJHWW91q
+	962v5a11NztWR+wZFCak0uv1fu/h6SniyW3jyZV8Kx3LSCraBwzxC+RmeNjsdrXheBE=
+X-Gm-Gg: ASbGncv0N9KiflTCTyE9Yd3IvXZxP2VcULfowCd2Ap22OTXl5uEOwFcXvozpaxLk02n
+	FLh2HSI4VSGAbIaTPITsoUN2uTJr5qYwyxBXaF9pGMb6/LIKb6iD/ZBmNzsL9Rc6ev3rKS2kwPE
+	wPVQzt0nGFAmV5/p421r73AaWu5ova7tQG78PSe+IFYB9BPIoFV9tiJT7u9Uh+NiL+4FWYxBlYN
+	UCcmrrtmcjG49WWXaOFImR/F/wQ7vsmAPBein+GxfP7WtozC20zIOT25nkDwLmSzk954o08Q2YF
+	5KTOMnVRs88wpE/MXUEvWcrMsFRc06iGplCaBPZbxlIqkKHYodZXW3IOibIXWfixeNiki50eOtv
+	fv9uw++CdYtyDFUNQIRCGT8A5FQRxniWU5jDyUuobjF5BvhpJyXY3xzyuUYc2iQr0M9QtsUDIvs
+	QuF9iYR4M/EEHpRnIs0sAF/jPn
+X-Google-Smtp-Source: AGHT+IEKKOcScQRFd2v86pYNutTp+VD4tsfO62nLVd6fmfaJHFBxnvd+5CCmg+FyG8DWccPQTGITTA==
+X-Received: by 2002:a17:903:380b:b0:295:6427:87d4 with SMTP id d9443c01a7336-2986a752b52mr34175245ad.50.1763134773922;
+        Fri, 14 Nov 2025 07:39:33 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:734d:a808:2eb1:a1ea])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c234889sm58702195ad.13.2025.11.14.07.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Nov 2025 07:39:33 -0800 (PST)
+Date: Fri, 14 Nov 2025 08:39:30 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Daniel Baluta <daniel.baluta@gmail.com>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>, corbet@lwn.net,
+	andersson@kernel.org, dan.j.williams@intel.com,
+	cedric.xing@intel.com, pasha.tatashin@soleen.com,
+	kevin.tian@intel.com, skhawaja@google.com, yesanishhere@gmail.com,
+	taimoorzaeem@gmail.com, linux@treblig.org,
+	arnaud.pouliquen@foss.st.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	rdunlap@infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH 2/2] Documentation: Fix filenames for remoteproc/rpmsg
+Message-ID: <aRdNMtfgftNPVJDU@p14s>
+References: <20251114065746.901649-1-daniel.baluta@nxp.com>
+ <20251114065746.901649-3-daniel.baluta@nxp.com>
+ <aRcEoX9saonpQuvf@archie.me>
+ <CAEnQRZC7n127nMaCo+UFnfvKHsRZJTMrmNq4FadfzDJa=1UUnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -48,169 +86,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAEnQRZC7n127nMaCo+UFnfvKHsRZJTMrmNq4FadfzDJa=1UUnA@mail.gmail.com>
 
-Hi,
+On Fri, Nov 14, 2025 at 01:33:57PM +0200, Daniel Baluta wrote:
+> On Fri, Nov 14, 2025 at 12:29 PM Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+> >
+> > On Fri, Nov 14, 2025 at 08:57:45AM +0200, Daniel Baluta wrote:
+> > >    This document describes the rpmsg bus and how to write rpmsg drivers.
+> > > -  To learn how to add rpmsg support for new platforms, check out remoteproc.txt
+> > > -  (also a resident of Documentation/).
+> > > +  To learn how to add rpmsg support for new platforms, check out remoteproc.rst
+> > > +  (also a resident of Documentation/driver-api).
+> >
+> > I think "also a resident of ..." can be dropped, since it's redundant (it's
+> > already covered in remoteproc.rst cross-reference which transforms into
+> > the link when you build the docs).
+> 
+> My point here is just to move the patches to a better location without
+> any crucial modification.
 
-Thanks for the review.
+I agree.
 
-On Fri, Nov 14, 2025 at 05:53:14PM +0800, Zhongqiu Han wrote:
-> On 11/13/2025 11:39 PM, Dawei Li wrote:
-> > put_device() is called on error path of rpmsg_eptdev_add() to cleanup
-> > resource attached to eptdev->dev, unfortunately it's bogus cause
-> > dev->release() is not set yet.
-> > 
-> > When a struct device instance is destroyed, driver core framework checks
-> > the possible release() callback from candidates below:
-> > - struct device::release()
-> > - dev->type->release()
-> > - dev->class->dev_release()
-> > 
-> > Rpmsg eptdev owns none of them so WARN() will complaint the absence of
-> > release():
-> 
-> Hi Dawei,
-> 
-> 
-> > 
-> > [  159.112182] ------------[ cut here ]------------
-> > [  159.112188] Device '(null)' does not have a release() function, it is broken and must be fixed. See Documentation/core-api/kobject.rst.
-> > [  159.112205] WARNING: CPU: 2 PID: 1975 at drivers/base/core.c:2567 device_release+0x7a/0x90
-> > 
-> 
-> 
-> Although my local checkpatch.pl didn’t complain about this log line
-> exceeding 75 characters, could we simplify it or just provide a summary
-> instead?
-> 
-> 
-> > Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> > ---
-> >   drivers/rpmsg/rpmsg_char.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> > index 34b35ea74aab..1b8297b373f0 100644
-> > --- a/drivers/rpmsg/rpmsg_char.c
-> > +++ b/drivers/rpmsg/rpmsg_char.c
-> > @@ -494,7 +494,6 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
-> >   	if (cdev)
-> >   		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
-> >   free_eptdev:
-> > -	put_device(dev);
-> 
-> 
-> Yes, remove put_device can solve the warning issue, however it would
-> introduce one memleak issue of kobj->name.
-
-
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c#n381
-> 
-> 
-> dev_set_name(dev, "rpmsg%d", ret); is already called, it depends on
-> put_device to free memory, right?
-
-Good catch.
-
-If it's just device name being leaked, just postpone dev_set_name till
-every resource was allocated successfully. 
-
-[Copying your comment on patch3/3]
-
-> As I mentioned about the potential memory leak issue in patch 1/3, we
-> could consider still using put_device for management, as this better
-> aligns with the driver model standards and avoids potential issue.
-> However, this requires assigning the release function in advance and
-> also handling the special case where ida allocation fails in
-> rpmsg_eptdev_add (removing the manual ida release).
-
-But I agree with you, every data structure embedding struct device
-should bind its life cycle management to struct devcice, that's what
-driver core is designed. But it's bit tricky to implement your proposed
-approach, especially considering backing port to stable kernel. A
-possible solution could be:
-
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index 34b35ea74aab..e223a5452a75 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -408,8 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
- {
-        struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
- 
--       ida_free(&rpmsg_ept_ida, dev->id);
--       if (eptdev->dev.devt)
-+       /*
-+        * release() can be invoked from error path of rpmsg_eptdev_add(),
-+        * WARN() will be fired if ida_free() is feed with invaid ID.
-+        */
-+       if (likely(ida_exists(&rpmsg_ept_ida, dev->id)))
-+               ida_free(&rpmsg_ept_ida, dev->id);
-+       if (eptdev->dev.devt && likely(ida_exists(&rpmsg_minor_ida, MINOR(eptdev->dev.devt))))
-                ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
-        kfree(eptdev);
- }
-@@ -458,6 +463,8 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
-        struct device *dev = &eptdev->dev;
-        int ret;
- 
-+       dev->release = rpmsg_eptdev_release_device;
-+
-        eptdev->chinfo = chinfo;
- 
-        if (cdev) {
-@@ -471,7 +478,7 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
-        /* Anonymous inode device still need device name for dev_err() and friends */
-        ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
-        if (ret < 0)
--               goto free_minor_ida;
-+               goto free_eptdev;
-        dev->id = ret;
-        dev_set_name(dev, "rpmsg%d", ret);
- 
-@@ -480,22 +487,13 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
-        if (cdev) {
-                ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
-                if (ret)
--                       goto free_ept_ida;
-+                       goto free_eptdev;
-        }
- 
--       /* We can now rely on the release function for cleanup */
--       dev->release = rpmsg_eptdev_release_device;
--
-        return ret;
- 
--free_ept_ida:
--       ida_free(&rpmsg_ept_ida, dev->id);
--free_minor_ida:
--       if (cdev)
--               ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
- free_eptdev:
-        put_device(dev);
--       kfree(eptdev);
- 
-        return ret;
- }
-
-ida_exists() is introduced in 7fe6b987166b9, which is beyond the
-coverage of every stable kernel, and the commit this patch is fixing
-(c0cdc19f84a4) is contained in almost every stable kernel maintained.
-
-Thanks,
-
-	Dawei
-
-> 
-> 
-> >   	kfree(eptdev);
-> >   	return ret;
-> 
-> 
-> -- 
-> Thx and BRs,
-> Zhongqiu Han
+> I can send a follow up patch if this is fine with everyone.
