@@ -1,67 +1,88 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C04A243951
-	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 13:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B6331BCAF
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 13:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763127361; cv=none; b=XlNt9IhBlJ78nJq2pG0gk3oZUygwRi7nkbgz/feSGPIGwE0rrhMfkpo9/a6iN3IgNnnpzsP4G8OdnDL5XT93FbqsCkpX/ZtX+4WfERwJa7L6YRuH6ph4ageEE11M4oakKAgqi4l9sGjSIfuC66Fv5Sl+o9GJPKVNSK1v9BVv1u4=
+	t=1763127636; cv=none; b=eHFcr0nejmWfdoPYXppaVIcF8/r0DrddS/IeWcmNx0S3+Wv4zY9+GHtIaOK08cGZO9sBmnC3NXFqmgFkKvbbJSkDg4cN5Y1Hgul3gScDTmioelHnPeTWAtJSmN28FdhUj5pCEznITZ8o9Dx7GejxDfcbdrIxTECXN71wIwbLc08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763127361; c=relaxed/simple;
-	bh=qw95CvdMmCrTiI2QSJae3SJp8u12cU/mjgFB23QBOoo=;
+	s=arc-20240116; t=1763127636; c=relaxed/simple;
+	bh=5A6JdhBRmv6MbsALQsZRtyY2qGt4NnOfRC53jAZgmFY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k4XLHLLQUxyt6Xvc1aSvehsXQl13HdBNveUo+kUaijxhNs0PCgLQdgHtlLtkP308xzxerZhCWY6g0dgGGRFVUG+JCjm7qZr18lYjq4S6CYx/5sWo5foWWrITr0AoMVXpcqQoNWuZMfV4pWnKzzZYFxosWyJvb7S1EbzPMFzs7Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQ2p+2be; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 In-Reply-To:Content-Type; b=MpQU59BbD6BV/TOidVYsyrImFXyHRyqmHI5a79h8QK6AIbtNLHR9u/JQKVTPH1opgatFg5G17OdiAM0g+/Kplua97pLdD6jYuMh43NPUYf3m1u4LKW9r+hA2KD/3U5NUeHFiqaxgahmKBKoj81I8M5OjweNJEoCSYYNmGVz03Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Px8eC1GN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fpF5mLJC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQ2p+2be"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7aa2170adf9so1738316b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 05:36:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Px8eC1GN";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fpF5mLJC"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AE8IaxG1484484
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 13:40:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8h49vkr88QSRBl9WHezGJ3lwgPLQouFMI9a6UN+Msr4=; b=Px8eC1GNB+h53rBi
+	AHLdNzs9wzRong0sgZpOFxhmv8tOx2bGXzY6g48J0V4yTldUCYZ7HvhWIRLCc9/B
+	dZzQe7rWq7T2rFNrpB3t6A9i90zdUJlTL7DKJOiP+vqlA7esjgnN/nFesuwUKIHJ
+	tEOuzegbRECPDxnDtJGKWVZP1UrJWDrS2L5CD61BnK786Q73j8o4b3hbVuaOvTfW
+	CRSvt4IGa9v0jLQV7SqS57w2+vYNZO9F80COknejBqcHUA5cYcxtySm8Sb63Ooql
+	jfuiNrza+y/oPuqr2RI/qTJv1fGGzVgqOw3ds9K7FsC8QIujV+WaUzU0QolzpS8P
+	M3bS9w==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4adr9cjb5j-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 13:40:33 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7a26485fc5dso2082904b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 05:40:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763127360; x=1763732160; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1763127633; x=1763732433; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=scABYrWfLMryk0p1vRaa9SSZUmq5nZBEo0AWWVBIqSc=;
-        b=DQ2p+2be9AWQGD60U6Q17k9HcuEkVUYxHEDoAB4LADRrYiKP/C33MOCV09Jpfpt29Q
-         TfjeIPJeTSbKWDN+3QMOTwLj/FIUTIlNu86IFN9CWzjXAEFoH5w4go8A5roOOza/GiPr
-         64NZOFhVFKEjkkoJ6Z/RZiukpZS3dQfi2qzbbWfgpgIu+Qj//7x16c9+/aRQ6UsBjrPs
-         FD+ubYsibSzbP5IFywqne5XnFxPmCaJuZWB0q+ACfbkLgMW3me/2PnwlPe2x6E+mOhfD
-         bvmYlW1SF3WitdHVb/adqjbTMJg6+yNKCmQx+flFFKulaDH8bnFOT/SsuHbYbABlV7cy
-         zKCg==
+        bh=8h49vkr88QSRBl9WHezGJ3lwgPLQouFMI9a6UN+Msr4=;
+        b=fpF5mLJC7wXF1HJYs1njWkIFyqETCdgArEkaTO8+rbQmIQBRu3SCTYBrO3Jo1hNA2B
+         IHJbSNM9fPugmi+Z+8517eLXQH99vUIGnCgT5otv3hJ7Y9Ag2t+uohDVolYBks9Vqwxt
+         7p1cTUvj25Db+tiBAW1p8Ns7gJxtZTmfJBZOiW682FLlI36EjQ+7x4Wdp1d0+KYj/CkV
+         XOUNjzCpdWuP6sfj9uxgMZ/phVeZp09juHoagKqtT53yuCKlGF6by542TvzaEn013+sz
+         jPS9FtyacAuEVXCxsSNtRYN98K4uJZ8KxxNl49ykyaR7vZHe8sSXNZvvAyOJRW+zfaV2
+         1z2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763127360; x=1763732160;
+        d=1e100.net; s=20230601; t=1763127633; x=1763732433;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=scABYrWfLMryk0p1vRaa9SSZUmq5nZBEo0AWWVBIqSc=;
-        b=DcL3m/5hFrnAi0IU9rXjILZZhAHzZuW79fzRJSdLefsmzlvkksfws5JmedszhqmMHz
-         IoIb6M64louXeocXoZyplheQ627in5oSYZenvQEpiZ1hxBETM2zP0MQ00eJRnVLscfng
-         9s2lzZAigCh0EhZ1Jyx8+5pWiJ0Vna3I5DN3KDTPKOjX112HtjP3iMlqjP1VX7Qim4Hf
-         /Xe3XrsGTJlkkm3OuY8uLHbK3uxe1qF6/BfoDKfnWLV72s4Jqod+tnKM4DiM+g43t3mN
-         z1VQlIF5EY++slnzVaHRWuOOI1o+H4d32dnnt1ix1uJRCGl/nc86ssDkYnzY3F3KA+RJ
-         CbCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHUxTRANL3QutushYb5ztoht6owRHr5rKjBhfuOgfDMONO8qoG5VR0Cn3zFA+m5/Y9kCNSqRknTDe3KfV4ZczT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxENDXTPshz6p0d3w7TcmKHDEYsQCLEIKpROEsINeVHWYxzkHZy
-	ML6ao40cFY08z+pm4EGMyETSu9SpWJrJQvoeaB9VWo8jc2aRVLy/xoCM
-X-Gm-Gg: ASbGncvuyRUf3D6bYktAV9aRLGIg9jQZ7rcwRSPVJAs37CgZbTcnHzpBZXR0cjXvbLY
-	psDC4h0djSd93HXf6g5El201o+r7EBTKMuCqJ2bIqCrfD5accRLbF1ppZej4eyF+zqw3fFzSjot
-	mhVRAITepyepLwQNSCLGQddsG2dy3//SFn1yFQH+svLaUTvjEsVTkbBpJOZJTOfbkFSSceHyX5T
-	8IkwKPEMFcSE8d2duEASU8eDpVxARF5IWepgxS2i7XS0rhl8PvZZBs4E0rUrNxykXJfbcEUwnem
-	C8Jo7jMUYt2awArsCPv9ePAuQ62ksWEYA3I3zEXEznWAlhnQXLipVEDqjAFlHxfxNyLYAh34RDD
-	P6m4sS74H3HN5S3nsfZNr7o6xC393eTMXj2iNNG1o/9OGi9HpPRlmSwzcH9hRqNB/V38wbon2nY
-	HvCdEgBMHCnR8A6onHRg==
-X-Google-Smtp-Source: AGHT+IHwhy1vTerg5Gbcyy0Rh5fn/eKlAsIHslT76ScI3eW0anR3tnZ2sM336zTG90LT4R0w1+j48g==
-X-Received: by 2002:a05:6a00:2408:b0:781:4f0b:9c58 with SMTP id d2e1a72fcca58-7ba3c080cf8mr3820686b3a.15.1763127359646;
-        Fri, 14 Nov 2025 05:35:59 -0800 (PST)
-Received: from [192.168.1.50] ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9250cda04sm5245361b3a.19.2025.11.14.05.35.53
+        bh=8h49vkr88QSRBl9WHezGJ3lwgPLQouFMI9a6UN+Msr4=;
+        b=oWrvh9fFI6XlLu/AFjkW8vb2MvLm4O3iBg3bhYI8KDcuyggaCiISarfh5IIS/a4BVa
+         vfnf8kaELIsIeQPiybA1gysVsiZd+7r7YqvCUOagL4OtjV3M7MTHAdYOhnE0qClPhvG9
+         39Xph09yPcTWm6T8ZvQXOsqk3KzC1yDNFZvnd9NA3dP2xnIZtnvoeDBAS7+1PdYvmuA9
+         3+1P7wpyhL+YI+haXxQy663yvTE0LKqLdP2ncZsSg7LNA3ecqKag79YwFYKnUXbyL1po
+         c/7Itq9GgZdcnwFdePTzfF5YBRaDKkZSU06UdQZ6RuTdSpZ6MEOf42/9a8BjeuB3xY9/
+         vTeA==
+X-Gm-Message-State: AOJu0YzlczKUMWK0hajRScXWiLoVrCo7ZjPuPUHklJhJFFkLrpeo/n/F
+	8fByOqfH9AMSglFBDXzWpBwIe0Q2tfjJGFee9CykSGKg37xbbQzBjysheq+JE0paNIB4QI8tgYF
+	3oHvboQpzjfrXrhoJ3BlWk4ZlZN7/JHz0B7VjbWzxeqcLyC2UKNhWGBeVgOL45dXUxDItVwqL2h
+	nCob6KfBQ=
+X-Gm-Gg: ASbGncskZrbjkm3rYKsB3Etev37z+L3wKM5gVzQImLfFFRWtvDxCfthwCK8Dms5Hlgp
+	ZjStUKbfvWZhjX0VJ/W6pFk1sMUAi7IFjVXlaF5XivOSAfHe94RYY8OqQRdreh/a89bMOfBh6dH
+	TCKGy9MghTzRFQrf6JOYWAjdXJmPtaCNdg3Wo+3OVUPG1DDNRjZ62EijujcowS8SZrGf/fmUlnl
+	dDZoADr8IAcKKGbIAreH8uZfhrsT6DFonRsWyomh4PeE7toQ5HIfltwQq5anYQxIHp+yjUlaUxK
+	kW4cglUyJn04ASZhaifZQsm9ksrnnP5gwRjIJhSuZB7NUlcyU4AVkj6cPkRz4ox4gwGSWeRmTsM
+	1rIWN2YOXf+/Y7SOHj96lyw/zuhPB2g71nBAtPgR7TjimVpxmzrvKtQIIZnRE4LrhT4AM0aoKy2
+	lwJz+C
+X-Received: by 2002:a05:6a00:4b12:b0:780:ed4f:e191 with SMTP id d2e1a72fcca58-7ba3c479c6cmr3119080b3a.23.1763127632763;
+        Fri, 14 Nov 2025 05:40:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGU919LE5QV0HkXIS1uAsaA3rGe0/n1O0dclAyr16aS8Fl3W3rmFXwCmYqvA/A5OkK9XfJp6Q==
+X-Received: by 2002:a05:6a00:4b12:b0:780:ed4f:e191 with SMTP id d2e1a72fcca58-7ba3c479c6cmr3119053b3a.23.1763127632266;
+        Fri, 14 Nov 2025 05:40:32 -0800 (PST)
+Received: from [10.133.33.68] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9256b8824sm5284823b3a.31.2025.11.14.05.40.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Nov 2025 05:35:58 -0800 (PST)
-Message-ID: <99c99fda-a3ab-4575-89fa-8d2e6a3ba4ab@gmail.com>
-Date: Fri, 14 Nov 2025 20:35:52 +0700
+        Fri, 14 Nov 2025 05:40:31 -0800 (PST)
+Message-ID: <b24c5bdd-06f1-49ad-9055-3365de64f1c5@oss.qualcomm.com>
+Date: Fri, 14 Nov 2025 21:40:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -69,43 +90,117 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] Documentation: Fix filenames for remoteproc/rpmsg
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, corbet@lwn.net,
- andersson@kernel.org, mathieu.poirier@linaro.org, dan.j.williams@intel.com,
- cedric.xing@intel.com, pasha.tatashin@soleen.com, kevin.tian@intel.com,
- skhawaja@google.com, yesanishhere@gmail.com, taimoorzaeem@gmail.com,
- linux@treblig.org, arnaud.pouliquen@foss.st.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- rdunlap@infradead.org, imx@lists.linux.dev
-References: <20251114065746.901649-1-daniel.baluta@nxp.com>
- <20251114065746.901649-3-daniel.baluta@nxp.com> <aRcEoX9saonpQuvf@archie.me>
- <CAEnQRZC7n127nMaCo+UFnfvKHsRZJTMrmNq4FadfzDJa=1UUnA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] rpmsg: char: Remove put_device() in
+ rpmsg_eptdev_add()
+To: Dawei Li <dawei.li@linux.dev>, andersson@kernel.org,
+        mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        set_pte_at@outlook.com, stable@vger.kernel.org,
+        zhongqiu.han@oss.qualcomm.com
+References: <20251113153909.3789-1-dawei.li@linux.dev>
+ <20251113153909.3789-2-dawei.li@linux.dev>
+ <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
 Content-Language: en-US
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <CAEnQRZC7n127nMaCo+UFnfvKHsRZJTMrmNq4FadfzDJa=1UUnA@mail.gmail.com>
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 5aSxHEomZdTzF0yZgt9dyKhyyKASm3vG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE0MDEwOSBTYWx0ZWRfX3UbeLumb5GmA
+ IKY0yRSzzRHDT4kG/b3S2NkSKytltzG3dBsOH2vgs/72fIRu4aiakmUBAtLTUubBjauRo+r3CrU
+ 6mXCpzx0N4x0Ed1nHC8apso91ZDqmQLHR2VCcC99iauFvi8F/TsPjEetiouwnIcDgO+hnE/2DkC
+ 95XWPkmsTymH5Zn4vIZ52bng52cjDpoKXlGKbcXNcfXfs/HwErLv2HtaUnZtgOsfEaw8XF2l8IX
+ SBZBIeN97eRbdNr8jNb747k/kBFQQvxb7voWrZqgLvttBFaPypWDzEY0r79DoUq+UOROpC4iGSN
+ FCLRoN7dyjOH/JJKRkfb9g3qW3aFBmbh9HnzhMKwPE1Nc3ulnKNewmLL9wkUAi94adfDacdP1+Z
+ HDIUtdnZll8DuwsE5CroP21Pq0rfdQ==
+X-Authority-Analysis: v=2.4 cv=MNdtWcZl c=1 sm=1 tr=0 ts=69173151 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=sFvjiMhPOwDUbjvKCIEA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-ORIG-GUID: 5aSxHEomZdTzF0yZgt9dyKhyyKASm3vG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-14_04,2025-11-13_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511140109
 
-On 11/14/25 18:33, Daniel Baluta wrote:
-> On Fri, Nov 14, 2025 at 12:29 PM Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+On 11/14/2025 5:53 PM, Zhongqiu Han wrote:
+> On 11/13/2025 11:39 PM, Dawei Li wrote:
+>> put_device() is called on error path of rpmsg_eptdev_add() to cleanup
+>> resource attached to eptdev->dev, unfortunately it's bogus cause
+>> dev->release() is not set yet.
 >>
->> On Fri, Nov 14, 2025 at 08:57:45AM +0200, Daniel Baluta wrote:
->>>     This document describes the rpmsg bus and how to write rpmsg drivers.
->>> -  To learn how to add rpmsg support for new platforms, check out remoteproc.txt
->>> -  (also a resident of Documentation/).
->>> +  To learn how to add rpmsg support for new platforms, check out remoteproc.rst
->>> +  (also a resident of Documentation/driver-api).
+>> When a struct device instance is destroyed, driver core framework checks
+>> the possible release() callback from candidates below:
+>> - struct device::release()
+>> - dev->type->release()
+>> - dev->class->dev_release()
 >>
->> I think "also a resident of ..." can be dropped, since it's redundant (it's
->> already covered in remoteproc.rst cross-reference which transforms into
->> the link when you build the docs).
+>> Rpmsg eptdev owns none of them so WARN() will complaint the absence of
+>> release():
 > 
-> My point here is just to move the patches to a better location without
-> any crucial modification.
-> I can send a follow up patch if this is fine with everyone.
+> Hi Dawei,
+> 
+> 
+>>
+>> [  159.112182] ------------[ cut here ]------------
+>> [  159.112188] Device '(null)' does not have a release() function, it 
+>> is broken and must be fixed. See Documentation/core-api/kobject.rst.
+>> [  159.112205] WARNING: CPU: 2 PID: 1975 at drivers/base/core.c:2567 
+>> device_release+0x7a/0x90
+>>
+> 
+> 
+> Although my local checkpatch.pl didn’t complain about this log line
+> exceeding 75 characters, could we simplify it or just provide a summary
+> instead?
+> 
+> 
+>> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Dawei Li <dawei.li@linux.dev>
+>> ---
+>>   drivers/rpmsg/rpmsg_char.c | 1 -
+>>   1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+>> index 34b35ea74aab..1b8297b373f0 100644
+>> --- a/drivers/rpmsg/rpmsg_char.c
+>> +++ b/drivers/rpmsg/rpmsg_char.c
+>> @@ -494,7 +494,6 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev 
+>> *eptdev,
+>>       if (cdev)
+>>           ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+>>   free_eptdev:
+>> -    put_device(dev);
+> 
+> 
+> Yes, remove put_device can solve the warning issue, however it would
+> introduce one memleak issue of kobj->name.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/ 
+> tree/drivers/rpmsg/rpmsg_char.c#n381
+> 
 
-OK, thanks!
+The above link I arised was wrong; it’s now updated to the correct one.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c?h=for-next#n476
+
+
+> dev_set_name(dev, "rpmsg%d", ret); is already called, it depends on
+> put_device to free memory, right?
+> 
+> 
+>>       kfree(eptdev);
+>>       return ret;
+> 
+> 
+
 
 -- 
-An old man doll... just what I always wanted! - Clara
+Thx and BRs,
+Zhongqiu Han
