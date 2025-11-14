@@ -1,194 +1,193 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012034.outbound.protection.outlook.com [52.101.66.34])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B03A22F3C09;
-	Fri, 14 Nov 2025 06:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763103342; cv=fail; b=TwKVlQZkOhEOc3hgZ6F/bB1Xj9rxa1m+yJNBvWLaBXq8VTmfu8hxikVe07RwooVfaDCLyhzVAun6lK3l4/tNrhzDBVhd3wWx1Jlaaes95ys9x0dJ1+KBxaxrW0Wht2L7zGcxgmg67I1YqREVahp5Iq7GtYSOroPGFTRxPIuKqII=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763103342; c=relaxed/simple;
-	bh=2JkRmuoQE5Ry5xg2WlLzWpgu32XDNvikFejRWlFZI7s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AwuGtU13JilskgWaTWG8yhcKmpOSw+7Sk5ylHbXJLw+wsAKYMLiMTbdrdg5UQ7t3TihOVhySfu5ROjIkgk59gMcq8rAgc/fu5CGy9OJRAEhmORt2RlMV2LMnw8MO2oeidRRM9pau598Ty3Fy3Dh7pfNAlIwLGlDDgTso6EebTbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MdAXEJoR; arc=fail smtp.client-ip=52.101.66.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9433081D3
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 09:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763114004; cv=none; b=sbyIQDU11DkX3rSQ6flCgX14UNMY8wfMauOfierxdrnjtOxBohupSL7bu/82bY1/AnVY8Jn3yJJ2Rm4fNE5uAXQ2RwrbJw2pC05XhaOJNwrDAubrQ2teUNvQey9297Ob8rI7U4T+cBOOP8aG9jM8/sPOlTY4c55F+MhoCVooXmA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763114004; c=relaxed/simple;
+	bh=KfXunk/V+2Wilz0GUY3YVr3vzZr4fvOLG+oTzAvEqZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RbXUQw75bl1c/tL/TV/d7mhVidAkYV3JBk670uVFsVhg5qS1CHyTFhP9wwZSwaDbI2+zlvBqEMxCC9uZpLbL4hY2nB5ar83iLUnu71ImtbwAtBhGKrjp21SImFZ2wrcCM/OOh4eEcu8z+1gQ6SEMqAhl0VsIzR4nEffiqmI4xWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fmBPVI9x; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PWL8e1rD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MdAXEJoR"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QvchPaI+JziR7QzTcVmotKoGjREgGl9qLGSsmNRl5bd07jmpGpD2wdMRM7QNLGkM+BajZ099fFlF/XOl2y0u11Pj5H0HNvLKr+37AKM7saXfWHGaBaZqm0AWfjJQrB+iAZErA43GanCUVVQnD/W8Wcq6POE4l3w4MApMI1qgHhBC+YNTlTmfi2FRwvcAqNPXPoe3MBMgXS5iBfzr8oRfjtWvX/kAzJa3GQI2ZQZUqPVDNHpGbG2mSE+Z9Kb1BKwdInCdTO+hrjEiXLiOFEHy6YxDf7G6EFfLD4NuNa2KYOb+N8iDl27OEykJdRik7PKG7zDyNbqokRGnKET3wKUEkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OPnPX8D01SRSKoigpO6zUhubOTq9r848MwV8BlUZH2A=;
- b=fBBsyCR746hREnMwm0h+F5BXyfAaNoEbzUd/GECC1/5T1ab2sxbURDA4NBgk+XRN+a4LKRzg6vFNASHa8N45C2AIl3Cla/5cYka71CvnVcxjEo+fLhRIzKosPYKkhn1ttOBbcixiWtaPE4vfgM58I0D72yr/ojBiQGGXTnhLk8vnXYTafvGt/VZhDBoFzmWY9xCbFBvi3dT3Dt7YoX+ew3wsvgyXTM5GLwTk/VhezZmUxm9gs6VZDD/GFQ95kDael8FW4BcrjhH5hlc32oyDrVevBIM6txxyqsVFOzG6qCOZQlhXxl7q4KKuB4vpVuePVdpqqM9pe0DsalqXn2hzdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OPnPX8D01SRSKoigpO6zUhubOTq9r848MwV8BlUZH2A=;
- b=MdAXEJoRrrc/gicmWhmjWYz3rfDUMuzhLInC8rYNTBEZgzGiCpx8T9JJhQ2ilw2GL60A01rf5PuCMiqgguiHyxyXLpoBRHCDBIXEdZHJiZt82S8HPAbjWn4xtJsdjOAFGSbSZ2tdg31Ime0higWHZKJDZ9fX5BpbRNzRNu3jRoQF+TvC91KZ05s3cZHG6ttI4GnwObQZ4HVvlFkinCwDstNUzZ08pwPAfdwrDuTNPT7W4Z83NFDsWLiI78wDc2AH3N3L400lBIAAcm2+8y713Y6stCnLXThkUiaXBgo5+CPfftp5CNAVG4s2DnblJdK6WR2vTTCtoOcAj76JK27ePA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
- by GV1PR04MB10276.eurprd04.prod.outlook.com (2603:10a6:150:1af::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9320.17; Fri, 14 Nov
- 2025 06:55:34 +0000
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::e99:f504:ce75:9bed]) by AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::e99:f504:ce75:9bed%6]) with mapi id 15.20.9320.013; Fri, 14 Nov 2025
- 06:55:34 +0000
-From: Daniel Baluta <daniel.baluta@nxp.com>
-To: corbet@lwn.net,
-	andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: dan.j.williams@intel.com,
-	cedric.xing@intel.com,
-	pasha.tatashin@soleen.com,
-	kevin.tian@intel.com,
-	skhawaja@google.com,
-	daniel.baluta@nxp.com,
-	yesanishhere@gmail.com,
-	taimoorzaeem@gmail.com,
-	linux@treblig.org,
-	arnaud.pouliquen@foss.st.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	rdunlap@infradead.org,
-	daniel.baluta@gmail.com,
-	imx@lists.linux.dev
-Subject: [PATCH 2/2] Documentation: Fix filenames for remoteproc/rpmsg
-Date: Fri, 14 Nov 2025 08:57:45 +0200
-Message-ID: <20251114065746.901649-3-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251114065746.901649-1-daniel.baluta@nxp.com>
-References: <20251114065746.901649-1-daniel.baluta@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM8P189CA0024.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:218::29) To AS8PR04MB8247.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::13)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fmBPVI9x";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PWL8e1rD"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AE8Uc6h1617027
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 09:53:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MVbd9aoIO6IlLlvrAdA93MjVckq2AIvysPXrZEUPqfs=; b=fmBPVI9xDvyA14iI
+	jTgPHBnl/PCkp3RQYqWN/BnhL5hO6BhIWEVujtekbSyKJNUX1/5qhM7/NWi7EY9k
+	D30t++FQ6b8/EDEPyOvdkcoBHlJNicLTPVMSYXNXtRafrealEpFKlap3fbnFLu/+
+	8aYr/7Zbva6PCgovvwGMn2+8nuv76CmXBOx8NFtRuUINGSnJ1RDi/vwcd/UFzry1
+	CEvkx1qgfFecZoS6lFboRQ/bjVJnFDo5+ssGgrEFPTwPPLlp4VvOL+8PS9uG9HKa
+	Ynti5Vt2VmwrW03iZF5JHj/rU4hHle0M7CJGBvn8klR6f3IO+o5XYAVhNetov8AA
+	LXzYbQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4adr9h1pja-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 09:53:21 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-297dabf9fd0so23674775ad.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 01:53:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763114000; x=1763718800; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MVbd9aoIO6IlLlvrAdA93MjVckq2AIvysPXrZEUPqfs=;
+        b=PWL8e1rD6xIJVf5opryRmUbnekHHdGTjlDP90vu2ntFlhY9IuWdF/G+De/jIe8D16m
+         f1cdG2PjfOb1cgLCXHxw0qwLwvjNUauz6R/EKJfgY4n+Bi4rgqebXoi0ystJedujL9ig
+         8jzysraZE96sIm1jKDpP7koDlCAiLVo+XmIuYOnTUD/6cUsYIXscYFO3m3Ruw6UpuqHM
+         LccZ+CaUeIlggrAsI1a4jdrSyqp52srSkOy2c6V8A/Htu+zOI41zzTWXzq39sZpWVrqa
+         C1Z6qPOq/PWH/CvV7EV8Qa0Kh+Cf673UXNuqeyNy37/1QCKd7r77TDR60n8yfS0HDnPk
+         9Ytw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763114000; x=1763718800;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MVbd9aoIO6IlLlvrAdA93MjVckq2AIvysPXrZEUPqfs=;
+        b=ffo4aQZMpDqKgweXU+pnFvdDbbxtIRudsNHVbVpQF8u5jpNnwwHEZqKynSUpKW8iXc
+         ZYT5RY5bkjaa5KXcvbOGCCGgeMWP+9bgvHYrlrjY5qosd/FZTPZCSwjXrHPiqUKHpN56
+         OozLjMqYA9Mb0A5mTBbzcHZZm1/0JIoZYnvZMZDcX6i0urgTsQc2ZNmvmycJ2yEQ6Nw1
+         jdkh+7Irdy/bIw2fWk9FC7j5IAlxKhOe8AoTIJIDVs1NxVmFSwtObeFOywIJ0x0M5/9G
+         4gi1NgAEbY6+TvlJLfsmKYAzUup2yuqPdm6Ai5Aw7NuM1+kQgtwObpaV0pnyIblWrqSG
+         aDig==
+X-Gm-Message-State: AOJu0Yysc+X03Vd6hXyCTe5iuf8Ki8JFHgeW3uXd6OziLOb1DcaxTn2E
+	MMBhQDYcMPZ+z68Gpd2GwiGL1lLea4PA0Zwl/UYYbwvXkbdQPc0+NGP8fQaC0Yp9egm0Ro9ZSm/
+	WY6ZcNK3KGnuPftnV/0mWfVKhIMuljjFzHq2q/iPbXK20uxSFPMFecOv5huymfh+MiYV2tn2o
+X-Gm-Gg: ASbGncuZTbXudFRE/ew6l9YVvXFxNY/RLx6slfNtS9AkSgkW6+YqtaemhAOqY32Gc1M
+	rud1xnXi0ltrSz+SG8jugp7mlZ5hno4qb3RNk3rlem2+RBEsC04uf4b0YwrWozpevu35ecwodvO
+	pE9Tox04aVgy2BrQ4zcVrcEYNBmwYkC4l1Erh0qQ3jZX8/LcwbkTSlRfeqqcx2JaYI6WFqIzICK
+	aB/d1VpxK2c8jAiiARuyfWJROvABolTMOeOAdXh8w2XInayg4VSRuPbkUM4w7LHDlU0BsQq8ami
+	GpdtMmCq7h/7g8qfma6jCJG4q3jJu8Gt5I756BeOX/TBnFu2mvbiDo0Z0hDmVF9akbtceKsFDVJ
+	OAyJo+zcHrq5Q9P+rxePYRi6x/DbeMEEKJbg2FAMwEnGcsgtycnwiIJhIBdc2D2yHTWpnSk/gYX
+	oBSziv
+X-Received: by 2002:a17:903:40d1:b0:295:68dd:4ebf with SMTP id d9443c01a7336-2986a6d0bf1mr31115815ad.16.1763113999918;
+        Fri, 14 Nov 2025 01:53:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEkqupIjh3AVLvFnwbTJck856h96S3xr/yWCA2vJ/9j9XVXbcvl2IYDqmaMeP6MS6vUKiymQA==
+X-Received: by 2002:a17:903:40d1:b0:295:68dd:4ebf with SMTP id d9443c01a7336-2986a6d0bf1mr31115455ad.16.1763113999390;
+        Fri, 14 Nov 2025 01:53:19 -0800 (PST)
+Received: from [10.133.33.68] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2345d2sm50094285ad.11.2025.11.14.01.53.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Nov 2025 01:53:19 -0800 (PST)
+Message-ID: <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
+Date: Fri, 14 Nov 2025 17:53:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|GV1PR04MB10276:EE_
-X-MS-Office365-Filtering-Correlation-Id: f226cfd1-60e6-42b0-a2be-08de234acf22
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|7416014|19092799006|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Gy297AnXExpkk9F4W22QB0SBFWOmk+HmE5rAJQ0jeHot9WOmk1LvnW0RXozQ?=
- =?us-ascii?Q?gtOK1yEq+KUwVF0UiPTzETlcUV0w1L6wDpcqc1AEKGqf1QBNKwWCgpkRknPQ?=
- =?us-ascii?Q?2DTUygFuer4HOnjI90p7nSeoDDygKtEal/0YxVwXq7kqGbxPc1KnGoz51ovl?=
- =?us-ascii?Q?hyjmYzcehqy6jNN9EV9X6Ql3VpBapfut0uRGgfGtZzCeYUKstUN1YtkoNmG9?=
- =?us-ascii?Q?OmhrVyrMIY7GMboff/egEHA+oQ31K89OKWnqOhjb5qoCtTe8ox4NSZFwyWF3?=
- =?us-ascii?Q?Ax6OBvc+ytieTTYY4qKOiY+I0bQBSTBSrimSEyTKQAp+WvDSevUS+hZMKSqk?=
- =?us-ascii?Q?U8HjG7H0LmgenUQSQGnA2F6iRfnsaMNM8dhw4Li9CYF8zqmTXUPTKytPVKhj?=
- =?us-ascii?Q?3a6BsXiw2qkqqraZJERwwWAoSaiHfdNyQxvAjshwqZqY3hLHZtNYnm0Rp5B8?=
- =?us-ascii?Q?M6a/mRBnZJycZHSs4vvFkjL3jpXwsAHyKHH7TJOd7/PlnHj4/0BtxcVtIdoa?=
- =?us-ascii?Q?nkf586xGE2o97Txie3MugpZXHSGZXBMG2yqPpiQsYt2dWKARMoCO75lDA/e5?=
- =?us-ascii?Q?nFig8cIhqnoJBx5I5BLXTJRnPvBVv1hwOn3m3hJoAiHl8e0AOmuRXV7a3OnN?=
- =?us-ascii?Q?gb+BvpWcRVRolVDM6xZm9r2RfpL8dGUtIuJNHAAi84nuwcrTdDaUE8iZ6E3w?=
- =?us-ascii?Q?TK6aLWUaIBTPF/jdlzPAlxtV2ShIqt8rQ/3LPJaTjlTP7rJJhBOnu0skVAqK?=
- =?us-ascii?Q?kzRlyY61VqagdHMIxi1ZJ7Z5oh+9FCIuSnmIrzoprCAJ6L8mg9boqoj+TRqb?=
- =?us-ascii?Q?5BxLX5ibJ35P1mSqOnboAQJbe8MI1hgbByMkhRRiFkNltdWWdtQncXMaAcs+?=
- =?us-ascii?Q?vU3auZv14cRBMuRyy3efyr0ZaXkyw0kDZU+NbANzoLAj3RNrmtcejq8tOZmV?=
- =?us-ascii?Q?iuaDTsepioHcet/l/OJcnfRHJXPgU6Bj4UldO/1WrHo7afYvujsV485/hPG3?=
- =?us-ascii?Q?1mIBV0DwAgixLAx0Qah41gCkYkxZHIggQ9P8wYuUwbRJcnohXWWoSqM7Jg7A?=
- =?us-ascii?Q?tKtqHmnCpVEoywLpNNOQaYgEhfebIoBcyiAAmdKB2FP+UDRaZYXQ2QxpKZrZ?=
- =?us-ascii?Q?zR4WIkQEt4Z7NBcO4CtNONYyNVYZEZJPm6axkdslwycGPjNfpJCyta+raJ1S?=
- =?us-ascii?Q?NU11meSIugP/u/s9lBjV3jo9d2LO8G9fxPfIL7ZNfb6ObZF8u7OpPj5i0Vw9?=
- =?us-ascii?Q?SYvLJnZUEv8AEO6CI5JygBDQbHhyYIbsmsdyZIFjsidc9FLUv6oWm3WOn3Wh?=
- =?us-ascii?Q?1JhZkT2CWj+SZuAneK9CMiODqzAhXoc7NsjnuHMsxDI9hiXYYJwQV+v1QiEk?=
- =?us-ascii?Q?c0Z4JdNbJa5nVmrqxoKff6hc/JRqywVWuZcMeSwdyYEfjtzPeCVHgfCe4DYA?=
- =?us-ascii?Q?4DClGlx09YfOEY47b1fiGHM7VTrCPg3nd/mzeV56IGlNNOWoNTF/ut0tta4g?=
- =?us-ascii?Q?fsb0qLULQtqcO8H5BEONpoFN/DxQcZYhDsgH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(19092799006)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?w1nONYo/aRYTevzWdM7h5zEmiQ45Q7Vz4eCSpk7AxY4JQyq+GhfPfyfDcTkS?=
- =?us-ascii?Q?WtXpt4mdmBdR9HOYIadGaA72fHUd+AgJDECDrTrvuK7Q+FZzscn7Q4WsWu8R?=
- =?us-ascii?Q?95tYwqlIfcEDfdXhNTPjZmdzBixUE/UjSQXzRoTblE9fQqKj9lM5BEcINOGj?=
- =?us-ascii?Q?fu/+WtFG+ujFX8KAmCOsZhpOUk7Per7xoYxXbDfQiJiDN1fbMkXeqxla1xzZ?=
- =?us-ascii?Q?MJU8e0uwkEkvJIAYOUVa8fqnaBqib2ByPdpODEEVjiULHVlpjW6mWVtKLgNX?=
- =?us-ascii?Q?uXfdK0XlWbagRvG7V08PU1zQ9pFDibIYzNHhRZfWGh81Cog7Y7tZDownZTQG?=
- =?us-ascii?Q?JoHpbmxTacZHIqYiPhJfo0xjlQj/snlhtkj8pwcV08RsPqxuhAPWBhdDFaTN?=
- =?us-ascii?Q?tX01Tp+39ve7fM3cqeTQyuMTWkklKNGlyQKloT8OpmkPeg+u6Mq+pFd28tlz?=
- =?us-ascii?Q?qD04EjokZ/lqdsik1YctF07QzGByzJVLNSfpS2SprZGXF9sJq/wAbOmIF4a4?=
- =?us-ascii?Q?lst30zDbLCwhjXjBezhMUqG68UX5ZBYoJZVNppR5pabwi1BGADTLwK8oSj0A?=
- =?us-ascii?Q?BBpgzokKY6rJ0M9DsRm+DsY9/Q/e1qh9lTGhsgv1CT+jTBV+pv65QxZcvPYf?=
- =?us-ascii?Q?wSHhoVgt2b1+TqN+9BMJ881uUlRl9hGHL4t+5J0MaS67Sq5CyfEBsLEhSIor?=
- =?us-ascii?Q?rzwHP8WtIxY+HWhh8PlIcYU9OrXUwPAiM5LdjM7kMQwl3gwoEXFZhWtpfwxl?=
- =?us-ascii?Q?oZUfqHKNLue+maCNTIT1qbSunDo8x0Nj85PqpM3A2HRVVXeNDYzGN1GwvvqN?=
- =?us-ascii?Q?v47GGdF9HkmhzWB48ZSmcmHwsvxFNoQveve3X2dcgQFH6zBw9f49gb/lPqbq?=
- =?us-ascii?Q?Xxw4n//W3epbyYliQ9UYFiC7mGlSlBSZH65Ed26PyfyT72zvaQVFQ3majY9f?=
- =?us-ascii?Q?D9fDfPPWHOSDi9Q5P6rqUxLpwJK9leK8UBxzzSS1keJE6FoJZ9OZyCHugeLq?=
- =?us-ascii?Q?3CFua7hPLo6NXSDGrlTd6dNUddyQxwBzXMlZSpzwRdErLtupFg7p7lI8XMxx?=
- =?us-ascii?Q?/4Qm+oVRqiXHlhXyJKHp2skPWIun1llYUFkf66tTD5ENLWVSfGJlKU2ou2cS?=
- =?us-ascii?Q?yKI0qcZqEQK08bRIzKaZo+3waOiwQ4qeKs3yiTAyXRSH40F5d6Nx6kmURXBW?=
- =?us-ascii?Q?Two546vN1BeDkvC/LE4pmyc1qq225hY600c+Spabh/yv6m5ZuX8DzgP7b7mq?=
- =?us-ascii?Q?fpP9H7IEm0tVabYUH+A9O5F7vEJ9LjZsGlilW+OkkCivLTY8UbQE/qrC/frE?=
- =?us-ascii?Q?bjEOUOrk0Y8YUpTutinR2Ims+lR6cwab1/vQg2DE91yAW/4JkU9f6DgTizKk?=
- =?us-ascii?Q?69cC3Tk17Uj/knIA4sH4JK1QgMrQbg5BrvT7bR5zYi6kjOPKw8Z5/F441nhg?=
- =?us-ascii?Q?8zdIZtnrR1JoxhpC8BzvF+z8phaOD5kPLh3/kBxiZ90j4o8eNITaVDN8xU6l?=
- =?us-ascii?Q?dFDd05blrV4EMA0PwxGuUERBztlx4QOZRblkXexRR4euB2L6kwamVtoxq00E?=
- =?us-ascii?Q?IU8z1TP3smiB9e2h1VNGdzaGI2/tSVOSMS9OpMtZ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f226cfd1-60e6-42b0-a2be-08de234acf22
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2025 06:55:34.4271
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NlcwURFpFVo55g96nmCvoFlMmeDDlA7YytQqrBDHfp4yN5EEuqrtyBZJWbEZRSKBjMHIi3/qxkGtIoG+uopIVA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10276
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] rpmsg: char: Remove put_device() in
+ rpmsg_eptdev_add()
+To: Dawei Li <dawei.li@linux.dev>, andersson@kernel.org,
+        mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        set_pte_at@outlook.com, stable@vger.kernel.org,
+        zhongqiu.han@oss.qualcomm.com
+References: <20251113153909.3789-1-dawei.li@linux.dev>
+ <20251113153909.3789-2-dawei.li@linux.dev>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20251113153909.3789-2-dawei.li@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: Vm7SLGa4Q3b9woCUY9deAT5AeQhwHeq1
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE0MDA3OCBTYWx0ZWRfX40VEcqaTtksh
+ P7nveLNxqrJSYeNuDkuT+xbG/6NoBq8ircZjq7pKC42NX9slJiLTwNCqZlB1fpldwuyP4CuAVVH
+ yANwXsV+/BSEH19cem2otPzkNuiZ3WLYr0mSMsQWe9bYU7AhJwq+cmbvZPlipdxHjZb96dbLf3q
+ +R0i7t9ybaWwJmDoy3N5ryq9jy9rr/lEM71cOwcIsgiw7/dA5SguiOIu7UoJSNSsmaWYjmXpFM7
+ XgJWdRjRnyY5+yeVXdPqz+zxeQWkfCJCeO8mOUS9kYay5qFEyYqR8cmid7ulh3Fc4/5aBo9KZ2J
+ wxPk+OM+c8xHZofVe5uc3+q0lWfYH+NvGZX+q2VrGEXyj8+wSaWtv8UralF+T+YuU/W6RRZoszn
+ 3/fydtfY36NpLcta2s/4Sm2ttwShzQ==
+X-Proofpoint-GUID: Vm7SLGa4Q3b9woCUY9deAT5AeQhwHeq1
+X-Authority-Analysis: v=2.4 cv=V+1wEOni c=1 sm=1 tr=0 ts=6916fc11 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=l8NkEzq--Y_aFj96GU8A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-14_02,2025-11-13_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 phishscore=0 clxscore=1015
+ spamscore=0 priorityscore=1501 impostorscore=0 adultscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511140078
 
-Fix rpmsg and remoteproc filenames references after moving
-them out of staging.
+On 11/13/2025 11:39 PM, Dawei Li wrote:
+> put_device() is called on error path of rpmsg_eptdev_add() to cleanup
+> resource attached to eptdev->dev, unfortunately it's bogus cause
+> dev->release() is not set yet.
+> 
+> When a struct device instance is destroyed, driver core framework checks
+> the possible release() callback from candidates below:
+> - struct device::release()
+> - dev->type->release()
+> - dev->class->dev_release()
+> 
+> Rpmsg eptdev owns none of them so WARN() will complaint the absence of
+> release():
 
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- Documentation/driver-api/remoteproc.rst | 2 +-
- Documentation/driver-api/rpmsg.rst      | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Hi Dawei,
 
-diff --git a/Documentation/driver-api/remoteproc.rst b/Documentation/driver-api/remoteproc.rst
-index 5c226fa076d6..d7ff4694aba6 100644
---- a/Documentation/driver-api/remoteproc.rst
-+++ b/Documentation/driver-api/remoteproc.rst
-@@ -357,4 +357,4 @@ rpmsg virtio devices this way, if desired).
- Of course, RSC_VDEV resource entries are only good enough for static
- allocation of virtio devices. Dynamic allocations will also be made possible
- using the rpmsg bus (similar to how we already do dynamic allocations of
--rpmsg channels; read more about it in rpmsg.txt).
-+rpmsg channels; read more about it in rpmsg.rst).
-diff --git a/Documentation/driver-api/rpmsg.rst b/Documentation/driver-api/rpmsg.rst
-index 40282cca86ca..a50c4db6679f 100644
---- a/Documentation/driver-api/rpmsg.rst
-+++ b/Documentation/driver-api/rpmsg.rst
-@@ -5,8 +5,8 @@ Remote Processor Messaging (rpmsg) Framework
- .. note::
- 
-   This document describes the rpmsg bus and how to write rpmsg drivers.
--  To learn how to add rpmsg support for new platforms, check out remoteproc.txt
--  (also a resident of Documentation/).
-+  To learn how to add rpmsg support for new platforms, check out remoteproc.rst
-+  (also a resident of Documentation/driver-api).
- 
- Introduction
- ============
+
+> 
+> [  159.112182] ------------[ cut here ]------------
+> [  159.112188] Device '(null)' does not have a release() function, it is broken and must be fixed. See Documentation/core-api/kobject.rst.
+> [  159.112205] WARNING: CPU: 2 PID: 1975 at drivers/base/core.c:2567 device_release+0x7a/0x90
+> 
+
+
+Although my local checkpatch.pl didn’t complain about this log line
+exceeding 75 characters, could we simplify it or just provide a summary
+instead?
+
+
+> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dawei Li <dawei.li@linux.dev>
+> ---
+>   drivers/rpmsg/rpmsg_char.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 34b35ea74aab..1b8297b373f0 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -494,7 +494,6 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+>   	if (cdev)
+>   		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+>   free_eptdev:
+> -	put_device(dev);
+
+
+Yes, remove put_device can solve the warning issue, however it would
+introduce one memleak issue of kobj->name.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c#n381 
+
+
+dev_set_name(dev, "rpmsg%d", ret); is already called, it depends on
+put_device to free memory, right?
+
+
+>   	kfree(eptdev);
+>   
+>   	return ret;
+
+
 -- 
-2.45.2
-
+Thx and BRs,
+Zhongqiu Han
