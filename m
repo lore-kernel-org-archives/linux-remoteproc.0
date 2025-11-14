@@ -1,158 +1,83 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B6331BCAF
-	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 13:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D5322DCB
+	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 14:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763127636; cv=none; b=eHFcr0nejmWfdoPYXppaVIcF8/r0DrddS/IeWcmNx0S3+Wv4zY9+GHtIaOK08cGZO9sBmnC3NXFqmgFkKvbbJSkDg4cN5Y1Hgul3gScDTmioelHnPeTWAtJSmN28FdhUj5pCEznITZ8o9Dx7GejxDfcbdrIxTECXN71wIwbLc08=
+	t=1763130229; cv=none; b=I/c66nymHejpma0Mi6BY1kZ+FS1hTZu7VIRa0T9At0B3hpZA5O84bzZn8RMTtY5GBHplgKzUsvTzKM+p+m1XciqYcZS/TFDALxS/Yb1YisikhlWgGRQMaWKGZvmhsfz1CBlITuTUqEi91sA2lNlsIVF3DBz6P0HKNSLJosWJFnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763127636; c=relaxed/simple;
-	bh=5A6JdhBRmv6MbsALQsZRtyY2qGt4NnOfRC53jAZgmFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MpQU59BbD6BV/TOidVYsyrImFXyHRyqmHI5a79h8QK6AIbtNLHR9u/JQKVTPH1opgatFg5G17OdiAM0g+/Kplua97pLdD6jYuMh43NPUYf3m1u4LKW9r+hA2KD/3U5NUeHFiqaxgahmKBKoj81I8M5OjweNJEoCSYYNmGVz03Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Px8eC1GN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fpF5mLJC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1763130229; c=relaxed/simple;
+	bh=2HghHUrkl5db0zEbNZE3HDsjkTGa1InKkbx0W70I7zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hY3TvXphQ/HO6lhnDQhWXlue/dKjlcOwfyeONFw1TyK7wHfmxIxaJqYw4/gPer+3meNPB4iPR/fVj8Y4hRlV86IITbsjfS5XbrkG7YdfzDev4t03DchQih8z6AsZ9ohFUVtFJRNifGRBU4VDEW8H0xAWK6+LqhCKdxxLAwREv/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rBqOsu4X; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Px8eC1GN";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fpF5mLJC"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AE8IaxG1484484
-	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 13:40:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8h49vkr88QSRBl9WHezGJ3lwgPLQouFMI9a6UN+Msr4=; b=Px8eC1GNB+h53rBi
-	AHLdNzs9wzRong0sgZpOFxhmv8tOx2bGXzY6g48J0V4yTldUCYZ7HvhWIRLCc9/B
-	dZzQe7rWq7T2rFNrpB3t6A9i90zdUJlTL7DKJOiP+vqlA7esjgnN/nFesuwUKIHJ
-	tEOuzegbRECPDxnDtJGKWVZP1UrJWDrS2L5CD61BnK786Q73j8o4b3hbVuaOvTfW
-	CRSvt4IGa9v0jLQV7SqS57w2+vYNZO9F80COknejBqcHUA5cYcxtySm8Sb63Ooql
-	jfuiNrza+y/oPuqr2RI/qTJv1fGGzVgqOw3ds9K7FsC8QIujV+WaUzU0QolzpS8P
-	M3bS9w==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4adr9cjb5j-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 13:40:33 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7a26485fc5dso2082904b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 14 Nov 2025 05:40:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763127633; x=1763732433; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8h49vkr88QSRBl9WHezGJ3lwgPLQouFMI9a6UN+Msr4=;
-        b=fpF5mLJC7wXF1HJYs1njWkIFyqETCdgArEkaTO8+rbQmIQBRu3SCTYBrO3Jo1hNA2B
-         IHJbSNM9fPugmi+Z+8517eLXQH99vUIGnCgT5otv3hJ7Y9Ag2t+uohDVolYBks9Vqwxt
-         7p1cTUvj25Db+tiBAW1p8Ns7gJxtZTmfJBZOiW682FLlI36EjQ+7x4Wdp1d0+KYj/CkV
-         XOUNjzCpdWuP6sfj9uxgMZ/phVeZp09juHoagKqtT53yuCKlGF6by542TvzaEn013+sz
-         jPS9FtyacAuEVXCxsSNtRYN98K4uJZ8KxxNl49ykyaR7vZHe8sSXNZvvAyOJRW+zfaV2
-         1z2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763127633; x=1763732433;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8h49vkr88QSRBl9WHezGJ3lwgPLQouFMI9a6UN+Msr4=;
-        b=oWrvh9fFI6XlLu/AFjkW8vb2MvLm4O3iBg3bhYI8KDcuyggaCiISarfh5IIS/a4BVa
-         vfnf8kaELIsIeQPiybA1gysVsiZd+7r7YqvCUOagL4OtjV3M7MTHAdYOhnE0qClPhvG9
-         39Xph09yPcTWm6T8ZvQXOsqk3KzC1yDNFZvnd9NA3dP2xnIZtnvoeDBAS7+1PdYvmuA9
-         3+1P7wpyhL+YI+haXxQy663yvTE0LKqLdP2ncZsSg7LNA3ecqKag79YwFYKnUXbyL1po
-         c/7Itq9GgZdcnwFdePTzfF5YBRaDKkZSU06UdQZ6RuTdSpZ6MEOf42/9a8BjeuB3xY9/
-         vTeA==
-X-Gm-Message-State: AOJu0YzlczKUMWK0hajRScXWiLoVrCo7ZjPuPUHklJhJFFkLrpeo/n/F
-	8fByOqfH9AMSglFBDXzWpBwIe0Q2tfjJGFee9CykSGKg37xbbQzBjysheq+JE0paNIB4QI8tgYF
-	3oHvboQpzjfrXrhoJ3BlWk4ZlZN7/JHz0B7VjbWzxeqcLyC2UKNhWGBeVgOL45dXUxDItVwqL2h
-	nCob6KfBQ=
-X-Gm-Gg: ASbGncskZrbjkm3rYKsB3Etev37z+L3wKM5gVzQImLfFFRWtvDxCfthwCK8Dms5Hlgp
-	ZjStUKbfvWZhjX0VJ/W6pFk1sMUAi7IFjVXlaF5XivOSAfHe94RYY8OqQRdreh/a89bMOfBh6dH
-	TCKGy9MghTzRFQrf6JOYWAjdXJmPtaCNdg3Wo+3OVUPG1DDNRjZ62EijujcowS8SZrGf/fmUlnl
-	dDZoADr8IAcKKGbIAreH8uZfhrsT6DFonRsWyomh4PeE7toQ5HIfltwQq5anYQxIHp+yjUlaUxK
-	kW4cglUyJn04ASZhaifZQsm9ksrnnP5gwRjIJhSuZB7NUlcyU4AVkj6cPkRz4ox4gwGSWeRmTsM
-	1rIWN2YOXf+/Y7SOHj96lyw/zuhPB2g71nBAtPgR7TjimVpxmzrvKtQIIZnRE4LrhT4AM0aoKy2
-	lwJz+C
-X-Received: by 2002:a05:6a00:4b12:b0:780:ed4f:e191 with SMTP id d2e1a72fcca58-7ba3c479c6cmr3119080b3a.23.1763127632763;
-        Fri, 14 Nov 2025 05:40:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGU919LE5QV0HkXIS1uAsaA3rGe0/n1O0dclAyr16aS8Fl3W3rmFXwCmYqvA/A5OkK9XfJp6Q==
-X-Received: by 2002:a05:6a00:4b12:b0:780:ed4f:e191 with SMTP id d2e1a72fcca58-7ba3c479c6cmr3119053b3a.23.1763127632266;
-        Fri, 14 Nov 2025 05:40:32 -0800 (PST)
-Received: from [10.133.33.68] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7b9256b8824sm5284823b3a.31.2025.11.14.05.40.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Nov 2025 05:40:31 -0800 (PST)
-Message-ID: <b24c5bdd-06f1-49ad-9055-3365de64f1c5@oss.qualcomm.com>
-Date: Fri, 14 Nov 2025 21:40:24 +0800
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rBqOsu4X"
+Date: Fri, 14 Nov 2025 22:23:29 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1763130215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=edbg6kSgtlnvu7vls6v+XLyNrvXdah8IKPMkEwyjJUo=;
+	b=rBqOsu4XzAKoovKNoPXeQ8Tln72B1IHrM3BHp9bcLAqbJBScFvu28TB7M4lVWu7caqN1Sg
+	t9GAUMRhTCeGYZIPmf7RG6C2pZfNIebinnNAgZLusE+Nb0dGTcTApdnR19rTf9jGSb4L0v
+	9vbcSFnSwysxAl5Vxb2FuAE3+evtqnw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Dawei Li <dawei.li@linux.dev>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	set_pte_at@outlook.com, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] rpmsg: char: Remove put_device() in
+ rpmsg_eptdev_add()
+Message-ID: <20251114142329.GA5858@wendao-VirtualBox>
+References: <20251113153909.3789-1-dawei.li@linux.dev>
+ <20251113153909.3789-2-dawei.li@linux.dev>
+ <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] rpmsg: char: Remove put_device() in
- rpmsg_eptdev_add()
-To: Dawei Li <dawei.li@linux.dev>, andersson@kernel.org,
-        mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        set_pte_at@outlook.com, stable@vger.kernel.org,
-        zhongqiu.han@oss.qualcomm.com
-References: <20251113153909.3789-1-dawei.li@linux.dev>
- <20251113153909.3789-2-dawei.li@linux.dev>
- <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 5aSxHEomZdTzF0yZgt9dyKhyyKASm3vG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE0MDEwOSBTYWx0ZWRfX3UbeLumb5GmA
- IKY0yRSzzRHDT4kG/b3S2NkSKytltzG3dBsOH2vgs/72fIRu4aiakmUBAtLTUubBjauRo+r3CrU
- 6mXCpzx0N4x0Ed1nHC8apso91ZDqmQLHR2VCcC99iauFvi8F/TsPjEetiouwnIcDgO+hnE/2DkC
- 95XWPkmsTymH5Zn4vIZ52bng52cjDpoKXlGKbcXNcfXfs/HwErLv2HtaUnZtgOsfEaw8XF2l8IX
- SBZBIeN97eRbdNr8jNb747k/kBFQQvxb7voWrZqgLvttBFaPypWDzEY0r79DoUq+UOROpC4iGSN
- FCLRoN7dyjOH/JJKRkfb9g3qW3aFBmbh9HnzhMKwPE1Nc3ulnKNewmLL9wkUAi94adfDacdP1+Z
- HDIUtdnZll8DuwsE5CroP21Pq0rfdQ==
-X-Authority-Analysis: v=2.4 cv=MNdtWcZl c=1 sm=1 tr=0 ts=69173151 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=sFvjiMhPOwDUbjvKCIEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-ORIG-GUID: 5aSxHEomZdTzF0yZgt9dyKhyyKASm3vG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-14_04,2025-11-13_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 malwarescore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511140109
+In-Reply-To: <b754155b-a17b-4e8e-92b7-8ab37949dded@oss.qualcomm.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 11/14/2025 5:53 PM, Zhongqiu Han wrote:
+Hi,
+
+Thanks for the review.
+
+On Fri, Nov 14, 2025 at 05:53:14PM +0800, Zhongqiu Han wrote:
 > On 11/13/2025 11:39 PM, Dawei Li wrote:
->> put_device() is called on error path of rpmsg_eptdev_add() to cleanup
->> resource attached to eptdev->dev, unfortunately it's bogus cause
->> dev->release() is not set yet.
->>
->> When a struct device instance is destroyed, driver core framework checks
->> the possible release() callback from candidates below:
->> - struct device::release()
->> - dev->type->release()
->> - dev->class->dev_release()
->>
->> Rpmsg eptdev owns none of them so WARN() will complaint the absence of
->> release():
+> > put_device() is called on error path of rpmsg_eptdev_add() to cleanup
+> > resource attached to eptdev->dev, unfortunately it's bogus cause
+> > dev->release() is not set yet.
+> > 
+> > When a struct device instance is destroyed, driver core framework checks
+> > the possible release() callback from candidates below:
+> > - struct device::release()
+> > - dev->type->release()
+> > - dev->class->dev_release()
+> > 
+> > Rpmsg eptdev owns none of them so WARN() will complaint the absence of
+> > release():
 > 
 > Hi Dawei,
 > 
 > 
->>
->> [  159.112182] ------------[ cut here ]------------
->> [  159.112188] Device '(null)' does not have a release() function, it 
->> is broken and must be fixed. See Documentation/core-api/kobject.rst.
->> [  159.112205] WARNING: CPU: 2 PID: 1975 at drivers/base/core.c:2567 
->> device_release+0x7a/0x90
->>
+> > 
+> > [  159.112182] ------------[ cut here ]------------
+> > [  159.112188] Device '(null)' does not have a release() function, it is broken and must be fixed. See Documentation/core-api/kobject.rst.
+> > [  159.112205] WARNING: CPU: 2 PID: 1975 at drivers/base/core.c:2567 device_release+0x7a/0x90
+> > 
 > 
 > 
 > Although my local checkpatch.pl didn’t complain about this log line
@@ -160,47 +85,132 @@ On 11/14/2025 5:53 PM, Zhongqiu Han wrote:
 > instead?
 > 
 > 
->> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Dawei Li <dawei.li@linux.dev>
->> ---
->>   drivers/rpmsg/rpmsg_char.c | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
->> index 34b35ea74aab..1b8297b373f0 100644
->> --- a/drivers/rpmsg/rpmsg_char.c
->> +++ b/drivers/rpmsg/rpmsg_char.c
->> @@ -494,7 +494,6 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev 
->> *eptdev,
->>       if (cdev)
->>           ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
->>   free_eptdev:
->> -    put_device(dev);
+> > Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Dawei Li <dawei.li@linux.dev>
+> > ---
+> >   drivers/rpmsg/rpmsg_char.c | 1 -
+> >   1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> > index 34b35ea74aab..1b8297b373f0 100644
+> > --- a/drivers/rpmsg/rpmsg_char.c
+> > +++ b/drivers/rpmsg/rpmsg_char.c
+> > @@ -494,7 +494,6 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+> >   	if (cdev)
+> >   		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+> >   free_eptdev:
+> > -	put_device(dev);
 > 
 > 
 > Yes, remove put_device can solve the warning issue, however it would
 > introduce one memleak issue of kobj->name.
+
+
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/ 
-> tree/drivers/rpmsg/rpmsg_char.c#n381
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c#n381
 > 
-
-The above link I arised was wrong; it’s now updated to the correct one.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c?h=for-next#n476
-
-
+> 
 > dev_set_name(dev, "rpmsg%d", ret); is already called, it depends on
 > put_device to free memory, right?
-> 
-> 
->>       kfree(eptdev);
->>       return ret;
-> 
-> 
 
+Good catch.
 
--- 
-Thx and BRs,
-Zhongqiu Han
+If it's just device name being leaked, just postpone dev_set_name till
+every resource was allocated successfully. 
+
+[Copying your comment on patch3/3]
+
+> As I mentioned about the potential memory leak issue in patch 1/3, we
+> could consider still using put_device for management, as this better
+> aligns with the driver model standards and avoids potential issue.
+> However, this requires assigning the release function in advance and
+> also handling the special case where ida allocation fails in
+> rpmsg_eptdev_add (removing the manual ida release).
+
+But I agree with you, every data structure embedding struct device
+should bind its life cycle management to struct devcice, that's what
+driver core is designed. But it's bit tricky to implement your proposed
+approach, especially considering backing port to stable kernel. A
+possible solution could be:
+
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index 34b35ea74aab..e223a5452a75 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -408,8 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+ {
+        struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+ 
+-       ida_free(&rpmsg_ept_ida, dev->id);
+-       if (eptdev->dev.devt)
++       /*
++        * release() can be invoked from error path of rpmsg_eptdev_add(),
++        * WARN() will be fired if ida_free() is feed with invaid ID.
++        */
++       if (likely(ida_exists(&rpmsg_ept_ida, dev->id)))
++               ida_free(&rpmsg_ept_ida, dev->id);
++       if (eptdev->dev.devt && likely(ida_exists(&rpmsg_minor_ida, MINOR(eptdev->dev.devt))))
+                ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+        kfree(eptdev);
+ }
+@@ -458,6 +463,8 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+        struct device *dev = &eptdev->dev;
+        int ret;
+ 
++       dev->release = rpmsg_eptdev_release_device;
++
+        eptdev->chinfo = chinfo;
+ 
+        if (cdev) {
+@@ -471,7 +478,7 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+        /* Anonymous inode device still need device name for dev_err() and friends */
+        ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
+        if (ret < 0)
+-               goto free_minor_ida;
++               goto free_eptdev;
+        dev->id = ret;
+        dev_set_name(dev, "rpmsg%d", ret);
+ 
+@@ -480,22 +487,13 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+        if (cdev) {
+                ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
+                if (ret)
+-                       goto free_ept_ida;
++                       goto free_eptdev;
+        }
+ 
+-       /* We can now rely on the release function for cleanup */
+-       dev->release = rpmsg_eptdev_release_device;
+-
+        return ret;
+ 
+-free_ept_ida:
+-       ida_free(&rpmsg_ept_ida, dev->id);
+-free_minor_ida:
+-       if (cdev)
+-               ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+ free_eptdev:
+        put_device(dev);
+-       kfree(eptdev);
+ 
+        return ret;
+ }
+
+ida_exists() is introduced in 7fe6b987166b9, which is beyond the
+coverage of every stable kernel, and the commit this patch is fixing
+(c0cdc19f84a4) is contained in almost every stable kernel maintained.
+
+Thanks,
+
+	Dawei
+
+> 
+> 
+> >   	kfree(eptdev);
+> >   	return ret;
+> 
+> 
+> -- 
+> Thx and BRs,
+> Zhongqiu Han
