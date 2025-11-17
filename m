@@ -1,132 +1,174 @@
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60622741C9
-	for <linux-remoteproc@vger.kernel.org>; Sat, 15 Nov 2025 17:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF2329A9C9
+	for <linux-remoteproc@vger.kernel.org>; Mon, 17 Nov 2025 16:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763228341; cv=none; b=Z35/4OZBgYztI5rWl/gmXMRuRKRybmm94XU7sSgCFFE4m14R6apwdry66LxkCPultW4Npxl3zQ5Cmsx8Zc9u48RDvNp8cxs3SaGEe9dXgHsXR5hupCi1vABBQa3TJuzxK0WEx/c5rz7jO9FmtLBgzhppGl57fZOQG5rFF0dsqkY=
+	t=1763398082; cv=none; b=WF0F9XVjYJHO1RwvIEXOY8B/drC8MMTKB9A0mM9IqKhsv3r/HxIwyig80v/oSePW+inguO4fUMNGF1q2gWpr39+TFMa4EufwRPRwUcKZtYP+Jza1XQwvsNsXUjB3NpKbR3i7haSx1zErPnCvOA34kWV18hmM2olJbDGpsDeCaKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763228341; c=relaxed/simple;
-	bh=axvrkSihge+9xhZ3hi0gwKyRsZ8ybhR3qmGzKH/27vc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q6WXMhbBwAhR0hxWYfscvsaJ9TLy4BzVnzzlKk2DzhBXl7F6CFqyAlG/F6fRjfpHi5aXPDa0FaALHip52+zf8X2uEEAhbyYX9Vb/n+hzXstXxUvWfP7tlV9KVNL4cuSpFsBrCjTaVfW2jcnlDFi3URjoxoTj9Eh3zB1Davi/Fkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mksVvVqM; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1763398082; c=relaxed/simple;
+	bh=oF+JsxxvOAY8DFWEQ8dt8SvjetGkL8w7SNRTWQCgVVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/1R9VZI5VpM0W+p9ivRQTl8JT1YrAl900Qi8n6AxTN83Jnu2edYwc1ei3qLmkqnWEZYryIk/CyUNWVobLrZqNnQgWktRF26BOB7FtaSPkalwEHagrydYccovYbPbJc+xDjPS0dopmBA9/LWM4YAQpi6p8Ai6yv1C62J4227g9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y+akTNWk; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mksVvVqM"
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-65363319bacso1291084eaf.2
-        for <linux-remoteproc@vger.kernel.org>; Sat, 15 Nov 2025 09:38:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y+akTNWk"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-298287a26c3so55717085ad.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Nov 2025 08:48:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1763228339; x=1763833139; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yVxVgAq914Gt36D2ho02AzcgyqfIBMKXorcNmzkpDrg=;
-        b=mksVvVqMfgLoAhWD4BcX5+mPKKsKHVsVunRRmJjFLSdHeBT1AipP6CGPvd+2GNz45r
-         ywMlBN87x5Nl8F/tDG4AtpkLIu/EWrdHU684yYZ7W13EsZWzlqldvY7Y6K35BrdiTOk7
-         INVaMsQLUF/QJYY9qwMUw2moCJ9MbNv/eK25LHBUcrc7legxCHavyEfYKnp0+n3je42t
-         4P2Xk9w/aMMq41x1Lg4PUPhTYmBp5/g2LrTRhnjUp4C+vFqX2Rw5dbJ2LlG3qd/j+KBJ
-         bKP8rB3stzBxMAO6Ss3hGbaiNknlg8GIHOmEApO/WW4VaERdGzFU46Vg3C1bPikrFqvc
-         1uuw==
+        d=linaro.org; s=google; t=1763398080; x=1764002880; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tx5pCt6UywoMhHGKyGxCGcYK9d/RLDNyjfLAZJe7BNY=;
+        b=Y+akTNWkUDbu4BXjwnZJmvO+ROx5ymIXRgM9/Y1In3xOflbcHBk5nQbaSA0/zQ7yiM
+         wz2H2S0Ai9bnNyf5vqceY+szxrPpBYMN6ukI8GUwXmAQRv033OQ8jPNFFqY8roX6I5eo
+         HNDsFBM00hDpKYXKJE/04tawNgfKpbxFjBzz+SZwDPUXuEKR2rMoQpBgJEL5eqEiZBdP
+         fEgpzZ5M3eDeQRcAYE7KJOtXTokkYtK+wAoq3RJS8xLMDmEQbC/bCYKGFO9ni4W9Ly5M
+         nztKZ7RB1H++P3U5qNxkLBmx6dy99oPHxIgZzB/jbuEpUdAhJnpUEPqiqI2Mk1xchTAD
+         8DBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763228339; x=1763833139;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yVxVgAq914Gt36D2ho02AzcgyqfIBMKXorcNmzkpDrg=;
-        b=wdRUcqFuw+3a+2UWw035MlM5kPGb43rPjmz4pRTvvjgDiKkdozjQcz5VSbjv9i1p0t
-         eYV5NeeXft9YVr0GkUc+Z6JztGPT47VPUlBO+XriC+Dp259ikC7bCTddV64c7W9yl/CE
-         IK3m/akispXCa0H/dBuaL14HUpqhxGBbt+0WgGKvD7tKPv8QM4sIbsw0PaBXmx2Q3Uqs
-         158UD2qIY84yyYlQG7aYM5Gs7HUP1ZujZ/jpOwr53yNyygp+MYgCsHkVPoNry6iqC1Fv
-         ydskFTYDwdmzTuJ9tPa/XK4F7tG3/iWYPcviFgAxBCClF2TopR+KcpysmxNiLI9a1BI/
-         iHzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjdD8dO2cClUDeiyBTRmKYGNnvpIHrFdCIlu+621OoyHPKOCPIdA03PEOSSEFW1wjksElGN0NNeGx9d3gLv0SG@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEO1QV51ArzzOFQxvJ4CGP9BP1eYKAAp7TSqPtJPfZT0AwMcTJ
-	kwFrUr83PP5YNVn2dIVfXtOK8FlS6h7bSSC3ur0aVmeS3+OdRxoRH6oG0iutVs5+Dz64ZzPadQr
-	CV2vFiMk030FPpzcMRGZwowl+/6DtlIA=
-X-Gm-Gg: ASbGnctdG715zekdEjsC/ueCOcEFeVBAuYfE+N46zz/mJe1qgH8HbkUu7brgFy8HoQJ
-	HtRVGq5bsJX4xzqSSj5x5MXGMvC5TfYe9KoQoJoCINgMyqWL9zIF1r/EBrqZj3knpryn16ZePMV
-	B+V5BGsW3KERhx3Td2Ax8ixi3K2PP9QLO3oWJWcA2cdUbbu8wbaH69Ylragp9Y9AhEbl9JEFnry
-	2IdbtxD6Rtm0yjXt6mVeRn3uv5oj0nxUrJcFpVtULY+N8jUzPo/IQdyDFmN6A==
-X-Google-Smtp-Source: AGHT+IF2GUyh2XS7BTBIW3VrwY8A4rsZLvmsmmJJOK/YALB+UYJp1tMWPljrfLfC5ozfAgG9hDdN3phFxSlFOLHWoTE=
-X-Received: by 2002:a05:6870:fb94:b0:3d4:3:6548 with SMTP id
- 586e51a60fabf-3e869165096mr3875079fac.45.1763228338736; Sat, 15 Nov 2025
- 09:38:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1763398080; x=1764002880;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tx5pCt6UywoMhHGKyGxCGcYK9d/RLDNyjfLAZJe7BNY=;
+        b=AnF9zDMd4v9dXIi2Xrh2GomwvQ+ofIp/2jRvY0EDEomxl07Ybykg8GEEIMKWTf3o5y
+         x1b0NJRjaB/Tg5dFQij/iLgR+i8htcnY2tSVq4qRhPWT7sBYILu1kg5urf0IoX9ZbS6d
+         Y5L+Sdkht5BAPWU7K8qh+Sgw7oxmSaZYlAi8FVoYc6b2ZEtGiVxOxzxRgH7BSYZ9kiRE
+         FlM49BtJG+K1k1XuOfDFJPBhkP7SehDaNoIoOPkcobQXb4Llm2fnOMhL/SlYBFinyKA+
+         xQL+qBbDYUracOtqZBufvbrGxvXT0PwcOp+4OAp6+BvL0Y5snpE5/up+ZIuWzydNEeY/
+         mGLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUDj3pLsXLqRpLXfrGk8PmLmNNigdZN02h5d+Gmm3O0Ew2THSWV1+OhBsWATdCgjg2wJh8iQaNiz7fvQmh3KKi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ZqDsxEBOlY72LEReCLvwUSuvQW2bR63GmLF5osufmMsJH2Gp
+	S86nCoqfJIXvCO3sXKA0T4Sa8t/ndjvUraUhn2UEQN7HOqSWjKqm8dpv1HjQDJO0kM8=
+X-Gm-Gg: ASbGncutqIXR9vH+LPKNApV5tIVk5VKlGxMy67QKasSl0tznv2T2+J4lECfO9P4FlYO
+	OZFzLdgyZcG+x9qqvXF8O2ej6Lv/BwheuUg5n+GEZsIZh+dqCilU4v0jP0TJ+y7i9QSeFOTpPhD
+	ZN+/KqJPKvXvqu+VGiqoESa1kTGFjefFlFH36K/wQLv7Wh9CSIeMINaU3m3aVXqOoRIZ7dR9ZJW
+	jWigT/e//+lNJSnOXRcvm6c3J9NBJ1B2OhnHiPdbgNL7xw+eij0I7vealP9CrF061FuPyI51POP
+	HWDNRYsEltoDDHdcZDiGNiVhyW0Smlf8ovfvmFTLTh4GxVYXz6WlSK7gWpVRdnAbgtbrzwwx7Jd
+	1DwU3wmAQKvkzBQpedtZNKm+SO8sQ5RyjZyokwz71tAEmeMbqRe2x5bq/MVmSDp6WzfazoZ/CQJ
+	TM3+uM5m/qJspmgA==
+X-Google-Smtp-Source: AGHT+IFOJfgBMktrjQ4WzqODR90mVSuboNdF+0l09QpBE2YhVUppij7GQo1/v8CGTNYHNVGS0fdYMw==
+X-Received: by 2002:a17:903:24f:b0:290:9332:eebd with SMTP id d9443c01a7336-2986a6bc404mr159661345ad.10.1763398079908;
+        Mon, 17 Nov 2025 08:47:59 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:df44:9b1b:6b35:3fb0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2985c2bed16sm144069755ad.86.2025.11.17.08.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Nov 2025 08:47:59 -0800 (PST)
+Date: Mon, 17 Nov 2025 09:47:56 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Huayu Zong <huayu.zong@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v3 1/3] remoteproc: mediatek: Support platform reg
+ offsets in mtk_scp_of_data
+Message-ID: <aRtRvBZ1zaxW0N20@p14s>
+References: <20251110101342.24261-1-huayu.zong@mediatek.com>
+ <20251110101342.24261-2-huayu.zong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007151828.1527105-1-tanmay.shah@amd.com> <20251007151828.1527105-2-tanmay.shah@amd.com>
- <CABb+yY0m_Whm1F7d2ub+vhn0eTb47UC9g=JvpLnWh-2E1oo52A@mail.gmail.com>
- <aa1ff206-d505-433b-9715-56d866a5f675@amd.com> <33edad1d-08b9-4fe4-8525-a1f50a898e2f@amd.com>
-In-Reply-To: <33edad1d-08b9-4fe4-8525-a1f50a898e2f@amd.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sat, 15 Nov 2025 11:38:47 -0600
-X-Gm-Features: AWmQ_bmUrDcYvzE1II2zPNI0yovnvdPW_QMnBEIq8UGHnfzcnS-CPnSPxp9L-l4
-Message-ID: <CABb+yY1Y90S_dbybMT07PTvmy60W2mt3mHdP56sp6DO75bpuNw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mailbox: check mailbox queue is full or not
-To: tanmay.shah@amd.com
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251110101342.24261-2-huayu.zong@mediatek.com>
 
-On Wed, Oct 15, 2025 at 10:27=E2=80=AFAM Tanmay Shah <tanmay.shah@amd.com> =
-wrote:
-> >>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> >>> index 5cd8ae222073..c2e187aa5d22 100644
-> >>> --- a/drivers/mailbox/mailbox.c
-> >>> +++ b/drivers/mailbox/mailbox.c
-> >>> @@ -35,6 +35,7 @@ static int add_to_rbuf(struct mbox_chan *chan, void
-> >>> *mssg)
-> >>>          idx =3D chan->msg_free;
-> >>>          chan->msg_data[idx] =3D mssg;
-> >>>          chan->msg_count++;
-> >>> +       chan->msg_slot_ro =3D (MBOX_TX_QUEUE_LEN - chan->msg_count);
-> >>>
-> >>>          if (idx =3D=3D MBOX_TX_QUEUE_LEN - 1)
-> >>>                  chan->msg_free =3D 0;
-> >>> @@ -70,6 +71,7 @@ static void msg_submit(struct mbox_chan *chan)
-> >>>                  if (!err) {
-> >>>                          chan->active_req =3D data;
-> >>>                          chan->msg_count--;
-> >>> +                       chan->msg_slot_ro =3D (MBOX_TX_QUEUE_LEN -
-> >>> chan->msg_count);
-> >>>
-> >> No, I had suggested adding this info in client structure.
-> >> There is no point in carrying msg_count and msg_slot_ro in mbox_chan.
-> >> The client needs this info but can/should not access the chan internal=
-s.
-> >>
-> >
-> > Hi Jassi,
-> >
-> > If I move msg_slot_ro to mbox_client that means, each channel needs its
-> > own client structure. But it is possible to map single client to
-> > multiple channels.
-> >
-> > How about if I rename msg_slot_ro to msg_slot_tx_ro -> that says this
-> > field should be used only for "tx" channel.
-> >
-> > Or is it must to map unique client data structure to each channel? If
-> > so, can I update mbox_client structure documentation ?
-> >
->
-> Hi Jassi,
->
-> I looked into this further. Looks like it's not possible to introduce
-> msg_slot_ro in the client data structure as of today. Because multiple
-> drivers are sharing same client for "tx" and "rx" both channels.
-> [references: 1, 2, 3]
->
-> so, msg_slot_ro won't be calculated correctly I believe.
->
-I don't see it. Can you please explain how the calculated value could be wr=
-ong?
+Good day,
 
-thnx
--jassi
+On Mon, Nov 10, 2025 at 06:13:29PM +0800, Huayu Zong wrote:
+> Some platforms only differ in HW register offsets, but can share
+> the same API. Refine struct mtk_scp_of_data to allow setting HW
+> register offsets via platform data, enabling better code reuse
+> and easier support for new platforms.
+> 
+> Signed-off-by: Huayu Zong <huayu.zong@mediatek.com>
+> ---
+>  drivers/remoteproc/mtk_common.h |  5 +++++
+>  drivers/remoteproc/mtk_scp.c    | 18 ++++++++++++++++--
+>  2 files changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/mtk_common.h b/drivers/remoteproc/mtk_common.h
+> index fd5c539ab2ac..d45480ad332e 100644
+> --- a/drivers/remoteproc/mtk_common.h
+> +++ b/drivers/remoteproc/mtk_common.h
+> @@ -112,6 +112,11 @@ struct mtk_scp_of_data {
+>  
+>  	u32 host_to_scp_reg;
+>  	u32 host_to_scp_int_bit;
+> +	u32 scp_to_host_ipc_clr_reg;
+> +	u32 scp_to_spm_ipc_clr_reg;
+> +
+> +	u32 scp_secure_domain_reg;
+> +	u32 scp_domain_value;
+>  
+>  	size_t ipi_buf_offset;
+>  	const struct mtk_scp_sizes_data *scp_sizes;
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 10e3f9eb8cd2..c3c37cae933a 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -236,7 +236,7 @@ static void mt8192_scp_irq_handler(struct mtk_scp *scp)
+>  		 * MT8192_SCP2APMCU_IPC.
+>  		 */
+>  		writel(MT8192_SCP_IPC_INT_BIT,
+> -		       scp->cluster->reg_base + MT8192_SCP2APMCU_IPC_CLR);
+> +		       scp->cluster->reg_base + scp->data->scp_to_host_ipc_clr_reg);
+>  	} else {
+>  		scp_wdt_handler(scp, scp_to_host);
+>  		writel(1, scp->cluster->reg_base + MT8192_CORE0_WDT_IRQ);
+> @@ -561,7 +561,7 @@ static int mt8188_scp_c1_before_load(struct mtk_scp *scp)
+>  static int mt8192_scp_before_load(struct mtk_scp *scp)
+>  {
+>  	/* clear SPM interrupt, SCP2SPM_IPC_CLR */
+> -	writel(0xff, scp->cluster->reg_base + MT8192_SCP2SPM_IPC_CLR);
+> +	writel(0xff, scp->cluster->reg_base + scp->data->scp_to_spm_ipc_clr_reg);
+>  
+>  	writel(1, scp->cluster->reg_base + MT8192_CORE0_SW_RSTN_SET);
+>  
+> @@ -575,6 +575,18 @@ static int mt8192_scp_before_load(struct mtk_scp *scp)
+>  	/* enable MPU for all memory regions */
+>  	writel(0xff, scp->cluster->reg_base + MT8192_CORE0_MEM_ATT_PREDEF);
+>  
+> +	/* Set the domain of master in SCP.
+> +	 *
+> +	 * In the SCP, cores, DMA, and SPI are masters. When these masters
+> +	 * access memory or devices, they need to carry a domain ID. This
+> +	 * domain ID is used to determine whether they have permission to
+> +	 * access the target device or memory.
+> +	 */
+> +
+> +	if (scp->data->scp_secure_domain_reg)
+> +		writel(scp->data->scp_domain_value,
+> +		       scp->cluster->reg_base + scp->data->scp_secure_domain_reg);
+> +
+
+This change is not related to the description in the changelog, nor the other
+changes in this patch.  Please do another patch.
+
+>  	return 0;
+>  }
+>  
+> @@ -1527,6 +1539,8 @@ static const struct mtk_scp_of_data mt8192_of_data = {
+>  	.scp_da_to_va = mt8192_scp_da_to_va,
+>  	.host_to_scp_reg = MT8192_GIPC_IN_SET,
+>  	.host_to_scp_int_bit = MT8192_HOST_IPC_INT_BIT,
+> +	.scp_to_host_ipc_clr_reg = MT8192_SCP2APMCU_IPC_CLR,
+> +	.scp_to_spm_ipc_clr_reg = MT8192_SCP2SPM_IPC_CLR,
+>  	.scp_sizes = &default_scp_sizes,
+>  };
+>  
+> -- 
+> 2.45.2
+> 
