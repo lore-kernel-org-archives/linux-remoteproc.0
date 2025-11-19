@@ -1,238 +1,213 @@
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011016.outbound.protection.outlook.com [52.101.70.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020602F0661;
-	Wed, 19 Nov 2025 15:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763567721; cv=fail; b=sdlM3fhw8qGgv1p0+4/a04LxGvc0JA1VDbQMu+ZBo1GRtueoCijlA463hK6q1DAHgfRK+bbaEiF9R98VJySJTT+BdT0oNAn2cK1E6eRcZf7S8XvONYq1zek0Qj7kRUskti5ZcEhocsqOJ8CcAzap/SktgXKE/5uPyjmU2u/BvLQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763567721; c=relaxed/simple;
-	bh=MGGCWrRxIf48BcDBxV/H8N6FUr3bhqzbo62rWlM1p6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hdae0n/7YtaxhLm50vccIVjTg2ak3VmohS3F7ptCUywGNW/MIzShMKmQ3xUOj26ngKWP+Yhy1V1utzaZmwcgi9+Ws+9uc3ycGChMa+FRIKVTzAsdUd1+3Tfi06IPzDXpYomNW3zkU7jjGOte8Ew9du8ZHAqrmhctW8niu0ENTlM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ElBTd9E6; arc=fail smtp.client-ip=52.101.70.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588D436E543;
+	Wed, 19 Nov 2025 16:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763568146; cv=none; b=HiahGHrYoLtnZi4d8z9kuAy2C+qDKi67dkNT8T6V84awu+7Ts8YMJjbVuoIIc5sMLxNJPmbnc4shHXCOGINk4EzsjWS8B2qZmDOe72l4jUKekjDkdz3jeHhd5p7tT3Pbzqvs5OR+VfComeeIlJM+hL7L4aHKZ3GDHzDQIsxTGBw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763568146; c=relaxed/simple;
+	bh=K6PMG4xSz7AcDJUWlqk2vPo0vVj8q+VRUlhpYysoEc4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ETYxwi6gzJP7i9L3IPSNwzPfh4ABFnfqP2oa0MXJraGijHn6nmwjuIkab6J4id98GKyT2cJBnrVKDXzus/6JUTibZJBlV3mJmhUp4E2g8i7AmyPOxq3uCK6L5E/5cPNPOaSTXMOFakHW3E2GAMouo04N4Xe+p6eeX2ojrNKGMxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hH4DrJg0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ElBTd9E6"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YkAXjLDx8ZGmjZznRHzPGo2er8xB7G6gFmlyZ+ZU82utBmlAaeTyS9Q95+xAZQBHeQ76Uns06ITmmW3uAqJrCvAEPfxPFjr5lrW3j1M48lKRzhU3DwHsi5GFijioU9ORPiVHS6yaPfa2NeCL5V0DyU1y+OFUm0wykCI9CqgCm6/pb/FHf39uRkaqb0VIKhNhE/s8jIlhAfboA+KcFVj1BhUWAU2qz9aQ8H5dJ2Uzp/S7vcv8qXHttAHTcDyXwJ0zIjJ2uM8gyB3j3CqAe+m2Yynr3MYBL+T96+3ysf4ctO5MU9K/uM81UZ+76XDe0hTHM7n/NJg9UfY6SptDklQ3bA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hjU+JADUEDMUTtgUU+DAcsrYc27yCMg9z0+PcJ6tRck=;
- b=I+IRt9jyvwFEsQmDGF6IDQDWiGHgOFP4+Jmbq27c84GZSpG6k+JNK9TAIgrLzi6KsvIx2tYqU7Zx3ezi+9uNabUUEs4AY0FlaeJm8TEqdAZe1QPgH7GnLVT5Uxp/FhWKi6J60ZGYUTbKQfGzMbTMihpL6yYenr3sdzoK8CXCI5prwnwiA5KFg9UQqI61U63IjtwtNQnUMwZWuf/O5YDILiOJm+ywAtqYcYUaKmMzeEmQ+SbTs505Q31INOO3/IYNEn65VKgJQRyekfymB1frnxNtKf0GrccIhGA4HKGfYJ8ylUhneXTl6OvC+3phFkLLFy5nRsbwVcmQrmyB1Y7o1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hjU+JADUEDMUTtgUU+DAcsrYc27yCMg9z0+PcJ6tRck=;
- b=ElBTd9E6VJleEqGZk/zixWGlMiCppq595xGzrIODgppJjRjoE2b+j0S/ueRKMwwhM4rMHTyUnQXlFwFhLBPrHJN4M2zdnKl5XraYj+e3Qr7tZ9Ey5fFvyUo3tVwrWpx0uFzx0C76EmLHYFIQklTtLZ+Szl78k2+x3YLPBimejaHzTqYqpdqtT2T/+s55TYaW1+H9CqNhL0dJD2D3pYlBlUQUzRkP/K9i8DFRAWIny3wjIyISC4Uk/PCDxV+zdu4xAYawsr+Yx0lUYa1WwDuVv784Fg5uexVvf+Grcd60pvzg/wFi5cNg4cIF4qgpPMxsSbscNlIQ3FUw8KI1ObxqLQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AS8PR04MB8756.eurprd04.prod.outlook.com (2603:10a6:20b:42f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
- 2025 15:55:16 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9320.021; Wed, 19 Nov 2025
- 15:55:15 +0000
-Date: Wed, 19 Nov 2025 10:55:04 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v4 12/12] remoteproc: imx_dsp_rproc: simplify start/stop
- error handling
-Message-ID: <aR3oWGzLv2tR+6jG@lizhi-Precision-Tower-5810>
-References: <20251119-imx-dsp-2025-11-19-v4-0-adafd342d07b@nxp.com>
- <20251119-imx-dsp-2025-11-19-v4-12-adafd342d07b@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119-imx-dsp-2025-11-19-v4-12-adafd342d07b@nxp.com>
-X-ClientProxiedBy: PH8PR07CA0013.namprd07.prod.outlook.com
- (2603:10b6:510:2cd::14) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hH4DrJg0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9922C113D0;
+	Wed, 19 Nov 2025 16:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1763568145;
+	bh=K6PMG4xSz7AcDJUWlqk2vPo0vVj8q+VRUlhpYysoEc4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hH4DrJg0JrMfS6V4azkeToN8uUfmwBchOsNW9Lp6DH2PGW0FPmjqSsUQ7r0MkJUjD
+	 ZG95HzgnVqb/2yT6O/UMFuAdgVdOSwIQgM/BNMpAIo+YsyJiW2VRMKuj2+QZDpjehZ
+	 1MzIVhY18a1VHigFeOk9Ev0DM0fGuEgoynUXFUw1qCg8UDKYwnNxyTcAeMu6+EAl9g
+	 QAHgzyYoO7Ra1732ERS6soiwCGFd63RA/3PHsUmBXpWKh6Q9pU6RSktzMCavUQ3yNo
+	 tPyn6xRSnpgsTs204hx01ut8a8VPFTFXViMcJh3/T1MGXHwYGvQNl5pfxTC1fy0fBZ
+	 VhPhfSbuGiNBw==
+Message-ID: <e73bdb23-c27b-4a18-b7e3-942f2d40b726@kernel.org>
+Date: Wed, 19 Nov 2025 17:02:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS8PR04MB8756:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53f1fdac-074e-4d16-a39f-08de278407dd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|19092799006|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?02bEY9dzX1avyV6/7L0KBWGnrU9Kru9z8IPT9Ef9bT9A5/Ri43MUGwG/jnXC?=
- =?us-ascii?Q?1dtf57qeRXnOpjDgHxM6xs4nptGlLy4B9xyCFrftwXEUgQZliD403etx1FiY?=
- =?us-ascii?Q?0g4qWB2FNoQOhK4F9PbDMJP2jQHCX9XpU340ND5dmkLQIx6lKystxg81Dgz1?=
- =?us-ascii?Q?nxkSI5Spbka++JXG2DXEoMBkYlpNKgPdHWqjqApiA+ygVRX+yp8qaCHjFHII?=
- =?us-ascii?Q?LNz+Fi5z6UWkAjbdco3wvPXEHD1t++pmpKjcH172tQQJgMrMXWA9ceJJNGFp?=
- =?us-ascii?Q?ztJfWRIxK3d4yFGVGQZF6k7fSvF2qISrR7WNmV+D3KBuUPfHcpbAHe5qeZE2?=
- =?us-ascii?Q?in+5seCrB7PiwGqs6TlvEeIV2n2ooT1nBdYO64eKfgZKqJo2Crs+6GDCXeta?=
- =?us-ascii?Q?QYIfn3WJrVlZ+MgDENtkpQkUvdyvHXfnKfqoHgLpE4Z/TtDECYDwvrgKtzvU?=
- =?us-ascii?Q?BtKtdh+e22Bh7ObrklZDi7mTKBCnWfoDmJ9J6lx7iIThg0OxqO0qiAYpep8L?=
- =?us-ascii?Q?KL8qKPg/dyC2lXojekHzDjVYF7xwQMl/m89HOo+IBff2owqFpKjKITUU7mHL?=
- =?us-ascii?Q?iWJwEl7oMWBiANLJUtXnD3mQZmy5h4eNaSUz/jGkG87L+0hxVyzsD4OVgzwk?=
- =?us-ascii?Q?2+Ny32o95mPrCI7a7FbYS6s4Pb992dhm7mpfW6w01TBuM5EmCJlGLctSUpeX?=
- =?us-ascii?Q?CJy8AqoHmOB9SeOw2crdaO/IZlgGFNQgbcqs9HTtdOMU6Kg6EBjvp+ZAzlu4?=
- =?us-ascii?Q?xouE5i94G2qrO3Jh4eKhWcR/9hbDkpHzqmZDmz9mEcGCM7wr8BlrZPWyC8fC?=
- =?us-ascii?Q?Lmy6KQr4XOhpnXoDTy+UpRqM5R/K2v0Cx/trKqTT9HGeB9PBAo7lP1jLcy6p?=
- =?us-ascii?Q?+dblzqXF5nkuvxGjTTDvO2QuN14wGVoZmdv2kNRVKXl0R2waAggoWhCxscXy?=
- =?us-ascii?Q?YRpg1XUXIw2p9ndtiPl2uk/JM6G8rUa2rBMMwVIFrpxdAP5e9XQU4VSUllR/?=
- =?us-ascii?Q?Jj3hNcxd85jd35thBMaKtVXxrsN5gMkzcLXCrMJ/pJ8MORSVhldus57E2UwH?=
- =?us-ascii?Q?da5PjWu3OsDdSaW6vaHldGXIF1bgZwL6iJeYMH3qo0Ue+RdXUxqpFM3/+12n?=
- =?us-ascii?Q?YdZ+uAamrXxhYg9CoEo17oLfC17xZPf5ypJwDdENf1e8lqcBxHE18kNnfk0y?=
- =?us-ascii?Q?carUh6ymjwf1Ac6b+tyBCbJxSeeo+1swOOS1AaE2qiBTpPe23D5Def1m8iyE?=
- =?us-ascii?Q?LqY1XWn2Vsr1j6LaKRnqg371qYXixynIvsqneDd4RGiyEA0IvXOjzoLYIGuK?=
- =?us-ascii?Q?TQeB+I2pUQnNOmsWyHA+zHer1f+Mp1IoKhUiUflrcbypLB3dE5VAPW4scTfS?=
- =?us-ascii?Q?YTz+Rv0HCHM5tutOkFGKFOQHd2gKPPknA0yw3qozUceilWqZJsEoAo43L7Hh?=
- =?us-ascii?Q?0H7RlnAAQ1P4jCOSJ5gsi2nXUSHzyvKR3cEjMg+p4j7I7o/a1fDgWxTVe2vx?=
- =?us-ascii?Q?wSaJ2k2iMNVifOiL5I+vhwIf+BsnAfTOCKgM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(19092799006)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SzYo5YEPQpuAMlghmKxBlIaPZzaJgQggxUoV0zJCSTjwPopNuRnXTra/Ged/?=
- =?us-ascii?Q?DMeCy5wHFuiD/ofggWuUB7Coa/LYCtMNGGUyzGV6QvIpoP7EYUfyO+UBZqfp?=
- =?us-ascii?Q?JnD0VZ975Wg1P3J2Y8rI8vFtwr147ZSuJzoHnvhXj+yWDUGnw6i+VAFBZw3I?=
- =?us-ascii?Q?SUeGVcjb+mRY0kXtEFAqgrSPWYdwVLqzysuo+iW6zifGJDv/Nkixp5x47wqu?=
- =?us-ascii?Q?YZW1lzdcxldgpPaCFRoX5TPMiK8SOpbIpV8FJfQXsxAct1PzOw8/20C9PBDd?=
- =?us-ascii?Q?Ya8mDKrxxOQj+9A0ZgVGzp7XJxSPXvdfaM5CsOmQez1X02qgDjumiB58Baj9?=
- =?us-ascii?Q?F1ThAcN4MMDSEEPgNzPQPgh2r2LE6dH5zWN2RDFSafPNK8ZiKa71ok24/xwn?=
- =?us-ascii?Q?9+Bix8aMoN6VRZ9sszYswE1KA+Dthn2395w5gxvknqJdhwWichT6J98eulOw?=
- =?us-ascii?Q?ZC4kuL4q1o40KI01CdDT6o1r8Pp6yLb73IiRHLGQ+08sK+kCJcOpTM77jUPU?=
- =?us-ascii?Q?aUTP1vJn/lsAicqGUgJYsu5kleFirIyfPIMAUuTx9saWrJwnajL/ygmaRJd9?=
- =?us-ascii?Q?V6+VdgSAeHMR5GccdNaPYOFRiqUFMDa4duVmJR+BJLvKGOJYGKFAZzeSzmdL?=
- =?us-ascii?Q?C2xf9afp0Y1wBQFCwuW6SvmiAG3z57u4QNDjEjtE9WkgXAJQ3RCz2eC+qbPr?=
- =?us-ascii?Q?MR9rnb6g0JUqTv0jYrxwL/Un1u49YfHDVnYerTJ74kXzo94sJLDhiRuSjhSy?=
- =?us-ascii?Q?XzR8KjFIhNDIW/FZ8xMPx6ahILi34GaAmYV8OhbpmnP/RbfglCKV+bYxAWAA?=
- =?us-ascii?Q?KuvRynNyNsabmH2Do6npmHafCTSA32pOnb3+uPHi6TXZIexcnprZIvuFHVt1?=
- =?us-ascii?Q?8gHLM2p/WgIyTh7RF8ASSWPylRi4kXtEBH6ITGFG8kvjU0H1PDjUv6LWoHiI?=
- =?us-ascii?Q?ItposehC5crGY1GD4OXzMQciCmmOmhZt0YhBC2Q537dRZhZfkhYnNiz6VeRm?=
- =?us-ascii?Q?rUdh61+QXiEXpmzmvfkhzb3QagrEavtSIbObh+jLhckrIH75XpC2P6VMCohe?=
- =?us-ascii?Q?ZXKKePON850nMA6u7SFhKTdRcX5HlkTYKAUE/Rykf2BOo+6EOjrSmSevTaqa?=
- =?us-ascii?Q?AWxByDZ5FgHpj1ZO/jLYPdck+zEoxsQ6+lQmWFF5htIHcmYlG1I33cR3qx4N?=
- =?us-ascii?Q?BCB9m60CACrVZXIw2C9htgN8dqPDGsED3mcyMId69hLV3d1I1g82esqLhMb/?=
- =?us-ascii?Q?RYPMcXLg7O/VW3JxwxCpXKZOlYVFl1yDiey39YGBNjFSf26dKKc61rCkHe2T?=
- =?us-ascii?Q?RmhA3bLHTFZRq9vSPUOONxP/e+9aFTKlw448IF/TmHO0cNrhcF/YxjmT9blw?=
- =?us-ascii?Q?WFHnhwr4VjJK1GnK8UCrcyV1nt4m0Knk/BO9wT3BriB4xMSS9ezAm4301p4M?=
- =?us-ascii?Q?SRHxRhALi6rvokCSXme00kwifnfZOkx6qdDa+ErG1PE0Cp0tSYKLYf0V/OV4?=
- =?us-ascii?Q?Ii6yOudBERZY8i7jWIlnyLEh4XdGue8JP/uSRMa0+GqRUeKw5C3o2Wg00EaP?=
- =?us-ascii?Q?kjnkLP3KArQa1WgjpylsLpTbU9UaDakncpnvPA3L?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53f1fdac-074e-4d16-a39f-08de278407dd
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 15:55:15.7329
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6fl0OShoW3g238hjtRz8sxPyYUamEvDoHVgog/kVgD8HvJhMrMKGoN6ZDBG5PGVb7/iDUStSxfBGY3SZrCpiCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8756
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 25/26] dt-bindings: reserved-memory: Add Google Kinfo
+ Pixel reserved memory
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com, rdunlap@infradead.org,
+ corbet@lwn.net, david@redhat.com, mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org
+References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
+ <20251119154427.1033475-26-eugen.hristev@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251119154427.1033475-26-eugen.hristev@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 19, 2025 at 12:21:57PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Replace goto-based error handling with early return pattern in
-> imx_dsp_rproc_{start,stop}() functions, and simplify if-else logic.
->
-> No functional changes, only code structure improvements for better
-> maintainability.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+On 19/11/2025 16:44, Eugen Hristev wrote:
+> Add documentation for Google Kinfo Pixel reserved memory area.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Above and commit msg describe something completely else than binding. In
+the binding you described kinfo Linux driver, above you suggest this is
+some sort of reserved memory.
 
+> 
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 > ---
->  drivers/remoteproc/imx_dsp_rproc.c | 39 ++++++++++++++++++--------------------
->  1 file changed, 18 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 6237e8db2eff759c2b7fcce5fb4a44e4ebaec8cf..1a1438823e7fc0a65ba15142abdd97e59692801c 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -376,20 +376,19 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  	struct device *dev = rproc->dev.parent;
->  	int ret;
->
-> -	if (dcfg->ops && dcfg->ops->start) {
-> -		ret = dcfg->ops->start(rproc);
-> -		goto start_ret;
-> -	}
-> -
-> -	return -EOPNOTSUPP;
-> +	if (!dcfg->ops || !dcfg->ops->start)
-> +		return -EOPNOTSUPP;
->
-> -start_ret:
-> -	if (ret)
-> +	ret = dcfg->ops->start(rproc);
-> +	if (ret) {
->  		dev_err(dev, "Failed to enable remote core!\n");
-> -	else if (priv->flags & WAIT_FW_READY)
-> +		return ret;
-> +	}
+>  .../reserved-memory/google,kinfo.yaml         | 49 +++++++++++++++++++
+>  MAINTAINERS                                   |  5 ++
+>  2 files changed, 54 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml b/Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml
+> new file mode 100644
+> index 000000000000..12d0b2815c02
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reserved-memory/google,kinfo.yaml#
+
+Filename based on the compatible.
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	if (priv->flags & WAIT_FW_READY)
->  		return imx_dsp_rproc_ready(rproc);
->
-> -	return ret;
-> +	return 0;
->  }
->
->  static int imx_dsp_rproc_mmio_stop(struct rproc *rproc)
-> @@ -431,20 +430,18 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
->  		return 0;
->  	}
->
-> -	if (dcfg->ops && dcfg->ops->stop) {
-> -		ret = dcfg->ops->stop(rproc);
-> -		goto stop_ret;
-> -	}
-> -
-> -	return -EOPNOTSUPP;
-> +	if (!dcfg->ops || !dcfg->ops->stop)
-> +		return -EOPNOTSUPP;
->
-> -stop_ret:
-> -	if (ret)
-> +	ret = dcfg->ops->stop(rproc);
-> +	if (ret) {
->  		dev_err(dev, "Failed to stop remote core\n");
-> -	else
-> -		priv->flags &= ~REMOTE_IS_READY;
-> +		return ret;
-> +	}
->
-> -	return ret;
-> +	priv->flags &= ~REMOTE_IS_READY;
+> +title: Google Pixel Kinfo reserved memory
 > +
-> +	return 0;
->  }
->
->  /**
->
-> --
-> 2.37.1
->
+> +maintainers:
+> +  - Eugen Hristev <eugen.hristev@linaro.org>
+> +
+> +description:
+> +  This binding describes the Google Pixel Kinfo reserved memory, a region
+
+Don't use "This binding", but please describe here hardware.
+
+> +  of reserved-memory used to store data for firmware/bootloader on the Pixel
+> +  platform. The data stored is debugging information on the running kernel.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: google,kinfo
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +    description: Reference to the reserved-memory for the data
+
+This does not match description. Unfortunately it looks like you added a
+node just to instantiate Linux driver and this is not allowed.
+
+If this was some special reserved memory region, then it would be part
+of reserved memory bindings - see reserved-memory directory.
+
+Compatible suggests that it is purely Linux driver, so another hint.
+
+Looks like this is a SoC specific thing, so maybe this should be folded
+in some of the soc drivers.
+
+
+
+> +
+> +required:
+> +  - compatible
+> +  - memory-region
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    reserved-memory {
+> +      #address-cells = <1>;
+> +      #size-cells = <1>;
+> +      ranges;
+> +
+> +      kinfo_region: smem@fa00000 {
+> +          reg = <0xfa00000 0x1000>;
+> +          no-map;
+> +      };
+> +    };
+
+Anyway, drop, not relevant.
+
+
+> +
+> +    debug-kinfo {
+> +        compatible = "google,debug-kinfo";
+
+Device node with only one phandle to reserved memory region is a proof
+it is not a real device.
+
+Also,
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC (and consider --no-git-fallback argument, so you will
+not CC people just because they made one commit years ago). It might
+happen, that command when run on an older kernel, gives you outdated
+entries. Therefore please be sure you base your patches on recent Linux
+kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+
+Best regards,
+Krzysztof
+
