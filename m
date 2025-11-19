@@ -1,453 +1,238 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011016.outbound.protection.outlook.com [52.101.70.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D85E3A9BEE
-	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 15:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763567173; cv=none; b=oqAwu4zrnu3dp0PuGTdgvVaFAt90bsIu0YaZtnI8JSRJl/oI9TbG+uMi/hQnlAiBCgI5zidhWqDviNnWQ45Z6sdPqjEM20zEB+MqRfGlLgv18lMWO1uOCPsTSJ1k/78gUiTBbnLRVL0eh8e7hq6Kc6GLlBA7RhkogQhEmbca45A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763567173; c=relaxed/simple;
-	bh=wT8jmHzcNzOn5Qz+3QDhit2hy9V6GOAqUfnO1Z91iT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YuStD1Avs3CK05zut6r7Ha2dkicjc/E2gazbEpuZ8c9OIJ0DX5ilxnabI9gLuoB5e9kz3R2Imk7kogKr+sj6KpAPJXPfLenAuFk3nTZmGLGG0nJWlMvvYVqXEXQ7ZCh86yy+ow6ozoqLaUKC539CSHl27Nd8TXYsxWF7um8+ktY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iKEE9S1x; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020602F0661;
+	Wed, 19 Nov 2025 15:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763567721; cv=fail; b=sdlM3fhw8qGgv1p0+4/a04LxGvc0JA1VDbQMu+ZBo1GRtueoCijlA463hK6q1DAHgfRK+bbaEiF9R98VJySJTT+BdT0oNAn2cK1E6eRcZf7S8XvONYq1zek0Qj7kRUskti5ZcEhocsqOJ8CcAzap/SktgXKE/5uPyjmU2u/BvLQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763567721; c=relaxed/simple;
+	bh=MGGCWrRxIf48BcDBxV/H8N6FUr3bhqzbo62rWlM1p6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=hdae0n/7YtaxhLm50vccIVjTg2ak3VmohS3F7ptCUywGNW/MIzShMKmQ3xUOj26ngKWP+Yhy1V1utzaZmwcgi9+Ws+9uc3ycGChMa+FRIKVTzAsdUd1+3Tfi06IPzDXpYomNW3zkU7jjGOte8Ew9du8ZHAqrmhctW8niu0ENTlM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ElBTd9E6; arc=fail smtp.client-ip=52.101.70.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iKEE9S1x"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-42b3c5defb2so4677403f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 07:46:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763567162; x=1764171962; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vjdG1/a5AFb8CurP464/OyK+i/niRA2OFjF7IXQ6EqU=;
-        b=iKEE9S1x9QWbGHB/ePXFxV+MOYG1FQjEFKLupkcUbkIDj1MwKSWWC80B5kbXz527Uu
-         +XrrAonfGs9qGc3eyA1TzIeotXf7kj+BVjN4suIrHDlzwVkBEz6MTYOwS0pnaQ4TwDjW
-         np02CTwRAZTGAX4P5BJIGbgELcQkvyKUPNtmsnrychGRuzXzPfutsHnE2bDaRz7Qw3UL
-         Hy2sn1q6aGUhuFRRo7QjslJ0yDKLJsUbaYSNAuGxCiVYaCgg6reHJpLV9v33MftCVQ8R
-         R79z8CbM+8gYja96FcgAPvOTrPUBeYykCrc9acmjDKxn15o9cVyWZ6ZV7q64VV9jB6St
-         nW2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763567162; x=1764171962;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vjdG1/a5AFb8CurP464/OyK+i/niRA2OFjF7IXQ6EqU=;
-        b=SR5XQ3pNpl+y/NLq3yzyk0Po3Rcll3WI3V5s47O7mUfNBCb2OFpu5W42gimPx/CC9Z
-         U6wuKaGBMIDNGd3K0ljC+hlr2AO7BHawan40gzlzSC6rePivK4l5CXAvB45QlO0jX87Z
-         MzhXxlwoW+Z/iegKr2Ul6P9osiqbRG2TQKNgFlnf1K9Rp6WJJajHhgYU4904RKr0brIU
-         BeyXd4ucAWleThJsfCFdzSi8hVbTLMcnu38n0nNJMbFpByYNBkG03BwlPIXMvtcvhW2U
-         W+1OWvIld0unYCETkToTJdGuwS8EDDfxmhbnM8S3D2YyWdYCqe4XqJ+CFCzCUqIqwY4n
-         GV1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXkNZrdvEm3rwAIDfudRbh4KGiiUB0SZAACvuS5pcGwRNQ6Qb7dMmIY9fN5D+hqvZWFNx6nrBtTZZdbMa/o/sfa@vger.kernel.org
-X-Gm-Message-State: AOJu0YxktWaDb5Y9E2gotqC7YGxyx1iDpamK0SBe2aP7qncC3cA2A0oc
-	yoamnIpcIBXISiXAZVc0H6VZmu27LB+v4oncHpiacX5nbeml/gUg4XJYDSkTIwQxvBM=
-X-Gm-Gg: ASbGncvJG9xY0HVf3l1X2q4rZ3udiWlJEWwY1s9ViPXoYXgXvRHpAKbMfmRFulUpJws
-	WF9JnSYDWrEWgwF5Gru/YTAltdV3zQzt3PNouYYTGllqmR4NxQDfXeFLLQnLXYRavtM3BV/IlP4
-	Z+LLyB1oSFS8Vh9FVhXc5H5p9cp0KYZKrjvyzPwEsPOv00/q+JuNAoMgkrP0QUYuqJy09J1SF+G
-	qVZ6TBGAO+ol9obPhiK/el+KNgPRccp86uwPOiGoFAUqgy9ElH1HiyHnl5tW49OeTxRFv5IodAS
-	qMy9sF7nIJVz4CmKSHx5O9/DuA78AsVu7rZ8Dw8WvqFG10X8lgC28bKivHaWti0vU+u2GVpBDdQ
-	iourQ6QrMEn/23uRTHDi0cqgujs36AHxReawr6vffM4LRePTY9HPkG+Vy1s7SO03nP0QOVCSiqR
-	YJ1QVHxifiSl0N+JTAZY1YEaaGBCYJiw==
-X-Google-Smtp-Source: AGHT+IEYehjZzwQP4QY9mT+/5fGr+NBXUC5zHCL5MMz466EKwRwnbbkUf34pwbvo8KJX34cdlYI+Ug==
-X-Received: by 2002:a05:6000:657:b0:400:7e60:7ee0 with SMTP id ffacd0b85a97d-42b592d8549mr20248098f8f.0.1763567162304;
-        Wed, 19 Nov 2025 07:46:02 -0800 (PST)
-Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-42b53dea1c9sm38765632f8f.0.2025.11.19.07.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Nov 2025 07:46:01 -0800 (PST)
-From: Eugen Hristev <eugen.hristev@linaro.org>
-To: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	tglx@linutronix.de,
-	andersson@kernel.org,
-	pmladek@suse.com,
-	rdunlap@infradead.org,
-	corbet@lwn.net,
-	david@redhat.com,
-	mhocko@suse.com
-Cc: tudor.ambarus@linaro.org,
-	mukesh.ojha@oss.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org,
-	jonechou@google.com,
-	rostedt@goodmis.org,
-	linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	tony.luck@intel.com,
-	kees@kernel.org,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [PATCH 26/26] meminspect: Add Kinfo compatible driver
-Date: Wed, 19 Nov 2025 17:44:27 +0200
-Message-ID: <20251119154427.1033475-27-eugen.hristev@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251119154427.1033475-1-eugen.hristev@linaro.org>
-References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ElBTd9E6"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YkAXjLDx8ZGmjZznRHzPGo2er8xB7G6gFmlyZ+ZU82utBmlAaeTyS9Q95+xAZQBHeQ76Uns06ITmmW3uAqJrCvAEPfxPFjr5lrW3j1M48lKRzhU3DwHsi5GFijioU9ORPiVHS6yaPfa2NeCL5V0DyU1y+OFUm0wykCI9CqgCm6/pb/FHf39uRkaqb0VIKhNhE/s8jIlhAfboA+KcFVj1BhUWAU2qz9aQ8H5dJ2Uzp/S7vcv8qXHttAHTcDyXwJ0zIjJ2uM8gyB3j3CqAe+m2Yynr3MYBL+T96+3ysf4ctO5MU9K/uM81UZ+76XDe0hTHM7n/NJg9UfY6SptDklQ3bA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hjU+JADUEDMUTtgUU+DAcsrYc27yCMg9z0+PcJ6tRck=;
+ b=I+IRt9jyvwFEsQmDGF6IDQDWiGHgOFP4+Jmbq27c84GZSpG6k+JNK9TAIgrLzi6KsvIx2tYqU7Zx3ezi+9uNabUUEs4AY0FlaeJm8TEqdAZe1QPgH7GnLVT5Uxp/FhWKi6J60ZGYUTbKQfGzMbTMihpL6yYenr3sdzoK8CXCI5prwnwiA5KFg9UQqI61U63IjtwtNQnUMwZWuf/O5YDILiOJm+ywAtqYcYUaKmMzeEmQ+SbTs505Q31INOO3/IYNEn65VKgJQRyekfymB1frnxNtKf0GrccIhGA4HKGfYJ8ylUhneXTl6OvC+3phFkLLFy5nRsbwVcmQrmyB1Y7o1w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hjU+JADUEDMUTtgUU+DAcsrYc27yCMg9z0+PcJ6tRck=;
+ b=ElBTd9E6VJleEqGZk/zixWGlMiCppq595xGzrIODgppJjRjoE2b+j0S/ueRKMwwhM4rMHTyUnQXlFwFhLBPrHJN4M2zdnKl5XraYj+e3Qr7tZ9Ey5fFvyUo3tVwrWpx0uFzx0C76EmLHYFIQklTtLZ+Szl78k2+x3YLPBimejaHzTqYqpdqtT2T/+s55TYaW1+H9CqNhL0dJD2D3pYlBlUQUzRkP/K9i8DFRAWIny3wjIyISC4Uk/PCDxV+zdu4xAYawsr+Yx0lUYa1WwDuVv784Fg5uexVvf+Grcd60pvzg/wFi5cNg4cIF4qgpPMxsSbscNlIQ3FUw8KI1ObxqLQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by AS8PR04MB8756.eurprd04.prod.outlook.com (2603:10a6:20b:42f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
+ 2025 15:55:16 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::55ef:fa41:b021:b5dd%4]) with mapi id 15.20.9320.021; Wed, 19 Nov 2025
+ 15:55:15 +0000
+Date: Wed, 19 Nov 2025 10:55:04 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v4 12/12] remoteproc: imx_dsp_rproc: simplify start/stop
+ error handling
+Message-ID: <aR3oWGzLv2tR+6jG@lizhi-Precision-Tower-5810>
+References: <20251119-imx-dsp-2025-11-19-v4-0-adafd342d07b@nxp.com>
+ <20251119-imx-dsp-2025-11-19-v4-12-adafd342d07b@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251119-imx-dsp-2025-11-19-v4-12-adafd342d07b@nxp.com>
+X-ClientProxiedBy: PH8PR07CA0013.namprd07.prod.outlook.com
+ (2603:10b6:510:2cd::14) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS8PR04MB8756:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53f1fdac-074e-4d16-a39f-08de278407dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|19092799006|52116014|376014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?02bEY9dzX1avyV6/7L0KBWGnrU9Kru9z8IPT9Ef9bT9A5/Ri43MUGwG/jnXC?=
+ =?us-ascii?Q?1dtf57qeRXnOpjDgHxM6xs4nptGlLy4B9xyCFrftwXEUgQZliD403etx1FiY?=
+ =?us-ascii?Q?0g4qWB2FNoQOhK4F9PbDMJP2jQHCX9XpU340ND5dmkLQIx6lKystxg81Dgz1?=
+ =?us-ascii?Q?nxkSI5Spbka++JXG2DXEoMBkYlpNKgPdHWqjqApiA+ygVRX+yp8qaCHjFHII?=
+ =?us-ascii?Q?LNz+Fi5z6UWkAjbdco3wvPXEHD1t++pmpKjcH172tQQJgMrMXWA9ceJJNGFp?=
+ =?us-ascii?Q?ztJfWRIxK3d4yFGVGQZF6k7fSvF2qISrR7WNmV+D3KBuUPfHcpbAHe5qeZE2?=
+ =?us-ascii?Q?in+5seCrB7PiwGqs6TlvEeIV2n2ooT1nBdYO64eKfgZKqJo2Crs+6GDCXeta?=
+ =?us-ascii?Q?QYIfn3WJrVlZ+MgDENtkpQkUvdyvHXfnKfqoHgLpE4Z/TtDECYDwvrgKtzvU?=
+ =?us-ascii?Q?BtKtdh+e22Bh7ObrklZDi7mTKBCnWfoDmJ9J6lx7iIThg0OxqO0qiAYpep8L?=
+ =?us-ascii?Q?KL8qKPg/dyC2lXojekHzDjVYF7xwQMl/m89HOo+IBff2owqFpKjKITUU7mHL?=
+ =?us-ascii?Q?iWJwEl7oMWBiANLJUtXnD3mQZmy5h4eNaSUz/jGkG87L+0hxVyzsD4OVgzwk?=
+ =?us-ascii?Q?2+Ny32o95mPrCI7a7FbYS6s4Pb992dhm7mpfW6w01TBuM5EmCJlGLctSUpeX?=
+ =?us-ascii?Q?CJy8AqoHmOB9SeOw2crdaO/IZlgGFNQgbcqs9HTtdOMU6Kg6EBjvp+ZAzlu4?=
+ =?us-ascii?Q?xouE5i94G2qrO3Jh4eKhWcR/9hbDkpHzqmZDmz9mEcGCM7wr8BlrZPWyC8fC?=
+ =?us-ascii?Q?Lmy6KQr4XOhpnXoDTy+UpRqM5R/K2v0Cx/trKqTT9HGeB9PBAo7lP1jLcy6p?=
+ =?us-ascii?Q?+dblzqXF5nkuvxGjTTDvO2QuN14wGVoZmdv2kNRVKXl0R2waAggoWhCxscXy?=
+ =?us-ascii?Q?YRpg1XUXIw2p9ndtiPl2uk/JM6G8rUa2rBMMwVIFrpxdAP5e9XQU4VSUllR/?=
+ =?us-ascii?Q?Jj3hNcxd85jd35thBMaKtVXxrsN5gMkzcLXCrMJ/pJ8MORSVhldus57E2UwH?=
+ =?us-ascii?Q?da5PjWu3OsDdSaW6vaHldGXIF1bgZwL6iJeYMH3qo0Ue+RdXUxqpFM3/+12n?=
+ =?us-ascii?Q?YdZ+uAamrXxhYg9CoEo17oLfC17xZPf5ypJwDdENf1e8lqcBxHE18kNnfk0y?=
+ =?us-ascii?Q?carUh6ymjwf1Ac6b+tyBCbJxSeeo+1swOOS1AaE2qiBTpPe23D5Def1m8iyE?=
+ =?us-ascii?Q?LqY1XWn2Vsr1j6LaKRnqg371qYXixynIvsqneDd4RGiyEA0IvXOjzoLYIGuK?=
+ =?us-ascii?Q?TQeB+I2pUQnNOmsWyHA+zHer1f+Mp1IoKhUiUflrcbypLB3dE5VAPW4scTfS?=
+ =?us-ascii?Q?YTz+Rv0HCHM5tutOkFGKFOQHd2gKPPknA0yw3qozUceilWqZJsEoAo43L7Hh?=
+ =?us-ascii?Q?0H7RlnAAQ1P4jCOSJ5gsi2nXUSHzyvKR3cEjMg+p4j7I7o/a1fDgWxTVe2vx?=
+ =?us-ascii?Q?wSaJ2k2iMNVifOiL5I+vhwIf+BsnAfTOCKgM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(19092799006)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SzYo5YEPQpuAMlghmKxBlIaPZzaJgQggxUoV0zJCSTjwPopNuRnXTra/Ged/?=
+ =?us-ascii?Q?DMeCy5wHFuiD/ofggWuUB7Coa/LYCtMNGGUyzGV6QvIpoP7EYUfyO+UBZqfp?=
+ =?us-ascii?Q?JnD0VZ975Wg1P3J2Y8rI8vFtwr147ZSuJzoHnvhXj+yWDUGnw6i+VAFBZw3I?=
+ =?us-ascii?Q?SUeGVcjb+mRY0kXtEFAqgrSPWYdwVLqzysuo+iW6zifGJDv/Nkixp5x47wqu?=
+ =?us-ascii?Q?YZW1lzdcxldgpPaCFRoX5TPMiK8SOpbIpV8FJfQXsxAct1PzOw8/20C9PBDd?=
+ =?us-ascii?Q?Ya8mDKrxxOQj+9A0ZgVGzp7XJxSPXvdfaM5CsOmQez1X02qgDjumiB58Baj9?=
+ =?us-ascii?Q?F1ThAcN4MMDSEEPgNzPQPgh2r2LE6dH5zWN2RDFSafPNK8ZiKa71ok24/xwn?=
+ =?us-ascii?Q?9+Bix8aMoN6VRZ9sszYswE1KA+Dthn2395w5gxvknqJdhwWichT6J98eulOw?=
+ =?us-ascii?Q?ZC4kuL4q1o40KI01CdDT6o1r8Pp6yLb73IiRHLGQ+08sK+kCJcOpTM77jUPU?=
+ =?us-ascii?Q?aUTP1vJn/lsAicqGUgJYsu5kleFirIyfPIMAUuTx9saWrJwnajL/ygmaRJd9?=
+ =?us-ascii?Q?V6+VdgSAeHMR5GccdNaPYOFRiqUFMDa4duVmJR+BJLvKGOJYGKFAZzeSzmdL?=
+ =?us-ascii?Q?C2xf9afp0Y1wBQFCwuW6SvmiAG3z57u4QNDjEjtE9WkgXAJQ3RCz2eC+qbPr?=
+ =?us-ascii?Q?MR9rnb6g0JUqTv0jYrxwL/Un1u49YfHDVnYerTJ74kXzo94sJLDhiRuSjhSy?=
+ =?us-ascii?Q?XzR8KjFIhNDIW/FZ8xMPx6ahILi34GaAmYV8OhbpmnP/RbfglCKV+bYxAWAA?=
+ =?us-ascii?Q?KuvRynNyNsabmH2Do6npmHafCTSA32pOnb3+uPHi6TXZIexcnprZIvuFHVt1?=
+ =?us-ascii?Q?8gHLM2p/WgIyTh7RF8ASSWPylRi4kXtEBH6ITGFG8kvjU0H1PDjUv6LWoHiI?=
+ =?us-ascii?Q?ItposehC5crGY1GD4OXzMQciCmmOmhZt0YhBC2Q537dRZhZfkhYnNiz6VeRm?=
+ =?us-ascii?Q?rUdh61+QXiEXpmzmvfkhzb3QagrEavtSIbObh+jLhckrIH75XpC2P6VMCohe?=
+ =?us-ascii?Q?ZXKKePON850nMA6u7SFhKTdRcX5HlkTYKAUE/Rykf2BOo+6EOjrSmSevTaqa?=
+ =?us-ascii?Q?AWxByDZ5FgHpj1ZO/jLYPdck+zEoxsQ6+lQmWFF5htIHcmYlG1I33cR3qx4N?=
+ =?us-ascii?Q?BCB9m60CACrVZXIw2C9htgN8dqPDGsED3mcyMId69hLV3d1I1g82esqLhMb/?=
+ =?us-ascii?Q?RYPMcXLg7O/VW3JxwxCpXKZOlYVFl1yDiey39YGBNjFSf26dKKc61rCkHe2T?=
+ =?us-ascii?Q?RmhA3bLHTFZRq9vSPUOONxP/e+9aFTKlw448IF/TmHO0cNrhcF/YxjmT9blw?=
+ =?us-ascii?Q?WFHnhwr4VjJK1GnK8UCrcyV1nt4m0Knk/BO9wT3BriB4xMSS9ezAm4301p4M?=
+ =?us-ascii?Q?SRHxRhALi6rvokCSXme00kwifnfZOkx6qdDa+ErG1PE0Cp0tSYKLYf0V/OV4?=
+ =?us-ascii?Q?Ii6yOudBERZY8i7jWIlnyLEh4XdGue8JP/uSRMa0+GqRUeKw5C3o2Wg00EaP?=
+ =?us-ascii?Q?kjnkLP3KArQa1WgjpylsLpTbU9UaDakncpnvPA3L?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53f1fdac-074e-4d16-a39f-08de278407dd
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 15:55:15.7329
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6fl0OShoW3g238hjtRz8sxPyYUamEvDoHVgog/kVgD8HvJhMrMKGoN6ZDBG5PGVb7/iDUStSxfBGY3SZrCpiCQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8756
 
-With this driver, the registered regions are copied to a shared
-memory zone at register time.
-The shared memory zone is supplied via OF.
-This driver will select only regions that are of interest,
-and keep only addresses. The format of the list is Kinfo compatible,
-with devices like Google Pixel phone.
-The firmware is only interested in some symbols' addresses.
+On Wed, Nov 19, 2025 at 12:21:57PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> Replace goto-based error handling with early return pattern in
+> imx_dsp_rproc_{start,stop}() functions, and simplify if-else logic.
+>
+> No functional changes, only code structure improvements for better
+> maintainability.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
----
- MAINTAINERS                |   1 +
- kernel/meminspect/Kconfig  |  10 ++
- kernel/meminspect/Makefile |   1 +
- kernel/meminspect/kinfo.c  | 289 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 301 insertions(+)
- create mode 100644 kernel/meminspect/kinfo.c
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8034940d0b1e..9cba0e472e01 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16168,6 +16168,7 @@ MEMINSPECT KINFO DRIVER
- M:	Eugen Hristev <eugen.hristev@linaro.org>
- S:	Maintained
- F:	Documentation/devicetree/bindings/misc/google,kinfo.yaml
-+F:	kernel/meminspect/kinfo.c
- 
- MEMBLOCK AND MEMORY MANAGEMENT INITIALIZATION
- M:	Mike Rapoport <rppt@kernel.org>
-diff --git a/kernel/meminspect/Kconfig b/kernel/meminspect/Kconfig
-index 8680fbf0e285..396510908e47 100644
---- a/kernel/meminspect/Kconfig
-+++ b/kernel/meminspect/Kconfig
-@@ -18,3 +18,13 @@ config MEMINSPECT
- 	  Note that modules using this feature must be rebuilt if option
- 	  changes.
- 
-+config MEMINSPECT_KINFO
-+	tristate "Shared memory KInfo compatible driver"
-+	depends on MEMINSPECT
-+	help
-+	  Say y here to enable the Shared memory KInfo compatible driver
-+	  With this driver, the registered regions are copied to a shared
-+	  memory zone at register time.
-+	  The shared memory zone is supplied via OF.
-+	  This driver will select only regions that are of interest,
-+	  and keep only addresses. The format of the list is Kinfo compatible.
-diff --git a/kernel/meminspect/Makefile b/kernel/meminspect/Makefile
-index 09fd55e6d9cf..283604d892e5 100644
---- a/kernel/meminspect/Makefile
-+++ b/kernel/meminspect/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_MEMINSPECT) += meminspect.o
-+obj-$(CONFIG_MEMINSPECT_KINFO) += kinfo.o
-diff --git a/kernel/meminspect/kinfo.c b/kernel/meminspect/kinfo.c
-new file mode 100644
-index 000000000000..62f8ee7a66a9
---- /dev/null
-+++ b/kernel/meminspect/kinfo.c
-@@ -0,0 +1,289 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *
-+ * Copyright 2002 Rusty Russell <rusty@rustcorp.com.au> IBM Corporation
-+ * Copyright 2021 Google LLC
-+ * Copyright 2025 Linaro Ltd. Eugen Hristev <eugen.hristev@linaro.org>
-+ */
-+#include <linux/container_of.h>
-+#include <linux/kallsyms.h>
-+#include <linux/meminspect.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
-+#include <linux/utsname.h>
-+
-+#define BUILD_INFO_LEN		256
-+#define DEBUG_KINFO_MAGIC	0xcceeddff
-+
-+/*
-+ * Header structure must be byte-packed, since the table is provided to
-+ * bootloader.
-+ */
-+struct kernel_info {
-+	/* For kallsyms */
-+	u8 enabled_all;
-+	u8 enabled_base_relative;
-+	u8 enabled_absolute_percpu;
-+	u8 enabled_cfi_clang;
-+	u32 num_syms;
-+	u16 name_len;
-+	u16 bit_per_long;
-+	u16 module_name_len;
-+	u16 symbol_len;
-+	u64 _relative_pa;
-+	u64 _text_pa;
-+	u64 _stext_pa;
-+	u64 _etext_pa;
-+	u64 _sinittext_pa;
-+	u64 _einittext_pa;
-+	u64 _end_pa;
-+	u64 _offsets_pa;
-+	u64 _names_pa;
-+	u64 _token_table_pa;
-+	u64 _token_index_pa;
-+	u64 _markers_pa;
-+	u64 _seqs_of_names_pa;
-+
-+	/* For frame pointer */
-+	u32 thread_size;
-+
-+	/* For virt_to_phys */
-+	u64 swapper_pg_dir_pa;
-+
-+	/* For linux banner */
-+	u8 last_uts_release[__NEW_UTS_LEN];
-+
-+	/* Info of running build */
-+	u8 build_info[BUILD_INFO_LEN];
-+
-+	/* For module kallsyms */
-+	u32 enabled_modules_tree_lookup;
-+	u32 mod_mem_offset;
-+	u32 mod_kallsyms_offset;
-+} __packed;
-+
-+struct kernel_all_info {
-+	u32 magic_number;
-+	u32 combined_checksum;
-+	struct kernel_info info;
-+} __packed;
-+
-+struct debug_kinfo {
-+	struct device *dev;
-+	void *all_info_addr;
-+	size_t all_info_size;
-+	struct notifier_block nb;
-+};
-+
-+static void update_kernel_all_info(struct kernel_all_info *all_info)
-+{
-+	struct kernel_info *info;
-+	u32 *checksum_info;
-+	int index;
-+
-+	all_info->magic_number = DEBUG_KINFO_MAGIC;
-+	all_info->combined_checksum = 0;
-+
-+	info = &all_info->info;
-+	checksum_info = (u32 *)info;
-+	for (index = 0; index < sizeof(*info) / sizeof(u32); index++)
-+		all_info->combined_checksum ^= checksum_info[index];
-+}
-+
-+static u8 global_build_info[BUILD_INFO_LEN];
-+
-+static int build_info_set(const char *str, const struct kernel_param *kp)
-+{
-+	size_t build_info_size = sizeof(global_build_info);
-+
-+	if (strlen(str) > build_info_size)
-+		return -ENOMEM;
-+	memcpy(global_build_info, str, min(build_info_size - 1, strlen(str)));
-+	return 0;
-+}
-+
-+static const struct kernel_param_ops build_info_op = {
-+	.set = build_info_set,
-+};
-+
-+module_param_cb(build_info, &build_info_op, NULL, 0200);
-+MODULE_PARM_DESC(build_info, "Write build info to field 'build_info' of debug kinfo.");
-+
-+static void __maybe_unused register_kinfo_region(void *priv,
-+						 const struct inspect_entry *e)
-+{
-+	struct debug_kinfo *kinfo = priv;
-+	struct kernel_all_info *all_info = kinfo->all_info_addr;
-+	struct kernel_info *info = &all_info->info;
-+	struct uts_namespace *uts;
-+	u64 paddr;
-+
-+	if (e->pa)
-+		paddr = e->pa;
-+	else
-+		paddr = __pa(e->va);
-+
-+	switch (e->id) {
-+	case MEMINSPECT_ID__sinittext:
-+		info->_sinittext_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID__einittext:
-+		info->_einittext_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID__end:
-+		info->_end_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID__text:
-+		info->_text_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID__stext:
-+		info->_stext_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID__etext:
-+		info->_etext_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_kallsyms_num_syms:
-+		info->num_syms = *(__u32 *)e->va;
-+		break;
-+	case MEMINSPECT_ID_kallsyms_relative_base:
-+		info->_relative_pa = (u64)__pa(*(u64 *)e->va);
-+		break;
-+	case MEMINSPECT_ID_kallsyms_offsets:
-+		info->_offsets_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_kallsyms_names:
-+		info->_names_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_kallsyms_token_table:
-+		info->_token_table_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_kallsyms_token_index:
-+		info->_token_index_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_kallsyms_markers:
-+		info->_markers_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_kallsyms_seqs_of_names:
-+		info->_seqs_of_names_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_swapper_pg_dir:
-+		info->swapper_pg_dir_pa = paddr;
-+		break;
-+	case MEMINSPECT_ID_init_uts_ns:
-+		if (!e->va)
-+			return;
-+		uts = e->va;
-+		strscpy(info->last_uts_release, uts->name.release, __NEW_UTS_LEN);
-+		break;
-+	default:
-+		break;
-+	};
-+
-+	update_kernel_all_info(all_info);
-+}
-+
-+static int kinfo_notifier_cb(struct notifier_block *nb,
-+			     unsigned long code, void *entry)
-+{
-+	struct debug_kinfo *kinfo = container_of(nb, struct debug_kinfo, nb);
-+
-+	if (code == MEMINSPECT_NOTIFIER_ADD)
-+		register_kinfo_region(kinfo, entry);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int debug_kinfo_probe(struct platform_device *pdev)
-+{
-+	struct kernel_all_info *all_info;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *mem_region;
-+	struct reserved_mem *rmem;
-+	struct debug_kinfo *kinfo;
-+	struct kernel_info *info;
-+
-+	mem_region = of_parse_phandle(dev->of_node, "memory-region", 0);
-+	if (!mem_region)
-+		return dev_err_probe(dev, -ENODEV, "no such memory-region\n");
-+
-+	rmem = of_reserved_mem_lookup(mem_region);
-+	if (!rmem)
-+		return dev_err_probe(dev, -ENODEV, "no such reserved mem of node name %s\n",
-+			      dev->of_node->name);
-+
-+	/* Need to wait for reserved memory to be mapped */
-+	if (!rmem->priv)
-+		return -EPROBE_DEFER;
-+
-+	if (!rmem->base || !rmem->size)
-+		dev_err_probe(dev, -EINVAL, "unexpected reserved memory\n");
-+
-+	if (rmem->size < sizeof(struct kernel_all_info))
-+		dev_err_probe(dev, -EINVAL, "reserved memory size too small\n");
-+
-+	kinfo = devm_kzalloc(dev, sizeof(*kinfo), GFP_KERNEL);
-+	if (!kinfo)
-+		return -ENOMEM;
-+	platform_set_drvdata(pdev, kinfo);
-+
-+	kinfo->dev = dev;
-+
-+	kinfo->all_info_addr = rmem->priv;
-+	kinfo->all_info_size = rmem->size;
-+
-+	all_info = kinfo->all_info_addr;
-+
-+	memset(all_info, 0, sizeof(struct kernel_all_info));
-+	info = &all_info->info;
-+	info->enabled_all = IS_ENABLED(CONFIG_KALLSYMS_ALL);
-+	info->enabled_absolute_percpu = IS_ENABLED(CONFIG_KALLSYMS_ABSOLUTE_PERCPU);
-+	info->enabled_base_relative = IS_ENABLED(CONFIG_KALLSYMS_BASE_RELATIVE);
-+	info->enabled_cfi_clang = IS_ENABLED(CONFIG_CFI_CLANG);
-+	info->name_len = KSYM_NAME_LEN;
-+	info->bit_per_long = BITS_PER_LONG;
-+	info->module_name_len = MODULE_NAME_LEN;
-+	info->symbol_len = KSYM_SYMBOL_LEN;
-+	info->thread_size = THREAD_SIZE;
-+	info->enabled_modules_tree_lookup = IS_ENABLED(CONFIG_MODULES_TREE_LOOKUP);
-+	info->mod_mem_offset = offsetof(struct module, mem);
-+	info->mod_kallsyms_offset = offsetof(struct module, kallsyms);
-+
-+	memcpy(info->build_info, global_build_info, strlen(global_build_info));
-+
-+	kinfo->nb.notifier_call = kinfo_notifier_cb;
-+
-+	meminspect_notifier_register(&kinfo->nb);
-+	meminspect_lock_traverse(kinfo, register_kinfo_region);
-+
-+	return 0;
-+}
-+
-+static void debug_kinfo_remove(struct platform_device *pdev)
-+{
-+	struct debug_kinfo *kinfo = platform_get_drvdata(pdev);
-+
-+	meminspect_notifier_unregister(&kinfo->nb);
-+}
-+
-+static const struct of_device_id debug_kinfo_of_match[] = {
-+	{ .compatible	= "google,debug-kinfo" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, debug_kinfo_of_match);
-+
-+static struct platform_driver debug_kinfo_driver = {
-+	.probe = debug_kinfo_probe,
-+	.remove = debug_kinfo_remove,
-+	.driver = {
-+		.name = "debug-kinfo",
-+		.of_match_table = of_match_ptr(debug_kinfo_of_match),
-+	},
-+};
-+module_platform_driver(debug_kinfo_driver);
-+
-+MODULE_AUTHOR("Eugen Hristev <eugen.hristev@linaro.org>");
-+MODULE_AUTHOR("Jone Chou <jonechou@google.com>");
-+MODULE_DESCRIPTION("meminspect Kinfo Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.43.0
-
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 39 ++++++++++++++++++--------------------
+>  1 file changed, 18 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index 6237e8db2eff759c2b7fcce5fb4a44e4ebaec8cf..1a1438823e7fc0a65ba15142abdd97e59692801c 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -376,20 +376,19 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+>  	struct device *dev = rproc->dev.parent;
+>  	int ret;
+>
+> -	if (dcfg->ops && dcfg->ops->start) {
+> -		ret = dcfg->ops->start(rproc);
+> -		goto start_ret;
+> -	}
+> -
+> -	return -EOPNOTSUPP;
+> +	if (!dcfg->ops || !dcfg->ops->start)
+> +		return -EOPNOTSUPP;
+>
+> -start_ret:
+> -	if (ret)
+> +	ret = dcfg->ops->start(rproc);
+> +	if (ret) {
+>  		dev_err(dev, "Failed to enable remote core!\n");
+> -	else if (priv->flags & WAIT_FW_READY)
+> +		return ret;
+> +	}
+> +
+> +	if (priv->flags & WAIT_FW_READY)
+>  		return imx_dsp_rproc_ready(rproc);
+>
+> -	return ret;
+> +	return 0;
+>  }
+>
+>  static int imx_dsp_rproc_mmio_stop(struct rproc *rproc)
+> @@ -431,20 +430,18 @@ static int imx_dsp_rproc_stop(struct rproc *rproc)
+>  		return 0;
+>  	}
+>
+> -	if (dcfg->ops && dcfg->ops->stop) {
+> -		ret = dcfg->ops->stop(rproc);
+> -		goto stop_ret;
+> -	}
+> -
+> -	return -EOPNOTSUPP;
+> +	if (!dcfg->ops || !dcfg->ops->stop)
+> +		return -EOPNOTSUPP;
+>
+> -stop_ret:
+> -	if (ret)
+> +	ret = dcfg->ops->stop(rproc);
+> +	if (ret) {
+>  		dev_err(dev, "Failed to stop remote core\n");
+> -	else
+> -		priv->flags &= ~REMOTE_IS_READY;
+> +		return ret;
+> +	}
+>
+> -	return ret;
+> +	priv->flags &= ~REMOTE_IS_READY;
+> +
+> +	return 0;
+>  }
+>
+>  /**
+>
+> --
+> 2.37.1
+>
