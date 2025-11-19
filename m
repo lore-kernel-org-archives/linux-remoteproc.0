@@ -1,69 +1,87 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012055.outbound.protection.outlook.com [52.101.53.55])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63AD2DFF13;
-	Tue, 18 Nov 2025 18:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763491878; cv=fail; b=nBfPkZG88DeTmUfU/QsEgrHvpoHNPOPXY8yA43CBMBm8lCo+dpATFSt8Rn5dbxTM5FlTni7OMkY78mvq2u3o5FcPvpRyf1MZsF7xbPCYwM4dS8puzbJxzAvKhYHjadVc6NMQKawcNy2YS5ZdKa8KvEM8NQ4FpzEznmxil9pxUlw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763491878; c=relaxed/simple;
-	bh=fTrwEBHPfyDHuVxwwx4nYSmubu8QtO1Khnfwo/tLAQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=J+AT5/ennOBmo4q/2yUvpu+sFq640KgiJEHsq9K2OJ6DVE3rYMgk7Ee1OnBpl6JQwmun72hri2t4s7V7IdwPbbioiaAdb6KVP80sprUoE2HgukizSjIoL1R/ArIbd2Mb2ORjrQbitdH/qaaQneFyrXQ9SFqZH5GftPuNPg/Cp4Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oKUCVc8C; arc=fail smtp.client-ip=52.101.53.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8C62D949A
+	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 04:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763525233; cv=none; b=bvGFAYkxc7+Vo91RsjVSx8MXpO9094n2LBRuIFv2eeh+QwifH/+7bCJCHKMq+n21X/zvQte8GCU/KGlteFHRzuNjoZhowihBvsUdivQd3QVvN1q/YxfRqhCLrB61LRMtdBA7i6ZXl30SMyQxuKjTkUW0321ynPGbf3OcNeguui0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763525233; c=relaxed/simple;
+	bh=rU38eKlcL/5UEYk2NS47XN9BNdxIq6d+BoWNaIkjavI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GV+uPnxYrtX3LFP3poBw1H1RLTX3fJrRCm5P5mQDK4smdnFmmgKdgapr0uQIiS2h1E6XLsTWMnx6cP5XCAxUL69ybklGohI01TCsUMpFNz+cAc4c2haFr2kJJcvxTqZndwoPZNRkRTYf/Of0FyTyRUJn3MhjqUXsEIQ/RiETnWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OjA4LID5; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UZAOFu0D; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oKUCVc8C"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JXWNqpiz84PJMrHfSSuZFYm+gkZ7zS3YM+ikmaMxSF9cETdKToxay3qi4zboAl16j3BeBkYG7hIzgzABY3ePKgoUMvie4xA4i6cvVyKA2lT0gkmr1BUr9bfxieZPvm3J2Hjpxajg1x8K8IDwzktvKXTDb/AwpduEtvajG4CPRoSP+YouuhtDzkQ+2gPiW4Ifx0mxBx14R8bt4mixNmCqcEVftaW3aUyqpCKcrs+O6l0ftcXrfg2Xo0y1CbCwcPPo7Ud3wkV3qzvP89SwBJL+F4uXpENmv2UgLwoTzbpy2oh7zQv1zeFP7axx6tcioGA6S+G8ozrxdDjQpro7LLNpBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SOPmq8qkkuyxsgrWe1/TvTTgdJWXKgi0T6z8WprXCi4=;
- b=aSbHqJ0zQq7MD+Prs1X63ziI/sB1m4MyKL5SMzoHxMf7qOmVNdvP7cjpoW+pQ85qW43uA16TTB0eicaqfkPUMV10zWeDphwPgeTXGOB+cXhMDy1ISbSMBN/J7m+so28pFUhucHRsUM1FFj+WnEwYkOwHmZdgth55CBIFE3Hb4jeRoI+WZK1y/AaBcpWusIMoapDFQZ2ABBDsHF6+Xf+Ey1sMTX6nRfJcNdH/149tMMDRAKZVEhL74iE+HNcZ/I59Hnw6nmkxZNtemNrra6UdIJqViGspERcXrh2NdhL8zGNVgSeFmab2UpS9czOOHtZtebOgp6ZFDUoooBWD83nNfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SOPmq8qkkuyxsgrWe1/TvTTgdJWXKgi0T6z8WprXCi4=;
- b=oKUCVc8Cnz2G3U4LIu/2Iv8i844OEKywUdU4rn7JLT5GWAIqjIeIw+sUtRFVIUIj1Mw40j6EtUn/C1Wy8xJDl8pmdghtW1V3V9BJsofcju3YBGFG30WREisINRRStiI3NSGNvyNRLl3IVasE8x7KLkyApXQx05KkhmmIA885A9E=
-Received: from MW4PR03CA0162.namprd03.prod.outlook.com (2603:10b6:303:8d::17)
- by LV3PR12MB9268.namprd12.prod.outlook.com (2603:10b6:408:216::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Tue, 18 Nov
- 2025 18:51:11 +0000
-Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
- (2603:10b6:303:8d:cafe::67) by MW4PR03CA0162.outlook.office365.com
- (2603:10b6:303:8d::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9320.22 via Frontend Transport; Tue,
- 18 Nov 2025 18:50:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Tue, 18 Nov 2025 18:51:10 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 18 Nov
- 2025 10:51:09 -0800
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 18 Nov
- 2025 10:51:09 -0800
-Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 18 Nov 2025 10:51:09 -0800
-Message-ID: <c9f65597-52ba-41ef-842a-2569c2074d6f@amd.com>
-Date: Tue, 18 Nov 2025 12:51:08 -0600
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OjA4LID5";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UZAOFu0D"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AJ3Os7F2664727
+	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 04:07:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fS+dGMCJRCHWZtUwrU0gp2ztWLVeW3DxbPgmO/wQHI4=; b=OjA4LID5uscpYRfo
+	BuLyuQsx6TZpgTtPh5uIKrWWelICBJlEGOBgwyfXFCq0M28s0dyoCyg8MXeimjoV
+	p6kjAAyBY09LtT0Vi9Q3PBRH7JKosqDsatoR73+LrsVmy0WgqZLpXzRpU1GfMi5Y
+	cMz0U9OfcNlWVEB6I52056vXo+3yD7iYagQaNkBCe4dd2nskXilIGq797eZb/lak
+	aBKLeYs28rUPEAA0tV+98pNF8pp5Vw5A6dzpWAAfapQBenqREGe2JJK+nZMwSuYu
+	K2sFkJhYdUAjVfWLgJ6yyQ22iHWlZ89Koe0KgMC9wJNRS0c4+lYjWsMhJ/bqIiuH
+	p/E5xA==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4agpjkauu2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 04:07:09 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-343daf0f38aso7126771a91.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Nov 2025 20:07:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763525228; x=1764130028; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fS+dGMCJRCHWZtUwrU0gp2ztWLVeW3DxbPgmO/wQHI4=;
+        b=UZAOFu0D78Zp8Tr7hGnW/STh0Z3f+ichFaBn4nSE25GQ7HIbJY3ZyIbW+VITNJFHqb
+         W7767eRHyb7XIuuQCS2SPvwVoNDUu445lHDbOGJTh1qEa423mwmBgrFabUwf5+e+kSs8
+         2DeWMGIZsAUbwK6feCdGAtTiPgSTpKPzP5Owa5/FM2obgbl2xhOXJcPQrnTgofbkr7Su
+         aZHJcMUHdyOR/XfHI+AhvUph5V4yiY4CCpIZs4Pljx6LGM83YXctnauqhUaAY3TFWgtA
+         Aj0r1+wgPgt86Ss318JOx2rJawvfUfOzysBwE+7XCryH829RnU0JMTXyfBUJTRsZmG+Z
+         kcVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763525228; x=1764130028;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fS+dGMCJRCHWZtUwrU0gp2ztWLVeW3DxbPgmO/wQHI4=;
+        b=dWWCO0QRiyW2eV5qtXmEaT9bIZ4IMcrvVixQH8Tbi59zprwZl94mpIcjJAULgCrjVH
+         r4RdSl/qpAwFJwYWh454xNTZLXDP+LI3/ovLaV7nbz4uPuAlGgQvWexEPpRi+1flPcE4
+         bCNx0xlewhz2LjWpQsTD/QFrComolDL2dnz8HxpMJoDU2IDnJCHdf6kbTZI1M2EzwoP/
+         BUxkUbyfClhhva6hVnUczYhM1GoBKozl2OA6mwRM+dvyh1dPGyg50wk174EltOXrrloC
+         iFS1bq3TeV5cakkmf1Kx9KAHPj+631RAl/I2QWXGYsagv7DouEBQGUjA7TXDesDkTntj
+         OSdg==
+X-Gm-Message-State: AOJu0Yz7Tm42RaUFf+f0fXiaDUW5TOvzwec+qKtoNXfMmZvHmRD3eMep
+	fwe/hzD9cVuZmZsIFTYU8DIjhIF+dr6VHWBBnEgROqQexxuqd+cq7nBM5AL/uSuJeRcut0TP7VZ
+	MVq8k+BUKdL6ufK7eGwOfmxbL6XMcfSJUlPFpg+zxFNQXld2T9JJNrlHYwcLiSwi0zkiEs4VA
+X-Gm-Gg: ASbGncvrtGcouT3D6t0y1hy+jYT5qlHSZoAzwxwDu8lPywZEiBfBvTjcZDgNeRsHaAv
+	7Fl7Hgg30YWYqrv5ln1aYwCupQC4zqoFili7YJGXXCt0l36Ls9j5p4knTmBzsN5uzADEUy6swOG
+	WchvKlFm0Lei3lrfQviNGXQEpB4zyzRcAXqKtjP7LC0GADIxbEs2zyDysKq6ws2QjWGaXPs8dmz
+	ftozlRnCdxAGJPlQpIrJU3AWJNTFQClzC8OPqhOZpLuXWgX+kEjL+VybxWJdmvRdPIlOwYy8Xr+
+	zKBmvjt+IXTC9BPtyD1pHF5ERh/4+qEcTBxxNabs9E8QmkBGx6FvDfMEhQ/ggJF6mZwmJ/9a+mM
+	l1qXRn39mUynvRk+dX3e3lW5DyYI9Yz9cjcC43HX1iFWiubFKL+yJ5W126Csjp7Mk+HaC2l6pS/
+	YuE8FNiQ==
+X-Received: by 2002:a17:90b:2e46:b0:340:66f9:381 with SMTP id 98e67ed59e1d1-343f9eb37ddmr19076483a91.10.1763525228020;
+        Tue, 18 Nov 2025 20:07:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHETq0FoatOPgD7ViESbnk3ztP2OtHyWXSHvfgh9KYljoPwsVKGXEaYPb5xtSXJRHIf16xPIQ==
+X-Received: by 2002:a17:90b:2e46:b0:340:66f9:381 with SMTP id 98e67ed59e1d1-343f9eb37ddmr19076452a91.10.1763525227470;
+        Tue, 18 Nov 2025 20:07:07 -0800 (PST)
+Received: from [10.133.33.174] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-345b04f3b8dsm1589964a91.12.2025.11.18.20.07.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Nov 2025 20:07:07 -0800 (PST)
+Message-ID: <38308885-af2e-4b61-9653-00bfca8ca0e9@oss.qualcomm.com>
+Date: Wed, 19 Nov 2025 12:07:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -71,168 +89,158 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH v2 1/2] mailbox: check mailbox queue is full or not
-To: Jassi Brar <jassisinghbrar@gmail.com>
-CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-	<linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <20251007151828.1527105-1-tanmay.shah@amd.com>
- <20251007151828.1527105-2-tanmay.shah@amd.com>
- <CABb+yY0m_Whm1F7d2ub+vhn0eTb47UC9g=JvpLnWh-2E1oo52A@mail.gmail.com>
- <aa1ff206-d505-433b-9715-56d866a5f675@amd.com>
- <33edad1d-08b9-4fe4-8525-a1f50a898e2f@amd.com>
- <CABb+yY1Y90S_dbybMT07PTvmy60W2mt3mHdP56sp6DO75bpuNw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] rpmsg: char: Fix WARN() in error path of
+ rpmsg_eptdev_add()
+To: Dawei Li <dawei.li@linux.dev>, andersson@kernel.org,
+        mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        set_pte_at@outlook.com, zhongqiu.han@oss.qualcomm.com
+References: <20251118154107.3100-1-dawei.li@linux.dev>
+ <20251118154107.3100-2-dawei.li@linux.dev>
 Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <CABb+yY1Y90S_dbybMT07PTvmy60W2mt3mHdP56sp6DO75bpuNw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|LV3PR12MB9268:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3b117ef9-6322-4683-56f8-08de26d370e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dmxPbW40WWhCMXBmcXN6Z3BJSlB3OFZ3TDdLZGF5WmszZ0pOZ1BwT2ozYytY?=
- =?utf-8?B?SDZiZ0FSMXhHL21YbmNBU2ZvWkwyZWV4emhsdHhOYS9qcTQ2NWdrZ3pjb1lr?=
- =?utf-8?B?eGYzay8rMGJGTkx0OXhRN2M0T2IwOGRqYmc5Y3R6ak9SaEpHM0xYeUcvSklR?=
- =?utf-8?B?enRpQytVSlBZY00vTG4xQVR2Q2xSdTFrcGx6RVB3ZGp2ZVB0RWExR2J2RC9h?=
- =?utf-8?B?UEExVXlpWVBpMys2RlZrVDVCejc5TXF6cXYveG5MYXkxRncySWMrb0FtbnVk?=
- =?utf-8?B?c0RBODZUaWVRZzA3VzdwYlB3UzM3RW9ZYmcvME9VRFNnTTBmdmRUd3hNZTdQ?=
- =?utf-8?B?ekxIbHR4a01rZnB2aDFaZUkyc3huTG9vVnk1aWszTnNmZUZoQ0s5U015RnVB?=
- =?utf-8?B?Z0tzSWZpdFRaVWdjaU1QSllrL1lKNVRPR25HMkE0Q003QUpUYlpSeHRielBD?=
- =?utf-8?B?Sy9majYzUitwa09lT1hHbGREeWt0MFJGMDFXWFpEcjgwQ1FOb3RxVWVkRXJy?=
- =?utf-8?B?Z01zQlFzNGxvZkVteGlDZU91dDBLQnBhYUhQckhBeldmSWYwUzlWelZDY0Zu?=
- =?utf-8?B?cTc4MUVmaFJ5QjZMSmVzVVhyZDBTU29JbGdRRFBxUWNtOE1mNEhQMUNtbGhu?=
- =?utf-8?B?Nk0wSFMyNmh2SERlMGhBU3M3Q2ZsN1F4STNnVXZ4ajNYRW5SWStxOFNHQkFN?=
- =?utf-8?B?UTRGTWVKWUJ3bjFxN0VJd3crc3FVdUsyZ1dTdXpQRWY3YnljUWhoN2FGVnox?=
- =?utf-8?B?OWVTNlBmUGlvM1ozcnJFait6alk4b3J6M1FkSkZMcEV2VGUxbm44aUo1ZmlS?=
- =?utf-8?B?c3BhUWdnRFRjL3ZUc0kxQmw5RzFUalhCY0RuQmhJVlVWcjFuWEY4Wk8wSFNj?=
- =?utf-8?B?NHZGUE1YUkdrMWR6Sk01REtab09RMGhBOFVFL0ZpZGw5U3g4VFNINVF5eHdN?=
- =?utf-8?B?L0Rza2l1ekh3c21HMVVSTExNNFJ6N05kTVlINDlpbERjODJNQldhTTF4b1Zr?=
- =?utf-8?B?R0JMZUt3MVNkK1doanFKb3JXQ080NHBWQVV3VkdaUGhrNjliR05Yck9mZkZo?=
- =?utf-8?B?c2UxTFNDRVUwV3hhUFRvSTY3dGdqalZrejAzdkF3L2VTVjdRRHV5emhLYWp0?=
- =?utf-8?B?cFpvZ1BMdkFhOHcrSlE2K25vWXhPcWd2MURBZnhoT1o4SUlMWHBBYmNpWUdF?=
- =?utf-8?B?ZWhMV3Vxa2NPcWtHRmZkaWducVRGelU2UlFmUmhBYlhYcWFrTDlWclRWcGZE?=
- =?utf-8?B?Rk5NLytwWnYzcmJ6ZlJ5bkkyUk9JejNnL1g4Rm15SFN6V1ZvYmtvdURoVUN6?=
- =?utf-8?B?anBnRVhtdTNTSGYyblM5SFNuMXlGTGF1L3VndXJqZ0pSVFI3S0w5ajg1WE1r?=
- =?utf-8?B?TTBVa2hPRDJQQXlLbi9mMDJnK1RIdHlXSm95UzlGSHUvMFR3L29sbGVRRDRN?=
- =?utf-8?B?UGtoOEtjendSL01RN25tTjQyRzJ6QmVLZDJocGhadzhNemxRVmtDQURDZG1t?=
- =?utf-8?B?VTc5QWs0elo4SVVBcGd3N1p4QS9qZ1A3MDR1WEdJNTdrUXl2MDhZYzVLcHRO?=
- =?utf-8?B?K3o5bGhLUThWdTJBRElkaDVtZE84UFliWkgzL1NUVytoUElkWGNUaFYxY2hj?=
- =?utf-8?B?dXB3aVNGc3hTaVFiZDY5V21tLzdFUzNCbWFBRGQyLy9MRnNZSmk5WHROZ3Jy?=
- =?utf-8?B?QmpBb2JVWUZXWXplRTNsWERHVVl0eVcyUzA4aFdpWCtUWUZGWS9PTit1dWIv?=
- =?utf-8?B?VEtnUTk4OXh6eGMrc3lrUEtwbXh3TFhsNHlrWUNPbkgwamc3VmVvVTFhOG5Q?=
- =?utf-8?B?bXd1cFFFSmhXR29XeUpQNmMrU0lMdmxpV3dNM1RoNzRUU2dVK2xtSzFxQUs0?=
- =?utf-8?B?S25KT0dSZGpKZlVkMUNmcHowR3lWWjlBc3RoZytLdDF2UEtMMjNUVld0bkpJ?=
- =?utf-8?B?VFNnS2JJMldNemJqaVgvSnRKZkRqNnJSSWRtTVp0dVV5Q1BmQytJak5lYWY1?=
- =?utf-8?B?RHNCM0pmVDZYZlpNT2dDaXJyRzNFdmpUejFlZmFWVVJLQWNnMWpwUHBKeGlQ?=
- =?utf-8?B?UTdZbXNQbnIvNFA0a2VXU1Y5M29tK1JNUHF2ekZHcEplSnp5bko0YXBkcVRG?=
- =?utf-8?Q?O5UE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2025 18:51:10.5865
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3b117ef9-6322-4683-56f8-08de26d370e5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9268
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20251118154107.3100-2-dawei.li@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: LOGwqE1sb47lh2dekKMcABdSpWwwaV5R
+X-Proofpoint-GUID: LOGwqE1sb47lh2dekKMcABdSpWwwaV5R
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE5MDAyOCBTYWx0ZWRfXyMoSUru+vZyx
+ dftfgJn0C+qx8gIcvX38/UeHBJZzNsQ2o8355AKFz2iHGEEDYkiJDGU+QUbgVJOFsrMIjbR8peW
+ E2wz/i1AdInaZ83p9zNFNvcbYnMn2LAgYgDWHlun6Lz4ZzJzLdlcnb5ZmhTmu9PpR3jkUIJ7p3a
+ ASMOHg1x/A246PSWE3NrSP98WmGAdnY4RiY3XNgpxO57R/VceB+qsVdiCKSOMQ09AEcdYA7Odc3
+ zpghwTwnApqj4kluybD5gVhxPwda+Oh3xEneNfFvrLpXgJYUuVI2gX83UZEQrBLNjtb2kXzAUUX
+ We9XJelTHgGivYuWU+636xeszTyCI/rWSV2HRsNmq/hbd0aTR4rcmeR07S3fq4Yo0Ze9JM+dTYf
+ MLne3S+sJqovtWBagcUfz2COtpPw5w==
+X-Authority-Analysis: v=2.4 cv=N/Yk1m9B c=1 sm=1 tr=0 ts=691d426d cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=WJ6qqwoD0WRQ6_SRdRYA:9
+ a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-19_01,2025-11-18_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ phishscore=0 impostorscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511190028
 
-
-
-On 11/15/25 11:38 AM, Jassi Brar wrote:
-> On Wed, Oct 15, 2025 at 10:27 AM Tanmay Shah <tanmay.shah@amd.com> wrote:
->>>>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
->>>>> index 5cd8ae222073..c2e187aa5d22 100644
->>>>> --- a/drivers/mailbox/mailbox.c
->>>>> +++ b/drivers/mailbox/mailbox.c
->>>>> @@ -35,6 +35,7 @@ static int add_to_rbuf(struct mbox_chan *chan, void
->>>>> *mssg)
->>>>>           idx = chan->msg_free;
->>>>>           chan->msg_data[idx] = mssg;
->>>>>           chan->msg_count++;
->>>>> +       chan->msg_slot_ro = (MBOX_TX_QUEUE_LEN - chan->msg_count);
->>>>>
->>>>>           if (idx == MBOX_TX_QUEUE_LEN - 1)
->>>>>                   chan->msg_free = 0;
->>>>> @@ -70,6 +71,7 @@ static void msg_submit(struct mbox_chan *chan)
->>>>>                   if (!err) {
->>>>>                           chan->active_req = data;
->>>>>                           chan->msg_count--;
->>>>> +                       chan->msg_slot_ro = (MBOX_TX_QUEUE_LEN -
->>>>> chan->msg_count);
->>>>>
->>>> No, I had suggested adding this info in client structure.
->>>> There is no point in carrying msg_count and msg_slot_ro in mbox_chan.
->>>> The client needs this info but can/should not access the chan internals.
->>>>
->>>
->>> Hi Jassi,
->>>
->>> If I move msg_slot_ro to mbox_client that means, each channel needs its
->>> own client structure. But it is possible to map single client to
->>> multiple channels.
->>>
->>> How about if I rename msg_slot_ro to msg_slot_tx_ro -> that says this
->>> field should be used only for "tx" channel.
->>>
->>> Or is it must to map unique client data structure to each channel? If
->>> so, can I update mbox_client structure documentation ?
->>>
->>
->> Hi Jassi,
->>
->> I looked into this further. Looks like it's not possible to introduce
->> msg_slot_ro in the client data structure as of today. Because multiple
->> drivers are sharing same client for "tx" and "rx" both channels.
->> [references: 1, 2, 3]
->>
->> so, msg_slot_ro won't be calculated correctly I believe.
->>
-> I don't see it. Can you please explain how the calculated value could be wrong?
+On 11/18/2025 11:41 PM, Dawei Li wrote:
+> put_device() is called on error path of rpmsg_eptdev_add() to cleanup
+> resource attached to eptdev->dev, unfortunately it's bogus cause
+> dev->release() is not set yet.
 > 
+> When a struct device instance is destroyed, driver core framework checks
+> the possible release() callback from candidates below:
+> - struct device::release()
+> - dev->type->release()
+> - dev->class->dev_release()
+> 
+> Rpmsg eptdev owns none of them so WARN() will complain the absence of
+> release().
+> 
+> Fix it by:
+> - Pre-assign dev->release() before potential error path.
+> - Check before ida_free() in dev->release().
+> 
+> By fixing error path of rpmsg_eptdev_add() and fixing potential memory
+> leak in rpmsg_anonymous_eptdev_create(), this work paves the way of rework
+> of rpmsg_eptdev_add() and its callers.
+> 
+> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
+> Signed-off-by: Dawei Li <dawei.li@linux.dev>
+> ---
+>   drivers/rpmsg/rpmsg_char.c | 26 +++++++++++++-------------
+>   1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 34b35ea74aab..373b627581e8 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -408,8 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
+>   {
+>   	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+>   
+> -	ida_free(&rpmsg_ept_ida, dev->id);
+> -	if (eptdev->dev.devt)
+> +	/*
+> +	 * release() can be invoked from error path of rpmsg_eptdev_add(),
+> +	 * WARN() will be fired if ida_free() is feed with invalid ID.
+> +	 */
+> +	if (likely(ida_exists(&rpmsg_ept_ida, dev->id)))
+> +		ida_free(&rpmsg_ept_ida, dev->id);
+> +	if (eptdev->dev.devt && likely(ida_exists(&rpmsg_minor_ida, MINOR(eptdev->dev.devt))))
+>   		ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
+>   	kfree(eptdev);
+>   }
+> @@ -458,6 +463,8 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+>   	struct device *dev = &eptdev->dev;
+>   	int ret;
+>   
+> +	dev->release = rpmsg_eptdev_release_device;
+> +
+>   	eptdev->chinfo = chinfo;
+>   
+>   	if (cdev) {
+> @@ -471,7 +478,7 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+>   	/* Anonymous inode device still need device name for dev_err() and friends */
+>   	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
+>   	if (ret < 0)
+> -		goto free_minor_ida;
+> +		goto free_eptdev;
+>   	dev->id = ret;
+>   	dev_set_name(dev, "rpmsg%d", ret);
+>   
+> @@ -480,22 +487,13 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
+>   	if (cdev) {
+>   		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
+>   		if (ret)
+> -			goto free_ept_ida;
+> +			goto free_eptdev;
+>   	}
+>   
+> -	/* We can now rely on the release function for cleanup */
+> -	dev->release = rpmsg_eptdev_release_device;
+> -
+>   	return ret;
+>   
+> -free_ept_ida:
+> -	ida_free(&rpmsg_ept_ida, dev->id);
+> -free_minor_ida:
+> -	if (cdev)
+> -		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
+>   free_eptdev:
+>   	put_device(dev);
+> -	kfree(eptdev);
 
-Hi Jassi,
 
-so on my platform I introduced some extra logs:
+Hi Dawei,
 
-[   80.827479] mbox chan Rx send message
-[   80.827485] add_to_rbuf: &chan->cl->msg_slot_ro = 00000000ab5fa771, 
-msg slot ro = 19
-[   80.827494] msg_submit: &chan->cl->msg_slot_ro = 00000000ab5fa771, 
-msg slot ro = 20
-[   80.833064] mbox chan Tx send message
-[   80.833070] add_to_rbuf: &chan->cl->msg_slot_ro = 00000000ab5fa771, 
-msg slot ro = 19
-[   80.833079] msg_submit: &chan->cl->msg_slot_ro = 00000000ab5fa771, 
-msg slot ro = 20
-[   80.837486] mbox chan Rx send message
-[   80.837492] add_to_rbuf: &chan->cl->msg_slot_ro = 00000000ab5fa771, 
-msg slot ro = 19
-[   80.837501] msg_submit: &chan->cl->msg_slot_ro = 00000000ab5fa771, 
-msg slot ro = 20
+Thanks for your new version~
 
-Tx and Rx both channels are updating same address of msg_slot_ro. If 
-user wants to check msg_slot_ro for Tx channel, then it is possible that 
-it was updated by Rx channel instead. Ideally there should be two copies 
-of msg_slot_ro, one for Tx and one for Rx channel.
+Patch 1/3 will introduce a use-after-free of eptdev in func
+rpmsg_anonymous_eptdev_create(),
 
-This happens because Tx and Rx both channels shares same client data 
-structure.
+https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c?h=for-next#n548
 
-Same can happen on other platforms as well.
+even though this issue will be resolved in 2/3. However, 1/3, as an
+independent commit, should not introduce a new bug.
 
-Thanks,
-Tanmay
 
-> thnx
-> -jassi
+>   
+>   	return ret;
+>   }
+> @@ -561,6 +559,8 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
+>   
+>   	if (!ret)
+>   		*pfd = fd;
+> +	else
+> +		put_device(&eptdev->dev);
+>   
+>   	return ret;
+>   }
 
+
+-- 
+Thx and BRs,
+Zhongqiu Han
