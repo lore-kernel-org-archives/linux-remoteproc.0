@@ -1,237 +1,154 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DF3342146
-	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 16:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2875735CB82
+	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 16:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763569197; cv=none; b=tzB4RFkX3vyQs48qT1bltCFxkvF7ptF78k4xIxMt3UdO1I8fskNhQndxSCd6r3UoyvbTCutm58vDJmmg9TqIn6L22zVI7NKtzNhMM9tdpGdT27+H+HC+K4EdJY2E8T7PqvExVjiizkJXZzQPdWpdHHnxdbsEANrm5lxCRSnaBFg=
+	t=1763569366; cv=none; b=QK/2izkhyr3opuMSrls1v5nzx5reLS+6jMSmHDmiOrhT1Unc0YE6RK5693/IPacAc2mcHobf6Ls7XwRje5tOV2hq5b9mbi506iygOEVYtQkLSjxOiuFFL6Ty3iZLBSoExzDTSK//9SURPW1Fivna1rvRgQHx1xbw+eXkwbhNeOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763569197; c=relaxed/simple;
-	bh=PytOZzTAioEaMxmqRTBvSzOZkl5VeEfXc7Gpm4o827k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AQtcNfVpyyKrITCFeqg1qItnt9ooPH/7qIYvSHQ/fpL/VQVnxeSe2lkrZ1emhcwe8Ru2OCbIqxhfKsEFuP6X2W+Hol2NZG85gZSxnJJvz0GKIlh/fbgj1ixSECZkZbIcGfjSDmrKRtoiZK39PPeIRmJKlfYIjJcvNyNHMEmyGDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vVj410F2; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1763569366; c=relaxed/simple;
+	bh=4tZVfB9dJ+rmxklUVisjbT+aHHa2hP/95ghmvU1+jv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nd36MGa1Nz3E1ZE56hW9dgQ+/cHb856jQOgvEV0VQRdCBi6yHyDfBxfUjyODw8of7fqtwCKEKoA9+tptzoiseYcYmHiqgEDV9T8gDjYB7JpL57WmkuLy6Ym4fC53pc6s/xlvwlGgshotS8fbG3w0r+eZ6r6zW0y8L8gRocBjE00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xE9gufn/; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vVj410F2"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4779cc419b2so48825315e9.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 08:19:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xE9gufn/"
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso7848296b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 08:22:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763569194; x=1764173994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s+urd6hZuWEo3shlMiSBaDb8+AZAhwgeZeQG9S0pL0o=;
-        b=vVj410F2JGATilDsa/pV64I8vu/EgjtpauMLcfnve5aDLDLRggiGgiczAPhvKEsC3Y
-         qDXsmY8b9iE9k44HdeH59Jd2iOHcE1IcK3uUkBTJkxhk6m6NM0KNPb65EnIabplC90n8
-         znvjFs7XksNK3svNPrMQSSegOuGUh/I1vO0SoAHjRqxL9HT9lvLY3hwDEEms+v9mRy65
-         rD9IwyKRZ1XlMnj2ridWYuAnQdQTbSzA+VwbLOkDTMX8sr25aBhbSUh9nXF4lBNrB9B7
-         jLk/pygSgSJgEGj/qc4Lv0tZgfFZ+G/VsG8Ozxc/uEw4L4ygGFz0ftuuPGtRmO4n4LIz
-         SQWA==
+        d=linaro.org; s=google; t=1763569364; x=1764174164; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SqgArqZqDLLZkxxlGxEl0Eyz/se4zZ6TXQ2QUXMksPc=;
+        b=xE9gufn/HyPx1J1FHvG46nO5e7dC32J8ZDVbZcCfJaO7HMleyz1NWZrgOKyL9+hMMc
+         ZqQB/X2etB4WKjPkf6DCLa8CTzxv+Jnt99Gh7kzXnS7EF2WmtmAE3msPLkaX9aMrImSy
+         k3FjhU+nPsz0vjYtIsT4tp1UOimOhztNo16IagJB58yJoIxed/FelEMxgC+X6xIWIxbF
+         WZOZhKBsD/STpXJsFG5O2UDLPK/av0kM8NJrc8OPiQgJYBU3cY+xFUKhXLCLQ4HO0N65
+         BrGYOT3TZBl9m4Pbe7Vs9IbKztJzL77o2xrugqB5gSkSo/IWfZq7TR/5a0rWGqYFZgb6
+         2y6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763569194; x=1764173994;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s+urd6hZuWEo3shlMiSBaDb8+AZAhwgeZeQG9S0pL0o=;
-        b=DpTj/DgqUyxdCmlNfn33jrUwrD53ALY9EtID+/FnlrXNgIzGVQbbM7nv/GmoIHl8nS
-         DmCVFjvhILoh9OcIoZR6/72WubjX2sgHBAOFfWDjonqA5vUIeqEjDXLKPbBgMtJ4vA3r
-         NnC1Ym2X7mNHEoR7FM/aPwd798KQVrx1beZ+RSqxM6AcSlk/74B8Ii/sqUWO5DYzZZq5
-         z/EwHz+m+O8UvoA2Oxd2bn+oyAZhkt95jnk1AM7gtWaKTlrnWZdQTfRLnlc1fliwoVc3
-         jqtSKL/9vq1MQoo0GnZSwacBsSuS81NzFFsjtC9r4b3xMTpBVM8WqUkliitVUqgU2ykp
-         PeUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhbMLtrju1T5E6DPuIGGZDYGPD7G+MV7pnk4ZNYgkrWTkP1oUdlT4FNs4dVabSRykpbkbEX0iZWv6MeE8lCofG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5U5Ip+sAhySPZqcEDm1mhmY3qord5wn6TKyb3ET+E6tHzrdYm
-	nIdxUSddxnHCnkI0xCXXZ7UOnbiNZ/E466L+Y8JHf10x0b3JOoqQIsntHgCq4xYVNvs=
-X-Gm-Gg: ASbGncsR6x9wKA1P2/mjndwSd4MKoGQi/fhOCvW54vA+160/uEcCOqV3Fa9NtoDP70w
-	GEsCRIKxr4iPAgX0a1ZbmJ9J8xi0vumKGwbwwZylwbIJvHX/uADeXPHt/pNTgG/HBPeizrpU/kg
-	XxbI9AAGDkunQkOTRip/9Cp/o+dufbsf4FN9wAmtNWBzz+2Aqw2ATqbAvqEWgvhJ0HqctE3wiB1
-	ze9e/4YeRaKDJStIJDU89sn2gDyOQdUwWnq3VhXP9+lvCTKG+5LQd/hAi92rBP0tHGLwuIQB9c5
-	Koy3TPGGBaZT2RkMNRPrPTT2hCuQWRNWjO8+/tTXX5IUXLcjZmBlEetZqRapbudJHVxwjLGg3+c
-	WrhLalcbqeZKmCdEHDi3shWYkl11XmbzbmWunm2jPA/KLvVU+OcBQRuMYWKA+PwkChGfWV6//lK
-	5QYX7J6X7m5PAlqLLUugnfxsliJxXh
-X-Google-Smtp-Source: AGHT+IFwK5aAXHXIDIc3E2JseMPHhoLC/8O7sdHZVlYBJKdiPiGNYDVrkfdVj41qV4fzGcHy4cnIEg==
-X-Received: by 2002:a05:600c:4513:b0:477:2f7c:314f with SMTP id 5b1f17b1804b1-4778fe5c820mr231183085e9.10.1763569190918;
-        Wed, 19 Nov 2025 08:19:50 -0800 (PST)
-Received: from [192.168.0.39] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477b0ffc90fsm61424875e9.2.2025.11.19.08.19.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Nov 2025 08:19:50 -0800 (PST)
-Message-ID: <060e7412-8f1f-4d31-af39-79213c560e85@linaro.org>
-Date: Wed, 19 Nov 2025 18:19:48 +0200
+        d=1e100.net; s=20230601; t=1763569364; x=1764174164;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SqgArqZqDLLZkxxlGxEl0Eyz/se4zZ6TXQ2QUXMksPc=;
+        b=eqIhz9tYO0bE9WNa7zgEpIU/Yo3XCOIUuLJg/153kR7Hd6NrUMfj1a4cCGLtQCYT5+
+         /l8kJp2afUSfRf3yxvinuLNkwAu5jejLlnPCzLDyyNSi09ig02f9/ykdze3a3WSQS0Cq
+         wlBekfuc0r/0m9MllfkcSuAgw2fTw3SIpwqaedI+rysWYYtakf97q2kWqZ4JhqtyOQvs
+         u2gegRtAJ3CWly6Txokn6+h31KPWrQ0id7vPy4ZbqPisYCWFx3QIIf+HafsPRyFFgihl
+         fkmaGfmo5WxZIM0ItxVXGmxJQE0lKUv4VM7jsQrhDrx6ip8bHYeGWuiyYwm74jLEKeK6
+         2Lsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtF4flSvSEEjs63Cqp5QMNbev7/KgsoRX7iow8J0hFAQZBYzfZkU4d67zT6guME9EE3gjDR0RK2yu2BpFR3vGx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5C4VFHEUozAIkXUI34ftcnLXYj/chIC80SkPDIDmYMbIWm1Dh
+	vkw8vut9YEp1WlfKm5un/oj3TZHYpOp5XWm/VWGwuKcQJj/Ivuwx8Z1gpZPV8ZjcSaQ=
+X-Gm-Gg: ASbGncsL8zC8PVr4rwnVghZL0E0bwLZCe19plVdZh2XWI/ZyQYlgRZVUvZc765DkTTQ
+	722h/rmvNmjPboB8tomRCrqW89cEsxc2Bcq56HMl3G4RXltQPAYPiZrGcsWWbWbhhHowjAogQ8w
+	6SEWariu4O4NlsbXJnC2TLCnjC6jIa1WFRRts38/GvUCTVAdH+Offtkp3Eu7Lo9MaySQKyaegJF
+	GAnEFYWFLEbiFJ+9UZRIJEIRNzgO3tYnZVnJZeKzm1mQmOp1Ss+2Vc0u/KGuwBEVCdTbf/gIwl/
+	4e/YdlvwHuGkdCgKZ2D1EyQLzuxgpZfR8241EdGCjKsqjiIZreoRhge+BoMk6w8Qg9V0g/d3yU/
+	nmPFOx5QXS8noycyV7pcd/0PFS1XA/H2pwfZJlBubj9dC4a12xE1R9qN98yyqsuBVyEMBqoLd3J
+	KTa/+y3C4BU4HgTA==
+X-Google-Smtp-Source: AGHT+IHuSIrZBCiLgca0WU1DQj7ineP68uKwSXumgVfu9Fe9sbAmM4VWuP+tv6PTaJCg3+0A1H698w==
+X-Received: by 2002:a05:6a00:812:b0:7ad:9e8a:1f72 with SMTP id d2e1a72fcca58-7c29c492acamr4056626b3a.14.1763569364343;
+        Wed, 19 Nov 2025 08:22:44 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:f8d9:9ae3:90a2:d39e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7ba611682cfsm17088879b3a.26.2025.11.19.08.22.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Nov 2025 08:22:43 -0800 (PST)
+Date: Wed, 19 Nov 2025 09:22:40 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Frank Li <Frank.Li@nxp.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v4 00/12] remoteproc: imx_dsp_rproc: Refactor to use new
+ ops and remove switch-case logic
+Message-ID: <aR3u0F7FTZUgxCQ6@p14s>
+References: <20251119-imx-dsp-2025-11-19-v4-0-adafd342d07b@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 25/26] dt-bindings: reserved-memory: Add Google Kinfo
- Pixel reserved memory
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com, rdunlap@infradead.org,
- corbet@lwn.net, david@redhat.com, mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org
-References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
- <20251119154427.1033475-26-eugen.hristev@linaro.org>
- <e73bdb23-c27b-4a18-b7e3-942f2d40b726@kernel.org>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <e73bdb23-c27b-4a18-b7e3-942f2d40b726@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251119-imx-dsp-2025-11-19-v4-0-adafd342d07b@nxp.com>
 
+On Wed, Nov 19, 2025 at 12:21:45PM +0800, Peng Fan (OSS) wrote:
+> This patchset aligns imx_dsp_rproc with the cleanup and modernization
+> previously applied to imx_rproc.c. The goal is to simplify the driver by
+> transitioning to the new ops-based method, eliminating the legacy
+> switch-case logic for a cleaner and more maintainable design.
+> 
+> Patches 1–5: General cleanup, including code simplification and adoption
+>              of the devres API.
+> Patches 6–10: Transition to the new ops-based approach, removing the
+>               switch-case structure.
+> Patch 11: Remove the obsolete enum imx_rproc_method.
+> Patch 12: Cleanup goto based logic.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> Changes in v4:
+> - Collected R-b and T-b
+> - Address the build warning in patch 1
+> - Add a new patch 12 to cleanup the goto based logic
+> - Link to V3: https://lore.kernel.org/imx/20251111-imx-dsp-2025-11-11-v3-0-d05dcba737fa@nxp.com/
+> 
+> Changes in v3:
+> - Collected R-b
+> - Simplify commit log for patch 4 per Frank.
+> - Link to V2: https://lore.kernel.org/all/20251106-imx-dsp-2025-11-06-v1-0-46028bc3459a@nxp.com/
+> 
+> Changes in v2:
+> - Collected R-b
+> - Patch 3: Update commit per Frank/Daniel
+> - patch 8: Use priv->dsp_dcfg->dcfg to avoid adding "const struct imx_rproc_dsp_dcfg *dsp_dcfg"
+> - Link to v1: https://lore.kernel.org/linux-remoteproc/CAEnQRZAOTFw=sBppHTYQAdfDBuNqkqk6gVO4FyP0EBsva3Oi+Q@mail.gmail.com/T/#m27c93af9fb1e7fdeb0766bdbffbaae39d79eefab
+> 
+> ---
+> Peng Fan (12):
+>       remoteproc: imx_dsp_rproc: simplify power domain attach and error handling
+>       remoteproc: imx_dsp_rproc: Use devm_rproc_add() helper
+>       remoteproc: imx_dsp_rproc: Use devm_pm_runtime_enable() helper
+>       remoteproc: imx_dsp_rproc: Use dev_err_probe() for firmware and mode errors
+>       remoteproc: imx_dsp_rproc: Drop extra space
+>       remoteproc: imx_dsp_rproc: Use start/stop/detect_mode ops from imx_rproc_dcfg
+>       remoteproc: imx_dsp_rproc: Move imx_dsp_rproc_dcfg closer to imx_dsp_rproc_of_match
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_MMIO switch case
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_SCU_API switch case
+>       remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_RESET_CONTROLLER switch case
+>       remoteproc: imx_rproc: Remove enum imx_rproc_method
+>       remoteproc: imx_dsp_rproc: simplify start/stop error handling
+> 
+>  drivers/remoteproc/imx_dsp_rproc.c | 353 +++++++++++++++++++------------------
+>  drivers/remoteproc/imx_rproc.h     |  14 --
 
+I have applied this set.
 
-On 11/19/25 18:02, Krzysztof Kozlowski wrote:
-> On 19/11/2025 16:44, Eugen Hristev wrote:
->> Add documentation for Google Kinfo Pixel reserved memory area.
-> 
-> Above and commit msg describe something completely else than binding. In
-> the binding you described kinfo Linux driver, above you suggest this is
-> some sort of reserved memory.
-> 
->>
->> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
->> ---
->>  .../reserved-memory/google,kinfo.yaml         | 49 +++++++++++++++++++
->>  MAINTAINERS                                   |  5 ++
->>  2 files changed, 54 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml b/Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml
->> new file mode 100644
->> index 000000000000..12d0b2815c02
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/reserved-memory/google,kinfo.yaml
->> @@ -0,0 +1,49 @@
->> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/reserved-memory/google,kinfo.yaml#
-> 
-> Filename based on the compatible.
-> 
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Google Pixel Kinfo reserved memory
->> +
->> +maintainers:
->> +  - Eugen Hristev <eugen.hristev@linaro.org>
->> +
->> +description:
->> +  This binding describes the Google Pixel Kinfo reserved memory, a region
-> 
-> Don't use "This binding", but please describe here hardware.
-> 
->> +  of reserved-memory used to store data for firmware/bootloader on the Pixel
->> +  platform. The data stored is debugging information on the running kernel.
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: google,kinfo
->> +
->> +  memory-region:
->> +    maxItems: 1
->> +    description: Reference to the reserved-memory for the data
-> 
-> This does not match description. Unfortunately it looks like you added a
-> node just to instantiate Linux driver and this is not allowed.
-> 
-> If this was some special reserved memory region, then it would be part
-> of reserved memory bindings - see reserved-memory directory.
+Thanks,
+Mathieu
 
-I sent this patch for reserved-memory directory, where all the
-reserved-memory bindings reside. Or maybe I do not understand your
-comment ?>
-> Compatible suggests that it is purely Linux driver, so another hint.
-
-This reserved memory area is used by both Linux and firmware. Linux
-stores some information into this reserved memory to be used by the
-firmware/bootloader in some specific scenarios (e.g. crash or recovery
-situations)
-As the firmware reserves this memory for this specific purpose, it is
-natural to inform Linux that the memory should not be used by another
-purpose, but by the purpose it was reserved for.
-Which would be the best way to have Linux understand where is this
-memory area so it could be handled?
-
-
-> 
-> Looks like this is a SoC specific thing, so maybe this should be folded
-> in some of the soc drivers.
-> 
-Not really soc specific. Any soc who implements this at firmware level
-can use it. The firmware can reserve some memory for this specific
-purpose and then pass it to Linux, so Linux can fill it up.
-It just happens that the Pixel phone has this implemented right now, but
-it is not constrained to Pixel only.
-
-Instantiating this driver with a call like platform_device_register_data
-would make the driver unaware of where exactly the firmware looks for
-the data. This is right now passed through the DT node. Do you have a
-better suggestion on how to pass it ?
-
-> 
-> 
->> +
->> +required:
->> +  - compatible
->> +  - memory-region
->> +
->> +additionalProperties: true
->> +
->> +examples:
->> +  - |
->> +    reserved-memory {
->> +      #address-cells = <1>;
->> +      #size-cells = <1>;
->> +      ranges;
->> +
->> +      kinfo_region: smem@fa00000 {
->> +          reg = <0xfa00000 0x1000>;
->> +          no-map;
->> +      };
->> +    };
-> 
-> Anyway, drop, not relevant.
-> 
-> 
->> +
->> +    debug-kinfo {
->> +        compatible = "google,debug-kinfo";
-> 
-> Device node with only one phandle to reserved memory region is a proof
-> it is not a real device.
-> 
-> Also,
-> Please use scripts/get_maintainers.pl to get a list of necessary people
-> and lists to CC (and consider --no-git-fallback argument, so you will
-> not CC people just because they made one commit years ago). It might
-> happen, that command when run on an older kernel, gives you outdated
-> entries. Therefore please be sure you base your patches on recent Linux
-> kernel.
-> 
-> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> people, so fix your workflow. Tools might also fail if you work on some
-> ancient tree (don't, instead use mainline) or work on fork of kernel
-> (don't, instead use mainline). Just use b4 and everything should be
-> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> patches to the patchset.
-> 
-Thanks for your review and suggestions
-
+>  2 files changed, 186 insertions(+), 181 deletions(-)
+> ---
+> base-commit: 187dac290bfd0741b9d7d5490af825c33fd9baa4
+> change-id: 20251119-imx-dsp-2025-11-19-fa99d7c84c91
 > 
 > Best regards,
-> Krzysztof
+> -- 
+> Peng Fan <peng.fan@nxp.com>
 > 
-
