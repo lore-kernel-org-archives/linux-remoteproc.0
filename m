@@ -1,246 +1,228 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010040.outbound.protection.outlook.com [52.101.84.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8C62D949A
-	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 04:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763525233; cv=none; b=bvGFAYkxc7+Vo91RsjVSx8MXpO9094n2LBRuIFv2eeh+QwifH/+7bCJCHKMq+n21X/zvQte8GCU/KGlteFHRzuNjoZhowihBvsUdivQd3QVvN1q/YxfRqhCLrB61LRMtdBA7i6ZXl30SMyQxuKjTkUW0321ynPGbf3OcNeguui0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763525233; c=relaxed/simple;
-	bh=rU38eKlcL/5UEYk2NS47XN9BNdxIq6d+BoWNaIkjavI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GV+uPnxYrtX3LFP3poBw1H1RLTX3fJrRCm5P5mQDK4smdnFmmgKdgapr0uQIiS2h1E6XLsTWMnx6cP5XCAxUL69ybklGohI01TCsUMpFNz+cAc4c2haFr2kJJcvxTqZndwoPZNRkRTYf/Of0FyTyRUJn3MhjqUXsEIQ/RiETnWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OjA4LID5; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UZAOFu0D; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A34E2F747D;
+	Wed, 19 Nov 2025 04:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763526132; cv=fail; b=sHxy8SxpUdtOEu9M9srYKlnNTChrI3Cs5inyWb+xwyUnB09ObF5iYLGd37o6WNwVVJyqbGfHX8fjBI7OdU6E9inRPBxOuMgl9FwUjiaeS3bnSjPPQWxyCpXbJSEMY5UHjMKXhzCmfiRHNwDcxi9ASt0weWM4QTTTjYtt3F+D8nU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763526132; c=relaxed/simple;
+	bh=e9KKBSqRpzPY6grKYsXAmX2B+obxuFcMUZuGS3g4dmA=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=dScbubj7GAPDciGcZ2bhA/YSgWV/UaVEngD/iUbV7AlUbzipXAwoY4XGNBmuBjdDU78jMs0KgmlGusytRS0oa0TsNcxfQ0u1Yo0ex/nij2etpKjvi8UiKQnG7TO6nizMpbl0SikA0tYmmIomFZSHl5RwnD/Uslgj9iLjWjA6jB8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=e+oIZjvU; arc=fail smtp.client-ip=52.101.84.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OjA4LID5";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UZAOFu0D"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AJ3Os7F2664727
-	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 04:07:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fS+dGMCJRCHWZtUwrU0gp2ztWLVeW3DxbPgmO/wQHI4=; b=OjA4LID5uscpYRfo
-	BuLyuQsx6TZpgTtPh5uIKrWWelICBJlEGOBgwyfXFCq0M28s0dyoCyg8MXeimjoV
-	p6kjAAyBY09LtT0Vi9Q3PBRH7JKosqDsatoR73+LrsVmy0WgqZLpXzRpU1GfMi5Y
-	cMz0U9OfcNlWVEB6I52056vXo+3yD7iYagQaNkBCe4dd2nskXilIGq797eZb/lak
-	aBKLeYs28rUPEAA0tV+98pNF8pp5Vw5A6dzpWAAfapQBenqREGe2JJK+nZMwSuYu
-	K2sFkJhYdUAjVfWLgJ6yyQ22iHWlZ89Koe0KgMC9wJNRS0c4+lYjWsMhJ/bqIiuH
-	p/E5xA==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4agpjkauu2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Nov 2025 04:07:09 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-343daf0f38aso7126771a91.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Nov 2025 20:07:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763525228; x=1764130028; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fS+dGMCJRCHWZtUwrU0gp2ztWLVeW3DxbPgmO/wQHI4=;
-        b=UZAOFu0D78Zp8Tr7hGnW/STh0Z3f+ichFaBn4nSE25GQ7HIbJY3ZyIbW+VITNJFHqb
-         W7767eRHyb7XIuuQCS2SPvwVoNDUu445lHDbOGJTh1qEa423mwmBgrFabUwf5+e+kSs8
-         2DeWMGIZsAUbwK6feCdGAtTiPgSTpKPzP5Owa5/FM2obgbl2xhOXJcPQrnTgofbkr7Su
-         aZHJcMUHdyOR/XfHI+AhvUph5V4yiY4CCpIZs4Pljx6LGM83YXctnauqhUaAY3TFWgtA
-         Aj0r1+wgPgt86Ss318JOx2rJawvfUfOzysBwE+7XCryH829RnU0JMTXyfBUJTRsZmG+Z
-         kcVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763525228; x=1764130028;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fS+dGMCJRCHWZtUwrU0gp2ztWLVeW3DxbPgmO/wQHI4=;
-        b=dWWCO0QRiyW2eV5qtXmEaT9bIZ4IMcrvVixQH8Tbi59zprwZl94mpIcjJAULgCrjVH
-         r4RdSl/qpAwFJwYWh454xNTZLXDP+LI3/ovLaV7nbz4uPuAlGgQvWexEPpRi+1flPcE4
-         bCNx0xlewhz2LjWpQsTD/QFrComolDL2dnz8HxpMJoDU2IDnJCHdf6kbTZI1M2EzwoP/
-         BUxkUbyfClhhva6hVnUczYhM1GoBKozl2OA6mwRM+dvyh1dPGyg50wk174EltOXrrloC
-         iFS1bq3TeV5cakkmf1Kx9KAHPj+631RAl/I2QWXGYsagv7DouEBQGUjA7TXDesDkTntj
-         OSdg==
-X-Gm-Message-State: AOJu0Yz7Tm42RaUFf+f0fXiaDUW5TOvzwec+qKtoNXfMmZvHmRD3eMep
-	fwe/hzD9cVuZmZsIFTYU8DIjhIF+dr6VHWBBnEgROqQexxuqd+cq7nBM5AL/uSuJeRcut0TP7VZ
-	MVq8k+BUKdL6ufK7eGwOfmxbL6XMcfSJUlPFpg+zxFNQXld2T9JJNrlHYwcLiSwi0zkiEs4VA
-X-Gm-Gg: ASbGncvrtGcouT3D6t0y1hy+jYT5qlHSZoAzwxwDu8lPywZEiBfBvTjcZDgNeRsHaAv
-	7Fl7Hgg30YWYqrv5ln1aYwCupQC4zqoFili7YJGXXCt0l36Ls9j5p4knTmBzsN5uzADEUy6swOG
-	WchvKlFm0Lei3lrfQviNGXQEpB4zyzRcAXqKtjP7LC0GADIxbEs2zyDysKq6ws2QjWGaXPs8dmz
-	ftozlRnCdxAGJPlQpIrJU3AWJNTFQClzC8OPqhOZpLuXWgX+kEjL+VybxWJdmvRdPIlOwYy8Xr+
-	zKBmvjt+IXTC9BPtyD1pHF5ERh/4+qEcTBxxNabs9E8QmkBGx6FvDfMEhQ/ggJF6mZwmJ/9a+mM
-	l1qXRn39mUynvRk+dX3e3lW5DyYI9Yz9cjcC43HX1iFWiubFKL+yJ5W126Csjp7Mk+HaC2l6pS/
-	YuE8FNiQ==
-X-Received: by 2002:a17:90b:2e46:b0:340:66f9:381 with SMTP id 98e67ed59e1d1-343f9eb37ddmr19076483a91.10.1763525228020;
-        Tue, 18 Nov 2025 20:07:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHETq0FoatOPgD7ViESbnk3ztP2OtHyWXSHvfgh9KYljoPwsVKGXEaYPb5xtSXJRHIf16xPIQ==
-X-Received: by 2002:a17:90b:2e46:b0:340:66f9:381 with SMTP id 98e67ed59e1d1-343f9eb37ddmr19076452a91.10.1763525227470;
-        Tue, 18 Nov 2025 20:07:07 -0800 (PST)
-Received: from [10.133.33.174] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-345b04f3b8dsm1589964a91.12.2025.11.18.20.07.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Nov 2025 20:07:07 -0800 (PST)
-Message-ID: <38308885-af2e-4b61-9653-00bfca8ca0e9@oss.qualcomm.com>
-Date: Wed, 19 Nov 2025 12:07:02 +0800
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="e+oIZjvU"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iEO6ukEuqBdxZ0IHd3eDhnVc0dFUtbhxUdrf1kc0neY9L+5jgtGTQIgPN43hPkrP0jhzBdaY+ueIV6hcw74XgIkAgY9S+8FRSYFwhoasX/k2NxiV0PLqCtY24ZdWyCJudSJH/NDFwH4CFaUhGdXOtEdvS/EwdD4gyzUdG+PsyRBcoE4iOk3qiZMe0yjxlN4KLcGmBHVg1RTYwPaCD2Mm+16T/GmvvTGFCFv/mz/RupiXrir9z1XoQaVWZA2T8roaAwxTLNNLY9peKa8AjDCSWP9/+/jh22EOfYfCTowxdnyHS/PMCaZLkhPpF2MHlRo+ZSpswKLKNsZmnwRTeMVXig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wgWH9VIOsiI6vKzuzv045rzFk970gPtqDF/iqQO7bCU=;
+ b=nt90wzC+J4mmrsNygb4QB2nh+uxh+EWyOUNMtP0PyZfxDD61fYdXhtG7tuIJMHdHg45jacGBnFfFICh2PgB07owk/EpmzPo030KTwsWUGv3j7SlDfX2M8slKn71NUKqAZVwXRlM6s2jhOoot8L5hE68d7zMeZjfoPN5tOvEWudBLS9t1XZGct/tDWNr1r65x83z+oYT8TwrjerInu7xWeqZt7Gu/4PB1U0sfcGFfsIvj/+0aWLpLegjhjtrYv9EHWmNsWRGFno3q+R+oJW03e0K834YCi7GrSbfaAyekOhcaMI7RJohlBEeeqDcYtHzBiN/2GbFPWc0V2mBi/A8nog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wgWH9VIOsiI6vKzuzv045rzFk970gPtqDF/iqQO7bCU=;
+ b=e+oIZjvUcgdjFfkbEbFYOnCnswTBDE/BjhK5VaUr5j4Lbjai0phLfFW1xram6yQGnNgovVIs9jvHGZb4dxhsxcnc8ocVqXIJW+llexahk9dr8zp28LVSnugUuG+Q8Cjtq8SoTARwuNiKP13obtrQgf+fWX51P9OCFoVTDwMo5XvW2fKfsBSsg3FyxXPrWqyUVh/Dr0nY+PnZG97YLmvL3q1vaLdI8hz1UOPE+wtlQy9oe9B0k9nbklBZlsBBHiscOuRe/+P07P4dCQ7FP+9RiuuFEeHZpqLUQpHs4kngflIY9/HsWT4UE8detGKSUmS+HVzKtIOlqGHnCrMhtXKgNQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PA4PR04MB9319.eurprd04.prod.outlook.com (2603:10a6:102:2a6::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.10; Wed, 19 Nov
+ 2025 04:22:02 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9320.013; Wed, 19 Nov 2025
+ 04:22:02 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v4 00/12] remoteproc: imx_dsp_rproc: Refactor to use new
+ ops and remove switch-case logic
+Date: Wed, 19 Nov 2025 12:21:45 +0800
+Message-Id: <20251119-imx-dsp-2025-11-19-v4-0-adafd342d07b@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANlFHWkC/x2MQQqAIBAAvxJ7bqEVo+wr0UF0qz1kohBB+Pes4
+ wzMPJA5CWeYmgcSX5LlDBV024DbbdgYxVcG1ameiAzKcaPPET+BRFjVao3xgxu1MwQ1jIlXuf/
+ pvJTyApHDbwNkAAAA
+X-Change-ID: 20251119-imx-dsp-2025-11-19-fa99d7c84c91
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+ Shengjiu Wang <shengjiu.wang@nxp.com>, 
+ Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SI1PR02CA0005.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::13) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] rpmsg: char: Fix WARN() in error path of
- rpmsg_eptdev_add()
-To: Dawei Li <dawei.li@linux.dev>, andersson@kernel.org,
-        mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        set_pte_at@outlook.com, zhongqiu.han@oss.qualcomm.com
-References: <20251118154107.3100-1-dawei.li@linux.dev>
- <20251118154107.3100-2-dawei.li@linux.dev>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <20251118154107.3100-2-dawei.li@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: LOGwqE1sb47lh2dekKMcABdSpWwwaV5R
-X-Proofpoint-GUID: LOGwqE1sb47lh2dekKMcABdSpWwwaV5R
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTE5MDAyOCBTYWx0ZWRfXyMoSUru+vZyx
- dftfgJn0C+qx8gIcvX38/UeHBJZzNsQ2o8355AKFz2iHGEEDYkiJDGU+QUbgVJOFsrMIjbR8peW
- E2wz/i1AdInaZ83p9zNFNvcbYnMn2LAgYgDWHlun6Lz4ZzJzLdlcnb5ZmhTmu9PpR3jkUIJ7p3a
- ASMOHg1x/A246PSWE3NrSP98WmGAdnY4RiY3XNgpxO57R/VceB+qsVdiCKSOMQ09AEcdYA7Odc3
- zpghwTwnApqj4kluybD5gVhxPwda+Oh3xEneNfFvrLpXgJYUuVI2gX83UZEQrBLNjtb2kXzAUUX
- We9XJelTHgGivYuWU+636xeszTyCI/rWSV2HRsNmq/hbd0aTR4rcmeR07S3fq4Yo0Ze9JM+dTYf
- MLne3S+sJqovtWBagcUfz2COtpPw5w==
-X-Authority-Analysis: v=2.4 cv=N/Yk1m9B c=1 sm=1 tr=0 ts=691d426d cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=WJ6qqwoD0WRQ6_SRdRYA:9
- a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-19_01,2025-11-18_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 bulkscore=0 adultscore=0 priorityscore=1501
- phishscore=0 impostorscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511190028
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PA4PR04MB9319:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57648076-0fbb-4167-7621-08de27233055
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|1800799024|366016|52116014|7416014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dG41dlFiMVVhR2VsRzdmUUdvVGhlSXhFNUQ2YmxLY09ReVMyRklOWnFQOTVa?=
+ =?utf-8?B?TURxc2RRbFlGR3h4c2NaOHQrVjlsY1dDZm9XY3p6R3JYNnZLbk9JWHJZN0h3?=
+ =?utf-8?B?b2wrdkVGWi9iaWRXczB6R1hyd2hjbjVlQUI2dVM1RXZWQzd2VUlsbEJHcnFk?=
+ =?utf-8?B?aE1idmNrRFlLT0c3R1RLa1hSc2w3MGxKK3RNQmdOTEZkOHdEOG14VStTOTBS?=
+ =?utf-8?B?TUNzWmpvMWNKVnNubGlPc2Y1NEJaVE52T20vZEdBeWx0ODg2c2ZiVzViZlFW?=
+ =?utf-8?B?YjZUYlQ0Mk52cFZiQURGNGhJQWxuSk45NHhjTzBpbWtkeEdVdWZBSFRvTit1?=
+ =?utf-8?B?RGxsYXM2eGZHOEtoS2UwbU9PcTVxL3FINk4zK1k3WnR2MHlMbk40QkMxQWto?=
+ =?utf-8?B?dFFwajkrNXh5N2lSREg2OGNoZDVJb2Q2OGw1MHpmcURtMUZpdlVRZHE1RURu?=
+ =?utf-8?B?U2dSMDVBSm9VQ3JRNXFpcU44UTY2aDZOZFBhV0VydElnQThOd01KZXhleXRu?=
+ =?utf-8?B?RFFlSjVuR256eExrbE5YLytuYm1iZ21WNkNuMWU4aGM2b05Db09qeE8wRElB?=
+ =?utf-8?B?aGtDc3pzb1ZWTUVGc2FrUG5Hb09RY2R5TER4VkVyeE5aY0YwdHc3RmQ2QU9z?=
+ =?utf-8?B?bXpYdnQ1NytQYi9yVXJLcG00QUg4R3NuWlVzVFdwZk0xSlRJYktvNUV1U3Ex?=
+ =?utf-8?B?NDB2WldQaFBuTmovV1RHUUJVd0tIdzBBNXNVS2htS0d6b1FaS3VHaWNFaWho?=
+ =?utf-8?B?QnBHZVZaUWZnNGthci9TMXQ3ODUrQmhqUnpPN0M2eGE1KzhhenZQaE1Bb3Vs?=
+ =?utf-8?B?bDl5MDc2VTZEbTVlRVhUYi9SdFBFS1RlY3krbFN6QlQwalNWQkxmUk1YdmRT?=
+ =?utf-8?B?YUxsNnVKdlNaOWl3VlYzYTJpWUIrSmdwMFo2ZmtZaGlxTWRUeEg4Yi9McTgz?=
+ =?utf-8?B?YTRBMXF5eGg0SGN5ajFXNkFiMXFRTlNMRnJCWUhoOEV4THdCTzlBV0tMVnFy?=
+ =?utf-8?B?RHo4Uk9zYm5vUXFIN0FlOVRTd1ZpYzgzekJvMFlBNmI4ai9OVDFHdFpJMWpo?=
+ =?utf-8?B?Q2lTQloxRHg3OW9sM1JuaUN4MTZwV0s2b05LZGZHMk16R1VIRWE1bEtOOG5w?=
+ =?utf-8?B?a2c3dktrd016bkRKVmlCVlptY0k2eUQ3SVhBMzN4cERUeEpxZmNOdnNZbytk?=
+ =?utf-8?B?SkVqRmdBcFVnMG11ZkhTTVZLU3RwQ2dJdk5DcUc2YXBocjI2dEtUVHQ5bDVS?=
+ =?utf-8?B?SklmUVlIWXlNODFOOCtENE1panRNWE41QUl0NnBvTHpWSG1kQzk0eTZmU29Z?=
+ =?utf-8?B?enFBQ3IrRGxoamozR0NUUnBVRW5UdDcvVkRSNVZkUmVjYnA3ZGd4SWhiRS9x?=
+ =?utf-8?B?TFNYMHhuSFdVOVFqS0JCWmxWN1hVTlBUUlZ1OGF3VUNsSSs2VVJhMkNYVExT?=
+ =?utf-8?B?YUZoSXJWalh0TlIzNUtYMFlGb2JEMVVacGtXc21iVTE2Mmx4MGJKblVmdk9h?=
+ =?utf-8?B?ai8xK1RudjBDSVdiTDJuVnEvUmJFRXNXY2lUL3dqNURZT3VYb1ExLzRKbGFh?=
+ =?utf-8?B?T2w4dmZSNzI1YmdETTRTSHJDZnc2cVcwN1U1bjZOcUlwWmVhYWdXa21lTHZF?=
+ =?utf-8?B?WUg0MWxKTy9FRklJcE1QZ2VsZi9LTjREZUJtWEZSV2dhdGFEWDVXQzl0WDhO?=
+ =?utf-8?B?WVF4bUR2NFcyY3U0OWpMT3pqWFJPNFZvektDQmMvQzhhcWljOFVHb0c0d1JK?=
+ =?utf-8?B?NHl2dVF6UzZxYTEvcE45WlVjMzR2SnJJTStzWUNPbXdhYWEzN3ZhVWRoc0xk?=
+ =?utf-8?B?S00yWXI1akk5NjAxUWhsSTgvdExNRFkvS3I0KzhKRDZpUmZqdHN1TEtwSVhx?=
+ =?utf-8?B?Y3c2RjNVVkwrUG81RE9OUTQzdVJ3bVVFQzRTb2tCVHE0UGE3Qmp6TnQzd1Bs?=
+ =?utf-8?B?YStDV0tST1ZDaS9PcnlLQ1hpSmNhV2tJYThMZENOQ2E3MmNvMG1HRVY4ODU2?=
+ =?utf-8?Q?7zmIG9XL76MPOf6a8FMlZ6pKGEhBoA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(52116014)(7416014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SCtzSDlFejRPSUFUZUltRmt4UFJ1OGt3UDMzL1IvaVZEK0E1OFJyYUYvQ0JE?=
+ =?utf-8?B?WE8rZEg3ekNqUENGRVhYQXp4TEJyVkpwTnh3UXMxbW5DQ1NxNWxqc2FJZTBZ?=
+ =?utf-8?B?cngxTHdpM3ZUYlVlQmEyWEpjOHMrZTEyaExrUmhaM1hFdk1JMm1BelJ0bDV0?=
+ =?utf-8?B?THJ2SmgvQlpWRjExR1hHd2pKQ3JvNWpmcUw3a3ZOc3h5VGJpRHoyamxVU01t?=
+ =?utf-8?B?WkZ3MG1JQmcraGpacXBrSHIwbWUxZldXc1p5cjd3YmY5M1BzRklteEs5RGhm?=
+ =?utf-8?B?Y1VvZWtZQnIxMnpsTG52OXUzelpoTStpMEJqdjBYUU1YSGpOSVNoTXpOVGhI?=
+ =?utf-8?B?dUcydGI1b3pPOVhmY2N5Q0RqMEVkODA0MWthclAwTUVYSS9KTkxHMXJNWExH?=
+ =?utf-8?B?alIwMjRzTjNQdFBrRjI1cmNsenIvZHBweUVVdFdVYy9iMVdGalpqNU9vTjZn?=
+ =?utf-8?B?WGxDWlhRZUdPcWMwVXF2TWtvVDMwTzdxZytFVURndko0UlFGNTBBWDBvRXhN?=
+ =?utf-8?B?RHNEVFZxeGx4Y2ZlcjhWU2pVQ2xhYWM3R2lmUC9pWTZGbWtVOFVQUVpqVzlv?=
+ =?utf-8?B?MXpGbU5lV0NhSlpzYUpwM1ZXRDFFOFM2SERielU5WHQzYjAvNkhpWE9Qa2Jw?=
+ =?utf-8?B?dFo3Ylg0MHcrdjV3bWYwc2RUVnIvb3c2ZEpkU24reG4xMHhkd0VaYjdZY3k0?=
+ =?utf-8?B?UWNRN2tUc3pvY1QyallpL1dGVHpJbGtoUW1DZTNLVW9UYUJ6MGNHVGQvLy9j?=
+ =?utf-8?B?cSs4NEVBK1JRcmdyYmUwaHhQT3k1cE5tdXV5VDBQWVUwNEpCeS9kcFNweXlK?=
+ =?utf-8?B?dHJrRWtYOFhUcGVLQlRpaWlQTmdKeldib1kxakM3MzZ0TXpTSVE3Z1FrQzBS?=
+ =?utf-8?B?TUpkMnlvWGtNT1dSUWMzMHJWQWZsVmF0cUk5MzhDUUJYMFNtRDg3dmF6S2Ra?=
+ =?utf-8?B?Q2pIYjMrZUFYKzlYRzhXdUpzMGtuQUR5bVczeVR6a3NjVEcwSHBaVVRhczdH?=
+ =?utf-8?B?KytmOE1EZFJaYUlKTGNyOGR2dEF6N0Yrd3VpMFRNTWZvTlRHZGM1SlpHVW5X?=
+ =?utf-8?B?bllNa2doRGpqS3NSRjQ4NldlVG1qVWFENG1sUTB6V2dMMnA1eUt2aDllQUZj?=
+ =?utf-8?B?THQwOVVvUFBQTUliSzlpT1pNN0NhdFdMeklVOWZMbU1DKzBsbnRJdFRpUEFh?=
+ =?utf-8?B?anNpSVdRTGhXQUM2OVB3NVhOeWZBbFZmZllZVlpINlo5Y09qZlB2K28zNFY5?=
+ =?utf-8?B?SmcrY0lXVGNSS1lxcDVxMUR2d0hLemNEVzR1ejZDZXgrUytaMklzbGlzNXdw?=
+ =?utf-8?B?eXYwQzAyWDRUOC9TdTJUSkdvTmxyM3FaVjNXNlJWU2gvUTg3aEQrQ2lHaEtp?=
+ =?utf-8?B?NTFKWHhCZ2M2SnpiSUV6aFI3aXRjVTVPbCsveEU2aHpOeUw0SkJEMkJnZnJJ?=
+ =?utf-8?B?bTFhcWlKMEtBeENnYlVUMXArSlR4WVkwRXIweis3VGI1V09icWwrWk9FdHBW?=
+ =?utf-8?B?b1gzK1lvU3kzM0lHV1V6ODFjdE9BN1dkejA2cDJpc2lrZllteWw0aWxSQ2hW?=
+ =?utf-8?B?ZDlWdWQ5dk54ampLcXFhR3RQL2M5Mm1KQ1N2SkUrTHFSS3pmOUt0SnplV0ZB?=
+ =?utf-8?B?dmRpWVNtd01kN24wTDErNzREclp6elBhdm5KQUNRcnhtYzBDb0cxd0dBdWZx?=
+ =?utf-8?B?eUZhUG9BZ3dTUWVNUExzUHZaYXlsVHU5b2g3MHRwVzdtNlNLY2N3a3hXS3Fw?=
+ =?utf-8?B?V09IQXd1VGNweElMOUFsbU9UUkZBVG5ZdkRjNEFYN1dVZVU5VnI3dEJwbHZV?=
+ =?utf-8?B?KzY4bnVibE16WkczYk9WL1AzNUUxRWtMWVJPSUMwOEVNdGRPd3huYkJvVFI5?=
+ =?utf-8?B?WVdlSG9hUDlDdzJkejlEM3hEWE5ZQ2NKNmhBSkJBNUE4ZWdPc0lySm5EWTV4?=
+ =?utf-8?B?SFl0RmVtVlJtS3pjV2NnbmhwTGVNRWxnZ1JvSjdKTzZmek9YOE1keFJZY0dG?=
+ =?utf-8?B?UzhOZ21MNEtKVFdoU29sdEtpeEJHbWxabGdJUExwd3AxaU53R0o5dmJuY1pn?=
+ =?utf-8?B?SjQyc3o4d3duYTZ2dVlzaDN3S0ZWekZIM2QrZTBkb0pIQUtvVWVkS0k2a0E4?=
+ =?utf-8?Q?B3HKEeeQsH5a/1Ypb1i2R0Gu8?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57648076-0fbb-4167-7621-08de27233055
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2025 04:22:02.4493
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n5Onb6j0KqMWPrJNJKkjagccrhX0bPf3Oar8SV2LbV/GndBvnLFMOoEBx/8pj9iuPd9PJx28HRYix4y9MWBIkw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB9319
 
-On 11/18/2025 11:41 PM, Dawei Li wrote:
-> put_device() is called on error path of rpmsg_eptdev_add() to cleanup
-> resource attached to eptdev->dev, unfortunately it's bogus cause
-> dev->release() is not set yet.
-> 
-> When a struct device instance is destroyed, driver core framework checks
-> the possible release() callback from candidates below:
-> - struct device::release()
-> - dev->type->release()
-> - dev->class->dev_release()
-> 
-> Rpmsg eptdev owns none of them so WARN() will complain the absence of
-> release().
-> 
-> Fix it by:
-> - Pre-assign dev->release() before potential error path.
-> - Check before ida_free() in dev->release().
-> 
-> By fixing error path of rpmsg_eptdev_add() and fixing potential memory
-> leak in rpmsg_anonymous_eptdev_create(), this work paves the way of rework
-> of rpmsg_eptdev_add() and its callers.
-> 
-> Fixes: c0cdc19f84a4 ("rpmsg: Driver for user space endpoint interface")
-> Signed-off-by: Dawei Li <dawei.li@linux.dev>
-> ---
->   drivers/rpmsg/rpmsg_char.c | 26 +++++++++++++-------------
->   1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 34b35ea74aab..373b627581e8 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -408,8 +408,13 @@ static void rpmsg_eptdev_release_device(struct device *dev)
->   {
->   	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
->   
-> -	ida_free(&rpmsg_ept_ida, dev->id);
-> -	if (eptdev->dev.devt)
-> +	/*
-> +	 * release() can be invoked from error path of rpmsg_eptdev_add(),
-> +	 * WARN() will be fired if ida_free() is feed with invalid ID.
-> +	 */
-> +	if (likely(ida_exists(&rpmsg_ept_ida, dev->id)))
-> +		ida_free(&rpmsg_ept_ida, dev->id);
-> +	if (eptdev->dev.devt && likely(ida_exists(&rpmsg_minor_ida, MINOR(eptdev->dev.devt))))
->   		ida_free(&rpmsg_minor_ida, MINOR(eptdev->dev.devt));
->   	kfree(eptdev);
->   }
-> @@ -458,6 +463,8 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
->   	struct device *dev = &eptdev->dev;
->   	int ret;
->   
-> +	dev->release = rpmsg_eptdev_release_device;
-> +
->   	eptdev->chinfo = chinfo;
->   
->   	if (cdev) {
-> @@ -471,7 +478,7 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
->   	/* Anonymous inode device still need device name for dev_err() and friends */
->   	ret = ida_alloc(&rpmsg_ept_ida, GFP_KERNEL);
->   	if (ret < 0)
-> -		goto free_minor_ida;
-> +		goto free_eptdev;
->   	dev->id = ret;
->   	dev_set_name(dev, "rpmsg%d", ret);
->   
-> @@ -480,22 +487,13 @@ static int rpmsg_eptdev_add(struct rpmsg_eptdev *eptdev,
->   	if (cdev) {
->   		ret = cdev_device_add(&eptdev->cdev, &eptdev->dev);
->   		if (ret)
-> -			goto free_ept_ida;
-> +			goto free_eptdev;
->   	}
->   
-> -	/* We can now rely on the release function for cleanup */
-> -	dev->release = rpmsg_eptdev_release_device;
-> -
->   	return ret;
->   
-> -free_ept_ida:
-> -	ida_free(&rpmsg_ept_ida, dev->id);
-> -free_minor_ida:
-> -	if (cdev)
-> -		ida_free(&rpmsg_minor_ida, MINOR(dev->devt));
->   free_eptdev:
->   	put_device(dev);
-> -	kfree(eptdev);
+This patchset aligns imx_dsp_rproc with the cleanup and modernization
+previously applied to imx_rproc.c. The goal is to simplify the driver by
+transitioning to the new ops-based method, eliminating the legacy
+switch-case logic for a cleaner and more maintainable design.
 
+Patches 1–5: General cleanup, including code simplification and adoption
+             of the devres API.
+Patches 6–10: Transition to the new ops-based approach, removing the
+              switch-case structure.
+Patch 11: Remove the obsolete enum imx_rproc_method.
+Patch 12: Cleanup goto based logic.
 
-Hi Dawei,
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v4:
+- Collected R-b and T-b
+- Address the build warning in patch 1
+- Add a new patch 12 to cleanup the goto based logic
+- Link to V3: https://lore.kernel.org/imx/20251111-imx-dsp-2025-11-11-v3-0-d05dcba737fa@nxp.com/
 
-Thanks for your new version~
+Changes in v3:
+- Collected R-b
+- Simplify commit log for patch 4 per Frank.
+- Link to V2: https://lore.kernel.org/all/20251106-imx-dsp-2025-11-06-v1-0-46028bc3459a@nxp.com/
 
-Patch 1/3 will introduce a use-after-free of eptdev in func
-rpmsg_anonymous_eptdev_create(),
+Changes in v2:
+- Collected R-b
+- Patch 3: Update commit per Frank/Daniel
+- patch 8: Use priv->dsp_dcfg->dcfg to avoid adding "const struct imx_rproc_dsp_dcfg *dsp_dcfg"
+- Link to v1: https://lore.kernel.org/linux-remoteproc/CAEnQRZAOTFw=sBppHTYQAdfDBuNqkqk6gVO4FyP0EBsva3Oi+Q@mail.gmail.com/T/#m27c93af9fb1e7fdeb0766bdbffbaae39d79eefab
 
-https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/drivers/rpmsg/rpmsg_char.c?h=for-next#n548
+---
+Peng Fan (12):
+      remoteproc: imx_dsp_rproc: simplify power domain attach and error handling
+      remoteproc: imx_dsp_rproc: Use devm_rproc_add() helper
+      remoteproc: imx_dsp_rproc: Use devm_pm_runtime_enable() helper
+      remoteproc: imx_dsp_rproc: Use dev_err_probe() for firmware and mode errors
+      remoteproc: imx_dsp_rproc: Drop extra space
+      remoteproc: imx_dsp_rproc: Use start/stop/detect_mode ops from imx_rproc_dcfg
+      remoteproc: imx_dsp_rproc: Move imx_dsp_rproc_dcfg closer to imx_dsp_rproc_of_match
+      remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_MMIO switch case
+      remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_SCU_API switch case
+      remoteproc: imx_dsp_rproc: Simplify IMX_RPROC_RESET_CONTROLLER switch case
+      remoteproc: imx_rproc: Remove enum imx_rproc_method
+      remoteproc: imx_dsp_rproc: simplify start/stop error handling
 
-even though this issue will be resolved in 2/3. However, 1/3, as an
-independent commit, should not introduce a new bug.
+ drivers/remoteproc/imx_dsp_rproc.c | 353 +++++++++++++++++++------------------
+ drivers/remoteproc/imx_rproc.h     |  14 --
+ 2 files changed, 186 insertions(+), 181 deletions(-)
+---
+base-commit: 187dac290bfd0741b9d7d5490af825c33fd9baa4
+change-id: 20251119-imx-dsp-2025-11-19-fa99d7c84c91
 
-
->   
->   	return ret;
->   }
-> @@ -561,6 +559,8 @@ int rpmsg_anonymous_eptdev_create(struct rpmsg_device *rpdev, struct device *par
->   
->   	if (!ret)
->   		*pfd = fd;
-> +	else
-> +		put_device(&eptdev->dev);
->   
->   	return ret;
->   }
-
-
+Best regards,
 -- 
-Thx and BRs,
-Zhongqiu Han
+Peng Fan <peng.fan@nxp.com>
+
