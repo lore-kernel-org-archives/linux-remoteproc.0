@@ -1,73 +1,73 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB99357732
-	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Nov 2025 17:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F6422257E
+	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Nov 2025 17:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763661070; cv=none; b=ZpH6MXOBlyftKeDB0xzmS+AeDMlVgeYoSomvxXJjebfnxFBKMU7Uk5h7KoXHwPKIa5wbU/SnaXzn95XLBoJImEhEircH8Xb/lHBcgAMYysiiwmiGI/n/kDZE/rf9XKvIqro33LgWp3ci78jJCYIrHRZ5Jc7TAQ8R1RGnXNLQQ7g=
+	t=1763661506; cv=none; b=mAwCZsb1W56XvHGYWP8Dd7pOSHZSy578vKCaV120io591jqWyyWcnZjwrFgxFZSz/zquOTOyEuJkNslx9aMkL0k5Wgs1JvYXmSm2BUA+8qO6XNtqGGs6jSWCCD4q+HhZMIpVfQ8i3dN1O4g6zwi11mlyJJhLrH9Gx+D9tSVpQWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763661070; c=relaxed/simple;
-	bh=zD7NgsDEUXwSzRf4wlPfCqiqHrm9X7LwU1FRDzbje5o=;
+	s=arc-20240116; t=1763661506; c=relaxed/simple;
+	bh=e/rWWjnF8wbNY62JkWWzbaPkZREI40lkpc1skO8jIvA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BPlhpoKQV5NA3Authwik+uqURHlqEdZtGC1XmitIQLHBOGCGBnSZG886pXgyxDrQujaVKsS2E0XN540Ttanmv6EVdFaosNnhUsVItX22KgiMmXNGI8YP1oN8za46shoV1TJaCvfksqEeGHs1SuDZe3NaqJMiN+vYiMDCNnInTR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hfFmInOp; arc=none smtp.client-ip=209.85.210.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWY6ERnvyHCkIQV0oL79fll3J90hOpTdsFLLj36muX+Vp7Ho7sWMoHk5CgIV+8HTArTo0AiOE8o+AI26q6hd+KnSq62THukJsiDkX61Uy6T+Yk27BvdN431+dgvBVDehWB/miKcDVZ1OpEqZP6LbZGx890HEv4F2MnWRTsAkHLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xBbS9yvH; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hfFmInOp"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7bc0cd6a13aso793664b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Nov 2025 09:51:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xBbS9yvH"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-29586626fbeso14173435ad.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Nov 2025 09:58:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1763661061; x=1764265861; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1763661504; x=1764266304; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SvyQOcIQQ86C542mLC2IQK954GH3/Pv3kj39BklXd04=;
-        b=hfFmInOpbCBMKVDGugkn6iMnE13/FpUqFH9aDkOZMKL18kT82X0s+R2RdXJi3ha6Xk
-         buHuyyG7xm0Uv0rXYJQmrbjxN0eF5Fu22t2VCjbf0awNObS3zK4ydtOxQUH7HIbTsxLk
-         8b2FPZgJKa5FBKXFjQ38XWqorj3wo6c5vTHak8+7bnrXeNRFwPQtDuapIU9s9iaxUc7+
-         UdpagSCjLlUqHFGxIMdRYZJoWBPX2hkj2So3miDSj48n8XuFkXiI8WH0JIc/owRGHcjf
-         GfWna8x0+Mjq1G9B2K9CgjXNjZwhYp2IlLG9AZGmZvRi6LOnKAqRrfbbJ/tqgv5d2Y39
-         U+ow==
+        bh=81Hr5jtNndhTD+szOLsCA5qYSFkSUAdLD3dMu1GvSpQ=;
+        b=xBbS9yvH5jNRg86UUqQbH6mF/wpAezUNiF/izsVpF60nlp53TB6rO+ykbjGU8ANGbG
+         2v0xR6pqWmQV9tY4MM3nu+Azi/ivUm7QN9qiZgJQPmNRMVHLClFjNGFB01fVT69YIaMQ
+         0lld7zqpNsmztP6DWmzrLflOzXv3ZgFKM9uEQadlnBOqegigVtaoXmI1dmEqbmz+Q5GW
+         W/dBYLpQDeqvWtC0vfOnZXONPBhxESi+ja8tAV9DjELGolZXHPzF4xKiet/G+ILvHW9L
+         qUDfRctqHHcYtuPZItCDVadUiIVKca2C5MDdhfvzDSywGaof7rKr5TVq9M7KDe9sDfrp
+         t+oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763661061; x=1764265861;
+        d=1e100.net; s=20230601; t=1763661504; x=1764266304;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SvyQOcIQQ86C542mLC2IQK954GH3/Pv3kj39BklXd04=;
-        b=KVyJ/MBNL/xGOswRm02OWO4wFmcH3bHf0EHjqvra+qfr5ue51P3tq1otG4Qo9kvZEy
-         PXjxYMo8jkfxRQ6ZePqRdWvmNxfpeRMjmLcL0L2ZDC64BQQLTijf1shuH1JTovqw1SBH
-         DYK1Of+TeW5bMyv1RYIGhiholinMa5AV55B/hY3gos6CakG7iE6SZ5nTexxydalQPgrI
-         cSc9P1rSesRCZMrvOuiFHecgCDAcaT4Rv8YjKjwNhX3tYnKhp7Wc44DZ6ijEX76J+CCy
-         h57tj3M3WEROIGQUWqIW/dDP0jFKs0OfBL5OZq81ma4FNB+CCQxxLK3hV6UzVrmOW5n0
-         netQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWo4eQbdSLuGQjjMVaobg/aMTuRQCb4TEalfnefYGJUj9DNT9nmbYEamIr/4DnWXf37tA8DAzYqS3Z7gflkSW3H@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbZmys2qMz24oxYedtNMudbRVVkjOQmkiVecuGf2/39dZNeiwf
-	UPJgoUiAdkpxZTgs9LeCLEfMUuiEXwtdVxuOI46FLJbk7s3dTXqn/7brEKcgiiZ/eo5YF7MQcf3
-	3RGgxok0=
-X-Gm-Gg: ASbGncsv5WKZiaQDC9by6eYg1pXar9NWLLd2YLuD3aoYgFKMB4cL+v6xICrXMCOZvez
-	KTbml94eR8M3Tr5LXOK+35nbkLEbYmUrb0385Cxwn+c/EsgggJW9pTKKYG89IA55EzdB0P7qLoX
-	6mmSEcXF6ivKYTz3SBhR6pQSmlD1Mi1fKUgpItab2nvUsMU3xn9XnCmNvaO3UJozUq4GJfmvkUI
-	T/vpPQRkq3s9gYUnUS011oZ+6mx6CVzPkLC5wJg5eDXj3I7HsQrj7dqGjkRq/68mggMk3hkctGm
-	m/qQqNMyxtj4sM5BTyxJPdZgxaJdjNtRJTcmUtEtMdbIjGI3bEeCnXJqDxVqWGnfR+kvwbo+M30
-	VtnbV6vMtxYJjlEezmPD+LQbholxtv1M8UIR3n39v0yrsuPsqlLXCeE0gIDop6wTdN3ffsg261P
-	GRWiN55LL7DWPGcw==
-X-Google-Smtp-Source: AGHT+IG5nfGUp6w8q9EcQONf815YWnnfwp5npwGR40rOPHk9oLxe0qBxjPkC/6purKVN5bANUXYjjw==
-X-Received: by 2002:a17:90b:5144:b0:343:e692:f8d7 with SMTP id 98e67ed59e1d1-34729867d6dmr3904935a91.11.1763661061313;
-        Thu, 20 Nov 2025 09:51:01 -0800 (PST)
+        bh=81Hr5jtNndhTD+szOLsCA5qYSFkSUAdLD3dMu1GvSpQ=;
+        b=f4KiK4OeSYh5MhCbPiPrmDHLjrhs/OoRGCEBf5FhXTdRFbctHWVa3aIfnuXS80RoXQ
+         rX6N/u7htR/KjSJKxIhrpD29ca/2gStaHUQHOOy2seYz+2grk+coE5L20pDzuka0mnfA
+         HuO2fkBDT/c7awbDJsXC/NdODIu90PCjkNjHigVNiP9ySl63fiESGKCj37g5VRDGLBrS
+         aEeb2MyIGboFYIBMdLv7yMMH5PSC2W0zHnJVWepxQatBJXq3BHlW4IxWzKF7KoYEVaAV
+         fJUJ4vTr/bvW6iPjfY3I28ml3cKT31LPHEHeZoeulkLeA/DINJM8Ifs2BkUHGYRKCMvl
+         mdfg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/1ea+WhqUSLLy6iRqJ1rxd1bF8VkPqm1fnYrR9GFTTCPzkEOzR89rCXtlPy6qBHGVyi3vpgwtdn2/5MQVgqm+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVIw/r4J/3o+Q/vAdKTiH4stPl0fQYdph4RsMcm4LNeszD5sgu
+	8FvEYmPDZNOsnX5OSc/ayf61ytHEIc4knQoRwzjien9z2Q/Indczvq6JsTOOzIFRVFI=
+X-Gm-Gg: ASbGncsw7H1Q/uwdjkg/VRKFindw0t6c2WKGvswx382U5wyWWJbJnXiQjF5iT7FmQQP
+	7i0GwAJF1Uru7sErihx78d9g5w6318nhYdMqd4OnvNYUR6Ul/9JSLRehmOtODQIx3E9lcB54DRi
+	mOtxVXaGKziExppqeWkCfr8rDrgcG3t0G9Dv2zmcVkvOG65IkjvNXGKqAwOC5dkGdXNPidx+Jq4
+	IVgtIe9ehoQQlQ8fc2zMF0wuXhbsWU49mVedg744PVC1Btr2SZFSCCD8ky0ZCY5mQ8lfY0TmfPU
+	2ze6Ut5cB9b9lsh8voRLU3DIfueAgBrxusY1NGN+E2MUcOsD//mYojD9rnhl0iDur5HPBVi8vaH
+	T0tezxgR6W64no2Z9jsbl+vHstWfSj0KG/gaRgwno6i07cmaaczcn8alt/dqIKTjYAPXHKpYT5d
+	IanRF/xM4ML8g1/iV7OLK2Qi0F
+X-Google-Smtp-Source: AGHT+IEi8cM1CIzgcmszW9SQnYjK09JCR0Q6AhXxWUnW+K/OtzywbTM5ivUVzOlsKeFa+uMdzIHcdQ==
+X-Received: by 2002:a17:903:166e:b0:298:3aa6:c03d with SMTP id d9443c01a7336-29b691d63b8mr4431025ad.57.1763661504479;
+        Thu, 20 Nov 2025 09:58:24 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:17b0:cde9:c3a1:870b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34726696bb2sm3242515a91.3.2025.11.20.09.51.00
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b29978fsm32158705ad.84.2025.11.20.09.58.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Nov 2025 09:51:00 -0800 (PST)
-Date: Thu, 20 Nov 2025 10:50:58 -0700
+        Thu, 20 Nov 2025 09:58:24 -0800 (PST)
+Date: Thu, 20 Nov 2025 10:58:21 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: Tanmay Shah <tanmay.shah@amd.com>
 Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] remoteproc: xlnx: enable boot recovery
-Message-ID: <aR9VAtgfFEe56z3W@p14s>
+Subject: Re: [PATCH v2 2/3] remoteproc: core: full attach detach during
+ recovery
+Message-ID: <aR9WvVjvBhXoO3oh@p14s>
 References: <20251113154403.2454319-1-tanmay.shah@amd.com>
- <20251113154403.2454319-2-tanmay.shah@amd.com>
+ <20251113154403.2454319-3-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -76,60 +76,118 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251113154403.2454319-2-tanmay.shah@amd.com>
+In-Reply-To: <20251113154403.2454319-3-tanmay.shah@amd.com>
 
-Good morning,
-
-On Thu, Nov 13, 2025 at 07:44:02AM -0800, Tanmay Shah wrote:
-> This is the default method to recover the remote processor from crash.
-> During this recovery the Linux will stop the remote, load the same
-> firmware again and start the remote processor. As of now, coredump
-> callback does not contain any useful implementation, but this can be
-> changed as required.
+On Thu, Nov 13, 2025 at 07:44:03AM -0800, Tanmay Shah wrote:
+> Current attach on recovery mechanism loads the clean resource table
+> during recovery, but doesn't re-allocate the resources. RPMsg
+> communication will fail after recovery due to this. Fix this
+> incorrect behavior by doing the full detach and attach of remote
+> processor during the recovery. This will load the clean resource table
+> and re-allocate all the resources, which will set up correct vring
+> information in the resource table.
 > 
 > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 > ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 0b7b173d0d26..8677b732ad14 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -891,6 +891,11 @@ static int zynqmp_r5_detach(struct rproc *rproc)
->  	return 0;
+> Changes in v2:
+>   - use rproc_boot instead of rproc_attach
+>   - move debug message early in the function
+> 
+>  drivers/remoteproc/remoteproc_core.c | 26 +++++++++++++++-----------
+>  1 file changed, 15 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index aada2780b343..f65e8bc2d1e1 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1777,11 +1777,11 @@ static int rproc_attach_recovery(struct rproc *rproc)
+>  {
+>  	int ret;
+>  
+> -	ret = __rproc_detach(rproc);
+> +	ret = rproc_detach(rproc);
+>  	if (ret)
+>  		return ret;
+>  
+> -	return __rproc_attach(rproc);
+> +	return rproc_boot(rproc);
 >  }
 >  
-> +static void zynqmp_r5_coredump(struct rproc *rproc)
-> +{
-> +	(void)rproc;
-> +}
+>  static int rproc_boot_recovery(struct rproc *rproc)
+> @@ -1829,6 +1829,11 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  	struct device *dev = &rproc->dev;
+>  	int ret;
+>  
+> +	dev_err(dev, "recovering %s\n", rproc->name);
+> +
+> +	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
+> +		return rproc_attach_recovery(rproc);
 > +
 
-Function rproc_coredump(), which is set by default in rproc_alloc_ops(), won't
-work?  If not please indicate why this is the case, otherwise this patch can be
-dropped.
+Humm... I find this a little messy.  Taking [1] as an example, I suggest moving
+the "unlock_mutex" block to line 1846 and add mutex calls to
+rproc_boot_recovery().  That way both rproc_attach_recovery() and
+rproc_boot_recovery() are called the same way.
 
->  static const struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.prepare	= zynqmp_r5_rproc_prepare,
->  	.unprepare	= zynqmp_r5_rproc_unprepare,
-> @@ -905,6 +910,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
->  	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
->  	.attach		= zynqmp_r5_attach,
->  	.detach		= zynqmp_r5_detach,
-> +	.coredump	= zynqmp_r5_coredump,
->  };
+[1] https://elixir.bootlin.com/linux/v6.17.8/source/drivers/remoteproc/remoteproc_core.c#L1832
+
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+>  	if (ret)
+>  		return ret;
+> @@ -1837,12 +1842,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  	if (rproc->state != RPROC_CRASHED)
+>  		goto unlock_mutex;
 >  
->  /**
-> @@ -938,7 +944,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+> -	dev_err(dev, "recovering %s\n", rproc->name);
+> -
+> -	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
+> -		ret = rproc_attach_recovery(rproc);
+> -	else
+> -		ret = rproc_boot_recovery(rproc);
+> +	ret = rproc_boot_recovery(rproc);
 >  
->  	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
+> @@ -1860,6 +1860,7 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>  {
+>  	struct rproc *rproc = container_of(work, struct rproc, crash_handler);
+>  	struct device *dev = &rproc->dev;
+> +	int ret;
 >  
-> -	r5_rproc->recovery_disabled = true;
-> +	r5_rproc->recovery_disabled = false;
->  	r5_rproc->has_iommu = false;
->  	r5_rproc->auto_boot = false;
->  	r5_core = r5_rproc->priv;
+>  	dev_dbg(dev, "enter %s\n", __func__);
+>  
+> @@ -1883,8 +1884,11 @@ static void rproc_crash_handler_work(struct work_struct *work)
+>  
+>  	mutex_unlock(&rproc->lock);
+>  
+> -	if (!rproc->recovery_disabled)
+> -		rproc_trigger_recovery(rproc);
+> +	if (!rproc->recovery_disabled) {
+> +		ret = rproc_trigger_recovery(rproc);
+> +		if (ret)
+> +			dev_warn(dev, "rproc recovery failed, err %d\n", ret);
+
+I would prefer a patch on its own for this one.
+
+I'm running out of time for today, I'll review patch 3/3 tomorrow.
+
+Thanks,
+Mathieu
+
+> +	}
+>  
+>  out:
+>  	pm_relax(rproc->dev.parent);
+> @@ -2057,7 +2061,7 @@ int rproc_detach(struct rproc *rproc)
+>  		return ret;
+>  	}
+>  
+> -	if (rproc->state != RPROC_ATTACHED) {
+> +	if (rproc->state != RPROC_ATTACHED && rproc->state != RPROC_CRASHED) {
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
 > -- 
 > 2.34.1
 > 
