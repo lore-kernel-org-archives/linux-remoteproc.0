@@ -1,203 +1,166 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B611DF755;
-	Fri, 21 Nov 2025 18:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF732FD7D0;
+	Fri, 21 Nov 2025 19:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763749714; cv=none; b=Us8vQ1aTb8f7//GzJWb8a5pFGDc4ztK7PAN4rrAiGb674wY9cLS4Wfl5GkFMUPipYW++hMuVoTQY2R6Nf1SLuE4XGwCdvaBDymNnA64+Fs+z6UNk5mVeTr277VhmrnUXf6ATbyI2JnWzpGbtHKlqznaD4tbDDEoc50ihfyV7CFc=
+	t=1763752477; cv=none; b=ebO9EusyIVayR9phCDcSFPLPsUkfbbK/rimeJsgW0gxBmc6EEcciYhG/AlyX3rTEi7wSi+dc3XyluNHHZUpz5XyUxlHzaXqyV2Fry/oRK6PG9q4xY7PqbCSS59JpHbP8iZz9NzHdV0L2/rk112JVEMSW/bu6YYY3yJlGpRQIBMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763749714; c=relaxed/simple;
-	bh=qWFdaRc8dGwhlojVuN8JsDy5PM4Z19NQu2lPhnzRQxQ=;
+	s=arc-20240116; t=1763752477; c=relaxed/simple;
+	bh=fGWNibXFUGAhDYfqhQTSp+K9Mm1aNTTr8crCL6BSz6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RWGFgK02Q2RbeO21Al+t2f/52ZDoPITeeug5cTFQ6hjP0k9AlwjQ44F4gsGFBkjhHAbhZvwr/FC/T9zZexVbgfMYxrcjF7R+zp2eumfeoRxwrCuux5Cv9xAv9TyA/Y/Z4woRnistxBVfy5Dv3E0lTQu67Z2ke7ZQ1t+jUNEmpKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ydo8dSWF; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=g/YG5H2sUrEvpSVBAs5wABz2tvZIRQ1fP6IrcnOXwoEdNLgpAyrT5hCqIditqCkOAFv/AmUYqptQPWAm2I28cyRUsr7fk0X8y1bV/Nhr/Qa1flQPecjVMwYMDxq0pXA/dMHbXyM+TbQ6YxZOTuL9WhFCUKWSBC6lH434AqAoApw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QGKAZJGP; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ydo8dSWF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870E0C4CEF1;
-	Fri, 21 Nov 2025 18:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1763749714;
-	bh=qWFdaRc8dGwhlojVuN8JsDy5PM4Z19NQu2lPhnzRQxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ydo8dSWFXQQiRpXHqAztXhM60d7GLuZ7jnGML4reMmoVituWqkNW8HsAPGoIqo4fm
-	 JvhBHujfYnmCrrkBUuX2iof4jeoJcJvgkQ3NyOGIRn61LxBiGMkzfy7AgFkUw8Vmmx
-	 4fYyDdVu0RnasvTnzsjjtWqryLUzl6DiEit/rM+yENHSOZ2XfW5RPOJHNYWhRflAZ1
-	 +0HaXKHeb0A/TwXb+/db1+xRzcKKD6bW953Xi057V1ahHkHdMmrjqef3830SkJTJjM
-	 ihlMu4rP2Y5lVD3M5Or4kJVZqJaZ9IwqXPMC6mBT91/YpC9EuLP+iKYlUsMHHE+TJe
-	 /juJ1BestKfGw==
-Date: Fri, 21 Nov 2025 18:28:30 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: add Microchip IPC
- remoteproc
-Message-ID: <20251121-doormat-splashy-1343ea24888a@spud>
-References: <20251121142157.3582463-1-valentina.fernandezalanis@microchip.com>
- <20251121142157.3582463-2-valentina.fernandezalanis@microchip.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QGKAZJGP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1763752475; x=1795288475;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fGWNibXFUGAhDYfqhQTSp+K9Mm1aNTTr8crCL6BSz6s=;
+  b=QGKAZJGPsDs7AIrvvRxTUb74haZct3x/p1NM3ofyLPBqAwYNtepsI+GR
+   qtz7ZpqJGG0dPMQSZ5O/if0FE1GZPTRYVrr47juQC+CyTD7yk6iekRa66
+   YTAeBiz/LxECM5yHF2OKHY9aT57/2QumayqVUftKgE+P9hHFwzS/Xe6+S
+   QLdaOJ3I3+DWetK1Vk6MFXLZcOTOXqUPf4zCQKZVpvWRvSuCzFKF+NKq1
+   9dKKAXvSS/6iRU7o2cA/gD2YWptKEzt328aGNDL0Jhjp5nYkRlmm+gwZ4
+   AImiZl+IN40Xe2Dc9km+4EmWDhGmlGUM2gsDBdQUmsimb3qGoVBgMKaTM
+   Q==;
+X-CSE-ConnectionGUID: xX6IkWpqToOA3LzIe+G3uA==
+X-CSE-MsgGUID: 1RlK06XmQpOjUfvhIrPWnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11620"; a="68454996"
+X-IronPort-AV: E=Sophos;i="6.20,216,1758610800"; 
+   d="scan'208";a="68454996"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2025 11:14:35 -0800
+X-CSE-ConnectionGUID: 2Ijzr5YBT3aA7bLtsNb2Hw==
+X-CSE-MsgGUID: PUXp5Oq0QOCwVdGLd9G5ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,216,1758610800"; 
+   d="scan'208";a="195936493"
+Received: from lkp-server01.sh.intel.com (HELO adf6d29aa8d9) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 21 Nov 2025 11:14:28 -0800
+Received: from kbuild by adf6d29aa8d9 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vMWaP-0006m3-1U;
+	Fri, 21 Nov 2025 19:14:25 +0000
+Date: Sat, 22 Nov 2025 03:13:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	tglx@linutronix.de, andersson@kernel.org, pmladek@suse.com,
+	rdunlap@infradead.org, corbet@lwn.net, david@redhat.com,
+	mhocko@suse.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hardening@vger.kernel.org, jonechou@google.com,
+	rostedt@goodmis.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org,
+	Eugen Hristev <eugen.hristev@linaro.org>
+Subject: Re: [PATCH 03/26] mm/percpu: Annotate static information into
+ meminspect
+Message-ID: <202511220241.7y7acdEZ-lkp@intel.com>
+References: <20251119154427.1033475-4-eugen.hristev@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6Sa2gz/r1oDXaw4E"
-Content-Disposition: inline
-In-Reply-To: <20251121142157.3582463-2-valentina.fernandezalanis@microchip.com>
-
-
---6Sa2gz/r1oDXaw4E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251119154427.1033475-4-eugen.hristev@linaro.org>
 
-On Fri, Nov 21, 2025 at 02:21:56PM +0000, Valentina Fernandez wrote:
-> Microchip family of RISC-V SoCs typically have one or more application
-> clusters. These clusters can be configured to run in an Asymmetric
-> Multi Processing (AMP) mode.
->=20
-> Add a dt-binding for these application clusters.
->=20
-> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.c=
-om>
-> ---
->  .../microchip,ipc-sbi-remoteproc.yaml         | 95 +++++++++++++++++++
->  1 file changed, 95 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/microchi=
-p,ipc-sbi-remoteproc.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-s=
-bi-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip=
-,ipc-sbi-remoteproc.yaml
-> new file mode 100644
-> index 000000000000..348902f9a202
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remo=
-teproc.yaml
-> @@ -0,0 +1,95 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-sbi-remotepr=
-oc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip IPC Remote Processor
-> +
-> +description:
-> +  Microchip family of RISC-V SoCs typically have one or more
-> +  clusters. These clusters can be configured to run in an Asymmetric
-> +  Multi Processing (AMP) mode where clusters are split in independent
-> +  software contexts.
-> +
-> +maintainers:
-> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: microchip,ipc-sbi-remoteproc
-> +
-> +  mboxes:
-> +    description:
-> +      Microchip IPC mailbox specifier. To be used for communication with
-> +      a remote cluster. The specifier format is as per the bindings,
-> +      Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
-> +    maxItems: 1
-> +
-> +  memory-region:
-> +    minItems: 1
-> +    maxItems: 5
-> +    description:
-> +      List of phandles to the reserved memory regions associated wih the=
- remoteproc
-> +      device. This is variable and describes the memories shared with th=
-e remote cluster
-> +      (e.g. firmware, resource table, rpmsg vrings, etc.)
-> +    items:
-> +      anyOf:
+Hi Eugen,
 
-Is this genuinely any of these, with no restrictions?
-Can you have rsc-table and firmware?
+kernel test robot noticed the following build errors:
 
-> +        - description: region used for the resource table when firmware =
-is started by the bootloader
-> +        - description: region used for the remote cluster firmware image=
- section
-> +        - description: virtio device (vdev) buffer
-> +        - description: virtqueue for sending messages to the remote clus=
-ter (vring0)
-> +        - description: virtqueue for receiving messages from the remote =
-cluster (vring1)
-> +
-> +  memory-region-names:
-> +    minItems: 1
-> +    maxItems: 5
-> +    items:
-> +      anyOf:
-> +        - const: rsc-table
-> +        - const: firmware
-> +        - const: buffer
-> +        - const: vring0
-> +        - const: vring1
-> +
-> +required:
-> +  - compatible
-> +  - mboxes
-> +  - memory-region
-> +  - memory-region-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Early boot mode example - firmware started by bootloader
-> +    soc {
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <2>;
-> +
-> +        remoteproc {
-> +            compatible =3D "microchip,ipc-sbi-remoteproc";
-> +            mboxes=3D <&ihc 8>;
-> +            memory-region =3D <&rsctable>, <&vdev0buffer>,
-> +                            <&vdev0vring0>, <&vdev0vring1>;
-> +            memory-region-names =3D "rsc-table", "buffer",
-> +                                  "vring0", "vring1";
-> +        };
-> +    };
-> +
-> +  - |
-> +    // Late boot mode example - firmware started by Linux (remoteproc)
-> +    soc {
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <2>;
-> +
-> +        remoteproc {
-> +            compatible =3D "microchip,ipc-sbi-remoteproc";
-> +            mboxes=3D <&ihc 8>;
-> +            memory-region =3D <&cluster_firmware>, <&vdev0buffer>,
-> +                            <&vdev0vring0>, <&vdev0vring1>;
-> +            memory-region-names =3D "firmware", "buffer",
-> +                                  "vring0", "vring1";
-> +        };
-> +    };
-> +...
-> --=20
-> 2.34.1
->=20
+[auto build test ERROR on rppt-memblock/fixes]
+[also build test ERROR on linus/master v6.18-rc6]
+[cannot apply to akpm-mm/mm-everything rppt-memblock/for-next next-20251121]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---6Sa2gz/r1oDXaw4E
-Content-Type: application/pgp-signature; name="signature.asc"
+url:    https://github.com/intel-lab-lkp/linux/commits/Eugen-Hristev/kernel-Introduce-meminspect/20251119-235912
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock.git fixes
+patch link:    https://lore.kernel.org/r/20251119154427.1033475-4-eugen.hristev%40linaro.org
+patch subject: [PATCH 03/26] mm/percpu: Annotate static information into meminspect
+config: sparc64-allmodconfig (https://download.01.org/0day-ci/archive/20251122/202511220241.7y7acdEZ-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 9e9fe08b16ea2c4d9867fb4974edf2a3776d6ece)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251122/202511220241.7y7acdEZ-lkp@intel.com/reproduce)
 
------BEGIN PGP SIGNATURE-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511220241.7y7acdEZ-lkp@intel.com/
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaSCvTgAKCRB4tDGHoIJi
-0sA9AP94HeIUxLBJ65z3TggfSks/RBYE3Sbpi8OF5+n/5yjNaAEA4uVJyruCUejN
-yh+vGrBowv9Xe6+UAp1NpnOwYD9kAwA=
-=+jR9
------END PGP SIGNATURE-----
+All errors (new ones prefixed by >>):
 
---6Sa2gz/r1oDXaw4E--
+>> mm/percpu.c:3350:25: error: use of undeclared identifier '__per_cpu_offset'; did you mean '__per_cpu_start'?
+    3350 | MEMINSPECT_SIMPLE_ENTRY(__per_cpu_offset);
+         |                         ^~~~~~~~~~~~~~~~
+         |                         __per_cpu_start
+   include/linux/meminspect.h:101:40: note: expanded from macro 'MEMINSPECT_SIMPLE_ENTRY'
+     101 |         MEMINSPECT_ENTRY(MEMINSPECT_ID_##sym, sym, sizeof(sym))
+         |                                               ^~~
+   include/linux/meminspect.h:92:29: note: expanded from macro 'MEMINSPECT_ENTRY'
+      92 |                                                .va = (void *)&(sym),            \
+         |                                                                ^~~
+   include/asm-generic/sections.h:42:13: note: '__per_cpu_start' declared here
+      42 | extern char __per_cpu_start[], __per_cpu_end[];
+         |             ^
+>> mm/percpu.c:3350:25: error: use of undeclared identifier '__per_cpu_offset'; did you mean '__per_cpu_start'?
+    3350 | MEMINSPECT_SIMPLE_ENTRY(__per_cpu_offset);
+         |                         ^~~~~~~~~~~~~~~~
+         |                         __per_cpu_start
+   include/linux/meminspect.h:101:52: note: expanded from macro 'MEMINSPECT_SIMPLE_ENTRY'
+     101 |         MEMINSPECT_ENTRY(MEMINSPECT_ID_##sym, sym, sizeof(sym))
+         |                                                           ^~~
+   include/linux/meminspect.h:93:22: note: expanded from macro 'MEMINSPECT_ENTRY'
+      93 |                                                .size = (sz),                    \
+         |                                                         ^~
+   include/asm-generic/sections.h:42:13: note: '__per_cpu_start' declared here
+      42 | extern char __per_cpu_start[], __per_cpu_end[];
+         |             ^
+>> mm/percpu.c:3350:1: error: invalid application of 'sizeof' to an incomplete type 'char[]'
+    3350 | MEMINSPECT_SIMPLE_ENTRY(__per_cpu_offset);
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/meminspect.h:101:51: note: expanded from macro 'MEMINSPECT_SIMPLE_ENTRY'
+     101 |         MEMINSPECT_ENTRY(MEMINSPECT_ID_##sym, sym, sizeof(sym))
+         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+   include/linux/meminspect.h:93:22: note: expanded from macro 'MEMINSPECT_ENTRY'
+      93 |                                                .size = (sz),                    \
+         |                                                         ^~
+   3 errors generated.
+
+
+vim +3350 mm/percpu.c
+
+  3349	
+> 3350	MEMINSPECT_SIMPLE_ENTRY(__per_cpu_offset);
+  3351	/*
+  3352	 * pcpu_nr_pages - calculate total number of populated backing pages
+  3353	 *
+  3354	 * This reflects the number of pages populated to back chunks.  Metadata is
+  3355	 * excluded in the number exposed in meminfo as the number of backing pages
+  3356	 * scales with the number of cpus and can quickly outweigh the memory used for
+  3357	 * metadata.  It also keeps this calculation nice and simple.
+  3358	 *
+  3359	 * RETURNS:
+  3360	 * Total number of populated backing pages in use by the allocator.
+  3361	 */
+  3362	unsigned long pcpu_nr_pages(void)
+  3363	{
+  3364		return data_race(READ_ONCE(pcpu_nr_populated)) * pcpu_nr_units;
+  3365	}
+  3366	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
