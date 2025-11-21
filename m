@@ -1,606 +1,236 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FE433BBB7;
-	Fri, 21 Nov 2025 14:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7562C11D3
+	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 15:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763735026; cv=none; b=qNC/0kwHMV9h0tSAR19uHbW4Hs18/aWymgccf/WzkU6FJJxSL1eSdALzrkoaTQbjkgkeyceuwVU2X5+meAtSw4dwd9txdr8rFCjGV5wh7PeqJWGyhXGEQwv3ufY2lhDKIbtC0vFMhgVD25yOrSZoGInIqWkacTl+KFdoQDLILK8=
+	t=1763737729; cv=none; b=lZJOKGr4g5sTQr7ysBOxWIPs1bqYrRVbdd2sHDWGK7NO8oVHWmfK/JY5KgN16fQsX1tWaK94cDFw04Z0s+D0vtSTDCycLILTZBkjkcrMhFGsp2ipjLy6LUdd/avDapGsxo0EVjqisMbvHpwjNZnZxUW+oMhMK/Fko60eNFR3k5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763735026; c=relaxed/simple;
-	bh=omMiT7pbMoA+dkdGJLVHzTNHrr6qMPU8BTC52NWXAKE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EdeDoVcJsL4Cvn8/1uEXh7rP8VF1UkIunYz2SpbNxQQRugb5leZ1qL0E5b4P+KXGiKYFv1jMjklC67V+UHUywwTTIhpe3AQCpnbb/9cw3LAEvSPyrnrQrWfjWtBfeG0z6SeNo6qZqGcKZ29Bh/HVdYWm0EhEe8I5GJO/ff2ZyWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZP79mZEW; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1763737729; c=relaxed/simple;
+	bh=uvPi9ASKPbADZRK8UKix4C8KIl9QlRR9xU1PJwogzMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X9lw16JtLJohQ+pl+NQ/VAMMISCxEAjlR3v91sKx1wkQoZmlcLgEG0Pq3Uerm7qw9mE2uyX4mjZJAqdQ20QWhJjwy+bcBlEDxFQpRxbEA4k7IwmcDljpnLkLc5/Q7f1ZWBrLoRvBcmtRans8mzU9i9eQGyCWTzSBuEkxm4hQ2u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eCPaurN0; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QmLxhY7R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZP79mZEW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1763735023; x=1795271023;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=omMiT7pbMoA+dkdGJLVHzTNHrr6qMPU8BTC52NWXAKE=;
-  b=ZP79mZEWMevuV/SXi/Xzzod4S16cKumCmH7SUpWP5x+LAvs3wE+jf+T5
-   KGrntJvQ+brFuaIJvHswV1Gt8Duzw35/kijRjFRWJm5+8/9DImQtEAyhW
-   8qLyEcMJiqyONR088NNN7WWeI7t7e5eWOFS7hrz23hvzicEV4UpsZExd9
-   TGdnr3HfC+mnYJ185bhWi2bdbFncsgHDgPpuBgiqCPLpIkKvjx2yK/An1
-   p841oqDdCQqbQCg1wzCxJZwIsO7NzcuJS/81mZaqgbPclC9RYH6zcykZr
-   DTUGOhK1gnegW8+vAHFx3p9ejTEnHF1a4EA38A1A3bwVDx2AF9xAWqppg
-   g==;
-X-CSE-ConnectionGUID: y2gBB57rQ7Cqsaw/h91kwQ==
-X-CSE-MsgGUID: VRmkWkxjTcaGSucjyNojfQ==
-X-IronPort-AV: E=Sophos;i="6.20,216,1758610800"; 
-   d="scan'208";a="216836379"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 21 Nov 2025 07:23:42 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 21 Nov 2025 07:22:40 -0700
-Received: from valentina.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Fri, 21 Nov 2025 07:22:38 -0700
-From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<valentina.fernandezalanis@microchip.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] remoteproc: add support for Microchip IPC remoteproc platform driver
-Date: Fri, 21 Nov 2025 14:21:57 +0000
-Message-ID: <20251121142157.3582463-3-valentina.fernandezalanis@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251121142157.3582463-1-valentina.fernandezalanis@microchip.com>
-References: <20251121142157.3582463-1-valentina.fernandezalanis@microchip.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eCPaurN0";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QmLxhY7R"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AL9VuVP3048073
+	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 15:08:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GXeMU2t/+YocV/lrKmcdn7FJ/vQLkZ3h6b3+GNAWoV4=; b=eCPaurN0MWzonVcn
+	T4viz7ty/3JGsfRv6ahwhXmtROfnpg7wqhlFlVjtiEv99roNMbuEYU/hlukePkaR
+	EUJNuFK9yd7ajGVJKVqB9pIEW9ZnQx3rcaqhxR7+VWbYx3SYn/BPsmgFeR8YLLP1
+	WCH6BQSvkt+Kkwmx3lnC6Ypl6ASc0ibmT4CTOmZkxojkUH8WTF01NfEo9g5IrEeh
+	bLkkLKuL/Nnbi3kDJgIeFbO5BPT+3YxUOXepuT3Y+mwgIOXi2VaQmnA9M+3YB1W+
+	Q0ITWnip6ZTu0UmE+x+qz1OcpUumB/lSub0wwqzapUqEUTr5iE8E65XSU0CqX5Tm
+	Lgh79w==
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com [209.85.217.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ajnhjs0c3-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 15:08:43 +0000 (GMT)
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5dfb8e7d182so450569137.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 07:08:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763737722; x=1764342522; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GXeMU2t/+YocV/lrKmcdn7FJ/vQLkZ3h6b3+GNAWoV4=;
+        b=QmLxhY7RMA82vlAxbGqIaoNbuxZICoFfy2Ou4tJQ63AnM2g5wenitjzsEimI1+tEuT
+         80S63tLhVDuLPDeC4F5yH4fyWiz+oRy5w69ohwlAsWpMof+CiBbxN9M8/l0nqAVfWGjO
+         PSdWiibn+Q0ZD/3itDmrckZcpuEYq1lkIZzTPK7vRMJALMRdj0oerzjGDcyRLLbS7lKg
+         0+0hMsv13DR50Kyt2UqXOXWsz4I6gj1atOMvvMI5CABOXJZf1kO804iG/wjLWir9s+Pt
+         YotJSEW6axJJgtHKEXG7fiGys/ouDTStdxtGPVis3iQZkOKyxhfTnIwxozlgTouj1ejO
+         iS3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763737722; x=1764342522;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GXeMU2t/+YocV/lrKmcdn7FJ/vQLkZ3h6b3+GNAWoV4=;
+        b=PF9sI+kTS6Scs7h3MpRQbqu/OVz9voCmxPvKSVOHjwxEbSYkQyXggPcrnPFbDe6MJU
+         cEwu/smt3ziYY3a9lrdb7gQLunQlBmGird8kI/1DjePfcPc8dsMLFTviENxqeqQ4hr8+
+         ugH6vP03LXY06EHD7ilzi4i4zKE7YcDE8cctH22IfjdcRrBwFD/Z5JhoCXscrNb3aEb2
+         t5XyagMbQ32Vl67LSauOz5mrbbfmCR0rzeuvxt9tSOhGsc1LmLHtVqpi0vDVPgkEsWd/
+         +NzTmcq3nYGTmkGghH3RDJkclaNtX8b2OAuTODQFI1XCno8/e+WbEqVPeb/gO0cpuwbh
+         xErA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwW2UboE8Wqo9wOk2LQeKT9l3J9o9c6pY0WDMnfFDrDpI6JwPOjusjHbIpVXO6dT4MxU2brDAQPuDDQY5VMxfN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLrhputdOYh8kJ5KTD8bfp0W6ksWsS0/fjFWl9n3rZhslLUzb+
+	9zh+Wz43pQWPhVFpLYlSNxAczw+FFzgCRZcnRCxxrn5LCsJckLdnSeNIWR+uF3gqclRk2KhLJc1
+	0hczNzGrQb0lMV1bQAppl1jLyOf8QqfQ4NZ+H5GcZNwNqxnyr7W8Tf2V6XyjuMpYGh7e1O6kM
+X-Gm-Gg: ASbGnctGaGgsG099Pb/Ug2MYh2m1RU21hXRBhREMvleK5op7LYgQwbbE9NxtdFmxX+m
+	YFWiSOwpRDJUt+8tjAOEiI18tZ9tijeX4TCLzQuFKpS/lNCegFL+qVmHDg3o0rTVbb6X8vWRJE+
+	cngz2tT8GJyUd0y0yTUQfmMYYemQN4uwrAEoaU+vaNMSMv/NHO3zBauqJdvQjA9jGPz70OHdAON
+	WV7v91vE8i4pZaZwySre2FzCaag3MtWeOFjpkYmqa+QvN5KQIRb4nhQzFlEI/MI01y9cQPNRwNG
+	CpiH6iKtrl0gXBg2PcimC0unjaKa6uz+h9LyWzTuPfKoXzY0SHfCifZy+mwu9V2/uPABBBkam1V
+	UXcZRLxyGH58fXsiBvNQL8Q+ERkJVZCXeRiHVlUJVNZJnTrmFY5iEW8KG5MTehqnj2vw=
+X-Received: by 2002:a05:6102:50a0:b0:5df:aa69:be98 with SMTP id ada2fe7eead31-5e1e6a6e492mr342514137.6.1763737722246;
+        Fri, 21 Nov 2025 07:08:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGO4HZ2HHfuPtxZw+pMyOmNu+f3imzE0i+3JXqRHNARVWLe23jAhWaT+EnRuJOBTWX+AoVknQ==
+X-Received: by 2002:a05:6102:50a0:b0:5df:aa69:be98 with SMTP id ada2fe7eead31-5e1e6a6e492mr342424137.6.1763737721446;
+        Fri, 21 Nov 2025 07:08:41 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7654d73430sm485852266b.24.2025.11.21.07.08.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Nov 2025 07:08:39 -0800 (PST)
+Message-ID: <238adfbb-3773-4318-93d3-b23697aa4b18@oss.qualcomm.com>
+Date: Fri, 21 Nov 2025 16:08:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 00/14] Peripheral Image Loader support for Qualcomm
+ SoCs running Linux host at EL2
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
+ <0156c327-b867-481e-af24-679f037bfa56@linaro.org>
+ <20251121113751.tnqw5abm5sd2rgr7@hu-mojha-hyd.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251121113751.tnqw5abm5sd2rgr7@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: urc_foSluQ9bcCmSCrBwg4sEpNk4RpE4
+X-Authority-Analysis: v=2.4 cv=SPlPlevH c=1 sm=1 tr=0 ts=6920807b cx=c_pps
+ a=P2rfLEam3zuxRRdjJWA2cw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=JSAmB6C2vfhm-E4Mg70A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=ODZdjJIeia2B_SHc_B0f:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIxMDExMCBTYWx0ZWRfX4VCW0oqRKniY
+ kgFVHZ1JuJXoP2uv6buUXrqkXBGD7nkfn+4UzYswOS4bUZIwZo7+zPXaW6UK3E4TeGK3wQ/5Mny
+ 7CevsMa4VYnjsKN0Uxw56o5vy+7XQGE3DFar8FyP38IlXv5Rt2Sd2aQxoI4iXjWi0pplo11SJ5O
+ 9/eMPlqubVyw6g55F/BEhmUFRx22WVFA3w7X8JXWnGmO149o0qU/+sgWq7hKWN3ufiXmof2Zdks
+ M5tH/SAkcIFGG6Xhl96dpuC6ZcdHZxLPHSGJsYYhDqWpFf2Mt3PFJTTi7QS6Q3XZ2o71Bw+m9Jg
+ yGKmsYxc9rSwuQfXEHMdUxpqwK1ALTDhQpC1Oa2JcoxAIz3Y575e/iDXqH/MoUzlWqRqC5uimz9
+ bIu6lcukp6UjZb5Xd6wHzDJWdMBQWQ==
+X-Proofpoint-GUID: urc_foSluQ9bcCmSCrBwg4sEpNk4RpE4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-21_04,2025-11-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511210110
 
-Microchip family of RISC-V SoCs typically have one or more
-clusters. These clusters can be configured to run in an Asymmetric
-Multi Processing (AMP) mode where clusters are split in independent
-software contexts.
+On 11/21/25 12:37 PM, Mukesh Ojha wrote:
+> On Fri, Nov 21, 2025 at 11:27:57AM +0000, Bryan O'Donoghue wrote:
+>> On 21/11/2025 11:01, Mukesh Ojha wrote:
+>>> In May 2025, we discussed the challenges at Linaro Connect 2025 [1]
+>>> related to Secure PAS remoteproc enablement when Linux is running at EL2
+>>> for Qualcomm SoCs.
+>>>
+>>> [1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
+>>>
+>>> Below, is the summary of the discussion.
+>>>
+>>> Qualcomm is working to enable remote processors on the SA8775p SoC with
+>>> a Linux host running at EL2. In doing so, it has encountered several
+>>> challenges related to how the remoteproc framework is handled when Linux
+>>> runs at EL1.
+>>>
+>>> One of the main challenges arises from differences in how IOMMU
+>>> translation is currently managed on SoCs running the Qualcomm EL2
+>>> hypervisor (QHEE), where IOMMU translation for any device is entirely
+>>> owned by the hypervisor. Additionally, the firmware for remote
+>>> processors does not contain a resource table, which would typically
+>>> include the necessary IOMMU configuration settings.
+>>>
+>>> Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
+>>> Authentication Service (PAS) from TrustZone (TZ) firmware to securely
+>>> authenticate and reset remote processors via a single SMC call,
+>>> _auth_and_reset_. This call is first trapped by QHEE, which then invokes
+>>> TZ for authentication. Once authentication is complete, the call returns
+>>> to QHEE, which sets up the IOMMU translation scheme for the remote
+>>> processors and subsequently brings them out of reset. The design of the
+>>> Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+>>> is not permitted to configure IOMMU translation for remote processors,
+>>> and only a single-stage translation is configured.
+>>>
+>>> To make the remote processor bring-up (PAS) sequence
+>>> hypervisor-independent, the auth_and_reset SMC call is now handled
+>>> entirely by TZ. However, the issue of IOMMU configuration remains
+>>> unresolved, for example a scenario, when KVM host at EL2 has no
+>>> knowledge of the remote processors’ IOMMU settings.  This is being
+>>> addressed by overlaying the IOMMU properties when the SoC runs a Linux
+>>> host at EL2. SMC call is being provided from the TrustZone firmware to
+>>> retrieve the resource table for a given subsystem.
+>>>
+>>> There are also remote processors such as those for video, camera, and
+>>> graphics that do not use the remoteproc framework to manage their
+>>> lifecycle. Instead, they rely on the Qualcomm PAS service to
+>>> authenticate their firmware. These processors also need to be brought
+>>> out of reset when Linux is running at EL2. The client drivers for these
+>>> processors use the MDT loader function to load and authenticate
+>>> firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
+>>> to retrieve the resource table, create a shared memory bridge
+>>> (shmbridge), and map the resources before bringing the processors out of
+>>> reset.
+>>>
+>>> It is based on next-20251120 and tested on SA8775p which is now called
+>>> Lemans IOT platform and does not addresses DMA problem discussed at
+>>> [1] which is future scope of the series.
+>>>
+>>> Changes in v8: https://lore.kernel.org/lkml/20251113-kvm-rproc-v7-v7-0-df4910b7c20a@oss.qualcomm.com/
+>>>   - Addressed suggestion from Stephen which was regarding commit message(9/14),
+>>>     debug log(12/14) suggestion, and return type change(4/14).
+>>>   - Added R-b tag on 10/14 .
+>> Sorry.
+>>
+>> Did we actually come up with a cogent reason to omit the video firmware
+>> loading here ?
+>>
+>> AFAIU it is required for Lemans and Glymur - leaving it out is blocking
+>> getting video stuff done and storing up trouble.
+>>
+>> What exactly is the blockage - is it something you want help with ?
+> 
+> I replied to you here[1] and given my reason..till something concluded on
+> "multi-cell IOMMU[2]", I can not add video and block what is working
+> already.
+> 
+> [1]
+> https://lore.kernel.org/lkml/20251105081421.f6j7ks5bd4dfgr67@hu-mojha-hyd.qualcomm.com/
+> 
+> [2]
+> https://lore.kernel.org/lkml/cover.1762235099.git.charan.kalla@oss.qualcomm.com/
 
-Add a remoteproc platform driver to be able to load and boot firmware
-to remote processors.
+I see that the following files call qcom_scm_pas_auth_.*():
 
-The driver uses SBI (RISC-V Supervisor Binary Interface) ecalls to
-request software running in machine privilege mode (M-mode) to
-start/stop the remote processor.
+drivers/firmware/qcom/qcom_scm.c
+drivers/gpu/drm/msm/adreno/adreno_gpu.c
+drivers/media/platform/qcom/iris/iris_firmware.c
+drivers/media/platform/qcom/venus/firmware.c
+drivers/net/ipa/ipa_main.c
+drivers/net/wireless/ath/ath12k/ahb.c
+drivers/remoteproc/qcom_q6v5_pas.c
+drivers/remoteproc/qcom_wcnss.c
 
-Inter-processor communication is supported through the
-virtio rpmsg stack using shared memory and the Microchip IPC mailbox
-driver.
+iris is difficult, rproc is done, adreno doesn't need it..
 
-Currently, the driver the following features are supported:
-- Start/stop a remote software context
-- Kick function implementation for RPMsg Communication
-- Attach to a remote context loaded by another entity (bootloader)
+would ath12k_ahb or IPA be affected by this series as well?
 
-Error Recovery and Power Management features are not currently supported.
-
-Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
----
- drivers/remoteproc/Kconfig                   |  12 +
- drivers/remoteproc/Makefile                  |   1 +
- drivers/remoteproc/mchp_ipc_sbi_remoteproc.c | 465 +++++++++++++++++++
- 3 files changed, 478 insertions(+)
- create mode 100644 drivers/remoteproc/mchp_ipc_sbi_remoteproc.c
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 48a0d3a69ed0..68bd68f553ea 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -54,6 +54,18 @@ config INGENIC_VPU_RPROC
- 	  This can be either built-in or a loadable module.
- 	  If unsure say N.
- 
-+config MCHP_IPC_SBI_REMOTEPROC
-+	tristate "Microchip IPC remoteproc support"
-+	depends on MCHP_SBI_IPC_MBOX || COMPILE_TEST
-+	depends on ARCH_MICROCHIP
-+	help
-+	  Say y here to support booting and loading firmware to remote
-+	  processors on various Microchip family of RISC-V SoCs via the
-+	  remote processor framework.
-+	  This can be either built-in or a loadable module.
-+	  If compiled as module, the module will be called mchp_ipc_remoteproc.
-+	  If unsure say N.
-+
- config MTK_SCP
- 	tristate "Mediatek SCP support"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 1c7598b8475d..afb28dff5666 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
- obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
- obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
- obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
-+obj-$(CONFIG_MCHP_IPC_SBI_REMOTEPROC)	+= mchp_ipc_sbi_remoteproc.o
- obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
-diff --git a/drivers/remoteproc/mchp_ipc_sbi_remoteproc.c b/drivers/remoteproc/mchp_ipc_sbi_remoteproc.c
-new file mode 100644
-index 000000000000..55d182c1eee7
---- /dev/null
-+++ b/drivers/remoteproc/mchp_ipc_sbi_remoteproc.c
-@@ -0,0 +1,465 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Microchip IPC Remoteproc driver
-+ *
-+ * Copyright (c) 2021 - 2025 Microchip Technology Inc. All rights reserved.
-+ *
-+ * Author: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-+ *
-+ * Derived from the imx_rproc implementation:
-+ * Copyright (c) 2017 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+#include <linux/workqueue.h>
-+
-+#include <asm/sbi.h>
-+#include <asm/vendorid_list.h>
-+#include <linux/mailbox/mchp-ipc.h>
-+
-+#include "remoteproc_internal.h"
-+
-+#define SBI_EXT_MICROCHIP_TECHNOLOGY	(SBI_EXT_VENDOR_START | \
-+					 MICROCHIP_VENDOR_ID)
-+
-+#define MIV_RPROC_MEM_MAX		2
-+
-+enum {
-+	SBI_EXT_RPROC_STATE = 0x3,
-+	SBI_EXT_RPROC_START,
-+	SBI_EXT_RPROC_STOP,
-+};
-+
-+/**
-+ * enum mchp_ipc_rproc_mbox_messages - predefined mailbox messages
-+ *
-+ * @MCHP_IPC_RPROC_MBOX_READY: a ready message response from a remote context indicating
-+ * that the remote context is up and running.
-+ *
-+ * @MCHP_IPC_RPROC_MBOX_PENDING_MSG: Not currently in use, but reserved for future use
-+ * to inform the receiver that there is a message awaiting in its receive-side
-+ * vring. At the moment, one can explicitly send the index of the triggered
-+ * virtqueue as a payload.
-+ *
-+ * @MCHP_IPC_RPROC_MBOX_STOP: a stop request for the remote context
-+ *
-+ * @MCHP_IPC_RPROC_MBOX_END_MSG: Indicates end of known/defined messages.
-+ * This should be the last definition.
-+ *
-+ */
-+enum mchp_ipc_rproc_mbox_messages {
-+	MCHP_IPC_RPROC_MBOX_READY = 0xFFFFFF00,
-+	MCHP_IPC_RPROC_MBOX_PENDING_MSG = 0xFFFFFF01,
-+	MCHP_IPC_RPROC_MBOX_STOP = 0xFFFFFF02,
-+	MCHP_IPC_RPROC_MBOX_END_MSG = 0xFFFFFF03,
-+};
-+
-+enum {
-+	MCHP_IPC_RPROC_RSC_TABLE_REGION,
-+	MCHP_IPC_RPROC_FW_REGION,
-+	MCHP_IPC_RPROC_BUFF_REGION,
-+	MCHP_IPC_RPROC_VRING0_REGION,
-+	MCHP_IPC_RPROC_VRING1_REGION,
-+	MCHP_IPC_RPROC_REGION_MAX,
-+};
-+
-+struct mchp_ipc_rproc_mem_region {
-+	const char *name;
-+	const char *prefix;
-+};
-+
-+struct mchp_ipc_rproc {
-+	struct device *dev;
-+	struct rproc *rproc;
-+	struct mbox_chan *mbox_channel;
-+	struct workqueue_struct *workqueue;
-+	struct mbox_client mbox_client;
-+	struct completion start_done;
-+	struct work_struct rproc_work;
-+	struct mchp_ipc_msg message;
-+	void __iomem *rsc_table;
-+	bool initialized;
-+	u32 chan_id;
-+};
-+
-+static struct mchp_ipc_rproc_mem_region mchp_rproc_mem_regions[] = {
-+	[MCHP_IPC_RPROC_RSC_TABLE_REGION] = {
-+		.name = "rsc-table",
-+		.prefix = NULL,
-+	},
-+	[MCHP_IPC_RPROC_FW_REGION] = {
-+		.name = "firmware",
-+		.prefix = NULL,
-+	},
-+	[MCHP_IPC_RPROC_BUFF_REGION] = {
-+		.name = "buffer",
-+		.prefix = "vdev0",
-+	},
-+	[MCHP_IPC_RPROC_VRING0_REGION] = {
-+		.name = "vring0",
-+		.prefix = "vdev0",
-+	},
-+	[MCHP_IPC_RPROC_VRING1_REGION] = {
-+		.name = "vring1",
-+		.prefix = "vdev0",
-+	},
-+};
-+
-+static int mchp_ipc_rproc_start(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_START,
-+			priv->chan_id, rproc->bootaddr, 0, 0, 0, 0);
-+
-+	if (ret.error)
-+		return sbi_err_map_linux_errno(ret.error);
-+
-+	if (!wait_for_completion_timeout(&priv->start_done,
-+					 msecs_to_jiffies(5000))) {
-+		dev_err(priv->dev, "timeout waiting for ready notification\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_stop(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_STOP,
-+			priv->chan_id, MCHP_IPC_RPROC_MBOX_STOP, 0, 0, 0, 0);
-+
-+	if (ret.error)
-+		return sbi_err_map_linux_errno(ret.error);
-+
-+	return ret.value;
-+}
-+
-+static int mchp_ipc_rproc_mem_alloc(struct rproc *rproc, struct rproc_mem_entry *mem)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	void *va;
-+
-+	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
-+	va = ioremap_wc(mem->dma, mem->len);
-+	if (IS_ERR_OR_NULL(va)) {
-+		dev_err(dev, "Unable to map memory region: %p+%zx\n",
-+			&mem->dma, mem->len);
-+		return -ENOMEM;
-+	}
-+
-+	mem->va = va;
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_mem_release(struct rproc *rproc,
-+				      struct rproc_mem_entry *mem)
-+{
-+	dev_dbg(rproc->dev.parent, "unmap memory: %pad\n", &mem->dma);
-+	iounmap(mem->va);
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_prepare(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct device_node *np = priv->dev->of_node;
-+	struct rproc_mem_entry *mem;
-+	struct resource res;
-+	int i, ret;
-+
-+	reinit_completion(&priv->start_done);
-+
-+	for (i = 0; i < ARRAY_SIZE(mchp_rproc_mem_regions); i++) {
-+		char *mem_region_name = devm_kstrdup(priv->dev,
-+						     mchp_rproc_mem_regions[i].name, GFP_KERNEL);
-+		int index = of_property_match_string(np, "memory-region-names", mem_region_name);
-+
-+		if (index < 0)
-+			continue;
-+
-+		ret = of_reserved_mem_region_to_resource_byname(np, mem_region_name, &res);
-+		if (ret)
-+			return ret;
-+
-+		if (mchp_rproc_mem_regions[i].prefix) {
-+			mem_region_name = devm_kasprintf(priv->dev, GFP_KERNEL, "%s%s",
-+							 mchp_rproc_mem_regions[i].prefix,
-+							 mem_region_name);
-+		}
-+
-+		if (i == MCHP_IPC_RPROC_BUFF_REGION) {
-+			mem = rproc_of_resm_mem_entry_init(priv->dev, index, resource_size(&res),
-+							   res.start, mem_region_name);
-+		} else {
-+			mem = rproc_mem_entry_init(priv->dev, NULL,
-+						   (dma_addr_t)res.start,
-+						   resource_size(&res), res.start,
-+						   mchp_ipc_rproc_mem_alloc,
-+						   mchp_ipc_rproc_mem_release,
-+						   mem_region_name);
-+		}
-+		rproc_add_carveout(rproc, mem);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-+{
-+	int ret;
-+
-+	ret = rproc_elf_load_rsc_table(rproc, fw);
-+	if (ret)
-+		dev_info(&rproc->dev, "No resource table in elf\n");
-+
-+	return 0;
-+}
-+
-+static void mchp_ipc_rproc_kick(struct rproc *rproc, int vqid)
-+{
-+	struct mchp_ipc_rproc *priv = (struct mchp_ipc_rproc *)rproc->priv;
-+	struct mchp_ipc_msg msg;
-+	int ret;
-+
-+	msg.buf = (void *)&vqid;
-+	msg.size = sizeof(vqid);
-+
-+	ret = mbox_send_message(priv->mbox_channel, (void *)&msg);
-+	if (ret < 0)
-+		dev_err(priv->dev,
-+			"failed to send mbox message, status = %d\n", ret);
-+}
-+
-+static int mchp_ipc_rproc_attach(struct rproc *rproc)
-+{
-+	return 0;
-+}
-+
-+static struct resource_table
-+*mchp_ipc_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+
-+	if (!priv->rsc_table)
-+		return NULL;
-+
-+	*table_sz = SZ_1K;
-+	return (struct resource_table *)priv->rsc_table;
-+}
-+
-+static const struct rproc_ops mchp_ipc_rproc_ops = {
-+	.prepare = mchp_ipc_rproc_prepare,
-+	.start = mchp_ipc_rproc_start,
-+	.get_loaded_rsc_table = mchp_ipc_rproc_get_loaded_rsc_table,
-+	.attach = mchp_ipc_rproc_attach,
-+	.stop = mchp_ipc_rproc_stop,
-+	.kick = mchp_ipc_rproc_kick,
-+	.load = rproc_elf_load_segments,
-+	.parse_fw = mchp_ipc_rproc_parse_fw,
-+	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-+	.sanity_check = rproc_elf_sanity_check,
-+	.get_boot_addr = rproc_elf_get_boot_addr,
-+};
-+
-+static void mchp_ipc_rproc_vq_work(struct work_struct *work)
-+{
-+	struct mchp_ipc_rproc *priv = container_of(work, struct mchp_ipc_rproc, rproc_work);
-+	struct device *dev = priv->rproc->dev.parent;
-+
-+	u32 msg = priv->message.buf[0];
-+
-+	/*
-+	 * Currently, we are expected to receive the following messages
-+	 * from the remote cluster: a ready message or receive the index
-+	 * of the triggered virtqueue as a payload.
-+	 * We can silently ignore any other type of mailbox messages since
-+	 * they are not meant for us and are meant to be received by the
-+	 * remote cluster only.
-+	 */
-+	switch (msg) {
-+	case MCHP_IPC_RPROC_MBOX_READY:
-+		complete(&priv->start_done);
-+		break;
-+	default:
-+		if (msg >= MCHP_IPC_RPROC_MBOX_READY && msg < MCHP_IPC_RPROC_MBOX_END_MSG)
-+			return;
-+		if (msg > priv->rproc->max_notifyid) {
-+			dev_info(dev, "dropping unknown message 0x%x", msg);
-+			return;
-+		}
-+		/* msg contains the index of the triggered vring */
-+		if (rproc_vq_interrupt(priv->rproc, msg) == IRQ_NONE)
-+			dev_dbg(dev, "no message was found in vqid %d\n", msg);
-+	}
-+}
-+
-+static void mchp_ipc_rproc_rx_callback(struct mbox_client *mbox_client, void *msg)
-+{
-+	struct rproc *rproc = dev_get_drvdata(mbox_client->dev);
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+
-+	priv->message = *(struct mchp_ipc_msg *)msg;
-+	queue_work(priv->workqueue, &priv->rproc_work);
-+}
-+
-+static int mchp_ipc_rproc_mbox_init(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct device *dev = priv->dev;
-+	struct mchp_ipc_sbi_chan *chan_priv;
-+	struct mbox_client *mbox_client;
-+
-+	mbox_client = &priv->mbox_client;
-+	mbox_client->dev = dev;
-+	mbox_client->tx_block = true;
-+	mbox_client->tx_tout = 100;
-+	mbox_client->knows_txdone = false;
-+	mbox_client->rx_callback = mchp_ipc_rproc_rx_callback;
-+
-+	priv->mbox_channel = mbox_request_channel(mbox_client, 0);
-+	if (IS_ERR(priv->mbox_channel))
-+		return dev_err_probe(mbox_client->dev,
-+				     PTR_ERR(priv->mbox_channel),
-+				     "failed to request mailbox channel\n");
-+
-+	chan_priv = (struct mchp_ipc_sbi_chan *)priv->mbox_channel->con_priv;
-+	priv->chan_id = chan_priv->id;
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_get_state(u32 chan)
-+{
-+	struct sbiret ret;
-+
-+	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_STATE,
-+			chan, 0, 0, 0, 0, 0);
-+
-+	if (ret.error)
-+		return sbi_err_map_linux_errno(ret.error);
-+
-+	return ret.value;
-+}
-+
-+static int mchp_ipc_rproc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct mchp_ipc_rproc *priv;
-+	struct rproc *rproc;
-+	struct resource res;
-+	int num_rmems, ret;
-+
-+	rproc = devm_rproc_alloc(dev, np->name, &mchp_ipc_rproc_ops,
-+				 NULL, sizeof(*priv));
-+	if (!rproc)
-+		return -ENOMEM;
-+
-+	priv = rproc->priv;
-+	priv->rproc = rproc;
-+	priv->dev = dev;
-+
-+	num_rmems = of_property_count_elems_of_size(np, "memory-region",
-+						    sizeof(phandle));
-+	if (num_rmems < 1)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "device needs at least one memory regions to be defined\n");
-+
-+	ret = of_reserved_mem_region_to_resource_byname(np, "rsc-table", &res);
-+	if (!ret) {
-+		priv->rsc_table  = devm_ioremap_resource(dev, &res);
-+		if (IS_ERR(priv->rsc_table)) {
-+			return dev_err_probe(dev, PTR_ERR(priv->rsc_table),
-+					     "failed to map resource table\n");
-+		}
-+	}
-+
-+	priv->workqueue = create_workqueue(dev_name(dev));
-+	if (!priv->workqueue)
-+		return dev_err_probe(dev, -ENOMEM, "cannot create workqueue\n");
-+
-+	INIT_WORK(&priv->rproc_work, mchp_ipc_rproc_vq_work);
-+	init_completion(&priv->start_done);
-+
-+	ret = mchp_ipc_rproc_mbox_init(rproc);
-+	if (ret)
-+		goto err_put_wkq;
-+
-+	/*
-+	 * Check if the remote cluster has been booted by another entity
-+	 * (i.e. bootloader) and set rproc state accordingly
-+	 */
-+	rproc->state = mchp_ipc_rproc_get_state(priv->chan_id);
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret, "Couldn't get cluster boot mode\n");
-+		goto err_put_mbox;
-+	}
-+
-+	if (rproc->state != RPROC_DETACHED)
-+		rproc->auto_boot = false;
-+
-+	/* error recovery is not supported at present */
-+	rproc->recovery_disabled = true;
-+
-+	dev_set_drvdata(dev, rproc);
-+
-+	ret = devm_rproc_add(dev, rproc);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "rproc_add failed\n");
-+		goto err_put_mbox;
-+	}
-+
-+	return 0;
-+
-+err_put_mbox:
-+	mbox_free_channel(priv->mbox_channel);
-+err_put_wkq:
-+	destroy_workqueue(priv->workqueue);
-+
-+	return ret;
-+}
-+
-+static void mchp_ipc_rproc_remove(struct platform_device *pdev)
-+{
-+	struct rproc *rproc = platform_get_drvdata(pdev);
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+
-+	mbox_free_channel(priv->mbox_channel);
-+	destroy_workqueue(priv->workqueue);
-+}
-+
-+static const struct of_device_id mchp_ipc_rproc_of_match[] __maybe_unused = {
-+	{ .compatible = "microchip,ipc-sbi-remoteproc", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mchp_ipc_rproc_of_match);
-+
-+static struct platform_driver mchp_ipc_rproc_driver = {
-+	.probe = mchp_ipc_rproc_probe,
-+	.remove = mchp_ipc_rproc_remove,
-+	.driver = {
-+		.name = "microchip-ipc-rproc",
-+		.of_match_table = of_match_ptr(mchp_ipc_rproc_of_match),
-+	},
-+};
-+
-+module_platform_driver(mchp_ipc_rproc_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Valentina Fernandez <valentina.fernandezalanis@microchip.com>");
-+MODULE_DESCRIPTION("Microchip IPC Remote Processor control driver");
--- 
-2.34.1
-
+Konrad
