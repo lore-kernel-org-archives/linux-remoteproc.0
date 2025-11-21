@@ -1,429 +1,290 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D1C23242D6;
-	Fri, 21 Nov 2025 09:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763718283; cv=fail; b=ZC1ugWsNfaC8Z907ssLXWcL3y6cXhIKx4tEUEdhU5/vs1J4Icm1+vwS0eVp9tJ3oxdeaZQVWV/BVxE1dChJF45YxCj9pM2aCHNYUm96zwPKB23A1VnFL9HTcleHHJPLclQQ2QYMHe9m7DRMVyaJ15QDdXNGFvU9lVVFflNmMxWQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763718283; c=relaxed/simple;
-	bh=9qoXC8gAU0jNZiko92bU8gPrZYGjVn61EJ+CtnEsqMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=a0mQ6e4HbVUo6QHTAQNWmH9Cey4EyIm06D2IH8Zjz7Gmwgat/T3TsAVAyOIiORX0dmuw4wV+V3I6il4Hb2J7PrFnut8vbgzsjMl24ZKT/fiKGc7yz6h3FQECfqyuaC7suLl2bZpSLlu71UrJDRff6byDeN0B4FwxpvGvE3Burbs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=SYgMN3AP; arc=fail smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF80C3451D1
+	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 11:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1763722888; cv=none; b=UqqqG7MQr0FNlDa7z8J1TQl8i1R2kWoguruz2mNJI6/Au+yQN26Qd6fPQwmLqESWuPDj2LMYPGqeVyR819VBqM3gG+naVdFLn9gRysDHgRgqcSY8qxyWsivi6hGqRQZQcByzoaB0PhH8iDwCj+3jYr4gk3acU7G1YyJWM97jN3w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1763722888; c=relaxed/simple;
+	bh=0syRGPa2tBhcuS8yaBU/aDfg/wqrjnmb4AHTzhL5kAE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uDFXyidFpYiUv9qLm642U8YuN0rnVE23M1K6YkdqufVnRHYvuEERJNKJggmUcrZgTjQzAci2eORcZaaN2ij2yJRzD6sT1eqlk4Vzla3LBlntjTdw+DCIb/q9U0fK/lOtPZTSm5Mg7yaLv8OE+Lp1amdMeaWDHABBzqdiwqKcPHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=V4M/xzHN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UARnQWud; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="SYgMN3AP"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AL9PHDw3140659;
-	Fri, 21 Nov 2025 10:44:18 +0100
-Received: from as8pr04cu009.outbound.protection.outlook.com (mail-westeuropeazon11011002.outbound.protection.outlook.com [52.101.70.2])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4ahfcq0psj-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 21 Nov 2025 10:44:18 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z7lJyqKF6pRBTALlNcCa7vSvVzooBU5IeFc1rvXVZ4MggzX8tc0ShiNcgFRyApNglyRiWWoYGmDCzG2EnxI7bGHuesZAFEyXzij5ufbSQlHYtOsCbORC8cuBo9zugrgpe16/U+ezZ/oE1qVfR7G44pv3v2TI3aLIqu0/vvd00L/BmFL7pcyThdVrJBOAJ2/kmCTutKJ5Ak5UnUsuWgVcykpD+3AOuRHYRhhzMKf8epevF+EADqlg6df5xytAcWbdivpLRfVmSQXllolhE/3C5OgqQxwzt7TFHVDfqBJrs3B+GAJos540KRnlmei5cPu8qR6IRPqhKU+hx5xLt/Xjxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HKqTgzvx7a9ps4rAT3RFzl6tdtOFmO8fAeo/zifdS8A=;
- b=eAhje/YiKTTmGip2baXP76oDpUvXEm6fZCoxFtpXij7Seq0//eTmzRYBpyMhwz5BSiFmTZhMBlFghDd0JOoO73FtEhiEBRX63ByA0LbfzbT6zi616CWbONPz4wgQS8NPT+aT7t7fL6eB/wSfLdRe241DYpXzhWOPqrOVBrB9OZ2JCD9SxvvbwlTvLwFZf0kgRVxTD335B7fUiZ46/q2ctNyixVvyw6cpR9z+8yRv1bZyx65c6J6VGDKgR12Q1yDuQfz2sZ7EXfMfNVYZFHwqSgJaXvfwq/jZwvO8Efsi7j1pu9la5uT9eZXqnB6gd/7rId9bmCoAn5VtptWf9lTaYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=amd.com smtp.mailfrom=foss.st.com; dmarc=fail
- (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HKqTgzvx7a9ps4rAT3RFzl6tdtOFmO8fAeo/zifdS8A=;
- b=SYgMN3APwayDj1/IZOoEl3DlVUSE6u0AXQD/815buLU8Rrv6tHLEHgmWSsN2tQ5SCePnxlkcQSQErDjJd3+SfZ0vwQHHZuRjwB0xJjz1Bawb1xzbq8WA5xLq/LbUf6B355OT3bbdgk1Ca+J33OwLCrRGgsoEayX7zAW0cbFzW0DKA+bKxiQ3Ko6y+4ufFw1GyEmJkCi3/OHRstOhAGUMpGCZ05qqeibfc4/AasyykUlTorlW/Xl8fE1AnILmm0HtHkrhBkYVewCEKI2okN/cKRSwMjSueG44A+AZKPOFYYd48dGc/f2X8Vab6OoPaQDxXTo8vXPn9VJq9V/+h1hxOQ==
-Received: from AM0PR04CA0070.eurprd04.prod.outlook.com (2603:10a6:208:1::47)
- by VI1PR10MB3296.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:131::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.11; Fri, 21 Nov
- 2025 09:44:13 +0000
-Received: from AM2PEPF0001C710.eurprd05.prod.outlook.com
- (2603:10a6:208:1:cafe::c9) by AM0PR04CA0070.outlook.office365.com
- (2603:10a6:208:1::47) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.11 via Frontend Transport; Fri,
- 21 Nov 2025 09:44:13 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- AM2PEPF0001C710.mail.protection.outlook.com (10.167.16.180) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9343.9 via Frontend Transport; Fri, 21 Nov 2025 09:44:13 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 21 Nov
- 2025 10:44:38 +0100
-Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 21 Nov
- 2025 10:44:12 +0100
-Message-ID: <0a2b9fe6-d8b2-42d6-b6b3-9a94a82c6738@foss.st.com>
-Date: Fri, 21 Nov 2025 10:44:12 +0100
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="V4M/xzHN";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UARnQWud"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AL9SZfB3541532
+	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 11:01:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6/NtCfE4eOOvvl6/BrqIrA
+	5GDBEKituqahdRPxRKqTg=; b=V4M/xzHN7LMYwrqx2sYjXRcYvDaAMttc4AiyYr
+	HQ/ayfnliBUiHMZq/GaQYIDyCjRmc6VYlatzqGE9Ufgpsois1bZjYm8F1jyOfj4z
+	hUCF9RQN/j0sKsmFNAg/ESiLOIvt8mryZUcjxEfYXI2Na6Hz6MEatiXIHUabbLs0
+	+6mzxLMDzQ3miiSBpcCmCb2mwzuQXc4eCoLOkuAlxz8mQ+1ON0Zo+VhjjPEFM4CC
+	Wp90Skm/XKX2VoDU65vgZJIauAkML0ub1LgL0YaZvRcAgBFM1BkDN8HGXHs9RVkG
+	a/my0Pb+HXcVJhGv7kccJL74zIEf9bS8sCgQo+TwZ7qRtgaw==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ajng009jg-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 11:01:25 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-343823be748so2097462a91.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 21 Nov 2025 03:01:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763722885; x=1764327685; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6/NtCfE4eOOvvl6/BrqIrA5GDBEKituqahdRPxRKqTg=;
+        b=UARnQWudTofBN6QG5QlMCYVlYZk0UMxnobXKmd5pJ1fJI6IYdO3Y7h/s2iI/lJOCrm
+         RyQxXngs8UehrrvPUNqhaVp5laRudjR/IM+ip87NfkswBJitIWHJXqT8rGmOL5GcLbz4
+         8Z+3nC9XKCzPvqCU1vyGNWJrX/C/iA4diWwflarJ3Bc3UBslDuXxDZn0TvwHRgNjlP3/
+         geDqkzmq3GxY3251HjHRbfbpot2rkScl88Fx5+2tO++NtFI8gmgH1DAvS2uT/ScVLB/8
+         9so2v8uRQlJs0gpP8OtLqwIBKKnXWXxb6Y4e/pDkZv8umKvIfDubaFpwkpo0PuHOaEB0
+         ajTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763722885; x=1764327685;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6/NtCfE4eOOvvl6/BrqIrA5GDBEKituqahdRPxRKqTg=;
+        b=dgdYGKw6lTymbAj3WR7dCAt46ZEZM9rytrp14UHNYl3KB/LPx+LAONpe3654DG84bT
+         /2o69/IxnT7M0B96m1oibRFvz44xEFWPh5MfEo6YZGC978MSSSP76io6Mj02WmdbB4Gg
+         RUlSeKVoHCUt5Nf5uoAjUfdnCjSY9f8+HbChpmi7XYKNipava/n7ufKNVPnIbONzYrfC
+         z6Ao7NNISYroDLq/pfiaRWGgikmSQ8j/SDP/WWJ6qaDxS3JgxsCDn6miA+6Fc9evHllI
+         9z/JQYQmzztmA5MvvEnSnytxF/3bvutHzJqoT3u9t+gILFAYSqS6QDAQBrPZvZElmG6m
+         W82Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUYi+7bPxvS93c0zWUK9vg0TA8J/AtkOOVPR15bugDOyqRn/bCZnE88OBAIgBompEPGWLMw6saytLpHZcvHgEwF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJPAq7ItH9lAMGZxKmrSIzDPKRlDneM1/BbO+UGSBcZUMqkPrx
+	WppnPfccE4OzYyzVBh78zTk6vsI6+3QsAfB5MV2A7a3PgoakdrvG4q/hD3n3vvv2mSN6O1z5Cxs
+	1jxarbtxEWvZ82kN0aS+4kBuu8lUpbJnL+p5cOOruKPf1ewo+IPYy3fiBkVM4lDdUsa4wdfgE
+X-Gm-Gg: ASbGncuHQkDeXYfGnZERSpXEideHD4bXtpX6U5VvFJDIbNyeCx7UeASPzDjd/M7WFdy
+	r1yaThgMTUy1zQlWjeGPr61SMD57rBwNYfBUSAxiOO8rt1H4XoCuLKDGxIR1poabnPstbuIwlLG
+	dqLnlHGqqHnDocrN8Xcw/4DHbetLa2SOzkbf8wJVUKGmmiQeSmBUwKWbr5JGiqrVDGKLCoJKAsW
+	BKUCrds3dYyUEtHrcp43fuDjDqJy0NyINwD7rQ4SRFhPtCvCBV7lh5An9ayiQ9tdBIbiBixCNpB
+	nNKj0ywlPyeCMnTe8Bmx2u3Hn96Q/xpFY65HPahFsdgK6l3YHml/pijju7aZ5gAEpeGtMOJOSCb
+	vHvx8K7JpmhI34vW0wKpvvabsKs7YuIi3OCze
+X-Received: by 2002:a17:90b:3d92:b0:340:4abf:391d with SMTP id 98e67ed59e1d1-34733e5d7c0mr2347742a91.16.1763722884150;
+        Fri, 21 Nov 2025 03:01:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH4EKY7MSLgTkKfk25ptNCqYPzEjYm4XjjCzOGQMz/G9K8eq3yeBgARKx61LheDDQVki2IjnA==
+X-Received: by 2002:a17:90b:3d92:b0:340:4abf:391d with SMTP id 98e67ed59e1d1-34733e5d7c0mr2347641a91.16.1763722883371;
+        Fri, 21 Nov 2025 03:01:23 -0800 (PST)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34727d5208csm5191165a91.15.2025.11.21.03.01.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Nov 2025 03:01:22 -0800 (PST)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH v8 00/14] Peripheral Image Loader support for Qualcomm SoCs
+ running Linux host at EL2
+Date: Fri, 21 Nov 2025 16:31:02 +0530
+Message-Id: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] rpmsg: virtio_rpmsg_bus: get buffer size from
- config space
-To: Tanmay Shah <tanmay.shah@amd.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>, <mst@redhat.com>, <jasowang@redhat.com>,
-        <xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <virtualization@lists.linux.dev>, <xiaoxiang@xiaomi.com>,
-        Xiang Xiao
-	<xiaoxiang781216@gmail.com>
-References: <20251114184640.3020427-1-tanmay.shah@amd.com>
- <20251114184640.3020427-3-tanmay.shah@amd.com>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <20251114184640.3020427-3-tanmay.shah@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM2PEPF0001C710:EE_|VI1PR10MB3296:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08e43389-18bb-4b5c-8128-08de28e2876f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|1800799024|376014|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Mng1RTlkck9pa0lUWThaellPd0ZjRzNMSXpHdUQ3YzBxT0huenRYRk1kZFFs?=
- =?utf-8?B?OUh6WDNLMkhqMW0xQXkxdEczUGZTYTFDcHJNNW56dWE5STlJei93dEJ4aEky?=
- =?utf-8?B?OU1yM0J2U2haSVJlVnVCK241K3lWd2pTNUZTTXd3TXY0eE53aHA4QnJ6K2dT?=
- =?utf-8?B?cGlUTmY3TzJlaFM2a0hUd25rKy9NQmhiOElmNDFUeEYrSGRqVFFRWUxNcVlx?=
- =?utf-8?B?QjA4N1NZNjdjOGN1bjhoMkRkV0UxUldYbU0zanN1SloyVW9SQ0pKT2M0U3pF?=
- =?utf-8?B?ZG5ydmUxM0daSWJuNWpyY3BOZlBiV05DOE9mRkRGaDFIOEdENkFSaU5NcHBu?=
- =?utf-8?B?eHZuTFg3dDVWdHBEcE1oNEtBTmI2RVJTanhrOFRwTXp1bUdWUDQzUGRpbk9q?=
- =?utf-8?B?QXd2cUMza0x5VE13MkJWck9BWnZrSE9ycjYxTFArenZveUU1MUlHWkVnSUhn?=
- =?utf-8?B?aU10cE1wRzAzblA5YmkwOG5aWlFDYllLbzlpcnB3cXM5dVNFc0hHaEtuSlov?=
- =?utf-8?B?b3hseXNualU1aTJ1M3VBME0xdHJ4am0yZVFvNEpVMG1HQWxuYVp4U2o0ODJV?=
- =?utf-8?B?TWVjSUhoK3lpb0lGWHE1dmtGSkZ2d1JkTXZwSGJSZmVjRzVvWitUa3Y5NHZy?=
- =?utf-8?B?azJSN3dacEZ3Mjh2ZTdQaFVYaHNWdmhhWmZiNzZMUDcvMGhESmsyMXB4eWtT?=
- =?utf-8?B?Uytub3M5OUpGMG5LdGtkREdsWDZ1aVpSNHlCSTNDVm5mbUFlQ1V5MUcyd2Mz?=
- =?utf-8?B?SWNJNTY0R1VKYTVyNnBTWnBrZmZYRnBuM29HR2tFdlBvN2xWRjYrR3Znb0tU?=
- =?utf-8?B?YUtOZFlTdzdQTzBYM1BERlF0bzNVbXNDNTdQSVp4aEVrbkhEVlVTNjg4V0o1?=
- =?utf-8?B?STJsTmhITldlR294c1l2MWhqY1hXN0ZXRzZHZTlyTVNQZFRRTkpqOUxLZXdN?=
- =?utf-8?B?bDFWWWFUZnZpcGZaYXdwY3lpVmdVOUtTVzh4K1VhMlBQVHFENUdYOCtnWUhz?=
- =?utf-8?B?cThOZVAzZVAxT1cwazBELzRhUy9QL3loRFErOTdmTERTeXFJVVkrbGhQeFUr?=
- =?utf-8?B?ZmtJeFNoRnFhbnRYcy80R09wenlqOW9ueURlelhya0xmRVFVcGhVZDhhZDVq?=
- =?utf-8?B?NkFvSzNtcEhLQlNjdUFoajloVTZxeFAzbmZGbHpWbjVzNTl0M3MrY3QxRVZC?=
- =?utf-8?B?bGxBcGEyQmRmR3A4V09MbzhJUGYxcE5UVzhNcnFEWENzT0VVaDZiT3BTdlhM?=
- =?utf-8?B?Y0hVMGVNQlVmRkN3MjNQc2ZpcXZKQTV1Snd0T1Jlem13aFZEb29HTmNJZ21G?=
- =?utf-8?B?eitYWE1pTXJCNmVkcXl1eXdMZSs5aUJLTjhqWWlsbThyQnFYRk9kdThQQzh0?=
- =?utf-8?B?eHNOa285cDhqaG8xOUlhRDByS2NzRGNuK1NvOUhjWXQrNVViUVdLOVlwbUJ3?=
- =?utf-8?B?djdXV1RkelN5YmdQTUxlZGxUYWlFdHl6UncyNEdOdEZaeGM4OHF3Tk50Wm1E?=
- =?utf-8?B?TTZIZzNzZG1Oa1hDSjZzdDBGR3cvZW02ZlI2UVl5VW5YTjliSG16NWhHT3RH?=
- =?utf-8?B?dEJ0Q3dPdFU1NHczMVNZd1R0NndRczg4WGxBNWVMUEpjQVhSV3ZHbUtkSDli?=
- =?utf-8?B?L0t5Q0pvdWRLMWxHdm5mb3RMeDZIc2dpanRTQzVtSWhZVVZnTjk2WDF1b2Y3?=
- =?utf-8?B?d1d6Q09wZkFLb2c1WVB5clkxQmZuNUxramlpcVViL2NydzlTYUtmUFlUVlVv?=
- =?utf-8?B?cVRxYW5tQlJEN3FYWXBrQ3pmbWpPQThWdWNOc1dwTG5pZDZTSlBXbWxTRzU5?=
- =?utf-8?B?U2xWbHFZdGJTK1FWcExEMURtVUZqTXJJb0xOcEJjTGR2dEZkdkdqakViM0RJ?=
- =?utf-8?B?cGFxdS8yZFhodnJHTHNtWU1RTnlOK1lndEdrWFV1NDBtVWE1Yk5ObE5pQWxE?=
- =?utf-8?B?Z3FSRXRTT3U4YVJGK1BJZ1NTbUVFZ0E5NWUzaXNrY1MwaGxsd3F0akxBZXlO?=
- =?utf-8?B?elpqRUg5K210dWx5QmtSaHNnNjkrMjZTYVl3dWJHaUltcGFuc1FJbE16eFdO?=
- =?utf-8?B?WjQydlBFc3hDYnRxaHZ3NnRMZEhqSStXQktNTVlzWlIzb3ZYS3I5YUpTeU04?=
- =?utf-8?Q?7c6Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(1800799024)(376014)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2025 09:44:13.2305
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08e43389-18bb-4b5c-8128-08de28e2876f
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM2PEPF0001C710.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR10MB3296
-X-Authority-Analysis: v=2.4 cv=DNSCIiNb c=1 sm=1 tr=0 ts=69203472 cx=c_pps
- a=lTC8IeES+PzMwLEJ9HO3BQ==:117 a=uCuRqK4WZKO1kjFMGfU4lQ==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=FOPVHIcnkjUA:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=IeNN-m2dAAAA:8 a=zd2uoN0lAAAA:8
- a=j2MSVUfDAAAA:8 a=oGp5VSZPowymOWLuIFMA:9 a=QEXdDO2ut3YA:10
- a=9a3gGlFUS2ax-cngMeOV:22
-X-Proofpoint-GUID: 3pJ72A7S460aWc_9x3g-MkcWGNwucJy-
-X-Proofpoint-ORIG-GUID: 3pJ72A7S460aWc_9x3g-MkcWGNwucJy-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIxMDA3MyBTYWx0ZWRfXyzMkpG9BEO7V
- PpBIGunX1PeeNMCkN3MaAZi1ZundzZ7kthN9SGCHRYHPRDqIRcb1lKhNpjL/1N3ThOiGoppONpP
- SZ6kso0nOVGYhjQh7YT0GNE8AgcrAVgT6mJR+KMwJQp5mTVrOhS07D8bwMxrl6ezQW0YIUV2vXK
- 4Z92yrkS6S/KLvcYYyk2fMGrGKORezAVbLhTcSV4mHPExNslXYi3WFjX0Yss6m9wc07Td/BiCT7
- wt2edZhJkfzPYrgjsFhdOdZvw40LxrElwRLHq1HYRXV4A6ZVNIM6cRjndwU+hfbqoba7GVHqUzh
- ONtwlYlvjohqFCWyYAPK4AyApxizpYSLhYsv/dGh2pjNwMzNRVAnzmPLekGiHirTHspxb4tCy2j
- Ss6DDkuJj55w3ebK4cMwPLKp10597Q==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAG9GIGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyLHQUlJIzE
+ vPSU3UzU4B8JSMDI1NDQyND3eyy3PiigqL85PgyC11TM0MLAwMDYyPDtCQloJaCotS0zAqwcdG
+ xtbUA1ZI0kV4AAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14-dev-f7c49
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1763722879; l=8178;
+ i=mukesh.ojha@oss.qualcomm.com; s=20250708; h=from:subject:message-id;
+ bh=0syRGPa2tBhcuS8yaBU/aDfg/wqrjnmb4AHTzhL5kAE=;
+ b=13xomvLMM8Px5pPBQJF63HgN2TCM+0VNqn+YENmhtiSnnH1NXyS8tgC61kaN6e/UDH+OXVbg2
+ 5fdTFsCgBvvC0SIWDFLKMD0Lmy1fE3Uv95T9TGgnDlM5Jh5qw67ZnxE
+X-Developer-Key: i=mukesh.ojha@oss.qualcomm.com; a=ed25519;
+ pk=eX8dr/7d4HJz/HEXZIpe3c+Ukopa/wZmxH+5YV3gdNc=
+X-Proofpoint-ORIG-GUID: -KhWSnm6UWKBI8hw3m1joqNT9Y6LuY9c
+X-Authority-Analysis: v=2.4 cv=R+UO2NRX c=1 sm=1 tr=0 ts=69204685 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=xSRJaIKPBtGH_lneNy8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: -KhWSnm6UWKBI8hw3m1joqNT9Y6LuY9c
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIxMDA4NCBTYWx0ZWRfX6vP2YUqLwxes
+ fy1uhJC/IAad5tS6/uF4go4SdcDA68V9f7nl3KeVMh/Ah13zTCYiqQkIKMvy587oQkhOp2Q1wtj
+ 6KHX/voKVWRX/abvDwr25tK66rFu8hyL8IaDHJw2WkDPVKIj88PO8vNtzYxSabpNCIj5ahOK8s7
+ sM/sxmKA5EuzHBOSh7YeGmz5LkfkjyGr/HGl3tRFEIS7LG+Z+LszULugYaGfxJU/p8m7scSOCKo
+ PW9W81FvsltNWZ+enZqEI4daDnRmytvf9bt9UZEJqHPVG7LU1MsjxKzYRqFx9S+Gkb77cWdbLB9
+ OSMb5/8JIJQZuG3NXzh4srqKEM22zjCSIBYToGnl+xliE61JEOVvEgH71/fpVxgl3hNJpkEvBT5
+ xuiH0Di+fv15nEnhFZ/4iE9ysNxMyg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-21_03,2025-11-20_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
- priorityscore=1501 bulkscore=0 suspectscore=0 impostorscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 spamscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 suspectscore=0 malwarescore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511210073
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511210084
 
+In May 2025, we discussed the challenges at Linaro Connect 2025 [1] 
+related to Secure PAS remoteproc enablement when Linux is running at EL2
+for Qualcomm SoCs.
 
+[1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
 
-On 11/14/25 19:46, Tanmay Shah wrote:
-> From: Xiang Xiao <xiaoxiang781216@gmail.com>
-> 
-> 512 bytes isn't always suitable for all case, let firmware
-> maker decide the best value from resource table.
-> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
-> 
-> Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->   drivers/rpmsg/virtio_rpmsg_bus.c | 68 +++++++++++++++++++++++---------
->   include/linux/virtio_rpmsg.h     | 24 +++++++++++
->   2 files changed, 74 insertions(+), 18 deletions(-)
->   create mode 100644 include/linux/virtio_rpmsg.h
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index cc26dfcc3e29..03dd5535880a 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -25,6 +25,7 @@
->   #include <linux/sched.h>
->   #include <linux/virtio.h>
->   #include <linux/virtio_ids.h>
-> +#include <linux/virtio_rpmsg.h>
->   #include <linux/virtio_config.h>
->   #include <linux/wait.h>
->   
-> @@ -39,7 +40,8 @@
->    * @sbufs:	kernel address of tx buffers
->    * @num_rbufs:	total number of buffers for rx
->    * @num_sbufs:	total number of buffers for tx
-> - * @buf_size:	size of one rx or tx buffer
-> + * @rbuf_size:	size of one rx buffer
-> + * @sbuf_size:	size of one tx buffer
->    * @last_sbuf:	index of last tx buffer used
->    * @bufs_dma:	dma base addr of the buffers
->    * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
-> @@ -60,7 +62,8 @@ struct virtproc_info {
->   	void *rbufs, *sbufs;
->   	unsigned int num_rbufs;
->   	unsigned int num_sbufs;
-> -	unsigned int buf_size;
-> +	unsigned int rbuf_size;
-> +	unsigned int sbuf_size;
->   	int last_sbuf;
->   	dma_addr_t bufs_dma;
->   	struct mutex tx_lock;
-> @@ -70,9 +73,6 @@ struct virtproc_info {
->   	atomic_t sleepers;
->   };
->   
-> -/* The feature bitmap for virtio rpmsg */
-> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-> -
->   /**
->    * struct rpmsg_hdr - common header for all rpmsg messages
->    * @src: source address
-> @@ -130,7 +130,7 @@ struct virtio_rpmsg_channel {
->    * processor.
->    */
->   #define MAX_RPMSG_NUM_BUFS	(256)
-> -#define MAX_RPMSG_BUF_SIZE	(512)
-> +#define DEFAULT_RPMSG_BUF_SIZE	(512)
->   
->   /*
->    * Local addresses are dynamically allocated on-demand.
-> @@ -443,7 +443,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
->   
->   	/* either pick the next unused tx buffer */
->   	if (vrp->last_sbuf < vrp->num_sbufs)
-> -		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
-> +		ret = vrp->sbufs + vrp->sbuf_size * vrp->last_sbuf++;
->   	/* or recycle a used one */
->   	else
->   		ret = virtqueue_get_buf(vrp->svq, &len);
-> @@ -569,7 +569,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->   	 * messaging), or to improve the buffer allocator, to support
->   	 * variable-length buffer sizes.
->   	 */
-> -	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
-> +	if (len > vrp->sbuf_size - sizeof(struct rpmsg_hdr)) {
->   		dev_err(dev, "message is too big (%d)\n", len);
->   		return -EMSGSIZE;
->   	}
-> @@ -680,7 +680,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->   	struct rpmsg_device *rpdev = ept->rpdev;
->   	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
->   
-> -	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-> +	return vch->vrp->sbuf_size - sizeof(struct rpmsg_hdr);
->   }
->   
->   static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
-> @@ -706,7 +706,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->   	 * We currently use fixed-sized buffers, so trivially sanitize
->   	 * the reported payload length.
->   	 */
-> -	if (len > vrp->buf_size ||
-> +	if (len > vrp->rbuf_size ||
->   	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
->   		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
->   		return -EINVAL;
-> @@ -739,7 +739,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->   		dev_warn_ratelimited(dev, "msg received with no recipient\n");
->   
->   	/* publish the real size of the buffer */
-> -	rpmsg_sg_init(&sg, msg, vrp->buf_size);
-> +	rpmsg_sg_init(&sg, msg, vrp->rbuf_size);
->   
->   	/* add the buffer back to the remote processor's virtqueue */
->   	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-> @@ -888,9 +888,39 @@ static int rpmsg_probe(struct virtio_device *vdev)
->   	else
->   		vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
->   
-> -	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
-> +	/*
-> +	 * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
-> +	 * size from virtio device config space from the resource table.
-> +	 * If the feature is not supported, then assign default buf size.
-> +	 */
-> +	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
-> +		/* note: virtio_rpmsg_config is defined from remote view */
-> +		virtio_cread(vdev, struct virtio_rpmsg_config,
-> +			     txbuf_size, &vrp->rbuf_size);
-> +		virtio_cread(vdev, struct virtio_rpmsg_config,
-> +			     rxbuf_size, &vrp->sbuf_size);
-> +
-> +		/* The buffers must hold rpmsg header atleast */
+Below, is the summary of the discussion.
 
-typo:  /* The buffers must hold at least the rpmsg header */
-> +		if (vrp->rbuf_size < sizeof(struct rpmsg_hdr) ||
-> +		    vrp->sbuf_size < sizeof(struct rpmsg_hdr)) {
-> +			dev_err(&vdev->dev,
-> +				"vdev config: rx buf sz = %d, tx buf sz = %d\n",
+Qualcomm is working to enable remote processors on the SA8775p SoC with
+a Linux host running at EL2. In doing so, it has encountered several
+challenges related to how the remoteproc framework is handled when Linux
+runs at EL1.
 
-message could be more explicit: s/"vdev config:/"bad vdev config:/
+One of the main challenges arises from differences in how IOMMU
+translation is currently managed on SoCs running the Qualcomm EL2
+hypervisor (QHEE), where IOMMU translation for any device is entirely
+owned by the hypervisor. Additionally, the firmware for remote
+processors does not contain a resource table, which would typically
+include the necessary IOMMU configuration settings.
 
-> +				vrp->rbuf_size, vrp->sbuf_size);
-> +			err = -EINVAL;
-> +			goto vqs_del;
-> +		}
-> +
-> +		dev_dbg(&vdev->dev,
-> +			"vdev config: rx buf sz = 0x%x, tx buf sz = 0x%x\n",
-> +			vrp->rbuf_size, vrp->sbuf_size);
-> +	} else {
-> +		vrp->rbuf_size = DEFAULT_RPMSG_BUF_SIZE;
-> +		vrp->sbuf_size = DEFAULT_RPMSG_BUF_SIZE;
-> +	}
->   
-> -	total_buf_space = (vrp->num_rbufs + vrp->num_sbufs) * vrp->buf_size;
-> +	total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
-> +			  (vrp->num_sbufs * vrp->sbuf_size);
-> +	total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
+Qualcomm SoCs running with QHEE (EL2) have been utilizing the Peripheral
+Authentication Service (PAS) from TrustZone (TZ) firmware to securely
+authenticate and reset remote processors via a single SMC call,
+_auth_and_reset_. This call is first trapped by QHEE, which then invokes
+TZ for authentication. Once authentication is complete, the call returns
+to QHEE, which sets up the IOMMU translation scheme for the remote
+processors and subsequently brings them out of reset. The design of the
+Qualcomm EL2 hypervisor dictates that the Linux host OS running at EL1
+is not permitted to configure IOMMU translation for remote processors,
+and only a single-stage translation is configured.
 
-Needed? The allocator does not manage the page alignment?
+To make the remote processor bring-up (PAS) sequence
+hypervisor-independent, the auth_and_reset SMC call is now handled
+entirely by TZ. However, the issue of IOMMU configuration remains
+unresolved, for example a scenario, when KVM host at EL2 has no
+knowledge of the remote processors’ IOMMU settings.  This is being
+addressed by overlaying the IOMMU properties when the SoC runs a Linux
+host at EL2. SMC call is being provided from the TrustZone firmware to
+retrieve the resource table for a given subsystem.
 
->   
->   	/* allocate coherent memory for the buffers */
->   	bufs_va = dma_alloc_coherent(vdev->dev.parent,
-> @@ -908,14 +938,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
->   	vrp->rbufs = bufs_va;
->   
->   	/* and second part is dedicated for TX */
-> -	vrp->sbufs = bufs_va + vrp->num_rbufs * vrp->buf_size;
-> +	vrp->sbufs = bufs_va + (vrp->num_rbufs * vrp->rbuf_size);
->   
->   	/* set up the receive buffers */
->   	for (i = 0; i < vrp->num_rbufs; i++) {
->   		struct scatterlist sg;
-> -		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
-> +		void *cpu_addr = vrp->rbufs + i * vrp->rbuf_size;
->   
-> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
-> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rbuf_size);
->   
->   		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
->   					  GFP_KERNEL);
-> @@ -1001,8 +1031,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
->   static void rpmsg_remove(struct virtio_device *vdev)
->   {
->   	struct virtproc_info *vrp = vdev->priv;
-> -	unsigned int num_bufs = vrp->num_rbufs + vrp->num_sbufs;
-> -	size_t total_buf_space = num_bufs * vrp->buf_size;
-> +	size_t total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
-> +				 (vrp->num_sbufs * vrp->sbuf_size);
->   	int ret;
->   
->   	virtio_reset_device(vdev);
-> @@ -1015,6 +1045,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
->   
->   	vdev->config->del_vqs(vrp->vdev);
->   
-> +	total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
->   	dma_free_coherent(vdev->dev.parent, total_buf_space,
->   			  vrp->rbufs, vrp->bufs_dma);
->   
-> @@ -1028,6 +1059,7 @@ static struct virtio_device_id id_table[] = {
->   
->   static unsigned int features[] = {
->   	VIRTIO_RPMSG_F_NS,
-> +	VIRTIO_RPMSG_F_BUFSZ,
->   };
->   
->   static struct virtio_driver virtio_ipc_driver = {
-> diff --git a/include/linux/virtio_rpmsg.h b/include/linux/virtio_rpmsg.h
-> new file mode 100644
-> index 000000000000..6406bc505383
-> --- /dev/null
-> +++ b/include/linux/virtio_rpmsg.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+There are also remote processors such as those for video, camera, and
+graphics that do not use the remoteproc framework to manage their
+lifecycle. Instead, they rely on the Qualcomm PAS service to
+authenticate their firmware. These processors also need to be brought
+out of reset when Linux is running at EL2. The client drivers for these
+processors use the MDT loader function to load and authenticate
+firmware. Similar to the Qualcomm remoteproc PAS driver, they also need
+to retrieve the resource table, create a shared memory bridge
+(shmbridge), and map the resources before bringing the processors out of
+reset.
 
-This licensing seems reserved for the UAPIs
+It is based on next-20251120 and tested on SA8775p which is now called
+Lemans IOT platform and does not addresses DMA problem discussed at
+[1] which is future scope of the series.
 
-> +/*
-> + * Copyright (C) Pinecone Inc. 2019
-> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
-> + */
-> +
-> +#ifndef _LINUX_VIRTIO_RPMSG_H
-> +#define _LINUX_VIRTIO_RPMSG_H
-> +
-> +#include <linux/types.h>
-> +
-> +/* The feature bitmap for virtio rpmsg */
-> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-> +#define VIRTIO_RPMSG_F_BUFSZ	2 /* RP get buffer size from config space */
-> +
-> +struct virtio_rpmsg_config {
-> +	/* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
-> +	__u32 txbuf_size;
-> +	__u32 rxbuf_size;
-> +	__u32 reserved[14]; /* Reserve for the future use */
-> +	/* Put the customize config here */
-> +} __attribute__((packed));
+Changes in v8: https://lore.kernel.org/lkml/20251113-kvm-rproc-v7-v7-0-df4910b7c20a@oss.qualcomm.com/
+ - Addressed suggestion from Stephen which was regarding commit message(9/14),
+   debug log(12/14) suggestion, and return type change(4/14).
+ - Added R-b tag on 10/14 .
 
-I am still convinced that adding a version field would help with future
-improvements, even though a feature bit field can be used to handle new
-configurations. Indeed, how can we address the need for more space
-beyond the 14 reserved words?
-Thanks,
-Arnaud
+Changes in v7: https://lore.kernel.org/lkml/20251104-kvm_rproc_v6-v6-0-7017b0adc24e@oss.qualcomm.com/
+ - Addressed Bryan suggestion to modify commit message on 2/14 .
+ - Repharsed commit message based on Krzysztof comment made on 1/14.
+ - Addressed Konrad suggestion 
+	o To remove pas metadata data structure.
+	o Added his suggestion on adding retry in rsc_table SCM call.
+	o Added his rephrased version of comment made in 12/14 
 
-> +
-> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+Changes in v6: https://lore.kernel.org/lkml/20251013-kvm_rprocv5-v5-0-d609ed766061@oss.qualcomm.com/
+ - Added comments made by Bryan to save some cycles and added in 2/14
+   which could change patch order.
+ - Renamed qcom_scm_pas_context_init to devm_qcom_scm_pas_context_init()
+ - Replaced devm_kzalloc with kzalloc for output_rt in scm function as
+   remoteproc framework does not usage devm_ api for resource table
+   pointer which is cause mem-abort issue start/stop test.
+ - Removed union usage and redundant code from qcom_scm_pas_prep_and_init_image().
+   
+Changes in v5: https://lore.kernel.org/lkml/20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com/
+ - Replaced minitems with maxitems.
+ - Addressed comments made by Bryan, Mani and Konrad.
+ - Fixed some of highlighted issues in v4.
+ - Added a new patch which removes qcom_mdt_pas_init() from exported
+   symbol list.
+ - Slight change in  v4's 5/12, so that it does use qcom_mdt_pas_load()
+   directly while it should use in the commit where it gets introduced.
+   Hence, reordered the patches a bit like v4 5/12 comes early before
+   4/12.
+
+Changes in v4: https://lore.kernel.org/lkml/20250921-kvm_rproc_pas-v3-0-458f09647920@oss.qualcomm.com/
+ - Fixed kernel robot warning/errors.
+ - Reworded some of the commit log, code comment as per suggestion from Bryan.
+ - Added support of gpdsp0 and gpdsp1 and disabled iris node.
+ - Add R-b tag to some of the reviewed patches.
+ - Rename struct qcom_scm_pas_cxt to qcom_scm_pas_context.
+
+Changes in v3: https://lore.kernel.org/lkml/20250819165447.4149674-1-mukesh.ojha@oss.qualcomm.com/
+ - Dropped video subsystem enablement for now, could add it in future
+   or on a separate series.
+ - Addressed most of the suggestion from Stephen and Bryan like some
+   remoteproc code checking resource table presence or right error
+   code propagation above the layer.
+ - Added leman-el2 overlay file.
+ - Added missed iommus binding which was missed last series.
+ - Separated qcom_mdt_pas_load() patch and its usage.
+ - Patch numbering got changed compared to last version
+
+Changes in v2: https://lore.kernel.org/lkml/20241004212359.2263502-1-quic_mojha@quicinc.com/
+ - A lot has changed from the V1 and a fresh look would be preferred.
+ - Removed approach where device tree contain devmem resources in
+   remoteproc node.
+ - SHMbridge need to created for both carveout and metadata memory
+   shared to TZ in a new way.
+ - Now, resource table would be given by SMC call which need to mapped
+   along with carveout before triggering _auth_and_reset_.
+ - IOMMU properties need to be added to firmware devices tree node when Linux
+   control IOMMU.
+
+---
+Mukesh Ojha (14):
+      dt-bindings: remoteproc: qcom,pas: Add iommus property
+      firmware: qcom_scm: Remove redundant piece of code
+      firmware: qcom_scm: Rename peripheral as pas_id
+      firmware: qcom_scm: Introduce PAS context initialization helper function
+      remoteproc: pas: Replace metadata context with PAS context structure
+      soc: qcom: mdtloader: Add PAS context aware qcom_mdt_pas_load() function
+      soc: qcom: mdtloader: Remove qcom_mdt_pas_init() from exported symbols
+      firmware: qcom_scm: Add a prep version of auth_and_reset function
+      firmware: qcom_scm: Refactor qcom_scm_pas_init_image()
+      firmware: qcom_scm: Add SHM bridge handling for PAS when running without QHEE
+      firmware: qcom_scm: Add qcom_scm_pas_get_rsc_table() to get resource table
+      remoteproc: pas: Extend parse_fw callback to fetch resources via SMC call
+      remoteproc: qcom: pas: Enable Secure PAS support with IOMMU managed by Linux
+      arm64: dts: qcom: Add EL2 overlay for Lemans
+
+ .../bindings/remoteproc/qcom,pas-common.yaml       |   3 +
+ arch/arm64/boot/dts/qcom/Makefile                  |  10 +
+ arch/arm64/boot/dts/qcom/lemans-el2.dtso           |  41 +++
+ drivers/firmware/qcom/qcom_scm.c                   | 368 ++++++++++++++++++---
+ drivers/firmware/qcom/qcom_scm.h                   |   1 +
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 166 ++++++++--
+ drivers/soc/qcom/mdt_loader.c                      |  42 ++-
+ include/linux/firmware/qcom/qcom_scm.h             |  30 +-
+ include/linux/soc/qcom/mdt_loader.h                |  22 +-
+ 9 files changed, 577 insertions(+), 106 deletions(-)
+---
+base-commit: 88cbd8ac379cf5ce68b7efcfd4d1484a6871ee0b
+change-id: 20251121-kvm_rproc_v8-5618000321fb
+
+Best regards,
+-- 
+-Mukesh Ojha
 
