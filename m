@@ -1,224 +1,387 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3C317A2F0;
-	Sat, 22 Nov 2025 07:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F230322FDE6
+	for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 12:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763798150; cv=none; b=b2ddTg2nFDuufs2PyzaR+lk50IpAQCePpdwrZTg8lxliMKazMG9CB/2Q1/WkVG7JH8k4+q/dpOPy3mFMSTGWBTGiU8+cKufaUCnTDO9Ov9+De82/fzou6djYp5YYOjoIb7juqQLEd1baBNfAYXqyKKsfGcSUY0FYrjh6qW0Vh4Y=
+	t=1763813122; cv=none; b=dSTBKeGmKv1SUwUExCTYd5PTL4wPpZZrxGXi3ME8tDdrHrHFP0BIaBSTmKpIjZaNLyxxdNCL3rbKgervaMr5HW9tEd86M0ATLvZJAajx6UjJmGjBah0mWoenjYBGolSrMH0n4wFBuckOVAy1++tuCVZVrWiLWFPtjSGxykaJZdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763798150; c=relaxed/simple;
-	bh=SXw40nk81lfewjY1S+9hPKCWNPlyLR4zHML4HwWfuNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsLp58wfJS/P4Mv7EIxVIQFjnd1rP7rRaNsCePRqPdydqSZTVKX8gJ9KCYW1PM/n7fTO1aBCNeYrAgWTBJwMIgOGnl1VnnaCUslJZxlvWAYcvl1knUsCUQFABLdhSa5RfSQT9dXaF90ocm+nzRRKAYHG21OANbUx5BZAgFmnjMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QVM9mC5G; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1763813122; c=relaxed/simple;
+	bh=uXGvMROAHpshYmghRoQmWEyc2actGmT3hsXg3x67nQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k5PzPWDjqNdFLy747rligHwUNLb+FfejJ6rplMKeiSXcP6PwZ9PpoNvxj0mgz6a28bj7Dihpm0ckp9Py3n0lWrfnG1tmvy0L98/Ntgd8P09MbNtt4nTeyDvyp5CxD9d8QnHRzjT5r5g539jZojPrn6mkvGi50I6mg3+lHjZq3Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QRMmlt5X; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WQ6LVYEZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QVM9mC5G"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1763798149; x=1795334149;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SXw40nk81lfewjY1S+9hPKCWNPlyLR4zHML4HwWfuNQ=;
-  b=QVM9mC5GJ0P1V3L2M/VZh8bvwnbxYhpmWtr7FeFr+cRdbghWKhXAjUMq
-   nnmT6oTArYPZ2Z3woTbDhCbFA18yi6oeLw+knEOivXmaGf/V1Gh1gKH2i
-   2h3Wdarrpv1sm5J4aoGlBntQVFqdjpRAFMBqEZ0U1GXxGv7Ecgj/8+uvC
-   2oOkvmzMnWq3yTbrpsgxL3A2DamMS7n6bUmrPHKuu73BIqMa6CDiOAxgH
-   sMCiBihE3WaJQlx760FIZULJbH25La+HHUn6Qo2Oi5UL6hwszdi3TJUuW
-   2bH9ke2PDrVDLuDR6UPzAEwEXnFMYKWKusQx+DGdEt5zHZE5dfjKVsBf2
-   A==;
-X-CSE-ConnectionGUID: d4b1Iu1hTJeJdzQgIiiBfg==
-X-CSE-MsgGUID: ZCqV2pBfQ8KuUS2MaLu7Ag==
-X-IronPort-AV: E=McAfee;i="6800,10657,11620"; a="69748450"
-X-IronPort-AV: E=Sophos;i="6.20,217,1758610800"; 
-   d="scan'208";a="69748450"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2025 23:55:48 -0800
-X-CSE-ConnectionGUID: wOeO3mLQSJuDwYi3qD24uQ==
-X-CSE-MsgGUID: AycttFy4TB+6j12x7ifhWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,217,1758610800"; 
-   d="scan'208";a="222833433"
-Received: from lkp-server01.sh.intel.com (HELO adf6d29aa8d9) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 21 Nov 2025 23:55:43 -0800
-Received: from kbuild by adf6d29aa8d9 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vMiT6-0007Gp-1a;
-	Sat, 22 Nov 2025 07:55:40 +0000
-Date: Sat, 22 Nov 2025 15:54:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	tglx@linutronix.de, andersson@kernel.org, pmladek@suse.com,
-	rdunlap@infradead.org, corbet@lwn.net, david@redhat.com,
-	mhocko@suse.com
-Cc: oe-kbuild-all@lists.linux.dev, tudor.ambarus@linaro.org,
-	mukesh.ojha@oss.qualcomm.com, linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org, jonechou@google.com,
-	rostedt@goodmis.org, linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: Re: [PATCH 23/26] soc: qcom: Add minidump driver
-Message-ID: <202511221521.2OINSDPK-lkp@intel.com>
-References: <20251119154427.1033475-24-eugen.hristev@linaro.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QRMmlt5X";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WQ6LVYEZ"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AM5HSBl2063938
+	for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 12:05:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	IMWEgHg+/7nPckwM6kiC7O9uDBWsoXKWRxhmJGNuWpI=; b=QRMmlt5XghFkwSc2
+	0Tibg8ewJujZRoG9+z9cygSPVAIK9qf6JWgJ2HDYA1f5n8diMxpz2zk1RL4nojIq
+	K5T/VkWgCo8aH/16Zc/6NjDc+vZtLamvPJ9toN4+0AtUrHDh7h2ZV4JBRecfiZPJ
+	AvhqOixDAqY2PompXPiy5vEiyEg8Bdhwc07GLFRf31XNNDSt83K9VdwDKcmOHumi
+	8R6WNZNKXjCfY874Rr0iy1ipuRjfOe8/hAl2ZQSGSZ4C2PHBcXHDNCoNaCZMhcHQ
+	rxB2PbOwziyiooww3wtPF4OeePG+QJnk9S+qsMPAPrHKDZbccqbXpCYrZfZxH98S
+	pDcv7w==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ak69sgmn8-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 12:05:19 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-297dde580c8so110195745ad.1
+        for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 04:05:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1763813119; x=1764417919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IMWEgHg+/7nPckwM6kiC7O9uDBWsoXKWRxhmJGNuWpI=;
+        b=WQ6LVYEZvE39O41iuukBprByCXPniv847HhNc/Ctw1RuPs3HbFovrm5QUWt06tgPBu
+         NSNgAJBxbnf2TTx7C95/hGjfuENPdlMhwC9Ck89RLvWhOcGCoghFYqIbhoNvfAd+MOyQ
+         l6OrcTdjY3vFGmay0Cg8OWt8lml5cZZ2Gv209Q59Y1LkaYJ5mK1f9OtIJvZCgP97Lbas
+         jfhAwTZS9XUkdCpoSEu8hlDbasyVEz6dSwkA4z2877wcuzqE2xUAQRMzVktrE535tiTv
+         LLVZrT8iTHdBFppsnhvokdywUZqujbo6vvz4dQHfGbzbD38rSalTrayBF6s/t25D6f93
+         Lwxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1763813119; x=1764417919;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IMWEgHg+/7nPckwM6kiC7O9uDBWsoXKWRxhmJGNuWpI=;
+        b=Bbh81yH/TpQjclQyYdvwsyGGciYq8fdDT6U8aGk6BH7dCwzLz/w315c5b6nkK/BhTp
+         qQ8v3TjKHpaOT0+x/L/JP4ti6L1b1ie4G39wIvlWPjktBmPeWGysnqlytJ8fUqL129FM
+         /nt2dFl8sLid+REXr/HY4YGANGzZG7Kp9Ij6Oua5Wb+lISrxC2hVN0R4M5hH/km/nSTd
+         sp5GkPMl9FsGimr5hJ/rEL/icTREkToigu/uuqlEvsW5wKgomu2Kfvp+0C8O0Sk0L4Ev
+         KFbIyebpnImdxy6/lk6J1xEI9xUGCe4CU8873qjBmUnb9T/uEz2u/d5ufFajf8Vlc4+C
+         Yxrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWb9O6qZYY4+hHvs2rZujDLqH5LfTVuhBq4LZWPOqdmx1JQWVudNzr3Lpc40JwN1gsfonttB509odYYWfgrVVKr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv2tTBH+IwO7OqvwIDs+nRtphS1C308TWIZA264oOpiyyN70KZ
+	QpdWvLiHm32SR3gxDFw8rktucxHYiPpDb/VRR59PzGzDV5petm/NvTuC8z19OdjmQEuy7wtNuxg
+	QP78PjSZIVorEpPtMYJAARRbUQXnA9DEPCTTB5fK//oHK/OXO0tF1T2psUeJfaB7mY9rHT25P
+X-Gm-Gg: ASbGncuA7DG6ESYLmto4wMyTiM92SjhzsM/nMF62vGHLfM8XtM+Sh950UvGvxpbHcpF
+	rkCpJQl0xPw74/Clx6wS3p5f1NbpmX+XOERv/r8TCjZg4gyfTady3Dm8kOOgLJerTu03LreRG1q
+	6DYZ6ZhCYf9NcP6HcewO09t0H/Q8Z80UeQhPuMGbZmEa8yddrEju0/+BIKdszCrX3yiAFFDe3MP
+	LV5XDz0g/VwRxQ6O3x8FDH0O5/KvXQ+GJL7rOvBB1POHMFnlgdZKt8lmaye7in2DaXLInA3alZP
+	8p0SG7oI2mEKI614PwGQWCr+AMp03xnK5WcHtgezAeKhJxwvS1wHfO3a6AZlIW72OCranXrmjoV
+	q8xxxo4Y3MdJcLZ6dgu7/e7Y3GvHJtxwoXzCA/XYU+uVS6kr72JXzFE1KVOeetXxOR2kkmZeeNU
+	XbRSO1iQ==
+X-Received: by 2002:a17:902:ce05:b0:298:6a9b:238b with SMTP id d9443c01a7336-29b6bf5d1f9mr53407075ad.51.1763813118589;
+        Sat, 22 Nov 2025 04:05:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEh7a4t8X5LiwBFrOGGuWCgNkjbWSu6rXohSgNewzmCoDcX1pSM4YDCYw1lbt4dDWSyc/4t0A==
+X-Received: by 2002:a17:902:ce05:b0:298:6a9b:238b with SMTP id d9443c01a7336-29b6bf5d1f9mr53406925ad.51.1763813118076;
+        Sat, 22 Nov 2025 04:05:18 -0800 (PST)
+Received: from [10.133.33.231] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b26fff4sm84712425ad.68.2025.11.22.04.05.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Nov 2025 04:05:17 -0800 (PST)
+Message-ID: <11280877-95f0-4361-9112-23bb17372e91@oss.qualcomm.com>
+Date: Sat, 22 Nov 2025 20:05:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251119154427.1033475-24-eugen.hristev@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/2] rpmsg: virtio_rpmsg_bus: get buffer size from
+ config space
+To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
+        mathieu.poirier@linaro.org, mst@redhat.com, jasowang@redhat.com,
+        xuanzhuo@linux.alibaba.com, eperezma@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        virtualization@lists.linux.dev, xiaoxiang@xiaomi.com,
+        Xiang Xiao <xiaoxiang781216@gmail.com>, zhongqiu.han@oss.qualcomm.com,
+        arnaud.pouliquen@foss.st.com
+References: <20251114184640.3020427-1-tanmay.shah@amd.com>
+ <20251114184640.3020427-3-tanmay.shah@amd.com>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20251114184640.3020427-3-tanmay.shah@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=PNMCOPqC c=1 sm=1 tr=0 ts=6921a6ff cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=IeNN-m2dAAAA:8 a=zd2uoN0lAAAA:8
+ a=j2MSVUfDAAAA:8 a=85zCUTaWTTiqXNVO5SsA:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22 a=9a3gGlFUS2ax-cngMeOV:22
+X-Proofpoint-ORIG-GUID: bsnEX6qrzj33ItllZDz_CZ27mfb2BjEd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDA5OCBTYWx0ZWRfXxareQF/Taofy
+ boc34wW58DG+VKXWmXpVcI9bnBy9iMGQTSPvAbquDJ4BmPPzGE82SDoWj7SqsJQ8w2E1VEojDDQ
+ ZWfidrB8OeKd1jvI3FAlcBSIKJyGEIId2BIFotvqFaPHhvM72YO0H8ZpAJSTqvUaB3wuMiHvHRQ
+ o16B2uVRHRDwGEIPxKbuKWZNFGxTmKFRGXnE7XCx+HKOJQziBukzE89UMa/Z7PyPXkRat+GSAZj
+ iwDuowrhWVUZ/+/iI4apeF8I/uYUgeDcT9anEN4PpT3Vj/ljRZXk4qsKRPyPQBptKKhJsqYV9bf
+ 9jLrri0rUqjOKEX1J7hKunYPk6yRz+9YLRApcz8pfdXDJ4WFQeL6qnXJB2O5KxEo0gG1jBsqjCV
+ /RvpuAQkK9L5YberLHmoBlTCdDj+fg==
+X-Proofpoint-GUID: bsnEX6qrzj33ItllZDz_CZ27mfb2BjEd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-22_04,2025-11-21_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 spamscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
+ clxscore=1015 phishscore=0 suspectscore=0 adultscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511220098
 
-Hi Eugen,
+On 11/15/2025 2:46 AM, Tanmay Shah wrote:
+> From: Xiang Xiao <xiaoxiang781216@gmail.com>
+> 
+> 512 bytes isn't always suitable for all case, let firmware
+> maker decide the best value from resource table.
+> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
+> 
+> Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>   drivers/rpmsg/virtio_rpmsg_bus.c | 68 +++++++++++++++++++++++---------
+>   include/linux/virtio_rpmsg.h     | 24 +++++++++++
+>   2 files changed, 74 insertions(+), 18 deletions(-)
+>   create mode 100644 include/linux/virtio_rpmsg.h
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index cc26dfcc3e29..03dd5535880a 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -25,6 +25,7 @@
+>   #include <linux/sched.h>
+>   #include <linux/virtio.h>
+>   #include <linux/virtio_ids.h>
+> +#include <linux/virtio_rpmsg.h>
+>   #include <linux/virtio_config.h>
+>   #include <linux/wait.h>
+>   
+> @@ -39,7 +40,8 @@
+>    * @sbufs:	kernel address of tx buffers
+>    * @num_rbufs:	total number of buffers for rx
+>    * @num_sbufs:	total number of buffers for tx
+> - * @buf_size:	size of one rx or tx buffer
+> + * @rbuf_size:	size of one rx buffer
+> + * @sbuf_size:	size of one tx buffer
+>    * @last_sbuf:	index of last tx buffer used
+>    * @bufs_dma:	dma base addr of the buffers
+>    * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
+> @@ -60,7 +62,8 @@ struct virtproc_info {
+>   	void *rbufs, *sbufs;
+>   	unsigned int num_rbufs;
+>   	unsigned int num_sbufs;
+> -	unsigned int buf_size;
+> +	unsigned int rbuf_size;
+> +	unsigned int sbuf_size;
+>   	int last_sbuf;
+>   	dma_addr_t bufs_dma;
+>   	struct mutex tx_lock;
+> @@ -70,9 +73,6 @@ struct virtproc_info {
+>   	atomic_t sleepers;
+>   };
+>   
+> -/* The feature bitmap for virtio rpmsg */
+> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> -
+>   /**
+>    * struct rpmsg_hdr - common header for all rpmsg messages
+>    * @src: source address
+> @@ -130,7 +130,7 @@ struct virtio_rpmsg_channel {
+>    * processor.
+>    */
+>   #define MAX_RPMSG_NUM_BUFS	(256)
+> -#define MAX_RPMSG_BUF_SIZE	(512)
+> +#define DEFAULT_RPMSG_BUF_SIZE	(512)
+>   
+>   /*
+>    * Local addresses are dynamically allocated on-demand.
+> @@ -443,7 +443,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>   
+>   	/* either pick the next unused tx buffer */
+>   	if (vrp->last_sbuf < vrp->num_sbufs)
+> -		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+> +		ret = vrp->sbufs + vrp->sbuf_size * vrp->last_sbuf++;
+>   	/* or recycle a used one */
+>   	else
+>   		ret = virtqueue_get_buf(vrp->svq, &len);
+> @@ -569,7 +569,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>   	 * messaging), or to improve the buffer allocator, to support
+>   	 * variable-length buffer sizes.
+>   	 */
+> -	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+> +	if (len > vrp->sbuf_size - sizeof(struct rpmsg_hdr)) {
+>   		dev_err(dev, "message is too big (%d)\n", len);
+>   		return -EMSGSIZE;
+>   	}
+> @@ -680,7 +680,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>   	struct rpmsg_device *rpdev = ept->rpdev;
+>   	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+>   
+> -	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
+> +	return vch->vrp->sbuf_size - sizeof(struct rpmsg_hdr);
+>   }
+>   
+>   static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> @@ -706,7 +706,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>   	 * We currently use fixed-sized buffers, so trivially sanitize
+>   	 * the reported payload length.
+>   	 */
+> -	if (len > vrp->buf_size ||
+> +	if (len > vrp->rbuf_size ||
+>   	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
+>   		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
+>   		return -EINVAL;
+> @@ -739,7 +739,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>   		dev_warn_ratelimited(dev, "msg received with no recipient\n");
+>   
+>   	/* publish the real size of the buffer */
+> -	rpmsg_sg_init(&sg, msg, vrp->buf_size);
+> +	rpmsg_sg_init(&sg, msg, vrp->rbuf_size);
+>   
+>   	/* add the buffer back to the remote processor's virtqueue */
+>   	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+> @@ -888,9 +888,39 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>   	else
+>   		vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
+>   
+> -	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+> +	/*
+> +	 * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
+> +	 * size from virtio device config space from the resource table.
+> +	 * If the feature is not supported, then assign default buf size.
+> +	 */
+> +	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
+> +		/* note: virtio_rpmsg_config is defined from remote view */
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     txbuf_size, &vrp->rbuf_size);
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     rxbuf_size, &vrp->sbuf_size);
+> +
+> +		/* The buffers must hold rpmsg header atleast */
+> +		if (vrp->rbuf_size < sizeof(struct rpmsg_hdr) ||
+> +		    vrp->sbuf_size < sizeof(struct rpmsg_hdr)) {
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on rppt-memblock/fixes]
-[also build test WARNING on linus/master v6.18-rc6]
-[cannot apply to akpm-mm/mm-everything rppt-memblock/for-next next-20251121]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hello Tanmay,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Eugen-Hristev/kernel-Introduce-meminspect/20251119-235912
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock.git fixes
-patch link:    https://lore.kernel.org/r/20251119154427.1033475-24-eugen.hristev%40linaro.org
-patch subject: [PATCH 23/26] soc: qcom: Add minidump driver
-config: nios2-randconfig-r123-20251122 (https://download.01.org/0day-ci/archive/20251122/202511221521.2OINSDPK-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251122/202511221521.2OINSDPK-lkp@intel.com/reproduce)
+May I know if the omission of = here is to accommodate the ping/pong/ack
+scenarios? mtu will 0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511221521.2OINSDPK-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/soc/qcom/minidump.c:108:35: sparse: sparse: restricted __le32 degrades to integer
->> drivers/soc/qcom/minidump.c:154:22: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] seq_num @@     got unsigned int enum meminspect_uid const id @@
-   drivers/soc/qcom/minidump.c:154:22: sparse:     expected restricted __le32 [usertype] seq_num
-   drivers/soc/qcom/minidump.c:154:22: sparse:     got unsigned int enum meminspect_uid const id
->> drivers/soc/qcom/minidump.c:184:19: sparse: sparse: unsigned value that used to be signed checked against zero?
-   drivers/soc/qcom/minidump.c:183:39: sparse: signed value source
+> +			dev_err(&vdev->dev,
+> +				"vdev config: rx buf sz = %d, tx buf sz = %d\n",
+> +				vrp->rbuf_size, vrp->sbuf_size);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+> +
+> +		dev_dbg(&vdev->dev,
+> +			"vdev config: rx buf sz = 0x%x, tx buf sz = 0x%x\n",
+> +			vrp->rbuf_size, vrp->sbuf_size);
+> +	} else {
+> +		vrp->rbuf_size = DEFAULT_RPMSG_BUF_SIZE;
+> +		vrp->sbuf_size = DEFAULT_RPMSG_BUF_SIZE;
+> +	}
+>   
+> -	total_buf_space = (vrp->num_rbufs + vrp->num_sbufs) * vrp->buf_size;
+> +	total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
+> +			  (vrp->num_sbufs * vrp->sbuf_size);
+> +	total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
+>   
+>   	/* allocate coherent memory for the buffers */
+>   	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+> @@ -908,14 +938,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>   	vrp->rbufs = bufs_va;
+>   
+>   	/* and second part is dedicated for TX */
+> -	vrp->sbufs = bufs_va + vrp->num_rbufs * vrp->buf_size;
+> +	vrp->sbufs = bufs_va + (vrp->num_rbufs * vrp->rbuf_size);
+>   
+>   	/* set up the receive buffers */
+>   	for (i = 0; i < vrp->num_rbufs; i++) {
+>   		struct scatterlist sg;
+> -		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+> +		void *cpu_addr = vrp->rbufs + i * vrp->rbuf_size;
+>   
+> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rbuf_size);
+>   
+>   		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+>   					  GFP_KERNEL);
+> @@ -1001,8 +1031,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+>   static void rpmsg_remove(struct virtio_device *vdev)
+>   {
+>   	struct virtproc_info *vrp = vdev->priv;
+> -	unsigned int num_bufs = vrp->num_rbufs + vrp->num_sbufs;
+> -	size_t total_buf_space = num_bufs * vrp->buf_size;
+> +	size_t total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
+> +				 (vrp->num_sbufs * vrp->sbuf_size);
+>   	int ret;
+>   
+>   	virtio_reset_device(vdev);
+> @@ -1015,6 +1045,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
+>   
+>   	vdev->config->del_vqs(vrp->vdev);
+>   
+> +	total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
+>   	dma_free_coherent(vdev->dev.parent, total_buf_space,
+>   			  vrp->rbufs, vrp->bufs_dma);
+>   
+> @@ -1028,6 +1059,7 @@ static struct virtio_device_id id_table[] = {
+>   
+>   static unsigned int features[] = {
+>   	VIRTIO_RPMSG_F_NS,
+> +	VIRTIO_RPMSG_F_BUFSZ,
+>   };
+>   
+>   static struct virtio_driver virtio_ipc_driver = {
+> diff --git a/include/linux/virtio_rpmsg.h b/include/linux/virtio_rpmsg.h
+> new file mode 100644
+> index 000000000000..6406bc505383
+> --- /dev/null
+> +++ b/include/linux/virtio_rpmsg.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
 
-vim +108 drivers/soc/qcom/minidump.c
 
-    93	
-    94	/**
-    95	 * qcom_md_get_region_index() - Lookup minidump region by id
-    96	 * @md: minidump data
-    97	 * @id: minidump region id
-    98	 *
-    99	 * Return: On success, it returns the internal region index, on failure,
-   100	 *	returns	negative error value
-   101	 */
-   102	static int qcom_md_get_region_index(struct minidump *md, int id)
-   103	{
-   104		unsigned int count = le32_to_cpu(md->toc->region_count);
-   105		unsigned int i;
-   106	
-   107		for (i = 0; i < count; i++)
- > 108			if (md->regions[i].seq_num == id)
-   109				return i;
-   110	
-   111		return -ENOENT;
-   112	}
-   113	
-   114	/**
-   115	 * register_md_region() - Register a new minidump region
-   116	 * @priv: private data
-   117	 * @e: pointer to inspect entry
-   118	 *
-   119	 * Return: None
-   120	 */
-   121	static void __maybe_unused register_md_region(void *priv,
-   122						      const struct inspect_entry *e)
-   123	{
-   124		unsigned int num_region, region_cnt;
-   125		const char *name = "unknown";
-   126		struct minidump_region *mdr;
-   127		struct minidump *md = priv;
-   128	
-   129		if (!(e->va || e->pa) || !e->size) {
-   130			dev_dbg(md->dev, "invalid region requested\n");
-   131			return;
-   132		}
-   133	
-   134		if (e->id < ARRAY_SIZE(meminspect_id_to_md_string))
-   135			name = meminspect_id_to_md_string[e->id];
-   136	
-   137		if (qcom_md_get_region_index(md, e->id) >= 0) {
-   138			dev_dbg(md->dev, "%s:%d region is already registered\n",
-   139				name, e->id);
-   140			return;
-   141		}
-   142	
-   143		/* Check if there is a room for a new entry */
-   144		num_region = le32_to_cpu(md->toc->region_count);
-   145		if (num_region >= MAX_NUM_REGIONS) {
-   146			dev_dbg(md->dev, "maximum region limit %u reached\n",
-   147				num_region);
-   148			return;
-   149		}
-   150	
-   151		region_cnt = le32_to_cpu(md->toc->region_count);
-   152		mdr = &md->regions[region_cnt];
-   153		scnprintf(mdr->name, MAX_REGION_NAME_LENGTH, "K%.8s", name);
- > 154		mdr->seq_num = e->id;
-   155		if (e->pa)
-   156			mdr->address = cpu_to_le64(e->pa);
-   157		else if (e->va)
-   158			mdr->address = cpu_to_le64(__pa(e->va));
-   159		mdr->size = cpu_to_le64(ALIGN(e->size, 4));
-   160		mdr->valid = cpu_to_le32(MINIDUMP_REGION_VALID);
-   161		region_cnt++;
-   162		md->toc->region_count = cpu_to_le32(region_cnt);
-   163	
-   164		dev_dbg(md->dev, "%s:%d region registered %llx:%llx\n",
-   165			mdr->name, mdr->seq_num, mdr->address, mdr->size);
-   166	}
-   167	
-   168	/**
-   169	 * unregister_md_region() - Unregister a previously registered minidump region
-   170	 * @priv: private data
-   171	 * @e: pointer to inspect entry
-   172	 *
-   173	 * Return: None
-   174	 */
-   175	static void __maybe_unused unregister_md_region(void *priv,
-   176							const struct inspect_entry *e)
-   177	{
-   178		struct minidump_region *mdr;
-   179		struct minidump *md = priv;
-   180		unsigned int region_cnt;
-   181		unsigned int idx;
-   182	
-   183		idx = qcom_md_get_region_index(md, e->id);
- > 184		if (idx < 0) {
-   185			dev_dbg(md->dev, "%d region is not present\n", e->id);
-   186			return;
-   187		}
-   188	
-   189		mdr = &md->regions[0];
-   190		region_cnt = le32_to_cpu(md->toc->region_count);
-   191	
-   192		/*
-   193		 * Left shift one position all the regions located after the
-   194		 * region being removed, in order to fill the gap.
-   195		 * Then, zero out the last region at the end.
-   196		 */
-   197		memmove(&mdr[idx], &mdr[idx + 1], (region_cnt - idx - 1) * sizeof(*mdr));
-   198		memset(&mdr[region_cnt - 1], 0, sizeof(*mdr));
-   199		region_cnt--;
-   200		md->toc->region_count = cpu_to_le32(region_cnt);
-   201	}
-   202	
+Echo Arnaud's comments. If it is intended for UAPI, please keep it in
+include/uapi/linux
+
+
+> +/*
+> + * Copyright (C) Pinecone Inc. 2019
+> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
+> + */
+> +
+> +#ifndef _LINUX_VIRTIO_RPMSG_H
+> +#define _LINUX_VIRTIO_RPMSG_H
+> +
+> +#include <linux/types.h>
+> +
+> +/* The feature bitmap for virtio rpmsg */
+> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> +#define VIRTIO_RPMSG_F_BUFSZ	2 /* RP get buffer size from config space */
+
+May I know why skip bit 1?
+
+
+> +
+> +struct virtio_rpmsg_config {
+> +	/* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
+> +	__u32 txbuf_size;
+> +	__u32 rxbuf_size;
+> +	__u32 reserved[14]; /* Reserve for the future use */
+
+Should we use __virtio32 instead of __u32 to avoid endianness issues?
+
+
+> +	/* Put the customize config here */
+> +} __attribute__((packed));
+> +
+> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thx and BRs,
+Zhongqiu Han
