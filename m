@@ -1,387 +1,417 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F230322FDE6
-	for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 12:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA97B2652B7
+	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 03:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763813122; cv=none; b=dSTBKeGmKv1SUwUExCTYd5PTL4wPpZZrxGXi3ME8tDdrHrHFP0BIaBSTmKpIjZaNLyxxdNCL3rbKgervaMr5HW9tEd86M0ATLvZJAajx6UjJmGjBah0mWoenjYBGolSrMH0n4wFBuckOVAy1++tuCVZVrWiLWFPtjSGxykaJZdY=
+	t=1763953364; cv=none; b=lKCtZ7d4LpxI4RRztsaozPPS1QlpD6FCv1yKctwNoK5ysAE/Lh5uW+93DAvJNwy6ZRE2tag7MAm0Zlg7KfduCSpNHjh9NnNl8XxXRsqucXZsUg/TWgRUJvWvqi+9nOf01eASJYnPeZwoSHk+vxiRBGIiX9FAvXoyO1ps6FtYjJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763813122; c=relaxed/simple;
-	bh=uXGvMROAHpshYmghRoQmWEyc2actGmT3hsXg3x67nQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k5PzPWDjqNdFLy747rligHwUNLb+FfejJ6rplMKeiSXcP6PwZ9PpoNvxj0mgz6a28bj7Dihpm0ckp9Py3n0lWrfnG1tmvy0L98/Ntgd8P09MbNtt4nTeyDvyp5CxD9d8QnHRzjT5r5g539jZojPrn6mkvGi50I6mg3+lHjZq3Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QRMmlt5X; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WQ6LVYEZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1763953364; c=relaxed/simple;
+	bh=7lglDPhhscPmEKRf/7UQETmGZN6t/kqZ2e38UElfHN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYh4GJ2xvcFd+/M3RfEYvJrO4mAfe4Et1HJ69PV7foC5GtiMsyrY4x3RhhQbnC5Z+jZNGiTSpH1wjs6ZJ5spGsej2KWu7gGPr1cUaH6bma+jTu9kRLzQxEaTehQ1aSdZo+dnXnogojlnjcvkl5POw6S8FR1fx1WsGAuoVFhXnF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVAmXbmS; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QRMmlt5X";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WQ6LVYEZ"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AM5HSBl2063938
-	for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 12:05:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IMWEgHg+/7nPckwM6kiC7O9uDBWsoXKWRxhmJGNuWpI=; b=QRMmlt5XghFkwSc2
-	0Tibg8ewJujZRoG9+z9cygSPVAIK9qf6JWgJ2HDYA1f5n8diMxpz2zk1RL4nojIq
-	K5T/VkWgCo8aH/16Zc/6NjDc+vZtLamvPJ9toN4+0AtUrHDh7h2ZV4JBRecfiZPJ
-	AvhqOixDAqY2PompXPiy5vEiyEg8Bdhwc07GLFRf31XNNDSt83K9VdwDKcmOHumi
-	8R6WNZNKXjCfY874Rr0iy1ipuRjfOe8/hAl2ZQSGSZ4C2PHBcXHDNCoNaCZMhcHQ
-	rxB2PbOwziyiooww3wtPF4OeePG+QJnk9S+qsMPAPrHKDZbccqbXpCYrZfZxH98S
-	pDcv7w==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ak69sgmn8-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 12:05:19 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-297dde580c8so110195745ad.1
-        for <linux-remoteproc@vger.kernel.org>; Sat, 22 Nov 2025 04:05:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVAmXbmS"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-34361025290so3005403a91.1
+        for <linux-remoteproc@vger.kernel.org>; Sun, 23 Nov 2025 19:02:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763813119; x=1764417919; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IMWEgHg+/7nPckwM6kiC7O9uDBWsoXKWRxhmJGNuWpI=;
-        b=WQ6LVYEZvE39O41iuukBprByCXPniv847HhNc/Ctw1RuPs3HbFovrm5QUWt06tgPBu
-         NSNgAJBxbnf2TTx7C95/hGjfuENPdlMhwC9Ck89RLvWhOcGCoghFYqIbhoNvfAd+MOyQ
-         l6OrcTdjY3vFGmay0Cg8OWt8lml5cZZ2Gv209Q59Y1LkaYJ5mK1f9OtIJvZCgP97Lbas
-         jfhAwTZS9XUkdCpoSEu8hlDbasyVEz6dSwkA4z2877wcuzqE2xUAQRMzVktrE535tiTv
-         LLVZrT8iTHdBFppsnhvokdywUZqujbo6vvz4dQHfGbzbD38rSalTrayBF6s/t25D6f93
-         Lwxw==
+        d=gmail.com; s=20230601; t=1763953362; x=1764558162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EThjVRtG3u91ThHtH8s7htB0Qt2hP8NHKg4Z/0u1oC4=;
+        b=MVAmXbmSW7Fd6KYzUTcIcWzZIVBJDYo7LcDY3hPwDsNA0jeRa+S4ogElHg98etyUQy
+         DPaufFik0PtlgjYMzycv2zaC1sNE1D4UWqg1MSMRPUrn92U58bXfghSsJajMIekGueB8
+         Z5tscZHPLrglDGRpzuU8SXKOOCuS9ogOCzyvaxZqqSrdCBKNiKqKFeopFU0RNrOgCbYZ
+         yTAkLLyTPofxrBkxqkLYGw0zoeic4R4gowdMXbpwcncKRGe/oWbbnK53xcm74YsEoxvs
+         uBCbj9ZMB3wAtFYl6evnzwEXcDp3P7IqKpl77522z+75VX/z31Uat2H6O7gJu0z49AKk
+         5tGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763813119; x=1764417919;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IMWEgHg+/7nPckwM6kiC7O9uDBWsoXKWRxhmJGNuWpI=;
-        b=Bbh81yH/TpQjclQyYdvwsyGGciYq8fdDT6U8aGk6BH7dCwzLz/w315c5b6nkK/BhTp
-         qQ8v3TjKHpaOT0+x/L/JP4ti6L1b1ie4G39wIvlWPjktBmPeWGysnqlytJ8fUqL129FM
-         /nt2dFl8sLid+REXr/HY4YGANGzZG7Kp9Ij6Oua5Wb+lISrxC2hVN0R4M5hH/km/nSTd
-         sp5GkPMl9FsGimr5hJ/rEL/icTREkToigu/uuqlEvsW5wKgomu2Kfvp+0C8O0Sk0L4Ev
-         KFbIyebpnImdxy6/lk6J1xEI9xUGCe4CU8873qjBmUnb9T/uEz2u/d5ufFajf8Vlc4+C
-         Yxrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWb9O6qZYY4+hHvs2rZujDLqH5LfTVuhBq4LZWPOqdmx1JQWVudNzr3Lpc40JwN1gsfonttB509odYYWfgrVVKr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv2tTBH+IwO7OqvwIDs+nRtphS1C308TWIZA264oOpiyyN70KZ
-	QpdWvLiHm32SR3gxDFw8rktucxHYiPpDb/VRR59PzGzDV5petm/NvTuC8z19OdjmQEuy7wtNuxg
-	QP78PjSZIVorEpPtMYJAARRbUQXnA9DEPCTTB5fK//oHK/OXO0tF1T2psUeJfaB7mY9rHT25P
-X-Gm-Gg: ASbGncuA7DG6ESYLmto4wMyTiM92SjhzsM/nMF62vGHLfM8XtM+Sh950UvGvxpbHcpF
-	rkCpJQl0xPw74/Clx6wS3p5f1NbpmX+XOERv/r8TCjZg4gyfTady3Dm8kOOgLJerTu03LreRG1q
-	6DYZ6ZhCYf9NcP6HcewO09t0H/Q8Z80UeQhPuMGbZmEa8yddrEju0/+BIKdszCrX3yiAFFDe3MP
-	LV5XDz0g/VwRxQ6O3x8FDH0O5/KvXQ+GJL7rOvBB1POHMFnlgdZKt8lmaye7in2DaXLInA3alZP
-	8p0SG7oI2mEKI614PwGQWCr+AMp03xnK5WcHtgezAeKhJxwvS1wHfO3a6AZlIW72OCranXrmjoV
-	q8xxxo4Y3MdJcLZ6dgu7/e7Y3GvHJtxwoXzCA/XYU+uVS6kr72JXzFE1KVOeetXxOR2kkmZeeNU
-	XbRSO1iQ==
-X-Received: by 2002:a17:902:ce05:b0:298:6a9b:238b with SMTP id d9443c01a7336-29b6bf5d1f9mr53407075ad.51.1763813118589;
-        Sat, 22 Nov 2025 04:05:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEh7a4t8X5LiwBFrOGGuWCgNkjbWSu6rXohSgNewzmCoDcX1pSM4YDCYw1lbt4dDWSyc/4t0A==
-X-Received: by 2002:a17:902:ce05:b0:298:6a9b:238b with SMTP id d9443c01a7336-29b6bf5d1f9mr53406925ad.51.1763813118076;
-        Sat, 22 Nov 2025 04:05:18 -0800 (PST)
-Received: from [10.133.33.231] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b26fff4sm84712425ad.68.2025.11.22.04.05.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Nov 2025 04:05:17 -0800 (PST)
-Message-ID: <11280877-95f0-4361-9112-23bb17372e91@oss.qualcomm.com>
-Date: Sat, 22 Nov 2025 20:05:12 +0800
+        d=1e100.net; s=20230601; t=1763953362; x=1764558162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EThjVRtG3u91ThHtH8s7htB0Qt2hP8NHKg4Z/0u1oC4=;
+        b=cnTwe+kI9pURfEQaXcbWGlMZ+rOlnAZlfklKnabKFuR5DMJbMLIK48tQ//Nw0GPClw
+         2uilUtpdr/dtz/k+klS9llm5wtj5H6lbCY4GF1UoTiHja/oErvnWAi9nbU8xnLV9y3Cb
+         2gNnACKrEhJANFSss1gmgd/fGndF/adUAIbNRXhHcR2Na+kMalps8X8RWngwBifWCHH/
+         UeoKvv15XPFMJzWWeR1OHAAT8yoLN5Q0xM4aMklLdMAjwu4ImgRZUx7DsLXBNINLM47g
+         EWtQfEgkfkX+xTbwtYDL1NI21hWRefC1ZngdtAiaxC+BMzRQr60cyD8F89ARCdt15Dmk
+         6rvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTzYzXOfEBNrTMDQuuMfit9VNMdjjsjqyi1dWkfu7l2/8zrTLdlpEd1tm0UAPLPOfdHX8ypeHhCez2NN+Pvs1+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsurG/5F1zHDUp0+9mqn2lmhqZK0t0Dra172G+czGiww6EhoNl
+	EXcYrylQU1pSe0xl3Zh+4EktRwpEe/i5tJG8uQ+RncZz/GURlWOVIGVQ
+X-Gm-Gg: ASbGncuPHfkjrLeLWUo5H/EpHPqQCbmmuhFA1eao8+wRGKLJrPddpXZ5HEzHVrYom1S
+	2UyLX8lol/X3H4TQjflFpp8RFoLgCGOQv4vXVe6E3+/rnYVyQmCkw/IAn5ScfTRizNOOZ8LUp7s
+	CVKpMyaGfLf7V6JNm/imlTEj2uXFMeqgE5Vum5raqmzcPFpVj1PZ/saDGhhQDK+4QI+UzM6vlM5
+	Aw3sOR7Rdm5Kfjgpu2rJFKXLQPaNhBANyOqhojZ9DGJg8AC82CDV3UiLBKOrvqnD+lyQgo5cGGb
+	MHi6yB4TpTU2KCq9hQJXW6CIJzxfmqiQrzyjimLHPjzPzE6sz5dssGMQewyI277SA2kThAeGHg8
+	jy7mccS+xQBNGxP1Oswy/t1LS4w6Ee3grkavVkjrKoIzKZzrHnOFBq3qUke23+ZzCDr5V3NYMnl
+	t9u4m7ztmKYj4=
+X-Google-Smtp-Source: AGHT+IEMt538xCkv+fqIIYil9IQfkAkpZOfttXOCrxqxU9ijd4Z/n1H3Gpy/X0jI7VxwtTCqcmNbzA==
+X-Received: by 2002:a17:90b:35cc:b0:341:194:5e7d with SMTP id 98e67ed59e1d1-34733f19c00mr11223472a91.24.1763953361678;
+        Sun, 23 Nov 2025 19:02:41 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34727d5178esm11869866a91.16.2025.11.23.19.02.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Nov 2025 19:02:40 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 8D1794209E72; Mon, 24 Nov 2025 10:02:37 +0700 (WIB)
+Date: Mon, 24 Nov 2025 10:02:37 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	tglx@linutronix.de, andersson@kernel.org, pmladek@suse.com,
+	rdunlap@infradead.org, corbet@lwn.net, david@redhat.com,
+	mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hardening@vger.kernel.org, jonechou@google.com,
+	rostedt@goodmis.org, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org
+Subject: Re: [PATCH 01/26] kernel: Introduce meminspect
+Message-ID: <aSPKzcsFixn48edg@archie.me>
+References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
+ <20251119154427.1033475-2-eugen.hristev@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] rpmsg: virtio_rpmsg_bus: get buffer size from
- config space
-To: Tanmay Shah <tanmay.shah@amd.com>, andersson@kernel.org,
-        mathieu.poirier@linaro.org, mst@redhat.com, jasowang@redhat.com,
-        xuanzhuo@linux.alibaba.com, eperezma@redhat.com
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        virtualization@lists.linux.dev, xiaoxiang@xiaomi.com,
-        Xiang Xiao <xiaoxiang781216@gmail.com>, zhongqiu.han@oss.qualcomm.com,
-        arnaud.pouliquen@foss.st.com
-References: <20251114184640.3020427-1-tanmay.shah@amd.com>
- <20251114184640.3020427-3-tanmay.shah@amd.com>
-Content-Language: en-US
-From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-In-Reply-To: <20251114184640.3020427-3-tanmay.shah@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=PNMCOPqC c=1 sm=1 tr=0 ts=6921a6ff cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=IeNN-m2dAAAA:8 a=zd2uoN0lAAAA:8
- a=j2MSVUfDAAAA:8 a=85zCUTaWTTiqXNVO5SsA:9 a=QEXdDO2ut3YA:10
- a=324X-CrmTo6CU4MGRt3R:22 a=9a3gGlFUS2ax-cngMeOV:22
-X-Proofpoint-ORIG-GUID: bsnEX6qrzj33ItllZDz_CZ27mfb2BjEd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTIyMDA5OCBTYWx0ZWRfXxareQF/Taofy
- boc34wW58DG+VKXWmXpVcI9bnBy9iMGQTSPvAbquDJ4BmPPzGE82SDoWj7SqsJQ8w2E1VEojDDQ
- ZWfidrB8OeKd1jvI3FAlcBSIKJyGEIId2BIFotvqFaPHhvM72YO0H8ZpAJSTqvUaB3wuMiHvHRQ
- o16B2uVRHRDwGEIPxKbuKWZNFGxTmKFRGXnE7XCx+HKOJQziBukzE89UMa/Z7PyPXkRat+GSAZj
- iwDuowrhWVUZ/+/iI4apeF8I/uYUgeDcT9anEN4PpT3Vj/ljRZXk4qsKRPyPQBptKKhJsqYV9bf
- 9jLrri0rUqjOKEX1J7hKunYPk6yRz+9YLRApcz8pfdXDJ4WFQeL6qnXJB2O5KxEo0gG1jBsqjCV
- /RvpuAQkK9L5YberLHmoBlTCdDj+fg==
-X-Proofpoint-GUID: bsnEX6qrzj33ItllZDz_CZ27mfb2BjEd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-22_04,2025-11-21_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 suspectscore=0 adultscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511220098
-
-On 11/15/2025 2:46 AM, Tanmay Shah wrote:
-> From: Xiang Xiao <xiaoxiang781216@gmail.com>
-> 
-> 512 bytes isn't always suitable for all case, let firmware
-> maker decide the best value from resource table.
-> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
-> 
-> Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->   drivers/rpmsg/virtio_rpmsg_bus.c | 68 +++++++++++++++++++++++---------
->   include/linux/virtio_rpmsg.h     | 24 +++++++++++
->   2 files changed, 74 insertions(+), 18 deletions(-)
->   create mode 100644 include/linux/virtio_rpmsg.h
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index cc26dfcc3e29..03dd5535880a 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -25,6 +25,7 @@
->   #include <linux/sched.h>
->   #include <linux/virtio.h>
->   #include <linux/virtio_ids.h>
-> +#include <linux/virtio_rpmsg.h>
->   #include <linux/virtio_config.h>
->   #include <linux/wait.h>
->   
-> @@ -39,7 +40,8 @@
->    * @sbufs:	kernel address of tx buffers
->    * @num_rbufs:	total number of buffers for rx
->    * @num_sbufs:	total number of buffers for tx
-> - * @buf_size:	size of one rx or tx buffer
-> + * @rbuf_size:	size of one rx buffer
-> + * @sbuf_size:	size of one tx buffer
->    * @last_sbuf:	index of last tx buffer used
->    * @bufs_dma:	dma base addr of the buffers
->    * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
-> @@ -60,7 +62,8 @@ struct virtproc_info {
->   	void *rbufs, *sbufs;
->   	unsigned int num_rbufs;
->   	unsigned int num_sbufs;
-> -	unsigned int buf_size;
-> +	unsigned int rbuf_size;
-> +	unsigned int sbuf_size;
->   	int last_sbuf;
->   	dma_addr_t bufs_dma;
->   	struct mutex tx_lock;
-> @@ -70,9 +73,6 @@ struct virtproc_info {
->   	atomic_t sleepers;
->   };
->   
-> -/* The feature bitmap for virtio rpmsg */
-> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-> -
->   /**
->    * struct rpmsg_hdr - common header for all rpmsg messages
->    * @src: source address
-> @@ -130,7 +130,7 @@ struct virtio_rpmsg_channel {
->    * processor.
->    */
->   #define MAX_RPMSG_NUM_BUFS	(256)
-> -#define MAX_RPMSG_BUF_SIZE	(512)
-> +#define DEFAULT_RPMSG_BUF_SIZE	(512)
->   
->   /*
->    * Local addresses are dynamically allocated on-demand.
-> @@ -443,7 +443,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
->   
->   	/* either pick the next unused tx buffer */
->   	if (vrp->last_sbuf < vrp->num_sbufs)
-> -		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
-> +		ret = vrp->sbufs + vrp->sbuf_size * vrp->last_sbuf++;
->   	/* or recycle a used one */
->   	else
->   		ret = virtqueue_get_buf(vrp->svq, &len);
-> @@ -569,7 +569,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->   	 * messaging), or to improve the buffer allocator, to support
->   	 * variable-length buffer sizes.
->   	 */
-> -	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
-> +	if (len > vrp->sbuf_size - sizeof(struct rpmsg_hdr)) {
->   		dev_err(dev, "message is too big (%d)\n", len);
->   		return -EMSGSIZE;
->   	}
-> @@ -680,7 +680,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->   	struct rpmsg_device *rpdev = ept->rpdev;
->   	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
->   
-> -	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
-> +	return vch->vrp->sbuf_size - sizeof(struct rpmsg_hdr);
->   }
->   
->   static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
-> @@ -706,7 +706,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->   	 * We currently use fixed-sized buffers, so trivially sanitize
->   	 * the reported payload length.
->   	 */
-> -	if (len > vrp->buf_size ||
-> +	if (len > vrp->rbuf_size ||
->   	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
->   		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
->   		return -EINVAL;
-> @@ -739,7 +739,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->   		dev_warn_ratelimited(dev, "msg received with no recipient\n");
->   
->   	/* publish the real size of the buffer */
-> -	rpmsg_sg_init(&sg, msg, vrp->buf_size);
-> +	rpmsg_sg_init(&sg, msg, vrp->rbuf_size);
->   
->   	/* add the buffer back to the remote processor's virtqueue */
->   	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
-> @@ -888,9 +888,39 @@ static int rpmsg_probe(struct virtio_device *vdev)
->   	else
->   		vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
->   
-> -	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
-> +	/*
-> +	 * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
-> +	 * size from virtio device config space from the resource table.
-> +	 * If the feature is not supported, then assign default buf size.
-> +	 */
-> +	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
-> +		/* note: virtio_rpmsg_config is defined from remote view */
-> +		virtio_cread(vdev, struct virtio_rpmsg_config,
-> +			     txbuf_size, &vrp->rbuf_size);
-> +		virtio_cread(vdev, struct virtio_rpmsg_config,
-> +			     rxbuf_size, &vrp->sbuf_size);
-> +
-> +		/* The buffers must hold rpmsg header atleast */
-> +		if (vrp->rbuf_size < sizeof(struct rpmsg_hdr) ||
-> +		    vrp->sbuf_size < sizeof(struct rpmsg_hdr)) {
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jjzv1iO7GRx9l9vd"
+Content-Disposition: inline
+In-Reply-To: <20251119154427.1033475-2-eugen.hristev@linaro.org>
 
 
-Hello Tanmay,
+--jjzv1iO7GRx9l9vd
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-May I know if the omission of = here is to accommodate the ping/pong/ack
-scenarios? mtu will 0
-
-
-> +			dev_err(&vdev->dev,
-> +				"vdev config: rx buf sz = %d, tx buf sz = %d\n",
-> +				vrp->rbuf_size, vrp->sbuf_size);
-> +			err = -EINVAL;
-> +			goto vqs_del;
-> +		}
-> +
-> +		dev_dbg(&vdev->dev,
-> +			"vdev config: rx buf sz = 0x%x, tx buf sz = 0x%x\n",
-> +			vrp->rbuf_size, vrp->sbuf_size);
-> +	} else {
-> +		vrp->rbuf_size = DEFAULT_RPMSG_BUF_SIZE;
-> +		vrp->sbuf_size = DEFAULT_RPMSG_BUF_SIZE;
-> +	}
->   
-> -	total_buf_space = (vrp->num_rbufs + vrp->num_sbufs) * vrp->buf_size;
-> +	total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
-> +			  (vrp->num_sbufs * vrp->sbuf_size);
-> +	total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
->   
->   	/* allocate coherent memory for the buffers */
->   	bufs_va = dma_alloc_coherent(vdev->dev.parent,
-> @@ -908,14 +938,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
->   	vrp->rbufs = bufs_va;
->   
->   	/* and second part is dedicated for TX */
-> -	vrp->sbufs = bufs_va + vrp->num_rbufs * vrp->buf_size;
-> +	vrp->sbufs = bufs_va + (vrp->num_rbufs * vrp->rbuf_size);
->   
->   	/* set up the receive buffers */
->   	for (i = 0; i < vrp->num_rbufs; i++) {
->   		struct scatterlist sg;
-> -		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
-> +		void *cpu_addr = vrp->rbufs + i * vrp->rbuf_size;
->   
-> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
-> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rbuf_size);
->   
->   		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
->   					  GFP_KERNEL);
-> @@ -1001,8 +1031,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
->   static void rpmsg_remove(struct virtio_device *vdev)
->   {
->   	struct virtproc_info *vrp = vdev->priv;
-> -	unsigned int num_bufs = vrp->num_rbufs + vrp->num_sbufs;
-> -	size_t total_buf_space = num_bufs * vrp->buf_size;
-> +	size_t total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
-> +				 (vrp->num_sbufs * vrp->sbuf_size);
->   	int ret;
->   
->   	virtio_reset_device(vdev);
-> @@ -1015,6 +1045,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
->   
->   	vdev->config->del_vqs(vrp->vdev);
->   
-> +	total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
->   	dma_free_coherent(vdev->dev.parent, total_buf_space,
->   			  vrp->rbufs, vrp->bufs_dma);
->   
-> @@ -1028,6 +1059,7 @@ static struct virtio_device_id id_table[] = {
->   
->   static unsigned int features[] = {
->   	VIRTIO_RPMSG_F_NS,
-> +	VIRTIO_RPMSG_F_BUFSZ,
->   };
->   
->   static struct virtio_driver virtio_ipc_driver = {
-> diff --git a/include/linux/virtio_rpmsg.h b/include/linux/virtio_rpmsg.h
+On Wed, Nov 19, 2025 at 05:44:02PM +0200, Eugen Hristev wrote:
+> diff --git a/Documentation/dev-tools/index.rst b/Documentation/dev-tools/=
+index.rst
+> index 4b8425e348ab..8ce605de8ee6 100644
+> --- a/Documentation/dev-tools/index.rst
+> +++ b/Documentation/dev-tools/index.rst
+> @@ -38,6 +38,7 @@ Documentation/process/debugging/index.rst
+>     gpio-sloppy-logic-analyzer
+>     autofdo
+>     propeller
+> +   meminspect
+> =20
+> =20
+>  .. only::  subproject and html
+> diff --git a/Documentation/dev-tools/meminspect.rst b/Documentation/dev-t=
+ools/meminspect.rst
 > new file mode 100644
-> index 000000000000..6406bc505383
+> index 000000000000..2a0bd4d6e448
 > --- /dev/null
-> +++ b/include/linux/virtio_rpmsg.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-
-
-Echo Arnaud's comments. If it is intended for UAPI, please keep it in
-include/uapi/linux
-
-
-> +/*
-> + * Copyright (C) Pinecone Inc. 2019
-> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
-> + */
+> +++ b/Documentation/dev-tools/meminspect.rst
+> @@ -0,0 +1,139 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +#ifndef _LINUX_VIRTIO_RPMSG_H
-> +#define _LINUX_VIRTIO_RPMSG_H
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +meminspect
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > +
-> +#include <linux/types.h>
+> +This document provides information about the meminspect feature.
 > +
-> +/* The feature bitmap for virtio rpmsg */
-> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
-> +#define VIRTIO_RPMSG_F_BUFSZ	2 /* RP get buffer size from config space */
-
-May I know why skip bit 1?
-
-
+> +Overview
+> +=3D=3D=3D=3D=3D=3D=3D=3D
 > +
-> +struct virtio_rpmsg_config {
-> +	/* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
-> +	__u32 txbuf_size;
-> +	__u32 rxbuf_size;
-> +	__u32 reserved[14]; /* Reserve for the future use */
-
-Should we use __virtio32 instead of __u32 to avoid endianness issues?
-
-
-> +	/* Put the customize config here */
-> +} __attribute__((packed));
+> +meminspect is a mechanism that allows the kernel to register a chunk of
+> +memory into a table, to be used at a later time for a specific
+> +inspection purpose like debugging, memory dumping or statistics.
 > +
-> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+> +meminspect allows drivers to traverse the inspection table on demand,
+> +or to register a notifier to be called whenever a new entry is being add=
+ed
+> +or removed.
+> +
+> +The reasoning for meminspect is also to minimize the required information
+> +in case of a kernel problem. For example a traditional debug method invo=
+lves
+> +dumping the whole kernel memory and then inspecting it. Meminspect allow=
+s the
+> +users to select which memory is of interest, in order to help this speci=
+fic
+> +use case in production, where memory and connectivity are limited.
+> +
+> +Although the kernel has multiple internal mechanisms, meminspect fits
+> +a particular model which is not covered by the others.
+> +
+> +meminspect Internals
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +API
+> +---
+> +
+> +Static memory can be registered at compile time, by instructing the comp=
+iler
+> +to create a separate section with annotation info.
+> +For each such annotated memory (variables usually), a dedicated struct
+> +is being created with the required information.
+> +To achieve this goal, some basic APIs are available:
+> +
+> +  MEMINSPECT_ENTRY(idx, sym, sz)
+> +is the basic macro that takes an ID, the symbol, and a size.
+> +
+> +To make it easier, some wrappers are also defined:
+> +  MEMINSPECT_SIMPLE_ENTRY(sym)
+> +will use the dedicated MEMINSPECT_ID_##sym with a size equal to sizeof(s=
+ym)
+> +
+> +  MEMINSPECT_NAMED_ENTRY(name, sym)
+> +will be a simple entry that has an id that cannot be derived from the sy=
+m,
+> +so a name has to be provided
+> +
+> +  MEMINSPECT_AREA_ENTRY(sym, sz)
+> +this will register sym, but with the size given as sz, useful for e.g.
+> +arrays which do not have a fixed size at compile time.
+> +
+> +For dynamically allocated memory, or for other cases, the following APIs
+> +are being defined:
+> +  meminspect_register_id_pa(enum meminspect_uid id, phys_addr_t zone,
+> +                            size_t size, unsigned int type);
+> +which takes the ID and the physical address.
+> +Similarly there are variations:
+> +  meminspect_register_pa() omits the ID
+> +  meminspect_register_id_va() requires the ID but takes a virtual address
+> +  meminspect_register_va() omits the ID and requires a virtual address
+> +
+> +If the ID is not given, the next avialable dynamic ID is allocated.
+> +
+> +To unregister a dynamic entry, some APIs are being defined:
+> +  meminspect_unregister_pa(phys_addr_t zone, size_t size);
+> +  meminspect_unregister_id(enum meminspect_uid id);
+> +  meminspect_unregister_va(va, size);
+> +
+> +All of the above have a lock variant that ensures the lock on the table
+> +is taken.
+> +
+> +
+> +meminspect drivers
+> +------------------
+> +
+> +Drivers are free to traverse the table by using a dedicated function
+> +meminspect_traverse(void *priv, MEMINSPECT_ITERATOR_CB cb)
+> +The callback will be called for each entry in the table.
+> +
+> +Drivers can also register a notifier with
+> +  meminspect_notifier_register()
+> +and unregister with
+> +  meminspect_notifier_unregister()
+> +to be called when a new entry is being added or removed.
+> +
+> +Data structures
+> +---------------
+> +
+> +The regions are being stored in a simple fixed size array. It avoids
+> +memory allocation overhead. This is not performance critical nor does
+> +allocating a few hundred entries create a memory consumption problem.
+> +
+> +The static variables registered into meminspect are being annotated into
+> +a dedicated .inspect_table memory section. This is then walked by memins=
+pect
+> +at a later time and each variable is then copied to the whole inspect ta=
+ble.
+> +
+> +meminspect Initialization
+> +-------------------------
+> +
+> +At any time, meminspect will be ready to accept region registration
+> +from any part of the kernel. The table does not require any initializati=
+on.
+> +In case CONFIG_CRASH_DUMP is enabled, meminspect will create an ELF head=
+er
+> +corresponding to a core dump image, in which each region is added as a
+> +program header. In this scenario, the first region is this ELF header, a=
+nd
+> +the second region is the vmcoreinfo ELF note.
+> +By using this mechanism, all the meminspect table, if dumped, can be
+> +concatenated to obtain a core image that is loadable with the `crash` to=
+ol.
+> +
+> +meminspect example
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +A simple scenario for meminspect is the following:
+> +The kernel registers the linux_banner variable into meminspect with
+> +a simple annotation like:
+> +
+> +  MEMINSPECT_SIMPLE_ENTRY(linux_banner);
+> +
+> +The meminspect late initcall will parse the compilation time created tab=
+le
+> +and copy the entry information into the inspection table.
+> +At a later point, any interested driver can call the traverse function to
+> +find out all entries in the table.
+> +A specific driver will then note into a specific table the address of the
+> +banner and the size of it.
+> +The specific table is then written to a shared memory area that can be
+> +read by upper level firmware.
+> +When the kernel freezes (hypothetically), the kernel will no longer feed
+> +the watchdog. The watchdog will trigger a higher exception level interru=
+pt
+> +which will be handled by the upper level firmware. This firmware will th=
+en
+> +read the shared memory table and find an entry with the start and size of
+> +the banner. It will then copy it for debugging purpose. The upper level
+> +firmware will then be able to provide useful debugging information,
+> +like in this example, the banner.
+> +
+> +As seen here, meminspect facilitates the interaction between the kernel
+> +and a specific firmware.
 
+Sphinx reports htmldocs warnings:
 
--- 
-Thx and BRs,
-Zhongqiu Han
+Documentation/dev-tools/meminspect.rst:42: WARNING: Block quote ends withou=
+t a blank line; unexpected unindent. [docutils]
+Documentation/dev-tools/meminspect.rst:46: WARNING: Definition list ends wi=
+thout a blank line; unexpected unindent. [docutils]
+Documentation/dev-tools/meminspect.rst:49: WARNING: Block quote ends withou=
+t a blank line; unexpected unindent. [docutils]
+Documentation/dev-tools/meminspect.rst:53: WARNING: Block quote ends withou=
+t a blank line; unexpected unindent. [docutils]
+Documentation/dev-tools/meminspect.rst:58: ERROR: Unexpected indentation. [=
+docutils]
+Documentation/dev-tools/meminspect.rst:60: WARNING: Block quote ends withou=
+t a blank line; unexpected unindent. [docutils]
+Documentation/dev-tools/meminspect.rst:62: ERROR: Unexpected indentation. [=
+docutils]
+Documentation/dev-tools/meminspect.rst:80: WARNING: Inline emphasis start-s=
+tring without end-string. [docutils]
+Documentation/dev-tools/meminspect.rst:88: WARNING: Definition list ends wi=
+thout a blank line; unexpected unindent. [docutils]
+
+I have to fix them up:
+
+---- >8 ----
+diff --git a/Documentation/dev-tools/meminspect.rst b/Documentation/dev-too=
+ls/meminspect.rst
+index 2a0bd4d6e4481e..d6a221b1169f04 100644
+--- a/Documentation/dev-tools/meminspect.rst
++++ b/Documentation/dev-tools/meminspect.rst
+@@ -38,37 +38,43 @@ For each such annotated memory (variables usually), a d=
+edicated struct
+ is being created with the required information.
+ To achieve this goal, some basic APIs are available:
+=20
+-  MEMINSPECT_ENTRY(idx, sym, sz)
+-is the basic macro that takes an ID, the symbol, and a size.
++  * MEMINSPECT_ENTRY(idx, sym, sz)
++    is the basic macro that takes an ID, the symbol, and a size.
+=20
+ To make it easier, some wrappers are also defined:
+-  MEMINSPECT_SIMPLE_ENTRY(sym)
+-will use the dedicated MEMINSPECT_ID_##sym with a size equal to sizeof(sym)
+=20
+-  MEMINSPECT_NAMED_ENTRY(name, sym)
+-will be a simple entry that has an id that cannot be derived from the sym,
+-so a name has to be provided
++  * MEMINSPECT_SIMPLE_ENTRY(sym)
++    will use the dedicated MEMINSPECT_ID_##sym with a size equal to sizeof=
+(sym)
+=20
+-  MEMINSPECT_AREA_ENTRY(sym, sz)
+-this will register sym, but with the size given as sz, useful for e.g.
+-arrays which do not have a fixed size at compile time.
++  * MEMINSPECT_NAMED_ENTRY(name, sym)
++    will be a simple entry that has an id that cannot be derived from the =
+sym,
++    so a name has to be provided
++
++  * MEMINSPECT_AREA_ENTRY(sym, sz)
++    this will register sym, but with the size given as sz, useful for e.g.
++    arrays which do not have a fixed size at compile time.
+=20
+ For dynamically allocated memory, or for other cases, the following APIs
+-are being defined:
++are being defined::
++
+   meminspect_register_id_pa(enum meminspect_uid id, phys_addr_t zone,
+                             size_t size, unsigned int type);
++
+ which takes the ID and the physical address.
++
+ Similarly there are variations:
+-  meminspect_register_pa() omits the ID
+-  meminspect_register_id_va() requires the ID but takes a virtual address
+-  meminspect_register_va() omits the ID and requires a virtual address
++
++  * meminspect_register_pa() omits the ID
++  * meminspect_register_id_va() requires the ID but takes a virtual address
++  * meminspect_register_va() omits the ID and requires a virtual address
+=20
+ If the ID is not given, the next avialable dynamic ID is allocated.
+=20
+ To unregister a dynamic entry, some APIs are being defined:
+-  meminspect_unregister_pa(phys_addr_t zone, size_t size);
+-  meminspect_unregister_id(enum meminspect_uid id);
+-  meminspect_unregister_va(va, size);
++
++  * meminspect_unregister_pa(phys_addr_t zone, size_t size);
++  * meminspect_unregister_id(enum meminspect_uid id);
++  * meminspect_unregister_va(va, size);
+=20
+ All of the above have a lock variant that ensures the lock on the table
+ is taken.
+@@ -77,15 +83,15 @@ is taken.
+ meminspect drivers
+ ------------------
+=20
+-Drivers are free to traverse the table by using a dedicated function
+-meminspect_traverse(void *priv, MEMINSPECT_ITERATOR_CB cb)
++Drivers are free to traverse the table by using a dedicated function::
++
++  meminspect_traverse(void *priv, MEMINSPECT_ITERATOR_CB cb)
++
+ The callback will be called for each entry in the table.
+=20
+-Drivers can also register a notifier with
+-  meminspect_notifier_register()
+-and unregister with
+-  meminspect_notifier_unregister()
+-to be called when a new entry is being added or removed.
++Drivers can also register a notifier with meminspect_notifier_register()
++and unregister with meminspect_notifier_unregister() to be called when a n=
+ew
++entry is being added or removed.
+=20
+ Data structures
+ ---------------
+@@ -115,7 +121,7 @@ meminspect example
+=20
+ A simple scenario for meminspect is the following:
+ The kernel registers the linux_banner variable into meminspect with
+-a simple annotation like:
++a simple annotation like::
+=20
+   MEMINSPECT_SIMPLE_ENTRY(linux_banner);
+=20
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--jjzv1iO7GRx9l9vd
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaSPKyAAKCRD2uYlJVVFO
+o3X1AQDv/TE1tWTJ8ZXxzegUA8QbZl8nMDxfkacY7FNjZC/xRQD8DSFK9tPqxhS0
+Zf7jek/k/PHFmMUwkhTyDVy+lTogUgc=
+=cIN1
+-----END PGP SIGNATURE-----
+
+--jjzv1iO7GRx9l9vd--
