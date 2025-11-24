@@ -1,104 +1,85 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CCA314A7D
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 15:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0642C11DB
+	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 17:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763999626; cv=none; b=ddlC5j1gub5qkB8OWUwKivfXodhZizDSOCTra2Z5e376reJv1Vo+FDfEZVjWkUZzKL+yLyx6SZwT8rYmhD+egJjYIKTK/1vklKi836X7DChS6gdzOzLXXvhqbH7OYUZUwHt4vljtr71wJdTLWq6OYObwcOE3f9fr+WxBvVeM/6g=
+	t=1764003978; cv=none; b=o6kuEyIgpJXT+WIGhAf1Qu9IJrqiM0Mqqf9lRZMUnSi8/+7y/Yc7G3OGlOCJu9+ZyaNsUmxhwK0P9EHLbGuk5aD5WFSwvWGs0bM7GCTcepPMvRtfcaGFdyAhP8LHMr79u7j+fmuGYdcacYH3PBRh7eUfejGAlZTYktCtsQjNrGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763999626; c=relaxed/simple;
-	bh=apeR+6JuSlimj28Oe4oBgpLM9V5n83U3UdyhU34El0w=;
+	s=arc-20240116; t=1764003978; c=relaxed/simple;
+	bh=JYk0DlsmrYkHa9pnunJP5MMBiIh8+pvQoxXtIvOuszA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMCeqtOdouwY3X/NrHpAQmIV7hJOwKQf42FohgjSPLMAdR5tr31cKF62xxLRZMizqmK6K1U9gNzw2uHakyFjqmyHgM4EEQtOcKDUHTQZ87lqlhdPhtN68vPi4tW7OZEiUKjGEUB5g2UKskkmpyRpiGZvlOK2UwXBX2xd2qaDqOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SmmoEyFx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OfR7/b5b; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=anUrKWtsxQ8q0JpsXLdRQkk5N1ZcqPRppDm+Ol9eZmMTf9eOns/+83tdIVDxOyWIKrSuiKceLM6lQ7ANrM1pMdhDvEferQ5Kd/eVx8ZzEF2y6K2x+3uANSe2fAAfnFmccq0Xr61B2bTQsezR54F7DDWAQBWeXnb2yoYccNkF6EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MwUJyBAz; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SmmoEyFx";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OfR7/b5b"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AOB2sJY3884524
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 15:53:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=lcUfwtPY7I4dq2SqD63B3hhl
-	sbHh9OxaMGpG1z80cTU=; b=SmmoEyFx/TjdE4OMgwuhPtdGYepaygrPdB8T9VTT
-	c8QPAw2fLeaYT3Xxif+6sGfFYmNi84BqOoLyjzvjZ3AUDbiVpIgh7io+/Sty8Nnu
-	zAHWLUcxEw+JUym4YG7Qrud1qhUzyvrlP00cpZBDeGwhvpKlJJL35/a2OZlYtklU
-	fy/JtVk2zbTUrODFpJ408r5pckm/VWtANbwVf30Lr5qPBP6SpvZPFv0CDsY94swX
-	f8JNbJ2+R/frMTrnn2YYoYswbinLTHfa250hw7BbiS8b4KHy0MROXLw41IeZ996G
-	ziyavERP4WG+/eDIMCdwPsrc+iHClBTqvOd0xunbvycSvg==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4amp568sdw-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 15:53:44 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3436d81a532so8882703a91.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 07:53:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MwUJyBAz"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2955623e6faso53026495ad.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 09:06:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763999623; x=1764604423; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1764003975; x=1764608775; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lcUfwtPY7I4dq2SqD63B3hhlsbHh9OxaMGpG1z80cTU=;
-        b=OfR7/b5baYsfsUQZxLBOyh+2CxTRWATfwzBoNZ9N/2G5UZY2Njr9H9z4HEAfMtoqP+
-         swfcJtkBwfrgdRQ6Lm+wvkcanUMVkvTykXshZplNigF3iUg/ec0y77t3AG8ayt/awagy
-         gX/4Eg0lKWnVr4B7DW3z5BwM7luS6QSnUd8i5yjUpgg00ZLpxl4vY4ZKzkGeJGT8FeOw
-         Z8INuEeVtulDld3VqSl0DbqsCrlIUca+l4xANqcqtXVOa7fgCTPJClLT6N2EKG9BFxxe
-         Anysh8eNegh+/K2h8NtcSuPQn/L1JsJQj4fdOrApNX8RIjLnjgH6ZxMdWUruT5WkrTFR
-         s4CQ==
+        bh=gnHv7SSUkVZXm9MlHQF7vnbKRHnkGY//zn2BWH6fbi8=;
+        b=MwUJyBAzQ9279jRUYy/gey3eDSFddfZgnMDp1XBvmQn2JmUMyA94hFPzfFhvrTxi3A
+         cJj8Wlz3fXhfF1diLtyLd0BBm+X4O57exrGlyqWjKStfYkF7WEGCcg7+hvEeF7ZWP9Z9
+         Li6zEH1tyiNYBB7rSf9Lp/eIIJ9Rnk8JbKeesmrEd/DDc7RDx6LkqhTvo/oQIMGA1MeV
+         4wOoUWi7jhf9NoEjlpkwIZTFhV+Gm8wEOlvFIX2DqJda7DpKTjvHv+8QoRT3UMLxK7XW
+         X9D0JAadElptu76pPK0UGsiRf7D090GanoeURyTrQfBWkJdLWnsO/n8/VEkk5yH5JeaJ
+         7ekQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763999623; x=1764604423;
+        d=1e100.net; s=20230601; t=1764003975; x=1764608775;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lcUfwtPY7I4dq2SqD63B3hhlsbHh9OxaMGpG1z80cTU=;
-        b=FblToJkcPG/RIee/hswtdpdxiJuMVGKKX/KgAnfSjO7dbVbivPB4o2esbAEKDf7Rk1
-         EmgYYdWfWcuOVgmOBxwAE9I767iOOIQjkuTGZl+KfoKPP5p6fswLP8HKBONYVs2jhEOD
-         aCaSzmElEeTEdR+11KRK8muM/NziJkEKxjmDeFK1ySoqKHbsUGPg4U6/wcv3UNUDXx3d
-         bZcPGP99zBNp0927NHTStygSkJfBSoQaY3XHmZgGDOK+ASNaZVqmt3sQzm9f2MPutO7s
-         gDnrVqpCBz/R4LqP/OBF2U7Sw5aHsFkm/WilNzYzqthkvfAX6uo88x0S/AJr8PnYxosO
-         4yuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBczWB1/jkKM3QB1jDjnw5RtltYFp6fKpAA0dcj5PsoHxTfAqBCdV9uZBsSlboNCrK2MRU0e5JfEsFfvPvF9+5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxb2ACQavigUDeOb7J/B2z4PADGLEr16gb233pLckTRi102j13
-	WJshxXZjxlI6LaQHDU0rGoY7pIqMBaPYBxGJKprqSU6ufwhFWnfjOvPMZ5fPbOsbbQmEra/6jVM
-	iU17DDcyvH/eSaqH0zDwted6dBp2Y1Xi+FI6VyUgf7f0feq+naGaCxcMD0//Ip/vt2EVajnTQ
-X-Gm-Gg: ASbGnctZzJ4eSZs7WfiDzENHN3AHguTKo3gU9vmFQG8/tJwxUtM2arpvAam/AT+zIcW
-	s6Jn8NOp4mhtRGLAUpZC14n0wWgI6FxZnXAyMxz63Mmln0pkIBTZ6Zmf+bTfmcWdX1qCuGhKtM/
-	+Vct86xYTFIlvZ1W5TNWdZjuBL0N0F/t9rSvipOu0eE1IE0yMFIO02hZcU189z/6GkVCNqw2jJm
-	nYlChsJ2Y4A8jJyYaAystGk5a+KgXZryOPahyfH9O/E0ZbxPh3919cRpeQmhCXrUpZ3slizLG9O
-	V/X5UYIdFloDJGlamSJ8al/N21bw0XrjySJqi/gL9QcERUuGjam7W/XlD9CoXxiWTGCGMabpers
-	A54ls1HxyqoWnhbMFfd+IljdP4sWjlNHiBU62
-X-Received: by 2002:a17:90b:48c6:b0:340:5c38:3a56 with SMTP id 98e67ed59e1d1-34733f5cef1mr11983280a91.37.1763999623306;
-        Mon, 24 Nov 2025 07:53:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGpyUmJzIx88EvSZBo3rN3kdAqiVkHc3BEVZBVRfdX+do+UkkNHg6B1NeQz2X4n+wL0IvGJqw==
-X-Received: by 2002:a17:90b:48c6:b0:340:5c38:3a56 with SMTP id 98e67ed59e1d1-34733f5cef1mr11983248a91.37.1763999622671;
-        Mon, 24 Nov 2025 07:53:42 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34727bca9aasm13807991a91.3.2025.11.24.07.53.38
+        bh=gnHv7SSUkVZXm9MlHQF7vnbKRHnkGY//zn2BWH6fbi8=;
+        b=rMVAglJJdKXaSzBDMwdPXlF38hKf7TxtRE4aeyOD2uY0dZW1bRWX55/DhUfY0FGcFE
+         ul8Sr2fA5RLR48dZV/xAI493R9dmLTilgfhR9KQR9bzu72IL9QqFLFfBrG+NBKDxQZ2F
+         Gw0PkjwxfGC1Pe9s3aQPQ9wdsBqDw15EPZrmw8JtOZK1CZJ9on0hD9kVnxVP9PuMopux
+         A5R3kgwPWAjwPypYjxA5ZEU0P2BQsml5nghBSOpPfIq/nVOeGIMYdUENzbUXPKQoM//w
+         LAT+CrNtsqsquGZKDHSwIVMrsrfLaGS4Jrg77y8Z2M+RCKvwHwmlBK76/YTird97F7w7
+         ClaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhM8xFzxFkPp5Y7a+nO3heGs0vfhvQFGDcGbfMjyTJOMMrizSLy4PlyElbeEADNnPuhCuDPa8MCgcqDOrfSZkh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7eXL2ej1UIjb+v0GIPiq5z0O3yn9p3Y1WWzD2uW5EUJ50dvwE
+	+nVaGWL26zPvezFIzRsqbj8eLLUsGtNPGVdApWscg+9cJkXc98E3FtQ/Vv2LfGDFZDE=
+X-Gm-Gg: ASbGncvu/Q5eOmoR9c/hXh+wAGCnHBpr85379Xg41jVQNgC7M+sXekO5hd1KnXvMR7i
+	hrO1Zed/t4vVduoqubMz/HxfKGjPuN0SfBKtxvN6+wO3plA6h9Eyq7mFnJJP6Cr+AFe6gMtZPbG
+	GThWvsHpCj6NowX5BrkeA9sLT4/lo1dl4/JD/ZLpiD1lXnzdoJEya+ukNR/J0UWXnn00HZc1/Bc
+	n1VbniYxyk6VNoNDY/8LZnjrhPwNtkjPhKk3gYx1BhzxlWFo+cZxtIov3L2PIQ4XJI0ys4jiKFg
+	B6fw16+16lLaqXrv385nhw3TRiU2Jdbp6Fd+HHLCbyUGAl2rome+WX6OqCR27+IdE29zbb4QWWs
+	ZD/9I0BgYuzJ7FldKHQSC/swBQEo+rNvTkFU6m597RDA+7yA8UO6bobVfgPcGADYGbGxnhNCUSv
+	N+Zu+vyPQcAvCBCV3qyXBf6YFV
+X-Google-Smtp-Source: AGHT+IFFll1ZBv/7+NTNtf66eRKGB3OEh6EXFU3EYSb6koOyW950nZNuI/PfU8U/2nZsnDgImLDneQ==
+X-Received: by 2002:a17:903:384c:b0:27c:56af:88ea with SMTP id d9443c01a7336-29b6bfa1f66mr134598965ad.60.1764003974768;
+        Mon, 24 Nov 2025 09:06:14 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:aebb:f23e:8a7c:d95d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29b5b13965csm142296595ad.30.2025.11.24.09.06.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Nov 2025 07:53:42 -0800 (PST)
-Date: Mon, 24 Nov 2025 21:23:36 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 00/14] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-Message-ID: <20251124155336.6b45ddgwc5mh6q2y@hu-mojha-hyd.qualcomm.com>
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <0156c327-b867-481e-af24-679f037bfa56@linaro.org>
- <20251121113751.tnqw5abm5sd2rgr7@hu-mojha-hyd.qualcomm.com>
- <238adfbb-3773-4318-93d3-b23697aa4b18@oss.qualcomm.com>
- <20251124064558.aaartbglgvcj7w5r@hu-mojha-hyd.qualcomm.com>
- <5dc2f787-56f7-44ca-89b2-754a0c46a1dd@oss.qualcomm.com>
+        Mon, 24 Nov 2025 09:06:14 -0800 (PST)
+Date: Mon, 24 Nov 2025 10:06:11 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-imx@nxp.com, Randy Dunlap <rdunlap@infradead.org>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v5 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+Message-ID: <aSSQg22Kt-565T8S@p14s>
+References: <20251104203315.85706-1-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -107,99 +88,75 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5dc2f787-56f7-44ca-89b2-754a0c46a1dd@oss.qualcomm.com>
-X-Proofpoint-GUID: ygTOoFbcpOjLyg2Za5hcTqOIlcrcTAaO
-X-Proofpoint-ORIG-GUID: ygTOoFbcpOjLyg2Za5hcTqOIlcrcTAaO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI0MDEzOSBTYWx0ZWRfX6aCWmxH+kwro
- 7wUapVM1uh9Jr+a8VS1rJXS8DGJ7DVBglI0FePrMk/T4GIsLvAXwEFwgA4DvCrrjyNwYV6396mi
- 4Naiii68qwplv3L1L1ZeA5GkhSR25LU0NRTM1lNZgtoBqIPbje4pfC5okJALdE3IC4JNTy/iS6r
- 9DSrMAJUmDAytJaF6GWrw0sb3VdrEd67XKOhJRnIjyt3LFnOnD9dBmcpY0W+UqwarcKfAfH6sGx
- dDk5ZyNVej5Nf0+gcMwwsusbP73qKVxMohAjl+eShts9+fBHh/Zz6n4n16Rls9EMznQ2KDG8h9m
- YYfgIqQkaQnPqttHEoIHyGM7AdVJ2UjFOnYO5pUzwm7EoF6OSmHJAlV7Qco6VEVX+TcvNFucuwH
- RpzBWZwmEA49YlS45nkzXLMlhxd1zQ==
-X-Authority-Analysis: v=2.4 cv=dPWrWeZb c=1 sm=1 tr=0 ts=69247f88 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=zU0Ex8qXXkjpmaSxHigA:9 a=CjuIK1q_8ugA:10 a=iS9zxrgQBfv6-_F4QbHw:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-24_06,2025-11-24_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 lowpriorityscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 phishscore=0 malwarescore=0 clxscore=1015 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511240139
+In-Reply-To: <20251104203315.85706-1-shenwei.wang@nxp.com>
 
-On Mon, Nov 24, 2025 at 12:33:47PM +0100, Konrad Dybcio wrote:
-> On 11/24/25 7:45 AM, Mukesh Ojha wrote:
-> > On Fri, Nov 21, 2025 at 04:08:36PM +0100, Konrad Dybcio wrote:
-> >> On 11/21/25 12:37 PM, Mukesh Ojha wrote:
-> >>> On Fri, Nov 21, 2025 at 11:27:57AM +0000, Bryan O'Donoghue wrote:
-> >>>> On 21/11/2025 11:01, Mukesh Ojha wrote:
-> >>>>> In May 2025, we discussed the challenges at Linaro Connect 2025 [1]
-> >>>>> related to Secure PAS remoteproc enablement when Linux is running at EL2
-> >>>>> for Qualcomm SoCs.
-> >>>>>
-> >>>>> [1] https://resources.linaro.org/en/resource/sF8jXifdb9V1mUefdbfafa
-> >>>>>
-
-[...]
-
-> >>>>>
-> >>>>> Changes in v8: https://lore.kernel.org/lkml/20251113-kvm-rproc-v7-v7-0-df4910b7c20a@oss.qualcomm.com/
-> >>>>>   - Addressed suggestion from Stephen which was regarding commit message(9/14),
-> >>>>>     debug log(12/14) suggestion, and return type change(4/14).
-> >>>>>   - Added R-b tag on 10/14 .
-> >>>> Sorry.
-> >>>>
-> >>>> Did we actually come up with a cogent reason to omit the video firmware
-> >>>> loading here ?
-> >>>>
-> >>>> AFAIU it is required for Lemans and Glymur - leaving it out is blocking
-> >>>> getting video stuff done and storing up trouble.
-> >>>>
-> >>>> What exactly is the blockage - is it something you want help with ?
-> >>>
-> >>> I replied to you here[1] and given my reason..till something concluded on
-> >>> "multi-cell IOMMU[2]", I can not add video and block what is working
-> >>> already.
-> >>>
-> >>> [1]
-> >>> https://lore.kernel.org/lkml/20251105081421.f6j7ks5bd4dfgr67@hu-mojha-hyd.qualcomm.com/
-> >>>
-> >>> [2]
-> >>> https://lore.kernel.org/lkml/cover.1762235099.git.charan.kalla@oss.qualcomm.com/
-> >>
-> >> I see that the following files call qcom_scm_pas_auth_.*():
-> >>
-> >> drivers/firmware/qcom/qcom_scm.c
-> >> drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> >> drivers/media/platform/qcom/iris/iris_firmware.c
-> >> drivers/media/platform/qcom/venus/firmware.c
-> >> drivers/net/ipa/ipa_main.c
-> >> drivers/net/wireless/ath/ath12k/ahb.c
-> >> drivers/remoteproc/qcom_q6v5_pas.c
-> >> drivers/remoteproc/qcom_wcnss.c
-> >>
-> >> iris is difficult, rproc is done, adreno doesn't need it..
-> >>
-> >> would ath12k_ahb or IPA be affected by this series as well?
-> > 
-> > Yes, they would be affected, and the modem as well, when Linux is
-> > running at EL2. However, I do not see them present in any of the QLi and
-> > targeted compute SoCs at the moment. Therefore, our firmware does not
-> > support it yet.
+On Tue, Nov 04, 2025 at 02:33:10PM -0600, Shenwei Wang wrote:
+> Support the remote devices on the remote processor via the RPMSG bus on
+> i.MX platform.
 > 
-> Hamoa's little brother should have ath12k_ahb.. and I assume IPA is
-> present on at least some platforms where there's a modem (QCM6490?)
-
-Sure, We will add the support for IP's when there is a need for SoC running Linux
-at EL2 (backed by firmware).
-
+> Changes in v5:
+>  - move the gpio-rpmsg.rst from admin-guide to staging directory after
+>    discussion with Randy Dunlap.
+>  - add include files with some code improvements per Bartosz's comments.
 > 
-> Konrad
+> Changes in v4:
+>  - add a documentation to describe the transport protocol per Andrew's
+>    comments.
+>  - add a new handler to get the gpio direction.
+> 
+> Changes in v3:
+>  - fix various format issue and return value check per Peng 's review
+>    comments.
+>  - add the logic to also populate the subnodes which are not in the
+>    device map per Arnaud's request. (in imx_rproc.c)
+>  - update the yaml per Frank's review comments.
+> 
+> Changes in v2:
+>  - re-implemented the gpio driver per Linus Walleij's feedback by using
+>    GPIOLIB_IRQCHIP helper library.
+>  - fix various format issue per Mathieu/Peng 's review comments.
+>  - update the yaml doc per Rob's feedback
+> 
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-gpio@vger.kernel.org
+> 
+> Shenwei Wang (5):
+>   dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+>   remoteproc: imx_rproc: Populate devices under "rpmsg" subnode
+>   docs: staging: gpio-rpmsg: gpio over rpmsg bus
+>   gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+>   arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+> 
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 123 +++++
+>  Documentation/staging/gpio-rpmsg.rst          | 202 ++++++++
+>  Documentation/staging/index.rst               |   1 +
+>  arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  27 +
+>  drivers/gpio/Kconfig                          |  17 +
+>  drivers/gpio/Makefile                         |   1 +
+>  drivers/gpio/gpio-imx-rpmsg.c                 | 475 ++++++++++++++++++
+>  drivers/remoteproc/imx_rproc.c                | 146 ++++++
+>  include/linux/rpmsg/imx_rpmsg.h               |  48 ++
+>  9 files changed, 1040 insertions(+)
 
--- 
--Mukesh Ojha
+I started reviewing this set.  Given the size and amount of comments to go
+through, it will likely take me several days.  I will tell you when I am done.
+
+Even at this early stage of review on my side, I can already confirm the only
+way to move forward with this set is by reaching a consensus that includes
+Andrew, Arneaud and Linus W.
+
+Thanks,
+Mathieu
+
+>  create mode 100644 Documentation/staging/gpio-rpmsg.rst
+>  create mode 100644 drivers/gpio/gpio-imx-rpmsg.c
+>  create mode 100644 include/linux/rpmsg/imx_rpmsg.h
+> 
+> --
+> 2.43.0
+> 
