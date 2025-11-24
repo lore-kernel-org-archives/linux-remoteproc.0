@@ -1,227 +1,172 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1201A315D22
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 15:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7E23148B5
+	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 15:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1763997949; cv=none; b=pRW9hCNj1mzeqCtkT/qa5nf3yT3UBiFbCxAzXMOi2ZIHzmhSHPcco9QcX63wnOdaB0iMjgcR2LJGwxBjoFEoya+ANUqEvGor+8rMcbPqEkDgudNof0s8EfmQb5n9PKMpVYLO7O9jtkJBnvNb/9k4VE8XiV2QTq9h0A9H1RLZ0nU=
+	t=1763998052; cv=none; b=srBpnoGf1FrFX8LudtaZHqBIy904xwCjmcKSAQWtjjBEHH2sWM+kIHfkN/1m1w7sKKKuTOt+QKRilbmxEC40Iwd+nsUIgFsWqwHmffdkaFNmTLB5Ki3ITDCeYSwFdQDhqlz1UUxTfRDE4aiR8/5UkBFj1MJxQYwNbJu3ef9lEVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1763997949; c=relaxed/simple;
-	bh=9rLc/3CNylDcoUI2xBmO0X0AQBMSrlF6X8puYxz9pC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ONTRqmoEmmV6KxpKfa0TrHHrPsYnDm/QwVM02Jao9gtGu+rTBaqkakXdeptayyqty2CfoGkr781xfESfIejEP2WMYRUBU7+H1w80SA9RTqNSHVIagGjDqo/1voacI0GNLLF88aNPWFQZzAMY8KpYBAw770aOnVg0c9ZVdVgCvxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kQOPMd+c; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eSix7EU8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1763998052; c=relaxed/simple;
+	bh=2/WcYCyzEAtsd7FolRM3lgoT5Al7DMEV9/hgNWettMw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ncgTr3RQHLa0Dbd7lndDi84A74BXL0P5HzheH5zuDYqSME93Wo49PExT2S8qOwEiEQqnrvqSUuHEYhlefbo7C8NJNHii/jAyCnaJz5EL0yrXAY/P+ZVFEHc0IAZk0IeXo747OEWbYq30Icap97ITjxDVG3EENHcZ2FAyEoKLQX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XLegxZ1p; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kQOPMd+c";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eSix7EU8"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AOE8YcE078534
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 15:25:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=fg4PBnZGTltBf0/Grl7qvJuT
-	Rdgj7EINCZqJULWJKQE=; b=kQOPMd+cqRCeLDKGxWb3Lg22F8pTTwl2NhgYLioI
-	7hAyILvbpwt10wFUIdysL36nFb697OmOK/Px09z5S/M0lZZu/mxGajAg8BKQxbYa
-	rMXwRnN52u9CXRdavyXx+Gn2SLDDo0mjKCUmXGMzU7XbNSnvsoDIuCAk6aO5BSj5
-	gtci1NVNP2Rs7kU44dXp+KaMfcax4UUFGFDgWPkAkOw3vVBCRDx7+xXowNXReHge
-	1AliUw3yU6d8couoTt5PCIKpkndt5YXxdLq+j3IlGOxKRoHsrIhWECapO03tuKYX
-	3uM5h5wfEOrTZ4rnCaQv7mQycD7vz1u/VFhJXkbMI/BoPg==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4amrv687e0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 15:25:47 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7b873532cc8so3573606b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 07:25:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLegxZ1p"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6431b0a1948so7232369a12.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Nov 2025 07:27:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1763997946; x=1764602746; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fg4PBnZGTltBf0/Grl7qvJuTRdgj7EINCZqJULWJKQE=;
-        b=eSix7EU8UTL4pg92F2BYQor4mU2sv1EYvFNk62qgrXp56P3lvd1ZckS+hIAxGO1UHS
-         f029tKNWwO4twKEkeGtCq7NFypUyifYOVAJ/TvD6g+vDWAoMXiY1dixC5yL7Lm11mhJm
-         5psNbZdrcgPBaYLggzErnlcl8RBtbIj7SofQm+H/VXGA91f6L7BBtPi4yLqSdavFf2n7
-         LbidiuwQsqOrCqNXKRWnLU/cUvI+rOlK12decjStsOJVmPNwoMjvfNuLxD62bKv8osfU
-         CTIiAf+x02qMxmnK92IzjjAFExLjMP/H+CxdFpnpfXFY47IcMo9e86Uu/QdEX2F0joHz
-         Dc/Q==
+        d=linaro.org; s=google; t=1763998049; x=1764602849; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hPXbuoT8gLmsTcz1LKML8KzSKiAMgBQ+ViKr9I+j9RY=;
+        b=XLegxZ1p0z74OH8VNdDos/I1ik/vc/G9VPq6GSxm41tMS56bhAuwj/hHThXdUnBcWc
+         FI7U/u/U8pWKIa9IZD2RKm/W4kqGR1k9vDUYVBwFc9V/8OLVgw2zXdpTPKL/sN0oatU1
+         m1YLicc8gV9UI23uWpab+2qOqXMrkbneLIcazmP+JQBXedmXfn3JJNeN7Vju46mJYpXy
+         zJSKZhe6M+Gx2V/k2FmnbKgzr0rPJbc8rXh+qtmFQfBfp6/cC9RuhFuy8WFKlMnjabIh
+         qxBDvyVe8+BvNNermEyzS+FBUn+OjuQDllKxfyEUYqbQOhjpqgCGrPs3QZx++1bUQ98P
+         8GrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1763997946; x=1764602746;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fg4PBnZGTltBf0/Grl7qvJuTRdgj7EINCZqJULWJKQE=;
-        b=up8tdCcptDBLeT4gul6TKYyX3FeR+g+rgoNJCviec5ISl8w91qPvTccdbEZnhEKgrc
-         dR+je0KRv6WjKIsLTGBSjjqzj9L7NCkQOcuYIo7tsT9oousTM/o2Vtw+p8cE5dyWRoi9
-         /w0NNktrKa7sO0OjGI46hmZbAZqJtQu3au01/CPMg/BVpxVYRLY7/e2QZ2j5FMUAKquP
-         Q3MmQWeJMc4jcKBv/sO9ih2Tlrczp+yjWT66WA1C68spcjcj0FcWwMKPXdnvaNZNGXTp
-         2qeqNpOUsi3M0qXx32wT5gYqQZo1ysf/bD+OS/TrT77cAjtVrfzE9GFsz1nR77PZcWa5
-         EdQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQA/+BkeN50jne0wP/qsDHstnsi1c1JZK3qj6bvrojwBodVME1rX5qBvRymNr7VEHAPmVRSfDUq+BHH27xL7yu@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIKAled5hYsGGznYevj1/KZFSi7CI5mrAAbrdVVyQs3JkPj8+v
-	A3zShf+xXuAp77Edsef514g8AR4R9QhmYTBqe+Ll22X2j6yb7JHscsHbTefz5/LjnRoYKlz9nxw
-	snYVsJmmGlF4NXc5OKokApC1T26alIlacQQYzPly3pfEzwPegZ8yOIKcQv4fUvmOlVj04GhEY
-X-Gm-Gg: ASbGnctZ5qIbH1F93y6GGSDdRPxlRd+bAEEYO4QXyykV/Yg8wnX9aRjGyjRAckI9hxO
-	s1iGZgSpXmQjSI8GwnRK3kvEPKymsUVw5IiUAN6INJdY+orpWmXItEX+hqeFm0xzleOqjjReRiS
-	VK2vC+BCRHfRhzOfjqXo032yfTZfWXdtnkg113dnVF7fwI8vjcz3mwGYQWzPiWWUQ/PcAIfFxao
-	d6hn23mztLauEcW2RucqMFgMNr4lQrVB2JWkfPhphsVphDwgX7qqIWidWOrKOANtw2oCtYRIRSz
-	n0Upj8eHwjJYYmfUbed04Vam/h4tTF63g5vd/xB9jA3iRTh4jOisuLm0Ajkz1u9i/ias+y8blUW
-	60X8cYHk6pgNBzXzMn18qeXaNokZgnl9n0EMF
-X-Received: by 2002:a05:6a00:73a7:b0:7aa:8c11:b520 with SMTP id d2e1a72fcca58-7c41e6f85b1mr12477876b3a.7.1763997946324;
-        Mon, 24 Nov 2025 07:25:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE/UHfsebODaWNAZCLgjrzCkR/LldaPt7pCFEwZe0hWH8/0+EpwOVz0Lq7CT9NvYVD4iY5QWg==
-X-Received: by 2002:a05:6a00:73a7:b0:7aa:8c11:b520 with SMTP id d2e1a72fcca58-7c41e6f85b1mr12477828b3a.7.1763997945572;
-        Mon, 24 Nov 2025 07:25:45 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7c3ed076853sm15027686b3a.2.2025.11.24.07.25.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Nov 2025 07:25:45 -0800 (PST)
-Date: Mon, 24 Nov 2025 20:55:38 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-Message-ID: <20251124152538.wt3kzztqmpr76hsx@hu-mojha-hyd.qualcomm.com>
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
- <86f3cb9f-e42d-40f9-9103-1a4953c66c71@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1763998049; x=1764602849;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hPXbuoT8gLmsTcz1LKML8KzSKiAMgBQ+ViKr9I+j9RY=;
+        b=rOZBpAfI4fN4bvzZLs4U7EnaHGgEALuv2f/gTE6Qm5ZvjwfBfCyqy/2FK3h+p1Zike
+         VEQz5MEpE5OpLlkxDe24lSoSrCaRcxgi8iqyOMuJx0UNnljNQ0HbmxjIQ85r6y0TAJ3s
+         C0xk8ofe9fC6V6vfD6cI00I9X8m/DRr4qXOJRCeQqR9vxLsWPexGassxgT2QJLr2VdpT
+         iqAgLyb+I7PK3pNbhNkxRTMHLvOe/p+IFMf2+iuRxQNY0rN1IveIyVijVsTP3rjXq26r
+         9M6MOerRlwtSWSUVyYZ2sfj8h9T3abu4WjBHMWB3o0TzOoVRMqR85bloiA2XTatmSyEu
+         127Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWJb5RNci4526lSNLpSvzNLBJz1WYKy/uduAAWOimSyqV89n6qnwPkmHfxonv/wcuKcCFNLh90sTzZDxhbetj7j@vger.kernel.org
+X-Gm-Message-State: AOJu0YycGEoixhvLyuMTK8Gs1DM704LKQa5fwn82M7cHl6wmET+iIsF/
+	j5oOXhUqSsDpWRTxStpUzfkBPctACW/hoC/ZQMfko7jrTbO6nWOiiXG31dsYzyjIqHGrpSqrJK7
+	AIXoRGIFSZkMrsCe+Gl7Aq69oseOFW3Cwm8v1GXsBXg==
+X-Gm-Gg: ASbGnctFmKIP8fIuWbO2DQMSfGbbQd+pSJ/AkDUjx83Y0dtsYlfkhK8IbgVn1tkC009
+	Fu25aoc2alTk2NK0VzwSJjiaTo6dghajuH/0SIJW2y/Ud9gUgr0mp2SAYmGLtJGM0p7XNlpKxPm
+	0byr1j87YeX+0n5ch2YkOmS/kT1matfYewzBF+S9zygxzwiH4FP3WbJfGxh8TuHiLG97FltdEK+
+	m/TNtPw2jJCzlsD8jNseTb+i48uEHXz/pdiCc2s6foLFQzeGg5w1MX2U0z+tgnWsym1S459pZg1
+	09e7uQqqxDmSbkYgFjPVIy7dmpHb9ZPl/IuV/Xdl
+X-Google-Smtp-Source: AGHT+IF8QEkzWvf4ABwZ5746O2obgVPWntwD+fd5/y1Lc5h5RDwaFcxXgvVKNe3CbF15J7X0KGPpVRchdEIoJn8QTA8=
+X-Received: by 2002:a05:6402:2552:b0:63c:3c63:75ed with SMTP id
+ 4fb4d7f45d1cf-64554685163mr11501766a12.22.1763998049271; Mon, 24 Nov 2025
+ 07:27:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86f3cb9f-e42d-40f9-9103-1a4953c66c71@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTI0MDEzNSBTYWx0ZWRfX/PPxG6RzPPwM
- 0u2pjUKFOcIrlpcrtTgCV3Fbn73nHrG5auD8t8CVgwiw7Kf+ah53kzIr3KiJQOlCghEBtVKFe3u
- 0a7+yD1cuqnFIM13b3bQt24PEiu4UE6cgR+tIO+qkKOVtP6ivavYq8lLU4Czo95ShjlvhSZJNs8
- GZecWvmaovdPqhiDivPsR2HWm5ka992Gt8QoAib+9piTtxnfUZdgvn7jjPB9VHT97whovJCiKcD
- QDje0zcn8PFGr5O0Wd6fr34R9OB44jZuTRF00YqXK0CX0u1AiuXT2mDWY8mcMzjbGDVLSccyouE
- Pl1SE9s9k/EAgvWJR03SNGwMrWADSXDVu1cSOJ8S/cCDdHDz0LssjxRP+rJ+Bm35xeLHlKZHUNU
- y/hbxSHirayWauqn0RwIKZEJs8JSbA==
-X-Proofpoint-GUID: 9LOBbBKoanxx0a3cGM3TIEcBmRqoK3ti
-X-Authority-Analysis: v=2.4 cv=f7BFxeyM c=1 sm=1 tr=0 ts=692478fb cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=pnlhYKf0aWWrAWvAJv0A:9 a=CjuIK1q_8ugA:10 a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-ORIG-GUID: 9LOBbBKoanxx0a3cGM3TIEcBmRqoK3ti
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-24_06,2025-11-24_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 phishscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511240135
+References: <20251122-imx95-rproc-2025-11-20-v3-0-9ae6ee619a78@nxp.com>
+In-Reply-To: <20251122-imx95-rproc-2025-11-20-v3-0-9ae6ee619a78@nxp.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 24 Nov 2025 08:27:18 -0700
+X-Gm-Features: AWmQ_bmPua71P-c3C9amQu2EA6PcheE8Yz3sJ-xba42mtqxFzXSsE84-oyqxRX8
+Message-ID: <CANLsYkynN2xSShAKXAcRsGTeS2YX1qhO=83xCScaaonJN=2hFA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/5] remoteproc: imx_rproc: Support i.MX95
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 24, 2025 at 12:48:31PM +0100, Konrad Dybcio wrote:
-> On 11/21/25 12:01 PM, Mukesh Ojha wrote:
-> > Qualcomm remote processor may rely on Static and Dynamic resources for
-> > it to be functional. Static resources are fixed like for example,
-> > memory-mapped addresses required by the subsystem and dynamic
-> > resources, such as shared memory in DDR etc., are determined at
-> > runtime during the boot process.
-> > 
-> > For most of the Qualcomm SoCs, when run with Gunyah or older QHEE
-> > hypervisor, all the resources whether it is static or dynamic, is
-> > managed by the hypervisor. Dynamic resources if it is present for a
-> > remote processor will always be coming from secure world via SMC call
-> > while static resources may be present in remote processor firmware
-> > binary or it may be coming qcom_scm_pas_get_rsc_table() SMC call along
-> > with dynamic resources.
-> > 
-> > Some of the remote processor drivers, such as video, GPU, IPA, etc., do
-> > not check whether resources are present in their remote processor
-> > firmware binary. In such cases, the caller of this function should set
-> > input_rt and input_rt_size as NULL and zero respectively. Remoteproc
-> > framework has method to check whether firmware binary contain resources
-> > or not and they should be pass resource table pointer to input_rt and
-> > resource table size to input_rt_size and this will be forwarded to
-> > TrustZone for authentication. TrustZone will then append the dynamic
-> > resources and return the complete resource table in output_rt
-> > 
-> > More about documentation on resource table format can be found in
-> > include/linux/remoteproc.h
-> > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> 
-> [...]
-> 
-> > +int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
-> > +			       size_t input_rt_size, void **output_rt,
-> > +			       size_t *output_rt_size)
-> > +{
-> > +	unsigned int retry_num = 5;
-> > +	int ret;
-> > +
-> > +	do {
-> > +		*output_rt = kzalloc(*output_rt_size, GFP_KERNEL);
-> > +		if (!*output_rt)
-> > +			return -ENOMEM;
-> > +
-> > +		ret = __qcom_scm_pas_get_rsc_table(ctx->pas_id, input_rt,
-> > +						   input_rt_size, output_rt,
-> > +						   output_rt_size);
-> > +		if (ret)
-> > +			kfree(*output_rt);
-> > +
-> > +	} while (ret == -EAGAIN && --retry_num);
-> 
-> Will firmware return -EAGAIN as a result, or is this to handle the
-> "buffer too small case"?
+Good morning,
 
-The latter one where a re-attempt could pass..
+Please note that due to other patchsets that need to be reviewed,
+Linux Plumbers and the upcoming 2-week December holidays in the
+western hemisphere, I do not foresee being able to look at this
+patchset before January.
 
-> 
-> I think the latter should use a different errno (EOVERFLOW?) and print
-> a message since we decided that it's the caller that suggests a suitable
-> output buffer size
+Thanks,
+Mathieu
 
-Agree with error code..
-
-This is kept on the caller side keeping future in mind. where we can have
-resource table coming from the client and it needs to go to TZ for
-authentication.
-
-Are you suggesting to move this retry on the caller side ?
-
-Just for information, once video patches becomes ready, we may bring this
-qcom_mdt_pas_map_devmem_rscs()[1] helper for video or any other client
-should be do this here as well ?
-
-I wanted to optimize this path, where caller is making a guess and
-gets the updated output size in return.
-
-[1]
-https://lore.kernel.org/lkml/20250819165447.4149674-9-mukesh.ojha@oss.qualcomm.com/#t
-
-> 
-> In case it doesn't make sense for the caller to share their expectations,
-> the buffer could be allocated (and perhaps resized if necessary) internally
-> with some validation (i.e. a rsctable likely won't be 5 GiB)
-
-Are you saying output_size as well should be checked and it should not be
-greater than something like UINT_MAX or something.. ?
-
-+	*output_rt_size = res.result[2];
-
-
-> 
-> Konrad
-
--- 
--Mukesh Ojha
+On Fri, 21 Nov 2025 at 17:58, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
+>
+> This patchset is pick up a previous patchset [1] with rebased on
+> next-20251030, and some changes applied.
+>  - Add runtime ops to separate cpu ops and lmm ops
+>  - added more comments
+>  - moved some check imx_sm_rproc_detect_mode() from imx_rproc_sm_prepare().
+>
+> No changes to the dt-binding patch, so R-b/A-b are kept.
+> More info could be found in commit message of each patch and below.
+>
+> [1]https://lore.kernel.org/linux-remoteproc/20250821-imx95-rproc-1-v5-0-e93191dfac51@nxp.com/
+>
+> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
+> one Cortex-M7 core. The System Control Management Interface(SCMI)
+> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
+> Manager(SM) includes vendor extension protocols, Logical Machine
+> Management(LMM) protocol and CPU protocol and etc.
+>
+> There are three cases for M7:
+> (1) M7 in a separate Logical Machine(LM) that Linux couldn't control it.
+> (2) M7 in a separate Logical Machine that Linux could control it using
+>     LMM protocol
+> (3) M7 runs in same Logical Machine as A55, so Linux could control it
+>     using CPU protocol
+>
+> In patch 3, Use LMM and CPU protocol to manage M7. More info could be
+> found in the patch commit log
+>     Current setup relies on pre-Linux software(U-Boot) to do
+> M7 TCM ECC initialization. In future, we could add the support in Linux
+>
+> Patchset was tested with below boot images when the patchset based on next-20251030:
+> imx-boot-variant-rpmsg-imx95-19x19-lpddr5-evk-sd.bin-flash_lpboot_sm_a55 (Use LMM protocol)
+> imx-boot-variant-alt-imx95-19x19-lpddr5-evk-sd.bin-flash_alt (Use CPU protocol)
+> imx-boot-imx95-19x19-lpddr5-evk-sd.bin-flash_all (M7 not under A55 control)
+>
+> Also tested i.MX8MP/8ULP-EVK.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> Changes in v3:
+> - Add R-b for patch 2,3,5
+> - Patch 4:
+>   Rename imx_rproc_ops_sm to imx_rproc_ops_sm_lmm.
+>   Add more comments in code
+>   Simplify if check in imx_rproc_sm_lmm_prepare()
+>   Update commit log
+>   Use dev_err for failure path
+> - Link to v2: https://lore.kernel.org/linux-remoteproc/20251031-imx95-rproc-2025-10-31-v2-0-758b2e547a55@nxp.com/T/#t
+>
+> Changes in v2:
+> - Patch 2: Change to const pointer for ops, update commit log and add R-b from Frank
+> - Patch 3: New patch, introduce prepare ops
+> - Patch 4: Rename imx_rproc_sm_prepare to imx_rproc_sm_lmm_prepare
+>            drop IMX_RPROC_FLAGS_SM_CPU_OP and IMX_RPROC_FLAGS_SM_LMM_OP
+>            Add a bool for dcfg->lmid and info->lmid check.
+>            Provide separate plat ops for lmm and cpu setup.
+>            Move LM permission check to a separate function.
+> - Patch 5: Drop macro IMX95_M7_CPUID and IMX95_M7_LMID
+> - Link to v1: https://lore.kernel.org/r/20251028-imx95-rproc-2025-10-28-v1-0-ce9e7db9edcb@nxp.com
+>
+> ---
+> Peng Fan (5):
+>       dt-bindings: remoteproc: fsl,imx-rproc: Add support for i.MX95
+>       remoteproc: imx_rproc: Add runtime ops copy to support dynamic behavior
+>       remoteproc: imx_rproc: Introduce prepare ops for imx_rproc_dcfg
+>       remoteproc: imx_rproc: Add support for System Manager API
+>       remoteproc: imx_rproc: Add support for i.MX95
+>
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml         |   1 +
+>  drivers/remoteproc/Kconfig                         |   2 +
+>  drivers/remoteproc/imx_rproc.c                     | 245 +++++++++++++++++++--
+>  drivers/remoteproc/imx_rproc.h                     |   4 +
+>  4 files changed, 238 insertions(+), 14 deletions(-)
+> ---
+> base-commit: 88cbd8ac379cf5ce68b7efcfd4d1484a6871ee0b
+> change-id: 20251120-imx95-rproc-2025-11-20-3b9369670d6a
+>
+> Best regards,
+> --
+> Peng Fan <peng.fan@nxp.com>
+>
