@@ -1,59 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010029.outbound.protection.outlook.com [40.93.198.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45769319612;
-	Mon, 24 Nov 2025 18:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764008893; cv=none; b=ma+NH5ad8uCjl84HTT9XTsT/vhAicdMDkQysbn8ILGKoEhk9wcRLLhUke6G8IWqOeNa8p9XYK/KoMGj0wGGqTkVF5FNwYQmZY4tXllL198K4L/+cNegq4vg2/zbGxktY4+lJmyFdXzRQmXkWKyN1cyYC45bSG2mlRzgwCE3lllY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764008893; c=relaxed/simple;
-	bh=LveFK3svzwr3240pinEzhr4cRcEQRM0RRxCFeTRmktU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RsKfhl6WjSKqf6bxIYd9eGtG64TgkhZ4Ujsk4HHsIjWGOqzr1bANQVr7UM+Ad0NTqqet+bFuvng3suuiuh0LqCO3HIEKa6dNJtr/gn2DscReFeqoizHZWYVQQ2dv+bY2Qlj7z7peIjJVLnjQG6b/BnQWHRXu9HJmALfkaeMwMSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGq6Jx7p; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB81C2D7DD9;
+	Tue, 25 Nov 2025 08:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764059885; cv=fail; b=VQ/1YPYpzC7EAmkcj9a2oyxJCbRMYhXlYaiIA+skQUFlR1srED7acpyfoFTZLktdlf7QCyuMOIMoZkKi4DKAOz+lvGwYZ/I6Rjg7a6YbYYV8slwfEytaV10XWskxSZQeU1AWfUdS2BzfbhLkDLLMOEp3LD3DcOu5Kcfw+d3nFv4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764059885; c=relaxed/simple;
+	bh=dO1hcQfWASwTH/gitHKyYeqR9rdvq++1dTyEshkDMn8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=to0LD36a5UAq/chMT1eQs14hmhpKzmJHru9lcjipOB1h2Pig9KInMRoXq3j0ySyl0tNc/wBySk77QORGx50aXotnrpXyplbx4vv+FWO1/xBi/SBsIwiXbqjJh22krlVwbQvPjc/nD7l9GniH5tbJwOnd/8KM8YndAqgb7lchO60=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HJIUonvp; arc=fail smtp.client-ip=40.93.198.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGq6Jx7p"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81B8C4CEF1;
-	Mon, 24 Nov 2025 18:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764008893;
-	bh=LveFK3svzwr3240pinEzhr4cRcEQRM0RRxCFeTRmktU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JGq6Jx7pBzvR2a+xdiqPUncCy1FvjZRbHZDBF+ugQBicvMnPobpFHPoZHIQMCce+J
-	 9qpdLngMVe17YC25iva5Kv0+tr1Z502VyIo48cTJeLzt+e/sTE589Ib8NqihaP3Owl
-	 GaZMkeokHq7NgRUQqA9aJNY5LsS5iAz5bSqpsMXSv4XZKwsQ06gQ9BdHk2MRlTgd8X
-	 geRahs6QZeiu7vVGLMetG0eXeNctJdJ3GOhG2vThlKG/DQiERnrF4wXdVaV6gjZZGe
-	 Utcp5ttWxDaiAxjKYH/xDtUR/FLmRGWrqPHpdhFq3XVvI7g8Eo94rWzcfhpCEyHF7Y
-	 ed9VCgAY54w5Q==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Beleswar Padhi <b-padhi@ti.com>,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-msm@vger.kernel.org
-Subject: [PATCH v7 2/2] remoteproc: qcom: Use of_reserved_mem_region_* functions for "memory-region"
-Date: Mon, 24 Nov 2025 12:27:48 -0600
-Message-ID: <20251124182751.507624-2-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251124182751.507624-1-robh@kernel.org>
-References: <20251124182751.507624-1-robh@kernel.org>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HJIUonvp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vmAAyXRu6OFhHtCv8NdGs5p/lclh3h5CYcSwbHA71F8bb07NLFEpnY4/53KokoNYlZQjY5Qx5LwajzXVII4Rau3KYj7HiwhE7Hfsjn/lG1Nw5VPvu8IlKgQA4JJtqEDC4PrdhEr6EuJYG4h3+3LJgzvNKnx21LtCJ6n9ktZqqqkQQis0o4dPP7p2H83LP/PFedfxoKDjQ0e+ye7EPXaSDcZcFSJNyCDVEcdhUQzTbWLITkiORLCdzs4yyloa2tvgc3Iz/JL2D1JQDnZYMgHfrEmjDAHVK4m6JhWUr9jik6gV7kLARvsQAd/DQ7jpcdUk5M4k28qvOFiYyWL+PXtyKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GqjARFKsV/Msh5mqb+fN832p9npTa+k24Y0SHNJ6mvU=;
+ b=eKTp57V9x6EPPFwdk9hKAJYQBdpBIww+u1LKmgE7QzuxqBZJ6Gp2MBgrWf3Oay73xAgmNM0V3ziPZ6nZCMS21xv9lPVzfyGUBXSlYLXf0bSox7z8rggVYRKnCthL5PwlubWoJbrSGTC5BpPAihA2qXfI9i9Vm14BPtQvQlHnjLzkeA2TSiZGp66dy3ShF0Y32lNfwwovPJ0/Gn48szd4weryjqzXO2vYlx9A4N04qeaNcWQ9e/RmIKhR16PmToSzE+RGfrZWUVYzxTnoQE9e+AsT/0opEOrTUAC3ODRo5jzhodyIkN0r5Y6xqM95qFvM21eX6DLFJZ8o01BWXRQevw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GqjARFKsV/Msh5mqb+fN832p9npTa+k24Y0SHNJ6mvU=;
+ b=HJIUonvp/NAV2ym/cXpWVXLbKlQsyl0Dk/o6ycrq0QtneWxXK9r4z7EGwnVMGVT/s4QPkLFnOraVQduF+XB87v/H0p8wS7OniDTtFNJNc9vYcKftjdPZQzYyGm3cae+5EBBHlKmOJLaeL6lj2WbvChUOoDG4GHlwpZLo3wTts4c=
+Received: from DM6PR07CA0113.namprd07.prod.outlook.com (2603:10b6:5:330::16)
+ by DS0PR10MB6127.namprd10.prod.outlook.com (2603:10b6:8:c5::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9343.17; Tue, 25 Nov
+ 2025 08:37:57 +0000
+Received: from DS1PEPF00017098.namprd05.prod.outlook.com
+ (2603:10b6:5:330:cafe::ee) by DM6PR07CA0113.outlook.office365.com
+ (2603:10b6:5:330::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9343.17 via Frontend Transport; Tue,
+ 25 Nov 2025 08:37:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ DS1PEPF00017098.mail.protection.outlook.com (10.167.18.102) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9366.7 via Frontend Transport; Tue, 25 Nov 2025 08:37:56 +0000
+Received: from DFLE214.ent.ti.com (10.64.6.72) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 25 Nov
+ 2025 02:37:50 -0600
+Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE214.ent.ti.com
+ (10.64.6.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 25 Nov
+ 2025 02:37:50 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE206.ent.ti.com
+ (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 25 Nov 2025 02:37:50 -0600
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5AP8bkjK3370792;
+	Tue, 25 Nov 2025 02:37:47 -0600
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <richard.genoud@bootlin.com>, <afd@ti.com>, <hnagalla@ti.com>,
+	<jm@ti.com>, <u-kumar1@ti.com>, <jan.kiszka@siemens.com>,
+	<christophe.jaillet@wanadoo.fr>, <b-padhi@ti.com>,
+	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] remoteproc: k3: support for graceful shutdown of remote cores
+Date: Tue, 25 Nov 2025 14:07:46 +0530
+Message-ID: <20251125083746.2605721-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -61,373 +82,321 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017098:EE_|DS0PR10MB6127:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5707325b-e4cb-4a1f-1ce2-08de2bfdee7b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?piAzGuOAIsDEzzI4E3LFI9Umxmr2JfSsdd1oxHthgnTIDMZS2hicnUHafpwJ?=
+ =?us-ascii?Q?NSouLKTGe0Wbt6xWV3dq84HUlJ73eE0ZQj53PgTISuRwjaMsI/XJ252Xj+1b?=
+ =?us-ascii?Q?se2b7eJjgGpC7qZKGl+RMS9+zl5GO5Bsp0tmgTUuu8Beciwnla8JMDgXCVHr?=
+ =?us-ascii?Q?LsNcHNxjWgcDl9fbS/By7XIEYOQfojtKZTdQcPV1agzB30lcatl36+0da0R4?=
+ =?us-ascii?Q?m+zN0p8/a8rDsOXLemwvFrlaIYAjGRZJ+YW6hk1Wpos4bK4HjKUjFAGI7StQ?=
+ =?us-ascii?Q?9jTDbW/oAVqIAZbI9FfB8IWcEfRDRSP78cRqevKFEpxtiP4j7qo5+yHu6WHr?=
+ =?us-ascii?Q?AURuIA87lUHWiy0PX+gHecfSz7cgx33b3gJNQVFnyUykBbjQDo8RLHNiQOw7?=
+ =?us-ascii?Q?/hNGqzGIh9jkWyzYGSFrajk8m6cMN7BlWHbI/Zilk27khUDrjR+8sNIWbgq4?=
+ =?us-ascii?Q?d22Z7onqTRuvZKEfwu3Xo5lCbZf9PUVjM/pNGNWVqPEx/WkxQGztaw4rA8ht?=
+ =?us-ascii?Q?bT+c1hp7jF+mA00bVL3Hw2VwbkUdLErOadn7wLaHUQEmHVzYkurcqM3FoHMr?=
+ =?us-ascii?Q?jxr6DnJ5RjXZ7v2qr56oGuoMlWrtgDI/8BRuQNhHK7N0FQmv5e4iKQukEBh/?=
+ =?us-ascii?Q?zvYXN83LszGlzYXlFcsFdwuGxhEz/5xN2Y9eDgZ/U/SpZIO/MBu4gt0/Al0u?=
+ =?us-ascii?Q?xwVEZ3+mqyXpO5egqeIAUmSdT45yRxsw9EIK/J16PegYHKkhthyxBbE7Qjvg?=
+ =?us-ascii?Q?0G9B7RygADwscGBRsCeA1rdaF9e4bYQjDKQAPw3WfLe6LHtXxDuDV22Smh/C?=
+ =?us-ascii?Q?AhYsZdZXfRNJINs8VKI38niqkqRoHzLSVfkeAtfQ92o8M4KNJdztog+tZmZ9?=
+ =?us-ascii?Q?Hc2ovIiSFMlNOLvpeKmJ9X+ny+EWYEhh6mRwT6+NW7nDxi2dslCkTjG4SjRL?=
+ =?us-ascii?Q?ckx4SngjfbR1YStySs0PZxVKCzG9LDcv3XqvnUAv2eBWlCibkkisED1rtl4c?=
+ =?us-ascii?Q?dijNxAdaua91+oQe0ALPzmX5vHwFVyeOdKUPeq+9QjuRFqjTp6amE+I5nFnf?=
+ =?us-ascii?Q?ltkjptldktt2WbXFSWvqaRBxWDWrquhEX5Twz/zyWyQvCvPUAiNhNY1fgQxx?=
+ =?us-ascii?Q?cx4Bqjl+IJrhwFvm3FpblI07TbfBrmcYwWCYENCiVV9XB6fnFWM1rQ6obu5K?=
+ =?us-ascii?Q?z/Jf1d9bi913MVVEotPQbFbHZ6Ef63eJW0PzfnJxAIE0GsCoE5YUxit+8wFz?=
+ =?us-ascii?Q?k+9oif95a9Tl3DejrCkdJDWkoOy7k0prqkmWB0Ty89+te1x/RcWomBX43acy?=
+ =?us-ascii?Q?s541qk+ymLrUrcwbHwZ/JeSsAD9xAYy2dOS/4Y4A+mbx075Cy+ew247Ix5Xp?=
+ =?us-ascii?Q?5oZmbzhiEDP8MszZLmEhTTSTVE6bOBnJ9w04YpfwPkomxSPQ+Fk/lQb7V8nR?=
+ =?us-ascii?Q?K4Xmj2sNaZyztwo89gAn1/EMu5u8otrIqI1EmGZQ9yWzHwB68d2cLKwaf96q?=
+ =?us-ascii?Q?cIM42deRzGxfNb8ch+zqFeOt0qEe4f+l43NGmjxYOG5rFLuyOywOqMLud5I0?=
+ =?us-ascii?Q?6gQ8Dt6nNLgH5LO96Go=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Nov 2025 08:37:56.0195
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5707325b-e4cb-4a1f-1ce2-08de2bfdee7b
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017098.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6127
 
-Use the newly added of_reserved_mem_region_to_resource() and
-of_reserved_mem_region_count() functions to handle "memory-region"
-properties.
+From: Richard Genoud <richard.genoud@bootlin.com>
 
-The error handling is a bit different in some cases. Often
-"memory-region" is optional, so failed lookup is not an error. But then
-an error in of_reserved_mem_lookup() is treated as an error. However,
-that distinction is not really important. Either the region is available
-and usable or it is not. So now, it is just
-of_reserved_mem_region_to_resource() which is checked for an error.
+Introduce software IPC handshake between the host running Linux and the
+remote processors to gracefully stop/reset the remote core.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Upon a stop request, remoteproc driver sends a RP_MBOX_SHUTDOWN mailbox
+message to the remotecore.
+The remote core is expected to:
+- relinquish all the resources acquired through Device Manager (DM)
+- disable its interrupts
+- send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
+- enter WFI state.
+
+Meanwhile, the K3 remoteproc driver does:
+- wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
+- wait for the remoteproc to enter WFI state
+- reset the remote core through device manager
+
+Based on work from: Hari Nagalla <hnagalla@ti.com>
+
+Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+[b-padhi@ti.com: Extend support to all rprocs]
+Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
-v7:
- - Split QCom to separate patch
----
- drivers/remoteproc/qcom_q6v5_adsp.c | 24 ++++------
- drivers/remoteproc/qcom_q6v5_mss.c  | 60 ++++++++-----------------
- drivers/remoteproc/qcom_q6v5_pas.c  | 69 +++++++++++------------------
- drivers/remoteproc/qcom_q6v5_wcss.c | 25 +++++------
- drivers/remoteproc/qcom_wcnss.c     | 23 ++++------
- 5 files changed, 72 insertions(+), 129 deletions(-)
+v2: Changelog:
+1. Extend graceful shutdown support for all rprocs (R5, DSP, M4)
+2. Halt core only if SHUTDOWN_ACK is received from rproc and it has
+entered WFI state.
+3. Convert return type of is_core_in_wfi() to bool. Works better with
+readx_poll_timeout() condition.
+4. Cast RP_MBOX_SHUTDOWN to uintptr_t to suppress compiler warnings
+when void* is 64 bit.
+5. Wrapped Graceful shutdown code in the form of notify_shutdown_rproc
+function.
+6. Updated commit message to fix minor typos and such.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index e98b7e03162c..d3933a66ed3d 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -625,26 +625,20 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
+Link to v1:
+https://lore.kernel.org/all/20240621150058.319524-5-richard.genoud@bootlin.com/
+
+Testing done:
+1. Tested Boot across all TI K3 EVM/SK boards.
+2. Tested IPC on all TI K3 J7* EVM/SK boards (& AM62x SK).
+4. Tested R5 rprocs can now be shutdown and powered back on
+from userspace.
+3. Tested that each patch in the series generates no new
+warnings/errors.
+
+ drivers/remoteproc/omap_remoteproc.h      |  9 ++-
+ drivers/remoteproc/ti_k3_common.c         | 72 +++++++++++++++++++++++
+ drivers/remoteproc/ti_k3_common.h         |  4 ++
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  |  2 +
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  |  5 ++
+ 6 files changed, 93 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+index 828e13256c023..c008f11fa2a43 100644
+--- a/drivers/remoteproc/omap_remoteproc.h
++++ b/drivers/remoteproc/omap_remoteproc.h
+@@ -42,6 +42,11 @@
+  * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
+  * on a suspend request
+  *
++ * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
++ *
++ * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor for a
++ * shutdown request. The remote processor should be in WFI state short after.
++ *
+  * Introduce new message definitions if any here.
+  *
+  * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
+@@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
+ 	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
+ 	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
+ 	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
+-	RP_MBOX_END_MSG		= 0xFFFFFF14,
++	RP_MBOX_SHUTDOWN	= 0xFFFFFF14,
++	RP_MBOX_SHUTDOWN_ACK	= 0xFFFFFF15,
++	RP_MBOX_END_MSG		= 0xFFFFFF16,
+ };
  
- static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
- {
--	struct reserved_mem *rmem = NULL;
--	struct device_node *node;
--
--	node = of_parse_phandle(adsp->dev->of_node, "memory-region", 0);
--	if (node)
--		rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
-+	int ret;
-+	struct resource res;
+ #endif /* _OMAP_RPMSG_H */
+diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+index 56b71652e449f..5d469f65115c3 100644
+--- a/drivers/remoteproc/ti_k3_common.c
++++ b/drivers/remoteproc/ti_k3_common.c
+@@ -18,7 +18,9 @@
+  *	Hari Nagalla <hnagalla@ti.com>
+  */
  
--	if (!rmem) {
-+	ret = of_reserved_mem_region_to_resource(adsp->dev->of_node, 0, &res);
-+	if (ret) {
- 		dev_err(adsp->dev, "unable to resolve memory-region\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	adsp->mem_phys = adsp->mem_reloc = rmem->base;
--	adsp->mem_size = rmem->size;
--	adsp->mem_region = devm_ioremap_wc(adsp->dev,
--				adsp->mem_phys, adsp->mem_size);
-+	adsp->mem_phys = adsp->mem_reloc = res.start;
-+	adsp->mem_size = resource_size(&res);
-+	adsp->mem_region = devm_ioremap_resource_wc(adsp->dev, &res);
- 	if (!adsp->mem_region) {
--		dev_err(adsp->dev, "unable to map memory region: %pa+%zx\n",
--			&rmem->base, adsp->mem_size);
-+		dev_err(adsp->dev, "unable to map memory region: %pR\n", &res);
- 		return -EBUSY;
- 	}
- 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 3087d895b87f..91940977ca89 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -1970,8 +1970,8 @@ static int q6v5_init_reset(struct q6v5 *qproc)
- static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- {
- 	struct device_node *child;
--	struct reserved_mem *rmem;
--	struct device_node *node;
-+	struct resource res;
-+	int ret;
- 
- 	/*
- 	 * In the absence of mba/mpss sub-child, extract the mba and mpss
-@@ -1979,71 +1979,49 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
- 	 */
- 	child = of_get_child_by_name(qproc->dev->of_node, "mba");
- 	if (!child) {
--		node = of_parse_phandle(qproc->dev->of_node,
--					"memory-region", 0);
-+		ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 0, &res);
- 	} else {
--		node = of_parse_phandle(child, "memory-region", 0);
-+		ret = of_reserved_mem_region_to_resource(child, 0, &res);
- 		of_node_put(child);
- 	}
- 
--	if (!node) {
--		dev_err(qproc->dev, "no mba memory-region specified\n");
--		return -EINVAL;
--	}
--
--	rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
--	if (!rmem) {
-+	if (ret) {
- 		dev_err(qproc->dev, "unable to resolve mba region\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	qproc->mba_phys = rmem->base;
--	qproc->mba_size = rmem->size;
-+	qproc->mba_phys = res.start;
-+	qproc->mba_size = resource_size(&res);
- 
- 	if (!child) {
--		node = of_parse_phandle(qproc->dev->of_node,
--					"memory-region", 1);
-+		ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 1, &res);
- 	} else {
- 		child = of_get_child_by_name(qproc->dev->of_node, "mpss");
--		node = of_parse_phandle(child, "memory-region", 0);
-+		ret = of_reserved_mem_region_to_resource(child, 0, &res);
- 		of_node_put(child);
- 	}
- 
--	if (!node) {
--		dev_err(qproc->dev, "no mpss memory-region specified\n");
--		return -EINVAL;
--	}
--
--	rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
--	if (!rmem) {
-+	if (ret) {
- 		dev_err(qproc->dev, "unable to resolve mpss region\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	qproc->mpss_phys = qproc->mpss_reloc = rmem->base;
--	qproc->mpss_size = rmem->size;
-+	qproc->mpss_phys = qproc->mpss_reloc = res.start;
-+	qproc->mpss_size = resource_size(&res);
- 
- 	if (!child) {
--		node = of_parse_phandle(qproc->dev->of_node, "memory-region", 2);
-+		ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 2, &res);
- 	} else {
- 		child = of_get_child_by_name(qproc->dev->of_node, "metadata");
--		node = of_parse_phandle(child, "memory-region", 0);
-+		ret = of_reserved_mem_region_to_resource(child, 0, &res);
- 		of_node_put(child);
- 	}
- 
--	if (!node)
-+	if (ret)
- 		return 0;
- 
--	rmem = of_reserved_mem_lookup(node);
--	if (!rmem) {
--		dev_err(qproc->dev, "unable to resolve metadata region\n");
--		return -EINVAL;
--	}
--
--	qproc->mdata_phys = rmem->base;
--	qproc->mdata_size = rmem->size;
-+	qproc->mdata_phys = res.start;
-+	qproc->mdata_size = resource_size(&res);
- 
- 	return 0;
++#include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/mailbox_client.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+@@ -69,6 +71,10 @@ void k3_rproc_mbox_callback(struct mbox_client *client, void *data)
+ 	case RP_MBOX_ECHO_REPLY:
+ 		dev_info(dev, "received echo reply from %s\n", rproc->name);
+ 		break;
++	case RP_MBOX_SHUTDOWN_ACK:
++		dev_dbg(dev, "received shutdown_ack from %s\n", rproc->name);
++		complete(&kproc->shutdown_complete);
++		break;
+ 	default:
+ 		/* silently handle all other valid messages */
+ 		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
+@@ -188,6 +194,67 @@ int k3_rproc_request_mbox(struct rproc *rproc)
  }
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 158bcd6cc85c..7bac843ce406 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -547,53 +547,37 @@ static void qcom_pas_pds_detach(struct qcom_pas *pas, struct device **pds, size_
+ EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
  
- static int qcom_pas_alloc_memory_region(struct qcom_pas *pas)
- {
--	struct reserved_mem *rmem;
--	struct device_node *node;
--
--	node = of_parse_phandle(pas->dev->of_node, "memory-region", 0);
--	if (!node) {
--		dev_err(pas->dev, "no memory-region specified\n");
--		return -EINVAL;
--	}
-+	struct resource res;
++/**
++ * is_core_in_wfi - Utility function to check core status
++ * @kproc: remote core pointer used for checking core status
++ *
++ * This utility function is invoked by the shutdown sequence to ensure
++ * the remote core is in wfi, before asserting a reset.
++ */
++bool is_core_in_wfi(struct k3_rproc *kproc)
++{
 +	int ret;
- 
--	rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
--	if (!rmem) {
-+	ret = of_reserved_mem_region_to_resource(pas->dev->of_node, 0, &res);
-+	if (ret) {
- 		dev_err(pas->dev, "unable to resolve memory-region\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	pas->mem_phys = pas->mem_reloc = rmem->base;
--	pas->mem_size = rmem->size;
--	pas->mem_region = devm_ioremap_wc(pas->dev, pas->mem_phys, pas->mem_size);
-+	pas->mem_phys = pas->mem_reloc = res.start;
-+	pas->mem_size = resource_size(&res);
-+	pas->mem_region = devm_ioremap_resource_wc(pas->dev, &res);
- 	if (!pas->mem_region) {
--		dev_err(pas->dev, "unable to map memory region: %pa+%zx\n",
--			&rmem->base, pas->mem_size);
-+		dev_err(pas->dev, "unable to map memory region: %pR\n", &res);
- 		return -EBUSY;
- 	}
- 
- 	if (!pas->dtb_pas_id)
- 		return 0;
- 
--	node = of_parse_phandle(pas->dev->of_node, "memory-region", 1);
--	if (!node) {
--		dev_err(pas->dev, "no dtb memory-region specified\n");
--		return -EINVAL;
--	}
--
--	rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
--	if (!rmem) {
-+	ret = of_reserved_mem_region_to_resource(pas->dev->of_node, 1, &res);
-+	if (ret) {
- 		dev_err(pas->dev, "unable to resolve dtb memory-region\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	pas->dtb_mem_phys = pas->dtb_mem_reloc = rmem->base;
--	pas->dtb_mem_size = rmem->size;
--	pas->dtb_mem_region = devm_ioremap_wc(pas->dev, pas->dtb_mem_phys, pas->dtb_mem_size);
-+	pas->dtb_mem_phys = pas->dtb_mem_reloc = res.start;
-+	pas->dtb_mem_size = resource_size(&res);
-+	pas->dtb_mem_region = devm_ioremap_resource_wc(pas->dev, &res);
- 	if (!pas->dtb_mem_region) {
--		dev_err(pas->dev, "unable to map dtb memory region: %pa+%zx\n",
--			&rmem->base, pas->dtb_mem_size);
-+		dev_err(pas->dev, "unable to map dtb memory region: %pR\n", &res);
- 		return -EBUSY;
- 	}
- 
-@@ -603,7 +587,6 @@ static int qcom_pas_alloc_memory_region(struct qcom_pas *pas)
- static int qcom_pas_assign_memory_region(struct qcom_pas *pas)
- {
- 	struct qcom_scm_vmperm perm[MAX_ASSIGN_COUNT];
--	struct device_node *node;
- 	unsigned int perm_size;
- 	int offset;
- 	int ret;
-@@ -612,17 +595,15 @@ static int qcom_pas_assign_memory_region(struct qcom_pas *pas)
- 		return 0;
- 
- 	for (offset = 0; offset < pas->region_assign_count; ++offset) {
--		struct reserved_mem *rmem = NULL;
--
--		node = of_parse_phandle(pas->dev->of_node, "memory-region",
--					pas->region_assign_idx + offset);
--		if (node)
--			rmem = of_reserved_mem_lookup(node);
--		of_node_put(node);
--		if (!rmem) {
-+		struct resource res;
++	u64 boot_vec;
++	u32 cfg, ctrl, stat;
 +
-+		ret = of_reserved_mem_region_to_resource(pas->dev->of_node,
-+							 pas->region_assign_idx + offset,
-+							 &res);
-+		if (ret) {
- 			dev_err(pas->dev, "unable to resolve shareable memory-region index %d\n",
- 				offset);
--			return -EINVAL;
-+			return ret;
++	ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl, &stat);
++	if (ret)
++		return false;
++
++	return (bool)(stat & PROC_BOOT_STATUS_FLAG_CPU_WFI);
++}
++EXPORT_SYMBOL_GPL(is_core_in_wfi);
++
++/**
++ * notify_shutdown_rproc - Prepare the remoteproc for a shutdown
++ * @kproc: remote core pointer used for sending mbox msg
++ *
++ * This function sends the shutdown prepare message to remote processor and
++ * waits for an ACK. Further, it checks if the remote processor has entered
++ * into WFI mode. It is invoked in shutdown sequence to ensure the rproc
++ * has relinquished its resources before asserting a reset, so the shutdown
++ * happens cleanly.
++ */
++int notify_shutdown_rproc(struct k3_rproc *kproc)
++{
++	bool wfi_status = false;
++	int ret;
++
++	reinit_completion(&kproc->shutdown_complete);
++
++	ret = mbox_send_message(kproc->mbox, (void *)(uintptr_t)RP_MBOX_SHUTDOWN);
++	if (ret < 0) {
++		dev_err(kproc->dev, "PM mbox_send_message failed: %d\n", ret);
++		return ret;
++	}
++
++	ret = wait_for_completion_timeout(&kproc->shutdown_complete,
++					  msecs_to_jiffies(5000));
++	if (ret == 0) {
++		dev_err(kproc->dev, "%s: timeout waiting for rproc completion event\n",
++			__func__);
++		return -EBUSY;
++	}
++
++	ret = readx_poll_timeout(is_core_in_wfi, kproc, wfi_status, wfi_status,
++				 200, 2000);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(notify_shutdown_rproc);
++
+ /*
+  * The K3 DSP and M4 cores have a local reset that affects only the CPU, and a
+  * generic module reset that powers on the device and allows the internal
+@@ -288,6 +355,11 @@ EXPORT_SYMBOL_GPL(k3_rproc_start);
+ int k3_rproc_stop(struct rproc *rproc)
+ {
+ 	struct k3_rproc *kproc = rproc->priv;
++	int ret;
++
++	ret = notify_shutdown_rproc(kproc);
++	if (ret)
++		return ret;
+ 
+ 	return k3_rproc_reset(kproc);
+ }
+diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
+index aee3c28dbe510..2a025f4894b82 100644
+--- a/drivers/remoteproc/ti_k3_common.h
++++ b/drivers/remoteproc/ti_k3_common.h
+@@ -22,6 +22,7 @@
+ #define REMOTEPROC_TI_K3_COMMON_H
+ 
+ #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
++#define PROC_BOOT_STATUS_FLAG_CPU_WFI		0x00000002
+ 
+ /**
+  * struct k3_rproc_mem - internal memory structure
+@@ -92,6 +93,7 @@ struct k3_rproc {
+ 	u32 ti_sci_id;
+ 	struct mbox_chan *mbox;
+ 	struct mbox_client client;
++	struct completion shutdown_complete;
+ 	void *priv;
+ };
+ 
+@@ -115,4 +117,6 @@ int k3_rproc_of_get_memories(struct platform_device *pdev,
+ void k3_mem_release(void *data);
+ int k3_reserved_mem_init(struct k3_rproc *kproc);
+ void k3_release_tsp(void *data);
++bool is_core_in_wfi(struct k3_rproc *kproc);
++int notify_shutdown_rproc(struct k3_rproc *kproc);
+ #endif /* REMOTEPROC_TI_K3_COMMON_H */
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index d6ceea6dc920e..156ae09d8ee25 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -133,6 +133,8 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	init_completion(&kproc->shutdown_complete);
++
+ 	ret = k3_rproc_of_get_memories(pdev, kproc);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+index 3a11fd24eb52b..64d99071279b0 100644
+--- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+@@ -90,6 +90,8 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	init_completion(&kproc->shutdown_complete);
++
+ 	ret = k3_rproc_of_get_memories(pdev, kproc);
+ 	if (ret)
+ 		return ret;
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 04f23295ffc10..8748dc6089cc2 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -533,6 +533,10 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+ 	struct k3_r5_cluster *cluster = core->cluster;
+ 	int ret;
+ 
++	ret = notify_shutdown_rproc(kproc);
++	if (ret)
++		return ret;
++
+ 	/* halt all applicable cores */
+ 	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+ 		list_for_each_entry(core, &cluster->cores, elem) {
+@@ -1129,6 +1133,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ 			goto out;
  		}
  
- 		if (pas->region_assign_shared)  {
-@@ -637,8 +618,8 @@ static int qcom_pas_assign_memory_region(struct qcom_pas *pas)
- 			perm_size = 1;
- 		}
- 
--		pas->region_assign_phys[offset] = rmem->base;
--		pas->region_assign_size[offset] = rmem->size;
-+		pas->region_assign_phys[offset] = res.start;
-+		pas->region_assign_size[offset] = resource_size(&res);
- 		pas->region_assign_owners[offset] = BIT(QCOM_SCM_VMID_HLOS);
- 
- 		ret = qcom_scm_assign_mem(pas->region_assign_phys[offset],
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index 07c88623f597..ca748e3bcc7f 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -873,27 +873,22 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
- 
- static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
- {
--	struct reserved_mem *rmem = NULL;
--	struct device_node *node;
- 	struct device *dev = wcss->dev;
-+	struct resource res;
-+	int ret;
- 
--	node = of_parse_phandle(dev->of_node, "memory-region", 0);
--	if (node)
--		rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
--
--	if (!rmem) {
-+	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &res);
-+	if (ret) {
- 		dev_err(dev, "unable to acquire memory-region\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	wcss->mem_phys = rmem->base;
--	wcss->mem_reloc = rmem->base;
--	wcss->mem_size = rmem->size;
--	wcss->mem_region = devm_ioremap_wc(dev, wcss->mem_phys, wcss->mem_size);
-+	wcss->mem_phys = res.start;
-+	wcss->mem_reloc = res.start;
-+	wcss->mem_size = resource_size(&res);
-+	wcss->mem_region = devm_ioremap_resource_wc(dev, &res);
- 	if (!wcss->mem_region) {
--		dev_err(dev, "unable to map memory region: %pa+%pa\n",
--			&rmem->base, &rmem->size);
-+		dev_err(dev, "unable to map memory region: %pR\n", &res);
- 		return -EBUSY;
- 	}
- 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index 2c7e519a2254..14005fb049a2 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -526,25 +526,20 @@ static int wcnss_request_irq(struct qcom_wcnss *wcnss,
- 
- static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
- {
--	struct reserved_mem *rmem = NULL;
--	struct device_node *node;
--
--	node = of_parse_phandle(wcnss->dev->of_node, "memory-region", 0);
--	if (node)
--		rmem = of_reserved_mem_lookup(node);
--	of_node_put(node);
-+	struct resource res;
-+	int ret;
- 
--	if (!rmem) {
-+	ret = of_reserved_mem_region_to_resource(wcnss->dev->of_node, 0, &res);
-+	if (ret) {
- 		dev_err(wcnss->dev, "unable to resolve memory-region\n");
--		return -EINVAL;
-+		return ret;
- 	}
- 
--	wcnss->mem_phys = wcnss->mem_reloc = rmem->base;
--	wcnss->mem_size = rmem->size;
--	wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
-+	wcnss->mem_phys = wcnss->mem_reloc = res.start;
-+	wcnss->mem_size = resource_size(&res);
-+	wcnss->mem_region = devm_ioremap_resource_wc(wcnss->dev, &res);
- 	if (!wcnss->mem_region) {
--		dev_err(wcnss->dev, "unable to map memory region: %pa+%zx\n",
--			&rmem->base, wcnss->mem_size);
-+		dev_err(wcnss->dev, "unable to map memory region: %pR\n", &res);
- 		return -EBUSY;
- 	}
++		init_completion(&kproc->shutdown_complete);
+ init_rmem:
+ 		k3_r5_adjust_tcm_sizes(kproc);
  
 -- 
-2.51.0
+2.34.1
 
