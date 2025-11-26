@@ -1,51 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3394A34104F;
-	Wed, 26 Nov 2025 20:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1243B34252D;
+	Wed, 26 Nov 2025 20:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764187521; cv=none; b=Pmp/Jp5nvtAj6TGUcOELYqvngh1llYSt1wsYRtaaF4AO/lS8MCmppG02KY9eXYGCbZ+f4o6yklfaeps9Tdotzg95klep/6UJ+BBHDkVoG+QbqiRjaiR026HdV8eb1p/7z3NDYyH1f5gDDxwreC9X9qPdPbDlKdjORnFGeHqWST0=
+	t=1764187523; cv=none; b=cmggnWkq/qDrx2Kx1cjRuPtVtV50ATA4qlLlS9x9/pX1QxWsZaUhRVKUvzpVHXrwKiDMQEmB4Sw2DppzY1tV9tMGrQDRgnU7Pp4klN6rH6WQnu5tgujraiyiQ5oOCgfuPRH0+8peyhnCOifteDQ1OZ8Tzi3zHsMi9ZWM/ULrXhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764187521; c=relaxed/simple;
-	bh=zv5NPZLk5xocYfuAXyByIGPAeSW64LITYQnD70lfGL4=;
+	s=arc-20240116; t=1764187523; c=relaxed/simple;
+	bh=4UvnEA00ko1lzXg0hdjBBBEsnJicagQcXbbjtn3U4jc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QCH4MMCeuV9pL3KiUuRlHYC1/loP0+PqPx1LrmvBJR8W626KJQjSGwWfhnyfgtBmgNzL4lAhpDF7LTCBqzUACe3mcaISn836zRqdo7uXwIqgDekjfXGIEzhGGvUx4r0Nsa8WOm1TiPBST7vCHOz3S5iM42e6u0ijsIG0DYqPrnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7cEAe7X; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=FVGt9IiIuXaQF/eHMZ0OwqWiPGCjorMFbFrPgE+wtDTv3y3U/RYvwPjoiunSffY4P2GNT1r1z5huK86uts3BRZlR6d0BwmBmXBo4EixX9KvjU/aU1PG217FG1e2+dc9EdHT3FRBwmi2qXlF0VIhXJ8BRUp4UQSjnFTuX2YxI3Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMmDAc/i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7cEAe7X"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B10FFC116D0;
-	Wed, 26 Nov 2025 20:05:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMmDAc/i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4BF9C113D0;
+	Wed, 26 Nov 2025 20:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764187520;
-	bh=zv5NPZLk5xocYfuAXyByIGPAeSW64LITYQnD70lfGL4=;
+	s=k20201202; t=1764187522;
+	bh=4UvnEA00ko1lzXg0hdjBBBEsnJicagQcXbbjtn3U4jc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=U7cEAe7XnvRePeOgvazlK6nMvfb6YHvv4oyRTu7cnWVEX5M4pwGIzyhjzw1bV1jnm
-	 iSPLB88Vr6mvcYHBf0bjJwdoGCRAeUR9dBHr4s9npw1F7ddkfM+J6Hf3VZ/VzntxyC
-	 Q4743w5j9S8yVAWn0/qKxivsbyq9Thw20I9Z79UEYa9tGhCMPQfvEXiiylDcMNtZwO
-	 bl2hLy7hkWcvg5KBED2s1b6G6Q8voQF9slZy8H1MpHmK791pSPG0TUPusKFjqBLNZ5
-	 +1r6CXfUzH+/1nWTJ/FZ4Unje45xL5oeeaZsMdSV6DD/cTJN2DW0XD0abI02ibIE1g
-	 au+msK4d5KJ5Q==
+	b=KMmDAc/iJr+WTIK/XNheFgGF6KoMxY8sGn6uKmy7ktSGlsc5vAWgRt5OoP/og4282
+	 iYmETb05ebG5T/0nIWKMYdjtUyF7kBBvRW51Br6V7CfyjHNIBDPA+HK5KmycbyCF7g
+	 tGFNL90m86oHbEdTEg+E0W+Vc/56Fq/XSASSc6z88l5ag9WUXVUQ5dSQ7v0C4Q/nXA
+	 2u5iLPnCHmGwtAV1uaqmVLkhXEMfEavoGxYU2Wyri7aHXWoeA64ZANBsABB8Jpv65S
+	 4M/c2DQYkuMsVf2yLK7BgXqj1rCY6wewj90H4jo+tX/QiXEBqR8lk0P1VeXC+sA3Dt
+	 c3KUU2YCiOzFg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca@lucaweiss.eu>
-Cc: linux-arm-msm@vger.kernel.org,
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Beleswar Padhi <b-padhi@ti.com>,
 	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/4] Start using rpmpd for power domains on MSM8974
-Date: Wed, 26 Nov 2025 14:10:42 -0600
-Message-ID: <176418784420.1591314.3648653659027460213.b4-ty@kernel.org>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: (subset) [PATCH v7 1/2] remoteproc: Use of_reserved_mem_region_* functions for "memory-region"
+Date: Wed, 26 Nov 2025 14:10:43 -0600
+Message-ID: <176418784429.1591314.3521019603654312437.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250621-msm8974-rpmpd-switch-v1-0-0a2cb303c446@lucaweiss.eu>
-References: <20250621-msm8974-rpmpd-switch-v1-0-0a2cb303c446@lucaweiss.eu>
+In-Reply-To: <20251124182751.507624-1-robh@kernel.org>
+References: <20251124182751.507624-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -56,24 +63,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 21 Jun 2025 15:19:55 +0200, Luca Weiss wrote:
-> Switch over the ADSP PIL to use power-domains instead of a regulator,
-> and have one commit switching over the MSM8974 SoC plus all the devices
-> to use power-domains.
+On Mon, 24 Nov 2025 12:27:47 -0600, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() and
+> of_reserved_mem_region_count() functions to handle "memory-region"
+> properties.
 > 
-> Note, that I'm aware that these changes are not backwards compatible and
-> not really bisectable, but since it only affects the ADSP on these
-> pretty old boards, I say it's fine to have this. Get all the patches
-> into the same release (6.17?) and then we're good again.
+> The error handling is a bit different in some cases. Often
+> "memory-region" is optional, so failed lookup is not an error. But then
+> an error in of_reserved_mem_lookup() is treated as an error. However,
+> that distinction is not really important. Either the region is available
+> and usable or it is not. So now, it is just
+> of_reserved_mem_region_to_resource() which is checked for an error.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] dt-bindings: remoteproc: qcom,adsp: Make msm8974 use CX as power domain
-      commit: 3d447dcdae53b13b5d7df32c4d1d35971d460008
-[2/4] remoteproc: qcom_q6v5_pas: Use resource with CX PD for MSM8974
-      commit: a1f2c2d55a81c38d63c251ebb7e73e00be37c229
+[2/2] remoteproc: qcom: Use of_reserved_mem_region_* functions for "memory-region"
+      commit: c70b9d5fdcd707ddac29284ea425fd433f374696
 
 Best regards,
 -- 
