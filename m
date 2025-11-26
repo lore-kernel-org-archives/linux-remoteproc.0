@@ -1,106 +1,105 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6CF18CC13;
-	Wed, 26 Nov 2025 21:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58D812B93;
+	Wed, 26 Nov 2025 21:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764191916; cv=none; b=IEHabCsL/k0Sw7utga4/T2DozOejOr9NE0pLLgiEK+7bF3n7hXTIkMaQ0eG2W3Ajh6ZSHI1cv46iy0uWLKHAcEbreewcHB4p3oJs35KrWSN0u2Cfzd8zye823IkwLvhiiYDu9d3j7w0BB03PpKJMKzHkIBm8kNkbF/KGLVN2cGg=
+	t=1764192296; cv=none; b=rR2oo7bF2jsJ/kBtMgMeMeuslZmNkpM8iLbTETmy+oFXHPCEq+k757SHYLvCudTuyVcp+w93choxQKdS0gKb8SEisp9Zd5k0SVz4bISXWfDeGDPcgLsE2UfBUwcljcIpwFD+dhfp20PeCkLv3MaKo8A04ED0sM38DROVs1DZmhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764191916; c=relaxed/simple;
-	bh=KWWvwkL5WqXzAE0/1K+ALzLNzVTX6crL4x/VZuNt9fU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVL6KMuuMbxUl1drtqN+6hNkiYFak++62m/y8lZYnRqnU5eZnQ3OrTcHJv8grMgW1e+rY3bR2kRm5A0IGyrBWoqazkPaRJG89IZBL3IanLl+boSvsWaQjgdJCZP0YVnasHgE6pZAjeGWQ+sbajScEyQfyYU335VTL5/w1MvOWUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W7aH67aR; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1764192296; c=relaxed/simple;
+	bh=AjhRZ85s9z+ZyGqKnInIoBL7dEFtynHaO9n5AAbKTRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iElsu4NgDT63XcEQEcsM3sFhWFgrndVoCl/CQt4BKMi4uP2+QAecubfthFe8nEBepTTJ2NivEt5HuP19qjqT5QNH/oLVc9+SqD3ARmd4kp6s7y+Jb7c1CdqoVJrImEyw891Dj5wVsOyfj5V5uVBC43u9glAkn8jOoP07aRqrd18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cgrturBY; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W7aH67aR"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=V+Qreg6M2mVqQ7IZlg7liWXgqKSSjn4qbwTueF8u5a8=; b=W7aH67aRnBiFbOMYaHtVvbDr3n
-	0OrsZ6OCt5bNnFtXubO1XCMULnXE1Np5pklqLd2OS3+Mh+snquMWFMi+lP1WX4ul3y6tT8PJTlL9Z
-	+5TDfbyrEhPvySKzB9ZYoE7me+vuk1tkgHluGYWOrTV7GCaz1zcj6/v7fSD0rsTe9j1cl+X0IK8C2
-	jCvP/YrbRs5t7EmD2diGMAlVlgQAgq9niuvnr84Q7OLW9HbWwa6DFn3+4yAmaIzWckZaUFkFSWZe7
-	FN22/EctP1hVEd5MpC6MKdeF+K7HDwvw28G6Ty3y3iXZp+t/FSq4N+8U4ntgBlFdW2WsEkl+OuszE
-	DZQoIQdg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vOMuE-0000000FfHi-1m4I;
-	Wed, 26 Nov 2025 21:18:30 +0000
-Message-ID: <e5ca4be6-6919-4855-bb7f-bd36761eab0f@infradead.org>
-Date: Wed, 26 Nov 2025 13:18:29 -0800
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cgrturBY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1764192295; x=1795728295;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AjhRZ85s9z+ZyGqKnInIoBL7dEFtynHaO9n5AAbKTRc=;
+  b=cgrturBYid/Na2ko0A1B67IbdV3pTG736Xb4xaCrtAvbMpqWHkF/GUoV
+   03NcSM+UJ2/IEb7iNsEANFVepo4OXmUf7hEP6iNlm66Sp6gkvllcll3Il
+   Tp1O4iigoX1tsBMdBiOKQBT4CHwu2FIz/+533XS4Sfa+uUgabb7ArQPHP
+   EEDEMfBCBTeAyPL2tAkV22Z5hVcYTHx3/NaAJlpsQW06u/5V36+zH4qMr
+   WDdh1+1eZZaZWIp+8XBpRvth8kRSp059RnNyiZUZLC6ntWqAf2S0wvBgl
+   HjAlRIHGzZt2xc8wFu3xy9EUj7boUmKVygRKf1Yxz5Lmgt/LfvsbrB/LO
+   g==;
+X-CSE-ConnectionGUID: ESri8MB9TsSrwLxXSj42iA==
+X-CSE-MsgGUID: EuEQm0O+T/uivZEk/cPdOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="65426310"
+X-IronPort-AV: E=Sophos;i="6.20,229,1758610800"; 
+   d="scan'208";a="65426310"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 13:24:54 -0800
+X-CSE-ConnectionGUID: yRfBQmL2R0u0glMI7lTH4w==
+X-CSE-MsgGUID: H/Ch56jIQByWNGczSEbAtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.20,229,1758610800"; 
+   d="scan'208";a="193858292"
+Received: from rvuia-mobl.ger.corp.intel.com (HELO localhost) ([10.245.245.89])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 13:24:50 -0800
+Date: Wed, 26 Nov 2025 23:24:48 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, workflows@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	Joe Perches <joe@perches.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Subject: Re: [PATCH v1 1/1] docs: Update documentation to avoid mentioning of
+ kernel.h
+Message-ID: <aSdwIN6qA-66hYhm@smile.fi.intel.com>
+References: <20251126205939.2321498-1-andriy.shevchenko@linux.intel.com>
+ <e5ca4be6-6919-4855-bb7f-bd36761eab0f@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] docs: Update documentation to avoid mentioning of
- kernel.h
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- "Dr. David Alan Gilbert" <linux@treblig.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, workflows@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
- Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20251126205939.2321498-1-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251126205939.2321498-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5ca4be6-6919-4855-bb7f-bd36761eab0f@infradead.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Wed, Nov 26, 2025 at 01:18:29PM -0800, Randy Dunlap wrote:
+> On 11/26/25 12:59 PM, Andy Shevchenko wrote:
 
+...
 
-On 11/26/25 12:59 PM, Andy Shevchenko wrote:
-> For several years, and still ongoing, the kernel.h is being split
-> to smaller and narrow headers to avoid "including everything" approach
-> which is bad in many ways. Since that, documentation missed a few
-> required updates to align with that work. Do it here.
+> > -The header file include/linux/kernel.h contains a number of macros that
+> > +There many header files in include/linux/ that contain a number of macros that
 > 
-> Note, language translations are left untouched and if anybody willing
-> to help, please provide path(es) based on the updated English variant.
+>    There are many
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  Documentation/core-api/kobject.rst              |  2 +-
->  Documentation/dev-tools/checkpatch.rst          |  2 +-
->  Documentation/driver-api/basics.rst             | 17 ++++++++++++++++-
->  .../driver-api/driver-model/design-patterns.rst |  2 +-
->  Documentation/process/coding-style.rst          | 10 +++++++---
->  Documentation/staging/rpmsg.rst                 |  7 +++++--
->  6 files changed, 31 insertions(+), 9 deletions(-)
+> >  you should use, rather than explicitly coding some variant of them yourself.
+> >  For example, if you need to calculate the length of an array, take advantage
+> >  of the macro
 > 
+> Otherwise LGTM. Thanks.
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
+Thanks!
 
-> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
-> index 2969ca378dbb..d63ea0bffdfe 100644
-> --- a/Documentation/process/coding-style.rst
-> +++ b/Documentation/process/coding-style.rst
-> @@ -1070,7 +1070,7 @@ readability.
->  18) Don't re-invent the kernel macros
->  -------------------------------------
->  
-> -The header file include/linux/kernel.h contains a number of macros that
-> +There many header files in include/linux/ that contain a number of macros that
-
-   There are many
-
->  you should use, rather than explicitly coding some variant of them yourself.
->  For example, if you need to calculate the length of an array, take advantage
->  of the macro
-
-Otherwise LGTM. Thanks.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Can you also test it? I hope it will be not so broken (as some of the files
+seems never were before in the generated docs).
 
 -- 
-~Randy
+With Best Regards,
+Andy Shevchenko
+
+
