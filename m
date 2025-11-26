@@ -1,226 +1,106 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3881B3191C3;
-	Wed, 26 Nov 2025 21:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6CF18CC13;
+	Wed, 26 Nov 2025 21:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764190805; cv=none; b=JVnfIKCbzdAlX0TYhnFpPEr2fmofBEBr0yVr1UYiQGZwIPr9bo6Mob4i5osRoQrNRp/ZrMHuKXmWdVn2l3JTuek4LJ/Lp4JGdgfOm/j0G54ZpppdsJrSdx87++d37MRJWVvLruAU0GBPD5UhpOQlZejJeRQkSHxKR37iTVzcBRQ=
+	t=1764191916; cv=none; b=IEHabCsL/k0Sw7utga4/T2DozOejOr9NE0pLLgiEK+7bF3n7hXTIkMaQ0eG2W3Ajh6ZSHI1cv46iy0uWLKHAcEbreewcHB4p3oJs35KrWSN0u2Cfzd8zye823IkwLvhiiYDu9d3j7w0BB03PpKJMKzHkIBm8kNkbF/KGLVN2cGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764190805; c=relaxed/simple;
-	bh=rVo+BGrVUWuk2ZUHe4MgRf6wzEP/hIkHu/ZB9WhQo5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I6MCz147r4MpXok0I5fR9EnduQJPd80HWTOD7h3Y1FBHo72Wx52011ONtDQLYqrRgL0TCAIeyPU22VkoEF25Jn3t5EPRigx0IG6X+AE2VmuwkLrTI5hmGnDIn2MnU1+kBpsfbvM8+8Lg/NGEUGYnKts5AblK9Y6LODcwi2R19F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEIG5BDB; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1764191916; c=relaxed/simple;
+	bh=KWWvwkL5WqXzAE0/1K+ALzLNzVTX6crL4x/VZuNt9fU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EVL6KMuuMbxUl1drtqN+6hNkiYFak++62m/y8lZYnRqnU5eZnQ3OrTcHJv8grMgW1e+rY3bR2kRm5A0IGyrBWoqazkPaRJG89IZBL3IanLl+boSvsWaQjgdJCZP0YVnasHgE6pZAjeGWQ+sbajScEyQfyYU335VTL5/w1MvOWUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W7aH67aR; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEIG5BDB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764190803; x=1795726803;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=rVo+BGrVUWuk2ZUHe4MgRf6wzEP/hIkHu/ZB9WhQo5k=;
-  b=jEIG5BDBoP2+qNwfy5PrOQq5lhefW0q3S/9hHxwdXdEWY1RcBgBWEAhe
-   uKBfDyi3sdVQ+f4n4APGa/KPQWlQNSpEltocjsQ4+Yl4IytjCAAUBUwD9
-   Byct8JKXeGZ6pHpuYwdk7a38eTrlDFZ5gWAfvCuBRk2oItYdWhi6fouUG
-   TZesjFX+xrqsKKjPoFZH0GC00ywT2N/u2eQbWmrdNejyxhR1vCpBNpWOM
-   4fpj3zq2Nri2xCbL32aWxb/+JwltlVEThSIJcftnt0P/NQS8ivYuWvkF0
-   yl38YqGLNC8dz5NAq8vv7s/sw5WCuRXPBhUL2LmAiGDNGsYzSxEfLk4j0
-   g==;
-X-CSE-ConnectionGUID: zlGYUGL8RLS6saoPXJ7bpQ==
-X-CSE-MsgGUID: j6xQXhA6QWqtA3aCSdK+RQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11625"; a="65423531"
-X-IronPort-AV: E=Sophos;i="6.20,229,1758610800"; 
-   d="scan'208";a="65423531"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2025 12:59:52 -0800
-X-CSE-ConnectionGUID: MyfPDdpWRMSIMqatf0tXaQ==
-X-CSE-MsgGUID: WzVFqLfnQtOZYpmBP1oGjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,229,1758610800"; 
-   d="scan'208";a="193272436"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa008.fm.intel.com with ESMTP; 26 Nov 2025 12:59:48 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id AB1CD9F; Wed, 26 Nov 2025 21:59:47 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Joe Perches <joe@perches.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH v1 1/1] docs: Update documentation to avoid mentioning of kernel.h
-Date: Wed, 26 Nov 2025 21:59:39 +0100
-Message-ID: <20251126205939.2321498-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W7aH67aR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=V+Qreg6M2mVqQ7IZlg7liWXgqKSSjn4qbwTueF8u5a8=; b=W7aH67aRnBiFbOMYaHtVvbDr3n
+	0OrsZ6OCt5bNnFtXubO1XCMULnXE1Np5pklqLd2OS3+Mh+snquMWFMi+lP1WX4ul3y6tT8PJTlL9Z
+	+5TDfbyrEhPvySKzB9ZYoE7me+vuk1tkgHluGYWOrTV7GCaz1zcj6/v7fSD0rsTe9j1cl+X0IK8C2
+	jCvP/YrbRs5t7EmD2diGMAlVlgQAgq9niuvnr84Q7OLW9HbWwa6DFn3+4yAmaIzWckZaUFkFSWZe7
+	FN22/EctP1hVEd5MpC6MKdeF+K7HDwvw28G6Ty3y3iXZp+t/FSq4N+8U4ntgBlFdW2WsEkl+OuszE
+	DZQoIQdg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vOMuE-0000000FfHi-1m4I;
+	Wed, 26 Nov 2025 21:18:30 +0000
+Message-ID: <e5ca4be6-6919-4855-bb7f-bd36761eab0f@infradead.org>
+Date: Wed, 26 Nov 2025 13:18:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] docs: Update documentation to avoid mentioning of
+ kernel.h
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, workflows@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+References: <20251126205939.2321498-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251126205939.2321498-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For several years, and still ongoing, the kernel.h is being split
-to smaller and narrow headers to avoid "including everything" approach
-which is bad in many ways. Since that, documentation missed a few
-required updates to align with that work. Do it here.
 
-Note, language translations are left untouched and if anybody willing
-to help, please provide path(es) based on the updated English variant.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- Documentation/core-api/kobject.rst              |  2 +-
- Documentation/dev-tools/checkpatch.rst          |  2 +-
- Documentation/driver-api/basics.rst             | 17 ++++++++++++++++-
- .../driver-api/driver-model/design-patterns.rst |  2 +-
- Documentation/process/coding-style.rst          | 10 +++++++---
- Documentation/staging/rpmsg.rst                 |  7 +++++--
- 6 files changed, 31 insertions(+), 9 deletions(-)
+On 11/26/25 12:59 PM, Andy Shevchenko wrote:
+> For several years, and still ongoing, the kernel.h is being split
+> to smaller and narrow headers to avoid "including everything" approach
+> which is bad in many ways. Since that, documentation missed a few
+> required updates to align with that work. Do it here.
+> 
+> Note, language translations are left untouched and if anybody willing
+> to help, please provide path(es) based on the updated English variant.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  Documentation/core-api/kobject.rst              |  2 +-
+>  Documentation/dev-tools/checkpatch.rst          |  2 +-
+>  Documentation/driver-api/basics.rst             | 17 ++++++++++++++++-
+>  .../driver-api/driver-model/design-patterns.rst |  2 +-
+>  Documentation/process/coding-style.rst          | 10 +++++++---
+>  Documentation/staging/rpmsg.rst                 |  7 +++++--
+>  6 files changed, 31 insertions(+), 9 deletions(-)
+> 
 
-diff --git a/Documentation/core-api/kobject.rst b/Documentation/core-api/kobject.rst
-index 7310247310a0..5f6c61bc03bf 100644
---- a/Documentation/core-api/kobject.rst
-+++ b/Documentation/core-api/kobject.rst
-@@ -78,7 +78,7 @@ just a matter of using the kobj member.  Code that works with kobjects will
- often have the opposite problem, however: given a struct kobject pointer,
- what is the pointer to the containing structure?  You must avoid tricks
- (such as assuming that the kobject is at the beginning of the structure)
--and, instead, use the container_of() macro, found in ``<linux/kernel.h>``::
-+and, instead, use the container_of() macro, found in ``<linux/container_of.h>``::
- 
-     container_of(ptr, type, member)
- 
-diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
-index fa2988dd4657..c1dff8e6bccb 100644
---- a/Documentation/dev-tools/checkpatch.rst
-+++ b/Documentation/dev-tools/checkpatch.rst
-@@ -753,7 +753,7 @@ Macros, Attributes and Symbols
-     sizeof(foo)/sizeof(foo[0]) for finding number of elements in an
-     array.
- 
--    The macro is defined in include/linux/kernel.h::
-+    The macro is defined in include/linux/array_size.h::
- 
-       #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
- 
-diff --git a/Documentation/driver-api/basics.rst b/Documentation/driver-api/basics.rst
-index 5e9f7aee71a7..8b6a5888cb11 100644
---- a/Documentation/driver-api/basics.rst
-+++ b/Documentation/driver-api/basics.rst
-@@ -114,10 +114,25 @@ Kernel objects manipulation
- Kernel utility functions
- ------------------------
- 
--.. kernel-doc:: include/linux/kernel.h
-+.. kernel-doc:: include/linux/array_size.h
-+   :internal:
-+
-+.. kernel-doc:: include/linux/container_of.h
-+   :internal:
-+
-+.. kernel-doc:: include/linux/kstrtox.h
-    :internal:
-    :no-identifiers: kstrtol kstrtoul
- 
-+.. kernel-doc:: include/linux/stddef.h
-+   :internal:
-+
-+.. kernel-doc:: include/linux/util_macros.h
-+   :internal:
-+
-+.. kernel-doc:: include/linux/wordpart.h
-+   :internal:
-+
- .. kernel-doc:: kernel/printk/printk.c
-    :export:
-    :no-identifiers: printk
-diff --git a/Documentation/driver-api/driver-model/design-patterns.rst b/Documentation/driver-api/driver-model/design-patterns.rst
-index 41eb8f41f7dd..965b2b93be6f 100644
---- a/Documentation/driver-api/driver-model/design-patterns.rst
-+++ b/Documentation/driver-api/driver-model/design-patterns.rst
-@@ -103,7 +103,7 @@ The design pattern is the same for an hrtimer or something similar that will
- return a single argument which is a pointer to a struct member in the
- callback.
- 
--container_of() is a macro defined in <linux/kernel.h>
-+container_of() is a macro defined in <linux/container_of.h>
- 
- What container_of() does is to obtain a pointer to the containing struct from
- a pointer to a member by a simple subtraction using the offsetof() macro from
-diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
-index 2969ca378dbb..d63ea0bffdfe 100644
---- a/Documentation/process/coding-style.rst
-+++ b/Documentation/process/coding-style.rst
-@@ -1070,7 +1070,7 @@ readability.
- 18) Don't re-invent the kernel macros
- -------------------------------------
- 
--The header file include/linux/kernel.h contains a number of macros that
-+There many header files in include/linux/ that contain a number of macros that
- you should use, rather than explicitly coding some variant of them yourself.
- For example, if you need to calculate the length of an array, take advantage
- of the macro
-@@ -1079,14 +1079,18 @@ of the macro
- 
- 	#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
- 
-+which is defined in array_size.h.
-+
- Similarly, if you need to calculate the size of some structure member, use
- 
- .. code-block:: c
- 
- 	#define sizeof_field(t, f) (sizeof(((t*)0)->f))
- 
--There are also min() and max() macros that do strict type checking if you
--need them.  Feel free to peruse that header file to see what else is already
-+which is defined in stddef.h.
-+
-+There are also min() and max() macros defined in minmax.h that do strict type checking if you
-+need them.  Feel free to peruse the header files to see what else is already
- defined that you shouldn't reproduce in your code.
- 
- 
-diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-index 40282cca86ca..42bac1149d9d 100644
---- a/Documentation/staging/rpmsg.rst
-+++ b/Documentation/staging/rpmsg.rst
-@@ -224,9 +224,12 @@ content to the console.
- 
- ::
- 
--  #include <linux/kernel.h>
-+  #include <linux/dev_printk.h>
-+  #include <linux/mod_devicetable.h>
-   #include <linux/module.h>
-+  #include <linux/printk.h>
-   #include <linux/rpmsg.h>
-+  #include <linux/types.h>
- 
-   static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
- 						void *priv, u32 src)
-@@ -244,7 +247,7 @@ content to the console.
- 	/* send a message on our channel */
- 	err = rpmsg_send(rpdev->ept, "hello!", 6);
- 	if (err) {
--		pr_err("rpmsg_send failed: %d\n", err);
-+		dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", err);
- 		return err;
- 	}
- 
+
+> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+> index 2969ca378dbb..d63ea0bffdfe 100644
+> --- a/Documentation/process/coding-style.rst
+> +++ b/Documentation/process/coding-style.rst
+> @@ -1070,7 +1070,7 @@ readability.
+>  18) Don't re-invent the kernel macros
+>  -------------------------------------
+>  
+> -The header file include/linux/kernel.h contains a number of macros that
+> +There many header files in include/linux/ that contain a number of macros that
+
+   There are many
+
+>  you should use, rather than explicitly coding some variant of them yourself.
+>  For example, if you need to calculate the length of an array, take advantage
+>  of the macro
+
+Otherwise LGTM. Thanks.
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
 -- 
-2.50.1
-
+~Randy
