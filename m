@@ -1,136 +1,215 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5598134CF
-	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Nov 2025 13:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF34E33344F
+	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Nov 2025 14:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764248839; cv=none; b=cntXaESGUcCfWz7yOh/rl8h67EYJqukeS7ws/OvYNGHp//vozZ1yr4K55uuOLNkIoaIVhoXKDrTqFw+bvFRNxvIMRaRMgPSaSMEMY+I2D8q9yRBEyKnFroKd2C5I1j/5VUNfXwFaHaNOtfCzSO5X04eiLJuJMYdl853+P856Sbc=
+	t=1764253734; cv=none; b=agayhy3WC0RNiODuMd98FmE+h98Gb2O/l3YpP+r/WDXZqrugXTiJQ1+/ZTLJVGffnAXZ4XUZor9EogXWW4i9JUur/v3h/5tacrcGIIXS11Pk7SRYo+h/HVkUhXq4bsFzVsWVVswUUQMqvR3fkkIaRQcLHJ/tZkvCmmPi5Th8wwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764248839; c=relaxed/simple;
-	bh=MZ9v+YINmrPfvQROk/hAUaEl45MOoAprD8l2tOX6vmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XNpocYnj9c/6EKQBKo0xrFNns/niC6pZuWqohf/uuDxY6j/XN55lEn/9VajLafkyJbrrPOI+th6FbxkhQNb+kwHsD3bePNDoe9k08Brl1DqGO9blWkn9MFPDgc2gIuwN0GxcAUb4kXCnrEMVicihAFF28oaAX6yOVg3b9dBmxrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=g1MTT91L; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1764253734; c=relaxed/simple;
+	bh=T1sb+tHvhi6RuyEEQJOSXM9p3OhuwHipbQpSaEsjzL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=sQIuOdJZrwWYmUJY3WdJitfoSpGujBD3CjhiD7EUMdfmToIjVUU3tzz3CWTbMqRUwLhp+xTDVen/Zd4D/BQKY0k15kOMypFy5BDook7H1EU3ZDoN2nKRw8W21mR9qj7d15NogutfZDAfV2121elFilPGt0vq70qnAZckRCcm4II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=erbwpoOD; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="g1MTT91L"
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4dHGt96PGFz9t1j;
-	Thu, 27 Nov 2025 14:07:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1764248833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3TzzDkCNNzPotJsfR4gMydlCd0DAED+iPWbHtDDO9qQ=;
-	b=g1MTT91LafeI/9Pc81vZ7YtZqSYz9AYpaytPDy1mtgrd1VYuHxt10bX4kvf6EruSXin4Q1
-	5UmO3YArO8BPXCPdyp/M4jbnlEzlYnQiIbA759T/eHY/zlJcwd8CvobJIz2DGVi7L/fYpc
-	pJt3KOFudJK5WW6vCJEup/RIwANf7XDecTgyuhNwAB6JSmHsCwJiL28arcwDSA9W49pkO3
-	HOWGHDc+OkM4F6/NJ3d3sD7oxXM4yL+rHzkDrAvJC5oOcHrBdNoi4fz4oQj0bhkSkqiH/+
-	VgKBpZ0R+LsmYuHGgrh0GAtd8YIBr1g14M7esHGJVeMUJ3q/h1VQK4QxbhGzPw==
-From: Stefan Roese <stefan.roese@mailbox.org>
-To: linux-remoteproc@vger.kernel.org
-Cc: Tanmay Shah <tanmay.shah@amd.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH] remoteproc: xlnx: Use high-prio workqueue instead of system wq
-Date: Thu, 27 Nov 2025 14:07:12 +0100
-Message-ID: <20251127130712.1190765-1-stefan.roese@mailbox.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="erbwpoOD"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251127142840euoutp02598f2a1b34c3fb9bbc29952d81f2ebe9~742lACbRd2812928129euoutp02H
+	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Nov 2025 14:28:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251127142840euoutp02598f2a1b34c3fb9bbc29952d81f2ebe9~742lACbRd2812928129euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1764253720;
+	bh=c+QeMOJOnfslgDcfNzsZCKnwETDURGiBqjri2tCUFfk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=erbwpoODj8qo874optlioim476oOShFTEsV3Ii2jsn23RSu2+ZqD/Byawvhgk9B9y
+	 8GKnMWuwLJ8Iga9mkAgXYi8I7oqYCCBi7g0JqpaqvnXzJjhKcm0qtB14Eu9mnTXfmB
+	 /fKBWfHcgCCVRO6fXtKiJOBP8NR400dWaL9LnMok=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c~742kOva7m0371103711eucas1p14;
+	Thu, 27 Nov 2025 14:28:39 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251127142836eusmtip20607f11d6d5e39787db9d5c4efbb27f3~742huJECq1704117041eusmtip2Y;
+	Thu, 27 Nov 2025 14:28:36 +0000 (GMT)
+Message-ID: <674efe8d-c299-4ce9-bf6b-c1920a5393eb@samsung.com>
+Date: Thu, 27 Nov 2025 15:28:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v7 2/2] remoteproc: qcom: Use of_reserved_mem_region_*
+ functions for "memory-region"
+To: "Rob Herring (Arm)" <robh@kernel.org>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn
+	Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+	Damm <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan
+	<peng.fan@nxp.com>, Beleswar Padhi <b-padhi@ti.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-msm@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251124182751.507624-2-robh@kernel.org>
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 3i8pczc3maioeap6w6uayz9ru7hqxqqs
-X-MBO-RS-ID: 3e19082f2e908c474eb
+X-CMS-MailID: 20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c
+X-EPHeader: CA
+X-CMS-RootMailID: 20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c
+References: <20251124182751.507624-1-robh@kernel.org>
+	<20251124182751.507624-2-robh@kernel.org>
+	<CGME20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c@eucas1p1.samsung.com>
 
-Testing on our ZynqMP platform has shown, that some R5 messages might
-get dropped under high CPU load. This patch creates a new high-prio
-workqueue which is now used instead of the default system workqueue.
-With this change we don't experience these message drops any more.
+Hi Rob,
 
-Signed-off-by: Stefan Roese <stefan.roese@mailbox.org>
-Cc: Tanmay Shah <tanmay.shah@amd.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- drivers/remoteproc/xlnx_r5_remoteproc.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+On 24.11.2025 19:27, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() and
+> of_reserved_mem_region_count() functions to handle "memory-region"
+> properties.
+>
+> The error handling is a bit different in some cases. Often
+> "memory-region" is optional, so failed lookup is not an error. But then
+> an error in of_reserved_mem_lookup() is treated as an error. However,
+> that distinction is not really important. Either the region is available
+> and usable or it is not. So now, it is just
+> of_reserved_mem_region_to_resource() which is checked for an error.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index feca6de68da28..459373901c973 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -16,6 +16,7 @@
- #include <linux/of_reserved_mem.h>
- #include <linux/platform_device.h>
- #include <linux/remoteproc.h>
-+#include <linux/workqueue.h>
- 
- #include "remoteproc_internal.h"
- 
-@@ -116,6 +117,7 @@ struct zynqmp_r5_cluster {
- 	enum  zynqmp_r5_cluster_mode mode;
- 	int core_count;
- 	struct zynqmp_r5_core **r5_cores;
-+	struct workqueue_struct *workqueue;
- };
- 
- /**
-@@ -174,10 +176,18 @@ static void handle_event_notified(struct work_struct *work)
- static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
- {
- 	struct zynqmp_ipi_message *ipi_msg, *buf_msg;
-+	struct zynqmp_r5_cluster *cluster;
- 	struct mbox_info *ipi;
-+	struct device *dev;
- 	size_t len;
- 
- 	ipi = container_of(cl, struct mbox_info, mbox_cl);
-+	dev = ipi->r5_core->dev;
-+	cluster = dev_get_drvdata(dev->parent);
-+	if (!cluster) {
-+		dev_err(dev->parent, "Invalid driver data\n");
-+		return;
-+	}
- 
- 	/* copy data from ipi buffer to r5_core */
- 	ipi_msg = (struct zynqmp_ipi_message *)msg;
-@@ -195,7 +205,7 @@ static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
- 	if (mbox_send_message(ipi->rx_chan, NULL) < 0)
- 		dev_err(cl->dev, "ack failed to mbox rx_chan\n");
- 
--	schedule_work(&ipi->mbox_work);
-+	queue_work(cluster->workqueue, &ipi->mbox_work);
- }
- 
- /**
-@@ -1194,12 +1204,21 @@ static int zynqmp_r5_remoteproc_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	cluster->workqueue = alloc_workqueue(dev_name(dev),
-+					     WQ_UNBOUND | WQ_HIGHPRI, 0);
-+	if (!cluster->workqueue) {
-+		dev_err_probe(dev, -ENOMEM, "cannot create workqueue\n");
-+		kfree(cluster);
-+		return -ENOMEM;
-+	}
-+
- 	/* wire in so each core can be cleaned up at driver remove */
- 	platform_set_drvdata(pdev, cluster);
- 
- 	ret = zynqmp_r5_cluster_init(cluster);
- 	if (ret) {
- 		kfree(cluster);
-+		destroy_workqueue(cluster->workqueue);
- 		platform_set_drvdata(pdev, NULL);
- 		dev_err_probe(dev, ret, "Invalid r5f subsystem device tree\n");
- 		return ret;
+This patch landed in today's linux-next as commit c70b9d5fdcd7 
+("remoteproc: qcom: Use of_reserved_mem_region_* functions for 
+"memory-region""). In my tests I found that it breaks booting of 
+DragonBoard410c (arch/arm64/boot/dts/qcom/apq8016-sbc.dts) by causing 
+the NULL pointer dereference. The issue is caused by replacing 
+devm_ioremap_wc() with devm_ioremap_resource_wc(), which fails on 
+devm_request_mem_region(), see comment in the code below. It looks that 
+the error handling is somewhere broken. Here is the the kernel log:
+
+remoteproc remoteproc0: 4080000.remoteproc is available
+qcom-wcnss-pil a204000.remoteproc: error -EBUSY: can't request region 
+for resource [mem 0x8e200000-0x8e7fffff]
+remoteproc remoteproc1: a204000.remoteproc is available
+remoteproc remoteproc1: powering up a204000.remoteproc
+remoteproc remoteproc1: Booting fw image qcom/apq8016/wcnss.mbn, size 
+4111376
+Unable to handle kernel paging request at virtual address fffffffffffffff0
+Mem abort info:
+...
+Internal error: Oops: 0000000096000046 [#1]  SMP
+Modules linked in: cpufreq_powersave qcom_wcnss_pil cpufreq_conservative 
+coresight_stm coresight_replicator coresight_tmc coresight_tpiu stm_core 
+coresight_funnel coresight_cpu_debug coresight_cti(+) adv7511 coresight 
+nfc rfkill msm snd_soc_lpass_apq8016 snd_soc_apq8016_sbc 
+snd_soc_lpass_cpu snd_soc_msm8916_analog snd_soc_msm8916_digital 
+snd_soc_qcom_common snd_soc_lpass_platform snd_soc_core qrtr ubwc_config 
+snd_compress llcc_qcom snd_pcm_dmaengine qcom_q6v5_mss snd_pcm ocmem 
+qcom_pil_info qcom_spmi_vadc qcom_camss drm_gpuvm qcom_pon rtc_pm8xxx 
+qcom_q6v5 qcom_spmi_temp_alarm venus_core qcom_vadc_common snd_timer 
+drm_exec qcom_sysmon snd qcom_common gpu_sched videobuf2_dma_sg 
+v4l2_mem2mem qcom_glink_smem v4l2_fwnode soundcore drm_dp_aux_bus 
+qmi_helpers mdt_loader v4l2_async videobuf2_memops videobuf2_v4l2 
+videodev qnoc_msm8916 videobuf2_common qcom_rng drm_display_helper mc 
+qcom_stats rpmsg_ctrl rpmsg_char display_connector ramoops socinfo 
+rmtfs_mem reed_solomon ax88796b asix usbnet phy_qcom_usb_hs ipv6 libsha1
+CPU: 2 UID: 0 PID: 28 Comm: kworker/2:0 Tainted: G W           
+6.18.0-rc1+ #16209 PREEMPT
+Tainted: [W]=WARN
+lr : __qcom_mdt_load+0x210/0x304 [mdt_loader]
+Call trace:
+  __pi_memcpy_generic+0x128/0x22c (P)
+  qcom_mdt_load+0x68/0x60c [mdt_loader]
+  wcnss_load+0x2c/0x5c [qcom_wcnss_pil]
+  rproc_start+0x30/0x1b4
+  rproc_boot+0x19c/0x560
+  rproc_auto_boot_callback+0x1c/0x34
+  request_firmware_work_func+0x4c/0x98
+  process_one_work+0x208/0x60c
+  worker_thread+0x244/0x388
+  kthread+0x150/0x228
+  ret_from_fork+0x10/0x20
+Code: 927cec03 cb0e0021 8b0e0042 a9411c26 (a900340c)
+---[ end trace 0000000000000000 ]---
+
+
+> ---
+> v7:
+>   - Split QCom to separate patch
+> ---
+>   drivers/remoteproc/qcom_q6v5_adsp.c | 24 ++++------
+>   drivers/remoteproc/qcom_q6v5_mss.c  | 60 ++++++++-----------------
+>   drivers/remoteproc/qcom_q6v5_pas.c  | 69 +++++++++++------------------
+>   drivers/remoteproc/qcom_q6v5_wcss.c | 25 +++++------
+>   drivers/remoteproc/qcom_wcnss.c     | 23 ++++------
+>   5 files changed, 72 insertions(+), 129 deletions(-)
+>
+
+> ...
+
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index 2c7e519a2254..14005fb049a2 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -526,25 +526,20 @@ static int wcnss_request_irq(struct qcom_wcnss *wcnss,
+>   
+>   static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
+>   {
+> -	struct reserved_mem *rmem = NULL;
+> -	struct device_node *node;
+> -
+> -	node = of_parse_phandle(wcnss->dev->of_node, "memory-region", 0);
+> -	if (node)
+> -		rmem = of_reserved_mem_lookup(node);
+> -	of_node_put(node);
+> +	struct resource res;
+> +	int ret;
+>   
+> -	if (!rmem) {
+> +	ret = of_reserved_mem_region_to_resource(wcnss->dev->of_node, 0, &res);
+> +	if (ret) {
+>   		dev_err(wcnss->dev, "unable to resolve memory-region\n");
+> -		return -EINVAL;
+> +		return ret;
+>   	}
+>   
+> -	wcnss->mem_phys = wcnss->mem_reloc = rmem->base;
+> -	wcnss->mem_size = rmem->size;
+> -	wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
+> +	wcnss->mem_phys = wcnss->mem_reloc = res.start;
+> +	wcnss->mem_size = resource_size(&res);
+> +	wcnss->mem_region = devm_ioremap_resource_wc(wcnss->dev, &res);
+
+The above line causes the failure. After restoring it to:
+
+wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
+
+the mentioned board boots fine again. I'm not sure about other drivers, 
+if they also fail the same way as they might not be used on the tested 
+board.
+
+>   	if (!wcnss->mem_region) {
+> -		dev_err(wcnss->dev, "unable to map memory region: %pa+%zx\n",
+> -			&rmem->base, wcnss->mem_size);
+> +		dev_err(wcnss->dev, "unable to map memory region: %pR\n", &res);
+>   		return -EBUSY;
+>   	}
+>   
+
+Best regards
 -- 
-2.52.0
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
