@@ -1,71 +1,74 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B55B30CDB0
-	for <linux-remoteproc@vger.kernel.org>; Sat, 29 Nov 2025 14:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E6430F955
+	for <linux-remoteproc@vger.kernel.org>; Sat, 29 Nov 2025 14:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764427854; cv=none; b=m4BEAUxiioW9sqfMTu+0FzVuOOvAT0leU3dKSR627IJCBPiDjg33JBB1OxFum4CHoflHE5D0qL739DcSm1Lch8V40GfkU1MCc0rOrz7WpNuFXT5d4WiUq6fJbpEO/gV/N8n+PUYYZvYajdOoY/KRhDA0p6eikaQx5I9EQA9MqQw=
+	t=1764427861; cv=none; b=K/VHnXX2B/hpqW7W1Al8NWbutvC7yFdVFvYLbCvVdZulVUGCFanS3eYwikM7xIpTU3G4uV9ymR7AcAW1Cp5Ad5sUbnUNP32y7v2ZU88HXrWtflCUyWbICMGb0tnlSvDa+jlzR3AJzQoM4cZYki9EvMQveH6+QTFmEf3j6NdqdoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764427854; c=relaxed/simple;
-	bh=On8iufHNupMUM8gQiRcj/sMjUlOBoIku4zCGN1itpwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rqu0fB547nUgOkG0pB4qu/iwtDVbIt6iIgFJc9o2N0u9Lh8BXiJHLu3a8eaTquEMTElHI1rpopDxOR0PihSmZ1ueK1HdBiiPhbtl/sfTbfBE6BvBZ4TByFeG1vp8dtFoDQGhO/1GD1cZLIiCFaUlOLMeRzuy15RR0Y/qy95ANwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IyuxZMsm; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1764427861; c=relaxed/simple;
+	bh=kJAVYd2/PPlXFLOf6bOfuTDn5AtW65rQSCFJWrlTfDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G33Ea6weDKe2l2WEjC1K+VguoNQrA9Cn13Xr33hNe7No4LwFC/mTAYXsN99YNQR/BNOVYuk9Tfi4b9RLl/pv4jdVpQtpPajfr+fx4sSwVNNfs2QLMXVv/uY6mmCmwQ89nxoI0MQC7DRCv+CrzxDdjJNSm6Ifddei6x2AtGIP068=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W/Qx3XDM; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IyuxZMsm"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-42b3c965df5so1570978f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Sat, 29 Nov 2025 06:50:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/Qx3XDM"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42e2cf93f7dso83913f8f.1
+        for <linux-remoteproc@vger.kernel.org>; Sat, 29 Nov 2025 06:50:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764427851; x=1765032651; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ctIpJYtrQV3nLKe/1NlZuGbTH89WBc7HNhCgLG2n0ts=;
-        b=IyuxZMsmR76vTptkNE5lElzz/1qfJIrfVgY4Awu3WSbd/ALHao3ERTiI9lRjwUFmGW
-         wGkTVKxcqSirvEmllIJAeL9QOiK7l4x0GK7OK5dpQZc7CrwPYtwOvqkEWh5FZTWFWFuc
-         WU6thrTFKWFkpZNO09+MUYmmXYAnjMZhixzxWJ7UERIMraSe1EQNRg5nQGr+3b+NCZDo
-         GZrKjR1Dcft+/bDK/wAe/OnrKrwPQhD67Y/djVlcpTiRd3LyNxt8p70YqH812uNMg1tF
-         O0JsQkyLWEGhihS/ZYSCayoMmj43KsIOb1wGn81AF0cqoj2KuyYn+r4B+dEn+NxNtxkw
-         h9bg==
+        d=linaro.org; s=google; t=1764427857; x=1765032657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5roHuQegQf4KvGy0xBz6y0ubzRCDlqFmvzi3L2AWogw=;
+        b=W/Qx3XDMWS1ds9QdnTvdp2EazQKt2QvWbGq+Oz5cZIPAnny/0obCp/TMzLTcx7G/Dl
+         1/DyEOg8aKg1/+cwX7yUJg90U7s0QCM3ggawgrJyeRqT8snKDOHGJadgjo/RcC8L6Mj0
+         4RuJyXgRVSei3CyAYLngQzTfQHJeBCZinYKHoSU9M5WF2XO+/Sco7oZ+aWRxh/d392Ug
+         MUmmJnfY+A+vVz/CflTebjGmsYZZgB29EOgtChAB2fNYQqjVfWAvOSPfts78IFu6cBIE
+         tcDtgrxVxBjc8D1ELRBZBg1eY5TbTKA7JbxXPAmgdo/BJ4DZ1y/LisyCd5KVMZWm06o8
+         mmfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764427851; x=1765032651;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ctIpJYtrQV3nLKe/1NlZuGbTH89WBc7HNhCgLG2n0ts=;
-        b=hzYu6Q7PxlZQoV5Cl5grFGO8FMxzFk+vVy2rdUOfCQY+fbpXCQ+JN2bdKsqbPPfFsL
-         pyzkVGtdxWb4KEsdzOY3FCyRe9yxL3sXsG96JpPO/uby3Lqvp+jb0Ax0PvGDQWYD/RE5
-         uXyj5yprSPJpDIAPK2JuT7isc0pITKF1HoClgT7u/Cnml+akaDg8bSADzdeD2tstuQ3D
-         GY9wfK7TBXPVuu0Y14AoX8FMUBFuHbWoUCI71Oa1gEDs+VdJvBXCCHQYX2CbqTpfJwXs
-         LK/iCHosxdor2L8H9s++Gvpx3sWpfWX8exMANkUN9rZp7iSKye2asHDc88h34ZR9Mk7F
-         yagg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhttjv6mGp5rVZ+9rUAbDTNuQ+E1RD8CwTPiR+noOSKtKk5SimHrWQ71AVibU+wPIWeKJdLXix0+JlfK6jhMlF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMAljaIkQlyH/90xeegTfZb4If9tz23AjMpHW+9V3N+xmQLT+L
-	DGtz9bpb8SZkyl11c1gJFrGwH25w9PnmqWpmCwmFOh+velEQjYvWvOHKdRWM/rhseas=
-X-Gm-Gg: ASbGncshiz0pXJjXTDQs9B4K2Ad3PBlO9s6ZDtMymTuFQ4lmzZbjrtn+MjN+EbBvMoQ
-	EqZ0wizGEcdT6Bs+zmgE0Z66FvkFqwECspnYTxxa+56N1PfMLsA0WODBk0T401OYhAqqXqpQD40
-	R5FNLt2guJoPX4Fm/KWVHyC/Cu1KG0tliSq8YcSstY/aFaXCmVNxRkMPCeEc5bL2azH2xpCMHp/
-	cRjyM+SiWoTMgKKLiq6WwSDUrlNyozKrOWG8hV9vx4mzZl6QSOKpiY6yTHcksIv6WagiogeOMLS
-	cF6TxuawweZYa/oWcmMBX0lez+PUbtU5R3T9DMz/+7wWQ5RD/Q+1mRCyPh7YGD2tj+OpPzDu0ty
-	C8AIs5X/lPnrecUO0FLbshKJHJLc4seIGE9bb2IXnaVGke8AqjNNgIb32WTsrgi38T1VX9cH4ZF
-	EBadq2Gun0e2XytCWy
-X-Google-Smtp-Source: AGHT+IEagBHd9lVZqVEQQFeawH/ZHO01RUoyPCy8iCQRfDy6+PBcG45QVAvcVinElE8Ql4ZFoPlYNw==
-X-Received: by 2002:a05:6000:2410:b0:42b:36f4:cd22 with SMTP id ffacd0b85a97d-42e0f344714mr21478943f8f.38.1764427850629;
-        Sat, 29 Nov 2025 06:50:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764427857; x=1765032657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5roHuQegQf4KvGy0xBz6y0ubzRCDlqFmvzi3L2AWogw=;
+        b=khmkQ7g/gTwHvR88nGpx5yaxdOXgV8iUq4q/RtdhjZ026Dq8+AMM955amfZZNtAZu4
+         83cHJMAmZmDRaJnY72u6Vu6BQ6vZ7QOWGPYqJBiim838ayCaC1tWZm2as6Rl93z/XlMe
+         XzTG5mUt3BclVMeUXOYJETxjAOfyCZg93wYxoj5nQAoPrefffbpTvMpvgVyljkRbwixn
+         pdGi4CuQE4k/JBYk/WnoWY+usNg7sV0dyWMYqYUrEMvyo15WyYLzyOqf01wQG4nwLLvc
+         y7x6RLp1vTQBd/xBjhmwvWHAzIk3tIJpIykmFRshhPyT62/kPsB5Ll6oC7jm1Kb2jCcS
+         tO9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUlG3IMT97K9qks4FFQzfXI7vBmZVCtHR0PjasZwlWT8/jTnSYoUIfh5+D5qzsDn46CcoF7HwiBaifcvDNF67Xp@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd7yffnm8VtRpeKUdTecAcDKEnyuhkroEk5WsE79EfRzwUE3oP
+	dxiQFEDqvkwXCh5M9aiiz2CMQgvSMt2KkouVp/fEw3jw0vfHyfVBZAbZkIXfp5rt9PM=
+X-Gm-Gg: ASbGncvbi1Cabc7pVDxw1ORjtkvYgpIpK2DM97FD2BiQHRfVogRX7Mz3i6KlZDO7RfL
+	vrHBGRg8tMuZps5YlYDPcskUeZxuIjsWCaN6ODzAuki9cgn1gDzhwdEc/uXGxIpW2oP6IaCBLbW
+	3kjiGaPjfUZmHuirkeycBMELRxPs1+CwkqFdItkU5m1toq1dnN1+1IwV586LGDsd5xHyStI8oe1
+	cENuiVyFMuVeUPbwYT4KgbWIDj5tf+AHFZtWGQEhzO0tVthQ2w1ggYGxyi+8ROoWkALsNQDhIed
+	wvx+Xb0SEN5zUTsZYqQQn4UHU2b7v1CP+vf+S9KGAH3l+pAEL2tN3mpoWs0FJ7pNSVH7Zi1k9WB
+	zANaUVSx60soT1qBB7jChsfE4aCzCcYPK4kbrIcBZv1P2UWRlpGjWJYGuZhm/mPpc5X1zCFiNTW
+	KR48+m5BcONCnpZwAwd07XBuguWtw=
+X-Google-Smtp-Source: AGHT+IF17rmdp5RFNg6kmMqYr9tYvGHfwa2QHnZkDzl2I/vBSSLY/k6vA/+nMv85qGYklo9B258YMw==
+X-Received: by 2002:a05:6000:61e:b0:429:d6dc:ae30 with SMTP id ffacd0b85a97d-42cc1d19914mr34066767f8f.46.1764427856782;
+        Sat, 29 Nov 2025 06:50:56 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1c5d618csm15509253f8f.14.2025.11.29.06.50.49
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-42e1c5c3016sm15993129f8f.1.2025.11.29.06.50.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Nov 2025 06:50:49 -0800 (PST)
-Date: Sat, 29 Nov 2025 17:50:47 +0300
+        Sat, 29 Nov 2025 06:50:56 -0800 (PST)
+Date: Sat, 29 Nov 2025 17:50:53 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Rob Herring <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH 0/4] remoteproc: qcom: Fix devm_ioremap_resource_wc() checking
-Message-ID: <cover.1764427595.git.dan.carpenter@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] remoteproc: qcom_q6v5_adsp: Fix a NULL vs IS_ERR() check
+ in adsp_alloc_memory_region()
+Message-ID: <6d6b1b0fb6a61b5155a640507217fd7e658858cf.1764427595.git.dan.carpenter@linaro.org>
+References: <cover.1764427595.git.dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,26 +77,34 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1764427595.git.dan.carpenter@linaro.org>
 
-The devm_ioremap_resource_wc() function returns error pointers and not
-NULL.  I don't know, if you'll want to fold these patches all together
-or not.  Or into the original patch, perhaps?
+The devm_ioremap_resource_wc() function never returns NULL, it returns
+error pointers.  Update the check to match.
 
-Dan Carpenter (4):
-  remoteproc: qcom: Fix a NULL vs IS_ERR() check in
-    adsp_alloc_memory_region()
-  remoteproc: qcom: pas: Fix a couple NULL vs IS_ERR() bugs
-  remoteproc: qcom: Fix NULL vs IS_ERR() bug in
-    q6v5_alloc_memory_region()
-  remoteproc: qcom_wcnss: Fix NULL vs IS_ERR() bug in
-    wcnss_alloc_memory_region()
-
+Fixes: c70b9d5fdcd7 ("remoteproc: qcom: Use of_reserved_mem_region_* functions for "memory-region"")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
  drivers/remoteproc/qcom_q6v5_adsp.c | 5 +++--
- drivers/remoteproc/qcom_q6v5_pas.c  | 8 ++++----
- drivers/remoteproc/qcom_q6v5_wcss.c | 4 ++--
- drivers/remoteproc/qcom_wcnss.c     | 4 ++--
- 4 files changed, 11 insertions(+), 10 deletions(-)
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+index d3933a66ed3d..b5c8d6d38c9c 100644
+--- a/drivers/remoteproc/qcom_q6v5_adsp.c
++++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+@@ -637,9 +637,10 @@ static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
+ 	adsp->mem_phys = adsp->mem_reloc = res.start;
+ 	adsp->mem_size = resource_size(&res);
+ 	adsp->mem_region = devm_ioremap_resource_wc(adsp->dev, &res);
+-	if (!adsp->mem_region) {
++	if (IS_ERR(adsp->mem_region)) {
+ 		dev_err(adsp->dev, "unable to map memory region: %pR\n", &res);
+-		return -EBUSY;
++		return PTR_ERR(adsp->mem_region);
++
+ 	}
+ 
+ 	return 0;
 -- 
 2.51.0
 
