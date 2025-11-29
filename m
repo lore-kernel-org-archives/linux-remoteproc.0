@@ -1,111 +1,246 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5836441C62;
-	Sat, 29 Nov 2025 17:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9830F272E54;
+	Sat, 29 Nov 2025 20:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764438368; cv=none; b=Xun6OZ3Pyr+59mJqgbN+sYckVwmnsVpPD91NsmzGN97rtRs3gN4lduOhjNWj+N7Rku65T/uF8kC8kNvoQs7mjICIom4JLEHbnwNi0plircQS0hNwcgQlLuD3U9oyjN4gQgnXZxTgE+cEumaUC2+88YGJSPjcBsTGPNucx9WUNJ0=
+	t=1764449755; cv=none; b=nerOt8i5xKkKcdGivoIaOB+zX3yHbARqdfw9OhctdTKb2QloBftw+6YjGwLvt1mR8/SBBh9ATVwfbaZGJJAt8H6QPnWUj0vjFDefQXH/VC/WAM4iUsJ7sq+stNMnxCtabrf+8OcUjp1/ZgeY7TIbawVc3lJqwymLC4Co39Sn7xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764438368; c=relaxed/simple;
-	bh=sG7xAvmeT/U78VJU2jq/8MBPk1NtPrKbbtxcHJpuZi4=;
+	s=arc-20240116; t=1764449755; c=relaxed/simple;
+	bh=LEzyAKobk7kjA6raGTsp1bNeymxqUDP+k+LfItAZDWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfh6pL31h1cORByydPbB8AOZb752IaJKip035Ka+g6a6QaST9CpMMlnToKHEaPULBpUpt7RbdwlY9N2T5zvqx1JkYLSXyMM/tDzTPhAYsuDbleHpZ08szGStIb2S3sPZ+Nd1TaVisoaM8bMl84b/mIvquDxF3YScRyG+qbCSeFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HsuQa2Kc; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGci+fm3rntDlPq/Dzcylx6DoQgv+DRU1H8cZTML36mH/N2FXEoqArJ0o7gTlkhsQDPVIEsXzqdkfYXPJcFugD9AgulM+ZOVL+n0KsGZcDA1FYa+V2K90pxAvnXhtCfKnImdToaS9HnVsX4NXTrD3WLW1XKIsDmnDchI7Y57IF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YR4ar81h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HsuQa2Kc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1764438366; x=1795974366;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sG7xAvmeT/U78VJU2jq/8MBPk1NtPrKbbtxcHJpuZi4=;
-  b=HsuQa2Kcf4PfrFAi8FM2JxKiGp2qdPbpgCTOFo72n4dgH4bU9X/uK6yE
-   /xoDR6iV22Jp2/Qv3vdDRzXkHCnYvNeGlBbJkbwOH+O3yfJDR2PpU9mOu
-   AnLZTD5FphtO0VZV3s1ajQNPrxAx1/nszpdd5WNLafSfTP23pW/u0Qz6u
-   XyRbLYjOy9jmUBcA6LZ3i6tqXTh/6zNN1yaEQZcSJ7QoMzo6Ip1COl0RL
-   1BDBVzElYiggnQh0ghrmFZDPRDNgq7oLPXo7j/rXyqUuHrjQMJuSpkM89
-   v9/djO/nENW+STLtpKPn3GgyuwMWxy/VE0HWmx5SS0288unPvCVHPtwiU
-   g==;
-X-CSE-ConnectionGUID: rLvQm+FLR7SjP2X0SKmYPA==
-X-CSE-MsgGUID: dZG+/s78SuKVO93/CHmmyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11628"; a="77058658"
-X-IronPort-AV: E=Sophos;i="6.20,237,1758610800"; 
-   d="scan'208";a="77058658"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2025 09:46:05 -0800
-X-CSE-ConnectionGUID: Xix+YeQ/Rmeva456Cx2KDQ==
-X-CSE-MsgGUID: MwSz+Sy9SYWRxjv3Ph7wFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.20,237,1758610800"; 
-   d="scan'208";a="193594079"
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO localhost) ([10.245.245.50])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2025 09:46:02 -0800
-Date: Sat, 29 Nov 2025 19:46:00 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Joe Perches <joe@perches.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH v2 1/1] docs: Update documentation to avoid mentioning of
- kernel.h
-Message-ID: <aSsxWIdMqYtiEugU@smile.fi.intel.com>
-References: <20251126214709.2322314-1-andriy.shevchenko@linux.intel.com>
- <a731c794-1b4c-4ea7-9cf1-0210b95eaa4d@infradead.org>
- <aSsQFjv5DK_7GS6P@smile.fi.intel.com>
- <87wm38vnp3.fsf@trenco.lwn.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YR4ar81h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4D4C4CEF7;
+	Sat, 29 Nov 2025 20:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764449755;
+	bh=LEzyAKobk7kjA6raGTsp1bNeymxqUDP+k+LfItAZDWA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YR4ar81hqVGXMt55va3yqlAwMSq99rTPi7/zXERUcBXz9nFtU2AGs/JMF/Qrqk2NH
+	 L1ZqcjusLAqRx5mDuHn1LE4ubIP0NmJnP5xNSK+4akRCXwlsxmG3/BZkpnEqBT1Gef
+	 AVgHeH8UbAgOz9lXsmaYa7gOx8oY/NgONoeljLKCMgpulw0v7ISRBWIFpGnEgiLKj/
+	 97JV2q6h4I2vRTb3Ny83J1XuvBwACF2wGghdetwm05Unf2E6scFsYX5K1PDf0dC9K5
+	 SdZUQ1443B0jIxgtLtDchLI/Jfuq07/JZpn9SOyJJPUi101Ra2eERIl+Dx8A5WaOqA
+	 NiuHw6FyTRjBg==
+Date: Sat, 29 Nov 2025 15:01:42 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] remoteproc: qcom: Fix NULL pointer issue
+Message-ID: <o7txzvxy36nphtf5aybzb3z25zovhgtseubkyn2hbira3aorxo@vky3kzv7gvs3>
+References: <20251128103240.1723386-1-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87wm38vnp3.fsf@trenco.lwn.net>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251128103240.1723386-1-mukesh.ojha@oss.qualcomm.com>
 
-On Sat, Nov 29, 2025 at 08:54:48AM -0700, Jonathan Corbet wrote:
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
-> > On Wed, Nov 26, 2025 at 04:26:04PM -0800, Randy Dunlap wrote:
-> >> On 11/26/25 1:46 PM, Andy Shevchenko wrote:
-> >> > For several years, and still ongoing, the kernel.h is being split
-> >> > to smaller and narrow headers to avoid "including everything" approach
-> >> > which is bad in many ways. Since that, documentation missed a few
-> >> > required updates to align with that work. Do it here.
-> >> > 
-> >> > Note, language translations are left untouched and if anybody willing
-> >> > to help, please provide path(es) based on the updated English variant.
-> >> > 
-> >> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >> > Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-> >> 
-> >> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> >
-> > Thanks, Randy!
-> >
-> > Jonathan, please apply this change. Independently on the opinions about
-> > kernel.h the documentation has to be updated as it's currently misleading.
+On Fri, Nov 28, 2025 at 04:02:40PM +0530, Mukesh Ojha wrote:
+> There is a scenario, when fatal interrupt triggers rproc crash handling
+> while a user-space recovery is initiated in parallel. The overlapping
+> recovery/stop sequences race on rproc state and subdevice teardown,
+> resulting in a NULL pointer dereference in the GLINK SMEM unregister
+> path.
 > 
-> I will but not right away...I'm really trying to stabilize things,
-> already too late, for the merge window.
+> 	Process-A                			Process-B
+> 
+>   fatal error interrupt happens
+> 
+>   rproc_crash_handler_work()
+>     mutex_lock_interruptible(&rproc->lock);
+>     ...
+> 
+>        rproc->state = RPROC_CRASHED;
+>     ...
+>     mutex_unlock(&rproc->lock);
+> 
+>     rproc_trigger_recovery()
+>      mutex_lock_interruptible(&rproc->lock);
+> 
+>       qcom_pas_stop()
+>       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+>       remoteproc remoteproc3: can't stop rproc: -22
+>      mutex_unlock(&rproc->lock);
+> 
+> 						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+> 						recovery_store()
+> 						 rproc_trigger_recovery()
+> 						  mutex_lock_interruptible(&rproc->lock);
+> 						   rproc_stop()
+> 						    glink_subdev_stop()
+> 						      qcom_glink_smem_unregister() ==|
+>                                                                                      |
+>                                                                                      V
+> 						      Unable to handle kernel NULL pointer dereference
+>                                                                 at virtual address 0000000000000358
 
-Noted, thanks for explanation!
+I'm not able to read out from these two flows where there would be a
+race condition. You're describing things that happens in process A and
+then you're describing things in processes B, but I think you're
+expecting the reader to deduce what the actual problem is from those
+-EINVAL lines in Process-A - or I'm completely failing to see what
+problem you're solving here.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> 
+> It is tempting to introduce a remoteproc state that could be set from
+> the ->ops->stop() callback, which would have avoided the second attempt
+> and prevented the crash.
+
+Above you tried to describe a race condition, but this is talking about
+something else.
+
+> However, making remoteproc recovery dependent
+> on manual intervention or a system reboot is not ideal.
+
+I totally agree with this statement, but I find it to come out of
+nothing.
+
+> We should always
+> try to recover the remote processor if possible.
+
+Yes! But there is a race condition?
+
+> A failure in the
+> ->ops->stop() callback might be temporary or caused by a timeout, and a
+> recovery attempt could still succeed, as seen in similar scenarios.
+
+This on the other hand, seems to be a real problem - but I don't think
+it's a race condition.
+
+> Therefore, instead of adding a restrictive state, let’s add a NULL check
+> at the appropriate places to avoid a kernel crash and allow the system
+> to move forward gracefully.
+
+You haven't established why the restrictive state would be needed.
 
 
+In fact, I don't think you have a race condition, because I think it can
+be 20 minutes between the "mutex_unlock()" and your "echo enabled" and
+you would see exactly the same problem.
+
+If I interpret pieces of your commit message and read the code, I think
+you're solving the problem that
+
+rproc_crash_handler_work()
+  rproc_trigger_recovery()
+    rproc_boot_recovery()
+      rproc_stop()
+        rproc_stop_subdevices()
+          glink_subdev_stop()
+            qcom_glink_smem_unregister(glink->edge)
+              deref(glink->edge)
+            glink->edge = NULL;
+        rproc_ops->stop() // returns -EINVAL
+        // rproc_unprepare_subdevices never happens
+        // rproc->state = OFFLINE never happens
+
+// rproc left in CRASHED state
+
+rproc_recovery_write()
+  rproc_trigger_recovery()
+    rproc_boot_recovery()
+      rproc_stop()
+        rproc_stop_subdevices()
+          glink_subdev_stop()
+            qcom_glink_smem_unregister(glink->edge)
+              deref(glink->edge) // glink is NULL -> oops
+
+
+Or in English, stopping the remoteproc fails, but we've already stopped
+the subdevices and when we then try to recover a second time, we fail to
+stop the subdevice.
+
+This does sound familiar, to the point that I believe we've talked about
+this in the past, and perhaps that's where the idea of a new state
+you're talking about is coming from? Unfortunately I don't remember the
+details, and the future reader of the git history surely won't
+remember...
+
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+> Changes in v4: https://lore.kernel.org/all/20241016045546.2613436-1-quic_mojha@quicinc.com/
+>  - Brought the same change from v2.
+>  - Added smd->edge NULL check.
+>  - Rephrased the commit text.
+> 
+> Changes in v3:
+>  - Fix kernel test reported error.
+> 
+> Changes in v2: https://lore.kernel.org/lkml/20240925103351.1628788-1-quic_mojha@quicinc.com/
+>  - Removed NULL pointer check instead added a new state to signify
+>    non-recoverable state of remoteproc.
+> 
+>  drivers/remoteproc/qcom_common.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> index 8c8688f99f0a..6480293d2f61 100644
+> --- a/drivers/remoteproc/qcom_common.c
+> +++ b/drivers/remoteproc/qcom_common.c
+> @@ -209,6 +209,9 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+>  {
+>  	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+>  
+> +	if (!glink->edge)
+> +		return;
+
+This does make glink_subdev_stop() idempotent, but do we guarantee that
+the rest of the involved callstack handles this as well? Is it
+documented somewhere that any changes to the framework or remoteproc
+drivers need to maintain this property - or does it just happen to work
+today?
+
+
+
+The commit message needs to be rewritten so that a 3rd party can read it
+and understand what problem it solves.
+
+Under what circumstance does qcom_pas_stop() fail, and in what
+circumstances would it work again a little bit later? Why do we get
+-EINVAL here?
+
+I fully agree with you that we should do our very best to recover the
+crashed remoteproc, to the point that I wonder who will actually trigger
+this bug? In what circumstance would a user go and manually enable
+recovery on a remoteproc with recovery already enabled, to dislodge it.
+
+I think we should fix the root cause, because that's what all the users
+and 99% of the developers will hit. Very few will attempt a manual
+recovery.
+
+If we then consider attempting a manual recovery after the recovery has
+failed, then we need to document that all parts of the stop must be
+idempotent - in which case this patch would be part of that
+implementation.
+
+Regards,
+Bjorn
+
+> +
+>  	qcom_glink_smem_unregister(glink->edge);
+>  	glink->edge = NULL;
+>  }
+> @@ -320,6 +323,9 @@ static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+>  {
+>  	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+>  
+> +	if (!smd->edge)
+> +		return;
+> +
+>  	qcom_smd_unregister_edge(smd->edge);
+>  	smd->edge = NULL;
+>  }
+> -- 
+> 2.50.1
+> 
