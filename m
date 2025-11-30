@@ -1,85 +1,87 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794A1224220
-	for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 12:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5C22727E6
+	for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 12:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764506180; cv=none; b=a1Cs3s5LGJjE1yBJkICwZDdAHlm0xZKyCTLPHvoYCWpmH/47fQY3woj/BIj7euUIi6eaIv/gL9CS732yXNiF8HGiHzTRT7Gs/xJfsnRk5Q+RxjD3E4qNOVXFwP4WpkKlgaXm2kZ2PjhyyqVAd6dkg1sZIWIzTXt24QNFcx8IQPc=
+	t=1764506181; cv=none; b=UbN9Fhm+ie5BLJJJr2hw6fFcfOmVCNz0s+HR1sGhZbs8pxkHgON5RVh2+4pWZ9ieD6KYauzs3FsWM2xv3qbjN2SNpX4gp/ysdXR0XYZei/42c45yGRTqZwV/IzfecBUJ3bmYa0RHURwiCr/M24G3FhGdv7qj6h3ue4aaAljUwfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764506180; c=relaxed/simple;
-	bh=O8qqd34rZzKAlT8emxlMGg0aXIBHepVV/wOrOHz5bV8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pyLOrW/Fu0LcZYjUxq/+WHmKCXYFIPoKFMQGKz3qnOE8Hhwq9s1pE8YKYizsjlEtzOP/Q2eURikZE/6afyA+FKHVa2HsSMfKQXQIcgfLnkkP4I7PcTW0j2zoLks94sBi/vkbZSJwvM/pZXWaAML4+vUMeALFn2zo0sg47kbJUYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RMw0BOPG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ivlUVbcv; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1764506181; c=relaxed/simple;
+	bh=pq/+nMdyC+q1ogI0/TIhIirNxNxs+pUe22DWF7lVnBo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YX/pxQfQBUEmD/J9mh0/JN3tqy87bG6hpgXqqL7Qx9fAor3wSqGQ36camvPKdBqzKNhTyhZ5H7BDZ/b5LiDBMO5CKBp4oqI2CvsLjvcI8x4QYHsMvHA3c5GJXYyA9Se17XNGfYFNt/ecXioYYqV4f+ZZrUcDshYCLwHM6/xhKs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TpxT7ZCn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LtCbQ7Uq; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RMw0BOPG";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ivlUVbcv"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AU8h4ED1049931
-	for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 12:36:18 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TpxT7ZCn";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LtCbQ7Uq"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5AU9ZLiX626434
+	for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 12:36:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=khDYn2iDAtsrUOzEA+11Sj
-	iFVdLA2q+h0420fjCDJjM=; b=RMw0BOPGhi5SF8Hgv5nYITpLNbk8W9uMtjCXhU
-	eOaPuU7Uvp8FvkUrEDiAdVuD8KS/xh+XUMjJZ534i/4I/BTMoQD08QxmbDZn+6KH
-	1hDdfm6vWMooTzha4Zn80izXs6+5+57I4WfLkHR5MgBqZu0CqihECgS4CX4bQ+Cw
-	aa1IJXl8+H8h3TRtqycKTk14TG1ZRYiviYdyvlH+83ZwyVcAYh4hFNZhiQal+kpc
-	hbOV+aKN5uCRnea7BZT3B5930I7gu8A04QyURPiqmrfnyVNZtqCILL+ivjgh1qlY
-	IBzBWiS3a1p/f1lSUbQdGbYtF+OosVq4+hEZB0GP6n7TnISw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4aqskf2410-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	e4n62F7hOmaFjnTCj5sDtBY7XKAle/kgKH/bYoDqk94=; b=TpxT7ZCnor5T2yg3
+	AKgmBbRB5Pt+U1lPauoLJS0xDRXqqO93uwhjmP1g6U+ru+mDj19cHM5kXCpC8xkb
+	/DN69xmHIx9y04/TtZbcu1pxjRkSuucpZ9iiwmkGW1hHgIi0UInB/FM5GCtajS8l
+	TanJTGLjX57AHO7tDv6nG7LBnQEh+QEQbTR1m39m8bY3G9NaHZFEgiuBVZQrnhTO
+	XwmXHfV8aZ6TyHXrKZxwkYVQb/aXqogQMz1Jv/TEApwBm3Ix/XcKOAc5eSMNmOI3
+	leAWHVHZ1o6DZK8hoTcfOOKkZqFLsquuCNVbm1E3hTiPQ0e+MFomBCu2X+R4SAbh
+	/NR0sw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4aqt46a2ww-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 12:36:17 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8b2e235d4d2so61960685a.3
-        for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 04:36:17 -0800 (PST)
+	for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 12:36:19 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b30b6abb7bso627117585a.1
+        for <linux-remoteproc@vger.kernel.org>; Sun, 30 Nov 2025 04:36:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764506177; x=1765110977; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=khDYn2iDAtsrUOzEA+11SjiFVdLA2q+h0420fjCDJjM=;
-        b=ivlUVbcv4P68C0OViBrV2wdLorsjzj+copjWRG+g55CZd8k5HMZMlSqoGORUlDy8aR
-         JmYtfdkJASCyT9jBbD+h33Ikx5QwZBTMkzEACc/k+GdIPT53bpmrG7KV9WR3/VUTWNsa
-         1PEgBFT/fMnzeDxLNPFT1UtbVRtxMbIIhhYXgr6yNZgFzqf8gp77vwh5CTDwg4nkQ87R
-         o5w9BkDRo6MYW2SABc8Mtrtgc8QS3xQAC6gt8F88Zp2KhxwDwo0GquvOF7+1w+Lr+OwC
-         NOuDUR2NfQfUPKEq5BX6YxybQ1foNiLr9nbi7+VyHyZhyZ6Fu4yQVqL8g6aBAL7x25ru
-         yHUQ==
+        d=oss.qualcomm.com; s=google; t=1764506178; x=1765110978; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e4n62F7hOmaFjnTCj5sDtBY7XKAle/kgKH/bYoDqk94=;
+        b=LtCbQ7Uq/BzPpb4T1xFw1AQDVEJc7u9pgsBxbmaY8bb+CgM5HTw5Y6yA/K0cvMdEj7
+         ZyEaHWTE9YOcsOzHp0W9bDZAVqciKvbfTtZvUqtu96up2t4r1zUszAbHIVpySEUj92W5
+         Lhwz353U41YMQVr5QwdlvZQa6xaA4HYwqifijKMAoN8g8zBxuNCkTvCu5nDl46jpotBr
+         5Rc6MYt/E5jmBSWYsq9rVmbIBrMa6rBH726AzciZnvuwmm3jQteBWPcI+o6iI/90fxOr
+         3By7AWrG7g/ftBrV0db1TK/STgxCGtcd1lnvoSzxi/dQ0bPefpfin/nNlnhnnzf9T8+S
+         p+gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764506177; x=1765110977;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=khDYn2iDAtsrUOzEA+11SjiFVdLA2q+h0420fjCDJjM=;
-        b=GDfEkCQ0BNwCRaqZMPMwuvv4cGQqtAT0pYvaWX4fjgfp/m6Mad9HEOSU4zP0qO7k67
-         /ItC3LwdvXCU4cdz+xijUknis2Jc5ypP22uGhryDEwbIqA9zfnonAzXxKxiezsOf8IFD
-         WHbHdzUycFCn9nwz4yE/xd9W9+juFghyAc/VaYp8iWQ5mNPWmWDGf4ur6en8ODHWo8ah
-         gC7s9W3fiBLNyu9/073zqiWjI2mYm8H2XNbEMAFesjzAPpSkPuLLTxLsQL3/1R+dyR+p
-         0vRDNWPel8qOYv7Yq1CLlhiJEWkwFQwHu0hBnfWMjkpzDxEvbnwDRv/SxIXyM6MpTHmK
-         9sgg==
-X-Gm-Message-State: AOJu0YzC8tN2e7LHr+F/XT8snemlMpkc38OUhWiWhTMtuGwB6rUCBxdi
-	Js8tuYu32Z2RTmF32TPIRD6tReZyP4d9UVaHGgvTTsFMmfdf1cO9RhbCgd3pHw32DkKN3RQIy76
-	PbaqpnnahniPB6DdKwZV9nooakqB4utsEtEPZSvUkC1GLbYYX7OPeVTyiL5FwjM0YSxO7pemo
-X-Gm-Gg: ASbGnctQeD4TW1N3ooYZ4j60o6G2AI0yRyGOhVqGThLZjo1BPBfxGcTJU1Qlca3C0SS
-	ha8AD7U/NrefqtuaI9385v9KYOWrA6buVxUIdwzFSF20mMzvs9Huojh7Pkr3v0YCqZZB/vXNx3m
-	5FcO/0ziJUsDcVkYurS02hVF6Pwfe0OlbsNCsQX/W5e3HwJijF7TNE5hPkSJypn0oGp4aRyNbW+
-	i0h99eCY5kV6DEkwQExhfxdeseKP1a9pJOb5K9JZP3kutQ9P8ECqqUEemi84fX6bIQks42cey5S
-	7Waz4Io82UcMQsXZirGUPtLe53VCbptjbHtHXdmYxv1Iu6uTnTSwOkeZsz9qUHzY29WRjDKItJt
-	G6MXQamLLzUJ4z0Qt6EZ7WPl5XehaCwvbJw==
-X-Received: by 2002:a05:620a:4411:b0:8b2:6251:64f9 with SMTP id af79cd13be357-8b33d4a74f3mr4231817785a.58.1764506176672;
-        Sun, 30 Nov 2025 04:36:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGeWK0WiHjAtwF/qYOyew/roqAG0tsI6NrdqTKzALGVqVXop4gZMar8qFcPH6xWCPkSaoNwMg==
-X-Received: by 2002:a05:620a:4411:b0:8b2:6251:64f9 with SMTP id af79cd13be357-8b33d4a74f3mr4231814785a.58.1764506176170;
-        Sun, 30 Nov 2025 04:36:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1764506178; x=1765110978;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=e4n62F7hOmaFjnTCj5sDtBY7XKAle/kgKH/bYoDqk94=;
+        b=C2WYm8LaNTPCoD5FIMy4taMsydMV/WA8ABd6l0mIkaMEXizENuzND9Kclg3k65ZN5e
+         cterG/RTYwCX5p+lw8bNGBZHXO/BA0fo0QoRwLyDeQkOMIHNBoI1Sn5qZJMKxCT4EZ57
+         bT66kMSLPJV1lF5+NfytjeIaRiwI9UP1jxkL5irBVxJZ2I4GL2he5BLZJwBohy/vzd3g
+         GFkeVdlG7240yA+BkdgD5KgpCGdz+CX7dv7RmS4uX5xpoEAlMceZHLM8w2+YWd6W+PYK
+         AVu/ecpVpwKE63JlQlvbVXSaFINaeai9OJOgMWmBQt/k86Nb9yT2a1veDuH+qztxtqBO
+         NudA==
+X-Gm-Message-State: AOJu0Ywd/3wH9z+2z1ncbp67mAcRQ9icPuA9Q0gmSgN8Tu01mKYsQgCU
+	uvWGA1GwGkDhElYx238m03p5dCNu4QCvjfeIYffxmu/rFqmo/NB5La55liU58gzQbogh+FzzuIp
+	2MjX1mqQ5cn6ZCfmVxhUkyMAzMJpGERVINrdQXvDFp7rUHOJq3GV9vERBVVCEbfa7tiApt6ko
+X-Gm-Gg: ASbGncuyLScCHKNSumD4WyQjX/GgQ4ZRT4umapMgqlkUUj6TIJWdql2kneC1keOSi7T
+	0psgQQBX5cUKWnAwkNXQ2w9pjhYFKQKhjEZUQ+skrn6JDOap/jJRweoOefd6qWX5JDX0GWycZSY
+	xchu5ca3GAPG+fyuz4Yc8dfyEWu+Lb0T/XyEv/NhjxNl/uscd5mfClsBLIGOYEmqkPAoLEfgnYO
+	oS+lD9uAsHePo9QjALm6Xxkgex1eTT7ciaTO+hi6oABtZUmezbt+Tr3KS0J0zjFQzCZDGdQIeTl
+	aSew8tTX5L6NEXVpULpZFy0MmPtQ9nJdswQKsjiVOfYGSq4eyAlcpj0thdnkZ5FPRxmPjcBoywr
+	A0vy973Dj1Zck53iuB61kryhdfvv6NIpNDw==
+X-Received: by 2002:a05:620a:4509:b0:892:eeb9:4def with SMTP id af79cd13be357-8b33d4cf9d0mr4721866885a.49.1764506178431;
+        Sun, 30 Nov 2025 04:36:18 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEwd83+g8q92x1y4CWxFdCnR6Wp/D+6ypCjsLsXp/d0HHxg4TfXOyYZHiS3ejZPS6LsXDPMgw==
+X-Received: by 2002:a05:620a:4509:b0:892:eeb9:4def with SMTP id af79cd13be357-8b33d4cf9d0mr4721863385a.49.1764506177949;
+        Sun, 30 Nov 2025 04:36:17 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.195.159])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f51c6c12sm920506666b.29.2025.11.30.04.36.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f51c6c12sm920506666b.29.2025.11.30.04.36.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 30 Nov 2025 04:36:15 -0800 (PST)
+        Sun, 30 Nov 2025 04:36:17 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: [PATCH 0/4] ASoC / rpmsg / remoteproc / soc: qcom: Constify buffer
- passed to send functions
-Date: Sun, 30 Nov 2025 13:36:07 +0100
-Message-Id: <20251130-rpmsg-send-const-v1-0-cb11c7e0a024@oss.qualcomm.com>
+Date: Sun, 30 Nov 2025 13:36:08 +0100
+Subject: [PATCH 1/4] remoteproc: mtp_scp_ipi: Constify buffer passed to
+ scp_ipi_send()
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -88,10 +90,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADc6LGkC/x3MMQqAMAxA0atIZgNNRRGvIg7VpprBKo2IIL27x
- fEN/7+gnIQVhuqFxLeoHLGA6gqWzcWVUXwxWGNbosZgOnddUTl6XI6oFzq21DkKs+8DlOxMHOT
- 5l+OU8wcxCDy5YgAAAA==
-X-Change-ID: 20251130-rpmsg-send-const-ae216a1fbd8f
+Message-Id: <20251130-rpmsg-send-const-v1-1-cb11c7e0a024@oss.qualcomm.com>
+References: <20251130-rpmsg-send-const-v1-0-cb11c7e0a024@oss.qualcomm.com>
+In-Reply-To: <20251130-rpmsg-send-const-v1-0-cb11c7e0a024@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -106,97 +107,86 @@ Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sound@vger.kernel.org,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2077;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1658;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=O8qqd34rZzKAlT8emxlMGg0aXIBHepVV/wOrOHz5bV8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpLDo6DD/JawmdtkgkOBaTkDXZexZA72yvwkmRX
- 2xb902gWAqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaSw6OgAKCRDBN2bmhouD
- 16BfD/oDmj4P63MBv+3h6ohF7ryGULYXhCUqF9p+69+7wePAdkGFR0SJ+SLk6Vy15z2rlQeSYXS
- Fq0PWTPhtAA3F1Ltma1AbOQtUE9D9Ovkh1yhinbcXfEmEo5kRDloS0j9684M6ig49Sd8AcrU/8B
- 082KRFV04slBSkbB0LADnS0NIVUtOTXI1enIqRB/fb1b/XClxr9xdMFY89a9vLJbp01nB9eZuaO
- eIRfeXxCK6HAHForIN0cpb8NvBA+D7ygWojSeB3S0I+FLMujOQ71pZjD9p9cIxZVsTBsGq4SB5o
- 28sOHp4Z9VhM9ocdhOfEfje2u4h8Y3xRN7AQEBMTzdbXwCtthtVc0YE35DHNNPP1gWWl6Rkp8MJ
- 8SlHUxvsxP5Img8IkUhJMbbkjtJye/7IHhPhsMRaZ5ANNJvp6jtcCelghY/Lyaip5VzXutDKsoD
- srWqfPLvBae3f1g0ArGiIsAx87MkgflTDPvSQ0HxR5Pt+HNtrV0dBpEX+5Yn/tafiqWMANaoeB0
- I5pPYvOdRsjAm/a0B2w0erknqUgmJHl6V3PETd8TiLyHb8LORu5YNLjcfF0q7cm1RcnzmOIVllq
- cEMypHzNVe5FEFQqxGUVv/RJ4FuNFpaYmBCwwH+1SehdWQZZwn4woBF+Yz7b2SjkCHpUmJ7BGaS
- pz9b+fLWw9Cti1Q==
+ bh=pq/+nMdyC+q1ogI0/TIhIirNxNxs+pUe22DWF7lVnBo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpLDo77EwKqXOJTM+99Uw/WZdDbkh4LZ6TE7MGd
+ 58HKTs3HPSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaSw6OwAKCRDBN2bmhouD
+ 19GjD/4yqvoVdSiFtXLgPtSNjWBghlWA484iGQ/nvK11zYtmLSt73fjHu+ppUkACDE3Gzj+MQW3
+ GDtp6bRzB1dZ3QT8+hLu/z1ccX0SfUdcsfvl8p/37dFdHApMe6rolFyGrlIn2G8TYijT3nYGyB0
+ izR8XwMJza/i4Fmr7yUyAAbVxOeHbHI3TF5CozIZns+a8GS7giqH2FmroISq6Lq16y0TDHRwJqU
+ A7ZLWYFUb2KyJTNwdjFO0sfjVkjqx8e/PKvM6Bzs8E3btdilFt/KcUIM6FXwFsUSUDpuuiRQPqt
+ Qj5mdGUxGAffYx5dow27iCxx6uemvTGdgakcUyiQCaQuCytEbDlh8Ocm9SRF8XuTaldc8Wtagkh
+ qNyDq8rMPwMzoHaW/BS0a54JrP8GZfP+40GvH+Z58mM7JNH6UoevmOFeyzT/u6PQ4QAA/4sskOK
+ gapow81/rauguxhutkRhwgqWvj3E7v9wSscxUC06Tk4DILYqPcd4gzxySFbYZrqEgx7xXie2fDj
+ r9mOc69XtfZRc9kYxDe15n5d6KEqv/5+uAg4SOlFfKoJjPjNu3LRCs1QldniZqnGgp33WEh3kbU
+ gRIEMvf47RDpaZ/ky3EnM/viU+sU8FftAtiEPtskYBtbQqyRQD3BLdg0yLoExpWQ4Qro+t2IVvW
+ Ps0SCz8LoJid2Gg==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Authority-Analysis: v=2.4 cv=X7Nf6WTe c=1 sm=1 tr=0 ts=692c3a42 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FPK7cjBCgYbqzSTDLBmM0Q==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTMwMDEwOCBTYWx0ZWRfXz/t2k5H+SNI1
+ VB3gkHAT4nXzThLowbLKwZbXb8Gg3Xq0BLJNdlSjMF2O+3Ls6Mm3lWZZm+yDKyEHepWbMkL/qlC
+ oNSH0kaCPgehuYUtXZM2eleYMmMyhFCVd0eZnAq32ncwepfQ28Yvgbeo/Vv8E20ixeBNA0259ce
+ Aj0ifB8tb7PUYy/QYQLOz+NjAqf5b1D2FTJTNR7QxRTx2f66sRhcvCOc0bpHW4z/2SrmroQibRw
+ cH+qYnD/vAhKXGgux671vX9AI4N7+K+5oFT0jyH3+tFaRvyWoJNRCg4RUrXTSqgeDMrA8cavDBA
+ 3RFXnZirZeaLb8ExZriBq/4o6d6ekwqgPyQA9h1nIJoxuYtkH2ukUkxR8KspI+PCUiSnIi8Wnhm
+ 63L0XD0MIoetpirCtBwNTBAZ4SovjA==
+X-Proofpoint-ORIG-GUID: vHNYzQcFRAhuOgxjyr2Z2EsS8G9eBj_X
+X-Authority-Analysis: v=2.4 cv=aO79aL9m c=1 sm=1 tr=0 ts=692c3a43 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FPK7cjBCgYbqzSTDLBmM0Q==:17
  a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=a5V6tGfecjnVh1JciPEA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: KRzDk0NlqAyDmy4MzKH3841uSh3oTrI5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTMwMDEwOCBTYWx0ZWRfX90O3P0EsYaE5
- Xgvz9F40rKltAus7cVw20HTVaCBW8C+B/DMQjvYuvUKS9Hbet0Ol1Q5bwHMbltNVGXh92gZGfuG
- 3Ul4x8EdKTYUYeKGGfh3HPezyN/lNFACLITh9ffz/QNcIqDdW+YgAhH+SjdIArkE75fpgXkOv9t
- HaMYv/S1V48qZTBZSR3nPlYnQXPguldWXQ100DXuP8STmFqF7WXMMqTcAHcI7wXg6kjHCNqTs9n
- KGW38YFOinh04KPq0RgMUuxf1wm0DQ/4o2DZNG5vKe6rj8kd2v9aUKdGQWLBfYKeA/wCA/qXad3
- cWjEcr4aC3q7dAELNFmMU87/IKwq0ga3f2kF/YJkIJxxcpy1aGcQNdS9KcQ9M4oFlsO+nMFfMKy
- VAsIomHuxA2B2CS9AEZTwgzuXmfMdQ==
-X-Proofpoint-ORIG-GUID: KRzDk0NlqAyDmy4MzKH3841uSh3oTrI5
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=bWW22GgIgZmb96Hp9REA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: vHNYzQcFRAhuOgxjyr2Z2EsS8G9eBj_X
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-28_08,2025-11-27_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- malwarescore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511300108
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 suspectscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 malwarescore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511300108
 
-Dependencies / merging
-======================
-Entire patchset is one logical chain, all further patches depend on
-previous ones, thus everything should be taken via same tree or shared
-between trees with tags.  Probably everything should go via ASoC with
-necessary acks.
+scp_ipi_send() should only send the passed buffer, without modifying its
+contents, so mark pointer 'buf' as pointer to const.
 
-Also, first patch or two patches could be taken now for this merge
-window...
-
-Description
-===========
-The remoteproc and rpmsg send-like functions should not modify data
-being sent, so buffer should be marked as pointer to const.  This is not
-only self-documenting code but actually increases the actual safety and
-clearly documents who is the owner of passed buffer.
-
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 ---
-Krzysztof Kozlowski (4):
-      remoteproc: mtp_scp_ipi: Constify buffer passed to scp_ipi_send()
-      remoteproc: mtp_scp: Constify buffer passed to scp_send_ipi()
-      rpmsg: Constify buffer passed to send API
-      ASoC: qcom:: Constify GPR packet being send over GPR interface
 
- drivers/remoteproc/mtk_scp.c       |  2 +-
- drivers/remoteproc/mtk_scp_ipi.c   |  2 +-
- drivers/rpmsg/mtk_rpmsg.c          |  4 ++--
- drivers/rpmsg/qcom_glink_native.c  | 13 ++++++++-----
- drivers/rpmsg/qcom_smd.c           | 10 ++++++----
- drivers/rpmsg/rpmsg_core.c         |  8 ++++----
- drivers/rpmsg/rpmsg_internal.h     |  8 ++++----
- drivers/rpmsg/virtio_rpmsg_bus.c   | 24 +++++++++++++-----------
- drivers/soc/qcom/apr.c             |  8 ++++----
- include/linux/remoteproc/mtk_scp.h |  2 +-
- include/linux/rpmsg.h              | 17 +++++++++--------
- include/linux/rpmsg/mtk_rpmsg.h    |  2 +-
- include/linux/soc/qcom/apr.h       |  4 ++--
- sound/soc/qcom/qdsp6/audioreach.c  |  6 +++---
- sound/soc/qcom/qdsp6/audioreach.h  |  4 ++--
- sound/soc/qcom/qdsp6/q6apm.c       |  3 ++-
- sound/soc/qcom/qdsp6/q6apm.h       |  2 +-
- 17 files changed, 64 insertions(+), 55 deletions(-)
+Patch necessary for the further patches, please keep with the rest.
 ---
-base-commit: 7a9e871ce4c7c8a7d75eaef8407083a0525de2dd
-change-id: 20251130-rpmsg-send-const-ae216a1fbd8f
+ drivers/remoteproc/mtk_scp_ipi.c   | 2 +-
+ include/linux/remoteproc/mtk_scp.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Best regards,
+diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+index c068227e251e..bc1ee82cff36 100644
+--- a/drivers/remoteproc/mtk_scp_ipi.c
++++ b/drivers/remoteproc/mtk_scp_ipi.c
+@@ -156,7 +156,7 @@ EXPORT_SYMBOL_GPL(scp_ipi_unlock);
+  *
+  * Return: 0 if sending data successfully, -error on error.
+  **/
+-int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
++int scp_ipi_send(struct mtk_scp *scp, u32 id, const void *buf, unsigned int len,
+ 		 unsigned int wait)
+ {
+ 	struct mtk_share_obj __iomem *send_obj = scp->send_buf;
+diff --git a/include/linux/remoteproc/mtk_scp.h b/include/linux/remoteproc/mtk_scp.h
+index 344ff41c22c7..4070537d6542 100644
+--- a/include/linux/remoteproc/mtk_scp.h
++++ b/include/linux/remoteproc/mtk_scp.h
+@@ -58,7 +58,7 @@ int scp_ipi_register(struct mtk_scp *scp, u32 id, scp_ipi_handler_t handler,
+ 		     void *priv);
+ void scp_ipi_unregister(struct mtk_scp *scp, u32 id);
+ 
+-int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
++int scp_ipi_send(struct mtk_scp *scp, u32 id, const void *buf, unsigned int len,
+ 		 unsigned int wait);
+ 
+ unsigned int scp_get_vdec_hw_capa(struct mtk_scp *scp);
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+2.48.1
 
