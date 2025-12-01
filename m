@@ -1,150 +1,149 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB254191F98
-	for <linux-remoteproc@vger.kernel.org>; Mon,  1 Dec 2025 16:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB2B7081F;
+	Mon,  1 Dec 2025 16:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764606041; cv=none; b=qXBM7kRlHfaWWj6y1YuV1q0Yqc149KuYOUmcuHWCQVbPWqMkpTvplIRdZdtclCzvIDyqKeNyVQp6v4BZb5rZWgVL7atx1jFkr1NZiDLUXSb6wTNKFBets/Wj8EYvkEN1CKejFPQSmlSTwUF4tfj4lrtGLZQ9QRzqtY0zbF3doA0=
+	t=1764606162; cv=none; b=fy/lyFSykQWNx2dYnLcl7TIDjAZQ/vDGixTJ4lZCE2XGkW00rpbaOvEAjc32K1JEXdQIr2Qzvu5zNr46SbqnNvqMk26EKoEGBVDEDULycVIJmDsQH0w/0MmqtDTTQhvcgvTmAxwfb1TegN9bEiE8tprDe2qa2rvo/wOz3A+lFm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764606041; c=relaxed/simple;
-	bh=cbTq8BHjRToGTEY8Sx66KTwTfnaIXn5PKzRscbZtMbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gL9tBgaBwYKcySDkO8W+vPIxKUOcXhEy8OZNE2uwe1f8zEpbNfw7XMNKAI7/NvP7oYs9OL/JgiBfKVuc0nepRpns8Kbsorlm1yZHEJBb8EMzoR4XPzwod8+VloLsyxIM7dTsOLtTbm8XLyoNRrIBtURXjCaLTy6rix1wDxSHvAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DzfN4wmN; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1764606162; c=relaxed/simple;
+	bh=r85JsunWmzVcpkVTxljVo7UGHdDjxktOk1tuBHycIDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n0j+xvCX+LMKTidnJhGG9TKLDKr582+ODHLfV88wtiUJDkpqJUtg9PWE53JWtaKL+y0b9XyKq6+co0VPtUIOlwDtrOZz5Y5mwos7ix8sOVaEDS2E3T4g6U1SNwK3+7zdCz+cBXacQqOgWE1240E8K8RtEFxRMNHHlvLxxpuGlRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3Bn3s86; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DzfN4wmN"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7b22ffa2a88so4244685b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Dec 2025 08:20:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764606039; x=1765210839; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cspTNBzt+I5BtqKUZhFjJeUVwDFagEE/l2BBHLFNpxc=;
-        b=DzfN4wmNhudh9Aoo99BlK6Ljv9vadO0w7/OlP7wg/MAmTyeAD2fMfjZe8RJoqcoAx6
-         xHyFEXNCUOVrZAuzr9iWeXwYbotQl3IzUKSnwYxDfbse93Bex1paum/dJiMpt7JfbGqY
-         mQZ/+CwybL2tCvzU3T5SUozd98yu4O5/p8XxGwnTeeC0Fe8SV5Z9qgjZWOHoUIbTmWlH
-         XyrMfBcZZfTAIaX7hRbO9zdDygKjrNsXbOD0OyQYzyPTdis7RHTTAKD612SAYh620O4N
-         GOs1DPvReKrst2BeaUiNzaawm+ba03LT/oDPzfdCq4FNFeGE6EMZhM7HMKjX0fOYupPM
-         ORaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764606039; x=1765210839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cspTNBzt+I5BtqKUZhFjJeUVwDFagEE/l2BBHLFNpxc=;
-        b=dUN3CNnqh25nXokllB0g8u8oHDLsV/xPZH6mxvdoz0IA9f33FvVdsuBCvoldm+uWMJ
-         jcakZQAmeKhq5ZnY3UDtaTfNDdWW6c6vsTcjGQ0SLxV1w3HPJoEwHsyZLBEuCh3Ke0id
-         8lvVcHJKfGNJ9p39QYFUmdze2eu8esE6lq1LDoJR0NXq6aI3QpgPT619Q3dkZYyYqnK5
-         Ed4Piv0MZZKIInomEPT30Hilplh2UwNKjb9nvSRAKamY+cIg8jMqW2l5FY2beq6ZvhRc
-         GWGGC1/ApLl+P4WE5X/V24+gvx/N6+ZiUAMgcipUZ7VVR75fqm8nmboM9v/huphO/04/
-         HplA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTH0tPcu5Mm4wSbEftSALm4Xlr3tEgPe9YXJvaQJMSgW5/BHacfm9TcdBb443i/7Wr6GQbr/0h0iRwsnNuM1qo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx8WTR88Wy7TXIUuYlHiWP4mLQVRXMyZIuV01LwTBpLvY4L7jF
-	GNQV5I+1zGWo6HrBrxyjiZHWDLtlKxnZGcq7D+b65iVBIrLDOxXIOY7+UUysMrAvNPc=
-X-Gm-Gg: ASbGncvQz7vws07JqK84Ro7kDwgQvvLltAzHOVkXK6SlQ0BgNMPzJ5MpWbHivzCVi/B
-	2q54VANsihb04UnqaKyPWwz8Ju5ssZqIUngveDyOWV0Ydo5dNZdVCKMpOfOC1+c7ARvh1PZGoR2
-	pRSRcm2b+KdLjR/Zact09oekaUozSOTSqKb0gsH/tl6fc8xYRHAwK4yB1whGjWiVHqAknSjCL3o
-	t5d+NxIvWow4ynlfoIv1EKwDqMqdsQtaL1YKY4IszHrw3IiFTiW5UEZaRxj/5MnSPxBbY0TgEYq
-	D4ZUqrV3EEYVomtJ0NxQTeZExr6Zpm2Rtezw/djUpx4LsZjYuovUJoeVaSqfMf/c9ABxCgmKYN9
-	+oCwspV8kOxtMyOj2nrGvoYt/7jdyy7dKCLAyS7WiRkyoigQ4iz4Oclwm8wudNQCH358drrhe4Q
-	vxiMo0b3LdKSd65A==
-X-Google-Smtp-Source: AGHT+IEC7gGRxUyVtd+YE469cDLd2n7LeD/hmDQKTfHSUTd0/7SmlOv1H6YZTofFyUN0T2uY8DHV7Q==
-X-Received: by 2002:a05:6a20:2448:b0:345:e30f:d6da with SMTP id adf61e73a8af0-36150f059e2mr47497364637.37.1764606039144;
-        Mon, 01 Dec 2025 08:20:39 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:7234:1ea8:3e35:6ee3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d15e9c3e41sm14161217b3a.33.2025.12.01.08.20.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Dec 2025 08:20:38 -0800 (PST)
-Date: Mon, 1 Dec 2025 09:20:35 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 0/4] ASoC / rpmsg / remoteproc / soc: qcom: Constify
- buffer passed to send functions
-Message-ID: <aS3AU0gEEOvWs4Uw@p14s>
-References: <20251130-rpmsg-send-const-v1-0-cb11c7e0a024@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3Bn3s86"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C42C4CEF1;
+	Mon,  1 Dec 2025 16:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764606162;
+	bh=r85JsunWmzVcpkVTxljVo7UGHdDjxktOk1tuBHycIDk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O3Bn3s86/DHt712xrGvIivq8dvdEduYK2YI/CMMMMRT9zX1rw81+EKB19MMzmCSI+
+	 F+n9UAR+8N+UkKYPdNCDrqRfncBuDw4CbzM5/lVwnpqrhe4Gidxmcov9qxIqatJc0Z
+	 LAfxvuEHlZb9mBk3GZsJQMMhjrPToY0TuyOtVcCXu/EYxRe7KFwulnqj/Kt3aom/Oo
+	 xeRHa4P6lqh87Kx1Vj007vLXthLaWWb68uvI51hqwZwgRdHOkI0R+GesuLcU3Hrv9l
+	 QmIYJQLdpNrmpDy3N9dX6AaRBHuFUuF883tmu78dwi4daDqfdtbmZyVMfsNSZQEMpx
+	 /dWqkXIT/fCdw==
+Message-ID: <3425c0dd-8c3c-4780-8d1b-494f38282c46@kernel.org>
+Date: Mon, 1 Dec 2025 17:22:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251130-rpmsg-send-const-v1-0-cb11c7e0a024@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: add Microchip IPC
+ remoteproc
+To: Valentina.FernandezAlanis@microchip.com
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251121142157.3582463-1-valentina.fernandezalanis@microchip.com>
+ <20251121142157.3582463-2-valentina.fernandezalanis@microchip.com>
+ <20251125-aromatic-savvy-eagle-b81696@kuoka>
+ <3e9f2caf-e3c6-4b59-b4e2-431e796399d7@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3e9f2caf-e3c6-4b59-b4e2-431e796399d7@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 30, 2025 at 01:36:07PM +0100, Krzysztof Kozlowski wrote:
-> Dependencies / merging
-> ======================
-> Entire patchset is one logical chain, all further patches depend on
-> previous ones, thus everything should be taken via same tree or shared
-> between trees with tags.  Probably everything should go via ASoC with
-> necessary acks.
-> 
-> Also, first patch or two patches could be taken now for this merge
-> window...
-> 
-> Description
-> ===========
-> The remoteproc and rpmsg send-like functions should not modify data
-> being sent, so buffer should be marked as pointer to const.  This is not
-> only self-documenting code but actually increases the actual safety and
-> clearly documents who is the owner of passed buffer.
-> 
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (4):
->       remoteproc: mtp_scp_ipi: Constify buffer passed to scp_ipi_send()
->       remoteproc: mtp_scp: Constify buffer passed to scp_send_ipi()
->       rpmsg: Constify buffer passed to send API
->       ASoC: qcom:: Constify GPR packet being send over GPR interface
-> 
->  drivers/remoteproc/mtk_scp.c       |  2 +-
->  drivers/remoteproc/mtk_scp_ipi.c   |  2 +-
->  drivers/rpmsg/mtk_rpmsg.c          |  4 ++--
->  drivers/rpmsg/qcom_glink_native.c  | 13 ++++++++-----
->  drivers/rpmsg/qcom_smd.c           | 10 ++++++----
->  drivers/rpmsg/rpmsg_core.c         |  8 ++++----
->  drivers/rpmsg/rpmsg_internal.h     |  8 ++++----
->  drivers/rpmsg/virtio_rpmsg_bus.c   | 24 +++++++++++++-----------
->  drivers/soc/qcom/apr.c             |  8 ++++----
->  include/linux/remoteproc/mtk_scp.h |  2 +-
->  include/linux/rpmsg.h              | 17 +++++++++--------
->  include/linux/rpmsg/mtk_rpmsg.h    |  2 +-
->  include/linux/soc/qcom/apr.h       |  4 ++--
+On 01/12/2025 17:04, Valentina.FernandezAlanis@microchip.com wrote:
+> On 25/11/2025 09:46, Krzysztof Kozlowski wrote:
+>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>
+>> On Fri, Nov 21, 2025 at 02:21:56PM +0000, Valentina Fernandez wrote:
+>>> Microchip family of RISC-V SoCs typically have one or more application
+>>> clusters. These clusters can be configured to run in an Asymmetric
+>>> Multi Processing (AMP) mode.
+>>>
+>>> Add a dt-binding for these application clusters.
+>>>
+>>> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+>>> ---
+>>>   .../microchip,ipc-sbi-remoteproc.yaml         | 95 +++++++++++++++++++
+>>>   1 file changed, 95 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
+>>> new file mode 100644
+>>> index 000000000000..348902f9a202
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
+>>> @@ -0,0 +1,95 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-sbi-remoteproc.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Microchip IPC Remote Processor
+>>> +
+>>> +description:
+>>> +  Microchip family of RISC-V SoCs typically have one or more
+>>> +  clusters. These clusters can be configured to run in an Asymmetric
+>>> +  Multi Processing (AMP) mode where clusters are split in independent
+>>> +  software contexts.
+>>> +
+>>> +maintainers:
+>>> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: microchip,ipc-sbi-remoteproc
+>> This should be SoC specific compatible.
+> There was some discussion on this in v1: 
+> https://lore.kernel.org/all/20241015-distrust-chatty-9e723e670fef@spud/
 
-Acked-by: Mathieu Poirier <mathieuu.poirier@linaro.org>
 
-I'll let Bjorn decide if he wants to include this in his upcoming pull request.
+I don't find anything from that explained in commit msg or device
+description, so next time you send you will get exactly the same comment.
 
-Thanks,
-Mathieu
-
->  sound/soc/qcom/qdsp6/audioreach.c  |  6 +++---
->  sound/soc/qcom/qdsp6/audioreach.h  |  4 ++--
->  sound/soc/qcom/qdsp6/q6apm.c       |  3 ++-
->  sound/soc/qcom/qdsp6/q6apm.h       |  2 +-
->  17 files changed, 64 insertions(+), 55 deletions(-)
-> ---
-> base-commit: 7a9e871ce4c7c8a7d75eaef8407083a0525de2dd
-> change-id: 20251130-rpmsg-send-const-ae216a1fbd8f
-> 
-> Best regards,
-> -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> 
+Best regards,
+Krzysztof
