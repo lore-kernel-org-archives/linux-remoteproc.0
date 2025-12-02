@@ -1,159 +1,215 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0616231ED72
-	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Dec 2025 13:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF1D1A9F88
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Dec 2025 14:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764682416; cv=none; b=SNCvMrfIxH6M3scdX7j7E5LC/8ZFxBqfU4B4mStvzujQ4umqxp5i2ZkjJhPKKPG8bvIoYdISd5hVUa8mqVGWMVPpy64WsSXb7rFFHNVOWu0+c8F1wH1yWG4TJZBAP5vL8aF8b8hKq+58PQ0fuTYMaOM8iXJ/nTkU1bso66ThMUY=
+	t=1764684937; cv=none; b=tYF2f10evWY0VuBgYty7gkL8Zdao6JX8MDHnZu4TMFZixMNrdPnU/M3RpUO2W3FXB7ecZvPFoYG2WyCDMnDIEJff0ZmID/RS3GmbwsFOh3qwClOqUbIfHbs4O9XRnufuHWZ09PlQpXCEnNTBMUoDYfA4UYp4MLZ8jexwXVBXu0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764682416; c=relaxed/simple;
-	bh=AM+aHzsRN4qi42SpXw7pHbMlE7KECMUcJIs6y1jEZ0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C9dT1ifqumrogWmCi9GRLWhqzEIgTA2OQn1fi1YjEl9ygn5PLmCF0zm8GpZ4I3Nb7XOlSjH8dJwsEAiv+JsDy2dzmqzmJ2UXnsJokbA4zIBKqYY5mDau3EG7Qfn/yqMNbHobuE+r7G25Qp/5ARzgrgDucJbRcDKFGohKJz/qbcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=F80WNxdn; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=axiLd/f7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1764684937; c=relaxed/simple;
+	bh=4Wc48KRaIcqiX0vglMdyQboI7iIQ2x8CgSCV7WOL/hs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F9cYUUGQTwN2QYfSTnJfeb1BUJwC1g4HX+qGA7FFI9ICjw1EsSphE4o4R/D+dc/nf/vOYVICu4OcuU5JBu+vOQYmUGu6VW80CXLV7agPZjY9erB2EFQ3Otwg6DCtxTaZxQEWqCO00iSLCoD2YkcLIXguwOZqm/0pBRa386WpqHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+ggOilV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="F80WNxdn";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="axiLd/f7"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B28FQ181932593
-	for <linux-remoteproc@vger.kernel.org>; Tue, 2 Dec 2025 13:33:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UVH1CgY1TXot5Gm/ufc63RsLSbUZbk1zNOoBDq0gsC4=; b=F80WNxdn0O0u1CyB
-	r0xOhXJWsFsBOWYqNGGzBAF18JyXk61jW7/tniYy7Au0hkOhlOtQ5bvO8hebxy6I
-	fYiT0OFCrwUow2Bvf763+9pxaCgb/+81ue/juhJ/2UdbJhFzRQJj8GVfPVvYF9XG
-	rDcfwCZ8apdfNk0lRYL9F5xHF2V9gGCXT4Zo7yWYvLWU63HMhpWygsOIIOqedDAi
-	OFUL/HBBj7ibwTAHhDaaX+gjYVhexGuoLkLRI4IZho2O5cOvxZb36MEG55QNVG1d
-	EgrTQB1BkgvUlgBWnDilAqpr6qax9R6nVLrwsafG8S+z0eAvRzSJIxPwD1Hw00pZ
-	10AqJw==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4asm4xtd4j-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 13:33:33 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-5dbd3b72401so470826137.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 05:33:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764682413; x=1765287213; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UVH1CgY1TXot5Gm/ufc63RsLSbUZbk1zNOoBDq0gsC4=;
-        b=axiLd/f7rTLSrxo2eN5vO3Qjour1MC7O5knRXEEBb9C1cJL+yODO9UcsOa28P4iEf+
-         uFBZUaS0rJQDyYhi+c/T88N/xs2d8xdeoEXi4CGS+Cc/4QiG+RXOOFae4gJFQTM/1/lT
-         bVL/a7cq4g9UvtsM6/fcb9R0zzrxl32VGIGwroEshi9fLT/x6r+nrksP5TVEVauMw/iB
-         UZnj6J/Wbj2lPoqp2QunRhsD99yy2k+zLHYoKyq8PIqhOeNZRHlQo2ggkRbcWT0IG+Zv
-         C8QkfoKLWeayLTPfO7L1AgngBWuzjHB2PTTlt7niMqt1K3auXSuG0qYyMpMm/0MN/0Wn
-         nXsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764682413; x=1765287213;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UVH1CgY1TXot5Gm/ufc63RsLSbUZbk1zNOoBDq0gsC4=;
-        b=uwJ1tHdq99ehu07QsawuRIbytQN26pMLOqorMCppjQrG+4ylisgMOVZ/bDdW/RAPwJ
-         JU/BAsVSVBm9PYcPVRAZ4PLrvvpna48R7bU5u5cvAbCPi2+XRH29ZCXEUEY4XhMgZcUD
-         4KwS2MJZASpeegM31XpAEhX6PAbiNC/x9VbgthdFPpkr2ytBh3sa+S+IJHJ3wM/t1OvN
-         73KcDSB/sTJ0WQQZ5I8KQP+HVe+Zrt0QHqqd1Ty9cnZZkW9B8tIQgOz89HB2qFB3Bml6
-         73hQIhQ1riDnsSVcXtrAxmLGCpJMmxylHomvdZNnOlEFnONk8RJBB4Pz95JLNTdXoLr3
-         jZhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWh/9m5fQPL46wuKVyfN0bGLTssJauViwK0DQ22LdMfDRnirN9iIHu2VL0UFy0UTnXqaP+owwEJAuuGYMvAB94R@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzo42BGWiJxzXKe7Cn+UZnsZglQ0WE2I2Oy+dU6qS0YZ+jMGsY
-	gqGG/ML/dvBv4kJtdk+0G5v6CvpdKCkcLj7nKkxZezw7yq/6gwGSlwxpr+pMjiMlG+Gzjc8BoL7
-	ZQk7pYSGDFH2TO7AQGmRJV4J3ARYD9IUK9oj7LbbfY2YeH65zgocs9Qc73gshK1sli9sYgQmi
-X-Gm-Gg: ASbGncuZxmk4xQfhVNz5w0G7Zt5299Ceqx+yoGEm/EswBNnhr17Axp/p5bup/Je6D/f
-	cZas2/z8IZG0DLLA2goJ6TJthiwmkBuL6I0s/O8p/TyC7k1UxuE2OKbY4zzm2imB98d37MyjNHv
-	rN4TjGfYoV3CkJ5cai3vxfUFPDHrUbNEczsaYrY0uJRnI6zwtjQiUWuAUgRoCJH/n/6OpfqWOif
-	6C58kDJWpdR1IFqBnJJQ4vcSxB3SZtPxMUNimrWj58nEi5eKekGM6v2bpJsQgVnw1kgmiJBEYGL
-	ZDTiQmCDNnUMhykbLo4QLOSRnKDwL1fV2nqGGmP/+ng/LtII+gdCgWORQe2WFIC1WAoCfa3sV5r
-	qCm1SoHSSchYKlWgCS8JZwQdjDAgfrFq7diyK7jv749XCm0DBgG5t1wJTf8W3MYcI6Q==
-X-Received: by 2002:a05:6102:510a:b0:5df:af0f:309b with SMTP id ada2fe7eead31-5e1de4f3ad6mr10222135137.5.1764682413215;
-        Tue, 02 Dec 2025 05:33:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGaWNELjoSxvZj1BH1eTd7MqaX3ipOuH2ZofSCDSU93F2r9VP/Kg9DzlmcWOXUfrhOiURgeIA==
-X-Received: by 2002:a05:6102:510a:b0:5df:af0f:309b with SMTP id ada2fe7eead31-5e1de4f3ad6mr10222122137.5.1764682412836;
-        Tue, 02 Dec 2025 05:33:32 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f51c67e2sm1532385266b.27.2025.12.02.05.33.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Dec 2025 05:33:32 -0800 (PST)
-Message-ID: <7b7655e0-198a-44c9-b49e-1ec030816527@oss.qualcomm.com>
-Date: Tue, 2 Dec 2025 14:33:30 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+ggOilV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C59DC19421
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Dec 2025 14:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1764684937;
+	bh=4Wc48KRaIcqiX0vglMdyQboI7iIQ2x8CgSCV7WOL/hs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p+ggOilV7hbCENVUpLZfQtcI9bfpQxkoFezHGuAQvuvaYdDyUV6O+t0GmwrCixOmy
+	 eULW8VDcVhs3pmhrxIhNNfQvFW3zdGGzyw/w2Y4odcZdbCGDaYNtEhKAKm/UMMdA4O
+	 xCHyePMCaHsP4Jm9H34vnPknAIQYx7+WkiU720/FmwpKT/ojij7crJN+bPbpoD6G/M
+	 ABgNsVnpOIZAM9v0vD4VmwAxVFpbaQCzgDvN3FcCXBOnFcJPurFRM5yHKHAcUzR3Gk
+	 urSDBmLfaBhdDE2Kxmm7ngIIP8x5Wvhgdqo2nmQ170Yub61jTjRyIGwDZxK6XQErY/
+	 1e0tgAb6nnxag==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-64312565c10so8545261a12.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 06:15:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXA9KMaC51F5QO3VfwAlDvrwD9ghfH/Pnpipk1a11SDgzESH6VBzZpbLwscCPutU24LvBoLmA/IMbNCDQn/zo1e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1k/Q+LGJhiTN+PHsANrPLF0R2pctta6lbEUmp7T40ZR8yohqY
+	KSNqSWkRihk/EceLYs5VYZL1xFe0Apg0q8oQRlKYgWpiBHtm8HjnLoULLjViKjUfRmeGB0XM/Z/
+	6MytNJ9jPj3xYddReWyKiIpuOliGO4Q==
+X-Google-Smtp-Source: AGHT+IHOK37x0Kt35joRUOghP+Y+b/h+dUlhViPYEEU5vZFEgzun82hvWA1eFjAbdPJqCcazIpiBmOYOIRh+oi7lQBk=
+X-Received: by 2002:a05:6402:51c9:b0:647:6589:516f with SMTP id
+ 4fb4d7f45d1cf-647658951c8mr11422163a12.23.1764684935180; Tue, 02 Dec 2025
+ 06:15:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: qcom_q6v5_wcss: use optional reset for
- wcss_q6_bcr_reset
-To: mr.nuke.me@gmail.com, andersson@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org
-References: <20251129013207.3981517-1-mr.nuke.me@gmail.com>
- <20251129013207.3981517-2-mr.nuke.me@gmail.com>
- <1ba66817-42e2-4c63-8a94-d2e5c9cb8c34@oss.qualcomm.com>
- <47f6bed6-4d21-4e11-ade5-b3314d026502@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <47f6bed6-4d21-4e11-ade5-b3314d026502@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: SALuCPTyCCXUcK5vJDzLW2AJE5Bcf1wj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAyMDEwOSBTYWx0ZWRfX1dPz6GWIRJKH
- GEL4NxgxvHMj94SsHT+maYp4MMIWsoQ4oeJ5BU/wwSF0HddjneWz/Vtgvu13jQDgHW/Km7v4OKn
- bvD64ZhU/nsgbX2xDy3nXUiSdNUCT8c/Hl68XMJq5pcIXwYcWkEmURLTaioa0CI63R/PvS4lanh
- ihBeMcJOQIgkHQEY3P+XFKJ+YGPFDVgEceWkPMcKgNkpNY7Aoz+0fsi2aWNCDW7LADToSdP0upI
- 5NdNwiU7s4ytRW37Q3KRbLSJ1tvX8/wtcn6ctum5jmLAycNQvbV4AhwsrcTheJDPrXMRZ2kxIRH
- l92JHGFG+dgRRFmFGgs+u2U82M2nB2kgifyVf574d8BZpqcCgFhGfR5JGH1JFC7QEBp3qLNwR2O
- ZoG/+VbWydrRS0fCe8vf3+FLq0dZmw==
-X-Authority-Analysis: v=2.4 cv=cPTtc1eN c=1 sm=1 tr=0 ts=692eeaad cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=mJIYNzVwy2jAzWdldTsA:9
- a=QEXdDO2ut3YA:10 a=crWF4MFLhNY0qMRaF8an:22
-X-Proofpoint-ORIG-GUID: SALuCPTyCCXUcK5vJDzLW2AJE5Bcf1wj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-01_01,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 clxscore=1015 phishscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512020109
+References: <20251124182751.507624-1-robh@kernel.org> <CGME20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c@eucas1p1.samsung.com>
+ <20251124182751.507624-2-robh@kernel.org> <674efe8d-c299-4ce9-bf6b-c1920a5393eb@samsung.com>
+In-Reply-To: <674efe8d-c299-4ce9-bf6b-c1920a5393eb@samsung.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 2 Dec 2025 08:15:23 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJTrGAJx-fv8OQGDhsLVKavQzzQotssEq_E5f_aJe8bOg@mail.gmail.com>
+X-Gm-Features: AWmQ_blpHLPsU5za5Q3_8cThmj1tfuI1sEcIZQQrDepEj9pfYTWSHFtibfJZbEw
+Message-ID: <CAL_JsqJTrGAJx-fv8OQGDhsLVKavQzzQotssEq_E5f_aJe8bOg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] remoteproc: qcom: Use of_reserved_mem_region_*
+ functions for "memory-region"
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
+	Beleswar Padhi <b-padhi@ti.com>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/1/25 10:04 PM, mr.nuke.me@gmail.com wrote:
-> On 12/1/25 5:21 AM, Konrad Dybcio wrote:
->> On 11/29/25 2:32 AM, Alexandru Gagniuc wrote:
->>> The "wcss_q6_bcr_reset" is not used on IPQ8074, and IPQ6018. Use
->>> devm_reset_control_get_optional_exclusive() for this reset so that
->>> probe() does not fail on platforms where it is not used.
->>>
->>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
->>> ---
->>
->> This reset is not even used (or documented anywhere).. the closest
->> I can find is "wcss_q6_reset" in qcom,q6v5.txt, initially documented
->> in:
->>
->> Fixes: 3a3d4163e0bf ("remoteproc: qcom: Introduce Hexagon V5 based WCSS driver")
->>
->> which claims it was made for.. IPQ8074
->>
->> Peeking at the GCC driver, this reset is most likely present as
->> GCC_WCSS_Q6_BCR
-> 
-> The downstream kernel uses GCC_WCSS_Q6_BCR for ipq8074 [1] and ipq6018 [2].
-> They only use of ->wcss_q6_bcr_reset in the QCN404 path, which does not use
-> ->wcss_q6_reset. So maybe we can get away with calling it "wcss_q6_reset",
-> store the pointer in ->wcss_q6_reset, and drop '.wcss_q6_reset_required'
+On Thu, Nov 27, 2025 at 8:28=E2=80=AFAM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Hi Rob,
+>
+> On 24.11.2025 19:27, Rob Herring (Arm) wrote:
+> > Use the newly added of_reserved_mem_region_to_resource() and
+> > of_reserved_mem_region_count() functions to handle "memory-region"
+> > properties.
+> >
+> > The error handling is a bit different in some cases. Often
+> > "memory-region" is optional, so failed lookup is not an error. But then
+> > an error in of_reserved_mem_lookup() is treated as an error. However,
+> > that distinction is not really important. Either the region is availabl=
+e
+> > and usable or it is not. So now, it is just
+> > of_reserved_mem_region_to_resource() which is checked for an error.
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>
+> This patch landed in today's linux-next as commit c70b9d5fdcd7
+> ("remoteproc: qcom: Use of_reserved_mem_region_* functions for
+> "memory-region""). In my tests I found that it breaks booting of
+> DragonBoard410c (arch/arm64/boot/dts/qcom/apq8016-sbc.dts) by causing
+> the NULL pointer dereference. The issue is caused by replacing
+> devm_ioremap_wc() with devm_ioremap_resource_wc(), which fails on
+> devm_request_mem_region(), see comment in the code below. It looks that
+> the error handling is somewhere broken. Here is the the kernel log:
+>
+> remoteproc remoteproc0: 4080000.remoteproc is available
+> qcom-wcnss-pil a204000.remoteproc: error -EBUSY: can't request region
+> for resource [mem 0x8e200000-0x8e7fffff]
+> remoteproc remoteproc1: a204000.remoteproc is available
+> remoteproc remoteproc1: powering up a204000.remoteproc
+> remoteproc remoteproc1: Booting fw image qcom/apq8016/wcnss.mbn, size
+> 4111376
+> Unable to handle kernel paging request at virtual address fffffffffffffff=
+0
+> Mem abort info:
+> ...
+> Internal error: Oops: 0000000096000046 [#1]  SMP
+> Modules linked in: cpufreq_powersave qcom_wcnss_pil cpufreq_conservative
+> coresight_stm coresight_replicator coresight_tmc coresight_tpiu stm_core
+> coresight_funnel coresight_cpu_debug coresight_cti(+) adv7511 coresight
+> nfc rfkill msm snd_soc_lpass_apq8016 snd_soc_apq8016_sbc
+> snd_soc_lpass_cpu snd_soc_msm8916_analog snd_soc_msm8916_digital
+> snd_soc_qcom_common snd_soc_lpass_platform snd_soc_core qrtr ubwc_config
+> snd_compress llcc_qcom snd_pcm_dmaengine qcom_q6v5_mss snd_pcm ocmem
+> qcom_pil_info qcom_spmi_vadc qcom_camss drm_gpuvm qcom_pon rtc_pm8xxx
+> qcom_q6v5 qcom_spmi_temp_alarm venus_core qcom_vadc_common snd_timer
+> drm_exec qcom_sysmon snd qcom_common gpu_sched videobuf2_dma_sg
+> v4l2_mem2mem qcom_glink_smem v4l2_fwnode soundcore drm_dp_aux_bus
+> qmi_helpers mdt_loader v4l2_async videobuf2_memops videobuf2_v4l2
+> videodev qnoc_msm8916 videobuf2_common qcom_rng drm_display_helper mc
+> qcom_stats rpmsg_ctrl rpmsg_char display_connector ramoops socinfo
+> rmtfs_mem reed_solomon ax88796b asix usbnet phy_qcom_usb_hs ipv6 libsha1
+> CPU: 2 UID: 0 PID: 28 Comm: kworker/2:0 Tainted: G W
+> 6.18.0-rc1+ #16209 PREEMPT
+> Tainted: [W]=3DWARN
+> lr : __qcom_mdt_load+0x210/0x304 [mdt_loader]
+> Call trace:
+>   __pi_memcpy_generic+0x128/0x22c (P)
+>   qcom_mdt_load+0x68/0x60c [mdt_loader]
+>   wcnss_load+0x2c/0x5c [qcom_wcnss_pil]
+>   rproc_start+0x30/0x1b4
+>   rproc_boot+0x19c/0x560
+>   rproc_auto_boot_callback+0x1c/0x34
+>   request_firmware_work_func+0x4c/0x98
+>   process_one_work+0x208/0x60c
+>   worker_thread+0x244/0x388
+>   kthread+0x150/0x228
+>   ret_from_fork+0x10/0x20
+> Code: 927cec03 cb0e0021 8b0e0042 a9411c26 (a900340c)
+> ---[ end trace 0000000000000000 ]---
+>
+>
+> > ---
+> > v7:
+> >   - Split QCom to separate patch
+> > ---
+> >   drivers/remoteproc/qcom_q6v5_adsp.c | 24 ++++------
+> >   drivers/remoteproc/qcom_q6v5_mss.c  | 60 ++++++++-----------------
+> >   drivers/remoteproc/qcom_q6v5_pas.c  | 69 +++++++++++-----------------=
+-
+> >   drivers/remoteproc/qcom_q6v5_wcss.c | 25 +++++------
+> >   drivers/remoteproc/qcom_wcnss.c     | 23 ++++------
+> >   5 files changed, 72 insertions(+), 129 deletions(-)
+> >
+>
+> > ...
+>
+> > diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_=
+wcnss.c
+> > index 2c7e519a2254..14005fb049a2 100644
+> > --- a/drivers/remoteproc/qcom_wcnss.c
+> > +++ b/drivers/remoteproc/qcom_wcnss.c
+> > @@ -526,25 +526,20 @@ static int wcnss_request_irq(struct qcom_wcnss *w=
+cnss,
+> >
+> >   static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
+> >   {
+> > -     struct reserved_mem *rmem =3D NULL;
+> > -     struct device_node *node;
+> > -
+> > -     node =3D of_parse_phandle(wcnss->dev->of_node, "memory-region", 0=
+);
+> > -     if (node)
+> > -             rmem =3D of_reserved_mem_lookup(node);
+> > -     of_node_put(node);
+> > +     struct resource res;
+> > +     int ret;
+> >
+> > -     if (!rmem) {
+> > +     ret =3D of_reserved_mem_region_to_resource(wcnss->dev->of_node, 0=
+, &res);
+> > +     if (ret) {
+> >               dev_err(wcnss->dev, "unable to resolve memory-region\n");
+> > -             return -EINVAL;
+> > +             return ret;
+> >       }
+> >
+> > -     wcnss->mem_phys =3D wcnss->mem_reloc =3D rmem->base;
+> > -     wcnss->mem_size =3D rmem->size;
+> > -     wcnss->mem_region =3D devm_ioremap_wc(wcnss->dev, wcnss->mem_phys=
+, wcnss->mem_size);
+> > +     wcnss->mem_phys =3D wcnss->mem_reloc =3D res.start;
+> > +     wcnss->mem_size =3D resource_size(&res);
+> > +     wcnss->mem_region =3D devm_ioremap_resource_wc(wcnss->dev, &res);
+>
+> The above line causes the failure. After restoring it to:
+>
+> wcnss->mem_region =3D devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss-=
+>mem_size);
+>
+> the mentioned board boots fine again. I'm not sure about other drivers,
+> if they also fail the same way as they might not be used on the tested
+> board.
 
-"BCR reset" is like saying "PIN number", both of the ones you mentioned are
-referring to the same thing
+Other platforms (non-QCom) were tested also use
+devm_ioremap_resource_wc(). So something else is claiming the same
+region? Can you dump out /proc/iomem?
 
-Konrad
+The region is dynamically allocated, so maybe that has something to do with=
+ it.
+
+Rob
