@@ -1,220 +1,389 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D0930F929
-	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Dec 2025 10:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C41A28BAB1
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Dec 2025 11:18:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764670407; cv=none; b=FmGtwBpFLHcQMR6t4Che4lo1LWyXSpEmyHvX9hEVpGafz55FPl36/xW6gyAhbLkdrfvYa5Qru9yK0Y0CS16XnuXW4H4ieW+q2Y1s4JWgydWqNj6RXJYjUFNOxoDqXLuhswRYu4DJsT5L2vKKjlfdysXQvr6HHzGycYD2CjOTlRQ=
+	t=1764674315; cv=none; b=qq8yA/pM7zi+tXu76hKTMVtQD1pXdxXAA+yZ7k729FJRSRhmIDaxhx2kVuarCDOwn715rLE+6aJuHPc0LEnU95dTj7Zpso/Do+85EnASNFgFdmqFff/STx928YsuuZy2QmqWxXVxTymH6aL3eHq06OnW3Vlf5dDqexycOCl9O5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764670407; c=relaxed/simple;
-	bh=jkD0PgX4AYLD/tWeanomvQ7p36iUYtXramiDJGNxlqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fp601nfl/QWNQwx+hgGFkRiy81FmnuA3VXuDxSvOFcczyqFFgIl67by7zO5drpoHCWSzK78Yz+y4VX1T+qr+/+hS/grje2iyK6wJgLP4aKJsJVHdhN/Z/7tWdDC+FXuh1CUf/vLKlSZajYdqUt4YfPwJ4KYIZT+1tTEejO4196E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T7FBKA6m; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=V2odpmc4; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1764674315; c=relaxed/simple;
+	bh=w382XtkhAPxqd7MsAJ4IUsHt4uKmL5b5TSOkfEWrtk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCetQ4kLJa8QMMbcFMXDc7jRU8A3E6mO4p3bvJ3LzUd1xELNbcqGEBKhJOHqWzPeyq3xGCsU4pBPWi9J0+Ps/GD1W3VENinioGBFQv3l1iIdhp/aGgifxYMMqJNX6l8ba6xB7tZ6Re+NEijSFAbLoAegpsyf7SRRzcpINS11nWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=of7hR2O2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GexFAalE; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T7FBKA6m";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="V2odpmc4"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B27oIQc1926505
-	for <linux-remoteproc@vger.kernel.org>; Tue, 2 Dec 2025 10:13:25 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="of7hR2O2";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GexFAalE"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B2AVcRg3660474
+	for <linux-remoteproc@vger.kernel.org>; Tue, 2 Dec 2025 11:18:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LsmArkF89BOUHhGXQUlWFZF2aiQoOW1ZrRrGna7xdxg=; b=T7FBKA6m/ge7cXxt
-	AXpuCZXKHfSJS4y+bY0aaVnQr4Fgd3vhmQcJz1p/CmJpjFtM8Obz7+j7Rgw9zI26
-	DX5mhc5PDqf4bJxyKhtCxk7ToPh/sEND4h6Jt48sjxdEbBDxtcYBldwzm7Cu+Zwe
-	w1gE5HFrUT/YPw/UCzOANxGS07yRASCudBSnjWsCFtpIFkFz/nQjR4wZI8bPJKKB
-	K97Yeq5U9AJosGbQqGArzbtjLYi4ijvYPLyoDHj5TCeD+nEDYkHUSfLhvEMzSfyn
-	w/9/d/Dxi42kzCnJLvYD2OuIofHA1ImuyiE4X6TFCJdFG9GodeE34jfnGSsbj7qj
-	1GkM7A==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4asm4xsu5g-1
+	Dg/OYrx4va6h9MRcN5ljZQwaDI2yk5HxAM9uySjHWEw=; b=of7hR2O2SnFqPy3e
+	D3lA5vBmm2KZ8matvZFMnFTjU4R0xFIRYvmEonK8d8RlBHyjzkiOCghDEm0ANM2Q
+	aL1AvNLrvYOcOxX1ZxwQMbY2QdK42osII9scj2bp6Xu2TFXwOy+J8oZ7TevO27/S
+	8Lt03b/aTExByhXvfs/v6zpdbxvj8sJOloEvpMr5SXRkWHDk4sALRN2LIiwrQjG0
+	lMFCdVYE+ja5hV1r0vnocXIlUdQQnPY1JqumoDCV2DGmTKHXUTDI1/SQzYvQlOwU
+	LdnVRBjPeKieocyhMmpAFdy54C45K+Ese+Q3xZdB3cvmVVmDiglaV7zt8a+nieyQ
+	jvcs1A==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4asxeeg4by-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 10:13:24 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7aa9f595688so7561261b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 02:13:24 -0800 (PST)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 11:18:30 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-29b760316a8so62057855ad.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 03:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764670404; x=1765275204; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LsmArkF89BOUHhGXQUlWFZF2aiQoOW1ZrRrGna7xdxg=;
-        b=V2odpmc4ypMEQtQyAR1x303PwKwZwzY0Jj2E7/YyeutsNyUfAVGGLds9uZmSwCq4eC
-         jrwqnS6Kxmha96p8N+VU0/C2YzynLu94czRigHOPXqDiNb2bnKyp1Ba52EUb9UBQMR4K
-         jNlS65+kk4KAtdLuE3RWauQHtWvfH5aonXsSWHjIs/1ZDLhmj3VVpoclECTEFlUDEnMT
-         5+C/OULPHtfaCQS61QrK2vv/XqhkdlpY4fy7nw4URXQS1Acp+gL8kd3/L3yMLtJz63b3
-         q8XC72EAXLPEI7gq30mp6Vx03Eh9fcw9FGOwFXKuYeUMxGz/VAngv6egCf6gSR3uJdzE
-         6Nhw==
+        d=oss.qualcomm.com; s=google; t=1764674310; x=1765279110; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Dg/OYrx4va6h9MRcN5ljZQwaDI2yk5HxAM9uySjHWEw=;
+        b=GexFAalErJxS5mP9iTUuhHDydRc1mN9vew9uFVMguJCU3rKzXkW4er9TX/afPH+65M
+         LxcAd6F8qtzbOZeVC+Sw05dErQUIG4o8odihojS40T7oJrx4yueEoAECgR32RzawIh2I
+         lGhPSk+EWrgvKRuLY7+vvhRcSCQqMuuU1kNx8OapchUua64FSSKty2PMaFOJWBAX4HBo
+         41uHVqayny6j5KOeq1bt5Jkba4tA6z+kZPJEjUopkq7j+1azAjVZgQiroaL8M5C9xfDX
+         MeHIqZjp0IQyYycRFs5yP4fYzI+nkZV6asNEw7zT1AbtkoVWw+ROuqPMaVfZgVuAJoPJ
+         UlmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764670404; x=1765275204;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LsmArkF89BOUHhGXQUlWFZF2aiQoOW1ZrRrGna7xdxg=;
-        b=I9Gnycnz+ftjs7lxP8jG+1iJsGeKF6MQYkDYiqF8rGxdDWTfSJ6zbOly9s8m2FHFjR
-         Aq3VGAfvI9+Ts3ciJC6QtwNmyGWH7rlVPcZDom+R1wMarxz396S5PuLnOGScsJlORZMh
-         +QD9GRzgTCRw62vvQyE5p4oFl9PHKUy3MCFiuQdts/RgqstPKCYdHMB3tJTb6TjFr5iE
-         Zr78mFlC3OFVVkbpgLuwr9UQMwCBCdwSIKK+8P149rC1YDOhuYhil7C6gx37Mn1ZaIqH
-         i4qGWrnJVfDiODOmtZzCi9hNkhgCsXpzZ3iyN+r7McDf4eG99vCwLhNO3gznzH0oY13Y
-         YMTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfGL+NG9UqjDFJNPfjvYfK72q/IntxrY0jH/LUxtcTdK1r4pBIVMo3DGFrIMJDBnE0GPE5dMDiY4gkQ3+wghR4@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd1Q/7amlzzicot4/3WaVeCcitOzEwJG3DYmjYMj44tw29SBkm
-	MSt3mw8awA6MQzdy46v4kyx3BXqySG4gMrsb3oPCmdacF2s+qO6TH3GTtFiqhhlSOsk3Tlj6MpC
-	nV0+5MJvBUpD5Z1ZsBRh41Pi4N4k+Yk1kRz3Z33dCXQCKCRJoTU5wFg5S1/MmAfg+SjLzkXGr
-X-Gm-Gg: ASbGnctPDKrQRiZ6tHOecSsNuLfqC3OgIBvYc8pf26bbDvhwlqesLsR2vo1oKpxlgJb
-	ECRCR3Lf8qdfATAPcdF/bSlDVXxKB2KLb/82+sjyAs3LXwzJ8xGg3vV0UgIc6xw8672MQ+V7lRo
-	WpczLQ71qSIp6bnH2XXKvOtwqr1TmO2OM04a9omYOroJDBohMq3Ye9z3hvkGoecNaETdMxRtqO+
-	V4kDb+BuwSyinTvEZ6qO40dEB0gDWD2SjxzDJmucjBd2P5vPW7SBeHWhygK5GJzZ7WahN3prEtZ
-	T32QQwu8Udz4gnW9Snwbq3AVtR3njaIA0rTkXbCWlpfY1mRTOp+QUETNc1wJSDpsA9Xcn/FCN6H
-	8/bn9eao2VM9NcgAVMtrMQsKoMtdiW7DLa9kdqFSyWQ==
-X-Received: by 2002:a05:6a00:17a7:b0:7b8:383d:870e with SMTP id d2e1a72fcca58-7c58c2ab7b5mr43279798b3a.2.1764670403820;
-        Tue, 02 Dec 2025 02:13:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IESsZ966I0XhgbDr2ekmgjrYiAu9aQpL3u5Xnmdj7BMfBxv2ve0RBT+vHWnMSj5FtqfLf96iA==
-X-Received: by 2002:a05:6a00:17a7:b0:7b8:383d:870e with SMTP id d2e1a72fcca58-7c58c2ab7b5mr43279759b3a.2.1764670403377;
-        Tue, 02 Dec 2025 02:13:23 -0800 (PST)
-Received: from [10.206.101.67] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d15fc08bd1sm16402354b3a.63.2025.12.02.02.13.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Dec 2025 02:13:22 -0800 (PST)
-Message-ID: <623225c2-166a-49a1-9856-d02ed55f1e47@oss.qualcomm.com>
-Date: Tue, 2 Dec 2025 15:43:17 +0530
+        d=1e100.net; s=20230601; t=1764674310; x=1765279110;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dg/OYrx4va6h9MRcN5ljZQwaDI2yk5HxAM9uySjHWEw=;
+        b=W1IUzIi5jxzI6t8dBwvruR10crnDwB3+wmvcbmFofyNb+sN9rFkeKYwX18iFdYYTPG
+         I6WgTVUbU48/55io9cJ9GigtlyFyZhJu8SmBgJfy2n9NxGKrpyakAAW0DChim1vuOqyL
+         /Yl8DeS5sZmrU4CQKQHTh7Z6+Dc3V5IsuyHCGybp3DKJvyb0mNdpyk2eV79Y8uAcvlpU
+         0luj73WlCxXpCSYSiBf+z+rxRz9jXQGuhj2tik/yIxKCfnlz7rBEwJuuCdALw4mpawlp
+         M9PjX0M08uvgPyzIW+fucExrFAXp6SAuvbJ8+Ak4ngLM7iEoILXVEzlVrV4jUDx1rQ2n
+         tjUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyvFg7fo6+Iyebotc4e1JF3FKCIcksO4HBWcF1D5IMn7MrfuIwwRipxaXQaARTDPG+VVOPbkXYNeh/yz/JV8aN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtVzPtHjKQa7c1p5s1+uQbTBJuY0EetxA9HKbOlWMgqi8mPyfS
+	pSMAc8pUmWHmgDkGpcq5l0XlMloTTG9CIJS5gP+Jh82ja0T4Qegn/2rgc4jT+haAvRsbffLAGKL
+	dh/SqaH8GUoXOC2YC3srk99rtfiPkEnRpS4D+KaRvCjarNBTVKy6RFUdWRREug0Z826lfIYGKUg
+	ybZBg/
+X-Gm-Gg: ASbGncuqJPX+K8RUMvkyq8r9kcxYq1qtrmQhzTTBtyJbwbz42giEYJoTHVtUz/vq2hL
+	0dr3NpMWeWe4KH+hG2SeavYfw6zcPX0Q5A58c4NqMoMQK/heiSWyYRaSC9T3C2QjkBaiuxnXlbK
+	fpwC/256Ty8vmyDFU6OF0VNAw0xby9Ankj2wt5s18UUPx8kbIfn3MaVbW66oVdJNzUFG2KXT+Ki
+	ljwK7pfV4PjmKmUPyuoatwwJyBgjuQEpKYYjUnz4h3Ds/HSiev2rDRtZMb59zZiWGGdsTcsPQiB
+	FP/SjbwgD7RDeOz+TrcHNlBtnP4KoVqfQVCtNMKir5NiWoJ49r0tUGRah5vzRLXyAhR4/l5Ydia
+	xn2y4bH2GU3d1BUBgtOTrGZZNcA+TUOOJH3Og
+X-Received: by 2002:a17:903:3d0c:b0:294:f711:baa with SMTP id d9443c01a7336-29b6c3c71b6mr521186745ad.2.1764674309639;
+        Tue, 02 Dec 2025 03:18:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEXa6xCeHNIZ0F+Ti4hBeAwQHmgmFJ4gSOqJTFj9zlC1wnqalofi4oQoo26fa157sCkGXSXyA==
+X-Received: by 2002:a17:903:3d0c:b0:294:f711:baa with SMTP id d9443c01a7336-29b6c3c71b6mr521186385ad.2.1764674308849;
+        Tue, 02 Dec 2025 03:18:28 -0800 (PST)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29bceb7bccbsm150257515ad.100.2025.12.02.03.18.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Dec 2025 03:18:28 -0800 (PST)
+Date: Tue, 2 Dec 2025 16:48:23 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] remoteproc: qcom: Fix NULL pointer issue
+Message-ID: <20251202111823.s7qgorpqalgaayn7@hu-mojha-hyd.qualcomm.com>
+References: <20251128103240.1723386-1-mukesh.ojha@oss.qualcomm.com>
+ <o7txzvxy36nphtf5aybzb3z25zovhgtseubkyn2hbira3aorxo@vky3kzv7gvs3>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/14] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Bryan O'Donoghue <bod@kernel.org>
-Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <0156c327-b867-481e-af24-679f037bfa56@linaro.org>
- <Ux4KioDAyhqgZYleT-eeeFKzuT_qadCIpP3RgyB40apZPX4I9_JwcfY9mebop4gmFcyh4LPw0KQvFzL4zzysJQ==@protonmail.internalid>
- <20251121113751.tnqw5abm5sd2rgr7@hu-mojha-hyd.qualcomm.com>
- <9dfe5343-824d-42c2-aab8-8389602601e9@kernel.org>
- <20251202083650.luk2jpcquq2pcf2r@hu-mojha-hyd.qualcomm.com>
-Content-Language: en-US
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <20251202083650.luk2jpcquq2pcf2r@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: EIzJX2UVYLUm8tv6u7j7LDMVMCdLj40x
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAyMDA4MSBTYWx0ZWRfXxGWzApPRaR6Y
- hSOQcoHE+6KD/tyQRNRm4TLOV1PRIQ4gI32zoyhZ6tknUDshPLDHGgBKHDtSNfxfCdLDqcMwayQ
- BsY9vUP+rWZMjFC2ekJo9EC+qRCCWPMJNil9GzNj6FMz120tsLmvg/HEis3OFPop206XaSmYuck
- B5y5wKjXGRd4jBaq+bN4ToXZnkSit/xYU6xxszgIcdTg2D/aRAaS1Wc1hiBzWklY0F3/FS0198h
- rnFkff3+pE7GRqkpmIhUOV46JumPgvWeKdTSzZB6IyYgfnjEPdke66ELre2Yj9AtqWesMSojtXg
- MbnucgFkGjAJoFrJ+ueDHP9Ibx+ltw0mpDNpDSOCOCNSusPk3T4Q+QKfLqJnvB6k02CIRZt6MJ8
- 2nYNjjr057OkvJLmGtN0iTNgr4y2Cg==
-X-Authority-Analysis: v=2.4 cv=cPTtc1eN c=1 sm=1 tr=0 ts=692ebbc4 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+In-Reply-To: <o7txzvxy36nphtf5aybzb3z25zovhgtseubkyn2hbira3aorxo@vky3kzv7gvs3>
+X-Proofpoint-GUID: QRtQzV6lcsuDiu4rQYWLteI38_ZzU-N7
+X-Authority-Analysis: v=2.4 cv=TMRIilla c=1 sm=1 tr=0 ts=692ecb06 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=EUspDBNiAAAA:8 a=Ajh8_egcEEMJNl95zMkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: EIzJX2UVYLUm8tv6u7j7LDMVMCdLj40x
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=LIePxy4-OamFXmqomhUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: QRtQzV6lcsuDiu4rQYWLteI38_ZzU-N7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAyMDA5MCBTYWx0ZWRfX86A1KATQ6ECG
+ yCrJLO6NoDDieYkc/KQMn1U0B6ujU3KF39u6+tOyo2O8vgUJuBBeTRyspPoIxS3FXcExgnwKKMb
+ Z8qw2+L8P1yvar6zRq60h/o4Htr/kPAdQfXgDaClOIxyc8ACsnSrWMXfX1wm2E0j6WzeqipWcgk
+ xZczLeBMhgYXRFjGwDS3LZRRtyeRM3k8YYpfuC5xHFp4jInaCI6Yn9Si9jNXmdp30uqKxrzMltA
+ 9c6mvoyPzhZuUOreWjbeK8cmSojHO+7o+5Blsf5qvTdbFM3ZFFDCd6sdgeW4M/3n2bQmOpunA4T
+ rA1pCYzBUM6nkPX+nps9j2IgubHFAUYzibQLqlotv/E60OVFT1TxyicTVk+7gnBgd87Ya1k0r2u
+ 9yd/DyMD9TbeBlhs3Ut2vtjOSqXsrg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-12-01_01,2025-11-27_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 clxscore=1011 phishscore=0 spamscore=0 suspectscore=0
+ malwarescore=0 phishscore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ clxscore=1015 bulkscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512020081
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512020090
 
-
-On 12/2/2025 2:06 PM, Mukesh Ojha wrote:
-> On Thu, Nov 27, 2025 at 10:25:23AM +0000, Bryan O'Donoghue wrote:
->> On 21/11/2025 11:37, Mukesh Ojha wrote:
->>>> Sorry.
->>>>
->>>> Did we actually come up with a cogent reason to omit the video firmware
->>>> loading here ?
->>>>
->>>> AFAIU it is required for Lemans and Glymur - leaving it out is blocking
->>>> getting video stuff done and storing up trouble.
->>>>
->>>> What exactly is the blockage - is it something you want help with ?
->>> I replied to you here[1] and given my reason..till something concluded on
->>> "multi-cell IOMMU[2]", I can not add video and block what is working
->>> already.
->>>
->>> [1]
->>> https://lore.kernel.org/lkml/20251105081421.f6j7ks5bd4dfgr67@hu-mojha-
->>> hyd.qualcomm.com/
->>
->> Why though ?
->>
->> You are mixing together the issue of multiple SIDs and the original loading
->> of firmware which could easily reuse the venus method of
->>
->> &iris {
->> 	video-firmware {
->> 		iommus = <&apss_smmu hex>;
->> 	};
->> };
+On Sat, Nov 29, 2025 at 03:01:42PM -0600, Bjorn Andersson wrote:
+> On Fri, Nov 28, 2025 at 04:02:40PM +0530, Mukesh Ojha wrote:
+> > There is a scenario, when fatal interrupt triggers rproc crash handling
+> > while a user-space recovery is initiated in parallel. The overlapping
+> > recovery/stop sequences race on rproc state and subdevice teardown,
+> > resulting in a NULL pointer dereference in the GLINK SMEM unregister
+> > path.
+> > 
+> > 	Process-A                			Process-B
+> > 
+> >   fatal error interrupt happens
+> > 
+> >   rproc_crash_handler_work()
+> >     mutex_lock_interruptible(&rproc->lock);
+> >     ...
+> > 
+> >        rproc->state = RPROC_CRASHED;
+> >     ...
+> >     mutex_unlock(&rproc->lock);
+> > 
+> >     rproc_trigger_recovery()
+> >      mutex_lock_interruptible(&rproc->lock);
+> > 
+> >       qcom_pas_stop()
+> >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+> >       remoteproc remoteproc3: can't stop rproc: -22
+> >      mutex_unlock(&rproc->lock);
+> > 
+> > 						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+> > 						recovery_store()
+> > 						 rproc_trigger_recovery()
+> > 						  mutex_lock_interruptible(&rproc->lock);
+> > 						   rproc_stop()
+> > 						    glink_subdev_stop()
+> > 						      qcom_glink_smem_unregister() ==|
+> >                                                                                      |
+> >                                                                                      V
+> > 						      Unable to handle kernel NULL pointer dereference
+> >                                                                 at virtual address 0000000000000358
 > 
-> I completely understand what you are saying, and it would be very easy
-> for me to do that if it gets accepted. However, I doubt that the people
-> who raised this concern would agree with the approach.
-> 
-> I’m not sure if the video team would like to pursue pixel/non-pixel/firmware context
-> banks separately. I’ll leave this to @Vikas to answer.
+> I'm not able to read out from these two flows where there would be a
+> race condition. You're describing things that happens in process A and
+> then you're describing things in processes B, but I think you're
+> expecting the reader to deduce what the actual problem is from those
+> -EINVAL lines in Process-A - or I'm completely failing to see what
+> problem you're solving here.
 
-Not exactly as a separate sub-node, but i do like the idea of 
-introducing a simple iommu property, something like this, which Stephan 
-proposed earlier in the discussion [1]
-
-firmware-iommus = <&apps_smmu ...>;
-
-I understand that we are doing the iommu-map thing, but a property 
-exclusively for firmware like above look much simpler to me.
-
-Dmitry/ Bryan/ Krzysztof if you are good with this, we can bring back 
-video in this series. Please share your thoughts on this.
-
-Regards,
-Vikash
-
-[1] https://lore.kernel.org/lkml/aKooCFoV3ZYwOMRx@linaro.org/
+I missed to mention mutex contention on rproc lock.
 
 > 
-> Also, I do not want the video PIL discussion to be part of this series, as it could
-> unnecessarily give the impression that this series depends on it.
+> > 
+> > It is tempting to introduce a remoteproc state that could be set from
+> > the ->ops->stop() callback, which would have avoided the second attempt
+> > and prevented the crash.
 > 
->>
->> That binding got dropped because it was unused in Iris.
->>
->> https://lore.kernel.org/lkml/05d40a3b-cc13-b704-cac7-0ecbeea0e59d@quicinc.com/
->>
->> I still fail to see why we are waiting for multi-cell IOMMU to land, when it
->> is expected to and what the VPU enablement story is upstream in the
->> meantime.
->>
->> Blocked it seems.
-> 
-> No, it is ongoing, there will be next version coming.
-> 
->>
->> ---
->> bod
-> 
+> Above you tried to describe a race condition, but this is talking about
+> something else.
 
+I could have used the discussion link pointing that we have discussed
+about having a separate rproc state.
+
+> 
+> > However, making remoteproc recovery dependent
+> > on manual intervention or a system reboot is not ideal.
+> 
+> I totally agree with this statement, but I find it to come out of
+> nothing.
+
+I meant, if we had separate state that would have avoided the crash but
+remoteproc would still not recover and will be non-functional and agree
+doing NULL check is not solving this either but keeping this more open
+ended like even if there is slightest chance but this is all hypothesis.
+
+> 
+> > We should always
+> > try to recover the remote processor if possible.
+> 
+> Yes! But there is a race condition?
+> 
+> > A failure in the
+> > ->ops->stop() callback might be temporary or caused by a timeout, and a
+> > recovery attempt could still succeed, as seen in similar scenarios.
+> 
+> This on the other hand, seems to be a real problem - but I don't think
+> it's a race condition.
+> 
+> > Therefore, instead of adding a restrictive state, let’s add a NULL check
+> > at the appropriate places to avoid a kernel crash and allow the system
+> > to move forward gracefully.
+> 
+> You haven't established why the restrictive state would be needed.
+
+I meant, remoteproc state(new) here..its a typo..
+
+> 
+> 
+> In fact, I don't think you have a race condition, because I think it can
+> be 20 minutes between the "mutex_unlock()" and your "echo enabled" and
+> you would see exactly the same problem.
+
+Yes, you are right, but the one I am describing here has had rproc lock
+race where a test case of recover just triggered and collided with
+unlucky crash at the same time at the remoteproc.
+
+> 
+> If I interpret pieces of your commit message and read the code, I think
+> you're solving the problem that
+> 
+> rproc_crash_handler_work()
+>   rproc_trigger_recovery()
+>     rproc_boot_recovery()
+>       rproc_stop()
+>         rproc_stop_subdevices()
+>           glink_subdev_stop()
+>             qcom_glink_smem_unregister(glink->edge)
+>               deref(glink->edge)
+>             glink->edge = NULL;
+>         rproc_ops->stop() // returns -EINVAL
+>         // rproc_unprepare_subdevices never happens
+>         // rproc->state = OFFLINE never happens
+> 
+> // rproc left in CRASHED state
+> 
+> rproc_recovery_write()
+>   rproc_trigger_recovery()
+>     rproc_boot_recovery()
+>       rproc_stop()
+>         rproc_stop_subdevices()
+>           glink_subdev_stop()
+>             qcom_glink_smem_unregister(glink->edge)
+>               deref(glink->edge) // glink is NULL -> oops
+> 
+> 
+> Or in English, stopping the remoteproc fails, but we've already stopped
+> the subdevices and when we then try to recover a second time, we fail to
+> stop the subdevice.
+> 
+> This does sound familiar, to the point that I believe we've talked about
+> this in the past, and perhaps that's where the idea of a new state
+> you're talking about is coming from? Unfortunately I don't remember the
+> details, and the future reader of the git history surely won't
+> remember...
+
+Yes, we spoke about it here
+
+https://lore.kernel.org/lkml/20240925103351.1628788-1-quic_mojha@quicinc.com/
+
+> 
+> > 
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > ---
+> > Changes in v4: https://lore.kernel.org/all/20241016045546.2613436-1-quic_mojha@quicinc.com/
+> >  - Brought the same change from v2.
+> >  - Added smd->edge NULL check.
+> >  - Rephrased the commit text.
+> > 
+> > Changes in v3:
+> >  - Fix kernel test reported error.
+> > 
+> > Changes in v2: https://lore.kernel.org/lkml/20240925103351.1628788-1-quic_mojha@quicinc.com/
+> >  - Removed NULL pointer check instead added a new state to signify
+> >    non-recoverable state of remoteproc.
+> > 
+> >  drivers/remoteproc/qcom_common.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+> > index 8c8688f99f0a..6480293d2f61 100644
+> > --- a/drivers/remoteproc/qcom_common.c
+> > +++ b/drivers/remoteproc/qcom_common.c
+> > @@ -209,6 +209,9 @@ static void glink_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+> >  {
+> >  	struct qcom_rproc_glink *glink = to_glink_subdev(subdev);
+> >  
+> > +	if (!glink->edge)
+> > +		return;
+> 
+> This does make glink_subdev_stop() idempotent, but do we guarantee that
+> the rest of the involved callstack handles this as well? Is it
+> documented somewhere that any changes to the framework or remoteproc
+> drivers need to maintain this property - or does it just happen to work
+> today?
+>
+
+This changes was not intended to enforce the check throughout the involved
+callstack instead just put NULL check to avoid the kernel crash. Yes, it
+works as in we don't see kernel crash after this.
+
+I see, even after this there is no guarantee that it would not result
+in kernel crash in future may be in some SSR notifier.
+
+> 
+> 
+> The commit message needs to be rewritten so that a 3rd party can read it
+> and understand what problem it solves.
+> 
+> Under what circumstance does qcom_pas_stop() fail, and in what
+> circumstances would it work again a little bit later? Why do we get
+> -EINVAL here?
+
+I don't have information on whether it will recover later or not.
+
+> 
+> I fully agree with you that we should do our very best to recover the
+> crashed remoteproc, to the point that I wonder who will actually trigger
+> this bug? In what circumstance would a user go and manually enable
+> recovery on a remoteproc with recovery already enabled, to dislodge it.
+> 
+> I think we should fix the root cause, because that's what all the users
+> and 99% of the developers will hit. Very few will attempt a manual
+> recovery.
+
+
+This can be triggered from developer by seeing why my audio does not
+work, that can lead to checking the state and triggering the recover
+command and he may not have liked to see kernel crash just because
+of this command. I know, there could be firmware bug but that firmware
+did not crash the system and it happened much time later.
+
+> 
+> If we then consider attempting a manual recovery after the recovery has
+> failed, then we need to document that all parts of the stop must be
+> idempotent - in which case this patch would be part of that
+> implementation.
+
+
+Now, I agree with all of the points but leaving the device crash just
+like that does not look fine either even if there is firmware bug, but it is
+not crashing in firmware but in Kernel.
+
+Do you think, I should still follow [1] - RPROC_DEFUNCT from framework +
+setting to RPROC_DEFUNCT from qcom_pas_stop() ?
+
+[1]
+https://lore.kernel.org/all/20241016045546.2613436-1-quic_mojha@quicinc.com/
+or 
+
+Not solve this at all ?
+
+> 
+> Regards,
+> Bjorn
+> 
+> > +
+> >  	qcom_glink_smem_unregister(glink->edge);
+> >  	glink->edge = NULL;
+> >  }
+> > @@ -320,6 +323,9 @@ static void smd_subdev_stop(struct rproc_subdev *subdev, bool crashed)
+> >  {
+> >  	struct qcom_rproc_subdev *smd = to_smd_subdev(subdev);
+> >  
+> > +	if (!smd->edge)
+> > +		return;
+> > +
+> >  	qcom_smd_unregister_edge(smd->edge);
+> >  	smd->edge = NULL;
+> >  }
+> > -- 
+> > 2.50.1
+> > 
+
+-- 
+-Mukesh Ojha
