@@ -1,316 +1,132 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020A1221F1C
-	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Dec 2025 15:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D722279DC3
+	for <linux-remoteproc@vger.kernel.org>; Tue,  2 Dec 2025 16:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764687925; cv=none; b=Q/MiWz4ay7au/+9vjuXayA27XRAuYDOEpYthUDb9rDHZM4kiRzak4tWegXt7YHF7omFWV7CGcfpdcLHHhRr5x/yw2TVWGbqrguK++leKGrFcD5MWMgR/udgkvX/FMdF+oYqYd9XrsgEykI268OzmIG87+lF+f04ZJ9mEzLef6VM=
+	t=1764692791; cv=none; b=u/LUgQog2V8LReEinhAhW35L68HScTuB8B1HYrCfjxNaSqnoUkObtJLOc+AB+MJbVUfB+UFHSPUHvIcMYXWjz8f2I704p89Is9lbe6K4Z2taGNEPY/Kh8LlI20lobj/ThVuo4pU8pcRqwY7Az8sS8K16zCJdMirTyezBj2xE/co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764687925; c=relaxed/simple;
-	bh=bApbVboGM0KE91bn3kKbMfTs/BklRV5/BsnBzJMWsHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ike8q2j7IS12YCW6Te7oVKgdkXfBzRn7B7rrkZFcq9z14EaqSByVrbMAvI0zlKTqTJopPYZMVeiHyzTqJVyAft/NNWVbcoEuIZ0aklfwKVS1VUIafNs5+JH80JxDUZST9I4Iqrz66PTiLU4+4S36lfp1IkDo0N5/iq1VGTodi1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yRhR0GvE; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1764692791; c=relaxed/simple;
+	bh=7TmdTTWdR2sAJDGsV/H1+Ez7fZ9qzH/Ras91GEmcQMg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d+w+jyXpEcbmsVcysA1RWCKI+wVkLIUy8Ic3K9xL0c2Pw2iAy244Krvo+nD788QJ2t1/oh1VbdMCfTIIZi3yzH6gb08T/eCo4X4n4yg9f2xi7I/DCa/8+wAlmmNQyNuKTo1DLfRAXheJ/Oo1fP8xs2u+Jyty0GRdv0jtcC1D+NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZ9mB6uj; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yRhR0GvE"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6418738efa0so9166340a12.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 07:05:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZ9mB6uj"
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-450063be247so2060992b6e.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 02 Dec 2025 08:26:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1764687921; x=1765292721; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bLofy9NjfVWvvYwD5IZ9P0Rgay+Ak8ZGY6jWoIwWek4=;
-        b=yRhR0GvEXODgrGY+zMIPW0+ipFr4MkAsbaCZi7XvP8tea6WcZpZ5QAcWCbc7jjDpnC
-         4aWx/dnBRCm5jhsGCpSmGg5b8JoiyvUaKMoK13S5qSPwepQp8szoUgytopLgQFVylA7P
-         rl53MwoWiJE9jRfGm5WW57GoSVDztZ2sKfVs0efmhF/NkX4HXG9jYnJAbtKH3Yi3CWuu
-         c9wQ3OpiG8LFarMGbmkN2Ru+1LhMsSrqQ0t3Dc5IP9SsjTw2g4Rlve6598nHe2mtQyP1
-         lyj93X3p+fKiGXqqFGT62gJkZftvIz7oZN+Hesh0lkNaAEGu6oShhrY4ik4+ALHyHzbR
-         lKsA==
+        d=gmail.com; s=20230601; t=1764692789; x=1765297589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PnAtWmdbMkCmI0bWWt89OpkxziHYbElMXbsGDyHdDw=;
+        b=AZ9mB6ujh1DFUorNzwidpY0aQKW39aXPDGLf4iYrbKGRO0B9x7iOhe3LfNU9D2W922
+         Lvl+lWAo1GuF3BVZcyD3cEGmDAZhfh1RYpIP6mI1DOzDqbXAiZouOtNnEjymg/uCGVDc
+         7zgxuFUi70ADQ5IfNNGIszvto7HxFz29XO880tsWJ7f0sMh7i/H2vMwqRfoiFMc4QLjQ
+         mQEQ+uqqcmglokMolyR25VMHYYojtUXRyDUQVEivFEudCTOw1vw6R+dKzO6gBoQKQWMe
+         jkjTqPX2TgS6p0MQgalKRvabqtqE/1B+Lu9i+X0qKlc/HrprX0ojPd/hZMTiayb6GwOX
+         Cgag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764687921; x=1765292721;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1764692789; x=1765297589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bLofy9NjfVWvvYwD5IZ9P0Rgay+Ak8ZGY6jWoIwWek4=;
-        b=SDiuH/ev+eI7AFwCJztiCmBqT2GAld+cAUrZu79LyzFM9rm2yAeJsyVdpgFNjG9WxF
-         GmEyENAGFBs7LFAzqYTM9wFlkJF+nJPOABGcqPvrFlxRH3WO+6ydSRygVQ0g/w5+qa4K
-         TTi9sZMgVfjZVL8s7X0OFjDdm0aUaO+6Ep1OcLQd0X/sJmyLxzPdiyT6mjR+2+csUnT+
-         XTUp79cJu3xbQeVHKIsPq5Qh3HEUFbwHkt5WCYmQxm5eWgDLpjT3QoiyvdBoM5+Ax6qG
-         jT6SoKwTkyOEdE2Y02/pArw2mQK3rLt0/PiGqhCuiASoVuE0jBUTFiA8mLBLOaM0M4Xh
-         CVOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDawZpSQPP3AEMT5/SPws7CYvQNJm0VxaxFZ1cegtgTQy+gUZhNs2BQmm/ZCQ9+iRXGBMskhgkki4TTtllwBYx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxGTT7ToVSnqVOQFS2VardAK6CDyczRcwAVvNAyg5zkjnbAW5l
-	kjL6+IdKGbwZzttRXP9QlBDcVPKGII14Asl0Jv4IzdvrfJRes6CnilQR33VqMZDBvsWati+Zo83
-	fHTfwHIphZv0bCvStINHPaIcieZnY5stWM95XkCxh4Q==
-X-Gm-Gg: ASbGncvSys/sqK+HaTeR3h/F9muQRVFNoYg2S8+UFefg9MabU2uYoUJO2tHUa8s6DET
-	Xmg8nMWYDV4zetw9smPGYixL2O2L8PNoQzLCiuDASoLChcATCsxXodWOLN4GotRQnNMAYAkSXfe
-	PSjgpM82ruzrdcn3ZWU3ywYV7GB/lJm3R6RbfRq2Nr4SqoFvtk2SDtZKmHahU8vO6xi8UnGWJa8
-	Ni0VRZX/zJUA1BMsMQ7ooE/55tnqKUSifEdCuvph3PkJeMPC4sJHSsRMp4xuJpI6IgqR5rPAF4P
-	bgqVMU7dRGXVmsP1FTI6R0ipDQ2p
-X-Google-Smtp-Source: AGHT+IGFY7tMRQfA84XDau7dZuU1g2UEmEbx6B2Ld/COfA63c6u9p6S/xnNQgqnrvT2IwX0spZ+GivkpBDRS5zvBtXs=
-X-Received: by 2002:a05:6402:358b:b0:643:ab7:2e7b with SMTP id
- 4fb4d7f45d1cf-645559f9dd0mr39444751a12.0.1764687920888; Tue, 02 Dec 2025
- 07:05:20 -0800 (PST)
+        bh=2PnAtWmdbMkCmI0bWWt89OpkxziHYbElMXbsGDyHdDw=;
+        b=YTXwas8kU23MV52cmv2LAq4ik0Btf8Cj64dixWC4oDSuXavG/RSazP9iwRLG5NAoyA
+         rwnZAKYc9ckZyQbdNRpH7qkZy2WtoHSPMZQ5DqUdkap0DANn96DFcN+kDB2QkipBVCSY
+         +0uyfQlXIjH32PqjuuWMaqxGI5sof1TvYxEOP+gSMCBEyjGEphNyZYM4Ia639xVCdoM4
+         EPiXtJ6WgXhfZfD4dDZiLKy2oiXk3ytW0J8VmcVP25ZSPh7u76b1rpnuHUb4YBgUV3jW
+         DxMgXFfd8m067ZLF2dYpW6Y2IU74S1EW9GUAcQTC0IhX+KlFh8dvsTxUlskjoUGQqHWv
+         XYNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXE15n2Q5PyMD87NdnP4tjvdCXLwSYPUkiT9p85YLNERPBCobse8e0EzO6knuEvTvFE+KzYBi2EwjYYVASGgFKP@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbE8CUEIm15heXA9sL4AAAv3FA6ELIQOiVHJcM/V4WV3/3N5zC
+	1PJsXA6VFlGYGRi/YZCQAOiBmsI3/Hd9i7JYrflbc9FvS2+dlcfsqLb+
+X-Gm-Gg: ASbGncvnmEeeGuLI8RlaFgxBViL921vkSLPMnpnVPWwP4XpIYKo5DU00zr3HNP+LkSc
+	Zukju8rDyxmcjZvRG+oIwWUYNL3op+7kgjCZ1dGo8TWV5AjQYBPoEzrBfv20GafWVz10OYx0xUf
+	3jNdU4YT6OAGQFRxSqtZHQqoKP63Tl14ONrPHQBoqvZwFkN9GzcI9s/KyH9/nGpq+/TpBao3z6M
+	dhE0gFZRKTFI3+LLCXwCqMX3r82REFvIXhci1wqU8ezkkbn52kI2JkNs5BDd2M8i/RGVwiQ+VRK
+	aLtPU7Eru28OMThdvLa6nEmaZKq99jgYGRX0o+Gnv/GfeYPSB60xprGbEoziSbApDCkvFzWBi1P
+	KrgaEVbptDwaNMH/7DoO1PnV0jAZykrr1LiGBo2OKqSI/ChcJaF80LoEnX5mndAKSe2U9dqzf7y
+	Pc1WULLQ4Vdw/AF0kZ9H601PfAMc8nm9pfjjPmY0EJkquCuqPbx49YOx9uTmnlxAMpCxfFtakUQ
+	pjIsQiTUNTlRjtKVQPE0YYE+A4J
+X-Google-Smtp-Source: AGHT+IHnSymlG4Rcfy7ky8sdHo/8LOZg5So4LcXdseUa5CzeTuphJTK1jKlkQxS0JuGgxnJtmsOZGQ==
+X-Received: by 2002:a05:6808:80c4:b0:442:cc90:1e4e with SMTP id 5614622812f47-4514e5fa7e5mr13578497b6e.14.1764692789380;
+        Tue, 02 Dec 2025 08:26:29 -0800 (PST)
+Received: from nukework.lan (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-659332e1480sm4236722eaf.7.2025.12.02.08.26.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 02 Dec 2025 08:26:28 -0800 (PST)
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	Govind Singh <govinds@codeaurora.org>,
+	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: konrad.dybcio@oss.qualcomm.com,
+	linux-kernel@vger.kernel.org,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Subject: [PATCH v2 1/2] remoteproc: qcom_q6v5_wcss: fix parsing of qcom,halt-regs
+Date: Tue,  2 Dec 2025 10:26:24 -0600
+Message-ID: <20251202162626.1135615-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251113154403.2454319-1-tanmay.shah@amd.com> <20251113154403.2454319-4-tanmay.shah@amd.com>
- <aSCHJvtEwYWb6Ie0@p14s> <a4c586e5-f89c-4a92-b74e-d358e7cf7a2d@amd.com>
-In-Reply-To: <a4c586e5-f89c-4a92-b74e-d358e7cf7a2d@amd.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 2 Dec 2025 08:05:09 -0700
-X-Gm-Features: AWmQ_bkXdBewu_96e140LxEduFRXhoSIDpYqBOv-WWxiVHZ1lYSTHb2qa4E_JRw
-Message-ID: <CANLsYkxuwpiy+nSedxpRM43J0jMsYY0w5DVw_3NFCqmgGnro1A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] remoteproc: xlnx: add crash detection mechanism
-To: tanmay.shah@amd.com
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 1 Dec 2025 at 22:04, Tanmay Shah <tanmay.shah@amd.com> wrote:
->
->
->
-> On 11/21/25 9:37 AM, Mathieu Poirier wrote:
-> > On Thu, Nov 13, 2025 at 07:44:04AM -0800, Tanmay Shah wrote:
-> >> Remote processor will report the crash reason via the resource table
-> >> and notify the host via kick. The host checks this crash reason on
-> >> every kick notification from the remote and report to the core
-> >> framework. Then the rproc core framework will start the recovery
-> >> process.
-> >
-> > Please substitute the word "kick" for "mailbox notification".  I also have to
-> > assume "core framework" and "rproc core framework" are the same.  Pick one and
-> > stick with it.
-> >
->
-> Ack.
->
-> >>
-> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> >> ---
-> >>
-> >> Changes in v2:
-> >>    - clear attach recovery boot flag during detach and stop ops
-> >>
-> >>   drivers/remoteproc/xlnx_r5_remoteproc.c | 56 +++++++++++++++++++++++++
-> >>   1 file changed, 56 insertions(+)
-> >>
-> >> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> index 8677b732ad14..5d04e8c0dc52 100644
-> >> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> @@ -108,6 +108,10 @@ struct rsc_tbl_data {
-> >>      const uintptr_t rsc_tbl;
-> >>   } __packed;
-> >>
-> >> +enum fw_vendor_rsc {
-> >> +    FW_RSC_VENDOR_CRASH_REASON = RSC_VENDOR_START,
-> >> +};
-> >> +
-> >>   /*
-> >>    * Hardcoded TCM bank values. This will stay in driver to maintain backward
-> >>    * compatibility with device-tree that does not have TCM information.
-> >> @@ -127,9 +131,21 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> >>      {0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
-> >>   };
-> >>
-> >> +/**
-> >> + * struct xlnx_rproc_crash_report - resource to know crash status and reason
-> >> + *
-> >> + * @crash_state: if true, the rproc is notifying crash, time to recover
-> >> + * @crash_reason: reason of crash
-> >> + */
-> >> +struct xlnx_rproc_crash_report {
-> >> +    u32 crash_state;
-> >> +    u32 crash_reason;
-> >> +} __packed;
-> >> +
-> >>   /**
-> >>    * struct zynqmp_r5_core - remoteproc core's internal data
-> >>    *
-> >> + * @crash_report: rproc crash state and reason
-> >>    * @rsc_tbl_va: resource table virtual address
-> >>    * @sram: Array of sram memories assigned to this core
-> >>    * @num_sram: number of sram for this core
-> >> @@ -143,6 +159,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> >>    * @ipi: pointer to mailbox information
-> >>    */
-> >>   struct zynqmp_r5_core {
-> >> +    struct xlnx_rproc_crash_report *crash_report;
-> >>      void __iomem *rsc_tbl_va;
-> >>      struct zynqmp_sram_bank *sram;
-> >>      int num_sram;
-> >> @@ -227,10 +244,14 @@ static void handle_event_notified(struct work_struct *work)
-> >>   static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
-> >>   {
-> >>      struct zynqmp_ipi_message *ipi_msg, *buf_msg;
-> >> +    struct zynqmp_r5_core *r5_core;
-> >> +    struct rproc *rproc;
-> >>      struct mbox_info *ipi;
-> >>      size_t len;
-> >>
-> >>      ipi = container_of(cl, struct mbox_info, mbox_cl);
-> >> +    r5_core = ipi->r5_core;
-> >> +    rproc = r5_core->rproc;
-> >>
-> >>      /* copy data from ipi buffer to r5_core */
-> >>      ipi_msg = (struct zynqmp_ipi_message *)msg;
-> >> @@ -244,6 +265,13 @@ static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
-> >>      buf_msg->len = len;
-> >>      memcpy(buf_msg->data, ipi_msg->data, len);
-> >>
-> >> +    /* Check for crash only if rproc crash is expected */
-> >> +    if (rproc->state == RPROC_ATTACHED || rproc->state == RPROC_RUNNING) {
-> >> +            if (r5_core->crash_report->crash_state)
-> >> +                    rproc_report_crash(rproc,
-> >> +                                       r5_core->crash_report->crash_reason);
-> >
-> > At this stage ->crash_state indicates that a crash occured, but how is it reset
-> > once the crash has been handle?  How do we make sure the next mailbox
-> > notification won't trigger another crash report?
-> >
->
-> I was counting on the remote firmware to reset the crash_state once it
-> reboots before sending the next mailbox notification.
->
-> If it's not the best idea, I can reset the crash_state field in start()
-> callback or attach() callback at the end. That will indicate that remote
-> firmware has started successfully.
+The "qcom,halt-regs" consists of a phandle reference followed by the
+three offsets within syscon for halt registers. Thus, we need to
+request 4 integers from of_property_read_variable_u32_array(), with
+the halt_reg ofsets at indexes 1, 2, and 3. Offset 0 is the phandle.
 
-I think this is a better solution.  That way we don't rely on
-something that may or may not happen.
+With MAX_HALT_REG at 3, of_property_read_variable_u32_array() returns
+-EOVERFLOW, causing .probe() to fail.
 
->
-> >> +    }
-> >> +
-> >>      /* received and processed interrupt ack */
-> >>      if (mbox_send_message(ipi->rx_chan, NULL) < 0)
-> >>              dev_err(cl->dev, "ack failed to mbox rx_chan\n");
-> >> @@ -397,6 +425,7 @@ static int zynqmp_r5_rproc_start(struct rproc *rproc)
-> >>      if (ret)
-> >>              dev_err(r5_core->dev,
-> >>                      "failed to start RPU = 0x%x\n", r5_core->pm_domain_id);
-> >> +
-> >
-> > Spurious change
-> >
->
-> Ack will remove it.
->
-> >>      return ret;
-> >>   }
-> >>
-> >> @@ -438,6 +467,8 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
-> >>      if (ret)
-> >>              dev_err(r5_core->dev, "core force power down failed\n");
-> >>
-> >> +    test_and_clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
-> >> +
-> >>      return ret;
-> >>   }
-> >>
-> >> @@ -874,6 +905,8 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-> >>
-> >>   static int zynqmp_r5_attach(struct rproc *rproc)
-> >>   {
-> >> +    rproc_set_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
-> >> +
-> >
-> > Why can't this be set in probe() and left alone from thereon?
-> >
->
-> Right now no specific reason. But I wanted to enable recovery only if
-> attach() callback is successful. If execution fails anytime before that,
-> then no point in enabling it.
->
-> >>      dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
-> >>
-> >>      return 0;
-> >> @@ -888,6 +921,8 @@ static int zynqmp_r5_detach(struct rproc *rproc)
-> >>       */
-> >>      zynqmp_r5_rproc_kick(rproc, 0);
-> >>
-> >> +    clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
-> >> +
-> >
-> > I'm not sure why this needs to be done, same comment for zynqmp_r5_rproc_stop().
-> >
->
-> I think for detach() may be it's not needed. I added it as a cleanup
-> sequence i.e. reverse of what's done in the attach() callback.
->
-> For stop it is needed in the following case:
->
-> attach() -> stop () -> load fw () -> start ().
->
-> In this sequence we need to make sure that if recovery is requested
-> after start(), then we execute "boot recovery" and not "attach recovery".
->
+Increase MAX_HALT_REG to 4, and update the indexes accordingly.
 
-I think this is a valid reason, just make sure it is documented in the
-code here and for _attach() above.
+Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
 
->
-> Thanks,
-> Tanmay
->
->
->
-> >>      return 0;
-> >>   }
-> >>
-> >> @@ -896,6 +931,26 @@ static void zynqmp_r5_coredump(struct rproc *rproc)
-> >>      (void)rproc;
-> >>   }
-> >>
-> >> +static int zynqmp_r5_handle_crash_rsc(struct rproc *rproc, void *rsc,
-> >> +                                  int offset, int avail)
-> >> +{
-> >> +    struct zynqmp_r5_core *r5_core = rproc->priv;
-> >> +
-> >> +    r5_core->crash_report =
-> >> +            (struct xlnx_rproc_crash_report *)(r5_core->rsc_tbl_va + offset);
-> >> +
-> >
-> > This function is so simple that I would fold it in zynqmp_r5_handle_rsc() below.
-> >
->
-> Ack.
->
-> > Thanks,
-> > Mathieu
-> >
-> >> +    return RSC_HANDLED;
-> >> +}
-> >> +
-> >> +static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
-> >> +                            int offset, int avail)
-> >> +{
-> >> +    if (rsc_type == FW_RSC_VENDOR_CRASH_REASON)
-> >> +            return zynqmp_r5_handle_crash_rsc(rproc, rsc, offset, avail);
-> >> +
-> >> +    return RSC_IGNORED;
-> >> +}
-> >> +
-> >>   static const struct rproc_ops zynqmp_r5_rproc_ops = {
-> >>      .prepare        = zynqmp_r5_rproc_prepare,
-> >>      .unprepare      = zynqmp_r5_rproc_unprepare,
-> >> @@ -911,6 +966,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
-> >>      .attach         = zynqmp_r5_attach,
-> >>      .detach         = zynqmp_r5_detach,
-> >>      .coredump       = zynqmp_r5_coredump,
-> >> +    .handle_rsc     = zynqmp_r5_handle_rsc,
-> >>   };
-> >>
-> >>   /**
-> >> --
-> >> 2.34.1
-> >>
->
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+changes since v1:
+ - Add "Fixes:" to commit message
+
+ drivers/remoteproc/qcom_q6v5_wcss.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 07c88623f5978..23ec87827d4f8 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -85,7 +85,7 @@
+ #define TCSR_WCSS_CLK_MASK	0x1F
+ #define TCSR_WCSS_CLK_ENABLE	0x14
+ 
+-#define MAX_HALT_REG		3
++#define MAX_HALT_REG		4
+ enum {
+ 	WCSS_IPQ8074,
+ 	WCSS_QCS404,
+@@ -864,9 +864,9 @@ static int q6v5_wcss_init_mmio(struct q6v5_wcss *wcss,
+ 		return -EINVAL;
+ 	}
+ 
+-	wcss->halt_q6 = halt_reg[0];
+-	wcss->halt_wcss = halt_reg[1];
+-	wcss->halt_nc = halt_reg[2];
++	wcss->halt_q6 = halt_reg[1];
++	wcss->halt_wcss = halt_reg[2];
++	wcss->halt_nc = halt_reg[3];
+ 
+ 	return 0;
+ }
+-- 
+2.45.1
+
