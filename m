@@ -1,249 +1,161 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA6B2F5A24
-	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Dec 2025 12:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10572CCC0
+	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Dec 2025 13:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764765399; cv=none; b=imHa9sE8k7dphb6tbNtjS3LEdEiZa+q2+HJHUhyPUws9DvoZeTWg92ZHSH0S0MJ3uRgD4hiwH6XbsWLPyp7nunUIg8Ru0lgRHJLBs3JL9gnsAeEyA4g7blcBPOqR+w5Zdd2g/5/uGWAhTqeBOVr4Wn4m8b3uTL8fyVxCe0YiVAI=
+	t=1764769542; cv=none; b=gP+62MZ1yN5HJOAL9XGzmZv6W4/l6oOYGqcAgsahB0bfeu3Tlw3i37HxGoX2rzPqTZePmjJgFnK3nFDNbFN8Amso1gOgWl+77uizj8NVuSgS/hQDPLqPM+FFe/MMmcTXN+3jxw8lxxQSWXaHYzNQA/rYZ764wPF0Doj0UvBi8Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764765399; c=relaxed/simple;
-	bh=133zDIChdD60IUS6JZm2ZJGsM91OrEgjoeRRjXh18zc=;
+	s=arc-20240116; t=1764769542; c=relaxed/simple;
+	bh=3O7BsqucWoTUWi1KgxG/oW8IBKSk1Hm+KrmEJbkQUf0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XT19cy54zGa7lZMc+vZ2HHCgUetRPlaeoxR8KTVeERt9Zfjpm4c9G/SkqnjAiguI7CSCIUCZGJg6nLD85NNDrjzc/qmU35T20DCEXOVS5Drb9B9tLDz6UuivSSz1oep4j8GBdRjwCuCJaON/wlu98HiMm2EtNMs9Ugt+gF1EX7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fje1H/Ov; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=XWmV9HOo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=jLkBdoS7SnmsAeyxKT4vCpuMYoaChmTJdjaWUlHp4e0fcIChMriZ6pRuxwBvMxyhIbIyceMH73hcCaHylM2JCUSuu3m4J4D8z8y/QcAX6MERnBVyYm2JmXoGByVMcp60jq0h1cekWXfal3q3C72LWXhQvl6PgRgPhfo5rmz0iuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=sKaag7vy; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fje1H/Ov";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="XWmV9HOo"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B3B3Dvk1374607
-	for <linux-remoteproc@vger.kernel.org>; Wed, 3 Dec 2025 12:36:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ECdp/n5IfO3x2LfiEzdXETlp4AG0BzfMJTkuSdywFLk=; b=Fje1H/Ov3ZZtY/HH
-	hJQtSmWleqciRpglbAms3u7r1TAc/2FJwlhNzPqu6FP8h8T+VrE3hVzhTNbESAk9
-	2n/YbqIkz+qeHkB3Rlrmpf+PgC/xQDijkIxX4Ov7Byt0wKIG+M26Yt5nm3zEuIq4
-	zILyGFTCBq3OqFEitnKGMzaBxgtvmjBPb0APfu04uNh8uBZHDMT5j5iUMCxmBizH
-	OkqVEV/dlI5675cpRWxXomyRjpUVndTBZ2iUvKgV1Pd90P5KPvQepjybPzNTvSXU
-	MReIvUI5h2Jn7yg/RcEy9yybKLpvKyzKWgen1sHaZ/fFbCkRHdfHNUikl3eCUyll
-	saWNug==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4atm0b87mk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 03 Dec 2025 12:36:36 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ee05927208so18903641cf.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Dec 2025 04:36:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764765395; x=1765370195; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ECdp/n5IfO3x2LfiEzdXETlp4AG0BzfMJTkuSdywFLk=;
-        b=XWmV9HOoABMfPjeJNIvV6KIPrTD06o5GbtRqC1jxSnDUZxYuoxwm798ewVguBSXRU+
-         ujv7A9dYdJDvPToaylEH6n1GV8SG+tivHVaHve3dhogUK/lm8D/ZslpOzrqDWcpiL3LQ
-         2rLePKFs1Xvs/+3g8oWGIDEhYe57RaPB/Qe8rq6JQEI3v3RdOChUBKZS9zpNyac0+M4s
-         NTLgS8e1JGKzffRle1wdwxPjIIbMLX/beLSc/Cpr8UrBIfaKvboWVXaqzChwbo3bB9/9
-         kir8n6vBMLsFJhsIpKQdx4pEswqLvICJG6QDtH7GljxLmhLuMs7sH5rsiMZ1XT5w8y0I
-         jmtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764765395; x=1765370195;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ECdp/n5IfO3x2LfiEzdXETlp4AG0BzfMJTkuSdywFLk=;
-        b=gG1VDm1WGDm+VDd4joFcpL3+tEEPWpWkcJ64n5iiylBjGAbB1YdYR+m0GuuW+Lw5k4
-         sFcZ90JWIkvAAjSQ5DMguE0I5r294lxBGL8v4RNgYQJ2Q8nSe/icek/Wty+SE8gTZ3ZV
-         xU3z5PaYTKSTG4gI5xhWKt/8Rr4XG25zrkJjnd/FyW6g7UR7TaDXISNhOtwvT7Bf0oeM
-         7ADWpkDaV7OcaK0IR1bWQtXEBWSr3TMmp1TH7DvqEltLuMP9+sCAzTmSjzLxzBKCVWyS
-         eV+Mfs++XP7sDmsmD0QSSBsmqGp6+hEJUJnbKIg8w/3lnvR1P+5dX+frAAHfactKhRzO
-         NDaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCRJErHxVTTNHbTPgnyNMwVMrvcH79/U+BcnVKvJ0IY3TxSSr+mTEynNKRCvbwVx6ogDnrPTTEpIc/KA6bc/g1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxja8sXsxS3r2JcAFwYN6H8/6cmszFcnSTMiviPE71/pt0AZrFq
-	ktH5gJddjXGdg8s+pF/LqHDyiWw5bPKcIBsuCOB0vZu0YaV27iyF8XbnitZCR0ulU5n6aVPnS1A
-	+O8B96cWr6ee6/3c3prc/lnl9MayUcKUB8NjhG8a9CE8kXPmohe86MFNwfy67SWmbykWBsDCP
-X-Gm-Gg: ASbGncv1STFRZ9AbAvVHthAxYszIxcDCDRB/RDTDt9VW5g28y1coJsO+6Qb30yoFgne
-	xKgjvDB111hBRDWKZ5giXjZID6/VN1By6cvoaXzSFfkI0LPoFsPcZ+/2mOLsES6y69a+FIibEpv
-	elwWFit6t+YozKgr+VKFkh0IihmEA/DYnfSF0b4ym/Y+/ihAhExMApXuv9aRprYyCOZg8LC9n+7
-	zJkPoPEUQofSBfwSndKFY6K5yr9EjGoK1SWfyLaZtDPaQ5AgzXjp/fQq7MuyU8lK0UyA3mqm4vk
-	VVc+wumhluGf6ekf11m8s3Ocd2kj6pIgSgWkkxZpVd6w1wcMr78BS0Sb5zoTxIk+lg59tKEIq0f
-	flr8CC2qSmnmgCPjYbLOx7EER94qZVb5SFNPCOg5h0U3aGY/I9LCZFCa8xOvKrb9dSg==
-X-Received: by 2002:ac8:5715:0:b0:4e6:eaff:3a4b with SMTP id d75a77b69052e-4f01752fdd6mr19881571cf.4.1764765395467;
-        Wed, 03 Dec 2025 04:36:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHgZNV2JmzxRkxvlZWlNQ34zmRdp6HoWlpB99+fd6sdr5WUTZMu9AQXTQ2JTGHrRS8I+lCTIg==
-X-Received: by 2002:ac8:5715:0:b0:4e6:eaff:3a4b with SMTP id d75a77b69052e-4f01752fdd6mr19881311cf.4.1764765394876;
-        Wed, 03 Dec 2025 04:36:34 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b76f5a4b762sm1798644866b.67.2025.12.03.04.36.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Dec 2025 04:36:34 -0800 (PST)
-Message-ID: <4376b7cf-7088-412b-8596-bdec5bdc273d@oss.qualcomm.com>
-Date: Wed, 3 Dec 2025 13:36:32 +0100
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="sKaag7vy"
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4dLzRZ5FpVz9sjn;
+	Wed,  3 Dec 2025 14:45:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1764769530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AlexLWpQYREvi2C+5BEJCHkIEl4pp/NzDH7/SKQraz8=;
+	b=sKaag7vyWkyqKwGprWYGAfGZKlAM/KS/hv4SD11RYC+rEP+wImeIZyu71TcI2Mb8+A/rSW
+	qcHKIzjoSChgWq1w8i/+hum4i/5Ev+UhWeKdQfy+ei3upx4O/gZjw/WnAzS+qJywht24FI
+	hsJhvwt5oCALo/hLOXX4ETfTosT5TL4oZPNSYqu59jI+dVR7P8ka02COE5MI66eDZ/3Dnt
+	72Fn+cMp+VHAxJEtgf6AkygY4dZHH73xLbwcXBD8aSewjNUKtCzP/USd4PA1hCqz2SAWco
+	F+py91+BuLm2kpatLI9sjpi6bsF+nyWoWjsGwvkCUEfT9yRaYtT9xxq7Hs2+ew==
+Message-ID: <7a0426a8-a8a3-4260-8cef-3880a1328e53@mailbox.org>
+Date: Wed, 3 Dec 2025 14:45:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
- <86f3cb9f-e42d-40f9-9103-1a4953c66c71@oss.qualcomm.com>
- <20251124152538.wt3kzztqmpr76hsx@hu-mojha-hyd.qualcomm.com>
+Subject: Re: [PATCH] remoteproc: xlnx: Use high-prio workqueue instead of
+ system wq
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>,
+ linux-remoteproc@vger.kernel.org
+Cc: Tanmay Shah <tanmay.shah@amd.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>
+References: <20251127130712.1190765-1-stefan.roese@mailbox.org>
+ <2db4a957-4291-466c-bdb7-cee5c03a353b@oss.qualcomm.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251124152538.wt3kzztqmpr76hsx@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=GMMF0+NK c=1 sm=1 tr=0 ts=69302ed4 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=G1CHwEGKOm80qSXAIBcA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: w7pcvkFXAH1RxdfInLBems7iyNbqdaxN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjAzMDEwMCBTYWx0ZWRfX1f1fQ9s4X375
- /LTDeUg2SFCWufJSSksIw8hvh9Po/X/bRh6QseSF5qr9hvWpd608ZtL0upHuYdIhz+FaQKslN6a
- qcEN6bzG0szXIu5MWKXVdmc5+L/S0YLCr8XbNEPH666xBmLogPxfJrYtGpPEswZGeFI3GqDOPzF
- vbpn5ABJ4Rw55WsSSxLaBuqYrRZWp18skG0UbriKdKxG65iNJwYp/CopiHjCGK8hYN9NpRxTqby
- T6RFST16LFUN9tBXmQK84efrmK5e+zg2JXOiZF0U1RbNbtRh3zjgsQK/1sDP0P5DLFblRUL4o3o
- kckCLyASFYSuSM9eIDOs7lEBN5HmO4p3hUlJqf6q2gG/Bad1R+kzG+qUK4XggEqALtc+t/2m8XX
- ChTKnZB4+fox2+aAyTVJSU97vnrLzw==
-X-Proofpoint-GUID: w7pcvkFXAH1RxdfInLBems7iyNbqdaxN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-03_01,2025-11-27_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 malwarescore=0 spamscore=0 bulkscore=0
- clxscore=1015 impostorscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2512030100
+From: Stefan Roese <stefan.roese@mailbox.org>
+In-Reply-To: <2db4a957-4291-466c-bdb7-cee5c03a353b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 38a8cb81e732d5dc694
+X-MBO-RS-META: bno1n3bimgpqr8od96a7pwwnjhrngm6x
 
-On 11/24/25 4:25 PM, Mukesh Ojha wrote:
-> On Mon, Nov 24, 2025 at 12:48:31PM +0100, Konrad Dybcio wrote:
->> On 11/21/25 12:01 PM, Mukesh Ojha wrote:
->>> Qualcomm remote processor may rely on Static and Dynamic resources for
->>> it to be functional. Static resources are fixed like for example,
->>> memory-mapped addresses required by the subsystem and dynamic
->>> resources, such as shared memory in DDR etc., are determined at
->>> runtime during the boot process.
->>>
->>> For most of the Qualcomm SoCs, when run with Gunyah or older QHEE
->>> hypervisor, all the resources whether it is static or dynamic, is
->>> managed by the hypervisor. Dynamic resources if it is present for a
->>> remote processor will always be coming from secure world via SMC call
->>> while static resources may be present in remote processor firmware
->>> binary or it may be coming qcom_scm_pas_get_rsc_table() SMC call along
->>> with dynamic resources.
->>>
->>> Some of the remote processor drivers, such as video, GPU, IPA, etc., do
->>> not check whether resources are present in their remote processor
->>> firmware binary. In such cases, the caller of this function should set
->>> input_rt and input_rt_size as NULL and zero respectively. Remoteproc
->>> framework has method to check whether firmware binary contain resources
->>> or not and they should be pass resource table pointer to input_rt and
->>> resource table size to input_rt_size and this will be forwarded to
->>> TrustZone for authentication. TrustZone will then append the dynamic
->>> resources and return the complete resource table in output_rt
->>>
->>> More about documentation on resource table format can be found in
->>> include/linux/remoteproc.h
->>>
->>> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
->>> ---
+Hi Zhongqiu Han,
+
+On 11/28/25 08:25, Zhongqiu Han wrote:
+> On 11/27/2025 9:07 PM, Stefan Roese wrote:
+>> Testing on our ZynqMP platform has shown, that some R5 messages might
+>> get dropped under high CPU load. This patch creates a new high-prio
+>> workqueue which is now used instead of the default system workqueue.
+>> With this change we don't experience these message drops any more.
 >>
->> [...]
+>> Signed-off-by: Stefan Roese <stefan.roese@mailbox.org>
+>> Cc: Tanmay Shah <tanmay.shah@amd.com>
+>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> ---
+>>   drivers/remoteproc/xlnx_r5_remoteproc.c | 21 ++++++++++++++++++++-
+>>   1 file changed, 20 insertions(+), 1 deletion(-)
 >>
->>> +int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
->>> +			       size_t input_rt_size, void **output_rt,
->>> +			       size_t *output_rt_size)
->>> +{
->>> +	unsigned int retry_num = 5;
->>> +	int ret;
->>> +
->>> +	do {
->>> +		*output_rt = kzalloc(*output_rt_size, GFP_KERNEL);
->>> +		if (!*output_rt)
->>> +			return -ENOMEM;
->>> +
->>> +		ret = __qcom_scm_pas_get_rsc_table(ctx->pas_id, input_rt,
->>> +						   input_rt_size, output_rt,
->>> +						   output_rt_size);
->>> +		if (ret)
->>> +			kfree(*output_rt);
->>> +
->>> +	} while (ret == -EAGAIN && --retry_num);
->>
->> Will firmware return -EAGAIN as a result, or is this to handle the
->> "buffer too small case"?
+>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/ 
+>> remoteproc/xlnx_r5_remoteproc.c
+>> index feca6de68da28..459373901c973 100644
+>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> @@ -16,6 +16,7 @@
+>>   #include <linux/of_reserved_mem.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/remoteproc.h>
+>> +#include <linux/workqueue.h>
+>>   #include "remoteproc_internal.h"
+>> @@ -116,6 +117,7 @@ struct zynqmp_r5_cluster {
+>>       enum  zynqmp_r5_cluster_mode mode;
+>>       int core_count;
+>>       struct zynqmp_r5_core **r5_cores;
+>> +    struct workqueue_struct *workqueue;
+>>   };
+>>   /**
+>> @@ -174,10 +176,18 @@ static void handle_event_notified(struct 
+>> work_struct *work)
+>>   static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
+>>   {
+>>       struct zynqmp_ipi_message *ipi_msg, *buf_msg;
+>> +    struct zynqmp_r5_cluster *cluster;
+>>       struct mbox_info *ipi;
+>> +    struct device *dev;
+>>       size_t len;
+>>       ipi = container_of(cl, struct mbox_info, mbox_cl);
+>> +    dev = ipi->r5_core->dev;
+>> +    cluster = dev_get_drvdata(dev->parent);
+>> +    if (!cluster) {
+>> +        dev_err(dev->parent, "Invalid driver data\n");
+>> +        return;
+>> +    }
+>>       /* copy data from ipi buffer to r5_core */
+>>       ipi_msg = (struct zynqmp_ipi_message *)msg;
+>> @@ -195,7 +205,7 @@ static void zynqmp_r5_mb_rx_cb(struct mbox_client 
+>> *cl, void *msg)
+>>       if (mbox_send_message(ipi->rx_chan, NULL) < 0)
+>>           dev_err(cl->dev, "ack failed to mbox rx_chan\n");
+>> -    schedule_work(&ipi->mbox_work);
+>> +    queue_work(cluster->workqueue, &ipi->mbox_work);
+>>   }
+>>   /**
+>> @@ -1194,12 +1204,21 @@ static int zynqmp_r5_remoteproc_probe(struct 
+>> platform_device *pdev)
+>>           return ret;
+>>       }
+>> +    cluster->workqueue = alloc_workqueue(dev_name(dev),
 > 
-> The latter one where a re-attempt could pass..
+> Hi Stefan,
 > 
->>
->> I think the latter should use a different errno (EOVERFLOW?) and print
->> a message since we decided that it's the caller that suggests a suitable
->> output buffer size
-> 
-> Agree with error code..
-> 
-> This is kept on the caller side keeping future in mind. where we can have
-> resource table coming from the client and it needs to go to TZ for
-> authentication.
-> 
-> Are you suggesting to move this retry on the caller side ?
+> destroy_workqueue() should also be invoked in zynqmp_r5_cluster_exit() 
+> to prevent resource leaks, right?
 
-I think we got confused in the review of the previous iterations and made
-qcom_scm_pas_get_rsc_table() retry 5 times (on the basis that "some" error
-could happen in firmware), but if it's specifically "buf too small", we should
-only need to call it utmost twice - once to get the required larger size (or
-succeed and exit) and another one with a now-correctly sized buffer.
+Of course. Forgot this path. Will add in v2.
 
-Looking at it again, do we really need to be so stringent about the maximum
-resource table size? Can we just push the currently defined SZ_16K inside
-qcom_scm_pas_get_rsc_table() as a constant and bump it up as necessary in
-the future?
-
-> Just for information, once video patches becomes ready, we may bring this
-> qcom_mdt_pas_map_devmem_rscs()[1] helper for video or any other client
-> should be do this here as well ?
+>> +                         WQ_UNBOUND | WQ_HIGHPRI, 0);
+>> +    if (!cluster->workqueue) {
+>> +        dev_err_probe(dev, -ENOMEM, "cannot create workqueue\n");
+>> +        kfree(cluster);
+>> +        return -ENOMEM;
+>> +    }
+>> +
+>>       /* wire in so each core can be cleaned up at driver remove */
+>>       platform_set_drvdata(pdev, cluster);
+>>       ret = zynqmp_r5_cluster_init(cluster);
+>>       if (ret) {
+>>           kfree(cluster);
+>> +        destroy_workqueue(cluster->workqueue);
 > 
-> I wanted to optimize this path, where caller is making a guess and
-> gets the updated output size in return.
+> Please adjust the call seq to avoid UAF.
 
-We always end up allocating in __qcom_scm_pas_get_rsc_table() so I think
-guessing a number like SZ_16K which is plenty for a effectively small u64[]
-in this file is ok too. Perhaps we could even shrink it down a bit..
+Ugh. My bad. Many thanks for catching.
 
-> [1]
-> https://lore.kernel.org/lkml/20250819165447.4149674-9-mukesh.ojha@oss.qualcomm.com/#t
+Thanks,
+Stefan
+
+>>           platform_set_drvdata(pdev, NULL);
+>>           dev_err_probe(dev, ret, "Invalid r5f subsystem device tree\n");
+>>           return ret;
 > 
->>
->> In case it doesn't make sense for the caller to share their expectations,
->> the buffer could be allocated (and perhaps resized if necessary) internally
->> with some validation (i.e. a rsctable likely won't be 5 GiB)
 > 
-> Are you saying output_size as well should be checked and it should not be
-> greater than something like UINT_MAX or something.. ?
-> 
-> +	*output_rt_size = res.result[2];
 
-Yeah we should probably make sure this doesn't exceed a large-but-not-
-entirely-unreasonable value
-
-Konrad
