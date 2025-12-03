@@ -1,111 +1,245 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011055.outbound.protection.outlook.com [52.101.65.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D8E315D47
-	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Dec 2025 18:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764785112; cv=none; b=EOO+gKJNKHwujX/uv3R1DK9skBeltCZ5Ozex0PxsJH0slrA8yAQQC+XO4kF7pjmokSzeAcqJTVFQ4h1g9N4QTYy9rsKsclWw9qDEIfXA1eZft4krZ6bvoAHATw1l58zbXrsFoRA7fWCtF9LqQj/WEHbaDoTrZ/irTWCbu/VIko4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764785112; c=relaxed/simple;
-	bh=EjjfiB9cBHAXSvDlgStQBwBw5SyzbG3m02xMWWjm2PU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IQiUcXEITTtpFtr0KolFBlsiJ1/MJu+lzb5Sg9AP/9KwwebLykiyR51w7BALkdh4sjblE/GwN/E6SrKM1YiW36cwk1334fMDYHKKTPtFoJPBp2km9TcSF6wT0Un8IUrSoP1fBkGlmWcZOqY+popTEIdkQZb8L7m03XuOMGSVrQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7FNjJuk; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF6B2FFDC9;
+	Wed,  3 Dec 2025 18:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764785359; cv=fail; b=P1iL+Xy702OHP0T2YqGmCgdWWfkAe+OrwnojGpGCLdYh9Q49/YtkyeNW6DR7CeBIWqLlfBIEIumBD1zbscttjLuNm5qmhRjpoyM6uY9QFCC2FaLj3z7g7ppTiRKo/gIxf/rMTkbEtuH7YzarpLbGcvRpd4wGaM42gaFZhSQQsGo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764785359; c=relaxed/simple;
+	bh=gkRN21w9eyvoN0Yx/+CAtBNarHq5+2teU+f1L0soBr0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=o5PuCp7HblHjrsrsA+WNaWSByBbM6zukTBlpOmjDOn8BLzyMYcDQEVP2F9+n61pNJrL8uR1lULhnvnnDiqW/0u8rJFb1jrOVMDRL4xCGgzRYZtCE54Je9iU8KheucL6+yjJFvob8KVcFMjJnj+9tVKPj1nFud/H0jZGtkAb1eXM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iTk7m7cx; arc=fail smtp.client-ip=52.101.65.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7FNjJuk"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7e1651ae0d5so397363b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Dec 2025 10:05:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1764785104; x=1765389904; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=r8aUKLL0U4HpZQYQ2ev6PbF/etF9iGnebdLww9uoN2Q=;
-        b=N7FNjJukA26CTj6MzDyUQowrglB4TIXAIBwLViVds8jxgzoGX4HHPv/uR35AnA+I3v
-         WzPf8D/rWGf8ZGoCSQ5KpBEm5pCfEOViOF3HEMVcxiTBNwdvCy1/wkMg5UoggFdHcshX
-         srPErQLGgdZylEPo6QT8esjWoSCg3XY4wUyT2EntCIb2Fj4M+7gQAL8Jbeg821+VLGl8
-         QNSgEQo7mSYIETyki45C+LFFGnvREpRXLGTCGprWs5Oelb0LMm24VWfJ0bv8QM/QJWk2
-         NE7FPBmMphe2JhUSHl2+7WYWgFYO7PxLfXTxSFxd4Q/Up/EtsVE+GzRYeCtbz7QBTmDm
-         6/3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764785104; x=1765389904;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r8aUKLL0U4HpZQYQ2ev6PbF/etF9iGnebdLww9uoN2Q=;
-        b=sRnOLlzPRAxJq/2Nd1NFsbY76XwqBUTPCRz6f5Ha/y6eM36ZJHhediKTLO73Kzzi5u
-         XCa4NKsL4Vg3N/Ch5Yxmi0plC+XOcNqWmapcS0osneIYnLbBMhEsg3F3wmgBL5kOpBhu
-         HGcGEBD5dPecY1Ynu/6Oz7/1aLrP4WmrRdgN0bWhudtFF6YDLEO/odoC0cu+e+gUoCL8
-         UxhohjmckjAZK32n2ZkkQcLdBnlGOELTaiPPn8zqvc7Mf1sMF1uznUtG02GsyjMtN6P/
-         vaSuFry2nQRsMT0UDBvQqOA5UuAI4rZQuEUPMQfvPZS4nCk05qWxFnOpMmV05tcQ6CsU
-         7CbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxSjX6VFDyo7aIdCWgvbvtpkvnxJvWx5bGWbzSnU1n9iQ9DBEmDD6QEBPRINA2cx2uFGG3MIlztGBFHuw1Tcxz@vger.kernel.org
-X-Gm-Message-State: AOJu0YysW6vNUoDlSLh01iHdBVNrCCLWZsOpdR0hgODT26JWj55EGCgv
-	cR4d7vMvdZ7Y/T26QL9IRIt2eaWqdJ3UWwUimx24Bk2QMoYMtN+m0YY+
-X-Gm-Gg: ASbGnctUQW1JQewZ54HQqDaeWWE+2R9UMeyKFRsywZa9By0T2gReJ3g18RqGrgt+P3T
-	pbzoIsMxkkdb2vrLHx5hMitGCOnxjtZPQCqmRrfVX/IXhKEDszcTnfIBNMBFlBuU4eH4hM6imu4
-	po8+zNoldxuF8jYQfDKTKsMpViw0jexoAwXrabhJ7pA70v/0DWDOp4KFAYinfwweIpHv8Hd64/R
-	37m395Pnj4LmgynqQUjlM22tZ2G6PLo5stgQ+8ePz26DCASVhvuUr+YY9oF4i6AefrllH1dpegB
-	+fEo7mOdIT6G3le0vBBKCKxrC605aT5sFURUWJGDwm5j27VB/PCfCsMNt00s6LBSwgFhC2ekK9v
-	XvkFkVDRs8KA1wCG2f3k4T7vtza6qMIOJ+1oxQE2jBr86l+Xt631BtuqoHzzmpVPvT2mv6UCtZG
-	Ez6EVkgWmkNVgfCuEzKPjjfdeOOP5/ZQ==
-X-Google-Smtp-Source: AGHT+IFEixLGV3A8+6jlL7a/8Uv2OMwWRqulw8eWOs24wopjQE6qdYvBYZM9hQQi+wS8cPkdVKqjPA==
-X-Received: by 2002:a05:6a20:3944:b0:342:1265:158f with SMTP id adf61e73a8af0-3640387a27bmr191416637.51.1764785103491;
-        Wed, 03 Dec 2025 10:05:03 -0800 (PST)
-Received: from soham-laptop.. ([103.182.158.110])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d150b68367sm21135011b3a.12.2025.12.03.10.04.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Dec 2025 10:05:03 -0800 (PST)
-From: Soham Metha <sohammetha01@gmail.com>
-To: linux-kernel-mentees@lists.linuxfoundation.org
-Cc: shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	Soham Metha <sohammetha01@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: remoteproc: Fix dead link to Keystone DSP GPIO binding
-Date: Wed,  3 Dec 2025 23:33:37 +0530
-Message-Id: <20251203180337.50831-1-sohammetha01@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iTk7m7cx"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eGlHL4Vee6Rj1ZXwh8+xlwfGD4aRIjedQ9Vs4JC+4Wm2p+hCJclAiBtQ3gxQJPg0KtgWOXUhFXgnApcCe0ppEhw5eSU6Ng6KbXKowvvnLdDKXYvwOWVsAFocWHZ56xn9aYHmkA3PagVKqCc8pXAbGsQ/1CaJD7f6QEywGUqBdA0YwDduHOhm3GUJuYvKQVi2/SzBICcfIxD1SPyv6KxX6wqHkTS/aMYJxCZSSaNgzJGCYeU24J1MVbr6GMCXRFnJxCU1dDrIOEHLNlbLDPQfie8BCNsqi7aYYYZs/WXiLql+lUDpS3NytXqMKhRdRtSOiOx2tCOoAMZdZpIMhbNevA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QzdCsiNW4aVMY6eON+onneoXp7RRIg0O+7/nJCpsEhw=;
+ b=T4l+IlrUNT7N/wYvOWCbngQ29PwGfN+oKQNZ0UIJzGrkJc6Gk8DdhB+i2TTvgSCaUsstTu2/QxeAfyvXo7/5GAjI2Zycv2lf7KNaZS5zWOeqrsTGy+WV/msaGStgjPIxhHz/s4zDYzQrUw/V6USD836ui7vmkTFfh6fxYclrqi4hddr8lF0vMBjG7AM1W5ZRkpowjCFOyO63JvTijjQEz68DwxMLQa2wwHEn5NoWw5tshCzfMIrJBT9x5/M9MGmxUsows43QxjIM/NHVXY5XmJgAN4hFjtilXecb2pWOMd8to1q/wxOllmWVNTEmVAzPD9bb+JQ4DFQ7kxTc9qfc7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QzdCsiNW4aVMY6eON+onneoXp7RRIg0O+7/nJCpsEhw=;
+ b=iTk7m7cxL36Vc6DG3ep2hXfZmf2ECmfJelhrcJkSUvXWczPFt35yLgzMFmdVDaBABVppVMPlNZcM5qsElrOGDH4lkSpIQicXPDkwK9Bn1Hi6OkSdYjNJ9yWylWnMIAzRfM3RjOo+xtSQ5uJzsqfQbf8T1jt918GgWLQm7KhUDYGluJdj9nAKxy52Fjrzn11hqOPcGnHQTzOYKYPD0Ifbi4uzuXa09IZKpEs0MuDd5EB4oqh7eCu6dYfqA7xXBIIeJDWtsfbIutqPVQOqXOkNB4ufXYjjMMy53q4dczcNk6R7xcwqASnGVZlS6E6jRhnb5uZhji/LtYnv9qWdQH7p5g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM9PR04MB8907.eurprd04.prod.outlook.com (2603:10a6:20b:40a::22)
+ by DU4PR04MB10600.eurprd04.prod.outlook.com (2603:10a6:10:588::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.9; Wed, 3 Dec
+ 2025 18:09:12 +0000
+Received: from AM9PR04MB8907.eurprd04.prod.outlook.com
+ ([fe80::a361:2618:7785:3bc9]) by AM9PR04MB8907.eurprd04.prod.outlook.com
+ ([fe80::a361:2618:7785:3bc9%4]) with mapi id 15.20.9388.003; Wed, 3 Dec 2025
+ 18:09:12 +0000
+Message-ID: <6a6e90fb-c8be-49ad-83b4-4b602489a616@nxp.com>
+Date: Wed, 3 Dec 2025 20:09:10 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: imx_dsp_rproc: Wait for suspend ACK only
+ if WAIT_FW_READY is set
+To: Bjorn Andersson <andersson@kernel.org>,
+ "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ "S.J. Wang" <shengjiu.wang@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, imx@lists.linux.dev,
+ linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251125124903.962295-1-iuliana.prodan@oss.nxp.com>
+ <20251125124903.962295-2-iuliana.prodan@oss.nxp.com>
+ <l5udmggplyatnozipk7tjugkkzwtglckjejq67aa7q4mlywxw4@4vhjkbhjthnn>
+Content-Language: en-US
+From: Iuliana Prodan <iuliana.prodan@nxp.com>
+In-Reply-To: <l5udmggplyatnozipk7tjugkkzwtglckjejq67aa7q4mlywxw4@4vhjkbhjthnn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P250CA0029.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5e3::19) To AM9PR04MB8907.eurprd04.prod.outlook.com
+ (2603:10a6:20b:40a::22)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8907:EE_|DU4PR04MB10600:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d3537f1-17a6-421b-a93c-08de32970f91
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K1dpdzRudk1GRjhuN3FSQTYyUUxjSHc5emJuZ2p2UUdQUE5oWTkwZTg4ZVA1?=
+ =?utf-8?B?UlRUbncvdWxXUldnSm1HOUNWRGtTWCtBL2RzQ0psSkxVY3ZZWFUwdkJpTU5B?=
+ =?utf-8?B?alNXaDNBNWhJUTllajZBRk5GLzFjcE45NVJRamEzbEFoQUtXSkVqWFdyVThL?=
+ =?utf-8?B?cG9YNUI1YmxDeWUrcEhpQjlPb0N5cHUwbGpHbHd4WGE5SkI5T0UwTWNkYWJD?=
+ =?utf-8?B?OVNMN0dURDlLdWZHeUp6dkRyRTg2bnpQNitTTG41cUhNeUVhTmxEcFcvUG9V?=
+ =?utf-8?B?ZFZqb1lBMkp5N1ZpUGdwLy9DMDE5YUZrdEhTMTRvRXJjZkg2MkNxb1FiS05M?=
+ =?utf-8?B?TFNLMlhBTndCcUZPQTdkclI0T0hBM2dkTmJlT0NJdlRMM1ozd3ZzZDdIQlNC?=
+ =?utf-8?B?T25pajZHTEpDeldVOHBJV2o5YjRiMWx6a0Zzd0FDQ3kxa2oydXZBS1VOV0R2?=
+ =?utf-8?B?NFRPcjFOZGdqbDZCUFh5ZzZOekZ3dHNYZlJoOXdZamo2bE1wUUhmenltL3VR?=
+ =?utf-8?B?czV1c05TRzFoMDk5VUlnM2dxcDVmdUdGelBmTDZRaXkzUkpqemhkYkRpUXFJ?=
+ =?utf-8?B?L0pLMCsyWVJQcU5HcmNwRmpDSzNFQTY3d2hHRXM4Z3VxeTRhMERkazJnWlZQ?=
+ =?utf-8?B?K2tZT3J4bWdCN09DSy9SMEkrZEVGN2Q4bllYb2VZelpNa0Z6YWUrS2NnanQ0?=
+ =?utf-8?B?ZkJ6L1RYMnM0eWZWMDYzdXpsWWU5WWdqNnFMSVY2SURSeFVHSUprQkxLV1d0?=
+ =?utf-8?B?eWxFVFY1MEhleW80cWdwUlVhakljS3IyeUs2QUFvM1RFNFVvV09udVlkY2F2?=
+ =?utf-8?B?SnRPdFg1RkFmZjBCaThDbWh0cktzWiszRjdURUpVaUNuL3RpNnVKV3NjMi9X?=
+ =?utf-8?B?OWUvMWY1TlV4SkRpWGlRcWpWaEViS3VHWlY5MjQyK2ZRRlY5VkFqYjdZbkNa?=
+ =?utf-8?B?QTg1ZC94aDhBR3lVNVJmZE94UDFZcHpGa0xuWHZZWVpWTUtKMmk4WTVDdUNI?=
+ =?utf-8?B?RVUyWXZsOG1ZUUZVWm5xRDdnL1RNS2U0aUF6aC9xaGQyeFdoaXo1M25YdFhL?=
+ =?utf-8?B?M2ZjVVJPRVNmUW1HNXMzQnM0d3N1REFTRmtyckZFK3o1QWxwZXE4QVNtM0lr?=
+ =?utf-8?B?em5Wc2xyQnhoU09jVTVUU0F6eGVqQXdFT0FzOVY0SUgvaTlqVng1elpUU0da?=
+ =?utf-8?B?MGlFd1dPNGhnNHJyVFVZTzhqOW5pVTRmWWFLUW9CcW9XTFEyRDkxUjNEdURP?=
+ =?utf-8?B?YmhuRFN2YXN6WC83aGluOGt4eXdVM3djZmIzUVcwNm5CaE9zRHJRcFBXcXRx?=
+ =?utf-8?B?Z1NWUWo5U2h1NkduZU45WUVBSkpyaFEyN2JmdmhONCtVMzJ1RFB0QUpqT0Zk?=
+ =?utf-8?B?YURGb2ZVWEltYjVRanpsR3FBQ1I5dFhucFdvR201QjlTRGNtYkpYSVptb1pU?=
+ =?utf-8?B?MlNhOStIcG5TdUlTR1k3VDJxazM0aWNrYWh0eUpFSzRnbkFDVWpsKzZpTmcy?=
+ =?utf-8?B?NHpiK0tmVUFSSU9ORStqTWFMR29uUHZwWGdnZ1dQalNIekRoN045Skt1Vk00?=
+ =?utf-8?B?UmdIbUE0bmIwT2FiUHROMlBFb2RWZ2M5VU1JakhNZzE4Qm1ZVGxyb3h1Nko2?=
+ =?utf-8?B?WHB2dTNENGtrWFVvYnRtMzA3ZGk3S3Rmb1pndTM4ZXZ4YTNuMlp3UWE2VG5k?=
+ =?utf-8?B?U1QrZHNxUnV5WHJIOUc2MmpWdjVUTGMrcVZUblNtb3Q2Z1MwVFNES0Z4NDB4?=
+ =?utf-8?B?MjkvTGJqVldZb2tXTEwyMnJYOVVoMElEclREWCtHYXZNcS8zb1ZzcWZCQmJ0?=
+ =?utf-8?B?UGtQTlpKUjI0UGhjR211SWNzRkU0eFdtZVVlMnhFb1NsbG41cURhVHFBbzBv?=
+ =?utf-8?B?dVNmdGRZc211NkcxMGlleU5OYkl5UktZQ1ExcVpjYjJwQm5DN05tS0xOdHlq?=
+ =?utf-8?Q?QClcxKM8+xInwIlf+GK+zhG0Ea4xSvjs?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8907.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Wjl6QlIxc0w4T0RsbGlQYkdCTXdQS3lmZGtjWUp2S01tNmJQRFp1N3Uxejd0?=
+ =?utf-8?B?cjZCR0tzMGdMMWVHSWFiVWZJSHgxd09aYUJpU3NidnRzSm5XRnppVmJNNEdI?=
+ =?utf-8?B?WXNUUjcvbG13YkdUSU91SjVxaDNnMmVpclVlUnNvWE90djlUTkxMcEpGdE9u?=
+ =?utf-8?B?MXgvcnlsV3hEM1phY25EZ3IrMytvclJhNC83dnF6NUVSc2hzY1lLeW92M2wx?=
+ =?utf-8?B?VUJYNitZa0FJdXdQU3M3aEh6YnF5SFRaZG9SaEd2TS9zR3doZUVXOE5yRXRC?=
+ =?utf-8?B?RFk2ZUdVdzg3V3ZTbTdkYWxYaTVyb2FtRXZSSUxINGFuTnVUd0pqdGcyMlN5?=
+ =?utf-8?B?djBFNmZlTDdmWmhnWFhUbFNVY0NsNEk2UW1ZUS9lVkpCWEJHZ3M3ekZScVBD?=
+ =?utf-8?B?TGxPdUhycU8zb0kvQi9YeFBQNFpaOHMwZTMrWHFvTGtVQjhJMFgxSXM3WnVm?=
+ =?utf-8?B?Z1I5bWgzS0JoMEQ3RmxGSUJXc204aloxUzFnYUdHaE0yS1NENnVsQ25QS3g4?=
+ =?utf-8?B?aEJXZENxcGIxNW1scUZvOXl6SmRzYTRwZkl1cm5aUVU3a3o1QnFUNkVaUjNX?=
+ =?utf-8?B?QVdFd2tWblRncnNwQUQrNktkNWUrVFRPY2lvVSs2NllUdEU1a2pZRmxRZC9z?=
+ =?utf-8?B?S0FRSWpkU0JTdXRjRUZybnQ4cWtyY3JZbjU5ZDRoaHhVWVN3VUlvRnQzcXZ0?=
+ =?utf-8?B?VEtEUXFoM2lPaittZEJ1VUhBMmdYdFhQTkdOU2xOTUo4UDQ0WGEwUHFGLzVF?=
+ =?utf-8?B?WDQzQi9hdlRKTzR4c1BndVduRGZZNVQ5MGxlNWNRRk9aVHRnendkME1LOGcr?=
+ =?utf-8?B?Y0JLQjVHK0llM3N0VENvdzZ2ajIzd3UyOUFGako2am5GTXBVNmIrYUtoK3BJ?=
+ =?utf-8?B?SmlqMEw2cFViZUE4TldoRjBoZTUyZEtaa2dwZzBTREpHbWdnVXZ0ZEpPb3Nr?=
+ =?utf-8?B?VmtuaW5zQnhoRnYwZDkwQVZ5TERvZWU4bkZpYUtDaGUyanhDL2VPRUpuQjhm?=
+ =?utf-8?B?Q0V3ZW9NemJYRVYxRlJGcHdIbTg4VG1LOFV1NjNpSTBpaVB1dVQ2b05MK20y?=
+ =?utf-8?B?c0hoNUFJd1loMHJPbnoySWhvVFgwTWt4TnY1SHlOeFl2UWVBT0xQZzJiRVlo?=
+ =?utf-8?B?eHV5MnFpeEg0dm41QUV3VzlXVlFVOUh3NzZpbzR4Q3M1b2ZhVGhiSTJ5MEcv?=
+ =?utf-8?B?UXNMWnUyTUFYbVFyQ09YclN0YTRlTHJWZXhFbGd5U3JiaUVROFJKRlVCZExo?=
+ =?utf-8?B?S1dZMnZUMzBOWTVMVGt4ZnFEL0pNT1VmQ3N0VlBiQy9aNzFRZFdoVDNHRnZL?=
+ =?utf-8?B?V0x1SWcrd2NSOGFKV0tXQVJ4aUpBU3NQU1AwSjdxb1QzVk5qMzU2UzdGV0dZ?=
+ =?utf-8?B?RWt2ZjIzOWNURldDNWZ1T1Z5L20yMmdTL1NsRFovZ0lnSE8vUlpjN0pLY1Iv?=
+ =?utf-8?B?TnExRlRmOGxKeWtMS2NxMWQxbFJjR2VUT2oxazVvTXdrMk9yTkZFdFFxQTMw?=
+ =?utf-8?B?WTNQc01obFZsWVFJRm9NR2JGaHFmUGNWZlg5RnpBNWFVYThYUHNNSCtiSTIz?=
+ =?utf-8?B?dW1RZWdOTXNSK1c2M0I0OWpNcHJmREFwMWJxVGxRQjM2WE9NMzdZSWxDdU03?=
+ =?utf-8?B?Y09Cd0hmSyt4Q2lobjcxRnBRV2tNbXQ0WlNCbkdUSjJiM2Z2M2pqV3dzZGxM?=
+ =?utf-8?B?dmZPTzRjTnVlYlhnUFJEMHYrN0VEZzBJZ3NIckdVL2w2Z1hoSDFIR3hqc3M4?=
+ =?utf-8?B?Ym9UWlF5Ky9iWTcrK29EM0dON2d2c01PTGp3MVRsTTRYWkdLeFF2cUl5bDBv?=
+ =?utf-8?B?SnRjaVlzMUx5WjU4V0lsNG1qT1hDSlFxQnJEN3hOMWlONU93R1JhVitTMmZX?=
+ =?utf-8?B?aXlQazBBVjNoYUU5TXFUeisyYVZFMHB6K3FNckxEOXlRbzMvc1EyTjBYd3NK?=
+ =?utf-8?B?MU42bzlId0c5Q1NjTkkvbUhCdXNZQXArQ1VObUJXcEs3M2IrMVg4d1dqcnN2?=
+ =?utf-8?B?dkgxd2VTc2FvM2RmdTdYR2FoTlVxOFFlUUwxUDJlN3U3dUhnakdidFc5RnNL?=
+ =?utf-8?B?cVNCNDRlU2J1Rk9WaTNndWh3d0JnTi95QWkwSlF4YS95cFhuWXRiRkptQ1p6?=
+ =?utf-8?B?T2pialRiMUVOd2RtUXpCR05XZ1FSQnQ2OXIwZDNESUZHU3FGQnZSOHA5cEdM?=
+ =?utf-8?B?VGc9PQ==?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d3537f1-17a6-421b-a93c-08de32970f91
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8907.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Dec 2025 18:09:12.2135
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4POQzuywZJnOIB4F3Bh2iF73mL5DRHFimg7GrinNxdw/Z1RsLkNExq04NQliTHo+zJtrXv1ACLscrMgS52XWFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10600
 
-The old text binding 'gpio-dsp-keystone.txt' was replaced by a DT schema in
-commit aff0a1701b020c8e6b172f28828fd4f3e6eed41a
-("dt-bindings: gpio: Convert ti,keystone-dsp-gpio to DT schema").
+On 11/26/2025 10:21 PM, Bjorn Andersson wrote:
+> On Tue, Nov 25, 2025 at 02:49:03PM +0200, Iuliana Prodan (OSS) wrote:
+>> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+>>
+>> The DSP suspend path currently waits unconditionally
+>> for a suspend ack from the firmware.
+>> This breaks firmwares that do not implement the
+>> mailbox-based READY handshake, as the DSP never
+>> responds and system suspend fails with -EBUSY.
+>>
+> 
+> But if the firmware doesn't implement "mailbox-based READY handshake",
+> do you still want to send the RP_MBOX_SUSPEND_SYSTEM message?
+> 
+If FEATURE_DONT_WAIT_FW_READY is set, it means the remote does not send 
+any feedback to the host and does not handle specific messages. In this 
+case, it’s better not to send the message at all.
 
-Update the reference to point to the new file.
+BTW, to avoid confusion with FW_READY macros, I’ll add a new patch to 
+rename these macros to FW_CONFIRMATION, since they are used both for 
+boot confirmation and other firmware acknowledgments.
 
-Signed-off-by: Soham Metha <sohammetha01@gmail.com>
----
- .../devicetree/bindings/remoteproc/ti,keystone-rproc.txt        | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> If so, can you clarify here in the commit message that the firmware
+> expects the mailbox-based message, and only the "handshake" part should
+> be omitted.
+> 
+> If that part isn't implemented either, then I think you should fix the
+> code to not poke the mailbox in the first place.
+> 
+Yes, will fix in v2.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-index 463a97c11eff..91f0a3b0c0b2 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-@@ -66,7 +66,7 @@ The following are the mandatory properties:
- - kick-gpios: 		Should specify the gpio device needed for the virtio IPC
- 			stack. This will be used to interrupt the remote processor.
- 			The gpio device to be used is as per the bindings in,
--			Documentation/devicetree/bindings/gpio/gpio-dsp-keystone.txt
-+			Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
- 
- SoC-specific Required properties:
- ---------------------------------
--- 
-2.34.1
+> 
+> Also, wrap your commit message at 75 characters, please.
+> 
+>> The driver already uses the WAIT_FW_READY flag to
+>> indicate that the firmware supports the READY
+>> handshake at boot. Apply the same logic during
+>> suspend: only wait for the suspend ack when the
+>> firmware is expected to support it.
+>>
+>> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+>> ---
+>>   drivers/remoteproc/imx_dsp_rproc.c | 7 ++++---
+>>   1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+>> index fc0470aa72c1..e25dbe32ef79 100644
+>> --- a/drivers/remoteproc/imx_dsp_rproc.c
+>> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+>> @@ -1327,10 +1327,11 @@ static int imx_dsp_suspend(struct device *dev)
+>>   	}
+>>   
+>>   	/*
+>> -	 * DSP need to save the context at suspend.
+>> -	 * Here waiting the response for DSP, then power can be disabled.
+>> +	 * The DSP must save its context during suspend.
+> 
+> Please double check that this comment reflect above conclusion.
+> 
+This is valid for some firmware, like Xtensa Audio Firmware (XAF), where 
+we use both firmware-ready replay and the messages are handled on the 
+remote side, where the DSP context is saved.
+
+> Regards,
+> Bjorn
+> 
+>> +	 * Wait for a response from the DSP if required before disabling power.
+>>   	 */
+>> -	if (!wait_for_completion_timeout(&priv->pm_comp, msecs_to_jiffies(100)))
+>> +	if (priv->flags & WAIT_FW_READY &&
+>> +	    !wait_for_completion_timeout(&priv->pm_comp, msecs_to_jiffies(100)))
+>>   		return -EBUSY;
+>>   
+>>   out:
+>> -- 
+>> 2.34.1
+>>
 
