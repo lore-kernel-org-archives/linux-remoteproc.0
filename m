@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B413168E8;
-	Wed,  3 Dec 2025 18:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233F430101C
+	for <linux-remoteproc@vger.kernel.org>; Wed,  3 Dec 2025 18:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764786930; cv=none; b=nZAv9Y08LhwAJNW8vBKwSlRydHkVpBZewass71uf/gEvnzLpm7ziVdyPac2h1ZCvrdR9sSjFWzUVHKqqM/jg7Qry2Q9h8kCHE8yxB4xqWF3kyb7sl82rkxxUUsQdcRqG0oZMSyb6qFBqMdmhdz2UIh0ut0xpVBk3bpb864isd+A=
+	t=1764788219; cv=none; b=AuAqiHbyJaLecyHzC+zSYZE06oKQR5NZWUJ8LSrFUUr39BYwndnuD9wshGmOTOfhkDl6FQ8bqe4F6jzzGg4OeEUlYI1WRash/Bv89tA3qGPeY0B4HjsGJlGnd/pJbjbUM9kNQbrMdsWkKb3o37dxRpKxfR9mQrvMdGi2VR+QIRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764786930; c=relaxed/simple;
-	bh=XlN+kiDIheSOouKZGlmhhmpbswiYumcvUrppuJjzNj8=;
+	s=arc-20240116; t=1764788219; c=relaxed/simple;
+	bh=451eezjKzgyOtVuH33TiHjo9Apd1b2ad46/RYOa3TK4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j0Rwyq9LMrRUYATMS5OO9+t/Vg3a8FQYK0tV5DNYwkRNboWWGPZaB+h4YmYIsX3hE7USWdsUsewRDEXkJ7yeDANWSEjHgMXvarIp8LL+1RwzevKHWZFiy+lxXTnsDE3qQAgvPXMmWzZhCib+EuRoNavQ6vNrikYaaGhMLZhLLHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWMd+ew2; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=CT3pDtnMKSxVACgXlgwnYwGLmHuVrPHbBlN5Z5RV5RRNUKlIly3jxebhxvkNaDXpoVqIfuUKWl6bZ1PTjASjs32lr+SqOD+yIaVsohLQtnLlzQ1gCtTo/1F34u3X39ggVKIxclgGverTZF0o8OlWCC9jRdu/b5bzJBTTOdxmvwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYeFjZlS; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWMd+ew2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246F1C4CEF5;
-	Wed,  3 Dec 2025 18:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764786929;
-	bh=XlN+kiDIheSOouKZGlmhhmpbswiYumcvUrppuJjzNj8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pWMd+ew2J8HAHLPPD8g8DTQa4BXOLdQ+BFlLXyg2eFVBR93joaRGYs/wY6I5HpuUB
-	 jQqHzzcZagUuSHMsVEVJo0kMnWtdQzuSvaOSE2xpktBmhaiKjdn+IoRo6h3uaHSHsH
-	 GdjWyJqr2zmXGs0jrQQeleU4HziIjrVkFQGNgfMqA52CTHO+1pLruW6ZtOS7/Lb0Bk
-	 DRHWd+LSfWZtEBk5ujmaW73bEl7ArhEn76tWiufFE1bhwYsE0AY6iQccOmJKglQzmJ
-	 Tf2wSvDvzu5YkY5BGO+62Lz5rjtPogbsqT4N+WwRKhquZOQs02iKNUNwu+QrbJAN5h
-	 ojBSxnpCwU+6Q==
-Message-ID: <aab83a61-9d22-443c-92bc-d7caf1c8afac@kernel.org>
-Date: Wed, 3 Dec 2025 19:35:25 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYeFjZlS"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7acd9a03ba9so56875b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Dec 2025 10:56:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764788217; x=1765393017; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=71E/ilkLBTqKwG0Dx6ylFmlxqv3BqJ7EmKi1/R6JSno=;
+        b=hYeFjZlSEhLpTl4tmq3AJznXp3ToWUH1OG0LTriGJc3T529t2159MfDArLErQWIMjJ
+         rj26DWpcg3ILZluKsD8a83nG9PO5AOANe1ZRUro8aJ9yE0/27Z5XGeWXTfm3nRE9xBkL
+         sRvwstoO17vAYSwMpHKnCGp506/oPEqHJRkEW8BWnZagyPscLDIFXsrOir+q5DyJrgE8
+         WEljobbOjpWwqQtL6rsdUkaIPmjqcnc1Z6O6GaW3WUFwIR/qxz214LeMWcaaHoQUB1FG
+         6909tPCHLaKDht/bNCFkwxSefCH+P6RRoeqqps934xQ+4p8SbSDO37tYQULAD84leVLF
+         2Vow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764788217; x=1765393017;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=71E/ilkLBTqKwG0Dx6ylFmlxqv3BqJ7EmKi1/R6JSno=;
+        b=ZawNo9K3nL65dQ6tyB1PmGVu7d/O/XX8VAVZk4GGo5fnNdl3kh1fvw56aEl+V9a6Jo
+         icy9EcZs89+fB+Lp3wCxmkkjcrSgodNz6NreaJ1V9TJgN39ITs/wqhEWfwg/UVo1GueI
+         7Ba9FoJDJg7OlOys21ehmr69xwSmWSzE6m1D+KsvJRwRq4GcTuC5HTWe29mAgmHHaNEv
+         SmZ8mQoemvQc6cLlUXjsk/PzWcr2GHqf1pSy38v/okE8jVz9M1bjhmCCvDsylgaXJgim
+         GTF9ol8UvOgddhlPrYeprL9a0R/wCgqIPmdWE+isoM7sC8dTf+yByruM1/4bZSzuViRg
+         P7Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSAxcO/CfHpjJ30t9Wg1OvuBN9l4NwFh3gLnvNa9HbGf2Pf5QBrnyzri+MX6H9I85vSpAErCrlBYqwBvX9hZpx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF3TGysvvnfYPjKAXVL3S9t6qU323oXIXCai3SwSOAMDJrYl8l
+	7foGN20tgOUHq4e+SE9CcgMo4Ihl5sbHzs3219F0tq3L9KVVROvyf7XR
+X-Gm-Gg: ASbGnct0O1E5FYUCngOeuDb7Ygnv8YR85eDG+49Cn8sCLqOU7iUZeQBJcRSI5uDX4/V
+	SUh+Ylc/y4WegIL2TzOaugDfYkiPv8P+77O8k7cEKh//Yz4hbdJDGgqFsWlrifmJZPTWKzCdwAd
+	OphpF/hD4776Kx/CsSPh3OdoqjPI3EW3rzOjScalQrSzNjGzTXoHw3Tjhb6/i84hS1JSqPOpn1W
+	C0/TnB1kc2hiyiQ0d/OUkWkJk7pEtTTd4smmgqWH2PCV8+363gTHrqQdvo4NhfTjteR275JmWjl
+	4ABQFvM6Xm9YEkwd7v+GWVML0rEN6+TBhlxG0upMFYMDSyhujnR654lqvuc7mzE9oSvtzvLkrKZ
+	nwhK47IQzWiNjcg8b67w0cx5JQtkpVu09j8RojNHwlCe2sWsxR1aLZHaGT/3mJjZ9ufYqjaqUej
+	xUSx02QsrHOWvxVB+1bobAFHom3B2nBQ==
+X-Google-Smtp-Source: AGHT+IFT6Akj8U+/fFusx2rop6IZ68mcqncMokm0DZX3RkEiNJb7fAdqG7Sl0CHQ1h6bv2pXck96VA==
+X-Received: by 2002:a05:6a00:a464:b0:7e1:730a:613b with SMTP id d2e1a72fcca58-7e1730a6f68mr1325466b3a.31.1764788217442;
+        Wed, 03 Dec 2025 10:56:57 -0800 (PST)
+Received: from [192.168.7.10] ([103.182.158.110])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7d1518e5dacsm21036833b3a.23.2025.12.03.10.56.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Dec 2025 10:56:56 -0800 (PST)
+Message-ID: <d2dfa83a-80e3-4a89-b853-a88589ef0092@gmail.com>
+Date: Thu, 4 Dec 2025 00:26:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -37,7 +71,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] dt-bindings: remoteproc: Fix dead link to Keystone DSP
  GPIO binding
-To: Soham Metha <sohammetha01@gmail.com>,
+To: Krzysztof Kozlowski <krzk@kernel.org>,
  linux-kernel-mentees@lists.linuxfoundation.org
 Cc: shuah@kernel.org, skhan@linuxfoundation.org,
  linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
@@ -46,68 +80,40 @@ Cc: shuah@kernel.org, skhan@linuxfoundation.org,
  <conor+dt@kernel.org>, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org
 References: <20251203180337.50831-1-sohammetha01@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <aab83a61-9d22-443c-92bc-d7caf1c8afac@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251203180337.50831-1-sohammetha01@gmail.com>
+From: Soham Metha <sohammetha01@gmail.com>
+In-Reply-To: <aab83a61-9d22-443c-92bc-d7caf1c8afac@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/12/2025 19:03, Soham Metha wrote:
-> The old text binding 'gpio-dsp-keystone.txt' was replaced by a DT schema in
-> commit aff0a1701b020c8e6b172f28828fd4f3e6eed41a
+Thank you for the feedback.
 
-Did you actually read what I asked? I think you just sent it too fast to
-be able to read entire multi-page document. If you read it, you would
-see that abbrev is 12 characters/digits.
-
-> ("dt-bindings: gpio: Convert ti,keystone-dsp-gpio to DT schema").
+On 04/12/25 00:05, Krzysztof Kozlowski wrote:
+> On 03/12/2025 19:03, Soham Metha wrote:
+>> The old text binding 'gpio-dsp-keystone.txt' was replaced by a DT schema in
+>> commit aff0a1701b020c8e6b172f28828fd4f3e6eed41a
 > 
-> Update the reference to point to the new file.
+> Did you actually read what I asked? I think you just sent it too fast to
+> be able to read entire multi-page document. If you read it, you would
+> see that abbrev is 12 characters/digits.
+> 
 
-This wasn't here before, no need to add obvious statements.
+I did see the documentation mention that the abbreviation should use 
+at least 12 characters, but I didn’t notice any upper limit mentioned 
+in the text. Because of this wording, I assumed longer values were 
+acceptable.
 
-Best regards,
-Krzysztof
+Should I send a v3 with a 12-character abbreviation?
+
+>> ("dt-bindings: gpio: Convert ti,keystone-dsp-gpio to DT schema").
+>>
+>> Update the reference to point to the new file.
+> 
+> This wasn't here before, no need to add obvious statements.
+> 
+> Best regards,
+> Krzysztof
+
+--
+Soham
