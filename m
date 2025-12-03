@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE026B756;
-	Wed,  3 Dec 2025 17:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC75398F8E;
+	Wed,  3 Dec 2025 17:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764782477; cv=none; b=GjFKZr/5FC5uSmMyVAghIedvtN0KVryvvj1qa1bgWRsUEas9Tesz0dT5HIVrCElcL4gW9XYI5KyEFTtG1M9V5Bvk5EPeufUVVeUXJ9BmWzL2aa0CT86818OGlexmU3YLaBjhKXP4lw40/Bj9pX8jTZ1WEuInq5BIez8O1fRQnSs=
+	t=1764782513; cv=none; b=d2uiQ3Xxil7DHkHji1CAwVuHo90k0xPYYQfFSEqZziPfWko8/X+NzH4SbJ0Im0GjkgbhfW5VSlLoU6TYCpY5P44tg9w5O9aEpgyv0Yqp0RFWe6R7lU5HJevxwL44M95QKwKyhq/VejM4d1GORTPgcOFXY2L7bZcSuu1kf72xS20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764782477; c=relaxed/simple;
-	bh=fdJ1L0/KH9n0iTE1A7RSEbamakqwcU6zYyXHy3ANRI4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZlcvA5we8I+XoKiV+5F9fpX2BScO4AGxkbkw/TReHD2QWJoVrgknYZJu6vQFF8MJxy7KAsk3NilpZK1wU2tigbKoK4toAiKYaH6m5woxv1gwmsXKwh0WnebozRYTP0scnHQm5LdLbD/9D/gLcngmaPba9NA5qv8aHW+dcUSKiD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZh9a6rI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764782513; c=relaxed/simple;
+	bh=pg6AgbK+WXKqk6ICGUlF6ZoMbP2l9IhcXljfRVKs6Jo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HMUvgYcrUNIXczTddsiQgpLJHJArCmfci7yp93PRquF15p7/RA7Q21JhKpjyUHAew07mAy8g1B3Zjf18Sf6UpCagO7/5AhrRrOyJ/QVnPpu/eN91MwARWiuXjcYH7RIXUj0cF9xPQufvVJzGPq+hl0wz9+wm9UYFtxemzDq/kg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/Nqr3Cl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZh9a6rI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F62C4CEF5;
-	Wed,  3 Dec 2025 17:21:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/Nqr3Cl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C779C4CEF5;
+	Wed,  3 Dec 2025 17:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764782477;
-	bh=fdJ1L0/KH9n0iTE1A7RSEbamakqwcU6zYyXHy3ANRI4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VZh9a6rIC2PaP9N63WFMRf7R4/uOew9c5w+J1GFFCHwyIHFVGI2YatylcPojxAiM3
-	 +6Fj0On6dIqa6pwlckcTCdpTmTkm7dN6ND5M6Cgek15pj2SeAQr4FB850TPRejG8y5
-	 Z5I3BzcJMKV++jGC4WReCDrF93KIM+uMw7DH6uPIPP5LAU2s1k2zFwK0njLeh+oxO6
-	 1dyRPy9vlnJR2WL7YUVDzhZBD+P2fDgoaXkPfQRlfHUVK2WxXoHwnCalaSHtWLKQDf
-	 Kf5QlQbjw++0TW4U6eM42SPhf+Xk0jbJEucT0yh1eadLgKyTuJvvmo61oQRhIISwD1
-	 pMiWM+X214CbA==
-Message-ID: <a0ae7bfa-9924-45b0-9d10-96b91eb17d0c@kernel.org>
-Date: Wed, 3 Dec 2025 18:21:12 +0100
+	s=k20201202; t=1764782513;
+	bh=pg6AgbK+WXKqk6ICGUlF6ZoMbP2l9IhcXljfRVKs6Jo=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=W/Nqr3ClPlgfGjJDfgCJmSNv8TBoB6Y0vWFHcIDFQfvQUrpVkkwINLCcOhsHqH8mJ
+	 WbjxAZepuBPGbjtYDY1UDq6vBimod87lrX9DLKgw+II+b+kmCXvXBRFz5PEp7Zr0su
+	 QBhdILCueSCPeZcY4MiATyF2blVG60v/5L0dElZhbJUfYpUVsWQJpUQKvnP9NQkjFj
+	 0sBUHytxw4loNG53nj6yLLGi2HHt7i7JViYBXWx764byCjok28ToYz4eOExAPw/I7J
+	 CO+T12oI28nwiGzxlwpZjugVaEB6yImRUi6zLikD69KOODVE6Req1QmBuafxjVYe4y
+	 qqdgiojkfKloQ==
+Message-ID: <a04e7622-e9a3-4088-89d4-285157321080@kernel.org>
+Date: Wed, 3 Dec 2025 18:21:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -36,6 +36,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] Documentation: remoteproc: fix deadlink
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Soham Metha <sohammetha01@gmail.com>,
  linux-kernel-mentees@lists.linuxfoundation.org
 Cc: shuah@kernel.org, skhan@linuxfoundation.org,
@@ -45,7 +46,7 @@ Cc: shuah@kernel.org, skhan@linuxfoundation.org,
  <conor+dt@kernel.org>, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org
 References: <20251203170702.42769-1-sohammetha01@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <a0ae7bfa-9924-45b0-9d10-96b91eb17d0c@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -90,26 +91,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251203170702.42769-1-sohammetha01@gmail.com>
+In-Reply-To: <a0ae7bfa-9924-45b0-9d10-96b91eb17d0c@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/12/2025 18:07, Soham Metha wrote:
-> The binding file 'gpio-dsp-keystone.txt' has been converted to a DT schema.
-> The current binding is located at:
+On 03/12/2025 18:21, Krzysztof Kozlowski wrote:
+> On 03/12/2025 18:07, Soham Metha wrote:
+>> The binding file 'gpio-dsp-keystone.txt' has been converted to a DT schema.
+>> The current binding is located at:
+>>
+>>     Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
+>>
+>> This change was made in https://lore.kernel.org/all/20250714202850.3011952-1-robh@kernel.org/
+>> and merged in aff0a1701b020c8e6b172f28828fd4f3e6eed41a
 > 
->     Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
+> Drop this sentence and instead please use 'commit sha' syntax, see
+> checkpatch and submitting patches docs for details.
 > 
-> This change was made in https://lore.kernel.org/all/20250714202850.3011952-1-robh@kernel.org/
-> and merged in aff0a1701b020c8e6b172f28828fd4f3e6eed41a
+>>
+>> Signed-off-by: Soham Metha <sohammetha01@gmail.com>
+>> ---
+>>  .../devicetree/bindings/remoteproc/ti,keystone-rproc.txt        | 2 +-
 
-Drop this sentence and instead please use 'commit sha' syntax, see
-checkpatch and submitting patches docs for details.
+And:
 
-> 
-> Signed-off-by: Soham Metha <sohammetha01@gmail.com>
-> ---
->  .../devicetree/bindings/remoteproc/ti,keystone-rproc.txt        | 2 +-
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
 
 Best regards,
 Krzysztof
