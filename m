@@ -1,266 +1,196 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010045.outbound.protection.outlook.com [52.101.84.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275302DF147
-	for <linux-remoteproc@vger.kernel.org>; Thu,  4 Dec 2025 12:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764851296; cv=none; b=UA2o7MvhqqORT6cF8Ja4wWgFyR+IxqpElOKacSKPWYzfE32+UqFfL6/YrqrtvkYnRSBfygt1YdjbiDChjqk2dIThqXVLVJk4ysfHdZ9YuhqfecJyjPSNfM8qRWYmKBk/3mdR11NUtPmmLwZzSKzZna6SMY8jeW3PV7YRePcRGw0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764851296; c=relaxed/simple;
-	bh=ZOudRBmbEmOaRJd/JjcOKm25J39Ef8Sm4m13z4UZW7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1DYN8cj2OTTSTL+UEHnEv817mQ+efJiRHQtrpqNiO55c3kiTxv+EBqs7F8fFLlMDGL6HKtYF4yBZt4XdycBXu4WN2z1s7XXd74GoEtLClolkH/vMqkEce//CJxAx/DN8Kuv8Nd6dLCHZ+jCWGh5XgUQ++l6OyufC2mSseJocfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UEVUgKoK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=T86rgijx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0741A3165;
+	Thu,  4 Dec 2025 12:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1764851340; cv=fail; b=SmjqbQaH3uv2F2FQ3T9CM5oRYb/UMTvhwuPPaSYUUc6sGYexUeb7AzQhxoYdwjcmLmz3fs6umJtA4JgXo5ldFshaLllIePAJH3L6DWI0mbxZ8IZesIP7JWfCY62T1HnF330hdvXUrW6H7jv4rZY2T8KA8ErW4fdEGJDI8mpZnOM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1764851340; c=relaxed/simple;
+	bh=jllfW8a2K7PIDr84y8H6Rm4pae3aH6EoTxG6McGA3KQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=CltfNc3uyZQm2tf7QURtQwADgrqZ1ohziNb5RqT60QerjGAbwZdrNSn9qYdRpCRyn98YANZ74wPX3/NAcUH5GUiqc6GMRupKtbafpqFJqffCPufpe7Jj7kYQSary62cx6LtR87HMzWNjP42qUcjCULwE8tVxR9o99oBeiyVtIp8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=s9n+bnbm; arc=fail smtp.client-ip=52.101.84.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UEVUgKoK";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="T86rgijx"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B4AEu2q1159665
-	for <linux-remoteproc@vger.kernel.org>; Thu, 4 Dec 2025 12:28:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=yJdwR1meSnfISNqUOOKV2CAI
-	qDZw63hxh9ZcGAIZ0pE=; b=UEVUgKoKTsJsD+xdl22ceIzj+lTqTvkYevwX2xOY
-	icYhkYHvbMcyDINofJ9zblMJY1H2L62qWlvRSBG6VVBmXBJNam5xRKjmdEUoh5Cp
-	KamzTUhzlmMtHOgm2akfq6dO7IyktaVL+jSyGv/gZZcnCRDsO4TiPrNHWFMr86cX
-	SqMw5k+AFXGexIUeYbkHsG6Pwxlgd0n/QRAs4Chom6TjEWAsTm8r4YUvdNB93mcq
-	HlA5wA6U6s734V5UB9ZtCRd+6bIj44Z2ujge9TCuE9H6ybqzTd9161XA6ptioesG
-	6hQIz/ncmhTXdxkfXxgX3mudvHqkaG6t62LdBdg7CTgQuQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4atu3h2rhj-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 04 Dec 2025 12:28:14 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-297f8a2ba9eso18364465ad.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Dec 2025 04:28:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764851293; x=1765456093; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJdwR1meSnfISNqUOOKV2CAIqDZw63hxh9ZcGAIZ0pE=;
-        b=T86rgijxAapg5aip1W7JbYHq8XEHxPxy0p8fu/6/eDmlvi+z/cVWVgdctEoPeybMIo
-         vJ6W9LR7nS1W3B0PmlWScGJ46lpeP+ZW0TS8bVWfPuHJQ4gzXNZ/3A9LxFsGyMdDDIN7
-         EesE97h9f908kw4pdAYTWVb/EA99037N391jNd/i1jvK7IANiwiVT6FcaPBjI+nPhURA
-         kuBj7eRa14UuGDNj/bZhnAZLP4D018uOlfQmAu1lEy5Zv1P4hhPkZgEUuY4ou4oQQYTb
-         BSTnDq0psiScq00WmTgQP6PfVTmuwOiFhgbAzG6bSYgLsCiKxJMLvf4ahN/rAvCHxpBe
-         Y9KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764851293; x=1765456093;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yJdwR1meSnfISNqUOOKV2CAIqDZw63hxh9ZcGAIZ0pE=;
-        b=mfSvpTF5RvgQnN2QHpQvIVUW9M+hE65UjAHyAFBkd8yQ3EqLwMkkxItm4kE0NO54Zy
-         bubrm3P7oXWUzI6SzrcHYSa/G4opRhSCFcXNlwYDNpwcI9oT+9IM1XE35GTnCp26Etxp
-         y3B0VUanY7U22kdmGX5s/3mAbtExITfjTP+x9I32K/BoESaWyQ4v7j7/eDjgTi2iKN4w
-         v7Fvbx8Sd86sYvZ80EC4WLvcM/ddx8ylbTK29wN7j+zplds+FkSUW+ABf7eoTXxmUgoX
-         YAORmWpiWUoTg8v64JIXoxkO7C4Aqr7TIeHyM+mJ1Waju1rsJf7uJuXbgxdRywPB8iAS
-         zQfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFntiTBTGU0m+NN8XD4IXb37xhRX1uIr2DeuX6H56X43TM81sRnaRdHjV+3ywHkU/9qmNLIIkuXan+UFhyMjeZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo2/wEBQ5ex4qr/NTSQefNRTYdOWn0k+J2l6vC+l5VhMPFEnlx
-	dqAk1CglE7xtGpMO+uP2ooosmpwdLKHl9EXkiJtidY/Glp4yONTS5vfT055sU+v/9RWI5hG7KLo
-	wNQlK5WsXgI+3MoM0tPrHn8maQ8nSarC0YCsSeFtnGl5CR2qN+YQgTkQZjUllOsFJpDt2QZl0
-X-Gm-Gg: ASbGncuuRaNfWSpyy6B/agddSeCR51htK+iDb8t6Bh+BtxFa6xATAL9lThGqww5IpuC
-	rnr/JRx30Hz/55hyLrps157kAYfHEFZ9TCnE8vzeCEUpcDyqbYcMUE2sKrdvPOmKpNjNDdvsYSe
-	bEvH3J3RLLskwJ+frmR0Hzgc+7svve1xD9owgED2pSnTYxTHYM8PfpnA45VlHZ+L6+WBaqnjTi+
-	R2TFYAai+vn163+6Y5nVFsutTIHIYIN6OHvu3n/TY8fzCntfN8yM1jeVX1S4OSvKqdaIHMtZ158
-	5/Eh6BIAu4JfWjDw/i0uVTDA3lmMZxMTD8cYcXCKMMuk76XLBj/+kKDhbHinwrlNCHYcFxfowhF
-	93siosCBGW+w1llQ6drnmzM7BMPbI++0g+F3a
-X-Received: by 2002:a17:903:1251:b0:295:195:23b6 with SMTP id d9443c01a7336-29d684aa287mr70732795ad.55.1764851293398;
-        Thu, 04 Dec 2025 04:28:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHazY5T4LAOqBiWE0ZbojffzCVeY53x34Sm+OzSUYr07hHxlMDVyRkGsLXbPbexGleqMTbktQ==
-X-Received: by 2002:a17:903:1251:b0:295:195:23b6 with SMTP id d9443c01a7336-29d684aa287mr70732365ad.55.1764851292730;
-        Thu, 04 Dec 2025 04:28:12 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-bf6a1da3bdcsm1745261a12.25.2025.12.04.04.28.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Dec 2025 04:28:12 -0800 (PST)
-Date: Thu, 4 Dec 2025 17:58:06 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-Message-ID: <20251204122806.s7lnqffgcrd7usem@hu-mojha-hyd.qualcomm.com>
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
- <86f3cb9f-e42d-40f9-9103-1a4953c66c71@oss.qualcomm.com>
- <20251124152538.wt3kzztqmpr76hsx@hu-mojha-hyd.qualcomm.com>
- <4376b7cf-7088-412b-8596-bdec5bdc273d@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="s9n+bnbm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XA0wuhq0TwCEx6ozYbNNm4S7kIpJSbf68DxZ9YEnDSZwY3LhSDV1Orz0+8OE/dHqIwer1/pKZKEfYtCmJwvknmFHCzOYO/SXv8K5IZ9KZRn1G3ssVISAsaUP6SwGwT6AETsG/F4CNLONlQGwWCQWbV8gJLO5X+aFWvypjOmpEudNiwjAOzvuIEOscArmnuoRBAdbOYeK6bA2STnK2GHyO56YATBGZiSOw1d2d/t5hXDoS4bjr1vRo9fcUvgo52VDPlrdt0tIyA+J4Q/TLexWxVv5k1eRbMRz3sH/tQdt4otKjGMJfoEkd/H9ZMYufVN0ZxslShHavxoz7GSZiyGQXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g8eQJcxuAhFRKdXmwefDcAXK2wiFcqqUOeI0PcelzJY=;
+ b=INcpzT0ZZMFE3ePQkDtNtNauVT3T1MZRHc/JXWof1Yhv33VIK7w/fLfM9uqjZOg/9+QTDrb72GgxfU15UhtD0GzjPk/EAA3YoPSysA4vK71N9nQyYasgWMxuqyDnMV8j5oucGkq0wnNPeh3idlwa2x3TiF6POdlbFjQdTaPPSGzxUh4ebvul9upavx/FYmtFu1ETqbEAr2lh8iBJZ6q/ikSmZ+c4aGA0uSfJizjkmcXep3i7Vg/mQfuIkcxp+10nVxDxAzUZgNn8TJaEKC7bqWc2zltHQvVn1oCoFBBmCUWriv3R7MNVwH7ca21rODmakiTkxziqi8uBAU/aMu5Rlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g8eQJcxuAhFRKdXmwefDcAXK2wiFcqqUOeI0PcelzJY=;
+ b=s9n+bnbmDt9EdLXgNWaQ2UUBBqV07tPS23zdQIcjZVqnqICxjHXPQHI3pA0W0lBniYVWf8SZCiMgvtrI/PJEcDluy6PeumcB10/e46KllMYf0sfhvY8HZ5Qv51Z+WS7ZL46OIZH5cL4MZDzYaoEcMmHphtERP+hoZWw/V9idXfc4vSS5EQPOnMttpCIwbw+dn+tXAGhWtq4erPPX6J3K2ihsmjsFV+ohydhzYo+ppqrXe+WT5//ZI5SQll+cJWYAQYoc/SUtsDbwmyObVqFqAc0jPhVcp1+aqk6Q8JV2YbZ6qmue3cuKUBBJR4r/vdZG+hKjTN7jqQIhs6OLc3h1dg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8907.eurprd04.prod.outlook.com (2603:10a6:20b:40a::22)
+ by AS8PR04MB7782.eurprd04.prod.outlook.com (2603:10a6:20b:28a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9366.17; Thu, 4 Dec
+ 2025 12:28:53 +0000
+Received: from AM9PR04MB8907.eurprd04.prod.outlook.com
+ ([fe80::a361:2618:7785:3bc9]) by AM9PR04MB8907.eurprd04.prod.outlook.com
+ ([fe80::a361:2618:7785:3bc9%4]) with mapi id 15.20.9388.003; Thu, 4 Dec 2025
+ 12:28:53 +0000
+From: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	"S.J. Wang" <shengjiu.wang@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: imx@lists.linux.dev,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH v2 1/3] remoteproc: imx_dsp_rproc: Skip RP_MBOX_SUSPEND_SYSTEM when mailbox TX channel is uninitialized
+Date: Thu,  4 Dec 2025 14:28:23 +0200
+Message-Id: <20251204122825.756106-1-iuliana.prodan@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AS4P250CA0003.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5df::19) To AM9PR04MB8907.eurprd04.prod.outlook.com
+ (2603:10a6:20b:40a::22)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4376b7cf-7088-412b-8596-bdec5bdc273d@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA0MDEwMSBTYWx0ZWRfX+ZqNH/3LIPAi
- G44A0eFf68F6tezxIkHs1APaQZoBnqsK6GqRnflnOrC2o/y1aJHr0yWfNC7D4dFjeppgyTb3phb
- qCA4ywGEefz/pc4h6p3xpFvA4e9tMA/NdThv16anqQkE2Nitj9UBBEK/9Eq/5flU85JI/j2obsu
- osUTZVVKKaqkVY1lo8FMa8mwh4wnsCPcAoUSAyhKpCdRNjE2q0VuA+GrxCPszGjQDLQYp9hLaqw
- e6YQImARpuJqPvyNmblL4kuFg1xpauu4luDcCXGtwUMvpFh+OE2B6C7r5Lqmalpm81/DfutbmUq
- PaVKjLJIuwMTMO+NJZt2Zk0ksvgpAJIcoAzQdjBQGKKnFkyzS6T35h7eXKsZcvoDDAlpzJHC3R2
- STCaJrKAL1P9OYvk52Rb3FKrmCqT7g==
-X-Proofpoint-GUID: Wxnor6pJGZe6Dnw3b2isgoMACSwYW71i
-X-Authority-Analysis: v=2.4 cv=KJxXzVFo c=1 sm=1 tr=0 ts=69317e5e cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=2Wt6xd7WRkCmuffoQkYA:9 a=CjuIK1q_8ugA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: Wxnor6pJGZe6Dnw3b2isgoMACSwYW71i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-04_03,2025-12-03_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512040101
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8907:EE_|AS8PR04MB7782:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07ded725-b572-4517-ccac-08de3330af76
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?mhCfIQxVpiHH7GE6y5Nt4IVx2tj3jGr1rNfkGcqP6GU6VDkwYsNAH2NE+zYn?=
+ =?us-ascii?Q?tbdcfBbADc6EfMNtFytzbZ6jsQEZZLnEiJTgsRacbbkhgSejJknztn53u85A?=
+ =?us-ascii?Q?/sszJshlouJ5HK2TQeylc2kw0veL8TZrIC17ecS0LB2/cw53CaCHHJJkgVw9?=
+ =?us-ascii?Q?3oypSzKqC5cveJf+FBuWmlvnzWNb8iFbS7njvYVnEGReQs2pVH/0OveEOh7d?=
+ =?us-ascii?Q?m0/gnpsinln8JUVye3HscpSCtJzEdkZwK6YcVUJVTrtr8lbuyyIlNroPZaAw?=
+ =?us-ascii?Q?OwvpDgbSj4TP+pKaOmE0uB/GNDOKg/4FSahaC3J8gGYygDDS91fn9VNba7Wz?=
+ =?us-ascii?Q?YLBA1yLWbTHt9eLETu7baqqV2a0e5zolosJxrGbsA73FbK/AGRLHB3qXb/CB?=
+ =?us-ascii?Q?Lrxzops5DhYM5OWVwI0Xc+p9puHKNtlp8a2kneko71K3tXP8mZA8zZW5o6M2?=
+ =?us-ascii?Q?gstr3wT9MxrnZUfQ71bgydx16YmAUn7bGALGxkxIUkRv7xXwnLfmxtrT2tQg?=
+ =?us-ascii?Q?5W+kncKlKnrVwYhfGiN0E6doDBne9P7X9r20gshH9wQaF40ATa5DILGJR4Ib?=
+ =?us-ascii?Q?URTC+pg1dqaZni8UTNsdPQBasC1k25siwZ9MPPFy8PG6vMdEUXW+NmrHTxMR?=
+ =?us-ascii?Q?0UhryU9/iBFjA25azWUg+C2qxsK5CWVIYS562J0KiQwPZxFSLYvJ05f7Tbwu?=
+ =?us-ascii?Q?LUHrZQpcrZXwS8wQc2GPsX+3n3JEQnzKq/Yn9mTw8RKBFdhmtoyMwbOGOA4R?=
+ =?us-ascii?Q?QB6A4BQpyfLmmtaHJgk7w2u6E7N/kZtlH2GaxbFXet6nkV9+2XBLUCFwBHQa?=
+ =?us-ascii?Q?9kbMWauJHNiCGg0b/ssOqxDeAPi5UBWeaHtPHsNQTh/ULIvWWCRfYpbjKNZC?=
+ =?us-ascii?Q?q2ujvmXYki3AbwKARJE7KCAMZFcJDQtYxsjdiw/myrVfD1oxpX4QGG8vB/IZ?=
+ =?us-ascii?Q?EZVgYPWHM/keQPQCOAIPswhl400OoIxQIZOUoSVfobDEMEf3tlvMyz9OkQWV?=
+ =?us-ascii?Q?GdpgONTiRhINYAa2SyPM5fwKhWs7RfDXhcBOZYbj2aR1XqzMLQxmx9+7/kpM?=
+ =?us-ascii?Q?OnOygm7QdfKipuB66iTnwlTwdsB65+mYfRMFei7cSEWrmFfkt9+98ZF7Ahs5?=
+ =?us-ascii?Q?f33Qw67bL79hR5G8Pej6uXzrs6SSxsWKNIOkcx4Yf8NH1qbUpg+lMuYyfgAN?=
+ =?us-ascii?Q?CK6Ik2tbfMBIsfClG/4B3Wm+0XRO0gkIA93tZLhAr4M/aC+GGTWCWOXkb1p6?=
+ =?us-ascii?Q?0J59KzH1GivuJm/Cj3Zn5j0uFYoQXoM0Ygy/uWdGKGm/TnOFWSlq8ET9gyCv?=
+ =?us-ascii?Q?nkzrUQuj1yaYF5VEbH/C3d8rc1JzWvf9yPV4EayjzD12BgthBznU1gcgXgcs?=
+ =?us-ascii?Q?iBKi6ZBCTAlm7MvD7O4lWV+UgKD+XXPwp1Hh9Kdof2NjgCoYymI6ta5gnsvd?=
+ =?us-ascii?Q?CDvzVawN+DkhCiQ6roQnHW/5YL0C0a4qWN/dBN3hV4dc9wUmFaOdynVSX8wE?=
+ =?us-ascii?Q?fBMOOfFA4/P5ygdi/Iajc+OV6pClsan775Me?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8907.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LUAJ94bg5iTZa9ld5qRFrtNCMFiAWhiuhGd7f65YDiteXOUZzR7YYo8ODm6o?=
+ =?us-ascii?Q?C0U3Vrq4qMfp40GCZA7XAkIgVCPMgSwVLXFnWjPmWOx7k1/2D+MJDfAXWQ6+?=
+ =?us-ascii?Q?BgcZOdKiRZBtNusz9HIXAsvyohxG9xRqZFBkIHgTD9W3eItKZDpi29u+VkS0?=
+ =?us-ascii?Q?phwrdZsJB/53gazFO3oxnFGUbUHI7hrIwtrcJ/UomibxR1dqknkApC9C0lzb?=
+ =?us-ascii?Q?ldA7eYmR+ATRS6Y/V2BS3st9yAzMV2XnYMKlom4JORD31QJevzx11ChCRjL0?=
+ =?us-ascii?Q?uAZkYb/Pu1T2/OgCCkLvH8HUj5Z9EB1NJ+yJJGmeeDpmhgx5a5AfZOUfkdem?=
+ =?us-ascii?Q?u/lbDQ+4Ak1DB5NBRthCDSqhsANYrlGG2yDnTQMPA/Qq84SnpSmaVfVurAmv?=
+ =?us-ascii?Q?K/EjSSbafuJigLmychvI+xBAwaEyORI0m0MyqC6kd0fOEa4eyVY95HpWbr2h?=
+ =?us-ascii?Q?VXzW2Q/jzKg9pp+qK4ojaUNRd9s7DfnFKS6SbNm+9AWXn/31P/TRdSfNAJUQ?=
+ =?us-ascii?Q?gf55/PLk5P1U2biams4MhdZbInsbYT/GuLyWJiWaQM6hun1w5jF9sWG8y7w1?=
+ =?us-ascii?Q?h/eyv7oAtaeSpBrL2qnVz7dsFpvqGL4OL2SCw7RyeRSgWckYWIJRWpbRkJF9?=
+ =?us-ascii?Q?7rmRcBAMb/0aBUv+PayqzW5BPoxTkdfPNlD03mReLKC7knTt1HvOQUnKqlbd?=
+ =?us-ascii?Q?vxj5xjCdvevnSYWRLQ8YdG5wKIQmGlqh3dtAJuzeOvZSfjWZlgzorW7LLS8A?=
+ =?us-ascii?Q?COS/qiASmUldvg6PGULuai1k12fSGPzjCndI1tmzdSkiA/tUSZ/RpskWEuWu?=
+ =?us-ascii?Q?G7rTfWVszdRHcxq3TRai8B2EolW1HApu7sgh7Ei0XenkdY3Qz5bb1zdP8hwW?=
+ =?us-ascii?Q?sp143D5xs2GOU68hRv2Ib6drbtt1ACeZpkED1qlmhGYY5km6zgBl0iS7P2du?=
+ =?us-ascii?Q?RP91kUym2s28l/83JuM5g7WSgin89GEU40VizA1ULdLqLNezF71zp+RzpaTl?=
+ =?us-ascii?Q?aWLK55O0uwdQh9HVg6Yo7Hz7GLZqO2J+GHtAAbrNcymeq+NH53QVgyCOJ2b5?=
+ =?us-ascii?Q?7wUqDCUXZ3Y4jk2ue/BsTL2kz1GdmKAVI+9V2C6vuwezV4tzOTdonFRWvfOV?=
+ =?us-ascii?Q?PUBlT/1w5p8oBYr4eVDVNDrPhkLrVdrNO4Sughb4bqLfuqf8ymHIE/Gc8M2A?=
+ =?us-ascii?Q?VDot7509typ+VtxrPdM4L5wHVMJ929YnQSb1+JSrACmEV19iLBsbeoTB7DF+?=
+ =?us-ascii?Q?fQjh/IsNO3lAeLaPvyg7aTjBaVkX9ohFlH+JW4rob0cLpmavnUe9xBbgslVI?=
+ =?us-ascii?Q?n6IMEsMqGg00VMWnnptZKIF/BosqqUFK3ZAUz9frlva7Fo5XeWTDtWf7YNJs?=
+ =?us-ascii?Q?PU4r5wyL3uJsoa9wdVTeWY5xtS0StRp9YqGmvICwB5pypm/5wjCr0zaQwJJT?=
+ =?us-ascii?Q?buUHxmKWf6wGRUddrIDQMNUM5C80YXwLqm3YYK3cY4q11gpSPbJdn/8I68Nz?=
+ =?us-ascii?Q?AIkiyTz+VfYJ6iNwfJHYTv2kH634xTOLZMcgC4Jb615lMTWs5hrC6BoZ7D+T?=
+ =?us-ascii?Q?rjZTzB5CUGAOaXK6edi+F40WmECzROJNk+CMvxqpfZYQmZsGDS4HbS2Comzx?=
+ =?us-ascii?Q?Aw=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07ded725-b572-4517-ccac-08de3330af76
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8907.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Dec 2025 12:28:53.0483
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i2yCIneLI1xCGHZjuFIdiLtqtQs9CnMw5dY7i2ANbLkukoXHhWZCBSt1kRrYR8aFUMBHlBm5EewV6NcWWtCz+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7782
 
-On Wed, Dec 03, 2025 at 01:36:32PM +0100, Konrad Dybcio wrote:
-> On 11/24/25 4:25 PM, Mukesh Ojha wrote:
-> > On Mon, Nov 24, 2025 at 12:48:31PM +0100, Konrad Dybcio wrote:
-> >> On 11/21/25 12:01 PM, Mukesh Ojha wrote:
-> >>> Qualcomm remote processor may rely on Static and Dynamic resources for
-> >>> it to be functional. Static resources are fixed like for example,
-> >>> memory-mapped addresses required by the subsystem and dynamic
-> >>> resources, such as shared memory in DDR etc., are determined at
-> >>> runtime during the boot process.
-> >>>
-> >>> For most of the Qualcomm SoCs, when run with Gunyah or older QHEE
-> >>> hypervisor, all the resources whether it is static or dynamic, is
-> >>> managed by the hypervisor. Dynamic resources if it is present for a
-> >>> remote processor will always be coming from secure world via SMC call
-> >>> while static resources may be present in remote processor firmware
-> >>> binary or it may be coming qcom_scm_pas_get_rsc_table() SMC call along
-> >>> with dynamic resources.
-> >>>
-> >>> Some of the remote processor drivers, such as video, GPU, IPA, etc., do
-> >>> not check whether resources are present in their remote processor
-> >>> firmware binary. In such cases, the caller of this function should set
-> >>> input_rt and input_rt_size as NULL and zero respectively. Remoteproc
-> >>> framework has method to check whether firmware binary contain resources
-> >>> or not and they should be pass resource table pointer to input_rt and
-> >>> resource table size to input_rt_size and this will be forwarded to
-> >>> TrustZone for authentication. TrustZone will then append the dynamic
-> >>> resources and return the complete resource table in output_rt
-> >>>
-> >>> More about documentation on resource table format can be found in
-> >>> include/linux/remoteproc.h
-> >>>
-> >>> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> >>> ---
-> >>
-> >> [...]
-> >>
-> >>> +int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
-> >>> +			       size_t input_rt_size, void **output_rt,
-> >>> +			       size_t *output_rt_size)
-> >>> +{
-> >>> +	unsigned int retry_num = 5;
-> >>> +	int ret;
-> >>> +
-> >>> +	do {
-> >>> +		*output_rt = kzalloc(*output_rt_size, GFP_KERNEL);
-> >>> +		if (!*output_rt)
-> >>> +			return -ENOMEM;
-> >>> +
-> >>> +		ret = __qcom_scm_pas_get_rsc_table(ctx->pas_id, input_rt,
-> >>> +						   input_rt_size, output_rt,
-> >>> +						   output_rt_size);
-> >>> +		if (ret)
-> >>> +			kfree(*output_rt);
-> >>> +
-> >>> +	} while (ret == -EAGAIN && --retry_num);
-> >>
-> >> Will firmware return -EAGAIN as a result, or is this to handle the
-> >> "buffer too small case"?
-> > 
-> > The latter one where a re-attempt could pass..
-> > 
-> >>
-> >> I think the latter should use a different errno (EOVERFLOW?) and print
-> >> a message since we decided that it's the caller that suggests a suitable
-> >> output buffer size
-> > 
-> > Agree with error code..
-> > 
-> > This is kept on the caller side keeping future in mind. where we can have
-> > resource table coming from the client and it needs to go to TZ for
-> > authentication.
-> > 
-> > Are you suggesting to move this retry on the caller side ?
-> 
-> I think we got confused in the review of the previous iterations and made
-> qcom_scm_pas_get_rsc_table() retry 5 times (on the basis that "some" error
-> could happen in firmware), but if it's specifically "buf too small", we should
-> only need to call it utmost twice - once to get the required larger size (or
-> succeed and exit) and another one with a now-correctly sized buffer.
+From: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-Ack., thanks for clarifying.
+Firmwares that do not use mailbox communication (e.g., the hello_world
+sample) leave priv->tx_ch as NULL. The current suspend logic
+unconditionally sends RP_MBOX_SUSPEND_SYSTEM, which is invalid without
+an initialized TX channel.
 
-> 
-> Looking at it again, do we really need to be so stringent about the maximum
-> resource table size? Can we just push the currently defined SZ_16K inside
-> qcom_scm_pas_get_rsc_table() as a constant and bump it up as necessary in
-> the future?
+Detect the no_mailboxes case early and skip sending the suspend
+message. Instead, proceed directly to the runtime PM suspend path,
+which is the correct behavior for firmwares that cannot respond to
+mailbox requests.
 
-Ack.
+Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+---
+Changes since v1:
+- Wrapped commit message to 75 characters
+- Changed dev_err to dev_dbg since this case is normal behavior
+---
+ drivers/remoteproc/imx_dsp_rproc.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> 
-> > Just for information, once video patches becomes ready, we may bring this
-> > qcom_mdt_pas_map_devmem_rscs()[1] helper for video or any other client
-> > should be do this here as well ?
-> > 
-> > I wanted to optimize this path, where caller is making a guess and
-> > gets the updated output size in return.
-> 
-> We always end up allocating in __qcom_scm_pas_get_rsc_table() so I think
-> guessing a number like SZ_16K which is plenty for a effectively small u64[]
-> in this file is ok too. Perhaps we could even shrink it down a bit..
-
-Just to avoid iteration, are you suggesting that we can keep this
-guesswork as part of __qcom_scm_pas_get_rsc_table() and start with
-something smaller than SZ_16K?
-
-I kind of agree with the first part, but SZ_16K was the recommended size
-from the firmware for Lemans to start with, in order to pass the SMC
-successfully on the first try. However, the same size was failing for
-Glymur, and it required a second attempt with the correct size.
-
-> 
-> > [1]
-> > https://lore.kernel.org/lkml/20250819165447.4149674-9-mukesh.ojha@oss.qualcomm.com/#t
-> > 
-> >>
-> >> In case it doesn't make sense for the caller to share their expectations,
-> >> the buffer could be allocated (and perhaps resized if necessary) internally
-> >> with some validation (i.e. a rsctable likely won't be 5 GiB)
-> > 
-> > Are you saying output_size as well should be checked and it should not be
-> > greater than something like UINT_MAX or something.. ?
-> > 
-> > +	*output_rt_size = res.result[2];
-> 
-> Yeah we should probably make sure this doesn't exceed a large-but-not-
-> entirely-unreasonable value
-
-Ack.
-
-> 
-> Konrad
-
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index 5130a35214c9..f51deaacc700 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -1242,6 +1242,15 @@ static int imx_dsp_suspend(struct device *dev)
+ 	if (rproc->state != RPROC_RUNNING)
+ 		goto out;
+ 
++	/*
++	 * No channel available for sending messages;
++	 * indicates no mailboxes present, so trigger PM runtime suspend
++	 */
++	if (!priv->tx_ch) {
++		dev_dbg(dev, "No initialized mbox tx channel, suspend directly.\n");
++		goto out;
++	}
++
+ 	reinit_completion(&priv->pm_comp);
+ 
+ 	/* Tell DSP that suspend is happening */
 -- 
--Mukesh Ojha
+2.25.1
+
