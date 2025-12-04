@@ -1,125 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EE921CC5B;
-	Wed,  3 Dec 2025 20:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D7721FF5F
+	for <linux-remoteproc@vger.kernel.org>; Thu,  4 Dec 2025 02:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764792434; cv=none; b=LHOLISScZmsFYaJeMsxM317cIu+eiRomRoo4r8kpuOiAQXBRIT5+nGFTcXwSYvtWZOCGvfxBUaTOHPBGTORezsc2LMZIjTjiGczvTSSZXxGatfrDgnJkUt1iqqiXanns32bqyD3p4ZmwYKvnp3tTbaS40jk48ayPrGwsP76Gt1U=
+	t=1764814431; cv=none; b=Io1DZ7Ueixq8yhOIA6lvcfQFdx8ag9D80u+gqvs/i3lybvNibtX+oVVZx2+E3eisLrSs2rkvEpXHIhhVsr7A719uJTZGqMMGXHwc+2NIxDgMUsMb76V089oGfmoBtEk2oRv+F3X1iCwPfxqDR8KBKB0237mGpccSQS/TKiHScbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764792434; c=relaxed/simple;
-	bh=CKSxJ5PzACcUCfZJ6BNrzyEmQ6cqGSgT/DPPtgS6CYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1JGdWkPjlNAHoIkMtWp4ATpRAFAniSFYqwfXOQBnaQoKBqpdhPFstWjJEscT6TCSD3ejYt78DApSXf8TobZyghK3TeviEkEHvrqnSkuiUKIvqyycKXWB5mqukR1FyunhNhvk4m34QeZfUxG2Cz4nJe4h2d83YGc+6Nh2OZwlNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSBdGVYQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1764814431; c=relaxed/simple;
+	bh=Bd4K1YtKNoEERuMs0RolaDt0ScTVx+zEHG9IVgqpbo4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B7LRwy7w7D0jG/6nwLNiLFM8a2tODvKZSUbGfveMJObRv6O37PJlaiu+Pi4EkqHdd8F/QrPR5FRLE3YilwlvoAhvILmY8QK0df0Zw3M3GJP1DQ1AX2LJa3E1t+gXWa+b0Vs7qUEx2Z+5AmoqO+nbXGHiium2CpIrjaGvWXbjwsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k9XYDrwo; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSBdGVYQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95AEFC4CEF5;
-	Wed,  3 Dec 2025 20:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764792433;
-	bh=CKSxJ5PzACcUCfZJ6BNrzyEmQ6cqGSgT/DPPtgS6CYI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rSBdGVYQJaPPhr7deQew1tXcBeCXZhF8C6ESyscZSkNRlPXU11LsB2TAPp/jDr4i+
-	 YTXFZQFg+chYPruYNY1Kv7gjhK1O1S/yUVxODQm9tYcPNp3ITYOFWVc7wQRk9iw9LB
-	 QByMIiKa68VzfmHNaksSCsjjUjbha1TxGJmQ0rEdSKuhiBea949dtwqFyq4wkVRU9t
-	 5kNtrpJdkUjemjVX6FD83XTWdPHlnsNEjmq/rPeoc1iIpjsRggAwlYMXsJU5oslpSM
-	 xR6+nCpEsgNH059oK/VRmrRANKzocPtyJUZHnV4wdPlEfs6d1Bhi39INCdWByjGz4y
-	 /HcKoARdQxVtA==
-Message-ID: <8f789104-f521-41ee-812b-34607f36a7da@kernel.org>
-Date: Wed, 3 Dec 2025 21:07:08 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k9XYDrwo"
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c95936e43cso131006a34.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 03 Dec 2025 18:13:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1764814429; x=1765419229; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xORHJgL+aGizbKJeyZszhgEnaCMXYKlt8oGjGv96pcI=;
+        b=k9XYDrwoZfM5DvcBVL7gebrcCl1eA64YkpT88JbD4VN4I/4cPTe8rSNGlX3NmPcvLT
+         qqvKtf9MxL80Ju14FFC8K0jn2m+ZtouvOkMQrIVD5LCTMJq8TAXSEdwVNL5IJTPGMBhU
+         pyrNI+lKtrv2/R0pEyVOfSh23h0jFGmwW4DAkBXdHwNo0GpWN8pl7ES0Zf8zQIiBF/kE
+         hv7/3cU7c2NylGdTGjDDjDdUzhlarrXkR3Wy5/bflPXsOOtwt/SChhIvZ6QuyK98uJDd
+         dZkOEiLjWLC+Xz3j04GwyhMkWQuwKblerxh2q8/N53TQTW+8sSpkgJiw881ZC/11e/XR
+         TB7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1764814429; x=1765419229;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xORHJgL+aGizbKJeyZszhgEnaCMXYKlt8oGjGv96pcI=;
+        b=LreHElqJbITtf+KF6kJp7UvFP6sUs4+U1E0lWVtWX0Jej+FkkCfTLNrxbwimEoOTc3
+         rjX9XW0T+ZsenMaCHXiQCHbKBrc9KK4CUNnguLov4L6jEpQfj3WIgH95RQOCFTkH01At
+         6y0z1E5xz6U0ahhZC7IB+4Whn/Xn7VBZfisyh421MvCQXc31qJ7UkzCQ/W0+FtVxmkM0
+         XZL06U5hUGGEX2DYuaQcQTo64IOKo+sruYwzCsWerLmBcVHvOfk5nDku3B7JfONobbjZ
+         VvQE2XZv+Z78VLCPmUuwkWbY/kqQOyiNzpFsQKdxJBwrBE0KyWUqJBoihYwSJT9KSaVf
+         gYsg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdrES4tBgbmT5riatVJyimwVPqTio9wbLrTNJtwb9cJFI2OBzztzIF5PVnsvTyBIruVW76K4Xd6gxceB+h8mRw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwloCwCgExI4FonHhWfWqR7xLvdKS4sh3laVPjtF5SdS+ZW/x3b
+	p9wnivRv1zcpRsYD1BCDCdZkWKb/aqG/mE5R5y3zA/ZYpWBG7tgseWtax1VfL7NQUCec4+MRemG
+	fn6ogUroMbFw1/PnntWLva3mBSi/enQE=
+X-Gm-Gg: ASbGncsbPSww5FCRy3hkaTtxoEhCIFlAb0ZmHpeVCo0uR/Ae+K0u5L6LoxmPecBxXqI
+	r6qiJPUDyFmg9BwWEi3BMrcja8k236kAZ5XBn1ZdYYLBu9qga/1HgiWY5m2PPLXkRtDCrAmm7wg
+	paAOzBtqB9bnoj2KO4qNkjVXGm0uk9f+/U2Bs+A+u6ErROMeO4005DhcSKfodSVUT7QTQrd0azP
+	+7E7rTSkrqsYo3hX5/FdlTfFzdAVjasioYeEqP9HWoCFZSJfJoRJcZi1jqckD2reuJ3CK8A
+X-Google-Smtp-Source: AGHT+IFwbzJfKP3QZXBd643uEhegzxd6VbdGf2JDLH3puDF7rj0n5xOB3XHYqb7RgWQQbnnXY7bKYRb25E38bGf0yLo=
+X-Received: by 2002:a05:6830:4118:b0:7c6:cb39:adf7 with SMTP id
+ 46e09a7af769-7c94db0ca70mr3417936a34.6.1764814428695; Wed, 03 Dec 2025
+ 18:13:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: remoteproc: Fix dead link to Keystone DSP
- GPIO binding
-To: Soham Metha <sohammetha01@gmail.com>,
- linux-kernel-mentees@lists.linuxfoundation.org
-Cc: shuah@kernel.org, skhan@linuxfoundation.org,
- linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20251203180337.50831-1-sohammetha01@gmail.com>
- <aab83a61-9d22-443c-92bc-d7caf1c8afac@kernel.org>
- <d2dfa83a-80e3-4a89-b853-a88589ef0092@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <d2dfa83a-80e3-4a89-b853-a88589ef0092@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251007151828.1527105-1-tanmay.shah@amd.com> <20251007151828.1527105-2-tanmay.shah@amd.com>
+ <CABb+yY0m_Whm1F7d2ub+vhn0eTb47UC9g=JvpLnWh-2E1oo52A@mail.gmail.com>
+ <aa1ff206-d505-433b-9715-56d866a5f675@amd.com> <33edad1d-08b9-4fe4-8525-a1f50a898e2f@amd.com>
+ <CABb+yY1Y90S_dbybMT07PTvmy60W2mt3mHdP56sp6DO75bpuNw@mail.gmail.com> <c9f65597-52ba-41ef-842a-2569c2074d6f@amd.com>
+In-Reply-To: <c9f65597-52ba-41ef-842a-2569c2074d6f@amd.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Wed, 3 Dec 2025 20:13:37 -0600
+X-Gm-Features: AWmQ_bnHLkr3Qycd2BPcthiErEVM85UAFY3lOTD20xSabGatzUan99jxWBnqHEA
+Message-ID: <CABb+yY0qZktWThE82RppmCN1cC=UvKkKp-F3T1ydwiUfyOZGkw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] mailbox: check mailbox queue is full or not
+To: tanmay.shah@amd.com
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03/12/2025 19:56, Soham Metha wrote:
-> Thank you for the feedback.
-> 
-> On 04/12/25 00:05, Krzysztof Kozlowski wrote:
->> On 03/12/2025 19:03, Soham Metha wrote:
->>> The old text binding 'gpio-dsp-keystone.txt' was replaced by a DT schema in
->>> commit aff0a1701b020c8e6b172f28828fd4f3e6eed41a
->>
->> Did you actually read what I asked? I think you just sent it too fast to
->> be able to read entire multi-page document. If you read it, you would
->> see that abbrev is 12 characters/digits.
->>
-> 
-> I did see the documentation mention that the abbreviation should use 
-> at least 12 characters, but I didn’t notice any upper limit mentioned 
-> in the text. Because of this wording, I assumed longer values were 
-> acceptable.
-> 
-> Should I send a v3 with a 12-character abbreviation?
+On Tue, Nov 18, 2025 at 12:51=E2=80=AFPM Tanmay Shah <tanmay.shah@amd.com> =
+wrote:
+> On 11/15/25 11:38 AM, Jassi Brar wrote:
+> > On Wed, Oct 15, 2025 at 10:27=E2=80=AFAM Tanmay Shah <tanmay.shah@amd.c=
+om> wrote:
+> >>>>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> >>>>> index 5cd8ae222073..c2e187aa5d22 100644
+> >>>>> --- a/drivers/mailbox/mailbox.c
+> >>>>> +++ b/drivers/mailbox/mailbox.c
+> >>>>> @@ -35,6 +35,7 @@ static int add_to_rbuf(struct mbox_chan *chan, vo=
+id
+> >>>>> *mssg)
+> >>>>>           idx =3D chan->msg_free;
+> >>>>>           chan->msg_data[idx] =3D mssg;
+> >>>>>           chan->msg_count++;
+> >>>>> +       chan->msg_slot_ro =3D (MBOX_TX_QUEUE_LEN - chan->msg_count)=
+;
+> >>>>>
+> >>>>>           if (idx =3D=3D MBOX_TX_QUEUE_LEN - 1)
+> >>>>>                   chan->msg_free =3D 0;
+> >>>>> @@ -70,6 +71,7 @@ static void msg_submit(struct mbox_chan *chan)
+> >>>>>                   if (!err) {
+> >>>>>                           chan->active_req =3D data;
+> >>>>>                           chan->msg_count--;
+> >>>>> +                       chan->msg_slot_ro =3D (MBOX_TX_QUEUE_LEN -
+> >>>>> chan->msg_count);
+> >>>>>
+> >>>> No, I had suggested adding this info in client structure.
+> >>>> There is no point in carrying msg_count and msg_slot_ro in mbox_chan=
+.
+> >>>> The client needs this info but can/should not access the chan intern=
+als.
+> >>>>
+> >>>
+> >>> Hi Jassi,
+> >>>
+> >>> If I move msg_slot_ro to mbox_client that means, each channel needs i=
+ts
+> >>> own client structure. But it is possible to map single client to
+> >>> multiple channels.
+> >>>
+> >>> How about if I rename msg_slot_ro to msg_slot_tx_ro -> that says this
+> >>> field should be used only for "tx" channel.
+> >>>
+> >>> Or is it must to map unique client data structure to each channel? If
+> >>> so, can I update mbox_client structure documentation ?
+> >>>
+> >>
+> >> Hi Jassi,
+> >>
+> >> I looked into this further. Looks like it's not possible to introduce
+> >> msg_slot_ro in the client data structure as of today. Because multiple
+> >> drivers are sharing same client for "tx" and "rx" both channels.
+> >> [references: 1, 2, 3]
+> >>
+> >> so, msg_slot_ro won't be calculated correctly I believe.
+> >>
+> > I don't see it. Can you please explain how the calculated value could b=
+e wrong?
+> >
+>
+> Hi Jassi,
+>
+> so on my platform I introduced some extra logs:
+>
+> [   80.827479] mbox chan Rx send message
+> [   80.827485] add_to_rbuf: &chan->cl->msg_slot_ro =3D 00000000ab5fa771,
+> msg slot ro =3D 19
+> [   80.827494] msg_submit: &chan->cl->msg_slot_ro =3D 00000000ab5fa771,
+> msg slot ro =3D 20
+> [   80.833064] mbox chan Tx send message
+> [   80.833070] add_to_rbuf: &chan->cl->msg_slot_ro =3D 00000000ab5fa771,
+> msg slot ro =3D 19
+> [   80.833079] msg_submit: &chan->cl->msg_slot_ro =3D 00000000ab5fa771,
+> msg slot ro =3D 20
+> [   80.837486] mbox chan Rx send message
+> [   80.837492] add_to_rbuf: &chan->cl->msg_slot_ro =3D 00000000ab5fa771,
+> msg slot ro =3D 19
+> [   80.837501] msg_submit: &chan->cl->msg_slot_ro =3D 00000000ab5fa771,
+> msg slot ro =3D 20
+>
+> Tx and Rx both channels are updating same address of msg_slot_ro. If
+> user wants to check msg_slot_ro for Tx channel, then it is possible that
+> it was updated by Rx channel instead. Ideally there should be two copies
+> of msg_slot_ro, one for Tx and one for Rx channel.
+>
+> This happens because Tx and Rx both channels shares same client data
+> structure.
+>
+> Same can happen on other platforms as well.
+>
+The queue is only for TX.
+The received data is directly handed to the client. So RX path should
+not be modifying that queue availability variable.
 
-No need, this is just a nit.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
+thanks
