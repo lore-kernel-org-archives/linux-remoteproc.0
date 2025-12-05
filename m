@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4338F277C9D;
-	Fri,  5 Dec 2025 22:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F5339FCE;
+	Fri,  5 Dec 2025 22:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764974332; cv=none; b=tCwt8KGf8Xb8BnkHXI/wmVQHqNF1chyr3UtPBoEdoI/pFJbQeaFtDycstOagZi6diI9WAWRTDDpWq+aVA1cdafFgQr7ZcUyzRU2IAR9ZyagqSXP21H0g1ca0dROH/lcyyY/z4xQ5nHzX4yJ357F0+r18sAW7FolWZ4eBlnCzib8=
+	t=1764974654; cv=none; b=Uaj0jBte1KDeqf79nvxCHbrQemNG8aCvhse/9YkNBLIvCDN2myDZe9WRQoprM+IKvMS/b6lQwX5+JJ3KOx/ORN9aOLA/cGskFE+pbQZOLPlrHdCL+mNfyueUGUGESJEQoS2a/hKjmXaQb2IB8PPeXUj6zh1wTiaxBsBJe9x1W24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764974332; c=relaxed/simple;
-	bh=GsAWgcmcBdDUvM9bPja3eU7qhvdsGz3cjt2fil1+uRY=;
+	s=arc-20240116; t=1764974654; c=relaxed/simple;
+	bh=SfMTlrnwvly/vkxH6ONkFIT0K1p6Gzas0t4LGNc9lRo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NNK9GFViJoJD3BjNlYdIQbC4HurRLg5/G3LixFE4Qmt/IZI55Ay2/VxK59pYOMLBoiu91p+T9ZxXhRVvgtnl6VkxY5BH1FAUghaQBd9fzSrOzSjAS5LRl7hfa0J0+OXzP04aehtj/cTzVrmDnuHPB0+GayvVXNQY2OcNfUsuIEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqghrcSE; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=daUjwc1aD5XdRXAd8EzD2H4cm/HOu/FrRz8vlirEdgnxkugfAGsnelTU63cyhdWJOK+WFON2ve2+2BHuaqzjBblHLiX1tOvam9Tl35kKktNAaCpJduq7IQ3GytsLJ6UCgC6x0iJ8L53P7EO0zvotVEe+goIIbNDu9oDI0xrctxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpAgb+C3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqghrcSE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB1BC4CEF1;
-	Fri,  5 Dec 2025 22:38:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpAgb+C3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9055C4CEF1;
+	Fri,  5 Dec 2025 22:44:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764974331;
-	bh=GsAWgcmcBdDUvM9bPja3eU7qhvdsGz3cjt2fil1+uRY=;
+	s=k20201202; t=1764974654;
+	bh=SfMTlrnwvly/vkxH6ONkFIT0K1p6Gzas0t4LGNc9lRo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iqghrcSELPEg2OBRCBrgiNwFvhnEx3z/NO6M1vIWozjQ3DwTY7Lr/TvS61E0WE4OE
-	 gKV2fLNYxbfVsF2qYR4Ypz36b22HA63YxbsqD6furOHLgCWlnUmYBkefBCNkJcjNjt
-	 mU6ZTHtv/xeHXA5ZkZRMOVKxCLMd9iVp46sQeMyb5iQlp9uTJZ8evIIXicNEMpdo32
-	 SgYxlnj0yICiqpopNperfTzcwkS4U7nz/s9P0QOWk0pgU4gd1zUAd/4m4FHu5t9TfM
-	 yi4GxSi5tZMmDn+eOdu8A2ZDuv6ORL0YVPadX+w/AUFyd07C8EEn1Tt8oJuLZx2xES
-	 YDlxraYJfFptA==
-Date: Fri, 5 Dec 2025 16:45:10 -0600
+	b=rpAgb+C3vQq14dSFLrodznTb61jSWdjuZYuUIkwgdaQN4XN/Is/lh60MdSMlXVLZq
+	 j1GPgIl1W+yhe6+4QQ4/VOR9xmGcDTvo1p1FlqeQQzIy76HxK1Ry/lp+Z/VkHwqyJN
+	 uX8hg/ljxMmFQfX2j0ppJzqmC91oNMjCpV0a72vTFU36ZzcQB0qN248yr2TerwYV6U
+	 p99yphRoWvpgiPq+jeJIhRBvNIff+IjE6OLtN67Qr4hrggwnRapLgg3eoIMZLW8k0z
+	 SjDDsNB6xoWBWn/C8Cb5vy6AcsTVwdHava6sB2lWDENIhhY8B3Erh6IvkUC5qvqln/
+	 WS2LZhnl8EXFg==
+Date: Fri, 5 Dec 2025 16:50:32 -0600
 From: Bjorn Andersson <andersson@kernel.org>
 To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
@@ -34,11 +34,11 @@ Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
 	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 04/14] firmware: qcom_scm: Introduce PAS context
- initialization helper function
-Message-ID: <rmy4ujnut2d65qxlfvdmoh5zkrzrcxtkpfdkjttfhlm45dnche@o3kd2vylonom>
+Subject: Re: [PATCH v8 08/14] firmware: qcom_scm: Add a prep version of
+ auth_and_reset function
+Message-ID: <ghladclj5xqlw3gzrleclkxk6cn4vhosfillx3wfgbf2tbe4iy@kgjzgg7j5gzh>
 References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <20251121-kvm_rproc_v8-v8-4-8e8e9fb0eca0@oss.qualcomm.com>
+ <20251121-kvm_rproc_v8-v8-8-8e8e9fb0eca0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -47,120 +47,127 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251121-kvm_rproc_v8-v8-4-8e8e9fb0eca0@oss.qualcomm.com>
+In-Reply-To: <20251121-kvm_rproc_v8-v8-8-8e8e9fb0eca0@oss.qualcomm.com>
 
-On Fri, Nov 21, 2025 at 04:31:06PM +0530, Mukesh Ojha wrote:
-> When the Peripheral Authentication Service (PAS) method runs on a SoC
-> where Linux operates at EL2 (i.e., without the Gunyah hypervisor), the
-> reset sequences are handled by TrustZone. In such cases, Linux must
-> perform additional steps before invoking PAS SMC calls, such as creating
-> a SHM bridge. Therefore, PAS SMC calls require awareness and handling of
-> these additional steps when Linux runs at EL2.
+On Fri, Nov 21, 2025 at 04:31:10PM +0530, Mukesh Ojha wrote:
+> For memory passed to TrustZone (TZ), it must either be part of a pool
+> registered with TZ or explicitly registered via SHMbridge SMC calls.
+> When Gunyah hypervisor is present, PAS SMC calls from Linux running at
+> EL1 are trapped by Gunyah running @ EL2, which handles SHMbridge
+> creation for both metadata and remoteproc carveout memory before
+> invoking the calls to TZ.
 > 
-> To support this, there is a need for a data structure that can be
-> initialized prior to invoking any SMC or MDT functions. This structure
-> allows those functions to determine whether they are operating in the
-> presence or absence of the Gunyah hypervisor and behave accordingly.
+> On SoCs running with a non-Gunyah-based hypervisor, Linux must take
+> responsibility for creating the SHM bridge before invoking PAS SMC
+> calls. For the auth_and_reset() call, the remoteproc carveout memory
+> must first be registered with TZ via a SHMbridge SMC call and once
+> authentication and reset are complete, the SHMbridge memory can be
+> deregistered.
 > 
-> Currently, remoteproc and non-remoteproc subsystems use different
-> variants of the MDT loader helper API, primarily due to differences in
-> metadata context handling. Remoteproc subsystems retain the metadata
-> context until authentication and reset are completed, while
-> non-remoteproc subsystems (e.g., video, graphics, IPA, etc.) do not
-> retain the metadata context and can free it within the
-> qcom_scm_pas_init() call by passing a NULL context parameter and due to
-> these differences, it is not possible to extend metadata context
-> handling to support remoteproc and non remoteproc subsystem use PAS
-> operations, when Linux operates at EL2.
-> 
-> Add PAS context data structure and initialization helper function.
+> Introduce qcom_scm_pas_prepare_and_auth_reset(), which sets up the SHM
+> bridge over the remoteproc carveout memory when Linux operates at EL2.
+> This behavior is indicated by a new field added to the PAS context data
+> structure. The function then invokes the auth_and_reset SMC call.
 > 
 > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > ---
->  drivers/firmware/qcom/qcom_scm.c       | 34 ++++++++++++++++++++++++++++++++++
->  include/linux/firmware/qcom/qcom_scm.h | 14 ++++++++++++++
->  2 files changed, 48 insertions(+)
+>  drivers/firmware/qcom/qcom_scm.c       | 48 ++++++++++++++++++++++++++++++++++
+>  include/linux/firmware/qcom/qcom_scm.h |  2 ++
+>  2 files changed, 50 insertions(+)
 > 
 > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> index 0a0c48fca7cf..e9e9d03ea36a 100644
+> index 5fa974683ee0..fdb736d839db 100644
 > --- a/drivers/firmware/qcom/qcom_scm.c
 > +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -558,6 +558,40 @@ static void qcom_scm_set_download_mode(u32 dload_mode)
->  		dev_err(__scm->dev, "failed to set download mode: %d\n", ret);
+> @@ -765,6 +765,54 @@ int qcom_scm_pas_auth_and_reset(u32 pas_id)
 >  }
+>  EXPORT_SYMBOL_GPL(qcom_scm_pas_auth_and_reset);
 >  
 > +/**
-> + * devm_qcom_scm_pas_context_init() - Initialize peripheral authentication service
-> + *				      context for a given peripheral
-
-It doesn't just initialize, it allocates it. So I think it would be
-better to name this function devm_qcom_scm_pas_context_alloc().
-
+> + * qcom_scm_pas_prepare_and_auth_reset() - Prepare, authenticate, and reset the
+> + *					   remote processor
 > + *
-> + * PAS context is device-resource managed, so the caller does not need
-> + * to worry about freeing the context memory.
+> + * @ctx:	Context saved during call to qcom_scm_pas_context_init()
 > + *
-> + * @dev:	  PAS firmware device
-> + * @pas_id:	  peripheral authentication service id
-> + * @mem_phys:	  Subsystem reserve memory start address
-> + * @mem_size:	  Subsystem reserve memory size
+> + * This function performs the necessary steps to prepare a PAS subsystem,
+> + * authenticate it using the provided metadata, and initiate a reset sequence.
 > + *
-> + * Upon successful, returns the PAS context or ERR_PTR() of the error otherwise.
+> + * It should be used when Linux is in control setting up the IOMMU hardware
+> + * for remote subsystem during secure firmware loading processes. The preparation
+> + * step sets up a shmbridge over the firmware memory before TrustZone accesses the
+> + * firmware memory region for authentication. The authentication step verifies
+> + * the integrity and authenticity of the firmware or configuration using secure
+> + * metadata. Finally, the reset step ensures the subsystem starts in a clean and
+> + * sane state.
+> + *
+> + * Return: 0 on success, negative errno on failure.
+> + */
+> +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_context *ctx)
+> +{
+> +	u64 handle;
+> +	int ret;
+> +
+> +	if (!ctx->has_iommu)
+> +		return qcom_scm_pas_auth_and_reset(ctx->pas_id);
+> +
+> +	/*
+> +	 * When Linux running @ EL1, Gunyah hypervisor running @ EL2 traps the
+> +	 * auth_and_reset call and create an shmbridge on the remote subsystem
+> +	 * memory region and then invokes a call to TrustZone to authenticate.
 
-Returns: The new PAS context, or ERR_PTR() on failure.
+The above three lines explain why we take the path above, and the next
+two lines explains why we didn't.
+
+So I think it would be better to move the above 3 lines above the
+!has_iommu, and just keep the two here.
+
+> +	 * When Linux runs @ EL2 Linux must create the shmbridge itself and then
+> +	 * subsequently call TrustZone for authenticate and reset.
+> +	 */
+> +	ret = qcom_tzmem_shm_bridge_create(ctx->mem_phys, ctx->mem_size, &handle);
+> +	if (ret) {
+> +		dev_err(__scm->dev, "Failed to create shmbridge for PAS ID (%u): %d\n",
+> +			ctx->pas_id, ret);
+
+We already print an error in qcom_tzmem_shm_bridge_create() and we print
+another one in qcom_pas_start(), so I think we can omit this one.
 
 Regards,
 Bjorn
 
-> + */
-> +struct qcom_scm_pas_context *devm_qcom_scm_pas_context_init(struct device *dev,
-> +							    u32 pas_id,
-> +							    phys_addr_t mem_phys,
-> +							    size_t mem_size)
-> +{
-> +	struct qcom_scm_pas_context *ctx;
+> +		return ret;
+> +	}
 > +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return ERR_PTR(-ENOMEM);
+> +	ret = qcom_scm_pas_auth_and_reset(ctx->pas_id);
+> +	qcom_tzmem_shm_bridge_delete(handle);
 > +
-> +	ctx->dev = dev;
-> +	ctx->pas_id = pas_id;
-> +	ctx->mem_phys = mem_phys;
-> +	ctx->mem_size = mem_size;
-> +
-> +	return ctx;
+> +	return ret;
 > +}
-> +EXPORT_SYMBOL_GPL(devm_qcom_scm_pas_context_init);
+> +EXPORT_SYMBOL_GPL(qcom_scm_pas_prepare_and_auth_reset);
 > +
 >  /**
->   * qcom_scm_pas_init_image() - Initialize peripheral authentication service
->   *			       state machine for a given peripheral, using the
+>   * qcom_scm_pas_shutdown() - Shut down the remote processor
+>   * @pas_id:	peripheral authentication service id
 > diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
-> index a13f703b16cd..4a57fa676513 100644
+> index b10b1aeb32c6..ccb8b2e42237 100644
 > --- a/include/linux/firmware/qcom/qcom_scm.h
 > +++ b/include/linux/firmware/qcom/qcom_scm.h
-> @@ -72,6 +72,20 @@ struct qcom_scm_pas_metadata {
+> @@ -74,6 +74,7 @@ struct qcom_scm_pas_context {
+>  	void *ptr;
+>  	dma_addr_t phys;
 >  	ssize_t size;
+> +	bool has_iommu;
 >  };
 >  
-> +struct qcom_scm_pas_context {
-> +	struct device *dev;
-> +	u32 pas_id;
-> +	phys_addr_t mem_phys;
-> +	size_t mem_size;
-> +	void *ptr;
-> +	dma_addr_t phys;
-> +	ssize_t size;
-> +};
-> +
-> +struct qcom_scm_pas_context *devm_qcom_scm_pas_context_init(struct device *dev,
-> +							    u32 pas_id,
-> +							    phys_addr_t mem_phys,
-> +							    size_t mem_size);
->  int qcom_scm_pas_init_image(u32 pas_id, const void *metadata, size_t size,
->  			    struct qcom_scm_pas_metadata *ctx);
->  void qcom_scm_pas_metadata_release(struct qcom_scm_pas_metadata *ctx);
+>  struct qcom_scm_pas_context *devm_qcom_scm_pas_context_init(struct device *dev,
+> @@ -87,6 +88,7 @@ int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
+>  int qcom_scm_pas_auth_and_reset(u32 pas_id);
+>  int qcom_scm_pas_shutdown(u32 pas_id);
+>  bool qcom_scm_pas_supported(u32 pas_id);
+> +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_context *ctx);
+>  
+>  int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
+>  int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
 > 
 > -- 
 > 2.50.1
