@@ -1,174 +1,255 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E30C313E21
-	for <linux-remoteproc@vger.kernel.org>; Fri,  5 Dec 2025 13:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A634361DDF
+	for <linux-remoteproc@vger.kernel.org>; Fri,  5 Dec 2025 15:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764940512; cv=none; b=fvimOgAsMfbzeQ/HGUI6ZkdW7zkGpdBg5kQFEkOJGpHA+mZKGaGVdeLBExJ4Xe681qvjiKFSMwblY9icN5UrK3rVaD3aOre10KTwp4G0ptmAhdi5cYXJnAHIYY/0YTEhgpCqFIq7nogAEh79Rhxi6tloG2QhKdO8an+mC1abo6k=
+	t=1764948356; cv=none; b=h3iwmeDRz3CtUjaLxP0pwjWoA++XMfqiE6aOmWDG1sl+brgpFJt56QhLl71i+C5gsK2cJgQVIGZfVT44ZOEZQhD1VDoiCoZYwxc5xSzHMl7AbfNwgKILKBzNjRB4dcyimhhLzKfmhKdVIpeN0MbwGoeusopOewzy1y+eOPgGoKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764940512; c=relaxed/simple;
-	bh=P6Iaz2aOtsMqfxcuXLgTn3iU7uCLpjdRc+QxEx17bSI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nzwvnduJqGy2PPz4FdHKdLa0J3NgPHNxJZ06y6JWYwPvB+Uwk2cndPAHydbyC45Zv5MbughlftlyBLaPOu5U6KrlQmsVxQxm6qygeRAMe3sSob3pOgXvnhp/nbLpIZGdvPgbdCaasMcERMn418COAnfKueuhKLSHdw3HSEiGyuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k7eMSDE8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VynPNdAc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1764948356; c=relaxed/simple;
+	bh=8B55ybRhaP1NxjzHhS5j+J3kMnpXtYwOq404qobc2fM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RnfkXBGXi5XlTsITwMSpM80kzx/utWAeCs6rY5ylz8bLgLJ3wNExCFv8qFyyXgOmzz6SSBVB3ABfcRmCqcIUCBwmyKuBTYXRJdh/mIzTddKdZAXIB3T2ctLvZlq7tAp0aiRBhRcZ+vtB1NtCRzQTlkAM2ssjeHbW4R+98SwqFyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vD5qHcI1; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k7eMSDE8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VynPNdAc"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B553nwr3522548
-	for <linux-remoteproc@vger.kernel.org>; Fri, 5 Dec 2025 13:15:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	m+ywHSJnRc2OkdOLEW3U9rDhFUvuD0Iwme0Y53Q+L8E=; b=k7eMSDE8MZgapD6Z
-	VdgNvR5eU7siZfXYfjk5wsrVWBkhlvNIk+yisPPfWuNwGTT03/qdcKhVuz+BZa5U
-	Z9YHWS9oJYvSyT7L3ypD161KPrYPc51WjE1tVXlz4CRmpLQIVkTRmFIm33xk3Xbj
-	4JYjybAnPiK1VTLsBuvkxtrb5o4gnG2tiH2p7FJFno+cM11BAHisEV/6DT+77sVv
-	0WaOUtT9uzNG/likjcy6YDs6AXGhMIg3Kz0MA43FGwAHjm64Anl5E8THc+iCsUeS
-	aCB0vxzK8qMWE6c+rji+kuhsW1ckG5G6gbJAhBec182U9cxxrAKYC71b3mYediAA
-	LdPRpg==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4aurwvh9hu-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 05 Dec 2025 13:15:05 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8b10c2ea0b5so66698085a.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Dec 2025 05:15:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vD5qHcI1"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-64162c04f90so4294353a12.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 05 Dec 2025 07:25:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1764940505; x=1765545305; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m+ywHSJnRc2OkdOLEW3U9rDhFUvuD0Iwme0Y53Q+L8E=;
-        b=VynPNdAcCBADCCJmSHBWNxxPEq48VMhGQM7iovNmO0QyC/ymZU9O1eDlI6X5rJe7t0
-         ttqTPCz3Zs37/iKJUP3DM9Pk0Ax2jMTRiGsE4yrbgvpMW1x1YbD1/RAUkEVmxrE1jZuD
-         rTISpVkCo61Ba3EjbX96kTuxC3fmGbSRAem5wZMfjgksVps5Yghi7az43trsXOBOeewr
-         x0uyZtO7XmlJVOp/S+nH6y3ojPlWpUjPXhsD5F3OcOO7z8Z0hFeQ6nli365bnO6Eb9qe
-         /VF+qG7uSi91BFyx0d+PA86e1ZFwKnB6JN+siJ3VGAe3Q3c42mdzFQ9nCZZNRagLAMm2
-         GVjg==
+        d=linaro.org; s=google; t=1764948351; x=1765553151; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GsoIJVCHmWy1FT7O+N+z+bRw/e2lbo3jyE9iVhVEHoY=;
+        b=vD5qHcI1ingruhgGMyNIMC255ukHM3NidyoDohriQrMaV9fm0TcW3v3LRwA7+wVaWq
+         3HnShgblv+FpVJbwI+qKYRO+XJSnV7pOfQV5rd2ha+xEzoLUiOZqZy+qpR3KSxkckoed
+         qV/9OFHDXimttHAOojI1D35QiiWbytKBwwgEJUMK/7kvzGaD71mjqU1/KfEH50nIdvZU
+         Q/YlX1RS7OlhoafLr6Se/CvFO+58kCaiW2+xJetLZKvmWQcldKkMgnN8AMMHuVeM19f3
+         58GVS/h53irqjZxwqmXy+nvhoOtoFiellRkfgw2g5vuSXngcRIt5KnaycRo4heK4xaan
+         4VHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1764940505; x=1765545305;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m+ywHSJnRc2OkdOLEW3U9rDhFUvuD0Iwme0Y53Q+L8E=;
-        b=fWulCsZlLK304NW7IlCjVLQAmZCHXJPzWZpZCu8CDjTOWPcCbkQvla4MFSbHV16Vg+
-         th5pwTaY+2dtj7sHjzz+1OfA47NGGDYquFk91itr+XOhfSJTEHDxKVPcOj6kdIrMqXEW
-         B6+eh1O2iQqbYCZA3IRo+1JcdkHjkAPKbeBcJW52dZZGsJP+XRiMTIH8zv9qaYl0SmIS
-         1658ILVkm/bzKrz5FGshggo8zhR/CyKYGsMuIqiVSgM6wHIW2tzVayOUTiZVz4Ozj2zB
-         hg5WLo0Z/nKmFPUTtlMtL/XE1xMQvybE7hxylRwH6gzc0rv/aoxnyyLQ8WgDn/gaGxIJ
-         1gVw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1ejo8WAtbi+0BYSpiQ5e6KZpGmnw3DKrHvkCgWhV8+wtDsL/oz1Jdt9ZHos6+gP/mxZWZS9x1U0TThvr9m2Sc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkI5vBKshDqZGVb45/02ukiRRcI9C5maIbqAr/dC5iD+pp0CnW
-	HfjrLe/zJXlRb1sKEo+iqbplu42zYCwQSnfLaMPRlO4P6SnWSwFdJ+gI4y5nz7ir9xeSxFbSMn3
-	WzHCHcK348wQUc0UvwsaviHhSmgwQ5YrxFqjRKL9pDfDTYAtZFf7w//s+Jqm2qO8ZMLxd1B1b
-X-Gm-Gg: ASbGncvewf+po7ddmk/OkvBLkV5N2mygSaD8zh4hhzl0L4mHKN/hYkdSu1S7yTLSKkb
-	Z9LkWQUP0UWMfAqdLnseu011rgoMeZwxCPsSb5xTTtHi95aIcn8eiPk38JS9ahyTl/hKE3RB6ez
-	1SLwwzj05rFeB7mUegXifS3coWyPdC5z8kU1vgqkbyOBn2gfrM0WWaCNuCaQOkULq1w5mbImamr
-	/R3mVVWnThpinUfI7FYUW8cq7NsazhhP8Mjx+Zansv8CPPFpcXhhKCDex8gxULNFXRLL0qXf+N2
-	XoAODKQ1XsrgkG0mIZ5oZdWXNZ+H7+X6woenAtCnIPcXWjXTF0Hy1ElEXjUfKLfLwPrQGep9dVB
-	/0MSMzl9xmuxatjFqvP8/dhkTshDSor4qrMPJl5vLzDANo+xBJ37SQ6KHRUm1fgEWIA==
-X-Received: by 2002:a05:620a:370f:b0:8b2:ef78:9c1a with SMTP id af79cd13be357-8b5e74503e4mr1049114485a.11.1764940504872;
-        Fri, 05 Dec 2025 05:15:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF2TOA/4tlgmqI9XOixGEr3Bq9/K70FoiPYeFtX6Dtk8hwTUbfPmshanH19pRHfCVGeP5SSpw==
-X-Received: by 2002:a05:620a:370f:b0:8b2:ef78:9c1a with SMTP id af79cd13be357-8b5e74503e4mr1049110385a.11.1764940504363;
-        Fri, 05 Dec 2025 05:15:04 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b79f44d3d9esm355075666b.30.2025.12.05.05.15.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Dec 2025 05:15:03 -0800 (PST)
-Message-ID: <e78feaff-0b48-42b6-a824-0f102a6ac9cc@oss.qualcomm.com>
-Date: Fri, 5 Dec 2025 14:15:00 +0100
+        d=1e100.net; s=20230601; t=1764948351; x=1765553151;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GsoIJVCHmWy1FT7O+N+z+bRw/e2lbo3jyE9iVhVEHoY=;
+        b=eBmHh6rFs55gjdDIc5jk1su3CfSeeFP29291ipBxtYgRE+pBBU+D9toAxtOkDsR4rn
+         op0NmuTJ3xDjDe7jB5rEOPFIw6XG0vGIpRr/+1/NVmTfejrCYsPfbu8K0KXzr4cYNwli
+         k1Irpl7kqnoPeWlRMKqLclH7yDxjpk3ZzFeJcvBcZUBIwk1VjJpXEFysOX9uDB/1tcuk
+         JMEUoeXM9CT6b8YA7XbeBz+Z0dZpPNvu+AIFio5M+cb/TU0JTh3QlVjRsyHOR9MP47Wa
+         4rG9weAnxt6ogyVEkE7xiZ8E2Q/IkENUGTZepswpgjCaPfnlj7LW9Lj/abxlPr/Hq5iD
+         01wA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9oKds7DgtWlYpc9wAGvRgr2bqTVfzifN+8jkvKVswPp5yfzPrR0dDBJ94SZR/6fejwHOV3rhxb/EQGR9bt29C@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt97Zk0vb0FuUONNtYpo0w+qWB50pymcKQs4MdE56aVtOi1iGf
+	e8v6ixpwOusRbAOz45RZvVxNPz51/MdwZTVk/ibg1hBRu9saVzJ2J1QjQcToDI1I9Yh8z5IvqaQ
+	m8zOoG1V/RidDVXancDfVB3FQBpQbik/4WS5dimrxgA==
+X-Gm-Gg: ASbGncsXJPSFV4cCrxFF7HzuRrQ2BTWYfmZXK63isfU04XCL4z1QG/O5f1DmFId+DFd
+	ajqYmSg8OD1hR7/ViYuV0MYII749uWV3icv8CTKDSBPll5zWazdFoYLoG6Vf7NK6FwEpXAWnFzD
+	2jQD6yO4obIkbzGgvmGoHEC596zamoZltuoUz7DFlaBm0HhitYuQu8SpKzZLmrNzkJw+oobqajh
+	OQVuGwzvB0GYxuEpW9s8zaBf0+yzyIe7Y82h5TI6LmG+J3PI360cKWCwk5r1AQ4DmUE50IUHI2L
+	Qb3DxqQMgCNWGNzPG8K/01bzgDPsYg==
+X-Google-Smtp-Source: AGHT+IE1o/bitoxaz1MpajvIa9GlFCkS/N0ihp9NddOYMAK2pOvstDfHPLiItzKSf0xSdfRKtHCoH2qZMY6AamTfLAs=
+X-Received: by 2002:a17:907:3cc8:b0:b71:88eb:e60c with SMTP id
+ a640c23a62f3a-b79dc77df3emr949922266b.44.1764948351178; Fri, 05 Dec 2025
+ 07:25:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
- <86f3cb9f-e42d-40f9-9103-1a4953c66c71@oss.qualcomm.com>
- <20251124152538.wt3kzztqmpr76hsx@hu-mojha-hyd.qualcomm.com>
- <4376b7cf-7088-412b-8596-bdec5bdc273d@oss.qualcomm.com>
- <20251204122806.s7lnqffgcrd7usem@hu-mojha-hyd.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251204122806.s7lnqffgcrd7usem@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA1MDA5NCBTYWx0ZWRfX2Xc0h5N9l5uf
- A3dsDezoHxtv/bDy2/rwdEPs3NPsqMvwTJRNVDIZs2DTDL2hW62/QI4BBzPZXVDJEwLUgNWAcBk
- NjHGmCicCqv4hhUR+myHKVrm+BRVLHJxR0B51WG/+PbwQeBsemmjjPxDu2+XBrBwh5Ln0+FsknD
- nDaZp4e3n2OihB7ydCqVdiQG2hcOyxOodeSJOlgBL3bg8nFee4ic7CNLNQLVhjcuhq+zTuX4Gdv
- ySOJOzOZU2bP3R5BMriUVz9YJBzhEp1DLh5ibVP8V3ZjXvYIm5EWGHMVxBGgXr2C2/hkiVR9nc6
- lVprOQGtxyeH6YQ9x2lbn5F9kdft2RNAjUgT440pwD6ZyVq79a0MMPFRaHlC7qmsLPGI2jWm41S
- MwdK/M7Ow+oWfC1+/thUzptzAgFNjQ==
-X-Authority-Analysis: v=2.4 cv=Yd2wJgRf c=1 sm=1 tr=0 ts=6932dad9 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=-GPZpz3KrsHxiqAZZ8kA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: EzvkIvvn1MwG7stncRuxWQNTMVKjC97n
-X-Proofpoint-ORIG-GUID: EzvkIvvn1MwG7stncRuxWQNTMVKjC97n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-05_04,2025-12-04_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512050094
+References: <20251126214709.2322314-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20251126214709.2322314-1-andriy.shevchenko@linux.intel.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 5 Dec 2025 08:25:39 -0700
+X-Gm-Features: AQt7F2rMfEJ0gvCUdSL0MMUPuM12OYKnm17iWsBqbS-CCk_tDkv2CDckLPP4-OA
+Message-ID: <CANLsYkzhvZK4ZhNP=Zc0XxENxGV8efFEMGLBc3RAV626edysiA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] docs: Update documentation to avoid mentioning of kernel.h
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, "Dr. David Alan Gilbert" <linux@treblig.org>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, workflows@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Joe Perches <joe@perches.com>, Bjorn Andersson <andersson@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/4/25 1:28 PM, Mukesh Ojha wrote:
-> On Wed, Dec 03, 2025 at 01:36:32PM +0100, Konrad Dybcio wrote:
->> On 11/24/25 4:25 PM, Mukesh Ojha wrote:
->>> On Mon, Nov 24, 2025 at 12:48:31PM +0100, Konrad Dybcio wrote:
->>>> On 11/21/25 12:01 PM, Mukesh Ojha wrote:
->>>>> Qualcomm remote processor may rely on Static and Dynamic resources for
->>>>> it to be functional. Static resources are fixed like for example,
->>>>> memory-mapped addresses required by the subsystem and dynamic
->>>>> resources, such as shared memory in DDR etc., are determined at
->>>>> runtime during the boot process.
->>>>>
->>>>> For most of the Qualcomm SoCs, when run with Gunyah or older QHEE
->>>>> hypervisor, all the resources whether it is static or dynamic, is
->>>>> managed by the hypervisor. Dynamic resources if it is present for a
->>>>> remote processor will always be coming from secure world via SMC call
->>>>> while static resources may be present in remote processor firmware
->>>>> binary or it may be coming qcom_scm_pas_get_rsc_table() SMC call along
->>>>> with dynamic resources.
+On Wed, 26 Nov 2025 at 14:47, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> For several years, and still ongoing, the kernel.h is being split
+> to smaller and narrow headers to avoid "including everything" approach
+> which is bad in many ways. Since that, documentation missed a few
+> required updates to align with that work. Do it here.
+>
+> Note, language translations are left untouched and if anybody willing
+> to help, please provide path(es) based on the updated English variant.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+>
+> v2: collected tag (Randy), fixed util_macros k-doc (Randy, me), fixed spelling (Randy)
+>
+>  Documentation/core-api/kobject.rst              |  2 +-
+>  Documentation/dev-tools/checkpatch.rst          |  2 +-
+>  Documentation/driver-api/basics.rst             | 17 ++++++++++++++++-
+>  .../driver-api/driver-model/design-patterns.rst |  2 +-
+>  Documentation/process/coding-style.rst          | 10 +++++++---
+>  Documentation/staging/rpmsg.rst                 |  7 +++++--
+>  include/linux/util_macros.h                     |  2 +-
+>  7 files changed, 32 insertions(+), 10 deletions(-)
+>
+> diff --git a/Documentation/core-api/kobject.rst b/Documentation/core-api/kobject.rst
+> index 7310247310a0..5f6c61bc03bf 100644
+> --- a/Documentation/core-api/kobject.rst
+> +++ b/Documentation/core-api/kobject.rst
+> @@ -78,7 +78,7 @@ just a matter of using the kobj member.  Code that works with kobjects will
+>  often have the opposite problem, however: given a struct kobject pointer,
+>  what is the pointer to the containing structure?  You must avoid tricks
+>  (such as assuming that the kobject is at the beginning of the structure)
+> -and, instead, use the container_of() macro, found in ``<linux/kernel.h>``::
+> +and, instead, use the container_of() macro, found in ``<linux/container_of.h>``::
+>
+>      container_of(ptr, type, member)
+>
+> diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
+> index fa2988dd4657..c1dff8e6bccb 100644
+> --- a/Documentation/dev-tools/checkpatch.rst
+> +++ b/Documentation/dev-tools/checkpatch.rst
+> @@ -753,7 +753,7 @@ Macros, Attributes and Symbols
+>      sizeof(foo)/sizeof(foo[0]) for finding number of elements in an
+>      array.
+>
+> -    The macro is defined in include/linux/kernel.h::
+> +    The macro is defined in include/linux/array_size.h::
+>
+>        #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+>
+> diff --git a/Documentation/driver-api/basics.rst b/Documentation/driver-api/basics.rst
+> index 5e9f7aee71a7..8b6a5888cb11 100644
+> --- a/Documentation/driver-api/basics.rst
+> +++ b/Documentation/driver-api/basics.rst
+> @@ -114,10 +114,25 @@ Kernel objects manipulation
+>  Kernel utility functions
+>  ------------------------
+>
+> -.. kernel-doc:: include/linux/kernel.h
+> +.. kernel-doc:: include/linux/array_size.h
+> +   :internal:
+> +
+> +.. kernel-doc:: include/linux/container_of.h
+> +   :internal:
+> +
+> +.. kernel-doc:: include/linux/kstrtox.h
+>     :internal:
+>     :no-identifiers: kstrtol kstrtoul
+>
+> +.. kernel-doc:: include/linux/stddef.h
+> +   :internal:
+> +
+> +.. kernel-doc:: include/linux/util_macros.h
+> +   :internal:
+> +
+> +.. kernel-doc:: include/linux/wordpart.h
+> +   :internal:
+> +
+>  .. kernel-doc:: kernel/printk/printk.c
+>     :export:
+>     :no-identifiers: printk
+> diff --git a/Documentation/driver-api/driver-model/design-patterns.rst b/Documentation/driver-api/driver-model/design-patterns.rst
+> index 41eb8f41f7dd..965b2b93be6f 100644
+> --- a/Documentation/driver-api/driver-model/design-patterns.rst
+> +++ b/Documentation/driver-api/driver-model/design-patterns.rst
+> @@ -103,7 +103,7 @@ The design pattern is the same for an hrtimer or something similar that will
+>  return a single argument which is a pointer to a struct member in the
+>  callback.
+>
+> -container_of() is a macro defined in <linux/kernel.h>
+> +container_of() is a macro defined in <linux/container_of.h>
+>
+>  What container_of() does is to obtain a pointer to the containing struct from
+>  a pointer to a member by a simple subtraction using the offsetof() macro from
+> diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
+> index 2969ca378dbb..258158637f65 100644
+> --- a/Documentation/process/coding-style.rst
+> +++ b/Documentation/process/coding-style.rst
+> @@ -1070,7 +1070,7 @@ readability.
+>  18) Don't re-invent the kernel macros
+>  -------------------------------------
+>
+> -The header file include/linux/kernel.h contains a number of macros that
+> +There are many header files in include/linux/ that contain a number of macros that
+>  you should use, rather than explicitly coding some variant of them yourself.
+>  For example, if you need to calculate the length of an array, take advantage
+>  of the macro
+> @@ -1079,14 +1079,18 @@ of the macro
+>
+>         #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+>
+> +which is defined in array_size.h.
+> +
+>  Similarly, if you need to calculate the size of some structure member, use
+>
+>  .. code-block:: c
+>
+>         #define sizeof_field(t, f) (sizeof(((t*)0)->f))
+>
+> -There are also min() and max() macros that do strict type checking if you
+> -need them.  Feel free to peruse that header file to see what else is already
+> +which is defined in stddef.h.
+> +
+> +There are also min() and max() macros defined in minmax.h that do strict type checking
+> +if you need them. Feel free to peruse the header files to see what else is already
+>  defined that you shouldn't reproduce in your code.
+>
+>
+> diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
+> index 40282cca86ca..42bac1149d9d 100644
+> --- a/Documentation/staging/rpmsg.rst
+> +++ b/Documentation/staging/rpmsg.rst
+> @@ -224,9 +224,12 @@ content to the console.
+>
+>  ::
+>
+> -  #include <linux/kernel.h>
+> +  #include <linux/dev_printk.h>
+> +  #include <linux/mod_devicetable.h>
+>    #include <linux/module.h>
+> +  #include <linux/printk.h>
+>    #include <linux/rpmsg.h>
+> +  #include <linux/types.h>
+>
+>    static void rpmsg_sample_cb(struct rpmsg_channel *rpdev, void *data, int len,
+>                                                 void *priv, u32 src)
+> @@ -244,7 +247,7 @@ content to the console.
+>         /* send a message on our channel */
+>         err = rpmsg_send(rpdev->ept, "hello!", 6);
+>         if (err) {
+> -               pr_err("rpmsg_send failed: %d\n", err);
+> +               dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", err);
+>                 return err;
+>         }
 
-[...]
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-> Just to avoid iteration, are you suggesting that we can keep this
-> guesswork as part of __qcom_scm_pas_get_rsc_table() and start with
-> something smaller than SZ_16K?
-> 
-> I kind of agree with the first part, but SZ_16K was the recommended size
-> from the firmware for Lemans to start with, in order to pass the SMC
-> successfully on the first try. However, the same size was failing for
-> Glymur, and it required a second attempt with the correct size.
-
-It depends on the payload, which you're probably much more familiar with.
-If 95% of them will be closer to e.g. 1K in size, it perhaps makes sense
-to use up the additional few dozen cycles on our amazingly fast CPUs and
-retry as necessary, instead of blindly reserving a whole bunch of memory.
-
-Konrad
+>
+> diff --git a/include/linux/util_macros.h b/include/linux/util_macros.h
+> index 2eb528058d0d..71564868b8f6 100644
+> --- a/include/linux/util_macros.h
+> +++ b/include/linux/util_macros.h
+> @@ -119,7 +119,7 @@
+>   * a fuss about it. This makes the programmer responsible for tagging
+>   * the functions that can be garbage-collected.
+>   *
+> - * With the macro it is possible to write the following:
+> + * With the macro it is possible to write the following::
+>   *
+>   *     static int foo_suspend(struct device *dev)
+>   *     {
+> --
+> 2.50.1
+>
