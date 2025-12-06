@@ -1,80 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB55325785D;
-	Sat,  6 Dec 2025 03:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ED930100D;
+	Sat,  6 Dec 2025 19:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764993595; cv=none; b=aCEeIgO1Iamu3gYmFbwcaJlwro2kQHReTmRworGn86YLdPofTLI39LYw9iwPxIPnYB7yNp3cfiE5a5rKm8StaTCm8HHv4uApV5QpWO+giIscC3mAen5rpyFlpVhKFb2SRxg4kqeKrKufLg/qUradsBBGO6f7YjDn4gl4ty+s+iw=
+	t=1765048042; cv=none; b=cHKHaD81J4Hez02Bk84Yetieiny3wdBnLonRwZflTAFG0vzeC4HXlkZBPB1rZxx/iU4GZ5zJ+jKD8z+VjzFitOuUbWiB1bn6R0aOmTJvZ2IHlmoKrsQEZg/38Tdm8OnsIqRRKJXdVM1sthakLGbP0gPIwO3MNirEYBWhnmrjOdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764993595; c=relaxed/simple;
-	bh=pEPt3HWjY7ucCmubfRLXzLpIWQ5q9hgoRVtNASqK7Rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I7ZTj0xCWMjsgxgG0TKCoV3BVi6HslHwEAqnHMllI/4xGLSiSOh8Aq45vLsEnu3owN/5m/K1Sclt8G4QTwNNuMgIFpDySj8GiSD3ob7/HeNKgEzTdP5u4e9501KKZ2rWrrZnTbXpf3YVbBhHRZbkTjgyrey20nulm1IUzJ4VwMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDYXetbw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765048042; c=relaxed/simple;
+	bh=wdyzESvsRQXJIV5x2M6hGsnr4tYVWDLrLodHRNoHEGc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GgQOjBn+r1LMLaA1ff3gPC8oPNlD/RAjHslx2VGhNy7Zp0Axhjh98GbMll7ezpg+12iKp9dZJhLgiJ5MM0Xvd6Vy0h46PeP6O2z5dgzQdkWgH46Llx0EijgFL4Iv2XGo+2t4NnaMuuifzJi6X0cRG7DsdcQk9bz6zxhjFvdZgmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSVr31nW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDYXetbw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6C8C2BCB3;
-	Sat,  6 Dec 2025 03:59:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSVr31nW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5965C4CEF5;
+	Sat,  6 Dec 2025 19:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1764993595;
-	bh=pEPt3HWjY7ucCmubfRLXzLpIWQ5q9hgoRVtNASqK7Rc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rDYXetbwG8rYwJvMZsec3bXyR4eq4MONW1gnGfMDcanX+gOp2m8KZ4kpccJzE7Sww
-	 TdRRJkKVxgMAzTPeLEBjYZqjnVYgzbNJ0pASHV11n58pfD8TefW0QFK/crCmlemknZ
-	 fxu4jjfo9r87xA5um+3mzFsz8RDoVDViuv5tTvqOHnj1oaroFyzB00NSszDnIWgejD
-	 kB21MqVE1cRtthlvajHUnTq4+FxP/fml9FvFlpyXrW5ALgcjNBIHrn+2Sq9PwbbeIG
-	 NlC7qmKsX4Hvb5fkse5aKSnvWYc3USaHcKWsVHR6kOWd+ebRWljt/uE4GlpBnbIl7z
-	 1x/ccbGIhwM/Q==
-From: Bjorn Andersson <andersson@kernel.org>
-To: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca@lucaweiss.eu>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/4] Start using rpmpd for power domains on MSM8974
-Date: Fri,  5 Dec 2025 22:06:08 -0600
-Message-ID: <176499396494.224243.12900669334147776741.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250621-msm8974-rpmpd-switch-v1-0-0a2cb303c446@lucaweiss.eu>
-References: <20250621-msm8974-rpmpd-switch-v1-0-0a2cb303c446@lucaweiss.eu>
+	s=k20201202; t=1765048041;
+	bh=wdyzESvsRQXJIV5x2M6hGsnr4tYVWDLrLodHRNoHEGc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=PSVr31nW1pWpN/qw66vBnvfkO5Jqa6VBPmCkVTHUcmXIjbpgikeDFVMLrHNnejKRY
+	 td5ZdhtueI+dILqNAVIlF1o8EiA5ZhigaaCRo29er8orhbWvHWzuHC/FLos4QMqBJ7
+	 IoiSeyl2WfK38a7mRT6cy59Z9+wSEImMxEliS2R6dUU2RCw9MZGcWLcrkDt8xS1XF9
+	 B0mfscQ+RdYvcOLexFRXlubAaxUREAc6pR9b+TXaBAKU0WwJuCEKHuL7Ra+50RjMGA
+	 s7vcFTtEO8BuYtAoXHTPTsbYaGIrd1S3mcOOCoMmRKLxeo00Hl5RbSN1gsEET5LRx2
+	 5Fa4a8krhThFQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F29313808200;
+	Sat,  6 Dec 2025 19:04:19 +0000 (UTC)
+Subject: Re: [GIT PULL] remoteproc updates for v6.19
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20251205200342.119676-1-andersson@kernel.org>
+References: <20251205200342.119676-1-andersson@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20251205200342.119676-1-andersson@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.19
+X-PR-Tracked-Commit-Id: 641092c1bc1bbc3be059d9d723b1cec10a368617
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e637b37a520513a04d00f4add07ec25f357e6c6d
+Message-Id: <176504785864.2170003.7507143168510636143.pr-tracker-bot@kernel.org>
+Date: Sat, 06 Dec 2025 19:04:18 +0000
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, Dan Carpenter <dan.carpenter@linaro.org>, Nickolay Goppen <setotau@mainlining.org>, Alexandru Gagniuc <mr.nuke.me@gmail.com>, Luca Weiss <luca@lucaweiss.eu>, Rob Herring <robh@kernel.org>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
+The pull request you sent on Fri,  5 Dec 2025 14:03:42 -0600:
 
-On Sat, 21 Jun 2025 15:19:55 +0200, Luca Weiss wrote:
-> Switch over the ADSP PIL to use power-domains instead of a regulator,
-> and have one commit switching over the MSM8974 SoC plus all the devices
-> to use power-domains.
-> 
-> Note, that I'm aware that these changes are not backwards compatible and
-> not really bisectable, but since it only affects the ADSP on these
-> pretty old boards, I say it's fine to have this. Get all the patches
-> into the same release (6.17?) and then we're good again.
-> 
-> [...]
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.19
 
-Applied, thanks!
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e637b37a520513a04d00f4add07ec25f357e6c6d
 
-[3/4] ARM: dts: qcom: msm8974: Sort header includes alphabetically
-      commit: cc09be7d644063334634baa6bb8f3860d6e05dcc
-[4/4] ARM: dts: qcom: msm8974: Start using rpmpd for power domains
-      commit: ce1799781200529149cc9e013ae1fdd6eb04b2b5
+Thank you!
 
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
