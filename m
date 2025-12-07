@@ -1,63 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4368302777;
-	Sat,  6 Dec 2025 19:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A190E3B8D61;
+	Sun,  7 Dec 2025 10:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765048044; cv=none; b=hum6BtVrhz/+l82+fz421wwZjUFYV8S9ao7iEvmuBAX8yEKly9hgmI96lC2l136J/GgOGjbiZmsvwh5/ldCTG6E40ntUyYn+IAzD7ka60C8iuprVGtibMCpp0/PDoz8uoQA546U+Y8+z8jwVipqOEAM+5JyhG8oweisu0GLn3pE=
+	t=1765103755; cv=none; b=TowJ7d7/KBJriXwoxaXYkEAj5hkQ3fdWQkHOoudSkMTbpClR4PwbLDOB7EQr9634ueMDdbH1ftLUzwjov28qdan1QKjZbKpcNaZc4e0wu0nNRKtIMy/QOOYzzCTwawH85sMGteLa1m30Dk4yjZ9RRJiWToi5CMmdN48BmbzkJ04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765048044; c=relaxed/simple;
-	bh=jzU2YC4zZZKaGNZwTOdjDjFd+mqR6aaVGwl35V0jmZo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=I+u6jX6H9/PfaeS8GDk0PPy6FJIIGmYH5BzlixVwLpwERrw2g4gvLzd42n55qrL5bduyCfB1VRdYVYJGU0mIEmiczUp3hbz6rn0pZfZX14rR9w+A4b/K+LfEjTkUrghnZSOt4Fhxkl/dpvnFc3YU2+M/vjlaWwXd0eRt+Tf9EMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F13//Bls; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765103755; c=relaxed/simple;
+	bh=cdxgLhluKDpR93tBLWRmMFNEs4dqL66QD+PPzLUtjGQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Tr1a01TjyAFqNRH8joBuSozeKS1NlHQPHGTi31ZB4d5rFTLaFAAPqf5BGfywqEDd99AY6dvyVigDbMjw72ISY8VmDGiC4heRP7JeZNltOeX46OgsgpSRymG6vrozzscVK697BWj1xWIkXRUYr9gnngGVFK1379k2WmnavYsjZM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=bEa+QCu6; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F13//Bls"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0AF6C4CEF5;
-	Sat,  6 Dec 2025 19:07:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765048043;
-	bh=jzU2YC4zZZKaGNZwTOdjDjFd+mqR6aaVGwl35V0jmZo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=F13//Bls9lH8f+3KPYFvMDVCWydqLb8Js8VHnEzhMZ3m4deLFnVCt6dks7DbogHRH
-	 n2/Tpromrv/mpzx93BP8bIKZGUBOkF8Wzi1UjP21WAx/Pjzrsmlz8TqB9LD/u34kN6
-	 uDILVaG3KfOsG8mi0MF1JjAkJWsMp4mlKKMvP7K6PIkJ+GjjmXJodnGDv4hGJ04/nY
-	 sRox7nhkLaJvNMdegINqlHgyBdsD1J4eGaCvX9APLnNagsStOh9qdFzQN/5stUFprV
-	 h/zLtF5Z4YDw+T5PNoc8xwWBRmKCpNy7SfBEDZN/EDV2sifMdAlDC8gtiSv88fQ594
-	 sXf4vDzMGcSkA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id F27D93808200;
-	Sat,  6 Dec 2025 19:04:21 +0000 (UTC)
-Subject: Re: [GIT PULL] rpmsg updates for v6.19
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251205200628.120406-1-andersson@kernel.org>
-References: <20251205200628.120406-1-andersson@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251205200628.120406-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rpmsg-v6.19
-X-PR-Tracked-Commit-Id: 112766cdf2e5ea0a0f72b0304d57a6f74c066670
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 973ec55764d0f0e25d495392477056d6a0be4660
-Message-Id: <176504786064.2170003.15219743717641040986.pr-tracker-bot@kernel.org>
-Date: Sat, 06 Dec 2025 19:04:20 +0000
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="bEa+QCu6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1765103745; bh=cdxgLhluKDpR93tBLWRmMFNEs4dqL66QD+PPzLUtjGQ=;
+	h=From:Date:Subject:To:Cc;
+	b=bEa+QCu6YYXBn6wLwNYGqjP6N6oSU7HpHtfyX/D93R/0sKgdZoo0wG5Ib3LRC1fl5
+	 czQqQ4b2r9pDaVhRZYSCBzP6fetEmcLt99oE04BaM/Bf/o3OxWdKtAd0pSm/WhmtFr
+	 asmu8DVnKNUvWF3WLbw/notJXm1WH/4XhpcY6+zA=
+From: Luca Weiss <luca@lucaweiss.eu>
+Date: Sun, 07 Dec 2025 19:35:35 +0900
+Subject: [PATCH] dt-bindings: remoteproc: qcom,adsp: Re-add cx-supply
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251207-adsp-cx-fixup-v1-1-0471bf2c5f33@lucaweiss.eu>
+X-B4-Tracking: v=1; b=H4sIAHdYNWkC/x2MQQqAIBAAvyJ7bsEWK+kr0UF0q72UKIUg/T3pO
+ AwzFTIn4QyzqpD4kSzX2aDvFPjDnTujhMZAmoae9IQu5Ii+4CbljmgMWUvGjuwHaE1M3MT/W9b
+ 3/QDuSC2EXwAAAA==
+X-Change-ID: 20251207-adsp-cx-fixup-442882486ec5
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca@lucaweiss.eu>
+X-Mailer: b4 0.14.3
 
-The pull request you sent on Fri,  5 Dec 2025 14:06:28 -0600:
+Some boards (e.g. sdm845-samsung-starqltechn) provide a cx-supply
+reference for the SLPI PAS.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rpmsg-v6.19
+The Linux driver unconditionally tries getting "cx" and "px" supplies,
+so it actually is used.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/973ec55764d0f0e25d495392477056d6a0be4660
+Fixes: 3d447dcdae53 ("dt-bindings: remoteproc: qcom,adsp: Make msm8974 use CX as power domain")
+Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+---
+There's literally one board using this upstream, judging from that I'm
+not sure this is a misuse of cx-supply or what exactly. An alternative
+to this patch is of course removing the usage in
+sdm845-samsung-starqltechn, but as it stands right now the patch under
+"Fixes" introduces a dtbs_check warning.
+---
+ Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thank you!
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+index 137f95028313..bde138716873 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+@@ -32,6 +32,9 @@ properties:
+   reg:
+     maxItems: 1
+ 
++  cx-supply:
++    description: Phandle to the CX regulator
++
+   px-supply:
+     description: Phandle to the PX regulator
+ 
 
+---
+base-commit: 37bb2e7217b01404e2abf9d90d8e5705a5603b52
+change-id: 20251207-adsp-cx-fixup-442882486ec5
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Luca Weiss <luca@lucaweiss.eu>
+
