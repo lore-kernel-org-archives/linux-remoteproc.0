@@ -1,182 +1,277 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3563C3115B5;
-	Mon,  8 Dec 2025 12:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD22A2EBBAF
+	for <linux-remoteproc@vger.kernel.org>; Mon,  8 Dec 2025 12:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765196776; cv=none; b=X+wPLiS132WsNmnZ3Nz2k58ItOEQPdeZOF0Z83VqoOXj2gQlc23BPJ0kEo/K5h6z9rouaJqE3CUFWIvl+AIUNQ+qoU68rVzR+swSWzvw+QhXcRi+dgbsitiEAQI/I62zCZ9BuEKD+impeMgpPT94Wpi9noaSi3OrYVgSbDECVcE=
+	t=1765197767; cv=none; b=fuJIlUGJNHj3dIL7cNcVt8Ht4z6lFOob7hFZA2/hlHDSw3gZQKtKKwb6axNHpzUhvJeYl6gw4wSFzIJtl9coYxhXYpD+VeYb3Hv024qx9dgCXls9aZ9pcv+Md9YN7LNn0JGHuYU8O0APjCdYt18yk84A9KlK8uBCF0j0fIqB6RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765196776; c=relaxed/simple;
-	bh=dRie47FOpA96SMRBxVlnQQl5cMhS7S0yMQBvp32acdU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DP0zMHlSasWQDT4BMtac3w2epfKLNbvQiSnm5QWJVE1ybOM5I9ApK8r8sCpsbS/pZRpFvBPUk/WLbsliKvrrd/IH1UrGwrr8qsuwqBkuyjr6pzGwWKIdgqbCtd3iqCt15YaysDrLHefgP5shgGOLCL7mshE5p8PYWmtnlMgMdyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SM4A9Ipq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765197767; c=relaxed/simple;
+	bh=8xIVj1oPw573xZll1w+KCySOz/zJABuXMM2i0K8zmFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=RsQAiSzPvkqY4oIrpMzkPh3UdaJ+fP4DKtnnsSjQi6ZWste4DpBjGnYG0/7q1HHogG7c7ERSSjKZ+it3SRvqSuVsoZYeZk8Ne/wCnyQpBcTQRL9WcJcLiUwQX50LNdcyul9fpk32PmSNUG5kvlbwtQXud3Mol+8zvctDI6jCfp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NOJ7rScp; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SM4A9Ipq"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D7008C19422;
-	Mon,  8 Dec 2025 12:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765196775;
-	bh=dRie47FOpA96SMRBxVlnQQl5cMhS7S0yMQBvp32acdU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=SM4A9IpqUZseqMXhmDC5n5YGBdYFjFamgpRrZ2eg0QGseWDD2ku399aHglw3AjRmb
-	 Ojk/OB5K2oPmA3tCLx97mov7T3KJRr4tyLD6r2rZFmd8p4I48fF0yq38lU4KIFHPeX
-	 2LUP9TxOcA+kAjza66erc4zbV5Rn2+LhfpV2FW63623D3Z64GD0ZegVUajfOroxeWA
-	 aK4XtQBszJq0leGVa4XfSUO0IZd+eBncGCdTFzuz4iwzQcBdLjqrq7jEgfhCQVgED9
-	 rkImRMSRV8xUcxCdqtG7bfZ/31S1ksujIoU8QiRYofqRxQAZk/oPQuCIHqS1zaREWH
-	 jqydf+rDCLNQw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1BDD3B7ED;
-	Mon,  8 Dec 2025 12:26:15 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 08 Dec 2025 16:25:39 +0400
-Subject: [PATCH v6 7/8] arm64: dts: qcom: ipq5424: add nodes to bring up q6
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NOJ7rScp"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251208124243euoutp02858fb03098f7ead892be8aacdcfdf8b3~-PgNpIs4s2881928819euoutp02o
+	for <linux-remoteproc@vger.kernel.org>; Mon,  8 Dec 2025 12:42:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251208124243euoutp02858fb03098f7ead892be8aacdcfdf8b3~-PgNpIs4s2881928819euoutp02o
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1765197763;
+	bh=TeCHUK8ly3u0CI/lUzUWsXGJUfrPlFtMtRIQkLKm/zU=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=NOJ7rScpu2XkuJCEzxkbY71v5K3qviYiAIeTlGuXEdATb4vaBoNoGO4jgEwNbakyO
+	 Vy+3TuwK3C6BCfbxjUTpwW+UKXLGijpsWNzWu62pzn93xnzyQpNdrJDuLLEDSs0zPd
+	 xD2/llIOYQP09TQ2tsV1Au/rjAdj5InkjZ38vCqQ=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251208124242eucas1p18ad0b3dea76a4e58723a1148e90be629~-PgNJCxmx2269822698eucas1p1t;
+	Mon,  8 Dec 2025 12:42:42 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251208124241eusmtip1faee3b50a42c148b87ef1321d70f043a~-PgL5JH1s0280602806eusmtip1H;
+	Mon,  8 Dec 2025 12:42:41 +0000 (GMT)
+Message-ID: <2c274bd2-3bcc-4b75-9a37-9a6441bd7a50@samsung.com>
+Date: Mon, 8 Dec 2025 13:42:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v7 2/2] remoteproc: qcom: Use of_reserved_mem_region_*
+ functions for "memory-region"
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Patrice
+	Chotard <patrice.chotard@foss.st.com>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, Beleswar Padhi
+	<b-padhi@ti.com>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-msm@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CAL_JsqJTrGAJx-fv8OQGDhsLVKavQzzQotssEq_E5f_aJe8bOg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251208124242eucas1p18ad0b3dea76a4e58723a1148e90be629
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251208-ipq5018-wifi-v6-7-d0ce2facaa5f@outlook.com>
-References: <20251208-ipq5018-wifi-v6-0-d0ce2facaa5f@outlook.com>
-In-Reply-To: <20251208-ipq5018-wifi-v6-0-d0ce2facaa5f@outlook.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>, 
- George Moussalem <george.moussalem@outlook.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1765196772; l=2895;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=qPV6GT5bCq9i4n/U0HBhMPTiFUd78LEt1PreAHNd75w=;
- b=3DPqVEVCsvF9yIFSJpTxarghGHMftOFqzuSdXcOtXictrtrLxDJzE/6q/FLVoZo8pZF5wLgkW
- GAeEQhaEdzHBynuOI8D2eA0IrVmnUsfDbTfllsV4QMAbPwLysxIGfhV
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+X-RootMTR: 20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c
+X-EPHeader: CA
+X-CMS-RootMailID: 20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c
+References: <20251124182751.507624-1-robh@kernel.org>
+	<CGME20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c@eucas1p1.samsung.com>
+	<20251124182751.507624-2-robh@kernel.org>
+	<674efe8d-c299-4ce9-bf6b-c1920a5393eb@samsung.com>
+	<CAL_JsqJTrGAJx-fv8OQGDhsLVKavQzzQotssEq_E5f_aJe8bOg@mail.gmail.com>
 
-From: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+On 02.12.2025 15:15, Rob Herring wrote:
+> On Thu, Nov 27, 2025 at 8:28 AM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 24.11.2025 19:27, Rob Herring (Arm) wrote:
+>>> Use the newly added of_reserved_mem_region_to_resource() and
+>>> of_reserved_mem_region_count() functions to handle "memory-region"
+>>> properties.
+>>>
+>>> The error handling is a bit different in some cases. Often
+>>> "memory-region" is optional, so failed lookup is not an error. But then
+>>> an error in of_reserved_mem_lookup() is treated as an error. However,
+>>> that distinction is not really important. Either the region is available
+>>> and usable or it is not. So now, it is just
+>>> of_reserved_mem_region_to_resource() which is checked for an error.
+>>>
+>>> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+>> This patch landed in today's linux-next as commit c70b9d5fdcd7
+>> ("remoteproc: qcom: Use of_reserved_mem_region_* functions for
+>> "memory-region""). In my tests I found that it breaks booting of
+>> DragonBoard410c (arch/arm64/boot/dts/qcom/apq8016-sbc.dts) by causing
+>> the NULL pointer dereference. The issue is caused by replacing
+>> devm_ioremap_wc() with devm_ioremap_resource_wc(), which fails on
+>> devm_request_mem_region(), see comment in the code below. It looks that
+>> the error handling is somewhere broken. Here is the the kernel log:
+>>
+>> remoteproc remoteproc0: 4080000.remoteproc is available
+>> qcom-wcnss-pil a204000.remoteproc: error -EBUSY: can't request region
+>> for resource [mem 0x8e200000-0x8e7fffff]
+>> remoteproc remoteproc1: a204000.remoteproc is available
+>> remoteproc remoteproc1: powering up a204000.remoteproc
+>> remoteproc remoteproc1: Booting fw image qcom/apq8016/wcnss.mbn, size
+>> 4111376
+>> Unable to handle kernel paging request at virtual address fffffffffffffff0
+>> Mem abort info:
+>> ...
+>> Internal error: Oops: 0000000096000046 [#1]  SMP
+>> Modules linked in: cpufreq_powersave qcom_wcnss_pil cpufreq_conservative
+>> coresight_stm coresight_replicator coresight_tmc coresight_tpiu stm_core
+>> coresight_funnel coresight_cpu_debug coresight_cti(+) adv7511 coresight
+>> nfc rfkill msm snd_soc_lpass_apq8016 snd_soc_apq8016_sbc
+>> snd_soc_lpass_cpu snd_soc_msm8916_analog snd_soc_msm8916_digital
+>> snd_soc_qcom_common snd_soc_lpass_platform snd_soc_core qrtr ubwc_config
+>> snd_compress llcc_qcom snd_pcm_dmaengine qcom_q6v5_mss snd_pcm ocmem
+>> qcom_pil_info qcom_spmi_vadc qcom_camss drm_gpuvm qcom_pon rtc_pm8xxx
+>> qcom_q6v5 qcom_spmi_temp_alarm venus_core qcom_vadc_common snd_timer
+>> drm_exec qcom_sysmon snd qcom_common gpu_sched videobuf2_dma_sg
+>> v4l2_mem2mem qcom_glink_smem v4l2_fwnode soundcore drm_dp_aux_bus
+>> qmi_helpers mdt_loader v4l2_async videobuf2_memops videobuf2_v4l2
+>> videodev qnoc_msm8916 videobuf2_common qcom_rng drm_display_helper mc
+>> qcom_stats rpmsg_ctrl rpmsg_char display_connector ramoops socinfo
+>> rmtfs_mem reed_solomon ax88796b asix usbnet phy_qcom_usb_hs ipv6 libsha1
+>> CPU: 2 UID: 0 PID: 28 Comm: kworker/2:0 Tainted: G W
+>> 6.18.0-rc1+ #16209 PREEMPT
+>> Tainted: [W]=WARN
+>> lr : __qcom_mdt_load+0x210/0x304 [mdt_loader]
+>> Call trace:
+>>    __pi_memcpy_generic+0x128/0x22c (P)
+>>    qcom_mdt_load+0x68/0x60c [mdt_loader]
+>>    wcnss_load+0x2c/0x5c [qcom_wcnss_pil]
+>>    rproc_start+0x30/0x1b4
+>>    rproc_boot+0x19c/0x560
+>>    rproc_auto_boot_callback+0x1c/0x34
+>>    request_firmware_work_func+0x4c/0x98
+>>    process_one_work+0x208/0x60c
+>>    worker_thread+0x244/0x388
+>>    kthread+0x150/0x228
+>>    ret_from_fork+0x10/0x20
+>> Code: 927cec03 cb0e0021 8b0e0042 a9411c26 (a900340c)
+>> ---[ end trace 0000000000000000 ]---
+>>
+>>
+>>> ---
+>>> v7:
+>>>    - Split QCom to separate patch
+>>> ---
+>>>    drivers/remoteproc/qcom_q6v5_adsp.c | 24 ++++------
+>>>    drivers/remoteproc/qcom_q6v5_mss.c  | 60 ++++++++-----------------
+>>>    drivers/remoteproc/qcom_q6v5_pas.c  | 69 +++++++++++------------------
+>>>    drivers/remoteproc/qcom_q6v5_wcss.c | 25 +++++------
+>>>    drivers/remoteproc/qcom_wcnss.c     | 23 ++++------
+>>>    5 files changed, 72 insertions(+), 129 deletions(-)
+>>>
+>>> ...
+>>> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+>>> index 2c7e519a2254..14005fb049a2 100644
+>>> --- a/drivers/remoteproc/qcom_wcnss.c
+>>> +++ b/drivers/remoteproc/qcom_wcnss.c
+>>> @@ -526,25 +526,20 @@ static int wcnss_request_irq(struct qcom_wcnss *wcnss,
+>>>
+>>>    static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
+>>>    {
+>>> -     struct reserved_mem *rmem = NULL;
+>>> -     struct device_node *node;
+>>> -
+>>> -     node = of_parse_phandle(wcnss->dev->of_node, "memory-region", 0);
+>>> -     if (node)
+>>> -             rmem = of_reserved_mem_lookup(node);
+>>> -     of_node_put(node);
+>>> +     struct resource res;
+>>> +     int ret;
+>>>
+>>> -     if (!rmem) {
+>>> +     ret = of_reserved_mem_region_to_resource(wcnss->dev->of_node, 0, &res);
+>>> +     if (ret) {
+>>>                dev_err(wcnss->dev, "unable to resolve memory-region\n");
+>>> -             return -EINVAL;
+>>> +             return ret;
+>>>        }
+>>>
+>>> -     wcnss->mem_phys = wcnss->mem_reloc = rmem->base;
+>>> -     wcnss->mem_size = rmem->size;
+>>> -     wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
+>>> +     wcnss->mem_phys = wcnss->mem_reloc = res.start;
+>>> +     wcnss->mem_size = resource_size(&res);
+>>> +     wcnss->mem_region = devm_ioremap_resource_wc(wcnss->dev, &res);
+>> The above line causes the failure. After restoring it to:
+>>
+>> wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
+>>
+>> the mentioned board boots fine again. I'm not sure about other drivers,
+>> if they also fail the same way as they might not be used on the tested
+>> board.
+> Other platforms (non-QCom) were tested also use
+> devm_ioremap_resource_wc(). So something else is claiming the same
+> region? Can you dump out /proc/iomem?
+>
+> The region is dynamically allocated, so maybe that has something to do with it.
 
-Enable nodes required for q6 remoteproc bring up.
+# dmesg | grep mem
+OF: reserved mem: 0x000000008e200000..0x000000008e7fffff (6144 KiB) 
+nomap non-reusable wcnss
+OF: reserved mem: 0x000000008dd00000..0x000000008e1fffff (5120 KiB) 
+nomap non-reusable venus
+OF: reserved mem: 0x000000008dc00000..0x000000008dcfffff (1024 KiB) 
+nomap non-reusable mba
+OF: reserved mem: 0x0000000086000000..0x00000000862fffff (3072 KiB) 
+nomap non-reusable tz-apps@86000000
+OF: reserved mem: 0x0000000086300000..0x00000000863fffff (1024 KiB) 
+nomap non-reusable smem@86300000
+OF: reserved mem: 0x0000000086400000..0x00000000864fffff (1024 KiB) 
+nomap non-reusable hypervisor@86400000
+OF: reserved mem: 0x0000000086500000..0x000000008667ffff (1536 KiB) 
+nomap non-reusable tz@86500000
+OF: reserved mem: 0x0000000086680000..0x00000000866fffff (512 KiB) nomap 
+non-reusable reserved@86680000
+OF: reserved mem: 0x0000000086700000..0x00000000867dffff (896 KiB) nomap 
+non-reusable rmtfs@86700000
+OF: reserved mem: 0x00000000867e0000..0x00000000867fffff (128 KiB) nomap 
+non-reusable rfsa@867e0000
+OF: reserved mem: 0x0000000086800000..0x00000000892fffff (44032 KiB) 
+nomap non-reusable mpss@86800000
+OF: reserved mem: 0x00000000bff00000..0x00000000bfffffff (1024 KiB) map 
+non-reusable ramoops@bff00000
+NUMA: Faking a node at [mem 0x0000000080000000-0x00000000bd9fffff]
+NODE_DATA(0) allocated [mem 0xbd7c6800-0xbd7c943f]
+   DMA      [mem 0x0000000080000000-0x00000000bd9fffff]
+Early memory node ranges
+   node   0: [mem 0x0000000080000000-0x0000000085ffffff]
+   node   0: [mem 0x0000000086000000-0x00000000892fffff]
+   node   0: [mem 0x0000000089300000-0x000000008dbfffff]
+   node   0: [mem 0x000000008dc00000-0x000000008e7fffff]
+   node   0: [mem 0x000000008e800000-0x00000000bd9fffff]
 
-Signed-off-by: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq5424.dtsi | 68 +++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+...
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index eb393f3fd728f0b2fc8cd93c849f8c170d76e312..c73a7a1bf397887befd384344394e30f05c372f2 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -222,6 +222,11 @@ tfa@8a832000 {
- 			no-map;
- 			status = "disabled";
- 		};
-+
-+		q6_region: wcss@8a900000 {
-+			reg = <0x0 0x8a900000 0x0 0x2800000>;
-+			no-map;
-+		};
- 	};
- 
- 	soc@0 {
-@@ -752,6 +757,37 @@ dwc_0: usb@8a00000 {
- 			};
- 		};
- 
-+		q6v5_wcss: remoteproc@d100000 {
-+			compatible = "qcom,ipq5424-wcss-sec-pil";
-+			reg = <0 0x0d100000 0 0x4040>;
-+			firmware-name = "ath12k/IPQ5424/hw1.0/q6_fw0.mbn";
-+			interrupts-extended = <&intc GIC_SPI 508 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_wcss_in 0 0>,
-+					      <&smp2p_wcss_in 1 0>,
-+					      <&smp2p_wcss_in 2 0>,
-+					      <&smp2p_wcss_in 3 0>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack";
-+
-+			mboxes = <&tmel_qmp 0>;
-+			qcom,smem-states = <&smp2p_wcss_out 1>,
-+					   <&smp2p_wcss_out 0>;
-+			qcom,smem-state-names = "stop",
-+						"shutdown";
-+
-+			memory-region = <&q6_region>;
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 500 IRQ_TYPE_EDGE_RISING>;
-+				label = "rtr";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 8>;
-+			};
-+		};
-+
- 		timer@f420000 {
- 			compatible = "arm,armv7-timer-mem";
- 			reg = <0 0xf420000 0 0x1000>;
-@@ -811,6 +847,14 @@ frame@f42d000 {
- 			};
- 		};
- 
-+		apcs_glb: mailbox@f400000 {
-+			compatible = "qcom,ipq5424-apcs-apps-global",
-+				     "qcom,ipq6018-apcs-apps-global";
-+			reg = <0 0x0f400000 0 0x10000>;
-+			#clock-cells = <1>;
-+			#mbox-cells = <1>;
-+		};
-+
- 		apss_clk: clock-controller@fa80000 {
- 			compatible = "qcom,ipq5424-apss-clk";
- 			reg = <0x0 0x0fa80000 0x0 0x20000>;
-@@ -1426,4 +1470,28 @@ timer {
- 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>,
- 			     <GIC_PPI 12 IRQ_TYPE_LEVEL_LOW>;
- 	};
-+
-+	wcss: smp2p-wcss {
-+		compatible = "qcom,smp2p";
-+		qcom,smem = <435>, <428>;
-+
-+		interrupt-parent = <&intc>;
-+		interrupts = <GIC_SPI 501 IRQ_TYPE_EDGE_RISING>;
-+
-+		mboxes = <&apcs_glb 9>;
-+
-+		qcom,local-pid = <0>;
-+		qcom,remote-pid = <1>;
-+
-+		smp2p_wcss_out: master-kernel {
-+			qcom,entry-name = "master-kernel";
-+			#qcom,smem-state-cells = <1>;
-+		};
-+
-+		smp2p_wcss_in: slave-kernel {
-+			qcom,entry-name = "slave-kernel";
-+			interrupt-controller;
-+			#interrupt-cells = <2>;
-+		};
-+	};
- };
 
+# cat /proc/iomem
+
+...
+80000000-85ffffff : System RAM
+  80000000-821affff : Kernel code
+  821b0000-82e5ffff : reserved
+  82e60000-840fffff : Kernel data
+  85000000-85013fff : reserved
+86000000-892fffff : reserved
+89300000-8dbfffff : System RAM
+8dc00000-8e7fffff : reserved
+  8dc00000-8e7fffff : reserved
+8e800000-bd9fffff : System RAM
+  b1000000-b6ffffff : reserved
+  b7000000-bbe08fff : reserved
+  bc480000-bd5fffff : reserved
+  bd621000-bd623fff : reserved
+  bd624000-bd724fff : reserved
+  bd725000-bd7b0fff : reserved
+  bd7b2000-bd7b4fff : reserved
+  bd7b5000-bd7b5fff : reserved
+  bd7b6000-bd7c9fff : reserved
+  bd7ca000-bd9fffff : reserved
+
+
+The devm_ioremap_resource_wc() requested region (0x8e200000-0x8e7fffff) 
+is marked as 'reserved' in /proc/iomem.
+
+Best regards
 -- 
-2.52.0
-
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
