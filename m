@@ -1,202 +1,179 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9851B2B9B7
-	for <linux-remoteproc@vger.kernel.org>; Mon,  8 Dec 2025 17:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDBD2D29C2
+	for <linux-remoteproc@vger.kernel.org>; Mon,  8 Dec 2025 22:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765213276; cv=none; b=uJPZlzv6bqXkXdliWgAUiqamSI0F6bFXEkxyfhvNdJIZKXIODTw2K6TBlEqMSrNjfEsp5XkqBap8jIDy3SkkgTPMxrlWwgw2Dr9+woiYva+cAvMi6kTjUiOVfOsS1UzEzEBfshwzG/muH5DI6o7j2xE2N2m0y3HdVKLbUN5jjWU=
+	t=1765233211; cv=none; b=RqqcZhJbpJGnOOAtQn37mdBTVIO7C8Ot+qJeGeiwjX2v/73WrILWr3rTBurip0kNZ4MtVRLAwcR80Jd5WUMZhNOFfePYiusCPmKG1jxe8ha/bU0QaB5sF0hVFILFXlqNSlIwvLdIFZ+MgCbsVFoQlUZ9pR1SVqwPY9uz0ZK91a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765213276; c=relaxed/simple;
-	bh=hSjEHJHJfe4hQKojmhGLqtPV+OqU9VLeIk3tEGl4Phw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GTSVpGJljzWQCC54EoiJk3SzUHGqpJm+pndP3uK5fiL+PqmglfWxTTJLJ4TqeIO/Gt2LUULHF1dFAgON33qqVXXbDy1wFpGqYNFG+18JN2yXuC/Oorw5Tukcsqx0RER8rbbE5cl2lsT248x0pyP+0aDJPxd4Fuc2fQxFFnPY5ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Rdy7g9GF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Kq24V1Ym; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1765233211; c=relaxed/simple;
+	bh=Y/PPeyVl2XzWDxE+UEj5DmnShJldEkJedeUhxFsDkVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lFrD9/Un6ZsJ6AV14rsXbbJ6KKGyPb938MVy1wgSS4IRl7yU2dYLYJYS0d4U0guuv+KPWdOnBRpGaR3pGZJm1d/bkHa6roERp8Wn0NeamO2E+DOyzK45F//bBWdsuRxSQaMfNyL8VDYUwaAFyn/dC8hfrsDUAdh00SXxpzQd0mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EuRD52eH; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Rdy7g9GF";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Kq24V1Ym"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B88aJfU095760
-	for <linux-remoteproc@vger.kernel.org>; Mon, 8 Dec 2025 17:01:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=eCB9rKt0bxBUYqdLGfWOYnLi
-	2W4YvD8volkGTkyVspI=; b=Rdy7g9GFXzpNGbHbxxsTk721cXtTLq89k8+3KP5i
-	SpkpeLOX/BNdUdWTt6bAnONP3fB+7PD6X+1waR8ahRljnvOjWDTyEuPcp26lmXQ2
-	GUgeBo2MiOTUnvydYzl6uo+EWxHOxjI0aLoDB+vquigbnRe4IXwtdZo4E5FAtXUQ
-	XzJz9NrFsYECZF9bCRUcUTyyIwTupgDSZ5frYwUR1Ef+3bmUp6uHMgjWURoWLPjk
-	pOuEoxk7WWc/K00hYNvM0agZQ4Jyq3djrCJnB0jCHH01XGpRuO1jxAhOTCpcTbOs
-	PFy8iPVeORNeAU+3CTKAy42SQfL7Kv8D6OmJUjGyN5N/iw==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4awuafsfp6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 08 Dec 2025 17:01:13 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-bbcf3bd4c8fso3140616a12.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Dec 2025 09:01:13 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EuRD52eH"
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-3ec3cdcda4eso4221882fac.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 08 Dec 2025 14:33:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1765213273; x=1765818073; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eCB9rKt0bxBUYqdLGfWOYnLi2W4YvD8volkGTkyVspI=;
-        b=Kq24V1YmBt6C5wczje6zRjATpYs3NZLi8ruyXgXi5ioO8PR1Qno0oIyLtdEGr41uZW
-         5vZvOaSi1aWvRTv6VrYnxkFf3QW3fL9CpxTQqVEpoErDsry5gtJjoNE9qSakVmEv63g+
-         puf+zq/2KlbmuKi9yR3UwwOxgVkFwP0x2M8jljeg2miLYZ6mT0eScowZb7vDAb5UMPXf
-         Sbeh3Iv4tqqiuSDL/wx5IrNmHiSlyoi6jPBOZKbeAJGi0M4V5osDtLj0kOvcji9y8Pdx
-         QT0L0poXLOIxB3cAVqmTKq5ppHHDjfqKvSwQLKUpYSYLXku0Xn3iHQp93zlgr/xflNpE
-         jycg==
+        d=gmail.com; s=20230601; t=1765233209; x=1765838009; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=negcTziY+LrNbWPAmrwhVy6s9d23g35N3KHIauZ61rU=;
+        b=EuRD52eH7TuRII2RwYm8O2fXb4NKTCQweTNnt19Hw2eOZja4v6k5BAcPUfK7cu2Bx+
+         TZv1dT9A/KQFdqe0A8ta/xY9j19arAilC8g5pFle60m8/JDSReAdnGIpxMMXBTLoKFPb
+         8iVbq5eVz+OlamDQS73LzCOD9rggKWo9eeJqGKDQyd5e38DooDqmIRWRyCdNWfXBWy63
+         giBTYroAiVXSx80+UmsxzTPEO8QqrP5V5pGyqMeRU50jlZoMAksIf4SYcRDD8ETmIzG6
+         hC2V85yyQEX0tANifi4/awK1kiLM4eq3moVRsnw/Iw89NkDlbPHiV4B2tDHtBJ0oijJG
+         R0HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765213273; x=1765818073;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eCB9rKt0bxBUYqdLGfWOYnLi2W4YvD8volkGTkyVspI=;
-        b=o/aQIplIr0ZZk1lGgD9QJUhGU9V8vhzRmbJ5V01TMVz1WfnieyNa0SGyB0bU11Sk6r
-         O9vGHQPTBZmXfS4To9zLmO5bEuT0vcMpa2rWIuJLVixnrGsIaBuBjJAC+iqwuyc7LfEV
-         DCU3+f8Ax2qpF+TIr5bGXj+2jnVYTpv/2CIrCSUPmZzmFruhuLcUHwXV9NfqLFQs88r4
-         qJFFpP+9SyRArAF+RC3i85TR6/fsZqRV+EkORYAvYd2J4yHnWmWRmaKLHSzqoMVISJk9
-         aYqCKTO80zbPB56xiSU3P+DOXljZrf9NN4aQAXfX9efzltUc/U8Y7QaOKHO4Fbgk0Q9q
-         hCnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhjzUwAmJl8TeklODqdfb/nU2+hVE68fuHel3jYWFynm7OAzbIj7zeOrM+82K+PacvnwbupHGOWiPlNk5tT0n2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw3dgV0Vxhkol4XQaiwSwLkLMBH/W0mHdtb8qgfzkVEjLZ/H9a
-	kH0jd1/ZF7VX0YnrB2oK58Td3z40RCYYVUSJ1JuKE9pIJcmiGLlqhjVQR3D4zjG81OByB0xgJQm
-	LSlMlIKgPdl/AW6bUNgcgYjRk/sjKy1sr3gRWAMFaSKiI2Fm23TpKqAXOqEpMUbnonSK4tc2H
-X-Gm-Gg: ASbGncujCb8iFldk71gkXBsvFfM+jydKWTUBADY0QbWLERK7grCN38NOnr6yvSmnH8I
-	wFuxBoupgT6RhRCzPdJN390YAdH4Byc2HxrxMz7GtzDqajAegMY8nr+sufpGml1kRPrSVg8L8yf
-	JIFbJOhofywZwBeXRmO/TWQIqoSd3S5K6zWnp3/ntpcB0ANJ5Ty1b+uoDOYLVPGyHT/yNGSNkjh
-	DgodfEXemR3JkSaeSgF7FIgxsp5YXZitfGlzx8RYUcyGc03njOq5wfFgj7QJrudOvuW8Hs/gRck
-	ltpo47HNRQlGdsv3iFVKHBKOBomp2nSN+nJ3hEoXXy1QAvG3Kg8czCa297T1YntUeT7msXs0MDB
-	kOyvvi1bLabsvX2EZ3LAfl31tZsc8GSc+h6XZ
-X-Received: by 2002:a05:6a00:1a11:b0:7e8:3fcb:9b0a with SMTP id d2e1a72fcca58-7f03e564eb1mr45268b3a.32.1765213272857;
-        Mon, 08 Dec 2025 09:01:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHaN+ITFTQf8tUPCh292VMVrUPI9Ljqza0yZj3DgFvhHwa0IGUMFw4hL1FdwQnXigomUpUApg==
-X-Received: by 2002:a05:6a00:1a11:b0:7e8:3fcb:9b0a with SMTP id d2e1a72fcca58-7f03e564eb1mr45217b3a.32.1765213272019;
-        Mon, 08 Dec 2025 09:01:12 -0800 (PST)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7e29f2ecf89sm13785614b3a.12.2025.12.08.09.01.08
+        d=1e100.net; s=20230601; t=1765233209; x=1765838009;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=negcTziY+LrNbWPAmrwhVy6s9d23g35N3KHIauZ61rU=;
+        b=nnwvsIl/wGqjbWHEsCDp2dKD9ZemrWrJ+SOildAdE/T+IGQgYiANu05/p2DJnfwl0k
+         7yB0FCdUE1v2WI/mWszX2Z0/lzNsVyjCc4sH/ZkKdNi0UtwFbr5GjSDEobfcRffQoFjX
+         C7XKOUXbKmUjUUBWU6ovn9Yg+lgGok9M2I5lxcY/oR9Jlqw07sR/GF4al3md9d51a/pd
+         DsTq49RLtvvh1KVfT3Bw0d3w5+2EUypa8vKCzaOIHnQ3frHSONj+7z46PM46ArgpK0mr
+         UZY99mAkwi9YQmUpqEE01zUgDKQ9Jq4ZI/LdQOnzUL0ECX14XgDOcaPkByBQWAxKJY3U
+         ro+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWaWgjmbzJUuikzF5wiXBw15eAe94bTLKS74I66203I+OLvRw75FV2XXp7Wv0LW8RFybifCn8QvX5dfxkxBzWmb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNWFUAVKozOeB6I1YCaz8A/+ScGJ3dt/Ci5f/3gEcLv+cW76SX
+	u0pAg9M7u2K4jJMQI64L1QlgCvN45lB3Tz2wpMmnhwu7t/RQAo7qK9D3
+X-Gm-Gg: ASbGncukzRGm9XiQ9f0eXQZd0ongTMHSx0r7Jio17G8x9hQAwQwhrKxxf+tnkBXdlN4
+	HX2Ll+Fm5s8wK+DnZcQgB5XJlW8gHkJ56qzCihhTubr67jjMD6QFnxbV6WDj2GHoV5xivMgoAJH
+	EIBhKMSY5bAvFRL0FC265FhClU78fneAzzRvn8OgTHKO+QEhOn5HNZx+FT/ix/aQIY0WYSZ/jYH
+	av2+CCXV094xHpCFTB0CsiG6K4kjG7EDw0ChVRA3iXSXz1RDeo2zoWEic+0dVJEWZQRh0AyOAs9
+	meeFku5QIi98RKiUe+SIMhNEiLRU3vW2ZicwvCOuaQGPsYdbxZkdUfMxXRJqQibTk3tf/kIWF/A
+	4DU2SW6FDIQyqaehcO0em7/+wpxAYxgH+AcxkGSjzqaEPao6ukOBbtIwOzyNGlQbyIkP1TGnvbo
+	qcY9cPo2aTpcZSeiyWVByH0kRu1YX/49AAq885x4uQFMTxPCLkayrLZNLwNk1AnLnTLGyk3X9cI
+	joOU9MCNLF6qLkmmxcA77oLKM5e
+X-Google-Smtp-Source: AGHT+IG6Ll/NyvIG8hYX/ZfdNkDgkNTwNAALldNpzCAzjxyuTVtaEabPJY1hs7aspEwUNuhiMEb1pw==
+X-Received: by 2002:a4a:ee0c:0:b0:657:56e3:7894 with SMTP id 006d021491bc7-6599a89ed27mr4341889eaf.5.1765233208778;
+        Mon, 08 Dec 2025 14:33:28 -0800 (PST)
+Received: from nukework.lan (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3f50b5884d7sm9793436fac.19.2025.12.08.14.33.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 08 Dec 2025 09:01:11 -0800 (PST)
-Date: Mon, 8 Dec 2025 22:31:04 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-Message-ID: <20251208170104.psvk4xxo7b4bg2eo@hu-mojha-hyd.qualcomm.com>
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
- <86f3cb9f-e42d-40f9-9103-1a4953c66c71@oss.qualcomm.com>
- <20251124152538.wt3kzztqmpr76hsx@hu-mojha-hyd.qualcomm.com>
- <4376b7cf-7088-412b-8596-bdec5bdc273d@oss.qualcomm.com>
- <20251204122806.s7lnqffgcrd7usem@hu-mojha-hyd.qualcomm.com>
- <e78feaff-0b48-42b6-a824-0f102a6ac9cc@oss.qualcomm.com>
- <sysdgcspvxhytyudknnyj4hu6lc47we5ijkrsssi6askysqyo2@bdzl5cvzc4be>
+        Mon, 08 Dec 2025 14:33:28 -0800 (PST)
+From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To: andersson@kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Govind Singh <govinds@codeaurora.org>,
+	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] remoteproc: qcom_q6v5_wcss: drop redundant wcss_q6_bcr_reset
+Date: Mon,  8 Dec 2025 16:33:14 -0600
+Message-ID: <20251208223315.3540680-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <sysdgcspvxhytyudknnyj4hu6lc47we5ijkrsssi6askysqyo2@bdzl5cvzc4be>
-X-Authority-Analysis: v=2.4 cv=ep7SD4pX c=1 sm=1 tr=0 ts=69370459 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=nmjsJmyt1rCFr6M104wA:9 a=CjuIK1q_8ugA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-ORIG-GUID: I4rzvLvcEpqCGnF57NkmtmQzJpT6-Vxa
-X-Proofpoint-GUID: I4rzvLvcEpqCGnF57NkmtmQzJpT6-Vxa
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA4MDE0NCBTYWx0ZWRfXw7Hn0FXemccM
- KTSlutFlDHuPZ67nuIALda8OTJjOWA34PNxn/63ul9QuXVPovVodPzDSHmfwLgZOF7d6vtzoJry
- cZr2me2P/NZwrbTTgW8VyKPo/k3iO/bDZ5PMaijpn0wYN0/T3OIPFck6sSQdFe1SCiTpygYXt+B
- r32pLR0AS5t+MOxuPpOjvdnVLo9M0gF7RefkEXTg0H5bKv8ALzzuzJR+PQfsjQ3QcL0GD3qHsTH
- Q5593dXJLgLCRHxlKyE+g1Tz6eXzCUAyA0M28pnL5IQcAfo7GRTn5SlTiELzD1lc8Wf6StZ4If/
- cfSj4IhlH6zxkLjwOx4jkEvi2erkF/sfb1XhJZduukV0wTxINT0FeDAXy7Mii34lCeQZ0gs90/s
- 91b46HKajSkZBhgbGaIWn01PuLW+YQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-06_02,2025-12-04_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 clxscore=1015 bulkscore=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2512080144
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 05, 2025 at 04:17:56PM -0600, Bjorn Andersson wrote:
-> On Fri, Dec 05, 2025 at 02:15:00PM +0100, Konrad Dybcio wrote:
-> > On 12/4/25 1:28 PM, Mukesh Ojha wrote:
-> > > On Wed, Dec 03, 2025 at 01:36:32PM +0100, Konrad Dybcio wrote:
-> > >> On 11/24/25 4:25 PM, Mukesh Ojha wrote:
-> > >>> On Mon, Nov 24, 2025 at 12:48:31PM +0100, Konrad Dybcio wrote:
-> > >>>> On 11/21/25 12:01 PM, Mukesh Ojha wrote:
-> > >>>>> Qualcomm remote processor may rely on Static and Dynamic resources for
-> > >>>>> it to be functional. Static resources are fixed like for example,
-> > >>>>> memory-mapped addresses required by the subsystem and dynamic
-> > >>>>> resources, such as shared memory in DDR etc., are determined at
-> > >>>>> runtime during the boot process.
-> > >>>>>
-> > >>>>> For most of the Qualcomm SoCs, when run with Gunyah or older QHEE
-> > >>>>> hypervisor, all the resources whether it is static or dynamic, is
-> > >>>>> managed by the hypervisor. Dynamic resources if it is present for a
-> > >>>>> remote processor will always be coming from secure world via SMC call
-> > >>>>> while static resources may be present in remote processor firmware
-> > >>>>> binary or it may be coming qcom_scm_pas_get_rsc_table() SMC call along
-> > >>>>> with dynamic resources.
-> > 
-> > [...]
-> > 
-> > > Just to avoid iteration, are you suggesting that we can keep this
-> > > guesswork as part of __qcom_scm_pas_get_rsc_table() and start with
-> > > something smaller than SZ_16K?
-> > > 
-> > > I kind of agree with the first part, but SZ_16K was the recommended size
-> > > from the firmware for Lemans to start with, in order to pass the SMC
-> > > successfully on the first try. However, the same size was failing for
-> > > Glymur, and it required a second attempt with the correct size.
-> > 
-> > It depends on the payload, which you're probably much more familiar with.
-> > If 95% of them will be closer to e.g. 1K in size, it perhaps makes sense
-> > to use up the additional few dozen cycles on our amazingly fast CPUs and
-> > retry as necessary, instead of blindly reserving a whole bunch of memory.
-> > 
-> 
-> Those "few dozen cycles", is tasked with sending messages to RPMh for
-> voting and unvoting the buses, then tzmem will hopefully hit the
-> genpool, twice, and then radix updates, and then more genpool updated
-> and more radix tree work. And then of course there's the one context
-> switch to secure world.
-> 
-> If we don't have space in the genpool, we're going to grow
-> dma_alloc_coherent, extend the genpool, call secure world to register
-> the new tzmem. And then for all those cases where the allocation wasn't
-> enough, the retry (with updated size) will not fit in the
-> PAGE_ALIGN(size) genpool that was created, so we'll do this twice.
-> 
-> Fortunately the tzmem growing should only happen on first remoteproc
-> boot, but I think it's a bit optimistic to say "a few dozen"...
-> 
-> 
-> The drawback with making it 16KB is that we're not going to test that
-> error path very often. But the more idiomatic form of first calling with
-> a size of 0, then allocate and pass the proper size, seems a bit
-> wasteful to me as well - in particular if we do it anew each subsystem
-> boot.
-> 
-> PS. 16KB is 0.03% of the ADSP carveout (or 3% of the ADSP DeviceTree
-> carveout...).
+The wcss_q6_bcr_reset used on QCS404, and wcss_q6_reset used on IPQ
+are the same. "BCR reset" is redundant, and likely a mistake. Use the
+documented "wcss_q6_reset" instead. Drop ".wcss_q6_reset_required"
+from the descriptor, since all targets now need it.
 
-What you suggest ? 0x36c8 bytes was the size for CDSP resource table on Lemans.
+This changes the bindings expectations, however, it actually fixes the
+driver to consume the intended ones (qcom,q6v5.txt), which lists
+"wcss_q6_reset" and *not* "wcss_q6_bcr_reset"
 
+Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+Changes since v1:
+ - rebased on latest remoteproc pull for v6.19
+ - Added paragraph detailing binding expectations (from Konrad)
+
+Changes since v1:
+ - rework change to unify wcss_q6_bcr_reset and wcss_q6_reset
+ 
+ drivers/remoteproc/qcom_q6v5_wcss.c | 23 +++++------------------
+ 1 file changed, 5 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index c27200159a88a..b391724cfd08e 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -96,7 +96,6 @@ struct wcss_data {
+ 	unsigned int crash_reason_smem;
+ 	u32 version;
+ 	bool aon_reset_required;
+-	bool wcss_q6_reset_required;
+ 	const char *ssr_name;
+ 	const char *sysmon_name;
+ 	int ssctl_id;
+@@ -134,7 +133,6 @@ struct q6v5_wcss {
+ 	struct reset_control *wcss_aon_reset;
+ 	struct reset_control *wcss_reset;
+ 	struct reset_control *wcss_q6_reset;
+-	struct reset_control *wcss_q6_bcr_reset;
+ 
+ 	struct qcom_q6v5 q6v5;
+ 
+@@ -309,7 +307,7 @@ static int q6v5_wcss_qcs404_power_on(struct q6v5_wcss *wcss)
+ 		return ret;
+ 
+ 	/* Remove reset to the WCNSS QDSP6SS */
+-	reset_control_deassert(wcss->wcss_q6_bcr_reset);
++	reset_control_deassert(wcss->wcss_q6_reset);
+ 
+ 	/* Enable Q6SSTOP_AHBFABRIC_CBCR clock */
+ 	ret = clk_prepare_enable(wcss->ahbfabric_cbcr_clk);
+@@ -803,19 +801,10 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 		return PTR_ERR(wcss->wcss_reset);
+ 	}
+ 
+-	if (desc->wcss_q6_reset_required) {
+-		wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
+-		if (IS_ERR(wcss->wcss_q6_reset)) {
+-			dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
+-			return PTR_ERR(wcss->wcss_q6_reset);
+-		}
+-	}
+-
+-	wcss->wcss_q6_bcr_reset = devm_reset_control_get_optional_exclusive(dev,
+-							"wcss_q6_bcr_reset");
+-	if (IS_ERR(wcss->wcss_q6_bcr_reset)) {
+-		dev_err(wcss->dev, "unable to acquire wcss_q6_bcr_reset\n");
+-		return PTR_ERR(wcss->wcss_q6_bcr_reset);
++	wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
++	if (IS_ERR(wcss->wcss_q6_reset)) {
++		dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
++		return PTR_ERR(wcss->wcss_q6_reset);
+ 	}
+ 
+ 	return 0;
+@@ -1062,7 +1051,6 @@ static const struct wcss_data wcss_ipq8074_res_init = {
+ 	.firmware_name = "IPQ8074/q6_fw.mdt",
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.aon_reset_required = true,
+-	.wcss_q6_reset_required = true,
+ 	.ops = &q6v5_wcss_ipq8074_ops,
+ 	.requires_force_stop = true,
+ };
+@@ -1072,7 +1060,6 @@ static const struct wcss_data wcss_qcs404_res_init = {
+ 	.firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
+ 	.aon_reset_required = false,
+-	.wcss_q6_reset_required = false,
+ 	.ssr_name = "mpss",
+ 	.sysmon_name = "wcnss",
+ 	.ssctl_id = 0x12,
 -- 
--Mukesh Ojha
+2.45.1
+
