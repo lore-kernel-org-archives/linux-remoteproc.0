@@ -1,75 +1,75 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679342882CD
-	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Dec 2025 14:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143FD2882CD
+	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Dec 2025 14:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765289225; cv=none; b=qMvW/KEDJuxHZr/qPP2C8biGAz3NF2SXeR+1aqvNjzfRk8DSCliMoflwpOGlN0fNtHh33yxtJ4WCwf5c/2jN5SptazmKpoCOl0ksLDQdogKk/iZMR4zMj9VNiNLPNitilN8BOBQ4FKGAZ0XaI9c8UBzZZTRnzfhUfDZrSOleteY=
+	t=1765289269; cv=none; b=ZGVOeZHQAK99Hzq8CAJ/hdClDbrIvLiStbTWM46nkmj1llrsKq1SQZp+ugxoNUaiZzyX+staVxMEpBPFIkaWwGRXUbpTraOuASAbxLcNj/Y3jaxgJ7gpZOQ8AqDNrBCUPGXn8s8ngrntJ1vA5tUqaSbherFNs3mIV+j5XnZ56KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765289225; c=relaxed/simple;
-	bh=fd+mJ8gHTs6Kr6af70JjQH9dVi3KRc/LWKQigRKj3wI=;
+	s=arc-20240116; t=1765289269; c=relaxed/simple;
+	bh=Dmc9rdVFoScFVpQrBHs8ADdcFVIv2yXnxYpPhE8hk44=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=exBRaW/ZuMFr9OJbnTZ8zg3JZZSyNKcEgzpc0Nhx9/PmLIRxpg9G9S2zzG1haOvMq7vU+O23TZTUktJk53gJUfuCRjUFeygS8defLEMnSJhTKs7bPy3GfDdzD2NkfeOe/A8uvBanuC4M/MNvO6c9BZZ+7VCfQenWMVOMMmX9Sew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m/TOp374; arc=none smtp.client-ip=209.85.210.179
+	 To:Cc:Content-Type; b=W4cIM181TPYGpiKzewALpcZ+2lBwjtUJfS/kGfq7MVgI8tJpJ6Valf1ZSYBiWh5Oa5b3ZNl+eW1jYt8JH76w8DEZTZHlIjSHCg8JYdEnZQwwZyDN+DWX7OJ8/MR6D1BYxly1yDxpr6q45orPHbEdClFmavns+wsDwNfSdTNsNxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jp+cdQuU; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/TOp374"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7aad4823079so5152802b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Dec 2025 06:07:04 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jp+cdQuU"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7aae5f2633dso6168555b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Dec 2025 06:07:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765289223; x=1765894023; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765289267; x=1765894067; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fd+mJ8gHTs6Kr6af70JjQH9dVi3KRc/LWKQigRKj3wI=;
-        b=m/TOp374/W3/y9R9uerhygn+G6XjlldPLciBC2a9JLZWKE4sozOtX4oQ3uD3gurO5B
-         Sah2Ry7BeJWOTSlu8ZKtFcuRQPfNpBc/hGAjxCSQqAEmC7IOQUz/LonDgz96q/wRtRd3
-         ah9N91yEHB7ogR2EgEVDGa56xKMlVXqnY5h42E8wcJyEnxbWEtOBvDWNUMD9plC0sdv2
-         nt01oqWYuA408SWF1nhC/zZKwQQ54ld+rGKzLqIev5ouAxjmYdOLKwrQOjnjHG8NJTTM
-         tK9Xc0jgz/DwliRv2ifLEMRRe36tDVrgKOXgjgV+fiL74FebTt4avN920XvXwKQq/Jmu
-         U97Q==
+        bh=Dmc9rdVFoScFVpQrBHs8ADdcFVIv2yXnxYpPhE8hk44=;
+        b=Jp+cdQuUL/HoGM7mJxEPFPbpUP1Ksls2Eb3XFInYbovBXfbg1j9lyZUzg5grZh1VyV
+         QUpeFUVI+p5XyxS8KjJaOV27dsJUZ8ffcHp69PMLV4ZNAmPodynU+OK7MDpUnTaasPTo
+         tJg0Sx7XWsoF8n43JqCkhyk46DVldZ3q9rQ5696i4Mqz/wsz2u8LrLwdY+e073tKK4f3
+         k8Bz5cB+iizV5d2JkYiLeQQ+nvw4BsSgy1LhOXYaBtsx/TqT2VCgqd9rvtM35S5mJWSM
+         /TOgLlYAxUH03vQv1hVxaZ15GRGMGK7pPf40nbVm/w8Nk5zL8peMJuu6h9iUZuDEh/No
+         wzVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765289224; x=1765894024;
+        d=1e100.net; s=20230601; t=1765289267; x=1765894067;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=fd+mJ8gHTs6Kr6af70JjQH9dVi3KRc/LWKQigRKj3wI=;
-        b=urIfCYsXBHmZcvFuIJ6lLKVl4d953Jlsr/bJ3l726E3uNi0TOGUagzK1g3EiXNyH9t
-         nLPAOK9lXBfk9Kty98ZNyNXqratMbjXP23G7B8VP69pyIMQP4GfwlCG9WS/iaJPogbvv
-         cofLUni7glHNKRo5uHzX2Mw7NiWVuFTL/fx4mroYnpMlm9jxNdBZYUmhxOBOo2oFoVeL
-         QTSafAILHx27gqlMaZjAK3byVntNwVk7UqegM8vUHc82BDsLN2bwfeH5GD6YcEacWE2W
-         zgU63oZOWviAj0/zhvmgPyM5I9Bg+h+Wz5hrrCEoYiTgBh0k8PKBbDwj92S1SucpOXKq
-         HvDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyZ2+tLWOA0HIkF31Vuffehk9Dpc5AcFeKVNbNInTMHNOXEqgxcQskUv45dk6a9OcW/muOLFDe55n14nVWtD5c@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy53TuThLrtKtlNUOjL8QoTnUPNI6aR1dT1a3izoL9imIFlx7Z
-	To7DspUShUWsb+blKszxgw8YyIRzqFIeyTffuCVE4vvzK+cFydsyniJTDs96lAudLRfignnHbyS
-	Q4p93DDLaUlqwLgYQO0S4h0BNOl6+PrE=
-X-Gm-Gg: ASbGncskuoZv6q9VT7O9mnq1i9osZDmerXfMWAIuvPj9lkwqzvcQcQy8Px3zy9opvaz
-	kF2f098p+Rtu7fy+lNAHZ2EOpVkSnoVKSymxKO2w3ZTm0E/9p9qiNMJaYjQUignjb5Wuo4BdHk9
-	778smnL3fsAE7jLxHnzRVfwlRQ/tn3Ib6ul+FfRUTjUVMs+1ST73liDD+M2lCcRn3b9YpClJ9Mu
-	RIozTsBLbv6D3VmE7c/VAU/FIeiEcAfOTF3HqoxPKQkBIZV8ZG3UjaIIThPamcEJu6AmTaE5cPL
-	mDKHDFFqSvOTt4EfliiTdKi7+OCiprpGkcVetlciC92DhXPN8FpPkNLqPo5YNPyaQMCvJvtsweU
-	MBiQcRsvCdw==
-X-Google-Smtp-Source: AGHT+IF5qKkipCzYEFzejnBb5df6vSYSFDP3s5q/B01Pgp/zxcwgrfIpRlHh7JiFs/tuo4o8rJk2zzjfEIRdHLWLt+o=
-X-Received: by 2002:a05:7022:4388:b0:11d:fc64:9562 with SMTP id
- a92af1059eb24-11e0315ee8bmr7976330c88.1.1765289223387; Tue, 09 Dec 2025
- 06:07:03 -0800 (PST)
+        bh=Dmc9rdVFoScFVpQrBHs8ADdcFVIv2yXnxYpPhE8hk44=;
+        b=hCnT4/urkHdHrWD1NzPWph5HVvZj0QleUoAJcH/xwWIADBpK5qyj2IoxRRnmFblCXw
+         N9NvmP1lIiXC7s/jzaE/bn7rbhUsHx/3dxD+luAC7mW3RFNweSEM7IE+vRHnaYdpzmY7
+         apZNdX1AI/QgWlsr2Wgg+rvfs443W7Nin+R3gp3IIEe0JUPXSieWzL7lmLmLn4ncb7MM
+         vZ9iwYyOBTrdWqpx1vQs7Pb4JqQ5uNrrmmH3nqfSu84EVgVTQeL368HvdMX9nu0W1HTL
+         IEZ5t8eVeX0H50KNhz8uMMTeC9vo9xJYkxYi6DndqMH3dwl+eYUgn8H/gkmagcK3FyVz
+         EgrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUD2g7Ri7Xro30plAX31jqlSuzPRaZgu9MYm05XIhO8nT7Y3bxyrjDLxxCOEwKcE/0KbO9V+jUQqoCUT1Z+sAlw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnRm2EfkfcnasNG1aqqmLbQqyhfoe7aDGUtioCxM8GpFApfbZf
+	xaSNKrsZiSmlLGiOEl3eIgN1hGiozEAKM3L7r5cdPUzupYxP2RORQeRhCUvxFEpihBuK7hmLUSK
+	KsQqoy4qnQ8RVzbrKKfN5W+99Uvnj7eM=
+X-Gm-Gg: ASbGncvhPtI3BBVcF9q59eX/wtCMOG/+lOZnMWKreXv1/PtCR4ouC4H+SInXeQKBzLI
+	Ph5BHi/Vv+FcIOmJMouUPtdrgHsLv6aeNudFgwfgAh09Ry/ySNxU5vWDbpuHfcOfbbCzsFQ5xas
+	74/C4Gd7gykUJu19ORKoJPAOIsJ3NUfK+hWU1hs8dGiFE5UUsaesC68ulHHCV3wW1YScsPZPwST
+	wI6eGWvsEw7/GhCTIvli5LjoSwcUMu+ewJ3p0zuzcwHg991JsHh9X4dOHPKU/fryeqE6TThsPKl
+	nAM/101rac5KOSoBR4dDPv+Fw9dtm1pf/nJb/iSP/Zyt60bHkntW0qECYMYKlD3n/rqjRoi9WgP
+	RDA8of6V6rg==
+X-Google-Smtp-Source: AGHT+IE/MNNz7wtG6bh2UZGMnD/oVNJ1TejvyJsrOq0p5iLxtYXVZCkZRmEenluo/ZYsAAS0ErkexZjLZxTzyvUOaTk=
+X-Received: by 2002:a05:7022:a92:b0:11b:9386:a3ca with SMTP id
+ a92af1059eb24-11e032d8b05mr7860628c88.43.1765289267225; Tue, 09 Dec 2025
+ 06:07:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251204122825.756106-1-iuliana.prodan@oss.nxp.com>
-In-Reply-To: <20251204122825.756106-1-iuliana.prodan@oss.nxp.com>
+References: <20251204122825.756106-1-iuliana.prodan@oss.nxp.com> <20251204122825.756106-2-iuliana.prodan@oss.nxp.com>
+In-Reply-To: <20251204122825.756106-2-iuliana.prodan@oss.nxp.com>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 9 Dec 2025 16:09:30 +0200
-X-Gm-Features: AQt7F2oWIRtUxYk-A63rfaiqGIFxA7_EkG0XNavFrSy6-Iw6Vp4fAIgO0gAu08g
-Message-ID: <CAEnQRZCPX-enWtWYXM1KD95=bTD5-i46L2Bej7gXP+mggCUwPw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] remoteproc: imx_dsp_rproc: Skip
- RP_MBOX_SUSPEND_SYSTEM when mailbox TX channel is uninitialized
+Date: Tue, 9 Dec 2025 16:10:13 +0200
+X-Gm-Features: AQt7F2pD3HTByIx6cmrNP1lp33kbo_jsvfA1vDQn-Zm1XLkckJBpR0yk-Ns6YM0
+Message-ID: <CAEnQRZAWAJ03u9LP33MXizJB6Rso+nL2FvRSKZE0Hx4o9ak+Uw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] remoteproc: imx_dsp_rproc: Rename macro to reflect
+ multiple contexts
 To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
 	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
@@ -85,15 +85,11 @@ On Thu, Dec 4, 2025 at 2:29=E2=80=AFPM Iuliana Prodan (OSS)
 >
 > From: Iuliana Prodan <iuliana.prodan@nxp.com>
 >
-> Firmwares that do not use mailbox communication (e.g., the hello_world
-> sample) leave priv->tx_ch as NULL. The current suspend logic
-> unconditionally sends RP_MBOX_SUSPEND_SYSTEM, which is invalid without
-> an initialized TX channel.
->
-> Detect the no_mailboxes case early and skip sending the suspend
-> message. Instead, proceed directly to the runtime PM suspend path,
-> which is the correct behavior for firmwares that cannot respond to
-> mailbox requests.
+> Rename WAIT_FW_READY to WAIT_FW_CONFIRMATION and FEATURE_DONT_WAIT_FW_REA=
+DY
+> to FEATURE_SKIP_FW_CONFIRMATION. This way, the term CONFIRMATION covers:
+> - waiting for firmware to confirm it is ready to start;
+> - waiting for any other confirmation from firmware.
 >
 > Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
 
