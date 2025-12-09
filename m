@@ -1,174 +1,642 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011064.outbound.protection.outlook.com [52.101.65.64])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A0D13AD26;
-	Mon,  8 Dec 2025 23:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765236817; cv=fail; b=TjjVGa9R6AsuuwuJnw2lqdQAOQeH0qm+lXP42RNCeY47R46Oqt0oN97+qjg+lTRA6RalHJDNjVsCT1bGAq0phiIIuve/8nQYcIJCDcEV4634kq4q7edgT1ntB53ybp/UkUoDL/8j6rSThpLavv/o9ri8u4Qv9V63LSnz0LfME4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765236817; c=relaxed/simple;
-	bh=3V/ye8lQISgK0FlJIx7qKXuDPbrJr7w6lJhEpfAiy40=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=K+soK2PjNqie85s531/5gDO+9avq5FbaeeE4ED3tn0rkFO6IJeQkY78ZHtS4UkZ3co2H8UfLV4xHzOsq7S8o+/Siu7uaOisMVlqFZx4pDZwLVMSIhNV89dxqscWK4lvNatfPhS5GviEPVmvL0lcC5fGUOmn4jsCVGfu/3PH09js=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Eq6qaTYg; arc=fail smtp.client-ip=52.101.65.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6E029BDB5
+	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Dec 2025 10:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765277139; cv=none; b=KUbsHI2hjgZWPDtB6FXPb9+GTK26M79vhGGl4S56NF9KdaaWPUFUAoo7thHT2gqhYhtuhL448AvcM/dGASDhYNCXbLZHf/9ua0dbk4a8eo9IoXKExyPn6SwfgssCznMJMaVJld4u9MH8ltq7suxtEkAvDGvyJoMcDSbGH8Ut3sw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765277139; c=relaxed/simple;
+	bh=zb/ZLKLf9wUwr6KjOKa0bbhSYACXfCfSjGx26SED+yE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fX0sIw95j0Ua94Tv4EYL4ljqfe124XI6FEGB8qco97y3kBAeIirNHFbVuU46IAUTpwe9gzJ6A+prfXAPCt5Mj4iwW2LJNf741MVT85SWXKwAEQMPfmvpUyI3LVNn85Mg8JWbTEvLMcm0o5Ges7OTrlAnuzOCEMHTjYahZWKSRwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k3YFQRi2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QwI4fzIO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Eq6qaTYg"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A+hBie1se99nV8Tvg6zf63jEqY2TjihdL5MYbP4qEGxgAr0GHn/U3tVnsQqyejY46UeML1AnfhdA7WF7Ed1R4DanBzozS/uNPVYXFC4koh+cwFSkRwyIOq6Yokmhnw7ygrgcDFH6s4zGLiAwFM+glYRTT/XuCby824MLsAPaRMPohL2PFlEUzkKPDZEY0NRwa0N/p2AVy0AEShd57g3sc9MUEXtO71qOA+SzHKF2quG9LF4il1HGluGbvJ14UhvPFwAX7ZIWdWA3DKorWi1FyZPA2JyzzrD7jv5F649u//fwNJbD/Y7fFzFU7BT+wgO/M0Djyxx7AzknR4158mpOrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HK749NKSXa7BEB0gHUvmTmpoik9cNE+JdOwbQju/zVQ=;
- b=fyBOvKq8fqUHlpIQBIJc1giREAMvvUQdidlDqTSqWoxayoFX5qBFqEolmpKGNw46BWepM6LVG+Lkps/zpT+q69cGTP8HyboeA1bFGo0qIB07Qatz2iNoyXWfMHlrzYLJdt3Q6pVm1U5PdgkTRMOyUP5PkkdnTEfnNBQGlKBU3Dt9HrWW+W7oUP3EVRbbJxVEIujNM+g2ouFk58rpcC7yD2sw5emG/Neyq2ie1g7SeUVF/iGzgTYF8sXLfQhti7mq7JaH4lE8R70+7/qrXdXeGnuHsNE5U+rbhwM9CqZThiAMA2ud5ryxdIkph8cmex9ShNtagDmE4W815axOFoUdIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HK749NKSXa7BEB0gHUvmTmpoik9cNE+JdOwbQju/zVQ=;
- b=Eq6qaTYg1L50BX8QKkUJ73cKvM0u3C2ujMaZjtKx5G8geX7UYGppO8772gkHO9bfWahfmxrYsYZlDu437VZCp/8guI0ZzRa95wSNGdmk+9TQLJ98fZ6lIpfOXLmju78iJmOxV9ghCzFqwkj09DXqkg2aLvqkvVf0UV0m3oUXz0SHrLzk4zdvRhi5ij/yZp30mmsNzR16FNdxDVP1jG6vK1EurkbyKUqzf9DlyIO+o6r54eYo3skwAobCtcB0Fv+bgerioCHfU+KINdBCcupR8CQnFOc/29h5iKifC+MfVsRoz4Roa7jZRv6qblFeXj3+vrd3fhA6gFCRdbrtx1kU0g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by AS8PR04MB7733.eurprd04.prod.outlook.com (2603:10a6:20b:288::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.14; Mon, 8 Dec
- 2025 23:33:33 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%5]) with mapi id 15.20.9388.013; Mon, 8 Dec 2025
- 23:33:32 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com,
-	Shenwei Wang <shenwei.wang@nxp.com>
-Subject: [PATCH] remoteproc: imx_rproc: Use strstarts for "rsc-table" check
-Date: Mon,  8 Dec 2025 17:33:02 -0600
-Message-ID: <20251208233302.684139-1-shenwei.wang@nxp.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0250.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::15) To PAXPR04MB9185.eurprd04.prod.outlook.com
- (2603:10a6:102:231::11)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k3YFQRi2";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QwI4fzIO"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5B99N7DR3966561
+	for <linux-remoteproc@vger.kernel.org>; Tue, 9 Dec 2025 10:45:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=LdtJ1kATu6fNjMp4apfkB/xV
+	CmHcGExb5AFIpVk5piY=; b=k3YFQRi2s2uU0Jnkhkou6koBJejMtY1CieizLbrk
+	q0syuAVKhXQ6gJO+S4aQhL326mAjeHxj+Oq8es/9liA3dG6rCBGcXXjtn5auXpZv
+	oMQwnOSQnCNJ5rElDGVMs4KxNUc31ueA8VrttUAbkm62L87moX00SThgNY8J19fz
+	r5UzOw3sRMEOYy6MpIJqxfidJHxulmKGkyse3RTVTWLOdG9JOKVyMUl8hAqDVlrA
+	wx34zkqcBljyraBxdKU0s298oSmGYzIj2uUsldknKg2YftpANfpCzt8qWItsFymp
+	2+JphNmaLMwG9Bb4NubAXIxCGxYMHkORO3kSf3BGbE2OOQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4awwfrbs2b-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 09 Dec 2025 10:45:33 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-29e6b269686so28454035ad.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Dec 2025 02:45:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1765277133; x=1765881933; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LdtJ1kATu6fNjMp4apfkB/xVCmHcGExb5AFIpVk5piY=;
+        b=QwI4fzIO2FE/5Zz/MYJflWD1X00pmMY5I5De/ljHtcgFSROxaWKCEA0IRGej/eLPTF
+         mukWncq5vfBYTc2WNMrAZgk57GvvvdF5jgOT+J9rbKIG1rTvctVJjtmFip9xuvD0jy4R
+         ef0IUViXXRJ0dmdj5e/vkvBDsBe8REQLbIHowauaLcqxm9eFObp+hKwikRNLev35fGgc
+         4MWQOd/6f3U1FkulayCoozjeij7r8QBGdAFwhBn3x7yAteGOM3/38BOZHVXqdVdEecGT
+         zTGARPvJ/Ux8wL8BDbMZyANUgK+mJ+VVCojKoTLHOdjeWBix5xTOsQ4tQt7tZzYZwR5/
+         F+Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765277133; x=1765881933;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LdtJ1kATu6fNjMp4apfkB/xVCmHcGExb5AFIpVk5piY=;
+        b=Wv/+MAJ/PzFllYLkNBVRZMiloZHSWLjKHv/A8ZFVpoAqvQlmuRy6Ca58aOWgMSXj3V
+         Wy7mtWQDSXKe/2+NU0WaUvDsJn+dGqxpqg9yqt/bHB94BinnJvN8fE+mpews6SPpJ4NQ
+         WGpxJ+x6tt+b7VAFy3Ybk80zz1+PO5uFdO1HdfKPRYPmGFk19vP5G4niIoZ0nXpl3EVv
+         7pfWT/gt0hc/KtfDNHu8MG8yPFCNqqFQ0mJIMndX3/dIrzMUTppIBxy+SNxm+pYth7qs
+         jLeqCacWvnveiM8j0sgsIw8/4wcQLZe0JSjPBi0UIHZvMnKNlacP+0H5I3XCelI9vkNe
+         bqRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjdiCkxLDlZF94LefGCWXYt+phnrsruSbfB41Eh5AFOxjZ/RhS6JBWHZOyZQshzSA7l3hEikeMS0FKoIQ8l4d/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrEpkTRfjTFLLoYGbpIT7ExZ8UtnacxKDsUFBPabDZrWsiiwtR
+	k2QhZQc0Rv+5WEqZh71KKMt1v4NsrKVVF4VYeVIlXEXnQKnOiS6YeaeEMIrwFROhKHNXz9QSqmV
+	3NPkY2VYXwww4sV316Zb2UdhfFz7b3vrbK1BdaCZAXb8F+tHxVNKFfLxIosONuULU1WWGIX4N
+X-Gm-Gg: AY/fxX4UZiEEekOlcFCi0hd3drMNIDYR3un4H1122TWpXmIXIles25Cw6Aq8x5psx5U
+	gyqwNapsjiXx8zAxZu9BNl5gcHMLCkoXDvujg91jPuCsucou7cQuXrpPQsr1gARyWmwlCir6NLq
+	/y2QCcDkdebjRYQ2vcbPyczSlLWAA1yNfaEE4SZyJTtB+rEz3oBjgsSKhV8UZ6K/aU4JazwfjJw
+	WMDKUjhneGGMZSjWb9mQCEriGgcqNJRl4tm9+NzD5RTFdPCJV9zY5+GTOjdHmdlfD3s7MsjfbZJ
+	KjS6mqXs++jMF384g/7MTG2Iq0h0XA5gs0ILYHu+qFxRAnLQYAgEmECv/OA5WF0mt6lQiiBfcpD
+	4LaBfiMEywmMpHjkbqtzxjCvzOZ/OQiPTN2n7
+X-Received: by 2002:a17:902:f546:b0:295:28a4:f0aa with SMTP id d9443c01a7336-29df610b0fbmr97810795ad.43.1765277132613;
+        Tue, 09 Dec 2025 02:45:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGqDPrLf5jzJilr902+CpdhMK5xRewGYqh+OWDhbRk1+Hl8Nis0ssZ7qmfYamBmZZPW3dBWXA==
+X-Received: by 2002:a17:902:f546:b0:295:28a4:f0aa with SMTP id d9443c01a7336-29df610b0fbmr97810645ad.43.1765277131857;
+        Tue, 09 Dec 2025 02:45:31 -0800 (PST)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29dae99f1c4sm151979625ad.66.2025.12.09.02.45.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Dec 2025 02:45:31 -0800 (PST)
+Date: Tue, 9 Dec 2025 16:15:25 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
+ qcom_scm_pas_get_rsc_table() to get resource table
+Message-ID: <20251209104525.wtevrvyxqomh63hg@hu-mojha-hyd.qualcomm.com>
+References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
+ <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
+ <igedl65pnenmeiybzktsw7toeqtb5mhbk7ks5dkavevko6e5yq@2tyakacovx7f>
+ <20251208164926.cwe7arncr6tnan5f@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9185:EE_|AS8PR04MB7733:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c3f62b4-4393-47a7-e0f1-08de36b23327
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|7416014|19092799006|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bxd1HSg9fPXlyrdCXO8hzmiXd17rQEj4JgPvXA17iPHmBgxCsIN3fPA+a8gQ?=
- =?us-ascii?Q?MuJ8SluZ5e40wsGMRE1XD8NfLTswP4USj7Xxy99dUiy3bMcJbqyg0LGDcDhc?=
- =?us-ascii?Q?NNthXToYl/sDd/P3061sbVYLZoPqeRbsiEOvN8RgdcxWefYBs/0nO9e45n4W?=
- =?us-ascii?Q?KkYnpYB2+JdNHdr4xoPxjjoVdLzh0GnWw/7kuz43m3nk5CWYZ0ZRTmjJQz5o?=
- =?us-ascii?Q?m/DNQNUo5OI5XBKjFOK4Yk9kQRYJtO+L56L9Hh16Ezmy6TWJj9LQKLdz9z6d?=
- =?us-ascii?Q?FzsqkVmQFmZGahf9IV4ZDCWalRGTSx5r6sDLfB99gLdw8K9BxyoRagVAyN60?=
- =?us-ascii?Q?CMdX7+D4imv01gWDjvEW4LbmGiLlZouJvxmWAy1LtdxiJkiYyjVuMLRhdm74?=
- =?us-ascii?Q?frlVxhnHhW9ySh7D7kL/VaTbdof4Ew/R0WyByZKEM7zCUonDdJsFmUmkDCpQ?=
- =?us-ascii?Q?CZ1MZYBvxdsznK0ZDmIXg7pEAXqIbU8Mg7x0ZxskzTOkDqtSSq2Nvqjueq4U?=
- =?us-ascii?Q?GrWQ1B9TrtxEV4wjVGhDCcsyCFe2BLvlh3n9d5bBK7vwt6tmJp0ShOON95Co?=
- =?us-ascii?Q?S9WQeLGQsINmAMz2DRsSZlbaBpnDHJykC2iqCGnFIv3ThdAP66r633ImCRDr?=
- =?us-ascii?Q?tMDwghQjdYfBV3uBAKmSmBv2IXJI1GyuQdvidcZYdmPA4aP6OiG36mU3pdbZ?=
- =?us-ascii?Q?EnutpDvwFVSKq1xrVq9LJgbzOJOaDSA0kJdW8ZkZMUKDMBTcBLDm0CsNVnIv?=
- =?us-ascii?Q?FiAhR3D40K3GjbN4jQne3t3D5dS6A3VSqoFOB3R19HBm9gR0I+geXrbzcuFN?=
- =?us-ascii?Q?2QGx37tIg72fI93XrIK9Wr6z0zN7abkn7jBvldZFJFchOkFZuAO8+La46/TD?=
- =?us-ascii?Q?3B32vomqPR5152T37URlp4tXatU4xoGyHX8ag318WEz+CReHk7be/KTYAkRX?=
- =?us-ascii?Q?5vY9vKV/iUEu/pY7XUjLjg+Ncj4ANdQdaipMKr3Y3pcy2ejcS7je3dhE7Xkd?=
- =?us-ascii?Q?P0etUPQiCDEbv0uScYl2233X5gtNiqAfWwyFvZg+pvgvehltqzrKciATxETN?=
- =?us-ascii?Q?EBjnRfeFyG9rH2SpNWgG3RM+e98DgXtmKz9w0t1fcOciKjobGESADKO/i3kr?=
- =?us-ascii?Q?k2to9BcT7jtGC/mKpTJ7h3e+79UenSG5aA5VqEQGXs+YZA24MfaFQBjIuNYy?=
- =?us-ascii?Q?as0lkngtlbjTRGfO2NcCA8FicE6/fOiI+LtWWLBRqELGBW+6LZfiisoO3r1r?=
- =?us-ascii?Q?L7TuEnrqkicZrQTI8zMl9eOM1AQaAifiBER2tlI1fbH0L5OI3ertEAtGu3QR?=
- =?us-ascii?Q?qSF9i3Mo8OHxgCjl7ffZkCxtRB2518IP5CMPXD39wCdRDoUdUReXeYz27Q8h?=
- =?us-ascii?Q?XSXjjedS6caehlJhbX1JQn3I6klG0ZD8R1xvsCfxr8Fm3PojU86u3LTY1GYm?=
- =?us-ascii?Q?p8z9Of9itQqx/Mx5MvmzjpxW0/yptvNvDWg054TRTZmih45K2rq9heVm9gr2?=
- =?us-ascii?Q?EuBF72kWuj3qN629k+Tuf9OIDadLw+POrbu6?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(7416014)(19092799006)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DmfwV9El+KUJSHzkp66zJn6FSLl5jar8HLktfrBXBFSgLhNzCy8BW1e3ykqZ?=
- =?us-ascii?Q?Bdt4UK1juZmBWIBhH5e4Ae5yH2s/ovEGVfjVP8lppLj6w6FdBKcGRyhXrIgW?=
- =?us-ascii?Q?IbeYL0L3duBrZep23vD77ARdv2kbtQaN6NmghGb9uFKriOaDnkOFMkj4IltI?=
- =?us-ascii?Q?Zv0RqCQm1g7kNxVe83wZIB6F9VEMAL3QZFSE3SCgyrHqg9QbTUGdRVj0LZL1?=
- =?us-ascii?Q?2TR2COYM7HWwbnvZ7TE9csVCaax3Klv5QKDeiHA1BVtFgcN4EDfztBUWgtB3?=
- =?us-ascii?Q?5Wsraa0I8qHTAsgFLRjmYXDHK/PU+5rdN/eV2q6fyIxl7v73dJQ3uPlB/Xxn?=
- =?us-ascii?Q?ZQKK729pMOgrYJOGupWmfs65m4M8rIezhpAf6Fb+e6ZBZ1I6GF1ZhnOIK1Yf?=
- =?us-ascii?Q?w+ScJ1HPyJeSQnkTqi7gqc0Sr3YxXPNQVFEjqKSaraouthVv2sOAoljsCP71?=
- =?us-ascii?Q?ZlVtDWezLElZOl8xCLvba++b4tzl7xVAMNQJ8aLNDE9qRSxoKBtaNElzn1dA?=
- =?us-ascii?Q?E+xByEg1XRYpuJ6kyi0RaFA3WCPHuJEf0/YkbVrtc21vIqys+BVpU0i7VrBS?=
- =?us-ascii?Q?C3Dxy6x20GlXaYMGCzk6s1EUorYOeYv+TLjylmvfK9ItQfQK3GtcOpKaIDsD?=
- =?us-ascii?Q?7WT6h8+4/Y0tzcaHKJBrTrZcVjbzfLFKh2UAqaKPqJStYxRZSAiONPDyNYew?=
- =?us-ascii?Q?6odyp+CTyRHp8xWOFjpCA0QU4dQO7IYWcyrZrRwDk1Ay5shkrNgJb1bS8zqX?=
- =?us-ascii?Q?QigaOmoyuG1+Ht9Vnayd4dZpmEMu8CVXpNxO6dOsoIVpHDFyNNwxCNW3E4/5?=
- =?us-ascii?Q?MI/2d2CV8Qz0G/0ErA8hOwFv+fCBBG878XwFKp7sFsa+j/NncKFIsbL2b7KT?=
- =?us-ascii?Q?sHRsJrpnGmv5cdQVWxw8yzyArHVpUoWVXQVyCyqasUJxlFlwg2nPb6w2Yokh?=
- =?us-ascii?Q?6ywsl4lwyt66wxp0FcPYwI+tutY7WrnQExhKHmqykRPf3EUG7DtkqmMf1cvi?=
- =?us-ascii?Q?rIPMMMa5g0pJRHfjz24cBbgY4bfhBEj4WI5sN8+xHAM+JSNgPgF/+mTNI74N?=
- =?us-ascii?Q?lcUoFqFJcWL8fcUbI7OikrDT9hS7gwk4OK9TLm80FCwmyde4untb3V3rxY2F?=
- =?us-ascii?Q?3upu7/4Gx/rD1iDTUSJVHHHHwxBFVYELvaUnYWYSOJAb0zHecdQR16GbCE99?=
- =?us-ascii?Q?Mi4mmTzUPGt0CMq2NwiuObcwxkxRZnoHW0Y78DvqxCmWivvEQKPz9U7lBv6D?=
- =?us-ascii?Q?j1gM9NaCCaxcB3VyOS+1j0Hhbx0Imo44Mva198SXEVyT/ghDDYoiOp9kNvwS?=
- =?us-ascii?Q?FCtw/t3xi+bU+FqPri2eAj4L/RCqQMpiJ0MWzM4ReOMJ/6xypAaZJaFMFYnE?=
- =?us-ascii?Q?5t5l+0vf+gE5D7ZZGhUFqPElccT1Tb+xY3oFRQ8BtMCb9odeRQpIVMOfJqFM?=
- =?us-ascii?Q?bm8+PHYioyBv2rj4v6r9ntsw5tst+dn2jmkI0A1S+KuXyN8DBMgEr4DTcHbh?=
- =?us-ascii?Q?tUZTUjxc0+seOgndMrGxGVXE3DhkFYvKPOLc5O37tDgI3IYklCg2ufbQ7Grq?=
- =?us-ascii?Q?uWV4KcFCUPRhYAYyF/VEclN84rHEZWauVdi9o/zK?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c3f62b4-4393-47a7-e0f1-08de36b23327
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2025 23:33:32.7110
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QuYeCgwwyfn57WseQ7yrBboKyANf/7OmFVltNGq6x9D7ht6K7k2ji6XVblyCZeqwkUOzXTU0DY9VbajTUDpjiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7733
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251208164926.cwe7arncr6tnan5f@hu-mojha-hyd.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjA5MDA3NSBTYWx0ZWRfX74RSig37rKuc
+ pxmpjplwcTujq9M4Ah3yCDFsdYmY0ywUpLIGRADYjyw+hDcg5ytqRVlINdMPm5Voy7sSj8i8KNl
+ /4aIDekAHmDhr6RAqX0o94C5by+I7WGexi5G5Fe3FZIDzH6YW6jBnGxoRtHADej7uuwhfjo6kma
+ 4B6hhbN/K+2F8q6927nclrqurDa0yoxE9jPPRuSgvjuoLVhWwxtBUviQgoLUUZwdNmYVMGlvyk1
+ KihRQ3/d/+2jHUtP3TQFCkbRLLqJOji1CQ3KLsImYBvYF+UbODjIgNHoEzNkOcSqeTliD7n3pSu
+ GX6MSO8NPa0k/ZFtbNJ3Kgrk48yUcdHzdzQ+mNx3OMPAcYoloNwPC3tA3jRx4/ljigyvKDBKUGj
+ EXu0lHm968hf3wKJ4DSplNELpzKnxQ==
+X-Proofpoint-ORIG-GUID: R3HhRDB7vJmOHQCMFyVRzAzYU8aCW3Qb
+X-Proofpoint-GUID: R3HhRDB7vJmOHQCMFyVRzAzYU8aCW3Qb
+X-Authority-Analysis: v=2.4 cv=fsXRpV4f c=1 sm=1 tr=0 ts=6937fdce cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=uDHemL44re2y6JaO7sYA:9
+ a=fXJTwrYLEpNIDeH8:21 a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-12-09_02,2025-12-04_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ suspectscore=0 adultscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2512090075
 
-The resource name may include an address suffix, for example:
-rsc-table@1fff8000.
+On Mon, Dec 08, 2025 at 10:19:26PM +0530, Mukesh Ojha wrote:
+> On Fri, Dec 05, 2025 at 04:40:51PM -0600, Bjorn Andersson wrote:
+> > On Fri, Nov 21, 2025 at 04:31:13PM +0530, Mukesh Ojha wrote:
+> > > Qualcomm remote processor may rely on Static and Dynamic resources for
+> > > it to be functional. Static resources are fixed like for example,
+> > > memory-mapped addresses required by the subsystem and dynamic
+> > > resources, such as shared memory in DDR etc., are determined at
+> > > runtime during the boot process.
+> > > 
+> > > For most of the Qualcomm SoCs, when run with Gunyah or older QHEE
+> > > hypervisor, all the resources whether it is static or dynamic, is
+> > > managed by the hypervisor. Dynamic resources if it is present for a
+> > > remote processor will always be coming from secure world via SMC call
+> > > while static resources may be present in remote processor firmware
+> > > binary or it may be coming qcom_scm_pas_get_rsc_table() SMC call along
+> > > with dynamic resources.
+> > > 
+> > > Some of the remote processor drivers, such as video, GPU, IPA, etc., do
+> > > not check whether resources are present in their remote processor
+> > > firmware binary. In such cases, the caller of this function should set
+> > > input_rt and input_rt_size as NULL and zero respectively. Remoteproc
+> > > framework has method to check whether firmware binary contain resources
+> > > or not and they should be pass resource table pointer to input_rt and
+> > > resource table size to input_rt_size and this will be forwarded to
+> > > TrustZone for authentication. TrustZone will then append the dynamic
+> > > resources and return the complete resource table in output_rt
+> > > 
+> > > More about documentation on resource table format can be found in
+> > > include/linux/remoteproc.h
+> > > 
+> > > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > > ---
+> > >  drivers/firmware/qcom/qcom_scm.c       | 158 +++++++++++++++++++++++++++++++++
+> > >  drivers/firmware/qcom/qcom_scm.h       |   1 +
+> > >  include/linux/firmware/qcom/qcom_scm.h |   4 +
+> > >  3 files changed, 163 insertions(+)
+> > > 
+> > > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> > > index 84498d0d2f0c..c4420b79fb57 100644
+> > > --- a/drivers/firmware/qcom/qcom_scm.c
+> > > +++ b/drivers/firmware/qcom/qcom_scm.c
+> > > @@ -27,6 +27,7 @@
+> > >  #include <linux/of_reserved_mem.h>
+> > >  #include <linux/platform_device.h>
+> > >  #include <linux/reset-controller.h>
+> > > +#include <linux/remoteproc.h>
+> > >  #include <linux/sizes.h>
+> > >  #include <linux/types.h>
+> > >  
+> > > @@ -111,6 +112,10 @@ enum qcom_scm_qseecom_tz_cmd_info {
+> > >  	QSEECOM_TZ_CMD_INFO_VERSION		= 3,
+> > >  };
+> > >  
+> > > +enum qcom_scm_rsctable_resp_type {
+> > > +	RSCTABLE_BUFFER_NOT_SUFFICIENT		= 20,
+> > > +};
+> > > +
+> > >  #define QSEECOM_MAX_APP_NAME_SIZE		64
+> > >  #define SHMBRIDGE_RESULT_NOTSUPP		4
+> > >  
+> > > @@ -766,6 +771,159 @@ int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(qcom_scm_pas_mem_setup);
+> > >  
+> > > +static int __qcom_scm_pas_get_rsc_table(u32 pas_id, void *input_rt, size_t input_rt_size,
+> > > +					void **output_rt, size_t *output_rt_size)
+> > 
+> > output_rt is not going to be modified, only its content, so it can be
+> > void * (single pointer).
+> > 
+> > > +{
+> > > +	struct qcom_scm_desc desc = {
+> > > +		.svc = QCOM_SCM_SVC_PIL,
+> > > +		.cmd = QCOM_SCM_PIL_PAS_GET_RSCTABLE,
+> > > +		.arginfo = QCOM_SCM_ARGS(5, QCOM_SCM_VAL, QCOM_SCM_RO, QCOM_SCM_VAL,
+> > > +					 QCOM_SCM_RW, QCOM_SCM_VAL),
+> > > +		.args[0] = pas_id,
+> > > +		.owner = ARM_SMCCC_OWNER_SIP,
+> > > +	};
+> > > +	void *input_rt_buf, *output_rt_buf;
+> > 
+> > I do one prefer one variable per line, preferably in reverse xmas order.
+> 
+> Ack.
+> 
+> > 
+> > > +	struct resource_table *rsc;
+> > 
+> > Calling this "empty_rsc" will make its purpose obvious.
+> 
+> Ack.
+> 
+> > 
+> > > +	struct qcom_scm_res res;
+> > > +	int ret;
+> > > +
+> > > +	ret = qcom_scm_clk_enable();
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = qcom_scm_bw_enable();
+> > > +	if (ret)
+> > > +		goto disable_clk;
+> > > +
+> > > +	/*
+> > > +	 * TrustZone can not accept buffer as NULL value as argument Hence,
+> > > +	 * we need to pass a input buffer indicating that subsystem firmware
+> > > +	 * does not have resource table by filling resource table structure.
+> > > +	 */
+> > > +	if (!input_rt)
+> > > +		input_rt_size = sizeof(*rsc);
+> > 
+> > If you overwrite input_rt here, you don't need to repeat this
+> > conditional below, like:
+> > 
+> > 	struct resource_table empty_rsc = {};
+> > 	
+> > 	...
+> > 	
+> > 	if (!input_rt) {
+> > 		input_rt = &empty_rsc;
+> > 		input_rt_size = sizeof(rsc);
+> > 	}
+> > 	
+> > 	qcom_tzmem_alloc(input_rt_size)
+> > 	
+> > 	memcpy(input_rt_buf, input_rt);
+> 
+> Ack.
+> 
+> > 
+> > > +
+> > > +	input_rt_buf = qcom_tzmem_alloc(__scm->mempool, input_rt_size, GFP_KERNEL);
+> > > +	if (!input_rt_buf) {
+> > > +		ret = -ENOMEM;
+> > > +		goto disable_scm_bw;
+> > > +	}
+> > > +
+> > > +	if (!input_rt) {
+> > > +		rsc = input_rt_buf;
+> > > +		rsc->num = 0;
+> > > +	} else {
+> > > +		memcpy(input_rt_buf, input_rt, input_rt_size);
+> > > +	}
+> > > +
+> > 
+> > Reading this patch once more, it looks reasonable, but few of the things
+> > in this function actually depend on *output_rt_size, yet we perform them
+> > in the loop below.
+> > 
+> > We're expecting, with some certainty, that this sequence will be called
+> > more than once, so I think it would be preferable to slice this
+> > differently, and only repeat the <loop></loop> part.
+> > 
+> > <loop>
+> 
+> Ack, I will move all the clock, bw voting and mentioned retry(on -EOVERFLOW) loop
+> to the caller of this function.
+> 
+> > 
+> > > +	output_rt_buf = qcom_tzmem_alloc(__scm->mempool, *output_rt_size, GFP_KERNEL);
+> > > +	if (!output_rt_buf) {
+> > > +		ret = -ENOMEM;
+> > > +		goto free_input_rt_buf;
+> > > +	}
+> > > +
+> > > +	desc.args[1] = qcom_tzmem_to_phys(input_rt_buf);
+> > > +	desc.args[2] = input_rt_size;
+> > > +	desc.args[3] = qcom_tzmem_to_phys(output_rt_buf);
+> > > +	desc.args[4] = *output_rt_size;
+> > > +
+> > > +	/*
+> > > +	 * Whether SMC fail or pass, res.result[2] will hold actual resource table
+> > > +	 * size.
+> > > +	 *
+> > > +	 * if passed 'output_rt_size' buffer size is not sufficient to hold the
+> > > +	 * resource table TrustZone sends, response code in res.result[1] as
+> > > +	 * RSCTABLE_BUFFER_NOT_SUFFICIENT so that caller can retry this SMC call with
+> > > +	 * output_rt buffer with res.result[2] size.
+> > > +	 */
+> > > +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+> > > +	*output_rt_size = res.result[2];
+> > > +	if (!ret)
+> > > +		memcpy(*output_rt, output_rt_buf, *output_rt_size);
+> > > +
+> > > +	if (ret && res.result[1] == RSCTABLE_BUFFER_NOT_SUFFICIENT)
+> > > +		ret = -EAGAIN;
+> > 
+> > </loop>
+> > 
+> > > +
+> > > +	qcom_tzmem_free(output_rt_buf);
+> > > +
+> > > +free_input_rt_buf:
+> > > +	qcom_tzmem_free(input_rt_buf);
+> > > +
+> > > +disable_scm_bw:
+> > > +	qcom_scm_bw_disable();
+> > > +
+> > > +disable_clk:
+> > > +	qcom_scm_clk_disable();
+> > > +
+> > > +	return ret ? : res.result[0];
+> > 
+> > Is there a risk that res.result[0] will carry something meaningful to
+> > the caller (which will be misinterpreted)?
+> 
+> No, its just to align with other SMC call, it will always have 0 value
+> on success.
+> 
+> > 
+> > > +}
+> > > +
+> > > +/**
+> > > + * qcom_scm_pas_get_rsc_table() - Retrieve the resource table in passed output buffer
+> > > + *				  for a given peripheral.
+> > > + *
+> > > + * Qualcomm remote processor may rely on both static and dynamic resources for
+> > > + * its functionality. Static resources typically refer to memory-mapped addresses
+> > > + * required by the subsystem and are often embedded within the firmware binary
+> > > + * and dynamic resources, such as shared memory in DDR etc., are determined at
+> > > + * runtime during the boot process.
+> > > + *
+> > > + * On Qualcomm Technologies devices, it's possible that static resources are not
+> > > + * embedded in the firmware binary and instead are provided by TrustZone However,
+> > > + * dynamic resources are always expected to come from TrustZone. This indicates
+> > > + * that for Qualcomm devices, all resources (static and dynamic) will be provided
+> > > + * by TrustZone via the SMC call.
+> > > + *
+> > > + * If the remote processor firmware binary does contain static resources, they
+> > > + * should be passed in input_rt. These will be forwarded to TrustZone for
+> > > + * authentication. TrustZone will then append the dynamic resources and return
+> > > + * the complete resource table in output_rt.
+> > > + *
+> > > + * If the remote processor firmware binary does not include a resource table,
+> > > + * the caller of this function should set input_rt as NULL and input_rt_size
+> > > + * as zero respectively.
+> > > + *
+> > > + * More about documentation on resource table data structures can be found in
+> > > + * include/linux/remoteproc.h
+> > > + *
+> > > + * @ctx:	    PAS context
+> > > + * @pas_id:	    peripheral authentication service id
+> > > + * @input_rt:       resource table buffer which is present in firmware binary
+> > > + * @input_rt_size:  size of the resource table present in firmware binary
+> > > + * @output_rt:	    buffer to which the both static and dynamic resources will
+> > > + *		    be returned.
+> > > + * @output_rt_size: TrustZone expects caller should pass worst case size for
+> > > + *		    the output_rt.
+> > > + *
+> > > + * Return: 0 on success and nonzero on failure.
+> > > + *
+> > > + * Upon successful return, output_rt will have the resource table and output_rt_size
+> > > + * will have actual resource table size,
+> > > + */
+> > > +int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
+> > > +			       size_t input_rt_size, void **output_rt,
+> > > +			       size_t *output_rt_size)
+> > > +{
+> > > +	unsigned int retry_num = 5;
+> > > +	int ret;
+> > > +
+> > > +	do {
+> > > +		*output_rt = kzalloc(*output_rt_size, GFP_KERNEL);
+> > 
+> > I'd prefer the output buffer and size to be carried in a local variables
+> > until we determine success, to avoid overwriting the caller's size with
+> > some bogus number and return a pointer to freed memory.
+> 
+> Sure.
+> 
+> > 
+> > Wouldn't be unreasonable to return an ERR_PTR() with the allocated
+> > buffer, instead of returning through the reference.
+> 
+> We anyway have to return the size through reference, why not do the same for 
+> allocated buffer as well..
 
-To handle such cases, use strstarts() instead of strcmp() when checking
-for "rsc-table".
 
-Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
----
- drivers/remoteproc/imx_rproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tried to take care most of the comments apart from above one., let me know if
+below is fine..
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 3be8790c14a2..33f21ab24c92 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -694,7 +694,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
- 		}
- 		priv->mem[b].sys_addr = res.start;
- 		priv->mem[b].size = resource_size(&res);
--		if (!strcmp(res.name, "rsc-table"))
-+		if (strstarts(res.name, "rsc-table"))
- 			priv->rsc_table = priv->mem[b].cpu_addr;
- 		b++;
- 	}
+---------------------------------------o<---------------------------------------
+
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 4ce892d8fb25..a589961f8225 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -27,6 +27,7 @@
+ #include <linux/of_reserved_mem.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
++#include <linux/remoteproc.h>
+ #include <linux/sizes.h>
+ #include <linux/types.h>
+ 
+@@ -111,6 +112,10 @@ enum qcom_scm_qseecom_tz_cmd_info {
+ 	QSEECOM_TZ_CMD_INFO_VERSION		= 3,
+ };
+ 
++enum qcom_scm_rsctable_resp_type {
++	RSCTABLE_BUFFER_NOT_SUFFICIENT		= 20,
++};
++
+ #define QSEECOM_MAX_APP_NAME_SIZE		64
+ #define SHMBRIDGE_RESULT_NOTSUPP		4
+ 
+@@ -766,6 +771,171 @@ int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size)
+ }
+ EXPORT_SYMBOL_GPL(qcom_scm_pas_mem_setup);
+ 
++static int __qcom_scm_pas_get_rsc_table(u32 pas_id, void *input_rt,
++					size_t input_rt_size, void *output_rt,
++					size_t *output_rt_size)
++{
++	struct qcom_scm_desc desc = {
++		.svc = QCOM_SCM_SVC_PIL,
++		.cmd = QCOM_SCM_PIL_PAS_GET_RSCTABLE,
++		.arginfo = QCOM_SCM_ARGS(5, QCOM_SCM_VAL, QCOM_SCM_RO, QCOM_SCM_VAL,
++					 QCOM_SCM_RW, QCOM_SCM_VAL),
++		.args[0] = pas_id,
++		.owner = ARM_SMCCC_OWNER_SIP,
++	};
++	struct qcom_scm_res res;
++	int ret;
++
++	desc.args[1] = qcom_tzmem_to_phys(input_rt);
++	desc.args[2] = input_rt_size;
++	desc.args[3] = qcom_tzmem_to_phys(output_rt);
++	desc.args[4] = *output_rt_size;
++
++	/*
++	 * Whether SMC fail or pass, res.result[2] will hold actual resource table
++	 * size.
++	 *
++	 * If passed 'output_rt_size' buffer size is not sufficient to hold the
++	 * resource table TrustZone sends, response code in res.result[1] as
++	 * RSCTABLE_BUFFER_NOT_SUFFICIENT so that caller can retry this SMC call
++	 * with output_rt buffer with res.result[2] size however, It should not
++	 * be of unresonable size.
++	 */
++	ret = qcom_scm_call(__scm->dev, &desc, &res);
++	if (res.result[2] > SZ_1G) {
++		ret = -E2BIG;
++		return ret;
++	}
++
++	*output_rt_size = res.result[2];
++	if (ret && res.result[1] == RSCTABLE_BUFFER_NOT_SUFFICIENT)
++		ret = -EOVERFLOW;
++
++	return ret ? : res.result[0];
++}
++
++/**
++ * qcom_scm_pas_get_rsc_table() - Retrieve the resource table in passed output buffer
++ *				  for a given peripheral.
++ *
++ * Qualcomm remote processor may rely on both static and dynamic resources for
++ * its functionality. Static resources typically refer to memory-mapped addresses
++ * required by the subsystem and are often embedded within the firmware binary
++ * and dynamic resources, such as shared memory in DDR etc., are determined at
++ * runtime during the boot process.
++ *
++ * On Qualcomm Technologies devices, it's possible that static resources are not
++ * embedded in the firmware binary and instead are provided by TrustZone However,
++ * dynamic resources are always expected to come from TrustZone. This indicates
++ * that for Qualcomm devices, all resources (static and dynamic) will be provided
++ * by TrustZone via the SMC call.
++ *
++ * If the remote processor firmware binary does contain static resources, they
++ * should be passed in input_rt. These will be forwarded to TrustZone for
++ * authentication. TrustZone will then append the dynamic resources and return
++ * the complete resource table in output_rt.
++ *
++ * If the remote processor firmware binary does not include a resource table,
++ * the caller of this function should set input_rt as NULL and input_rt_size
++ * as zero respectively.
++ *
++ * More about documentation on resource table data structures can be found in
++ * include/linux/remoteproc.h
++ *
++ * @ctx:	    PAS context
++ * @pas_id:	    peripheral authentication service id
++ * @input_rt:       resource table buffer which is present in firmware binary
++ * @input_rt_size:  size of the resource table present in firmware binary
++ * @output_rt:	    buffer to which the both static and dynamic resources will
++ *		    be returned.
++ * @output_rt_size: TrustZone expects caller should pass worst case size for
++ *		    the output_rt.
++ *
++ * Return: 0 on success and nonzero on failure.
++ *
++ * Upon successful return, output_rt will have the resource table and output_rt_size
++ * will have actual resource table size,
++ */
++int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
++			       size_t input_rt_size, void **output_rt,
++			       size_t *output_rt_size)
++{
++	struct resource_table empty_rsc = {};
++	size_t size = SZ_16K;
++	void *output_rt_tzm;
++	void *input_rt_tzm;
++	int ret;
++
++	ret = qcom_scm_clk_enable();
++	if (ret)
++		return ret;
++
++	ret = qcom_scm_bw_enable();
++	if (ret)
++		goto disable_clk;
++
++	/*
++	 * TrustZone can not accept buffer as NULL value as argument Hence,
++	 * we need to pass a input buffer indicating that subsystem firmware
++	 * does not have resource table by filling resource table structure.
++	 */
++	if (!input_rt) {
++		input_rt = &empty_rsc;
++		input_rt_size = sizeof(empty_rsc);
++	}
++
++	input_rt_tzm = qcom_tzmem_alloc(__scm->mempool, input_rt_size, GFP_KERNEL);
++	if (!input_rt_tzm) {
++		ret = -ENOMEM;
++		goto disable_scm_bw;
++	}
++
++	memcpy(input_rt_tzm, input_rt, input_rt_size);
++
++	do {
++		output_rt_tzm = qcom_tzmem_alloc(__scm->mempool, size, GFP_KERNEL);
++		if (!output_rt_tzm) {
++			ret = -ENOMEM;
++			goto free_input_rt;
++		}
++
++		ret = __qcom_scm_pas_get_rsc_table(ctx->pas_id, input_rt_tzm,
++						   input_rt_size, output_rt_tzm,
++						   &size);
++		if (ret)
++			qcom_tzmem_free(output_rt_tzm);
++
++	} while (ret == -EOVERFLOW);
++
++	if (!ret) {
++		void *tbl_ptr;
++
++		tbl_ptr = kzalloc(size, GFP_KERNEL);
++		if (!tbl_ptr)
++			goto free_output_rt;
++
++		memcpy(tbl_ptr, output_rt_tzm, size);
++		*output_rt = tbl_ptr;
++		*output_rt_size = size;
++	}
++
++free_output_rt:
++	if (!ret)
++		qcom_tzmem_free(output_rt_tzm);
++
++free_input_rt:
++	qcom_tzmem_free(input_rt_tzm);
++
++disable_scm_bw:
++	qcom_scm_bw_disable();
++
++disable_clk:
++	qcom_scm_clk_disable();
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(qcom_scm_pas_get_rsc_table);
++
+ /**
+  * qcom_scm_pas_auth_and_reset() - Authenticate the given peripheral firmware
+  *				   and reset the remote processor
+diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
+index a56c8212cc0c..50d87c628d78 100644
+--- a/drivers/firmware/qcom/qcom_scm.h
++++ b/drivers/firmware/qcom/qcom_scm.h
+@@ -105,6 +105,7 @@ int qcom_scm_shm_bridge_enable(struct device *scm_dev);
+ #define QCOM_SCM_PIL_PAS_SHUTDOWN	0x06
+ #define QCOM_SCM_PIL_PAS_IS_SUPPORTED	0x07
+ #define QCOM_SCM_PIL_PAS_MSS_RESET	0x0a
++#define QCOM_SCM_PIL_PAS_GET_RSCTABLE	0x21
+ 
+ #define QCOM_SCM_SVC_IO			0x05
+ #define QCOM_SCM_IO_READ		0x01
+diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+index d6d83888bb75..7c331598ea15 100644
+--- a/include/linux/firmware/qcom/qcom_scm.h
++++ b/include/linux/firmware/qcom/qcom_scm.h
+@@ -88,6 +88,10 @@ int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
+ int qcom_scm_pas_auth_and_reset(u32 pas_id);
+ int qcom_scm_pas_shutdown(u32 pas_id);
+ bool qcom_scm_pas_supported(u32 pas_id);
++int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
++			       size_t input_rt_size, void **output_rt,
++			       size_t *output_rt_size);
++
+ 
+
+> 
+> 
+> -- 
+> -Mukesh Ojha
+
 -- 
-2.43.0
-
+-Mukesh Ojha
