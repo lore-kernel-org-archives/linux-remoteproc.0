@@ -1,100 +1,114 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com [74.125.82.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83192DC33D
-	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Dec 2025 14:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B194299943
+	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Dec 2025 14:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765289333; cv=none; b=abD9LeqllY2o0TeK03FyFZ7wPQAp0yyi0KWrNhJck8zgYVOrc4L8F+qEi1azTl+n85m1CkgXq4oMhjhgJ7sQr3FY/ETZSwVRtyQj5xktFbKPpfakwDQABmDUvfELvfbow255oINMslXCko2OFLBqc4xN0G19BwLK9Q2FHy2axDg=
+	t=1765289858; cv=none; b=PTKn3yRuFTpeb0AspnvVYU4uCIIb61UdjRDQvW4fWmZxa3D3HpNoJiRpUKO+xsy+wYGNeBXMvBV7qvwRPDVO2wXl3m2hjE6mYu73l6WkWpG1Awbjl+miq4l4R878tfsEPs5rZWqUn2HHTAijMEhQosnIMOaHdyqs/NYpei3GNQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765289333; c=relaxed/simple;
-	bh=VyyBZwlKUZ2rmYSXMRbs5oz8IUqh5cHk9HMqteoGQSQ=;
+	s=arc-20240116; t=1765289858; c=relaxed/simple;
+	bh=unuZ6P3b7Yxjaa+0itPHl4nXBL7mIF6rtwXPOxCWtX4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GStD95+E73nwZbr9jzWavYn8sPUs3SK0D/ZP0s4Z20rb2tCniaoWNSonNE/m9Hio3jLjkVLAv0DuhQ1W0Cc4d9zb1yzLDXWJtPfz8sxvjYg/M9A8Rd8IctbTGFPcn2KpSWPBbwbFnANekizXvT82mTomxbDJFGryhujLFd/EABg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dWhIfYVm; arc=none smtp.client-ip=209.85.210.176
+	 To:Cc:Content-Type; b=XFfgSJFv4UxVbQzyKzy25xBH9J4+eWRRVg5fwoAkCYKUEsaXElP3vkPcBMV471KgWaMKvbflGILOiODuOO0SgPZdDWxsap0zMgqDKFOVa7FeNLxDD6AYLAhZOYRfR5CjxMu6RwgmqtGCzrvwq3+bDPT464zGTC7HJH1Rd6TlQtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EJcDhqP6; arc=none smtp.client-ip=74.125.82.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dWhIfYVm"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7f1243792f2so460513b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Dec 2025 06:08:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJcDhqP6"
+Received: by mail-dy1-f173.google.com with SMTP id 5a478bee46e88-2a45877bd5eso8182709eec.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Dec 2025 06:17:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765289331; x=1765894131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VyyBZwlKUZ2rmYSXMRbs5oz8IUqh5cHk9HMqteoGQSQ=;
-        b=dWhIfYVmB683y31SqHYkF4w6CqIe3f9Yey3ky+fs01Ybzs31m171f1mkb0druWBI+5
-         SEyBQqgAqDNatYhw7BUCsCIm+0PWEWmmWziYbYMpTi99egaWkWURp9EYNwJEZr9jtqby
-         X84htk6mahgpp5V1DYRW4+f7JGiu5Alb9QuMw/BClgQjoTxY8AQ07hJRljSYEI+C++5l
-         23frCO0sT31R86kvnaoKUGMRDihCQr/ebp6jIhVYq2q72qybdQGnecntVZkRB30EZWxn
-         0012uGltZU3Ju4GIDsyy3y9U1KVxDdTsoSad55QNbNO56BwEtSs+M70pjV/Uo32qxm/a
-         CwBg==
+        d=gmail.com; s=20230601; t=1765289856; x=1765894656; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GqGl05z99jHp2ShgOvgQgByFBkkP2VElXGK/JMHVdj4=;
+        b=EJcDhqP6gkSRYJwsSv2k0z0JKn9iv5hcbelmELr2P3lxWCRnlk0lbADGeEpal6NB4p
+         wYuuoo9+s5zqMnCoWq40Dd4sWemsqp+oOEPWUbqAl3J/GbjdVKnH/2NbJbU7hong+gjQ
+         sawD3lVJ6BJcqYA9eu75o9Gnka3/Z5vxcEXy8NS4ZouORDBysJdlvLwaNm208Z74YZBe
+         +Tyl8ln2f+b5tVxwpZFY2dly7V0+LHt4ezeVsRejV5mAkwpMOJRd2rH97TzHkb/iBjcc
+         amJ7UUeOBoZvlsLphZZunoALUwUDvoFN8NbYLerIHWjUqFLqCkBtu2i6Ww45VwuZtD5E
+         h/2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765289331; x=1765894131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=VyyBZwlKUZ2rmYSXMRbs5oz8IUqh5cHk9HMqteoGQSQ=;
-        b=BxIVtu9+A9Xjs6EKx7yyW+lYNmF9+0R5D+chitQbloRttSjgGa0vERoMhNPdZ5Sy6E
-         eXLmcPA7IOBzJJQZaT6+68pA7yWpr0BPTT/ljWelY6AzKOpZw+FnFZf48Ut7nu4vq6AW
-         SdRofekFv3+gancynKZ0Xm/bLaFPjI77N+5BJKcxwwF9tscgAqzU2P20FKFDSIAGx5j8
-         zW8A9aA6bP58AtlyMVX8FMMcy0i/9MpZFzDU/TMvM2AWy29jhVZGdgE/QMslZOfey/aL
-         XXr8mWJ6gs8VjCq5rMsfksfrhXDcxv/+tlOlLY343XHsV/6k5NelZK757W/tuVpjEJVd
-         FF2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXa03+tOdMQ+/lIpc1OIfIJ3oOpmPEgsuXwoulxM7Ez3q+/RewTWauJDwjjOPci9AJt0vuL3R8uC/4KNkmd6Bpj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLx6JVekyMyf+mjIvLhgKkdZUs73JoD7kwSQm82laOqhP/KV2Y
-	WkdKr2h8iq0vFQ3zACfzYyeKI6yH4uu2/obbD8/zyfUatrgeN0MyIjvw7DIQCMZj194zuSiA6cg
-	RFmbt/P7C6Xa5xGxB7si1+AfkIod2dXI=
-X-Gm-Gg: ASbGncs+okbGN4/h8G62sDueAAFkcPSKbnzgTGtQzDAK4ZJc8k5YTRlfrSSpdaGZZ/G
-	QLIiBbs7v+waeAXnOj7reTGf7sn4/YZ0WIlN27FsNIMWjlZU9sDUZYqpujrhqtqysXVVJt0vwMb
-	RusOgMNj4S3Aw+E6hDLK3980AqlaJvy8vxVZZ5nXFDSdA+qCzZMBRD/L5j5fuS5PjWh8+l7huw1
-	ly7yvIkG1V59OJA7CuEy724QH6jsgrzqM7icm+MadSR+5Bn58zoEXKeQs7Avas+WByLJf3hrQ1c
-	TzJdwcBRjeMiX5DCqceNvAqcmkvFVaZVbntFpvbenx6v8ildRj5mXIRvkqas04yFCoMdMg08SNS
-	Ug699uYn9fw==
-X-Google-Smtp-Source: AGHT+IGlAhSuqCl2kRyMGsShmSil97vNdY0PHNYfllyi4vyK36zscoZ6DMWDYGU3rPKH1rKNgSPRieolC8FcfVHxjzk=
-X-Received: by 2002:a05:7022:423:b0:11b:8b4b:bff7 with SMTP id
- a92af1059eb24-11e032ac942mr8661512c88.39.1765289330793; Tue, 09 Dec 2025
- 06:08:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765289856; x=1765894656;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GqGl05z99jHp2ShgOvgQgByFBkkP2VElXGK/JMHVdj4=;
+        b=cVd3bwX60w/6A2vciT/3SPXevK38MFBwyfRc7JqbhrPwSeiKv4t2QJYtwnry1kUd8K
+         2TYYE78psECRwhEcFbqccghdRPVgHEGerIbfHZ/t8iFRXYkdGpqhxVMzVpQnlt1AwYou
+         8JIe7iLX660envnU4x3CBa6yeec2/bqHzSqv9skrwen0FyvNj2FMDwLpDSiD5/rZVhA9
+         g2PtIyFWcKRiHpQ5uX4OLf0WX2/faj53xcpZ77l/3pLYBJ77XgRKchGkjeKq4tMfw2or
+         QHsT7+8YKPB2WlcjU8bpP46/QAqOds7fZYs4EwuxaSgXZzMEMJfAVbB2Swvpno1IN3jj
+         fBsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWscqLMBhAsIwI6hh+bet1osUNhxWuSI+jSdSfMM2ygRFYwFvxjL/LnN+LLlcFAgUObqp1Obf1aege+hKH68OHn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEnzGxYV1IWb37CeJpxQ+4TAcWpAIiHERX+67rx+3DPeShokpf
+	YNVLvOvxFUSzsffeVr4svC4GK3ol3sgUYjIrtWky1Md4wFiFFRYAbsIjJO6dBOenp/IPboHjLhB
+	dVkgGpWrtTTWbJzhRh1XMPmY4TfpaGgw=
+X-Gm-Gg: AY/fxX5NHTaK6VP05tgM1OBQ82t2sqxl8Jh7thtQh+3mjn+GAXOG/bqK/4u9DO/4HoA
+	7Eiz8jsJN7Lx7SN9IkwU6e5o+fyrK5q6SZkhaq9PsTZMSAb6+alHjLkZOAsOzCAdTVd+leoZDxh
+	Qh0F7PeuL8ZZdXbHg/a0GyAzIzdFDhmh/38Idredu20Ne4zT0ZCvp1Yl+dKWuV3ilRnaYTOUsUo
+	jkxrXJlRSnlrpsAKL1OCjATwf5tk+/eYUijtwc74tbs2/kazez/qON31w/8mPBwURx0Fq36shYF
+	hOimEIRcmm4JewxRU86tAu8rBQ8ngEqKwM8LVybwElFSLftp6ee00Re+0wGktTR2yyUZnMBGVGC
+	qaO8zpREwSQ==
+X-Google-Smtp-Source: AGHT+IHJSK7Qp1zb5om02W592OqiY5udTEsk9nBSftpZyGmqI0e9P/OjwE7rDiAyfrBX382yq5jBhBWzuWKkJmGaXh4=
+X-Received: by 2002:a05:7301:f25:b0:2a4:50c2:a74c with SMTP id
+ 5a478bee46e88-2abf8dee655mr691583eec.8.1765289856143; Tue, 09 Dec 2025
+ 06:17:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251204122825.756106-1-iuliana.prodan@oss.nxp.com> <20251204122825.756106-3-iuliana.prodan@oss.nxp.com>
-In-Reply-To: <20251204122825.756106-3-iuliana.prodan@oss.nxp.com>
+References: <20251124182751.507624-1-robh@kernel.org> <CGME20251127142839eucas1p186846c6c1ea1d9e43369fbba9bb5d17c@eucas1p1.samsung.com>
+ <20251124182751.507624-2-robh@kernel.org> <674efe8d-c299-4ce9-bf6b-c1920a5393eb@samsung.com>
+ <CAL_JsqJTrGAJx-fv8OQGDhsLVKavQzzQotssEq_E5f_aJe8bOg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJTrGAJx-fv8OQGDhsLVKavQzzQotssEq_E5f_aJe8bOg@mail.gmail.com>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 9 Dec 2025 16:11:19 +0200
-X-Gm-Features: AQt7F2rz9EfsJBbiHeX3xN1JnTkS5oOdOlbJa4JQf39jSVqAGLuMb5NMx16wl5A
-Message-ID: <CAEnQRZDw-jwpXdb3oi+-DZ+YD4aQfyON0gPNrGpox1v7m4Voig@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] remoteproc: imx_dsp_rproc: Wait for suspend ACK
- only if WAIT_FW_CONFIRMATION is set
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	"S.J. Wang" <shengjiu.wang@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev, 
-	linux-remoteproc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+Date: Tue, 9 Dec 2025 16:20:03 +0200
+X-Gm-Features: AQt7F2rjwQKc_bRBeYsxUFhD_YJR9U-Y3qN6s4VMgPax1Na8ykfHoapTIdM-w18
+Message-ID: <CAEnQRZDBZ52FoNRBJa1qScbkcEYKwbyP_ephutdkYFaY5b1yLw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/2] remoteproc: qcom: Use of_reserved_mem_region_*
+ functions for "memory-region"
+To: Rob Herring <robh@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Peng Fan <peng.fan@nxp.com>, 
+	Beleswar Padhi <b-padhi@ti.com>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-msm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 4, 2025 at 2:29=E2=80=AFPM Iuliana Prodan (OSS)
-<iuliana.prodan@oss.nxp.com> wrote:
+> Other platforms (non-QCom) were tested also use
+> devm_ioremap_resource_wc(). So something else is claiming the same
+> region? Can you dump out /proc/iomem?
 >
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
->
-> The DSP suspend path currently waits unconditionally for a suspend ack
-> from the firmware. This breaks firmwares that do not implement the
-> mailbox-based CONFIRMATION handshake, as the DSP never responds and
-> system suspend fails with -EBUSY.
->
-> The driver already uses the WAIT_FW_CONFIRMATION flag to indicate that
-> the firmware supports the CONFIRMATION handshake at boot. Apply the same
-> logic during suspend: only send the suspend message and wait for the
-> suspend ack when the firmware is expected to support it.
->
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> The region is dynamically allocated, so maybe that has something to do with it.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+We noticed a related issue with imx_dsp_rproc.
+
+Because:
+imx_dsp_rproc_prepare:
+ -> imx_dsp_rproc_add_carveout
+     -> /*... */ and this calls devm_ioremap_resource_wc
+-> pm_runtime_get_sync
+
+imx_dsp_rproc_unprepare:
+ ->pm_runtime_put_sync
+
+There is no easy way to manually undo devm_ioremap_resource_wc so I have
+sent a patch to use devm_ioremap_wc.
+
+https://lore.kernel.org/imx/20251209140425.766742-1-daniel.baluta@nxp.com/T/#u
+
+In your case Marek at least you need to understand which driver
+reserves    8dc00000-8e7fffff : reserved and why.
+
+thanks,
+Daniel.
