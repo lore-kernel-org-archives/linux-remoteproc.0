@@ -1,179 +1,652 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013064.outbound.protection.outlook.com [52.101.72.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA4C237180;
-	Tue,  9 Dec 2025 16:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765296317; cv=fail; b=a51mGCuNaYTdo12VxyrxcHjscJ9+U1HZPvmOFW107CNWRwpheO94UfXHGAQQs5prBlAxXAtL3gJn/R3S3/L4irYEbickRuj5/tUZgwqvYvfBUu329KsLLZFevfL5Q2+YTUJ+qQzAqil1eMCKQ6EaeQtKQ2yNG+De6ktYlkOfU1U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765296317; c=relaxed/simple;
-	bh=MT6CquSbIUySNVs7ZnD0aenN08NWBj4Z7VM3uQyUPME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=r46DrJWLE4dqY/vPMaTzhsraM8BVFuBTmjLJ9x9/L/H+ErGUrMA4d6A66tOjevhdn/XjGTSz6fCak1WEmoUdE00rntgbE973iinqeVIH4xx6t6hav00CAveYNFKw4fXDQQ0rKD1I9u+242smA2HfK0EPSYKWNEepqUzzasFWoiw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UINQKG9E; arc=fail smtp.client-ip=52.101.72.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52E3188735
+	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Dec 2025 17:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765301601; cv=none; b=C2Su8rR8Vu88/NtjX2IB5kQtWusY6NPKQ4djnqHnlZrmnsKHq49pCHDoLYHl9LZSaB1HyQBYLgVFYjKNh6W9U4HQ3ZBXIIHkVj8PWNz5jScjne7qpWTiqUyackvEd+6c23B8pjSs11MtwrNoXYBJbMT5bqWJPRAGsE1bxNzzP7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765301601; c=relaxed/simple;
+	bh=WCq/zW+aYyXIE1gIkTrf9jvNywH/14i2fVEMsevXgv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fx5d+jnfadrmwymXpubIp/fI/JBsfK/OaxDEMNhpScPwzUW7B6I1fXNh5ck5/v2Vb0trnKm/6s4IUS9UalbXkckaP9470mhFkJtjsP6gqq9Qew/LZoxidp3Ke7LSndzhziI9R1s8gdZObR0zeNogb30U3JQJ/u95kGX/LOcKW0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zdgizX8b; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UINQKG9E"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l39BSQBMMLJrW0w7Is6/jvjH8hLF+4ljVx0YJ31FWI85hHIzsuamJdT/FcRGHa1EpATzU7WpAIEE83OONhsnVusaV+DkM4CIoVkL0WQo5DLMY4OtJeDybL4Sb2jnNUU1t0cxp5O9qMB3bxeRyVxSycfBRJcBcUHTVkVMvsZ7vJGSIFGxZhXFAZvXiQpvN4R8N/v4BSsZukKuY9amZkxS91uiiTBGNW+utiVU7jT0knlwHtEepWAW69uL+7KrqkfPs7D8ti5J0lOpXtYfleL5o45gBwualWUR5jR+HrJEweSyG2sE/Hv2B/1NXVi2nRHVaxheR8goXX9uzK0eb5C9DA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yNFd4nZVbIqggj/W+9I8JmTu5WCBdg1Fkxh2JFcg7Ag=;
- b=PAy4bIt1YcC1zvWIv1y91rYL+XJo+XDiIAp5C0dF1Q96msybTlrjuA01c/riNuwvKAd7/DHD9qk7HSggD98rM8GNj/HHwAulR95fpzbOAc/6owgCeD7PYXadD2QMxeacnJimuKlW3xBO9ApHGHgaKBu07Pj9XNiHm8Auqi0guts+cFyq5Mef25/lkZTElKrXJIUmB14aQxQx57cjfqEHRVo0oFOiY9VwwHeY9fu+4xF7MFxPS2Vli2CpmYI25gs0u5MA3GzcuI/fKYzoPuINUz3SZrrxFmyJY+CvLA7tkHo/nwfhHWVvqBa+pcs3RstjDT6Oik+jaWnoLuemosHXAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yNFd4nZVbIqggj/W+9I8JmTu5WCBdg1Fkxh2JFcg7Ag=;
- b=UINQKG9E+SGL6EbaXeE+SujJwnoIh8bycZQVAMn9+tSTNuCSIC6ERK8VPPAibvtNVV7sEZwy8nYTi3EvFWwDnstt9aa0DdLmfBO7Fn9fzUKm2x/qGV4eoNiD4DkqkTGMygHOR8w9TTuRsoMThttZzGrJOOQAcNFVeyih+k+fjug4Vc/mSVl1EVmFuHj/eD9Fg2L0N8A3knzpOIqDurZoZFRcgCYTnlDmdm7x/HHlIKobFnSb0hXCKIEatwQHGTO+49RKzKYyUjOz4MTErnXTo59a3dWj5nNnHyQjHmAJJVlt+GZkTWSzaUq5bISha9AtdNLf4jcxMfloHNTfmN/iVg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DU2PR04MB8951.eurprd04.prod.outlook.com (2603:10a6:10:2e2::22)
- by AM7PR04MB7160.eurprd04.prod.outlook.com (2603:10a6:20b:119::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9388.14; Tue, 9 Dec
- 2025 16:05:12 +0000
-Received: from DU2PR04MB8951.eurprd04.prod.outlook.com
- ([fe80::753c:468d:266:196]) by DU2PR04MB8951.eurprd04.prod.outlook.com
- ([fe80::753c:468d:266:196%4]) with mapi id 15.20.9388.013; Tue, 9 Dec 2025
- 16:05:12 +0000
-Date: Tue, 9 Dec 2025 11:05:05 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH] remoteproc: imx_rproc: Use strstarts for "rsc-table"
- check
-Message-ID: <aThIsUU22pdulMrJ@lizhi-Precision-Tower-5810>
-References: <20251208233302.684139-1-shenwei.wang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251208233302.684139-1-shenwei.wang@nxp.com>
-X-ClientProxiedBy: PH7P220CA0007.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:326::13) To DU2PR04MB8951.eurprd04.prod.outlook.com
- (2603:10a6:10:2e2::22)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zdgizX8b"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7b22ffa2a88so5974269b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Dec 2025 09:33:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1765301599; x=1765906399; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WzqyaXyqvcVTv4wWEkpPFoU8ZocUu34KaIAM6xQodXo=;
+        b=zdgizX8bCGnfducPmxGCdFoe1eynRIH5s6MEteXv+ZtHQ4MAC09i4DBJ0CftCcJ+4+
+         IlTwMYDj4/Knr5wJZl3t4fhnaDjg2xfAnen1zlxTrTUNWR1PtMoViMITAHPoZ6CuwHpD
+         DMK5Jvye3aYUDptlA3vMVcaw+SneCIqBtrTDyJSNDqoMXyQ4eNkIwtKTwx+zGX5rlnUu
+         cKRSx390uN8u7AomXreD2fuG1Mku/qGIsoTMXeezdSFoOBwIZ/Q8knhRn1uZleVbfvsO
+         fbg4JjHtlVh0m3xkMVvYjrZ35HAhQzAf4AYfV0acEHqGvg1PqqwxkX9qFSWuSbmBLBHJ
+         f67Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765301599; x=1765906399;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WzqyaXyqvcVTv4wWEkpPFoU8ZocUu34KaIAM6xQodXo=;
+        b=MOsR38wBNUeVNSHiXLOCpVTzbKDSnjpl9G+cZJ7CyGA0gjK/5kQXz5KcneDSG8jE3a
+         qgjNymcnO0o74cLFDVoaQJgRSqtqTKYGin41QQPdEdofQaF+MGwlTCcsaqOhBXANkNQr
+         MYheJdlP1Qe36rENwNE24T1QcDfyKG/6dwrNW0uqYRyc42CamYhlqqUV+mdTtLnwMtUr
+         RvFKlZznBbtQBJLq+QXdTBh1PqMwehzGzidU9erolT0SV6RzHg3oibqA7jY/BQGtpqwo
+         0Q2dQDJpIAsZg7WZuyHnK5lhICYUnd0eJVlfeh/xtVwpwmVMX3eZwEg0Bbdx121WisdX
+         m3UA==
+X-Forwarded-Encrypted: i=1; AJvYcCW311cmbettRCDKA+lkqGf8hR0bP+WpMJYGAulmq93E8YWiLiiEe5mgAa8kp5csn7mG/Yquv7nauliKsjcvkckF@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqU0tw2lb3/ViDPNYYHgvBKi8azZmRqO4zTrvxGXjmfVVmu8Q2
+	fXq5eGwX3vMsIh10a+stYHdtfOnSHpDFagD8SmqxIipwTJtSY7rqHUzJLR8g1SWuVzo=
+X-Gm-Gg: ASbGncsoNX6LDx3OvNzHh4I9yu5pt3PsOx6tw1roocE3/L5p8/1wJgG848yqNlHKYl7
+	alr9lANlevpVZzmQdOyS02n3jlwLanFV1YKZis107+YYUgNMfGnSNyeQNYzbFLOp+fr9IsxR7yY
+	2QQ7/bdAbeUVKGP7wRiIZROR5MiPXFyZiomyJuUWcQ4QrhpIKuNUcQGt5ggJ2W8YrDJHYCCPLTw
+	yN8Ild+D8KOoDFygZ1uMLltt5Lkb4dWRAGBH3mNYxLiS/aZb0ZozbJIwvT0HZEY1c45TzkTmhs/
+	hhnvuWrg8ZqCI3frJh3konr1dMIxPruD6CClPE1Z84/mzOJetThDRGL2J9+wr2EMQF5ZsQSL+lR
+	NjT9FO2ALHHBg1f/gdMtfSiLryjo0FDHQy+yRQ4nQMbe8J03nK8JIasgNMyE4GqBHt/S6TaCeOE
+	QEfGmHdLRm8/cp
+X-Google-Smtp-Source: AGHT+IHPOMyOhqwRsCuUbH01pYdCZlQlWO0ArigDoX4sH1jducUqnEy3dcIPB14c+9KXGlQPe79yXA==
+X-Received: by 2002:a05:6a00:b86:b0:7b8:ac7f:5955 with SMTP id d2e1a72fcca58-7e8c21f6c7emr10533150b3a.17.1765301598648;
+        Tue, 09 Dec 2025 09:33:18 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:586f:ed0d:a5f:6ef8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7f1a1ba7047sm983505b3a.34.2025.12.09.09.33.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Dec 2025 09:33:17 -0800 (PST)
+Date: Tue, 9 Dec 2025 10:33:15 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] remoteproc: add support for Microchip IPC
+ remoteproc platform driver
+Message-ID: <aThdW87kR3gJMvUB@p14s>
+References: <20251121142157.3582463-1-valentina.fernandezalanis@microchip.com>
+ <20251121142157.3582463-3-valentina.fernandezalanis@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PR04MB8951:EE_|AM7PR04MB7160:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2a94ba25-424f-4f71-de3c-08de373cbbea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|19092799006|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5rqY+rMu8Xa08XNx11nnHSR1ONKXH80ArtlfNjRwZ9xJjHD+Hv+CpTNEZE9c?=
- =?us-ascii?Q?jxtf/Vq3rk6LIajx1Kw3qmvpe2zMGTdZeC28NdiwQTePEy2CK4ZAJQHF33dJ?=
- =?us-ascii?Q?gYUlb5Mm6Cmr468FgNXpCfIthQYFL+yMucJDiT0PW+VRfKnrCxmTjNJuewdk?=
- =?us-ascii?Q?ZjLdsiyLnhwo9+n+Vude44IJBNMfvbHnGX9jrMPQU9XgFMD6GzCQ2j1gdJh5?=
- =?us-ascii?Q?89j1Xf4uJcUUiT2uf46X1pEaH6u9AIIGR8FVlkNCh3Fzsj/QWgJkb5o6XU4u?=
- =?us-ascii?Q?MIp0pSuFBGLCRsBXmKj7eLKjEzzHsHUYphEzFhe1900bq4xdXgHVaG/ETFC9?=
- =?us-ascii?Q?Z/elfwQ3sBGyLSAEnbGFPaad1tQYNBRkCkKPFkrQggg0Z5ik5u9WLYyG20WA?=
- =?us-ascii?Q?ElI+IoZd2AZ5GIIh79HUidTl4e8OHfwMHr1JpW6gm0qmCEHquaj25rt103hf?=
- =?us-ascii?Q?v2UbXe8ZZSNCtXz6cCCJ8Fz/5NIetRz/NFq9fn2Of5qGcBa5fDyvLlJy9394?=
- =?us-ascii?Q?KUaAeZmg73BhV4pFY+Znd84fCdrbEYPJt1F72VrYG5xE7z60ufjxI9kkaQiA?=
- =?us-ascii?Q?QsCEuTNfIqCLuEAPoARJrt1QgJVh1aWK8R8X2jsujVk7B4ytu3g3I8cF5uhB?=
- =?us-ascii?Q?+9/yZQJj1WV7S7FM/Hy/bgfPaqW7qV3qgOIHez0UYBCL+sP26Pur/GUxQBrp?=
- =?us-ascii?Q?+2I/rdikpk2cJMldtn1okFS4rmrMsfqTXeax2Lk8K6WOajxwxM9fKLI0rvPk?=
- =?us-ascii?Q?FOaahjO/oYrd+3tqgODhoGVICKNlu9rGm2UU91BX/sY72QxYNe1dQY67WrwS?=
- =?us-ascii?Q?qqB93xD6bSjtIAXv38yp/3f/bm+CDeu5JbzVLEZP8rjRFFSENNLmxbIrldoh?=
- =?us-ascii?Q?tTfnjCdsOaRCPURR1uoPQQXo1m4Hh5REDaVfhvudmQU2vWWxPsz+gr5rxDhY?=
- =?us-ascii?Q?Kk4gRBFn9DdpN2f/xPNVhdE2jTIdZCam6Lc5I78P3DDDGiZlE221haWzQqjJ?=
- =?us-ascii?Q?WYi+GwvMrVNJMfN15raAojjoEU2431g+KXdROeEiP0t1cZQy//cdlkBQ4rLY?=
- =?us-ascii?Q?nZ8CML1kFp8WnmNVt+WYhJYodDil1UrNKRjZd4v4dp9RZphLCDl05GMy1Y73?=
- =?us-ascii?Q?gQy3Tt7VgAeTp2YngWFtfXFyBbNrkNF5AAAtl7ZDpSGIGLweV22yvBZIXInP?=
- =?us-ascii?Q?Rj1rxdDbFgx3ctkJInxotDmjADsDD7BzVtbbGJHE7Ha+HTxolmSb4v3dPGN4?=
- =?us-ascii?Q?7osTJhOFjk/eY7XQ2YgjH41su7qFOHDh7lmXAUI2+1ijRbbGyybBrzXiTtxW?=
- =?us-ascii?Q?McjJwnxddFFwNFdFuHzzJmsg3m8cPGCUWweOglabk5h62OjIIrUlwKxrJbv4?=
- =?us-ascii?Q?D/ni+FzoE7y48JUC4NH3DVLTYWu+CB+K9SA1wdq3QdEGl8LdNw6exLS9TrVZ?=
- =?us-ascii?Q?ad/g3rdeNWE3NRFNmwS1xUEUuBO4dPiDYprhw45JYwYoHaeYI58uVxAp/kh5?=
- =?us-ascii?Q?k//xlhvYbfFNg/VRGyptpJiYB123hiJe0LWt?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8951.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(19092799006)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?y2sip6V86up1W81m/ZmJ/iB0rb19A6ocGbdX4QVou6mTpELx/ULaGWw/cWZN?=
- =?us-ascii?Q?R2Fs0Xaoo7b6cbn1BaKSmhl4BTveEhYslaAscV3AXsVIUcRice6bXDZ/cije?=
- =?us-ascii?Q?B41HMAXWeT9CyWEUTEb7jY977VEpHc9NpRU3Tt4ce6mRLzzkf3PF/JeXybTy?=
- =?us-ascii?Q?SVmXyN6vDUythXlcOPsb+gmJiPN4JuKLXBlXJ2j+rUay37yyg2NM5N3qXIFR?=
- =?us-ascii?Q?3Oof07mMhHmbciPrPGJgCz9atsMapuephJ9OgO4h6A1DWFV54gDK6WnI0OYV?=
- =?us-ascii?Q?k7JzlrD61VTMjQAct2PEXuxzy3D98KbcskkbiQYgc0Zzc9VazolCEKWc6FoI?=
- =?us-ascii?Q?mKoRGyjtIuWy7TG0Ery9EdsvMEbRUVqbtpm9sQk9GrAIc1HgiXa/duHGMPNY?=
- =?us-ascii?Q?DSTr4yyoSbM+njy7Wwq8XvX+x6sT6Dlc1VtwnJD5lk646U3aJxML1cpiDlk8?=
- =?us-ascii?Q?ihgo47A249Ws319fAalHJ347eWhRt8j3pKqB3IZDWpKPRCPq7lJWbOzLeMHR?=
- =?us-ascii?Q?nHIY/S3v/lzq8d9yxt5DAkfEIw3g5NwZ9orFNWa5NkTZq6oaz6SsQ8kSoiGh?=
- =?us-ascii?Q?xsyzdIo91uxZq4NV/eSNWa3uiaTNBL+BkzT0zwKainJnSAjjsN/ubUpsgXIG?=
- =?us-ascii?Q?MrI46qDnICxbWs/Job9hA8vVRQKOx4/ZLCJSr7KXMLUhTCifGrMOPoJHpUW8?=
- =?us-ascii?Q?rxW/EmIbjySpWyG54L5JmflCBriET+VRncCxwO/hgJZsF8nTbei5YxsvYj1g?=
- =?us-ascii?Q?T7BBGThmmILaMutldrBCXRwTlREUEqfNr3UU04BWp3DroKk2o4Dx2ukLVpNk?=
- =?us-ascii?Q?HdXqHiAOXb1Jt0UnQuSIvmT+4iyspcAfGaWlaNwY7sZe/DS2dx9X1SH/fmu9?=
- =?us-ascii?Q?xmVRW7TAhGXySJ+FDpSd5+6+pNwuQjKePafOuT5vOT+UZzlYex9pHm/oDiTW?=
- =?us-ascii?Q?hUAQRWf0gGqFKxkXDXRlmP1S/bOLki4D7ZmnVfBn7nJp6mBPdhJTVeIvR/kz?=
- =?us-ascii?Q?sover11cTU3glLu9GoyFAl4XBHj4s01hjtgYP8drNlPwvzqGyNNScER+Ysyd?=
- =?us-ascii?Q?2/96VECjbTnLRIIDElv3BeWmJHM6ijxeFox4ZawhLyVDtF+hZix3leqjXGAY?=
- =?us-ascii?Q?mPR0Q68Xuff7ZEFruXn0mQhcctpfWEBSPT8cSHKnL/ikOyvO6yyAot18k/+G?=
- =?us-ascii?Q?orOhBiYT7QEsTYgXJ+JvEOHYmqBbOqYFlwGM5kJnw3bHjEo95h9h/qjjILwG?=
- =?us-ascii?Q?cxYcSCpvevpNY/ruFVHPNiyF7LE8TehGm+QkQMyVDN+Hh0qcrwh9xQuom1Yo?=
- =?us-ascii?Q?oX2q+cmOc1VHk6yxdfttXguYhNDa2r8fe+7F+h7AHdtCSCoebqeZNFYe4p27?=
- =?us-ascii?Q?nHtVpN/Z6bRTk1Pn0QBkqxLHdy2G9Je2wdxUY7rfkKBCnDoAtibcIP/ZgQzR?=
- =?us-ascii?Q?SuFG/MlLzW2sNtm7JMCHJXYQnXC+duUIAa9Rvbl5+5g1jfcl11oX3RyCzN29?=
- =?us-ascii?Q?l4HIE/uBcrx5Z4FeDKvziyrcr4I36q8GupoRAYmjOuLw/AxItNWuzuv2HljP?=
- =?us-ascii?Q?FTHMetQnY2HPL8+SgCyf4YbWNB3XUm2ct3fIhksT?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2a94ba25-424f-4f71-de3c-08de373cbbea
-X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8951.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2025 16:05:12.5349
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GURlXKhSuJ0ffsZAxutA2cY9J56h1F0uUDeiK6A1cC/Cscr7KsIvvqPyx99oj6bkRWjvo81sBywUbmVOYSus7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB7160
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251121142157.3582463-3-valentina.fernandezalanis@microchip.com>
 
-On Mon, Dec 08, 2025 at 05:33:02PM -0600, Shenwei Wang wrote:
-> The resource name may include an address suffix, for example:
-> rsc-table@1fff8000.
->
-> To handle such cases, use strstarts() instead of strcmp() when checking
-> for "rsc-table".
->
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+Good day,
+
+On Fri, Nov 21, 2025 at 02:21:57PM +0000, Valentina Fernandez wrote:
+> Microchip family of RISC-V SoCs typically have one or more
+> clusters. These clusters can be configured to run in an Asymmetric
+> Multi Processing (AMP) mode where clusters are split in independent
+> software contexts.
+> 
+> Add a remoteproc platform driver to be able to load and boot firmware
+> to remote processors.
+> 
+> The driver uses SBI (RISC-V Supervisor Binary Interface) ecalls to
+> request software running in machine privilege mode (M-mode) to
+> start/stop the remote processor.
+> 
+> Inter-processor communication is supported through the
+> virtio rpmsg stack using shared memory and the Microchip IPC mailbox
+> driver.
+> 
+> Currently, the driver the following features are supported:
+> - Start/stop a remote software context
+> - Kick function implementation for RPMsg Communication
+> - Attach to a remote context loaded by another entity (bootloader)
+> 
+> Error Recovery and Power Management features are not currently supported.
+> 
+> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
 > ---
+>  drivers/remoteproc/Kconfig                   |  12 +
+>  drivers/remoteproc/Makefile                  |   1 +
+>  drivers/remoteproc/mchp_ipc_sbi_remoteproc.c | 465 +++++++++++++++++++
+>  3 files changed, 478 insertions(+)
+>  create mode 100644 drivers/remoteproc/mchp_ipc_sbi_remoteproc.c
+> 
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index 48a0d3a69ed0..68bd68f553ea 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -54,6 +54,18 @@ config INGENIC_VPU_RPROC
+>  	  This can be either built-in or a loadable module.
+>  	  If unsure say N.
+>  
+> +config MCHP_IPC_SBI_REMOTEPROC
+> +	tristate "Microchip IPC remoteproc support"
+> +	depends on MCHP_SBI_IPC_MBOX || COMPILE_TEST
+> +	depends on ARCH_MICROCHIP
+> +	help
+> +	  Say y here to support booting and loading firmware to remote
+> +	  processors on various Microchip family of RISC-V SoCs via the
+> +	  remote processor framework.
+> +	  This can be either built-in or a loadable module.a
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+No line break needed.
 
->  drivers/remoteproc/imx_rproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 3be8790c14a2..33f21ab24c92 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -694,7 +694,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
->  		}
->  		priv->mem[b].sys_addr = res.start;
->  		priv->mem[b].size = resource_size(&res);
-> -		if (!strcmp(res.name, "rsc-table"))
-> +		if (strstarts(res.name, "rsc-table"))
->  			priv->rsc_table = priv->mem[b].cpu_addr;
->  		b++;
->  	}
-> --
-> 2.43.0
->
+> +	  If compiled as module, the module will be called mchp_ipc_remoteproc.
+> +	  If unsure say N.
+> +
+>  config MTK_SCP
+>  	tristate "Mediatek SCP support"
+>  	depends on ARCH_MEDIATEK || COMPILE_TEST
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 1c7598b8475d..afb28dff5666 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -14,6 +14,7 @@ obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
+>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+> +obj-$(CONFIG_MCHP_IPC_SBI_REMOTEPROC)	+= mchp_ipc_sbi_remoteproc.o
+
+Please drop the "ipc_sbi", it is redundant and doesn't any useful information.
+Here and everywhere in this file.
+
+>  obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
+>  obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
+>  obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
+> diff --git a/drivers/remoteproc/mchp_ipc_sbi_remoteproc.c b/drivers/remoteproc/mchp_ipc_sbi_remoteproc.c
+> new file mode 100644
+> index 000000000000..55d182c1eee7
+> --- /dev/null
+> +++ b/drivers/remoteproc/mchp_ipc_sbi_remoteproc.c
+> @@ -0,0 +1,465 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Microchip IPC Remoteproc driver
+> + *
+> + * Copyright (c) 2021 - 2025 Microchip Technology Inc. All rights reserved.
+> + *
+> + * Author: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> + *
+> + * Derived from the imx_rproc implementation:
+> + * Copyright (c) 2017 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_reserved_mem.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc.h>
+> +#include <linux/workqueue.h>
+> +
+> +#include <asm/sbi.h>
+> +#include <asm/vendorid_list.h>
+> +#include <linux/mailbox/mchp-ipc.h>
+> +
+> +#include "remoteproc_internal.h"
+> +
+> +#define SBI_EXT_MICROCHIP_TECHNOLOGY	(SBI_EXT_VENDOR_START | \
+> +					 MICROCHIP_VENDOR_ID)
+> +
+> +#define MIV_RPROC_MEM_MAX		2
+> +
+> +enum {
+> +	SBI_EXT_RPROC_STATE = 0x3,
+> +	SBI_EXT_RPROC_START,
+> +	SBI_EXT_RPROC_STOP,
+> +};
+> +
+> +/**
+> + * enum mchp_ipc_rproc_mbox_messages - predefined mailbox messages
+> + *
+> + * @MCHP_IPC_RPROC_MBOX_READY: a ready message response from a remote context indicating
+> + * that the remote context is up and running.
+> + *
+> + * @MCHP_IPC_RPROC_MBOX_PENDING_MSG: Not currently in use, but reserved for future use
+> + * to inform the receiver that there is a message awaiting in its receive-side
+> + * vring. At the moment, one can explicitly send the index of the triggered
+> + * virtqueue as a payload.
+> + *
+> + * @MCHP_IPC_RPROC_MBOX_STOP: a stop request for the remote context
+> + *
+> + * @MCHP_IPC_RPROC_MBOX_END_MSG: Indicates end of known/defined messages.
+> + * This should be the last definition.
+> + *
+> + */
+> +enum mchp_ipc_rproc_mbox_messages {
+> +	MCHP_IPC_RPROC_MBOX_READY = 0xFFFFFF00,
+> +	MCHP_IPC_RPROC_MBOX_PENDING_MSG = 0xFFFFFF01,
+> +	MCHP_IPC_RPROC_MBOX_STOP = 0xFFFFFF02,
+> +	MCHP_IPC_RPROC_MBOX_END_MSG = 0xFFFFFF03,
+> +};
+> +
+> +enum {
+> +	MCHP_IPC_RPROC_RSC_TABLE_REGION,
+> +	MCHP_IPC_RPROC_FW_REGION,
+> +	MCHP_IPC_RPROC_BUFF_REGION,
+> +	MCHP_IPC_RPROC_VRING0_REGION,
+> +	MCHP_IPC_RPROC_VRING1_REGION,
+> +	MCHP_IPC_RPROC_REGION_MAX,
+> +};
+> +
+> +struct mchp_ipc_rproc_mem_region {
+> +	const char *name;
+> +	const char *prefix;
+> +};
+> +
+> +struct mchp_ipc_rproc {
+> +	struct device *dev;
+> +	struct rproc *rproc;
+> +	struct mbox_chan *mbox_channel;
+> +	struct workqueue_struct *workqueue;
+> +	struct mbox_client mbox_client;
+> +	struct completion start_done;
+> +	struct work_struct rproc_work;
+> +	struct mchp_ipc_msg message;
+> +	void __iomem *rsc_table;
+> +	bool initialized;
+> +	u32 chan_id;
+> +};
+> +
+> +static struct mchp_ipc_rproc_mem_region mchp_rproc_mem_regions[] = {
+> +	[MCHP_IPC_RPROC_RSC_TABLE_REGION] = {
+> +		.name = "rsc-table",
+> +		.prefix = NULL,
+> +	},
+> +	[MCHP_IPC_RPROC_FW_REGION] = {
+> +		.name = "firmware",
+> +		.prefix = NULL,
+> +	},
+> +	[MCHP_IPC_RPROC_BUFF_REGION] = {
+> +		.name = "buffer",
+> +		.prefix = "vdev0",
+> +	},
+> +	[MCHP_IPC_RPROC_VRING0_REGION] = {
+> +		.name = "vring0",
+> +		.prefix = "vdev0",
+> +	},
+> +	[MCHP_IPC_RPROC_VRING1_REGION] = {
+> +		.name = "vring1",
+> +		.prefix = "vdev0",
+> +	},
+> +};
+> +
+> +static int mchp_ipc_rproc_start(struct rproc *rproc)
+> +{
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +	struct sbiret ret;
+> +
+> +	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_START,
+> +			priv->chan_id, rproc->bootaddr, 0, 0, 0, 0);
+> +
+> +	if (ret.error)
+> +		return sbi_err_map_linux_errno(ret.error);
+> +
+> +	if (!wait_for_completion_timeout(&priv->start_done,
+> +					 msecs_to_jiffies(5000))) {
+> +		dev_err(priv->dev, "timeout waiting for ready notification\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mchp_ipc_rproc_stop(struct rproc *rproc)
+> +{
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +	struct sbiret ret;
+> +
+> +	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_STOP,
+> +			priv->chan_id, MCHP_IPC_RPROC_MBOX_STOP, 0, 0, 0, 0);
+> +
+> +	if (ret.error)
+> +		return sbi_err_map_linux_errno(ret.error);
+> +
+> +	return ret.value;
+> +}
+> +
+> +static int mchp_ipc_rproc_mem_alloc(struct rproc *rproc, struct rproc_mem_entry *mem)
+> +{
+> +	struct device *dev = rproc->dev.parent;
+> +	void *va;
+> +
+> +	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
+> +	va = ioremap_wc(mem->dma, mem->len);
+> +	if (IS_ERR_OR_NULL(va)) {
+> +		dev_err(dev, "Unable to map memory region: %p+%zx\n",
+> +			&mem->dma, mem->len);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	mem->va = va;
+> +
+> +	return 0;
+> +}
+> +
+> +static int mchp_ipc_rproc_mem_release(struct rproc *rproc,
+> +				      struct rproc_mem_entry *mem)
+> +{
+> +	dev_dbg(rproc->dev.parent, "unmap memory: %pad\n", &mem->dma);
+> +	iounmap(mem->va);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mchp_ipc_rproc_prepare(struct rproc *rproc)
+> +{
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +	struct device_node *np = priv->dev->of_node;
+> +	struct rproc_mem_entry *mem;
+> +	struct resource res;
+> +	int i, ret;
+> +
+> +	reinit_completion(&priv->start_done);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(mchp_rproc_mem_regions); i++) {
+> +		char *mem_region_name = devm_kstrdup(priv->dev,
+> +						     mchp_rproc_mem_regions[i].name, GFP_KERNEL);
+> +		int index = of_property_match_string(np, "memory-region-names", mem_region_name);
+> +
+> +		if (index < 0)
+> +			continue;
+> +
+> +		ret = of_reserved_mem_region_to_resource_byname(np, mem_region_name, &res);
+> +		if (ret)
+> +			return ret;
+> +
+> +		if (mchp_rproc_mem_regions[i].prefix) {
+> +			mem_region_name = devm_kasprintf(priv->dev, GFP_KERNEL, "%s%s",
+> +							 mchp_rproc_mem_regions[i].prefix,
+> +							 mem_region_name);
+> +		}
+> +
+> +		if (i == MCHP_IPC_RPROC_BUFF_REGION) {
+> +			mem = rproc_of_resm_mem_entry_init(priv->dev, index, resource_size(&res),
+> +							   res.start, mem_region_name);
+> +		} else {
+> +			mem = rproc_mem_entry_init(priv->dev, NULL,
+> +						   (dma_addr_t)res.start,
+> +						   resource_size(&res), res.start,
+> +						   mchp_ipc_rproc_mem_alloc,
+> +						   mchp_ipc_rproc_mem_release,
+> +						   mem_region_name);
+> +		}
+> +		rproc_add_carveout(rproc, mem);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int mchp_ipc_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	int ret;
+> +
+> +	ret = rproc_elf_load_rsc_table(rproc, fw);
+> +	if (ret)
+> +		dev_info(&rproc->dev, "No resource table in elf\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static void mchp_ipc_rproc_kick(struct rproc *rproc, int vqid)
+> +{
+> +	struct mchp_ipc_rproc *priv = (struct mchp_ipc_rproc *)rproc->priv;
+> +	struct mchp_ipc_msg msg;
+> +	int ret;
+> +
+> +	msg.buf = (void *)&vqid;
+> +	msg.size = sizeof(vqid);
+> +
+> +	ret = mbox_send_message(priv->mbox_channel, (void *)&msg);
+> +	if (ret < 0)
+> +		dev_err(priv->dev,
+> +			"failed to send mbox message, status = %d\n", ret);
+> +}
+> +
+> +static int mchp_ipc_rproc_attach(struct rproc *rproc)
+> +{
+> +	return 0;
+> +}
+> +
+> +static struct resource_table
+> +*mchp_ipc_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
+> +{
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +
+> +	if (!priv->rsc_table)
+> +		return NULL;
+> +
+> +	*table_sz = SZ_1K;
+> +	return (struct resource_table *)priv->rsc_table;
+> +}
+> +
+> +static const struct rproc_ops mchp_ipc_rproc_ops = {
+> +	.prepare = mchp_ipc_rproc_prepare,
+> +	.start = mchp_ipc_rproc_start,
+> +	.get_loaded_rsc_table = mchp_ipc_rproc_get_loaded_rsc_table,
+> +	.attach = mchp_ipc_rproc_attach,
+> +	.stop = mchp_ipc_rproc_stop,
+> +	.kick = mchp_ipc_rproc_kick,
+> +	.load = rproc_elf_load_segments,
+> +	.parse_fw = mchp_ipc_rproc_parse_fw,
+> +	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+> +	.sanity_check = rproc_elf_sanity_check,
+> +	.get_boot_addr = rproc_elf_get_boot_addr,
+> +};
+> +
+> +static void mchp_ipc_rproc_vq_work(struct work_struct *work)
+> +{
+> +	struct mchp_ipc_rproc *priv = container_of(work, struct mchp_ipc_rproc, rproc_work);
+> +	struct device *dev = priv->rproc->dev.parent;
+> +
+> +	u32 msg = priv->message.buf[0];
+> +
+> +	/*
+> +	 * Currently, we are expected to receive the following messages
+> +	 * from the remote cluster: a ready message or receive the index
+> +	 * of the triggered virtqueue as a payload.
+> +	 * We can silently ignore any other type of mailbox messages since
+> +	 * they are not meant for us and are meant to be received by the
+> +	 * remote cluster only.
+> +	 */
+> +	switch (msg) {
+> +	case MCHP_IPC_RPROC_MBOX_READY:
+> +		complete(&priv->start_done);
+> +		break;
+> +	default:
+> +		if (msg >= MCHP_IPC_RPROC_MBOX_READY && msg < MCHP_IPC_RPROC_MBOX_END_MSG)
+
+The condition (msg == MCHP_IPC_RPROC_MBOX_READY) is already checked as part of
+the previous case statement.  If you need to repeat this check, the design of
+the case state likely needs more work.
+
+> +			return;
+> +		if (msg > priv->rproc->max_notifyid) {
+> +			dev_info(dev, "dropping unknown message 0x%x", msg);
+> +			return;
+> +		}
+> +		/* msg contains the index of the triggered vring */
+> +		if (rproc_vq_interrupt(priv->rproc, msg) == IRQ_NONE)
+> +			dev_dbg(dev, "no message was found in vqid %d\n", msg);
+> +	}
+> +}
+> +
+> +static void mchp_ipc_rproc_rx_callback(struct mbox_client *mbox_client, void *msg)
+> +{
+> +	struct rproc *rproc = dev_get_drvdata(mbox_client->dev);
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +
+> +	priv->message = *(struct mchp_ipc_msg *)msg;
+> +	queue_work(priv->workqueue, &priv->rproc_work);
+> +}
+> +
+> +static int mchp_ipc_rproc_mbox_init(struct rproc *rproc)
+> +{
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +	struct device *dev = priv->dev;
+> +	struct mchp_ipc_sbi_chan *chan_priv;
+> +	struct mbox_client *mbox_client;
+> +
+> +	mbox_client = &priv->mbox_client;
+> +	mbox_client->dev = dev;
+> +	mbox_client->tx_block = true;
+> +	mbox_client->tx_tout = 100;
+> +	mbox_client->knows_txdone = false;
+> +	mbox_client->rx_callback = mchp_ipc_rproc_rx_callback;
+> +
+> +	priv->mbox_channel = mbox_request_channel(mbox_client, 0);
+> +	if (IS_ERR(priv->mbox_channel))
+> +		return dev_err_probe(mbox_client->dev,
+> +				     PTR_ERR(priv->mbox_channel),
+> +				     "failed to request mailbox channel\n");
+> +
+> +	chan_priv = (struct mchp_ipc_sbi_chan *)priv->mbox_channel->con_priv;
+
+Where is the memory for ->con_priv allocated?
+
+> +	priv->chan_id = chan_priv->id;
+> +
+> +	return 0;
+> +}
+> +
+> +static int mchp_ipc_rproc_get_state(u32 chan)
+> +{
+> +	struct sbiret ret;
+> +
+> +	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, SBI_EXT_RPROC_STATE,
+> +			chan, 0, 0, 0, 0, 0);
+> +
+> +	if (ret.error)
+> +		return sbi_err_map_linux_errno(ret.error);
+> +
+> +	return ret.value;
+> +}
+> +
+> +static int mchp_ipc_rproc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct mchp_ipc_rproc *priv;
+> +	struct rproc *rproc;
+> +	struct resource res;
+> +	int num_rmems, ret;
+> +
+> +	rproc = devm_rproc_alloc(dev, np->name, &mchp_ipc_rproc_ops,
+> +				 NULL, sizeof(*priv));
+> +	if (!rproc)
+> +		return -ENOMEM;
+> +
+> +	priv = rproc->priv;
+> +	priv->rproc = rproc;
+> +	priv->dev = dev;
+> +
+> +	num_rmems = of_property_count_elems_of_size(np, "memory-region",
+> +						    sizeof(phandle));
+
+Please add a comment to describe why a minimum of 1 memory region is needed.
+Otherwise I have to guess.
+
+> +	if (num_rmems < 1)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "device needs at least one memory regions to be defined\n");
+> +
+> +	ret = of_reserved_mem_region_to_resource_byname(np, "rsc-table", &res);
+> +	if (!ret) {
+> +		priv->rsc_table  = devm_ioremap_resource(dev, &res);
+> +		if (IS_ERR(priv->rsc_table)) {
+> +			return dev_err_probe(dev, PTR_ERR(priv->rsc_table),
+> +					     "failed to map resource table\n");
+> +		}
+> +	}
+
+The above makes me suspicious but I currently don't have time to look in the
+rproc_ops for answers.  You can either spin off a  new revision to address the
+comments already received or wait for me to look at the rproc_ops in January -
+the choice is yours.
+
+Thanks,
+Mathieu 
+
+> +
+> +	priv->workqueue = create_workqueue(dev_name(dev));
+> +	if (!priv->workqueue)
+> +		return dev_err_probe(dev, -ENOMEM, "cannot create workqueue\n");
+> +
+> +	INIT_WORK(&priv->rproc_work, mchp_ipc_rproc_vq_work);
+> +	init_completion(&priv->start_done);
+> +
+> +	ret = mchp_ipc_rproc_mbox_init(rproc);
+> +	if (ret)
+> +		goto err_put_wkq;
+> +
+> +	/*
+> +	 * Check if the remote cluster has been booted by another entity
+> +	 * (i.e. bootloader) and set rproc state accordingly
+> +	 */
+> +	rproc->state = mchp_ipc_rproc_get_state(priv->chan_id);
+> +	if (ret < 0) {
+> +		dev_err_probe(dev, ret, "Couldn't get cluster boot mode\n");
+> +		goto err_put_mbox;
+> +	}
+> +
+> +	if (rproc->state != RPROC_DETACHED)
+> +		rproc->auto_boot = false;
+> +
+> +	/* error recovery is not supported at present */
+> +	rproc->recovery_disabled = true;
+> +
+> +	dev_set_drvdata(dev, rproc);
+> +
+> +	ret = devm_rproc_add(dev, rproc);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "rproc_add failed\n");
+> +		goto err_put_mbox;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_put_mbox:
+> +	mbox_free_channel(priv->mbox_channel);
+> +err_put_wkq:
+> +	destroy_workqueue(priv->workqueue);
+> +
+> +	return ret;
+> +}
+> +
+> +static void mchp_ipc_rproc_remove(struct platform_device *pdev)
+> +{
+> +	struct rproc *rproc = platform_get_drvdata(pdev);
+> +	struct mchp_ipc_rproc *priv = rproc->priv;
+> +
+> +	mbox_free_channel(priv->mbox_channel);
+> +	destroy_workqueue(priv->workqueue);
+> +}
+> +
+> +static const struct of_device_id mchp_ipc_rproc_of_match[] __maybe_unused = {
+> +	{ .compatible = "microchip,ipc-sbi-remoteproc", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, mchp_ipc_rproc_of_match);
+> +
+> +static struct platform_driver mchp_ipc_rproc_driver = {
+> +	.probe = mchp_ipc_rproc_probe,
+> +	.remove = mchp_ipc_rproc_remove,
+> +	.driver = {
+> +		.name = "microchip-ipc-rproc",
+> +		.of_match_table = of_match_ptr(mchp_ipc_rproc_of_match),
+> +	},
+> +};
+> +
+> +module_platform_driver(mchp_ipc_rproc_driver);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Valentina Fernandez <valentina.fernandezalanis@microchip.com>");
+> +MODULE_DESCRIPTION("Microchip IPC Remote Processor control driver");
+> -- 
+> 2.34.1
+> 
