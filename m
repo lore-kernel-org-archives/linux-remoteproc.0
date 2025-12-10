@@ -1,233 +1,233 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazolkn19011035.outbound.protection.outlook.com [52.103.13.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE372FD7A7
-	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Dec 2025 08:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765355368; cv=none; b=OsjZax41+TnZXtfIgeZgA+GmDk82+beTOr5b02DsKXKp9Ck2wQ+pAj3vl9vYJnZ78KUbgPPTxaFV0Qi0IprxX126FT7vVTx+3lzyzbhwfyd3DbYFk+i5a5v6N8CZIxjPFrgLoLOCsxOLZFoC9SyPjIQxDabLY2rJyzS4leNhGAQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765355368; c=relaxed/simple;
-	bh=qvi74J9sGmPbv2Wwh8WA/VqFaGmAKDgSY+ejYYpI0LM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sqB4FSHXeoB83FIYtOW4wzfxGekoplMLmJixXwkYQjgPavYhKJKCy72tjFVy/UoBG73cEvK3rb/IAJyNmB7BC0llUKcOHEzsL5ty543uZjDckfUx9Od+Xh3Cmh0QEiP4siMhhXP08VT0YDx2x1eH28QQdY9Mw3YCFjO3NEUA1to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=fOaPSDWV; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F689311C2F;
+	Wed, 10 Dec 2025 10:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.13.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765362716; cv=fail; b=Ktizs+3XVpcukabs4FiOlE0pVAawYBZAKFLDmxXPrUzoLCSy/VbS4c6jJ49meFpWdfBCnBP23Cf/NXK+4UaNmRIteVlZbbSG+Xmn5DfFIB9oQxAzQkhxNWc0ktVOXz2hCeoNQNj3M7getCig/7YlB7lRxY2AJBP25pPMQTFeonM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765362716; c=relaxed/simple;
+	bh=fUeRiKS3IQhqxj1LVmkyLDO58Qw3+u1VGaADil1/3kk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PfU0ozvqrX20HrvLzJGH+5j7P635ZlFlsgtY0VSthxZFBg5cSyRs1tuTfewhRfOLmokE0MNjB4dZmVZ6Lu2MhfK61z3LmXoB11TbTHSVIST1vgkBknKpKCz6tkAn4zpuKnv4y/aOgxJ135/HHJAfVQ9zgPaJApKpmV+vXOtEYK8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=m+BvzIvB; arc=fail smtp.client-ip=52.103.13.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fOaPSDWV"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4dR85S3tchz9sxW;
-	Wed, 10 Dec 2025 09:29:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1765355356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R2fAVVKkr71HL6JDJ23QePccl/g4qDPSbnYyac60MMc=;
-	b=fOaPSDWVpmCb6ma+E9ClcXaf1JoJdVfnzayVT2JezGJu+ZXP4MBuMWYNvsjIF0mglff5LP
-	KSYUhqpkX8/X6n8ssyLLL8SHVSR3NjH0khsoiyKJs07Wg/l9vEPar9znjMSAqapL2X7KqX
-	6t5ma/qEEq4D1E5o7WEJFSKuPmyrFFRmIH6DFf2gTzoUIIz6PdPS24zpqnUktAXEl5ptnR
-	IyjjQwWkR8TmAkllUy6WLvhGUEQvyS3TOuJLRVM2kpYy4d8dcNbwIL+9Ouv9lpSaSJuRTg
-	10/XRiAodsbTH2WLYDidmVL6IlmgapQq9nKtKjHpNiBE5oaaEb/8PXTSVrmcjw==
-Message-ID: <d78ab175-e235-4f14-9b36-199209f0da9c@mailbox.org>
-Date: Wed, 10 Dec 2025 09:29:15 +0100
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="m+BvzIvB"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DCdi7fkGyFz59h7QHhUxsY2jagq2G49xPxYnP0uvXi66uA68948XNWYXE9uoG5fqIVavory6mtVFATTt5R495MRlHXCqwxSz4FAhNopFomHgWq9OvJ0cxWbies7deQx+4RDw1zcLXzezg1G0no6fjEPD7cOcOJ/Egux6TLVIhukXfvUfn4DQ9EAUGzhWj1RSUF9bXhnwqF74HI2b5q8ZRofd/OM5b7AdUZZdAXqhG+G1SExUZCpz7lQWrn8TD5a/gBTsj51ep+gfayixfEPuQj+TfErOgMVSAlJI3AV7aI1t58D/844x/aaTP6xZC66AkFJjy0ztLXSQBLQLYcnPsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qEZFkj1CBQ5i1SHdmFTwM8qbMpimPpw+aBpav7jqLhk=;
+ b=qwU5JcoJx1Qj5SVvBYaqzl+HrVXYy9PzcUSMhSsNxONqKpBD0lagyciJbQxGSUFjTOoH3So3FymEGAJ+U3BFFi79AcEN7LLOeRhOEBPD7y7Bsa/oW2Lzx/8ifTqRwYyw+gNiL3dMiFLvVTu2D8SrbmVyeqz3Lo7S1JqLz8+/TXiicAGN37m3nSV7ltujQOPhX8xHJt7sTMg+SSydR/rXb/TDNSGttUJOmBKdd38SAnDB8h0VQpd3ja/ChJoRc4OVTISjHeIEWTVeDz6jpDXhOk7arvV0JJARFVmQvkRc3g6cy8fB6eooXMe71uY3ipZfP3sfUJAXIhVQpWvN3rsGVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qEZFkj1CBQ5i1SHdmFTwM8qbMpimPpw+aBpav7jqLhk=;
+ b=m+BvzIvBg4N6sLMPSb3vVuiNvMphkjMFeKb2C40YEFRXr+45JK9HXPugItCGf8z5ychKuBhudnbDXJHUv0Z2bCEGGukjEjAlu1/OolbNkJ1F3ehaBtPsTqzTzJNVlcZZzEjypWHomdDqxvAD3i4tQ3SjCPj3WAy2aoWLIHjHMw6QhCTT7xV8aNdA7w/Q4V2h0q3yu2K8uSLotgyI8L99n9DnB0fDzBXE9JTw9QM5vLDgeSKHjPb/+i1hWpw/V39dqPPJwcUbpxmpsx4hrbvkKRUHRe3YXxqRHvMGu144Cch6CarFoEVAittliIwlqz9EDklXB9WrMoGs97UOrw9x4g==
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com (2603:10b6:8:253::16)
+ by SA1PR19MB6669.namprd19.prod.outlook.com (2603:10b6:806:258::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.8; Wed, 10 Dec
+ 2025 10:31:48 +0000
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::5880:19f:c819:c921]) by DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::5880:19f:c819:c921%5]) with mapi id 15.20.9412.005; Wed, 10 Dec 2025
+ 10:31:45 +0000
+Message-ID:
+ <DS7PR19MB88834BCECB817E8A0F0EA80A9DA0A@DS7PR19MB8883.namprd19.prod.outlook.com>
+Date: Wed, 10 Dec 2025 14:31:33 +0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/8] firmware: qcom_scm: ipq5332: add support to pass
+ metadata size
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+ Jassi Brar <jassisinghbrar@gmail.com>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+References: <20251208-ipq5018-wifi-v6-0-d0ce2facaa5f@outlook.com>
+ <20251208-ipq5018-wifi-v6-1-d0ce2facaa5f@outlook.com>
+ <zjimpbzncmjfcaoiepbkwcg3v3soka3mhudee447h5hseuiyci@kfexqup2aly2>
+Content-Language: en-US
+From: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <zjimpbzncmjfcaoiepbkwcg3v3soka3mhudee447h5hseuiyci@kfexqup2aly2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DX0P273CA0073.AREP273.PROD.OUTLOOK.COM
+ (2603:1086:300:59::6) To DS7PR19MB8883.namprd19.prod.outlook.com
+ (2603:10b6:8:253::16)
+X-Microsoft-Original-Message-ID:
+ <eb28d662-e544-4c16-ae49-fcb006acbe2c@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [v3 PATCH] remoteproc: xlnx: Use high-prio workqueue instead of
- system wq
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>, tanmay.shah@amd.com,
- linux-remoteproc@vger.kernel.org
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20251204104009.129483-1-stefan.roese@mailbox.org>
- <b8951794-f720-49a9-9b21-1971a364c956@amd.com>
- <fcd670a1-75c9-4a18-89cf-52c12ff0c07c@mailbox.org>
- <747f8248-bbd8-4580-bc57-3efda9f50eb0@oss.qualcomm.com>
-Content-Language: en-US
-From: Stefan Roese <stefan.roese@mailbox.org>
-In-Reply-To: <747f8248-bbd8-4580-bc57-3efda9f50eb0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 9f183a8da079215615a
-X-MBO-RS-META: j5qmifyc5q684ia6nzb96u3duh8pcbde
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR19MB8883:EE_|SA1PR19MB6669:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f2b2bfb-5641-47a7-9cef-08de37d75074
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|6090799003|23021999003|8060799015|19110799012|15080799012|461199028|19061999003|52005399003|40105399003|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YmtqSUtCOHRTaUk3MGlxOG1qdlFtdHJ3ODV4eVp6NzFyeWtjWm5wL0FjUWF1?=
+ =?utf-8?B?eU8xYzZUdVBrWHNteEZSNWFEM1pFbHFsa1ZXeGVrWUgyNGlkS2xKQVNjQjBU?=
+ =?utf-8?B?RkhNTVlIOWdKZFVxWkdtNXU0UktxczJlUUtrdVh3RFhhZTRsUEErZzhMRFBZ?=
+ =?utf-8?B?bDVGbXQ1S3BVeCtWVXhnZExTZEk1ajJwWHZJVUVLM0Jmd0t4WE05bGFxd2FH?=
+ =?utf-8?B?UmtpdkI4TzVLVUh0QjFIK0JWL3FtWjV1ZmZEMGt2Qng0N1RROXJxMlRiZ3Vo?=
+ =?utf-8?B?czdlcGtnWDV2cmtIWGxYUmNHTytwWHhZWnQ0TVJrUnMyMVBYUFpVRWt4bStY?=
+ =?utf-8?B?UUNjVnkzNjdVMElNQW9VeUp2WVR3K1ZtaWYrMGcyTEs1WE1VcWxQYUxMSEx6?=
+ =?utf-8?B?eDluOXh5K2ZQNEF6MkpiNWtCaWpKSzFzb3VLb1dJTFdlT0J5WjV2SUJEUHNE?=
+ =?utf-8?B?SEo1dXVWbHRFeXBCaXhyQ2VOOWE0KzcreDBOR3VTY29nandTOTJ5NmRQOTFS?=
+ =?utf-8?B?cnpnZ0RWT1lRWHJOQTVjZmU1S3ZnVE9NU0hoOURoU01uRWhrblNIekdnN3Ft?=
+ =?utf-8?B?dktyeGJRaW1vZjRicytRaVBJRXZpcUQzVzhWUnJUOGpkbFhjZ05Wb2UreUpS?=
+ =?utf-8?B?QVN2K2hHd0V2WEM1Y3dzZFdWdUoyMi8zSEc1bHNTYjJ0WXNJVjJURVdINUlR?=
+ =?utf-8?B?aFJtTzE3bGpWOW82ZlhDcGlqencxQ01MMUo1Y0c2YU42MmRNTlJPK2IyUWVG?=
+ =?utf-8?B?a1JXbWtCVXNZUCtwenJNZVFZQ2lYVHhiWEVjMTNSZWtyZzV1bHMzcDhveXJ0?=
+ =?utf-8?B?cDQxblJ0R2xhb1BLVjhGZk8ydUFkQ0ErSjJPSWk4dGdKN0tZS2xqVW1EWmJI?=
+ =?utf-8?B?M3RiUG1nek1xM0FhTWRESDc3ZHFvekE5VGR1enJKZ1AxZjJQVXFySDdpRjJj?=
+ =?utf-8?B?NEp5bXpxL0RVNU5aZGJDTlM5Yllzdm9yQUFxNDY4c2t5WHJNWEpxL1Y2dmFu?=
+ =?utf-8?B?MGVmV2FwZ3psRWdnNVdMTDJ5ZFBvVzgwaWdybHAyTHFtc0R4RkVURG5pcmd6?=
+ =?utf-8?B?VGNtRmhMUXlETWFESlZrQ2FscWVob3dwQU54aS9rbmdVMDdSUnlobC95bHE5?=
+ =?utf-8?B?OElzMDBVMUNPZ3FzWWZ5T0t2c0JabVkxN1ZYRndkeDFxWmREcUlEZnVCeU1B?=
+ =?utf-8?B?TDFaMmlBR2VBKzcwTTR6a3RuZ0VwUkhkNEQ0M2VNdEhLRW8xUmwrVFk0NjE1?=
+ =?utf-8?B?dmJ4M3JRaGl3TFVBRGdydDhJKytMYjArM1hHaGpkVGxEWmdaWG1nU0pOTlFP?=
+ =?utf-8?B?TENCMExLNTJoTmszelpYR1h4Z0VhV3dWNzJzYnZ5RFBNcEkxaVVEK2FQcWE4?=
+ =?utf-8?B?L29wQTB3M2ZvNHVZQ3dmZ2xBRWdMaDVRWHp0eUhBL3JPL2owK2ZkRTJIalNk?=
+ =?utf-8?B?S3Q3S2RYOEtZcWZEVWFwTjFPdUdYSkxjMDFRUEVMakorUzIvQUh4M0tTdjg0?=
+ =?utf-8?B?YW04MU9keUZTd2xseTBVNi82cDdFTG9OQnFGbW1tNTJmQmdJelMxNjV4NHZP?=
+ =?utf-8?B?UXJEZlN3SkN4UUxkK05OVDV0RXl2K3ZKOEJhcTFxYjVmbU9hYlZ0dm5rN2Rj?=
+ =?utf-8?Q?OieZWyaRKh5HsI77QCMAmla18hq3q2QaYEPTbNHc7WeQ=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VTJFNmRhQmxSUkNJMHI4ejJua1hpeXhLUFI0akRZQTNYcmxDZTkvU0dyWlUw?=
+ =?utf-8?B?Y0tVaytkWmxpM3piRmNPUWtsWDlOQmNuVUw0N1g1N2c5dEtzU0MwMWUvR0FM?=
+ =?utf-8?B?TUY0aXFCWWpoV1ZOMUYzVE1idGxndW1iUkE1REY3MTdKZDZEcGMxTXREdGw5?=
+ =?utf-8?B?dk5oanEwRzJKNFMvVUg4b0FxSUF4UUNQUm41eEdDbTZyOXRmcjdDZW1INVJD?=
+ =?utf-8?B?NFV1Q3Z4b1hrR3llODFJdC9sU2VNRmZNU3dtTUlWNEFUUHQ1cVh1aEVnVVRN?=
+ =?utf-8?B?WklqeUhNNVduVHFkZXhXek1abTcxRjhtOG4rdXlHSHhwY1lSODY0RkRXWEdK?=
+ =?utf-8?B?T0pJNTRsMGR5eW42N01IVmx4bUtUaW12RXQraSs1aU13cjRTMzBmKzJRL0J1?=
+ =?utf-8?B?YnNKRElxYTY2UEF2TDM5OGd6Z3ZRZjYrNVNaWmdKeXlQcFhxaDQ1MTUyV0t0?=
+ =?utf-8?B?VWVZUHRsUk1HOWlyb0hFNkVSTGpSekxpZTR5VWtiRExOQlpZdXVYMUR0Nlgz?=
+ =?utf-8?B?Y1ZtUUJMUjUrK2d1aUlIbmNzQzI1ajVNQmZXYlFTUWtyWk9IZUt2VUZhaksw?=
+ =?utf-8?B?SnFJb01JR295VnNjM3Rjei9wTXF4dXNsclIwdGpUVTA4ZUZmM3BxSEthNkFw?=
+ =?utf-8?B?WlVsbTYxY21iaGVKdHg5US9vVFIwT3g5Q3B0dUlUNElsSTRPcG1VTjJIVG5B?=
+ =?utf-8?B?bGxjWjV0U1I1ZklZZTliWElrNldvNjZZYk42U3l4Wk5qcWt6UVRldW9OcWFq?=
+ =?utf-8?B?MU9XYW5seG5rK3IzaDEvUlZxVDNEaUdyOEpoem5ZZ0hnMDVIeXhGVE5hYUZL?=
+ =?utf-8?B?eWJVbEJpQTV6dDBsbHdObi8wRzl0VlZMRm5xUmdQQjRyaHVOSmtDZHpDM1lC?=
+ =?utf-8?B?RU5pdjlvNmI4Y3lNWXI4UEtMWWZaalZBWkRSVGN2VFF5dGVxVjIvajJYczJT?=
+ =?utf-8?B?L0xpYXEwNzdIYk55ZTAyL2NDMGVLL29NRVVxTHkwbklpdmRNdFJIakIweFBx?=
+ =?utf-8?B?czZBNFJ2NHZCbUNLbTVPQk9HU1VzVGhWL0Y1bWFUKzFTSWtCZzMvZzZPZjMr?=
+ =?utf-8?B?K3hBaXNscFd1bHpZWlB5eGJUQTJZTkovRzlySXR1RkRQblppckZQUHVlRWt5?=
+ =?utf-8?B?b3E5WjJoTWt2R0pSRzg1bnBUMjBBS25YREVnUVhOSUpHSmNKVndzMXF3NC9m?=
+ =?utf-8?B?L2c1dGNTWUVwYkVVcGxCWjFxZU1QZGpZYWoyTWpkUXJZS1ZTUWVlTWkraVNR?=
+ =?utf-8?B?MlFwcVpPQmFMSnIvK0M4eklNRy9hMlJqYm9qbkJ3QXhqRldRMlBLUUZPcGlU?=
+ =?utf-8?B?OUd5WHQ1a1ozT09oTTd5WWRoZEphTW5KaC9vWFVPblROSkd1RnVUTXhPWFph?=
+ =?utf-8?B?dVJmNkF3Q1FiZERKcXVmOStGOEwrZ3dyV0h6Smp6M2NoS08vZzJ4RTloVmts?=
+ =?utf-8?B?Y0k4eHpsOVFaM1pZYTdZV0RackRhSndrVFo1aUdyRkFUMHBrU0drTXdSR0g2?=
+ =?utf-8?B?clliZzYwSlZISVNDOTExWEppSEJRVXNtVm10YkxOMUdrUzc2UFp6RXV6Y1F3?=
+ =?utf-8?B?SFNYKzVucGxFY2ljZk1UR0h0aFRJZjlBYnpleVo0S1pMOGxXWFRwVHBkS2RX?=
+ =?utf-8?B?OS9nKzVweElvREFsdHRPMmFRb0JLTVRiVXlERGhJRWNHTEtVKzd6anVxSU93?=
+ =?utf-8?Q?ehGGkDTB5LmJkbFaGV65?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f2b2bfb-5641-47a7-9cef-08de37d75074
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB8883.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2025 10:31:45.0525
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR19MB6669
 
-Hi Tanmay,
 
-On 12/10/25 03:51, Zhongqiu Han wrote:
-> On 12/5/2025 8:06 PM, Stefan Roese wrote:
->> Hi Tanmay,
+
+On 12/9/25 23:52, Dmitry Baryshkov wrote:
+> On Mon, Dec 08, 2025 at 04:25:33PM +0400, George Moussalem via B4 Relay wrote:
+>> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 >>
->> On 12/4/25 17:45, Tanmay Shah wrote:
->>> Hello,
->>>
->>> Thank You for your patch. Please find my comments below.
->>>
->>> On 12/4/25 4:40 AM, Stefan Roese wrote:
->>>> Testing on our ZynqMP platform has shown, that some R5 messages might
->>>> get dropped under high CPU load. This patch creates a new high-prio
->>>
->>> Here, I would like to understand what it means by "R5 messages might 
->>> get dropped"
->>>
->>> Even under high CPU load, the messages from R5 are stored in the 
->>> virtqueues. If Linux doesn't read it, then it is not really lost/ 
->>> dropped.
->>>
->>> Could you please explain your use case in detail and how the testing 
->>> is conducted?
+>> IPQ5332 security software running under trustzone requires metadata size.
+>> With new command support added in TrustZone that includes a size parameter,
+>> pass metadata size as well.
 >>
->> Our use-case is, that we send ~4k messages per second from the R5 to
->> Linux - sometimes even a bit more. Normally these messages are received
->> okay and no messages are dropped. Sometimes, under "high CPU load"
->> scenarios it happens, that the R5 has to drop messages, as there is no
->> free space in the RPMsg buffer, which is 256 entries AFAIU. Resulting
->> from the Linux driver not emptying the RX queue.
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> Signed-off-by: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+>> ---
+>>  drivers/firmware/qcom/qcom_scm.c | 17 +++++++++++++----
+>>  drivers/firmware/qcom/qcom_scm.h |  1 +
+>>  2 files changed, 14 insertions(+), 4 deletions(-)
 >>
->> Could you please elaborate on these virtqueues a bit? Especially why no
->> messages drop should happen because of these virtqueues?
+>> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+>> index 1a6f85e463e06a12814614cea20719c90a371b69..c970157f75b51027fb73664a58c38550344ab963 100644
+>> --- a/drivers/firmware/qcom/qcom_scm.c
+>> +++ b/drivers/firmware/qcom/qcom_scm.c
+>> @@ -583,9 +583,6 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+>>  	int ret;
+>>  	struct qcom_scm_desc desc = {
+>>  		.svc = QCOM_SCM_SVC_PIL,
+>> -		.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE,
+>> -		.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_VAL, QCOM_SCM_RW),
+>> -		.args[0] = peripheral,
+>>  		.owner = ARM_SMCCC_OWNER_SIP,
+>>  	};
+>>  	struct qcom_scm_res res;
+>> @@ -617,7 +614,19 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+>>  	if (ret)
+>>  		goto disable_clk;
+>>  
+>> -	desc.args[1] = mdata_phys;
+>> +	if (__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_PIL,
+>> +					 QCOM_SCM_PIL_PAS_INIT_IMAGE_V2)) {
+>> +		desc.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE_V2;
+>> +		desc.arginfo = QCOM_SCM_ARGS(3, QCOM_SCM_VAL, QCOM_SCM_RW, QCOM_SCM_VAL);
+>> +		desc.args[0] = peripheral;
+>> +		desc.args[1] = mdata_phys;
+>> +		desc.args[2] = size;
+>> +	} else {
+>> +		desc.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE;
+>> +		desc.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_VAL, QCOM_SCM_RW);
+>> +		desc.args[0] = peripheral;
+>> +		desc.args[1] = mdata_phys;
+>> +	}
+>>  
+>>  	ret = qcom_scm_call(__scm->dev, &desc, &res);
+>>  	qcom_scm_bw_disable();
+>> diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
+>> index a56c8212cc0c41021e5a067d52b7d5dcc49107ea..b8e5b4f2498e75c9eca1a0c0032254b7126b9ed3 100644
+>> --- a/drivers/firmware/qcom/qcom_scm.h
+>> +++ b/drivers/firmware/qcom/qcom_scm.h
+>> @@ -100,6 +100,7 @@ int qcom_scm_shm_bridge_enable(struct device *scm_dev);
+>>  
+>>  #define QCOM_SCM_SVC_PIL		0x02
+>>  #define QCOM_SCM_PIL_PAS_INIT_IMAGE	0x01
+>> +#define QCOM_SCM_PIL_PAS_INIT_IMAGE_V2	0x1a
 > 
-> AFAIK, as a transport layer based on virtqueue, rpmsg is reliable once a
-> message has been successfully enqueued. The observed "drop" here appears
-> to be on the R5 side, where the application discards messages when no
-> entry buffer is available.
+> Please keep these defines sorted (QCOM_SCM_PIL_PAS_INIT_IMAGE_V2 should
+> come after QCOM_SCM_PIL_PAS_MSS_RESET).
 
-Correct.
-
-> In the long run, while improving the Linux side is recommended,
-
-Yes, please.
-
-> it could
-> also be helpful for the R5 side to implement strategies such as an
-> application-level buffer and retry mechanisms.
-
-We already did this. We've added an additional buffer mechanism to the
-R5, which improved this "message drop situation" a bit. Still it did not
-fix it for all our high message rate situations - still resulting in
-frame drops on the R5 side (the R5 is a bit resource restricted).
-
-Improving the responsiveness on the Linux side seems to be the best way
-for us to deal with this problem.
-
-Thanks,
-Stefan
+Thanks, will update.
 
 > 
+>>  #define QCOM_SCM_PIL_PAS_MEM_SETUP	0x02
+>>  #define QCOM_SCM_PIL_PAS_AUTH_AND_RESET	0x05
+>>  #define QCOM_SCM_PIL_PAS_SHUTDOWN	0x06
 >>
->> Thanks,
->> Stefan
+>> -- 
+>> 2.52.0
 >>
->>> Thanks,
->>> Tanmay
->>>
->>>> workqueue which is now used instead of the default system workqueue.
->>>> With this change we don't experience these message drops any more.
->>>>
->>>> Signed-off-by: Stefan Roese <stefan.roese@mailbox.org>
->>>> Cc: Tanmay Shah <tanmay.shah@amd.com>
->>>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->>>> ---
->>>> v3:
->>>> - Call cancel_work_sync() before freeing ipi (suggested by Zhongqiu 
->>>> Han)
->>>>
->>>> v2:
->>>> - Also call destroy_workqueue() in zynqmp_r5_cluster_exit() 
->>>> (suggested by Zhongqiu Han)
->>>> - Correct call seq to avoid UAF (suggested by Zhongqiu Han)
->>>>
->>>>   drivers/remoteproc/xlnx_r5_remoteproc.c | 23 ++++++++++++++++++++++-
->>>>   1 file changed, 22 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/ 
->>>> remoteproc/xlnx_r5_remoteproc.c
->>>> index feca6de68da28..308328b0b489f 100644
->>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> @@ -16,6 +16,7 @@
->>>>   #include <linux/of_reserved_mem.h>
->>>>   #include <linux/platform_device.h>
->>>>   #include <linux/remoteproc.h>
->>>> +#include <linux/workqueue.h>
->>>>   #include "remoteproc_internal.h"
->>>> @@ -116,6 +117,7 @@ struct zynqmp_r5_cluster {
->>>>       enum  zynqmp_r5_cluster_mode mode;
->>>>       int core_count;
->>>>       struct zynqmp_r5_core **r5_cores;
->>>> +    struct workqueue_struct *workqueue;
->>>>   };
->>>>   /**
->>>> @@ -174,10 +176,18 @@ static void handle_event_notified(struct 
->>>> work_struct *work)
->>>>   static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
->>>>   {
->>>>       struct zynqmp_ipi_message *ipi_msg, *buf_msg;
->>>> +    struct zynqmp_r5_cluster *cluster;
->>>>       struct mbox_info *ipi;
->>>> +    struct device *dev;
->>>>       size_t len;
->>>>       ipi = container_of(cl, struct mbox_info, mbox_cl);
->>>> +    dev = ipi->r5_core->dev;
->>>> +    cluster = dev_get_drvdata(dev->parent);
->>>> +    if (!cluster) {
->>>> +        dev_err(dev->parent, "Invalid driver data\n");
->>>> +        return;
->>>> +    }
->>>>       /* copy data from ipi buffer to r5_core */
->>>>       ipi_msg = (struct zynqmp_ipi_message *)msg;
->>>> @@ -195,7 +205,7 @@ static void zynqmp_r5_mb_rx_cb(struct 
->>>> mbox_client *cl, void *msg)
->>>>       if (mbox_send_message(ipi->rx_chan, NULL) < 0)
->>>>           dev_err(cl->dev, "ack failed to mbox rx_chan\n");
->>>> -    schedule_work(&ipi->mbox_work);
->>>> +    queue_work(cluster->workqueue, &ipi->mbox_work);
->>>>   }
->>>>   /**
->>>> @@ -1154,6 +1164,7 @@ static void zynqmp_r5_cluster_exit(void *data)
->>>>       for (i = 0; i < cluster->core_count; i++) {
->>>>           r5_core = cluster->r5_cores[i];
->>>> +        cancel_work_sync(&r5_core->ipi->mbox_work);
->>>>           zynqmp_r5_free_mbox(r5_core->ipi);
->>>>           of_reserved_mem_device_release(r5_core->dev);
->>>>           put_device(r5_core->dev);
->>>> @@ -1162,6 +1173,7 @@ static void zynqmp_r5_cluster_exit(void *data)
->>>>       }
->>>>       kfree(cluster->r5_cores);
->>>> +    destroy_workqueue(cluster->workqueue);
->>>>       kfree(cluster);
->>>>       platform_set_drvdata(pdev, NULL);
->>>>   }
->>>> @@ -1194,11 +1206,20 @@ static int zynqmp_r5_remoteproc_probe(struct 
->>>> platform_device *pdev)
->>>>           return ret;
->>>>       }
->>>> +    cluster->workqueue = alloc_workqueue(dev_name(dev),
->>>> +                         WQ_UNBOUND | WQ_HIGHPRI, 0);
->>>> +    if (!cluster->workqueue) {
->>>> +        dev_err_probe(dev, -ENOMEM, "cannot create workqueue\n");
->>>> +        kfree(cluster);
->>>> +        return -ENOMEM;
->>>> +    }
->>>> +
->>>>       /* wire in so each core can be cleaned up at driver remove */
->>>>       platform_set_drvdata(pdev, cluster);
->>>>       ret = zynqmp_r5_cluster_init(cluster);
->>>>       if (ret) {
->>>> +        destroy_workqueue(cluster->workqueue);
->>>>           kfree(cluster);
->>>>           platform_set_drvdata(pdev, NULL);
->>>>           dev_err_probe(dev, ret, "Invalid r5f subsystem device 
->>>> tree\n");
->>>
 >>
-> 
 > 
 
