@@ -1,65 +1,67 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010053.outbound.protection.outlook.com [52.101.56.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EA61A2C25;
-	Sat, 13 Dec 2025 05:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765604571; cv=fail; b=HcLKbdt6cOKgVWvwIGMvQVh4v4guI3Rfat6lAmtSFZnOUG3YOel8uV2mnr2OUG6Qda9X06fgNxCoDsW4w8BB8v5Wy/iiwmf4FDQbcy5mJrd4nzuPdMoZpewszDmhdsfoPt/KMY9db6sYotrsGm5kA/PDNYwu/0PlKEwabJRdCbM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765604571; c=relaxed/simple;
-	bh=Xi9m7Ki/gHCy6u6DZahEpRiYbZ75IpEkKPhwcg52mHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OOSwkhtyuYurUBNeHX4galoo9L+8eY7ja0KqyMd8r//8lFNx1Mxt/XsOoNht3D+cz2AyewNs0BXZtyEPMeCM0UGCWJbH7fGphc3FonMzlC755b40tTTJrOiOY0kSYbM+3CakJF07sXFYdSO0DNIDrrXbqxJVB+coFeIgQV40MeA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5rLSPGOR; arc=fail smtp.client-ip=52.101.56.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E213594A
+	for <linux-remoteproc@vger.kernel.org>; Sat, 13 Dec 2025 06:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765608525; cv=none; b=EG966QJvsZ4eUFqvssa3Wrkpr2Odd8bly8pY+4UMwVHV0IRoWx0VmnN5gwZPzB/F3qQ4CbMzHnVAgYSA0B4Q0W9ZnVyTTMX5Klh6+834x5p0IHU/4/F3o9tZVkj2h7wuUazDErAqx69qaYZAsMnkCCaLTVA4scuZgHjeQP1BwF0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765608525; c=relaxed/simple;
+	bh=OSPLFg4W3QR5ByFn0Z+25izVWJy4kGkKLbWih19PHZA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nmTfwaRrsK5yIW5UVa02fAUIQWUZtfXfUSCVz9nVcV/bvyVI/jRGareeys770LZwc2sXCG6kb57FgTcSMhQ9Yc9d3JA6HHOuyFBVrlvOqn917k3B9CCIN7UTXZ3gPQKn3wNxuJFOIOh69f8KDq70MR2buEifuuR7FP0AyG7/k8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V/rv/PvX; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5rLSPGOR"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=a+tSo7a8PEyEnlpLWMeusH6REF3WN5SuxgClS67fsc1RH9Hrl8/tk+3YMmoWnj1pq1xakGLdBbbjtdjZN2Mzv60VSR0n/Hj87oWbZg0XgxOsyAL9f7ugkLtXNBqp/JFzDun6WOxmAcIRRJwRNDkQw17IpjLrMUvIDM+CUbYKR0GjHceYs2adTXogUhXqvUWiguuRQHvKO3dgBYLI+hF0lhunNRzvznTQURbAJb7yIPNcEdvpi7nmZ+756iRHBbOVQdX6jehUb5hXU3aBHSb3S8QJ3/3EtDGbsn6MEBAx0o7MyShlX283C6iFhLufuww1bagJ4Q79AIsmTxGf22LZlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ubVWnJAWFEpVJqVUd/lqngHglXBNr7VzgW6XQDeQRNc=;
- b=LkT8e5irvM/H9Y5E/hIOdg8To0/gnsIpmwkfVeN9WEsVSEGeEO4pvSJ5nB7II1syUFaDRc0Mttxv9jfiBDOGrcB0xiAamgnWrZiBvsD2MLoTlkpEboXVjEkTkuM3zpeDFUdrW5njgxL/NPCfb9+NqQ7AhXItNyvdDk3WQ62n2eEviHObGsFa/L0DResUB7+JbRW7HwyTKZWtd+Femc9IEfPtoByZ6m4QhTc9n4uYzddIedhxPKJw1iMbVS27Vr1b85eg7WrB3oFPNuEhf9qdngVjj+tCecsg+7YjaVzJka2C0aNPHmgZ1siKK3I6uAs6bSc7nGBXSlsZKUEM66B10Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=microchip.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ubVWnJAWFEpVJqVUd/lqngHglXBNr7VzgW6XQDeQRNc=;
- b=5rLSPGORkm4DtcvTtpumCCrts3AaAkse7q+ORF7pbuqs0b1Bb7ETGeUkDvufzJHXwfTBvSvr4ux1v8C5cwlhYjg9lr+Javf0n2NvAZMYC1av4LZwSoqSQ1v7BlI42OO0JYiEs3x+/+tvl7bj/GZyMsKJDv+ZZXsVOUlkvE034SM=
-Received: from SJ0PR13CA0120.namprd13.prod.outlook.com (2603:10b6:a03:2c5::35)
- by LV8PR12MB9084.namprd12.prod.outlook.com (2603:10b6:408:18e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.11; Sat, 13 Dec
- 2025 05:42:44 +0000
-Received: from SJ1PEPF00002315.namprd03.prod.outlook.com
- (2603:10b6:a03:2c5:cafe::f2) by SJ0PR13CA0120.outlook.office365.com
- (2603:10b6:a03:2c5::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9434.5 via Frontend Transport; Sat,
- 13 Dec 2025 05:42:44 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ1PEPF00002315.mail.protection.outlook.com (10.167.242.169) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9412.4 via Frontend Transport; Sat, 13 Dec 2025 05:42:44 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 12 Dec
- 2025 23:42:43 -0600
-Received: from [172.31.132.204] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Fri, 12 Dec 2025 21:42:42 -0800
-Message-ID: <41cf749c-0f57-4470-adfc-147c79bbd795@amd.com>
-Date: Fri, 12 Dec 2025 23:42:42 -0600
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V/rv/PvX"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7b89c1ce9easo2211577b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Dec 2025 22:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1765608523; x=1766213323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OSPLFg4W3QR5ByFn0Z+25izVWJy4kGkKLbWih19PHZA=;
+        b=V/rv/PvXawv5NhhkAlMigL5A3ymTVqMjUYFcMQfTez04D7GoxsMFc3nHxvrRxu0+Bx
+         q/ag4Oils+4vYzzLAYkocXSctwh95tJIk7AfzCjE9g4pD/crZacOKcamExzMPbbSjgdU
+         KpahdKnZjsNP57dPYv7jaInJnq5iLcW9+0ZWmvT2OozAB0E1wIJitV0Dv73h8kHCl6Je
+         gm6vdMhqnhnrGP6jyc/R+pcvBWKNWf5P9e8+76Dii1eOMderlpgnbFv5KVQKR9ZZP1Q2
+         +7GgkROGYw6lLjhmPRcJU5vV3NKGCV2mkB6SwBClNERHoV9nzTfyhH/Rn2nie3gdTSjk
+         kIXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765608523; x=1766213323;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OSPLFg4W3QR5ByFn0Z+25izVWJy4kGkKLbWih19PHZA=;
+        b=dlcYbsnlXEmDcY0smnQzha2Vz3yTPfOuq4axWdNvsACn1573yZf1Kgchc+Rq+Gxep8
+         1b1Q7inSLurV94Ecg50mi+34hkC8mIYPTpiIAzw/fWHHjKVwT0iU+t2vFjSi7+Rqrf2h
+         eIRmSE10cqMztgI5RpHDQ/zLniOQE4Mno+fYCASmSgirfVx8BB3j2Ff5aL6w7lyRvesF
+         UuvnGBcLZB3Qn6izVE4cjChqOeUxzGH7nZxpE74zNtUzaIyYXWvwMJDQknx6DUgMcisN
+         iBLiDj826WTVfzha5Omqv9jwa+h4PN+kIp81x9XKpqqN1/UCFdWlciOcmosPZukmDaDV
+         7O7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUefuHwCTCIRP3AID3gy4nqrnP5V0AT2J78+orwTAxsvC/n/5n9kEa8mwplvw0gtKd7QfDgSP0DySRGDQAtYCEg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/du6PMLwsXldRJv2+L6QmM2tQnTVgUfhci8SoOctk11O9jA5t
+	NldD5oKg1E08Iz3GmiGjceNNJM+Ea/Uu28VDja3Qilu5RWH/qU/20CcyMDXxYfz+ZkA=
+X-Gm-Gg: AY/fxX7TQU1Qsp0/HZu+teJv4LjUX+VoZhFEutR4syaYp333Et74sRMbG6JAAhJBiAk
+	iOxntrpCICAWOeq4G+F8ThpQsQeoEBQpyEBvuaJ4E/eWh1lG8IC0DEz7x2dWmnQ9ONjqoZHIVkg
+	bxXuGO34KW0yrwZl2hWO7fZk2wYKU0/rCi1If8gf/QR0+Gg0NYFcH2VWhPFtVc5ilJKyxMtlfY/
+	flJEALDx6b6Odlzodzhqv1tnk26r1vXD5mz1ENhgaXeisD0xbiEo4WwANNd6X7HE9TR/bjL3lWy
+	R/VUVzB95MsXwaiCkRPXbN1mUEUST9B/9jdjOCzA5eFsJs5vDdm94neC2JSzZLpEg15xUWP6tZp
+	kEJeHK+5Tq9BGvqju+d4EDm3jD9axTy6U80y3GOQOIm8VsJXsXsvZxxaFKdtC8W1m8sAwq0lvBJ
+	tvidA7GV80BYeaOqTnEXrP91Bb5gm5YD9Tj8h9nhk0XKnAAyh/6E60HhA/mKrcfw==
+X-Google-Smtp-Source: AGHT+IHwMXPg7Qn0Ef9xWbq83SFpsB1sFhZLa5C8vjkRdWjkXJZFN6bz1qhctibBoHiLjB/xaNqEfg==
+X-Received: by 2002:a05:6a00:1c99:b0:7e8:4471:ae56 with SMTP id d2e1a72fcca58-7f6694a964bmr3530338b3a.34.1765608522549;
+        Fri, 12 Dec 2025 22:48:42 -0800 (PST)
+Received: from [10.200.3.203] (p99250-ipoefx.ipoe.ocn.ne.jp. [153.246.134.249])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7f4c4ab52aasm6927000b3a.38.2025.12.12.22.48.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Dec 2025 22:48:41 -0800 (PST)
+Message-ID: <bf00eec5-e9fe-41df-b758-7601815b24a0@linaro.org>
+Date: Sat, 13 Dec 2025 08:48:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -67,218 +69,113 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: add Microchip IPC
- remoteproc
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>,
-	<andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20251121142157.3582463-1-valentina.fernandezalanis@microchip.com>
- <20251121142157.3582463-2-valentina.fernandezalanis@microchip.com>
+Subject: Re: [PATCH 00/26] Introduce meminspect
+To: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, tglx@linutronix.de, andersson@kernel.org,
+ pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, david@redhat.com,
+ mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org,
+ Trilok Soni <tsoni@quicinc.com>, Kaushal Kumar <kaushalk@qti.qualcomm.com>,
+ Shiraz Hashim <shashim@qti.qualcomm.com>,
+ Peter Griffin <peter.griffin@linaro.org>, stephen.s.brennan@oracle.com,
+ Will McVicker <willmcvicker@google.com>,
+ "stefan.schmidt@linaro.org" <stefan.schmidt@linaro.org>
+References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
+From: Eugen Hristev <eugen.hristev@linaro.org>
 Content-Language: en-US
-From: Tanmay Shah <tanmay.shah@amd.com>
-In-Reply-To: <20251121142157.3582463-2-valentina.fernandezalanis@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20251119154427.1033475-1-eugen.hristev@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002315:EE_|LV8PR12MB9084:EE_
-X-MS-Office365-Filtering-Correlation-Id: f50ac805-e095-4c13-1777-08de3a0a7069
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NTdnbFdRSUNybGRDUURSaFh2MGdKT3VrdkZEOUQrbkdjWmNSbmZMRnZnK2sr?=
- =?utf-8?B?TUNNc0ZKcm4zNzFISitWdktXZW5XeHJDbUtwakhOY0t2N05YSE5odGdyZUM5?=
- =?utf-8?B?V2N3S3ZWN0dOU0VldGtDcHREY2h3czZrSmFSZ1RacHJuT0VPR2haNE16RUMr?=
- =?utf-8?B?YThEVlVBYkU1Zmo5dzZPS05jVjg1MitrcFRBNGlmL1FVbENDVWhxNTBiYVhF?=
- =?utf-8?B?R0ZFdFZiM0pzOGtXZTVSd3U2Zm5FVFJyZ2tBblFYS3J4UVc5K0dDTURIUGt6?=
- =?utf-8?B?WVBnWFF4MllLbWRsZkdhYTc4UVdpNFZlNXNMZFpxVG1zSnR4d05GZXFKajNk?=
- =?utf-8?B?dy9zZVBFTnhzTXNFNjZYTmo0RklBdGxxZWM4SFhUdFVUMHVnbU9tb3IyMWV3?=
- =?utf-8?B?OWdtZmtqbDN6Q25iUVU2UVVYcHhtenFyeE82MnRMWmN2Q1VhZXBtR3RzMzgv?=
- =?utf-8?B?Zi8rNWt3RXBudUVtbHpFY0l0ZmIvNHJ1OVliNjBKM2paemxUdVJWaGxPZ2NF?=
- =?utf-8?B?OEg3b1VLa2p4YXZGYWFiVmR3c24zQnlwRkp6RVhzRnZsS2FJZXBWUExwZzR3?=
- =?utf-8?B?N1IrTFBab0VRcHBlMzlVRzErRUdRdVVkME5rUEVsMjVwZWdzMUNRcjVLVnNP?=
- =?utf-8?B?eWJUTFBWK0p3RzBWNmNlTTh5dTNvQkZoQ2R0T2hHTHlKYnUxQUhwUmVGeVg4?=
- =?utf-8?B?aVBmaFZySE5xbHYweWorcE9NM1NKRnhJaWNFaGF2a21YTDRZbzdLSTEvbGJh?=
- =?utf-8?B?czlmV1JqbHBBVUpKOFBpOWVGcFVycm5ncWg5M0Z0VVdUN3FKR3ArR0g5MXA2?=
- =?utf-8?B?WUFsYm1kV2Y3MVYvODhsMTF3UU9SQTBxdFVPc3pEb1ZhWkdLclI1SnRGWnFP?=
- =?utf-8?B?Q3pKajBOWFBabWI1ejV3VTlEcUQrSER4WHpHZjdpS0NrWFpTdUg1TlZnZlZ4?=
- =?utf-8?B?bis1dGIyMFpFajJOVXhhaHRRb1BMbkhDeHAxT1EzQUw4cTkzYjRjZjRScVA3?=
- =?utf-8?B?aitiY2tsVGw4Z3UyMFcwdmdKK0pOb3lKSDNoT3FQUWxrd1RuMDdYNDJGcVJO?=
- =?utf-8?B?dmY5bUx0cCtObnIzYmpDekVzM0JkaDZRWFpsdlo5YW1PVlNKQkpYbFlyMHNl?=
- =?utf-8?B?cHJDRTJOR0d3b2QwcnNDMnE3V0RpYmtCaUFzdis0QU0xQVlweW83QURXa2Fh?=
- =?utf-8?B?Z3lvOHJ2SXArOW9idmhQYUl5UFl6OXQwbXRaZWtza3FVaHNBZUpLTkwzeHNK?=
- =?utf-8?B?ZzFNT1RLbDRSdnVzMERsTXZQKzJ1WlZyZ1FiZktIczVuUWFoS0FpSEdPYXVa?=
- =?utf-8?B?REdSeFFjUDAwSjJsSjZKZDRtNmdZQlVid2p4TWo5RHhXOHc4bEFjVSt5YmtC?=
- =?utf-8?B?Z3NhZm1tVWU4S05hNUFJNC91VlY2UFN1a292a2wrTEFzZkh4UWdwMlBRWExy?=
- =?utf-8?B?NkUrcVBHendKM1MwVDFPSThuMkZMRGUxK1FtNkEwNXdEV1gyOFBWQjBVanVY?=
- =?utf-8?B?WGhWaHVrU085SGlzR1Y5L2gwVFNXWFpFUWJGK25jNTV0L3BLenZ4bThZY3Fn?=
- =?utf-8?B?VUF3THdtVkVTNkFycHNlSnN3cDI0d3BSOW1rNi81bjBDWFNmdXh5VmpPdjRv?=
- =?utf-8?B?aTNZN0I0Q082emtUb25tejA1WW1tb1RpdTA3eGROUjg2RzBPWmlETzRkZDgz?=
- =?utf-8?B?M1k3c0FRd1U1YndlOEprb29nSUlEbWFiWFlmbjF1MzI5K3RlV2NmVWM3Zlhi?=
- =?utf-8?B?RDQvK1BpRTVWVFVkYXFVbHVWN2lUNjE3QnV3ZHBrcFVSWll5WUlSWU5mT0hn?=
- =?utf-8?B?RElBRGQxQ2hCZFNEZHBJZUM2aytkSzEvQXhEVjFTR2xNMWdRZTNLYXZSRnNz?=
- =?utf-8?B?SFptVDBCS2VLMlQyZ21zOSt3NmRIVGRORTJ6TGVmSUhwcGNRSlRlbFBJVytU?=
- =?utf-8?B?Q29hZ0JDS2ZUMG9maWVvNDVoRlc1ZktIL3BjcUxjWXF4VUJyRmlwVlIyRFFL?=
- =?utf-8?B?dC9QeTEzZzFWMDJWV3pNNlY0dDY5OW5kYldGcnVEL2NOWDdsZ25Nd1YxQm14?=
- =?utf-8?Q?73ypFk?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2025 05:42:44.1861
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f50ac805-e095-4c13-1777-08de3a0a7069
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002315.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9084
 
 
-Hello, Please find my comment below:
 
-On 11/21/25 8:21 AM, Valentina Fernandez wrote:
-> Microchip family of RISC-V SoCs typically have one or more application
-> clusters. These clusters can be configured to run in an Asymmetric
-> Multi Processing (AMP) mode.
-> 
-> Add a dt-binding for these application clusters.
-> 
-> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-> ---
->  .../microchip,ipc-sbi-remoteproc.yaml         | 95 +++++++++++++++++++
->  1 file changed, 95 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
-> new file mode 100644
-> index 000000000000..348902f9a202
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
-> @@ -0,0 +1,95 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-sbi-remoteproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip IPC Remote Processor
-> +
-> +description:
-> +  Microchip family of RISC-V SoCs typically have one or more
-> +  clusters. These clusters can be configured to run in an Asymmetric
-> +  Multi Processing (AMP) mode where clusters are split in independent
-> +  software contexts.
-> +
-> +maintainers:
-> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: microchip,ipc-sbi-remoteproc
-> +
-> +  mboxes:
-> +    description:
-> +      Microchip IPC mailbox specifier. To be used for communication with
-> +      a remote cluster. The specifier format is as per the bindings,
-> +      Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
-> +    maxItems: 1
-> +
-> +  memory-region:
-> +    minItems: 1
-> +    maxItems: 5
-> +    description:
-> +      List of phandles to the reserved memory regions associated wih the remoteproc
-> +      device. This is variable and describes the memories shared with the remote cluster
-> +      (e.g. firmware, resource table, rpmsg vrings, etc.)
-> +    items:
-> +      anyOf:
-> +        - description: region used for the resource table when firmware is started by the bootloader
-> +        - description: region used for the remote cluster firmware image section
-> +        - description: virtio device (vdev) buffer
-> +        - description: virtqueue for sending messages to the remote cluster (vring0)
+On 11/19/25 17:44, Eugen Hristev wrote:
+> meminspect is a mechanism which allows the kernel to mark specific memory
+> areas for memory dumping or specific inspection, statistics, usage.
+> Once regions are marked, meminspect keeps an internal list with the regions
+> in a dedicated table.
 
-This is in-accurate as per the implementation:
-https://github.com/torvalds/linux/blob/a919610db43b34621d0c3b333e12db9002caf5da/drivers/rpmsg/virtio_rpmsg_bus.c#L878
+[...]
 
-Also the implementation can be changed. The description doesn't need to mention
-if vring0 is used for rx or tx.
 
-> +        - description: virtqueue for receiving messages from the remote cluster (vring1)
+> I will present this version at Plumbers conference in Tokyo on December 13th:
+> https://lpc.events/event/19/contributions/2080/
+> I am eager to discuss it there face to face.
 
-Same here.
+Summary of the discussions at LPC talk on Dec 13th:
 
-> +
-> +  memory-region-names:
-> +    minItems: 1
-> +    maxItems: 5
-> +    items:
-> +      anyOf:
-> +        - const: rsc-table
-> +        - const: firmware
-> +        - const: buffer
-> +        - const: vring0
-> +        - const: vring1
-> +
-> +required:
-> +  - compatible
-> +  - mboxes
-> +  - memory-region
-> +  - memory-region-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Early boot mode example - firmware started by bootloader
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        remoteproc {
-> +            compatible = "microchip,ipc-sbi-remoteproc";
-> +            mboxes= <&ihc 8>;
+One main idea on the static variables annotation was to do some linker
+magic, to create a list of variables in the tree, that would be parsed
+by some script, the addresses and sizes would be then stored into the
+dedicated section at the script level, without having any C code change.
+Pros: no C code change, Cons: it would be hidden/masked from the code,
+easy to miss out, which might lead to people's variables being annotated
+without them knowing
 
-In the driver, this "mboxes" id is used for powering on/off remote processor.
+Another idea was to have variables directly stored in a dedicated
+section which would be added to the table.
+e.g. static int __attribute(section (...)) nr_irqs;
+Pros: no more meminspect section Cons: have to keep all interesting
+variables in a separate section, which might not be okay for everyone.
 
-I think, "power-domains" is more suitable property over "mboxes" for this purpose.
+On dynamic memory, the memblock flag marking did not receive any obvious
+NAKs.
 
-It is possible to only load, start and stop remote processor without any
-communication. So ideally "mboxes" can be optional, but in this case it can't be
-because remote's power-domain id is used from "mboxes" id. Even if both are the
-same number, they should be different properties and should be used for
-different purpose.
+On dynamic memory that is bigger in size than one page, as the table
+entries are registered by virtual address, this would be non-contiguous
+in physical memory. How is this solved?
+-> At the moment it's left for the consumer drivers to handle this
+situation. If the region is a VA and the size > PAGE_SIZE, then the
+driver needs to handle the way it handles it. Maybe the driver that
+parses the entry needs to convert it into multiple contiguous entries,
+or just have virtual address is enough. The inspection table does not
+enforce or limit the entries to contiguous entries only.
 
-Thanks,
-Tanmay
+On the traverse/notifier system, the implementation did not receive any
+obvious NAKs
 
-> +            memory-region = <&rsctable>, <&vdev0buffer>,
-> +                            <&vdev0vring0>, <&vdev0vring1>;
-> +            memory-region-names = "rsc-table", "buffer",
-> +                                  "vring0", "vring1";
-> +        };
-> +    };
-> +
-> +  - |
-> +    // Late boot mode example - firmware started by Linux (remoteproc)
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        remoteproc {
-> +            compatible = "microchip,ipc-sbi-remoteproc";
-> +            mboxes= <&ihc 8>;
-> +            memory-region = <&cluster_firmware>, <&vdev0buffer>,
-> +                            <&vdev0vring0>, <&vdev0vring1>;
-> +            memory-region-names = "firmware", "buffer",
-> +                                  "vring0", "vring1";
-> +        };
-> +    };
-> +...
+General comments:
 
+Trilok Soni from Qualcomm mentioned they will be using this into their
+software deliveries in production.
+
+Someone suggested to have some mechanism to block specific data from
+being added to the inspection table as being sensitive non-inspectable
+data.
+[Eugen]: Still have to figure out how that could be done. Stuff is not
+being added to the table by default.
+
+Another comment was about what use case there is in mind, is this for
+servers, or for confidential computing, because each different use case
+might have different requirements, like ignoring some regions is an
+option in one case, but bloating the table in another case might not be
+fine.
+[Eugen]: The meminspect scenario should cover all cases and not be too
+specific. If it is generic enough and customizable enough to care for
+everyone's needs then I consider it being a success. It should not
+specialize in neither of these two different cases, but rather be
+tailored by each use case to provide the mandatory requirements for that
+case.
+
+Another comment mentioned that this usecase does not apply to many
+people due to firmware or specific hardware needed.
+[Eugen]: one interesting proposed usecase is to have a pstore
+driver/implementation that would traverse the inspection table at panic
+handler time, then gather data from there to store in the pstore
+(ramoops, mtdoops or whatever backend) and have it available to the
+userspace after reboot. This would be a nice use case that does not
+require firmware nor specific hardware, just pstore backend support.
+
+Ending note was whether this implementation is going in a good direction
+and what would be the way to having it moving upstream.
+
+Thanks everyone who attended and came up with ideas and comments.
+There are a few comments which I may have missed, so please feel free to
+reply to this email to start a discussion thread on the topic you are
+interested in.
+
+Eugen
