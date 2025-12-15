@@ -1,72 +1,77 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC10818C2C
-	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Dec 2025 01:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FEF23372C
+	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Dec 2025 01:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765762766; cv=none; b=J8lZjg8rIXUZd4Fdhu4boktrY3QFICGvHtLlFSl+bbvKTogvkGErLetwN57E6/0QTBNPnjIS7lkuOet42Gumwstya45JoWGmIDBO8V3kzcsEK8BFMtdzz7Yov1+9NqztO/ih4dMywx8y3zS01gXE2WS6Ubyo4JtA/B49mkwNYlY=
+	t=1765763257; cv=none; b=JjHqNOvcoAXYpCoA/txMMk2J2vD5/DNET/iFeDSNESxlXNo/wcKGcEVDFe+sWfuI8LTcEoP12vUkyTxu4G8Rxg9dm75CbUBqmC8E5D9A0EgEH3ReEKVzVjxH0DPXrJO1lZqbv5SKHQtiz9W7p0v62fJuCrJKVY5BMJixhe+1amw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765762766; c=relaxed/simple;
-	bh=k0AIvnDWVMG7Y4wKZy8PhAxFrYCzZJ0PZRlPyQMp2d8=;
+	s=arc-20240116; t=1765763257; c=relaxed/simple;
+	bh=w5/l1o2Ccs+wTV82X39IQALsl81dNOiZ/a1Oj+eEziE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3p/z5U3DiDw3qsnMXRyIyWmGj2YAIkwaS9bld5ryFiLzLnsKW8J3q3jRIiLqzwJ0zxutsWtIfR9RBOuCwTm/iglNHpXwGQB3o5t3FX0n7LvNQOmpvB2s2SibzMS7pizMXDXEfhIKQNFHdrsBuRIB0D+pfu0wpaEQx5q6OUqELk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kqGvJDZT; arc=none smtp.client-ip=209.85.216.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyM+P8+5/mIiR6TDRHyBo+S03MnSQAd4ZlktchRv9MPjK0WHTdpwt4KQkQDbax8ChD4OSeSobO1rTowRzVKautgMTl6vnqBXmhrhAapNacAFW2lCYgtYkwoZLs6HbkJuwZrrCq4cHR6WrbQEJph/6L2QhTNkbbU8f34OcoRFW58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BJy+jQM9; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kqGvJDZT"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-34aa62f9e74so3563555a91.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 14 Dec 2025 17:39:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BJy+jQM9"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7f0da2dfeaeso3014493b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Sun, 14 Dec 2025 17:47:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765762764; x=1766367564; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1765763255; x=1766368055; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ANBknulCzJ+NpT/RV9+tvFzXk2SLbrdyzL4bSFdcmvU=;
-        b=kqGvJDZTxNqlZhVm3XoMzYF0aT4mbjfjNYu1/ZMWAg6La+VpbvyGcSU7ZENHnsJ2BR
-         hPo1n4cUNXJIFKiowsXxwogTiSt/UUhwN+7Yi6yxRw6HX5kh/8j/mNZd8No250JJ7/QR
-         FBDl1eZgG6FZnG+E3bZ8kVgESKnQT9EtwzeCp3S6GojrFszRx3wewHCgUKL1ZkuftbXl
-         p7zO4cXGqcEaTKiPBUJcDoa53byMafJ5MsGn5qmFxUILfIfWCkbtG1S6xlhR4xu8w3rX
-         3sTHuMfqcMxJ4pYAURdzvScqAvEbpjr8rlpehFxtIpl1z2SXYDo1ons25kcasdY9/ide
-         LzEA==
+        bh=60TiVQHwX+JgHVId/D5T9qrKNf/jEUK80ayznML9HB8=;
+        b=BJy+jQM9x8l1Y8HUbXTwsi1cZhr+8dBykA6Yq3t8+qfgpK5krngT7AyXTbg0C3nK7W
+         7HHsQAQRaCYRth+UIF/3WX/mHWldnWokKzv1FSEZPpguF+REhQ4SQqOjt6ub9kvCxo55
+         x6EnHD5pKDUL0iFZsuoVUKcwI3VXu1Br3DpXBtFEVQbcXxYn8jT2ywWYggRuZE0wzXDG
+         w0DO2KAoZgk4ymbV8yr4M8TbvvtyBaHH0FyV5dMGSw1T/1u3aK0GSzFN8Bjg6oOtbzis
+         NIJwdris++CFbsXjroFZ/bdhS5vt8wJdCjqwT8uxFQWBmxw0VShEYC0axC8e7xPezvQb
+         YD8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765762764; x=1766367564;
+        d=1e100.net; s=20230601; t=1765763255; x=1766368055;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ANBknulCzJ+NpT/RV9+tvFzXk2SLbrdyzL4bSFdcmvU=;
-        b=Ob+JEsx/tZ4VkxmLhhMJdAmJALANDPlk23KYSFbrzOcDwqsAWsdgHwF5n6ifWc0+Gg
-         IfMQKxZdNLo/FBqg58vjVujngOcBm+OkNIZcKYk+5+WrAiD+p+uG+/MH2IKAy+2Gk1ef
-         I1qSZ7NX6nuqTrQ+tnP3ppzvH1iC55LxwN9usahB/Sao2H+km1S1dxpTjUPgyzAS9VXV
-         HQY9HEeYgBAVi/FuVmgZ8p5hiudMVse4/lnzMOlP1JM7PlAVgT7ETHhWTU7yai/QwFpf
-         FolFWLlFzo1IN132VSAKsiTdODyDlH2zlbI40VvN2c8uAyoaF4eRtONyuMiYAw00Ycah
-         ZOdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxRSkL08E085rCEZ009URnppiNiRJ2Fn9N3/CQJbIWFo/PvxgJVfmwM2d3eGVgnkin5qkrblWbvqSxYhKyof12@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw54csBBi/ADP62noiR8Exwc/6O7h81xb6AROay1u7Ke3HCwgTH
-	TUXheythM+AyJRnfWQuepdmD20Znx5XkEPsQQ2SSAkMrT8Svwl1H9FQNstkuy0p/BxI=
-X-Gm-Gg: AY/fxX53gGnYvr0e7sOv2oQuoXAgSvgVw8gkPPkINdrpPR0Yc79vRgDhRaRr4HXQQ8M
-	DGxymjq8Esh9Zwsw0Ip5+wEnz6klbkGP0gpzemHU9m9dqpTxqKBWDpIGu27UeXgNAm2U1cLtB2m
-	hgqJjY5ZUoeNQfwv0+RUlZkIgSl6ylKgoLk7/xIe6nePlzx2G0eLRwnEDnbayFuE9+0/QbhyzPH
-	hPPtIXEIDxjXehnidqXXD7p/HNbx93o47yTGOrXWfSdU2mfEoT7aZLyC6iGlSw3lg95ZPbFIRPg
-	PlS1CZQvQ0/sbD6lKAh7AFNfTqCMdRs4M9gJaeysFw3p6UNEv3/btV1WFwxHJbMvC4or0kUR773
-	oNrc15W9Egd5xxQqyihjRMsYrtLhJIdY6JOmoM5OgWJF1FO6uDxwAeEUsnQVvzm8c1MeZ8E3wdA
-	TK9rakfYZvFlP8vmhSlAr3ddN5xqlYqMXkY3AWSRv7pg==
-X-Google-Smtp-Source: AGHT+IEEH/MPRy5s7U+kyHScGR0GHLIOXl1SxGpgweU/Mtzit1FYvEDkVU28mycvGRDH2rPMUZtm9A==
-X-Received: by 2002:a17:90b:35d2:b0:34a:48ff:694 with SMTP id 98e67ed59e1d1-34abd7a4d37mr6767705a91.31.1765762764021;
-        Sun, 14 Dec 2025 17:39:24 -0800 (PST)
+        bh=60TiVQHwX+JgHVId/D5T9qrKNf/jEUK80ayznML9HB8=;
+        b=oy6GSxLyN5mVPtyKyZAdG3m2sv9+OxcV7rq1GfeKSKZntPHDr9Rz4S8eWmqpNOt4MJ
+         5MjGziw6TkdeFhQLkUIqRxIv7Py5weU859/8x6jSNmdi0DklWC/1SP3signmz+bsujD/
+         IF5O5sRTBepgKeUVtikWaqUnkT1J19aoFD6sy3JH2wj/KTBHyTLxAFCqC8eCxzpnSFis
+         EMHuff8oeeQ9p8KDr1MKfXYZw0ddLjrjC7BFkkPSUmc+rfS+87NrXrRh1/kKvwFhA1p7
+         MuKel57E3SdaSA3Y5o/8B9ontOiF6G0whRh42MKYFPrGXIDGCQAbTNCrVRitj6nHBizG
+         7NFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKIC/UmFQ/mRkxo6YB8N1zfGLwV8Px7VOmxwKMjNB7ENbCai2kfzz95pudfvC35r3n/Xx6JI4aT6irGLEZFq/k@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdLoHiao49Vy6yh51B6RXv/xxyQDXzXqwjq514PKgQmDipoA9I
+	qZeWBGtNK8p0b85/cuwp0V0rQbHKudeav0A3CXVk2bMnawNoKddq6Fn8Z/LUWf2gzbI=
+X-Gm-Gg: AY/fxX55uJolrR6IgwNBWRHLsFmw/mOFxUuM7XDxVkdaAx98SOkeAbZD+iXBRH6S14r
+	7gH3XuEQ+/T92g46pF7QZR4zTRzH8cbHBRpBo0/PUhAGmXRG+0G9hIc7uF5dogbnUK/KTkf45+V
+	wEEzLYGJR3tAfzNC75YoBD1dZEkjo7h7WxPdFWv1SoaKfwlQapKttVQBXWJzP242BwPAedmleA8
+	fY0LEcqR+jLjJtkEGgyR8hypYpKxakgPURpHSDpm7XNT3FMCWU/x8WMSz5ug3a5AJY/QWWVn5eY
+	ZQ/oOqj0mwhzl9H61Mp9zCDehof9jpKZsRcnMmfwO3A6beVPBQPQ1zQSTzm5/iyw3AcGsfuiGkC
+	saaYGId65rmLYRI2cgVg81hwvLKP/L3+fcMwMtpaeh/98IglBh4BlYB2qRkuG2YM7LNB08dM9BC
+	IITJFBYwZqTlItXfoAjWcRTAhPKLmeb9m1r0HIeXeNKg==
+X-Google-Smtp-Source: AGHT+IE7DB5VswrYSIey9vxa12pLuiwAgC9x+4syu1vaVA6PK12DnwXwjcCkNymmFng9LlbdJgerXA==
+X-Received: by 2002:a05:6300:210c:b0:366:14ac:e1ea with SMTP id adf61e73a8af0-369b05bfa3dmr8389889637.80.1765763254691;
+        Sun, 14 Dec 2025 17:47:34 -0800 (PST)
 Received: from p14s (p7838222-ipoefx.ipoe.ocn.ne.jp. [123.225.39.221])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34abe13f7e6sm3093132a91.0.2025.12.14.17.39.21
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c0c2589d4f7sm10903627a12.3.2025.12.14.17.47.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Dec 2025 17:39:23 -0800 (PST)
-Date: Sun, 14 Dec 2025 18:39:19 -0700
+        Sun, 14 Dec 2025 17:47:34 -0800 (PST)
+Date: Sun, 14 Dec 2025 18:47:29 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Gui-Dong Han <hanguidong02@gmail.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: core: fix race in driver_override_show() and use
- core helper
-Message-ID: <aT9mx4cd4JldZtyc@p14s>
-References: <20251202174948.12693-1-hanguidong02@gmail.com>
+To: Soham Metha <sohammetha01@gmail.com>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org, shuah@kernel.org,
+	skhan@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: Fix dead link to Keystone
+ DSP GPIO binding
+Message-ID: <aT9oseym8VmDGxzy@p14s>
+References: <20251203180337.50831-1-sohammetha01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -75,132 +80,39 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251202174948.12693-1-hanguidong02@gmail.com>
+In-Reply-To: <20251203180337.50831-1-sohammetha01@gmail.com>
 
-On Wed, Dec 03, 2025 at 01:49:48AM +0800, Gui-Dong Han wrote:
-> The driver_override_show function reads the driver_override string
-> without holding the device_lock. However, the store function modifies
-> and frees the string while holding the device_lock. This creates a race
-> condition where the string can be freed by the store function while
-> being read by the show function, leading to a use-after-free.
+On Wed, Dec 03, 2025 at 11:33:37PM +0530, Soham Metha wrote:
+> The old text binding 'gpio-dsp-keystone.txt' was replaced by a DT schema in
+> commit aff0a1701b020c8e6b172f28828fd4f3e6eed41a
+> ("dt-bindings: gpio: Convert ti,keystone-dsp-gpio to DT schema").
 > 
-> To fix this, replace the rpmsg_string_attr macro with explicit show and
-> store functions. The new driver_override_store uses the standard
-> driver_set_override helper. Since the introduction of
-> driver_set_override, the comments in include/linux/rpmsg.h have stated
-> that this helper must be used to set or clear driver_override, but the
-> implementation was not updated until now.
+> Update the reference to point to the new file.
 > 
-> Because driver_set_override modifies and frees the string while holding
-> the device_lock, the new driver_override_show now correctly holds the
-> device_lock during the read operation to prevent the race.
-> 
-> Additionally, since rpmsg_string_attr has only ever been used for
-> driver_override, removing the macro simplifies the code.
-> 
-> Fixes: 39e47767ec9b ("rpmsg: Add driver_override device attribute for rpmsg_device")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
+> Signed-off-by: Soham Metha <sohammetha01@gmail.com>
+> ---
+>  .../devicetree/bindings/remoteproc/ti,keystone-rproc.txt        | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
 Applied.
 
 Thanks,
 Mathieu
-
-> ---
-> I verified this with a stress test that continuously writes/reads the
-> attribute. It triggered KASAN and leaked bytes like a0 f4 81 9f a3 ff ff
-> (likely kernel pointers). Since driver_override is world-readable (0644),
-> this allows unprivileged users to leak kernel pointers and bypass KASLR.
-> Similar races were fixed in other buses (e.g., commits 9561475db680 and
-> 91d44c1afc61). Currently, 9 of 11 buses handle this correctly; this patch
-> fixes one of the remaining two.
-> ---
->  drivers/rpmsg/rpmsg_core.c | 66 ++++++++++++++++----------------------
->  1 file changed, 27 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index 5d661681a9b6..96964745065b 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -352,50 +352,38 @@ field##_show(struct device *dev,					\
->  }									\
->  static DEVICE_ATTR_RO(field);
+ 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+> index 463a97c11eff..91f0a3b0c0b2 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+> @@ -66,7 +66,7 @@ The following are the mandatory properties:
+>  - kick-gpios: 		Should specify the gpio device needed for the virtio IPC
+>  			stack. This will be used to interrupt the remote processor.
+>  			The gpio device to be used is as per the bindings in,
+> -			Documentation/devicetree/bindings/gpio/gpio-dsp-keystone.txt
+> +			Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
 >  
-> -#define rpmsg_string_attr(field, member)				\
-> -static ssize_t								\
-> -field##_store(struct device *dev, struct device_attribute *attr,	\
-> -	      const char *buf, size_t sz)				\
-> -{									\
-> -	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-> -	const char *old;						\
-> -	char *new;							\
-> -									\
-> -	new = kstrndup(buf, sz, GFP_KERNEL);				\
-> -	if (!new)							\
-> -		return -ENOMEM;						\
-> -	new[strcspn(new, "\n")] = '\0';					\
-> -									\
-> -	device_lock(dev);						\
-> -	old = rpdev->member;						\
-> -	if (strlen(new)) {						\
-> -		rpdev->member = new;					\
-> -	} else {							\
-> -		kfree(new);						\
-> -		rpdev->member = NULL;					\
-> -	}								\
-> -	device_unlock(dev);						\
-> -									\
-> -	kfree(old);							\
-> -									\
-> -	return sz;							\
-> -}									\
-> -static ssize_t								\
-> -field##_show(struct device *dev,					\
-> -	     struct device_attribute *attr, char *buf)			\
-> -{									\
-> -	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
-> -									\
-> -	return sprintf(buf, "%s\n", rpdev->member);			\
-> -}									\
-> -static DEVICE_ATTR_RW(field)
-> -
->  /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
->  rpmsg_show_attr(name, id.name, "%s\n");
->  rpmsg_show_attr(src, src, "0x%x\n");
->  rpmsg_show_attr(dst, dst, "0x%x\n");
->  rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
-> -rpmsg_string_attr(driver_override, driver_override);
-> +
-> +static ssize_t driver_override_store(struct device *dev,
-> +				     struct device_attribute *attr,
-> +				     const char *buf, size_t count)
-> +{
-> +	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-> +	int ret;
-> +
-> +	ret = driver_set_override(dev, &rpdev->driver_override, buf, count);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return count;
-> +}
-> +
-> +static ssize_t driver_override_show(struct device *dev,
-> +				    struct device_attribute *attr, char *buf)
-> +{
-> +	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-> +	ssize_t len;
-> +
-> +	device_lock(dev);
-> +	len = sysfs_emit(buf, "%s\n", rpdev->driver_override);
-> +	device_unlock(dev);
-> +	return len;
-> +}
-> +static DEVICE_ATTR_RW(driver_override);
->  
->  static ssize_t modalias_show(struct device *dev,
->  			     struct device_attribute *attr, char *buf)
+>  SoC-specific Required properties:
+>  ---------------------------------
 > -- 
-> 2.43.0
+> 2.34.1
 > 
