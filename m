@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D57216E24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6FF3009E8;
 	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765780528; cv=none; b=SWB/EAJK9H3JM+sG81giGqRcLHd7QHq2V9r6/Zjaar1Gw1SgJoB5PCPpUIM/XqDn8Mec2zY2iqoDj/oZsEhvV26eyImjdxvfuZN2lDWsmXVZXG8gkpBVpcLiZyQxYFlXTJku1F+QBHGUY8eH/aqJAVi4NEZqsWhCKoVuL2r0zBs=
+	t=1765780529; cv=none; b=Ac+A1k2Iy1zS2siJWEqkbDBkm0JfvWjlNGKi33gDDgbhAwjhWY0b+xEYLjgEF3SygUQPPJskfQORdNzch8qR5F4k3dnA6Wj632fXOeGpjV4V7ABLuf23c3dvdaw9GsmAKvLVIQ5X4alS8A0l67YYATmYjjJyH0uf608EIb7QxFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765780528; c=relaxed/simple;
-	bh=R9bOuEoZdBBKSqErNlPpPrfNLJ8IyPpF8i2bjBEJBZE=;
+	s=arc-20240116; t=1765780529; c=relaxed/simple;
+	bh=k+rp1wLoy0SJ9elXcUNeQ5srX67PFojXk0aEwDQrD3g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Woyd0jPe6WeQu3WeSA7WZ2YQZd4uxrtkCHkY/jdI6HuOSJ++4ALnoa8KJeTTSda1CYuU4kJjvZ7W/8chtAUOPGAPveVr3OAbKOHUl4dga2kw4pItgdaCJMZtZl6fA9OMff5rcqoOOeQji3ItsyrdUjCESgpTh63OUHXiO6EpGMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0w6JiAQ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=Zs1MU+XqED2BTRM8cr5SRuFi2hvicdeOCd0PSANWHo5DO3U/jYTRqunpZLxtYTRR/e3fo2BAFji3cuXNcB9cfCd3uaLGHUhTxv+Xzx7igTNRFFI4nSQXjeD1GaehmyaKq0l1vl7QEh7lzzkFIdxxNMIIGUbSXatl9uJP/uM4Iho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QneqUN+6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0w6JiAQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5054DC19421;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QneqUN+6"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9A380C2BCC7;
 	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1765780528;
-	bh=R9bOuEoZdBBKSqErNlPpPrfNLJ8IyPpF8i2bjBEJBZE=;
+	bh=k+rp1wLoy0SJ9elXcUNeQ5srX67PFojXk0aEwDQrD3g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=s0w6JiAQNS1gkX5Iq8v26Rud5bqgPOWFiUlAQh0/uccDp6Ng5/0GySj/6gTk04TgV
-	 KrMxyzuNFar8wHzvMBLzrLOQdO10wW3/kw2PRTMdO2toZh34Mz3f4ELhskYpSXjMpE
-	 XhiCD4dREgGVM2LeP+FkhXzItjZpmaU5ecM7jQJVV1lfJt18nMkryUtyZknPCO9dCt
-	 e7wTOkYAvHVs4ySEEUXwrKeTq2huQwAeoMdh0fmv9wyx5QBCgaH8Uq2Tjc5V9tHfmS
-	 nZLp30IxdJK9eKULur1bTKsGbfEOC/6fP+VKKLjHd4V5iru+74Pd8P84sgaVTxS1yo
-	 Q6NyX0UuO3C9Q==
+	b=QneqUN+6XYJLJVKKBAISPQkgQIgnDNM4FfrYKzkDoVNRZ8gfVCBsWa3IaBv5oIp6F
+	 ODscUOVF1RR5EoJ5zDty4Srx09qOuWQHlCP8IUFSYdMyhRJCRUWCcfSQ0HAi7xTpZt
+	 fRhDJR6tSVxH2snGzqa0rQlSAW+S6dBj4q7cJZpQxvEJ0mbJ6yN/RWT2c9ggIYWnH/
+	 KrvTLAk/utJU+WPBmF9vbBQgi9xPTYmOzXP+F+gKJG2I+h4zm/pmJHW2h2W0ZWom9M
+	 sbr0xKixPYwnvBlY70YEyg86VzRhFj3IUxGwLaWIxt/ux+h7za4L6RZZpT0IktvoDC
+	 YlKrN6HD819DQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A79D59D99;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D0ED5B16F;
 	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
 From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 15 Dec 2025 10:35:06 +0400
-Subject: [PATCH v7 1/8] firmware: qcom_scm: ipq5332: add support to pass
- metadata size
+Date: Mon, 15 Dec 2025 10:35:11 +0400
+Subject: [PATCH v7 6/8] arm64: dts: qcom: ipq5332: add nodes to bring up q6
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -41,7 +40,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251215-ipq5018-wifi-v7-1-ec4adba941b5@outlook.com>
+Message-Id: <20251215-ipq5018-wifi-v7-6-ec4adba941b5@outlook.com>
 References: <20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com>
 In-Reply-To: <20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -53,14 +52,14 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Jassi Brar <jassisinghbrar@gmail.com>
 Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+ Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>, 
+ George Moussalem <george.moussalem@outlook.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1765780526; l=2518;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1765780526; l=2823;
  i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=CCFYnvFM5T3GiiGMSosO6E7Dk1pLF9EZodgYgOn+Dq0=;
- b=pMrQta9Nyww8N0EiX2QXHjRk9AjwZzLKwgmLwE6GcDr94P6IZVZnIGEsqSSTA5ddZ8OCp6Xej
- 4QwDs3nLZWRD1kyrnDrhPMDMLIuaDQT5XgQFcuPuyfRbFHRk94iBB+M
+ bh=RFwP414pKiR9g6tQiK0sXcMEO0nCLBZxMpD6b2bmUe8=;
+ b=LSg182aeYhdwHLTKx0Q5Os/4O+5kPfvaSUbjnMHVKc5nmEzJ+dFyWc+k071LcbSVu/E764IPc
+ NWFZMLH5P32B3eboalNVK+5yBE667E4+vDi0L2VBR231iwwNxMcKnj8
 X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
  pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
 X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
@@ -70,65 +69,104 @@ Reply-To: george.moussalem@outlook.com
 
 From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 
-IPQ5332 security software running under trustzone requires metadata size.
-With new command support added in TrustZone that includes a size parameter,
-pass metadata size as well.
+Enable nodes required for q6 remoteproc bring up.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 Signed-off-by: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- drivers/firmware/qcom/qcom_scm.c | 17 +++++++++++++----
- drivers/firmware/qcom/qcom_scm.h |  1 +
- 2 files changed, 14 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi | 64 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-index 1a6f85e463e06a12814614cea20719c90a371b69..c970157f75b51027fb73664a58c38550344ab963 100644
---- a/drivers/firmware/qcom/qcom_scm.c
-+++ b/drivers/firmware/qcom/qcom_scm.c
-@@ -583,9 +583,6 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
- 	int ret;
- 	struct qcom_scm_desc desc = {
- 		.svc = QCOM_SCM_SVC_PIL,
--		.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE,
--		.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_VAL, QCOM_SCM_RW),
--		.args[0] = peripheral,
- 		.owner = ARM_SMCCC_OWNER_SIP,
+diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+index 45fc512a3bab221c0d99f819294abf63369987da..c31b6906355ed7f7e8dd0fd8e1f46654cc5560eb 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
+@@ -2,7 +2,7 @@
+ /*
+  * IPQ5332 device tree source
+  *
+- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
++ * Copyright (c) 2022-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ #include <dt-bindings/clock/qcom,apss-ipq.h>
+@@ -146,6 +146,35 @@ smem@4a800000 {
+ 
+ 			hwlocks = <&tcsr_mutex 3>;
+ 		};
++
++		q6_region: wcss@4a900000 {
++			reg = <0x0 0x4a900000 0x0 0x2b00000>;
++			no-map;
++		};
++	};
++
++	wcss: smp2p-wcss {
++		compatible = "qcom,smp2p";
++		qcom,smem = <435>, <428>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <GIC_SPI 418 IRQ_TYPE_EDGE_RISING>;
++
++		mboxes = <&apcs_glb 9>;
++
++		qcom,local-pid = <0>;
++		qcom,remote-pid = <1>;
++
++		smp2p_wcss_out: master-kernel {
++			qcom,entry-name = "master-kernel";
++			#qcom,smem-state-cells = <1>;
++		};
++
++		smp2p_wcss_in: slave-kernel {
++			qcom,entry-name = "slave-kernel";
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
  	};
- 	struct qcom_scm_res res;
-@@ -617,7 +614,19 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
- 	if (ret)
- 		goto disable_clk;
  
--	desc.args[1] = mdata_phys;
-+	if (__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_PIL,
-+					 QCOM_SCM_PIL_PAS_INIT_IMAGE_V2)) {
-+		desc.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE_V2;
-+		desc.arginfo = QCOM_SCM_ARGS(3, QCOM_SCM_VAL, QCOM_SCM_RW, QCOM_SCM_VAL);
-+		desc.args[0] = peripheral;
-+		desc.args[1] = mdata_phys;
-+		desc.args[2] = size;
-+	} else {
-+		desc.cmd = QCOM_SCM_PIL_PAS_INIT_IMAGE;
-+		desc.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_VAL, QCOM_SCM_RW);
-+		desc.args[0] = peripheral;
-+		desc.args[1] = mdata_phys;
-+	}
+ 	soc@0 {
+@@ -586,6 +615,39 @@ frame@b128000 {
+ 			};
+ 		};
  
- 	ret = qcom_scm_call(__scm->dev, &desc, &res);
- 	qcom_scm_bw_disable();
-diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
-index a56c8212cc0c41021e5a067d52b7d5dcc49107ea..57d63e932f62dfc03ddc6a3343dcd89d35de6137 100644
---- a/drivers/firmware/qcom/qcom_scm.h
-+++ b/drivers/firmware/qcom/qcom_scm.h
-@@ -105,6 +105,7 @@ int qcom_scm_shm_bridge_enable(struct device *scm_dev);
- #define QCOM_SCM_PIL_PAS_SHUTDOWN	0x06
- #define QCOM_SCM_PIL_PAS_IS_SUPPORTED	0x07
- #define QCOM_SCM_PIL_PAS_MSS_RESET	0x0a
-+#define QCOM_SCM_PIL_PAS_INIT_IMAGE_V2	0x1a
- 
- #define QCOM_SCM_SVC_IO			0x05
- #define QCOM_SCM_IO_READ		0x01
++		q6v5_wcss: remoteproc@d100000 {
++			compatible = "qcom,ipq5332-wcss-sec-pil";
++			reg = <0x0d100000 0x10000>;
++			firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mbn";
++			interrupts-extended = <&intc GIC_SPI 421 IRQ_TYPE_EDGE_RISING>,
++					      <&smp2p_wcss_in 0 IRQ_TYPE_NONE>,
++					      <&smp2p_wcss_in 1 IRQ_TYPE_NONE>,
++					      <&smp2p_wcss_in 2 IRQ_TYPE_NONE>,
++					      <&smp2p_wcss_in 3 IRQ_TYPE_NONE>;
++			interrupt-names = "wdog",
++					  "fatal",
++					  "ready",
++					  "handover",
++					  "stop-ack";
++
++			clocks = <&gcc GCC_IM_SLEEP_CLK>;
++			clock-names = "sleep";
++
++			qcom,smem-states = <&smp2p_wcss_out 1>,
++					   <&smp2p_wcss_out 0>;
++			qcom,smem-state-names = "stop",
++						"shutdown";
++
++			memory-region = <&q6_region>;
++
++			glink-edge {
++				interrupts = <GIC_SPI 417 IRQ_TYPE_EDGE_RISING>;
++				label = "rtr";
++				qcom,remote-pid = <1>;
++				mboxes = <&apcs_glb 8>;
++			};
++		};
++
+ 		pcie1: pcie@18000000 {
+ 			compatible = "qcom,pcie-ipq5332", "qcom,pcie-ipq9574";
+ 			reg = <0x18000000 0xf1c>,
 
 -- 
 2.52.0
