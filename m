@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CB730BF78;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EA330C344;
 	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765780529; cv=none; b=bujoSqwNWjgj+ACmVREsL8zdYA6eiPc7upSCwrs6doAGyYf7Vpa8OnYJ8W7YDADEknBDpxCi4kaqNPqk8XVHHNg2uIGre/TN5D4Px2XsD9jKvRtN4VQ3sALYMw0lSx3qzWJw7rO7RHVjsszB1wTtNKqJcGQ6my1iMay4jj/Ue8c=
+	t=1765780529; cv=none; b=UGqFrNxmaAIH4MCBJNX3qfGUOGHmTNNd0Eyzob158qvBls4lOJ8UjwOfgud5j7kzEFFhLolKUJ54qiIaBOa4Npjama4mBBIIwxe/DkDjnbuvFY6CmKyj6jAzOd8qGv/wh7V/RcI3v/a7zAdmiF8ndgptvkdzgembks+CiQ1Ij6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1765780529; c=relaxed/simple;
-	bh=ZB+ibr6dilxZnutwmYn2gcBErrUE9nWV6PvJR01uJRU=;
+	bh=Lf+FQE4DVs8wvHLmolFVttU+W2l4hGvMNlsCOthE8w0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aTpRd/oRJANadrk4I5iYrzvGCGEkP50al+9hnCxXA4GsqS81Z1DT4yCOG0az1tYO0n2fuCX+S+jhedXP+TtTwHy3mSqph/eISPhEGfHN4oqTlNccHRAapsbl2XTMv5If14jX3D9AgWpeKmmp1hRb1q43qK9gzdt2OEW4ddkpC/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsXRE9XD; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=bY5D4oStplk/GbIw47L3NF1fnYzYmBEdgE5GgVucU7C2jKoexqL6vfjWpVZEonQWJHX/86yTHk1A0aIpYpY4snRUJq/mmbl46q+oncl1/IoL2aFnBxqSa4PrFwjWQI1CrNAxfk/bG3axVgUTMZXhksqm/qdDAwAikLuZ87gvRqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDUZHd7p; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsXRE9XD"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B4A72C4AF19;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDUZHd7p"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 86FB0C2BCB7;
 	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1765780528;
-	bh=ZB+ibr6dilxZnutwmYn2gcBErrUE9nWV6PvJR01uJRU=;
+	bh=Lf+FQE4DVs8wvHLmolFVttU+W2l4hGvMNlsCOthE8w0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=OsXRE9XDaX4RhSgtmTGEP4tALitWEUwHtVgejOXo++/ly6biy8TfmrzP+LdPdDdx9
-	 2oj66rYxpJMCt3H+9GPiep7h7ir1piEKYVOcaIHYsNVHQtDAJpwku9StaLzh0h0BmM
-	 zgFM/fu9pTE2axdbVvJv3yJJiraJCSVU5gMAdcfRZ6mwoJ2WKl563w4DGYySJdNJTc
-	 PFcMyQJF6IymGwwYwC2gEFZNZAwSi+jFvg+EtMFwwte3ctNUXVuA7JMWz+c1UGNZDV
-	 Nge/+rqtXliiNU7Qk+/Z3apWDMf/gJwsy25qY32FE1I0i/He/SmM1A4xMg6lgl0kUX
-	 zFVIwguPdOR8Q==
+	b=CDUZHd7px6P96hRWWgMmLKbDWT9203Z+RWlP9vEDdjh1enmCFtGYNP+T5rEdSMIlS
+	 UiCC0ycZQjB/8m5GrCgfnuUsL/BUaW+OuOQ8Qle3x5dbZrPqw6m6iQ9JZipQDXNEyk
+	 dfXp8dr8x5Izo59Ol10QPMsSe7ARcKgAXjEA1GbZvBGtb5oJb7gneJMTM9nO70+LXp
+	 Y5mczCZlniW+09+RJ3hPKcqILMS/pFqg5+uQaj33jHetL4dFB27FbrU8SrlTv0HsKR
+	 Y5hP3MnS5Y0b34/8j0FTR8vbZSHqDeCy8chrv2CkNe2IZFvFDbl2lN11ciSaQXqmbp
+	 gSlaHcMcDNEig==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA082D59D99;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802B0D41D74;
 	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
 From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Mon, 15 Dec 2025 10:35:12 +0400
-Subject: [PATCH v7 7/8] arm64: dts: qcom: ipq5424: add nodes to bring up q6
+Date: Mon, 15 Dec 2025 10:35:10 +0400
+Subject: [PATCH v7 5/8] arm64: dts: qcom: ipq5018: add nodes to bring up q6
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251215-ipq5018-wifi-v7-7-ec4adba941b5@outlook.com>
+Message-Id: <20251215-ipq5018-wifi-v7-5-ec4adba941b5@outlook.com>
 References: <20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com>
 In-Reply-To: <20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -52,14 +52,14 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Jassi Brar <jassisinghbrar@gmail.com>
 Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
  George Moussalem <george.moussalem@outlook.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1765780526; l=2766;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1765780526; l=2536;
  i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=+Zkxc9uM0DSPpECVa8dmf4bSp6l72OxtVRlDoafOAek=;
- b=UkasRBP1Cb17TLka2FEA3pzS24OsJ8PcpNRMcPxX/kyS1T7mSKScWfT5VIgKIfykB60TVlgIz
- ny9mA4ak3wICHfjcSx+RVGn0AH0oBLGVWi2DLV14JsSuh7GmnrzyEKb
+ bh=U+CxhXV7IiW6598EUIu9tQZCBq0lj8MkLhtP7TD5I8s=;
+ b=diC55B13ROdDqKiaREz99TYj8BPbt26jlvPd59SAQ/K2Tl03xaXfV+ZfQitXtNU0Pe00JSdmR
+ DwZoF00y1EdCiq9z7gIv4Z1cqscP6ufceM5n+XDyGRXmyYPUdX0GYbg
 X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
  pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
 X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
@@ -67,28 +67,28 @@ X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
 X-Original-From: George Moussalem <george.moussalem@outlook.com>
 Reply-To: george.moussalem@outlook.com
 
-From: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+From: George Moussalem <george.moussalem@outlook.com>
 
 Enable nodes required for q6 remoteproc bring up.
 
-Signed-off-by: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- arch/arm64/boot/dts/qcom/ipq5424.dtsi | 68 +++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi | 64 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index eb393f3fd728f0b2fc8cd93c849f8c170d76e312..08fcda401556eb2a16d317966cd39c006e109b25 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -222,6 +222,35 @@ tfa@8a832000 {
+diff --git a/arch/arm64/boot/dts/qcom/ipq5018.dtsi b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+index f024b3cba33f6100ac3f4d45598ff2356e026dcf..7bb09621891ea6d287d1c83c77e2feb71b93a0c6 100644
+--- a/arch/arm64/boot/dts/qcom/ipq5018.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq5018.dtsi
+@@ -158,6 +158,35 @@ tz_region: tz@4ac00000 {
+ 			reg = <0x0 0x4ac00000 0x0 0x200000>;
  			no-map;
- 			status = "disabled";
  		};
 +
-+		q6_region: wcss@8a900000 {
-+			reg = <0x0 0x8a900000 0x0 0x2800000>;
++		q6_region: wcss@4b000000 {
 +			no-map;
++			reg = <0x0 0x4b000000 0x0 0x1b00000>;
 +		};
 +	};
 +
@@ -97,79 +97,68 @@ index eb393f3fd728f0b2fc8cd93c849f8c170d76e312..08fcda401556eb2a16d317966cd39c00
 +		qcom,smem = <435>, <428>;
 +
 +		interrupt-parent = <&intc>;
-+		interrupts = <GIC_SPI 501 IRQ_TYPE_EDGE_RISING>;
++		interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
 +
 +		mboxes = <&apcs_glb 9>;
 +
 +		qcom,local-pid = <0>;
 +		qcom,remote-pid = <1>;
 +
-+		smp2p_wcss_out: master-kernel {
++		wcss_smp2p_out: master-kernel {
 +			qcom,entry-name = "master-kernel";
 +			#qcom,smem-state-cells = <1>;
 +		};
 +
-+		smp2p_wcss_in: slave-kernel {
++		wcss_smp2p_in: slave-kernel {
 +			qcom,entry-name = "slave-kernel";
 +			interrupt-controller;
 +			#interrupt-cells = <2>;
 +		};
  	};
  
- 	soc@0 {
-@@ -752,6 +781,37 @@ dwc_0: usb@8a00000 {
+ 	soc: soc@0 {
+@@ -717,6 +746,41 @@ frame@b128000 {
  			};
  		};
  
-+		q6v5_wcss: remoteproc@d100000 {
-+			compatible = "qcom,ipq5424-wcss-sec-pil";
-+			reg = <0 0x0d100000 0 0x4040>;
-+			firmware-name = "ath12k/IPQ5424/hw1.0/q6_fw0.mbn";
-+			interrupts-extended = <&intc GIC_SPI 508 IRQ_TYPE_EDGE_RISING>,
-+					      <&smp2p_wcss_in 0 0>,
-+					      <&smp2p_wcss_in 1 0>,
-+					      <&smp2p_wcss_in 2 0>,
-+					      <&smp2p_wcss_in 3 0>;
++		q6v5_wcss: remoteproc@cd00000 {
++			compatible = "qcom,ipq5018-wcss-sec-pil";
++			reg = <0x0cd00000 0x10000>;
++			firmware-name = "ath11k/IPQ5018/hw1.0/q6_fw.mbn";
++			interrupts-extended = <&intc GIC_SPI 291 IRQ_TYPE_EDGE_RISING>,
++					      <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
++					      <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
 +			interrupt-names = "wdog",
 +					  "fatal",
 +					  "ready",
 +					  "handover",
 +					  "stop-ack";
 +
-+			mboxes = <&tmel_qmp 0>;
-+			qcom,smem-states = <&smp2p_wcss_out 1>,
-+					   <&smp2p_wcss_out 0>;
-+			qcom,smem-state-names = "stop",
-+						"shutdown";
++			clocks = <&gcc GCC_SLEEP_CLK_SRC>,
++				 <&gcc GCC_SYS_NOC_WCSS_AHB_CLK>;
++			clock-names = "sleep",
++				      "interconnect";
++
++			qcom,smem-states = <&wcss_smp2p_out 0>,
++					   <&wcss_smp2p_out 1>;
++			qcom,smem-state-names = "shutdown",
++						"stop";
 +
 +			memory-region = <&q6_region>;
 +
 +			glink-edge {
-+				interrupts = <GIC_SPI 500 IRQ_TYPE_EDGE_RISING>;
++				interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
 +				label = "rtr";
 +				qcom,remote-pid = <1>;
 +				mboxes = <&apcs_glb 8>;
 +			};
 +		};
 +
- 		timer@f420000 {
- 			compatible = "arm,armv7-timer-mem";
- 			reg = <0 0xf420000 0 0x1000>;
-@@ -811,6 +871,14 @@ frame@f42d000 {
- 			};
- 		};
- 
-+		apcs_glb: mailbox@f400000 {
-+			compatible = "qcom,ipq5424-apcs-apps-global",
-+				     "qcom,ipq6018-apcs-apps-global";
-+			reg = <0 0x0f400000 0 0x10000>;
-+			#clock-cells = <1>;
-+			#mbox-cells = <1>;
-+		};
-+
- 		apss_clk: clock-controller@fa80000 {
- 			compatible = "qcom,ipq5424-apss-clk";
- 			reg = <0x0 0x0fa80000 0x0 0x20000>;
+ 		pcie1: pcie@80000000 {
+ 			compatible = "qcom,pcie-ipq5018";
+ 			reg = <0x80000000 0xf1d>,
 
 -- 
 2.52.0
