@@ -1,223 +1,282 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D194E1DDC28
-	for <linux-remoteproc@vger.kernel.org>; Sat, 13 Dec 2025 07:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF4122D7B5
+	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Dec 2025 01:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765610589; cv=none; b=VBptlqa0MUFQdV6B1zbt77MyvQd8Z4d/ktsUkfc8WOLNfZJU8/5WHwlbc9Aw76fEIsSGbLj8fqkE5f5NL/AxPjaZNHo8LVhbUjcT8XHjE/OjT4Uvg/5TsT7Flra2kNtMZzZJCfLQ1YH0Nf5/BB+QlYtLg8W0JB2Ro0JZ5i9g6+k=
+	t=1765760690; cv=none; b=NqW5Gpe8Uo2LL/uipcdOUIuIbTP25sibnuOrY91bZL+MfP4Vi9ju4Fs2O58PPAYsv9pxUxAIr7ROccJZxnEefZ3J1wSahxvuh9nS/mEO5Ld/VTzWoaN7ZYId5ygiHgRr+e9ZzfpLO22VZhF+ZqFJdaK95Eh05+6LfwjwIm1Lkqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765610589; c=relaxed/simple;
-	bh=9Qa+PthUmnTltiZTazohO99moG5pdpcX7qRMBsxF/ys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EnJ2EbyZ/T+mUWr/RNnlp3haDMj32CgcNIndo0bFIf6V8y4pYBjijxVaCGWigoq4RkohOUhzAPHw6FWC1d9lDCgyJI1EV1ifyK0ommmYSySnpOF46VCy13CPmqUlZRl8C1cQzcBdESFhAkzxXf0ks/QJ9cYbvlt9ancUuoMViXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hd5IO/Ik; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1765760690; c=relaxed/simple;
+	bh=XWyq5s6tv/TqDiKny8B7IeTrEaEsHnviazHxisaV9Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OskqwGXP3MxU2WFF+Ht5kVPasvpMvVk0ZtI8lNuzbIb21vGvvMw1zJ5JxmTAfHWIHgPFQnfhgvw5elvm1mO6Rml0YwNccQausi2QKUDRRKwyCryY4fu6j2vNUoQP2ErEa0/W4zNJ9SqKCmVORZ9k8bhDXVAeyKwrydfwLdE5xkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hJ70lEC3; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hd5IO/Ik"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2a0833b5aeeso11101265ad.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 12 Dec 2025 23:23:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hJ70lEC3"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-29efd139227so35363805ad.1
+        for <linux-remoteproc@vger.kernel.org>; Sun, 14 Dec 2025 17:04:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765610587; x=1766215387; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qS/a8O0BbZSZZsXyGtd7peZrK8putFww9+X+USFCeDw=;
-        b=hd5IO/IkAS9Cts2py6hsAvieVf9h9ZCCP+wq7vdZv7lGLHc5Ult5/ZSoGo16bFFEi9
-         IIUP5p/qP+Cq74AfbT8Ijn1rQt0YfoBujNP+PLlo3DLIZgqZe7QLOTGgzVNnX3XPq6y2
-         OxFZMhGSuLqL7C7N7X12CxPkge2OnVhZsr7umtXcTGBiifiHTF4A/bT//HVcNSx+lxPM
-         2SKqJ39F7qwfflmuEa+va62mlcfawqpEBCEFusZvUhYwhLYHjcTiAwl7s1RfyM8dQElg
-         l5zPl8kSkv77Dr4s+Jtq4y76qqnXkYlH0D0Bu0RvCUpoVs2eiIwOW/k9hLe6EUNWi5O4
-         F52Q==
+        d=linaro.org; s=google; t=1765760687; x=1766365487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=inC+Wy9jzavRGBSwjZxV0qHxl3oyLnDwyagmXqiYjYQ=;
+        b=hJ70lEC3isL6tko28fuPx3vWiBF388Pmw5MXDqqDDJu37dRkRSFgxLdIPG0ou9J1uy
+         YbBOxMPg7YuZyUfS9y24r2zRRoqDC17etO04KAbVUWrj5QwsJ1OD7In4BRVxc2Aq2ddN
+         BvddHxI2H58opwZKn+a9gzjGhD9Xnt3h5CB+f1C2HdfHcDFGPa+x9OhbePuyxy5Lgrzd
+         vhNFzfweZSDEgbMrT3t69uYWfBv1sgtFrHKAbrxi1OupCwXMoZG6QZCpvqoaNe3D/0SN
+         Mmd+E5m7/PM6I77z7epRCTkiLDq0/o7ndtSs+as+AAd29OZT+fTHeBFu/ygdKR7ZXKwU
+         Y/oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765610587; x=1766215387;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qS/a8O0BbZSZZsXyGtd7peZrK8putFww9+X+USFCeDw=;
-        b=Ciwj90htqojBfWXb4M3ADwfMFDF3/r4PGYCFyHXewMulxniAqGiZDExJJR/hYmJ8bE
-         wgzm1g48I787R4lj3rfY/5CPn5dNKuhOxtyQ7Sg0kUYZkyQU1txkkkQqEUDXY0NMwRiI
-         c/Vyq7vYylnn3IZXRekDg+/rokrBdqD8xqpdIyMkiM5YkmTfIfP5jMV2qA3xpeVb3aWS
-         YsMM+ahLOUE7mVuFMViYydDMq1Kt+cMQiMyUaT2+5NPDiWfNIVlsgdSk4v1TNwYQDjrO
-         qTDCvJDDULU7QV90cHZdA0HSecp4VH0EqDAFlYgHkSTaVvxNdnCW52tOYn2Duc64Rzb+
-         H7+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVeGzQ4ryxoozIv8BZEvRln5ELKy0wI5LF2C1kY483zHtjNatzr0D0zNkUyw3s96+kU823S9NLKcMWMXrLl1011@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7Sro3cd+/XlpidA7JR/3+aEc5C4KINQm9hf/b+abffYp2Iib3
-	PTR/TXyKZQOwBL63GGGC0nBtgaPWWailAn0KZrA+bXu58BYpz9QoKR7b1txF/Ptdc5E=
-X-Gm-Gg: AY/fxX4HO0Y3qi+7jJWfMtbtgiiMC4s9jwynJCNBTiZH87lKbkacF1oG3CEU0/Jywul
-	a7bbS9TLAm2d9eriPLaIt8pXvXSGWCLrACyGtAgH5hSq9L/su+DR6FNikKdIYV47ebj2NAZrspR
-	shz7FcLtzCc8O7jJ3fZthtrdO0UM7QgyluuY1KdQ8NTksos1kQOcEHIP0iAVzmGz/3/z9Aj785v
-	KKL3UmItxkq2Dq2V1hqo/d02T2KbO2fNG8FXnVa041FDl374ZkTmFLGR2LTe3669nxFv8pYoOPx
-	1PsBdlVk537MKiLsxTsGldFdb6u+BXBa9VWi686kKf+rBXw+WOe8As8qB/13SOvbiOggkjoTcg/
-	Vgqv8PijA9q+612LQ694B2gYaXqbKgzjCE/UD41FiXTGv+X5cxDdkRRS7E8eB7Xoyc0aRzXVows
-	rW/mtg5CnZsDhlD6yR78EU8lbv3TJrF+ThBBnape5P2hZwuIZ9G6k=
-X-Google-Smtp-Source: AGHT+IF5ZAK05FTZM7z1I/Tfu2uwtqip2Rr6c/twbgvqZujsfkv8PIP29+IUmV2/Et+MT9YWs2FBBQ==
-X-Received: by 2002:a17:903:2c07:b0:29d:df04:fcdf with SMTP id d9443c01a7336-29f2436dfb5mr47558295ad.42.1765610586985;
-        Fri, 12 Dec 2025 23:23:06 -0800 (PST)
-Received: from [10.200.3.203] (p99250-ipoefx.ipoe.ocn.ne.jp. [153.246.134.249])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29f2563b116sm39121255ad.102.2025.12.12.23.22.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Dec 2025 23:23:06 -0800 (PST)
-Message-ID: <c3db6ccd-dfc7-4a6a-82b7-3d615f8cab4f@linaro.org>
-Date: Sat, 13 Dec 2025 09:22:56 +0200
+        d=1e100.net; s=20230601; t=1765760687; x=1766365487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=inC+Wy9jzavRGBSwjZxV0qHxl3oyLnDwyagmXqiYjYQ=;
+        b=qxUi6UMyozo1B2v3kObMo+3xpmz3oP6YSwLAj+FappuWLLsOVTba95vKrXWxqItP23
+         hNcNZ6sQz6zrF3gmRLHuigL0ztdqUdg2uFhz0GhaRCz3OhVDfZx77vz1ZhsdBWTwux/C
+         Ux8+QSSDbHO6hSJ8CBoUWl+D4iULV01A07FE1CEaiYDug1nQYHBULobR5Ob7HwtoaXrk
+         yn5A3YUa3G5jH59uB8BNSVYfjBpazxNnzaIXOASSSwuXNH7GOQKWTM/KGES+BSkrfG9f
+         bgvCEK1pAaBDiEUvg3O06tmK0iyq1kV065I5MB8kZsBMFsRCdisX1U4kqjYfxvfs6L2y
+         KXFw==
+X-Gm-Message-State: AOJu0YyyMTsjbmOK1L/l6p0093ZFEs4JW9VS4tcQElJ+VwAKAu2YT086
+	0kdBrAaAH6N8xNPnzLbyas1zLB0B1+kXJuLBV/zmN19uNWPliFPt2IxnAwVxR6hkf2Q=
+X-Gm-Gg: AY/fxX7usiLOYy87gLDCRxVKJq99iBu21VBKEFvNPJNuQ/9N/SBgWDQ2CG71axcyVrx
+	ttUDe8rManC9H1VbHxgcnLatNU/Z4XFxpSwxJWuFdd3ebLiFE632HD9kntir/YcJeM8g4l5rTg6
+	kUPwAooOu7jh7/1KJBcnoGZt5JOYpXmkuJJ0cPJSrw5gP2CjBNZZdYHUtOT9tb+zAyVjQgHnJkH
+	/4BvN6W1RGiMwKlXpYiNwFyDkdWJM/ymLB3rPzlmmsp1D69KaI/Ih+0nWg4jvvyv/6RLrwb+uxg
+	HdwZRI1tI8SM50nAhigbSuvlTLp36nbKKcZw386m4uylYQskrAOJ7zcFFuzMs1xyYBkS/GgnNmp
+	N+SMOrGYNhLXOX7ph9BPJlgftHbbxIFdZlCft8E2Ujbz0XUYigpihjuVxxIh/wlGL+ihhU7drV6
+	9Iszezr7CbCbxfp4Qxm0vH34DIL7mFGZzKdAyRWn2+ow==
+X-Google-Smtp-Source: AGHT+IH780U+szUHUNQS1YjqiBuVr0+NPVsL48001MXGp8vaAOzfLNXng9apn4f0AJiTSkwsjQO5dg==
+X-Received: by 2002:a17:903:32cd:b0:29e:97a1:76bc with SMTP id d9443c01a7336-29f23b5ecf4mr93977595ad.21.1765760687185;
+        Sun, 14 Dec 2025 17:04:47 -0800 (PST)
+Received: from p14s (p7838222-ipoefx.ipoe.ocn.ne.jp. [123.225.39.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a09afe20e5sm46224665ad.26.2025.12.14.17.04.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Dec 2025 17:04:46 -0800 (PST)
+Date: Sun, 14 Dec 2025 18:04:43 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: patrick.oppenlander@gmail.com
+Cc: linux-remoteproc@vger.kernel.org, andersson@kernel.org
+Subject: Re: [PATCH] rpmsg: virtio: EPOLLOUT support
+Message-ID: <aT9eq2AGdgXtppdT@p14s>
+References: <20251022032817.320378-1-patrick.oppenlander@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/26] Introduce meminspect
-To: Randy Dunlap <rdunlap@infradead.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com, corbet@lwn.net, david@redhat.com,
- mhocko@suse.com
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org,
- Trilok Soni <tsoni@quicinc.com>, Kaushal Kumar <kaushalk@qti.qualcomm.com>,
- Shiraz Hashim <shashim@qti.qualcomm.com>,
- Peter Griffin <peter.griffin@linaro.org>, stephen.s.brennan@oracle.com,
- Will McVicker <willmcvicker@google.com>,
- "stefan.schmidt@linaro.org" <stefan.schmidt@linaro.org>
-References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
- <bf00eec5-e9fe-41df-b758-7601815b24a0@linaro.org>
- <5903a8e1-71c6-4546-ac50-35effa078dda@infradead.org>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <5903a8e1-71c6-4546-ac50-35effa078dda@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022032817.320378-1-patrick.oppenlander@gmail.com>
 
-
-
-On 12/13/25 08:57, Randy Dunlap wrote:
-> Hi,
+On Wed, Oct 22, 2025 at 02:28:17PM +1100, patrick.oppenlander@gmail.com wrote:
+> From: Patrick Oppenlander <patrick.oppenlander@gmail.com>
 > 
-> On 12/12/25 10:48 PM, Eugen Hristev wrote:
->>
->>
->> On 11/19/25 17:44, Eugen Hristev wrote:
->>> meminspect is a mechanism which allows the kernel to mark specific memory
->>> areas for memory dumping or specific inspection, statistics, usage.
->>> Once regions are marked, meminspect keeps an internal list with the regions
->>> in a dedicated table.
->>
->> [...]
->>
->>
->>> I will present this version at Plumbers conference in Tokyo on December 13th:
->>> https://lpc.events/event/19/contributions/2080/
->>> I am eager to discuss it there face to face.
->>
->> Summary of the discussions at LPC talk on Dec 13th:
->>
->> One main idea on the static variables annotation was to do some linker
->> magic, to create a list of variables in the tree, that would be parsed
->> by some script, the addresses and sizes would be then stored into the
->> dedicated section at the script level, without having any C code change.
->> Pros: no C code change, Cons: it would be hidden/masked from the code,
->> easy to miss out, which might lead to people's variables being annotated
->> without them knowing
->>
->> Another idea was to have variables directly stored in a dedicated
->> section which would be added to the table.
->> e.g. static int __attribute(section (...)) nr_irqs;
->> Pros: no more meminspect section Cons: have to keep all interesting
->> variables in a separate section, which might not be okay for everyone.
->>
->> On dynamic memory, the memblock flag marking did not receive any obvious
->> NAKs.
->>
->> On dynamic memory that is bigger in size than one page, as the table
->> entries are registered by virtual address, this would be non-contiguous
->> in physical memory. How is this solved?
->> -> At the moment it's left for the consumer drivers to handle this
->> situation. If the region is a VA and the size > PAGE_SIZE, then the
->> driver needs to handle the way it handles it. Maybe the driver that
->> parses the entry needs to convert it into multiple contiguous entries,
->> or just have virtual address is enough. The inspection table does not
->> enforce or limit the entries to contiguous entries only.
->>
->> On the traverse/notifier system, the implementation did not receive any
->> obvious NAKs
->>
->> General comments:
->>
->> Trilok Soni from Qualcomm mentioned they will be using this into their
->> software deliveries in production.
->>
->> Someone suggested to have some mechanism to block specific data from
->> being added to the inspection table as being sensitive non-inspectable
->> data.
->> [Eugen]: Still have to figure out how that could be done. Stuff is not
->> being added to the table by default.
->>
->> Another comment was about what use case there is in mind, is this for
->> servers, or for confidential computing, because each different use case
->> might have different requirements, like ignoring some regions is an
->> option in one case, but bloating the table in another case might not be
->> fine.
->> [Eugen]: The meminspect scenario should cover all cases and not be too
->> specific. If it is generic enough and customizable enough to care for
->> everyone's needs then I consider it being a success. It should not
->> specialize in neither of these two different cases, but rather be
->> tailored by each use case to provide the mandatory requirements for that
->> case.
->>
->> Another comment mentioned that this usecase does not apply to many
->> people due to firmware or specific hardware needed.
->> [Eugen]: one interesting proposed usecase is to have a pstore
->> driver/implementation that would traverse the inspection table at panic
->> handler time, then gather data from there to store in the pstore
->> (ramoops, mtdoops or whatever backend) and have it available to the
->> userspace after reboot. This would be a nice use case that does not
->> require firmware nor specific hardware, just pstore backend support.
->>
->> Ending note was whether this implementation is going in a good direction
->> and what would be the way to having it moving upstream.
->>
->> Thanks everyone who attended and came up with ideas and comments.
->> There are a few comments which I may have missed, so please feel free to
->> reply to this email to start a discussion thread on the topic you are
->> interested in.
->>
->> Eugen
->>
+> Previously, polling an rpmsg endpoint (e.g. /dev/ttyRPMSGx) would
+> generate EPOLLIN events but no EPOLLOUT events.
 > 
-> Maybe you or someone else has already mentioned this. If so, sorry I missed it.
+> Unfortunately, poll support means that we can no longer disable
+> tx-complete interrupts as there is no way to know whether a poller is
+> waiting in sendq, so we always need notifications.
 > 
-> How does this compare or contrast to VMCOREINFO?
+> Signed-off-by: Patrick Oppenlander <patrick.oppenlander@gmail.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 101 ++++++++++---------------------
+>  1 file changed, 32 insertions(+), 69 deletions(-)
+>
+
+As we previously agreed, I have added this patch to my tree under the condition
+it doesn't break anything.  Let's see how things go.
+
+Thanks,
+Mathieu
+
+ 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 484890b4a6a74..79d983055b4d6 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -41,13 +41,12 @@
+>   * @buf_size:   size of one rx or tx buffer
+>   * @last_sbuf:	index of last tx buffer used
+>   * @bufs_dma:	dma base addr of the buffers
+> - * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
+> + * @tx_lock:	protects svq and sbufs, to allow concurrent senders.
+>   *		sending a message might require waking up a dozing remote
+>   *		processor, which involves sleeping, hence the mutex.
+>   * @endpoints:	idr of local endpoints, allows fast retrieval
+>   * @endpoints_lock: lock of the endpoints set
+>   * @sendq:	wait queue of sending contexts waiting for a tx buffers
+> - * @sleepers:	number of senders that are waiting for a tx buffer
+>   *
+>   * This structure stores the rpmsg state of a given virtio remote processor
+>   * device (there might be several virtio proc devices for each physical
+> @@ -65,7 +64,6 @@ struct virtproc_info {
+>  	struct idr endpoints;
+>  	struct mutex endpoints_lock;
+>  	wait_queue_head_t sendq;
+> -	atomic_t sleepers;
+>  };
+>  
+>  /* The feature bitmap for virtio rpmsg */
+> @@ -144,6 +142,8 @@ static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+>  static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+>  static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>  				  int len, u32 dst);
+> +static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+> +				  poll_table *wait);
+>  static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+>  static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
+>  						   struct rpmsg_channel_info *chinfo);
+> @@ -154,6 +154,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>  	.sendto = virtio_rpmsg_sendto,
+>  	.trysend = virtio_rpmsg_trysend,
+>  	.trysendto = virtio_rpmsg_trysendto,
+> +	.poll = virtio_rpmsg_poll,
+>  	.get_mtu = virtio_rpmsg_get_mtu,
+>  };
+>  
+> @@ -436,7 +437,6 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  	unsigned int len;
+>  	void *ret;
+>  
+> -	/* support multiple concurrent senders */
+>  	mutex_lock(&vrp->tx_lock);
+>  
+>  	/*
+> @@ -454,62 +454,6 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  	return ret;
+>  }
+>  
+> -/**
+> - * rpmsg_upref_sleepers() - enable "tx-complete" interrupts, if needed
+> - * @vrp: virtual remote processor state
+> - *
+> - * This function is called before a sender is blocked, waiting for
+> - * a tx buffer to become available.
+> - *
+> - * If we already have blocking senders, this function merely increases
+> - * the "sleepers" reference count, and exits.
+> - *
+> - * Otherwise, if this is the first sender to block, we also enable
+> - * virtio's tx callbacks, so we'd be immediately notified when a tx
+> - * buffer is consumed (we rely on virtio's tx callback in order
+> - * to wake up sleeping senders as soon as a tx buffer is used by the
+> - * remote processor).
+> - */
+> -static void rpmsg_upref_sleepers(struct virtproc_info *vrp)
+> -{
+> -	/* support multiple concurrent senders */
+> -	mutex_lock(&vrp->tx_lock);
+> -
+> -	/* are we the first sleeping context waiting for tx buffers ? */
+> -	if (atomic_inc_return(&vrp->sleepers) == 1)
+> -		/* enable "tx-complete" interrupts before dozing off */
+> -		virtqueue_enable_cb(vrp->svq);
+> -
+> -	mutex_unlock(&vrp->tx_lock);
+> -}
+> -
+> -/**
+> - * rpmsg_downref_sleepers() - disable "tx-complete" interrupts, if needed
+> - * @vrp: virtual remote processor state
+> - *
+> - * This function is called after a sender, that waited for a tx buffer
+> - * to become available, is unblocked.
+> - *
+> - * If we still have blocking senders, this function merely decreases
+> - * the "sleepers" reference count, and exits.
+> - *
+> - * Otherwise, if there are no more blocking senders, we also disable
+> - * virtio's tx callbacks, to avoid the overhead incurred with handling
+> - * those (now redundant) interrupts.
+> - */
+> -static void rpmsg_downref_sleepers(struct virtproc_info *vrp)
+> -{
+> -	/* support multiple concurrent senders */
+> -	mutex_lock(&vrp->tx_lock);
+> -
+> -	/* are we the last sleeping context waiting for tx buffers ? */
+> -	if (atomic_dec_and_test(&vrp->sleepers))
+> -		/* disable "tx-complete" interrupts */
+> -		virtqueue_disable_cb(vrp->svq);
+> -
+> -	mutex_unlock(&vrp->tx_lock);
+> -}
+> -
+>  /**
+>   * rpmsg_send_offchannel_raw() - send a message across to the remote processor
+>   * @rpdev: the rpmsg channel
+> @@ -582,9 +526,6 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  
+>  	/* no free buffer ? wait for one (but bail after 15 seconds) */
+>  	while (!msg) {
+> -		/* enable "tx-complete" interrupts, if not already enabled */
+> -		rpmsg_upref_sleepers(vrp);
+> -
+>  		/*
+>  		 * sleep until a free buffer is available or 15 secs elapse.
+>  		 * the timeout period is not configurable because there's
+> @@ -595,9 +536,6 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  					(msg = get_a_tx_buf(vrp)),
+>  					msecs_to_jiffies(15000));
+>  
+> -		/* disable "tx-complete" interrupts if we're the last sleeper */
+> -		rpmsg_downref_sleepers(vrp);
+> -
+>  		/* timeout ? */
+>  		if (!err) {
+>  			dev_err(dev, "timeout waiting for a tx buffer\n");
+> @@ -676,6 +614,34 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>  	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+>  }
+>  
+> +static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+> +				  poll_table *wait)
+> +{
+> +	struct rpmsg_device *rpdev = ept->rpdev;
+> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+> +	struct virtproc_info *vrp = vch->vrp;
+> +	__poll_t mask = 0;
+> +
+> +	poll_wait(filp, &vrp->sendq, wait);
+> +
+> +	/* support multiple concurrent senders */
+> +	mutex_lock(&vrp->tx_lock);
+> +
+> +	/*
+> +	 * check for a free buffer, either:
+> +	 * - we haven't used all of the available transmit buffers (half of the
+> +	 *   allocated buffers are used for transmit, hence num_bufs / 2), or,
+> +	 * - we ask the virtqueue if there's a buffer available
+> +	 */
+> +	if (vrp->last_sbuf < vrp->num_bufs / 2 ||
+> +	    !virtqueue_enable_cb(vrp->svq))
+> +		mask |= EPOLLOUT;
+> +
+> +	mutex_unlock(&vrp->tx_lock);
+> +
+> +	return mask;
+> +}
+> +
+>  static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>  {
+>  	struct rpmsg_device *rpdev = ept->rpdev;
+> @@ -922,9 +888,6 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  		WARN_ON(err); /* sanity check; this can't really happen */
+>  	}
+>  
+> -	/* suppress "tx-complete" interrupts */
+> -	virtqueue_disable_cb(vrp->svq);
+> -
+>  	vdev->priv = vrp;
+>  
+>  	rpdev_ctrl = rpmsg_virtio_add_ctrl_dev(vdev);
+> -- 
+> 2.51.1.dirty
 > 
-> thanks.
-
-This inspection table could be created in an VMCOREINFO way, the patch
-series here[1] is something that would fit it best .
-
-The drawbacks are :
-some static variables have to be registered to VMCOREINFO in their file
-of residence. This means including vmcoreinfo header and adding
-functions/code there, and everywhere that would be needed , or , the
-variables have to be un-static'ed , which is a no-go.
-This received more negative opinions on that particular patch series.
-The annotation idea seemed cleaner and simpler, and more generic.
-
-We could add more and more entries to the vmcoreinfo table, but that
-would mean expanding it a lot, which it would maybe defy its purpose,
-and be getting too big, especially for the cases where custom drivers
-would like to register data.
-
-How I see it, is that maybe the vmcoreinfo init function, could also
-parse the inspection table and create more entries if that is needed.
-So somehow memory inspection is a superset or generalization , while
-VMCOREINFO is a more particular use case that would fit here.
-
-Do you think of some better way to integrate the meminspect table into
-VMCOREINFO ?
-
-[1]
-https://lore.kernel.org/all/20250912150855.2901211-1-eugen.hristev@linaro.org/
