@@ -1,116 +1,97 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9165B26F288
-	for <linux-remoteproc@vger.kernel.org>; Mon, 15 Dec 2025 02:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76CD1448E0;
+	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765765191; cv=none; b=pHdEQ/lVRLzagZ3kVrEwBH76lQrZEHLHr9lBnOvC3ZNH5Y6ud64ZyZaUFx7CxMTMhs429cYpB5Evg/gKC58j6Jtnz846tCnekJB6sWEyyAdQaxAqF6fbynQN2AXs81RZgbPaP0gI0mRvQX2Po1B7XQOTnxN8YsSPqdd6fE4P28c=
+	t=1765780528; cv=none; b=HRiT4MyEVLyngrs3p7sUVVCu56TDaWZmQtwesKqEPLss4zCxMqL86KSbc6v7xTw/WY156eC4O5V7uiSv1dxtTQC3NDzQ/fKeptTzC+MQ5aI7BUIXj1YznkxRRgD3O9PH3H+CdnLYkssumGo7yGBOkePikF3LBlmZAFKvpztmN8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765765191; c=relaxed/simple;
-	bh=aW+yQYjoTCVBtGqvUIqWfBFdLzxBL6TthkJE1sLcV4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cQhPIOqbpkv8VSHnmw7TqFmUDt3wgdckGHgY+qVVWKF/fF5Ai2SoFlL4rhN+B154RczGYfH3uUOi6Jbp0yueI0tY4piO81Db6PG3Et6xDhZixw2VpAjAWFuIS8ONtSfecYG3GOJA/QmCemGoQVqIT7/ehIVnOXHQ5P2mYZJqdoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q96ijKOn; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1765780528; c=relaxed/simple;
+	bh=VnwpWxR/8+nShFX5zfIEPvBeQMXdJgHrpvPMXyO7f/o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rXk1ugwcS83NKm/l8rJFcMmUchJKuYL+4SJMu1WcuxN9WXiHYiggsJwZGaqiaYqSWdlvCcApj4X0Zqzlj7AFo7DpXVbH4E1hix55u1r3fT+WbJgl6jFmNbv3WGHMOurJzbRvN64HRhcpgyq8kRPOQayHbDYd2EtldErEWi/QoIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKI66DoG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q96ijKOn"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-29f102b013fso35459475ad.2
-        for <linux-remoteproc@vger.kernel.org>; Sun, 14 Dec 2025 18:19:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765765189; x=1766369989; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vyQpy40LuVc+jIOEZN17H+ajGzV6rjuUMt2NowJl5CE=;
-        b=q96ijKOnZ1xion7zUYT7C53a4KBQlsNkx4xOGp3LfyAza1WgCc+i0x9/rcpPYc7lbF
-         iXJY3BZVyRBRczPlyFFwjEF0C7fXFwyNFN/rJjoP+2KNOq2kfG3c/HSH8E89K60+i9f1
-         Ha1Fc6Lh/SdaDhg+7yx28jrpH9qilhtUiU3BvGlFSJ+c4vL+1iLlQZr9UOkNegcq/LhX
-         rCfPN86QIdxXMnu3O79LxyU41XMwAnqCbhwbGq2qdAuxzkH6zVI7nGxMp+UZzLskFSlm
-         D2qaX+RYN14uZzNne1LDaezZOaVO2xc9bcQL1BSDP154r+IHKuWKLB1D2vld2qC5h8tR
-         zyNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765765189; x=1766369989;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vyQpy40LuVc+jIOEZN17H+ajGzV6rjuUMt2NowJl5CE=;
-        b=QkjfIazWWzEwZiqpJTMHfk4aFShEWS1XGYzbKNwyj8weVRHTvdzRshIn3GBXdJoQGy
-         GSioN9pwZUf0ShEvK6qBDLgnjnP3Lk0hqx4AjTs+EDZx/5gRg3O3GbcmZTxBmTWsQ+qF
-         v2vit3fWy5e3ryhcpo/xOrvRpcjDbV1SIZRohvfsMA7MbqnmKGN9hWaJT8XV61waybwO
-         lGWuRPYah23mAmgbKwwx00Eal7EbauQ1YEw83gui6bTFfQHd3/ugsvhebyKBxMfxKGoc
-         KGYBq1xdi+aW59y5wf/qw0c4PXluU9joW1J1jB1Bw2nENjFXinCushY0nem2b0Q74DEW
-         6oAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzXFmLh+AO6S/mjBo7ccPsHSIkVwvIov02zjzVdzH8Tcnx4ksDniG6u23JKWxVFmPKf0vBQSCShqPAQmOiZenD@vger.kernel.org
-X-Gm-Message-State: AOJu0YxujvOk2S2IsYYRG+Qn2Ydtwi/eQICyJIQIIHNTJYe+OzGK0V+R
-	abovRWWn7/OhFBts8jlPgY2Hp8JZWMj1lnWJglgKh10kX0imavL7eH8+e6QGTmIUEJ4=
-X-Gm-Gg: AY/fxX7TUcusaHXxbhLolUG0qgS1bnVFULNUAt/K3nUnB77Kxh42dqd0fF1t238zcUF
-	K8onrltZ4BH4lop9CeII/QXF61K9kKf02+8elC29TViseDynZ3jhbwaxKNXKPgJ8K0Kr7Nsn3lI
-	oOkzMjM1BQTMlbeuNwR1+qfIqZAg0+9D3zHCCcov0SUqWZEaGS5Nlwy2uN97DYEchor+L99n5Z9
-	OK+06MHOgjeVo57/iR8W/yrSLLqUXp86/4ynjGmUj2yJ8Q/xSF/o2ddpmEC0idZ+bQRsuu4uaOY
-	kYXlMpSZjqtET8wY0z2gOldWDs3P5wcUMewTxIQmsvnA3G7q8a2853Fc+I8Ve+ii7pwFLbrbpS4
-	5N0c5npghGO0nW9qv/eW67/WbY7entr1ZIzOpsPwXHF0DR1ocFkoSiGGjyVqaQYUKzBr2VMRp4c
-	QwUH8y9L3/q1ihQCDJMw9aPGbt0H6GoRK6chhpLsh7ow==
-X-Google-Smtp-Source: AGHT+IHIU/jYZqSE4lK3mrtbuZ7ZFUKFi0MmSupmKRFzoKfYEL8mWKvDxqp7/lHuRh29MqAgh78KvQ==
-X-Received: by 2002:a17:902:f544:b0:2a0:d6d5:b342 with SMTP id d9443c01a7336-2a0d6d5b935mr26580395ad.37.1765765188823;
-        Sun, 14 Dec 2025 18:19:48 -0800 (PST)
-Received: from p14s (p7838222-ipoefx.ipoe.ocn.ne.jp. [123.225.39.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a0e96df1c9sm15403105ad.39.2025.12.14.18.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Dec 2025 18:19:48 -0800 (PST)
-Date: Sun, 14 Dec 2025 19:19:43 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-imx@nxp.com
-Subject: Re: [PATCH] remoteproc: imx_rproc: Use strstarts for "rsc-table"
- check
-Message-ID: <aT9wP_3olsf7WbPL@p14s>
-References: <20251208233302.684139-1-shenwei.wang@nxp.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKI66DoG"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7697BC2BC87;
+	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765780528;
+	bh=VnwpWxR/8+nShFX5zfIEPvBeQMXdJgHrpvPMXyO7f/o=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=OKI66DoGBTmFAoRAImFSwNjDYMtMm2teSmOIuISJCkZLXhooCZh//pYtzMcOojhF6
+	 HJ7tVkq2669oofn2shaiXdHcIFI3J3e2dmmh8nM2HR3nOH0BzBb50lJmHPvLkENS3q
+	 +GJQ3KPkXLBXS/q1IJGERskhkAP+FKpJlz/8R7+K4TqBawJhnnz+NxYJueSzQCcqvg
+	 PKxImsKwvJXcBCV+/cyCEMbsSs4nsrX587SoAcm99+ktcvMB3ZwfDbuKj9J+BYmY4r
+	 zElOCa5gLzKkpNMPTprbRdQ9Jcg4+hRIqr++0TOnXD0s9bcjpKl8Yshh5xiqgSiUVf
+	 QPuiL7Ok8DGWg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 711DCD5B16F;
+	Mon, 15 Dec 2025 06:35:28 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Mon, 15 Dec 2025 10:35:09 +0400
+Subject: [PATCH v7 4/8] mailbox: qcom: fix IPC register offset for IPQ5424
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251208233302.684139-1-shenwei.wang@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251215-ipq5018-wifi-v7-4-ec4adba941b5@outlook.com>
+References: <20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com>
+In-Reply-To: <20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1765780526; l=1407;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=bQie0gh5+yB2rgVd9SAgk+hMuExkZX7LZ4wgufEEF9I=;
+ b=ejBjz1LnFrBL/mN4ZXwRdohWziR6hrBgFOzVNjlMYOPl3t3qhEz31c6JPnxymw5zM8PgRY6+P
+ dvXEaL+YUfHDWVkNsPgJFw+gE37Bea24ptnDnd7MjIVPqKR6KcHwSwU
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On Mon, Dec 08, 2025 at 05:33:02PM -0600, Shenwei Wang wrote:
-> The resource name may include an address suffix, for example:
-> rsc-table@1fff8000.
-> 
-> To handle such cases, use strstarts() instead of strcmp() when checking
-> for "rsc-table".
-> 
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 3be8790c14a2..33f21ab24c92 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -694,7 +694,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
->  		}
->  		priv->mem[b].sys_addr = res.start;
->  		priv->mem[b].size = resource_size(&res);
-> -		if (!strcmp(res.name, "rsc-table"))
-> +		if (strstarts(res.name, "rsc-table"))
->  			priv->rsc_table = priv->mem[b].cpu_addr;
+From: George Moussalem <george.moussalem@outlook.com>
 
-Before applying this patch, I want to know how it ever worked before.  How
-did DT with a suffix tested?
+The IPC register in IPQ5424 is at offset 0xc instead of 0x8 as defined
+in driver data for msm8994. As such, switch to the existing
+apps_shared_apcs_data driver data which has offset set to 0xc.
 
->  		b++;
->  	}
-> -- 
-> 2.43.0
-> 
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index d3a8f6b4a03b368821ef9a5b24fee78037104610..258b03307869b244e053e7a355531268114906df 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -164,7 +164,7 @@ static const struct of_device_id qcom_apcs_ipc_of_match[] = {
+ 	{ .compatible = "qcom,sm6125-apcs-hmss-global", .data = &msm8994_apcs_data },
+ 	{ .compatible = "qcom,sm6115-apcs-hmss-global", .data = &msm8994_apcs_data },
+ 	{ .compatible = "qcom,ipq5332-apcs-apps-global", .data = &ipq6018_apcs_data },
+-	{ .compatible = "qcom,ipq5424-apcs-apps-global", .data = &msm8994_apcs_data },
++	{ .compatible = "qcom,ipq5424-apcs-apps-global", .data = &apps_shared_apcs_data },
+ 	{ .compatible = "qcom,ipq8074-apcs-apps-global", .data = &ipq6018_apcs_data },
+ 	{ .compatible = "qcom,sc7180-apss-shared", .data = &apps_shared_apcs_data },
+ 	{ .compatible = "qcom,sc8180x-apss-shared", .data = &apps_shared_apcs_data },
+
+-- 
+2.52.0
+
+
