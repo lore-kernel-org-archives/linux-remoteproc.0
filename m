@@ -1,359 +1,388 @@
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C06633F362
-	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 22:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8DC325494
+	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 22:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765923844; cv=none; b=jd3YXMmtvs/gA/zvihTt5WuAoZKweE/2O197Cp0m8pUpym0Rh1Ot6JLbCFSyBYyp89LQ0rf38hK0DZSnrBXZynZFy4yEI1wQHpWE7hXMy8kkXbhsX/UUqHVL3k7C7FnwUixXfv9J8Ehd27N71GRgbtyZ+EL+z2eSQRKpew/ua2Q=
+	t=1765925002; cv=none; b=QoYWxWcUklOD2dIX7SJV7eGcaqsGs4aEEyddDS9pzqYZXcF7CuQR2+UCJ46zECGnGQrsVP7zf4ZDRry2coizJGksmHKtBCD03gyN2E2BLjbHXbnz3RDpjkR4XJVNb6E+DXjSb5Jjn+lJtXq7R3y2Hs2bnhOvcaSuSAi91f4I9Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765923844; c=relaxed/simple;
-	bh=f+/nNAjSGYY2ENuv/b+fDYiEOTkax2ilfzfed+Spv2M=;
+	s=arc-20240116; t=1765925002; c=relaxed/simple;
+	bh=5m/koOPy6G0lZRWTJ4470I+GfRttX+2WNMqz69CcYKc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxVubcfj4laaesFM2tkebBI7fMURgADIzSP3likQP6mExkHm6Oa11WW1SAzingUi907fJFwNy2MT7Rhl9dyEaTYixzIUKW4pRVWRBX1ttXsm/+NDdoqUvkZargSQpkvF2YVsoLJKfmkEuEe2f1B2NywaM0MsmVPItCvDzP0zcoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OFGm40Fm; arc=none smtp.client-ip=209.85.210.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=rx05YtKBYjGZdcX1Dn2SqpMJsAIiin9IrVBXAiYVBSvERJY53HjxEMpGuY1efS1GeaazifsNWpjrtKq7871foarphhZC0ghNZjGI40THRzomt2qxA56eaxyJGcbigVAJfWB7kWZYgl6ZpukvG7T1F831FBXQMJdWO1BN67ms4v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xmfPU15s; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OFGm40Fm"
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7e2762ad850so5377772b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 14:24:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xmfPU15s"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7aa2170adf9so4182382b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 14:43:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765923840; x=1766528640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AdTRCBs5e2VEb/2+0jd+GH5sExE/IfnulepilsSOVBM=;
-        b=OFGm40Fm6WemTHaZ4ukbbFHiWL9Tq4jQRdWJYCSLkH54RVmW0L48PMsTwv0G98z7HX
-         TPMzEOuUtNnG2/XOHRv5QEC5R+nt3bOQTkxDL/iS08oXBqCGSC4bggdfUiZ44VMvAcVe
-         zO5MEoETBc09UTecEcsSomhCvmy1vMrwgQuQFHEo2AbRLI3t40vfJD6OWTgrO3vFLnh7
-         GVakvurXh2EA0c/x2ZZjECX7K87qPYLjRagA3hckVjMjw49R+btDOuQwWHOSk5xkDtK7
-         AnoW4Es8tlu+WTxgfY97Dkxj4Gq4GkPHDxIE7CRkqna0lC3ez+f1LnMLutZTmo4pcskX
-         lahw==
+        d=linaro.org; s=google; t=1765925000; x=1766529800; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Pmhs9R5yujRMsXI7hGVvqKn/i96+V/UX6HQAMgAQFEQ=;
+        b=xmfPU15sI9ffo8OIV28N8uou1ifEB8HynKpMMmCy0FWhEs4Hgq/E/VUgBEz9bmHylW
+         Oe6qqkkOJMMKbqFBbCGqQKRszJ0pfibM/dhs6/dUkrubqDUSRj0dpty58zSwO2Rvsbtc
+         F6FaZ75jHYTXpCNJCCL36Lj8minGLbN4Wku0A8k58rRADiXi3Bp7hlFpErZ29931/UBF
+         opvVIilEbKX+y4tj/t9c/NB7PLmkBkSh0EcJ+C3hdOv1t6HtE53Ywtb5XGoOXIzjM5Js
+         Iqlj406EVXdEXt7lre5MVQjw1j5z+gYttf9LyQrFY1sIByVLcdgEJjRKqFDhYc+XwcaG
+         6lXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765923840; x=1766528640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AdTRCBs5e2VEb/2+0jd+GH5sExE/IfnulepilsSOVBM=;
-        b=daGqaWBYahviVYgyS7l0wK7uAgcBOB/xAbFNoZ8cxC148l61NHHzKIM6KBf5U7Qnem
-         obShMKHK2i1ARmMRD1B2FSA7LNfV5FRm7qDIf4uDThhjJgRA6VCvXezv83YABiSNpzif
-         j4XX8WeHEDNsDy06NoLjDZpjyt/e9gJEM+xRfs+fRvcdGvnzaOg+ajs41GALvwmuZLzd
-         mzbDfunKKJfywy+L3Y7NYCjVbc8YubmT6pY9TYe0D+41oLGQKEBEp4FKYlRfTgLcaavm
-         PXCnFD38GDnILLzvVTp0OTU0QcLG95E9ZoVl0HWEqxB98nVIIq1jobqp/sMAvQnaOg6P
-         xAkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWr7D37m7xqRv9DjvlObyZyBQ/kuiaB1eUWjEYo0jfLW4e4xmezy+q+jzyeD7Ak1dhoGYExe8P0cXgRbBFvyMr@vger.kernel.org
-X-Gm-Message-State: AOJu0YymwccLQxXbNGskqYHMPX189aRLcrf5ynk1dZjQDIZYYsNzDtRX
-	XBP0Wcgbv2xCPppX/W2C63WaW7oeQXN1zTOiTCyWJAScPdnHjfroktegIy0VALu0F4I=
-X-Gm-Gg: AY/fxX64POGdRTp7pk0ynZwBbUUxQbsR9RMvl423qdn9pYb3E6+6s2lJN/TEGt+BSaV
-	gHk4PGijZ5O9/WiNDQYa3KEkKUf6mr7JhMHLpzsvp+Q0SMFdyn4GfA71W+viUivQDe+N51YLC8e
-	vmNW6DDV6JttYWOsVlqBdLtrXmloqco1Dy3RrQq1t1ZC47Dk0LJ2rb3krW/+Hon18lN/ZV8WvMt
-	4urG1WDvAx6huxXnvUeZooL0s2spyVYCvaaA+oTWDVLrhy0WFuQ+rRb7a3NXKvmit6Uy9njT9Iz
-	R+i6ugqYrZKGhkml2YhM291uc4JIRb3O0atowIwhBgZPq5bm6DKdjI55lUT+spZy+kw9IVy5vV6
-	MuF6zImKFcHbueedgSjJF9EXDVK84AxMomK5Hm3cjOeiiI2snGAHX/Lyxx3aCyxFsDuc/15mxtB
-	dX4mRx9q3UYc4Z6Q==
-X-Google-Smtp-Source: AGHT+IFw34ekhYpLgwTzgsA5c1I7XEJGtx0plUdIT3tSiewP94ziLUssbb0E5VHPSHCWe5aGzFT8cw==
-X-Received: by 2002:a05:6a20:6a24:b0:35d:cc9a:8bbb with SMTP id adf61e73a8af0-369afc00b9cmr16283445637.47.1765923840199;
-        Tue, 16 Dec 2025 14:24:00 -0800 (PST)
+        d=1e100.net; s=20230601; t=1765925000; x=1766529800;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pmhs9R5yujRMsXI7hGVvqKn/i96+V/UX6HQAMgAQFEQ=;
+        b=LyTkz01Du/wiw5heiy+CdqlBB9AZ7QeAv3bOoA63S/evPYQxqNv0D+9GDUbyGdlHAh
+         WlqFxCiNUfYuzbpwFVmLW2x4dYwS29r/z6QPSI30C+E/ExE0zRADpREFWF/oZUs8B9ZU
+         4EMDITohlTVYqrdICSc7/XxWLKYfEBc+7mfLOd5ypGnAcBIoTEJ6uOg/S2PsTDX/rRMr
+         IubcwKBdNITpXEYnKQ775q5meUmnAxSn0cmXtsP1tqDX++1VN/BNPsmdUH0ACdhXncoY
+         a8FKs7L78g3yRA0+kRkv/88juZtu34WJvhPlrspzmisNgkWV5XwQt8fBZtf9tWn8tgSY
+         ZmJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjbukN7Y8hZyaQ2atBYEtFyYcFRBMLHtb9DIvWz3V1cprYZt7oxDPHYT8KoG/Hu4cvW1VKRAT5dfgQTVDyae+c@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnZrSzUxc/EVYXjb5UK59Iy+G6sxFRL9QoOVXhvWi4OPeWcqUN
+	3Z454ZLpIzzT8zOJg8Umey0i9fLCRyw7VPjflm4Y/Q8fw3xSStJmJtauiXVUvlpIB6U=
+X-Gm-Gg: AY/fxX4u8YKQi6CIobAWWbu82Nj1MCGI698Tk+6JBBlL5SyNLEIV1KhmTsbyN7FGolZ
+	uGxx6sVS/YvjTUlG+A1CbzXGexCkb2byck/4mA6LvVew1qhIRUeaU0SH8NFbVCEPXI5Wxj5M70g
+	VFvxj6aldCDXuNF/JIzw3/ubt7q8YvUESzEzx9S2IHXpluKCage5eWEkGLSdsTN9aK91uh1+rRk
+	nAV2DGyBxJcVhowHAHUWabgHduAKyk9VD0DkeOLE5SIVcZGCM30ok705G2ICupBj65ZkBnF6dio
+	k/DJKtSNtW6KhzDzyPAX+0PA9GWAX77T2z8PJ4uW1Ykf1vyxVUSB5xOx+/h3KLuBkmKcUfMjlsk
+	x76ZAYK3eq39phLZvOSWUm0XtdZ2lSPZd/AHchKKB+o5EhSc0TL8Mzo553SkB7JRob7PkrX2+Bp
+	s342rGEI73TzNlTA==
+X-Google-Smtp-Source: AGHT+IHNPXQ3Xi+tz8BLzdIHyswnzFSrmIiz2RKZNeo8HDdj6iPZTnOaGHAJ1FBKZe5fiFy0jIZHqw==
+X-Received: by 2002:a05:6a00:b486:b0:7e8:43f5:bd57 with SMTP id d2e1a72fcca58-7f669c8d79bmr14641653b3a.67.1765924999794;
+        Tue, 16 Dec 2025 14:43:19 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:ba5d:91e2:900a:fb01])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c0c2c963b53sm16297176a12.36.2025.12.16.14.23.58
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7fcb92f9686sm598475b3a.26.2025.12.16.14.43.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 14:23:59 -0800 (PST)
-Date: Tue, 16 Dec 2025 15:23:57 -0700
+        Tue, 16 Dec 2025 14:43:19 -0800 (PST)
+Date: Tue, 16 Dec 2025 15:43:16 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Beleswar Padhi <b-padhi@ti.com>
-Cc: andersson@kernel.org, richard.genoud@bootlin.com, afd@ti.com,
-	hnagalla@ti.com, jm@ti.com, u-kumar1@ti.com, jan.kiszka@siemens.com,
-	christophe.jaillet@wanadoo.fr, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: k3: support for graceful shutdown of
- remote cores
-Message-ID: <aUHb_ax7rn3K_QeW@p14s>
-References: <20251125083746.2605721-1-b-padhi@ti.com>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: tanmay.shah@amd.com, Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>,
+	andersson@kernel.org, mst@redhat.com, jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	virtualization@lists.linux.dev, xiaoxiang@xiaomi.com,
+	Xiang Xiao <xiaoxiang781216@gmail.com>
+Subject: Re: [RFC PATCH 2/2] rpmsg: virtio_rpmsg_bus: get buffer size from
+ config space
+Message-ID: <aUHghNsj-GEAYUUx@p14s>
+References: <20251114184640.3020427-1-tanmay.shah@amd.com>
+ <20251114184640.3020427-3-tanmay.shah@amd.com>
+ <11280877-95f0-4361-9112-23bb17372e91@oss.qualcomm.com>
+ <c5395ebf-b0ea-4be8-b0c0-6a51d4c98e09@amd.com>
+ <324fdbe2-037a-4daa-84de-8b63dbac8117@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251125083746.2605721-1-b-padhi@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <324fdbe2-037a-4daa-84de-8b63dbac8117@foss.st.com>
 
-Hi Beleswar,
+On Fri, Dec 05, 2025 at 05:01:17PM +0100, Arnaud POULIQUEN wrote:
+> Hi,
+> 
+> On 12/3/25 19:12, Tanmay Shah wrote:
+> > Hello,
+> > 
+> > Thanks for your reviews. Please find the response below.
+> > 
+> > On 11/22/25 6:05 AM, Zhongqiu Han wrote:
+> > > On 11/15/2025 2:46 AM, Tanmay Shah wrote:
+> > > > From: Xiang Xiao <xiaoxiang781216@gmail.com>
+> > > > 
+> > > > 512 bytes isn't always suitable for all case, let firmware
+> > > > maker decide the best value from resource table.
+> > > > enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
+> > > > 
+> > > > Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
+> > > > Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> > > > ---
+> > > >   drivers/rpmsg/virtio_rpmsg_bus.c | 68 +++++++++++++++++++++++---------
+> > > >   include/linux/virtio_rpmsg.h     | 24 +++++++++++
+> > > >   2 files changed, 74 insertions(+), 18 deletions(-)
+> > > >   create mode 100644 include/linux/virtio_rpmsg.h
+> > > > 
+> > > > diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/
+> > > > virtio_rpmsg_bus.c
+> > > > index cc26dfcc3e29..03dd5535880a 100644
+> > > > --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > > +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> > > > @@ -25,6 +25,7 @@
+> > > >   #include <linux/sched.h>
+> > > >   #include <linux/virtio.h>
+> > > >   #include <linux/virtio_ids.h>
+> > > > +#include <linux/virtio_rpmsg.h>
+> > > >   #include <linux/virtio_config.h>
+> > > >   #include <linux/wait.h>
+> > > > @@ -39,7 +40,8 @@
+> > > >    * @sbufs:    kernel address of tx buffers
+> > > >    * @num_rbufs:    total number of buffers for rx
+> > > >    * @num_sbufs:    total number of buffers for tx
+> > > > - * @buf_size:    size of one rx or tx buffer
+> > > > + * @rbuf_size:    size of one rx buffer
+> > > > + * @sbuf_size:    size of one tx buffer
+> > > >    * @last_sbuf:    index of last tx buffer used
+> > > >    * @bufs_dma:    dma base addr of the buffers
+> > > >    * @tx_lock:    protects svq, sbufs and sleepers, to allow
+> > > > concurrent senders.
+> > > > @@ -60,7 +62,8 @@ struct virtproc_info {
+> > > >       void *rbufs, *sbufs;
+> > > >       unsigned int num_rbufs;
+> > > >       unsigned int num_sbufs;
+> > > > -    unsigned int buf_size;
+> > > > +    unsigned int rbuf_size;
+> > > > +    unsigned int sbuf_size;
+> > > >       int last_sbuf;
+> > > >       dma_addr_t bufs_dma;
+> > > >       struct mutex tx_lock;
+> > > > @@ -70,9 +73,6 @@ struct virtproc_info {
+> > > >       atomic_t sleepers;
+> > > >   };
+> > > > -/* The feature bitmap for virtio rpmsg */
+> > > > -#define VIRTIO_RPMSG_F_NS    0 /* RP supports name service
+> > > > notifications */
+> > > > -
+> > > >   /**
+> > > >    * struct rpmsg_hdr - common header for all rpmsg messages
+> > > >    * @src: source address
+> > > > @@ -130,7 +130,7 @@ struct virtio_rpmsg_channel {
+> > > >    * processor.
+> > > >    */
+> > > >   #define MAX_RPMSG_NUM_BUFS    (256)
+> > > > -#define MAX_RPMSG_BUF_SIZE    (512)
+> > > > +#define DEFAULT_RPMSG_BUF_SIZE    (512)
+> > > >   /*
+> > > >    * Local addresses are dynamically allocated on-demand.
+> > > > @@ -443,7 +443,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+> > > >       /* either pick the next unused tx buffer */
+> > > >       if (vrp->last_sbuf < vrp->num_sbufs)
+> > > > -        ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+> > > > +        ret = vrp->sbufs + vrp->sbuf_size * vrp->last_sbuf++;
+> > > >       /* or recycle a used one */
+> > > >       else
+> > > >           ret = virtqueue_get_buf(vrp->svq, &len);
+> > > > @@ -569,7 +569,7 @@ static int rpmsg_send_offchannel_raw(struct
+> > > > rpmsg_device *rpdev,
+> > > >        * messaging), or to improve the buffer allocator, to support
+> > > >        * variable-length buffer sizes.
+> > > >        */
+> > > > -    if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+> > > > +    if (len > vrp->sbuf_size - sizeof(struct rpmsg_hdr)) {
+> > > >           dev_err(dev, "message is too big (%d)\n", len);
+> > > >           return -EMSGSIZE;
+> > > >       }
+> > > > @@ -680,7 +680,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct
+> > > > rpmsg_endpoint *ept)
+> > > >       struct rpmsg_device *rpdev = ept->rpdev;
+> > > >       struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+> > > > -    return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
+> > > > +    return vch->vrp->sbuf_size - sizeof(struct rpmsg_hdr);
+> > > >   }
+> > > >   static int rpmsg_recv_single(struct virtproc_info *vrp, struct
+> > > > device *dev,
+> > > > @@ -706,7 +706,7 @@ static int rpmsg_recv_single(struct
+> > > > virtproc_info *vrp, struct device *dev,
+> > > >        * We currently use fixed-sized buffers, so trivially sanitize
+> > > >        * the reported payload length.
+> > > >        */
+> > > > -    if (len > vrp->buf_size ||
+> > > > +    if (len > vrp->rbuf_size ||
+> > > >           msg_len > (len - sizeof(struct rpmsg_hdr))) {
+> > > >           dev_warn(dev, "inbound msg too big: (%d, %d)\n", len,
+> > > > msg_len);
+> > > >           return -EINVAL;
+> > > > @@ -739,7 +739,7 @@ static int rpmsg_recv_single(struct
+> > > > virtproc_info *vrp, struct device *dev,
+> > > >           dev_warn_ratelimited(dev, "msg received with no recipient\n");
+> > > >       /* publish the real size of the buffer */
+> > > > -    rpmsg_sg_init(&sg, msg, vrp->buf_size);
+> > > > +    rpmsg_sg_init(&sg, msg, vrp->rbuf_size);
+> > > >       /* add the buffer back to the remote processor's virtqueue */
+> > > >       err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+> > > > @@ -888,9 +888,39 @@ static int rpmsg_probe(struct virtio_device *vdev)
+> > > >       else
+> > > >           vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
+> > > > -    vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+> > > > +    /*
+> > > > +     * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
+> > > > +     * size from virtio device config space from the resource table.
+> > > > +     * If the feature is not supported, then assign default buf size.
+> > > > +     */
+> > > > +    if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
+> > > > +        /* note: virtio_rpmsg_config is defined from remote view */
+> > > > +        virtio_cread(vdev, struct virtio_rpmsg_config,
+> > > > +                 txbuf_size, &vrp->rbuf_size);
+> > > > +        virtio_cread(vdev, struct virtio_rpmsg_config,
+> > > > +                 rxbuf_size, &vrp->sbuf_size);
+> > > > +
+> > > > +        /* The buffers must hold rpmsg header atleast */
+> > > > +        if (vrp->rbuf_size < sizeof(struct rpmsg_hdr) ||
+> > > > +            vrp->sbuf_size < sizeof(struct rpmsg_hdr)) {
+> > > 
+> > > 
+> > > Hello Tanmay,
+> > > 
+> > > May I know if the omission of = here is to accommodate the ping/pong/ack
+> > > scenarios? mtu will 0
+> > > 
+> > > 
+> > 
+> > Yes. At minimum RPMsg header is needed to ping the correct endpoint. We
+> > don't need to have any payload attached to the packet. MTU will be
+> > sizeof rpmsg_hdr I think.
+> > 
+> > > > +            dev_err(&vdev->dev,
+> > > > +                "vdev config: rx buf sz = %d, tx buf sz = %d\n",
+> > > > +                vrp->rbuf_size, vrp->sbuf_size);
+> > > > +            err = -EINVAL;
+> > > > +            goto vqs_del;
+> > > > +        }
+> > > > +
+> > > > +        dev_dbg(&vdev->dev,
+> > > > +            "vdev config: rx buf sz = 0x%x, tx buf sz = 0x%x\n",
+> > > > +            vrp->rbuf_size, vrp->sbuf_size);
+> > > > +    } else {
+> > > > +        vrp->rbuf_size = DEFAULT_RPMSG_BUF_SIZE;
+> > > > +        vrp->sbuf_size = DEFAULT_RPMSG_BUF_SIZE;
+> > > > +    }
+> > > > -    total_buf_space = (vrp->num_rbufs + vrp->num_sbufs) * vrp-
+> > > > >buf_size;
+> > > > +    total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
+> > > > +              (vrp->num_sbufs * vrp->sbuf_size);
+> > > > +    total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
+> > > >       /* allocate coherent memory for the buffers */
+> > > >       bufs_va = dma_alloc_coherent(vdev->dev.parent,
+> > > > @@ -908,14 +938,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
+> > > >       vrp->rbufs = bufs_va;
+> > > >       /* and second part is dedicated for TX */
+> > > > -    vrp->sbufs = bufs_va + vrp->num_rbufs * vrp->buf_size;
+> > > > +    vrp->sbufs = bufs_va + (vrp->num_rbufs * vrp->rbuf_size);
+> > > >       /* set up the receive buffers */
+> > > >       for (i = 0; i < vrp->num_rbufs; i++) {
+> > > >           struct scatterlist sg;
+> > > > -        void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+> > > > +        void *cpu_addr = vrp->rbufs + i * vrp->rbuf_size;
+> > > > -        rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+> > > > +        rpmsg_sg_init(&sg, cpu_addr, vrp->rbuf_size);
+> > > >           err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+> > > >                         GFP_KERNEL);
+> > > > @@ -1001,8 +1031,8 @@ static int rpmsg_remove_device(struct
+> > > > device *dev, void *data)
+> > > >   static void rpmsg_remove(struct virtio_device *vdev)
+> > > >   {
+> > > >       struct virtproc_info *vrp = vdev->priv;
+> > > > -    unsigned int num_bufs = vrp->num_rbufs + vrp->num_sbufs;
+> > > > -    size_t total_buf_space = num_bufs * vrp->buf_size;
+> > > > +    size_t total_buf_space = (vrp->num_rbufs * vrp->rbuf_size) +
+> > > > +                 (vrp->num_sbufs * vrp->sbuf_size);
+> > > >       int ret;
+> > > >       virtio_reset_device(vdev);
+> > > > @@ -1015,6 +1045,7 @@ static void rpmsg_remove(struct
+> > > > virtio_device *vdev)
+> > > >       vdev->config->del_vqs(vrp->vdev);
+> > > > +    total_buf_space = ALIGN(total_buf_space, PAGE_SIZE);
+> > > >       dma_free_coherent(vdev->dev.parent, total_buf_space,
+> > > >                 vrp->rbufs, vrp->bufs_dma);
+> > > > @@ -1028,6 +1059,7 @@ static struct virtio_device_id id_table[] = {
+> > > >   static unsigned int features[] = {
+> > > >       VIRTIO_RPMSG_F_NS,
+> > > > +    VIRTIO_RPMSG_F_BUFSZ,
+> > > >   };
+> > > >   static struct virtio_driver virtio_ipc_driver = {
+> > > > diff --git a/include/linux/virtio_rpmsg.h b/include/linux/virtio_rpmsg.h
+> > > > new file mode 100644
+> > > > index 000000000000..6406bc505383
+> > > > --- /dev/null
+> > > > +++ b/include/linux/virtio_rpmsg.h
+> > > > @@ -0,0 +1,24 @@
+> > > > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > > 
+> > > 
+> > > Echo Arnaud's comments. If it is intended for UAPI, please keep it in
+> > > include/uapi/linux
+> > > 
+> > > 
+> > 
+> > It's not intended for UAPI. I need to fix the license. I will check
+> > other virtio headers in the same directory and fix the license
+> > accordingly.
+> > 
+> > > > +/*
+> > > > + * Copyright (C) Pinecone Inc. 2019
+> > > > + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
+> > > > + */
+> > > > +
+> > > > +#ifndef _LINUX_VIRTIO_RPMSG_H
+> > > > +#define _LINUX_VIRTIO_RPMSG_H
+> > > > +
+> > > > +#include <linux/types.h>
+> > > > +
+> > > > +/* The feature bitmap for virtio rpmsg */
+> > > > +#define VIRTIO_RPMSG_F_NS    0 /* RP supports name service
+> > > > notifications */
+> > > > +#define VIRTIO_RPMSG_F_BUFSZ    2 /* RP get buffer size from
+> > > > config space */
+> > > 
+> > > May I know why skip bit 1?
+> > > 
+> > > 
+> > 
+> > Thanks, that's a good question. I keept id 2 unmodified from the
+> > original series. I don't know why ID 2 was chosen in the original
+> > series. I will have to discuss this with the linux remoteproc/rpmsg
+> > maintainers and choose the correct ID.
+> > 
+> > I don't see any problem choosing ID 1, but for some reason if ID 1 was
+> > assigned and deprecated (I don't think that is the case) then only we
+> > should use ID 2.
+> 
+> 
+> The ID 1 was proposed in an openamp PR [1]. If we
+> enter VIRTIO_RPMSG_F_BUFSZ first it makes sense to set its ID to 1.
+>
 
-On Tue, Nov 25, 2025 at 02:07:46PM +0530, Beleswar Padhi wrote:
-> From: Richard Genoud <richard.genoud@bootlin.com>
+I agree.
+ 
+> [1]https://github.com/OpenAMP/open-amp/pull/160/commits/d4a13128f94e46180285c05a20da78fdca54f7d7
 > 
-> Introduce software IPC handshake between the host running Linux and the
-> remote processors to gracefully stop/reset the remote core.
 > 
-> Upon a stop request, remoteproc driver sends a RP_MBOX_SHUTDOWN mailbox
-> message to the remotecore.
-> The remote core is expected to:
-> - relinquish all the resources acquired through Device Manager (DM)
-> - disable its interrupts
-> - send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
-> - enter WFI state.
+> Regards,
+> Arnaud
 > 
-> Meanwhile, the K3 remoteproc driver does:
-> - wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
-> - wait for the remoteproc to enter WFI state
-> - reset the remote core through device manager
-> 
-> Based on work from: Hari Nagalla <hnagalla@ti.com>
-> 
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> [b-padhi@ti.com: Extend support to all rprocs]
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> v2: Changelog:
-> 1. Extend graceful shutdown support for all rprocs (R5, DSP, M4)
-> 2. Halt core only if SHUTDOWN_ACK is received from rproc and it has
-> entered WFI state.
-> 3. Convert return type of is_core_in_wfi() to bool. Works better with
-> readx_poll_timeout() condition.
-> 4. Cast RP_MBOX_SHUTDOWN to uintptr_t to suppress compiler warnings
-> when void* is 64 bit.
-> 5. Wrapped Graceful shutdown code in the form of notify_shutdown_rproc
-> function.
-> 6. Updated commit message to fix minor typos and such.
-> 
-> Link to v1:
-> https://lore.kernel.org/all/20240621150058.319524-5-richard.genoud@bootlin.com/
-> 
-> Testing done:
-> 1. Tested Boot across all TI K3 EVM/SK boards.
-> 2. Tested IPC on all TI K3 J7* EVM/SK boards (& AM62x SK).
-> 4. Tested R5 rprocs can now be shutdown and powered back on
-> from userspace.
-> 3. Tested that each patch in the series generates no new
-> warnings/errors.
-> 
->  drivers/remoteproc/omap_remoteproc.h      |  9 ++-
->  drivers/remoteproc/ti_k3_common.c         | 72 +++++++++++++++++++++++
->  drivers/remoteproc/ti_k3_common.h         |  4 ++
->  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +
->  drivers/remoteproc/ti_k3_m4_remoteproc.c  |  2 +
->  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  5 ++
->  6 files changed, 93 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-> index 828e13256c023..c008f11fa2a43 100644
-> --- a/drivers/remoteproc/omap_remoteproc.h
-> +++ b/drivers/remoteproc/omap_remoteproc.h
-> @@ -42,6 +42,11 @@
->   * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
->   * on a suspend request
->   *
-> + * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
-> + *
-> + * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor for a
-> + * shutdown request. The remote processor should be in WFI state short after.
-> + *
->   * Introduce new message definitions if any here.
->   *
->   * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-> @@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
->  	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
->  	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
->  	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
-> -	RP_MBOX_END_MSG		= 0xFFFFFF14,
-> +	RP_MBOX_SHUTDOWN	= 0xFFFFFF14,
-> +	RP_MBOX_SHUTDOWN_ACK	= 0xFFFFFF15,
-> +	RP_MBOX_END_MSG		= 0xFFFFFF16,
->  };
->  
->  #endif /* _OMAP_RPMSG_H */
-> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-> index 56b71652e449f..5d469f65115c3 100644
-> --- a/drivers/remoteproc/ti_k3_common.c
-> +++ b/drivers/remoteproc/ti_k3_common.c
-> @@ -18,7 +18,9 @@
->   *	Hari Nagalla <hnagalla@ti.com>
->   */
->  
-> +#include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/iopoll.h>
->  #include <linux/mailbox_client.h>
->  #include <linux/module.h>
->  #include <linux/of_address.h>
-> @@ -69,6 +71,10 @@ void k3_rproc_mbox_callback(struct mbox_client *client, void *data)
->  	case RP_MBOX_ECHO_REPLY:
->  		dev_info(dev, "received echo reply from %s\n", rproc->name);
->  		break;
-> +	case RP_MBOX_SHUTDOWN_ACK:
-> +		dev_dbg(dev, "received shutdown_ack from %s\n", rproc->name);
-> +		complete(&kproc->shutdown_complete);
-> +		break;
->  	default:
->  		/* silently handle all other valid messages */
->  		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
-> @@ -188,6 +194,67 @@ int k3_rproc_request_mbox(struct rproc *rproc)
->  }
->  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
->  
-> +/**
-> + * is_core_in_wfi - Utility function to check core status
-> + * @kproc: remote core pointer used for checking core status
-> + *
-> + * This utility function is invoked by the shutdown sequence to ensure
-> + * the remote core is in wfi, before asserting a reset.
-> + */
-> +bool is_core_in_wfi(struct k3_rproc *kproc)
-> +{
-> +	int ret;
-> +	u64 boot_vec;
-> +	u32 cfg, ctrl, stat;
-> +
-> +	ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl, &stat);
-> +	if (ret)
-> +		return false;
-> +
-> +	return (bool)(stat & PROC_BOOT_STATUS_FLAG_CPU_WFI);
-> +}
-> +EXPORT_SYMBOL_GPL(is_core_in_wfi);
-> +
-> +/**
-> + * notify_shutdown_rproc - Prepare the remoteproc for a shutdown
-> + * @kproc: remote core pointer used for sending mbox msg
-> + *
-> + * This function sends the shutdown prepare message to remote processor and
-> + * waits for an ACK. Further, it checks if the remote processor has entered
-> + * into WFI mode. It is invoked in shutdown sequence to ensure the rproc
-> + * has relinquished its resources before asserting a reset, so the shutdown
-> + * happens cleanly.
-> + */
-> +int notify_shutdown_rproc(struct k3_rproc *kproc)
-> +{
-> +	bool wfi_status = false;
-> +	int ret;
-> +
-> +	reinit_completion(&kproc->shutdown_complete);
-> +
-> +	ret = mbox_send_message(kproc->mbox, (void *)(uintptr_t)RP_MBOX_SHUTDOWN);
-> +	if (ret < 0) {
-> +		dev_err(kproc->dev, "PM mbox_send_message failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = wait_for_completion_timeout(&kproc->shutdown_complete,
-> +					  msecs_to_jiffies(5000));
-> +	if (ret == 0) {
-> +		dev_err(kproc->dev, "%s: timeout waiting for rproc completion event\n",
-> +			__func__);
-> +		return -EBUSY;
-> +	}
-> +
-
-
-Won't that create an issue on systems with an older FW that doesn't send a
-RP_MBOX_SHUDOWN_ACK message?  Unless I'm missing something, this kind of feature
-needs to be backward compatible.   
-
-Thanks,
-Mathieu
-
-> +	ret = readx_poll_timeout(is_core_in_wfi, kproc, wfi_status, wfi_status,
-> +				 200, 2000);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(notify_shutdown_rproc);
-> +
->  /*
->   * The K3 DSP and M4 cores have a local reset that affects only the CPU, and a
->   * generic module reset that powers on the device and allows the internal
-> @@ -288,6 +355,11 @@ EXPORT_SYMBOL_GPL(k3_rproc_start);
->  int k3_rproc_stop(struct rproc *rproc)
->  {
->  	struct k3_rproc *kproc = rproc->priv;
-> +	int ret;
-> +
-> +	ret = notify_shutdown_rproc(kproc);
-> +	if (ret)
-> +		return ret;
->  
->  	return k3_rproc_reset(kproc);
->  }
-> diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-> index aee3c28dbe510..2a025f4894b82 100644
-> --- a/drivers/remoteproc/ti_k3_common.h
-> +++ b/drivers/remoteproc/ti_k3_common.h
-> @@ -22,6 +22,7 @@
->  #define REMOTEPROC_TI_K3_COMMON_H
->  
->  #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
-> +#define PROC_BOOT_STATUS_FLAG_CPU_WFI		0x00000002
->  
->  /**
->   * struct k3_rproc_mem - internal memory structure
-> @@ -92,6 +93,7 @@ struct k3_rproc {
->  	u32 ti_sci_id;
->  	struct mbox_chan *mbox;
->  	struct mbox_client client;
-> +	struct completion shutdown_complete;
->  	void *priv;
->  };
->  
-> @@ -115,4 +117,6 @@ int k3_rproc_of_get_memories(struct platform_device *pdev,
->  void k3_mem_release(void *data);
->  int k3_reserved_mem_init(struct k3_rproc *kproc);
->  void k3_release_tsp(void *data);
-> +bool is_core_in_wfi(struct k3_rproc *kproc);
-> +int notify_shutdown_rproc(struct k3_rproc *kproc);
->  #endif /* REMOTEPROC_TI_K3_COMMON_H */
-> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> index d6ceea6dc920e..156ae09d8ee25 100644
-> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-> @@ -133,6 +133,8 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	init_completion(&kproc->shutdown_complete);
-> +
->  	ret = k3_rproc_of_get_memories(pdev, kproc);
->  	if (ret)
->  		return ret;
-> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> index 3a11fd24eb52b..64d99071279b0 100644
-> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-> @@ -90,6 +90,8 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	init_completion(&kproc->shutdown_complete);
-> +
->  	ret = k3_rproc_of_get_memories(pdev, kproc);
->  	if (ret)
->  		return ret;
-> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> index 04f23295ffc10..8748dc6089cc2 100644
-> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-> @@ -533,6 +533,10 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
->  	struct k3_r5_cluster *cluster = core->cluster;
->  	int ret;
->  
-> +	ret = notify_shutdown_rproc(kproc);
-> +	if (ret)
-> +		return ret;
-> +
->  	/* halt all applicable cores */
->  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
->  		list_for_each_entry(core, &cluster->cores, elem) {
-> @@ -1129,6 +1133,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
->  			goto out;
->  		}
->  
-> +		init_completion(&kproc->shutdown_complete);
->  init_rmem:
->  		k3_r5_adjust_tcm_sizes(kproc);
->  
-> -- 
-> 2.34.1
+> > 
+> > 
+> > Arnaud, Mathieu, Bjorn any input here?
+> > 
+> > > > +
+> > > > +struct virtio_rpmsg_config {
+> > > > +    /* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
+> > > > +    __u32 txbuf_size;
+> > > > +    __u32 rxbuf_size;
+> > > > +    __u32 reserved[14]; /* Reserve for the future use */
+> > > 
+> > > Should we use __virtio32 instead of __u32 to avoid endianness issues?
+> > > 
+> > > 
+> > 
+> > Sure, if that is the standard in other virtio headers I will modify it.
+> > 
+> > Thanks,
+> > Tanmay
+> > 
+> > > > +    /* Put the customize config here */
+> > > > +} __attribute__((packed));
+> > > > +
+> > > > +#endif /* _LINUX_VIRTIO_RPMSG_H */
+> > > 
+> > > 
+> > 
 > 
