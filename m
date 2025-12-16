@@ -1,179 +1,94 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013060.outbound.protection.outlook.com [40.107.159.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8AD338927;
-	Tue, 16 Dec 2025 07:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765871024; cv=fail; b=X3lHSlAotwDTnXXTKW+OcgQhGQSl0M217Tt3gTmuQrdHcqi/R58TnmZHWUmrb27fa9cmUqY8vOBrxbbK8dzfymfeTdHUq0TYGjHL8xgk3sslFf1bH+iaQMqqjh1FqBulq/Kw2rpzeN0DBkP8RsXYBDvvTRfVZnc8CfOcvQs5zIY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765871024; c=relaxed/simple;
-	bh=HB9/EtFElU3QVxQNRt6Yp+4kz1ChrPRFW11o4d09XCc=;
-	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=EHnRMzly/o0OqHG1rtOcV4cjwmQwxAlTUS6/fpE+DpgxxHHxGomjBNHpa/NL4hGH9iA/brvhjTTOPrMuNRucVWWC8bOfsgZvuZ1l1sFcJMfcCEt90HlGYUzF4HOYWJsy9FM5E9PeMaLcoZDXP/w/rhry3s/51Qp4hy4nOX9Kt+g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Qs6TGmL2; arc=fail smtp.client-ip=40.107.159.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2259730E0C0
+	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 08:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765875015; cv=none; b=c6zlmwq/PJJ1G18Mj8A1/iQ5y09PpG26syqcwqQFG5vSdpTGDvIPWrZ/ViDi+bpVcjS3FsC1Thw0C+uSDs2a3SfDfGL6U6BbkvcRQDc1BhZ6bAgikNHkVSrlj27K82e0PRxsmPu45hlhId/qLnUG5CluSM0P0ScgtMf6toXQaH4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765875015; c=relaxed/simple;
+	bh=ZUFe47qtGYjU5Yn2pY9F8UI7JZG74YZxx2wQ1k0dRgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uPO+2FPfQdSUf7m5Io2nwnAVakEqL30ftPw3SDvNAN3hd1ncVMNWYxBaQI5DfOqUa8j2W6ncmIaFYs8zR6GL36pgaK+lLa2bQSP4UZq1Xle8h1KvNjHrhizcjWLEgT3ohvtIYYVm/uIMRHtbcHq1AaEkSBNZqz0Nsajao7ytngo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KLx1dA7n; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Qs6TGmL2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nd3pFv9rMwQ/JKXFq7APSetI+z49X412KJY/UNoX9mJWZvZV8FJpwVu/M/bSt/5kjeDB8KxdD5Ds6wvqyftVX/4yXJhJQIHf4pdPhOpmVJiG2s0ycriGjFzr7oglVXvC7F/a2BiLmItMeLuDpLm1gDuxE6CfELCPsIyyHtNnXlKw8BnILAcFtq3foPKM8pfexsBAvBU22qWKYvFvxQDZe9fn0v1DGrQT9PdbTY7VB2eaHA+dElmJQdOCMJx5NlemdR1Ou/tBU9S3mrqHejezClaSckXaXu6xvvtjR5N3GLjI11qUomeh3vMQS6CAf0XNx+Sov/GbZzAqtNSekRGw9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n9q2wg+KDn1rSPE8Xkm4ICVuHhYr+oJS5uq1KZpxBfI=;
- b=imY+jLYePdfMu7EMtAHWr5r98+WrX0rrksdn8APWKbKNwVRj2eElpi7ZqxCdVxtAepv/Q1DV7YzP8ll7rhmugq1XMNqUnl1w4Ia87tDheTrCY7hnSWf0tTmaRi3DEHNccTenhBKPDZW1zbHjDl91RM668IyZ0nRSjSkbUwU5l3ksSvP4EEoIqLzJT9aR0K0hJySQegtFr2nklp461OLqT6WyicKHOS6GlnzQ73g8S6+6aUTvuHbGZo7wtQRKBhVI7C2w1zd4MOKPqTtOFc7zGAVotquViWmdF/cXUky1TQ/rO1z+lSXIqysWzWZ2F3FimG4HD3BVWg1K3WreQU629Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n9q2wg+KDn1rSPE8Xkm4ICVuHhYr+oJS5uq1KZpxBfI=;
- b=Qs6TGmL2sl/Hp71VGkXkjo/1L7RTqhrNfoAixquura4NM3Wrg4toCvm/NpCf22rO45otiaf6ffxkp4hfGfDiv3d12pRDYDCuUCIuQZ/OlGOsjaodSGGp8cvNWJg2hu+U0Vkjq69HzDlUEhfI+h3sTS5lb45GMWY/Fx6TOMkE9mlAC9/3+E+GKOJW5Pm0wEMf+0Lxk2U7aRLlznC9tzKMBi5fx78Tg9VKK0WK6SwAGC1Z4kYHg7t0gyLyAyySTFtdmSUSMsnPCNPZUKvF+9AG0rwryBiTuBG4elUvmczazrdK+dpNP9GLoP8xX8aI3tvBCW1zRK0A99H53rBRGujeSA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
- by DU6PR04MB11135.eurprd04.prod.outlook.com (2603:10a6:10:5c3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Tue, 16 Dec
- 2025 07:43:39 +0000
-Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::bab2:d15c:fcf8:ef2b]) by AM0PR04MB7044.eurprd04.prod.outlook.com
- ([fe80::bab2:d15c:fcf8:ef2b%7]) with mapi id 15.20.9412.011; Tue, 16 Dec 2025
- 07:43:39 +0000
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	daniel.baluta@nxp.com,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: imx_dsp_rproc: only reset carveout memory at RPROC_OFFLINE state
-Date: Tue, 16 Dec 2025 15:42:16 +0800
-Message-Id: <20251216074216.447193-1-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0015.apcprd04.prod.outlook.com
- (2603:1096:4:197::21) To AM0PR04MB7044.eurprd04.prod.outlook.com
- (2603:10a6:208:191::20)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLx1dA7n"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2a0bae9aca3so30520205ad.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 00:50:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1765875008; x=1766479808; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZUFe47qtGYjU5Yn2pY9F8UI7JZG74YZxx2wQ1k0dRgg=;
+        b=KLx1dA7nXlar4Y1RdRs0omA7As1afxUv9e3HsIYvmlzdQTXQKDS0SjLLzM+D6//q3Z
+         6v5iui5VRkvcKsQLq9wuIIm+cxmos+gxdSSluJ2OD84dXEyuVBhE6m5wmTMBMo799j6f
+         NlP+sFlq1e+vFYK4ObfQ4U+G5F46HHMdhOpwZz7HxeC9Q+skDaCytlKKWaC60T3wGLJ6
+         jUrZ/bFOh3NIe/3YgAk+7+gnjcySNBVWV0GxSXX9eJQrV2la3XU0poyI/p14Yt173Yq8
+         f37fKwDHO7brD1NG6Y0lhGjNBG7VZ1sCLrpZ+g/54/yWeATG9DdhL6SB6XqhndOVkax4
+         6F5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1765875008; x=1766479808;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=ZUFe47qtGYjU5Yn2pY9F8UI7JZG74YZxx2wQ1k0dRgg=;
+        b=Zr5uCSq8TNOG86E6FHKKPbygKYrvu9v0/urVuuOqDrq6oRQJyrI6icoRorVA5gc7Pc
+         ojUvSL0tkS2031OFz78KUEsmlqeN3OvHBwrvmuLb6iqREYUhzoXDHkLda30Hc1UJVOf+
+         L3hbvJ5Mu8iMfaTvnUkhiL9b8oRDbT3UjyoJB/incEJf00pPTSrhiSGXvI5QqU25i2eA
+         3vwEf/W0jnaFvEnHEyHNUwueC55NXwkOu7JN2hb2FOF9Jr+uiy1z51Z3+8mRKdB5+x4h
+         vEtv3oXU/2u+xBsIpWLxyzVZ9ZMDFALxsVT8p7MvZnkZOW7s53TY6boTd9AXgS5OdsmY
+         xtyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjxz6D7dewYE/+Y3JWeY0Rm+17x+27DXHnRiIaHvLfsVrRZeDQT1Uw8I+oh29ztV3F3wT/unhtGiryO0/CPA3P@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG0HA8C+QqZCYGYXmu1CyScvFwTHBemvSB5MeENAcdvhxPzjEF
+	W+tu54F8e/9uVHOEUeOeq6Gp5X8ZSMKjmOuAPxosFwLHridcP+IjbcOX8t9EBnHoiqN89feJfNH
+	i/h6z40EPTtu2OuXyeacyH4iFO5D8c0w=
+X-Gm-Gg: AY/fxX5HscHvcH3uOvx5HS3zmoTnODBMBUeV+NVTJkZblg9HiWYly1RF7q76mxzwS+s
+	eWshRPXS/r4fVpTBwNGQVyL+fG6nWxBBOYpiy1orP+hmvpVKYB+aBCCtNIpC0SP/Pf48843bCL7
+	/j1XVZhsuRwIZU19mow9pqMhYt95JdIz9f/mY26I50miJgbvFiqh4Xe+ODSOkU7o9hYcd49m3Am
+	vpexk9ytiZuduQBMP8MbaWObQGtdMkzflyPG7wGm7WdGgBcBXTI8zF+jFDwCq+VIRcl8DtwZaBh
+	fw279kscreLGcq75U/y4ZN+u+9ONjHPVKnJI7KohYDDsyMuBb7bQp1FJwXdZHzDJ6AUND2KYh0N
+	lZb7iAlgWQWCx0YeU8U5G
+X-Google-Smtp-Source: AGHT+IFdZYFT+NIwzhAXA50MF6zrj86tN0JwKIahPILeOcWuOCFok0qYlbb+VZx5E16t5BM86z6amXtW1CuiK+Z1D7g=
+X-Received: by 2002:a05:7022:5f04:b0:11b:88a7:e1b0 with SMTP id
+ a92af1059eb24-11f354cd726mr6498824c88.26.1765875007985; Tue, 16 Dec 2025
+ 00:50:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DU6PR04MB11135:EE_
-X-MS-Office365-Filtering-Correlation-Id: 171d6e59-0232-47b5-8433-08de3c76d3a7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|19092799006|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pj492inUgDhkBCA14FMSKnOryexsEkZCcD/c+orHU5Kei0qXS9+p4nANZdu/?=
- =?us-ascii?Q?w+vwaoKGGgtkPI3S3Nmxb11UMOqIY4OMpPIjXjG8PgzceVAwi9OHCIchEqt0?=
- =?us-ascii?Q?M0cHyqTLKIolQOtQNfiqIhPqG/9Gx3A+3qBVGjafstiLRCs52DNb4CGNINNm?=
- =?us-ascii?Q?dT4ei4N7UiUrYCpxPXWo2YDYM2wZ6PQMcdE+Y6Zx8Srp2LVrGVpEm14nvTyi?=
- =?us-ascii?Q?1jOy+Qe6/mZyxcOXPSfljZUaPHcCyQp6NpUU9MMS08od3FlLpfNF+4aOauyI?=
- =?us-ascii?Q?CB6vlLBuGjIhNKgLx5nRfD1MJcG0cFH+0nRbuBDVsDwPJinRuh5bnnic/r+l?=
- =?us-ascii?Q?MPX2D7p6gloF4oOUGxkQYX4rr6i8C7Ml0RMTfdLeLx5Xdd4JW4YOaNooZLh5?=
- =?us-ascii?Q?tQydFc3TjRxkfRo/PrK85EzLfUHfL4vCaa6iaGySjts8Mhez8+XybMKvpF/a?=
- =?us-ascii?Q?tv6mPywYLUUJdamILrdaoenMBU2/LrnPBBNiYYblIoo3jBtmTGvpnwZvbeSz?=
- =?us-ascii?Q?TokgK1e5Ndx/A7O/jjOWBjRA3GJSYYFyCwV0xm5hBKN0O87D4vPoxjL8plQ1?=
- =?us-ascii?Q?mAKhE8hXueOukKWxQOQ6OgWaBOPOcyEGYtFOi4GS+A/Ml05CrMAZb9lrFC+e?=
- =?us-ascii?Q?+GP4WHRckr8ULZ3fMv6xvcCKKXUQyJTL5cH9jyrh5pUBe+8zrB9BjefwwMx2?=
- =?us-ascii?Q?JDRoHq5B3eB2hWWqe3TkKScvF0bIS7Yf6QLu+Pp+g5ylrgmRL5yIfeLfIETw?=
- =?us-ascii?Q?Nr62Yba5Rn/4LVUlv79Iw1oJfBJodATzQ0d1buQbEUXFCJuF46gI9TgLGA3C?=
- =?us-ascii?Q?zJCSCfNnS0QD/RgxUhpkZyOrsz+18fXeJK23aSGJ1aRsWrY+6PTgSh2b1XXg?=
- =?us-ascii?Q?RalxuV+hfp295YhLg5wbwYYcgcaGKKg/04naQVNndbe6c4kJv3yR0K5jStsN?=
- =?us-ascii?Q?aNclWllHENDI8neYPHCnmT+o/OFNSh9OgNatvL1ktIXYOC+8UuNCuYkNn6DC?=
- =?us-ascii?Q?tDzWXaL1H+BT04bvPa8GrCNn0PsMarC1+xCZFFkLj083gqXoSfrLgzhVoLy3?=
- =?us-ascii?Q?ODmAvsV/sDXv/GDkBjmnxGtbfj0WVH6CQCupPxtKIjknC51gTfTZxYhX2DsD?=
- =?us-ascii?Q?iEzkoW9N355ojV2U/RHkorpV9bWZM3xO8vMZIuwS36JD70nwTgz/EPQMAedC?=
- =?us-ascii?Q?pvyToHbNNfvpqOeBusr8iANh3pwsDdPDJhLoc34/l9t6XxdYksQtZ9K/+ETp?=
- =?us-ascii?Q?3XNiVc2t1I+TOoF+Zf2zQAmyAUoU3elCSgQu254GiQ/+SogS9PqvzykWpKnr?=
- =?us-ascii?Q?WTjlo6K+anip82THPJq70H300PSq/V/BzFg57JSM/SvsEsAMi3Stzu011BnF?=
- =?us-ascii?Q?zmOcfpLso8DjqKLik4/T30AaasddR4XTdCkSC9nPqpuTmjH4txUohkKoP8oi?=
- =?us-ascii?Q?ecf/TGjYL4A4+ZkavsqEvM1WDJoOndOsP1WqTOFF6+qYXYBBApj8Zb/vKjTj?=
- =?us-ascii?Q?VoGVENzmcuzLfTKDADursQ/J5kL/CbdqNbppEYsmNKhsMCCY2SY+ANyplw?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9BAk698esu3K7m4m832Mp29naIT7+eWto9FkXT+oI80aCvR5dwyEGk2tTizn?=
- =?us-ascii?Q?lW4+klzr81ujYnUxkNBv0TQcf2tzOYJzRmrOq2fzzc5Yz3OdWi6kRO5dxf5N?=
- =?us-ascii?Q?+/GL+Ih2KCnbZ2cs/tKdVo9SM6b7PdVplFvDSi+4bxLegwFMusluZ5vC6EeO?=
- =?us-ascii?Q?/CE1iUYjdXmylipXWm7Kl3cazx7tE6uhCZvaNSg1XIh372rOsELsrFWyioQP?=
- =?us-ascii?Q?x2YRiszvD3rMwzBL/ZkAdORn6vNh4i9SrjMWpxV4wVtMXz5re3+hsFPXQBiV?=
- =?us-ascii?Q?OUJJeyKnXXs8YShIVdUn2y5E1A7CqiU3dzYtl+e4ITrWnJBg0Z2Yt9Z9mCeO?=
- =?us-ascii?Q?1nwT3Ap/OutXDKjsNv68Hu4y3nHsyvmt9LUbaUH11US+tOlq6XAX/mmBe74F?=
- =?us-ascii?Q?NPU76zOoaUaDMWWkBVNZTn5HGedm0QxZeq2LXDNafIbmdKMO3FhORR0HhhK2?=
- =?us-ascii?Q?gTYPMSL8Vwe09+aRLplRg/mKtODKVA6MLTFJRPEl5KLpCAID+yC6THe7mixe?=
- =?us-ascii?Q?WYK4J9y7WUTaezKFFzXOuxiZYe0CANTFd5o1tXMKnp9qcbwYJS22icNB+6MH?=
- =?us-ascii?Q?gbXNWx5Rn51OM2cCTqnjhh+kCve4KfEJ2ItZr+/aifTLZXVRy9bOBhj131CE?=
- =?us-ascii?Q?44fHg8dZHJ4hEUcaqqaJNu0o7GMpWLkh+0blHi9S0MmZea9lvHeS37b1e1H5?=
- =?us-ascii?Q?mQo/euLLU8Umzw4oQxwkB3SWpgY3JZzFpuRK8Gz/5IdcsI1DodWySETUUtff?=
- =?us-ascii?Q?TiCVG0Cun8gECBzPa1aNa1gkXG+wvTjkEpFLgVKENYIEHFktRNgW2LAXMIK6?=
- =?us-ascii?Q?h4/LlYjKXzfPWiVTbPm5uxmhXCn8mxjV91fdwy2YS9RFUvLMmEnD5tiBYn3C?=
- =?us-ascii?Q?V10Z4ew1Khnun96FUlUYMWKIOBV9zQCnSkmLMh4VHUzDNvxa6mnObZT/ZimQ?=
- =?us-ascii?Q?X1RxnNSBHjv3EPQXwTaqHSZ8r837TDkePi7nSB1G9KCjZzzFXA8QKzFEqGvM?=
- =?us-ascii?Q?LFtZzeF7+hSu6tQmlT0NTkQX4DR+gdRaIa8lJbeXJyld6dMnStqi/7gcjT25?=
- =?us-ascii?Q?HrM17KX6tRySV0SI7mwucPFkyapgXl0bIInCWx3NFls0oqcqFQw0syo9Aj9o?=
- =?us-ascii?Q?Uf4IC2B0T1qCMwBsFKYuo4ZwnWzNXjKCqHWL3e9L4qtGuCnsCLR2xtPCEJ9e?=
- =?us-ascii?Q?2s5JrhDzjB9Ts7JS0/y3X2Vlzi0nYzMLBx0vOPgzIPgzuNb6Nw8qsBgMnC/7?=
- =?us-ascii?Q?JKYIu9Xvni3Zw+PXN1uptXhXvIvayXDG6Rck0SRLbZSrRAuWUF9uBm9k63Ba?=
- =?us-ascii?Q?mC/+hWWbm9cpt7L33bCq19Riex/y3DWPGr2hTI0Mbp32dRThvScTDuonWrFs?=
- =?us-ascii?Q?V9hSEeookLFazG8xMfsDhhLmW9RmNh1am9VzYoTDmNDVfafl8Xd9WqPjF0KE?=
- =?us-ascii?Q?q7WVe5Bw7015+tR1ZRkvr61iWiVIaS0moWj0gGPKdL6vJkrHGh4ao8GSARtO?=
- =?us-ascii?Q?FiIXZmKmTXKdughowJpuugDt5DHwoBR6oT3/VX0+y44D3LuYRK+tvhvy/FcJ?=
- =?us-ascii?Q?0+lhP7Gv9PR8nDeg+K0iCMgKAnuQfHF4/98K+PuD?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 171d6e59-0232-47b5-8433-08de3c76d3a7
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2025 07:43:39.1178
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XJEcLhPHQ0HTUgs9z9KZmffmby+CfHYmEeq0kp6L+/X5zaALa3XFbTOblvt1G6Hyh/UnU5EMQQndJfNuYLgzjg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU6PR04MB11135
+References: <20251216074216.447193-1-shengjiu.wang@nxp.com>
+In-Reply-To: <20251216074216.447193-1-shengjiu.wang@nxp.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Tue, 16 Dec 2025 10:52:38 +0200
+X-Gm-Features: AQt7F2qAJy_LSqPhNedKh08SXl3wUZHMX7Nrl3yXqFHsKDgpXLFzkxbItF2FoEo
+Message-ID: <CAEnQRZCZe3z8F7TsFdCz5P6mu6qzGkdoqC76XkyCCzQz+pSpmA@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: only reset carveout memory at
+ RPROC_OFFLINE state
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	daniel.baluta@nxp.com, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Don't need to reset memory at suspend and resume stage, because some
-memory is used to save the software state for resume, if it is cleared,
-the resume operation can fail.
+On Tue, Dec 16, 2025 at 9:59=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.co=
+m> wrote:
+>
+> Don't need to reset memory at suspend and resume stage, because some
+> memory is used to save the software state for resume, if it is cleared,
+> the resume operation can fail.
 
-Fixes: c4c432dfb00f ("remoteproc: imx_dsp_rproc: Add support of recovery and coredump process")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/remoteproc/imx_dsp_rproc.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+I would rephrase this as "Do not reset memory ...".
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index d03017d6b214..ac8aa71aa56c 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -984,9 +984,11 @@ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
- 	 * Clear buffers after pm rumtime for internal ocram is not
- 	 * accessible if power and clock are not enabled.
- 	 */
--	list_for_each_entry(carveout, &rproc->carveouts, node) {
--		if (carveout->va)
--			memset(carveout->va, 0, carveout->len);
-+	if (rproc->state == RPROC_OFFLINE) {
-+		list_for_each_entry(carveout, &rproc->carveouts, node) {
-+			if (carveout->va)
-+				memset(carveout->va, 0, carveout->len);
-+		}
- 	}
- 
- 	ret = imx_dsp_rproc_elf_load_segments(rproc, fw);
--- 
-2.34.1
+"Don't need .." suggests that this operation is unnecessary, but not wrong.
 
+With that,
+
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
