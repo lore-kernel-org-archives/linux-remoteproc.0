@@ -1,76 +1,74 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94372737E7
-	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 22:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C06633F362
+	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 22:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765923183; cv=none; b=U6EVTpwSPM5Ej02RcmeFJnHxH8G2faUABw1yHn/rWfc8CEXrPvSK3vwuw3bgEAjDc1KZ6Se/DAt87t5rUHrGMJ8uyD+huqPiJHcN7pHzGp3y26V22nE9sgufRd4uo3dopka4Cf7sm1EIQ8hljua4dDOHiv2meTXgt4oQTx6TssA=
+	t=1765923844; cv=none; b=jd3YXMmtvs/gA/zvihTt5WuAoZKweE/2O197Cp0m8pUpym0Rh1Ot6JLbCFSyBYyp89LQ0rf38hK0DZSnrBXZynZFy4yEI1wQHpWE7hXMy8kkXbhsX/UUqHVL3k7C7FnwUixXfv9J8Ehd27N71GRgbtyZ+EL+z2eSQRKpew/ua2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765923183; c=relaxed/simple;
-	bh=LvE6q0gKAaH+zhnu3rkz2k1a3t/HbuUKHBIYnnglztc=;
+	s=arc-20240116; t=1765923844; c=relaxed/simple;
+	bh=f+/nNAjSGYY2ENuv/b+fDYiEOTkax2ilfzfed+Spv2M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUXaJ4LH4aNgOicfTf016KsSAA4DmuIX20Ze0NNxlEnGhLkMYblEuKO6D2D926d436H7v57u6jAafFQ0OM8ulA8ApgIAyJ+2dYFLyp1x0rhBhLp/O00AUd2mn7gi/0GxGNdp/YVymppTGaK+/V8F3NmcjtxTnWdVqJt+xRgeAE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xxIEY6nE; arc=none smtp.client-ip=209.85.214.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=QxVubcfj4laaesFM2tkebBI7fMURgADIzSP3likQP6mExkHm6Oa11WW1SAzingUi907fJFwNy2MT7Rhl9dyEaTYixzIUKW4pRVWRBX1ttXsm/+NDdoqUvkZargSQpkvF2YVsoLJKfmkEuEe2f1B2NywaM0MsmVPItCvDzP0zcoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OFGm40Fm; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xxIEY6nE"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2a0a95200e8so30246495ad.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 14:13:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OFGm40Fm"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7e2762ad850so5377772b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 14:24:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765923181; x=1766527981; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1765923840; x=1766528640; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=auWb4dQBMJYzfosA/pOnNDayLZ5ZzA6A+0CwU8nFlUY=;
-        b=xxIEY6nEf6zMZQYi1QZjYYfXFGRs9UoaFw7nUBYvHb8OxBqm0iNVHV9l5AznBcS1cz
-         h4p0a5VIcI18wIx8cS7t53dosPHcmT6tohijJSwm02JZvNjCyaL6h3xFS6VPF5aaPMLH
-         2q9pBi8q6JlSvTxh0zOpCpD8SJdZXx4qdqp3B/OmwiD0EEYoFfr0htssu4LnOztZt4jQ
-         C1BRgiUKA+/oK+vjH1HyMjEvLXP/GJeNr5VyvvKbNuvOV75px2mNFBm4eGFdCUiI2j/5
-         GK7A2KqXfFdHnQqCEihDsSbtKuEH8jNdsRZdGEQIjo87NoApwdTQC5+jg8CbDWXeXyIo
-         Jt5Q==
+        bh=AdTRCBs5e2VEb/2+0jd+GH5sExE/IfnulepilsSOVBM=;
+        b=OFGm40Fm6WemTHaZ4ukbbFHiWL9Tq4jQRdWJYCSLkH54RVmW0L48PMsTwv0G98z7HX
+         TPMzEOuUtNnG2/XOHRv5QEC5R+nt3bOQTkxDL/iS08oXBqCGSC4bggdfUiZ44VMvAcVe
+         zO5MEoETBc09UTecEcsSomhCvmy1vMrwgQuQFHEo2AbRLI3t40vfJD6OWTgrO3vFLnh7
+         GVakvurXh2EA0c/x2ZZjECX7K87qPYLjRagA3hckVjMjw49R+btDOuQwWHOSk5xkDtK7
+         AnoW4Es8tlu+WTxgfY97Dkxj4Gq4GkPHDxIE7CRkqna0lC3ez+f1LnMLutZTmo4pcskX
+         lahw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765923181; x=1766527981;
+        d=1e100.net; s=20230601; t=1765923840; x=1766528640;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=auWb4dQBMJYzfosA/pOnNDayLZ5ZzA6A+0CwU8nFlUY=;
-        b=odweaSPRroH9gwD4GSdWHULuvDZzV4o1GUM+1DYQcEuakEfMNQkRY4J6oY2eNaBaCn
-         69vm+JFAfgNWxRIqYiFJlOZ57B4a/OMKL0ssQi5iAB+cH+oJTMloaHOZNt2XYGvGbFBa
-         OKIDoEI0Nh9+cXnremw7WANn7uOg5oYlr5YqNq2m291kHOhHsTTJt/0qz0/Kpp18Pgx4
-         rvxYa5N3yd1rO1vphFwNlNpcHonbYDO93Fxcds//tFbNlL+KeSaQdTu4FBAWr2z4pJmA
-         ysBN+RBdYmU1iw6lRBbPQ85LEXAVFrFyIfbhYrl0IxIR1lijtKfb8Y9N8j1IRnl4bEC5
-         cGpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOSqUW+1Ik/bQB3e5pjeWAV7ftFF6HZXHRUGykcxaQXIJN62q1izI3dAUPGkgFuXmgoAO9QLIx1eT20Me1uVZT@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMaleA5vSwFtl4PDPXY76Tj3rDW8MaXzrNxOAk+55lT0kQbvyr
-	AFq+RzAWmEb9eWEHiQ32Kho88cux04yCiupDObBCG9jFp668vgc2xIwocGF6YKWrfks=
-X-Gm-Gg: AY/fxX4Kjcy2tKdV0+VNzNkY7yqVQb5yj0kSIIetFkt1Qrfp9Qjftcil1dTlz2pQ409
-	AiqjEGah8XD1QFDhDfpDLrvsSzTSoIZdNFoojawZp1SMMHezVIW6/nEEFPB1nsYTwx0Zdnq+3Ad
-	MFTdOtln8gsKKA3ExBe4Hkp2hd3MI6XgYUFeVRjw5Oe/5aoMgE4T4dzhDpO07GWq+BMtouPi5+K
-	z5Nknyf8GkJS4Xb968II7KYeLVhs96//cgpsL8kqxiePjhgApcMTHqld9Egec/EZ6myyyrpjotC
-	kPh1NRqCVW0QFSXSJKF2IO6dGUSgR2ox7sr8wm+QuGpYI/zk2fC02cfx9F4N+EXiMb2fYlZQJ7R
-	BiHPWPpoJDWOcDOJ4CdSrBrub8OzUneyZzj5xLpPYqvE5zMVHuJgJexjCbXQRommGlLwPDgI603
-	GA6qmI/uO5PetkRg==
-X-Google-Smtp-Source: AGHT+IG5tChOpyR0Nhxu0Rhdpo8VAFsmpzSG4K1uTUFmNnHdpvpNSpU1hBhSP/GWyCviK9VF9gEm4g==
-X-Received: by 2002:a17:903:1986:b0:295:738f:73fe with SMTP id d9443c01a7336-29f23c7d087mr141376425ad.30.1765923181120;
-        Tue, 16 Dec 2025 14:13:01 -0800 (PST)
+        bh=AdTRCBs5e2VEb/2+0jd+GH5sExE/IfnulepilsSOVBM=;
+        b=daGqaWBYahviVYgyS7l0wK7uAgcBOB/xAbFNoZ8cxC148l61NHHzKIM6KBf5U7Qnem
+         obShMKHK2i1ARmMRD1B2FSA7LNfV5FRm7qDIf4uDThhjJgRA6VCvXezv83YABiSNpzif
+         j4XX8WeHEDNsDy06NoLjDZpjyt/e9gJEM+xRfs+fRvcdGvnzaOg+ajs41GALvwmuZLzd
+         mzbDfunKKJfywy+L3Y7NYCjVbc8YubmT6pY9TYe0D+41oLGQKEBEp4FKYlRfTgLcaavm
+         PXCnFD38GDnILLzvVTp0OTU0QcLG95E9ZoVl0HWEqxB98nVIIq1jobqp/sMAvQnaOg6P
+         xAkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWr7D37m7xqRv9DjvlObyZyBQ/kuiaB1eUWjEYo0jfLW4e4xmezy+q+jzyeD7Ak1dhoGYExe8P0cXgRbBFvyMr@vger.kernel.org
+X-Gm-Message-State: AOJu0YymwccLQxXbNGskqYHMPX189aRLcrf5ynk1dZjQDIZYYsNzDtRX
+	XBP0Wcgbv2xCPppX/W2C63WaW7oeQXN1zTOiTCyWJAScPdnHjfroktegIy0VALu0F4I=
+X-Gm-Gg: AY/fxX64POGdRTp7pk0ynZwBbUUxQbsR9RMvl423qdn9pYb3E6+6s2lJN/TEGt+BSaV
+	gHk4PGijZ5O9/WiNDQYa3KEkKUf6mr7JhMHLpzsvp+Q0SMFdyn4GfA71W+viUivQDe+N51YLC8e
+	vmNW6DDV6JttYWOsVlqBdLtrXmloqco1Dy3RrQq1t1ZC47Dk0LJ2rb3krW/+Hon18lN/ZV8WvMt
+	4urG1WDvAx6huxXnvUeZooL0s2spyVYCvaaA+oTWDVLrhy0WFuQ+rRb7a3NXKvmit6Uy9njT9Iz
+	R+i6ugqYrZKGhkml2YhM291uc4JIRb3O0atowIwhBgZPq5bm6DKdjI55lUT+spZy+kw9IVy5vV6
+	MuF6zImKFcHbueedgSjJF9EXDVK84AxMomK5Hm3cjOeiiI2snGAHX/Lyxx3aCyxFsDuc/15mxtB
+	dX4mRx9q3UYc4Z6Q==
+X-Google-Smtp-Source: AGHT+IFw34ekhYpLgwTzgsA5c1I7XEJGtx0plUdIT3tSiewP94ziLUssbb0E5VHPSHCWe5aGzFT8cw==
+X-Received: by 2002:a05:6a20:6a24:b0:35d:cc9a:8bbb with SMTP id adf61e73a8af0-369afc00b9cmr16283445637.47.1765923840199;
+        Tue, 16 Dec 2025 14:24:00 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:ba5d:91e2:900a:fb01])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29eea0594e8sm172904795ad.87.2025.12.16.14.12.59
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c0c2c963b53sm16297176a12.36.2025.12.16.14.23.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Dec 2025 14:13:00 -0800 (PST)
-Date: Tue, 16 Dec 2025 15:12:57 -0700
+        Tue, 16 Dec 2025 14:23:59 -0800 (PST)
+Date: Tue, 16 Dec 2025 15:23:57 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Daniel Baluta <daniel.baluta@nxp.com>
-Cc: andersson@kernel.org, m.szyprowski@samsung.com, shawnguo@kernel.org,
-	kernel@pengutronix.de, festevam@gmail.com,
-	arnaud.pouliquen@foss.st.com, robh@kernel.org,
-	geert+renesas@glider.be, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, iuliana.prodan@nxp.com
-Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: Fix multiple start/stop
- operations
-Message-ID: <aUHZaapZ1IAs_mRE@p14s>
-References: <20251210154906.99210-1-daniel.baluta@nxp.com>
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, richard.genoud@bootlin.com, afd@ti.com,
+	hnagalla@ti.com, jm@ti.com, u-kumar1@ti.com, jan.kiszka@siemens.com,
+	christophe.jaillet@wanadoo.fr, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: k3: support for graceful shutdown of
+ remote cores
+Message-ID: <aUHb_ax7rn3K_QeW@p14s>
+References: <20251125083746.2605721-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -79,141 +77,283 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251210154906.99210-1-daniel.baluta@nxp.com>
+In-Reply-To: <20251125083746.2605721-1-b-padhi@ti.com>
 
-Good day,
+Hi Beleswar,
 
-On Wed, Dec 10, 2025 at 05:49:06PM +0200, Daniel Baluta wrote:
-> After commit 67a7bc7f0358 ("remoteproc: Use of reserved_mem_region_*
-> functions for "memory-region"") following commands with
-> imx-dsp-rproc started to fail:
+On Tue, Nov 25, 2025 at 02:07:46PM +0530, Beleswar Padhi wrote:
+> From: Richard Genoud <richard.genoud@bootlin.com>
 > 
-> $ echo zephyr.elf > /sys/class/remoteproc/remoteproc0/firmware
-> $ echo start > /sys/class/remoteproc/remoteproc0/state
-> $ echo stop > /sys/class/remoteproc/remoteproc0/state
-> $ echo start > /sys/class/remoteproc/remoteproc0/state #! This fails
-> -sh: echo: write error: Device or resource busy
+> Introduce software IPC handshake between the host running Linux and the
+> remote processors to gracefully stop/reset the remote core.
 > 
-> This happens because aforementioned commit replaced devm_ioremap_wc with
-> devm_ioremap_resource_wc which will "reserve" the memory region with the
-> first start and then will fail at the second start if the memory
-> region is already reserved.
+> Upon a stop request, remoteproc driver sends a RP_MBOX_SHUTDOWN mailbox
+> message to the remotecore.
+> The remote core is expected to:
+> - relinquish all the resources acquired through Device Manager (DM)
+> - disable its interrupts
+> - send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
+> - enter WFI state.
 > 
-> Even partially reverting the faulty commit won't fix the
-> underlying issue because we map the address in prepare() but we never
-> unmap it at unprepare(), so we will keep leaking memory regions.
+> Meanwhile, the K3 remoteproc driver does:
+> - wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
+> - wait for the remoteproc to enter WFI state
+> - reset the remote core through device manager
 > 
-> So, lets use alloc() and release() callbacks for memory carveout
-> handling. This will nicely map() the memory region at prepare() time
-> and unmap() it at unprepare().
+> Based on work from: Hari Nagalla <hnagalla@ti.com>
 > 
-> Fixes: 67a7bc7f0358 ("remoteproc: Use of_reserved_mem_region_* functions for "memory-region"")
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+> [b-padhi@ti.com: Extend support to all rprocs]
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 > ---
-> Changes since v1:
->  * https://lore.kernel.org/imx/091a4f29-5435-428a-9a1c-ef82465211cb@nxp.com/T/#t 
->  * took a different approach and instead of partially reverting the
->   faulty patch, used alloc() and release() callbacks to handle memory
->   region mapping.
->  drivers/remoteproc/imx_dsp_rproc.c | 50 ++++++++++++++++++++----------
->  1 file changed, 33 insertions(+), 17 deletions(-)
+> v2: Changelog:
+> 1. Extend graceful shutdown support for all rprocs (R5, DSP, M4)
+> 2. Halt core only if SHUTDOWN_ACK is received from rproc and it has
+> entered WFI state.
+> 3. Convert return type of is_core_in_wfi() to bool. Works better with
+> readx_poll_timeout() condition.
+> 4. Cast RP_MBOX_SHUTDOWN to uintptr_t to suppress compiler warnings
+> when void* is 64 bit.
+> 5. Wrapped Graceful shutdown code in the form of notify_shutdown_rproc
+> function.
+> 6. Updated commit message to fix minor typos and such.
 > 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index 5130a35214c9..83468558e634 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -644,6 +644,32 @@ static void imx_dsp_rproc_free_mbox(struct imx_dsp_rproc *priv)
->  	mbox_free_channel(priv->rxdb_ch);
->  }
+> Link to v1:
+> https://lore.kernel.org/all/20240621150058.319524-5-richard.genoud@bootlin.com/
+> 
+> Testing done:
+> 1. Tested Boot across all TI K3 EVM/SK boards.
+> 2. Tested IPC on all TI K3 J7* EVM/SK boards (& AM62x SK).
+> 4. Tested R5 rprocs can now be shutdown and powered back on
+> from userspace.
+> 3. Tested that each patch in the series generates no new
+> warnings/errors.
+> 
+>  drivers/remoteproc/omap_remoteproc.h      |  9 ++-
+>  drivers/remoteproc/ti_k3_common.c         | 72 +++++++++++++++++++++++
+>  drivers/remoteproc/ti_k3_common.h         |  4 ++
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +
+>  drivers/remoteproc/ti_k3_m4_remoteproc.c  |  2 +
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  5 ++
+>  6 files changed, 93 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+> index 828e13256c023..c008f11fa2a43 100644
+> --- a/drivers/remoteproc/omap_remoteproc.h
+> +++ b/drivers/remoteproc/omap_remoteproc.h
+> @@ -42,6 +42,11 @@
+>   * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
+>   * on a suspend request
+>   *
+> + * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
+> + *
+> + * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor for a
+> + * shutdown request. The remote processor should be in WFI state short after.
+> + *
+>   * Introduce new message definitions if any here.
+>   *
+>   * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
+> @@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
+>  	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
+>  	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
+>  	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
+> -	RP_MBOX_END_MSG		= 0xFFFFFF14,
+> +	RP_MBOX_SHUTDOWN	= 0xFFFFFF14,
+> +	RP_MBOX_SHUTDOWN_ACK	= 0xFFFFFF15,
+> +	RP_MBOX_END_MSG		= 0xFFFFFF16,
+>  };
 >  
-> +static int imx_dsp_rproc_mem_alloc(struct rproc *rproc,
-> +				   struct rproc_mem_entry *mem)
+>  #endif /* _OMAP_RPMSG_H */
+> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+> index 56b71652e449f..5d469f65115c3 100644
+> --- a/drivers/remoteproc/ti_k3_common.c
+> +++ b/drivers/remoteproc/ti_k3_common.c
+> @@ -18,7 +18,9 @@
+>   *	Hari Nagalla <hnagalla@ti.com>
+>   */
+>  
+> +#include <linux/delay.h>
+>  #include <linux/io.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/mailbox_client.h>
+>  #include <linux/module.h>
+>  #include <linux/of_address.h>
+> @@ -69,6 +71,10 @@ void k3_rproc_mbox_callback(struct mbox_client *client, void *data)
+>  	case RP_MBOX_ECHO_REPLY:
+>  		dev_info(dev, "received echo reply from %s\n", rproc->name);
+>  		break;
+> +	case RP_MBOX_SHUTDOWN_ACK:
+> +		dev_dbg(dev, "received shutdown_ack from %s\n", rproc->name);
+> +		complete(&kproc->shutdown_complete);
+> +		break;
+>  	default:
+>  		/* silently handle all other valid messages */
+>  		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
+> @@ -188,6 +194,67 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+>  }
+>  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+>  
+> +/**
+> + * is_core_in_wfi - Utility function to check core status
+> + * @kproc: remote core pointer used for checking core status
+> + *
+> + * This utility function is invoked by the shutdown sequence to ensure
+> + * the remote core is in wfi, before asserting a reset.
+> + */
+> +bool is_core_in_wfi(struct k3_rproc *kproc)
 > +{
-> +	struct device *dev = rproc->dev.parent;
-> +	void *va;
+> +	int ret;
+> +	u64 boot_vec;
+> +	u32 cfg, ctrl, stat;
 > +
-> +	va = ioremap_wc(mem->dma, mem->len);
-> +	if (!va) {
-> +		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-> +			&mem->dma, mem->len);
-> +		return -ENOMEM;
+> +	ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl, &stat);
+> +	if (ret)
+> +		return false;
+> +
+> +	return (bool)(stat & PROC_BOOT_STATUS_FLAG_CPU_WFI);
+> +}
+> +EXPORT_SYMBOL_GPL(is_core_in_wfi);
+> +
+> +/**
+> + * notify_shutdown_rproc - Prepare the remoteproc for a shutdown
+> + * @kproc: remote core pointer used for sending mbox msg
+> + *
+> + * This function sends the shutdown prepare message to remote processor and
+> + * waits for an ACK. Further, it checks if the remote processor has entered
+> + * into WFI mode. It is invoked in shutdown sequence to ensure the rproc
+> + * has relinquished its resources before asserting a reset, so the shutdown
+> + * happens cleanly.
+> + */
+> +int notify_shutdown_rproc(struct k3_rproc *kproc)
+> +{
+> +	bool wfi_status = false;
+> +	int ret;
+> +
+> +	reinit_completion(&kproc->shutdown_complete);
+> +
+> +	ret = mbox_send_message(kproc->mbox, (void *)(uintptr_t)RP_MBOX_SHUTDOWN);
+> +	if (ret < 0) {
+> +		dev_err(kproc->dev, "PM mbox_send_message failed: %d\n", ret);
+> +		return ret;
 > +	}
 > +
-> +	mem->va = va;
+> +	ret = wait_for_completion_timeout(&kproc->shutdown_complete,
+> +					  msecs_to_jiffies(5000));
+> +	if (ret == 0) {
+> +		dev_err(kproc->dev, "%s: timeout waiting for rproc completion event\n",
+> +			__func__);
+> +		return -EBUSY;
+> +	}
 > +
-> +	return 0;
-> +}
-> +
-> +static int imx_dsp_rproc_mem_release(struct rproc *rproc,
-> +				     struct rproc_mem_entry *mem)
-> +{
-> +	iounmap(mem->va);
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * imx_dsp_rproc_add_carveout() - request mailbox channels
->   * @priv: private data pointer
-> @@ -659,7 +685,6 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
->  	struct device *dev = rproc->dev.parent;
->  	struct device_node *np = dev->of_node;
->  	struct rproc_mem_entry *mem;
-> -	void __iomem *cpu_addr;
->  	int a, i = 0;
->  	u64 da;
->  
-> @@ -673,15 +698,10 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
->  		if (imx_dsp_rproc_sys_to_da(priv, att->sa, att->size, &da))
->  			return -EINVAL;
->  
-> -		cpu_addr = devm_ioremap_wc(dev, att->sa, att->size);
-> -		if (!cpu_addr) {
-> -			dev_err(dev, "failed to map memory %p\n", &att->sa);
-> -			return -ENOMEM;
-> -		}
-> -
->  		/* Register memory region */
-> -		mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)att->sa,
-> -					   att->size, da, NULL, NULL, "dsp_mem");
-> +		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)att->sa,
-> +					   att->size, da, imx_dsp_rproc_mem_alloc,
-> +					   imx_dsp_rproc_mem_release, "dsp_mem");
 
-Was there a reason you kept those here rather than moving them to probe() as
-Iuliana suggested?  Note that I would be fine with this solution since this is
-how it was before, but if we have to go through a refactoring we may as well
-take those things into account.
 
->  
->  		if (mem)
->  			rproc_coredump_add_segment(rproc, da, att->size);
-> @@ -709,15 +729,11 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
->  		if (imx_dsp_rproc_sys_to_da(priv, res.start, resource_size(&res), &da))
->  			return -EINVAL;
->  
-> -		cpu_addr = devm_ioremap_resource_wc(dev, &res);
-> -		if (IS_ERR(cpu_addr)) {
-> -			dev_err(dev, "failed to map memory %pR\n", &res);
-> -			return PTR_ERR(cpu_addr);
-> -		}
-> -
->  		/* Register memory region */
-> -		mem = rproc_mem_entry_init(dev, (void __force *)cpu_addr, (dma_addr_t)res.start,
-> -					   resource_size(&res), da, NULL, NULL,
-> +		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)res.start,
-> +					   resource_size(&res), da,
-> +					    imx_dsp_rproc_mem_alloc,
-> +					    imx_dsp_rproc_mem_release,
->  					   "%.*s", strchrnul(res.name, '@') - res.name, res.name);
-
-I'm fine with this part.
+Won't that create an issue on systems with an older FW that doesn't send a
+RP_MBOX_SHUDOWN_ACK message?  Unless I'm missing something, this kind of feature
+needs to be backward compatible.   
 
 Thanks,
 Mathieu
 
->  		if (!mem)
->  			return -ENOMEM;
+> +	ret = readx_poll_timeout(is_core_in_wfi, kproc, wfi_status, wfi_status,
+> +				 200, 2000);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(notify_shutdown_rproc);
+> +
+>  /*
+>   * The K3 DSP and M4 cores have a local reset that affects only the CPU, and a
+>   * generic module reset that powers on the device and allows the internal
+> @@ -288,6 +355,11 @@ EXPORT_SYMBOL_GPL(k3_rproc_start);
+>  int k3_rproc_stop(struct rproc *rproc)
+>  {
+>  	struct k3_rproc *kproc = rproc->priv;
+> +	int ret;
+> +
+> +	ret = notify_shutdown_rproc(kproc);
+> +	if (ret)
+> +		return ret;
+>  
+>  	return k3_rproc_reset(kproc);
+>  }
+> diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
+> index aee3c28dbe510..2a025f4894b82 100644
+> --- a/drivers/remoteproc/ti_k3_common.h
+> +++ b/drivers/remoteproc/ti_k3_common.h
+> @@ -22,6 +22,7 @@
+>  #define REMOTEPROC_TI_K3_COMMON_H
+>  
+>  #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK	(SZ_16M - 1)
+> +#define PROC_BOOT_STATUS_FLAG_CPU_WFI		0x00000002
+>  
+>  /**
+>   * struct k3_rproc_mem - internal memory structure
+> @@ -92,6 +93,7 @@ struct k3_rproc {
+>  	u32 ti_sci_id;
+>  	struct mbox_chan *mbox;
+>  	struct mbox_client client;
+> +	struct completion shutdown_complete;
+>  	void *priv;
+>  };
+>  
+> @@ -115,4 +117,6 @@ int k3_rproc_of_get_memories(struct platform_device *pdev,
+>  void k3_mem_release(void *data);
+>  int k3_reserved_mem_init(struct k3_rproc *kproc);
+>  void k3_release_tsp(void *data);
+> +bool is_core_in_wfi(struct k3_rproc *kproc);
+> +int notify_shutdown_rproc(struct k3_rproc *kproc);
+>  #endif /* REMOTEPROC_TI_K3_COMMON_H */
+> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> index d6ceea6dc920e..156ae09d8ee25 100644
+> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> @@ -133,6 +133,8 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	init_completion(&kproc->shutdown_complete);
+> +
+>  	ret = k3_rproc_of_get_memories(pdev, kproc);
+>  	if (ret)
+>  		return ret;
+> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> index 3a11fd24eb52b..64d99071279b0 100644
+> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> @@ -90,6 +90,8 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	init_completion(&kproc->shutdown_complete);
+> +
+>  	ret = k3_rproc_of_get_memories(pdev, kproc);
+>  	if (ret)
+>  		return ret;
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 04f23295ffc10..8748dc6089cc2 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -533,6 +533,10 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>  	struct k3_r5_cluster *cluster = core->cluster;
+>  	int ret;
+>  
+> +	ret = notify_shutdown_rproc(kproc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* halt all applicable cores */
+>  	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+>  		list_for_each_entry(core, &cluster->cores, elem) {
+> @@ -1129,6 +1133,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>  			goto out;
+>  		}
+>  
+> +		init_completion(&kproc->shutdown_complete);
+>  init_rmem:
+>  		k3_r5_adjust_tcm_sizes(kproc);
+>  
 > -- 
-> 2.45.2
+> 2.34.1
 > 
