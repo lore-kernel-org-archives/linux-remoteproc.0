@@ -1,297 +1,204 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DC227A107;
-	Tue, 16 Dec 2025 05:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132D333556D;
+	Tue, 16 Dec 2025 06:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765864387; cv=none; b=BeES9KPuuY4uX7NB+h1r7ak8q6m7G2n35JxOf0eCPwWExG7+bTCJa60D4fpVDCWc8U1ewImzvjb0NB3RfgGDb1xQEa6iMYLc0Jh04lyBdcsN0QeVfUuSH+kcA7uwmDhxUz3/6cLdeKyIGuZRrN7DyoegHXPE7bCGAROsQ7fo+Yc=
+	t=1765868074; cv=none; b=cvcDdSFC8PJ1fODn7DA3Yr5MIYoqRTMzFVzLOzqNcl14+WE496t8OhXpfoV1QEFsFbpAp9mjlFM6Oe9vLnLzypOLaFfgWrpFVIapjlSaVdVjgoer0eq7ajcpB/aFAvoCCEXi/9g+WBj0eoBS8U+4yQo8s9UtvS9ZpP1VLUzuieI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765864387; c=relaxed/simple;
-	bh=s86mdKjN2cdmgjm8R2+QkPL0rT4EVd4ArfKmeFvFbFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OY3mom/gBwJbHrTY2cxLhmHLabqkawNW2HqP1q4v+popSL+j3fREN2GhjcyZWZ/jXA2PN6GPqWcUW32mI9SB+PvhYrgb8844bRD2BeLM2hDL6HY/Qfum3b4iIiYDZo3vDoN5sjYAjNviAWIKMFtyGxd43o3nJoAOqNlT5SuNVmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9tTIDtt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1765868074; c=relaxed/simple;
+	bh=CkWhfFXzA8/BEk61uxGLX5BnD38ZUjhdbL7cfP1q454=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WpjYjKlyYCQx6bp008I7WyBNrQE6U8/bROJEISa79s60+vT1Vb62ECSAgcbPx1KVWvnq2pF/LH31tgoNUwtpzNYgAJjLx0WKByJOUr9cz/028qViSUnzwRQBfXdfl0Osfss/F4WlQrwDJfwQrMcpOlFtz1LzRvr1QojLdzWf9+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MO/94LMd; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9tTIDtt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CD72C4CEF1;
-	Tue, 16 Dec 2025 05:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1765864386;
-	bh=s86mdKjN2cdmgjm8R2+QkPL0rT4EVd4ArfKmeFvFbFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D9tTIDttgLgO+UO60bk1Bv2SVwFcr1y+ha0xFhkAzd0jIyZZlaBnKcIOeg1rrw5B4
-	 pAVWl/cM4z5104QhJCf9BXs1SbRPL0yJoGwmEUt0Vjuym1qAzLoCi6xuKk8Ei82Iwz
-	 VWYjFBor5bGxWVRZN5Z62RsLR13XA8ONG2QnS2NHj7QNrUDyhK3JZQ0VvxLV8v7BKF
-	 sPwChVDIcjAgT7vO6579Jx3T6UBtGgG3mpHyvomaSiY5zV6sYicLLs+k/mYO6nrqH0
-	 bvPYadLDvwU8+X3PurYi9ATlyTfgIYKiLeYWuwyKHr4w6bMB0W1J0Xa+gsDy1CoP3F
-	 3WZU/MpORlSfQ==
-Date: Tue, 16 Dec 2025 06:53:04 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, konradybcio@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/3] dt-bindings: remoteproc: qcom,ipq8074-wcss-pil:
- convert to DT schema
-Message-ID: <20251216-notorious-omniscient-frog-caceaf@quoll>
-References: <20251210003729.3909663-1-mr.nuke.me@gmail.com>
- <20251210003729.3909663-2-mr.nuke.me@gmail.com>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MO/94LMd"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=3RuRVgDnSJ1WklbtVGpQY94ttgAeXmiQnAu2DWxJ2NU=; b=MO/94LMd2nNmSyM4b6pq0LPNfu
+	lV+QLoNiqXLSxCSNVu9EwOfy/hKL9SpVyDdXKqXajYgK6W1juh/UmKkJl+m4KKNQ6UnUIpOB5WtDR
+	zecmPUTTTIbWy0RXejw1baiKOkrL0aG5Voi0hSGlJompsJdF/WhTofMygz4bVBMlZmFXP3hTjl6wL
+	lsqbsez7H5H7BehsNr/qAuorNFJd70QVQAUzQcof01bOk2Q2hCA4hhIc6vxaGd6z4611dePHGUG0p
+	/1aPsVCtQ/SLgsVD6P2ObLgyO7kiyggEbfwHAem8Oaypq5Gvjn9Kstp31v3t0vmVeGLLLg0eF0G3s
+	OpiXVZ0Q==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vVOwz-00000004o6W-06pX;
+	Tue, 16 Dec 2025 06:54:25 +0000
+Message-ID: <b74aef93-9138-413a-8327-36c746d67e10@infradead.org>
+Date: Mon, 15 Dec 2025 22:54:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251210003729.3909663-2-mr.nuke.me@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/26] Introduce meminspect
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com, corbet@lwn.net, david@redhat.com,
+ mhocko@suse.com
+Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org,
+ Trilok Soni <tsoni@quicinc.com>, Kaushal Kumar <kaushalk@qti.qualcomm.com>,
+ Shiraz Hashim <shashim@qti.qualcomm.com>,
+ Peter Griffin <peter.griffin@linaro.org>, stephen.s.brennan@oracle.com,
+ Will McVicker <willmcvicker@google.com>,
+ "stefan.schmidt@linaro.org" <stefan.schmidt@linaro.org>
+References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
+ <bf00eec5-e9fe-41df-b758-7601815b24a0@linaro.org>
+ <5903a8e1-71c6-4546-ac50-35effa078dda@infradead.org>
+ <c3db6ccd-dfc7-4a6a-82b7-3d615f8cab4f@linaro.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <c3db6ccd-dfc7-4a6a-82b7-3d615f8cab4f@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 09, 2025 at 06:37:23PM -0600, Alexandru Gagniuc wrote:
-> Convert the QCS404 and IPQ WCSS Peripheral Image Loader bindings to DT
-> schema. The text bindngs incorrectly implied that IPQ8074 needs only
-> one qcom,smem-states entry. This is only true for QCS404. IPQ8074
-> requires both "stop" and "shutdown".
+
+
+On 12/12/25 11:22 PM, Eugen Hristev wrote:
 > 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-
-Don't add fake addresses to CC. I could not respond to this email
-because of that!
-
-> ---
->  .../remoteproc/qcom,ipq9574-wcss-pil.yaml     | 167 ++++++++++++++++++
->  .../bindings/remoteproc/qcom,q6v5.txt         | 102 -----------
->  2 files changed, 167 insertions(+), 102 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,ipq9574-wcss-pil.yaml
->  delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,ipq9574-wcss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,ipq9574-wcss-pil.yaml
-> new file mode 100644
-> index 0000000000000..d28f42661d084
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,ipq9574-wcss-pil.yaml
+> On 12/13/25 08:57, Randy Dunlap wrote:
+>> Hi,
+>>
+>> On 12/12/25 10:48 PM, Eugen Hristev wrote:
+>>>
+>>>
+>>> On 11/19/25 17:44, Eugen Hristev wrote:
+>>>> meminspect is a mechanism which allows the kernel to mark specific memory
+>>>> areas for memory dumping or specific inspection, statistics, usage.
+>>>> Once regions are marked, meminspect keeps an internal list with the regions
+>>>> in a dedicated table.
+>>>
+>>> [...]
+>>>
+>>>
+>>>> I will present this version at Plumbers conference in Tokyo on December 13th:
+>>>> https://lpc.events/event/19/contributions/2080/
+>>>> I am eager to discuss it there face to face.
+>>>
+>>> Summary of the discussions at LPC talk on Dec 13th:
+>>>
+>>> One main idea on the static variables annotation was to do some linker
+>>> magic, to create a list of variables in the tree, that would be parsed
+>>> by some script, the addresses and sizes would be then stored into the
+>>> dedicated section at the script level, without having any C code change.
+>>> Pros: no C code change, Cons: it would be hidden/masked from the code,
+>>> easy to miss out, which might lead to people's variables being annotated
+>>> without them knowing
+>>>
+>>> Another idea was to have variables directly stored in a dedicated
+>>> section which would be added to the table.
+>>> e.g. static int __attribute(section (...)) nr_irqs;
+>>> Pros: no more meminspect section Cons: have to keep all interesting
+>>> variables in a separate section, which might not be okay for everyone.
+>>>
+>>> On dynamic memory, the memblock flag marking did not receive any obvious
+>>> NAKs.
+>>>
+>>> On dynamic memory that is bigger in size than one page, as the table
+>>> entries are registered by virtual address, this would be non-contiguous
+>>> in physical memory. How is this solved?
+>>> -> At the moment it's left for the consumer drivers to handle this
+>>> situation. If the region is a VA and the size > PAGE_SIZE, then the
+>>> driver needs to handle the way it handles it. Maybe the driver that
+>>> parses the entry needs to convert it into multiple contiguous entries,
+>>> or just have virtual address is enough. The inspection table does not
+>>> enforce or limit the entries to contiguous entries only.
+>>>
+>>> On the traverse/notifier system, the implementation did not receive any
+>>> obvious NAKs
+>>>
+>>> General comments:
+>>>
+>>> Trilok Soni from Qualcomm mentioned they will be using this into their
+>>> software deliveries in production.
+>>>
+>>> Someone suggested to have some mechanism to block specific data from
+>>> being added to the inspection table as being sensitive non-inspectable
+>>> data.
+>>> [Eugen]: Still have to figure out how that could be done. Stuff is not
+>>> being added to the table by default.
+>>>
+>>> Another comment was about what use case there is in mind, is this for
+>>> servers, or for confidential computing, because each different use case
+>>> might have different requirements, like ignoring some regions is an
+>>> option in one case, but bloating the table in another case might not be
+>>> fine.
+>>> [Eugen]: The meminspect scenario should cover all cases and not be too
+>>> specific. If it is generic enough and customizable enough to care for
+>>> everyone's needs then I consider it being a success. It should not
+>>> specialize in neither of these two different cases, but rather be
+>>> tailored by each use case to provide the mandatory requirements for that
+>>> case.
+>>>
+>>> Another comment mentioned that this usecase does not apply to many
+>>> people due to firmware or specific hardware needed.
+>>> [Eugen]: one interesting proposed usecase is to have a pstore
+>>> driver/implementation that would traverse the inspection table at panic
+>>> handler time, then gather data from there to store in the pstore
+>>> (ramoops, mtdoops or whatever backend) and have it available to the
+>>> userspace after reboot. This would be a nice use case that does not
+>>> require firmware nor specific hardware, just pstore backend support.
+>>>
+>>> Ending note was whether this implementation is going in a good direction
+>>> and what would be the way to having it moving upstream.
+>>>
+>>> Thanks everyone who attended and came up with ideas and comments.
+>>> There are a few comments which I may have missed, so please feel free to
+>>> reply to this email to start a discussion thread on the topic you are
+>>> interested in.
+>>>
+>>> Eugen
+>>>
+>>
+>> Maybe you or someone else has already mentioned this. If so, sorry I missed it.
+>>
+>> How does this compare or contrast to VMCOREINFO?
+>>
+>> thanks.
+> 
+> This inspection table could be created in an VMCOREINFO way, the patch
+> series here[1] is something that would fit it best .
+> 
+> The drawbacks are :
+> some static variables have to be registered to VMCOREINFO in their file
+> of residence. This means including vmcoreinfo header and adding
+> functions/code there, and everywhere that would be needed , or , the
+> variables have to be un-static'ed , which is a no-go.
+> This received more negative opinions on that particular patch series.
+> The annotation idea seemed cleaner and simpler, and more generic.
+> 
+> We could add more and more entries to the vmcoreinfo table, but that
+> would mean expanding it a lot, which it would maybe defy its purpose,
+> and be getting too big, especially for the cases where custom drivers
+> would like to register data.
+> 
+> How I see it, is that maybe the vmcoreinfo init function, could also
+> parse the inspection table and create more entries if that is needed.
+> So somehow memory inspection is a superset or generalization , while
+> VMCOREINFO is a more particular use case that would fit here.
+> 
+> Do you think of some better way to integrate the meminspect table into
+> VMCOREINFO ?
 
-Filename based on the compatible, so for example:
-qcom,ipq8074-wcss-pil.yaml
+No, I just wanted to make sure that you or someone had looked into that.
+Thanks for your summary.
 
-> @@ -0,0 +1,167 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/qcom,ipq9574-wcss-pil.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm IPQ WCSS Peripheral Image Loader
-> +
-> +maintainers:
-> +  - Placeholder Maintainer <placeholder@kernel.org>
+> [1]
+> https://lore.kernel.org/all/20250912150855.2901211-1-eugen.hristev@linaro.org/
 
-This must be a real person. Fallback is your SoC maintainer.
-
-> +
-> +description:
-> +  The IPQ WCSS peripheral image loader is used to load firmware on the Qualcomm
-> +  Q6 processor that exposes WiFi-6 devices to the OS via the AHB bus. It is
-> +  generally used by ath11k to start up the wireless firmware.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,ipq8074-wcss-pil
-> +      - qcom,qcs404-wcss-pil
-> +
-> +  reg:
-> +    minItems: 2
-
-Drop
-
-> +    maxItems: 2
-> +    description:
-> +      The base address and size of the QDSP6, and RMB register blocks
-
-Drop description. Look at other bindings how this is written.
-
-> +
-> +  reg-names:
-> +    items:
-> +      - const: qdsp6
-> +      - const: rmb
-> +
-> +  interrupts-extended:
-
-No, you only need interrupts. Please look at other bindings - how they
-write this.
-
-> +    minItems: 5
-
-Drop
-
-> +    maxItems: 5
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: wdog
-> +      - const: fatal
-> +      - const: ready
-> +      - const: handover
-> +      - const: stop-ack
-> +
-> +  resets:
-> +    minItems: 3
-
-Drop
-
-> +    maxItems: 3
-> +
-> +  reset-names:
-> +    items:
-> +      - const: wcss_aon_reset
-> +      - const: wcss_reset
-> +      - const: wcss_q6_reset
-> +
-> +  clocks:
-> +    minItems: 10
-> +    maxItems: 13
-
-Why is this flexible? Wasn't in the old binding and nothing in the
-commit msg explained a change in the binding.
-
-> +
-> +  clock-names:
-> +    minItems: 10
-> +    maxItems: 13
-> +
-> +  cx-supply:
-> +    description:
-> +      reference to the regulators used for the booting of the Hexagon core
-> +
-> +  memory-region:
-> +    description: Reference to wcss reserved-memory region
-
-Drop description. Missing maxItems, please look at other bindings. Don't
-write your own style, but look how we already wrote remoteproc bindings
-(the latest).
-
-> +
-> +  qcom,halt-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      A phandle reference to a syscon representing TCSR followed by the three
-> +      offsets within syscon for q6, wcss and nc halt registers.
-> +    items:
-> +      - items:
-> +          - description: phandle to TCSR_MUTEX registers
-> +          - description: offset to the Q6 halt register
-> +          - description: offset to the wcss halt register
-> +          - description: offset to the nc halt register
-> +
-> +  qcom,smem-states:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-That's incomplete - missing constraints. Are you sure you wrote this
-code the same way we already did for other devices?
-
-> +    description: States used by the AP to signal the remote processor
-> +
-> +  qcom,smem-state-names:
-> +    description:
-> +      Names of the states used by the AP to signal the remote processor
-> +
-> +  glink-edge:
-> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
-> +    description:
-> +      Qualcomm G-Link subnode which represents communication edge, channels
-> +      and devices related to the Modem.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - interrupts-extended
-> +  - interrupt-names
-> +  - memory-region
-> +  - qcom,halt-regs
-> +  - qcom,smem-states
-> +  - qcom,smem-state-names
-> +
-> +allOf:
-
-Seems you do not reference other schemas. I am going to repeat myself
-for 10th time: are you sure you followed other devices?
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,ipq8074-wcss-pil
-> +    then:
-> +      properties:
-> +        qcom,smem-states:
-> +          items:
-> +            - description: Shutdown Q6
-> +            - description: Stop Q6
-> +        qcom,smem-state-names:
-> +          items:
-> +            - const: shutdown
-> +            - const: stop
-
-Missing clocks
-
-Missing blank line
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,qcs404-wcss-pil
-> +    then:
-> +      properties:
-> +        qcom,smem-states:
-> +          maxItems: 1
-> +        qcom,smem-state-names:
-> +          items:
-> +            - const: stop
-
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,qcs404-wcss-pil
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 10
-> +          maxItems: 10
-> +        clock-names:
-> +          items:
-> +            - const: xo
-> +            - const: gcc_abhs_cbcr
-> +            - const: gcc_axim_cbcr
-> +            - const: lcc_ahbfabric_cbc
-> +            - const: tcsr_lcc_cbc
-> +            - const: lcc_abhs_cbc
-> +            - const: lcc_tcm_slave_cbc
-> +            - const: lcc_abhm_cbc
-> +            - const: lcc_axim_cbc
-> +            - const: lcc_bcr_sleep
-
-All this goes to previous if.
-
-> +      required:
-> +        - clocks
-> +        - clock-names
-> +        - cx-supply
-> +
-> +additionalProperties: false
-
-Missing example.
-
-
-Best regards,
-Krzysztof
+-- 
+~Randy
 
