@@ -1,94 +1,129 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2259730E0C0
-	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 08:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183A3352938
+	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 11:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765875015; cv=none; b=c6zlmwq/PJJ1G18Mj8A1/iQ5y09PpG26syqcwqQFG5vSdpTGDvIPWrZ/ViDi+bpVcjS3FsC1Thw0C+uSDs2a3SfDfGL6U6BbkvcRQDc1BhZ6bAgikNHkVSrlj27K82e0PRxsmPu45hlhId/qLnUG5CluSM0P0ScgtMf6toXQaH4=
+	t=1765885766; cv=none; b=SH+PK9JqbwCHczleS/GzyKlISyHKGLYijzaC9Euw3yn1pZWEQz3CaNAyVaEGwc6iVzODyRlYtDJWDlKgOZcfjvDF9Sc5oi9ahO6z+HXJH7e9utyWhNeSLZ80wjke7UhLcsXJVRO3Df8vt6vbNZrjd6pdfwsb5zur8HYBL3CFYFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765875015; c=relaxed/simple;
-	bh=ZUFe47qtGYjU5Yn2pY9F8UI7JZG74YZxx2wQ1k0dRgg=;
+	s=arc-20240116; t=1765885766; c=relaxed/simple;
+	bh=P3r5nPJCwq57O4gAEF8RXUKtm9lIBx2Lzztq/sylt38=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uPO+2FPfQdSUf7m5Io2nwnAVakEqL30ftPw3SDvNAN3hd1ncVMNWYxBaQI5DfOqUa8j2W6ncmIaFYs8zR6GL36pgaK+lLa2bQSP4UZq1Xle8h1KvNjHrhizcjWLEgT3ohvtIYYVm/uIMRHtbcHq1AaEkSBNZqz0Nsajao7ytngo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KLx1dA7n; arc=none smtp.client-ip=209.85.214.169
+	 To:Cc:Content-Type; b=Fn16MPWxwMvQ4bFZct3bZDpYM3vCci25UgdchmJAQsyDesy+/gbd1yWRB68+t4hbhSASxfRkyBvT7Pb4jHw/81NuJbp6a3oTH0UeKRLbUIWpQngBe/e7DNab3SJuMPGjYOAo39c2DvvM9AD4DMILsAnq/aiXzG0pcIr/AP9rozs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dgtd9fOE; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLx1dA7n"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2a0bae9aca3so30520205ad.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 00:50:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dgtd9fOE"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-bf5ac50827dso2835979a12.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 03:49:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1765875008; x=1766479808; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1765885764; x=1766490564; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZUFe47qtGYjU5Yn2pY9F8UI7JZG74YZxx2wQ1k0dRgg=;
-        b=KLx1dA7nXlar4Y1RdRs0omA7As1afxUv9e3HsIYvmlzdQTXQKDS0SjLLzM+D6//q3Z
-         6v5iui5VRkvcKsQLq9wuIIm+cxmos+gxdSSluJ2OD84dXEyuVBhE6m5wmTMBMo799j6f
-         NlP+sFlq1e+vFYK4ObfQ4U+G5F46HHMdhOpwZz7HxeC9Q+skDaCytlKKWaC60T3wGLJ6
-         jUrZ/bFOh3NIe/3YgAk+7+gnjcySNBVWV0GxSXX9eJQrV2la3XU0poyI/p14Yt173Yq8
-         f37fKwDHO7brD1NG6Y0lhGjNBG7VZ1sCLrpZ+g/54/yWeATG9DdhL6SB6XqhndOVkax4
-         6F5Q==
+        bh=AHWMHf/Niwek5OLfXdmD1/NkgvAHjqsNRHIl2ImUeLk=;
+        b=Dgtd9fOEnyuvvfu34Ax/bMvZOkxkmM/850v4lVMVLGEhF2ITsgg89/3KEnwNNQMgcA
+         EOFjYYeNoaOpkrbCgsx5oi+ytLKkF9ysQaRBTOL2EnPR6uYHL8UbpHAHK0PzILyAUzSz
+         5XtAvkF01aI1hYIHyPB5H3amu16hyDJAHvv3LRIYjxnT53TLNeXtHmzi4WRrmIi/Pto1
+         X8+Ih2YJxm8wrKLRkgorT+ODeOnmXjePxtDNDamBA5oYCLzPo9WFYd1TG/yBPRgdVxN/
+         LDW8RJ45MoyLV8oT9mxFoF/hec5FagdZdI8TBY/CSHzK07tvKphF2lR1QgLYgbZCR2Sh
+         TRDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765875008; x=1766479808;
+        d=1e100.net; s=20230601; t=1765885764; x=1766490564;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=ZUFe47qtGYjU5Yn2pY9F8UI7JZG74YZxx2wQ1k0dRgg=;
-        b=Zr5uCSq8TNOG86E6FHKKPbygKYrvu9v0/urVuuOqDrq6oRQJyrI6icoRorVA5gc7Pc
-         ojUvSL0tkS2031OFz78KUEsmlqeN3OvHBwrvmuLb6iqREYUhzoXDHkLda30Hc1UJVOf+
-         L3hbvJ5Mu8iMfaTvnUkhiL9b8oRDbT3UjyoJB/incEJf00pPTSrhiSGXvI5QqU25i2eA
-         3vwEf/W0jnaFvEnHEyHNUwueC55NXwkOu7JN2hb2FOF9Jr+uiy1z51Z3+8mRKdB5+x4h
-         vEtv3oXU/2u+xBsIpWLxyzVZ9ZMDFALxsVT8p7MvZnkZOW7s53TY6boTd9AXgS5OdsmY
-         xtyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjxz6D7dewYE/+Y3JWeY0Rm+17x+27DXHnRiIaHvLfsVrRZeDQT1Uw8I+oh29ztV3F3wT/unhtGiryO0/CPA3P@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG0HA8C+QqZCYGYXmu1CyScvFwTHBemvSB5MeENAcdvhxPzjEF
-	W+tu54F8e/9uVHOEUeOeq6Gp5X8ZSMKjmOuAPxosFwLHridcP+IjbcOX8t9EBnHoiqN89feJfNH
-	i/h6z40EPTtu2OuXyeacyH4iFO5D8c0w=
-X-Gm-Gg: AY/fxX5HscHvcH3uOvx5HS3zmoTnODBMBUeV+NVTJkZblg9HiWYly1RF7q76mxzwS+s
-	eWshRPXS/r4fVpTBwNGQVyL+fG6nWxBBOYpiy1orP+hmvpVKYB+aBCCtNIpC0SP/Pf48843bCL7
-	/j1XVZhsuRwIZU19mow9pqMhYt95JdIz9f/mY26I50miJgbvFiqh4Xe+ODSOkU7o9hYcd49m3Am
-	vpexk9ytiZuduQBMP8MbaWObQGtdMkzflyPG7wGm7WdGgBcBXTI8zF+jFDwCq+VIRcl8DtwZaBh
-	fw279kscreLGcq75U/y4ZN+u+9ONjHPVKnJI7KohYDDsyMuBb7bQp1FJwXdZHzDJ6AUND2KYh0N
-	lZb7iAlgWQWCx0YeU8U5G
-X-Google-Smtp-Source: AGHT+IFdZYFT+NIwzhAXA50MF6zrj86tN0JwKIahPILeOcWuOCFok0qYlbb+VZx5E16t5BM86z6amXtW1CuiK+Z1D7g=
-X-Received: by 2002:a05:7022:5f04:b0:11b:88a7:e1b0 with SMTP id
- a92af1059eb24-11f354cd726mr6498824c88.26.1765875007985; Tue, 16 Dec 2025
- 00:50:07 -0800 (PST)
+        bh=AHWMHf/Niwek5OLfXdmD1/NkgvAHjqsNRHIl2ImUeLk=;
+        b=Ylh1mX4OFmH95gdy7SUFfv2+hG3hbGmFq5P7rFXrj1I75nj5YHV2BP/SOVEv+269sG
+         9tjeXaDQq+GnyKq/1tlkNIvx36j5Bnsce6c4s7xKQAfTVoDpPNLqS+fJjNJHThh0+T4c
+         4EE2LBg+JlXJR/Ws/x6GR/o7yd3J0ZURAx22Z8Zqtjxp/ygHuF3P3Wl5fkBzG+kZfOv0
+         oUhxMAt/MebAcW4vgSWQeqiLWD/KJJr/R8VZu4GTm7wM0kuOMcfD8arzs0EoYNAyzCa9
+         ATaNWg1p2s4t++6HC1z/LvOEAJ8xzB/OrZaJyq37k2hJFcZU2NiW9H31pCM10iNAG8kr
+         FDZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzpIR2gfIQbnggdwwwLNA8siCL/PMLkn62cZ52B8K4BSIfrg/QEQOUvDzJkoBwod33QxJJ/HB0P0RwNpY/Sznh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAk6qrFboUCng/zm44vLgOcUuCBsOmrOf/U5cN1Q10t0a/alFt
+	/vUSuYDmOBgTLxf7XcW2njGm4z8DH1lulBBM5p1ojNG6mrd/Hng+3dMn/GByy/PNqTDVp5GJXDb
+	EyBhsrDQ8i9qEU7GCmcMm1tjaZCRonXzttQ==
+X-Gm-Gg: AY/fxX6/d8hPb7xE/iB5AbRc7d6ZzQ7v84O0uIERC/434p7nYmeT4fvorQke8xw/Yjc
+	XNBAbq9JSSryeujW9pdfr5XIySVP6oAtXf+/EiNt/LEa83foXzv9f/qMMwdr9uRi/UlYtfi3X6v
+	s9RGU8mMN+udMXuWmhDnJFRh7hLiRwoN+cl8YzDt9DyPa9SATTYp7GbrUMIR7zXsg1P+NsRmDPK
+	g95FdsfTEry6YB8EVrh5RkO/gFKPMtXSgYzdIpSPbfc89nCGI5cGXk30U1AhdGSRg7ZfVcZfHkm
+	BOdU0FZ9x+9LsUBkQXQ0hWCIxV3iPfhKXePcHuszL5My1jpHlTpQDD38MnXZdKT2ip2TZwqLr3v
+	avjYhst3GBQ==
+X-Google-Smtp-Source: AGHT+IHPEep5dtYauknDb8YyMm1kDWolPZTnV2HvftVKII1DWWjGIN4YN/9xsVgqVLYIfLemujNO/0Bup29BPcFhFqI=
+X-Received: by 2002:a05:701b:2415:b0:119:e56b:98a4 with SMTP id
+ a92af1059eb24-11f349c583amr8528888c88.11.1765885764035; Tue, 16 Dec 2025
+ 03:49:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251216074216.447193-1-shengjiu.wang@nxp.com>
-In-Reply-To: <20251216074216.447193-1-shengjiu.wang@nxp.com>
+References: <20251216-imx95-rproc-2025-12-15-v4-0-bf1064ea8daf@nxp.com> <20251216-imx95-rproc-2025-12-15-v4-4-bf1064ea8daf@nxp.com>
+In-Reply-To: <20251216-imx95-rproc-2025-12-15-v4-4-bf1064ea8daf@nxp.com>
 From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Tue, 16 Dec 2025 10:52:38 +0200
-X-Gm-Features: AQt7F2qAJy_LSqPhNedKh08SXl3wUZHMX7Nrl3yXqFHsKDgpXLFzkxbItF2FoEo
-Message-ID: <CAEnQRZCZe3z8F7TsFdCz5P6mu6qzGkdoqC76XkyCCzQz+pSpmA@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: only reset carveout memory at
- RPROC_OFFLINE state
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	daniel.baluta@nxp.com, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 16 Dec 2025 13:51:55 +0200
+X-Gm-Features: AQt7F2r5R94-pfKGDYvFfrkyngEDJyIru0ByBqDzhFtMH5nZZaARnweMqygnu0M
+Message-ID: <CAEnQRZBS7zzc9AmTymCGVKwExeZ-JNFiG9MamWOZmk=gXdBY7w@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] remoteproc: imx_rproc: Add support for System
+ Manager API
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>, 
+	Daniel Baluta <daniel.baluta@nxp.com>, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 16, 2025 at 9:59=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.co=
+On Tue, Dec 16, 2025 at 3:53=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
 m> wrote:
 >
-> Don't need to reset memory at suspend and resume stage, because some
-> memory is used to save the software state for resume, if it is cleared,
-> the resume operation can fail.
-
-I would rephrase this as "Do not reset memory ...".
-
-"Don't need .." suggests that this operation is unnecessary, but not wrong.
-
-With that,
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> i.MX95 features a Cortex-M33 core, six Cortex-A55 cores, and
+> one Cortex-M7 core. The System Control Management Interface(SCMI)
+> firmware runs on the M33 core. The i.MX95 SCMI firmware named System
+> Manager(SM) includes vendor extension protocols, Logical Machine
+> Management(LMM) protocol and CPU protocol and etc.
+>
+> Depending on SM configuration, M7 can be used as follows:
+>  (1) M7 in a separate Logical Machine (LM) from A55 cores, that Linux
+>      can't control
+>  (2) M7 in a separate LM from A55 cores that Linux can control using LMM
+>      protocol.
+>  (3) M7 runs in same Logical Machine as A55 cores, so Linux can control i=
+t
+>      using CPU protocol
+>
+> So extend the driver to using LMM and CPU protocol to manage the M7 core.
+>  - Compare linux LM ID(got using scmi_imx_lmm_info) and M7 LM ID(the ID
+>    is fixed as 1 in SM firmware if M7 is in a separate LM),
+>    if Linux LM ID equals M7 LM ID(linux and M7 in same LM), use CPU
+>    protocol to start/stop. Otherwise, use LMM protocol to start/stop.
+>    Whether using CPU or LMM protocol to start/stop, the M7 status
+>    detection could use CPU protocol to detect started or not. So
+>    in imx_rproc_detect_mode, use scmi_imx_cpu_started to check the
+>    status of M7.
+>  - For above case (1) and (2), Use SCMI_IMX_LMM_POWER_ON to detect whethe=
+r
+>    the M7 LM is under control of A55 LM.
+>  - For above case , after using SCMI_IMX_LMM_POWER_ON to check
+>    permission, SCMI_IMX_LMM_SHUTDOWN API should be called to shutdown
+>    the M7 LM to save power only when M7 LM is going to be started by
+>    remoteproc framework. Otherwise bypass SCMI_IMX_LMM_SHUTDOWN API if
+>    M7 LM is started before booting Linux.
+>
+> Current setup relies on pre-Linux software(U-Boot) to do M7 TCM ECC
+> initialization. In future, we could add the support in Linux to decouple
+> U-Boot and Linux.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
 Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
