@@ -1,253 +1,179 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013060.outbound.protection.outlook.com [40.107.159.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FAE33A6EC
-	for <linux-remoteproc@vger.kernel.org>; Tue, 16 Dec 2025 07:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765870040; cv=none; b=nSNOms8K4qO/cSgmg3+xitwo163SvdWx7/mixI8+e6oKqeFCPUUZuoKrpiWNiJBvV5vuBwsghw0OFl3pFwtdlDON4QMCgx+e/+gSwndFu00hwwzc+lfYH+oEJZ9A3lpkzy7YEAUOyPrcqK+xcUB3ULy0qgArABz8Bh8gc3Xa2hY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765870040; c=relaxed/simple;
-	bh=0kPUYHQ/G4RfpscPzI7pr0OmdhWbcBqqBUxeWAMHLZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PamVppk5OT0dE/UlCt9oFhWvNANeZyDR/gxyxY3VbWAcbBRMOLPKXidrrbkKsR+whkcaKUYOIVDjuUS7o62uv9iFPLiTkhPJwQJyBJ4EiSDHCduGCRYdogPvD4Qhn5E2wwrIAyCI9Lhyl+gmcjHvbCW0eb/cqZqC0fEaWT8hcBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lm5xSb2X; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8AD338927;
+	Tue, 16 Dec 2025 07:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765871024; cv=fail; b=X3lHSlAotwDTnXXTKW+OcgQhGQSl0M217Tt3gTmuQrdHcqi/R58TnmZHWUmrb27fa9cmUqY8vOBrxbbK8dzfymfeTdHUq0TYGjHL8xgk3sslFf1bH+iaQMqqjh1FqBulq/Kw2rpzeN0DBkP8RsXYBDvvTRfVZnc8CfOcvQs5zIY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765871024; c=relaxed/simple;
+	bh=HB9/EtFElU3QVxQNRt6Yp+4kz1ChrPRFW11o4d09XCc=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=EHnRMzly/o0OqHG1rtOcV4cjwmQwxAlTUS6/fpE+DpgxxHHxGomjBNHpa/NL4hGH9iA/brvhjTTOPrMuNRucVWWC8bOfsgZvuZ1l1sFcJMfcCEt90HlGYUzF4HOYWJsy9FM5E9PeMaLcoZDXP/w/rhry3s/51Qp4hy4nOX9Kt+g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Qs6TGmL2; arc=fail smtp.client-ip=40.107.159.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lm5xSb2X"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2a0a33d0585so23896425ad.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 15 Dec 2025 23:27:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1765870037; x=1766474837; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PJCA2xXmtdABe9cuOOw6HKVAFYxYWKkv6zuIQkQSiJk=;
-        b=lm5xSb2XbgVJJua1CVQR22c9ySMunRfdv1obZuP3q9tqFUszoVK2AI81SnQikH6oQo
-         MtZz3tXiWDkspnAJG9pRyQ4Ltm06lq4i0Y/1r6nrQ7n4NUfmCokCI9OJPNpEk+hVlTjr
-         XtN9sbaOTK5KT0dqsURNXid7bpMHi3fCUu0lY49pRKjE2znj9nJwumsy+1PDrz2nnb/l
-         4qpvGvPntnl1xo+o7Y4hi81Lvd+3SOYfrOEWvRsh6zm87jsFXDWgQIMlAfslkwc275NP
-         L8+hfzcADz4BBx0QSc8lGEPh4F8coTr0wJC7uaehXSjP/n37CM9ALb0Izpzc84CUHXKo
-         sm/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765870037; x=1766474837;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PJCA2xXmtdABe9cuOOw6HKVAFYxYWKkv6zuIQkQSiJk=;
-        b=wBQ6qcI++b293+xwvmngKnVfjBnbOUYzz+jWf8DWMixNVcXOGrH18DwKUNKzlUP6H4
-         TCglYRD98crIfl8XEEVM+TF0AZnG5+pzMgJKoEGUCQe8zOJ7HbFTO22WiB6RP+NS0Ste
-         3tg661Emy+GAt7FbV4AdPgLNpK5cTD/jt0EpMRs66y/BRT/2S15tlM7tOq4rnwgJz7c8
-         Sct2L4HkpLAOyz3Pzqxp4QEOLbqqMu6fPvbA848SLdpTryuLB+MKQmDj9PzKUs062Oa+
-         qgQRZX8o0FZ+QEABymATfMyVDXKGymi4S9MjFqeMW5e5tFmWq4+iJ89S+amxoifbQMti
-         O47A==
-X-Forwarded-Encrypted: i=1; AJvYcCVwGiCWqOwIh3nYmgBjDZBk0B+KPmc64u1l2ocE+V5E4mBZY1d0OJuAr7WkzVCZHsj4vLB4lKVOk8vvsYB5mOyp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLde/crDYUVj+HxYN8zZVcVTaU1Ihs13dRnWKzibsuxa6bqROV
-	iiz70m/ekJcEBND/dY84w+ZOi+vQZlgtzEPzoEq3heBCRGLuaPZAlGGUdKfFVkzZpSA=
-X-Gm-Gg: AY/fxX5g7Ixa7y1DasFYC/Dq9ES/SHgxgJ9K5SZPame8gHCSDmGBgDNtej4a2yf9OFu
-	o1BRxgIaJUXPPCnAfWtj3G2D8FBgBQm9eAr5YVPOi+Z1oQMi+UWpVXtIGt9Juxt9Z/kIRKZS+HE
-	WVGojXdQKKZ+9aEDAGOrs2x3jyNI7hENoiRMME2RLjLdOi2gHHFaEcQuCf1RPlbs7QThZTovQfb
-	AKXs4ncsQbuU9QH7MvQzgohNSOgkJR5tAp4UZ37taRm8D5QOhdI8QhJTFJyce53BaSss81T14OW
-	3nc77QSoXFVedDEmrr3/l+95GyG5MqjmLInYDMYqG3HUOoyLxrrjE94gYZzESVpAqqeQtRrtcuZ
-	QK71S5hFvw15uts9+oFq/pgIay30pzVl1B/rlZHv4VT28n3Zkh5sjsLilwszknCDi/fukHp/OiM
-	ZMsZZiQMqL27ZgO49x7pPV1BU2NrEANEDC+jjhXlrvbPR9cxj+ca7xxw==
-X-Google-Smtp-Source: AGHT+IG0XHPlxrZ19+Thmc35PPwHSeilDW9jn34WiJoQPAtDXf3ILNz55k3pKMcPVzcVte7yg4mphg==
-X-Received: by 2002:a17:902:ea0b:b0:297:dabf:9900 with SMTP id d9443c01a7336-29f23bde313mr144794935ad.0.1765870036820;
-        Mon, 15 Dec 2025 23:27:16 -0800 (PST)
-Received: from [192.168.10.197] (14-201-17-74.static.tpgi.com.au. [14.201.17.74])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29ee9b36a80sm155735495ad.19.2025.12.15.23.27.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Dec 2025 23:27:16 -0800 (PST)
-Message-ID: <93297eb0-1ad4-40ba-9438-ac02aa6b1d6b@linaro.org>
-Date: Tue, 16 Dec 2025 09:27:03 +0200
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Qs6TGmL2"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nd3pFv9rMwQ/JKXFq7APSetI+z49X412KJY/UNoX9mJWZvZV8FJpwVu/M/bSt/5kjeDB8KxdD5Ds6wvqyftVX/4yXJhJQIHf4pdPhOpmVJiG2s0ycriGjFzr7oglVXvC7F/a2BiLmItMeLuDpLm1gDuxE6CfELCPsIyyHtNnXlKw8BnILAcFtq3foPKM8pfexsBAvBU22qWKYvFvxQDZe9fn0v1DGrQT9PdbTY7VB2eaHA+dElmJQdOCMJx5NlemdR1Ou/tBU9S3mrqHejezClaSckXaXu6xvvtjR5N3GLjI11qUomeh3vMQS6CAf0XNx+Sov/GbZzAqtNSekRGw9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n9q2wg+KDn1rSPE8Xkm4ICVuHhYr+oJS5uq1KZpxBfI=;
+ b=imY+jLYePdfMu7EMtAHWr5r98+WrX0rrksdn8APWKbKNwVRj2eElpi7ZqxCdVxtAepv/Q1DV7YzP8ll7rhmugq1XMNqUnl1w4Ia87tDheTrCY7hnSWf0tTmaRi3DEHNccTenhBKPDZW1zbHjDl91RM668IyZ0nRSjSkbUwU5l3ksSvP4EEoIqLzJT9aR0K0hJySQegtFr2nklp461OLqT6WyicKHOS6GlnzQ73g8S6+6aUTvuHbGZo7wtQRKBhVI7C2w1zd4MOKPqTtOFc7zGAVotquViWmdF/cXUky1TQ/rO1z+lSXIqysWzWZ2F3FimG4HD3BVWg1K3WreQU629Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n9q2wg+KDn1rSPE8Xkm4ICVuHhYr+oJS5uq1KZpxBfI=;
+ b=Qs6TGmL2sl/Hp71VGkXkjo/1L7RTqhrNfoAixquura4NM3Wrg4toCvm/NpCf22rO45otiaf6ffxkp4hfGfDiv3d12pRDYDCuUCIuQZ/OlGOsjaodSGGp8cvNWJg2hu+U0Vkjq69HzDlUEhfI+h3sTS5lb45GMWY/Fx6TOMkE9mlAC9/3+E+GKOJW5Pm0wEMf+0Lxk2U7aRLlznC9tzKMBi5fx78Tg9VKK0WK6SwAGC1Z4kYHg7t0gyLyAyySTFtdmSUSMsnPCNPZUKvF+9AG0rwryBiTuBG4elUvmczazrdK+dpNP9GLoP8xX8aI3tvBCW1zRK0A99H53rBRGujeSA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com (2603:10a6:208:191::20)
+ by DU6PR04MB11135.eurprd04.prod.outlook.com (2603:10a6:10:5c3::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.13; Tue, 16 Dec
+ 2025 07:43:39 +0000
+Received: from AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::bab2:d15c:fcf8:ef2b]) by AM0PR04MB7044.eurprd04.prod.outlook.com
+ ([fe80::bab2:d15c:fcf8:ef2b%7]) with mapi id 15.20.9412.011; Tue, 16 Dec 2025
+ 07:43:39 +0000
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	daniel.baluta@nxp.com,
+	linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] remoteproc: imx_dsp_rproc: only reset carveout memory at RPROC_OFFLINE state
+Date: Tue, 16 Dec 2025 15:42:16 +0800
+Message-Id: <20251216074216.447193-1-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.37.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR04CA0015.apcprd04.prod.outlook.com
+ (2603:1096:4:197::21) To AM0PR04MB7044.eurprd04.prod.outlook.com
+ (2603:10a6:208:191::20)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/26] Introduce meminspect
-To: Randy Dunlap <rdunlap@infradead.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com, corbet@lwn.net, david@redhat.com,
- mhocko@suse.com, linux-debuggers@vger.kernel.org,
- "kees@kernel.org" <kees@kernel.org>
-Cc: tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org,
- Trilok Soni <tsoni@quicinc.com>, Kaushal Kumar <kaushalk@qti.qualcomm.com>,
- Shiraz Hashim <shashim@qti.qualcomm.com>,
- Peter Griffin <peter.griffin@linaro.org>, stephen.s.brennan@oracle.com,
- Will McVicker <willmcvicker@google.com>,
- "stefan.schmidt@linaro.org" <stefan.schmidt@linaro.org>
-References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
- <bf00eec5-e9fe-41df-b758-7601815b24a0@linaro.org>
- <5903a8e1-71c6-4546-ac50-35effa078dda@infradead.org>
- <c3db6ccd-dfc7-4a6a-82b7-3d615f8cab4f@linaro.org>
- <b74aef93-9138-413a-8327-36c746d67e10@infradead.org>
- <93682055-4a6d-4098-b74f-afef735d1699@infradead.org>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <93682055-4a6d-4098-b74f-afef735d1699@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7044:EE_|DU6PR04MB11135:EE_
+X-MS-Office365-Filtering-Correlation-Id: 171d6e59-0232-47b5-8433-08de3c76d3a7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|19092799006|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pj492inUgDhkBCA14FMSKnOryexsEkZCcD/c+orHU5Kei0qXS9+p4nANZdu/?=
+ =?us-ascii?Q?w+vwaoKGGgtkPI3S3Nmxb11UMOqIY4OMpPIjXjG8PgzceVAwi9OHCIchEqt0?=
+ =?us-ascii?Q?M0cHyqTLKIolQOtQNfiqIhPqG/9Gx3A+3qBVGjafstiLRCs52DNb4CGNINNm?=
+ =?us-ascii?Q?dT4ei4N7UiUrYCpxPXWo2YDYM2wZ6PQMcdE+Y6Zx8Srp2LVrGVpEm14nvTyi?=
+ =?us-ascii?Q?1jOy+Qe6/mZyxcOXPSfljZUaPHcCyQp6NpUU9MMS08od3FlLpfNF+4aOauyI?=
+ =?us-ascii?Q?CB6vlLBuGjIhNKgLx5nRfD1MJcG0cFH+0nRbuBDVsDwPJinRuh5bnnic/r+l?=
+ =?us-ascii?Q?MPX2D7p6gloF4oOUGxkQYX4rr6i8C7Ml0RMTfdLeLx5Xdd4JW4YOaNooZLh5?=
+ =?us-ascii?Q?tQydFc3TjRxkfRo/PrK85EzLfUHfL4vCaa6iaGySjts8Mhez8+XybMKvpF/a?=
+ =?us-ascii?Q?tv6mPywYLUUJdamILrdaoenMBU2/LrnPBBNiYYblIoo3jBtmTGvpnwZvbeSz?=
+ =?us-ascii?Q?TokgK1e5Ndx/A7O/jjOWBjRA3GJSYYFyCwV0xm5hBKN0O87D4vPoxjL8plQ1?=
+ =?us-ascii?Q?mAKhE8hXueOukKWxQOQ6OgWaBOPOcyEGYtFOi4GS+A/Ml05CrMAZb9lrFC+e?=
+ =?us-ascii?Q?+GP4WHRckr8ULZ3fMv6xvcCKKXUQyJTL5cH9jyrh5pUBe+8zrB9BjefwwMx2?=
+ =?us-ascii?Q?JDRoHq5B3eB2hWWqe3TkKScvF0bIS7Yf6QLu+Pp+g5ylrgmRL5yIfeLfIETw?=
+ =?us-ascii?Q?Nr62Yba5Rn/4LVUlv79Iw1oJfBJodATzQ0d1buQbEUXFCJuF46gI9TgLGA3C?=
+ =?us-ascii?Q?zJCSCfNnS0QD/RgxUhpkZyOrsz+18fXeJK23aSGJ1aRsWrY+6PTgSh2b1XXg?=
+ =?us-ascii?Q?RalxuV+hfp295YhLg5wbwYYcgcaGKKg/04naQVNndbe6c4kJv3yR0K5jStsN?=
+ =?us-ascii?Q?aNclWllHENDI8neYPHCnmT+o/OFNSh9OgNatvL1ktIXYOC+8UuNCuYkNn6DC?=
+ =?us-ascii?Q?tDzWXaL1H+BT04bvPa8GrCNn0PsMarC1+xCZFFkLj083gqXoSfrLgzhVoLy3?=
+ =?us-ascii?Q?ODmAvsV/sDXv/GDkBjmnxGtbfj0WVH6CQCupPxtKIjknC51gTfTZxYhX2DsD?=
+ =?us-ascii?Q?iEzkoW9N355ojV2U/RHkorpV9bWZM3xO8vMZIuwS36JD70nwTgz/EPQMAedC?=
+ =?us-ascii?Q?pvyToHbNNfvpqOeBusr8iANh3pwsDdPDJhLoc34/l9t6XxdYksQtZ9K/+ETp?=
+ =?us-ascii?Q?3XNiVc2t1I+TOoF+Zf2zQAmyAUoU3elCSgQu254GiQ/+SogS9PqvzykWpKnr?=
+ =?us-ascii?Q?WTjlo6K+anip82THPJq70H300PSq/V/BzFg57JSM/SvsEsAMi3Stzu011BnF?=
+ =?us-ascii?Q?zmOcfpLso8DjqKLik4/T30AaasddR4XTdCkSC9nPqpuTmjH4txUohkKoP8oi?=
+ =?us-ascii?Q?ecf/TGjYL4A4+ZkavsqEvM1WDJoOndOsP1WqTOFF6+qYXYBBApj8Zb/vKjTj?=
+ =?us-ascii?Q?VoGVENzmcuzLfTKDADursQ/J5kL/CbdqNbppEYsmNKhsMCCY2SY+ANyplw?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB7044.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9BAk698esu3K7m4m832Mp29naIT7+eWto9FkXT+oI80aCvR5dwyEGk2tTizn?=
+ =?us-ascii?Q?lW4+klzr81ujYnUxkNBv0TQcf2tzOYJzRmrOq2fzzc5Yz3OdWi6kRO5dxf5N?=
+ =?us-ascii?Q?+/GL+Ih2KCnbZ2cs/tKdVo9SM6b7PdVplFvDSi+4bxLegwFMusluZ5vC6EeO?=
+ =?us-ascii?Q?/CE1iUYjdXmylipXWm7Kl3cazx7tE6uhCZvaNSg1XIh372rOsELsrFWyioQP?=
+ =?us-ascii?Q?x2YRiszvD3rMwzBL/ZkAdORn6vNh4i9SrjMWpxV4wVtMXz5re3+hsFPXQBiV?=
+ =?us-ascii?Q?OUJJeyKnXXs8YShIVdUn2y5E1A7CqiU3dzYtl+e4ITrWnJBg0Z2Yt9Z9mCeO?=
+ =?us-ascii?Q?1nwT3Ap/OutXDKjsNv68Hu4y3nHsyvmt9LUbaUH11US+tOlq6XAX/mmBe74F?=
+ =?us-ascii?Q?NPU76zOoaUaDMWWkBVNZTn5HGedm0QxZeq2LXDNafIbmdKMO3FhORR0HhhK2?=
+ =?us-ascii?Q?gTYPMSL8Vwe09+aRLplRg/mKtODKVA6MLTFJRPEl5KLpCAID+yC6THe7mixe?=
+ =?us-ascii?Q?WYK4J9y7WUTaezKFFzXOuxiZYe0CANTFd5o1tXMKnp9qcbwYJS22icNB+6MH?=
+ =?us-ascii?Q?gbXNWx5Rn51OM2cCTqnjhh+kCve4KfEJ2ItZr+/aifTLZXVRy9bOBhj131CE?=
+ =?us-ascii?Q?44fHg8dZHJ4hEUcaqqaJNu0o7GMpWLkh+0blHi9S0MmZea9lvHeS37b1e1H5?=
+ =?us-ascii?Q?mQo/euLLU8Umzw4oQxwkB3SWpgY3JZzFpuRK8Gz/5IdcsI1DodWySETUUtff?=
+ =?us-ascii?Q?TiCVG0Cun8gECBzPa1aNa1gkXG+wvTjkEpFLgVKENYIEHFktRNgW2LAXMIK6?=
+ =?us-ascii?Q?h4/LlYjKXzfPWiVTbPm5uxmhXCn8mxjV91fdwy2YS9RFUvLMmEnD5tiBYn3C?=
+ =?us-ascii?Q?V10Z4ew1Khnun96FUlUYMWKIOBV9zQCnSkmLMh4VHUzDNvxa6mnObZT/ZimQ?=
+ =?us-ascii?Q?X1RxnNSBHjv3EPQXwTaqHSZ8r837TDkePi7nSB1G9KCjZzzFXA8QKzFEqGvM?=
+ =?us-ascii?Q?LFtZzeF7+hSu6tQmlT0NTkQX4DR+gdRaIa8lJbeXJyld6dMnStqi/7gcjT25?=
+ =?us-ascii?Q?HrM17KX6tRySV0SI7mwucPFkyapgXl0bIInCWx3NFls0oqcqFQw0syo9Aj9o?=
+ =?us-ascii?Q?Uf4IC2B0T1qCMwBsFKYuo4ZwnWzNXjKCqHWL3e9L4qtGuCnsCLR2xtPCEJ9e?=
+ =?us-ascii?Q?2s5JrhDzjB9Ts7JS0/y3X2Vlzi0nYzMLBx0vOPgzIPgzuNb6Nw8qsBgMnC/7?=
+ =?us-ascii?Q?JKYIu9Xvni3Zw+PXN1uptXhXvIvayXDG6Rck0SRLbZSrRAuWUF9uBm9k63Ba?=
+ =?us-ascii?Q?mC/+hWWbm9cpt7L33bCq19Riex/y3DWPGr2hTI0Mbp32dRThvScTDuonWrFs?=
+ =?us-ascii?Q?V9hSEeookLFazG8xMfsDhhLmW9RmNh1am9VzYoTDmNDVfafl8Xd9WqPjF0KE?=
+ =?us-ascii?Q?q7WVe5Bw7015+tR1ZRkvr61iWiVIaS0moWj0gGPKdL6vJkrHGh4ao8GSARtO?=
+ =?us-ascii?Q?FiIXZmKmTXKdughowJpuugDt5DHwoBR6oT3/VX0+y44D3LuYRK+tvhvy/FcJ?=
+ =?us-ascii?Q?0+lhP7Gv9PR8nDeg+K0iCMgKAnuQfHF4/98K+PuD?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 171d6e59-0232-47b5-8433-08de3c76d3a7
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB7044.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2025 07:43:39.1178
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XJEcLhPHQ0HTUgs9z9KZmffmby+CfHYmEeq0kp6L+/X5zaALa3XFbTOblvt1G6Hyh/UnU5EMQQndJfNuYLgzjg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU6PR04MB11135
 
+Don't need to reset memory at suspend and resume stage, because some
+memory is used to save the software state for resume, if it is cleared,
+the resume operation can fail.
 
+Fixes: c4c432dfb00f ("remoteproc: imx_dsp_rproc: Add support of recovery and coredump process")
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ drivers/remoteproc/imx_dsp_rproc.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-On 12/16/25 09:00, Randy Dunlap wrote:
-> 
-> 
-> On 12/15/25 10:54 PM, Randy Dunlap wrote:
->>
->>
->> On 12/12/25 11:22 PM, Eugen Hristev wrote:
->>>
->>>
->>> On 12/13/25 08:57, Randy Dunlap wrote:
->>>> Hi,
->>>>
->>>> On 12/12/25 10:48 PM, Eugen Hristev wrote:
->>>>>
->>>>>
->>>>> On 11/19/25 17:44, Eugen Hristev wrote:
->>>>>> meminspect is a mechanism which allows the kernel to mark specific memory
->>>>>> areas for memory dumping or specific inspection, statistics, usage.
->>>>>> Once regions are marked, meminspect keeps an internal list with the regions
->>>>>> in a dedicated table.
->>>>>
->>>>> [...]
->>>>>
->>>>>
->>>>>> I will present this version at Plumbers conference in Tokyo on December 13th:
->>>>>> https://lpc.events/event/19/contributions/2080/
->>>>>> I am eager to discuss it there face to face.
->>>>>
->>>>> Summary of the discussions at LPC talk on Dec 13th:
->>>>>
->>>>> One main idea on the static variables annotation was to do some linker
->>>>> magic, to create a list of variables in the tree, that would be parsed
->>>>> by some script, the addresses and sizes would be then stored into the
->>>>> dedicated section at the script level, without having any C code change.
->>>>> Pros: no C code change, Cons: it would be hidden/masked from the code,
->>>>> easy to miss out, which might lead to people's variables being annotated
->>>>> without them knowing
->>>>>
->>>>> Another idea was to have variables directly stored in a dedicated
->>>>> section which would be added to the table.
->>>>> e.g. static int __attribute(section (...)) nr_irqs;
->>>>> Pros: no more meminspect section Cons: have to keep all interesting
->>>>> variables in a separate section, which might not be okay for everyone.
->>>>>
->>>>> On dynamic memory, the memblock flag marking did not receive any obvious
->>>>> NAKs.
->>>>>
->>>>> On dynamic memory that is bigger in size than one page, as the table
->>>>> entries are registered by virtual address, this would be non-contiguous
->>>>> in physical memory. How is this solved?
->>>>> -> At the moment it's left for the consumer drivers to handle this
->>>>> situation. If the region is a VA and the size > PAGE_SIZE, then the
->>>>> driver needs to handle the way it handles it. Maybe the driver that
->>>>> parses the entry needs to convert it into multiple contiguous entries,
->>>>> or just have virtual address is enough. The inspection table does not
->>>>> enforce or limit the entries to contiguous entries only.
->>>>>
->>>>> On the traverse/notifier system, the implementation did not receive any
->>>>> obvious NAKs
->>>>>
->>>>> General comments:
->>>>>
->>>>> Trilok Soni from Qualcomm mentioned they will be using this into their
->>>>> software deliveries in production.
->>>>>
->>>>> Someone suggested to have some mechanism to block specific data from
->>>>> being added to the inspection table as being sensitive non-inspectable
->>>>> data.
->>>>> [Eugen]: Still have to figure out how that could be done. Stuff is not
->>>>> being added to the table by default.
->>>>>
->>>>> Another comment was about what use case there is in mind, is this for
->>>>> servers, or for confidential computing, because each different use case
->>>>> might have different requirements, like ignoring some regions is an
->>>>> option in one case, but bloating the table in another case might not be
->>>>> fine.
->>>>> [Eugen]: The meminspect scenario should cover all cases and not be too
->>>>> specific. If it is generic enough and customizable enough to care for
->>>>> everyone's needs then I consider it being a success. It should not
->>>>> specialize in neither of these two different cases, but rather be
->>>>> tailored by each use case to provide the mandatory requirements for that
->>>>> case.
->>>>>
->>>>> Another comment mentioned that this usecase does not apply to many
->>>>> people due to firmware or specific hardware needed.
->>>>> [Eugen]: one interesting proposed usecase is to have a pstore
->>>>> driver/implementation that would traverse the inspection table at panic
->>>>> handler time, then gather data from there to store in the pstore
->>>>> (ramoops, mtdoops or whatever backend) and have it available to the
->>>>> userspace after reboot. This would be a nice use case that does not
->>>>> require firmware nor specific hardware, just pstore backend support.
->>>>>
->>>>> Ending note was whether this implementation is going in a good direction
->>>>> and what would be the way to having it moving upstream.
->>>>>
->>>>> Thanks everyone who attended and came up with ideas and comments.
->>>>> There are a few comments which I may have missed, so please feel free to
->>>>> reply to this email to start a discussion thread on the topic you are
->>>>> interested in.
->>>>>
->>>>> Eugen
->>>>>
->>>>
->>>> Maybe you or someone else has already mentioned this. If so, sorry I missed it.
->>>>
->>>> How does this compare or contrast to VMCOREINFO?
->>>>
->>>> thanks.
->>>
->>> This inspection table could be created in an VMCOREINFO way, the patch
->>> series here[1] is something that would fit it best .
->>>
->>> The drawbacks are :
->>> some static variables have to be registered to VMCOREINFO in their file
->>> of residence. This means including vmcoreinfo header and adding
->>> functions/code there, and everywhere that would be needed , or , the
->>> variables have to be un-static'ed , which is a no-go.
->>> This received more negative opinions on that particular patch series.
->>> The annotation idea seemed cleaner and simpler, and more generic.
->>>
->>> We could add more and more entries to the vmcoreinfo table, but that
->>> would mean expanding it a lot, which it would maybe defy its purpose,
->>> and be getting too big, especially for the cases where custom drivers
->>> would like to register data.
->>>
->>> How I see it, is that maybe the vmcoreinfo init function, could also
->>> parse the inspection table and create more entries if that is needed.
->>> So somehow memory inspection is a superset or generalization , while
->>> VMCOREINFO is a more particular use case that would fit here.
->>>
->>> Do you think of some better way to integrate the meminspect table into
->>> VMCOREINFO ?
->>
->> No, I just wanted to make sure that you or someone had looked into that.
->> Thanks for your summary.
-> 
-> Although you copied Stephen Brennan on this, I think it would be a good idea
-> to copy the linux-debuggers@vger.kernel.org mailing list also to see if
-> there are any other comments about it. [now done]
-
-Thanks . I copied Stephen because we had a discussion at LPC at his talk
-and he also attended my talk.
-
-I also had a nice talk with Kees Cook and he was very interested in
-having pstore as a backend for meminspect. (copied now as well)
-
-> 
->>> [1]
->>> https://lore.kernel.org/all/20250912150855.2901211-1-eugen.hristev@linaro.org/
->>
-> 
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index d03017d6b214..ac8aa71aa56c 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -984,9 +984,11 @@ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
+ 	 * Clear buffers after pm rumtime for internal ocram is not
+ 	 * accessible if power and clock are not enabled.
+ 	 */
+-	list_for_each_entry(carveout, &rproc->carveouts, node) {
+-		if (carveout->va)
+-			memset(carveout->va, 0, carveout->len);
++	if (rproc->state == RPROC_OFFLINE) {
++		list_for_each_entry(carveout, &rproc->carveouts, node) {
++			if (carveout->va)
++				memset(carveout->va, 0, carveout->len);
++		}
+ 	}
+ 
+ 	ret = imx_dsp_rproc_elf_load_segments(rproc, fw);
+-- 
+2.34.1
 
