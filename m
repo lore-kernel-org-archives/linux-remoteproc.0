@@ -1,206 +1,325 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430F535E521
-	for <linux-remoteproc@vger.kernel.org>; Wed, 17 Dec 2025 13:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765976995; cv=none; b=FnoWxdiiEQOBJQ45cz1WA3XalWEnGHmuJrqlkwA6s4+Fth5U7qzW3MZImO2FBo48dNnGQkJ0MN7K6kNMpReeVJw9laQaLP0jLkS0YU9UkBUM/ZbZjoH0YQ6gqY25c9FDJH4NkE6raAYEnTXH6OgukAJyowKSLnfd6FsWhVaQETw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765976995; c=relaxed/simple;
-	bh=k//VXwjKpLf4ePq4urW6+vTHmlvuTAt7wiEtxM65XeE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DSO2psCv3MQDy82fwEszxVZ7lQIYJDk62n/1lZvuPn4JEP+BzV3wQw0L1AjlEwVHtLWRXG4GOvM34js0fNXRmxoYW5tqNA/p6KtjBW+a27afO8JWR7dDE5Sl3QiTn2Tktlu16F3Faq+D9nGVYuJaS11bdOfKC7F3+EEyYHLqH6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fFVSTUtx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JupX8u29; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD8524290D;
+	Wed, 17 Dec 2025 15:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=91.207.212.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1765986012; cv=fail; b=ojRjP+wmBE89czhWhbP3fYq+eE07N83SQ5IOtd+7LVZZhapczJhGzMKLhjO+0VXD2XecJ6TKo4CBARvUkV3SaxokrE2lwMwj/VPjHz4lpMONwWH5bw2my6Rp6Cy4S2excajE7yvizdygf8uvRTBJa4htmTjc8qpn+Zqhr+9h4gQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1765986012; c=relaxed/simple;
+	bh=qFwzrGjy1xa/l4lzO/v1BxJ4wD5oTtq+olLUa4kAbAM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zb2rMY3NEJlog3rdKMEOiwZSEAW6NaAHZcru+aptSASPTmzAdZUukqgj70FJVGR6qjoMxiQfIdmkk6QoXvGfRuhegnsg0dwcOr4G9SRC+OtEmyhS+NDrK2RvgpTCj3nT3aVY6Zstw0vJ3QHN9m0tAfMfUAlEEv8Ml21Kx7meOTE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Kvq6K6b1; arc=fail smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fFVSTUtx";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JupX8u29"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BHCL0Om330813
-	for <linux-remoteproc@vger.kernel.org>; Wed, 17 Dec 2025 13:09:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nY+m1HxvRLCAvE+BIW+be1ykVerj/S4gZuW5Um71+iQ=; b=fFVSTUtxIORa/1x0
-	Vl9aw/R0wZzUrGqX+H2hhUs6/ZN1Siz/FFGT0GQxnCG+EqWOibdq24WdhzvVyr2w
-	nTfafcOuEbTxVa9yWSGI7A8akL68gGx0YS1XQurCYjKiuVx0zmPgOH54X4x8NQAL
-	srQWPG/cOioCyGoQADDA8gTg/FOAjp6Cemkmhoeh+JsIBK9vMU08Rkeopw8QLYZp
-	H+OtgQBGevHfuoEbM+l0HZtJrOO/F4buS8Bo6AXM3kY7eg8DPA1wGp2ioNO690ss
-	9k2YxEksHwMGrYEcg3wumqtO3sPvQ1uJ2mmnadgGWznVqDX5oJDZRr+olHJwdGDM
-	JYMxqQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b3t8e0hnc-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 17 Dec 2025 13:09:51 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ee23b6b6fdso13103371cf.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Dec 2025 05:09:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1765976991; x=1766581791; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nY+m1HxvRLCAvE+BIW+be1ykVerj/S4gZuW5Um71+iQ=;
-        b=JupX8u29sHCh5B3C7DXdt93lRWtZ8AnRSefhLnwmP+N/Koc1RHYufKkto3kvTIF7zG
-         TsbXImyA6Bw/qiFTwngu0KOC1j/mfZsmY6TocylLpRpxsPoxuOhSkb/hUyMA+q2nPo5O
-         EAeVBGP5kr0joHm3Qug2Whe0+vuj0iw8mzwgREDiYQY0bV9vBCh0pDRJ3BzExSN9Yq5P
-         jmZS+QBLX2WVXKs1NI7hg7Rnwaz9PKWUugckKH9Q/k8/IGD6066FPIHEVV7M1wi9pXRV
-         e9S//0CORWJbzDSeBkp2+giYmSrUV8RRewEf32ltInM13WUFqkWa7R99ew6c8vBZQorO
-         hbqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1765976991; x=1766581791;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nY+m1HxvRLCAvE+BIW+be1ykVerj/S4gZuW5Um71+iQ=;
-        b=Ui1u0j2X0QRTX/GV5EEgQhhYAlxnb9RSluX6NykcVMh+9cJZNccRlDcccOlhtwwIVg
-         oV++L0CGAk3dboVrRkth1pSLRzVphYoFLKL92F87BTo3Bcc2rAbhk9HuU6+5rAJOPDxy
-         T6MfU73AEAVUl7/GHkUmniQgzALLB+e1tR/jplF2ATQoZ98dMnaLgAxz71L1/kfT5Zja
-         eThDpKWLAK2eqrbDzeVyvQ7tkrtbAbL9dNzvM2FT6DKS0FMOF9aZ5ELGWT4UWne6SC6u
-         HtJ9yIw2fWKeOZHpdX1yN8cYpzN0gbk5RGfXOc6ejwIm2LGA8VYMNYtP8mQSyZpwMDu4
-         Avzw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrh6SADJgMxRyO0TzeY9Cq4my+ueDHMbsJM1oHECZkYGQtXusknq4YrhZi133f7QtD+zKspdwmnF8N85EMxc7s@vger.kernel.org
-X-Gm-Message-State: AOJu0YywB6pAh757sQDxkhvU1ZFS75flSr6SapPBklTm7+19bG7vetT4
-	nAUsL/0FrbKC29Wh6a+TZkHLrNsDXUh59x4uqf10kKit65UINSCd96FgnvkYpjwRmTWf7RAig4j
-	B/qdi9EOGCbeF+scpF/YzHXQPuJhBqWBjPC9K6NYVywuAiNlR3qHlvETARiWLEGRkdirNzzh3
-X-Gm-Gg: AY/fxX4tnUMayxXTRBgl/esD7PGPQXEOA9pfvlIGYVDT1Tz6JofySQM4lSTJCIXExP2
-	kHyxqc1bKeLz4m2GIRTg972WbM0wdsBSD1BIUzPcNV5zxOqXILEEVWYdN2o9q3PiqePN3T245iG
-	Gx4TCnC3yM3sl/W2pIHgvb9u5xa5ZSB6dLL4BYXMX8/Rn6wfc9yNwfmQOQgplEUgq4oZ+xipW5d
-	70rbyLIsLXm285c21v9E4id/n+QxIbY5H1KlxtwpkjeZJB4YiCEiqdY3bRQxiZAXlYrE0gqmkdr
-	BoTSFURCB4SEpC+PSaBu6VVh6uNgaU+lqfigJs7qgnwF1k1BHe2uDBADt19AIpUmlu5azfdmWjH
-	O/J7xcPkUE0d2wFIyAK/lJaGGzXEq7QmBIEAu4ZJq2I+3nNjV3mEUx6L9nhZp5a+ibA==
-X-Received: by 2002:ac8:588c:0:b0:4e8:a54d:cce8 with SMTP id d75a77b69052e-4f1d04ec585mr193474341cf.4.1765976990877;
-        Wed, 17 Dec 2025 05:09:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFFOIgftumFt2rPagd7WMAwupyG927hYvjfHGYbMJ2mFWjjolrhO9f+WryJIAq0yWn9bWnTKg==
-X-Received: by 2002:ac8:588c:0:b0:4e8:a54d:cce8 with SMTP id d75a77b69052e-4f1d04ec585mr193473791cf.4.1765976990115;
-        Wed, 17 Dec 2025 05:09:50 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7cfa29eb69sm2014690266b.6.2025.12.17.05.09.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Dec 2025 05:09:49 -0800 (PST)
-Message-ID: <0560bae7-f825-4bd4-bb9a-b7d145b0e621@oss.qualcomm.com>
-Date: Wed, 17 Dec 2025 14:09:46 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Kvq6K6b1"
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BHFdn8t072175;
+	Wed, 17 Dec 2025 16:39:57 +0100
+Received: from pa4pr04cu001.outbound.protection.outlook.com (mail-francecentralazon11013009.outbound.protection.outlook.com [40.107.162.9])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4b3gavkjdq-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 17 Dec 2025 16:39:56 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=So7HCY1GK9Qh+RwlMYwpkp5TNJbNC/c1lAo1mc0nbmsRHjoZsxOUip9NYRGl4zQFWc2lgXMEMjrtxmrzfhkimDkoU4Teye7UjmtevcfSA52Wty+JDq7L4jVBJd1lberCZdKBPHpmMGjJKx6OgCFTEOeotRlzyyaLMxjRfvU+yJKIn0JQGSOsDIKAZ0J7JM53blo4uJ0cwfgqi2WJVee9h14WAFXRo2putCMSJE/aZt41RUB1OQHv/WDQmjagLSCi/fylFdnwR87rloAPVBpHbJYcq+JqQ4tD0jsHlm7FHq8rgkKhfwrgZuk0CxVp2o2mGczJXZyOgcu1Di0DFMzQCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vVnX47y9eLUnyonTmsIYsd1TzbP1+Mgmimqn69+e4g0=;
+ b=NWvU5pGCXiE5F0/zjmCAgPyLqDZ+XLFalH0cu2vULerSnTE7sQ7xIgX4tVz4MviPQ8+ZimDb7suU6eZRVybjMkQNEVykc+2phAzbxkqf+nrxkAeWSW5Zop6tVEnMz8CMJ4vavuDaYOgR2abRNnSTnvD53cFqyZq/gKW58RgBfY08dHYlKN+6xARH+jBa8mxqcutJn49tnhGCq2QpJ+mPQ62R/pXqLvtBPKewaLld2KAzzFhWM8n6Le8GIBJulF26AzPsZbMoR17K0o92qUFG0uHGmRCPVp7AjsYBKtmdMjM5OVwFf10pwjesnamRmHJSNgbzR4+p4UUFA+0JF7spCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vVnX47y9eLUnyonTmsIYsd1TzbP1+Mgmimqn69+e4g0=;
+ b=Kvq6K6b1mqmdhtH+/yJK2pnJuaFYLuU8tMveMOginleTrW3BzBgVIsZjC7G9qCg1u81tiPq4jKPKJOzODFe5DWHrlR4Ec3K+6ef+E3zVW29Sc/mIQex4Dodcu0MCbroMi4YhUkBhoE5TSE4vVqorHdIOuEGn91TXUQXUCdRYpGnNSXhPn6rtJqI87fjQH8sn1Ln+svji+CSMUeFDcwErgak5O9WZC1XHZIYqrFcV0GKEiHzTpVAqjlpyvN7fpCUZpVbpBnwN6LgmXyofg3g7bhB08javgLasCfCJmBnhbuBMBNULDnmX1IR0sQiiORz3T+8Di/olHCRGlJU2VDN0EQ==
+Received: from AS4P251CA0014.EURP251.PROD.OUTLOOK.COM (2603:10a6:20b:5d2::14)
+ by AM7PR10MB3271.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:10d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.6; Wed, 17 Dec
+ 2025 15:39:52 +0000
+Received: from AMS0EPF00000194.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5d2:cafe::d4) by AS4P251CA0014.outlook.office365.com
+ (2603:10a6:20b:5d2::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9434.6 via Frontend Transport; Wed,
+ 17 Dec 2025 15:39:51 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ AMS0EPF00000194.mail.protection.outlook.com (10.167.16.214) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9434.6 via Frontend Transport; Wed, 17 Dec 2025 15:39:52 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 17 Dec
+ 2025 16:40:40 +0100
+Received: from localhost (10.48.87.127) by STKDAG1NODE2.st.com (10.75.128.133)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 17 Dec
+ 2025 16:39:51 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>,
+        Sumit Garg <sumit.garg@kernel.org>
+CC: <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Subject: [PATCH v20 0/6] Introduction of a remoteproc tee to load signed firmware
+Date: Wed, 17 Dec 2025 16:39:11 +0100
+Message-ID: <20251217153917.3998544-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
- qcom_scm_pas_get_rsc_table() to get resource table
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
- <86f3cb9f-e42d-40f9-9103-1a4953c66c71@oss.qualcomm.com>
- <20251124152538.wt3kzztqmpr76hsx@hu-mojha-hyd.qualcomm.com>
- <4376b7cf-7088-412b-8596-bdec5bdc273d@oss.qualcomm.com>
- <20251204122806.s7lnqffgcrd7usem@hu-mojha-hyd.qualcomm.com>
- <e78feaff-0b48-42b6-a824-0f102a6ac9cc@oss.qualcomm.com>
- <sysdgcspvxhytyudknnyj4hu6lc47we5ijkrsssi6askysqyo2@bdzl5cvzc4be>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <sysdgcspvxhytyudknnyj4hu6lc47we5ijkrsssi6askysqyo2@bdzl5cvzc4be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDEwMSBTYWx0ZWRfXziNz+q7mc4gR
- MSvzIxYzJdA8bzLz2LodFgAbTrvoWgyneRz8TcTLW3taAeX5GIFo53/Cp0MW/xRyd++u/jkh7lx
- 8l99Z0kuSHKeRJ73sWaBlkJ+5sqOi4L031dUmBvWZygNFvm+MHpOnX+dBToK244ztiXwwlzdHZk
- agJ+8b7+Peqcg6zTL558isQGIy5hss8E2UVh11FHG5sRNkU3k8vUyvcQ1R/+wkySHF8b+A6i615
- nB0oyEev3JALPBWL2oS3oDUJ6Yqa3wfp3dUX+Ikex3+1nrr0UMh+zFVlKxJ+leja9NNsJOlHFnB
- JogfMqLsFoIH2P9ImrnTNWjYfB4QBdnzqpWgogVPXbwPprkqj18NdybgpzOnOTnJqluxbxdShC9
- d4prri/Y1oJ0+OqSd4RmgZiw2+3nvQ==
-X-Proofpoint-GUID: K7i_C6ErnSznTjL5bpDc1GPT7vxr53Yc
-X-Proofpoint-ORIG-GUID: K7i_C6ErnSznTjL5bpDc1GPT7vxr53Yc
-X-Authority-Analysis: v=2.4 cv=EsHfbCcA c=1 sm=1 tr=0 ts=6942ab9f cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=6YH-TVDjK5cHQ1zWBw4A:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF00000194:EE_|AM7PR10MB3271:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13ff0a73-4e73-4ed9-4687-08de3d828544
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|30052699003|82310400026|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/APLkWxUSO8J68BORPUBP0x2lV1vVsx6XlGESciGBywAEcuL1yrLjJ8zZIja?=
+ =?us-ascii?Q?cqK04FOVJWHPpPpfkhEYOHt1Y/1By3VsP/D5bVX/9lLhV+InYiFlLe4rP8PV?=
+ =?us-ascii?Q?N6kjD8+9kyg31K9nMrA3z3LFs82DDY+zLvjAlYFR/kDCwUChxtGWxG9CQQUr?=
+ =?us-ascii?Q?ZNbbh9L9MtEeEpG7xO4+4niDt2J3LZr0iEy08gxD5sQdTLIGc3gGwE23XTjd?=
+ =?us-ascii?Q?KH74/7Kg/mtzLGAE2gvVwl6xJpYlQlkg5GV2MFQgRhBfrJOV9P0jCwgeExZE?=
+ =?us-ascii?Q?JV54Xa04wFw6Wmh0t9p+ZCLHwtZ5X8VHUzbkKQYGTfkEk5pFeUg5n80HrPcA?=
+ =?us-ascii?Q?Ey/Oiv410u1k4RrrPcIKzeABm+pVB9xI3D00pc2o6WFDa6Mm5j9JCKGIlX+o?=
+ =?us-ascii?Q?gh1DqLqt82yh+NYwjwZocddeZgb6bBHfu7UTHE403t3AZSQWILzKS6OIljY4?=
+ =?us-ascii?Q?pxcQCztx38pWjX6nngnNJFSQ53a/GZIzeaiohFMzmq00K2BooKn++GkuHAiW?=
+ =?us-ascii?Q?4gcmSICfbKDXfGlX8bIqANQqO/O3UFAPNpH59cH3AxM2BmRNpjbSJyIPkJ1W?=
+ =?us-ascii?Q?YbhNBi9od+8b2C7tUDa7+dByyGGkT2MnMrO3+0m/Gi3g2G4ToAf44lGamt1m?=
+ =?us-ascii?Q?Rm7k8u7XK5C5GfFqF5oqDvR7RgqvKC5vmC51dWZq2UBJOdxrsBacdhpSgNb3?=
+ =?us-ascii?Q?FDsi4mLamGfTUo6+9arv6EbeO4IOVSnJlMptHVkmpLK7fEDwHy51h7L5SlDP?=
+ =?us-ascii?Q?nUGH/m2d6nQS5ppn5aczvvdbUcV+akqknrIRV/7Eoha1llwkifrwBoYjVc0t?=
+ =?us-ascii?Q?GBhJPOfuWb7FN1idqczNAob7ceZCoGrjACI/SJpiirt8CEMxqohln0EdPUhn?=
+ =?us-ascii?Q?6x/EvNb/dLL//Yxu4Amna0VYYlw3YcysGCAFOaXZ4JJKAc9d0zKzsVu5q9pR?=
+ =?us-ascii?Q?yqxr7Kbxr5pRXXeVKWFL19W/QUH39umht0GbEknSPZJLA78kzYmuw+7MWISS?=
+ =?us-ascii?Q?brUeAlfPp5MIgeCr4MLR7crpJQic2BXEVHhBQpjVa5EIz5VcCc9OkC7maKK1?=
+ =?us-ascii?Q?lAqUZvgVsQ8XUzGNMBTanCimUeerEQm2rnZizwwQuc+e2SFxsfK/jJm2QWry?=
+ =?us-ascii?Q?uGl5L15rez/YAht3czg30DSgrGV8bHjNntz+fgNtMN2UCxUhiNmo8AK8K0sx?=
+ =?us-ascii?Q?82HfpQ5hcica3id34mw6MoWJtuc/ovVhCAWPSbMIDSOh93HpcC7RnGh3u9hU?=
+ =?us-ascii?Q?pMmuTWZ6NJP6VCZq5ymxjSnxoP+61wKqsKneV3lAfEgkTrXOxfMUuDw939go?=
+ =?us-ascii?Q?9inJJegFwwibx1dovDoULsnF65WZEMJz3qRk26Q1kpwWgoNOqfzmeNW2EtAA?=
+ =?us-ascii?Q?jVg28KSkgUNQK1DRHmVwB7eKlC+TD4o3BgO+gEHVRAFo/7/QgvBMp5zbefbv?=
+ =?us-ascii?Q?ZFMojKO7EhM/4/PdIrXsEJBkCpr1BU4neDgLjk861RhiKiQitAHnirEZV4ma?=
+ =?us-ascii?Q?0vI6EacrjuespzCTjnRrWOq3zg5Rcx6knFuXXBt2cgcM49QeZz2+xs93KdKH?=
+ =?us-ascii?Q?Rcr2sUDNbFvMplc3j/bgYvrDiNerYRqZtHOmLFUn?=
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(30052699003)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2025 15:39:52.3319
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13ff0a73-4e73-4ed9-4687-08de3d828544
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000194.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR10MB3271
+X-Authority-Analysis: v=2.4 cv=Ba3VE7t2 c=1 sm=1 tr=0 ts=6942cecd cx=c_pps
+ a=LGnPzPuKiaZPXrRM6phl+Q==:117 a=d6reE3nDawwanmLcZTMRXA==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=FOPVHIcnkjUA:10 a=wP3pNCr1ah4A:10
+ a=s63m1ICgrNkA:10 a=KrXZwBdWH7kA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=8b9GpE9nAAAA:8 a=dChbvKt_AAAA:20 a=KKAkSRfTAAAA:8
+ a=CVn58vbsVnitWPl08coA:9 a=T3LWEMljR5ZiDmsYVIUa:22 a=cvBusfyB2V15izCimMoJ:22
+ a=bA3UWDv6hWIuX7UZL3qL:22
+X-Proofpoint-ORIG-GUID: Ps7pOUVlAHsT05AjUTPEt2XMDZgAz_ai
+X-Proofpoint-GUID: Ps7pOUVlAHsT05AjUTPEt2XMDZgAz_ai
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE3MDEyMyBTYWx0ZWRfX+IDZLVVNRtHS
+ 70rzpoSjCsXuLaI3t55jltMJVmF3ywIHD6RAu2yhkg1GmG5HbIJ5+J7mRYwbjnCGDWpoUA+nRUV
+ BeXokmA3yJG8R4aFcyN8rYkEqSfAw/N/DjwHruJEhQGTL2LTfRYYCz2tFUpEKFRy6h07Kr+1jcP
+ x5fXdz36UuO3kfDmPFy7Kuw8IU0WPTtrAVRhuVA71I2aZXcBVnxEfiF4LTe9xz3qOwdqtn0fpEI
+ qLalCABEl73tD7Y7JsVeUVztSVYUCLGtqFbvkR24z6dlkZhNUzE21Uvl2uBr9TEl9uYjqKRL+Ov
+ dOBEg/9yMK05k4Kg4DCTD/BcsFEm/owVKg+pUdPa16OJeidaYOhg/4gonzFRHz6AzzzbFMPyzal
+ ejHnONZkuPa55Py/aLm6Okr67sNrAw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-17_01,2025-12-16_05,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 bulkscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- clxscore=1015 lowpriorityscore=0 phishscore=0 spamscore=0 adultscore=0
+ definitions=2025-12-17_03,2025-12-16_05,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ spamscore=0 phishscore=0 clxscore=1011 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 priorityscore=1501 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512170101
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512170123
 
-On 12/5/25 11:17 PM, Bjorn Andersson wrote:
-> On Fri, Dec 05, 2025 at 02:15:00PM +0100, Konrad Dybcio wrote:
->> On 12/4/25 1:28 PM, Mukesh Ojha wrote:
->>> On Wed, Dec 03, 2025 at 01:36:32PM +0100, Konrad Dybcio wrote:
->>>> On 11/24/25 4:25 PM, Mukesh Ojha wrote:
->>>>> On Mon, Nov 24, 2025 at 12:48:31PM +0100, Konrad Dybcio wrote:
->>>>>> On 11/21/25 12:01 PM, Mukesh Ojha wrote:
->>>>>>> Qualcomm remote processor may rely on Static and Dynamic resources for
->>>>>>> it to be functional. Static resources are fixed like for example,
->>>>>>> memory-mapped addresses required by the subsystem and dynamic
->>>>>>> resources, such as shared memory in DDR etc., are determined at
->>>>>>> runtime during the boot process.
->>>>>>>
->>>>>>> For most of the Qualcomm SoCs, when run with Gunyah or older QHEE
->>>>>>> hypervisor, all the resources whether it is static or dynamic, is
->>>>>>> managed by the hypervisor. Dynamic resources if it is present for a
->>>>>>> remote processor will always be coming from secure world via SMC call
->>>>>>> while static resources may be present in remote processor firmware
->>>>>>> binary or it may be coming qcom_scm_pas_get_rsc_table() SMC call along
->>>>>>> with dynamic resources.
->>
->> [...]
->>
->>> Just to avoid iteration, are you suggesting that we can keep this
->>> guesswork as part of __qcom_scm_pas_get_rsc_table() and start with
->>> something smaller than SZ_16K?
->>>
->>> I kind of agree with the first part, but SZ_16K was the recommended size
->>> from the firmware for Lemans to start with, in order to pass the SMC
->>> successfully on the first try. However, the same size was failing for
->>> Glymur, and it required a second attempt with the correct size.
->>
->> It depends on the payload, which you're probably much more familiar with.
->> If 95% of them will be closer to e.g. 1K in size, it perhaps makes sense
->> to use up the additional few dozen cycles on our amazingly fast CPUs and
->> retry as necessary, instead of blindly reserving a whole bunch of memory.
->>
-> 
-> Those "few dozen cycles", is tasked with sending messages to RPMh for
-> voting and unvoting the buses, then tzmem will hopefully hit the
-> genpool, twice, and then radix updates, and then more genpool updated
-> and more radix tree work. And then of course there's the one context
-> switch to secure world.
-> 
-> If we don't have space in the genpool, we're going to grow
-> dma_alloc_coherent, extend the genpool, call secure world to register
-> the new tzmem. And then for all those cases where the allocation wasn't
-> enough, the retry (with updated size) will not fit in the
-> PAGE_ALIGN(size) genpool that was created, so we'll do this twice.
-> 
-> Fortunately the tzmem growing should only happen on first remoteproc
-> boot, but I think it's a bit optimistic to say "a few dozen"...
-> 
-> 
-> The drawback with making it 16KB is that we're not going to test that
-> error path very often. But the more idiomatic form of first calling with
-> a size of 0, then allocate and pass the proper size, seems a bit
-> wasteful to me as well - in particular if we do it anew each subsystem
-> boot.
-> 
-> PS. 16KB is 0.03% of the ADSP carveout (or 3% of the ADSP DeviceTree
-> carveout...).
+Main updates from version V19[3]:
+--------------------------------
+The devicetree is now structured as follows:
 
-Hm, perhaps 16 is not a bad choice then
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			rproc-service@0 {
+				compatible = "rproc-service-80a4c275-0a47-4905-8285-1486a9771a08";
+				reg = <0>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				status = "okay";
+				m4: m4@0 {
+					compatible = "st,stm32mp15-m4-tee";
+					reg = <0>;
+					mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
+					mbox-names = "vq0", "vq1", "shutdown";
+					memory-region = <&vdev0vring0>,	<&m_ipc_shm>, <&mcuram2>,
+							<&vdev0vring1>, <&vdev0buffer>, <&retram>;
+					interrupt-parent = <&exti>;
+					interrupts = <68 1>;
+					status = "okay";
+				};
+			};
+		};
+	};
 
-Konrad
+As a consequence, this version:
+
+- Introduces a new stm32_rproc_tee.c remoteproc driver.
+
+  Instead of further complicating the existing stm32_rproc.c driver, a
+  dedicated TEE-based driver is added. Both drivers are intended to also
+  support the STM32MP2x Cortex-M33 remote processor in a next step.
+
+- Reworks the bindings:
+  - Drop the st,stm32-rproc.yaml updates that were introduced in previous
+    revisions.
+  - Add remoteproc-tee.yaml for the
+    "rproc-service-80a4c275-0a47-4905-8285-1486a9771a08" compatible.
+  - Add st,stm32-rproc-tee.yaml for the "st,stm32mp15-m4-tee" compatible.
+
+- Reworks the probing sequence:
+
+  The m4@0 device is now probed by the remoteproc-tee driver, which itself
+  is instantiated by the TEE (OP-TEE) bus.
+
+
+Main updates from version V18[2]:
+--------------------------------
+- rework documentation for the release_fw ops 
+- rework function documentation in remoteproc_tee.c
+- replace spinlock by mutex and generalize usage in remoteproc_tee.c
+
+
+Main updates from version V17[1]:
+--------------------------------
+- Fix:  warning: EXPORT_SYMBOL() is used, but #include <linux/export.h>
+  is missing
+
+
+More details are available in each patch commit message.
+
+[1] https://lore.kernel.org/linux-remoteproc/20250613091650.2337411-1-arnaud.pouliquen@foss.st.com/
+[2] https://lore.kernel.org/linux-remoteproc/20250616075530.4106090-1-arnaud.pouliquen@foss.st.com/
+[3] https://lore.kernel.org/linux-devicetree/20250625094028.758016-1-arnaud.pouliquen@foss.st.com/
+
+
+Tested-on:
+---------
+commit 7d0a66e4bb90 ("Linux 6.18")
+
+Description of the feature:
+--------------------------
+This series proposes the implementation of a remoteproc tee driver to
+communicate with a TEE trusted application responsible for authenticating
+and loading the remoteproc firmware image in an Arm secure context.
+
+1) Principle:
+
+The remoteproc tee driver provides services to communicate with the OP-TEE
+trusted application running on the Trusted Execution Context (TEE).
+The trusted application in TEE manages the remote processor lifecycle:
+
+- authenticating and loading firmware images,
+- isolating and securing the remote processor memories,
+- supporting multi-firmware (e.g., TF-M + Zephyr on a Cortex-M33),
+- managing the start and stop of the firmware by the TEE.
+
+2) Format of the signed image:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/src/remoteproc_core.c#L18-L57
+
+3) OP-TEE trusted application API:
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/ta/remoteproc/include/ta_remoteproc.h
+
+4) OP-TEE signature script
+
+Refer to:
+https://github.com/OP-TEE/optee_os/blob/master/scripts/sign_rproc_fw.py
+
+Example of usage:
+sign_rproc_fw.py --in <fw1.elf> --in <fw2.elf> --out <signed_fw.sign> --key ${OP-TEE_PATH}/keys/default.pem
+
+
+5) Impact on User space Application
+
+No sysfs impact. The user only needs to provide the signed firmware image
+instead of the ELF image.
+
+
+For more information about the implementation, a presentation is available here
+(note that the format of the signed image has evolved between the presentation
+and the integration in OP-TEE).
+
+https://resources.linaro.org/en/resource/6c5bGvZwUAjX56fvxthxds
+
+Arnaud Pouliquen (6):
+  dt-bindings: firmware: Add TEE remoteproc service binding
+  dt-bindings: remoteproc: Add STM32 TEE-controlled rproc binding
+  remoteproc: core: Introduce rproc_pa_to_va helper
+  remoteproc: Introduce optional release_fw operation
+  remoteproc: Add TEE support
+  remoteproc: stm32: Add TEE-controlled STM32 driver
+
+ .../arm/firmware/linaro,optee-tz.yaml         |   6 +
+ .../bindings/remoteproc/remoteproc-tee.yaml   |  47 ++
+ .../remoteproc/st,stm32-rproc-tee.yaml        | 100 +++
+ drivers/remoteproc/Kconfig                    |  10 +
+ drivers/remoteproc/Makefile                   |   3 +-
+ drivers/remoteproc/remoteproc_core.c          |  52 ++
+ drivers/remoteproc/remoteproc_internal.h      |   6 +
+ drivers/remoteproc/remoteproc_tee.c           | 771 ++++++++++++++++++
+ drivers/remoteproc/stm32_rproc_tee.c          | 526 ++++++++++++
+ include/linux/remoteproc.h                    |   6 +
+ include/linux/remoteproc_tee.h                |  89 ++
+ 11 files changed, 1615 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/remoteproc-tee.yaml
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/st,stm32-rproc-tee.yaml
+ create mode 100644 drivers/remoteproc/remoteproc_tee.c
+ create mode 100644 drivers/remoteproc/stm32_rproc_tee.c
+ create mode 100644 include/linux/remoteproc_tee.h
+
+
+base-commit: 7d0a66e4bb9081d75c82ec4957c50034cb0ea449
+-- 
+2.43.0
+
