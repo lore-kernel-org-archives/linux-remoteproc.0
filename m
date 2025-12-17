@@ -1,312 +1,221 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011015.outbound.protection.outlook.com [52.101.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897D926C385;
-	Wed, 17 Dec 2025 20:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766004966; cv=fail; b=ASwHC6HiSTLBS1LFUtcBPY4kTFbqQBxiTb1SmlZhYkLNN6FHcRDZrY/aMiHYugBNN1g11FrHzoUJguS/kmLPoxN1TkLPZz4gtaN5jidygBQzZCb69auLB6GwQtT1+qhJf/iiq0xm4fmrvdOE9vfltds+h8tX4j/0c59sr1Ju/ig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766004966; c=relaxed/simple;
-	bh=aZUtHP8KQc74V1Yj5hdNOFN3devmsICHrxFym4h6LJE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ls3pwXhH7pOIlwAijDsfPQ3tmRAjanXCfiV1yxMxR+P83n2lRlKU9DdSaWuyk5t2hwHb3c0xNToIDjR859xEGk6EopIHjit0jkbLX9/Pvfkj4Jd1IIWlnRN17aOZqXOhL1hU4NpAabGmQyFtI/HQ/FDyXJ+01fNLMf9d4oseB18=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=eFAWShri; arc=fail smtp.client-ip=52.101.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64F3330CDB0
+	for <linux-remoteproc@vger.kernel.org>; Wed, 17 Dec 2025 20:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766005107; cv=none; b=Xc+rW/sHrRU3XZpTcRSonQtM3XgSkn5pQBIUQR9XHM9ofhTTyV+fhI3upCnf/wxxkc1IfCFb2jEId1GaxE+HhPn7kiE8fqjtZfbeyvHfhuI/ay+meSEtphzJzJ9EErPuZ896TTqG9FelfIv9iHeIvPVtxGesCZBuRXl7MBXH3Bs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766005107; c=relaxed/simple;
+	bh=hZNjoNQVlYTqUf2JurJDMNVvZvU8KiFitH8a3f2oqF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K67dggcSwd5fxcUVVM7m53yds7MmP3ifT4r0jxYsR8306AEramZ/VwlGGqOuCJEfLjkrUPrmSmWalG5pB4khVCS3MIBkjjvEtnVqCQlvlr6hUxLiQHHP9UwWOW+ZOCjI83lUsylIuvsyscHDTzkIVvn8LhzZ41nEDhqOEpkH2U8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N1+Z4rqB; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="eFAWShri"
-Received: from VE1PR04MB7344.eurprd04.prod.outlook.com (2603:10a6:800:1a1::10)
- by AMDPR04MB11608.eurprd04.prod.outlook.com (2603:10a6:20b:717::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.6; Wed, 17 Dec
- 2025 20:22:24 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aJYbeeu841DC8frGe+YvhdJ0xAnOMfsPYaGWyX6R0FuKbmnZbyKQbtOIIsAUPp4b1OLmKJFZgie5tDpFNqllBVor+JY5NY6i1P99UlSZ5szhwrI0aPJyF2xVS6JPYZ1W2JE9g7fEi5MkmM09c2ix4flLR6PORLbXUZGMfirMxTGwpj++wKoYnwR3NUziYxfGyJyUWPPcAOxedyUu0db5u5OrH90B0Kqw1vyzlAUfhokLlDJNieDWbWXJmD0h1QkCxODWOomjKj+U4PNaQFs2v5WJIupeNl6J12K4yoSBpEEIXxnjtD1LULF9R1aJGtdCoaGq3Oh1Gfe9tqaLUXPueA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sfACWLHp3df4sJIZvQAd9/UNu9AkArwbM4B04f0+SxI=;
- b=sF720XE4f/L7CYStIlCszjjhVyskaqdoDMkyy1DhcSipnWroUK1mY0xjnDR0PVXvZ2kx3vTBtuVkFMvyejMDbiuN64QQqtOsXi3CtCSzUrcD7JJH4OOfyww1hEZXOP0+gfP7OOXT1+SdBSuYx/WME1ETmx8QndGdmYZOIvP3BIJ2GDfdesU/9jdBrWkK3ZLdj81sV3cHmsD/xPY5Df4enP2FWSkIU04tsENNbNm22Uf6tnKVTTo0AkQYx1+s5w19Ao5anGt8dAqyZlXWpqnayS/2h8DxQLeAKk133IJQ9U+Wz8bQxFEpBEAp/EuxcB8vtSR+2aVMr5crtj4Uyj1flQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sfACWLHp3df4sJIZvQAd9/UNu9AkArwbM4B04f0+SxI=;
- b=eFAWShriqgmMYLa20gAHZ4i60xMVLN3iWgiFaxANBceDL912XE6p+2N4OiQrQ3l7YAhHMR9VGM9Wgvn2HYmzJT52vmIJqWS2+ChIoQC4cjJJS2dY3k+0SPQ04tKsKWAegSQHX6W1Vg9JKvUbuixSa8GyXjjJV1NubkobpPMGfPJvJ8HcSnmXh0bBr3YHKXDsyAYzH+ud8iAvPWhZJLoQVVHI+/U/tpjrclyZoDk380N0jMqSFmaFqpgtlAwRTxPwCrcY1EfAQs16QJJKIq+bqwPBe8xyqHi78Ragv+yh3ef8DuPAUMCsySC1jJgavmbV615hRaSj+NkeyzSyrAnW+A==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by VE1PR04MB7344.eurprd04.prod.outlook.com (2603:10a6:800:1a1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9412.7; Wed, 17 Dec
- 2025 19:45:11 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%5]) with mapi id 15.20.9434.001; Wed, 17 Dec 2025
- 19:45:10 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Rob Herring <robh@kernel.org>
-CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng
- Fan <peng.fan@nxp.com>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v6 1/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Thread-Topic: [PATCH v6 1/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Thread-Index: AQHcb42nD0vV/FZ/cEahrrMlv9mXGw==
-Date: Wed, 17 Dec 2025 19:45:10 +0000
-Message-ID:
- <PAXPR04MB9185E86CB81C111DAB5B329D89ABA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20251212194341.966387-1-shenwei.wang@nxp.com>
- <20251212194341.966387-2-shenwei.wang@nxp.com>
- <20251217005758.GA3452672-robh@kernel.org>
-In-Reply-To: <20251217005758.GA3452672-robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic:
-	PAXPR04MB9185:EE_|VE1PR04MB7344:EE_|AMDPR04MB11608:EE_
-x-ms-office365-filtering-correlation-id: c10af08c-1e1d-44a1-90b7-08de3da4ca1e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|19092799006|376014|7416014|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?ASk2nHi1s63vFuGMc7ka9p+JaT+euGcfSH7YKkL3p44ALDawwX4+2quemlQd?=
- =?us-ascii?Q?QApxCDWVr8r8bhgEO5jTkdNCBTGIp+/Rh2a4SsM6ojXmpnvPy7ylCGGU3cL2?=
- =?us-ascii?Q?Y+GUYzZJT/FIElBtJKxbo4v2qGnvkFZgDBW1TTcdQLXqLhrn3qSyNhqep2kO?=
- =?us-ascii?Q?fspNxmPh8KzC6YxdW5KRfsEKvNMMoDMrUE8BWmaa5+w9r/Oih7NcwJW+id5n?=
- =?us-ascii?Q?r4botM7SuzmLwz9rBZ8k158jVjYvJD26ow+ysGz+hFr4M8D2WwFW/NsFdRUE?=
- =?us-ascii?Q?ATMFXOWMhNHKHfh5jW7LgWbXTebvgPBO73nWC6bQs/505IVje7kaN3BrwVg/?=
- =?us-ascii?Q?r9HsmZ163tT2/aJyt4FjcmCXTyQoagFtbz218M0rr7aBoMgjN44V5dXQ8ewT?=
- =?us-ascii?Q?jnW+nNZ0Ze5iSIJl5Tl3k0d9o2jPP3viEBjHo+EF0itoQHLdRUINswAFXfB/?=
- =?us-ascii?Q?oP8AtnKbdfvEpyLEnEQEQD9f1Zrb4TKOt5YGEDs7BLV8hw++45Z/Y64eT44M?=
- =?us-ascii?Q?eVMoEmcl5Pg8YQ6LIO2QoM/VNBqAeDrU2EaX0vD+4N3H9sIlnk1e+2LPmRH1?=
- =?us-ascii?Q?VTVTux3eEhfdoa6EkCw09OhpigRtib76Je2QZopa+2UgDHY/VOuMgacWR0Kz?=
- =?us-ascii?Q?6dpuQ98CWie04TorJ3ncuQ5iebMQS8/Nc+ZY/VknkfGNxSwRzlvzP131sm+Y?=
- =?us-ascii?Q?x9+U7WGlB+6C1spteYd/BY9e7BXLbmI9d8kIERIpy0aE8CZ5/SLxN74NN7R9?=
- =?us-ascii?Q?I4wXgmDwRkyWoocnmL4byccN6IYJTJpmAu3bEwQBeiy68tGUrMMXRUVKWPhz?=
- =?us-ascii?Q?+EalXGhy/UFbizQjrkNn7dN69n4uKDtSlQC8kihNpBizF9EHflcWVyFsikfy?=
- =?us-ascii?Q?Q7CrA3BJnHiNirzRs+Q/94cIzCulDFvtwTAaSzWNv5yU1K2Y7HcM9+iq2k3o?=
- =?us-ascii?Q?pGg4Sxgl5tNTcGDo5Xw1QA3Am8ECfWTCPLJ6fnz3aLgQG5sQ3MxxWsYjq1vz?=
- =?us-ascii?Q?Q9Bkl+Mrx/5a1+0TkQGuvUyT29muZ7CLlzBMzrEWKGwZkhLhmu8yQGAVNMQN?=
- =?us-ascii?Q?pM/2ucknebT2VlhNSeJ7VRAatqzLGN2pJ9b8MhC8V2gEqmDxIKfYAoAxlC6b?=
- =?us-ascii?Q?2+T/eZofWRNzN6Uxmi+jJIaq9+U4+x6GERBHDYTYTf3iSeW+j3MBwkKlNhJa?=
- =?us-ascii?Q?Q4AKc/UVlpyW58mXXIa/TX3f7i7UJYE9BoXo2CaPXDLuJ/fiTv6STe/vi689?=
- =?us-ascii?Q?GpjvozFKP0XLYKyOVinE1vpbr9zohkp0in7l+nkzy8foOgKuv6Xm1/oj8ikT?=
- =?us-ascii?Q?zDHN4v9+xb7jkH2CfJJVkyJNbiw6jKHiz+omuoB4MGmCMV1UxdKeOx2C9yEz?=
- =?us-ascii?Q?ZnIKHeonTPL5p3xC418HvQXsbE48gNrNYPTyh+0Y2Y3t94I4iG2IL12jEDiM?=
- =?us-ascii?Q?n/5EJm2qNSnpbwt+uSwddqOhGZkjtyOq0tr7Q8a3Lqm30nnSKQm4UKJObbR8?=
- =?us-ascii?Q?gaI1eKSXKC+ud1vdt3dXWOk01rybZmSLDlo6?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(7416014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?rrLsLs+Qi1OCwP7DhBAWjKnBJMXbbSvytitYsGzC8PjymB5qZ50J2NfDhSec?=
- =?us-ascii?Q?wZb4HsGu4rmqbdFL1j4k8zKdBA+gvefUDM7VltgLlJgCeiatOvVdo8F9E1UK?=
- =?us-ascii?Q?HBuJUzuzNsjyzj2ucXcHd9O+XesUE6Hlz8eTjKFAfhL+A9q0Wt7qK+lPAZSO?=
- =?us-ascii?Q?nr5GDHkSn6o9p/OSK77D6LTEKp8f6sSsgIar1f0VghalqmBoyViMxvUO+wNJ?=
- =?us-ascii?Q?hQ6Ok9lLWmak9Yn+nmruvbEhkP7p3Cmuc8/s8XHIQTjtzeassP+2q7mtNUVF?=
- =?us-ascii?Q?gejNsLA89Qy6nztzRzEnQ9pVC9YhYXx99p94vS19Yx80YisVMimEuctSSPnA?=
- =?us-ascii?Q?1An56UTNkk0zZ53tGr6A6dQ3x2O1UPeCXpfvzz6avA0Ha9XHuMgWQ3Jr+KDT?=
- =?us-ascii?Q?DgUpqyaVnu6VBuhR6o95kiNNMelPtuoATcif1rHxb0tuS6R3YT73oas3bJaW?=
- =?us-ascii?Q?TFyvsTTCV7zOUyGNHwkswbGmnZD9kDTXZL+DsezCIV5E/OXLvr41pUIXOucj?=
- =?us-ascii?Q?52wvl3D0CU7vCtto2cIe3fsxqmr3lF9iVz+1Zxya9QCDPLjybeHUdKUG/BAY?=
- =?us-ascii?Q?oPflazdwq4O8fcM03vn0qaen2hq3Zy5szMFpgmpdGqb7j2cULyWe1HqxXeNl?=
- =?us-ascii?Q?o2g4gwxhWAKbK8FSwDmjcxwTtLwu4DaJQ/3AsWZ4Br+gMKReW0qwEBVpvQ3J?=
- =?us-ascii?Q?Cvzu2XCS6+yx+TX0igWkmIE/cWuRhAIewFlO3ANR7i3VLb0CASg3kOSWm5Ip?=
- =?us-ascii?Q?X5155fkl3HIGrOfDiRvd2l002xWdq2uMUJOqqDPlgcA5L0O2kfNHlGDAarC6?=
- =?us-ascii?Q?mclW0/2HDp8Ra771FIuzx7D4QGsqTbC0ho6nzROyoJ0aQobWly06HT1qr65C?=
- =?us-ascii?Q?YWNgRCRRIeSOb2Eaj56rDKJLPoFTDSRr3sV19Ta67Fr66Lg4NFj9BUtF0ECE?=
- =?us-ascii?Q?4/zf6xEQETb4P+Eu4sqG/jNpr9lHu4su5COJjfTLEszSThZ0fwqM0Z6UZ+AQ?=
- =?us-ascii?Q?RLiG6gQWLiKIZav3yGTp/hNVK3UTo4uvPWQzgFpnaOgaAkRcWpU6bbVth7Yg?=
- =?us-ascii?Q?u2t9LIHQZuLl1aWjgehHrdvsN55OCrVY76qlVJMy9c7laPJ14CG0azLP4Ytq?=
- =?us-ascii?Q?BpBTG19zXdTCEIsKgJ1eFDyGHLp8weAyzza33Js0PrS1HcfTN9HEpWYAjuBf?=
- =?us-ascii?Q?OnrSSWxzstFF68H/5hYkC0rXNNLVZSf3u2mcxiUqUvjlYfXoAEfdo8rFljeL?=
- =?us-ascii?Q?aeKrCePvO1ED5Wop6wewUDalGWTa60KZ9G4jLHEXfNnt1dYcjPWc7thL1XU0?=
- =?us-ascii?Q?7VdHwcM7WPBnCWAkjAYsDTy8tf9rhppcaPldn5r22oAIyKj8KAsFMufH6EFE?=
- =?us-ascii?Q?JqNqJk/qfSQhGMCcRwkbeA5/LgNce7bGEM7GPUMQ5TKz2Q6AEoE+fCiAo7Sd?=
- =?us-ascii?Q?AompyvA33FgA/OUt1iAvpxc3EUc6aAiFQQPBPNgVpTenGmbiON0JuQYiKAVw?=
- =?us-ascii?Q?01umVFQUw3jozLh/+t9sVwNslYcA5xlA52EbfVQ0AQC0Suin50gT6OOMyx7c?=
- =?us-ascii?Q?6Xq8RBt71d8SzJdQtgA=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N1+Z4rqB"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-34b75f7a134so3649881a91.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 17 Dec 2025 12:58:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1766005103; x=1766609903; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y8l6Ur6Yr4Kr5eraloIZXw+ktF7rID9FaI2hPFW+l6Y=;
+        b=N1+Z4rqBgb57nSPSgEiUut/dzHp3RuEbZRBg/xUj0sHysFa/AL3X7PoG772/+PTHr7
+         GAvK+kAS6marNDZEz49gzbPaeQqGH6ydlnbrC2BFi+5sel32Yf6CRT4afgMIFHpf3wwM
+         MEWkt5Wdz7hfYJFRiJdlIKS7vXqXjHbdQfxGhbytIl02IKklMAp0GZsSIhamRMsO5TPw
+         pCPOQKnBZXDA/UgjwPRsNw+KOuLLe1jL9lE90uKWo7vtyjk2daYOjhA65s2JiavdgXdy
+         CmAz1krX12zAIOBWEPTHvTkkNTrTYBo/w7CIe+Clfp2JN24gZfVUNbmZ3g3b5x+/c6nz
+         fa5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1766005103; x=1766609903;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y8l6Ur6Yr4Kr5eraloIZXw+ktF7rID9FaI2hPFW+l6Y=;
+        b=BQ0iRF88cUKda7IAXq8AoA/gM5qf1f+P5IfETsQla5/qglwTiXEREbSk1pFcVVQKaG
+         uiVEZUsqVnSH0RxN0AxWkZJSQSLBMsXjjvcV4urXHaxGZK9rNMrPC6ZzmuK5rtugEOCH
+         1meIqrB6QO5ycHsEwpp4g0OrwAJLEJsRhc3ZBup/94X/JVvmlCx5vmJM3w7Bv7yMyGeX
+         sLViUe61+Y2ITzFh5YWBDuVFdGPvNVEUutOTSuYSV9m3nTNuIMUW074VYk+VdrsZxEYG
+         TLH5lCJ39b8L8m5xh075zy5pfjXQwpD4L9yEiA7qX12RM6CbwMBhVQfxbEoAEv6IYwqC
+         Ihew==
+X-Forwarded-Encrypted: i=1; AJvYcCWgVr2SYcYBJQFgH8HzXGFXYAJNrhUeR9W2W3mx/JWnh7tNQ+k2V7OLPun5FvPw7Hi4irp6BIP7Q1t42anPEQUy@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdTfuFQsb9pckqxNrRa1UaOT2PM6yP7Ov+9AuL2QgIoOXGsLoz
+	TmnruJO+JFL1GTdrESaKMNZ4Ug0DlgR0wQxijwzXMr3jzpeJ5tYFPCBD9rOTxOGQg/I=
+X-Gm-Gg: AY/fxX5/4GKif/ipLYkzbb2p/kwVgh0mcqVjm9uDjBRiBH9+EcAMG7qJgXlYpaN8byV
+	G7OYBmcHgQ9Im4HXAvtfcpXQDSChnvuZgqlanr76w4DPhpWqvP7pVfvGioWdEyaQYqzTEZ8tobC
+	hHIC1i7didVID1qExwBGuL4fikEgkFNK8cdTW/+YUNhwaI/mLD7Pt/0K389UwKA+1uiNIxAzkls
+	ozHNYQD3XA8bMANOUxrxWRATXGVRV3lbQuAlkkrFBajde/T6QmyUD+DbvrOW5pte1IZHBp3xy5Q
+	dqDaLqGvx4LtLQb2QtHgpSzoxosnKYKffkGrJGtazwZdKx5Lm4HS0CI1/cqyuYSBcgj/zOFrdX0
+	zvx8bXJoQPloJYkoH9qO9LHXXmRebtyIhTeVhvsvtpBnthmEfym7fi0pq7b2NHSwWNizISiHq6X
+	w/dA0VEya7XEPnuslHnGsvriY=
+X-Google-Smtp-Source: AGHT+IEv6aRfuWteg9CkMupYi3aESqJksIkIawgSnCLh8bd8HFbrpV909yajnxOdzZbpUhAy/NMThA==
+X-Received: by 2002:a17:90b:5348:b0:32e:3829:a71c with SMTP id 98e67ed59e1d1-34abd809190mr17284905a91.16.1766005103068;
+        Wed, 17 Dec 2025 12:58:23 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:cfb9:c35:9f28:8222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e7710a5f8sm11766a91.6.2025.12.17.12.58.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Dec 2025 12:58:22 -0800 (PST)
+Date: Wed, 17 Dec 2025 13:58:19 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, mst@redhat.com, jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	virtualization@lists.linux.dev, xiaoxiang@xiaomi.com,
+	Xiang Xiao <xiaoxiang781216@gmail.com>
+Subject: Re: [RFC PATCH 1/2] rpmsg: virtio_rpmsg_bus: allow the different
+ vring size for send/recv
+Message-ID: <aUMZayrdEIB6P90p@p14s>
+References: <20251114184640.3020427-1-tanmay.shah@amd.com>
+ <20251114184640.3020427-2-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c10af08c-1e1d-44a1-90b7-08de3da4ca1e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2025 19:45:10.7995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: keBMDMAVJ6m9P82fUO9jGGdoUMiih5PhnT59MTvQoq4EVDfTBseiir7F9WNTg8ickAbww24+Nf+7/mIudjTtgA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7344
-X-OriginatorOrg: nxp.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251114184640.3020427-2-tanmay.shah@amd.com>
 
+Hi Tanmay,
 
+On Fri, Nov 14, 2025 at 10:46:39AM -0800, Tanmay Shah wrote:
+> From: Xiang Xiao <xiaoxiang781216@gmail.com>
+>
 
-> -----Original Message-----
-> Subject: [EXT] Re: [PATCH v6 1/5] dt-bindings: remoteproc: imx_rproc: Add
-> "rpmsg" subnode support
-> On Fri, Dec 12, 2025 at 01:43:37PM -0600, Shenwei Wang wrote:
-> > Remote processors may announce multiple devices (e.g., I2C, GPIO) over
-> > an RPMSG channel.
->=20
-> Which channel does that happen on?
+This feature has been abandoned a long time ago - you own it now.
+ 
+> it's useful if the communication throughput is different from each side
+> 
 
-It runs on the RPMSG  Control channel.
+Please provide a better changelog.
 
->=20
-> > These devices may require corresponding device tree nodes, especially
-> > when acting as providers, to supply phandles for their consumers.
-> >
-> > Define an RPMSG node to work as a container for a group of RPMSG
-> > channels under the imx_rproc node.
-> >
-> > Each subnode within "rpmsg" represents an individual RPMSG channel.
-> > The name of each subnode corresponds to the channel name as defined by
-> > the remote processor.
-> >
-> > All remote devices associated with a given channel are defined as
-> > child nodes under the corresponding channel node.
-> >
-> > Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> > ---
-> >  .../devicetree/bindings/gpio/gpio-rpmsg.yaml  | 49 +++++++++++++++++
-> >  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 54 +++++++++++++++++++
-> >  2 files changed, 103 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
-> > b/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
-> > new file mode 100644
-> > index 000000000000..b3e1a5dbf731
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > +---
-> > +
-> > +title: Generic GPIO driver over RPMSG
->=20
-> The driver doesn't go over RPMSG. It's a GPIO provider or protocol.
->=20
-
-Yes, it might be clearer to phrase it as 'Generic RPMSG GPIO Controller,' s=
-ince this is=20
-a GPIO controller driver that operates over the RPMsg bus.
-
-> > +
-> > +maintainers:
-> > +  - Shenwei Wang <shenwei.wang@nxp.com>
-> > +
-> > +description:
-> > +  On an AMP platform, some GPIO controllers are exposed by the remote
-> > +processor
-> > +  through the RPMSG bus. The RPMSG GPIO transport protocol defines
-> > +the packet
-> > +  structure and communication flow between Linux and the remote
-> > +firmware. Those
-> > +  controllers are managed via this transport protocol.
->=20
-> Got a reference to where any of this is defined?
-
-Will add a ref to the gpio-rpmsg.rst doc.
-
->=20
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - fsl,rpmsg-gpio
-> > +          - const: rpmsg-gpio
-> > +      - const: rpmsg-gpio
-> > +
-> > +  reg:
-> > +    maxItems: 1
->=20
-> I still don't understand how 'reg' is determined. You may have explained =
-it
-> previously, but *this* patch needs to make me understand.
->=20
-
-I see. Will add a description for this item.
-
-> > +
-> > +  "#gpio-cells":
-> > +    const: 2
-> > +
-> > +  gpio-controller: true
-> >        memory-region =3D <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>=
-,
-> <&rsc_table>;
-> >        syscon =3D <&src>;
-> > +
-> > +      rpmsg {
->=20
-> What's the purpose of this node? Is it going to contain things other than=
- "rpmsg io
-> channels"?
-
-It represents the RPMSG bus between Linux and the remote processor, and wil=
-l eventually=20
-host additional channels such as rpmsg-i2c-channel and rpmsg-pwm-channel.
-
-Thanks,
-Shenwei
-
->=20
-> > +        rpmsg-io-channel {
-> > +          #address-cells =3D <1>;
-> > +          #size-cells =3D <0>;
-> > +
-> > +          gpio@0 {
-> > +            compatible =3D "rpmsg-gpio";
-> > +            reg =3D <0>;
-> > +            gpio-controller;
-> > +            #gpio-cells =3D <2>;
-> > +            #interrupt-cells =3D <2>;
-> > +            interrupt-controller;
-> > +            interrupt-parent =3D <&rpmsg_gpioa>;
-> > +          };
-> > +
-> > +          gpio@1 {
-> > +            compatible =3D "rpmsg-gpio";
-> > +            reg =3D <1>;
-> > +            gpio-controller;
-> > +            #gpio-cells =3D <2>;
-> > +            #interrupt-cells =3D <2>;
-> > +            interrupt-controller;
-> > +            interrupt-parent =3D <&rpmsg_gpiob>;
-> > +          };
-> > +        };
-> > +      };
-> >      };
-> >  ...
-> > --
-> > 2.43.0
-> >
+> Signed-off-by: Xiang Xiao <xiaoxiang@xiaomi.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 47 ++++++++++++++++----------------
+>  1 file changed, 24 insertions(+), 23 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 484890b4a6a7..cc26dfcc3e29 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -37,8 +37,9 @@
+>   * @svq:	tx virtqueue
+>   * @rbufs:	kernel address of rx buffers
+>   * @sbufs:	kernel address of tx buffers
+> - * @num_bufs:	total number of buffers for rx and tx
+> - * @buf_size:   size of one rx or tx buffer
+> + * @num_rbufs:	total number of buffers for rx
+> + * @num_sbufs:	total number of buffers for tx
+> + * @buf_size:	size of one rx or tx buffer
+>   * @last_sbuf:	index of last tx buffer used
+>   * @bufs_dma:	dma base addr of the buffers
+>   * @tx_lock:	protects svq, sbufs and sleepers, to allow concurrent senders.
+> @@ -57,7 +58,8 @@ struct virtproc_info {
+>  	struct virtio_device *vdev;
+>  	struct virtqueue *rvq, *svq;
+>  	void *rbufs, *sbufs;
+> -	unsigned int num_bufs;
+> +	unsigned int num_rbufs;
+> +	unsigned int num_sbufs;
+>  	unsigned int buf_size;
+>  	int last_sbuf;
+>  	dma_addr_t bufs_dma;
+> @@ -112,7 +114,7 @@ struct virtio_rpmsg_channel {
+>  /*
+>   * We're allocating buffers of 512 bytes each for communications. The
+>   * number of buffers will be computed from the number of buffers supported
+> - * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> + * by the vring, up to a maximum of 256 in each direction.
+>   *
+>   * Each buffer will have 16 bytes for the msg header and 496 bytes for
+>   * the payload.
+> @@ -127,7 +129,7 @@ struct virtio_rpmsg_channel {
+>   * can change this without changing anything in the firmware of the remote
+>   * processor.
+>   */
+> -#define MAX_RPMSG_NUM_BUFS	(512)
+> +#define MAX_RPMSG_NUM_BUFS	(256)
+>  #define MAX_RPMSG_BUF_SIZE	(512)
+>  
+>  /*
+> @@ -439,11 +441,8 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  	/* support multiple concurrent senders */
+>  	mutex_lock(&vrp->tx_lock);
+>  
+> -	/*
+> -	 * either pick the next unused tx buffer
+> -	 * (half of our buffers are used for sending messages)
+> -	 */
+> -	if (vrp->last_sbuf < vrp->num_bufs / 2)
+> +	/* either pick the next unused tx buffer */
+> +	if (vrp->last_sbuf < vrp->num_sbufs)
+>  		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+>  	/* or recycle a used one */
+>  	else
+> @@ -878,19 +877,20 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	vrp->rvq = vqs[0];
+>  	vrp->svq = vqs[1];
+>  
+> -	/* we expect symmetric tx/rx vrings */
+> -	WARN_ON(virtqueue_get_vring_size(vrp->rvq) !=
+> -		virtqueue_get_vring_size(vrp->svq));
+> -
+>  	/* we need less buffers if vrings are small */
+> -	if (virtqueue_get_vring_size(vrp->rvq) < MAX_RPMSG_NUM_BUFS / 2)
+> -		vrp->num_bufs = virtqueue_get_vring_size(vrp->rvq) * 2;
+> +	if (virtqueue_get_vring_size(vrp->rvq) < MAX_RPMSG_NUM_BUFS)
+> +		vrp->num_rbufs = virtqueue_get_vring_size(vrp->rvq);
+> +	else
+> +		vrp->num_rbufs = MAX_RPMSG_NUM_BUFS;
+> +
+> +	if (virtqueue_get_vring_size(vrp->svq) < MAX_RPMSG_NUM_BUFS)
+> +		vrp->num_sbufs = virtqueue_get_vring_size(vrp->svq);
+>  	else
+> -		vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
+> +		vrp->num_sbufs = MAX_RPMSG_NUM_BUFS;
+>  
+>  	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+>  
+> -	total_buf_space = vrp->num_bufs * vrp->buf_size;
+> +	total_buf_space = (vrp->num_rbufs + vrp->num_sbufs) * vrp->buf_size;
+>  
+>  	/* allocate coherent memory for the buffers */
+>  	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+> @@ -904,14 +904,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
+>  		bufs_va, &vrp->bufs_dma);
+>  
+> -	/* half of the buffers is dedicated for RX */
+> +	/* first part of the buffers is dedicated for RX */
+>  	vrp->rbufs = bufs_va;
+>  
+> -	/* and half is dedicated for TX */
+> -	vrp->sbufs = bufs_va + total_buf_space / 2;
+> +	/* and second part is dedicated for TX */
+> +	vrp->sbufs = bufs_va + vrp->num_rbufs * vrp->buf_size;
+>  
+>  	/* set up the receive buffers */
+> -	for (i = 0; i < vrp->num_bufs / 2; i++) {
+> +	for (i = 0; i < vrp->num_rbufs; i++) {
+>  		struct scatterlist sg;
+>  		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+>  
+> @@ -1001,7 +1001,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+>  static void rpmsg_remove(struct virtio_device *vdev)
+>  {
+>  	struct virtproc_info *vrp = vdev->priv;
+> -	size_t total_buf_space = vrp->num_bufs * vrp->buf_size;
+> +	unsigned int num_bufs = vrp->num_rbufs + vrp->num_sbufs;
+> +	size_t total_buf_space = num_bufs * vrp->buf_size;
+>  	int ret;
+>  
+>  	virtio_reset_device(vdev);
+> -- 
+> 2.34.1
+> 
