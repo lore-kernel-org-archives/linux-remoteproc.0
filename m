@@ -1,229 +1,205 @@
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013016.outbound.protection.outlook.com [40.107.162.16])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C57327BE0;
-	Thu, 18 Dec 2025 14:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766069642; cv=fail; b=l5uZK5FGdHReBIM/RyIzxH6KH5YamHtbM+ACcCxQl1Bp7xlhWCAeUBuIEFfzRaxe101LhSmQyONwlw27w4QOQ9LdVKVEwjbkZIXzPuINHiX10fvb8K0c1s9Pn446vpMOEWQZ3PVbOUHiAGv2oIxUUDAC4XgotsIQ94gaRFo20xo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766069642; c=relaxed/simple;
-	bh=ZrXd34hT5bqmoyqBqtOgYK2Q43gTF+g5p72X3L7fyjc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QyTWl7ilZHGBkseC67E6/TYdGfb6N0oChuxPY7fAt9j5ZESl4kOi43r+geDYn9PJuzqccK5EnqiebJT9BkaJUSBE0uG5oF5fc/5hE+A63ZRLEW6eZ/w4+TS4wahtVc61wtUbYm2M1SCLxu9m6WF+DcVXpezxwmRcghypNcS1AKg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HpPI0VSL; arc=fail smtp.client-ip=40.107.162.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B64D2D5419
+	for <linux-remoteproc@vger.kernel.org>; Thu, 18 Dec 2025 15:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1766070291; cv=none; b=MJID2TWN+oR8lqe77Ka4hHg+VpyIFLZ6HdhxCL3qUEhebpkAGIFC50zqLfPhU6oj0moLeEVdClOhY2Hv1qrouQTJk5bimro0yTTV2cJyrVyEZbUhgRF/K70ZAUMwATBYq7upxM+Ei1o61j1XO9CNJ8PWvb4JBbHwzgMKajgL/C0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1766070291; c=relaxed/simple;
+	bh=wM6mtQ42kLrbIFFIS6ybd6wPAxn6eUxJB6OQRbWw5jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDxR5mSOpbKwqd7syKrovE5r1wr2s28R42a8GLD73IGjXtzHDFkPn+8SUC0wfBopsCwusPpols0cUobk1mi5NW6GffyPLfJg5msD1x81YF6wsUT8b1RgkRNR/QiFD6Z30tlZ7DHasSOY4dOISXPHDDA2VXLWzt074Lo+IkLXvcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uS/3vuUU; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HpPI0VSL"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wmi6dECvC0xB57fn4ukBNRbaaf7hpumnMLQMYlpwqIQP0U4etHMVEKLjfSVgiddMWb3adViTinvvRiD+dzXbRiQAPzHg8iXfOhyGfVwvgi40g99m+tag5sGwQ3BX0oruL0LxjX0ptnoAHCV+C0vkJ/blXVZqVBCQk027TCuibbYA83nH3dUOfJjmRgVl7CHXFe3iZagGg1fyMMWxJUhpmRbyVdblpLYm5Deb6Tdm9zOT9FU76T09P+gDjeFxQP7j2hYoOL8hDaks9ummvJou0VpkBDcfybH0QMasQIGo686ACTKqd/6+Yqdt1FyMeAmqjFgGZ16fB50fHyYn3N+/4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L7vKTTeoUuwb6jOBegA0oNX0lf+wGVFG76G7578l3ro=;
- b=nYBtxSCfjih2WPqBc8Pwv1fXfl+0oz3lXB5IZEfTLZIxmEDLsNdNPL6nmn8y8AzTIqW9IyMLCwy7hxGo/ZVgPaDkGFv3oWa5m1aN3UK3yhCdGi3EyDP2ueV7t+BNHTFVnvKY1Rv6VkAVaTLJYINyi2U/BGy8ogXtaq3SnTgXvYdFi2eioztT/quxOeVI4wCSmQDwGXGmO9CxhKw4qDm3kg7A4gm6ZdH+IZHgrjL9P+qzPahH9Qlz25hYJDEgu/cwZQ4eUi/agw81TScdk43xwmqT+iY3/YF0URbgYe0cGTS2zDDfPkiMXeigDQ2nNpBQuIiOHOFixZyAszvSmmeJAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=L7vKTTeoUuwb6jOBegA0oNX0lf+wGVFG76G7578l3ro=;
- b=HpPI0VSLIYCxL9TRGa/kqk3NxrWEDknBS+v3hRIYVxGzlypaU1wmFBI3CsQs/t/yeovS0zqb6+DoIpfNR4RMYvg8fDdHZx4HWBYq7liKP3IE/dwmcOEw1SIiVG5FI4vFCm8iH8XUSkzJOf36d+DRVLn2BOErEZXoBTW9Yzdw8u97mwS5Njm1/HIDL00xBhrexmDqqYdVyg/gH0PX8EU3Q+r/2lC1RvXDGu6b1g+7ZBbJxkRuUZe/A2qyX7oQb1Urrf86lUWgKE3NnC5NYSQhrL1A+/85tM08MWICCiJJe1Qmo/wmGmpzoFA9OOTCXci/10RaqCQk0ojIiHBXQ5ko4A==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by PAXPR04MB9218.eurprd04.prod.outlook.com (2603:10a6:102:221::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9434.7; Thu, 18 Dec
- 2025 14:53:55 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::21bf:975e:f24d:1612%5]) with mapi id 15.20.9434.001; Thu, 18 Dec 2025
- 14:53:55 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, Linus Walleij
-	<linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Mathieu
- Poirier <mathieu.poirier@linaro.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>
-CC: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v6 1/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Thread-Topic: [PATCH v6 1/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Thread-Index: AQHccC4hz+aC8+IZZkGsM1CDssj1CQ==
-Date: Thu, 18 Dec 2025 14:53:55 +0000
-Message-ID:
- <PAXPR04MB918536F2859B9A57A0BAE84E89A8A@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20251212194341.966387-1-shenwei.wang@nxp.com>
- <20251212194341.966387-2-shenwei.wang@nxp.com>
- <f53639e8-feef-438a-9b1a-c349fc17d0c6@foss.st.com>
-In-Reply-To: <f53639e8-feef-438a-9b1a-c349fc17d0c6@foss.st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|PAXPR04MB9218:EE_
-x-ms-office365-filtering-correlation-id: bb045e35-2e5c-4a3a-9970-08de3e45445c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|19092799006|376014|7416014|366016|1800799024|38070700021|921020;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?BoJ1uY6XmdZZoHfYuAGMBzuKTy/O/Kog+RFEGoOK6p62Gpx3JRp+wXXdeXuc?=
- =?us-ascii?Q?ujdHJGUKxqO4QWv2lh56rGtTwcKAneQZlKlHq5VI9bD9pBCbS9KrzAWesvx6?=
- =?us-ascii?Q?ttf7VUCIA/SOP4wRN4lffjSRAUr488gvB8I7yxrkLxfJbsdByKDQZrNpwZCm?=
- =?us-ascii?Q?LOrlTBeCKNmqtTYbz9zLMK3URXHkLwtspVJnWIS0GRKnRTzaVvfjJibe6/Gp?=
- =?us-ascii?Q?Xf/R9rmwaJiwr3tCymgFHQii3CUz5IU7bxKJWSyDNXLbkkIIvunivWY3zWbW?=
- =?us-ascii?Q?l9HMYO2/lcFz9KmcWtt30U4WUZpJdDTbebseaPJwU0vyRS42n7F22ufPrbXM?=
- =?us-ascii?Q?Gy5CZReoJTlKvAxOhoNXoqGoeONmXkg7++rAqPB2kORey2z8bGpsI0lfnsNn?=
- =?us-ascii?Q?tZG8WItC50rF4Bat7r/xj5pOC22LdGkpKyTSG3BbH39xC5WRIsLtwEsM5bSX?=
- =?us-ascii?Q?f3NLY9ZrL8Rd34ZS3V1WcAneuF7RkIl74G0V2hpxT421bzdLEQXgU8WkW92l?=
- =?us-ascii?Q?TRSAfZvuuq/egDUERC+EP27CFYP3OjBNYMwnBCnSBYHSrQeHKr5qWy6s7hvN?=
- =?us-ascii?Q?dV+ajkh3smacFmaHNNKYTHg56can3MC0QsQVk2nYC2cZZKFwXoh7V0Wfobpn?=
- =?us-ascii?Q?bjQvep1QXrk+1r9FT/pEy4VO5mM0VxuX/ofvcMBKMBntYEsKxVY8tSB78vTB?=
- =?us-ascii?Q?1jBSoBKuSUy9GbLDWmTMOX8i2/vq/bLJk5bCeSFSnJEGx/cPWv0sUmFVmGRK?=
- =?us-ascii?Q?rH3TBgvAHUwNN9lMI8Cyi8oDkdM4rtjcehdIPJADY5m+eRF0bD5qIih6I3MX?=
- =?us-ascii?Q?syxTShZFBoM8aOV091YzXZaCF+jCn2c84cbMYpqJU4u3CR/hvzTpMlTA1L9n?=
- =?us-ascii?Q?buiX1aQ9cMoSjOOG38HuaUFGufMbljrlMLCVVv202IGZ9Yd6kSuBtWb67Kbr?=
- =?us-ascii?Q?P2vXIneT54a8Ww1vj89NxEJFwkdqjAfTInm+2d8kDS0eFtP/kZWnDkDGnfrd?=
- =?us-ascii?Q?gAZzUQ6XIF8VspWBtyNAkzzN3PkK0NY0oY4t97li70sA8ufQf87i2+aRKh6+?=
- =?us-ascii?Q?Ac0+AcC+XMflLEhod0AW7bgzzNs+60uXjcJ3j2TPLR9iSP2gcCDhdurXAgkq?=
- =?us-ascii?Q?ijzIcf1PzfNblWg+xPUF7DON6V9MGP3iuRpignc1KzPOxFHWFOc3BfXUurAP?=
- =?us-ascii?Q?jiq+Y0+GrcBxd3mH5s0lrzlGjfmJksYBlxRpALFp0R6aP2yjDbn2FEJYRCxu?=
- =?us-ascii?Q?k9IicrKwDkWMjlMInsqzgPcbADZgEzjHCK/iN9ZC1Hlso7j6dsK7K9K8n4Nr?=
- =?us-ascii?Q?OGRZI5didNOcwgTbTs7wqB/ZzEV1Biy5dIphyBHCkD6HK8uLY0+6FenWRASU?=
- =?us-ascii?Q?x4u4edBAPXz8hZ+H9IViPngkDwUrUwiFuZoey5ztAjZUZxWpfaElgnOa0y0O?=
- =?us-ascii?Q?bGuLBSAiTS86yNO3P9DVnM1ViY2T2plQiEybN20/HEahR+Rbb8BOlZQBW+L/?=
- =?us-ascii?Q?HTyzbK2hEGDmkCt6nZj5Aa5oGSVgN4IuGYA1cBloB1nGGl3q64rPhQAZkQ?=
- =?us-ascii?Q?=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(366016)(1800799024)(38070700021)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?+fHj95mh4UyEoK3dFKXOH8Egt4luRI0uL1Q6Ill71Fe0u+IpaE23U2qZQr6b?=
- =?us-ascii?Q?OrCnx/bpN0KQusK5GVtAIHNkfH03LYrAvOXIf1PaxK+oFXn+U1XqedIakh1j?=
- =?us-ascii?Q?GnS/XAcDXBapyMQwtMZsvktJCtqWW8RW1a5/XqxREiZ2u6iGffCTMtxd/2bM?=
- =?us-ascii?Q?HnTstlIARAwk4EjGw/anlbC5NLMu9NYilyXHTXPGPaxulECMpIvCDXjpXHDL?=
- =?us-ascii?Q?Xa8reKoC91iXrAnOBtdgwfyaO75uYQ+uGUsRHB/l8tzsMIHvmbcuj+HKvCNL?=
- =?us-ascii?Q?o0v+piZsY0cffCVMzZV/CREaaJ2bx5R8030Ldo3ZchcRaW8wBnp5//g/nPVi?=
- =?us-ascii?Q?1AFdHA1NPdNLXS7nG8Tb59S5TiNZS3NYWliW+nY/17hcVBYpYe0Qu85GLKM/?=
- =?us-ascii?Q?TIjsImbyjwb/DFGyCY/s3PpTRhFv32BBVxxIPAEQmJhrUIoh20XDrrql8LgS?=
- =?us-ascii?Q?06IMRRAUH9bv1eR3pCYKJy7oR91FvZCOn6/Y/dYoq7l2wUg6wJGaZy9v2T+d?=
- =?us-ascii?Q?18jndbdRjzTgXaIWRgZqeVzcvnKGyAV9v/YuDxrneuOMyNIEVxUBexIROD1b?=
- =?us-ascii?Q?xEPQMOKQ8cQuGq6YJ+2X2mDpKNOoCymylw4Km2DdC7HnFtOWMtAOoXz9ydV1?=
- =?us-ascii?Q?dmjvPXEdXIaqlLAd6ADl2nru6Jc/jbNFlqFccnsuY2d4m0h2cL95YxSyrmBB?=
- =?us-ascii?Q?FxlktJbL896wmqr+R83WhqRRNgAVBAlx+CTIRs27RQhsGpNtJ1GEIMx4NtUq?=
- =?us-ascii?Q?2mpZ1bgTc8md4jWsy4pQROWXXD0cTMmyKCIJ7VK6gExMY2TD4RzxCeenkbgb?=
- =?us-ascii?Q?NFcf8IChsXhpgz6C6m/SFtwTz5On7TIqgj1/pOEAImtvAZkqh6SCQcKoC/vV?=
- =?us-ascii?Q?MwjQt+gRs5xOAHulUlwY5vXOx+hyGt21WnQZdjczmPkvwQlUKnbwtwY781ss?=
- =?us-ascii?Q?0uL9MUx0ddKM3SKE0FnjQPkZqpxWpO6dpR5WH1AFcfkCyQ7FYN8Rmjd7jwMJ?=
- =?us-ascii?Q?m4QKqJCFpaKJtsMsM+KhEhMcWkhQr2ywttR11xpzrIIC6yhaTZiLYPpcViGN?=
- =?us-ascii?Q?LiqBbmjO2zbLrqFDvtHpGXqoDCA7nZpsCQyitjP+aBGjIbg4f2Io5iLxOTzK?=
- =?us-ascii?Q?J3aXPXxXKaCcfRB4Wx1X8xgwexZJr1Ku4TPkhZC7Aan9WuKQsPljOQu8/I9g?=
- =?us-ascii?Q?SqMkLU2qsEnsFWECrtCo0vRmm6mnhH1CGJiaGkEjvZH4GM6WP5R+uYKtNw1v?=
- =?us-ascii?Q?GK3DtgFfTeB/EAgRsx55qSoCO001D8y16hm5e4KSbktDdKnvuMFWad3buLWz?=
- =?us-ascii?Q?poemMCHI5rbogPb2H4DqdZv6yNJKGtA3W9lnwpp6UiC+BgbLmtaa+nbNxqfT?=
- =?us-ascii?Q?xHOpLqiurxL8K/YhGo8yjPZ5oTtvH16Tu832xB1nntk9y395Zq9lHAkOfOVv?=
- =?us-ascii?Q?C0XI+vwdPiD7HnaEYIqhCiCzsRQtnaEG9tb0ZW7RSPJYXQYHioTHZalsncJB?=
- =?us-ascii?Q?uokRpse4y5ldMKNMqbJZEaaxZwnqhQE15CYVIg2xXZzpR3FBaMwEWMI7CPL3?=
- =?us-ascii?Q?+sdocv4MJbKuEh6jshusdst7jd5JDHonS06rrzQS?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uS/3vuUU"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4dXDLS40jyz9sl4;
+	Thu, 18 Dec 2025 15:58:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1766069888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AnvcTzf4eQpHltEa9TSncPW/58ngk5FSKG9RRcyxl2Q=;
+	b=uS/3vuUU8E1M7wUbPCA8bB8JZjyUCTYzF7k1Nk1RdFTmpZvA5KhYJdZQmHVUy0jUdH3U20
+	uv+XoWFdpMINaa6nFj3cQjUJAYxfyZHEKJz8WqsV/jhs0tVa5/KISEFiyfQTWz9xk3AFMz
+	8GKz8hnVSFPpFhCydOWSLA3S8OKjx8BfHqkCi9zRKD4dJSDYWasbZHJVOvMYzXkSr71JUx
+	NxzPJKaL+h2Wno5b6yrAKlKF35x3lZcdAKUNpKD5yvyh9c7XQViVHz3k7GtCZwsWD+5SVW
+	pHvuBE3sbl0vH1TWY9igccmmme1pvntj+3jpk00uAkS0EY7Vb0luJ4LCZX2FTw==
+Message-ID: <3e7f54e7-9287-47ee-9252-9fa13e028634@mailbox.org>
+Date: Thu, 18 Dec 2025 15:58:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb045e35-2e5c-4a3a-9970-08de3e45445c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2025 14:53:55.3628
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: syUbHG4HTXw4i2ob2fysttm9bFVzOJfGsezXVAkkzvG7x74zj/yTXEIH+3c2sRaaeneSypQe73ChAILrsvKWHw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9218
+Subject: Re: [v3 PATCH] remoteproc: xlnx: Use high-prio workqueue instead of
+ system wq
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Tanmay Shah <tanmay.shah@amd.com>,
+ Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>,
+ linux-remoteproc@vger.kernel.org
+References: <20251204104009.129483-1-stefan.roese@mailbox.org>
+ <b8951794-f720-49a9-9b21-1971a364c956@amd.com>
+ <fcd670a1-75c9-4a18-89cf-52c12ff0c07c@mailbox.org>
+ <747f8248-bbd8-4580-bc57-3efda9f50eb0@oss.qualcomm.com>
+ <d78ab175-e235-4f14-9b36-199209f0da9c@mailbox.org>
+ <1adb380c-4b57-4799-8e3f-f9ba5d14eb18@amd.com> <aT9g4FcdJdec01_q@p14s>
+ <ae1fd2a4-e35d-4907-a08c-a469adf6e96e@mailbox.org> <aUHTbCVdG6i1hA8Q@p14s>
+ <f4071b82-e4bf-49f3-81e7-7a03f4976027@mailbox.org> <aUMh-B5IPtFfjS-7@p14s>
+Content-Language: en-US
+From: Stefan Roese <stefan.roese@mailbox.org>
+In-Reply-To: <aUMh-B5IPtFfjS-7@p14s>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 8b95774f4ffead81c35
+X-MBO-RS-META: ej5ncug5b777mc35718csnnut7q8akbb
 
+Hi Mathieu,
 
+On 12/17/25 22:34, Mathieu Poirier wrote:
+> On Wed, Dec 17, 2025 at 11:27:44AM +0100, Stefan Roese wrote:
+>> Hi Mathieu,
+>>
+>> On 12/16/25 22:47, Mathieu Poirier wrote:
+>>> On Tue, Dec 16, 2025 at 03:34:18PM +0100, Stefan Roese wrote:
+>>>> Hi Mathieu,
+>>>>
+>>>> On 12/15/25 02:14, Mathieu Poirier wrote:
+>>>>> On Wed, Dec 10, 2025 at 12:28:52PM -0600, Tanmay Shah wrote:
+>>>>>> Hello, please check my comments below:
+>>>>>>
+>>>>>> On 12/10/25 2:29 AM, Stefan Roese wrote:
+>>>>>>> Hi Tanmay,
+>>>>>>>
+>>>>>>> On 12/10/25 03:51, Zhongqiu Han wrote:
+>>>>>>>> On 12/5/2025 8:06 PM, Stefan Roese wrote:
+>>>>>>>>> Hi Tanmay,
+>>>>>>>>>
+>>>>>>>>> On 12/4/25 17:45, Tanmay Shah wrote:
+>>>>>>>>>> Hello,
+>>>>>>>>>>
+>>>>>>>>>> Thank You for your patch. Please find my comments below.
+>>>>>>>>>>
+>>>>>>>>>> On 12/4/25 4:40 AM, Stefan Roese wrote:
+>>>>>>>>>>> Testing on our ZynqMP platform has shown, that some R5 messages might
+>>>>>>>>>>> get dropped under high CPU load. This patch creates a new high-prio
+>>>>>>>>>>
+>>>>>>
+>>>>>> This commit text should be fixed. Messages are not dropped by Linux, but R5
+>>>>>> can't send new messages as rx vq is not processed by Linux.
+>>>>>>
+>>>>>
+>>>>> I agree.
+>>>>>>>>>> Here, I would like to understand what it means by "R5
+>>>>>>>>>> messages might get dropped"
+>>>>>>>>>>
+>>>>>>>>>> Even under high CPU load, the messages from R5 are stored in
+>>>>>>>>>> the virtqueues. If Linux doesn't read it, then it is not
+>>>>>>>>>> really lost/ dropped.
+>>>>>>>>>>
+>>>>>>>>>> Could you please explain your use case in detail and how the
+>>>>>>>>>> testing is conducted?
+>>>>>>>>>
+>>>>>>>>> Our use-case is, that we send ~4k messages per second from the R5 to
+>>>>>>>>> Linux - sometimes even a bit more. Normally these messages are received
+>>>>>>>>> okay and no messages are dropped. Sometimes, under "high CPU load"
+>>>>>>>>> scenarios it happens, that the R5 has to drop messages, as there is no
+>>>>>>>>> free space in the RPMsg buffer, which is 256 entries AFAIU. Resulting
+>>>>>>>>> from the Linux driver not emptying the RX queue.
+>>>>>>>>>
+>>>>>>
+>>>>>> Thanks for the details. Your understanding is correct.
+>>>>>>
+>>>>>>>>> Could you please elaborate on these virtqueues a bit? Especially why no
+>>>>>>>>> messages drop should happen because of these virtqueues?
+>>>>>>>>
+>>>>>>>> AFAIK, as a transport layer based on virtqueue, rpmsg is reliable once a
+>>>>>>>> message has been successfully enqueued. The observed "drop" here appears
+>>>>>>>> to be on the R5 side, where the application discards messages when no
+>>>>>>>> entry buffer is available.
+>>>>>>>
+>>>>>>> Correct.
+>>>>>>>
+>>>>>>>> In the long run, while improving the Linux side is recommended,
+>>>>>>>
+>>>>>>> Yes, please.
+>>>>>>>
+>>>>>>>> it could
+>>>>>>>> also be helpful for the R5 side to implement strategies such as an
+>>>>>>>> application-level buffer and retry mechanisms.
+>>>>>>>
+>>>>>>> We already did this. We've added an additional buffer mechanism to the
+>>>>>>> R5, which improved this "message drop situation" a bit. Still it did not
+>>>>>>> fix it for all our high message rate situations - still resulting in
+>>>>>>> frame drops on the R5 side (the R5 is a bit resource restricted).
+>>>>>>>
+>>>>>>> Improving the responsiveness on the Linux side seems to be the best way
+>>>>>>> for us to deal with this problem.
+>>>>>>>
+>>>>>>
+>>>>>> I agree to this. However, Just want to understand and cover full picture
+>>>>>> here.
+>>>>>>
+>>>>>> On R5 side, I am assuming open-amp library is used for the RPMsg
+>>>>>> communication.
+>>>>>>
+>>>>>> rpmsg_send() API will end up here: https://github.com/OpenAMP/open-amp/blob/be5770f30516505c1a4d35efcffff9fb547f7dcf/lib/rpmsg/rpmsg_virtio.c#L384
+>>>>>>
+>>>>>> Here, if the new buffer is not available, then R5 is supposed to wait for
+>>>>>> 1ms before sending a new message. After 1ms, R5 will try to get buffer
+>>>>>> again, and this continues for 15 seconds. This is the default mechanism.
+>>>>>>
+>>>>>> This mechanism is used in your case correctly ?
+>>>>>>
+>>>>>> Alternatively you can register platform specific wait mechanism via this
+>>>>>> callback: https://github.com/OpenAMP/open-amp/blob/be5770f30516505c1a4d35efcffff9fb547f7dcf/lib/include/openamp/rpmsg_virtio.h#L42
+>>>>>>
+>>>>>> Few questions for further understanding:
+>>>>>>
+>>>>>> 1) As per your use case, 4k per second data transfer rate must be maintained
+>>>>>> all the time? And this is achieved with this patch?
+>>>>>>
+>>>>>> Even after having the high priority queue, if someone wants to achieve 8k
+>>>>>> per seconds or 16k per seconds data transfer rate, at some point we will hit
+>>>>>> this issue again.
+>>>>>>
+>>>>>
+>>>>> Right, I also think this patch is not the right solution.
+>>>>
+>>>> Hmmm. My understanding of Tanmays's comments is somewhat different. He
+>>>> is not "against" this patch in general AFAIU. Please see my reply with
+>>>> a more detailed description of our system setup and it's message flow
+>>>> and limitations that I just sent a few minutes ago.
+>>>>
+>>>
+>>> Regardless of how we spin things around, this patch is about running out of
+>>> resource (CPU cycles and memory).  It is only a matter of time before this
+>>> solution becomes obsolete.
+>>>
+>>> The main issue here is that we are adding a priority workqueue for everyone
+>>> using this driver, which may have unwanted side effects.  Please add a kernel
+>>> module parameter to control what kind of workqueue is to be used.
+>>
+>> Okay, will do.
+> 
+> Please see this patchset [1] Tanmay is currently working on.  I would much
+> rather see that solution put to work than playing with workqueue priorities.
+> 
+> [1]. "[RFC PATCH 0/2] Enhance RPMsg buffer management"
 
-> -----Original Message-----
-> From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-> Sent: Thursday, December 18, 2025 4:30 AM
-> To: Shenwei Wang <shenwei.wang@nxp.com>; Linus Walleij
-> <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>; Rob Herring
-> <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> <conor+dt@kernel.org>; Bjorn Andersson <andersson@kernel.org>; Mathieu
-> Poirier <mathieu.poirier@linaro.org>; Shawn Guo <shawnguo@kernel.org>;
-> Sascha Hauer <s.hauer@pengutronix.de>; Jonathan Corbet <corbet@lwn.net>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>; linux-
-> gpio@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> kernel@vger.kernel.org; linux-remoteproc@vger.kernel.org; imx@lists.linux=
-.dev;
-> linux-arm-kernel@lists.infradead.org; linux-doc@vger.kernel.org; dl-linux=
--imx
-> <linux-imx@nxp.com>
-> Subject: [EXT] Re: [PATCH v6 1/5] dt-bindings: remoteproc: imx_rproc: Add
-> "rpmsg" subnode support
->         syscon =3D <&src>;
-> > +
-> > +      rpmsg {
-> > +        rpmsg-io-channel {
-> > +          #address-cells =3D <1>;
-> > +          #size-cells =3D <0>;
-> > +
-> > +          gpio@0 {
-> > +            compatible =3D "rpmsg-gpio";
-> > +            reg =3D <0>;
-> > +            gpio-controller;
-> > +            #gpio-cells =3D <2>;
-> > +            #interrupt-cells =3D <2>;
-> > +            interrupt-controller;
-> > +            interrupt-parent =3D <&rpmsg_gpioa>;
->=20
->=20
-> "rpmsg_gpioa" seems not defined, or I missed something?
->=20
+Thanks for the notice. I'll take a look at it and if possible give it
+a try and will report back.
 
-That's just a reference alias in the DTS example, so you can ignore it. I c=
-an also remove=20
-it in the next version to avoid any confusion.
-
-Regards,
-Shenwei
-
-> Regards,
-> Arnaud
->=20
-> > +          };
-> > +
-> > +          gpio@1 {
-> > +            compatible =3D "rpmsg-gpio";
-> > +            reg =3D <1>;
-> > +            gpio-controller;
-> > +            #gpio-cells =3D <2>;
-> > +            #interrupt-cells =3D <2>;
-> > +            interrupt-controller;
-> > +            interrupt-parent =3D <&rpmsg_gpiob>;
-> > +          };
-> > +        };
-> > +      };
-> >       };
-> >   ...
+Thanks,
+Stefan
 
