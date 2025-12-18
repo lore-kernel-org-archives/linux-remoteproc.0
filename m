@@ -1,286 +1,328 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8F0336EF9
-	for <linux-remoteproc@vger.kernel.org>; Thu, 18 Dec 2025 14:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1E42773DE;
+	Thu, 18 Dec 2025 14:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766066881; cv=none; b=g+ZjNPRY2wvBr3hU8s0SvFoW83JoLS9hL4XASWd6PwlQM4rSUr4+xcFfMDRxa02d/FCdY29iu3ezl7oHJW/H41FG8W3uzcLDr9oXp5vQ1CtkjrBIlFG/CFHUqMRn9fyC6HI4R1B90JqiIQgMESGamYYO4gWO246TSp09rhvMAgo=
+	t=1766068624; cv=none; b=LVgp5WgFE1LsHQrKDbHYk2HQkbg0ocmFkU/x2zIC9FrDJkEmTHy79LpMuNCZs3t1tf9VIsC9TbF7Lyljfl9T9fudpwcLjcYh000W5neieoV2S1o9vRZmXGun49cOjAsJWLvX6Z4mBQiTdfzOFux9jiAAvKmVfUT2XpiNC86Nm4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766066881; c=relaxed/simple;
-	bh=sdoaS3aVPnS8mlbKoSr87lcUSDSkDh/AS/lPTgP6tjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XngVW9DT9f07DF8/RgAIehM46/lykFGxIw3DwtTCVFkTe7TZgYgiU3rcDMrjX9Um+Wbjj/zRmV9axxjvOCAL1/mZo6V2DD18wnfGjFy6f573NTueyq7/MUpNIOb775tzOxlQBI7k+ZAZfksI9+ZOn9VLqdvdoIyzUGwXIaOyZl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mXfppaV7; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TExsO59Y; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1766068624; c=relaxed/simple;
+	bh=C4aVgHKLH2zwboXazAOmsuS2KMJ4bZLNfRZH48TA7KE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PvZ4X2eDN1oZg9+0iF89WM5aX1ACj5U02SkATrq2rH5nhoiZOHM5LBz+XXerOictbIaSB951risZYyaTyO/YXFmofqgCH+xFvMa0SDcby72uBub5X76YOhRBBIqK37FBsCBgqVdNOuibKUyWPUs7Ovuu/+QMkzyqnK3pRvIMfI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npRJQJ+n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mXfppaV7";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TExsO59Y"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5BI8wiKL237745
-	for <linux-remoteproc@vger.kernel.org>; Thu, 18 Dec 2025 14:07:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o87SlVtSMSkrOoLeMNWzmv5vpvWXLBuQJpH68X8QlW4=; b=mXfppaV7X9Dxt9Vf
-	LA9opNIPxTOI69qUfqof8ArhXpia6iOvBIRyoGfltkS657FQ2MgEjUpUidMD2CwJ
-	YUfjaouirQTR+mjmQfdmymOqD4j1TjDPw5ND8LSm2xnP9oarl4A2zCXMy4uPYTMI
-	yZywaCaSyLu9ewRabwpS0LF/3cTwlLZzd1ldSUgoPojojWKX3taHAmiP9oWcZ1NY
-	1L/uexS7d8Jnw6KISu11wrQMcUH5+xder+j9GLl17ifLq8LHqpha7dL3rTyd/ouS
-	idmFTqe3n9FR1UAdlheZCqlmzMfxNagenGAfdV4T82s1yvWWUQ/or7KuMWIUHOAs
-	A6TRaA==
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com [209.85.128.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4b44x3jmmu-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 18 Dec 2025 14:07:58 +0000 (GMT)
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-78e7a045cb3so218977b3.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Dec 2025 06:07:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1766066878; x=1766671678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o87SlVtSMSkrOoLeMNWzmv5vpvWXLBuQJpH68X8QlW4=;
-        b=TExsO59YlJqePpCNxibTsiJr66WtU0RmS8u/UGfiGw7+ZWhEyv8SqM3D9yJlocyA1V
-         051NUdN8HG3+OGb5/2x5z6P8jm31GSByoRg4i+r0s0Cjz/y9fJCipqEHv8FavAV5tBvg
-         FP2Vgs4eK8SlW1PtO2LXvOnqjxFw5tEOw0eWBr1polhhZgTq9zQMflgEXP0AAPK4Dhet
-         0GWgFUimBPCA0sMhHwdD045RnuKE9cGDqrgdzTX4cmevykucyk5eXYcjYm8XpqEo5CHU
-         4+q408bo/FwuoGpwKyHPUu/pTDUPDlzfrSW1PymUais+4tttXXJ48WJDZbo97VTTp06z
-         z/SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766066878; x=1766671678;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o87SlVtSMSkrOoLeMNWzmv5vpvWXLBuQJpH68X8QlW4=;
-        b=OFDpBHIy6sj6gLFztBoX2W4wLxE291W/ffnWZN4fDykXaB3gfOYG+Y4EI25xcYpicE
-         e6eHeFV+TW25LzJfLU62/G0oHFOxwg3ldZmjSAwY9wEQAKnmnegu7vHaIq7YF8wwlaYw
-         6utAa/S/b6+8pMdbEbZFZH2wCib7Q8p1CWn5cUPYildfmxG8k97ZqutbRf9ZwqbQcUyD
-         xhpi/mlYwxiSWz3vvcuqe6nb2S0iK9bZC2skaUtX1r8qgI5UDlfO7rvqSy3xa1OGwoVk
-         NTIJh/xnudK5DT5BE6zID4/Q6QvvQKG920yxGMZoQxm7NwuJ3PHhf0twqVLtUTqvNeD5
-         S4rA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLEKRJWFv4O8qgjxVtxi5urYgt3urehbPRixBD05EZCFDng7EJstip/dzxWqUEB93C6lLERjhf3C0n6BTN6hO5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk1fQfErc4Z5eup//DAtpcxg2nVDq5yyZYqIIHpr5E30GGgQCF
-	ILtdKHHNDzJ3hbyXs6I5wX1vroVtPuu0Yz6wBkmS07ue7nuluFY9yw5Y51UwJf4Ygb3JGrrqz4a
-	ZwxQI8OsYGeqbbiSQXtK7DhqRmClruI3NXlVKuiAf1hg7tYWzDaYL8MtLgicC9wATbR2U0JXB
-X-Gm-Gg: AY/fxX5a2QjtsxwhDfqlP6qG9qvjLax8NuB6M+LGPw6JDmpogxhiOWMslKhQonsk68a
-	NgrWJeyIKszMZkYC20XiG6xHIbCvNxtBpj86R0YS+rU5/AzbLHjJqTQ3i6fip6bhONUUrvN00bE
-	VDUaMuuHJ8Ex1J/CgqJKjY/Kc1eVPTMSPjLXgnIaqaYfu8aTH8jc3NOKDIwpOgIs6c0wm/OoZ24
-	nrlIwe5mSaz8VmMqHDpCPvY29IIPEs6U0zvDjYioTq9rPvhucKOP5lOD+9MwH/Px/QFNVbu26VE
-	kd3gziIQE8tyGEWe3/ooJIC06+2+29+RKSY/1zWeT0/j4hbKSq/P2QiBENu/OsC3FwZc9fDvHpl
-	86Qhhs4osHHk12A7hO6RGDER0PKE0d4g8YCL97xK1NpgeJjEjt5K0jjSBWo7XFxDXlg==
-X-Received: by 2002:a05:690c:398:b0:78f:9d17:aff2 with SMTP id 00721157ae682-78fa7fb0c7amr17541547b3.5.1766066878032;
-        Thu, 18 Dec 2025 06:07:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHgUVF2ZvoMUW7DMha9Kz/azXqDs9FfldE8kOJJ1DVHmIj4XY8q/Ljmvx8z/7Vv2VwzZXA3Ug==
-X-Received: by 2002:a05:690c:398:b0:78f:9d17:aff2 with SMTP id 00721157ae682-78fa7fb0c7amr17541447b3.5.1766066877595;
-        Thu, 18 Dec 2025 06:07:57 -0800 (PST)
-Received: from [192.168.119.72] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b80234a2d9bsm249294866b.48.2025.12.18.06.07.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Dec 2025 06:07:56 -0800 (PST)
-Message-ID: <80cb1b5f-7950-4014-913f-838d35fb64bd@oss.qualcomm.com>
-Date: Thu, 18 Dec 2025 15:07:53 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npRJQJ+n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4F5EC4CEFB;
+	Thu, 18 Dec 2025 14:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1766068622;
+	bh=C4aVgHKLH2zwboXazAOmsuS2KMJ4bZLNfRZH48TA7KE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=npRJQJ+n2T/y2apPKRagp7AdUodJQ+cnhwXusv0lE9gGgbwlz0954GPVGSKPAHWd9
+	 LVy1zbS+vOC6cwzkMiFLj7DTzuYmfw1bvM4cxa/0YKs+qjdPXEWUJ28QRCnCKSvoAn
+	 x0hSws9giSplsSa1/mYO6XmU2YFo7g+xGqIRwrNR8KJZvQBoepGEGVcoMkt8AEvHvp
+	 SsQkxMeqq/do0L9W5gu61tDSApWdwHnQt43I/1P4xq/M1dQXgrisx4q5V2taXjDz+c
+	 Rm2m8PDJvfSffQSCfuYdEvinoawcZRRncf50vHTjUTjgN13U8l7LFPhJHzLBwd83Gr
+	 VoqJUQ0qXZAbA==
+Date: Thu, 18 Dec 2025 08:37:00 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 11/14] firmware: qcom_scm: Add
+ qcom_scm_pas_get_rsc_table() to get resource table
+Message-ID: <2332azku3gvlm7vwuu6xvhdtr3nhbbjsnpgclh3m4mk6gvotjs@h4cizwnu6dkl>
+References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
+ <20251121-kvm_rproc_v8-v8-11-8e8e9fb0eca0@oss.qualcomm.com>
+ <igedl65pnenmeiybzktsw7toeqtb5mhbk7ks5dkavevko6e5yq@2tyakacovx7f>
+ <20251208164926.cwe7arncr6tnan5f@hu-mojha-hyd.qualcomm.com>
+ <20251209104525.wtevrvyxqomh63hg@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 00/14] Peripheral Image Loader support for Qualcomm
- SoCs running Linux host at EL2
-To: Bryan O'Donoghue <bod@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251121-kvm_rproc_v8-v8-0-8e8e9fb0eca0@oss.qualcomm.com>
- <0156c327-b867-481e-af24-679f037bfa56@linaro.org>
- <Ux4KioDAyhqgZYleT-eeeFKzuT_qadCIpP3RgyB40apZPX4I9_JwcfY9mebop4gmFcyh4LPw0KQvFzL4zzysJQ==@protonmail.internalid>
- <20251121113751.tnqw5abm5sd2rgr7@hu-mojha-hyd.qualcomm.com>
- <9dfe5343-824d-42c2-aab8-8389602601e9@kernel.org>
- <20251202083650.luk2jpcquq2pcf2r@hu-mojha-hyd.qualcomm.com>
- <623225c2-166a-49a1-9856-d02ed55f1e47@oss.qualcomm.com>
- <bds552pvggsf6jgfyghyigp2fb6zb6hucwqirwye5puctnrhdi@tqw4b2nc3mkg>
- <64dbe824-a94c-4394-8cbe-ebdb7a3c42fd@oss.qualcomm.com>
- <qnpgm5zmiqvwwmwc4z64uqssodrkcjaai4ro5tt36wua2jljlv@y3dx5s2sxrlp>
- <55f68c6f-9b7e-4393-9ca2-b94551cd81b8@oss.qualcomm.com>
- <jX9Ifmjba1jKjv7wLdH0BnDY-4Zo91ibfsoeCCOFvKhD_a8NWM8ONnJtbO_Cr5v6tttjEI8b-l0O7na3iXSL9Q==@protonmail.internalid>
- <28207f1f-31f0-4007-bab5-e073ddf2d262@oss.qualcomm.com>
- <24aa56bf-b03f-4b4b-9ac6-89fc91762179@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <24aa56bf-b03f-4b4b-9ac6-89fc91762179@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMjE4MDExNyBTYWx0ZWRfXx68AgAEMUky/
- WSl5vu6QWUmGJ8GeTc5Tr+pV3WgV7KqfYIBXw5+7DVrByJSfOthCS2DEow6vuzq04Nd9+gf/+Qc
- NOAOuvPAiok2sVK6Q4kPzgK+Wvl/Ck8nRA5/xo1Iy9bpnXlyi15S1U7xqjQ7xx8r0L7sK24Q1n2
- TZj0CAxOKJIKaEAK4sZjp+y7yWkaZiN4DEZ+hsMcXRYOPYrsIq1wRnaGcBHMzveC3N6lSw6BnIg
- KOEo+jJbMPz1VK1giH/sFXcSrGIFELvpMbx2vDU4FMrUbAGH+oNqGcN9Fer+5Ms5JQ2RtqPI8jq
- FtVuq7cyxtL/D87xHudmPhhAoCnx9y3NDsXpkZUqud0/i83FXsZR3U3qNg5peN1FQZmj6IRsh4e
- gkNmAG/Tjs93rjctURLe7UleS4v/ig==
-X-Proofpoint-GUID: XSd2PbWr7usawXojzK2SdaKPXhbZd0a8
-X-Proofpoint-ORIG-GUID: XSd2PbWr7usawXojzK2SdaKPXhbZd0a8
-X-Authority-Analysis: v=2.4 cv=Zpjg6t7G c=1 sm=1 tr=0 ts=69440abe cx=c_pps
- a=NMvoxGxYzVyQPkMeJjVPKg==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=wP3pNCr1ah4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=inLNWrLPvn9skOYvWnUA:9 a=uiejn4RyafnNK9Kq:21 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=kLokIza1BN8a-hAJ3hfR:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-12-18_02,2025-12-17_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- phishscore=0 malwarescore=0 clxscore=1015 impostorscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2512180117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251209104525.wtevrvyxqomh63hg@hu-mojha-hyd.qualcomm.com>
 
-On 12/18/25 5:32 AM, Bryan O'Donoghue wrote:
-> On 17/12/2025 11:43, Konrad Dybcio wrote:
->> On 12/17/25 11:08 AM, Vikash Garodia wrote:
->>>
->>> On 12/6/2025 2:48 AM, Dmitry Baryshkov wrote:
->>>> On Wed, Dec 03, 2025 at 10:48:14AM +0530, Vikash Garodia wrote:
->>>>>
->>>>> On 12/3/2025 2:54 AM, Bjorn Andersson wrote:
->>>>>> On Tue, Dec 02, 2025 at 03:43:17PM +0530, Vikash Garodia wrote:
->>>>>>>
->>>>>>> On 12/2/2025 2:06 PM, Mukesh Ojha wrote:
->>>>>>>> On Thu, Nov 27, 2025 at 10:25:23AM +0000, Bryan O'Donoghue wrote:
->>>>>>>>> On 21/11/2025 11:37, Mukesh Ojha wrote:
->>>>>>>>>>> Sorry.
->>>>>>>>>>>
->>>>>>>>>>> Did we actually come up with a cogent reason to omit the video firmware
->>>>>>>>>>> loading here ?
->>>>>>>>>>>
->>>>>>>>>>> AFAIU it is required for Lemans and Glymur - leaving it out is blocking
->>>>>>>>>>> getting video stuff done and storing up trouble.
->>>>>>>>>>>
->>>>>>>>>>> What exactly is the blockage - is it something you want help with ?
->>>>>>>>>> I replied to you here[1] and given my reason..till something concluded on
->>>>>>>>>> "multi-cell IOMMU[2]", I can not add video and block what is working
->>>>>>>>>> already.
->>>>>>>>>>
->>>>>>>>>> [1]
->>>>>>>>>> https://lore.kernel.org/lkml/20251105081421.f6j7ks5bd4dfgr67@hu-mojha-
->>>>>>>>>> hyd.qualcomm.com/
->>>>>>>>>
->>>>>>>>> Why though ?
->>>>>>>>>
->>>>>>>>> You are mixing together the issue of multiple SIDs and the original loading
->>>>>>>>> of firmware which could easily reuse the venus method of
->>>>>>>>>
->>>>>>>>> &iris {
->>>>>>>>>      video-firmware {
->>>>>>>>>          iommus = <&apss_smmu hex>;
->>>>>>>>>      };
->>>>>>>>> };
->>>>>>>>
->>>>>>>> I completely understand what you are saying, and it would be very easy
->>>>>>>> for me to do that if it gets accepted. However, I doubt that the people
->>>>>>>> who raised this concern would agree with the approach.
->>>>>>>>
->>>>>>>> I’m not sure if the video team would like to pursue pixel/non-pixel/firmware context
->>>>>>>> banks separately. I’ll leave this to @Vikas to answer.
->>>>>>>
->>>>>>> Not exactly as a separate sub-node, but i do like the idea of introducing a
->>>>>>> simple iommu property, something like this, which Stephan proposed earlier
->>>>>>> in the discussion [1]
->>>>>>>
->>>>>>> firmware-iommus = <&apps_smmu ...>;
->>>>>>>
->>>>>>> I understand that we are doing the iommu-map thing, but a property
->>>>>>> exclusively for firmware like above look much simpler to me.
->>>>>>>
->>>>>>
->>>>>> "We know we need to find a generic solution to this very problem, but
->>>>>> while we work on that let's add this quick hack to the ABI"?
->>>>>
->>>>> I would not call that as hack, rather a simpler solution instead of packing
->>>>> everything into the generic iommu-map.
->>>>>
->>>>> "firmware-iommus" is much more readable to interpret something running in
->>>>> el2 mode, than digging into function ids inside iommu-map and then matching
->>>>> it up with specific SIDs to confirm.
->>>>
->>>> If you want it formally, NAK from my side for firmware-iommus. Either
->>>> reuse an existing approach (at least it makese sense from the historical
->>>> point of view) or introduce a generic approach, which is iommu-maps. The
->>>> proposed firmware-iommus is definitely a hack around the IOMMU
->>>> properties.
->>>>
->>>> But it's really off-topic here.
->>>
->>> Infact i see a concern with the iommu-map approach for firmware SIDs. Let say the hardware generates 10 SIDs, including firmware. So video binding should describe those 10 SIDs and the DTS should have all those 10 SIDs as well, including firmware SID.
->>> Given above, video driver cannot distinguish if the SOC is running in EL2 (KVM) mode or Gunyah mode.
->>
->> EL2 vs Gunyah is not hard (something like is_hyp_mode_available()), but
->> again, this should all be calling some sort of is_gunyah() which would
->> come from the gunyah hyp drivers, which have seen no activity on lkml
->> for over a year..
->>
->> Konrad
+On Tue, Dec 09, 2025 at 04:15:25PM +0530, Mukesh Ojha wrote:
+> On Mon, Dec 08, 2025 at 10:19:26PM +0530, Mukesh Ojha wrote:
+> > On Fri, Dec 05, 2025 at 04:40:51PM -0600, Bjorn Andersson wrote:
+> > > On Fri, Nov 21, 2025 at 04:31:13PM +0530, Mukesh Ojha wrote:
+[..]
+> > > 
+> > > Wouldn't be unreasonable to return an ERR_PTR() with the allocated
+> > > buffer, instead of returning through the reference.
+> > 
+> > We anyway have to return the size through reference, why not do the same for 
+> > allocated buffer as well..
 > 
-> What exactly is the status of the iommu-map stuff and when is it likely to land ?
-
-I don't know. This is unrelated to the issue this patchset is solving.
-
-> We _already_ have thanks to chromeos a way to define this stuff in venus.
-
-Which was.. heavily debated, let's call it, after Krzysztof noticed it exists
-and you agreed it should not spread by leaving your r-b on:
-
-6d3926a237b6 ("dt-bindings: media: qcom,sm8550-iris: Do not reference legacy venus properties")
-
-> My €0.02 is 100% fine with iommu-map as a solution for VPU but then, actually want to see it as part of the series solving the problem.
 > 
-> Else, we should reuse the venus approach.
-> 
-> Right now we have the worst of both worlds. Iris is blocked waiting on iommu-map but the iommu-map series has dropped Iris support because - reasons.
+> Tried to take care most of the comments apart from above one., let me know if
+> below is fine..
 
-I think you're replying to the wrong series.
+It's indeed fine, much better. Thank you.
 
-> The very definition of being stuck between a rock and a hard place.
 > 
-> @Mukesh - can you add Iris support back into the series ? If so then is it perfectly reasonable to proceed with iommu-map for Iris.
+> ---------------------------------------o<---------------------------------------
 > 
-> If not then we should just reuse the approach we have.
-> 
-> Either way I regard this series as broken right now, as it applies a solution that excludes one of the primary users of that solution with no view as to when that user gets enabled, worse still it requires adaptation to the new solution but the proposer won't do that work...
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 4ce892d8fb25..a589961f8225 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/remoteproc.h>
+>  #include <linux/sizes.h>
+>  #include <linux/types.h>
+>  
+> @@ -111,6 +112,10 @@ enum qcom_scm_qseecom_tz_cmd_info {
+>  	QSEECOM_TZ_CMD_INFO_VERSION		= 3,
+>  };
+>  
+> +enum qcom_scm_rsctable_resp_type {
+> +	RSCTABLE_BUFFER_NOT_SUFFICIENT		= 20,
 
-Why should Mukesh be required to carry your burden?
+This isn't an enumeration, it's the constant 20. So #define would be
+more suitable...
 
-You (as the Iris maintainer) are a consumer of this new set of APIs provided in
-this series, so one would expect that you can help test it by creating a
-downstream patch (that would be nice to share), rebased on new revisions as
-necessary and sharing feedback based on the drawbacks you notice.
-> It places Iris in a very invidious position.
-> 
-> So again I think if we can agree to add Iris support back into this series then we should go ahead with implementing in Iris.
-> 
-> If not then the conclusion is Iris _won't_ use that solution and we go with the previous venus solution.
+> +};
+> +
+>  #define QSEECOM_MAX_APP_NAME_SIZE		64
+>  #define SHMBRIDGE_RESULT_NOTSUPP		4
+>  
+> @@ -766,6 +771,171 @@ int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_scm_pas_mem_setup);
+>  
+> +static int __qcom_scm_pas_get_rsc_table(u32 pas_id, void *input_rt,
+> +					size_t input_rt_size, void *output_rt,
+> +					size_t *output_rt_size)
+> +{
+> +	struct qcom_scm_desc desc = {
+> +		.svc = QCOM_SCM_SVC_PIL,
+> +		.cmd = QCOM_SCM_PIL_PAS_GET_RSCTABLE,
+> +		.arginfo = QCOM_SCM_ARGS(5, QCOM_SCM_VAL, QCOM_SCM_RO, QCOM_SCM_VAL,
+> +					 QCOM_SCM_RW, QCOM_SCM_VAL),
+> +		.args[0] = pas_id,
+> +		.owner = ARM_SMCCC_OWNER_SIP,
+> +	};
+> +	struct qcom_scm_res res;
+> +	int ret;
+> +
+> +	desc.args[1] = qcom_tzmem_to_phys(input_rt);
+> +	desc.args[2] = input_rt_size;
+> +	desc.args[3] = qcom_tzmem_to_phys(output_rt);
+> +	desc.args[4] = *output_rt_size;
+> +
+> +	/*
+> +	 * Whether SMC fail or pass, res.result[2] will hold actual resource table
+> +	 * size.
+> +	 *
+> +	 * If passed 'output_rt_size' buffer size is not sufficient to hold the
+> +	 * resource table TrustZone sends, response code in res.result[1] as
+> +	 * RSCTABLE_BUFFER_NOT_SUFFICIENT so that caller can retry this SMC call
+> +	 * with output_rt buffer with res.result[2] size however, It should not
+> +	 * be of unresonable size.
+> +	 */
+> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+> +	if (res.result[2] > SZ_1G) {
+> +		ret = -E2BIG;
+> +		return ret;
+> +	}
+> +
+> +	*output_rt_size = res.result[2];
+> +	if (ret && res.result[1] == RSCTABLE_BUFFER_NOT_SUFFICIENT)
+> +		ret = -EOVERFLOW;
+> +
+> +	return ret ? : res.result[0];
+> +}
+> +
+> +/**
+> + * qcom_scm_pas_get_rsc_table() - Retrieve the resource table in passed output buffer
+> + *				  for a given peripheral.
+> + *
+> + * Qualcomm remote processor may rely on both static and dynamic resources for
+> + * its functionality. Static resources typically refer to memory-mapped addresses
+> + * required by the subsystem and are often embedded within the firmware binary
+> + * and dynamic resources, such as shared memory in DDR etc., are determined at
+> + * runtime during the boot process.
+> + *
+> + * On Qualcomm Technologies devices, it's possible that static resources are not
+> + * embedded in the firmware binary and instead are provided by TrustZone However,
+> + * dynamic resources are always expected to come from TrustZone. This indicates
+> + * that for Qualcomm devices, all resources (static and dynamic) will be provided
+> + * by TrustZone via the SMC call.
+> + *
+> + * If the remote processor firmware binary does contain static resources, they
+> + * should be passed in input_rt. These will be forwarded to TrustZone for
+> + * authentication. TrustZone will then append the dynamic resources and return
+> + * the complete resource table in output_rt.
+> + *
+> + * If the remote processor firmware binary does not include a resource table,
+> + * the caller of this function should set input_rt as NULL and input_rt_size
+> + * as zero respectively.
+> + *
+> + * More about documentation on resource table data structures can be found in
+> + * include/linux/remoteproc.h
+> + *
+> + * @ctx:	    PAS context
+> + * @pas_id:	    peripheral authentication service id
+> + * @input_rt:       resource table buffer which is present in firmware binary
+> + * @input_rt_size:  size of the resource table present in firmware binary
+> + * @output_rt:	    buffer to which the both static and dynamic resources will
+> + *		    be returned.
+> + * @output_rt_size: TrustZone expects caller should pass worst case size for
+> + *		    the output_rt.
+> + *
+> + * Return: 0 on success and nonzero on failure.
+> + *
+> + * Upon successful return, output_rt will have the resource table and output_rt_size
+> + * will have actual resource table size,
+> + */
+> +int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
+> +			       size_t input_rt_size, void **output_rt,
+> +			       size_t *output_rt_size)
+> +{
+> +	struct resource_table empty_rsc = {};
+> +	size_t size = SZ_16K;
+> +	void *output_rt_tzm;
+> +	void *input_rt_tzm;
+> +	int ret;
+> +
+> +	ret = qcom_scm_clk_enable();
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = qcom_scm_bw_enable();
+> +	if (ret)
+> +		goto disable_clk;
+> +
+> +	/*
+> +	 * TrustZone can not accept buffer as NULL value as argument Hence,
 
-Because that surely won't get any pushback.. 
+Lowercase 'h' in Hence, please.
 
-Konrad
+> +	 * we need to pass a input buffer indicating that subsystem firmware
+> +	 * does not have resource table by filling resource table structure.
+> +	 */
+> +	if (!input_rt) {
+> +		input_rt = &empty_rsc;
+> +		input_rt_size = sizeof(empty_rsc);
+> +	}
+> +
+> +	input_rt_tzm = qcom_tzmem_alloc(__scm->mempool, input_rt_size, GFP_KERNEL);
+> +	if (!input_rt_tzm) {
+> +		ret = -ENOMEM;
+> +		goto disable_scm_bw;
+> +	}
+> +
+> +	memcpy(input_rt_tzm, input_rt, input_rt_size);
+> +
+> +	do {
+> +		output_rt_tzm = qcom_tzmem_alloc(__scm->mempool, size, GFP_KERNEL);
+> +		if (!output_rt_tzm) {
+> +			ret = -ENOMEM;
+> +			goto free_input_rt;
+> +		}
+> +
+> +		ret = __qcom_scm_pas_get_rsc_table(ctx->pas_id, input_rt_tzm,
+> +						   input_rt_size, output_rt_tzm,
+> +						   &size);
+> +		if (ret)
+> +			qcom_tzmem_free(output_rt_tzm);
+> +
+> +	} while (ret == -EOVERFLOW);
+> +
+> +	if (!ret) {
+> +		void *tbl_ptr;
+> +
+> +		tbl_ptr = kzalloc(size, GFP_KERNEL);
+> +		if (!tbl_ptr)
+> +			goto free_output_rt;
+> +
+> +		memcpy(tbl_ptr, output_rt_tzm, size);
+> +		*output_rt = tbl_ptr;
+> +		*output_rt_size = size;
+> +	}
+> +
+> +free_output_rt:
+> +	if (!ret)
+> +		qcom_tzmem_free(output_rt_tzm);
+> +
+> +free_input_rt:
+> +	qcom_tzmem_free(input_rt_tzm);
+> +
+> +disable_scm_bw:
+> +	qcom_scm_bw_disable();
+> +
+> +disable_clk:
+> +	qcom_scm_clk_disable();
+> +
+> +	return ret;
 
-> Either way, the proposed series as is, is an effective blocker for Iris so I'd like a commitment either to re-add or we agree it won't be added at all.
+I still think it would be nice to match the prototype of
+rproc_find_loaded_rsc_table() and return the pointer our resource table.
+
+Effectively:
+  return ret ? ERR_PTR(ret) : tbl_ptr;
+
+(although return tbl_ptr; after making sure it's either the allocated
+memory or ERR_PTR() would be nicer)
+
+Should be able to make the return type struct resource_table * (even
+though struct resource_table is a opaque type here).
+
+But, my concrete concerns have been addressed, so I'm happy either way.
+
+Regards,
+Bjorn
+
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_scm_pas_get_rsc_table);
+> +
+>  /**
+>   * qcom_scm_pas_auth_and_reset() - Authenticate the given peripheral firmware
+>   *				   and reset the remote processor
+> diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
+> index a56c8212cc0c..50d87c628d78 100644
+> --- a/drivers/firmware/qcom/qcom_scm.h
+> +++ b/drivers/firmware/qcom/qcom_scm.h
+> @@ -105,6 +105,7 @@ int qcom_scm_shm_bridge_enable(struct device *scm_dev);
+>  #define QCOM_SCM_PIL_PAS_SHUTDOWN	0x06
+>  #define QCOM_SCM_PIL_PAS_IS_SUPPORTED	0x07
+>  #define QCOM_SCM_PIL_PAS_MSS_RESET	0x0a
+> +#define QCOM_SCM_PIL_PAS_GET_RSCTABLE	0x21
+>  
+>  #define QCOM_SCM_SVC_IO			0x05
+>  #define QCOM_SCM_IO_READ		0x01
+> diff --git a/include/linux/firmware/qcom/qcom_scm.h b/include/linux/firmware/qcom/qcom_scm.h
+> index d6d83888bb75..7c331598ea15 100644
+> --- a/include/linux/firmware/qcom/qcom_scm.h
+> +++ b/include/linux/firmware/qcom/qcom_scm.h
+> @@ -88,6 +88,10 @@ int qcom_scm_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
+>  int qcom_scm_pas_auth_and_reset(u32 pas_id);
+>  int qcom_scm_pas_shutdown(u32 pas_id);
+>  bool qcom_scm_pas_supported(u32 pas_id);
+> +int qcom_scm_pas_get_rsc_table(struct qcom_scm_pas_context *ctx, void *input_rt,
+> +			       size_t input_rt_size, void **output_rt,
+> +			       size_t *output_rt_size);
+> +
+>  
 > 
-> Either way Iris gets unblocked.
+> > 
+> > 
+> > -- 
+> > -Mukesh Ojha
 > 
-> ---
-> bod
+> -- 
+> -Mukesh Ojha
