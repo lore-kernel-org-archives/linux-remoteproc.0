@@ -1,45 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8D81FC0EF;
-	Sat, 20 Dec 2025 08:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251524A35;
+	Sat, 20 Dec 2025 08:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766220341; cv=none; b=oWiUc6SEPUmsCUyoGtnmwA3rdBKRyhUllQ2C/OSAOhMNeIXnMJuBos2aIdE2uKw6pexz7k24c0p704T7FWPFqtmM4gP2UN1p81d+2ueyGdRWtthaKdsdmYkWs1C/MxZp69S4rx6pKPQYsmXMEUE9LjxLbTuIf4l2YN7HRNnU6kI=
+	t=1766220846; cv=none; b=dL1k3VSUvH4c1pkal5rAeOQc6P8C/7ZtJVOQAYyBZu62VtOd+xxnv6nKEjb6TjdcBO/c0YTwH34dSOkXinVmFR2ZM7iRw0LNG3ll1GV+z72A6hk65Nhtnrkof0l8YZF8Ucl95kgY4TaEWYelUMhujWS1eu6JuVLY4TxOfJjj1bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766220341; c=relaxed/simple;
-	bh=E83PYgXKvVNpmYokx8X6uiQgxTVJQc9K3iHEnK4jIFE=;
+	s=arc-20240116; t=1766220846; c=relaxed/simple;
+	bh=ME1PQR0kwfmB/h9m9Q9QgcF8LIQq656uWfk3ydEYZN0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pmOTJhzGi4MKKkClwH/wGNJZto0aCBPI5XKAIf2o8FF5nLdRTfRkXD37yn90XD99WOfmHiRuQr6IFqdphIBS5FDNDmlg1JjJzglVc+1KOWWtrMLO3ztOmnrus87Cg/2tXYdXjYcOqeSQf29j5ILiQyYhdXaG8kqhuXTGE6Ygvbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qw+bBk0a; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=MZTUR6AmxHmdZqxAYTa9yxLiOG5UfQpVdotTeSU1/aAfLiBxfNsbRdDXyG7BL94Bf/opuIY9/kuNjdzl8vLNbuD0BrAi6Fa9Xa4lGWlA/HnRuCGFtxJYjPLXeOErE269ic/nO2upp3zNHwwHLciH8U7HD0YZam3BTCadrKA2MOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OLDHIbD7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qw+bBk0a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D55FDC4CEF5;
-	Sat, 20 Dec 2025 08:45:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OLDHIbD7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20292C4CEF5;
+	Sat, 20 Dec 2025 08:54:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766220340;
-	bh=E83PYgXKvVNpmYokx8X6uiQgxTVJQc9K3iHEnK4jIFE=;
+	s=k20201202; t=1766220845;
+	bh=ME1PQR0kwfmB/h9m9Q9QgcF8LIQq656uWfk3ydEYZN0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qw+bBk0aWGbD12vZnCAphj0rpC6mSJd8DQ9g+4IY1c9Hl9SZLwaFZPive4DrpQJ7j
-	 kpmPSKE7jgdfy9HU6aH4rvQG9/c3i1sQ7Bl/r7b+WZgMFcTpT9eUrqkiMS4ZlKDDVw
-	 j4fqTj4O12Ma+4HaOXAZZe+tXjntd/wgcv4kTxOU4B5dRV0+fNUXpREbWCarz6XQL+
-	 ncPOMf0Os/fpsgeG6ur9Z0mSQXYniJ+KGu4GHEVOp5bx/Pb7288j349CU+TuVYB8/v
-	 /2ny1wn4IACx0X68mYtCDBswuiJM9nezFbMPcnXpKTz3Dw0xb6yAYQftF5ZOy0bzmS
-	 GN+wXznC7V+yg==
-Date: Sat, 20 Dec 2025 09:45:37 +0100
+	b=OLDHIbD7oyU8mmVmkoxmE4E8Qtb3yibI9KJsX+HvXPVAyAr3c8LgGbndyfebXe3EA
+	 ChmOfPNoXcJIs/ZzW2KG/jCc83M/I84b4DmASvqXTKXRoKKFQH4GBhtOVxWAWj3Zf8
+	 wtv6+IuSWStMJwvB05lsUzD5I7mcSDZY9q8AKxsqVYBNSkbUsofgBlz16o8fndLRHE
+	 /xSveaX3vLihZqpX3TQtIDlWyopKGidVepz+xAv1vItCyZLnFlpbGidNrYfeyPpe6K
+	 zTZz3oFkxYENiF73YVXVBB3iBEE8Vjg4VC4DHzXIJ9BhUo2l0qz3rbBPIIpwzWZJ8U
+	 GEqOJ3cvLE8fw==
+Date: Sat, 20 Dec 2025 09:54:02 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>, 
-	George Moussalem <george.moussalem@outlook.com>
-Subject: Re: [PATCH v8 6/6] arm64: dts: qcom: ipq9574: add nodes to bring up
- q6
-Message-ID: <20251220-gleaming-papaya-toucanet-c2cb88@quoll>
-References: <20251219031010.2919875-1-varadarajan.narayanan@oss.qualcomm.com>
- <20251219031010.2919875-7-varadarajan.narayanan@oss.qualcomm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Alexandru Gagniuc <mr.nuke.me@gmail.com>, andersson@kernel.org, 
+	mathieu.poirier@linaro.org, krzk+dt@kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/9] dt-bindings: remoteproc: qcom: add IPQ9574 image
+ loader
+Message-ID: <20251220-imaginary-merciful-quoll-a91a4c@quoll>
+References: <20251219043425.888585-1-mr.nuke.me@gmail.com>
+ <20251219043425.888585-2-mr.nuke.me@gmail.com>
+ <20251219144433.GA3163791-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -48,19 +47,22 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251219031010.2919875-7-varadarajan.narayanan@oss.qualcomm.com>
+In-Reply-To: <20251219144433.GA3163791-robh@kernel.org>
 
-On Fri, Dec 19, 2025 at 08:40:10AM +0530, Varadarajan Narayanan wrote:
-> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+On Fri, Dec 19, 2025 at 08:44:33AM -0600, Rob Herring wrote:
+> On Thu, Dec 18, 2025 at 10:34:10PM -0600, Alexandru Gagniuc wrote:
+> > Document the IPQ9574 native (non-PAS) WCSS image loader. It is similar
+> > to IPQ8074 WCSS, but requires several new clocks. These clocks must be
+> > enabled by the host in non-PAS mode, and are not optional. Add an
+> > example that uses the "qcom,ipq9574-wcss-pil" binding.
 > 
-> Enable nodes required for q6 remoteproc bring up.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> Is the new example really much different and unique. If not, drop it 
+> (especially since it wasn't even tested).
 
-Incomplete DCO.
+There is simply no example for existing devices, so this is fine. It
+could be mentioned here WHY it is being added, which would solve two
+people's questions (yours and mine earlier). If only people knew and
+said WHY they are doing something.
 
 Best regards,
 Krzysztof
