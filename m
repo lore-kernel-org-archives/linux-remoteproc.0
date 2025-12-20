@@ -1,241 +1,193 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700F636657E;
-	Fri, 19 Dec 2025 16:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102662E03F5;
+	Sat, 20 Dec 2025 08:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766162950; cv=none; b=XoqI97ytqDqZyPO46CqrAGKdKM04y5gF+yhrRjXAVhbL6uWwBw6UNt2YWnJ/3W56LnEC8k0wJAWFlWoIZDCfP9Q3+za/D0wo49uD1rQlRTiomaommGTLqz5/+JS29YBi/jOGZ8sJd5Wcvu3rdWtr63eaS0QltOv0RB0Yhd7lukE=
+	t=1766219998; cv=none; b=bevlD1Y144NlBFbedX4VgBK/SJ27mJrVROOg44NZ+9Matedp745E0p3CYXATNhQXJiPbhB5Kx1VJIJQ8cp9+0j7rtFo9XSPX14YNH0WAsKf/YSKH1vh2iVwIPPJRNFUq2PHZvjdc9E+XBa07YW0Q4fkjFqBHj0+TrCIKnLfr6OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766162950; c=relaxed/simple;
-	bh=8OOidh8j/WNjputt5lVwQsxZCg3kjra8hNH1KbKw198=;
-	h=From:Date:Content-Type:MIME-Version:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=XyuIWs05vnEAetfklRaNz+K09md186Yyrrlz2okeBhF9Ds/3TcckcwLjHR3lo80WSPnybHbr629C25iGQ8D6SNrZK0TK+AM1cup/JdV505QzpFRsSJeWpF97lXi6HWRD4L79+ISnHivlWl16L2UI0SknLcfkUWp4O6grWfsM6cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qr//oIr5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766219998; c=relaxed/simple;
+	bh=XvsmVs4f1meZGPxhF8DDjwBt/VslBi0sJliAfkGY+ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qmo0qSof4MHSaEOcROVlJYwn6YqiqNAOhlNx5GXFaLDhxOv2iGgUCKLzRoJD9fGaGNSlWYkV4/ZABY/nBmrvfP/Z/W44Csi2ntz2KJrq1DH48sWPwLwzeslxtBKuWHp6LYGO8OTPzGk4NAPO6DI7OqnGIz/K8BxAW7M5wp5DsS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVs5r/Y0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qr//oIr5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA421C4CEF1;
-	Fri, 19 Dec 2025 16:49:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVs5r/Y0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A0F0C4CEF5;
+	Sat, 20 Dec 2025 08:39:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766162949;
-	bh=8OOidh8j/WNjputt5lVwQsxZCg3kjra8hNH1KbKw198=;
-	h=From:Date:Cc:To:In-Reply-To:References:Subject:From;
-	b=qr//oIr5aN41TSnXsMaaZ2xZQ3n0alBGG3tqRqGLSy5/lahNc9lQc0WOSy2xJW7Zy
-	 Duch5l7uJH0l+AjeIZI2unYIMxmTbOLnr291ukseI33JoSnkwXdQOzxPQIkcg+ZeTJ
-	 ervEVTTCxAUZSvBlzrU35fBBAHFycZ1CPoE41vWhiuFr2KYebAs1431otshHsASNEx
-	 GiQgUJ0UIlhO0M2BBfJqGFHWYWFe4Mt7AS+JeYW9IAnJn4m5wPxCbT//h6Fm/ZItCO
-	 Gotd68IMRclFL8zOluL0AtJ8s048KR7RBBbmaR4+xu6vgiaV+8gxBqSBoV5qGaD7xS
-	 demnoLKtiylOA==
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 19 Dec 2025 10:49:08 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1766219997;
+	bh=XvsmVs4f1meZGPxhF8DDjwBt/VslBi0sJliAfkGY+ig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XVs5r/Y0KL0W9oo+Y+7WOvOL3+gX394NakrRBrulw1KTm/qYx0r3XO8ZLND5V6Upg
+	 HamRZ6BlAdrEWpz7vf3I1AJZG52zEPXSes3xnD2eEqEZ7ZOlUrgb5M7wHJ0wIvgtit
+	 zP671DJ4uLRPkK0FMM0oLKpne6k5pg+Mn2xXhffqJKFpxf1h6U9ibvi106UbLPt21l
+	 zG7iKrhycPHe0BjHxLtNZ1BzV00H4EnILhHkrMqO2Obb7xNnEt0+EeLYKcnoOsuNEN
+	 70QRaYSTbpxJIzS4ZffRh1j1w4A8aR6rM7ICo5kGJq83wy/JXyEkTpXuZo+mxRLuxM
+	 CMuR1mBSA72rA==
+Date: Sat, 20 Dec 2025 09:39:54 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, George Moussalem <george.moussalem@outlook.com>
+Subject: Re: [PATCH v8 2/6] dt-bindings: remoteproc: qcom: document hexagon
+ based WCSS secure PIL
+Message-ID: <20251220-amphibian-nippy-firefly-d4fac0@quoll>
+References: <20251219031010.2919875-1-varadarajan.narayanan@oss.qualcomm.com>
+ <20251219031010.2919875-3-varadarajan.narayanan@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Cc: krzk+dt@kernel.org, devicetree@vger.kernel.org, 
- mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- andersson@kernel.org, linux-arm-msm@vger.kernel.org
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-In-Reply-To: <20251219043425.888585-1-mr.nuke.me@gmail.com>
-References: <20251219043425.888585-1-mr.nuke.me@gmail.com>
-Message-Id: <176616243343.3584214.2540779290356918872.robh@kernel.org>
-Subject: Re: [PATCH 1/9] dt-bindings: remoteproc: qcom,ipq8074-wcss-pil:
- convert to DT schema
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251219031010.2919875-3-varadarajan.narayanan@oss.qualcomm.com>
 
-
-On Thu, 18 Dec 2025 22:34:09 -0600, Alexandru Gagniuc wrote:
-> Convert the QCS404 and IPQ WCSS Peripheral Image Loader bindings to DT
-> schema. The text bindngs incorrectly implied that IPQ8074 needs only
-> one qcom,smem-states entry. This is only true for QCS404. IPQ8074
-> requires both "stop" and "shutdown".
+On Fri, Dec 19, 2025 at 08:40:06AM +0530, Varadarajan Narayanan wrote:
+> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 > 
-> The example is to be added in a subsequent commit that adds the
-> IPQ9574 binding.
+> Add new binding document for hexagon based WCSS secure PIL remoteproc.
+> IPQ5018, IPQ5332 and IPQ9574 follow secure PIL remoteproc.
 > 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> 
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> [ Dropped ipq5424 support ]
+> Signed-off-by: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
 > ---
-> Changes since RFC
->  - rename binding from ipq9574 to ipq8074
->  - use a real person instead of placeholder as maintainer
->  - drop redundant minItems and descriptions
->  - merge if: clauses as suggested by Krzysztof
->  - various other fixes suggested by Krzysztof
-> 
-> I used my name as a placeholder for the "maintainer" field. Krzysztof
-> mentioned to get the "SOC maintainer" using get_maintainer. I don't
-> know how to do that, and I don't see anyone listed for QCS404,
-> IPQ8074, or IPQ9574. The bindings apply to any of those SOCs.
+> v8: Dropped Krzysztof's 'Reviewed-by' as the bindings file has changed significantly
+>     Drop ipq5424 support
+>     Update example to ipq9574 instead of ipq5424
+>     Change 'mboxes' description
+
+I do not see any "significant" differences in the binding. You ONLY
+dropped one compatible (no problem, why would we care?) and renamed one
+description in mboxs. No other changes, nothing, so I do not understand
+what was the significant difference here.
+
+Dropping reviews at v8 is really unexpected and to me it feels like you
+rewrite everything, which should not happen at v8.
+
+
 > ---
->  .../remoteproc/qcom,ipq8074-wcss-pil.yaml     | 156 ++++++++++++++++++
->  .../bindings/remoteproc/qcom,q6v5.txt         | 102 ------------
->  2 files changed, 156 insertions(+), 102 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,ipq8074-wcss-pil.yaml
->  delete mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,q6v5.txt
+>  .../remoteproc/qcom,wcss-sec-pil.yaml         | 172 ++++++++++++++++++
+>  1 file changed, 172 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
+> new file mode 100644
+> index 000000000000..0fe04e0a4ca5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcss-sec-pil.yaml
 
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Well, since you ask for re-review and I really cannot find the
+difference, then let's start nitpicking from scratch:
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Please use one of the compatibles, e.g. the oldest device, as filename.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+> @@ -0,0 +1,172 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,wcss-sec-pil.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm WCSS Secure Peripheral Image Loader
+> +
+> +maintainers:
+> +  - Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> +
+> +description:
+> +  Wireless Connectivity Subsystem (WCSS) Secure Peripheral Image Loader loads
+> +  firmware and power up QDSP6 remoteproc on the Qualcomm IPQ series SoC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,ipq5018-wcss-sec-pil
+> +      - qcom,ipq5332-wcss-sec-pil
+> +      - qcom,ipq9574-wcss-sec-pil
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    maxItems: 1
+> +    description: Firmware name for the Hexagon core
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Watchdog interrupt
+> +      - description: Fatal interrupt
+> +      - description: Ready interrupt
+> +      - description: Handover interrupt
+> +      - description: Stop acknowledge interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +
+> +  clocks:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
 
-  pip3 install dtschema --upgrade
+What is this? How did it ever appear here? Sorry, but this is not a
+syntax present anywhere.
 
+> +
+> +  clock-names:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
 
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/v6.19-rc1-9-g98675bc92a9e (exact match)
- Base: tags/v6.19-rc1-9-g98675bc92a9e (use --merge-base to override)
+Neither this. Look, I have never reviewed something like this:
 
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
+https://lore.kernel.org/all/20240829134021.1452711-2-quic_gokulsri@quicinc.com/
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20251219043425.888585-1-mr.nuke.me@gmail.com:
+NAK, that's not a binding style at all. Please do not invent completely
+different style.
 
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: smp2p-wcss (qcom,smp2p): master-kernel: 'qcom,smp2p-feature-ssr-ack' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smp2p.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:1: 'wcss_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:2: 'wcss_ecahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:3: 'wcss_acmt' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:4: 'wcss_axi_m' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:5: 'q6_axim' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:6: 'q6_axim2' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:7: 'q6_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:8: 'q6_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:9: 'q6ss_boot' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:10: 'mem_noc_q6_axi' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:11: 'wcss_q6_tbu' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:12: 'sys_noc_wcss_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: smp2p-wcss (qcom,smp2p): master-kernel: 'qcom,smp2p-feature-ssr-ack' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smp2p.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:1: 'wcss_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:2: 'wcss_ecahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:3: 'wcss_acmt' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:4: 'wcss_axi_m' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:5: 'q6_axim' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:6: 'q6_axim2' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:7: 'q6_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:8: 'q6_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:9: 'q6ss_boot' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:10: 'mem_noc_q6_axi' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:11: 'wcss_q6_tbu' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:12: 'sys_noc_wcss_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: smp2p-wcss (qcom,smp2p): master-kernel: 'qcom,smp2p-feature-ssr-ack' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smp2p.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:1: 'wcss_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:2: 'wcss_ecahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:3: 'wcss_acmt' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:4: 'wcss_axi_m' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:5: 'q6_axim' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:6: 'q6_axim2' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:7: 'q6_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:8: 'q6_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:9: 'q6ss_boot' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:10: 'mem_noc_q6_axi' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:11: 'wcss_q6_tbu' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:12: 'sys_noc_wcss_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: smp2p-wcss (qcom,smp2p): master-kernel: 'qcom,smp2p-feature-ssr-ack' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smp2p.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:1: 'wcss_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:2: 'wcss_ecahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:3: 'wcss_acmt' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:4: 'wcss_axi_m' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:5: 'q6_axim' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:6: 'q6_axim2' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:7: 'q6_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:8: 'q6_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:9: 'q6ss_boot' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:10: 'mem_noc_q6_axi' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:11: 'wcss_q6_tbu' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:12: 'sys_noc_wcss_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: smp2p-wcss (qcom,smp2p): master-kernel: 'qcom,smp2p-feature-ssr-ack' does not match any of the regexes: '^pinctrl-[0-9]+$'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,smp2p.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:1: 'wcss_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:2: 'wcss_ecahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:3: 'wcss_acmt' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:4: 'wcss_axi_m' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:5: 'q6_axim' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:6: 'q6_axim2' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:7: 'q6_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:8: 'q6_ahb_s' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:9: 'q6ss_boot' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:10: 'mem_noc_q6_axi' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:11: 'wcss_q6_tbu' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
-arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: remoteproc@cd00000 (qcom,ipq9574-wcss-pil): clock-names:12: 'sys_noc_wcss_ahb' was expected
-	from schema $id: http://devicetree.org/schemas/remoteproc/qcom,ipq8074-wcss-pil.yaml
+What's weird, this change did not happen at v8, so you still kept my
+review tag even after inventing this weird code.
 
+> +
+> +  mboxes:
+> +    items:
+> +      - description: TMECom mailbox driver
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: States used by the AP to signal the remote processor
+> +    items:
+> +      - description: Stop Q6
+> +      - description: Shutdown Q6
+> +
+> +  qcom,smem-state-names:
+> +    description:
+> +      Names of the states used by the AP to signal the remote processor
+> +    items:
+> +      - const: stop
+> +      - const: shutdown
+> +
+> +  memory-region:
+> +    items:
+> +      - description: Q6 reserved region
+> +
+> +  glink-edge:
+> +    $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
+> +    description:
+> +      Qualcomm G-Link subnode which represents communication edge, channels
+> +      and devices related to the Modem.
+> +    unevaluatedProperties: false
 
-
-
+Best regards,
+Krzysztof
 
