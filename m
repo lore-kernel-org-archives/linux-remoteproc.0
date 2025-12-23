@@ -1,178 +1,101 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D603314A64
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 20:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B206313277
+	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 22:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766522119; cv=none; b=Spkp6Neu54yc0PhzHlfZyMIfyO9FqiM9oRcb1n0e3ky6eUcmMRe24fuYva9ZAZOhr8YNV5P8y4N1ckE0MBYfRyXXNj2ABBxSx6cDoZ3gBkCZN6/ZeJU7Y9Q8c0dSTce5BIf92QQ85ydF7IN2OcpMkOBlX+BuTFnC4IHWqVzmM1k=
+	t=1766528012; cv=none; b=LjsmnrDHrVew9AnwjhJjnzWSR6erIEx1kJXyIKSD0tUfWuYp0p+rCOLFy9ZaP1IVRtaq+9jCxhs7YaorESjsb01pAFX9JoygrbS7Vi05DFvp1KO9LCxPzKaih9Gusdd6EGqI+iR0PHoo3DG2JE7Pfx6Vum548pkqqNNkIY2FjUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766522119; c=relaxed/simple;
-	bh=QOueJ1mRgYwmgJidNsqj0fULy188ozhjfLL7kXVZdWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IST0wzVKfwTOk2PDACorcW6RLGns2YTxytSHDXiLO/NmY1hR5mULRqI6TJQ2PyoRQFFn49D80KDk0+uC0mwQGUszFPERPC4zbAl4zgYbkLEFusq1GESLq49fr8/uzi5Sdkft6k1J1RC1W+jM8Ra25MgU0zKTRYC+ceVqd19efvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EWZHdW5F; arc=none smtp.client-ip=209.85.210.49
+	s=arc-20240116; t=1766528012; c=relaxed/simple;
+	bh=sMUBMbrK7/ZzTN2ifHo0idjCHc3u2IqyKo1PdHLi5oA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m1jCYFxPTa31fxQTjesdVl9rTkgYU5Io15qGHtpyJQc/a2nqW1Bu2SxWln/F1f85T5AmQZUeRuqchHJTTjwJBhVT6LgnLHB0Ua3JOBqUJ/24DDinycSda1O5NuUt3idfs+Gg5T+HhxXdH7p5hk920Pb20sbHol86b2AMj/s2noM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARsk4y2L; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EWZHdW5F"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7c75dd36b1bso3925861a34.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 12:35:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARsk4y2L"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-34c565b888dso6005666a91.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 14:13:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766522116; x=1767126916; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0uk5rbnTrDj6OgXv3yPUh1V1C8LXaBlzWsDnZOyRYEI=;
-        b=EWZHdW5FEPVcqQmqE2ce8PDKUiN4UqEZIize/qiRSsG4jXZ2JI08qh0WNOGlcb0oTM
-         D7PTRyUoYE5E+zCYrVuoaiQwTb7eSzqaw/7qF5NlyUysstIRJeIdgQsDdaC+pKM2oufH
-         6ze+/fBRM79QilA6CXFHy9Euxu16QMg8hTIRDSaFhWPKwXnY9u3UdIyeI4FTBNzxn/lr
-         qfsnku28Gl7EMbjoWsvuXUxqzCAipHpHMmICH6r84u4jjalS7U+4FkMNB75/heMyknoQ
-         hFEbag+Me4oNVH33WhO4p3te2Mi/xU2tQF79CugKsOGIY0CtqPRgyOJxKxxqC+crP2qy
-         WSzQ==
+        d=gmail.com; s=20230601; t=1766528011; x=1767132811; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qbMxF+gY7bPHqJ8ldPkOL73xrNsVRUkggRkHgQFozfo=;
+        b=ARsk4y2L9vKJ/C6xcHRJVa1W35aenPVGMU5cLNJO4hcrtFuL6Mfx7IWoynZyG66G1N
+         VK7IAWxGn0+9WG9pxWE9blQijIKVUUjPlBpB2EvXwMoc+3TZbAu6JRLzUyL6CfWbeJb5
+         PCRBZmutep+HFqlZ6UYxHgTp1E4fF2evtDOmHm9pb3vf27iagEIZ6L2S3IarHbiBmzCe
+         Nh3n3ZXYytZa40+0wN867AaVxVZl3nHSg2qHZ8PTi3pqge0WPiiJClIRAzDLpTBm5XMU
+         yfUaYFJef8Q9dxCfrdUhac8aPwUNTOch97nrEuOGu/cimp95exUn/SCBVtFP0MIlYc4I
+         RONA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766522116; x=1767126916;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=0uk5rbnTrDj6OgXv3yPUh1V1C8LXaBlzWsDnZOyRYEI=;
-        b=ZcRsAiztS9qup6S/+4jRR4J8HXxUzCUAKWfKH2Jzj5XJk4MmKVhmfLIW8OvsWKG7RF
-         kgp2PbMZZIsU11kgGeRUYAFSzFDj0jO+FmQF53jm7z0q1JaFvtmF/oVRoO2WO6iKtH9j
-         BaglvgggxxL+JKIoudQw6zhSeiRJAh9wykBU6NPt+TAeanYAKPy4XQOmds7jY0lTrC2d
-         7jO9EhWq/Fv8mlbM++gWcdlXjU0yNZNxb+PYZQ7PXIvT1JJp7RXCRIqLNYXIfO6gjsZc
-         6q50q3iMdaqviTi4P7PLZITlqAEf1kHxeBFVu+iffh+USOsqk2WPmoimce1QxweHG6NK
-         Y/KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+NRMaiMG4JLq5ogaaAVmQMYbnvn/MIQIlFK/eaxpSYiyuLB0i8BCUkKMoAYKKj45UeHWC+MIhZkEUD1tG78Lh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoWdlmZMIQMgUK1in0SPGrfzjZ2OHhwx3efTrUqdrYoA4apjiF
-	MwGEmhx1LnWb37gG+FX7ylNbrXNvaRuQ/AbelPfLbDFmJ59UDncDx0IqT7esuA==
-X-Gm-Gg: AY/fxX6f2tPSV6tB2IBjofleNpR0mp364fHAvfoERUou5xC6guHTvfx9cqJU7ihrAQp
-	HTgW6bID1VuV2SXG88TqTfObMwJSVQ8wFfvN1wD4hOLxKCCNb3jZcYewnHzYD5qVvJtXYGLsmSY
-	n0I+fC6ri6ASkwx29/uUTYJRCn1WsxBfsw77HabRE/HpGTe7oGvj8j0vqIXUDwR9irj05afTLpE
-	YdOI3deMTiYJr0qNrqvDMIpiyb3SiE4Gc8Vt2tCjecrX+i1glBcxFCii11JiOjKih+UmseyoRYd
-	ro53uLYtsZhP3sF98wUoMEZ7v70lDKcfy9dbeEEPm9kcMBZxYvRgZMaESp22sW67mgrRqqG0cEj
-	UweoAEZbRMgN/D9SKKKG3DGOGTfNhYawNFjtUZ26Tqy4dP+2H3AAe5pRY5Z3RA68mB04jZk3FIA
-	rFq3/yWJgH+mEyWT1PTPDajOxVYkCTl7M68NZvgcXjp16i8pio3C2ZWP1G8WAlBsdhGF2RKE3HE
-	dtgWICNWpZPT/cOsWw6OSqP6qCWl3g=
-X-Google-Smtp-Source: AGHT+IHyErY0P8ecU1HiiChzO9n89IIYBESftCKQJd7X7/dItVzyCNpRjo4JbYfClhw5F35/fWnswA==
-X-Received: by 2002:a05:6830:4103:b0:758:1417:7ee7 with SMTP id 46e09a7af769-7cc66a0b453mr8289822a34.5.1766522115974;
-        Tue, 23 Dec 2025 12:35:15 -0800 (PST)
-Received: from nukework.gtech (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cc667d571dsm10065971a34.17.2025.12.23.12.35.15
+        d=1e100.net; s=20230601; t=1766528011; x=1767132811;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qbMxF+gY7bPHqJ8ldPkOL73xrNsVRUkggRkHgQFozfo=;
+        b=AeGi3zvqcSePK8dcXlPtOzcSVV7YQPkN14da45BKeF7AD/P5+4VXqYukaSWC9gqS/v
+         LB2uBuZR/aeqjv7UjcqsE+PptZc0/j35VSxvhLadjTrZ6ddJ6CsSTsBkm1d3W/BC0j6g
+         cpDxX0yVJ5TEwTVrBUy7HBAy32cLCWornKnwXAWoIAFJoQfHlBIUeE2jM+0kPpc28+H2
+         x+xIOh0JpPY4bA7O6ygw7clIJ++ETJnm6qBmxI4oEFbybcc+ClDMHYQ8OsEi6vzJjV0t
+         lmy15thIIQalpMN1rYHbMYjrPnZ6c9urir/+UfJLg/AmOsxv4jJxp8bhzNuASjo97VGo
+         B4RA==
+X-Gm-Message-State: AOJu0YwTp4IeH5Ye/EZvLAjO1GZ5aFZ+yRZcMGd5CisF7bBLD0FL14+2
+	uxiQNvf85BnAGCOE5ME03fl+484TrhYgLF6W1Q5owrGef/IgsQgdyoAt
+X-Gm-Gg: AY/fxX4L5PWFAOQgEw+/S7KhHqfLHh64wDPUo2mC3MjJbwQsivhqwk056fHxRzb9RoT
+	Suf2VwfQ9ueW5Sfv9HhBT2PfkMFZAHTwHISyTtYjkni7xhLZZaUe48UIZ35Sgu5Q+IJmY3A114V
+	plnw/6fMZJu439HW/hQNgiLSel5rXsALUKjF5nWUEyxowVD+l2Clf6VME0KRCs2nzkhOCHn/uz4
+	n81wn47ugs2zH9Bq9y81gx2Eglx89d5RrsCBOjqA/3Rv6n5cryx80B9I9G6/JwrOyFd5hS/UuDn
+	Bpj2UELb2r1E4h7XWG3lOrE0lbi0NCBbIIFO3aRV/pq0WRTxa9mJClwXkiYx10ci+ZrKFKCQERH
+	/UdOSgpqv9eC93hsm/N3QpJJADi/efVkVExvVFHKefiRNpFJdRS2jf+s+tMOI3ByhBner3eST4e
+	wluoqybuvbd9gZ8NlQJ/aHU0oW5GhwM41pQKXOiK+KAQ==
+X-Google-Smtp-Source: AGHT+IGikOIURWcD46OTUx3VcgjIsTTbayXLK7FFPsek16ZYnMoDIlgfP2L9P5rmA4oZ7WKOU3FoVg==
+X-Received: by 2002:a17:90b:1f82:b0:340:ff7d:c26 with SMTP id 98e67ed59e1d1-34e921557bamr14728161a91.16.1766528010571;
+        Tue, 23 Dec 2025 14:13:30 -0800 (PST)
+Received: from localhost.localdomain ([2401:4900:8838:aa50:ded0:d1bf:9b7c:5ce5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e70d65653sm16742889a91.5.2025.12.23.14.13.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Dec 2025 12:35:15 -0800 (PST)
-From: "Alex G." <mr.nuke.me@gmail.com>
-To: andersson@kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: mathieu.poirier@linaro.org, krzk+dt@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] remoteproc: qcom_q6v5_wcss: support m3 firmware
-Date: Tue, 23 Dec 2025 14:35:14 -0600
-Message-ID: <5116928.iIbC2pHGDl@nukework.gtech>
-In-Reply-To: <5b9cd24e-7eae-4cbb-b013-6ef135902ae7@oss.qualcomm.com>
-References:
- <20251219043425.888585-1-mr.nuke.me@gmail.com>
- <20251219043425.888585-7-mr.nuke.me@gmail.com>
- <5b9cd24e-7eae-4cbb-b013-6ef135902ae7@oss.qualcomm.com>
+        Tue, 23 Dec 2025 14:13:30 -0800 (PST)
+Received: (nullmailer pid 28846 invoked by uid 1000);
+	Tue, 23 Dec 2025 22:10:36 -0000
+From: Kathara Sasikumar <katharasasikumar007@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org, skhan@linuxfoundation.org, david.hunter.linux@gmail.com, Kathara Sasikumar <katharasasikumar007@gmail.com>
+Subject: [PATCH] docs: dt-bindings: remoteproc: fix Keystone DSP GPIO binding link
+Date: Tue, 23 Dec 2025 22:10:20 +0000
+Message-ID: <20251223221019.28823-2-katharasasikumar007@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-On Friday, December 19, 2025 7:29:07 AM CST Konrad Dybcio wrote:
-> On 12/19/25 5:34 AM, Alexandru Gagniuc wrote:
-> > IPQ8074, IPQ6018, and IPQ9574 support an m3 firmware image in addtion
-> > to the q6 firmware. The firmware releases from qcom provide both q6
-> > and m3 firmware for these SoCs. Support loading the m3 firmware image.
-> > 
-> > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> > ---
-> > 
-> >  drivers/remoteproc/qcom_q6v5_wcss.c | 44 +++++++++++++++++++++++++----
-> >  1 file changed, 39 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c
-> > b/drivers/remoteproc/qcom_q6v5_wcss.c index b62e97c92d058..265010c5c82cb
-> > 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_wcss.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-> > @@ -101,7 +101,8 @@ enum {
-> > 
-> >  };
-> >  
-> >  struct wcss_data {
-> > 
-> > -	const char *firmware_name;
-> > +	const char *q6_firmware_name;
-> > +	const char *m3_firmware_name;
-> > 
-> >  	unsigned int crash_reason_smem;
-> >  	u32 version;
-> >  	bool aon_reset_required;
-> > 
-> > @@ -161,6 +162,7 @@ struct q6v5_wcss {
-> > 
-> >  	unsigned int crash_reason_smem;
-> >  	u32 version;
-> >  	bool requires_force_stop;
-> > 
-> > +	const char *m3_firmware_name;
-> > 
-> >  	struct qcom_rproc_glink glink_subdev;
-> >  	struct qcom_rproc_pdm pdm_subdev;
-> > 
-> > @@ -922,11 +924,40 @@ static void *q6v5_wcss_da_to_va(struct rproc *rproc,
-> > u64 da, size_t len, bool *i> 
-> >  	return wcss->mem_region + offset;
-> >  
-> >  }
-> > 
-> > +static int q6v5_wcss_load_aux(struct q6v5_wcss *wcss, const char
-> > *fw_name)
-> > +{
-> > +	const struct firmware *extra_fw;
-> > +	int ret;
-> > +
-> > +	dev_info(wcss->dev, "loading additional firmware image %s\n", 
-fw_name);
-> 
-> I don't think this log line is useful beyond development
+make refcheckdocs reports a broken link in the Keystone remoteproc
+binding documentation.
 
-Remoteproc driver prints the main (q6) fimrware name, so I thought it would be 
-prudent to print the names of any additional firmwares:
+Update the reference to point to the current YAML schema.
 
-    remoteproc remoteproc0: Booting fw image IPQ9574/q6_fw.mdt, size 8140
+Signed-off-by: Kathara Sasikumar <katharasasikumar007@gmail.com>
+---
+ .../devicetree/bindings/remoteproc/ti,keystone-rproc.txt        | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > +
-> > +	ret = request_firmware(&extra_fw, fw_name, wcss->dev);
-> > +	if (ret)
-> > +		return 0;
-> 
-> return ret, perhaps? Unless you want to say that "it's fine if the M3 image
-> is missing, particularly not to impose any new requirements on existing
-> setups". But you haven't spelt that out explicitly.
-
-I intended to not abort when aux firmware is missing. Maybe the better way to 
-handle this is to check for "-ENOENT" in the caller instead of return 0 here.
-
-> You also haven't provided an explanation as to why the firmware should be
-> loaded. Is it necessary for some functionality? Is it that case on the
-> newly-supported IPQ9574?
-
-I don't have a good answer. I reasoned that since the qcom provides it [1], 
-the M3 firmware would need to be loaded. I haven't done much testing without 
-it.
-
-Alex
-
-[1] https://github.com/quic/upstream-wifi-fw.git
-
-
-> Konrad
-
-
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+index 463a97c11eff..91f0a3b0c0b2 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
++++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+@@ -66,7 +66,7 @@ The following are the mandatory properties:
+ - kick-gpios: 		Should specify the gpio device needed for the virtio IPC
+ 			stack. This will be used to interrupt the remote processor.
+ 			The gpio device to be used is as per the bindings in,
+-			Documentation/devicetree/bindings/gpio/gpio-dsp-keystone.txt
++			Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
+ 
+ SoC-specific Required properties:
+ ---------------------------------
+-- 
+2.51.0
 
