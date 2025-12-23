@@ -1,101 +1,211 @@
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B206313277
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 22:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F641DEFF5
+	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 22:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766528012; cv=none; b=LjsmnrDHrVew9AnwjhJjnzWSR6erIEx1kJXyIKSD0tUfWuYp0p+rCOLFy9ZaP1IVRtaq+9jCxhs7YaorESjsb01pAFX9JoygrbS7Vi05DFvp1KO9LCxPzKaih9Gusdd6EGqI+iR0PHoo3DG2JE7Pfx6Vum548pkqqNNkIY2FjUg=
+	t=1766528170; cv=none; b=Mk0BGo13I7tzlbeAyJQEkvhJ5nq6+oN3DVu9hqF49uucs9So1+fIwugMXbF9Qxu3stJZ9DW9Fuf4MZseqb6ufz/OzzMeGajTHZ7NonwRc/2XNuN2vGxAdPyt9qLIqlUNgTMGN8d2jvjL1GxVbIXkAED60u8DgorFMBMec69CaP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766528012; c=relaxed/simple;
-	bh=sMUBMbrK7/ZzTN2ifHo0idjCHc3u2IqyKo1PdHLi5oA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m1jCYFxPTa31fxQTjesdVl9rTkgYU5Io15qGHtpyJQc/a2nqW1Bu2SxWln/F1f85T5AmQZUeRuqchHJTTjwJBhVT6LgnLHB0Ua3JOBqUJ/24DDinycSda1O5NuUt3idfs+Gg5T+HhxXdH7p5hk920Pb20sbHol86b2AMj/s2noM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARsk4y2L; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1766528170; c=relaxed/simple;
+	bh=yzbHwEjuUh5QG9F4g4O/Qg7p+yrh30QLZ0ZwvpnIAUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rc4UG9GnoksZ9GlGEbAvzFS4RHXVaVWmcRGe5n2rvb/GhOxTfKBgjnTnrE/ufD2tbU7mDlUC3mJPtzALMPn0sIE1B0/oCTtcKND/jwB+NZQfxUGzmUj6VwA6+AlTqp6NR9kxNoDlt3sXYNtI1AmeEtTpEh1CKWpcvTk5IZ+5yxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jp9sk05v; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARsk4y2L"
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-34c565b888dso6005666a91.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 14:13:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jp9sk05v"
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-b72b495aa81so906009966b.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Dec 2025 14:16:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1766528011; x=1767132811; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qbMxF+gY7bPHqJ8ldPkOL73xrNsVRUkggRkHgQFozfo=;
-        b=ARsk4y2L9vKJ/C6xcHRJVa1W35aenPVGMU5cLNJO4hcrtFuL6Mfx7IWoynZyG66G1N
-         VK7IAWxGn0+9WG9pxWE9blQijIKVUUjPlBpB2EvXwMoc+3TZbAu6JRLzUyL6CfWbeJb5
-         PCRBZmutep+HFqlZ6UYxHgTp1E4fF2evtDOmHm9pb3vf27iagEIZ6L2S3IarHbiBmzCe
-         Nh3n3ZXYytZa40+0wN867AaVxVZl3nHSg2qHZ8PTi3pqge0WPiiJClIRAzDLpTBm5XMU
-         yfUaYFJef8Q9dxCfrdUhac8aPwUNTOch97nrEuOGu/cimp95exUn/SCBVtFP0MIlYc4I
-         RONA==
+        d=linaro.org; s=google; t=1766528167; x=1767132967; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5UyYhutUWgIRgYB1MC5/PxDmOAUg51biGCRnLKpp0Ys=;
+        b=Jp9sk05vgYeIga/DrZdJy/LczFORJYcFwM6vmYh/9mPk0Khw95Euo4sXNRVQ2M6XeM
+         KB3H7M3JQbo0jhbENex6wmW3Z+J0FJvvvDKAbYjQUB9UHSKFRGRrpHO+BabqUjM6ypj2
+         /N+7nix1CMLsaKizKx3L7v2maKTAm0QoXYROALfr2ISPZOy3LHZ5icpfAiqQlbtlXtkY
+         Fpm+hZV/4PpgOn55XcDp3xf7BFGX9W32ykmBb1hczp+YjKEk/tR610ci6rJXCiJdo+yp
+         WtG61qomilXkBFdQPBYiDeHUtRgGS6FF67pdpMkCvGi+PUYN8xp8eSqMr1X9xGyW+cvM
+         BPIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1766528011; x=1767132811;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qbMxF+gY7bPHqJ8ldPkOL73xrNsVRUkggRkHgQFozfo=;
-        b=AeGi3zvqcSePK8dcXlPtOzcSVV7YQPkN14da45BKeF7AD/P5+4VXqYukaSWC9gqS/v
-         LB2uBuZR/aeqjv7UjcqsE+PptZc0/j35VSxvhLadjTrZ6ddJ6CsSTsBkm1d3W/BC0j6g
-         cpDxX0yVJ5TEwTVrBUy7HBAy32cLCWornKnwXAWoIAFJoQfHlBIUeE2jM+0kPpc28+H2
-         x+xIOh0JpPY4bA7O6ygw7clIJ++ETJnm6qBmxI4oEFbybcc+ClDMHYQ8OsEi6vzJjV0t
-         lmy15thIIQalpMN1rYHbMYjrPnZ6c9urir/+UfJLg/AmOsxv4jJxp8bhzNuASjo97VGo
-         B4RA==
-X-Gm-Message-State: AOJu0YwTp4IeH5Ye/EZvLAjO1GZ5aFZ+yRZcMGd5CisF7bBLD0FL14+2
-	uxiQNvf85BnAGCOE5ME03fl+484TrhYgLF6W1Q5owrGef/IgsQgdyoAt
-X-Gm-Gg: AY/fxX4L5PWFAOQgEw+/S7KhHqfLHh64wDPUo2mC3MjJbwQsivhqwk056fHxRzb9RoT
-	Suf2VwfQ9ueW5Sfv9HhBT2PfkMFZAHTwHISyTtYjkni7xhLZZaUe48UIZ35Sgu5Q+IJmY3A114V
-	plnw/6fMZJu439HW/hQNgiLSel5rXsALUKjF5nWUEyxowVD+l2Clf6VME0KRCs2nzkhOCHn/uz4
-	n81wn47ugs2zH9Bq9y81gx2Eglx89d5RrsCBOjqA/3Rv6n5cryx80B9I9G6/JwrOyFd5hS/UuDn
-	Bpj2UELb2r1E4h7XWG3lOrE0lbi0NCBbIIFO3aRV/pq0WRTxa9mJClwXkiYx10ci+ZrKFKCQERH
-	/UdOSgpqv9eC93hsm/N3QpJJADi/efVkVExvVFHKefiRNpFJdRS2jf+s+tMOI3ByhBner3eST4e
-	wluoqybuvbd9gZ8NlQJ/aHU0oW5GhwM41pQKXOiK+KAQ==
-X-Google-Smtp-Source: AGHT+IGikOIURWcD46OTUx3VcgjIsTTbayXLK7FFPsek16ZYnMoDIlgfP2L9P5rmA4oZ7WKOU3FoVg==
-X-Received: by 2002:a17:90b:1f82:b0:340:ff7d:c26 with SMTP id 98e67ed59e1d1-34e921557bamr14728161a91.16.1766528010571;
-        Tue, 23 Dec 2025 14:13:30 -0800 (PST)
-Received: from localhost.localdomain ([2401:4900:8838:aa50:ded0:d1bf:9b7c:5ce5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34e70d65653sm16742889a91.5.2025.12.23.14.13.24
+        d=1e100.net; s=20230601; t=1766528167; x=1767132967;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5UyYhutUWgIRgYB1MC5/PxDmOAUg51biGCRnLKpp0Ys=;
+        b=XyeRFQGET8gq1Yz0lpSS28Ie0RVbJQRnVHsowGh1tNUt1GWUrL4QZu6qJj0jzM2/nQ
+         Rn6mq+n9ZHMDeC+D7ZqFMarinDPf+YNUNlKmuLbxkC1f5Cz9jHz6hrowujkcXgoRh+BO
+         J2/pCX5xrezrrPqiG3PulBBDULqdZFetlDo6Dhc0sPN4L9DT3kBjiUagwGHX0ioGw1WJ
+         ZuiQXFiAYMLSem4nz1JxBl5pDdsnMy/4ksjdGtrmsbX017OzmacBlfaSnYI+7ZOUWuqg
+         prkVVa/GCb6YnPo81xdQWFv6VT8M9Ol6zC04EkL81FI2DWToDEiC6aXCMXKiv0WGtbml
+         yn0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWWkXHITqfvddbHlfPlrlD9wPB55t0rxJekD9ruXGHRvC2dyzoW+CvcwkrvssZ7+UVK7pnlRPR5b3i4ZcVTBhR4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIHBfXS9zjqTypUW0bbvacgLROWNVzilyzMidHpxmvRjdrHMCY
+	cUK7VviW32fpiTOeZxqg6uN2zWGeXmCLguf1LfAzGGZCQO1nJuOaOXNoxtnzT4ZJDZw=
+X-Gm-Gg: AY/fxX4ZhfCyTwQoQOkJNXZqyMPrtp6pe7z/vO8tXW+Lzh3Sqz1oMwoV2IQRCc0Ak+o
+	UoTyX3vztVrgT08GIZO56VLeyIOAmfaOARZMBteKgg9gZ+8USYejMZdLo8vEnCmm5tSlrzJLHgd
+	v0cW2EBS3MqqzdeKn0fm5CbBad0TI92JhwqpE7c5H8PdATc2NrbaoubAKtSXam31YdSJS7LKcAf
+	ODXV66B3VDjM5loIseKfhssU0rPl48mvnDMmE82hXcef6yTQj/4/HgzVmwdoyfwVC7h73pWOfSP
+	nvh5IsduEsYlnH+2rHKG3CkQvre2qW8y21yNAno54o0lE/yLhtFBaeBvBq3k80g/XNN0RI33qiF
+	rrFlCDnUwxPHE3RmB+HqTUEJzetD3qtR5XHL3Ys1067lk+d8XFuHtYjHPPiRj15LDtGUlv6ktdA
+	PHp3jyqOVnuC4zGsrt
+X-Google-Smtp-Source: AGHT+IGq+sIPac4pUDc5c2NSoUMS1PyA5G2WwEI/2p2f6em7Z3AmU60xOTfzeGCKspp1fvzaaAIBYw==
+X-Received: by 2002:a17:907:6ea4:b0:b80:f2e:6e1 with SMTP id a640c23a62f3a-b803722a7demr1668448866b.43.1766528167036;
+        Tue, 23 Dec 2025 14:16:07 -0800 (PST)
+Received: from linaro.org ([77.64.146.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b8037f4ef1fsm1556445466b.64.2025.12.23.14.16.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Dec 2025 14:13:30 -0800 (PST)
-Received: (nullmailer pid 28846 invoked by uid 1000);
-	Tue, 23 Dec 2025 22:10:36 -0000
-From: Kathara Sasikumar <katharasasikumar007@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, shuah@kernel.org, skhan@linuxfoundation.org, david.hunter.linux@gmail.com, Kathara Sasikumar <katharasasikumar007@gmail.com>
-Subject: [PATCH] docs: dt-bindings: remoteproc: fix Keystone DSP GPIO binding link
-Date: Tue, 23 Dec 2025 22:10:20 +0000
-Message-ID: <20251223221019.28823-2-katharasasikumar007@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        Tue, 23 Dec 2025 14:16:06 -0800 (PST)
+Date: Tue, 23 Dec 2025 23:15:33 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>, aiqun.yu@oss.qualcomm.com,
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gokul krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+Subject: Re: [PATCH v3 4/5] remoteproc: qcom: pas: Add late attach support
+ for subsystems
+Message-ID: <aUsUhX8Km275qonq@linaro.org>
+References: <20251223-knp-remoteproc-v3-0-5b09885c55a5@oss.qualcomm.com>
+ <20251223-knp-remoteproc-v3-4-5b09885c55a5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251223-knp-remoteproc-v3-4-5b09885c55a5@oss.qualcomm.com>
 
-make refcheckdocs reports a broken link in the Keystone remoteproc
-binding documentation.
+On Tue, Dec 23, 2025 at 01:13:50AM -0800, Jingyi Wang wrote:
+> From: Gokul krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> 
+> Subsystems can be brought out of reset by entities such as bootloaders.
+> As the irq enablement could be later than subsystem bring up, the state
+> of subsystem should be checked by reading SMP2P bits and performing ping
+> test.
+> 
+> A new qcom_pas_attach() function is introduced. if a crash state is
+> detected for the subsystem, rproc_report_crash() is called. If the
+> subsystem is ready either at the first check or within a 5-second timeout
+> and the ping is successful, it will be marked as "attached". The ready
+> state could be set by either ready interrupt or handover interrupt.
+> 
+> If "early_boot" is set by kernel but "subsys_booted" is not completed
+> within the timeout, It could be the early boot feature is not supported
+> by other entities. In this case, the state will be marked as RPROC_OFFLINE
+> so that the PAS driver can load the firmware and start the remoteproc. As
+> the running state is set once attach function is called, the watchdog or
+> fatal interrupt received can be handled correctly.
+> 
+> Signed-off-by: Gokul krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5.c      | 87 ++++++++++++++++++++++++++++++++-
+>  drivers/remoteproc/qcom_q6v5.h      | 11 ++++-
+>  drivers/remoteproc/qcom_q6v5_adsp.c |  2 +-
+>  drivers/remoteproc/qcom_q6v5_mss.c  |  2 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c  | 97 ++++++++++++++++++++++++++++++++++++-
+>  drivers/remoteproc/qcom_q6v5_wcss.c |  2 +-
+>  6 files changed, 195 insertions(+), 6 deletions(-)
+> 
+> [...]
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 52680ac99589..7e890e18dd82 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> [...]
+> @@ -434,6 +440,85 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
+>  	return qcom_q6v5_panic(&pas->q6v5);
+>  }
+>  
+> +static int qcom_pas_attach(struct rproc *rproc)
+> +{
+> +	int ret;
+> +	struct qcom_pas *pas = rproc->priv;
+> +	bool ready_state;
+> +	bool crash_state;
+> +
+> +	pas->q6v5.running = true;
+> +	ret = irq_get_irqchip_state(pas->q6v5.fatal_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
+> +
+> +	if (ret)
+> +		goto disable_running;
+> +
+> +	if (crash_state) {
+> +		dev_err(pas->dev, "Sub system has crashed before driver probe\n");
+> +		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
 
-Update the reference to point to the current YAML schema.
+Have you tested this case? From quick review of the code in
+remoteproc_core.c I'm skeptical if this will work correctly:
 
-Signed-off-by: Kathara Sasikumar <katharasasikumar007@gmail.com>
----
- .../devicetree/bindings/remoteproc/ti,keystone-rproc.txt        | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 1. Remoteproc is in RPROC_DETACHED state during auto boot
+ 2. qcom_pas_attach() runs and calls rproc_report_crash(), then fails so
+    RPROC_DETACHED state remains
+ 3. rproc_crash_handler_work() sets RPROC_CRASHED and starts recovery
+ 4. rproc_boot_recovery() calls rproc_stop()
+ 5. rproc_stop() calls rproc_stop_subdevices(), but because the
+    remoteproc was never attached, the subdevices were never started.
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-index 463a97c11eff..91f0a3b0c0b2 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-@@ -66,7 +66,7 @@ The following are the mandatory properties:
- - kick-gpios: 		Should specify the gpio device needed for the virtio IPC
- 			stack. This will be used to interrupt the remote processor.
- 			The gpio device to be used is as per the bindings in,
--			Documentation/devicetree/bindings/gpio/gpio-dsp-keystone.txt
-+			Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
- 
- SoC-specific Required properties:
- ---------------------------------
--- 
-2.51.0
+In this situation, rproc_stop_subdevices() should not be called. I would
+expect you will need to make some minor changes to the remoteproc_core
+to support handling crashes during RPROC_DETACHED state.
 
+I might be reading the code wrong, but please make sure that you
+simulate this case at runtime and check that it works correctly.
+
+> +		ret = -EINVAL;
+> +		goto disable_running;
+> +	}
+> +
+> +	ret = irq_get_irqchip_state(pas->q6v5.ready_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &ready_state);
+> +
+> +	if (ret)
+> +		goto disable_running;
+> +
+> +	enable_irq(pas->q6v5.handover_irq);
+> +
+> +	if (unlikely(!ready_state)) {
+> +		/* Set a 5 seconds timeout in case the early boot is delayed */
+> +		ret = wait_for_completion_timeout(&pas->q6v5.subsys_booted,
+> +						  msecs_to_jiffies(EARLY_ATTACH_TIMEOUT_MS));
+> +
+
+Again, have you tested this case?
+
+As I already wrote in v2, I don't see how this case will work reliably
+in practice. How do you ensure that the handover resources will be kept
+on during the Linux boot process until the remoteproc has completed
+booting?
+
+Also, above you enable the handover_irq. Let's assume a handover IRQ
+does come in while you are waiting here. Then q6v5_handover_interrupt()
+will call q6v5->handover(q6v5); to disable the handover resources
+(clocks, power domains), but you never enabled those. I would expect
+that you get some bad reference count warnings in the kernel log.
+
+I would still suggest dropping this code entirely. As far as I
+understand the response from Aiqun(Maria) Yu [1], there is no real use
+case for this on current platforms. If you want to keep this, you would
+need to vote for the handover resources during probe() (and perhaps
+more, this case is quite tricky).
+
+Please test all your changes carefully in v4.
+
+Thanks,
+Stephan
+
+[1]: https://lore.kernel.org/linux-arm-msm/c15f083d-a2c1-462a-aad4-a72b36fbe1ac@oss.qualcomm.com/
