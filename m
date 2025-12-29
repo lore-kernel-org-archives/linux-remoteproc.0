@@ -1,227 +1,154 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE0B3A1E6B
-	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Dec 2025 04:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3480910F1;
+	Mon, 29 Dec 2025 05:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1766982739; cv=none; b=mEilf+N08sjg75p2r6rm41eKTkGAYnnTP3aLzVvREM9qhHmQ5Ae4sRVGcHBzsXP//5vklzoTDk9PbxvyHJcfoDdQpHGGad1otjHH794M9pG783/9K1s0oi+dwt6bCGiKJBka8XLMC1kvXvamNoS+fRKg9tbtPTaJZ0sC4B61cA4=
+	t=1766986778; cv=none; b=oilWU3oICHRAyMlxxV8uIHNlckb/8iEJWEHBVytC31/yVG0Weigfgb6WzwCzbVuo88SO2rSNwv+bI4tCZmOuzMvQ+YPIhVEox0BW8yZvCETUKIDaejakbbD6TpdRMeNo2v75HIX5xW01znaQaxJ5HI5kEBLG1jvxhTdpm0s92OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1766982739; c=relaxed/simple;
-	bh=kLJp2zW30SyEirLd2hJk5YmCXnYsCmPJ8ttStB77kFw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YMFn7SmpHYJ05cfMgh33RPI/oq7mxxZjcypmULEJhJQ8OaYOFlgVaPw3vwWEhIXfZ+Iam3iGFwqD4CRr+xry6tjuhtLlHgisoYu+fXHYPN0nCDfbvTMh49MCyq35eo8xIaCcHHDI/U/naTpWtkky8rKV6iey9HLcF2X6WPY1cOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R17pDxF2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1766986778; c=relaxed/simple;
+	bh=hUD0ESZR0fiGX+5i+A4WD58O6b8Rleo0ARVfBQND1fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ryfkeBQCjZlw0UFv+FWs1kv4jOLHC93hTPwZbUt5CN7r4y2HScRCGnZdgGZKjefn0ubTK2cgXLHIJhgunpOhDxi5xLsozUsLUn/2HzQs0Q05ya6vkHEauTDXBvAxpG+nW6DtGdLDPlzZE14TYFt3917IsDjAfd34If+hJQ6P2mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=crfK7hGE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R17pDxF2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4716C4CEF7;
-	Mon, 29 Dec 2025 04:32:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="crfK7hGE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B43C4CEF7;
+	Mon, 29 Dec 2025 05:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1766982739;
-	bh=kLJp2zW30SyEirLd2hJk5YmCXnYsCmPJ8ttStB77kFw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=R17pDxF2cYQGJjr0Lui2Oskacm9bRRnadyTcMahexEeGvO8Ps+pERAKLWB9+MvSyj
-	 Gb+GMAyo0U+bGza6YOMQXCf4uBGdozhNV3kLFPUE8wrQyoLOYtH5DLxRX2y3fZpGNY
-	 sVhMUjr4bQ2eNLUhhYBJBPTuUbmhMOpeHcH2IZPSW7ZII/aftWtl55uCpX29x7G30P
-	 T92ByQqgJVMEVaEQJqVaaNlRhE6ny2NEr9DG7E5sVdbeUizVVe4iDhet4VE7ttrQiT
-	 d+kIEmC/ZCfmSBHoPuvd0OdF2GvRtAyJphGQN2s2Kd72iJvVWzKNEUVOL7O658a3Bt
-	 ABlYzJ3S4+5Wg==
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	tzungbi@kernel.org
-Subject: [PATCH] remoteproc: mediatek: Break lock dependency to `prepare_lock`
-Date: Mon, 29 Dec 2025 04:31:46 +0000
-Message-ID: <20251229043146.4102967-1-tzungbi@kernel.org>
-X-Mailer: git-send-email 2.52.0.351.gbe84eed79e-goog
+	s=k20201202; t=1766986778;
+	bh=hUD0ESZR0fiGX+5i+A4WD58O6b8Rleo0ARVfBQND1fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=crfK7hGEKJQd+jZ/mzVVllUGC53q1JtiM6l0nfgK0VmZ+jHGITOazGfxXJsgGjzhk
+	 w+SOgDsDiiDVFhcjFx1MwfiTWZ4iCOnfJ5EpkBzLLWt/b9jfx4VxULNYVllvN1APN4
+	 uP9z7nLzBszdSpkTIk2HnRHyVqAYtM/5D1uVgjcTZIEUeFCGzWV1E/CK4ZZsoYLvVJ
+	 Pdx7fX6aZsz1Wh0NTY94/o1DY+6Z7T2Yu3GA8BDwQ7eCMrdCy6OkzGQbPbZsxhT/rF
+	 9SDLMgTzaZnjdXrCdRo8HKNS0FEwwW2jwb2iPYJjAPtXUv/IMpJLD4dKLvBVPFr6gi
+	 MQpYWX6j4BHyg==
+Date: Mon, 29 Dec 2025 11:09:29 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v20 1/6] dt-bindings: firmware: Add TEE remoteproc
+ service binding
+Message-ID: <aVIUEafDoVQv0rHf@sumit-xelite>
+References: <20251217153917.3998544-1-arnaud.pouliquen@foss.st.com>
+ <20251217153917.3998544-2-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251217153917.3998544-2-arnaud.pouliquen@foss.st.com>
 
-`scp_ipi_send` acquires `prepare_lock` via `clk_prepare_enable` while
-the caller often holds `ec_dev->lock` (e.g., `cros_ec_cmd_xfer`).  The
-reverse dependency exists where `clk_prepare` can trigger operations
-that eventually take `ec_dev->lock` (e.g., via sysfs/regulator/genpd).
+On Wed, Dec 17, 2025 at 04:39:12PM +0100, Arnaud Pouliquen wrote:
+> Add a device tree binding for the TEE-based remote processor control
+> service implemented as an OP-TEE Trusted Application identified by
+> UUID 80a4c275-0a47-4905-8285-1486a9771a08.
+> 
+> The TEE service node is a child of the "linaro,optee-tz" firmware node and
+> acts as a container for remoteproc devices that are controlled via TEE.
+> 
+> In addition, the "linaro,optee-tz" binding is updated to specify the
+> '#address-cells' and '#size-cells' values used for child TEE service
+> nodes.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  .../arm/firmware/linaro,optee-tz.yaml         |  6 +++
+>  .../bindings/remoteproc/remoteproc-tee.yaml   | 47 +++++++++++++++++++
+>  2 files changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/remoteproc-tee.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml b/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml
+> index 5d033570b57b..ab69eecba9ad 100644
+> --- a/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml
+> +++ b/Documentation/devicetree/bindings/arm/firmware/linaro,optee-tz.yaml
+> @@ -41,6 +41,12 @@ properties:
+>        HVC #0, register assignments
+>        register assignments are specified in drivers/tee/optee/optee_smc.h
+>  
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+>  required:
+>    - compatible
+>    - method
+> diff --git a/Documentation/devicetree/bindings/remoteproc/remoteproc-tee.yaml b/Documentation/devicetree/bindings/remoteproc/remoteproc-tee.yaml
+> new file mode 100644
+> index 000000000000..083ecf1f38cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/remoteproc-tee.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/remoteproc-tee.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TEE Remote Processor Control Service (UUID 80a4c275-0a47-4905-8285-1486a9771a08)
+> +
+> +maintainers:
+> +  - Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> +
+> +description: |
+> +  Node describing a TEE-based remote processor control service implemented as
+> +  a Trusted Application identified by UUID 80a4c275-0a47-4905-8285-1486a9771a08.
+> +
+> +  It is a child of the OP-TEE firmware node ("linaro,optee-tz") and acts as a
+> +  container for child remoteproc devices (for example, the STM32MP15 M4 core
+> +  described by "st,stm32mp1-tee").
+> +
+> +properties:
+> +  compatible:
+> +    const: rproc-service-80a4c275-0a47-4905-8285-1486a9771a08
 
-Move clock prepare / unprepare operations to remoteproc prepare() /
-unprepare() callbacks to break the lock dependency from `ec_dev->lock`
-to `prepare_lock`.
+This should just be "80a4c275-0a47-4905-8285-1486a9771a08" which is the
+device/service identity on TEE bus.
 
-This breaks the dependency chain in the lockdep report:
-> WARNING: possible circular locking dependency detected
-> ...
-> the existing dependency chain (in reverse order) is:
-> ...
-> -> #0 (prepare_lock){+.+.}-{3:3}:
->        __lock_acquire
->        lock_acquire
->        __mutex_lock_common
->        mutex_lock_nested
->        clk_prepare
->        scp_ipi_send [mtk_scp_ipi]
->        scp_send_ipi [mtk_scp]
->        mtk_rpmsg_send [mtk_rpmsg]
->        rpmsg_send [rpmsg_core]
->        cros_ec_pkt_xfer_rpmsg [cros_ec_rpmsg]
+-Sumit
 
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
----
- drivers/remoteproc/mtk_scp.c     | 39 +++++++++++++++++++++++---------
- drivers/remoteproc/mtk_scp_ipi.c |  4 ++--
- 2 files changed, 30 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index db8fd045468d..98d00bd5200c 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -283,7 +283,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
- 	struct mtk_scp *scp = priv;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clocks\n");
- 		return IRQ_NONE;
-@@ -291,7 +291,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
- 
- 	scp->data->scp_irq_handler(scp);
- 
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return IRQ_HANDLED;
- }
-@@ -665,7 +665,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = scp->dev;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
-@@ -680,7 +680,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
- 
- 	ret = scp_elf_load_segments(rproc, fw);
- leave:
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return ret;
- }
-@@ -691,14 +691,14 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = scp->dev;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
- 	}
- 
- 	ret = scp_ipi_init(scp, fw);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	return ret;
- }
- 
-@@ -709,7 +709,7 @@ static int scp_start(struct rproc *rproc)
- 	struct scp_run *run = &scp->run;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
-@@ -734,14 +734,14 @@ static int scp_start(struct rproc *rproc)
- 		goto stop;
- 	}
- 
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	dev_info(dev, "SCP is ready. FW version %s\n", run->fw_ver);
- 
- 	return 0;
- 
- stop:
- 	scp->data->scp_reset_assert(scp);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	return ret;
- }
- 
-@@ -909,7 +909,7 @@ static int scp_stop(struct rproc *rproc)
- 	struct mtk_scp *scp = rproc->priv;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clocks\n");
- 		return ret;
-@@ -917,12 +917,29 @@ static int scp_stop(struct rproc *rproc)
- 
- 	scp->data->scp_reset_assert(scp);
- 	scp->data->scp_stop(scp);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return 0;
- }
- 
-+static int scp_prepare(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = rproc->priv;
-+
-+	return clk_prepare(scp->clk);
-+}
-+
-+static int scp_unprepare(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = rproc->priv;
-+
-+	clk_unprepare(scp->clk);
-+	return 0;
-+}
-+
- static const struct rproc_ops scp_ops = {
-+	.prepare	= scp_prepare,
-+	.unprepare	= scp_unprepare,
- 	.start		= scp_start,
- 	.stop		= scp_stop,
- 	.load		= scp_load,
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index c068227e251e..7a37e273b3af 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -171,7 +171,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 	    WARN_ON(len > scp_sizes->ipi_share_buffer_size) || WARN_ON(!buf))
- 		return -EINVAL;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clock\n");
- 		return ret;
-@@ -211,7 +211,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 
- unlock_mutex:
- 	mutex_unlock(&scp->send_lock);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return ret;
- }
--- 
-2.52.0.351.gbe84eed79e-goog
-
+> +
+> +  reg:
+> +    description: |
+> +      Logical identifier of the TEE remoteproc service instance.
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^[a-zA-Z0-9,._-]+@[0-9a-fA-F]+$":
+> +    type: object
+> +
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +
+> +additionalProperties: false
+> +...
+> -- 
+> 2.43.0
+> 
