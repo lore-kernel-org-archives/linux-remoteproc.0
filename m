@@ -1,37 +1,36 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453171E1DE5;
-	Wed, 31 Dec 2025 16:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB682853F3;
+	Wed, 31 Dec 2025 16:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767198619; cv=none; b=obP2OiR1hRgal/7oDRZM6/yoGPZP50j3KKwdGJVeTlY7Rs2fWLYQ6yeJeNxLuqwsp+bSxOoJXQUR7vh6ev3b0pMMmHzBWGR9eHISOn4dhOFTlNiS5Fsv58nBEywjH99PH6trNZPAUZT0KK3FZRpvvUF0Jk0UhKw/W2dTRey9tsY=
+	t=1767198621; cv=none; b=Q7xyugnVcWtUV8uWxHpFmLf1lHKI6fCVEghg0E8s7wrDY11yfqDYq14qYYPL5JPYPHD/0JeG1zhOhYkDRZ41LBDn/IL3oLak+osDjcCiZRebOiiAg+B0KKlf4B2L1P7fcP3ZR/kDKbjQqnqYTHS7SX2uqlPctjcH5lR5NLKRkY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767198619; c=relaxed/simple;
-	bh=kje6FfYzsYzhL0+9EN+aOdgwkk5qI+W58fEitS2M52k=;
+	s=arc-20240116; t=1767198621; c=relaxed/simple;
+	bh=aMja6Z9fX8rrD7tGW04IaMqot4eLHPhfBiWd1DqOpF0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UPndYAwJuIqWTYZcTZB/GIxjpQ85DMuHkEcCmrymdjFAyn+93BwzL7rCAiWUsIKyef6CdnKJT5AVSfOFzcMUDpufDZAffAaI4FBVR9xVOFYZPfZs3j5oNzjgDyPyi6U0CzPs3sXJ31mJfv/60gMpDbhSnvSeVoMou2jeU8WKIi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=mmjHG87p; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=V1BsLWu5; arc=none smtp.client-ip=5.75.144.95
+	 In-Reply-To:To:Cc; b=llzixwliQ1+aEvY7Kj7tkt870xr2yUm0+jq//QcDZvaHh2TOeduPc7GNZ16+0yQHUON6J1zd/DD7of6V5R+BU1aX/Xo1Zr6Z3R5DFjCYdJggM3XwN844iQughMNyFofbAcaKD1wM7D5ks6LVcQYVkLyyczUE8qQTgU0LBsJBzmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=nGUr8pDU; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=NfF7yHMN; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="mmjHG87p";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="V1BsLWu5"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="nGUr8pDU";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="NfF7yHMN"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1767198615; bh=bwgpq2SxZk3X77Y3wWKbmv0
-	WkrIqAtrkmxEA1yyLCS8=; b=mmjHG87pkEaC87S+PZXbXgbhXCVRew9lamdqgYzd3hB67BXBg3
-	/xDkfqqs7OR6NjpXjaDX9XOV9yAoH+hXvc4mgW5z8aVoHDlGcs3YPBPRfFGmnVM2w+YF9EMGZCo
-	zgrn1kdamWvh9lEXcYiUw/dAvsDcgcyg9JwWywQqffLxylrmAFWTyxB0wFnb/mhEjA92jb7M/v5
-	p3XP6zaUjjRIHa55jiqqSIXbaZHPpOW89aMP1c0+aPBpqWOkH36yFLhGGzj3v6FSu7O7DRqrg7w
-	30CA6ySw7I7Ex2wAoYlWH3tewTIZOyedQ4cKWp2Hu62P32SnKMK/iuhDVh8Ey2Gc2Ug==;
+	h=To:Message-Id:Subject:Date:From; t=1767198616; bh=fI8FOLHpbycTT/h/3zmIK5u
+	o0pmwrVVpdWD6LohdKK4=; b=nGUr8pDU3KyBSDRL20kdLL5xjIml/6nJF31tW54dNgy6o7Q3gL
+	hNqZs13COGyYXvifmpD98LVB34aVbd5Ev5HTqWPOV1l3rXUND1HcUc4jc40FOuDhNBchTzAGNi2
+	dQ06kNeuUXyT1+jwnpP2w5PGh5mUG/Mg9//CLrMNnqVQLSeQ8wG0WMhyjtpXZ9vWEN0IBGSp+up
+	WONLYacbiSmdkuXWLayMYO5LzxXbr4/o6p4207f2Qe6DecL4BHQgRaPobyxjTOlZjKqZbJ7i9Q1
+	8hPMSRE76dGM/LFIVEwEc9//Zk8fAxot1TuFI+5prGhZ3TpNcx7zueFPX5TGtf8hZpw==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1767198615; bh=bwgpq2SxZk3X77Y3wWKbmv0
-	WkrIqAtrkmxEA1yyLCS8=; b=V1BsLWu5inDCBFXAFIv8yxafcC+x3wRY68/KvscgDU58ibtgfE
-	d9k3Vc3Vj1S6OFxSz8up2ukaj/S2fbokLsCg==;
+	h=To:Message-Id:Subject:Date:From; t=1767198616; bh=fI8FOLHpbycTT/h/3zmIK5u
+	o0pmwrVVpdWD6LohdKK4=; b=NfF7yHMNVNbevi14BC3DCaPzfEDrFVfzEwDcEQBlpXIigofDST
+	/TcBpNgCLDRarYaxVhnDpl+ZlijMUbTwa+DA==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 31 Dec 2025 17:30:11 +0100
-Subject: [PATCH v3 1/9] remoteproc: qcom_q6v5_mss: Introduce
- need_pas_mem_setup
+Date: Wed, 31 Dec 2025 17:30:13 +0100
+Subject: [PATCH v3 3/9] remoteproc: qcom_q6v5_mss: Add MDM9607
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -40,7 +39,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251231-mss-v3-1-f80e8fade9ec@mainlining.org>
+Message-Id: <20251231-mss-v3-3-f80e8fade9ec@mainlining.org>
 References: <20251231-mss-v3-0-f80e8fade9ec@mainlining.org>
 In-Reply-To: <20251231-mss-v3-0-f80e8fade9ec@mainlining.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -51,148 +50,182 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1767198613; l=4192;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767198613; l=5352;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=kje6FfYzsYzhL0+9EN+aOdgwkk5qI+W58fEitS2M52k=;
- b=gbKuTuPWszNgDe2jlQeT+XWVrTpMeMg9pZm6aP5vjAaMoy+7kdp/GltL19LWZ7dE8MQCW4uel
- i97Z5mKnrI5BzRRVrvWN6MUIzRlXiYmStwvaC4Uh50GNKpntP5LhiXp
+ bh=JD15BMvJP3u9OapIu2lVtcZXhls9SqY3Po7tJcplGi8=;
+ b=L0iuH4lt1kw2JULmeF1F6vmKZaPkASTEvw2oJlRmcE/XuNwoCSj+Fk0ngvNN9uw6Z4I09YI6p
+ drimaBd1JXUCAeV6kbSiCyUfLPb0vP8IoJ5VBPpXYOmd/JS8B+dQ2g+
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Some platforms like MSM8953 and MSM8937 TZ needs to be
-informed of the modem start address and pas_id.
-Lets introduce need_pas_mem_setup flag for handle this case.
+From: Stephan Gerhold <stephan@gerhold.net>
 
+Add support for MDM9607 MSS it have different ACC settings
+and it needs mitigation for inrush current issue.
+
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+[Reword the commit, add necessary flags, rework inrush current mitigation]
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- drivers/remoteproc/qcom_q6v5_mss.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_mss.c | 89 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 75 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 91940977ca89..3c404118b322 100644
+index 3c404118b322..19863c576d72 100644
 --- a/drivers/remoteproc/qcom_q6v5_mss.c
 +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -162,6 +162,7 @@ struct rproc_hexagon_res {
- 	char **proxy_pd_names;
- 	int version;
- 	bool need_mem_protection;
-+	bool need_pas_mem_setup;
- 	bool has_alt_reset;
- 	bool has_mba_logs;
- 	bool has_spare_reg;
-@@ -240,6 +241,7 @@ struct q6v5 {
- 	struct qcom_sysmon *sysmon;
- 	struct platform_device *bam_dmux;
- 	bool need_mem_protection;
-+	bool need_pas_mem_setup;
- 	bool has_alt_reset;
- 	bool has_mba_logs;
- 	bool has_spare_reg;
-@@ -1441,7 +1443,7 @@ static int q6v5_mpss_load(struct q6v5 *qproc)
- 			max_addr = ALIGN(phdr->p_paddr + phdr->p_memsz, SZ_4K);
- 	}
+@@ -124,6 +124,7 @@
+ #define QDSP6v56_CLAMP_QMC_MEM		BIT(22)
+ #define QDSP6SS_XO_CBCR		0x0038
+ #define QDSP6SS_ACC_OVERRIDE_VAL		0x20
++#define QDSP6SS_ACC_OVERRIDE_VAL_9607	0x80800000
+ #define QDSP6v55_BHS_EN_REST_ACK	BIT(0)
  
--	if (qproc->version == MSS_MSM8953) {
-+	if (qproc->need_pas_mem_setup) {
- 		ret = qcom_scm_pas_mem_setup(MPSS_PAS_ID, qproc->mpss_phys, qproc->mpss_size);
- 		if (ret) {
- 			dev_err(qproc->dev,
-@@ -2224,6 +2226,7 @@ static const struct rproc_hexagon_res sc7180_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = true,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = true,
- 	.has_spare_reg = true,
-@@ -2253,6 +2256,7 @@ static const struct rproc_hexagon_res sc7280_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = true,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = true,
- 	.has_spare_reg = false,
-@@ -2285,6 +2289,7 @@ static const struct rproc_hexagon_res sdm660_mss = {
- 			NULL
- 	},
- 	.need_mem_protection = true,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2321,6 +2326,7 @@ static const struct rproc_hexagon_res sdm845_mss = {
- 			NULL
- 	},
- 	.need_mem_protection = true,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = true,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2353,6 +2359,7 @@ static const struct rproc_hexagon_res msm8998_mss = {
- 			NULL
- 	},
- 	.need_mem_protection = true,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2392,6 +2399,7 @@ static const struct rproc_hexagon_res msm8996_mss = {
- 			NULL
- 	},
- 	.need_mem_protection = true,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2427,6 +2435,7 @@ static const struct rproc_hexagon_res msm8909_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = false,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2473,6 +2482,7 @@ static const struct rproc_hexagon_res msm8916_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = false,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2509,6 +2519,7 @@ static const struct rproc_hexagon_res msm8953_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = false,
-+	.need_pas_mem_setup = true,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2562,6 +2573,7 @@ static const struct rproc_hexagon_res msm8974_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = false,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2600,6 +2612,7 @@ static const struct rproc_hexagon_res msm8226_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = false,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
-@@ -2646,6 +2659,7 @@ static const struct rproc_hexagon_res msm8926_mss = {
- 		NULL
- 	},
- 	.need_mem_protection = false,
-+	.need_pas_mem_setup = false,
- 	.has_alt_reset = false,
- 	.has_mba_logs = false,
- 	.has_spare_reg = false,
+ /* QDSP6v65 parameters */
+@@ -256,6 +257,7 @@ struct q6v5 {
+ };
+ 
+ enum {
++	MSS_MDM9607,
+ 	MSS_MSM8226,
+ 	MSS_MSM8909,
+ 	MSS_MSM8916,
+@@ -747,15 +749,19 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 			return ret;
+ 		}
+ 		goto pbl_wait;
+-	} else if (qproc->version == MSS_MSM8909 ||
++	} else if (qproc->version == MSS_MDM9607 ||
++		   qproc->version == MSS_MSM8909 ||
+ 		   qproc->version == MSS_MSM8953 ||
+ 		   qproc->version == MSS_MSM8996 ||
+ 		   qproc->version == MSS_MSM8998 ||
+ 		   qproc->version == MSS_SDM660) {
+ 
+-		if (qproc->version != MSS_MSM8909 &&
+-		    qproc->version != MSS_MSM8953)
+-			/* Override the ACC value if required */
++		/* Override the ACC value if required */
++		if (qproc->version == MSS_MDM9607)
++			writel(QDSP6SS_ACC_OVERRIDE_VAL_9607,
++			       qproc->reg_base + QDSP6SS_STRAP_ACC);
++		else if (qproc->version != MSS_MSM8909 &&
++			 qproc->version != MSS_MSM8953)
+ 			writel(QDSP6SS_ACC_OVERRIDE_VAL,
+ 			       qproc->reg_base + QDSP6SS_STRAP_ACC);
+ 
+@@ -800,7 +806,7 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 		writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+ 
+ 		if (qproc->version != MSS_MSM8909) {
+-			int mem_pwr_ctl;
++			int mem_pwr_ctl, reverse = 0;
+ 
+ 			/* Deassert QDSP6 compiler memory clamp */
+ 			val = readl(qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+@@ -812,7 +818,8 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 			writel(val, qproc->reg_base + QDSP6SS_PWR_CTL_REG);
+ 
+ 			/* Turn on L1, L2, ETB and JU memories 1 at a time */
+-			if (qproc->version == MSS_MSM8953 ||
++			if (qproc->version == MSS_MDM9607 ||
++			    qproc->version == MSS_MSM8953 ||
+ 			    qproc->version == MSS_MSM8996) {
+ 				mem_pwr_ctl = QDSP6SS_MEM_PWR_CTL;
+ 				i = 19;
+@@ -822,16 +829,34 @@ static int q6v5proc_reset(struct q6v5 *qproc)
+ 				i = 28;
+ 			}
+ 			val = readl(qproc->reg_base + mem_pwr_ctl);
+-			for (; i >= 0; i--) {
+-				val |= BIT(i);
+-				writel(val, qproc->reg_base + mem_pwr_ctl);
++			if (qproc->version == MSS_MDM9607) {
+ 				/*
+-				 * Read back value to ensure the write is done then
+-				 * wait for 1us for both memory peripheral and data
+-				 * array to turn on.
++				 * Set first 5 bits in reverse to avoid
++				 * "inrush current" issues.
+ 				 */
+-				val |= readl(qproc->reg_base + mem_pwr_ctl);
+-				udelay(1);
++				reverse = 6;
++				for (; i >= reverse; i--) {
++					val |= BIT(i);
++					writel(val, qproc->reg_base + mem_pwr_ctl);
++					udelay(1);
++				}
++				for (i = 0; i < reverse; i++) {
++					val |= BIT(i);
++					writel(val, qproc->reg_base + mem_pwr_ctl);
++					udelay(1);
++				}
++			} else {
++				for (; i >= 0; i--) {
++					val |= BIT(i);
++					writel(val, qproc->reg_base + mem_pwr_ctl);
++					/*
++					 * Read back value to ensure the write is done then
++					 * wait for 1us for both memory peripheral and data
++					 * array to turn on.
++					 */
++					val |= readl(qproc->reg_base + mem_pwr_ctl);
++					udelay(1);
++				}
+ 			}
+ 		} else {
+ 			/* Turn on memories */
+@@ -2410,6 +2435,41 @@ static const struct rproc_hexagon_res msm8996_mss = {
+ 	.version = MSS_MSM8996,
+ };
+ 
++static const struct rproc_hexagon_res mdm9607_mss = {
++	.hexagon_mba_image = "mba.mbn",
++	.proxy_supply = (struct qcom_mss_reg_res[]) {
++		{
++			.supply = "pll",
++			.uA = 100000,
++		},
++		{}
++	},
++	.proxy_clk_names = (char*[]){
++		"xo",
++		NULL
++	},
++	.active_clk_names = (char*[]){
++		"iface",
++		"bus",
++		"mem",
++		NULL
++	},
++	.proxy_pd_names = (char*[]){
++		"mx",
++		"cx",
++		NULL
++	},
++	.need_mem_protection = false,
++	.has_alt_reset = false,
++	.has_mba_logs = false,
++	.has_spare_reg = false,
++	.has_qaccept_regs = false,
++	.has_ext_bhs_reg = false,
++	.has_ext_cntl_regs = false,
++	.has_vq6 = false,
++	.version = MSS_MDM9607,
++};
++
+ static const struct rproc_hexagon_res msm8909_mss = {
+ 	.hexagon_mba_image = "mba.mbn",
+ 	.proxy_supply = (struct qcom_mss_reg_res[]) {
+@@ -2672,6 +2732,7 @@ static const struct rproc_hexagon_res msm8926_mss = {
+ 
+ static const struct of_device_id q6v5_of_match[] = {
+ 	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
++	{ .compatible = "qcom,mdm9607-mss-pil", .data = &mdm9607_mss},
+ 	{ .compatible = "qcom,msm8226-mss-pil", .data = &msm8226_mss},
+ 	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
+ 	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
 
 -- 
 2.52.0
