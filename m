@@ -1,37 +1,37 @@
 Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E066288C96;
-	Wed, 31 Dec 2025 16:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A604D27467F;
+	Wed, 31 Dec 2025 16:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767198623; cv=none; b=SCecenbvl/a5rMnogpC3qyMPUjQotpPOXh7kg9ixhkviPOgpvPS++q75g6FfBzaAE9sxouST/Rx0TyO5vB8ATWHJ+l8mnohCOuh8indqKSrQHwsaN+Y/CZXNv+lKueO+qOZWy7E1YSvD3fe4mSjRge4dTP8YFiWIpq6LTvE/ybw=
+	t=1767198630; cv=none; b=lwoFUk4Yll4UMjKukqyD/VuxdfNqk53/ZGrfev90r93iija0lkWfmsfgP0PHQjJe+4E3XLv0AO9nMmeyAvRFBRMyTzNVvbF0ZI0UF5XPOgghKzaDfpBgX+sZv3pJv57IQ7vEdHQyBa4eEf8qvANPTb7Yg5+RfNhTvGjp3ArK23I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767198623; c=relaxed/simple;
-	bh=04XEBMDpEV1lgd2MHxPLm427fT+7qwuMKA4T1FeHvJI=;
+	s=arc-20240116; t=1767198630; c=relaxed/simple;
+	bh=3IozC71ijmNg38qD8RfT3RWim9e1qFERmdN0P/NMg+M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ME98PVFk5g73CKsmPwZQkxoobML85rShL6dYS4IcTCnwx/YF52ImefWW8OIj9S5R3i5k7moqNjYYPzXZbXqAhHMWxV1dzqRIjSOdmaTuKOAGLgSLHVaAVAAX53YsSJik2xXCDqPgN+wDQQfP9bz2t74f2k/l2jIwIFdTHUdFyvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=YFCgnR9u; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=oyKQeZFq; arc=none smtp.client-ip=5.75.144.95
+	 In-Reply-To:To:Cc; b=Av3uEisbPz1GQlByc1CUtK6BHSSb0C2aCsUR/BCVVQ3GfzCVA2zJpDTbL2obT7yku45nkYhgaF0s3DN18F37hUGmKGkCyyzBnrXe9Swt4Ynga+u2zrLsXe24WXxo5XR133hQZGi3Z+8ZHnsouoCujt78cP74GxUUqvnnkz3rQcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=b47aSYWm; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=RiRTOwy9; arc=none smtp.client-ip=5.75.144.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="YFCgnR9u";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="oyKQeZFq"
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="b47aSYWm";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="RiRTOwy9"
 DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1767198617; bh=QffQ/HFvNOEYyu7fqrFQscK
-	deFLLrT010lx1XxLDOn4=; b=YFCgnR9ukbZCz6DDVCiJsx3tQGfg6vMWLP1jb7idXAeMrLVABz
-	OUyHg6HNT9bfA9zJYR2jbsPRYEtXrTLXv8+Ci1jrwWY8BRAN8ttxflzALRd8ezzdeWgUear+vJx
-	ATWKJa3M3EkMC2UJta3jZE94Gybroi8KU9yzeBzbnzTNu32L7PJeThdywxWmCP1lUHR6FGKk3qR
-	Vpjfl0C/pbL7QityGkVgV77i+mxKFoPwWxFfOTb1y97wgGjLdeJWDxc8i9d01rO1X3prxIEsWme
-	H6xrANt+JKqPPYQu0WuuBqQ0XKYz7Rrx6soso4fiuchvGipay/Y++6IxUKwXT8ATv5w==;
+	h=To:Message-Id:Subject:Date:From; t=1767198615; bh=fF8lruY0Q3UFuXdQyaJnl4x
+	uJqz5yvtNSd1wFxVNgaQ=; b=b47aSYWmKd6Rd3sF44gNLtMDCupdp7Jrar779NM9H7SuXXdvOx
+	XRNy8zFQI6sPaq1ZhPMHD4Q95hUjG1SQ7RXnM36x2nP+puDXxRw0+vIAtA/C71278ScylLZzR95
+	aE0XZzyGxPC4K3T0w5Pl7ZmLbh0E0VYMzqw/sO2vYaxFsw9ZiPtfLB9o7sokPrEw5coPcXKPfM9
+	kZL7VVJGXgyawdfoG+Uis2IHBJzNFSzrYJcoZoOvLmqkcwc1O1tZ41thd03BP/phlqI+z512fTf
+	g3fjk45s8gDSMhkdlQfUoKaRC7yjytoagCTSdJNII0aPhOTTeK/bk8fU/iNxibzm3hw==;
 DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=To:Message-Id:Subject:Date:From; t=1767198617; bh=QffQ/HFvNOEYyu7fqrFQscK
-	deFLLrT010lx1XxLDOn4=; b=oyKQeZFq4psOJ82jU0KMHDRMTsuD3yatPLAeFNcpPQ6hkcMoEf
-	bXZ2sqb2TwCjlke0QsMi6eantOLPwystNDAQ==;
+	h=To:Message-Id:Subject:Date:From; t=1767198615; bh=fF8lruY0Q3UFuXdQyaJnl4x
+	uJqz5yvtNSd1wFxVNgaQ=; b=RiRTOwy9tLkd25Kpm3FXETrDS5pVMMLPIVGfZMZZNk0SVOnyVL
+	eeZmaoKRuRrVSNJo3q5jSTmIQRTZuHsDCJBA==;
 From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 31 Dec 2025 17:30:16 +0100
-Subject: [PATCH v3 6/9] dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add
- MSM8937
+Date: Wed, 31 Dec 2025 17:30:12 +0100
+Subject: [PATCH v3 2/9] dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add
+ MDM9607
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -40,7 +40,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251231-mss-v3-6-f80e8fade9ec@mainlining.org>
+Message-Id: <20251231-mss-v3-2-f80e8fade9ec@mainlining.org>
 References: <20251231-mss-v3-0-f80e8fade9ec@mainlining.org>
 In-Reply-To: <20251231-mss-v3-0-f80e8fade9ec@mainlining.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -51,49 +51,41 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1767198613; l=1343;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1767198613; l=1060;
  i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=04XEBMDpEV1lgd2MHxPLm427fT+7qwuMKA4T1FeHvJI=;
- b=tenWIBtsP6Dd3oBMiRYRWAc+A+/oVkCzIyN/MNGPHoR2N+b9ExAbjsKUpiRc4luIwuO/ygroQ
- Ac6pLvacDTUCOOnou+Bftxk4DkXyNIbZztx0oOg5awC98H4kGM25l+C
+ bh=3IozC71ijmNg38qD8RfT3RWim9e1qFERmdN0P/NMg+M=;
+ b=zlXgbYTPbqJ8mn4SqdrGN1Ukej6VoJKXjDWFhe8+kfJFMhAWV50QITaJlIBUQUdL+iXjgADQq
+ YfqViu/v+dFBpJjS4zqR0v+Mz8R2qfMliIUfozpb1d+7E8lMjkuvrS+
 X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
  pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-Add the compatible for MSS as found on the MSM8937 platform.
+Add the compatible for MSS as found on the MDM9607 platform.
 
 Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-index 74202dd34703..b4a1b5852896 100644
+index c179b560572b..4e0d2fe0e46c 100644
 --- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
 +++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-@@ -23,6 +23,7 @@ properties:
+@@ -17,6 +17,7 @@ properties:
+   compatible:
+     oneOf:
+       - enum:
++          - qcom,mdm9607-mss-pil
+           - qcom,msm8226-mss-pil
+           - qcom,msm8909-mss-pil
            - qcom,msm8916-mss-pil
-           - qcom,msm8917-mss-pil
-           - qcom,msm8926-mss-pil
-+          - qcom,msm8937-mss-pil
-           - qcom,msm8953-mss-pil
-           - qcom,msm8974-mss-pil
- 
-@@ -232,6 +233,7 @@ allOf:
+@@ -226,6 +227,7 @@ allOf:
+         compatible:
+           contains:
+             enum:
++              - qcom,mdm9607-mss-pil
                - qcom,msm8909-mss-pil
                - qcom,msm8916-mss-pil
-               - qcom,msm8917-mss-pil
-+              - qcom,msm8937-mss-pil
      then:
-       properties:
-         power-domains:
-@@ -276,6 +278,7 @@ allOf:
-             enum:
-               - qcom,msm8926-mss-pil
-               - qcom,msm8917-mss-pil
-+              - qcom,msm8937-mss-pil
-               - qcom,msm8974-mss-pil
-     then:
-       required:
 
 -- 
 2.52.0
