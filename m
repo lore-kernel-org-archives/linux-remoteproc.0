@@ -1,128 +1,68 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0CD149C6F;
-	Fri,  2 Jan 2026 09:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A01F2D7DD5;
+	Fri,  2 Jan 2026 10:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767347708; cv=none; b=mqpKB4NAw8kTEEk7Un2u0Dk7Rqc4quLT4YgnTvI07PyLCS104oLOeKf8D/gJywJiyTXqmsfNEF2d7n99/mhXwZ6guI70l0hGVGfemDyd9UgtuxUq5gK96EXCLdsD73OThpFf6fTVEZx2tLwnF9LAAeQ4VVlM/Ux5JuQRCuM/m7k=
+	t=1767351528; cv=none; b=PXPCjOsjKXLbECqfOpTCrfkKLzc4FHrLo/ZMPFZB9DmJPlJjw6p2DSiYFCs2f5wE9lgSj3osmvD5UMHZ1lqOAE2TVi6VsjZA1fFtLcp2FQsvMcArKHd7g+psIaboxUuTaOPa8VSt5qLqmthKW9OulZKRwkGDlWWfYG3HND8L1Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767347708; c=relaxed/simple;
-	bh=9Nv4Qa2PE9uSVW8OnUTuV1TBsV2uWxhkQ80yf+tBGpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lFipgyI5fzXmMQhwGSQI/DHAvbvVf/ePc1lGhTZpAJD3K61v7K4/jHRUrzgedXHQ87TSaak3ZQX1Ta7xyhWy9th8JNBg2FS0hTajJ006OAzXPyzpFwW9MjsJ+6nShQbJE6rLqlyqXvZcClU1KqhOBck1FMPnAiU/7m2l2IJVebY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqr3h3ut; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767351528; c=relaxed/simple;
+	bh=f7KEs7uqu3mjK7qSi1bqsjP5YQwse1uJDwnsAXg75dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HSc9EQ4G1dnqTF936E1/CYnKF42wtd5kI9IkndVOpixdQH+7jb026Nzgzy5hTZEarPXCPDinAyy/6pGZF0n5IXpU5GQMtuVutbMMyWu3Ktp04RIt7YINMPSqkCNdPe4B7S05/EO/bojDkw40d6Yel+OcMxGnSVK/pTWoHmwIGTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OugyS8t6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqr3h3ut"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDCFC116B1;
-	Fri,  2 Jan 2026 09:55:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OugyS8t6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7CA2C116B1;
+	Fri,  2 Jan 2026 10:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767347707;
-	bh=9Nv4Qa2PE9uSVW8OnUTuV1TBsV2uWxhkQ80yf+tBGpc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aqr3h3utE/v48xE/ma2SNVN/jjBSherCuVuWapoIiyk6jbGl9wejzy+vnTbTzDyMZ
-	 E6hXDLcG3tk/XeGeV0XgLGLh0bfK1TbZLS8JIN1Mov7JHTT9mdgV6odjOtz/CoECsA
-	 71Hrv7pHkmcpAOfkjPzFwlQfON2jwJh1URmi8khPa+y26VHq9i3f+HuRCmuLrXatV9
-	 8TroyP9fwF/LAEYK7xNe7dE+Aa7kh2sr7Fx5fMmJ3jP+3JEzdB89lqPzXfnOvf3UBa
-	 n9k8K5e3KRUcM2BN4AWoAnwdEYNDpNYp9EQTflum47ryKGlvjCML95RO+RW4ugnXNn
-	 /CpNReYsRMBJQ==
-Message-ID: <c104d173-6316-4bcf-b89b-62417d0b30c8@kernel.org>
-Date: Fri, 2 Jan 2026 09:55:00 +0000
+	s=k20201202; t=1767351528;
+	bh=f7KEs7uqu3mjK7qSi1bqsjP5YQwse1uJDwnsAXg75dk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OugyS8t6Dez1Z1kpkF2PV/LchT0HQXvPYPbuy/5tY8IxhrX1QTdt92baLVR0w+Vwa
+	 JAykQ9l3IWgnmgfalLPS2/s61kCWs76gOdAV3YPUQHYOCipXr6a10L9QtFv3xUb486
+	 C8IoGSuVIg+v4nEpf6jHRExHvJvQp5Qc1s+k0yPNztgycKrn1mCiTu1I0qVqZE8iRK
+	 BLHawhzSPlp1WrrBs4feqCZjZFy/sBl8zyEcLJiJzsvCskIymYdb4pXrrpdrlqz54B
+	 gtJuMVDj9lhCnyxsNOc1jRZgcNOXEJD39aZJRAgdGj5M36v7AzDvvUz+yMpJsoxzBn
+	 A+zz3ZjMcEQIA==
+Date: Fri, 2 Jan 2026 11:58:45 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephan Gerhold <stephan@gerhold.net>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/9] dt-bindings: remoteproc: qcom,msm8916-mss-pil:
+ Add MDM9607
+Message-ID: <20260102-rigorous-clever-marten-d6da73@quoll>
+References: <20251231-mss-v3-0-f80e8fade9ec@mainlining.org>
+ <20251231-mss-v3-2-f80e8fade9ec@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/9] remoteproc: qcom_q6v5_mss: Add MDM9607
-To: barnabas.czeman@mainlining.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251231-mss-v3-0-f80e8fade9ec@mainlining.org>
- <NLGulU4z-1Wrf5120YfX8CYJ_8DSP-9-DhaJ3KAIQCvqF9Qf184udOzFoEQH1qgJDZUl9cxEpsdyztfhcz8G-w==@protonmail.internalid>
- <20251231-mss-v3-3-f80e8fade9ec@mainlining.org>
- <6bfc790d-b0da-4c5b-bd2d-ceed9a75bb24@kernel.org>
- <DEGDp05xNKls7EO30mtT70wJFIkDT0-248vPaBikWJGkFf--YvzpyJ_h5sc7RSH1y9hkCKdFRBIJwQUNE9Rlzw==@protonmail.internalid>
- <a627abcaa38c0ba11c76c1f0c42b0c6b@mainlining.org>
- <d3bcaf7d-06ae-4410-8d7c-970fdb196c47@kernel.org>
- <MdF8n8gAaT_bieezcdxrSQouvHzG8TbGRiVRjHHXdc_Wjpr_GbDod8rUNrthtLEfOkycxxO5SVOfSPmyHe2C5g==@protonmail.internalid>
- <73d028cfdd514d6c3f073bb66fdd07cf@mainlining.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bod@kernel.org>
-In-Reply-To: <73d028cfdd514d6c3f073bb66fdd07cf@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251231-mss-v3-2-f80e8fade9ec@mainlining.org>
 
-On 01/01/2026 21:57, barnabas.czeman@mainlining.org wrote:
-> On 2026-01-01 21:58, Bryan O'Donoghue wrote:
->> On 01/01/2026 13:50, barnabas.czeman@mainlining.org wrote:
->>>>> +				for (; i >= 0; i--) {
->>>>> +					val |= BIT(i);
->>>>> +					writel(val, qproc->reg_base + mem_pwr_ctl);
->>>>> +					/*
->>>>> +					 * Read back value to ensure the write is done then
->>>>> +					 * wait for 1us for both memory peripheral and data
->>>>> +					 * array to turn on.
->>>>> +					 */
->>>>> +					val |= readl(qproc->reg_base + mem_pwr_ctl);
->>>>> +					udelay(1);
->>>> Isn't the logic here inverted ?
->>>>
->>>> i.e. you've written a thing and ostensibly require a delay for that
->>>> thing to take effect, the power to switch on in this case.
->>>>
->>>> It makes more sense to write, delay and read back rather than write,
->>>> readback and delay surely...
->>> This is the original reset sequence without modification, i have just
->>> moved it in a else case when it is not an MDM9607, MSM8917 or MSM8937.
->>
->> Doesn't make it correct, we fix upstream logic bugs all the time...
-> Here is the original upstream logic
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/remoteproc/qcom_q6v5_mss.c?h=next-20251219#n823
-> and here is the same at downstream 3.18
-> https://git.codelinaro.org/clo/la/kernel/msm-3.18/-/blob/LA.UM.6.6.c32-05500-89xx.0/drivers/soc/qcom/pil-q6v5.c#L451
-> and same from downstream 4.9
-> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/drivers/soc/qcom/pil-q6v5.c#L518
+On Wed, Dec 31, 2025 at 05:30:12PM +0100, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wr=
+ote:
+> Add the compatible for MSS as found on the MDM9607 platform.
+>=20
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
+=2Eorg>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml |=
+ 2 ++
+>  1 file changed, 2 insertions(+)
 
-Plenty of downstream bugs...
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Let's assume those are posted writes i.e. the IO fabric equivalent of 
-UDP - I'm not sure I'd say the downstream code is consistent in its 
-treatement of write transactions..
-
-But aside from just pointing at downstream - how is val |= readl() a 
-correct thing versus val = readl();
-
-...
-
-I mean its just not
-
-> 
->>
->> For example a read-back to ensure write completion is only required for
->> posted memory transactions.
->>
->> Is this a posted write ?
->>
->> Is there an io-fabric in the world which exceeds 1 microsecond to
->> perform a write transaction ?
->>
->> Anyway leaving that aside the bit that's really objectionable and IMO
->> obvious a bug is val |= readl();
->>
->> Why or the bit back in ? and then why not check the bit was set on the
->> read ?
->>
->> val = readl() is a lot less janky and shouldn't it matter that the bit
->> we tried to set is actually reflected in the read-back ?
->>
->> Failure to set the bit would certainly be a problem...
->>
->> ---
->> bod
+Best regards,
+Krzysztof
 
