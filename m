@@ -1,123 +1,227 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EB92749ED
-	for <linux-remoteproc@vger.kernel.org>; Fri,  2 Jan 2026 22:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D7752F88
+	for <linux-remoteproc@vger.kernel.org>; Sat,  3 Jan 2026 06:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767392260; cv=none; b=kAYt7r6RTfCEwnKlONEbKsUM1RKaVu6VZe3y58w46o1AmrG2jKKEoHegIiZWqNQyRS+zqgJ850U6Cph/eQq8gk/fyimeF3gG6gRIAZ1E6IqCqPQJYKIrhGYKkw6UJL3hi2CgNGxRx43VbvKbAYok02OI3JqI8dw8NUkoleOsZBo=
+	t=1767422216; cv=none; b=DQV3wNcvioeGdVIMVnQiMLvgjg5F43N8FsmUCaurSMc2JKvDYf7aJnoxnYAjSAkMqXaVj+vP0cPLBAggxdsKzHUxJdSmC8SApeZ3iB90oy+NQZo9yMDd5Wn3OJmFWPh9dsACBxjUgYFQN8V4OHX2w3dP2EsqrhQRMyYKhaPe2/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767392260; c=relaxed/simple;
-	bh=/64Co2q0kgEgA6DPpVmvrLqtt4+bKlfMdoKNXVNCcsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=scW7NigYNO6K4cdDc2BRNvRhe7WCPfb4xR0fE8cSIkOzgXXOicB07RH4XAYRBmitqY5j2uDX+dM/6nFbZa4WCWegETe0PVfrXbNkAzCa1ZpeHq16FnlTLSGlnINVaQ4LvIh4l9VVZ5TVtdVtI4n3WclplgqJ9TvFtyLis4VAhsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ge2fF73i; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767422216; c=relaxed/simple;
+	bh=GcSJTsIdgVF1gHPqEGPZ9hEjZebFvNeOtsDBF78oZCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lcYIEVInYXomZFMR2aacHyhjrUs6J3nONz6NSoGc10v568dK5KkjY+MRxCuyf8p1/hax0reUYVrvOPVtLlBYzOJmp6kOKZ/s5LfM7lmeoo7WAeZvLVPb0wjS9k73mRpC4KNvKx/GSmPIrkuXt9DqNivyr+ils+bPlWRpKA5K4Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JrbvOruB; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ge2fF73i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2525C2BC87
-	for <linux-remoteproc@vger.kernel.org>; Fri,  2 Jan 2026 22:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767392259;
-	bh=/64Co2q0kgEgA6DPpVmvrLqtt4+bKlfMdoKNXVNCcsQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ge2fF73iJ8fd9je/5EvWRvXS4+eNAXKRDPzkWl71vlZSnTL/QfKna/aIUVBrNzqh5
-	 mDsdGxhIVjOAF5DgyQXjyPdkWInWTLYyR9nBQBjvEYKXdK4AlCDsxA4DRs7FKwJd55
-	 qbNGH1+8COzIcaBwqUZtXwBOXEyk4P7MwVgy80b4xpW7IdeVJUU16yVWcdTMFVs1VE
-	 a/shbiUuWL8wYX6p4iaLWpnQh2+AczJFAcfhA1YoN3SzJA9UdLIX7SN1jvxiC3iOfj
-	 7D4GSVWzrtB2v8A78o2IxK2poTFA4PCSHN/pB4Gh1eYAhTxFCE8mUEEVm572e5YK5f
-	 d5bdHvqxa8TAA==
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b728a43e410so2384628866b.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 02 Jan 2026 14:17:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXMCZ4wmPCPI13jLwDz3QJGpVwVN6hp+R1/8qLPjR0xo4IcsLWNdiZusiFAYRIAt1vlxr1z/GrEGjA/+ZxXwAIF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxtdk/kzji1bj2QbRilUvrPteR4j80neX50unbHU5SvbGDqh+di
-	lC/Pt2B8op9sBdMWmIxfxkWfc5VPMj5BnEEpB8RURdItY3Sb7ryA0z+OL13UylAkAmLr3e8W3AU
-	decWDtuqRP6mMXsqNfVt/4RaFKrMnDw==
-X-Google-Smtp-Source: AGHT+IGcdjYMdq8WHlapJ12+Pohp79IeQ6Qp00t62ofYPur0Xu5Cyh0Zdwx3rcPrWR7fro3HFhzV7izpL+ysUdN6FT8=
-X-Received: by 2002:a17:907:da17:b0:b83:3770:a0e4 with SMTP id
- a640c23a62f3a-b833770a15emr2280910966b.34.1767392258434; Fri, 02 Jan 2026
- 14:17:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JrbvOruB"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7fc0c1d45a4so11176799b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 02 Jan 2026 22:36:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1767422213; x=1768027013; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n009qAjQa1f/gx1JlFPWaK6vp1HVpsaalQe/6LgsF9o=;
+        b=JrbvOruBrh8lmpIc7RX7dnszwqV0ZJvn2pS9G1dhEGqecM0sSS3ZzGk6+hKHsts9eB
+         C+xP39BkTmzg9evARoi3qoeyq8kZMHZqd11kFj5vYzUOT0YJlcQikJy2h7RKXFZNKe3T
+         YA4iYlXRVO/irzy+dZLvgkPjRdXcBD3JIEuQylFoThLU8A12V6+ye6KnIIi1SNK9/Byp
+         J7VpDq0SiCBMqmX/Lf2+mbyUNhsDSVuZ6CZxv6A9v1EHFBfLjQ/ucuQHQAJP520mcf/3
+         PT2WniBjQ4BN4bXjevPkvTcKpkcc0kRPT/749qf5ZqeYp4MwFJGf0D6Uqv1P6oFi6lTM
+         41CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767422213; x=1768027013;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n009qAjQa1f/gx1JlFPWaK6vp1HVpsaalQe/6LgsF9o=;
+        b=r1iZuwYwngDzVnaV8I1nJkk2t8h7i+w8U4eTb17F2mQqOglSvRF1DfW8MACjApgztr
+         Mr5By17ugfMoyAJmyadcQ0GBvGHAzR9S2d4pVzpnqk5OrDY7qxSUBD0nb+M4+IGhWCCM
+         /KIoHzV3iLSjp5/H3/3L9/iW6Fw+HGpcW7GijUwytBzJ9ySfObZSaVV1+z8XF2ouj1yW
+         cYoIqnUNFz6dx9PrQ99yYeyKVRK2D//yfXQlbD8RZvCXuomTDovIz5ZhNnSspdHg7Xdr
+         I1ddClsdAli0LPtagjjJOCml5zd1HY3x513OGAk9xAzKSSON2PsELRrJNwOOs+yhJzbQ
+         cdEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt2eNsYV0GoaKvoa5JAQuxxEuEoWHmn/nnocIvX18BYFpJNYTFV8LlUBpDNXkiOltgPUeYpqHeYj0J3VqLa+Li@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRYLyIjJ0plheUSbdkfHlkuHC/Dy0Nf7mRvuz2xJeAhgGoiBuR
+	DhUFYHjFcKShCzLASPwxKoFTfka2roMCb3jHdXlMps2A7cpyYv500j8faW9Tx004R84=
+X-Gm-Gg: AY/fxX6wAI9+I8Eq0DM3kRIDbKTH5+X/BMpZ2SWV2fp/yCq4Y1Vwb6H/mNILhD2YXwA
+	MMC8o0dKJQHnTdKJiBgKvTnNOfx0eBTFsEh3AmEgHQOI4OuOBrq+FcsjBbOUD3J9nAxt1B1l25b
+	xLx4m4dLZTYALViSkGRYq05vhCWtMockW30oPCIweCLesFRMVAlYZo76QIXxLOYLEWS39BSFIWg
+	92UBZfDEaH4nIAnN6o0PKIEhtsYrr5G0uk+zNKSa8YBpRDBpqeiB9GSbg+UbLAMO7V0Y21FQWc/
+	PO05YQZl7/r6kutkhAPqsHRl1tPpEN74ZXnTnLWscM9rIqfhVXFqcIjCcSP9NlBxYDt1X0H09Up
+	ye/rq4KCI42S1JWOcZ2+U3QFzjB2SxxR6GcSItZzdC/tfVzT/Cx9jSWAV2RgaZBDR2V/BMHcpkM
+	Rrfm/GrfoP6NG4muOCSB7rMbV6/E4aju8EqSWkWuINdF43dNd3P6slTYr6s3AhXQaT
+X-Google-Smtp-Source: AGHT+IFjVDKmB/xNuLtQKRYfU/ITUXwxCDRtTDnOfIZDb5jRoUr7iNoQ0th445p4ZZcSbNCPgjHtMA==
+X-Received: by 2002:a05:6a00:140f:b0:807:c2b9:38ec with SMTP id d2e1a72fcca58-807c2b93f63mr22110230b3a.15.1767422213430;
+        Fri, 02 Jan 2026 22:36:53 -0800 (PST)
+Received: from ?IPV6:2405:6e00:642:d187:9f0f:f4ff:8fd1:e7bf? ([2405:6e00:642:d187:9f0f:f4ff:8fd1:e7bf])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7ff7e0a2e3esm41753812b3a.37.2026.01.02.22.36.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Jan 2026 22:36:52 -0800 (PST)
+Message-ID: <4b8953ac-567b-4d68-9c25-72a69afdf1b3@linaro.org>
+Date: Sat, 3 Jan 2026 08:36:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251217153917.3998544-1-arnaud.pouliquen@foss.st.com>
- <20251217153917.3998544-2-arnaud.pouliquen@foss.st.com> <20251229232530.GA2753472-robh@kernel.org>
- <aVOzHWmlJ-eneS-2@sumit-xelite>
-In-Reply-To: <aVOzHWmlJ-eneS-2@sumit-xelite>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 2 Jan 2026 16:17:27 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+_S8UY7s7WQg9jXuBXCYMBWVCy=kVDMdkKTx6RctqQJA@mail.gmail.com>
-X-Gm-Features: AQt7F2qSpJIFr1cZ7Ak2PMJj_kJpZOMaYqr6WPt7b6SXNB2GqwyfYzNGk02nLo4
-Message-ID: <CAL_Jsq+_S8UY7s7WQg9jXuBXCYMBWVCy=kVDMdkKTx6RctqQJA@mail.gmail.com>
-Subject: Re: [PATCH v20 1/6] dt-bindings: firmware: Add TEE remoteproc service binding
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Jens Wiklander <jens.wiklander@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/26] mm/memblock: Add MEMBLOCK_INSPECT flag
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, tglx@linutronix.de, andersson@kernel.org,
+ pmladek@suse.com, rdunlap@infradead.org, corbet@lwn.net, david@redhat.com,
+ mhocko@suse.com, tudor.ambarus@linaro.org, mukesh.ojha@oss.qualcomm.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ jonechou@google.com, rostedt@goodmis.org, linux-doc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-arch@vger.kernel.org, tony.luck@intel.com, kees@kernel.org
+References: <20251119154427.1033475-1-eugen.hristev@linaro.org>
+ <20251119154427.1033475-19-eugen.hristev@linaro.org>
+ <aVImIneFgOngYdSn@kernel.org>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <aVImIneFgOngYdSn@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Dec 30, 2025 at 5:10=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org> =
-wrote:
->
-> On Mon, Dec 29, 2025 at 05:25:30PM -0600, Rob Herring wrote:
-> > On Wed, Dec 17, 2025 at 04:39:12PM +0100, Arnaud Pouliquen wrote:
-> > > Add a device tree binding for the TEE-based remote processor control
-> > > service implemented as an OP-TEE Trusted Application identified by
-> > > UUID 80a4c275-0a47-4905-8285-1486a9771a08.
-> > >
-> > > The TEE service node is a child of the "linaro,optee-tz" firmware nod=
-e and
-> > > acts as a container for remoteproc devices that are controlled via TE=
-E.
-> >
-> > Is this generic for any remoteproc device or just ST's remoteproc. Look=
-s
-> > like the latter to me.
->
-> That's true, the DT description of the remoteproc subnode is very
-> specific to the vendor which in this case is ST.
->
-> >
-> > > In addition, the "linaro,optee-tz" binding is updated to specify the
-> > > '#address-cells' and '#size-cells' values used for child TEE service
-> > > nodes.
-> >
-> > I'm pretty sure I already rejected per service/app child nodes for
-> > OP-TEE when its binding was submitted.
->
-> That was the reason to have discoverable TEE bus in first place and I
-> have been motivating people to dynamically discover firmware properties
-> rather than hardcoding in the DT.
->
-> > If we do need something in DT
-> > to define some resources, then can't we have some sort of
-> > standard/common communications channel? I don't care to see some sort o=
-f
-> > free-for-all where we have every vendor doing their own thing. OP-TEE
-> > needs to standarize this.
->
-> I suppose this requires a wider scope work as you can see the DT resource
-> dependence from here [1]. By standardize communication channel, do you
-> mean to say if adding an alternative backend to fwnode for TEE in
-> parallel to DT, ACPI or swnode is the way to go for discovering fw
-> properties?
 
-No, not at all.
 
-> Or do you have any other suggestion here?
+On 12/29/25 08:56, Mike Rapoport wrote:
+> Hi Eugen,
+> 
+> On Wed, Nov 19, 2025 at 05:44:19PM +0200, Eugen Hristev wrote:
+>> This memblock flag indicates that a specific block is registered
+>> into an inspection table.
+>> The block can be marked for inspection using memblock_mark_inspect()
+>> and cleared with memblock_clear_inspect()
+> 
+> Can you explain why memblock should treat memory registered for inspection
+> differently?
 
-What I mean is why doesn't the TEE define the communication channel
-(mailbox+shmem and notification interrupt) rather than each TEE app?
+It should not, at a first glance.
 
-More generally, is having TEE apps depending on random DT resources
-really a box we want to open? Is the next thing going to be a TEE
-clock/reset/gpio/power provider? Where do we draw the line?
+The purpose of the flag is to let memblock be aware of it.
+The flag is there to have a "memblock way" of registering the memory,
+which inside memblock , it can translate to a meminspect way of
+registering the memory. It's just an extra layer on top of meminspect.
+With this, it would be avoided to call meminspect all over the places it
+would be required, but rather use the memblock API.
+And further, inside memblock, it would be a single point where
+meminspect can be disabled (while preserving a no-op memblock flag), or
+easily changed to another API if needed.
+Ofcourse, one can call here directly the meminspect API if this is desired.
+Do you think it would be better to have it this way ?
 
-Rob
+Thanks for looking into it,
+Eugen
+
+
+> 
+>> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+>> ---
+>>  include/linux/memblock.h |  7 +++++++
+>>  mm/memblock.c            | 36 ++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 43 insertions(+)
+>>
+>> diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+>> index 221118b5a16e..c3e55a4475cf 100644
+>> --- a/include/linux/memblock.h
+>> +++ b/include/linux/memblock.h
+>> @@ -51,6 +51,10 @@ extern unsigned long long max_possible_pfn;
+>>   * memory reservations yet, so we get scratch memory from the previous
+>>   * kernel that we know is good to use. It is the only memory that
+>>   * allocations may happen from in this phase.
+>> + * @MEMBLOCK_INSPECT: memory region is annotated in kernel memory inspection
+>> + * table. This means a dedicated entry will be created for this region which
+>> + * will contain the memory's address and size. This allows kernel inspectors
+>> + * to retrieve the memory.
+>>   */
+>>  enum memblock_flags {
+>>  	MEMBLOCK_NONE		= 0x0,	/* No special request */
+>> @@ -61,6 +65,7 @@ enum memblock_flags {
+>>  	MEMBLOCK_RSRV_NOINIT	= 0x10,	/* don't initialize struct pages */
+>>  	MEMBLOCK_RSRV_KERN	= 0x20,	/* memory reserved for kernel use */
+>>  	MEMBLOCK_KHO_SCRATCH	= 0x40,	/* scratch memory for kexec handover */
+>> +	MEMBLOCK_INSPECT	= 0x80,	/* memory selected for kernel inspection */
+>>  };
+>>  
+>>  /**
+>> @@ -149,6 +154,8 @@ unsigned long memblock_addrs_overlap(phys_addr_t base1, phys_addr_t size1,
+>>  bool memblock_overlaps_region(struct memblock_type *type,
+>>  			      phys_addr_t base, phys_addr_t size);
+>>  bool memblock_validate_numa_coverage(unsigned long threshold_bytes);
+>> +int memblock_mark_inspect(phys_addr_t base, phys_addr_t size);
+>> +int memblock_clear_inspect(phys_addr_t base, phys_addr_t size);
+>>  int memblock_mark_hotplug(phys_addr_t base, phys_addr_t size);
+>>  int memblock_clear_hotplug(phys_addr_t base, phys_addr_t size);
+>>  int memblock_mark_mirror(phys_addr_t base, phys_addr_t size);
+>> diff --git a/mm/memblock.c b/mm/memblock.c
+>> index e23e16618e9b..a5df5ab286e5 100644
+>> --- a/mm/memblock.c
+>> +++ b/mm/memblock.c
+>> @@ -17,6 +17,7 @@
+>>  #include <linux/seq_file.h>
+>>  #include <linux/memblock.h>
+>>  #include <linux/mutex.h>
+>> +#include <linux/meminspect.h>
+>>  
+>>  #ifdef CONFIG_KEXEC_HANDOVER
+>>  #include <linux/libfdt.h>
+>> @@ -1016,6 +1017,40 @@ static int __init_memblock memblock_setclr_flag(struct memblock_type *type,
+>>  	return 0;
+>>  }
+>>  
+>> +/**
+>> + * memblock_mark_inspect - Mark inspectable memory with flag MEMBLOCK_INSPECT.
+>> + * @base: the base phys addr of the region
+>> + * @size: the size of the region
+>> + *
+>> + * Return: 0 on success, -errno on failure.
+>> + */
+>> +int __init_memblock memblock_mark_inspect(phys_addr_t base, phys_addr_t size)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = memblock_setclr_flag(&memblock.memory, base, size, 1, MEMBLOCK_INSPECT);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	meminspect_lock_register_pa(base, size);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * memblock_clear_inspect - Clear flag MEMBLOCK_INSPECT for a specified region.
+>> + * @base: the base phys addr of the region
+>> + * @size: the size of the region
+>> + *
+>> + * Return: 0 on success, -errno on failure.
+>> + */
+>> +int __init_memblock memblock_clear_inspect(phys_addr_t base, phys_addr_t size)
+>> +{
+>> +	meminspect_lock_unregister_pa(base, size);
+>> +
+>> +	return memblock_setclr_flag(&memblock.memory, base, size, 0, MEMBLOCK_INSPECT);
+>> +}
+>> +
+>>  /**
+>>   * memblock_mark_hotplug - Mark hotpluggable memory with flag MEMBLOCK_HOTPLUG.
+>>   * @base: the base phys addr of the region
+>> @@ -2704,6 +2739,7 @@ static const char * const flagname[] = {
+>>  	[ilog2(MEMBLOCK_RSRV_NOINIT)] = "RSV_NIT",
+>>  	[ilog2(MEMBLOCK_RSRV_KERN)] = "RSV_KERN",
+>>  	[ilog2(MEMBLOCK_KHO_SCRATCH)] = "KHO_SCRATCH",
+>> +	[ilog2(MEMBLOCK_INSPECT)] = "INSPECT",
+>>  };
+>>  
+>>  static int memblock_debug_show(struct seq_file *m, void *private)
+>> -- 
+>> 2.43.0
+>>
+> 
+
