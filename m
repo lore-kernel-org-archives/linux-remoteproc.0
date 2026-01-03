@@ -1,119 +1,106 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2024E29B8C7;
-	Sat,  3 Jan 2026 07:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC0B1A9FAF;
+	Sat,  3 Jan 2026 15:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767426076; cv=none; b=mE3ulUQWk9+s8O3fBoA7B6bLl/KIVbHXE8aMeuvPiuS5QT99MZRI83hJTeBUHweyE4Bf9a8PrDba0/siFbcA/mingW5rZUYGbycnG3lyGXNmyrTjMoUkmX0QydWbtJyFrXCPyn0BzozFexSue3ABIPsNOsZ9686OggVqE27QUrI=
+	t=1767454273; cv=none; b=q+oFXIbTWQh17ZGGJTFt5pb5F6TBC9M0fqd+JyJycrYRBpwmMuK9ogGzDxLAOlRziwGKNUMWi1nNc+oe+0tqVn/0/wwr4f0qVeeB3nMGuBD7zZGryxAGM1PJC/LqvE1hgyZgNNmrnl+QqGZhfeA9XDafsKn+kOVqiS/bSLcwVGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767426076; c=relaxed/simple;
-	bh=VhcEvPbKUCvMSJ5HG3Gz+nnOwUWvfOml3AhVHogk8eg=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=BRmUFGs2/pw7OceiwsB2IPgRD4xkv9UO8ajbFNa8Ve8e4c3FljYayPtxXzW4nf43X9LtPjU8faqxf4mGzRmo9Y3KMZYG/3hwnY3Uylw6rFzXhBPtgotjMZOAwtsu/ikVnaEJvgrl1nH4ZWhrHln75ANG3EUknYDDhoZ+hT2vB0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=rNyzPj+J; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=v5y3Sqfe; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1767454273; c=relaxed/simple;
+	bh=kl6qTPp3RSkSjEuA9MaghL6DrnrfjFyfW8WoI0NBE0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PQHAR2JfSTLbgManGYwfZsEY7sRKbw4B/3geP/gaR3kVhhAalBU0mtZaL54Eg2D6g9JMfvZOHXabXrRF+HvRGG6QAFdiRyDZv9c0tIk+hpN/vWKyeI3mN2miDx3IJ48TYgkIdhb3XUbun73LqihAzExPy70bq84j0h1DSUpJaS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaPcPNzG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="rNyzPj+J";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="v5y3Sqfe"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1767426061; bh=NBb6TpNSoCwFXPgQi4mLqE9
-	rhUUN5RA4BSIU6zTshNs=; b=rNyzPj+Jcy2PypPw0hYzfn5+NqdpXJSrTHCqYoD5ZCnu8R6oa4
-	1ahq3AQvG3QRlzpT8PwntIHt0jCdkwdeJTAUfD0dsWxoA49J1JN/CZ6hjXbcNvV5kTBxeGpsRsU
-	bbOTjOpbs0FOLKKw2loQMvzU1QNqMNHcb6zI1mxitxM3bbDjbOfCYUI45LRFbqCg5lP5xewJPZR
-	jLvILtf/STexaB8mRdYbiOqdu59bnleAYzBrSTVEO5WtxtkF+r5LR/MVUia1Jq4iW7sq8zvBD4R
-	swOmtk1vO8q9ze6ngLutF4kOdIqurneeQsWixQfVdD6OK7mDs1cgYtnTxSV3ejyn/pw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1767426061; bh=NBb6TpNSoCwFXPgQi4mLqE9
-	rhUUN5RA4BSIU6zTshNs=; b=v5y3Sqfeb2PaDWbKGZ6S5jjcUis5XSjt4/b2AOoS9rfWywHlg4
-	PAG15VnHQsOTDRmtO/WqkKxUWMeD8SwBKgAg==;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaPcPNzG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C21C113D0;
+	Sat,  3 Jan 2026 15:31:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767454272;
+	bh=kl6qTPp3RSkSjEuA9MaghL6DrnrfjFyfW8WoI0NBE0w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OaPcPNzGhiI60ViGZyqcrWIcM1V381NPIDI7KcgpfwswOxmaFECuJWDK4Cki6c19J
+	 6dXWzq8HXPJP3aUrFz1tXbHkS7Z7WAyT7cV2F0A5nyyr5ezoen5i9OFkRtQ9xq24ym
+	 gsTVSXU4vCBRho+eVTWpv0yP1yO5rcSYOu33zm8aPtjahAyLYAtpsVpj0XkX6R9iRD
+	 YUmdNeXac7j3vRuWcZ1LLMPf6tQ3ZCF7kBsp7e8+pGcKPFkhIYaovZ2wVhggEdS/tP
+	 Fp3+ZleQIbjoNLUPDU0y+eQXo57epGH9UjdcwwaY9I/C6kPJ7AhQMkGs+TEVkNdob6
+	 IeKWWU6gg7ilg==
+Date: Sat, 3 Jan 2026 09:31:09 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,adsp: Allow cx-supply on
+ qcom,sdm845-slpi-pas
+Message-ID: <wj62mko4bmt7xyr4rqssgegkkdndwyxobyqwo3q7iff5cu7b6s@4pgat7y366mx>
+References: <20251229152658.284199-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 03 Jan 2026 08:41:01 +0100
-From: barnabas.czeman@mainlining.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bryan O'Donoghue <bod@kernel.org>, Bjorn Andersson
- <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/9] remoteproc: qcom_q6v5_mss: Add MDM9607
-In-Reply-To: <1440e47e-2d7b-4d49-97c4-a717fadd3fb6@oss.qualcomm.com>
-References: <20251231-mss-v3-0-f80e8fade9ec@mainlining.org>
- <NLGulU4z-1Wrf5120YfX8CYJ_8DSP-9-DhaJ3KAIQCvqF9Qf184udOzFoEQH1qgJDZUl9cxEpsdyztfhcz8G-w==@protonmail.internalid>
- <20251231-mss-v3-3-f80e8fade9ec@mainlining.org>
- <6bfc790d-b0da-4c5b-bd2d-ceed9a75bb24@kernel.org>
- <DEGDp05xNKls7EO30mtT70wJFIkDT0-248vPaBikWJGkFf--YvzpyJ_h5sc7RSH1y9hkCKdFRBIJwQUNE9Rlzw==@protonmail.internalid>
- <a627abcaa38c0ba11c76c1f0c42b0c6b@mainlining.org>
- <d3bcaf7d-06ae-4410-8d7c-970fdb196c47@kernel.org>
- <1440e47e-2d7b-4d49-97c4-a717fadd3fb6@oss.qualcomm.com>
-Message-ID: <af693a39a3ad88a573e2d97b3ab411b3@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251229152658.284199-2-krzysztof.kozlowski@oss.qualcomm.com>
 
-On 2026-01-02 13:00, Konrad Dybcio wrote:
-> On 1/1/26 9:58 PM, Bryan O'Donoghue wrote:
->> On 01/01/2026 13:50, barnabas.czeman@mainlining.org wrote:
->>>>> +                for (; i >= 0; i--) {
->>>>> +                    val |= BIT(i);
->>>>> +                    writel(val, qproc->reg_base + mem_pwr_ctl);
->>>>> +                    /*
->>>>> +                     * Read back value to ensure the write is done 
->>>>> then
->>>>> +                     * wait for 1us for both memory peripheral and 
->>>>> data
->>>>> +                     * array to turn on.
->>>>> +                     */
->>>>> +                    val |= readl(qproc->reg_base + mem_pwr_ctl);
->>>>> +                    udelay(1);
->>>> Isn't the logic here inverted ?
->>>> 
->>>> i.e. you've written a thing and ostensibly require a delay for that
->>>> thing to take effect, the power to switch on in this case.
->>>> 
->>>> It makes more sense to write, delay and read back rather than write,
->>>> readback and delay surely...
->>> This is the original reset sequence without modification, i have just
->>> moved it in a else case when it is not an MDM9607, MSM8917 or 
->>> MSM8937.
->> 
->> Doesn't make it correct, we fix upstream logic bugs all the time...
->> 
->> For example a read-back to ensure write completion is only required 
->> for posted memory transactions.
->> 
->> Is this a posted write ?
->> 
->> Is there an io-fabric in the world which exceeds 1 microsecond to 
->> perform a write transaction ?
+On Mon, Dec 29, 2025 at 04:26:59PM +0100, Krzysztof Kozlowski wrote:
+> One SDM845 board uses cx-supply, which is not allowed by the bindings,
+> as reported by dtbs_check:
 > 
-> Writes on arm64 aren't usually observable from the remote endpoint when
-> you would expect them to, they can be buffered unless there's an 
-> explicit
-> readback right afterwards (which creates a dependency that the 
-> processor
-> will fulfill)
+>   sdm845-samsung-starqltechn.dtb: remoteproc@5c00000 (qcom,sdm845-slpi-pas): Unevaluated properties are not allowed ('cx-supply' was unexpected)
 > 
-> Now I don't like that this driver is going
+> The SDM845 SLPI binding already allows lcx and lmx domains, thus the
+> cx-supply seems like a fake name for something else, e.g. some
+> enable pin.
+
+We've seen a few other cases where specific rails are powered by
+external LDOs, instead of the rails represented as RPMh power-domains,
+but I can't see that this would apply for CX.
+
+> The qcom_q6v5_pas.c driver parses cx-supply, so it is an
+> established ABI, therefore document it for this device only.
+
+This part of the implementation is a remnant from times before we had
+decided to represent the corner(level)-based power rails as
+power-domains (and iirc some older platforms still need/expect this).
+
+Regards,
+Bjorn
+
 > 
-> val |= BIT(i);
-> writel(val, foo);
-> // val is "altered" but not really
-> val |= readl(foo);
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
-> I didn't notice we were just doing a readback for the sake of a 
-> readback
-> in the last revision. MDM9607 should most definitely have it too..
-In this case I should go back to previous inrush current mitigation from 
-v2.
-> Perhaps I should have just read the comment
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+> index 137f95028313..16a245fe2738 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
+> @@ -32,6 +32,8 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> +  cx-supply: true
+> +
+>    px-supply:
+>      description: Phandle to the PX regulator
+>  
+> @@ -159,6 +161,9 @@ allOf:
+>            items:
+>              - const: lcx
+>              - const: lmx
+> +    else:
+> +      properties:
+> +        cx-supply: false
+>  
+>    - if:
+>        properties:
+> -- 
+> 2.51.0
 > 
-> Konrad
