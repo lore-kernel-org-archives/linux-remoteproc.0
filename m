@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4119223BCE3;
-	Sat,  3 Jan 2026 15:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7833C1F;
+	Sat,  3 Jan 2026 16:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767454280; cv=none; b=RZRHr9cfM7j/dguD6V95XXNn8wvbmTXY7c1V4mjYaMDfMAQNSNfPfTmRn7NxBC+gE+SApRXW6db+1PSfKvLNaiRvEtbaVXXvivsxfslEQqP3OtVYZT//rIRPIE9gHmLbd6pSO6G6/QwFN8AJcYboQWr1/3sRJcuuMc1m9iOrsaQ=
+	t=1767456109; cv=none; b=cH5W+cODMtpxg2hzYoigKZHilCYgvbmmpC84XkonauHcevNkNDtB4HMheWySFnJ/unseZpkh/DYrPn2J/NRWEeQ1OhlZyFFXF8EiYyBdBl927NztllzeGAeQ9z0yET0t1flyUywGJwkJg+ScMaDQiIFEsS39uCkDLtOYsp7zg/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767454280; c=relaxed/simple;
-	bh=Gp5cbcQWRtX2d9SlLhFf5G7SliMS1HJDCzKciXheDac=;
+	s=arc-20240116; t=1767456109; c=relaxed/simple;
+	bh=TTzyM30cr/hEsnmjoGkCUz/GaOUvJy+291pNbgjoMVg=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RyNVpnK7g4scPD844Rz4rpyQEmZ2HAibieKIo68I8pSWHQhHMHMuA5xWY37gp7W3SvB4jagks/stRV9cAwS8RMrcsJGu7/JrG+hWjITs3/NNnguaNADFqM6fF4beLYOcQiw/oOivyhglNkJpowyBHb+dgRw/ruY+3ZG6e+7cxUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLcPGB3q; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=qaUlzwOOoq0cR6Ps0X7vSi937D4PyjY4ljEj1Sv15ipfqyftIyArSKDH7c+yfNIwD104jXRRrTIw8uieaEBte8ZgA0KECmK6GuaU+mVwMnw4pfZXs2c0XzLIPxaW/gnYDVILLP8F1RsM6Q3sRLdZxFG9V9Py1z4ppJUrXsinsec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IF/ARlkW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLcPGB3q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81D1DC113D0;
-	Sat,  3 Jan 2026 15:31:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IF/ARlkW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B59C113D0;
+	Sat,  3 Jan 2026 16:01:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767454279;
-	bh=Gp5cbcQWRtX2d9SlLhFf5G7SliMS1HJDCzKciXheDac=;
+	s=k20201202; t=1767456108;
+	bh=TTzyM30cr/hEsnmjoGkCUz/GaOUvJy+291pNbgjoMVg=;
 	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=kLcPGB3qTb9/xxuht/rtTOBzgvhKVwPZWgyJ8JoPN2Im7RaWQEwUGH5GtzjEoyNYK
-	 LEnkLS/tnWOFBSBl4Bj4EofIYnPUz1HvapUA5V6aw9eiYC89tx9/CyadMApEQ1s175
-	 HurtyXAnmFQx98kZHUwnbmboK2ij0+eYnNnQC5hJxBNmyRSkXHMwZE0gnuYw//B8w3
-	 yNweg5WaS0p0p/eo3+dAn0oUIhvgpjp9XfQMGZJXgfJ+VwWU7KQVL5FadZp2I97lmD
-	 jkOCP9b1JIG08MZjXc5B4e6016Znab9FQn4rL3jkramcGo+hULsStmEA53snerfaNy
-	 9quxzJ0dJ42Gg==
+	b=IF/ARlkWr7KTQ5Fm4QCUcDi5Q1NWV1g1LqbywqzSOwty/ZCpajyrwHUat5cjK1Dnp
+	 9NZdKGLJqWClejnR0b3sMYaeNGiYXjgygsekvwFV4chxcdTRN5W7WAaYgpJWikc//s
+	 xDAdURVx10Bk4Gz0JrdeVIX04iNMcOsrurh7Rm7l2T2+Wbj7GCYAOdusOWH/xBoYSk
+	 tZ7hvT5oX88HP4T4Kd2bcGhi4BXjN4+FopHu5+ZZ/BjsE3QW3xx2O9HsTBdvee45cT
+	 5KCUGtgznkZCL6i81rsOg5FleAfTxlmsuZiQE536nlSYYgpHy62+5CnCAU+yWsKpdX
+	 wm9CEmgUYB7+A==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Rob Herring <robh@kernel.org>,
@@ -37,12 +37,12 @@ To: Mathieu Poirier <mathieu.poirier@linaro.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,adsp: Allow cx-supply on qcom,sdm845-slpi-pas
-Date: Sat,  3 Jan 2026 09:31:16 -0600
-Message-ID: <176745427322.2626390.8402364058025458069.b4-ty@kernel.org>
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,sm8550-pas: Drop SM8750 ADSP from if-branch
+Date: Sat,  3 Jan 2026 10:01:46 -0600
+Message-ID: <176745610338.2631079.885451348924031995.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20251229152658.284199-2-krzysztof.kozlowski@oss.qualcomm.com>
-References: <20251229152658.284199-2-krzysztof.kozlowski@oss.qualcomm.com>
+In-Reply-To: <20251223130533.58468-2-krzysztof.kozlowski@oss.qualcomm.com>
+References: <20251223130533.58468-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -53,23 +53,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 29 Dec 2025 16:26:59 +0100, Krzysztof Kozlowski wrote:
-> One SDM845 board uses cx-supply, which is not allowed by the bindings,
-> as reported by dtbs_check:
+On Tue, 23 Dec 2025 14:05:34 +0100, Krzysztof Kozlowski wrote:
+> The binding for SM8750 ADSP PAS uses SM8550 ADSP as fallback, thus
+> "if:then:" block with "contains:" and the fallback does not need to
+> mention qcom,sm8750-adsp-pas.
 > 
->   sdm845-samsung-starqltechn.dtb: remoteproc@5c00000 (qcom,sdm845-slpi-pas): Unevaluated properties are not allowed ('cx-supply' was unexpected)
 > 
-> The SDM845 SLPI binding already allows lcx and lmx domains, thus the
-> cx-supply seems like a fake name for something else, e.g. some
-> enable pin.  The qcom_q6v5_pas.c driver parses cx-supply, so it is an
-> established ABI, therefore document it for this device only.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/1] dt-bindings: remoteproc: qcom,adsp: Allow cx-supply on qcom,sdm845-slpi-pas
-      commit: 2cb0c97ce4392d1b76c178bf7c6613b4e89a4b19
+[1/1] dt-bindings: remoteproc: qcom,sm8550-pas: Drop SM8750 ADSP from if-branch
+      commit: 332c03279bc81a1a88d8dc5dd23f3c956d99d882
 
 Best regards,
 -- 
