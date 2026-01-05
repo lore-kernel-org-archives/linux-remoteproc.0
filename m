@@ -1,218 +1,125 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28F3343D98
-	for <linux-remoteproc@vger.kernel.org>; Mon,  5 Jan 2026 18:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD8F2DC35C
+	for <linux-remoteproc@vger.kernel.org>; Mon,  5 Jan 2026 21:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767636009; cv=none; b=phmVf2vWta8OPXY+ZRLQ03gtpsddI3PoxFurtJFh1zP49RUSatohbITAHNLA20KtmlvcRrWP69oaFc6HvQ6gW8uteko6KFJDkoItOQjc0RxuGtlYkwlU9gbYC6U8f56ISIzJg687i3jbHILJ7r9YOhlaVJx/vFFjl9yOLN+Sl1I=
+	t=1767647364; cv=none; b=MK85jVGn2myckCLtipYNKXladCemJIVbkG0KXZD7Q54nKqygcqag8GRSb2KuojzbrUw6ZZRTlwVvdfuJ8+xKo1u1wwWyQaAJ0ZZdlAAuVDOz56ja85C6hx8d/msKIFf3bZcpn5TGDTqSx1n9vFfBQs0LJbErx8nsIlLEWOPr8UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767636009; c=relaxed/simple;
-	bh=5/19OY6eZY8CTI1TjSHvmJQ6WXrakW3nS1Hjc8j58LI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekfcBhLZYUmZIAu9IFwCuxYUtWPwIlDQMPfPtY+33AFZrTN2WmCpOcE8rtWHK2I7JNUZdOI2rTpXr/WBCztieJ8YNcQOzMmk07mbNQgC49cvQryAoP3RSuUYHiAdNfPrFbasb9xGWxQP1v/EsPSrPloVeMxoSr+ADfXCbX7YrPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TN1IOeCF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ro7Y1+4j; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1767647364; c=relaxed/simple;
+	bh=jwLkcTvlIBQUkhCwf3AoG2rQ1UjqOwQNEsd9gNEIZw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUbUDNxe4m2LC9uPBq3ssD33MWKdTolgc0WfegEQ1+FaA/cp6dc/1aofBjb25vvCM3xHekCdg4Si1ujcU5UsPDWFAWvC6CMlaLNYic2pqv5zQVG3S2yClffQ+GdgPf4MVVqflhs/3MwQnNEy1TZ6I2z/0riUWxGn1XFx/eOQpUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hY06D8iw; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TN1IOeCF";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ro7Y1+4j"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 605FKfl31751808
-	for <linux-remoteproc@vger.kernel.org>; Mon, 5 Jan 2026 18:00:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zZOJPN/yb0Ckwc+93wrH09JVZmpZlHivpeL60KoebF0=; b=TN1IOeCFX9A9463X
-	tDJ5gw58saPQGS4s0wH/Ncwde2y4GhNdxoZDzfCVUm4XvhsA1QcPLG18AwKUV0WN
-	tYCDdu7J7xQ7zaGgUBB801BZi8BRQUJhf+j2ISv0qItsWTEP/DnsghjjAngoir8d
-	8jMWZ/l8vTdkDEOnI4uBqvA1MK/5DBoVRgMwkjdkW9I7LLaFAcM7a8h2vYcIiokt
-	J0Pc2cID1nmzqJAphVofDou2UstvWOL4eFE28uP6rVqq+Cs1t8kwg+aLyi8EiR9L
-	e7i1nBSylOpCuyefBsVJGH71QBzxtNdWatIrYCBZlJeKijpyrko1TZ6+L6ZpPzdi
-	sAWmCA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bgfv00fdy-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jan 2026 18:00:06 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c196fa94049so1181954a12.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jan 2026 10:00:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hY06D8iw"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2a0d52768ccso3875985ad.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jan 2026 13:09:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767636006; x=1768240806; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zZOJPN/yb0Ckwc+93wrH09JVZmpZlHivpeL60KoebF0=;
-        b=Ro7Y1+4jn8c3/c48v3SPdBr7+8jspK8Pu5fVe+C5Iox/kvDuBn5Pt92fXkE8ZKPxFV
-         CJi6SKXpQ8qumSSXgqfVApr4Dc2Lpl99T5ebDrsY9hs+ZZP6DdcPRgqJPCkTmkxsDvHG
-         9GPt0uTe8RWnsmTntGlFcYq9d2EgFtpEyBpE7/1WjmTF2v+21VGO93Lhav2hUDgbuaN2
-         NeyM9vZxA5zo9sJy+ypgZF/XPxs8T5zjfRS/CSd633bzP4+arssn+GwyAjwPfB2aR7Hy
-         oJncp48zat6KQ5Dgm/5PY4uMw3CmnhjtRQcMUB/lgARMPgo9udUN32tM62uXOB4ipk5v
-         zGfw==
+        d=linaro.org; s=google; t=1767647362; x=1768252162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4tSkxCKwZXCfTTNee+KHC5cdt2q9BOYUvx4EdY3LV9o=;
+        b=hY06D8iwTuEhL4HHUrDEZduvvvJAEAZFZbNxmC7RwOfKCxRPZOVuuZEuOnSk1JQceQ
+         8GdjoO/G6MCcl8Kjz60hI0bxeLEp7eYPLYPI2pqS780GtzgIxogEj2CDlYDBUL77V+JS
+         LGVOOBh5bl0f52r6DS+BYwn2OdKClFfQB+hLTJi672y+wKGWXKziVdV/FwncDOhwJj5o
+         pK1HLTpAJWP0+qWrM4du7uZlcwf5NW7f0j8g/Cx3p834DnvI+yBzWMBafOd9RLad1umr
+         lLI93KSFLw+aVJ20z2cYVQYQTKwaIgPSLdIx9SYTqmm4f2GVq7s93wz56q4bgPh2a+JG
+         cn2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767636006; x=1768240806;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zZOJPN/yb0Ckwc+93wrH09JVZmpZlHivpeL60KoebF0=;
-        b=VeVFtrJ/W460WbCNtc0qgbKQRZVJ80vwqN6f0WXcSH5krGfL/mOQuFaQt/m9oCNU0a
-         aZLtlpEX9NaEd8mo6dX/ruzPj6HoM3bZOzaV9AvmXn4Wd4JneEOY3L34R+Rs36QbVtxt
-         kJK8hXdAiXpaYL/U476cEFVjyp1MmSpWgixlu80aXLO//AJW/IhoyQ5PYlBoKazYczPs
-         mWDroNuqmTzcl+3iJly4fAy64mjQ/mBJcQVZG79CH1qbznmW7ob//QzG9tAYM3wt54Wv
-         dR44VN5qb6CZSiKB8SR9DVlrG1DTPVAhyB06O2iziMYMPZ3+6+IQji6bd3qfGhf+ylhI
-         hd4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUl41q2YGW+xbPgUsM+sD1kxLWbMBcIbbYRNAqhpZ3bvadIoMtCYeIEeUJ91TJ9I0NagNe07vA1VL/9QaYJQ8nR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys4T4ZdpV732xk+ZH9YZ+gnYJA1Zsub5VXxJwwErUwJ/PE3NEX
-	6LbeU/iu/QD6Yet+k3FjnpXYXF2J2YspmebdIjQJy4CzhM4EagWjHFxgqbgxAhqLSND5W/N3c4o
-	rGtkLSD6DeSJ+UYZIWBFNIQTpcGs2ZZZlWYFRRcH/2cC6YVwmDML3oOPaNJ5frig3DQaig8Yv
-X-Gm-Gg: AY/fxX7GK8imf9XXUmFJzaJ9tYZ7olaFWRk+k/NYO3FKQ1tMONlXtVTPfV9OisQLkkk
-	7pkgfVRQVEsgmWs8kK38g0dAEhryKpAf/UPYtPJ/KPhiW4XmPRUj60Q4jTqskfQYhcSltySDE08
-	c0rrP+2/bT9caUPBcgVmN2qwMuIxIYRGzIgPsfpE2cwCVPm7Hx6BWeWh5RdI9sNOyt9VtxRm8tA
-	6kqgUBKKmdUDo4ryVZgGPotlLDnVm4obL5peW6Q/XFaKWzzchh9nz0aC5Ne+4JmXxADJXrAqlV8
-	3ArG4q/MtBerVFI+fLgEXhBPW0LOmQoScEMWjCsFNrFqOgxWynEsTeRAj0+Hp1ptKjmS+xUJ0Pz
-	aGgl/oaOK3A6yDN/xz/Aq1lnmTTQ9mPcKc0tvxq3cg1G0yEaB/A==
-X-Received: by 2002:a17:90b:3b4f:b0:32e:8ff9:d124 with SMTP id 98e67ed59e1d1-34f5f8b4f02mr7964a91.15.1767636005569;
-        Mon, 05 Jan 2026 10:00:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEXnFzNWl9jnWzXu1wXVFqUFevFHXlW2JypT3YQ0urh+Ea5xHWLmn/4yUAoYuZeO8boIXKu1Q==
-X-Received: by 2002:a17:90b:3b4f:b0:32e:8ff9:d124 with SMTP id 98e67ed59e1d1-34f5f8b4f02mr7929a91.15.1767636004925;
-        Mon, 05 Jan 2026 10:00:04 -0800 (PST)
-Received: from [192.168.0.107] ([183.82.31.185])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34f5f7b1922sm15402a91.4.2026.01.05.10.00.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jan 2026 10:00:04 -0800 (PST)
-Message-ID: <6d48473e-2c00-4d3a-ab9f-338761db33d2@oss.qualcomm.com>
-Date: Mon, 5 Jan 2026 23:30:00 +0530
+        d=1e100.net; s=20230601; t=1767647362; x=1768252162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4tSkxCKwZXCfTTNee+KHC5cdt2q9BOYUvx4EdY3LV9o=;
+        b=FK6fvV9/PvgMFKZ74w78X2h5fBOxG//8+4h8zG0wxvq3tRSaaAbHFkVDamusY4aCdK
+         8kvjQD3WN+Gxx3NcXdAh5FGrq2FrPPMSEfvrZIl6Kc58jzo/L60OFX88tBnxWpKezxAf
+         cdwX2VSYMB5KJd0Hgxlq5l8JCM6fdt13Z4wUIo7UYm1sDrCboDjl0CEqZtijC3nKvGmG
+         yuAKF6p+A9cg33TdavS3HlZQcNYq2TNd1h0AnpbZNbHYgpDOPxa2vo6HcPBIuG6YwGDO
+         7LlAapulvzGjT2EjWOC7eElcEjKdVHRjSLPgAKobhuGgUmx+yBBBp8thQO/6VBYSygmo
+         PVow==
+X-Forwarded-Encrypted: i=1; AJvYcCVDjw9dijMMxgEfl8Hg73eP8yogNK6tJC2m5roZIn9Hb/v7ct5x0xlMOeoEsNKLdMPzv4uF2TBAKZrXLaQ3Wj0p@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2u2KfMrCd4+5eUiqjjMVCSIB8XtttseyKnYCA/GksUtyOOa4s
+	N69IkTszWoKUW2NxzN/rFmP01JfX5XkpZdaSt3Qj0foGInU7UVxxtKAVRIoFYaiInog=
+X-Gm-Gg: AY/fxX7eArXJxa89A5liFdB4lw0u6q+Td4P9FJdE374LI6dPRsahlL6Tu7yH6hLui3l
+	WJn1A22oCHzEHTboIUao/tGILfgkS11PzTBHjcRGfeqIINJXpSAbUeRH3SLm+RZGqeWKLqfVJTD
+	RFy/lh/3/FajHodsgaCGrYtmJgzlXZt3qTxFbXqDWYzDgd3EdB9H0QdK0u1fHZ6uJcP0YnB5+JE
+	6MRsUmx5xzJ6nDFPQXKt/r15wOhGMAxfROQbQA/VfLz8xs6htLIK6mG8KVaKn/71PpiUT5FU+Wg
+	Uw+GaHq6kFnvzosXglKB//NQBOYa05WxvpxNgudEFVVPBbV3ukMMDS87RmGR0m66nsWrPo3eHSW
+	VM1CxuLNcP5VLIedKkRb0mT97Mzm6rKJxBI29BhHQ+EILeJDOQJ8sEslHb4lqvbMb8U468RQCuI
+	kpY5q8NM8BYSP6pw==
+X-Google-Smtp-Source: AGHT+IHXo6DMFCW0WpfI4RbwmQ0/+SMw7AIolM0jI+6hLOC2qL1pTqhGB59TCu4aAjBQnNj3aCaTnQ==
+X-Received: by 2002:a17:903:2f46:b0:29f:2b8a:d3d with SMTP id d9443c01a7336-2a3e2d7896dmr8294395ad.4.1767647361918;
+        Mon, 05 Jan 2026 13:09:21 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:3f6b:5551:220f:8f13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3ba03f9sm1721825ad.0.2026.01.05.13.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Jan 2026 13:09:21 -0800 (PST)
+Date: Mon, 5 Jan 2026 14:09:19 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: andersson@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, daniel.baluta@nxp.com,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: imx_dsp_rproc: only reset carveout memory
+ at RPROC_OFFLINE state
+Message-ID: <aVwof_w31EMxi5st@p14s>
+References: <20251218071750.2692132-1-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/9] remoteproc: qcom_q6v5_wcss: support m3 firmware
-To: mr.nuke.me@gmail.com, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        andersson@kernel.org, jeff.johnson@oss.qualcomm.com
-Cc: mathieu.poirier@linaro.org, krzk+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251219043425.888585-1-mr.nuke.me@gmail.com>
- <20251219043425.888585-7-mr.nuke.me@gmail.com>
- <5b9cd24e-7eae-4cbb-b013-6ef135902ae7@oss.qualcomm.com>
- <5116928.iIbC2pHGDl@nukework.gtech>
- <4e21205e-0b09-496e-9d6f-9fe2c327c13a@oss.qualcomm.com>
- <7d5be110-c605-4a02-8121-1c4cb2571bb8@gmail.com>
-Content-Language: en-US
-From: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
-In-Reply-To: <7d5be110-c605-4a02-8121-1c4cb2571bb8@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=e9YLiKp/ c=1 sm=1 tr=0 ts=695bfc26 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=V6Ol1F/91haf34TWKFX4Fg==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=SWP3IsI89bYa406iQT8A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-GUID: PXilHG9_dT2sLPAT0vnCd08pKJhtc6ae
-X-Proofpoint-ORIG-GUID: PXilHG9_dT2sLPAT0vnCd08pKJhtc6ae
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA1MDE1NiBTYWx0ZWRfX/GnU2npTF4Dl
- YQrlCty6hAJNHs1wZ2O/wDKh65p0/e1nozEIIqB2A+8v0bdGnEvrrpM8d36arIcPUGARzETBYYx
- eex8AYc1iuUOmRvmQjiN9+B0z7bz1XFaZEcPf6ijoPTIU23WuLGa4G4kmuro8bHOSwFEuJ8t11I
- NVHkac94udc7MkdTm2p9eGFOVGDbkwKiMAnmu7uM50ICRK2jnZsMMMJL4oSQBJazqokWxIfVWua
- vEE67xB91A5A32ww7+amm5J3D5WjVufMP+Wa8quXTKmA+d6H8c3TQjCN+awxqDhn67XcXjBeMbN
- llV3bmmr9gkcGypItefRdQJSZb2J6WtCfIN4hFgVhXRdIBeu29ZiKqbMnTxXqNqGdfI2263X/ij
- UkTaoZyPWiFjScoDTREHzSbcXvkTh7nVZPIGyIW8wtjvbogxzSiNbtCrzatWd4uVS7Ko3pCSrIz
- kquIXBVUXzDZS7rBXKg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2026-01-05_01,2026-01-05_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- suspectscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601050156
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251218071750.2692132-1-shengjiu.wang@nxp.com>
 
-
-
-On 1/5/2026 8:53 PM, mr.nuke.me@gmail.com wrote:
+On Thu, Dec 18, 2025 at 03:17:50PM +0800, Shengjiu Wang wrote:
+> Do not reset memory at suspend and resume stage, because some
+> memory is used to save the software state for resume, if it is cleared,
+> the resume operation can fail.
 > 
-> 
-> On 12/29/25 6:37 AM, Konrad Dybcio wrote:
->> On 12/23/25 9:35 PM, Alex G. wrote:
->>> On Friday, December 19, 2025 7:29:07 AM CST Konrad Dybcio wrote:
->>>> On 12/19/25 5:34 AM, Alexandru Gagniuc wrote:
->>>>> IPQ8074, IPQ6018, and IPQ9574 support an m3 firmware image in addtion
->>>>> to the q6 firmware. The firmware releases from qcom provide both q6
->>>>> and m3 firmware for these SoCs. Support loading the m3 firmware image.
->>>>>
->>>>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
->>>>> ---
->>
->> [...]
->>
->>>>> +static int q6v5_wcss_load_aux(struct q6v5_wcss *wcss, const char
->>>>> *fw_name)
->>>>> +{
->>>>> +    const struct firmware *extra_fw;
->>>>> +    int ret;
->>>>> +
->>>>> +    dev_info(wcss->dev, "loading additional firmware image %s\n",
->>> fw_name);
->>
->> Your email client is messing up the reply context - if it happens to
->> be Thunderbird, set:
->>
->> mailnews.wraplength = 0
->> mailnews.send_plaintext_flowed = false
->>
->> in the config
-> 
-> Oops.
->>>>
->>>> I don't think this log line is useful beyond development
->>>
->>> Remoteproc driver prints the main (q6) fimrware name, so I thought it would be
->>> prudent to print the names of any additional firmwares:
->>>
->>>      remoteproc remoteproc0: Booting fw image IPQ9574/q6_fw.mdt, size 8140
->>>
->>>>> +
->>>>> +    ret = request_firmware(&extra_fw, fw_name, wcss->dev);
->>>>> +    if (ret)
->>>>> +        return 0;
->>>>
->>>> return ret, perhaps? Unless you want to say that "it's fine if the M3 image
->>>> is missing, particularly not to impose any new requirements on existing
->>>> setups". But you haven't spelt that out explicitly.
->>>
->>> I intended to not abort when aux firmware is missing. Maybe the better way to
->>> handle this is to check for "-ENOENT" in the caller instead of return 0 here.
->>>
->>>> You also haven't provided an explanation as to why the firmware should be
->>>> loaded. Is it necessary for some functionality? Is it that case on the
->>>> newly-supported IPQ9574?
->>>
->>> I don't have a good answer. I reasoned that since the qcom provides it [1],
->>> the M3 firmware would need to be loaded. I haven't done much testing without
->>> it.
->>
->> Well, could you please try?
->>
->> IIRC it was strictly necessary for ATH1xk-on-PCIe so I'm assuming it's going
->> to be a necessity here as well
-> 
-> I tried this without the M3 firmware, and I don't see a measurable difference in normal operation. I only tested AP mode briefly. How can I know for sure if the M3 firmware is needed or not?
+> Fixes: c4c432dfb00f ("remoteproc: imx_dsp_rproc: Add support of recovery and coredump process")
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> ---
+> changes in v2:
+> - refine commit message.
+>
 
-AFAIK, M3 Firmware is required for an underlying sub-processor which is used
-by the Wi-Fi subsystem.
-
-Hi Jeff,
-
-Is there any upstream facing documentation on the need for M3 Firmware ?
+Applied.
 
 Thanks,
-Vignesh
-
-
+Mathieu
+ 
+>  drivers/remoteproc/imx_dsp_rproc.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> Alex
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index d03017d6b214..ac8aa71aa56c 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -984,9 +984,11 @@ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
+>  	 * Clear buffers after pm rumtime for internal ocram is not
+>  	 * accessible if power and clock are not enabled.
+>  	 */
+> -	list_for_each_entry(carveout, &rproc->carveouts, node) {
+> -		if (carveout->va)
+> -			memset(carveout->va, 0, carveout->len);
+> +	if (rproc->state == RPROC_OFFLINE) {
+> +		list_for_each_entry(carveout, &rproc->carveouts, node) {
+> +			if (carveout->va)
+> +				memset(carveout->va, 0, carveout->len);
+> +		}
+>  	}
+>  
+>  	ret = imx_dsp_rproc_elf_load_segments(rproc, fw);
+> -- 
+> 2.34.1
 > 
-
