@@ -1,87 +1,87 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B05340DA3
-	for <linux-remoteproc@vger.kernel.org>; Mon,  5 Jan 2026 17:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28F3343D98
+	for <linux-remoteproc@vger.kernel.org>; Mon,  5 Jan 2026 18:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767635835; cv=none; b=sNdoD+AlXmoUYTDb4fL+fRlBkhXSiC4gw61N+jPh6lrGJEdAHgTlI+uiM3BdNzCC9bSPbWtCl2Nnwl6Xqvd3ODcS1d7JWDZlPKSnNXsIYhF1IHrFoHy5I3pBEqFHZ/ZL/2dW268DXYYkFdHAj8n23gUiQmA+O0yiLXNswvzk4XA=
+	t=1767636009; cv=none; b=phmVf2vWta8OPXY+ZRLQ03gtpsddI3PoxFurtJFh1zP49RUSatohbITAHNLA20KtmlvcRrWP69oaFc6HvQ6gW8uteko6KFJDkoItOQjc0RxuGtlYkwlU9gbYC6U8f56ISIzJg687i3jbHILJ7r9YOhlaVJx/vFFjl9yOLN+Sl1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767635835; c=relaxed/simple;
-	bh=pyEGqOvXdHfsPS8mT2RifqqvTmsMWYWxCpCvhaasfpA=;
+	s=arc-20240116; t=1767636009; c=relaxed/simple;
+	bh=5/19OY6eZY8CTI1TjSHvmJQ6WXrakW3nS1Hjc8j58LI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AAkktpr3MRm/VHFMqTh/BiFX9f26mQBYR8py+R9pMQbCVbwcJC6bfGMYfUDfSC+heuUHOOyivjU8xI0juhy5epzBxWTUvFkYEeTSBVsfmZFg0e/YW7Ao3gBSsOxdPqpXabf17Swh7aSlTdCwLNdRkuJ3s6H3j28PH35QvL4e+3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kBTYcP7G; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WJfjdw3M; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=ekfcBhLZYUmZIAu9IFwCuxYUtWPwIlDQMPfPtY+33AFZrTN2WmCpOcE8rtWHK2I7JNUZdOI2rTpXr/WBCztieJ8YNcQOzMmk07mbNQgC49cvQryAoP3RSuUYHiAdNfPrFbasb9xGWxQP1v/EsPSrPloVeMxoSr+ADfXCbX7YrPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TN1IOeCF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ro7Y1+4j; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kBTYcP7G";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WJfjdw3M"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 605GKDvY3338521
-	for <linux-remoteproc@vger.kernel.org>; Mon, 5 Jan 2026 17:57:13 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TN1IOeCF";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ro7Y1+4j"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 605FKfl31751808
+	for <linux-remoteproc@vger.kernel.org>; Mon, 5 Jan 2026 18:00:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	luFQohOzUtSfFErML01fuIAdonSt43+90znEjAeHo9g=; b=kBTYcP7GTT32LIEU
-	jBm5osAqY0ijXTXPYf4V7qJnig8su9EKz6kSpKk2PesX+ZD1FBeCkablOidbsPHO
-	w1KdIMiC3TfWpe6zwIbCTXdH0xcT/s0Jl255bjkd7wPl1pDazLuv0QwvqpvMc8tf
-	C2hqMvvfkWbx1kwhkcanSzpcvZLX4D0kfM2yYIPPjhUpTKaCSd6Gw3kYkHx5xi8q
-	C22fAqTOoV/55LT+S+ZhsuTlgHnfVa7XwNghcR0Ymxg4wh6dkqM/72Z92dOirAm9
-	VeNVqxxfH0ZNRiMlNT0vWIfmDbvKv+7YavPKAVAL0QVXlwgYLK8WZ24Zb95L69OG
-	FWMs7g==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bggqu091r-1
+	zZOJPN/yb0Ckwc+93wrH09JVZmpZlHivpeL60KoebF0=; b=TN1IOeCFX9A9463X
+	tDJ5gw58saPQGS4s0wH/Ncwde2y4GhNdxoZDzfCVUm4XvhsA1QcPLG18AwKUV0WN
+	tYCDdu7J7xQ7zaGgUBB801BZi8BRQUJhf+j2ISv0qItsWTEP/DnsghjjAngoir8d
+	8jMWZ/l8vTdkDEOnI4uBqvA1MK/5DBoVRgMwkjdkW9I7LLaFAcM7a8h2vYcIiokt
+	J0Pc2cID1nmzqJAphVofDou2UstvWOL4eFE28uP6rVqq+Cs1t8kwg+aLyi8EiR9L
+	e7i1nBSylOpCuyefBsVJGH71QBzxtNdWatIrYCBZlJeKijpyrko1TZ6+L6ZpPzdi
+	sAWmCA==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bgfv00fdy-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jan 2026 17:57:13 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-34c43f8ef9bso1791645a91.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jan 2026 09:57:13 -0800 (PST)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jan 2026 18:00:06 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c196fa94049so1181954a12.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Jan 2026 10:00:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1767635832; x=1768240632; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1767636006; x=1768240806; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=luFQohOzUtSfFErML01fuIAdonSt43+90znEjAeHo9g=;
-        b=WJfjdw3MFVbI9DtRp6FnfHX1Sq1dUnYRH0FHh16hqBpRBRCQNBfEoepPCsvn2gU7TX
-         Jr/PM+X3CPWjTAE5wYfl4DSsicABNR9qov8vpov1rsi23SQV61dcANWYh41oIdY0LrdJ
-         kdrvscQTrGVfK8A+/wLcZE88PMgu6IHVJz8Z0bS0YhOIY1wAS4FAVguWe9WsY0qG5qQ0
-         Abv1uy/5yEfqSgEFy86Du1pb5pexmWEdejyDzRNNyUQ+J5JtijvWCYaVgx31nRv2wJlw
-         Od7xGQVrGS7gZUV/i06DBImD5qfQs+oqG5Ixw3hOE2VLyOkjc5ap7uECcYrC6TNabnOr
-         rbqA==
+        bh=zZOJPN/yb0Ckwc+93wrH09JVZmpZlHivpeL60KoebF0=;
+        b=Ro7Y1+4jn8c3/c48v3SPdBr7+8jspK8Pu5fVe+C5Iox/kvDuBn5Pt92fXkE8ZKPxFV
+         CJi6SKXpQ8qumSSXgqfVApr4Dc2Lpl99T5ebDrsY9hs+ZZP6DdcPRgqJPCkTmkxsDvHG
+         9GPt0uTe8RWnsmTntGlFcYq9d2EgFtpEyBpE7/1WjmTF2v+21VGO93Lhav2hUDgbuaN2
+         NeyM9vZxA5zo9sJy+ypgZF/XPxs8T5zjfRS/CSd633bzP4+arssn+GwyAjwPfB2aR7Hy
+         oJncp48zat6KQ5Dgm/5PY4uMw3CmnhjtRQcMUB/lgARMPgo9udUN32tM62uXOB4ipk5v
+         zGfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767635832; x=1768240632;
+        d=1e100.net; s=20230601; t=1767636006; x=1768240806;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=luFQohOzUtSfFErML01fuIAdonSt43+90znEjAeHo9g=;
-        b=mfqjd74bBxBAi3bHcSF6ef6/EUD5hhaxUZB7QtPGdQsmWlaxj92rCCU6qaWYA9j48w
-         0it5f3CVgvEC5jnGuw9IHn3wbqWhwGzQ6rukfjUiV4BYQohMOLnl8SnhKNY7jEQYsQ6x
-         eJU7lPrSSIC95ZwvGe3w7ehUypQoy3F1z53pc6vg+aIJikighqVDjdlC4hBhmxQWlRci
-         lb7kbXboin1NGYyXcv6KvQfe373UP6cKrgqX9CktZsQtWLhVTfEcz+nevy6L2aQ5uZ7M
-         zlguef4RazYaYwHSWNVcO3qOHC9Sr0BHcj2UZ7hQurGjmnq309QwqlKueh/WC5h6HNn4
-         xttg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLlt5DoVmaPD1N9WTdrD2anBwJ40xypVHrGmRStnJEjofr+FpPWrdePuAUR7cnx8uC052pjeih7t6h0bKriIn2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeJxtfgXBPcLCKn7mQzN3EAHb4gNF2avdmxlZeE3IRGHSqzcGD
-	h3BAI9bwSKgfsEyJXRWggDvDZ8YKbdOktWISrq2rbDeyQJD0p5Xe/oFot3dJ1Q6mj+eqVsU7PID
-	ZCSM6NOe40Yr5MbkX1N2fAkSZNxcfs7fMgy6ale74fp674SfH3ZjWx5YQZAUQ7fkxtoTgbHur
-X-Gm-Gg: AY/fxX5Wp6x0BxU33S5Pae3h0znAyGrnoyFh7oVnbSI06yw95HtR95FA6EDRHKF0RSn
-	DQggRpqnrV74lyDEB/TKcaXJvN9YSDRW6nqA9hDzIbTF6wGUTF9iUjBOIXBuVf2pXVj/e3sPQ66
-	I+piuaiK1bwWog7/7WuGX+7XUACMp6G/Ojh7xQgSyjL1uwx/85baCX73Kk1LQoEDbKdyK2PJxH1
-	2QICcWh3B6J0c8OSPUxqLcaNa2qvIpS4SbRHJIcQriuB5g47iLQycFDBacWSqqAzQ/peAhR3/ba
-	oDiwUlovmxnaeb/c3/dmtZrp+zgwkoW1L7sOvRFanyiyynM+HoCOFuKo/he+deGbkZyVaF3ycu1
-	X+JpBxOE9XeT9skReLIYFBFC/RRQH9HPtTm+4n2NawYCvWL0j8A==
-X-Received: by 2002:a17:90b:5825:b0:34a:a16d:77c3 with SMTP id 98e67ed59e1d1-34f5f83ddc3mr14801a91.2.1767635831931;
-        Mon, 05 Jan 2026 09:57:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IElruqKiFOG7DhNDu5zJlxmkqXIl8agGfM9DEGHevp6QtmhWxaqcdqCqo8PIRXDBYKFtHOY+Q==
-X-Received: by 2002:a17:90b:5825:b0:34a:a16d:77c3 with SMTP id 98e67ed59e1d1-34f5f83ddc3mr14767a91.2.1767635831388;
-        Mon, 05 Jan 2026 09:57:11 -0800 (PST)
+        bh=zZOJPN/yb0Ckwc+93wrH09JVZmpZlHivpeL60KoebF0=;
+        b=VeVFtrJ/W460WbCNtc0qgbKQRZVJ80vwqN6f0WXcSH5krGfL/mOQuFaQt/m9oCNU0a
+         aZLtlpEX9NaEd8mo6dX/ruzPj6HoM3bZOzaV9AvmXn4Wd4JneEOY3L34R+Rs36QbVtxt
+         kJK8hXdAiXpaYL/U476cEFVjyp1MmSpWgixlu80aXLO//AJW/IhoyQ5PYlBoKazYczPs
+         mWDroNuqmTzcl+3iJly4fAy64mjQ/mBJcQVZG79CH1qbznmW7ob//QzG9tAYM3wt54Wv
+         dR44VN5qb6CZSiKB8SR9DVlrG1DTPVAhyB06O2iziMYMPZ3+6+IQji6bd3qfGhf+ylhI
+         hd4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUl41q2YGW+xbPgUsM+sD1kxLWbMBcIbbYRNAqhpZ3bvadIoMtCYeIEeUJ91TJ9I0NagNe07vA1VL/9QaYJQ8nR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys4T4ZdpV732xk+ZH9YZ+gnYJA1Zsub5VXxJwwErUwJ/PE3NEX
+	6LbeU/iu/QD6Yet+k3FjnpXYXF2J2YspmebdIjQJy4CzhM4EagWjHFxgqbgxAhqLSND5W/N3c4o
+	rGtkLSD6DeSJ+UYZIWBFNIQTpcGs2ZZZlWYFRRcH/2cC6YVwmDML3oOPaNJ5frig3DQaig8Yv
+X-Gm-Gg: AY/fxX7GK8imf9XXUmFJzaJ9tYZ7olaFWRk+k/NYO3FKQ1tMONlXtVTPfV9OisQLkkk
+	7pkgfVRQVEsgmWs8kK38g0dAEhryKpAf/UPYtPJ/KPhiW4XmPRUj60Q4jTqskfQYhcSltySDE08
+	c0rrP+2/bT9caUPBcgVmN2qwMuIxIYRGzIgPsfpE2cwCVPm7Hx6BWeWh5RdI9sNOyt9VtxRm8tA
+	6kqgUBKKmdUDo4ryVZgGPotlLDnVm4obL5peW6Q/XFaKWzzchh9nz0aC5Ne+4JmXxADJXrAqlV8
+	3ArG4q/MtBerVFI+fLgEXhBPW0LOmQoScEMWjCsFNrFqOgxWynEsTeRAj0+Hp1ptKjmS+xUJ0Pz
+	aGgl/oaOK3A6yDN/xz/Aq1lnmTTQ9mPcKc0tvxq3cg1G0yEaB/A==
+X-Received: by 2002:a17:90b:3b4f:b0:32e:8ff9:d124 with SMTP id 98e67ed59e1d1-34f5f8b4f02mr7964a91.15.1767636005569;
+        Mon, 05 Jan 2026 10:00:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEXnFzNWl9jnWzXu1wXVFqUFevFHXlW2JypT3YQ0urh+Ea5xHWLmn/4yUAoYuZeO8boIXKu1Q==
+X-Received: by 2002:a17:90b:3b4f:b0:32e:8ff9:d124 with SMTP id 98e67ed59e1d1-34f5f8b4f02mr7929a91.15.1767636004925;
+        Mon, 05 Jan 2026 10:00:04 -0800 (PST)
 Received: from [192.168.0.107] ([183.82.31.185])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34f5f7a557asm14022a91.3.2026.01.05.09.57.08
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34f5f7b1922sm15402a91.4.2026.01.05.10.00.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 Jan 2026 09:57:11 -0800 (PST)
-Message-ID: <19b2dd07-ed70-4eaa-8395-6a62d52ec862@oss.qualcomm.com>
-Date: Mon, 5 Jan 2026 23:27:07 +0530
+        Mon, 05 Jan 2026 10:00:04 -0800 (PST)
+Message-ID: <6d48473e-2c00-4d3a-ab9f-338761db33d2@oss.qualcomm.com>
+Date: Mon, 5 Jan 2026 23:30:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -89,142 +89,130 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/9] remoteproc: qcom_q6v5_wcss: support IPQ9574
+Subject: Re: [PATCH 7/9] remoteproc: qcom_q6v5_wcss: support m3 firmware
 To: mr.nuke.me@gmail.com, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        andersson@kernel.org, mathieu.poirier@linaro.org,
+        andersson@kernel.org, jeff.johnson@oss.qualcomm.com
+Cc: mathieu.poirier@linaro.org, krzk+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc: krzk+dt@kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
 References: <20251219043425.888585-1-mr.nuke.me@gmail.com>
- <20251219043425.888585-6-mr.nuke.me@gmail.com>
- <a14e40b7-b70b-4658-9dee-7e5e6265ad5f@oss.qualcomm.com>
- <12223416.nUPlyArG6x@nukework.gtech>
- <55d70e0b-7a6b-4979-9ae9-4443e54ab584@oss.qualcomm.com>
- <7f6754a4-4a3b-4b6f-9220-a1790a9ba393@gmail.com>
+ <20251219043425.888585-7-mr.nuke.me@gmail.com>
+ <5b9cd24e-7eae-4cbb-b013-6ef135902ae7@oss.qualcomm.com>
+ <5116928.iIbC2pHGDl@nukework.gtech>
+ <4e21205e-0b09-496e-9d6f-9fe2c327c13a@oss.qualcomm.com>
+ <7d5be110-c605-4a02-8121-1c4cb2571bb8@gmail.com>
 Content-Language: en-US
 From: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
-In-Reply-To: <7f6754a4-4a3b-4b6f-9220-a1790a9ba393@gmail.com>
+In-Reply-To: <7d5be110-c605-4a02-8121-1c4cb2571bb8@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA1MDE1NiBTYWx0ZWRfX/oo1y6jww6gN
- PzMD/4ED9pRUERWj2c/19CalhvmbvhId9jCOT2S09ppYE+a5z/WC6O8eTSjtLonEwXwaSIMIUoL
- ymGUaJTYoXm+rxkX8UBRmPDf+D8YH9R+wXMMhD1Njbmzuz6SYin94e8XoZZNFIFdMzEeBReq49a
- oIwp152ifaExUig4kaKeUM+PRH87UTK7L7goEvXbWaujPGVEA5LTEBzykTkrGK/CUO5f+9ClakH
- gQZ9nMQQJ+IkvveR7YSfyMhH6hUeZA0eRQ/JdwIrbrVtJAXdzLjIkYdHF1xFMH6hco1Yo7ePbOd
- UPbRFrVM0jNHBhMWpQh6A4pfx/nfmWuaNKh+WwUP4fuPcou6yS2GXOHo90ieKbmWFsB1vdbsELM
- SCn84XiAcaB0iwXJ0ibXiHVv0njMhkwkLV3zIJcDsWEJceDazYJu7q7hSPh+LV6mNoAZGUyMIAC
- T2XkLb91V6vd7sXvCCg==
-X-Proofpoint-ORIG-GUID: 16olpsJKo3b9Rfr2VgtdVfFR69H-R0y1
-X-Authority-Analysis: v=2.4 cv=fr/RpV4f c=1 sm=1 tr=0 ts=695bfb79 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=V6Ol1F/91haf34TWKFX4Fg==:17
+X-Authority-Analysis: v=2.4 cv=e9YLiKp/ c=1 sm=1 tr=0 ts=695bfc26 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=V6Ol1F/91haf34TWKFX4Fg==:17
  a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=pGLkceISAAAA:8
- a=CDNBFjyWLGXVnZMhk_0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 16olpsJKo3b9Rfr2VgtdVfFR69H-R0y1
+ a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=SWP3IsI89bYa406iQT8A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-GUID: PXilHG9_dT2sLPAT0vnCd08pKJhtc6ae
+X-Proofpoint-ORIG-GUID: PXilHG9_dT2sLPAT0vnCd08pKJhtc6ae
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA1MDE1NiBTYWx0ZWRfX/GnU2npTF4Dl
+ YQrlCty6hAJNHs1wZ2O/wDKh65p0/e1nozEIIqB2A+8v0bdGnEvrrpM8d36arIcPUGARzETBYYx
+ eex8AYc1iuUOmRvmQjiN9+B0z7bz1XFaZEcPf6ijoPTIU23WuLGa4G4kmuro8bHOSwFEuJ8t11I
+ NVHkac94udc7MkdTm2p9eGFOVGDbkwKiMAnmu7uM50ICRK2jnZsMMMJL4oSQBJazqokWxIfVWua
+ vEE67xB91A5A32ww7+amm5J3D5WjVufMP+Wa8quXTKmA+d6H8c3TQjCN+awxqDhn67XcXjBeMbN
+ llV3bmmr9gkcGypItefRdQJSZb2J6WtCfIN4hFgVhXRdIBeu29ZiKqbMnTxXqNqGdfI2263X/ij
+ UkTaoZyPWiFjScoDTREHzSbcXvkTh7nVZPIGyIW8wtjvbogxzSiNbtCrzatWd4uVS7Ko3pCSrIz
+ kquIXBVUXzDZS7rBXKg==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2026-01-05_01,2026-01-05_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 adultscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ suspectscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601050156
 
 
 
-On 1/5/2026 9:39 PM, mr.nuke.me@gmail.com wrote:
+On 1/5/2026 8:53 PM, mr.nuke.me@gmail.com wrote:
 > 
 > 
-> On 12/29/25 6:35 AM, Konrad Dybcio wrote:
->> On 12/23/25 9:21 PM, Alex G. wrote:
->>> On Friday, December 19, 2025 7:20:04 AM CST Konrad Dybcio wrote:
+> On 12/29/25 6:37 AM, Konrad Dybcio wrote:
+>> On 12/23/25 9:35 PM, Alex G. wrote:
+>>> On Friday, December 19, 2025 7:29:07 AM CST Konrad Dybcio wrote:
 >>>> On 12/19/25 5:34 AM, Alexandru Gagniuc wrote:
->>>>> Q6 based firmware loading is also present on IPQ9574, when coupled
->>>>> with a wifi-6 device, such as QCN5024. Populate driver data for
->>>>> IPQ9574 with values from the downstream 5.4 kerrnel.
->>>>>
->>>>> Add the new sequences for the WCSS reset and stop. The downstream
->>>>> 5.4 kernel calls these "Q6V7", so keep the name. This is still worth
->>>>> using with the "q6v5" driver because all other parts of the driver
->>>>> can be seamlessly reused.
->>>>>
->>>>> The IPQ9574 uses two sets of clocks. the first, dubbed "q6_clocks"
->>>>> must be enabled before the Q6 is started by writing the Q6SS_RST_EVB
->>>>> register. The second set of clocks, "clks" should only be enabled
->>>>> after the Q6 is placed out of reset. Otherwise, the host CPU core that
->>>>> tries to start the remoteproc will hang.
->>>>>
->>>>> The downstream kernel had a funny comment, "Pray god and wait for
->>>>> reset to complete", which I decided to keep for entertainment value.
+>>>>> IPQ8074, IPQ6018, and IPQ9574 support an m3 firmware image in addtion
+>>>>> to the q6 firmware. The firmware releases from qcom provide both q6
+>>>>> and m3 firmware for these SoCs. Support loading the m3 firmware image.
 >>>>>
 >>>>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 >>>>> ---
->>>>
->>>> [...]
->>>>
->>>>> @@ -128,6 +137,12 @@ struct q6v5_wcss {
->>>>>
->>>>>       struct clk *qdsp6ss_xo_cbcr;
->>>>>       struct clk *qdsp6ss_core_gfmux;
->>>>>       struct clk *lcc_bcr_sleep;
->>>>>
->>>>> +    struct clk_bulk_data *clks;
->>>>> +    /* clocks that must be started before the Q6 is booted */
->>>>> +    struct clk_bulk_data *q6_clks;
->>>>
->>>> "pre_boot_clks" or something along those lines?
->>>
->>> I like "pre_boot_clocks".
->>>
->>>> In general i'm not super stoked to see another platform where manual and
->>>> through-TZ bringup of remoteprocs is supposed to be supported in parallel..
->>>>
->>>> Are you sure your firmware doesn't allow you to just do a simple
->>>> qcom_scm_pas_auth_and_reset() like in the multipd series?
->>>
->>> I am approaching this from the perspective of an aftermarket OS, like OpenWRT.
->>> I don't know if the firmware will do the right thing. I can mitigate this for
->>> OS-loaded firmware, like ath11k 16/m3 firmware, because I can test the driver
->>> and firmware together. I can't do that for bootloader-loaded firmware, so I try
->>> to depend on it as little as possible. I hope that native remoterproc loading
->>> for IPQ9574 will be allowed.
 >>
->> These are two parallel questions. I didn't even know that the bootloader
->> preloaded firmware on these platforms (are you sure that's the case?)
+>> [...]
 >>
->> qcom_scm_pas_auth_and_reset() is usually preceded by qcom_mdt_pas_init() +
->> qcom_mdt_load_no_init() where *you* supply the loadable firmware for the
->> remote processor.
+>>>>> +static int q6v5_wcss_load_aux(struct q6v5_wcss *wcss, const char
+>>>>> *fw_name)
+>>>>> +{
+>>>>> +    const struct firmware *extra_fw;
+>>>>> +    int ret;
+>>>>> +
+>>>>> +    dev_info(wcss->dev, "loading additional firmware image %s\n",
+>>> fw_name);
+>>
+>> Your email client is messing up the reply context - if it happens to
+>> be Thunderbird, set:
+>>
+>> mailnews.wraplength = 0
+>> mailnews.send_plaintext_flowed = false
+>>
+>> in the config
 > 
-> What I mean is that the init sequence is implemented in the trustzone firmware which is loaded at boot time. Irrespective of what Q6 and M3 firmware I supply, if trustzone doesn't cooperate, I can't start the remoteproc. I don't have that problem when the init sequence is implemented in the kernel.
+> Oops.
+>>>>
+>>>> I don't think this log line is useful beyond development
+>>>
+>>> Remoteproc driver prints the main (q6) fimrware name, so I thought it would be
+>>> prudent to print the names of any additional firmwares:
+>>>
+>>>      remoteproc remoteproc0: Booting fw image IPQ9574/q6_fw.mdt, size 8140
+>>>
+>>>>> +
+>>>>> +    ret = request_firmware(&extra_fw, fw_name, wcss->dev);
+>>>>> +    if (ret)
+>>>>> +        return 0;
+>>>>
+>>>> return ret, perhaps? Unless you want to say that "it's fine if the M3 image
+>>>> is missing, particularly not to impose any new requirements on existing
+>>>> setups". But you haven't spelt that out explicitly.
+>>>
+>>> I intended to not abort when aux firmware is missing. Maybe the better way to
+>>> handle this is to check for "-ENOENT" in the caller instead of return 0 here.
+>>>
+>>>> You also haven't provided an explanation as to why the firmware should be
+>>>> loaded. Is it necessary for some functionality? Is it that case on the
+>>>> newly-supported IPQ9574?
+>>>
+>>> I don't have a good answer. I reasoned that since the qcom provides it [1],
+>>> the M3 firmware would need to be loaded. I haven't done much testing without
+>>> it.
+>>
+>> Well, could you please try?
+>>
+>> IIRC it was strictly necessary for ATH1xk-on-PCIe so I'm assuming it's going
+>> to be a necessity here as well
 > 
->> The init sequence provided by this interface will be at worst identical to
->> what you're proposing here (except abstracted out), and at best containing
->> some fixes and/or workarounds that may be necessary.
-> 
-> I think this portrays the TZ path as somehow superior. That's not how things work in my use casee.
+> I tried this without the M3 firmware, and I don't see a measurable difference in normal operation. I only tested AP mode briefly. How can I know for sure if the M3 firmware is needed or not?
 
-Adding my 2 cents here, in some platforms, the regions which you are accessing
-as part of the init sequence might be access protected by Trustzone.
-This might lead to the kernel bringup failing due to an access violation.
+AFAIK, M3 Firmware is required for an underlying sub-processor which is used
+by the Wi-Fi subsystem.
 
-This was the motivation behind me asking if this worked in my previous email.
-Using the TZ interface, as suggested by Konrad, should work in any case.
+Hi Jeff,
+
+Is there any upstream facing documentation on the need for M3 Firmware ?
 
 Thanks,
 Vignesh
 
-> 
-> The bootloader/FW versions depends on when and who made the device. So while the newest TZ from upstream may have the latest fixes, I have no guarantee that they will be present on a given device at runtime. The best solution I found to get consistent behavior across devices is to do these sequences from the kernel. Is there something incomplete in my init sequence that I can fix?
-> 
->  > Please try using PAS and see if that works.
-> 
-> I found the v6 of the multipd series [1]. It needed some minor adjustments to compile. I went as far as loading the Q6 firmware and starting the remoteproc without error. I did not test any further.
+
 > 
 > Alex
-> 
-> [1] https://patchwork.kernel.org/project/linux-remoteproc/patch/20231110091939.3025413-1-quic_mmanikan@quicinc.com/
-> 
 > 
 
