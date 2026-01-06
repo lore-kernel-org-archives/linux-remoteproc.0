@@ -1,84 +1,93 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013041.outbound.protection.outlook.com [40.93.201.41])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF613112C4;
-	Tue,  6 Jan 2026 10:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767696505; cv=fail; b=ca8eGxm7FmHeJVkKvZog07L0+jr6toWOOmf6j1F5r1Xpvxzu4UReOI9Cq98f2/e1fbGLVTRjTHCJMl30ysZJeM/SF7hCKYmivQHrHQhYfJtBjMIGgxWavDzAA7woBYm4mo3g+5+YU6QRkV5nWUu/L8+6JDq0ysxbSGbbA51Veho=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767696505; c=relaxed/simple;
-	bh=oPO6EtiP8WJgxrpT034sq+z9teqrYJq78HfUgYIrXTo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HFrV64np+8u9lrT68Zlziv2/3UrJpzkGVN2HQfcB8w2FyEGJv9imZD+G93o/KmhLXVXUNqGsfi9zG1b1UX+8yU4UvDXrXalBiSU3FdfbCz8siX7Hty5KrbaTDe8BLMdfq/yNo31ylBVOFBiPbgtbtRNyrqomrgrOWEHxGBARXsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cIZErT6Z; arc=fail smtp.client-ip=40.93.201.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1759327BE4
+	for <linux-remoteproc@vger.kernel.org>; Tue,  6 Jan 2026 10:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767696863; cv=none; b=OBKrPqUSbYwVK0SxFIqZPJgmbr7nIpJUaVSKXSOLdftX2YZrwRYgYhhnPyUEShOnqZaIRUYdIh8hjXcmMNP/Rhj+jvhUnKJh0B8T9RoP5upJ/NFAq8Oe4gfhE8C3xHKMlJiB7Ego+tlhTlPQSTyh2RRAkWbY253+wYPoq7XwFVY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767696863; c=relaxed/simple;
+	bh=XIro8WjTgN2pc3GAXZcAdEVNHU6nIfrqjubHsp3Vkes=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ETGFoozMO+pc1t64DDKMyFb7pU7dkR2rF3dCA78PV0GO1Rcyrdf7vNqgtDMWJNNlEIdieS21DGGdgHaYuYHqxMMKz4i1DSL7spHIXqabAftYebDa2tCtchhLNsL/Y+7N22Qvp2zFKt5IX8Lqy2QSVD9h+OmdT6GQ3OtHMfhtK1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cHxN3s1k; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fgjEsRfS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cIZErT6Z"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Iyj7zmcsqPBd+NC99QwE5vN9wXuU1jAwH9sA+SeLc1WY2T5b5jLIHAqhDg7cCN+KJh+Eyc6ENL6dtyr0nX3FFOrILnLaot03GN+gdq/xzgAnPFn7DWlsjgg+QDDn/Q1plE1bPjER31OO4NUrjHcibGvmRctk8vQYYUJ0B7HdIoSAt8O8w673hKD0UKE7shk53bPJMUd5C0UVCdPoYXxrGTwjyUsLD2fKQ5mCjfom3bnVdVUIfFn6mo58kjc47fwA8Hwl1vbt3yTDXRX9FoNoSBK113w2t1yVXFOklqKg+3U6RoDWTcI5yDB9N3AtO/RiBlwnNZ8IfllYCOasiC4Ezw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5yf24Kv+HN9iGRnmSnIUEdsQG5GsxLtIfLvwcTtB9yI=;
- b=vYhfx3s19f2+CsZaEQqW54FOOwxexvViXtyNMhzVyu8Al1d9zz5RSkO4IoZFGntHWNI74UDpk64CZZr55X3KjyG2WFXSwGuD42kbqNTmYH4EvsXgA5BbSzswghjgSAjAIoc8OzUDx83izrWEgG6STAHCAxuD/i9a8yewZnD1QHd1nA72RRf5i2WgMhnlYEvyucYuVd3JFvFzBTcvi+bSs7m/tCj6ov9zEl1VH1aVLJVQWXdIx0EAC5YOFz71l9dIZHT2Fl+HJB3vYzlE15ctUcGENau7JF5tH0MJV7LPbViHxjy4003vz5hm1lRfcb84bFFtLfsuLNflCnhk4jgt8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5yf24Kv+HN9iGRnmSnIUEdsQG5GsxLtIfLvwcTtB9yI=;
- b=cIZErT6ZpHh3YlyBA0VmqNCxOcoWhE4UTs5nKKmcSVVx32I5H8v93DKR3zixEwsw4jbw+aY/MJYMyD2A9pa/uPtef5d3APOlcKXr5PZUIbWSnuYp/iY7QlatZPlzc9souL4WJfkXjGQ+6uNyKYGGwulv7ZVrxqdDA7pkxErnKng=
-Received: from SJ0PR03CA0047.namprd03.prod.outlook.com (2603:10b6:a03:33e::22)
- by BLAPR10MB5075.namprd10.prod.outlook.com (2603:10b6:208:322::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9478.4; Tue, 6 Jan
- 2026 10:48:21 +0000
-Received: from SJ1PEPF00002315.namprd03.prod.outlook.com
- (2603:10b6:a03:33e:cafe::b3) by SJ0PR03CA0047.outlook.office365.com
- (2603:10b6:a03:33e::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9478.5 via Frontend Transport; Tue, 6
- Jan 2026 10:48:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- SJ1PEPF00002315.mail.protection.outlook.com (10.167.242.169) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9499.1 via Frontend Transport; Tue, 6 Jan 2026 10:48:19 +0000
-Received: from DLEE201.ent.ti.com (157.170.170.76) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 6 Jan
- 2026 04:48:14 -0600
-Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE201.ent.ti.com
- (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 6 Jan
- 2026 04:48:14 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
- (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 6 Jan 2026 04:48:14 -0600
-Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 606Aluwb2890257;
-	Tue, 6 Jan 2026 04:48:10 -0600
-From: Beleswar Padhi <b-padhi@ti.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
-	<kristo@kernel.org>
-CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <b-padhi@ti.com>,
-	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 3/3] arm64: dts: ti: k3-am62p-j722s-common-main: Add HSM M4F node
-Date: Tue, 6 Jan 2026 16:17:55 +0530
-Message-ID: <20260106104755.948086-4-b-padhi@ti.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cHxN3s1k";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fgjEsRfS"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6069WKWB4090856
+	for <linux-remoteproc@vger.kernel.org>; Tue, 6 Jan 2026 10:54:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=hMQ+mZX9c2O47rQg3eTyflrNGC26BNQZOwS
+	mJqlRC64=; b=cHxN3s1kOl0wOQEBqJPb3C0q8m61IZftubOSkB7sK+16nI2gvWN
+	Iklfm9ke7SsH5qVVWbb0JJEal/Iuf8nGmZB4LCujJDtH5sQIU47q/uDvuSQQtXDj
+	OAO64x/qvjeqxKeFh1Z57Y3IXDNKLd9q+DzNIfi1QlICZsj+umoq3ljHcoYCJ7Ma
+	pLNRBAvr9gay0BJXjWF1Gx093EzOcG1GdVMvcStOXt2ojLcipH6pHsQSKy1OdhgK
+	q6fOsaMUhErlONKknXd6JCZj/oASAwvEP9L9jaFuAmkPYSc9lyL8PZs0bGCJKSzd
+	XBO2qmAcCAgMMYrpWJO10IPHWO5W0UOQ1hg==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bgyun873m-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 06 Jan 2026 10:54:20 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7fc82eff4adso805289b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 06 Jan 2026 02:54:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1767696860; x=1768301660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hMQ+mZX9c2O47rQg3eTyflrNGC26BNQZOwSmJqlRC64=;
+        b=fgjEsRfSORinS53e1VvGz+CIL2NGtwKKW0q/jh0Hg23YP4Ueiq6nQhdOKkYVN/CkNn
+         XJMkAgZ+uBJAfBeqOjC+bVu45luYhekQ8XrGgdqlZ/SpYHv93xKU2e6p5vcUmHG7NFNt
+         6HU5Jg4+VoOToMIFcslawRKqIFRYUp5EH2PpHbjEYaHR1KVGOMxSdMmLXcpkjjyepMJs
+         yJ20CdBoyNlr/C+uTlqmaOpHaB1nXO/yVkJeTfH/sQq+yD/slQDVEtlMLj/5ojWXOEuD
+         Ga32O6nZPOaTgQS+OGHerT44GTfq9mFCZF5NJJgLg33zS4+9mipt+a2r35z98yIDkz1V
+         74/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767696860; x=1768301660;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hMQ+mZX9c2O47rQg3eTyflrNGC26BNQZOwSmJqlRC64=;
+        b=WYWpU0gyokkvfx+eFUPg6WjG3VVaUctfVOduPF0Y3GWGYXohi8L3J9BWBE9A3a3FRb
+         uSpMgyxEI4uxNR1EjTlsoUAZoX2rfdu7v9WSFmAJNZQzxYy+Iz5eeXs8va/06+d9CSLX
+         orrYkrj3wR7xesQdXrMy5piggiXK9d/HAnf05InMS76tQ5nRw9FQtTLyNLYTe6ZD6oHV
+         GK4xJm/mIrtJ/7FEyHBwRQmox5uONsBQd9P4VTLosQeD+UPJptYgN7Oc6/YgGvk0naln
+         OIiVWwWDIyfdFxpiVYFLbjH7H6fHEkoFR/OECxk1+TGZTvSKg1TTdXH5rL9QJRF1g0bz
+         NKpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnAAWm1DaLi6kZulFGYfKibxX3L3iq5a/rXkijwLevk+jPDL0E8spDIbWr5KRQpesWTLTW3EC7zuVtt9MVekhS@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywom6UVObARMNauWQWhtguAaEgBErhOY5rGyhYvLSuPqi3RRdH2
+	jWtGYxo862kYkPbVmqcnQh1oGcTEN3PvaePeEZ3lbQVRid1ptsbddECdu1YGeI08I8yPikyCC5T
+	c4RR/BeqYD9lPppQ6ueutKlgPIprlE8rnZEg2tCw0+L5LnA5zuwRzktxAsMOteb0Uajxmr8MM
+X-Gm-Gg: AY/fxX5ilHBL958BWh8G2QoBKi87qjrICwEIMDQ3Gdw2+wSJKOD+3Bi7DaKyzvzeikm
+	j4rBJu9y6IMUbig5x/bJmj9+IloUQaMlEBAiBV1AW80Rs/2G9pUo4fRCNUPQm1eDtOaQzfBuK47
+	02l9nChyx9l5i7LXctMFN8qQdeeSK/rM6q6F+7eAIpkUhNYc6hiengHStOw1liQSzLZ9K86mC8t
+	E78nzddMqxGVMENBraXTdMvPXFL6CYX/U1+MiRQLTBpBy0deI7fxgafITAGwn0JdGL2tONv8c7r
+	uyP8WGsG5sUR3/wzQOziWE0B244JTPov+P3AKU6mffTxyVLK1fVvtKczbkwSLXp4yLvzRWSwAZd
+	WCgwabvaSGraa4S192pFTzqjR7rvZ9x4ZT0FOj4ZbJbnbJ2ooWgiUlCUN0udQQhF4Rf+Kl8utJX
+	dDEOIwoq2v+6zO7vNYauAZb8NBea/Nid2GdchvwHo=
+X-Received: by 2002:a05:6a00:400c:b0:7e8:3fcb:bc46 with SMTP id d2e1a72fcca58-81944ea24famr2326804b3a.27.1767696859596;
+        Tue, 06 Jan 2026 02:54:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG8LbqWhLWBjrqxtrYCiPh0IY/UdFZmI0mTogA2PeZoSLUp3f8a6ZHKaFlhh7e3dP6B8DH21A==
+X-Received: by 2002:a05:6a00:400c:b0:7e8:3fcb:bc46 with SMTP id d2e1a72fcca58-81944ea24famr2326769b3a.27.1767696859028;
+        Tue, 06 Jan 2026 02:54:19 -0800 (PST)
+Received: from hu-varada-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-819bafe9b98sm1855121b3a.20.2026.01.06.02.54.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Jan 2026 02:54:18 -0800 (PST)
+From: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+To: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+        quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+Subject: [PATCH v9 0/6] Add new driver for WCSS secure PIL loading
+Date: Tue,  6 Jan 2026 16:24:06 +0530
+Message-Id: <20260106105412.3529898-1-varadarajan.narayanan@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260106104755.948086-1-b-padhi@ti.com>
-References: <20260106104755.948086-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -86,127 +95,186 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002315:EE_|BLAPR10MB5075:EE_
-X-MS-Office365-Filtering-Correlation-Id: c117d0d8-f7cd-4ff4-20f1-08de4d111b10
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7ZASgNot5t961+Mrl2sk8abWkbdOgIsnXCdn49T+O8p84MeAA91mcFmku3Za?=
- =?us-ascii?Q?zROg48O8o9QwnRb9/aI1wHyTJ7Y9Fd3suQXoeKsBIbSKD8Ja6PrSa3PfBxFP?=
- =?us-ascii?Q?aNjD3sGUdun4ozPemukhXvMjkSfsSMzohNI9a1KxgESP/JiHueIESKPp+ejQ?=
- =?us-ascii?Q?zal3Wl4IpxjALIWpnyfARJw0osEAigLHhRJNnAJihD/UB3WHd2Z+OYfPtgLG?=
- =?us-ascii?Q?eceiBMqBc0x0Gqh81IaC2Pzho1wHU2dyel5pnq4nVXG0Ksb/tvQGd1Tv/9nd?=
- =?us-ascii?Q?oEX3nNO7lAQrWHE69R2K0qu4lzykq6uV54ymGxLvBvRB8TfkM7pAsWr/l6la?=
- =?us-ascii?Q?cwyU2xcb5MbVWKUkjHGhK6LzTleaQIxzHkZ/zLFV1gEOAhQQMlKnK7RTCs85?=
- =?us-ascii?Q?N0R2pCHZhdA55x8LQDefA9VJPPkhh/UHK/WaggLz8lr4Y2E37D/MiuodTHEx?=
- =?us-ascii?Q?arHxkIfU7jg/HUzAEHaRW6j8zkeTqbH8UNDpTOTepQefTRVpBiCk5yG99JRQ?=
- =?us-ascii?Q?R2fN/Auxcq3CmY9I+jA215V394NtjLlmpAbsw2E+N9JKBgx3J20o+68ayOh+?=
- =?us-ascii?Q?9K56qLXgHNr2QVFs07E+Rg9SGDBbgyLg1+1mFUOqQLhQ0bSBxz+NoxvMXUMk?=
- =?us-ascii?Q?7k+cFMdezJmXjnncFeArwLQfhlOp7Kqno1mPGnTaxIyBOoEnlJWgXC0P91AG?=
- =?us-ascii?Q?MSrruUc+4n0ixbX+LaAey6IdkzNaEhbRIFM9313DeW9lXbRiqcWX1gOQc4+E?=
- =?us-ascii?Q?qYZ6dlIkTLpcjJucbRGS4YDLrQOZOPQ1cnXHIdT2J+NfAO488n6pkKsKziKl?=
- =?us-ascii?Q?anJTlNEeO+ALWIn1hn9MhbLi3IBUUu1xW49BCS6YBQZeKMXl+Y6Mpfxy1gwU?=
- =?us-ascii?Q?JOKtEOrxqyjAIBbg0Kg9SwouvSQDKtRsAeiLpczb8MoxhTkPg2AnC+ZGBw5q?=
- =?us-ascii?Q?k/K8xL/7qnG4htcJumgvVgDjXQCZPSkhsAYlYnTuX5HgZM5zhP6ioIe1hhnc?=
- =?us-ascii?Q?ttZeUDsiQ/OoyKPxSyoos5CHlkdNnjpde16kao9U+5qRVwWLodq0M38H4j0k?=
- =?us-ascii?Q?tAyLnnx2HhIW8zNGSojExJntYo2SOG4u9yuyHVeFoaecWUEH6sfPhE4to2Wk?=
- =?us-ascii?Q?F/ClhnALPr014IOAek3tuyRHW1LCDnNndVA/C7ZyG8ZelN3ZxNst4piwIIOJ?=
- =?us-ascii?Q?CCq5OelyKNGjgZyNR1yywQBw0irXjYaaHthocz+tJcwHKlW/+FxZvplkBSo8?=
- =?us-ascii?Q?5alOWbSKwUYdWzPOQUSLbvXV1jS+qjXXAEAgKlImgV4RTnmuIhWyzpr/qLoj?=
- =?us-ascii?Q?pPhWgekrVHKsmFilg3c5/P6DY9BAIH1dnl70Ra99VCuKLQgMYuAp05VwUsRo?=
- =?us-ascii?Q?LVa7h91Dg9QLDDmXBTfrL6sza+PK23/o9BLnkdr0SPD4kGDLHMRyccca9F3h?=
- =?us-ascii?Q?D6dz459/0sXTy4BscbZYoaHYk9gYq8/pZEUWO35u5+10qdu2guzBvuTYGRpi?=
- =?us-ascii?Q?rVxp4sj7xgY0ejQ2UPIEwf0XHDHg8FARaMtrKm6M5TgntJ3i0vstGCBjBz9/?=
- =?us-ascii?Q?knCu2W1nGHzrO5bpx1M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2026 10:48:19.6003
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c117d0d8-f7cd-4ff4-20f1-08de4d111b10
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002315.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5075
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTA2MDA5MiBTYWx0ZWRfX6KU7e0QPyb4i
+ UmSfatFpElCUhniaSan26LwBYZnzxLYLkjhii3LkyAC2swP43YpAVdN2n0j+NAHxFHb1c2gWCDR
+ ++30HsJG7ReN4wFfjIV7p+ckfg+/UkGiZv0f8PFjO92oZYUBoFsXD8AHItpTMxNer0ZA0r8oE7w
+ DuVDRjk0csbCY5RdUKq7rL2II3zltWeK0pYRAWuyjrPPA7w9PnJVOTq28j9sf0sLXZ0jawrpwd7
+ ae9DInNpfVp/ATKcESZovmevkmYt1H84jEK4DmSH2Kif1zvBvyFDEydsrvCt4ehV8MXxKoW4m5t
+ 5Cs87oBEYGUpzvvylCyd5x86yFS1hp3GK09k9zz75br8No4/m9nvXZEq1/AWG0sADmzf+kMLHFu
+ 3fA5utoajly9N4oJ/wOYb82W2NwkJ4/3uaAc42hWzcfwdUq91BkhyCaD0qIhWNuKi7Eaa0KGkzT
+ 45DH0wEJUKMitnv7olg==
+X-Authority-Analysis: v=2.4 cv=YqIChoYX c=1 sm=1 tr=0 ts=695ce9dc cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=LpQP-O61AAAA:8 a=EUspDBNiAAAA:8
+ a=UqCG9HQmAAAA:8 a=gjiOCNvPbvlRQkj2kwMA:9 a=2VI0MkxyNR6bbpdq8BZq:22
+ a=TjNXssC_j7lpFel5tvFf:22 a=pioyyrs4ZptJ924tMmac:22
+X-Proofpoint-GUID: Pbdj9l38fMYZhP8nurnYexqW4hMORjjW
+X-Proofpoint-ORIG-GUID: Pbdj9l38fMYZhP8nurnYexqW4hMORjjW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-05_02,2026-01-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ phishscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601060092
 
-The TI K3 AM62P and J722S SoCs have a HSM (High Security Module) M4F
-core in the MAIN Voltage Domain which could be used to run secure
-services like Authentication. Add Device Tree Node definitions for the
-HSM core in the respective SoC common main dtsi file.
+As discussed in [4] posting this series after dropping IPQ5424 support
+to remove dependency on Sricharan's tmel-qmp mailbox driver series v4 [1].
 
-The corresponding reg ranges of HSM node has also been added to its
-parent node's (cbass_main bus) ranges property.
+Imported from 20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com.
 
-Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
----
-v2: Changelog:
-1. None
+Imported from f20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com
+I've resumed Gokul's work as the last submission dates back April 2025.
 
-Link to v1:
-https://lore.kernel.org/all/20251231165102.950644-4-b-padhi@ti.com/
+- Secure PIL is signed, firmware images which only TrustZone (TZ)
+  can authenticate and load. Linux kernel will send a request to TZ to
+  authenticate and load the PIL images.
 
- .../boot/dts/ti/k3-am62p-j722s-common-main.dtsi   | 15 +++++++++++++++
- arch/arm64/boot/dts/ti/k3-am62p.dtsi              |  1 +
- arch/arm64/boot/dts/ti/k3-j722s.dtsi              |  1 +
- 3 files changed, 17 insertions(+)
+- When secure PIL support was added to the existing wcss PIL driver
+  earlier in [2], Bjorn suggested not to overload the existing WCSS
+  rproc driver, instead post a new driver for PAS based IPQ WCSS driver.
+  This series adds a new secure PIL driver for the same.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-index 3cf7c2b3ce2dd..28586cbc57613 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-@@ -1117,4 +1117,19 @@ vpu: video-codec@30210000 {
- 		clocks = <&k3_clks 204 2>;
- 		power-domains = <&k3_pds 204 TI_SCI_PD_EXCLUSIVE>;
- 	};
-+
-+	hsm_m4fss: m4fss@43c00000 {
-+		compatible = "ti,hsm-m4fss";
-+		reg = <0x00 0x43c00000 0x00 0x20000>,
-+		      <0x00 0x43c20000 0x00 0x10000>,
-+		      <0x00 0x43c30000 0x00 0x10000>;
-+		reg-names = "sram0_0", "sram0_1", "sram1";
-+		resets = <&k3_reset 225 1>;
-+		firmware-name = "hsm.bin";
-+		ti,sci = <&dmsc>;
-+		ti,sci-dev-id = <225>;
-+		ti,sci-proc-ids = <0x80 0xff>;
-+		status = "disabled";
-+		bootph-pre-ram;
-+	};
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p.dtsi b/arch/arm64/boot/dts/ti/k3-am62p.dtsi
-index e2c01328eb298..9d6266d6ddb82 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p.dtsi
-@@ -96,6 +96,7 @@ cbass_main: bus@f0000 {
- 			 <0x00 0x31100000 0x00 0x31100000 0x00 0x00050000>, /* USB1 DWC3 Core window */
- 			 <0x00 0x40900000 0x00 0x40900000 0x00 0x00030000>, /* SA3UL */
- 			 <0x00 0x43600000 0x00 0x43600000 0x00 0x00010000>, /* SA3 sproxy data */
-+			 <0x00 0x43c00000 0x00 0x43c00000 0x00 0x00040000>, /* HSM SRAM ranges */
- 			 <0x00 0x44043000 0x00 0x44043000 0x00 0x00000fe0>, /* TI SCI DEBUG */
- 			 <0x00 0x44860000 0x00 0x44860000 0x00 0x00040000>, /* SA3 sproxy config */
- 			 <0x00 0x48000000 0x00 0x48000000 0x00 0x06408000>, /* DMSS */
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-index c8b634c346779..059c65ece183f 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-@@ -173,6 +173,7 @@ cbass_main: bus@f0000 {
- 			 <0x00 0x31200000 0x00 0x31200000 0x00 0x00040000>, /* USB1 DWC3 Core window */
- 			 <0x00 0x40900000 0x00 0x40900000 0x00 0x00030000>, /* SA3UL */
- 			 <0x00 0x43600000 0x00 0x43600000 0x00 0x00010000>, /* SA3 sproxy data */
-+			 <0x00 0x43c00000 0x00 0x43c00000 0x00 0x00040000>, /* HSM SRAM ranges */
- 			 <0x00 0x44043000 0x00 0x44043000 0x00 0x00000fe0>, /* TI SCI DEBUG */
- 			 <0x00 0x44860000 0x00 0x44860000 0x00 0x00040000>, /* SA3 sproxy config */
- 			 <0x00 0x48000000 0x00 0x48000000 0x00 0x06408000>, /* DMSS */
+- Also adds changes to scm to pass metadata size as required for IPQ5332,
+  reposted from [3].
+
+[1]
+https://patchwork.kernel.org/project/linux-arm-msm/cover/20250327181750.3733881-1-quic_srichara@quicinc.com/
+
+[2]
+https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
+
+[3]
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20240820055618.267554-6-quic_gokulsri@quicinc.com/
+
+[4]
+https://lore.kernel.org/linux-arm-msm/aUN7Aer%2FGG1d5Om9@hu-varada-blr.qualcomm.com/
+
+Changes in v9:
+	- Add R-b from Konrad for dts patches
+	- Renamed qcom,wcss-sec-pil.yaml -> qcom,ipq5018-wcss-sec-pil.yaml
+	- Restore clocks & clock-names in above yaml
+	- Fix DCO on two patches
+	- Link to v8: https://lore.kernel.org/linux-arm-msm/20251219031010.2919875-1-varadarajan.narayanan@oss.qualcomm.com/
+
+Changes in v8:
+	- Dropped Krzysztof's 'Reviewed-by' as the bindings file has changed significantly
+		* IPQ5018 support added in v6
+		* IPQ5424 support dropped in v8
+		* Updated to use IPQ9574 as example
+	- dt-bindings-check and dtbs-check passed
+	- Dropped IPQ5424 support from drivers/remoteproc/qcom_q6v5_wcss_sec.c
+	- Updated copyrights of drivers/remoteproc/qcom_q6v5_wcss_sec.c
+	- Change 'qcom,smem-state-names' order to resolve dt-bindings-check error in ipq5018.dtsi
+	- Dropped changes to ipq5424.dtsi
+	- Link to v7: https://lore.kernel.org/linux-arm-msm/20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com/
+
+Changes in v7:
+	- correctly sorted QCOM_SCM_PIL_PAS_INIT_IMAGE_V2 by command ID
+	- correctly sorted smp2p-wcss nodes in dtsi files
+	- Link to v6: https://lore.kernel.org/r/20251208-ipq5018-wifi-v6-0-d0ce2facaa5f@outlook.com
+
+Changes in v6:
+	- added patch to fix IPC register offset for ipq5424
+	- changed phandle description for mboxes property in dt-bindings
+	- updated bindings to define the right clocks per SoC based on
+	  compatible. Ran make dt_binding_check for validation of all
+	  SoCs
+	- use of more descriptive match data property (use_tmelcom) and
+	  added a condition in wcss_start to not error out if tmelcom
+	  isn't used
+	- mitigated potential off-by-one
+	- adopted use of of_reserved_mem_region_to_resource to acquire
+	  memory-region resource
+	- added driver support for ipq5018 SoC
+	- corrected size of reg properties as per Konrad's comments
+	- added patch to bring up Q6 in ipq5018 dtsi
+	- Link to v5: https://lore.kernel.org/r/20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com
+
+Changes in v5:
+	- retained all the patches as in v3 and addressed comments in
+	  v3.
+	- reverted changes to dt-bindings done in v4 and retained as in
+	  v3 and fixed firmware format from .mdt to .mbn and retained
+	  reviewed-by.
+	- dropped 2 patches in v4 that adds support for q6 dtb loading.
+	  Will post them as a new series.
+
+	Following tests were done:
+	- checkpatch
+	- dt_binding_check and dtbs_check
+	- Link to v4: https://lore.kernel.org/r/20250327181750.3733881-1-quic_srichara@quicinc.com
+
+Changes in v4:
+        - changed q6 firmware image format from .mdt to .mbn
+        - corrected arrangement of variable assignemnts as per comments
+          in qcom_scm.c
+        - added scm call to get board machid
+        - added support for q6 dtb loading with support for additional
+          reserved memory for q6 dtb in .mbn format
+        - updated dt-bindings to include new dts entry qcom,q6-dtb-info
+          and additional item in memory-region for q6 dtb region.
+        - removed unnecessary dependency for QCOM_Q6V5_WCSS_SEC in
+          Kconfig
+        - removed unwanted header files in qcom_q6v5_wcss_sec.c
+        - removed repeated dtb parsing during runtime in qcom_q6v5_wcss_sec.c
+        - added required check for using tmelcom, if available. Enabled
+          fallback to scm based authentication, if tmelcom is unavailable.
+        - added necessary padding for 8digt hex address in dts
+	- Link to v3: https://lore.kernel.org/r/20250107101320.2078139-1-quic_gokulsri@quicinc.com
+
+	Following tests were done:
+	- checkpatch
+	- kernel-doc
+	- dt_binding_check and dtbs_check
+
+Changes in v3:
+        - fixed copyright years and markings based on Jeff's comments.
+        - replaced devm_ioremap_wc() with ioremap_wc() in
+          wcss_sec_copy_segment().
+        - replaced rproc_alloc() and rproc_add() with their devres
+          counterparts.
+        - added mailbox call to tmelcom for secure image authentication
+          as required for IPQ5424. Added ipq5424 APCS comatible required.
+        - added changes to scm call to pass metadata size as required for
+          IPQ5332.
+	- Link to v2: https://lore.kernel.org/r/20240829134021.1452711-1-quic_gokulsri@quicinc.com
+
+Changes in v2:
+        - Removed dependency of this series to q6 clock removal series
+          as recommended by Krzysztof
+	- Link to v1: https://lore.kernel.org/r/20240820085517.435566-1-quic_gokulsri@quicinc.com
+
+George Moussalem (1):
+  arm64: dts: qcom: ipq5018: add nodes to bring up q6
+
+Manikanta Mylavarapu (4):
+  firmware: qcom_scm: ipq5332: add support to pass metadata size
+  dt-bindings: remoteproc: qcom: document hexagon based WCSS secure PIL
+  arm64: dts: qcom: ipq5332: add nodes to bring up q6
+  arm64: dts: qcom: ipq9574: add nodes to bring up q6
+
+Vignesh Viswanathan (1):
+  remoteproc: qcom: add hexagon based WCSS secure PIL driver
+
+ .../remoteproc/qcom,ipq5018-wcss-sec-pil.yaml | 178 ++++++++++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi         |  64 ++++
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  64 +++-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  60 +++-
+ drivers/firmware/qcom/qcom_scm.c              |  17 +-
+ drivers/firmware/qcom/qcom_scm.h              |   1 +
+ drivers/remoteproc/Kconfig                    |  19 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss_sec.c       | 328 ++++++++++++++++++
+ include/linux/remoteproc.h                    |   2 +
+ 10 files changed, 728 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,ipq5018-wcss-sec-pil.yaml
+ create mode 100644 drivers/remoteproc/qcom_q6v5_wcss_sec.c
+
+
+base-commit: 3609fa95fb0f2c1b099e69e56634edb8fc03f87c
 -- 
 2.34.1
 
