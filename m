@@ -1,44 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8931F1D6AA;
-	Wed,  7 Jan 2026 07:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E3B22154F;
+	Wed,  7 Jan 2026 08:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767771132; cv=none; b=Nh+Vhv/fLs1g/03zBc39u2zL9OiAhpx1Xfg4phL2u0uVqDDiQwsQcEEuMBgAEtkwlemR78GPlvMvE3C7UL7rXElz7OFb6/AoS3gc38Y1c3BGSeKrztKksapRKIkrZLTAKTpYBIOzoPV5mZk4cxKIVFJf9TxI5m/bF995gP1NoJM=
+	t=1767772945; cv=none; b=kuRXboQOXJg18pSdb0Hf+DGZt5iqGsj0OeiOJjQqicubnqyHj6MPod1U1yYyTMcNoXwly6RHn1xDfvCdlUnIdUffXkNY4XizqFAHi7yhE87JQH2H6eYlii52LgcZjSAB1c7/0B6uXwG+2oGm25pZ2Fur8K/prowroS6ynB/f6p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767771132; c=relaxed/simple;
-	bh=Me1MQB8p4vt4d18ujl8lzsSIszAY2TFC1Bnkr0Wan3o=;
+	s=arc-20240116; t=1767772945; c=relaxed/simple;
+	bh=DiFqXXAVH3dPVWjI5I+jZNWn92Ms+skONWcK14qKhUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cf8qMQSexHWb3qMvIbfdzo5yozN4SdiSmFECKy2u9j8HYgSam6nbOmrpsLEWb0E86Q5yCwX3t5dHPF68uvVIeydRaRi6UXCnBRnh7mB3v/zb7F9V19JODqw5oxwWCjW2lTRiSo//hEJAe6ykuZT8kbWB9u+Ic15QeGabjI+uhvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hsg6TQFj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=troJ/xqoLDunOqGzwNxVAfcWNKTBVZqTQv+CUzzaw2NRtpRoNlctVrKRmdC5R5kPHzIB4BtZ1cw+6l0neru1KGz1/QF6r3BIg6/WmuZV7fjcFc07tnUJbadB2JKPIEpOA9laywagAyLYi8sb6bOWqUzoWrhiiGCK7oJSL/m27m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Be3ZtXSN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hsg6TQFj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D7FFC4CEF7;
-	Wed,  7 Jan 2026 07:32:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Be3ZtXSN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC51C4CEF7;
+	Wed,  7 Jan 2026 08:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767771132;
-	bh=Me1MQB8p4vt4d18ujl8lzsSIszAY2TFC1Bnkr0Wan3o=;
+	s=k20201202; t=1767772945;
+	bh=DiFqXXAVH3dPVWjI5I+jZNWn92Ms+skONWcK14qKhUQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hsg6TQFj/oUMayh4cZF+X9LT4XX5vFPzNYkQ8uHoaj39fYWJRqgnU1482zomDZYa4
-	 UeHkKvgYOzeFywDLUN6mK45KpYDfdzC8sguox8VQHdUBnss9poY5+9YW2vw9EHFjgi
-	 Jc67gR0og5u5BXtAAoOt1npPV+U9lbXB3qTW7qoVCiFYzAoZN4/4/RVc72VP6q24hD
-	 vY0DglecAbJH77Yep1c72HyrTZ9kYOXWhZIeQLdjoDlMhWE+oW4en8IwVM7/ABkgB2
-	 ruaShzbqiZKCdNU1r3A3+yt5kMpu1i7VHXc3tFmN8nSmuLP+vuU65T5JfSesq+zfkp
-	 zOQGwZuQKCIlg==
-Date: Wed, 7 Jan 2026 08:32:09 +0100
+	b=Be3ZtXSN81ERsHazYcsdBODBq4DwMkOekC1QcoriNRSz1bTBkiwbG2KXC5L03a4r5
+	 /oNuWfkzG4c8xXx8ATOyXN4vShoULb5kssGr5asZB9rmxBX3DzZdY/0E1N4Is5uEO5
+	 YNvVWTEwGyjq0ry63b9jRgEJwaS2ah4Q00taNup+kCYyE4Z1xShjJsctMW0X38nkFN
+	 Ps7rq8Y+sBcEZkNjaJScRT3q0gC152bxGcFKcZrSGVH/yKmguEx5w2XL0PhAtHzqrJ
+	 xbwII5wCSNn05NYCnfB2qMx758kdLwoBjbpk0x2HiXsjZsEWsrOkRd/wIXITfIY+wR
+	 SmeFDG0RNUttg==
+Date: Wed, 7 Jan 2026 09:02:22 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+To: Beleswar Padhi <b-padhi@ti.com>
 Cc: andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, George Moussalem <george.moussalem@outlook.com>
-Subject: Re: [PATCH v9 2/6] dt-bindings: remoteproc: qcom: document hexagon
- based WCSS secure PIL
-Message-ID: <20260107-sticky-gopher-of-weather-f2b369@quoll>
-References: <20260106105412.3529898-1-varadarajan.narayanan@oss.qualcomm.com>
- <20260106105412.3529898-3-varadarajan.narayanan@oss.qualcomm.com>
+	krzk+dt@kernel.org, conor+dt@kernel.org, nm@ti.com, vigneshr@ti.com, 
+	kristo@kernel.org, afd@ti.com, u-kumar1@ti.com, hnagalla@ti.com, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: remoteproc: Add HSM M4F core on TI
+ K3 SoCs
+Message-ID: <20260107-nippy-doberman-of-growth-164f2a@quoll>
+References: <20260106104755.948086-1-b-padhi@ti.com>
+ <20260106104755.948086-2-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -47,20 +47,20 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260106105412.3529898-3-varadarajan.narayanan@oss.qualcomm.com>
+In-Reply-To: <20260106104755.948086-2-b-padhi@ti.com>
 
-On Tue, Jan 06, 2026 at 04:24:08PM +0530, Varadarajan Narayanan wrote:
-> From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+On Tue, Jan 06, 2026 at 04:17:53PM +0530, Beleswar Padhi wrote:
+> Some of the TI K3 family of SoCs have a HSM (High Security Module) M4F
+> core in the Wakeup Voltage Domain which could be used to run secure
+> services like Authentication. Add the device tree bindings document for
+> this HSM M4F core.
 > 
-> Add new binding document for hexagon based WCSS secure PIL remoteproc.
-> IPQ5018, IPQ5332 and IPQ9574 follow secure PIL remoteproc.
+> The added example illustrates the DT node for the HSM core present on K3
+> J722S SoC.
 > 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> [ Dropped ipq5424 support ]
-> Signed-off-by: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 > ---
+> v2: Changelog:
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
