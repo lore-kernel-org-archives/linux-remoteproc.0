@@ -1,79 +1,77 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F178392B8C
-	for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jan 2026 15:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815E839C62C
+	for <linux-remoteproc@vger.kernel.org>; Wed,  7 Jan 2026 15:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767799782; cv=none; b=Ih2UZD/1Ct/mV4tJK8LPEV0RwYYqhm6dQ+7Ff/9UpoxRaeWBf2jDmvkaPlsF4Gy04ojjQu4mmr/TiqdvC7uljveHUQfopxsH5R8iHlCNO2o4WM7NFnzodjUG2uWp6sYpVZGy949iIDzJTGSyCQtQkcadw9gttQP/8VKOQAalbyk=
+	t=1767800143; cv=none; b=CfXOcBgG4N+cpMbLT3zSFZh+CsVu40YAc/qYWTUx8RNQMbOKVge5u4Kg3QvyQEBHf3GxNSbZW65S49iUsv0y4+FYGiyk3saulM2YSlGQlDJ7mtEaz9ZO8aaWp4inBGpBvtXRVnb+c/SkQKundtOvObnpN9tKPsBioaotNsmZ2S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767799782; c=relaxed/simple;
-	bh=CHCmBLNmGhkB75IOglbedkzSH7qQK1bVET7toOu8COI=;
+	s=arc-20240116; t=1767800143; c=relaxed/simple;
+	bh=mGN3GgnNdoOqT5ttldrfgrxqNaE1p+uWyAokSQ+Gslc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eks69PR9KNL5yriJFmWAnG7IzRqMODuuoLpVluJ0O7tbkDlGeKBChapYLjMVohHtg9FfuKTEIBL8hwiO/t1Ch/SVRGuscbZAsTV7Z0kqt35tYGGI5ajRQpHdzQ0b5a9k0IAd0as4hqsJSD0vSH5VifXpCzp/LTGE5f78MvA0NTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DxVI3lNF; arc=none smtp.client-ip=209.85.210.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=cazU2lDAN4LEq8NGczvtoLuFRSqYzN07yITLIZWI1Rn+6BA4EUEQqxOjpm4Qwv7eaAWp5Jsi/gDOpZmEQaakqWRqQXnWC39qvBeIii7eVf+9MxanBZ5mMvpWUuSiZNhGiR2mHRM+dkaqVXNDkCj6Pa3CE/heJI0RYW3t3djZ0A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ifWwwKe8; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DxVI3lNF"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7f1243792f2so1221044b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jan 2026 07:29:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifWwwKe8"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2a07fac8aa1so19451635ad.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 07 Jan 2026 07:35:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1767799778; x=1768404578; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1767800141; x=1768404941; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M7ti2ZsSBs6BaW10SxBm3tdhBa1xYNo4bRZH+Kb0/2k=;
-        b=DxVI3lNFGw6n3FkflU3fVCLwoTz9WXVvFZ2Pxablcm5hOBJClxd82dytyEje+zZMhw
-         GSbRj9RX76WtyIcitolJOSJfuQakdDjM/ueqwUjyo9xLmrnJW48rcyYpSfIqvKHBr3ic
-         dmnXNJLTxCGk7xFuE+LEZtcW0MCfIIeHLcrFM2pDzAOW5nxU5lpCkAXyeTIBhAuQm9VD
-         76NYR2ryAJs8Cb0/fV89Ris7kGi1tiqCXD+Bsy5gHLemjN0/N2YtW+jhTEiEoRbaW78N
-         rY8QkrrmEWEFhfR02l+o6yXojxp2K2ioQHq5WhKDCXiMIcwXJQjLq6Sh57xhcoGG2aUE
-         0IqQ==
+        bh=/SR2gLuU1H5541mPq9C4V04vstpLOPeBOnMkn3dWO/g=;
+        b=ifWwwKe8Smrr+FnksjcqI7m3i0DzMT42h55P22D+IGaBM9R4AkK2fH4dCWaF0NwVFU
+         o8m8nLX1z3yDt//AXNOqZRzBgcfDg6JYhrORAJNGpQEDAdd2hRocNBjWfRCCPAeofP2G
+         YEopQMIRkGx51d8JBfRkC6f6e619oFDLCtUbNlBYuVQ+G/JNRZ0SS+cbTfmyIy7k4PiF
+         TaNiZcm7ZF/vRlTbaPgvnf8vhZah+UzfRJ99ryZRsMfzzn6K/HoI3G+vKethHRnxFbFN
+         p9a5Z45Nx7KlhDWQz9lCA8594yQ/tipXAYNMaEiUEaXnuDevULIvw9/tATwzw8lCw8iy
+         nxKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1767799778; x=1768404578;
+        d=1e100.net; s=20230601; t=1767800141; x=1768404941;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M7ti2ZsSBs6BaW10SxBm3tdhBa1xYNo4bRZH+Kb0/2k=;
-        b=F1Sy6kiqFVFUnnu/qht//epiW3z+aVrQjX+q0wOhwTQhx+0402tFKhVu6eiRro2Tga
-         gQJPP9pXzcBip0GY6eBS34surAU0zGYQ9gPmw/Tzu2BCsMZgwCcAmoybKfJJdEnNRPnB
-         DbM1IO8Me0LiBWHXB1Y2CHg+7r4zvkPgskGuVYF4JOCn7aW8UAEvmfl53B7rlg4BXAdG
-         jcnHpYA+KiewGrWu2mGZZtecpMSy+SEQkyQ6xeajKR40MOhhpRgRBf2G6qPO+cQ1XuU7
-         DJb6zSkEGNJUWd7xWrgv1WEEgYnWMhnaO5w9NuKaxTFMFI6bdid+FTtk9Udp3VvpueZr
-         LlnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZlHQ0aGdBEO2frY2qyTyCfgBhRwJwjQXojpw5dp7V0OxRaEWN74cGtWtj2FXGzuFu2XcCWl8zEq4JyguMcm/u@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1OqZPlOAdLyizDuICok1qkd0/nj9zGD0xvb/W7V73f5No1qQs
-	6u6oVDcCzufDT0y4XaSJU2Zgm1puu3YrqCX0FQ1ESfv4M3JSP6nXWfq30YTwSECGr2Q=
-X-Gm-Gg: AY/fxX6Gn9PQdgcUAaz7SU0BcLbTVKHqAX8EnCU/v+PgL45c1XQ2KwXnryOMjjUVqO0
-	Kk95wvP51N2dDYsCco0QW9wFmq0ALJfE7TlbjXYyguL3ynskRpkzJs/B86jmM34ABO41FwrHAxi
-	DeKIV246LpGJnShyi/Q4oKOY2tUjlhRnmaUQZEwqzUOxvFkYuP/szRSQwDENzLTAXTfQ2Zu17sA
-	f50zDeNZZ4LSbJHwPnwKNrJobjMpTgSLJVqRBkxmgLMI5V03EoxnEeYEJuxr0+feiUbwB+uJwa0
-	5LCv/T+RWdFy2BnPpGgsNxAYhraQu4w7BKL52LtkCg0ZaVNrC4i0Zg15HniNZCxMNaphrZQ4O6N
-	OFBiJkwTN2iAKgKDLiamULcDL+d7XQTzeypLYqkwlfPtkFhiR6zTgeEy+++gsgDrRnAutwrjLgY
-	Blns0UOb+1yNW7tA==
-X-Google-Smtp-Source: AGHT+IElKLdFn879OtAvmFvwXJ1ZamVYHpzEPzVJ1OffNR29Z6BAVmJm3WV6d7OfkFXx84SFGEf1aQ==
-X-Received: by 2002:a05:6a00:6c82:b0:7e8:43f5:bd4b with SMTP id d2e1a72fcca58-81b7fbcbd0amr2490638b3a.55.1767799778184;
-        Wed, 07 Jan 2026 07:29:38 -0800 (PST)
+        bh=/SR2gLuU1H5541mPq9C4V04vstpLOPeBOnMkn3dWO/g=;
+        b=S49uCQTqHfXLTAMQ3iXeB7/J/PnMbjJ4bL0zUWTSaj61DFjY2LTbrR9c5/SIZMAlCq
+         NnD3MMIglkWO6cEq9E3p+EzT14nrNYIIwb802OvN+M/DKmH792ajC8axHFyMpqoImlmC
+         JTgmm1UcXNeI7emaGW/8hfddxpBK7sMhRvnt7ouiFKdqYkIYNakOu6lzZfvqKf3hCGUp
+         cujiJZxKU9hPBvVLZCDHgmEU+Wk2rg616y/OqzNi3bS3Upkqi470jaZijcKL+erk+dj6
+         uDLEDY5y7uTy+lMjGbDylCm8IJdkoOywZ2dCrYZmgHjUFWVDc8ReuGYeG/xkghTAVQf8
+         kq8A==
+X-Forwarded-Encrypted: i=1; AJvYcCUb0UFXuzVXcyFzUe+cVizqodAeougpkgw0BGd0bIOWtK4J5uludzSZ2Ag88xTuQ2kMvwf25xBooqRzqbF5FHam@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyib9zUlYZOdfTqq+keyealHkHgzbikhnTIJ/bfdjuXQnc6D/L5
+	O1tL/z8tUfjq2bqFIJ3JGl/PlVK4mikstFLyT7Udf4/87eOnEAAMl+g5zOunjbf+S6Olz2tWuof
+	DlJcjB94=
+X-Gm-Gg: AY/fxX6UDbEy9caw1lFzCEO489MrPLXT/S/lCumZq7V+Y8wvqJuCfTkQ3ZY7CjYDnxq
+	ENOLhbrWlp+v78cJyhsG+uc4oq+Bsc3tkSG2lP+RwyB+loDtv/OnQA5xdZZ8ilzyit7HIddjvbj
+	BTZmPzNOILS+6V1RupdO/FNnl1KwqTibQRBuJfBt9YRKtu/YM8f0CJ+mYuf1sBat3kipsFHkuIa
+	264/UNqekM+Y9l29etUjBW1dJ9JJ0K1BNZHQ9bBU0MADx9iOg3u8dnJGALCdzLMVRLM+BAGO/Q1
+	OeEW7s2Gw5pc3xmn4hBtPr3TsQvsYK18fQH5uiHZB5ycTN7sfvE6Wf5Qy0VJm4Je6BTMPgn8aS1
+	Bzwz6EgQES8rw+CyNkl3fkWbOm7Yh0GHa+ExijN3e8o2e5fQ12N7SUeN7e4w3k3kDWwkkh8zuNW
+	X3dT/EQtAYYo3WKQ==
+X-Google-Smtp-Source: AGHT+IGBvG5WmQSIVwy8pD5KbvRQIOMKna1wirHJXxpWkWLnZtjO89ZkOS60V0d1bqeYUMlW/GSgnw==
+X-Received: by 2002:a17:903:1105:b0:2a0:cb8d:2ed6 with SMTP id d9443c01a7336-2a3ee4d9b4bmr18514405ad.51.1767800140725;
+        Wed, 07 Jan 2026 07:35:40 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:9510:cc09:7589:5527])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-819c52fc9bdsm5313254b3a.32.2026.01.07.07.29.37
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-819c52f88casm5317448b3a.34.2026.01.07.07.35.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jan 2026 07:29:37 -0800 (PST)
-Date: Wed, 7 Jan 2026 08:29:35 -0700
+        Wed, 07 Jan 2026 07:35:40 -0800 (PST)
+Date: Wed, 7 Jan 2026 08:35:37 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] remoteproc: mediatek: Break lock dependency to
- `prepare_lock`
-Message-ID: <aV57397Ie41nww9W@p14s>
-References: <20251229043146.4102967-1-tzungbi@kernel.org>
- <aVw4QUp6j4vBOrOF@p14s>
- <aVx90sSLgRzSPazF@google.com>
- <aV1CA1Kf0D6HNVli@p14s>
- <aV3DOTpoTr5RoDL2@google.com>
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, nm@ti.com, vigneshr@ti.com, kristo@kernel.org,
+	afd@ti.com, u-kumar1@ti.com, hnagalla@ti.com,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: remoteproc: Add HSM M4F core on TI
+ K3 SoCs
+Message-ID: <aV59SdFU15HpLHeO@p14s>
+References: <20260106104755.948086-1-b-padhi@ti.com>
+ <20260106104755.948086-2-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -82,105 +80,119 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aV3DOTpoTr5RoDL2@google.com>
+In-Reply-To: <20260106104755.948086-2-b-padhi@ti.com>
 
-On Wed, Jan 07, 2026 at 02:21:45AM +0000, Tzung-Bi Shih wrote:
-> On Tue, Jan 06, 2026 at 10:10:27AM -0700, Mathieu Poirier wrote:
-> > On Tue, Jan 06, 2026 at 03:13:22AM +0000, Tzung-Bi Shih wrote:
-> > > On Mon, Jan 05, 2026 at 03:16:33PM -0700, Mathieu Poirier wrote:
-> > > > On Mon, Dec 29, 2025 at 04:31:46AM +0000, Tzung-Bi Shih wrote:
-> > > > > `scp_ipi_send` acquires `prepare_lock` via `clk_prepare_enable` while
-> > > > > the caller often holds `ec_dev->lock` (e.g., `cros_ec_cmd_xfer`).  The
-> > > > > reverse dependency exists where `clk_prepare` can trigger operations
-> > > > > that eventually take `ec_dev->lock` (e.g., via sysfs/regulator/genpd).
-> > > > 
-> > > > What operation would that be?  Please be specific so that I can trace the code.
-> > > 
-> > > The chain is discovered by lockdep: &ec_dev->lock -> prepare_lock ->
-> > > &genpd->mlock -> ... -> kn->active#2 -> &ec_dev->lock.
-> > > 
-> > > -> #6 (&ec_dev->lock){+.+.}-{3:3}:
-> > >        __mutex_lock_common
-> > >        mutex_lock_nested
-> > >        cros_ec_cmd_xfer
-> > >        cros_ec_cmd_xfer_status
-> > >        cros_usbpd_charger_get_port_status
-> > >        cros_usbpd_charger_get_prop
-> > >        power_supply_get_property
-> > >        power_supply_show_property
-> > >        power_supply_uevent
-> > >        dev_uevent
-> > >        uevent_show
-> > >        dev_attr_show
-> > >        sysfs_kf_seq_show
-> > >        kernfs_seq_show
-> > >        seq_read_iter
-> > >        kernfs_fop_read_iter
-> > >        vfs_read
-> > > -> #5 (kn->active#2){++++}-{0:0}:
-> > >        kernfs_drain
-> > >        __kernfs_remove
-> > >        kernfs_remove_by_name_ns
-> > >        sysfs_remove_file_ns
-> > >        device_del
-> > >        __device_link_del
-> > >        device_links_driver_bound
-> > >        driver_bound
-> > > -> #4 (device_links_lock){+.+.}-{3:3}:
-> > >        __mutex_lock_common
-> > >        mutex_lock_nested
-> > >        device_link_remove
-> > >        _regulator_put
-> > >        regulator_put
-> > >        devm_regulator_release
-> > > ...
-> > > -> #1 (&genpd->mlock){+.+.}-{3:3}:
-> > >        __mutex_lock_common
-> > >        mutex_lock_nested
-> > >        genpd_lock_mtx
-> > >        genpd_runtime_resume
-> > >        __rpm_callback
-> > >        rpm_callback
-> > >        rpm_resume
-> > >        __pm_runtime_resume
-> > >        clk_core_prepare
-> > >        clk_prepare
-> > > -> #0 (prepare_lock){+.+.}-{3:3}:
-> > >        __lock_acquire
-> > >        lock_acquire
-> > >        __mutex_lock_common
-> > >        mutex_lock_nested
-> > >        clk_prepare
-> > >        scp_ipi_send
-> > >        scp_send_ipi
-> > >        mtk_rpmsg_send
-> > >        rpmsg_send
-> > >        cros_ec_pkt_xfer_rpmsg
-> > >
-> > 
-> > From what I understand, cros_ec_cmd_xfer() gets called and takes @ec_dev->lock.
-> > From there scp_ipi_send() and clk_prepare_enable() are eventually called.  The
-> > latter takes @prepare_lock and proceeds to enable the mechanic that will get the
-> > clock prepared.  The process to enable the clock mechanic, which may happen on
-> > a different CPU, involves calling cros_ec_cmd_xfer() and lockdep complains
-> > because @ec_dev->lock is already held. 
-> >  
-> > > > > Move clock prepare / unprepare operations to remoteproc prepare() /
-> > > > > unprepare() callbacks to break the lock dependency from `ec_dev->lock`
-> > > > > to `prepare_lock`.
-> > > > 
-> > > > With the information presented to me, I don't see how doing that changes
-> > > > anything.  @prepare_lock is simply held for a longer period of time.  
-> > > 
-> > > In prepare() callback, the clock becomes prepared and prepare_lock won't be
-> > > held after that.
-> > 
-> > If my theory (above) is correct, you are proposing to avoid the condition by
-> > preparing the clock ahead of time before any IPI can take place.  Is this
-> > correct?
+On Tue, Jan 06, 2026 at 04:17:53PM +0530, Beleswar Padhi wrote:
+> Some of the TI K3 family of SoCs have a HSM (High Security Module) M4F
+> core in the Wakeup Voltage Domain which could be used to run secure
+> services like Authentication. Add the device tree bindings document for
+> this HSM M4F core.
 > 
-> Correct, so that it doesn't need to prepare the clock (i.e., acquire the
-> @prepare_lock) when @ec_dev->lock is held.
+> The added example illustrates the DT node for the HSM core present on K3
+> J722S SoC.
+> 
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+> v2: Changelog:
+> [Krzysztof Kozlowski]:
+>  1. Update commit msg to remove redundant "bindings".
+>  2. Update filename to match compatible.
+>  3. Remove "address-cells" & "size-cells" property. These belong to the
+>     device's parent node.
+>  4. Drop description from firmware-name property.
+>  5. Fix indentation for DT example.
+> 
+> Link to v1:
+> https://lore.kernel.org/all/20251231165102.950644-2-b-padhi@ti.com/
+> 
+>  .../bindings/remoteproc/ti,hsm-m4fss.yaml     | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,hsm-m4fss.yaml
+> 
 
-Is there anyone else that can review and test this patch?
+I have applied this patch- Nishanth and Vignesh should handle the .dsti files.
 
+Thanks,
+Mathieu
+
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,hsm-m4fss.yaml b/Documentation/devicetree/bindings/remoteproc/ti,hsm-m4fss.yaml
+> new file mode 100644
+> index 0000000000000..9244e60acee37
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,hsm-m4fss.yaml
+> @@ -0,0 +1,72 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/ti,hsm-m4fss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI K3 HSM M4F processor subsystems
+> +
+> +maintainers:
+> +  - Beleswar Padhi <b-padhi@ti.com>
+> +
+> +description: |
+> +  Some K3 family SoCs have a HSM (High Security Module) M4F core in the
+> +  Wakeup Voltage Domain which could be used to run secure services like
+> +  Authentication. Some of those are J721S2, J784S4, J722S, AM62X.
+> +
+> +$ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,hsm-m4fss
+> +
+> +  reg:
+> +    items:
+> +      - description: SRAM0_0 internal memory region
+> +      - description: SRAM0_1 internal memory region
+> +      - description: SRAM1 internal memory region
+> +
+> +  reg-names:
+> +    items:
+> +      - const: sram0_0
+> +      - const: sram0_1
+> +      - const: sram1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - resets
+> +  - firmware-name
+> +  - ti,sci
+> +  - ti,sci-dev-id
+> +  - ti,sci-proc-ids
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        remoteproc@43c00000 {
+> +            compatible = "ti,hsm-m4fss";
+> +            reg = <0x00 0x43c00000 0x00 0x20000>,
+> +                  <0x00 0x43c20000 0x00 0x10000>,
+> +                  <0x00 0x43c30000 0x00 0x10000>;
+> +            reg-names = "sram0_0", "sram0_1", "sram1";
+> +            resets = <&k3_reset 225 1>;
+> +            firmware-name = "hsm.bin";
+> +            ti,sci = <&sms>;
+> +            ti,sci-dev-id = <225>;
+> +            ti,sci-proc-ids = <0x80 0xff>;
+> +        };
+> +    };
+> -- 
+> 2.34.1
+> 
