@@ -1,235 +1,405 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011029.outbound.protection.outlook.com [40.107.130.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DD235BDAF;
-	Fri,  9 Jan 2026 12:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767960542; cv=fail; b=R/iTWsPvo5+ky5y7y8/xKSktOS4QMVzdnWmYrWZOTJTgRXINW5Tk4SJLxUa1qG+zlEt6gyGmbLkNDbDKmIzIIQdlgd7Ts1awFrHuB8xHv+CzypOAhdHurK0MWMBzaO/BzWDFsmYIrE3HeHBAm2sz5fA/bopzNiVYsitsEZIHp0c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767960542; c=relaxed/simple;
-	bh=OA1xGy3ZnRg38oCJTqx7dQQ/LQ9ce0n1p5dFeKIEvmI=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=evErS4DjlDv+KaE+yf6rb23kjK25RNk6e0U4e0oa2D04eotfQwk1mXJgIz9KgED8tkxYIl9ezhaATDhfyxKW6QT0G0DNU6FE8Zf/Lxue8koZXN6UFBRSle7crZ0tWiRaAvqhmYsAVzohEP3p+gj03cjXLwo+72ViG2lV5tUc13I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=EQA9hqgw; arc=fail smtp.client-ip=40.107.130.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B668211A05
+	for <linux-remoteproc@vger.kernel.org>; Fri,  9 Jan 2026 16:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1767977594; cv=none; b=XdEgpHCishsBxCW6DBoEUxBZX9u1oedUgDisn9U9IkWjhdn+g2JPyHY5Kelm7Td4o0ISvIu5iv693KxdGCZZVSGz11xatvpfKo2sPiHqqDuqqYhSM8VfQu7AuEhq0/MUWz566XvSPcamr4KCRoivH3yaM6utuHwdSdvqBsBXrzo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1767977594; c=relaxed/simple;
+	bh=cOwNMxj1GA9OkvcUCn6cCAfzXvDRMr5yy8Ln7aMA2BA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o0bahW6tIymnF0CZU/GXQCk85LQhJlqX7+u622NzvQv/neXjW0RYFTj8Gr0y4pNjD2jyyVa8YGFgh2juBP3w70DI2Ivm4zAQ0/pEtKEeqb8Wa6qFvSzy/IiMt1FGNMOxVfjfNusep68vd5fBEKf35TEMWdRQVO5sdzFy3ZHhwzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qi76a7sZ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="EQA9hqgw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IQrPTjj61FRBBc3cByjbzDgLq0hm7VlkevxMNYBxYbO1M5H5xgp4+7CG4BTyOHn5S6zb224klRdL8eYPfHr6ExnzrdhDyfVbuvt02MYTNcJmlS6YEdp8Xg93NwTb6TYyURsV6Uu8ow4mXTvsCvOVcVQPxSPUy/30jgUp/AceAxSVn32ivQrQOjBcKoKDcq6vruauN0rkHTBgb0OinjN9e/PzcoTPhdfle5w2/6MmvHk+IZ0g2bVXdu3lrZAK4r/DapxqJvKg8oDpk0MeQoJCG4yQMk1DdXAUrTgAJ8ODKEBRwg2vbmlZmXWZgz5rR7KN2atbDobF3bPA+THv4ajZ/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gSWP2XURuK+lL21gel8uGB/7l6iV5DBrcFu7eH03T3Q=;
- b=YYZgBuPgsG+wNSk2UgXTQN2XVna/IeCaoPOFdoCGvPdiiZ2sl4+8fQRSejvOQeY34U7L6NEMNI3VpuCTUVxLaFd5mNdm3l4glpuBTXjdZ0o6ieHfHkKyp+fOUtOJ8PXs51ihMnPWxRqNHkMpNzSsFwwUuLpAeaDlVoCcyh6X+EiJgK/W70Ct0Bp3m1Wzlgp+LASa1T2CDvNxhTzP+o6/+00PmzfK8MV1SGElM0MNR1V0xbCxP13xt7aE77pB+1GMPjxbPxxRC4PiyTuC4XIO4LToULKZlfO60EWutk7d66W/h5MVkNF9LGw4iqfoBc2JL7k0Q4LzsEpp+yyZuSjFwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gSWP2XURuK+lL21gel8uGB/7l6iV5DBrcFu7eH03T3Q=;
- b=EQA9hqgw1yadu2bnTM0SLL/gnBS1mhrcE5fYWMKN8eN8zOo434+ytwYoTZhjTAmwFSBUG0RNjZZz9crbLp1mIciqsRnRQI0N13rI7NIO9PfS539r6vvyrcezDUIOBbL+kThAYlqUBXOW7r1DoOhEr1ZnlrkC8h/6oIecvBlYDOFXxk3ZHG6WkN8XP0QMxTSp5yHgt62juT+V+Sux1Jrda/fyIL92UlDgEo3ihcUISJ+Wc5XeY0zzD1ZFRzCN0hV94juo9yS5L6Yxj4ivTJs0nFleb1delHMI+mv5cvsYRok/u035UqYOEnGNOQacbshwmcjN3NhaWWdh3YyH051xOQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GV4PR04MB11356.eurprd04.prod.outlook.com (2603:10a6:150:298::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9499.3; Fri, 9 Jan
- 2026 12:08:54 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9499.003; Fri, 9 Jan 2026
- 12:08:54 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Fri, 09 Jan 2026 20:08:06 +0800
-Subject: [PATCH v6 6/6] remoteproc: imx_rproc: Add support for i.MX95
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260109-imx95-rproc-2026-1-8-v6-6-d2fefb36263d@nxp.com>
-References: <20260109-imx95-rproc-2026-1-8-v6-0-d2fefb36263d@nxp.com>
-In-Reply-To: <20260109-imx95-rproc-2026-1-8-v6-0-d2fefb36263d@nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
- Frank Li <Frank.Li@nxp.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: SI2P153CA0014.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::6)
- To PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qi76a7sZ"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2a0d06ffa2aso33277495ad.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Jan 2026 08:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1767977592; x=1768582392; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaqWa6GwKZ79SM+IhZLbtYN2bwnUHociofDF1yzWcCA=;
+        b=qi76a7sZkvb45xGxe9y8Qf8nkwH/gIVNA+2HLX5KdMEThsM7tEkMRyibLGePfgauxK
+         jp91njSGdbrer2YwLoxOGi0YKvCEsGZmsHxSfqfgEF6h8vVs26auPyh3PT8XuHWal5HC
+         P4/JcoQJsAy+eLAfbPXXuPYyuNRRuavkNHpioXo+bJE5vfVGBcXDjqj/7lWr+Y0vmcCF
+         4cLZEQiICT9c9eQ/8T0tYKcR+Zp6GxyTJ/IZX406kGxoej0sSFKwKS1bqkw5Er31iziB
+         HKiOWkWVt7x8GtXP2X9GzlNZbGd8R2sxprbCpTW8HrWQPXmg/Wqv3Gt5SUbNqXySuF1Z
+         xERw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1767977592; x=1768582392;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OaqWa6GwKZ79SM+IhZLbtYN2bwnUHociofDF1yzWcCA=;
+        b=L+NeeUuzOXkImmCqdsMzCWNA2YABlcAhBVDGSPRufnZ0OEdOtU1e6KRkaJKmrehk2K
+         O1FrKMLUsyf9pLa/RAQFzHTFi3ykQdZjdYiaAgBmShshOwLIsnzdumJCAm51wU4b6dCB
+         zyOR2ykjmCp5P2VK3UG8qU4HGFB9jH1cWNiXVCwV7/HDJdJEW85TAnpzyKMsEJGqUqcL
+         2Svk/cf7twoa76vhxQiilfmStLhS8eUGNRTfzU6NlUoXDOYTjMtxd9YvUW192CXIx7m7
+         AYH18CWm5xR6hXFXGQqgNTdcaMzV4cNxvMHJaDVvIeQWOnFi9V/T8lpWGzo8hp29Q5Js
+         svOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTnecADucdRrB0o3Cbf0+rWev6D9IE9nyd1V2aRc22Eumsbsa15h5ERAAaF9Q+X1GjLf80PiG0AXv4JozLnNk8@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHmJ2xNLKZ6PPhZ+CKqeOMaQ/Tj1kTL1rnHQwPaU4t3kmo2uYJ
+	xZR4j8/Vz4thNpzjvk8O8ri3eDiElhKe7ALfTfwdCuF5gEK6R/P5uthzOuKqztWnoSc=
+X-Gm-Gg: AY/fxX4G/g3V8NlJaGwWNOf1Oeodg/AmpI0EvXd0FTCntO6tXDPXROfBnVjJD4sF3nF
+	abc0aUsNCpb6iS9xCNTeAZ1hGN5v6HcrGuexuVY5VFWZBxbwrlah34hIaMJQ0jztqu+jaTxOIOg
+	IJ2c/naFxFU1PiUZOxSYjI/MoZyxVEm923lfMZlJJd41WAUymxEaGLvosocpF9RtcedkpBx1OFy
+	WcxZM0q7AHLlcN+btu5V5CEihwXy92lrHnmsFAQaIwARI9klo5j7aqDpNdpXLctlgwOVM+lVCa2
+	tfYQxl4LxYKH7dQPGV6yqR7o5NFkvPEQBv8+R1LWRFBlgwgi3kkPolQ/iouV3MlOnsGRU3v8QfE
+	D6I+z22eBoVO10JeBmsEZ1LoVBV2ayI4NEb/PeFBE7k8XzoLLBQRApJAPoxCFL4BZsRvVTlLr1z
+	oYirg0caN9oNxh
+X-Google-Smtp-Source: AGHT+IHkZthbWD1r2B8dtIONK44c/vHWpQ4SBob6ZvXAaQ+xXI4x7Rf7Ht4mf6kRP85lnIHL2Av3lA==
+X-Received: by 2002:a17:903:228a:b0:2a0:d692:5681 with SMTP id d9443c01a7336-2a3ee429c59mr88234505ad.24.1767977591485;
+        Fri, 09 Jan 2026 08:53:11 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:ca5b:496:5e63:8d3f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3c4795fsm111802335ad.33.2026.01.09.08.53.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Jan 2026 08:53:10 -0800 (PST)
+Date: Fri, 9 Jan 2026 09:53:08 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Beleswar Prasad Padhi <b-padhi@ti.com>
+Cc: Patrick Oppenlander <patrick.oppenlander@gmail.com>,
+	andersson@kernel.org, richard.genoud@bootlin.com, afd@ti.com,
+	hnagalla@ti.com, jm@ti.com, u-kumar1@ti.com, jan.kiszka@siemens.com,
+	christophe.jaillet@wanadoo.fr, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] remoteproc: k3: support for graceful shutdown of
+ remote cores
+Message-ID: <aWEydI7ES2yKjpcG@p14s>
+References: <20251125083746.2605721-1-b-padhi@ti.com>
+ <CAEg67G=VWsupb53B=a5cyF2RbN58Bqfy8OJ+vpK3_dzCQnvd+Q@mail.gmail.com>
+ <e917f964-85d9-4c33-a79a-d7f7474a6afb@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|GV4PR04MB11356:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5f6e48a9-acc8-4fe3-366d-08de4f77dc25
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|7416014|376014|19092799006|1800799024|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YU45b3lQaDZxWW1jbi9YWVdSS3hUYTloS25PdU1rNllKcktXZGl4Q0Via2Nm?=
- =?utf-8?B?WGV1OGU1Mng3ZFpWV04zWXFhVXAreThJQWZlRnZTZGxKcFEvUUllTHFmd1Ar?=
- =?utf-8?B?clJ5ZlcyeUhCMjIvZDh1VENwS0JibjYxamhGeGdickUwUWF2cGdvVmYwZ0Ft?=
- =?utf-8?B?dTdVKzYwZTAvdkp5anhSa1hTSm1jOWVudFVnMndETU1mOWw3bFpXUGxOVFUz?=
- =?utf-8?B?bjBEK0cvcHpjNW1VSHhzRmYrL1lyY1VOV0NDQTRmOVUxdEZLKzFzN0xWTTcv?=
- =?utf-8?B?Qkh0a0xyL3dxcU5yQnFBVnEvZEJDczhueW0rODRGelJ0aWpMbExPeUpidm50?=
- =?utf-8?B?ajhQTmVzbWQxSFM0NEFpaTdpVVBpVkZTTFh3VDc4VWRjUHRXNnZncnJxNTlj?=
- =?utf-8?B?K0syVk5nTmwzZ0ZIb2RCaWFjZGpXaGRXa2pzMzFLV0JkZUYzZVhuUk9zN2xG?=
- =?utf-8?B?VTBIeHFuREhBUGhQK1VJLzUva2k1MWhNRlRJR09iQzY5cGNEOUZGNi9uek56?=
- =?utf-8?B?amRpL2Z4UEUzYWdVcm5sK0NTMGpvVEVsdXFYUTl3dUxFbnV6b2FsUjFla3pt?=
- =?utf-8?B?bHB0dDgwaVM3N2xuR3VGaGdKM0JxeXhUZ0srTFhHaTNqWG1xUE5VZ2Nyc21F?=
- =?utf-8?B?VC91YjhtSm1RMXNyNTRDQk1wUWEyNkcyR2ljMkV5SlA5KzFSY2JGTE1QQVpi?=
- =?utf-8?B?WEUvUmgzRXRtOTRUZE5ZNEZCT2NyMWVldHNORTZ6NDFJT0o5WWRMMFJicTR1?=
- =?utf-8?B?SHVobC8xbmNLK1d6UkluMjhkWVdWdkZQaFhzbWNMNWdSY09wSUJJclZ1eDBB?=
- =?utf-8?B?TTA0VWdmYUlpcUMySFlybFZxVFFTbjlYcWN0MWFoTTM2bUdKUkk0anlOdDJD?=
- =?utf-8?B?Z1ovK2lEYVFDbFRYYlRyV21Tc2hBQUNMcTNpanJibkJqcUVmSjNnNGlueGJX?=
- =?utf-8?B?T0pHeXdIb0xQNUdZOTdSRU45TFl6M3o3KzBaNW1pTUVSNytKNDIxcE5zbkJx?=
- =?utf-8?B?QVMvWGFGUlpmTTdiRmw4SHdMWVN3NW0zU3VqUjhDUUhYYVpSZjd0U0dJTzZU?=
- =?utf-8?B?Ung2cm5RRlBQRmRmaHZhWHVwbkl2b2VxM3A0RTdRKzAveVNJZ2U0YytOMERn?=
- =?utf-8?B?Q3I1NUF1Qjd0ZFlZWG5GUDJ1RkJKRHJla0F6VGlkekFQbUVBSUxuWWV0Y09u?=
- =?utf-8?B?Ky84eTA1NnQ5WkNpYi9rNTNmNUs5bVJncGlQSVVJL21hbEoveWRGTnlvWWJo?=
- =?utf-8?B?VXZmSEVha2NtT0FVMXlKQ0NKR3UwUG85UlJaRGtFeUpjVXZaWDQwQmhxT1Jv?=
- =?utf-8?B?NytWUXFCN0xwWkZFbUQ3dTlkYWZJd1JpQWtVY29HWjdWZHRSZWJBUDk5dTk1?=
- =?utf-8?B?UU9uQXNmcExma3kvamZZVXVPWElGQWVjd2hIZDAyWFIya2xDNW5TWUN2cFVO?=
- =?utf-8?B?OTJVN242bjVqTURoT2hRWXFZdWlnaHZCT2lJOHc0SGhPNEloNzVlUWFnaGV5?=
- =?utf-8?B?SFNzSDNmbEYvZ3NMbTJqY1p5U0E2Sk5yM1JxWGZpY1QvL3FUQURuUi80K2Rk?=
- =?utf-8?B?OFlQVzJBa3RNanJ3bnZGZ2gyU3RmY3l2b0V2STgyZG5ZUWpMZjgxMzd6YzNl?=
- =?utf-8?B?SzB2bzdTdjdQVC9Ta282UEVEVHM4dkQ0Qlh1OUF3czRHSTNkV1hjblBuTGpv?=
- =?utf-8?B?bjhiYmswMUNRdDE4eUt5enhuTE8wZ1VuZCt6bzJ3N0swajYrMStEZm5CVjNE?=
- =?utf-8?B?dGxFTDUwd29KVVY2UnFycjUya0Ruci9EdzUxS003VUV3M095dEdVMThnWGs2?=
- =?utf-8?B?L3YxY0d2MldJeXFLMmhVT0hHUmYvOFo4QVp5dUhFVzZ3bGN5Y2xRelE1c2l0?=
- =?utf-8?B?WWFRRTlRZjA4ejV1S05YeUJRd0hXbEdjVEl2ZWZxRUM4cUlYWVBFWEdVdG82?=
- =?utf-8?B?UXlyK3JpbEpuNmZibm01K3RCeEYra0lIM2pONjR2dzhMZjRUOTVPVzc1QU9t?=
- =?utf-8?B?VmMxVGkySzFmcEs3ZDlLRjMyRzNNYUI2b0tsTmo4WDdoVUpHMktYSWxNLytw?=
- =?utf-8?B?d1I4M2t0eXl4akR1OHYvQnRXRzd0NGlta1VWZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(19092799006)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Qy9jckdVZjJCOEtrSEdlWm0wcUUvbHNzN1AzRjcvblEvVnl2c0Q0MmdySy9o?=
- =?utf-8?B?dmV0VGNJVXd4cmR3di9PeDFNdTNGd2ZQQ2I1b2Y3QWdHYW0vTU5HOFM4MllO?=
- =?utf-8?B?Q0EwNDFvTllJMWRqbitUMHB2NDdLU3ptQnNwTG1pNUJUeHFhSytGNThSTW9k?=
- =?utf-8?B?b0dRZ05kTjNtbm42aGdMOE0rdXBLNzVnaEhEckhpdnNzeGxBa2NRTERmV0Ft?=
- =?utf-8?B?ajdsNWJoSnZMRVZlc1NwQWNQSGRnTmpqbk1Kc0t1R2YvTHFzYStOLzlJVk5Z?=
- =?utf-8?B?YTQzQ0VyZkN3RWlCUEhjcWdGU3pHZmlsZGEydVNid0RiU0s0RkdIeGZqRlg2?=
- =?utf-8?B?WnNjUGFWNzdjUzVLRUVEaTdzL3lQS1ZSS0JsUVd5WHhxRmFLb1BRUFBqVzdL?=
- =?utf-8?B?dmk0TjNoemxIWWFYZ2JGbC90bDVQWTZnSlA4UFAwTmlBNzZCbElNUk5FYm9w?=
- =?utf-8?B?TWM0K3BybEVrV0xDRy8zZ0FVM1lpRktJT3ZmcW9KNjJ1a0gxZ043U21vUG41?=
- =?utf-8?B?ZmNvODNzUnp3ZG03bDU4TGEvSnRGUXNodk1Ia0JUQVlJblFQck9tNHBHSWFr?=
- =?utf-8?B?TFR2M3lEaFpsaFR4ZkVTRmptVFVLZWxPZnpXSnRQM0UydkdQVDRab1JOaTg3?=
- =?utf-8?B?OHhYcTlLVVJwdXozWHVTQUdSY1hqZEdabkE1L295TnlCcDhHRDE4OGxzYTZC?=
- =?utf-8?B?dE5kNWdnMEhpY0dPNlFGYzZrOU5sREFlazZodXFyRE13eHl2NmtwN1ZuazU2?=
- =?utf-8?B?eUo1VGJjYkRKeVZiUjhBM3p3VlUvSzZGcFQvdk93MUgrVGVwZi9GSGFBMmtt?=
- =?utf-8?B?d3ZBenY1OUFRc2pQSTlZR2xwT016bDRzalBqZjVLY1VBcEl3dHREMjNmd0Ir?=
- =?utf-8?B?VmFNRVlLTFJRZUpWaWhoWGFyUGV4aHR5WkE3akoyRWJhc2pCSTFYVGFGTjRq?=
- =?utf-8?B?LzU4emh3S0FwczF1aGkxM1hPanV3azVwK0FrYlIrUFNRUTZlbG1nT0hPOHF6?=
- =?utf-8?B?Sm5sZURpdEFiemlvMmYwNDBlQ2NhWStzbmZXU2hVbkZsbnpMSjlzZS9ScjZj?=
- =?utf-8?B?WHhvdGc2OGd1dm8zNGlqY1NsOGUrbStKbVlFVWJ1cURmUGtKa0lQTStWWWVm?=
- =?utf-8?B?VEF5d0R0TW5xZXlTVzVnN1RUbmpYeVhPS29EdmtTeXIrbjlvaHcrOENXQ1NV?=
- =?utf-8?B?Z3FNT2ZQVlZ2cjB3U2JsL0JZZzVyTGVINEJ2SzVBMzVlSEpQM3dPY1ZhM0xU?=
- =?utf-8?B?RWxoM1g4TGx3MDhvb0x6bm0vOU1CK1lQR3lkckF3RWgyZWlqRDRWc1hTQnFV?=
- =?utf-8?B?WTc0RklKSSthMkVJRUpJTllKR09OT2VLZWVHTGdtSjlJN29YdTRZTGVaVGpy?=
- =?utf-8?B?QVkxSkhtRXd5K1AwRHVWZ1N5a3BSYUF2UWd4UUExelowQ1Z4bmthaytURjdp?=
- =?utf-8?B?RUNSVU9MZWNGT3d2WnBoRUpFRTdGVkJQSXB2Rm43bXk1aUZLUC9oenFIalRL?=
- =?utf-8?B?UktGTjlIZjZ1M0FjQ0ppU0dlZk81QTZndVRnUG43SnhoRXhkR2RtTms0S2dn?=
- =?utf-8?B?TDljajJXb21nYjE5cmNtdFRMK1JVYkhtcVZPRGJZTGhWN3JoY2l3d0pqbi80?=
- =?utf-8?B?VkRFMER6c3A0aU51bzdGRi9DRGZNNnVvRzUvRFlaejhNY2M3VEQ2Si95V2hu?=
- =?utf-8?B?enNaS21OclVnTlFRZHdWNXFka0tzblMrNVZqUjcrMElXTWgvb2F3MnJVYmoy?=
- =?utf-8?B?cW13LzdTVm5nQTk0T3hsNWJWbm0wa1M5S2E5QnpreGhkY2NWOU4zakhnV0o0?=
- =?utf-8?B?SkNrUkk1VUlvZW92MlQ0TzdvUGlzMEwycUxlZHhKVzUwUjg0RUVobnpLREJZ?=
- =?utf-8?B?QnhFcmVjYVdrRnljamRkZDRya044dkRzZysyZlhuTjdCOU5jcm5vUWRYeS9w?=
- =?utf-8?B?N2Fha0hUendDR2NyVHpwS0xuUnVybDc4bzdQU2cxbVFRNlZBaHFLU242aFFC?=
- =?utf-8?B?elRaNitLWWp2NnNnUzdiclZzcXhOaUxYQTlDQjE3c1hSdWppZUE4UHlST1Vn?=
- =?utf-8?B?QUQySnV5NDVUZDQ1R3FRMVY1WmN0aUxGak1sdEZuNXFSUHRibjJMYzRsRExx?=
- =?utf-8?B?dHVxRno4UnhlUGxzUU1ybmRZV2VqdkI2ais1N0pTREEvRW0rdVAyaU91azly?=
- =?utf-8?B?a0dZM2Ruay9pSkxrUWZvRzFOVEhiNUdwSUNCdFdCd0RGZHpRdy90MXFldVFt?=
- =?utf-8?B?UElvUkluOGVoanFXbXpRWk9pbEp3QXBzUXBUb2NzaXZwZ09STzZrMmxDcDFj?=
- =?utf-8?B?N0tPRUF5MzRrNGd5cGFUK3FXL2lBcWY3cmxoTVYvcXJubm5hVlhpQT09?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f6e48a9-acc8-4fe3-366d-08de4f77dc25
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2026 12:08:54.7758
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: buYl8W/iWWvy9fcVRluIIECb8yRWS443PWharLlqO9HzNiDa2HyjDVi3aAUcE142se8EAT3y3CyJ3FMOUSNW7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB11356
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e917f964-85d9-4c33-a79a-d7f7474a6afb@ti.com>
 
-From: Peng Fan <peng.fan@nxp.com>
+On Thu, Nov 27, 2025 at 04:03:40PM +0530, Beleswar Prasad Padhi wrote:
+> Hi Patrick, Mathieu,
+> 
+> On 27/11/25 02:11, Patrick Oppenlander wrote:
+> > On Tue, 25 Nov 2025 at 19:39, Beleswar Padhi <b-padhi@ti.com> wrote:
+> >> From: Richard Genoud <richard.genoud@bootlin.com>
+> >>
+> >> Introduce software IPC handshake between the host running Linux and the
+> >> remote processors to gracefully stop/reset the remote core.
+> >>
+> >> Upon a stop request, remoteproc driver sends a RP_MBOX_SHUTDOWN mailbox
+> >> message to the remotecore.
+> >> The remote core is expected to:
+> >> - relinquish all the resources acquired through Device Manager (DM)
+> >> - disable its interrupts
+> >> - send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
+> >> - enter WFI state.
+> > What happens if the remote core is unable to action the shutdown
+> > request 
+> 
+> 
+> We abort the shutdown sequence if the remoteproc does not respond with
+> an ACK within the timeout assuming rproc is busy doing some work.
+> 
+> > (maybe it has crashed).
+> 
+> 
+> remoteproc core has the infra to handle rproc crash. It initiates a
+> recovery mechanism by stopping and starting the rproc with the same
+> firmware.
+> 
+> Are you suggesting that we check if rproc_stop() is invoked from a
+> recovery context, and forcefully reset the rproc without sending/waiting
+> for SHUTDOWN msg as a crashed core can't respond to mbox irqs?
 
-Add imx_rproc_cfg_imx95_m7 and address(TCM and DDR) mapping.
-Add i.MX95 of_device_id entry.
+I think that is a fair ask.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/remoteproc/imx_rproc.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> 
+> >
+> > Is there a way to cleanup resources which the remote core allocated
+> > without rebooting the whole system?
+> 
+> For SW resources (like mem, vdev): Yes
+> However, I feel this is currently missing in rproc core. We should be
+> making a call to rproc_resource_cleanup() in rproc_boot_recovery()'s
+> error paths and in rproc_crash_handler_work() in case of subsequent
+> crashes.
+> 
+> ^^ Mathieu, thoughts about the above?
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 09f168d9ebbecee5d26b0ed4e3523f0030275f31..375de79168a1c8d11b87ac1bd63774a3feac106d 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -133,6 +133,18 @@ struct imx_rproc {
- 	u32				flags;
- };
- 
-+static const struct imx_rproc_att imx_rproc_att_imx95_m7[] = {
-+	/* dev addr , sys addr  , size	    , flags */
-+	/* TCM CODE NON-SECURE */
-+	{ 0x00000000, 0x203C0000, 0x00040000, ATT_OWN | ATT_IOMEM },
-+
-+	/* TCM SYS NON-SECURE*/
-+	{ 0x20000000, 0x20400000, 0x00040000, ATT_OWN | ATT_IOMEM },
-+
-+	/* DDR */
-+	{ 0x80000000, 0x80000000, 0x50000000, 0 },
-+};
-+
- static const struct imx_rproc_att imx_rproc_att_imx93[] = {
- 	/* dev addr , sys addr  , size	    , flags */
- 	/* TCM CODE NON-SECURE */
-@@ -1435,6 +1447,15 @@ static const struct imx_rproc_dcfg imx_rproc_cfg_imx93 = {
- 	.flags		= IMX_RPROC_NEED_CLKS,
- };
- 
-+static const struct imx_rproc_dcfg imx_rproc_cfg_imx95_m7 = {
-+	.att		= imx_rproc_att_imx95_m7,
-+	.att_size	= ARRAY_SIZE(imx_rproc_att_imx95_m7),
-+	.ops		= &imx_rproc_ops_sm_lmm,
-+	/* Must align with System Manager Firmware */
-+	.cpuid		= 1, /* Use 1 as cpu id for M7 core */
-+	.lmid		= 1, /* Use 1 as Logical Machine ID where M7 resides */
-+};
-+
- static const struct of_device_id imx_rproc_of_match[] = {
- 	{ .compatible = "fsl,imx7ulp-cm4", .data = &imx_rproc_cfg_imx7ulp },
- 	{ .compatible = "fsl,imx7d-cm4", .data = &imx_rproc_cfg_imx7d },
-@@ -1449,6 +1470,7 @@ static const struct of_device_id imx_rproc_of_match[] = {
- 	{ .compatible = "fsl,imx8qm-cm4", .data = &imx_rproc_cfg_imx8qm },
- 	{ .compatible = "fsl,imx8ulp-cm33", .data = &imx_rproc_cfg_imx8ulp },
- 	{ .compatible = "fsl,imx93-cm33", .data = &imx_rproc_cfg_imx93 },
-+	{ .compatible = "fsl,imx95-cm7", .data = &imx_rproc_cfg_imx95_m7 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, imx_rproc_of_match);
+So far a crash has been treated like a rproc_stop()/rproc_start() operation.
+Doing resource cleanup as part of a crash recovery would akin to a
+rproc_shutdown()/rproc_boot() operation, introducing a lot of churn and backward
+compatibility issues.
 
--- 
-2.37.1
-
+> 
+> For HW resources: No
+> In TI Device Manager (DM) firmware, only the entity which requested a
+> resource can relinquish it, no other host can do that cleanup on behalf
+> of that entity. So, we can't do much here.
+> 
+> Thanks,
+> Beleswar
+> 
+> >
+> > Patrick
+> >
+> >> Meanwhile, the K3 remoteproc driver does:
+> >> - wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
+> >> - wait for the remoteproc to enter WFI state
+> >> - reset the remote core through device manager
+> >>
+> >> Based on work from: Hari Nagalla <hnagalla@ti.com>
+> >>
+> >> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+> >> [b-padhi@ti.com: Extend support to all rprocs]
+> >> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> >> ---
+> >> v2: Changelog:
+> >> 1. Extend graceful shutdown support for all rprocs (R5, DSP, M4)
+> >> 2. Halt core only if SHUTDOWN_ACK is received from rproc and it has
+> >> entered WFI state.
+> >> 3. Convert return type of is_core_in_wfi() to bool. Works better with
+> >> readx_poll_timeout() condition.
+> >> 4. Cast RP_MBOX_SHUTDOWN to uintptr_t to suppress compiler warnings
+> >> when void* is 64 bit.
+> >> 5. Wrapped Graceful shutdown code in the form of notify_shutdown_rproc
+> >> function.
+> >> 6. Updated commit message to fix minor typos and such.
+> >>
+> >> Link to v1:
+> >> https://lore.kernel.org/all/20240621150058.319524-5-richard.genoud@bootlin.com/
+> >>
+> >> Testing done:
+> >> 1. Tested Boot across all TI K3 EVM/SK boards.
+> >> 2. Tested IPC on all TI K3 J7* EVM/SK boards (& AM62x SK).
+> >> 4. Tested R5 rprocs can now be shutdown and powered back on
+> >> from userspace.
+> >> 3. Tested that each patch in the series generates no new
+> >> warnings/errors.
+> >>
+> >>  drivers/remoteproc/omap_remoteproc.h      |  9 ++-
+> >>  drivers/remoteproc/ti_k3_common.c         | 72 +++++++++++++++++++++++
+> >>  drivers/remoteproc/ti_k3_common.h         |  4 ++
+> >>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +
+> >>  drivers/remoteproc/ti_k3_m4_remoteproc.c  |  2 +
+> >>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  5 ++
+> >>  6 files changed, 93 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+> >> index 828e13256c023..c008f11fa2a43 100644
+> >> --- a/drivers/remoteproc/omap_remoteproc.h
+> >> +++ b/drivers/remoteproc/omap_remoteproc.h
+> >> @@ -42,6 +42,11 @@
+> >>   * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
+> >>   * on a suspend request
+> >>   *
+> >> + * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
+> >> + *
+> >> + * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor for a
+> >> + * shutdown request. The remote processor should be in WFI state short after.
+> >> + *
+> >>   * Introduce new message definitions if any here.
+> >>   *
+> >>   * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
+> >> @@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
+> >>         RP_MBOX_SUSPEND_SYSTEM  = 0xFFFFFF11,
+> >>         RP_MBOX_SUSPEND_ACK     = 0xFFFFFF12,
+> >>         RP_MBOX_SUSPEND_CANCEL  = 0xFFFFFF13,
+> >> -       RP_MBOX_END_MSG         = 0xFFFFFF14,
+> >> +       RP_MBOX_SHUTDOWN        = 0xFFFFFF14,
+> >> +       RP_MBOX_SHUTDOWN_ACK    = 0xFFFFFF15,
+> >> +       RP_MBOX_END_MSG         = 0xFFFFFF16,
+> >>  };
+> >>
+> >>  #endif /* _OMAP_RPMSG_H */
+> >> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
+> >> index 56b71652e449f..5d469f65115c3 100644
+> >> --- a/drivers/remoteproc/ti_k3_common.c
+> >> +++ b/drivers/remoteproc/ti_k3_common.c
+> >> @@ -18,7 +18,9 @@
+> >>   *     Hari Nagalla <hnagalla@ti.com>
+> >>   */
+> >>
+> >> +#include <linux/delay.h>
+> >>  #include <linux/io.h>
+> >> +#include <linux/iopoll.h>
+> >>  #include <linux/mailbox_client.h>
+> >>  #include <linux/module.h>
+> >>  #include <linux/of_address.h>
+> >> @@ -69,6 +71,10 @@ void k3_rproc_mbox_callback(struct mbox_client *client, void *data)
+> >>         case RP_MBOX_ECHO_REPLY:
+> >>                 dev_info(dev, "received echo reply from %s\n", rproc->name);
+> >>                 break;
+> >> +       case RP_MBOX_SHUTDOWN_ACK:
+> >> +               dev_dbg(dev, "received shutdown_ack from %s\n", rproc->name);
+> >> +               complete(&kproc->shutdown_complete);
+> >> +               break;
+> >>         default:
+> >>                 /* silently handle all other valid messages */
+> >>                 if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
+> >> @@ -188,6 +194,67 @@ int k3_rproc_request_mbox(struct rproc *rproc)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
+> >>
+> >> +/**
+> >> + * is_core_in_wfi - Utility function to check core status
+> >> + * @kproc: remote core pointer used for checking core status
+> >> + *
+> >> + * This utility function is invoked by the shutdown sequence to ensure
+> >> + * the remote core is in wfi, before asserting a reset.
+> >> + */
+> >> +bool is_core_in_wfi(struct k3_rproc *kproc)
+> >> +{
+> >> +       int ret;
+> >> +       u64 boot_vec;
+> >> +       u32 cfg, ctrl, stat;
+> >> +
+> >> +       ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl, &stat);
+> >> +       if (ret)
+> >> +               return false;
+> >> +
+> >> +       return (bool)(stat & PROC_BOOT_STATUS_FLAG_CPU_WFI);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(is_core_in_wfi);
+> >> +
+> >> +/**
+> >> + * notify_shutdown_rproc - Prepare the remoteproc for a shutdown
+> >> + * @kproc: remote core pointer used for sending mbox msg
+> >> + *
+> >> + * This function sends the shutdown prepare message to remote processor and
+> >> + * waits for an ACK. Further, it checks if the remote processor has entered
+> >> + * into WFI mode. It is invoked in shutdown sequence to ensure the rproc
+> >> + * has relinquished its resources before asserting a reset, so the shutdown
+> >> + * happens cleanly.
+> >> + */
+> >> +int notify_shutdown_rproc(struct k3_rproc *kproc)
+> >> +{
+> >> +       bool wfi_status = false;
+> >> +       int ret;
+> >> +
+> >> +       reinit_completion(&kproc->shutdown_complete);
+> >> +
+> >> +       ret = mbox_send_message(kproc->mbox, (void *)(uintptr_t)RP_MBOX_SHUTDOWN);
+> >> +       if (ret < 0) {
+> >> +               dev_err(kproc->dev, "PM mbox_send_message failed: %d\n", ret);
+> >> +               return ret;
+> >> +       }
+> >> +
+> >> +       ret = wait_for_completion_timeout(&kproc->shutdown_complete,
+> >> +                                         msecs_to_jiffies(5000));
+> >> +       if (ret == 0) {
+> >> +               dev_err(kproc->dev, "%s: timeout waiting for rproc completion event\n",
+> >> +                       __func__);
+> >> +               return -EBUSY;
+> >> +       }
+> >> +
+> >> +       ret = readx_poll_timeout(is_core_in_wfi, kproc, wfi_status, wfi_status,
+> >> +                                200, 2000);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       return 0;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(notify_shutdown_rproc);
+> >> +
+> >>  /*
+> >>   * The K3 DSP and M4 cores have a local reset that affects only the CPU, and a
+> >>   * generic module reset that powers on the device and allows the internal
+> >> @@ -288,6 +355,11 @@ EXPORT_SYMBOL_GPL(k3_rproc_start);
+> >>  int k3_rproc_stop(struct rproc *rproc)
+> >>  {
+> >>         struct k3_rproc *kproc = rproc->priv;
+> >> +       int ret;
+> >> +
+> >> +       ret = notify_shutdown_rproc(kproc);
+> >> +       if (ret)
+> >> +               return ret;
+> >>
+> >>         return k3_rproc_reset(kproc);
+> >>  }
+> >> diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
+> >> index aee3c28dbe510..2a025f4894b82 100644
+> >> --- a/drivers/remoteproc/ti_k3_common.h
+> >> +++ b/drivers/remoteproc/ti_k3_common.h
+> >> @@ -22,6 +22,7 @@
+> >>  #define REMOTEPROC_TI_K3_COMMON_H
+> >>
+> >>  #define KEYSTONE_RPROC_LOCAL_ADDRESS_MASK      (SZ_16M - 1)
+> >> +#define PROC_BOOT_STATUS_FLAG_CPU_WFI          0x00000002
+> >>
+> >>  /**
+> >>   * struct k3_rproc_mem - internal memory structure
+> >> @@ -92,6 +93,7 @@ struct k3_rproc {
+> >>         u32 ti_sci_id;
+> >>         struct mbox_chan *mbox;
+> >>         struct mbox_client client;
+> >> +       struct completion shutdown_complete;
+> >>         void *priv;
+> >>  };
+> >>
+> >> @@ -115,4 +117,6 @@ int k3_rproc_of_get_memories(struct platform_device *pdev,
+> >>  void k3_mem_release(void *data);
+> >>  int k3_reserved_mem_init(struct k3_rproc *kproc);
+> >>  void k3_release_tsp(void *data);
+> >> +bool is_core_in_wfi(struct k3_rproc *kproc);
+> >> +int notify_shutdown_rproc(struct k3_rproc *kproc);
+> >>  #endif /* REMOTEPROC_TI_K3_COMMON_H */
+> >> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> >> index d6ceea6dc920e..156ae09d8ee25 100644
+> >> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> >> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> >> @@ -133,6 +133,8 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+> >>         if (ret)
+> >>                 return ret;
+> >>
+> >> +       init_completion(&kproc->shutdown_complete);
+> >> +
+> >>         ret = k3_rproc_of_get_memories(pdev, kproc);
+> >>         if (ret)
+> >>                 return ret;
+> >> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> >> index 3a11fd24eb52b..64d99071279b0 100644
+> >> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> >> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> >> @@ -90,6 +90,8 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
+> >>         if (ret)
+> >>                 return ret;
+> >>
+> >> +       init_completion(&kproc->shutdown_complete);
+> >> +
+> >>         ret = k3_rproc_of_get_memories(pdev, kproc);
+> >>         if (ret)
+> >>                 return ret;
+> >> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> >> index 04f23295ffc10..8748dc6089cc2 100644
+> >> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> >> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> >> @@ -533,6 +533,10 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+> >>         struct k3_r5_cluster *cluster = core->cluster;
+> >>         int ret;
+> >>
+> >> +       ret = notify_shutdown_rproc(kproc);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >>         /* halt all applicable cores */
+> >>         if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+> >>                 list_for_each_entry(core, &cluster->cores, elem) {
+> >> @@ -1129,6 +1133,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+> >>                         goto out;
+> >>                 }
+> >>
+> >> +               init_completion(&kproc->shutdown_complete);
+> >>  init_rmem:
+> >>                 k3_r5_adjust_tcm_sizes(kproc);
+> >>
+> >> --
+> >> 2.34.1
+> >>
+> >>
