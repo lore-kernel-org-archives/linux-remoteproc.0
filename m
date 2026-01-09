@@ -1,45 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C0F337680;
-	Fri,  9 Jan 2026 08:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8100A2FA0DF;
+	Fri,  9 Jan 2026 08:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767947477; cv=none; b=iZiGfBBFR0ql1xrwKllYH0ah4Ti6r6N0hwjAqjGeGbudmVpo5+dzEAynDPv58fSJnJOxICXIGLKiv19MZPfMM2DkAnfn/x95+TbIV7HiLucxh28x+Y1DuyCfEcHqJM4Z+aNJji+EAp3gzJigURVA1IGHP2HpseMoQm8C1yd7s4Y=
+	t=1767947904; cv=none; b=GpY1qO+/WYZJMjNmxVVBAiU51pyjgF4FPHg3P41Y8GveQ3w6Pbna7y4fTFn1v7PMA/N3dQJl+9ocCQ0vRkMZWOQPFhbKmq1/tJboz8U4gpmzU6H3QnqXFG5T3TXMeJSyFts+HQ0/I7TUVqRmjRwCzr5QRXK3yhtU3jB6ZSKWHBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767947477; c=relaxed/simple;
-	bh=z/3K945QaPnxo9J+uTHlZjInxvBPFTxyR9rwDXWHnBE=;
+	s=arc-20240116; t=1767947904; c=relaxed/simple;
+	bh=GOK6m9wIFd/54meS8u7eNi+3Ziy96yomzx/Fy24h6WA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Si2kmzWgdx7UExOaQUYQ7eJlttQi9kBNoEUDeUUdxyBhBFdrZqVLNlRf2irnoH06WvOwEwTj4zBRpWykQArDucmJVayb+QqCEyeNLvPePmeTTS3tQ0bEOVQcx5R2s+GcI34xYKlGs9F/8uXfbVwifi4EPHMF4xdMWENvvAcv6Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/F98IYC; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXvw4TWTkJCIJDubYlJlTwaBkeNr6kLXknygZjJWKeLBw+JtLrQYrcnIQEdsnuRFFT0ofISGtR0Axa31eHXundGKUFhxvkjhCTq9lNsgu5+FJOjI715euo0Vwxd6VlkbC5klbyjaM6SCwux1Up0m1eYIT8xyz++APj7n/9FBNn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LcdJy21D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/F98IYC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49C3BC4CEF7;
-	Fri,  9 Jan 2026 08:31:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LcdJy21D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE4A9C4CEF1;
+	Fri,  9 Jan 2026 08:38:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767947477;
-	bh=z/3K945QaPnxo9J+uTHlZjInxvBPFTxyR9rwDXWHnBE=;
+	s=k20201202; t=1767947904;
+	bh=GOK6m9wIFd/54meS8u7eNi+3Ziy96yomzx/Fy24h6WA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h/F98IYCnm230ekFZV6Odp+YUCpsetRbeBwvHWXz1TUVfP9wo6MZsFkDelPRwFRHL
-	 s+y0GrTUTALP5YsT+pIWPl56Kug2XTs0jogTxnjqHgHzwom4AGndIykRGE4z7q4wZp
-	 aU6ZkRQehPCAGn4dp3Mn62eaNJNtyEoeFcqk+dXcMDbu5xw67Zc6Y1ueNtYK9HC7iC
-	 SmUg16Lb+k2o5hyqSbg+mXIT1l6HUJ2QN6ZFsvnqDB2UVpiEGPNnxrrxOF9sRXqWD3
-	 xqXBnhGuEj8/D05wt+n59J/B5EH/RYgF5uph7tntf36f8hwHZmbiixOgQdVSqo7cC6
-	 AfcmupFlPFv2Q==
-Date: Fri, 9 Jan 2026 09:31:15 +0100
+	b=LcdJy21DgoWTMDUB9ocHeRm34vaw9uU50QDWkTaMoCRW5pHB0sbN36GdLftlCnUla
+	 eWgJVRUpWJh70UBPWlvFpiNG2e7oKeuFsxTWvTYayOhcOZ1bgZle/IXXEq2PjHDbWA
+	 dkJup7svvwrrmyg1ICF3OXszmMvVmQRK9gw4a6F60DtvvHeExAxg+O0XXrG4iW7XX2
+	 wYWxoxtlIMz9Y9GGkoiUDVvRce6zEtXbGZhJ5EPt9NLNQf/pdT7RI4a+OA3KV4shbI
+	 XMGZrAIvx9JRoXnaSY1brksqvf9wNTi49CsYSPh/pI7OF6P2yWDDcOnGFwJhoFzI9C
+	 yLQyPK5p90l5Q==
+Date: Fri, 9 Jan 2026 09:38:21 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 Cc: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com, 
 	linux-remoteproc@vger.kernel.org, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, Govind Singh <govinds@codeaurora.org>, robh@kernel.org, 
-	conor+dt@kernel.org, konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] remoteproc: qcom_q6v5_wcss: drop unused clocks
- from q6v5 struct
-Message-ID: <20260109-rough-goldfish-of-sufficiency-adbfbf@quoll>
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, konradybcio@kernel.org, 
+	sboyd@kernel.org, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] dt-bindings: remoteproc: qcom,ipq8074-wcss-pil:
+ convert to DT schema
+Message-ID: <20260109-silky-authentic-gibbon-1f92ef@quoll>
 References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
- <20260109043352.3072933-2-mr.nuke.me@gmail.com>
+ <20260109043352.3072933-3-mr.nuke.me@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -48,19 +47,19 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260109043352.3072933-2-mr.nuke.me@gmail.com>
+In-Reply-To: <20260109043352.3072933-3-mr.nuke.me@gmail.com>
 
-On Thu, Jan 08, 2026 at 10:33:36PM -0600, Alexandru Gagniuc wrote:
-> Three of the clocks from struct q6v5_wcss are not populated, and are
-> not used. Remove them.
+On Thu, Jan 08, 2026 at 10:33:37PM -0600, Alexandru Gagniuc wrote:
+> Convert the QCS404 and IPQ WCSS Peripheral Image Loader bindings to DT
+> schema. The text bindngs incorrectly implied that IPQ8074 needs only
+> one qcom,smem-states entry. This is only true for QCS404. IPQ8074
+> requires both "stop" and "shutdown".
 > 
-> Fixes: 0af65b9b915e ("remoteproc: qcom: wcss: Add non pas wcss Q6 support for QCS404")
+> The example is to be added in a subsequent commit that adds the
+> IPQ9574 binding.
 > 
-
-Drop blank line. There are no spacers between tags.
-
 > Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
+> 
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
