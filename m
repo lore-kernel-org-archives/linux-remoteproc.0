@@ -1,86 +1,137 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0757E309F0B;
-	Fri,  9 Jan 2026 08:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9F334405F;
+	Fri,  9 Jan 2026 08:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767947358; cv=none; b=FpoEZDDhavWSZ/2lxZZgGh9imRW6BYAsLCs6W0rX5eIIaIdllT4b3kriskkvLS3fd+KZ1Vdz/bZbA5B32MREMmt+LE5+pzgpSFbhmah/7rDiY+DfoNnwH3vCZqtGJRu2B5QSYFpHvkq2KzkXrqjZ4y9L7k2pichM8Zc+38VggGI=
+	t=1767947436; cv=none; b=EjmLqmUj4USSYPwF+TghAETngjDKtxSzc2Gs6FvxQC9NQeCbiwVGMe7fNWlukugmpEIDm/tKOC1wE1kl7dApOCJJdK6JINVhmCyOnd+Mlz7feJHRxLin0kNI72LTeU3W+Pwkxpgr3PQOlrnqThDDzX6O3qrNw7BPxVwxtnga1ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767947358; c=relaxed/simple;
-	bh=DR+6npnCyebeUSMfXW51qn4aIacFlfDSregQ/90gJPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFcK4bGqi9B4cvht8sJFXyBOY+c+LAtMlLdNsU3/MukFhWbXqPFStGiAwMwoVNchszm3WzfclcIU82KRZnsXoOQE6aeL80enyRWLWF5mCbznNTTH0NFQJKAPV6TMvJLaAQIwLFCHvbVNpaM4qwmp8Z8Y9SWQgCniap5GP8EZ6JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKI+tUx8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1767947436; c=relaxed/simple;
+	bh=or07uxmqS+L/dS4dqUgo0rh3GtAd9dwYI+GAzt7QKLo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uxDoby5qUyqYKMemuyeW55tSpANDFXQKxyrtgua+Euw7DOwlh68018nKp3GQZC7NDfTi+VnzylTWEFJi0bbfcMMTzXfQAtMnROPEWD7fs4dddRKRhei7rXfxPpvTSTdyK6KeXhfItGER/rELlqiYp6fPzr3q/PzTuIs5XiZns+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOIY67ir; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKI+tUx8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED464C4CEF1;
-	Fri,  9 Jan 2026 08:29:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOIY67ir"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78863C4CEF1;
+	Fri,  9 Jan 2026 08:30:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1767947357;
-	bh=DR+6npnCyebeUSMfXW51qn4aIacFlfDSregQ/90gJPA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TKI+tUx8m0cVPNA1oaU9tRMyNG0a0ud6MPpevi38CoynJJ4xJSSC7Hkx8tD42ZcO1
-	 tXZ6KcT0HDZLTG1tBcWG60qhIz7T1Lh6BVDJgqTMvySppinQU1Eheq6MqBdBdBqU0L
-	 ONeqqZ/fiwmWcbuREM2v3Jw+e0abRfs0lS8JfHw+eeVZc3rlWniubliRzOBVFc50aE
-	 wp+d2zLOmT7QP8ktMLYLLTl3UkeSt1E9PPQFLU2scA+HDb7EbfLZSgyyNKU8br1cjo
-	 s5IUFXy1WXahM+5eLdTNc5Yc08DkEvmHWTI9azKzP66s37ZTe66DXpoo5BNxMEi0G5
-	 Kvt7u9JvrxX+Q==
-Date: Fri, 9 Jan 2026 09:29:14 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com, 
-	linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org, 
-	konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574
- support
-Message-ID: <20260109-viper-of-radical-correction-836d83@quoll>
-References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+	s=k20201202; t=1767947435;
+	bh=or07uxmqS+L/dS4dqUgo0rh3GtAd9dwYI+GAzt7QKLo=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=bOIY67irxSPwjTTshTs+3YBamS85MeAgZJ5oxRBYAfUaKOUKPCj/mZZksrbE7u8mR
+	 E5aFtg1e6mrry4UNH0id/tiFy+TzRnNOeWsdGkEUKNLgqbeLhMC/OAkV8k9zdIMI3X
+	 YMA/F2Vjrram4vhRo9sQ1BXGlkUMayhAo08qigIt4CZiESSGT954H5XrzQ7OD/8Tts
+	 qYFyvraDmu1/Aeh7ZaIwKrfEq0kup4lGLOesGulEh/ZNo9DNR3FSL91KzW2RBzR66G
+	 TRmwesJItMpAG9ns1sRfbVaNMh3huVpxPw9Gw5zW2wbErPFl/rc3qNKpbwwmYpLR/h
+	 Rn0+oPjlmgmYg==
+Message-ID: <fc06077a-70ae-4b00-836a-4be3712a30e0@kernel.org>
+Date: Fri, 9 Jan 2026 09:30:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574
+ support
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+ linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org,
+ robh@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ sboyd@kernel.org, p.zabel@pengutronix.de, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+ <20260109-viper-of-radical-correction-836d83@quoll>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260109-viper-of-radical-correction-836d83@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 08, 2026 at 10:33:35PM -0600, Alexandru Gagniuc wrote:
-> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
-> driver. This firmware is usually used to run ath11k firmware and enable
-> wifi with chips such as QCN5024.
+On 09/01/2026 09:29, Krzysztof Kozlowski wrote:
+> On Thu, Jan 08, 2026 at 10:33:35PM -0600, Alexandru Gagniuc wrote:
+>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
+>> driver. This firmware is usually used to run ath11k firmware and enable
+>> wifi with chips such as QCN5024.
+>>
+>> When submitting v1, I learned that the firmware can also be loaded by
+>> the trustzone firmware. Since TZ is not shipped with the kernel, it
+>> makes sense to have the option of a native init sequence, as not all
+>> devices come with the latest TZ firmware.
+>>
+>> Qualcomm tries to assure us that the TZ firmware will always do the
+>> right thing (TM), but I am not fully convinced, and believe there is
+>> justification for a native remoteproc loader. Besides, this series
+>> has improvements to the existing code.
+>>
+>> Changes since v1:
+>>  - Improve bindings following review feedback
 > 
-> When submitting v1, I learned that the firmware can also be loaded by
-> the trustzone firmware. Since TZ is not shipped with the kernel, it
-> makes sense to have the option of a native init sequence, as not all
-> devices come with the latest TZ firmware.
+> This is not specific enough.
+
+I saw now detailed changelogs in individual patches, so it's fine.
+
 > 
-> Qualcomm tries to assure us that the TZ firmware will always do the
-> right thing (TM), but I am not fully convinced, and believe there is
-> justification for a native remoteproc loader. Besides, this series
-> has improvements to the existing code.
+> With such vague changelog you could at least make it easy for us to
+> compare with older version, but not:
 > 
-> Changes since v1:
->  - Improve bindings following review feedback
+> $ b4 diff '20260109043352.3072933-1-mr.nuke.me@gmail.com'
+> Grabbing thread from lore.kernel.org/all/20260109043352.3072933-1-mr.nuke.me@gmail.com/t.mbox.gz
+> Checking for older revisions
+> Grabbing search results from lore.kernel.org
+> Nothing matching that query.
+> ---
+> Analyzing 10 messages in the thread
+> Could not find lower series to compare against.
 
-This is not specific enough.
-
-With such vague changelog you could at least make it easy for us to
-compare with older version, but not:
-
-$ b4 diff '20260109043352.3072933-1-mr.nuke.me@gmail.com'
-Grabbing thread from lore.kernel.org/all/20260109043352.3072933-1-mr.nuke.me@gmail.com/t.mbox.gz
-Checking for older revisions
-Grabbing search results from lore.kernel.org
-Nothing matching that query.
----
-Analyzing 10 messages in the thread
-Could not find lower series to compare against.
 
 
 Best regards,
 Krzysztof
-
