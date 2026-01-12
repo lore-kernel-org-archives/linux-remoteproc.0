@@ -1,300 +1,104 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5C52D2493
-	for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jan 2026 11:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C5630171A
+	for <linux-remoteproc@vger.kernel.org>; Mon, 12 Jan 2026 11:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768216095; cv=none; b=ViGyjw9f41ml1CZyT3Vgty7oQ4ziktPRttCYFFA5HUVPrkPwTz3qSfUfFso+kTgxiEcOoRxqN1ny9O/PvJmxaOlkY1I0XW7RLRzs1fvYtn6d0soDH/uAw60/dx2YzBQCoz2pKpnOl4tWtBLYb4HV0/7sc6fP7ly9Hvc9rYEXPPU=
+	t=1768216399; cv=none; b=jl9PBhQ2v4SFwTUy/Be2yRNwbNfoDuruBrXMbw6oKIREeLaQEAsBM5yk5SADBPX0Sm94Xzc5zqmADqoWIxgdnfcwcdL2WInq5bQnKg0sEy2tqka2Q3jTuWLklBwXP5thLk/fxWcykKsBcJ5HUVzFF2T7EdxEAouvOGD55FXfJh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768216095; c=relaxed/simple;
-	bh=THBb8iNVHiWTn1PIj6nqLs4VxMIVMf+6Yz/hbkzsFYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YlZfeASWn8qjwMoV7hMpBrQOIw8ek+6QXuiml7G3qPWBmBGKAYePWwVVtEp2RRGxz/HWqsS5kiZqOdKLlKKNvhltCanTFLKMgIy2vDhDzh63rq8i7ZYjFumzap8fm6Xzwi/NKTc28VlfZ5auPOkjKZvDepSLnqFWurzUrJtmMao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNbuxFiM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1768216399; c=relaxed/simple;
+	bh=tiFf2Hax6qiohmjLxT9EJq13kbkFEMihpUrXcadA+yM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HZ9gJphyQCawes5V8sJAZJSWrrVY6bsOKzm46FJTAdo2XUiiL8Lay8vDPg/MeylEA/OtyOVcutDvVbYXFHDFhnQ4zcmc5qklmffsIjEUAaaTHCTtJmgopv0vZeLWqCagYZvsNT3zLRVivuHw34OXtdjkUwJGwAZLXRmA6Cq/4QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0+dU8cF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNbuxFiM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 231B7C19421;
-	Mon, 12 Jan 2026 11:08:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0+dU8cF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FDB1C16AAE;
+	Mon, 12 Jan 2026 11:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1768216094;
-	bh=THBb8iNVHiWTn1PIj6nqLs4VxMIVMf+6Yz/hbkzsFYg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SNbuxFiM+KUf4s0Q5cA9Ir+Rwb+ANHuCxIxlO7+4q82ldLGqE5n7px8HroqMDvrwu
-	 GuNDmpm3n/9W9TdSPNG0wNjUS+a+svJ5NxcEeNajuyttNMxcNBCCc9l86vAH2A4jBH
-	 G1UQunGoItdl6kGLmxWYJ4LFw7fPuz6a/pz4bB/xn22cHWC1M2bz+rCOG7AyP5YF3C
-	 iiIninKltQh9oLYxVtdITgmQEEcZyofgEDadZDZYA+8oPThYW0I4E9v8DRyQpepwq7
-	 qLzkjAts+MMZTQhnUgmiIJbRxvcFOb/v1jtNCnIhr/8/7o5lpQzPRU/rqfbmV7aPTh
-	 yLGStpB7j4XDQ==
+	s=k20201202; t=1768216399;
+	bh=tiFf2Hax6qiohmjLxT9EJq13kbkFEMihpUrXcadA+yM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d0+dU8cFO0JZbjcLt1ek31AKogkcQbNNCaOCyuZuSSGW/weNh5ABkmh75/6H4eKBX
+	 MonYQjR8gezW6I46OTGhOT32qZau+uUh5PbXVBV5VnUznC4cTkSfeQEZQQIVy++gzH
+	 OGUBnrMlzHniMna1dELhmvBwKl3cdj5qwBzFtAVie7MqHis/sE/YC+IWtea5fxMI/l
+	 F20g15e8T6QQJA49n1Yn9zCgQJEZ0OYfFAAJRib+tNbNQ/aEX5ETLEuXwYOzjtec8L
+	 KdIdIjROIgrGmDl95CIKzGbaoNEP4+Qw6UXYw56doXJZLDwww42lfLkDA2UYUB2lpb
+	 z6vjU/yQGpKfg==
+Date: Mon, 12 Jan 2026 11:13:16 +0000
 From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	linux-remoteproc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	tzungbi@kernel.org
-Subject: [PATCH v2] remoteproc: mediatek: Break lock dependency to `prepare_lock`
-Date: Mon, 12 Jan 2026 11:07:55 +0000
-Message-ID: <20260112110755.2435899-1-tzungbi@kernel.org>
-X-Mailer: git-send-email 2.52.0.457.g6b5491de43-goog
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] remoteproc: mediatek: Break lock dependency to
+ `prepare_lock`
+Message-ID: <aWTXTMTanGj1io3b@google.com>
+References: <20251229043146.4102967-1-tzungbi@kernel.org>
+ <kkwqx4h3oqmfimejyy73hreq5pcjwbijwy2chnve5bjmcq4fli@ty4n5adbo5oy>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kkwqx4h3oqmfimejyy73hreq5pcjwbijwy2chnve5bjmcq4fli@ty4n5adbo5oy>
 
-A potential circular locking dependency (ABBA deadlock) exists between
-`ec_dev->lock` and the clock framework's `prepare_lock`.
+On Sat, Jan 10, 2026 at 01:10:22PM -0600, Bjorn Andersson wrote:
+> On Mon, Dec 29, 2025 at 04:31:46AM +0000, Tzung-Bi Shih wrote:
+> > `scp_ipi_send` acquires `prepare_lock` via `clk_prepare_enable` while
+> 
+> Please suffix functions with (), instead of treating it just like any
+> other `symbol`, this makes it easier to see what is a function and what
+> is an object/variable.
+> 
+> > the caller often holds `ec_dev->lock` (e.g., `cros_ec_cmd_xfer`).  The
+> > reverse dependency exists where `clk_prepare` can trigger operations
+> > that eventually take `ec_dev->lock` (e.g., via sysfs/regulator/genpd).
+> 
+> Can you please expand this explanation slightly. You're hinting that
+> there's an ABBA issue, but you're leaving it to the reader to know/guess
+> what that issue is.
+> 
+> I believe you have some concrete case where this is a probelm, please
+> include this, if nothing else as an example.
+> 
+> > 
+> > Move clock prepare / unprepare operations to remoteproc prepare() /
+> > unprepare() callbacks to break the lock dependency from `ec_dev->lock`
+> > to `prepare_lock`.
+> 
+> Please expand this with an argumentation that the prolonged "prepared
+> time" will not have any negative impact.
+> 
+> > 
+> > This breaks the dependency chain in the lockdep report:
+> > > WARNING: possible circular locking dependency detected
+> > > ...
+> > > the existing dependency chain (in reverse order) is:
+> > > ...
+> > > -> #0 (prepare_lock){+.+.}-{3:3}:
+> > >        __lock_acquire
+> > >        lock_acquire
+> > >        __mutex_lock_common
+> > >        mutex_lock_nested
+> > >        clk_prepare
+> > >        scp_ipi_send [mtk_scp_ipi]
+> > >        scp_send_ipi [mtk_scp]
+> > >        mtk_rpmsg_send [mtk_rpmsg]
+> > >        rpmsg_send [rpmsg_core]
+> > >        cros_ec_pkt_xfer_rpmsg [cros_ec_rpmsg]
+> 
+> If this is the AB case, can you please include a stack for the BA case
+> as well in the commit message?
+> 
+> 
+> With these things clarified, I expect that your patch is the correct way
+> to solve the problem.
 
-The first order (A -> B) occurs when scp_ipi_send() is called while
-`ec_dev->lock` is held (e.g., within cros_ec_cmd_xfer()):
-1. cros_ec_cmd_xfer() acquires `ec_dev->lock` and calls scp_ipi_send().
-2. scp_ipi_send() calls clk_prepare_enable(), which acquires
-   `prepare_lock`.
-See #0 in the following example calling trace.
-(Lock Order: `ec_dev->lock` -> `prepare_lock`)
-
-The reverse order (B -> A) is more complex and has been observed
-(learned) by lockdep.  It involves the clock prepare operation
-triggering power domain changes, which then propagates through sysfs
-and power supply uevents, eventually calling back into the ChromeOS EC
-driver and attempting to acquire `ec_dev->lock`:
-1. Something calls clk_prepare(), which acquires `prepare_lock`.  It
-   then triggers genpd operations like genpd_runtime_resume(), which
-   takes `&genpd->mlock`.
-2. Power domain changes can trigger regulator changes; regulator
-   changes can then trigger device link changes; device link changes
-   can then trigger sysfs changes.  Eventually, power_supply_uevent()
-   is called.
-3. This leads to calls like cros_usbpd_charger_get_prop(), which calls
-   cros_ec_cmd_xfer_status(), which then attempts to acquire
-   `ec_dev->lock`.
-See #1 ~ #6 in the following example calling trace.
-(Lock Order: `prepare_lock` -> `&genpd->mlock` -> ... -> `&ec_dev->lock`)
-
-Move the clk_prepare()/clk_unprepare() operations for `scp->clk` to the
-remoteproc prepare()/unprepare() callbacks.  This ensures `prepare_lock`
-is only acquired in prepare()/unprepare() callbacks.  Since
-`ec_dev->lock` is not involved in the callbacks, the dependency loop is
-broken.
-
-This means the clock is always "prepared" when the SCP is running.  The
-prolonged "prepared time" for the clock should be acceptable as SCP is
-designed to be a very power efficient processor.  The power consumption
-impact can be negligible.
-
-A simplified calling trace reported by lockdep:
-> -> #6 (&ec_dev->lock)
->        cros_ec_cmd_xfer
->        cros_ec_cmd_xfer_status
->        cros_usbpd_charger_get_port_status
->        cros_usbpd_charger_get_prop
->        power_supply_get_property
->        power_supply_show_property
->        power_supply_uevent
->        dev_uevent
->        uevent_show
->        dev_attr_show
->        sysfs_kf_seq_show
->        kernfs_seq_show
-> -> #5 (kn->active#2)
->        kernfs_drain
->        __kernfs_remove
->        kernfs_remove_by_name_ns
->        sysfs_remove_file_ns
->        device_del
->        __device_link_del
->        device_links_driver_bound
-> -> #4 (device_links_lock)
->        device_link_remove
->        _regulator_put
->        regulator_put
-> -> #3 (regulator_list_mutex)
->        regulator_lock_dependent
->        regulator_disable
->        scpsys_power_off
->        _genpd_power_off
->        genpd_power_off
-> -> #2 (&genpd->mlock/1)
->        genpd_add_subdomain
->        pm_genpd_add_subdomain
->        scpsys_add_subdomain
->        scpsys_probe
-> -> #1 (&genpd->mlock)
->        genpd_runtime_resume
->        __rpm_callback
->        rpm_callback
->        rpm_resume
->        __pm_runtime_resume
->        clk_core_prepare
->        clk_prepare
-> -> #0 (prepare_lock)
->        clk_prepare
->        scp_ipi_send
->        scp_send_ipi
->        mtk_rpmsg_send
->        rpmsg_send
->        cros_ec_pkt_xfer_rpmsg
-
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
----
-v2:
-- Re-organized commit message.
-- Rebased to next-20260109.
-
-v1: https://lore.kernel.org/r/20251229043146.4102967-1-tzungbi@kernel.org
-
- drivers/remoteproc/mtk_scp.c     | 39 +++++++++++++++++++++++---------
- drivers/remoteproc/mtk_scp_ipi.c |  4 ++--
- 2 files changed, 30 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index 328541e62158..4651311aeb07 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -283,7 +283,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
- 	struct mtk_scp *scp = priv;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clocks\n");
- 		return IRQ_NONE;
-@@ -291,7 +291,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
- 
- 	scp->data->scp_irq_handler(scp);
- 
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return IRQ_HANDLED;
- }
-@@ -665,7 +665,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = scp->dev;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
-@@ -680,7 +680,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
- 
- 	ret = scp_elf_load_segments(rproc, fw);
- leave:
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return ret;
- }
-@@ -691,14 +691,14 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = scp->dev;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
- 	}
- 
- 	ret = scp_ipi_init(scp, fw);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	return ret;
- }
- 
-@@ -709,7 +709,7 @@ static int scp_start(struct rproc *rproc)
- 	struct scp_run *run = &scp->run;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
-@@ -734,14 +734,14 @@ static int scp_start(struct rproc *rproc)
- 		goto stop;
- 	}
- 
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	dev_info(dev, "SCP is ready. FW version %s\n", run->fw_ver);
- 
- 	return 0;
- 
- stop:
- 	scp->data->scp_reset_assert(scp);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	return ret;
- }
- 
-@@ -909,7 +909,7 @@ static int scp_stop(struct rproc *rproc)
- 	struct mtk_scp *scp = rproc->priv;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clocks\n");
- 		return ret;
-@@ -917,12 +917,29 @@ static int scp_stop(struct rproc *rproc)
- 
- 	scp->data->scp_reset_assert(scp);
- 	scp->data->scp_stop(scp);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return 0;
- }
- 
-+static int scp_prepare(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = rproc->priv;
-+
-+	return clk_prepare(scp->clk);
-+}
-+
-+static int scp_unprepare(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = rproc->priv;
-+
-+	clk_unprepare(scp->clk);
-+	return 0;
-+}
-+
- static const struct rproc_ops scp_ops = {
-+	.prepare	= scp_prepare,
-+	.unprepare	= scp_unprepare,
- 	.start		= scp_start,
- 	.stop		= scp_stop,
- 	.load		= scp_load,
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index c068227e251e..7a37e273b3af 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -171,7 +171,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 	    WARN_ON(len > scp_sizes->ipi_share_buffer_size) || WARN_ON(!buf))
- 		return -EINVAL;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clock\n");
- 		return ret;
-@@ -211,7 +211,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 
- unlock_mutex:
- 	mutex_unlock(&scp->send_lock);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return ret;
- }
--- 
-2.52.0.457.g6b5491de43-goog
-
+An attempt: https://lore.kernel.org/r/20260112110755.2435899-1-tzungbi@kernel.org
