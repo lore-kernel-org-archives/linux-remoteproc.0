@@ -1,119 +1,183 @@
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EF52D12F3
-	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 03:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A343435C1BA
+	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 05:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768362846; cv=none; b=ZgaYp+xFWf7F2ARruEQfwhKGfa1u+Pb8FiS5XFucFxrSfC7s0jbWDjVxqiH+FKg5q4dArCVyyuXu8yb1QQWZn6YOYapP2Of/vmmp/g/4XG24ZCznSuNEGNSikrgWuisXQmDOT2yB9AIgdYNYIIZAy0gYtIgS5xvoSQbrJJbtC38=
+	t=1768369384; cv=none; b=O7HQtB/9svzturHbKZWsVVDsbb0tHZ5OR6RMJ5iRKKsMXLOh/APCf2oWrfmT2MMujsjbkjxJZOMoGqE6a9lQg5kmvXluOgBKyHFxauYV4jiBPAGDWajv60G1XVUVAN7O8GK/eMyw4STVz2rUfNUglcKIp8MOgP/LBMr+Z1zP/L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768362846; c=relaxed/simple;
-	bh=49Agcpa3CyOrsrq3mxJxyGH0gvBgFmZs5flbI2qCHE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EJtK5WkQS+2dDEtuL1kPn6UpOISo3gXOoH3ZrfZUqziaG+zvyoo657TuKqD4L0BgP36TP1M4nsGkgcg0AGY4n8QOq8Wb2gvoenedKronlyPBlr3M/5DszM2q5w08xeIBw9Z+8h30z7jGG8hQ04y47TqJnuc56qBXD/kEPvZB07o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BHff7knx; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1768369384; c=relaxed/simple;
+	bh=JJTMFk75Gutd2cMz2WE3Y+uKgBt/r2fjdYpl1po23nc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pW44qLLAMa8IeqMbFqtcLtqQMHq9KiOVGi4vkySMJmGmBT7QY5o0WPD5kmOvoTF+Iro1vQc6PfcYv87Lp/OlQ/eoUkDr5ar5C7Y5Ko3O31KXaZRM9KHT0WQalQ1CBmbMdqlRgE8iwIluVDE4MM29oE0TUzpwSP4VMUzuuHNsXog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P/o+CV+S; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=J/6DRws8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHff7knx"
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-45a84c6746cso2030675b6e.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Jan 2026 19:54:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P/o+CV+S";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="J/6DRws8"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60E5En5w2949894
+	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 05:42:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VxdvyYzIZyOHUwmxqd8hJRQXBpXJoAEPCSYU7mtFibg=; b=P/o+CV+Su1NYNCVk
+	rrJMjpCGKB97iInfMqhn816TuCnId5jDZQFcrxYKsiKFxXw03Ez6b//ucOJOBacS
+	Hrqq85OyN6prLm1FF2bRcqizP7rMPV1bPzy1i00pX3n3XMZI0grqOJa9R8fbkqPQ
+	daTqxfG7E+NDbJB07sqxT5b7AfcOSy8zcdJJ2VhFJ57fKp5tgmBt/Or65vec9KrE
+	Mvw3x7Hx0yEJWgLPKKQW1tqsZ1EJlMYcRvPHLL7AdeYcg+GShI1PjUzXHFKcykxh
+	SW0ape/gZbSZkdIvXdfOnCpG9cHM2SnVJRPd14fsGfZEsOyVSidvAmX3zohKyCxr
+	J5gTsA==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bns8v2eej-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 05:42:53 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-34eff656256so8290698a91.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Jan 2026 21:42:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768362844; x=1768967644; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=os7psBao2TAcJgN/WPhuBCCHt5VJwqCGY+lkgH3GuIM=;
-        b=BHff7knxIjXR9o3S5bPVLTTdCSxKsLlqepizM9GDtWS+Irqt86qwnMIS6dnFrobbz0
-         NdEgeFsncS1cz08u3mqtV/V0mwzaqcM1ieLj0KBi83FNarTGCQ26kh1gfb6oQQ3fNvjk
-         uThReZYl10EdvAGhSYMXu7NB9TILMYJktuVNeO9y9a6P1iCwZBaHiC+H89Hqd2Rj03Ty
-         SGfHjFYI/z9By6N0Kz5Gh7wYI4DGuBwmvX5sOBaa3UZp/y7DSwn2hjuN2ZGt0+91OfiF
-         ZR6MxyfT3FNgXmxmHnXcFpLZLHQsvXXFK8zqq1ImRopO0lSkzuJlPdZJLRzlhIyQcODQ
-         PNMQ==
+        d=oss.qualcomm.com; s=google; t=1768369372; x=1768974172; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VxdvyYzIZyOHUwmxqd8hJRQXBpXJoAEPCSYU7mtFibg=;
+        b=J/6DRws8eWNKJkF0SttomNs8FM7m77MyqPeFJa4nPu7cxfYyjDAR2ZvnWjRZQXi88s
+         gYrVMIVV8XvyLChEd+exRu+CJaRhC63sjqxDuVqgYyEjZLAImcU6A6Eet21+9MiWEuAO
+         C+QaGYJqZSvQvNnmsWx+DoBg7wxOL13gkL2OurCl+0EtTmRsdTykCWqxizb13XPEMSnW
+         kg0jxjJQ82xSqRtSqO/gELBuO2nKLBzRBfoffTXDln/EkWPu30Tl1O2l0DLrEhdt2H5b
+         VJPK/ipqzNsIxmshljJSuKoeuW1C5VIGJBLDCpKUvIlZ0cGRU2sFxW2R9+R8R+Ec7jHv
+         syXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768362844; x=1768967644;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=os7psBao2TAcJgN/WPhuBCCHt5VJwqCGY+lkgH3GuIM=;
-        b=HpB0L46WFOgjTuCqd1ef3Dqsr+Ncc6FQXn1nr0f5l8XBJwD6BOhMFvT1VCkQumVHXJ
-         nOX7SXbv5Hv1lhfOsGkZxPG5HRK2zTztMF83viXnHEAOAC2NQVHum1RxrTMr7eW3mYfJ
-         ZihHBckw1Xr6+VI2/BAcATIK1oOUvsm3CkKco6qNeh0Hp02l3GTQox5+Ocn2vfsJ+ikF
-         1wtB4qbCV1QTAoG09ue0L6SqRKPA8AVc7t+/XyleKEfmRNNxNMEk32adzzpKuBUgpxdR
-         gobtp5oXU1OHPoz8bcVdAnWDhN9k905F6UBkFL9x61qX/nFL7yKnAWD5FBJhAg5E/pqY
-         F+Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsHmXbIrJECyC77PAHmpAEWrYrx8GOum0RgoLFEaM2G7bHqM7aynX/mYFm3BUgvt2rJKzYBHslY63xw/e58k2D@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL5niqfEMppLcn7WBxy5zTaUEc4JaHWDacwC+lJ37nay83D4gT
-	ECN1sdL0a0fP4ljmX6iq084z/24boEE0EgIk3nAlhoXqTjwH0z5MboAN
-X-Gm-Gg: AY/fxX5ICaM2GITESWAT5Rutf5F+UjwSDhcvIKoUNGXE9JSwoLazPwUeaPP6XaE8NGS
-	LCT+rfyhsaqUeW/xxlsPkSJLrdhYmJM5ETJud1LWyzen99rPjch/U9t5SatrXwA4yrVO4lLo58c
-	lSbDZXuPlzUTMN/R1gbznubZ+u6GTHX0sRu4H32Yt349UnDkLjjuwJjXINVOullR92UjhDu8Whm
-	4PTB/c/TrcaoW795xoJKqm2D38BgUPkNMB+dHVMRtKUCXwMrXv/yDfvHzijjMWi1x0XH4ZVY7D2
-	Q/TgLkrU8gWnm1pOu55QGhR96Oq4Smy8auxiZHp8dq2AZqjzQDzHmDLFhWvhqnHvMDtRLyjEUQY
-	hZIK/yzshVK+99Ou9nJ6OzaRhMW1DJHhAfFIUc0Ylh2DM6RU+TLOn+XrTrae6jFnbZndmho5/mA
-	YAsiQvqkbxIyJ3mr8OG56mdQaSkb0RX3TvvwOCxf+gVsA2GE626xgog+CNSnKW721ta49zBlQLj
-	soWU72QczEEZz3Sa+ivuebcBMrsQcgLsmGj8pfFMQ==
-X-Received: by 2002:a05:6808:c14b:b0:455:d4ee:bb2a with SMTP id 5614622812f47-45c7142ffafmr1012777b6e.5.1768362844292;
-        Tue, 13 Jan 2026 19:54:04 -0800 (PST)
-Received: from nukework.gtech (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa50721a6sm15877468fac.10.2026.01.13.19.54.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Jan 2026 19:54:02 -0800 (PST)
-From: "Alex G." <mr.nuke.me@gmail.com>
-To: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
- linux-remoteproc@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574 support
-Date: Tue, 13 Jan 2026 21:54:00 -0600
-Message-ID: <4814455.tdWV9SEqCh@nukework.gtech>
-In-Reply-To: <14283f23-31cc-4bf8-9762-f0348c30618d@oss.qualcomm.com>
-References:
- <20260109043352.3072933-1-mr.nuke.me@gmail.com>
- <14283f23-31cc-4bf8-9762-f0348c30618d@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1768369372; x=1768974172;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VxdvyYzIZyOHUwmxqd8hJRQXBpXJoAEPCSYU7mtFibg=;
+        b=K9ClLZx4n2j5ycpFoQJ5ipOdKBZoJK+NgzyBKVTSkmyA0ubdf2Fk9PHyw2j3NBBLlz
+         ur81lha9bu3ZWYuWfGNn1z+c9mfeMpW+LjlLDCfcMIdkEpHUYNLEtQZ1DuPJzRUJY+dH
+         iLFpf3hKiJUArWb28w/+1NMxGNhuNb7eAXM3kPdll39oSuzFjzlmImDsHmqAgFdnMbt5
+         03T3vqMQPt5mF2iqbo6gYxoWqjgEiDJ8ajVh/oXmlpM96aK2TMIMA0yIM3HDmjQmt/01
+         Vx5F5xInl0UmVm6l3XTj36hC/5f9CmnXivl47XMIADqmC5CCpmv2Lp5u9+U9IHG4s1n5
+         iDAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXB7GoEJsSoeNP6vrYKyW48XJFfxNxpmsT4nJpBjDHIZ8XrtK0Z0EudUJjoqGr0MKKkDUG4RnvyWCVvE7YUm3Kc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYWE1bWNWyXdg36vSAuGeIeWRJraotUr1OAp3kFqklbnmLUR/d
+	kVa0WciqHx2FP0bK1UHpYsztUiYjBD6GEmJO3xXqVLZCJtgnSZuN5Njn7qVhK3RKeCXw4c2viPU
+	JaY/Sm4jYP/KORrjC2Ixe084l6cc60VUreblYUfkS7HaS8KGb8b4wcoA2Q+uDF+IpIm4+Y60f
+X-Gm-Gg: AY/fxX7Sav44cNpZNLNAV/UJ0KZJSJGYqW7YZwPbU0HSgdKhEerlS0knMpTlLhUXhra
+	U+qSoMrG7WJA9gYzDV9Z/KYZewnPdycCX0I7G12M0W+OEzd/ZKnnQce2rGahUJsGwtVFQNQPlSS
+	qaQTHdhXA3G8Tztm3NAGYys4nwgaMuC9yzEIci4ysCJ5llO3sGW3JZKzzCzAlDd0upcNG4L2i/+
+	AU420A7Lr/22LhcXCIOcoCzjHC/gHy3jYgsId/N3Aqm55YC7CshM9gLGWOrWiy9JXII0zboZwy1
+	UXByXuGLBFtgXy/PCxk5MAYFJYaBYQMgGI6N3Hp3Et5PG+6U+K+/XMtejyLLGQCRito1VDiWWLA
+	bvaekBFom5sQVSqlmJ7KmEuhcd1UcLTAQOgPTxMTOaArcyQ/P
+X-Received: by 2002:a17:90b:3806:b0:34c:75d1:6f90 with SMTP id 98e67ed59e1d1-35109129c2bmr1728008a91.17.1768369372459;
+        Tue, 13 Jan 2026 21:42:52 -0800 (PST)
+X-Received: by 2002:a17:90b:3806:b0:34c:75d1:6f90 with SMTP id 98e67ed59e1d1-35109129c2bmr1727981a91.17.1768369371938;
+        Tue, 13 Jan 2026 21:42:51 -0800 (PST)
+Received: from [10.151.36.141] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35109c78f20sm784491a91.13.2026.01.13.21.42.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Jan 2026 21:42:51 -0800 (PST)
+Message-ID: <cfa31127-2208-4c65-b8ef-3b5d534e050b@oss.qualcomm.com>
+Date: Wed, 14 Jan 2026 11:12:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574
+ support
+To: "Alex G." <mr.nuke.me@gmail.com>, andersson@kernel.org, krzk+dt@kernel.org,
+        mturquette@baylibre.com, linux-remoteproc@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
+        konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+ <14283f23-31cc-4bf8-9762-f0348c30618d@oss.qualcomm.com>
+ <4814455.tdWV9SEqCh@nukework.gtech>
+Content-Language: en-US
+From: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+In-Reply-To: <4814455.tdWV9SEqCh@nukework.gtech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=aY5sXBot c=1 sm=1 tr=0 ts=69672cdd cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=MOnJJczUH92I72-_oswA:9 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-ORIG-GUID: 0sOh6sMVtaMs00ZjY2mRQwkqzSSWu9ML
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE0MDA0MSBTYWx0ZWRfX+TO79aXJdEpe
+ 6arP1E5ttRDVuDjrCCkInipgF8+zwbmOCIJ5XKqebiU/yRm4MlD/Wyt880wIKOnUUuaNIwLTWBu
+ R8JnUXQ6RgM3oTh2mQqIdPmbbHCBm3+PWTmmWdEdfzqqcRzSLJyw0e4wYEhkYNM67w3lyqwAOw5
+ msaxQv/eJaZmBBT0qaWS/AtcfaOgVBR75/2AOcvbFEHonbo8RU6qcogJYBhIgg1iFu8rIXCFDFh
+ uWp4eu/4MykNELa2ngwl1RLpWNJyl96vbsJP2pqnjK5qVc+FqNCTq4N/gUlQK1o3clHTzJ+uXuc
+ 09o6NxqLH6YvLiIZg9cbeWbhBx/h3hUE5cmxiGfJhJ3azCP8WFwMYLPUxaVZFXHxq+3xEIjQplx
+ Fd/K209gdT3AVuYC2UI+Od49Kc5Nhl62plp3sCkVb/UKMp+NKZty12yngZdM8f3Hh07GXDf/mRe
+ vKH2CSzYpY5d2qa63vA==
+X-Proofpoint-GUID: 0sOh6sMVtaMs00ZjY2mRQwkqzSSWu9ML
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-14_01,2026-01-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 bulkscore=0
+ lowpriorityscore=0 clxscore=1015 adultscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2512120000 definitions=main-2601140041
 
-On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
-> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
-> > Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
-> > driver. This firmware is usually used to run ath11k firmware and enable
-> > wifi with chips such as QCN5024.
-> > 
-> > When submitting v1, I learned that the firmware can also be loaded by
-> > the trustzone firmware. Since TZ is not shipped with the kernel, it
-> > makes sense to have the option of a native init sequence, as not all
-> > devices come with the latest TZ firmware.
-> > 
-> > Qualcomm tries to assure us that the TZ firmware will always do the
-> > right thing (TM), but I am not fully convinced
+
+
+On 1/14/2026 9:24 AM, Alex G. wrote:
+> On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
+>> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
+>>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
+>>> driver. This firmware is usually used to run ath11k firmware and enable
+>>> wifi with chips such as QCN5024.
+>>>
+>>> When submitting v1, I learned that the firmware can also be loaded by
+>>> the trustzone firmware. Since TZ is not shipped with the kernel, it
+>>> makes sense to have the option of a native init sequence, as not all
+>>> devices come with the latest TZ firmware.
+>>>
+>>> Qualcomm tries to assure us that the TZ firmware will always do the
+>>> right thing (TM), but I am not fully convinced
+>>
+>> Why else do you think it's there in the firmware? :(
 > 
-> Why else do you think it's there in the firmware? :(
+> A more relevant question is, why do some contributors sincerely believe that 
+> the TZ initialization of Q6 firmware is not a good idea for their use case?
+> 
+> To answer your question, I think the TZ initialization is an afterthought of 
+> the SoC design. I think it was only after ther the design stage that it was 
+> brought up that a remoteproc on AHB has out-of-band access to system memory, 
+> which poses security concerns to some customers. I think authentication was 
+> implemented in TZ to address that. I also think that in order to prevent clock 
+> glitching from bypassing such verification, they had to move the initialization 
+> sequence in TZ as well.
 
-A more relevant question is, why do some contributors sincerely believe that 
-the TZ initialization of Q6 firmware is not a good idea for their use case?
+Exactly, the TZ interface is present to address the security concerns.
+Also, as I mentioned in [1], on some platforms, TZ might access protect the clocks
+and registers which might prevent the remoteproc bringup and throw an access
+violation.
 
-To answer your question, I think the TZ initialization is an afterthought of 
-the SoC design. I think it was only after ther the design stage that it was 
-brought up that a remoteproc on AHB has out-of-band access to system memory, 
-which poses security concerns to some customers. I think authentication was 
-implemented in TZ to address that. I also think that in order to prevent clock 
-glitching from bypassing such verification, they had to move the initialization 
-sequence in TZ as well.
-
-Alex
+We can keep this support added for IPQ9574, as it is good to have, but can we
+keep the default compatible in ipq9574 DTSI to use the TZ interface, which has
+already picked up an R-b in this series [2].
 
 
+[1] https://lore.kernel.org/linux-remoteproc/21468f66-56df-43ea-99c2-7257d8d6bb7c@oss.qualcomm.com/T/#m688033ab79c63a8953e38f5575d1c0ff6b37b13a
+[2] https://lore.kernel.org/linux-remoteproc/20260113092021.1887980-1-varadarajan.narayanan@oss.qualcomm.com/T/#t
 
-
+> 
+> Alex
+> 
+> 
+> 
+> 
+> 
+> 
 
