@@ -1,144 +1,187 @@
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE02D7DD3
-	for <linux-remoteproc@vger.kernel.org>; Thu, 15 Jan 2026 05:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1AF2DC328
+	for <linux-remoteproc@vger.kernel.org>; Thu, 15 Jan 2026 06:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768454880; cv=none; b=gigYsHoDK8CeYYJYaIpQSFkysFlpj8W6+T3w8XHxP4ApbzVW1u642piBdVc1sjb3Nqadn9Ifgv3DmvdXDUZVtkpeAC7Xa1GqXLrPh4lbtN8QA8UqL1Om5gu2UiUm2QiaYPWpkhnCIvM2RwZlrLnso1jBMge8At12R2wSKfuYdxU=
+	t=1768459388; cv=none; b=ScN+b/34uEPYCcrHddkL2OQc3t3Pjrq6ABShcDbumznd6AnJyMeAjDjjzAkty3/b961sFnH5Z2Zyl88tyBnK2pXthWa2qc75mk0Ag+SELzi3/fzTw/5vk4twKv+S+AXvkAmkM173KVtTYn9aSMcczqFdWgiYf5JC/H8QvRbn/Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768454880; c=relaxed/simple;
-	bh=oQqaoD9CWxihva9z43UC4l+nSw+HBzDnr6z/ms6gO2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JxT2TCLBo42PL+HvzExZrOPFjV3S2PdaYvg9RmtwExUkHpcKX1jU2LohNUSnnVcPb2CWcZ2oB+k8coD3vkC3KsMiuXxDoj/IFQ/u5ewWHDij006WiJVLcNeAkiQ2pM6+7APlJjy6+X5XXCZcSX8agxGIPSGIt7ewVdugLqBKuvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2fDgReC; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1768459388; c=relaxed/simple;
+	bh=+aFW6EH9TJ0AOZQTB+GWz9NqX5sXiGDNwhsnV/Xf3jk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=i5rurxWmpQZ1PnxU/qhpCeM5NCzFjrWtg9Qv/y74DCb+N4iwWk4T+/k0NkvSbMmHkJ6bgm8sMM9IZ2sl6veGtdCPsQ+SG13HQ7oHqVZOyyIGxE8m61Xv+ZwPgmy0W17snEMmXrcykAv3SQouCYD+Dta9SqfIS5Iwn+jD9kI24FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dYEweG3V; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WqYmvxiQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2fDgReC"
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-45c8b850f96so226827b6e.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 21:27:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dYEweG3V";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WqYmvxiQ"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60F6g2XA783439
+	for <linux-remoteproc@vger.kernel.org>; Thu, 15 Jan 2026 06:43:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=MrtIlupneZwT0y08AelsrV
+	YE3mbEdWwQW/NPCjWwFkA=; b=dYEweG3Vb5ShsFhmAVh+82W5UK1TFT+bJumgfk
+	7LKi7VW/viA1xHXgOH9z9iJq1HICK1cl4UU9mjJUoyom2YtGVkzHcmfR12ncomSW
+	w5GcoJisy5tOZ7+URr5UPzWZAbupXzYJ9iE/bcpQudUFkYHWPGCghajsvZ5EJONZ
+	ole8GYnftHZ2zxpNpbRcyMsxteBKjldJP+L2X9lqDyg3BDL6xWo1f00oMeiwd2BJ
+	m2mOf3tOKPqp4C4RmDv/13KcEo7mp18Mt1YIL46URYMC9BxZyrJuz8MGGmkg1lTL
+	JAs/wB4RKWeFCjeP7tZQCIqi4R70jdRbHbimYD6/kurTb//A==
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4bpbj5jum6-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 15 Jan 2026 06:43:06 +0000 (GMT)
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-2ae32686ed0so4693002eec.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 22:43:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768454877; x=1769059677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Hja+osRR3fdOtBUZSkMF+9cn4r00td+5ctV4DGDt1o=;
-        b=T2fDgReCIOabBORtFQ5rg9UknhjuKcCscoLJjwYd70GsczUK9izNhVlA+mHXsQ4cOf
-         7Cm2W0eY0m7dBynv0MygZUFKcs5dncGSSTLVkD8/Ui/I7+fHf1EzW8zZfJc+R38Dsexr
-         FFPQVEo5oX3bWrv/JjHBgFK4iPQwSp7hxj9+6gd0TXcMVrDToOxlSlXF/1vi8eEWNNYW
-         890m55QXNTV4fWfhQIBGFDzq+C9tOJACFaZNjmQtgeE4s7lTUSQxmOz5mC8Na+i5sOsG
-         9+OuihdGM0NdFj3XJgpgyONtFfHeWGmWChoM3yspBjU42hLAqLfUmvHZgFQiQ6hc8sJs
-         aGbA==
+        d=oss.qualcomm.com; s=google; t=1768459385; x=1769064185; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MrtIlupneZwT0y08AelsrVYE3mbEdWwQW/NPCjWwFkA=;
+        b=WqYmvxiQH6Wy1u946iYl2nkdWrAMnqvgT4MCzabQWmQf3PZQyBlw8utlleBHtrA3J4
+         CLtdA77wzbcXs9kUFnxFlgPCU7B5uofllGpJMnWmTgHl7pHnqnKoFGQ2ZHTjYH4K7Hvv
+         T4qdfWr2cinXXqt4QU5mH5rl80iFIYijA1LJTyLu/06/ZSoXTzw8ltXZyQiA8NnwIcCH
+         Aw3EWxBtuv7aeCEFvdSPYuqfOaiCTIeatBzl1FFoc4kl3pdvFozidmCCXy2nc+0PXXkn
+         NzEgFMM1lqWKs4tih5KcMzPwsyIkgdobwN1I9BZWSlzp6ew9SvfkRTycoGa/APjo7WJN
+         kusA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768454877; x=1769059677;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7Hja+osRR3fdOtBUZSkMF+9cn4r00td+5ctV4DGDt1o=;
-        b=Y867eR0Gk84CsKssXXlsGXOaf28sbMwzsn9jBbkIHD/JdXQaqk283icV2By6xSGlWY
-         Z1sUHH6Qvu2v3oPm8rFzjsJqqD/Wh1QoOq/Dy5ZvojvSpCCZuuomMyvnuEMEeN3gLvUz
-         LGyirzfx31Kp5V7Fyj3Xuz6DPRvxxjtt7gtt81nggM2aWnRXh+J2bTuWPdq1/sJRl/dT
-         vEEyJ1mxAzyUdo9H9PDcyOMQ4bpzcUcbRIAnUa20JoAfjwKNI0O2CsoNycKt9WO97fQU
-         ylM5hE6y04zZAteL0mSju4fyk1bfA1IYzPzpWAOHiFi1B/N1sdpe/zxGpJY6mQEJiETt
-         aptA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+pwOSucMFN17nQt6K7Aab/VojAAJl4meAxt0ZJvhXZ+YYPRkW0aK9rporkN0KbbgUEC+ubT17nOA0+p/uezwI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLwvKFONerTcgzAywLTEuz+h4wBFWbvYIi9ZmcxZMvAHZpym5e
-	8nxZPDgKXL5ci7R04SjaaSFzTqMBk43g3B5I0EsKoCGfJ3MjY1joe86X
-X-Gm-Gg: AY/fxX6+ndPQp6hRGEKizl/2jvrWEqaOtG0HKIbYEgANWfVcTk8jsVBb1faU36FGedC
-	p+HxVi8bHnI2n5qgP692dDQC1hc7Ovk/Bq/nykwihwkQorvbNFM4qxU01HEF3o6fMgSyVIzh0KP
-	qgE8O+XND40bKruIb3pNOzxpgZtMueFSxYISQpUZ0uHI1qgRPj4FpJF3OHi8xffSdStS2tzX105
-	h72/E/TX4F2I9r6Coq1g9jvkMX+Jh9uelNlXkd7xJe6ilOshWGAUh4q3N+X8isAd8LJOR6lCuei
-	/K/cdkEso4B7c584lKgytNynEEtrOlUH0HruEnjbmriKmLHaREz1MRVEJGqd4+Yw7M0NmY8pV/I
-	NjypBfE+c5p+ajqfdXUuRzmxPodcvB970GHRBWtSxGV2nX0em4yKosEXBbEK0w3kPwjt9FAWaPS
-	kQhoDPqYQebIzoGqRzjpHBww00kcAev9DzUVencJiGU+5H78UKCDOR7Expfl87OCW/sRnmUgal7
-	tjqPZwHrPVuG9GPYMl17bXLwCuJWxI=
-X-Received: by 2002:a05:6808:a585:20b0:45c:71ff:1f69 with SMTP id 5614622812f47-45c71ff212fmr2335636b6e.50.1768454877438;
-        Wed, 14 Jan 2026 21:27:57 -0800 (PST)
-Received: from nukework.gtech (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfd68b13fesm803256a34.3.2026.01.14.21.27.54
+        d=1e100.net; s=20230601; t=1768459385; x=1769064185;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MrtIlupneZwT0y08AelsrVYE3mbEdWwQW/NPCjWwFkA=;
+        b=UEZibjiieT9ohSprAYXEJhA3kLdxOkWDmqAZ4Yh3ncNxbmVqp0A3tTFM3+bDWtkKrt
+         IqntHDmQesBkdohDEVzolkZceCPFhtJquwi/HPToETJIUTglVU2rCWs9MGgR9FAs6ue1
+         7sV3VwcUzlz5Xhm/r7ClpoTe8T50i8EJP1Fdu8U2wCKnEiFBVRNGrkip63pFIid7fGob
+         N4Z1vbkw0cINkd9OezV92jt+SSsL/D+vCXTpVIGr89Crf9bKh/xnvQ/JSjerQAVCa2JC
+         0MZx0W2ds2MTOM8RVd8yi6j9GZyEEke1Chv4/grlltMkEWcn1LP3s+uy+uUgAAzO65fa
+         cJfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXlE2ZuOUifP9bo6JEd7WCkSt9nJhV6oOrtu35zJ6znd8Sw+Oxyo9qh5bWmZy10v1a2yg4I3/Q/dOh4mTTeQEHi@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXLJttKC23aKYeHWZn1msNsjRKCjbl5vV8qT/DRBOUhhQmdzbf
+	8W9tXPFHjL12lcToERQKcfGbydQjt3ISFNnYdLfm+Shsfgqw9uYFbUfxn0L1hJkGUFJvFVaGFw0
+	Yb2lqq3YtOMdDdDIN/nnHr28abJQgvQAzJZ9xVvenm6HGaTCzYENgrx0iQZst9BCTJvQExaKE
+X-Gm-Gg: AY/fxX4aZ3lAA2CuG3OovQyiFOB1g8da7MHTGac2iiEbaJBnRZLErYT8rhjEio/OuAw
+	MRTztDSItS77O/lb656hZNL0/+eKthCnurqCzW/do8L2zwPTIVKFdy74kNtzu9PkOjKNemPvkzi
+	n8NRWcKNHg+sO3s2N0V2w1RM6RtBVdoCp+kM2KByjtHP/urzfCr4n3A+n7wQ3IkQhArD0yFjFS9
+	GTl3kcfYZzxBSOYI03wb2Nsjv3OrZFdGlydUVElBPiNue7B6iGC5vhM09mUAqLahoBH4XEoJ385
+	TmNkUwmcutPk3phpX4+7cHPwBnxu645yR+5m2CugVy+TfkJjfGN4O5r0xhTmhE+elA7F4tYPWg0
+	+1GxngsJUYbftWd/Wvd0iZNQ2CCBYT0GXcxRwWIUsF/HFIpjYTbqcQf8TQqpR
+X-Received: by 2002:a05:7301:6589:b0:2b0:3d03:37d4 with SMTP id 5a478bee46e88-2b486b7592bmr6935081eec.3.1768459385141;
+        Wed, 14 Jan 2026 22:43:05 -0800 (PST)
+X-Received: by 2002:a05:7301:6589:b0:2b0:3d03:37d4 with SMTP id 5a478bee46e88-2b486b7592bmr6935051eec.3.1768459384593;
+        Wed, 14 Jan 2026 22:43:04 -0800 (PST)
+Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2b1775fe27dsm18986471eec.29.2026.01.14.22.43.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 21:27:55 -0800 (PST)
-From: "Alex G." <mr.nuke.me@gmail.com>
-To: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
- linux-remoteproc@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
- konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject:
- Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574 support
-Date: Wed, 14 Jan 2026 23:27:53 -0600
-Message-ID: <27098742.6Emhk5qWAg@nukework.gtech>
-In-Reply-To: <577d547e-6311-49b3-9c74-84797b281447@oss.qualcomm.com>
-References:
- <20260109043352.3072933-1-mr.nuke.me@gmail.com>
- <4814455.tdWV9SEqCh@nukework.gtech>
- <577d547e-6311-49b3-9c74-84797b281447@oss.qualcomm.com>
+        Wed, 14 Jan 2026 22:43:04 -0800 (PST)
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Subject: [PATCH v4 0/2] Add ADSP and CDSP support for Kaanapali SoC
+Date: Wed, 14 Jan 2026 22:42:54 -0800
+Message-Id: <20260114-knp-remoteproc-v4-0-fcf0b04d01af@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG6MaGkC/22OywrCMBBFf0WyNiUPUxpX/oe4mKRTG7RNTWpQS
+ v/dtC4E6Wbgwr3nzEQiBoeRHHcTCZhcdL7P4bDfEdtCf0Xq6pyJYEJxISS99QMN2PkRh+AtbUo
+ DkhkAVtYkj4aAjXutwPMlZwMRqQnQ23bBcMH1UmtdHH14r9rEl/LXwIT+NyRBGS1txbWWRgmEk
+ 4+xeDzhbn3XFfmQRZTkj7LxZ5KZogzTVaWsUqA2KPM8fwDDlJwMEAEAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-3d134
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1768459382; l=2092;
+ i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
+ bh=+aFW6EH9TJ0AOZQTB+GWz9NqX5sXiGDNwhsnV/Xf3jk=;
+ b=rfZlxL+eGHQOPkyW984bYJlowSGdXedygxgCnbFIxoXxjQfH+MuD/fHxey50XhXASw3OW4dpc
+ 7lGvovuJhgyBs149Vhgt5ANe1tnZcsXlqkYvUfjoJlrKW5VE9/MiScK
+X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
+ pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTE1MDA0MiBTYWx0ZWRfX5tPBBhGio1sW
+ Y2I1OJxXr3eWThoTKdAFZWXc2B0Z9iCdsO5B9uoO1/zmzTC/10qDMvO/YsBMxXubI+PmNTldb7u
+ ku+E/Q+FLUZt0UyLHK6bAulHvpQQbDPeuswFj/OU6VowoVVrZrDx5wC2xD1YweRfzxmxE4GmuXD
+ 1wAnayxr9Q3CGRpSchmYeGp+FKJSziKVKxshbAJGh6j8UZ5y4py/mxQTSbyHrRvbAGesPWixsgj
+ CuMstatGLlyKuFZ/f0yaaVOb1X3hiTPX0U+JmwPHTd5+KXZW16yeE4l1GZ7Oh+P3kD0/5SIrY6U
+ gE8Y2nQnFo54WS8xOxl0UrvEMTjZ2bq0yvFaeSKMRx/2DgqsYpnfA4wdzqNqZGdS4YRmx3IovvM
+ I/ezjrbrdITmngcMSPLcIniXOMQxyrJH5u7JVPT9Gmf36s1F2Tt0UoPO47sxl/nhQCTu3rngaAm
+ TBrtuhUuVB3NnlyJmGw==
+X-Proofpoint-ORIG-GUID: _x2406hofYmzmk-y0VL5UsZKkzwqXbj2
+X-Proofpoint-GUID: _x2406hofYmzmk-y0VL5UsZKkzwqXbj2
+X-Authority-Analysis: v=2.4 cv=aapsXBot c=1 sm=1 tr=0 ts=69688c7a cx=c_pps
+ a=wEP8DlPgTf/vqF+yE6f9lg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=wiK5Jlmr689xq3VXDD8A:9 a=QEXdDO2ut3YA:10 a=bBxd6f-gb0O0v-kibOvt:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2026-01-15_02,2026-01-14_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 phishscore=0 adultscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2512120000
+ definitions=main-2601150042
 
-On Wednesday, January 14, 2026 4:26:36 AM CST Konrad Dybcio wrote:
-> On 1/14/26 4:54 AM, Alex G. wrote:
-> > On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
-> >> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
-> >>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
-> >>> driver. This firmware is usually used to run ath11k firmware and enable
-> >>> wifi with chips such as QCN5024.
-> >>> 
-> >>> When submitting v1, I learned that the firmware can also be loaded by
-> >>> the trustzone firmware. Since TZ is not shipped with the kernel, it
-> >>> makes sense to have the option of a native init sequence, as not all
-> >>> devices come with the latest TZ firmware.
-> >>> 
-> >>> Qualcomm tries to assure us that the TZ firmware will always do the
-> >>> right thing (TM), but I am not fully convinced
-> >> 
-> >> Why else do you think it's there in the firmware? :(
-> > 
-> > A more relevant question is, why do some contributors sincerely believe
-> > that the TZ initialization of Q6 firmware is not a good idea for their
-> > use case?
-> > 
-> > To answer your question, I think the TZ initialization is an afterthought
-> > of the SoC design. I think it was only after ther the design stage that
-> > it was brought up that a remoteproc on AHB has out-of-band access to
-> > system memory, which poses security concerns to some customers. I think
-> > authentication was implemented in TZ to address that. I also think that
-> > in order to prevent clock glitching from bypassing such verification,
-> > they had to move the initialization sequence in TZ as well.
-> 
-> I wouldn't exactly call it an afterthought.. Image authentication (as in,
-> verifying the signature of the ELF) has always been part of TZ, because
-> doing so in a user-modifiable context would be absolutely nonsensical
-> 
-> qcom_scm_pas_auth_and_reset() which configures and powers up the rproc
-> has been there for a really long time too (at least since the 2012 SoCs
-> like MSM8974) and I would guesstimate it's been there for a reason - not
-> all clocks can or should be accessible from the OS (from a SW standpoint
-> it would be convenient to have a separate SECURE_CC block where all the
-> clocks we shouldn't care about are moved, but the HW design makes more
-> sense as-is, for the most part), plus there is additional access control
-> hardware on the platform that must be configured from a secure context
-> (by design) which I assume could be part of this sequence, based on
-> the specifics of a given SoC
+Add initial support for remoteprocs including ADSP and CDSP on Qualcomm
+Kaanapali platform which are compatible with ealier Platforms with minor
+difference.
 
-What was the original use case for the Q6 remoteproc? I see today's use case 
-is as a conduit for ath11k firmware to control PCIe devices. Was that always 
-the case? I imagine a more modern design would treat the remoteproc as 
-untrusted by putting it under a bridge or IOMMU with more strict memory access 
-control, so that firmware couldn't access OS memory.
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+---
+Changes in v4:
+- separate adsp/cdsp and soccp, pick adsp/cdsp in this series to unblock other feature
+- fix node order
+- add reviewed-by tag
+- Link to v3: https://lore.kernel.org/r/20251223-knp-remoteproc-v3-0-5b09885c55a5@oss.qualcomm.com
 
+Changes in v3:
+- Drop Glymur ADSP/CDSP binding 
+- Extend the "interrupts" and "interrupt-names" properties in the pas-common
+- add missing IPCC_MPROC_SOCCP definition
+- fix complie err caused by qcom_q6v5_wcss.c
+- code clean up for late attach feature
+- call rproc_report_crash() instead of set RPROC_CRASHED state
+- fix q6v5.running and q6v5.handover_issued state handling
+- if wait_for_completion_timeout return 0, set RPROC_OFFLINE for PAS loader
+- Only ping the subsystem if ready_state is set
+- Link to v2: https://lore.kernel.org/r/20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com
 
-> Konrad
+Changes in v2:
+- Drop MPSS change
+- pick Glymur changes from https://lore.kernel.org/linux-arm-msm/20250924183726.509202-1-sibi.sankar@oss.qualcomm.com
+- Drop redundant adsp bindings - Dmitry
+- Clarify Kaanapali CDSP compatible in commit msg - Krzysztof
+- include pas-common.yaml in soccp yaml and extend the common part - Krzysztof
+- Clear early_boot flag in the adsp stop callback - Dmitry
+- Use .mbn in soccp driver node - Konrad
+- Link to v1: https://lore.kernel.org/r/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com
 
+---
+Jingyi Wang (2):
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali ADSP
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali CDSP
 
+ .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml        | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+---
+base-commit: cc3aa43b44bdb43dfbac0fcb51c56594a11338a8
+change-id: 20251223-knp-remoteproc-f6ba30baa06d
 
+Best regards,
+-- 
+Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
