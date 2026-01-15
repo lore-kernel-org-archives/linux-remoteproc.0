@@ -1,102 +1,145 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3FB3A89BA
-	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 22:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334EA2857CD
+	for <linux-remoteproc@vger.kernel.org>; Thu, 15 Jan 2026 04:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768430554; cv=none; b=ErsFtrbhx+QrM+aNir2DG3o27zaovIdeSVCDn+T9mz03Hd3PqqsBMgdai9/b8GDrTKDPXBR72MhkVg/Zt1D9nV3z+3aR1ghcjQ0ZYCDsUW2zTjZV6tLIaV+TdTps3j7FVMmi1zILx9R5WbiCG1Gun4z/3LrVPBPpGMPZk9apxNo=
+	t=1768452646; cv=none; b=UpNfsOCznLtAph00PdRFjLeqsJgw4AtBb8cYT/OsFUQbtHlCZlmPHr1KJ8o3l2X9h2EIDp+l9ARiRjVbGNe33SYWsdJFkkOF19wN/W/z7GPeaM3hcxWia/VzfHdd/37nS70mmeuqFZ0MNpAzuM+mbbyKxEE+oSN9pvlmHNXb8hA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768430554; c=relaxed/simple;
-	bh=FsoC5ZXVIM0tPvsgw+kQrOtyl7nYAB/8v6gWuJPFCrc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CWxVxt6GQHAXjThDc6wggE4M0KlWyQn4vsufE47mXpBVXylly5m9rpChqmHsMi7sgTmx0kMp5vzWLSE3gOIjQnJiWFNw9zcGkOQhdoxQzGCRT+eSWPP/f3O5dGmDgS9zKXv3hERUcXbAdJQnyTWTzO7YTN9nrt9D0+ig+r1wSt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qQj2aDH1; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1768452646; c=relaxed/simple;
+	bh=bwH7TKQitdKzloCZTOTMKs7FMvbuDSsPsScuXO2XnSQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DYSU/evCCIqzkXKJnAHRgLQRFeX/zYRnA+rDv1fuYPuhEXfpHWsidBJgjpFzQKDyUoxVXgLbS9TiBro/dYepiWf2nQ+9C9FbAEfQ3v7WEmDb9DDd5qVF2L6rNPtBa7GhHE5bMfcXmKHoUVy/tLKn92S+5DsXKFLcwg502HT7NKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAqV74t/; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qQj2aDH1"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2a58f2e514eso2157895ad.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 14:42:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAqV74t/"
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-4041b3c1fa1so205493fac.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 20:50:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1768430544; x=1769035344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1768452644; x=1769057444; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Mq+7e6HHgulV0HLjSWXnWUAjSy0Qs9edOct4mk3Fy3A=;
-        b=qQj2aDH1eXj2Uyw8N5GCdNw2JeYK+YBDNspEGd9ipUWH0Tu8L4HK+8DiJPN7+LhrYO
-         nWStZAzdQuRbGK3gY39BNl8+X0OKeelc0NcqAskVB9c5xSPEaHKzLeTlbbo55WDheNJn
-         2+FWDJhN+Rs98waGiSXJC6VPkp3e0uLpyrhYlP5n2AOpoiP+x5U3XaH9wb6ESdrxW44+
-         hYvSbZZCpG3hiYIuwNtqtBQByvPD01455JpAXJ8klzGB7rE+K4f6AG79k/KgLOUZyszO
-         VBCvH6iDI/o5pxbLh9lhaRv8mQq+dJnJ+LXsIshD4RTAhL/UArDeZnGG33bsPiPsN1Yi
-         ikDQ==
+        bh=gaxkG3FjcBbVuAmcMeHgDVclONwI7K7qJ4Bb/eS73xU=;
+        b=VAqV74t/w3hqcpKjdurhyCLdERsArrjqT4Nh7ItvYgIORi1xyGz6fnccOymsJYnO4V
+         HUAAdkaLwnEOoDYkapMZEsrDOruvgYHBj8I0lDbmAAG+ddByUstdzjnmnLn1ycivhusD
+         sTKkUZ2N2+pDlinagoD5mNzDjZS2MVofA4Em1tE+0LY/PnV84xn7DDfZwqy2tM0RKue6
+         TOOTvICAZfFAnJm3hbjS+apTERfDw7KcFFJe/NxnamvrY1whsXqHLx0MucFIdKF2vX7O
+         QwLCuSRxYtRIoBhHxFjMyJy91QEtxTiVGUwEfVSnDeHodnz/YkAKeIg+oE0dTXmgEAPD
+         Z/XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768430544; x=1769035344;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-gg:x-gm-message-state:from
+        d=1e100.net; s=20230601; t=1768452644; x=1769057444;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=Mq+7e6HHgulV0HLjSWXnWUAjSy0Qs9edOct4mk3Fy3A=;
-        b=RX2GOWc+KDPUc5JzQN8Yw4HrZuLnNtIFBZfdI/CoXvHbQ4OAjzjCc9U+q4he0dfC02
-         cgYyjAPWL1Li/5lW6k+PI86Fkge6eMu/VzwQHiPBzd8VBeiwtS21SH7Sj6J/VGjTpYWK
-         0jqn14QuZhPAWOrngIIpChogSG90455Hyyx5Kjjvn0u7NgJunkH30rreGJNnjxdPyV5j
-         5Z8kcquk7STtB434lCayWtwLbH/zSOW9cAM8NynbIhr7vAzTPsIx1VE1tfWt8eLa8T14
-         5bwp+iJBNTMajKUL0IlUHhMwFbHiNk04toEc4CcgiB3YK3DYT8a+L0edkQIYeI5iuR4f
-         evog==
-X-Forwarded-Encrypted: i=1; AJvYcCWSc7yDc8TzN3pBU/SRmBxnU4MEUe7owt4eHR9+OwTQE/fMfJuCiE0FxiAVH9PRMKky9/TbyRqewBftVScadw2X@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxomjwiAo89GfaDeYTN9+qHAHPjOwvZMr9N+e5WSVkP6idLd6b
-	/QRHMUs662Jqz3Uu+/IMPc7PF92nPOEeeHvYmLWL7SGrw2+XJsuN3z9kgh7jumnNN8o3dLFcr9x
-	2LM80
-X-Gm-Gg: AY/fxX6/S2u+BVvR4WS2ZNqHr6/LK1AurYl/O70UrVqNg4o1nHxkPfsxf+2jU1RD620
-	uDvBmN1pbSzZYcVwnzzOfnzlqNJJ+G1AFpdNIpKXg9nclDAo1nNlpLi0pbAcS1Cd29Ix7R8Fq4j
-	y44CbmgDymVZ+zeosaGvzJyspACkAvqWPij+C5xRmqxRSeQB8gOGjKx+kQMFOkHn1VPgBDKD/gC
-	sQJMVMBg8k6o88QdUSkIhq2rP9Y1qshhWBwZuJZfIyJOJOpj1rBfhvghCz5nvQL90PBl9nu4Zzg
-	wDHaDZDu/ptt6XL7GWtPm+bq/WJ5ZWJ1OQjdRvK7Dl1MPJVl6c9Olxo1C45LRXWsVOqu1VbNRY5
-	VJdWt3F2s7uBtZ05eUvG1jCCUtlQ6siB8VzphQ4ychDAWa+zMAuLacOrQfI9KFrPrwyL+yjFbsc
-	uf9fZMemNuvfA8RwJzI4s=
-X-Received: by 2002:a17:902:d58f:b0:29e:c2dd:85ea with SMTP id d9443c01a7336-2a599dac14emr43196155ad.11.1768430544458;
-        Wed, 14 Jan 2026 14:42:24 -0800 (PST)
-Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a3e3c48dc1sm232455225ad.40.2026.01.14.14.42.23
+        bh=gaxkG3FjcBbVuAmcMeHgDVclONwI7K7qJ4Bb/eS73xU=;
+        b=rL9+J4htsnx9ARG6R2OEPJBePOpkgXs8UySt0ZcFCN/xSMo1JPQRNvgo2YhpfnKTqO
+         jud+xgabIVWn4ZyyL/SEivxZjAudFbjAH+y/mv5wi0528fi1MF4YC19w1gbPslNERNwe
+         1LQuFH0OLqHGEbwDbhV84pSjNPbadYOaCoHi1ohDLqgF5L3oVlRmz6ICzY0gMyVuO51t
+         MyPw2XcPodPG3JlU/M+VZrRhOdFgS1l0STDGXpumdnV0EVW2l3v2bGgFV4pg2Agn2SiF
+         Xrbuw/5Z4bUrze4Mhv8eUpzdeeHQg+ifu00OU7f9YaWWqBXXGSkR1YO2pt4k/xxGcaQ+
+         56Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlFX7k720tEzbQSXQ+NFkdJviBGVLyTwVI+6ob211FDVXt/L/d/EvxgQX0gRzyUssLIuiKahJnqF8zFt7OEydq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzol1nZH3Yq2WJuT4R/ZWodNZ75ascme6D5/xiVAPxAnIzMH9GI
+	u4IHINyJpPEZHvAER6+rO/fyhPoaWn/Mm1p4GXqIoBVwI2i9ULyGu2EY
+X-Gm-Gg: AY/fxX594/MOzBsE6ORCUVmh5s+99TUeeOlco+cZI7jKCYK/zmQT2uXzW9EPwRJ62Q4
+	NIKyI+Sgk2CxospDvU9Dx2RmBD6v5GwN5jRW7XVMh9uH/tfalAy8Vf2UdkvSrZ3ZwgqZlZc9Jh4
+	NtvuVvJGXeq7GwdxY+wYBHhlQHc8GE1wwNxzPJH/0noh35HEyqd8+crBk3vZkS3sYct5p2ZqWYB
+	66aYZZgaNLWt3HqdZuxsit0lu2rQyrWda2oEM2UGMOhjdNtm4Rob1eaNXPKuxjr/pgW2OGQXQB7
+	mS7DDLZ8PgOzTbO8wnwVN7YI4R/bKl5b0Xn7AZ+eWkorjPo9n/jUYZYdSFlkqBgLgZDgh71Ni7v
+	OC5NTTyqevqlTBpsQT9dkw7ubfw356M7h1Ia8RVvWUv/twe2mRGxv61LMO2ltOQLBDL+MZnoJem
+	esnR5EMzhGH5lJmWoiMTRZUrfJwABL/7Jzy9F2jR6Bow3nTIo1nGQnsFDejnW5HQn0UNqpYx5RC
+	kWZL4t94L8//747LCIUHvHsaj0O3iE=
+X-Received: by 2002:a05:6870:c0c3:b0:3ec:4266:13f7 with SMTP id 586e51a60fabf-40407197688mr3586919fac.29.1768452644055;
+        Wed, 14 Jan 2026 20:50:44 -0800 (PST)
+Received: from nukework.gtech (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4de8cbfsm17750746fac.3.2026.01.14.20.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 14:42:23 -0800 (PST)
-From: Kevin Hilman <khilman@baylibre.com>
-To: andersson@kernel.org, Haotian Zhang <vulab@iscas.ac.cn>
-Cc: baolin.wang@linux.alibaba.com, linux-omap@vger.kernel.org, 
- linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251124104805.135-1-vulab@iscas.ac.cn>
-References: <20251124104805.135-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] hwspinlock: omap: Handle devm_pm_runtime_enable()
- errors
-Message-Id: <176843054363.3597156.2942719740253822601.b4-ty@baylibre.com>
-Date: Wed, 14 Jan 2026 14:42:23 -0800
+        Wed, 14 Jan 2026 20:50:42 -0800 (PST)
+From: "Alex G." <mr.nuke.me@gmail.com>
+To: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
+ linux-remoteproc@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
+ konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject:
+ Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574 support
+Date: Wed, 14 Jan 2026 22:50:40 -0600
+Message-ID: <5206383.iZASKD2KPV@nukework.gtech>
+In-Reply-To: <cfa31127-2208-4c65-b8ef-3b5d534e050b@oss.qualcomm.com>
+References:
+ <20260109043352.3072933-1-mr.nuke.me@gmail.com>
+ <4814455.tdWV9SEqCh@nukework.gtech>
+ <cfa31127-2208-4c65-b8ef-3b5d534e050b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-a6db3
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-
-On Mon, 24 Nov 2025 18:48:05 +0800, Haotian Zhang wrote:
-> Although unlikely, devm_pm_runtime_enable() can fail due to memory
-> allocations. Without proper error handling, the subsequent
-> pm_runtime_resume_and_get() call may operate on incorrectly
-> initialized runtime PM state.
+On Tuesday, January 13, 2026 11:42:45 PM CST Vignesh Viswanathan wrote:
+> On 1/14/2026 9:24 AM, Alex G. wrote:
+> > On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
+> >> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
+> >>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
+> >>> driver. This firmware is usually used to run ath11k firmware and enable
+> >>> wifi with chips such as QCN5024.
+> >>> 
+> >>> When submitting v1, I learned that the firmware can also be loaded by
+> >>> the trustzone firmware. Since TZ is not shipped with the kernel, it
+> >>> makes sense to have the option of a native init sequence, as not all
+> >>> devices come with the latest TZ firmware.
+> >>> 
+> >>> Qualcomm tries to assure us that the TZ firmware will always do the
+> >>> right thing (TM), but I am not fully convinced
+> >> 
+> >> Why else do you think it's there in the firmware? :(
+> > 
+> > A more relevant question is, why do some contributors sincerely believe
+> > that the TZ initialization of Q6 firmware is not a good idea for their
+> > use case?
+> > 
+> > To answer your question, I think the TZ initialization is an afterthought
+> > of the SoC design. I think it was only after ther the design stage that
+> > it was brought up that a remoteproc on AHB has out-of-band access to
+> > system memory, which poses security concerns to some customers. I think
+> > authentication was implemented in TZ to address that. I also think that
+> > in order to prevent clock glitching from bypassing such verification,
+> > they had to move the initialization sequence in TZ as well.
 > 
-> Add error handling to check the return value of
-> devm_pm_runtime_enable() and return on failure.
+> Exactly, the TZ interface is present to address the security concerns.
+> Also, as I mentioned in [1], on some platforms, TZ might access protect the
+> clocks and registers which might prevent the remoteproc bringup and throw
+> an access violation.
 > 
-> [...]
+> We can keep this support added for IPQ9574, as it is good to have, but can
+> we keep the default compatible in ipq9574 DTSI to use the TZ interface,
+> which has already picked up an R-b in this series [2].
 
-Applied, thanks!
+I think that's an acceptable plan. For the TZ case, we'd have to keep the 
+clock framework from disabling the "unused" remoteproc clocks. Do you think 
+"protected-clocks" property is the right way to do it? Which series should add 
+it?
 
-[1/1] hwspinlock: omap: Handle devm_pm_runtime_enable() errors
-      commit: 3bd4edd67b034f8e1f61c86e0eb098de6179e3f2
+Alex
 
-Best regards,
--- 
-Kevin Hilman <khilman@baylibre.com>
+> 
+> [1]
+> https://lore.kernel.org/linux-remoteproc/21468f66-56df-43ea-99c2-7257d8d6bb
+> 7c@oss.qualcomm.com/T/#m688033ab79c63a8953e38f5575d1c0ff6b37b13a [2]
+> https://lore.kernel.org/linux-remoteproc/20260113092021.1887980-1-varadaraj
+> an.narayanan@oss.qualcomm.com/T/#t
+> > Alex
+
+
+
 
