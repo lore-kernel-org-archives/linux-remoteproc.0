@@ -1,82 +1,81 @@
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334EA2857CD
-	for <linux-remoteproc@vger.kernel.org>; Thu, 15 Jan 2026 04:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE02D7DD3
+	for <linux-remoteproc@vger.kernel.org>; Thu, 15 Jan 2026 05:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1768452646; cv=none; b=UpNfsOCznLtAph00PdRFjLeqsJgw4AtBb8cYT/OsFUQbtHlCZlmPHr1KJ8o3l2X9h2EIDp+l9ARiRjVbGNe33SYWsdJFkkOF19wN/W/z7GPeaM3hcxWia/VzfHdd/37nS70mmeuqFZ0MNpAzuM+mbbyKxEE+oSN9pvlmHNXb8hA=
+	t=1768454880; cv=none; b=gigYsHoDK8CeYYJYaIpQSFkysFlpj8W6+T3w8XHxP4ApbzVW1u642piBdVc1sjb3Nqadn9Ifgv3DmvdXDUZVtkpeAC7Xa1GqXLrPh4lbtN8QA8UqL1Om5gu2UiUm2QiaYPWpkhnCIvM2RwZlrLnso1jBMge8At12R2wSKfuYdxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1768452646; c=relaxed/simple;
-	bh=bwH7TKQitdKzloCZTOTMKs7FMvbuDSsPsScuXO2XnSQ=;
+	s=arc-20240116; t=1768454880; c=relaxed/simple;
+	bh=oQqaoD9CWxihva9z43UC4l+nSw+HBzDnr6z/ms6gO2w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DYSU/evCCIqzkXKJnAHRgLQRFeX/zYRnA+rDv1fuYPuhEXfpHWsidBJgjpFzQKDyUoxVXgLbS9TiBro/dYepiWf2nQ+9C9FbAEfQ3v7WEmDb9DDd5qVF2L6rNPtBa7GhHE5bMfcXmKHoUVy/tLKn92S+5DsXKFLcwg502HT7NKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAqV74t/; arc=none smtp.client-ip=209.85.160.51
+	 MIME-Version:Content-Type; b=JxT2TCLBo42PL+HvzExZrOPFjV3S2PdaYvg9RmtwExUkHpcKX1jU2LohNUSnnVcPb2CWcZ2oB+k8coD3vkC3KsMiuXxDoj/IFQ/u5ewWHDij006WiJVLcNeAkiQ2pM6+7APlJjy6+X5XXCZcSX8agxGIPSGIt7ewVdugLqBKuvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2fDgReC; arc=none smtp.client-ip=209.85.167.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAqV74t/"
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-4041b3c1fa1so205493fac.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 20:50:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2fDgReC"
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-45c8b850f96so226827b6e.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Jan 2026 21:27:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1768452644; x=1769057444; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1768454877; x=1769059677; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gaxkG3FjcBbVuAmcMeHgDVclONwI7K7qJ4Bb/eS73xU=;
-        b=VAqV74t/w3hqcpKjdurhyCLdERsArrjqT4Nh7ItvYgIORi1xyGz6fnccOymsJYnO4V
-         HUAAdkaLwnEOoDYkapMZEsrDOruvgYHBj8I0lDbmAAG+ddByUstdzjnmnLn1ycivhusD
-         sTKkUZ2N2+pDlinagoD5mNzDjZS2MVofA4Em1tE+0LY/PnV84xn7DDfZwqy2tM0RKue6
-         TOOTvICAZfFAnJm3hbjS+apTERfDw7KcFFJe/NxnamvrY1whsXqHLx0MucFIdKF2vX7O
-         QwLCuSRxYtRIoBhHxFjMyJy91QEtxTiVGUwEfVSnDeHodnz/YkAKeIg+oE0dTXmgEAPD
-         Z/XQ==
+        bh=7Hja+osRR3fdOtBUZSkMF+9cn4r00td+5ctV4DGDt1o=;
+        b=T2fDgReCIOabBORtFQ5rg9UknhjuKcCscoLJjwYd70GsczUK9izNhVlA+mHXsQ4cOf
+         7Cm2W0eY0m7dBynv0MygZUFKcs5dncGSSTLVkD8/Ui/I7+fHf1EzW8zZfJc+R38Dsexr
+         FFPQVEo5oX3bWrv/JjHBgFK4iPQwSp7hxj9+6gd0TXcMVrDToOxlSlXF/1vi8eEWNNYW
+         890m55QXNTV4fWfhQIBGFDzq+C9tOJACFaZNjmQtgeE4s7lTUSQxmOz5mC8Na+i5sOsG
+         9+OuihdGM0NdFj3XJgpgyONtFfHeWGmWChoM3yspBjU42hLAqLfUmvHZgFQiQ6hc8sJs
+         aGbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1768452644; x=1769057444;
+        d=1e100.net; s=20230601; t=1768454877; x=1769059677;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=gaxkG3FjcBbVuAmcMeHgDVclONwI7K7qJ4Bb/eS73xU=;
-        b=rL9+J4htsnx9ARG6R2OEPJBePOpkgXs8UySt0ZcFCN/xSMo1JPQRNvgo2YhpfnKTqO
-         jud+xgabIVWn4ZyyL/SEivxZjAudFbjAH+y/mv5wi0528fi1MF4YC19w1gbPslNERNwe
-         1LQuFH0OLqHGEbwDbhV84pSjNPbadYOaCoHi1ohDLqgF5L3oVlRmz6ICzY0gMyVuO51t
-         MyPw2XcPodPG3JlU/M+VZrRhOdFgS1l0STDGXpumdnV0EVW2l3v2bGgFV4pg2Agn2SiF
-         Xrbuw/5Z4bUrze4Mhv8eUpzdeeHQg+ifu00OU7f9YaWWqBXXGSkR1YO2pt4k/xxGcaQ+
-         56Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlFX7k720tEzbQSXQ+NFkdJviBGVLyTwVI+6ob211FDVXt/L/d/EvxgQX0gRzyUssLIuiKahJnqF8zFt7OEydq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzol1nZH3Yq2WJuT4R/ZWodNZ75ascme6D5/xiVAPxAnIzMH9GI
-	u4IHINyJpPEZHvAER6+rO/fyhPoaWn/Mm1p4GXqIoBVwI2i9ULyGu2EY
-X-Gm-Gg: AY/fxX594/MOzBsE6ORCUVmh5s+99TUeeOlco+cZI7jKCYK/zmQT2uXzW9EPwRJ62Q4
-	NIKyI+Sgk2CxospDvU9Dx2RmBD6v5GwN5jRW7XVMh9uH/tfalAy8Vf2UdkvSrZ3ZwgqZlZc9Jh4
-	NtvuVvJGXeq7GwdxY+wYBHhlQHc8GE1wwNxzPJH/0noh35HEyqd8+crBk3vZkS3sYct5p2ZqWYB
-	66aYZZgaNLWt3HqdZuxsit0lu2rQyrWda2oEM2UGMOhjdNtm4Rob1eaNXPKuxjr/pgW2OGQXQB7
-	mS7DDLZ8PgOzTbO8wnwVN7YI4R/bKl5b0Xn7AZ+eWkorjPo9n/jUYZYdSFlkqBgLgZDgh71Ni7v
-	OC5NTTyqevqlTBpsQT9dkw7ubfw356M7h1Ia8RVvWUv/twe2mRGxv61LMO2ltOQLBDL+MZnoJem
-	esnR5EMzhGH5lJmWoiMTRZUrfJwABL/7Jzy9F2jR6Bow3nTIo1nGQnsFDejnW5HQn0UNqpYx5RC
-	kWZL4t94L8//747LCIUHvHsaj0O3iE=
-X-Received: by 2002:a05:6870:c0c3:b0:3ec:4266:13f7 with SMTP id 586e51a60fabf-40407197688mr3586919fac.29.1768452644055;
-        Wed, 14 Jan 2026 20:50:44 -0800 (PST)
+        bh=7Hja+osRR3fdOtBUZSkMF+9cn4r00td+5ctV4DGDt1o=;
+        b=Y867eR0Gk84CsKssXXlsGXOaf28sbMwzsn9jBbkIHD/JdXQaqk283icV2By6xSGlWY
+         Z1sUHH6Qvu2v3oPm8rFzjsJqqD/Wh1QoOq/Dy5ZvojvSpCCZuuomMyvnuEMEeN3gLvUz
+         LGyirzfx31Kp5V7Fyj3Xuz6DPRvxxjtt7gtt81nggM2aWnRXh+J2bTuWPdq1/sJRl/dT
+         vEEyJ1mxAzyUdo9H9PDcyOMQ4bpzcUcbRIAnUa20JoAfjwKNI0O2CsoNycKt9WO97fQU
+         ylM5hE6y04zZAteL0mSju4fyk1bfA1IYzPzpWAOHiFi1B/N1sdpe/zxGpJY6mQEJiETt
+         aptA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+pwOSucMFN17nQt6K7Aab/VojAAJl4meAxt0ZJvhXZ+YYPRkW0aK9rporkN0KbbgUEC+ubT17nOA0+p/uezwI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLwvKFONerTcgzAywLTEuz+h4wBFWbvYIi9ZmcxZMvAHZpym5e
+	8nxZPDgKXL5ci7R04SjaaSFzTqMBk43g3B5I0EsKoCGfJ3MjY1joe86X
+X-Gm-Gg: AY/fxX6+ndPQp6hRGEKizl/2jvrWEqaOtG0HKIbYEgANWfVcTk8jsVBb1faU36FGedC
+	p+HxVi8bHnI2n5qgP692dDQC1hc7Ovk/Bq/nykwihwkQorvbNFM4qxU01HEF3o6fMgSyVIzh0KP
+	qgE8O+XND40bKruIb3pNOzxpgZtMueFSxYISQpUZ0uHI1qgRPj4FpJF3OHi8xffSdStS2tzX105
+	h72/E/TX4F2I9r6Coq1g9jvkMX+Jh9uelNlXkd7xJe6ilOshWGAUh4q3N+X8isAd8LJOR6lCuei
+	/K/cdkEso4B7c584lKgytNynEEtrOlUH0HruEnjbmriKmLHaREz1MRVEJGqd4+Yw7M0NmY8pV/I
+	NjypBfE+c5p+ajqfdXUuRzmxPodcvB970GHRBWtSxGV2nX0em4yKosEXBbEK0w3kPwjt9FAWaPS
+	kQhoDPqYQebIzoGqRzjpHBww00kcAev9DzUVencJiGU+5H78UKCDOR7Expfl87OCW/sRnmUgal7
+	tjqPZwHrPVuG9GPYMl17bXLwCuJWxI=
+X-Received: by 2002:a05:6808:a585:20b0:45c:71ff:1f69 with SMTP id 5614622812f47-45c71ff212fmr2335636b6e.50.1768454877438;
+        Wed, 14 Jan 2026 21:27:57 -0800 (PST)
 Received: from nukework.gtech (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3ffa4de8cbfsm17750746fac.3.2026.01.14.20.50.41
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7cfd68b13fesm803256a34.3.2026.01.14.21.27.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Jan 2026 20:50:42 -0800 (PST)
+        Wed, 14 Jan 2026 21:27:55 -0800 (PST)
 From: "Alex G." <mr.nuke.me@gmail.com>
 To: andersson@kernel.org, krzk+dt@kernel.org, mturquette@baylibre.com,
  linux-remoteproc@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Cc: mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org,
  konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de,
  linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 Subject:
  Re: [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native ipq9574 support
-Date: Wed, 14 Jan 2026 22:50:40 -0600
-Message-ID: <5206383.iZASKD2KPV@nukework.gtech>
-In-Reply-To: <cfa31127-2208-4c65-b8ef-3b5d534e050b@oss.qualcomm.com>
+Date: Wed, 14 Jan 2026 23:27:53 -0600
+Message-ID: <27098742.6Emhk5qWAg@nukework.gtech>
+In-Reply-To: <577d547e-6311-49b3-9c74-84797b281447@oss.qualcomm.com>
 References:
  <20260109043352.3072933-1-mr.nuke.me@gmail.com>
  <4814455.tdWV9SEqCh@nukework.gtech>
- <cfa31127-2208-4c65-b8ef-3b5d534e050b@oss.qualcomm.com>
+ <577d547e-6311-49b3-9c74-84797b281447@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -86,8 +85,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 
-On Tuesday, January 13, 2026 11:42:45 PM CST Vignesh Viswanathan wrote:
-> On 1/14/2026 9:24 AM, Alex G. wrote:
+On Wednesday, January 14, 2026 4:26:36 AM CST Konrad Dybcio wrote:
+> On 1/14/26 4:54 AM, Alex G. wrote:
 > > On Tuesday, January 13, 2026 8:28:11 AM CST Konrad Dybcio wrote:
 > >> On 1/9/26 5:33 AM, Alexandru Gagniuc wrote:
 > >>> Support loading remoteproc firmware on IPQ9574 with the qcom_q6v5_wcss
@@ -116,29 +115,29 @@ On Tuesday, January 13, 2026 11:42:45 PM CST Vignesh Viswanathan wrote:
 > > in order to prevent clock glitching from bypassing such verification,
 > > they had to move the initialization sequence in TZ as well.
 > 
-> Exactly, the TZ interface is present to address the security concerns.
-> Also, as I mentioned in [1], on some platforms, TZ might access protect the
-> clocks and registers which might prevent the remoteproc bringup and throw
-> an access violation.
+> I wouldn't exactly call it an afterthought.. Image authentication (as in,
+> verifying the signature of the ELF) has always been part of TZ, because
+> doing so in a user-modifiable context would be absolutely nonsensical
 > 
-> We can keep this support added for IPQ9574, as it is good to have, but can
-> we keep the default compatible in ipq9574 DTSI to use the TZ interface,
-> which has already picked up an R-b in this series [2].
+> qcom_scm_pas_auth_and_reset() which configures and powers up the rproc
+> has been there for a really long time too (at least since the 2012 SoCs
+> like MSM8974) and I would guesstimate it's been there for a reason - not
+> all clocks can or should be accessible from the OS (from a SW standpoint
+> it would be convenient to have a separate SECURE_CC block where all the
+> clocks we shouldn't care about are moved, but the HW design makes more
+> sense as-is, for the most part), plus there is additional access control
+> hardware on the platform that must be configured from a secure context
+> (by design) which I assume could be part of this sequence, based on
+> the specifics of a given SoC
 
-I think that's an acceptable plan. For the TZ case, we'd have to keep the 
-clock framework from disabling the "unused" remoteproc clocks. Do you think 
-"protected-clocks" property is the right way to do it? Which series should add 
-it?
+What was the original use case for the Q6 remoteproc? I see today's use case 
+is as a conduit for ath11k firmware to control PCIe devices. Was that always 
+the case? I imagine a more modern design would treat the remoteproc as 
+untrusted by putting it under a bridge or IOMMU with more strict memory access 
+control, so that firmware couldn't access OS memory.
 
-Alex
 
-> 
-> [1]
-> https://lore.kernel.org/linux-remoteproc/21468f66-56df-43ea-99c2-7257d8d6bb
-> 7c@oss.qualcomm.com/T/#m688033ab79c63a8953e38f5575d1c0ff6b37b13a [2]
-> https://lore.kernel.org/linux-remoteproc/20260113092021.1887980-1-varadaraj
-> an.narayanan@oss.qualcomm.com/T/#t
-> > Alex
+> Konrad
 
 
 
