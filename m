@@ -1,214 +1,166 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013012.outbound.protection.outlook.com [52.101.72.12])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16CB2F9C3D;
-	Thu, 22 Jan 2026 15:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769094038; cv=fail; b=k2NrFwuYihB9r2lUxPB1SXIdv7aoF4O7/1nsL2GIyrC/KBKN8dgo4n6nsGrB/GfLwveOrTyRoFr+XK81AtSpKmettRUnFnLSUtnP4jyrzkTLF1pL2S0G+gIsQkEewCt7VdIsZX+vvVFXpFyETpdTBk+fJ+tgba2rcTaCaOXaLMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769094038; c=relaxed/simple;
-	bh=uqius2VvB0lRFUj/kYZr70hjn1OBjDJd9GFqrhedGZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WeANeVmfOEV7rZss7cZ3Gy42YvB9o/I7qkDJIgM9v3Pq57yyF1er5pPt0QDXXaEu3dUGXf2SoLnC3ds7xMl8F+JOvmuGIqHqoYC/6V5/hbx7pvzuFWZRvu7FhO3DIiLfmsNE3H/DzKwX7dInMDa3lgUn0eGNPuxm6SDZEKeqb8Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iqDa8xTF; arc=fail smtp.client-ip=52.101.72.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8291924C076
+	for <linux-remoteproc@vger.kernel.org>; Sun, 25 Jan 2026 18:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769367120; cv=none; b=TEh0HQDKCAmLMvAvhpzH2MS0Kr//FnDroLV8p3Hss9w9yHqSjpUbl7hl0ZaWyBUl3ZQzAlQuKWrlawTCULvQ/+4UazdhIQA39wfD4pxEqd/loqLGP6NV7SNCp/D4oJPM+RG55dEoeoTIsJ5E/lAzsqS6rbKUc+F1mkblyNu9EQs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769367120; c=relaxed/simple;
+	bh=zMaEvU68BWlhZpxDtfLltxRySkbC44HvvmZ1IlohbuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=piW3uFq3suTZJxKoTUbKQ8bu3XWmvTeq3HDCjw3wjtwWNQB3UHhoSPyjOlKVyTqe9f5aH8BxPwgVcDZL5/QsYizsOTVrDKMb++qd/YkJJRUZMlip4N9wZXl+wsFXLBmN4Q8beTES+t2qHHDo/8A3o3vmr7jcI79DL8bSFa43ygI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GUb3b+DY; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iqDa8xTF"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m+U9VWBUYfHFXJR6E3D6Y3y9omPD2aw7SYe65wzT35NO5d3lI3uqK0Mw4Oi7Ym/9C7Nru2oheyWZl5DGMFpv/3/HwlCZnEmePs1lfsnN2vRugP6kRxrbWXyiFlC0rgpGijREgl3L6jZVYSbObQ+uSRw704nU5urXJDi9P4DQx1BO81RLO9pESl63j4fjE2Lb99Y+zH1X24kSjjofrmv1K57bcc6j4bSya0hUbX+oqndK7zK1zVbUWrT52XVlc99OMtKI8a7Mhuh6TLL2IOh0BTokzH8zMMOZrMgJLXrF1Sv7gt1mNYb7gurs702TnwSqZ+JbAcsD6HsJ58I+hBDWDQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7iOfBDtHc5rUXY7Ed9OAnlf74Pe8rVgMc+uTMls4Fm8=;
- b=H1Pm7hzL7Ah8ChQOAKl0nbS/2Nwqm7+mCYfLNM9I5e5JEApMkwjuy50S+zEqzOrNK1IZfdoT+Es6rsOlRg6CGc2ot8eIzDm868v/gELo6xHEzbDbU5l6T008Jr6AFO3DN526deh8s9VdQPHz8quTzYL23Oi4YeWt70VuVouuuYcQ/dvDLBY8sO+1B2reQ3D7x1A7d5OHklgUQ2HiAg66XcMGSCmI1UZ1w+ydQZzEzenXE4vBeBbdbrBDnyygGZ78pUSBoJBoZwmphW8QRdMebU3LmGMINy5ruwK4LlYKtXRD+7Y5LAtT+9UP3PaKSRn9w879WTAUDt1iqlbSIDS2rQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7iOfBDtHc5rUXY7Ed9OAnlf74Pe8rVgMc+uTMls4Fm8=;
- b=iqDa8xTFlnIf2jdm5KpJ7HJN2LdKkRma7d5yW+L4hqcI/WC80VKsUSkZ7Dt6w2t4r9al3AlLXXbvmI0CFmUK+h5mWpUwsSqiWwHt0UQS+F0W+aTFZW0hmAxwZE6yCVEwpc77arSp/jgzgCa2Pyv7z46Tm44Zqnuzcx9MlFRV9SMwaZVhNvm3gIqlvW85IEfV4StS2+SZrDwtfhmTgH3kIz5XrBRona2u+AkzYpgk5Uy2BKEx1SExHqhvurQzllwEIN/teIMUb0KpC9tl3WEAbJtLBL2qeEkqYMLfAxUSKLzepJsmEtW3y7EjBg/TqWvDkyzaAiCzYwtvy0k3MPpPdg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PRASPRMB0004.eurprd04.prod.outlook.com (2603:10a6:102:29b::6)
- by PAXPR04MB8653.eurprd04.prod.outlook.com (2603:10a6:102:21c::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9542.10; Thu, 22 Jan
- 2026 15:00:33 +0000
-Received: from PRASPRMB0004.eurprd04.prod.outlook.com
- ([fe80::6ab3:f427:606a:1ecd]) by PRASPRMB0004.eurprd04.prod.outlook.com
- ([fe80::6ab3:f427:606a:1ecd%4]) with mapi id 15.20.9520.009; Thu, 22 Jan 2026
- 15:00:33 +0000
-Date: Thu, 22 Jan 2026 10:00:24 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: imx_rproc: Not report loaded resource table
- when none
-Message-ID: <aXI7iL2Zf282uFlh@lizhi-Precision-Tower-5810>
-References: <20260122-imx-rproc-fix-v1-1-36cc64369a40@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260122-imx-rproc-fix-v1-1-36cc64369a40@nxp.com>
-X-ClientProxiedBy: PH8PR20CA0020.namprd20.prod.outlook.com
- (2603:10b6:510:23c::21) To PRASPRMB0004.eurprd04.prod.outlook.com
- (2603:10a6:102:29b::6)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GUb3b+DY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=1cYkOR6p+28OeK
+	pILTeDYy1YUmgndRIsJrSEImzjWWs=; b=GUb3b+DY+9mJpJ7B3Rk9AyWsPIlsID
+	gYiUHWLfH4MhylfpJpW6wK1EEp4qmRvMXufRAsUMyjw3n6a7jZTjlMDlAiAJeytr
+	PDYusfLDkbrdpScgSILsNpYpTv9wxWk3n8sIRRm98T1X5yszKvRP0oq5bX6qilP5
+	LjHLu7d1lAZJzkgT7s2l3Qa9JZdRes785y0OH4j4PHwtTrndA/aCfpLOjcH1lb4z
+	BtZ0JoJOhdKJB5uQXdN4teK3yDzq+Q8ww2MIjkXg7v93zhNt8uES1joQCXP5zbLl
+	u9kPE+ySeVYAst58JG+Fjj7CLKQTVDUGyLh4C9GbhtN1nhxaNB2QPgsw==
+Received: (qmail 2369426 invoked from network); 25 Jan 2026 19:51:47 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jan 2026 19:51:47 +0100
+X-UD-Smtp-Session: l3s3148p1@Xefl4TpJKhBtKXAW
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Antonio Borneo <antonio.borneo@foss.st.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+	Will Deacon <will@kernel.org>
+Subject: [RFC PATCH 0/4] hwspinlock: refactor headers into public provider/consumer pair
+Date: Sun, 25 Jan 2026 19:46:51 +0100
+Message-ID: <20260125184654.17843-6-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PRASPRMB0004:EE_|PAXPR04MB8653:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44bf2d9f-53a5-4653-d84d-08de59c6fdc2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|376014|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?y9F2BjWaY3xwMff5loJOSuLvtMPucm6qd/W8nXV2pkBdh7Y/ybOfyraahKOb?=
- =?us-ascii?Q?Y+/l3sfG3RVKAK3IvzpUfzyL0c3/DudqWqs8eeKVlTJhE1uqGywIc7p4sCRz?=
- =?us-ascii?Q?qNfRrONTlAaRuWD53Kb2lQ6OSL0JW3iGbNZxATxPKiK5NJdhQMfHXbbPQ9cT?=
- =?us-ascii?Q?tV02GHfE7ekTBL4WE+d00uKvl8q02X/f/Hjph8hDOWL1umnr5vGMf93L5xtf?=
- =?us-ascii?Q?Y2WrX+CE/0jUakEtIHmg1yaoeuma0rqa91mz+6lL9hVtdFJUBP66as7A3Fsj?=
- =?us-ascii?Q?ubJZLHTm7o/8LMn2misRdKODdHi6EbE3cGoxVvPYwShy036td5aeXWyCENHE?=
- =?us-ascii?Q?2QHR0+G7DT/vGYCV05mj2RPn8wI+0AD1t2Sd1GI9/bP0HJTlSGhA/70lxHaU?=
- =?us-ascii?Q?DZSUTZK6ilbRObAZ5DrIbnRWEmUfpkxpMszDblJHFIJhPpspageV9m57NvPd?=
- =?us-ascii?Q?UwsDIxUc6sI8d4BxaIhEzDF21Fak6gWBs7efg0oZKhjaSAVaKcLqh6CouOku?=
- =?us-ascii?Q?fWZoQvBUQnn4MWDTMTxhoD7a6FY3IapdHw05dM+NSQUW8I7xJ98JdafxDieg?=
- =?us-ascii?Q?B7O+nUkzRCe168IJl7g706DKv3EoiFGLRJnpmHYOE+vr+Vqp1tSNLV/5K2/L?=
- =?us-ascii?Q?KoeIlQ7h/MLGWJvzJQrV5ysaWYhuGqOeeaGLq5tYCr2vBMe3Qa5bWzGbqMUk?=
- =?us-ascii?Q?rn0ufpYvcalIN3U4JdhB7ZTxXWOD9fB8W5bnX8RE1dg5WQP6RM/0zcFJmMBd?=
- =?us-ascii?Q?2bWJA6BhqoiokkX5zfkUJ9xoU5fXFjCwcOOUvtKI9Nnap/BrUtV7vmWawjAU?=
- =?us-ascii?Q?D3mKxDg8Yi46qEWZ7Jw+jGOJV6uxsEOP+yWtXhl6xciZ+ZI1PsAkBp2YpHDV?=
- =?us-ascii?Q?UjuCFlRE0YH06tr97R1bzwcZuSqf421vFFXS8QntuKmCFS6KprQTM00OA8sY?=
- =?us-ascii?Q?S/V2iyQbusQGXMxezlEYbouAszEoih/zT0XRRmRQ/s/4h20R0oSNBoR5O5Ml?=
- =?us-ascii?Q?HrzMSlmGk011Te/uS6YqF04o2oK3fIQI9VJ/cptkYxFRKmjO7U1h90bJ0yfu?=
- =?us-ascii?Q?I+IW6Jav9ISSbhLXGS28DRW4nJDOdGyY3sdTzM+gEKP8dPmssb5LzOpdENz4?=
- =?us-ascii?Q?y/AOZGDm2hETZwHdidSaq7xoQl1h8Brm/HJ10Hxvcdg9U/4axU/sZFAyfJkH?=
- =?us-ascii?Q?0+cgj946gaeTXiMRoc6eeQ4CdTgGS0eNfvSloMsnA4YQFrxyfTokk/FAfX01?=
- =?us-ascii?Q?Q9q+tspCqzHsxnc310njn0YaLrJRjZGCTINBjuL8bNnjfXAVz6JPfQlIFsgd?=
- =?us-ascii?Q?ZqvVEoeOtRdmHVwIBTJgNU5+ji5jQnf0eN4f7yPQuksAIUnXtDizuuijwxq9?=
- =?us-ascii?Q?x/miBvCLego9c2bRaWoFyM0BgnRBl1W8dGC6ohejStP08urdI/I8YyavWZmq?=
- =?us-ascii?Q?oxVE7jVTB2tgI1VU8PL7qSQZ/pB+iw1igi90BfhWFwGLoJHxi35WPt9YVlkH?=
- =?us-ascii?Q?ZZp+6SCytVAEDZ7/LO0yXdzGc7HQPJ6SpwiV7w9rABWo9PT8XGGBWjoRmIfG?=
- =?us-ascii?Q?ORneY1PAibShtYpesdVY0tunlh4Fwtd0KJTI6ObTZcowbTtp4U4CN3ckbquc?=
- =?us-ascii?Q?PuajvqdZC0pcFrXyMLGGEB4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PRASPRMB0004.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hj2V4wpotXdkVfGHxzDaI1np1oFgCiNeBWzDGdS/ygUCsu4gUtnFL+PPmp+/?=
- =?us-ascii?Q?GKav0/55ig3aRzkQcw/Vx8O9yUiCORSuMg5i22zF2WX5cwRHU9m46we80YB9?=
- =?us-ascii?Q?Si7MTzgt4QNssot1nRNPxu4ufAwUjHdoNvrMFmmKAQ/kjs5gAMuMenrtIRMJ?=
- =?us-ascii?Q?Tqe4n5u6JFqhmXrGWef27qKgd+qD53bIn+hHUQ5mV5HtvJicopiDAswnQlQ1?=
- =?us-ascii?Q?xpY286aBEZupzEtXwv8ASWOVw87adqUHSIzjthXpDxw7i6TJJJsDDptnpvM4?=
- =?us-ascii?Q?+jyh66Xu8II92bij80HhiFykkKgtwOKqXkbxHuIm+2ls7xlDOO8thOhtlsrX?=
- =?us-ascii?Q?G91NeBGUkou0VyFEZKOKamerjEVZSIBZaqAU7gzzvTtLRyYxIEoKIENip8ih?=
- =?us-ascii?Q?a3IE77su1rOPgYqaTOrljv+B1npioSD5SYwX9RaGFRKRBF3+dKwA7GSmXv9N?=
- =?us-ascii?Q?oAttN9yhMZ9r8zH/J1czwiNTQLo/G/3iLA4Jq2O5vmXMen/OmUE2vPXSLrnI?=
- =?us-ascii?Q?PA+E3fDRgYymNAOrVGkoaqSbJAfmb7NRzrhGkhHDX2jkq2tLq/1ARFkbuSL5?=
- =?us-ascii?Q?QTA48afCvYbcz2ziUem8bJ/8nEfH91x9Y0Lj80+6esuh53FYqw1rag3wUk4x?=
- =?us-ascii?Q?VcdviHEe3xrE91NggjoRHpvJobgssGYjoi3J1OypORw2k7H2WUCLp20ldsEP?=
- =?us-ascii?Q?zN0yXFpTRqOKlGqTZLvyT8e5+KfZTQd7NEitXJKqH6MOoLvDqO+gHCRD+ITy?=
- =?us-ascii?Q?gS20zAAWJ2S8lJXke/8EJvJ3iO92zdK+umfa5nYNwo2eHd3xlFO+8oXLcHsS?=
- =?us-ascii?Q?g/KL4J66ygBXYP4DGEmQit9iTdVIGd7+22ukJUzeB2FOeoS7lbuuxg1igzvf?=
- =?us-ascii?Q?q//AEvAth78B9krl6MyqiPl3wvoH16gv+9hjILYlgAyfdgFi0lLOQpwRYM+Y?=
- =?us-ascii?Q?OP4Kuuk39R9t5Ro5Khf5EWxTopyGfccvs7TzHqGunKkMdbUKPlqK3X+CuayX?=
- =?us-ascii?Q?71BuhNGBMopqmjsDiPqz5MpWaqvjzuyOvHpkA3mRNbG5pTWRxFj69XqlMbSq?=
- =?us-ascii?Q?RUuRpvnhUi0T00n8kvUpnqY1I1cI/2vuyUYF52ZnEaIjrws/Q7I5FF3G5Px9?=
- =?us-ascii?Q?Zg0M1hkZEl4EszyIlaK/cPOjFgtoSQa6KoZBJrtjLaw6w3OtZAP09YdmbGBl?=
- =?us-ascii?Q?++/Vlv9FcxnRz6/aox2vIdkbAcGFMABhFoIgoxmoWHkSbhrQxoS4vkM3pz/F?=
- =?us-ascii?Q?sHNzpkKyFgoIzaSc2b5GYCyMnGaXEqz0cGMcDYKWifBDJd4B5AywLH4rxURE?=
- =?us-ascii?Q?C/vKJsyHyMqTXoFJlhbc+wtiq+MRrP0N+7LjQR36iO1S+f2TDZhBuYgys2ij?=
- =?us-ascii?Q?IpfsCGwEfKCqUPTZ/KcZY153wWpVEyLyNnty6+zf94tt/4MgwBMf0I/YUAAZ?=
- =?us-ascii?Q?duaLHqVJPYTzh6N4I9i/kFsesRdcuL9pc1CIsqTQe3DoZqVY+Vb2sRWjPuYn?=
- =?us-ascii?Q?f6oL92x5tj4ULPq0ISNUf4M+A5fyrTh3P5Rgjft1X8W7ZJ/0V+m/R6F/0KBH?=
- =?us-ascii?Q?rSmMbqquzaCLHrRgx/LPTHf4FDPRXdZxXse6JaGaziEO1Qmc4DyHNhrzCUwZ?=
- =?us-ascii?Q?mJUrBf/GJlvwBJBRtidpqrY+4lqJ0xJA67ktH+nQOV3o5l4ZAoAzR0Lj7ri8?=
- =?us-ascii?Q?WlLrxpANmK1gnH0eSx+kVIIsC4K08YV53Ny0OzkNeAfi46AF?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44bf2d9f-53a5-4653-d84d-08de59c6fdc2
-X-MS-Exchange-CrossTenant-AuthSource: PRASPRMB0004.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2026 15:00:33.0443
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 59G9Smft2l8UsGNKuJGB3Stc/bYNO9GjFa8jcnj8tR8aLxC4nxZOV916VMuGieOHuESRU9SK7YAbnjyAUdsDzA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8653
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 22, 2026 at 11:24:43AM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->
-> When starting a firmware without a resource table after previously running
-> one that had a resource table, imx_rproc_elf_find_loaded_rsc_table() may
-> incorrectly return a valid device memory pointer (priv->rsc_table).
->
-> In this case rproc->cached_table is NULL because the current firmware does
-> not contain a resource table, but the remoteproc core still interprets the
-> non-NULL return value as a loaded resource table and attempts to memcpy()
-> from rproc->cached_table, leading to a NULL pointer dereference and kernel
-> panic.
->
-> Fix this by returning NULL from imx_rproc_elf_find_loaded_rsc_table() when
-> there is no cached resource table for the current firmware. This ensures
-> that a loaded resource table is only reported when a valid cached_table
-> exists, which matches the remoteproc core expectations.
->
-> This issue can be reproduced by:
->   1) start a firmware with a resource table
->   2) stop the remote processor
->   3) start a firmware without a resource table
->
-> With this change, starting a firmware without a resource table no longer
-> causes kernel dump.
->
-> Fixes: e954a1bd1610 ("remoteproc: imx_rproc: Use imx specific hook for find_loaded_rsc_table")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+TLDR: I want to create a hwspinlock provider outside of the hwspinlock
+directory. So, I refactored the headers into a provider/consumer pair.
+Which seems to me like a reasonable seperation anyhow. No functional
+changes. My build tests went fine and buildbots are happy, too.
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Longer explanation:
 
->  drivers/remoteproc/imx_rproc.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 375de79168a1c8d11b87ac1bd63774a3feac106d..cf044b385b58fe1e17d0fc440c243d76ecf020ae 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -729,6 +729,10 @@ imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *
->  {
->  	struct imx_rproc *priv = rproc->priv;
->
-> +	/* No resource table in the firmware */
-> +	if (!rproc->cached_table)
-> +		return NULL;
-> +
->  	if (priv->rsc_table)
->  		return (struct resource_table *)priv->rsc_table;
->
->
-> ---
-> base-commit: e3b32dcb9f23e3c3927ef3eec6a5842a988fb574
-> change-id: 20260122-imx-rproc-fix-e206f8e6e477
->
-> Best regards,
-> --
-> Peng Fan <peng.fan@nxp.com>
->
+There is a device (MFIS) in newer Renesas SoCs which combines various
+things like hwspinlocks, mailboxes and other stuff. Sadly, these are not
+strictly separated. Registers are kind of mixed and its register
+unprotection scheme will need one of its own locks. I tried various
+paths to handle this device (MFD, auxiliary bus) but I concluded that
+the sub-device dependencies give enough reasons for a single driver in
+drivers/soc/. So, this series will allow me to instantiate a hwspinlock
+provider from the other directory.
+
+Patches 1+2 do the actual refactoring with a fallback being in place. I
+used '-B' with git-format-patch in this RFC, so the actual changes are
+more visible when the headers are moved.
+
+Patch 3 converts all the users. There are not many. We could try to get
+all the acks for this single patch. Or I can break it into single
+patches and send them to subsystems. I don't mind.
+
+Patch 4 simply removes the fallback.
+
+Looking forward to comments on this approach. If the hwspinlock
+maintainers like it as is, I would kindly propose to apply patches 1+2
+after 7.0-rc1 comes out. This might sound a bit hasty, but a) I want to
+avoid chasing a moving target and b) this would remove one dependency of
+the hwspinlock driver I originally intend to upstream, of course.
+
+I would take care of patches 3+4 as needed.
+
+A branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/hwspinlock/refactor-includes
+
+Patches are based on linux-next as of 2026-01-21.
+
+Opinions?
+
+Thanks and happy hacking,
+
+   Wolfram
+
+
+Wolfram Sang (4):
+  hwspinlock: refactor existing headers into provider.h
+  hwspinlock: refactor existing headers into consumer.h
+  treewide: convert hwspinlock users to the new consumer header file
+  hwspinlock: remove old header file
+
+ Documentation/locking/hwspinlock.rst          |  2 +-
+ MAINTAINERS                                   |  2 +-
+ drivers/base/regmap/regmap.c                  |  2 +-
+ drivers/hwspinlock/hwspinlock_core.c          |  5 +--
+ drivers/hwspinlock/omap_hwspinlock.c          |  4 +-
+ drivers/hwspinlock/qcom_hwspinlock.c          |  4 +-
+ drivers/hwspinlock/sprd_hwspinlock.c          |  4 +-
+ drivers/hwspinlock/stm32_hwspinlock.c         |  4 +-
+ drivers/hwspinlock/sun6i_hwspinlock.c         |  4 +-
+ drivers/hwspinlock/u8500_hsem.c               |  5 +--
+ drivers/iio/adc/sc27xx_adc.c                  |  2 +-
+ drivers/irqchip/irq-stm32mp-exti.c            |  2 +-
+ drivers/mfd/syscon.c                          |  2 +-
+ drivers/nvmem/sc27xx-efuse.c                  |  2 +-
+ drivers/nvmem/sprd-efuse.c                    |  2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c         |  2 +-
+ drivers/soc/qcom/smem.c                       |  2 +-
+ drivers/spi/spi-sprd-adi.c                    |  2 +-
+ .../{hwspinlock.h => hwspinlock/consumer.h}   | 22 ++--------
+ .../linux/hwspinlock/provider.h               | 40 ++++++++++++-------
+ 20 files changed, 49 insertions(+), 65 deletions(-)
+ rename include/linux/{hwspinlock.h => hwspinlock/consumer.h} (94%)
+ rename drivers/hwspinlock/hwspinlock_internal.h => include/linux/hwspinlock/provider.h (78%)
+
+-- 
+2.47.3
+
