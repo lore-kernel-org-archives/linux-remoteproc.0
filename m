@@ -1,754 +1,339 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E05F334C1D;
-	Mon, 26 Jan 2026 12:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DEE33DEED
+	for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jan 2026 15:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769429341; cv=none; b=I8FWjHAjAUyqRrOpn3GS72uFf5TSrNE+WdGrW4q/q9crBY3XllM8xFHE6IMyoHIzpOEbqeATG67RAOFWCie+Q5UhVWLOHBmaOz/mXkwvEbiYPwnbBAuGQaKYifA3Aiw7Qca8/bUueMXXnnX1FB3VbfKEJnKLwytJxLY69uwVwiQ=
+	t=1769442449; cv=none; b=XDXlW36MBptcXEPRkj7TYHEzP0oudF+i9rWiAF0K/lnPGkAjIWnDq+wtKtg0Jxvu5N2YzCifAIhESreY3IdvZuNlQYHvW3TQBP2+Cipz7VLcIZESZdrepdiqJNpqMNIZk4dZtYttDEoj3qIZl7cIYppsUQSs4RepPN5osuqNFPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769429341; c=relaxed/simple;
-	bh=lEhw4DRJF4dLrVIA6aBSwKTHspM5qVNNgxDW02ka+70=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mac3r1g9zxR0F1WcMA68DRmkS6Q9ANCywvOVhMLjawvFMepUYtPsaBO3BOKNkKVj4CQIV0zj77mVVGcGLnUuOzHd5ceFy/e0SelCnc2Qv3xVas3ZXHM40YaNjSFJt8U2zfkfoarx6jtpGhcDqa2vAuanl/rgbmA9p7gKerEI0kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=13e/QUey; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1769442449; c=relaxed/simple;
+	bh=+C8S8/3umsYjxM4gR3d6qgPcacyphjhf8CqViqELrZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VTfvHs3qMHeHj4uoSmTPHilkZWWYYrdnSvR9sT6ZBQLLu4ANR35tUgWHoUW7JacLYXDQdLlPN1ZSAIztxUWKmWP5p6l6i7pOPhWls9Ph69D+nQl6tpNoGNkvke/AmLH3ulhh+0+ihqCjYnxdy5Sfx+wOc5eVJNbmhNOiZE1tjEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bIH5RlLn; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="13e/QUey"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1769429338; x=1800965338;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=lEhw4DRJF4dLrVIA6aBSwKTHspM5qVNNgxDW02ka+70=;
-  b=13e/QUeyE4FVJw2mBRuCwOiA69J/jlhyckTYVBHWAMMp6CcKJg5wHPUG
-   XOvyPasONlMsyR/dsAycw9XglwAkvmbx8gj1OJziPabGOB9JjJfpj1wFb
-   ghe9St867mN4nqflhaDwJHhz7bo2A26dH4nhZhCsEi4+KVD5pNXLckO3C
-   kUNwaYY1KpcLNjpOvu1m9IuLj/s2xdMrG57B7aSIQTQHfnx4iA/Tdqd2c
-   HGDF+2niXRu0Y8yMYKFeTAgTJaEp4DsUehvs8zpMxOFWE8AoFy0kTngrZ
-   LwMTZvPNRQIYEoOR3JfBSILwSs9Fsq3Ut11Mge8rKp06yu/DcDEycF/Fh
-   g==;
-X-CSE-ConnectionGUID: YdKOwlMaRum+YCEcOjTQUQ==
-X-CSE-MsgGUID: j0RKaWAYTBuIGAhfcB/k6w==
-X-IronPort-AV: E=Sophos;i="6.21,255,1763449200"; 
-   d="scan'208";a="59537389"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Jan 2026 05:08:51 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 26 Jan 2026 05:08:22 -0700
-Received: from valentina.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Mon, 26 Jan 2026 05:08:20 -0700
-From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<valentina.fernandezalanis@microchip.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 2/2] remoteproc: add support for Microchip IPC remoteproc platform driver
-Date: Mon, 26 Jan 2026 12:06:58 +0000
-Message-ID: <20260126120658.1674253-3-valentina.fernandezalanis@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260126120658.1674253-1-valentina.fernandezalanis@microchip.com>
-References: <20260126120658.1674253-1-valentina.fernandezalanis@microchip.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bIH5RlLn"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-823075fed75so2502629b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jan 2026 07:47:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1769442448; x=1770047248; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Onpoby8TzgYOiBiFEP1WwP/Cbvb++rQ+q0VOL7clC5Y=;
+        b=bIH5RlLnm6sHjnVLdwmKjrkLts53mWG2USmkkFZZEhUs7Sbkajtnj//wIuK29tf4XB
+         pQzFOQhOwtlTcXmGGBu8nzCOSOUa/X+QJCcIQVfrCX2gjBEfaL/ZO+E5xG19SvamcQQ1
+         AUYqjYXRBZfLiIIUpfijJhleBO5BIpH2ujSFu8UjI6lXJwv4LiKdXTBHA7FX4oJ/kbVy
+         02UT3rFE4NTJavZajFjq4empZ0sKmTXSLmZzCFp9SVng6nkwheWJcbmQ1k4l9vLa2q7Y
+         s7OIhe8MELGDVUMzXTw9WAbmtbiO6+2vpvs7jIl+nlYItqpnA48ts/DNHJKuWqnIDY5f
+         i8VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769442448; x=1770047248;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Onpoby8TzgYOiBiFEP1WwP/Cbvb++rQ+q0VOL7clC5Y=;
+        b=fSUQgl3aLi3vxwQf16A0Yt3IMk16zb96CQG6P0uldQPHnrr8/f3DpZgalrxNBFG1P8
+         3+rgqy++XfHK/4UaQpyfXMitdUYvoNhjh7t+HU+k4TEy2p/z/EExaxHeBN1V02EcPnLT
+         duwoFGH1JMdYIBQagjLD31cefpr0aZotnCml43f0VKuzwpZ1I1d6bQBoE1LWkWjH4jMM
+         Ec8XLPvPBVNA6CCm8ioLf9rakgxcSL6t+02OPW/tntbEvgVAIbC7QxsV/cUoM+tyDWTY
+         ihuC/F3gEUgcYRWbrgHzVatWjrSKv0BDcvdy835Ctd+52/uirB444tPZCgllJ4FKy00y
+         Bldg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlPys7bUTQCrQKtogNsiKbg7apiNBRe3BT5JzhMhEA0sLm4JpYGgO2UJbTXzBTrx9FWzWDyXFkl68SKpdpWVm5@vger.kernel.org
+X-Gm-Message-State: AOJu0YymUbW5o/6Ob27bfi23ASbjsUlhTKLnHQfI/AkTV9Rrgrv+g86i
+	H4jze4j1KCeOn5/3evybAoj4ieuqZbrepvy7JSYht/dm7iNSZEGck2UXXahoLjvpyMw=
+X-Gm-Gg: AZuq6aJHmtZS0dMIwlaLER/I3QopuiiRgnTmPvq0aFcS0wkKSZaVEb/a1k6W9/AwDdN
+	106hi52pgCm5H3NNN++SOEOvpPHlHuGEO+514sEr4PiWgHZ70ZLjI/IgghCIEoBvzy59Z5pP0vr
+	rO1Wv9Z22xatSLmjLWtlauGYCvNNo4mf0bRqNraU6EAzXebif53bcJUO72/uvLim+BwbNOj1V0B
+	rRkx+fp5U8k01vtQ8FQ2yD8PnGpwRjTH86pBXQxCt6M3KNz1FF4ZSz/L8PDWTSTNgFFxTIjHvgt
+	CrdFxJnD2imKRVkVvusVsgiNGkbwn3UmEqDhXYGHskRytgpA7i7YlF9cDwFjfTD67iCw9CZcjBj
+	x7QWwAuTFKZWr57pFHusjRjT4QCkEkuNf4vsHflDwKCxXIaGve5+O7bZ9kJ4cY5VwuSuGLgOK+V
+	QFtGtLGiBihbTKJQ==
+X-Received: by 2002:a05:6a00:4b51:b0:81e:b93a:ab09 with SMTP id d2e1a72fcca58-8234119b7e6mr4073196b3a.1.1769442447588;
+        Mon, 26 Jan 2026 07:47:27 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:6260:7bcf:7e2d:fa8d])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c635a142e5asm8664137a12.12.2026.01.26.07.47.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Jan 2026 07:47:27 -0800 (PST)
+Date: Mon, 26 Jan 2026 08:47:24 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2] remoteproc: mediatek: Break lock dependency to
+ `prepare_lock`
+Message-ID: <aXeMjN4ziJ-w63sB@p14s>
+References: <20260112110755.2435899-1-tzungbi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260112110755.2435899-1-tzungbi@kernel.org>
 
-Microchip family of RISC-V SoCs typically have one or more
-clusters. These clusters can be configured to run in an Asymmetric
-Multi Processing (AMP) mode where clusters are split in independent
-software contexts.
+On Mon, Jan 12, 2026 at 11:07:55AM +0000, Tzung-Bi Shih wrote:
+> A potential circular locking dependency (ABBA deadlock) exists between
+> `ec_dev->lock` and the clock framework's `prepare_lock`.
+> 
+> The first order (A -> B) occurs when scp_ipi_send() is called while
+> `ec_dev->lock` is held (e.g., within cros_ec_cmd_xfer()):
+> 1. cros_ec_cmd_xfer() acquires `ec_dev->lock` and calls scp_ipi_send().
+> 2. scp_ipi_send() calls clk_prepare_enable(), which acquires
+>    `prepare_lock`.
+> See #0 in the following example calling trace.
+> (Lock Order: `ec_dev->lock` -> `prepare_lock`)
+> 
+> The reverse order (B -> A) is more complex and has been observed
+> (learned) by lockdep.  It involves the clock prepare operation
+> triggering power domain changes, which then propagates through sysfs
+> and power supply uevents, eventually calling back into the ChromeOS EC
+> driver and attempting to acquire `ec_dev->lock`:
+> 1. Something calls clk_prepare(), which acquires `prepare_lock`.  It
+>    then triggers genpd operations like genpd_runtime_resume(), which
+>    takes `&genpd->mlock`.
+> 2. Power domain changes can trigger regulator changes; regulator
+>    changes can then trigger device link changes; device link changes
+>    can then trigger sysfs changes.  Eventually, power_supply_uevent()
+>    is called.
+> 3. This leads to calls like cros_usbpd_charger_get_prop(), which calls
+>    cros_ec_cmd_xfer_status(), which then attempts to acquire
+>    `ec_dev->lock`.
+> See #1 ~ #6 in the following example calling trace.
+> (Lock Order: `prepare_lock` -> `&genpd->mlock` -> ... -> `&ec_dev->lock`)
+> 
+> Move the clk_prepare()/clk_unprepare() operations for `scp->clk` to the
+> remoteproc prepare()/unprepare() callbacks.  This ensures `prepare_lock`
+> is only acquired in prepare()/unprepare() callbacks.  Since
+> `ec_dev->lock` is not involved in the callbacks, the dependency loop is
+> broken.
+> 
+> This means the clock is always "prepared" when the SCP is running.  The
+> prolonged "prepared time" for the clock should be acceptable as SCP is
+> designed to be a very power efficient processor.  The power consumption
+> impact can be negligible.
+> 
+> A simplified calling trace reported by lockdep:
+> > -> #6 (&ec_dev->lock)
+> >        cros_ec_cmd_xfer
+> >        cros_ec_cmd_xfer_status
+> >        cros_usbpd_charger_get_port_status
+> >        cros_usbpd_charger_get_prop
+> >        power_supply_get_property
+> >        power_supply_show_property
+> >        power_supply_uevent
+> >        dev_uevent
+> >        uevent_show
+> >        dev_attr_show
+> >        sysfs_kf_seq_show
+> >        kernfs_seq_show
+> > -> #5 (kn->active#2)
+> >        kernfs_drain
+> >        __kernfs_remove
+> >        kernfs_remove_by_name_ns
+> >        sysfs_remove_file_ns
+> >        device_del
+> >        __device_link_del
+> >        device_links_driver_bound
+> > -> #4 (device_links_lock)
+> >        device_link_remove
+> >        _regulator_put
+> >        regulator_put
+> > -> #3 (regulator_list_mutex)
+> >        regulator_lock_dependent
+> >        regulator_disable
+> >        scpsys_power_off
+> >        _genpd_power_off
+> >        genpd_power_off
+> > -> #2 (&genpd->mlock/1)
+> >        genpd_add_subdomain
+> >        pm_genpd_add_subdomain
+> >        scpsys_add_subdomain
+> >        scpsys_probe
+> > -> #1 (&genpd->mlock)
+> >        genpd_runtime_resume
+> >        __rpm_callback
+> >        rpm_callback
+> >        rpm_resume
+> >        __pm_runtime_resume
+> >        clk_core_prepare
+> >        clk_prepare
+> > -> #0 (prepare_lock)
+> >        clk_prepare
+> >        scp_ipi_send
+> >        scp_send_ipi
+> >        mtk_rpmsg_send
+> >        rpmsg_send
+> >        cros_ec_pkt_xfer_rpmsg
+> 
+> Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+> ---
+> v2:
+> - Re-organized commit message.
+> - Rebased to next-20260109.
+> 
+> v1: https://lore.kernel.org/r/20251229043146.4102967-1-tzungbi@kernel.org
+> 
+>  drivers/remoteproc/mtk_scp.c     | 39 +++++++++++++++++++++++---------
+>  drivers/remoteproc/mtk_scp_ipi.c |  4 ++--
+>  2 files changed, 30 insertions(+), 13 deletions(-)
+>
 
-Add a remoteproc platform driver to be able to load and boot firmware
-to remote processors.
-
-The driver uses SBI (RISC-V Supervisor Binary Interface) ecalls to
-request software running in machine privilege mode (M-mode) to
-start/stop the remote processor.
-
-Inter-processor communication is supported through the
-virtio rpmsg stack using shared memory and the Microchip IPC mailbox
-driver.
-
-Currently, the driver the following features are supported:
-- Start/stop a remote software context
-- Kick function implementation for RPMsg Communication
-- Attach to a remote context loaded by another entity (bootloader)
-
-Error Recovery and Power Management features are not currently supported.
-
-Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
----
- drivers/remoteproc/Kconfig           |  12 +
- drivers/remoteproc/Makefile          |   1 +
- drivers/remoteproc/mchp_remoteproc.c | 613 +++++++++++++++++++++++++++
- 3 files changed, 626 insertions(+)
- create mode 100644 drivers/remoteproc/mchp_remoteproc.c
-
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index 48a0d3a69ed0..243e1c48c66b 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -54,6 +54,18 @@ config INGENIC_VPU_RPROC
- 	  This can be either built-in or a loadable module.
- 	  If unsure say N.
+Applied.
  
-+config MCHP_REMOTEPROC
-+	tristate "Microchip remoteproc support"
-+	depends on MCHP_SBI_IPC_MBOX || COMPILE_TEST
-+	depends on ARCH_MICROCHIP
-+	help
-+	  Say y here to support booting and loading firmware to remote
-+	  processors on various Microchip family of RISC-V SoCs via the
-+	  remote processor framework.
-+	  This can be either built-in or a loadable module. If compiled
-+	  as module, the module will be called mchp_remoteproc.
-+	  If unsure say N.
-+
- config MTK_SCP
- 	tristate "Mediatek SCP support"
- 	depends on ARCH_MEDIATEK || COMPILE_TEST
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 1c7598b8475d..600cd15d9823 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
- obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
- obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
- obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
-+obj-$(CONFIG_MCHP_REMOTEPROC)	+= mchp_remoteproc.o
- obj-$(CONFIG_MTK_SCP)			+= mtk_scp.o mtk_scp_ipi.o
- obj-$(CONFIG_OMAP_REMOTEPROC)		+= omap_remoteproc.o
- obj-$(CONFIG_WKUP_M3_RPROC)		+= wkup_m3_rproc.o
-diff --git a/drivers/remoteproc/mchp_remoteproc.c b/drivers/remoteproc/mchp_remoteproc.c
-new file mode 100644
-index 000000000000..fcc2c3f64bf4
---- /dev/null
-+++ b/drivers/remoteproc/mchp_remoteproc.c
-@@ -0,0 +1,613 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Microchip IPC Remoteproc driver
-+ *
-+ * Copyright (c) 2026 Microchip Technology Inc. All rights reserved.
-+ *
-+ * Author: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-+ *
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+#include <linux/workqueue.h>
-+
-+#include <asm/sbi.h>
-+#include <asm/vendorid_list.h>
-+#include <linux/mailbox/mchp-ipc.h>
-+
-+#include "remoteproc_internal.h"
-+
-+#define SBI_EXT_MICROCHIP_TECHNOLOGY	(SBI_EXT_VENDOR_START | \
-+					 MICROCHIP_VENDOR_ID)
-+
-+#define ACK_TIMEOUT			3000
-+#define MCHP_SBI_TARGET_TYPE_CPU	BIT(31)
-+#define MCHP_SBI_TARGET_ID_MASK		GENMASK(30, 0)
-+#define MCHP_IPC_READY_MSG		0xFFFFFF00
-+
-+/*
-+ * Remote cluster boot modes:
-+ * - Early boot firmware is started directly by the bootloader.
-+ * - Late boot firmware is started by Linux via remoteproc.
-+ */
-+enum {
-+	MCHP_LATE_BOOT_MODE = 0x0,
-+	MCHP_EARLY_BOOT_MODE = 0x6,
-+};
-+
-+/*
-+ * SBI RPROC extension function IDs
-+ */
-+enum {
-+	SBI_EXT_RPROC_STATE = 0x3,
-+	SBI_EXT_RPROC_START = 0x4,
-+	SBI_EXT_RPROC_STOP  = 0x5,
-+	SBI_EXT_RPROC_READY = 0x6,
-+};
-+
-+/*
-+ * Reserved memory region indexes
-+ */
-+enum {
-+	MCHP_IPC_RPROC_RSC_TABLE_REGION,
-+	MCHP_IPC_RPROC_FW_REGION,
-+	MCHP_IPC_RPROC_BUFF_REGION,
-+	MCHP_IPC_RPROC_VRING0_REGION,
-+	MCHP_IPC_RPROC_VRING1_REGION,
-+	MCHP_IPC_RPROC_REGION_MAX,
-+};
-+
-+/**
-+ * struct mchp_ipc_rproc_mem_region - Reserved memory region descriptor
-+ * @name:   the name used to match memory-region-names in the device tree
-+ * @prefix: optional prefix for the carveout name
-+ */
-+struct mchp_ipc_rproc_mem_region {
-+	const char *name;
-+	const char *prefix;
-+};
-+
-+/**
-+ * struct mchp_ipc_rproc - Microchip IPC remoteproc private structure
-+ * @dev:		pointer to the device
-+ * @rproc:		rproc handle
-+ * @mbox_channel:	mailbox channel handle
-+ * @workqueue:		workqueue for processing incoming notifications
-+ * @rsc_table:		the resource table address
-+ * @rsc_table_size:     size of the resource table region
-+ * @mbox_client:	mailbox client to request the mailbox channel
-+ * @start_done:		completion for remote processor ready notification
-+ * @rproc_work:		pointer to the work struture
-+ * @message:		buffer for the last received message
-+ * @target_id:		hardware identifier for the remote cluster
-+ * @has_cpu_target:	flag selecting SBI target type as CPU or mbox ID
-+ */
-+struct mchp_ipc_rproc {
-+	struct device *dev;
-+	struct rproc *rproc;
-+	struct mbox_chan *mbox_channel;
-+	struct workqueue_struct *workqueue;
-+	void __iomem *rsc_table;
-+	size_t rsc_table_size;
-+	struct mbox_client mbox_client;
-+	struct completion start_done;
-+	struct work_struct rproc_work;
-+	struct mchp_ipc_msg message;
-+	u32 target_id;
-+	bool has_cpu_target;
-+};
-+
-+static const struct mchp_ipc_rproc_mem_region mchp_rproc_mem_regions[] = {
-+	[MCHP_IPC_RPROC_RSC_TABLE_REGION] = {
-+		.name = "rsc-table",
-+		.prefix = NULL,
-+	},
-+	[MCHP_IPC_RPROC_FW_REGION] = {
-+		.name = "firmware",
-+		.prefix = NULL,
-+	},
-+	[MCHP_IPC_RPROC_BUFF_REGION] = {
-+		.name = "buffer",
-+		.prefix = "vdev0",
-+	},
-+	[MCHP_IPC_RPROC_VRING0_REGION] = {
-+		.name = "vring0",
-+		.prefix = "vdev0",
-+	},
-+	[MCHP_IPC_RPROC_VRING1_REGION] = {
-+		.name = "vring1",
-+		.prefix = "vdev0",
-+	},
-+};
-+
-+/**
-+ * mchp_rproc_sbi_call() - Invoke a Microchip-specific SBI extension ecall
-+ * @rproc:    pointer to the remoteproc instance
-+ * @sbi_func: the SBI function ID
-+ * @target:   the hardware ID of the target remote cluster
-+ *
-+ * This function performs a Supervisor Binary Interface (SBI) call to the
-+ * Machine Mode (M-Mode) firmware. It encodes the @target ID and type into a
-+ * single 32-bit register argument using MSB encoding:
-+ * [31]    : target Type Flag (1 = CPU/Cluster)
-+ * [30:0]  : target Cluster ID
-+ *
-+ * Return: The value returned by the SBI call on success, or a
-+ * negative errno on error.
-+ */
-+static int mchp_rproc_sbi_call(struct rproc *rproc, u32 sbi_func, u32 target)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct sbiret ret;
-+
-+	target &= MCHP_SBI_TARGET_ID_MASK;
-+
-+	if (priv->has_cpu_target)
-+		target |= MCHP_SBI_TARGET_TYPE_CPU;
-+
-+	ret = sbi_ecall(SBI_EXT_MICROCHIP_TECHNOLOGY, sbi_func,
-+			target, 0, 0, 0, 0, 0);
-+
-+	if (ret.error)
-+		return sbi_err_map_linux_errno(ret.error);
-+
-+	return ret.value;
-+}
-+
-+/**
-+ * mchp_ipc_rproc_vq_work() - Remoteproc notification work function
-+ * @work: Pointer to the work structure
-+ *
-+ * Handles incoming IPC messages from the remote cluster, either
-+ * processing control messages or passing notifications to the
-+ * remoteproc virtqueue framework.
-+ */
-+static void mchp_ipc_rproc_vq_work(struct work_struct *work)
-+{
-+	struct mchp_ipc_rproc *priv = container_of(work, struct mchp_ipc_rproc, rproc_work);
-+	struct device *dev = priv->rproc->dev.parent;
-+	struct mchp_ipc_msg *msg = &priv->message;
-+	u32 message;
-+
-+	if (!msg->buf || msg->size < sizeof(u32))
-+		return;
-+
-+	message = *msg->buf;
-+
-+	if (message == MCHP_IPC_READY_MSG) {
-+		complete(&priv->start_done);
-+		return;
-+	}
-+
-+	if (message > priv->rproc->max_notifyid) {
-+		dev_info(dev, "dropping unknown vqid 0x%x\n", message);
-+		return;
-+	}
-+
-+	if (rproc_vq_interrupt(priv->rproc, message) == IRQ_NONE)
-+		dev_dbg(dev, "no message found in vqid %d\n", message);
-+}
-+
-+/**
-+ * mchp_ipc_rproc_rx_callback() - Callback for incoming mailbox messages
-+ * @mbox_client: Mailbox client
-+ * @data: message pointer
-+ *
-+ * Receives data from the IPC mailbox and schedules the notification
-+ * work function to process the message.
-+ */
-+static void mchp_ipc_rproc_rx_callback(struct mbox_client *mbox_client, void *data)
-+{
-+	struct rproc *rproc = dev_get_drvdata(mbox_client->dev);
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+
-+	priv->message = *(struct mchp_ipc_msg *)data;
-+	queue_work(priv->workqueue, &priv->rproc_work);
-+}
-+
-+static int mchp_ipc_rproc_mem_alloc(struct rproc *rproc, struct rproc_mem_entry *mem)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	void *va;
-+
-+	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
-+	va = ioremap_wc(mem->dma, mem->len);
-+	if (IS_ERR_OR_NULL(va)) {
-+		dev_err(dev, "Unable to map memory region: %p+%zx\n",
-+			&mem->dma, mem->len);
-+		return -ENOMEM;
-+	}
-+
-+	mem->va = va;
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_mem_release(struct rproc *rproc,
-+				      struct rproc_mem_entry *mem)
-+{
-+	dev_dbg(rproc->dev.parent, "unmap memory: %pad\n", &mem->dma);
-+	iounmap(mem->va);
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_prepare(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct device_node *np = priv->dev->of_node;
-+	struct rproc_mem_entry *mem;
-+	struct resource res;
-+	const char *mem_region_name;
-+	const char *carveout_name;
-+	int i, index, ret;
-+
-+	reinit_completion(&priv->start_done);
-+
-+	for (i = 0; i < ARRAY_SIZE(mchp_rproc_mem_regions); i++) {
-+		mem_region_name = mchp_rproc_mem_regions[i].name;
-+		index = of_property_match_string(np, "memory-region-names", mem_region_name);
-+
-+		if (index < 0)
-+			continue;
-+
-+		ret = of_reserved_mem_region_to_resource_byname(np, mem_region_name, &res);
-+		if (ret)
-+			return ret;
-+
-+		if (mchp_rproc_mem_regions[i].prefix) {
-+			carveout_name = devm_kasprintf(priv->dev, GFP_KERNEL, "%s%s",
-+						       mchp_rproc_mem_regions[i].prefix,
-+						       mem_region_name);
-+			if (!carveout_name)
-+				return -ENOMEM;
-+		} else {
-+			carveout_name = mem_region_name;
-+		}
-+
-+		if (i == MCHP_IPC_RPROC_BUFF_REGION) {
-+			mem = rproc_of_resm_mem_entry_init(priv->dev, index, resource_size(&res),
-+							   res.start, carveout_name);
-+		} else {
-+			mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
-+						   resource_size(&res), res.start,
-+						   mchp_ipc_rproc_mem_alloc,
-+						   mchp_ipc_rproc_mem_release, carveout_name);
-+		}
-+
-+		if (!mem)
-+			return -ENOMEM;
-+
-+		rproc_add_carveout(rproc, mem);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_start(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct device *dev = rproc->dev.parent;
-+	unsigned long timeout;
-+	int ready_ack;
-+	int ret;
-+
-+	ret = mchp_rproc_sbi_call(rproc, SBI_EXT_RPROC_START, priv->target_id);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * If the firmware supports the SBI_EXT_RPROC_READY function ID,
-+	 * query the firmware to check if the remote cluster has booted
-+	 * successfully; otherwise, wait for an asynchronous ready
-+	 * notification delivered via the mailbox.
-+	 */
-+	if (priv->has_cpu_target) {
-+		timeout = jiffies + msecs_to_jiffies(ACK_TIMEOUT);
-+		do {
-+			ready_ack = mchp_rproc_sbi_call(rproc,
-+							SBI_EXT_RPROC_READY,
-+							priv->target_id);
-+			if (ready_ack > 0)
-+				return 0;
-+			if (ready_ack < 0)
-+				return ready_ack;
-+
-+			usleep_range(1000, 1100);
-+		} while (time_before(jiffies, timeout));
-+
-+		dev_err(dev, "timeout waiting for SBI ready ack\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	if (!wait_for_completion_timeout(&priv->start_done, msecs_to_jiffies(ACK_TIMEOUT))) {
-+		dev_err(dev, "timeout waiting for ready notification\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_stop(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	int ret = 0;
-+
-+	ret = mchp_rproc_sbi_call(rproc, SBI_EXT_RPROC_STOP, priv->target_id);
-+	if (ret < 0)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static int mchp_ipc_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-+{
-+	int ret;
-+
-+	ret = rproc_elf_load_rsc_table(rproc, fw);
-+	if (ret)
-+		dev_info(&rproc->dev, "No resource table in elf\n");
-+
-+	return 0;
-+}
-+
-+static void mchp_ipc_rproc_kick(struct rproc *rproc, int vqid)
-+{
-+	struct mchp_ipc_rproc *priv = (struct mchp_ipc_rproc *)rproc->priv;
-+	struct mchp_ipc_msg msg;
-+	int ret;
-+
-+	if (!priv->mbox_channel) {
-+		dev_err(priv->dev, "No initialized mbox channel\n");
-+		return;
-+	}
-+
-+	msg.buf = (void *)&vqid;
-+	msg.size = sizeof(vqid);
-+
-+	ret = mbox_send_message(priv->mbox_channel, (void *)&msg);
-+	if (ret < 0)
-+		dev_err(priv->dev,
-+			"failed to send mbox message, status = %d\n", ret);
-+}
-+
-+static struct resource_table
-+*mchp_ipc_rproc_get_loaded_rsc_table(struct rproc *rproc, size_t *table_sz)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+
-+	if (!priv->rsc_table)
-+		return NULL;
-+
-+	*table_sz = priv->rsc_table_size;
-+
-+	return (struct resource_table *)priv->rsc_table;
-+}
-+
-+static int mchp_ipc_rproc_attach(struct rproc *rproc)
-+{
-+	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
-+
-+	return 0;
-+}
-+
-+static const struct rproc_ops mchp_ipc_rproc_ops = {
-+	.prepare = mchp_ipc_rproc_prepare,
-+	.start = mchp_ipc_rproc_start,
-+	.stop = mchp_ipc_rproc_stop,
-+	.load = rproc_elf_load_segments,
-+	.parse_fw = mchp_ipc_rproc_parse_fw,
-+	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
-+	.sanity_check = rproc_elf_sanity_check,
-+	.get_boot_addr = rproc_elf_get_boot_addr,
-+	.kick = mchp_ipc_rproc_kick,
-+	.get_loaded_rsc_table = mchp_ipc_rproc_get_loaded_rsc_table,
-+	.attach = mchp_ipc_rproc_attach,
-+};
-+
-+static int mchp_ipc_rproc_mbox_init(struct rproc *rproc)
-+{
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+	struct device *dev = priv->dev;
-+	struct mchp_ipc_sbi_chan *chan_priv;
-+	struct mbox_client *mbox_client;
-+
-+	mbox_client = &priv->mbox_client;
-+	mbox_client->dev = dev;
-+	mbox_client->tx_block = true;
-+	mbox_client->tx_tout = 100;
-+	mbox_client->knows_txdone = false;
-+	mbox_client->rx_callback = mchp_ipc_rproc_rx_callback;
-+
-+	priv->mbox_channel = mbox_request_channel(mbox_client, 0);
-+	if (IS_ERR(priv->mbox_channel))
-+		return dev_err_probe(mbox_client->dev,
-+				     PTR_ERR(priv->mbox_channel),
-+				     "failed to request mailbox channel\n");
-+
-+	/* Retrieve the mbox channel private data to get the mailbox ID */
-+	if (!priv->has_cpu_target) {
-+		chan_priv = (struct mchp_ipc_sbi_chan *)priv->mbox_channel->con_priv;
-+		priv->target_id = chan_priv->id;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mchp_ipc_rproc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *cpu_node;
-+	struct mchp_ipc_rproc *priv;
-+	struct rproc *rproc;
-+	struct resource res;
-+	int ret;
-+
-+	rproc = devm_rproc_alloc(dev, np->name, &mchp_ipc_rproc_ops,
-+				 NULL, sizeof(*priv));
-+	if (!rproc)
-+		return -ENOMEM;
-+
-+	priv = rproc->priv;
-+	priv->rproc = rproc;
-+	priv->dev = dev;
-+
-+	/*
-+	 * Determine if the firmware supports SBI_EXT_RPROC_READY function ID.
-+	 * If not supported (firmware versions prior to HSS v2026.04), the
-+	 * mailbox channel ID is required to pass to the firmware. Otherwise,
-+	 * the CPU ID can be used to identify the target cluster instead.
-+	 */
-+	ret = mchp_rproc_sbi_call(rproc, SBI_EXT_RPROC_READY, 0);
-+	if (ret == -ENOTSUPP) {
-+		priv->has_cpu_target = false;
-+		if (!of_property_present(np, "mboxes"))
-+			return dev_err_probe(dev, -ENOENT,
-+					"mboxes property required for HSS versions prior to 2026.04\n");
-+	} else {
-+		cpu_node = of_parse_phandle(np, "cpu", 0);
-+		if (cpu_node) {
-+			priv->target_id = of_get_cpu_hwid(cpu_node, 0);
-+			of_node_put(cpu_node);
-+			priv->has_cpu_target = true;
-+		} else {
-+			priv->has_cpu_target = false;
-+			if (!of_property_present(np, "mboxes"))
-+				return dev_err_probe(dev, -ENOENT,
-+						"at least cpu or mboxes must be present\n");
-+		}
-+	}
-+
-+	if (of_property_present(np, "mboxes")) {
-+		ret = mchp_ipc_rproc_mbox_init(rproc);
-+		if (ret)
-+			return ret;
-+
-+		priv->workqueue = create_workqueue(dev_name(dev));
-+		if (!priv->workqueue) {
-+			ret = -ENOMEM;
-+			dev_err_probe(dev, ret, "cannot create workqueue\n");
-+			goto err_put_mbox;
-+		}
-+
-+		INIT_WORK(&priv->rproc_work, mchp_ipc_rproc_vq_work);
-+	}
-+
-+	/*
-+	 * Retrieve the current boot state of the remote cluster to determine how its
-+	 * firmware was started.
-+	 * MCHP_EARLY_BOOT_MODE: firmware was started directly by the bootloader.
-+	 * MCHP_LATE_BOOT_MODE: firmware will be started by Linux via remoteproc.
-+	 */
-+	ret = mchp_rproc_sbi_call(rproc, SBI_EXT_RPROC_STATE, priv->target_id);
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret, "cannot get boot mode\n");
-+		goto err_put_wkq;
-+	}
-+
-+	/* Set the rproc state based on the cluster boot mode */
-+	if (ret == MCHP_EARLY_BOOT_MODE) {
-+		/*
-+		 * If the cluster was already started by another entity (early boot mode),
-+		 * check if the resource table is provided as a memory-region. It is
-+		 * expected that the remote processor firmware provides a copy of the
-+		 * resource table at a dedicated memory address.
-+		 *
-+		 * However, the absence of a resource table entry in early boot mode is
-+		 * considered valid since some firmware might not use rpmsg. The
-+		 * lifecycle can still be controlled by Linux once the cluster is
-+		 * attached.
-+		 */
-+		ret = of_reserved_mem_region_to_resource_byname(np, "rsc-table", &res);
-+		if (!ret) {
-+			priv->rsc_table = devm_ioremap_resource(dev, &res);
-+			if (IS_ERR(priv->rsc_table)) {
-+				ret = PTR_ERR(priv->rsc_table);
-+				dev_err_probe(dev, ret, "failed to map resource table\n");
-+				goto err_put_wkq;
-+			}
-+			priv->rsc_table_size = resource_size(&res);
-+		}
-+		rproc->state = RPROC_DETACHED;
-+	} else {
-+		/*
-+		 * If the cluster is to be started by Linux (late boot mode), the
-+		 * firmware memory region must be provided in the device tree.
-+		 * This region is used to load the remote processor ELF image
-+		 * to shared DDR memory.
-+		 */
-+		ret = of_reserved_mem_region_to_resource_byname(np, "firmware", &res);
-+		if (ret) {
-+			dev_err_probe(dev, ret, "missing firmware memory region\n");
-+			goto err_put_wkq;
-+		}
-+		rproc->auto_boot = false;
-+	}
-+
-+	init_completion(&priv->start_done);
-+
-+	/* error recovery is not supported at present */
-+	rproc->recovery_disabled = true;
-+
-+	dev_set_drvdata(dev, rproc);
-+
-+	ret = devm_rproc_add(dev, rproc);
-+	if (ret) {
-+		dev_err_probe(dev, ret, "rproc_add failed\n");
-+		goto err_put_wkq;
-+	}
-+
-+	return 0;
-+
-+err_put_wkq:
-+	if (priv->workqueue)
-+		destroy_workqueue(priv->workqueue);
-+err_put_mbox:
-+	if (priv->mbox_channel)
-+		mbox_free_channel(priv->mbox_channel);
-+
-+	return ret;
-+}
-+
-+static void mchp_ipc_rproc_remove(struct platform_device *pdev)
-+{
-+	struct rproc *rproc = platform_get_drvdata(pdev);
-+	struct mchp_ipc_rproc *priv = rproc->priv;
-+
-+	if (priv->workqueue)
-+		destroy_workqueue(priv->workqueue);
-+
-+	if (priv->mbox_channel)
-+		mbox_free_channel(priv->mbox_channel);
-+}
-+
-+static const struct of_device_id mchp_ipc_rproc_of_match[] __maybe_unused = {
-+	{ .compatible = "microchip,ipc-sbi-remoteproc", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mchp_ipc_rproc_of_match);
-+
-+static struct platform_driver mchp_ipc_rproc_driver = {
-+	.probe = mchp_ipc_rproc_probe,
-+	.remove = mchp_ipc_rproc_remove,
-+	.driver = {
-+		.name = "microchip-ipc-rproc",
-+		.of_match_table = of_match_ptr(mchp_ipc_rproc_of_match),
-+	},
-+};
-+
-+module_platform_driver(mchp_ipc_rproc_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Valentina Fernandez <valentina.fernandezalanis@microchip.com>");
-+MODULE_DESCRIPTION("Microchip IPC Remote Processor control driver");
--- 
-2.34.1
-
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 328541e62158..4651311aeb07 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -283,7 +283,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
+>  	struct mtk_scp *scp = priv;
+>  	int ret;
+>  
+> -	ret = clk_prepare_enable(scp->clk);
+> +	ret = clk_enable(scp->clk);
+>  	if (ret) {
+>  		dev_err(scp->dev, "failed to enable clocks\n");
+>  		return IRQ_NONE;
+> @@ -291,7 +291,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
+>  
+>  	scp->data->scp_irq_handler(scp);
+>  
+> -	clk_disable_unprepare(scp->clk);
+> +	clk_disable(scp->clk);
+>  
+>  	return IRQ_HANDLED;
+>  }
+> @@ -665,7 +665,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
+>  	struct device *dev = scp->dev;
+>  	int ret;
+>  
+> -	ret = clk_prepare_enable(scp->clk);
+> +	ret = clk_enable(scp->clk);
+>  	if (ret) {
+>  		dev_err(dev, "failed to enable clocks\n");
+>  		return ret;
+> @@ -680,7 +680,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
+>  
+>  	ret = scp_elf_load_segments(rproc, fw);
+>  leave:
+> -	clk_disable_unprepare(scp->clk);
+> +	clk_disable(scp->clk);
+>  
+>  	return ret;
+>  }
+> @@ -691,14 +691,14 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
+>  	struct device *dev = scp->dev;
+>  	int ret;
+>  
+> -	ret = clk_prepare_enable(scp->clk);
+> +	ret = clk_enable(scp->clk);
+>  	if (ret) {
+>  		dev_err(dev, "failed to enable clocks\n");
+>  		return ret;
+>  	}
+>  
+>  	ret = scp_ipi_init(scp, fw);
+> -	clk_disable_unprepare(scp->clk);
+> +	clk_disable(scp->clk);
+>  	return ret;
+>  }
+>  
+> @@ -709,7 +709,7 @@ static int scp_start(struct rproc *rproc)
+>  	struct scp_run *run = &scp->run;
+>  	int ret;
+>  
+> -	ret = clk_prepare_enable(scp->clk);
+> +	ret = clk_enable(scp->clk);
+>  	if (ret) {
+>  		dev_err(dev, "failed to enable clocks\n");
+>  		return ret;
+> @@ -734,14 +734,14 @@ static int scp_start(struct rproc *rproc)
+>  		goto stop;
+>  	}
+>  
+> -	clk_disable_unprepare(scp->clk);
+> +	clk_disable(scp->clk);
+>  	dev_info(dev, "SCP is ready. FW version %s\n", run->fw_ver);
+>  
+>  	return 0;
+>  
+>  stop:
+>  	scp->data->scp_reset_assert(scp);
+> -	clk_disable_unprepare(scp->clk);
+> +	clk_disable(scp->clk);
+>  	return ret;
+>  }
+>  
+> @@ -909,7 +909,7 @@ static int scp_stop(struct rproc *rproc)
+>  	struct mtk_scp *scp = rproc->priv;
+>  	int ret;
+>  
+> -	ret = clk_prepare_enable(scp->clk);
+> +	ret = clk_enable(scp->clk);
+>  	if (ret) {
+>  		dev_err(scp->dev, "failed to enable clocks\n");
+>  		return ret;
+> @@ -917,12 +917,29 @@ static int scp_stop(struct rproc *rproc)
+>  
+>  	scp->data->scp_reset_assert(scp);
+>  	scp->data->scp_stop(scp);
+> -	clk_disable_unprepare(scp->clk);
+> +	clk_disable(scp->clk);
+>  
+>  	return 0;
+>  }
+>  
+> +static int scp_prepare(struct rproc *rproc)
+> +{
+> +	struct mtk_scp *scp = rproc->priv;
+> +
+> +	return clk_prepare(scp->clk);
+> +}
+> +
+> +static int scp_unprepare(struct rproc *rproc)
+> +{
+> +	struct mtk_scp *scp = rproc->priv;
+> +
+> +	clk_unprepare(scp->clk);
+> +	return 0;
+> +}
+> +
+>  static const struct rproc_ops scp_ops = {
+> +	.prepare	= scp_prepare,
+> +	.unprepare	= scp_unprepare,
+>  	.start		= scp_start,
+>  	.stop		= scp_stop,
+>  	.load		= scp_load,
+> diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
+> index c068227e251e..7a37e273b3af 100644
+> --- a/drivers/remoteproc/mtk_scp_ipi.c
+> +++ b/drivers/remoteproc/mtk_scp_ipi.c
+> @@ -171,7 +171,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
+>  	    WARN_ON(len > scp_sizes->ipi_share_buffer_size) || WARN_ON(!buf))
+>  		return -EINVAL;
+>  
+> -	ret = clk_prepare_enable(scp->clk);
+> +	ret = clk_enable(scp->clk);
+>  	if (ret) {
+>  		dev_err(scp->dev, "failed to enable clock\n");
+>  		return ret;
+> @@ -211,7 +211,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
+>  
+>  unlock_mutex:
+>  	mutex_unlock(&scp->send_lock);
+> -	clk_disable_unprepare(scp->clk);
+> +	clk_disable(scp->clk);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.52.0.457.g6b5491de43-goog
+> 
+> 
