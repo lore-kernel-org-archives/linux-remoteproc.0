@@ -1,98 +1,124 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FE632FA19
-	for <linux-remoteproc@vger.kernel.org>; Mon, 26 Jan 2026 10:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04771313550;
+	Mon, 26 Jan 2026 12:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769423374; cv=none; b=NmKx5xBu95tPAZRN7NsFZZJPxok41lWoBW+6xvruJJtjofoOqnOqpjSYyozt59lJR+l0Kj0mxvRn2108AiRKv2cf4X7/eXUK68e6ysJQX1lx9HPQHROHt8BBnO/FkNlDwEf7m6XQZHJ2YN1u5jJuz19ZBybidqzk0fczfoVNkMM=
+	t=1769429323; cv=none; b=MLsB3gEJyBQrArtOeFavPpsYiCNUsy71pDJc2xGs6V+5Zm8I3tXrasfcWeAyg/FGA9EucT5qhsyLuy7yTRyTb0/Mdgzr8vWCJgMm4hvLG1tgZErjTZ3qxUm3zaCPJpJ+hy7lEYOYLgiFNSOKQ5AdlW17TO3PLqsraf3g7hZre6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769423374; c=relaxed/simple;
-	bh=Jh9DbPdyhqX1cvGDcyHJMZub+1uUsIMf6B/WAv++Rbo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTcR/7/Am7sqwMn3CBNigX8Z7dGtNELPbW8nq/q2hAJFTBVieETC2gfWuG/RE3sanKylPXJ8nCjf13kV0VtbvQc4pJD10prZ5iPcD8bMMf18fcyy10AvzZ/K9+Ahrfz5xngIiRi+0ry1hxhpydjxv0Up6CtWkO1mLvYLdHS1nEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jHX8+Wl7; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1769429323; c=relaxed/simple;
+	bh=Y6sUaUtvpMTu0Wf3O7a4vFBsqfedkoyz0S5r64NVT3w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZUFghtPJTt1nXbXxM7h/n9JVEeqsy3nPQTJPeQwrPJdnWfFTdZLG3r7+07c+kGCzUtOl3tqwHJavaiMT24MpMwBS8YlreccioExogm9WNLJuCQmmV3YO4XjPJUTP1pyPWn1Z54o2Al7lV6pjG1+K4/GTRL8Y7AFOHEIESC7FUG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EJFeroVb; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jHX8+Wl7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=F2bF
-	S/uMFLgtEVC0YCnMXZC86wb3SDlDFVJk5gHDbHs=; b=jHX8+Wl7CjOEdsajEoyd
-	YLJSni1KMKFnTnF6HUkKy4i7hdARKm53juZzr7ZafJR47rtHoNyWJaaKdHJ/2sso
-	LqYQH5W3d0RaRaQ8Q8J1G9u4nNTashMNVexC1gLUhUwVMKjdwdx0vBnOcNj2BbqO
-	OzdLxlpS3qYwey2EMbughKgdVpyf2lbwjuTyiOgPikJmtfRlj0LYKeoBgjXrSvoV
-	mlK/IzdLZzcuzrQK6IypnN/vpPwAKgfyOgmhmg2cICJBgE71R+rc1lx8MlV6l5v8
-	F39Y7wqyE8Wvnw4+qlOC0DvLTWsXo+ZALNH34HFE5YzYV8NWVP6e4yVnRLb2de1H
-	6g==
-Received: (qmail 2710669 invoked from network); 26 Jan 2026 11:29:27 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jan 2026 11:29:27 +0100
-X-UD-Smtp-Session: l3s3148p1@tFg7+0dJFMUujnvz
-Date: Mon, 26 Jan 2026 11:29:26 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Antonio Borneo <antonio.borneo@foss.st.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Chen-Yu Tsai <wens@kernel.org>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, Mark Brown <broonie@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Waiman Long <longman@redhat.com>,
-	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [RFC PATCH 0/4] hwspinlock: refactor headers into public
- provider/consumer pair
-Message-ID: <aXdCBu6kzdw1NWay@ninjato>
-References: <20260125184654.17843-6-wsa+renesas@sang-engineering.com>
- <aXc7DxsqiCGdfzxi@smile.fi.intel.com>
- <aXc-Zxw05XQLb1Dy@ninjato>
- <aXdAB2bLTy6u8G8c@smile.fi.intel.com>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EJFeroVb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1769429320; x=1800965320;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Y6sUaUtvpMTu0Wf3O7a4vFBsqfedkoyz0S5r64NVT3w=;
+  b=EJFeroVbKPlef44gBDcyXE/la7hdcpe4IS2MuPR9cx6D8UngCwqByLRV
+   coKONEUS1TjZDnoK2Mlojt+AcwfjeBS1CNvkybyxVvJcwDtwSu4aOj+78
+   KiSYCwtrK42e/9UE/9Fga3QBWAN3eaajoCrPTrJI7gsw7mLdAbpHQS1aT
+   FuVvPhYQ2Vk5nsGeV2kO8/HtAXTSdN5dZX00wBepbhhWSNn0UJ8FmSYUM
+   cnXYN9zChGC9/TzMCXfAAx7q9OoMN28iKziDo9WS/MKmlq9oOnMVQo33f
+   9LMWDdtDcGWRPxJ3r2mpOED6iK0wAvfNDMgCj+OTYksEqoIihUsR4My0K
+   w==;
+X-CSE-ConnectionGUID: lg+rExm3SemOjIBtFxY/WA==
+X-CSE-MsgGUID: QDRAihz9TiyGuXqSZ5fcjA==
+X-IronPort-AV: E=Sophos;i="6.21,255,1763449200"; 
+   d="scan'208";a="52870263"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2026 05:08:33 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Mon, 26 Jan 2026 05:08:18 -0700
+Received: from valentina.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.58 via Frontend Transport; Mon, 26 Jan 2026 05:08:16 -0700
+From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<valentina.fernandezalanis@microchip.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/2] Add Microchip IPC remoteproc support
+Date: Mon, 26 Jan 2026 12:06:56 +0000
+Message-ID: <20260126120658.1674253-1-valentina.fernandezalanis@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aXdAB2bLTy6u8G8c@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
+Hello all,
 
-> > Providers need it, especially the 'priv' member. Consumers won't see it.
-> 
-> But can't we make it opaque?
-> 
-> We may have getters and setters for the priv member...
+This series adds support for the Microchip Inter-Processor
+Communication (IPC) remoteproc platform driver.
 
-I think we could do that.
+Microchip RISC-V SoCs typically contain one or more clusters. Clusters
+can operate in Asymmetric Multi-Processing (AMP) mode, where individual
+cores or groups of cores run as independent software contexts.
 
-Two drivers use the bank member, but only for the device
-(lock->bank->dev). That can probably be refactored away, I'd guess.
+The configuration is flexible, as the set of cores or clusters that can
+be controlled as remote processors may vary, and memory regions used
+for firmware as well as mailbox assignments depend on the system
+design.
+
+Communication with remote cores or clusters is abstracted using ecalls
+to the platform's Supervisor Binary Interface (SBI) firmware, through
+which the state of remote cores or clusters are controlled.
+
+Changes in v3:
+- dt-bindings:
+  - Improve commit message and property descriptions as per feedback.
+  - Add cpu property and update memory region descriptions.
+  - Implement conditional to handle required properties
+  - Implement conditionals on vring memory regions
+
+- mchp_remoteproc driver:
+  - Drop "ipc_sbi" from Makefile and rename driver file
+    to mchp_remoteproc.c
+  - Add support for using remote cluster CPU ID for life
+    cycle management via SBI interface
+  - Improve documentation for early and late boot use cases
+  - Improve resource table mapping and error handling
+- Link to v2: https://lore.kernel.org/r/20251121142157.3582463-1-valentina.fernandezalanis@microchip.com/
+
+Changes in v2:
+ - simplify memory region handling with memory-region-names
+ - rename compatible to "microchip,ipc-sbi-remoteproc"
+ - rephrase dt binding commit  subject, message and description property
+ - drop microchip,auto-boot and microchip,skip-ready-wait properties
+ - fix memory-region constraints and add memory-region-names
+ - fix binding example and add examples for all use cases
+ - Link to v1: https://lore.kernel.org/r/20240912170025.455167-6-valentina.fernandezalanis@microchip.com/
+
+Thanks,
+Valentina
+
+Valentina Fernandez (2):
+  dt-bindings: remoteproc: add Microchip IPC remoteproc
+  remoteproc: add support for Microchip IPC remoteproc platform driver
+
+ .../microchip,ipc-sbi-remoteproc.yaml         | 131 ++++
+ drivers/remoteproc/Kconfig                    |  12 +
+ drivers/remoteproc/Makefile                   |   1 +
+ drivers/remoteproc/mchp_remoteproc.c          | 613 ++++++++++++++++++
+ 4 files changed, 757 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
+ create mode 100644 drivers/remoteproc/mchp_remoteproc.c
+
+-- 
+2.34.1
 
