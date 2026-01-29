@@ -1,191 +1,172 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3084385506
-	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Jan 2026 10:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769684206; cv=none; b=cJ1W6axz7i8vkNzs9XajEqCyjcOZ0x9LFvMNh2wzqc0KA62AG0QCLCbZqXJ5tXDwF0SfaHGlnAeuXcxaI+fZDjcSr+bFXv0BxnY9SvzlJpimQGXg0PkPGbnm0lv/wK1r00MzsvV8CabDZUn8gx4TjN+PNytyzvkrNCSwxNY+Do8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769684206; c=relaxed/simple;
-	bh=NftH4NbySuxTwiS3x7VPTmzHnoh0WpL/QxwCqSDMyvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QLelERHEFZvdQeNPDBwWRBwjlPi12FlvVWerW1ih2JSDhDvwNHxY7RWCyPSv1NlYwBOs7J/vVoBKlYd1RsGbGadkhMugjbTh76jxpzqOk+6wpBLaPTwkk7p/wX7qhPn5mRQuWpisc58RERgInpCbXWg5FYfk8a9O9yk+qC0DekM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fe/0YN+g; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VT9TtOW3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFAF313281
+	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Jan 2026 15:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1769702379; cv=pass; b=EUCCQmiggu0v1jBxlaf1d7EIS/7ZvsKj4e9YNsWOynEBV1spKR6yBnosU90++YrZkrOiQjoXS27yAWgk5/ihgH1Yw8EjG4wvSiY5FLr/bDDXI718VOBXBqzTS3YijOOWI7n5ttkUHf8s3qgGDMQoUZZxyozQX0rKNwTgUXhneCQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1769702379; c=relaxed/simple;
+	bh=jP6B/+HWGupxxJrmj9WayxckdF/Nn9MjSYPmAAE2/5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SzdZO9wFAANnB+YYDnwr7jtMCnvLuRRaCLmJ1yXg6EvDde025Xrbmm0+czoVe7k4F6/QAqGITobu/370s81ON5/PDtKQngIQc5ugz+albczZ8HJ9LVvatHfXsyCtM1GP0R5Tn5vvFfoujLW4saiiUNue3g7/haLQqXfGwZhVseI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EdfEWwGk; arc=pass smtp.client-ip=74.125.82.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fe/0YN+g";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VT9TtOW3"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60TALADp3676045
-	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Jan 2026 10:56:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Y+70wOe9GzJyEZl1jsTNS3cNPpQOsspWrv2NzcTlOHI=; b=fe/0YN+gbNWgLrb+
-	rVRwkg9k2vWOD7p4PQrUolrDCEs+KJnAi0ruzt3Rpw3NMK4dBkbqw3jlhRCWobdP
-	xszs2zjf77mY4eVYgLc/duduE54abowqX8GaKHLwhT6aBW8kK+td/uNhZMAfcZ+i
-	5z4URz4V+quOh0EG1+GvnnG7OFYSceTRSr0HngyDGtsoHIKTBxvnsWMz7Vys0j29
-	IqFlOdvjqNFO9Txl0WLCjiknX0L8nGDxBWylDfXhNc4no4hO1VwNZwyK/+Uqn1rz
-	Lhx/iaFL8mgqsPjlYqFHY1drMyt7FO4RTC4pr+2Y0BnAHpI0mJK6m+T53tsiT4Y6
-	hZ6R7g==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c05q7g3cv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Jan 2026 10:56:43 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2a76b0673dcso8341265ad.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 29 Jan 2026 02:56:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EdfEWwGk"
+Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-1233bc1117fso1503231c88.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 29 Jan 2026 07:59:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1769702377; cv=none;
+        d=google.com; s=arc-20240605;
+        b=BZ2JuOu5VTW22i0JRHAYgGrwru2yF+GLZDOo9CHv/lBwynQ2EzTWKbIyDN/jDfzb4q
+         bISXzmZMsHhY/C8OXHFnqzxdinQ9AunhBXebbSlViA+A7mpVJc06CZbqgqndyhPm8IH1
+         LFN2z78tpv66Kctzf1YEnwcNB/6zKE9FBlHxK3hacR+lyvJL1VFd4+04PerW0n3cq6E9
+         vMY0ggEXBhSuVKbbasZ44mFg6EDWxWvRHpEt7xAs/bTM+zh2y7SbokF1nOtnYIeGNgbO
+         8KK+ylLB44EKUDIoeG6lAr3TBAAfJteVQbJKoeR3M3dV36XK+zkih/lAzjaZUc5vTJGL
+         syNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=6mJvDD1VpYWneH4exWtlRRFpCw/yxXuXg63uajYfPqQ=;
+        fh=UhItXkx99rqogJB7l1obh4xmnIyivoAHIY/vB8PXjK4=;
+        b=WHPmMIi80ERVCeNnpfz2Rrmz937eCouMwh5uinS/un15CwlusRcurBqbM5bmYtfJpP
+         smIbW00A1cNMobI1JALnkyJp8ujGryInB3HjF7AdftPfAoB5veydAQvq8SCsGwj56Gal
+         u5CvTrZEOmx1nl/28bfpWLYiCbcWJZaaRY9547qroeDrDujoK5jhzQojIYhjc8qI+9Jc
+         xzbnE/sEnO/XWGCupoK3CJJPIKOZfe+0uYe9kZneZgMoBoEF2T+9SKaOTebWo/EJnMBa
+         LtMdgLnXJEWXmFjitiFuFLabbozwZQ7IFds7s2DCPn37pbmBh4xsDkYlQETBt1BgY9ZG
+         l+SA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1769684203; x=1770289003; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y+70wOe9GzJyEZl1jsTNS3cNPpQOsspWrv2NzcTlOHI=;
-        b=VT9TtOW35ZjAETEyeOHzwhJ8z7UGnJUYOUJSckWZYNQplDNUg7aXlMZ/rdxNGpMNXz
-         Kqwt5KUetv+sGz1lq+nDHco8cKosGkotb94Z6/Xe/g0xkhPR8lHQzKkILfZVN9avmEo8
-         TSj+smGY0if1B8qqGLu7TEwfMgyBg1KO5SlMOiJ9h37NxQaze0cBl+dv/RuAVLSX6WwI
-         NXCmIwQA6WSyH9Rvd8JNt0jXCg8/bbs2YFc/GIFdHT5/CXq/K5dA9I/Hrzw4520Ef8Hz
-         PXCfXjSwbWQIMqRqSiWB1HEvxfqbE982I/wycCxDYEgVyTBrRcAZWv/MQCNHfv8e8kP/
-         1J6A==
+        d=gmail.com; s=20230601; t=1769702377; x=1770307177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6mJvDD1VpYWneH4exWtlRRFpCw/yxXuXg63uajYfPqQ=;
+        b=EdfEWwGkzAuOGOF5BJMUWNaOWgA1nMUTgFlBKcxPW53Vyh6Yh5T40lWEkrmox/G0SC
+         kvyEoHaVxqsLoe9BrCa/IND4L3W+FWSpmeScWwvEW48ZvEobQGfwWE3017QD7SWHhpCE
+         9gUXaYdv0LzqNmGqmB43zwoPFpsXPo6tHg3sWCB9dTYYzOFzuQzpVpAHN1AZiqqTjlkO
+         hcNo8LraGf4LGcVOSxPCsYbpnqXkXL0vxEdb+KlyvNuEozDZ/yp2H1r+S+vgqLOI1P/H
+         J3SPbWJm8gqpBU9qCWWm3Mo6F/H16G2ji0CWgruuIrKUD4taLSg0NqxKT3cNw9jzC5D6
+         18Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1769684203; x=1770289003;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y+70wOe9GzJyEZl1jsTNS3cNPpQOsspWrv2NzcTlOHI=;
-        b=ZsSxksNH6VSs/jgSsag/1J3Me07yNxgC+vItr3YyzRZnfS6fn4N1OlhE5zZJ3FXnNU
-         Rlkh3GOEwZ2Ghibw16TkFtAjpRjkPQQWtl6k7MUIePsB4AENAmZBm0xxN9HOHwbPNvJX
-         dqDicdlBwXL+EJki0SdIR/B1BsgA69nA81KiCckjs0yVwI2os/6q7Hc7vJa7PcYTltC0
-         vw2ExlqaqzTdKi7q57OfgbzvwHDQZLAyHdXEBo7EOy84u5/ko9V4JBnUZ9knziVQWPlW
-         9nnJK/a9acZAGO5O0P0LGaGrjdmvxEmYHsK78JgqQtDsbo5qnYwk59KknDEP1e0cVOPy
-         LL6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVDbh7CHhUxhRcdel+CWLl4E4+qZ/PLqsKE46zujQL8HqBtZNgoCeUQsIzjX3q42YhpmZN/4N6i/0gGeyS5IO3H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV3F0IFdiVDSG2uWq848Nic1jE0H6l8FcQF8G5q7Oa2ybEKYbY
-	cZOE0X8WK5UtP0XS/Mk3mydVC41CD5850jd1nGwnZGwXRaN/GCA49gy0G/9wWOBs/q0FYr0lQzg
-	855kjq8rdGZAHQxF/OKCaencDm5LKystI8DiGko+SXRFCgRI3jpi5zFPC/Hn6Z7qZqyF2A+t5
-X-Gm-Gg: AZuq6aKdQl8b2AfhOaUvfsMPcaHGr6bDxvp/d5UKRcKTZC/Qsk5fwR5/eiiySRGfcLE
-	aPp/gOVN4dcLd/WiyxXZScJB/JyDG4tyzskJN+LGA9peAU96Hv6hMVkdijmiP+SYJcHAnltnwcW
-	gTLW31LSb3EYRhk1/tLseNeLq/fF+jhgD8AmsadHw0NrPdcbqkgveef4y9k3vHYG8dPVEMsw304
-	DdnmCSNhJZVDorfKdED549oSYLmjVxOc7I2TDRsOU9DmpQqESD8l4H0d37xIEhmsjqWqDU4oxnX
-	kbFZjzxmWJUCsz+FIOGvjq90+NihxwBXe+yqtTb92C9MQtSI+LrayrNW/GnSR90PaYDEuv6aW1L
-	XCS9lO6Ao5Ty/Vgz0ktgVZKgOTARklUAr0JF7ypw=
-X-Received: by 2002:a17:90b:4fd0:b0:343:c3d1:8b9b with SMTP id 98e67ed59e1d1-353fed6fc6dmr7148482a91.19.1769684202951;
-        Thu, 29 Jan 2026 02:56:42 -0800 (PST)
-X-Received: by 2002:a17:90b:4fd0:b0:343:c3d1:8b9b with SMTP id 98e67ed59e1d1-353fed6fc6dmr7148465a91.19.1769684202472;
-        Thu, 29 Jan 2026 02:56:42 -0800 (PST)
-Received: from [10.217.239.82] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-353f6103e9fsm7877407a91.2.2026.01.29.02.56.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Jan 2026 02:56:42 -0800 (PST)
-Message-ID: <52d01bf9-2d73-4a7a-a734-2330bc426bd7@oss.qualcomm.com>
-Date: Thu, 29 Jan 2026 16:26:38 +0530
+        d=1e100.net; s=20230601; t=1769702377; x=1770307177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6mJvDD1VpYWneH4exWtlRRFpCw/yxXuXg63uajYfPqQ=;
+        b=XGlqGvJbdUmDo2FFzLEK/y7GnvTAXhYhMIPhw2RutlauYqgnF0iPduHrzFuSLilKtZ
+         Zkg06hqoPTTTvEdu+xWPSr0MknZnIoHFIw3G35+DNtvcUAzgZkxUAhiIbBkjuZgcKBS9
+         bcRI3B6K4w8OP4TDLOIcGrce7LwOPSYkchHp7C7ADJTVm9c/hYilmYqqgVwaE/HWuxOd
+         BZdh2w4A9BKU3GEd3zw4SCsMxntdLI1WZ2oqeH1IZVJy3Y+Zttr/Cy8WmQCGX71Fd5gv
+         NoS4hu6xzuYc5WMHPXGPXEzfQCH20a4FIvCeUECJsiMUCc+MOQCLIFHlPuSdilqafp0Q
+         VjZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRONke2tJ092Iv23TCIkLZ50nT55Z5XkqbIzy6IxSeM8I1PAQ02Q40xu+ZDGavo62R2PfTOPpYjtau7DnnJSJ4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQBPsrvHRzEl9gB5Yk3Wep78h2pyn2se8fB614H0rye7UxxPz+
+	+AEBqY5lMnHtdJbRu/LSMRkoVgaJq4EIjhKAua0ohe+eoh6zSQXmvKYyePX9q1rYnRF6UXXNIa7
+	TJKpi+LCE7IDcOyAEZkEqETfEzhdpAKw=
+X-Gm-Gg: AZuq6aJKQpEPzgAeFeTiUYys/2Muq+HLfONyK49jrVvRRzqX5tTGv+p0UTtyPVCNBGM
+	t+1dNXVk1q6NldwtuAD4b3fr0Px1szEsg0T52fE9MkbwjC/NKKB7C7d/dM7Ntyl9yzBbPgoielF
+	2pwFFk04fXG7iCXXeXXFYFG7MK7+/1RwkRbJILcSVKUeFUOEhMMlswUKq36zzfgcXXWVx3mMlVs
+	uwSfncIVnRsO4PaKbQm88yryFCQFZVnenIS+wF7k2T7B3WCtac3WM2LrmdvrNfrs6YS/r2/wRjo
+	veHoAip/hlmCKpcN9bcjIPZVO49G972VEEyyeIH0H0tv20JaqLdU4uw45Y/XtY60hdU40SaWOL/
+	bTELoks5dlOj/TQ==
+X-Received: by 2002:a05:7022:128d:b0:11b:f271:835a with SMTP id
+ a92af1059eb24-124b100d8camr2199762c88.3.1769702377004; Thu, 29 Jan 2026
+ 07:59:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] soc: qcom: smp2p: Add irqchip state support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org,
-        Chris Lew <chris.lew@oss.qualcomm.com>
-References: <20260127-smp2pv2-v3-0-4060b859b1e2@oss.qualcomm.com>
- <20260127-smp2pv2-v3-1-4060b859b1e2@oss.qualcomm.com>
- <1395db8b-c31e-4c09-9b73-30c1e814d769@oss.qualcomm.com>
-Content-Language: en-US
-From: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-In-Reply-To: <1395db8b-c31e-4c09-9b73-30c1e814d769@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: qeDf9Uszliu8EKB-fLZI00UmYSPml697
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTI5MDA3MiBTYWx0ZWRfX4xrGaJBgG2SQ
- 5vD9RD+a6KP4yHxlAoTLW8sYNUhHjoTnsdClyBm8Tb6TMYloGHlqh1Cvquu54IH+cF+egv4XCKa
- v8siyVkM824fAi8s9PGxSRxqGaNPwF9SrJ7Wj0Lisou6lbR9pFEr0GKNMPitL2Y0+MUmM+dhiS+
- hqyBQLnGPsDyWBzJMWLFxOKSFA5DAYiBPc3Lxrkmi4v7wmTKwlkXoVRPjgO4UJkb4iI4hmHDv3e
- 90MiiamTeaw4z75qKrkHK0dPWvWcXjWIIbEEuUhwNhydW1SbhELHpH+Bm9SRLbbJSN1h1u/cAi/
- CehQ3DXSt3RXG2qsFSK8aAaNFZHOtRgatNIUp5RqSVVpApgw+B3NilN6EolAsVwiulZkmLdMkTc
- wxIh6aUEllPIWuCv1dK/gfV3i/K4mEkokqdlAeUWuA5S3eMrbGun/iiC9CRT1lWPTP8LQmmT7zY
- rUxmoCwznaLP7QQW5Qg==
-X-Authority-Analysis: v=2.4 cv=donWylg4 c=1 sm=1 tr=0 ts=697b3ceb cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=eYfYLhE3UDMrALPLOrsA:9
- a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-ORIG-GUID: qeDf9Uszliu8EKB-fLZI00UmYSPml697
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-01-29_02,2026-01-28_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 suspectscore=0 spamscore=0 impostorscore=0
- bulkscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601290072
+References: <20260129-imx-rproc-fix-v3-1-fc4e41e6e750@nxp.com>
+In-Reply-To: <20260129-imx-rproc-fix-v3-1-fc4e41e6e750@nxp.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Thu, 29 Jan 2026 18:02:21 +0200
+X-Gm-Features: AZwV_Qh0LikHrjwYELL0Qb32OlZcL13Rg7Wtaiv5oFtOG766mVjbDDliX8TbUzs
+Message-ID: <CAEnQRZA-nMai9-CEdMqnr2drqBRXXPOKE3a+_3j4S_=x-bM0pQ@mail.gmail.com>
+Subject: Re: [PATCH v3] remoteproc: imx: Fix invalid loaded resource table detection
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Iuliana Prodan <iuliana.prodan@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Frank Li <frank.li@nxp.com>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Peng Fan <peng.fan@nxp.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jan 29, 2026 at 3:45=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp.co=
+m> wrote:
+>
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> imx_rproc_elf_find_loaded_rsc_table() may incorrectly report a loaded
+> resource table even when the current firmware does not provide one.
+>
+> When the device tree contains a "rsc-table" entry, priv->rsc_table is
+> non-NULL and denotes where a resource table would be located if one is
+> present in memory. However, when the current firmware has no resource
+> table, rproc->table_ptr is NULL. The function still returns
+> priv->rsc_table, and the remoteproc core interprets this as a valid loade=
+d
+> resource table.
+>
+> Fix this by returning NULL from imx_rproc_elf_find_loaded_rsc_table() whe=
+n
+> there is no resource table for the current firmware (i.e. when
+> rproc->table_ptr is NULL). This aligns the function's semantics with the
+> remoteproc core: a loaded resource table is only reported when a valid
+> table_ptr exists.
+>
+> With this change, starting firmware without a resource table no longer
+> triggers a crash.
+>
+> Fixes: e954a1bd1610 ("remoteproc: imx_rproc: Use imx specific hook for fi=
+nd_loaded_rsc_table")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-On 1/27/2026 6:25 PM, Konrad Dybcio wrote:
-> On 1/27/26 11:38 AM, Deepak Kumar Singh wrote:
->> From: Chris Lew <chris.lew@oss.qualcomm.com>
->>
->> A remoteproc booted during earlier boot stages such as UEFI or the
->> bootloader, may need to be attached to without restarting the remoteproc
->> hardware. To do this the remoteproc will need to check the ready and
->> handover states in smp2p without an interrupt notification. Create
->> qcom_smp2p_start_in() to initialize the shadow state without notifying
->> clients because these early events happened in the past.
->>
->> Add support for the .irq_get_irqchip_state callback so remoteproc can
->> read the current state of the fatal, ready and handover bits.
->>
->> Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
->> Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
->> ---
->>   drivers/soc/qcom/smp2p.c | 55 ++++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 55 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
->> index cb515c2340c1..c27ffb44b825 100644
->> --- a/drivers/soc/qcom/smp2p.c
->> +++ b/drivers/soc/qcom/smp2p.c
->> @@ -222,6 +222,39 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
->>   	}
->>   }
->>   
->> +static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
->> +{
->> +	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
->> +	unsigned int pid = smp2p->remote_pid;
->> +	char buf[SMP2P_MAX_ENTRY_NAME];
->> +	struct smp2p_smem_item *in;
->> +	struct smp2p_entry *entry;
->> +	size_t size;
->> +	int i;
->> +
->> +	in = qcom_smem_get(pid, smem_id, &size);
->> +	if (IS_ERR(in))
->> +		return;
->> +
->> +	smp2p->in = in;
->> +
->> +	/* Check if version is initialized by the remote. */
->> +	if (in->version == 0)
->> +		return;
->> +
->> +	for (i = smp2p->valid_entries; i < in->valid_entries; i++) {
->> +		list_for_each_entry(entry, &smp2p->inbound, node) {
->> +			memcpy(buf, in->entries[i].name, sizeof(buf));
-> Is there a reason for this copy at all?
-I don't see a compelling reason. This code snippet is same as present in 
-qcom_smp2p_notify_in().
-> [...]
+Changes looks good to  me >
+
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -729,6 +729,10 @@ imx_rproc_elf_find_loaded_rsc_table(struct rproc *rp=
+roc, const struct firmware *
+>  {
+>         struct imx_rproc *priv =3D rproc->priv;
 >
->> +	/* Check inbound entries in the case of early boot processor */
-> "in case a remote processor has already been started"?
-This i can update in case new patch set is required.
-> Konrad
->
+> +       /* No resource table in the firmware */
+> +       if (!rproc->table_ptr)
+> +               return NULL;
+
+I wonder if we can make this change generic because it should happen
+on other platforms also.
+
+Maybe something like this:
+
+remoteproc: core: Only copy loaded table when valid
+
+Copy resource table in memory only when:
+* the current loaded firmware provides one
+AND
+* there is an explicit request to have the rsc table copied in memory
+via rsc-table
+
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1281,7 +1281,7 @@ static int rproc_start(struct rproc *rproc,
+const struct firmware *fw)
+         * that any subsequent changes will be applied to the loaded versio=
+n.
+         */
+        loaded_table =3D rproc_find_loaded_rsc_table(rproc, fw);
+-       if (loaded_table) {
++       if (rproc->cached_table && loaded_table) {
+                memcpy(loaded_table, rproc->cached_table, rproc->table_sz);
+                rproc->table_ptr =3D loaded_table;
+        }
