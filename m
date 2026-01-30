@@ -1,225 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5E5346AF9;
-	Thu, 29 Jan 2026 17:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9172638BA
+	for <linux-remoteproc@vger.kernel.org>; Fri, 30 Jan 2026 00:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1769707973; cv=none; b=fzkc/PD1k9ls/+fBy6soPeYkNYBj7A5X45UEcTvZ+SdB8XDMQJXfxZ6OBk0htd8jw8YxgwjFDK3RABVnstwu31+KELNDjxkADLzRmGcsfA+Htesc0OqpesegGwPvRu2jrpwBrZ6ReGmBw+tPRaWaJpw8+y+gSr8BcIcFK0lrJ94=
+	t=1769732366; cv=none; b=FDP2varEhwNcGZlrwUYy3Zz4LLQaVZ/h0xJhbfJJidhznLmCeXGdFVg86ZWgnFjOofEUkQmrTj4jspThF6r0J8SbBs6zgZK8WWxXn/Qe/cBxGWAy/LgvZuRpceEYoqlH8twGRPa+Bbk6XA0xspUOw0H/tX6OcLB4nAsfdzUfEwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1769707973; c=relaxed/simple;
-	bh=HlRcXWh5Jpr3Xxla8uDIVDBLndWvusZX9KH5OKRs+Us=;
+	s=arc-20240116; t=1769732366; c=relaxed/simple;
+	bh=EKiQzoEkzljnc+viujwGwJeys/BQXOjyz6zoi4u0dvs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtoWvUqUmWdZQsqOcaDnpIR9DUo+Wgh4TJ1Xy1Jqe8bPIdszGKy3eixu9NY5o0lcRorABWZZRSreiJ977aeEIVzPtFM7w4U4gT26YdeiJhWsmvEIiEij9LBMKNAtZoL90jHVAACC0LQu5AgodmVO+4flhd8T+4QWJvnKnFnJthg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRiczQ3R; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=dsYU4texbDJCUH20TztefadKxL/nYQ/+l9Rd1DdA6Dk5yNrx+L3CKXZ+CP6VIQlp5tNC4kN/HxgjczGh5uG2k4VhW5BvBjTEhGBpaw3BbuJm3TqfXMPnaA2nlwQrxMrpLpElfu5w/KwijurSn1Z9QNtNsQMRbmo/UhYVQCZcyzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J2FHjCEJ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BxDyUWCA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRiczQ3R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3474CC116D0;
-	Thu, 29 Jan 2026 17:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1769707973;
-	bh=HlRcXWh5Jpr3Xxla8uDIVDBLndWvusZX9KH5OKRs+Us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fRiczQ3Rcs/s8HQISEftm6wjnwi52XySPsrJ+ybcc+/iY1/aMy840cjLtllw7R5qo
-	 ND1nBQRikO8/JRCrR4C831cNKjWLr3lE3/Q7t+m2zgRTpj6jOWokikOvk0B2kN7fp1
-	 zd2ykmmRIdarNdzOzfYQ9ftG7fkzAWLwFlevpTtX82gr7NYxpjO+pO8K5NzkPVYLso
-	 72xdbyHPFnKgUfru3l/v3YbkixdmyUBeGQ02XC0KcPxQDA8KVhZqBFz8LC1ejXOVsK
-	 KWB0BtD2uvpExn+P1Uc7xkctook+xZN3zKc9lJw8l+CrsGbqUkmnY1n8EmXoc5AvoW
-	 Os7UcRAkTD4rA==
-Date: Thu, 29 Jan 2026 11:32:52 -0600
-From: Rob Herring <robh@kernel.org>
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: remoteproc: add Microchip IPC
- remoteproc
-Message-ID: <20260129173252.GA1309005-robh@kernel.org>
-References: <20260126120658.1674253-1-valentina.fernandezalanis@microchip.com>
- <20260126120658.1674253-2-valentina.fernandezalanis@microchip.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J2FHjCEJ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BxDyUWCA"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 60TI3JL63641923
+	for <linux-remoteproc@vger.kernel.org>; Fri, 30 Jan 2026 00:19:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=9CJ43V4EbjuhLmiO2IaWAjx4
+	TLOb/s8qWCGW7bqpIoc=; b=J2FHjCEJbteIYvp8WoUyPUf3glmqk75C/mRhATyt
+	gNMdyEOI2/mhyxqc1f4dp6R7vLOYGZ97FgPAJ4ilXwSp03Ia+y4ltnq6M3LDKe5n
+	GGZq2dknd60+rIQlwsC1njurnivFpDusv4DxR38rpnIAZS6yGn8WSX7KbWpdCpR5
+	OrUqzN4mKsBKKaHzMrHygX4a/yANTBf7FcLpJsarxextHIbsy50Vm3jYPqjuSA7n
+	4ic0/qn1SqlJoYWXbeovMh3hqy3/pXuOc/EZvWR8Ab8JVROq4bPyhom/jg0jyUX4
+	knXRCZL3n2DIA4gzmbGoDJcqaPihz612oJYFTojY7NqUDQ==
+Received: from mail-dl1-f72.google.com (mail-dl1-f72.google.com [74.125.82.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c05sr2hfw-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 30 Jan 2026 00:19:22 +0000 (GMT)
+Received: by mail-dl1-f72.google.com with SMTP id a92af1059eb24-124a5098029so8372251c88.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 29 Jan 2026 16:19:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1769732361; x=1770337161; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9CJ43V4EbjuhLmiO2IaWAjx4TLOb/s8qWCGW7bqpIoc=;
+        b=BxDyUWCAE7RSEm/iDPX8d2vETfM5sj1V5ZJTeYiH0UpZBEApN/nM8ETrFVqTCeHI0S
+         90EdZsqTFfWuG8MiuWKKpzEgOjVpz6yAWSrtUpjdc3yt4M5atpD4gyA1iszLu3aiGbi/
+         9MosZ7rqTJ3ZVEBQcMzHXSfDBhLrCzo4IPV4rMzF3PxGx0LnlnrA+5PbUPLmLdix2vb0
+         vS1vnvQS12TAhTF2BbSSGDDBXoFAJ0eswYP9jDRHiSBwZfPzi6WYURfuB3lhzyS0xTDu
+         y+U4sV+JJhfLwdicZgT4r9249PYqYygUpqxJ2xB0A2HZwiQuBP+lypvxNhn73rt/HXUB
+         tiBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1769732361; x=1770337161;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9CJ43V4EbjuhLmiO2IaWAjx4TLOb/s8qWCGW7bqpIoc=;
+        b=kkwGH/m6USAtE1j9NqJB5nmIokD30A9krCrQfiXQHB9rFi3jLpfkhPhvcovyGry1YA
+         Wms3KZ/dlIrI4LZH5Yv4BsLpjlJTlZ+mg0zWW+G2wHmooOEu+yTNxUZBgMD7HQmcHykf
+         mbI+Nz1F0DwP+H05nzHRoffqhdieV0MOZQ7C1JRrZ5n0KeQ4GCQzS+rnM2CUZfcUnD3I
+         ULqZ65M2Xau/pBM7vyTzSxi04P2hFGIiy/M0BMLqaKUaCzGloTjqrNKI5frUA7fSh5LH
+         8tEIU66A1zuTgHreQRKlVCsbGcUZN5sVxTgs6YOMDYfWxnwqo6tTluygVf95hUnIZhgG
+         Tb7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCwjpOrgaHS71LrP6+w2OOB9e0xSD0J/2jo3WuqFTfM9pp/QS10dz8tanODNjU05yryh0ySzMet1OEcP+s4C7Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaTvAI3jlAzjDK/QoVXc7p/H4WrdeL0EdG6QJfymvv1/TlPZYu
+	mPgqzQxzgwdUissHpkzReEDETD/8qc1blLJi9fkdb0et/Bq3Zvc0oMJAeXF0wzbFq6fvHW/2Vcd
+	c7FXNE4XH8q21Va0LDuImNR0X4YBu5Aa+3g1qS4ajUgQYaQ3BZxR0tsBQMTQ/tECi4jwBg7fPs9
+	DWEbr2
+X-Gm-Gg: AZuq6aLwEmPV27fL+qW+jUbjiw07aHrBT1hPliqdkTjpqNH7ctdSCx5E5Jm10yCIW+Q
+	jDwSSZVqhQpcnP9rmlJ0OrpvGXaFMxOInGrulp+xHhArAuVecT/HE0W6waGsBY1QtKgCiVw59Yx
+	ENuOtxh920wV4h8R5b2tt3kUboZ3PkJ/MUJzCYNRGcCKd4d0sciz4CluN68yeVOLDQPFCc1rvL5
+	l4tZGYYFM3e/Ywbf3RTRe667U0PZjJyWILo/mIbRzl1yYkKkCBNEbIfB2q1CHSyd6cfFPqXJcsu
+	75y9FqqJA18jgQV03bFrGOZ+IUKA3bHBJRBzPDrYL+Hicxa3mtaAvoNQb0KxUg/WnYz90KZa6d1
+	3HWTRWhTvZfermtLmViet+EA/o2CWx6F3+w7jiTwmsaukNJJ8tF/lU22jWZoOH+g=
+X-Received: by 2002:a05:7022:438a:b0:119:e569:f274 with SMTP id a92af1059eb24-125c1021a87mr570953c88.29.1769732361340;
+        Thu, 29 Jan 2026 16:19:21 -0800 (PST)
+X-Received: by 2002:a05:7022:438a:b0:119:e569:f274 with SMTP id a92af1059eb24-125c1021a87mr570937c88.29.1769732360795;
+        Thu, 29 Jan 2026 16:19:20 -0800 (PST)
+Received: from hu-clew-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-124a9d8ba78sm8163033c88.8.2026.01.29.16.19.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jan 2026 16:19:20 -0800 (PST)
+Date: Thu, 29 Jan 2026 16:19:18 -0800
+From: Chris Lew <christopher.lew@oss.qualcomm.com>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, corbet@lwn.net,
+        rusty@rustcorp.com.au, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/5] rpmsg: Replace sprintf() with sysfs_emit() in sysfs
+ show
+Message-ID: <aXv5BipphkogvzkZ@hu-clew-lv.qualcomm.com>
+References: <20251217065112.18392-1-zhongqiu.han@oss.qualcomm.com>
+ <20251217065112.18392-2-zhongqiu.han@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260126120658.1674253-2-valentina.fernandezalanis@microchip.com>
+In-Reply-To: <20251217065112.18392-2-zhongqiu.han@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMTMwMDAwMCBTYWx0ZWRfX25ux+idR7L19
+ oAUYnkpDKqOhfeqFxXdwicd0vcdrlgXLcoMC6saEZNzJ7G2kY/U/9TAd0O7IrahVOqHG5wK/TXy
+ VMDpy2ruCM7yx7yH8URu33z5K044TRpnroWoQdq90RkUP78Xr7N27xw4F3GVIeX9+Q9pOtr3voK
+ nnIyI8Gd2UA0Nff/V8q7O8lcfipSYdgD3yXSJ0C/AYPPHPtKTbe9T+75YfP7jxv26s1Bc+qI7um
+ XRrsJQjhodyQWc7aaFFJiVuaBQ60mJc8NUTVehRcjUmR9u19vzTTKn+JzXUaXfUA8xAncf0KsjC
+ mwWJTTPCoyeVUBMSkHcRPiWW1IwMayS916JyCsplV21iB4RGixV1i4wX+tvO0NtwLJs5Ry9bNmA
+ VFLcr7ZIziEbKCTaZ+zO1DIjx6SxPrzvsMh5EjY1iEzh8/bFexY9QZvU8gbpIQsN6qUHpnxilAh
+ m7JsJOz3ATrs60BTnaw==
+X-Proofpoint-ORIG-GUID: h1SRSC32X9anxoLSQiqaRBn4-phTi42x
+X-Authority-Analysis: v=2.4 cv=UsJu9uwB c=1 sm=1 tr=0 ts=697bf90a cx=c_pps
+ a=bS7HVuBVfinNPG3f6cIo3Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=kj9zAlcOel0A:10 a=vUbySO9Y5rIA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=APNczDZykQHC8614KWwA:9
+ a=CjuIK1q_8ugA:10 a=vBUdepa8ALXHeOFLBtFW:22
+X-Proofpoint-GUID: h1SRSC32X9anxoLSQiqaRBn4-phTi42x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-01-29_03,2026-01-29_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 clxscore=1011
+ spamscore=0 malwarescore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2601300000
 
-On Mon, Jan 26, 2026 at 12:06:57PM +0000, Valentina Fernandez wrote:
-> Microchip RISC-V SoCs typically contain one or more clusters. Clusters
-> can operate in Asymmetric Multi-Processing (AMP) mode, where individual
-> cores or groups of cores run as independent software contexts.
+On Wed, Dec 17, 2025 at 02:51:08PM +0800, Zhongqiu Han wrote:
+> Use sysfs_emit() instead of sprintf() in sysfs attribute show functions.
+> sysfs_emit() is the recommended API for sysfs output as it provides buffer
+> overflow protection and proper formatting.
 > 
-> The compatible is intentionally generic, representing a “generic” SBI
-> ecall interface to a set of remote processors, with the platform
-> abstracted  via SBI ecalls. The IPC/IHC (named differently depending on
-> whether it is RTL for the FPGA fabric or a hardened version) is
-> intended for Asymmetric Multiprocessing, where a set of cores or
-> clusters can run other firmware, such as Zephyr.
+> No functional changes.
 > 
-> Unlike platforms with a fixed DSP, the configuration here is variable
-> even for a single SoC. For example, which memory regions are used for
-> the remote cluster or which mailbox channel is selected. This binding
-> documents that firmware interface.
-> 
-> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> Signed-off-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
 > ---
->  .../microchip,ipc-sbi-remoteproc.yaml         | 131 ++++++++++++++++++
->  1 file changed, 131 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
-> new file mode 100644
-> index 000000000000..6fc0ab7f3ffb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/microchip,ipc-sbi-remoteproc.yaml
-> @@ -0,0 +1,131 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/microchip,ipc-sbi-remoteproc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip IPC Remote Processor
-> +
-> +description:
+>  drivers/rpmsg/qcom_smd.c   | 2 +-
+>  drivers/rpmsg/rpmsg_char.c | 6 +++---
+>  drivers/rpmsg/rpmsg_core.c | 4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+>
 
-Need '>' to maintain paragraph formatting.
-
-> +  Microchip RISC-V SoCs typically contain one or more clusters. Clusters can
-> +  operate in Asymmetric Multi-Processing (AMP) mode, where individual cores
-> +  or groups of cores run as independent software contexts.
-> +
-> +  The configuration is flexible, as the set of cores or clusters that can be
-> +  controlled as remote processors may vary, and memory regions used for
-> +  firmware as well as mailbox assignments depend on the system design.
-> +
-> +  Communication with remote cores or clusters is abstracted using ecalls
-> +  to the platform's Supervisor Binary Interface (SBI) firmware, through
-> +  which the state of remote cores or clusters are controlled. This binding
-> +  documents that firmware interface.
-> +
-> +maintainers:
-> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: microchip,ipc-sbi-remoteproc
-> +
-> +  cpu:
-> +    description:
-> +      phandles to the CPUs comprising the remote cluster
-
-More than 1? Then should be 'cpus'.
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Already has a type. Drop.
-
-> +
-> +  mboxes:
-> +    description:
-> +      Microchip IPC mailbox specifier. Used for communication with
-> +      a remote cluster. For HSS versions prior to v2026.04, it is also
-> +      used for controlling the life cycle of a remote cluster. The
-> +      specifier format is as per the bindings in
-> +      Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
-> +    maxItems: 1
-> +
-> +  memory-region:
-> +    minItems: 1
-> +    maxItems: 5
-> +    description:
-> +      List of phandles to the reserved memory regions associated wih the
-> +      remoteproc device. This is variable and describes the memories shared
-> +      with the remote cluster (e.g. firmware, resource table, rpmsg vrings)
-> +    items:
-> +      anyOf:
-> +        - description: resource table when firmware is started by the bootloader
-> +        - description: remote cluster firmware image section
-> +        - description: virtio device (vdev) buffer
-> +        - description: vring0
-> +        - description: vring1
-> +
-> +  memory-region-names:
-> +    minItems: 1
-> +    maxItems: 5
-> +    items:
-> +      anyOf:
-
-Use 'enum'
-
-> +        - const: rsc-table
-> +        - const: firmware
-> +        - const: buffer
-> +        - const: vring0
-> +        - const: vring1
-> +
-> +required:
-> +  - compatible
-> +
-> +# Remote Cluster ID is derived either from the CPU phandle or
-> +# from the mailbox specifier prior to HSS v2026.04
-> +anyOf:
-> +  - required:
-> +      - cpu
-> +  - required:
-> +      - mboxes
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        memory-region-names:
-> +          contains:
-> +            enum:
-> +              - vring0
-> +              - vring1
-> +    then:
-> +      properties:
-> +        memory-region-names:
-> +          contains:
-> +            const: buffer
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Early boot mode example - firmware started by bootloader
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        remoteproc {
-> +            compatible = "microchip,ipc-sbi-remoteproc";
-> +            cpu = <&cpu4>;
-> +            mboxes= <&ihc 8>;
-> +            memory-region = <&rsctable>, <&vdev0buffer>,
-> +                            <&vdev0vring0>, <&vdev0vring1>;
-> +            memory-region-names = "rsc-table", "buffer",
-> +                                  "vring0", "vring1";
-> +        };
-> +    };
-> +
-> +  - |
-> +    // Late boot mode example - firmware started by Linux (remoteproc)
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        remoteproc {
-> +            compatible = "microchip,ipc-sbi-remoteproc";
-> +            cpu = <&cpu4>;
-> +            mboxes= <&ihc 8>;
-> +            memory-region = <&cluster_firmware>, <&vdev0buffer>,
-> +                            <&vdev0vring0>, <&vdev0vring1>;
-> +            memory-region-names = "firmware", "buffer",
-> +                                  "vring0", "vring1";
-> +        };
-> +    };
-> +...
-> -- 
-> 2.34.1
-> 
+Reviewed-by: Chris Lew <christopher.lew@oss.qualcomm.com>
