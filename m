@@ -1,90 +1,87 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD36E2D5C7A;
-	Thu,  5 Feb 2026 05:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6292C859;
+	Thu,  5 Feb 2026 10:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770268190; cv=none; b=HHJY0V1rXVUVd9HM0QSXEzhW5H+GmASHlSaTOrXeusnl9k5UMabiPbKdgouHS+3LjzE9Kd9h2QTcwSNin83E0zZAiSixOSg901j3XS6nST0r9kr7kuPTB3Q7Y3IIKB6aj9YhEbbXuI9i8b9yX163Y9oHD4W1jF9RL6dYfe5Wg4w=
+	t=1770287651; cv=none; b=qo2HXhyN7/Dsm/A7AE+Ft56hqOImzRDEKjs3SPh+UZMGmCpAPLPGT/fk9iHoUaaduu14Vtgxjq/oLW4Ous+PMt+77Hq5XeIDqokYOHYEF7FOQowO1NSdVdYDxZvaEFLAM3MnyUyLztiDHJ8PIrV6xvCETQ4c1k2MfnOFhQpahl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770268190; c=relaxed/simple;
-	bh=uXtEkzXwvLkgzjn6q++b+eQ43MJpzndn7+opZoeIKQE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fQ+E5zSYAilYVxEoKSyMVOflWq5dr4KpV8jnnzvFQT3JV8adquMO38WqwBL8I8tG/+Eh0nm+RaDQGHZ4UrEqZCQvyLPQc32QTjDJbAyFd1P3t0nRAboBM0jsOxk9pVMVJt2mdmEAXR6PXYDeyymNzO9JbQhNaJo2lsUEidsXyd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAAnMskNJoRppZW4Bw--.38207S2;
-	Thu, 05 Feb 2026 13:09:33 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	Frank.Li@nxp.com,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com
-Cc: linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] remoteproc: imx_rproc: Check return value of regmap_attach_dev() in imx_rproc_mmio_detect_mode()
-Date: Thu,  5 Feb 2026 13:09:05 +0800
-Message-Id: <20260205050905.3031134-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1770287651; c=relaxed/simple;
+	bh=cwXSjNmvIUZsjhs6VwwUPithsGWgsk48QoUZLaQvkRI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGG1+o/3C7kK/rX9kkFsjdiaEs0j4fmpT2gAmA2pbu7f5a7VrMkSl6MsHUYgVetHV3WjLK7JPST01/EB5SjODcccph5Yq5RybOvALb5QnePgpiJkNjPX5U19K5G2dylLiBaTOP4SICbVkpwJ2gly+odGR52Einl8vgCFXoHycys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTydPk6h; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTydPk6h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7306EC4CEF7;
+	Thu,  5 Feb 2026 10:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770287651;
+	bh=cwXSjNmvIUZsjhs6VwwUPithsGWgsk48QoUZLaQvkRI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jTydPk6hucGwsRHGQltqdVNVaGhxmvt2Wt8/jeiaiVNsq5tfpi7HDtBAKUjChxoHi
+	 IqKz2f7m29g5O6jHW/ZNN82FRasYYi5P90Rx1dheHO5PnUFCnWITGxrrrcCyAwR2nX
+	 AxuIhcinKPdoGrlNCVbUmyKe9vVhPi+dLCOQ2RFIFNZwFJrKgnTS3OzuT+Vnih1SX1
+	 XeYC2kG8xCRl/C3C2pr80o+nVVajtdfVbSxm9/YdJwclB9Dfvkvb7g59w3FkWhrOP2
+	 b629rk5pCNSYStsJ4/3N6+my7J6VD0eIvcGW6A3RbIisX+5YmmGl6P7RoH8YX/qoou
+	 4kyH692fHzALw==
+Date: Thu, 5 Feb 2026 11:34:08 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Cc: robh@kernel.org, srini@kernel.org, amahesh@qti.qualcomm.com, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
+	konradybcio@kernel.org, mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH V3 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: Add
+ Glymur ADSP
+Message-ID: <20260205-succinct-honest-badger-52e1b7@quoll>
+References: <20260129001358.770053-1-sibi.sankar@oss.qualcomm.com>
+ <20260129001358.770053-2-sibi.sankar@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAnMskNJoRppZW4Bw--.38207S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw4fKFWkCFykAr4xWry8Zrb_yoWDJFc_Ca
-	4a9rW8J3WFvrWYkw1q9r4FyF4qyry8ZF9avFW5KFZxJwn7XrnrAFWkZr17X3Z3Xr98Ar90
-	k34IvrW7AFnrujkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
-	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrw
-	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
-	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
-	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
-	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
-	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBuWLUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260129001358.770053-2-sibi.sankar@oss.qualcomm.com>
 
-Add error checking for regmap_attach_dev() call in
-imx_rproc_mmio_detect_mode() function to ensure proper error
-propagation.
+On Thu, Jan 29, 2026 at 05:43:54AM +0530, Sibi Sankar wrote:
+> Document compatible for Qualcomm Glymur ADSP PAS which is fully
+> compatible with Qualcomm Kaanapali ADSP PAS.
+> 
+> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> ---
+> 
+> Changes in v3:
+> - A few variants of the SoC are expected to run Linux at EL1 hence the
+>   iommus properties are left optional.
+> - Link to v2: https://lore.kernel.org/all/20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com/
+> 
+>  .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml         | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> index b117c82b057b..fb6e0b4f54e8 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> @@ -29,6 +29,7 @@ properties:
+>            - qcom,x1e80100-cdsp-pas
+>        - items:
+>            - enum:
+> +              - qcom,glymur-adsp-pas
+>                - qcom,kaanapali-adsp-pas
 
-Return the value of regmap_attach_dev() if it fails to prevent
-proceeding with an incomplete regmap setup.
+There is no such hunk... I think this continues my comments from Sep/Oct
+2025 that creating such patches, with multiple dependencies makes more
+difficult to review.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/remoteproc/imx_rproc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I mark it as not applicable, please send when your dependencies hit the
+tree so I can review it in proper context.
 
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index f5f916d67905..0e23f519c247 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -1007,7 +1007,9 @@ static int imx_rproc_mmio_detect_mode(struct rproc *rproc)
- 	}
- 
- 	priv->regmap = regmap;
--	regmap_attach_dev(dev, regmap, &config);
-+	ret = regmap_attach_dev(dev, regmap, &config);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "regmap attach failed\n");
- 
- 	if (priv->gpr) {
- 		ret = regmap_read(priv->gpr, dcfg->gpr_reg, &val);
--- 
-2.25.1
+Best regards,
+Krzysztof
 
