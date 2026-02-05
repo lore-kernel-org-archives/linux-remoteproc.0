@@ -1,87 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6292C859;
-	Thu,  5 Feb 2026 10:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5351990A7
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Feb 2026 12:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770287651; cv=none; b=qo2HXhyN7/Dsm/A7AE+Ft56hqOImzRDEKjs3SPh+UZMGmCpAPLPGT/fk9iHoUaaduu14Vtgxjq/oLW4Ous+PMt+77Hq5XeIDqokYOHYEF7FOQowO1NSdVdYDxZvaEFLAM3MnyUyLztiDHJ8PIrV6xvCETQ4c1k2MfnOFhQpahl4=
+	t=1770294644; cv=none; b=A6y8fpRPvtbN85XWIwZUUvwLg2wnC9Nn7z6wFX7tvi1dVQaClBTxv4iVCYuQqYFkphxISNWlL4S0CCLgdG3MTGnmrACUpgMA9Sp42lZkA9LlfOe0dChxWxUHRP3Vn9yQ8DsGQ7ICue2HpIQBenrhtXKuKMyr0hcSvuNz4Vp8gJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770287651; c=relaxed/simple;
-	bh=cwXSjNmvIUZsjhs6VwwUPithsGWgsk48QoUZLaQvkRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGG1+o/3C7kK/rX9kkFsjdiaEs0j4fmpT2gAmA2pbu7f5a7VrMkSl6MsHUYgVetHV3WjLK7JPST01/EB5SjODcccph5Yq5RybOvALb5QnePgpiJkNjPX5U19K5G2dylLiBaTOP4SICbVkpwJ2gly+odGR52Einl8vgCFXoHycys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTydPk6h; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770294644; c=relaxed/simple;
+	bh=uND1ONUGdNhpoclQ5sqn36Q9nqz74LEUWRO+lp7PPWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SmqNJDmoQBuq2UNwK/bcowuS4NFpUUDOtNDn/k7ErrGWHumOeZqSGim7SUpztA50n+FtBB3Sd7l/sZDKTvqnmfYLOx2O5aUGPz0BEwLz67VwupfOkizmrINoUpCgmRvKHr23lg4WsQ6oVgz1exBjmQmtJzK+wimTepF+ejyL1M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=O6WJ1OH9; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTydPk6h"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7306EC4CEF7;
-	Thu,  5 Feb 2026 10:34:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770287651;
-	bh=cwXSjNmvIUZsjhs6VwwUPithsGWgsk48QoUZLaQvkRI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jTydPk6hucGwsRHGQltqdVNVaGhxmvt2Wt8/jeiaiVNsq5tfpi7HDtBAKUjChxoHi
-	 IqKz2f7m29g5O6jHW/ZNN82FRasYYi5P90Rx1dheHO5PnUFCnWITGxrrrcCyAwR2nX
-	 AxuIhcinKPdoGrlNCVbUmyKe9vVhPi+dLCOQ2RFIFNZwFJrKgnTS3OzuT+Vnih1SX1
-	 XeYC2kG8xCRl/C3C2pr80o+nVVajtdfVbSxm9/YdJwclB9Dfvkvb7g59w3FkWhrOP2
-	 b629rk5pCNSYStsJ4/3N6+my7J6VD0eIvcGW6A3RbIisX+5YmmGl6P7RoH8YX/qoou
-	 4kyH692fHzALw==
-Date: Thu, 5 Feb 2026 11:34:08 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Cc: robh@kernel.org, srini@kernel.org, amahesh@qti.qualcomm.com, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
-	konradybcio@kernel.org, mathieu.poirier@linaro.org, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH V3 1/5] dt-bindings: remoteproc: qcom,sm8550-pas: Add
- Glymur ADSP
-Message-ID: <20260205-succinct-honest-badger-52e1b7@quoll>
-References: <20260129001358.770053-1-sibi.sankar@oss.qualcomm.com>
- <20260129001358.770053-2-sibi.sankar@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="O6WJ1OH9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1770294642;
+	bh=uND1ONUGdNhpoclQ5sqn36Q9nqz74LEUWRO+lp7PPWU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=O6WJ1OH9sjuOjCUfTuTUHRKgw7hpjfNMDr4o8IJD8FHKeyWqDlRaR/gFdzwws6JOP
+	 TbsXvDxkjKTNqQCawECwYmWneKx5qp9WMK5AMwSBSPuQAnHAld6hT2sB7kdKGUBfLl
+	 Mmfnn+NFNI7XSr4DzD+kCTeIAPDVLnnzoMsFzlPIH+JG4K4tp0ACpuQ6QHFfVzoUth
+	 PofobZYSsBh2iT2tLdjJnYjypp3Ttl6ddtj6jq4IkDG76o9Vd3yyBNREnCtPMvcMak
+	 6ZClfSyQbq7rYGVkBoUmwITNo5A05UevRspsaAnca0YSqxUauIkiPhuuSUpxSJ2eBD
+	 nV+wtHyPasPLg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7FC0917E0017;
+	Thu,  5 Feb 2026 13:30:42 +0100 (CET)
+Message-ID: <a880d5d9-348e-4777-ae7f-69bdf7794e58@collabora.com>
+Date: Thu, 5 Feb 2026 13:30:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20260129001358.770053-2-sibi.sankar@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: mediatek: Unprepare SCP clock during system
+ suspend
+To: Tzung-Bi Shih <tzungbi@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Chen-Yu Tsai <wenst@chromium.org>, linux-remoteproc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20260204085442.1822123-1-tzungbi@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20260204085442.1822123-1-tzungbi@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 29, 2026 at 05:43:54AM +0530, Sibi Sankar wrote:
-> Document compatible for Qualcomm Glymur ADSP PAS which is fully
-> compatible with Qualcomm Kaanapali ADSP PAS.
+Il 04/02/26 09:54, Tzung-Bi Shih ha scritto:
+> Prior to commit d935187cfb27 ("remoteproc: mediatek: Break lock
+> dependency to prepare_lock"), `scp->clk` was prepared and enabled only
+> when it needs to communicate with the SCP.  The commit d935187cfb27
+> moved the prepare operation to remoteproc's prepare(), keeping the clock
+> prepared as long as the SCP is running.
 > 
-> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> The power consumption due to the prolonged clock preparation can be
+> negligible when the system is running, as SCP is designed to be a very
+> power efficient processor.
+> 
+> However, the clock remains prepared even when the system enters system
+> suspend.  This prevents the underlying clock controller (and potentially
+> the parent PLLs) from shutting down, which increases power consumption
+> and may block the system from entering deep sleep states.
+> 
+> Add suspend and resume callbacks.  Unprepare the clock in suspend() if
+> it was active and re-prepare it in resume() to ensure the clock is
+> properly disabled during system suspend, while maintaining the "always
+> prepared" semantics while the system is active.
+> 
+> Fixes: d935187cfb27 ("remoteproc: mediatek: Break lock dependency to prepare_lock")
+> Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
+
+Would be great if you could mention that in this driver, at the moment of writing,
+there is no .attach() callback, hence rproc->state can never be RPROC_ATTACHED (as
+in case that would also leave the clock prepared).
+
+In any case, even though I don't exactly *love* how this is actually done, I don't
+really have any better option.
+
+But....
+
 > ---
+>   drivers/remoteproc/mtk_scp.c | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
 > 
-> Changes in v3:
-> - A few variants of the SoC are expected to run Linux at EL1 hence the
->   iommus properties are left optional.
-> - Link to v2: https://lore.kernel.org/all/20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com/
-> 
->  .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml         | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> index b117c82b057b..fb6e0b4f54e8 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-> @@ -29,6 +29,7 @@ properties:
->            - qcom,x1e80100-cdsp-pas
->        - items:
->            - enum:
-> +              - qcom,glymur-adsp-pas
->                - qcom,kaanapali-adsp-pas
+> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+> index 4651311aeb07..6200c687e232 100644
+> --- a/drivers/remoteproc/mtk_scp.c
+> +++ b/drivers/remoteproc/mtk_scp.c
+> @@ -1592,12 +1592,40 @@ static const struct of_device_id mtk_scp_of_match[] = {
+>   };
+>   MODULE_DEVICE_TABLE(of, mtk_scp_of_match);
+>   
+> +#ifdef CONFIG_PM_SLEEP
 
-There is no such hunk... I think this continues my comments from Sep/Oct
-2025 that creating such patches, with multiple dependencies makes more
-difficult to review.
+...you don't need this ifdef as when CONFIG_PM_SLEEP is not set the macro
+SET_SYSTEM_SLEEP_PM_OPS is stubbed out (check pm.h).
 
-I mark it as not applicable, please send when your dependencies hit the
-tree so I can review it in proper context.
+After removing the ifdef, there'll be something to change, specifically:
 
-Best regards,
-Krzysztof
+> +static int scp_suspend(struct device *dev)
+
+static int __maybe_unused scp_suspend(struct device *dev)
+{
+
+> +{
+> +	struct mtk_scp *scp = dev_get_drvdata(dev);
+> +	struct rproc *rproc = scp->rproc;
+> +
+> +	/* Only unprepare if the SCP is running and holding the clock */
+> +	if (rproc->state == RPROC_RUNNING)
+> +		clk_unprepare(scp->clk);
+> +	return 0;
+> +}
+> +
+> +static int scp_resume(struct device *dev)
+
+static int __maybe_unused scp_resume(struct device *dev)
+{
+
+After which,
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Cheers,
+Angelo
+
+> +{
+> +	struct mtk_scp *scp = dev_get_drvdata(dev);
+> +	struct rproc *rproc = scp->rproc;
+> +
+> +	if (rproc->state == RPROC_RUNNING)
+> +		return clk_prepare(scp->clk);
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops scp_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(scp_suspend, scp_resume)
+> +};
+> +
+>   static struct platform_driver mtk_scp_driver = {
+>   	.probe = scp_probe,
+>   	.remove = scp_remove,
+>   	.driver = {
+>   		.name = "mtk-scp",
+>   		.of_match_table = mtk_scp_of_match,
+> +		.pm = &scp_pm_ops,
+>   	},
+>   };
+>   
+
 
