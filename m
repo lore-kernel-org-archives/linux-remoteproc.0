@@ -1,73 +1,71 @@
-Received: from mail-wr1-f65.google.com (mail-wr1-f65.google.com [209.85.221.65])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D216D3EF0C0
-	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Feb 2026 13:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D0E2264CF
+	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Feb 2026 16:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770385279; cv=none; b=TDdgMDBDr0vHeCJx6ZjDq/IlRSmclDzPNp6RrHn0algxgrLZdFeUcYK+9ZEFa9dHa6V+bLBBnn2dNJdZp9YI4JgmUdZD046fYGyRxnFvwcSxG9fPQ9vjNkZOaEolSdZ7I86u8LEcKVC4/3rMm0YgNsK9c7K54gwpklig/BLKINk=
+	t=1770393684; cv=none; b=LulDDw0QbIcCr272Ole3vO38nuERq4exVVuzNdXqXPQoU1jiMHqZTd6MO1G+WCqsNvP6kQh/6R7FoLZ8rC8oTnFz2mVeciQGnxMyUns7hzvLwr0c08Fy/i8u4W00dELU0gjS8wPNUFAvWMF2TYeqjdIGKk4PRpJqWmFu0JhLwJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770385279; c=relaxed/simple;
-	bh=cgQMbDqYfT71b9lkPLaFsRUiAtSX9sd1HsEdDuF2BwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=TnT+vwSC3OOK+MfGPszyP/GJ/HoOPSI3hJm9NnaZwUxtUlL+70J/ems/TYAhKhGrHrusm1tOaA+esR0KQspCud6shKuNHBAHkK3iyXIXRbaOOYJ+eHvgeJoYo+DGd5xanwoQy0nQwtKB2Xxl09sh/sKwaWPHvwxnHqcwp5j5yTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lG5R/6mQ; arc=none smtp.client-ip=209.85.221.65
+	s=arc-20240116; t=1770393684; c=relaxed/simple;
+	bh=IV7QAjuyUw85XIDcqG151gFu0X7JrvrKBJ7KMcj6Wyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E76ahfMJMRAQeP+iIusmugaX6BgnjaitjqoG46/jli1lH572q7b/aWshlSVaw2LuCeU9IyKFj/N5V7vMSI/adnR14QzInbDahzfTDfU4GbGjHj4jt/ODoKPOK4iAGZ1dkRWxvRUG8JJXaWJXfJ1p6foMcOiTVAzEFGM065SwIcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sEvYpIjU; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lG5R/6mQ"
-Received: by mail-wr1-f65.google.com with SMTP id ffacd0b85a97d-4362aadaf09so643904f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Feb 2026 05:41:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sEvYpIjU"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2a07f8dd9cdso16340045ad.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Feb 2026 08:01:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770385277; x=1770990077; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QC0qEoIgNdVzf+DU7HTFpZWfSSy5BNhr3750S1v0f68=;
-        b=lG5R/6mQC5dizOpg+xc4ycfssOhvxnel/HgB7Kqslk4Pq4E5VDK+Dqf+5r8Em7z6dZ
-         CmV+JZf6FbEM43v2xbeutSLqlv5+GQmwBk9L6I9J6B1iTOWcDxnxT82nFtP6tGWTyZwB
-         H+Y89NldGy0Ey/m3CtjzL5+bNvWawuGUEeNby+SjRTThQbwZ4lVQnnSLHI0MBWcbHW/Q
-         0KSa5wMfBOR7EkMFm/uRDr522xKEYafgk/oXsrgEYOvzllZgGAE0Cufho8ZQrQyyAAlH
-         SUl5kxCKMISeJ3si7t/ynnFwQYlWG/feexTJ2xlgliRJ1dPTZ9Rf7VMR0rWwt21/W067
-         4K3Q==
+        d=linaro.org; s=google; t=1770393684; x=1770998484; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XMf0JguzxHjMSjmKuASfsYMf0I7uSocPhP7aGXcZdPo=;
+        b=sEvYpIjUTPZRhj5Hd+4D5pZFVYY70SIUf9QNSq571FxPhA6BWrGAm4SGMnCym2+AEL
+         R0sa2B+9jvWG2P4YJOUQJJbM9dOXAKQcJyS7oL2RLp2w7BYB5RpXMnTfX+Jg0nB4oXtA
+         SD584KYtfmpJiDYm2BO5GsDbJ9O6edHU7GAfK1wrFPteGfoUlkeli6yfwqleGNYj7Lld
+         9eB+HsV2PTlSX3qk3uE+oO74pXsAbxo5s/McmbA1CtLxASUCJ8bcad/+LIpI9KqxUOHw
+         0meRw0YUiIiu1g/uDTeBcIZ2GsOHJh/bRLztUpvsbezzp3jOuxDzAxNC4DbY6Y1idwDv
+         FZWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770385277; x=1770990077;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QC0qEoIgNdVzf+DU7HTFpZWfSSy5BNhr3750S1v0f68=;
-        b=ngCTlz7RHGnlsdl1zff1Tnk9StdNUdokhWJgoYHtclwf/3wWCz7/3KGW09hh80HOWK
-         JyyTHqwn87ZZevHMkOvu150CvgMN2lJV2G979cWedpDMwSr2shCza/aQI9VNOiNs5yj1
-         5HY0Ja1X8YWpFfPPvi7U7zTO7tecqfKV37xrDU0PNAUd/ZuROzgQU8O4l66nxvX2Fvgm
-         8xXMSey7etYS7KxvGC+H8tMXMxgZUxNDUGB/cAELzqE0ODq7qucRgN4wZV5zNzTZRrrJ
-         iNb+J9yPXFcwvzSA5T9b75bgFhdTjzj4NH6w9vWqJiA04x4cES0slN8FsFYhqPtpaUSG
-         2sMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV60xWdkiScQPN1ro8KsqH11IUKacmSoQuRvwmwied/Eg6vDYIIjzrlrXvUsqfJEsllNPR/gpRnu+4Jncwv8Kus@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKWbSTf4XrS4azGWJNqLXf+JcaAuflhCL8OlBltV0UunKdf7VX
-	Q5Flm20FLzLOChvLjxXeUiO4U+Ky4CqA6Qbp1K5UdoPs2hzTzYGijibPv/J3nfyjsiY=
-X-Gm-Gg: AZuq6aI0z8pnzu7gGU3jK7XyGyHKITo2jWRyvlw8Br3XANZOtPF6UPZLEct/CziztKA
-	FZ0qSJolN4Nj4YYwCyHIGZhGUfa9515nq9XOVux+u5WK14dYt84rBfZ6c08/BlbbT/YNjPS4nTQ
-	PciwVVBn2q1lUhFLIlTnnvr3L7S73BiT11dPZZh/oihGxNL9ZhuIwLh1ivPRtGFfIonWD6jQg8u
-	KCBz/fRajeoAiAFl7KpFbIrFIAisaxxXLa+7ylp8PyGZNBLQelVw4Ux5aUuuq1DVG7D1/0ufmqH
-	T06Dy9fH20bwPxF6tvSH3DU9oo+6xfOQ8LMKBIHjjgYm4mZDY6HMdpnhuuWk3MWbwOSHknlBujc
-	4XfDzr/wobDYMwzaPKKuFGQdleSPRpImxxxmNh8WIiaHu6Gj4AFjRl0/nXjzQjVg2zXtvyl7d4S
-	hCBiRj1KIWWXXWmRoK
-X-Received: by 2002:a05:6000:616:b0:431:369:e7b with SMTP id ffacd0b85a97d-43629341e83mr4341944f8f.18.1770385277209;
-        Fri, 06 Feb 2026 05:41:17 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-436296b25casm6297355f8f.4.2026.02.06.05.41.16
+        d=1e100.net; s=20230601; t=1770393684; x=1770998484;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XMf0JguzxHjMSjmKuASfsYMf0I7uSocPhP7aGXcZdPo=;
+        b=FnmQibpR+yUqfDnPsczyfvVebvy1ucnLXABOCrkIIm8lEVgKXUWz1BQUscBbR8prco
+         rfxpcVnVF73oZX83mA2lsg8hHo/H4ZP1qbyafklCwHqGLYd/fXdoimpQnGoUBxegYf7Q
+         oodGtmubPz7qKS+dyRDIX2DvCi2XFVerpYv3MFdda2ar9kr6jDzWNB48WgEVVUMeGhwR
+         gwueE6hjYBoCfc3aRZ1WF/FzvAD4O+cTGA80PdFCyVl5fKKiwDi9Rz3/bzvUjD4s3X/P
+         rXfTxfvLsglZ9G1Ha+UeV1cxe9N82Pvx1QbHdi9a0a1tTmuVF1g8oE4pn/0J3+Uxp30P
+         MG1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ztz2/nHOCW8WT8HEfnHS0iCvYaoDFPn9VXWH6jdbTnTaeUf98BqhSgKVb5a7z+Z3nx5BQqLzIHBKtZoC9n3n@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdPJ3+fr7ZcNj61q686gIEdTR5jfWfoUDtyQ5cxTMWmcdcmsmW
+	nsmKh1f9rmGxgARPmmp0f3KKqsQHGgg15J5z7/u66RpA2Ro7LTSq7bStLEYWJAKPkxg4k4lpqYx
+	Oih6b/AM=
+X-Gm-Gg: AZuq6aLHW+QfXmXkkXJzCdEUIlnHw/tENOSdm6+yKnpcfYBzBcrZlmqiK3CljfGzRlY
+	ddJIBxs/ai/36G+/33GN+BvX/ylUtp/86lbRQ9VIHrZnJhDfa4S/2MqGNoTewHTh2aRiOxSUbRw
+	636qx5rDGmiTWvvYTd4UAtE9ZJjtNOHuMgkKSdHQqldlJ2q+QnkC3h44bY7ok2ewdj/bAUVxOsa
+	M5ccfF5pvjDfWRQZA4pty55GAjwTaZ0u2uAnSfpkwp8lUaLBY1KfDBIFXe+4knXVXuSpJB0y+LH
+	nm2ar597dhN28VwKYyXpfWqIg+bmrkldSF4XFHkC6tgBal+dSyAX6gapm3Ui7kJGea6sOXumXAJ
+	YMU+tz/INczqpy08ND0tqTBU+zAhxLjiY4wCA19Uo8qSO2ofiSwL/ACg70nCP+HrTmKlY8+Mf08
+	a5OGgHo9I58cVz
+X-Received: by 2002:a17:903:19c8:b0:2a0:f47c:cfc with SMTP id d9443c01a7336-2a9516d530fmr30153565ad.34.1770393682517;
+        Fri, 06 Feb 2026 08:01:22 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:fa3:e3b4:3597:587a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a951a638b5sm36621555ad.11.2026.02.06.08.01.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Feb 2026 05:41:16 -0800 (PST)
-Date: Fri, 6 Feb 2026 16:41:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [bug report] remoteproc: imx_rproc: Introduce prepare ops for
- imx_rproc_dcfg
-Message-ID: <aYXveV_Y1gT73JoK@stanley.mountain>
+        Fri, 06 Feb 2026 08:01:22 -0800 (PST)
+Date: Fri, 6 Feb 2026 09:01:19 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tim Michals <tcmichals@yahoo.com>
+Subject: Re: [PATCH] remoteproc: xlnx: fix sram property parsing
+Message-ID: <aYYQT7OGEuGeOP9G@p14s>
+References: <20260204202730.3729984-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -76,72 +74,51 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <caa37f28-a2e8-4e0a-a9ce-a365ce805e4b@stanley.mountain>
+In-Reply-To: <20260204202730.3729984-1-tanmay.shah@amd.com>
 
-[ Smatch checking is paused while we raise funding.  #SadFace
-  https://lore.kernel.org/all/aTaiGSbWZ9DJaGo7@stanley.mountain/ -dan ]
+On Wed, Feb 04, 2026 at 12:27:30PM -0800, Tanmay Shah wrote:
+> From: Tim Michals <tcmichals@yahoo.com>
+> 
+> As per sram bindings, "sram" property can be list of phandles.
+> When more than one sram phandles are listed, driver can't parse second
+> phandle's address correctly. Because, phandle index is passed to the API
+> instead of offset of address from reg property which is always 0 as per
+> sram.yaml bindings. Fix it by passing 0 to the API instead of sram
+> phandle index.
+> 
+> Fixes: 77fcdf51b8ca ("remoteproc: xlnx: Add sram support")
+> 
+> Signed-off-by: Tim Michals <tcmichals@yahoo.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index bd619a6c42aa..970a9ef97945 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -1005,7 +1005,7 @@ static int zynqmp_r5_get_sram_banks(struct zynqmp_r5_core *r5_core)
+>  		}
+>  
+>  		/* Get SRAM device address */
+> -		ret = of_property_read_reg(sram_np, i, &abs_addr, &size);
+> +		ret = of_property_read_reg(sram_np, 0, &abs_addr, &size);
 
-Hello Peng Fan,
+I'll pick this up in two weeks when 6.20-rc1 comes out.
 
-Commit edd2a9956055 ("remoteproc: imx_rproc: Introduce prepare ops
-for imx_rproc_dcfg") from Jan 9, 2026 (linux-next), leads to the
-following Smatch static checker warning:
+On a separate note, it would help if an example that includes an "sram" was part
+of the xlnx_r5 bindings.
 
-	drivers/remoteproc/imx_rproc.c:648 imx_rproc_prepare()
-	warn: ignoring unreachable code.
+Thanks,
+Mathieu
 
-drivers/remoteproc/imx_rproc.c
-    605 static int imx_rproc_prepare(struct rproc *rproc)
-    606 {
-    607         struct imx_rproc *priv = rproc->priv;
-    608         struct device_node *np = priv->dev->of_node;
-    609         struct rproc_mem_entry *mem;
-    610         int i = 0;
-    611         u32 da;
-    612 
-    613         /* Register associated reserved memory regions */
-    614         while (1) {
-    615                 int err;
-    616                 struct resource res;
-    617 
-    618                 err = of_reserved_mem_region_to_resource(np, i++, &res);
-    619                 if (err)
-    620                         return 0;
-    621 
-    622                 /*
-    623                  * Ignore the first memory region which will be used vdev buffer.
-    624                  * No need to do extra handlings, rproc_add_virtio_dev will handle it.
-    625                  */
-    626                 if (strstarts(res.name, "vdev0buffer"))
-    627                         continue;
-    628 
-    629                 if (strstarts(res.name, "rsc-table"))
-    630                         continue;
-    631 
-    632                 /* No need to translate pa to da, i.MX use same map */
-    633                 da = res.start;
-    634 
-    635                 /* Register memory region */
-    636                 mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
-    637                                            resource_size(&res), da,
-    638                                            imx_rproc_mem_alloc, imx_rproc_mem_release,
-    639                                            "%.*s", strchrnul(res.name, '@') - res.name,
-    640                                            res.name);
-    641                 if (!mem)
-    642                         return -ENOMEM;
-    643 
-    644                 rproc_coredump_add_segment(rproc, da, resource_size(&res));
-    645                 rproc_add_carveout(rproc, mem);
-    646         }
-    647 
---> 648         if (priv->ops && priv->ops->prepare)
-    649                 return priv->ops->prepare(rproc);
-
-This is unreachable code.
-
-    650 
-    651         return 0;
-    652 }
-
-regards,
-dan carpenter
+>  		if (ret) {
+>  			dev_err(dev, "failed to get reg property\n");
+>  			goto fail_sram_get;
+> 
+> base-commit: 85ab651885e1b542ee0bb9ec4642ef0b11716997
+> -- 
+> 2.34.1
+> 
+> 
