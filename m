@@ -1,71 +1,80 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D0E2264CF
-	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Feb 2026 16:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1C130B52E
+	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Feb 2026 16:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770393684; cv=none; b=LulDDw0QbIcCr272Ole3vO38nuERq4exVVuzNdXqXPQoU1jiMHqZTd6MO1G+WCqsNvP6kQh/6R7FoLZ8rC8oTnFz2mVeciQGnxMyUns7hzvLwr0c08Fy/i8u4W00dELU0gjS8wPNUFAvWMF2TYeqjdIGKk4PRpJqWmFu0JhLwJ0=
+	t=1770394215; cv=none; b=jDVB9NNSqGIrJTieqCScp6HdR37Efs0Ul5ekkFd2+159yAJ6vm5IkG/moiNo6UFFCJ1MDMCnZUMb5MOQwPbhMj3GpddxqbaXEyUqHdG0+lOHFT9jRO6af6YmvA1NKCJN8No3PsT+q4Bkr/+jPb87J5WYprepYIjtxZSZEDRqoK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770393684; c=relaxed/simple;
-	bh=IV7QAjuyUw85XIDcqG151gFu0X7JrvrKBJ7KMcj6Wyc=;
+	s=arc-20240116; t=1770394215; c=relaxed/simple;
+	bh=xoUbFm5BTkRiUAzdIjH86j8+cd5U0ieA8XUJf+QV+oY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E76ahfMJMRAQeP+iIusmugaX6BgnjaitjqoG46/jli1lH572q7b/aWshlSVaw2LuCeU9IyKFj/N5V7vMSI/adnR14QzInbDahzfTDfU4GbGjHj4jt/ODoKPOK4iAGZ1dkRWxvRUG8JJXaWJXfJ1p6foMcOiTVAzEFGM065SwIcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sEvYpIjU; arc=none smtp.client-ip=209.85.214.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+q/3YcDrhBE2fGfwt2W5pLmKEwyA3mMovcecLVkQfUWJ2mL751FA1HSkXot0FLkdfFJFlrMg8JdAOhYdlN2Rs9MUVpWjvpjDtUMCbut5ulipOBpv4f1h8fgUUaeqLOTOf5etWzNigK6kZCAjLvP7OK++ye0bbENBPBojgrzeKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wqTapAVc; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sEvYpIjU"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2a07f8dd9cdso16340045ad.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Feb 2026 08:01:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wqTapAVc"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2a95de4b5cbso2750955ad.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Feb 2026 08:10:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770393684; x=1770998484; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1770394214; x=1770999014; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XMf0JguzxHjMSjmKuASfsYMf0I7uSocPhP7aGXcZdPo=;
-        b=sEvYpIjUTPZRhj5Hd+4D5pZFVYY70SIUf9QNSq571FxPhA6BWrGAm4SGMnCym2+AEL
-         R0sa2B+9jvWG2P4YJOUQJJbM9dOXAKQcJyS7oL2RLp2w7BYB5RpXMnTfX+Jg0nB4oXtA
-         SD584KYtfmpJiDYm2BO5GsDbJ9O6edHU7GAfK1wrFPteGfoUlkeli6yfwqleGNYj7Lld
-         9eB+HsV2PTlSX3qk3uE+oO74pXsAbxo5s/McmbA1CtLxASUCJ8bcad/+LIpI9KqxUOHw
-         0meRw0YUiIiu1g/uDTeBcIZ2GsOHJh/bRLztUpvsbezzp3jOuxDzAxNC4DbY6Y1idwDv
-         FZWw==
+        bh=HOEJZRVPudm8f+CgXHv89P8iLoQHtMeP5j8jQ4S4oiM=;
+        b=wqTapAVc6K/aAWqwMQtwvOVoQq5ZBn7fXxEhRGpU4U8tMBHORtj086REUi9ZHgByR4
+         LYXLKGLaywOc+EyBxIgaIsUaTuIaaMG92maEWS4HAupMtsDMDRYg1q3Ol6oh2wOCc14o
+         SL+exANw43PEE/LxjSQzVVtxY4zX7TWNjQHjBX/NycXq1EKdD5FR5rosi0WxblzZ5uw4
+         qzSbQuZw6KHJf3/eKRxbvoqbrET01AQxLr3V76Zm89ZoX+0WXBDs+7qVhFvghesIW5Gj
+         WLv0lmMT37O2FT6dEsncuFeDwsLjg9QrphNr00EoS+aW/1IaJfKXk2GZxbhVg0OXdS2a
+         dAKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770393684; x=1770998484;
+        d=1e100.net; s=20230601; t=1770394214; x=1770999014;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XMf0JguzxHjMSjmKuASfsYMf0I7uSocPhP7aGXcZdPo=;
-        b=FnmQibpR+yUqfDnPsczyfvVebvy1ucnLXABOCrkIIm8lEVgKXUWz1BQUscBbR8prco
-         rfxpcVnVF73oZX83mA2lsg8hHo/H4ZP1qbyafklCwHqGLYd/fXdoimpQnGoUBxegYf7Q
-         oodGtmubPz7qKS+dyRDIX2DvCi2XFVerpYv3MFdda2ar9kr6jDzWNB48WgEVVUMeGhwR
-         gwueE6hjYBoCfc3aRZ1WF/FzvAD4O+cTGA80PdFCyVl5fKKiwDi9Rz3/bzvUjD4s3X/P
-         rXfTxfvLsglZ9G1Ha+UeV1cxe9N82Pvx1QbHdi9a0a1tTmuVF1g8oE4pn/0J3+Uxp30P
-         MG1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU5ztz2/nHOCW8WT8HEfnHS0iCvYaoDFPn9VXWH6jdbTnTaeUf98BqhSgKVb5a7z+Z3nx5BQqLzIHBKtZoC9n3n@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdPJ3+fr7ZcNj61q686gIEdTR5jfWfoUDtyQ5cxTMWmcdcmsmW
-	nsmKh1f9rmGxgARPmmp0f3KKqsQHGgg15J5z7/u66RpA2Ro7LTSq7bStLEYWJAKPkxg4k4lpqYx
-	Oih6b/AM=
-X-Gm-Gg: AZuq6aLHW+QfXmXkkXJzCdEUIlnHw/tENOSdm6+yKnpcfYBzBcrZlmqiK3CljfGzRlY
-	ddJIBxs/ai/36G+/33GN+BvX/ylUtp/86lbRQ9VIHrZnJhDfa4S/2MqGNoTewHTh2aRiOxSUbRw
-	636qx5rDGmiTWvvYTd4UAtE9ZJjtNOHuMgkKSdHQqldlJ2q+QnkC3h44bY7ok2ewdj/bAUVxOsa
-	M5ccfF5pvjDfWRQZA4pty55GAjwTaZ0u2uAnSfpkwp8lUaLBY1KfDBIFXe+4knXVXuSpJB0y+LH
-	nm2ar597dhN28VwKYyXpfWqIg+bmrkldSF4XFHkC6tgBal+dSyAX6gapm3Ui7kJGea6sOXumXAJ
-	YMU+tz/INczqpy08ND0tqTBU+zAhxLjiY4wCA19Uo8qSO2ofiSwL/ACg70nCP+HrTmKlY8+Mf08
-	a5OGgHo9I58cVz
-X-Received: by 2002:a17:903:19c8:b0:2a0:f47c:cfc with SMTP id d9443c01a7336-2a9516d530fmr30153565ad.34.1770393682517;
-        Fri, 06 Feb 2026 08:01:22 -0800 (PST)
+        bh=HOEJZRVPudm8f+CgXHv89P8iLoQHtMeP5j8jQ4S4oiM=;
+        b=eNgoyOwfNlndwpE8UgJO6i1zI+x2aIK04pFc8y4EybysfnhD/LUKN3Q2FtfmKiQ4OE
+         onl8fM+avTjDT9c3TinePqZNxkLLMFuxB3SJVYNtxRUNuO5/kklm5IH7JPQq7R5t64Gm
+         aVAJQaHNEQlRRD+gw345/7/eis774Ei63ssf2+5W9iC8cL0sMtDjIQkm3BlxCi2tHG3L
+         LhnloRDXOINrCKO/AyLPnAg7D7TIg4O95Qqzg8aH8PSDKdaTqlMso1SPnhxCXnm2APhP
+         Wdx0dliTJ0wQMKGCFfbNjIQl+0aMFQNv6otcmTL2QlaI5HETyxhQyNQ2J0r0Gm72SeMj
+         S94A==
+X-Forwarded-Encrypted: i=1; AJvYcCV7boXO/LtlEzkKpI7dklDE82YN9h3fDJpy7SLLPkQMJMhTTygCb3ihqNmsKGKJZC5pxy0cfI3iiqnzU4K/2ddl@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYAh+ZCgtYJJvfMhZmTZBFwf5VxfZuLlzo5j6aDYr3tuEozhXh
+	5HrMEoNRSGyjtQ5DSZ11ADTzoqeW71OigIJ+9ZHY8D1RwSGAA26HnrcpjuABz8tJDcs=
+X-Gm-Gg: AZuq6aJXwSMrgNinzN7ZMP8TRSAUTcglTnKbTl0JBM1eeCgrDMiFIMfE+7DSfXjVpYE
+	wHtd/31hxWPP/y+Nn3ZV9ABNj7WmU5diW4gLctzOciM4xXfLMrcjj2YSum5PlG1P5oeEAOVL6Js
+	ZegRXii2Of4suD6NCQqF4SwTaKONA5lY0zdJ/gvNQqTEnWfrLvxUDu9wSbWf5C9rzFOWbNwef0q
+	DYojHaM4O8pKJBO45Zcjft62nLpvIRetPfxw/74mxTF2rEWFanQ8F56ahFQNiW/3yd6oXq5fSVP
+	cbmSas6iELlUgLT4IbPFHS5ksGpk7sWqgryh3Q/eXVMeXc42jzLYkbku+OpE9pgFhqmK6ayuHTt
+	f2vvzm02jeLbh3x9QzBSKwZ8wI61GQMitmsL/rYYkNyz78lmMvZyBi1Va/Uh/SPrwZ4D7HWT7lW
+	Ng3yxwka5BMJF1
+X-Received: by 2002:a17:902:e5ca:b0:2a7:757b:35ad with SMTP id d9443c01a7336-2a95170b352mr36939965ad.42.1770394214292;
+        Fri, 06 Feb 2026 08:10:14 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:fa3:e3b4:3597:587a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a951a638b5sm36621555ad.11.2026.02.06.08.01.21
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2a951c722c3sm26045635ad.23.2026.02.06.08.10.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Feb 2026 08:01:22 -0800 (PST)
-Date: Fri, 6 Feb 2026 09:01:19 -0700
+        Fri, 06 Feb 2026 08:10:13 -0800 (PST)
+Date: Fri, 6 Feb 2026 09:10:11 -0700
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Tim Michals <tcmichals@yahoo.com>
-Subject: Re: [PATCH] remoteproc: xlnx: fix sram property parsing
-Message-ID: <aYYQT7OGEuGeOP9G@p14s>
-References: <20260204202730.3729984-1-tanmay.shah@amd.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Chen Ni <nichen@iscas.ac.cn>,
+	"andersson@kernel.org" <andersson@kernel.org>,
+	Frank Li <frank.li@nxp.com>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] remoteproc: imx_rproc: Check return value of
+ regmap_attach_dev() in imx_rproc_mmio_detect_mode()
+Message-ID: <aYYSY3Rn3702zk3S@p14s>
+References: <20260205050905.3031134-1-nichen@iscas.ac.cn>
+ <PAXPR04MB8459ABF483274720F6BB23188866A@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,51 +83,59 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260204202730.3729984-1-tanmay.shah@amd.com>
+In-Reply-To: <PAXPR04MB8459ABF483274720F6BB23188866A@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Wed, Feb 04, 2026 at 12:27:30PM -0800, Tanmay Shah wrote:
-> From: Tim Michals <tcmichals@yahoo.com>
+On Fri, Feb 06, 2026 at 03:34:41AM +0000, Peng Fan wrote:
+> > Subject: [PATCH] remoteproc: imx_rproc: Check return value of
+> > regmap_attach_dev() in imx_rproc_mmio_detect_mode()
+> > 
+> > Add error checking for regmap_attach_dev() call in
+> > imx_rproc_mmio_detect_mode() function to ensure proper error
+> > propagation.
+> > 
+> > Return the value of regmap_attach_dev() if it fails to prevent
+> > proceeding with an incomplete regmap setup.
+> > 
+> > Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> > ---
+> >  drivers/remoteproc/imx_rproc.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/remoteproc/imx_rproc.c
+> > b/drivers/remoteproc/imx_rproc.c index f5f916d67905..0e23f519c247
+> > 100644
+> > --- a/drivers/remoteproc/imx_rproc.c
+> > +++ b/drivers/remoteproc/imx_rproc.c
+> > @@ -1007,7 +1007,9 @@ static int
+> > imx_rproc_mmio_detect_mode(struct rproc *rproc)
+> >  	}
+> > 
+> >  	priv->regmap = regmap;
+> > -	regmap_attach_dev(dev, regmap, &config);
+> > +	ret = regmap_attach_dev(dev, regmap, &config);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "regmap attach
+> > failed\n");
 > 
-> As per sram bindings, "sram" property can be list of phandles.
-> When more than one sram phandles are listed, driver can't parse second
-> phandle's address correctly. Because, phandle index is passed to the API
-> instead of offset of address from reg property which is always 0 as per
-> sram.yaml bindings. Fix it by passing 0 to the API instead of sram
-> phandle index.
 > 
-> Fixes: 77fcdf51b8ca ("remoteproc: xlnx: Add sram support")
+> In the main probe, there is already dev_err_probe for
+> detect_mode. So I would use below style as other error
+> return in imx_rproc_mmio_detect_mode():
+> dev_err("regmap attach failed\n");
+> return ret;
 > 
-> Signed-off-by: Tim Michals <tcmichals@yahoo.com>
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index bd619a6c42aa..970a9ef97945 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -1005,7 +1005,7 @@ static int zynqmp_r5_get_sram_banks(struct zynqmp_r5_core *r5_core)
->  		}
->  
->  		/* Get SRAM device address */
-> -		ret = of_property_read_reg(sram_np, i, &abs_addr, &size);
-> +		ret = of_property_read_reg(sram_np, 0, &abs_addr, &size);
+> Let's wait Mathieu's view.
+>
 
-I'll pick this up in two weeks when 6.20-rc1 comes out.
-
-On a separate note, it would help if an example that includes an "sram" was part
-of the xlnx_r5 bindings.
-
-Thanks,
-Mathieu
-
->  		if (ret) {
->  			dev_err(dev, "failed to get reg property\n");
->  			goto fail_sram_get;
+I agreew with Peng's assessment.
+ 
+> Regards
+> Peng.
 > 
-> base-commit: 85ab651885e1b542ee0bb9ec4642ef0b11716997
-> -- 
-> 2.34.1
-> 
+> > 
+> >  	if (priv->gpr) {
+> >  		ret = regmap_read(priv->gpr, dcfg->gpr_reg, &val);
+> > --
+> > 2.25.1
+> > 
 > 
