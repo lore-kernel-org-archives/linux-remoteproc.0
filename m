@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6671F419A;
-	Mon,  9 Feb 2026 15:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA61237E2F1;
+	Mon,  9 Feb 2026 15:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770651645; cv=none; b=gTMzQ5eEsWsS4RaCwDx55HwVbLvJvKMkPsLpOGtAtQ/UVBVpanX7yG5dZFXrhB5ovPzST4zgnRRBGPAmbcJFnlmNnhhUicv24e5BGY48dRnyPWHLkPb8HHGfqXxP6BNhHZ45CgW5XX91hs79Jfbuyc8XgalkgKlGPLWw2TbBatE=
+	t=1770651659; cv=none; b=hN+le+LCC12rWhwo4BDWYJsyZUKTyxf13z/th97W4JDL22v0uOcPgNzsIGHNh5GwgyuxgrHmSfLWdIpeDtjWt0o6Osh+zdLj+kUDqmGhbhSAcIySfW2ywq15uxqAYSKYm72I38u6iJoTzXdL5jGdJ+jWBwmqdSxLTL+8NB4rNzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770651645; c=relaxed/simple;
-	bh=5MSqFI0yYF88dHuoP10E8rn1wmmVor2/en8T7e99gw8=;
+	s=arc-20240116; t=1770651659; c=relaxed/simple;
+	bh=s85QXji6X3+y0PIbY6WxqlRaax3H6dBL9DFgg0MdgT0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wuv7ulkOs2q1qVf89PV5qcay2kZcRr+ifYwJPYdm/rLlLsZQCV113WWPbBPU8rSjQ9FX4Y6sZmEfEevqsX9xoFQXNbYh1HgmRSa7o/WRPATp4vBUKwXucDtsaCGZea+xZp4sRX1B7TcQWWJDdrOgoX60X87DPRbCop+igT5X/xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfrXyXlP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5gb5XHhCdD1ISWlzJY7d/9TSKyCqkIoJA77sT3EhdIrZtnuAhwHa7LtJILzMu4oH4asYbJrwvK9vtOmA0k6jdYhBGK0/wXYdfuyqJoW2tDnnWK+eZJqKAO13cgUUEnXGQlCdRr5m1dEr5R1XK8c0N7gXngMBp6lDcK0HSxwXdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OdgXAwti; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfrXyXlP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52281C116C6;
-	Mon,  9 Feb 2026 15:40:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OdgXAwti"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4AD2C116C6;
+	Mon,  9 Feb 2026 15:40:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770651644;
-	bh=5MSqFI0yYF88dHuoP10E8rn1wmmVor2/en8T7e99gw8=;
+	s=k20201202; t=1770651659;
+	bh=s85QXji6X3+y0PIbY6WxqlRaax3H6dBL9DFgg0MdgT0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kfrXyXlPfjvlhlknbXEtjPunDnJ6SbVESH2xs1VUWX4IEl/rhKscLWV+1Xt7j5yTC
-	 4rz4KgLbrGbxmWafJOzdmbme4+48QU17x9ukC4lSqvq0kN8yJmJwLvx4vJ9FGnFzzZ
-	 3tS1EXcp25MhGC9EiXYjMQRNu9MSl/Z7YhHS/hLJEVRq0VzfrDd1Wbea6mcfx4HJNx
-	 2KhK5Bx7B0MdzfgGp9PwUswhKzOtsPwDfa+HIFpAsR+wPQy0aMYxoNgevFNoeJCjg6
-	 q3EhJGth+Ef6NFkrjqrtN8jnzEvEq9VBNM7Av7Jdkh9XgiiDbCjLVK2pB9T/SAXwP0
-	 o8PgSJ76L1KGg==
-Date: Mon, 9 Feb 2026 09:40:42 -0600
+	b=OdgXAwtiWKiNsQ1kEGi2o3twt8hDc9ZvHb4d7cnEiCP7YLvGRU8uRd4o8LkjionJF
+	 gAJsxC/uLSTfl8wuNh8pV9FykxAKj1XmnTAKK6pTxw3BVplhlZC6Em4XTMoqD7fbmY
+	 A2qUhRsRKagogDJYnzWImdqD8UNAhSI/MvrrwWgSsaSbJ+LZNpb8AkBU2jQDENHJtp
+	 5CYxOalD17rzHvJXz7no7Zurw/Um+bxU9RpCgMKTYLWRKdPyvl3wF7Uie4v8dlO2eg
+	 8XtAxnaeVtsYBxblOqgK4hevzUBWXgri5tWL6TgVYO1/x8Jov7kAXuNsqe3+7Kt/Mb
+	 +H1QurKBqhWlA==
+Date: Mon, 9 Feb 2026 09:40:56 -0600
 From: Bjorn Andersson <andersson@kernel.org>
 To: Douglas Anderson <dianders@chromium.org>
-Cc: jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org
-Subject: Re: [PATCH v2 07/15] remoteproc: xlnx: Use mbox_ring_doorbell()
+Cc: jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, mathieu.poirier@linaro.org
+Subject: Re: [PATCH v2 08/15] rpmsg: qcom_glink_rpm: Use mbox_ring_doorbell()
  instead of NULL message
-Message-ID: <3s7angk25pwtyonscqey2lq6uwxysoypvnbifloydgjao4wh22@7dofvqyj7di2>
+Message-ID: <vl25packrz4awbrfr4cg3jjyuv4io64fz2gv4rpzo32jfvuqjj@iayxnuqngfsu>
 References: <20260208040240.1971442-1-dianders@chromium.org>
- <20260207200128.v2.7.I90e87b8f7d6ddccfa0372bb96d196d2d9d7685db@changeid>
+ <20260207200128.v2.8.I700ba93ec437db5100c0076941d8470344ea9995@changeid>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -44,15 +44,17 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260207200128.v2.7.I90e87b8f7d6ddccfa0372bb96d196d2d9d7685db@changeid>
+In-Reply-To: <20260207200128.v2.8.I700ba93ec437db5100c0076941d8470344ea9995@changeid>
 
-On Sat, Feb 07, 2026 at 08:01:29PM -0800, Douglas Anderson wrote:
+On Sat, Feb 07, 2026 at 08:01:30PM -0800, Douglas Anderson wrote:
 > As per the patch ("mailbox: Deprecate NULL mbox messages; Introduce
 > mbox_ring_doorbell()"), we want to switch all users of NULL mailbox
 > messages to use mbox_ring_doorbell().
 > 
-> This client only ever sent NULL message on the rx channel, so the
-> transition is straightforward.
+> This client only ever sent NULL messages, so the transition is
+> straightforward. We can remove the call to mbox_client_txdone(). The
+> call didn't do anything for NULL messages and it's now officially
+> documented not to be called for doorbells.
 > 
 > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
@@ -65,22 +67,23 @@ Bjorn
 > 
 > (no changes since v1)
 > 
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/rpmsg/qcom_glink_rpm.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index a7b75235f53e..de807247e9c9 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -245,7 +245,7 @@ static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
->  	memcpy(buf_msg->data, ipi_msg->data, len);
+> diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
+> index e3ba2c63a5fc..4cb9c36adcd4 100644
+> --- a/drivers/rpmsg/qcom_glink_rpm.c
+> +++ b/drivers/rpmsg/qcom_glink_rpm.c
+> @@ -197,8 +197,7 @@ static void glink_rpm_tx_kick(struct qcom_glink_pipe *glink_pipe)
+>  	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
+>  	struct glink_rpm *rpm = container_of(pipe, struct glink_rpm, tx_pipe);
 >  
->  	/* received and processed interrupt ack */
-> -	if (mbox_send_message(ipi->rx_chan, NULL) < 0)
-> +	if (mbox_ring_doorbell(ipi->rx_chan) < 0)
->  		dev_err(cl->dev, "ack failed to mbox rx_chan\n");
+> -	mbox_send_message(rpm->mbox_chan, NULL);
+> -	mbox_client_txdone(rpm->mbox_chan, 0);
+> +	mbox_ring_doorbell(rpm->mbox_chan);
+>  }
 >  
->  	schedule_work(&ipi->mbox_work);
+>  static irqreturn_t qcom_glink_rpm_intr(int irq, void *data)
 > -- 
 > 2.53.0.rc2.204.g2597b5adb4-goog
 > 
