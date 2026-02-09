@@ -1,217 +1,97 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011051.outbound.protection.outlook.com [40.107.130.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F0F34DCE2;
-	Sun,  8 Feb 2026 11:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770551115; cv=fail; b=pEc29EjoV7wBrKuhU38dRfwWbPTGTX0QXsqzRfDp4UeZP2gpikk7fcOQzJVWJZe1FvYDSRffE9MeaY9YbybirZhOCrV5FLxybhibeP035lZTn+y+Nbc0BRpxiRRcEzc2/Ofa5uXxXI3I1Rc6KUX+GCVqwd9vvnrQmjzoUL9YZf4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770551115; c=relaxed/simple;
-	bh=hkbfrmXSeIPWKSZPD31TnENYdT1uyKogcksDlCaM9iQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ExNHPcye14BxylZG8jrkj0y7HpdtXduSsdSdInL2fpFlaTt4VpcujV48abXwN2srH+OWBOkOp+eNHBZvz8wLg60TQLPy0J5XBw500eOPiRQ+0jhN+W9lJ+IYdkM6vIF+FQPEEDjqSJnpDKKrZEn9v2nxBh/5H7Z7Ia+oRsUjT9Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FGRIHkDN; arc=fail smtp.client-ip=40.107.130.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FGRIHkDN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PsIbVir5TAxUISBIVvAigOVuFRrUInm1iMc+o9ZTpYWfTZyBEgdYFgcuMp9cnYVFnI7zUcpJHxMrFTNFVv1LT/9eYp8aS5Sch+Oi0hKzXI6h/PoQtT5gyVn59o1oOVhjz7QHPCOpwpElRPXwJgHQaP4WAll2NHq5w816G69YHi7ifLPP+QCcXOS2JL5OVfc13UfjWfBW1s6KRsF+dUEZczt6U1aHQyQ+u9a0p7TS3L2LYfLAEDevVzqCOuDF5PEKqGlloCyBmRLy4FoBHGw8XaWzP1cccZYUp3INkYo6a0da/d9Loa/Dvd0R2mt1PNOXH4vYwddY5+leOOvIVYKhvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7g085mK7dlTL/pjvvItj+7VZ6169FI0xkmCYJy6D4dI=;
- b=GmtbxxNLO35WM3hWJa5kyyXZtrG2thZ08r8vVy4JziFyGxZ86nkbZ5eeq0tf35/nb6zR5VcZv95TB5n6EYNUpR8OBtacdeMZmU8EvlWxN9QfFSeT/35UXuxEXkWcs8DVCXuPJ12XIJ1wmrTTwKHMeBKKbwGl+FcozD5WdxnXHmmaibzOJJbmYrfuSo0iuBsZDYmtejMRI1eDRYlv5gCzMk9MbcTPEkp9jrFTFgKMMnPErGlJV7oEEe6MwREKdWHzR+C5ZFGMJuTk3SZVqpUyGaRrxjeGCa9GkDDMfgSPOwBF5kis+5t5bvelY++iwvZ5PaxdPz7z+BSHDrVtHFWwSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7g085mK7dlTL/pjvvItj+7VZ6169FI0xkmCYJy6D4dI=;
- b=FGRIHkDNOldxMX/J+VGYpPUMxXOuJOtac/Q0D7yeCrkV08qy26teoGYp3uoMRjtk2LcqK6G/mBlKS5HO7Y66Iy4o1YDinarSe4hMh3CA/KUoBu7RjyFTQMthXbfbNMe7O/2OprDhowz3fk56tOvAfgLuNWjDKPoNfPbJkjh5ciV3QzhxL6NDSdHwZh8vUi9P1NrubA0wLajeOSjC8JSl8lMYxF+quZhc3d8QMusyVX5M67+iBE0RpyQU9FnV75+DGCrzuSfNvk4oVs7C8RnWoI4bau/xR6Skh2+pqkFeZeIC3G8QwXfbqrcJlMkpDUn16Hz5JbkDjHFADyPDEoRagQ==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PA2PR04MB10160.eurprd04.prod.outlook.com (2603:10a6:102:407::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9587.18; Sun, 8 Feb
- 2026 11:45:11 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::4972:7eaa:b9f6:7b5e%7]) with mapi id 15.20.9587.013; Sun, 8 Feb 2026
- 11:45:11 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [bug report] remoteproc: imx_rproc: Introduce prepare ops for
- imx_rproc_dcfg
-Thread-Topic: [bug report] remoteproc: imx_rproc: Introduce prepare ops for
- imx_rproc_dcfg
-Thread-Index: AQHcl25HD4HxlvqrUEqKyFIT1+WP0rV4rXtg
-Date: Sun, 8 Feb 2026 11:45:11 +0000
-Message-ID:
- <PAXPR04MB8459F2126C8D692EC6F8065D8864A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <caa37f28-a2e8-4e0a-a9ce-a365ce805e4b@stanley.mountain>
- <aYXveV_Y1gT73JoK@stanley.mountain>
-In-Reply-To: <aYXveV_Y1gT73JoK@stanley.mountain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PA2PR04MB10160:EE_
-x-ms-office365-filtering-correlation-id: e300c85f-aaee-48c5-7204-08de6707844c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|19092799006|376014|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?DB48U1yBeBzymqNoOsiVnjdWa7OnwCEcXomAin+jupT/6zByCJKkNxsUe5cr?=
- =?us-ascii?Q?Jq8k1I3rGSQHEeSm+07FknGclW2KIvDe2u1nMHwZwclbshCmUTIE2ut0v5ln?=
- =?us-ascii?Q?wFYUD1hYve7bxto0rkBvEoorCJvQ6BPlmJcF2CrniPbhLxXcu8diGvbCu5id?=
- =?us-ascii?Q?tU94AhZjAwtbyF6zYX/5Y5AXFpXuhV4uWMcSX2XqY1ocaGulT+iAoWkxZNcQ?=
- =?us-ascii?Q?iZoqRGCUO/Yid7s5RQBW56CMAKgJMBjxAPLWlG0cKajTfVwDkycHEo3wYZ1k?=
- =?us-ascii?Q?Z+OyMHQLbKNxNLQREEjv4bWocqUzN7sE7OCgNKlhnZqbpuLE2WW6x/pcwOPX?=
- =?us-ascii?Q?3XdPNer4fdsngP5Ohg7PufppX7W9eaaHmOaUWllwtftmKl/I4qwgeTKiZo20?=
- =?us-ascii?Q?iOgVbA5lAs+7dqAS7hlj8Fmnhy6QMST3dr5GGdWKctP2shCkCbs5yWMplrBY?=
- =?us-ascii?Q?ay+1lovFXz1G4vGzG3XsKldOUKCF2oYT44WoZHsg7bABG59LBA7CPBEYIbgz?=
- =?us-ascii?Q?iFemDHLe1njwAxIJ2cimn3ZEcYRPAlfkd/mslJs6UCSrHFM7xgI9XAKnJmvJ?=
- =?us-ascii?Q?hdRbByJw7rTbw0Q2wRzLmAYrZL7PyIF61nYCfDo407AY7M0oBmIccKKZCKnV?=
- =?us-ascii?Q?upyCzS96wMC+PUmhvLyJSbE690GQvs0FLgnylQc9vGvH6Zw2/qJY+yobzrwy?=
- =?us-ascii?Q?17ueHSF94nxSmK6BTThjStonTrtKnUaJDlftMoljMKeXeMEROMW+YbylGPsj?=
- =?us-ascii?Q?BrgUFTAvO7q+xerERBg172Pd9TT+YqlRO4xspZZLUjOwG31tDiJrpgHyDAaJ?=
- =?us-ascii?Q?ZskR4o1pbFMSxUXIXB6BQQH71bLDReXIm6SM4sttrUkoaJN+nwgq5nAnf/pZ?=
- =?us-ascii?Q?6k2tDf8NBI7U8620NF3/peoym+xw1a8YTKZGCZWRgRnOYyijD5DPBfcsFOOe?=
- =?us-ascii?Q?utx58bx/s7fwdkFixmN1SAMcoeGzUrRTcW3ycqMrns0It3/O0qzuTpwrR9wL?=
- =?us-ascii?Q?xGPK7mW5ZU57cbmLOdA8oh8uANrHhcYFrxaUM0uh+/6dIJdNuR7dP5bhTiK5?=
- =?us-ascii?Q?KQ2MJzhdOYLM7VZcbbysSayteJF8zQEqxVCbniOVxInj+jfb/V9IFUIbfeT3?=
- =?us-ascii?Q?MY1oZsUEjUzx/SRhhUxEhHj7/re2vJci9g3/RMg8a+MmzzgWjc9tYJ+lXRte?=
- =?us-ascii?Q?1ed9urVdX13mkB/6t7UJ8xTFBY9FqerrqFnynnspjF/XeOyqkTHc1Je5omT3?=
- =?us-ascii?Q?KKh2bUCqVokqfSWrCahX97yhLyUZIC/LUsbSD0uvJzk07xpuFhkOPHxcKEEK?=
- =?us-ascii?Q?WqYVugp4My+aHV/urCw7RYRr2CtO6BWR67Rt2rtaXw8iLQh8FgCl1TMZZmca?=
- =?us-ascii?Q?jx5qK+N/DgvRKmTezDODzH5rgFF7hnm4Fwv0gNCAcnViV115h5yABFlMHf68?=
- =?us-ascii?Q?xidvvB83i2G2FI8i9Be/ufMf/pwBhfxz25NLJwj1Et2FfHRdtXYtu7zkOffA?=
- =?us-ascii?Q?U2k+YGjIACKYImMBgiygWneSdaiOUQQtxjzGVH8xK3OqXn6gvheTxETIH52g?=
- =?us-ascii?Q?hdmTCsAMjXyEfVsR3NDBg7qdC1ajGaNN7PJONIzuWrZqyINFozUI7bs9V6fT?=
- =?us-ascii?Q?D/UZEYXEJ0eVHFt8cKvKR0M=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(376014)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?uwbTVWEyXu+sT/dF1+ABRhE61MNj4/R8jMQNdNlKbmhR1R5ZpE5D0fllP946?=
- =?us-ascii?Q?aiAEhyx76FOMJPs5uoSdJJyq1cli1jbIqYxQy//qCnYSgC1W6rBXlj9lvovY?=
- =?us-ascii?Q?kzBF25ibQOritWN9S439P4H/AK2ARuuSgyS+L1dUR86dqoABdQXkliY15LNb?=
- =?us-ascii?Q?2tMmc2pCFXjQh4gxIN3Xp/v1k6tjguHsWPK4rnn3PGfa8+qcDVWD2YJrcuqQ?=
- =?us-ascii?Q?xB9W5VFhGLJpB289wemvYv7rqu1OHZtraHue7hXkGIn714tXMoBpWGFNKXvn?=
- =?us-ascii?Q?/R3ZrB9yX8XN/iE62UKx4twmSGgUkZlenpatsn2IzIxlJbVPeVrqqrMtk1yx?=
- =?us-ascii?Q?ot5SIFC/lFLHJJCgD1podyJ5m2J6cfY2uWLkJ2F4IeIQfW1YMANOtJwx+93R?=
- =?us-ascii?Q?45EtKMVYLWJsvu42lpS43FydtwaRPeQjwG7ooc5j1Khs4SbkX734jJCuIgro?=
- =?us-ascii?Q?r5STpqC4Aur3jh/unPUoda8tXR/Ood06rNyoxOU2W4d6ZyIzNDGfzhimQSD1?=
- =?us-ascii?Q?yupb3WFrcbtSJq5VhCYLtZUs0zzrEGvQcI1ZIIX19U23AoH/fX7I8dkH25rj?=
- =?us-ascii?Q?KNfYSGP6r2PhDpWXJ/8SKGcBmEC4CRfcc/FMYP9znFDEqL8HsPqoFGEQOHNx?=
- =?us-ascii?Q?s7HuMd1owG1+6weiYo8ikbIXmNT4h5qWNDL1noohBCHeJvv+3acdRa/yOAY3?=
- =?us-ascii?Q?TWXbxFlAZdGA1B7XJrhmxh/7v8RTylAr2Y0tYs+XROb34OCG0aLvZJpbgxut?=
- =?us-ascii?Q?t8pLLoMK5smBsvFnf8Xb3LlpexXsBQ/Do4ThLUU9ay/zVfp2z0jOL/R6xc9z?=
- =?us-ascii?Q?gDbTt90fTEG31isnxmBp2q/PqE67WklWLmtm4pxbXwo2CUGTL6H0JTirgj1O?=
- =?us-ascii?Q?lrcdNc9aHwlVGXuCYSeAzQpIQWwoavJMFBDIhIQld802FzJa/fSqEbVwd7+e?=
- =?us-ascii?Q?1Gk9L0PE3tgvl8zW2lXpmBis0oFXRzjgnH3tSKg4JF8TO1RBhLb8DuYDelGW?=
- =?us-ascii?Q?Hu3z0W5SU+WhIQ9rF7hE7X18pbHhHemdjXRYWnlJW85aAUKuddnz5DT4+4+8?=
- =?us-ascii?Q?HLbRjSzz0hzPiOdsnLNNSYDnBk7KQbaSwdAewJ3FcrYc9IVTSY69V3oS8Ihz?=
- =?us-ascii?Q?09Vk1fvVvfcPKsyrhCOg97lwhecIrc6vTcv5G2UI1+VbBiMv8f6H/mxLLIlh?=
- =?us-ascii?Q?HWDy8Meh6Go+Y1p7pyzwp35ZPrDJpyxm4pBFSrBI/djZpBYHdL4UKD68/NWY?=
- =?us-ascii?Q?lFBbzTCRpORERyKSfrIyKz10gzMdaAkzTSc3yirgZuKCBsnw/2GE5GOeD7GD?=
- =?us-ascii?Q?Nho511pCGeXc1IbYF++9YEckqy+zlVHpVk1ZaVBQvbV3aVIfPE4u7UNvR7yT?=
- =?us-ascii?Q?xbDBJSWDh0iJVfOUGcm2UtzsjZxXI6ROIugYiWBlGaRu5wq+1FDRgwj+0Gp2?=
- =?us-ascii?Q?D9lYXhOIUXrc0H2hzRlnkkCPcuI4T3yn2LhN4waQ/xleLEPVNm9jfv/LpoBA?=
- =?us-ascii?Q?NJCXJWfLNtpI6D7h1br/dhmeX25Aq3mXkfC3JCUSsdaxVQRKO/lfniFO4vK/?=
- =?us-ascii?Q?+04lwobIw4eZrQzjygoN/ToFJi1WW8q6Nvu/KahiJblcLlmPAEyMoYyE/hfd?=
- =?us-ascii?Q?KVPjDMCPBEkrRoGROaEkVmdROu4/ymTcyuBGlZ7LVMUtfilq07JIdi4VT68B?=
- =?us-ascii?Q?TUC6vnIZv55nBdhrnz9oRYTLkvjrTfCvJvvcqLlrE2Lvoy9j?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9532D8767;
+	Mon,  9 Feb 2026 05:18:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770614334; cv=none; b=JA94xWDkmIgLRlDtPG8anESYuJkqvyR8vW9aprCWM7iWhg4wOdY1Z/3uRav8KeFDKJBVeqdTjpouZgal0Qb5jHTfHlUmaw6B3VFrkUgtUbW/EoMiwpKwMq44cKYD9ddYPi74rH2vFiHEtXvR7VG226leV/BR/erUXddCJl0ty9I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770614334; c=relaxed/simple;
+	bh=ryvxP56BpEYWQ/bV/GwhxtChmLT6+SueJYNn+SC2l4M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Lt67iCfTLixJXgXhpeMlMg189H0RFikNBtDkccrKtq/pvLqScFNngfY08seKZgB+0evVbEXXsFo1UFRtJL5Y/xd9dkMHuiu2ZyPUPqYGY//smWjsEkqeUC2tDwuDrSUyDDtJ22iJ5aWjS8gYm6dU2+pNhlkREhTbgEg1qNqSZHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowADnjGgtbolp6gaCBw--.8544S2;
+	Mon, 09 Feb 2026 13:18:37 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: peng.fan@nxp.com
+Cc: andersson@kernel.org,
+	festevam@gmail.com,
+	frank.li@nxp.com,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	mathieu.poirier@linaro.org,
+	s.hauer@pengutronix.de,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH v2] remoteproc: imx_rproc: Check return value of regmap_attach_dev() in imx_rproc_mmio_detect_mode()
+Date: Mon,  9 Feb 2026 13:14:07 +0800
+Message-Id: <20260209051407.1467660-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e300c85f-aaee-48c5-7204-08de6707844c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Feb 2026 11:45:11.4807
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: grbj3IGbsNt/wLjfpNPxUrMvx9QoqjQH5AfR7b4JrfYv0Qu3xq6Yesb6EE29i08VKsfAC3mJCe29qG/wiYW/og==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10160
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowADnjGgtbolp6gaCBw--.8544S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xw4fKFWkCFykWF4DJry3XFb_yoWkJFg_Ca
+	4akrW8X3W0vrW5C3WDZr4rAFWUtFy8ZF9Y9F4UtFZxJwn7XrnrAFWDZrnrZa1fXryqyr90
+	k34Svr47AFnrujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBuWLUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Hi Dan,
+Add error checking for regmap_attach_dev() call in
+imx_rproc_mmio_detect_mode() function to ensure proper error
+propagation.
 
-Thanks for your report.
+Return the value of regmap_attach_dev() if it fails to prevent
+proceeding with an incomplete regmap setup.
 
-> Subject: [bug report] remoteproc: imx_rproc: Introduce prepare ops for
-> imx_rproc_dcfg
->=20
-> Hello Peng Fan,
->=20
-> Commit edd2a9956055 ("remoteproc: imx_rproc: Introduce prepare
-> ops for imx_rproc_dcfg") from Jan 9, 2026 (linux-next), leads to the
-> following Smatch static checker warning:
->=20
-> 	drivers/remoteproc/imx_rproc.c:648 imx_rproc_prepare()
-> 	warn: ignoring unreachable code.
->=20
-> drivers/remoteproc/imx_rproc.c
+Suggested-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+Changes in v2:
+- Use dev_err() + return ret instead of dev_err_probe()
+---
+ drivers/remoteproc/imx_rproc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-[...]
->     642                         return -ENOMEM;
->     643
->     644                 rproc_coredump_add_segment(rproc, da,
-> resource_size(&res));
->     645                 rproc_add_carveout(rproc, mem);
->     646         }
->     647
-> --> 648         if (priv->ops && priv->ops->prepare)
->     649                 return priv->ops->prepare(rproc);
->=20
-> This is unreachable code.
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index f5f916d67905..75baf905988b 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -1007,7 +1007,11 @@ static int imx_rproc_mmio_detect_mode(struct rproc *rproc)
+ 	}
+ 
+ 	priv->regmap = regmap;
+-	regmap_attach_dev(dev, regmap, &config);
++	ret = regmap_attach_dev(dev, regmap, &config);
++	if (ret) {
++		dev_err(dev, "regmap attach failed\n");
++		return ret;
++	}
+ 
+ 	if (priv->gpr) {
+ 		ret = regmap_read(priv->gpr, dcfg->gpr_reg, &val);
+-- 
+2.25.1
 
-Indeed.
-
-The i.MX95 patches were developed quite some time ago. Later, there was
-another change [1] which modified the reserved-memory while-loop logic.
-When rebasing my changes on top of that, I overlooked this behavior
-change, which resulted in the early return making the prepare callback
-unreachable.
-
-Regarding why this was not exposed earlier during testing: NXP U-Boot
-powers up the M7 (leaving it in reset) and initializes TCM ECC by default.
-As a result, even without calling the platform prepare ops, Linux can
-still load the M7 ELF correctly, so no issue was observed.
-
-In hindsight, I should have tested the case where M7 remains powered off
-when rebasing these changes (:
-
-I have just sent out a fix to address this issue. Thanks again for
-reporting it.
-
-[1] 67a7bc7f0358b ("remoteproc: Use of_reserved_mem_region_* functions for =
-"memory-region")
-
-Thanks,
-Peng
-
->     650
->     651         return 0;
->     652 }
->=20
-> regards,
-> dan carpenter
