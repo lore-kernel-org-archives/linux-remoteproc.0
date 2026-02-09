@@ -1,46 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCC929A9C3;
-	Mon,  9 Feb 2026 15:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C40B37E2F1;
+	Mon,  9 Feb 2026 15:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770650640; cv=none; b=iFKdgfmEL0pEEuXR0EgclyQdIe2CWsp/X+0YXma3sD8/y048INbn3gj0iPbivlx5wuwqlpd9BeHHD3MFTEAt4HGElge1oFE0KxGsnUNrrZlLmPMQzNypoMUTNxTgn+TOwxxXu3lNghj1Dt8bkN/g6EBht1hrEhR1sCVbsAAl3M0=
+	t=1770651620; cv=none; b=t8ipfRNmTOeLhKea6BwvHSDR2wUfN7Mc3TpjjmbhudDSmpgt3gF/pgBnQEjEZAO1BzXbjDpPCm9gpfWxDIoTNJx/CbJJzVXeS87Mo/x6TIHHDZOByRBhYYSmtqFBo6ZmC0LRNz1juww7Eruxht4HE5EsXVLMin6q5eSxFJhbR9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770650640; c=relaxed/simple;
-	bh=CATv9n8/6UVhKAt6xSMvM8ZPSENEtVF49mw0FRzE/8Q=;
+	s=arc-20240116; t=1770651620; c=relaxed/simple;
+	bh=5DRu3dMpaADpDKLopx8dO5LEkVz+35Fl6LlXv05MFMY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MDkSMAuIzWhYBJ4DoM5IR0/j5psj7eei3A2HOBJXwTDdnbdLDlL6nhvVzb0RtEnrG/tuK6WQAidFzYfTrqy/wo/vgqUsIn1tDL/aAKM2zLP+fs22KBfM3S2FczS12YZDfnD79jYuMnITGL4g2ljr0i5z1g+k9euEwjGzdbu7Fs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaGQUU6M; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xd8sG7S6t7IWV/SNaOy9whrrQaDcq2LnzpPaEXkdJa9d1AcjApbyBrmC6V7KAhWNvLx/V81yWCfkyQXX6kkXR43a9Aq5BloxhNu8Wr2nQm6ujEvww6PHXGRgFnCaBPAeDfe5S401Z3jWCqRg+WJRsCPeGBeNiEihVm6tTeso2mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3giKneR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaGQUU6M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A822C116C6;
-	Mon,  9 Feb 2026 15:23:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3giKneR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3742C116C6;
+	Mon,  9 Feb 2026 15:40:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770650640;
-	bh=CATv9n8/6UVhKAt6xSMvM8ZPSENEtVF49mw0FRzE/8Q=;
+	s=k20201202; t=1770651620;
+	bh=5DRu3dMpaADpDKLopx8dO5LEkVz+35Fl6LlXv05MFMY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IaGQUU6MZiYnBwbZV+WB6yl0LNLcHbFtCwOafK7v3aP9dNH6203w4KEZw+7MfEC4p
-	 83Wgv8mmFdTftmAFnx8rL/0BstQ/LljdeZcqY9QXbbtbvsZPj5g060jDq/IIb/ECzy
-	 mEqpXgr55tVRNNvmMytI2u+8Xf8Xnx+nCebj4Xag10AvuvTsukawTkaYHokUzqdE/R
-	 dYF4izP3eLQp1iKlJ9DC0/fr6nMgpMCWgQS82PyQuVIWIFTmPTk7o/svkZnFSvrx7+
-	 3nt8NXynVrm8Hc2Kw5RtqdN08lDOGLtlPDDvKBlNu6+F+dz11nnmThloWb5dTA8XHg
-	 Ef1ciNGC6eavQ==
-Date: Mon, 9 Feb 2026 09:23:57 -0600
+	b=E3giKneRdTIS8o5HAfKsCgyA3Vk576TJHuj27G++WpF4bVwo8cqDkL6Qmv+VYPGZ8
+	 cuixX8S9UWdGdgfLNEhjWW+EobdUEmwbMpxPsUxHYKe2KuU+agUKPUb/oWYn35b27L
+	 +GtecYO4Men19p1sVRPAWK38hPds7C0lkC1Rq2OvR9enQA/5TK2AbLY7olteRNqLCq
+	 xJz0El8ZBaNm7AuLJLQxUx/LZGECtS+u6RnXBYid20/LgnxlvkWnspo+l0HdqD8tw6
+	 cj29zBhNWE9FTbRHQQ2HoCrzcD3K5DGDHNgsfMuP9tHFWAvFpfgDJ/z1ciUy6p6Lr2
+	 MqqCGfPCz2Nig==
+Date: Mon, 9 Feb 2026 09:40:15 -0600
 From: Bjorn Andersson <andersson@kernel.org>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Andrew Davis <afd@ti.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v3 1/2] remoteproc: core: support fixed device index from
- DT aliases
-Message-ID: <a62kzllm4dgqavg47utvhb6m7oswcgenvq5nhw7tutyrs436lr@vtilvllrxkfb>
-References: <20260204105216.3929071-1-arnaud.pouliquen@foss.st.com>
- <20260204105216.3929071-2-arnaud.pouliquen@foss.st.com>
- <4a4e50f4-9e02-4ca2-8b3f-b01caa7df35e@ti.com>
- <1a175145-d29f-426a-a163-1d185b8b0348@foss.st.com>
- <b9b478ea-cec7-4b5b-8ae9-d0574c4eb02a@ti.com>
- <25df6720-da97-4f81-9124-bdb7e9542d56@foss.st.com>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: jassisinghbrar@gmail.com, Frank.Li@nxp.com, arm-scmi@vger.kernel.org, 
+	cristian.marussi@arm.com, festevam@gmail.com, imx@lists.linux.dev, 
+	jay.buddhabhatti@amd.com, jonathanh@nvidia.com, kernel@pengutronix.de, 
+	konradybcio@kernel.org, krzk@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-tegra@vger.kernel.org, mathieu.poirier@linaro.org, 
+	michal.simek@amd.com, nm@ti.com, rafael@kernel.org, robh@kernel.org, 
+	s.hauer@pengutronix.de, shawn.guo@linaro.org, ssantosh@kernel.org, 
+	sudeep.holla@kernel.org, tglx@kernel.org, thierry.reding@gmail.com
+Subject: Re: [PATCH v2 01/15] mailbox: Deprecate NULL mbox messages;
+ Introduce mbox_ring_doorbell()
+Message-ID: <yotr3aia3gra4jmlykqadqwi45lphhdyx7tt4n5cdwcungfpbd@gns6bb6m3vmz>
+References: <20260208040240.1971442-1-dianders@chromium.org>
+ <20260207200128.v2.1.I600d04c0553f5c5ba39c2f92201da313aedfe746@changeid>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -49,57 +51,101 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <25df6720-da97-4f81-9124-bdb7e9542d56@foss.st.com>
+In-Reply-To: <20260207200128.v2.1.I600d04c0553f5c5ba39c2f92201da313aedfe746@changeid>
 
-On Mon, Feb 09, 2026 at 10:51:07AM +0100, Arnaud POULIQUEN wrote:
-> On 2/5/26 21:07, Andrew Davis wrote:
-> > On 2/5/26 11:58 AM, Arnaud POULIQUEN wrote:
-> > > On 2/4/26 15:57, Andrew Davis wrote:
-> > > > On 2/4/26 4:52 AM, Arnaud Pouliquen wrote:
-[..]
-> > 
-> > It becomes immediately obvious this is valid only for a given platform.
-> > 
-> > The other thing I want to avoid is the ever-growing alias lists in DT.
+On Sat, Feb 07, 2026 at 08:01:23PM -0800, Douglas Anderson wrote:
+> The way the mailbox core behaves when you pass a NULL `mssg` parameter
+> to mbox_send_message() is a little questionable. Specifically, the
+> mailbox core stores the currently active message directly in its
+> `active_req` field. In at least two places it decides that if this
+> field is `NULL` then there is no active request. That means if `mssg`
+> is ever NULL it will cause the mailbox core to think is no active
+> request. The two places where it does this are:
 > 
-> For my understanding, is this only your expectation, or is it a general
-> direction recommended by the Linux maintainers?
+> 1. When a client calls mbox_send_message(), if `active_req` is NULL
+>    then it will call the mailbox controller to send the new message
+>    even if the mailbox controller hasn't yet called mbox_chan_txdone()
+>    on the previous (NULL) message.
+> 2. The mailbox core will never call the client's `tx_done()` callback
+>    with a NULL message because `tx_tick()` returns early whenever the
+>    message is NULL.
 > 
-
-If I remember correctly I did stand by the idea of using aliases to get
-stable numbering in /sys/class/remoteproc when we spoke about it several
-years ago (6-7?). But remoteprocs are coming and going, and any
-information we would have encoded in those numbers would have been
-confusing.
-
-A big problem is that your numbering scheme will not be consistent over
-time and as such prevent your customers from reusing the same userspace
-between different platforms.
-
-Another one is for the developer, who need to remember that on platform
-A the R5F is id 2, but on platform B it's id 3 - when they sit and write
-their echo commands.
-
-Replying on properly maintained rproc->name handles both of these cases
-for you.
-
-> > Could be done without having to add a list of aliases to every DT. Is
-> > there no other heuristic that we could use to produce an static ordering?
+> Though the above doesn't look like it was a conscious design choice,
+> it does have the benefit of providing a simple way to assert an
+> edge-triggered interrupt to the remote processor on the other side of
+> the mailbox. Specifically:
 > 
-> Other alternatives I can see are:
-> - use of the reg property: whould break legacy.
+> 1. Like a normal edge-triggered interrupt, if multiple edges arrive
+>    before the interrupt is Acked they are coalesced.
+> 2. Like a normal edge-triggered interrupt, as long as the receiver
+>    (the remote processor in this case) "Ack"s the interrupt _before_
+>    checking for work and the sender (the mailbox client in this case)
+>    posts the interrupt _after_ adding new work then we can always be
+>    certain that new work will be noticed. This assumes that the
+>    mailbox client and remote processor have some out-of-band way to
+>    communicate work and the mailbox is just being used as an
+>    interrupt.
+> 
+> Doing a `git grep -A1 mbox_send_message | grep NULL` shows 14 hits in
+> mainline today, but it's not 100% clear if all of those users are
+> relying on the benefits/quirks of the existing behavior.
+> 
+> Since the current NULL `mssg` behavior is a bit questionable but has
+> some benefits, let's:
+> 
+> 1. Deprecate the NULL behavior and print a warning.
+> 2. Add a new mbox_ring_doorbell() function that is very similar to the
+>    existing NULL `mssg` case but a tad bit cleaner.
+> 
+> The design of the new mbox_ring_doorbell() will be to maximize
+> compatibility with the old NULL `mssg` behavior. Specifically:
+> 
+> * We'll still pass NULL to the mailbox controller to indicate a
+>   doorbell.
+> * Doorbells will not be queued and won't have txdone.
+> * We'll call immediately into the mailbox controller when a doorbell
+>   is posted.
+> 
+> With the above, any mailbox clients that don't mix doorbells and
+> normal messages are intended to see no change in behavior when
+> switching to the new API. Using the new API, which officiall documents
+> that mbox_client_txdone() shouldn't be called for doorbells, does
+> allow us to remove those calls.
+> 
+> There are two differences in behavior between the old sending a NULL
+> message and the new mbox_ring_doorbell():
+> 
+> 1. If the mailbox controller returned an error when trying to send a
+>    NULL message, the old NULL message could have ended up being queued
+>    up in the core's FIFO. Now we will just return the error.
+> 2. If a client rings a doorbell while a non-doorbell message is in
+>    progress, previously NULL messages would have been "queued" in that
+>    case and now doorbells will be immediately posted.
+> 
+> I'm hoping that nobody was relying on either of the two differences.
+> In general holding NULL messages in the mailbox core's queue has odd
+> behavior and is hard to reason about. Hopefully it's reasonable to
+> assume nobody was doing this.
+> 
+> As mentioned above, it should be noted that it's now documented that
+> "txdone" shouldn't be called (by both mailbox drivers and clients) for
+> doorbells. That being said, in most cases it won't hurt since the
+> mailbox core will ignore the bogus "txdone". The only case where it's
+> critical for a mailbox controller not to call "txdone" for a doorbell
+> is when a mailbox channel mixes normal messages and doorbells and
+> cares about the txdone callback. Specifically, when you ring a
+> doorbell and immediately send a normal message, if the controller
+> calls "txdone" for the doorbell it could look as if the normal message
+> finished before it should have. This issue also would have happened
+> with the old NULL `mssg`, though.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-That obviously wouldn't work if you remoteproc is a mmio device.
+I like how this cleans up the logic hacks, but perhaps even more so how
+it takes a step towards cleaning up the mailbox API when it comes to
+expectations between client and provider implementations.
 
-> - add a new proc node property: would do the same than the
->   existing alias.
-
-If we decide that a global id-scheme is the right way to go, then alias
-is the mechanism to express that. There's no reason to hack around it...
-
-But I don't think it is the right solution. How about providing our
-users a reference snippet, licensed as public domain, that just resolves
-a remoteproc by the name property?
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
 
 Regards,
 Bjorn
