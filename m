@@ -1,111 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F8526ED48;
-	Mon,  9 Feb 2026 21:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770673080; cv=none; b=caIojxXY2QUt5CjQOoEsp/3r9bX8fsW2IwTb6fMi7coaqUnGnU5PcJmi9ofA9M3wMtTP8coPlXhhWK5JOSu9jjxEPuhO8l3M5n04nlBO1mxohEUvfd307dTnW24IuMcbU3jKvPKjbU274ldeHErhu6sx8R6sQrI2N5T+K4Nc6NI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770673080; c=relaxed/simple;
-	bh=V5k7yronzuPg2/sQDnDLiZPJmoREh3DS6In0CZNegm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=piIlRZXY6Mfu2eSviplCwfkkE1eyLvZlHb5WAAdiz5D8cEWL6R4c9WEq10XxKgE96lg++MZbd9bJ2PKqg/3XTGAxxu51oSsLX4DHYgBfH0wLngNYTNL1fjs4EN4VXK7e+pwYhEBMg30ozZkxS+eVUOdA4c0f86TSIaNIJCZ/cws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R2/CxZyE; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045AA324B1D
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Feb 2026 23:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.161.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770678365; cv=pass; b=C/gIK95Y+AiAtLayfhOfRivjdGMKFhFe0aaByOK/tuptwC19WunjPpB+5pmZTw71XG4myFt4Vq+1ZhKvBye9auhue2PfVsK3yGo3Ggue4Fdu/KdaVhBh1tz1DsFLs0pM+TIcWiUbMQsZgxABoHdRkCcZs+ymHaloAi9BZox3Dj8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770678365; c=relaxed/simple;
+	bh=3CMr7co1DRh/RKzmgL+sf0SpJ+u3D9obkDjv8ZFp6L8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=PGZPi5hfrWWqcrGwOsXeFLFNFUMPsYkQF3If1MpMIjvxiUGiuXGpUBIzcu/KLc+kEYWIzfnCNzDu1SQRvI0pcpucfyGzfo5sibhiAOi33MrxnKuW9T4KkxVR1sw/j7jUj43/L3rcwJux/AQng8RwOPzrzxNtfEfrheEkbbwmojc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ujaqc37d; arc=pass smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R2/CxZyE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A991C116C6;
-	Mon,  9 Feb 2026 21:37:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770673080;
-	bh=V5k7yronzuPg2/sQDnDLiZPJmoREh3DS6In0CZNegm4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R2/CxZyE7D7NuC7727GzKNmG8L0gFdn827lwUEFhrk1GcDYwfKzMWilh9KCwLySN2
-	 tDMTyIgjKpNBsz+CrnFUB8QrkqCqmuexDnRgYALsArlPL7MYxDDAkqQGMRry/iQQEz
-	 tXkZ9aLz2eqJBLP0lhFLwX/6MjqEStYuaBxUaPzS36VebR2KunZkZR9O1OXhOtXp8N
-	 y7WKLM3eEtcCOQ9wRj+umXbC0jg6B9FNMdR1WBBVMG3pafl6iUuxvb1YkCeBuik/q3
-	 twvcXwcELPoyngclQnEGLBF2iDgahBFNYk+KVc3S2d7b59tHFINf47IiCuGxldwxT1
-	 EqvORhp9jn0CQ==
-Date: Mon, 9 Feb 2026 15:37:54 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-renesas-soc@vger.kernel.org, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andy Shevchenko <andy@kernel.org>, 
-	Antonio Borneo <antonio.borneo@foss.st.com>, Arnd Bergmann <arnd@arndb.de>, Boqun Feng <boqun.feng@gmail.com>, 
-	Chen-Yu Tsai <wens@kernel.org>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Danilo Krummrich <dakr@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ingo Molnar <mingo@redhat.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Linus Walleij <linusw@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, Mark Brown <broonie@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Samuel Holland <samuel@sholland.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Srinivas Kandagatla <srini@kernel.org>, 
-	Thomas Gleixner <tglx@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Wilken Gottwalt <wilken.gottwalt@posteo.net>, Will Deacon <will@kernel.org>
-Subject: Re: [RFC PATCH 0/4] hwspinlock: refactor headers into public
- provider/consumer pair
-Message-ID: <epechyewxhlkp2dgw7yxmz5duak3illbmjpeux5jgt2ewskc3j@cre3vpa5wnhy>
-References: <20260125184654.17843-6-wsa+renesas@sang-engineering.com>
- <aXc7DxsqiCGdfzxi@smile.fi.intel.com>
- <aXc-Zxw05XQLb1Dy@ninjato>
- <aXdAB2bLTy6u8G8c@smile.fi.intel.com>
- <aXdCBu6kzdw1NWay@ninjato>
- <aXikZ5wc6bvgRqF6@ninjato>
- <aYnBrN0JRCf9-UjB@ninjato>
- <yl4bbbev7lgrmnqys2izkolo5egzg24faukvqar5eh26q5ra7p@42rcegfpqqt6>
- <aYo60vooftdem4Lt@ninjato>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ujaqc37d"
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-6729292dcd7so146081eaf.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Feb 2026 15:06:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770678362; cv=none;
+        d=google.com; s=arc-20240605;
+        b=P8WqxiNYRRwIvS0TZP+zIccaFw65MKtJGdu0zG3arWfO7aaBv84aZV5BJFdr2sH9oT
+         mW8zXDDyFsOIwg+xz9W9Pg2M+TyMuMzFw2UOEGxuXxQA2cd+ItXT23KXvy2+H70f4CUE
+         J88vPr9BoyiFKEtNgCmHUWttEj6heJL4WRFs2Cz7094WYpz5u99b/VUImlk61s++Yy8k
+         SAxsGEgK6Kt8hFFeWK70j4mMwafk2k5/bCPWkWimhcVTG891H1BD+6YXL+TooWaBU1tB
+         IqwxZLexUI6ocL1+KjfM/duUkbDTCf5gkRfqXQkXlneGtcEPeAUINsYTQKwhr83jzELP
+         sOPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=3CMr7co1DRh/RKzmgL+sf0SpJ+u3D9obkDjv8ZFp6L8=;
+        fh=+ORG/vsch1OCCHBPOAWH9qTP8QgPS3jOqVFU0CAk+n8=;
+        b=eXV714MBh2OfuytmrjV3uWbafESai7hD6UZ0C1OiMhiNvOk/frbG7F+Q3p9uc8TgQA
+         CzXx/N5Ttmdvsler75J0SxYroj6czJInnqTY1CL0Jw3n9BcgbikILOWj3mJKRq5utzLH
+         DksZPG1wpJPlO6+YajqbLZP1Ni6EXD2E3hzzH6Z5J6nNg4IBEw3V7i+YhoIqHQ9jRXTf
+         md6KSrkiP+TKhoHLDQJyoIfc5jj3/aBdX5Kn7vyAVmVGknuyPbd4naxQY5lHgQKg1ir6
+         zTXZQZOpXgoVAFYpxi8aqt5uZBuXiNOSTdo2x0EkCjUN8r5LfkGMX0g8pv7vqRcTmLUr
+         WFFw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1770678362; x=1771283162; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3CMr7co1DRh/RKzmgL+sf0SpJ+u3D9obkDjv8ZFp6L8=;
+        b=Ujaqc37dnQl2R5Yqj26hFvHbjrkkVtvv3gWCjC5Ecr1+WZO3N7g4EBLvZOP54cVaY6
+         6x62DGnZb6lzyxmjWD5HXAEoTSCqmxUR5oQgQ3gSJ4wp+EF1bVoAvPyYYAx6zMwz1ixz
+         FVbDiYe4M7VG0vFRbcS2WNe3kIAit/yPe6ANQZPeoUl8kIwt4IduA+Ag+HKUk+uWMHjs
+         krKywhijR4qDlElkHf1/eTVzbJsb6wvpQ7p1T8Meb943tOCUUQYmzNd8dl6vWhvluWRH
+         tHWbMnSeQvIcZ7Bi3NUTVxF3F0tuyULOROVqr138baNClehGQeHbS1OWvu1RfityBPdu
+         LHEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770678362; x=1771283162;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3CMr7co1DRh/RKzmgL+sf0SpJ+u3D9obkDjv8ZFp6L8=;
+        b=N4ZyfINZTV9kX0EQK8y8rWyFTxY4qu+PEowjVKUkpgiaNgf47OEHvuyJU4/7n+13lE
+         Ain/otCpF7EuxKO2wlzuSt9lVyf+xdvmBG1+oM/wBioT6nLaSzUQgLjbCYlBG1Kh1fzS
+         u0EF3DqKzvZW8a6ySGCHY33kc8SofcBrSNJwtn1YX6pjbJLj6cW0RrqmruyEeZOJU34s
+         LSEekeYSfZe3+emXR9b6IdNyhQPjUro7JX1A+6f9AHDKJEYvCpa5A8br4GtkwUsBAOb9
+         3LqBb3aass21yzF5HZFWIWBxj7N942AGJ+cw+cIOYFeXtlkptibofUQ6pWpNGu4CHVoV
+         RgXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/xJykFEXxX3TC9XqKHimUFzQ62XB+SdUZVs30sSdMNXlsgVzWEMFcEYqkxlaD+RtQtpHIiRs8dNfC+VlfalJU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKlVpbWegQXtboy7N8a5hWPPCEHV4640OQ2W4EY9H1cvFPGTfZ
+	oq7m5M3oyC3Q2JrSIJ5Np8fTl9C1v7a1ejMrfXg5Jl1CJlWzvp2aB3gQUFJwvL63Vt5F8I+K88d
+	EpMraT+KLWg1x7jLwQA86szfjna40OuY=
+X-Gm-Gg: AZuq6aIih+SpGUVG0EkyMlptbhTrHlEk/vqvTOjh2pgmSxc1WH1ZSKjP5JwAdqb2k69
+	MxcNq5QEpWUb6e0J+ouk48L4yRhGdKp7Hd9SYzq4fBhl60Iew9h9+ip/OP5VA/YdOyi9qJavyAh
+	lr1wI9+FObPozhPTieyCJslsjHLrYAR44sLiBqJW8hQWPe3mTkMfMI7eBBZouv3xkO8B6MbLFQF
+	wgKFr2c5+Azur0Ic1wS8M/i4vSgGp2n+KEXDC3CftVhbhhxihvoI1howwnGrjbB1w9c8+Rql6QV
+	6MUPADc9gB9uSCEmk9chISswPJg=
+X-Received: by 2002:a05:6820:1514:b0:65f:6994:314b with SMTP id
+ 006d021491bc7-66d0d2fa708mr4985297eaf.76.1770678361869; Mon, 09 Feb 2026
+ 15:06:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aYo60vooftdem4Lt@ninjato>
+From: Yoann Lecuyer <yoann.lecuyer@gmail.com>
+Date: Tue, 10 Feb 2026 00:05:49 +0100
+X-Gm-Features: AZwV_QjCJogYNxSx58S_93uDe6N0OJjkbPA74xddnic2w5pObERjuWLWGj2ZiXo
+Message-ID: <CAPZXbJmpAZfxFK9LKaS=wZXX+pez9j5k3gjF+CRPgP6Ru4DuRA@mail.gmail.com>
+Subject: Re: [PATCH v2] remoteproc: qcom_wcnss: Fix handling the lack of PD
+ regulators in v3
+To: val@packett.cool
+Cc: andersson@kernel.org, barnabas.czeman@mainlining.org, 
+	devicetree@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, 
+	justinstitt@google.com, konrad.dybcio@oss.qualcomm.com, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux@mainlining.org, llvm@lists.linux.dev, 
+	Luca Weiss <luca@lucaweiss.eu>, mathieu.poirier@linaro.org, matti.lehtimaki@gmail.com, 
+	morbo@google.com, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, phone-devel@vger.kernel.org, 
+	vladimir.lypak@gmail.com, ~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 09, 2026 at 08:51:46PM +0100, Wolfram Sang wrote:
-> Hi Bjorn,
-> 
-> thanks for the reply!
-> 
-> > > Moving maintainers from CC to To ;) Do you, in general, approve this
-> > > change to the headers?
-> > 
-> > Certainly, I don't think we should force unnatural slicing of drivers
-> > across the source tree.
-> 
-> Cool, glad you like it.
-> 
-> > I've always found the current model unergonomic, resolving this part
-> > might very well have the side effect that Andy is looking for (and I'd
-> > welcome that).
-> 
-> Yeah probably, but frankly the task of redesigning hwlock-allocation is
-> a bit exceeding my bandwidth for this project. Can we make this a second
-> step on top of this series?
+> The changes introduced to handle single power domain platforms have
+> swapped the info pointer increment from num_pd_vregs to num_pds, which
+> would shift the info pointer past the end of the array for pronto-v3,
+> which does not list power domain regulators in vregs.
+>
+> This showed up as a difference between GCC- and LLVM-compiled kernels
+> on SDM632 devices, where only with LLVM one would get the
+> "regulator request with no identifier" error, because the out-of-bounds
+> memory ended up being zeroed. Fix by skipping the increment when there
+> are more power domains than regulators.
+>
+> Signed-off-by: Val Packett <val@packett.cool>
 
-I'm okay with that. It's winter and the yak might need its fur.
+Tested-by: Yoann Lecuyer <yoann.lecuyer@gmail.com>
 
-> And if so, would be this series acceptable
-> as-is then (modulo the better include-sorting mentioned by Andy)?
-> 
-
-Sounds good, I'll pick up your v2 once we get out of the merge window
-and share a immutable branch for the other subsystems.
-
-> Hope you are well,
-> 
-
-Likewise,
-Bjorn
-
->    Wolfram
-> 
+Yoann
