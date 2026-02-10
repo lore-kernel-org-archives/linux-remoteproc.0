@@ -1,144 +1,117 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CF923A9A8;
-	Tue, 10 Feb 2026 07:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16553431E6
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 10:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770708065; cv=none; b=lLmp4RAPbktFU1PkAKUvdWDHkmdXdnwB5p7OHVOTCkholvMO1jcHwalVtv4UeTHa9Ry1uXBzeuo7kWb7G16AyL1ySPNNPI9riELIdGL+epWe2LpNO41t3+WibodPcSTgzIURPSGGhEmMTzqMakXE4NVbMUuVPf487/oS2ukHnUE=
+	t=1770717969; cv=none; b=Jy7pFWC0N6N2Re8WOLa9uLq9PqHnWXQxoNasbOG04ajcWAVW5FiC7itRBzUaihs7nGrvKSL7pvQwuUaS5fBN4goNQh3lcJLpGw/auSLxS2a6NPgLg55zDAvdr/oZBUQVtbUuf5XtIb+XWVFqRSyjNEE6GtWQGY2Q+6WYlxWGPS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770708065; c=relaxed/simple;
-	bh=OBZ7vmJOuXFVdEocUKywotsuTZKHpBEwnRySOMXd6l0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdmFrjos1H8Hu0dZNjQJWkBak2zYUJR9bg03b7qqmtlWsvHt+/GCQxevGTPuM6EWA0sMn8zGPNPHWPGHQ1b4/DNhn5wqPdVZrJlUupudBaxYX/hCGyCCEOmit7OQX3+RPbEXjpGPCxBS2BHjgs5GxB1c/SKyBTR/tnJpHbkk944=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/pLcOe3; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1770717969; c=relaxed/simple;
+	bh=iSptxz8p4g6PdPf6HENwaDd6LV2JWc2F7IUKzPBclHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Y45d+q+rctjeX+yVn/jGJuarXvF1jKKexmzP0qHJQjh75zQFa+sGLLhfnuAO0yQjQ8YwXeUA2lhvkevtwQPqq97PfghOzlnJZTzroJY0y3y1LoFzBD3P8oGxAmEE8GcrYTBkCypbMUoDOigVtZAzwRccuU4iKAS7fZgbUqw1M6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hrD+eCg/; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/pLcOe3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1770708064; x=1802244064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OBZ7vmJOuXFVdEocUKywotsuTZKHpBEwnRySOMXd6l0=;
-  b=f/pLcOe3zsUaXu3GlMgtti46BxdIVBuVyjO6rwvbj+KWwD9xoSY10gI/
-   96i01ZEnr7UH58ZBXG6jUXqPKTjAE/YNCC2un3z47QBbcX0VsnSHzVQKm
-   hjf/CPMky5jmBuA3NCSC74MV7sKVck1ThykWAGKblXeaNrMjpCKOmTW+W
-   Os+vGGnacqb96AG/hi5taHF1LpedpM8GrXz+8503nu2KbWTZArMomEWOF
-   1dSULFaTqfQ1yGlhyhJMv+XXmSE2pItH4LNuGxZpcScJIvq9pwAMcLqCu
-   JcVdI8zBqf9KhU3lUzD9MlyUp+YRGfZeXN876Knd8QfHR8NHqaUr+KzUY
-   g==;
-X-CSE-ConnectionGUID: LOsoUTpiShqKuAbqy8dL4A==
-X-CSE-MsgGUID: iqt0ZsptRSOtDV/ILkzMTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11696"; a="89414238"
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
-   d="scan'208";a="89414238"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2026 23:21:03 -0800
-X-CSE-ConnectionGUID: YtCzlq72TW+BC8VOT+lUBA==
-X-CSE-MsgGUID: rEiM7InjQtaVWLV1ZmJ1kg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
-   d="scan'208";a="234791955"
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO localhost) ([10.245.244.39])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2026 23:20:55 -0800
-Date: Tue, 10 Feb 2026 09:20:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-renesas-soc@vger.kernel.org,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Antonio Borneo <antonio.borneo@foss.st.com>,
-	Arnd Bergmann <arnd@arndb.de>, Boqun Feng <boqun.feng@gmail.com>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>,
-	Linus Walleij <linusw@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, Mark Brown <broonie@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Thomas Gleixner <tglx@kernel.org>, Waiman Long <longman@redhat.com>,
-	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [RFC PATCH 0/4] hwspinlock: refactor headers into public
- provider/consumer pair
-Message-ID: <aYrcVE9HsDNAwqIB@smile.fi.intel.com>
-References: <20260125184654.17843-6-wsa+renesas@sang-engineering.com>
- <aXc7DxsqiCGdfzxi@smile.fi.intel.com>
- <aXc-Zxw05XQLb1Dy@ninjato>
- <aXdAB2bLTy6u8G8c@smile.fi.intel.com>
- <aXdCBu6kzdw1NWay@ninjato>
- <aXikZ5wc6bvgRqF6@ninjato>
- <aYnBrN0JRCf9-UjB@ninjato>
- <yl4bbbev7lgrmnqys2izkolo5egzg24faukvqar5eh26q5ra7p@42rcegfpqqt6>
- <aYo60vooftdem4Lt@ninjato>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hrD+eCg/"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20260210100600euoutp0206488ff4bc033da24bb0805e95e27087~S2ppkMVn_1674516745euoutp02a
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 10:06:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20260210100600euoutp0206488ff4bc033da24bb0805e95e27087~S2ppkMVn_1674516745euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1770717960;
+	bh=iqv5yu3rZHAdomhHqmBxnT8iNOSK+QFPJ3nRHhxnESE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=hrD+eCg/x3K0GV2CXmRRwRD+jvUUYhvNtM57pZhyE9lLEtIn93hh2AJlgzXDCRapV
+	 lwFjEEkBhpf0mKXEj7YZPu7crdfPQoHhbRCsnQAkK3vvYLaQGn5EDP2IgBFuI6MTXZ
+	 IRA/OSUMD3hlbIXiIDuuNcF1fTiCS39qQvnk8jhI=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20260210100559eucas1p27d8d05bbeb0789cc784c731e60cbfd68~S2ppNelee1483214832eucas1p2V;
+	Tue, 10 Feb 2026 10:05:59 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20260210100559eusmtip29f0f19592053e074a3c00f4215774666~S2pog4J0N0437504375eusmtip2X;
+	Tue, 10 Feb 2026 10:05:58 +0000 (GMT)
+Message-ID: <871063b3-6293-4b62-b9a0-e637fac5dd27@samsung.com>
+Date: Tue, 10 Feb 2026 11:05:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aYo60vooftdem4Lt@ninjato>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] remoteproc: qcom_wcnss: Fix reserved region mapping
+ failure
+To: "Rob Herring (Arm)" <robh@kernel.org>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20260128220243.3018526-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20260210100559eucas1p27d8d05bbeb0789cc784c731e60cbfd68
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20260128220305eucas1p23e47ba043c0314765ce41478b4b8a0d6
+X-EPHeader: CA
+X-CMS-RootMailID: 20260128220305eucas1p23e47ba043c0314765ce41478b4b8a0d6
+References: <CGME20260128220305eucas1p23e47ba043c0314765ce41478b4b8a0d6@eucas1p2.samsung.com>
+	<20260128220243.3018526-1-robh@kernel.org>
 
-On Mon, Feb 09, 2026 at 08:51:46PM +0100, Wolfram Sang wrote:
+On 28.01.2026 23:02, Rob Herring (Arm) wrote:
+> Commit c70b9d5fdcd7 ("remoteproc: qcom: Use of_reserved_mem_region_*
+> functions for "memory-region"") switched from devm_ioremap_wc() to
+> devm_ioremap_resource_wc(). The difference is devm_ioremap_resource_wc()
+> also requests the resource which fails. Testing of both fixed and
+> dynamic reserved regions indicates that requesting the resource should
+> work, so I'm not sure why it doesn't work in this case. Fix the issue by
+> reverting back to devm_ioremap_wc().
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reported-by: André Apitzsch <git@apitzsch.eu>
+> Fixes: c70b9d5fdcd7 ("remoteproc: qcom: Use of_reserved_mem_region_* functions for "memory-region"")
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> I created some dummy regions matching the flags used here and did
+> request_mem_region() on them successfully, so I'm not sure why it
+> doesn't work for this driver. Something else is requesting the region?
+>
+> Perhaps there's a deferred probe and somehow request_mem_region() is not
+> getting undone correctly?
 
-> > > Moving maintainers from CC to To ;) Do you, in general, approve this
-> > > change to the headers?
-> > 
-> > Certainly, I don't think we should force unnatural slicing of drivers
-> > across the source tree.
-> 
-> Cool, glad you like it.
-> 
-> > I've always found the current model unergonomic, resolving this part
-> > might very well have the side effect that Andy is looking for (and I'd
-> > welcome that).
-> 
-> Yeah probably, but frankly the task of redesigning hwlock-allocation is
-> a bit exceeding my bandwidth for this project. Can we make this a second
-> step on top of this series?
+I didn't manage to track what is the root cause of the 
+request_mem_region() failure, but this is definitely not related to 
+deferred probe. This function is called only once from the qcom_wcnss 
+driver and fails, because the region is already assigned to 'reserved' 
+owner.
 
-How do you see it's done if others will (*) start (ab)using that struct
-directly?
+> ---
+>   drivers/remoteproc/qcom_wcnss.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
+> index ee18bf2e8054..4add9037dbd5 100644
+> --- a/drivers/remoteproc/qcom_wcnss.c
+> +++ b/drivers/remoteproc/qcom_wcnss.c
+> @@ -537,7 +537,7 @@ static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
+>   
+>   	wcnss->mem_phys = wcnss->mem_reloc = res.start;
+>   	wcnss->mem_size = resource_size(&res);
+> -	wcnss->mem_region = devm_ioremap_resource_wc(wcnss->dev, &res);
+> +	wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
+>   	if (IS_ERR(wcnss->mem_region)) {
+>   		dev_err(wcnss->dev, "unable to map memory region: %pR\n", &res);
+>   		return PTR_ERR(wcnss->mem_region);
 
-> And if so, would be this series acceptable
-> as-is then (modulo the better include-sorting mentioned by Andy)?
-
-*From my experience it's not the Q "will they or not?", the Q is "when?"
- they start abusing it. I really prefer to hide as much as possible from
- day 1. Maybe the structure can be split to two? Currently IIO has a
- (painful and long) conversion from open to opaque. Taking this into account
- I really don't won't to repeat this design mistake. But it's all up to
- the maintainers, of course. Just my deep worries about this... while
- the idea, as I said, I fully support.
-
+Best regards
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
