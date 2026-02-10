@@ -1,94 +1,231 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB7719CC14;
-	Tue, 10 Feb 2026 05:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231432E9729;
+	Tue, 10 Feb 2026 06:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770700077; cv=none; b=ZXR9DLgOxAjfAAc0H1zvu3iy0VaGHVWJlcQCLW/hBKms+iie43OETdkk0wWzc1ZXaPx4vZwjoHPgLfIKR30yQnxioTWwQ73rq25mf0lxzSJ5AVxPisd0QebsCaugohM2rF6UAgP3IXyuPkP+tj3l2sc+1lkz/WXxlM59kt+ydmo=
+	t=1770704048; cv=none; b=ZpfOUGWdxFgY2GCAHtU4/nlKU9W2oYUT4B5ZgjYzMat3jIGycNf1O6e15rKOYsSrf6e9yPY41p9itsRSyw5LlomuoO24LjkQOt9KL8DKg1MuTUXimRKDnr15PRRuCdPrrNC/nCuCLbqQmsz8nP3+rvKelFMTCPQmbcKt7Hzk+qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770700077; c=relaxed/simple;
-	bh=GHhLcJr/AJb9M8ik+tIcHxrfl37FV+NJc7VhpKgeZDo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NUxW1V+8rKX6Eklv2n/aVKmRfeXKtw3BTcqGO7+8gScLDuGOmCNIxhU4ay31yRpj8fGODEu71sybug451NnVliBxvPJjf94Hy8ou9GT6CXDSULF4lIfOYlirPA0hOPMhLjbXgWZuIkSOig0T2RwDfv5QTT+6Bb74+M/gOz0uZ2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowAAHsm0gvYppnPyYBw--.20020S2;
-	Tue, 10 Feb 2026 13:07:44 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: Frank.li@nxp.com
-Cc: peng.fan@nxp.com,
-	andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: imx_rproc: Check return value of regmap_attach_dev() in imx_rproc_mmio_detect_mode()
-Date: Tue, 10 Feb 2026 13:07:44 +0800
-Message-Id: <20260210050744.1902425-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <aYoNI7f0OMegFBM3@lizhi-Precision-Tower-5810>
-References: <aYoNI7f0OMegFBM3@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1770704048; c=relaxed/simple;
+	bh=NOoZ/TSgvmHM8MvVRv66uYCD2q1u3i1JerRCuxg/nYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RK8bu5VBSsF887rN3OxS00XFLs6CjBixLVoUY+vRYKGsWuoZDE1LsiY965178MYAa6ymQxMCEDWK/sWrga7jukBttmIXRoDhWEdL9EEffhD1ufqLaNtYFH9EtahrEktLjTwzK104E0+q2K7dogsIPJrE3+s3l3XwpMvFodfaqfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyF7BGSO; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyF7BGSO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8796C116C6;
+	Tue, 10 Feb 2026 06:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1770704047;
+	bh=NOoZ/TSgvmHM8MvVRv66uYCD2q1u3i1JerRCuxg/nYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nyF7BGSOacd8nQFeoyK69yTrIr6WEkiceyw4AmLFO/LBQGkpzoYRL1Vq5peFNPXe5
+	 2GRB93lvaDKY5I95NdSIEuSaoLOw+lFX62Vn/TwPEa9Foqr2ip4DHypDXObc0s47hm
+	 l9cluPBg1t1rZcpe3oVwhndSnk7Fq7d/VVseZG6N4sgGTylUK45zCAX5cliiSo6+jt
+	 Mo91W1qf9xn5E1n3sp/ZH6wUnhHCefuLoo6zDX0kFRKpBbjJCABmCXEKRONaCkbyhB
+	 bkeUykXpi+rRobG0QkSxwlMXFlViarS0V5Xg7DPijQAOTHtIPVfinRdmfJPm9O0Ipa
+	 SjUbczIUskKLg==
+Date: Tue, 10 Feb 2026 11:43:59 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	op-tee@lists.trustedfirmware.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [Linux-stm32] [PATCH v20 1/6] dt-bindings: firmware: Add TEE
+ remoteproc service binding
+Message-ID: <aYrMp9wqk91-tQXn@sumit-xelite>
+References: <20251217153917.3998544-1-arnaud.pouliquen@foss.st.com>
+ <20251217153917.3998544-2-arnaud.pouliquen@foss.st.com>
+ <20251229232530.GA2753472-robh@kernel.org>
+ <aVOzHWmlJ-eneS-2@sumit-xelite>
+ <CAL_Jsq+_S8UY7s7WQg9jXuBXCYMBWVCy=kVDMdkKTx6RctqQJA@mail.gmail.com>
+ <aVtqITUxy--E8HJt@sumit-xelite>
+ <49f1808d-1e08-4f47-ac3a-5f2274086060@foss.st.com>
+ <a17c017a-15f5-4ebc-9dd0-baab718dbe0a@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAHsm0gvYppnPyYBw--.20020S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrur1xKF1xCFWxCry7Zw1fWFg_yoWDXrX_uw
-	4Yy3yay3WUZrWag3sruF4rta9rGa1UCFWUGw1Yq3W5Jr1UG39rGF4vgFnay3W8uFW3tr9I
-	934rXw1fu3WIkjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbhAYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
-	A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r4j6F4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xK
-	xwCY1x0262kKe7AKxVWUtVW8ZwCY02Avz4vE14v_GrWl42xK82IYc2Ij64vIr41l4I8I3I
-	0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67AKxVWUJVWU
-	GwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
-	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I
-	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4F1vDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+In-Reply-To: <a17c017a-15f5-4ebc-9dd0-baab718dbe0a@foss.st.com>
 
-On Mon, Feb 09, 2026 at 11:36:51AM -0500, Frank Li wrote:
-> On Mon, Feb 09, 2026 at 01:14:07PM +0800, Chen Ni wrote:
-> > Changes in v2:
-> > - Use dev_err() + return ret instead of dev_err_probe()
+Hi Arnaud,
+
+On Tue, Feb 03, 2026 at 08:42:34AM +0100, Arnaud POULIQUEN wrote:
 > 
-> why?
+> Hello Rob, Sumit,
 > 
-> Frank
+> Just a gentle reminder. Could you please provide your advice or a conclusion
+> on the direction we should take for the DT declaration? I need your input to
+> be able to move forward.
+> 
+> Thanks and regards,
+> Arnaud
+> 
+> On 1/13/26 10:20, Arnaud POULIQUEN wrote:
+> > Hello,
+> > 
+> > On 1/5/26 08:37, Sumit Garg wrote:
+> > > On Fri, Jan 02, 2026 at 04:17:27PM -0600, Rob Herring wrote:
+> > > > On Tue, Dec 30, 2025 at 5:10 AM Sumit Garg
+> > > > <sumit.garg@kernel.org> wrote:
+> > > > > 
+> > > > > On Mon, Dec 29, 2025 at 05:25:30PM -0600, Rob Herring wrote:
+> > > > > > On Wed, Dec 17, 2025 at 04:39:12PM +0100, Arnaud Pouliquen wrote:
+> > > > > > > Add a device tree binding for the TEE-based remote processor control
+> > > > > > > service implemented as an OP-TEE Trusted Application identified by
+> > > > > > > UUID 80a4c275-0a47-4905-8285-1486a9771a08.
+> > > > > > > 
+> > > > > > > The TEE service node is a child of the
+> > > > > > > "linaro,optee-tz" firmware node and
+> > > > > > > acts as a container for remoteproc devices that are
+> > > > > > > controlled via TEE.
+> > > > > > 
+> > > > > > Is this generic for any remoteproc device or just ST's
+> > > > > > remoteproc. Looks
+> > > > > > like the latter to me.
+> > > > > 
+> > > > > That's true, the DT description of the remoteproc subnode is very
+> > > > > specific to the vendor which in this case is ST.
+> > > > > 
+> > > > > > 
+> > > > > > > In addition, the "linaro,optee-tz" binding is updated to specify the
+> > > > > > > '#address-cells' and '#size-cells' values used for child TEE service
+> > > > > > > nodes.
+> > > > > > 
+> > > > > > I'm pretty sure I already rejected per service/app child nodes for
+> > > > > > OP-TEE when its binding was submitted.
+> > > > > 
+> > > > > That was the reason to have discoverable TEE bus in first place and I
+> > > > > have been motivating people to dynamically discover firmware properties
+> > > > > rather than hardcoding in the DT.
+> > > > > 
+> > > > > > If we do need something in DT
+> > > > > > to define some resources, then can't we have some sort of
+> > > > > > standard/common communications channel? I don't care to
+> > > > > > see some sort of
+> > > > > > free-for-all where we have every vendor doing their own thing. OP-TEE
+> > > > > > needs to standarize this.
+> > > > > 
+> > > > > I suppose this requires a wider scope work as you can see
+> > > > > the DT resource
+> > > > > dependence from here [1]. By standardize communication channel, do you
+> > > > > mean to say if adding an alternative backend to fwnode for TEE in
+> > > > > parallel to DT, ACPI or swnode is the way to go for discovering fw
+> > > > > properties?
+> > > > 
+> > > > No, not at all.
+> > > > 
+> > > > > Or do you have any other suggestion here?
+> > > > 
+> > > > What I mean is why doesn't the TEE define the communication channel
+> > > > (mailbox+shmem and notification interrupt) rather than each TEE app?
+> > > 
+> > > The synchronous communication channel is already there for each TEE app
+> > > based on (invoke commands + TEE shared memory). OP-TEE does support
+> > > notification interrupts too but those haven't been exposed to TEE client
+> > > drivers yet. I suppose this remoteproc use-case can be a good example to
+> > > expose that as a generic TEE notification interface too.
+> > 
+> > In the STM32MP series, the mailboxes and shared RAM are used for RPMsg
+> > communication between Linux and the remote processor. My concern is that
+> > using notification in OP-TEE could impact performance by introducing
+> > latency. Additionally, this might require a DMA allocator in OP-TEE to
+> > manage the shared memory. One RPMsg virtio requires the declaration of
+> > at least three carveouts. Managing these as memory regions in OP-TEE
+> > would be complex (due to limited number of memory area declaration on
+> > STM32MP2).
+> > > 
+> > > > 
+> > > > More generally, is having TEE apps depending on random DT resources
+> > > > really a box we want to open? Is the next thing going to be a TEE
+> > > > clock/reset/gpio/power provider? Where do we draw the line?
+> > > 
+> > > This is really a hard line to draw since silicon/OEM vendors based
+> > > on their
+> > > hardware security architecture partition various resources among TEE and
+> > > the Linux world. And one general principle we try to follow for the TEE
+> > > is to keep it's Trusted Computing Base (TCB) to a minimal too.
+> > > 
+> > > IMHO, if the threat model is well understood then we should allow for
+> > > this hetrogenous partitioning of system resources.
+> > 
+> > Here are some additional resources we need to manage the remote
+> > processor, which seem complex to handle without Device Tree (DT):
+> > 
+> > - Clocks: On STM32MP, we manage clocks through the OP-TEE SCMI service
+> >    [1]. The SCMI OP-TEE clock/reset service already exists and should be
+> >    reused.
+> > - Power domains
+> > - Remoteproc Watchdog interrupt: Cannot be caught by OP-TEE on
+> >    stm32mp15.
+> > - Graceful shutdown of the remote processor: This involves sending a
+> >    mailbox notification to request shutdown and waiting up to 500 ms for
+> >    the remoteproc to deinitialize its resources. Waiting this long in the
+> >    secure context seems inefficient.
+> > - compatibility with some coming IPC mechanisms: Such as rpmsg_I2C or
+> >    virtio-msg might require remoteproc subnode descriptions in the
+> >    future.
+> > 
+> > If the proposed topology does not gain consensus, what about an
+> > alternative approach that manages the remoteproc TEE similarly to SCMI,
+> > by introducing a remoteproc-backend with the proc ID as a parameter?
+> > 
+> > 
+> > &firmware {
+> >      optee: optee {
+> >          compatible = "linaro,optee-tz";
+> >          method = "smc";
+> >          sproc: sproc {
+> >              compatible = "80a4c275-0a47-4905-8285-1486a9771a08";
+> >              #address-cells = <1>;
+> >          #size-cells = <0>;
+> >          };
+> >      };
+> > };
+> > 
+> > rproc1: m33@0 {
+> >    [...]
+> > 
+> >    remoteproc-backend = < &sproc 0>
+> > };
+> > 
+> > 
+> > rproc2: m0@0 {
+> >    [...]
+> > 
+> >    remoteproc-backend = < &sproc 1>
+> > };
 
-Hi Frank,
+Using a phandle like this makes it a bit more cleaner but I would defer
+to Rob since he has the final say here.
 
-The replacement of dev_err_probe() with dev_err() + return ret is based
-on two key reasons:
+-Sumit
 
-1. Consistency with existing code style in imx_rproc_mmio_detect_mode():
-   The upper-level probe function already uses dev_err_probe() to handle
-   errors from this function, and all other error paths here also use
-   "dev_err() + return ret", so this change aligns with the existing
-   coding style.
-
-2. Technical rationale from community feedback:
-   regmap_attach_dev() only returns -ENOMEM errors, and dev_err_probe() is
-   silent for -ENOMEM errors [1]. Using dev_err() ensures the error is
-   logged clearly, while returning the original ret maintains proper error
-   propagation.
-
-[1] 2f3cfd2f4b7c ("driver core: Make dev_err_probe() silent for -ENOMEM")
-
-Best regards,
-Chen Ni
-
+> > 
+> > 
+> > [1]https://elixir.bootlin.com/linux/v6.18.4/source/drivers/clk/clk-scmi.c
+> > 
+> > Thanks,
+> > Arnaud
+> > 
+> > > 
+> > > -Sumit
+> > 
+> > _______________________________________________
+> > Linux-stm32 mailing list
+> > Linux-stm32@st-md-mailman.stormreply.com
+> > https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
+> 
