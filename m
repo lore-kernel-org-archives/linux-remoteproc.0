@@ -1,77 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DA830E0CC
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 14:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5148F3A8F7;
+	Tue, 10 Feb 2026 14:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770733201; cv=none; b=kF+w5EfCu6C9OX2A98+B8dd0o+BaZrPAkVt3l8pSaMi0+M3HqoqTq6VFxA+2dSeMxktYuaFfOpQJ+/QXKZxCNLC75nfW4yoaA7WrmvLV1HRVdlCCYYB2vkjuVr5EYsbg8Xpl5erKg9EdEqqxWFLOcmmrOwJBHof7eA9aqe2rtX0=
+	t=1770735393; cv=none; b=B8NFaMOFkCWjgMNl5/p2mNX7xZUafVXug6ZNUketD6ZedF5hkWu49FkW3Ab3+8Gw1rc3EFNfYwLsh/q6Dqn1y59R9BnZ6g+oOityHQFGt1d8F12RpHinJw5AZYcv70xlAwYy64bzGJXNQyw+RAIAlwHXlp2O6V0ktDMveU2Tyic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770733201; c=relaxed/simple;
-	bh=Odw3h2xXVkrcgCjrEBxTd6gG5L40NhU7zxaajIxkAsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jqyw87x5yJjLlNar6x1SN3fGrxQSKZZEOdHFzshDmPRmukKarR+ZfTvcZNTgQiesGCTW3B5r7FGuwzX/aCvBbuFbOb9mamiO4Lj4nFYZuUpsffbBiySQaOw3Kabf5mNw1EpA/LPgAS76YWA1eAvWXShG+Ahj4WwQB4b7M0SroVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bh+T3j3i; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770735393; c=relaxed/simple;
+	bh=I3z0RieF2cpVQuvDYOlXn/wI309BIjZMJC8vZ6UgamE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOd9zVQc4qER3SP9dferDAtquF1cWpXY8gRScExWCLPFTLUYSdV6aVcYM2HDE6PJbY9x8A5kGWXJHKmRSwI/jP4sl4cumzMMpNo9dvmZ8mcz3ufCAaVweSlIcXieVBUquwuSV8X7U0JZjLFq+Rxf/IVDvQl6mMeRBeBBXnw8qKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=caPMy6Gw; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bh+T3j3i"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6661FC2BC86
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 14:20:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770733201;
-	bh=Odw3h2xXVkrcgCjrEBxTd6gG5L40NhU7zxaajIxkAsA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Bh+T3j3iTWYfAVEB+OpSnFuBl7FTl9X1t7PcutsI3Q/B/GDgJjifvoWAJ2+gzXief
-	 vJM69hMd4FvOnqcEd/FihbVtkdycwE4EHu48Jdhmje8UVA9ZZR4ed2dKs/zBt0Aad3
-	 EUfyt0KYattmvr31qg31g04Nw+Dj2/tuYCsYtUsyoV3hOTjOglRokyfrNdFqIIEArr
-	 STv26k3KsuZ9uE2e2ike9TJflX4NT3S2CcOLWAvjMKrkuicUIFFfAS+n65KdL4I/aw
-	 PDcczD7NL3yo8+pSQ+ChJ37Emt7J+jZMysH34NuQzCmXoIxhUVlIWBndFw4hhh9SKC
-	 UhN0jo0iwG0sw==
-Received: by mail-yx1-f41.google.com with SMTP id 956f58d0204a3-64ad8435f46so3419744d50.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 06:20:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXVTLPQQ5Pw5t4I4BoQS01UVm9QdBqCI29qpgtXR6cLG5QViC9/bC559FpWNbOMmFXRCdP6sWRy/2LIrne9gUCL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMq4RpOy6/Cvt3OSd9DR/Egqjrswobph0CVIsCQLh4uA6oQk9o
-	gvEgKK/8MMjT1iDNRgtCFl1CscAx6jpvGV0fhsXhzr0XCGD5SM8QKUqFiipShBHWGjc5bOAThI8
-	0IWSCT986xb4NuFqFBkMlteQZAvTLAQA=
-X-Received: by 2002:a05:690e:150b:b0:649:3e3d:327 with SMTP id
- 956f58d0204a3-649f1eb3d66mr13590998d50.40.1770733200730; Tue, 10 Feb 2026
- 06:20:00 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="caPMy6Gw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1770735392; x=1802271392;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I3z0RieF2cpVQuvDYOlXn/wI309BIjZMJC8vZ6UgamE=;
+  b=caPMy6GwCMCFKb7eYdPbs+n4ROoM/RD71SVaefHNneEC4v7KVSr2p9KD
+   jrNop2vJrLfEvOWGOeFu0w3w5+vyOfyXBRnVmMOQ59aJaciTye7NifgRw
+   ZcSRcn8NS+i0RErfiD69AyJLphAF7qIttR1cjVnRzXnS0n6grzi8H8dHb
+   72hPUkVoKga1ONwHerP+sw+UnuGyJg7qnb0bjqOHaHh3JSupw+n7AxpL4
+   VUX5tPxSjnQDRSiLlADv2ZdO+xvnrmLWjeBu65zTHAV8ktQakq9g7XXDn
+   DcyqExUTcDBy1FcwPxrOIc6WOUQ2cjq3KBuzuft+JIdL+wx0Zk8XUtSXx
+   A==;
+X-CSE-ConnectionGUID: OA418yRnTV6OxTu7h3dmjA==
+X-CSE-MsgGUID: wXH2ecY7RJWaQQ9pnuyQXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="71850482"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
+   d="scan'208";a="71850482"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2026 06:56:32 -0800
+X-CSE-ConnectionGUID: JOwfHkBGRJWeYxsxBLTXjA==
+X-CSE-MsgGUID: gX7C/LNTTpCkGpsrFp64ZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
+   d="scan'208";a="216474198"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO localhost) ([10.245.244.39])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2026 06:56:30 -0800
+Date: Tue, 10 Feb 2026 16:56:27 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 0/2] hwspinlock: remove platform_data from subsystem
+Message-ID: <aYtHG2m61D8fc4vd@smile.fi.intel.com>
+References: <20260210110057.10869-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260210110057.10869-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20260210110057.10869-1-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Tue, 10 Feb 2026 15:19:49 +0100
-X-Gmail-Original-Message-ID: <CAD++jLntW0QZ+Nt45Z-G2wbmqrL5jtnuy2B5_rRE6eS2w-1Nqg@mail.gmail.com>
-X-Gm-Features: AZwV_QjNXHFtXvNMF9TF_TvJtup1g1L8Eh_OBP9sLN0HF7Jz7nHdNO-AVIyYB00
-Message-ID: <CAD++jLntW0QZ+Nt45Z-G2wbmqrL5jtnuy2B5_rRE6eS2w-1Nqg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] hwspinlock: remove platform_data from subsystem
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-renesas-soc@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, linux-arm-kernel@lists.infradead.org, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Bjorn Andersson <andersson@kernel.org>, 
-	linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Feb 10, 2026 at 12:01=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-
-[Page Mathieu who I think wrote this driver]
-
+On Tue, Feb 10, 2026 at 12:00:54PM +0100, Wolfram Sang wrote:
 > As stated in patch 1, the U8500 driver is clearly unused for more than a
 > decade. Removing it allows us to remove generic platform_data support.
 > Both removals make the upcoming refactoring (headers and lock
 > allocation) in the hwspinlock subsystem easier.
 
-Fair enough, these hwsemaphores were only used when communicating
-with two DSPs that we never managed to support upstream.
+What I like the most is the patches with zero + statistics :-)
+Acked-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
-Reviewed-by: Linus Walleij <linusw@kernel.org>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Yours,
-Linus Walleij
+
