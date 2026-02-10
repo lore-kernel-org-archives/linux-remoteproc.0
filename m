@@ -1,144 +1,149 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07A330F543
-	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Feb 2026 23:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770680676; cv=none; b=d0wglWHB1Ll7GGvUn6Fdr++XiKnjRl99+XBSKPNFEsq+7B6LTc4wGlMZ0Tqpyh5tOJDTjJ1uUSEq/TaMty3DzK1cbNVbFJyTup++9UAol/4KZRNYFE0zjD8ovJf6RWs6fp8SNEVer0H00xeKhsFM2urfT9Wif+1IlHmJ9XWHPqs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770680676; c=relaxed/simple;
-	bh=WkWA3gNRN8MbTIaaw/WdnYAdJq21Zd6sjc7Z72Y6cd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dgKjmxSu6yzg+aKEjjUlJxDn2LQimKDOQNCUtv2PunAMJGVolx92O1y754pbHIdkBnh8YJ8mNlSz+F7ij3quXUFRpJ/GS9JZZ/D32PCuGwB5lCYr3Um/zaAMQFd+bF4gZp/HO9lzENtK6bF4RdCWCmsLKHC1N7yueN3u4rPiUvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Grk/k/Ih; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2F723AB98
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 00:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.161.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770683952; cv=pass; b=rsLZ007GrhHsRNjAgvUVwel6E37FDpK/RvcORDPo9B+Lsz/tuERVPD5jULiRQPefbDq1tgIpKVmyaGcl43DwiqwEglAQa7M7LEiKNFL2F96GduYU3WAZj9iFSVhdIITe7ocTf78jco5/KQGjaUSJaDskfkb7vrz53qxrvA09Drs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770683952; c=relaxed/simple;
+	bh=CRHDCY+aNL8cCuJ5x1LKl4BcDxts38ZAFNhckqdTfRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fg8SOYv9Q1TjOTUynb/3FYBagk+IzG8IrcJh4PeZamNg2FMnhYKjJvB0sO2Ia/+ErDT3I0DcOYJ/VEXA7zNxjSVqqu8w8xwNwBPZKqKk1bvjxumLElsJJuHPpzNit+ABipRP6VGZkA9KXIcSZkMgbBiOAkMii1RVKMcbZJbsk9Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCSuMGfE; arc=pass smtp.client-ip=209.85.161.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Grk/k/Ih"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-8c6d8751c88so526255785a.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Feb 2026 15:44:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCSuMGfE"
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-67263e2ed52so425447eaf.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Feb 2026 16:39:10 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1770683949; cv=none;
+        d=google.com; s=arc-20240605;
+        b=jQuK81vagWhzZ564VNTO4//ASf13PkDENhIvKey9TMqzwUoErCzcCi4MOmP+YKKSpj
+         UbMj9DyDHlG60yr1dz5lHT7+zgtElE8KJ9eVaApau8q1fATSPNWw0Lh88Iq5YBwVvNZF
+         eu5Y7+5RBIHnxA8JOrWouIyKKANK5jKTbGmJL+6cHnb0wTMUcLCREO71yC1xAn8bhgCL
+         sNy6zkOdK5TRI8CjxvrdatIA0Ia6Qu9vArKqN70xyxKuykM6FkflzTOwraOCD/Hhr6QR
+         Iv0+gzUSESpDB60aBaFoDAJVBWhnrWQ0oym/oysm3yQNWNFimCF2+esk2LPHbMSY6/1T
+         xjaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=Bf5IdcegF6twrrNNR7clze4xkdFwkIRE6sG++xaVg4U=;
+        fh=efikkLjuzVxFNTOM4XeuLg4T21S3j36iHpZ3+WchxdA=;
+        b=fOBvkAkJ2TNhDFaDm2j2dFZnUDyElSbC8zd1BWTflclT8KY66RJZ/77ary5hD0Hw4+
+         ydE9hJcEyVnV6L7KG2MgnU4fyyPTfla+FYKNTII53FnBhpwIJ3HUBEjAquFr6bIlRUCo
+         ++rY9Ya5Q9JY3Y3PF1sEt+gx7eGkZ0mF7kHYlVbTkVBhFNecCe5kzpdF5coZpO+2UH5c
+         kjFmaAE8kGbr015ig/7nre4i7guow+PZIH/s0ZSCgyYvtKmzc8jiDbX0wKuqd1rk34CO
+         pf//RaG6wodKXAw6yLUq40wF7iRl1OQBGks1xShFiDLDLjrJmy5kXVZwBxsol7DT4ueh
+         KQIg==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1770680674; x=1771285474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+H3/GA2xrGI8laFlb2XtgBdDq8ZI3AS2aMAn2lwL5dI=;
-        b=Grk/k/IhkAQJzSrSNivBznjxGYecSeMytwjmN2FGG+9U/p/c0p56QEAoysyI3aV0m/
-         N/CWHrYwaBDyAWmvHAAnJ68C2YmjrXRAOK94qA/yy0KVAJkHYuzxZYLz3SsZzWVvL5UQ
-         rY41bXrZnPkTwzHzCz1yRY7163bFTPnI3Aaca3drk+EKPWZTM6F8QQSfiW8GYgK2MF2k
-         qYqociwtK9q5mqMMUpn+wPA0XFUtZ8wQyaHMgmL0EJoUL0AgNy+5krhPjJfF2ibjSniV
-         k+D4/7VOc/3zbpTGrAmNpc4+GUL8RJkbHcUjmmLazj++YIdnN/NlMJ2DTQ/QKvEwnAkZ
-         hcJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770680674; x=1771285474;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1770683949; x=1771288749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+H3/GA2xrGI8laFlb2XtgBdDq8ZI3AS2aMAn2lwL5dI=;
-        b=n8loYy/N9uFQHqRrEzZJShXvhd24bz2dmnv2T/Q25Afq6fi5Sz8lsYfVK3GwkB1BR5
-         iENliT+w8Uoezz9vBlJs2yunJQd7BydMFaSzF5/UaftTZc94GQFiLNBTIjBcvo7clzsK
-         ouH+hT/krbvZCOpMpYEFKE28zVpX+y79H4IAMyQLAYN9tAOKfifnPsxB6xgTMZxkJc2w
-         Dz4guWDJtPQF7KlfuvxfC8iPjAxMhzGo141xAzRu2lMQ8o8oTcMfXSjhwMfKIjfqYO7o
-         3eX5s+PjoeAcppStWVz3EerOzZpR26iebUj5/Rb/6AwhpNNz2qIP6HOuQSUvZ23vjChY
-         VMXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPN+oi9n25XvnCTg3gMlHGGuDIi5TSiq2BGa5bCOFKPw7N/KsDmkBKdcsOOI209zMDUed1fNlkIwdEsqaP6k+f@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLFHbArC2v87Ehd7ywo3cW3XDC9fDUM6rnIEkFTsaSDYH2jyyH
-	sX+lAqOMoPiYmZIzKbzC4wmPOf/ZXqzOe+v0U2Cjplg64tAHMZqV7MbgDJrBfQ==
-X-Gm-Gg: AZuq6aJAhQG7qL9vVjksJL5yhw3j881c1Jtq4EvziXgtKiZWceCnnCXM0U7OLsbOBUe
-	N25ydOaZsqbc9xMXz0+0Uy5niCwm8wMVIz10LZyDnLW2YZBn6PND51Q40Ai6awfvIXce+3FNDKu
-	k4ffokc5/HuAEWvYt6JN/6aNIXmui0fG7laqUuJZR/8f3AEoeTLo0QKieeKpMuZrPP2jE+hQ56I
-	uj6xYIKhXFGXOPvwOGnN07xDbAm6xM/ZeBMSjxbidYPDE+bdS9ajuDCaNAne6uU8sIhjGgn0B1z
-	ju60ue0jpCPFnKI8pKWy9gRYJu5Vb0Hr9Vd5RfMwCbwafRUL5w7JjiirZiEe/unF/pACSuUTsxy
-	O/Nle3RcpSuCNTyoFF9cZvozqHVmQyXt0+47ty66qUckm1Yv1BxiVcuVpH8hv1D4JVuwclQCtQ3
-	jm+RpBMVdwCLA8AXHBBpz4DyTogXTYGRBNb6yu/3Er8b17RhN5p+ovFb6Dtf1aYhAwFYFkQdY4B
-	s9D+Kxz91Vr
-X-Received: by 2002:a05:622a:11cf:b0:501:3e36:1513 with SMTP id d75a77b69052e-50673cf1e54mr2558791cf.6.1770680674531;
-        Mon, 09 Feb 2026 15:44:34 -0800 (PST)
-Received: from Desktop-PC.. (wnpgmb0311w-ds01-161-217-39.dynamic.bellmts.net. [142.161.217.39])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8953c03fc95sm87426066d6.26.2026.02.09.15.44.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Feb 2026 15:44:34 -0800 (PST)
-From: jassisinghbrar@gmail.com
-To: linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Cc: tanmay.shah@amd.com,
-	andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Subject: [PATCH] mailbox: add API to query available TX queue slots
-Date: Mon,  9 Feb 2026 17:44:30 -0600
-Message-ID: <20260209234430.512492-1-jassisinghbrar@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=Bf5IdcegF6twrrNNR7clze4xkdFwkIRE6sG++xaVg4U=;
+        b=GCSuMGfEPfzMl3he42tzkuKrehHOEwSPbWg9z90dF81Afyi3sPX6nHguyl9DXmTk4e
+         6I4gIyihsEb7ZViL/AxrsB3qEzoyeA18VCG/n5Dy7EsyjJHpAxbKkbv5kouxorw9CtSY
+         ErTcKZAIcy3Ck62Eg3V5O21E360Cg5+rXaqKmHKe3Ecv1aNdGvtcCfyNZzVJEEddoNDv
+         JRtyUaMb9DMW2gKJjKDCu2T3OnxM4xcAEhRlVGVsVu+/IUJ3+AUuriZmgpVGoIg8stGp
+         PfG5iXK6qZQFyuDRY7Qx0LItXki1cH4fE3AjOoiegYwEYQywG2RTCdmaOzOAFkzmXgzb
+         Zlew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770683949; x=1771288749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Bf5IdcegF6twrrNNR7clze4xkdFwkIRE6sG++xaVg4U=;
+        b=Rq46w9Csa8PCGNKv42F9lYRA+Jm1ul5DN5Z7WjzUfqgLAjmn1pqOUUZXY1VZF9Xq9E
+         /dQXgM2BU4u3EDAFCCinF9yLKZCsTDpf16bA/iVnpCfFbK24z1Q+xt8+Nk065KcUURWo
+         fkqzU8WSQaqhjkajjmBAFMGEj21CCApU2hK4oPOf4G7EwKbfORq4auw/bdggi1XLRhQL
+         FYc+QGaFXVso1Sh/TZV8V3MA+DRXP5OYSP0W4K2dosHdlbHZghW2Llgv5+zfOAMIFTu6
+         pdotHwL2qBBN14OZ4uMFtF260xGgqiIGP6tCGZEbaoNepTg1R7WMZ3i96yEe45+W46GX
+         P6DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURVrCNdIOC3JcAGvCOFXYc8PVgP7mzqrU442RB/v3aoWrW4SdL2z2UJQIZnc5KOlE147b+7MlTuCVL5Es5kg2i@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE618rcuzs6gj2rcCo8FD0mYbnXOsgMeG3Y/OyKU98r1ex6ljt
+	Iss1LJUiPLrppXxHqLK63oUY2FuGhR8jB0Av2Ybj4MAEWlTW7m9X3iTIjbtHkWDhxraRQ/kctvU
+	EFw2gAcLGTKMISHvuXbXEwEqeFpyTgyM=
+X-Gm-Gg: AZuq6aKotGKf8F2Jx3O65eTTDqPje5S17nqpeHn9aVOe83ZFqmZAVCq7X60vY+dVfp7
+	JeQE60kt+8LtEGmZxS5yk3SbllWXVhod8Jj0eC+h+kOZ6PNYvlL+LsY9FotK/pUP1r4AZFDz/fz
+	ZeportT799BKBXePnBOcWEETUcjWOaidXAonIwW3JE9ZV1zHtTGzt08DRGPf1bFSoUcYs2MNn6k
+	Tc41pA3HSD+9JR7yT/MVKiyf/UXZAD0O6BQY0QBl56LngxPn/I/iuipvmUHpb5SFuq9Z6llN1iA
+	TKSjGhfr
+X-Received: by 2002:a4a:e908:0:b0:65b:257b:a898 with SMTP id
+ 006d021491bc7-66d32fdac10mr3465078eaf.29.1770683949518; Mon, 09 Feb 2026
+ 16:39:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
+References: <20260208040240.1971442-1-dianders@chromium.org> <20260207200128.v2.1.I600d04c0553f5c5ba39c2f92201da313aedfe746@changeid>
+In-Reply-To: <20260207200128.v2.1.I600d04c0553f5c5ba39c2f92201da313aedfe746@changeid>
 From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Mon, 9 Feb 2026 18:38:58 -0600
+X-Gm-Features: AZwV_QhZe5s2jbJJnfFS4JALRsv_5-7Jio6ijB129QGrcufx887IYcSq_3ToyAU
+Message-ID: <CABb+yY2GbPcuPiVsE_-HCS8MbpBqvjgjDkoVLNSBDZq1bnfpEw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] mailbox: Deprecate NULL mbox messages; Introduce mbox_ring_doorbell()
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Frank.Li@nxp.com, andersson@kernel.org, arm-scmi@vger.kernel.org, 
+	cristian.marussi@arm.com, festevam@gmail.com, imx@lists.linux.dev, 
+	jay.buddhabhatti@amd.com, jonathanh@nvidia.com, kernel@pengutronix.de, 
+	konradybcio@kernel.org, krzk@kernel.org, lenb@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	mathieu.poirier@linaro.org, michal.simek@amd.com, nm@ti.com, 
+	rafael@kernel.org, robh@kernel.org, s.hauer@pengutronix.de, 
+	shawn.guo@linaro.org, ssantosh@kernel.org, sudeep.holla@kernel.org, 
+	tglx@kernel.org, thierry.reding@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Clients sometimes need to know whether the mailbox TX queue has room
-before posting a new message. Rather than exposing internal queue state
-through a struct field, provide a proper accessor function that returns
-the number of available slots for a given channel.
+Hi Douglas,
 
-This lets clients choose to back off when the queue is full instead of
-hitting the -ENOBUFS error path and the misleading "Try increasing
-MBOX_TX_QUEUE_LEN" warning.
+On Sat, Feb 7, 2026 at 10:04=E2=80=AFPM Douglas Anderson <dianders@chromium=
+.org> wrote:
+> @@ -249,6 +255,28 @@ int mbox_send_message(struct mbox_chan *chan, void *=
+mssg)
+>         if (!chan || !chan->cl)
+>                 return -EINVAL;
+>
+> +       /*
+> +        * The mailbox core gets confused when mbox_send_message() is cal=
+led
+> +        * with NULL messages since the code directly stores messages in
+> +        * `active_req` and assumes that a NULL `active_req` means no req=
+uest
+> +        * is active. This causes the core to call the mailbox controller=
+ a
+> +        * second time even if the previous message hasn't finished and a=
+lso
+> +        * means the client's tx_done() callback will never be called. Ho=
+wever,
+> +        * clients historically passed NULL anyway. Deprecate passing NUL=
+L
+> +        * here by adding a warning.
+> +        *
+> +        * Clients who don't have a message should switch to using
+> +        * mbox_ring_doorbell(), which explicitly documents the immediate
+> +        * sending of doorbells, the lack of txdone, and what happens if =
+you
+> +        * mix doorbells and normal messages.
+> +        *
+> +        * TODO: when it's certain that all clients have transitioned, co=
+nsider
+> +        * changing this to return -EINVAL.
+> +        */
+> +       if (!mssg)
+> +               dev_warn_once(chan->mbox->dev,
+> +                             "NULL mailbox messages are deprecated\n");
+>
+Nit: maybe  "NULL mailbox messages are deprecated, use
+mbox_ring_doorbell instead" ?
 
-Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
----
- drivers/mailbox/mailbox.c      | 23 +++++++++++++++++++++++
- include/linux/mailbox_client.h |  1 +
- 2 files changed, 24 insertions(+)
-
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 2acc6ec229a4..22eb8f3213be 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -218,6 +218,29 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
- }
- EXPORT_SYMBOL_GPL(mbox_client_peek_data);
- 
-+/**
-+ * mbox_chan_tx_slots_available - Query the number of available TX queue slots.
-+ * @chan: Mailbox channel to query.
-+ *
-+ * Clients may call this to check how many messages can be queued via
-+ * mbox_send_message() before the channel's TX queue is full. This helps
-+ * clients avoid the -ENOBUFS error without needing to increase
-+ * MBOX_TX_QUEUE_LEN.
-+ * This can be called from atomic context.
-+ *
-+ * Return: Number of available slots in the channel's TX queue.
-+ */
-+unsigned int mbox_chan_tx_slots_available(struct mbox_chan *chan)
-+{
-+	unsigned int ret;
-+
-+	guard(spinlock_irqsave)(&chan->lock);
-+	ret = MBOX_TX_QUEUE_LEN - chan->msg_count;
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(mbox_chan_tx_slots_available);
-+
- /**
-  * mbox_send_message -	For client to submit a message to be
-  *				sent to the remote.
-diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
-index c6eea9afb943..e5997120f45c 100644
---- a/include/linux/mailbox_client.h
-+++ b/include/linux/mailbox_client.h
-@@ -45,6 +45,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg);
- int mbox_flush(struct mbox_chan *chan, unsigned long timeout);
- void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
- bool mbox_client_peek_data(struct mbox_chan *chan); /* atomic */
-+unsigned int mbox_chan_tx_slots_available(struct mbox_chan *chan); /* atomic */
- void mbox_free_channel(struct mbox_chan *chan); /* may sleep */
- 
- #endif /* __MAILBOX_CLIENT_H */
--- 
-2.43.0
-
+Thanks,
+Jassi
