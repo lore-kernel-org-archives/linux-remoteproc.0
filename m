@@ -1,155 +1,147 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D1C2BCF4C
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 22:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770761012; cv=pass; b=M1DFSdaahZ8FG1C9bAjIA5+MyNiRUjEwAGUFZzfjyzDMzDBKMeMmfo6/Fg/L1e+Nm4FLVi755W38BUP56uoNuZeThHzDL0xExsCR+3YKJGWJUZBSMTLJ4iVxMS/bgWyylTuO/djfeR/DaaX6ENRjZXezrYhB1VCPwp6pTvlAeOU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770761012; c=relaxed/simple;
-	bh=t2JsmQ7gHl2ZvmEVuEnjm9WXT9Hm/NM7NXsCAyMrWmw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gcp73xebfimbcOxKuySOW4G+XcFyxDTKDHOYAmXSE05WMh5mRXhHg279lZtN/IaPBA3YCgsImhNO9bTlEPNdmCPw1rPR8bLxXvptgsrrrcSTIIhsgumPOEFTVzpgsGxcVEt4s6izOlWur9/7hUeHKonPru+TsWG1UPO67Rb5GQU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TXnD66dL; arc=pass smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28B130EF94;
+	Wed, 11 Feb 2026 05:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770789443; cv=none; b=D+sJTeaJrtyC3F6/Sb90sRtD+tZeLtnQCcPhjVGfxmKTfQbJe+0kojcUdxipx60HNij59j78R//jBrnwTx4Cxf2lxQ6+LvXvHFyG1ycpHeqjzkhGnhU7zFagE5t9py7Ts8YLpnRStHMMER3bc+YoSSB/wYCSSUU9sUB7V/KtnfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770789443; c=relaxed/simple;
+	bh=WnpB/MHUvOu0MxaG9qXi+XunVyvMIMGcsZJjH30GK1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nMVk7aV3ZQzQU9mVTph3JjoOH3X9RV39Wbm3sAvgF3sd6MTZUBfxGeJomRJ4gUsXKP4YCkId38EJkPsADLA3BBQ5GcitKKsCZD0uVQwg5Zqbh5cHQ22QpXmjzu+mD5WnjV/d6ihQPCrsQpWu+0WMlEOs8IyX3AJReoChI8w+wRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NX2TBbv1; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TXnD66dL"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b8e9c8ada38so1018269766b.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Feb 2026 14:03:30 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1770761009; cv=none;
-        d=google.com; s=arc-20240605;
-        b=PMesMMCH13apb9EkKnj0d4N1TzxxiE2sWAg8Z9mgPiortKgyFgI5lvApN30sOry++Y
-         jBoFKNJWQgbEbmPifOMHo/sMN1CqQfslYsLPSjODMIDyC9FJFevMhIC3SXvdRqX+UpYZ
-         bHR97CGdKWWHdQfULDXPJPtHquib55z17lsFJdfOZ+gYUZwgYvWOLQEjrI0Nw4nUjAY8
-         zw6eQiCQuyPh8Sa8O2NM4d2K2r4yRsGuOc74NxioSFXQouBMprDn9YqnZVikrA2t6807
-         KppRzqiA5hdxwyONSEbINNxVhBrmfo4yKFKmuPrEc2eYBWHPtm2P6VVqmBc27S/cclVd
-         1nsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=UliAcKlqQ0Ffn7IelNMZvQRaXYOmOwslWVLsu673AlY=;
-        fh=Ehd+j2wtO6kaXQbSb9uPnNhTJIli2Hg6fQERLiUUGNA=;
-        b=VSpU8rIg+JDLVHjqJl1jqu6ZJ6YB/iBnrfcLjuGf4amrD5EGqaRIzqCEJemxWCGCd7
-         RuyAKsTOWUJ6SJCMy6sPV7p85eTLwWxMY/yAENvAZBx0WAPULnWFcQjC8Xfj1gbf4149
-         4dI5wPuOegNTlCur9AKUKqbqSVasvHHEHowBJHx/HP/ZB3SYZhBNy2Q2FYl3v4ZWtS5s
-         k0pqEsSgqdB9nO+xbxlXcOD+iHdAFIO9L6NSYy9eZtgDKd8u9vxft0bMp0fSNQ4BWQfb
-         ExTbox+nPvS+qfIHhdOPjG50CRRg1wnEWKcnMYnv/OTp/y+Wy5SVVR42wnHIy6Ct7pM8
-         f1/g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1770761009; x=1771365809; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UliAcKlqQ0Ffn7IelNMZvQRaXYOmOwslWVLsu673AlY=;
-        b=TXnD66dLRRAu06hDDAynfki9iHPCqSo+eO9tc+HKrKV8NE60VM1aZ8bl8d3la+3G3k
-         x49ieThtw2GtS7g2lyiBOVP0mcWzFNpflHzPy0F1yr6HupK15c2U1tHXnQ5108USGpL3
-         zWClCAIxuCjnU/5rJGkcgOcZr6h6W+LK5VG6NZMei04E2UAf8+U6hVpNx351A8S7ZdL4
-         6ecYqnqz7Hv352TsT+qAl1ayRwx/WjUP7J1V1A+15XNNwSpHokc9CCuvdooGEHuJozA+
-         obZKCO1nBOtn2Ytl/g78aOES3IgIfdgoiZV1ld3goZkfu+tboYz+AcrY+Jr0yV4SHrcS
-         o1mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1770761009; x=1771365809;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UliAcKlqQ0Ffn7IelNMZvQRaXYOmOwslWVLsu673AlY=;
-        b=vk0dIdSHRzWn2DdIShva9s2Gy2wAxeNq3WuCvIOttFCS1wn0iSEO2KW9dfXC4IY4J5
-         D1UgETOY5juJo5hzRCw9eKI2B2iq692fh7xFali1yFhSGwUUW85t8URbj7UdqizstKbV
-         CQnOqjVwLR8KEP5z1QxiIjuhyBRVrOmef0c9t3faY2Jk5Ob7zAhDeW2tGzJKS9R+TZFY
-         8KxYOMmV8zKYfVoaKk90IclwoEYx+Saf7VQfuDLvKoq3tS9oU6GtSdRMrS3GnOcemgIj
-         IFPRPmTxlGTe8nVvg5tUQbvOorCnMH4kob6IunNrd26LZ3JM0m29/wrVwwoxEXYR7FjG
-         5XxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdagVWRlLEvBEBG9FGoCwPwMYmP2Vqfqinahtt+hKlGU/neg0dKl5lkmQp2Z7u9nZu1JBlA8/6M0YlmmtCXurK@vger.kernel.org
-X-Gm-Message-State: AOJu0YztNUjYrEGaABHVM37MXpGQJCJSo41AuddRRJirbrDkc8hLyzlG
-	HnPAyVbPvwqVdeHvFzrF5zc7rGGUun/Tq/a5QT+i5PgDigzmVzW5PVYBJLAmEAQmPu91uu0pKaC
-	t89TBLTpD/U4Irbpl1zQU4kTOginDymg8t0AWxSi8Tg==
-X-Gm-Gg: AZuq6aJT37vgfl5M/9u5nk3PylxLGJo297WgPLvRDciTb5JxKcFazVX7e5/bwVjsFuX
-	0i/+clNwSxcb7LW7EF9covIvUcuduMd1pjwwNdVR4nbc2jepoM/2qct2JibasE0QFiVXQHkI43B
-	XiU0TokQByNDbG4u2cCtSfJ33FmOBDqwnZzA2jKAHrnJDdhS2EvWtM93xg181wNv/YEdlBsQCoi
-	knoeRty42FQMKBNioWtwdt0s9HqBEFk5Ni2qtuP4ELQWVLYJfvZvZKDK5g2W/U9dLRvSkq9z4Rt
-	WOTYa4YN3/WYzvZzhxtZ/VGaBx7H8WU+BDmlZv8GhA==
-X-Received: by 2002:a17:907:9618:b0:b8d:be68:bc21 with SMTP id
- a640c23a62f3a-b8f6eec8fe7mr6747966b.21.1770761008993; Tue, 10 Feb 2026
- 14:03:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NX2TBbv1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1770789442; x=1802325442;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WnpB/MHUvOu0MxaG9qXi+XunVyvMIMGcsZJjH30GK1s=;
+  b=NX2TBbv1xhrHswGVJURVxU3XzgKWSE4ETUlYUuzHoK16HCXXjusbfQWB
+   Ajnx1SuFy/T+X9ks2aOT1BMoBADM9/I6s/tYWxHDItRtBM4XDzo3hdVwK
+   EWsKQY9G+xTLTtBC5KU9eEZKvMANa1MrwznzvkotZFO8idSYaAbco7ds6
+   2ELNtUyeAX83PSBHbX+Xx8djkSdk4hMmFrZ+HZlvYE+2vyQ0tOL0KxTST
+   bVQQyOKr4AzZf/1vQVaJ6Cc2UhALkKvhKudvLpKRVl2DlBRKQJ7TuHlD8
+   8eHfm7L+kmwSgSk2p0hroZZy5L1iTgYoB8TxfJffWuqLu9u6k9je1voTZ
+   g==;
+X-CSE-ConnectionGUID: UbHVe8RET1SbHgwpe0DJbw==
+X-CSE-MsgGUID: m3w9gAj+SNiM6IC3s0bS/A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11697"; a="94569681"
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
+   d="scan'208";a="94569681"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2026 21:57:21 -0800
+X-CSE-ConnectionGUID: Cp3x9V8wSLW7rubOh6WZ5A==
+X-CSE-MsgGUID: H3wgMnd3QcCarV66oRkcfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,283,1763452800"; 
+   d="scan'208";a="212176563"
+Received: from lkp-server01.sh.intel.com (HELO 765f4a05e27f) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 10 Feb 2026 21:57:15 -0800
+Received: from kbuild by 765f4a05e27f with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1vq3Ds-00000000piq-4C4o;
+	Wed, 11 Feb 2026 05:57:13 +0000
+Date: Wed, 11 Feb 2026 13:56:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-imx@nxp.com,
+	arnaud.pouliquen@foss.st.com, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v7 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+Message-ID: <202602111320.C3eHRtNV-lkp@intel.com>
+References: <20260210170814.406883-4-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260208-imx-rproc-fix-v1-1-ad74555eb9a4@nxp.com>
-In-Reply-To: <20260208-imx-rproc-fix-v1-1-ad74555eb9a4@nxp.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 10 Feb 2026 15:03:17 -0700
-X-Gm-Features: AZwV_Qgdm6kPXS9NZM-j5COa-F6f74PqWhNBvMsMK65d02PCcMWV4eo058PVXss
-Message-ID: <CANLsYky0HEkzL86XZ5K1NwJ3Gh9DcQKwu=WwiozMmus8UJQDPQ@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: imx_rproc: Fix unreachable platform prepare_ops
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Peng Fan <peng.fan@nxp.com>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260210170814.406883-4-shenwei.wang@nxp.com>
 
-On Sun, 8 Feb 2026 at 04:29, Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Smatch reports unreachable code in imx_rproc_prepare(), where an early
-> return inside the reserved-memory parsing loop prevents platform
-> prepare_ops from being executed.
->
-> When of_reserved_mem_region_to_resource() fails, imx_rproc_prepare()
-> returns immediately, so the platform-specific prepare callback is never
-> called. As a result, prepare_ops such as imx_rproc_sm_lmm_prepare() on
-> i.MX95 have no chance to run.
->
-> This is problematic when Linux controls the M7 Logical Machine and is
-> responsible for preparing resources such as TCM. Without running the
-> platform prepare callback, loading the M7 ELF into TCM may fail if the
-> bootloader did not power up and initialize TCM.
->
-> Fix this by breaking out of the reserved-memory loop instead of
-> returning, allowing the platform prepare_ops to be executed as intended.
->
-> Fixes: edd2a9956055 ("remoteproc: imx_rproc: Introduce prepare ops for imx_rproc_dcfg")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-remoteproc/aYYXAa2Fj36XG4yQ@p14s/T/#t
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index f5f916d6790519360f446f063e09d018c5654953..8c8ddbf995a46b01627d15a2eb3da0b72eee6285 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -617,7 +617,7 @@ static int imx_rproc_prepare(struct rproc *rproc)
->
->                 err = of_reserved_mem_region_to_resource(np, i++, &res);
->                 if (err)
-> -                       return 0;
-> +                       break;
->
+Hi Shenwei,
 
-I will pick this up for the next cycle.
+kernel test robot noticed the following build errors:
 
-Thanks,
-Mathieu
+[auto build test ERROR on brgl/gpio/for-next]
+[also build test ERROR on robh/for-next remoteproc/rproc-next linus/master v6.19 next-20260210]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->                 /*
->                  * Ignore the first memory region which will be used vdev buffer.
->
-> ---
-> base-commit: 9845cf73f7db6094c0d8419d6adb848028f4a921
-> change-id: 20260208-imx-rproc-fix-843dd1031b5b
->
-> Best regards,
-> --
-> Peng Fan <peng.fan@nxp.com>
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Shenwei-Wang/dt-bindings-remoteproc-imx_rproc-Add-rpmsg-subnode-support/20260211-011505
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20260210170814.406883-4-shenwei.wang%40nxp.com
+patch subject: [PATCH v7 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+config: nios2-randconfig-r054-20260211 (https://download.01.org/0day-ci/archive/20260211/202602111320.C3eHRtNV-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20260211/202602111320.C3eHRtNV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202602111320.C3eHRtNV-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   nios2-linux-ld: drivers/gpio/gpio-rpmsg.o: in function `rpmsg_get_channel_ofnode':
+>> drivers/gpio/gpio-rpmsg.c:473: undefined reference to `rproc_get_by_child'
+>> drivers/gpio/gpio-rpmsg.c:473:(.text+0x454): relocation truncated to fit: R_NIOS2_CALL26 against `rproc_get_by_child'
+   nios2-linux-ld: drivers/gpio/gpio-rpmsg.o: in function `rpmsg_get_rproc_node_name':
+   drivers/gpio/gpio-rpmsg.c:450: undefined reference to `rproc_get_by_child'
+   drivers/gpio/gpio-rpmsg.c:450:(.text+0x4e0): relocation truncated to fit: R_NIOS2_CALL26 against `rproc_get_by_child'
+
+
+vim +473 drivers/gpio/gpio-rpmsg.c
+
+   466	
+   467	static struct device_node *
+   468	rpmsg_get_channel_ofnode(struct rpmsg_device *rpdev, char *chan_name)
+   469	{
+   470		struct device_node *np_chan = NULL, *np;
+   471		struct rproc *rproc;
+   472	
+ > 473		rproc = rproc_get_by_child(&rpdev->dev);
+   474		if (!rproc)
+   475			return NULL;
+   476	
+   477		np = of_node_get(rproc->dev.of_node);
+   478		if (!np && rproc->dev.parent)
+   479			np = of_node_get(rproc->dev.parent->of_node);
+   480	
+   481		if (np) {
+   482			/* Balance the of_node_put() performed by of_find_node_by_name(). */
+   483			of_node_get(np);
+   484			np_chan = of_find_node_by_name(np, chan_name);
+   485			of_node_put(np);
+   486		}
+   487	
+   488		return np_chan;
+   489	}
+   490	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
