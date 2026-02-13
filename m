@@ -1,70 +1,71 @@
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012027.outbound.protection.outlook.com [52.101.48.27])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010064.outbound.protection.outlook.com [40.93.198.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63AC286A9;
-	Fri, 13 Feb 2026 00:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568B026299;
+	Fri, 13 Feb 2026 00:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770941535; cv=fail; b=Y6sAXwWpuD6DC1y8Ep3TEL8bYIoK1HBMJRqaMrZTm1dBKrXL+3U3LyNKgq+/h+/3GFhARaeHSepADtu+v3pE/oPTNAaUafrHVKbJ/ODt9D/P7B152cZPhplwZiWrlClBkU0wTC87lOaSaGNS0eHGdJ1J6g8c/QmUqfLFahRPXlQ=
+	t=1770941538; cv=fail; b=gx/9yRooslckL93np3WmBGKbCdSGRbuGdAQXry06GJv2cWkEszcEUTWPNVouT0Z6iH22pkcR6Lc6PPmnk5ozSlw32oIee2r9nms3cFl+VGWhOFOOScNNVkMGLhLnLYYpz8Jxkzg2AV+rreiibePOmhpuYO1HQ82fY5hxIVO0Mok=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770941535; c=relaxed/simple;
-	bh=2N+r1E0ls4J3FHB2ZWNVT5q0XKMMYmvGZjmgI36JDoY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mbUvqrwg6GmhEIfPKHTLzZM/xyfDSQWZ7Ih1ppPHWA+4mU2W0JNmPZfxg1HmfMoDQjVmtOhPGqMT5ChHHRW8HFVLgIJFfcd2ufG5h0OvHJ7fwS2nIKSd2ecTAJkWEGF46s7ISeEl29qHcfhujg+/7jXcTfzcGFvN5I53d3wOYOw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e2StyUWf; arc=fail smtp.client-ip=52.101.48.27
+	s=arc-20240116; t=1770941538; c=relaxed/simple;
+	bh=II1EzelvOAjVqbLaJ8pGzueouzHIL+3HBgRa4k3IGgo=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JETDMHTo8ojH2CKmmT94UNjmQIWFaB0KEMjeZX6PQiPXvUeWW3nsMSIkud4L7htK6CftzppsKcP6K6YGDzMRWKeNzntB9VolwpvomvLImApwZtBKtKAPMPGBpoiC9rRHN5QiDJ1cG1OzpipO/+aCnZlEHJYze370IP9oKh+y8OA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=STq2E+eO; arc=fail smtp.client-ip=40.93.198.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e2StyUWf"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="STq2E+eO"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lGSDGDI3hTaRPd8OwGyL0BVUz43KUH0Vm98gFrwX6Oy1ZFEGPhbyuP+IHpWYWA5hxjESq453E6YhJe7W4mrPX3raLjmqnoHUJzmyYC0+2sdBBbyaaHR0tfh4o6rcqwq77ABB6UpkmalmeBD1AopoIV6KwoUbbrpnFRPUjlK286Y8hiKyRB08qEtb0iy+znftXlznyV6oWUufKVQz6J5kaj+34VeRTgFxw72yrnpBX8M5KzuoeQ1c+aUtie5ngVZP+6n+5UXSSdlKrTSmbtCVLA0hNXcw5jyHieaZNBtfDW2nTyM/hUfisim8X4XuBtRqR4NpxExJBskNChGCpksEUA==
+ b=m8889e9S+Vqd4/HUk1N9xO3hZ7a2dQ1/kEkYdgm6mH3n4m2hKwtZJs6ASJBmT3nofsik//ZH1QlEGLUi8jz6R+vNgudIXG397qWxXb96ZBJXC7ypztW3+pW+AvzZN3td7jVzEWHTHpAaB/K7wJ1JKxdhc1FxeBVsLuBc5o2sWmAOJrDWICNnn36QsM8uzAWtDIEB+otBb9nx1BxEilFDWyGVsO1CH7y96JGnaw4fZVRKnCYMR2NBmYWS9i2jsXGz2Z4J4l74SoLFtsKnT8vg+R8g1N25soL1R2hrgwhgOqcuf6abpNnmfS6Q52YX2ieu9Nr6JHaXa3DjMPxi/jDOJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r7RLrY+6f1tADVcggWZtiUJWeSouJUnwzfZ2+QjIChk=;
- b=jKmMDCMISgLJ/5OK9dg/spkhVGc1X1QQdqPbL6+NjbSYdI4orpZNRPOWIIN1z2RZCzXizZB74Gq7Dkom7rgXWo+XsXC3Z8PhQslCO9VFUW2V42Xijq0qNgChv86mN8fgMXO8I8K4eqtmbbj/fmeMLMYeEEcmKSTkERWJYpL4xqgwCMqa/ADMQoIbHCzd21M4Z8+GAsACF5VttECTxlNZnElblTFNHgoVxysVdm4FXje56EmJsoyHHDtPu9Cwxmeyi4rKuN8ZCLautqJhopE7HKxXss2vzj80GuhpWdN2sJsocBkpGJbSiQvOpau96mEuimKgqpyYBkmlUmn54Cb9ZA==
+ bh=8er1eumWx/N0bQKAFDcASCSh3xjERdHCOL5aE+l9fUc=;
+ b=Pa/YCfa4PKERyI5PFu1was4XL78WAuGKHhw95iNI0CUDVEFLPde+J+X3sYDWOvu9mzNb2LEdEczzehtQG0RDqH8h0kqxUBkvE7j11lSufk6xt/TvahmzAWs8RhftKC0nJbgOxg+KZGDKWcxd73ZAoVkbbqS+AAAYnHlsvGqhjiGO1eQTshZn7qGwIqwYUcOGbllG1Job/mc7STIeC/dvkww0NkEEGzuygIACirxEy5DwtnP62YkeIVe02uCSU1D+AtLVQyfWPj75oWAw0QDTmyMT9mEhQKmsgBeHzx5ixvuVWu/Fp74lIXwmKNZT/Pg3ZwogkjYcd/ggTpOdaXKlaA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
+ 198.47.21.195) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r7RLrY+6f1tADVcggWZtiUJWeSouJUnwzfZ2+QjIChk=;
- b=e2StyUWfm1ubRGVrtSvf4udlBPTQsqFNWNso5zbMDf7mn4FN1ZeE1IctyVJfbWPMuSxxeyucwOefYi0+7J0fPB67t2Na6rfnXb9KQ0fQOx05k54TVgkqIGA0HQGXRRUyZh+eVsv1CfVl7+jmG/1wew3rfXu4XZLYAyGA6BXv7/I=
-Received: from PH8PR07CA0006.namprd07.prod.outlook.com (2603:10b6:510:2cd::7)
- by DS4PPFEE36F3C1F.namprd10.prod.outlook.com (2603:10b6:f:fc00::d56) with
+ bh=8er1eumWx/N0bQKAFDcASCSh3xjERdHCOL5aE+l9fUc=;
+ b=STq2E+eO4rthnNxiruVNnNs+F2o2kC5Lmk09nDBS0z96Eg5wriFTQPjmQ3JNiEcbIcflfhLCsvsAP5KNnJR73um5dlXtqlmqPiciHkl0BqRq8yQGwj9Pk/O3H/g/WsHEHqiIRKHDT4L4SKBQDP1L5W/3UbCVRgTWbr59yeVWyBE=
+Received: from CH2PR14CA0037.namprd14.prod.outlook.com (2603:10b6:610:56::17)
+ by DS7PR10MB7227.namprd10.prod.outlook.com (2603:10b6:8:db::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.13; Fri, 13 Feb
- 2026 00:12:12 +0000
-Received: from MW1PEPF00016159.namprd21.prod.outlook.com
- (2603:10b6:510:2cd:cafe::ba) by PH8PR07CA0006.outlook.office365.com
- (2603:10b6:510:2cd::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.11; Fri, 13 Feb
+ 2026 00:12:13 +0000
+Received: from CH1PEPF0000A34C.namprd04.prod.outlook.com
+ (2603:10b6:610:56:cafe::fb) by CH2PR14CA0037.outlook.office365.com
+ (2603:10b6:610:56::17) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.12 via Frontend Transport; Fri,
- 13 Feb 2026 00:12:08 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ 13 Feb 2026 00:11:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- MW1PEPF00016159.mail.protection.outlook.com (10.167.249.84) with Microsoft
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ CH1PEPF0000A34C.mail.protection.outlook.com (10.167.244.6) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9611.0 via Frontend Transport; Fri, 13 Feb 2026 00:12:09 +0000
-Received: from DLEE203.ent.ti.com (157.170.170.78) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9611.8 via Frontend Transport; Fri, 13 Feb 2026 00:12:12 +0000
+Received: from DFLE213.ent.ti.com (10.64.6.71) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
- 2026 18:12:09 -0600
-Received: from DLEE212.ent.ti.com (157.170.170.114) by DLEE203.ent.ti.com
- (157.170.170.78) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 18:12:11 -0600
+Received: from DFLE212.ent.ti.com (10.64.6.70) by DFLE213.ent.ti.com
+ (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
- 2026 18:12:09 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE212.ent.ti.com
- (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 18:12:11 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE212.ent.ti.com
+ (10.64.6.70) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 12 Feb 2026 18:12:08 -0600
+ Transport; Thu, 12 Feb 2026 18:12:11 -0600
 Received: from localhost ([10.249.48.175])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61D0C8kk3961765;
-	Thu, 12 Feb 2026 18:12:08 -0600
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61D0CBmr3961853;
+	Thu, 12 Feb 2026 18:12:11 -0600
 From: Hari Nagalla <hnagalla@ti.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nm@ti.com>
@@ -72,10 +73,12 @@ CC: <vigneshr@ti.com>, <s-anna@ti.com>, <b-padhi@ti.com>,
 	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, <kristo@kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, Hari Nagalla <hnagalla@ti.com>
-Subject: [PATCH 0/4] Fix AM62A/J722S C7XV DSP reset variation.
-Date: Thu, 12 Feb 2026 18:11:47 -0600
-Message-ID: <20260213001151.17370-1-hnagalla@ti.com>
+Subject: [PATCH 1/4] dt-bindings: remoteproc: k3-dsp: Add C7xv dsp variant for J722S
+Date: Thu, 12 Feb 2026 18:11:48 -0600
+Message-ID: <20260213001151.17370-2-hnagalla@ti.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20260213001151.17370-1-hnagalla@ti.com>
+References: <20260213001151.17370-1-hnagalla@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -86,85 +89,96 @@ Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW1PEPF00016159:EE_|DS4PPFEE36F3C1F:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8793340-e92a-4630-ea83-08de6a9487c8
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A34C:EE_|DS7PR10MB7227:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4919e2c6-443d-46e7-4f38-08de6a94893d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rZ+1EpBKHSbIqTRqLoG8ANV/LBx8gSqdyHfu2cUMFuirMGPjjy+Zf9PHY1Xg?=
- =?us-ascii?Q?1SDWjuTXR8tqS0C1XmyFnwqYjtE3Z0/RDnk8Dw/qecEcxiR39X3TVXTK9zZz?=
- =?us-ascii?Q?+umUVA2VJ651ClyIHkLotCXkubGAKSF16WtMp0E5jfhhqBrO2W10ZIa6vs8J?=
- =?us-ascii?Q?koSmJmkA9SaOusAUx6dWs9G23FKkj7smEQwty/4rtnAhxRrlYpW/6wcDotAu?=
- =?us-ascii?Q?B6nUVwBa2SLWKfm34gW0E4qUeXKGPsNW3BDQs8G9cHYD+cC7qYgWkwRzT/Im?=
- =?us-ascii?Q?Y77srD8qjrUj0q3lX08ii9NIQN2BUEXL0Mjkxf664Z3yt5jVvW620ceisvE0?=
- =?us-ascii?Q?LnmxzBHJdmo4D4Go12fXL344e5HY0tPhgjFd/icK8U40iNEk783CxIutlwPO?=
- =?us-ascii?Q?8QP/H7O4QFtfW4cUEz+LmdvcZo5S6KdJCeJzmVnFiIBXo6AgJBrhxP1xsSut?=
- =?us-ascii?Q?N50k3Ia6fDZ7cdloGQzlbt6sK60tlXx5C1wAfebotlu7ulB7hWXQ3JhSbwuE?=
- =?us-ascii?Q?gssq8gUNqylUniECQB8NB0GThx997QErf28pFXlRv/WyLlYHrF5RJrYZ/Bdc?=
- =?us-ascii?Q?TLn3QmHw+TfT2EDdvVt0T93VAU2OXgl2ESHXEF4YZqEi0m6usgaXAKeeWUqd?=
- =?us-ascii?Q?NId/ShPO+XhPVViioLu8nHrXTV+DfKQX+A5y4Pc8a1MQKcZqe8DwS6B9G8XQ?=
- =?us-ascii?Q?8uuDU1pm8UpFns/r044cX4EyVhICTV8tssldNgJtCywJHa7AULsGZU8NNZy9?=
- =?us-ascii?Q?V4xDQ/2UaSZ6xEKw3+QRpmJL+UYBZ23MATxFFHY954oBI6S5yDlOQWA1+o/4?=
- =?us-ascii?Q?7YCi9ML0yiuJh2P8mmDmu7J0Rt6Fb3yDh+gnIzZGGeA0++gz0wmyRyCXbhwa?=
- =?us-ascii?Q?LkOzk7RT6iAKenjiRtESphtq12JcZZ4a0B5Dgyi6X0VMb+Z+qvo5JmtWfhOs?=
- =?us-ascii?Q?6Qp2P8e7dn2SclQRuqncDiy9WuQSEFOmMTh0j6g2FuRj2JvW4VrX2xQt8Qoc?=
- =?us-ascii?Q?9QmqeCbxEE6Bo7zP8+Qhah/mTAFIlsQVFYRGhQDrh1ovlv2ZGH1yGxxddJLm?=
- =?us-ascii?Q?C5kgYb/f0bAM0UAG6v7o2y5L4oFDlY/tqvu03kX4VhVMcyHleeEToFFwxArs?=
- =?us-ascii?Q?rHNBMyQ/enSfjl7I1b+lbFv1KFN9nMkvwOE0oF4TLOi3f0b/hZHUuIFHk6vB?=
- =?us-ascii?Q?5thy0uofBTZ8964E4drqWZyISce9EaOqiP74QyZJulSCQrS94WLdywydZZex?=
- =?us-ascii?Q?pcVMG+WBCA7gdfQ3dNaBU2maCxby8UvyyESxrXRixBE+N/PtTTMe0/iEpnxW?=
- =?us-ascii?Q?MrbLGm/35Nu1k0tPWYELo1mgKudF4m43jLh3Ovq9iJN2egDh4DjNcVbO5kfq?=
- =?us-ascii?Q?0nFOLuMvZ63HebJQ+qI5y1IQqhn+e4qHcLfxsOQdR7oRVSqHxFqSFehrrC9t?=
- =?us-ascii?Q?u2Yb7KyCtrdkTLFQ5O+RoHasX99Wn0CB7uPs5pBS37NYDizXnquCIa3BIfXt?=
- =?us-ascii?Q?rkJCQau9jzqjt3ICAdunFLzCOgV0KRQLce6Ckj4NTeIHaAVhCVzt9SEIdVVS?=
- =?us-ascii?Q?nDexBame5JssAAqDmN2l7A++EJQQQE73ZStWvwSDtD+8EhTxP/2xyIedfs67?=
- =?us-ascii?Q?4mDX/KyAe0ximetcHQ2Eq5pV2O/EpWFq3u5GbD+Vhdl2Udd9uAaHSiqclE8P?=
- =?us-ascii?Q?/VHnFg=3D=3D?=
+	=?us-ascii?Q?L94MOnkeMpWdkcgSk59SKu6skjwSEG2Y9t0Bba74iQR3fK95NAHIZLuwsL9Z?=
+ =?us-ascii?Q?aU+bIbHhS98zIQR0mYe4TZCFKBnlDA6rWbOspqmFDH5VjVQqyj2QWtLvE9jn?=
+ =?us-ascii?Q?5MDDrH5DDT7iByJB3j4bg4BnsBKGtxr+5xagcqEOqIUSGlTXPCS5/9FGTYDg?=
+ =?us-ascii?Q?kzhO0Qkdeicn4aGNxb3J8Pp2Sd3FCzvz4ppj2ruOkiB3vbsG02qHMWlOzUBw?=
+ =?us-ascii?Q?2Fb7x0S95JGt1//H8wcSx41iE9Pdf0WGaNcK97ivp4i4sRH026nNSOSE8fdZ?=
+ =?us-ascii?Q?9JYmD3nIJkIoWegFhUsvVX21rvKwFGvQ4JMXweqH1m1LXUcoXfdPmZ8cXZ4i?=
+ =?us-ascii?Q?iPfhAKUwCdvEa2w5mmf1I+/4CmxztZtJ6wDWyffKEz11H8jRBVBuV9glcvW4?=
+ =?us-ascii?Q?8AotsY2PrG5/QHP2lwk2pTCEvPFASvs+hOXJffA71yAl3pg1OcnA3IR4GRZq?=
+ =?us-ascii?Q?qiVXS0wplAZ8JucvIG6fQSQdeb26+ek9DpCaXFtunzw5VbBRjEqIJcYswMen?=
+ =?us-ascii?Q?7oP8DJK1eyAjnVFST6Ymzeomf83xh/Jo6K4RKVGLw9MZ2bPglU4yerY9I4bC?=
+ =?us-ascii?Q?fwWyYXxeSxhyIelocTzcAHIuq71OvFiO5nm9SLj2IKEp2m6p8yXFj5Mi1kBx?=
+ =?us-ascii?Q?uXKzQjueBCvJyBmx89imynMh+MkGWa+OYJP8O0CHuDqPZqmAwTEo19qq462H?=
+ =?us-ascii?Q?KJPyNNun3X3pjZKMIN4rUDka5Sg6fL5Sa28A4zjHHK2AXfbhPUU14ubHF85Q?=
+ =?us-ascii?Q?ll5yhZIn4HTxOoRqDdQhQptoMKr2VucDPOuG8yAd7TJzVh4Z/ed+/7BOmAb4?=
+ =?us-ascii?Q?kfQ3KmT8nF78d9h0TKgp1yYUKUDCZt907G18weiSo1TYA7jADmrhbxx4MzPn?=
+ =?us-ascii?Q?FxjF+PCvRlOyeEE+urrGJU3+g3BKLQPH59BtWOGw1gYmlifESN/f4h4TZ2JB?=
+ =?us-ascii?Q?AMimzlDj/oRpX6W0oICFzNCPjRK3RDtV+8nsexBfN+/q7JzfoPpLHwOEBfHx?=
+ =?us-ascii?Q?bcDlxvMMxJPOr7+jSqSKdnacDqRaSGeloWcC7s3v3GgqJMCUShBLpULZpNFL?=
+ =?us-ascii?Q?h9Vmc8qlWHei4qZHs+4t2n6GsAqjI+04U8a6TYSpA/BjtExQ41mlI9QfzSM/?=
+ =?us-ascii?Q?phtLjHQTUXSgMvZHONZYTvwkGegw1ubuy5RxYP87PVQO8CSO6GYeVjw6dVOa?=
+ =?us-ascii?Q?BlcV84ek9Op7ZnxNv5wttdXYaxP3zQyAgW8SeQWPgvrlNIAllmHMmLhEwoOB?=
+ =?us-ascii?Q?x325ZTCM4XeEEBpsNPMPTpqHdk50UpmC5GGSiK9HgTElwGqrVrMVtC/qx9dC?=
+ =?us-ascii?Q?ZDusD8ZA9fTifuBnU4KMgOpkdgQ3L3X9RgZ6P0uR5H84O/i2OqFQaoPbiUhv?=
+ =?us-ascii?Q?EVTp7otW8kukGhc1AgUsw+gCNU9fT1+msGGVSiru1dcy9ZLGm5/q77o028gt?=
+ =?us-ascii?Q?m5pagKShoZipgYGtHH375MfwZReL9rST7e/B2DG3T1vbgJ3u2hBqkWGlZ3Ah?=
+ =?us-ascii?Q?IlWUn/xQ0EZ92znMefZaOx8m4xyOngx8qDXsRZY0udh/Dgnd1112roF4Jg16?=
+ =?us-ascii?Q?8obMDbMSMk8CnI/I1zNznFAPrF+BE/ZWyRft2CQkXCle4nuxCeu+ZeSERzdO?=
+ =?us-ascii?Q?cf3z/8b2AL08v2SVY54NLVnGnnQ7HTfSdQZTTnI+wqKRWsgKN91NN/tG2nT/?=
+ =?us-ascii?Q?8DC2uw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	OM7J54Y9XtIQEDMWl2Vk6ooCNGmAhq8txxVr+7l0QFsIMXgWXZKKzIi2DUJsEg4wnTAs6gFzaWdtiHlcgStlzuF2hJu6kxmqwMt4tQkPX+mxe46WM6W4b+so6WU/+25NbzO/t2ZHsUj5tTbdkwpqjO1BPDtcErykTBsnI+BxXt81OYZjZyhaIlPbIff/vHJ1BgAAM4johHrtYJ6HivNFtBGwZQMd4V+9uPEDtWPyP0LcFdfbmqM80EgFg/QeNtHV3V4u4cCvTiEXfRMfo1dTjheCqqoXzYTBpC07cubjBGrAkKzw0D0UMwC/ehPp/J+OwbL5rOZy7JeKVwjpxd0y//IBopteDvkWYgfOW6Q7L6pBB6Jy74wKeLIY2xfn7WcG+gaCyt8MKCqXuZxnKYzABJ7fGJ4f60sNKau7rnkxiQOLUwN4B/47DwWzXSaKb7c8
+	izy10J8ssMmoxVJP4Glzc/Ng9LPGFJvmjIeqjFRv1gAKXZWC3K3p9YYzEJzisucLMqQCdsYWPG//T2uOOlhH6H9GDygBUgJKvBr10fuOCzysav/+27aI6g7XiQt6iGSYqv1XjACwjZb4cSGQ6TnIc6xf+cy3YRdRGF633c3I5eEssYz/ldZoEVsz+KvkoGM0LLxMQ7uf4zPpRiCIR36n6XcS4mJDUcjr/drllw5csj7izOBuFiMT/g6YjmfUF93BHyf46djAE5dRkxI8EUAKj2IujVXEU//zcJURWyLAbYnpnlpo+NtHfi6NDe0C2DPOHs71PamcBuKub0/m/xU52HF7A4xEdLhqTw6rbTQ0IoNZz+4okBX21fZokbQ9LeWFLBaQnOzIInQAuiBoovLQdH5kcU3xxT0ynle5qP1YKp7UyhBQWqAzy3qhhzVeEYjb
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 00:12:09.7449
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 00:12:12.2391
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8793340-e92a-4630-ea83-08de6a9487c8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4919e2c6-443d-46e7-4f38-08de6a94893d
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MW1PEPF00016159.namprd21.prod.outlook.com
+	CH1PEPF0000A34C.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPFEE36F3C1F
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7227
 
-Even though both AM62A and J722S2 devices have similar C7XV DSP deep
-learning engines, they are integrated differently to the Reset
-controller. Both devices provide module level global reset for the C7xv DSP.
-However, on AM62A an additonal local reset signal is provided which
-can be used to halt CPU execution with DSP core still powered on. 
+J722S uses the C7xv DSP based deep learning engine similar to AM62A,
+but the reset and module enable integration in the SoC is little
+different. It does not have local reset from power state controller.
+So, add a new compatible string to distinguish this difference.
 
-patch dependency/apply order :
-1) dt-bindings: remoteproc: k3-dsp: Add C7xv dsp variant for J722S
-2) arm64: dts: ti: k3-j722s-main: update compatible string for C7XV dsp 
-3) remoteproc: k3-dsp: use local reset for C7XV dsps on AM62A
-4) remoteproc: k3-dsp: add compatible string for j722s C7XV DSP
+Signed-off-by: Hari Nagalla <hnagalla@ti.com>
+Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+---
+ .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml        | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Testing done:
- Tested on AM62A SK and J722S EVM boards.
-
-Hari Nagalla (4):
-  dt-bindings: remoteproc: k3-dsp: Add C7xv dsp variant for J722S
-  arm64: dts: ti: k3-j722s-main: update compatible string for C7XV dsps
-  remoteproc: k3-dsp: use local reset for C7XV dsps on AM62A
-  remoteproc: k3-dsp: add compatible string for j722s C7XV DSP
-
- .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml   | 3 +++
- arch/arm64/boot/dts/ti/k3-j722s-main.dtsi                 | 4 ++--
- drivers/remoteproc/ti_k3_dsp_remoteproc.c                 | 8 ++++++++
- 3 files changed, 13 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+index b51bb863d759..c241d88f640b 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
+@@ -29,11 +29,13 @@ properties:
+   compatible:
+     enum:
+       - ti,am62a-c7xv-dsp
++      - ti,j722s-c7xv-dsp
+       - ti,j721e-c66-dsp
+       - ti,j721e-c71-dsp
+       - ti,j721s2-c71-dsp
+     description:
+       Use "ti,am62a-c7xv-dsp" for AM62A Deep learning DSPs on K3 AM62A SoCs
++      Use "ti,j722s-c7xv-dsp" for J722S Deep learning DSPs on K3 J722S SoCs
+       Use "ti,j721e-c66-dsp" for C66x DSPs on K3 J721E SoCs
+       Use "ti,j721e-c71-dsp" for C71x DSPs on K3 J721E SoCs
+       Use "ti,j721s2-c71-dsp" for C71x DSPs on K3 J721S2 SoCs
+@@ -127,6 +129,7 @@ allOf:
+         compatible:
+           enum:
+             - ti,am62a-c7xv-dsp
++            - ti,j722s-c7xv-dsp
+     then:
+       properties:
+         reg:
 -- 
 2.34.1
 
