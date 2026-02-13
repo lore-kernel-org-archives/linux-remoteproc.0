@@ -1,173 +1,231 @@
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012058.outbound.protection.outlook.com [40.107.200.58])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15073BB4A;
-	Fri, 13 Feb 2026 00:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770941546; cv=fail; b=VT6Qs2viPfn10dlzy2hy1lLhUbZEZ3kVunYl1rLF3NYP1g4a8F6IXqCfRK6IYF0qih//8zCQN3R1AOkVyueNTysAZnVrCJpdRQq92jnmhlC8EgdXvdM8nFg7qETZfJwJ41QhztvMYHTmITn4WkGPRdNjwaz1me+IVbxdBmEasGA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770941546; c=relaxed/simple;
-	bh=vCg2/4GahioIBwdraJ+VornoVtiEVKckyJ2QB0xVBr8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V8RiNDM89XQb0/zAPC72gcynEXJ8y1tkyTP4Xt4NGRpNi6RptL4rTSDHzYmCW3IoNrUlGzezjwDyeVERVdsJgCGPBYF7KvpX6AT8pfbSio5c+9eaLXUXAJT/mvB4hLirrMig04vVDgWa5LSkdOGStrjowyqFbyPBtZIZkO1ATwQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OYcBX9zj; arc=fail smtp.client-ip=40.107.200.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B6A19C542
+	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Feb 2026 01:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1770945763; cv=none; b=pc83CEo0AHxdauv/7nIg201qzNery79L5fh0AqyLtwjqEORpkGCZ9XwwmCfmlOvFNPOyK8lFR2xT2F3/IAMeYPA3bQimXwQh6PqiLgGgPVjxUrp6vIMvo2Uhj9qMKp7oe8y75VZRCNfX9+Hisd4EDLpz6hzqtvWSGPmbbCzdU/0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1770945763; c=relaxed/simple;
+	bh=2EeIMhJK8PFDk+lw2mlbKJHzWDiXMy1oQw7hKItHAM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5btGQ6mQ1gAiQJZT/ELXetdW0htgljGRDNlaL06pubrVbkBuFamVHoExhUg7X+Vih3KC3UHbw6QfWDz01K86MZK8cpA2EWZvJxxvNTa9Dutymd2J2G/wXZFaprJyHXvNgGkIcSKvfnl9GkTabDSmlCOqS43b++SCk5SBvLLJho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GiN7jc4s; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=f4GJFPZK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OYcBX9zj"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cqSNqUyBAR3qcw0Yc7ni9gVvkol0jLOV0feuxPgf0XNMIIWDWFK2w2fp1LNWJt6nvHOt1tMjK64RChQ55nu3QT9gTayHzhX75/VEIse6mMbrw14+V9KcKjkvRmHv8g7kgxKm4ihv4JRrlgJZXMWXxIyoeE3TnLTWtGJc0ESAIo9/249IyRnQ1xuRMYWjdxmduYiIBg23bd4hWZx8wtv/3kzy1ecqqyRio/xJncwjLSIDpcKWWpPYYTzFijSfXppNN34+a55N061gH8ZDLmqXpttpjAjpylL70ahsAZUn2h51hKj4z9Tu26YBcgOrR/mIPHH8JWdhd6FqnOR/QTi/Eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t91UVP9tU+pIsAnnSvJCtyUPC7V1YqvNdfZnE+NNHUc=;
- b=CIH5fHX1jIhww291+eGgAQbj8bABGEn7z7Y3DOjd8Q9v0RYHXkknnus0daeVyelsAsQftWBVpfTOCSjo3hjN2P1s/a9lLf1enUKYyJPlnYXJrkZ7owvdVzQ4dZHNeQdOTYHx+aFspFtQf6ws5Q/GSIgwfzCcM48A+sRvnMNItjNzau1PqAtYt1M2arX6mLSWBvUg5V6aiLZTyAs9l3WxC0lzCYm28DJStHPdVvr5qiI5Gm2I6RGDkkCAMq2VsfiJKn0SbkBypbzLL03xHcr5kxafR/be8FP2Kh72PqP2FKTc/0adp/PMxZU0GFDacQk99Ov0K31v7DcVUSp+wDGn1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t91UVP9tU+pIsAnnSvJCtyUPC7V1YqvNdfZnE+NNHUc=;
- b=OYcBX9zj/oKqRIuxUvCVa4LVevjMvXADHlPVH9FALPm5md0S0ABeCdTs3011plL7q2r9IA4kJz364acdNqj1IjXUNrKSE+3uyWCcbIaiin393HJC7vD3DM+tezoXtNzFkoEKvbWLxNNrxFPE00V5emtnxA/debB13CHT93lsft0=
-Received: from CH5P221CA0020.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:1f2::11)
- by DM6PR10MB4363.namprd10.prod.outlook.com (2603:10b6:5:21e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.13; Fri, 13 Feb
- 2026 00:12:22 +0000
-Received: from CH1PEPF0000A349.namprd04.prod.outlook.com
- (2603:10b6:610:1f2:cafe::bc) by CH5P221CA0020.outlook.office365.com
- (2603:10b6:610:1f2::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9611.12 via Frontend Transport; Fri,
- 13 Feb 2026 00:12:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- CH1PEPF0000A349.mail.protection.outlook.com (10.167.244.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9611.8 via Frontend Transport; Fri, 13 Feb 2026 00:12:21 +0000
-Received: from DFLE207.ent.ti.com (10.64.6.65) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
- 2026 18:12:17 -0600
-Received: from DFLE204.ent.ti.com (10.64.6.62) by DFLE207.ent.ti.com
- (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 12 Feb
- 2026 18:12:16 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE204.ent.ti.com
- (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 12 Feb 2026 18:12:16 -0600
-Received: from localhost ([10.249.48.175])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 61D0CGco3962077;
-	Thu, 12 Feb 2026 18:12:16 -0600
-From: Hari Nagalla <hnagalla@ti.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nm@ti.com>
-CC: <vigneshr@ti.com>, <s-anna@ti.com>, <b-padhi@ti.com>,
-	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kristo@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Hari Nagalla <hnagalla@ti.com>
-Subject: [PATCH 3/4] remoteproc: k3-dsp: use local reset for C7XV dsps on AM62A
-Date: Thu, 12 Feb 2026 18:11:50 -0600
-Message-ID: <20260213001151.17370-4-hnagalla@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20260213001151.17370-1-hnagalla@ti.com>
-References: <20260213001151.17370-1-hnagalla@ti.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GiN7jc4s";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="f4GJFPZK"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61D0SgO7723667
+	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Feb 2026 01:22:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=19MkWG0OHq3iuy1pxsE17MAI
+	lcD70cm6euhfGg/Aln0=; b=GiN7jc4sPOQ+hKBNNRyF+Y/x7ejsevvat8Gmkk6n
+	kTDgz1VXjV97lrxr2z4wXnxE4MDxGrjh+LnVflguuO4+Gg/WmnCBIA2jgOar2IuK
+	i23tnTOtQ1c+HpSPZrVf12lA93+UU0lPY7dW9LCc3FASgKyAGbP9JhdbAly6eu+O
+	5+mv68Gt7Gr2xLoko4hM/mJDKvVEvyDXlvQt3GDTzJOE92qf5iKN5ojlQDIs3lt9
+	Uud2NR3CrCwOKuJpRtE/90Wc91aV9YMyM6KELm0/ctwnKy05JaJYb14s/v5lJMrG
+	2so2l8oKeMqngADv4L5oI/cZk+aBfY2K1U36M5b8HIDjuw==
+Received: from mail-dy1-f199.google.com (mail-dy1-f199.google.com [74.125.82.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4c9cyab1jq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Feb 2026 01:22:41 +0000 (GMT)
+Received: by mail-dy1-f199.google.com with SMTP id 5a478bee46e88-2baa7366f9aso2971416eec.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Feb 2026 17:22:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1770945760; x=1771550560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=19MkWG0OHq3iuy1pxsE17MAIlcD70cm6euhfGg/Aln0=;
+        b=f4GJFPZKIegNX9pqbv4oBmqewMiKHlh2OLe82D5p7xQj6hkLi1RlPZPgYWNpjD8Q6s
+         2cyohCNiPIzjgnu41ZW44K7izOVDB4Yk/PxLvuQ8mFJbx3V8BMWVwrpH7hBggLZ99Ca9
+         vc95b8jO5vitVeEQAf4oRP1IWqtZhuEStpTykFxYzPIbEen0ac9cDgLyosINiGpFE/HN
+         ckVwzLcaXhGBAELeY5sFjulKu1uWP4e2cLUMXqHumPHCLqGgHtyNAto+tSdcNtCN87eS
+         LnVfBQbB9xR08k79cGpzB1COPA01wa0xvZMtSLlp2sgKNjK4qjuMj3hU22lpqL8nRvsr
+         sQGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770945760; x=1771550560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=19MkWG0OHq3iuy1pxsE17MAIlcD70cm6euhfGg/Aln0=;
+        b=PhavHGuLz8bJgs6oemw9brS9pbrM0vNxO8+8VXE3rK3afypz0xhCH5zO91lN3mfLAZ
+         LLSxBSamom386l2Sq/KqHFzNQj4jZIxi0eX6GD/vF0DpGv6XDKd4JsjyNVannsy7Or7R
+         4h98GgmizRkN3Shz99RTbEYQEaBj7uH3IyJ3DDaKrVX5lzf8wIBiNdmXDtordfEbhpTr
+         +MW/05+RAUX8BSZF/1+jUNDLTUGxLF+cIAWp58CqQjV9qNjYxu+nfASl50Wq9nOeYrOQ
+         oXSGAfM6mfcNPM/D2XCWyCHPF4ysrE9jbPEWTyvZn0Oqo1BeP33d7fuWQrk5iSbjKMgA
+         I5HA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZRq0R9A8alM3wAd2ezvuZaWlZ7MbHK232dI2fZJfRmMcSGnT/55jagugjOiJ+7wj13fvPiQgXo0H9CBsMApTi@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6Pzuq5Va2fCeuS9mehaOz1VufDA2d2zkXJvyEf6OzFpyVKymi
+	BO6W6psj6ibMXq2HYmmrYvhTJ2MXWkVlChZRneWfMM/jDZO9pCraC7TMqMVMT/ZpfpGXhywHfKS
+	CjWP+Wc4mCK3iR4XbK/W9OYcN62vxOC6i3KVeJ+0pe9/lCICgramQeCqH12HAKTLh9zqYDCw3
+X-Gm-Gg: AZuq6aK6+MTwpvkTDrUHizeNg0X8Tjzrjej1SwvcIDy21MU8u9m9prnIy4bxNV4Co7d
+	AhZhSqqLpF4Pi6nSnIOtNXez+NOmUz7a8SQWIm9tCQtbeeCI9S/ZMiIdfRuHuAGW2N3X2GDSVio
+	MN4hG43vpIkm2f6fP5PaD18yAm+MhE9cqb6wmSxNO9fXZnumErm8CHFHM9rsFDkNeJSMu0mBZUN
+	RSWNGNJM0L7hrN56ZN7/A8pxYDXK6Jh0rzcLeV7ijmIL5g03wDav1Wyd+EI06d4YuXJaHZdZ0i5
+	6YulCj88e4qhPcTXMSbWtzsmHKqnyVimNdViNmcZMHzet6M6fsD2P0pzelLM8fcaVkmPowoeXTm
+	GH5+KSJw7KzTzUQi62iYzvitJLPojnrDQTBXVgNiNVab4NOsp3kRptd7vKqe2/gvd
+X-Received: by 2002:a05:7301:168e:b0:2b8:6573:2d35 with SMTP id 5a478bee46e88-2babc42e1f4mr92363eec.2.1770945760210;
+        Thu, 12 Feb 2026 17:22:40 -0800 (PST)
+X-Received: by 2002:a05:7301:168e:b0:2b8:6573:2d35 with SMTP id 5a478bee46e88-2babc42e1f4mr92328eec.2.1770945759451;
+        Thu, 12 Feb 2026 17:22:39 -0800 (PST)
+Received: from QCOM-aGQu4IUr3Y (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ba9dcead67sm4637540eec.26.2026.02.12.17.22.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Feb 2026 17:22:39 -0800 (PST)
+Date: Fri, 13 Feb 2026 09:22:32 +0800
+From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Subject: Re: [PATCH v3 3/5] dt-bindings: remoteproc: qcom,pas: Document pas
+ for SoCCP on Kaanapali and Glymur platforms
+Message-ID: <aY582M8dgOrKW39w@QCOM-aGQu4IUr3Y>
+References: <20251223-knp-remoteproc-v3-0-5b09885c55a5@oss.qualcomm.com>
+ <20251223-knp-remoteproc-v3-3-5b09885c55a5@oss.qualcomm.com>
+ <20251223-furry-mighty-agouti-a222f7@quoll>
+ <ae532ff4-1a96-4dc1-9fa0-81305624c9c9@oss.qualcomm.com>
+ <f4ef4a57-4192-4dbf-939c-46efa13c0391@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A349:EE_|DM6PR10MB4363:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb28339d-573d-444a-fb3e-08de6a948e9e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WSWGC89K8i5WA1bwkky774n94Zqfy3fDL1ImACHjq7AozmE1QCTClqUy/2O6?=
- =?us-ascii?Q?lWVNGCJ2eiUWroa1Nwi6fjZGyA2oA+0EuH+/V5DuPAbC92i4Kwlzh0s5Ex/q?=
- =?us-ascii?Q?J4H/cQxHrQ5JfhAzxbFlIQk65tWQDVAEFjA4lLtCqzbfqIS7UbJkabvtjTZj?=
- =?us-ascii?Q?GI+rbJSdkB/f3pqkVOUcFaTPnheWf9FRNWeHUXsWIeI4lwnOZsiLPBWFBS3Q?=
- =?us-ascii?Q?ArDYQiIuz86oPb4yS6xkLXV3i/suPobsbIVS7q5VRgNIkruGiZJ7kD09IRZX?=
- =?us-ascii?Q?FR2cLNp9pL3EwEjZIJQir7Xj5t0eRBxtJ8JCAiQfDq2455IuUZ3YU6FsRaZJ?=
- =?us-ascii?Q?lHz9vSyVI54Si9Pqlh7op0q43gCxUIXFG0ViVbD8ysnCengeUfqDCZC75/fC?=
- =?us-ascii?Q?QWXzCHtvC2bzPK6KQH1Ik9fEN24NkHVSTfcM/gk3+DGxcxwyUPBsedru9Sud?=
- =?us-ascii?Q?rkrli9sxJq2p1mdw7b/DsehdsR5kgpuboxOvhfaVeQyxK9GXnLfr0ys0KXZG?=
- =?us-ascii?Q?W9KJO955ahwituY2GXyB1u1gOW9rhDcNrNKhlNO5Rjgqn68akMWTen1GLFzR?=
- =?us-ascii?Q?TLTIyNHcDf0jRq5YD5Ogb4ZQP0z2WGL59cXz1t2xKXzXoaRRvdiP51f3eXqE?=
- =?us-ascii?Q?d6unJzpUHNQmMFc+Koff271sL/1c0aUloOaRrl/vN/tEPxEhmoyQdU+qmeSf?=
- =?us-ascii?Q?8X2yOq7JeNFbl6+8PM49otERzP6B43heMwPEqoiitikZ/2ZQh+oG0pomTK1P?=
- =?us-ascii?Q?ObRLl3INRnfDjAvnWfwl6Hkh+CEkbTqwF8egkYMETw0SfhIpu6hU0PUwxa4O?=
- =?us-ascii?Q?5KjmRbLJvZfY9jMWGByYCk+pp1UJPcZDX6amdggbC73dJpfhaKEOmlqevUJA?=
- =?us-ascii?Q?b8XzLaJwEDkoX0hG3QO/AR8M8T9t5VkfXZhXBf9hJjSGSZmPdt0Mi4rU4chm?=
- =?us-ascii?Q?GoQX57xrL1sXoQy7DlPEZWc/FoDNedC7hl19sZsQI4tUESQlZcLUYceadBQ4?=
- =?us-ascii?Q?hSzdfObkERV2zcthwmfe5LD3bVGNIfKse4HdMOfN1d2RVx+wieVnKq57iTTV?=
- =?us-ascii?Q?V8wnqs7TmV8+ap4l4lOppn5NtP6ptqhJrcFo8g/IeYcbRkUVidawjmD6nPfQ?=
- =?us-ascii?Q?VmYwHM526Fe5pLREL1sRDP6YJQHRXad+tY4pQEl7/UGvIU3BUPSzVaD3XAWr?=
- =?us-ascii?Q?m4kSsB2srZ2x1qYuf2MJLnbFN83vMt0Ar1+PqZsYdcTuq45t+jwKNS+8UoqT?=
- =?us-ascii?Q?K6eKz8BWL9ArWIU4k42k3HES9cy80k21RLfOfK6gNLdZ3ZkQuAfs/JpRgnbu?=
- =?us-ascii?Q?TFq0h30Rc2qcstK6qI7EDMuk0H5lmV5omo8on61PIs5wC2776//mhCCXhwSR?=
- =?us-ascii?Q?xZrj3TN4zu1NvL4uHxrQShCXL+jxCcx0pu7i9UO0N2D+781hONxrntLCAqVb?=
- =?us-ascii?Q?aSDGXjgrxgzYlSMq8Sp+6zMZ+df413Cy79PAi1Ogw7rSwCUnLpCZ4nnOWUXx?=
- =?us-ascii?Q?xCcwWvgc1NC1T4pAooj04ND/Vdjfu/oWEEoHQqdR/XV0JGE/p+HLHbwquoJo?=
- =?us-ascii?Q?7nBxu4pnGxDX2tsGxdLbL03peAfMtFHNGGlnG/PXZrVE7Ai8n+kzcA3ap6r3?=
- =?us-ascii?Q?VyVENrr9Y3toAo+4bbvnDkLUn2rKOGNWrmnOPInVZhrobc5noaZRH0steX7Q?=
- =?us-ascii?Q?1/lnhQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	aaoMunGxpbFMZGnCX3mLN4HOEAgrwqHcgtpAO4DFQ+/CLgyQzBMJ+Wq5ZHp1L7RONAJO2aImVEyv5D9yFTqUt0UN9lczTFtLH4DFD+IkHo9aG4EiCyjXRsW/fYxZYFh8pDu3XYikqiNeLYQG4iMkbPqiYpzCIzlIF6oqQmLbv2AQzcWNlE5+CxH6ccpcSGmQv3eyHKQlo9Mbu8gdMN5VUXM+raDA5jbEmjjajYvdp6UwVX3HZkAylfNWO+bUiH3XUlxR9DxvPuwtVuPJoDLhtFfGtXlZTxRC0EzqcYcGeuURi2zDe0IAZwMCJH2sb+9S/NlB8ked7VIRMmaauTg4L+LohdyJsiIZsJD19n4IGXLNlruzySvFNOa2T42BQgkynX4ix6acJVu8TsSNvBnEMa2Gp/zk3C6VmsLnd+X/ZZdq2ksngCfbCK4nuG/6pEk9
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2026 00:12:21.2674
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb28339d-573d-444a-fb3e-08de6a948e9e
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A349.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4363
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4ef4a57-4192-4dbf-939c-46efa13c0391@kernel.org>
+X-Proofpoint-GUID: Je_eu8LyxfyuXoMFLMY8j9E9KEOZFPvl
+X-Authority-Analysis: v=2.4 cv=OrBCCi/t c=1 sm=1 tr=0 ts=698e7ce1 cx=c_pps
+ a=cFYjgdjTJScbgFmBucgdfQ==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=kj9zAlcOel0A:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
+ a=VwQbUJbxAAAA:8 a=SvtFGoktTUcKB-mbNKIA:9 a=CjuIK1q_8ugA:10
+ a=scEy_gLbYbu1JhEsrz4S:22
+X-Proofpoint-ORIG-GUID: Je_eu8LyxfyuXoMFLMY8j9E9KEOZFPvl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjEzMDAwOCBTYWx0ZWRfX2SgELLHXuVhC
+ 0kg5xoK5wSEoz53BWL4fnvi606ktar32PAmGgUE4Ei7IkhKKX8wR6Ee/nPT3q3BWZwYVK3pJKrT
+ 43UX4htGtmTw8gU6Xla9kRuTKORZjmnYM+lDCepRX4C09HgAegPEeU3wFQgMEkfx1r6G1ueHrC+
+ mRT2IWvWGZSXPTJN55WOHUUibY4tzIy7zHs6Wf61l2KT0z42ejrU9bmOnLfpGGBQ5hFzl7NsmmW
+ C+bGa5CwScHGkWEmXVFhjfYh8LZUfdKxRTNKWhpEaZH9H1og9/btYiDxn4rchadMC7zCr94do9x
+ UK4/77NWip1RiqYc1BIo1kCU0dTncH65oZi+EB1nY2YnrGr99pupc4bi27qbHneUryQBhmhiA8i
+ 5acop3rCobgu6stAOdFlWJnCvWr2faCKmG01imxaVv5+2c6ZslMzoX5A2e3vivO+Y0M0ne0fsT1
+ HLRQ4B1Mci6H3ejHIRw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-12_05,2026-02-12_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 bulkscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ clxscore=1011 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2602130008
 
-The C7XV deep learning engine dsp core in AM62A has a local reset line
-from power state controller. In the absence of using the local reset,
-it is in an unknown state and when the module is turned on, CPU starts
-executing and may go into a bad state. Set local reset to 'true' for
-AM62A, so that the remote proc driver properly asserts the local reset
-before enabling the module to load the firmware. And it is deasserted
-after firmware load is complete to start the core.
+On Wed, Dec 24, 2025 at 09:34:30AM +0100, Krzysztof Kozlowski wrote:
+> On 24/12/2025 04:16, Jingyi Wang wrote:
+> > 
+> > 
+> > On 12/23/2025 9:29 PM, Krzysztof Kozlowski wrote:
+> >> On Tue, Dec 23, 2025 at 01:13:49AM -0800, Jingyi Wang wrote:
+> >>> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> >>> index 63a82e7a8bf8..149e993282bb 100644
+> >>> --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> >>> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> >>> @@ -33,16 +33,22 @@ properties:
+> >>>        - description: Handover interrupt
+> >>>        - description: Stop acknowledge interrupt
+> >>>        - description: Shutdown acknowledge interrupt
+> >>> +      - description: Pong interrupt
+> >>> +      - description: Wake acknowledge interrupt
+> >>>  
+> >>>    interrupt-names:
+> >>>      minItems: 5
+> >>> +    maxItems: 7
+> >>>      items:
+> >>> -      - const: wdog
+> >>> -      - const: fatal
+> >>> -      - const: ready
+> >>> -      - const: handover
+> >>> -      - const: stop-ack
+> >>> -      - const: shutdown-ack
+> >>> +      enum:
+> >>
+> >> No, no. Stop doing random changes. NAK
+> >>
+> >> Now you remove strict order (see writing bindings) and claim every
+> >> device like SM8550 ADSP PAS has any order.
+> >>
+> >> And it is now de-synced with interrupts. Read writing bindings - this is
+> >> clearly described there at line 90!
+> >>
+> >> You can only grow existing list.
+> >>
+> >>
+> >>
+> > 
+> > the interrupt for soccp is defined as 
+> > "wdog","fatal","ready","handover","stop-ack","pong","wake-ack"
+> > while other pas could be:
+> > "wdog","fatal","ready","handover","stop-ack","shutdown-ack"
+> > 
+> > so grow existing list is not work for this,
+> > 
+> > In the v1, got your comments to adjust pas-common.yaml for the interrupt:
+> > https://lore.kernel.org/all/861b6ede-f168-44e6-85bd-10cf04dbcec7@kernel.org/
+> > 
+> > and in v2, interrupt are moved as part to the "allOf" with if-else and
+> > also got NAK:
+> > https://lore.kernel.org/all/20251030-venomous-apricot-falcon-b3fd64@kuoka/
+> > 
+> > Could you please share a example for us to understand how to maintain it in
+> > pas-common.yaml, not define if-else and has strict order at the same time?
+> > That will be very helpful.
 
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
----
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I guess something like this would work?
 
-diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index d6ceea6dc920..7881c711d872 100644
---- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-+++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -211,7 +211,7 @@ static const struct k3_rproc_dev_data c7xv_data = {
- 	.mems = c7xv_mems,
- 	.num_mems = ARRAY_SIZE(c7xv_mems),
- 	.boot_align_addr = SZ_2M,
--	.uses_lreset = false,
-+	.uses_lreset = true,
- };
- 
- static const struct of_device_id k3_dsp_of_match[] = {
--- 
-2.34.1
+  interrupt-names:
+    minItems: 5
+    maxItems: 7
+    oneOf:
+      - items:
+          - const: wdog
+          - const: fatal
+          - const: ready
+          - const: handover
+          - const: stop-ack
+          - const: shutdown-ack
+      - items:
+          - const: wdog
+          - const: fatal
+          - const: ready
+          - const: handover
+          - const: stop-ack
+          - const: pong
+          - const: wake-ack
 
+> > 
+> 
+> Can you read the docs first? This is not a ping pong, where you keep
+> sending till it passes the review. If I provide you idea, then you will
+> send something whatever based on that because you still did not read the
+> rules governing bindings.
+
+Krzysztof,
+
+Feel free to shout at me if my suggestion is not what you have in
+your mind :)
+
+Shawn
