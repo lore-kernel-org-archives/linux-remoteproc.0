@@ -1,392 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704362FD7C3;
-	Sun, 15 Feb 2026 17:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABA8182B7
+	for <linux-remoteproc@vger.kernel.org>; Sun, 15 Feb 2026 22:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771177294; cv=none; b=MZdzLpCvsOEW/OorqDfGhtuh+VGSodaNBH8SKbr2yBEb4PkKrtGoE0Ba/LbgSp3iKLFUvFmM7ZFobppEGVIwUTh0vM+jMdrveCEOW3nJXCvzMAWC1Oex3oisIIgF5fx9yWW9roTyvvkHS7uZSL+AkPQa0xDa5Afk+nmaT0ZFxvk=
+	t=1771196119; cv=none; b=MeP2UUh4IbwA42QKxRcFEItGplQC+9GnEzUpcgnJSeqzumE2Q4s+qNJRjb8M1JUTUjPxXs4U4pIJhDbQRK/hmVIxdasYJBTA8TWz+aA5X1+9vq7wYgKQNJt9lwDHS9UM3eA/eg0IfOaHGKQyzVwhPbXcezyc3Ye9Qp4IoN2QJEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771177294; c=relaxed/simple;
-	bh=LbQM1SY4h+dsVwn+X2vz/LGXYAHWPx+4nDtz+WVRXY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Q4kuAQCY3U9BI7denXF+pexXPrIDJagKT/fhdFVglX54zYxFlgvDzc0krRFdZBlvjaIdRuYQb446Uy1taXiimlS1QTbejwL2bWB6Xmmgc9SWWdB4lJI/eFxaiRlaeexu5Fhb5iD5FLDNJE8UOv03p87j0mQDLRnsqa9XFuN9DzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdK6NmcF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771196119; c=relaxed/simple;
+	bh=TNyRzSBr/AtNCce67q749OZFUSphAmrWNkHgydf587w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fvpEgfoTzUFCYauOomFf+Htr4kkxB7JUQBbrtCNa6pt/4Aw6Qy0b1z2zY8mUiYa+Mh6PL0nXwJJQ2H8jtSR9Srhl7fmysa9RKG6zihlX9joImhnmo2jhGqf3StdwpRPFHIOsNUtB3QtLdjgBgc01wAfYscynICdXDpsPKpIqHEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Khem6T/L; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdK6NmcF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0D7FC4CEF7;
-	Sun, 15 Feb 2026 17:41:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771177294;
-	bh=LbQM1SY4h+dsVwn+X2vz/LGXYAHWPx+4nDtz+WVRXY4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WdK6NmcFacf//rpk+7mVBNLf9Uqw6vxsXU1TO8FE6CTNQvYRINSdI9AGMmCd4lVEx
-	 veFIrQHD0RHWZ/N2p9mhKY/gARXQ+6GdUeVOsZNT7kKxd286kULU027R63mp9utP6p
-	 2zyO8Ik66k6+NDYQRPZfPiylsL7d2boC5ZMXhYqBpfILEa0JQo1xYr4cVkaEI2OkbA
-	 Wb8BXkWKcPdQu8Bj/SXXeQfXqo4Vy0oiaQnXZvDkR3+8xuZe/HwSCB5e6DnsEWTfS4
-	 YYvBRnXlsfHkrDuZkHTz0LkO74O9NekcL1vlfXd8/ad5wVlhEjLPE5efOuBSalQuYp
-	 qGgPvZHkaB6RQ==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	andersson@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Khem6T/L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=fjqK1CnmMLnynK
+	mUkq2NGNXQxQWHiqDXRDV1cxXQMFc=; b=Khem6T/LPXw9DcbGo2IAw6sOzSG6U5
+	H+3X7IjRDdV59N8cB8IV56DQabVc5sY0EGs7isNQKWgzIcrflS0xfTsyWykrOCIN
+	uXqpNDup5wRHcdl/ovjJEz4Kph6I3yNxxllxraRzP/cLNeSBfT24ixK4hIpVTbFu
+	KPhRq0XDDSGz0w/xy9Jv1AYH2A9nrni1JQ2Z+U+GiSqkbGNbWo9dEOvx68PTFusm
+	BA+a4Gt8A7K2lky5w3aEzE14WxR8ylMT5G5nh+AxRcgKht+aPrFfq2KQigyR28W+
+	r4SDphAActIw7+YT8hOnwMb1RpfMPbwjCPddRcsyeOy0MBMvVqYD3Zag==
+Received: (qmail 3011230 invoked from network); 15 Feb 2026 23:55:04 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 Feb 2026 23:55:04 +0100
+X-UD-Smtp-Session: l3s3148p1@reycuuRKXIQujns5
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.19-5.15] remoteproc: mediatek: Break lock dependency to `prepare_lock`
-Date: Sun, 15 Feb 2026 12:41:18 -0500
-Message-ID: <20260215174120.2390402-10-sashal@kernel.org>
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Antonio Borneo <antonio.borneo@foss.st.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Boqun Feng <boqun@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	driver-core@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+	Will Deacon <will@kernel.org>
+Subject: [RFC v2 PATCH 00/13] hwspinlock: move device alloc into core and refactor includes
+Date: Sun, 15 Feb 2026 23:54:40 +0100
+Message-ID: <20260215225501.6365-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260215174120.2390402-1-sashal@kernel.org>
-References: <20260215174120.2390402-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.19
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Tzung-Bi Shih <tzungbi@kernel.org>
+My ultimate goal is to allow hwspinlock provider drivers outside of the
+subsystem directory. It turned out that a simple split of the headers
+files into a public provider and a public consumer header file is not
+enough because core internal structure need to stay hidden. Even more,
+their opaqueness could and should even be increased. That would also
+allow the core to handle the de-/allocation of the hwspinlock device
+itself.
 
-[ Upstream commit d935187cfb27fc4168f78f3959aef4eafaae76bb ]
+This series does all that. Patches 1-7 abstract access to internal
+structures away using helpers. Patch 8 then move hwspinlock device
+handling to the core, simplifying drivers. The remaining patches
+refactor the headers until the internal one is gone and the public ones
+are divided into provider and consumer parts. More details are given in
+the patch descriptions.
 
-A potential circular locking dependency (ABBA deadlock) exists between
-`ec_dev->lock` and the clock framework's `prepare_lock`.
+One note about using a callback to initialize hwspinlock priv: I also
+experimented with a dedicated 'set_priv' helper function. It felt a bit
+clumsy to me. Drivers would need to save the 'bank' pointer again and
+iterate over it. Because most drivers will only have a simple callback
+anyhow, it looked leaner to me.
 
-The first order (A -> B) occurs when scp_ipi_send() is called while
-`ec_dev->lock` is held (e.g., within cros_ec_cmd_xfer()):
-1. cros_ec_cmd_xfer() acquires `ec_dev->lock` and calls scp_ipi_send().
-2. scp_ipi_send() calls clk_prepare_enable(), which acquires
-   `prepare_lock`.
-See #0 in the following example calling trace.
-(Lock Order: `ec_dev->lock` -> `prepare_lock`)
+This series is based on the cleanup series "hwspinlock: remove
+platform_data from subsystem" and has been tested on a Renesas
+SparrowHawk board (R-Car V4H) with a yet-to-be-upstreamed hwspinlock
+driver for the MFIS IP core. A branch can be found here (the MFIS driver
+is still WIP):
 
-The reverse order (B -> A) is more complex and has been observed
-(learned) by lockdep.  It involves the clock prepare operation
-triggering power domain changes, which then propagates through sysfs
-and power supply uevents, eventually calling back into the ChromeOS EC
-driver and attempting to acquire `ec_dev->lock`:
-1. Something calls clk_prepare(), which acquires `prepare_lock`.  It
-   then triggers genpd operations like genpd_runtime_resume(), which
-   takes `&genpd->mlock`.
-2. Power domain changes can trigger regulator changes; regulator
-   changes can then trigger device link changes; device link changes
-   can then trigger sysfs changes.  Eventually, power_supply_uevent()
-   is called.
-3. This leads to calls like cros_usbpd_charger_get_prop(), which calls
-   cros_ec_cmd_xfer_status(), which then attempts to acquire
-   `ec_dev->lock`.
-See #1 ~ #6 in the following example calling trace.
-(Lock Order: `prepare_lock` -> `&genpd->mlock` -> ... -> `&ec_dev->lock`)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/hwspinlock/refactor-alloc-buildtest
 
-Move the clk_prepare()/clk_unprepare() operations for `scp->clk` to the
-remoteproc prepare()/unprepare() callbacks.  This ensures `prepare_lock`
-is only acquired in prepare()/unprepare() callbacks.  Since
-`ec_dev->lock` is not involved in the callbacks, the dependency loop is
-broken.
+Buildbots seem to be happy, too.
 
-This means the clock is always "prepared" when the SCP is running.  The
-prolonged "prepared time" for the clock should be acceptable as SCP is
-designed to be a very power efficient processor.  The power consumption
-impact can be negligible.
+Looking forward to comments. I especially wonder if the last patch
+should stay as-is or if it should be broken out, so individual
+subsystems can pick up their part (with a fallback in place, of course,
+until the last user is converted).
 
-A simplified calling trace reported by lockdep:
-> -> #6 (&ec_dev->lock)
->        cros_ec_cmd_xfer
->        cros_ec_cmd_xfer_status
->        cros_usbpd_charger_get_port_status
->        cros_usbpd_charger_get_prop
->        power_supply_get_property
->        power_supply_show_property
->        power_supply_uevent
->        dev_uevent
->        uevent_show
->        dev_attr_show
->        sysfs_kf_seq_show
->        kernfs_seq_show
-> -> #5 (kn->active#2)
->        kernfs_drain
->        __kernfs_remove
->        kernfs_remove_by_name_ns
->        sysfs_remove_file_ns
->        device_del
->        __device_link_del
->        device_links_driver_bound
-> -> #4 (device_links_lock)
->        device_link_remove
->        _regulator_put
->        regulator_put
-> -> #3 (regulator_list_mutex)
->        regulator_lock_dependent
->        regulator_disable
->        scpsys_power_off
->        _genpd_power_off
->        genpd_power_off
-> -> #2 (&genpd->mlock/1)
->        genpd_add_subdomain
->        pm_genpd_add_subdomain
->        scpsys_add_subdomain
->        scpsys_probe
-> -> #1 (&genpd->mlock)
->        genpd_runtime_resume
->        __rpm_callback
->        rpm_callback
->        rpm_resume
->        __pm_runtime_resume
->        clk_core_prepare
->        clk_prepare
-> -> #0 (prepare_lock)
->        clk_prepare
->        scp_ipi_send
->        scp_send_ipi
->        mtk_rpmsg_send
->        rpmsg_send
->        cros_ec_pkt_xfer_rpmsg
+Happy hacking,
 
-Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-Tested-by: Chen-Yu Tsai <wenst@chromium.org>
-Link: https://lore.kernel.org/r/20260112110755.2435899-1-tzungbi@kernel.org
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
+   Wolfram
 
-LLM Generated explanations, may be completely bogus:
 
-Good - the `prepare`/`unprepare` ops were added in 2020, well before any
-current stable tree branch point. They exist in 5.10, 5.15, 6.1, and all
-newer stable trees.
+Wolfram Sang (13):
+  hwspinlock: add helpers to retrieve core data
+  hwspinlock: add callback to fill private data of a hwspinlock
+  hwspinlock: omap: use new callback to initialize hwspinlock priv
+  hwspinlock: qcom: use new callback to initialize hwspinlock priv
+  hwspinlock: sprd: use new callback to initialize hwspinlock priv
+  hwspinlock: stm32: use new callback to initialize hwspinlock priv
+  hwspinlock: sun6i: use new callback to initialize hwspinlock priv
+  hwspinlock: handle hwspinlock device allocation in the core
+  hwspinlock: move entries from internal to public header
+  hwspinlock: remove internal header
+  hwspinlock: sort include and update copyright
+  hwspinlock: refactor provider.h from public header
+  hwspinlock: refactor consumer.h from public header
 
-### 5. User Impact Assessment
+ Documentation/locking/hwspinlock.rst          |   2 +-
+ MAINTAINERS                                   |   2 +-
+ drivers/base/regmap/regmap.c                  |   2 +-
+ drivers/hwspinlock/hwspinlock_core.c          | 129 +++++++++++++-----
+ drivers/hwspinlock/hwspinlock_internal.h      |  72 ----------
+ drivers/hwspinlock/omap_hwspinlock.c          |  29 ++--
+ drivers/hwspinlock/qcom_hwspinlock.c          |  69 +++++-----
+ drivers/hwspinlock/sprd_hwspinlock.c          |  41 +++---
+ drivers/hwspinlock/stm32_hwspinlock.c         |  28 ++--
+ drivers/hwspinlock/sun6i_hwspinlock.c         |  38 ++----
+ drivers/iio/adc/sc27xx_adc.c                  |   2 +-
+ drivers/irqchip/irq-stm32mp-exti.c            |   2 +-
+ drivers/mfd/syscon.c                          |   2 +-
+ drivers/nvmem/sc27xx-efuse.c                  |   2 +-
+ drivers/nvmem/sprd-efuse.c                    |   2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c         |   2 +-
+ drivers/soc/qcom/smem.c                       |   2 +-
+ drivers/spi/spi-sprd-adi.c                    |   2 +-
+ .../{hwspinlock.h => hwspinlock/consumer.h}   |  29 +---
+ include/linux/hwspinlock/provider.h           |  60 ++++++++
+ 20 files changed, 268 insertions(+), 249 deletions(-)
+ delete mode 100644 drivers/hwspinlock/hwspinlock_internal.h
+ rename include/linux/{hwspinlock.h => hwspinlock/consumer.h} (93%)
+ create mode 100644 include/linux/hwspinlock/provider.h
 
-This affects **MediaTek SCP on ChromeOS devices** (Chromebooks with
-MediaTek SoCs). The deadlock scenario involves:
-- ChromeOS EC communication via rpmsg (SCP IPI)
-- Clock framework interactions
-- Power domain/regulator/device link chains
-
-This is a real-world deadlock that lockdep detected. ChromeOS devices
-are widely deployed, and a deadlock in the EC communication path could
-cause a complete system hang.
-
-### 6. Risk Assessment
-
-**Changes are mechanical and low-risk:**
-- All `clk_prepare_enable()` → `clk_enable()` (7 call sites)
-- All `clk_disable_unprepare()` → `clk_disable()` (7 call sites)
-- New `scp_prepare()`/`scp_unprepare()` callbacks added to `scp_ops`
-  (simple wrappers)
-
-**The pattern is well-established** - `clk_prepare()` is meant to be
-called in sleepable context, `clk_enable()` can be called from any
-context including IRQ. Separating them is a standard clock framework
-pattern.
-
-**Total: 30 insertions, 13 deletions** across 2 files - small and
-contained.
-
-### 7. Dependency Check
-
-The commit is self-contained:
-- No subsequent commits in these files depend on it
-- The `rproc_ops.prepare`/`.unprepare` callbacks exist since 2020
-  (present in all stable trees: 5.10+)
-- No other infrastructure changes needed
-
-### Verification
-
-- **git log master** confirmed commit d935187cfb27f is the exact commit
-  being analyzed
-- **git log --oneline d935187cfb27f..master** confirmed no subsequent
-  commits modify the same files (no dependencies)
-- **git log/show 33467ac3c8dc8** confirmed `prepare`/`unprepare` ops
-  were added to `rproc_ops` in April 2020, present in stable trees 5.10+
-- **Code review of remoteproc_internal.h** confirmed
-  `rproc_prepare_device()`/`rproc_unprepare_device()` wrappers exist and
-  are called in `rproc_fw_boot()` and `rproc_shutdown()` paths
-- **Reviewed-by and Tested-by** from Chen-Yu Tsai (wenst@chromium.org)
-  confirms the fix was tested on real hardware
-- **Lockdep call trace** in commit message confirms this is a real
-  detected lock ordering issue, not theoretical
-- The commit is a standalone single patch (not part of a series) -
-  confirmed by lore.kernel.org link format (single patch, not X/Y)
-
-### Summary
-
-This commit fixes a **lockdep-detected ABBA deadlock** in the MediaTek
-SCP remoteproc driver. The deadlock involves the clock framework's
-`prepare_lock` and the ChromeOS EC's `ec_dev->lock`. The fix is
-mechanically simple (splitting `clk_prepare_enable` into separate
-`clk_prepare` + `clk_enable` calls), uses existing remoteproc framework
-infrastructure (`prepare`/`unprepare` callbacks available since 2020),
-and has been reviewed and tested. The scope is limited to 2 files with
-30 insertions/13 deletions. The risk of regression is very low as it
-uses a well-established clock framework pattern, and the benefit is
-preventing a real deadlock on ChromeOS devices with MediaTek SoCs.
-
-**YES**
-
- drivers/remoteproc/mtk_scp.c     | 39 +++++++++++++++++++++++---------
- drivers/remoteproc/mtk_scp_ipi.c |  4 ++--
- 2 files changed, 30 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index db8fd045468d9..98d00bd5200cc 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -283,7 +283,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
- 	struct mtk_scp *scp = priv;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clocks\n");
- 		return IRQ_NONE;
-@@ -291,7 +291,7 @@ static irqreturn_t scp_irq_handler(int irq, void *priv)
- 
- 	scp->data->scp_irq_handler(scp);
- 
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return IRQ_HANDLED;
- }
-@@ -665,7 +665,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = scp->dev;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
-@@ -680,7 +680,7 @@ static int scp_load(struct rproc *rproc, const struct firmware *fw)
- 
- 	ret = scp_elf_load_segments(rproc, fw);
- leave:
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return ret;
- }
-@@ -691,14 +691,14 @@ static int scp_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 	struct device *dev = scp->dev;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
- 	}
- 
- 	ret = scp_ipi_init(scp, fw);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	return ret;
- }
- 
-@@ -709,7 +709,7 @@ static int scp_start(struct rproc *rproc)
- 	struct scp_run *run = &scp->run;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(dev, "failed to enable clocks\n");
- 		return ret;
-@@ -734,14 +734,14 @@ static int scp_start(struct rproc *rproc)
- 		goto stop;
- 	}
- 
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	dev_info(dev, "SCP is ready. FW version %s\n", run->fw_ver);
- 
- 	return 0;
- 
- stop:
- 	scp->data->scp_reset_assert(scp);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 	return ret;
- }
- 
-@@ -909,7 +909,7 @@ static int scp_stop(struct rproc *rproc)
- 	struct mtk_scp *scp = rproc->priv;
- 	int ret;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clocks\n");
- 		return ret;
-@@ -917,12 +917,29 @@ static int scp_stop(struct rproc *rproc)
- 
- 	scp->data->scp_reset_assert(scp);
- 	scp->data->scp_stop(scp);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return 0;
- }
- 
-+static int scp_prepare(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = rproc->priv;
-+
-+	return clk_prepare(scp->clk);
-+}
-+
-+static int scp_unprepare(struct rproc *rproc)
-+{
-+	struct mtk_scp *scp = rproc->priv;
-+
-+	clk_unprepare(scp->clk);
-+	return 0;
-+}
-+
- static const struct rproc_ops scp_ops = {
-+	.prepare	= scp_prepare,
-+	.unprepare	= scp_unprepare,
- 	.start		= scp_start,
- 	.stop		= scp_stop,
- 	.load		= scp_load,
-diff --git a/drivers/remoteproc/mtk_scp_ipi.c b/drivers/remoteproc/mtk_scp_ipi.c
-index c068227e251e7..7a37e273b3af8 100644
---- a/drivers/remoteproc/mtk_scp_ipi.c
-+++ b/drivers/remoteproc/mtk_scp_ipi.c
-@@ -171,7 +171,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 	    WARN_ON(len > scp_sizes->ipi_share_buffer_size) || WARN_ON(!buf))
- 		return -EINVAL;
- 
--	ret = clk_prepare_enable(scp->clk);
-+	ret = clk_enable(scp->clk);
- 	if (ret) {
- 		dev_err(scp->dev, "failed to enable clock\n");
- 		return ret;
-@@ -211,7 +211,7 @@ int scp_ipi_send(struct mtk_scp *scp, u32 id, void *buf, unsigned int len,
- 
- unlock_mutex:
- 	mutex_unlock(&scp->send_lock);
--	clk_disable_unprepare(scp->clk);
-+	clk_disable(scp->clk);
- 
- 	return ret;
- }
 -- 
 2.51.0
 
