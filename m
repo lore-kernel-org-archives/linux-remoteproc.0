@@ -1,61 +1,61 @@
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EBB2E88A1
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Feb 2026 18:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BEE2E92D4
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Feb 2026 18:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771265502; cv=none; b=ECOdPYJNB6zpkYiyZ8n1BFMG6Ajgl27VdbBIAhXP38TBerXLZ1bWnJXd6BV0kPtDtmO6vzinQYBlwoyn9Eup4Aka4G8dGp+6B7BgOagniw4ed1Ww8SKc4Kyml9ckK8hbRjmJp7GtDL+wTlFTev/2lTVfMr/XCyIktukUTX8oaLA=
+	t=1771265504; cv=none; b=n3kcCNHu7YMgKD0amUY8T0jZUWta+y0JR3/y+7UIUVC+AjK8FMzI3NELsXZF6wv6KNNsF3Gn5nOHa1gcOkR7hSCuS4v0/pVlmfKVZ6AN9IVCSWYbJtfd34ixrTSVjGV5qpoAvT/lBt9oLu90bqWALh0/ZyE1Ti0vzqKFwRAQhnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771265502; c=relaxed/simple;
-	bh=fNEzY1/433eDdGyIXd3gTHHwaVm5VhatRxpUEgl5vp0=;
+	s=arc-20240116; t=1771265504; c=relaxed/simple;
+	bh=1LwO0v04lIfnNg2Y8tO3ZD/AcNQmoxD04js80NYmaIw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JVN6mJYX4/u76IHSQlCvHCDuX3SAVqtetbOigvmi1bF3N+rDKadkKWeWq6WUHGHGyN6q2ZbLFH5SmjKjBUdUjEdO5ViYdWp3uHXlkV98p/RYEatqsFtajTC/kvdo4m9MOZBgBcXZe/zn0X9KsLJaOCZqQyrVt+Hznk1Ijnb/+h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JgbbkxkK; arc=none smtp.client-ip=74.125.82.48
+	 MIME-Version; b=r4l5MfeD/HghJo25iR6UwOzjB8PRRw5nupeq396s7ZECHpHDP6PWURniVvUtXMR9MDjO9jr2R5MLaLuse696U/7cOaH/u5meUFjRK5QQnbY9lCjnB0M37CUKjtFCYaqgZj/ASlUHIE93C2AMcBOXjRNBUz8VfSi93w1xffQmE2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cRYNPB1A; arc=none smtp.client-ip=74.125.82.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JgbbkxkK"
-Received: by mail-dl1-f48.google.com with SMTP id a92af1059eb24-124a635476fso3831364c88.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Feb 2026 10:11:41 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cRYNPB1A"
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-126ea4b77adso4062315c88.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Feb 2026 10:11:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1771265500; x=1771870300; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1771265503; x=1771870303; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yqyxcmWx7XZ4iXbnS055ZItFgkfiS2n3W/xrPfsX0Xs=;
-        b=JgbbkxkKARzwrsc6jY+mqTuh/7eDCd32HnIi3MKzRe5RHXEgFylaYNVJM9bYi7vHyn
-         QSz0DitwTZHtGX5/lZfV7FgXCFllvATL1RJXXtfArG56j1lEuw/F/z6qfYdHvGIjDo4g
-         jdMJeDNNTXQdoyjmoLi8R6lZom+xEuA4B5hlY=
+        bh=McVpUeglzEgOwVzdcsjAkstJ2kz3KalaGrnYqtVtRLI=;
+        b=cRYNPB1APEtIU0So2QDoKNkCQS7tQJDs6p2bpeoyGHMRLTksWAeITTEYb7lLWGSUFB
+         0Io7r2sAI7XCxnvEO4PkS6uaauR4sEEAs0DteGoylzPCkA6GDp5d4SrUK/kzM0CkaaN3
+         x/l8gpLZ9hstQZsE9EqlFyC64odw1/Gt2cSsU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771265500; x=1771870300;
+        d=1e100.net; s=20230601; t=1771265503; x=1771870303;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=yqyxcmWx7XZ4iXbnS055ZItFgkfiS2n3W/xrPfsX0Xs=;
-        b=DXPwAshUltfC9oOVz1Hd9D4uX8BrEyufckuAYaaP1bwiDjJlqx7TRZwbUi/BbbUDPB
-         GRcH+rxN9TbcnQf6HGQJT39wYeNDU7FItissRsuPrj6Q/dcd9dR+OoaXC2mVmd64DHkx
-         sq/n8wSrtQeBtZ9EsOkYM/4Nn9flvFeENFHUb7AvPnGiRVZKO7K9i8PR5lthTu2Kwa0/
-         nWoqZjGtefdBVEPOWDXgC2Y601J+oo5IwRPvPZsDWXv6nkPZIZvTbvr//Gfqcf2gquvH
-         G51BNby0NfeAe9k1ffMPvO2lZNJfRjBAx42wMc1nqa/518w53jyLXTb9Cz5gZzK687n8
-         W2xA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYvQI9vrW+2tqdDPyMIcnrETC7gVHP6ttUvlP+SortejGCMmPMM0kXCLlOgiCcQCwRSIfTCWNrrsxihmiGAIKW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFihKHvZtfHKMzhAv7ed9bDYJbybuIVNpxxGyRrvBWpoJVUwdq
-	bUfYfA+tnU1Op8Ft9ESOAAW79cKeoEzhiLSZdw/k22mLfn1SDgACzOnse0rJdh6N0w==
-X-Gm-Gg: AZuq6aIkBbWc82u/yucrrGSiLXUG1jxUl2SUUZ+dksowSbDZLyaeJuanvzLjv4Hyr/G
-	oumFkIkD4PRBrmgrc59s8D74jMj9M4vcvw5sM1DqMmwtT/+icBPOscLvbugQUDUoEr2uMeaQIpL
-	/ZuIwt5X3xjwK04MSSOfMgJZfPIvVMR/4ewNugbyE/vQaeoBeTLkLZ6r4KvNaxgTsJ2Mhn/RpdL
-	U6BTDN8qxHnfSUPVZvyw7Q0k4/WVu81NNl+FmZ6IWOQCp+1VrmKvPp4Q1W5v7Bt7/C0rL14GrCC
-	MW56a4yEj/ncv/RPC/kkSoGRzH5tpsBVvEyFUAPcmWorteyC2tlkKA5H10GMSJREeVC9Sdwix0Q
-	t7Jc9eeveAFU5Oa/KtorGBlbRsrkZPLR5UiBmSQseDtDpnrh/wSMxp7y52qrbjv2qt8xCq6+Zoy
-	BdQw/T4RrRb+msknYssRnIeI/xSIzEMx61tCCxSGHB3qsrESMqBTqD8HLmho7M2q3SiHXFI+nzY
-	Uf0/pqPlnA=
-X-Received: by 2002:a05:7022:a9a:b0:11b:a73b:2327 with SMTP id a92af1059eb24-1273ae2ef59mr4312457c88.30.1771265500459;
-        Mon, 16 Feb 2026 10:11:40 -0800 (PST)
+        bh=McVpUeglzEgOwVzdcsjAkstJ2kz3KalaGrnYqtVtRLI=;
+        b=ciQrco+grp6+JzIg81MfBlfVC1ejUYPKqx8fJIApYiQYhNtZ3e0QxB8goCigjVwyb6
+         DqVM7m6NkucSTFh7/mufgOdpWHSlyeI/gncpXGVURe0TOohmE4dPiOf+st7fhkC1muwE
+         QJhAqCO76vQe1z7Gwmc2hFArbBQXoBoTWw4kdoZcdl4y12Nkffr2tOAOMAw/w1zsd/9/
+         PyajbJUBSM9+CY0lx7dk1i3nOUoFEgpi2ZMAW40Uz3ooIvbo0gvvebGXy9EnkI3COr1L
+         0AlSUu8VinplcKuGRnRz26Q0pKTDFD0Fpal0mvL5Y2gxQ8eslau6VvbPgNomxqkHFHrc
+         P3kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWh1Z00D49P/5+u9nG7mxN5ICnd7p/j0072FseNWz5tAEKGSMhcyw9Bjdf3O9LpsoeYWvvg/VP3eHRP7MdPjiXd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJjrlKFP4AbZPRI3mzmx1+PaHFglvLPGKv8HA7PVSOSQbFMGIU
+	4CExy+8wFwy8+NggkEVic/AwM0rH9+jWS7KBE1PGWL2oy1co8YPyja+afHS5rb8Mvw==
+X-Gm-Gg: AZuq6aL1jELGRw1+LuJGhSC3jC/nVel3PEX3v45bAnAyoSRPxMKVaLWcKRd0xAq5mCB
+	rMQA36gMZuuC8cLvAxb3i+ci3hse1c9QNbObji+x08l66Y2xXj/0nfD8aTa/LPuevwGqKFvKXQh
+	MnET7+yCLb0mbVJB1SwaFfDkWlhteVWyq+eSLEixMRFtzNs2cNvBD7mSxH+MYu8vlPRJ4uPoxdn
+	imZoH5i6Mjiv4Xim49A65qDCrDkReb8UxUS8YjtMsR1vBDPJ9KLZueui0y3l8S6zs6cgM77GNIn
+	CGPwM7+ihv1NK8xnUn9cZv0SqGF71RQ9PYWr4TXk8wasQ5Et3TWX+iDbJQZth4q5jER1GiRqFr2
+	fuxhN9tFEi5hMeEfiHKUwA06UNQjG1G5kcTeK1/f76Y+a7EQ4pwE7I5PmCiHtV53Dzs4vbSwR8M
+	vPjA3er7wSDCXE0feZa92hTtkMs9SvTUbMtBpcQ4lY8zzuyJTYt4q4EzlpeC0S8Mths7rtr1WbM
+	8vaCACF1mY=
+X-Received: by 2002:a05:7022:160a:b0:122:2f4:b251 with SMTP id a92af1059eb24-127397bf3femr5004979c88.21.1771265502576;
+        Mon, 16 Feb 2026 10:11:42 -0800 (PST)
 Received: from dianders.sjc.corp.google.com ([2a00:79e0:2e7c:8:2953:dae1:1e39:73b3])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12742c64282sm13724326c88.5.2026.02.16.10.11.38
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-12742c64282sm13724326c88.5.2026.02.16.10.11.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Feb 2026 10:11:38 -0800 (PST)
+        Mon, 16 Feb 2026 10:11:41 -0800 (PST)
 From: Douglas Anderson <dianders@chromium.org>
 To: jassisinghbrar@gmail.com
 Cc: Douglas Anderson <dianders@chromium.org>,
@@ -64,9 +64,9 @@ Cc: Douglas Anderson <dianders@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	mathieu.poirier@linaro.org
-Subject: [PATCH v3 08/15] rpmsg: qcom_glink_rpm: Use mbox_ring_doorbell() instead of NULL message
-Date: Mon, 16 Feb 2026 10:09:45 -0800
-Message-ID: <20260216100943.v3.8.I700ba93ec437db5100c0076941d8470344ea9995@changeid>
+Subject: [PATCH v3 09/15] rpmsg: glink: smem: Use mbox_ring_doorbell() instead of NULL message
+Date: Mon, 16 Feb 2026 10:09:46 -0800
+Message-ID: <20260216100943.v3.9.I6973a32c3fcd6d2edebdd6fd868fe0a046420ed5@changeid>
 X-Mailer: git-send-email 2.53.0.273.g2a3d683680-goog
 In-Reply-To: <20260216181002.3475421-1-dianders@chromium.org>
 References: <20260216181002.3475421-1-dianders@chromium.org>
@@ -90,26 +90,29 @@ documented not to be called for doorbells.
 Acked-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
+This driver is used on my sc7180-trogdor Chromebook. While I haven't
+stress tested with it, I can confirm that the system boots normally to
+UI and can suspend/resume with this patch in place.
 
 (no changes since v1)
 
- drivers/rpmsg/qcom_glink_rpm.c | 3 +--
+ drivers/rpmsg/qcom_glink_smem.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-index e3ba2c63a5fc..4cb9c36adcd4 100644
---- a/drivers/rpmsg/qcom_glink_rpm.c
-+++ b/drivers/rpmsg/qcom_glink_rpm.c
-@@ -197,8 +197,7 @@ static void glink_rpm_tx_kick(struct qcom_glink_pipe *glink_pipe)
- 	struct glink_rpm_pipe *pipe = to_rpm_pipe(glink_pipe);
- 	struct glink_rpm *rpm = container_of(pipe, struct glink_rpm, tx_pipe);
+diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+index 7a982c60a8dd..f2a6d94e72ea 100644
+--- a/drivers/rpmsg/qcom_glink_smem.c
++++ b/drivers/rpmsg/qcom_glink_smem.c
+@@ -197,8 +197,7 @@ static void glink_smem_tx_kick(struct qcom_glink_pipe *glink_pipe)
+ 	struct glink_smem_pipe *pipe = to_smem_pipe(glink_pipe);
+ 	struct qcom_glink_smem *smem = pipe->smem;
  
--	mbox_send_message(rpm->mbox_chan, NULL);
--	mbox_client_txdone(rpm->mbox_chan, 0);
-+	mbox_ring_doorbell(rpm->mbox_chan);
+-	mbox_send_message(smem->mbox_chan, NULL);
+-	mbox_client_txdone(smem->mbox_chan, 0);
++	mbox_ring_doorbell(smem->mbox_chan);
  }
  
- static irqreturn_t qcom_glink_rpm_intr(int irq, void *data)
+ static irqreturn_t qcom_glink_smem_intr(int irq, void *data)
 -- 
 2.53.0.273.g2a3d683680-goog
 
