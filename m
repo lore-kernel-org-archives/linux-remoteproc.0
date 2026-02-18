@@ -1,133 +1,301 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3793358C9
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Feb 2026 12:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869FB3009DA
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Feb 2026 10:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771329807; cv=none; b=QCmeB4MsSwP3KASacsbX3Qsf9JX1JoLG1hCqV8VAoMrTsexbKoZjHCL8y5mQmW4f+fKTNEMFfhUZippsdN3r3lP7OiwdY9x/ItOhL2QmivGKJxHUazF2lJ5wp7CPslWZH4Nzl2w3YvzEfhEkLVAvREa8/oFoTd9o5iDMTMwOtCQ=
+	t=1771410014; cv=none; b=C/74LstzVBR4MZKTC5W/bgySDG1lA8MBXf5bQnwgpdppCCGwx9xAbhyHBk0VYhL5TRv3NHEdPYJsduD7a0C5HBqgPcCu6uiK2mmi2HsLLA7vfIvUwKoa8dOKqSdOOiMbvRr/1hEkhUXrNwuAcT0UqiWM9U6oZZJ2WTA+2yswKk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771329807; c=relaxed/simple;
-	bh=V3NSsjRzcska2Hz3eFdT6Nk/+5O//C+pPnEu8vffZ8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AFgutobXSvEiiajZgCKTQdFR8cknABBgEGPZxKMBkbDv901pUqksMLa7jRTNg76hRMTDACiQsNVVCcm1oY1Aew6dNloGlu+rkFv+RB/xU2k/MRmZJA+zZe8Ps6+jC54oHVrT3cijyvdmw3muYg/OxhVQ+oLzZTDhxDWLJM6Wtjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SvbWnXo8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hp8Ey7u6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1771410014; c=relaxed/simple;
+	bh=KMRhh6W9t1S/zQ6NhQbrvFLYqyEEu7IaIcL7BGCP9Fc=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kE7K4uCTSaO0Yd/W3fdl0vJa9vRBoHhTCABvjLy4KdeaoH4sagxdbtt2U5Fz0CWIY6IApTRmD+rbD12OoknlE+lhbJl5GJ0MB6hLcOTe4gSE51X2ryyG5i6z5UUH94LNXRLtZUFvtzt1ksnLzHa8KF7lUWR1bc4Ss0t876m5vkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piRPMPq1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SvbWnXo8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hp8Ey7u6"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61HB3chx1942831
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Feb 2026 12:03:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1UH/chMZ48M9K3k9g62/VMEN
-	kbu6JZ9ebl5YxGNzHvc=; b=SvbWnXo8bVE01HdxoVB5dHi5gBvJ9U7fXumHtkL9
-	1/oG4zpREtQ0vkQZfhKVmviqD42HYskFk7WTyNcCfF8pyuNGrMh1puRifu3T2vVM
-	Xirm1G0KQsS83oebSmproKhjz4faBSoN1Mv2Z92V6OAOTmh0vuUkHixyK8uMus1d
-	ZiqkIOz0i1FnRSYZ09bpqYJBCLzfM4rgN1Cj17zYs5hp6meMeKZEEihISBcD82uE
-	6Y7taVlfcGOQnTAoBjrkAkHaiujdgI6TGlB3r07eqFBda/NYQoEW0YdgREDW/s0a
-	bLQygjbeJnS5caEz+4td3v5j8leySwazNzfKzzeBaMuoiA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ccq4g0668-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Feb 2026 12:03:25 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8954adc2173so689736536d6.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Feb 2026 04:03:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1771329805; x=1771934605; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1UH/chMZ48M9K3k9g62/VMENkbu6JZ9ebl5YxGNzHvc=;
-        b=hp8Ey7u6ai2bb7IV3PsmCA+7o2va65EXVceo9C9+/zLWNGMpnNezdLOei4ZqRIoMT1
-         gy6m8+8tcnkM4YhG6Rg2u8xy9/Tdc5zlzEbPSWFyvUCUcwoqgMNg9Rn8CvShpHur/6p1
-         cIWSuOaKyOtV9I6whY83b1vEhw99WA76Jq8z8Pi2KUc1JwuTpdvGYY+sOXqrU4Z9yxvG
-         ncUABLYHa4BC5bjvbch8mzhqH7DhIBua/1AMyhuQuPOtrLjWUQkKfMXq0PjzWy5oo6/z
-         pomqiLCincRytZ3p8b2yZtlyz1vMIBXnK995CY3WCOXR1yqnA5AMPfNl3gMPOVCyN7H7
-         7E9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1771329805; x=1771934605;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1UH/chMZ48M9K3k9g62/VMENkbu6JZ9ebl5YxGNzHvc=;
-        b=WEPasO609ywuzcbbJOnEKTA02LamwpWVWJCzNpDpQpcc5eiyq1EOXRU7pXpXkaSFI/
-         CaobGpWhYVmS7Oxl1TWGdKhM9yaIo81hRgCwx7K5VV4kGkUmO1CZE1VvQVSKGEJIfdQR
-         IbZtQwmeJwUpuv4x5ExyzJLm0HZUNk1b17EaHHrNo7SB/gSS/vLH7k3zBhG+HR121bAA
-         CzdmAdR48tjQlNaKAaTJmuZ/NbfiJKfziRmmcFUkgvdWlx+oncIhKzSS/ZUp/Q1iSFFf
-         JsiXOubVBMf7m8CZeTDmM83ZvBHXDN3hqEFeLB76KfF+FcLN2nbCMXKmlQX7cXnNukzE
-         ALhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCBEJ4bTFFp9B84wIbknHtOwqVo0U5xbI79GjGl+IrsJqFDBliLvg+gBBklb8aVuInBB/aWyyIGkdLZhFlo8ek@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbJDae1HTYhlVZTLVJkPCwr2bON+jGyF8H3brbWlMH8ocXtCLq
-	TJtksnXEDgLcR5PTT7xkipv0L0GWv6kjXPu0JJassjnVDlP81rSb1BfH7wO2KoA5yorlqB/45hC
-	P3v/1Mqncy13+dwWKMRigYOtgCtQX+NwZATIcStyT9MMZlb1gFdw8ElCkcnMLvEXNKCmt06TT
-X-Gm-Gg: AZuq6aJXHG4F2XRE55hy+nwD98BfI0Ekk6yOoXt/5Yp0e6ATthkxOm9jbrGrG3MA5js
-	PssG0UbiV728tW1kmgcCaxFRDgP2TWulvfm+XR2wSwV3AKSNCl3yzURboyppvmbil0xLvqE9slU
-	6d54Nc4oWWUEd019gdridS8TzY8ZRnhjubBNgMYuqBFKXbIbSet2YvCo/c4PqQIDZ770XpzGkaM
-	a6nxwpvUSyk7/pcxzXhA1gtIjlf+eAS/RQDIx7CSeStr8mS3fnjyAnnrLvKm3cYNdEhqiFfBcBu
-	Mb5sVxsZfkRaF++aGvHTvXHo4fzLvMrSTM9FS+Y22AqDPucIS4Fw/bAANQV58o/stvJt5TtobzF
-	6nIjsJiS56G6ZskP9th/Panjlo18oOC/vPhyN
-X-Received: by 2002:a05:620a:a508:b0:8cb:4d9b:6b48 with SMTP id af79cd13be357-8cb4d9b6f08mr1048829485a.6.1771329805252;
-        Tue, 17 Feb 2026 04:03:25 -0800 (PST)
-X-Received: by 2002:a05:620a:a508:b0:8cb:4d9b:6b48 with SMTP id af79cd13be357-8cb4d9b6f08mr1048825385a.6.1771329804732;
-        Tue, 17 Feb 2026 04:03:24 -0800 (PST)
-Received: from oss.qualcomm.com ([86.121.162.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4836aa0847asm555188455e9.3.2026.02.17.04.03.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Feb 2026 04:03:24 -0800 (PST)
-Date: Tue, 17 Feb 2026 14:03:22 +0200
-From: Abel Vesa <abel.vesa@oss.qualcomm.com>
-To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Cc: robh@kernel.org, srini@kernel.org, amahesh@qti.qualcomm.com,
-        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-        konradybcio@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH V3 4/5] arm64: dts: qcom: glymur: Add ADSP and CDSP for
- Glymur SoC
-Message-ID: <45m4c3g222mfkyiff4qqcvfwjfeqszrfvsg6dcwrlnanvrodtg@ilheo3ppgwsf>
-References: <20260129001358.770053-1-sibi.sankar@oss.qualcomm.com>
- <20260129001358.770053-5-sibi.sankar@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piRPMPq1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AAC9C2BCB3
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Feb 2026 10:20:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1771410014;
+	bh=KMRhh6W9t1S/zQ6NhQbrvFLYqyEEu7IaIcL7BGCP9Fc=;
+	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
+	b=piRPMPq1JdjrH5xmr6Qs/V+e9vEf3hRMW+F2zhIxb+JEaCgt21TeynmqDUItYAqvj
+	 zYyoLeS+gb7ygloju8kp4NxNqF5TQ3NMLMRk/t0fqkqldGDQ7m0vqHWi+6IFfcWiAv
+	 X86dUvgMK4t/Zsqb6VwdbgZXtPuDAZDoAvup3XmWtdD/3lSXBQkzPwWr0Z6xjV7Ssu
+	 oj23Io1n0JHIuuduhHCevY/zSElk6DjImynbCNHYHZocQSD61gxjy3CyGv0NgADguI
+	 N6sUEZ2A9/5ktY7u5fr9UPqBlOYH0sB2xuhgr0y2Wp+ZrcbJ6CdfdOJfFndlq/Csu1
+	 WnOreDr8/ltUQ==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-59de66fda55so5290960e87.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Feb 2026 02:20:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWivKgpZTp2n48Q89jDVrto1091qksVeeA0NSufdbOHvbxuf3HIyk6gvK9KJsdXUGcbzciOcxKw3B9gWAOKiwVj@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzubg1smtEIiMRQUbPQgO/539LPh8UVR8y/WFDOsZ1WulkkzibB
+	4lp9zR276Qi8xEqnTa/jX9wY0LcLNkyGokWCPa6QVN6rwGHKQj+KeXb6DyF85zh4xOk+ubyh4G2
+	lljyeCtvRHkeAx3oo1uQk7WfrXUObUz5S/B1pIfPONA==
+X-Received: by 2002:a05:6512:685:b0:59e:38e2:7b60 with SMTP id
+ 2adb3069b0e04-59f6d485901mr4374992e87.53.1771410012913; Wed, 18 Feb 2026
+ 02:20:12 -0800 (PST)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 18 Feb 2026 04:20:11 -0600
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 18 Feb 2026 04:20:11 -0600
+From: Bartosz Golaszewski <brgl@kernel.org>
+In-Reply-To: <20260212213656.662437-4-shenwei.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260129001358.770053-5-sibi.sankar@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA5OSBTYWx0ZWRfX6NMoIJ/bD9B2
- aihn9YmzGnUcb7H17THWGIpfqmTDTf5a+Lb5BZDS1qKJQW4qZV0D4hwFyfGuBjK3LNLs+Sr3zVd
- 9E/1TMRzKWmkMayi8+dpLmIMUqQdVlxMYSDPkmnHa4ynWtlHWdJYFm0pyfAOBn5GSO7oB9erucC
- T+wz6hyLguVQasmIxoYqAuFgHx2m0BQVGmJ7GK6QnPSXnPkofZKVNxzrkfoRc/Zg3loVn7kF9kC
- Ux5MhLU4JkzCk9blv5i2aFTK6DZ/VNtxecj/MGzgRBryMQch7x9truT8u7sgZsC5NKBSKI0Ne/b
- YHbOcGQX3W5JdGrFLLC7SCunEpmkrXPzI/yn6Yacw0h6dN5KOBX5bRlarxNRDZ6X0mO3DwjoLc/
- 895gjmsgqLyBrrPyhFmDIASbiSaGym06rhHC7ir2AtLWs1nLAqZNq6ODid+pPH0kDG5pQQD6P9M
- vTxTVCYVnJtn9PAi3og==
-X-Proofpoint-ORIG-GUID: KWrqzg0JcXmvmerBmWwPaKbPynvZjGvH
-X-Proofpoint-GUID: KWrqzg0JcXmvmerBmWwPaKbPynvZjGvH
-X-Authority-Analysis: v=2.4 cv=YdiwJgRf c=1 sm=1 tr=0 ts=6994590d cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=oauzzCmhM186DRC0Y2yWPg==:17
- a=kj9zAlcOel0A:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
- a=EUspDBNiAAAA:8 a=JOSM2k-csAVseA6ZNKgA:9 a=CjuIK1q_8ugA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-17_01,2026-02-16_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 spamscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
- definitions=main-2602170099
+References: <20260212213656.662437-1-shenwei.wang@nxp.com> <20260212213656.662437-4-shenwei.wang@nxp.com>
+Date: Wed, 18 Feb 2026 04:20:11 -0600
+X-Gmail-Original-Message-ID: <CAMRc=MfM7Wc6ae+thPnqBdJUKhLVkrgZYYD_9EjAzxbE5mtSgg@mail.gmail.com>
+X-Gm-Features: AaiRm50s4fsP3Hfe2L_u48xMA8NYIISGBNrR-9MdGdJEdOmmMFh9mEr9DdPOsIQ
+Message-ID: <CAMRc=MfM7Wc6ae+thPnqBdJUKhLVkrgZYYD_9EjAzxbE5mtSgg@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
+	arnaud.pouliquen@foss.st.com, Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>, 
+	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 26-01-29 05:43:57, Sibi Sankar wrote:
-> Add remoteproc PAS loader for ADSP and CDSP with its fastrpc nodes.
-> 
-> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+On Thu, 12 Feb 2026 22:36:55 +0100, Shenwei Wang <shenwei.wang@nxp.com> said:
+> On an AMP platform, the system may include two processors:
+> 	- An MCU running an RTOS
+> 	- An MPU running Linux
+>
+> These processors communicate via the RPMSG protocol.
+> The driver implements the standard GPIO interface, allowing
+> the Linux side to control GPIO controllers which reside in
+> the remote processor via RPMSG protocol.
+>
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> ---
+>  drivers/gpio/Kconfig      |  17 ++
+>  drivers/gpio/Makefile     |   1 +
+>  drivers/gpio/gpio-rpmsg.c | 588 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 606 insertions(+)
+>  create mode 100644 drivers/gpio/gpio-rpmsg.c
+>
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index b45fb799e36c..3179a54f0634 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -1892,6 +1892,23 @@ config GPIO_SODAVILLE
+>
+>  endmenu
+>
+> +menu "RPMSG GPIO drivers"
+> +	depends on RPMSG
+> +
+> +config GPIO_RPMSG
+> +	tristate "Generic RPMSG GPIO support"
+> +	depends on REMOTEPROC
+> +	select GPIOLIB_IRQCHIP
+> +	default REMOTEPROC
 
-Reviewed-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+You're using a lot of OF-centric APIs here, don't you need to depend on OF?
+Alternatively, it seems that only rpmsg_get_channel_ofnode() really requires
+OF-nodes and everything else could just use firmware node API.
+
+> +	help
+> +	  Say yes here to support the generic GPIO functions over the RPMSG
+> +	  bus. Currently supported devices: i.MX7ULP, i.MX8ULP, i.MX8x, and
+> +	  i.MX9x.
+> +
+> +	  If unsure, say N.
+> +
+> +endmenu
+> +
+>  menu "SPI GPIO expanders"
+>  	depends on SPI_MASTER
+>
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index c05f7d795c43..501aba56ad68 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -158,6 +158,7 @@ obj-$(CONFIG_GPIO_RDC321X)		+= gpio-rdc321x.o
+>  obj-$(CONFIG_GPIO_REALTEK_OTTO)		+= gpio-realtek-otto.o
+>  obj-$(CONFIG_GPIO_REG)			+= gpio-reg.o
+>  obj-$(CONFIG_GPIO_ROCKCHIP)	+= gpio-rockchip.o
+> +obj-$(CONFIG_GPIO_RPMSG)		+= gpio-rpmsg.o
+>  obj-$(CONFIG_GPIO_RTD)			+= gpio-rtd.o
+>  obj-$(CONFIG_ARCH_SA1100)		+= gpio-sa1100.o
+>  obj-$(CONFIG_GPIO_SAMA5D2_PIOBU)	+= gpio-sama5d2-piobu.o
+> diff --git a/drivers/gpio/gpio-rpmsg.c b/drivers/gpio/gpio-rpmsg.c
+> new file mode 100644
+> index 000000000000..163f51fd45b5
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-rpmsg.c
+> @@ -0,0 +1,588 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2026 NXP
+> + *
+> + * The driver exports a standard gpiochip interface to control
+> + * the GPIO controllers via RPMSG on a remote processor.
+> + */
+
+Add newline here.
+
+[snip]
+
+> +
+> +static struct device_node *
+> +rpmsg_get_channel_ofnode(struct rpmsg_device *rpdev, char *chan_name)
+> +{
+> +	struct device_node *np_chan = NULL, *np;
+> +	struct rproc *rproc;
+> +
+> +	rproc = rproc_get_by_child(&rpdev->dev);
+> +	if (!rproc)
+> +		return NULL;
+> +
+> +	np = of_node_get(rproc->dev.of_node);
+> +	if (!np && rproc->dev.parent)
+> +		np = of_node_get(rproc->dev.parent->of_node);
+> +
+> +	if (np) {
+> +		/* Balance the of_node_put() performed by of_find_node_by_name(). */
+> +		of_node_get(np);
+> +		np_chan = of_find_node_by_name(np, chan_name);
+> +		of_node_put(np);
+
+If you put np here, why even bother with "balancing". If you don't do
+of_node_get() before calling of_find_node_by_name(), you'll be in the
+same place, no?
+
+> +	}
+> +
+> +	return np_chan;
+> +}
+> +
+> +static int
+> +rpmsg_gpio_channel_callback(struct rpmsg_device *rpdev, void *data,
+> +			    int len, void *priv, u32 src)
+> +{
+> +	struct gpio_rpmsg_packet *msg = data;
+> +	struct rpmsg_gpio_port *port = NULL;
+> +	struct rpdev_drvdata *drvdata;
+> +
+> +	drvdata = dev_get_drvdata(&rpdev->dev);
+> +	if (drvdata && msg && msg->port_idx < MAX_PORT_PER_CHANNEL)
+> +		port = drvdata->channel_devices[msg->port_idx];
+> +
+> +	if (!port)
+> +		return -ENODEV;
+> +
+> +	if (msg->header.type == GPIO_RPMSG_REPLY) {
+> +		*port->info.reply_msg = *msg;
+> +		complete(&port->info.cmd_complete);
+> +	} else if (msg->header.type == GPIO_RPMSG_NOTIFY) {
+> +		generic_handle_domain_irq_safe(port->gc.irq.domain, msg->pin_idx);
+> +	} else
+> +		dev_err(&rpdev->dev, "wrong command type!\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static int rpmsg_gpio_channel_probe(struct rpmsg_device *rpdev)
+> +{
+> +	struct device *dev = &rpdev->dev;
+> +	struct rpdev_drvdata *drvdata;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	if (!dev->of_node) {
+> +		np = rpmsg_get_channel_ofnode(rpdev, rpdev->id.name);
+> +		if (np) {
+> +			dev->of_node = np;
+> +			set_primary_fwnode(dev, of_fwnode_handle(np));
+> +		}
+> +		return -EPROBE_DEFER;
+> +	}
+> +
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> +	if (!drvdata)
+> +		return -ENOMEM;
+> +
+> +	drvdata->rproc_name = rpmsg_get_rproc_node_name(rpdev);
+> +	dev_set_drvdata(dev, drvdata);
+> +
+> +	for_each_child_of_node_scoped(dev->of_node, child) {
+
+Like mentioned above: this could be:
+
+device_for_each_child_node() {
+	fwnode_device_is_available();
+	...
+}
+
+> +		if (!of_device_is_available(child))
+> +			continue;
+> +
+> +		if (!of_match_node(dev->driver->of_match_table, child))
+> +			continue;
+> +
+> +		ret = rpmsg_gpiochip_register(rpdev, child);
+> +		if (ret < 0)
+> +			dev_err(dev, "Failed to register: %pOF\n", child);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void rpmsg_gpio_channel_remove(struct rpmsg_device *rpdev)
+> +{
+> +	dev_info(&rpdev->dev, "rpmsg gpio channel driver is removed\n");
+> +}
+
+Please drop this, no need to log it,
+
+> +
+> +static const struct of_device_id rpmsg_gpio_dt_ids[] = {
+> +	{ .compatible = "rpmsg-gpio" },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
+> +	{ .name	= "rpmsg-io-channel" },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(rpmsg, rpmsg_gpio_channel_id_table);
+> +
+> +static struct rpmsg_driver rpmsg_gpio_channel_client = {
+> +	.drv.name	= KBUILD_MODNAME,
+> +	.drv.of_match_table = rpmsg_gpio_dt_ids,
+
+Can you please do:
+
+	.drv = {
+		.name = "open-coded-name",
+		.of_match_table = ...
+	};
+
+?
+
+Bartosz
+
+> +	.id_table	= rpmsg_gpio_channel_id_table,
+> +	.probe		= rpmsg_gpio_channel_probe,
+> +	.callback	= rpmsg_gpio_channel_callback,
+> +	.remove		= rpmsg_gpio_channel_remove,
+> +};
+> +module_rpmsg_driver(rpmsg_gpio_channel_client);
+> +
+> +MODULE_AUTHOR("Shenwei Wang <shenwei.wang@nxp.com>");
+> +MODULE_DESCRIPTION("generic rpmsg gpio driver");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.43.0
+>
+>
