@@ -1,33 +1,33 @@
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F37B31C567;
-	Thu, 19 Feb 2026 13:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E3C86277;
+	Thu, 19 Feb 2026 13:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771507634; cv=none; b=fAaOkzVSbnW0YHC0TtM5ZEuNkBYAAe+AsngMYdizv5mjbTg57YFISlF/QHT/yH5PhZjNFATXFkFemeurOEGlgbHuW+dT1Z44hT8csaNUc7omgKByxzr5BdaptfNBCxPkDdzzfH2332FB5HgNQtOfFT8i/y/jDkOFCS38MWYOtms=
+	t=1771508554; cv=none; b=N8tlKRwYrVZTT0zMaU4JaZRQH5rGp4ZixioCMdIbiFJUpNoFqZ3+MqGX75RlFwaGrcPm26pfcFoLdYVu55c+KQLf9ufaSxuh8Z8JHy84QDVQuUNmA2wB0cNC/XtJp4iBdGp11s6k38wXZEZ0eD1frjwWEbPr9WnQ9QBW+/DnXUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771507634; c=relaxed/simple;
-	bh=fYby79ddVirT7D8yoSoby7rf0tIAQwLqM1soMItKJoQ=;
+	s=arc-20240116; t=1771508554; c=relaxed/simple;
+	bh=MPW4DEn5P3My4mx8HNR2D1Qa3+cpIreLCA5+A4gMwYU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lwta85JJvxXeP49cN2lwgRFCIg7rg0grJmaNU26d6S+/FHMOZ7kcj+oQKXv9AUC9n4D4brWHtIQljlqg6C1/54aQu0afOGUsFCE8FZG0tOdNA4fB0Ht7HLuWebCrr7l1PoefHeLbSWM2HU+wAGpbasSdDCbjRzrMxinUDziVHJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=klslBckA; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/O/w+EGVJYjk6XLcd5AenzkznropJB2LA0D2lMU+cF8qzDdoE9IqjkR1tsnWOTJFUO91dGPR5JdK5IKw8cgoazbLc/F/BiPbSc+8SPVvmrwmnD4xyb3pMEzjxNi5GHAID0QMFDLL38MTHXRlEXsXSL+ZJYX4qTEZukFZhPNZg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZQ+CO1Cu; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="klslBckA"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZQ+CO1Cu"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OTx5xYUSGsOyZu92DsCx1SvBwbu3nc6Z9peJKy6aG94=; b=klslBckAQ9ua5SE2P5JljVjvSQ
-	ZD6yujfTr8QwvZqsbYgjbIsmmFx0ZZtWMBtuGoRKA1BpMNh5P+uzGinNCZG3EolLk1Hn+auQTOD/W
-	kmgjnUO3B2S70xdA4KFlmZaPFjs27Ls79w0i19HUi0OK6VdUrP7LZFlx4vrsFPG8K2eI=;
+	bh=m71zW88H7K19uDqB/mJVa6SLvXopmaXhdyjRMA5F7Ug=; b=ZQ+CO1CuHmS7qG0gJgND/e2zBA
+	/ubCjr4WIUdnz0YjIla8GiDmOEPHMbPXJFH2bv/HTmr4xfkGKBqUFqcA4c3jySyxFZM4s03A0s2GQ
+	9g8b2lZ2UOhZudKslVqwCiLVlV81XNuoZ5oZ6RPNggjSHFkeqIASVLsOy26sY9Zax3Ec=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1vt43S-007uuW-8t; Thu, 19 Feb 2026 14:26:54 +0100
-Date: Thu, 19 Feb 2026 14:26:54 +0100
+	id 1vt4IR-007v3K-BB; Thu, 19 Feb 2026 14:42:23 +0100
+Date: Thu, 19 Feb 2026 14:42:23 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
 Cc: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
@@ -46,7 +46,7 @@ Cc: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
 	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
 	linux-imx@nxp.com, Bartosz Golaszewski <brgl@bgdev.pl>
 Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Message-ID: <44804825-5e61-4c3c-96bf-e5a3f3eacec1@lunn.ch>
+Message-ID: <13f9d767-61d6-4e29-b36e-6dcc860ccb11@lunn.ch>
 References: <20260212213656.662437-1-shenwei.wang@nxp.com>
  <20260212213656.662437-4-shenwei.wang@nxp.com>
  <aae7c851-a93b-4d57-a118-43c6e68c4790@foss.st.com>
@@ -60,24 +60,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <aae7c851-a93b-4d57-a118-43c6e68c4790@foss.st.com>
 
-> > +	if (sync) {
-> > +		err = wait_for_completion_timeout(&info->cmd_complete,
-> > +						  msecs_to_jiffies(RPMSG_TIMEOUT));
-> > +		if (err == 0) {
-> > +			dev_err(&info->rpdev->dev, "rpmsg_send timeout!\n");
-> > +			return -ETIMEDOUT;
+> > +	u8 id;		/* Message ID Code */
+> > +	u8 vendor;	/* Vendor ID number */
 > 
-> strange condition you return an error if err == 0, for redability use 'ret'
-> variable or simply:
+> Does this fields above are mandatory, seems that it is just some constant
+> values that are useless.
 > 
-> 		if(!wait_for_completion_timeout(&info->cmd_complete,
-> 				  msecs_to_jiffies(RPMSG_TIMEOUT)) {
-> 			dev_err(&info->rpdev->dev, "rpmsg_send timeout!\n");
-> 			return -ETIMEDOUT;
-> 		}
+> > +	u8 version;	/* Vendor-specific version number */
+> 
+> Why it is vendor specific? the version should represent the rpmsg-tty
+> protocol version.
+> 
+> > +	u8 type;	/* Message type */
+> > +	u8 cmd;		/* Command code */
+> > +	u8 reserved[5];
+> 
+> What is the purpose of this reserved field?
 
-This will be from a comment i made. It appears that
-do_wait_for_common() can return -ERESTARTSYS. I assume that should be
-returned to user space?
+They have an implementation of the other end running on there systems,
+and it sounds like it is widely deployed, and they are trying to keep
+backwards compatibility. The protocol also implements more than
+GPIO. There is also I2C, maybe watchdog, i don't remember, but early
+versions of this patchset had a list. Some of these fields are used
+for some of these other devices.
 
-	Andrew
+I've been arguing it should be a clean design, with the protocol
+focusing on GPIO. And that the rpmsg channel makes it clear this is a
+GPIO device, the protocol itself does not need to include fields to
+differentiate between GPIO, I2C etc.
+
+When they start submitting I2C over rpmsg, i expect the same sort of
+discussion will start again, so the likelihood of keeping backwards
+compatible with there firmware seems low to me.
+
+	   Andrew
