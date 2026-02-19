@@ -1,290 +1,159 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011058.outbound.protection.outlook.com [40.107.130.58])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8619C14A4F9;
-	Thu, 19 Feb 2026 16:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771519352; cv=fail; b=AZMlw9mGUSwj4xI5y26VZ7HL93Iq5gI/KKkPTxJ9aVA0V8LfAlPJtooSigUjPBZp4qMjmRZxsgHm9XnzvXcJdI1z3dQiOg6266IwBXQT+CfmRKlJZXWYxx8y2qZk/uzn3XkuOVuY6H4ZZo3sgb6dgFtaxpybjnbBKi+hwY6rl8g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771519352; c=relaxed/simple;
-	bh=YC5zDwkoFXuBoZnBTyJeFpgYU1aFV0WLFqnH8oJwjBQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hv5YbZsuMx5zYZCO+d+8uDlxZTvWFiAdhynBRoDjXMe4bvoM4ust0FDZXaZxd8j58oSJEaamPVEN+Xz/1KfG5gII9/zKLVM87GipaBDjqDUdiBDzlATh2JYVx1nAv5e1wy1eYsKgvNju4B5EioZvFIJVWPF3J4HHqCsFelGZA+4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ENlzxWhw; arc=fail smtp.client-ip=40.107.130.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B523093BB
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Feb 2026 19:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771530169; cv=none; b=dV5X6oRMEI6WoOhgk0sp30Lgr2kciPhx7Pd23zPWD2SpPTImWIAdzrBLUfp9+EtLU7ToaPcf1RO9BbcNgHypoMBDFFkb/YDFwEh2jBiqIRjoBlLxfG+STDWBQwBb98z96MkycpkFx5WylPBSwwlWxRRc7Mau+jetbWwQotxomNA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771530169; c=relaxed/simple;
+	bh=Mcz56Jl+p/soPmNbRmaQsqePO5EC6zzwHTPcSBB+GxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VRnM/X9w1kXsRJKpwZw30t6jO4nSzRX6EfoRRuy8yM6HA903dNt/coWCVefCd7mTfF98sZdhBNHfho+xfC6WaAiyYif0l6uJM9q7p0Scs1Nf5VMXxEtgDYLFr5ekjAbHUXsxIsh+8TaUvISxfNFg7aVHRB9KJGsb9YJGe+wSQZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gQcXcMC/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YHWD+NO3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ENlzxWhw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YYKI5Nb3wOUyUZlUb1rU3NAoH1+vvAf0c+XR7MQC7pI9XCX46bWaDhK81CVLwDMpEOGgMLoEMUvSMhFI5Gm0cftD/ViLzNBE5Muq9ZNIiTVB344grxTcj6m/IoQ8xeBQelx36o8JuRoFjrVTukNmwK79XGm3D5FXD6QxSF1I35rM0cIf6iuP8UYBQA6L5kPB2aUbniVBIsEfr1vpnVRRvFMYEjNx5DKEm9HQmRBU4J1v83CJwjR33IEpw4l5+Cw2xPF8wDtcbxsM4tGm4nf9RWInecpLL5Ppwg0Ke99V/VTG3dWjp+hIJhYZ2hN7LlFYBOBxULzluxbyLbL1vLLdug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DKW0VqsH2wm0dcny9PHVG1LSeilTMtjn972X3rDVgUw=;
- b=RTPFxdis98zkhOqYG9KT6mhxCFTUoh+n+VQ9efaf4d/uOnrQc/NIzF6wmzn6cc3CZ3TQ3SfL763xtZCta6qtzI389V2Hv6+DX+6sn0V3vy/f3XbZRC1JL1RHbBHdL48vZRgd/qH9LE4pVfMgi7jEplZDmbW15yQu0S4YTdD8cZVSpYxn4zt2DBSM1ydJon3X3ZeC6qqOfcWpUFymY8tuVYrBcKcFottWsCG2/t+eMsfjdIynYHN5/2mm33NFdlfLUUoudyrEwwPYkFSPHU+3baXAGq/KYaX9cHpG8SYcknlSf3+p1MhdaUrORwjXCM5ThLMleCtSS95entK+6+NK2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DKW0VqsH2wm0dcny9PHVG1LSeilTMtjn972X3rDVgUw=;
- b=ENlzxWhw6QQXGH/Qryb4omksYdt27n/FuHRHOc5FPcvyk/Zo9FvdBJ6JeSvj7vz3EsHHJXUrvFhle4FNtuMhH4E5egA7knHF2FbJxGcireYUlQ50ltUxu0NgVMeyjXGgTNFdof+3VEt/was+VvnzVxemn7cZKyXBlIe5rXNnOuBK5fz5D05+mXeXr+hhOPr5R1BXzbf1BUj+TfTiizuNCHSl4qFWWMhw9U0NpMHMSDDYIe/iv82yqFd8nzh2Fm2YHRhYDMoHRpnZB7e2Qr3GtNeVt4/ceXH7OwA1KEBmxmqLy0rOWrwxDe7qF6IUxCHUp9lMFgRlqTeMDGsXu1YF1w==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by VE1PR04MB7454.eurprd04.prod.outlook.com (2603:10a6:800:1a8::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.15; Thu, 19 Feb
- 2026 16:42:26 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb%4]) with mapi id 15.20.9632.010; Thu, 19 Feb 2026
- 16:42:25 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, Linus Walleij
-	<linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet
-	<corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson
-	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Frank
- Li <frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan
-	<skhan@linuxfoundation.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan
-	<peng.fan@nxp.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Thread-Topic: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Thread-Index: AQHcob66sNtOQFpEMUGdW+FM+DdI+A==
-Date: Thu, 19 Feb 2026 16:42:25 +0000
-Message-ID:
- <PAXPR04MB91857DDADAC9D5864DC11FFB896BA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20260212213656.662437-1-shenwei.wang@nxp.com>
- <20260212213656.662437-4-shenwei.wang@nxp.com>
- <aae7c851-a93b-4d57-a118-43c6e68c4790@foss.st.com>
- <44804825-5e61-4c3c-96bf-e5a3f3eacec1@lunn.ch>
- <PAXPR04MB9185EFFB8C73462E215EF486896BA@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <5e227857-7e33-43ad-8330-5304fa3616d5@lunn.ch>
-In-Reply-To: <5e227857-7e33-43ad-8330-5304fa3616d5@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|VE1PR04MB7454:EE_
-x-ms-office365-filtering-correlation-id: a2a52dff-c3b8-4e54-257e-08de6fd5dcad
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7416014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?CiVRUhU5Q5nOJ6H3mTfXFt6K7SrX+Y/qofnkta2w87KB80+rzCGgTO8AQzM8?=
- =?us-ascii?Q?H2A4IsTmQMSljQEtsFc4+4NCfanQBTig02Rl4nQLXyiSrf4XK12udL5nZBaB?=
- =?us-ascii?Q?nP969tcn7vFgRptNVjZHVI7vLUrh0uj7tJxR6tdb2qUFKo1jZcnJoOpItvaL?=
- =?us-ascii?Q?oduPQiPJjl/scePvIueGlzx6stk+ogMs1gvq0dBUNTG7/uUCY2+kB+NFxsw6?=
- =?us-ascii?Q?kPo8NxaHT5OTQuOQ0jC7HjwLNXT5H1g6QCyLs3lXJ/cJzVU86VCc5Goi5FDW?=
- =?us-ascii?Q?89tBTJgmvIiJBUtdOwRSY02kMh3fvVdIMNFEnn2P3rgvWkfMS7WBA2tGOG38?=
- =?us-ascii?Q?d5s5S+4ocWpbD2gsFYkyhQ9v3mJIW2a7yQzuBCPEAXZIF5h2punEnyIgNZLL?=
- =?us-ascii?Q?AXVRIHz8J3xFi/djqqCwoKITtIdLh3AU4vHHRMum+I3wh79M/22CZnmc5WuK?=
- =?us-ascii?Q?gYwrnRDRPv+r1WWf8fEZCYjKtXkVwmNiG3iR4DrS3EQ1Xb3ykbUzJq3R47Nh?=
- =?us-ascii?Q?EMoEKmKeKwS2i5C+kE/p8yddbIZmWmYa3m8Z/lRfS2YB8FtnzQeonziVEEEy?=
- =?us-ascii?Q?oSEVtRrDfHFAljadnaSarjBT5IvN95nb+Ryi8RblUF2oWAeElwQLQkgpp4qk?=
- =?us-ascii?Q?1y50l27Egg/ZiwEztNZyEs/rUYhrK5/GsICpx/d5Qvm7okEmkeRuaphz8Yy4?=
- =?us-ascii?Q?tCfwbgQGo91Z/ovpf1vxZhi0tqTMyTayj9gsqyb47MRU842Kgw3mWadMkSn1?=
- =?us-ascii?Q?KQx//5VrLwZK2fecAu9DTMtbFubRLRCzz4eh371Qil87civ85ujd/xsaAkVd?=
- =?us-ascii?Q?APbCOz6wRfeUO5tTYOihFjwd+J1uCNlADKAMhV8XIiCabHGZRw1Pz0WS/G7g?=
- =?us-ascii?Q?jibqMHd9uh10dpvdD2+7XpYspyebvVW/KQC9N31+4VGsNsMxWrZb7/O4X1lo?=
- =?us-ascii?Q?FKF94wlUazmyHNlw1WbA9H2zn3uJRswK4486GlLsW3e3UPUGzCuZXTYqpld8?=
- =?us-ascii?Q?s5nQbSCZaXe0N5QZm08Crp45jZ6Clb1vGrta1MQafyS18hqdeIJdwE80AEQc?=
- =?us-ascii?Q?AItFsvB5OFebnhaXcwYnlPqFpBVMHh6sHsMnPIvKGt/GMYtBOEl8FHVAyBnR?=
- =?us-ascii?Q?aQ/ECjsAkM7k1eT08b6AQ5EIQ1TW7+dd+AhiJCtYctKBLbMLWoXA3+1wXmzm?=
- =?us-ascii?Q?esYFXrA0IiqyBtWWNm0D08pZiAZSUd47CR6pKNFvZDXiyaa+eo1Xxdwo8fZh?=
- =?us-ascii?Q?9XrYNe2KiVYm+h5M7upyQ7/o9a3RQ6gSbnZb/a6GCdeWyi7lDTkybQ2qMJ2v?=
- =?us-ascii?Q?WX/CGT1SlPMOGv9iiSCucihBG3zE/yznBOx/3MFZoYxuVwA/3P6zHquBsyND?=
- =?us-ascii?Q?fseuk8/nZs9Ji+/3VHbhHstFed/YQpR8+kcEPzlCW3KToSndkcyc7TVNY3xb?=
- =?us-ascii?Q?q1ebMwfE4bYE+SPMX4XPdrnZVv961aW0tm/Y1VD6UXWvnJFpTa93TFlF7CKk?=
- =?us-ascii?Q?EcwctY1X346G67Y8d9zWM5GUj7mjLE5NF/jRxzKqgEb7vrYUSn6ZRO2/GFIE?=
- =?us-ascii?Q?7rjJJ7hLuOZXUtcgu4bXmderZApX+3U4M1IFAv8pfQ4f4vUJP67Wq6FGbesA?=
- =?us-ascii?Q?IRI0tziTv4v8L4S0RIpbe4c=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7416014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?EBygjEBYI5kXROSwJu15F5eSJJk6Z8uSKKr0C1NnYIUlMCFXlN2rsi91/AGA?=
- =?us-ascii?Q?Nqxanr/30fEDHKO6IMo5NCpld748mqbrIxywhkbCkLOU2uy0Hu3tfpVL9sLv?=
- =?us-ascii?Q?IgVJz9mg24JM0GkiaNq7YCeSrgvbEuM3rEfSamLDL8CKDWBbVi40N4ST/Trg?=
- =?us-ascii?Q?cYUCeDNfJXCakg91b8hniHsahGxSJVsFFQb88nrFTwjQsl3S4jsXn7U6aFSp?=
- =?us-ascii?Q?O+dMWCd1N/Me8tisBwQabwzR/m7qTsmchBCYhsKqAorFz7pzlDX+MMeenIJI?=
- =?us-ascii?Q?EQ6ThLtXGe6B8w8o4k4TeHWboKgP4Nd1hZbN8h2vlpGSTWTLDNZA4APmFMAc?=
- =?us-ascii?Q?2xD6WiUPEV0rmBC+xOPp0e7UzmquTkM2vZUUe9GXHUMF7zwlKArK5R0HLYwC?=
- =?us-ascii?Q?974Ow+V77SrdOTmi61gfqmwaC1a3B3ROONX3sroEFKe9np0us5HfdxJZdTeJ?=
- =?us-ascii?Q?tUcXQBu4fVXTx5WNwYFHl8CcJf6mjgFb498dEOofXQHSAPsv6vs951rExlWz?=
- =?us-ascii?Q?RfhyFtIf65YDcp9+snnJSbQeSdTzMoBN1qlLRRtmoj2A2t71zSt99byNGMvq?=
- =?us-ascii?Q?xsoZ4svun5KNqX6AyPdEMELcUkNCO9I+Z4zEoLK/F7CmTVVqC0slGYRk8Zt1?=
- =?us-ascii?Q?co2TIW1nsvBUnYXhvU6s4yB38Fjw6Oll1zkxWAay24dPkso3IoCeflarUsq9?=
- =?us-ascii?Q?IkZmPk08+XzDX5iVPCOpkSevNhGcDrUU+lJMI1ycQBYNcKX3+t0vpgTzG3G+?=
- =?us-ascii?Q?QXGNzRATUnPu57bMELaLranhkynoyw4MOLidhHeZ8Dt6P7WuNzXaKjJFGmGI?=
- =?us-ascii?Q?S5lbHGjxE/LsNSn0TSQdBN2tphfpWZZ2NiYFxos7bn4xlQr3+1YLQJm2w+QW?=
- =?us-ascii?Q?ekkM0VZ5gPr5hL17mDGEXBsRtnEK4/wcyBbLJVbBglK5tUdlYYYlwh0uPoHG?=
- =?us-ascii?Q?GQU5lCImCWVbLdFGVWf80I02FP45jmWnFvLiqlGZMsGVrGYo7MhBGPPCbACT?=
- =?us-ascii?Q?JatsHOFYNToq/ywNY1ccLmGHaflJFTz25QXNiHJAEEaKjBBmnO7epBuoynl0?=
- =?us-ascii?Q?zfqJrchmg8WRFzWPXTcY0pTRLOYGCCUZhP7eG/OQDwkqwBlek4yRXfer/ug3?=
- =?us-ascii?Q?p+X39cTXv+G0/HdUqJ0tFoRd8OpHU/jWtpyv7+b1T+2/2jAbkIpayy2+uvm8?=
- =?us-ascii?Q?mFeoxphWy9r2UGYXt9Dz79VZhwnvGFDeNFnVFHvIcHtlprUZh+gx4TGhASaT?=
- =?us-ascii?Q?3HbBnh4Vg9F3ErCyxAmYWVGrSt7C6lQH2qZ+wsBtLU8K/gPnjvWmXHN/9Cnk?=
- =?us-ascii?Q?W6geUSut+pkld12udHpqn5i8xCKFPpkchadAcxc1mi9eWvpkh1JAiNJnVKle?=
- =?us-ascii?Q?va7G3zPr3sSHmoc2pzDt+WcqSlRUraq9GR1XPM77ekRcoFs1A2jcMEqSgpGT?=
- =?us-ascii?Q?zhwlf/Esyuqu1mGjylWQN5QRlBM3MxseTCDbqM1HjqRZ2rCcffztb3x+nIVX?=
- =?us-ascii?Q?dcMHRvbahQ4xfs1OA+SKveX0gGmBfg5Hg1NVdRIsVKgFdhA3Iem39QRnhrC0?=
- =?us-ascii?Q?OllTYcc1efm44C/oNwmeMo3woQ3lDLWuLFxvaaqTvfgZzJvBgHudHwARYhF3?=
- =?us-ascii?Q?KiMPTKspG9InbBylb2xEtkhxE41Pkk2rzsGCATLVIHA/Q8Df/FMw7H0M0qn0?=
- =?us-ascii?Q?MyQFa+TkD9a8bN0kmjC4FAKZFhwZjy6x7W0aGTzwM+1Riv1+?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gQcXcMC/";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YHWD+NO3"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61JCRKt8159744
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Feb 2026 19:42:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GcKVJlOB1hmcCtrOgSV1bzmf0u5ByVni4PLnc1gEtbU=; b=gQcXcMC/lVLMfTbm
+	MlpJhArBBl1z4O8Hw5cM4kXDBaad8wkR/JnQNxBYlP5+MMD1tV3FIpa7U0S81mN6
+	+X8Zq1t0rOxBR434rpZLsMPbNtudG2efGgzWdZOdqlCHv1jm/hQrKgWFxZgTOStY
+	ThmuBhi3XEGn+nrYvXZ0m5UG3i8CwJx4jmCvpLibd8rkTAKYuXe4quFywLpc030T
+	PCXApzYgwu4DmYZcKb8JhRDv3GdpfkMAZiJW2XhpnnGn5FPoabSEM00cRMRK27sY
+	ppOIeg0QVP6tP9vtBkuaVKVjcJq4FMGZzSdVNd7s/gsBhhgHebBUljLmv7Xf4jxp
+	cFPgZA==
+Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cdrpgarhr-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Feb 2026 19:42:47 +0000 (GMT)
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-2bd2a2028c5so1923110eec.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Feb 2026 11:42:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1771530166; x=1772134966; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GcKVJlOB1hmcCtrOgSV1bzmf0u5ByVni4PLnc1gEtbU=;
+        b=YHWD+NO371tK34TobBED4fpvK2oCH6amQn9QEKXemME9flFhsG19/D1v4idsNkbOCt
+         9laQzu3JqioxdpQ6ojUJfQZ1NDduVDnNBGTJefdIztNOSJzXDeihw3i2MMY2dLZiXJJT
+         SIe146RJgEyY9HVn5c+r8fLPAvwVouJOblFSiVVXzt7SqBs1ZnvGySXU5g8GDHT6llP+
+         jfoMA8mXVsHLO5qkjz2YR9+Gevu7ux/O42BWr19s99U+U6sibdWYpQJn2kx6+lzNIZR3
+         WNKyYf4szAhXN58YXJxuKxtXj4jaauhsE3RWxq0aVU/rxr0tCKtx8d+XYTtCv3fUrxRy
+         NB8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771530166; x=1772134966;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GcKVJlOB1hmcCtrOgSV1bzmf0u5ByVni4PLnc1gEtbU=;
+        b=qkj8GpOM5MEgIAZcO4p3wWWs2vmTFBEGmVbk8QhhO4XE6RQJFQiVkTeQKMsoDYThjE
+         3yoMGHLsKUt/oVqzTs6iFa1nkTgt/wcGlo91q92GccPn9xD2gca/Lh6EgTX/WjNRC8eG
+         NBs4KyEN7hIpvNZfKH02hkeiQbxev6wtqMZAf4f0Y0J4BLtkctQWP9tNcx9QlJfjdmiZ
+         0YTJQI7L1AJEtS5fEQaN3Rl6DbiMO/aEgp6lENaMYvizqmCYIegBRGMDy3MQ7mg74Uid
+         KA0RCJLtycboYccROVE8+QBSvqvJ9zwgOpc6alAaPCXsyuFi+vSFKbVLJl4DdTsuCxJr
+         LiGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoYK+AsSblYRUbD9pIsHqGySAQa2BOO+ywAb1Ob76bCgA9UPMFbaaDdTixiN2hIvd6f0EQuale3ReWCNnjPtPc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkfIRy86slrj8QgvsWJZelDw+yN9zxnG9u1LfxUXbZrFCUxxJB
+	bOl84eZMb43LL16IbdSj0v2uaevElaGUs2MdN3auZp4ZXPBHnMmgCEn/9drsiGgn+jXa/ZmZoAP
+	zryrHVzbuJnPTpitf3SP0+0jGKVMHGwmBvB6gr/nC59FZaqUrsG0h1RWzCe+FpzfOAFgIZFyf
+X-Gm-Gg: AZuq6aJclUeP4HZ72Wswmw7SWKJMn7SuTFyC2xrU8lGhBA6aIpuryF67dOPItpFM3rK
+	d+B9hxmYOIR9Iw3gTbZq7VyqjAeRnjKghrf5UjoLi0zS212u63n3kChPjt1UHybXveCACfpBlnY
+	iG5eR6HG/Uff7InayHkhbd/xI7O9pFz2Z5aeZucweygy2L680Ne+Cw5CF9f13dgMWwqXg2IuZE4
+	4aUIzw9QASb6ag7Oe1c3ao+CPtIWnjV1Vluwdd9QqKe2v86enfQEX0XCiqXanX+ZMn5Wl2i0Vj6
+	mxzKwODwo4pX6jdZatTnO0Zq6xsUkAi3pw+2eIy60pRxUzYBOzb/O8KUEhvrAnzVaGgNBb8YYON
+	QdpanFWeqzUFDBWilsOkDGDnjigWF2MXrEy7An5P6FKqtcFB27i2sCTdqov6V1IVKpqeO9NbcNO
+	s1/2aOny1K9yKdnw==
+X-Received: by 2002:a05:7300:e614:b0:2ba:6c1a:8818 with SMTP id 5a478bee46e88-2bac97d241amr7644333eec.29.1771530166278;
+        Thu, 19 Feb 2026 11:42:46 -0800 (PST)
+X-Received: by 2002:a05:7300:e614:b0:2ba:6c1a:8818 with SMTP id 5a478bee46e88-2bac97d241amr7644317eec.29.1771530165725;
+        Thu, 19 Feb 2026 11:42:45 -0800 (PST)
+Received: from [192.168.1.41] (c-24-130-122-79.hsd1.ca.comcast.net. [24.130.122.79])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2bacb543e1dsm21614319eec.4.2026.02.19.11.42.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Feb 2026 11:42:45 -0800 (PST)
+Message-ID: <62d53cdd-b71b-48f8-88d5-65407d3a80c7@oss.qualcomm.com>
+Date: Thu, 19 Feb 2026 11:42:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2a52dff-c3b8-4e54-257e-08de6fd5dcad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2026 16:42:25.3680
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nm1cREPn8VSBvMpEMGGWNChTCZzzombxDIp1EsRhrHBzEzNnHE6f7QgYOamR6QcLmLmeX0afpBq3x9JEQxoDnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7454
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/6] arm64: dts: qcom: ipq5018: add nodes to bring up
+ q6
+To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
+        andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+        quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: George Moussalem <george.moussalem@outlook.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20260113092021.1887980-1-varadarajan.narayanan@oss.qualcomm.com>
+ <20260113092021.1887980-5-varadarajan.narayanan@oss.qualcomm.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20260113092021.1887980-5-varadarajan.narayanan@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: E5vCgDjpkZnJZ9ElQbdv6VzUfwd8QpPr
+X-Authority-Analysis: v=2.4 cv=JrL8bc4C c=1 sm=1 tr=0 ts=699767b7 cx=c_pps
+ a=Uww141gWH0fZj/3QKPojxA==:117 a=Tg7Z00WN3eLgNEO9NLUKUQ==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
+ a=UqCG9HQmAAAA:8 a=bzy-IBSobD9MKY258vcA:9 a=QEXdDO2ut3YA:10
+ a=PxkB5W3o20Ba91AHUih5:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDE3OSBTYWx0ZWRfX3fyF2gKYOCth
+ dZTSyw78LVsYD44vmjl+rBkpqka/kBF0wDh8osqkPlBSmgL6uaUrKBWfXFgMRA2/w+bYMIWcAlt
+ UHqQISCmiEY+cu5hTAaTrr7FdSrtEw8Eo+85twb9v2ygqspCEOCS3C9fApsaU4x0YB+NnMAfgH7
+ VDPms9BOxZ9cdSxJ1te8PoWQI99aSKURocdI+ns5trRZLz+MluVlMv4LQ7RkTVN9pblJHm+gG9p
+ 4FGtmpIGld7BmGD82NXIMY068WbOfuBy6HaZjz3jRVvx6IAuXiT42DT/aYmt54bvCxTikt+fQl/
+ v+wEpN8kSZWqC58Q2SmB4E/w58kagYrtkYJypiSCefc+Bdz1uYnd5K0hrfYVqfp/9XfPW+qmwxY
+ 1VkHX9gOSWiGFwuq9DrQED8vEcvQdYfpWU41erZZKyrb6VawhKIG4dLkyShK2fjlwn1su5H4Kwu
+ OPgjNHRP0JLrrXA61bw==
+X-Proofpoint-ORIG-GUID: E5vCgDjpkZnJZ9ElQbdv6VzUfwd8QpPr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-19_04,2026-02-19_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 clxscore=1011 spamscore=0 adultscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2601150000
+ definitions=main-2602190179
 
+On 1/13/2026 1:20 AM, Varadarajan Narayanan wrote:
+> From: George Moussalem <george.moussalem@outlook.com>
+> 
+> Enable nodes required for q6 remoteproc bring up.
 
+I just recently became aware of this series, and have some questions...
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Thursday, February 19, 2026 9:25 AM
-> To: Shenwei Wang <shenwei.wang@nxp.com>
-> Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>; Linus Walleij
-> <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>; Jonathan Corb=
-et
-> <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn Andersson
-> <andersson@kernel.org>; Mathieu Poirier <mathieu.poirier@linaro.org>; Fra=
-nk Li
-> <frank.li@nxp.com>; Sascha Hauer <s.hauer@pengutronix.de>; Shuah Khan
-> <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org; linux-
-> doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix Kernel Tea=
-m
-> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
-> <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
-> remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Bartosz
-> Golaszewski <brgl@bgdev.pl>
-> Subject: [EXT] Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO dri=
-ver
-> On Thu, Feb 19, 2026 at 02:17:26PM +0000, Shenwei Wang wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Andrew Lunn <andrew@lunn.ch>
-> > > Sent: Thursday, February 19, 2026 7:27 AM
-> > > To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-> > > Cc: Shenwei Wang <shenwei.wang@nxp.com>; Linus Walleij
-> > > <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>; Jonathan
-> > > Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof
-> > > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
-> > > Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier
-> > > <mathieu.poirier@linaro.org>; Frank Li <frank.li@nxp.com>; Sascha
-> > > Hauer <s.hauer@pengutronix.de>; Shuah Khan
-> > > <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org; linux-
-> > > doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix
-> > > Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > > <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>;
-> > > devicetree@vger.kernel.org; linux- remoteproc@vger.kernel.org;
-> > > imx@lists.linux.dev; linux-arm- kernel@lists.infradead.org;
-> > > dl-linux-imx <linux-imx@nxp.com>; Bartosz Golaszewski
-> > > <brgl@bgdev.pl>
-> > > Subject: [EXT] Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg
-> > > GPIO driver
-> > >
-> > > > > +   if (sync) {
-> > > > > +           err =3D wait_for_completion_timeout(&info->cmd_comple=
-te,
-> > > > > +                                             msecs_to_jiffies(RP=
-MSG_TIMEOUT));
-> > > > > +           if (err =3D=3D 0) {
-> > > > > +                   dev_err(&info->rpdev->dev, "rpmsg_send timeou=
-t!\n");
-> > > > > +                   return -ETIMEDOUT;
-> > > >
-> > > > strange condition you return an error if err =3D=3D 0, for redabili=
-ty use 'ret'
-> > > > variable or simply:
-> > > >
-> > > >               if(!wait_for_completion_timeout(&info->cmd_complete,
-> > > >                                 msecs_to_jiffies(RPMSG_TIMEOUT)) {
-> > > >                       dev_err(&info->rpdev->dev, "rpmsg_send timeou=
-t!\n");
-> > > >                       return -ETIMEDOUT;
-> > > >               }
-> > >
-> > > This will be from a comment i made. It appears that
-> > > do_wait_for_common() can return -ERESTARTSYS. I assume that should
-> > > be returned to user space?
-> > >
-> >
-> > It looks like there might be a bit of confusion around what
-> > wait_for_completion_timeout() actually returns. That function never
-> > returns -ERESTARTSYS. Instead, its behavior is pretty
-> > simple:
-> >
-> > - 0 means the wait timed out
-> > - A positive value means the completion happened (the value is just
-> > the remaining jiffies)
-> >
-> > So the driver returns the timeout error, and the upper application can
-> > decide how it wants to handle that situation, for example restart or ig=
-nore.
->=20
-> wait_for_completion_timeout():
->         return wait_for_common(x, timeout, TASK_UNINTERRUPTIBLE);
->=20
-> wait_for_common():
->         return __wait_for_common(x, io_schedule_timeout, timeout, state);
->=20
-> __wait_for_common():
->         timeout =3D do_wait_for_common(x, action, timeout, state);
->         ...
->         return timeout;
->=20
-> do_wait_for_common():
->=20
->                 do {
->                         if (signal_pending_state(state, current)) {
->                                 timeout =3D -ERESTARTSYS;
+> +		q6v5_wcss: remoteproc@cd00000 {
+> +			compatible = "qcom,ipq5018-wcss-sec-pil";
+> +			reg = <0x0cd00000 0x10000>;
+> +			firmware-name = "ath11k/IPQ5018/hw1.0/q6_fw.mbn";
 
-Once wait_for_common() is called with state =3D TASK_UNINTERRUPTIBLE, signa=
-l_pending_state() will=20
-always return false. As a result, -ERESTARTSYS is not a possible return val=
-ue in this scenario.
+This file does not currently exist in linux-firmware.
+Instead there is q6_fw.mdt with associated .b* files.
 
-Thanks,
-Shenwei=20
+How do we transition from .mdt to .mbn given that distros update their version
+of linux-firmware independently from kernel updates? Will we need to have both
+the .mdt and .mbn files present for some period of time? Are there associated
+changes which no longer attempt to load the .mdt files?
 
->                                 break;
->                         }
-> ...
->                 } while (!x->done && timeout); ...
->                 if (!x->done)
->                         return timeout;
-> ...
->         return timeout ?: 1;
->         Andrew
+I ask because I've been told the ath11k/ath12k drivers will also need to
+transition their firmware loading from m3_fw.mdt to m3_fw.mbn, and I'm not
+sure how to make that transition.
+
+/jeff
