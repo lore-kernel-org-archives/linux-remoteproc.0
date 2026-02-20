@@ -1,67 +1,88 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013056.outbound.protection.outlook.com [52.101.72.56])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A2429B79B;
-	Fri, 20 Feb 2026 09:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771579971; cv=fail; b=KGrrDU2KXmPyHFo/salJ/rRhg3aGloD4c9NOgSJ0N5yBxnfocSEzw4weVYtmk21JWtaDzpDV3321enKZrdap4xag2rmffQtZ8aoMIMzKptbzDkWfz64a90LyLjYOFm+ZLmluLzA7CL9qcb1WjK3GnkMVFWbQYCfUL/2QGRXDd/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771579971; c=relaxed/simple;
-	bh=OrleDfTMl6Mmyl4ThcJXo2B2/677c+Ni7y1DJjW/WS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nR3fqCxJE6vpnEQYvpLvpAD70oFIaYXlgv2Pwi8Kpdk6NiLZmDthCfpnPxQ/SWOIymHtuvJT0LNHsEXYjqu/O9k40zDlwin8C7nospp+TlijrIFU+5Xk64fZ7CF72ccJD0fDVfi7fBXvgVjhWLfE2WCIhddvIqkEVCJ24ixoxxU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=N8Cj975l; arc=fail smtp.client-ip=52.101.72.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7160F33DEF7
+	for <linux-remoteproc@vger.kernel.org>; Fri, 20 Feb 2026 10:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1771583782; cv=none; b=dtwWOHKR1TdccKd/UkVBcp6eE3ssG9njq59yUYjStGXn1yfZ+Q5GA+KsdaeSOC055PhPepCBMvPL42mHNSNgbmLNgomXHDanr1o/BS7ygmkme/UQN9/tEVzuELrhcTcaZopvPB59zi9AEAxeyrDvcbXogAvIiuwFp1Mh1v9wdDk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1771583782; c=relaxed/simple;
+	bh=G5at7ibjN0g14PaG2FatNt8F41ngH9k8/i1n0QqS/zE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a0PLblgVn9aBp+/toipLZvA5kbDrc9dhypWPnzsdicsV2g13Lt5aVPgvt13W62RcWP6VsZZPJ8YWzkBUknaru9wwBigm9x4PINr0+GrnPZ/+7FlH7Tsap+9S1QueLmJ2xeU+Lv+y9mu6rjLT7D6NxZUL6JL3xNW0b8q/lchHeq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RKQQHNmD; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gF3xLkvh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="N8Cj975l"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qGBsEfnwayte3RjDdfwiJaBvX0QZ+fG3dxDZ2Qb9qN8pGCUcFE63HdhNq+kiR5M3/FG9hFyLYyJukTgYu/5FA54m3+HMPjvDaCDiLxuQr2PTnaYLS+ZPK6LAUKpVRD66Xg2QHVAdWOKRndZzDkEkd9uA3Hk4rLWZTwbJts5qFzK0Zp2YlzT3ghNJIlJxqXs3AHXc/oUyUyrLy++KEbR9scUkas2tjbdbgOnGuuRP0EAj7zFaCCmhH3Nou2BZ1ockgv64UAoPiT4pIuxJ/QeuH7r3BLlja5PqP1dXfYPajmCd5ea0+hHdQEK9y73wgHv/bEScIM7ljQJycZWFO7oz2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/e6I/L6vNtKyTnwWCbIrTmsPzO+ZLZatZtquZSEbNMQ=;
- b=nBQDcIcLweCEjh9Irp83j+/yiK463IdOWNrjFnwNIRl6WpGvX3kL5nBoYkQxCnMeVEnQFp71ORDxyWsMuH45oSAlOITA7EcuWm69hT8SERPj2KU9MrLCwOysGXPn3nxv+4Fvht/q+XA5FkuuZ5t+Jp02Zvr0FDH/GpHjGZb+rvkdLUltnxskCdLl+jvuyDf+55Hbfnbv//HN2waEJRwAoWmP77aq1cwgGDaSnou9dJFzgj2KerxaBBoijFxR8ln5q68kJCl7i98GJC0gaoMi3pRbkLkPwtj5jrL6ltkU8wauFrqPgOwHHvwG8MgHX58DH0rDjCR6f2AsMPJwPgv86Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=nxp.com smtp.mailfrom=foss.st.com; dmarc=fail
- (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/e6I/L6vNtKyTnwWCbIrTmsPzO+ZLZatZtquZSEbNMQ=;
- b=N8Cj975l27XLKraYUL7a6f15Znk/KHZrTz7DhAYrNg/slgQ+2w7jnjkHR/EgMEzaVcjJYqsLuuk6RSht/lwIkZP/pkImsbsESQ1j5o5tR/nlhGeeONEi9EUmFvi5U6IbbMIJ8/UmAuxXR7fRyFiiXiTfzdgxJGmYk8OWTpBLPKZDzHYGKYSY3zUq5oVdoF/Ch4//IunpAXMQgNUd0Xyvm/+Wv2xje+jS6AfQAIX1LQ6e/wxZLsE5A4HtFrRfFthgLxjADNuPauRKNF5/rEhJTXWLzGFWziVfSgGy4CWuT2VRdy0XDMxsbWPSbkynX6//Dyd126/8bp3IqK6i8s0T6A==
-Received: from AS4P190CA0046.EURP190.PROD.OUTLOOK.COM (2603:10a6:20b:656::29)
- by PAVPR10MB7113.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:319::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.16; Fri, 20 Feb
- 2026 09:32:42 +0000
-Received: from AMS0EPF000001AE.eurprd05.prod.outlook.com
- (2603:10a6:20b:656:cafe::17) by AS4P190CA0046.outlook.office365.com
- (2603:10a6:20b:656::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.16 via Frontend Transport; Fri,
- 20 Feb 2026 09:32:38 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- AMS0EPF000001AE.mail.protection.outlook.com (10.167.16.154) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Fri, 20 Feb 2026 09:32:41 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Fri, 20 Feb
- 2026 10:34:28 +0100
-Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Fri, 20 Feb
- 2026 10:32:40 +0100
-Message-ID: <fdbdfd15-1848-4d17-ab1c-53472ab6c817@foss.st.com>
-Date: Fri, 20 Feb 2026 10:32:39 +0100
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RKQQHNmD";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gF3xLkvh"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 61K5Rreq1851333
+	for <linux-remoteproc@vger.kernel.org>; Fri, 20 Feb 2026 10:36:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	73hsc16MmRU/mTVMGpbbBTJJ3KemmpyZ4ao7J6lqNsg=; b=RKQQHNmDXinPsObc
+	wzVKb4XY4P2Qyj2ukBVebHrLACA6MGsrpO5mQa+F6/XY8N9FGONoHO2yrn/yFvaE
+	uoexgLkrwuo0rJ7nJzHjWsuFX/b233GLbvFXbae0RK96LKQ7poprIq22ecY+H3kI
+	Dvpihf/UJX8OWR+DArsVEVjg5qtz2k7vRAsk9xXSrGn2cVluNaGomNJUStYIQRtC
+	vnhMH5Q1MjJqUPTbXZr7kXrx7xS5ZCGezCT6btHl5mRHJ4TimQFCrPCi79NPxor+
+	fLhmsB4SX66X8lAKvpmFXD+aaI71ZcwrQyGq/54kJzd+DXD07uPJ7C/z4KJmc5RX
+	vGoqzA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ce9ng9uwj-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 20 Feb 2026 10:36:20 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8c70cb31bcdso195899885a.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Feb 2026 02:36:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1771583780; x=1772188580; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=73hsc16MmRU/mTVMGpbbBTJJ3KemmpyZ4ao7J6lqNsg=;
+        b=gF3xLkvhUM6ppVEpUWUvydHoJii3B6YPIP9DG24kdUCadoCOJORjKFlut5Rg4B1hqw
+         1YsVumG1ACmvIXPM4WZT2ZP2WdSWwIR4uQuB5ujhfkDDe45n75A3Umc86rzDM+YlTGNx
+         UAwDUPAQUtq0a+fq4Zp4D4Iz69FgIbchHtsOzuC5aQjlwgy4r8uTUVpi8tkgZuy25Gz5
+         npUHb8VzKmeFHAPfTtHQQPORCgFd/F53luhD/sGjWUflbtMl7tNDf2Gyv1/hcDjjLO4q
+         FHuiE9IlvxIaLROwZC95ejf18s2vstLgXte3LjdvLZ89ZWY4T25opQOkdFPYL42r97h/
+         1OYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1771583780; x=1772188580;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=73hsc16MmRU/mTVMGpbbBTJJ3KemmpyZ4ao7J6lqNsg=;
+        b=HUXb6S/BexeAEjxE10VJm0Cbbt4J7dMyPK06k+c/DgdxphBWh5RNU2NHOuKi/BA9Jd
+         veFwQt56WZYlQ/VlTF5QHVtZjS2nHluSRWOcrqCaxG1BKrVGwOYow85yq86w9Oiaf1bG
+         p1KJHToC+fYalAVBXLl1sa7s+SytM8GyZWNDnCLrsR6P9MprEHlgn3kIK24N/FAVC47Y
+         YVPhWbq/40OgcWm2cOHnSbitEDZMii5VTiuSMr2jTd2L6wiKgqNuRHzVPt0toqygHBzS
+         LlRPzdJcANjYKzX14L5H1uaLiBqm4feWPLcxdoIxGAIHMuU6rkiPLqlbLFFJ+DB/HwbU
+         yixg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi90Ltcbzu+3lz7rfHobExLesHK817hRCjs5bVqxDuogvB5Ts3ySAMykM81fuC8S6lv2sv8Ra9igiOr12i14YU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaSrXdg8sQyjJvuxLVLr7h26/c9tmgbNY4Ka6AwPDfyigr22xN
+	KJWVzVshWXNYpdzDqOd2+1aL3aKAu0hA/3+hqJLzwX5YmMWIRZ4PtCPEs2mvcFoHLlkL4j7bMpC
+	IYlLK9RSOGzgCuaBhhol97frCJtyqoTZUOh6+kLJiL8NoxXpaa6nNo5G/NCOt06x6Z5PPbPY3eW
+	jRQa4v
+X-Gm-Gg: AZuq6aIKJRXDWvWtfouDvVZauBHj8jZS2OdR8wpW8Wtu7gQYW4WLn1NFpeiD8Chtu9v
+	vpj7zQmiErhUNRiYSBOKJZ9cOANsVt24JNv2ClfiIxn6X4Y+NIRed6D5eA560bmP+aGC8Exe2j9
+	NeJIGn2oENoF3e7wKinGkGMngMh72WF7VPRS10KqjAwbLfhckKCxxGLkmpFTj3kWjrzL1HnVrJ9
+	7iWKZZ7vjTehSjqxFWMxWK/WuAmgNj+qsc7jCbbwByIznlfrKusKCk45qugzGPRZq8RuF24XByj
+	ZJ2TLruVYDI//u/QnjSiDARFBGJWINILGOLEnBKQvmCpXZc8KOnRt88ZTxCAx80/3UVi1GQZ7k4
+	D7yNd4usgk8qWrJgIwXqT8to7m9N9XX0YxkVVVOOC2v7OrlkJLru0DeoDAouIDnyjGpHj8bmdDw
+	/m1+Y=
+X-Received: by 2002:a05:620a:d8a:b0:8b2:e346:de7b with SMTP id af79cd13be357-8cb40820215mr2416018585a.1.1771583779840;
+        Fri, 20 Feb 2026 02:36:19 -0800 (PST)
+X-Received: by 2002:a05:620a:d8a:b0:8b2:e346:de7b with SMTP id af79cd13be357-8cb40820215mr2416017585a.1.1771583779333;
+        Fri, 20 Feb 2026 02:36:19 -0800 (PST)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-65bad2a9d1asm4594244a12.15.2026.02.20.02.36.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Feb 2026 02:36:17 -0800 (PST)
+Message-ID: <be05578a-d90e-42ce-a1de-4f670fce03d0@oss.qualcomm.com>
+Date: Fri, 20 Feb 2026 11:36:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -69,317 +90,79 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-To: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-	"Mathieu Poirier" <mathieu.poirier@linaro.org>, Frank Li <frank.li@nxp.com>,
-	"Sascha Hauer" <s.hauer@pengutronix.de>
-CC: Shuah Khan <skhan@linuxfoundation.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan
-	<peng.fan@nxp.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>
-References: <20260212213656.662437-1-shenwei.wang@nxp.com>
- <20260212213656.662437-4-shenwei.wang@nxp.com>
- <aae7c851-a93b-4d57-a118-43c6e68c4790@foss.st.com>
- <AS8PR04MB917654F40D80A2DBAD30ACD1896BA@AS8PR04MB9176.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH v10 4/6] arm64: dts: qcom: ipq5018: add nodes to bring up
+ q6
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+        Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
+        andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+        quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: George Moussalem <george.moussalem@outlook.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20260113092021.1887980-1-varadarajan.narayanan@oss.qualcomm.com>
+ <20260113092021.1887980-5-varadarajan.narayanan@oss.qualcomm.com>
+ <62d53cdd-b71b-48f8-88d5-65407d3a80c7@oss.qualcomm.com>
 Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <AS8PR04MB917654F40D80A2DBAD30ACD1896BA@AS8PR04MB9176.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF000001AE:EE_|PAVPR10MB7113:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96aecdac-b807-47dd-3206-08de7062ff06
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QkRReU9WS3dnVkdtbFAwOFlvRjE5eUd2NzdVWWs2VXhFd01qTU5QOTFnNTRi?=
- =?utf-8?B?dUJnNDkyNlBhV1ptNUNDblBlaHdCZTBZODdPaFdISDltTnhpVFJzNkxVcXFL?=
- =?utf-8?B?Wnp3bHBsM0tiY0J4RXN1akFrdThhbmFuMDRLaDdWWlUzL1JJMEpOTWpISkxS?=
- =?utf-8?B?U3AveDV4VFB1dXVoNTBRVHErR3pSdmpnT2hIQkZvYnFxdldiY0lvTGV6cklv?=
- =?utf-8?B?TkY1elA1MGIrR0NIUVBNb1hoVTV4T1lGV01mTkpjL3M5WmlrL084RUFIYnpE?=
- =?utf-8?B?eEkweWJXaXpjenZsQVlTU1VSU3B3UVhvSmRRaWJLWjRPRStCKzBwZEtHc1Fn?=
- =?utf-8?B?OHgzblVtdFk2bUhpSUFDMjVTTlRQZEVQanFZelg2U2tNWTlGZ1pjRk9jUlNw?=
- =?utf-8?B?cHBQblN6WGlDV1d0ZnFsNndUeFc2SGYrS3FrRUMyOGlaZGxucm9XalFWemcv?=
- =?utf-8?B?WHQ0amxZdU56RUV3eUJEOUgzVnVFYXd2bVVTdWdJMFlLQ3JhblFPME5sZWoy?=
- =?utf-8?B?aGlCQXMySllnS1pGZDEzTCtQUXRXUHBDVUVJZkg4UEdTbEt1MnhkVmxRQVY4?=
- =?utf-8?B?NUlpQ0s5WGFEU2dDOGhieWNMQ1ZmWUllaFZ2YkdCNnJONXUvU3lveXRud0pX?=
- =?utf-8?B?VHRlVzFZMERCa0swMVduRm9hbDBTZWYwaldVamlOeW9KZzRweDlqR2JKbG5P?=
- =?utf-8?B?Yno0VDQyVG1wMlJscE9pUGpqU0N5eXdic2Y0cnpzYXJKZlFRQ0ZPUVRZU2lB?=
- =?utf-8?B?NnVyWWVVd0RMOXBvVWl0aVpseTRoU3EvTlk0MTRvL3NlRFp3U2FhdEIrTlY0?=
- =?utf-8?B?NWhoZ2NRTDdrMHVHYXpwaUlLcVNMUkhsTXBRbmFSYktCUytsSUNUYmU2dzds?=
- =?utf-8?B?Q0V5Mk9DVzJrNUpoTlRXVlExQjQvSEMvK1BTNTJUYm9yMSt0aFZDUzJERStC?=
- =?utf-8?B?ZnFvdk9Na3ZPNGNuMXdXS2Q0ZWNNR2hraGoxendIYUJ4QjJiMUIycG9zRXZG?=
- =?utf-8?B?WHpHVEtwNmpOWFJzZHBMV2M5Uld3T29JU3MxU3hreE1zS1JaSk52dnJoY3Bi?=
- =?utf-8?B?NFZQMFBTa1g5d2htZEYvL0NmRkhlaTVoTzN1bnZVbWNHaEtIdkVFL2laN3NW?=
- =?utf-8?B?RmdkOFJpMW1jZDNxK2c2VzBYT1ZPWlZuK0lkVDVIUStkMW1vMjFnUldkNXhp?=
- =?utf-8?B?Y3JhZ2E3eG8xSGFyTk14T0VLL2x5b1hoall2Q09xaVdIYmd0dzVyV05HT1lZ?=
- =?utf-8?B?eWFlTS9vRzd1QlFVemtNeXFWZm1JVENyM2xQSU1QN0tMTklQN1JGbENNOGQ0?=
- =?utf-8?B?OTY4Q3pka0ZBcitaekRMbGxZdFdCeXpLZTdlR3kwS1UwZll2K0JGL2NjODVj?=
- =?utf-8?B?U0JhY1k0dUx0OHM5S2pydXFFUisrQnNNVVNUTll6UUIvejBaYXM4VStPWGZ4?=
- =?utf-8?B?dkNHZEs5MDJuMnppSmhydFYrRHdKNnlsOWthMVA1b1VIS0hvcnZON1BPdFRX?=
- =?utf-8?B?a054dENQczkxQTdmbFBmd3MvY1c2U2NYa21QVjJoL2NtNDJXOGtubi9QZ0pY?=
- =?utf-8?B?eHVNWFRvMjdGYllLRm10TVgrbkFJK2ZBQnNLNU1YWVY5M3dZWDBLZXd6WnlY?=
- =?utf-8?B?eXIrZjVTY0cyeFlNeWY2Z1lURXNRMmZZRDBHWnZOSHBBYzM4YkN6V2pNUUsv?=
- =?utf-8?B?WlIvOENuMjFEaVovanFUa25RSGcwWVliVTRCR3FIQkxoek04TTZ1a0FuWEtU?=
- =?utf-8?B?dGVqeWpza1NTWTcyZEZtN3BwNkJzczAxYnYzYmJVWlhjVi9KUUhWYUlLU084?=
- =?utf-8?B?a0NaRlBkcU00VXVFZE53NnNJSWFrVDhRdnFOZzVCcHVzVXN5eFlQVXR1c3FQ?=
- =?utf-8?B?S0dnSGp2YVdDWG5ZMGFZVTh4YWlVNG9vbWhRZjQvdUN3OTFpRE1pTFhJK2ll?=
- =?utf-8?B?RXpwSDExc2dhUUp2NVhjNm5oY3pndng5NlpSeXlzYmxaeGwwVlJoTWJ2ZStu?=
- =?utf-8?B?SWIwOEI2R3p0dlptSUlpQ3lFdHlXdHVTNGZnWnNZMlo5c3J2QUV0RnlKWkMr?=
- =?utf-8?B?WHpHVklZdjhoaUpCOWFnMDBrbnU4T3lVZEVSQWZvTm1hQ05ibCt6Zjd1b2pO?=
- =?utf-8?B?MVMvOFZiY1c2S1VpS3lQZFdxRCtsRW9SeVdxV3FTRFNXM3VqRmRDYWcwMVQ0?=
- =?utf-8?B?cUxadkhDalp6L1FISTEwOHBJQ0JLemozZlVUZDhxQ3JnemFhdTQ2MEc3M1Z4?=
- =?utf-8?Q?AGoSB7A7PpgA76BzqPiihwb3ALAelRTc+hfPv8hKns=3D?=
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	R+e/cSZRToJvrbcFG1aXRPa3grCWrwqVEshrnLI80StJzKSLEm0CZZ5RF5HcvH67M/QlZ+J+BdhbPYlkw7M39y0D4Doww0zsw37TmwqEZH3W+rJgBYWdnSMfvXmPnNAkjhAqABuZq9n/p679Cb1xS7VrcOHxinJqSt3h4C+0ppDzeMoMgpDrcxlwG1y05MjEKBE4HcUxlQk4uvlnDZ8MMngvIc71zaqQaJnXkTR1b/qZIkGdVaCirLs1bZJl1NWMsDG7unZBCJK9CXOepCYUqzFbRZkaJ25E90LIuZ7LESb1I2KUsNyhboCUFPxvhlVS05GW7Rz8+6f5hOZFTVznnqgXG7NOEFbbUiFmQZc1Byxn2nBypD3IGs4bzl9H7ZWRguTMWaGdQFy8LOjOcrlRCiEw0eB2mZiXNkQ5jGttA82dlxzhCh9pSKjLHbwKX/VJ
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2026 09:32:41.9583
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96aecdac-b807-47dd-3206-08de7062ff06
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF000001AE.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR10MB7113
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <62d53cdd-b71b-48f8-88d5-65407d3a80c7@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjIwMDA5MiBTYWx0ZWRfX+5mwIexpyswS
+ cbfPa2vIUWULxYnha/riZnycylUfTK4h1pWmZE6r3CEaGMmaYSUW9xX3qXU5vcRJTv5F/RHRoNa
+ kK1FC4lbs63lRdA/TkrPz83e2Y1kxxwwyb4l/abanP+q/L4cM7mP4u8h6njRlfxaZCMwwB4A+61
+ q9yCL9QOjgBanQc9/PWXQD3v/RalgE5GXwFqbkJomvJorl1n/ZOHholVTMLhkOwOlUAf8zuHPVJ
+ Lnp5OvKlhlTcgbgg+P8UYu+6Xcf0Lvy6TZl7YQ9ygV/8RmhAi2mx0c/nRB4Kk4WJm0lVSCU4vSI
+ JJQF9xBXmI8YvgFxd5LNTovDghh2q3oaxb2SN0Z1lmvFkmulPbXic3IMpZsKOVXE+odlkVKffyb
+ tLdSdQRXsLPklH5C1efSmeqafCVTxCvxKlVbrKI6y82GKKzmJ7QvFDw4FnURujEDI7qcLgauvm8
+ UfyfvYmXMmAfgRkY+5A==
+X-Proofpoint-ORIG-GUID: BuGjMHkGLOrfgFazicl2BsXaJd86icJz
+X-Authority-Analysis: v=2.4 cv=Sbj6t/Ru c=1 sm=1 tr=0 ts=69983924 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22
+ a=UqCG9HQmAAAA:8 a=HV0a73jl2iU2vqZvWrUA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-GUID: BuGjMHkGLOrfgFazicl2BsXaJd86icJz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-20_01,2026-02-20_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602200092
 
-
-
-On 2/19/26 22:13, Shenwei Wang wrote:
-> 
-> 
->> -----Original Message-----
->> From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
->> Sent: Thursday, February 19, 2026 3:21 AM
->> To: Shenwei Wang <shenwei.wang@nxp.com>; Linus Walleij
->> <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>; Jonathan Corbet
->> <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
->> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn Andersson
->> <andersson@kernel.org>; Mathieu Poirier <mathieu.poirier@linaro.org>; Frank Li
->> <frank.li@nxp.com>; Sascha Hauer <s.hauer@pengutronix.de>
->> Cc: Shuah Khan <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org; linux-
->> doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix Kernel Team
->> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
->> <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
->> remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
->> kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Bartosz
->> Golaszewski <brgl@bgdev.pl>; Andrew Lunn <andrew@lunn.ch>
->> Subject: [EXT] Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
->>> +     rproc = rproc_get_by_child(&rpdev->dev);
->>> +     if (!rproc)
->>> +             return NULL;
->>> +
->>> +     np = of_node_get(rproc->dev.of_node);
->>> +     if (!np && rproc->dev.parent)
->>> +             np = of_node_get(rproc->dev.parent->of_node);
+On 2/19/26 8:42 PM, Jeff Johnson wrote:
+> On 1/13/2026 1:20 AM, Varadarajan Narayanan wrote:
+>> From: George Moussalem <george.moussalem@outlook.com>
 >>
->> Is a topology where they is no rproc->dev node but a parent node exist?
->>
+>> Enable nodes required for q6 remoteproc bring up.
 > 
-> If no rproc->dev, it should return NULL in the above check.
-
-Regarding rproc_alloc, seems that rproc->dev.of_node is always NULL.
-so probably test on it is useless.
-
+> I just recently became aware of this series, and have some questions...
 > 
->>> +
->>> +     if (np) {
->>> +             /* Balance the of_node_put() performed by of_find_node_by_name().
->> */
->>> +             of_node_get(np);
->>> +             np_chan = of_find_node_by_name(np, chan_name);
->>> +             of_node_put(np);
->>> +     }
->>> +
->>> +     return np_chan;
->>> +}
->>> +
->>> +static int
->>> +rpmsg_gpio_channel_callback(struct rpmsg_device *rpdev, void *data,
->>> +                         int len, void *priv, u32 src) {
->>> +     struct gpio_rpmsg_packet *msg = data;
->>> +     struct rpmsg_gpio_port *port = NULL;
->>> +     struct rpdev_drvdata *drvdata;
->>> +
->>> +     drvdata = dev_get_drvdata(&rpdev->dev);
->>> +     if (drvdata && msg && msg->port_idx < MAX_PORT_PER_CHANNEL)
->>> +             port = drvdata->channel_devices[msg->port_idx];
->>> +
->>> +     if (!port)
->>> +             return -ENODEV;
->>> +
->>> +     if (msg->header.type == GPIO_RPMSG_REPLY) {
->>> +             *port->info.reply_msg = *msg;
->>> +             complete(&port->info.cmd_complete);
->>
->> What happen if the remoteprocessor answer after the completion timeout?
->> Could it result in desynchronization between the request and the answer?
+>> +		q6v5_wcss: remoteproc@cd00000 {
+>> +			compatible = "qcom,ipq5018-wcss-sec-pil";
+>> +			reg = <0x0cd00000 0x10000>;
+>> +			firmware-name = "ath11k/IPQ5018/hw1.0/q6_fw.mbn";
 > 
-> If the remote processor responds after the timeout, that late reply will be ignored. The current
-> transfer should fail with TIMEOUT, and the state won’t be carried over because cmd_complete
-> is reinitialized before each new request, so a stale completion won’t desynchronize the next
-> transaction. Each command–reply cycle is isolated, so a delayed reply cannot corrupt or mix with
-> a subsequent request.
-
-I missed the reinit_completion. Indeed, that prevents issue if reply 
-arrive after the time out.
-
-That said a second request can be sent before the remote processor 
-responds to the first one:
-- resquest 1 sent to remoteprocessor.
-- timeout occurs
-- request 2 sent to remote processor
-- reply of request 1 received
-
-Wouldn't this lead to a desynchronization between requests and replies? 
-I do not see a mechanism that would prevent this
-
+> This file does not currently exist in linux-firmware.
+> Instead there is q6_fw.mdt with associated .b* files.
 > 
->>
->> Having a cmd_counter in gpio_rpmsg_head could help to identify current request
->> and answer
->>
->> the use of reinit_completion could be also needed
->>
->>> +     } else if (msg->header.type == GPIO_RPMSG_NOTIFY) {
->>> +             generic_handle_domain_irq_safe(port->gc.irq.domain, msg->pin_idx);
->>> +     } else
->>> +             dev_err(&rpdev->dev, "wrong command type!\n");
->>
->> Could you print the msg->header.type value to help for debug?
->>
-> 
-> Sure. Will add it in next version.
-> 
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static int rpmsg_gpio_channel_probe(struct rpmsg_device *rpdev) {
->>> +     struct device *dev = &rpdev->dev;
->>> +     struct rpdev_drvdata *drvdata;
->>> +     struct device_node *np;
->>> +     int ret;
->>> +
->>> +     if (!dev->of_node) {
->>> +             np = rpmsg_get_channel_ofnode(rpdev, rpdev->id.name);
->>> +             if (np) {
->>> +                     dev->of_node = np;
->>> +                     set_primary_fwnode(dev, of_fwnode_handle(np));
->>> +             }
->>> +             return -EPROBE_DEFER;
->>> +     }
->>> +
->>> +     drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
->>> +     if (!drvdata)
->>> +             return -ENOMEM;
->>> +
->>> +     drvdata->rproc_name = rpmsg_get_rproc_node_name(rpdev);
->>> +     dev_set_drvdata(dev, drvdata);
->>> +
->>> +     for_each_child_of_node_scoped(dev->of_node, child) {
->>> +             if (!of_device_is_available(child))
->>> +                     continue;
->>> +
->>> +             if (!of_match_node(dev->driver->of_match_table, child))
->>> +                     continue;
->>> +
->>> +             ret = rpmsg_gpiochip_register(rpdev, child);
->>> +             if (ret < 0)
->>> +                     dev_err(dev, "Failed to register: %pOF\n", child);
->>> +     }
->>> +
->>> +     return 0;
->>
->> return ret
->> or indicate why the return of rpmsg_gpiochip_register is not taken into account
->>
-> 
-> rpmsg_gpiochip_register() failing only affects whether the GPIO instance gets created. The
-> rpmsg channel driver itself can still probe successfully and continue to operate for other features.
+> How do we transition from .mdt to .mbn given that distros update their version
+> of linux-firmware independently from kernel updates? Will we need to have both
+> the .mdt and .mbn files present for some period of time? Are there associated
+> changes which no longer attempt to load the .mdt files?
 
-This is not safe, by default you have to exist with error if something 
-fails, ensuring that all resources allocated during the probe are released.
-If there is a strong reason to not do this you have to explain the 
-exception in a comment.
+Since there are no in-kernel users for this one (the ipq8074 WCSS driver
+requests that but no DT is wired up), I would say we should promptly move to
+MBN..
 
-> 
->>
->>> +}
->>> +
->>> +static void rpmsg_gpio_channel_remove(struct rpmsg_device *rpdev) {
->>> +     dev_info(&rpdev->dev, "rpmsg gpio channel driver is removed\n");
->>> +}
->>> +
->>> +static const struct of_device_id rpmsg_gpio_dt_ids[] = {
->>> +     { .compatible = "rpmsg-gpio" },
->>> +     { /* sentinel */ }
->>> +};
->>> +
->>> +static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
->>> +     { .name = "rpmsg-io-channel" },
->>
->> I would remove the "-channel" suffix to have similar naming than "rpmsg-tty" and
->> "rpmsg-raw"
->>
-> 
-> The channel name comes from the remote firmware, so we can’t freely rename it on the
-> Linux side. On i.MX platforms the firmware follows its own naming conventions, and the *-channel
-> suffix is part of that scheme.
+> I ask because I've been told the ath11k/ath12k drivers will also need to
+> transition their firmware loading from m3_fw.mdt to m3_fw.mbn, and I'm not
+> sure how to make that transition.
 
-As Andrew mentioned, in other words, you cannot expect to impose 
-upstream constraints based on your downstream legacy. Your legacy 
-firmware will continue to be supported by your legacy NXP rpmsg GPIO driver.
+I can't see any m3_fw.mdt in the tree or l-f, unless the m3.bin qualifies
 
-Moreover, changing the name of this rpmsg channel will help you have 
-both drivers coexist in your downstream kernel.
-
-Regards
-Arnaud
-
-
-> 
-> Thanks,
-> Shenwei
-> 
->> Regards,
->> Arnaud
->>
->>> +     { },
->>> +};
->>> +MODULE_DEVICE_TABLE(rpmsg, rpmsg_gpio_channel_id_table);
->>> +
->>> +static struct rpmsg_driver rpmsg_gpio_channel_client = {
->>> +     .drv.name       = KBUILD_MODNAME,
->>> +     .drv.of_match_table = rpmsg_gpio_dt_ids,
->>> +     .id_table       = rpmsg_gpio_channel_id_table,
->>> +     .probe          = rpmsg_gpio_channel_probe,
->>> +     .callback       = rpmsg_gpio_channel_callback,
->>> +     .remove         = rpmsg_gpio_channel_remove,
->>> +};
->>> +module_rpmsg_driver(rpmsg_gpio_channel_client);
->>> +
->>> +MODULE_AUTHOR("Shenwei Wang <shenwei.wang@nxp.com>");
->>> +MODULE_DESCRIPTION("generic rpmsg gpio driver");
->>> +MODULE_LICENSE("GPL");
-> 
-
+Konrad
