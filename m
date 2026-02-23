@@ -1,125 +1,129 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A76527E049;
-	Mon, 23 Feb 2026 14:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7F929A9C8;
+	Mon, 23 Feb 2026 15:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771857768; cv=none; b=oWK0Fjb69x/TFSf8dk+JYns3pxxcIj7jYgarQLZPGWdrotbP01l0iDZVhQ3id4gPHnHokCpfLJNO5ugXuWwZkvdEtAg7ECPJ+LLx+VdcMohG4Fl0ELlaB9xVg1aZEZ9cREbsXSEGnTfY664uG9d6H5G0chhw2Gd2uvqF8ietEoQ=
+	t=1771860586; cv=none; b=b6OQ4U6uVc7l6OZlhYCKW/2shdDuTTM+coUAwl/AGq6uLOBRk2vJ3hDz5UHxbfbhUW6v0f3zTijLKEG1wu/8SjY7cq1/txan+D7+sPqMnOS3yyzk7qstdLX3ZdhpSSB+dfzy9fN8c+it1M1I0rS6jJG1ScHIx69+z1Lzw5az3vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771857768; c=relaxed/simple;
-	bh=+cWvpV653gRQnu0cW4AkcHRnKnqyVn6i1wzLUAvgpoA=;
+	s=arc-20240116; t=1771860586; c=relaxed/simple;
+	bh=HBQfRjeQ43AwW7bFrn0A8vyL1xP9lpu1YDjXfbPrFkE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PxIXfE2EoqMaoRRKyhCMTcCG9yedRjiqmTMz5Cf+SESofurlLf1rljvN9osbUH+u0pxoTKcoscaHP8c3O0CKDvjz2wFg65hsmtlaU4vWht1q1H68sVbTFpFZJvP1fJLWeylyhXYCu21Sm0qIvDA5NhdpEYMV6d6S0S2vBgBd89g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SN52Eh6I; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=tXsqL3vpUVnn5E/gCWqZ6qwPVIfVsA7pZVGglIuqjH0t6OBFM54+1UYKmkX0ZXUJOFs7GtiDhqa5CS+l5UxoVm8DF06y+sauxnOjvQ1K1hl/uTg5wp/0gDyKsL+dvH7nr1AUskZHpEBAyWHUWCqgH9tXhiyOcE38/LtcXpgERqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NocW6qKv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SN52Eh6I"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2C39C116D0;
-	Mon, 23 Feb 2026 14:42:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NocW6qKv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559DEC116C6;
+	Mon, 23 Feb 2026 15:29:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771857767;
-	bh=+cWvpV653gRQnu0cW4AkcHRnKnqyVn6i1wzLUAvgpoA=;
+	s=k20201202; t=1771860585;
+	bh=HBQfRjeQ43AwW7bFrn0A8vyL1xP9lpu1YDjXfbPrFkE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SN52Eh6IPc+fMk02ASHGoqIk/WWHlmCze5iqsWGilw5FjPFcEpklbiwgngthxUjKn
-	 RvUOedFR9DoWuDgmn2MuNhqjmhFg/eQPHOMi6tlCRztm1bBMNJCza3xPKzBz1u034n
-	 eVs4KS/hO3cYK1T5psrqopoItFerpSO5h9aw87pUE0OPFPX3IkxBOWGAXQ2Z9IZpLw
-	 X7SCZUpHCsuUKMcIU6ERuZZHmCb2FA6wCIKI2xfVhBD5Z/NjsR4HwR8WWEGrRskA3d
-	 H/6JeuXNV1UH+1uH9dqPYQ82jvUH14TQxht/v9QrVNsrLXBb8gWQBgOOdwU1Urad3O
-	 uc1qMxDY0I6qQ==
-Date: Mon, 23 Feb 2026 08:42:43 -0600
+	b=NocW6qKvIApn6IIxODELUGBFt5QvuGDznrW1p2btACQNMbL0x+cQjRQkufyuLGfHQ
+	 LQSrb4UcRmIXk5gIlAhjfXzB/7Vn51KdEOHcL1yO0JR7TIAiELPC2uLdFbHaP/fC3v
+	 pH7/+OUXr4NJOm2AuvRWy0jnmRmfuLW8QuvS4q37wDruc6zYthcdFRillhHCGXZFI5
+	 /0v3SOFoI+YODvKd+6pOWGsj3bQO1yDcqIte0C5liRyHNcinXgObk68tFVef0+mM1m
+	 QW4CtY5gg2aUSQpJx08bFE0ksgfZtTHrY/1QlY52/x4q5/8aVeUeWP/N0srAXvufHS
+	 KAcnu4NX8qf6w==
+Date: Mon, 23 Feb 2026 09:29:43 -0600
 From: Bjorn Andersson <andersson@kernel.org>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Linus Walleij <linusw@kernel.org>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Frank Li <frank.li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Message-ID: <nbzdtngifwrx2kyu4tsiwwua5v4i5cjtaotemq5hubaets3bcn@fk25twf5rv6x>
-References: <20260212213656.662437-4-shenwei.wang@nxp.com>
- <aae7c851-a93b-4d57-a118-43c6e68c4790@foss.st.com>
- <13f9d767-61d6-4e29-b36e-6dcc860ccb11@lunn.ch>
- <fd257c80-d97f-45b0-a12f-3a1888ba81db@foss.st.com>
- <396819f2-dd00-4c09-8bc7-c035a5282a56@lunn.ch>
- <PAXPR04MB9185A908F5090F0CA4FF05F78968A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <b21b9ee5-d84e-47f8-86b5-c111ecc3d43d@lunn.ch>
- <PAXPR04MB918576D67A268E59242964A08968A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <CAD++jLkUVFckLTq=SoivNFoFymhJo4KM=qGmajFcv9T9+7tPmg@mail.gmail.com>
- <b4c422ce-3538-40aa-8bfa-b70f02774b5d@foss.st.com>
+To: jassisinghbrar@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	tanmay.shah@amd.com, mathieu.poirier@linaro.org
+Subject: Re: [PATCH] mailbox: add API to query available TX queue slots
+Message-ID: <jo4kugxook5b6fl7ifh3nuznehotkyqwnrgwq3olank7cvzhmj@hj5ibm3bbsln>
+References: <20260209234430.512492-1-jassisinghbrar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b4c422ce-3538-40aa-8bfa-b70f02774b5d@foss.st.com>
+In-Reply-To: <20260209234430.512492-1-jassisinghbrar@gmail.com>
 
-On Mon, Feb 23, 2026 at 03:24:43PM +0100, Arnaud POULIQUEN wrote:
-> On 2/22/26 15:48, Linus Walleij wrote:
-> > On Fri, Feb 20, 2026 at 7:57 PM Shenwei Wang <shenwei.wang@nxp.com> wrote:
-[..]
-> > 
-> > Is it generic? If it is not, let's call it "NXP rpmsg GPIO driver" and rename
-> > files etc accordingly. Maybe it can share code with the actual generic
-> > RPMSG driver once that arrives, that is more of a library question.
+On Mon, Feb 09, 2026 at 05:44:30PM -0600, jassisinghbrar@gmail.com wrote:
+> From: Jassi Brar <jassisinghbrar@gmail.com>
 > 
-> I would like to (re)express my concerns regarding the creation of an
-> NXP-specific driver. To clarify my concerns, ST, like probably some other
-> SoC vendors, has rpmsg-gpio and rpmsg-i2c drivers in downstream with plans
-> to upstream them.
+> Clients sometimes need to know whether the mailbox TX queue has room
+> before posting a new message.
+
+This is rather vague, could you be more specific?
+
+> Rather than exposing internal queue state
+> through a struct field, provide a proper accessor function that returns
+> the number of available slots for a given channel.
 > 
-> If we proceed in this direction:
-> 
-> -Any vendor wishing to upstream an rpmsg-gpio driver might submit their own
-> platform-specific version.
-> 
-> - If NXP upstreams other rpmsg drivers, these will likely remain NXP-centric
-> to maintain compatibility with their legacy firmware and the nxp-rpmsg-gpio
-> driver, leading to platform-specific versions in several frameworks.
-> 
-> - The implementation will impact not only the Linux side but also the remote
-> side. Indeed, some operating systems like Zephyr or NuttX implement the
-> rpmsg device side (Zephyr already implements the rpmsg-tty)
-> 
-> Maintaining a generic approach for RPMsg, similar to what is done for
-> Virtio, seems to me a more reliable solution, even though it may induce some
-> downstream costs (ST would also need to break compatibility with legacy ST
-> remote proc firmware).
+> This lets clients choose to back off when the queue is full instead of
+> hitting the -ENOBUFS error path and the misleading "Try increasing
+> MBOX_TX_QUEUE_LEN" warning.
 > 
 
-Could the virtio-based mechanism be used directly (without rpmsg)?
+In the event that we're using the mailbox framework as a doorbell, I
+presume that the queue is full of duplicate rings already - so backing
+off it perfectly fine.
 
-
-If not, it would be good to derive a generic rpmsg-gpio protocol from
-the virtio protocol, and land implementations of this in e.g. Linux and
-Zephyr to establish that option.
+But in the case where the client actually uses the interface to convey
+data, what is the expected way for the client to know when to make
+another attempt?
 
 Regards,
 Bjorn
 
+> Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
+> ---
+>  drivers/mailbox/mailbox.c      | 23 +++++++++++++++++++++++
+>  include/linux/mailbox_client.h |  1 +
+>  2 files changed, 24 insertions(+)
 > 
-> In the end, I am just trying to influence the direction for RPMsg, but based
-> on the discussions in this thread, it seems others share similar
-> expectations, which should probably be taken into account as well.
-> 
-> Thanks and Regards,
-> Arnaud
-> 
-> 
-> I just want to
-> 
-> > 
-> > Yours,
-> > Linus Walleij
+> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> index 2acc6ec229a4..22eb8f3213be 100644
+> --- a/drivers/mailbox/mailbox.c
+> +++ b/drivers/mailbox/mailbox.c
+> @@ -218,6 +218,29 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
+>  }
+>  EXPORT_SYMBOL_GPL(mbox_client_peek_data);
+>  
+> +/**
+> + * mbox_chan_tx_slots_available - Query the number of available TX queue slots.
+> + * @chan: Mailbox channel to query.
+> + *
+> + * Clients may call this to check how many messages can be queued via
+> + * mbox_send_message() before the channel's TX queue is full. This helps
+> + * clients avoid the -ENOBUFS error without needing to increase
+> + * MBOX_TX_QUEUE_LEN.
+> + * This can be called from atomic context.
+> + *
+> + * Return: Number of available slots in the channel's TX queue.
+> + */
+> +unsigned int mbox_chan_tx_slots_available(struct mbox_chan *chan)
+> +{
+> +	unsigned int ret;
+> +
+> +	guard(spinlock_irqsave)(&chan->lock);
+> +	ret = MBOX_TX_QUEUE_LEN - chan->msg_count;
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(mbox_chan_tx_slots_available);
+> +
+>  /**
+>   * mbox_send_message -	For client to submit a message to be
+>   *				sent to the remote.
+> diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+> index c6eea9afb943..e5997120f45c 100644
+> --- a/include/linux/mailbox_client.h
+> +++ b/include/linux/mailbox_client.h
+> @@ -45,6 +45,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg);
+>  int mbox_flush(struct mbox_chan *chan, unsigned long timeout);
+>  void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
+>  bool mbox_client_peek_data(struct mbox_chan *chan); /* atomic */
+> +unsigned int mbox_chan_tx_slots_available(struct mbox_chan *chan); /* atomic */
+>  void mbox_free_channel(struct mbox_chan *chan); /* may sleep */
+>  
+>  #endif /* __MAILBOX_CLIENT_H */
+> -- 
+> 2.43.0
 > 
