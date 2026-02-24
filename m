@@ -1,95 +1,89 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C9E3ACA6C;
-	Tue, 24 Feb 2026 18:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292D91D5170;
+	Tue, 24 Feb 2026 18:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771957609; cv=none; b=QRCfTjlTtZF5S+oNh1Aw1BMganRUkYHka0DS0gmFK8Nkd4RO9sbaue7a9St6JKH7Dnv9pp6ZvADHF01nS3msw6FNYz5UKgkavTIuvoQ5ReP0UvHiE/Ws1ADfNRxf+hu5ixM2f4ha4x+g/bk7GyoYWEB+gdQOsaVvskqxyAsOr98=
+	t=1771958721; cv=none; b=dYft7R7hZrpKxvM78hSaa1qiKQ3POh+URnEaWKehn9tWx7yixRtT8VbS2Boekb8TYnvRShbU8eMxab0qzqwVX0heuCg8J4AJAxH8KsUi6j2nqCKdlSmQNvnsQfGGop0XiUcCQ+Qp4W7yXRZ4JmCvExeRfGiPhcs41rqwV1FAicY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771957609; c=relaxed/simple;
-	bh=G7/Adg13ZQ0liy4QhOZKarYCYwGHG6kcs1d81upG/jU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OJ7b3DTSMNaB+hPkD1YAXxr4n11+Q8xgFiebTvr1DjxQr6TNkFzicnwJHoAei+8zusf5ESrUlw3O/aRCqGiliC2BwtxmqJLKcKEZhR5WmdUW/cH1v3Sy40aCF1Iiarwi1fbWe/kWPz+QHLgWROkWB++k8qVPfguoBNoQ/WWKbcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mG8HyCpF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1771958721; c=relaxed/simple;
+	bh=SqolAWGlUuLI3GWRT27Gw5TF43c8uynCsM1+ZmdyY0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eVnRXdX3uWO84KXU+dpBMjMQoCV1RjvcDVaFU/gePsDd6QboF52A5wPZM+nssKLuRnviLeG4kjqYfgxS5834zIYBXV5BnMA8clmTJQlyBOtl2gvZwtCpi4WdOQbwiCli0jWOEVLCBbxWJLy9M2BJujQy/Z0KIabEERnczYRtkF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=KUeOs5ER; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mG8HyCpF"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=H5YAxZr0Jw72bQeCO52v2wrVTxSELxtM46IRbGRfGy4=; b=mG
-	8HyCpF+e3G87XvR62HmC5UuvjuQweothHamhJx4IRZ9OAMnibWEvcfYoV1MhFJQIjwkpDrY2wNogZ
-	aFjmttioOlXiZPAU2HAfkAW6Qi91KxQxWk02aalaDRzKlIK4WWcY7tY96SRoWOOWAnECSFVzszfGz
-	LRU7I7E3wAn+DCQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vux7H-008e3Y-Dy; Tue, 24 Feb 2026 19:26:39 +0100
-Date: Tue, 24 Feb 2026 19:26:39 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Frank Li <frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Message-ID: <063dc2bf-8b01-45b6-822a-524f4e7c504d@lunn.ch>
-References: <PAXPR04MB9185A908F5090F0CA4FF05F78968A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <b21b9ee5-d84e-47f8-86b5-c111ecc3d43d@lunn.ch>
- <PAXPR04MB918576D67A268E59242964A08968A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <CAD++jLkUVFckLTq=SoivNFoFymhJo4KM=qGmajFcv9T9+7tPmg@mail.gmail.com>
- <b4c422ce-3538-40aa-8bfa-b70f02774b5d@foss.st.com>
- <PAXPR04MB91859B642802813F908B03DA8977A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <64ef5dbf-6264-4758-a5d8-d8c52c359fcc@foss.st.com>
- <PAXPR04MB9185934EB640E8B21905FF878974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <79eb8bb8-83cb-4b24-8e56-42a53c710055@lunn.ch>
- <PAXPR04MB9185F1A67384E4886282227A8974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="KUeOs5ER"
+Message-ID: <ddd8b949-3f73-4e3d-90b9-be95e859f3b1@packett.cool>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1771958716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XFvAN+eThWLRnldrhy5N9eq98qVVFyFFadQtYFCknE4=;
+	b=KUeOs5ERjE4CmcrKHoSDRiDxz8WcjSY7WPUhlSjBy9OwKiP2QuHdI20AQstwce59aslGXa
+	ZaFZB1ldfe8hG947Z6XZkTCoWBzk6YMy2r07pha+8ToOvPCHerrlQEna7O4GI8L+rv8Uig
+	srLDuurRuY9eQ0/ejTGLgsrh6PcsKXFWFe867T4VQi3T26oAeu+vWC16v8wpJfVDomNfdi
+	sFsfEp8nrXQZHriQpvcf/+dSCPYpQdQwnz/dSbdzx3w9uC04gjampRnnRTQHRsdDTbJCDE
+	nkYLGN4kR5mINub2UcTyMCZx9tsx0ppZ8+39PKlBnKPF5NGeMrfXvlaUn2Jz7Q==
+Date: Tue, 24 Feb 2026 15:45:05 -0300
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PAXPR04MB9185F1A67384E4886282227A8974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH v2] remoteproc: qcom_wcnss: Fix handling the lack of PD
+ regulators in v3
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ =?UTF-8?Q?Matti_Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+ Luca Weiss <luca@lucaweiss.eu>, Vladimir Lypak <vladimir.lypak@gmail.com>,
+ =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
+ phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, llvm@lists.linux.dev
+References: <20260201210230.911220-1-val@packett.cool>
+ <jup7hphwpa754gyhtcahz25glecp6ctpuxcwzvco6wrbokvnip@quw7hrauahsa>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+In-Reply-To: <jup7hphwpa754gyhtcahz25glecp6ctpuxcwzvco6wrbokvnip@quw7hrauahsa>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-> Regarding type, it’s needed, especially for the in packets. There are two distinct kinds of incoming 
-> packets: notification‑in and reply‑in. Because of that differences, Combining cmd and type would 
-> blur that distinction and complicate the implementation.
 
-[Goes and looks at gpio-virtio]
+On 2/23/26 5:03 PM, Bjorn Andersson wrote:
+> On Sun, Feb 01, 2026 at 05:55:03PM -0300, Val Packett wrote:
+>> The changes introduced to handle single power domain platforms have
+>> swapped the info pointer increment from num_pd_vregs to num_pds, which
+>> would shift the info pointer past the end of the array for pronto-v3,
+>> which does not list power domain regulators in vregs.
+>>
+>> This showed up as a difference between GCC- and LLVM-compiled kernels
+>> on SDM632 devices, where only with LLVM one would get the
+>> "regulator request with no identifier" error, because the out-of-bounds
+>> memory ended up being zeroed. Fix by skipping the increment when there
+>> are more power domains than regulators.
+>>
+> Is the error only an error print, or did the thing stop working as well?
 
-https://elixir.bootlin.com/linux/v6.19.3/source/include/uapi/linux/virtio_gpio.h#L13
+It's a real error. Likely no one would've bothered debugging it if it 
+weren't breaking everything :)
 
-/* Virtio GPIO request types */
-#define VIRTIO_GPIO_MSG_GET_NAMES		0x0001
-#define VIRTIO_GPIO_MSG_GET_DIRECTION		0x0002
-#define VIRTIO_GPIO_MSG_SET_DIRECTION		0x0003
-#define VIRTIO_GPIO_MSG_GET_VALUE		0x0004
-#define VIRTIO_GPIO_MSG_SET_VALUE		0x0005
-#define VIRTIO_GPIO_MSG_IRQ_TYPE		0x0006
+It was a blocker for allowing LLVM/clang builds of the msm8953 kernel in 
+postmarketOS, the whole reason to dig into this was "switching to clang 
+breaks the modem, WTF?!"
 
-	Andrew
- 
+~val
+
