@@ -1,66 +1,69 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012064.outbound.protection.outlook.com [40.107.209.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFDB3D7D9C
-	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Feb 2026 16:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772037659; cv=none; b=mZu5p8HvM/ct1GAVrMbv8/wEHac0q4b/f75wliYwadzBEB8Ru58uG6Yki+L3eokDk8yR1SNMpIBU/CtnHdg/Pl1eWhBl2+GqXvtdnum7t/YvFXFsSRuh3tHgeLbOEtxqfexhlYrn33PdXiDsOxPjRILJ6r2BYRJsGGDkLQyMZzM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772037659; c=relaxed/simple;
-	bh=fg1onnz8md+No8HrMWJrdd2FjHskuWmMxJA94664OhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QEoMglEqLZtaQO66xW4Pl2GA7V+qXx0hAYgC2GNlCCDpfVjyilJnvVoHRUFuvxRetqf5SK3r9irxvekSsLEk5AIjzxzfUxBbd2/tuduTAtZ9XC1pcTmiTE78b4OIyshEvq5I8KBCR0LS9Ahs1Kc4nlhv78mJMMy+89jTQX9zLZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J14VdoBo; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F713C199A;
+	Wed, 25 Feb 2026 17:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772040134; cv=fail; b=EMkSQZD8Yv7YdkoHnlcsUtC45i0saR1ycWXG7kz0uaX8kEc8YPcrKBQIOwZKBSJ8pWClCaJmOiRJwKYHsZY+09u2cCyZ+W0119edz/G93V8/YMh7YIoVgqB2VAthAWzc043p1HGTIGx6BnBtsTJPr/QGk8ruLq7VYWeDLl/WiTk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772040134; c=relaxed/simple;
+	bh=5H6kH3JBfM1KO3TBrGZO8XT7uetmP3rpiwnFFHc08gg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=HCD5QCA5mf9Fk3zX5O2myZjm5qeht5C7I2H2TWJKjbDCgeAArUaeazkJtJv/WMfUZjegSd61IvJHhvUGhpSRh7vRyrAdLxAD8axMvHjCMaHuDR7fNlUO322ia1p0k+puduVjEPQhjQlYUx6iQDGYa0gRRAM42OyAvQ3vNZVmiHc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Pu4o+9/q; arc=fail smtp.client-ip=40.107.209.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J14VdoBo"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-48375f10628so44898745e9.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 25 Feb 2026 08:40:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1772037654; x=1772642454; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eBqFP7Hzw46CSYhpPo7qadiVR6MSgoNAqRWTUg+WnDg=;
-        b=J14VdoBosU5AeEkY/WzZRFy8/YwhENoIPXSaN0nCSgNdQQZhuzCzMspWExbTOM4T+Y
-         sN9ZNcmdGdh4Gw5T64Kpx3FzQ/ML3F5PK2Cjs+YkMFK6WLmYmOTz747nTluZR/qHVbe4
-         Y7MpgsTidkb4DUMyWTXvewoycSaN8ZzT9c1iuYr59aMs8ne3bd1PQduFC4mu1GWMkiZL
-         M2EHE9C33nqojymfGlZyS1xrKaX0kqYL+3nmwFx0gRpBPQLHdpkbOS+wIJPNR1/YattK
-         mJkFlIL+9uShYhwk6HBYKnMdeb1DjTwJtGZ8Q1fYUg9xF+rDxK+kywmD/vxlWL9rfmMg
-         IfoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772037654; x=1772642454;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eBqFP7Hzw46CSYhpPo7qadiVR6MSgoNAqRWTUg+WnDg=;
-        b=MGom5vrwlslpknghOV+yaBAPlt+n7OS9qVtLnhcobykFVNxY9ivQ3Lt6nM5bIjNo5O
-         QWbQJwWxdmqYc5JPSNuJsRBhq7RviLBxSHvuLai17zDl2JemPtxsljNhWr6WCL8E4xjR
-         Da80VlDpTDb4Gxto8fpFzi3pfjZpwY2ksreyrokqXa88LTIB/2cOzT0I27jAVNL2MMSV
-         12kFCE4cnhtr5Juom7ZE3nGrOppDIfbJe0BGMqr1WVw+f8w7lXldzr9PLzGX0wytzg4q
-         KPA7Z3XCq7ITuH0y3H+Cwsgu91VSG5ihUfnZBAwztg5UQR6xodIUdbs2zOzPZWtQW4CZ
-         zAVQ==
-X-Gm-Message-State: AOJu0Yzc5xs2HdXg0xoU8YCxbI1weHmsfbFS07EwZ5HE3Wg7tpgL1LYG
-	TxslZhbpa4uA8mytFINBHD+9hiYhA4sD+VJe5Hf9AKbo5L91aolKEzYfK5pAYK3MAkQ=
-X-Gm-Gg: ATEYQzyuoG39n7U6ouLZMR4dPpMmne+SqsSog0H7DTONfBJk+EloazKOFpf7htrjU5q
-	M23HCWEL4eWpdGLfRbpG0GS/f0FCiRdJyVyrOpRd9wqQQjAU4qpAimcWP+NCed5aEswcL9gRfPl
-	/Re6poR/9lhcMeq38BkgK2IUNtwqHCY6xwgK93cMaP1hAaKDR30ClQrvszljHUxOb6+zNXW5AwU
-	/nEC8ebP/VD4HXMcGqXBNTClg8iR7cgLcPLk0LReCAWlLiDTJ00HTNFYFXVGLuhL2DWrHq162/N
-	lkB5spCXdFt40euwmE8b+EkkwM8FOriRj+q1KC2D5kWymnpVgpy3IA0akBlT6y0jK3O7I+8GVyb
-	lWEZEM+I33la/SDK+K92FowkAi/9IFwHzfrD9YXroZifOoYBdbu8YWScHRmRwQCLb+Y1Y8WqicV
-	ggqcD68FP9lLLUrkfl0cMuviIuHhDZUy1elg7gZD0MDNQW+hKMDeQYjkkedJtedUYKocTm7piXv
-	Qhm/PjZnlwmeJtfajNniQ==
-X-Received: by 2002:a05:600c:638d:b0:480:1e40:3d2 with SMTP id 5b1f17b1804b1-483a95f5a62mr252604165e9.29.1772037653504;
-        Wed, 25 Feb 2026 08:40:53 -0800 (PST)
-Received: from [10.0.1.128] (248.201.173.83.static.wline.lns.sme.cust.swisscom.ch. [83.173.201.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-483bd6854c7sm183843845e9.0.2026.02.25.08.40.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 Feb 2026 08:40:52 -0800 (PST)
-Message-ID: <4307232b-1df1-412c-8105-d9eab181b493@gmail.com>
-Date: Wed, 25 Feb 2026 17:40:51 +0100
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Pu4o+9/q"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dO5QzW/kWS9tUes7E9FkMOD87tBfwzdel0Zv2fEqc2TQnP5L2OxofaFRt79TkixOrYr4p+3pqcDnMMd6jO7FCKil2vxYeGYjEm+6976PIhn2QHS1MRoGmOQ8oWN9+loIKXX+LU+i2tIX4ewQqdhoeYFOmYnv/ALipBxaibcD9UI+y2hTSezAB+5ILAMgV9fC19R2HmvOd5klhtmHjU/MKc/UXj2hHqMZuxkNavbVUVo07wskoiaioQBaa1BI2yRc/kGNvigDaEMFW+taQYG2h1DvWy+miM6TxfmAxIcwE9ykwDXgfyTtBTEF6WqSbbHLka0shNoIzi/fzh/P7livVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8YB6oaVsM68At+shQajnuRgKNs5plAPqULikxga4KQo=;
+ b=pUKqTpq29lr6oidwSvhOYgMAuhKpgaiPoS43UBT2nznhFxYeifelWUI9/dses81BjdlVeKkIgmpbZjADU05+ms4Q3MJCJWw7s00kMv7j7+ZMUQPoBVnrPUDNjRTt35hyoT6XjS4xRgwixAeFofhphCUPzCuogbpHyPVSZAB2Z6ITx9oOBtEvMaeJ1zeoHDM7gAHBjlSHys/aPjKD7ciKSduQISlbS+x5ohL5NV0oRVAuTijd1sV0UjW9A3GHr9zLyywKZRDN5Lb/2u8gjk+42Bx+BKDb1GekAUOzmeOWgkYhr9oMCUHaP8m36Qje9tEs9U0QEmT9qirqnNGG+lR1jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8YB6oaVsM68At+shQajnuRgKNs5plAPqULikxga4KQo=;
+ b=Pu4o+9/q6aubOBoAh00sqTVAvSsdHWy/pqGV7h3od9bsWzUtSfGiPXsN15kGFvteQJj63SAk6HvOTe7Ui8MrflYwVfeRvyvFV/QpdLucnRR8Vu7Dijy3bZzN3UJrlc+fNoiy6kkU9fVxbZU/eVfqupS3XHvMk3gDrcqAABWrGJg=
+Received: from CH0PR03CA0040.namprd03.prod.outlook.com (2603:10b6:610:b3::15)
+ by CH2PR12MB4183.namprd12.prod.outlook.com (2603:10b6:610:7a::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.21; Wed, 25 Feb
+ 2026 17:22:08 +0000
+Received: from CH1PEPF0000AD83.namprd04.prod.outlook.com
+ (2603:10b6:610:b3:cafe::f5) by CH0PR03CA0040.outlook.office365.com
+ (2603:10b6:610:b3::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.19 via Frontend Transport; Wed,
+ 25 Feb 2026 17:21:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CH1PEPF0000AD83.mail.protection.outlook.com (10.167.244.85) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.12 via Frontend Transport; Wed, 25 Feb 2026 17:22:07 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 25 Feb
+ 2026 11:22:06 -0600
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Feb
+ 2026 11:22:05 -0600
+Received: from [10.31.200.39] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 25 Feb 2026 11:22:05 -0600
+Message-ID: <f480e21a-6075-40c0-b420-56171f7d4e60@amd.com>
+Date: Wed, 25 Feb 2026 11:22:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -68,73 +71,332 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: imx_rproc: Fix unreachable platform
- prepare_ops
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>
-Cc: linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Peng Fan <peng.fan@nxp.com>, Dan Carpenter <dan.carpenter@linaro.org>
-References: <20260208-imx-rproc-fix-v1-1-ad74555eb9a4@nxp.com>
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH v3 2/2] remoteproc: xlnx: add crash detection mechanism
+From: "Shah, Tanmay" <tanmays@amd.com>
+To: Bjorn Andersson <andersson@kernel.org>, Tanmay Shah <tanmay.shah@amd.com>
+CC: <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20260223185006.1278518-1-tanmay.shah@amd.com>
+ <20260223185006.1278518-3-tanmay.shah@amd.com>
+ <kwgx4f5ig6m24w7gzaiokvi7udta4ugywuzqeysc2x3j3no4jp@eywiejlnvjsq>
+ <3175bac0-1def-4f3c-bebb-31459855b1a9@amd.com>
 Content-Language: en-US
-From: Emanuele Ghidoli <ghidoliemanuele@gmail.com>
-In-Reply-To: <20260208-imx-rproc-fix-v1-1-ad74555eb9a4@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <3175bac0-1def-4f3c-bebb-31459855b1a9@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB04.amd.com: tanmays@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD83:EE_|CH2PR12MB4183:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f7721a4-52d8-4d6d-ad5d-08de7492674a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	gWQAoYAqaVZ91ilkYhqUGbwPHKmFGqcfrOClg20H5WcIwodgDedeNmCS/UGk02pdUxztVRPGIU9RcMB6b717Wcdbtb1FYNssqOkX8D3x2FpbhmYAUo4URbnfDn/QGb5Xc+PLPAM5paLSsk+TX2aF2BSLEWOS7Pb4rD7zLVQFxh9BTILs8tERs/ypzeio71wHQdHSvFnh7Z0lmYWCykfsNibrgbGRjd3yZDgQ4ZGEl6l44C/boZAGPg8MUXNNIPM7xArSiennk03odwYQAz03uQxgkNQaiZXY4DeN9aW/HE0cR/OUwI/yGaKEJ9pftChFqeDHxNt9h5F5mNSCNinhRavvSwqB/iWoqask2IaKvsC7WF+OUdrZ7mWolqCqFNOVnVkIrxSp9/6Tl6OAK5X5FX99PuOJFQ6f6vZHycX9eJriB08ZYi5HHB5XYvZrKFZVZNIfOGzJRO96/Mddv63YhSA7hjkqFAPqGKeO1/GPlR4a46i8B5kxArYw28eOoraaLHEla6qT6YXnnEANuLwUMauFA31r/ERaFbDgk74XsKd4Eg+e749aqsZx1vH/uIj1N5C71U4Ks5RP1tCI5pQhf/ZaIwkH3ByNPBW9RDDl2aUW7W3Upr7Db74Dk7iCZPUlvHs1GS4RdsHdZ2M53RHJmJ7kt6e9GETyS9SjNNKiOUStro4feSY6qHB5rCz0FspfKWQXjV45w9jlMW9vcLMVE8oIKKn9tOjyqTcHIjG+2wug3Z3ajUcmVPUkdoFCY5VqqHUpEUH4bYzZQbFvHnHa99tCHjrKJoEED5KLJ8m147zn9NwhsdLJV6NyBTUAVKRqXUPSSj8meVOsX+W++Fiqtg==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	nQdbNDpz+UZ+WNL06OL5WLccbwspFBSVPU95br0d45UcMU1tBtlosL0fcVZGLW/zYXkAQ6WKzOJxZc5VLMR18Xk58zIJ6XQhq5ZgiGzbIUYsbelCbCCKf02/h0BE370fOaiTFtA+YMz9SGcMeKNUpZFv4mHp4PJmfii3B/9d1m5xH7sX4WUYWZ5OK4QxsXljMILX09zBajzyQMrDQikMM3Tu4xRttNZHiUuW08IRVpEMiIt4iwNMQgwVCYtkHZ+giLPFAWUcW1zPWo2XOBI79D5+pS+PvekcMiF+J21b7jjSs4OKGN2q2OdhL5wpYRys609Qdj1jqN45uWS/rqS5NjXEIhhO8kZl/NdmrdCm/R7/pVi3WARUo8QKg5niHaafwLr0XKjc1GjuxmbqIwHf+mSoIp0I+1ZfKDqf2FRUoouXvaTtyQFNM2BnD7XIend+
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2026 17:22:07.9642
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f7721a4-52d8-4d6d-ad5d-08de7492674a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD83.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4183
 
 
 
-On 2/8/26 12:30, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 2/23/2026 4:40 PM, Shah, Tanmay wrote:
 > 
-> Smatch reports unreachable code in imx_rproc_prepare(), where an early
-> return inside the reserved-memory parsing loop prevents platform
-> prepare_ops from being executed.
 > 
-> When of_reserved_mem_region_to_resource() fails, imx_rproc_prepare()
-> returns immediately, so the platform-specific prepare callback is never
-> called. As a result, prepare_ops such as imx_rproc_sm_lmm_prepare() on
-> i.MX95 have no chance to run.
+> On 2/23/2026 1:55 PM, Bjorn Andersson wrote:
+>> On Mon, Feb 23, 2026 at 10:50:06AM -0800, Tanmay Shah wrote:
+>>> Remote processor will report the crash reason via the resource table
+>>> and notify the host via mailbox notification. The host checks this
+>>> crash reason on every mailbox notification from the remote and report
+>>> to the rproc core framework. Then the rproc core framework will start
+>>> the recovery process.
+>>>
+>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>>> ---
+>>>
+>>> Changes in v3:
+>>>   - %s/kick/mailbox notification/
+>>>   - %s/core framework/rproc core framework/
+>>>   - fold simple function within zynqmp_r5_handle_rsc().
+>>>   - remove spurious change
+>>>   - reset crash state after reporting the crash
+>>>   - document set and reset of ATTACH_ON_RECOVERY flag
+>>>   - set recovery_disabled flag to false
+>>>   - check condition rproc->crash_reason != NULL
+>>>
+>>> Changes in v2:
+>>>   - clear attach recovery boot flag during detach and stop ops
+>>>
+>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 60 ++++++++++++++++++++++++-
+>>>  1 file changed, 59 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>> index bd619a6c42aa..0d831330ea90 100644
+>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>> @@ -108,6 +108,10 @@ struct rsc_tbl_data {
+>>>  	const uintptr_t rsc_tbl;
+>>>  } __packed;
+>>>  
+>>> +enum fw_vendor_rsc {
+>>> +	FW_RSC_VENDOR_CRASH_REASON = RSC_VENDOR_START,
+>>
+>> Given that this is a vendor-specific resource, wouldn't it be nice to
+>> find e.g. XLNX somewhere in the name? Same thing with the enum itself.
+>>
 > 
-> This is problematic when Linux controls the M7 Logical Machine and is
-> responsible for preparing resources such as TCM. Without running the
-> platform prepare callback, loading the M7 ELF into TCM may fail if the
-> bootloader did not power up and initialize TCM.
+> Ack. I will change name for enum and resource both.
 > 
-> Fix this by breaking out of the reserved-memory loop instead of
-> returning, allowing the platform prepare_ops to be executed as intended.
+>>> +};
+>>> +
+>>>  /*
+>>>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
+>>>   * compatibility with device-tree that does not have TCM information.
+>>> @@ -127,9 +131,21 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+>>>  	{0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+>>>  };
+>>>  
+>>> +/**
+>>> + * struct xlnx_rproc_crash_report - resource to know crash status and reason
+>>> + *
+>>> + * @crash_state: if true, the rproc is notifying crash, time to recover
+>>> + * @crash_reason: reason of crash
+>>> + */
+>>> +struct xlnx_rproc_crash_report {
+>>> +	u32 crash_state;
+>>> +	u32 crash_reason;
+>>> +} __packed;
+>>> +
+>>>  /**
+>>>   * struct zynqmp_r5_core - remoteproc core's internal data
+>>>   *
+>>> + * @crash_report: rproc crash state and reason
+>>>   * @rsc_tbl_va: resource table virtual address
+>>>   * @sram: Array of sram memories assigned to this core
+>>>   * @num_sram: number of sram for this core
+>>> @@ -143,6 +159,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+>>>   * @ipi: pointer to mailbox information
+>>>   */
+>>>  struct zynqmp_r5_core {
+>>> +	struct xlnx_rproc_crash_report *crash_report;
+>>>  	void __iomem *rsc_tbl_va;
+>>>  	struct zynqmp_sram_bank *sram;
+>>>  	int num_sram;
+>>> @@ -227,10 +244,14 @@ static void handle_event_notified(struct work_struct *work)
+>>>  static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
+>>>  {
+>>>  	struct zynqmp_ipi_message *ipi_msg, *buf_msg;
+>>> +	struct zynqmp_r5_core *r5_core;
+>>> +	struct rproc *rproc;
+>>>  	struct mbox_info *ipi;
+>>>  	size_t len;
+>>>  
+>>>  	ipi = container_of(cl, struct mbox_info, mbox_cl);
+>>> +	r5_core = ipi->r5_core;
+>>> +	rproc = r5_core->rproc;
+>>>  
+>>>  	/* copy data from ipi buffer to r5_core */
+>>>  	ipi_msg = (struct zynqmp_ipi_message *)msg;
+>>> @@ -244,6 +265,16 @@ static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
+>>>  	buf_msg->len = len;
+>>>  	memcpy(buf_msg->data, ipi_msg->data, len);
+>>>  
+>>> +	/* Check for crash only if rproc crash is expected */
+>>> +	if (rproc->state == RPROC_ATTACHED || rproc->state == RPROC_RUNNING) {
+>>> +		if (r5_core->crash_report && r5_core->crash_report->crash_state) {
+>>
+>> Nit. I'd prefer the order of these to be swapped...
+>>
+>> Compare:
+>>
+>> "Check if we have crashed, and if so check that we're in a state where
+>> that makes sense."
+>>
+>> vs the way you're ordering this:
+>>
+>> "Check if we're in a state, and if in that state we have crashed"
+>>
+>>
+>> The "have we crashed" question is the most-significant-bit of this
+>> chunk, making that the outermost conditional makes it faster for the
+>> next reader to orient themselves in the code.
 > 
-> Fixes: edd2a9956055 ("remoteproc: imx_rproc: Introduce prepare ops for imx_rproc_dcfg")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/linux-remoteproc/aYYXAa2Fj36XG4yQ@p14s/T/#t
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/remoteproc/imx_rproc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Ack, that makes sense.
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index f5f916d6790519360f446f063e09d018c5654953..8c8ddbf995a46b01627d15a2eb3da0b72eee6285 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -617,7 +617,7 @@ static int imx_rproc_prepare(struct rproc *rproc)
->  
->  		err = of_reserved_mem_region_to_resource(np, i++, &res);
->  		if (err)
-> -			return 0;
-> +			break;
->  
->  		/*
->  		 * Ignore the first memory region which will be used vdev buffer.
+>>
+>>> +			rproc_report_crash(rproc,
+>>> +					   r5_core->crash_report->crash_reason);
+>>
+>> Are these two value spaces synchronized? crash_reason seems to be a
+>> generic 32-bit number without particular definition, and you pass it
+>> into a enum rproc_crash_type.
+>>
 > 
-> ---
-> base-commit: 9845cf73f7db6094c0d8419d6adb848028f4a921
-> change-id: 20260208-imx-rproc-fix-843dd1031b5b
+> Yes, crash_reason is supposed to be enum rproc_crash_type.
 > 
-> Best regards,
+>> I presume the outcome is that you get the string
+>> "crash detected in <name>: type: unknown" in your log for most cases?
+>>
+> 
+> So far, we have only "WATCHDOG" and "FATAL ERROR" cases. I guess any
+> more reasons would have to go in the "unknown" case.
+> 
+>>
+>> In the Qualcomm drivers we can get RPROC_WATCHDOG or RPROC_FATAL_ERROR.
+>> For the watchdog bite there isn't much information, but for the fatal
+>> error we have a error string which we print, then we call
+>> rproc_report_crash(FATAL) which results in another "useless" print.
+>>
+>> Perhaps we could expand rproc_report_crash() to allow drivers to provide
+>> some information about the crash beyond the enum.
+>>
+>> Something like:
+>> 	rproc_report_crash(rproc, RPROC_FATAL_ERROR, "%d", report->crash_reason);
+>>
+>> Would that be useful to you? Would it be valuable to turn your
+>> "crash_reason" into a human readable string?
+>>
+> 
+> Yes, it is valuable to turn "crash_reason" to human readable string.
+> Should we leave that part to each driver and not have it in the common
+> framework?
+> 
+> If we are to refactor rproc_report_crash, then I think following is more
+> flexible:
+> 
+> rproc_report_crash(rproc, const char *crash_reason_str);
+> 
+> Then each platform driver can print crash reason however they see fit.
+> We can also avoid printing crash reason two times this way.
+> 
 
-Tested-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
+Hi Bjorn,
+
+I take this back. I think crash_reason can be defined differently for
+each firmware project. I would like to provide that flexibility to the
+firmware developer. Hence, I prefer not to convert crash_reason integer
+to human readable string, as can be different for different fw projects.
+
+Instead, the xlnx platform driver will simply print the crash_reason
+integer as given by the firmware, and notify the crash to the core
+framework as following:
+
+rproc_report_crash(rproc, RPROC_FATAL_ERROR);
+
+This way, we don't have to modify the rproc_report_crash() API.
+I hope this makes sense.
+
+I will wait for your response before sending the new version. Rest of
+the comments I will address as asked.
+
+Thanks,
+Tanmay
+
+> If we do this, then crash_reason can be defined for each driver
+> individually. That's more appropriate as each vendor can have different
+> enum for crash.
+> 
+> Let me know your thoughts.
+> 
+>>> +			r5_core->crash_report->crash_state = 0;
+>>> +			r5_core->crash_report->crash_reason = 0;
+>>> +		}
+>>> +	}
+>>> +
+>>>  	/* received and processed interrupt ack */
+>>>  	if (mbox_send_message(ipi->rx_chan, NULL) < 0)
+>>>  		dev_err(cl->dev, "ack failed to mbox rx_chan\n");
+>>> @@ -438,6 +469,13 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+>>>  	if (ret)
+>>>  		dev_err(r5_core->dev, "core force power down failed\n");
+>>>  
+>>> +	/*
+>>> +	 * Clear attach on recovery flag during stop operation. The next state
+>>> +	 * of the remote processor is expected to be "Running" state. In this
+>>> +	 * state boot recovery method must take place over attach on recovery.
+>>> +	 */
+>>> +	test_and_clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
+>>> +
+>>>  	return ret;
+>>>  }
+>>>  
+>>> @@ -859,6 +897,9 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+>>>  
+>>>  static int zynqmp_r5_attach(struct rproc *rproc)
+>>>  {
+>>> +	/* Enable attach on recovery method. Clear it during rproc stop. */
+>>> +	rproc_set_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
+>>> +
+>>>  	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
+>>>  
+>>>  	return 0;
+>>> @@ -873,9 +914,25 @@ static int zynqmp_r5_detach(struct rproc *rproc)
+>>>  	 */
+>>>  	zynqmp_r5_rproc_kick(rproc, 0);
+>>>  
+>>> +	clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
+>>> +
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
+>>> +				int offset, int avail)
+>>> +{
+>>> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+>>> +	void *rsc_offset = (r5_core->rsc_tbl_va + offset);
+>>> +
+>>> +	if (rsc_type == FW_RSC_VENDOR_CRASH_REASON)
+>>> +		r5_core->crash_report = (struct xlnx_rproc_crash_report *)(rsc_offset);
+>>
+>> I don't think you need the cast.
+>>
+>> Regards,
+>> Bjorn
+>>
+>>> +	else
+>>> +		return RSC_IGNORED;
+>>> +
+>>> +	return RSC_HANDLED;
+>>> +}
+>>> +
+>>>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>>>  	.prepare	= zynqmp_r5_rproc_prepare,
+>>>  	.unprepare	= zynqmp_r5_rproc_unprepare,
+>>> @@ -890,6 +947,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+>>>  	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
+>>>  	.attach		= zynqmp_r5_attach,
+>>>  	.detach		= zynqmp_r5_detach,
+>>> +	.handle_rsc	= zynqmp_r5_handle_rsc,
+>>>  };
+>>>  
+>>>  /**
+>>> @@ -923,7 +981,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+>>>  
+>>>  	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+>>>  
+>>> -	r5_rproc->recovery_disabled = true;
+>>> +	r5_rproc->recovery_disabled = false;
+>>>  	r5_rproc->has_iommu = false;
+>>>  	r5_rproc->auto_boot = false;
+>>>  	r5_core = r5_rproc->priv;
+>>> -- 
+>>> 2.34.1
+>>>
+> 
 
