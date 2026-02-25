@@ -1,265 +1,356 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AF530B52A;
-	Wed, 25 Feb 2026 21:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D5D3815DE;
+	Wed, 25 Feb 2026 23:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772053345; cv=none; b=lE0Jtvg/TEHTNLsh2ucDE7odT43h9S2IsmJxyRLrEusSAsv4FQV3XZy4NT3vs/7RvPD/+TTNB/WiEUe/w+9BeZs1DImHhijwhSoP0SAe2kzYkTNC04pSDg9an6t5e04BRCgLnhUrY6VRntUEiB3TPbmVHghr7DZ0UGIozY1RKvI=
+	t=1772062205; cv=none; b=P4GuaB28L4w/Y39C2pO97zU1nC9ZPI8gan445VLBcAN5cUjVLDkb15SWwTc00tQ0HuWeonnyT6InPHBxBXPETxWhsLtXxmGi3deO2r64bb8LIY+lsDfPdfoev0zYvR1KkotAxkkcpCkKNEtibKM1QthKfypM2hXVOtCA0KratD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772053345; c=relaxed/simple;
-	bh=Jy6N4IhDvASBtWTrPNraJpD5E/n58S/X9rF10vWsGxo=;
+	s=arc-20240116; t=1772062205; c=relaxed/simple;
+	bh=feTl4z7EoM084DOAu81qIzjnsc8/OWyi59XCj/KrDp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLnqgjL3pEiG8X0TzwXgG8epLV8LrwxZfbpVRa5hMeMHZP9F1WGNaqNu9kkmzk4rX9ANa2dyRLnW+fkie+ThiFgTSw/HmuTIFDLqaeGWz6rPzNtnsCLZUcXNzw+xGT9vysGFfGWKruDxFjAJs0psRmdiPnV7rCAzIN6hGFO5SH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a23zWkRX; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwYBqFb9RN9pKTAKn1SQYgOTxNeUJ2PttvaX1yX5X2HA/OHgOSkTeQWAXEDz0mX17mvB7tPa3RBmTfJW3tOpuHQFN/ckI+vZdJsOS3g/Qx//ylhVXfB/cHDraMRZsYBHcLG2I94MFN2H6LMW5fDNZwo2A/ZwX1VWcoiWPKVepM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOkrKoJH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a23zWkRX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D99C116D0;
-	Wed, 25 Feb 2026 21:02:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOkrKoJH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AF09C116D0;
+	Wed, 25 Feb 2026 23:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772053344;
-	bh=Jy6N4IhDvASBtWTrPNraJpD5E/n58S/X9rF10vWsGxo=;
+	s=k20201202; t=1772062205;
+	bh=feTl4z7EoM084DOAu81qIzjnsc8/OWyi59XCj/KrDp8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a23zWkRXy8vl9KpsWM3WnIQDHv5KYZxIkD9EzaTAuYeMVllHnEtvD7eDFZIOvpovG
-	 NyT3pHLz6vBKDacWjPBF2Y7YLvtK+UpcOHVeAlr6IVFmUMqOKUyLUHoxeLCIefGe/4
-	 KDA1ElBAy3D3WtzRCmMr1IRZmeKwexlOtSozi568vaUtgwtjjov2SRc8vLAmc5upa8
-	 fpy5OHgptojo/HYMS3m2GA6hFJcObfwfN0rCVE7s9b9LwjKgcEot1q8FAEhsyU6svv
-	 huy/XM8X573n77N53VjBQ3iJdQ/gcaCcs++iMY0V9TjMjmLkJ5YpeyAvbI0yX0qepC
-	 WUD4dpEJBnxZw==
-Date: Wed, 25 Feb 2026 15:02:18 -0600
+	b=JOkrKoJHewwaQUZDenps8+xsqMixIdL/OnjYBUfHcveOdihWq3GE+cAyhOnxt3Ora
+	 e/7GHtth6nVcimC/TX1sEU1Amz+2NYMqFzUY5wTN7bngvcOKuUetfMy4aiIFd36kUL
+	 UkgNW1Hk1rmgQbzJAjCiSAVo2h4l9XjnkrIrNeoRPXHhTmqcEDcer2wZxaIAooyDNC
+	 ZLxsf/rDQMAt2SYvwJVUwwaJyxsahQyDiGvm33SOsuQ1zSsQ06wGB5fQoLJHVdUh7H
+	 oJehgAr5LjMqkTTKRHdQiRZeuxQxK0oqBGoeovQzQ42VHI1VMwz07qIyapXPO/Dgyz
+	 T8QnjzqML3zGQ==
+Date: Wed, 25 Feb 2026 17:30:01 -0600
 From: Bjorn Andersson <andersson@kernel.org>
-To: Shenwei Wang <shenwei.wang@nxp.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, 
-	Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <frank.li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-Message-ID: <l7vmhr5rg444pqp47x2k5ejamjnisx5rqwfmfr6m2tjazxpbm6@wq2vd4hcxco2>
-References: <CANLsYkxAwgG1WkMRr8EJZuSUnN_jKVnsWhWTakVqhvtMBO365A@mail.gmail.com>
- <PAXPR04MB91851D3DA6A92669CB5926A18974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <CANLsYkw-8ERXy3v8Sv55Cpq=+41Toez3EjLMbENAkavvr8STeQ@mail.gmail.com>
- <PAXPR04MB9185B68BC640D940534E44098974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <d4c8f7dd-c0a8-4721-9750-47429637d8c1@lunn.ch>
- <PAXPR04MB9185BB6443B9E1E407F409D68974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <ndozoc6qdrpv3xuktumsah56im5rbtg6iwerq3xi2xkcuyewpx@szswqvojleg3>
- <AS8PR04MB917652D63DB090D22129D3D78975A@AS8PR04MB9176.eurprd04.prod.outlook.com>
- <2b72kkgwe5hio4uwrxj5oi72llkxhx7egw442fugq6unv7unah@5bfve7k3mvky>
- <PAXPR04MB918508A39832000D786E8F938975A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+To: tanmay.shah@amd.com
+Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] remoteproc: xlnx: add crash detection mechanism
+Message-ID: <invfmjqikuyzpkfv7sw5lccj4kudoktzhk37t3rjfvuizpashl@ssjowsnczygz>
+References: <20260223185006.1278518-1-tanmay.shah@amd.com>
+ <20260223185006.1278518-3-tanmay.shah@amd.com>
+ <kwgx4f5ig6m24w7gzaiokvi7udta4ugywuzqeysc2x3j3no4jp@eywiejlnvjsq>
+ <3175bac0-1def-4f3c-bebb-31459855b1a9@amd.com>
+ <f480e21a-6075-40c0-b420-56171f7d4e60@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PAXPR04MB918508A39832000D786E8F938975A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+In-Reply-To: <f480e21a-6075-40c0-b420-56171f7d4e60@amd.com>
 
-On Wed, Feb 25, 2026 at 08:31:33PM +0000, Shenwei Wang wrote:
+On Wed, Feb 25, 2026 at 11:22:05AM -0600, Shah, Tanmay wrote:
 > 
 > 
-> > -----Original Message-----
-> > From: Bjorn Andersson <andersson@kernel.org>
-> > Sent: Wednesday, February 25, 2026 1:44 PM
-> > To: Shenwei Wang <shenwei.wang@nxp.com>
-> > Cc: Andrew Lunn <andrew@lunn.ch>; Mathieu Poirier
-> > <mathieu.poirier@linaro.org>; Arnaud POULIQUEN
-> > <arnaud.pouliquen@foss.st.com>; Linus Walleij <linusw@kernel.org>; Bartosz
-> > Golaszewski <brgl@kernel.org>; Jonathan Corbet <corbet@lwn.net>; Rob Herring
-> > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> > <conor+dt@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
-> > gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>;
-> > devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org; dl-linux-imx <linux-
-> > imx@nxp.com>; Bartosz Golaszewski <brgl@bgdev.pl>
-> > Subject: [EXT] Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-> > 
-> > Caution: This is an external email. Please take care when clicking links or opening
-> > attachments. When in doubt, report the message using the 'Report this email'
-> > button
+> On 2/23/2026 4:40 PM, Shah, Tanmay wrote:
 > > 
 > > 
-> > On Wed, Feb 25, 2026 at 05:54:00PM +0000, Shenwei Wang wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Bjorn Andersson <andersson@kernel.org>
-> > > > Sent: Wednesday, February 25, 2026 9:53 AM
-> > > > To: Shenwei Wang <shenwei.wang@nxp.com>
-> > > > Cc: Andrew Lunn <andrew@lunn.ch>; Mathieu Poirier
-> > > > <mathieu.poirier@linaro.org>; Arnaud POULIQUEN
-> > > > <arnaud.pouliquen@foss.st.com>; Linus Walleij <linusw@kernel.org>;
-> > > > Bartosz Golaszewski <brgl@kernel.org>; Jonathan Corbet
-> > > > <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
-> > > > <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Frank Li
-> > > > <frank.li@nxp.com>; Sascha Hauer <s.hauer@pengutronix.de>; Shuah
-> > > > Khan <skhan@linuxfoundation.org>; linux- gpio@vger.kernel.org;
-> > > > linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix
-> > > > Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > > > <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>;
-> > > > devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org;
-> > > > dl-linux-imx <linux- imx@nxp.com>; Bartosz Golaszewski
-> > > > <brgl@bgdev.pl>
-> > > > Subject: [EXT] Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg
-> > > > GPIO driver On Tue, Feb 24, 2026 at 10:43:06PM +0000, Shenwei Wang
-> > wrote:
-> > > > >
-> > > > >
-> > > > > > -----Original Message-----
-> > > > > > From: Andrew Lunn <andrew@lunn.ch>
-> > > > > > Sent: Tuesday, February 24, 2026 4:15 PM
-> > > > > > To: Shenwei Wang <shenwei.wang@nxp.com>
-> > > > > > Cc: Mathieu Poirier <mathieu.poirier@linaro.org>; Bjorn
-> > > > > > Andersson <andersson@kernel.org>; Arnaud POULIQUEN
-> > > > > > <arnaud.pouliquen@foss.st.com>; Linus Walleij
-> > > > > > <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>;
-> > > > > > Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;
-> > > > > > Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> > > > > > <conor+dt@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > > > > > <s.hauer@pengutronix.de>; Shuah Khan
-> > > > > > <skhan@linuxfoundation.org>; linux- gpio@vger.kernel.org;
-> > > > > > linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > > > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > > > > > <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>;
-> > > > > > devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> > > > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org;
-> > > > > > dl-linux-imx <linux- imx@nxp.com>; Bartosz Golaszewski
-> > > > > > <brgl@bgdev.pl>
-> > > > > > Subject: [EXT] Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg
-> > > > > > GPIO driver
-> > > > > > > Please explain how you would design your generic rpmsg-gpio
-> > > > > > > driver which is derived From gpio-virtio?
-> > > > > >
-> > > > > > We have already seen the virtio commands are pretty much
-> > > > > > identical to what i suggested.
-> > > > > >
-> > > > > > You could just replace virtqueue_add_sgs() with rpmsg_sendto()
-> > > > > > and reimplement
-> > > > > > virtio_gpio_request_vq() to be the callback registered with
-> > > > rpmsg_create_ept().
-> > > > > > The rest of basic GPIO handling should not need any changes at all.
-> > > > > >
-> > > > >
-> > > > > Creating endpoints and calling rpmsg_sendto() is only a small part
-> > > > > of the picture. You also need to manage the service announcement
-> > > > > from the remote side and handle asynchronous notification
-> > > > > messages. That entire flow is already implemented in the existing
-> > virtio_rpmsg_bus driver.
-> > > > > Re‑implementing those pieces just to mimic gpio‑virtio over RPMSG
-> > > > > would
-> > > > essentially mean reinventing the wheel without any real benefit.
-> > > > >
-> > > >
-> > > > I can absolutely see a benefit to this, there are multiple different
-> > > > rpmsg backends supported in Linux, so a gpio-rpmsg driver could be used by
-> > any one of them.
-> > > >
-> > > > I don't see this to be a case of "reinventing the wheel". Instead we
-> > > > copy what looks to be a very functional wheel and make it fit rpmsg.
-> > > > This will result in some "duplication", but rpmsg already provide
-> > > > the life cycle management and has a clean send/callback interface,
-> > > > so there shouldn't be any inventing...
-> > > >
-> > >
-> > > Interesting — could you walk me through how you’d structure the driver
-> > > with the new proposal? I’d like to see how you would layer it conceptually.
-> > >
-> > > The current RPMSG solution:
-> > >
-> > >      On Remoteprc                      On Linux
-> > > GPIOs -> RPMSG -> VIRTIO == VIRTIO -> RPMSG -> GPIO-RPMSG drivers
-> > >
-> > > The VIRTIO solution:
-> > >
-> > >      On Remoteprc                     On Linux
-> > >           GPIO -> VIRTIO == VIRTIO -> GPIO-VIRTIO driver
-> > >
-> > > Your proposal:
-> > >
-> > >      On Remoteprc                     On Linux
-> > > GPIOs -> RPMSG -> VIRTIO == VIRTIO -> ???
+> > On 2/23/2026 1:55 PM, Bjorn Andersson wrote:
+> >> On Mon, Feb 23, 2026 at 10:50:06AM -0800, Tanmay Shah wrote:
+> >>> Remote processor will report the crash reason via the resource table
+> >>> and notify the host via mailbox notification. The host checks this
+> >>> crash reason on every mailbox notification from the remote and report
+> >>> to the rproc core framework. Then the rproc core framework will start
+> >>> the recovery process.
+> >>>
+> >>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >>> ---
+> >>>
+> >>> Changes in v3:
+> >>>   - %s/kick/mailbox notification/
+> >>>   - %s/core framework/rproc core framework/
+> >>>   - fold simple function within zynqmp_r5_handle_rsc().
+> >>>   - remove spurious change
+> >>>   - reset crash state after reporting the crash
+> >>>   - document set and reset of ATTACH_ON_RECOVERY flag
+> >>>   - set recovery_disabled flag to false
+> >>>   - check condition rproc->crash_reason != NULL
+> >>>
+> >>> Changes in v2:
+> >>>   - clear attach recovery boot flag during detach and stop ops
+> >>>
+> >>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 60 ++++++++++++++++++++++++-
+> >>>  1 file changed, 59 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>> index bd619a6c42aa..0d831330ea90 100644
+> >>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>> @@ -108,6 +108,10 @@ struct rsc_tbl_data {
+> >>>  	const uintptr_t rsc_tbl;
+> >>>  } __packed;
+> >>>  
+> >>> +enum fw_vendor_rsc {
+> >>> +	FW_RSC_VENDOR_CRASH_REASON = RSC_VENDOR_START,
+> >>
+> >> Given that this is a vendor-specific resource, wouldn't it be nice to
+> >> find e.g. XLNX somewhere in the name? Same thing with the enum itself.
+> >>
 > > 
-> > What I'm suggesting is the following:
+> > Ack. I will change name for enum and resource both.
 > > 
-> > GPIOs -> RPMSG -> VIRTIO == VIRTIO -> RPMSG -> GPIO-RPMSG
-> >        ^                                    ^
-> >        \-----+------------------------------/
-> >              |
-> >              |
-> > With this interface on being directly derived from the existing protocol (and likely
-> > the implementation as well) using gpio-virtio.
+> >>> +};
+> >>> +
+> >>>  /*
+> >>>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
+> >>>   * compatibility with device-tree that does not have TCM information.
+> >>> @@ -127,9 +131,21 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+> >>>  	{0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+> >>>  };
+> >>>  
+> >>> +/**
+> >>> + * struct xlnx_rproc_crash_report - resource to know crash status and reason
+> >>> + *
+> >>> + * @crash_state: if true, the rproc is notifying crash, time to recover
+> >>> + * @crash_reason: reason of crash
+> >>> + */
+> >>> +struct xlnx_rproc_crash_report {
+> >>> +	u32 crash_state;
+> >>> +	u32 crash_reason;
+> >>> +} __packed;
+> >>> +
+> >>>  /**
+> >>>   * struct zynqmp_r5_core - remoteproc core's internal data
+> >>>   *
+> >>> + * @crash_report: rproc crash state and reason
+> >>>   * @rsc_tbl_va: resource table virtual address
+> >>>   * @sram: Array of sram memories assigned to this core
+> >>>   * @num_sram: number of sram for this core
+> >>> @@ -143,6 +159,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+> >>>   * @ipi: pointer to mailbox information
+> >>>   */
+> >>>  struct zynqmp_r5_core {
+> >>> +	struct xlnx_rproc_crash_report *crash_report;
+> >>>  	void __iomem *rsc_tbl_va;
+> >>>  	struct zynqmp_sram_bank *sram;
+> >>>  	int num_sram;
+> >>> @@ -227,10 +244,14 @@ static void handle_event_notified(struct work_struct *work)
+> >>>  static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
+> >>>  {
+> >>>  	struct zynqmp_ipi_message *ipi_msg, *buf_msg;
+> >>> +	struct zynqmp_r5_core *r5_core;
+> >>> +	struct rproc *rproc;
+> >>>  	struct mbox_info *ipi;
+> >>>  	size_t len;
+> >>>  
+> >>>  	ipi = container_of(cl, struct mbox_info, mbox_cl);
+> >>> +	r5_core = ipi->r5_core;
+> >>> +	rproc = r5_core->rproc;
+> >>>  
+> >>>  	/* copy data from ipi buffer to r5_core */
+> >>>  	ipi_msg = (struct zynqmp_ipi_message *)msg;
+> >>> @@ -244,6 +265,16 @@ static void zynqmp_r5_mb_rx_cb(struct mbox_client *cl, void *msg)
+> >>>  	buf_msg->len = len;
+> >>>  	memcpy(buf_msg->data, ipi_msg->data, len);
+> >>>  
+> >>> +	/* Check for crash only if rproc crash is expected */
+> >>> +	if (rproc->state == RPROC_ATTACHED || rproc->state == RPROC_RUNNING) {
+> >>> +		if (r5_core->crash_report && r5_core->crash_report->crash_state) {
+> >>
+> >> Nit. I'd prefer the order of these to be swapped...
+> >>
+> >> Compare:
+> >>
+> >> "Check if we have crashed, and if so check that we're in a state where
+> >> that makes sense."
+> >>
+> >> vs the way you're ordering this:
+> >>
+> >> "Check if we're in a state, and if in that state we have crashed"
+> >>
+> >>
+> >> The "have we crashed" question is the most-significant-bit of this
+> >> chunk, making that the outermost conditional makes it faster for the
+> >> next reader to orient themselves in the code.
 > > 
-> > You can have multiple "GPIOs" (presumably a "bank" each) instances and that
-> > will be reflected in having multiple "GPIO-RPMSG" instances.
+> > Ack, that makes sense.
 > > 
-> > I haven't made any attempts at implementing this, but it looks very similar to
-> > gpio-virtio in concept and it looks very similar to the exiting RPMSG tty in the
-> > sense of being a generic implementation.
+> >>
+> >>> +			rproc_report_crash(rproc,
+> >>> +					   r5_core->crash_report->crash_reason);
+> >>
+> >> Are these two value spaces synchronized? crash_reason seems to be a
+> >> generic 32-bit number without particular definition, and you pass it
+> >> into a enum rproc_crash_type.
+> >>
 > > 
-> > To reach something functional on the Linux side it seems to be a matter of taking
-> > the gpio-virtio driver, register a rpmsg_driver instead, change _virtio_gpio_req()
-> > to use rpmsg_send(), and perform the actions of virtio_gpio_event_vq() in the
-> > rpmsg_driver callback function.
+> > Yes, crash_reason is supposed to be enum rproc_crash_type.
+> > 
+> >> I presume the outcome is that you get the string
+> >> "crash detected in <name>: type: unknown" in your log for most cases?
+> >>
+> > 
+> > So far, we have only "WATCHDOG" and "FATAL ERROR" cases. I guess any
+> > more reasons would have to go in the "unknown" case.
+> > 
+> >>
+> >> In the Qualcomm drivers we can get RPROC_WATCHDOG or RPROC_FATAL_ERROR.
+> >> For the watchdog bite there isn't much information, but for the fatal
+> >> error we have a error string which we print, then we call
+> >> rproc_report_crash(FATAL) which results in another "useless" print.
+> >>
+> >> Perhaps we could expand rproc_report_crash() to allow drivers to provide
+> >> some information about the crash beyond the enum.
+> >>
+> >> Something like:
+> >> 	rproc_report_crash(rproc, RPROC_FATAL_ERROR, "%d", report->crash_reason);
+> >>
+> >> Would that be useful to you? Would it be valuable to turn your
+> >> "crash_reason" into a human readable string?
+> >>
+> > 
+> > Yes, it is valuable to turn "crash_reason" to human readable string.
+> > Should we leave that part to each driver and not have it in the common
+> > framework?
+> > 
+> > If we are to refactor rproc_report_crash, then I think following is more
+> > flexible:
+> > 
+> > rproc_report_crash(rproc, const char *crash_reason_str);
+> > 
+> > Then each platform driver can print crash reason however they see fit.
+> > We can also avoid printing crash reason two times this way.
 > > 
 > 
-> Thanks for the explanation. If I’m understanding correctly, what you’re suggesting is 
-> essentially a driver that merges the roles of a virtio_driver and an rpmsg_driver into a 
-> single source file. There may be opportunities for a few function reuse, but overall it 
-> would still result in a fairly distinct codebase.
+> Hi Bjorn,
+> 
+> I take this back. I think crash_reason can be defined differently for
+> each firmware project. I would like to provide that flexibility to the
+> firmware developer. Hence, I prefer not to convert crash_reason integer
+> to human readable string, as can be different for different fw projects.
 > 
 
-Most of the non-boilerplate code in gpio-virtio would be impacted by
-differences between rpmsg and virtio. So combining the two
-implementations in a single source file would add complexity to an
-otherwise straightforward driver, only with trivial parts reused.
+Then we certainly shouldn't pass it as the second argument of
+rproc_report_crash().
 
-My expectation is that it will be better to just have two separate
-drivers - but reuse all the design-work done in the gpio-virtio.
+> Instead, the xlnx platform driver will simply print the crash_reason
+> integer as given by the firmware, and notify the crash to the core
+> framework as following:
+> 
+> rproc_report_crash(rproc, RPROC_FATAL_ERROR);
+> 
+> This way, we don't have to modify the rproc_report_crash() API.
+> I hope this makes sense.
+> 
+
+Yes, that makes sense.
+
+I think I'd like to make the proposed modification regardless, but that
+is then a completely separate change.
+
+> I will wait for your response before sending the new version. Rest of
+> the comments I will address as asked.
+> 
+
+Is your struct xlnx_rproc_crash_report already defined and in use by the
+firmware? If not, I'd recommend that you spend a little bit extra time
+thinking about the content of it. E.g. the human readable char [] found
+in Qualcomm's crash reports is quite useful...
 
 Regards,
 Bjorn
 
 > Thanks,
-> Shenwei
+> Tanmay
 > 
-> > Regards,
-> > Bjorn
+> > If we do this, then crash_reason can be defined for each driver
+> > individually. That's more appropriate as each vendor can have different
+> > enum for crash.
 > > 
-> > >
-> > > Thanks,
-> > > Shenwei
-> > >
-> > > > Similarly, I'm guessing that there's a firmware-side implementation
-> > > > of virtio-gpio in Zephyr, it should be straightforward to transplant this to the
-> > rpmsg interface.
-> > > >
-> > > > Regards,
-> > > > Bjorn
-> > > >
-> > > > > Thanks,
-> > > > > Shenwei
-> > > > >
-> > > > > > Interrupt support does however need some changes. The
-> > > > > > virtio_gpio_request_vq() replacement would need to see if the
-> > > > > > received message indicates an interrupt and call the equivalent
-> > > > > > of virtio_gpio_event_vq(), since rpmsg does not have a separate
-> > > > > > mechanism to
-> > > > deliver interrupts, unlike rpmsg.
-> > > > > >
-> > > > > > At a guess, 90% of the code would stay the same?
-> > > > > >
-> > > > > >    Andrew
+> > Let me know your thoughts.
+> > 
+> >>> +			r5_core->crash_report->crash_state = 0;
+> >>> +			r5_core->crash_report->crash_reason = 0;
+> >>> +		}
+> >>> +	}
+> >>> +
+> >>>  	/* received and processed interrupt ack */
+> >>>  	if (mbox_send_message(ipi->rx_chan, NULL) < 0)
+> >>>  		dev_err(cl->dev, "ack failed to mbox rx_chan\n");
+> >>> @@ -438,6 +469,13 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+> >>>  	if (ret)
+> >>>  		dev_err(r5_core->dev, "core force power down failed\n");
+> >>>  
+> >>> +	/*
+> >>> +	 * Clear attach on recovery flag during stop operation. The next state
+> >>> +	 * of the remote processor is expected to be "Running" state. In this
+> >>> +	 * state boot recovery method must take place over attach on recovery.
+> >>> +	 */
+> >>> +	test_and_clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
+> >>> +
+> >>>  	return ret;
+> >>>  }
+> >>>  
+> >>> @@ -859,6 +897,9 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+> >>>  
+> >>>  static int zynqmp_r5_attach(struct rproc *rproc)
+> >>>  {
+> >>> +	/* Enable attach on recovery method. Clear it during rproc stop. */
+> >>> +	rproc_set_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
+> >>> +
+> >>>  	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
+> >>>  
+> >>>  	return 0;
+> >>> @@ -873,9 +914,25 @@ static int zynqmp_r5_detach(struct rproc *rproc)
+> >>>  	 */
+> >>>  	zynqmp_r5_rproc_kick(rproc, 0);
+> >>>  
+> >>> +	clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
+> >>> +
+> >>>  	return 0;
+> >>>  }
+> >>>  
+> >>> +static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
+> >>> +				int offset, int avail)
+> >>> +{
+> >>> +	struct zynqmp_r5_core *r5_core = rproc->priv;
+> >>> +	void *rsc_offset = (r5_core->rsc_tbl_va + offset);
+> >>> +
+> >>> +	if (rsc_type == FW_RSC_VENDOR_CRASH_REASON)
+> >>> +		r5_core->crash_report = (struct xlnx_rproc_crash_report *)(rsc_offset);
+> >>
+> >> I don't think you need the cast.
+> >>
+> >> Regards,
+> >> Bjorn
+> >>
+> >>> +	else
+> >>> +		return RSC_IGNORED;
+> >>> +
+> >>> +	return RSC_HANDLED;
+> >>> +}
+> >>> +
+> >>>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
+> >>>  	.prepare	= zynqmp_r5_rproc_prepare,
+> >>>  	.unprepare	= zynqmp_r5_rproc_unprepare,
+> >>> @@ -890,6 +947,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+> >>>  	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
+> >>>  	.attach		= zynqmp_r5_attach,
+> >>>  	.detach		= zynqmp_r5_detach,
+> >>> +	.handle_rsc	= zynqmp_r5_handle_rsc,
+> >>>  };
+> >>>  
+> >>>  /**
+> >>> @@ -923,7 +981,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+> >>>  
+> >>>  	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+> >>>  
+> >>> -	r5_rproc->recovery_disabled = true;
+> >>> +	r5_rproc->recovery_disabled = false;
+> >>>  	r5_rproc->has_iommu = false;
+> >>>  	r5_rproc->auto_boot = false;
+> >>>  	r5_core = r5_rproc->priv;
+> >>> -- 
+> >>> 2.34.1
+> >>>
+> > 
+> 
