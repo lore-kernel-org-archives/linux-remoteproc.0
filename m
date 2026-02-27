@@ -1,88 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7C533A01E;
-	Fri, 27 Feb 2026 03:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BD033A9E5;
+	Fri, 27 Feb 2026 03:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772164359; cv=none; b=GfDFvancn0WOy36z4rdEFNILx7KNvL4d48p88RTvIJv+LgaoaZX7H+dalS0UqGSIVtZefuV9Nn/1ZnOCS26fk1NDK+uVFIccrg+SUPGgGgIj6wYjC38A4G88ghzP3PgV5dkZU1PNIvpcNblA15mVCmY3nX87uiXm5Vvyn7y9YNE=
+	t=1772164419; cv=none; b=U9P2co+7M1VdVnp/F3g8Hf1AhrLhpEGTzyFmI9+Y+9ZxfjU4buHDk66mBL7g8woZZGlMjGFgRVGqM49+MrBpXTiODp404Qfu29gjPWmdSsxuONmqQ6WYlK7SN+0U3b5T+71/SLZ2MUT0P2n8ks/rIZpk0bifMymPTeaX03TfCT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772164359; c=relaxed/simple;
-	bh=sGcIi9R+H+rYlejz3LbbzLzmzqTMDT0m2GiS7N0wTHE=;
+	s=arc-20240116; t=1772164419; c=relaxed/simple;
+	bh=9v0532ZHQguBgkAE8pS/q4kOnIWgIhGnRt0PCO35+Ik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZdqRCp/TnxV3Mji6l5frLAMojLJajnHVP/26CUPsGdzqc0SZD+dkU4/ZR7PP4hHhzVIFMmT7BKW9oa7cclOxQL1kJ8j0E2cFLKW4UBRB2pZazVQhNlSD0lmzrevxwyXBlP6YDjycdCQOSjRdWRiI1obhTgk5k0GFyZ02H/LT/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bl/CaEpa; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRACqWb+eXaUhcV5DftCGFS4TMVIiHI2DVSApQV9UN8s1UY1kAq56c9o69eBUJcfjj2wshciTXQ0ai1qXQy6rO9wOXO303shPUUIyP/VgyqsMfPebHUhgMHk84CmlwFVz9oZLekopMLRF0dnW6gFEXTTCDztGd3dGAM+9D+s1HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpkA0tgF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bl/CaEpa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B7CC19423;
-	Fri, 27 Feb 2026 03:52:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpkA0tgF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA17C116C6;
+	Fri, 27 Feb 2026 03:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772164359;
-	bh=sGcIi9R+H+rYlejz3LbbzLzmzqTMDT0m2GiS7N0wTHE=;
+	s=k20201202; t=1772164419;
+	bh=9v0532ZHQguBgkAE8pS/q4kOnIWgIhGnRt0PCO35+Ik=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bl/CaEpaUARa6Oyh6+Q0TcqnR8VOvXTMqZYbXr3BBHTjB47Cwk8KEjyGZpObZNz1n
-	 ZxnigLbQI3Gf+rkoz37BGPLbUhC6OFGzUAJWcw/Jo2M+BPLZ2H2Ygkt1IzKdiUbvH+
-	 DhGFXGmlexEEZHtsC8IrME0z6f/dhFFs6rL15r6dh6IolqqtAuvw0c9jhF1VuBWzSk
-	 Onynceq+DDz9aBm7RHMF5epDxAtyqjL3Dkyv0PekcK1rpVLLpvPHR2XRyGyDxwHi1Q
-	 a0S/K8APMxChudUL+KRFVORIwLMxiiVIkGCd55cWW64MQK1HQVS5U3WwNZ8bsLLZGe
-	 O78k5YHQFRB3w==
-Date: Thu, 26 Feb 2026 21:52:35 -0600
+	b=RpkA0tgFsAPE0aGhlvroM+iMjRlqDApBlkx2pIee9YCxJ/7bcA6nKHr+/3C831Dl6
+	 z0LQcshubsCm0DcyA9A3f1E1ovstugi1mU6vaUm7NO1FW//kRp35KZDv7SZ1xsBOAe
+	 WtISeoGiWUiLlVopQxEZoRAau2j0CIJtH4Okbzr30dkjih1zwWmrEjkNpo7Po9IV69
+	 PPDdYtecHOdeuCGmF1hIQccr24qxkUF1PWjqUN3/xm3ebXGhdCRNNqxpCot8tskD7D
+	 hXz6BJOTG7BAtB0B7bg3VjXZTOHaVaTYS2BO3tVTEmTBg57R+FAwFoQ7DUvEwt29YO
+	 PKddE+dLdwm5Q==
+Date: Thu, 26 Feb 2026 21:53:35 -0600
 From: Bjorn Andersson <andersson@kernel.org>
-To: Val Packett <val@packett.cool>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Matti =?utf-8?Q?Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>, Luca Weiss <luca@lucaweiss.eu>, 
-	Vladimir Lypak <vladimir.lypak@gmail.com>, 
-	=?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] remoteproc: qcom_wcnss: Fix handling the lack of PD
- regulators in v3
-Message-ID: <mteufo3laiiuhcgbihxnossy4xfkxhct57mkav2fr4oxvaldp7@k6p7edkfgjt4>
-References: <20260201210230.911220-1-val@packett.cool>
- <jup7hphwpa754gyhtcahz25glecp6ctpuxcwzvco6wrbokvnip@quw7hrauahsa>
- <ddd8b949-3f73-4e3d-90b9-be95e859f3b1@packett.cool>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	tanmay.shah@amd.com, mathieu.poirier@linaro.org
+Subject: Re: [PATCH] mailbox: add API to query available TX queue slots
+Message-ID: <nelghqxyuwelah3op6ls6pflm5ujwayfzuchode44vjmagymmv@ptisap64ewkl>
+References: <20260209234430.512492-1-jassisinghbrar@gmail.com>
+ <jo4kugxook5b6fl7ifh3nuznehotkyqwnrgwq3olank7cvzhmj@hj5ibm3bbsln>
+ <CABb+yY2vzczJ8ODc22P4hCDn1=epki9aXgJCySumeADBuHgaKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ddd8b949-3f73-4e3d-90b9-be95e859f3b1@packett.cool>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABb+yY2vzczJ8ODc22P4hCDn1=epki9aXgJCySumeADBuHgaKg@mail.gmail.com>
 
-On Tue, Feb 24, 2026 at 03:45:05PM -0300, Val Packett wrote:
-> 
-> On 2/23/26 5:03 PM, Bjorn Andersson wrote:
-> > On Sun, Feb 01, 2026 at 05:55:03PM -0300, Val Packett wrote:
-> > > The changes introduced to handle single power domain platforms have
-> > > swapped the info pointer increment from num_pd_vregs to num_pds, which
-> > > would shift the info pointer past the end of the array for pronto-v3,
-> > > which does not list power domain regulators in vregs.
-> > > 
-> > > This showed up as a difference between GCC- and LLVM-compiled kernels
-> > > on SDM632 devices, where only with LLVM one would get the
-> > > "regulator request with no identifier" error, because the out-of-bounds
-> > > memory ended up being zeroed. Fix by skipping the increment when there
-> > > are more power domains than regulators.
-> > > 
-> > Is the error only an error print, or did the thing stop working as well?
-> 
-> It's a real error. Likely no one would've bothered debugging it if it
-> weren't breaking everything :)
-> 
-> It was a blocker for allowing LLVM/clang builds of the msm8953 kernel in
-> postmarketOS, the whole reason to dig into this was "switching to clang
-> breaks the modem, WTF?!"
+On Mon, Feb 23, 2026 at 06:35:16PM -0600, Jassi Brar wrote:
+> On Mon, Feb 23, 2026 at 9:29 AM Bjorn Andersson <andersson@kernel.org> wrote:
+> >
+> > On Mon, Feb 09, 2026 at 05:44:30PM -0600, jassisinghbrar@gmail.com wrote:
+> > > From: Jassi Brar <jassisinghbrar@gmail.com>
+> > >
+> > > Clients sometimes need to know whether the mailbox TX queue has room
+> > > before posting a new message.
+> >
+> > This is rather vague, could you be more specific?
+> >
+> > > Rather than exposing internal queue state
+> > > through a struct field, provide a proper accessor function that returns
+> > > the number of available slots for a given channel.
+> > >
+> > > This lets clients choose to back off when the queue is full instead of
+> > > hitting the -ENOBUFS error path and the misleading "Try increasing
+> > > MBOX_TX_QUEUE_LEN" warning.
+> > >
+> >
+> > In the event that we're using the mailbox framework as a doorbell, I
+> > presume that the queue is full of duplicate rings already - so backing
+> > off it perfectly fine.
+> >
+> > But in the case where the client actually uses the interface to convey
+> > data, what is the expected way for the client to know when to make
+> > another attempt?
+> >
+> Whatever the client is currently using. It just backs off for another
+> such signal when mbox_chan_tx_slots_available() returns 0.
+> If a client submits periodically, it will back off for another period.
+> If a client submits upon receiving ack packet for last submission, it
+> will back off until it gets another ack packet.
 > 
 
-Can you provide me with a Fixes: line please?
+Thanks for clarifying.
 
 Regards,
 Bjorn
 
-> ~val
-> 
+> Cheers!
+> Jassi
