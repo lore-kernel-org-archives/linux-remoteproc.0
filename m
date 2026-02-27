@@ -1,109 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34D2D781B
-	for <linux-remoteproc@vger.kernel.org>; Fri, 27 Feb 2026 00:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7C533A01E;
+	Fri, 27 Feb 2026 03:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772150443; cv=none; b=WlDkNxrbCQYnJtRgrNtXJHl6KTVfjaU9ZWyXJoDeIEkFSU6DIDj8aNGETSbKxyZedq3oJj0qhlXw/hjoFpptr6hPNUwWd1qzCgPiQNiz65QINCtFD6Fbfmyigfg8j/fH6q4Qp+rOmHtcQPdsVWnehltCYefRCelDNzezpAQAFIA=
+	t=1772164359; cv=none; b=GfDFvancn0WOy36z4rdEFNILx7KNvL4d48p88RTvIJv+LgaoaZX7H+dalS0UqGSIVtZefuV9Nn/1ZnOCS26fk1NDK+uVFIccrg+SUPGgGgIj6wYjC38A4G88ghzP3PgV5dkZU1PNIvpcNblA15mVCmY3nX87uiXm5Vvyn7y9YNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772150443; c=relaxed/simple;
-	bh=9DezwKPafh4uiqbk/gjEzFUtqzlwBbzlI4BmHc11dhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OXtKnvDpXKE/zvHc3g0yyyE0EddT93SM48yBTp3wdn2PJsx0L1FmhMM0HzI8zp15fmQESF1CX5lkHZqQ+qaWg0P5ILrkdcJQoqrkqHa71boWqleMIDcHbhMbiMp3o6Zz/il6uI0YjMvgNFoZHFVfeX+5QBfofkOOMWlk9d36P+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=laueYUpu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772164359; c=relaxed/simple;
+	bh=sGcIi9R+H+rYlejz3LbbzLzmzqTMDT0m2GiS7N0wTHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZdqRCp/TnxV3Mji6l5frLAMojLJajnHVP/26CUPsGdzqc0SZD+dkU4/ZR7PP4hHhzVIFMmT7BKW9oa7cclOxQL1kJ8j0E2cFLKW4UBRB2pZazVQhNlSD0lmzrevxwyXBlP6YDjycdCQOSjRdWRiI1obhTgk5k0GFyZ02H/LT/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bl/CaEpa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="laueYUpu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 481FDC2BCFA
-	for <linux-remoteproc@vger.kernel.org>; Fri, 27 Feb 2026 00:00:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bl/CaEpa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B7CC19423;
+	Fri, 27 Feb 2026 03:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772150443;
-	bh=9DezwKPafh4uiqbk/gjEzFUtqzlwBbzlI4BmHc11dhE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=laueYUpuuYc+GxWvK+6ILshWte/ihb4gEMV5tn8EimGyWRJbCpY8dx/vP47+MjMyf
-	 ZZTJ6DdinA6SMT84gvU7sNGo+VKSSR6mtYLODZL9sSQ6a23FFUXXy34e+wmf5TaovF
-	 XKrKIAHiK1uv6C0KdrMjWcKTWNLHmVjV9QPZWQATjSUXFLYbrJGJWV/2dLCRenitK8
-	 bxCyWB2Ho8IbADrr2cM+0TKxt6mcID7k42E6sTDD1Pn+XGC7u4SkbeItZyNmbo3vih
-	 lyVwoqgWyLT1xDk20EITFGsewzbURcw9jot23Fi/2MW9MXmJBTrR2JL+Azovw8+T/Y
-	 UNOtkcpcJPCNw==
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-79801df3e42so20345867b3.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Feb 2026 16:00:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVq7uiJUJxGtgM8V/z+9kA5rw1O9Y/QJi06+QQYboOJFLqo8xSiQE4HFO2bFR7gQHJQZVCA4WwzjmCK2AKriOjv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG0En4K1pcdJU0+g4oxra/tN+2u/6kqJTyp+HjLnf22p/4SUOh
-	1ysyiz99A3hLeSDL9IsSbhWb9FRWtSiELbG125sa20/RWL+aMtlgSLZcbO1bTUc4NHMsoE5h0ic
-	lK4+HENpYpYpC5zVP7trVc4RrPegRswQ=
-X-Received: by 2002:a05:690c:308a:b0:796:3e25:3e95 with SMTP id
- 00721157ae682-79874d00f80mr36642507b3.18.1772150442330; Thu, 26 Feb 2026
- 16:00:42 -0800 (PST)
+	s=k20201202; t=1772164359;
+	bh=sGcIi9R+H+rYlejz3LbbzLzmzqTMDT0m2GiS7N0wTHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bl/CaEpaUARa6Oyh6+Q0TcqnR8VOvXTMqZYbXr3BBHTjB47Cwk8KEjyGZpObZNz1n
+	 ZxnigLbQI3Gf+rkoz37BGPLbUhC6OFGzUAJWcw/Jo2M+BPLZ2H2Ygkt1IzKdiUbvH+
+	 DhGFXGmlexEEZHtsC8IrME0z6f/dhFFs6rL15r6dh6IolqqtAuvw0c9jhF1VuBWzSk
+	 Onynceq+DDz9aBm7RHMF5epDxAtyqjL3Dkyv0PekcK1rpVLLpvPHR2XRyGyDxwHi1Q
+	 a0S/K8APMxChudUL+KRFVORIwLMxiiVIkGCd55cWW64MQK1HQVS5U3WwNZ8bsLLZGe
+	 O78k5YHQFRB3w==
+Date: Thu, 26 Feb 2026 21:52:35 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Val Packett <val@packett.cool>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Matti =?utf-8?Q?Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>, Luca Weiss <luca@lucaweiss.eu>, 
+	Vladimir Lypak <vladimir.lypak@gmail.com>, 
+	=?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, 
+	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] remoteproc: qcom_wcnss: Fix handling the lack of PD
+ regulators in v3
+Message-ID: <mteufo3laiiuhcgbihxnossy4xfkxhct57mkav2fr4oxvaldp7@k6p7edkfgjt4>
+References: <20260201210230.911220-1-val@packett.cool>
+ <jup7hphwpa754gyhtcahz25glecp6ctpuxcwzvco6wrbokvnip@quw7hrauahsa>
+ <ddd8b949-3f73-4e3d-90b9-be95e859f3b1@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANLsYkxAwgG1WkMRr8EJZuSUnN_jKVnsWhWTakVqhvtMBO365A@mail.gmail.com>
- <PAXPR04MB91851D3DA6A92669CB5926A18974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <CANLsYkw-8ERXy3v8Sv55Cpq=+41Toez3EjLMbENAkavvr8STeQ@mail.gmail.com>
- <PAXPR04MB9185B68BC640D940534E44098974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <d4c8f7dd-c0a8-4721-9750-47429637d8c1@lunn.ch> <PAXPR04MB9185BB6443B9E1E407F409D68974A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <ndozoc6qdrpv3xuktumsah56im5rbtg6iwerq3xi2xkcuyewpx@szswqvojleg3>
- <AS8PR04MB917652D63DB090D22129D3D78975A@AS8PR04MB9176.eurprd04.prod.outlook.com>
- <2b72kkgwe5hio4uwrxj5oi72llkxhx7egw442fugq6unv7unah@5bfve7k3mvky>
- <PAXPR04MB918508A39832000D786E8F938975A@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <l7vmhr5rg444pqp47x2k5ejamjnisx5rqwfmfr6m2tjazxpbm6@wq2vd4hcxco2>
-In-Reply-To: <l7vmhr5rg444pqp47x2k5ejamjnisx5rqwfmfr6m2tjazxpbm6@wq2vd4hcxco2>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 27 Feb 2026 01:00:31 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkTFHqQRgNeaOmEDOL7AEM8WLVKxU-ZpRyLuw3whOK2ug@mail.gmail.com>
-X-Gm-Features: AaiRm53DnshMNxnGb5s2nvHBLr2HJwlmre0-C9Elu3HkLIEYq6Sfix20f-OwTTU
-Message-ID: <CAD++jLkTFHqQRgNeaOmEDOL7AEM8WLVKxU-ZpRyLuw3whOK2ug@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, Bartosz Golaszewski <brgl@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <frank.li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ddd8b949-3f73-4e3d-90b9-be95e859f3b1@packett.cool>
 
-On Wed, Feb 25, 2026 at 10:02=E2=80=AFPM Bjorn Andersson <andersson@kernel.=
-org> wrote:
+On Tue, Feb 24, 2026 at 03:45:05PM -0300, Val Packett wrote:
+> 
+> On 2/23/26 5:03 PM, Bjorn Andersson wrote:
+> > On Sun, Feb 01, 2026 at 05:55:03PM -0300, Val Packett wrote:
+> > > The changes introduced to handle single power domain platforms have
+> > > swapped the info pointer increment from num_pd_vregs to num_pds, which
+> > > would shift the info pointer past the end of the array for pronto-v3,
+> > > which does not list power domain regulators in vregs.
+> > > 
+> > > This showed up as a difference between GCC- and LLVM-compiled kernels
+> > > on SDM632 devices, where only with LLVM one would get the
+> > > "regulator request with no identifier" error, because the out-of-bounds
+> > > memory ended up being zeroed. Fix by skipping the increment when there
+> > > are more power domains than regulators.
+> > > 
+> > Is the error only an error print, or did the thing stop working as well?
+> 
+> It's a real error. Likely no one would've bothered debugging it if it
+> weren't breaking everything :)
+> 
+> It was a blocker for allowing LLVM/clang builds of the msm8953 kernel in
+> postmarketOS, the whole reason to dig into this was "switching to clang
+> breaks the modem, WTF?!"
+> 
 
-> > Thanks for the explanation. If I=E2=80=99m understanding correctly, wha=
-t you=E2=80=99re suggesting is
-> > essentially a driver that merges the roles of a virtio_driver and an rp=
-msg_driver into a
-> > single source file. There may be opportunities for a few function reuse=
-, but overall it
-> > would still result in a fairly distinct codebase.
-> >
->
-> Most of the non-boilerplate code in gpio-virtio would be impacted by
-> differences between rpmsg and virtio. So combining the two
-> implementations in a single source file would add complexity to an
-> otherwise straightforward driver, only with trivial parts reused.
->
-> My expectation is that it will be better to just have two separate
-> drivers - but reuse all the design-work done in the gpio-virtio.
+Can you provide me with a Fixes: line please?
 
-I agree with Bjorn.
+Regards,
+Bjorn
 
-If there is indeed code to be reused, just create a library
-module .c/.o/.h file and export the symbols. modprobe will
-bring it in, Kconfig will configure it in if compiled in. One or the
-other or both modules can use that. We do this
-all over the place.
-
-Yours,
-Linus Walleij
+> ~val
+> 
