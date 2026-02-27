@@ -1,140 +1,82 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6C0163;
-	Fri, 27 Feb 2026 07:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F39347FC0
+	for <linux-remoteproc@vger.kernel.org>; Fri, 27 Feb 2026 09:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772177721; cv=none; b=tRTJQV/64hR9N1a8/a/jEL/D2YERPM8PUUTOuzsQmopo7MS9FOD+Tx/Gtc7uH+duZK6t8YE+cp0XT/ZTjdQ1veLl4z231x7T0KaI4PrvmYdwKvTangm2KaODk0IFVPzycGiGP9Td6+Cdr1w5L29nV5RhAXvOeytoG+ZGI0THSJc=
+	t=1772183807; cv=none; b=opwcnBrOcE1398JFJmu06yzhxRmfWvQa4jMElTxNSSvvhI5V0D6H/C842hmp3xPM5+KZekA7++wz7iYdOIhoN9EGvGp29O9qqQOfgaWQ5Ro/FW8f5VagpPCUzP+Fz0shf/ncDT5Q9evZ8oe8yZOA3FDZUCThh7Dir68Su5FoQRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772177721; c=relaxed/simple;
-	bh=HzM9hWGK9CJTRgLvRgEPIV8M54ZVhzA3JCet5Na+wg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bALr/l0j+o5nyVEWIlTC+KDAL3O572+nE2vwRJ08itg3N8FBz8gi6WxTR7bFFi5nL/dd5sfOquOcfzJ71Zx/6Syzyrghrz1o+qsDerhTLLAuQpyYlMwVHCEBTp0sz45Nkh5xqmx3SLMhxIhDZOpe5F4uNKulnbHIdgVwy8xB8rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnzph0jM; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnzph0jM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CED21C116C6;
-	Fri, 27 Feb 2026 07:35:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772177721;
-	bh=HzM9hWGK9CJTRgLvRgEPIV8M54ZVhzA3JCet5Na+wg8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fnzph0jM3YTA3y8bJ8jupzmSt5G3srEX0reAYkHqrv61ARWjjJuNc5B4tpNGLOiQi
-	 nub9Kb9IJKGtptbuCsYg0M+iAZsma+0CX2XWBwoejAPKbEpnl1McdSThYK5Voce1KH
-	 e2pUPzE1RckFpQLJO4VIxKHkSt0r0TWO/5KJn3XtQ8hFw0F9I3rmeO4buVSQ2zopR/
-	 Hk+FDbsf1a+sT1PkIXRgJgP8ZAl9wlCwLlSgMQQUYdqb0Oeq1HlBm4IH2v9QQso3XV
-	 iHj7aoVgRlk2+oF6RtuLlQv4nplG3M84tIRsrWdTkPSm38/5gOguRse/oE4gqMkRzB
-	 8cr1vHD3b69Bw==
-Message-ID: <20887046-26c3-47dc-9cc5-c537f8d90772@kernel.org>
-Date: Fri, 27 Feb 2026 08:35:15 +0100
+	s=arc-20240116; t=1772183807; c=relaxed/simple;
+	bh=y4Gg8StWVxc70nPTjHzbFNozRlWAE+RWWrT3WYVr3BI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ujdbl/tjh65ABocifZJwA+EDr9+Tvaloc6xdjYlswzd7QvZQzCe3eRmxHrVwe/iWeU6cCVrs2Gl4XYEQr0iJYcF+z4lvcZi+myFjGLj+Vt+mnwnUVlw2I9Hj8A2p8TOYSEd6hSdrJZk9TXg0uZIJQk2tGBeHjfhFG0vV7fbMx8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowACXQm7vYKFplIPTCA--.13808S2;
+	Fri, 27 Feb 2026 17:16:31 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: robh@kernel.org,
+	Frank.Li@nxp.com,
+	s.hauer@pengutronix.de,
+	linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] remoteproc: imx_rproc: Fix NULL vs IS_ERR() bug in imx_rproc_addr_init()
+Date: Fri, 27 Feb 2026 17:15:46 +0800
+Message-Id: <20260227091546.4044246-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] dt-bindings: remoteproc: qcom,pas: Document pas
- for SoCCP on Kaanapali and Glymur platforms
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-References: <20251223-knp-remoteproc-v3-0-5b09885c55a5@oss.qualcomm.com>
- <20251223-knp-remoteproc-v3-3-5b09885c55a5@oss.qualcomm.com>
- <20251223-furry-mighty-agouti-a222f7@quoll>
- <ae532ff4-1a96-4dc1-9fa0-81305624c9c9@oss.qualcomm.com>
- <f4ef4a57-4192-4dbf-939c-46efa13c0391@kernel.org>
- <aY582M8dgOrKW39w@QCOM-aGQu4IUr3Y>
- <e3dcadb3-0239-4a49-a5ee-3c20ff97ea4e@kernel.org>
- <22273aee-73b5-4747-a2d4-6edce5102092@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <22273aee-73b5-4747-a2d4-6edce5102092@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACXQm7vYKFplIPTCA--.13808S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZr4DKw4kWFW5tr15uw15urg_yoWfKFg_CF
+	yIvrWxXw10vFyjka4Uuw4Syay2yr109Fna9F15ta9xJrW3Wr12krW8Xr1DZas5X39xWry5
+	Wr92qFW7ZrnrCjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
+	6r43MxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUqhFxUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 27/02/2026 06:52, Jingyi Wang wrote:
-> qcom,milos-pas.yaml
-> qcom,sa8775p-pas.yaml
-> qcom,sc7180-pas.yaml
-> qcom,sm8150-pas.yaml
-> qcom,sm8350-pas.yaml
-> modifying pas-common means we need to add explicit list in each file,
-> (also we need to add constraint for smem-state)
-> 
-> To avoid affecting the existing yaml bindings, we assume below
-> Option2: have a new common file for soccp yaml with "pong"
-> interrupt along with 4 corresponding "smem-state"
-> 
-> the example will be like:
-> kaanapali-soccp.yaml ref with soccp-common.yaml. and the common yaml
-> will be very much pas-common.yaml content, while the interrupt and
-> smem state will be updated.
-> 
+The devm_ioremap_resource_wc() function never returns NULL, it returns
+error pointers.  Update the error checking to match.
 
+Fixes: 67a7bc7f0358 ("remoteproc: Use of_reserved_mem_region_* functions for "memory-region"")
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/remoteproc/imx_rproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I don't understand how many files you want to have. Two new files, so
-three common files?
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index d33d1e2c41a4..0dd80e688b0e 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -812,7 +812,7 @@ static int imx_rproc_addr_init(struct imx_rproc *priv,
+ 
+ 		/* Not use resource version, because we might share region */
+ 		priv->mem[b].cpu_addr = devm_ioremap_resource_wc(&pdev->dev, &res);
+-		if (!priv->mem[b].cpu_addr) {
++		if (IS_ERR(priv->mem[b].cpu_addr)) {
+ 			dev_err(dev, "failed to remap %pr\n", &res);
+ 			return -ENOMEM;
+ 		}
+-- 
+2.25.1
 
-You need one place for definition of common properties, so all
-smem-states and smd/glink-edge. The interrupts don't have to be there at
-all. They were placed because some devices have similar constraints and
-the lists should be shared. If the list anyway cannot be shared via
-common file, just move it to individual schemas. The other common bits
-like clocks and power-domains also make little point in the common file
-if they are not actually fixed (thus common).
-
-Best regards,
-Krzysztof
