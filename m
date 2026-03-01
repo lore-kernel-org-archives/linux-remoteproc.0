@@ -1,38 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF4B248F73;
-	Sun,  1 Mar 2026 01:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C194F283C89;
+	Sun,  1 Mar 2026 01:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772327902; cv=none; b=grbctf2WzC7Lm31NOz9PawyItUOJZjIWUX0fhKPaHLFgAJhO56LcNw+50+wLvPymwuzQm6iXSf32GcFQ4XYfUoydJZF2XeUOPUWlY5/mz85ToAJbDzhBYDpJT3Y8Qr3mZLZtc63IAQU/zq6R4AJG/r3n3wAdvblBrbfeB/mfeP8=
+	t=1772328322; cv=none; b=dXzzdUFwVTWFDP378ALdkkuODLc+S7DbMRfbZ578oXvqRrlUVEiOEZpDEsTmiGNRftndaYQpWR+3fA1eeNnvo3n3aeMp+8l+Y4j4tw7hZ49l1j8AwcaIM/cHrOcJxsGpDHJ9ejcqG/swxbtVOW25xhqMu2gydLu3YPPLxBcipeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772327902; c=relaxed/simple;
-	bh=RMJxycq/lG0NDS98wiJCB7Zeva6ZQw7NCB44O7t1qlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A6EI+gZ8t3pzAGfPCar/ysGgV/AnQJrZKzOGRwFMoNBDtF8e2Dk4tWX8P+m7Tf2+jElLRI7NY8NF+g8SzJTr/ymn0KhSCrvuTEdCPuEEj+CGELLUHHDVSLFCrcCcAZKX23yFCyiuUl2dc/9CtKhdE7MLDWhgGGZuLslgfiTQOmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8eEbdBZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772328322; c=relaxed/simple;
+	bh=p1l63WeXc4D9MuN7I3Wqx11wL6kIqX8nQK0itJKGcQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bsowhm8jl2FSgK9Z3wBX61gXScI2P2Mn2D/4u5VS0kVeA21DgRepHdPL69yhYKd8Ls88h2uHPbTevr3neUyjCY1jTagrOzTNoSZCKlvWhpR3nCK0SYPNaRb6yOadAw0aW05KSSYvuK1f31DRvv1eZmjVEkVcFZizNOIBTmwX7jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAnOB9an; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8eEbdBZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446A2C19421;
-	Sun,  1 Mar 2026 01:18:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAnOB9an"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2502C19424;
+	Sun,  1 Mar 2026 01:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772327901;
-	bh=RMJxycq/lG0NDS98wiJCB7Zeva6ZQw7NCB44O7t1qlI=;
+	s=k20201202; t=1772328322;
+	bh=p1l63WeXc4D9MuN7I3Wqx11wL6kIqX8nQK0itJKGcQI=;
 	h=From:To:Cc:Subject:Date:From;
-	b=t8eEbdBZ80eJK/jKwtxHRa0m810t1whibWyashaa4pH+Xb/dze2M58bMD2/JKAgpf
-	 U3Aqg9Bhpn8jgN9R2ajCKX1LKBILZs8nnzqWy+D8NOQ17AQLhwX0XX+DMN08MNHo+9
-	 4Pm781xp8s9OtZYWGEijX29Vm2MdzxDFbC6DjykO25ELIV1VTciZD0+LK94VupHa+4
-	 ne75hRQLUxYyKrz07s6wiv5L6zATzHJ16+UoCcfT4nXTqcwV/qeeBCpVMcCQ9Ad5cx
-	 pd+QVyRah9+7fbVZvdKFUS+NZGsOU9iP3vwz2XTpWktB//I1jloAfMpgNaQVeIGdbo
-	 FOfHVuNRnnD3w==
+	b=EAnOB9an4Rt20OfuYaBR6+H2e4RHgXdlWqzo7kVyTBDu8aAyhQUAI8Onb1oOwet2i
+	 Wrmgybr0V5C4prR/Qjm70bp3kb9hQe2h540dCt5+9AodzysIDLLMoHL8QwgvyRBqJI
+	 PFyvIhSMSFfx3JMcxgB83FW33+UgPDRIjTL2BzAX5k/WNN2G4g5n78UXi7pNxt5mxL
+	 TBfM5DmmZTwF4I9TN6qVUZLcbmuW/iTQdYNCG8eu/E/TE0r3RsXTi99q6uchoZ7kJt
+	 XkzzWu6gQ0q2HT7sbCcPdB+a2CnsJn1FFX6o2UySThcsHEQcz/VMeiTV4txiYzz+lz
+	 hTs5sVSiI7YFQ==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
-	hanguidong02@gmail.com
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-remoteproc@vger.kernel.org
-Subject: FAILED: Patch "rpmsg: core: fix race in driver_override_show() and use core helper" failed to apply to 6.12-stable tree
-Date: Sat, 28 Feb 2026 20:18:19 -0500
-Message-ID: <20260301011820.1672586-1-sashal@kernel.org>
+	peng.fan@nxp.com
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: FAILED: Patch "remoteproc: imx_rproc: Fix invalid loaded resource table detection" failed to apply to 6.12-stable tree
+Date: Sat, 28 Feb 2026 20:25:20 -0500
+Message-ID: <20260301012520.1682420-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -54,123 +57,56 @@ Sasha
 
 ------------------ original commit in Linus's tree ------------------
 
-From 42023d4b6d2661a40ee2dcf7e1a3528a35c638ca Mon Sep 17 00:00:00 2001
-From: Gui-Dong Han <hanguidong02@gmail.com>
-Date: Wed, 3 Dec 2025 01:49:48 +0800
-Subject: [PATCH] rpmsg: core: fix race in driver_override_show() and use core
- helper
+From 26aa5295010ffaebcf8f1991c53fa7cf2ee1b20d Mon Sep 17 00:00:00 2001
+From: Peng Fan <peng.fan@nxp.com>
+Date: Thu, 29 Jan 2026 09:44:48 +0800
+Subject: [PATCH] remoteproc: imx_rproc: Fix invalid loaded resource table
+ detection
 
-The driver_override_show function reads the driver_override string
-without holding the device_lock. However, the store function modifies
-and frees the string while holding the device_lock. This creates a race
-condition where the string can be freed by the store function while
-being read by the show function, leading to a use-after-free.
+imx_rproc_elf_find_loaded_rsc_table() may incorrectly report a loaded
+resource table even when the current firmware does not provide one.
 
-To fix this, replace the rpmsg_string_attr macro with explicit show and
-store functions. The new driver_override_store uses the standard
-driver_set_override helper. Since the introduction of
-driver_set_override, the comments in include/linux/rpmsg.h have stated
-that this helper must be used to set or clear driver_override, but the
-implementation was not updated until now.
+When the device tree contains a "rsc-table" entry, priv->rsc_table is
+non-NULL and denotes where a resource table would be located if one is
+present in memory. However, when the current firmware has no resource
+table, rproc->table_ptr is NULL. The function still returns
+priv->rsc_table, and the remoteproc core interprets this as a valid loaded
+resource table.
 
-Because driver_set_override modifies and frees the string while holding
-the device_lock, the new driver_override_show now correctly holds the
-device_lock during the read operation to prevent the race.
+Fix this by returning NULL from imx_rproc_elf_find_loaded_rsc_table() when
+there is no resource table for the current firmware (i.e. when
+rproc->table_ptr is NULL). This aligns the function's semantics with the
+remoteproc core: a loaded resource table is only reported when a valid
+table_ptr exists.
 
-Additionally, since rpmsg_string_attr has only ever been used for
-driver_override, removing the macro simplifies the code.
+With this change, starting firmware without a resource table no longer
+triggers a crash.
 
-Fixes: 39e47767ec9b ("rpmsg: Add driver_override device attribute for rpmsg_device")
+Fixes: e954a1bd1610 ("remoteproc: imx_rproc: Use imx specific hook for find_loaded_rsc_table")
 Cc: stable@vger.kernel.org
-Signed-off-by: Gui-Dong Han <hanguidong02@gmail.com>
-Link: https://lore.kernel.org/r/20251202174948.12693-1-hanguidong02@gmail.com
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Acked-by: Daniel Baluta <daniel.baluta@nxp.com>
+Link: https://lore.kernel.org/r/20260129-imx-rproc-fix-v3-1-fc4e41e6e750@nxp.com
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/rpmsg/rpmsg_core.c | 66 ++++++++++++++++----------------------
- 1 file changed, 27 insertions(+), 39 deletions(-)
+ drivers/remoteproc/imx_rproc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 5d661681a9b6c..96964745065b1 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -352,50 +352,38 @@ field##_show(struct device *dev,					\
- }									\
- static DEVICE_ATTR_RO(field);
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 375de79168a1c..f5f916d679051 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -729,6 +729,10 @@ imx_rproc_elf_find_loaded_rsc_table(struct rproc *rproc, const struct firmware *
+ {
+ 	struct imx_rproc *priv = rproc->priv;
  
--#define rpmsg_string_attr(field, member)				\
--static ssize_t								\
--field##_store(struct device *dev, struct device_attribute *attr,	\
--	      const char *buf, size_t sz)				\
--{									\
--	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
--	const char *old;						\
--	char *new;							\
--									\
--	new = kstrndup(buf, sz, GFP_KERNEL);				\
--	if (!new)							\
--		return -ENOMEM;						\
--	new[strcspn(new, "\n")] = '\0';					\
--									\
--	device_lock(dev);						\
--	old = rpdev->member;						\
--	if (strlen(new)) {						\
--		rpdev->member = new;					\
--	} else {							\
--		kfree(new);						\
--		rpdev->member = NULL;					\
--	}								\
--	device_unlock(dev);						\
--									\
--	kfree(old);							\
--									\
--	return sz;							\
--}									\
--static ssize_t								\
--field##_show(struct device *dev,					\
--	     struct device_attribute *attr, char *buf)			\
--{									\
--	struct rpmsg_device *rpdev = to_rpmsg_device(dev);		\
--									\
--	return sprintf(buf, "%s\n", rpdev->member);			\
--}									\
--static DEVICE_ATTR_RW(field)
--
- /* for more info, see Documentation/ABI/testing/sysfs-bus-rpmsg */
- rpmsg_show_attr(name, id.name, "%s\n");
- rpmsg_show_attr(src, src, "0x%x\n");
- rpmsg_show_attr(dst, dst, "0x%x\n");
- rpmsg_show_attr(announce, announce ? "true" : "false", "%s\n");
--rpmsg_string_attr(driver_override, driver_override);
++	/* No resource table in the firmware */
++	if (!rproc->table_ptr)
++		return NULL;
 +
-+static ssize_t driver_override_store(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	int ret;
-+
-+	ret = driver_set_override(dev, &rpdev->driver_override, buf, count);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
-+static ssize_t driver_override_show(struct device *dev,
-+				    struct device_attribute *attr, char *buf)
-+{
-+	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
-+	ssize_t len;
-+
-+	device_lock(dev);
-+	len = sysfs_emit(buf, "%s\n", rpdev->driver_override);
-+	device_unlock(dev);
-+	return len;
-+}
-+static DEVICE_ATTR_RW(driver_override);
+ 	if (priv->rsc_table)
+ 		return (struct resource_table *)priv->rsc_table;
  
- static ssize_t modalias_show(struct device *dev,
- 			     struct device_attribute *attr, char *buf)
 -- 
 2.51.0
 
