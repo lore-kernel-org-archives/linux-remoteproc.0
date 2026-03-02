@@ -1,82 +1,79 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010005.outbound.protection.outlook.com [52.101.56.5])
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012071.outbound.protection.outlook.com [52.101.53.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628533859D8;
-	Mon,  2 Mar 2026 19:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4822FE044;
+	Mon,  2 Mar 2026 20:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772481391; cv=fail; b=Ndh6+emkQeqV73qRrTot5WI1UrADRA27lVbhErV071esAS2Pv5dJSeTDnqD39G442ShADXC6rxaSY9VjEeov46O02vhaPHc0/M9JCX9w4vN2yfop7UHqgzJ5foTy0EKeURn9+3igua7AScEHp+RiY0NPrklTy7Me3GnER9sPSn8=
+	t=1772482668; cv=fail; b=qKZV/+5//QRb/z8k1AJgqXo4hTCU031+9HnRdulycISW2igwUBD1S4sIOgq5uLXT4DMthPlfp0KVj4IFR104CgNiBC2jpp8c/NUJwX4lpzSR1ddbeqU5DPgSAVJgpm1WvX54OtWNIfgU0OTWBWDoJaI7JzU17Cox6UJ1CJy4G7Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772481391; c=relaxed/simple;
-	bh=LQXpFgcbBE0IRrJwnouGw8FWwPvzsq+TRxDdmyeDZtU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sXeL4I7cyQVkJeCbT+xBSMN+wC7aGQPSpPNQMNaVyK7E44AMlJbj3I7Wsub9t3qrOBjUSGGBf85uY5H67v724fZbm5h2AreEPQD6yXJdvOP3OU9Sy+QMt20redA7kD7fdnGLi2XV+V++Z8cviRYCWDNo1E5DZv+M5+y3mLmp5pQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sU+TtjRF; arc=fail smtp.client-ip=52.101.56.5
+	s=arc-20240116; t=1772482668; c=relaxed/simple;
+	bh=EfB1Pv8gMQGp/CUMd/oLQTAtqwl0T7P2D2lK3PlbxiM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B7w+wM88ioPEiVVHznAu7GQrbAhUnWuuhAvzeB4axB+g99+jruzhiBlz6cJgFUF5EcVFlry10wbHfha9SLNJbl0TDlpU7rShUv7XXw743KBMGa36ZHTSyR7/MU1KCDDfELF3lRYVkfjy8tC2btRBOsQMbFtO4DFqi/7MCIHZ/Ck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=b+/SRoh/; arc=fail smtp.client-ip=52.101.53.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sU+TtjRF"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="b+/SRoh/"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LCCfnxraRzm/J9pRsWeQ0lv7k6zH5lL94AX+6S8+c6LExlX396PMpLSNawnTu+drb8OchjC5O4NC0HLTum7RD4vBvOO+9lkl2SvDCahchZJs7ZFth1+/MZ4H0d8Rc0vaeo2NnKpnNzT+n683hBQVLm9abE+IdZ0YcElqGxftMm6ilXGHA4leXN+H2+IP85CRwyhdGW0+nBYMhY9K/NQQiW9pJ8XqxVa3TivKvYYvvnBWzQpaUGLmTriRbMpRLrgzhjfU8l9mcKlBDrvBs0L/l+fyjoYm90CqQ4A3SvsbR53Kt9h5GusCbOZita2qJif7e8d4vWnGUidx3ehRMjSlPg==
+ b=Ro7449ItdpY9qXoPYRL2dd2P+km2v11JP4VDVbLUlH5J5NsQCYYCYE5iA5dByh7KJVZVJBghpy7SKKXcaB6QISjPTVueb8GfNNsJK1mgDUprVP0s4iPPtS6ZdJwDfA0dQzummZB6UIiF9D/6uqMtyQF5yCviDjFVIIN3vXaf65VMPujV7tT5xUmgsoJUmR8d8l93q6/NV7UMVPlmgTJqlmnC+ypWG6PXlAqpUDMybXrMiKY/6/HIMOpm6OlE77ghq8RHU2ysvLhFtc8gzaY7mefxyy73Dszvqq+1sniDCVVXx6h9HgU0P/WVBA4t7xvYkHvL5NqK012WF1iYHOoYpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4I5QJ6lSwpIvhKuw/Obsloq3iv2jb2i8e1LhysM02/A=;
- b=kz8IyXifAOAGDpqb+5Rwm7fk3Nsim52BYr4zOREY/85UjW8/gOdqrVeV9D2G+e6GZBhsVC8KqFXybuYNv/wOBxjKkbtvkCwv0SArfzP/d9OtKj1UPx8x9vh7QOMUHVUssuUTIWm3bsoPKlF6vaVfjqd54WtMNiOiiAmjQCAehwi+p80Azq7hzSejDVGgxlhTfeZ74KkGbEDeURZdFqFI31FxivRb8kJDhioPEB9JbK/8xzGoEGSrCrhgc4ZL+9rrn6INxJo+JWhI4kMm41/sWMOfz8Zk/uoUrPqjeQzgLbAX8VUls2rvyPiW5G5sdoSOrymuz5P8gDiiladxuyy3nA==
+ bh=JfQ3u+an+Z2WWl5S5ElTTEv4QFYIPh75klDIxJbE6Ec=;
+ b=bcOX8MtxRgNFJbejc0PNznW5URHQeX8yxKvH/mh8/l1/1FaY2MiVpP2Rry5jiSliNujpyQVZar7jC1jJmAk9LKsx7PeEukScJaG60bVwHEl53zzA1npX/iEj3D8Yqc83Pd4AnZOn6rGeR2B+rkAan4Uo5jw22+H/Nsq5/8nT6AJkoCKmQC5/7LBkrSXfSpVGp199klDtkMSKhSKEp7b9V6+Mjg+bDSnZWpCh2//WLAIOB2vc1hmtd/VEJMF4bZkKIUVa1/9YnhJVhmUp+MOStmI7NDexMh5AqtZ6CPmsYh/kerHLdDNRS3XflYXbryT1ku3lwnrAYwlEGKLXqytOLw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
  dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4I5QJ6lSwpIvhKuw/Obsloq3iv2jb2i8e1LhysM02/A=;
- b=sU+TtjRF3X7txFl+NcC0JCdmcQrwBsHnF0FYmbbUQ0o4T6ZjwwY1mPJkiRiPshLCjLXm4lr4JsAaxYc7/dfDdbP+o14JwG8+P7vgiw/qlPZ6XzeaFjpyZQmyFn+MccNAxlMwPJyv5JzXA+B7HxskLA413qaRCqhgaZkwMVrPR4c=
-Received: from SJ0PR03CA0273.namprd03.prod.outlook.com (2603:10b6:a03:39e::8)
- by SJ2PR10MB7705.namprd10.prod.outlook.com (2603:10b6:a03:57b::20) with
+ bh=JfQ3u+an+Z2WWl5S5ElTTEv4QFYIPh75klDIxJbE6Ec=;
+ b=b+/SRoh/x1V2VqLr/MkKJTQdxt1/4f3MogaXyEi5QnhvqEWDl5i8UyqyWpQ4wsaUBKZ3r+EWdMACN4TOE3pBfRllHbDyHhRNQzn5ykAZaphyIwSU/PWlybueHKHeOQIa4adpTf+INcFlKxOugS4AcPFZ7EPPcrD4Vzt1lV0bvMQ=
+Received: from BL1PR13CA0418.namprd13.prod.outlook.com (2603:10b6:208:2c2::33)
+ by PH7PR10MB6081.namprd10.prod.outlook.com (2603:10b6:510:1fb::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.20; Mon, 2 Mar
- 2026 19:56:23 +0000
-Received: from MWH0EPF000C6195.namprd02.prod.outlook.com
- (2603:10b6:a03:39e:cafe::4c) by SJ0PR03CA0273.outlook.office365.com
- (2603:10b6:a03:39e::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.18; Mon, 2 Mar
+ 2026 20:17:43 +0000
+Received: from BL02EPF00029928.namprd02.prod.outlook.com
+ (2603:10b6:208:2c2:cafe::7d) by BL1PR13CA0418.outlook.office365.com
+ (2603:10b6:208:2c2::33) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.21 via Frontend Transport; Mon,
- 2 Mar 2026 19:56:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ 2 Mar 2026 20:17:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
  smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
  action=none header.from=ti.com;
 Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- MWH0EPF000C6195.mail.protection.outlook.com (10.167.249.105) with Microsoft
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ BL02EPF00029928.mail.protection.outlook.com (10.167.249.53) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.16 via Frontend Transport; Mon, 2 Mar 2026 19:56:23 +0000
-Received: from DLEE209.ent.ti.com (157.170.170.98) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.9654.16 via Frontend Transport; Mon, 2 Mar 2026 20:17:41 +0000
+Received: from DFLE210.ent.ti.com (10.64.6.68) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Mar
- 2026 13:56:19 -0600
-Received: from DLEE206.ent.ti.com (157.170.170.90) by DLEE209.ent.ti.com
- (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 14:17:36 -0600
+Received: from DFLE211.ent.ti.com (10.64.6.69) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Mar
- 2026 13:56:19 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE206.ent.ti.com
- (157.170.170.90) with Microsoft SMTP Server (version=TLS1_2,
+ 2026 14:17:36 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE211.ent.ti.com
+ (10.64.6.69) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 2 Mar 2026 13:56:19 -0600
+ Transport; Mon, 2 Mar 2026 14:17:36 -0600
 Received: from lelvem-mr06.itg.ti.com ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 622JuIOb1348869;
-	Mon, 2 Mar 2026 13:56:19 -0600
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 622KHZ1P881392;
+	Mon, 2 Mar 2026 14:17:35 -0600
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
 	<mathieu.poirier@linaro.org>
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	"Andrew Davis" <afd@ti.com>
-Subject: [PATCH 2/3] remoteproc: da8xx: Remove unused local struct data
-Date: Mon, 2 Mar 2026 13:56:15 -0600
-Message-ID: <20260302195616.312378-2-afd@ti.com>
+Subject: [PATCH] remoteproc: keystone: Request IRQs in probe()
+Date: Mon, 2 Mar 2026 14:17:34 -0600
+Message-ID: <20260302201734.320747-1-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20260302195616.312378-1-afd@ti.com>
-References: <20260302195616.312378-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -88,89 +85,115 @@ Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000C6195:EE_|SJ2PR10MB7705:EE_
-X-MS-Office365-Filtering-Correlation-Id: 56789436-1bf5-4886-18bf-08de7895c7e9
+X-MS-TrafficTypeDiagnostic: BL02EPF00029928:EE_|PH7PR10MB6081:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7ed43bf0-6a52-42e4-3cca-08de7898c1b3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|34020700016|36860700013|1800799024|82310400026|376014;
+	BCL:0;ARA:13230040|1800799024|82310400026|34020700016|36860700013|376014;
 X-Microsoft-Antispam-Message-Info:
-	3+2fBsbjhsUhXUdE8HMwb3h5BkGI6ITmmRGdfG1YJUG4o/QjS3U6vbe9O+D98B1Ui9OZLumNdBYn2WS5h9fgB/TdJ2mgkCwlWSpragFHFwliIyRxJXjSRxEdd6ltRPiKq3wixjJI2K0yNJOuQ+z7XJNMi4FUZRib0LNN4eQPs+sbHXFZWfltkCduq38j/1XjlwIb5/UZLeFRDYDmksxRTV2npd9/UBqsoo4wKV5chGo623mbhXjZwXl39sxsgDpM2ikLHiqdosGLthcy8UAOdlR4H9f3O4ZjoSdQ/Bhv098JNy5P/4M2dA7MX7ts/8bz/MgKzWF19/y5fB7a16LU+SV84KvuZyxv2NBuBmZL7VBGcffhTXBblu6ahufypD3FLYyl1ZhtIVkhIKYETckeCmCMtGV+377jMLBVyTBBWlmImx8Go801phWCW8VwC47R4b4/W5ks6pa/ttojJmB8ae2iRX1L3NE3fGOOz7Q0txvemPfN69kjLqaeLkISpVKn79+ola3LRjS6Rhc4swdQnM4S9jnU0tEFmfdV3K+XLylnMK4gVXWkFhwk0fuTkPc1njrpuzqEJx1xcbxm1d9muZ7IZhaSWSq0J0bwXN7z5Fr+umInKMpp9kaLtR90p0b7+QjH2ZXVwvGEaAg68h7+rlAeVdArV09vz2KHUZgdmEjaeZHh5h9VMYvN7p0i7e39bOjbyjvAkwV+FTMvMnKFedv5CXgUr466GnZWXNvTVFMg/d65hE0yqb60bI2FI0mfcWkMSQwGlL3G2Mto2vPS7VB9c/DG4cxP4OHiXaFTzgZUMnl//3aUJgDB6vdZkEfNZC9MNAXgN5/JwOZ4eyh0kg==
+	V/IRUkDsk4hKNJxfeX+K2K5zHE3aTi8G+E+U54LhawGOnpRzH9Ia8+1rbRrrVZXuNPuITHnYmaDi81R2golu93vvJ/M6mVT/bCb6Aych8FV1W2Ud+YWA4tsT9SnxfUuMEnNR4Xp/B3JtbCDC2zhb72qVvrFhl+sTn9q6Iq74Am/ix3Aoq/1NXoqqc7Vi7XSNYN0CG3zZLnOlU4Okm5qatxRv8FXf/MCNwgAt1/ecMpLCpwBOzO6SvRv3jQPQeBwSc/bd7b/jd8QE4qQp99XkfPVQyD6xbib5/6tdhemNbVGAibaAHn5mpi4+z/Eko3JEQNBhAVR590OHEGsVCBwBFa48rx942qRoTD85bXv6VFuBFBf1JqOCXg0fzZSBYOfdgZ+zPUL+7bqQ4NdQODSdxtgwAYHB+Zg+jrhz6sSASvJsJvwy24TBuyJSpiolOOYyoru77lk5q44cgjgdfaHgJh1i6/H/0zeC9W+mXpRepgxM2PA62ypqmxy9BhzmqJgsrWNeWJUuxTKyk2NyqI1vyinbIiuM582vzWjtB8qx0P+hJ8ZNjX2VNC8x0sXhW1/OZ+uOJ67KWeE1oEUwXWVv7SdRdWj0Y46E7fWXpuW7WONHgj1i8zdtoYIEAAcCtnxXlyRjNIstahVqxVL35ISMcG03bZGa1GdVOc2T7WKJXoARKEUrL8vKxc2IUclVrIlu9bW1utqSjolxirmjx5Srtohax4EJZ7DtfOOTruvLd7jor0Tyh0KmNYaiyZnvg5Y29Wfsv/hJYr7lfhoObT68YNoB1u2Cg1jbQJBNC1t28+OyCla6BREi1TrdgmDiTyoEqJUufRW7YxaxGoYDzzVfAg==
 X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(34020700016)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(34020700016)(36860700013)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	58bczxINVVcOj++hbr8Of+K+uW/TBLkq8q+x98pibn+uHOFs+jUb6Iw8gtcbzbbN6w7dFqnAC9TnDS4063CwaEnVlKjhTuUauQWEnQFliYYQ9QCxgwEnLdsvLBrDHtUePcK7NPA7NBUFVrgATmgkOZQPqou4fT1tKVp1bV4L75rO42e0hNXY3k0dqae6XFSij3a+VWp0RAWDlMd5Naig5HLSizDOa83y9hffssrjms9V7r0Fvf17rUchbm9eef0DHqUgMgZf7r3aGZaQ4XyVMTqJ6L8kuUJhNJm36OHzZTEi4wW/JQT1lvmmiwstih9X9lZxPej9LbVEyVAflTvi6WJAgH5/nHB6PNmh7GYI2S1nqToZM5+5qs5+gIki7p7oRcttfkV7g1dUplF7yS+x+4rfiY5UulQkGRdCJNEq3mO94sT2uOCA1CjWTaKfj8dc
+	Ev7Bsp9os02XYByevco7NdN3lSytw2DJtj9QzuWXsrG93YsArjmmq+eviXaAqRlEgyz2Hyp2Rh8RQeI6TVs/e3Kf/WZ4Cw1U9DvnmVtlEkW5vJKmOeDaaFthnELRr+S/ryilFN1RclTwcG/pT9ir7O3h/UrnLaklU4YQJgTOJeoweQnM4mikOsBXnobZ2od47xwVjj/lrZao6H+3YGdYCchYyaLyAAF96kg9iFtdWMGYzPF/mqLnErxdbP7CVxHMGITW607jVX5XoP8c1vBoCTi/eIUufkS0UP7fHZ9PtcBYufpcl6CXG8qXpk+Yr2u1RqOMGpvd0HyWTdv6hSSjs8WexLULIpmUUshyk6FMEu3WgkdFvnQ6xbgnDPJVXZSO+oz5zV/89cUfxLPVGCiyjRu88iUzeMt26HwLLwgWTjwbWVyBXuE5Ypsfhh3BdX8d
 X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2026 19:56:23.1257
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2026 20:17:41.2050
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56789436-1bf5-4886-18bf-08de7895c7e9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ed43bf0-6a52-42e4-3cca-08de7898c1b3
 X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000C6195.namprd02.prod.outlook.com
+	BL02EPF00029928.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7705
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6081
 
-The member irq is never used and ack_fxn is unneeded as it
-is already a part of another member irq_data. Drop those
-and their struct docs. While touching the struct docs add
-one for dsp_reset which was previously missing.
+IRQs can be registered in probe and only need to be enabled/disabled
+during remoteproc start/stop. This lets us catch IRQ issues early
+and simplify remoteproc start/stop.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/remoteproc/keystone_remoteproc.c | 41 +++++++++---------------
+ 1 file changed, 15 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 41744f3f0252f..f44bee303eb5e 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -57,11 +57,10 @@ struct da8xx_rproc_mem {
-  * @mem: internal memory regions data
-  * @num_mems: number of internal memory regions
-  * @dsp_clk: placeholder for platform's DSP clk
-- * @ack_fxn: chip-specific ack function for ack'ing irq
-+ * @dsp_reset: control for local reset
-  * @irq_data: ack_fxn function parameter
-  * @chipsig: virt ptr to DSP interrupt registers (CHIPSIG & CHIPSIG_CLR)
-  * @bootreg: virt ptr to DSP boot address register (HOST1CFG)
-- * @irq: irq # used by this instance
-  */
- struct da8xx_rproc {
- 	struct rproc *rproc;
-@@ -69,11 +68,9 @@ struct da8xx_rproc {
- 	int num_mems;
- 	struct clk *dsp_clk;
- 	struct reset_control *dsp_reset;
--	void (*ack_fxn)(struct irq_data *data);
- 	struct irq_data *irq_data;
- 	void __iomem *chipsig;
- 	void __iomem *bootreg;
--	int irq;
- };
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+index 4d6550b485675..e7fde55097866 100644
+--- a/drivers/remoteproc/keystone_remoteproc.c
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -173,35 +173,16 @@ static int keystone_rproc_start(struct rproc *rproc)
  
- /**
-@@ -122,7 +119,7 @@ static irqreturn_t da8xx_rproc_callback(int irq, void *p)
- 		 * we need to ack it after taking down the level else we'll
- 		 * be called again immediately after returning.
- 		 */
--		drproc->ack_fxn(drproc->irq_data);
-+		drproc->irq_data->chip->irq_ack(drproc->irq_data);
+ 	INIT_WORK(&ksproc->workqueue, handle_event);
  
- 		return IRQ_WAKE_THREAD;
+-	ret = request_irq(ksproc->irq_ring, keystone_rproc_vring_interrupt, 0,
+-			  dev_name(ksproc->dev), ksproc);
+-	if (ret) {
+-		dev_err(ksproc->dev, "failed to enable vring interrupt, ret = %d\n",
+-			ret);
+-		goto out;
+-	}
++	enable_irq(ksproc->irq_ring);
++	enable_irq(ksproc->irq_fault);
+ 
+-	ret = request_irq(ksproc->irq_fault, keystone_rproc_exception_interrupt,
+-			  0, dev_name(ksproc->dev), ksproc);
++	ret = keystone_rproc_dsp_boot(ksproc, rproc->bootaddr);
+ 	if (ret) {
+-		dev_err(ksproc->dev, "failed to enable exception interrupt, ret = %d\n",
+-			ret);
+-		goto free_vring_irq;
++		flush_work(&ksproc->workqueue);
++		return ret;
  	}
-@@ -320,9 +317,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
  
- 	drproc->chipsig = chipsig;
- 	drproc->bootreg = bootreg;
--	drproc->ack_fxn = irq_data->chip->irq_ack;
- 	drproc->irq_data = irq_data;
--	drproc->irq = irq;
+-	ret = keystone_rproc_dsp_boot(ksproc, rproc->bootaddr);
+-	if (ret)
+-		goto free_exc_irq;
+-
+ 	return 0;
+-
+-free_exc_irq:
+-	free_irq(ksproc->irq_fault, ksproc);
+-free_vring_irq:
+-	free_irq(ksproc->irq_ring, ksproc);
+-	flush_work(&ksproc->workqueue);
+-out:
+-	return ret;
+ }
  
- 	ret = devm_rproc_add(dev, rproc);
- 	if (ret)
+ /*
+@@ -215,8 +196,8 @@ static int keystone_rproc_stop(struct rproc *rproc)
+ 	struct keystone_rproc *ksproc = rproc->priv;
+ 
+ 	keystone_rproc_dsp_reset(ksproc);
+-	free_irq(ksproc->irq_fault, ksproc);
+-	free_irq(ksproc->irq_ring, ksproc);
++	disable_irq(ksproc->irq_fault);
++	disable_irq(ksproc->irq_ring);
+ 	flush_work(&ksproc->workqueue);
+ 
+ 	return 0;
+@@ -427,10 +408,18 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 	ksproc->irq_ring = platform_get_irq_byname(pdev, "vring");
+ 	if (ksproc->irq_ring < 0)
+ 		return ksproc->irq_ring;
++	ret = devm_request_irq(dev, ksproc->irq_ring, keystone_rproc_vring_interrupt,
++			       IRQF_NO_AUTOEN, dev_name(dev), ksproc);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to request vring interrupt\n");
+ 
+ 	ksproc->irq_fault = platform_get_irq_byname(pdev, "exception");
+ 	if (ksproc->irq_fault < 0)
+ 		return ksproc->irq_fault;
++	ret = devm_request_irq(dev, ksproc->irq_fault, keystone_rproc_exception_interrupt,
++			       IRQF_NO_AUTOEN, dev_name(dev), ksproc);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable exception interrupt\n");
+ 
+ 	ksproc->kick_gpio = devm_gpiod_get(dev, "kick", GPIOD_ASIS);
+ 	ret = PTR_ERR_OR_ZERO(ksproc->kick_gpio);
 -- 
 2.39.2
 
