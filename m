@@ -1,176 +1,183 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBD94DC543
-	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Mar 2026 18:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AE3384241
+	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Mar 2026 19:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772563836; cv=none; b=J+V5SB5jjgNApK7YuNefreeDQLMgmY/Lpsce86puojkGhX9S5qg/JRaCFg6AzVtQQrvtKqJL5ISL3W/EjcDDZlI6ZuoF0PIscPoucQQfE/NZras5vVnMun9L1FMhqzaixPVeTXux7/wWhS11sl5rnvbutbFx2h/MUcyzbez2CZU=
+	t=1772566300; cv=none; b=XPsXtlu0Rmg4a0SDRVyRpscGdEO5R6WLnIRs7yOsyzJla/yXpvBYHYO+Ca9/m0vzNgeVLoZ3kfS0m6SPVlL6Tgk+EKLjwwJfB8M/WDfmWvufCqdXF3crvf0owkIvhQ8lL7J9430GFNcdZMx3BcRjoFH5zoByLtdNBRCKHk30eN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772563836; c=relaxed/simple;
-	bh=BhzdJyekgz0SUdQuPdU2KmCe50jZgn4HDDf2/xppf6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=apV7/QeDfCu/OEmwU/Vv0w1pq69wZsEorG2vt4icHl2mF519IsfLlrMAox4bxmjGnV8NS1HfEGoaVTrzN/LlGejhk/8Hs9qRXzpQQX6gA3+ov929iVNkgJT/jtcgQNlhffbsJqxKZO6AAV7j4cfL398CEvezTFyxDXc5bHC+n7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I4lVI/sN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iE4JIt4I; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1772566300; c=relaxed/simple;
+	bh=+G/DTapTeKGN5hxk3oLgQA92dCCGah5RYraucKRmfsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUhDQYtYH8o0ViIO22Wzh/a/uGQKkeDwvg6MgcTjrZxNsXp1Aj4ZTIvl8aqZA0QDnPQj7h6ClfNIjfKG6XMf3+I6ylD8wL5FbY6L+fWmHssE5hyalIqhmCn/47EAob2TTa3DMggBv2tSBx460/tuWPoVfxtooKJRi1YLNxydqBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SZ59QVo9; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I4lVI/sN";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iE4JIt4I"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 623H0Xca3238644
-	for <linux-remoteproc@vger.kernel.org>; Tue, 3 Mar 2026 18:50:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	buvZSBdZ9Dfv2lUvs2TTRnj/m5Lm8hd3/JQq4D8/ppg=; b=I4lVI/sNO29U8EMf
-	6T5bSMKzok+c0ixTGjwSAdTDDHPUhM0ANx7n6CzqqvZ0v+TWbxN4UyYnfnRPQbxr
-	NDNjUFcySTA80kgjdjCxS6PAjiKpcHJPMct1ISSiR68RbPi675LSNu8PtwtBxoj/
-	tesbhmyn+MVG3Cq0lQh9R/OdGr6nqNKI4/N7RtOCh3m3fVCr65H/T75D0IIV5AMj
-	vcPPPTlkGXa66j0xiWsDhkzWEIvk/Xlj+Krl8bdIzqzGzL7gvHOJBf9Mrc5mCJrB
-	/+Sm18nxc8AmINZFf3xgzuTx95JX6W5cEIHaTCcwSmSQkSMrOlWe1KZD4BHmR2S1
-	Uk5Ycg==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cnvtu9upv-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 03 Mar 2026 18:50:31 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2adc527eaf5so29739095ad.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Mar 2026 10:50:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1772563831; x=1773168631; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=buvZSBdZ9Dfv2lUvs2TTRnj/m5Lm8hd3/JQq4D8/ppg=;
-        b=iE4JIt4IDYSVb5jo9Z8c84tkSn2fesXHOnhHJUB4jUfudfMvUMWtnFYAbLyzc2DsKx
-         +D3isqakTDqPhprRZhqqjTpuHWqgJ3WBlQtb9ZE0Ek5Blsrd+YsM/T7rVK8KFsbND+eQ
-         OMm3BLuiehomRRP2RkQEuyvK0qpGnlZ1xa0cYgo+it0qrh7VBgf2rj9f02B+hyRjDcrS
-         G9LdB6NRIbJSr96xuqzhOp58ozCwq9dP9c6RcvvAd+TcA+wI3ObQ+MzZpEU5Q9zaq+cu
-         YBY/eT1PKwBpC67XlZUfrD2EvyPMA05bImvuxK/pBft7x2DE53gDWkbbdbPntI0uni0I
-         x/zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772563831; x=1773168631;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=buvZSBdZ9Dfv2lUvs2TTRnj/m5Lm8hd3/JQq4D8/ppg=;
-        b=LaP+7QboUQCSd0kzfZPncrLx5SLndsMdGwcT/W8zKGLzx9fae3Drpl1WPAzHDNlLBv
-         SLaDLITjZOOa+4yqWoivn1Y/upxWYwnAA3U8eEwW6UVP0d0lAaSCctkPu+Qq47UkgbM/
-         T2GIuk25JsDHIWb38oNkEwxrlGKiyj6owsY0KgzP8bLM2GFZUXIez+rF2W/BU6oRnvBM
-         8c+fmUHNOYlhPmfk365Ro6c62GcZNCv9GQseAMHKqmRLzo0KCOSVmiIcV4/1cgdntv3n
-         86OkSOQOg7s1tkVKhdWqF8j+U0xMwLota3lEsHNBjFDY/KCsTv6GyjsV+UWBG6YNMM6w
-         QSTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ86lqNKu5wOeWeP28SI4xpfM47jjXsIgUQMIXK6uis6fvFEfK+r57mEpWRxmm7h9iMosmFhVk1hntndN7WLpP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuOqamb4AeJ4hX6ueaaJFgu0jjCrowgwngCJIhe44JDy4zmv0u
-	HRViDB9iFChhau5lX9FyfDUbdg9HTi+Vv08LIuvEHVVKMLQEZURjkLp8HJnO1Th0GSfZeQyVza0
-	Wwmau2qU2RKt5DyxOSBZaSXLpvAb1//r/fyvTN56CtFuDNUcuRWl+OvZPZFmRx/Jb6RIl7BDc
-X-Gm-Gg: ATEYQzyxIRn0boRIuW02vu/i8Fr9OaCmuuZETH6sIXQOCBdBZqw7Yy9NGsiRh/2KLjz
-	Wi6fMk1ApxdXDtSOkUJG3vL01oOp59ni41ikaB0OMGsRNtf46Nrxs7eYIdZ5v9zE4lEJOA5cySj
-	uZMUxbHITDjMe9/hhOJUyD48ZAzWeG1n/g2n0jjBAmzkQQAbboBJSf+iHtTD64/6I7YwTir7EjB
-	YL1OukryFnXyw9tQU0s8tKmBHpUlwQhH3EXNBkeYyxGk+25xbBtlEg9PRYcc91r90pirAIvjV32
-	CMr1petjiHlfdjrbg+ytbHu6wiuCfuS41orPhZDDizmKAIkD4UjPzyx2wvsvmyMm77et6rby6gS
-	MS8b02pb7/Y06XaySnFKW6r5ZjlIG+T6OWdRwp8RVNTB3BuFFZXy9N4P8RiIpTpc=
-X-Received: by 2002:a17:903:984:b0:2ae:4e43:a606 with SMTP id d9443c01a7336-2ae4e43b42cmr81715985ad.20.1772563830852;
-        Tue, 03 Mar 2026 10:50:30 -0800 (PST)
-X-Received: by 2002:a17:903:984:b0:2ae:4e43:a606 with SMTP id d9443c01a7336-2ae4e43b42cmr81715735ad.20.1772563830250;
-        Tue, 03 Mar 2026 10:50:30 -0800 (PST)
-Received: from [192.168.0.107] ([183.82.176.234])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2adfb6f0ff9sm188970095ad.84.2026.03.03.10.50.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Mar 2026 10:50:29 -0800 (PST)
-Message-ID: <756630f0-b6d6-4869-aec5-91aab0f6f074@oss.qualcomm.com>
-Date: Wed, 4 Mar 2026 00:20:24 +0530
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SZ59QVo9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=LvaEYI1DkC3gG8
+	HSqLFIO8B3jdRzN35AWnw6uUmoiyo=; b=SZ59QVo9Z5/LC1KfkTHdINIkg4qQIh
+	rrARNwidjwPh4FKHOt0EL84P2O15m3+cCEZk6b8gT8MOaaJRfGsLvgDIR0LQ0Q2i
+	IizIk//hhKHAKMRpvRMgiGd/fPGi8Ro4+e1jpL3y18MzVBYvCgHDLFLg46wp3WqG
+	u5yTUg2nxeqjszTbODaculaZYCl99Bk8pSnyYDUp3UAhdUFw4stnLjBrnCY2T07l
+	Brbf3ZVbrD0FXw1J0oO27SJHkbAfIvGkeSpFFEoCBZn/8P4M9MvOIRGh5ko0C9ng
+	Cu7IHYKRvVYo5KM7IuoMnQC61BW1ILt1pDlLhg/PWyTKX/tsJn/rLmBg==
+Received: (qmail 430333 invoked from network); 3 Mar 2026 20:31:25 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Mar 2026 20:31:25 +0100
+X-UD-Smtp-Session: l3s3148p1@m8u8vyNM4qcujnu+
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Antonio Borneo <antonio.borneo@foss.st.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Boqun Feng <boqun@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	driver-core@lists.linux.dev,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Linus Walleij <linusw@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v3 00/15] hwspinlock: move device alloc into core and refactor includes
+Date: Tue,  3 Mar 2026 20:25:52 +0100
+Message-ID: <20260303192600.7224-17-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/6] Add new driver for WCSS secure PIL loading
-To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
-        andersson@kernel.org, mathieu.poirier@linaro.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
-        quic_mmanikan@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260113092021.1887980-1-varadarajan.narayanan@oss.qualcomm.com>
-Content-Language: en-US
-From: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
-In-Reply-To: <20260113092021.1887980-1-varadarajan.narayanan@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: K7SFtvrXkVPcwsfvAgA3GBKO-_whtDiP
-X-Proofpoint-ORIG-GUID: K7SFtvrXkVPcwsfvAgA3GBKO-_whtDiP
-X-Authority-Analysis: v=2.4 cv=A75h/qWG c=1 sm=1 tr=0 ts=69a72d77 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nh/15Aj2rvbLbjah8EXp4w==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=LpQP-O61AAAA:8 a=EUspDBNiAAAA:8
- a=UqCG9HQmAAAA:8 a=Z0qTAJmwHQViJ36sbxQA:9 a=QEXdDO2ut3YA:10
- a=uG9DUKGECoFWVXl0Dc02:22 a=TjNXssC_j7lpFel5tvFf:22 a=pioyyrs4ZptJ924tMmac:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzAzMDE1MiBTYWx0ZWRfXxf8jkLxcWeYU
- 6tuW6JKM1pBIrFKxGr9FOiiTBU6c56hcwE6wWrFS9jaJ/RCsJA5p7spFhv6MOxGF4wBQDeVxEA1
- XsGkjtSMFk7BFmOdfwvemHfIXYNMqUs9lA2KArRc+1azH9Bue5bJhCuClDfQVztilDX36G0FEh1
- eRfJEjZmA0oj3S+x98yIPRGca5xwfsPjTyF+Wr8a13RufgH6s1o5mzdCdGddF1PI0F+lIRU0HbW
- 1xWk+chn0y4346lAzbODkcopyDVy8yiGFcLUZk94U6o0ucJP6GYc7rmt3TTwkncGf5uM0blVlNb
- DSFi7Dzxjygnnq7pEGtzzLWDPhmYqVyNRI9tymzShF7X6NPwFVsJSaCPNCQ1gWRYMuCcNFQUkQN
- +/p9aeDuB3BatE3vYL11GgrWS6at+Sl1CisxgIcUR7TqUoabgwE2a3acU/aOPa4thrvk54E85B5
- HwxEphicO3pjNW8s5vA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-03_02,2026-03-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
- adultscore=0 clxscore=1015 bulkscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603030152
+Content-Transfer-Encoding: 8bit
 
-On 1/13/2026 2:50 PM, Varadarajan Narayanan wrote:
-> As discussed in [4] posting this series after dropping IPQ5424 support
-> to remove dependency on Sricharan's tmel-qmp mailbox driver series v4 [1].
-> 
-> Imported from 20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com.
-> 
-> Imported from f20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com
-> I've resumed Gokul's work as the last submission dates back April 2025.
-> 
-> - Secure PIL is signed, firmware images which only TrustZone (TZ)
->   can authenticate and load. Linux kernel will send a request to TZ to
->   authenticate and load the PIL images.
-> 
-> - When secure PIL support was added to the existing wcss PIL driver
->   earlier in [2], Bjorn suggested not to overload the existing WCSS
->   rproc driver, instead post a new driver for PAS based IPQ WCSS driver.
->   This series adds a new secure PIL driver for the same.
-> 
-> - Also adds changes to scm to pass metadata size as required for IPQ5332,
->   reposted from [3].
-> 
-> [1]
-> https://patchwork.kernel.org/project/linux-arm-msm/cover/20250327181750.3733881-1-quic_srichara@quicinc.com/
-> 
-> [2]
-> https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
-> 
-> [3]
-> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240820055618.267554-6-quic_gokulsri@quicinc.com/
-> 
-> [4]
-> https://lore.kernel.org/linux-arm-msm/aUN7Aer%2FGG1d5Om9@hu-varada-blr.qualcomm.com/
-> 
-> Changes in v10:
-> 	- Add R-b tags
-> 	- Remove unused fields from 'struct wcss_sec'
-> 	- Remove glink and ssr subdev if wcss_sec_probe() fails
-> 	- Link to v9: https://lore.kernel.org/linux-arm-msm/20260106105412.3529898-1-varadarajan.narayanan@oss.qualcomm.com/
-Hi Bjorn,
+Changes since RFC v2:
 
-With Dmitry's R-b in patch 3/6, all 6 patches now have R-b tags.
+* u8500 and platform_data removal included in this series to make the
+  dependency crystal clear
+* fixed a build failure when adding the callback (Thanks, Sergey!)
+  This series passes now my improved buildscripts. Buildbots are
+  happy, too.
+* mention why "Contact:" information was dropped (Thanks, Andy!)
+* small changes to commit messages
+* added tags (Thanks, everyone!)
+* dropped RFC status
+* rebased to 7.0-rc2
 
-Could you please help review and pick up this series ?
+My ultimate goal is to allow hwspinlock provider drivers outside of the
+subsystem directory. It turned out that a simple split of the headers
+files into a public provider and a public consumer header file is not
+enough because core internal structure need to stay hidden. Even more,
+their opaqueness could and should even be increased. That would also
+allow the core to handle the de-/allocation of the hwspinlock device
+itself.
 
-Thanks,
-Vignesh
+This series does all that. Patches 1-2 remove the meanwhile unused
+platform_data. Patches 3-9 abstract access to internal
+structures away using helpers. Patch 10 then moves hwspinlock device
+handling to the core, simplifying drivers. The remaining patches
+refactor the headers until the internal one is gone and the public ones
+are divided into provider and consumer parts. More details are given in
+the patch descriptions.
+
+One note about using a callback to initialize hwspinlock priv: I also
+experimented with a dedicated 'set_priv' helper function. It felt a bit
+clumsy to me. Drivers would need to save the 'bank' pointer again and
+iterate over it. Because most drivers will only have a simple callback
+anyhow, it looked leaner to me.
+
+This series has been tested on a Renesas SparrowHawk board (R-Car V4H)
+with a yet-to-be-upstreamed hwspinlock driver for the MFIS IP core. A
+branch can be found here (the MFIS driver is still WIP):
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/hwspinlock/refactor-alloc-buildtest
+
+Happy hacking,
+
+   Wolfram
+
+
+Wolfram Sang (15):
+  hwspinlock: u8500: delete driver
+  hwspinlock: remove now unused pdata from header file
+  hwspinlock: add helpers to retrieve core data
+  hwspinlock: add callback to fill private data of a hwspinlock
+  hwspinlock: omap: use new callback to initialize hwspinlock priv
+  hwspinlock: qcom: use new callback to initialize hwspinlock priv
+  hwspinlock: sprd: use new callback to initialize hwspinlock priv
+  hwspinlock: stm32: use new callback to initialize hwspinlock priv
+  hwspinlock: sun6i: use new callback to initialize hwspinlock priv
+  hwspinlock: handle hwspinlock device allocation in the core
+  hwspinlock: move entries from internal to public header
+  hwspinlock: remove internal header
+  hwspinlock: sort include and update copyright
+  hwspinlock: refactor provider.h from public header
+  hwspinlock/treewide: refactor consumer.h from public header
+
+ Documentation/locking/hwspinlock.rst          |   2 +-
+ MAINTAINERS                                   |   3 +-
+ drivers/base/regmap/regmap.c                  |   2 +-
+ drivers/hwspinlock/Kconfig                    |  10 --
+ drivers/hwspinlock/Makefile                   |   1 -
+ drivers/hwspinlock/hwspinlock_core.c          | 129 +++++++++++----
+ drivers/hwspinlock/hwspinlock_internal.h      |  72 --------
+ drivers/hwspinlock/omap_hwspinlock.c          |  29 ++--
+ drivers/hwspinlock/qcom_hwspinlock.c          |  69 ++++----
+ drivers/hwspinlock/sprd_hwspinlock.c          |  41 ++---
+ drivers/hwspinlock/stm32_hwspinlock.c         |  28 ++--
+ drivers/hwspinlock/sun6i_hwspinlock.c         |  38 ++---
+ drivers/hwspinlock/u8500_hsem.c               | 155 ------------------
+ drivers/iio/adc/sc27xx_adc.c                  |   2 +-
+ drivers/irqchip/irq-stm32mp-exti.c            |   2 +-
+ drivers/mfd/syscon.c                          |   2 +-
+ drivers/nvmem/sc27xx-efuse.c                  |   2 +-
+ drivers/nvmem/sprd-efuse.c                    |   2 +-
+ drivers/pinctrl/stm32/pinctrl-stm32.c         |   2 +-
+ drivers/soc/qcom/smem.c                       |   2 +-
+ drivers/spi/spi-sprd-adi.c                    |   2 +-
+ .../{hwspinlock.h => hwspinlock/consumer.h}   |  57 +------
+ include/linux/hwspinlock/provider.h           |  60 +++++++
+ 23 files changed, 268 insertions(+), 444 deletions(-)
+ delete mode 100644 drivers/hwspinlock/hwspinlock_internal.h
+ delete mode 100644 drivers/hwspinlock/u8500_hsem.c
+ rename include/linux/{hwspinlock.h => hwspinlock/consumer.h} (87%)
+ create mode 100644 include/linux/hwspinlock/provider.h
+
+-- 
+2.51.0
 
