@@ -1,153 +1,147 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012023.outbound.protection.outlook.com [52.101.43.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A400B481241;
-	Mon,  2 Mar 2026 20:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772483256; cv=fail; b=ugw9Uk90eIUQtsNwQufe/14k75NcLBs39VlRoVvqfHtnfFtd6MFyE+2xPQ4xojKBm5ksSwwZpxwx+1TndRgD7FDDnbkLtOq3XrBbiq4By+UMQrbCJVPw9W6w3tmH4bsbDQ+1czbYn4c7Ir5afqHSk/urHaqxcaFbvHecTr8Kal4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772483256; c=relaxed/simple;
-	bh=OxBfdlHp4ca4ORTxNS0lXqHGYKIFh1hBQRHj7u7QJvs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m5QmtrM7AFhlqZl/3Dcn9j7mAGcyV7H2gPwomnrpCwW/FPdovMr3ZyhTWyPc2qM1w3ztE29cNlZtL/sj2uxDHZ713MDevh4FNTa7XUyP3G5h3mL3Rabrn/YYm5zexbG9rjByIoTPhBdpMvf5ugnH6Lk7YFbGNv5t9/AVC2HrO5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=t/lEpIxN; arc=fail smtp.client-ip=52.101.43.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6262A47DD40
+	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Mar 2026 15:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772550834; cv=none; b=pwSXjZOX5X1hmYzLc3uaUsDUfiHLuvCTvazhLkiKg54K6zmYlm8QHbEJS/usqZvF1pFNmu/Tj3VPbu93vgTQc1GBxky+76s1R4B2/Yoq1C9bIvrh4cfwpVD3MaMqpdD7UyCuOwRG0cEh88RxbGMzGwrc88zWVcezJhXJtmYWlfg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772550834; c=relaxed/simple;
+	bh=u51znr7imJISDF2aAPlKKydu7adw48rtitqrto52OU0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gYYD/wooizK+1Q/swRwAYHWPkArYWDhtCtsJ6h4qPHY34j9lAGiOvLhixkFL3/7LBDk7cCTK9rKl1AYgpd0lE/nxS4Owna/mibQMZZp+XQwxyASlx0XLMKl9wkzUOA4p1LWZMM71yx6xWfAoSGNgvXAC8LO7bKAFAsM8YlwVgR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=g7reTRUX; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t/lEpIxN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MKQ6C+bd2qdgFk/WXZeAxHd/Te1aP9ma1+FVDYVm+4hqBJPbKtj/PAIWg1Ge25uteolg+bQUgTCb66JzwOvgcq3JULVYLZy9hjR5WaRk+8XVRfNpmYGp1YpVRgXp8ueP1Ossw14tBY6Tu+1mb+EYy4NTAU6iPU4q+nXK334o04sbz3V0/nTbRx1KIA2mCEzuDhmyZWyQkHP6LfP2aVOheboHPIcEDPhcKeZowna/XEXcxiUsmhzv2YMgLxNVjCI8slHqV84ZLYKaswqrkbq7TzdDJshKk8QIPPyH5ir4+HHn0FzCo/FgzwK9cAZqgSB02yIEH4ty0MFY7e3q3F7QOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iEQRSF1nXWASAQPjjFwLap+6ioUljNwYB3ui+Fl/3JI=;
- b=GzhoasrbZJxY1zeMeDIphAa13T57reNR56Wya/GRVfFf+gzhe7g7B6UQMSfRbCVflLVsb+htgDO1VpgL+IPz3s7Lr677lAAfaRgn4S2xXpCa8ghBht6yzpbWeQ3r3NykdTk3v3/eKcTsSAOwyWK7kkStdYT8hgual3rdUhhd8wMpfk3vzCKq+ctdYsevod7Gr5SQ1H9X/yntENj7PX3YYP1WrSHgxKsz4DBPeGJX2sgv5f2bKH7+eOO0me4tYsVkV8ImBPYOGLhAQk88cg1GpK2jb/h90Q3+JOft0UfyCSMeiJnrplC0jG1F/RP/u5eE1NvcEpxR9kvt+/XtJBk7Tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iEQRSF1nXWASAQPjjFwLap+6ioUljNwYB3ui+Fl/3JI=;
- b=t/lEpIxNSB+jBa1as3LFxKRRWh1mv9m6NsNKDOO6Wga1imQR5CxK386jvvdv2jRzB+5RvZGXucR5/v+pZvjV+uDm5JqGn2xvYmVRwmQAfTQ6v/q2VRXoUpw82z717FVqAvEK6x5cIkA9TaJF5I1R7QmZ1un4wUG7KdDeM0xOb5A=
-Received: from SN1PR12CA0060.namprd12.prod.outlook.com (2603:10b6:802:20::31)
- by PH0PR10MB997594.namprd10.prod.outlook.com (2603:10b6:510:37f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.21; Mon, 2 Mar
- 2026 20:27:33 +0000
-Received: from SN1PEPF0002BA4F.namprd03.prod.outlook.com
- (2603:10b6:802:20:cafe::ed) by SN1PR12CA0060.outlook.office365.com
- (2603:10b6:802:20::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.21 via Frontend Transport; Mon,
- 2 Mar 2026 20:27:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
-Received: from lewvzet201.ext.ti.com (198.47.23.195) by
- SN1PEPF0002BA4F.mail.protection.outlook.com (10.167.242.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.16 via Frontend Transport; Mon, 2 Mar 2026 20:27:32 +0000
-Received: from DLEE212.ent.ti.com (157.170.170.114) by lewvzet201.ext.ti.com
- (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Mar
- 2026 14:27:31 -0600
-Received: from DLEE202.ent.ti.com (157.170.170.77) by DLEE212.ent.ti.com
- (157.170.170.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 2 Mar
- 2026 14:27:31 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE202.ent.ti.com
- (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 2 Mar 2026 14:27:31 -0600
-Received: from fllvem-mr07.itg.ti.com ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 622KRUtK1383398;
-	Mon, 2 Mar 2026 14:27:31 -0600
-From: Andrew Davis <afd@ti.com>
-To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Andrew Davis" <afd@ti.com>
-Subject: [PATCH 2/2] remoteproc: pru: Remove empty remove callback
-Date: Mon, 2 Mar 2026 14:27:28 -0600
-Message-ID: <20260302202728.322073-2-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20260302202728.322073-1-afd@ti.com>
-References: <20260302202728.322073-1-afd@ti.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="g7reTRUX"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4806cc07ce7so65476565e9.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Mar 2026 07:13:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1772550832; x=1773155632; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b/1uzkb2dN7kd3Qkoeot6UDS00kHNcaUEjRCBygzqAo=;
+        b=g7reTRUXrVtGMEYIzIvuONNXEXEVuLlkgjZwxTj9HBoYzvJSp/7XPT8BrZYEbMXao6
+         VdIBVDsTgSVvAuW00lD2LYsSYbZXHvHRG5OM+50tK4WGKt3/I9HUA9Nn04nc4ZiDgO+6
+         mwkKyTXDeBHeMrTAOQtmQI40xvPU8oR2mEonk1FoLb0Wl3fNCjvs+CmDawaHheCJ6e+G
+         2+GEdnuUAY7D0Wl6he8SLX24QPtUnfmv/IxHPjnwNhJzAphKpcitqkwuoni5lXgXHSvn
+         DO8tJ4D9vz7RMPvJ6JyPnK4MbgylQP8jQGUJqhnPjH8noUWb4H6vHhRRtNeZg04sRlT9
+         AAdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772550832; x=1773155632;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=b/1uzkb2dN7kd3Qkoeot6UDS00kHNcaUEjRCBygzqAo=;
+        b=UNBMkl5RFWOKni6vSNZWgI8klM0JVxA/U4AYmznDcp5fWFJMWuwZPYpJRYlUVgPA76
+         BJfSubxJoF4sGBnPLMNCrFdoIH2cKzZYK4rw+9Pq82GqH8T8cIY/5NpA5wcrNZyLEVNe
+         ObXEoxBWo5NtVQwnR+M6L3iwB10fVFDURCuGFLHr1HhcOote5pafCZSHWr0zyxGRdrCB
+         HjvfJrZkzsau3lqbgQWLmFBrBflrfzupA+g8dpPf39QEcdYYSzuHbuA5jEEOb/+Vnbzg
+         izNfMFJvwBsvYFvE66tpHJvaNzl+M5donH67MKq2MMiLItvIO57vllqMaJ/Eh2UQArB5
+         6IdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXliyAro2ZXyH4cZHl8fMi7H1Jgs3N6FLSGcirzcsE5XtAJlZA6uquOsSGq3IYCiJqJcPH8ZI5fV6NBT4tZhIu4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDLu4HchfmDyPq6tyYOATMnoaT1bf3wphN/QHGJmkfnP5+izU6
+	zvIhb+9GRX8rg6f+4qcpIf5UcviRypdw/SmFHOElOtwkwQ7OcMpax6onFyTantbMr2/Dyj9F2VH
+	S39Wp
+X-Gm-Gg: ATEYQzyss/tdNrdAaEvVmG4qajIWZPIKnyY+vEOP+VvsElD3RmvSiTzD3b4lMGW8B96
+	IGOT0xCGciCNWheaFwJrkEzH5Rx4ic49Q9Vr6gzIcM3Uaty+E0quMLxJ6lcqyyeOw44W8zoQyBS
+	gO0wrom27rvA0C8o718I/JmZr4HCOP3uxf99lMaFeNoeHq4sIGgcJ69x3czcwUc2YEwAhdG/v5T
+	L5ZiNOHrhYsczap3C7IU6fKnYEtf+bnAUYltNaxQiEVY2GwTbZyxFoU/aM1C0zJYOSCaOjWtkTC
+	Fh1GA6pHh9+ajLFEC+55y9T3aR9Vp9xoilWkHI1CpBX07JWer4ttTHyyN+K1pG2mKyXgLi17gjH
+	RokbGBrj/YWSekHfT98N24cfQDGI9CY+o37eXCV62n0C+zYh4GnxNy317p1PkGcA/TlddLCMuYa
+	72SL0h5DldjevhJ6h1rA4G
+X-Received: by 2002:a05:600c:c04b:10b0:483:79a6:e7e1 with SMTP id 5b1f17b1804b1-483c9ba7e28mr208421115e9.7.1772550831695;
+        Tue, 03 Mar 2026 07:13:51 -0800 (PST)
+Received: from localhost ([2001:4090:a244:8139:5278:cf5a:3494:5e80])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48516f74a1dsm10512105e9.2.2026.03.03.07.13.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2026 07:13:51 -0800 (PST)
+From: "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>
+Date: Tue, 03 Mar 2026 16:12:59 +0100
+Subject: [PATCH 1/6] dt-bindings: remoteproc: k3-r5f: Split up memory
+ regions
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4F:EE_|PH0PR10MB997594:EE_
-X-MS-Office365-Filtering-Correlation-Id: be49ee9c-c9b1-400e-adb4-08de789a2257
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|34020700016|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	fBHFns6UnWyMJCQaKbDLgyvqCv9zUKBlmVqhcLcBpquI+2BOtaBCgf13AmwHj3Xwe0viBtgclFCIognAY9Fq3NEx0RzgXjO6vG7ZX0xddP8bsaQF5VoO68WfLE9UU73w3opmFtdb1I7VqXJIa0HUP/xtBr6ow+e2DC70oGnqFBKqf3Trg5VH9N7Hj5QiUEuwNkeRjf4Mk2Wjd2BGLT8tS2N0cVSaUlkbTZ9VCaSSGPfH86f9qmDZtQd12C/KQVtjQQC44bkxya79bmS79LP8TpTmN/8Ox4nQV/h3YVe9a4PMawjo5QHFR5j7Pu0jgZdNQmyqY6MiJ5NuGPEu0WuV9dywRqJ+YNHzYMk7ySZzz8TLkeiWcfntUPjj61dgCK80ozaqvfVa/QLUcur4n6oPfBu+HErGieJ8nKpyJlsFwyUnul6tvHYJ1WxBqqPM7pI4qELzi7Y4MfiyNt1lWef0O4kqrLxYBzT2VzHxGNNo+lLtQ2DIMP0YmWG7ynXYQGKrFll0tVwPHp+vRm4oVoAB2Bjvbp4vMINnICAM+x+rv5baNEL3z+7kDnuXqFne1ZX+G5Q2EYlwFvDc8X05o7w8t4ZdWUJrRZC5ZF1K6KV9G77LuDg5vBtB3tkA4JXWwY9hFdqMLxf7WZoA0YE1z8hDa067Z2QEFpyaSJccO2PP+PftccPV8PF2+uPCXmcx88iDE4gb6B84uUG2lCXwFXTHtuHuvDhVlcq320wR9zPnHgR7dwS+wFcxAQ0Uef2Li/CIXoEjkHImlSbrVIAIktMoLnroSiIGAwRnpx9dAdbQX2dGcnOK0kOiCU9q0GUxj1VRVLWtXVeLzV4GdE/yaZUm/g==
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(34020700016)(36860700013);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	zvaqr6azJjtBNEX4EvVKeh14PR5a/8Jla2t+MrIMTkcVEbGz7wd2zuFytYDQKcTsWl7H+UAITTsVSOBXngGKu46hft4e6uMwYwkyBbJT8LX0ueuMU59ko7DxRO6w5gQmmrvm7DOFcywnvSdkBgId3o4pzOlYIgDRgaBqxygdauqEQuGJKq1fKcrtoLmjvuj56e7RN+lHDb2Klq3TqOibrIXiaCCUqKAsoEZmyn6384tkKn3GTPGxAlgsQ3xhd6tC/HOK44z0dsRyCgANKp5Nwuq7leNOlbTozs31Y6nk6cZhTRQyy+vepkl6HeyHIAYiTmOYzxYyR1n54TUNzjqp17vWyUM3On0PcVCnb668IhN/ZTP90QmHBfxue/Fdq6QPImMKH6N0epAEshOLn/pPsCeBpBi29T3FIkvXuWqoyxPWKKkdXL4Dky5pQYit/GiH
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Mar 2026 20:27:32.8995
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: be49ee9c-c9b1-400e-adb4-08de789a2257
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA4F.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB997594
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260303-topic-am62a-ioddr-dt-v6-19-v1-1-12fe72bb40d2@baylibre.com>
+References: <20260303-topic-am62a-ioddr-dt-v6-19-v1-0-12fe72bb40d2@baylibre.com>
+In-Reply-To: <20260303-topic-am62a-ioddr-dt-v6-19-v1-0-12fe72bb40d2@baylibre.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>, 
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>
+Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
+ Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2494; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=u51znr7imJISDF2aAPlKKydu7adw48rtitqrto52OU0=;
+ b=owGbwMvMwCXWejAsc4KoVzDjabUkhsxlv/qNZCSmsZ19u8ro08pvk1aoWlxdk/vxRE+Hztc3H
+ 7llXn9k6yhlYRDjYpAVU2TpTAxN+y+/81jyomWbYeawMoEMYeDiFICJyFsy/HcxFJpW0HDvkyZH
+ RE9cdNd1vZNZ9/c2/AiqFHzvdPud0hGG/4nvDyr+UfRbLNv0pW2/VLO77vxZe5yiJqyYfiXD16a
+ 7hwsA
+X-Developer-Key: i=msp@baylibre.com; a=openpgp;
+ fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-The .remove() callback only prints out a debug message, remove
-this otherwise unneeded callback.
+Split up the region reserved for the firmware image in more specific
+sections to expose the full fixed layout. Especially the LPM metadata
+section is important for bootloaders as it contains information about
+how to exit IO+DDR. This is read by the bootloader but is written by the
+firmware.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
+Signed-off-by: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
 ---
- drivers/remoteproc/pru_rproc.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ .../bindings/remoteproc/ti,k3-r5f-rproc.yaml           | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-index 19b107d29242d..a4636c7bc6b7b 100644
---- a/drivers/remoteproc/pru_rproc.c
-+++ b/drivers/remoteproc/pru_rproc.c
-@@ -1078,14 +1078,6 @@ static int pru_rproc_probe(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+index a927551356e69d3961b3c5c6b72d027fabe83d3c..6aadc61e20f9f4c27f5b9c87ab2025a02776c5de 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
+@@ -158,12 +158,28 @@ patternProperties:
+           defined. The reserved memory nodes should be carveout nodes, and
+           should be defined with a "no-map" property as per the bindings in
+           Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++
++          For IO+DDR low power mode support on AM62x SoCs, additional memory
++          regions may be defined to partition the DDR_LPM_DATA section:
++            [0] DMA allocations (required)
++            [1] IPC resources or firmware image sections
++            [2] LPM FS stub section
++            [3] LPM metadata section containing dmEntryPoint and fsCtxtAddr
++            [4] LPM FS context and reserved sections
++            [5] DM trace and firmware sections
++
++          The LPM metadata region at index 3 allows the bootloader to directly
++          read the LPM metadata address without hardcoded offsets.
+         minItems: 2
+         maxItems: 8
+         items:
+           - description: region used for dynamic DMA allocations like vrings and
+                          vring buffers
+-          - description: region reserved for firmware image sections
++          - description: region reserved for firmware image sections or IPC resources
++          - description: LPM FS stub binary and X.509 certificate
++          - description: LPM metadata (dmEntryPoint, fsCtxtAddr)
++          - description: LPM FS context data and reserved sections
++          - description: DM RM/PM trace and firmware code/data
+         additionalItems: true
  
--static void pru_rproc_remove(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--	struct rproc *rproc = platform_get_drvdata(pdev);
--
--	dev_dbg(dev, "%s: removing rproc %s\n", __func__, rproc->name);
--}
--
- static const struct pru_private_data pru_data = {
- 	.type = PRU_TYPE_PRU,
- };
-@@ -1131,7 +1123,6 @@ static struct platform_driver pru_rproc_driver = {
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe  = pru_rproc_probe,
--	.remove = pru_rproc_remove,
- };
- module_platform_driver(pru_rproc_driver);
- 
+ # Optional properties:
+
 -- 
-2.39.2
+2.51.0
 
