@@ -1,46 +1,48 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDC638422F
-	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Mar 2026 19:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ECAD389114
+	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Mar 2026 19:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772566314; cv=none; b=PiS5NYu6X1z2dVpLw2DCOIVcqnv1HL1pnOmkoiR3nbuRJt+sBtItef0xE9KWP2g+MblfRX1OdemuHIH/7MKscv9k0cwEhar2XVr6l32sHM5youjatmOSkpnR37KC+Vz2JdXIs1qCfxP2uGXNh1OYk9S755gDhYMcnGSu2Md0Twk=
+	t=1772566314; cv=none; b=e+Mvnv1gzsGaQIkkxH0jcevuqqafEFoy8EoO4FpDBFkTO/mN+pbj1yq0bTPXZpLDiOXpIVWICnyGJaqSxdK49HIkRXolt0VuIFRAYpGT7COBtRfFJprZrn45wuqmP1HCz5fa7Ld68dObLUPluOMZA4x80XfgmdBFyKboj49M2EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1772566314; c=relaxed/simple;
-	bh=BOJUADIyKNQOmgmPGc3taoNmpZ8OTIDAPRRqTVBjSXY=;
+	bh=OEH3l5ojWMA/OYyQO8879NCGmmk7Y1mf0kCu8Rq9dKA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DvAul4iQ4HuB+RPdbwpAO6LOFTr/QXlIrMEiGRgL6wR/c9Y1wa89jyhRJXMd2iqqgVASJp75snO92Q9aof7UTgNdMUjcEN6afYLSx6GMVXStnwbbNdESwuRJZgTU7fEYblVjBtF1ZCGvTycgQxfP9AVi8YWje+1vsCcDnZ858rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KCtbvHhe; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=u1dhhKAooJyh1RRPDPD9ALH3YS+cWomHHlY0g97/W9UWpZMLxUmL8qv5qc4XIBVRy/OQoU4SsEAOYOdcD9GkEO4mpuYqVyMKa+Tnaww4BTrOzNJGm65Dzqux3U4mbmOYv8rwFw128kAj/+boScLJF+HLJqaVugoOxMBZ/SeXwlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=GlweQzJj; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KCtbvHhe"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GlweQzJj"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=zX4JfdCplWngZzhZKUpZWK0F/ozfzqmnLJfc+peLwlY=; b=KCtbvH
-	heog8LKaSsbCXiEWtCEvVeJZ05+9LlMVbn76yt/wlQxA7utnWIReHDgGPWPH6yhD
-	qJ7DX4hkQsG0ViC0hx0zzeUYSlazDjbfN+wjx+V81gts0oaEFIchmd+g42HdFLrB
-	AwhOKLA3ikUvnATPlqAkYT0k7LvRd4q8IuAuehPAviTtTL9MH5QjviI03HDjCSju
-	XDgcWJA1BJXObl8tEnd5LUGimc3zl8zBTJ09f1f7efod4xutep3NolyFyFBY6QKp
-	hKHz4Ua2ZP1m7HqfO2AFb6aXag3LQ6dwCOQIImd7EtZ7Kv9YRHf4VMl9sCqNg445
-	aEZg7E6Tf2MRhLmQ==
-Received: (qmail 430606 invoked from network); 3 Mar 2026 20:31:32 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Mar 2026 20:31:32 +0100
-X-UD-Smtp-Session: l3s3148p1@Hj82wCNMWJEujnu+
+	 s=k1; bh=cfGSgS8xrxtvLo0CzFzbdSrdEtwKeD6q3V5u52qRc1c=; b=GlweQz
+	JjdFgbqgnM2YRaAN5ErA6fIuURTabWOa24CkwbYjc5tIRsY7dr/j6VhKtIgh/l7L
+	4aFrb4PMC1lii+YahXo6k1wGeqb1U9ljT0o05f2PsVHIq7ce3sWleRBCheM+Co94
+	rnIbjIijw9UEgrhW8XqFeE8eHKt+6sU7e8zYFoQMul9ymADPeUycXpB0rGt+vbU0
+	ng3wm+c1u4Vzu+5zu7D9nHyIoiOFOBCN6CMcIjpOgZFuk+Ce+q4d4AmvnmkR0PR/
+	QvymOOG3C7L18XqeSnR0bJQ1jS6hb7lmUcBYvsrgTeeJijAyT9PfYHlNfLd1nCBB
+	IEkioe+nOrK7jSlQ==
+Received: (qmail 430629 invoked from network); 3 Mar 2026 20:31:33 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Mar 2026 20:31:33 +0100
+X-UD-Smtp-Session: l3s3148p1@N2BFwCNMXpEujnu+
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v3 07/15] hwspinlock: sprd: use new callback to initialize hwspinlock priv
-Date: Tue,  3 Mar 2026 20:25:59 +0100
-Message-ID: <20260303192600.7224-24-wsa+renesas@sang-engineering.com>
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 08/15] hwspinlock: stm32: use new callback to initialize hwspinlock priv
+Date: Tue,  3 Mar 2026 20:26:00 +0100
+Message-ID: <20260303192600.7224-25-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260303192600.7224-17-wsa+renesas@sang-engineering.com>
 References: <20260303192600.7224-17-wsa+renesas@sang-engineering.com>
@@ -56,60 +58,54 @@ Apply the new helper to avoid using internal structures from the core.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/hwspinlock/sprd_hwspinlock.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/hwspinlock/stm32_hwspinlock.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-index 0b91bdd4303d..c19b680d5fdf 100644
---- a/drivers/hwspinlock/sprd_hwspinlock.c
-+++ b/drivers/hwspinlock/sprd_hwspinlock.c
-@@ -70,10 +70,18 @@ static void sprd_hwspinlock_relax(struct hwspinlock *lock)
- 	ndelay(10);
+diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+index 51e8e533ac31..02db950c9450 100644
+--- a/drivers/hwspinlock/stm32_hwspinlock.c
++++ b/drivers/hwspinlock/stm32_hwspinlock.c
+@@ -48,10 +48,18 @@ static void stm32_hwspinlock_relax(struct hwspinlock *lock)
+ 	ndelay(50);
  }
  
-+static void *sprd_hwspinlock_init_priv(int local_id, void *init_data)
++static void *stm32_hwspinlock_init_priv(int local_id, void *init_data)
 +{
-+	void __iomem *base = init_data;
++	void __iomem *io_base = init_data;
 +
-+	return base + HWSPINLOCK_TOKEN(local_id);
++	return io_base + local_id * sizeof(u32);
 +}
 +
- static const struct hwspinlock_ops sprd_hwspinlock_ops = {
- 	.trylock = sprd_hwspinlock_trylock,
- 	.unlock = sprd_hwspinlock_unlock,
- 	.relax = sprd_hwspinlock_relax,
-+	.init_priv = sprd_hwspinlock_init_priv,
+ static const struct hwspinlock_ops stm32_hwspinlock_ops = {
+ 	.trylock	= stm32_hwspinlock_trylock,
+ 	.unlock		= stm32_hwspinlock_unlock,
+ 	.relax		= stm32_hwspinlock_relax,
++	.init_priv	= stm32_hwspinlock_init_priv,
  };
  
- static void sprd_hwspinlock_disable(void *data)
-@@ -86,8 +94,7 @@ static void sprd_hwspinlock_disable(void *data)
- static int sprd_hwspinlock_probe(struct platform_device *pdev)
- {
- 	struct sprd_hwspinlock_dev *sprd_hwlock;
--	struct hwspinlock *lock;
+ static void stm32_hwspinlock_disable_clk(void *data)
+@@ -73,7 +81,7 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct stm32_hwspinlock *hw;
+ 	void __iomem *io_base;
 -	int i, ret;
 +	int ret;
  
- 	if (!pdev->dev.of_node)
- 		return -ENODEV;
-@@ -123,16 +130,11 @@ static int sprd_hwspinlock_probe(struct platform_device *pdev)
- 	/* set the hwspinlock to record user id to identify subsystems */
- 	writel(HWSPINLOCK_USER_BITS, sprd_hwlock->base + HWSPINLOCK_RECCTRL);
+ 	io_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(io_base))
+@@ -106,11 +114,8 @@ static int stm32_hwspinlock_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
  
--	for (i = 0; i < SPRD_HWLOCKS_NUM; i++) {
--		lock = &sprd_hwlock->bank.lock[i];
--		lock->priv = sprd_hwlock->base + HWSPINLOCK_TOKEN(i);
--	}
+-	for (i = 0; i < STM32_MUTEX_NUM_LOCKS; i++)
+-		hw->bank.lock[i].priv = io_base + i * sizeof(u32);
 -
- 	platform_set_drvdata(pdev, sprd_hwlock);
+ 	ret = devm_hwspin_lock_register(dev, &hw->bank, &stm32_hwspinlock_ops,
+-					0, STM32_MUTEX_NUM_LOCKS, NULL);
++					0, STM32_MUTEX_NUM_LOCKS, io_base);
  
- 	return devm_hwspin_lock_register(&pdev->dev, &sprd_hwlock->bank,
- 					 &sprd_hwspinlock_ops, 0,
--					 SPRD_HWLOCKS_NUM, NULL);
-+					 SPRD_HWLOCKS_NUM, sprd_hwlock->base);
- }
- 
- static const struct of_device_id sprd_hwspinlock_of_match[] = {
+ 	if (ret)
+ 		dev_err(dev, "Failed to register hwspinlock\n");
 -- 
 2.51.0
 
