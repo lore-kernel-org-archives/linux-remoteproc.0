@@ -1,141 +1,154 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726E3372693
-	for <linux-remoteproc@vger.kernel.org>; Wed,  4 Mar 2026 09:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB7133DEC8
+	for <linux-remoteproc@vger.kernel.org>; Wed,  4 Mar 2026 13:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772615972; cv=none; b=WGnIZaaaGCbnDZnrdvH+Crelw5tsLvws4fZn+V5XBOQ65LIVW0GrsWwgeK7AfKLccaAG3ni8MR+ZxzKyrCHX7zFq6I2zGMhiOpCB9ZQKNwi9pGhZ6upIyRB0zorPICjyhQPahZdVcod7Vr+2JtzOwy42YPTNzade0hutS8YI8SI=
+	t=1772631504; cv=none; b=hSa9OcjsnMtybKE8JZu9fUDxI1aH3vwGrpqgBxRvekqIBm7zrawj0X6zE6k70ltLikEMSuQbbUbxfxaZQxTftyt/RNsr6TVexuIGUblUxbWO2Q3iRkcgoyg5hFJiLLodwae/j09nx6qPMhVOqFdUaLrSi3MPUKVA/riAbfzFryQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772615972; c=relaxed/simple;
-	bh=CgUIX/j8xbNBZepU+kcoSbBhv8dHEWhS+UNWzvSI4TY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DSfwv4iVz78tC1CuFMtQp4Yq8Oc1sxlW8Dd8LjnX0ZOKHmG4UE9ZcJxceX/m3ztcDxQoUkTZNJoFyU6oXNS/fVeKdbhFeLEERJC3fol3KMlLA8g3nARmoc/jOK9+YvTcTKgzgZB2SYaofh+6YWg1omwGuk7r9HbZcNlkGq0R5Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YuwAzi+F; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BPqHNVpI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1772631504; c=relaxed/simple;
+	bh=GUYEALaM6WRnx8wWumgwjF/F8NjS7pDDweLv1LJL5/U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DbScbICvvRnBmDfscvU3/EzHPSyHkSNYH2sr3t+JNjnD4Md3IJT7lBDOiOsz2VcAxEFRc2RiVMVvBdEfKSwy7z2lSF8T16y9+XL5Tkz7Ub4TyUuxnFuHiqKf2ripuEIJvDgcEhL+Eaqqk/e19WAq4b1QnyMAYWci6Q+uu74yVyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UX1DbG51; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YuwAzi+F";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BPqHNVpI"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6245SfJk2861379
-	for <linux-remoteproc@vger.kernel.org>; Wed, 4 Mar 2026 09:19:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yrXi13Z30e/iaNuSMOSCmABJiJllICGpM6/FbLGTct8=; b=YuwAzi+F4fbeBVFB
-	iREDt9xOK25QxQJrQD9qQLEEn7kx2IJoRsk3BfYgaRyb88tda99pF21X1qL7flJU
-	B37R1lKTaD6s423Pz2yvng3ji646s54i1y01ONE5m0qTyIAMDPkS5Ns1sS9uL89T
-	/dRz88Y/PXbreMlfbaR3yuhJ3svEX2/6P5MZkYjQIvuHJ+bIIkftl8UyKQO02TNY
-	AzK+ubTyRCCYt4FYGWXG656WriKN4Rq7MuuvKTc10kgV64qh6439oWyGUsfDGgeB
-	a2+QuynkoYxCj4v+hAMXmQs+/JlW8XFO4/ktDxvKBF4fGvi+cFKMIQm01XZbHfXW
-	5r2cKQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cp2c9kb28-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 04 Mar 2026 09:19:29 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-899fcb63705so13875026d6.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Mar 2026 01:19:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UX1DbG51"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-439b611274bso2233801f8f.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Mar 2026 05:38:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1772615969; x=1773220769; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yrXi13Z30e/iaNuSMOSCmABJiJllICGpM6/FbLGTct8=;
-        b=BPqHNVpI5jrQXhlBuFJjv0QZzmUbTXxpRVDxAiLdl2O/bs9Vcf9ZrqLfQjgsvG8KoI
-         Pzo4Y07zPZz6Y0a96gX4S3pfTlOCrCLZthc8TAtY6Y4yUbKgRnQYUsfWfG3+UlEMy+4N
-         iRhZm7OUdLD60YG2a9FakfQ4D80Ju3/uMppi8za92V+/GebmGHptk5j1evnrNFoEqYuE
-         uidy08KS58xCg96ajjg92LsWAuNwd979T5iAk2M8HhdeaTqT+G2BN8vUZKl/VwxWFWxM
-         PKfXoISs7VV2QPaoOP16T4wXzrl08SfeXK9LhP8WD9xS4TLrFcpgD3KUxSQzBNfBb07D
-         xGDQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1772631500; x=1773236300; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6xKCzFEa575Ece/U0GGFSt+Fu+C5w9MJrHLEfRQR2Cg=;
+        b=UX1DbG515dcjMXIdTHKQxWPTBHXq9dgyw8CfJ+QSb2p6U2OTv8NrOnD6EPAe/ljmMF
+         ZARgEk7hv802vGVqUz+tD6i5dCOZkcw8FLbeJu1IVxQEVAqP5zSYhPea4MnwrjhmSolU
+         OwswT77M+ReQzkzUkX7ws18yXfdPfrJ4IkALsnBYIh8AHD51ywOYE1Mwsog4RixDECDj
+         NyUn1G+i8SutzgOGm+trt/inbX9/l8cxckrwXig9VEvnxEJsN4VmbyPQpNz8DTyp30N2
+         H/6KgVY38hTNHwiPo/AiyLiHFg9K8WGj/nI3YU368CGzfYOjNRdHhqp7bXqRcteIu/iV
+         qYyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772615969; x=1773220769;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yrXi13Z30e/iaNuSMOSCmABJiJllICGpM6/FbLGTct8=;
-        b=hUrrT4a/zZiXxfNBrSfSUt1EoVM6E9oiAK5UKslHTrFeNYpNCos2JmUPQ4KBiPnjVo
-         75qpzuWf1bpRym37i+4ONS8hWuP+IPdlvZpO9/LgztZU2Q2balpGkJt1IBRPM/mUG2la
-         9HpXWnm1GIldOF2JemJdEO9EeAyVzCjntjGyUvjHc4Kwl0askdmH/Zki6lXOm6WN/MMm
-         5cI38L1ruCa7jwtXO+7Htb5SrdQ6waDHfCbhRoj1ak5XvAAJI1VtEztD78GKgUSJyOlS
-         xPQnfSYLjncizUhBn+X34c68XEx+WM4faSby2FNpLkorPE5Bbf6myusqGOf6t0FR0ubV
-         zMmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMExExwizMAInZJnzxAybrlXSg4iAaYkDKR3rgXIgIyrUkRd2Iz2xCme2dHHoBAVNuh684SCGoa5SbGD4uJkIg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpsC4XkXrosa/98kYqDoZrj4zWLLZ7Gq9EIgJnKMoRePAEd2Sl
-	FXDp3OiolGH71KLF8O3iOHdJEqOVnerXb700tQU54fxVhoBfDqwxdwZP9UZs5k09O7xAQ3XkTU4
-	B0lGKckK4eG9Na6/BcYTcZODlIbfBnFHfoUblBWEW0vl99cBuEaCIS7cyXolQJMZveNwUwjQx
-X-Gm-Gg: ATEYQzz0hFWstO/ux49Enev2CPFRp1OmbIm1VPFTBQlRfZZbr8x+OmqOozpUTCSEUu/
-	kKqk+NA3nDbxCTXxDxzdl8RNtbUJZzWK+mjGx1IuNxHy49+pMtRwrkBe58nifx11sQg1vZNa+eU
-	TTiVX3cqFEV/vbTYvW9YNVZLoiSw1mIUO39GUFdwC/iUAowL3HsrO8VFMr8GTX311g7BtDELC/f
-	39DaMqyQuatVnuo1UMDXMRrzXD/uvHkPAf2Wr4LbOtDsuS3x/HbLcyEzuf4lIEmXsSdhUxCrVc2
-	OsB335Ma0q19nrF8tt62dbIusN86Yc/PUhTRnHftam7DcTV8jz+usqgySpeMgYdjLyGoPaU5fb7
-	9skXPNbjaHEyZ+TObxrtLUTj3RwamB917Fp/ahTxRQDE3JiWfarn7e+Mb0BlrljvPzwxilsX30C
-	L2xyQ=
-X-Received: by 2002:a05:6214:8090:b0:899:f3a9:19dc with SMTP id 6a1803df08f44-89a1998b809mr10047316d6.1.1772615968871;
-        Wed, 04 Mar 2026 01:19:28 -0800 (PST)
-X-Received: by 2002:a05:6214:8090:b0:899:f3a9:19dc with SMTP id 6a1803df08f44-89a1998b809mr10047116d6.1.1772615968446;
-        Wed, 04 Mar 2026 01:19:28 -0800 (PST)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b935ae613ddsm716364666b.33.2026.03.04.01.19.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2026 01:19:27 -0800 (PST)
-Message-ID: <e2fec324-c2fe-4055-82d9-f5c6aaef420e@oss.qualcomm.com>
-Date: Wed, 4 Mar 2026 10:19:26 +0100
+        d=1e100.net; s=20230601; t=1772631500; x=1773236300;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6xKCzFEa575Ece/U0GGFSt+Fu+C5w9MJrHLEfRQR2Cg=;
+        b=ZJKjR6QN5HkHTnorEIYWJX4ERfBYarooAGUxANLJWImwenWLGDZ7YtkkKbePllAxbl
+         T10jc4pZQSXRtdGBL5tp3QmrGgVQ3NS/dVlE7XzYFNReKSpxE8/0bDzJ/IAYT1Ir6cZ3
+         94PZRCwPiLoxnp7uOqq/nXOIyRCfq9Dx391+GS9a4Dbtj3SLJtP7o6+DYZA5+zKfPgQ3
+         QpYCwmyC7e92Lgfzlb64/4lH+0qc9SsMbq+MOdCKTwhnjFk5YIC4kQ8ySJ9SXA0ImURj
+         ETCwB/7z8t1RQoOR8qUNMTDmT7v5ehWUk8tD1ZETNndHMO+dV2G4Iy9jzjSjrsnIPBEK
+         wdMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUfchdgUtwkDYYm+/Fg300MrHT0UTHvVQgbD1ylxQ6v1f9Rr860BIBUfMwTwADEJKMi4RFg/fhE/oTQZOCJKrh1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8bYXHip32sofn6eAyhZx205jebRXkrx+d63dQYTzFss8CiNFG
+	dCp3td9e1bHtNavhnFByVOiww9qhLz8i/MxUf/n1RXLV/SlCIhUOHeEfgDVYQL5yOwk=
+X-Gm-Gg: ATEYQzxPBkLaKwHruBr6Fez/PZxYygwQM+C3TKe5+bEzh6QwyGMo5IKOh0STrbPYXn+
+	Wh44HsHX8o5x8qhekMw+vr9YAj+bMPle6XKhHxiGSXgQca1sjAqqvfnACzd1lR3nXAD2BenU/3N
+	sQDnpwNR03vguGpmd+rEpEfBz+0ef1brU/W5ISaa0oGdRYUxavlcW8YXjzvcwXpcUsGRRq0zJ+Y
+	/dWNY3gykBmLefV3qfOR+baZqnX769uVRLIm58ERIiOIBAzELcw8ITQP0ilM79NUU7/f07xpuuk
+	Otwzse3fSNHWET9R07N7GKKSuh8Tpf1+KI1QcgUPer5+6MxnDJsp6oyBTkSyk75ocJQJeIQRd72
+	MRJHlN9vNmJNYLHWsXHldxPZdolzVgxM9UzocBttN3xYd/32a/LxLwpKZJ9cE7zrl6x88e+HBwY
+	Z2Qio/2hpp22d1wRg=
+X-Received: by 2002:a05:6000:2302:b0:435:9d70:f299 with SMTP id ffacd0b85a97d-439c7f79f5fmr3963520f8f.22.1772631499943;
+        Wed, 04 Mar 2026 05:38:19 -0800 (PST)
+Received: from localhost ([195.52.25.213])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439b503425asm25373373f8f.25.2026.03.04.05.38.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2026 05:38:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/15] hwspinlock: qcom: use new callback to initialize
- hwspinlock priv
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20260303192600.7224-17-wsa+renesas@sang-engineering.com>
- <20260303192600.7224-23-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260303192600.7224-23-wsa+renesas@sang-engineering.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=9f27ca151f75da4521dca0ec3d004e6ed38b66748edd73afbb0ffdc24d2c;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 04 Mar 2026 14:38:10 +0100
+Message-Id: <DGU1F4OMYXZY.3S9ZX8TB5S3IP@baylibre.com>
+Cc: "Bjorn Andersson" <andersson@kernel.org>, "Mathieu Poirier"
+ <mathieu.poirier@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Suman Anna" <s-anna@ti.com>, "Nishanth Menon" <nm@ti.com>, "Vignesh
+ Raghavendra" <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>, "Vishal
+ Mahaveer" <vishalm@ti.com>, "Kevin Hilman" <khilman@baylibre.com>, "Dhruva
+ Gole" <d-gole@ti.com>, "Sebin Francis" <sebin.francis@ti.com>, "Kendall
+ Willis" <k-willis@ti.com>, "Akashdeep Kaur" <a-kaur@ti.com>,
+ <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 2/6] dt-bindings: remoteproc: k3-r5f: Add
+ memory-region-names
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+To: "Conor Dooley" <conor@kernel.org>, "Markus Schneider-Pargmann (TI)"
+ <msp@baylibre.com>
+X-Mailer: aerc 0.21.0
+References: <20260303-topic-am62a-ioddr-dt-v6-19-v1-0-12fe72bb40d2@baylibre.com> <20260303-topic-am62a-ioddr-dt-v6-19-v1-2-12fe72bb40d2@baylibre.com> <20260303-hesitate-preoccupy-5e311cbd3e58@spud> <20260303-payphone-pancake-b6068c545bc3@spud>
+In-Reply-To: <20260303-payphone-pancake-b6068c545bc3@spud>
+
+--9f27ca151f75da4521dca0ec3d004e6ed38b66748edd73afbb0ffdc24d2c
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA0MDA2OSBTYWx0ZWRfX9bokouVmN8ye
- eOe666PdlrGWdNBhdrwvHJGv01wjhd9pegm4P+5KLvpeyIX6Exr7GeWng61uFjmAwsV5/Saq4u6
- snkLopNAQB9NTASCcnqJLBfVTwaL8SIHoKacvxc6+VQmk8WgmSqZMiFcO+Vi5cDAP1Z8nDutcGW
- 7oTB+PHGrx+oSb/7qNugmXfIS7T9rH1WrgoU6u/g/sw3bSjjAeIPbDZRAC97ENZDA7TIeFRh+rE
- 3rFwMzzEZCBbrWJ+zmqesxl/wk5huitCnUeU3z6AjaB2jEPYf33am45om5VEV9PNh/Q1SzIIbL+
- CHce2jwE6WAhciCoItgsZVnAdMR0cscKpAmPCLOgzKNZSJ4CrKvtMaVp5MxghakG5vyZ9PlEtRN
- l9s04fpVF/2sHqR3arnC4jn6ilcHRv2LpqhKgNugzF1JNwWD85Rn+GrAXPz88xHux3fcb1cIqBo
- kkUmYd9NXN5OO9XiIBw==
-X-Proofpoint-ORIG-GUID: uQ2AFb7c6gEfVAv1ExJRWWF_ChLv3Kaf
-X-Proofpoint-GUID: uQ2AFb7c6gEfVAv1ExJRWWF_ChLv3Kaf
-X-Authority-Analysis: v=2.4 cv=EefFgfmC c=1 sm=1 tr=0 ts=69a7f921 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=LDBv8-xUAAAA:8 a=EUspDBNiAAAA:8 a=7CJMOFuoybIo_9NlnXUA:9 a=QEXdDO2ut3YA:10
- a=zZCYzV9kfG8A:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=DZeXCJrVpAJBw65Qk4Ds:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-04_04,2026-03-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 spamscore=0 bulkscore=0 adultscore=0 impostorscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2602130000
- definitions=main-2603040069
 
-On 3/3/26 8:25 PM, Wolfram Sang wrote:
-> Apply the new helper to avoid using internal structures from the core.
-> Remove superfluous setting of drvdata while here.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
+Hi Conor,
 
-Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Tue Mar 3, 2026 at 7:33 PM CET, Conor Dooley wrote:
+> On Tue, Mar 03, 2026 at 06:31:56PM +0000, Conor Dooley wrote:
+>> On Tue, Mar 03, 2026 at 04:13:00PM +0100, Markus Schneider-Pargmann (TI)=
+ wrote:
+>> > Add names to the memory-region-names for easier idenfitication of memo=
+ry
+>> > regions.
+>> >=20
+>> > Signed-off-by: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
+>> > ---
+>> >  .../bindings/remoteproc/ti,k3-r5f-rproc.yaml          | 19 ++++++++++=
++++++++++
+>> >  1 file changed, 19 insertions(+)
+>> >=20
+>> > diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rp=
+roc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yam=
+l
+>> > index 6aadc61e20f9f4c27f5b9c87ab2025a02776c5de..76ef23afe8c9f7f155dfec=
+7fcabc7c60b8b286c6 100644
+>> > --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yam=
+l
+>> > +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yam=
+l
+>> > @@ -182,6 +182,25 @@ patternProperties:
+>> >            - description: DM RM/PM trace and firmware code/data
+>> >          additionalItems: true
+>> > =20
+>> > +      memory-region-names:
+>> > +        description: |
+>> > +          Optional names for the memory regions specified in the memo=
+ry-region
+>>=20
+>> Is this really optional? Shouldn't it be made mandatory so that it is
+>> easy to tell the difference between the two configurations?
+>
+> Actually, so that you can tell at all, since it looks like anything from
+> 2 to 8 regions is permitted (which this prop doesn't account for I guess,
+> only allowing 2 or 6 regions).
 
-Konrad
+Thanks for your feedback. I will fix both, make memory-region-names
+required and fix the inconsistency between both properties regarding
+what is allowed.
+
+Best
+Markus
+
+--9f27ca151f75da4521dca0ec3d004e6ed38b66748edd73afbb0ffdc24d2c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaag1whsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlMO
+BwEAlzDsVfiuqPCx/XTZv4wEd09mmQ8/q1n6TFL57MQ0VPsA/10oQtozFUWjofc9
+KhaPSSQMHdxnVfQ4MrQdxnV+d+EP
+=C3Zm
+-----END PGP SIGNATURE-----
+
+--9f27ca151f75da4521dca0ec3d004e6ed38b66748edd73afbb0ffdc24d2c--
