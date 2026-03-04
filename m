@@ -1,170 +1,239 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010024.outbound.protection.outlook.com [52.101.61.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1748132ED54;
-	Wed,  4 Mar 2026 15:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772636983; cv=fail; b=Guc0+rmARjPfQMaee880dhZnhc3O1ZKGveNzt2L3YNHB4gRMlWMOaOlEOkQSQLR/vfWTijh8YO5qkF5z0apUPIY3FIx/ZIWhYamMBTFESfsMWsU+SbWaWb4VvzEeH9imEO3fiml5bIML7QXDRJ5z7vvr7VUySEfXlj+IM+O2kwA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772636983; c=relaxed/simple;
-	bh=PpGRt1Lh4wzch+c9M46W4RYLkZmmkbKPwdEj/2q6VA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZxU/Yd9T70qv6zM563g0QE9FDXHe5MDTbMkX8pEeDXX4183JOUDJgjwWxy018H0xffnPmXlYW7ctAypSVjw9N4Ig7lii2L/D0mOABAABex17aARNa7jACrBnh9BFdTdqkTQ8khXurxsKkPqHFjfK28CSEsor/CzfTA67PEcTT0M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Oh6ZRWBd; arc=fail smtp.client-ip=52.101.61.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED42F3D1CC3
+	for <linux-remoteproc@vger.kernel.org>; Wed,  4 Mar 2026 19:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1772652264; cv=none; b=L6yZqlmLkk5wg6c1jM87/Lap/Vo23Nh7Q/d/W/RDIlccNzIjYvPEsVf2rz8/F62DRwU/5jDKkmmQ38GnzyOFzliiRXC08iLq8dLgXBwb3Hf9A0oCM89Dcfji0VwFygZ1bnKT6eiS4YJ/ypxvBj6D3Ca5raDdEzshflL+xOl/qBM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1772652264; c=relaxed/simple;
+	bh=Jz94D8EaFkOhoL0aUNwiiImmgaQzQhtaZnhY+XaHLw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=neaX6Ie9JBzo5yRrWrisxY9e/1zI15qKU6Sbtcf7A+Wg/06rPip8t36iZrzsCwPMk4g5nFNIWtBba0vd26BEFi2EnhIrSdx07DXY8YftdlqxiYMJFSW7dFlt5MQQOHpr0Tcjqh0jrF30BfBBPBugJWWe372hdEYVogT8VspcVNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCh7Fhi1; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Oh6ZRWBd"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oKL+nioYJ4U+odRikddnN5Stg4Zaanijevi+PMTlyt0Yh1E7VHvBVLZjAGDElmFCONv2y7/lpOENiVOKD/wPd083Anjjg/tn0V8znim7eJ+2GcuXHz+H8x4zKlb2nstBbB/Qm/i5p5EvrwsVoA50mSe6BvvC0ryXvDkgNi1CNDB6AqsdiJwFfzgmPll8atO8Ass9sPFxLJI+M3MpgBjtBKepN+oXDfUeSt1FDOsgNCa54gml5QP8XP/0kuB5g6tFKvomhwzViuu65XPfVNClOh+lyQD4cJrQYzRbg0gNreBjnVft+v/gekzyoizQjK3VZ/38Q3M4qXQy3AayZO7Okw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v53kShnlc2StxvzL17mkso6zI5Tsg84giXBvYT6j2h0=;
- b=oBoxff163uYpCej0Ipi/P372u2IkkJln72Xu30j4oSVACVoCmxT/mnlCxcsH9bpI9dL9m5DyHhJ6CslPqGqkiZcHulULHW9VnrL2mst8XfJ2R0lCr64npVM5//OXl60zdmYrMD4o4gUug2TN4mYlHVbOr6etg47oRC1mWfboJOzPlqbNbPXJeTEQfHANbceqq3b5L9VFWNGsMGpfN9WOa1DWbRk+Ojbw7w0/Z6WY0wqVIPhwFoWccp6Vr8acL3SmpiMHwPeHrjVAa61Io3lmu0MVoUqESYLND2D510bUkVDW2HwnB6oKQwv/FA6cFa2kIWt9nOh6Cz8hFJGAs1FirA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v53kShnlc2StxvzL17mkso6zI5Tsg84giXBvYT6j2h0=;
- b=Oh6ZRWBdPH6J7FRs0/zawPZV98+ZtdHZ6NRssHURpI/kC8ylDhyZKh7RN+xEpwdd0mDcVYZyzgd9bEl7bu8fKAYyDIrGU0aauT1W2Cw6giSxSz/NhNkfAyfN1l3+eR3G3Sj+4jTCiJgTOUpiIBqyeTSXxyyuRgHxLuerNBlvUQM=
-Received: from SJ0PR13CA0011.namprd13.prod.outlook.com (2603:10b6:a03:2c0::16)
- by PH0PR12MB8174.namprd12.prod.outlook.com (2603:10b6:510:298::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Wed, 4 Mar
- 2026 15:09:31 +0000
-Received: from MWH0EPF000C6188.namprd02.prod.outlook.com
- (2603:10b6:a03:2c0:cafe::1b) by SJ0PR13CA0011.outlook.office365.com
- (2603:10b6:a03:2c0::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.20 via Frontend Transport; Wed,
- 4 Mar 2026 15:09:30 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- MWH0EPF000C6188.mail.protection.outlook.com (10.167.249.120) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9678.18 via Frontend Transport; Wed, 4 Mar 2026 15:09:29 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 4 Mar
- 2026 09:09:29 -0600
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 4 Mar
- 2026 09:09:29 -0600
-Received: from [10.31.206.142] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 4 Mar 2026 09:09:28 -0600
-Message-ID: <6fd87385-1b8b-4b1e-b27f-b06f81096b23@amd.com>
-Date: Wed, 4 Mar 2026 09:09:28 -0600
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCh7Fhi1"
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7d18f80b5c2so5515462a34.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 04 Mar 2026 11:24:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1772652261; x=1773257061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DxNST9zow/AHVZatDVFxrIoYusqakUqirmlL5pR85cE=;
+        b=QCh7Fhi1I8W4lydCGn6tWTDJaUiukX4M+bmfFPIDsRR3fWioRBrcNoeEBlo1/cuiVr
+         M3hw5zPEsbS2ci4mV928yVaM7B26kVlbakIjoAY/e3lkNdIhfP3zl/RkMMoyVUpo08yw
+         7oT0FzTjKfYCTalQd+iG8sCM33dTS6iQNvdmLUfb9HNjCY/3Vesmq+eHemh28JiOoJI8
+         z+Ec/lOgrFznZTLypnzcrDsPu7Vr4VfZOihvWys1Up9i8iHneJWdaBtIS0lyoFkwKAdt
+         80VDHTJ+z+L4ignyR/PAi9u6RrgWVaNIYW65FDqn7jQ1Njywfu92Sz2/LHFrE+nQ6Q9s
+         pC/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772652261; x=1773257061;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DxNST9zow/AHVZatDVFxrIoYusqakUqirmlL5pR85cE=;
+        b=WEV4th+s51JU3xnP5EU5viCqL9UL6oK3ljbgzMHHJLodmz48K/47IB66Ny/Xi69rgs
+         o8E780o1uohZ3cKD9dQCrKq2IX6WYxOEYRV8ijA2ABqRCMKBruDHPWBeRei0JrumyJp+
+         c/FGie1/gPB0D5lCZLr8ke/ReIkJx/UmAPuUhZYTHdPa+O7nBLVgr/wjet7d2GkxayJv
+         /YDm53FaWtJpPGyDi/WrEHGGJZzIwxEIhIA+poFIAwLfKzFGJCe/HYVuy4Moa8OFhHYT
+         cXEkbt+qzRHyRE5LPOHuOtWfSpQjE+v6/h61jei/oh5rUg/0xlq1rEZeUbA6yLO1PV6h
+         4Lyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRaHHXNvTz53y2+8RvZ1feEXfB1dQTAPIDNrhDOfykvxTnouaV6EmUtnkHHtPTuhOsfYBlVgnztlsqwNNtxXaL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA10pyTUDENMZ9X42BwXTL0nJNNmzmUihwEDt63m9axiECa2ij
+	ThjUJoc5KffMzTNsUohuwEyJL9hnzML+WKQH3QaraCBFKqebICeL9ofX
+X-Gm-Gg: ATEYQzygKH/U8ziBbDsdB8HQX5JYF/H+o1h7Q3q/OAaVvBDfmVk1ICj3kVEsHUR+kJ1
+	/Ity+b+IFa8lMkKzNfrjMIEtbwqVWUudXc6oD81cB5/MEYgaZja2l4eG//aQWKUSCqGfvmrIRu3
+	cXp2pMjNKCfTfkykNbrGzYjLGgOwBYQa6uiuoiKhlr9up3lnWmY9FnKxY9e+eLI/E4ok7fdDkz1
+	MLz98Mybo8uu4kf/9aent/y82mrwFXtRri6xmU/nEBB3rEQRsoDEDT5ztLVaF2ZLuC8GbWKBqE9
+	LqaJ5k8QXP+afeIRqqeWNWMwVObMiV3NJ06FVH+U3yXZoX3SjP/Vdhl4EzWRyZY+PmAqNdE1cT4
+	taUtoGRy6Xp1v3IlMtOVZIh4f7xIC0rJXK1aLvkbbyC6NiNMQa8LBvfxYsmqv0cx1qQc2uRhfXK
+	EZgjCkzZB0Nwx2ZifDNPpOd5Mreg0VQ/3Fs55XWv7XdBK3JmpjoQ0JdAHwJUphM+IZC2IL8gjTW
+	O6iQcHEeeG06aeeC4V8uctyYJsP3vwcrpkqKNWxyg==
+X-Received: by 2002:a05:6820:1ca4:b0:674:2eda:cbe7 with SMTP id 006d021491bc7-67b17764b28mr1697480eaf.52.1772652260810;
+        Wed, 04 Mar 2026 11:24:20 -0800 (PST)
+Received: from framework.misc.iastate.edu ([2610:130:110:25d:5b2b:e942:c11b:ed62])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-679f2d85297sm13294165eaf.11.2026.03.04.11.24.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Mar 2026 11:24:20 -0800 (PST)
+From: Kerigan Creighton <kerigancreighton@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: loic.poulain@oss.qualcomm.com,
+	wcn36xx@lists.infradead.org,
+	andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kerigan Creighton <kerigancreighton@gmail.com>
+Subject: [PATCH 1/3] wifi: wcn36xx: add support for WCN3610
+Date: Wed,  4 Mar 2026 13:24:07 -0600
+Message-ID: <20260304192409.927562-1-kerigancreighton@gmail.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH] mailbox: add API to query available TX queue slots
-To: Bjorn Andersson <andersson@kernel.org>, Jassi Brar
-	<jassisinghbrar@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-	<tanmay.shah@amd.com>, <mathieu.poirier@linaro.org>
-References: <20260209234430.512492-1-jassisinghbrar@gmail.com>
- <jo4kugxook5b6fl7ifh3nuznehotkyqwnrgwq3olank7cvzhmj@hj5ibm3bbsln>
- <CABb+yY2vzczJ8ODc22P4hCDn1=epki9aXgJCySumeADBuHgaKg@mail.gmail.com>
- <nelghqxyuwelah3op6ls6pflm5ujwayfzuchode44vjmagymmv@ptisap64ewkl>
-Content-Language: en-US
-From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <nelghqxyuwelah3op6ls6pflm5ujwayfzuchode44vjmagymmv@ptisap64ewkl>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000C6188:EE_|PH0PR12MB8174:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89fb2299-fa44-4d0a-94f7-08de7a0008e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|82310400026|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	cwdHgag2qcBOY/3yehy/FCFdQbNkcHbiwSecDr9vqz4uWUNcYjI06m8BEDMm3b09y0sTVPHTPA8pyviebBrw0r53MxYbb75AOpnJbSozXRsLCDXgrZH3aTTsv4SDMOe1lOcGcj/Icqg4QpCxOz4U227MnFlqJyddih4eqK2ZtoXFNta3E05b0K3btnx1YE+hVa/KqAMRUyjywDXPF+d0Vct9krYtLbgfWO5i89llkKsOj8aTaU+FLlChzGsWs1D6K+x0NcFwRn/1nP2DHIYEEEGNMBstaNzNHUdwymPLE/hpdYDtqELcpeIjfqv1kAJn/TArQvwO2mULKtibeRGDVjeqkCLlrYY9ms8+vUmzFmutq2T9OSbhe3mzJAir5N58nZEPJIrfmTHfE1eTsJF4wdmVukZw57IG1uIwqPbX5kPMFgQZWbOeczpQTx3JmvM36WlKo9UeZlp/yM/rIkoeXotmfZHGKa1yHAO+JyAoxFoqqhkP29wBgSf+7gtF+lJ9LEBgOzuDOgCkl+fbD3fFe9exW7oPo+R+I/tG5KK3zxg8vPkgoEW2TG7FT1Ef99Zj5aj60Zy6j7K1ZafOQ/5KggNtnkx1JSLdmK5RMeH6H6WWBjRcugVn8wTQfavRmCBIrD+3nkci1aQ7+XfTRFqGC3JCnmPYmOb/mdiPDlwnDbOT0qgSYJNc0Ywg/h8qu3curcXvGuvbNzq7TYqpgcRjmP9nYw0ETdD9BcNyzoviF7KpSVtkzjr4nhpqpGSxh8wOd8T1K5jrQM8w4cS5PadsHA==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	dZcUC7EW/ZwV0c56zJlfMUksElrKqXRtQyGwEiX/d1ZCM0O9ZGq2VtwjDR+zzYknukTwFqicQwLyGoveU9f6LEylacURErekiokvfzv20UG9AUGlDmy1Ivn4KIhmeKa7MuzRqABDJBtlYtgjszQ+nAV70m2h+t3/4ipmDRW+xvE2Y9XHmi74JTRD4CzQh0/eWheAVa5cM9iz8xMgQugrrjZ9azWcMyxgSxlyiJ21UVfH+NRNxKd715Ayot0FuX5nRq/2wty5vFKX/MHrOOnPmJ4F1v0lK6On8tAALcHLGHQeT5oOlNR856CZ6nrxhoPwy6lDWYTr+XuXIQmHs2sxZD3n+QoknpTSpp9nTooaVzbKUqO29WYQcil0BaXpIOWK3vFIjBTiDW7O/vM/CqhzcOPMn2qrc9WkwNGyuzku0N2O+2EU2I8uqX/QX3et8M8K
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2026 15:09:29.9970
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89fb2299-fa44-4d0a-94f7-08de7a0008e0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000C6188.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8174
 
+The WCN3610 is a 2.4GHz-only WLAN/BLE combo chip used in some
+cheaper Android and Windows phones such as the Lumia 550, and
+IoT devices like the Anki Vector robot. It shares a lot in
+common with the WCN3620.
 
+Tested on an Anki Vector 1.0 and 2.0 robot. Support for other
+WCN36xx chips has not been affected.
 
-On 2/26/2026 9:53 PM, Bjorn Andersson wrote:
-> On Mon, Feb 23, 2026 at 06:35:16PM -0600, Jassi Brar wrote:
->> On Mon, Feb 23, 2026 at 9:29 AM Bjorn Andersson <andersson@kernel.org> wrote:
->>>
->>> On Mon, Feb 09, 2026 at 05:44:30PM -0600, jassisinghbrar@gmail.com wrote:
->>>> From: Jassi Brar <jassisinghbrar@gmail.com>
->>>>
->>>> Clients sometimes need to know whether the mailbox TX queue has room
->>>> before posting a new message.
->>>
->>> This is rather vague, could you be more specific?
->>>
->>>> Rather than exposing internal queue state
->>>> through a struct field, provide a proper accessor function that returns
->>>> the number of available slots for a given channel.
->>>>
->>>> This lets clients choose to back off when the queue is full instead of
->>>> hitting the -ENOBUFS error path and the misleading "Try increasing
->>>> MBOX_TX_QUEUE_LEN" warning.
->>>>
->>>
->>> In the event that we're using the mailbox framework as a doorbell, I
->>> presume that the queue is full of duplicate rings already - so backing
->>> off it perfectly fine.
->>>
->>> But in the case where the client actually uses the interface to convey
->>> data, what is the expected way for the client to know when to make
->>> another attempt?
->>>
->> Whatever the client is currently using. It just backs off for another
->> such signal when mbox_chan_tx_slots_available() returns 0.
->> If a client submits periodically, it will back off for another period.
->> If a client submits upon receiving ack packet for last submission, it
->> will back off until it gets another ack packet.
->>
-> 
-> Thanks for clarifying.
-> 
+The WCN3610 requires specific BTC configuration values for
+stable Wi-Fi. Without these values, there's some packet loss.
+An extra CFG table was made so other chips are not affected.
 
-Hi Jassi,
+STA_POWERSAVE causes firmware bugs (long hangs) with the
+WCN3610, thus it has been disabled just for this chip.
 
-What is the next step for this patch? When it is expected to merge?
+Signed-off-by: Kerigan Creighton <kerigancreighton@gmail.com>
+---
+ drivers/net/wireless/ath/wcn36xx/main.c    |  4 +-
+ drivers/net/wireless/ath/wcn36xx/smd.c     | 70 +++++++++++++++++++++-
+ drivers/net/wireless/ath/wcn36xx/wcn36xx.h |  1 +
+ 3 files changed, 73 insertions(+), 2 deletions(-)
 
-
-Thank You,
-Tanmay
-
-> Regards,
-> Bjorn
-> 
->> Cheers!
->> Jassi
+diff --git a/drivers/net/wireless/ath/wcn36xx/main.c b/drivers/net/wireless/ath/wcn36xx/main.c
+index c3f0860873..6c90c13251 100644
+--- a/drivers/net/wireless/ath/wcn36xx/main.c
++++ b/drivers/net/wireless/ath/wcn36xx/main.c
+@@ -1438,7 +1438,7 @@ static int wcn36xx_init_ieee80211(struct wcn36xx *wcn)
+ 		BIT(NL80211_IFTYPE_MESH_POINT);
+ 
+ 	wcn->hw->wiphy->bands[NL80211_BAND_2GHZ] = &wcn_band_2ghz;
+-	if (wcn->rf_id != RF_IRIS_WCN3620)
++	if (wcn->rf_id != RF_IRIS_WCN3620 && wcn->rf_id != RF_IRIS_WCN3610)
+ 		wcn->hw->wiphy->bands[NL80211_BAND_5GHZ] = &wcn_band_5ghz;
+ 
+ 	if (wcn->rf_id == RF_IRIS_WCN3680)
+@@ -1535,6 +1535,8 @@ static int wcn36xx_platform_get_resources(struct wcn36xx *wcn,
+ 	/* External RF module */
+ 	iris_node = of_get_child_by_name(mmio_node, "iris");
+ 	if (iris_node) {
++		if (of_device_is_compatible(iris_node, "qcom,wcn3610"))
++			wcn->rf_id = RF_IRIS_WCN3610;
+ 		if (of_device_is_compatible(iris_node, "qcom,wcn3620"))
+ 			wcn->rf_id = RF_IRIS_WCN3620;
+ 		if (of_device_is_compatible(iris_node, "qcom,wcn3660") ||
+diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
+index 813553edcb..7352c73f32 100644
+--- a/drivers/net/wireless/ath/wcn36xx/smd.c
++++ b/drivers/net/wireless/ath/wcn36xx/smd.c
+@@ -83,6 +83,70 @@ static struct wcn36xx_cfg_val wcn36xx_cfg_vals[] = {
+ 	WCN36XX_CFG_VAL(LINK_FAIL_TX_CNT, 1000),
+ };
+ 
++static struct wcn36xx_cfg_val wcn3610_cfg_vals[] = {
++	WCN36XX_CFG_VAL(CURRENT_TX_ANTENNA, 1),
++	WCN36XX_CFG_VAL(CURRENT_RX_ANTENNA, 1),
++	WCN36XX_CFG_VAL(LOW_GAIN_OVERRIDE, 0),
++	WCN36XX_CFG_VAL(POWER_STATE_PER_CHAIN, 785),
++	WCN36XX_CFG_VAL(CAL_PERIOD, 5),
++	WCN36XX_CFG_VAL(CAL_CONTROL, 1),
++	WCN36XX_CFG_VAL(PROXIMITY, 0),
++	WCN36XX_CFG_VAL(NETWORK_DENSITY, 3),
++	WCN36XX_CFG_VAL(MAX_MEDIUM_TIME, 6000),
++	WCN36XX_CFG_VAL(MAX_MPDUS_IN_AMPDU, 64),
++	WCN36XX_CFG_VAL(RTS_THRESHOLD, 2347),
++	WCN36XX_CFG_VAL(SHORT_RETRY_LIMIT, 15),
++	WCN36XX_CFG_VAL(LONG_RETRY_LIMIT, 15),
++	WCN36XX_CFG_VAL(FRAGMENTATION_THRESHOLD, 8000),
++	WCN36XX_CFG_VAL(DYNAMIC_THRESHOLD_ZERO, 5),
++	WCN36XX_CFG_VAL(DYNAMIC_THRESHOLD_ONE, 10),
++	WCN36XX_CFG_VAL(DYNAMIC_THRESHOLD_TWO, 15),
++	WCN36XX_CFG_VAL(FIXED_RATE, 0),
++	WCN36XX_CFG_VAL(RETRYRATE_POLICY, 4),
++	WCN36XX_CFG_VAL(RETRYRATE_SECONDARY, 131),
++	WCN36XX_CFG_VAL(RETRYRATE_TERTIARY, 129),
++	WCN36XX_CFG_VAL(FORCE_POLICY_PROTECTION, 5),
++	WCN36XX_CFG_VAL(FIXED_RATE_MULTICAST_24GHZ, 1),
++	WCN36XX_CFG_VAL(FIXED_RATE_MULTICAST_5GHZ, 5),
++	WCN36XX_CFG_VAL(DEFAULT_RATE_INDEX_5GHZ, 5),
++	WCN36XX_CFG_VAL(DEFAULT_RATE_INDEX_24GHZ, 6),
++	WCN36XX_CFG_VAL(MAX_BA_SESSIONS, 40),
++	WCN36XX_CFG_VAL(PS_DATA_INACTIVITY_TIMEOUT, 200),
++	WCN36XX_CFG_VAL(PS_ENABLE_BCN_FILTER, 1),
++	WCN36XX_CFG_VAL(PS_ENABLE_RSSI_MONITOR, 1),
++	WCN36XX_CFG_VAL(NUM_BEACON_PER_RSSI_AVERAGE, 20),
++	WCN36XX_CFG_VAL(STATS_PERIOD, 10),
++	WCN36XX_CFG_VAL(CFP_MAX_DURATION, 30000),
++	WCN36XX_CFG_VAL(FRAME_TRANS_ENABLED, 0),
++	WCN36XX_CFG_VAL(BA_THRESHOLD_HIGH, 128),
++	WCN36XX_CFG_VAL(MAX_BA_BUFFERS, 2560),
++	WCN36XX_CFG_VAL(DYNAMIC_PS_POLL_VALUE, 0),
++	WCN36XX_CFG_VAL(TX_PWR_CTRL_ENABLE, 1),
++	WCN36XX_CFG_VAL(ENABLE_CLOSE_LOOP, 1),
++	WCN36XX_CFG_VAL(ENABLE_LPWR_IMG_TRANSITION, 0),
++	/*
++	 * BTC_EXECUTION_MODE
++	 * 0: SMART_COEX
++	 * 1: WLAN_ONLY
++	 * 2: PTA_ONLY
++	 * 3: SMART_MAX_WLAN
++	 * 4: SMART_MAX_BT
++	 * 5: SMART_BT_A2DP
++	 */
++	WCN36XX_CFG_VAL(BTC_EXECUTION_MODE, 2),
++	WCN36XX_CFG_VAL(BTC_STATIC_OPP_WLAN_ACTIVE_WLAN_LEN, 90000),
++	WCN36XX_CFG_VAL(BTC_STATIC_OPP_WLAN_ACTIVE_BT_LEN, 60000),
++	WCN36XX_CFG_VAL(BTC_STATIC_OPP_WLAN_IDLE_WLAN_LEN, 30000),
++	WCN36XX_CFG_VAL(BTC_STATIC_OPP_WLAN_IDLE_BT_LEN, 120000),
++	WCN36XX_CFG_VAL(BTC_FAST_WLAN_CONN_PREF, 1),
++	WCN36XX_CFG_VAL(BTC_STATIC_LEN_LE_BT, 120000),
++	WCN36XX_CFG_VAL(BTC_STATIC_LEN_LE_WLAN, 30000),
++	WCN36XX_CFG_VAL(MAX_ASSOC_LIMIT, 10),
++	WCN36XX_CFG_VAL(ENABLE_MCC_ADAPTIVE_SCHEDULER, 0),
++	WCN36XX_CFG_VAL(ENABLE_DYNAMIC_RA_START_RATE, 0), /* Let the firmware handle it */
++	WCN36XX_CFG_VAL(LINK_FAIL_TX_CNT, 1000),
++};
++
+ static struct wcn36xx_cfg_val wcn3680_cfg_vals[] = {
+ 	WCN36XX_CFG_VAL(CURRENT_TX_ANTENNA, 1),
+ 	WCN36XX_CFG_VAL(CURRENT_RX_ANTENNA, 1),
+@@ -632,6 +696,9 @@ int wcn36xx_smd_start(struct wcn36xx *wcn)
+ 	if (wcn->rf_id == RF_IRIS_WCN3680) {
+ 		cfg_vals = wcn3680_cfg_vals;
+ 		cfg_elements = ARRAY_SIZE(wcn3680_cfg_vals);
++	} else if (wcn->rf_id == RF_IRIS_WCN3610) {
++		cfg_vals = wcn3610_cfg_vals;
++		cfg_elements = ARRAY_SIZE(wcn3610_cfg_vals);
+ 	} else {
+ 		cfg_vals = wcn36xx_cfg_vals;
+ 		cfg_elements = ARRAY_SIZE(wcn36xx_cfg_vals);
+@@ -2380,7 +2447,8 @@ int wcn36xx_smd_feature_caps_exchange(struct wcn36xx *wcn)
+ 	mutex_lock(&wcn->hal_mutex);
+ 	INIT_HAL_MSG(msg_body, WCN36XX_HAL_FEATURE_CAPS_EXCHANGE_REQ);
+ 
+-	wcn36xx_firmware_set_feat_caps(msg_body.feat_caps, STA_POWERSAVE);
++	if (wcn->rf_id != RF_IRIS_WCN3610)
++		wcn36xx_firmware_set_feat_caps(msg_body.feat_caps, STA_POWERSAVE);
+ 	if (wcn->rf_id == RF_IRIS_WCN3680) {
+ 		wcn36xx_firmware_set_feat_caps(msg_body.feat_caps, DOT11AC);
+ 		wcn36xx_firmware_set_feat_caps(msg_body.feat_caps, WLAN_CH144);
+diff --git a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+index 7ee79593cd..cb409d48f7 100644
+--- a/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
++++ b/drivers/net/wireless/ath/wcn36xx/wcn36xx.h
+@@ -96,6 +96,7 @@ enum wcn36xx_ampdu_state {
+ #define WCN36XX_MAX_POWER(__wcn) (__wcn->hw->conf.chandef.chan->max_power)
+ 
+ #define RF_UNKNOWN	0x0000
++#define RF_IRIS_WCN3610	0x3610
+ #define RF_IRIS_WCN3620	0x3620
+ #define RF_IRIS_WCN3660	0x3660
+ #define RF_IRIS_WCN3680	0x3680
+-- 
+2.53.0
 
