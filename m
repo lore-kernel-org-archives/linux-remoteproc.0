@@ -1,374 +1,222 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013069.outbound.protection.outlook.com [52.101.83.69])
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azhn15010054.outbound.protection.outlook.com [52.102.136.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799513C2786;
-	Thu,  5 Mar 2026 15:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763B417BA6;
+	Thu,  5 Mar 2026 15:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.136.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772725017; cv=fail; b=udQmpUNGb1/XmCFG2ZLSr0JNOI3asR6wgm2fCeLQxtp6xt+Zk2M7GTZ8KeLlkevQL4IQNA8nd+6+ngDIIwpIFuxlR5saDELx8bI/MusdTz4CipbHmB6vlAG0ohsoveKy9m61c5YIMVC6Rh6vKthgHNBddrLpY2X9N7ludq1/7pw=
+	t=1772726006; cv=fail; b=ScpVBpuBfO8Z7XLFGQlNVLdYZHlqZMWp433lwhlLovSMpGM3t5H3AAYvEnRH6HI6Y0Y9qNMcvF3ugACoQZaDsprfTSChyIBGxM9MDnkLvhu6xUCIWKHa/4eptchP74vTURMhqUBiJRZChmFJrZGvwgtVbv/udrSNNBOHA+C2084=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772725017; c=relaxed/simple;
-	bh=WOTZbMJjw1i7YGgJjxM0t/VVuCVVl2WWGMyYeuxGzG0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=vGl2/a7X9r0SxL7XeYwALWVnIVpMxNbT1fsPHU2lkD/ILgHRAMoXzktnJQUwWqE0mpmvX032VGgXjx/alArVmzM9vH7sbaHsfcOlPNJJCO7qNGd4bl/TpxXwS8qA3ssfnQH8KtK6WQxEY2G+Bg60w0C9oaSHW/7GPEATBuGU/7w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=pvGfxYX7; arc=fail smtp.client-ip=52.101.83.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1772726006; c=relaxed/simple;
+	bh=4CU6pj1Pdx9dFWWZih4uLUYlVQ4b5yH5sFtB+BbuCKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r9neZKE6GacpCW1ZZxI0KR9QbATfit3qO3M9tKXow59FQfh6BVeY5/+6HsNXrWPersRT21kmzA4aZoCbqZuc58+mKcGgtIO37ay5SnPVH+gU5g2alO+s3iX7JVJCc+GhipMUqZjad8ho+HP6eUzjE/DaDlJ/6/lDykE9lupJdLE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R3ZLuUf1; arc=fail smtp.client-ip=52.102.136.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="pvGfxYX7"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R3ZLuUf1"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jBwxKc4yVhw5XQCaDiBUoOAGWvU1jpSEegdBBoD0LmlYnsQfbCaam96lXVeQhVuMk/P2NLMEapFUKj+OajKgs+UFgMtSNEz9l649UfBCvGb2FGpdXcvYDjTsM84OrsAsA+sVXER6jNh2KVSBU+a4d0e080RolvfRVSIUPoyIr3zwuFvJYnHOiF3kxg2bbC0kTVhvNDf2HXutQVwi1tICSrjlBVvGKuZbGilARs5fmLqW1OExAmgmK5V3Pvrz/AjyI347oYYhQRvm9/s1qddeqgdVKSSn+R+tIx0khD8M5/MiIUyQhyR8Q4Voz/4Xm45oczRpFCWG64+uvFBij00RMw==
+ b=a1Bmw1vKquT3VjRpzPjkpN6gHPOxBx8IFBwu/C386sYhEcbK5K+BbCdjQFks7mcvi00pVi6EUFoxREsUo/onwSMDbDw6ND7+CSol+iFLVwA3faIKMQCCLRfrEeTBUptuRFi9k4ibmQ9LYEkNms7qnbqkC+mWc8L1yxl5R7AK3wA106btjLts7eJ3jicyOq1tIfkAM4jCRaTCrJJS+p1/5pUx/jweMv7Lurcwv1iWopYRyMP9rxXRUOfPsXzBIVzKIDbJ80qPHkuS70D9IqE8ORW6eqe+u/84uADiFdL/C4j1ZbWcxmUZjOUxzT/hzWRDts+EGT486adHuTP6vYLDIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7FLnrjtHtkTm3gDsK9QSPnZhS2xt8dN4MonrCmPC1yc=;
- b=N+9sFecMhaPlvT6f23NvaUZFLt4/TD1r6QLFmrtjAYG2iHlzOlY4GGrQKw7q7+YjKEk1w2XQmyLorwu9NJITR5HeXtibHpNLWTuD2EzYktxarsYljfsj61Lg/5Xgv9yxLfjhLDc34Nv73Q56nbftA4+aUEGghkjlsNWPookJjQHPcp04fSGr0hGn/LWVditLjA8DkW6znBxiTQW9bdPzS7OC3Gck6MGbDB1KLpcU/Gj9RLhQ/N04raYBu1j1QBQ/gtFNPO3snkyF8QDhzg0xCPAp9kQ4hGjmLfdLdRoC5OE7hcGbI97YeBBswIMbvSXGJ3z80RdeZBURcNCPa2q+uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
+ bh=kw2aixUH/tbZ9jCj1bflRepifdxlK0lsktfGzQGgb8k=;
+ b=FUOBUKn9Ll/P/FPBH0fex0m+XTBHFFSIUCRYjybVD0rTZBw1CQdFpGm6Rx86oF6XLIyowmN1JjS4TgaQuBBH+A3rV8DW9xjc+i8B3MHKPTODMDC+uve46PdTUOSzvYEFrofImIbwLeWdS/sbAcQcaR5rES62K4HnhFLNfXxnBKPFCWGQVt6no7I5x2pb/CX5aRFlkYrdpryIVc/+IqjQR1Ijg1zkG6A83k/F92an7mrAiPAP1uUaVmeTMk6ucuMS/6p6PfzYIrDlREkV/N+hHFfK37aRik1wQ3aI8VgfZE6XA3qzeGikNLValo5xuCKStfU8VU9/CaDYN6/0uRWmfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7FLnrjtHtkTm3gDsK9QSPnZhS2xt8dN4MonrCmPC1yc=;
- b=pvGfxYX7sdTwp5mmcRTnpeKQ5KjxBFPP6w/VAB7hZI7k1qGg3nI6a3ap+kmq0FZ6Kj016XqF3QUm9tw8ctSJtmTRnkEh4J/lsCT+8z6T/3KM4pEtoE3VIbC8WvJ8b/Lx9UixP5GVqlkkL7D5I+3XXrqquW5SDn73C2TtEhz4w5mzghv4ewwpvfoqzprTuj7nFM2/igIlgax1hYyU7xbksSter4DY2okbskO517af1+ewj0ekCC1c+L+di3q6bwEIXwu7RpIhb6i6rfqxeDPPBMKgNXzrEbj19dYD5of0wktFzF3CWrG4oe/ZyBIMMhn2j2gQt1NpYq+GfhX1tqPy4A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::13)
- by DU4PR04MB10624.eurprd04.prod.outlook.com (2603:10a6:10:592::6) with
+ bh=kw2aixUH/tbZ9jCj1bflRepifdxlK0lsktfGzQGgb8k=;
+ b=R3ZLuUf1ZzqUynMhcFJ7IxDVuE9cyRoDScGafBGdSQIW8wKbkKpA8OYqscAzQuivtUA+BCzUkMGqA+/hrcSJJp7zwT0cCRMFk2x2X+/QIfCEqMIwnr24RzPNDNkl4VI6JFvUhH1ZYParhgA78rcNeS0Xks3o43ZceyIuBTzdgok=
+Received: from BN1PR12CA0026.namprd12.prod.outlook.com (2603:10b6:408:e1::31)
+ by SJ0PR10MB4511.namprd10.prod.outlook.com (2603:10b6:a03:2de::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Thu, 5 Mar
- 2026 15:36:51 +0000
-Received: from AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::e99:f504:ce75:9bed]) by AS8PR04MB8247.eurprd04.prod.outlook.com
- ([fe80::e99:f504:ce75:9bed%3]) with mapi id 15.20.9678.017; Thu, 5 Mar 2026
- 15:36:51 +0000
-Message-ID: <7f66aa76-394f-4478-88a0-f2dbf3a19d45@oss.nxp.com>
-Date: Thu, 5 Mar 2026 17:39:47 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-To: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
- Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, arnaud.pouliquen@foss.st.com
-Cc: Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
- devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-References: <20260304211808.1437846-1-shenwei.wang@nxp.com>
- <20260304211808.1437846-2-shenwei.wang@nxp.com>
-Content-Language: en-US
-From: Daniel Baluta <daniel.baluta@oss.nxp.com>
-In-Reply-To: <20260304211808.1437846-2-shenwei.wang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS4P195CA0003.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:5e2::9) To AS8PR04MB8247.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.17; Thu, 5 Mar
+ 2026 15:53:22 +0000
+Received: from BN1PEPF00004680.namprd03.prod.outlook.com
+ (2603:10b6:408:e1:cafe::29) by BN1PR12CA0026.outlook.office365.com
+ (2603:10b6:408:e1::31) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9654.23 via Frontend Transport; Thu,
+ 5 Mar 2026 15:52:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ BN1PEPF00004680.mail.protection.outlook.com (10.167.243.85) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9678.18 via Frontend Transport; Thu, 5 Mar 2026 15:53:20 +0000
+Received: from DFLE208.ent.ti.com (10.64.6.66) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 5 Mar
+ 2026 09:52:50 -0600
+Received: from DFLE206.ent.ti.com (10.64.6.64) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 5 Mar
+ 2026 09:52:47 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE206.ent.ti.com
+ (10.64.6.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 5 Mar 2026 09:52:47 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 625FqkZb2607208;
+	Thu, 5 Mar 2026 09:52:46 -0600
+Message-ID: <2d852f07-0bd9-4076-b0dd-93425ed237f4@ti.com>
+Date: Thu, 5 Mar 2026 09:52:46 -0600
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ti: sci: Drop fake 'const' on handle pointer
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Nishanth Menon
+	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>, "Vinod
+ Koul" <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Thomas Gleixner
+	<tglx@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Andersson
+	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+	"Philipp Zabel" <p.zabel@pengutronix.de>, Dave Gerlach <d-gerlach@ti.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC: <stable@vger.kernel.org>
+References: <20260223202426.566958-2-krzysztof.kozlowski@oss.qualcomm.com>
+ <195cc8dc-8642-481c-8bdd-f5409ab8f5b5@ti.com>
+ <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8247:EE_|DU4PR04MB10624:EE_
-X-MS-Office365-Filtering-Correlation-Id: a3128f45-65d8-406c-4848-08de7acd03ec
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004680:EE_|SJ0PR10MB4511:EE_
+X-MS-Office365-Filtering-Correlation-Id: faeade3c-2292-421e-a379-08de7acf5328
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|376014|366016|1800799024|921020;
+	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|34020700016|36860700016|921020|12100799066;
 X-Microsoft-Antispam-Message-Info:
-	tRWxib4ZZZrmDQ/WYK1Ev6MMoDDo512BbeE9FS5tP2l4GUFi1b0q1p4DcOjIEgoHL0iJqbRiUvCzBZ/CAEQD4Ca0he35nHx/mVXvcKf9jYpVy2PQ1b7JnrFRaBWPtE9Jp2/eUNYlF98m7S69yyUWZTyEec+CeN2ZWCbKnMvOfKN/Nng57O8sZxsTH/uxrKhxlUVl3c6jICkPj62LP69Z+3Yo+4ALmV8gu5MtWjKTS4GMQyq2Cl5TWsJ/PecR7jya2K+2jyDgbsisc7ro8Cb8fZ94+N1WqdH5ubhKAqT60viBfHmUcZCLIW77bpjxZjBkWR27EbO3a/xQPCfI15cOqxNTGDif7Qo1IrWd3o9D/U3OSrz17C1HxEJxh+BHzWC6wf1Ik/G1uzgfk5iubZLkyOLctyWAEwNzCvXs0LKF72QdJh9gsvkTP/md1jmiSyjAJyYetshntuV0qVlz4OEGai64K0/jK8T153mpxs+uEMaqQk7h+SUyldjMgn60yZhE5bSRUF//jlrnlUwKnR5ROqiXe9WmKCex9inZh+xvGMbjEGpM6ykjlUH3QD11YvxsAd252jSBjnX0Wmmi/VEB95R8RNupWBVGZ/0lLTerhNQ3OFvnUW7toYGr05AbJJ0HB6GExjT5fPqrFRl1eTCy+7iZH+YJaM1xX53c3V1bcpQFqv6vzDwVe6NU6//YYY9DEP9UjHoILWrYbfityXtzBy8U2faI2jp2Og0Eh0eHwD/lThm4Qk/4nDT7IMbnflvC8AlbJxTrWIDcMbIRLVri7g==
+	isAOi5PEPDP7ViXm6eoNCuTBE5jEstc33/p5kT6opN/amQuk1g1TuryGDR7zhJz7r8Tect/1heIGghmXwqvYB72ePI01jUAMTwRQQl0jIS8poNsHUI4/Nrav2bBKER3vrTW1bpREWrBYF44O2+LB4UaLo9jcHhQeUNpESzovOSYM7y+M86Ir9QCE5e5g4A3Rh0Neywe6AavTUOgJGfq8UN8uP8hk3ZX132a4AE7sxXuJN7otvy1gdtSR5oH8T9sJ7gLSNH+TZFxvEPwQ+hduUD0zLwa4vAB6gFbrQuwQ84TOJEN07Xwsmvlelshds/n0kNdycf2sx4IPGMHyuIm4uuK3aPUAW9ektWrzp08hVHgvvniuZeImDt9hmOHHLI/cKGqr/VXFdC3wNuTE5QqdB+wsZyVU22gZv/JKlkg14+J9kG3jfLQJ1Cfcg9igJIZC+F0H38jn454OP2UP6Q4g6R1sPXdaevHg0xjB2G4jDQoTcUl9ZyJdoTQcg81l2TqihppQIYixmPk/5IWf7vpyrYMSrXhNaqVKRXhOoxRI46+KcWLMjBGxePyxyua6Vs5jMWhpsglo30UuXlijDnxJ9TJTGIYnFRUyJN8cuRxlTutBdGi7PgJNJKH2fCdhanK+guVelKeCWiUHVvHTHHAa26dloKedsxBXPKVqrO/bMvA+216XCoSvSACxPjENWzacsaN+DowN/JHNczNP0Ixm9XYNWiTrmtL2aH+dVe46qL0lMwKhpvI4dqpJag/Ho7c8qHy/de1Ab0Y3jRtVpmq/k5bfcAWvOZw/uVoGWrasQooc1jODuCCY0wDUeuutZWGC
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8247.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(34020700016)(36860700016)(921020)(12100799066);DIR:OUT;SFP:1501;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TVBqNHBzaUs1NFZWRDN5MHhHVEEvdGEvY1RBd3RnVkh6am9mNlVuSDRZcjh3?=
- =?utf-8?B?M0xBcFlCdW5pV0pOZGdQa1NHejJTcjdhamZZSXB5QlZSYnp3NEZkOUxjVVlQ?=
- =?utf-8?B?eXZuRUEzK09PbklkblN2ZWpHdXBqN0xZMlVxRjRsN1EvYnpHOWFmZnRnRFZE?=
- =?utf-8?B?V2ZhelR0QzJEWmJnK2d4MW9jUkNNcDJuRFZVMFVubHhNc01uZWtuZGNUbTda?=
- =?utf-8?B?RytoR3g0LzQxNUROeXhzK1VxNnc3K2hsazNqR3FKSGlZbDlLQTlCWTc0dmZ3?=
- =?utf-8?B?NVFvektVUTN2VzJob1BVeTkwZjIvMStXdnhReTJlZklqeEFhRk1rWVNkOXhS?=
- =?utf-8?B?QTJXZFRkTGRPcy92d0NGTmVwY3NMcVU0YWdGL2Y4OWkvUHoxc0xQd3Y2eS95?=
- =?utf-8?B?TDdiOU9iaGdISmZQZzdGbi9wNUtacjhvdWJBTzFsbkNCUlcvR3o4dzB4OTlX?=
- =?utf-8?B?aTJvM2lnQWU4UGNTQ0gvMk1oWDdBYXJZTzhVc3FhTzJOc0RWS3o5ZDB3M0Zo?=
- =?utf-8?B?ZzNvMVVpK3pydTByYVU2enBrZzRzek9FOWh4ZWJRbXZITlMwYVQrVmpqT1lB?=
- =?utf-8?B?V1N6d1VVeFJsVjd3bERPdWJ4TjFoQlVWcGRwV3lmaWl2aWcreXlabVlxbUZl?=
- =?utf-8?B?UzAyODRDZ2d4RU40QXpmOUNHOFZNT2NJQ1A4cWJlL2VXb3M4Ny9ranVCcTgr?=
- =?utf-8?B?dHMySUszakFSZy9OcWFjeHdFU0Q1aGlOQW90dWR0ZFE2ZWdCNGN4UE5yTmFk?=
- =?utf-8?B?elBJRmxxZmJUdXlPakFCY0Z5YzA4RXA5bmpyZ1lIYksweXZkQi9UbmQvdHZP?=
- =?utf-8?B?MUN6MENLcHBpRnp5dEJlaFBONU5zMGdGQlRuS1pUOTlCVytGcmg2YUhGU1Vj?=
- =?utf-8?B?QWRnRWlNNkR3cWFqWGpBMmJQVER4MWo2aTNHWTFjaGRhYjJxLytqc0JWcDBu?=
- =?utf-8?B?TjRkdjlYK1NOVkhSK1dFOEtWL2FMaUtQMU9rRlE2UVpNVTlPOWNoNGpvT0Jk?=
- =?utf-8?B?SXRqR3Z4bVByTnFWb0tOVHVzSm82czdxL2tZWjdLT0laRVRCVSs3VXdKdVBn?=
- =?utf-8?B?NS9qanlhZXViYmw2QTlLdGRzVHluTXI4VHo4QmFiZFdDVHRBZnNxditOYjhC?=
- =?utf-8?B?ZzJiMWVzd0xQK0dwaUVVYVk0TjlvdWxTTEdiYlc2UzJwQndtMFYyNUxSVXht?=
- =?utf-8?B?RWdqZ0hzTDQvSzJhSUFldEdwUVE2dk9lQ2FkMENrTVFxQ2JQYWxqSWZmUnVH?=
- =?utf-8?B?emdqOHlpTDdhNis4UG9EWWp2YUhTeng0cytTMzR1N1dXejdYcnlyeW5zWHNa?=
- =?utf-8?B?TDE5aGxITmQ2SFdwNlNtM2NZVWlhQTE5dlkwdHkyTG12ME1OMlp6aVVVelN3?=
- =?utf-8?B?akludXdIbVRTV1RGOW9ZTE1WL3V1QlB5czNJTFhhRWdKb0w0TjJBcUNMeUlq?=
- =?utf-8?B?aEI4clV5dFF4NjFBSW5LSzNtQ0JjS3RJeTBqSXhkTmdvanRjTWdEaUNoSXpr?=
- =?utf-8?B?b3Y1eDZUMTVjTlBOTksrT0NaZGovaFRKYzQ2SlJuYXhVSFVtRGpZWmc5S2Fs?=
- =?utf-8?B?dk0zaEprZHlvZWRVa0JpNnVlb1JUWk1NRWk0bDduZXp5MW5hckM4L1NONGRv?=
- =?utf-8?B?L2w2WVpYUy9YbFpYc01NSHYraVdQNU12Zmttb0lMZWRvd2V4NE5EQ2diTHdU?=
- =?utf-8?B?NXR4S0ZxSDhUTVljNUZYUmFWdzdLdnZzQk9MbWIrUlBPQm9MOVMzUmE2aWh5?=
- =?utf-8?B?NE1Wa0pqMFFYTmhVUzJKTkVWMzNXQ0xOOFdKZHBsQTFrWW1wNnl3eks5ZnVm?=
- =?utf-8?B?dWZGcXRDc2taeEZSL0x3Y2R0VGs0a0pLa1JmaUtuQk02OE1EbE91ekwyVGZL?=
- =?utf-8?B?a2RVOHJXaG5NMnpBcnViZHZjRlpXajdFSmFjT1A2ZTZuSkNvT0xPcERYeVo5?=
- =?utf-8?B?dFp0bVp4ODJja0dCSUhvaGNYMEo3OXp3YVJJM0lBeXpXMUM4T0luU2lCbjhQ?=
- =?utf-8?B?SncwNStIVU9UY0NZTXlhV3R5VFk3Q2hsZDIzRVFsUXk4RFo5NUNmcjZYaGQv?=
- =?utf-8?B?WGxZczJ1aHVFL0VBVFRscS9CVUI4R0s0Tkx5aTFSNFBPWVpxRFM4ZmNjVTA4?=
- =?utf-8?B?dys0Qy9XNEU4NjZhM2RMRFlwWWVPV1BsL1loUmwrRWVRb3l5cFpiUVQ1eXJ1?=
- =?utf-8?B?dlRDZ2hrUXpVZTdCTFRyYXZTTkZocDhzVGpYZm1BSzNQb0d4eHUwc3ZxZGI4?=
- =?utf-8?B?dG10aG1DL1ljbUQ1aE5GYTNETU1GSzcrbGo2SGhNL0pHSE5BbjB6ZDJaeUlU?=
- =?utf-8?B?eUx1QVJ3alhINzlzMmsyb2t4MFE5K0dJczZDanZGeDc5bWp1Zkt2QT09?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3128f45-65d8-406c-4848-08de7acd03ec
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8247.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 15:36:51.2931
+	Z3YY2E7hUfuEY3JAhx3IxLufg9olywII8aAIQ6K358EATpEB9WQrFe0pQhaX8jfZUQ3arRFivRBtNAJiSWE9NFr9dzkI93+i5i/4qYNONy2FjgZRQAa2AxRJ1acUBN4XhOBv3hJqMyp6q7mQGseuK2MjG61R/Zd3aJr39ueS3AJQbXXUe05k24fWssjeiOhwzX777h+k/ayT79JlFBAM/ATnaFQHu/LPR5cJD/JXK9MfXweqTCOo5P30IOfD+rLEuKcjmZ7BSMeHNpLCupm8He57ageCYAwXSGzD9h53/UckDUZ76uyLOiqq6KE+d7Wih+Erfs/UrPAsms4i8qeJiBTxDLCtWF7iVcdLFSLWc7SIlOymvxAix8X0mMdxVPwQWMpSGUaPD8pWVi0Xmug0V6SXRYsjwErhERZ3tYa7KEsaIa1moAho6YxNXaNERcTj
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2026 15:53:20.3849
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q4Q87KxZHIw6hrUWApS9bAfxWthaLn5BelseZv+y2+XW+7bX763Jr3nc13RWEJlDB5f0KYvY+qTo3Ak2IbekPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10624
+X-MS-Exchange-CrossTenant-Network-Message-Id: faeade3c-2292-421e-a379-08de7acf5328
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004680.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4511
 
-On 3/4/26 23:18, Shenwei Wang wrote:
+On 3/5/26 8:59 AM, Krzysztof Kozlowski wrote:
+> On 02/03/2026 20:12, Andrew Davis wrote:
+>> On 2/23/26 2:24 PM, Krzysztof Kozlowski wrote:
+>>> All the functions operating on the 'handle' pointer are claiming it is a
+>>> pointer to const thus they should not modify the handle.  In fact that's
+>>> a false statement, because first thing these functions do is drop the
+>>> cast to const with container_of:
+>>>
+>>>     struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+>>>
+>>> And with such cast the handle is easily writable with simple:
+>>>
+>>>     info->handle.version.abi_major = 0;
+>>>
+>>
+>> The const is for all the consumers drivers of the handle. Those
+>> consumers cannot do the above becouse both handle_to_ti_sci_info()
+>> and struct ti_sci_info itself are only defined inside ti_sci.c.
+>>
+>>> The code is not correct logically, either, because functions like
+>>> ti_sci_get_handle() and ti_sci_put_handle() are meant to modify the
+>>> handle reference counting, thus they must modify the handle.
+>>
+>> The reference counting is handled outside of the ti_sci_handle struct,
+>> the contents of the handle are never modified after it is created.
+>>
+>> The const is only added by functions return a handle to consumers.
+>> We cannot return non-const to consumer drivers or then they would
+>> be able to modify the content without a compiler warning, which would
+>> be a real problem.
+> 
+> This is the same argument as making pointer to const the pointer freed
+> via kfree() (or free() in userspace). kfree() does not modify the
+> contents of the pointer, right? The same as getting putting handle does
+> not modify the handle...
+> 
 
+In that argument, if we wanted the consumer of the pointer to not free()
+it we would return a const pointer, free()'ing that would result in the
+warning we want (discards const qualifier).
 
-[...]
+If you could somehow malloc() from a const area in memory then free()
+doesn't modify the pointed to values, only the non-const record keeping
+which would be stored outside of the const memory. So even in this analogy
+there isn't a problem.
 
-> +GPIO RPMSG Protocol
-> +===================
-> +
-> +The GPIO RPMSG transport protocol is used for communication and interaction
-> +with GPIO controllers located on remote cores on the RPMSG bus.
-> +
-> +Message Format
-> +--------------
-> +
-> +The RPMSG message consists of a 6-byte packet with the following layout:
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   |type |cmd  |port |line |  data    |
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +- **Type (Message Type)**: The message type can be one of:
-> +
-> +  - 0: GPIO_RPMSG_SEND
-> +  - 1: GPIO_RPMSG_REPLY
-> +  - 2: GPIO_RPMSG_NOTIFY
+> The point is that storing the reference counter outside of handle does
+> not make the argument correct. Logically when you get a reference, you
+> increase the counter, so it is not a pointer to const. And the code
+> agrees, because you must drop the const.
+> 
 
-I think would make sense to display the type in hexa.  e.g : 0x00, 0x01, etc.
+The record keeping memory is not const and can be modified.
 
-Also, would it make sense to display the byte index as follows outside of the boxes?
-> +
-> +- **Cmd**: Command code, used for GPIO_RPMSG_SEND messages.
+And where do we drop the const? The outer "struct ti_sci_info" was never
+const to begin with, so no dropped const.
 
-Are there any specific commands? Also please either use upper-case first 
+If the issue is that the handle is not const inside that outer struct
+we could fix that,
 
-letter (e.g Type, Cmd) or lower-case letter (port, line) but do not mix them.
+struct ti_sci_info {
+...
+-	struct ti_sci_handle handle;
++	const struct ti_sci_handle handle;
+...
+};
 
+And with that change even your original commit message example issue
+goes away,
 
-> +
-> +- **line**: The GPIO line(pin) index of the port.
+struct ti_sci_info *info = handle_to_ti_sci_info(handle);
+info->handle.version.abi_major = 0;
 
-In message format line comes after port so switch the order here.
+would now fail to work to compile.
 
-> +
-> +- **port**: The GPIO port(bank) index.
-> +
-> +- **data**: See details in the command description below.
-> +
-> +- **reply err**: Error code from the remote core.
-> +
-> +  - 0: Success
-> +  - 1: General error (Early remote software only returns this unclassified error)
-> +  - 2: Not supported (A command is not supported by the remote firmware)
-> +  - 3: Resource not available (The resource is not allocated to Linux)
-> +  - 4: Resource busy (The resource is already in use)
-> +  - 5: Parameter error
+Andrew
 
-Is this part of the 6-byte packet? Are these standard errors or you defined them as is?
+> 
+>>
+>> Andrew
+>>
+>>> Modification here happens anyway, even if the reference counting is
+>>> stored in the container which the handle is part of.
+>>>
+>>> The code does not have actual visible bug, but incorrect 'const'
+>>> annotations could lead to incorrect compiler decisions.
+>>>
+> 
+> 
+> Please kindly trim the replies from unnecessary context. It makes it
+> much easier to find new content.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-> +
-> +
-> +GPIO Commands
-> +-------------
-> +
-> +Commands are specified in the **Cmd** field for **GPIO_RPMSG_SEND** (Type=0) messages.
-> +
-> +The SEND message is always sent from Linux to the remote firmware. Each
-> +SEND corresponds to a single REPLY message. The GPIO driver should
-
-Wouldn't be the other way around? Each REPLY corresponds to a single SEND msg?
-
-> +serialize messages and determine whether a REPLY message is required. If a
-> +REPLY message is expected but not received within the specified timeout
-> +period (currently 1 second in the Linux driver), the driver should return
-> +-ETIMEOUT.
-> +
-> +GET_DIRECTION (Cmd=2)
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 0   | 2   |port |line | 0   | 0  |
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 1   | 2   |port |line | err | dir|
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +- **err**: See above for definitions.
-> +
-> +- **dir**: Direction.
-> +
-> +  - 0: Output
-> +  - 1: Input
-> +
-> +SET_DIRECTION (Cmd=3)
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 0   | 3   |port |line | dir | 0  |
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +- **dir**: Direction.
-> +
-> +  - 0: None
-> +  - 1: Output
-> +  - 2: Input
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 1   | 3   |port |line | err | 0  |
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +- **err**: See above for definitions.
-> +
-> +
-> +GET_VALUE (Cmd=4)
-> +~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 0   | 4   |port |line | 0   | 0  |
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 1   | 4   |port |line | err | val|
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +- **err**: See above for definitions.
-> +
-> +- **val**: Direction.
-Why is direction High or Low? Or I'm missing something.
-> +
-> +  - 0: High
-> +  - 1: Low
-> +
-> +SET_VALUE (Cmd=5)
-> +~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 0   | 5   |port |line | val | 0  |
-> +   +-----+-----+-----+-----+-----+----+
-
-So when getting replies val is at index 5, but when sending requests val is at index 4. Wonder
-
-if we make this consistent? Or at least explain why did you choose this layout.
-
-> +
-> +- **val**: Output Level.
-> +
-> +  - 0: High
-> +  - 1: Low
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 1   | 5   |port |line | err | 0  |
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +- **err**: See above for definitions.
-> +
-> +SET_IRQ_TYPE (Cmd=6)
-
-Is there a cmd for gpio polarity?
-
-[...]
-> +
-> +NOTIFY_REPLY (Cmd=10)
-> +~~~~~~~~~~~~~~~~~~~~
-> +The reply message for the notification is optional. The remote firmware can
-> +implement it to simulate the interrupt acknowledgment behavior.
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +-----+-----+-----+-----+-----+----+
-> +   |0x00 |0x01 |0x02 |0x03 |0x04 |0x05|
-> +   | 0   | 10  |port |line |level| 0  |
-> +   +-----+-----+-----+-----+-----+----+
-> +
-> +- **line**: The GPIO line(pin) index of the port.
-> +- **port**: The GPIO port(bank) index.
-> +- **level**: GPIO line status.
-> +
-> +Notification Message
-> +--------------------
-> +
-> +Notifications are sent with **Type=2 (GPIO_RPMSG_NOTIFY)**:
-
-Here you should clarify who sends the notification messages.
-
-... Notifications are messages sent by the remote core and they have Type=0x02...
-
-
-[..]
