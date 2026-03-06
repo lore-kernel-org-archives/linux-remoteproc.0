@@ -1,114 +1,141 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9099A384231
-	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Mar 2026 14:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D423B8BB3
+	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Mar 2026 15:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772808979; cv=none; b=l9KZ8VRQCIGUDChuE9SzEKxbnMWl8uEkj5jYXHqJnbfMM4eZAnKjlB/zNj9b7a4ZWoaPCgFUt52xe+Xa8kViK6JnWr7RS5mEM/VkZDtLead+W0H4wx2BlpM39hpi/75p5r+OxJzQIw3hKYD5ZlhMk9etp938dh8JwYR9LxrK93o=
+	t=1772811613; cv=none; b=CibR/J/yPyYHu0fT6hn9bzIdXtIgGkqLDbCZFkFem3voP41oPzqC8bbUrhSWrVRc3fk2G/iU2Ax24TbnJUoIRiCwH2+TZsOSvozweTdgDFREh+QphVQ0e700Jr2gUhuGadnYyaQwnNP8ljokWZjBXC37GeWkTA0iWUCdmfq0df4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772808979; c=relaxed/simple;
-	bh=AttQkix3m08aHW46j0BnzSTtr0g+owRdurqQvIt3pbs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hIbKdpOsZWSgwxX8Pz92yxtPvrzzvALpG2V3D0mbVBlESICUmoLC6TDs/G8BWcKE/gza9oh2Iq+6e+nR8gC3+9F4h9C8C42wuz4Rriz3Uq8jbqMd+1proYzPzIbb3PhCCwDh0MhMPJLL9OxoY9+bmfgk4U+sK/huPon7Gy/UgQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IiZekF94; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bYZpXK4N; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1772811613; c=relaxed/simple;
+	bh=Bt9Qa0S7HuAqxfWE+5XT2Me1HGCFa+NbCGCJteZtnfs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o08SzAKu/2WAzGezCXZ6YNyxcrNzK9XxdJYUX5AFoqVHPbFlen0n4HAuEaDZ/2MwS5RV1V0rSmjr+b5rA5ITCBFZ3q/KLRQlIUV58rvEtNUjOATcbcUZR9iCW4ATyPH7sgiq+C5rezqBfaBvxAg8t7xmLDDGwNauJ9m8CJe0lMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W3mV1Ri4; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ShdBiLoF; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IiZekF94";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bYZpXK4N"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W3mV1Ri4";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ShdBiLoF"
 Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 626Batx24186262
-	for <linux-remoteproc@vger.kernel.org>; Fri, 6 Mar 2026 14:56:16 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 626FTlvN496296
+	for <linux-remoteproc@vger.kernel.org>; Fri, 6 Mar 2026 15:40:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=7SjdswPi7pCIktLLW0IOgccbJarmXU6/ZCw
-	04/NF+Ik=; b=IiZekF94KxSn8ffRR4/WZ+hIh246aVnajVZpfpPbWzUvPPcw/yZ
-	x40C5cSkYvShCiXf7xKY4RRvTs8dy8lns2/XS4nAvW1/Wj7RcQW2ZWcxWGrw9cKl
-	SRc5rcFsx71Ms3SZ7TobsrBnfkI9ku03dI/s2T3ZZdazSJ9LEu6iAE4WcNpRycqD
-	3uq3stggTUXg6daooqIXtd0I8x+UNLp3+cgPnF+Api22zLiQ4t5tbO8U+yYlGS1M
-	odWHD6MlV5UYq4MsqIGwvfd3qe0NtsKwkFVtRIX4E8kbgj7GIaACgY5TsJBMLOFv
-	1jMt/pDGkSHDyol1ZDoP0AzDIIJlGE88CWw==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cqruk9s8y-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wpH7c7MyE5oMPFius9rdgPXUx1Fgj3bT2b7iRgr/UYQ=; b=W3mV1Ri4C0Kr+8NY
+	z48jIL/Lo5XCeSg8j7D2tMGiz+BixeS5WwAv+77z6Xtmt3pR8njgOFeAZk6HFWcR
+	Oe0ZKlLov/jk7pnvYIKXwyH7MfJKbX0HuZ2GueDvAeOb6k9QaQmPqWmOKdAR59pn
+	xQjhDSAc5fiGNCDUU7FsPAQh5WM+mj27lJKEClXszb72kWsUAoqrv4mtMbX+Efv/
+	m17Hp96OLfYiwK9tX1eSetYWiKUrZXXbobABTIeAuNZmIx4touC45LQCSaHPVUyp
+	yRgXXe4KghrLLTAyBzGs+Hpwb/FHWFSoJ1U6gIwIWeqQFSbJtg7+w8atgfY78i8S
+	x/xrPg==
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cqruk9xr1-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 06 Mar 2026 14:56:16 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-2be27d4e3e5so21144374eec.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Mar 2026 06:56:16 -0800 (PST)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 06 Mar 2026 15:40:10 +0000 (GMT)
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-2bda35eab74so2922360eec.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Mar 2026 07:40:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1772808975; x=1773413775; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7SjdswPi7pCIktLLW0IOgccbJarmXU6/ZCw04/NF+Ik=;
-        b=bYZpXK4N6toOQgeziWRSFxFv/ZALcTtWbcNeFbbL1CehoHIbM1ePEpGYeIkNDoIbSv
-         EdBIaN47ywEcPYjtYfvixz5PMfVE1BOpu2AMAqEvKllZrQXLirfnUAU/74/eeOInRGYj
-         cTaaiIRNL6YW09448oBYakV+r9gK9Cvse0zxQYJguOOS+waYXIH6MIaulMDNnNo9qbYV
-         LQ4uoTjerYqgbcIiuen3qw/Vq8txrAP4lQY+qRvGaTAos94QmnVazprLGiw6OEM6BAKX
-         TBHG12W65AGCgjyVE69nC5Oj66ahDvGYYoHmP7D3O1nUUkb+Jyv1aLNkAPGSlXFzkg17
-         3jYQ==
+        d=oss.qualcomm.com; s=google; t=1772811609; x=1773416409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wpH7c7MyE5oMPFius9rdgPXUx1Fgj3bT2b7iRgr/UYQ=;
+        b=ShdBiLoFgVKC/kiBbz7d+MJ0PJCXwWOaXQk3CfwGu6Q73SBV0Tvlxj+Pj25jhwzYjl
+         X4rpvQuYEcQstENZTZoVQNtOhpOaig/vPoVoLraEzid9O/xQRikKXrbi+vWKPfwRaoY8
+         C0JcJA/V/dv3i+oJxpRYZn42KL0O4fdW97Ull4XOx72B1pm23uBpoBTn0GHaF/njuFsg
+         HVgPNppP+pgOdT9rZF9hOodJSIGisC2oYy5HEJC4tbnN/6d4vkNZBwq599Yc5Gf1O9G9
+         q2G8dwZcdkyZdI6JQuHpDoR6fYKSPxswDNMc/o+a9Oj/xfmxfHxEuac28T5Su6e5AjNS
+         ZiRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772808975; x=1773413775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7SjdswPi7pCIktLLW0IOgccbJarmXU6/ZCw04/NF+Ik=;
-        b=EQHjYGeu0kVuQ/xd/USix9oEQ+dnlSl1mwDNE47IwKc/Z/hJJIvOgpcykGSR/WRdlx
-         I4FpSX/2mbDJr5TynsCUV69tBU46uVQ/e8BoKNwsOOS+8eukvnZDkjgh6EwDFQWSZjr3
-         ojGMUeAUdm3YrvJTkZhcyO7rkJZKxNy5mdJDI6tlYZz/iIcAwcaKK9UU9rKcR6elVNqJ
-         fFmBM5c5CY3rzrg8b5xPtSXJDnpps6hiWGVNoExzlNcMkdTgNO+Jkigr4OGl+rCI4WZ/
-         EWi7gxm1j7X0jVxeUQ1taS366kRGU5ZtLi7im/c47vXFJSn9hRlcROappiBsz5IhipGF
-         K0Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzjjWpYAyliif9xIOkHAD3+0Pa4KzVreRpOB+wFeq9vETsPKStriXZq0Jk4TQ+CCVEYftvVdxPZUX8Pwx1oryH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyREvFdg8SI7p4g6SBbsZ4+e8djnO6tj7UT8nJo4JqTK35vIuGc
-	ZBW3bWOg5MfzCwBHtyZSPPi3W6GRvALHEfqjnaHmEtdcB47ZPAOvK6Hz2L896SblnjB1QnPVZ+e
-	7lMxVG53KwwA7KDMfCRdGxgCRhTVrMQh8yTvvjmF0saDs/znwwJg2H9/DhbafJkaf4uPvPLvp
-X-Gm-Gg: ATEYQzykFRKrFRWpzRlR2HTX1YXNTbVo+hdaaxHGLKSSppU6G6xKwRVxOfDzSTqwVqp
-	apDlmMo5Qu1Bf351PKboS/XMwig1C3Oq0D8vnuJMcJ7Jh78cgyWpoCEndvQsiqjL2NQZvxF1tjj
-	tNw7r52JVSJnWEtdgiU5d7ZZ8Bjyc63As8q01mdgmuOLgNqAM+QOAmRxM/2yB+gJzBPDb7mSqCa
-	w8t65orNar3xwp94YYP0fTyL4oiS4zK3r2E16mybVSUPotbtChOzRE8YAJw2fI1u0Ks5m+aqhE/
-	7w4wQpTjWKtjzYmuJegUk+dW9iAFRPQRFf0weXdYLZMAruARgDheiIoQTokxlS35kbFmzfNUZm2
-	cur1bRTopedTcvowFY3cdfZ2bm8y06dFnoAbvn+m75X2X5rRncEtXfgEk+kC2WebthvX2btCNON
-	w+Yf8uFg==
-X-Received: by 2002:a05:693c:2c07:b0:2b8:261a:fbdf with SMTP id 5a478bee46e88-2be4e067a2emr902226eec.39.1772808975158;
-        Fri, 06 Mar 2026 06:56:15 -0800 (PST)
-X-Received: by 2002:a05:693c:2c07:b0:2b8:261a:fbdf with SMTP id 5a478bee46e88-2be4e067a2emr902203eec.39.1772808974470;
-        Fri, 06 Mar 2026 06:56:14 -0800 (PST)
-Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2be4f807a30sm1259726eec.6.2026.03.06.06.56.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2026 06:56:14 -0800 (PST)
-From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Subject: [PATCH] remoteproc: qcom: Add missing space before closing bracket
-Date: Fri,  6 Mar 2026 22:56:07 +0800
-Message-ID: <20260306145607.1394878-1-shengchao.guo@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1772811609; x=1773416409;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wpH7c7MyE5oMPFius9rdgPXUx1Fgj3bT2b7iRgr/UYQ=;
+        b=Lb+ryXxB/oZCrLEWtzZt/kgkfmaXRiCNpj5ekqFSDZ2hddvxhIMBYuMKa3UbntBT82
+         3337WAD+USnyM5QG5KsaXHCTQHJJotp3Ji/H+tmUrx9oJgLZvuji3mWF0qBKJgsw9Qga
+         aIneWmM1VNP1Kwxpt87L3Hu4qJgs6q+3GnxH/EY6odW5go9yJKevNIR/TYag14DOdnF8
+         tCW6ZI8c49PkFU8qPXi7zJM+/OATj3T7kkZRrN9oyJuiONMPPmGkq+mrLLD+aJ1HAYwd
+         XWin6ur6ELLgSp5CLuradPC+hRkfpA8ooa+CiBR8BX6IUnwfwArQHnDbu909RJapA4tV
+         E/lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWz+KStLMCdemz9nljH9G5S5xa9Z9MYTAocU22dBXdBwb4k1M0QD9SNG/JaoTbnkzPPXF9jlxY67/3Nle/VK1M@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu0Gmnkyv8ks9iVTslEe9K1CTVY9XL+tNfQgmmsYFnL11bzFU6
+	GFVqXLvl+Z6YZcar7DOViBv3gR+RP0ka+lEPvPaDwcgXcqQaoN124IxCfpniisGRj7OK6izFwgE
+	g5IoTEZc6TthJ/Uro0DrXfhWjKTAIVv/4mdE3UbFeXz91Jy0vIVzMZKqurAQDHZvwc2RJtkyDyi
+	tM2nep
+X-Gm-Gg: ATEYQzzuS7wfllq3W/1FrS0QPbXZHgT90K18lgzeG7mcqO6arylfN+kGU9yig1DaEDH
+	OzpCwYyCEYutxR1Mwyvofu+sLTEg9ZaTFMq+jrJcXKVWjlieKf/CbI5cQx/RLm8pDOeTvdATuNI
+	COdz4LXhtWXZr9lDUVoTTx+pLX3qaB2QumunpFulAUggms/z4dUvvfjl8fIWPQl6liR5GkoD+DC
+	Gx5AHGmIdJ7QGm4ZysoOND0BNxZduldcUlGqoq4Awpj8putSUnspbG6VT4J30luZwDQofhEzll8
+	JU2eWn37ETQd3rtttisRoqxeW0xWUgNYVpVbPZKXTatTD4z67MccZS1N4WpyRwlbX5/dRJ/XwVa
+	9MyDo4NvkVX8bF2y2qHjee70oPlzqJK/f9P+oigbo8WE7bFnMyfwwejeJrkyddv2eFTVm2H5W9x
+	Q+QZYY2MFHFQbDWg==
+X-Received: by 2002:a05:7300:ec07:b0:2a4:3593:ccba with SMTP id 5a478bee46e88-2be4e56f9f9mr928827eec.1.1772811609178;
+        Fri, 06 Mar 2026 07:40:09 -0800 (PST)
+X-Received: by 2002:a05:7300:ec07:b0:2a4:3593:ccba with SMTP id 5a478bee46e88-2be4e56f9f9mr928768eec.1.1772811608557;
+        Fri, 06 Mar 2026 07:40:08 -0800 (PST)
+Received: from [192.168.1.41] (c-24-130-122-79.hsd1.ca.comcast.net. [24.130.122.79])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2be4f94833bsm1356612eec.18.2026.03.06.07.40.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Mar 2026 07:40:08 -0800 (PST)
+Message-ID: <9741588f-e6a1-4749-970b-3ed814399a32@oss.qualcomm.com>
+Date: Fri, 6 Mar 2026 07:40:04 -0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA2MDE0MyBTYWx0ZWRfXz9ed+gInhkk/
- Rq2FA50cH6azy0D6jH1cYhjwaHXku1GXEQwicuz6/Y+IrLq/EvXsnbu+jJs2I99A5jJSQ4d9Ro7
- yfgL9Nie5OpChjTrKgz8MQi8W13vHdZ2kW+v2oqbHoTMC4kG+G6XMmz/AIhhKDfV6PKkloZXUoi
- XIlUXxPi0dfGA9Bb6ku4SdV3EygQEg2EkSBH0Zvscy/8QTftEn8HNBOWEP/zUAr18Srl8tY0Oje
- pfU/4I9GnH462If92wBR6WpGI6CAOkhZVVeM4jGwn+K4j4Jp10PpONs0jRSAU4yARq+VcTfJAXv
- hJHqnoJ3huPU3tU9NvPinHAKDiPGAv9868492QsMrro1v1OaZWlKaR3k3QFp94tbFqUpZA2iinG
- US6aREhpH9jOV9T/itZ9wSDp7D6h2iyIMunFwJH5DPDD3+I4t2VmcFnzQkLLBAz3WitTpQLFqBP
- 24x79qazYGjVYuvcEtQ==
-X-Proofpoint-ORIG-GUID: _idCkWGwb3qixFQFo0K_OUQymqm7l6yp
-X-Authority-Analysis: v=2.4 cv=DvZbOW/+ c=1 sm=1 tr=0 ts=69aaeb10 cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=EUspDBNiAAAA:8
- a=GiIGSGX71zzE2fQmXVIA:9 a=6Ab_bkdmUrQuMsNx7PHu:22
-X-Proofpoint-GUID: _idCkWGwb3qixFQFo0K_OUQymqm7l6yp
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/14] firmware: qcom: Add a generic PAS service
+To: Sumit Garg <sumit.garg@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, robin.clark@oss.qualcomm.com,
+        sean@poorly.run, akhilpo@oss.qualcomm.com, lumag@kernel.org,
+        abhinav.kumar@linux.dev, jesszhan0024@gmail.com,
+        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+        vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
+        bod@kernel.org, mchehab@kernel.org, elder@kernel.org,
+        andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, jjohnson@kernel.org,
+        mathieu.poirier@linaro.org, trilokkumar.soni@oss.qualcomm.com,
+        mukesh.ojha@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
+        jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com,
+        vignesh.viswanathan@oss.qualcomm.com,
+        srinivas.kandagatla@oss.qualcomm.com,
+        amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
+        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+        skare@qti.qualcomm.com, Sumit Garg <sumit.garg@oss.qualcomm.com>
+References: <20260306105027.290375-1-sumit.garg@kernel.org>
+ <20260306105027.290375-3-sumit.garg@kernel.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20260306105027.290375-3-sumit.garg@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA2MDE0NiBTYWx0ZWRfX+oU5I7TixAvA
+ 8337IL9Jn6OoxaYXSHbFgQ5WExEzVTWt56aK5MrFEHHNTXctlSSUtqdJLg/RywDnvkIGwrB+wmi
+ HSOwDLSiBqDKbqdrY99sVfVWr+9b0+A82W6qp2vFLykitg+r45kBCgJHktpwr+O2WnFaEsCHmzd
+ rudViCNriXoZT2r8wFNSWxKMQsMv+sOHlFqwGdGMXJdUmafVeFEp0SB9Eh90NVSH8j6My+JMASc
+ aWFMd5lhEexRfhhu6ZJgbCZqTbhbXIqLckqRN4ILr/LXR35FZeUX5YAEc0v4tE67GkZG1n98yLm
+ 8meICKJQqC9TMeCKhiNKmJWGb7YRA35/8u7CkyzxiU5hbnHysFvzqVNWB+Foxt0tpuVCxJDXcSS
+ 6YrvVIDwkEmS00urY96ScBzyIguDK3y+H4VEq9kzge2I//sijLhOGqAevZTi+kCZ1vfkUmFzvc9
+ 8sogCAlmfEaNNjYDWCg==
+X-Proofpoint-ORIG-GUID: yPh6ZhV2E0vKNmxdPq2VfnnSXmkPRUk_
+X-Authority-Analysis: v=2.4 cv=DvZbOW/+ c=1 sm=1 tr=0 ts=69aaf55a cx=c_pps
+ a=wEP8DlPgTf/vqF+yE6f9lg==:117 a=Tg7Z00WN3eLgNEO9NLUKUQ==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=VwQbUJbxAAAA:8 a=40pWYZonmZhD7659SdoA:9 a=QEXdDO2ut3YA:10
+ a=bBxd6f-gb0O0v-kibOvt:22
+X-Proofpoint-GUID: yPh6ZhV2E0vKNmxdPq2VfnnSXmkPRUk_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-06_04,2026-03-06_02,2025-10-01_01
@@ -116,207 +143,110 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  lowpriorityscore=0 impostorscore=0 malwarescore=0 bulkscore=0 adultscore=0
  suspectscore=0 clxscore=1015 phishscore=0 priorityscore=1501 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603060143
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603060146
 
-Add missing space before closing curly bracket for qcom_q6v5_mss and
-qcom_q6v5_pas driver of_match[] lines, so that all qcom remoteproc
-drivers are consistent on the common coding style.
+On 3/6/2026 2:50 AM, Sumit Garg wrote:
+>  drivers/firmware/qcom/Kconfig          |   8 +
+>  drivers/firmware/qcom/Makefile         |   1 +
+>  drivers/firmware/qcom/qcom_pas.c       | 295 +++++++++++++++++++++++++
 
-Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
----
- drivers/remoteproc/qcom_q6v5_mss.c |  26 +++---
- drivers/remoteproc/qcom_q6v5_pas.c | 138 ++++++++++++++---------------
- 2 files changed, 82 insertions(+), 82 deletions(-)
+kernel-doc is throwing some warnings in this file which I've listed below.
+kernel-doc is also throwing warnings in some of the other files touched by
+this series, but since those are presumably preexisting I didn't bother to
+mention them. Just want to avoid adding new warnings.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 91940977ca89..256882b2fd67 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -2657,19 +2657,19 @@ static const struct rproc_hexagon_res msm8926_mss = {
- };
- 
- static const struct of_device_id q6v5_of_match[] = {
--	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss},
--	{ .compatible = "qcom,msm8226-mss-pil", .data = &msm8226_mss},
--	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss},
--	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss},
--	{ .compatible = "qcom,msm8926-mss-pil", .data = &msm8926_mss},
--	{ .compatible = "qcom,msm8953-mss-pil", .data = &msm8953_mss},
--	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss},
--	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss},
--	{ .compatible = "qcom,msm8998-mss-pil", .data = &msm8998_mss},
--	{ .compatible = "qcom,sc7180-mss-pil", .data = &sc7180_mss},
--	{ .compatible = "qcom,sc7280-mss-pil", .data = &sc7280_mss},
--	{ .compatible = "qcom,sdm660-mss-pil", .data = &sdm660_mss},
--	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss},
-+	{ .compatible = "qcom,q6v5-pil", .data = &msm8916_mss },
-+	{ .compatible = "qcom,msm8226-mss-pil", .data = &msm8226_mss },
-+	{ .compatible = "qcom,msm8909-mss-pil", .data = &msm8909_mss },
-+	{ .compatible = "qcom,msm8916-mss-pil", .data = &msm8916_mss },
-+	{ .compatible = "qcom,msm8926-mss-pil", .data = &msm8926_mss },
-+	{ .compatible = "qcom,msm8953-mss-pil", .data = &msm8953_mss },
-+	{ .compatible = "qcom,msm8974-mss-pil", .data = &msm8974_mss },
-+	{ .compatible = "qcom,msm8996-mss-pil", .data = &msm8996_mss },
-+	{ .compatible = "qcom,msm8998-mss-pil", .data = &msm8998_mss },
-+	{ .compatible = "qcom,sc7180-mss-pil", .data = &sc7180_mss },
-+	{ .compatible = "qcom,sc7280-mss-pil", .data = &sc7280_mss },
-+	{ .compatible = "qcom,sdm660-mss-pil", .data = &sdm660_mss },
-+	{ .compatible = "qcom,sdm845-mss-pil", .data = &sdm845_mss },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, q6v5_of_match);
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 46204da046fa..46daa5c9ac3f 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1531,78 +1531,78 @@ static const struct qcom_pas_data sm8750_mpss_resource = {
- };
- 
- static const struct of_device_id qcom_pas_of_match[] = {
--	{ .compatible = "qcom,milos-adsp-pas", .data = &sm8550_adsp_resource},
--	{ .compatible = "qcom,milos-cdsp-pas", .data = &milos_cdsp_resource},
--	{ .compatible = "qcom,milos-mpss-pas", .data = &sm8450_mpss_resource},
--	{ .compatible = "qcom,milos-wpss-pas", .data = &sc7280_wpss_resource},
--	{ .compatible = "qcom,msm8226-adsp-pil", .data = &msm8996_adsp_resource},
--	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource},
--	{ .compatible = "qcom,msm8974-adsp-pil", .data = &msm8996_adsp_resource},
--	{ .compatible = "qcom,msm8996-adsp-pil", .data = &msm8996_adsp_resource},
--	{ .compatible = "qcom,msm8996-slpi-pil", .data = &msm8996_slpi_resource_init},
--	{ .compatible = "qcom,msm8998-adsp-pas", .data = &msm8996_adsp_resource},
--	{ .compatible = "qcom,msm8998-slpi-pas", .data = &msm8996_slpi_resource_init},
-+	{ .compatible = "qcom,milos-adsp-pas", .data = &sm8550_adsp_resource },
-+	{ .compatible = "qcom,milos-cdsp-pas", .data = &milos_cdsp_resource },
-+	{ .compatible = "qcom,milos-mpss-pas", .data = &sm8450_mpss_resource },
-+	{ .compatible = "qcom,milos-wpss-pas", .data = &sc7280_wpss_resource },
-+	{ .compatible = "qcom,msm8226-adsp-pil", .data = &msm8996_adsp_resource },
-+	{ .compatible = "qcom,msm8953-adsp-pil", .data = &msm8996_adsp_resource },
-+	{ .compatible = "qcom,msm8974-adsp-pil", .data = &msm8996_adsp_resource },
-+	{ .compatible = "qcom,msm8996-adsp-pil", .data = &msm8996_adsp_resource },
-+	{ .compatible = "qcom,msm8996-slpi-pil", .data = &msm8996_slpi_resource_init },
-+	{ .compatible = "qcom,msm8998-adsp-pas", .data = &msm8996_adsp_resource },
-+	{ .compatible = "qcom,msm8998-slpi-pas", .data = &msm8996_slpi_resource_init },
- 	{ .compatible = "qcom,qcs404-adsp-pas", .data = &adsp_resource_init },
- 	{ .compatible = "qcom,qcs404-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,qcs404-wcss-pas", .data = &wcss_resource_init },
--	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource},
--	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource},
--	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource},
--	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource},
--	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource},
--	{ .compatible = "qcom,sar2130p-adsp-pas", .data = &sm8350_adsp_resource},
--	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource},
--	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init},
--	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource},
--	{ .compatible = "qcom,sc7280-cdsp-pas", .data = &sm6350_cdsp_resource},
--	{ .compatible = "qcom,sc7280-mpss-pas", .data = &mpss_resource_init},
--	{ .compatible = "qcom,sc7280-wpss-pas", .data = &sc7280_wpss_resource},
--	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource},
--	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource},
--	{ .compatible = "qcom,sc8180x-mpss-pas", .data = &sc8180x_mpss_resource},
--	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8250_adsp_resource},
--	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource},
--	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource},
--	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init},
--	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init},
--	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init},
--	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init},
--	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init},
--	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource},
--	{ .compatible = "qcom,sdx75-mpss-pas", .data = &sm8650_mpss_resource},
--	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init},
--	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init},
--	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource},
--	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource},
--	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource},
--	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init},
--	{ .compatible = "qcom,sm6375-adsp-pas", .data = &sm6350_adsp_resource},
--	{ .compatible = "qcom,sm6375-cdsp-pas", .data = &sm8150_cdsp_resource},
--	{ .compatible = "qcom,sm6375-mpss-pas", .data = &sm6375_mpss_resource},
--	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource},
--	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource},
--	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init},
--	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sdm845_slpi_resource_init},
--	{ .compatible = "qcom,sm8250-adsp-pas", .data = &sm8250_adsp_resource},
--	{ .compatible = "qcom,sm8250-cdsp-pas", .data = &sm8250_cdsp_resource},
--	{ .compatible = "qcom,sm8250-slpi-pas", .data = &sdm845_slpi_resource_init},
--	{ .compatible = "qcom,sm8350-adsp-pas", .data = &sm8350_adsp_resource},
--	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource},
--	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sdm845_slpi_resource_init},
--	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init},
--	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource},
--	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource},
--	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sdm845_slpi_resource_init},
--	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource},
--	{ .compatible = "qcom,sm8550-adsp-pas", .data = &sm8550_adsp_resource},
--	{ .compatible = "qcom,sm8550-cdsp-pas", .data = &sm8550_cdsp_resource},
--	{ .compatible = "qcom,sm8550-mpss-pas", .data = &sm8550_mpss_resource},
--	{ .compatible = "qcom,sm8650-adsp-pas", .data = &sm8550_adsp_resource},
--	{ .compatible = "qcom,sm8650-cdsp-pas", .data = &sm8650_cdsp_resource},
--	{ .compatible = "qcom,sm8650-mpss-pas", .data = &sm8650_mpss_resource},
--	{ .compatible = "qcom,sm8750-mpss-pas", .data = &sm8750_mpss_resource},
--	{ .compatible = "qcom,x1e80100-adsp-pas", .data = &x1e80100_adsp_resource},
--	{ .compatible = "qcom,x1e80100-cdsp-pas", .data = &x1e80100_cdsp_resource},
-+	{ .compatible = "qcom,sa8775p-adsp-pas", .data = &sa8775p_adsp_resource },
-+	{ .compatible = "qcom,sa8775p-cdsp0-pas", .data = &sa8775p_cdsp0_resource },
-+	{ .compatible = "qcom,sa8775p-cdsp1-pas", .data = &sa8775p_cdsp1_resource },
-+	{ .compatible = "qcom,sa8775p-gpdsp0-pas", .data = &sa8775p_gpdsp0_resource },
-+	{ .compatible = "qcom,sa8775p-gpdsp1-pas", .data = &sa8775p_gpdsp1_resource },
-+	{ .compatible = "qcom,sar2130p-adsp-pas", .data = &sm8350_adsp_resource },
-+	{ .compatible = "qcom,sc7180-adsp-pas", .data = &sm8250_adsp_resource },
-+	{ .compatible = "qcom,sc7180-mpss-pas", .data = &mpss_resource_init },
-+	{ .compatible = "qcom,sc7280-adsp-pas", .data = &sm8350_adsp_resource },
-+	{ .compatible = "qcom,sc7280-cdsp-pas", .data = &sm6350_cdsp_resource },
-+	{ .compatible = "qcom,sc7280-mpss-pas", .data = &mpss_resource_init },
-+	{ .compatible = "qcom,sc7280-wpss-pas", .data = &sc7280_wpss_resource },
-+	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource },
-+	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource },
-+	{ .compatible = "qcom,sc8180x-mpss-pas", .data = &sc8180x_mpss_resource },
-+	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8250_adsp_resource },
-+	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource },
-+	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource },
-+	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init },
-+	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init },
-+	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init },
-+	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init },
-+	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init },
-+	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource },
-+	{ .compatible = "qcom,sdx75-mpss-pas", .data = &sm8650_mpss_resource },
-+	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init },
-+	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init },
-+	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource },
-+	{ .compatible = "qcom,sm6350-adsp-pas", .data = &sm6350_adsp_resource },
-+	{ .compatible = "qcom,sm6350-cdsp-pas", .data = &sm6350_cdsp_resource },
-+	{ .compatible = "qcom,sm6350-mpss-pas", .data = &mpss_resource_init },
-+	{ .compatible = "qcom,sm6375-adsp-pas", .data = &sm6350_adsp_resource },
-+	{ .compatible = "qcom,sm6375-cdsp-pas", .data = &sm8150_cdsp_resource },
-+	{ .compatible = "qcom,sm6375-mpss-pas", .data = &sm6375_mpss_resource },
-+	{ .compatible = "qcom,sm8150-adsp-pas", .data = &sm8150_adsp_resource },
-+	{ .compatible = "qcom,sm8150-cdsp-pas", .data = &sm8150_cdsp_resource },
-+	{ .compatible = "qcom,sm8150-mpss-pas", .data = &mpss_resource_init },
-+	{ .compatible = "qcom,sm8150-slpi-pas", .data = &sdm845_slpi_resource_init },
-+	{ .compatible = "qcom,sm8250-adsp-pas", .data = &sm8250_adsp_resource },
-+	{ .compatible = "qcom,sm8250-cdsp-pas", .data = &sm8250_cdsp_resource },
-+	{ .compatible = "qcom,sm8250-slpi-pas", .data = &sdm845_slpi_resource_init },
-+	{ .compatible = "qcom,sm8350-adsp-pas", .data = &sm8350_adsp_resource },
-+	{ .compatible = "qcom,sm8350-cdsp-pas", .data = &sm8350_cdsp_resource },
-+	{ .compatible = "qcom,sm8350-slpi-pas", .data = &sdm845_slpi_resource_init },
-+	{ .compatible = "qcom,sm8350-mpss-pas", .data = &mpss_resource_init },
-+	{ .compatible = "qcom,sm8450-adsp-pas", .data = &sm8350_adsp_resource },
-+	{ .compatible = "qcom,sm8450-cdsp-pas", .data = &sm8350_cdsp_resource },
-+	{ .compatible = "qcom,sm8450-slpi-pas", .data = &sdm845_slpi_resource_init },
-+	{ .compatible = "qcom,sm8450-mpss-pas", .data = &sm8450_mpss_resource },
-+	{ .compatible = "qcom,sm8550-adsp-pas", .data = &sm8550_adsp_resource },
-+	{ .compatible = "qcom,sm8550-cdsp-pas", .data = &sm8550_cdsp_resource },
-+	{ .compatible = "qcom,sm8550-mpss-pas", .data = &sm8550_mpss_resource },
-+	{ .compatible = "qcom,sm8650-adsp-pas", .data = &sm8550_adsp_resource },
-+	{ .compatible = "qcom,sm8650-cdsp-pas", .data = &sm8650_cdsp_resource },
-+	{ .compatible = "qcom,sm8650-mpss-pas", .data = &sm8650_mpss_resource },
-+	{ .compatible = "qcom,sm8750-mpss-pas", .data = &sm8750_mpss_resource },
-+	{ .compatible = "qcom,x1e80100-adsp-pas", .data = &x1e80100_adsp_resource },
-+	{ .compatible = "qcom,x1e80100-cdsp-pas", .data = &x1e80100_cdsp_resource },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, qcom_pas_of_match);
--- 
-2.43.0
+>  drivers/firmware/qcom/qcom_pas.h       |  53 +++++
+>  include/linux/firmware/qcom/qcom_pas.h |  41 ++++
+>  5 files changed, 398 insertions(+)
+>  create mode 100644 drivers/firmware/qcom/qcom_pas.c
+>  create mode 100644 drivers/firmware/qcom/qcom_pas.h
+>  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
+...
+> +/**
+> + * qcom_pas_mem_setup() - Prepare the memory related to a given peripheral
+> + *			  for firmware loading
+> + * @pas_id:	peripheral authentication service id
+> + * @addr:	start address of memory area to prepare
+> + * @size:	size of the memory area to prepare
+> + *
+> + * Returns 0 on success.
 
+kernel-doc complains:
+Warning: drivers/firmware/qcom/qcom_pas.c:103 No description found for return
+value of 'qcom_pas_mem_setup'
+
+should use the kernel-doc Return: tag
+
+ * Return: 0 on success
+
+(Returns: is also accepted although not documented)
+
+> + */
+...
+> +/**
+> + * qcom_scm_pas_auth_and_reset() - Authenticate the given peripheral firmware
+> + *				   and reset the remote processor
+> + * @pas_id:	peripheral authentication service id
+> + *
+> + * Return 0 on success.
+
+hmmm, kernel-doc didn't complain about this one so the script must accept
+'Return' without the ":" (but not 'Returns' without the ":").
+
+Suggest changing to Return: to be conformant with the actual documentation:
+<https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#function-documentation>
+
+> + */
+> +int qcom_pas_auth_and_reset(u32 pas_id)
+> +{
+> +	if (ops_ptr)
+> +		return ops_ptr->auth_and_reset(ops_ptr->dev, pas_id);
+> +
+> +	return -ENODEV;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_pas_auth_and_reset);
+...
+> +/**
+> + * qcom_pas_set_remote_state() - Set the remote processor state
+> + * @state:	peripheral state
+> + * @pas_id:	peripheral authentication service id
+> + *
+> + * Returns 0 on success.
+
+Warning: drivers/firmware/qcom/qcom_pas.c:217 No description found for return
+value of 'qcom_pas_set_remote_state'
+
+> + */
+...
+> +/**
+> + * qcom_pas_shutdown() - Shut down the remote processor
+> + * @pas_id:	peripheral authentication service id
+> + *
+> + * Returns 0 on success.
+
+Warning: drivers/firmware/qcom/qcom_pas.c:232 No description found for return
+value of 'qcom_pas_shutdown'
+
+> + */
+...
+> +/**
+> + * qcom_pas_supported() - Check if the peripheral authentication service is
+> + *			  available for the given peripheral
+> + * @pas_id:	peripheral authentication service id
+> + *
+> + * Returns true if PAS is supported for this peripheral, otherwise false.
+
+Warning: drivers/firmware/qcom/qcom_pas.c:248 No description found for return
+value of 'qcom_pas_supported'
+
+> + */
+...
+> +/**
+> + * qcom_pas_is_available() - Check for PAS service
+> + *
+> + * Returns true on success.
+
+Warning: drivers/firmware/qcom/qcom_pas.c:262 No description found for return
+value of 'qcom_pas_is_available'
+
+> + */
