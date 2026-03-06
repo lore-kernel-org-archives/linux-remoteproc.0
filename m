@@ -1,240 +1,143 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AF23AEF2C
-	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Mar 2026 14:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAED238E133;
+	Fri,  6 Mar 2026 14:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772805830; cv=none; b=u7RGXedGemzKq/9U+wc0XH71FZvux+qi/cfbMHd7/96kQ8PV6xfsjAEbhuVnS7rMSHAg8SU1KXTlU7I1ZNGWck/eoo2MRa0udpAJ2ngVo3e8LE9CDCLKJJFwARzoPkS8Ytb32kbDk0MFNVlP5FtzUxcO6M91TZ5kjK6VDS7Gk2g=
+	t=1772806380; cv=none; b=ExQKNFFhoL8dLPKaPTbK8K1XmyrG8v+k2cguYGB85/O8kRSdZcT+j4bTVO+Ie1C0PFsqUE5HMN+bJD1NK6M0UqWCpupcCs6gMkjBy6E2hMKwYZHwL7XD71qAEUeLsxMZCv+F0/sRhVvWYBD4nLBrBvb6o0CFKFA21jU/TJJjs60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772805830; c=relaxed/simple;
-	bh=kJAc7f5m5jxavMkgdIHdotCTd133ITydGJDsM8ctX+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NTn+Ow268k1UtYlwoOcuBL/lRfTVDoywrYAQl0GHl9wMp6uAo6VGa7KZB/655GT4ucdyRD3tXYTqUZk05nD8k1RlSo+mUfAhJOeWZ85bWXfKEP/S+LW7K/ZIR4XRoiMjXfPatTWGqs0nhbBXP8/6zl8RCuImLE0UiJl14sPaoII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gcX/xm6H; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=C9X/K4GC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1772806380; c=relaxed/simple;
+	bh=TVG+Zf5EBR+Hc0BUuVwUMFxh1cfQpzOyH4YiLwic/gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=teTC3NsAoJ8E8CUf0opCq3JVg9t7Z9x9NlFLa0QnySD+gQeOKDkeNg3mfPHSxlasE6yviC7TZ9Li2i9Pn8ErGVO0o4XesXjTSJWX+qUHPuMu/CgBfXYvKnQdCo+I7lW00rYmGb2qYo02PCLVe5Q+4Bapz3EpmtwYSkH/LSHRj7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5hBOUHU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gcX/xm6H";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="C9X/K4GC"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 626BcF63631290
-	for <linux-remoteproc@vger.kernel.org>; Fri, 6 Mar 2026 14:03:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=thDMk6e40n+6IH98mjP5Yb1qMk17Ss9qvkj
-	Pv6/pb60=; b=gcX/xm6HmU67074MVmE9teSdUwGPWt3J/qIS1GhXSsOazi/ExHV
-	pJk6bTRxemgeDPsKFShQXxKJiAabAE5ssaIzRoi89goD5LalNGSCnMPuCYPx6JTW
-	PbNQkBJtoeNaWYXo9HtvOtYnw9gNM/gWcTqO3rCWksNEPaySjg+sIObP8Qe+89W6
-	uxff01OfydmJkr3AP7qge1bWiN31Et+sidktV/B9kYKJonuye7fa3DDKD1I9kBUd
-	7oBQn5lZlYMN4PxhpT/7PjK8wSXJQyQxzIsLNkrWMT2sQvAtx++zpaO0acSwvYd9
-	oGyiTQSa91e+U03q4t5jKKKaIiQPi9h7djw==
-Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cqj4savvm-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 06 Mar 2026 14:03:47 +0000 (GMT)
-Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-2be21146933so6577501eec.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Mar 2026 06:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1772805827; x=1773410627; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=thDMk6e40n+6IH98mjP5Yb1qMk17Ss9qvkjPv6/pb60=;
-        b=C9X/K4GCviyYahOoB4o7NYj8g4SOm4Egf1ZHhwbbYr8KhapwTiFB67jIofac/0uEhf
-         HS5fYuLQ9u8HaD9uSqWFEGSWHvqAgqpXUUMSKmyjxW5N0e6KhDO6OaMF7t/xcA26qZeo
-         +It42emCIyKZkzG0oteFWohQHphfzbZq5eIVsxVzTjfzUsY2Zm38f5n9x1+uGnlIbjkA
-         40IDKacQs5k4dTavvbZtzU047wCeqwiMiZSaSHTZKhuf2KId4npB6GGE8kBc66Tlqym2
-         bu6+vfjeyQHC6JCksdSR6AbS6MsbpUCxhYHgQd+vS3OU+R9jgwGKO+waYzqQrAwIBSuh
-         Tepg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1772805827; x=1773410627;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=thDMk6e40n+6IH98mjP5Yb1qMk17Ss9qvkjPv6/pb60=;
-        b=UXxOG4yoXFh1tiBQqjDOlGuTgJSSREWozVCkt+FbYW08BcV+MC9EprLF0OWhh7YxhE
-         6/+0tCkbxBRhx8h9bfXZShiEfEENsf1fm8yJO3DZFrW45iBE38lJcmy3wXMQd/EEe5yA
-         6S0Am7PMZbjUVRaRdoCxrjEFcmGKs9tmrWxVNYBV4hNtrNfd2Ok8uuVkMwHq6B4A4qE3
-         C1+Jn50IojPxLripj+np1atVrer6xlv6NFze4Kdpt05lhy3RF+RXFZPtWBR4V3OSx8L8
-         5uYUtmjHAeJfkCGeuvlKZWrcs64nzJBNH9Fs1o7LdO+/4NaKRK9cW0W6bowwQepkbfb7
-         03aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZAqEOGGM2valvVTZ7oMe5OlDg7C1doTSjpHX3h2RZtN2t+7IF0lNNyItiwd0zNzWMm/VtwUfPi2NLAxRe0d/i@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLsWYKRj48d7KqBSDuiTM1z1hyT5ge12OvddhhoJ6V8ZlkgdEG
-	M9PttPKXy7+C00IQpqXk2XIO0hmkTsRSsNw+kaBoqmR9KrvGfr/o5cNaWTek9Y+NYmsvrAVMgkj
-	k6zay/7HtC0EcdIu9mZs3NHgmsFt/yuvU4svq/Unu48uO4sSjTHqa1ycZW0j7nH+13Avcx9R3
-X-Gm-Gg: ATEYQzy8oLXC4TReI58Nv1Z8gwpXEqGlUm0XQoe+Nte1kbpRw6tkNpqKJ41GH2PEaGM
-	iHEu2D92ShyDTYVpfAjUFdR7PLiI1PkQO1zxtLgFqzzbWTckKfm+6ZpqsetBVmfd2ojCdDHSKB2
-	xiYAIUdeSgIaHcRec/dAZApJkdhgD32izhyugMCKkqwfgaOzA6N0t1zgBLyyF2mrrOqL0a6/EAW
-	DbBQdxoKiguXikQP6tGYdJ3dsvYbVtnL54w3tNAHGZFTXh2+ljUPwaKs1sk7vfa6w8Ih8g87bhy
-	e0mcXfOqCw+B4+Tf9kJC/geWEMtr8JJL0xUbZUV16pTrOi+NTh/PmlfpZONIsXD9MAr4NGM9FaB
-	offiwle7/GED2dUcfrVo4jHxGDJqOOK9pDOZ1BzhK7lOB1WeYuvamW4vpxFso5QvtbyA3apI0DB
-	Hkz7kIQw==
-X-Received: by 2002:a05:7300:a44d:b0:2b8:6ad3:804e with SMTP id 5a478bee46e88-2be4e0555a3mr767863eec.22.1772805826499;
-        Fri, 06 Mar 2026 06:03:46 -0800 (PST)
-X-Received: by 2002:a05:7300:a44d:b0:2b8:6ad3:804e with SMTP id 5a478bee46e88-2be4e0555a3mr767820eec.22.1772805825537;
-        Fri, 06 Mar 2026 06:03:45 -0800 (PST)
-Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2be4f948631sm1200531eec.19.2026.03.06.06.03.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Mar 2026 06:03:44 -0800 (PST)
-From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Subject: [PATCH] dt-bindings: remoteproc: qcom: Drop types for firmware-name
-Date: Fri,  6 Mar 2026 22:03:06 +0800
-Message-ID: <20260306140306.1328719-1-shengchao.guo@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5hBOUHU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CEF0C4CEF7;
+	Fri,  6 Mar 2026 14:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1772806379;
+	bh=TVG+Zf5EBR+Hc0BUuVwUMFxh1cfQpzOyH4YiLwic/gg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Y5hBOUHUc6WTCkBDUQVZcl6hI+ZbN0Y4rvaKVEl4D18giUtCCr/AUiEp3kJ4PF3EB
+	 sHKB7f0J7OORuIMIisymAhWTsT3o688klNJGffmk6o1S1dIwu1p2abJIQBsVhKC6HF
+	 gd9AaFCxcjMB5x2QhNsv3a2Ltn5zbJpA6tvO3ucYoMd68sLic8FVHqyf+Br/20H20Z
+	 gHJ9GbKxHSHiD/SeCKaO1LafQiNO09BThQScj+yok+2ln8qcVyDoB4nQZbLSszKq4h
+	 72YyqEShvdCd4RM5pp9zR60Yp/2uJ+t8+exWvP+xB182uequKacauzE2SF61MlxbPb
+	 kmoQ+s6CFjGFg==
+Message-ID: <c8d9258a-04d8-4841-be4e-7751acac2dae@kernel.org>
+Date: Fri, 6 Mar 2026 15:12:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzA2MDEzNCBTYWx0ZWRfX9BHIfnupyVF4
- yh3qlxvoNi5XIfwqB6y1sOsdN8g6z40VpPT1W+SLBCDlGiss1QKZWDnEmHT5YgnKk/f2N79QQeN
- +66LTxNg1S+7EmiHMuseA0iWkAx3ik4/A000WECXyR4D1I9HQe3cXq8gP3I+fKIUARTO/ao6sd6
- 0szAfeIQorzl+FZlxdsRRYDVmYH35cLbGRSHuef8DND9dV3J/duDhOQ5IvJzUDsRQ5LMk2Mkw3U
- wXE2ww/QFT4DbO6NswXGOJceI9buzeWrVqAV5C0Y/vBEvxrV9PuGFbTxAKZfQwAvLZQlgCDCc11
- 9rk4SK2NaLHq/55xvAcXX4Md+L3NvYN1mQNdTqw2trCV30bEPMPET9P8D44P1JpCao6PHBzLYSo
- bFyoySZ8ItoqYKpQ3BIa9xS4e3t4bYiEG2co43r3dl1CKGMOA4/V2LnCxElFyVWO2X+N4F90YWv
- iXaJoclyajIzYY7YEig==
-X-Proofpoint-ORIG-GUID: zJdauXZIzn9szpd6vRZW4ZtrytUaD28G
-X-Proofpoint-GUID: zJdauXZIzn9szpd6vRZW4ZtrytUaD28G
-X-Authority-Analysis: v=2.4 cv=T8uBjvKQ c=1 sm=1 tr=0 ts=69aadec3 cx=c_pps
- a=wEP8DlPgTf/vqF+yE6f9lg==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
- a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8
- a=nzWYI2exGoiye4W2V5EA:9 a=bBxd6f-gb0O0v-kibOvt:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-06_04,2026-03-06_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 lowpriorityscore=0 adultscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603060134
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: remoteproc: qcom: Drop types for
+ firmware-name
+To: Shawn Guo <shengchao.guo@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260306140306.1328719-1-shengchao.guo@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260306140306.1328719-1-shengchao.guo@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The type of firmware-name is already defined by core schemas.  Some of
-qcom remoteproc bindings define it redundantly, while others do not.
-Drop it to be consistent and avoid it being copied over to new files.
+On 06/03/2026 15:03, Shawn Guo wrote:
+> The type of firmware-name is already defined by core schemas.  Some of
+> qcom remoteproc bindings define it redundantly, while others do not.
+> Drop it to be consistent and avoid it being copied over to new files.
+> 
+> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml     | 1 -
+>  .../devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml     | 1 -
+>  .../devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml         | 1 -
+>  .../devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml      | 1 -
+>  .../devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml      | 1 -
+>  .../devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml        | 1 -
+>  Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml | 1 -
+>  .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml          | 1 -
 
-Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
----
- .../devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml     | 1 -
- .../devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml     | 1 -
- .../devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml         | 1 -
- .../devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml      | 1 -
- .../devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml      | 1 -
- .../devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml        | 1 -
- Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml | 1 -
- .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml          | 1 -
- 8 files changed, 8 deletions(-)
+I was fixing all remoteprocs here:
+https://lore.kernel.org/all/20240115182031.1610088-1-krzysztof.kozlowski@linaro.org/#r
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-index c179b560572b..1e7c165f925e 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-@@ -137,7 +137,6 @@ properties:
-       - description: MPSS reserved region
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string-array
-     items:
-       - description: Name of MBA firmware
-       - description: Name of modem firmware
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
-index 4d2055f283ac..1b65813cc8ad 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
-@@ -126,7 +126,6 @@ properties:
-       - description: Metadata reserved region
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string-array
-     items:
-       - description: Name of MBA firmware
-       - description: Name of modem firmware
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-index 188a25194000..bcd2bcf96e24 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-@@ -51,7 +51,6 @@ properties:
-     description: Reference to the AOSS side-channel message RAM.
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string-array
-     items:
-       - description: Firmware name of the Hexagon core
- 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-index b1402bef0ebe..7c9accac92d0 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-@@ -98,7 +98,6 @@ properties:
-       - description: metadata reserved region
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string-array
-     items:
-       - description: Name of MBA firmware
-       - description: Name of modem firmware
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-index 005cb21732af..f349c303fa07 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-@@ -98,7 +98,6 @@ properties:
-       - description: metadata reserved region
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string-array
-     items:
-       - description: Name of MBA firmware
-       - description: Name of modem firmware
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-index 5dbda3a55047..63ae3a30f626 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-@@ -42,7 +42,6 @@ properties:
-     description: Reference to the reserved-memory for the Hexagon core
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-index 5d463272165f..7e67eda13240 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-@@ -56,7 +56,6 @@ properties:
-   smd-edge: false
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string
-     description: Firmware name for the Hexagon core
- 
- required:
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-index 11b056d6a480..27b8c127d74f 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-@@ -52,7 +52,6 @@ properties:
-   smd-edge: false
- 
-   firmware-name:
--    $ref: /schemas/types.yaml#/definitions/string-array
-     items:
-       - description: Firmware name of the Hexagon core
-       - description: Firmware name of the Hexagon Devicetree
--- 
-2.43.0
+so I am a bit confused how I missed these. Maybe at that time the
+dtschema did not have definition and I postponed fixing these for later?
 
+And then more wrong addons like sa8775p appeared...
+
+
+> -    $ref: /schemas/types.yaml#/definitions/string-array
+>      items:
+>        - description: Name of MBA firmware
+>        - description: Name of modem firmware
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
+> index 5dbda3a55047..63ae3a30f626 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
+> @@ -42,7 +42,6 @@ properties:
+>      description: Reference to the reserved-memory for the Hexagon core
+>  
+>    firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+>      description: Firmware name for the Hexagon core
+
+This and other needs fixes, look at my commit.
+
+Best regards,
+Krzysztof
