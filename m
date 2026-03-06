@@ -1,115 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 407F933689D;
-	Fri,  6 Mar 2026 07:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBD2374195
+	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Mar 2026 07:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772781978; cv=none; b=ab/mE+unWqR1gw3N+itnOCJt0lFKMpkNlaU/A7TM/Eh6OvcvjQOeMPfljSUX+18/3wi7SuL5pFhi74dsdMwoeptUxYmp2KtiyIKSKHc2SGI+e2YEXzTamHPlsJoqYSQvlCNz7yNrbzLYsMuDqT8SIdhGtpUop2VcsW+FAy45apU=
+	t=1772782517; cv=none; b=GvqVoS+XWplugHiHyLIbvdrL5LgsBBhw8AkC91mqR2OakIVrHuCzltG31C83n9bY2aIsYbMI2AutCZ1+S3798ymgFXdo0uTrDANIEC6yOO8pbg/smgYviGGXuLIeTHUVAmDOMFrryVEAKte8X6uG0pzu02skn6yjI8so5nNiJ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772781978; c=relaxed/simple;
-	bh=0OsDcbApXz/KlVsR7bz4w4dCqLP8CleCOTsm7mf5LbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KQnun+49udhaWXUMH+x0N8C1+N51+y09gCLWWhsakb2lGbB2cMdtRIGllG91igjqsWudrIWsEH3M9DUo1gaMKPscbgCKv4qIq+ke5czYQL2pRonQ0wOfvORx4VxSiRQZwXOYCpfMRSDpU/OTYhD+vffcGhZfd3NvyhrySqeiKoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/smk4DA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1772782517; c=relaxed/simple;
+	bh=6UStxTN0ltHJ/GkEo7bx/EfcLlbOuCrV481hg4emXsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Y+ttAJvXuh/wFUhB0DbnvXRAUw9RzyoaYoxZRza6vTrbtqmEPX65Q19CdLaC4Y0E5CpgrFGcm8z55MQ6M4/Jh/meTk67c/04/RshAeK/uKkRlYDnGT88+4hW6+YHiVMMypTnCjRiyqTGFJQupL8mfaN4k6674ZNY26hgJhyhoN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EM40PIl3; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/smk4DA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18AC4C4CEF7;
-	Fri,  6 Mar 2026 07:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1772781977;
-	bh=0OsDcbApXz/KlVsR7bz4w4dCqLP8CleCOTsm7mf5LbM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=p/smk4DARJ9uQJkglZLcbTUuI+edX9Oj+jqykOBxrME4Azk2/PLPKt4UdBOoN0rqF
-	 07KtGJgkRG+PJVUNaZDN65Qq3xSVdoMBKHb23cB9h1DfpJR0IQQf3/LlxpJzXLXAD/
-	 7vKOgVe+feYh+e38lEMu7C8cteCD2co0+mglw+aOt4Nb00r7esnVBH5UU/7Cd8Yi7g
-	 QMX9/QVE8RzURg+4JJqLfVS+WGp1G2tN4aUzKWymLoNmlq+nMC6FYznrIUsT6wvCdp
-	 BR2osarrVRkec0KVQA/AyD9tpdle/VJnpYvlnSxFzsXy380tvUoNzZ2cYkqaFcfkoD
-	 QM2dbZ9h02iAQ==
-Message-ID: <88af5318-110f-426d-825f-ca7467a63533@kernel.org>
-Date: Fri, 6 Mar 2026 08:26:13 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EM40PIl3"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4836f4cbe0bso76806035e9.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Mar 2026 23:35:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1772782513; x=1773387313; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y6XoprPGy2obVCQE2uQgSeOts5auhhet8rC7x7T+9nI=;
+        b=EM40PIl3oC8AvBM9s2nfJZo4h6hSmBkn1M3E60cXyupESAl/YpD9NcmBBp9xHqzvXP
+         cVg1ms4rFDZH2YdNEIGFWeHchjBTPrg5aLsWX3Ix+UhXFKUOEcOcYzs1eZzPTdaoL/7+
+         DWMn1/qN031qigecNUIXfnelZwDK1HTweTTcFkFd8oqbLH2Lk9sIn7uPwVCMAS9LhOot
+         Gjr27j8tye7Ku02D94lqefFgmF3UniDvYfOvGYTTRJ0Ap8QZJNC2oohC6hpGZ78bP4n0
+         ATCoCadkhQThOTpioqDYEA8qsE6xvakPTRBV+DQm9ah9MSEld+m+F1JBNEFwwtM8AvXI
+         bQQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1772782513; x=1773387313;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y6XoprPGy2obVCQE2uQgSeOts5auhhet8rC7x7T+9nI=;
+        b=geQGhgmYdA4qx1NjXnVYPE/QRi/qw90WIVJC1EhEXuYcejTApRfEaxjKyxkx6jFRGY
+         fzSDWEFTuNkTID8/irj4z55uSedjOQDuhUTQqVWKZRS4LsB5bYInGTYNFRj/Px3AvgtJ
+         /CPfNx1suQYH5fkrrxh9IhRMJgDyf4sOqSo0SMtwP7Tks/C519vLalvLXNtJILizWMPK
+         WX48cH6uWDkcoQwMAxhWyW+Hl7H11US+CBHHWRGkuJWQusdv+HZJ7vLLSleqgh0bKvsu
+         ZU6A1XwtSSKj5l5K7SC5YyL4qk8yI2+bQKHHD93ZzANUeMI/Y/hn2ZdWaMtU7ZD3yGCQ
+         yo0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVjT+/7qgJnTf+vbp1uEsFRAO9smHk+BP0r6iCyUMsLaVoZ5VhPeurmED5JNakBm0NfXC0IRRTKqVhBhgyeUvof@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8MdYo2EU9HDzmw/gnNVV6pn/+x2EziDkx4twmvLE0DrA2gI6m
+	rFTrtIXn9EjL9KjEA5UCYj9rQ3gQ3n9RBmVl+ZpyEdkpcky/RRreIsKv90+8oUZH9GQ=
+X-Gm-Gg: ATEYQzyKFyjTKsyXmm/eqL2rK4Gbx6qIyS4Ky3RlsnVy9vxNdtLybNOXi3LESd0zk0T
+	PGvqtP9qx24Y+4LLWjQL6+qu9VqGBw+BR4/T/x7TtrIhi4ImrMfLuvBvIv0DHr1NYVhMFxYkw9F
+	WolF55rZQSF6wQwRFVDPEqK85mVtpPJuL/w6tScYRd2F+n4zwAeGVR/4KhGvQZ8rlzoi0obfABX
+	We1DkknYHglOPqUl3rKh2hfyCPWL50b2nHcQXzeaRKBAzp0OyXFjehO+qJ0K3tFOpKTuuQFSCbf
+	txVbno05YDdcJzyqqc1+HC95bVptI0bwGlh4U6Owa9qvkvH26aI6DaCektKoBgabPtXfY+TWbul
+	LHKO3IaX9wsxNRPujxy3rEur3gphsjUf8vhzYNsfrpqa/XtyJrP/DgnscGjEjHdkHxEEAQPlQ3y
+	OcPvjkNRbSACGnxigk7J5duLq7L7cUfjcF7WCfgnA=
+X-Received: by 2002:a05:600c:4e89:b0:45d:d97c:236c with SMTP id 5b1f17b1804b1-48526951430mr16785555e9.21.1772782512990;
+        Thu, 05 Mar 2026 23:35:12 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439dae2bdf8sm1953812f8f.25.2026.03.05.23.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Mar 2026 23:35:12 -0800 (PST)
+Date: Fri, 6 Mar 2026 10:35:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Shenwei Wang <shenwei.wang@nxp.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	arnaud.pouliquen@foss.st.com
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-imx@nxp.com
+Subject: Re: [PATCH v9 4/5] gpio: rpmsg: add support for NXP legacy firmware
+ protocol
+Message-ID: <202603060910.Q5zBquzF-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: remoteproc: qcom,wcnss-pil: Add
- wcn3610 compatible
-To: Kerigan Creighton <kerigancreighton@gmail.com>,
- linux-wireless@vger.kernel.org
-Cc: loic.poulain@oss.qualcomm.com, wcn36xx@lists.infradead.org,
- andersson@kernel.org, mathieu.poirier@linaro.org,
- linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260306004344.10968-1-kerigancreighton@gmail.com>
- <20260306004344.10968-2-kerigancreighton@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260306004344.10968-2-kerigancreighton@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260304211808.1437846-5-shenwei.wang@nxp.com>
 
-On 06/03/2026 01:43, Kerigan Creighton wrote:
-> The Qualcomm WCN3610 is a 2.4GHz-only WLAN/BT combo chip.
-> It's similar to the WCN3620, though more basic. Add a
-> wcn3610 compatible for use in device trees.
-> 
-> It needs its own compatible because of chip-specific
-> configuration done in wcn36xx.
+Hi Shenwei,
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+kernel test robot noticed the following build warnings:
 
-With the changes from patch 2:
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Shenwei-Wang/docs-driver-api-gpio-rpmsg-gpio-driver-over-rpmsg-bus/20260305-052440
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
+patch link:    https://lore.kernel.org/r/20260304211808.1437846-5-shenwei.wang%40nxp.com
+patch subject: [PATCH v9 4/5] gpio: rpmsg: add support for NXP legacy firmware protocol
+config: x86_64-randconfig-161-20260306 (https://download.01.org/0day-ci/archive/20260306/202603060910.Q5zBquzF-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+smatch: v0.5.0-9004-gb810ac53
 
-Best regards,
-Krzysztof
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202603060910.Q5zBquzF-lkp@intel.com/
+
+smatch warnings:
+drivers/gpio/gpio-rpmsg.c:188 rpmsg_gpio_imx_send_fixed_up() error: buffer overflow 'imx_std_cmd_map' 7 <= 27
+
+vim +/imx_std_cmd_map +188 drivers/gpio/gpio-rpmsg.c
+
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  176  static int rpmsg_gpio_imx_send_fixed_up(struct rpmsg_gpio_info *info,
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  177  				   struct rpmsg_gpio_packet *msg)
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  178  {
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  179  	struct rpmsg_gpio_nxp_packet imx_msg;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  180  
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  181  	if (msg->cmd >= sizeof(imx_std_cmd_map))
+
+This looks like a sizeof() vs ARRAY_SIZE() bug.
+
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  182  		return -EINVAL;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  183  
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  184  	imx_msg.id = IMX_RPMSG_ID;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  185  	imx_msg.vendor = IMX_RPMSG_VENDOR;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  186  	imx_msg.version = IMX_RPMSG_VERSION;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  187  	imx_msg.type = msg->type;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04 @188  	imx_msg.cmd = imx_std_cmd_map[msg->cmd];
+                                                                              ^^^^^^^^
+Out of bounds.
+
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  189  	imx_msg.port_idx = msg->port_idx;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  190  	imx_msg.line = msg->line;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  191  	imx_msg.val1 = msg->val1;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  192  	imx_msg.val2 = msg->val2;
+49a0cb20cd49a59 Shenwei Wang 2026-03-04  193  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
