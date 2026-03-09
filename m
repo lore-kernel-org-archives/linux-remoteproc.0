@@ -1,239 +1,181 @@
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010064.outbound.protection.outlook.com [52.101.193.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E59E38E5ED;
-	Mon,  9 Mar 2026 13:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773063572; cv=fail; b=Pkf1Gw9yKf/a7F6PeEZl6K4o8WQAnW5Iwxn4ulNd/0tuwUINd73RHUTVC9s1kzQ4AOIDFy2pkYWCrkT6rWuPy7gWFkMmfzTNF9Msj2cTmhXM3LCusS/S+FZm1pHqqc07GYu+zIu0qizAYN1Wu5MAh3jVX7oMnukZyPvSAQ3DUr4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773063572; c=relaxed/simple;
-	bh=KmGiNTGmcB18G5yhTQG5sD4cTkQUsn3K5VM1SCUUFHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=d4vrOS1OD8rChgVXJ5ZWRxUhxs2XnJ30fZM9dyZGdaA6wshTSy8SpwumNqkVvQHFAAL3EBWRCT3UKwohBJkkSlZOxRwcSr2NogQyKDdkfY2l/6VIA7mpI+Z71NSYRhl02oEj7wIiRE77J1HgSQi3Cq/sbiVtALJjPS9NeG14UVo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Kjo+SFQV; arc=fail smtp.client-ip=52.101.193.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373C03CD8C7
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Mar 2026 14:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773066368; cv=none; b=IvupSs3+q2UJEJZsN7Q0QbGYDcDMgRT7hhyWKJjm6htfM8u1b+cCXTDB4r0eKjTz+tlOEBjDQ0Fa6ywzsV13SNMA23BTG6vpYO2hCMGmdoVQv8RsS/z3IpuG/dGK35x1/4Yvn978xGv6MVosTuq0qARcps4gy+7tUjEFFjCKdWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773066368; c=relaxed/simple;
+	bh=0GzH/WbkPxuwUlkTNUh22Q69q46ZpYbEGhCSmH4mU2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXNoEcLYqOG8kuzSqM25eLUyFgKs5tb8UO65EqrgHFACESv6vOGEzKcVh64Yqi8tES3uqwI44geWV6Ya1970PbZ9J/CUAlN4GbfSVulet0I94fffcRE2s3Mc+/Eu8IZc0FQ5NJFVux25HZf7WemY4XBlIMo95YpY5uKbB03gJg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LdXCEi29; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kjo+SFQV"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zo9wUOOf5MK3XILPnqM+s27sbweHxcJoBIC4Uw3Y7QPEh7Elb/7GMb8iCwaDahnZ/A/qkqhYJ6HEL1G/RU4IQz4ScFiz1PFScBxIP3SWZKegMflh5vOQgCbtZk+vgZdVmhVj7uACcQlWIxSv09u3wqpwQosZ/5hyK/btnD9Tw7IIb0N5si1J/ECZsegcnkvBIIhZdMDw8JPXDqKU0QcabwuA0+SKUbA7hV5TBocP3nCy6rjw2AAo4WmVVDETsf2inI+wMWPg+jQAmsn7ozWKf2d3rgxH1fIDmQqFARukGRFUrMnx5kLAxhllfDjkVVCc5wLHU5QXC4K44zfrsCtTNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MHB7E9rvIK3PIs7krEYIUdRpKD6Ij8/0f1N99mop3Nw=;
- b=ABWVQqomxSyo0nv5eT1n+nDSwzRZKvajl6z7oDnBEGdM95o9gQm+mwaowsdQBA/bq+JtvJxETVuwZItBHUNZeBfXQn64OEKqxJMYJQdt49Pvo1mQwG1WB/xDrJPq+2SbTmaab5Nyb3xNzSW6IeCYx8nisfaA/TL9QI5FyPl/rSTcO+mZ8LUlBTtawYDSEwRpeYRIcaRj87iAQRztAF/jRLuEVnAwHYzm3VJt4+leKOMjiseYnzJKUNBPaZ5Xn/CGOaxExMzhEOTPOn9wcb9w4scLpCb5533hbwpfBdQE8L1rg6jXrUAzSnGp69pP+OS2dXGPNUImAuFxWd3X5Z5GpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MHB7E9rvIK3PIs7krEYIUdRpKD6Ij8/0f1N99mop3Nw=;
- b=Kjo+SFQVyDdLqYCLWRj1X6T8+liFszL2Kgw9jBneRjhEP+g3e6PmqQuRYUjXrTh3iBebaA8cVnwBjKjYANE1VLCzBY7+OYuASFNAqmhaGrplm73gNT00NCaECJhU/vExEEm6rv4/wY4dKCUjW3ngAua9Ge9qwX0uy4EUAS7NVKM=
-Received: from DM6PR08CA0013.namprd08.prod.outlook.com (2603:10b6:5:80::26) by
- SJ0PR10MB4749.namprd10.prod.outlook.com (2603:10b6:a03:2da::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.25; Mon, 9 Mar
- 2026 13:39:24 +0000
-Received: from CY4PEPF0000EE31.namprd05.prod.outlook.com
- (2603:10b6:5:80:cafe::fd) by DM6PR08CA0013.outlook.office365.com
- (2603:10b6:5:80::26) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.25 via Frontend Transport; Mon,
- 9 Mar 2026 13:39:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- CY4PEPF0000EE31.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9678.18 via Frontend Transport; Mon, 9 Mar 2026 13:39:23 +0000
-Received: from DLEE204.ent.ti.com (157.170.170.84) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 9 Mar
- 2026 08:39:23 -0500
-Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 9 Mar
- 2026 08:39:18 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE205.ent.ti.com
- (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 9 Mar 2026 08:39:18 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 629DdHNi1182586;
-	Mon, 9 Mar 2026 08:39:18 -0500
-Message-ID: <512c8f92-f56e-4bb7-a6c4-aef7c4120bce@ti.com>
-Date: Mon, 9 Mar 2026 08:39:17 -0500
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LdXCEi29"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-35691a231a7so7259343a91.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Mar 2026 07:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1773066366; x=1773671166; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fBrm9MTDNHeQZv4wJ0CXspPHqOyz2SoB+5IA+qzdZls=;
+        b=LdXCEi29nj/zxzt9jH3uU16Svz33wDY1upwuF7Ah4oJCH79vByAIyc/mvzFZEMeNgl
+         CKEscjbDgMAl/KHpC+yj8rj/oZH5U3i0kuolgd24TajHsWX3xzlawzWZFUU2/iysFabZ
+         jVouzVUcz8MDt/C498/Wn9/Gh3RQN+QvWdVy8HPrkZb2NU0GXjlqXZrrkdwNghpWMnd2
+         LyIyGZ8bRrfHws+VyBUzFRxhQ9NvxYsRrm+s0debhU4m2Mp/ZnlKF0rQGtdM3quaITMg
+         yYHFvfvCAS5VgRSp2AxeewfS/Yt8FIbB15NmGvJYy6Mlj1QI3+n95XXkkZ3KC+c238Kb
+         GW2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773066366; x=1773671166;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fBrm9MTDNHeQZv4wJ0CXspPHqOyz2SoB+5IA+qzdZls=;
+        b=Qo6t+PkHD+GM+6+oEf8ImWjWHAU8emdI0QOo0IbdBw+E+b56b8otJiXa2bp8Omgtc1
+         Q6hDohOAcdbUTm/KNCEtCKdr2Cj6fiu45Ywy01JdiOocBkp2DsGUT/10Qdv/BRJMYpPU
+         8SXAgFF4iF5IgKwvkQEMmZz9h7Gir4MbLxtO5qEA/7RJnNkmAsRvekTw9Ha3Ygv8GxGC
+         FYdWrk7yCZoWmf8N7CKc8hWfl8Kw/FO/5EvK3ap+Z0sRRaAopgOhyeuh8PU7QaAYHS/h
+         G9KW27T8PDzAhDtwCj6E1WUs4vZATtJSx3fMNa1qNpc/D0hAmr4LrWI4jJ327Q02H0k8
+         GYRw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtFvyveMvzaEP8myjFCJNt/LhuBriIcZKlNW8jCcESaq/hB8aHW9yPr6VZKqOqAGJsIwGQVZ8sbUDKVdW4ZUvX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK1kyKHpboizqyx80HIzLqobTYc+YTE+cB9uyuQftbjptDAGzb
+	d2g8i7iz+VtzdNWMkeUrNIigIgVX3GAkY0RkmPUf7eHi3HRrVp+zcL7sw4uOh8+2GQI=
+X-Gm-Gg: ATEYQzw/vU0XPcVaHLlOcMhBnOYR+s42KbswGVMPMYv9UW2il+eKWmdW6mG6KDm0O3x
+	xHwhkZmfJ5vpkuGzRfH8fv4Ku8f6c4T3tOTFJxovlGL/cP5rfnCJh5HbljQMluVldsTgwcTUtf2
+	L8yb4caoicpq3hAsj5Z33zrNJyxmWNkyW85Ir+qMQEQh+uO+vFVUoXF6Y8h9/9WSya6O7XW9VFG
+	oEkpdSOBeyg1deWKkVfEuAH2et0p8cMY1eFcrs0hC7cnEc6pd7eKkOCggt2A/mljuEgMg/nITJI
+	d1A4qbB5sD3tYIb837sZwiiTKWlnCRXUr8+ELi2SR+1q1JSZiixL0jiqc3qx1O4ZRNu87q4lK8W
+	yTqwNig847Q7xGaZuKYrNOI8xKQP08NATusLMXtFF+XVX5Eg+jr6wFmEMfHTnLR8yPoKQr5kpFd
+	38ys8zxAFGFIyooKTJdt1jEugNHaM=
+X-Received: by 2002:a17:90b:2496:b0:359:8564:dc0e with SMTP id 98e67ed59e1d1-359be21aab6mr5402377a91.3.1773066366110;
+        Mon, 09 Mar 2026 07:26:06 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:9504:de97:a114:6f18])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-359bbcacf06sm4290839a91.4.2026.03.09.07.26.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2026 07:26:05 -0700 (PDT)
+Date: Mon, 9 Mar 2026 08:26:03 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: keystone: Request IRQs in probe()
+Message-ID: <aa7Ye7_c3nU5J4Qx@p14s>
+References: <20260302201734.320747-1-afd@ti.com>
+ <aasMuUHVnyAx3FmS@p14s>
+ <5d2936a4-9124-4910-93ed-c898d6facdb1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ti: sci: Drop fake 'const' on handle pointer
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, Nishanth Menon
-	<nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
-	<ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, "Stephen
- Boyd" <sboyd@kernel.org>, Peter Ujfalusi <peter.ujfalusi@gmail.com>, "Vinod
- Koul" <vkoul@kernel.org>, Frank Li <Frank.Li@kernel.org>, Thomas Gleixner
-	<tglx@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Bjorn Andersson
-	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
-	"Philipp Zabel" <p.zabel@pengutronix.de>, Dave Gerlach <d-gerlach@ti.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-CC: <stable@vger.kernel.org>
-References: <20260223202426.566958-2-krzysztof.kozlowski@oss.qualcomm.com>
- <195cc8dc-8642-481c-8bdd-f5409ab8f5b5@ti.com>
- <5b6a4284-4766-424c-9171-feaa08c52ad1@oss.qualcomm.com>
- <2d852f07-0bd9-4076-b0dd-93425ed237f4@ti.com>
- <c768706e-f063-44bd-92cd-f3984ad3bfbc@oss.qualcomm.com>
- <aa2899ff-a8d9-4740-b256-266f7073f0a9@ti.com>
- <7aa1e643-a557-439c-a337-20575adf1e35@oss.qualcomm.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <7aa1e643-a557-439c-a337-20575adf1e35@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE31:EE_|SJ0PR10MB4749:EE_
-X-MS-Office365-Filtering-Correlation-Id: d717b4b3-0775-4cad-2cf4-08de7de14674
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|1800799024|82310400026|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	4r6gJI54oASuTREFVtD5zQzAStqRMfRzWIO5+2FOQef9MFsTRwPjBhrE2U7hFOlLhRPrRG3rg8bZqUscgc27yW+ZR8TnwlrL/iPRZjcWSED5K0f39RafBizsODKl4l3qaJsWiQWn77ssLhunxOqLF45cnQ1fUmccT3e/WpHOaSrY8XuHRb9WHnpm7dEumSauGYeidDr+h9LhipQWCSo3WA4Xax5s6rh2zu7wRg6hLjr3xqhcPs5t1Xv0yfuwmPWqLxkNHHd5+EiAYQsoUIKsx9h0kYOrBp6LsGAHTGenU8p0+r+DdMI8itClxs3nMQ9CSp0Za32M02ABOb7dV0JBHk5J4M1lzLCZAVKEiA0ZZhiCAgTZSVgWQ7zcx7eezyQzy+EKK0cdCeb+odQxqoKiSL+zVBM7ZAQmHb7l/t1C6nqQAAbuFRPsDVLkV1BwWitFwzyL66hMMAi5kuq7Q8xG2G1UpWdZx0meISEuym7wTD0CNf567hdmLnhy7nBDz0Ier9TFh6l1dwTC0QYrwzLGuir3gWfLPjJz+Izm7sjlq7AzYGiOZFmnNHtZTIFgeiEJivWD6LpHL8pWuQMWVzoOgC91i7chbxcK+CyJ+uuRTK6OCIeX7ir9SCFGDfhNvUaS9S2Cj59Vi0rtJVURwEYCo8ioPhitSz1RxDyPKe2Yg7Wr1XeJWLA1pu4+T9Og8b2nZPz0na8IpwjatTKrFLeVuCcVgFuZ/jM5uUW45BJYPxcECwG13OKKpxp2VdDvkvf30cXw5aED3M5FCbHEcWfwNwalxSz3BqoFljp0iOVsHhB3KaxPrDNbm30ZhqiXzjHN
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(1800799024)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	5j+x3jwTJvfMeRrTLYr6h1qr6lXnOTzmUccfV0AoKrOLUCLzjYlJ76OBhsZv3lN/R1UZOxa2gm2BPlGcrlEJqG6++FMLrSrCtkRJ+0dlNcYx//UNUGxx+OvNbqJYvtAN66N9ghk+bNCDEOpun1d7mUfjXLH/hS3pLBR0MafeUYp0Ffk19atfgFiBHZmTBn9eXkCH6hhLAJrV/HiP+TghzVHq+z+fETOB0dDj0yXOriIFdjtFJCBeO5naFfKlo5vqUdZb5k36oRV+0HeIRvBOPRoKYVhhM4YdpXl4QNVsKCk/wtboCvioolZMCADDzCwZYIrJQyapa1I8b3PLynXx6qz+flFcBY9ZWracT7iXDOSd+81erXhbWbZyb5Rbw7Sp0Ii5ikbn/uEnDknSImO5PQaud4HzngFSiwZ87kS2kIoaI39AEmPlZAUU9Jh8tuwL
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 13:39:23.5522
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d717b4b3-0775-4cad-2cf4-08de7de14674
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE31.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4749
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d2936a4-9124-4910-93ed-c898d6facdb1@ti.com>
 
-On 3/5/26 1:49 PM, Krzysztof Kozlowski wrote:
-> On 05/03/2026 19:44, Andrew Davis wrote:
->> On 3/5/26 9:59 AM, Krzysztof Kozlowski wrote:
->>> On 05/03/2026 16:52, Andrew Davis wrote:
->>>>>>> The code is not correct logically, either, because functions like
->>>>>>> ti_sci_get_handle() and ti_sci_put_handle() are meant to modify the
->>>>>>> handle reference counting, thus they must modify the handle.
->>>>>>
->>>>>> The reference counting is handled outside of the ti_sci_handle struct,
->>>>>> the contents of the handle are never modified after it is created.
->>>>>>
->>>>>> The const is only added by functions return a handle to consumers.
->>>>>> We cannot return non-const to consumer drivers or then they would
->>>>>> be able to modify the content without a compiler warning, which would
->>>>>> be a real problem.
->>>>>
->>>>> This is the same argument as making pointer to const the pointer freed
->>>>> via kfree() (or free() in userspace). kfree() does not modify the
->>>>> contents of the pointer, right? The same as getting putting handle does
->>>>> not modify the handle...
->>>>>
->>>>
->>>> In that argument, if we wanted the consumer of the pointer to not free()
->>>> it we would return a const pointer, free()'ing that would result in the
->>>> warning we want (discards const qualifier).
->>>>
->>>> If you could somehow malloc() from a const area in memory then free()
->>>> doesn't modify the pointed to values, only the non-const record keeping
->>>> which would be stored outside of the const memory. So even in this analogy
->>>> there isn't a problem.
->>>
->>> I am not saying about malloc. I am saying about free() which does not
->>> modify the freed memory.
->>>
->>
->> And if you look, kfree() in Linux takes a const pointer. We also do not
+On Fri, Mar 06, 2026 at 11:29:09AM -0600, Andrew Davis wrote:
+> On 3/6/26 11:19 AM, Mathieu Poirier wrote:
+> > Good day,
+> > 
+> > On Mon, Mar 02, 2026 at 02:17:34PM -0600, Andrew Davis wrote:
+> > > IRQs can be registered in probe and only need to be enabled/disabled
+> > > during remoteproc start/stop. This lets us catch IRQ issues early
+> > > and simplify remoteproc start/stop.
+> > > 
+> > > Signed-off-by: Andrew Davis <afd@ti.com>
+> > > ---
+> > >   drivers/remoteproc/keystone_remoteproc.c | 41 +++++++++---------------
+> > >   1 file changed, 15 insertions(+), 26 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+> > > index 4d6550b485675..e7fde55097866 100644
+> > > --- a/drivers/remoteproc/keystone_remoteproc.c
+> > > +++ b/drivers/remoteproc/keystone_remoteproc.c
+> > > @@ -173,35 +173,16 @@ static int keystone_rproc_start(struct rproc *rproc)
+> > >   	INIT_WORK(&ksproc->workqueue, handle_event);
+> > > -	ret = request_irq(ksproc->irq_ring, keystone_rproc_vring_interrupt, 0,
+> > > -			  dev_name(ksproc->dev), ksproc);
+> > > -	if (ret) {
+> > > -		dev_err(ksproc->dev, "failed to enable vring interrupt, ret = %d\n",
+> > > -			ret);
+> > > -		goto out;
+> > > -	}
+> > > +	enable_irq(ksproc->irq_ring);
+> > > +	enable_irq(ksproc->irq_fault);
+> > > -	ret = request_irq(ksproc->irq_fault, keystone_rproc_exception_interrupt,
+> > > -			  0, dev_name(ksproc->dev), ksproc);
+> > > +	ret = keystone_rproc_dsp_boot(ksproc, rproc->bootaddr);
+> > >   	if (ret) {
+> > > -		dev_err(ksproc->dev, "failed to enable exception interrupt, ret = %d\n",
+> > > -			ret);
+> > > -		goto free_vring_irq;
+> > > +		flush_work(&ksproc->workqueue);
+> > > +		return ret;
+> > >   	}
+> > > -	ret = keystone_rproc_dsp_boot(ksproc, rproc->bootaddr);
+> > > -	if (ret)
+> > > -		goto free_exc_irq;
+> > > -
+> > >   	return 0;
+> > > -
+> > > -free_exc_irq:
+> > > -	free_irq(ksproc->irq_fault, ksproc);
+> > > -free_vring_irq:
+> > > -	free_irq(ksproc->irq_ring, ksproc);
+> > > -	flush_work(&ksproc->workqueue);
+> > > -out:
+> > > -	return ret;
+> > >   }
+> > >   /*
+> > > @@ -215,8 +196,8 @@ static int keystone_rproc_stop(struct rproc *rproc)
+> > >   	struct keystone_rproc *ksproc = rproc->priv;
+> > >   	keystone_rproc_dsp_reset(ksproc);
+> > > -	free_irq(ksproc->irq_fault, ksproc);
+> > > -	free_irq(ksproc->irq_ring, ksproc);
+> > > +	disable_irq(ksproc->irq_fault);
+> > > +	disable_irq(ksproc->irq_ring);
+> > >   	flush_work(&ksproc->workqueue);
+> > >   	return 0;
+> > > @@ -427,10 +408,18 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+> > >   	ksproc->irq_ring = platform_get_irq_byname(pdev, "vring");
+> > >   	if (ksproc->irq_ring < 0)
+> > >   		return ksproc->irq_ring;
+> > > +	ret = devm_request_irq(dev, ksproc->irq_ring, keystone_rproc_vring_interrupt,
+> > > +			       IRQF_NO_AUTOEN, dev_name(dev), ksproc);
+> > > +	if (ret)
+> > > +		return dev_err_probe(dev, ret, "failed to request vring interrupt\n");
+> > >   	ksproc->irq_fault = platform_get_irq_byname(pdev, "exception");
+> > >   	if (ksproc->irq_fault < 0)
+> > >   		return ksproc->irq_fault;
+> > > +	ret = devm_request_irq(dev, ksproc->irq_fault, keystone_rproc_exception_interrupt,
+> > > +			       IRQF_NO_AUTOEN, dev_name(dev), ksproc);
+> > 
+> > request_irq() sets irqflags IRQF_COND_ONESHOT, something that is not done here.
+> > Are you sure this is what you want?
+> > 
 > 
-> The slub, but that's the only implementation being I believe frowned
-> upon. The mistake made long time ago...
-> 
->> modify the content of the pointer we are given either, so we should
->> be okay using const by the same reasoning.
-> 
-> That's a mistake so you cannot use the same reasoning. It's bogus and
-> bugfree to take a pointer to const for any kfree(). Just poke MM folks...
-> 
+> devm_request_irq() looks to also set IRQF_COND_ONESHOT matching request_irq().
+>
 
-Don't act like I'm trying to trick you by picking some bad example, you
-picked kfree() and it just happened to showcase my point.
-
+You are correct - I have applied this patch.
+ 
+> Not sure it would matter anyway as these IRQs are not shared, behavior would
+> be unchanged.
 > 
->>
->>>>
->>>>> The point is that storing the reference counter outside of handle does
->>>>> not make the argument correct. Logically when you get a reference, you
->>>>> increase the counter, so it is not a pointer to const. And the code
->>>>> agrees, because you must drop the const.
->>>>>
->>>>
->>>> The record keeping memory is not const and can be modified.
->>>>
->>>> And where do we drop the const? The outer "struct ti_sci_info" was never
->>>> const to begin with, so no dropped const.
->>>
->>> We discuss about different points. I did not say the outer memory is
->>> const. I said that you drop the const - EXPLICITLY - from the pointer to
->>> handle.
->>>
->>
->> Only because container_of() forces the const to be dropped, that is out
->> of our control. But we never modify handle though the non-const parent
->> struct.
+> Andrew
 > 
-> That is not true. You could use container_of_const() if you wanted to
-> have const. You explicitly drop the const, code would not work without
-> dropping the const and this is the problem.
+> > Thanks,
+> > Mathieu
+> > 
+> > > +	if (ret)
+> > > +		return dev_err_probe(dev, ret, "failed to enable exception interrupt\n");
+> > >   	ksproc->kick_gpio = devm_gpiod_get(dev, "kick", GPIOD_ASIS);
+> > >   	ret = PTR_ERR_OR_ZERO(ksproc->kick_gpio);
+> > > -- 
+> > > 2.39.2
+> > > 
 > 
-
-There is no dropping the const, the parent struct was never const in
-the first place. Only the handle inside the parent struct is const and
-it can stay const and nothing would stop working in any API function.
-
->>
->>> And that API which gets a handle (increases reference count) via pointer
->>> to const is completely illogical, because increasing refcnt is already
->>> modifying it. Just because you store the refcnt outside, does not change
->>> the fact that API is simply confusing.
->>>
->>
->> If the refcnt is not inside the const struct, then the contents are not
->> changed, therefor const is still correct. Even if the content of handle
->> were in fixed ROM, nothing would break here.
-> 
-> I am talking about API and again you go into memory correctness. So
-> again, very simple: any refcnt get taking const data is bogus.
-> 
-
-Modifying a refcnt stored *inside* a const struct is bogus. Keeping an
-external refcnt about a bit of const data is perfectly sane. When the
-refcnt goes to 0 nothing happens, it's not like we go an free() the
-const data or anything. The refcnt exists just to print a warning if the
-count goes negative, nothing else.
-
-Andrew
-
-> 
-> Best regards,
-> Krzysztof
-
