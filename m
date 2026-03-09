@@ -1,164 +1,111 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFCF3DAC02
-	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Mar 2026 15:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8143D7D7E;
+	Mon,  9 Mar 2026 15:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773069932; cv=none; b=mp/trCRso/Pl6BJK6DPA/ssswdXe9Y7O5q1C1I5r9reNE2K1y/6oDlhjmIvknMByEI7/YTbkZ6EWtTcZXxfG1G9A22eGI8la/MuOxcxVKHl+sMv2NeXM8gXG9xvZkWdp8FOTM3k8CrGaFhUHO7N9QGZBaPunsojFYVOAHrSkQdI=
+	t=1773070517; cv=none; b=ThIEDwxiuM49i04GH2ZxGZqj2KankdLFZ2vGEyFTf4Too19+s1KjhuoCDf9s17aQDO6ds+H32qDhkLCPKFjWGb+y3NkLKX9csD3O9dWzSikl2l6AvPXxP72mnsHm0CJEDCOCWfyZhwL8BKCg0h75AP7M52wTGMqQ/N8TUo6aJpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773069932; c=relaxed/simple;
-	bh=fLdlgK54rTn34EKZI8AHzVRLbm2SJ8RTjlamikvXF3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PFSIqKYut9lBUzyKd5H/KveP4CrMHwCOdv9ZtJuyB6glsi/EDHun7GvKCwCqRUxBMfx8RLWnUSpx482kYJFI2Ybk9+98qyy2/LvRCv2OAgm3TdGPk2/n2f9fRYBAPIH9jDpJfeXtVCgSCyH8rB6A0tG/S2DvvakHIXYmRaM0XH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TfzUYh+B; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1773070517; c=relaxed/simple;
+	bh=u+/MI2wZ/2tYxv66P3IM2zQuv9Y6IN55qSc/ZDaUOO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vwh1tfKSAVv/Vl2KSg+azi/EK93cC0jVKylwMlE7YkaKezZOSiQILFTKhVq2Ufs3h4Xmi+WW8gPOXV/98e4YZJs3MM+tmuFKC85KhAZF3jWx/AGeQalOrNyq1fQlXurvjBD4CE5AU55VnvZ3/dhnJTdzYqxBSarBu8f8iy2uv/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adq/96lZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TfzUYh+B"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5a12cd0bcd8so6156182e87.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Mar 2026 08:25:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1773069929; x=1773674729; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xKq8ulzy5MHQKDxfFMVcrLftpi/uwWVl0kgu6a2rhEE=;
-        b=TfzUYh+BUDnQh31j1IOzPljjfQogGf47ltG5YAmIW848lyytTPPXuz8FWQGDh1CJTt
-         orZV/TYwTxb39OUo0KvYHhHlmxZvgwptrzu8gZX4btVd0RMVuFYUZOvn3r+cA90MtzTt
-         Pr1qyOgliMTt3RuNN6JjriZjVp/7AtoLpgddo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773069929; x=1773674729;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=xKq8ulzy5MHQKDxfFMVcrLftpi/uwWVl0kgu6a2rhEE=;
-        b=wndovEukr20StpU//6P2799yMksr0eeQ+a1TvUshfOA724Q6J8oxSmbRFl0i6ogLtG
-         o/9mGlrhprW8DR3zYzOMjL1S2mdUl9Xbx7+0o9t716Im5VcyWBrU56xj/zXVoOSc3yoz
-         Q+e7wn27J5bxSY77V8AEqMJU4btfv36+ndoRdnBFrg9D8pTwVXwoVrQ13TPeaDmylxiT
-         geI7KhGCJvzEsYRkHnDRwIiHkrccomtuifL9yv3gG43IcdPp2G2XtQJT3MKhexSAvyoq
-         T2a4/6K/rsGtFyhOnrNeGUn6eUVKqmqTRtOqxYolxryUXVLo2Plf921vRysr3Do8ZOVn
-         aQdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWexVb/iVn4abjZ85bj6IWNGXsA303wfO2hfT0KraZZMqkwwspxPRZGImSUhqBOwP5TQux/NqDEhppYhN8KX5C4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDqS6LcMEf9d1fXTbDVos6hTPduCL6RFTMPViaSsOpBtxLWNP4
-	5XD0w5uY+exhI1S3QXhOc1rVRkioVysEUZXWWNZu0cGn4AzRsHIKEdP6dJ7focuR+PwYoNk2E2I
-	Hm+5+seiw
-X-Gm-Gg: ATEYQzy2GE6yGSzEJqY17YB/ABLyz5zl9Pq0q6BYy4WXNg2zKvRKWO+Hjv+lzWqirm1
-	w5Y/NVenAt8PBMzTxwdZJIlH0xnOkT+b89SU3k6H/HmcB9ta2c8Tsun4bLHyiBPzW/x+7wHA6hE
-	6IGZIP506xNjhEJY6FhQYtiS0eOXrEBblevyFtD1Jr6IpHWyCU8jltB4lLJTwYKnbv4AHbnMvMj
-	GQRW0dCyxAXQdeVuRIXix0DKfO0pMRlmKiJJBpMeztrMeAhb+H5DOZML1rLQg0emOhj0KKO5+/9
-	DatL4qc+ZFYBZTe1OxYpqL5amr9kNVBKwCGXX0q6X8gcPA//q5fQAQainLTAy6Ev5s/VvBNLspn
-	TtaZxmOrTbSD9g/mB80IjWj6D8+USl9IW4WW5uFYDu4XXUshH6uA6+h1HVEIKbt6x5643aT3b+K
-	oE+k78XV1z6NaBBvf+gs7cN9ISSNLkxQ60u57paixTAqyylCAXAlMDUj2xbqe8Ng==
-X-Received: by 2002:a05:6512:3b9c:b0:5a1:3e92:4f8 with SMTP id 2adb3069b0e04-5a13e920566mr2983399e87.30.1773069928688;
-        Mon, 09 Mar 2026 08:25:28 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a13d03d841sm2124069e87.39.2026.03.09.08.25.28
-        for <linux-remoteproc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Mar 2026 08:25:28 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5a12cd0bcd8so6156120e87.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Mar 2026 08:25:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWsUaE9qBvxVaTh0pddJQrFiobOtpV6e8+iJE3xtwolqejkb4JCYQCM7N01N9EeYE5Ie0xFzB6HfVnCiXMqKX5I@vger.kernel.org
-X-Received: by 2002:a17:907:1c2a:b0:b96:dcc0:2e19 with SMTP id
- a640c23a62f3a-b96dcc03e2bmr431706766b.56.1773069586848; Mon, 09 Mar 2026
- 08:19:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adq/96lZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA4F9C4CEF7;
+	Mon,  9 Mar 2026 15:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773070517;
+	bh=u+/MI2wZ/2tYxv66P3IM2zQuv9Y6IN55qSc/ZDaUOO0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=adq/96lZzdI0wteQ0IcsUV8KQGfZBQHXjBIKCfRr7fB8YEaWOeKLl6bEqKFvs/E12
+	 Esy8Do4TUnqN2/4IIETqw9tFgzIiE/UvEiHFxZhGFtweEX3cIfiS2vsYvZqHLaUw+v
+	 SNMfmh1ur0KoIj0VuyPaj+CxBecDD7hOtAVM2yvbdU45HPBYA7JDlYRSMPS48fblK7
+	 x/VtV3B4VM8Bm6n2ov0Ca5vnHKQnZQnDPInKCqb7uj4Mgkvwj2CjXOp/sUwFTuPld8
+	 qKdQm03+k1lbHx9zX016Kd353/bclFqTWz1H+f2M2lDjCcV9w8V9jchIkklFrtGo1b
+	 iGzOSpJ4DeRmg==
+Message-ID: <2796a368-8026-4021-b11f-4dbd883ded2f@kernel.org>
+Date: Mon, 9 Mar 2026 16:35:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260216181002.3475421-1-dianders@chromium.org>
-In-Reply-To: <20260216181002.3475421-1-dianders@chromium.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 9 Mar 2026 08:19:33 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XosP+rpT7w1Dcr=Xu7K8MCnA-=hndCgvsdwRAeVXuUdA@mail.gmail.com>
-X-Gm-Features: AaiRm52PitiYzwSf40xttz_JauQBZgQS8kA13tji_SRNQ2F75XcOox36FcsJy20
-Message-ID: <CAD=FV=XosP+rpT7w1Dcr=Xu7K8MCnA-=hndCgvsdwRAeVXuUdA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/15] mailbox: Stop sending NULL mailbox messages
-To: jassisinghbrar@gmail.com
-Cc: Frank.Li@nxp.com, Santosh Shilimkar <ssantosh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, andersson@kernel.org, arm-scmi@vger.kernel.org, 
-	cristian.marussi@arm.com, daniel.baluta@nxp.com, festevam@gmail.com, 
-	imx@lists.linux.dev, jay.buddhabhatti@amd.com, jonathanh@nvidia.com, 
-	kernel@pengutronix.de, konradybcio@kernel.org, krzk@kernel.org, 
-	lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, lucaswei@google.com, marco.crivellari@suse.com, 
-	mathieu.poirier@linaro.org, michal.simek@amd.com, nm@ti.com, 
-	rafael@kernel.org, robh@kernel.org, shawn.guo@linaro.org, 
-	sudeep.holla@kernel.org, tglx@kernel.org, thierry.reding@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: qcom: Drop types for
+ firmware-name
+To: Shawn Guo <shengchao.guo@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+ Bartosz Golaszewski <brgl@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20260309123357.1911586-1-shengchao.guo@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20260309123357.1911586-1-shengchao.guo@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jassi,
+On 09/03/2026 13:33, Shawn Guo wrote:
+> The type of firmware-name is already defined by core schemas.  Drop it
+> from individual bindings that have either a redundant definition or
+> an override as string type.  For the later cases, constrain the number
+> of expected firmware names to 1.
+> 
+> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
 
-On Mon, Feb 16, 2026 at 10:11=E2=80=AFAM Douglas Anderson <dianders@chromiu=
-m.org> wrote:
->
-> As talked about in the first patch in this series, passing NULL as the
-> 'mssg' argument to mbox_send_message() ends up causing confusion and
-> quirky behavior inside the mailbox core. Despite this, there are a
-> number of drivers that pass NULL.
->
-> It is plausible that some of the drivers passing NULL may have been
-> taking advantage of the quirks of the mailbox core. Specifically, they
-> may have been taking advantage that calling "tx_done" wasn't truly
-> necessary for NULL messages (it was a noop) or that NULL messages were
-> passed onto the mailbox controller right away without queuing.
->
-> This series introduces a new API call: mbox_ring_doorbell(). The new
-> API call tries to mimic the specific quirks that were helpful in the
-> old behavior and it's expected to be a nearly drop-in replacement.
->
-> There are some subtle differences between the new call and the old
-> behavior, but it's expected that all of these differences are only for
-> cases where the old behavior made little sense. The description of the
-> first patch details these differences.
->
-> The series attempts to convert all in-tree users to stop passing NULL
-> for mssg. As per above, there are some slight differences in behavior.
-> If any of the patches are causing problems, they can safely be
-> reverted while debugging the problems. Eventually, all code should be
-> converted over to stop passing NULL mssg.
->
-> Changes in v3:
-> - Suggest mbox_ring_doorbell in the warning message
-> - Updated patch description based on Cristian's response.
->
-> Changes in v2:
-> - Instead of just documenting NULL, introduce a new function
->
-> Douglas Anderson (15):
->   mailbox: Deprecate NULL mbox messages; Introduce mbox_ring_doorbell()
->   ACPI: PCC: Use mbox_ring_doorbell() instead of NULL message
->   firmware: arm_scmi: Use mbox_ring_doorbell() instead of NULL message
->   firmware: imx-dsp: Use mbox_ring_doorbell() instead of NULL message
->   firmware: tegra: bpmp: Use mbox_ring_doorbell() instead of NULL
->     message
->   irqchip/qcom-mpm: Use mbox_ring_doorbell() instead of NULL message
->   remoteproc: xlnx: Use mbox_ring_doorbell() instead of NULL message
->   rpmsg: qcom_glink_rpm: Use mbox_ring_doorbell() instead of NULL
->     message
->   rpmsg: glink: smem: Use mbox_ring_doorbell() instead of NULL message
->   rpmsg: qcom_smd: Use mbox_ring_doorbell() instead of NULL message
->   soc: qcom: aoss: Use mbox_ring_doorbell() instead of NULL message
->   soc: qcom: smp2p: Use mbox_ring_doorbell() instead of NULL message
->   soc: qcom: smsm: Use mbox_ring_doorbell() instead of NULL message
->   soc: ti: wkup_m3_ipc: Use mbox_ring_doorbell() instead of NULL message
->   drivers: firmware: xilinx: Use mbox_ring_doorbell() instead of NULL
->     message
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Just checking to see if there is any addional changes you need from me
-on this series. It looks like it's -rc3 which is maybe an ideal time
-for this series to get some linux-next bake time? A good number of the
-patches in this series have Acks from maintainers so they could all go
-in your tree, I think. For those that don't, I guess worst case they
-just don't land right now and I can re-post them later. ...or if you
-think they would be OK to pickup that would be cool too.
-
-Thanks!
-
--Doug
+Best regards,
+Krzysztof
