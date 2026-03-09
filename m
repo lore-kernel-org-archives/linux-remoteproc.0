@@ -1,126 +1,164 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052313BED46
-	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Mar 2026 14:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFCF3DAC02
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Mar 2026 15:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773067035; cv=none; b=QX/TKB8bk9BUaqPvlHCdZY0X99XTyTd1bk29XAJY0sycdq1ru40RErtTS/lHwEf2J7UjeLqZrycARgzv76HFQaG+ybt+agrtAyjD6712h9GNak0VDYUF2EdLpnpPXB6BOU65SxZNwDvX7qNiTwJRI1RC19fa62C56m/PaFWReDw=
+	t=1773069932; cv=none; b=mp/trCRso/Pl6BJK6DPA/ssswdXe9Y7O5q1C1I5r9reNE2K1y/6oDlhjmIvknMByEI7/YTbkZ6EWtTcZXxfG1G9A22eGI8la/MuOxcxVKHl+sMv2NeXM8gXG9xvZkWdp8FOTM3k8CrGaFhUHO7N9QGZBaPunsojFYVOAHrSkQdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773067035; c=relaxed/simple;
-	bh=9wFHCio89LaMW7wPY7AbeCn2g20iYeKS9H6nhdbkUFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kXi2rc2y6y0i7fhZW3CNdE/ccutmTVZwXUAoWYAEQXlGxveMUpfwhtye11oIx+MGs0uA1IFaI2C1ZWlvODnpPwuX71gJQj0mW1yvblnf3gqqVVW96EtuVN8iUAXPPxX5VVlApHWv1hosciQbyhueRFb87C/baFTmDw/Esp0luVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rK0FGgZr; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1773069932; c=relaxed/simple;
+	bh=fLdlgK54rTn34EKZI8AHzVRLbm2SJ8RTjlamikvXF3o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PFSIqKYut9lBUzyKd5H/KveP4CrMHwCOdv9ZtJuyB6glsi/EDHun7GvKCwCqRUxBMfx8RLWnUSpx482kYJFI2Ybk9+98qyy2/LvRCv2OAgm3TdGPk2/n2f9fRYBAPIH9jDpJfeXtVCgSCyH8rB6A0tG/S2DvvakHIXYmRaM0XH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TfzUYh+B; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rK0FGgZr"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2ae8979dbb2so16544045ad.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Mar 2026 07:37:13 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TfzUYh+B"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5a12cd0bcd8so6156182e87.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Mar 2026 08:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773067033; x=1773671833; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RGC50SoNQ/IL+9dTh5yK8xHvRueXeBTNyhrhCxqJ7wI=;
-        b=rK0FGgZrloX0aFougthPY5DNGrwdZp1eCR818R3EntKElY7q6CaFmILqn383R369bS
-         Pc4Shy3HctIOa98oLymGd+7cH5byA4ieKuY5JLz6euwzvtTbIVIN2f+eDGjUi5FGi8C7
-         s98JoJ4NCIDYpecXffUOxTAp82MFZFEUAdXnZgBB+Zyg25573mvSxriYnkcHlNtDj9Bs
-         k8/InPIslcIulhqdAEH71kxcDknmnq6+2JU7MJGQGQ32dS3l55yhdb4HMAXFmFHiDb+c
-         774PUzF0Nz4WKm296sMJHMpTniIUuE/gU6A43dY57U+4dPf4V+yoJvPY02vDNw33i/Nn
-         Srwg==
+        d=chromium.org; s=google; t=1773069929; x=1773674729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xKq8ulzy5MHQKDxfFMVcrLftpi/uwWVl0kgu6a2rhEE=;
+        b=TfzUYh+BUDnQh31j1IOzPljjfQogGf47ltG5YAmIW848lyytTPPXuz8FWQGDh1CJTt
+         orZV/TYwTxb39OUo0KvYHhHlmxZvgwptrzu8gZX4btVd0RMVuFYUZOvn3r+cA90MtzTt
+         Pr1qyOgliMTt3RuNN6JjriZjVp/7AtoLpgddo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773067033; x=1773671833;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RGC50SoNQ/IL+9dTh5yK8xHvRueXeBTNyhrhCxqJ7wI=;
-        b=NuS0VarVq9NMCcVq+eMgKu14FPxtWCJd74ncOIvoDyxrlh9bcsxpKA5oi84qZdg3kn
-         fZaar9z8iKs2ZLJM8GqWHue+pwjKtjnVJ8TYYDWqgi5isAdAiPyWXqbaNQ/z5fyFyGCS
-         1CxnWxzuR2vnFQJvl7TOw9T23hCX6F8B85Jy6l7mkgLM0JB+JIi6z7dwDjChdGK1O/8B
-         E9/14GBOda7SND0fIpEHuZuOq4Vl0AXo8oiT/jt/fuCwlf5HzEWl5GPAjLOJrxsnxXdJ
-         asvTA6ZpzgegcHZ6VJfQm7UmelIdVOwVPCb5PJpbH1v13X21YidlLd2Gs/u0pVdyowza
-         gZkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWccqoJC6enLeLsIER3jpcSzcXNE0CNjxwShCCNAiuA6ot1ZkRYd2PcakGAvXIHBzJ6+oz2GFYpDD4Voo0gEadA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6r91+prllRQMl8WYiVwKW9VAEB+AbVnKWHs7ZySJLm9H9B2JD
-	no6hbXDR2JyzXwbt8Qer01NjPzI5lQuh3GvBUDm3Amtfwp3RPvCvPQK0G83DUme9t6oudcpccgs
-	ocDIALyE=
-X-Gm-Gg: ATEYQzwhzGTxWmyqTuCudNAIo22L+3FSIblZLYLBsOg1jj+Hzn/75cD0ul2JFhSfh6U
-	VXhHeM3iI32He3G/znjw7ak3kqLrBe0n7yBbJNAP0RPXOAg35UaO1y8U7sTZ9zf/kLaVm21lyCR
-	qsXQPymyWZkhYpeAM68VwviEgTqWYtL199Ox6I6XahtBBRNIcIwkpbCjjRPo4pCGBFvcETMhId6
-	fDkQGCWJd61gdt0XpRjY+JxK/10vxfkooivAvfucgXHUbQUEnaM4F3ylAMpf4nyz7Yo+jiSsheD
-	e1VTlNW1bomLKU6BlQZKvnDvDpaAbMQp2QDrGVMSVj/L8VA2PVskyD0tUpyfRcAkKx85riiNGtr
-	n95dqUMrVVfbSm+UeUH/VfK2y16fCll1WTJ1Nzf3Pqu7kjoFXrCqS0IM56q03vBSb/o/8cQ7jKT
-	H7EE3dnEvZjgAbxbjyOdy9U0meutc=
-X-Received: by 2002:a17:903:4405:b0:2ae:4dce:7e92 with SMTP id d9443c01a7336-2ae82421b26mr106299285ad.14.1773067033127;
-        Mon, 09 Mar 2026 07:37:13 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:9504:de97:a114:6f18])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ae840b2e9dsm157222545ad.85.2026.03.09.07.37.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2026 07:37:12 -0700 (PDT)
-Date: Mon, 9 Mar 2026 08:37:10 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Jori Koolstra <jkoolstra@xs4all.nl>
-Cc: gregkh@linuxfoundation.org, Bjorn Andersson <andersson@kernel.org>,
-	"open list:REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM" <linux-remoteproc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drivers: rpmsg: class_destroy() is deprecated
-Message-ID: <aa7bFpwOKHz2727C@p14s>
-References: <20260308140850.1138376-1-jkoolstra@xs4all.nl>
+        d=1e100.net; s=20230601; t=1773069929; x=1773674729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xKq8ulzy5MHQKDxfFMVcrLftpi/uwWVl0kgu6a2rhEE=;
+        b=wndovEukr20StpU//6P2799yMksr0eeQ+a1TvUshfOA724Q6J8oxSmbRFl0i6ogLtG
+         o/9mGlrhprW8DR3zYzOMjL1S2mdUl9Xbx7+0o9t716Im5VcyWBrU56xj/zXVoOSc3yoz
+         Q+e7wn27J5bxSY77V8AEqMJU4btfv36+ndoRdnBFrg9D8pTwVXwoVrQ13TPeaDmylxiT
+         geI7KhGCJvzEsYRkHnDRwIiHkrccomtuifL9yv3gG43IcdPp2G2XtQJT3MKhexSAvyoq
+         T2a4/6K/rsGtFyhOnrNeGUn6eUVKqmqTRtOqxYolxryUXVLo2Plf921vRysr3Do8ZOVn
+         aQdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWexVb/iVn4abjZ85bj6IWNGXsA303wfO2hfT0KraZZMqkwwspxPRZGImSUhqBOwP5TQux/NqDEhppYhN8KX5C4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDqS6LcMEf9d1fXTbDVos6hTPduCL6RFTMPViaSsOpBtxLWNP4
+	5XD0w5uY+exhI1S3QXhOc1rVRkioVysEUZXWWNZu0cGn4AzRsHIKEdP6dJ7focuR+PwYoNk2E2I
+	Hm+5+seiw
+X-Gm-Gg: ATEYQzy2GE6yGSzEJqY17YB/ABLyz5zl9Pq0q6BYy4WXNg2zKvRKWO+Hjv+lzWqirm1
+	w5Y/NVenAt8PBMzTxwdZJIlH0xnOkT+b89SU3k6H/HmcB9ta2c8Tsun4bLHyiBPzW/x+7wHA6hE
+	6IGZIP506xNjhEJY6FhQYtiS0eOXrEBblevyFtD1Jr6IpHWyCU8jltB4lLJTwYKnbv4AHbnMvMj
+	GQRW0dCyxAXQdeVuRIXix0DKfO0pMRlmKiJJBpMeztrMeAhb+H5DOZML1rLQg0emOhj0KKO5+/9
+	DatL4qc+ZFYBZTe1OxYpqL5amr9kNVBKwCGXX0q6X8gcPA//q5fQAQainLTAy6Ev5s/VvBNLspn
+	TtaZxmOrTbSD9g/mB80IjWj6D8+USl9IW4WW5uFYDu4XXUshH6uA6+h1HVEIKbt6x5643aT3b+K
+	oE+k78XV1z6NaBBvf+gs7cN9ISSNLkxQ60u57paixTAqyylCAXAlMDUj2xbqe8Ng==
+X-Received: by 2002:a05:6512:3b9c:b0:5a1:3e92:4f8 with SMTP id 2adb3069b0e04-5a13e920566mr2983399e87.30.1773069928688;
+        Mon, 09 Mar 2026 08:25:28 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a13d03d841sm2124069e87.39.2026.03.09.08.25.28
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Mar 2026 08:25:28 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5a12cd0bcd8so6156120e87.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Mar 2026 08:25:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWsUaE9qBvxVaTh0pddJQrFiobOtpV6e8+iJE3xtwolqejkb4JCYQCM7N01N9EeYE5Ie0xFzB6HfVnCiXMqKX5I@vger.kernel.org
+X-Received: by 2002:a17:907:1c2a:b0:b96:dcc0:2e19 with SMTP id
+ a640c23a62f3a-b96dcc03e2bmr431706766b.56.1773069586848; Mon, 09 Mar 2026
+ 08:19:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260308140850.1138376-1-jkoolstra@xs4all.nl>
+References: <20260216181002.3475421-1-dianders@chromium.org>
+In-Reply-To: <20260216181002.3475421-1-dianders@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 9 Mar 2026 08:19:33 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XosP+rpT7w1Dcr=Xu7K8MCnA-=hndCgvsdwRAeVXuUdA@mail.gmail.com>
+X-Gm-Features: AaiRm52PitiYzwSf40xttz_JauQBZgQS8kA13tji_SRNQ2F75XcOox36FcsJy20
+Message-ID: <CAD=FV=XosP+rpT7w1Dcr=Xu7K8MCnA-=hndCgvsdwRAeVXuUdA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/15] mailbox: Stop sending NULL mailbox messages
+To: jassisinghbrar@gmail.com
+Cc: Frank.Li@nxp.com, Santosh Shilimkar <ssantosh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, andersson@kernel.org, arm-scmi@vger.kernel.org, 
+	cristian.marussi@arm.com, daniel.baluta@nxp.com, festevam@gmail.com, 
+	imx@lists.linux.dev, jay.buddhabhatti@amd.com, jonathanh@nvidia.com, 
+	kernel@pengutronix.de, konradybcio@kernel.org, krzk@kernel.org, 
+	lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, lucaswei@google.com, marco.crivellari@suse.com, 
+	mathieu.poirier@linaro.org, michal.simek@amd.com, nm@ti.com, 
+	rafael@kernel.org, robh@kernel.org, shawn.guo@linaro.org, 
+	sudeep.holla@kernel.org, tglx@kernel.org, thierry.reding@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Mar 08, 2026 at 03:08:49PM +0100, Jori Koolstra wrote:
-> The class_destroy() function documents that:
-> 
->   Note, the pointer to be destroyed must have been created with a call
->   to class_create().
-> 
-> However, class_create() is deprecated. rpmsg already uses
-> class_register() but the class_destroy() calls should also be replaced
-> with class_unregister().
-> 
-> Link: https://lore.kernel.org/all/2023040244-duffel-pushpin-f738@gregkh/
-> Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
-> ---
->  drivers/rpmsg/rpmsg_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Jassi,
+
+On Mon, Feb 16, 2026 at 10:11=E2=80=AFAM Douglas Anderson <dianders@chromiu=
+m.org> wrote:
 >
+> As talked about in the first patch in this series, passing NULL as the
+> 'mssg' argument to mbox_send_message() ends up causing confusion and
+> quirky behavior inside the mailbox core. Despite this, there are a
+> number of drivers that pass NULL.
+>
+> It is plausible that some of the drivers passing NULL may have been
+> taking advantage of the quirks of the mailbox core. Specifically, they
+> may have been taking advantage that calling "tx_done" wasn't truly
+> necessary for NULL messages (it was a noop) or that NULL messages were
+> passed onto the mailbox controller right away without queuing.
+>
+> This series introduces a new API call: mbox_ring_doorbell(). The new
+> API call tries to mimic the specific quirks that were helpful in the
+> old behavior and it's expected to be a nearly drop-in replacement.
+>
+> There are some subtle differences between the new call and the old
+> behavior, but it's expected that all of these differences are only for
+> cases where the old behavior made little sense. The description of the
+> first patch details these differences.
+>
+> The series attempts to convert all in-tree users to stop passing NULL
+> for mssg. As per above, there are some slight differences in behavior.
+> If any of the patches are causing problems, they can safely be
+> reverted while debugging the problems. Eventually, all code should be
+> converted over to stop passing NULL mssg.
+>
+> Changes in v3:
+> - Suggest mbox_ring_doorbell in the warning message
+> - Updated patch description based on Cristian's response.
+>
+> Changes in v2:
+> - Instead of just documenting NULL, introduce a new function
+>
+> Douglas Anderson (15):
+>   mailbox: Deprecate NULL mbox messages; Introduce mbox_ring_doorbell()
+>   ACPI: PCC: Use mbox_ring_doorbell() instead of NULL message
+>   firmware: arm_scmi: Use mbox_ring_doorbell() instead of NULL message
+>   firmware: imx-dsp: Use mbox_ring_doorbell() instead of NULL message
+>   firmware: tegra: bpmp: Use mbox_ring_doorbell() instead of NULL
+>     message
+>   irqchip/qcom-mpm: Use mbox_ring_doorbell() instead of NULL message
+>   remoteproc: xlnx: Use mbox_ring_doorbell() instead of NULL message
+>   rpmsg: qcom_glink_rpm: Use mbox_ring_doorbell() instead of NULL
+>     message
+>   rpmsg: glink: smem: Use mbox_ring_doorbell() instead of NULL message
+>   rpmsg: qcom_smd: Use mbox_ring_doorbell() instead of NULL message
+>   soc: qcom: aoss: Use mbox_ring_doorbell() instead of NULL message
+>   soc: qcom: smp2p: Use mbox_ring_doorbell() instead of NULL message
+>   soc: qcom: smsm: Use mbox_ring_doorbell() instead of NULL message
+>   soc: ti: wkup_m3_ipc: Use mbox_ring_doorbell() instead of NULL message
+>   drivers: firmware: xilinx: Use mbox_ring_doorbell() instead of NULL
+>     message
 
-Applied - thanks,
-Mathieu
- 
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index 96964745065b..948541656950 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -650,7 +650,7 @@ static int __init rpmsg_init(void)
->  	ret = bus_register(&rpmsg_bus);
->  	if (ret) {
->  		pr_err("failed to register rpmsg bus: %d\n", ret);
-> -		class_destroy(&rpmsg_class);
-> +		class_unregister(&rpmsg_class);
->  	}
->  	return ret;
->  }
-> @@ -659,7 +659,7 @@ postcore_initcall(rpmsg_init);
->  static void __exit rpmsg_fini(void)
->  {
->  	bus_unregister(&rpmsg_bus);
-> -	class_destroy(&rpmsg_class);
-> +	class_unregister(&rpmsg_class);
->  }
->  module_exit(rpmsg_fini);
->  
-> 
-> base-commit: d466c332e106fe666d1e2f5a24d08e308bebbfa1
-> -- 
-> 2.53.0
-> 
+Just checking to see if there is any addional changes you need from me
+on this series. It looks like it's -rc3 which is maybe an ideal time
+for this series to get some linux-next bake time? A good number of the
+patches in this series have Acks from maintainers so they could all go
+in your tree, I think. For those that don't, I guess worst case they
+just don't land right now and I can re-post them later. ...or if you
+think they would be OK to pickup that would be cool too.
+
+Thanks!
+
+-Doug
