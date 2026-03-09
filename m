@@ -1,190 +1,118 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011011.outbound.protection.outlook.com [40.107.130.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BEB3EDAA6;
-	Mon,  9 Mar 2026 20:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773089790; cv=fail; b=BEntQ37gYl5JEAXwMrA0P8i+J3YyCfoTKxVGVcWFLcyfVHNvff9ctQWpXXfqiByTHSl+gDxrWGaORlfWrMbHZZDICvs0e1SFS1ge0L5eZDBK8KA79cniv8+NX0RRvdqCil2yDSUpUIp1PZtm11j7FJCVD15HnTUiIPc9Gxg8qEw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773089790; c=relaxed/simple;
-	bh=6GPsFy9zCNA4aOGX5lsr4ft8T8IqZh9Ce5RCYwC8o6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=F/pq9V4r8sCIh9XazvuTChn4rhRgSuUHiE+rLZMQcawRVOJ7M9mckxZSG8lQgtyfwe0AygRkIg4M7GSgupHeHgUuaIgc67zlXwZxcC+mWcKFx1O9nBprW1coHUUHKcEZjqo3Wh0J1z/hDS31s7rml0DS85mWT8cA8q0Rf+NDVnk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZA9TegaH; arc=fail smtp.client-ip=40.107.130.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E03338E5F2
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Mar 2026 22:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773095053; cv=none; b=pJm1Xetc05wmT3sPAsgDbPeabJ3K3OlV/Qyz3H1+NUKy42Vk2vE90ValLk+pJtnkyx72SQ2CECSy/aUMZstMX6vFfMSkRmYq0ykQLoFW2WlovBjRltnKSemW53LYlPRGAAOTQsTFlSY73CpAiAx4cmrj4rhxzxQQN15a2CaeoLI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773095053; c=relaxed/simple;
+	bh=p74FA63573R7vSgP0Ymlo382GmnT2c2KE5hGfqtfC/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F25VdKz9/dHhy1DG/C79gB7RwcUc74+f+3e+dnSQeatkYagOjYcfF+g0nD7hKpA/DCrzEnJeBghpWQUOJ2zW/BHZqNBt+2yK+PAYZSMZpET/0iySw3X42BAKVOrTdHT+bnjlIFyvprxVTjpkCGM6ECGoYgflL9q530unLIjFS/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FWQ/dZZp; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZA9TegaH"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V4xsw/OF5l3vSp3wDY9Zclm73cw8Ipklm43BnysamGQTQF2eZ56/dRuUOir1X6m0f5y9ov7YRo+MGz3YSj9E5AKkNafZqcRVXFOT8FT4hgUCA8cscgfn6ZjHo1iQqUpdht8hIaG94IyIiOFGPRZq2aL8AEc93hTRxcNtHJStQNMJwq1+p00uV91pRHcCa0yq5mJZbw0aivfrGoBG2whcVA5ZoQinsvN2jA8YK45nNiGyirk0/Yvvj8n7HJ+2a1MOtm6hThzRzpQ8Beq3NScNQ8e1+WxoUdSRO+URmJH7zKd+uEAoqQFufoUSsfchOL7uKpmMO3mlJ3nEh7bi7LYPkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RC93O/9B2LylJvMbACxtTRweB3sixPckboUTpa+OTAc=;
- b=ANKaGeaeSTUu44D0tj2mtjgde6/zK6u2vbK/a2tESHZtDMtsmbzpO9jHX+frsfgT8ajqoHpBb3vnbuJ3s9OhyH0cnemzRiKIVxdiZDZbSDWIVXPqhoeQkLxyfhkBO2Ym2oU7ifejVJXxhM0ddwzsVlovon88oRxnNbageSGKSpcfGnXsKwm41BBZ5SsiC4fxUW4K8eWfzn77NIdIUrqgAbdCrkUSxSeZgniOOTzPGEgCu2l4GNK2Vr/l3mL105cSIkOQSBKNTkYNIiEF7vcmgPT1Fx125xvynrIbCi5sJaRT2Mr8s8OGMRshGL0YUngD4UivgxICvfjkLNec2LLlcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RC93O/9B2LylJvMbACxtTRweB3sixPckboUTpa+OTAc=;
- b=ZA9TegaHh4I+7lkygHuYT6GTqqR/G/Y3J3p9cBOOj7np2XsIU2C1JvnQl0rMUqjEOhe+6vPsfaNVQLHU9M5K9RjKNXxEU9M5XmDeFUPyQ8NDehL4MIOiB6xTq2FevSDrTmfDWMeFHKYnWl9DyghIw06Yn/fqD1niwTKMLtLgjTwST0yxCW/4xE0hNliHWdmgzLCoLM+iPE8pLYe6l+GcxwUqAOe1lxp4zE+w66TWhGfKrL2RuoIbGMx0srCsm/bmwG1uqsp5hoUybcrU8BeYweHUUlD/s4Gnv2i88JnIy95HDCcamZ/NnyKUQyDrKtAdD7C9ioDnOCL6Q0iCW1R7nw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by DBAPR04MB7335.eurprd04.prod.outlook.com (2603:10a6:10:1b1::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.25; Mon, 9 Mar
- 2026 20:56:26 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb%4]) with mapi id 15.20.9678.024; Mon, 9 Mar 2026
- 20:56:26 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	arnaud.pouliquen@foss.st.com
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com
-Subject: [PATCH v10 5/5] arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
-Date: Mon,  9 Mar 2026 15:55:32 -0500
-Message-ID: <20260309205532.1794202-6-shenwei.wang@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260309205532.1794202-1-shenwei.wang@nxp.com>
-References: <20260309205532.1794202-1-shenwei.wang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SN6PR08CA0031.namprd08.prod.outlook.com
- (2603:10b6:805:66::44) To PAXPR04MB9185.eurprd04.prod.outlook.com
- (2603:10a6:102:231::11)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FWQ/dZZp"
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-4170e916d77so636439fac.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Mar 2026 15:24:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1773095051; x=1773699851; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SHnLn6sNqEV/ng1JAOx90FzzxM70L3M7Mka9F9TdMQ4=;
+        b=FWQ/dZZpZ8MAhDSERJVLDYZr9GXgNv9ZhTnkIjdqAo2D2KqEojLnCVyWLzJahB2YJ1
+         rOe6eckQkDVxozsaN3gSKctLYrFOiodHeblIKTTB8nGpEMWfXUmh4wIYtQGo38PulTIt
+         3nfWppAgg4UX5On29+w3COYySDlEdLfo2SbUQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773095051; x=1773699851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SHnLn6sNqEV/ng1JAOx90FzzxM70L3M7Mka9F9TdMQ4=;
+        b=oeX8V543oAy8s381l/ZJnYwAW8knsS1zF3/Bn6ksVm9ujRUSzEIQse1zTVm693hgK5
+         Db5idb0340n31/E15S1we+0cvnfvagC/Z9N5FhRp3Ip59vRTby/1JbOVRVcR4XBx/LWV
+         jpXxvHbtYpQkk4/U9/AZgvC3eqJA3dYIY2yhuNXwZDOfe1A8WGmphrCOI7E7oVOv/kIx
+         ymJhg5+Jt91W5M/cIZwl3neFOJTTHI37l1B0At6PTpOMaW2HOtRWyn3YcHuJPXz6lqQS
+         aK67ibInFpD00RQL2lSIahWAFB8aqD8SDgLB99fxoU3NF3+nPftcS4fa6p6GtcxNquLL
+         mK/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUprWRE91uaHEPAqJ2zHoQu3VSxRo70CVPGD4FQeaUGCNvLWgNsfj4pXhotV1vSega2Vyg4Wb9gV3TgA4l9JrfG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAgn4yS/4pgcsonRD2Ur0FRIUOkX3lbj0hgZFcA2pwf3fOBJwR
+	YSs52nHV5lF3ozReVifjM3jGJ0Uvl4H1+Noy0lIwqjBBPFzlQagwvyGoIg1GEMUyYXM=
+X-Gm-Gg: ATEYQzyCwsFyavRavUT/k2Zw2snWjIUIO3qD90k59lBHuUKuKMl0Oc5lTjZWK1bwdYL
+	P74+zwkxY6eYJYYJBqGDFZRnjFIf6nZKiYKGE/NE2u2fJ9cJ0QRRgpvQFIXwHqya8dq9UEnoFtV
+	h8KkK0O1Y//0IJPlx6J9LoqFIWAZl/lQ288LzU4cMZPdre2oaLMtGW32lPqJKz/Bw/dXbXLkCLd
+	EijR0xEsP95PzCrINXyO3X4oYlTpaprxUNgNpfMuNEPUOLDxppfgeDKC7YczTztOEEtKiSfb5a/
+	xMe6SI+ZPsmMKdHWgiUZ3Kqw1peMhMEBSvVDLMK4SQzyWkzV0xvPkr0gWoJdcMzwxD2QPh+a6A/
+	D4YWeiYK6p0cItbMMDcCDS2HdKvfM1zurI3pQNjh9xsRCqv/eEyvQuc6Gmbc0M7w+zFOLGy/uhW
+	lPYEAJWhtmiftBBBS+PJu1X5zlQsJVsUZtwpw=
+X-Received: by 2002:a05:6820:151f:b0:677:d91c:2e26 with SMTP id 006d021491bc7-67b9bd3a2camr8004764eaf.51.1773095051333;
+        Mon, 09 Mar 2026 15:24:11 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-67ba42709e9sm5372733eaf.0.2026.03.09.15.24.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Mar 2026 15:24:10 -0700 (PDT)
+Message-ID: <03136b99-1bcc-44a9-bfc8-bb4ee96c5414@linuxfoundation.org>
+Date: Mon, 9 Mar 2026 16:24:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9185:EE_|DBAPR04MB7335:EE_
-X-MS-Office365-Filtering-Correlation-Id: 266dbdf8-ca80-4088-3efb-08de7e1e5440
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|19092799006|1800799024|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	tsF1DaDu9CU/7mBqE+AMBd60Lsb4KDdDakK0NkI3adHUgce38K8Ur54goT/YXKpMfnXFQSV63yLBN/dVI53Qx+L6tHx/RVT/z278B/wRGRL36frADmzsc1u0fZe7BBBGYXrLKAydgFiYD0mUY6mmDShtmhyPvWZOkXjEmWce3BOTwAe3I//qyErzjCPZnEdwK9OxCetVLIwZ9eApan7kYMhtEfcLQkAQt4hLZ1ytCug2ImHdJUHa1jUI3l96xB5mIYQP8qBWBch9okMTV7W6TegUns5k40aLZ6Oc/JpOu0EiCEog5WSflcKg60CbswJplOg+zAS8Y9EMyjBn+iTKcsbk3pXHpqQMXcfmIDSEkpCHsgV3UiAU881UCNgBH9qvxMiZHp0geTGlp9r6iN9D4QMqt2azo7fm+bDIm8MYy75ThoaKLNMCFMPoqwbIZyxLauy76JOwmKgFn7cze1BQkl/qEBg91Bmmnclphf8jwkYqxywlmKSXP4LtCOsGLhrrXBZNnCScI+u3IQQPvDOQCS3GcZxibcHNDW8gqIZrlQwnjMqbSel4kaTXSESUdXwm/BMiYZFExPUrtFuiymqlCkaW9v6E/piQFSgWodY/bIjZvV7BOF7Dlypg2gInZ4OTW1muc1Xorck9MZOkzcqsHaLbkbOYd3uNwvotdA7hx8TCmSV6LewG+J8HRuFiJUs8JB2IowDvZkNYQA+w5goOcQYJiNa5iksSCT/3TbbENIqpqRnUE4Rgny9KUEJ+xZ/enKUeCL4A90bsUUs+5/9XqJ27dWNXdfBy4dmJ0wu3UjROXZuicjbD4sDZKq3JQLlZ
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(19092799006)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yYBWqXnMqP9KChauIS3tC7+ySwo7M1ZeV+A/exsJ6G9byOGvvmHlIq2t2ruw?=
- =?us-ascii?Q?vixBVO8SmdcizhaTTLovdXCSdZWaFW83XuZ7sw49xkgkoIXzJ5EgBwjlzC+N?=
- =?us-ascii?Q?Rh366AhvT2wrg3mhoQPt6WilUbkhFCWnytHROHCZ1QLCEQYu7WPWEIv8OH5q?=
- =?us-ascii?Q?YItau4HlCGQdbKLIoTa9mL8bvFPFxQOBToASeiiSJSfQ6uXXOJR6JVkqCCsV?=
- =?us-ascii?Q?D1fJOKGXF2OSAP1NOKHHQ237ier+0GuPuhFre5+sqEw66KisTaa0OYJ8AFbD?=
- =?us-ascii?Q?I8Mvt+Kak1H8IRsaKOw/NeBmfFMn0jZUMW7ggXVAcNRFghbYtU5cmvGPHbQH?=
- =?us-ascii?Q?VxfJdkXN+VmntNNcs3QUD3fz98wxURExIgvkyR/vVkDrsG4PLdrortnkF5Kj?=
- =?us-ascii?Q?oO27fZQaEtuKXGUeY8zviamPWYzr4bT4TwBZf9fZzhMddUnoulytMJObVibe?=
- =?us-ascii?Q?JGWuF+ap+dCCgifmaqNKljXpWAc3SV27v8IVxbam2bdrHbMfsikwk/QS4hHO?=
- =?us-ascii?Q?ANMaSfPOczmbfh51iELw4NrvaCG4oHfqzY1zDDGvkmnBoKtpQnFPU7cQ8PTX?=
- =?us-ascii?Q?ni5ElWv7q5sfrNj0P5Vu4oQVdkkxUKD0b+ZiuTUOk3lRVRAgVTy4kI+AwRh3?=
- =?us-ascii?Q?YTHgAYUFk31dn+j1unS8jMa+6JEdTaKSa+Y1BgkzyTootov/ZT/LYVrRnTgd?=
- =?us-ascii?Q?QZLa2DZMYbHRlTduqziGSnhB//XNsZsCCM3eYX2rYPaHv+poGOJzOqPC7AHW?=
- =?us-ascii?Q?ZZm1xMxciOI3IulUM3G9qj0wAHfA3mnngfiJkjx52k+RdwcPJR2uzB6Ndoiy?=
- =?us-ascii?Q?7h+1292UzRK0AByadk6TT8DuK7ND/YE/C/YCqSPQkOEUl7XIn2N5Ozv5aOGj?=
- =?us-ascii?Q?5zLisRcBzusxgMiQhVrQcjmBSadl734s4LqBJ4oEHdMNr0JSytKhMiYu/aB3?=
- =?us-ascii?Q?Rr1azbaPtuPeYyEwryvm7tPsTi9E3LOLzElmSBcFlrl5FlFUWgs6icRluofb?=
- =?us-ascii?Q?AUkq9rPE5Ccv6H/USVSikNNRFPjgikJAUV2NFS0X20QSRZKzkITWAB5rpo0t?=
- =?us-ascii?Q?H7WLeFGgwsQRFs81f6wBYh19G7vdY6O9PlUZZLrY7z7Pg6NjMGS89RIzDjVN?=
- =?us-ascii?Q?QR40ngBr4HNiD0M9krA8QNtVdZEAlg5K6akcWAwJTvxCITbHNBoJ8d7m2cRX?=
- =?us-ascii?Q?XPTuXt7jb7ykuAYvixzSsu7aNUx3mEJI4fVseXr00hhqfVUeu7m5guNRCC3r?=
- =?us-ascii?Q?qf7rmhNBW7gJmeIx76XBiii3ul2i6/CwnSyZ1FvzifuEKSqTWtQHOFvSd9rL?=
- =?us-ascii?Q?KRxz/9bA0RD7rFlptO4hRtCtwt3oUU5zFlDTni6LubbVyuXgyMlNYJo6Ex5O?=
- =?us-ascii?Q?JttRVOBGPXjXy8ZNXGDlGWAiBQ3YwSVI19hWFRBg/A30e4UMcqVlu6gStVTW?=
- =?us-ascii?Q?Mn93DFWNtTK8i6HTEYXilK/B84YqgnW+6JTvbZZCpdlAllwNqq8Ai+7xxzvk?=
- =?us-ascii?Q?HgVcUj8WSow+WXqpmChnsx2myxOe/wHgrHXHJid+3IUch+xKFKI4gpK1rRAa?=
- =?us-ascii?Q?nDNTo6WkLQa5mg8WWc7Kb6QCpXzxXcEyW6scwElcYvHtlsY4ajMZzPnit9Bx?=
- =?us-ascii?Q?gq9bBTHWfXY6cKSUM/P9agf2vqBlDZxTFRgXFZxdiXe+tvqVYIa3S6UuRc3g?=
- =?us-ascii?Q?uGaqE9Bo8E92M6nwy+cZzL2v9r6lVrEWCFUEUgfmy/NGrHNkUIYZ28jJqFE/?=
- =?us-ascii?Q?01YC7yhOjw=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 266dbdf8-ca80-4088-3efb-08de7e1e5440
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 20:56:26.2465
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oZtBKmQcSt2791tdaUYq0oofZMznitcLL2tc/p2dlFSpJNBowXWrafXTN4XIS3GIcHrJTVbqvy/DquVxNcxj2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7335
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 1/5] docs: driver-api: gpio: rpmsg gpio driver over
+ rpmsg bus
+To: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, arnaud.pouliquen@foss.st.com
+Cc: linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20260309205532.1794202-1-shenwei.wang@nxp.com>
+ <20260309205532.1794202-2-shenwei.wang@nxp.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20260309205532.1794202-2-shenwei.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add the RPMSG bus node along with its GPIO subnodes to the device
-tree.
+On 3/9/26 14:55, Shenwei Wang wrote:
+> Describes the gpio rpmsg transport protocol over the rpmsg bus between
+> the remote system and Linux.
+> 
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> ---
+>   Documentation/driver-api/gpio/gpio-rpmsg.rst | 266 +++++++++++++++++++
+>   Documentation/driver-api/gpio/index.rst      |   1 +
+>   2 files changed, 267 insertions(+)
+>   create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
+> 
+> diff --git a/Documentation/driver-api/gpio/gpio-rpmsg.rst b/Documentation/driver-api/gpio/gpio-rpmsg.rst
+> new file mode 100644
+> index 000000000000..0f0a3ce3806b
+> --- /dev/null
+> +++ b/Documentation/driver-api/gpio/gpio-rpmsg.rst
+> @@ -0,0 +1,266 @@
+> +.. SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +GPIO RPMSG Protocol
 
-Enable remote device communication and GPIO control via RPMSG on
-the i.MX platform.
+Let's expand RPMSG for the first time. Looks there is another
+RPMSG acronym that is completely different.
 
-Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+The rest looks good to me.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-index 9b5d98766512..ad1ef00a1e3d 100644
---- a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
-@@ -191,6 +191,31 @@ scmi_sensor: protocol@15 {
- 	cm33: remoteproc-cm33 {
- 		compatible = "fsl,imx8ulp-cm33";
- 		status = "disabled";
-+
-+		rpmsg {
-+			rpmsg-io-channel {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				rpmsg_gpioa: gpio@0 {
-+					compatible = "rpmsg-gpio";
-+					reg = <0>;
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					#interrupt-cells = <2>;
-+					interrupt-controller;
-+				};
-+
-+				rpmsg_gpiob: gpio@1 {
-+					compatible = "rpmsg-gpio";
-+					reg = <1>;
-+					gpio-controller;
-+					#gpio-cells = <2>;
-+					#interrupt-cells = <2>;
-+					interrupt-controller;
-+				};
-+			};
-+		};
- 	};
- 
- 	soc: soc@0 {
--- 
-2.43.0
-
+thanks,
+-- Shuah
