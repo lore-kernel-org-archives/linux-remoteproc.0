@@ -1,57 +1,44 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D343E958B
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 07:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62BD03E9597
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 07:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773129388; cv=none; b=YM9I0L4XP/lvP5GvIx7xn0WQVxXYMus6LTwFjCe1QLxOVvC/o0bIQBl3CnWBK0PckzOhvhtyNfOLMdSqpvsrRq9O8yU1/UpcCIljh1sCsj2G/D+yxvBrkmdNHHHm3lT9zIaFroOKQ7gGuzSTx+JGxE2JjDGGoqAB/0d6iwsWJ0M=
+	t=1773129390; cv=none; b=bDO9UQqfBmhm48WnAYRzFXbpG6vgmvTwChMNISMojwHge7g49PBikzoRGlHxt+iObPNHPMQeBirwwAyy3yPxkHbEM3VrX+QHY7sgYL8+ephzueUid63TZx0FA8JuH0Nbeh0imGyNKXVM/CrPjcvOkbV05K5T37uQWUabj5ZRcko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773129388; c=relaxed/simple;
-	bh=asNNZO3T9J/zCvAshr8ECVC12qbgcjwJBEdnKjW8eco=;
+	s=arc-20240116; t=1773129390; c=relaxed/simple;
+	bh=XSXpLvgEtf8gkGC6vqgXnLn+x0RQgYmg32UvC5obOks=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iaY8626HuOeY67TSDYSSD9wdlc+5sa3MYCk3uZasOEtIhUqWGXdtFSWzPX04kY3UKJFfwiWQ82WX4cnsqgO6sLtDmykBCJNnOVC6b8FEexHDQomhexYHjoz2YJS+INArCGp8sPRlBzz9l+N/KbH2StR+07nSuuRl0pnXIHbGwEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=B3cMMvxA; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=kInICDYob+B82LcEZgHzCQV8SL2ibjzAkyLz751J5Q0w6uTtheXJJvJ8RMVuQyyHJo4DDx2D1DzSdae3qdPaSlZu2blrTImOmhpehL+6VCNKmGnv2s6t+PN2ibRP+awAthtqXvTnMTdogx3Y19a/njB9OVf4NFHPUEJFKawdiSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eWQYik1A; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="B3cMMvxA"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eWQYik1A"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=ZRMTNQrz0U6t5XnH9AMNswJjY22nKrWom0qhpwEtk9U=; b=B3cMMv
-	xA1iERRotAgLTpQZiW593f9fq1ZyAfoFw8Kx0QHNkAiBVip/JOl5Tnm4u9ejpyGA
-	BGvA4PllKr6ecoahdZ/fqfMwheXAQSayWKmCdY62dLiOYEcSkcwu/Fbbp4rjyPQO
-	5Q7hiLGbNajoBSpe8j+A1iIfncz/+qHWNmvra+WDHHvbSOIKh7ltP9vp384g8upr
-	hg11kaab1P1HDSUkTowW3rtyuUzd8gETsTjr1lGcUOyoyvljuRRS4JGP01YRnnaS
-	K7ucTKGy5UFVAU3fGm/HsWR9YNSqhZbY/mnFNVhoOBoUr5MhknaYC/Qpnw75u5uJ
-	I3Y5DGJ3dQj/azaQ==
-Received: (qmail 3112771 invoked from network); 10 Mar 2026 08:55:58 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Mar 2026 08:55:58 +0100
-X-UD-Smtp-Session: l3s3148p1@tCuG2aZM5NIujntP
+	 s=k1; bh=V9/Xk0SE3kHSqCT1iJcjM3q5nVH3IOMXei18cV6OdNM=; b=eWQYik
+	1AZPSENCe6cEzL688W7NYdO7yqcoBHjbjmN5uDg9pGbNdVRgfoJ1IO8H2EFYu4LS
+	gEptWTj8WC73202sPxE2eHKgUlLz7U2LY2gDIHCkheST/ETnMZe+CBQ0cJVQ+ypw
+	q01yIFWjK8SlZUg1kiE2WTGv0cqRHvcsmdk/lLOwtoUSUBQnTbRJDGwe9APe5kti
+	jEuGfxE3d/rmeF63HM/l6AsxE1LBagdMb3psr/y1KJp3/kkbL7a8m3ceiZp9SD3t
+	FF7wwlfNnO1rieHNpPZQvGAK7WAtYeBGIUpv+q+usOpix6Ny2zWSu+z6iiq7ceK4
+	PXKHVhKqi/+KQlmw==
+Received: (qmail 3112803 invoked from network); 10 Mar 2026 08:55:59 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Mar 2026 08:55:59 +0100
+X-UD-Smtp-Session: l3s3148p1@Wb6e2aZM7NIujntP
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-remoteproc@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH v4 11/15] hwspinlock: move entries from internal to public header
-Date: Tue, 10 Mar 2026 08:55:26 +0100
-Message-ID: <20260310075539.11701-12-wsa+renesas@sang-engineering.com>
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v4 13/15] hwspinlock: sort include and update copyright
+Date: Tue, 10 Mar 2026 08:55:28 +0100
+Message-ID: <20260310075539.11701-14-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260310075539.11701-1-wsa+renesas@sang-engineering.com>
 References: <20260310075539.11701-1-wsa+renesas@sang-engineering.com>
@@ -63,187 +50,56 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Providers need the ops-structure and the hwlock_to_id-function. Move
-these entries to the public header. With this change, all providers are
-also updated to use the public header only. The internal header is now
-used by the core only.
+During the latest refactoring, unsorted includes were a bit annoying.
+So, sort them to avoid this. Also, update the copyright due to said
+refactorings and remove the contact field in favor of MAINTAINERS
+entries.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/hwspinlock/hwspinlock_core.c     |  8 +++++++
- drivers/hwspinlock/hwspinlock_internal.h | 29 ------------------------
- drivers/hwspinlock/omap_hwspinlock.c     |  2 --
- drivers/hwspinlock/qcom_hwspinlock.c     |  2 --
- drivers/hwspinlock/sprd_hwspinlock.c     |  2 --
- drivers/hwspinlock/stm32_hwspinlock.c    |  2 --
- drivers/hwspinlock/sun6i_hwspinlock.c    |  2 --
- include/linux/hwspinlock.h               | 23 +++++++++++++++++++
- 8 files changed, 31 insertions(+), 39 deletions(-)
+ drivers/hwspinlock/hwspinlock_core.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index a7610ba755b4..e0227d027cf2 100644
+index 838bb2ab5eba..adf6fefb382f 100644
 --- a/drivers/hwspinlock/hwspinlock_core.c
 +++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -915,5 +915,13 @@ struct device *hwspin_lock_get_dev(struct hwspinlock *hwlock)
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_get_dev);
+@@ -3,26 +3,26 @@
+  * Hardware spinlock framework
+  *
+  * Copyright (C) 2010 Texas Instruments Incorporated - http://www.ti.com
+- *
+- * Contact: Ohad Ben-Cohen <ohad@wizery.com>
++ * Copyright (C) 2026 Sang Engineering
++ * Copyright (C) 2026 Renesas Solutions Corp.
+  */
  
-+int hwlock_to_id(struct hwspinlock *hwlock)
-+{
-+	int local_id = hwlock - &hwlock->bank->lock[0];
-+
-+	return hwlock->bank->base_id + local_id;
-+}
-+EXPORT_SYMBOL_GPL(hwlock_to_id);
-+
- MODULE_DESCRIPTION("Hardware spinlock interface");
- MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
-diff --git a/drivers/hwspinlock/hwspinlock_internal.h b/drivers/hwspinlock/hwspinlock_internal.h
-index 3c835d96bf86..20ae531fc389 100644
---- a/drivers/hwspinlock/hwspinlock_internal.h
-+++ b/drivers/hwspinlock/hwspinlock_internal.h
-@@ -15,28 +15,6 @@
+ #define pr_fmt(fmt)    "%s: " fmt, __func__
+ 
+ #include <linux/delay.h>
+ #include <linux/device.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/spinlock.h>
+-#include <linux/types.h>
+ #include <linux/err.h>
+-#include <linux/jiffies.h>
+-#include <linux/radix-tree.h>
+ #include <linux/hwspinlock.h>
+-#include <linux/pm_runtime.h>
++#include <linux/jiffies.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include <linux/pm_runtime.h>
++#include <linux/radix-tree.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
  
  struct hwspinlock_device;
  
--/**
-- * struct hwspinlock_ops - platform-specific hwspinlock handlers
-- *
-- * @trylock:	make a single attempt to take the lock. returns 0 on
-- *		failure and true on success. may _not_ sleep.
-- * @unlock:	release the lock. always succeed. may _not_ sleep.
-- * @bust:	optional, platform-specific bust handler, called by hwspinlock
-- *		core to bust a specific lock.
-- * @relax:	optional, platform-specific relax handler, called by hwspinlock
-- *		core while spinning on a lock, between two successive
-- *		invocations of @trylock. may _not_ sleep.
-- * @init_priv:	optional, callback used when registering the hwspinlock device.
-- *		Its return value will be used to fill the per-lock 'priv' data.
-- */
--struct hwspinlock_ops {
--	int (*trylock)(struct hwspinlock *lock);
--	void (*unlock)(struct hwspinlock *lock);
--	int (*bust)(struct hwspinlock *lock, unsigned int id);
--	void (*relax)(struct hwspinlock *lock);
--	void *(*init_priv)(int local_id, void *init_data);
--};
--
- /**
-  * struct hwspinlock - this struct represents a single hwspinlock instance
-  * @bank: the hwspinlock_device structure which owns this lock
-@@ -65,11 +43,4 @@ struct hwspinlock_device {
- 	struct hwspinlock lock[];
- };
- 
--static inline int hwlock_to_id(struct hwspinlock *hwlock)
--{
--	int local_id = hwlock - &hwlock->bank->lock[0];
--
--	return hwlock->bank->base_id + local_id;
--}
--
- #endif /* __HWSPINLOCK_HWSPINLOCK_H */
-diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
-index 87ab30614e1d..41a8812708ef 100644
---- a/drivers/hwspinlock/omap_hwspinlock.c
-+++ b/drivers/hwspinlock/omap_hwspinlock.c
-@@ -23,8 +23,6 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- 
--#include "hwspinlock_internal.h"
--
- /* Spinlock register offsets */
- #define SYSSTATUS_OFFSET		0x0014
- #define LOCK_BASE_OFFSET		0x0800
-diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
-index e2836d6728e8..22cc6f9003df 100644
---- a/drivers/hwspinlock/qcom_hwspinlock.c
-+++ b/drivers/hwspinlock/qcom_hwspinlock.c
-@@ -14,8 +14,6 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- 
--#include "hwspinlock_internal.h"
--
- #define QCOM_MUTEX_APPS_PROC_ID	1
- #define QCOM_MUTEX_NUM_LOCKS	32
- 
-diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
-index bbae37e25243..0f4fc622e3cd 100644
---- a/drivers/hwspinlock/sprd_hwspinlock.c
-+++ b/drivers/hwspinlock/sprd_hwspinlock.c
-@@ -15,8 +15,6 @@
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
--#include "hwspinlock_internal.h"
--
- /* hwspinlock registers definition */
- #define HWSPINLOCK_RECCTRL		0x4
- #define HWSPINLOCK_MASTERID(_X_)	(0x80 + 0x4 * (_X_))
-diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
-index ed937bc26bf5..8eafe1a74b1b 100644
---- a/drivers/hwspinlock/stm32_hwspinlock.c
-+++ b/drivers/hwspinlock/stm32_hwspinlock.c
-@@ -14,8 +14,6 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- 
--#include "hwspinlock_internal.h"
--
- #define STM32_MUTEX_COREID	BIT(8)
- #define STM32_MUTEX_LOCK_BIT	BIT(31)
- #define STM32_MUTEX_NUM_LOCKS	32
-diff --git a/drivers/hwspinlock/sun6i_hwspinlock.c b/drivers/hwspinlock/sun6i_hwspinlock.c
-index 8bbed23af5f4..145d284c5ab5 100644
---- a/drivers/hwspinlock/sun6i_hwspinlock.c
-+++ b/drivers/hwspinlock/sun6i_hwspinlock.c
-@@ -17,8 +17,6 @@
- #include <linux/spinlock.h>
- #include <linux/types.h>
- 
--#include "hwspinlock_internal.h"
--
- #define DRIVER_NAME		"sun6i_hwspinlock"
- 
- #define SPINLOCK_BASE_ID	0 /* there is only one hwspinlock device per SoC */
-diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
-index 58733cda7a9a..4f5b6932712e 100644
---- a/include/linux/hwspinlock.h
-+++ b/include/linux/hwspinlock.h
-@@ -27,8 +27,31 @@ struct hwspinlock_ops;
- 
- #ifdef CONFIG_HWSPINLOCK
- 
-+/**
-+ * struct hwspinlock_ops - platform-specific hwspinlock handlers
-+ *
-+ * @trylock:	make a single attempt to take the lock. returns 0 on
-+ *		failure and true on success. may _not_ sleep.
-+ * @unlock:	release the lock. always succeed. may _not_ sleep.
-+ * @bust:	optional, platform-specific bust handler, called by hwspinlock
-+ *		core to bust a specific lock.
-+ * @relax:	optional, platform-specific relax handler, called by hwspinlock
-+ *		core while spinning on a lock, between two successive
-+ *		invocations of @trylock. may _not_ sleep.
-+ * @init_priv:	optional, callback used when registering the hwspinlock device.
-+ *		Its return value will be used to fill the per-lock 'priv' data.
-+ */
-+struct hwspinlock_ops {
-+	int (*trylock)(struct hwspinlock *lock);
-+	void (*unlock)(struct hwspinlock *lock);
-+	int (*bust)(struct hwspinlock *lock, unsigned int id);
-+	void (*relax)(struct hwspinlock *lock);
-+	void *(*init_priv)(int local_id, void *init_data);
-+};
-+
- void *hwspin_lock_get_priv(struct hwspinlock *hwlock);
- struct device *hwspin_lock_get_dev(struct hwspinlock *hwlock);
-+int hwlock_to_id(struct hwspinlock *hwlock);
- struct hwspinlock_device *hwspin_lock_register(struct device *dev, const struct hwspinlock_ops *ops,
- 					       int base_id, int num_locks, void *init_data);
- int hwspin_lock_unregister(struct hwspinlock_device *bank);
 -- 
 2.47.3
 
