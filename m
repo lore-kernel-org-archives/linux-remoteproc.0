@@ -1,86 +1,85 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1116D38946E
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 11:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABAE38A715
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 11:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773141774; cv=none; b=YusLiQ2gJNCm4wZWgzyprS7fBUOGN4rmTGfGlN+LldXPtMKHUSBF5ENgtvUP5l9mRpJuqu90mDnBLE4WX2EeO4/Jud9cofY0SEdRM5I6DTqvakzdYYb6bsuYyfGcn1fqmhupC9M0qyh3FZYhOyWk1W6XOhE+qf8eCeqLe9pgjRc=
+	t=1773141776; cv=none; b=HnAy6t8QJ7CjJOmodcGoT38vR46tzmitXHQt1SgATzEIRMKAEPCdld2yuzRGvBXHipFnW7nRdb0vkYkAoiQiIm0hX6E/3xIHRuyEt6CmonnMyIDZYKhnZe1PQ3an3oC6c/LOjp+GNCkFzfng/MN/31KdHZomdNBO1bW75OxzaVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773141774; c=relaxed/simple;
-	bh=MhZZXUyWfb59oILbyPbh6LcS50AAaVQ8Jux1XwFcQ8g=;
+	s=arc-20240116; t=1773141776; c=relaxed/simple;
+	bh=6B0vVMbf0cTPfHKQcu37PToX+TkTnGz5fLYnXk2cW+U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pmj7NvqBL4VPgvU8KAoxnDn5DLfOfzRN4toWXXosGL0q5/oFqatkeBoVQ4gjUOAErOZYLrMe2tFl21PY+ql0fsPQ3GyTHnRjWpcJFTK67LtlW/yrVtjwYcTbAfjGqqdOZvK4F/ryZKxmPnVOTGyqBKY+h72M4Qtsow9kXiWx774=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ku1uPC/I; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NG59ZxKF; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=q6AMty8WrBUPRB4MpYvC6Jgfd+zXwAxo++eos/L4QGqzUJPhOweFn+1PkSGpDvJj/xrVhYAKFL2laTt0kxfVBb/TkTRuUYWQrkBTY8PWFItDOUDQK33HW+xOroAjnoZiBYzWtPXmgWRBql11mVw20VZcSXOxL7Chdb8CXVg7G+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CVFTHzAh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bdOvnrIm; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ku1uPC/I";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NG59ZxKF"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62A98eww2363765
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 11:22:51 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CVFTHzAh";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bdOvnrIm"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62A8xe273589663
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 11:22:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oIgDdQSPHHbW/xDZMWuKTK+oRBDbO81ulYdAvMxwVv4=; b=Ku1uPC/IZy5e02N6
-	j0heH1khlSjCw6iao/7RiS/0xxvM0oA7s9rjq+PgLKv+MtnS0j8T68outou4DNJH
-	kuVceTvx+0FXeHgCwD204top+wTclk0G7mp7/zKtEF5W140RvXkHmJQsgtwsOlAu
-	wW+beES46aAYKxQFudoiZEPcbn4UTYE7VYMRfpB9DWnJ+1Y1p1q7LWY3IfnxwBy4
-	5igK1pRpKs0DJluSIriODadG2wqCk4QObhwheFLzsL4l9wlYNyjjs8qg+x1cQnwJ
-	HVz0NDJWs+3V8tLLdp3cCOgRvlD/izSRTwfvP6jIvVAAGfRvLrziIEY/Mla7sSQN
-	VsgdMw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ct032byh1-1
+	bZ81K+s/mqduu4wm6bGMuDFDp5cpVX1TLMHdFJk1Aus=; b=CVFTHzAh2YbPm1ss
+	y28i08Ray5OG1nsjoX8Gfm9cXS8ChSyEQvkd8+XUFNY2ZbCp1AnM473aFXYOzjwF
+	IrfdxD+EIpLamGGgozAJovWLjmOk5xsyBY4/vZJZ55RRgrdlbvPlO2K00SHK3Ykp
+	oiBHLkXWL2UZq737Jlc3Xn0mJXTzFooA9OLctJtxASqod3F13/jJ05HElO1QLC5k
+	yLIBdv8NSwztQDl+5aZTP9gldewCA9xBIcBU1LYw3roiVj+kcxEvdS0anv/1TXb+
+	i9LHNWolLBaY0nLD3hKq71W+z5MMRkkbv+8mLa6ya0OUeq5TsJghA7iM9fH8Z4Qq
+	KWorlw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ct1ekumc1-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 11:22:51 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-5091782ab06so7351421cf.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 04:22:51 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 11:22:53 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cd7fc27cf7so1406247885a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 04:22:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773141770; x=1773746570; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1773141773; x=1773746573; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oIgDdQSPHHbW/xDZMWuKTK+oRBDbO81ulYdAvMxwVv4=;
-        b=NG59ZxKFdNxco5+Y/u4on/4Hxu4Q7Zj+Z79FzJrBEJeGewdG3PIbePf6JOKv8vPp29
-         jGcpMsAo6HDu5ALzZR1K37CWca87kHljOqKP3+8ZREWgJJwmayBSWpoTkeQUW9fZ2rrd
-         8jdjn9vgXt60/294+pzZfIBlwbGt9R/bKzE+zXxcJ17VwXbILvshxaR/ywDlsaynBhSA
-         rHImPmVPG8iExStMYBs91DIC2+IQH5Z5YpuX6d9QPunMV+pRlArDdY1mHtcolc30sLmV
-         gsBdlrKgR/oZfEPR9grkw3UTZrivauAFB6B+n4z70KUn61C/qfTQ1ilg8S0g6EpPw1lN
-         VggA==
+        bh=bZ81K+s/mqduu4wm6bGMuDFDp5cpVX1TLMHdFJk1Aus=;
+        b=bdOvnrImg0HFJpRQe5Nb+KQ4pU4u9/PhksEkyDL9ie866JIC0gb4bWrODuzBHnweys
+         DvjB3qHO2OoLEuhXioFGhLlB29odr8WD68Jfs4HCFoeYHt9sm4mHxHtxfJkTGWlCz7yf
+         WcQMMOWppEuC7ECm3mBPHFML8TPsNIFp5N+9Y5efd8WWEmevptDMauNWoVhonb0FYSMy
+         oz673WfNr4QQ2++60wX5M/R8jYHU1udoduXuZm6hMq9L0dGjMbDyj9HVJvsF/fK0P475
+         AIkvSZAEC270ImTq5ZcUJV+ih8U/LT4165HEHP5zB87MVG54KYLq3So6lz/pmWcoule7
+         1Uww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773141770; x=1773746570;
+        d=1e100.net; s=20230601; t=1773141773; x=1773746573;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=oIgDdQSPHHbW/xDZMWuKTK+oRBDbO81ulYdAvMxwVv4=;
-        b=j83+1FS8TwBAY2JiyhdntOFmMgHW8qAuaBoKwJea5mWFQNnyH5UB9sRTb4JCsUwVnW
-         4Jx2fwGoHFggibNBrQbUaDnRNWxc7ZNQS9bOMbzLi7x24Mly5aKJlpaPK+AzaK09V/G3
-         E3UcuZ4gYxmborUDAUzfrDwtq873DYEnpqFDG0j+GAtvA91FhFUqz/p8/ziBwZ9PlOYV
-         rUME3QZv/4zdfMDE3QalcNGsqJITanTHwQeRfbLJi28kasyQo358fpD54SBf1lTSGHcy
-         Cm5nnT0SjhdPc9JPv9z4lnUHlf0GdobJlu9FPzZVIE9+RTERWNfOCP/lE9qfoUhlqx2U
-         7G2w==
-X-Gm-Message-State: AOJu0Yzqs7x49/0O2ypIcATCeoZQJIJKLpeeqPWU9pErIJ/vVANYcBrk
-	o+OVHwLg0OWdnCd5PtMJD9/iz68COH8mK6M2Wx6ASWw2rWLRbP9MG5PDpDmFWIPpH/hhwnUmnHL
-	ONld2gKc1VCYkuGtRT5xP60WQDF8kp+9uI6qytGyn9eyhDjOh2doTlp/D6WXcUWDJpa+rlflI
-X-Gm-Gg: ATEYQzxOSGLmQrKvqjbdMusRrx314Dh2mBuwzsbbktg4p0G/LC325CnL68Jda6CN4St
-	RuPUkXwyhS3a/viQ0CynFs2qqb3dB3Z0xDJxHvDcNPtMZ8r7rN6URpBMrHdOcdieJHPE+AWLSxV
-	llj9FzTyJMlZHoAxmaK4oynyUz7QG+4iSMGppIYv6wjIdogqMZv0hRirv2i6CbZ+kfZhrMExH6B
-	W+b+IbipwLLv62FF9arGZcUoW66t1TS42iwSORaCktT/xnneZE2LkA43s8qtPtEVu6c4k5grlq/
-	xWj968/51jhmjf0cdNWJQDPhnw6sRajJMQ+DfRZZzSVsVSpxy0+MVG2aOZkjtg9F8LRCgRO6qH/
-	SSTjwGwA7oSu5bRxVGd//+CCBgPB5Y3VDyDKfCEkGPwqQ
-X-Received: by 2002:a05:620a:318d:b0:8cb:4d9b:6b48 with SMTP id af79cd13be357-8cd6d3eaf48mr1956314185a.6.1773141770383;
-        Tue, 10 Mar 2026 04:22:50 -0700 (PDT)
-X-Received: by 2002:a05:620a:318d:b0:8cb:4d9b:6b48 with SMTP id af79cd13be357-8cd6d3eaf48mr1956311185a.6.1773141769971;
-        Tue, 10 Mar 2026 04:22:49 -0700 (PDT)
+        bh=bZ81K+s/mqduu4wm6bGMuDFDp5cpVX1TLMHdFJk1Aus=;
+        b=LGFGYE+TQEJ9qVCEiI+/4NqoyuN24S5okqnAHYPyA+G9WnutqB5G9mTqSTNBxncAOx
+         /IcswPTrxFCt51jJhcdlKq23KNRbaXAN2lY+uKI5CNIaUW0JMq5hfBy/SdANJapxmAXr
+         ZQ49q6qtpRwj0vnuSAU95KD78sGLmTGiiTCus/zLlF9P6DLkCDwtsiRLEW7YapkuETHH
+         vBQG6zQNw+qgAdMvllowEKrOCtuLxvL8cwUT7MWbkAbM8SJuuhegyaO44sE+WhJ9rmtp
+         HUFEnGvxY5h52lYAITQDPpKzxEtgJla+MBPX9n+IVkPScYTV1LFlC5/t1SXtoVrUP7R1
+         YXWA==
+X-Gm-Message-State: AOJu0YzPNBrmmfF9CVNdYuFISmtg1EdRadN4/HuifTlU4Vk1G14HLVZm
+	MrKy9tpVqnF8P6YXzEjLXmyz5vh1UtLxq24K6IrAR4pVi2NANa/2SeiC/t63udX0bb9DhFYMuiS
+	s1MJjYb0KLHIj0G2tuklMy4DzE7D3LFzb84QYabXQetVC7U5kdP/p/AhmEzX4GCnfysyHJEWO
+X-Gm-Gg: ATEYQzxyEY22vQOwDz1iPG7YYa9tnt3/8olsLKI69u7ZB7lOo0zd+wb460lQekQKSvJ
+	ghQyH9YYupcBsKdh4U4UdKX2uAudQ2Jq+FbG/E+7/P8V5Kgx6Z/bsWZ+efb9HJ4DnkivCcAZU7q
+	mSdbus0dZWPnliFFZ0X0q+AZr7vJDCSRuZ7DncYEmG+iIm5yIfC3k0IhVVyP8s4htxCFajKkOn2
+	2QSiIpIiYMwXwc4wKknYlq5higlrR0WBoDouV3p9U8vHujcOUMQLe12FdEvAWPu/+JmQlAB7Pm5
+	GBt8k0Lih0f+yCQw2g6dk1cg4UZSXujWmkzK8M53wKDPeIefhmiwtanIKrA7i97vUuVgyKNbCYV
+	u9zWSyv95PaJOWuYNRppwttBbZ2oL1OUVIKMn3Lh0f01n
+X-Received: by 2002:a05:620a:468d:b0:8cd:92e7:7192 with SMTP id af79cd13be357-8cd92e7773dmr446825985a.71.1773141772877;
+        Tue, 10 Mar 2026 04:22:52 -0700 (PDT)
+X-Received: by 2002:a05:620a:468d:b0:8cd:92e7:7192 with SMTP id af79cd13be357-8cd92e7773dmr446823685a.71.1773141772443;
+        Tue, 10 Mar 2026 04:22:52 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.94])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541b7f255sm67162115e9.12.2026.03.10.04.22.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48541b7f255sm67162115e9.12.2026.03.10.04.22.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2026 04:22:48 -0700 (PDT)
+        Tue, 10 Mar 2026 04:22:51 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Tue, 10 Mar 2026 12:22:36 +0100
-Subject: [PATCH v2 2/5] remoteproc: mtp_scp: Constify buffer passed to
- scp_send_ipi()
+Date: Tue, 10 Mar 2026 12:22:37 +0100
+Subject: [PATCH v2 3/5] rpmsg: Constify buffer passed to send API
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -89,7 +88,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260310-rpmsg-send-const-v2-2-0e94c5db9bf4@oss.qualcomm.com>
+Message-Id: <20260310-rpmsg-send-const-v2-3-0e94c5db9bf4@oss.qualcomm.com>
 References: <20260310-rpmsg-send-const-v2-0-0e94c5db9bf4@oss.qualcomm.com>
 In-Reply-To: <20260310-rpmsg-send-const-v2-0-0e94c5db9bf4@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -108,50 +107,53 @@ Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mathieu Poirier <mathieuu.poirier@linaro.org>,
         Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1615;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13547;
  i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=MhZZXUyWfb59oILbyPbh6LcS50AAaVQ8Jux1XwFcQ8g=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpr/7/GykfeN06ugvQtQkoDM6PNcDwvBeH+8Dt3
- FPaTV7303CJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaa/+/wAKCRDBN2bmhouD
- 1+InD/9J+1xEG6CF2PZMGQySQThP0VZ7hQUI/UT72YfGzryRehuNMY/eZ31woOO2Vu0a0gVzdkV
- efLQ5HCw042qUk5q9JJSAGuRt0G6tBH4bZzi5ZoyTgythpFc/MdY2HF/A/CwoHyYzqBafD+TYRl
- K6F9tzJ3lvA45lkSkeDNKkBgXmR5ZS2Car2ShwTUaoflGU7Neyz8c0bd2sD5u0uQwZwxDgsGOzf
- 2uM3gRe8DRSav8N/zQQjnMbr8ous8IxoN5D1QFHpzrWCuFlI/J3Ce52B+rkkXREtuDBq2iN8RHA
- n/LsgVhHbe4oP0X8J8cXyBPaYTUQKcx3Fbq9bemyxVaFEa5ZXEih5L8HMAhb6V35QwAHsAkZ6x4
- HbcS3uUX8az6sMR16tNZ9oHOc3fVHGlcAtub0mGwbi4l6Po69aRWa7nu8MDYjpkyPZzaeBL4W/H
- +40L3j0GFuqbARddLEwBoSs3i5VOHmEm8o4UfLWsmd1lr6dP1hOQVAzo/8tJXiKglh//taqgDRH
- EdigPxJ9TOu/Ey3ozVyP1agqBCvyFJUcDys3Q13/ESZezgipDuHYeSRKv/ahAI5h2pm3NKEJ2Vb
- sM3s8JvQ6bM6k04yN0bb2tR+bej1HZfVaiZCBcRsSYyyKRlW0Q/VXtYMIE+eGInWKVMZOj+DPMW
- xxExYfX+Hg9hlGQ==
+ bh=6B0vVMbf0cTPfHKQcu37PToX+TkTnGz5fLYnXk2cW+U=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpr/8AWwrOLpR1jQOYLLeUnLd7iNkB9dvFL+FHN
+ 5G56dRpYRiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaa//AAAKCRDBN2bmhouD
+ 14+BD/9147We9xfkXZdj5OtI225DcSkVivpk79k426PSLJHmpuGX7F7LIVgiHilx+t/yDFE0rP/
+ fFbBYc6lD1Yxui7NQCJGVpP8u+ff2SSH9B+B/zuLP+nK7T+2IL7/ohhNOsPuOn76z6b95dNu3d1
+ JG19Pl1CjYVQEOby8Gj/opncbteACIcES4Ezary9jg1NRXbhfI6Hx+bMSA0oUPJ2EvQ4Yd01r5F
+ 8mS1acaKPkrSxGkWKn7749XQKG+6fXz4OBU9XN4s2/0IRsB8HqcjyLQlnlYiqBNvpS7HJXaSLJY
+ 286H7YMPPAux4HFWibiCY7hHs00vmTmRBdf+2Jd0NnC+hKrnFsNrkQJh3r2fnAOnVgRU2UpBEBZ
+ qoSa39jZbf9jTN4J4nROm1gvuS20hqLLKUHUUUgCdJX2UgFKLoKF+jngSSpaskSpwYWNP6+8FUq
+ gRsa1ZINFDAcJP2PK1UTXAOXvqzF2NAUMhp+mUasXMiPFX9G6CAnNKTXgRSOlYtuycwYBmDafhI
+ FvKj5XUDmcray9PCKEj4yWUCGs7m5Sy21UDNkUM2DHPoNtETCMoGXTIMv/y5H2wSsDJWfhUUUQi
+ z6dpsJdAJIwkALccAjXvkTECp4D3WDfJh7JDWwRtxSqTXfTBPBT5f2myNqDkclXgMlCxlCAB91a
+ q8Jz0ZdV1DK8HQQ==
 X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEwMDA5OCBTYWx0ZWRfXywHNi31VJb9a
- 2OVqm5CB+eiGC0x8DQMIz/3cJJyuSdudsuX7xoH6JKcfHOx3Xugvk7scBzwrE3dE+IMTWfxPC5X
- 6E5qY4Bnga+/UUtupCs44d8zW9klumeRKCSTtW56tBEMPH1uCYbBZY8zXtmVndskdpOycAVhFZt
- 6AwLIIF76cgzHpdP58bBbeB9OXta3+u3hpBLqO6Ip0XUWe9L/VdXsbegCfQ4ZSTZzdYviYsv3lw
- ebIA9YcOGiCa4YVxc5iQqFOIO6cliEnqbfMLLOC/bY760IE9ohkxB6cv5v/IB8yAXUVG63m443M
- DWCKj2L+wWGBBPjbGxZPbGeV7k/T6zO8pS2P2zyJaxiRtb0R5yyFGBwJj24n6ySa3x5GQ72783c
- HyIeNlnRZ/1SimuvoW19L3aE8Ur2Lt75/hPhfkwp7+Ii3cMuK9oUIQ3+ySKzVTDF7F0W52/Dbq+
- Y45r+0uXhXlEqRPQrqg==
-X-Proofpoint-ORIG-GUID: ISzkje-lRqTVzqRtpsg0GS7cR1N2eG8m
-X-Proofpoint-GUID: ISzkje-lRqTVzqRtpsg0GS7cR1N2eG8m
-X-Authority-Analysis: v=2.4 cv=WtEm8Nfv c=1 sm=1 tr=0 ts=69afff0b cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
+X-Proofpoint-GUID: 2W0APB_lx5Vj-S8QaRwSHix9DVaruJBH
+X-Proofpoint-ORIG-GUID: 2W0APB_lx5Vj-S8QaRwSHix9DVaruJBH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEwMDA5OCBTYWx0ZWRfX/Ryz1uQtm81A
+ UUfeD+kLDl4zi/lMLumLYI+/NVPisNbK/GqxRlIZE9Nn83UwrdFrqcgzhPLonyqJw3dFl72JZhe
+ fincCpxTaxDhC+34Mq0dw2HBkhwCq5sk3DmJEa/ESZ+kp0q4TY/mBwRP3DUBV2n6wce1qb4do4j
+ HYZYe66n1thPF6s04dD7NwsAcz6tz8O2ROdXPYEiX9zKrQlSx8MCyyVUFsqyvucBTMRq6E7CUTp
+ h26TKhfzhwcwIenqxk3JrIsT3j0zW1XjqzbEauVP/Rn8WWqNUvn0L6QzYuid1OuohtJxC/a0QY8
+ cRppwV39RULzd+a0r8XTZqc2YmmJ+3+G7IwHpQmct+rW1orU8ZLvR5hPfDPEDnskCIrGlPzfr3P
+ wx2268fzdy+NUxklaCR/UL+riE93kfDt9zZZjJvcwD4RCaRVVAiMl8Fzj48Um4YDFyj6Nlu1mD5
+ xBMrIo/vy3nhdnZ1NUQ==
+X-Authority-Analysis: v=2.4 cv=eIEeTXp1 c=1 sm=1 tr=0 ts=69afff0d cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
  a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=aY2cFw3b1D9xo--RORcA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=7kuhv_acGB6hOQYBqC0A:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-10_02,2026-03-09_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 spamscore=0 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 phishscore=0 adultscore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603100098
 
-scp_send_ipi() should only send the passed buffer, without modifying its
-contents, so mark pointer 'buf' as pointer to const.
+The rpmsg_send(), rpmsg_sendto() and other variants of sending
+interfaces should only send the passed data, without modifying its
+contents, so mark pointer 'data' as pointer to const.  All users of this
+interface already follow this approach, so only the function
+declarations have to be updated.
 
 Acked-by: Mathieu Poirier <mathieuu.poirier@linaro.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
@@ -159,36 +161,312 @@ Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Patch necessary for the further patches, please keep with the rest.
 ---
- drivers/remoteproc/mtk_scp.c    | 2 +-
- include/linux/rpmsg/mtk_rpmsg.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/rpmsg/mtk_rpmsg.c         |  4 ++--
+ drivers/rpmsg/qcom_glink_native.c | 13 ++++++++-----
+ drivers/rpmsg/qcom_smd.c          | 10 ++++++----
+ drivers/rpmsg/rpmsg_core.c        |  8 ++++----
+ drivers/rpmsg/rpmsg_internal.h    |  8 ++++----
+ drivers/rpmsg/virtio_rpmsg_bus.c  | 24 +++++++++++++-----------
+ include/linux/rpmsg.h             | 17 +++++++++--------
+ 7 files changed, 46 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index bb6f6a16d895..85a74c9ec521 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1078,7 +1078,7 @@ static void scp_unregister_ipi(struct platform_device *pdev, u32 id)
- 	scp_ipi_unregister(scp, id);
+diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+index 0e03c5336609..1b670ed54cfa 100644
+--- a/drivers/rpmsg/mtk_rpmsg.c
++++ b/drivers/rpmsg/mtk_rpmsg.c
+@@ -135,7 +135,7 @@ static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+ 	kref_put(&ept->refcount, __mtk_ept_release);
  }
  
--static int scp_send_ipi(struct platform_device *pdev, u32 id, void *buf,
-+static int scp_send_ipi(struct platform_device *pdev, u32 id, const void *buf,
- 			unsigned int len, unsigned int wait)
+-static int mtk_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
++static int mtk_rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len)
  {
- 	struct mtk_scp *scp = platform_get_drvdata(pdev);
-diff --git a/include/linux/rpmsg/mtk_rpmsg.h b/include/linux/rpmsg/mtk_rpmsg.h
-index 363b60178040..badcbc89917f 100644
---- a/include/linux/rpmsg/mtk_rpmsg.h
-+++ b/include/linux/rpmsg/mtk_rpmsg.h
-@@ -25,7 +25,7 @@ struct mtk_rpmsg_info {
- 			    ipi_handler_t handler, void *priv);
- 	void (*unregister_ipi)(struct platform_device *pdev, u32 id);
- 	int (*send_ipi)(struct platform_device *pdev, u32 id,
--			void *buf, unsigned int len, unsigned int wait);
-+			const void *buf, unsigned int len, unsigned int wait);
- 	int ns_ipi_id;
- };
+ 	struct mtk_rpmsg_rproc_subdev *mtk_subdev =
+ 		to_mtk_rpmsg_endpoint(ept)->mtk_subdev;
+@@ -144,7 +144,7 @@ static int mtk_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+ 					  len, 0);
+ }
  
+-static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	struct mtk_rpmsg_rproc_subdev *mtk_subdev =
+ 		to_mtk_rpmsg_endpoint(ept)->mtk_subdev;
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index 9ef17c2e45b0..401a4ece0c97 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1474,7 +1474,7 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
+ }
+ 
+ static int __qcom_glink_send(struct glink_channel *channel,
+-			     void *data, int len, bool wait)
++			     const void *data, int len, bool wait)
+ {
+ 	struct qcom_glink *glink = channel->glink;
+ 	struct glink_core_rx_intent *intent = NULL;
+@@ -1553,28 +1553,31 @@ static int __qcom_glink_send(struct glink_channel *channel,
+ 	return 0;
+ }
+ 
+-static int qcom_glink_send(struct rpmsg_endpoint *ept, void *data, int len)
++static int qcom_glink_send(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	struct glink_channel *channel = to_glink_channel(ept);
+ 
+ 	return __qcom_glink_send(channel, data, len, true);
+ }
+ 
+-static int qcom_glink_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++static int qcom_glink_trysend(struct rpmsg_endpoint *ept, const void *data,
++			      int len)
+ {
+ 	struct glink_channel *channel = to_glink_channel(ept);
+ 
+ 	return __qcom_glink_send(channel, data, len, false);
+ }
+ 
+-static int qcom_glink_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
++static int qcom_glink_sendto(struct rpmsg_endpoint *ept, const void *data,
++			     int len, u32 dst)
+ {
+ 	struct glink_channel *channel = to_glink_channel(ept);
+ 
+ 	return __qcom_glink_send(channel, data, len, true);
+ }
+ 
+-static int qcom_glink_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
++static int qcom_glink_trysendto(struct rpmsg_endpoint *ept, const void *data,
++				int len, u32 dst)
+ {
+ 	struct glink_channel *channel = to_glink_channel(ept);
+ 
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index e1eb450f4fea..3ac863f400ec 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -960,28 +960,30 @@ static void qcom_smd_destroy_ept(struct rpmsg_endpoint *ept)
+ 	kref_put(&ept->refcount, __ept_release);
+ }
+ 
+-static int qcom_smd_send(struct rpmsg_endpoint *ept, void *data, int len)
++static int qcom_smd_send(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
+ 
+ 	return __qcom_smd_send(qsept->qsch, data, len, true);
+ }
+ 
+-static int qcom_smd_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++static int qcom_smd_trysend(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
+ 
+ 	return __qcom_smd_send(qsept->qsch, data, len, false);
+ }
+ 
+-static int qcom_smd_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
++static int qcom_smd_sendto(struct rpmsg_endpoint *ept, const void *data, int len,
++			   u32 dst)
+ {
+ 	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
+ 
+ 	return __qcom_smd_send(qsept->qsch, data, len, true);
+ }
+ 
+-static int qcom_smd_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
++static int qcom_smd_trysendto(struct rpmsg_endpoint *ept, const void *data,
++			      int len, u32 dst)
+ {
+ 	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
+ 
+diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+index 96964745065b..2f9444d1f194 100644
+--- a/drivers/rpmsg/rpmsg_core.c
++++ b/drivers/rpmsg/rpmsg_core.c
+@@ -153,7 +153,7 @@ EXPORT_SYMBOL(rpmsg_destroy_ept);
+  *
+  * Return: 0 on success and an appropriate error value on failure.
+  */
+-int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
++int rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	if (WARN_ON(!ept))
+ 		return -EINVAL;
+@@ -182,7 +182,7 @@ EXPORT_SYMBOL(rpmsg_send);
+  *
+  * Return: 0 on success and an appropriate error value on failure.
+  */
+-int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
++int rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data, int len, u32 dst)
+ {
+ 	if (WARN_ON(!ept))
+ 		return -EINVAL;
+@@ -210,7 +210,7 @@ EXPORT_SYMBOL(rpmsg_sendto);
+  *
+  * Return: 0 on success and an appropriate error value on failure.
+  */
+-int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++int rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	if (WARN_ON(!ept))
+ 		return -EINVAL;
+@@ -238,7 +238,7 @@ EXPORT_SYMBOL(rpmsg_trysend);
+  *
+  * Return: 0 on success and an appropriate error value on failure.
+  */
+-int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst)
++int rpmsg_trysendto(struct rpmsg_endpoint *ept, const void *data, int len, u32 dst)
+ {
+ 	if (WARN_ON(!ept))
+ 		return -EINVAL;
+diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+index 397e4926bd02..a8b7065fd165 100644
+--- a/drivers/rpmsg/rpmsg_internal.h
++++ b/drivers/rpmsg/rpmsg_internal.h
+@@ -63,11 +63,11 @@ struct rpmsg_device_ops {
+ struct rpmsg_endpoint_ops {
+ 	void (*destroy_ept)(struct rpmsg_endpoint *ept);
+ 
+-	int (*send)(struct rpmsg_endpoint *ept, void *data, int len);
+-	int (*sendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++	int (*send)(struct rpmsg_endpoint *ept, const void *data, int len);
++	int (*sendto)(struct rpmsg_endpoint *ept, const void *data, int len, u32 dst);
+ 
+-	int (*trysend)(struct rpmsg_endpoint *ept, void *data, int len);
+-	int (*trysendto)(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++	int (*trysend)(struct rpmsg_endpoint *ept, const void *data, int len);
++	int (*trysendto)(struct rpmsg_endpoint *ept, const void *data, int len, u32 dst);
+ 	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+ 			     poll_table *wait);
+ 	int (*set_flow_control)(struct rpmsg_endpoint *ept, bool pause, u32 dst);
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 8d9e2b4dc7c1..5ae15111fb4f 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -136,11 +136,12 @@ struct virtio_rpmsg_channel {
+ #define RPMSG_RESERVED_ADDRESSES	(1024)
+ 
+ static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
+-static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+-static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+-			       u32 dst);
+-static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+-static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
++static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len);
++static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data,
++			       int len, u32 dst);
++static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data,
++				int len);
++static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, const void *data,
+ 				  int len, u32 dst);
+ static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 				  poll_table *wait);
+@@ -490,7 +491,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+  */
+ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 				     u32 src, u32 dst,
+-				     void *data, int len, bool wait)
++				     const void *data, int len, bool wait)
+ {
+ 	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+ 	struct virtproc_info *vrp = vch->vrp;
+@@ -580,7 +581,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+ 	return err;
+ }
+ 
+-static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
++static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	struct rpmsg_device *rpdev = ept->rpdev;
+ 	u32 src = ept->addr, dst = rpdev->dst;
+@@ -588,8 +589,8 @@ static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+ }
+ 
+-static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+-			       u32 dst)
++static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data,
++			       int len, u32 dst)
+ {
+ 	struct rpmsg_device *rpdev = ept->rpdev;
+ 	u32 src = ept->addr;
+@@ -597,7 +598,8 @@ static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, true);
+ }
+ 
+-static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data,
++				int len)
+ {
+ 	struct rpmsg_device *rpdev = ept->rpdev;
+ 	u32 src = ept->addr, dst = rpdev->dst;
+@@ -605,7 +607,7 @@ static int virtio_rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+ }
+ 
+-static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
++static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, const void *data,
+ 				  int len, u32 dst)
+ {
+ 	struct rpmsg_device *rpdev = ept->rpdev;
+diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+index fb7ab9165645..83266ce14642 100644
+--- a/include/linux/rpmsg.h
++++ b/include/linux/rpmsg.h
+@@ -182,11 +182,11 @@ struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *,
+ 					rpmsg_rx_cb_t cb, void *priv,
+ 					struct rpmsg_channel_info chinfo);
+ 
+-int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len);
+-int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++int rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len);
++int rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data, int len, u32 dst);
+ 
+-int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len);
+-int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data, int len, u32 dst);
++int rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data, int len);
++int rpmsg_trysendto(struct rpmsg_endpoint *ept, const void *data, int len, u32 dst);
+ 
+ __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+ 			poll_table *wait);
+@@ -249,7 +249,7 @@ static inline struct rpmsg_endpoint *rpmsg_create_ept(struct rpmsg_device *rpdev
+ 	return NULL;
+ }
+ 
+-static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
++static inline int rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len)
+ {
+ 	/* This shouldn't be possible */
+ 	WARN_ON(1);
+@@ -257,7 +257,7 @@ static inline int rpmsg_send(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return -ENXIO;
+ }
+ 
+-static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
++static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data, int len,
+ 			       u32 dst)
+ {
+ 	/* This shouldn't be possible */
+@@ -267,7 +267,8 @@ static inline int rpmsg_sendto(struct rpmsg_endpoint *ept, void *data, int len,
+ 
+ }
+ 
+-static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
++static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data,
++				int len)
+ {
+ 	/* This shouldn't be possible */
+ 	WARN_ON(1);
+@@ -275,7 +276,7 @@ static inline int rpmsg_trysend(struct rpmsg_endpoint *ept, void *data, int len)
+ 	return -ENXIO;
+ }
+ 
+-static inline int rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
++static inline int rpmsg_trysendto(struct rpmsg_endpoint *ept, const void *data,
+ 				  int len, u32 dst)
+ {
+ 	/* This shouldn't be possible */
 
 -- 
 2.51.0
