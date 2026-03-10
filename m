@@ -1,46 +1,57 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACAC362152
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 07:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E91364E82
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 07:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773129367; cv=none; b=oWeVC/IvqQwPsBBmFYz4Dd8AlK0FOmKxFVyJ4nSH2A9D/+zq/JObnTUknfHrxU+hK9FaiBkBnUG4uBTWkMcgDz/XtkZoma9NVyWrIDwzscG9fQl/PNFM27HivGLBmc4L6qrcEY4V6UxQ5C+xj5cwU3kmNW9+5cODwh/gLeRU9g4=
+	t=1773129369; cv=none; b=NUMIndrJalYbh5JChY96VWx3i6Y+v4belA/ohHM5ovZguHrzxdXzNK9909ewL7/CgmKQTb/QglApFWdT7SIzTmekt38baLjyXbi74kFEb4MvpaeXO8KEd33kMKuJwJTFviDZ/8aHH3fOHx88HSUb4TcZg+j26KmjN02bW+/5/c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773129367; c=relaxed/simple;
-	bh=v5e/DxyGISXuWGTly0K6hLPabucxx/f/+ZMbtBjb6TY=;
+	s=arc-20240116; t=1773129369; c=relaxed/simple;
+	bh=ie25SIPrCyJJGxZvKcNfxyNV67pa8xcffLXnNnSW+7I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c1287ouWr++QyE7bs9eK0EOwtG6uGF0R38YwcJz1qsIzZdSCxHWaO6Ma++L4YdZKiRfYIH6GGn6K0fZcgeW5JYSt36bYJSwCa3zHNnmzlO1+HClIdfY86QaYu5gqylKUzdVcgam4SzMWJK7bnjGobCuMRf3LuJDEgsode5Us2CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Jv+wtlXL; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=ggmT6wIYgAFx1jglEs630FDMICbEjgGbHKeXmB3XFdRexg+HrVL50Z67CkNSq9EOc9r5F2r4o6E7gZBkxPkn3qU7XbQU3YrOQPVJmBdg6APdO8SY8FJdA9U9pcf8aAM/OXxltoiN6X4P5V3RjYwEhWgyrm9E3dXWYCmPPSrBbWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jSnsmLqY; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Jv+wtlXL"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jSnsmLqY"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=giHulHp/dlRiUxdh2pIugbOCY78tk9Tnbt/aIN3rJPw=; b=Jv+wtl
-	XLmxUDPdR3zpant6xZesfcEUpOcT7Ei2lzYSDe6rkBbEU/VodorU1B+aOyD+ob4z
-	Nll9cyPpL/4Xdv1pLIvlvVFDMxJ98V/KWA1jrpKPiu64mbEr5/DtMYLvugy8gMsL
-	rjDh0vdl7ZIddov9mnIuR27rqQJpbLfOL60Qo3Ic43TPwvIJk5SOUtSfV1Gy4AVS
-	+eQ7WnyxRMAZ/CIXTu/LMMoNT9Mk4NzCNuZ6pJhgeClmugUXgx1RUCmmndUdG+s5
-	rdvUJBvnauJy2ING2taBlvFJJCVOskTNiifgcJaaraCtZDMmea7dk+r5sJRvLJY/
-	wqMKs76Oxtu7UYIA==
-Received: (qmail 3112571 invoked from network); 10 Mar 2026 08:55:48 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Mar 2026 08:55:48 +0100
-X-UD-Smtp-Session: l3s3148p1@A3Lv2KZMopAujntP
+	 s=k1; bh=Ww4nYucVcxYHOiIbxAnzL68uueWTV/h2bRDqOLnsme0=; b=jSnsmL
+	qYMbsKvWcgJkDyGTS/MKc6CavAjUlEjTs7Jc1fq4TKz63lF18ap7o8k4SN8PXbyS
+	AHL8q+PdihoH4HtcqxO1Zy9d6w3gs2vfEITGwDJ18954tz/bYbrqQpz/k5n1K+Nt
+	vqA+pg0pr/pfiZ2fyH5RHWpZiNLfI2uD5UnE6EKKWdtKakY3rKSVsxEeWvmAX4PB
+	+B3SdKbjJvBo2xJWzM61toM3yRYMNng1r3e81RTJbF7WjE0V86GHf4eX9TX5YlDv
+	GFNVWeKy9ahgzUkxhBCCWgdgtJ2nAGza2RYfakik/k4ZYVxFHNsMPQILQ5qr5KgQ
+	co7yFG/J9Xj4yChg==
+Received: (qmail 3112619 invoked from network); 10 Mar 2026 08:55:50 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Mar 2026 08:55:50 +0100
+X-UD-Smtp-Session: l3s3148p1@Bz4S2aZMrpAujntP
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v4 01/15] hwspinlock: u8500: delete driver
-Date: Tue, 10 Mar 2026 08:55:16 +0100
-Message-ID: <20260310075539.11701-2-wsa+renesas@sang-engineering.com>
+	Orson Zhai <orsonzhai@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-remoteproc@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH v4 03/15] hwspinlock: add helpers to retrieve core data
+Date: Tue, 10 Mar 2026 08:55:18 +0100
+Message-ID: <20260310075539.11701-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260310075539.11701-1-wsa+renesas@sang-engineering.com>
 References: <20260310075539.11701-1-wsa+renesas@sang-engineering.com>
@@ -52,223 +63,194 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The U8500 platform was converted to DT around 2013 and is DT only
-meanwhile. This driver has never been converted to a DT driver, so it
-clearly hasn't been used since then. To ease upcoming refactoring in the
-hwspinlock subsystem, remove this obsolete driver.
+This is a first step to hide internal core structs from hwspinlock
+providers. It adds helper functions to retrieve the data needed by them.
+Because all users are only within the hwspinlock subsystem and the
+change there is trivial, conversion is included in this patch as well.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Linus Walleij <linusw@kernel.org>
-Acked-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 ---
- MAINTAINERS                     |   1 -
- drivers/hwspinlock/Kconfig      |  10 ---
- drivers/hwspinlock/Makefile     |   1 -
- drivers/hwspinlock/u8500_hsem.c | 155 --------------------------------
- 4 files changed, 167 deletions(-)
- delete mode 100644 drivers/hwspinlock/u8500_hsem.c
+ drivers/hwspinlock/hwspinlock_core.c  | 12 ++++++++++++
+ drivers/hwspinlock/omap_hwspinlock.c  |  4 ++--
+ drivers/hwspinlock/qcom_hwspinlock.c  | 11 ++++++-----
+ drivers/hwspinlock/sprd_hwspinlock.c  |  6 +++---
+ drivers/hwspinlock/stm32_hwspinlock.c |  4 ++--
+ drivers/hwspinlock/sun6i_hwspinlock.c |  4 ++--
+ include/linux/hwspinlock.h            |  2 ++
+ 7 files changed, 29 insertions(+), 14 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 77fdfcb55f06..5e5282c62d2e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3155,7 +3155,6 @@ F:	drivers/clocksource/clksrc-dbx500-prcmu.c
- F:	drivers/dma/ste_dma40*
- F:	drivers/pmdomain/st/ste-ux500-pm-domain.c
- F:	drivers/gpio/gpio-nomadik.c
--F:	drivers/hwspinlock/u8500_hsem.c
- F:	drivers/i2c/busses/i2c-nomadik.c
- F:	drivers/iio/adc/ab8500-gpadc.c
- F:	drivers/mfd/ab8500*
-diff --git a/drivers/hwspinlock/Kconfig b/drivers/hwspinlock/Kconfig
-index 3874d15b0e9b..d84e00084ee2 100644
---- a/drivers/hwspinlock/Kconfig
-+++ b/drivers/hwspinlock/Kconfig
-@@ -53,14 +53,4 @@ config HWSPINLOCK_SUN6I
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index cc8e952a6772..2c9eceba7fe8 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -888,5 +888,17 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
  
- 	  If unsure, say N.
++void *hwspin_lock_get_priv(struct hwspinlock *hwlock)
++{
++	return hwlock->priv;
++}
++EXPORT_SYMBOL_GPL(hwspin_lock_get_priv);
++
++struct device *hwspin_lock_get_dev(struct hwspinlock *hwlock)
++{
++	return hwlock->bank->dev;
++}
++EXPORT_SYMBOL_GPL(hwspin_lock_get_dev);
++
+ MODULE_DESCRIPTION("Hardware spinlock interface");
+ MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
+diff --git a/drivers/hwspinlock/omap_hwspinlock.c b/drivers/hwspinlock/omap_hwspinlock.c
+index 1832e0c3af6b..5bf0061d3fd6 100644
+--- a/drivers/hwspinlock/omap_hwspinlock.c
++++ b/drivers/hwspinlock/omap_hwspinlock.c
+@@ -37,7 +37,7 @@
  
--config HSEM_U8500
--	tristate "STE Hardware Semaphore functionality"
--	depends on ARCH_U8500 || COMPILE_TEST
--	help
--	  Say y here to support the STE Hardware Semaphore functionality, which
--	  provides a synchronisation mechanism for the various processor on the
--	  SoC.
--
--	  If unsure, say N.
--
- endif # HWSPINLOCK
-diff --git a/drivers/hwspinlock/Makefile b/drivers/hwspinlock/Makefile
-index a0f16c9aaa82..3a740805949d 100644
---- a/drivers/hwspinlock/Makefile
-+++ b/drivers/hwspinlock/Makefile
-@@ -9,4 +9,3 @@ obj-$(CONFIG_HWSPINLOCK_QCOM)		+= qcom_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_SPRD)		+= sprd_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_STM32)		+= stm32_hwspinlock.o
- obj-$(CONFIG_HWSPINLOCK_SUN6I)		+= sun6i_hwspinlock.o
--obj-$(CONFIG_HSEM_U8500)		+= u8500_hsem.o
-diff --git a/drivers/hwspinlock/u8500_hsem.c b/drivers/hwspinlock/u8500_hsem.c
-deleted file mode 100644
-index 5a2d8c3e0d80..000000000000
---- a/drivers/hwspinlock/u8500_hsem.c
-+++ /dev/null
-@@ -1,155 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * u8500 HWSEM driver
-- *
-- * Copyright (C) 2010-2011 ST-Ericsson
-- *
-- * Implements u8500 semaphore handling for protocol 1, no interrupts.
-- *
-- * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
-- * Heavily borrowed from the work of :
-- *   Simon Que <sque@ti.com>
-- *   Hari Kanigeri <h-kanigeri2@ti.com>
-- *   Ohad Ben-Cohen <ohad@wizery.com>
-- */
--
--#include <linux/module.h>
--#include <linux/delay.h>
--#include <linux/io.h>
--#include <linux/slab.h>
--#include <linux/spinlock.h>
--#include <linux/hwspinlock.h>
--#include <linux/platform_device.h>
--
--#include "hwspinlock_internal.h"
--
--/*
-- * Implementation of STE's HSem protocol 1 without interrutps.
-- * The only masterID we allow is '0x01' to force people to use
-- * HSems for synchronisation between processors rather than processes
-- * on the ARM core.
-- */
--
--#define U8500_MAX_SEMAPHORE		32	/* a total of 32 semaphore */
--#define RESET_SEMAPHORE			(0)	/* free */
--
--/*
-- * CPU ID for master running u8500 kernel.
-- * Hswpinlocks should only be used to synchonise operations
-- * between the Cortex A9 core and the other CPUs.  Hence
-- * forcing the masterID to a preset value.
-- */
--#define HSEM_MASTER_ID			0x01
--
--#define HSEM_REGISTER_OFFSET		0x08
--
--#define HSEM_CTRL_REG			0x00
--#define HSEM_ICRALL			0x90
--#define HSEM_PROTOCOL_1			0x01
--
--static int u8500_hsem_trylock(struct hwspinlock *lock)
--{
+ static int omap_hwspinlock_trylock(struct hwspinlock *lock)
+ {
 -	void __iomem *lock_addr = lock->priv;
--
--	writel(HSEM_MASTER_ID, lock_addr);
--
--	/* get only first 4 bit and compare to masterID.
--	 * if equal, we have the semaphore, otherwise
--	 * someone else has it.
--	 */
--	return (HSEM_MASTER_ID == (0x0F & readl(lock_addr)));
--}
--
--static void u8500_hsem_unlock(struct hwspinlock *lock)
--{
++	void __iomem *lock_addr = hwspin_lock_get_priv(lock);
+ 
+ 	/* attempt to acquire the lock by reading its value */
+ 	return (SPINLOCK_NOTTAKEN == readl(lock_addr));
+@@ -45,7 +45,7 @@ static int omap_hwspinlock_trylock(struct hwspinlock *lock)
+ 
+ static void omap_hwspinlock_unlock(struct hwspinlock *lock)
+ {
 -	void __iomem *lock_addr = lock->priv;
--
--	/* release the lock by writing 0 to it */
--	writel(RESET_SEMAPHORE, lock_addr);
--}
--
--/*
-- * u8500: what value is recommended here ?
-- */
--static void u8500_hsem_relax(struct hwspinlock *lock)
--{
--	ndelay(50);
--}
--
--static const struct hwspinlock_ops u8500_hwspinlock_ops = {
--	.trylock	= u8500_hsem_trylock,
--	.unlock		= u8500_hsem_unlock,
--	.relax		= u8500_hsem_relax,
--};
--
--static int u8500_hsem_probe(struct platform_device *pdev)
--{
--	struct hwspinlock_pdata *pdata = pdev->dev.platform_data;
--	struct hwspinlock_device *bank;
--	struct hwspinlock *hwlock;
--	void __iomem *io_base;
--	int i, num_locks = U8500_MAX_SEMAPHORE;
--	ulong val;
--
--	if (!pdata)
--		return -ENODEV;
--
--	io_base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(io_base))
--		return PTR_ERR(io_base);
--
--	/* make sure protocol 1 is selected */
--	val = readl(io_base + HSEM_CTRL_REG);
--	writel((val & ~HSEM_PROTOCOL_1), io_base + HSEM_CTRL_REG);
--
--	/* clear all interrupts */
--	writel(0xFFFF, io_base + HSEM_ICRALL);
--
--	bank = devm_kzalloc(&pdev->dev, struct_size(bank, lock, num_locks),
--			    GFP_KERNEL);
--	if (!bank)
--		return -ENOMEM;
--
--	platform_set_drvdata(pdev, bank);
--
--	for (i = 0, hwlock = &bank->lock[0]; i < num_locks; i++, hwlock++)
--		hwlock->priv = io_base + HSEM_REGISTER_OFFSET + sizeof(u32) * i;
--
--	return devm_hwspin_lock_register(&pdev->dev, bank,
--					 &u8500_hwspinlock_ops,
--					 pdata->base_id, num_locks);
--}
--
--static void u8500_hsem_remove(struct platform_device *pdev)
--{
--	struct hwspinlock_device *bank = platform_get_drvdata(pdev);
--	void __iomem *io_base = bank->lock[0].priv - HSEM_REGISTER_OFFSET;
--
--	/* clear all interrupts */
--	writel(0xFFFF, io_base + HSEM_ICRALL);
--}
--
--static struct platform_driver u8500_hsem_driver = {
--	.probe		= u8500_hsem_probe,
--	.remove		= u8500_hsem_remove,
--	.driver		= {
--		.name	= "u8500_hsem",
--	},
--};
--
--static int __init u8500_hsem_init(void)
--{
--	return platform_driver_register(&u8500_hsem_driver);
--}
--/* board init code might need to reserve hwspinlocks for predefined purposes */
--postcore_initcall(u8500_hsem_init);
--
--static void __exit u8500_hsem_exit(void)
--{
--	platform_driver_unregister(&u8500_hsem_driver);
--}
--module_exit(u8500_hsem_exit);
--
--MODULE_LICENSE("GPL v2");
--MODULE_DESCRIPTION("Hardware Spinlock driver for u8500");
--MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
++	void __iomem *lock_addr = hwspin_lock_get_priv(lock);
+ 
+ 	/* release the lock by writing 0 to it */
+ 	writel(SPINLOCK_NOTTAKEN, lock_addr);
+diff --git a/drivers/hwspinlock/qcom_hwspinlock.c b/drivers/hwspinlock/qcom_hwspinlock.c
+index 0390979fd765..7ff89c3e8c6b 100644
+--- a/drivers/hwspinlock/qcom_hwspinlock.c
++++ b/drivers/hwspinlock/qcom_hwspinlock.c
+@@ -27,7 +27,7 @@ struct qcom_hwspinlock_of_data {
+ 
+ static int qcom_hwspinlock_trylock(struct hwspinlock *lock)
+ {
+-	struct regmap_field *field = lock->priv;
++	struct regmap_field *field = hwspin_lock_get_priv(lock);
+ 	u32 lock_owner;
+ 	int ret;
+ 
+@@ -44,7 +44,7 @@ static int qcom_hwspinlock_trylock(struct hwspinlock *lock)
+ 
+ static void qcom_hwspinlock_unlock(struct hwspinlock *lock)
+ {
+-	struct regmap_field *field = lock->priv;
++	struct regmap_field *field = hwspin_lock_get_priv(lock);
+ 	u32 lock_owner;
+ 	int ret;
+ 
+@@ -66,13 +66,14 @@ static void qcom_hwspinlock_unlock(struct hwspinlock *lock)
+ 
+ static int qcom_hwspinlock_bust(struct hwspinlock *lock, unsigned int id)
+ {
+-	struct regmap_field *field = lock->priv;
++	struct regmap_field *field = hwspin_lock_get_priv(lock);
++	struct device *dev = hwspin_lock_get_dev(lock);
+ 	u32 owner;
+ 	int ret;
+ 
+ 	ret = regmap_field_read(field, &owner);
+ 	if (ret) {
+-		dev_err(lock->bank->dev, "unable to query spinlock owner\n");
++		dev_err(dev, "unable to query spinlock owner\n");
+ 		return ret;
+ 	}
+ 
+@@ -81,7 +82,7 @@ static int qcom_hwspinlock_bust(struct hwspinlock *lock, unsigned int id)
+ 
+ 	ret = regmap_field_write(field, 0);
+ 	if (ret) {
+-		dev_err(lock->bank->dev, "failed to bust spinlock\n");
++		dev_err(dev, "failed to bust spinlock\n");
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/hwspinlock/sprd_hwspinlock.c b/drivers/hwspinlock/sprd_hwspinlock.c
+index 22e2ffb91743..0d08efbdfb07 100644
+--- a/drivers/hwspinlock/sprd_hwspinlock.c
++++ b/drivers/hwspinlock/sprd_hwspinlock.c
+@@ -40,8 +40,8 @@ struct sprd_hwspinlock_dev {
+ static int sprd_hwspinlock_trylock(struct hwspinlock *lock)
+ {
+ 	struct sprd_hwspinlock_dev *sprd_hwlock =
+-		dev_get_drvdata(lock->bank->dev);
+-	void __iomem *addr = lock->priv;
++		dev_get_drvdata(hwspin_lock_get_dev(lock));
++	void __iomem *addr = hwspin_lock_get_priv(lock);
+ 	int user_id, lock_id;
+ 
+ 	if (!readl(addr))
+@@ -59,7 +59,7 @@ static int sprd_hwspinlock_trylock(struct hwspinlock *lock)
+ /* unlock the hardware spinlock */
+ static void sprd_hwspinlock_unlock(struct hwspinlock *lock)
+ {
+-	void __iomem *lock_addr = lock->priv;
++	void __iomem *lock_addr = hwspin_lock_get_priv(lock);
+ 
+ 	writel(HWSPINLOCK_NOTTAKEN, lock_addr);
+ }
+diff --git a/drivers/hwspinlock/stm32_hwspinlock.c b/drivers/hwspinlock/stm32_hwspinlock.c
+index bb5c7e5f7a80..1d75dc03f4ad 100644
+--- a/drivers/hwspinlock/stm32_hwspinlock.c
++++ b/drivers/hwspinlock/stm32_hwspinlock.c
+@@ -27,7 +27,7 @@ struct stm32_hwspinlock {
+ 
+ static int stm32_hwspinlock_trylock(struct hwspinlock *lock)
+ {
+-	void __iomem *lock_addr = lock->priv;
++	void __iomem *lock_addr = hwspin_lock_get_priv(lock);
+ 	u32 status;
+ 
+ 	writel(STM32_MUTEX_LOCK_BIT | STM32_MUTEX_COREID, lock_addr);
+@@ -38,7 +38,7 @@ static int stm32_hwspinlock_trylock(struct hwspinlock *lock)
+ 
+ static void stm32_hwspinlock_unlock(struct hwspinlock *lock)
+ {
+-	void __iomem *lock_addr = lock->priv;
++	void __iomem *lock_addr = hwspin_lock_get_priv(lock);
+ 
+ 	writel(STM32_MUTEX_COREID, lock_addr);
+ }
+diff --git a/drivers/hwspinlock/sun6i_hwspinlock.c b/drivers/hwspinlock/sun6i_hwspinlock.c
+index c2d314588046..8ff81cb5880a 100644
+--- a/drivers/hwspinlock/sun6i_hwspinlock.c
++++ b/drivers/hwspinlock/sun6i_hwspinlock.c
+@@ -62,14 +62,14 @@ static void sun6i_hwspinlock_debugfs_init(struct sun6i_hwspinlock_data *priv)
+ 
+ static int sun6i_hwspinlock_trylock(struct hwspinlock *lock)
+ {
+-	void __iomem *lock_addr = lock->priv;
++	void __iomem *lock_addr = hwspin_lock_get_priv(lock);
+ 
+ 	return (readl(lock_addr) == SPINLOCK_NOTTAKEN);
+ }
+ 
+ static void sun6i_hwspinlock_unlock(struct hwspinlock *lock)
+ {
+-	void __iomem *lock_addr = lock->priv;
++	void __iomem *lock_addr = hwspin_lock_get_priv(lock);
+ 
+ 	writel(SPINLOCK_NOTTAKEN, lock_addr);
+ }
+diff --git a/include/linux/hwspinlock.h b/include/linux/hwspinlock.h
+index 74b91244fe0e..dffa1dff7289 100644
+--- a/include/linux/hwspinlock.h
++++ b/include/linux/hwspinlock.h
+@@ -27,6 +27,8 @@ struct hwspinlock_ops;
+ 
+ #ifdef CONFIG_HWSPINLOCK
+ 
++void *hwspin_lock_get_priv(struct hwspinlock *hwlock);
++struct device *hwspin_lock_get_dev(struct hwspinlock *hwlock);
+ int hwspin_lock_register(struct hwspinlock_device *bank, struct device *dev,
+ 		const struct hwspinlock_ops *ops, int base_id, int num_locks);
+ int hwspin_lock_unregister(struct hwspinlock_device *bank);
 -- 
 2.47.3
 
