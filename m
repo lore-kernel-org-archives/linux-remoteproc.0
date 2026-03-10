@@ -1,163 +1,207 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321CA29B78D
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 13:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF9B33A9DA
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 13:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773150635; cv=none; b=LfExct/k1aaZq1wxwX5eTWrBFFt5PrP+rDwYgfmFRn/FsxQvkZALx0Kur0klGheQ7cNs0I0v0gSQUpHwUnn99bVKkLKUl9xO+CYEmqX+zdvGX2HdoeWrB9t5tjf0eAOGgkzS7z9krvf3+SFNrGNq+sbA4PBrs59hBGjppnl4WzE=
+	t=1773150736; cv=none; b=GSBgtoHHr1wDMtCYomERdGZrDRWqbH41cH4m7ODA56wBfslF9Fd9LHnLq651TS4X5RQHKExDFbke4iAfqipkdQ6D/UIAYZTfigea3+X+x0SYZNEqNTc+dD3f3ba5RiXjCZ0eOK5m3sdDEGS2vrdHSA4DQk7LjrYjyW0fYmlJ7Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773150635; c=relaxed/simple;
-	bh=rdUiPy2+hha7jKHz5R0tb6oJs3+2mZ0mZsIaAo22UjU=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WxQpX5dR5mfj2IY//kumxxHz79Bz+0362KtXQ00yOoUpywgVvjovpwXDqHHBvilxX/e+rHAKyUD6N4ZDeo5d0Jt79a37pp8KIrxEG/P1k8g1AK6UORujGD7vhpuF85/B4bqctkrv97a2Ygcj/dVIjQmdU2UzFU7203XHYkcx5Xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD+BDVLW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773150736; c=relaxed/simple;
+	bh=qEhVOURgjmKZcofjoKjsKX5vda8WZAM1vsEimNH/fEU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y3f66ZpKqZEQoD8z89ykEmyLbNVZqC5QO1dQF81MRphBnxVhJN4tGDTqHH7R39+hFcbM6sl4BNhUbtrqX+vHVdh3f2f9wsHzweXpaIkVzuXcin+bx1QGhQYT+vrDVoSGFMZzzASVo9iddMnFZQhBZPE8ji3/QyyJPZa6x12+uh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bvqnY2jP; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Yx+VHYBq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD+BDVLW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE18FC2BC9E
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 13:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773150634;
-	bh=rdUiPy2+hha7jKHz5R0tb6oJs3+2mZ0mZsIaAo22UjU=;
-	h=From:In-Reply-To:References:Date:Subject:To:Cc:From;
-	b=iD+BDVLWIM5gKelp2lGniBHdneqFnctQ0qYo7K1X9zPLp66DY5DHC4xuWI7WHO50U
-	 vWKzA277e9alpN1wcHs2R1vBK0HKiKGTGcq8WfsCinZXjfr/5X8GjZCUBunjVRRQSY
-	 a4DNTnGlkQoswt7IYAkhDzemA7+HbZEheA+Mn6bDNhABrGlTFDdd87FUb+A+Ram23p
-	 8bdBLr7GNiRCmu11HjcKR0Z5J+vjFj4OPmHHyL7G0GGNfVCXVTbt0/DF91l+5N/5EQ
-	 hJbns3TXj0nX63YsdGswa6KLeeLcURu6YjMlO0OMUDZlnGXyNsG++ytHI913nwM1S4
-	 JEcK3yImCpLZw==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5a126c8aab9so7381236e87.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 06:50:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVRnaRY9kOj/YCEq4AxnYCQ+XEz0LdLOt0ojVmieL371NwymlfoOSIFfhTsa/V7p1HAH1wCbsOCLm38ULUI4TDp@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAaOAj/UZL/7R7oqscvlRxK/wRTWthiv809OgnoZKLIFbhhWbA
-	Qth5z4l/Bi7j3syPrQLuD8cE+5Muz5mb8HxmM+dGb2kFcBP4ERaTVpaeeW2dZ8KFUIL0V7HFsvl
-	x0rrMNK75rUG3NEAtPTaQjwoY4vucbK/UrSrKq/h1dQ==
-X-Received: by 2002:a05:6512:32ca:b0:5a1:2efb:917f with SMTP id
- 2adb3069b0e04-5a13caae6ccmr4333373e87.4.1773150633351; Tue, 10 Mar 2026
- 06:50:33 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 10 Mar 2026 06:50:30 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 10 Mar 2026 06:50:30 -0700
-From: Bartosz Golaszewski <brgl@kernel.org>
-In-Reply-To: <20260310-knp-soccp-v4-5-0a91575e0e7e@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bvqnY2jP";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Yx+VHYBq"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62ACamii790143
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 13:52:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Ec26YDNl2RQt9urDzAThYSRYy4h33GcE6qn
+	sJgHmtXg=; b=bvqnY2jPazi/tsvLcRN+V5TDWd35xhqyThTI9i2IBOgb46XQJ2H
+	VETFqvFMo5r6jI7/FzQxeWxty/h/MPWH2opLlckx5fC5Z7xKcYWplepLR28FpzEC
+	KbTImlZGL8vVKnYvYt1+W/fzov83fPWHrTQc44ku2zY5TIxU6Zbw4+wH1tuV2E/q
+	p9Rd0LD7WI+QgrMa1X1HPhSplUAH9DCGmwx+p8D27KNblywEckzJ+vbGxl44QxlW
+	/Ov5qCJ+KLSvVcE6j/qnewd/SQIoGKfJg3zMVNqS+LIC4/NrmOt+BtCMKEyaCPWh
+	8woaU2J3JJ5u+PAfc+Pb4SfOTx98qTCJnJw==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ct1ekv4cw-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 13:52:14 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-358e95e81aeso61260633a91.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Mar 2026 06:52:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773150734; x=1773755534; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ec26YDNl2RQt9urDzAThYSRYy4h33GcE6qnsJgHmtXg=;
+        b=Yx+VHYBq88HivBUbjrJkRlrA6n1VYBFFmpLwlcYLWJZZZF8x3KBx5iz6og0R0TDJBs
+         ZzAiEQMWq6mVUJplNIYUBFYbmLt04j1IiWG0D8/n4Jn/hC7dSOpkP2Uv1ZMRyxDxbTLH
+         f1BVICD8jzKtyOjMhbRofGnwa/aGR51NvIvsvqkVSTy0vLPoj1RQdmWZEEQQTd3uv/N0
+         KXpbSHInVX4kPPEU8/+yQHnLGML6P/sUmUB5kcl/tgqA1jTBili51BcpGqPUfx6plkBc
+         hACG4n6n4voXz8H217AqFaCYkm/Mlz10BXS5njL7eaVy2woa2RwY2GyW5RL5L6L0sGzq
+         2Tsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773150734; x=1773755534;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ec26YDNl2RQt9urDzAThYSRYy4h33GcE6qnsJgHmtXg=;
+        b=vJ9aFoSoDSbDeigdzZarvIaifyBwTQc3JKNqqyF3/F26kWoe8pqbGxt6Q7GnTbB7H9
+         KPL2hkLmU46IPn1uXm9op43NxfbnPb611zjCwZoU/G9RwhDkgXPfgsiLkX2Q3eAc/w9Q
+         j2ZH3jJY3VGGjToqU5Fy9JYM4NiOMP3ysZEEPvb3fx9kxFxddpN2aK3Mr/Afp7JNKC2n
+         1Bo5HEju/g/gRnAkGFW9MBi+o9iL1+JOKFJClcHU5BbGpXIIHljErD09GV8cZavAIIgO
+         TWEISmMqZKG0zxHZXIMX1VBM9YqI8Lnx4JYMuzhvxDbE/DOlJJXInLEtm2Mrwu/yEy27
+         qPGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMcyDJN8rBe4THPPdM0Y+A7jkZKxUGavYoVEoRb7CmoiOavrshVMiRJDW79uCbLd3L7fruZgYduXZDidXxWTUb@vger.kernel.org
+X-Gm-Message-State: AOJu0YycrRMp7Oc76SKTwFphb/O82P2VTa5F6AU0mG5UAG3xIx7UaUuB
+	lAba8TWo2qe8pth6r9tEdfKgKr5ChOURJjd1XIuSvlcTl7DYVcXzcdT6C2Rbi/j0+mOORp5Z6j6
+	tmUoPvFePAhZJHnKwgdKXI3b0rKuHTNhwkgwnAwULqaE01+HvPSQECaA1FZEdhd/7q7duiHwJ
+X-Gm-Gg: ATEYQzzbPY56RRbs52fxhZxJXScuBztbGE7eiuI1ALg0709UIJfAYD4leyKyptGGqbZ
+	0XkMmR30pOGw6o2g42jUeEvVsz6bkunuodQoxKIBDU9xwf+1I85eNZztWmxt3QurdRQuC/D483F
+	woINQgLTjFP23AV5RwzlPscyxN1S+o/4Y7+xqOSTLZwFtuTo7QoUOb/IFn2vFaplVpSwLDEqE66
+	5GGNJJuuwvggVCyEPo+PvfI6c/PVqhwiNypZF0RW0vcpW4ETfiFXEi3QftbHy6NBEuZVudbauqK
+	BP4ad1CKttXq/CvU/lPZAlymnD7uwSf7hY5bs2ceKyEfUb2YH8GMiPmUb8whfO67cgDX1jhk1Qv
+	N+jWf8Y9RJUpqcxCySUPnUhoSD/7q8LVmqn6wWn+UwbUq+zD0
+X-Received: by 2002:a17:90b:38d0:b0:34c:fe57:2793 with SMTP id 98e67ed59e1d1-359be344cbamr13628217a91.20.1773150733565;
+        Tue, 10 Mar 2026 06:52:13 -0700 (PDT)
+X-Received: by 2002:a17:90b:38d0:b0:34c:fe57:2793 with SMTP id 98e67ed59e1d1-359be344cbamr13628184a91.20.1773150732920;
+        Tue, 10 Mar 2026 06:52:12 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-359f088e4bbsm3333149a91.9.2026.03.10.06.52.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2026 06:52:12 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] remoteproc: qcom: pas: Fix the dtb PAS context creation
+Date: Tue, 10 Mar 2026 19:22:04 +0530
+Message-ID: <20260310135205.2497789-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260310-knp-soccp-v4-0-0a91575e0e7e@oss.qualcomm.com> <20260310-knp-soccp-v4-5-0a91575e0e7e@oss.qualcomm.com>
-Date: Tue, 10 Mar 2026 06:50:30 -0700
-X-Gmail-Original-Message-ID: <CAMRc=MedT32COu-B_TsrN+jCrHjde2v5gnA6WOUmMQ2dEBY6WQ@mail.gmail.com>
-X-Gm-Features: AaiRm51ARcqlsmU2wIb7NleLQsLhCnonv2nK6lkxB23KnfmtQ9OYSi2lSUj0KNE
-Message-ID: <CAMRc=MedT32COu-B_TsrN+jCrHjde2v5gnA6WOUmMQ2dEBY6WQ@mail.gmail.com>
-Subject: Re: [PATCH v4 5/7] remoteproc: core: set recovery_disabled when doing rproc_add()
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Luca Weiss <luca.weiss@fairphone.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: nWwZ7R6vXM2ROFRor6vamKExtzZ30HNa
+X-Proofpoint-ORIG-GUID: nWwZ7R6vXM2ROFRor6vamKExtzZ30HNa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEwMDEyMCBTYWx0ZWRfX15YchKPn//t0
+ txX3x/jf9HaKEVjOaGIR9itdos887oALAmHunhcjm6uN5FMURw6VYrQX7QBPfsd/amCEoYE1Rua
+ gkYBJhguI8iowjVBT//Bcu9ri0ogBtJowHEwMCQfTbGIpAnApKmcG7rwGNq0zuAc4p8P7iAV0Ej
+ /oEeoSBXTLC1ir3o+cT+mYzOBrizrA37sL6FohP6n8ZzzRL86nobg+T1cah6J5tjbDYFNrnUlYx
+ 6UeTWsJ6fyuRLSLVNRvp3GlueQaqkw1nvtvrndAJbonVDIL/2bRBxiIbizY19L6NSWr+6wabXMt
+ Uj4OHnc/AyvvJm+50OFbCOYU15Ma/CVuTe7uHTzakpvYIdEwHKAMaFYQdlCVFeDu89jiL6g4Z1X
+ tCJek7+Qak4k7H9CvFRorT+Sv8WfUIfmm8WgtFR1e29AG2e+YXN2gzDxp0fWX//kRoA+ZaPhy1Y
+ ishYQ6nBati9RySyZSw==
+X-Authority-Analysis: v=2.4 cv=eIEeTXp1 c=1 sm=1 tr=0 ts=69b0220e cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22 a=EUspDBNiAAAA:8
+ a=Zzg8c1LOEvFJJv0PgygA:9 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-10_02,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2602130000 definitions=main-2603100120
 
-On Tue, 10 Mar 2026 11:03:21 +0100, Jingyi Wang
-<jingyi.wang@oss.qualcomm.com> said:
-> rproc_add() called by rproc probe function failure will tear down all
-> the resources including do device_del() and remove subdev etc. If
-> rproc_report_crash() is called in this path, the rproc_crash_handler_work
-> could be excuted asynchronously, rproc_boot_recovery()->rproc_stop() will
-> be called with recovery enabled, which may cause NULL pointer dereference
-> if the resource has already been cleaned up.
->
-> [    5.251483] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000300
-> [    5.260499] Mem abort info:
-> [    5.263384]   ESR = 0x0000000096000006
-> [    5.267248]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    5.272711]   SET = 0, FnV = 0
-> [    5.275865]   EA = 0, S1PTW = 0
-> [    5.279106]   FSC = 0x06: level 2 translation fault
-> [    5.284125] Data abort info:
-> [    5.287101]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
-> [    5.292742]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    5.297939]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    5.303400] user pgtable: 4k pages, 48-bit VAs, pgdp=000000089e086000
-> [    5.310022] [0000000000000300] pgd=080000089e087403, p4d=080000089e087403, pud=080000089e088403, pmd=0000000000000000
-> [    5.320917] Internal error: Oops: 0000000096000006 [#1]  SMP
-> [    5.392494] Hardware name: Qualcomm Technologies, Inc. Kaanapali QRD (DT)
-> [    5.399466] Workqueue: rproc_recovery_wq rproc_crash_handler_work
-> [    5.405729] pstate: 23400005 (nzCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> [    5.412879] pc : qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem]
-> [    5.419674] lr : glink_subdev_stop+0x1c/0x30 [qcom_common]
-> [    5.425308] sp : ffff800080ffbc90
-> [    5.428724] x29: ffff800080ffbc90 x28: ffff00081be833f0 x27: ffff000800059c00
-> [    5.436053] x26: 0000000000000000 x25: ffff000800a56f80 x24: 61c8864680b583eb
-> [    5.443384] x23: ffff00081be83038 x22: 0000000000000001 x21: ffff00081be83000
-> [    5.450714] x20: ffff00081be833c0 x19: 0000000000000000 x18: 0000000000000010
-> [    5.458043] x17: 0000000000000000 x16: 0000000000000000 x15: ffff0008042684f8
-> [    5.465374] x14: 00000000000002dd x13: ffff0008042684f8 x12: ffffd37f69f967a0
-> [    5.472705] x11: ffffd37f6a006800 x10: ffffd37f69fee7c0 x9 : ffffd37f69fee818
-> [    5.480036] x8 : 0000000000017fe8 x7 : c0000000ffffefff x6 : 0000000000000001
-> [    5.487366] x5 : ffff000d6536d408 x4 : 0000000000000001 x3 : 0000000000000000
-> [    5.494697] x2 : ffffd37f5703c18c x1 : 0000000000000001 x0 : 0000000000000000
-> [    5.502028] Call trace:
-> [    5.504549]  qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem] (P)
-> [    5.511344]  glink_subdev_stop+0x1c/0x30 [qcom_common]
-> [    5.516622]  rproc_stop+0x58/0x17c
-> [    5.520127]  rproc_trigger_recovery+0xb0/0x150
-> [    5.524693]  rproc_crash_handler_work+0xa4/0xc4
-> [    5.529346]  process_scheduled_works+0x18c/0x2d8
-> [    5.534092]  worker_thread+0x144/0x280
-> [    5.537952]  kthread+0x124/0x138
-> [    5.541280]  ret_from_fork+0x10/0x20
-> [    5.544965] Code: a9be7bfd 910003fd a90153f3 aa0003f3 (b9430000)
-> [    5.551224] ---[ end trace 0000000000000000 ]---
->
-> So set recovery_disabled during rproc_add().
->
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index b087ed21858a..f66dde712cec 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2286,7 +2286,10 @@ int rproc_add(struct rproc *rproc)
->  {
->  	struct device *dev = &rproc->dev;
->  	int ret;
-> +	bool rproc_recovery_save;
->
-> +	rproc_recovery_save  = rproc->recovery_disabled;
-> +	rproc->recovery_disabled = true;
->  	ret = rproc_validate(rproc);
->  	if (ret < 0)
->  		return ret;
-> @@ -2319,6 +2322,7 @@ int rproc_add(struct rproc *rproc)
->  	list_add_rcu(&rproc->node, &rproc_list);
->  	mutex_unlock(&rproc_list_mutex);
->
-> +	rproc->recovery_disabled = rproc_recovery_save;
->  	return 0;
->
->  rproc_remove_dev:
->
-> --
-> 2.25.1
->
->
+DTB PAS context creation should be done only for subsystems that support
+a DTB firmware binary; otherwise, memory is wasted. Move the context
+creation to the appropriate location and, while at it, fix the place
+where the DTB PAS context was being released unconditionally.
 
-Ideally things like this would be passed to the rproc core in some kind of a
-config structure and only set when registration succeeds. This looks to me
-like papering over the real issue and I think it's still racy as there's no
-true synchronization.
+Fixes: b13d8baf5601 ("remoteproc: pas: Replace metadata context with PAS context structure")
+Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+---
+ drivers/remoteproc/qcom_q6v5_pas.c | 36 +++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-Wouldn't it be better to take rproc->lock for the entire duration of
-rproc_add()? It's already initialized in rproc_alloc().
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index 46204da046fa..3bde37ac510c 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -250,7 +250,9 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
+ 	return 0;
+ 
+ release_dtb_metadata:
+-	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
++	if (pas->dtb_pas_id)
++		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
++
+ 	release_firmware(pas->dtb_firmware);
+ 
+ 	return ret;
+@@ -623,6 +625,7 @@ static void qcom_pas_pds_detach(struct qcom_pas *pas, struct device **pds, size_
+ 
+ static int qcom_pas_alloc_memory_region(struct qcom_pas *pas)
+ {
++	struct rproc *rproc = pas->rproc;
+ 	struct resource res;
+ 	int ret;
+ 
+@@ -640,6 +643,12 @@ static int qcom_pas_alloc_memory_region(struct qcom_pas *pas)
+ 		return PTR_ERR(pas->mem_region);
+ 	}
+ 
++	pas->pas_ctx = devm_qcom_scm_pas_context_alloc(pas->dev, pas->pas_id,
++						       pas->mem_phys, pas->mem_size);
++	if (IS_ERR(pas->pas_ctx))
++		return PTR_ERR(pas->pas_ctx);
++
++	pas->pas_ctx->use_tzmem = rproc->has_iommu;
+ 	if (!pas->dtb_pas_id)
+ 		return 0;
+ 
+@@ -657,6 +666,14 @@ static int qcom_pas_alloc_memory_region(struct qcom_pas *pas)
+ 		return PTR_ERR(pas->dtb_mem_region);
+ 	}
+ 
++	pas->dtb_pas_ctx = devm_qcom_scm_pas_context_alloc(pas->dev, pas->dtb_pas_id,
++							   pas->dtb_mem_phys,
++							   pas->dtb_mem_size);
++	if (IS_ERR(pas->dtb_pas_ctx))
++		return PTR_ERR(pas->dtb_pas_ctx);
++
++	pas->dtb_pas_ctx->use_tzmem = rproc->has_iommu;
++
+ 	return 0;
+ }
+ 
+@@ -838,23 +855,6 @@ static int qcom_pas_probe(struct platform_device *pdev)
+ 
+ 	qcom_add_ssr_subdev(rproc, &pas->ssr_subdev, desc->ssr_name);
+ 
+-	pas->pas_ctx = devm_qcom_scm_pas_context_alloc(pas->dev, pas->pas_id,
+-						       pas->mem_phys, pas->mem_size);
+-	if (IS_ERR(pas->pas_ctx)) {
+-		ret = PTR_ERR(pas->pas_ctx);
+-		goto remove_ssr_sysmon;
+-	}
+-
+-	pas->dtb_pas_ctx = devm_qcom_scm_pas_context_alloc(pas->dev, pas->dtb_pas_id,
+-							   pas->dtb_mem_phys,
+-							   pas->dtb_mem_size);
+-	if (IS_ERR(pas->dtb_pas_ctx)) {
+-		ret = PTR_ERR(pas->dtb_pas_ctx);
+-		goto remove_ssr_sysmon;
+-	}
+-
+-	pas->pas_ctx->use_tzmem = rproc->has_iommu;
+-	pas->dtb_pas_ctx->use_tzmem = rproc->has_iommu;
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+ 		goto remove_ssr_sysmon;
+-- 
+2.50.1
 
-Bart
