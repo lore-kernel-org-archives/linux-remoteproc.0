@@ -1,92 +1,97 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504363C9ED1
-	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Mar 2026 09:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B1228000F;
+	Wed, 11 Mar 2026 15:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773221113; cv=none; b=Kh2Lha2nxPt0BDitDlSblrtX4/GHJvb3lYwcXZPwhr0Ru2iYQf2WYxe/A0ijnHZHLlFiqHATPh5ibDxBOKVhqRlqyMrixSbl/ctQm9OHgoxhoc390FpKfg54LACsUpI0r0nxCK/VsqnuBhIU8Y0UejVfKup9B5qPBtRJ6OEFId0=
+	t=1773242376; cv=none; b=qiKSWuYXxQj8oxBYG+gIWa83LeB6E2KZB4t9ykpluMgGZKxWRMGw6whBTz1QYC77IEvriZy1X2Wf25YPWKoKFjzPnL1I3bof2qTc4vQNUL+z+WtXOlt4xLx3Y5MXqBoWf2jdxDob+7FNeL9I/izKHLB+HiclyESNtsSEh7BRyAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773221113; c=relaxed/simple;
-	bh=01GKf65j/jScrwoKQ+C2Gxr6oYYNcBqF+y3kaUEjbLo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L2Xyc/I9hTRF5wm7cBifkxgbBbgoxqjDoN8E0NxtcE+OCgSWxeIThV7eHOhYluLjaXuIrv2AdfB9CEydEWhEaybMTG8OQLgcj9+mofMQcIFTPvSFJci5rvrZviPRefbz+T1+F4O2TjISAnY5VIu6Ddnq4IyJUJSO9LaPXl0tzfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IK9qaKAc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1773242376; c=relaxed/simple;
+	bh=lZGAKZNNBMzzahzkxmyAkS4p2ouXVw+Q9VeEoZYT90Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YWAfAao+Ps3DgvrfIoxYbZSwiWCBgnvvks4p8VKXUxMuIEXPo5BaDQDg4jouaJxJUiZTPo28ueXWAXrte56ZdMyiHcld2C2V/8BxmkQkWI9aHXi68z2ngcwo/3dvmwThysPo4734pSNmqbyOGHdUfQcHRJRpM1mdBTr/MD6qVwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c05EwYSj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IK9qaKAc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD68C2BCAF
-	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Mar 2026 09:25:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c05EwYSj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B169C4CEF7;
+	Wed, 11 Mar 2026 15:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773221113;
-	bh=01GKf65j/jScrwoKQ+C2Gxr6oYYNcBqF+y3kaUEjbLo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IK9qaKAc40x9w1tTnDGK/5LfwtlPgFMQbzLlkR8KIJgzQd5uLNQvBbpMt2vh78Hdf
-	 uGFIdbEEKhpLM7kwrYSqd/d6UMtbhBEQn6P8nswxyoNEodBRhoszprfEvS+TvD881+
-	 KFaoGOWRRavp+r/ljv2ths/HESZBtfyYFBrTiWerLSWzV1GJ6IEITEuhK9bbwbRQrm
-	 JSrEUBKRCmA4D7VowIA5CT+EyZhNq2ZFR6u9nqkXA7vxtLKcSniNmqjqfUsh5kdNp3
-	 Yb95HaLUCp2J00ygi8cr6kBVXzHmTqlWtuqzhw9aLMoq9bG1iIIGd1/ZYY7er6CZid
-	 6upOZohwnPaqA==
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-79801df3e42so10677977b3.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Mar 2026 02:25:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUW6EFumEfIjedevYueYUzY/EWIr+K+WtNd2sJQIr7J2mCqdgypm5cnHpoROjXzo/WlOyLJU0BgJnC2HDcieDjl@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGQYUv+5DlmkmZ45v5hFvs+agZw3BgNu6/98nEfql3qIcStbQZ
-	tYHeHtqa+zyhyIfesNzxddwsm38N+dPShapFUehJR6ilh127yvJAUb6AaFZm+2f3nD0h60O+Xcj
-	g7UkzS3ipt40DbPxKs2E6GORAo8haIOw=
-X-Received: by 2002:a05:690c:6d84:b0:794:f400:2bfb with SMTP id
- 00721157ae682-79917f593b5mr14822137b3.26.1773221111798; Wed, 11 Mar 2026
- 02:25:11 -0700 (PDT)
+	s=k20201202; t=1773242376;
+	bh=lZGAKZNNBMzzahzkxmyAkS4p2ouXVw+Q9VeEoZYT90Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c05EwYSjDtfmXHW89XKcVmZp7cmVhR6uq0BgwmTJJRJLujdUJxUxpLNG4V/sOWh1l
+	 au44+0Rgf3EXtyoM9DL35mMhehNZmT0lFqGXdQfI9OCanHICG1Ut/n5JSdFWx4gVOC
+	 ree0iTvFl0MtJdqtO4VRoSycu13RgSHBe8reuQUHkgu5/TuQIRFMv02fxthgOVsaM0
+	 R9hFM9cEglycyxZbBBC8F6EWXrH+L2y6hJ7T9LtHchM5dxUZL/O485ZzX5HP8VRwAo
+	 CzH5dBrHX5gCiUMkyvJyBkpE0qqp+ZWQY25zhQH3Deh5/ZCmh81ONrgYwgxQJAoEdf
+	 JRCC4jkBDJnow==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Rob Herring <robh@kernel.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>
+Subject: [GIT PULL] remoteproc fixes for v7.0
+Date: Wed, 11 Mar 2026 10:19:33 -0500
+Message-ID: <20260311151933.26814-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260310075539.11701-1-wsa+renesas@sang-engineering.com> <20260310075539.11701-16-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20260310075539.11701-16-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Wed, 11 Mar 2026 10:24:59 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkoWCcBvB4G-2EDYU4kezPhVF6943TY6PmK5ooGwruLzA@mail.gmail.com>
-X-Gm-Features: AaiRm52-5ccgCpLSKuxxaehFi73jWhXjY0Lv_AX860GJVRZU0Kw14nXERH-rf2Y
-Message-ID: <CAD++jLkoWCcBvB4G-2EDYU4kezPhVF6943TY6PmK5ooGwruLzA@mail.gmail.com>
-Subject: Re: [PATCH v4 15/15] hwspinlock/treewide: refactor consumer.h from
- public header
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Lee Jones <lee@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Boqun Feng <boqun@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Thomas Gleixner <tglx@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Srinivas Kandagatla <srini@kernel.org>, 
-	Antonio Borneo <antonio.borneo@foss.st.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org, 
-	driver-core@lists.linux.dev, linux-iio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 10, 2026 at 8:56=E2=80=AFAM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
 
-> Factor out the entries only needed for consumers from the generic public
-> header. This allows for a clean separation between providers and
-> consumers. Also remove contact field in favor of MAINTAINERS entries.
-> Fix the users, too.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Jonathan Cameron <jonathan.cameron@huawei.com> # for IIO
-> Acked-by: Lee Jones <lee@kernel.org> # for MFD
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
-Acked-by: Linus Walleij <linusw@kernel.org>
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 
-Yours,
-Linus Walleij
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v7.0-fixes
+
+for you to fetch changes up to 97e4567d39941248579da34b7fbb568e6659511e:
+
+  remoteproc: imx_rproc: Fix unreachable platform prepare_ops (2026-03-05 10:18:23 -0700)
+
+----------------------------------------------------------------
+remoteproc fixes for v7.0
+
+Correct the early return from the i.MX remoteproc prepare operation,
+which prevented the platform-specific prepare function to be reached.
+
+Ensure that the Mediatek SCP clock is released during system suspend,
+after the recent refactoring to avoid issues with the clock framework's
+prepare lock.
+
+Correct the type of the subsys_name_len field in the sysmon event
+QMI message, as the recent introduction of big endian support in the QMI
+encoder highlighted the type mismatch and resulted in a failure to
+encode the message.
+
+Roll back the devm_ioremap_resource_wc() to a devm_ioremap_wc() in the
+Qualcomm WCNSS remoteproc driver, after reports that requesting this
+resource fails on some platforms.
+
+----------------------------------------------------------------
+Bjorn Andersson (1):
+      remoteproc: sysmon: Correct subsys_name_len type in QMI request
+
+Peng Fan (1):
+      remoteproc: imx_rproc: Fix unreachable platform prepare_ops
+
+Rob Herring (Arm) (1):
+      remoteproc: qcom_wcnss: Fix reserved region mapping failure
+
+Tzung-Bi Shih (1):
+      remoteproc: mediatek: Unprepare SCP clock during system suspend
+
+ drivers/remoteproc/imx_rproc.c   |  2 +-
+ drivers/remoteproc/mtk_scp.c     | 39 +++++++++++++++++++++++++++++++++++++++
+ drivers/remoteproc/qcom_sysmon.c |  2 +-
+ drivers/remoteproc/qcom_wcnss.c  |  2 +-
+ 4 files changed, 42 insertions(+), 3 deletions(-)
