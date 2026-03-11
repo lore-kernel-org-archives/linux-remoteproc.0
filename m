@@ -1,46 +1,46 @@
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011038.outbound.protection.outlook.com [40.107.208.38])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012039.outbound.protection.outlook.com [52.101.48.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CAC2C0285;
-	Wed, 11 Mar 2026 19:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17204361647;
+	Wed, 11 Mar 2026 19:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.39
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773257310; cv=fail; b=rDcG1+14mKFWMmk0tzSSba9HuGfKSfcOCf4v4oW6sSZX1jqzGjvZewTWr2yfOUi2sxuFqeV8+qRe8CTq5+tF/rcSd/Df3josxEtHbRtoJivnze3/JGvrNvBkKVdtT85knlHe8+5RgEO60kzTzA+552c20uA25UhtMOXXDu+J9LQ=
+	t=1773258235; cv=fail; b=o51qR6YQWZxkUI2W00IVsKpwxk88TPcq2tT/yVRcpdpZLEyPoUG0x21VAO0nD5zToTc4rSqG84tlrME7RTjs1uriCswSCcnroHXH2FNjxkwbm6ksKT0QDj8L1ygkKj8qNisYmDQ0ta+E6ksrbQWXltU4AFneJQ+nOCMHzC9bL/4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773257310; c=relaxed/simple;
-	bh=QJ6X4R3larHWKeKUfkGWsbUPSPhU+x7Rw04x8ZmNq3M=;
+	s=arc-20240116; t=1773258235; c=relaxed/simple;
+	bh=z/BrPb1JQ85qyTw74dfB+GjD6YVz4E7K+DUOL6SfSNc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oDDBCyXbrwMaxX2ZWt78IvWxGBm7W9i0CUh0JihaXH1iFXIi/GKqVTtpnWQtee82hg/xBGWnv5LkR3Wa1fZhPTwFSO9i1vea0aebD9WVXl9+eziltvASjS2FLY/5FGy045NeOP8W+91H3dLKIF15fvvsfvH+I398y2j+jc0njrM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fRtOoPV1; arc=fail smtp.client-ip=40.107.208.38
+	 In-Reply-To:Content-Type; b=ArdskfpmqT4t3QL/YHsWv5BHSk68WhByFW08hP/6S+O3pq/OHL06GQaDZTBNKqssMw+pm2lcr2z04zYAQw75Fy29aAFA6xYPwHih5PCF2xBS7RTPshCY1huQ+GopHz1UROio0h3+SnSmO9KaNcGCy7Uew96NDJXnnsHO+7g+aUk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SoYmeJO3; arc=fail smtp.client-ip=52.101.48.39
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fRtOoPV1"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SoYmeJO3"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xbZH0pEELXhW3a9iqMBpXe7SuoB8Jfz0on55ZIOhA8NQJXcDHNSpBUqGKApcmD4ZkiNWvcUbFiulAIXGTF1AHneDW+5UzpPqo8Y7gAYQweXNU17D+1ghu6+731whpjeEJrYBtrYnEY/Nx5lxT8ivZJLs7dDpEIXvhouQXMZTTib0x75q+ITz3lkWC5PbHKJtKxA4qQhBxxC/NewCAUNWzMmrK4lyji7zVCToH2MuLAzZSUdyQ0fPZ7afR1yPXUP7HvSwCvXdZxxn5lK9Co6rm/TradbZD+UmwtK2X6qECkRbyzRfGQ4VLHXgxCL7mU4+CF7/g/hd+AlLmx3v5DQBPg==
+ b=CSW1hUCiV5xjemGZd+FsnywC5we67RDZTH1FvdLWA1hKzk1cDfpuzqawKrDxnF+JlMZIcVOa2IJNSPVpHL5KUGKl3dui6snGMULQfrTirnmqDwAbx8CLqvkH7UuVMfS6H9egsKUW20StdDzLk055eklhECfCSm1pqPaItkjg93YWPcZvTuJ3oOiIXI+M4qIGQGkfrBXd0je7nW8J2jpAw5VB3lbVlCso1+EGwwuBP9XTzdzJtGD9hFIvzKs1OmLYPxd15SWhd+SaRfpzchc3R2jRo5sY1o7eDqPBGsZxepFsmTa49DRfpiDnBjohdA0rsX3r9J24XxNmJLHucfgiKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/bkv1+p4Js6NzfkAzivEHajfBwKNrdYJq18Dun67D3w=;
- b=TkJOq2+YbN9WYJTErCkB7DnUH5O1fisiIzLB+zyBAkC9+CAq9G//3umG3rGbgzZOy+3NhwVg35cjWYSig+tD/Jx3u4bd7wN22Ur6tR6KbFaq0Xl0q2aa0yU0cFRq7FqZcR2UE+cMza6IILSX6aH9hTZ4vbDf0r+TztDLS93abAUInGJRHZ7+hvlzgywlYK5m6yLl+nxnnX7uxMdQC+yVDwDxxnYzDVC6DzA2O3/tzmx0BHYaHMrqpD+VQGERLCqOfIeNx09ExPYQaC2Fxxdi6/3Gw9rpJg3nIaVJDKLqJzhOCf2gUHJtyD4azEF1PgnrOL1EcPyeG3mK0ksXQHWCVQ==
+ bh=LYRb0rduXWO7uRnZ0izr7m62ctMOqsqi6O6U5x3KlSQ=;
+ b=h7frCfCf1BPj3+mFhFDd4mPftj29++rCzmxLqAEfsvKNB6nCHHS/Jzm+tdxCKf1r7FSFVKCl8m4a9qo6RMSeEnKXBYeUEmHUAEbDes+9YuKbqo18NRTPEr4E4OkF0FvRlAEyiomE+MAZPDwS351djtuKEaZiCiMqruSP6xHq26YmziVVKV97HUgn2lqBx/mCXuufJ5Nqbe9Dqs/XucgRdPVFeLFLsRNFzh7FSukS6pxDkT/XwIjXbEkZnSpyFjbGFJVd/KvXBX+z1W87dLphihuBtBnDrtGQhkpBh/f7SRhnaLhSjr8RIuLpzyT3t2QS64ChxMxIvX9z+yzcJvG3WQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/bkv1+p4Js6NzfkAzivEHajfBwKNrdYJq18Dun67D3w=;
- b=fRtOoPV1NGXvUcojBsKAuMaVbgpJ7zOgp/JtYfTE/cvKHLKhccs1aguVJMxIMAuC3ZOgTWYYO7fKzUNmvqVi1k/QfnmraEXNRV4e4BpdhhrMAlC3qXd3ESMJBTLutP/yWuFtZwIHrMb2KuKmuqDRSryg9pjjABjIhLnhITuDTFU=
-Received: from BY5PR03CA0006.namprd03.prod.outlook.com (2603:10b6:a03:1e0::16)
- by SN7PR12MB7370.namprd12.prod.outlook.com (2603:10b6:806:299::11) with
+ bh=LYRb0rduXWO7uRnZ0izr7m62ctMOqsqi6O6U5x3KlSQ=;
+ b=SoYmeJO3CO1FoSwgcG8aFEQZYaFv5HtK0f3BiI1mNmb1YX+qt7MApaocPt1uxCTNZafDALx7PIpYP3G4QcXG5FFr4lHQrBWt7GG25YLOhLuHs9WrLZM1fhF9cRra8L+bTDEnUZzvoVdbnIN8fDFWe1d22VrzNo7GzD3c9h+LHmE=
+Received: from SN7PR04CA0062.namprd04.prod.outlook.com (2603:10b6:806:121::7)
+ by MN2PR12MB4080.namprd12.prod.outlook.com (2603:10b6:208:1d9::16) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.5; Wed, 11 Mar
- 2026 19:28:20 +0000
-Received: from SJ5PEPF000001C9.namprd05.prod.outlook.com
- (2603:10b6:a03:1e0:cafe::93) by BY5PR03CA0006.outlook.office365.com
- (2603:10b6:a03:1e0::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.25 via Frontend Transport; Wed,
- 11 Mar 2026 19:27:52 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.6; Wed, 11 Mar
+ 2026 19:43:49 +0000
+Received: from SA2PEPF000015CD.namprd03.prod.outlook.com
+ (2603:10b6:806:121:cafe::e4) by SN7PR04CA0062.outlook.office365.com
+ (2603:10b6:806:121::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.27 via Frontend Transport; Wed,
+ 11 Mar 2026 19:43:26 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -48,22 +48,22 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ5PEPF000001C9.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SA2PEPF000015CD.mail.protection.outlook.com (10.167.241.203) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9678.18 via Frontend Transport; Wed, 11 Mar 2026 19:28:19 +0000
+ 15.20.9678.18 via Frontend Transport; Wed, 11 Mar 2026 19:43:47 +0000
 Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 11 Mar
- 2026 14:28:19 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
+ 2026 14:43:46 -0500
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Mar
- 2026 14:28:19 -0500
-Received: from [10.31.206.142] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 11 Mar 2026 14:28:18 -0500
-Message-ID: <4868ea67-34f8-4b41-8d5e-9fc3d4517c01@amd.com>
-Date: Wed, 11 Mar 2026 14:28:18 -0500
+ 2026 14:43:46 -0500
+Received: from [10.31.206.142] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 11 Mar 2026 14:43:46 -0500
+Message-ID: <9bd9b628-7af4-47fe-9c83-ef9a9220f6ea@amd.com>
+Date: Wed, 11 Mar 2026 14:43:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -72,124 +72,86 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH 3/3] remoteproc: zynqmp: release mailbox channels on
- shutdown
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, <tanmay.shah@amd.com>
-CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20260303235127.2317955-1-tanmay.shah@amd.com>
- <20260303235127.2317955-4-tanmay.shah@amd.com> <abA4wGI7DvQLhTzY@p14s>
- <91a3bf88-cd64-4f3d-adb6-5e21558e8ff8@amd.com> <abGihYilz6yC0TCh@p14s>
+Subject: Re: [PATCH] remoteproc: xlnx: do not send new mailbox notification
+To: Tanmay Shah <tanmay.shah@amd.com>, <andersson@kernel.org>,
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20260219224329.3475032-1-tanmay.shah@amd.com>
 Content-Language: en-US
 From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <abGihYilz6yC0TCh@p14s>
+In-Reply-To: <20260219224329.3475032-1-tanmay.shah@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Received-SPF: None (SATLEXMB04.amd.com: tanmays@amd.com does not designate
  permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C9:EE_|SN7PR12MB7370:EE_
-X-MS-Office365-Filtering-Correlation-Id: 87c5b559-d205-4d78-5ed9-08de7fa45a30
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015CD:EE_|MN2PR12MB4080:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6decc239-489d-4ade-297f-08de7fa6830d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|22082099003|18002099003|56012099003;
+	BCL:0;ARA:13230040|1800799024|376014|36860700016|82310400026|13003099007|18002099003|56012099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	MKZAic3WIxRVdoGFfUBWrQh6aP28ZZMXP0M5TlI6/qcnSLWoKuklu8GUFXUimg5RW3wigXLnOu733/MC9LEs+pP7aNrBOwbsu7x9CEUg5QqV9zKJm+TjBxq5NrTVONAi2T3MCPRyQ2lP4iNrSeibT+m2fzIVxY8Clitt9FURpGpoG8qtwc0fIOYRxpIehR/r7zN0Ckuh7bBSjs/k3qm0TMjEYwXwGEVmLWA7Am4lYKVQXPf1UHveybvrITV/1+R9EGzXtua3bkzhmBKLi70CSPrc8hbZIWONGR/pAbbsNuF+BAFdKIj8qpgsmkBc3PX4frWawOFO9W5uijmIgtYNPB6J/wOObM+lbV/zgRep61k8VMWsBKrDvGxj04xQEZO6wYXQItXMoKu7A4w/xhSwcNFlhwbMleVRBLHbD2OQGb5W9KkleeZldGUsSWlGn64zwbhuDXL1W7K8sgnh40SSgUAQoMPYW+bn91hv55Z45s7VcK5EAJnMWXhqQIdwIOcwxgPyfYdwNxgiPAdNdpxxS/nFK195CyrHnAncKMLgovw6rKkmPrSY8aKk7j1Cv7qOTg8U85MpOAnfMigU+ac5BXfN7i+yMDahu9oWgOpjmEH/4L4a6Y+LXjnvyluy5B0iBSpzJ0TbztWNte9FpvrlPpYTazSjCvnMHpF/5XziyZvgBg0EI4lo+Zdk8IZn8zT4H3GNp/L1CndX6Y6IMQjFeR15m0i0W4D9LkXNlIoCK1sI7Rp9wRPdsr5ebAxxSi/6h9i1frE3XAziBtjNGH8nGw==
+	TS62DUQ0OasC5/cn+8Z4kTRFox4aXewv+pj2HwooI0NQEwSolwhOYhHYYmS0C8aqFiQ+q+RXABCajwD2lgDIwhYk3Lon+rHyj00C96PtSrCGzhV7dueSoQcjgDoEYa9IH1sue4ktNC4af7nz30p+bktjgTmJMMzsf5QMWUFt9CIQrXNmZi23NkyfmN8YTrHGLJatXgx2c3Lowwp8AFieoOYHRGNZ0qJuHa8tzB0+l93/XeNfbTriULOoQg3SkjEmWPdt8J4BCzGLIT0fGPwcHXweaVHWpphxptUc1lYYifi8H/LZ7Wbq63p+Tb+uH63GBeCfF9qrFSsT2MiG2Wco3MAwjqtcqD4OR54lrqLLG4eQQjZQYg98P1SAiviM/rYLbuf/8kIL2dklu9CaJRIQqwzEbnMnAaD/L808FHJWmS/rlOnra2Le31s1atPotYGCmONLXBfpHi+/ZgiWTheAHSfmRTg5IDg7JAPKYyCNoAN4SiGVYut0seTHIWARV8jDYWvCu1tF4Ed6kwD3ZKpWjlIrrOm8lF0C1x0cYHZmtLaBumaiUA77M0iPWY8y79jVzy6DKqxG0gtMW1xdAw2uDhiKVhITeC7pD5eiyjLH4Syhi71ewseef3TEZYFG/BVrXzL6JqAt+4T05sqyHjuG8KRYv3cA9XnbX7bPhYy516CIQV49O7gRI/x+DkSPvHiueTi8VGuCnvDp+mOLeNEgpGNgPDK++6SeStEh4L8KXaY=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(13003099007)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	P+i8ovBcrZvFjXP+/ArLNmsZV4NIIGC2oo0X42J1zlq5gzz0O+YOKtocumDCff8GoBxGWKtaofRVNAIJg4sFg4ePJi8R+FWy6mS1mPJpc2xjXtrL5I2LJzDL5ubYdWH/sx3rUg/IacrPe8bSMomRBy+UjwI7u//exMptZVxuqmaGYpeuTcz6o0q+K7nKwb+wZ3Zejxkv0e86DDvwdWwB74e4l5CRED7t3NKc8sf0hMSOkTmMoVKD0C0geuNIRssEVzrzfZDM1CccgNDZJM8pyJJa72IxlBZUh0gmjDUfLMKQTwOYChXfiwCHrP+01MtFgh8rmtpchcS9Gbt+dl5rscdMpjORHlcplye5eN+GkXQi1nNaEmLGGwtjsWxfwnyNaZZLK/FkLMlC3BgCmY4RgUQaM+KdJb8aXIGTyIyf9HhOYxVEu74rfxbazitoJmOY
+	EszFQdub60Xdt0jXRUv4QqLIbhYNpseFpAeVs1IZ0woMfcTHxyjUrARTyi6IVVmVvmMIdzIpAWBrcKDwf5ZYLom326nv3j/FsvwFbwp6KYeHlrLO0gA8L+FHkEvOLU8e5S6PQjXoxyS8mD+hCA9FY5uSSyIoAAXtjC11YUm6zgDmOCM8Zp7p47Ip31V79f2DOhxBycX6uEpqJKu5AXz4zb2pHmk54r8GwujKtwwqXMDWWn+hEiEaiHJHaSIWzdkkE/2nyokz+5PhViNivsUsGWYO4ScBRKFapFeNdItbsIVtctEQTeGNfwIkdda/qZ4uQQtGUUbHQUbSyfN4ljW0y5HjbYAd2uZTWGt2/oeMl4G3L3sULAK2IoCBR+honLSWnkCFcre97jix4qrei8zsQ91rHMuE8EuyBSEcGY5rwQFqsnLy+Vy8Hs5mDKAlNcmf
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2026 19:28:19.6840
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2026 19:43:47.2501
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87c5b559-d205-4d78-5ed9-08de7fa45a30
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6decc239-489d-4ade-297f-08de7fa6830d
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001C9.namprd05.prod.outlook.com
+	SA2PEPF000015CD.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7370
-
-
-
-On 3/11/2026 12:12 PM, Mathieu Poirier wrote:
-> On Tue, Mar 10, 2026 at 11:04:54AM -0500, Shah, Tanmay wrote:
->>
->>
->> On 3/10/2026 10:29 AM, Mathieu Poirier wrote:
->>> On Tue, Mar 03, 2026 at 03:51:28PM -0800, Tanmay Shah wrote:
->>>> mailbox driver can't introduce shutdown callback, as it might endup
->>>> closing mbox channels prematurely. By allowing the client driver to
->>>> manage the shutdown process, it's ensured that mailbox channels are
->>>> closed only when they are no longer needed.
->>>>
->>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>>> ---
->>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> index 5e92dc51f1c0..50a9974f3202 100644
->>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> @@ -1490,6 +1490,8 @@ static void zynqmp_r5_remoteproc_shutdown(struct platform_device *pdev)
->>>>  			dev_err(cluster->dev, "failed to %s rproc %d\n",
->>>>  				rproc_state_str, rproc->index);
->>>>  		}
->>>> +
->>>> +		zynqmp_r5_free_mbox(r5_core->ipi);
->>>
->>> This is already called in zynqmp_r5_cluster_exit(), why doing it here again?
->>>
->>
->> Hi,
->>
->> Thanks for reviews.
->> I think cluster_exit() call is called only during driver unload. Where
->> as shutdown callback is called during power-off commands of linux like
->> reboot or shutdown.
->>
->> That is why I am calling it separately during shutdown() callback.
-> 
-> The problem here is that zynqmp_r5_free_mbox() is called twice.  At shutdown
-> time all drivers go throuth the normal driver shutdown process where
-> platform_driver.shutdown() is called and subsequently device management
-> callbacks such as zynqmp_r5_cluster_exit().  The same applies to loading and
-> unloading of drivers.  Unless there is a corner case I can't see, calling
-> zynqmp_r5_free_mbox() twice is not needed.
-> 
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4080
 
 Hi Mathieu,
 
-I tested this patch again. On my platform I don't see
-zynqmp_r5_cluster_exit() being called when issuing `reboot` command.
+On 2/19/2026 4:43 PM, Tanmay Shah wrote:
+> Only write a new message to the tx mbox queue if slot is available in
+> the tx queue. If queue is full, then do not send new mbox notification.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+> 
+> Depends on: https://lore.kernel.org/linux-remoteproc/20260209234430.512492-1-jassisinghbrar@gmail.com/T/#u
+> 
 
-It only calls platform_driver.shutdown() callback.
+This dependency is now merged in the linux-next branch.
 
-I think device management APIs are called only during driver remove
-callback, and not shutdown sequence.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/mailbox?id=57df858a46f0a4cc104716e0ec88864e5c386ca4
+
+I don't know what's the process, but can we merge this patch and
+dependency both in the for-next branch?
 
 Thanks,
 Tanmay
 
->>
->> Thanks,
->> Tanmay
->>
->>> I have applied the other two patches in this series.
->>>
->>> Thanks,
->>> Mathieu
->>>
->>>>  	}
->>>>  }
->>>>  
->>>> -- 
->>>> 2.34.1
->>>>
->>
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index bd619a6c42aa..622de733c929 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -332,7 +332,10 @@ static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
+>  	int ret;
+>  
+>  	ipi = r5_core->ipi;
+> -	if (!ipi)
+> +	if (!ipi || !ipi->tx_chan)
+> +		return;
+> +
+> +	if (mbox_chan_tx_slots_available(ipi->tx_chan) == 0)
+>  		return;
+>  
+>  	mb_msg = (struct zynqmp_ipi_message *)ipi->tx_mc_buf;
+> 
+> base-commit: 462799c088e71b2b8a511c2a9649420fcb569ab7
 
