@@ -1,182 +1,195 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011038.outbound.protection.outlook.com [40.107.208.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B063830F7EF
-	for <linux-remoteproc@vger.kernel.org>; Wed, 11 Mar 2026 17:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773249667; cv=none; b=TY5KxKUfuKTGosaW1tgyw3mcKJTEPE4jVr2HHjTUX6rA9oMBIbNWo8DJkHPJPkUMBzz2slEH9QTHBEn3PibDbDU7TXaxtVhgbURCBbTByGZNp4pzXQdJ4YPdx5VZ7z/64G3wef2O97JmjUPDLC/XzmjEq2Bo478QwQV/v9Ntyuc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773249667; c=relaxed/simple;
-	bh=37ro0LdVssBpdr9YV7WFZmX7QJXkkG9R7lAPHfVPfVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJR6ybkFLXkG+zyaaYH/b8Bvg/lKmchIKJ48rz79R4kc6NhcbMmLzKYWiXBztZkFryx67s28gz2WBrmVmtwJQxPfPpvBGPrUFH/M/Bl+a2sJEOolMvYbV9KAGUej6warUwWYl9PicFuaXruaL4MafFdUGIe3I336gohA7kJaCoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ez3lv/wc; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CAC2C0285;
+	Wed, 11 Mar 2026 19:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773257310; cv=fail; b=rDcG1+14mKFWMmk0tzSSba9HuGfKSfcOCf4v4oW6sSZX1jqzGjvZewTWr2yfOUi2sxuFqeV8+qRe8CTq5+tF/rcSd/Df3josxEtHbRtoJivnze3/JGvrNvBkKVdtT85knlHe8+5RgEO60kzTzA+552c20uA25UhtMOXXDu+J9LQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773257310; c=relaxed/simple;
+	bh=QJ6X4R3larHWKeKUfkGWsbUPSPhU+x7Rw04x8ZmNq3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oDDBCyXbrwMaxX2ZWt78IvWxGBm7W9i0CUh0JihaXH1iFXIi/GKqVTtpnWQtee82hg/xBGWnv5LkR3Wa1fZhPTwFSO9i1vea0aebD9WVXl9+eziltvASjS2FLY/5FGy045NeOP8W+91H3dLKIF15fvvsfvH+I398y2j+jc0njrM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fRtOoPV1; arc=fail smtp.client-ip=40.107.208.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ez3lv/wc"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2aaf43014d0so1340845ad.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Mar 2026 10:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773249664; x=1773854464; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7QuY2IvGCqSSBdyso8uzQGpjnvc5nll1p5/k4gdBJI=;
-        b=Ez3lv/wct9vKwx8M1SpMyoNFGvsn93dsADnCs72oar8KCRqP2jMsuwhgkmu3CAwQth
-         LQoHg4kLp7JelG4wNLGgB/r8jQaT5c0SDkjQo3ANNdMA/3LtWyduTegBtigKAMkdLeGm
-         lTNYwheLwySHACpotT5GUoEfUiUUgvCSKc27s8sZEPQW1MJXaAlPQu1HpkkDKdG08BMF
-         V+FaNM+M8+DHHwgzDvGhvns5D1vBnntNPc8SkAg1z0c8kc6eEqsxZO8cpWAU5MZGuHKN
-         YFprhtRXbBQvCql7ehzcAeyRB7naWncoF0rmk+XV3R4KYbRTVBu22nHP2xuU5NZr+kKC
-         0jNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1773249664; x=1773854464;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V7QuY2IvGCqSSBdyso8uzQGpjnvc5nll1p5/k4gdBJI=;
-        b=YfCAxH6RHBh9kMXhf3drVuK9ORdlcu44FkU8SOqhJGtj5ruJPpX/a80u9+b3oFgReY
-         c6V3TaO5jOlvrogc12/hAAp9rANA8OL92GvPVdwISwHi92UwZ3qfOlKvxRC4A+YTC6ZB
-         aRk0ZAaKTEJeRluo9aYeVPQwmLk+vjFxnA7Yks8fuFtD4TZULPD7OQYLJ4yd6/i5oXN/
-         H8Wus1byaNtvak9IDqyuqQ9WOZ9bzVSkfbbsjAb5KiNG3B/juEwXgzgYdft2yWU7Lwq1
-         5Et6jWJVLcCZiZ0G3CJEp3d8T49UkRH/U2PvtC4bp/Kd0w0P3Np+L3cB+PxX7Lke2bPt
-         dACw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDa+saGNXRPqoQfQnG7J1WXMiV4WleahX9Rhf9ujgyE4GRlfDUyRDXMYnC9fDzR2NmkEz74U9hAvTUrrfnWkCI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpOdPaDPFdcnRTBu5T1dZTVczERTgiV9BReZ82Wj4CFKYH7QXz
-	wxB3+wzTDZs1tnhfnorJMe4AuFiWns+iNxc2No54C799Mly1McBhpBOPPzZvNiGjHnKpRxk+gLS
-	zQKIi
-X-Gm-Gg: ATEYQzyYq16/UNonpxrnC5aIr6YVExNObhrZV6R8wwTySSOP1bwVPoYrS4p/ibIdShf
-	jDuLe5Rc2xanAM7fVmecimay3PWXHfGYoZ7agGbHyU5nJ2yKqrXwHd2crBp63wnXukkKA4gHYpo
-	3vdFwnlTDLpaumgSEnGT1gXJeETfUA6WSfuRa/0D5fa4Aa8pf2tXnKJV+MEvp6Tlbmr0YLm63qR
-	5LXWdQTOusiEBfBrv9RwlMBV2i64LuRLlrxur7MURSWQBuLmdbiv782jtl8Ot2QQgmOLgkaXU6o
-	17bR82qtsQU2PIhDKDqn6+i/K8e0Ru6dWRswurWRUxd42373ASTWHTnUK50uYJhcGtZ+f4GD+xM
-	VcznPP5/eAl4vWKiyUAU5/zgLx+1Xi8heVZy49Z5x7w+wyRD/7ld+PHtf5Hh8ano3bCM3FcuP2G
-	YF6w/Ytn6SRZscM9LkpHBOL5llbPk=
-X-Received: by 2002:a17:902:f70a:b0:2ab:230d:2da9 with SMTP id d9443c01a7336-2aeae8dce39mr34727925ad.48.1773249663876;
-        Wed, 11 Mar 2026 10:21:03 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:80ec:cdb0:5d0e:6048])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aeae378ca7sm28243875ad.91.2026.03.11.10.21.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Mar 2026 10:21:03 -0700 (PDT)
-Date: Wed, 11 Mar 2026 11:21:00 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] remoteproc: xlnx: remote crash recovery
-Message-ID: <abGkfM9O7Qpd1N68@p14s>
-References: <20260303233533.2310513-1-tanmay.shah@amd.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fRtOoPV1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xbZH0pEELXhW3a9iqMBpXe7SuoB8Jfz0on55ZIOhA8NQJXcDHNSpBUqGKApcmD4ZkiNWvcUbFiulAIXGTF1AHneDW+5UzpPqo8Y7gAYQweXNU17D+1ghu6+731whpjeEJrYBtrYnEY/Nx5lxT8ivZJLs7dDpEIXvhouQXMZTTib0x75q+ITz3lkWC5PbHKJtKxA4qQhBxxC/NewCAUNWzMmrK4lyji7zVCToH2MuLAzZSUdyQ0fPZ7afR1yPXUP7HvSwCvXdZxxn5lK9Co6rm/TradbZD+UmwtK2X6qECkRbyzRfGQ4VLHXgxCL7mU4+CF7/g/hd+AlLmx3v5DQBPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/bkv1+p4Js6NzfkAzivEHajfBwKNrdYJq18Dun67D3w=;
+ b=TkJOq2+YbN9WYJTErCkB7DnUH5O1fisiIzLB+zyBAkC9+CAq9G//3umG3rGbgzZOy+3NhwVg35cjWYSig+tD/Jx3u4bd7wN22Ur6tR6KbFaq0Xl0q2aa0yU0cFRq7FqZcR2UE+cMza6IILSX6aH9hTZ4vbDf0r+TztDLS93abAUInGJRHZ7+hvlzgywlYK5m6yLl+nxnnX7uxMdQC+yVDwDxxnYzDVC6DzA2O3/tzmx0BHYaHMrqpD+VQGERLCqOfIeNx09ExPYQaC2Fxxdi6/3Gw9rpJg3nIaVJDKLqJzhOCf2gUHJtyD4azEF1PgnrOL1EcPyeG3mK0ksXQHWCVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/bkv1+p4Js6NzfkAzivEHajfBwKNrdYJq18Dun67D3w=;
+ b=fRtOoPV1NGXvUcojBsKAuMaVbgpJ7zOgp/JtYfTE/cvKHLKhccs1aguVJMxIMAuC3ZOgTWYYO7fKzUNmvqVi1k/QfnmraEXNRV4e4BpdhhrMAlC3qXd3ESMJBTLutP/yWuFtZwIHrMb2KuKmuqDRSryg9pjjABjIhLnhITuDTFU=
+Received: from BY5PR03CA0006.namprd03.prod.outlook.com (2603:10b6:a03:1e0::16)
+ by SN7PR12MB7370.namprd12.prod.outlook.com (2603:10b6:806:299::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.5; Wed, 11 Mar
+ 2026 19:28:20 +0000
+Received: from SJ5PEPF000001C9.namprd05.prod.outlook.com
+ (2603:10b6:a03:1e0:cafe::93) by BY5PR03CA0006.outlook.office365.com
+ (2603:10b6:a03:1e0::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.25 via Frontend Transport; Wed,
+ 11 Mar 2026 19:27:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ5PEPF000001C9.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9678.18 via Frontend Transport; Wed, 11 Mar 2026 19:28:19 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 11 Mar
+ 2026 14:28:19 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 11 Mar
+ 2026 14:28:19 -0500
+Received: from [10.31.206.142] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 11 Mar 2026 14:28:18 -0500
+Message-ID: <4868ea67-34f8-4b41-8d5e-9fc3d4517c01@amd.com>
+Date: Wed, 11 Mar 2026 14:28:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260303233533.2310513-1-tanmay.shah@amd.com>
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH 3/3] remoteproc: zynqmp: release mailbox channels on
+ shutdown
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, <tanmay.shah@amd.com>
+CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20260303235127.2317955-1-tanmay.shah@amd.com>
+ <20260303235127.2317955-4-tanmay.shah@amd.com> <abA4wGI7DvQLhTzY@p14s>
+ <91a3bf88-cd64-4f3d-adb6-5e21558e8ff8@amd.com> <abGihYilz6yC0TCh@p14s>
+Content-Language: en-US
+From: "Shah, Tanmay" <tanmays@amd.com>
+In-Reply-To: <abGihYilz6yC0TCh@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB04.amd.com: tanmays@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C9:EE_|SN7PR12MB7370:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87c5b559-d205-4d78-5ed9-08de7fa45a30
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700016|22082099003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	MKZAic3WIxRVdoGFfUBWrQh6aP28ZZMXP0M5TlI6/qcnSLWoKuklu8GUFXUimg5RW3wigXLnOu733/MC9LEs+pP7aNrBOwbsu7x9CEUg5QqV9zKJm+TjBxq5NrTVONAi2T3MCPRyQ2lP4iNrSeibT+m2fzIVxY8Clitt9FURpGpoG8qtwc0fIOYRxpIehR/r7zN0Ckuh7bBSjs/k3qm0TMjEYwXwGEVmLWA7Am4lYKVQXPf1UHveybvrITV/1+R9EGzXtua3bkzhmBKLi70CSPrc8hbZIWONGR/pAbbsNuF+BAFdKIj8qpgsmkBc3PX4frWawOFO9W5uijmIgtYNPB6J/wOObM+lbV/zgRep61k8VMWsBKrDvGxj04xQEZO6wYXQItXMoKu7A4w/xhSwcNFlhwbMleVRBLHbD2OQGb5W9KkleeZldGUsSWlGn64zwbhuDXL1W7K8sgnh40SSgUAQoMPYW+bn91hv55Z45s7VcK5EAJnMWXhqQIdwIOcwxgPyfYdwNxgiPAdNdpxxS/nFK195CyrHnAncKMLgovw6rKkmPrSY8aKk7j1Cv7qOTg8U85MpOAnfMigU+ac5BXfN7i+yMDahu9oWgOpjmEH/4L4a6Y+LXjnvyluy5B0iBSpzJ0TbztWNte9FpvrlPpYTazSjCvnMHpF/5XziyZvgBg0EI4lo+Zdk8IZn8zT4H3GNp/L1CndX6Y6IMQjFeR15m0i0W4D9LkXNlIoCK1sI7Rp9wRPdsr5ebAxxSi/6h9i1frE3XAziBtjNGH8nGw==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	P+i8ovBcrZvFjXP+/ArLNmsZV4NIIGC2oo0X42J1zlq5gzz0O+YOKtocumDCff8GoBxGWKtaofRVNAIJg4sFg4ePJi8R+FWy6mS1mPJpc2xjXtrL5I2LJzDL5ubYdWH/sx3rUg/IacrPe8bSMomRBy+UjwI7u//exMptZVxuqmaGYpeuTcz6o0q+K7nKwb+wZ3Zejxkv0e86DDvwdWwB74e4l5CRED7t3NKc8sf0hMSOkTmMoVKD0C0geuNIRssEVzrzfZDM1CccgNDZJM8pyJJa72IxlBZUh0gmjDUfLMKQTwOYChXfiwCHrP+01MtFgh8rmtpchcS9Gbt+dl5rscdMpjORHlcplye5eN+GkXQi1nNaEmLGGwtjsWxfwnyNaZZLK/FkLMlC3BgCmY4RgUQaM+KdJb8aXIGTyIyf9HhOYxVEu74rfxbazitoJmOY
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Mar 2026 19:28:19.6840
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87c5b559-d205-4d78-5ed9-08de7fa45a30
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001C9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7370
 
-On Tue, Mar 03, 2026 at 03:35:31PM -0800, Tanmay Shah wrote:
-> Remote processor can crash or hang during normal execution. Linux
-> remoteproc framework supports different mechanisms to recover the
-> remote processor and re-establish the RPMsg communication in such case.
-> 
-> Crash reporting on AMD-Xilinx platform:
-> 
-> 1) Using debugfs node
-> 
-> User can report the crash to the core framework via debugfs node using
-> following command:
-> 
-> echo 1 > /sys/kernel/debug/remoteproc/remoteproc0/crash
-> 
-> 2) Remoteproc notify to the host about crash state and crash reason
-> via the resource table
-> 
-> This is a platform specific method where the remote firmware contains
-> vendor specific resource to update the crash state and the crash
-> reason. Then the remote notifies the crash to the host via mailbox
-> notification. The host then will check this resource on every mbox
-> notification and reports the crash to the core framework if needed.
-> 
-> Crash recovery mechanism on AMD-Xilnx platform:
-> 
-> There are two mechanisms available to recover the remote processor from
-> the crash. 1) boot recovery, 2) attach on recovery
-> 
-> Remoteproc core framework will choose proper mechanism based on the
-> rproc features set by the platform driver.
-> 
-> 1) Boot recovery
-> 
-> This is the default mechanism to recover the remote processor.
-> In this method core framework will first stop the remote processor,
-> load the firmware again and then starts the remote processor. On
-> AMD-Xilinx platforms this method is supported. The default coredump
-> method is supported.
-> 
-> 2) Attach on recovery
-> 
-> If RPROC_ATTACH_ON_RECOVERY feature is enabled by the platform driver,
-> then the core framework will choose this method for recovery.
-> 
-> On versal and later platforms following is the sequence of events expected
-> during remoteproc crash and attach on recovery:
-> 
-> a) Remoteproc attach/detach flow is working, and RPMsg comm is established
-> b) Remote processor (RPU) crashed (crash not reported yet)
-> c) Platform management controller is instructed to stop and reload elf
->    on inactive remote processor before reboot (platform specific method)
-> d) Platform management controller reboots the remote processor
-> e) Remote processor boots again, and detects previous crash (platform
->    specific mechanism to detect the crash)
-> f) Remote processor Reports crash to the Linux (Host) and wait for
->    the recovery.
-> g) Linux performs full detach and reattach to remote processor.
-> h) Normal RPMsg communication is established.
-> 
-> It is required to destroy all RPMsg related resources and recreate them
-> during recovery to establish successful RPMsg communication. To achieve
-> this complete rproc_detach followed by rproc_boot calls are needed. That
-> is what this patch-series is fixing along with adding rproc recovery
-> methods for AMD-Xilinx platforms.
-> 
-> Change log:
-> 
-> Changes in 3: 
->   - both rproc_attach_recovery() and
->     rproc_boot_recovery() are called the same way.
->   - remove unrelated changes
->   - %s/kick/mailbox notification/
->   - %s/core framework/rproc core framework/
->   - fold simple function within zynqmp_r5_handle_rsc().
->   - remove spurious change
->   - reset crash state after reporting the crash
->   - document set and reset of ATTACH_ON_RECOVERY flag
->   - set recovery_disabled flag to false
->   - check condition rproc->crash_reason != NULL
->
 
-For V3 Bjorn made several comments in relation with QCOM use cases.  As such I
-will let him continue with this patchset.
+
+On 3/11/2026 12:12 PM, Mathieu Poirier wrote:
+> On Tue, Mar 10, 2026 at 11:04:54AM -0500, Shah, Tanmay wrote:
+>>
+>>
+>> On 3/10/2026 10:29 AM, Mathieu Poirier wrote:
+>>> On Tue, Mar 03, 2026 at 03:51:28PM -0800, Tanmay Shah wrote:
+>>>> mailbox driver can't introduce shutdown callback, as it might endup
+>>>> closing mbox channels prematurely. By allowing the client driver to
+>>>> manage the shutdown process, it's ensured that mailbox channels are
+>>>> closed only when they are no longer needed.
+>>>>
+>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>>>> ---
+>>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>>> index 5e92dc51f1c0..50a9974f3202 100644
+>>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>>> @@ -1490,6 +1490,8 @@ static void zynqmp_r5_remoteproc_shutdown(struct platform_device *pdev)
+>>>>  			dev_err(cluster->dev, "failed to %s rproc %d\n",
+>>>>  				rproc_state_str, rproc->index);
+>>>>  		}
+>>>> +
+>>>> +		zynqmp_r5_free_mbox(r5_core->ipi);
+>>>
+>>> This is already called in zynqmp_r5_cluster_exit(), why doing it here again?
+>>>
+>>
+>> Hi,
+>>
+>> Thanks for reviews.
+>> I think cluster_exit() call is called only during driver unload. Where
+>> as shutdown callback is called during power-off commands of linux like
+>> reboot or shutdown.
+>>
+>> That is why I am calling it separately during shutdown() callback.
+> 
+> The problem here is that zynqmp_r5_free_mbox() is called twice.  At shutdown
+> time all drivers go throuth the normal driver shutdown process where
+> platform_driver.shutdown() is called and subsequently device management
+> callbacks such as zynqmp_r5_cluster_exit().  The same applies to loading and
+> unloading of drivers.  Unless there is a corner case I can't see, calling
+> zynqmp_r5_free_mbox() twice is not needed.
+> 
+
+Hi Mathieu,
+
+I tested this patch again. On my platform I don't see
+zynqmp_r5_cluster_exit() being called when issuing `reboot` command.
+
+It only calls platform_driver.shutdown() callback.
+
+I think device management APIs are called only during driver remove
+callback, and not shutdown sequence.
 
 Thanks,
-Mathieu
+Tanmay
 
-> Changes in v2:
->   - use rproc_boot instead of rproc_attach
->   - move debug message early in the function
->   - clear attach recovery boot flag during detach and stop ops
-> Tanmay Shah (2):
->   remoteproc: core: full attach detach during recovery
->   remoteproc: xlnx: add crash detection mechanism
-> 
->  drivers/remoteproc/remoteproc_core.c    | 15 +++++-
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 71 ++++++++++++++++++++++++-
->  2 files changed, 84 insertions(+), 2 deletions(-)
-> 
-> 
-> base-commit: 098493c6dced7b02545e8bd0053ef4099a2b769e
-> -- 
-> 2.34.1
-> 
+>>
+>> Thanks,
+>> Tanmay
+>>
+>>> I have applied the other two patches in this series.
+>>>
+>>> Thanks,
+>>> Mathieu
+>>>
+>>>>  	}
+>>>>  }
+>>>>  
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>
+
