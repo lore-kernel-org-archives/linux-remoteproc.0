@@ -1,287 +1,175 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98E9258EC2;
-	Thu, 12 Mar 2026 04:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704AE1DDC28
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Mar 2026 04:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773290845; cv=none; b=uFtaH0gaA2a2xasa16XkCaIg6d9ZHojCubSoGLy/Y84sTW4DHR+sw9Iw3wx+XcF4P0QzenCi19q6LIWX8wO1x047xWjC9SB/qYlZpArEufVwptzG/Od0WyXMyPMlVdx5Zm45v+byveiDJfSCdPWy1vLr/IUimhAqqVAlHSM4rS8=
+	t=1773291189; cv=none; b=UVSNtiNOibHMhy7ltCrVeSWhbNUwdGoMd+dIA0/y1WGgfyNm5LJb/D/Hehkfww7GSVYTZGq+h80GgI0Xq2OmQUYXyslO3gUFua6LKIs67gYBSoppSET4OYhGNr2IqsSRb49dXV3zWNZjgcW93ApjBknnmXgI3dTtK20wAagPHzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773290845; c=relaxed/simple;
-	bh=Gp54JLvaaOIECrVsI9+uHuFT4IiNN9InE0F4T3empxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NlZ1MvD82XOGl6+aJ0bHEgxUqygOpR0ZJO9jNM1DTjeCQujMEwtZT7FpXADXKO7d0waPzYueMby1WnhxWSnur+WgvzwKqaxu1h2LEBDcVRjv33qwcjmeQ0J3/zmakK1MWnfR5pzv0wY5/Qw1DXfLtsbdrb2jzd34tIgtQFjhPrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VnyGzRoG; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1773291189; c=relaxed/simple;
+	bh=lN/KbGQqw23Tc2KDnTrwaaYJdfzwqq6mDA68SJrn/qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeU3z8xd8eYQY3bDPW9/z9tGgj7O+XnA/FiVnhki7UnhERBnOLi85Be04QLzsXgKjvdJ96A26weojfbQTj3ra7SO+NMiIKTlAuqT2MPS8WP+ZqeJ7MZlSQ800OuSk9i+zk7bZKPk1cUyvIUIcA/gwd0ssLmhvjSfXq28PcBW4Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dchCiEM3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FH4PlfAV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VnyGzRoG"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=A2SvhJ+b53Uvh0SW06/h2KPYmtALDs9kOKOYcwwDLA0=; b=VnyGzRoGzkd8sAAvVV3Y/W6ZN0
-	tKjKqCKmOocvgGs2WMlfWDZKSsXB8ZVZckIdwVxx+isq7qvFLGieQAcdQINeeSI0U5lmzoeckjN1P
-	fpOlTWJ9/v6707emE9rHLMZBDNwcmeIh42L5g3RJRUZ5PluWGXtKUDSp+15rNVwAY6n28KPynzvip
-	8M+n2m480sEjG8LOTrXHMf9kL4AvUVoAinWEFH2hdIxCwt12t7vNVuvMadKGy49cneNMRZ86dUuvn
-	kKk0L70BiK14w69z6fOhbwVFm7woPVZnv9og0y56U9VuASYMSZf/o5lXdue2UIhgTKAlsYSpxvMcM
-	lBafm1tw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1w0Xwo-0000000DI74-3YB5;
-	Thu, 12 Mar 2026 04:47:00 +0000
-Message-ID: <e398475e-4db2-40ed-baeb-89c2bbf6a0d5@infradead.org>
-Date: Wed, 11 Mar 2026 21:46:57 -0700
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dchCiEM3";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FH4PlfAV"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62BMOmvw587637
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Mar 2026 04:53:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Jl8minE8nYKp9+OT5OcDwwB9
+	zbvmYytTY2026ml5RWM=; b=dchCiEM32H1zvmnyTX/vqHJhwhPXOd1shQZkhVW5
+	V6JQK1FWz/BmIBAEIbi4Z2Z4wiXWxVZu3Hp/aRq+HAj4zfh3q2p1Az1vuY68V/xF
+	/C785FdLoLRzk9VQPY56W2PM3wGpvasy3MCx6w6dUvphruf8VSpg1HNrnSIi780+
+	qPIBjwU7rCj0FFs4XnAMBQStvoLjYMDRb6q0ibyJNRqZfHCzFoqVhpchbOjRHtTZ
+	O86Qjc+g7ECZWed9AtjfiZNfaqBYy4CuSOy0qWwNGniA91ioKA6Nbe0qvdxnz0/T
+	Ins1Kjn5mf0sOAlMXL7GiSUhjwG6VR6/+dHI2YqG5GzLEg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cuh5q0w70-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Mar 2026 04:53:07 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-8cd7c4ab845so280809585a.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 11 Mar 2026 21:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773291187; x=1773895987; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jl8minE8nYKp9+OT5OcDwwB9zbvmYytTY2026ml5RWM=;
+        b=FH4PlfAVx+Zn317QI9i99LL6AJKOy6emI2z+8SF8AyM0nfPOR1luf940F5RNfVpFF+
+         fqfB8o4LT4vU584vSwsAP9e2op4KVEGLhK5KDiq5e3zRPeNfG0PAELjDGOX0/dINioUM
+         mtai9JKZqUuj6IvVcc7ML1UBASnCnZle3TQEYXe2J+5k+c1lA5pJPGSkSlkzycK+NxLN
+         o2loj5SRYQLNT5gkwyWnmq9ot4qEiZEi2x+X1GofYXx7rrKTvzipxK5EsOE5LvE2IIrN
+         CbsUNwQlE+ac3zozmSHIej9oLTEc6rPezsnIF9IQ1zUUztA1YmShYW1xECdPK5hHE0hg
+         N2Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1773291187; x=1773895987;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Jl8minE8nYKp9+OT5OcDwwB9zbvmYytTY2026ml5RWM=;
+        b=c+uJDD7tRAH0rnf6WJ4zLigSh0yIMNwYeMU+YAf/Cces7otrWLxOh87oCvUCdVaJul
+         5zPjtrGOX1xULsUYsaUsQj1z1VEQW/BDumQJY2FX+2nKVx9vU3V7Zvwqhhp6sTa7gP+T
+         jAZda5lPQIiZL1UTejjdHCy6pNBsbTV0PQQiLAljjG9PwekMj9omjfwz0mR4DJY7JMke
+         tnmYUxKi+HyswooOaoSTqfEuAr43oKEnUo7WCmFpdtBZT+UizTPUnkD9Q7e2SmwkNjcZ
+         ZRMPvHzVJbMgr4xdk2J5orlM1r2PHPe75jp7tqnGG1bkO0NC73ZJobb5MA4iqBlpu4Aj
+         851Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2ecjHFmwoH36XEsMPkQWNM8yFwqw/GFEu423XaEQzuld+ueXihlJ1Q3gGjp8TdNyVrfOYaJ3hAagdPOgx2/8S@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC+GrDcmOIDlt71Zyz8Ed+RQXUR/+LbeuTqxjV616OasTpuyDH
+	zNh35DBFtrhbOpSImKzq9YlgwWhFn84qHbDkoI8jRIQca5EqNeTT5rq5sXZWFpxleJjX2TRRQF8
+	P9LL71khVxK1gmCVatMnz1eq0X2O9RaijFXnBuMGlk8adupRA4UpjbaO98e7ZRU6RvfWbHY9h
+X-Gm-Gg: ATEYQzzxQncskwzdb9ZJL49xYxpWww6vC9q5vKAqbDHnxkphiTohO+0iEIXYmHj2EMz
+	OwohbReK7+OoqQqnSceb+p6Ye1yRjS61oTThr9ieei7YNJqaPi9NOs34g4OkSCIdYx9BdbcRWe7
+	/qLlwjkPbFBhuKxpcR/pgK7L9QwbNBrtNOhuNiR9s5yTMGUM/gUTJFYvyhIOczayImcJxkhgpND
+	PcC7r10G3zrFV6nYUwMV6yZHvzZIOSXboWdpNWIsnEQhoGgRs4XbmDXWdAexqEQ4p4tHYOI2h7A
+	tY4Zz4KNGkoYjlqoOMsAvNnIvJsbtSVs4M0yGSySkPQNEzO4qlDLpdwzBEdDAtb2eRGSpuGyIBU
+	iy37F95mV0UloblZEkg/4en1faYSrgpOnJRUHgKPEjM3dkzVkZR9YB8A3Um07gFlJtpUBfSz/Jf
+	4/re9jJIXvpdRUlB7LVdgxCQFLUu9DpwbWy8o=
+X-Received: by 2002:a05:620a:4153:b0:8cd:79aa:693a with SMTP id af79cd13be357-8cda1a56db3mr613114885a.67.1773291186606;
+        Wed, 11 Mar 2026 21:53:06 -0700 (PDT)
+X-Received: by 2002:a05:620a:4153:b0:8cd:79aa:693a with SMTP id af79cd13be357-8cda1a56db3mr613112585a.67.1773291186087;
+        Wed, 11 Mar 2026 21:53:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a15603487bsm739851e87.41.2026.03.11.21.53.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Mar 2026 21:53:03 -0700 (PDT)
+Date: Thu, 12 Mar 2026 06:53:00 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/7] dt-bindings: remoteproc: qcom: Document pas for
+ SoCCP on Kaanapali and Glymur platforms
+Message-ID: <tpoksnga6erjhoh37vohoqw32fe62wbhjg74tvulgyn4jt2nbi@kamwahlyuqvo>
+References: <20260310-knp-soccp-v4-0-0a91575e0e7e@oss.qualcomm.com>
+ <20260310-knp-soccp-v4-4-0a91575e0e7e@oss.qualcomm.com>
+ <oqvq52az6iknhg4negqaprfsx5dfo527acoeas3tusqpqvak2c@wrdmsydyy6ns>
+ <20260311-unique-daft-nightingale-584252@quoll>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/25] kernel: Introduce meminspect
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Eugen Hristev <eugen.hristev@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
- Christoph Lameter <cl@gentwo.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
- Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
- Youngjun Park <youngjun.park@lge.com>, Petr Mladek <pmladek@suse.com>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-mm@kvack.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260311-minidump-v2-v2-0-f91cedc6f99e@oss.qualcomm.com>
- <20260311-minidump-v2-v2-1-f91cedc6f99e@oss.qualcomm.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260311-minidump-v2-v2-1-f91cedc6f99e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260311-unique-daft-nightingale-584252@quoll>
+X-Proofpoint-ORIG-GUID: JNMYrgvAnjQ_01dh0CeTuEWBzXLJqMi3
+X-Authority-Analysis: v=2.4 cv=CIUnnBrD c=1 sm=1 tr=0 ts=69b246b3 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8
+ a=n-Yar0ZZng0pcsCwfiQA:9 a=CjuIK1q_8ugA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-GUID: JNMYrgvAnjQ_01dh0CeTuEWBzXLJqMi3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEyMDAzNiBTYWx0ZWRfX3Dn/s1koCozR
+ /lNA6nrM7h8fHffyxBIImKYO1D2dKoN5xX8W8DqNOoVkZVBpxwCMNX7Fk6Pa+os1WiP+z+A8uAF
+ OM5G3Eo0nV0a4PH+x7tlB1T41zwHLc6DmkzZdMYcsXqRHQ8UD+DCyG3yP+yKFhB8WjY8ok9REzq
+ QvoZYDITT73wzymT1q1slrx+fnodXlWJCDvPv4RlR91oMYb3EjM1MBlOwcanD4FgruzKqUlrNgu
+ +w267DTom9odjV8j02tbPGYp80JQv4JFJnpC5IN+v9kbOfeYtKOiekincsZ08WLg984NFeta526
+ mjSgF2qQXIwCDwqkAronjlo5J7wtVQymRd441VYM0WIqsvT8nb7fg2G1/a2PPL5wSqsQ8peIxE+
+ gGaYzWbA/2bKNoGHjccT4igPAkxa+XqJHVIbYtLIEdDUUzSv1lv1ikmlwDShpt4uiT14TFrmU6U
+ K0QyUR/IkxpZVKzqfug==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-11_02,2026-03-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 suspectscore=0 impostorscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603120036
 
+gn Wed, Mar 11, 2026 at 07:26:38AM +0100, Krzysztof Kozlowski wrote:
+> On Wed, Mar 11, 2026 at 04:04:09AM +0200, Dmitry Baryshkov wrote:
+> > On Tue, Mar 10, 2026 at 03:03:20AM -0700, Jingyi Wang wrote:
+> > > Document the component used to boot SoCCP on Kaanapali SoC and add
+> > > compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
+> > > the "qcom,smem-states", "qcom,smem-state-names" in the pas-common.
+> > > 
+> > > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > > ---
+> > >  .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 154 +++++++++++++++++++++
+> > >  .../bindings/remoteproc/qcom,pas-common.yaml       |   6 +-
+> > >  2 files changed, 159 insertions(+), 1 deletion(-)
+> > 
+> > With all the changes to pas-common, what is being left in it? Would it
+> 
+> You need place for definition of properties - smd/glink-edge and
+> qcom,smem-states. The latter is actually not properly defined in one
+> place, becuse there are bindings having  it but not refencing
+> pas-common.
 
+So do we for schemas definig smd-edge.
 
-On 3/10/26 1:15 PM, Mukesh Ojha wrote:
-> diff --git a/Documentation/dev-tools/meminspect.rst b/Documentation/dev-tools/meminspect.rst
-> new file mode 100644
-> index 000000000000..d0c7222bdcd7
-> --- /dev/null
-> +++ b/Documentation/dev-tools/meminspect.rst
-> @@ -0,0 +1,144 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +==========
-> +meminspect
-> +==========
-> +
-> +This document provides information about the meminspect feature.
-> +
-> +Overview
-> +========
-> +
-> +meminspect is a mechanism that allows the kernel to register a chunk of
-> +memory into a table, to be used at a later time for a specific
-> +inspection purpose like debugging, memory dumping or statistics.
-> +
-> +meminspect allows drivers to traverse the inspection table on demand,
-> +or to register a notifier to be called whenever a new entry is being added
+> 
+> It can also define common order of interrupts, but as you pointed out
+> this does not work for this new device anymore.
 
-  preferably...                                                is added
+Nor does it work for SocCP smem-states. I think that having such a
+pas-common overcomplicates existing schema. What about splitting
+qcom,dsp-common from qcom,pas-common with the latter keeping properties
+that are common to existing DSP and SoCCP, while the former being used
+only for DSPs?
 
-> +or removed.
-> +
-> +The reasoning for meminspect is also to minimize the required information
-> +in case of a kernel problem. For example a traditional debug method involves
-> +dumping the whole kernel memory and then inspecting it. Meminspect allows the
-> +users to select which memory is of interest, in order to help this specific
-> +use case in production, where memory and connectivity are limited.
-> +
-> +Although the kernel has multiple internal mechanisms, meminspect fits
-> +a particular model which is not covered by the others.
-> +
-> +meminspect Internals
-> +====================
-> +
-> +API
-> +---
-> +
-> +Static memory can be registered at compile time, by instructing the compiler
-> +to create a separate section with annotation info.
-> +For each such annotated memory (variables usually), a dedicated struct
-> +is being created with the required information.
-
-   is created
-
-> +To achieve this goal, some basic APIs are available:
-> +
-> +* MEMINSPECT_ENTRY(idx, sym, sz)
-> +  is the basic macro that takes an ID, the symbol, and a size.
-> +
-> +To make it easier, some wrappers are also defined
-> +
-> +* MEMINSPECT_SIMPLE_ENTRY(sym)
-> +  will use the dedicated MEMINSPECT_ID_##sym with a size equal to sizeof(sym)
-
-     uses the dedicated
-
-> +
-> +* MEMINSPECT_NAMED_ENTRY(name, sym)
-> +  will be a simple entry that has an id that cannot be derived from the sym,
-
-     is a simple entry that
-
-> +  so a name has to be provided
-> +
-> +* MEMINSPECT_AREA_ENTRY(sym, sz)
-> +  this will register sym, but with the size given as sz, useful for e.g.
-
-     registers sym, but with
-
-> +  arrays which do not have a fixed size at compile time.
-> +
-> +For dynamically allocated memory, or for other cases, the following APIs
-> +are being defined::
-
-   are defined::
-
-> +
-> +  meminspect_register_id_pa(enum meminspect_uid id, phys_addr_t zone,
-> +                            size_t size, unsigned int type);
-> +
-> +which takes the ID and the physical address.
-> +
-> +Similarly there are variations:
-> +
-> + * meminspect_register_pa() omits the ID
-> + * meminspect_register_id_va() requires the ID but takes a virtual address
-> + * meminspect_register_va() omits the ID and requires a virtual address
-> +
-> +If the ID is not given, the next avialable dynamic ID is allocated.
-
-                                    available
-
-> +
-> +To unregister a dynamic entry, some APIs are being defined:
-
-                                            are defined:
-
-> + * meminspect_unregister_pa(phys_addr_t zone, size_t size);
-> + * meminspect_unregister_id(enum meminspect_uid id);
-> + * meminspect_unregister_va(va, size);
-> +
-> +All of the above have a lock variant that ensures the lock on the table
-> +is taken.
-> +
-> +
-> +meminspect drivers
-> +------------------
-> +
-> +Drivers are free to traverse the table by using a dedicated function::
-> +
-> + meminspect_traverse(void *priv, MEMINSPECT_ITERATOR_CB cb)
-> +
-> +The callback will be called for each entry in the table.
-
-maybe           is called
-
-> +
-> +Drivers can also register a notifier with meminspect_notifier_register()
-> +and unregister with meminspect_notifier_unregister() to be called when a new
-> +entry is being added or removed.
-
-         is added or removed.
-
-> +
-> +Data structures
-> +---------------
-> +
-> +The regions are being stored in a simple fixed size array. It avoids
-
-               are stored
-
-> +memory allocation overhead. This is not performance critical nor does
-> +allocating a few hundred entries create a memory consumption problem.
-> +
-> +The static variables registered into meminspect are being annotated into
-
-                                                   are annotated into
-
-> +a dedicated .inspect_table memory section. This is then walked by meminspect> +at a later time and each variable is then copied to the whole inspect table.
-> +
-> +meminspect Initialization
-> +-------------------------
-> +
-> +At any time, meminspect will be ready to accept region registration
-
-                meminspect is ready
-
-> +from any part of the kernel. The table does not require any initialization.
-> +In case CONFIG_CRASH_DUMP is enabled, meminspect will create an ELF header
-
-                                         meminspect creates an ELF header
-
-> +corresponding to a core dump image, in which each region is added as a
-> +program header. In this scenario, the first region is this ELF header, and
-> +the second region is the vmcoreinfo ELF note.
-> +By using this mechanism, all the meminspect table, if dumped, can be
-> +concatenated to obtain a core image that is loadable with the `crash` tool.
-> +
-> +meminspect example
-> +==================
-> +
-> +A simple scenario for meminspect is the following:
-> +The kernel registers the linux_banner variable into meminspect with
-> +a simple annotation like::
-> +
-> +  MEMINSPECT_SIMPLE_ENTRY(linux_banner);
-> +
-> +The meminspect late initcall will parse the compilation time created table
-
-maybe...                                       compile-time
-
-> +and copy the entry information into the inspection table.
-> +At a later point, any interested driver can call the traverse function to
-> +find out all entries in the table.
-> +A specific driver will then note into a specific table the address of the
-> +banner and the size of it.
-> +The specific table is then written to a shared memory area that can be
-> +read by upper level firmware.
-> +When the kernel freezes (hypothetically), the kernel will no longer feed
-> +the watchdog. The watchdog will trigger a higher exception level interrupt
-> +which will be handled by the upper level firmware. This firmware will then
-> +read the shared memory table and find an entry with the start and size of
-> +the banner. It will then copy it for debugging purpose. The upper level
-> +firmware will then be able to provide useful debugging information,
-> +like in this example, the banner.
-> +
-> +As seen here, meminspect facilitates the interaction between the kernel
-> +and a specific firmware.
-
+> 
+> > be easier to leave it as is for the traditional DSPs and copy necessary
+> > functionality into the soccp schema?
 
 -- 
-~Randy
-
+With best wishes
+Dmitry
