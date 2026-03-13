@@ -1,96 +1,110 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E144931E84C
-	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Mar 2026 05:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D712A330305
+	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Mar 2026 06:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773381448; cv=none; b=p7bemiGxsH+Zx5XucSOIrcCFuDTYk7m0yHMDaDhTLX2t7hMHk0uTKnqInM9ypnnTPRAFfA80bQhYmHEG1wOZWrSSjOk/FOjJ+yrxeltuesMrzHdlWuZfVHc/SWTrYxJKmQkTjPfnCNFo4OxDqOEbAjTj91/gBofQqkC1bhnPIok=
+	t=1773381913; cv=none; b=WLOLED/03QT1JrMVn5G2gdyYeTOUbAWxmM1b0RmVMgqO/ahRgKBSfn1fDrJCmpShDSPKNBm9ORrfe+8FN7fqvmd8hEKr5sYseG8sU7EFw8FjQH7CxUlfwTBnlrjHsBX7YG14DTCMPwIv9aHMHjbXECVpL62e04HQwFn4N0K+t+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773381448; c=relaxed/simple;
-	bh=zwT6xDusC6j5T/vrwWHmVMovFMdOS8MfKQEkest5f0Q=;
+	s=arc-20240116; t=1773381913; c=relaxed/simple;
+	bh=JB/usJN3+rbRiZIr1+8g7VPqy6EEuWzOH+oPf8czcUU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDCKxklWty+ugW6rTJRExXUyckMfIE4VJkKbiXn0wrbGN0kNIAF8YaQY7U3ZD7Xy4XGAhrtM25x12B0TohM0tSe2oAMiU7CbI/Yo5RfLzqXZvkp6i24Q4BCp1W0pNtQ8nwnKUUDugWIphNQayYGhp+wwvebtcsbiUzEbBIijX/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Wf1d9nnG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BgE5LBTV; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=p60f3b8mEYwVgNe09QKqU8KsK2rXb+bySxX86RXp88Z2iSlQb9eIKE4ZfhMFBRaIvr0egneoKXrVHf7M+GbZmoQqnxA/1gIbBX0kC6stL0AGG4SBoD79TKrf0wxXEox0bWOLnk0I5nP+7ae/gzd8uAmmBwl7Rw4gm7Lytn3I0tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QJfMvUBq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NeU7AxGn; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Wf1d9nnG";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BgE5LBTV"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62D5tZHf4140640
-	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Mar 2026 05:57:26 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QJfMvUBq";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NeU7AxGn"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62D5thrJ3342929
+	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Mar 2026 06:05:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=zJrnE0PGCzj+u4RuLR8bcNal
-	PPmbYduIhnoKk3Zb+sM=; b=Wf1d9nnGXf2+t7b42v6U0846GBfFy6ZN9wMTSu3f
-	m1yfvFoNYE7f718t3rZc+PpAit5Eo+Ko43PONxpN1jE3XDCWgAU8fMxHbQ9JGaXn
-	oPgJ4jT7Zhs5fU6vPyilVUJrK516Aoa04iw62zvUYyYURKA9TmfyphYqN9IR9PU+
-	Nh2ymxtdWjnoKBKnG/QIE31uEq9tdIv3nxxghoEIItt0VIltmHx8oudG5QBGb7O6
-	FGyFfuSrDOpmKQ55+JhfewwUZdqt0mjrSN9zjWT6pOl/ioGvOuCAwo5cbbPMj6G3
-	Hne3yIX/sWbLhenXQa4epfApvvsB/uyWKlVxC1t1+Qpx3w==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cvbn286rr-1
+	:references:subject:to; s=qcppdkim1; bh=zeM7gmRvWE3zPnFK+DBIUx8d
+	4QuC9ACWMKfdIK3rw1I=; b=QJfMvUBqwcfY9u+taSrVQqTd80hEJj12tOwH5Q9j
+	xaX9k0s8mlDbhIGsyeV7Sv2muOCdElzAqOAi1FkgvuzsypAnc9KVBF/OhZbRfuI0
+	eP3/swrWAVVyoStb5e+YPt30JEOc7NG6psZJycX4CZ0mekZSKIfbVV2E1p5/Ff1p
+	UXQnYl2ePnKSwUKn85QTF0fvIYjitY+MK2kohDZ7/b+AXxSNk2IYy0TqJGFJTwzA
+	PuKJfdmvTc5N2rmnW1mvZXsxdjvfMVtx5kAOry1BM8k/Jy/nrsUlXLxe3dy8zJDP
+	OluuQkZYpex1FDmbDCQwjYuzgihFZk+Hwmeljq/GFawn8A==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cus9w3e5y-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Mar 2026 05:57:26 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2ae3badc00dso20896815ad.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Mar 2026 22:57:25 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 13 Mar 2026 06:05:09 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2aec07e8aafso9140785ad.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Mar 2026 23:05:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773381445; x=1773986245; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1773381909; x=1773986709; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zJrnE0PGCzj+u4RuLR8bcNalPPmbYduIhnoKk3Zb+sM=;
-        b=BgE5LBTVgUrnISZoGYBVhjsbJwQj/wiFPJXtzWxrxS8dQzLqa/uo5qmL3nTDOINQcK
-         4qtBs9+hBjY14keyiOsY18LmQZHiuP/YTKU88mHD1TzlA3VdkKMgPMlr5fpHRC47YPpA
-         noNlqP+oyWgNi7n9yap3KMfVwjzBklx3JbO75NWSTckJWwnVUx1GLGos/2bZ4tki7CDK
-         lG0cXEWagqmm0NpVkxkGkIRDdxXGxG+D6e3D9Ktj8JHf+TdJKXfLnSbFE5Ihp1aanl0h
-         UFdq0cDVUiLf0CnSoogdz1eJaiyIntOxTNBPosJWZ1F6SkDFVFvP+WzEMaCmqVOT/QCt
-         wFww==
+        bh=zeM7gmRvWE3zPnFK+DBIUx8d4QuC9ACWMKfdIK3rw1I=;
+        b=NeU7AxGndEWvTlbIu+rGi8hAXScOCSM6lVidJHAf13QLWJiRjRarEiJ52OV9FC/t8C
+         fw8mLzlNM/ajeNlgNdYitWZz6nLZTpS8Akt+wZUQZUzVwifVlqA7iEoFDh0ONpzxQP1u
+         JNc4Uof5ODbUj4b6n0+4EbzXOpsTvHY3ehpXP4K1cJAZB9ve2beajZaTXV1U3tpIDol/
+         z5gbpbfw+0rkTrySn9fFXj8IP1aJNhMO0gleUgl5QgLIKcbsrxLWnsqtL6vtRslIxwa2
+         R89ifkNclMVrDwDHtH6aqmOb7Vx/t5FO2VWzs+ATUBBeV3ke3Mu+0/XvtvZhOI7m0io/
+         C9vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773381445; x=1773986245;
+        d=1e100.net; s=20251104; t=1773381909; x=1773986709;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zJrnE0PGCzj+u4RuLR8bcNalPPmbYduIhnoKk3Zb+sM=;
-        b=UilYxYZTKoX4+dpAIb43aYQSffVC5KgWBKdNg5QCgc4udAtgrsZAkcabhl0lR3UQNK
-         3o/fyZOLvwKjEOqUcs/OR7Jis942lO4DpGrg3HOTaBVhPiNU/VjQrrvEK54NkEC5bfdu
-         UFnisiCi8FMUbTdyg4/WmZ7exNi6z8VgEROasqaxbTM5bHa0Hxxsm+cz60MeKPECdGgV
-         004hvBGPwtW93ouTcwh+WRpCKKwRrhQb9tn4gnUE/offtZoCUo2LFKf92p8f0xcjIxZ+
-         5I/mkUQ1oZBXb1Hvy2LS0lNJIMdPASP0tjOcgAaVleedU3Yh/GHM3ilLdXlexqa9YxX0
-         7a/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUIRzQwQdGXyq2LEJbafXWzxLQRopEIoSQOqKHmPTjTSvLTsCjs/eBTUz8hfDMubj5vMJYTpI8xRfXf4Q3eAVR2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5wjrUk1eyXO1Y2ELkG6I60z8BAlitKG3xNfw13m+uoFGUfuEY
-	otepAkyIYISZLJKSLrcZElsIVsC/VJpm+Cg9cRX3puNSLXrBzqeSY3XXzjQuXb9IepvVMOiqiZK
-	WOgVWzvp8MT4yQOJpTSjIRo1H58fPbzNkKboFqDkCPGy3wBwby33/JvvhXMo1+QYhKESHBW3Q
-X-Gm-Gg: ATEYQzydWLqHkHLmHR+N+vL2gxIKVX4ZQrQE4WN+WMZUO4fSkbGBUpOXgxFeYerLBsl
-	XXBPdR1L96GTS2ajTy2288/ObuFstEqAdpcVrhkNO4XHX8cXLiyGrvDyHrAN79EXo8MekvEjonu
-	x/QVlgCYslw31vi8NJfDkVIPc/HpPL1YK0Uw4mI1TEVH8AOmq5iASo0yXeaM+VR3AzTqLWWbOko
-	V44Nj39osqnWvZz192mD0yTHCAKOYq64GaNfpGLZ9OXBCDgMEg29ixMm2BknPZEib2H2IoBz7Cw
-	138AfhT1HhKNre7jfSRlPSLYrCA0HqVufU982O2MnajwLzufVYRn4THCeOYNFqOSSOfGj3FqmmK
-	r42/wNgf+A8nkLGu0Suqkc+dEE4bA1qWEY4P/fT8gjaqT8zHw
-X-Received: by 2002:a17:903:98d:b0:2ae:803b:d3cf with SMTP id d9443c01a7336-2aeca96057bmr20103825ad.18.1773381445276;
-        Thu, 12 Mar 2026 22:57:25 -0700 (PDT)
-X-Received: by 2002:a17:903:98d:b0:2ae:803b:d3cf with SMTP id d9443c01a7336-2aeca96057bmr20103595ad.18.1773381444731;
-        Thu, 12 Mar 2026 22:57:24 -0700 (PDT)
+        bh=zeM7gmRvWE3zPnFK+DBIUx8d4QuC9ACWMKfdIK3rw1I=;
+        b=hEbqRMY4Ly6yzjnXgRx+F0KkKWg/jL+fa2z7Fy9ljCuWpu5Hdo73+L9u0mnjV6+li3
+         JpDA1XUZnEdPCWovY1AFlJbXk7HOMjrymp0Cu1UkNcoebzHcLI9O4c+9gkftKyni3ONH
+         0xr3/hbpTsr9c/vYel86S9RcpNa4izAELF7rYf/on26Vz9nECMPMcCB73F7cxAvOHVXw
+         yNXxrFVoQgY1jNmzSvEdozhExFV4F4qYmCrgyvFq8PlFVBB/qfWsMI7DlIHfeYiG7vqZ
+         vI/Vyx1jb4+i3ECoQWGj8EaCXB5ZO60wrARFly2Ykj50Um4IV9i8n0vnEMJJQgTHFvgh
+         2UyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpLuH3jhbOWJqqia2upK4q60f4zBpUSgui666zy0jmBOrHyuhcyCwBJdTMbbNFhQdpoLeZtu6ktL58W6+kYygL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHnEfQx19esBRQe3l4wEHeVss5/UQ76kHBsx+qTAKVtfcWy3hB
+	8myTIVdatZe+cBK+jIGaTYYfnrs8PhGIUIzDgEqNjoc7LHXPxGCi+mEekE2zbTbhP0A778bvxUS
+	i/cg+qmzt3xcfh47ctKAU6gCJnDI47rG2aXgZYtYD8a1LtyB0z4yqIB3cxMCyy/ReuchpR92O
+X-Gm-Gg: ATEYQzz7tVia0VmGWoWFYwdMOSXwwbkn/4lx22FM4zusdiKr1Ht6uXNxKMlVcI1FlBb
+	L6U01IbN/6t0XMJE++vt63UweQis//zGnRuTNR8ffvMtdI6ueulQhvKu2DdjY6rVMT+cmtrInLf
+	8/WVSU66lCxuK8MEYvRzj7aWCzqYMyBmIxnXW7o8voucDUVFJZkCqWZFxlxDsxj8FT5XYk3eeQt
+	jb1U6LJi2vGkfCrmUmQH1xfY3L1u7xTXYpZZ0Si1eVC937YHx7fl65aEZgHsauq4F4Zkob25F6K
+	sksZsjTJWfn5Wv4rsQtF6hvRzy/2sP3P/vEst+22MyYlYEITFHgF/Sx/Gl16i3HXxey37LOm1Ir
+	U4/ZqTvyd67HzSFTJrwRIBXxb8ABszJXUopXWddE+WPVNzLEk
+X-Received: by 2002:a17:902:e80c:b0:2ae:a786:6663 with SMTP id d9443c01a7336-2aecab1e86cmr19453685ad.26.1773381908528;
+        Thu, 12 Mar 2026 23:05:08 -0700 (PDT)
+X-Received: by 2002:a17:902:e80c:b0:2ae:a786:6663 with SMTP id d9443c01a7336-2aecab1e86cmr19452995ad.26.1773381907930;
+        Thu, 12 Mar 2026 23:05:07 -0700 (PDT)
 Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aece6198dfsm10158405ad.29.2026.03.12.22.57.22
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aece7ee5b1sm10183605ad.46.2026.03.12.23.04.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2026 22:57:24 -0700 (PDT)
-Date: Fri, 13 Mar 2026 11:27:18 +0530
+        Thu, 12 Mar 2026 23:05:07 -0700 (PDT)
+Date: Fri, 13 Mar 2026 11:34:51 +0530
 From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Map/unmap subsystem region
- before auth_and_reset
-Message-ID: <20260313055718.yyb5ohjdql6resdv@hu-mojha-hyd.qualcomm.com>
-References: <20260310135205.2497789-1-mukesh.ojha@oss.qualcomm.com>
- <20260310135205.2497789-2-mukesh.ojha@oss.qualcomm.com>
- <uwqpxa4jqf3k3pbcf7mkszzuhrqulich4iujiejtuey4vrtg5d@umlik2vhdkvi>
- <20260311084918.q4vonsudasta7dll@hu-mojha-hyd.qualcomm.com>
- <55oglwp3ejolkjyksn4am2dnx43k7axf5zl6tevkuuuww3n33u@jcffxhtaxxaq>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
+        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+        dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org,
+        elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        jjohnson@kernel.org, mathieu.poirier@linaro.org,
+        trilokkumar.soni@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
+        jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com,
+        vignesh.viswanathan@oss.qualcomm.com,
+        srinivas.kandagatla@oss.qualcomm.com,
+        amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
+        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+        skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
+        Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: Re: [PATCH v2 01/15] arm64: dts: qcom: kodiak: Add EL2 overlay
+Message-ID: <20260313060451.hswg6snnnexchmzs@hu-mojha-hyd.qualcomm.com>
+References: <20260312062756.694390-1-sumit.garg@kernel.org>
+ <20260312062756.694390-2-sumit.garg@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -99,121 +113,120 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <55oglwp3ejolkjyksn4am2dnx43k7axf5zl6tevkuuuww3n33u@jcffxhtaxxaq>
-X-Proofpoint-ORIG-GUID: OhdUoBQHQ4NBTJU_36PJ8S3PVbgj6sLH
-X-Proofpoint-GUID: OhdUoBQHQ4NBTJU_36PJ8S3PVbgj6sLH
-X-Authority-Analysis: v=2.4 cv=ZKfaWH7b c=1 sm=1 tr=0 ts=69b3a746 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+In-Reply-To: <20260312062756.694390-2-sumit.garg@kernel.org>
+X-Proofpoint-GUID: Q7mQ2WpeLrMRWb3K7mfZtxm10ilw0zRx
+X-Authority-Analysis: v=2.4 cv=IIIPywvG c=1 sm=1 tr=0 ts=69b3a915 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=Lsr5OTPFVPdoxJcc1pYA:9 a=CjuIK1q_8ugA:10
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEzMDA0NSBTYWx0ZWRfXyXfQvn6UbvyV
- BDMaYmRUTZUNdNZ5JwzXcuyGLje9/v5lcJdMOep7pcMW2MnnuxTl+hleudYutRGsAnLiOpSIRXD
- +8yDwrrKdsxVn/dG/G+x6Llf1CF5QKd8NaTt877uoJvowIBCvUushLD+Xx7k8o4x9SlurXl6yxY
- AmuxgpJb14WJtxlH49QNUHVbAeF/EcOQgw2icOgdh1+OgEf36HoTOopv5PA4h88RSQNcJ6GrOSk
- GybgcZ2KoJi8rPRYmy9RNlj/l5y+bGApYjBBaJRqhMwDOo7iBBs0M/1CjQJGMiokI0GG3wCNqVe
- idPUpm+kKIpNpPC7k4fujmjqzPBTMqi42A7LOIo/VbyCRY5WYw5XyyNmjhjZfBFu1NhiKhK3vUV
- WCd/TTxobjA+W0a7u8w/+mAwMlRhaaM5+5CvJ4ng6xVk3aj0k+YipdXR/5bBkTL8W0LC3jFItN0
- RmyGIbN1v5DKbOwTExA==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=EUspDBNiAAAA:8 a=D5leSQ3MSkE6s3ds0kQA:9 a=CjuIK1q_8ugA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzEzMDA0NyBTYWx0ZWRfX5PXA/yI7d7Kn
+ Uj85Iemmhwo2yvllEw4BZWv5QlOqasL5xjIfLnVJAO0QYxmzL7t90u4oBVa+NpqgfdTHvH58NXo
+ o2/jhaZr95Fo9RrJh+6kRduoUcpRtCuERmGVWYEn4Jjyg2K7+r9XvwtI7s50N4YZ6HfKeuSNvxv
+ AoLYN6FhajKhxXsHrSHhKAVUiVZweqENGMd5j1kLkLrYCp9wQj9XV3Xp8Ind68UFaaKTBsm4qC7
+ rEMvBv9WNtAX7LgSlh2mqTr/lYeQZVfPmEjCsnrqUq25RCFh+AtreQsB3zhj0QAKFhXn5k726Hi
+ 4BVdu6UyRn60zyfjvfVHkYVQlh6SKcItjUnzF0ff/Rdus7dXdtUpQ+RPs9mBsVgyL1nS+XcJh0/
+ Q0dgY465G0F+gQEXgFr+OaUkfgpnEqKOs8LQaXbnjrnGcjiErIEUd7iajMxJNaorWyZD8XOjkAm
+ jCecdZQKGf4iX8GeYpQ==
+X-Proofpoint-ORIG-GUID: Q7mQ2WpeLrMRWb3K7mfZtxm10ilw0zRx
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-12_03,2026-03-12_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 spamscore=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 priorityscore=1501 phishscore=0
+ suspectscore=0 bulkscore=0 priorityscore=1501 phishscore=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 impostorscore=0 spamscore=0 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603130045
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603130047
 
-On Fri, Mar 13, 2026 at 05:40:22AM +0200, Dmitry Baryshkov wrote:
-> On Wed, Mar 11, 2026 at 02:19:18PM +0530, Mukesh Ojha wrote:
-> > On Wed, Mar 11, 2026 at 04:34:53AM +0200, Dmitry Baryshkov wrote:
-> > > On Tue, Mar 10, 2026 at 07:22:05PM +0530, Mukesh Ojha wrote:
-> > > > Qualcomm remoteproc drivers such as qcom_q6v5_mss, which do not use the
-> > > > Peripheral Authentication Service (PAS), always map the MBA region before
-> > > > use and unmap it once the usage is complete. This behavior was introduced
-> > > > to avoid issues seen in the past where speculative accesses from the
-> > > > application processor to the MBA region after it was assigned to the remote
-> > > > Q6 led to an XPU violation. The issue was mitigated by unmapping the region
-> > > > before handing control to the remote Q6.
-> > > > 
-> > > > Currently, most Qualcomm SoCs using the PAS driver run either with a
-> > > > standalone QHEE or the Gunyah hypervisor. In these environments, the
-> > > > hypervisor unmaps the Q6 memory from HLOS Stage-2 and remaps it into the
-> > > > Q6 Stage-2 page table. As a result, speculative accesses from HLOS cannot
-> > > > reach the region even if it remains mapped in HLOS Stage-1; therefore, XPU
-> > > > violations cannot occur.
-> > > > 
-> > > > However, when the same SoC runs Linux at EL2, Linux itself must perform the
-> > > > unmapping to avoid such issues. It is still correct to apply this mapping/
-> > > > unmapping sequence even for SoCs that run under Gunyah, so this behavior
-> > > > should not be conditional.
-> > > > 
-> > > > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > > > ---
-> > > >  drivers/remoteproc/qcom_q6v5_pas.c | 48 +++++++++++++++++++++++-------
-> > > >  1 file changed, 38 insertions(+), 10 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > > index 3bde37ac510c..033d618ccba9 100644
-> > > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > > @@ -138,6 +138,13 @@ static void qcom_pas_segment_dump(struct rproc *rproc,
-> > > >  		return;
-> > > >  	}
-> > > >  
-> > > > +	pas->mem_region = ioremap_wc(pas->mem_phys, pas->mem_size);
-> > > 
-> > > Which will be called once per segment. Move this to qcom_pas_minidump()
-> > > and call iounmap() afterwards.
-> > 
-> > Good eyes!, Ah!! my bad.
-> > 
-> > And moving it to qcom_pas_minidump() will cover minidump cases and
-> > fallback cases to full dumps if minidump_id is mentioned for a
-> > subsystem. However, we may miss mapping for pure rproc_coredump() case
-> > when the framework assigned .coredump = rproc_coredump when vendor
-> > coredump callback is not provided when subsystem does not have minidump_id
-> > mentioned. Do you think writing qcom_pas_coredump() wrapper over
-> > rproc_coredump() will be fine ?
-> > 
-> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > @@ -141,6 +141,11 @@ static void qcom_pas_segment_dump(struct rproc *rproc,
-> >         memcpy_fromio(dest, pas->mem_region + total_offset, size);
-> >  }
-> > 
-> > +static void qcom_pas_coredump(struct rproc *rproc)
-> > +{
-> > +       rproc_coredump(rproc);
+On Thu, Mar 12, 2026 at 11:57:42AM +0530, Sumit Garg wrote:
+> From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > 
-> It won't be that simple, most likely. You'd need to call ioremap_wc()
-> before and iounmap() afterwards. Then it would make sense.
-
-I meant the same with the help of wrapper..
-
+> All the existing variants Kodiak boards are using Gunyah hypervisor
+> which means that, so far, Linux-based OS could only boot in EL1 on those
+> devices.  However, it is possible for us to boot Linux at EL2 on these
+> devices [1].
 > 
-> And alternative option would be to use
-> rproc_coredump_add_custom_segment() and add a custom function which
-> would perform ioremap() / memcpy() / iounmap().
-
-This will involve map, unmap called for each segment.
-However, I feel, it will be inefficient compared to qcom_pas_coredump()
-where, we can map only once.
-
-Thanks,
-Mukesh
-
+> When running under Gunyah, the remote processor firmware IOMMU
+> streams are controlled by Gunyah. However, without Gunyah, the IOMMU is
+> managed by the consumer of this DeviceTree. Therefore, describe the
+> firmware streams for each remote processor.
 > 
-> > +}
-> > +
-> >  static void qcom_pas_minidump(struct rproc *rproc)
-> >  {
-> >         struct qcom_pas *pas = rproc->priv;
+> Add a EL2-specific DT overlay and apply it to Kodiak IOT variant
+> devices to create -el2.dtb for each of them alongside "normal" dtb.
 > 
-> -- 
-> With best wishes
-> Dmitry
+> [1]
+> https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-4/boot-developer-touchpoints.html#uefi
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> [SG: watchdog fixup]
+> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile        |  2 ++
+>  arch/arm64/boot/dts/qcom/kodiak-el2.dtso | 35 ++++++++++++++++++++++++
+>  2 files changed, 37 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/kodiak-el2.dtso
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index f80b5d9cf1e8..09a7f943190e 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -139,6 +139,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs615-ride.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-radxa-dragon-q6a.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+> +qcs6490-rb3gen2-el2-dtbs := qcs6490-rb3gen2.dtb kodiak-el2.dtbo
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-el2.dtb
+
+We may need to add for couple of more variants..
+
+>  
+>  qcs6490-rb3gen2-vision-mezzanine-dtbs := qcs6490-rb3gen2.dtb qcs6490-rb3gen2-vision-mezzanine.dtbo
+>  qcs6490-rb3gen2-industrial-mezzanine-dtbs := qcs6490-rb3gen2.dtb qcs6490-rb3gen2-industrial-mezzanine.dtbo
+> diff --git a/arch/arm64/boot/dts/qcom/kodiak-el2.dtso b/arch/arm64/boot/dts/qcom/kodiak-el2.dtso
+> new file mode 100644
+> index 000000000000..0b3a69a0d765
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/kodiak-el2.dtso
+> @@ -0,0 +1,35 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + *
+> + * Kodiak specific modifications required to boot in EL2.
+> + */
+> +
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&gpu_zap_shader {
+> +	status = "disabled";
+> +};
+> +
+> +&remoteproc_adsp {
+> +	iommus = <&apps_smmu 0x1800 0x0>;
+> +};
+> +
+> +&remoteproc_cdsp {
+> +	iommus = <&apps_smmu 0x11a0 0x0400>;
+> +};
+> +
+> +&remoteproc_wpss {
+> +	iommus = <&apps_smmu 0x1c03 0x1>,
+> +		 <&apps_smmu 0x1c83 0x1>;
+> +};
+> +
+> +&venus {
+> +	status = "disabled";
+> +};
+> +
+> +&watchdog {
+> +	status = "okay";
+> +};
+
+
+rb3gen2 has modem as well, did we test that as well ?
 
 -- 
 -Mukesh Ojha
