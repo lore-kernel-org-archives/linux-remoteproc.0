@@ -1,140 +1,165 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013032.outbound.protection.outlook.com [40.107.159.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E51296BD6;
-	Sat, 14 Mar 2026 17:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773507724; cv=fail; b=OOP7kga/gktNeZkiGf+WrYCPrgk1PcfW93wMqh/C0t2MuSg6Q4J+FkY6NKaAEGwqovENA43+eOUgrtEUCvU0a8RDDTawN5RTp2U1+wZa8xrxr1oAEX3KBjvKJeB0QiHwk84muljXwbDqfs+vPNLr3RhFQ6VIo//aUn7wwHgBbXw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773507724; c=relaxed/simple;
-	bh=nKJKctPqXcGZz+o+ME5hJEVe+jRvntkuSZYfuC+8zW8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DsTTtLJralMwWqBoQYD6IDz/s6v0vdZ/MGDXYfnbceiK3x4f4hAngLnHvLUUnrukor/Xy9DvPe79bfIxDhpaDVSMdgIOBX4y5M7LxxbSw34znZ2ilrOTgaAWBuMJeq9A/2OFvnAbN97MiWBhkQ7Eej0UO+821JzROn41qxOrS5M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=RSW1M9Au; arc=fail smtp.client-ip=40.107.159.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4F933A039;
+	Sun, 15 Mar 2026 12:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773576004; cv=none; b=QNDs9blpOtluF1fuQc7W6TAhokLTwBAxRCfw0eQa4QRkvWoyJ4gWrArH7KKkGRGPm04DA//oCJOJb81hzOWXPdUDZlEAoXnxkQi+G86U6TnQS3ifhuDRNl7oXRSGVyO+kvM4ToR6Hq81LRckequRrI3vSS6NoJWSGdN4Al0oz9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773576004; c=relaxed/simple;
+	bh=lxBUJrkmPutJFyxxYY70RzA9EEjz2HZtBHDF1SXNhSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LvTROo7Q+7iVWbVnQmgFPMs7aNfcxH3LhNvIqEol1vtu5ikqzrwSyu6Efpq3Vp/qmVmO1C6arJSQeWHzIwqSEL3Fuu6dMXhGmRnOAw7SVRWjAa3ptdsLFL/IWPDz3B02+ZNdz0d3j4RlgsFfI21EHfYYJt95iPDAunSRcT+azJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKR+ab0T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="RSW1M9Au"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xz5lZZ55QqrcPoZ7gXBRLd++QXruE03NmKbYSt9Ncet0u3YvjpZVtO3CZ8d0WAY07TC3H0T4JrJTBR8vnIeBdZl/81r8hi/fMeg016jwB/v7RtRFfLZJ40t8ucntX36fp9hmHTDeuql/kqsdrVYFn42PxHSl3zWBfZo64vX5CZitXQ6fTtoIKofrHTBdRdUFCtRnwgkVUjIa0AdlZTESkaeqvxgwp0k6KUg6lgPU8YjtRBWMNQgT3glCg6pQMAy5CF+0AlyP3pHe4XVWjtS6i18BZ/qtXp8F92UGbXqVbsKBSV4q0zgwVwb5W5gljTO2jBKcZuf/yFEwqIYD8eLy6g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R3cHtxDMxizvF8Rt0l8cvDDuYEqMvByNIz9WMEHOOA0=;
- b=l5DD1MrjLp99owOqzh9l3DbcmKZeDYFkWGbjVwGH7P6H0J2bMNyhhVPql85BzfC7E2d/vUBdoUZmY4LEqGAuHTJ6agBzlPBPEOxaIp7aNh0+2hnpZufDUL9WefWkkrKR6mBsImK1W09H9T8fj6hOTQkcewStJzutWhB/92IhSa7ueTleOXS6UC2ZbXs22ANTu9zDGisrdIkyvcP41ZCeFOz11wCS4/lOIjRYOcXO7X6OljkNyz+aH+gyfldYzEaYlpMBe2kuWMAVFKY2YFUB9zrrKfpLwpyxNbCK2nX6odEUroKxjypZbUow/g3IvfMJtGy1As4tGe7ihuFgaw725g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R3cHtxDMxizvF8Rt0l8cvDDuYEqMvByNIz9WMEHOOA0=;
- b=RSW1M9AuTK3HS77XKcsy8secASwUnRsycv1NObJtJAVFOPpuyivWsylFSGGYoQovsNDpBiU56fJuUU1ulVfyqlNOkopao3TsxNZgjuVmwc81lVWJbXdF67qA53qT0afBYFS6MroMn6olbKgRba6nDCDJsNxspkJ8phgksMZ+Fw/a757QcWCOufj4H8Cp+1ggX0awkEwp+sj7G62kic+XFvGuZNQvX4gb5tDqtmLeG2J3XJHORTkplFgbmDMKxojIY5aNrqOzvwqJOtUJyCmIO83s/OChBdJtxoFMmKuUFMIMGHDeSCaOK+Y7uRNi8f+ww2kKZvBAlHBd1H3jUDVE9Q==
-Received: from AS4P192CA0001.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:5da::15)
- by GV1PR10MB8660.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:1d6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.18; Sat, 14 Mar
- 2026 17:01:56 +0000
-Received: from AM3PEPF0000A79A.eurprd04.prod.outlook.com
- (2603:10a6:20b:5da:cafe::a3) by AS4P192CA0001.outlook.office365.com
- (2603:10a6:20b:5da::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.21 via Frontend Transport; Sat,
- 14 Mar 2026 17:01:56 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- AM3PEPF0000A79A.mail.protection.outlook.com (10.167.16.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9700.17 via Frontend Transport; Sat, 14 Mar 2026 17:01:55 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Sat, 14 Mar
- 2026 18:04:12 +0100
-Received: from localhost (10.252.24.255) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.29; Sat, 14 Mar
- 2026 18:01:54 +0100
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, <linux-kernel@vger.kernel.org>
-CC: Antonio Borneo <antonio.borneo@foss.st.com>,
-	<linux-remoteproc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH] MAINTAINERS: Update remoteproc repo url for hwspinlock
-Date: Sat, 14 Mar 2026 18:01:51 +0100
-Message-ID: <20260314170151.18319-1-antonio.borneo@foss.st.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKR+ab0T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A802C4CEF7;
+	Sun, 15 Mar 2026 11:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773576003;
+	bh=lxBUJrkmPutJFyxxYY70RzA9EEjz2HZtBHDF1SXNhSI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RKR+ab0ToiqNTWHpKevrNoHmxXta5IWsylx4pb44fX5XqPvMbmQdoSi45r/SNZQHO
+	 FiHWz1aW6F1/GRsXBMo5cQ+vVfHY31Cz9vhCcZOTHkM/2u03BGcEfZOQ4yolbi25hQ
+	 C/8jisi6ZNiGM4sYsM2F9526x2p57/Bc/grnhD7or8acqDw04GHj60CD99qpf9eID2
+	 t8bZAcPn/NIkG4RNO0y9dAxN9JVSVX51LFnAS2Zmvll6IAOjYN5mFVjcVRjadgUOTR
+	 H4Z7aJuO1Wb8RYawDlPSgKkqdnZfpuv3ZNNJqGyss7IDeGNn4z/8zsWdOW5IEUJ3A0
+	 bpn2/qreyo1Jw==
+Date: Sun, 15 Mar 2026 11:59:56 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Vishal Mahaveer <vishalm@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+	Sebin Francis <sebin.francis@ti.com>,
+	Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 8/8] dt-bindings: remoteproc: k3-r5f: Require
+ memory-region-names
+Message-ID: <20260315-rebel-catapult-fab5d4e77349@spud>
+References: <20260312-topic-am62a-ioddr-dt-v6-19-v2-0-37cb7ceec658@baylibre.com>
+ <20260312-topic-am62a-ioddr-dt-v6-19-v2-8-37cb7ceec658@baylibre.com>
+ <20260313-quantum-modest-prawn-896bde@quoll>
+ <DH1P27ZP9QYQ.2IP3X8G218GR8@baylibre.com>
+ <849c07bd-2f8d-4982-b5cf-c336807ab8ed@kernel.org>
+ <20260313-kettle-craftily-aa087e6b74db@spud>
+ <DH2KR1W7CWZW.35FWVV4MNS0NE@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF0000A79A:EE_|GV1PR10MB8660:EE_
-X-MS-Office365-Filtering-Correlation-Id: d00312d4-3edd-4dcd-e4de-08de81eb65c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700016|13003099007|7053199007|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	XXetjihql6EcYHgXtqMcAoaELj/Pg2xHMrtJhAC6ftzwyNZVUXgpnK3TwsViVnEaPqP8+tNkAQ7Ur1R97kPCL+KdwzYYeYbnxe8d+jSQqHVARcMDhWVZmn6lgujUaJBHifImVYIAtLi4kS8AiK2G8TnsGKG42lt86Go2WnId8PYTYfmppDa167YYfUtWFdR/u8EZI3dOts5/DPt4Je6qjUBe+kmMipqpcnqS4zR8NQ7H41SCktiP0aJCHGLABruWpVMyvZziyYM7+INechSZjHC4VJTP5miQpbpI2VBbYUm6t9tELlE0kDP1pjTJfbnhLxLhWfdG29qlA31rHWAH+EtBj7RxAOti6iiE7wh2tISWjh2qlTGKhN4Wif3sVqdNBN8Y/NI13IxHtH7zTVAekRmk/8DhsXQ67sgy1n8zC9+A9DPnvXTXxOJPwbdqCDH0f3+tPgj25AAkwosdDmZSLJ/EEgnp/yLdzaxxi3WMqjBdUGBFzLaQO/OxM8dthSre0umiKdq9oPtXhkgtKXEuyYbvmz/q7FAv9NCsZfaA8+FmSTUKVvKpnxLWynLo1sQa5uu82uwPZbQoYhbLSBRae+bVUHszWHSuU5YMt/etbtGf+l0SxAmEDIIDyBbd0yW+j0Vz7q8MX/Hh0eYt8Ecx2kuF2yro9phpzypjS/nq4nL3Y9Ng8gwtOWM2cT5izLDwsPXlTwWQH4qAg/bE7XDWTg==
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(13003099007)(7053199007)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	ZPBniuvYp61282OcwketbgaUZ4cWkcu2Wf9NDEeOJ9Q3ZdVV4olhxNQHBqtsX0jxJDhqKO+3wx3DY2UJo/Zr0g6x9DIHM3CdjNJwEnE6wttWbbL8/AoQYzD4OG4BobWf5+tck1zBuV+Ptq1G6aUD6qKTfQ74+3oRPtMYecx2F+UqqGWs1BXfUWGONZuVFl9ZtvRM6Wc/6vFNLypnIm3ci+6QWulnkStyYpjU/E77jIw4hFrvOsO8z5pZjXbW4ECMNzRL93fEK7/1DCDhbJHSkcch0Imh+YvOqxecgNgVsj9E9ZyhB+6qSu6S5k02Uoy6OaUzQgc/3rZR/7dlYMgkhYzMVy27VdzYpKrgbDEIGKZiQ4iTh7vwhHGgcxVsauRySAZjk4BVV+vlCFfNAfKXOuzXLP2BFDiXSxshie1YIvlLRb6J4e+g3+/MM3dXwiBY
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Mar 2026 17:01:55.6978
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d00312d4-3edd-4dcd-e4de-08de81eb65c3
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A79A.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB8660
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5s+wKzVm3gU0jb2w"
+Content-Disposition: inline
+In-Reply-To: <DH2KR1W7CWZW.35FWVV4MNS0NE@baylibre.com>
 
-Since 2021, the remoteproc repo is not hosted anymore in Bjorn's
-personal namespace, but commit cc73f503f7ec ("MAINTAINERS: Update
-remoteproc repo url") only updated the url for remoteproc and
-rpmsg in MAINTAINERS file.
-The old repository is still accessible, but it's not updated since
-2021 and is not anymore listed in https://git.kernel.org/ .
 
-Update the url for hwspinlock too.
+--5s+wKzVm3gU0jb2w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, Mar 14, 2026 at 03:28:25PM +0100, Markus Schneider-Pargmann wrote:
+> Hi,
+>=20
+> On Fri Mar 13, 2026 at 5:18 PM CET, Conor Dooley wrote:
+> > On Fri, Mar 13, 2026 at 04:49:14PM +0100, Krzysztof Kozlowski wrote:
+> >> On 13/03/2026 14:38, Markus Schneider-Pargmann wrote:
+> >> > Hi Krzysztof,
+> >> >=20
+> >> > On Fri Mar 13, 2026 at 2:13 PM CET, Krzysztof Kozlowski wrote:
+> >> >> On Thu, Mar 12, 2026 at 04:49:02PM +0100, Markus Schneider-Pargmann=
+ (TI) wrote:
+> >> >>> If memory-region is used, require memory-region-names.
+> >> >>
+> >> >> Why?
+> >> >=20
+> >> > This was a suggestion/comment from Conor in the last version:
+> >> >=20
+> >> >     Is this really optional? Shouldn't it be made mandatory so that =
+it is
+> >> >     easy to tell the difference between the two configurations?
+> >>=20
+> >> Then write it in commit msg. You have entire commit msg to explain why
+> >> you are doing things, instead of obvious what. We can read the diff.
+> >>=20
+> >> >=20
+> >> > https://lore.kernel.org/all/20260303-hesitate-preoccupy-5e311cbd3e58=
+@spud/
+> >> >=20
+> >> >>
+> >> >> I don't understand also why this is a separate change, but maybe an=
+swer
+> >> >> to "Why are you doing it" would cover it as well.
+> >> >=20
+> >> > I made this a separate patch so the git tree never has any
+> >> > binding/devicectree warnings for memory-region-names even in-between
+> >> > patches. That's why I created these patches in this order:
+> >> >=20
+> >> > 1. Add the memory-region-names as an optional property.
+> >> > 2. Add memory-region-names to all users of memory-region.
+> >>=20
+> >> So what is the point of this if it is optional? IOW, what does this
+> >> commit achieve? Almost nothing.
+> >>=20
+> >> > 3. Make the property required if memory-region exists.
+> >>=20
+> >> but only required here? You need to organize your work in logical hunk=
+s.
+> >
+> > My rationale for my original request was that the meaning of the second
+> > memory region is modified by this series. Previously it was always
+> > "firmware image sections", but now it can also be "IPC resources".
+> > Nothing changed in terms of the number of memory regions (it was 2-8
+> > before and 2-8 after), so without making memory-region-names mandatory,
+> > there'd be no way to tell which of the two configurations are being
+> > used.
+> >
+> > This patch should likely be squashed with the patch adding
+> > memory-region-names, so that it is easily to provide an explanation for
+> > what's going on.
+>=20
+> My goal was to not introduce any warnings in any of the patches.
+>=20
+> That is the reason why I only added the requirement for
+> memory-region-names at the end, after adding memory-region-names to all
+> users.
+>=20
+> The alternative patch order as you suggest is:
+> 1. Introduce required memory-region-names
+> 2. Add memory-region-names to all users
+>=20
+> After patch 1 there will be new warnings about memory-region-names
+> missing for every user of r5f memory-region until patch 2 is applied. I
+> can happily squash this patch into the patch introducing
+> memory-region-names. I can also update the commit message to describe
+> why I split the patches this way.
+>=20
+> Let me know what you prefer.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 55af015174a54..4afb4a62589e2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11213,7 +11213,7 @@ M:	Bjorn Andersson <andersson@kernel.org>
- R:	Baolin Wang <baolin.wang7@gmail.com>
- L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/andersson/remoteproc.git hwspinlock-next
-+T:	git https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git hwspinlock-next
- F:	Documentation/devicetree/bindings/hwlock/
- F:	Documentation/locking/hwspinlock.rst
- F:	drivers/hwspinlock/
+Personally, I don't think that transient warnings that won't appear in
+linux-next (just in the individual trees) are worth splitting for, when
+the split is artificial and goes counter to explaining the motivation.
 
-base-commit: 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f
--- 
-2.34.1
+--5s+wKzVm3gU0jb2w
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCabafOQAKCRB4tDGHoIJi
+0vmlAQDXTszQ/SaIi996hoyGcUzmvmQKd9smF0NlFNXUhneLxgD8D/pzwTGw2Npz
+4bEHbuKvDetJcOngtdSmF0DE0DVTsg8=
+=rQWI
+-----END PGP SIGNATURE-----
+
+--5s+wKzVm3gU0jb2w--
