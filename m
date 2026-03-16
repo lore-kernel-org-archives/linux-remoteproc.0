@@ -1,65 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B90E309F08;
-	Mon, 16 Mar 2026 02:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319B630C617;
+	Mon, 16 Mar 2026 02:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773626563; cv=none; b=TNJCnGsq9jmfRZpAnTweoVdH08ZnxrCZTpNScWSnLc2DuvmmEgJr1WO5iXh8LDOw9KgMWbu0jyFR8mydNI0ZMCH0EDbXmNzRAZipFOsG4Tx6UpiCg7EQp2+7tELZWWO0vfNin5085+uc3M6JnTxH1oI0BkY4mMFUjh2/YdgjxpU=
+	t=1773626564; cv=none; b=P9Jkjl4iMayuvMdlM61hc9A+vlYOYF2ATKHY6SmIgGGwCW647hWQCSkwsJzvZm6Aamkyf06fhhCNMijT54YaoDXRj9r95txuB6Ih8u2QI+LxX7fDPzMNLhUuu8WruiGGuXxdH19H2Vm1UF/rfcYzOZFhOJyfWaOhM+ouRWH+70A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773626563; c=relaxed/simple;
-	bh=BuOo5vxj1gLbW3Ia7bVSuXN20wkAZTTCpKCe+LqWza0=;
+	s=arc-20240116; t=1773626564; c=relaxed/simple;
+	bh=1rniWbs8wKJFLAz52IKvGUUEMXY14VYrjP9NXuQUYa8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cxLKYpRZ0IQYlc2l5D07CzPk8bQ+5DR2R8kUv+i4BCDvM5WBQ8KPfmxavg8DiIODeqXkCw6nsRMpFmtfAeYYKbd+by/YPaWi+WumOBJPpMaRVGoayjbKy2W/+Z9LmCv79dF4+OG0CnXNnWRC85wOfVfMqqcdHOMSeaQa/5LOi/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enSqJOGE; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=kXUZwkhrMeRmYuDnOTgfY/AF20aGwCdPfwk4uzgbBZESLHd6/v7D49LinGg9KWHxW3JsBH2ybSekYSYpZw0WCzKC0sF2pLcXgIPqm9otldTUF/USolYiltcYJPPjezIJhuhLtPDhaxGpN7JVZ8MhXvvaoEk9de/oCYucqmL2unk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZjBdcW0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enSqJOGE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B57BC19425;
-	Mon, 16 Mar 2026 02:02:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZjBdcW0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C10C4CEF7;
+	Mon, 16 Mar 2026 02:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773626562;
-	bh=BuOo5vxj1gLbW3Ia7bVSuXN20wkAZTTCpKCe+LqWza0=;
+	s=k20201202; t=1773626563;
+	bh=1rniWbs8wKJFLAz52IKvGUUEMXY14VYrjP9NXuQUYa8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=enSqJOGEpCVeo23yF51TwkmQQ1+nVNEIQWHEEohawdzs3ilK8JaMnaRaq/Qs1PMgF
-	 uXcc2B9rR0z9Ks54GvcG1gLFj/p3Zp7A28TZKLScBdaD25yum8C1eUDCzRnNMAADu/
-	 14T1y2Utn3b5V2rvs/yv4/WuJXE12k/wbkoozUEJKeGKiC1IsM3LnQ1e5mQAAbTLIc
-	 aQf7zY78YR6j24QOQFqskpZBSbeGwEuf2J6Uw9cKQENna/aAYO6IT1mJb9QA+Xjwev
-	 ywJXEyks4yfjWW9//wAtWZK0sxfSiRFYsRXdKeBkUnd2LuADBkL6R67wPOc1NloTQL
-	 L3TzwMePPXcSw==
+	b=ZZjBdcW0PEtedHR5OXtKy94ae41Vr74gB1wsXVcaSG+Lx1CgdqxdBW1W+RJHUKmL9
+	 UDW8FXD3KYeeTLNZp5pNjdVpUdsD3K7YflVibEnvkVMGuY3H7/OD/8CAm11KJZuu15
+	 qgAaYRgs1Izxa/t5Et5NfrZVcl7S9e2zCUSjumBTw3tsupHDdxOWQlhmrXUGw3qKRj
+	 3UhLFy0d7X107K2DzHkGJaTlM4O4RGA+eT/6g1jhPVZ1p/7HZ1YTy2QuSPv4TdaJxl
+	 3dQUq3aR8a1d+aqfcVp43F0jbhjnFeAdRVGA8If2MESaSyIuDB+MPRpygCGWmngmmc
+	 cTuNqEJLRk2gw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: konradybcio@kernel.org,
-	Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-Cc: linux-kernel@vger.kernel.org,
-	Alex Elder <elder@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kees Cook <kees@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Mark Brown <broonie@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath10k@lists.infradead.org,
-	ath11k@lists.infradead.org,
-	ath12k@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: (subset) [PATCH v1 0/8] Group QMI service IDs into the QMI header
-Date: Sun, 15 Mar 2026 21:02:27 -0500
-Message-ID: <177362655085.7429.167557193442435410.b4-ty@kernel.org>
+	Chris Lew <chris.lew@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/2] soc: qcom: smp2p: Add support for remoteproc early attach
+Date: Sun, 15 Mar 2026 21:02:28 -0500
+Message-ID: <177362655067.7429.10097680594827277371.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260309230346.3584252-1-daniel.lezcano@oss.qualcomm.com>
-References: <20260309230346.3584252-1-daniel.lezcano@oss.qualcomm.com>
+In-Reply-To: <20260127-smp2pv2-v3-0-4060b859b1e2@oss.qualcomm.com>
+References: <20260127-smp2pv2-v3-0-4060b859b1e2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -70,25 +49,19 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 10 Mar 2026 00:03:29 +0100, Daniel Lezcano wrote:
-> The different subsystems implementing the QMI service protocol are
-> using their own definition of the service id. It is not a problem but
-> it results on having those duplicated with different names but the
-> same value and without consistency in their name.
+On Tue, 27 Jan 2026 16:08:44 +0530, Deepak Kumar Singh wrote:
+> Some remoteproc will boot during earlier boot stages, add callback
+> .irq_get_irqchip_state for remoteproc to check the states in smp2p
+> and mark the state "attached", also add smp2p v2 support.
 > 
-> It makes more sense to unify their names and move the definitions in
-> the QMI header file providing a consistent way to represent the
-> supported protocols. Consequently the different drivers will use them
-> instead of their own definition of the service id.
 > 
-> [...]
 
 Applied, thanks!
 
-[6/8] soc: qcom: pdr: Use the unified QMI service ID instead of defining it locally
-      commit: 24f80cbe0b8f4c6b27d03c7a7ad707d76c1c4885
-[8/8] samples: qmi: Use the unified QMI service ID instead of defining it locally
-      commit: 8baf6b3b7695849581a91bdaf66af2be68ef32ed
+[1/2] soc: qcom: smp2p: Add irqchip state support
+      commit: 8a9a7b9d14c21d060301a8dd4a676ccb4ade5870
+[2/2] soc: qcom: smp2p: Add support for smp2p v2
+      commit: 42c4cf5d482813067789dd5ea2e33f3b7805e7e1
 
 Best regards,
 -- 
