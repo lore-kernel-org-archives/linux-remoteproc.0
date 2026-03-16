@@ -1,138 +1,124 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3111431AA99
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Mar 2026 15:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773675532; cv=none; b=i1SUy0wnAbih60xsH/Qu0gwCImlzCZ/Nr2648a3py0IhUUR8G+lZMLoXtltsW50mmbpDlBcKh+MEE+VWtFFi8xxW2VN7AGzOw4VHSfByQEzFshL6U9fyWH8yGQzt/nsBaQULDjgEm4qoyeRltCSrTqkUhJtRjKTB0cejLTVyPfs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773675532; c=relaxed/simple;
-	bh=SuxSyS+PpsRM7oOsD/WRLgROVRgLuw4xMKMLzmaxo3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuZ/2DsqCDDZCKosv4qfBlXic+qWHN60X/KMW6MdvPUhLU9tgYsMGFICYYvrEac+IyHQZP40yVZX3Nio3p3+kYFU7nC7O1m7viMxm0NZDUCT/HmgrR56dse2MKmcdi5wWeCwbvW8bZ0mDw7kKdQXb2nAXR513xuO4zTDVxqgt80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pG5ZPmB3; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5578D3CCFA7
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Mar 2026 16:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773676868; cv=pass; b=Gjg9N2Kf9huDdAHQgdpgN470J+Dp6mwnfwSyC+Ri1pn8/WR/SoNIwTXr/oJUxF091trm7+49efw6zjMcYujuWP0BURf/JAHsPk8nhbfz85b92Rc9e236fl0Vz4d274nyWj9Y7tDSM7VmvgOzLfHeBy7nJME8MhwQgXT0jXYhHvY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773676868; c=relaxed/simple;
+	bh=nRTROiegC3HHzc2PKkDT6LEu+pHZlAThf22kVsmxLDs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oqNfOL+YuMLhmquxHKHWYgnC697zOGkUo6zEQtz09NE0KnavB9N5GhcAt5CYxEDuVzz4Ej+qmrEfyFqE/0ZAvgWMH4vz0sw6p2fAjxHrC6PL6WBe0A4miYc6UipcZXMyGv6IjJ6Rzn0PF58P+zvWCRLU3UJErrZtoMhToqaeb9Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tRvR8jWP; arc=pass smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pG5ZPmB3"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2b042533de1so12444615ad.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Mar 2026 08:38:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tRvR8jWP"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6618bc129acso6104476a12.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Mar 2026 09:01:07 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773676866; cv=none;
+        d=google.com; s=arc-20240605;
+        b=ePKvfXCGFpWartTxnSMDwaY8yj1NTyNMm3eBvP9a4RgRz4ZnplLLuDvibak2B8wJZN
+         eVXkamvRk2CRZ9po7YS7B1luMneJs03H/VywqznUnj65Do0EtkBL2dY2iNljYJmSrcs5
+         BjtmL1IZ2HaxZhTqEB1MMPUiDix7auEsJFbAfR6BM6xI0edttGSdCXD0eCxGXLVM7f8K
+         SvNjo8dNDnNg8XEthTA2FNbX2KShMTbZxu/7SorOJ9eLu5qpVjvKFnTxUTbPQTXICJPV
+         uxd92Me4f/7Zit9Njzc9OTeB+GinwnN4hH5wa6UcLEU3vgiNc6kG2FQz/xc2ETDqlNiA
+         na6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=nRTROiegC3HHzc2PKkDT6LEu+pHZlAThf22kVsmxLDs=;
+        fh=NeQE3iCmWZMVk4l7zSvNIRhxV5C1QP9Zr9nIbDtL85E=;
+        b=QBmqWnEOOv+YWKCimtPCzbV/cLixyNjGtnJRlnLyWUzVsX/bU+G5Ki1D7j+F80ponM
+         27QJJIVDfawD0AC/8nJQZEcwNqDXJWJ0Lb4wdnKIBJEV2i8xhtjpBQrqvpDLiBBz+euy
+         qu3/aJnUGDu4lavase2H54Ri/5buhgyn4eeLZ7ym4Jd+M0aNhsLKKhdg682wZJLJkzNn
+         z+sg6gxcvsUUxvJ3xL9UNpK1fLxZeu/R4rKp75caU6J+C+RKSgINePKdt3qy5kJNJ5xz
+         WAPZ5avgOghm4U57vHo5wEiBW85P/SSKvxr5KArMmBOe6bE3QI3kAe9A8QRlBzPQSDq3
+         9A1w==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773675530; x=1774280330; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U9aCgOjWIIxNoZyTqWIPp/K8d98rcBE2FRaCGCiBcKo=;
-        b=pG5ZPmB3KvaR0CESkDNRaQnK3oBH4fsr4gVgy2jKNAiAHDmg58HilYvqaXR74eYtFZ
-         uBbykEAIxZ1JJpYEqQxXXXx2QDHzCE3R5xdk0mnmX0+uG9Z8OtR3quIfi8QXnaqQquXO
-         OuNyJoxoVDXvBaX9945seJV3rHhbWiBVg+HmMbUK9VGWyppTYlT9frVs5qh/qnK4a3yM
-         MvEqHmt/gMX01Ll4WgKFM+mqxeXcxmm2ZgNHIYuQ/6bjUkKHeTzq9ZgjeJ71vLS3TeNp
-         Bhtq5+TeMhSQytHxVIhSjvT0xJeC7zHKFmgRhFd2u6hg7bvQ2k2PMYE35HeQHL5SEBW2
-         k2OA==
+        d=linaro.org; s=google; t=1773676866; x=1774281666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nRTROiegC3HHzc2PKkDT6LEu+pHZlAThf22kVsmxLDs=;
+        b=tRvR8jWPdYpapywuFbFHAwdbkmfciAm97lupRo23Lz95ol4WDw47KF+V049m3ECDKP
+         khDfrPMN6aR/vimprZmLRF6GU2CkUGsd4Jv5xtJGU+u1yNjoX+Yy544KdjdWYeVUqwvP
+         PAuT67hKYlEjtdFL0MRqVeSCfe5qhhfNz5y8pDlti3aC5sbdN5iYW7S3kFsgmreBC4CN
+         qAGJEDXXCt/WGvWjeZrLQIJq7Yect+cT6Mb1tiyLaxvjXE+m/ds4hH8ov+Y8sMqZNrSm
+         SWPoHKrCT3TVDDSq/C0ySD3PoMmRqSWtUYuAZVCOsx/LSb4q+nVLCCHHlStxxvaawLlT
+         Ym6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773675530; x=1774280330;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U9aCgOjWIIxNoZyTqWIPp/K8d98rcBE2FRaCGCiBcKo=;
-        b=jeNyU4ou5PUS6DbxZmSgGTI2UPOfj7APItzRgLLI4oFDJ24zd/CAIfJwCA3kVu3qF+
-         Uq1yYJ811GJJ/FH+7+/6InVTYRkAF21mOgWlYPZTFq7kVJooVTB9ExWgDXobe9cEuvAl
-         Az9LuMASGf1nk/LF+4cMxIlxys/WPBA8bzP1G0wasa2t2cyCL/uZS8PwzTrrKJNEYXjj
-         lYJlwqKaY1p6g2gJtqr6mPohjYbwdXxfb7QqUKZu/djz0zynhmnBU3nEaZjoiqlAmfvA
-         SuLfHgRo0bfJau4EJcMoxqjiy6PO402GTeAboJxSU5NJgO9TxMXgA3niJdqME0dUIW0C
-         MxLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXm8WXCOBQvs1h2xfhKP53shNZxa1XFfEqgqHVSywSarpQ57ATbPWq5DrDuzxf9ak/gGH+JOAukk/R3Fh+NlbKZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcyJsq0lgmKCbtbxtEfT8v5cp+hr5CbRLj3zzVGPgpH6hpzcoN
-	+brnlIvQTzKk9HGIpl7XuYG+OVOYSx71wvjCnpsIjadXK4pabEl1r88ri0f77TP7rcs=
-X-Gm-Gg: ATEYQzytG8Yx3BlxawnsKHO1cieXTwigW7WKcy5BKejsOTAEZsL4qumgKtGu/iTTBtJ
-	aBgnqYW+0KOuXDwagerhdvV/rnVtueOtpfhqNL8T1mcBh+Vf1sjfFwMWF+OH/3OllfWbHTdPS4T
-	8wznwEn0cLn8Tioh6iG7D8KsoSXRJEzUPPC8nUyXJ4zRd1uU7/4S7KBVrGxeecCziKk3nfyevbb
-	s5t/T1Hb6qGICJO6th9qH7QMsZaaB+TYD8PjLd24wwaE59Y12j/p48tTqEXAbWHBcZG8j5hYZKP
-	Rk+Jdn6sFStXmZMHVXnJh2taczmEUU+0Q8kWuMBhB51rCmkSfANw8UHrW02Lw9auQL2Y8G4aGFq
-	kQ7KeJI2E31/dh2gE3TOpr0WYcBlIa9Pyx5Hhye/BphY9dA5Il/UcvohupSalM7GxYIRptirkN1
-	Zfq4Ux2XXbX30L1yyitfWlWsGEQBKL0DajsEdQGQ==
-X-Received: by 2002:a17:903:3b8e:b0:2ae:3afc:eb42 with SMTP id d9443c01a7336-2aecab04a1dmr126215285ad.38.1773675530440;
-        Mon, 16 Mar 2026 08:38:50 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:ca75:c28f:fb21:b50f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aece7ed753sm142542475ad.45.2026.03.16.08.38.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Mar 2026 08:38:50 -0700 (PDT)
-Date: Mon, 16 Mar 2026 09:38:47 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: tanmay.shah@amd.com
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] remoteproc: zynqmp: release mailbox channels on
- shutdown
-Message-ID: <abgkB_9fMPGtq3Jn@p14s>
-References: <20260303235127.2317955-1-tanmay.shah@amd.com>
- <20260303235127.2317955-4-tanmay.shah@amd.com>
- <abA4wGI7DvQLhTzY@p14s>
- <91a3bf88-cd64-4f3d-adb6-5e21558e8ff8@amd.com>
+        d=1e100.net; s=20251104; t=1773676866; x=1774281666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=nRTROiegC3HHzc2PKkDT6LEu+pHZlAThf22kVsmxLDs=;
+        b=QqD3bPRUX5yT+Cl4JtD057IS7uhCp0nH5HE1/F7jRN6TPFNtXuEQFvlMveq9+yZXfq
+         ZBt+s4qz41R9eIPfWFCnMebZ56DbqQTLVApf8rwTzgFYjOX9BbY+tIWk/pKK9994DFN6
+         S88Ey59h83+XuZAGlKU9nhw15J0n/GuwbEZrmBcVWXDoRhQjLfSnytJihdPf6ntn4wVx
+         3z9KCgB4JJW3nEFlwTHb/3A+qqLQL8SE49Oy7xtvbKxGixb2t2oIzmNLjUSC2O3pbdhV
+         +S6nRp+doDSKs57WYCspqlTciV15/THZNMY9UArOAPYCxYiguCtCDUxDceaqT3TaPADj
+         PWkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDLfQp14soY4eiiectfSGdWVND4Hb1yzIBs6y4Gc9v932J37lhOEou1mfM3d7J2VqfiIw8KM/jTZxtnM6rTSOS@vger.kernel.org
+X-Gm-Message-State: AOJu0YztLObGb9C/CMwBw60s1hHtJDf3qUG42Hz87q/45pA6B15wUwdQ
+	HZ5xDW6V5DEr8/lzclAvg1u1s5F46HuOuchYOoliloM8dbm+34Lk6CyyTQ21+E71ZYrHR1n6YSj
+	+fCVMrWEAKjGqJ2q+i2TiEuaAlNWe8/6FKYg+XESHbw==
+X-Gm-Gg: ATEYQzzTpr7nvYHzSseCuk0wqtXTN7Dk4yAq2i/dz8oZrSrbBdldp2YgKTTfiRNn0Jl
+	Gn02KFQczQW+8YXmE/kIjCZ1SXOnuaaeP7WCBgpKNWJZabtEMN8bUv883oSAejdyEfcT2e9Lhvv
+	csrLNk/5npo8NsYauQ/1Mknv3mNuiaDvaIF+XHiWhib0derRD64BtcZUCaqU/rsaCmdKl9fQuo6
+	hAYWuH5NxJSglfUkagOBpQZTzOnJegBRtIkY6SbVbt/eOV3J/YULxtYGP8NwpYXLzsgLIEMflyL
+	tFV1yXkuCaznTaLVBvmDLt2pHO1w8leVUuXF32iRFg==
+X-Received: by 2002:a05:6402:51c9:b0:65c:2af1:b7e2 with SMTP id
+ 4fb4d7f45d1cf-663bac17dcamr7423927a12.27.1773676865593; Mon, 16 Mar 2026
+ 09:01:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <91a3bf88-cd64-4f3d-adb6-5e21558e8ff8@amd.com>
+References: <20260313195801.2043306-1-shenwei.wang@nxp.com> <CAD++jLkVZc7J+39eUtpWz4+YQm035HDtUyiyrEFGifQkcSMsCA@mail.gmail.com>
+In-Reply-To: <CAD++jLkVZc7J+39eUtpWz4+YQm035HDtUyiyrEFGifQkcSMsCA@mail.gmail.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 16 Mar 2026 10:00:53 -0600
+X-Gm-Features: AaiRm52a6xRhLIv8WCDX8JG5wzLTI5tmdCIrfHWi7mJRzbOdI91SV43T2PYw5ig
+Message-ID: <CANLsYkyd8x29kz1u2dkyn_5hhWVJehz6VVKEx81Ew6i1nKObwg@mail.gmail.com>
+Subject: Re: [PATCH v12 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+To: Linus Walleij <linusw@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Cc: Shenwei Wang <shenwei.wang@nxp.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, arnaud.pouliquen@foss.st.com, 
+	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 10, 2026 at 11:04:54AM -0500, Shah, Tanmay wrote:
-> 
-> 
-> On 3/10/2026 10:29 AM, Mathieu Poirier wrote:
-> > On Tue, Mar 03, 2026 at 03:51:28PM -0800, Tanmay Shah wrote:
-> >> mailbox driver can't introduce shutdown callback, as it might endup
-> >> closing mbox channels prematurely. By allowing the client driver to
-> >> manage the shutdown process, it's ensured that mailbox channels are
-> >> closed only when they are no longer needed.
-> >>
-> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> >> ---
-> >>  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> index 5e92dc51f1c0..50a9974f3202 100644
-> >> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> @@ -1490,6 +1490,8 @@ static void zynqmp_r5_remoteproc_shutdown(struct platform_device *pdev)
-> >>  			dev_err(cluster->dev, "failed to %s rproc %d\n",
-> >>  				rproc_state_str, rproc->index);
-> >>  		}
-> >> +
-> >> +		zynqmp_r5_free_mbox(r5_core->ipi);
-> > 
-> > This is already called in zynqmp_r5_cluster_exit(), why doing it here again?
-> > 
-> 
-> Hi,
-> 
-> Thanks for reviews.
-> I think cluster_exit() call is called only during driver unload. Where
-> as shutdown callback is called during power-off commands of linux like
-> reboot or shutdown.
-> 
-> That is why I am calling it separately during shutdown() callback.
+[Adding Andrew Lunn]
 
-Then call zynqmp_r5_free_mbox() from zynqmp_r5_remoteproc_shutdown() rather than
-zynqmp_r5_cluster_exit().
+On Mon, 16 Mar 2026 at 08:23, Linus Walleij <linusw@kernel.org> wrote:
+>
+> Hi Shenwei,
+>
+> On Fri, Mar 13, 2026 at 8:58=E2=80=AFPM Shenwei Wang <shenwei.wang@nxp.co=
+m> wrote:
+>
+> > Support the remote devices on the remote processor via the RPMSG bus on
+> > i.MX platform.
+>
+> I think v12 looks pretty good, if Arnaud gives his ACK on this patch
+> series I think it's ripe for merge.
 
-> 
-> Thanks,
-> Tanmay
-> 
-> > I have applied the other two patches in this series.
-> > 
-> > Thanks,
-> > Mathieu
-> > 
-> >>  	}
-> >>  }
-> >>  
-> >> -- 
-> >> 2.34.1
-> >>
-> 
+Please wait until Andrew and I have provided our RBs before merging.
+
+>
+> Yours,
+> Linus Walleij
