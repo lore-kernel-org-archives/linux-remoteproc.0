@@ -1,72 +1,76 @@
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F181D61B7
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 15:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D13EC2EB
+	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 15:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773760478; cv=none; b=YFDXFri80SEBK8/Otet438x+N/kI7yW4zK7BazJprSy08NIf1TXUkv/x0cQIUOoeW5fEmYvPPDRspAjisjVyflrYuKD62NF0IaOIINeVZJO3Yoss+6PDwVdnYjM0+fOD5pIFl3UfqwrS5ZFhPCifQTcAXfkpjpqyqxIJ+pFg8TY=
+	t=1773762040; cv=none; b=c5UPtaFRs8nUzwneF1HXgiSAjPMS8Xr7f3QZ2yXYbsW29n155Yhcb7o9woYPd8wxTeKZuQKA/HCEn/fPoyvZj9ahgjzWlWpGiewHxw9jc793WSlLOnPLbtIrG6fIydNvXt2dsSrMgqU5PcLuxcZk+XIBHKbFYDdvLmZCD+SfdKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773760478; c=relaxed/simple;
-	bh=8eIg/TsxhBfhrDXrcLNSgXHJF+jPGKAn9zEiVwie6to=;
+	s=arc-20240116; t=1773762040; c=relaxed/simple;
+	bh=+28TyEqbgg+eO18RfYm/y8EenXN+3buC5i+dg4Bi5ho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vE/uDmwmOV4F/6o9KRPNshNdG9qUBFSsE9LLJP8A8b3dSRNXQtGm1CbhGpBqG1fiaGgt3AMaYJ4vgV7d6YKqVcDRPMYhxIiA+aIqjKzHIWZbUxvaH3qjShUTmKfNquoLnu0hgg1MZElKZVEw+f4DBE82RnvmZFxRKkcj7lHTfkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oCz/uBzI; arc=none smtp.client-ip=209.85.210.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+oLSfttIFKAAm6bWM7Y5BZYV1l5mY9g/mlwosQFfahCmKrpDK9V+mv46gV+oac6tdtiGWV7aWOjuPeEU5sUa8Rn6Qo0Yn+ZKlXYn0CWeIbyRxW48l8FtMvLBA21oNLkSIqkj6TqDYD4hCgJfGd07lu5B2ct6hP9wjB+ilqRuEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FZYvqUx7; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oCz/uBzI"
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-829ac4670c4so4460144b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 08:14:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FZYvqUx7"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-35bb9070644so95285a91.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 08:40:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773760477; x=1774365277; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1773762037; x=1774366837; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EtOSe21dSzIPk1g7D20jFSn+X/ojhgl/PZA3x4gz+zw=;
-        b=oCz/uBzIG7FxbeyIxNDfFfC6cxEstDXE+qTrNKsWlfOhf5SnllRCiWVV7x0dgyKKOv
-         KqlXZ4f2DUty6BlW1OkcTfkss/m8DqeVJeqk4KPtZfstvomXkte5QSvmLmWWv9Hn2JiK
-         kSJKcf7eABdElCbHzyuEf2YguvwGhKWgJoURVUiPizx8I/jVC7FbOtcCaZZkIh45UkbP
-         RbVfD68ROgjXp0szih0lv3i2M4gN4e7SVj1XUZfH0Ohlgi8mXDCGTEYg6tLp11whvN6v
-         N/XuC9ueBHobPiENXAa4JVajqRzuwUJFM5p80moOz5lTec0te/2cJRQCZrO7tsyqzEG2
-         Vg1w==
+        bh=jMbpigMk9kBN96FxVGa+Cb1r1OnBt+q3Ymeru06O2aA=;
+        b=FZYvqUx7Lwf7RY8WTpCCC0WRC//e3UKkWCyk0EswgyXWhvNy3jTbKY2XR6jKR2o0OD
+         bnXCSbnHgOqJIy/VIxbP1As1oM4YzIstD6Jg9S/sHXLGQS2i75+oIQ5U7Zp5fvoPOu3I
+         ofp7MRP9H9LK5x8++UTiFPeMeaxoTcbULLH4VCwsijNFtZkFCCif80EiMzpH/lVqJNIQ
+         8oadJfI25UIb2kYrAHVW2lbfghXV9OJdsEJDaYX7gjZ7tHIZYk1UN6BuTr79GSci85gG
+         q3C3lqhjaHI10x495YcRHOA9KXhTkGuegQ+/qcUSMugN41VcKUoXzDo20l+wuktpzyyw
+         IuiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773760477; x=1774365277;
+        d=1e100.net; s=20251104; t=1773762037; x=1774366837;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EtOSe21dSzIPk1g7D20jFSn+X/ojhgl/PZA3x4gz+zw=;
-        b=Vh0poSw0jvgP2m/013tiG4vmtwTevpwpRwKGifLhiVB/94Fa/5CNiTZzASIulpPQgx
-         TOoY/5I3wYOc6N/AT6Wk6RvcOPv9UgzYRwuR+ZGBTlVOn+gZpxplh8wi8yeQbI/ecfKt
-         c9RB7ealONpx7R8T5pKlhRVW2GYZKC7NAZV2RUIqSuvtePdzqU+r+7kXS60veF7SxS/C
-         E8VE640pOj238a+TU2DFeoOk3vfyxrTmSxuxiGhpuu7ZNJ9igKk+U5n32E5ptxu4A7Sf
-         WRhRm72GX/TWBdYaQGW5irSXVtGzH3s4Thc1J04IZoDEu47gjqrr346zFPC1FHeHPCZ1
-         SN3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWfF4hpIzJRsVvREuO95lOAP3Hil+x4U9YTHulmbVCUM5Ep4N0liAbmfwH+p2OHP0VYceZXrJmA3o1M7pQfCM3/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIbQ9b42LJspRrzbmMcn909WWk8VHqQ7jqV7mL7JwD1y/F9kPo
-	PuxmIfLygyMNZexOByn2jAyp96KSFQqafSzKWXhqVX37xFKBwprd2XpOyXAvLB9i1uo=
-X-Gm-Gg: ATEYQzwY4v3IoCIdT3h+qbmEdXcLaHTJIDMe0o7nBFcAedyobdyEnIk5g9EKBQ6n3E6
-	sAPVxOENaf2KY7jLFhEiwIDAVV3GEsKT3QM+LRWoGuVB8u823vUB4NxxOS4HuPS1n6HopynV6Bh
-	C6j9dMVkLrQG63EazlMjkExAieQh2yAhTr8lGIftthwzuKxqbDkVosbd1GaHdA6W7a/XrLhfpuJ
-	YqPHz7eUaKpSPzaKcurkV8duTN1WnprR047RN3NtFQMHaRiTwdma5yXOTqjFO9TtDkkudqpvrJY
-	u+RjZoSCZNtZtCz6ohpsAIxljo49F7DXyuESpFbMGidMpE70LerrT7yUK5+Mm+0xl/dNjrVpiDs
-	Eao3L5SSps2N88nddnllGThr5577FsnA+OhNAgaiQxn6h2UlODp5StkgFLQwfLE4KMhq5vAMC9p
-	UZXn7W34WkiiPPEYxjA+LuO6coUKA=
-X-Received: by 2002:aa7:8886:0:b0:827:4372:dd15 with SMTP id d2e1a72fcca58-82a19898705mr15504292b3a.40.1773760476640;
-        Tue, 17 Mar 2026 08:14:36 -0700 (PDT)
+        bh=jMbpigMk9kBN96FxVGa+Cb1r1OnBt+q3Ymeru06O2aA=;
+        b=gdk52TvQWJPcJ8dETP1I0fd4R6TyY+pkm30ym7+7vQLFBOh/NmFJfGDj4s5A/at48Z
+         7M+ZmnuTZDDGSSF35cJqtYWEnuN32xsrIqILEZFPA330otFiTOLvCbMoRH916SecXnhl
+         McwIV/+JQrpT0mPAcuC7wzWX1n7mpOmlclsyMYiyZCtsDKx06Wba0fIKRGNjHMmtWCZh
+         NAuabhFDvb8eAAvgI9GdGF58XT1S/MujwOMPF8+Yf8wv1TiLvugqkPx4q8dspZ0lUjpV
+         sn51dxP5IzA0bi8urI6A1uelAB7R8HlyfYTm2SGc21JePtgiW4T0QYvJyqj46+Zq+GaH
+         m/vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOfbhJIuXAIWISihtsLYgmyeg3RixyVAkqZyDORcCiNWKDcjt0jcwu1uLoWhqWrie1DCgLSDLwHILnu/fNFlbr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyacBx89rhWkSeOMv1+PCTmnlWRQW2iCHYXALhOhMocJgTvcYZ5
+	pgHF491dSVE60T4raVRw8qZlOZAFUTg/+LfOdi33QhkXzjQxLiCACkZ3iGF1/sHYDhY=
+X-Gm-Gg: ATEYQzwBON+kbwxM9+Hmut1p85P38GT70ChPmzVCTsEDsGJxPzw1RmglhlBVFzDqHCn
+	T/3IEei8dTQUGdtxXqgTGdA8Zr3a5TlZKRXXM8uIiKoiXkS6Ze+rEkFxOUArzTCO71ExyaNfNf3
+	PDK08UolyvDwMlbRZI2nBM5/iIbsypg7r1ZSfw2oBeHSwlB7NPf9TWWsBOTHDtRJF6pmCWgBGih
+	2jMYjgCuKg50GGG5LyP5StW2vDXZJiZIvGxlnSt2ptts05SLaZT4L1X4VdXbO8DYWdoROu/CadU
+	HKdLNZ66YgDOXsv47TeBV5+cTzoj8f1FLoVPBIGyGZo2UeSKX/RlVWOkQkZz5OHK+v3eLu4OvqN
+	NyvWn3BOCBIGU69OCGEPhJo3V8RntH1NEe044wUnfXyk2n3mdDHMBNTvMY45AEnEqAXl7GVBHd7
+	KC3IuWtwVSTZSfobNTkjNOpQEGpQPqE/aJCtxysw==
+X-Received: by 2002:a17:902:da8f:b0:2ae:504c:ae8a with SMTP id d9443c01a7336-2aeca936252mr185416155ad.16.1773762037073;
+        Tue, 17 Mar 2026 08:40:37 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d74d:3187:221b:ee9f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82a0734039asm20131334b3a.41.2026.03.17.08.14.35
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aece7ee4a1sm188860095ad.54.2026.03.17.08.40.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 08:14:36 -0700 (PDT)
-Date: Tue, 17 Mar 2026 09:14:33 -0600
+        Tue, 17 Mar 2026 08:40:36 -0700 (PDT)
+Date: Tue, 17 Mar 2026 09:40:33 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: tanmay.shah@amd.com
 Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: xlnx: do not send new mailbox notification
-Message-ID: <ablv2f7Y7bESE3Bg@p14s>
-References: <20260219224329.3475032-1-tanmay.shah@amd.com>
- <abgfO32Dc9QbgQau@p14s>
- <dcf81aa3-a50e-4545-8d6f-7885c6804e87@amd.com>
+Subject: Re: [PATCH 3/3] remoteproc: zynqmp: release mailbox channels on
+ shutdown
+Message-ID: <abl18XFwhKJ9bVRE@p14s>
+References: <20260303235127.2317955-1-tanmay.shah@amd.com>
+ <20260303235127.2317955-4-tanmay.shah@amd.com>
+ <abA4wGI7DvQLhTzY@p14s>
+ <91a3bf88-cd64-4f3d-adb6-5e21558e8ff8@amd.com>
+ <abgkB_9fMPGtq3Jn@p14s>
+ <6e18177d-d2be-4d42-807f-2238436bd4a2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -75,85 +79,89 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dcf81aa3-a50e-4545-8d6f-7885c6804e87@amd.com>
+In-Reply-To: <6e18177d-d2be-4d42-807f-2238436bd4a2@amd.com>
 
-On Mon, Mar 16, 2026 at 11:29:49AM -0500, Shah, Tanmay wrote:
+On Mon, Mar 16, 2026 at 11:37:05AM -0500, Shah, Tanmay wrote:
 > 
 > 
-> On 3/16/2026 10:18 AM, Mathieu Poirier wrote:
-> > On Thu, Feb 19, 2026 at 02:43:30PM -0800, Tanmay Shah wrote:
-> >> Only write a new message to the tx mbox queue if slot is available in
-> >> the tx queue. If queue is full, then do not send new mbox notification.
+> On 3/16/2026 10:38 AM, Mathieu Poirier wrote:
+> > On Tue, Mar 10, 2026 at 11:04:54AM -0500, Shah, Tanmay wrote:
 > >>
-> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> >> ---
 > >>
-> >> Depends on: https://lore.kernel.org/linux-remoteproc/20260209234430.512492-1-jassisinghbrar@gmail.com/T/#u
+> >> On 3/10/2026 10:29 AM, Mathieu Poirier wrote:
+> >>> On Tue, Mar 03, 2026 at 03:51:28PM -0800, Tanmay Shah wrote:
+> >>>> mailbox driver can't introduce shutdown callback, as it might endup
+> >>>> closing mbox channels prematurely. By allowing the client driver to
+> >>>> manage the shutdown process, it's ensured that mailbox channels are
+> >>>> closed only when they are no longer needed.
+> >>>>
+> >>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >>>> ---
+> >>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
+> >>>>  1 file changed, 2 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>>> index 5e92dc51f1c0..50a9974f3202 100644
+> >>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>>> @@ -1490,6 +1490,8 @@ static void zynqmp_r5_remoteproc_shutdown(struct platform_device *pdev)
+> >>>>  			dev_err(cluster->dev, "failed to %s rproc %d\n",
+> >>>>  				rproc_state_str, rproc->index);
+> >>>>  		}
+> >>>> +
+> >>>> +		zynqmp_r5_free_mbox(r5_core->ipi);
+> >>>
+> >>> This is already called in zynqmp_r5_cluster_exit(), why doing it here again?
+> >>>
 > >>
-> >>  drivers/remoteproc/xlnx_r5_remoteproc.c | 5 ++++-
-> >>  1 file changed, 4 insertions(+), 1 deletion(-)
+> >> Hi,
 > >>
-> >> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> index bd619a6c42aa..622de733c929 100644
-> >> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> @@ -332,7 +332,10 @@ static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
-> >>  	int ret;
-> >>  
-> >>  	ipi = r5_core->ipi;
-> >> -	if (!ipi)
-> >> +	if (!ipi || !ipi->tx_chan)
-> >> +		return;
-> >> +
-> >> +	if (mbox_chan_tx_slots_available(ipi->tx_chan) == 0)
-> >>  		return;
+> >> Thanks for reviews.
+> >> I think cluster_exit() call is called only during driver unload. Where
+> >> as shutdown callback is called during power-off commands of linux like
+> >> reboot or shutdown.
 > >>
+> >> That is why I am calling it separately during shutdown() callback.
 > > 
-> > Is see 3 options to handle this situation:
-> > 
-> > (1) I can provide an RB for this patch and Jassi picks it up in his tree.  The
-> > downside is that if a subsequent submission conflicts with this change, we have
-> > to wait for the next cycle.  In that case:
-> > 
-> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > 
-> > (2) Jassi provides me with a pull request to bring the patch in the
-> > rproc-next tree.
+> > Then call zynqmp_r5_free_mbox() from zynqmp_r5_remoteproc_shutdown() rather than
+> > zynqmp_r5_cluster_exit().
 > > 
 > 
-> Hi Mathieu,
+> I have to call zynqmp_r5_free_mbox() from both handlers i.e.
+> platform_driver.remove() and platform_driver.shutdown(). I can't skip
+> either of them.
 > 
-> I am curious what do you mean by pull request?
->
-> Jassi had included remoteproc mailing list when sent the original patch
-> here:
-> https://lore.kernel.org/linux-remoteproc/20260209234430.512492-1-jassisinghbrar@gmail.com/
-> 
-> Since then no other change was introduced in that patch. Isn't it enough
-> for it to pick-up for rproc-next? I am just asking from the process
-> point of view, what should have been done differently?
-> 
-> If all looks good, then I think you can pick up original patch from him
-> for rproc-next, as the same patch got merged in the linux-next.
+> Because during driver unload (rmmod), shutdown() handler won't be
+> called. And during power-off commands (reboot, shutdown) remove()
+> handler won't be called.
 
-If I apply Jassi's patch to rproc-next, we'll end up with the same patch with
-two different SHA1s in two different trees, something that is not compatible
-with the linux-next process.  To avoid this kind of situation we work with pull
-requests, which doesn't change the patch's SHA1.
+I was under the impression that during system shutdown, ->remove() and
+->shutdown() were called sequentially.  I looked into the platform_driver
+structure documentation and nothing of that nature is described, leading me to
+beleive your assessment is correct.
 
-Since preparing a pull request takes time that Jassi may not have, I provided my
-R-B for your patch, allowing him to merge it in his mailbox tree.
+I'll apply your patch.
 
+> 
+> Let me know if I am still missing something.
 > 
 > Thanks,
 > Tanmay
 > 
-> > (3) I pick it up in the rproc-next tree in 5 weeks when v7.1-rc1 comes out.
-> >   
-> >>  	mb_msg = (struct zynqmp_ipi_message *)ipi->tx_mc_buf;
 > >>
-> >> base-commit: 462799c088e71b2b8a511c2a9649420fcb569ab7
-> >> -- 
-> >> 2.34.1
+> >> Thanks,
+> >> Tanmay
+> >>
+> >>> I have applied the other two patches in this series.
+> >>>
+> >>> Thanks,
+> >>> Mathieu
+> >>>
+> >>>>  	}
+> >>>>  }
+> >>>>  
+> >>>> -- 
+> >>>> 2.34.1
+> >>>>
 > >>
 > 
