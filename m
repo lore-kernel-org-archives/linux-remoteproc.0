@@ -1,182 +1,191 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012059.outbound.protection.outlook.com [52.101.66.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604463C141A
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 12:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773751037; cv=none; b=iQbCk4dyn8eH6K3oITJGHFNNrIyZ5IzkERR6W79bO74VK2ZkBkkG0326ltJTNqOb59bha0jvVHc5vnGayRxcD4KMbHrscRQW0vzQe+EXwCLNqJGW9C3fXoV7H8f0M9MU1oXb3Im1fy8V69K0I2C15VA36ftWV4MKTrjRP1J1ol4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773751037; c=relaxed/simple;
-	bh=/LQ5g80XzsL/5CYAV3ISomhAgBWuAHns7jP627oUkDo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FIKJwIaeulG4h3TREVShE3iYisae500I8x17L0d0RDaAElt4yaO19qz0UZ2SWnFMUByRB+mJaG9ph07eyWLjAAFuLxCjNy9XIs599YZynyCEDjHo9h5ij/snMKa3CyuFOttzRyJaHJ1PpSklPtLCP0q2Dft2VUx8a7v3siHtRhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FbKAAK1L; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=V6Y6yPHb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967E03CD8D2;
+	Tue, 17 Mar 2026 13:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773755666; cv=fail; b=aq2c9TMavKJDRkWOhdGlU4MweIwAJ17hbTA1P3ZHUZB/E57zWyicYPooSi/pBrichWc5M6N17ra+1sryFGqmHitYYj/IfeGuPxbX1aN3jRY2HMci9fXWK8iGXjnbcf9SLoWovEkjl/EEvN1PmNBKLG7YwR57wmCltvOLpXOC3u4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773755666; c=relaxed/simple;
+	bh=h8vW9QFHEsbdwF3sZuZYLNzmqqdLN09PcEnZ1dPYIV0=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=az8Kvfg56fhnaBes9UW6y9G7tghueHzig9j0MqDNL0RkyKvbTDv+4go4WDXATJK9nqGLY97ewZ9vqB0wL9IWgP5OB9myLC9+H//EKwy7Xv8eHOVDYCscmSs9BvbeRfU5KPgjr7lVjhyyNSDRUVGOsp2vXOYp5SsRz7yJOTpsd+E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=kfDjiaA6; arc=fail smtp.client-ip=52.101.66.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FbKAAK1L";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="V6Y6yPHb"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62H82EJa2314565
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 12:37:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PcpTwB54irJqs240PvVV/4GT4ehMjn9PnMnfxN7sXBw=; b=FbKAAK1L3AL/kMQL
-	f+JgJitK6FzWufXruPRpNmpR/N97YYfGYs+qhXsYzFWU/djN2twZJQc7qjiTnnBu
-	qTt5/eNxB3b/2vLfotFc4Y7XuqM4fHblNM4eierINCK1B4jabTQSbKLsrurGjciZ
-	7aGfFsUvNSX4w3U09s76lf6h6x0DvWhcuaPILTyPGruHE/f0kP2huBNEhON9uZjj
-	gsdq3+4KSJiBHmo+66/zT8vLQqawfThkN3wqsjpcczFuFPKRoNwmgma/E8T0/rAE
-	6VSigu2z1dUjkcakUvTmm5MFDPQuW9wFV/GvxZg0QGiyrhCJEYOSIH83YJBphHZm
-	ukS20g==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cxmf2bunm-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 12:37:14 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8cd80c4965aso497214185a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 05:37:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1773751034; x=1774355834; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PcpTwB54irJqs240PvVV/4GT4ehMjn9PnMnfxN7sXBw=;
-        b=V6Y6yPHbF7qZedlpzkE+jtJ4gX2vtiE4pPjiGjBrwX9OXXT817/uSlHQZcrP5Yep2u
-         6y0QNqBod0zJTgFhua0Bs3R0U2c/u1hr4hEUhn5zofDKY7UegRSGG46SO9li/7qB4un9
-         SvIFOKeNHCKAbSbKf0iFmzu/DPIeDHW3Hnx8YtsX7JEhZxxg08fPthVhlAszoktYFr9+
-         y+WEOSVofxQRyFhl4/oXvrUcj5J69SG0IECoUz9ncx9wYSz3ShIxMgJuwPfBT5qSD08w
-         XZ4omKn+/AlI/T180ynFeTkGM4MPbc6EzM7y0s1s/mIwqh19Bb/38i0yw71+UP3MSiTU
-         dZ7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773751034; x=1774355834;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PcpTwB54irJqs240PvVV/4GT4ehMjn9PnMnfxN7sXBw=;
-        b=FC6sikdAUoFpDOgFFfCaOY3O6cV8AD3Zap0+NSgxzg/0XND+heW1Bintu16wQX8gzq
-         sSLB16YFqY30daL2NntlECQXkfTMqQm0jIMb1dy01nyiFN0/aaxvykaGeOU8fKuiigpr
-         g39sauiJWW+O5CwoXYaQpWze+oDz8YCiouvqRskLA9IVi1vP0KGn7Jiw1gUtnbi59y5B
-         OvS5UKpQEERyGkR3eJhmShKNM91sdpAqAM6pS2MOilyxwlU3RpkhQBNXTiOb0ThFm18a
-         Yj7530DDDH6QkfuxMd/Rs8Cjsdq2adLvLZuPPus5QJ+7vbsFTS0a5LyIX3462qav900q
-         DxqQ==
-X-Gm-Message-State: AOJu0YwjAhA8vIMTeKIWSA+1LPz0rWFinDO+oXvJ1qckMnhN1de7/nC/
-	xziVz7kHNlLjO3x6As0G8rg8caX2UCPe25tw3r9zyr5flR2DXhWpxEm7T/niVHsRkevmTqJ9T/y
-	85mfp7eT/uuNdIEu/eFNtcpwfWro/k+ISF9fWmXySNaVLQsyZ1lJxG/TWjV+myUAFDWQSWKU+
-X-Gm-Gg: ATEYQzyHu1/5f+pJ3FmPietzaRXMF5rtOTmNMXAiP9hr8925P6b1HL47h+1mTl808Qb
-	aWUHX2LtdgnB5IbqE3+B5wMFG/to21IQOeyqwvM/00/TwBti/Cij1VVRPPCXWAhNKjmFTmXxNVd
-	Fswdtl3HDU3/2zf83TWwWOzlJLT9nyKANj/6wWIjfSGhoVevncjrMArDQrGRa9/UEwDQUXbF5tX
-	TOeBmpcCBVB30tUhlM9xr/pOG+BT6/HVMff2SoS+qjNQKZAqw133iv9DuKWJ6YGOs77IoMXVmN+
-	OLKgSSrn9DtGu+QFn9PM8FjnlEWTIOmltEwySFOiQ/7ZLK/ZVGpADK7YEjN2ENECOQBNdG75MVL
-	Cd77Xs5TeBYgoGqb+O3Kn64+3XSaKNiCZ74AIWsW+RRIQ
-X-Received: by 2002:a05:620a:3710:b0:8cd:7833:7e3b with SMTP id af79cd13be357-8cde1313ac7mr379626485a.6.1773751033818;
-        Tue, 17 Mar 2026 05:37:13 -0700 (PDT)
-X-Received: by 2002:a05:620a:3710:b0:8cd:7833:7e3b with SMTP id af79cd13be357-8cde1313ac7mr379621885a.6.1773751033207;
-        Tue, 17 Mar 2026 05:37:13 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.94])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-439fe1abf84sm45556443f8f.14.2026.03.17.05.37.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 05:37:12 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Date: Tue, 17 Mar 2026 13:36:54 +0100
-Subject: [PATCH v3 5/5] media: platform: mtk-mdp3: Constify buffer passed
- to mdp_vpu_sendmsg()
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="kfDjiaA6"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AqThbOnFQ8/SlDMtiUWjR9WZ3ATg2FYepBTcEpg+fSNBu1zBXcvGbLsz1GwmRWSvJlIhm5WJRvHeP/u+8K9GGCwZwIkrIrSZeAnQMQyfkZ5YBLzr4/pXrB11GYL7Z/GPC12p9+oR/jsw7GSePq3++4UdqyRTAxKUXiaPXoAAhT5IP90qgJJQtiqj/PDyViRSXqVKQDbVztdUh52pFNDrfOVmMKIgx9CsKtnCcRny2Q/Lpz7HbfyoEI5I/37PadnGbwSR94PTDkXL6JZtp3Qp9hPCsv+sRyNAHKJo7nafTdtozXhd9/6uqUG02I1OKThk30smYqktio2ojIFWJrKBow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h8vW9QFHEsbdwF3sZuZYLNzmqqdLN09PcEnZ1dPYIV0=;
+ b=k7OwV4RggN4Ch/OhZVZDDjgEcWNpApl/udsYwI9n9HoItWgfgyfo9oMP4hcHginn5YYHJqPP3sKu/V1nwLdyPPbcuzYkisKR2zlFTpHT6h0Q0I6h3RUrTKiRfKnauWAFNgKxBNE9rtiSJZCz/BwDiCrLvpXxKKTXh7GmVUGZIn+Tt5WBDtjuDS2Y+7xmOzolDevs96IMPt1s88mj+wfEgjk30wH/Xfv6ai0fDwFLpyt1Eg5+HBw/G7p9SZpSC0l647+UPlOqV9cqFfXvjuAUB79s5mQ2Vn9BubKezOZwnLmYlYCU9L/MXMhciRZXkMZ9HWu0OUi0ZfoP8+j+Q1ZpeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=sang-engineering.com
+ smtp.mailfrom=foss.st.com; dmarc=fail (p=none sp=none pct=100) action=none
+ header.from=foss.st.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h8vW9QFHEsbdwF3sZuZYLNzmqqdLN09PcEnZ1dPYIV0=;
+ b=kfDjiaA6i0BZjlyHKa0nFI0yNOfc0zEKrJvBXWCpHiiwfUiOmvcI8qmBFegUQNt654SF5USEB/M9GfLMmbj/HwI5fuIfbx5gR853hLCDyJ9f1+cc30r5egEfPG8uX/8YfsZxPzznhZvnaPOmvRj0ijO1KD3HRSZlt4Nlq0OSNoEThXqPkIfYnJIQdIL/je9RopaznemXZ8hQUUERtyIDCahvyBJ4K3ssvtXqEZMAOUX41HC4lUhVjoLjZU3DNf0QK4TTMTeZcKK6X2SAp5V1RqAUaZKVsjo2Wl8BOxO1FawBKrWfchhEMQkmnMlL3pVs47eEGiPdBEKU5UVil6ZGQw==
+Received: from DB9PR06CA0009.eurprd06.prod.outlook.com (2603:10a6:10:1db::14)
+ by FRZPR10MB9918.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:d10:1c9::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.24; Tue, 17 Mar
+ 2026 13:54:21 +0000
+Received: from DU6PEPF00009524.eurprd02.prod.outlook.com
+ (2603:10a6:10:1db:cafe::28) by DB9PR06CA0009.outlook.office365.com
+ (2603:10a6:10:1db::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.24 via Frontend Transport; Tue,
+ 17 Mar 2026 13:54:12 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ DU6PEPF00009524.mail.protection.outlook.com (10.167.8.5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9700.17 via Frontend Transport; Tue, 17 Mar 2026 13:54:20 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Tue, 17 Mar
+ 2026 14:56:53 +0100
+Received: from [192.168.8.15] (10.48.87.74) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Tue, 17 Mar
+ 2026 14:54:18 +0100
+Message-ID: <dd21653b7343e261ec9c88c622c5facbba69df95.camel@foss.st.com>
+Subject: Re: [PATCH v4 04/15] hwspinlock: add callback to fill private data
+ of a hwspinlock
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	<linux-renesas-soc@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Orson Zhai
+	<orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>, "Maxime
+ Coquelin" <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Wilken Gottwalt <wilken.gottwalt@posteo.net>,
+	Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-omap@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>
+Date: Tue, 17 Mar 2026 14:54:16 +0100
+In-Reply-To: <20260310075539.11701-5-wsa+renesas@sang-engineering.com>
+References: <20260310075539.11701-1-wsa+renesas@sang-engineering.com>
+	 <20260310075539.11701-5-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260317-rpmsg-send-const-v3-5-4d7fd27f037f@oss.qualcomm.com>
-References: <20260317-rpmsg-send-const-v3-0-4d7fd27f037f@oss.qualcomm.com>
-In-Reply-To: <20260317-rpmsg-send-const-v3-0-4d7fd27f037f@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-sound@vger.kernel.org, linux-media@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1097;
- i=krzysztof.kozlowski@oss.qualcomm.com; h=from:subject:message-id;
- bh=/LQ5g80XzsL/5CYAV3ISomhAgBWuAHns7jP627oUkDo=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpuUrqgmtdERuN3F27OHUmSHYeKw5e7+/d1vJYu
- lQtMLR4gguJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCablK6gAKCRDBN2bmhouD
- 15jcD/4/Gi4pOzQo6bWmArEEKAEmKpSLeGaLTVR6yuNG8KwvwphE6E4w2Yi5wy5L4TV30U31R2I
- Cku6v9OjiaWcvGVp2wSSpAkv1HMyqXkUqKM3VHfhP6RHCCNEC8TLnAiGUnDmcYZ5niVVFzVmw8m
- v/1WQa9G1p2v/jzVM3WzKfga6U5SoFezZzU4cWQbM8mJUZUZVMjwaeLqLMyciB80jz8RDRSN24Y
- COQyhl/3m/c1wL8pNJDR8QkNDDJ1GdRmE/ege3JxLwdsVSez4uED0bXNsD53wFk9/9mC5uNOzZy
- 3oFPRNIINZbspDiBrcbP8d9229ebKfUr9bndPzjyJbjoLLmHbcmghV90ZlFbO6Gs7b0YxYQW3lK
- VWc1iQJ4PKJ0ocO7WDxrztmD7MIHbH6IepDsz4MPOhFdalKDCrDXa0CfC2bSI1VFGFy2VFAxOBp
- 8BGEJmqzGF4zhrXoSPG/6sIoRxAqlGYbCccADWHJClI5JBUqno7bmssBht1lTz7W3+Rs/5ILg1L
- zeQ9pis01EF8YVgyfAXkwrlU+HDue1nOXa21u1ELAm8sWnPWYD9AdR4W4TlYC2aktq5E9xaRTk1
- ZQ0zROlLiome5squwaqzQd3/PTC5FhHbuVFHq1nOwR7UoCDxw1FTX6zYgvjV4ALFXnkbevg3mZC
- Dr9djLjyQVcSO2g==
-X-Developer-Key: i=krzysztof.kozlowski@oss.qualcomm.com; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-X-Proofpoint-ORIG-GUID: zKcpz0NEi7Uaz7vrzeIuTNeoa8UPV91A
-X-Proofpoint-GUID: zKcpz0NEi7Uaz7vrzeIuTNeoa8UPV91A
-X-Authority-Analysis: v=2.4 cv=FvcIPmrq c=1 sm=1 tr=0 ts=69b94afa cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=gOEeR9iKwsj33Yj5oN/cWg==:17
- a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=QX4gbG5DAAAA:8 a=EUspDBNiAAAA:8 a=lY2TEL3CVMzQJMwj26oA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=AbAUZ8qAyYyZVLSsDulk:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE3MDExMSBTYWx0ZWRfX2l90oJR4204E
- EtYrUrDgi8Y0Z29SiHwCXre2+/ftPwfNmxx1EgdX1fc2AMYybw8CFXuqR4DQh9HB91sBB6G9bbi
- 7ygozbUkk48zjwrCkvJLGtbwA+uygjUQBQHM7pGIX4kYSUnZ1L9x1vPc82+VxUdGfNxz5HB0pDD
- Hi6MqisGc345FGeU1Z6xfhTz6mwpeFYCUwIa/NyY/WEjnlRtxNBqaROdrspIWRKD12YyvraOBTZ
- ONRNX6g0FNdAKeRAk+Jda0LqqastBkUX40Booi2PwBneZDwbkzKFFYXTrUq+I+prLyRTh6xD6RA
- IxF6VaP28d2bD8nfw5Ropgftkbz1itM7MG+zujCoMa9wmuht4EjMKnw7DcKDLQY2xeLBqr3TF4i
- NQXQwAmmpNKAuq3FDGbkfxEpqEL4lMGJVCtjcZ1zAhxLStqZdwelNVi1feNZxpMv9ySd0k+8gaV
- 9xFypTFtLSGBwxteJ1g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-17_01,2026-03-17_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 clxscore=1015 malwarescore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2603170111
+X-ClientProxiedBy: STKCAS1NODE1.st.com (10.75.128.134) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009524:EE_|FRZPR10MB9918:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea234ec9-7203-461c-b3ee-08de842cb02c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|7416014|7053199007|22082099003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	AI6RG4Fx1UK97ITArYgTPro+HuBgaUhXw5pHiT1nDKsN1sThYItfefGOC35S28gXv2KuA2AOJn7lDPIfZAN1D3yD9c7U4i1KlKQlY53StGPCVd7YXzCPVzVwlxk7zdrWjAIKt6piU/I+aV3Ja2YE9hGLKAsQLnTqbGMa42oNxtVi2RTEH1vDufJf+6qvpdP3EnbYQpRl9hVd7Oj9xhY9ZZDILfrkqz+N9IYoS/+i53uwdUO6MGxuZZSKAfJwlaeAf/DfXJl79UFShAikn6M9VP9Fhm/J7ncNMQmwGEqQSQIm+yWcZzx5pSHRMf25zSH2aJOkhEZFyBt1zMDEacGbzDabOT8mMUFKQwrQU+qFpoiCFhwWrFbGf5s0kp+B0acPprHupJWW7iihE3Thi/SjXqa+n7o1VdbBGcW4nxuBzC21/u8eFRObQGmnlW90SQX2dqMgT+zfw7TDP3OUCsfJQEKvTMOvAk9QoogJoA1PWtX2TstTPwBNy6E+itbLMfMZgXh6bmdmz3ZtBk2Ja5b/4xvwE/0YLneNquW9l62MO6r+WA23tK2XOHnXQeK6h9iUJmS0LTJGtkb3fCT3ughg5fBEnpF31JR46Tvs9PYUknA6R3AERH+1F2ttxX+4vX2kCWIjA4uoml9ehB2+Bx1/knJCKsfH64AQkuqyCLpNfElbFlQzhyb45MSWWevoXXwFRwA2hPYK/yRBoXPoaijkLa6YbHSYBZWeVm0QLBgAZ2PrDk71pbj9b1PNvPs9dHju4xO3aL0HjECf3E7vFVfJzg==
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(7416014)(7053199007)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	RmGw/7gVYBpsqbXd3U8AA7L9iVS99zZwjEk3NUyTsgI249tGBZGzN0ZFy4R3bdmMt1RsAqU5dT9Wl5DNQwn+UKl7KkdaN9vpTIvGziowzg3h+rLbJxGwDpvu8kocMRTaCt9nWgDRcNw3kWeZoWY+2D+m3Yl/y0Trmm6QAo00YiL8knSehHPhZh1+EWreR0sI3T8y/pte3YJWGa6aes3M+GWr+TtVcI0/lV0rxVwlipmowIDcKozAZT16A0u/Xe1KRuxO5cXF+eaM5LQj4p/VoX8qTgOfReYQ3/Q30YtNfJ34WpRQNU3e4jce6TWVjgnm34jdtKm+Jqn0G3ktRNfh0jaiiTF46z1tbmi/eX+1AW/EGVa6dfMrdlMTE8sZA2rzVu92e/4EgPA4/GttqFPihR04fdwInWoP2RyAv+tfn5GZatXooV8uyz5bnwAlsD7k
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 13:54:20.1205
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea234ec9-7203-461c-b3ee-08de842cb02c
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF00009524.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRZPR10MB9918
 
-mdp_vpu_sendmsg() passes the buffer to scp_ipi_send(), which takes now
-pointer to const, so adjust this interface as well for increased code
-safety and code readability.
+On Tue, 2026-03-10 at 08:55 +0100, Wolfram Sang wrote:
+> To hide internal core structures from providers, a callback is added to
+> the ops which allows to set the 'priv' field of a hwspinlock. It is
+> called when a hwspinlock device is registered and, thus, iterated over
+> all locks. The register-functions are also extended to pass a data
+> pointer to this callback, so it can do necessary calculations for the
+> priv field of each hwspinlock. Providers are added only an empty
+> placeholder and are converted separately because these changes need
+> dedicated reviews.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> =C2=A0drivers/hwspinlock/hwspinlock_core.c=C2=A0=C2=A0=C2=A0=C2=A0 | 19 +=
+++++++++++++++----
+> =C2=A0drivers/hwspinlock/hwspinlock_internal.h | 19 +++++++++++--------
+> =C2=A0drivers/hwspinlock/omap_hwspinlock.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 2 +-
+> =C2=A0drivers/hwspinlock/qcom_hwspinlock.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 2 +-
+> =C2=A0drivers/hwspinlock/sprd_hwspinlock.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 2 +-
+> =C2=A0drivers/hwspinlock/stm32_hwspinlock.c=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +=
+-
+> =C2=A0drivers/hwspinlock/sun6i_hwspinlock.c=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +=
+-
+> =C2=A0include/linux/hwspinlock.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++--
+> =C2=A08 files changed, 33 insertions(+), 19 deletions(-)
+>=20
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hw=
+spinlock_core.c
+> index 2c9eceba7fe8..afe1e7ce2829 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -507,6 +507,7 @@ static struct hwspinlock *hwspin_lock_unregister_sing=
+le(unsigned int id)
+> =C2=A0 * @ops: hwspinlock handlers for this device
+> =C2=A0 * @base_id: id of the first hardware spinlock in this bank
+> =C2=A0 * @num_locks: number of hwspinlocks provided by this device
+> + * @init_data: additional data passed on to the init_priv callback
+> =C2=A0 *
+> =C2=A0 * This function should be called from the underlying platform-spec=
+ific
+> =C2=A0 * implementation, to register a new hwspinlock device instance.
+> @@ -516,10 +517,11 @@ static struct hwspinlock *hwspin_lock_unregister_si=
+ngle(unsigned int id)
+> =C2=A0 * Returns: %0 on success, or an appropriate error code on failure
+> =C2=A0 */
+> =C2=A0int hwspin_lock_register(struct hwspinlock_device *bank, struct dev=
+ice *dev,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0const struct hwspinlock_ops *ops, int base_id, int num_lo=
+cks)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0const struct hwspinlock_ops *ops, int base_id, int num_lo=
+cks,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0void *init_data)
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
----
+Hi Wolfram,
 
-Depends on the first patch.
----
- drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+this API is described in Documentation/locking/hwspinlock.rst
+in chapter 'API for implementors'.
 
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-index fae3e1ad2df7..67f3001153ae 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-vpu.c
-@@ -163,7 +163,7 @@ void mdp_vpu_unregister(struct mdp_dev *mdp)
- }
- 
- static int mdp_vpu_sendmsg(struct mdp_vpu_dev *vpu, enum scp_ipi_id id,
--			   void *buf, unsigned int len)
-+			   const void *buf, unsigned int len)
- {
- 	struct mdp_dev *mdp = vpu_to_mdp(vpu);
- 	unsigned int t = MDP_VPU_MESSAGE_TIMEOUT;
+Changing the API parameters should require updating the documentation too.
 
--- 
-2.51.0
+Since this API is changed again in 10/15, it's probably fine to update the
+documentation only once in the last 15/15.
 
+Best Regards,
+Antonio
