@@ -1,167 +1,210 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011054.outbound.protection.outlook.com [52.101.70.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D13EC2EB
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 15:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773762040; cv=none; b=c5UPtaFRs8nUzwneF1HXgiSAjPMS8Xr7f3QZ2yXYbsW29n155Yhcb7o9woYPd8wxTeKZuQKA/HCEn/fPoyvZj9ahgjzWlWpGiewHxw9jc793WSlLOnPLbtIrG6fIydNvXt2dsSrMgqU5PcLuxcZk+XIBHKbFYDdvLmZCD+SfdKQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773762040; c=relaxed/simple;
-	bh=+28TyEqbgg+eO18RfYm/y8EenXN+3buC5i+dg4Bi5ho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+oLSfttIFKAAm6bWM7Y5BZYV1l5mY9g/mlwosQFfahCmKrpDK9V+mv46gV+oac6tdtiGWV7aWOjuPeEU5sUa8Rn6Qo0Yn+ZKlXYn0CWeIbyRxW48l8FtMvLBA21oNLkSIqkj6TqDYD4hCgJfGd07lu5B2ct6hP9wjB+ilqRuEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FZYvqUx7; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BE42DAFCB;
+	Tue, 17 Mar 2026 15:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773763199; cv=fail; b=Q/HNkact/1qyGvIfH1Ju5QH+ess0BwidTycIfiAF5ukaINiNt4UResoqG1XJDPIC0P+fNuLJMgJZ2S/RRRHnc1vCXxPbU3tqXywNbBAue75sy6QgLYb5y2ZODPxqoavMnhhGjpyvMhSFS700v5Xtp32lQYN9FA1cOHhbTYnfmV4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773763199; c=relaxed/simple;
+	bh=quCw7dXYQ/RYvoCplaEwouJzLwR/rsCzWBj/Nk5KARE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ImoHtzhNJ8DtR5GDYywTPVA1Mq03dczoTip5F1lI4ZbgzbH4UP8lncPX2eKutKTs+YXGhNNaQclCCoF0Tmckdi2bHg2AOUBZvezGF3qdOGI2MgbKlBFOaMRF3X8a4fRdsRs3sji+cvxyGVa1leB6eBiDKgUPafuaRazuw3opuJc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OrS8RoI0; arc=fail smtp.client-ip=52.101.70.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FZYvqUx7"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-35bb9070644so95285a91.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Mar 2026 08:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773762037; x=1774366837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMbpigMk9kBN96FxVGa+Cb1r1OnBt+q3Ymeru06O2aA=;
-        b=FZYvqUx7Lwf7RY8WTpCCC0WRC//e3UKkWCyk0EswgyXWhvNy3jTbKY2XR6jKR2o0OD
-         bnXCSbnHgOqJIy/VIxbP1As1oM4YzIstD6Jg9S/sHXLGQS2i75+oIQ5U7Zp5fvoPOu3I
-         ofp7MRP9H9LK5x8++UTiFPeMeaxoTcbULLH4VCwsijNFtZkFCCif80EiMzpH/lVqJNIQ
-         8oadJfI25UIb2kYrAHVW2lbfghXV9OJdsEJDaYX7gjZ7tHIZYk1UN6BuTr79GSci85gG
-         q3C3lqhjaHI10x495YcRHOA9KXhTkGuegQ+/qcUSMugN41VcKUoXzDo20l+wuktpzyyw
-         IuiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773762037; x=1774366837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jMbpigMk9kBN96FxVGa+Cb1r1OnBt+q3Ymeru06O2aA=;
-        b=gdk52TvQWJPcJ8dETP1I0fd4R6TyY+pkm30ym7+7vQLFBOh/NmFJfGDj4s5A/at48Z
-         7M+ZmnuTZDDGSSF35cJqtYWEnuN32xsrIqILEZFPA330otFiTOLvCbMoRH916SecXnhl
-         McwIV/+JQrpT0mPAcuC7wzWX1n7mpOmlclsyMYiyZCtsDKx06Wba0fIKRGNjHMmtWCZh
-         NAuabhFDvb8eAAvgI9GdGF58XT1S/MujwOMPF8+Yf8wv1TiLvugqkPx4q8dspZ0lUjpV
-         sn51dxP5IzA0bi8urI6A1uelAB7R8HlyfYTm2SGc21JePtgiW4T0QYvJyqj46+Zq+GaH
-         m/vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOfbhJIuXAIWISihtsLYgmyeg3RixyVAkqZyDORcCiNWKDcjt0jcwu1uLoWhqWrie1DCgLSDLwHILnu/fNFlbr@vger.kernel.org
-X-Gm-Message-State: AOJu0YyacBx89rhWkSeOMv1+PCTmnlWRQW2iCHYXALhOhMocJgTvcYZ5
-	pgHF491dSVE60T4raVRw8qZlOZAFUTg/+LfOdi33QhkXzjQxLiCACkZ3iGF1/sHYDhY=
-X-Gm-Gg: ATEYQzwBON+kbwxM9+Hmut1p85P38GT70ChPmzVCTsEDsGJxPzw1RmglhlBVFzDqHCn
-	T/3IEei8dTQUGdtxXqgTGdA8Zr3a5TlZKRXXM8uIiKoiXkS6Ze+rEkFxOUArzTCO71ExyaNfNf3
-	PDK08UolyvDwMlbRZI2nBM5/iIbsypg7r1ZSfw2oBeHSwlB7NPf9TWWsBOTHDtRJF6pmCWgBGih
-	2jMYjgCuKg50GGG5LyP5StW2vDXZJiZIvGxlnSt2ptts05SLaZT4L1X4VdXbO8DYWdoROu/CadU
-	HKdLNZ66YgDOXsv47TeBV5+cTzoj8f1FLoVPBIGyGZo2UeSKX/RlVWOkQkZz5OHK+v3eLu4OvqN
-	NyvWn3BOCBIGU69OCGEPhJo3V8RntH1NEe044wUnfXyk2n3mdDHMBNTvMY45AEnEqAXl7GVBHd7
-	KC3IuWtwVSTZSfobNTkjNOpQEGpQPqE/aJCtxysw==
-X-Received: by 2002:a17:902:da8f:b0:2ae:504c:ae8a with SMTP id d9443c01a7336-2aeca936252mr185416155ad.16.1773762037073;
-        Tue, 17 Mar 2026 08:40:37 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:d74d:3187:221b:ee9f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2aece7ee4a1sm188860095ad.54.2026.03.17.08.40.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Mar 2026 08:40:36 -0700 (PDT)
-Date: Tue, 17 Mar 2026 09:40:33 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: tanmay.shah@amd.com
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] remoteproc: zynqmp: release mailbox channels on
- shutdown
-Message-ID: <abl18XFwhKJ9bVRE@p14s>
-References: <20260303235127.2317955-1-tanmay.shah@amd.com>
- <20260303235127.2317955-4-tanmay.shah@amd.com>
- <abA4wGI7DvQLhTzY@p14s>
- <91a3bf88-cd64-4f3d-adb6-5e21558e8ff8@amd.com>
- <abgkB_9fMPGtq3Jn@p14s>
- <6e18177d-d2be-4d42-807f-2238436bd4a2@amd.com>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OrS8RoI0"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QephiirQND5jH+Hik5hz8RrRPcGdQF8bTWGkWjJouo0zeXgX+SvB6F8coa0mASf5cpEVtaBZM9/hGs5sOwz+Np0nD4gl6FEokwEYgHTQvocLl28B9Z/J64cbzbd9gHYZqfFgGhUy0ggff6Ea+vfSV9TFE75fwMsRbyGKI2xY6qkFEBa2S5RC/ecWFeWzYp66odVOg806OJLLFKB18bZCSzKwazzR8NtwEspAMwnIBvuI7q6BYgVQdM9NmpPa1bSixsPVo/sdua8Mz4LT4ZxuxSn8Z0/am2+K14mW2sFFxEOOI+Hnr7Z7S2KFDvKFLZUk3Cq8ZmLaboxzplTJXbLokg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/EWI7RnyuPuquF2KVsHcMwLmJIQ4E4pGiDy+LO6tL9U=;
+ b=pEmLNKxzEZD0bzLSoHAX+BLtO0qzq98y9N5fqx4ehD/M4TzKj6FkjRnTxYY75oob5UAGsO5XzYtnNxTAvtTjo8r4pk9/iCBkOri6fOea6WnF3ePGe4Ezaik3ubc/rtHFy3Ot8nzoep58wxoa0tWH/uT6FfMTbUymJPqcJNH/HUAqozYkEZFNc38lMO6lVVmwnhrWTPpEgmTuqhG5ikKCxy3Ed1PGZIpON8KLgAdjBLZlEkrliNX8lYQmnswKpUd1VJhJfO67NwpPei77qYGiDltv7gOFl5cHibMqOe/1XMv7nrMaW/DgRgiAkIe56FA8YG0BuaY8aeAlA3Ljyw1/3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/EWI7RnyuPuquF2KVsHcMwLmJIQ4E4pGiDy+LO6tL9U=;
+ b=OrS8RoI0P83qN759tzMPmdbnL0RJJlWdqp5iyJYz5BQ0SsHiWH7atRhcCe0jMao/5xCUNkK9KSxS4E4b8pRcaW/gZ0q18PDsxyAqW3qFVsK2e6t/tsmuGtiGlkqlnf59Zg4/5OuD5kpLkJmNB/QU2dD0KhpB8sM7LOzHFRxoVYAR5iivJBnNrDpLESXlnFKYCjVEVXxypT00KMZxrMGxS+kbBix12HieM57upuwUaxkGz7fAIBLRZzzIMva3+7kXjrfpS6PAPWVEPlb++L6pZpWgNzGBmYhBAxG9M0X+9NecHJN7ifjGu9S4NGCprYT25HJNrrbh4w50kFPwaa5dgw==
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
+ by PA1PR04MB11264.eurprd04.prod.outlook.com (2603:10a6:102:4eb::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.22; Tue, 17 Mar
+ 2026 15:59:52 +0000
+Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::b4c0:6119:2228:2ceb]) by PAXPR04MB9185.eurprd04.prod.outlook.com
+ ([fe80::b4c0:6119:2228:2ceb%4]) with mapi id 15.20.9700.021; Tue, 17 Mar 2026
+ 15:59:50 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>, Arnaud POULIQUEN
+	<arnaud.pouliquen@foss.st.com>
+CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
+ Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Frank Li <frank.li@nxp.com>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng
+ Fan <peng.fan@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v12 3/5] gpio: rpmsg: add generic rpmsg GPIO driver
+Thread-Topic: [PATCH v12 3/5] gpio: rpmsg: add generic rpmsg GPIO driver
+Thread-Index: AQHcticVXzvcQ2AusUOfPokHZf/vKg==
+Date: Tue, 17 Mar 2026 15:59:50 +0000
+Message-ID:
+ <PAXPR04MB9185CD662F8DF859E5DCD5E68941A@PAXPR04MB9185.eurprd04.prod.outlook.com>
+References: <20260313195801.2043306-1-shenwei.wang@nxp.com>
+ <20260313195801.2043306-4-shenwei.wang@nxp.com>
+ <2aa1d063-181f-4145-9f1f-7e3012c4d0af@foss.st.com>
+ <0f880475-a850-4138-b79d-d3c88765b0e0@lunn.ch>
+In-Reply-To: <0f880475-a850-4138-b79d-d3c88765b0e0@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|PA1PR04MB11264:EE_
+x-ms-office365-filtering-correlation-id: 72115783-b529-45b8-1025-08de843e3888
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|19092799006|1800799024|366016|376014|7416014|38070700021|18002099003|22082099003|56012099003;
+x-microsoft-antispam-message-info:
+ qWEMdMiIhP5P8Vahjx9P2aGQ/XEa5gbkxzGnpaLLZCFTX9z100+68ZF1DQTdI1aMoQhROqRzTi+CtggaPHSfUB4eny21QLCLgIT/+2qq2VBNEhfpUJ0mQfQUBeLRmjYAZE3+CTUIRAzJvVOFQiHUFYxXOAeq+e9UWsg8/QAbWlf2x2ycP/1eFA/PBTWA8MOplo57NELkDWqDa7cKaX70A/MxgLJ1sDSzcBkKRH76s4mDqSzMPGG/cWwnldOPYov3O+LOeWMmclOIlJfSlNXTGIEgoXlD6+7VBipSGU1/3Rof5QSg9gg/6hlVDWNujSeYP69X772JGp9IHrliiFqU1zoU+OIegBo4a6w1ZWdFnEvBh6BfLd2dEJC0WKABCw8gnLKGnD4mKpdpxXchDrahhUg43mms3EXY4oy0ooS/opoZ7EaZpRGM8qhhSeToK1TMbOWLlilqQvv6TNaJYxiodrRJgj45uSM0hg72M5JK8UqMpN1VMWFYrnAG4HziLKm9Ikhk21NVifEo+/n005lDZuFKKohwdajYcHJe+IchzGRw/auTmHPFhfM7obZLtQeOasuhemTHnKPLIf/MGQ72LYMLqf7MaG1RI5BtxXZ7LY9zPZ0BVk9CMGh1k49OKxJNNcfM7O0a7MlnXt7oeSJiaI1qFDpfjE182LIiUivQ3xzZQPxQhWClJL4AoT/2oYA5v8ZnewO2qchn8ASJkjGA5eUNpzneKzRtn1+AGZGrNXpyy3nOogurilkBg+nwFKhoVcUpZ1IJMTCLRxs3eMwdqf+DKvsYrPgud5JJLQheiWY=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(376014)(7416014)(38070700021)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?d5JOKwBYEhVROojYK/P+dj/mfZgh46ELRyuWbzCyaHExGbwJk5u/gxHuK94w?=
+ =?us-ascii?Q?lx9iYOlQZkbSCijiBHWZh55+uf+Me4qa+oXGm6Fw4SAsXsLD6Y74lmh7dXKs?=
+ =?us-ascii?Q?d5BJXrpWzs5/EPdcArOFX4nypj0TV/0ijjB//kzOWdK8J1OX9br0zhKu7ZkP?=
+ =?us-ascii?Q?N8EVIdhHNK39qljIqz7DXomb0/Q0YgDMojEEZ5fDb1SYfd++L6mQwWBCrd7P?=
+ =?us-ascii?Q?kNs10+CGP/2Fqm2OCFk0QQpsgCzWKebdk7LT4WhnAie/C40mhU4ZjimDTavb?=
+ =?us-ascii?Q?Ea68qpEqy6A0IK9j9nYiMlc/96IP+67Chi5c2nxiwQWVRxL3aHDtER8PrfU+?=
+ =?us-ascii?Q?emyURs4FIGiCc9bDC/tMgYqhH9EhK3kvYwHYahJ5eSKemyWibGJ34MG0qNSK?=
+ =?us-ascii?Q?DOfckNlBh16dScUixJsT6XIKqM9+dT7nSk8ToyOwzLGMhau37U36nghIrXo4?=
+ =?us-ascii?Q?Q/rF0bLspJDznZvM0L3IpayfanZOAeq6CCECcjiI7pipKCDCUux4ch1W1i3R?=
+ =?us-ascii?Q?Sr+dhmRXKDRbeKWBjk3waRqIYtWAW44YIsfEqnrVm3LfgvI3wQuex9X8rTQe?=
+ =?us-ascii?Q?YsCrO+0DV1nMH232WJ6PrYJKNdR3nWTpbchQP1Zw37Dulck3pbqv2vCrXkNg?=
+ =?us-ascii?Q?yV17mvyNpw7mJS1SJslAUoUQRSDr6MWeUHPAU8EuF+Lsbddd0C3EWza7Cexk?=
+ =?us-ascii?Q?RJVSQ/IwH0N9Rx/qnRJSloqHKJDlJz/+MqwPryJlcfWOsNZYaHXu2590rToB?=
+ =?us-ascii?Q?kETZ1gM2xv4DuyPYOLYSV8OcDBSmq6ChfAWOlvgUHnj834MZHT8gaqEtnAMl?=
+ =?us-ascii?Q?wP8lWd8NouRtT4POX1TiTFZ8o9zH3qzIx67GSYFW0emVfr95wuc3My3DJuDk?=
+ =?us-ascii?Q?GDkyuEYVlyAVTfWVS4/MBN5J68xmC3jJZw0eIT3kkEw2748gNTSm+5c7BziH?=
+ =?us-ascii?Q?iCZBIAHWfnALxZ8K0bUnuKkwPidhy32wTDFQj4MSE3u1cE4atn1WfKSzgmIq?=
+ =?us-ascii?Q?FAAbyMlE67YLj8XOpfhmY0x4Gm1mWO0ybO23erq0RM9ODuTNAU2pkw8K083i?=
+ =?us-ascii?Q?hpDyKJtzyxw4oyPmXxFk5MUUvvy7f63l5hZJJrCiRlxAAlei9D9QEMqTid7I?=
+ =?us-ascii?Q?XZB0PgA7sUWBZY+vqZmZRj4apzxLb0PK41dWAdLFRYPFh94q5yH3UgdYJWwb?=
+ =?us-ascii?Q?grtnzRUSgDO9grzBzB37uN2VLCVqUzJA6g7FbvXYVpgOxphwAgOb+i1Dc0yI?=
+ =?us-ascii?Q?blZQlGM1Y9Xw26dKtWTaNjILy2R79LTH90VdscthKkRMAQrbCMGzfi6v/Am1?=
+ =?us-ascii?Q?E6N35pD6HQJxh8jOC3z3TnFPCUEgGKItI1EDAGgv1s074OGbt8kyf0KA4YQ1?=
+ =?us-ascii?Q?MTFAFbqVUz+L+e0R2gZcmlSOPXl11BUQVJKvNlPz3UpCbDZvdk7dEqgXCqKV?=
+ =?us-ascii?Q?Y8kqxEssPmHqV6Pe8dLo9glY3+HDwJcwWq5t70C31hU2XIWsuNgnX5m5FwjQ?=
+ =?us-ascii?Q?Xi4Xdm2TeIwImMarRgGxmiK2darC/PJ8ez3CJvePJR8eFGUWCiAxJKI75Bzw?=
+ =?us-ascii?Q?aAFoH53zh7OardYKA5ag1tCl9vR3uBn+9fD2naF5rgei555dXmDBnh7YBltN?=
+ =?us-ascii?Q?PgV5sU6odD/O+QSFLqOsAC9qq+NIbZJ7bmPnaPAMzjdiLrVmuS9JcGqljhr5?=
+ =?us-ascii?Q?DaXFWBqx659+BPkZHuCZOOl+4evKExg9KbXDihUI/bEgYRMZ?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6e18177d-d2be-4d42-807f-2238436bd4a2@amd.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72115783-b529-45b8-1025-08de843e3888
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2026 15:59:50.3995
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: d1dhMsuKrdWr27XaU/ux2s1EZp0ldXaOmIP/0otGFBwUVdEy6Va1ZYaFZxd5N5nWk+jbP8teHqNgTowbTAFT7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB11264
 
-On Mon, Mar 16, 2026 at 11:37:05AM -0500, Shah, Tanmay wrote:
-> 
-> 
-> On 3/16/2026 10:38 AM, Mathieu Poirier wrote:
-> > On Tue, Mar 10, 2026 at 11:04:54AM -0500, Shah, Tanmay wrote:
-> >>
-> >>
-> >> On 3/10/2026 10:29 AM, Mathieu Poirier wrote:
-> >>> On Tue, Mar 03, 2026 at 03:51:28PM -0800, Tanmay Shah wrote:
-> >>>> mailbox driver can't introduce shutdown callback, as it might endup
-> >>>> closing mbox channels prematurely. By allowing the client driver to
-> >>>> manage the shutdown process, it's ensured that mailbox channels are
-> >>>> closed only when they are no longer needed.
-> >>>>
-> >>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> >>>> ---
-> >>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 2 ++
-> >>>>  1 file changed, 2 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >>>> index 5e92dc51f1c0..50a9974f3202 100644
-> >>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >>>> @@ -1490,6 +1490,8 @@ static void zynqmp_r5_remoteproc_shutdown(struct platform_device *pdev)
-> >>>>  			dev_err(cluster->dev, "failed to %s rproc %d\n",
-> >>>>  				rproc_state_str, rproc->index);
-> >>>>  		}
-> >>>> +
-> >>>> +		zynqmp_r5_free_mbox(r5_core->ipi);
-> >>>
-> >>> This is already called in zynqmp_r5_cluster_exit(), why doing it here again?
-> >>>
-> >>
-> >> Hi,
-> >>
-> >> Thanks for reviews.
-> >> I think cluster_exit() call is called only during driver unload. Where
-> >> as shutdown callback is called during power-off commands of linux like
-> >> reboot or shutdown.
-> >>
-> >> That is why I am calling it separately during shutdown() callback.
-> > 
-> > Then call zynqmp_r5_free_mbox() from zynqmp_r5_remoteproc_shutdown() rather than
-> > zynqmp_r5_cluster_exit().
-> > 
-> 
-> I have to call zynqmp_r5_free_mbox() from both handlers i.e.
-> platform_driver.remove() and platform_driver.shutdown(). I can't skip
-> either of them.
-> 
-> Because during driver unload (rmmod), shutdown() handler won't be
-> called. And during power-off commands (reboot, shutdown) remove()
-> handler won't be called.
 
-I was under the impression that during system shutdown, ->remove() and
-->shutdown() were called sequentially.  I looked into the platform_driver
-structure documentation and nothing of that nature is described, leading me to
-beleive your assessment is correct.
 
-I'll apply your patch.
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Tuesday, March 17, 2026 9:22 AM
+> To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+> Cc: Shenwei Wang <shenwei.wang@nxp.com>; Linus Walleij
+> <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>; Jonathan Corb=
+et
+> <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn Andersson
+> <andersson@kernel.org>; Mathieu Poirier <mathieu.poirier@linaro.org>; Fra=
+nk Li
+> <frank.li@nxp.com>; Sascha Hauer <s.hauer@pengutronix.de>; Shuah Khan
+> <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org; linux-
+> doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix Kernel Tea=
+m
+> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
+> <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
+> remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Bartosz
+> Golaszewski <brgl@bgdev.pl>
+> Subject: [EXT] Re: [PATCH v12 3/5] gpio: rpmsg: add generic rpmsg GPIO dr=
+iver
+>=20
+> > > +static int rpmsg_gpio_send_message(struct rpmsg_gpio_port *port,
+> > > +                              struct rpmsg_gpio_packet *msg,
+> > > +                              bool sync) {
+> > > +   struct rpmsg_gpio_info *info =3D &port->info;
+> > > +   struct rpdev_drvdata *drvdata;
+> > > +   int ret;
+> > > +
+> > > +   drvdata =3D dev_get_drvdata(&info->rpdev->dev);
+> > > +   reinit_completion(&info->cmd_complete);
+> > > +
+> > > +   if (drvdata->protocol_fixed_up)
+> > > +           ret =3D drvdata->protocol_fixed_up->send_fixed_up(info,
+> > > + msg);
+> >
+> > Seems not part of a generic implementation
+>=20
+> Agreed. Lets have a clean generic implementation first, and then patches =
+on top
+> for legacy stuff.
+>=20
 
-> 
-> Let me know if I am still missing something.
-> 
-> Thanks,
-> Tanmay
-> 
-> >>
-> >> Thanks,
-> >> Tanmay
-> >>
-> >>> I have applied the other two patches in this series.
-> >>>
-> >>> Thanks,
-> >>> Mathieu
-> >>>
-> >>>>  	}
-> >>>>  }
-> >>>>  
-> >>>> -- 
-> >>>> 2.34.1
-> >>>>
-> >>
-> 
+Adding fixed_up hooks doesn't make the implementation non-generic-this patt=
+ern is=20
+widely used in Linux drivers.
+
+Shenwei
+
+> > > +   ret =3D of_property_read_u32(np, "ngpios", &port->ngpios);
+> >
+> > The number of GPIOs should be obtained from the remote side, as done
+> > in virtio_gpio. In virtio_gpio, this is retrieved via a get_config oper=
+ation.
+> > Here, you could implement a specific RPMsg to retrieve the remote topol=
+ogy.
+>=20
+> The DT property ngpios is pretty standard, so i think it makes a lot of s=
+ense to
+> have. But i also agree that asking the other side makes sense. What is be=
+ing
+> implemented here with rpmsg is not that different to greybus, and the gre=
+ybus
+> GPIO driver also ask the other side how many GPIO lines it has. So yes, i=
+t should
+> be part of the protocol, but maybe optional?
+>=20
+>           Andrew
