@@ -1,214 +1,108 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012070.outbound.protection.outlook.com [52.101.53.70])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4C43016F7;
-	Tue, 17 Mar 2026 21:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773782167; cv=fail; b=rD+CQuTAXsFNRcehSfVDLP0NJw9U8DeMSBhS4hf7WDnLezMUpILSR70XrlL9/AD6ORdcwUsRJGBfS7mWfL9+xH8sukj/Svs38gUVJjxn2Qd6jonqe61CMFlpxlUzvFISefNWHBzNP1hsRUyu0pQxHFMSULAsLNZBsG7MHtGfBd4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773782167; c=relaxed/simple;
-	bh=KRk0axCwTNH2JjSsIpZ6TbVG5K23HyGV6JRxRwMTXJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CFruSp/TkC0T8o8YgVRmhu8hnbkHnhg95xACBUSSiOGXuQu20aG8KdlOGVK2X54U5tsiDEO+6fW55lqcXRgS4oyK89/qOhask6EmVk65mwLIcqd7b7MoY67gb7Sq/PMZyW51vVKxlLFfFjvrgJypR67N7jsqNKaUB8xcQ+nt8No=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UiXzfbPf; arc=fail smtp.client-ip=52.101.53.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97FA175A6F;
+	Wed, 18 Mar 2026 04:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773808167; cv=none; b=DHJsrlRphTkOxnW2cKW3XvTerNfkVuB+vBD889MB93Gb3dL7OyzB6Al2gRebJsDo6rDapbS6/Zv+3PwHAd/AehZL42S1g2U/nW8IN/rCZvKeg3LtUweAcWtnx00u7mQD8cCzRLEajIH2NAZLWRIq89TmcSMOQ0wGb2Ek4lhGVWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773808167; c=relaxed/simple;
+	bh=xENssHMqtmDUd6ddNYFgzzYECQYmei62l+2VFyCPV3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hXnsp8tpJqOvmhjslxv+9casWSf4mbc08wMeQYZ35a2izPdlxHrgBW195GVay/0/33A0cAYijckN2Ko1ir0ZmCKT5wKQnBWW7selxLPUvz1dWia+HxCBgdlVCr3q6HIrGzvZTMVKeR0jSXr9NUYHei10VD7HDbRJaXRq4pS6DY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ceJsvMo9; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UiXzfbPf"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eRfL+TVgMwCXcI3HHNmxcxpIWgwVUWkO+mjFne6zKTluFGvUVdQi31mjqoocpshNbKKDo39qZEzTf/XurJSaps+Uwf3ta7h2M9p6HvVIRtJeALpLR7mvSwIUj61JeTyhYL2BhK2pCtglkPHkqRU3M2ythQC8RcVhJSmO059UTM4HfnqVmt4IXo0vRroDtIjqLMhj4ZrdR9LQLoQvcRcJdf78nK1gumpduqgphiN4bqnVBg2cag0KjYsU8ct8GAQkElqDOzz+HujunsSVt/EVU6VvKAYbRUWPaFNR5PoprpbbuKcESaTYSZhXe/cypbymLkl5eIyBQXEuQOmBn0vIFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sFdxEqovyb8fyi2QMsfYIxQ1UXQ/lB4axkWFF2iow/A=;
- b=sI52075O47bMM6r0u02FcgRFkRZmTiPdcT3+x3RpIosZKGutI8woh5T9pTs+jb6d/c6rfqjAkCbbojDu0fn5kv//HvrOyaJS9BUyRK609U633rtaITG6RCJn/UHbG6n4d4//Pf7rxm03YoYgkYQdMkoiA+OcqxmNJ8bo5H5rBZ2h3N4RIyYl2MqKty1jmqXOjJGp8qDGL10lsr2ZpHfAc/bDML0LDPrAYxSJlOoJtmsBt/OUvBc5UoRRBwXZfy4rNm48Ty8KRAWxkjVQRuzgQgINN2uq+zs+dbfoXsxdecmYB5R50iCMZeNMC8o/m+tZtLAyRg1ACHVyeikwspcbAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sFdxEqovyb8fyi2QMsfYIxQ1UXQ/lB4axkWFF2iow/A=;
- b=UiXzfbPfWoWEvIHZXilGLCpGi0Bv2Z4cqAxG6AsCSavovkPhujGAdz6veX8lR2gEiCdxaK0bvT4O5fFiCaiJSqZXKdNxZMwRxRobCmYED+RpMIo2a7qsmNUs6sGtw0Dre+NTcLxjFluKcXWQFPCcdpP48WqeEhq75flFxCL8THA=
-Received: from SJ0P220CA0024.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::32)
- by LV5PR12MB9753.namprd12.prod.outlook.com (2603:10b6:408:2b6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.19; Tue, 17 Mar
- 2026 21:16:02 +0000
-Received: from SJ1PEPF00002310.namprd03.prod.outlook.com
- (2603:10b6:a03:41b:cafe::f7) by SJ0P220CA0024.outlook.office365.com
- (2603:10b6:a03:41b::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.25 via Frontend Transport; Tue,
- 17 Mar 2026 21:15:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ1PEPF00002310.mail.protection.outlook.com (10.167.242.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9700.17 via Frontend Transport; Tue, 17 Mar 2026 21:16:01 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 17 Mar
- 2026 16:16:01 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 17 Mar
- 2026 14:16:01 -0700
-Received: from [10.31.206.142] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 17 Mar 2026 16:16:00 -0500
-Message-ID: <cc0f3ec9-7e65-4eb4-b54f-41612f3f26db@amd.com>
-Date: Tue, 17 Mar 2026 16:16:00 -0500
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ceJsvMo9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1773808166; x=1805344166;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xENssHMqtmDUd6ddNYFgzzYECQYmei62l+2VFyCPV3A=;
+  b=ceJsvMo9Bn7LsAWY/t/i8DWYEqn+yq+bbiM+uJfem0QAPhCAP8rgoBPJ
+   OUucvqHx1/NknB5gU1/3UPmy3Z87XbPdDDY1cINpkSnQook6dC5QwPee1
+   h96vGVwJDZ/z76YDGMfTdx8QcCbWenBm+90IEyNYyCPX6l2ZLme05+mE3
+   SBJxtHe5ndLCaCuJW/YWIBK0YVYwv8ahaZYLlKeNN+/IdA6snpmeq5YSP
+   dTdsjOBiRjy3+k7vHy716CI6ztCRpecqJ3nJOPuIfsv9cgDI+akMvgSKN
+   uwzQFERo72e4T2wUVS+hsCFSNnMaXc4fZQybcI0G0iveTs2YvEY7JLJ0/
+   g==;
+X-CSE-ConnectionGUID: HOEnM3IxQkCXVPsnWGDkOg==
+X-CSE-MsgGUID: jj6RTgNMSzSUaWHM/1XqUA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11732"; a="74741677"
+X-IronPort-AV: E=Sophos;i="6.23,126,1770624000"; 
+   d="scan'208";a="74741677"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Mar 2026 21:29:26 -0700
+X-CSE-ConnectionGUID: QUSrzIFwQvefJ9yBlkVeRg==
+X-CSE-MsgGUID: TuiNnyVXTFem3CT5ugEnAw==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 63737dd503cb) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 17 Mar 2026 21:29:23 -0700
+Received: from kbuild by 63737dd503cb with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1w2iX3-000000002Vh-1EPe;
+	Wed, 18 Mar 2026 04:29:21 +0000
+Date: Wed, 18 Mar 2026 12:28:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Anas Iqbal <mohd.abd.6602@gmail.com>, andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Anas Iqbal <mohd.abd.6602@gmail.com>
+Subject: Re: [PATCH] remoteproc: use SIZE_MAX in rproc_u64_fit_in_size_t()
+Message-ID: <202603181241.MTvrVLVa-lkp@intel.com>
+References: <20260314110137.178981-1-mohd.abd.6602@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH v4 0/2] remoteproc: xlnx: remote crash recovery
-To: Tanmay Shah <tanmay.shah@amd.com>, <andersson@kernel.org>,
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20260303233533.2310513-1-tanmay.shah@amd.com>
-Content-Language: en-US
-From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <20260303233533.2310513-1-tanmay.shah@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002310:EE_|LV5PR12MB9753:EE_
-X-MS-Office365-Filtering-Correlation-Id: 571b58df-83e1-4228-d871-08de846a646c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700016|18002099003|56012099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	MDrvBtHwkcocE4HOVi334njp9nXbeG3eH6HYKid2+rmQScpk0FJpCOR6TJa682s585dMv1BZO1Dp+ZEzWe/pCxR0ykJhO+/fp+mUoQyhykMYmJM/DMIo6V5OZBoIY1edEPxsVCmwg47RFwWP1t4dI+WmPTde1I9IGveIiXPjUDPJ1zCUByFStjKH4sZdqp++NeN0G5FOjDvxUL2QxKHhe9VA8XhBhA2UiOt+ZRPRpcQt9aobuCsthva+mmNqwgL6zXo8yjr1QUUBJZL5Z4LB/PBlYBJjUCiXs3UYWbAuMm9PYqs0PUDfwAvvvKeKkd5b6O2FZlzqoFkMlUWq+5jdGr8ps0g+Dygw8MPYFFw97Y2RYjz710iCM0ZFpJ2AahnYJwHolI2CKikr2ctEXsxs9WW2V3k4z8DxU8F1WTem9x3uEY4/7QCBwfYW/k9XNlGQvN49NwVn4E6AQjWtVgAWvk6cnzI1e/R4aO1cbPVYDJxBdoAKoxr2fmacWm26M51f/aGWombXqs9/Oxw4DTw3glRcBGqpmK1OfpeWZfUBaGlkPUVi0ovmi/PkFMgBFLtMDonBN1fYkLYktYrUu+/zdLbaWVGhbm7aoj8yU/tyeB2L0FZdUillEwe5ZkpqnU1w8FFhQJVgpUNZz9wCKrRbp5TuQiQWKLmbTDJzD8vol9Dik8jcasn/beV7lWqLcT2W74mY7/mDcKsoLQnKWsaxZzz+Vebo4yANKhOR/iA4zSVPLVN9Ko7jsm4T5fnjde5lDKBSiLtSPiIavVX/reWIgg==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700016)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	GqsXz/vLULbCcPPjkDYihEfKWXU4pF6HEHlT4GTJVkH2r0wwEp09LVV2suC+AMFZYf4gSfl1QUKHXPI1pDECzCW7Kvh2D4txnY7Q5/uA5ApapNCfYiA1wPuUU7ouvcAiXejO+6W7rES3+nkHgME/9RmOzQn9ox8RmFEG+Kf5ZNGPu6KFCaU5HRTVyEA0kaA7pAtVCEWOFR3ceGbOuMi4zmO1lp+JZ1zCsJ4/eiUJJIFVlM6U6m6FGygMZNvnU7kt7fBkjgoUdYKtCMMJXRdquSHuk6/bZrF7yGBgaku6Iyk9/SVOhXkjaBeXcbbzgVLiRJUpnBzcJ/DhuU9nyRfiJngnZdiPNtBSloI2LcQ8Nmy7Zdw/wi1g5dRHQptaQhtMn80Ss/0WG7ZuAw2ZrLSKRCJ/jIjMNpe+zRXDch6V80TU0fEbnCWs+4Oxfp2KS02m
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2026 21:16:01.8319
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 571b58df-83e1-4228-d871-08de846a646c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002310.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV5PR12MB9753
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260314110137.178981-1-mohd.abd.6602@gmail.com>
 
+Hi Anas,
 
+kernel test robot noticed the following build warnings:
 
-On 3/3/2026 5:35 PM, Tanmay Shah wrote:
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on linus/master v7.0-rc4 next-20260317]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Hi Bjorn, requesting reviews on this patch series.
+url:    https://github.com/intel-lab-lkp/linux/commits/Anas-Iqbal/remoteproc-use-SIZE_MAX-in-rproc_u64_fit_in_size_t/20260315-042913
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20260314110137.178981-1-mohd.abd.6602%40gmail.com
+patch subject: [PATCH] remoteproc: use SIZE_MAX in rproc_u64_fit_in_size_t()
+config: arm64-randconfig-r072-20260317 (https://download.01.org/0day-ci/archive/20260318/202603181241.MTvrVLVa-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 8.5.0
+smatch: v0.5.0-9004-gb810ac53
 
-Thanks,
-Tanmay
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202603181241.MTvrVLVa-lkp@intel.com/
 
-> Remote processor can crash or hang during normal execution. Linux
-> remoteproc framework supports different mechanisms to recover the
-> remote processor and re-establish the RPMsg communication in such case.
-> 
-> Crash reporting on AMD-Xilinx platform:
-> 
-> 1) Using debugfs node
-> 
-> User can report the crash to the core framework via debugfs node using
-> following command:
-> 
-> echo 1 > /sys/kernel/debug/remoteproc/remoteproc0/crash
-> 
-> 2) Remoteproc notify to the host about crash state and crash reason
-> via the resource table
-> 
-> This is a platform specific method where the remote firmware contains
-> vendor specific resource to update the crash state and the crash
-> reason. Then the remote notifies the crash to the host via mailbox
-> notification. The host then will check this resource on every mbox
-> notification and reports the crash to the core framework if needed.
-> 
-> Crash recovery mechanism on AMD-Xilnx platform:
-> 
-> There are two mechanisms available to recover the remote processor from
-> the crash. 1) boot recovery, 2) attach on recovery
-> 
-> Remoteproc core framework will choose proper mechanism based on the
-> rproc features set by the platform driver.
-> 
-> 1) Boot recovery
-> 
-> This is the default mechanism to recover the remote processor.
-> In this method core framework will first stop the remote processor,
-> load the firmware again and then starts the remote processor. On
-> AMD-Xilinx platforms this method is supported. The default coredump
-> method is supported.
-> 
-> 2) Attach on recovery
-> 
-> If RPROC_ATTACH_ON_RECOVERY feature is enabled by the platform driver,
-> then the core framework will choose this method for recovery.
-> 
-> On versal and later platforms following is the sequence of events expected
-> during remoteproc crash and attach on recovery:
-> 
-> a) Remoteproc attach/detach flow is working, and RPMsg comm is established
-> b) Remote processor (RPU) crashed (crash not reported yet)
-> c) Platform management controller is instructed to stop and reload elf
->    on inactive remote processor before reboot (platform specific method)
-> d) Platform management controller reboots the remote processor
-> e) Remote processor boots again, and detects previous crash (platform
->    specific mechanism to detect the crash)
-> f) Remote processor Reports crash to the Linux (Host) and wait for
->    the recovery.
-> g) Linux performs full detach and reattach to remote processor.
-> h) Normal RPMsg communication is established.
-> 
-> It is required to destroy all RPMsg related resources and recreate them
-> during recovery to establish successful RPMsg communication. To achieve
-> this complete rproc_detach followed by rproc_boot calls are needed. That
-> is what this patch-series is fixing along with adding rproc recovery
-> methods for AMD-Xilinx platforms.
-> 
-> Change log:
-> 
-> Changes in 3: 
->   - both rproc_attach_recovery() and
->     rproc_boot_recovery() are called the same way.
->   - remove unrelated changes
->   - %s/kick/mailbox notification/
->   - %s/core framework/rproc core framework/
->   - fold simple function within zynqmp_r5_handle_rsc().
->   - remove spurious change
->   - reset crash state after reporting the crash
->   - document set and reset of ATTACH_ON_RECOVERY flag
->   - set recovery_disabled flag to false
->   - check condition rproc->crash_reason != NULL
-> 
-> Changes in v2:
->   - use rproc_boot instead of rproc_attach
->   - move debug message early in the function
->   - clear attach recovery boot flag during detach and stop ops
-> Tanmay Shah (2):
->   remoteproc: core: full attach detach during recovery
->   remoteproc: xlnx: add crash detection mechanism
-> 
->  drivers/remoteproc/remoteproc_core.c    | 15 +++++-
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 71 ++++++++++++++++++++++++-
->  2 files changed, 84 insertions(+), 2 deletions(-)
-> 
-> 
-> base-commit: 098493c6dced7b02545e8bd0053ef4099a2b769e
+smatch warnings:
+drivers/remoteproc/remoteproc_internal.h:221 rproc_u64_fit_in_size_t() warn: always true condition '(val <= (~0)) => (0-u64max <= u64max)'
 
+vim +221 drivers/remoteproc/remoteproc_internal.h
+
+   214	
+   215	static inline
+   216	bool rproc_u64_fit_in_size_t(u64 val)
+   217	{
+   218		if (sizeof(size_t) == sizeof(u64))
+   219			return true;
+   220	
+ > 221		return val <= SIZE_MAX;
+   222	}
+   223	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
