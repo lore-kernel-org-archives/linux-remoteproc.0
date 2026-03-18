@@ -1,84 +1,206 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304DD376BE3
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Mar 2026 10:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10BC63D3481
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Mar 2026 11:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773829891; cv=none; b=FgzOOSUFbvoB6rr6Jv/M90P0pxb8MMRImc7P6F52sDfAb6e608WxuUQftCbaewgZ7Xw89TrRdgLpPip39Bib/9FMOFDbUG/2xJV5oVRe9gGeNWRGvLyNtS6UeSRJgY92LzAVZsn/RGy+Cl2+wvRVFIa/keqSAmTnmjrH5Yw1JBs=
+	t=1773834576; cv=none; b=M4ViL1gTql0EzN6zilKnOn10OEbMEvcKcP4BtS/s+s9A9eZl9oZOZfvqvI64Re+AwrB5Ru9qKo1NjR1oSoujDl5RQuB8iHQ1sDanwhzi6njtcWahqUWf+eYx0HsTSUJxbGnrDsSSsdQAcbp2juCuKPNG9jSt9dYdAT+ubOjeauM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773829891; c=relaxed/simple;
-	bh=tNz2zKgiIZ4b1XgW/xgqhkDTe7RnDJCiXkFfoEfaLTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EL+EszJddC+vlBayQHQ3Jj7x1kqdQFNgZdeeO8YsIoxmrKQ76XTiBN6OAu4NkEotBvQJjyxEE+y4on9fRvRmLYhBEiek4pb4dDUbU42G2XjasEmmW4vPgjDb7HWEda9lMcBj6DKtK5xhFayMGuryO3YOa0fhAaVziiTaDK9yQ0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=j0+If8cX; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1773834576; c=relaxed/simple;
+	bh=BrZuPlklCAo71qWA5RBbDtAMQZKPiERrhde+rkkQchE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HK1iEiHXQj05HudiL8HrM9qOkH5OL5NrKNyoCVEwZt5zKcN7haEYGcWvQqk4nTbNIQ6UT0TrrT5VP2CSx9tTYJHELGpICQsbPmuPHsW0/68mpgZ/2ka8TDaYjqrPgr4vykHbM01ZnZux15vwZAcnwWIaQNG8wWebWFZ2LXePZXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VtZWAF1J; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CKV7PKix; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="j0+If8cX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=rnzd
-	zNBShor5SsCSqm500KkuoYe6Fk+7EQmEipEUtYE=; b=j0+If8cXjhMytAuuv3jW
-	symnEI673OxAipEnveU+8nsBw/z6ifDnQoZG1Tyr6Uju1kwDt8iDohWo/idrsNEA
-	3ko5H9oRd3IAsn2ZU3XurgHC4R1rm3Il4M2A42M0JDsiwDeqDNNmpYiqZGJ6PR/U
-	Lv2aQXzwdztSFpRROlkIRhb9S+J40Tn52TAu0AhTU22xbdbwxBWlKHyoAE33UqaJ
-	SX8eTW9uDSpvGYcVOF4IE5699O/OX9ZNUSbJytWt9FuICEIFFgosMADLiu+zF+UR
-	TLC3I3GNnrmpjH70/bQBdszMDNS6E49Dk20ySM0X2RfzvYtZOxC2GFahdHfgcIGN
-	6g==
-Received: (qmail 652465 invoked from network); 18 Mar 2026 11:31:19 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Mar 2026 11:31:19 +0100
-X-UD-Smtp-Session: l3s3148p1@d+DX80lNYtsujnvy
-Date: Wed, 18 Mar 2026 11:31:12 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Wilken Gottwalt <wilken.gottwalt@posteo.net>,
-	Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v4 04/15] hwspinlock: add callback to fill private data
- of a hwspinlock
-Message-ID: <abp-8GlLkoBAUJj8@ninjato>
-References: <20260310075539.11701-1-wsa+renesas@sang-engineering.com>
- <20260310075539.11701-5-wsa+renesas@sang-engineering.com>
- <dd21653b7343e261ec9c88c622c5facbba69df95.camel@foss.st.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VtZWAF1J";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CKV7PKix"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62I8miKf084587
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Mar 2026 11:49:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=y6uekHplewyqgNPzHqkV6E
+	5PzKA4fuWkkb//gMyMjmE=; b=VtZWAF1JfTCOn3kMg2k0rq91Fq0bQHN7l2YXIZ
+	VkvoWcCA0EtypC5bR4XGydkZvClGmv+VQAnyOTFnmW/A5zXJ4PHun5d3euJE/t0j
+	xlnxTh7xHRKEMLfODJPP+NkzRByZATeT5TGAUgL8eAjO2rQH5/T2uGLQqMehjTVC
+	GaAn+jLMb2FM0yfNpCF8dNP/N3uHv10nF/f+gCGt3X8loNa7sbE18i5KlnNYOs/V
+	G1PXGHch1rfd+x6z7POk1EKyw7ZWF8JHlKi7EeF5mE+K8Ete3pZmkvX77ElR5kYd
+	wLxVMYbqXE8NQ7CMxmRYJj5reAn04K1juru3C5gcSQmeHXdA==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4cykqet2u0-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Mar 2026 11:49:34 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3595485abbbso8574523a91.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Mar 2026 04:49:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1773834574; x=1774439374; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y6uekHplewyqgNPzHqkV6E5PzKA4fuWkkb//gMyMjmE=;
+        b=CKV7PKixJhWVPKWgF4Ice+F8y5meSF000jEVI0+0/U3V12R9dioo8a3ja7pKjwTAQ0
+         IraCB2EymAO6VUSwkmRnLxwxtqc6aBqOkV0uQq06kcmyY5iQ0HltdPd3N6p1FR+i58Wc
+         eqv4Q38OWi8UQ9i4LishQ6czIjgaff4uiY8L1daK/+66i+m+T88QScYDn94sd6qPFjnW
+         q9b9wQ77hNnSDC6ZLFcSLun5ryoChsusqcrOCPiCbtfjC2+wgbmHF3MqH82WpgMCzfsG
+         ahshr3TaFnIlqRl52iQ14QYkTjAExY7QfoiZrhXf1WT6LnpPL9Wr5/o5CxYwH7G61jGA
+         V+Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1773834574; x=1774439374;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y6uekHplewyqgNPzHqkV6E5PzKA4fuWkkb//gMyMjmE=;
+        b=XasfMSDroljBnrzPm2NhilSL6jS1yusblfRTlSFC2dI1aGqBXGh2Z9NmMCz/5ZMUbs
+         +0WFSt9DjVqKqFE4bBm/JmnOYYgPVBnVSY0AoI0hSD8u/04mLiV429hrgQSKyjgOXmUR
+         QpGzkLWdfW/clUg61JmpEwN3uQ1VauCg2gc4YwFEL5ChqWEa8h/YnPZeLS6gokanbpyb
+         8vKCv8p6dUoz1AERusoM1kUEhw0PYdX7VBtfrZSa2h3ARDNSMzE0qNQb0cF47WVwkbsJ
+         QhpW/H9cLyz0HgnYhMIYmdFdHYFD0DwkpDMCQcrOAN733WVqWmW+BtQPbxV/BKXIAM5i
+         odqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi8I4/ZhJD4UvYQ9YfzZxQ7+tUs6R0hkqvcGedouIVjFCakjZjBNDZKew8kdvkS6ej4foBCMmO9SA/PbNgejdx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiMXqQ8CsoCmJa9Nn+G6dzw2PY1ec2UrdnaZfIKb7GwuFUuRDr
+	tegLvyXfQfgnYdY9ifD50M1aGoOytpsbBuu7s1oFExomSKcIh+D5N1PP3CtN0UsYLsrvae3CGzn
+	0XAINbkGEin4t50a0CtxNxUI4zzITov4WXoygbq4IotQMioZIQQpnnLtrluVP+W7w7yX7ofr5Gf
+	sg8MfZ
+X-Gm-Gg: ATEYQzzkWYAZEz05Yg3nHbWDTmbiMLmsqp1031nLwN28NEZVRkL/yIO0ZncKORd0lxT
+	Pw2BhCDf5QsUc3mCWe8xfwuoFT1QYc/NxFIK1YU7uVoRGCWgGTGwO8sP3cAy2YrtXtCgn13dPA1
+	OdNzhf4Lf6NtEwLoE1K59p9UYIu5wKiLrPxUe7+WiUpf8kfwEPlCtEGW4QP/sF1DxbG3dvETb/H
+	FEnaBGzNXSwjukdxxQPyeHxaEsYHrNCkYcCDaJooFuN+xK6LwK7CPWUhNLWDVDZDHzQTZ/OfcJj
+	XrOQXOn1WnZUbpWdphlNTPj0cT2+xe7Jw5vQl+qpcoPUZ4Wwa/jn2s4+a5RtPYeDLZAP06tke1d
+	xzwkEzXc7PpdbPwq1+AY1ToEGqwEytKktPgMDmpUHa3LbdXWkyw==
+X-Received: by 2002:a17:90b:47:b0:35b:9ab6:1d4a with SMTP id 98e67ed59e1d1-35bb9f2e18emr2458672a91.18.1773834573672;
+        Wed, 18 Mar 2026 04:49:33 -0700 (PDT)
+X-Received: by 2002:a17:90b:47:b0:35b:9ab6:1d4a with SMTP id 98e67ed59e1d1-35bb9f2e18emr2458641a91.18.1773834573169;
+        Wed, 18 Mar 2026 04:49:33 -0700 (PDT)
+Received: from hu-wasimn-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c741e543579sm2351542a12.16.2026.03.18.04.49.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Mar 2026 04:49:32 -0700 (PDT)
+From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+Date: Wed, 18 Mar 2026 17:19:16 +0530
+Subject: [PATCH v2] remoteproc: qcom: Fix leak when custom dump_segments
+ addition fails
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd21653b7343e261ec9c88c622c5facbba69df95.camel@foss.st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260318-rproc-memleak-v2-1-ade70ab858f2@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIADuRumkC/3XMQQ6CMBCF4auQWVvCFK3IynsYFqUOMpFSbLXRk
+ N7dyt7NJP8k71shkGcK0BYreIoc2M055K4AM+r5RoKvuUFWUlU1KuEX74ywZCfSd1GrIw0NoVb
+ 7HvJm8TTwe/MuXe6Rw9P5z8ZH/H3/SREFipPq8YCNzh6eXQjl46Un46wt84EupfQFSLEQybEAA
+ AA=
+X-Change-ID: 20260316-rproc-memleak-367ef8e1a64b
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Gurbir Arora <gurbaror@codeaurora.org>,
+        Siddharth Gupta <sidgup@codeaurora.org>
+Cc: kernel@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+        Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1773834569; l=2218;
+ i=wasim.nazir@oss.qualcomm.com; s=20250807; h=from:subject:message-id;
+ bh=BrZuPlklCAo71qWA5RBbDtAMQZKPiERrhde+rkkQchE=;
+ b=lyyyjlH5zeW1Pqi+u+EtZk3SE7wbtbfu/CEk5yxYGfMcTz56GvcJtHglpaJjOyvZU03w8GYkt
+ X8s8qrAv6y7D4Oxx71HpQMUN2+RVVosLqaMYApOuiXs+YbU5+uRTKXL
+X-Developer-Key: i=wasim.nazir@oss.qualcomm.com; a=ed25519;
+ pk=4ymqwKogZUOQnbcvSUHyO19kcEVTLEk3Qc4u795hiZM=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE4MDA5OSBTYWx0ZWRfXzcXfsqhynNcQ
+ 33KXsA8JHrSun5L7zsId+Wl7+h15PC88k7vRQCG7EQTNRYb+nEDCrwG583cxv3yNGCHVaE33YnB
+ xab3b5d535r+qeatnRKpt6W0s/VslQ4COdfPcMU3YQ0hDGCUwd1Ix0W0/K07k5Sr0Hwy8Ui6qbP
+ oMxlzBahsleIOs6w9EPprFKTKHEuB9JEalW/AzJHSagSYV7IpliD8zpbKC/u79CslzamXx8G2NI
+ hWvsR/Uk8FyZ3W6pU9jBNXKh9VgVD3JSbEwZxsl2uDwCxgAn5WZCA9Wcay8H0Lh56faygriWROV
+ sDL77EN4WueAHBxop2/CoV83Gkhw2bGkeg+BrGvJ8LsJIG9CSheg58mhmf4P92a5lRzq0FjBRg4
+ en9ZJAa7YPuUdG7xylyX9lwdL7tC78wJHXJoey5UEq7IzkAA3YIhrN4BEm5bkl2ENIy/wk6OWQa
+ 4h0UKzMPtRiUVMLfK3w==
+X-Authority-Analysis: v=2.4 cv=Cd4FJbrl c=1 sm=1 tr=0 ts=69ba914e cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=BdrfqlbclRokfh3ynYUA:9 a=QEXdDO2ut3YA:10
+ a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-ORIG-GUID: GPT6_GdqFm2l3EdFVVaqJlVVsMnKH-Cq
+X-Proofpoint-GUID: GPT6_GdqFm2l3EdFVVaqJlVVsMnKH-Cq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-18_01,2026-03-17_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603180099
 
-Hi Antonio,
+Free allocated minidump_region 'name' in qcom_add_minidump_segments()
+when failing before adding the region to 'dump_segments'. Otherwise,
+the 'name' is not tracked and is never freed by qcom_minidump_cleanup().
 
-> this API is described in Documentation/locking/hwspinlock.rst
-> in chapter 'API for implementors'.
-> 
-> Changing the API parameters should require updating the documentation too.
+Return error when adding to 'dump_segments' fails.
 
-I totally agree. I missed that.
+Cc: stable@vger.kernel.org # v5.11
+Fixes: 8ed8485c4f05 ("remoteproc: qcom: Add capability to collect minidumps")
+Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+---
+Changes in v2:
+- Add fixes tag in commit.
+- Add stable mailing list in cc.
+- Link to v1: https://lore.kernel.org/r/20260316-rproc-memleak-v1-1-96b1518a1a61@oss.qualcomm.com
+---
+ drivers/remoteproc/qcom_common.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-> Since this API is changed again in 10/15, it's probably fine to update the
-> documentation only once in the last 15/15.
+diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
+index 6c31140268ac..aa93d3324561 100644
+--- a/drivers/remoteproc/qcom_common.c
++++ b/drivers/remoteproc/qcom_common.c
+@@ -110,6 +110,7 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
+ 	struct minidump_region __iomem *ptr;
+ 	struct minidump_region region;
+ 	int seg_cnt, i;
++	int ret = 0;
+ 	dma_addr_t da;
+ 	size_t size;
+ 	char *name;
+@@ -130,17 +131,22 @@ static int qcom_add_minidump_segments(struct rproc *rproc, struct minidump_subsy
+ 		if (le32_to_cpu(region.valid) == MINIDUMP_REGION_VALID) {
+ 			name = kstrndup(region.name, MAX_REGION_NAME_LENGTH - 1, GFP_KERNEL);
+ 			if (!name) {
+-				iounmap(ptr);
+-				return -ENOMEM;
++				ret = -ENOMEM;
++				break;
+ 			}
+ 			da = le64_to_cpu(region.address);
+ 			size = le64_to_cpu(region.size);
+-			rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t, name);
++			ret = rproc_coredump_add_custom_segment(rproc, da, size, rproc_dumpfn_t,
++								name);
++			if (ret) {
++				kfree(name);
++				break;
++			}
+ 		}
+ 	}
+ 
+ 	iounmap(ptr);
+-	return 0;
++	return ret;
+ }
+ 
+ void qcom_minidump(struct rproc *rproc, unsigned int minidump_id,
 
-Well, the changes are little, so I will change the documentation
-whenever the API itself gets modified.
+---
+base-commit: b84a0ebe421ca56995ff78b66307667b62b3a900
+change-id: 20260316-rproc-memleak-367ef8e1a64b
 
-Thanks for the heads up!
-
-   Wolfram
+Best regards,
+-- 
+Wasim Nazir <wasim.nazir@oss.qualcomm.com>
 
