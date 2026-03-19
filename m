@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9724C2FFDF7;
-	Thu, 19 Mar 2026 08:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CD62FFDF7;
+	Thu, 19 Mar 2026 08:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773907587; cv=none; b=iI6/Q6XGja2djQxparJvNEWvzX9BblIgnlu7Xur11u09hv5yOhgzYx/Eb8qWs7JkvfC8UaGPPrw2bRC1kZhJc3+TpiyemHW4JPJz95DmMiPVIl8rh595US0ckO5dQc93Ot22cX+5iVa89Z8UlzpUvY6k3/DZU1laIKYTIo1mQ0Q=
+	t=1773907647; cv=none; b=ZMMbpp9NPk7LxyeukTR9yiAk2ptMhGsboyZiqdGP+eN79X16jA1IkmzI8q8rooas2+YuJ/JvTP9i1JIYq9EPxLkBKvMbsl7n9vFI7GH7/vm4xz90CQH8HtdpDpLBkRXITQpQVg2QRcyTeL2xnb4ss+3RYpSuCilM30HAQSflqow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773907587; c=relaxed/simple;
-	bh=LND9QP38YR3zwrHcZrV2AQ0j85RMG+MUPI/TxNx7ph4=;
+	s=arc-20240116; t=1773907647; c=relaxed/simple;
+	bh=/eggGJc8w0dVMpTXWMeYMFm/znwA+edXs/5l6qyW4PE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=orSD+ogas6YIzLD56M2MnPJyurKOZHEBJBrhOdeSyLJzrzgWjdoMZFhPRz6JnIpe7AAr9ipvq+uWJ4mB+TX34T/VdQzgh1aDnNKq7+/NHG1aUgEGf7QnJytLygQTSCdiIOme1HKpWWUDFCSK87QJQn9c8Wv3mX9auAFuyv2lqn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mAoLMsnh; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9PhByz+XzRxOsnLjhDvY1ZsSYkipS9PgqLOMr5KttjIrdleaYqUCKds5l0yTFg0KMqvnWcuVLnohy2y++EWScPHxRpXQT1hyV2e4ExK3tZpI8wmf3eBRsKJqkzH0TETx779zu8xt41H1C3/X7aLVcHE1Nkmi9h8/WY48hJAuxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yqv2xAS9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mAoLMsnh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D19E5C19424;
-	Thu, 19 Mar 2026 08:06:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yqv2xAS9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77302C19424;
+	Thu, 19 Mar 2026 08:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1773907587;
-	bh=LND9QP38YR3zwrHcZrV2AQ0j85RMG+MUPI/TxNx7ph4=;
+	s=k20201202; t=1773907646;
+	bh=/eggGJc8w0dVMpTXWMeYMFm/znwA+edXs/5l6qyW4PE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mAoLMsnhwO55TSj97BpIYQ6GGdnoo4+804Ny+0owESLqk3FJnTkHlhyv9bLhrCF99
-	 0sT9NpOmTKokTvdExb8z1iErj+uk0TzkZSU4ditf/VT0VWAYsiFFZTHZWFPSA16YBz
-	 HGR/abXCzo4q5Nmyw6affJxlSHF78KGysbFhvCPbYOEvMAGCORBZkJKJ0R+UAZYJ8O
-	 qAgEa3Sl1SpgbcJmBhJAcZdxXh84wI39Yqazewcwl3riFVXoG6FzQetlqQ50sJ0QmB
-	 u2L2i6/3KU4FprDksfvPZ2uG4Xm+QPvcKE0Egk0g9uftSHIuR8QAnY/gyQMB4se5cW
-	 +2bWg2UcYBLYA==
-Date: Thu, 19 Mar 2026 09:06:24 +0100
+	b=Yqv2xAS9fjzDIa7+qFMFWEC3da1aX7vqYq3Nm7gvhUEnG0sIodlyG5dShrFBWRyZb
+	 kcCgtrw/+Zsppc5EMEN2Pz2HFIfNmMbs0Rid6utUuSOgXEZfT2tty4+Q5480DeMcAO
+	 cJZRPVTeSRVKHUyK5HdiJqua0tr12r0BGKFnU50su6MR+YRH78Za65A4Veqh57N1Sw
+	 9dXnkVUTpeeHxIeY9p2gsfWrrV9YSYEgogVN6D1+cXz5vZeib1RfsN5b+31oUMWllR
+	 wFRreAhlODAlh7IyNtSGCNaPekZgTtIVMjq1OMW9nzXYuu8yQRRP4GTeimdBVrpadm
+	 1aRZZYmhSNzsQ==
+Date: Thu, 19 Mar 2026 09:07:24 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -36,11 +36,10 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
 	devicetree@vger.kernel.org
-Subject: Re: [PATCH v21 2/6] dt-bindings: remoteproc: Add STM32
- TEE-controlled rproc binding
-Message-ID: <20260319-prehistoric-mongrel-of-essence-fea9b0@quoll>
+Subject: Re: [PATCH v21 0/6] Introduction of a remoteproc tee to load signed
+ firmware
+Message-ID: <20260319-fiery-onyx-serval-aceb17@quoll>
 References: <20260317180329.1207625-1-arnaud.pouliquen@foss.st.com>
- <20260317180329.1207625-3-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -49,24 +48,49 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260317180329.1207625-3-arnaud.pouliquen@foss.st.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20260317180329.1207625-1-arnaud.pouliquen@foss.st.com>
 
-On Tue, Mar 17, 2026 at 07:03:23PM +0100, Arnaud Pouliquen wrote:
-> Add a Device Tree binding for the STM32 remote processor controlled
-> via a Trusted Application running in OP-TEE.
-> This binding describes the interface and properties required for STM32MP
-> remoteproc instances managed by the TEE rproc service, including a
-> linkage to the TEE backend through the property "rproc-tee-phandle".
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> ---
+On Tue, Mar 17, 2026 at 07:03:21PM +0100, Arnaud Pouliquen wrote:
+>=20
+> Main updates from version V20[4]:
+> --------------------------------
+> To address Rob=E2=80=99s concern on v20concerning resource declaration un=
+der the
+> tee node, the device tree is now structured as follows,replacing the
+> child-parent hierarchy with a phandle:
+>=20
+>     firmware {
+>         tee_rproc: optee-rproc {
+>             compatible =3D "80a4c275-0a47-4905-8285-1486a9771a08";
+>         };
+>     };
+>=20
 
-Heh, and standard comment...
+And what is the parent here?
 
-A nit, subject: drop second/last, redundant "binding". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>     m4: m4@0 {
+
+What sort of bus do you have here (IOW, what does this 0 mean?)
+
+>       compatible =3D "st,stm32mp1-m4-tee";
+>       reg =3D <0 0>;
+>=20
+>       mboxes =3D <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
+>       mbox-names =3D "vq0", "vq1", "shutdown";
+>=20
+>       memory-region =3D <&vdev0vring0>, <&m_ipc_shm>, <&mcuram2>,
+>                       <&vdev0vring1>, <&vdev0buffer>, <&retram>;
+>=20
+>       interrupt-parent =3D <&exti>;
+>       interrupts =3D <68 1>;
+>=20
+>       rproc-tee-phandle =3D <&tee_rproc 0>;
+>       st,auto-boot;
+>       wakeup-source;
+>=20
+>       status =3D "okay";
+>     };
 
 Best regards,
 Krzysztof
