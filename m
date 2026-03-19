@@ -1,163 +1,229 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF5E3A0E9A
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Mar 2026 07:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD743A6B8F;
+	Thu, 19 Mar 2026 08:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773905642; cv=none; b=Dr71AVNNyus2DdSQwOiNvkTdcvVWFU7umFaABh+b/s1KMMkkKZdoCQU0mrLowZ9BPcSkQjH/YJbnS5xIdSZ1/tlUlP7fWNCEAbKoptFU28cMPmLjIxko0EVInAXd9BZdBqtUqglxIrOtiE1cqmnsF914nizwNvm5z2l2pVmGwZM=
+	t=1773907566; cv=none; b=E0af44JxP09AskRyWrl3eUMwiAP/IPYL8Re2BAn0ur2jt6+5FSpviqbIsT0WmxZKUqyGDIZdvA/HF2k8jAoqHXPcEpizYwE9ZI4S4SM6KOk0P8jvG7j8RfKrXgbjpttnUCdKQ0NQUDk3bqfm6yj4YcZuto12HV0L8lqIEaSqauE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773905642; c=relaxed/simple;
-	bh=AhNDDZecnmD2xFm+TNWATlQbxsUvN8KlFepA01COIwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j251cJEAbPnRRIdctZSplN8NkcEIplWdlxmDwL2qkg9yMrHWWFt5jqZgIw5pktRPoRO+kAT3NrkhsuEYC4eJeWcIpKR8dryFEnnBzKs/MNkihrd9N+GOcmB0me7GeXGcPycoWLADsvMSn1UmcGMvTFEeWCCNvKnuqQviPi6cK1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IvOkIInU; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1773907566; c=relaxed/simple;
+	bh=4JCWNF+D/qWHcNu86lWPqI3P/Ks4jxVkRRfjXis1WB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ank5E+bQWVaQRQwDQjWVr6T8eLESHSL3mHEiO9b4Q/0uAXu3TtqWe989zD0gIl/8+eOsN/v3LW3Z154XU+Eh3G1LtKsFOChlqxVy1PGjwVS8+xes+phNSX/kEtMRepDOidWPAAp+iKC+TdP5RkqclH7HsuGO8vTYFIGr0oHqZZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPJywGWm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IvOkIInU"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-439b97a8a8cso546527f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Mar 2026 00:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1773905637; x=1774510437; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mfnoZII81lwHDQG+q8k3CqLmv9bwI5/ooG/r2BOJypo=;
-        b=IvOkIInU/YzZLqaHZgSxaRamre1CKdkvdI70PFUfeH49IfziLVMMlBx8JBwXExRU+I
-         gVRhh17h9JfspgTMMC/rrvpb6csmLx8UMmMITDH5bpFdSylsCAMhN1Lb8AzT8GzNRKmr
-         N+tZrhu9OWY5JmnPNsVUJjwjoIu07UIG/l/+kGr0XiojwstpSLa9eE3RBkwl3qeFJmxu
-         t0lzdAmp1R867dvF3FnUE6WLp2dQXwUnWLam6WCwjp8wJ6DKtsj1brcR/9puwlQMk37V
-         sffUCzBXmHbcM6FgB8e0rvmV9AhfAia6M6odtwKzHbGlQfiiTnQpney5fyj3ZKr3Mj/L
-         UTCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773905637; x=1774510437;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mfnoZII81lwHDQG+q8k3CqLmv9bwI5/ooG/r2BOJypo=;
-        b=ZXSyn+EnymnQKp2F0ynvtSGXbQJDr3ewCoT1po5Vkf+OQiFlnz0Aj+Iv345kD3Kule
-         /y+E+Wu5uAyQEB+d3vYl1IoNGhF7fqQOEoxuC5/lWVt2xGDWmoxQf8Iw02kI7FLTxrtH
-         xs+827pbsqDhgEPBrHjbYeUbIfYwttywYiVSWWq0iBfhDjbp/h4G0cRFr13RiThpuHgq
-         yCpr9E4+U63XvYhL3wpLPs81pAuSCytkMgqaRLZCKppqU2+B6P6G/r3xJKiokS+0Ekmz
-         nNdvk1FSJqiZSj5Ed/Q/fkblBXwdOpaIVpBpW9H1P2PHhMc4IGIFdCkST8vEqlM7SPgU
-         +KFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVleeLaYZwFePULOMVReAs6PPRJELHnL5shXJZhroKcmjyah96JVy4FqZ8ksvLDliCXwa2g49NelELVtELXXmxx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyMW8J51TZ6ACVdbh3sBf1JAtZhPTC22E2CInjT5gAo43NOYx7
-	JQ3hwybusON7zvgoHYg5e7MpKxvmizYQRxp7poptm9A6QYTVNyeCQXk2QAiIAo97bGQ=
-X-Gm-Gg: ATEYQzxTFPjXlX3JUdhaFEfoSbJyDj2ZQpr3EvA/FFgHErmcuYI+8f6SJgIVnw6+TaP
-	jbeX5QGhG1iky6CsU52jt6hsoHl9QR2Fd7UxB83/GxhkEjMG3roiZsLAYpOddUnhFKDwwt+fLcP
-	T2LKD5dHi13ogjflnfFauSUISr4O957Dt+VtWiyMCxKYUY7ySvs67GImgR8HqBg/nCZfORMN61k
-	tm1Fq4Ah8DTtfdWOz46yDH+azih0R/abTastxG4Tm2SfZ5AM94UZvP+hSYfMeW0tDGtQyBHLV/z
-	ndUkHeyQa8zQcklBzffopQUC+eRvh6bNXv7wiQ6NWt/abH+FwtIw0vkkbh2aLHsigPpwnZxmMFP
-	l1IRvLgHt/9azpdMv8spFh/PbmBwyae49md/xCmQs01rPHTMut8F/e2qd/adoly6dWWHW4kaDGN
-	uhLg3KqeoqRwoNm8mkoYOgVQyfd6MVA3A=
-X-Received: by 2002:a05:6000:25c6:b0:43b:4ae5:d7c8 with SMTP id ffacd0b85a97d-43b527a50cfmr10368836f8f.2.1773905636943;
-        Thu, 19 Mar 2026 00:33:56 -0700 (PDT)
-Received: from [192.168.0.34] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b51899622sm15875212f8f.28.2026.03.19.00.33.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Mar 2026 00:33:56 -0700 (PDT)
-Message-ID: <46c47101-2672-4970-a212-71e2c8555d80@linaro.org>
-Date: Thu, 19 Mar 2026 09:33:52 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPJywGWm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD00C19424;
+	Thu, 19 Mar 2026 08:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773907566;
+	bh=4JCWNF+D/qWHcNu86lWPqI3P/Ks4jxVkRRfjXis1WB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPJywGWmfPZKo4esFCd879TXQJvbVAD2piXfU4mtgyq9Zd4VcIigyHRLZaniM+AT1
+	 DDSGrTb18/IGjBT2vl9PL7tjXDWVt8mZB/W/zHqEveP77YHO3N+8XLAZili5hOhvRD
+	 3Ep0CcTceZNeof0PKKDgqBl8VnpubVB3H3OCk9U7yI0OGVEMkv9tv6vTqeoYfyPHsX
+	 awSjW9RNWaf9p2Cpza8WkNWThQu7XNSh3q6d4yYYICM869q/XOTWD9c9JrKurNK98k
+	 VtILAttqv7Ww0SGR27d1IAjLYU41dnH6K9J+dNZ2joj2RY/dPzSvL1jePwpNgCbpnc
+	 ijcCCxdNNy1EQ==
+Date: Thu, 19 Mar 2026 09:06:03 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Jens Wiklander <jens.wiklander@linaro.org>, 
+	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sumit Garg <sumit.garg@kernel.org>, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v21 2/6] dt-bindings: remoteproc: Add STM32
+ TEE-controlled rproc binding
+Message-ID: <20260319-glistening-ultramarine-ibis-1eb3d6@quoll>
+References: <20260317180329.1207625-1-arnaud.pouliquen@foss.st.com>
+ <20260317180329.1207625-3-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/25] Introduce meminspect
-To: Bjorn Andersson <andersson@kernel.org>,
- Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>, Dennis Zhou <dennis@kernel.org>,
- Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@gentwo.org>,
- Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner
- <tglx@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
- Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>,
- Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
- Youngjun Park <youngjun.park@lge.com>, Petr Mladek <pmladek@suse.com>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-mm@kvack.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-References: <20260311-minidump-v2-v2-0-f91cedc6f99e@oss.qualcomm.com>
- <abdnp90cC5PI9wyz@baldur>
- <20260316181647.m7x4ncmwdjho6yvr@hu-mojha-hyd.qualcomm.com>
- <abtlUQqMOxj5PwGB@baldur>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <abtlUQqMOxj5PwGB@baldur>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260317180329.1207625-3-arnaud.pouliquen@foss.st.com>
 
-
-
-On 3/19/26 04:55, Bjorn Andersson wrote:
-> On Mon, Mar 16, 2026 at 11:46:47PM +0530, Mukesh Ojha wrote:
->> On Sun, Mar 15, 2026 at 09:24:39PM -0500, Bjorn Andersson wrote:
->>> On Wed, Mar 11, 2026 at 01:45:44AM +0530, Mukesh Ojha wrote:
-> [..]
->>>> , to get all the regions as
->>>> separate files.  The tool from the host computer will list the regions
->>>> in the order they were downloaded.
->>>>
->>>> Once you have all the files simply use `cat` to put them all together,
->>>> in the order of the indexes.  For my kernel config and setup, here is my
->>>> cat command : (you can use a script or something, I haven't done that so
->>>> far):
->>>
->>> So these need to be sorted in numerical order, by that number at the end
->>> of the file name?
->>>
->>> Do you manually punch these in? How do we make this user friendly?
->>
->> Yes, manually.. but I think we can do better. We could make
->> this more user‑friendly by using the section header and string table in
->> the md_KELF binary both of which existed in the earlier implementation.
->> Then, we can write an upstream‑friendly script that reads this KELF
->> metadata file, checks whether a binary with the registered name is
->> present, and stitches everything together to form a complete ELF that
->> the crash tool can consume.  Let me know if you have any suggestion..
->>
+On Tue, Mar 17, 2026 at 07:03:23PM +0100, Arnaud Pouliquen wrote:
+> Add a Device Tree binding for the STM32 remote processor controlled
+> via a Trusted Application running in OP-TEE.
+> This binding describes the interface and properties required for STM32MP
+> remoteproc instances managed by the TEE rproc service, including a
+> linkage to the TEE backend through the property "rproc-tee-phandle".
 > 
-> Can we somehow identify that these regions belong to the minidump and
-> teach QDL to build the ELF for us?
-
-We could integrate the feature that Mukesh suggests directly into QDL as
-a separate command
-e.g. qdl download-and-build-minidump
-
-The first region (the ELF header) is mandatory, because all the regions
-themselves contain only data. To be able to use any of the regions, one
-needs to know at least the physical and virtual address of that memory.
-And this information is saved in the ELF header.
-So QDL could join together all the regions into a single crashdump-like
-file.
-
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> V21 updates:
+> - the m4 node is no more declared as a child of the optee-rproc node
+> - "rproc-tee-phandle" property is introduced to reference the optee-rproc
+> ---
+>  .../remoteproc/st,stm32-rproc-tee.yaml        | 108 ++++++++++++++++++
+>  1 file changed, 108 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/st,stm32-rproc-tee.yaml
 > 
-> Regards,
-> Bjorn
+> diff --git a/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc-tee.yaml b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc-tee.yaml
+> new file mode 100644
+> index 000000000000..ca4dd1c8e7b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/st,stm32-rproc-tee.yaml
+> @@ -0,0 +1,108 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/st,stm32-rproc-tee.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: STMicroelectronics STM32 remote processor controlled via TEE
+> +
+> +maintainers:
+> +  - Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> +
+> +description: |
+> +  STM32MP remote processor controlled by a Trusted Application
+> +  running in OP-TEE. This node is a child of the TEE remoteproc service
+> +  (UUID 80a4c275-0a47-4905-8285-1486a9771a08) and exposes a remoteproc
+> +  instance managed by the Linux remoteproc core via the TEE rproc service.
+> +
+> +  Firmware loading, authentication and remote processor start/stop are managed
+> +  by the TEE application. The STM32-specific driver handles platform resources
+> +  such as the mailboxes and reserved-memory.
+> +
+> +properties:
+> +  compatible:
+> +    const: st,stm32mp1-m4-tee
+
+Drop "tee", it suggests that compatible is tied to implementation of FW
+you put there.
+
+> +
+> +  reg:
+> +    description: |
+
+Do not need '|' unless you need to preserve formatting.
+
+> +      Remote processor identifier used by the TEE service. The <0> value
+> +      in the example denotes a single instance with ID 0.
+> +    maxItems: 1
+> +
+> +  mboxes:
+> +    description: |
+> +      Mailbox channels used for rpmsg/virtio functionality and processor
+> +      shutdown.
+> +    maxItems: 3
+> +
+> +  mbox-names:
+> +    items:
+> +      - const: vq0
+> +      - const: vq1
+> +      - const: shutdown
+> +
+> +  memory-region:
+> +    description: |
+> +      List of phandles to reserved-memory nodes describing the memory layout
+> +      for the interprocessors communication.
+
+Drop description. You miss maxItems, though.
+
+> +
+> +  interrupts:
+> +    description: |
+
+Same comments...
+
+> +      Optional watchdog / status interrupt line used to detect crashes
+> +      and optionally wake up the system.
+> +    maxItems: 1
+> +
+> +  st,auto-boot:
+> +    type: boolean
+> +    description: |
+> +      If present, the remote processor will be automatically started by
+> +      the remoteproc core at boot.
+
+That's policy, not DT property.
+
+> +
+> +  wakeup-source:
+> +    type: boolean
+> +    description: |
+> +      Indicates that the watchdog interrupt can be used as a wakeup source.
+> +
+> +  rproc-tee-phandle:
+
+Missing vendor prefix, drop phandle. You do not say that "st,auto-boot"
+is "st,auto-boot-boolean"
+
+> +    description: |
+> +      Phandle to the remote processor backend node and its identifier. This property
+> +      is used to link the TEE remoteproc service to the remote processor instance
+> +      it controls. The value is a phandle reference to the remote processor node,
+> +      followed by a cell specifying the remote processor identifier used by the TEE.
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+
+Missing constraints.
+
+I also do not understand which bus node this is being child, if not
+remote proc.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - rproc-tee-phandle
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    firmware {
+> +        tee_rproc: optee-rproc {
+> +            compatible = "80a4c275-0a47-4905-8285-1486a9771a08";
+> +        };
+> +    };
+
+Drop
+
+> +
+> +    m4: m4@0 {
+
+Drop unused label.
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+e.g. mcu, because m4 feels like given model (Cortex M4?).
+
+> +      compatible = "st,stm32mp1-m4-tee";
+> +      reg = <0 0>;
+> +
+> +      mboxes = <&ipcc 0>, <&ipcc 1>, <&ipcc 2>;
+> +      mbox-names = "vq0", "vq1", "shutdown";
+> +
+> +      memory-region = <&vdev0vring0>, <&m_ipc_shm>, <&mcuram2>,
+> +                      <&vdev0vring1>, <&vdev0buffer>, <&retram>;
+> +
+> +      interrupt-parent = <&exti>;
+> +      interrupts = <68 1>;
+> +
+> +      rproc-tee-phandle = <&tee_rproc 0>;
+> +      st,auto-boot;
+> +      wakeup-source;
+> +
+> +      status = "okay";
+
+Drop
+
+Best regards,
+Krzysztof
 
