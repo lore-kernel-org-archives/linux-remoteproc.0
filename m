@@ -1,115 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE733A7F5E
-	for <linux-remoteproc@vger.kernel.org>; Fri, 20 Mar 2026 13:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF69223DCE;
+	Mon, 23 Mar 2026 07:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774013048; cv=none; b=kNgdLg+t1oKi485wR6Lhe4zLDFqson1RBXNVoU+5/EsoIDtDSXCWwDd3K80BaOrTzsSYGIC6nlv4QSy+cli87Grn4fBr8TzNCKbdgxh1IYVXJgLWjIDknW2gkZ1gaEUvHMZW2u1eBCPqNOD9cocXeiqtLiIroUYZuc63uHfTOkg=
+	t=1774249480; cv=none; b=GSIGQ33t5B4tok3i9CTVXP06mIXcB81CRtfbldekaiYGcSmlomVhs2uEIF8kX/fJX6LY+/kIpNzK+JBk4ysMKkqnIQdAe+gQ3MKCQxHcFP8JU06tzY89CZNLGcfIRf5TFTxlBBlzjJhMIkvnnIFhC4T2kwPilaelxYSVqtOSDlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774013048; c=relaxed/simple;
-	bh=qKboe0/DtcoJu2p1G1+lmquY232Ov8fUQpxq2txGni0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XMaCYxHSBhXLB/AEMFwjVPJ6LXdyH+GRd6JqeO1iF2W8cTatNYeCxzU81+gzMOvpWOD1Zn7E1h3E8m9E0xspbwsMeYa6N/07GPDWEhWMyJdwpNoroQBCLXXlVpMpIo4Td2mNJkC2pbYNLzgvrUJcCRE381hOTY6g+fdbsg+OqbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsmxSYJe; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsmxSYJe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70070C2BCAF
-	for <linux-remoteproc@vger.kernel.org>; Fri, 20 Mar 2026 13:24:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774013048;
-	bh=qKboe0/DtcoJu2p1G1+lmquY232Ov8fUQpxq2txGni0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IsmxSYJe13Uh2Ham+r9TnB/dla6xbqEeqDJoJyBrjNZknv+2gLOnec6nA7rwmRRSp
-	 VX3aWbHsiGogLffTRLtYztOtlD8LUlE5JsZ/+h8X5AMO5UFjDy0hehWlkJA7emwQY9
-	 pdtYgrO9etYNEoUU6i8Wbq2iHg6VH9JEk5Y8yIUwQvxpzjEb0uci4kKmQf1Xj5AePh
-	 1admpNUXPfJIbek+/5Xlog+ItkFA1cIM0IH7Vc8i/l14DCc6Z9HDwG3SGdmqWhRQKZ
-	 v5VIafh3FUq2rN9HFg/qIeRgu71ekoko+6TS3kj3pjE82XNY464bVvJPsJ08Zgcync
-	 w29Hhl9Dn72pg==
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-797ab169454so6434847b3.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 20 Mar 2026 06:24:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWiiU+eR2/LuUVSK1Q58hfLTJCHTCLdHcQg2oJO7RyFO0VGgOhzVdV/qsV2MSGH0m0IGKM7fHHPYzYFmsu5x5wc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLAClbPlApkkte2nicHqoxJSC3aVtZ5guOkWFo+hMhOjwlY4wc
-	+VLCv6JR8kqoy0207v2EBvC7DnuRxEi1ZxZIbD2qXi6Gf+ZruVJMzq0RoTVP+SnK+N8lsCSeZAZ
-	MX+vHYOgrWRz49o60gfze1IBFfpBocW8=
-X-Received: by 2002:a05:690c:6608:b0:79a:3752:af20 with SMTP id
- 00721157ae682-79a90aae9a8mr26948667b3.7.1774013047789; Fri, 20 Mar 2026
- 06:24:07 -0700 (PDT)
+	s=arc-20240116; t=1774249480; c=relaxed/simple;
+	bh=GfBvqqAgM0czqvKEf99RG7YCHROyg41fa9JjRAeJ1eQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JP0RYC4yFhB0LxHovKpT7a6sDTdCJ7G0tZzkZaSBJBoqUtI9NEivTn0ITeaBpCjoOC6F3zv3jTeF9S6skH3trrd67jeZlLZR9mmiW5fbln7aSWGGESlyflwvj2QS42lvzkiAcQQWQ8HOJ+7RcSJ1G/EKueLQO0eUwhhVkyyPLEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [111.196.245.197])
+	by APP-03 (Coremail) with SMTP id rQCowAD3Etqx5cBpfwWGCw--.11493S2;
+	Mon, 23 Mar 2026 15:03:13 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+To: andersson@kernel.org
+Cc: mathieu.poirier@linaro.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pengpeng@iscas.ac.cn
+Subject: [PATCH 6/7] remoteproc: validate resource table offset count
+Date: Mon, 23 Mar 2026 15:03:13 +0800
+Message-ID: <20260323070313.42933-1-pengpeng@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260313195801.2043306-1-shenwei.wang@nxp.com>
- <20260313195801.2043306-4-shenwei.wang@nxp.com> <2aa1d063-181f-4145-9f1f-7e3012c4d0af@foss.st.com>
- <104e9861-bfd4-4e0f-8967-a849edf7e6fb@lunn.ch> <CANLsYkx6KhspTjzpk51ywfgWcf-FR7-3XrH=MmBi_W6yZmMukA@mail.gmail.com>
-In-Reply-To: <CANLsYkx6KhspTjzpk51ywfgWcf-FR7-3XrH=MmBi_W6yZmMukA@mail.gmail.com>
-From: Linus Walleij <linusw@kernel.org>
-Date: Fri, 20 Mar 2026 14:23:56 +0100
-X-Gmail-Original-Message-ID: <CAD++jLkAQzQ+zzC9ycRt+CQ3801G4p=sJbg1K0h2ugHW0JnQ8w@mail.gmail.com>
-X-Gm-Features: AaiRm521fZwGOYxcLS7yMLe01ZzXoPJRV2jTRRY65q686pnlDl5uPYKXfNpRPU4
-Message-ID: <CAD++jLkAQzQ+zzC9ycRt+CQ3801G4p=sJbg1K0h2ugHW0JnQ8w@mail.gmail.com>
-Subject: Re: [PATCH v12 3/5] gpio: rpmsg: add generic rpmsg GPIO driver
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, 
-	Shenwei Wang <shenwei.wang@nxp.com>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, devicetree@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAD3Etqx5cBpfwWGCw--.11493S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4kWr1xtFW7ury7KrWUCFg_yoW8JFyrpF
+	s3XayIkry5GFyjqFsrAa4jy3WfXw1UGFy3Kay3G3ZaqwnrAry8J3WrCryfCFWUJrn0qr1U
+	JFWYyw13ZFZ7AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU6v38UUU
+	UU=
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-On Wed, Mar 18, 2026 at 5:03=E2=80=AFPM Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
+rproc_handle_resources() trusts table_ptr->num when it walks the offset[]
+array, but it does not first verify that the loaded resource table is
+large enough to actually contain that many offsets. A malformed firmware
+image can therefore force the loop to read past the end of the table
+header before any per-entry bounds checks run.
 
-> I have made this point clear before: modeling legacy protocols in
-> mainline doesn't scale.  Mainline uses a single generic protocol, and
-> yes, it means breaking legacy protocols.  This is the cost of moving
-> to a mainline kernel.  If people want to use the legacy firmware, they
-> must stick with a legacy kernel.
+Reject resource tables whose offset array does not fit inside the loaded
+section.
 
-I mostly agree with this stance.
+Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
+---
+ drivers/remoteproc/remoteproc_core.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-But it is under the assumption that the contributor is coming from the
-same legal body that can define and change the firmware in question.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index b087ed21858a..47fdfe5c2124 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1022,6 +1022,12 @@ static int rproc_handle_resources(struct rproc *rproc,
+ 	if (!rproc->table_ptr)
+ 		return 0;
+ 
++	if (struct_size(rproc->table_ptr, offset,
++			rproc->table_ptr->num) > rproc->table_sz) {
++		dev_err(dev, "resource table is truncated\n");
++		return -EINVAL;
++	}
++
+ 	for (i = 0; i < rproc->table_ptr->num; i++) {
+ 		int offset = rproc->table_ptr->offset[i];
+ 		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
+-- 
+2.50.1 (Apple Git-155)
 
-For example: the mainline Linux kernel supports a whole slew of
-funky Apple rpmsg-like protocols. c.f. drivers/soc/apple/rtkit.c
-
-We cannot go and tell the Asahi contributors to change the Apple
-firmware to use rpmsg like everyone else, because they are not Apple,
-they just want to run Linux on someone else's hardware.
-
-In this case, the contributor is coming from the same legal body as
-the one doing the firmware. I know and sympathize with the fact
-that sometimes working inside a company to make changes happen
-can be as hard as working on the outside, and internal structures
-can be as resistant to pressure change as Microsoft, or Apple.
-Additionally they hit the contributor on the head with "just get this
-done, now, fast".
-
-So it is pretty important in this situation that it is NXP that we address.
-The contributor is just a representative of that legal body
-in this case.
-
-If someone *outside* of NXP, say an OpenWrt hobbyist contributor
-was pushing the same patches based on code drops and reverse
-engineering, the response would be *different*.
-
-In a way the situation is a bit icky. As the Linux community we often
-see all contributions as personal, individual. And the discussion here
-is that of standards committee, which we are not.
-
-So if we are addressing NXP, then we need to be explicit about that,
-and careful not to put their representative in the crosshairs. It's unfair,
-he's just the messenger.
-
-Yours,
-Linus Walleij
