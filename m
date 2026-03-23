@@ -1,173 +1,159 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D6F3ACA62
-	for <linux-remoteproc@vger.kernel.org>; Mon, 23 Mar 2026 14:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774276188; cv=pass; b=N7XB1Bc8apOwoCwrci8q3EfqESVCuHm4NB3E8+Um2PkzP081l78OuWeDGm+nHVFbzek8GnWnpXvXIQnWnbFooIJ7fjpfrSyEDzhrjFkHjFnw+BZQECtVzZ0kUEX0LUVM/vSzW2LckTSObwytwiFQSxoFsTYIKdx6wqP+Nqi19iM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774276188; c=relaxed/simple;
-	bh=+on5q4N8SL0w5EOH9rEDfmQSu2nzNibcQeALQEa6kg4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pJJ1VDW6dwSU5enXChIL+YnHjeI6Vwf8iukaR63KdFS0w3mEJlQvVO4jrAzzAhbTYcdgRz65xi+LSuXhpVHxV7S4DR2UfXRu4oQI+KX9H9TKhg6fVDc+apkFZ0E4bJb7NjZsHMMcX787cpccpcQn4UPyOUgg5P6izc9/WtjczDk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EarLjfEg; arc=pass smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FD43AA4FD
+	for <linux-remoteproc@vger.kernel.org>; Mon, 23 Mar 2026 14:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774276383; cv=none; b=ueazo3U+fe9ut8kzCeOHK3QqOtZxE4hIy1M14LiJVTdVtKXrGBuWWLQDo1DLor38fnWCAVBlNy6XRDtc5JPJdtmcR44NkaZqc8Z5WSrBmNDhKX418OGpQ76venHs04L9NC52NwFEy9u7BMCl9SaeZPMkVIZDSqwb7kTlm85+hss=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774276383; c=relaxed/simple;
+	bh=L314OVt7jzJjhCVDOKBkuT++0Uzl9fPon89IPJAPcK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyyTPhhSkpfPQ79GogOthz8Xdg0Oem613nwDiowoNDRAUuTQssDlgJMK9kmlDY+OT09s9bpMnNxaaNghOxaN0JcwX4UK5VUwmwo1dJsS2xTWQK1DdxOQ2py8PgeZCWDNGFt36oHbFPJh3x0GCBCd4xumGcusVVAiyW2OS16UMYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dskaInVl; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EarLjfEg"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b9358bc9c50so39134066b.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Mar 2026 07:29:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774276185; cv=none;
-        d=google.com; s=arc-20240605;
-        b=aKe1vEQpYUZ2eW+JZWwdGX/otdv5ABQUKj6aHvZWqjryiOrKsuefqLxeN6iVjP5zHj
-         qdUn6VPLtRfFZWNWRbyJ2D8X63Ckpn0/S9Y44WSH65wDGG7241i2n7Bd8g8ywowdB2Wr
-         P4Keil3tZWwyERPDa0NpvUYr+eMXN4RGlV7PU42Hf8nyRWXyZlngha5C+YYHkVg6zEBr
-         ORhB1PgcuH4kI/ZLyvtzezqdJXrmwT9kNG+68IIXijxPGs6gLMJyhNC+YVpJ5HNIyA1u
-         ICS/y6qZ7ZJ9J78RsGvR0cp00WOWyswWemMs+Hgx+x6iqt/gyUbPb2oZrpVXDYohUtWg
-         rRfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=HJ90V3WnYMZ+Bz1s0rTfRxBxtHCI8HjCYpnHgbscmPs=;
-        fh=95dEVVKrH2LQ5oK/nCWBSAnv1JukJjPVNRBTG8f+1Ps=;
-        b=TYBhS41QwJG7KMgZ3jgc0bLlY3srR/tPu100r67xHlThE91lyzJ9NVGNiVK0+1ppOC
-         zcxrCkkToiZU3RT9RROIcHUwmBnMpEbv+AASCUO7x4Lu4HXjidwislS+oAXzdIUnhgEc
-         SuyIny43g+OkMSGa44MbRhlpJXs5PK94Bv/NbaMIbvEIepRDTzi+TxwS3J/Hj8HB7oKO
-         XgXZNRuqqHl3fRW9c31WGUHy0rN+0RkwiMDdR37uOE+0MbTgxeqiz/R8hPHa6CnRsrxi
-         yUEBCMnsl/Ry9xDO0EOio2e4IrF1RQmDIt0/Y/BUntwZiVn1Dh9PoRQ8J9L0ClIMarl4
-         z88A==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dskaInVl"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-35b905e9dc0so154687a91.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Mar 2026 07:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1774276185; x=1774880985; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJ90V3WnYMZ+Bz1s0rTfRxBxtHCI8HjCYpnHgbscmPs=;
-        b=EarLjfEgA8q0L+mwlFDSb/Jsya1AqkRGVOEPLdSMAJ77MX5lxnxT+QRFA0oAznGfEF
-         2nN+mUJ0plLWWYiAPW/X1kXuZKOVozD0xKj2u2YsNGCv0YXdcpgmH3G00mjovvMWi1u+
-         /AxLT5kjY7lPXfaIQ/4EbEPfCluifk1XH3imnJFze0Ftux+Ji82Nxqsb8txMGrYfFaTT
-         93M5cbt8/BlNKpA2GbQ09bmrdbHGNBbSE+SKiH5g2ai09kT60GSOlzA7KnUI02sydvxx
-         yJ75R0Og09ge7PwUlcRLj5WxOb470X98xhzXrScpCjYJmg7vW8Xl8LaVKgYzEi0ZyGyf
-         w/mA==
+        d=linaro.org; s=google; t=1774276381; x=1774881181; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cZBfJFwgoEUz2EcnixeOofm+Rp3x7VxxVqxoB2WloHc=;
+        b=dskaInVl8Ew0God64P3gYw3D0y90EDa1/kQOZO2oIE3FtstqI/GjCUNo7xq6oeL2C4
+         yj4s5LTQEY5yyoWVp/DoDXu6pP9T3qU2I+tnFnjJeQEUfB9FpKTYGy1RDxRtmNMjrCNe
+         9lFzIjLP0T9gli7mrSFjnYzn+Vt5hX2dJdyAWY+OnLoTnpxOcLzLjhlOfnNnfIQzrYx7
+         /Tj5UZVVFsZ/Hhtknjtagi88BgaM9rRxExsLhZJ9DQDZgGptx5yLisTCy6Tf01Ghzvof
+         akeegyBQ9btDPz7DRsa0zyGVJ46D1MA3UlApOx4nPJ8FuQoVdNZz5Z0Iep2GWi1+Y+0l
+         Gb9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774276185; x=1774880985;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HJ90V3WnYMZ+Bz1s0rTfRxBxtHCI8HjCYpnHgbscmPs=;
-        b=oMYjHS6DJLCkiT+ypftOvLDYRRgiKZSv882wbdcfNKTO7OoSVQzVuT2NOLtGidI9td
-         jvbuNX2p6777CWDMR/0RgVwtNeYmYecFAdp1vnRAqfLetXtndUVd4H0pxDAEORwW4/sK
-         LpuqX9pNUxiWLjL+meYVH3kIRuoTt77BQjmpqsWTs0soMf9pyBpyBwC+WxJI1BjiEL04
-         LvxbievR9FlLTYfcLj7BKaHTP/rFhGY2jdHV/tq1vZUUr79joHg5giFKfSZWb19HMLKh
-         94oChjuKfwF64NBh2bSJXu/6wPdQZk+R7KnETnbATK+efVGLR7EBzNyqn32FusqoKE6l
-         1YTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJbDVuER25eVbINcKp4myQZ0Odr8uYEujrPmi1zX2Z8XwvV72rw37beUmTkCpSrO0BhYO4ZHjSlizEAlLMBnMf@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXdH6uh0fTc8H88IHTWvMnWxwdqU0qc+8LKhbMeNqsjrMWsqCm
-	W5egAfHlQZ9koHpLdwtZkoKreOfs/20xjkPmYyW+iTplFbhTMXq+xubEFqNw/JzpS5tBgVnk/oL
-	C6svXX3+oiPNKgeZvEH6WxYTo4OAx/KIykePjVhVfLw==
-X-Gm-Gg: ATEYQzxGnXm0fvXcvrEggUeBTHsV2QpEmHQswhT/A7cZSEIuURaPAavk+WtzcvezbYa
-	YiRljcY9oa0/S+RitOr674uyNfEKzi9TVWg0dZiFH8rjeo2pP7Us7xD8edRuloAe2eTc49nqwir
-	UwxevJCsx08yI3nVLgPGjjdl941YraJDoYqtHqRMsAE2B2o9UsZJfBO+YuRk4LeciaxpeJPQwbj
-	i+YBDZ2lPdyp4ygm/hAR+FDK+B0Ms4nw345luotwlQ+YTLbRkrRJI3uE1suUmaY28ERr00tz+Tl
-	K6PuOTFhdFK7HH89PNZI/2E8qJdFJRsP1MnTDrAugg==
-X-Received: by 2002:a17:907:a18b:b0:b98:2b20:6680 with SMTP id
- a640c23a62f3a-b982ee95138mr577158566b.0.1774276185012; Mon, 23 Mar 2026
- 07:29:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1774276381; x=1774881181;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cZBfJFwgoEUz2EcnixeOofm+Rp3x7VxxVqxoB2WloHc=;
+        b=ZDli+e3el6K/sESO2MMJSgEs/MrVXS9cnI9lm1AwaODGBAFySlOCOQ46b4BgISMWR0
+         JyS/W+nwtHk7gxex55NNRq3G9pLqcOuayVO2Ozl7cLoZV+fq2RZWD1MmajevgSMEYikn
+         XwkrHF0P5xH0ViC4QhWubgcXxuMSzgF1zFr+WaUm1HjR/RGbiajNBKlPbDTRXoM08L2w
+         e6an9LVHkg/tNfHjGFwDw2l9nl12EoHQrcxIY2yVZrr9szSL+iy8CyEPcnyCTbajXoX9
+         X9LgkRdzWiy63DusXtp7PuIV/Lp1EqFeBhMC1hdgA9VFlvMIijcu0ciphss/cfUy+BnY
+         xw/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWTFooSmZK40y0o+7ZLRQgsQcNUGSD4Y0RYh+Db/OwoCdU8AKczlDHVmWvBe/XQCTCYDA7qwFSBY+R0bTNlSGNP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh7ORFnu0yqdWELUy48yLDHMZ0Hw7sLu/wa3R9V9GN4zcjkfj+
+	AF27DD3J/l4JfweUmHxvU/8iiveJPBE62BJYZQ03Sh74oR25RAfaYB9KLn3d0jQ2+5o=
+X-Gm-Gg: ATEYQzyMIh3UlDj9KNbn25unOmpWh3rp4HDeiitGf8Kdhro8HuUr8VjM6k+Xpr03kQw
+	xXglyxD5/aXM2K6S5aKF6prRfm0r5O5vzmG3rq7sPYrbiNAs8vtJ29GKK3N0Aq3BV8UJs+STkVB
+	0ONm0fZEc/iyEDQ7uDZVmfMxi9AoHKORXCXnxIY3bp6mJqo5zqlMSeRH6Cyv87voH05gs3JqVbK
+	kfiyRwKJRhSMcFOx2FztyRY0Qfx/YKaU14hopdMaTkpEypZJENQv/bkHe3R2plms6toSLiehSpQ
+	kPGXCbj7RCA1kLySSGxJ2+5XPAFEY0k7eYsrJrYMwFwXueef7XttGjSXENlVWhhim9qcS3ayuIK
+	KyXVMlYuv+vfkP3I91hlAKxzDFQhN3Z2LTVryIgOcNt4jGeCDdbQ90/rUtpLz32dzUVpeVm+f8Z
+	+QipO5QWFp2IQWJxjEFy7imXOCtzq8NG61wpEFSg==
+X-Received: by 2002:a17:90b:3943:b0:359:f22:8879 with SMTP id 98e67ed59e1d1-35bd2cec783mr10505770a91.22.1774276381189;
+        Mon, 23 Mar 2026 07:33:01 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:36f1:e61e:d1a0:422b])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-35bd262cb35sm4765516a91.1.2026.03.23.07.32.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2026 07:33:00 -0700 (PDT)
+Date: Mon, 23 Mar 2026 08:32:57 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Daniel Baluta <daniel.baluta@oss.nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 0/4] Add i.MX94 remoteproc support and reset vector
+ handling improvements
+Message-ID: <acFPGVNOornxsPG6@p14s>
+References: <20260312-imx943-rproc-v1-0-3e66596592a8@nxp.com>
+ <b5e05fe6-97c4-40cd-b7cc-b417d8717aec@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260317-rpmsg-send-const-v3-0-4d7fd27f037f@oss.qualcomm.com>
-In-Reply-To: <20260317-rpmsg-send-const-v3-0-4d7fd27f037f@oss.qualcomm.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 23 Mar 2026 08:29:33 -0600
-X-Gm-Features: AQROBzDAtL1nQ4PFq47to0a6JE1kiVHOZBw70rBZKtJtzPk95r669W13VmBQzzg
-Message-ID: <CANLsYkxVRDd941sVq9rdn_O0eDbDcVctPpKTACVi5vfYhzgYKQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] ASoC / rpmsg / remoteproc / soc: qcom: Constify
- buffer passed to send functions
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Srinivas Kandagatla <srini@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b5e05fe6-97c4-40cd-b7cc-b417d8717aec@oss.nxp.com>
 
-On Tue, 17 Mar 2026 at 06:37, Krzysztof Kozlowski
-<krzysztof.kozlowski@oss.qualcomm.com> wrote:
->
-> This got acks from Mathieu (remoteproc) and Mark (audio), so can we
-> funnel everything via Qualcomm remoteproc tree?
+On Fri, Mar 20, 2026 at 11:19:06AM +0200, Daniel Baluta wrote:
+> On 3/12/26 14:36, Peng Fan (OSS) wrote:
+> > This series adds remoteproc support for the i.MX94 family, including the
+> > CM70, CM71, and CM33S cores, and introduces a new device‑tree property to
+> > correctly derive the hardware reset vector for Cortex‑M processors whose
+> > ELF entry point does not directly correspond to the actual reset address.
+> >
+> > Background:
+> > Cortex‑M processors fetch their initial SP and PC from a fixed reset vector
+> > table. While ELF images embed the entry point (e_entry), this value is
+> > not always aligned to the hardware reset address. On platforms such as
+> > i.MX94 CM33S, masking is required to compute the correct reset vector
+> > address before programming the SoC reset registers.
+> 
+> What happens if the reset vector is at 0 and the e_entry point is at 0x800...?
+> 
+> In this case masking will no longer work! Can we implement a generic approach?
 >
 
-I'm good with that.
+I will wait to see an R-B from Daniel before looking at this set.
 
-> Dependencies / merging
-> ======================
-> Entire patchset is one logical chain, all further patches depend on
-> previous ones, thus everything should be taken via same tree or shared
-> between trees with tags.  Probably everything should go via ASoC with
-> necessary acks.
->
-> Changes in v3:
-> - Subject fixes (Angelo)
-> - Tags
-> - Link to v2: https://patch.msgid.link/20260310-rpmsg-send-const-v2-0-0e94c5db9bf4@oss.qualcomm.com
->
-> Changes in v2:
-> - New patch #5: media: platform: mtk-mdp3: Constify buffer passed to mdp_vpu_sendmsg()
-> - Rebase, add acks.
-> - Link to v1: https://patch.msgid.link/20251130-rpmsg-send-const-v1-0-cb11c7e0a024@oss.qualcomm.com
->
-> Description
-> ===========
-> The remoteproc and rpmsg send-like functions should not modify data
-> being sent, so buffer should be marked as pointer to const.  This is not
-> only self-documenting code but actually increases the actual safety and
-> clearly documents who is the owner of passed buffer.
->
-> Best regards,
-> Krzysztof
->
-> ---
-> Krzysztof Kozlowski (5):
->       remoteproc: mtk_scp_ipi: Constify buffer passed to scp_ipi_send()
->       remoteproc: mtk_scp: Constify buffer passed to scp_send_ipi()
->       rpmsg: Constify buffer passed to send API
->       ASoC: qcom:: Constify GPR packet being send over GPR interface
->       media: platform: mtk-mdp3: Constify buffer passed to mdp_vpu_sendmsg()
->
->  .../media/platform/mediatek/mdp3/mtk-mdp3-vpu.c    |  2 +-
->  drivers/remoteproc/mtk_scp.c                       |  2 +-
->  drivers/remoteproc/mtk_scp_ipi.c                   |  2 +-
->  drivers/rpmsg/mtk_rpmsg.c                          |  4 ++--
->  drivers/rpmsg/qcom_glink_native.c                  | 13 +++++++-----
->  drivers/rpmsg/qcom_smd.c                           | 10 +++++----
->  drivers/rpmsg/rpmsg_core.c                         |  8 ++++----
->  drivers/rpmsg/rpmsg_internal.h                     |  8 ++++----
->  drivers/rpmsg/virtio_rpmsg_bus.c                   | 24 ++++++++++++----------
->  drivers/soc/qcom/apr.c                             |  8 ++++----
->  include/linux/remoteproc/mtk_scp.h                 |  2 +-
->  include/linux/rpmsg.h                              | 17 +++++++--------
->  include/linux/rpmsg/mtk_rpmsg.h                    |  2 +-
->  include/linux/soc/qcom/apr.h                       |  4 ++--
->  sound/soc/qcom/qdsp6/audioreach.c                  |  6 +++---
->  sound/soc/qcom/qdsp6/audioreach.h                  |  4 ++--
->  sound/soc/qcom/qdsp6/q6apm.c                       |  3 ++-
->  sound/soc/qcom/qdsp6/q6apm.h                       |  2 +-
->  18 files changed, 65 insertions(+), 56 deletions(-)
-> ---
-> base-commit: 2360a9a195d2eae6f7d0cac2cbe920ae8a06c54f
-> change-id: 20251130-rpmsg-send-const-ae216a1fbd8f
->
-> Best regards,
-> --
-> Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
->
+Thanks,
+Mathieu
+ 
+> 
+> >
+> > Similarly, on i.MX95, the existing implementation always programs a reset
+> > vector of 0x0, which only works when executing entirely from TCM. When
+> > firmware is loaded into DDR, the driver must pass the correct reset vector
+> > to the SM CPU/LMM interfaces.
+> >
+> > This series addresses these issues and provides the necessary DT bindings
+> > and driver support.
+> >
+> > Summary of patches:
+> > [1]dt-bindings: remoteproc: imx-rproc: Introduce fsl,reset-vector-mask
+> > Adds a new DT property allowing SoCs to specify a mask for deriving the
+> > hardware reset vector from the ELF entry point.
+> >
+> > [2]dt-bindings: remoteproc: imx-rproc: Support i.MX9[4,52]
+> > Adds compatible strings for i.MX94 CM70, CM71, and CM33S processors.
+> >
+> > [3]remoteproc: imx_rproc: Pass bootaddr to SM CPU/LMM reset vector
+> > Ensures the correct reset vector is passed to SM APIs by introducing a
+> > driver‑level helper (imx_rproc_get_boot_addr()) that applies the
+> > reset‑vector mask.
+> >
+> > [4]remoteproc: imx_rproc: Add support for i.MX94 remoteproc
+> > Adds address translation tables and configuration data for CM70, CM71,
+> > and CM33S, enabling full remoteproc operation on i.MX94.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> > Peng Fan (4):
+> >       dt-bindings: remoteproc: imx-rproc: Introduce fsl,reset-vector-mask
+> >       dt-bindings: remoteproc: imx-rproc: Support i.MX94
+> >       remoteproc: imx_rproc: Pass bootaddr to SM CPU/LMM reset vector
+> >       remoteproc: imx_rproc: Add support for i.MX94
+> >
+> >  .../bindings/remoteproc/fsl,imx-rproc.yaml         |  9 +++
+> >  drivers/remoteproc/imx_rproc.c                     | 85 +++++++++++++++++++++-
+> >  2 files changed, 91 insertions(+), 3 deletions(-)
+> > ---
+> > base-commit: 7109a2155340cc7b21f27e832ece6df03592f2e8
+> > change-id: 20260311-imx943-rproc-2050e00b65f7
+> >
+> > Best regards,
+> 
+> 
