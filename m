@@ -1,197 +1,221 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010044.outbound.protection.outlook.com [52.101.84.44])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C55A3AE1B1;
-	Mon, 23 Mar 2026 13:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774273879; cv=fail; b=cBRNyO289JJPtAMe8UZWMFeb5gAy212rcsA1rsM3cCFcNB1do41okYy9xIlt08d7iN7b+Jjz57HhGMv/UrQV79PM1o1c9MrNC1IYsOGKk/fKbj8FSjgRx/n41bq9Xli9+odGgVeu0yCQa5TS07wfLpYKUKTQQeLj7S1v+yWEK18=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774273879; c=relaxed/simple;
-	bh=EMLxheDAf5W/XBeTrSPwGPwXlfEpFEdxDDay9gHu2yM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UoSPIkqBk7yYPVVE4iE+ZLznPjOH4WnnKUiwzbUYcOzV5Msve3rEJVqZ2i12dedIuyqmTWHaYzW4satE2F/B1qA/cgwN0Vv5C8fZ5B8O6gpAXx/Pz5wPWEgFnn+5iMVyrxf9baEIg+iiwbncmBUD6I0icbww8RKCuOL0lbBiXrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UfNa2jjb; arc=fail smtp.client-ip=52.101.84.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4A43C07A;
+	Mon, 23 Mar 2026 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774275603; cv=none; b=m+HZbWUAVGdiwH0YfvfTlB5PSJBqRWyFGuMXfi1WlHdriX3Igs0/YDgli17V1xNg5XkfUO5WDqvkAAVs5ec5fQJv2OiUJ6ql1fBhjLJjJ5swiTjnAo2mtvTrYXc+SQjZaF7WCp+aJmZWbUsoys7VHNbH6Cwly09vC2SD9AchAto=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774275603; c=relaxed/simple;
+	bh=BE6MT0FJ+XUj3GwSQ9qgEIvygG/gVGIFXxDyZdfpswc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=apDrAaVCokHNob/v8UkCN+XO7nKMDhTHa6eE2IopmFlDcvpDIXGDZQqKtkx/FDZJg2YTxxnbgF0j8mb0xkQZFif8K77kJ/B5JMV5DdKMMyWD4O3QDjsXejA9hKffH/ESF6q0Etqq3HWu/Pd2nis2iPKgsM3o7kbi/++eMmXZlxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaYY+t0s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UfNa2jjb"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vsaPT76XfV6M+VogFC/TTh0kRdwSYKz7f/SCL4vXPkErmZZA8BTS0QhGCyvPA4Pa95Whyn8xpekNGm2GXFZZM7qOb0hS+S3bMuT7ZjUkh/Ag9jih7Bi12CUCKrSl45sjz2jdcE+U9TeB19Oltp5wm4h9+JZP86aKiZbwmu3bmNiVmtEJDRyU7wTerwncX5UP+3JABpFkHPUOMMqTHKdwXqlIz8YFjVKv4JPogXgHe36DYKA9bRkQsrOm8xtTHLBUlx3lYPxpvS0D4CLxcT06LXI8Fo47BC6T5BmojkMAbUbAbvc5yfcyAwYOnB4RzEVxExqSXLjnOTqbcJtmdpRrQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+3GOWPIVljvKJN7KNFT2U0PYatgsfRiQD1Y7YM77qG8=;
- b=oTUfAn58S+5zXNOxdNMkvc3yH6eCydKq3b56YE1WKyJLnoAIFG60UdG58e/OYzm26ulToUCisCwGh10QQa4shK5BEncz9uDqK91VU6uizU071DMaeF2aytbAlg5PNTy/BVVV6O2OAynePi4FlRpAlhNG/9Ak0WFhnEHPoGXH6AheyX+JW4zBzzoaJ6r5gJFQtRG5w68BNHUtipih7f7j154itIDiBzp9g4LsNEh7iF8nmb/19W183zTyLJrllzOuVp6IWiUAQ0qru57g11AHV/Q/4f1JxEEiZKxEfSn8J82HquTK6aN4nZNixvbx4flNmT+np8dDH/6bZbsPHK8Ang==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+3GOWPIVljvKJN7KNFT2U0PYatgsfRiQD1Y7YM77qG8=;
- b=UfNa2jjbw5XC11gXUP9Asoa8P8zxtNXq2Ziq+UuDBMcLpIyRFMcvqKUadRvNPnNw19FNP6pXjHNwYQFLnVhUQIX2QNys5hpbyu4EUqWmkqRgDM4frYZsj8SlIjxISbCaFE+J4BI+k9cQnt83LKBMdkgryU0ZiQ7uJfYSD2LOL8xxIDcT8roAXayyn3WelihmOjyfu3rJVJpelk/o5+aXlMQn6ps1FKxiUYOZ/NX7KLE0Nw/R7wGkCX0Lxf7+6S6hvcWcJ+YH3mFuUOnNomBIoquOoPntdy34l1mXSEhCi1he5bErO/vKg0j7VkZK29nBXpAbf60gnrP5wePZgrph9Q==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by DU2PR04MB8613.eurprd04.prod.outlook.com (2603:10a6:10:2d8::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.31; Mon, 23 Mar
- 2026 13:50:55 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb%4]) with mapi id 15.20.9723.030; Mon, 23 Mar 2026
- 13:51:15 +0000
-From: Shenwei Wang <shenwei.wang@nxp.com>
-To: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
- Andersson <andersson@kernel.org>, Mathieu Poirier
-	<mathieu.poirier@linaro.org>, Frank Li <frank.li@nxp.com>, Sascha Hauer
-	<s.hauer@pengutronix.de>, "arnaud.pouliquen@foss.st.com"
-	<arnaud.pouliquen@foss.st.com>
-CC: Shuah Khan <skhan@linuxfoundation.org>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan
-	<peng.fan@nxp.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>
-Subject: RE: [PATCH v12 3/5] gpio: rpmsg: add generic rpmsg GPIO driver
-Thread-Topic: [PATCH v12 3/5] gpio: rpmsg: add generic rpmsg GPIO driver
-Thread-Index: AQHcsyPMkrsH1v1X8EObP4AwJRt0+bW8L85w
-Date: Mon, 23 Mar 2026 13:51:15 +0000
-Message-ID:
- <PAXPR04MB9185BAA70595FB4BE85F8362894BA@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20260313195801.2043306-1-shenwei.wang@nxp.com>
- <20260313195801.2043306-4-shenwei.wang@nxp.com>
-In-Reply-To: <20260313195801.2043306-4-shenwei.wang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|DU2PR04MB8613:EE_
-x-ms-office365-filtering-correlation-id: 223e4322-4d2a-425b-52cd-08de88e3409a
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|19092799006|366016|921020|38070700021|56012099003|18002099003|22082099003;
-x-microsoft-antispam-message-info:
- 4jBgwbXoBXxk0QsVuiu4H3DuiG7O+ez14fBjgZ4O3rM57fF3AmIW+x6xV4tpeBeGWw3jaJLSrh1ftsFL3tFBj8AtuOgUShZCiKAyQrakFS1/I/0OAmB2OHoDz+h5rFDtQa513VfAwl6g6y7eeP4uvEMebzqOuPDEqfr+V6flypdWDxOFOYeUl9yoZGuzCUxeDlML5Jha7zjOAGFp1GbAbR+94ykBPcfZLF/m5BUZe4bBZocIog+lKJDOACm0A7AdYwogZk+eSJt/Pm6zu7MhqOQHSmkQHVXkJfS3eaoIa/gMMVogR3KDun54y5KnfWBwBn97S1lKeuky5F58daFmc/u6vFfkQPIPbj/lF4OP1NUm1Np4NIVNNislgypCVBN+hLOjEThpFb4caEXC4SWpysE9fQZp+w1QF2yX3euu46apFVn2EVdezhyQqD+ISB7jUDBB1BdLTy9rV+vrKVXusINdW8B6vdDJBqmEZR1JQd6x+hionLSjtrG7d5YNSRyl+AszKwJ7osq1fIxLmgKoPlzKc8jjiVkCtxoVlRq8p0xTNcUntRgucSi9aUQdpYYsKWQJHAMsvwW6xQ8NiXw3bAcK4rNXXg0ihdP6zyackw3on5S+K9h0i/OEJ8k4TiU1sk638DXMG/fzbluUw7GM6337ikCr6upns61YUbVyPW2BgSZs+k3X7p6ZPjncgC36LulVj2vEVzuI5FrebS6BS7KCxGghDtFN6+gywqpAoZtFCLn7LgQIigQRzOM0FfGAvTnwUXBmzYaqWz5vj6dux9AyAEXSs5nsOSHQlYFODDFJVzIDTDHwAWa72bSqBkeP
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(19092799006)(366016)(921020)(38070700021)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?J/kTa1zOjBVyJEvDi/NeqC+VoNgs96PuNLy9bIScK4mSUTh6bb9wnpRLcKCT?=
- =?us-ascii?Q?xvxuRMWTAAzTxonH5nYAsXWJ6ODtBK01sYOfATTeCNUJi8SBFHNa91IqSxF7?=
- =?us-ascii?Q?aV9phS/BNJg0alc2DG46vXD8bfaCLYlK+IvsBKuYl8jNYo6A/lVSKQMabD/t?=
- =?us-ascii?Q?g+U7yQ373SAwGu86r+pimgrH8YF03Peg8cWgVrErByuxXGKPoKCzm0/G2igR?=
- =?us-ascii?Q?nTGFuYYc5m5inqnUHEIww2cpd31QTvI+CcX2qTxRy3VzqGTIdx6/DYRnEkKv?=
- =?us-ascii?Q?1odFLNR/CSQ9IZ2HIKgkG1tajnD+Vprg/suARwlHIKQo/uDI7Aav/E1VdJEC?=
- =?us-ascii?Q?ix/adUkg9HfgLU56EJROyutIdCf6AzPVMMu0UljXm+nmPVh0x18uXdEkGT1r?=
- =?us-ascii?Q?oQZv4btwqlb3pJ7SMQl5BXt1/7ep4rK1pFpCq6vAEZYfapf3z/rtP9GL7+9P?=
- =?us-ascii?Q?MaCnjXG6dJEOiBpF+/2U9C+16vAAjUbgQSpF0dklAufiRXfMbFt8PYhOUMRC?=
- =?us-ascii?Q?8nyc+grmxu0QZK5ke7eKzTYmQErXYuFwAN0bsuAu8RlELeCuytiM7c/dSa63?=
- =?us-ascii?Q?RClgXuUF0EpKBLqMkWsONuKgwmCAOMnz0cEo2Gcqs64OcN7YtZ5pnbKPaXf6?=
- =?us-ascii?Q?HoB6RYK9IuCcFt65nZR1nIlJ8/+PNfB/jyYv4MdUbOXiLBeyFgABJkCWRkUs?=
- =?us-ascii?Q?1Jw5TyuwrMiPfiGu5OmJ87tBbz8Q3F/iwvNkRzrWU97Q8YfMWCHOmEN3VbGF?=
- =?us-ascii?Q?FgRoGGPAYWhT1PyYED1JbAZKoXPpqeDgi7i6rjc6kM9XyI05pSjb5MibEkd+?=
- =?us-ascii?Q?Srzonn4VBqTPXoveWI+iMOoUFfDBELNDlmiS83k5eDQsqyvOBBjf0R9KXC5G?=
- =?us-ascii?Q?pCURpZuPHsPQzzLrjDDe32KADgeSS6z49g3PZwsO1oOb+Lm2W4iKw/W2S1Od?=
- =?us-ascii?Q?FafV+583UjFdScJqnlfMiHOF2MXZ2aAlD+2RMdX83LT/mR/TgGbWmYfbgDG1?=
- =?us-ascii?Q?34Wb1r+mFAZZ/vZhiOxzkuKWyNZ9IX7wVtWdefayEy4u87ccoTlLfwgMjlo5?=
- =?us-ascii?Q?8HUmw4jy2NmgN4YYt4ri0+Qg6kzsMU+HAkKRFkKGTbPnjN1hTXPLuVTLECqE?=
- =?us-ascii?Q?omCb3r12wF5qToyq00azlnZ7bFckRQn9xl6vEfUN6SlavJc6Pbi2ySaZPudQ?=
- =?us-ascii?Q?okJL8EBKqulbr2UtKs6zJvI6v7g4J6bxPBMk5FXF3xP2LI3xOk+n0YdQ/DHt?=
- =?us-ascii?Q?7gfCJpSisM3M1yyv6GH1NWxvzsiZ36KKtE5rBNJDwTlRgpklDlGste+CJLF2?=
- =?us-ascii?Q?j76gfhpju/cbe/+APC1KDHyQ5CyjJGgj2yIBzWvj9dRUICkHtSmXa+DfQtdI?=
- =?us-ascii?Q?u94kKSE0B9xiuaN/g7nP/qdca51maxjbj1VpcfClipowLImHcemXatf2LuLm?=
- =?us-ascii?Q?OT2iJE5lPPGPabmGa8x6cyXxNuiqHx7I3OkQ+ze5PlJhMQ4lmBEH7CCE7+0l?=
- =?us-ascii?Q?sjvxgKMJiyav2Qa6UBREP7zk67Bpl1RfizwHwG96yfdkaLM7/2FS4e9DKCBi?=
- =?us-ascii?Q?P/bH8eqtcQrZYVdO1b0uh/+HREPXd3+lyYtV1XBxeVwKpHawPzCNKvNws6Y/?=
- =?us-ascii?Q?7z4kLPhFdhGnG/KIiZ+FtB7RLdcJEtWrOdyHlzRcHBVBTQkApQ1Y2omgVrzV?=
- =?us-ascii?Q?ad6+gZhm0i4KQQk+Kz6jlIcIjjfu6OfLmiTvoD8OFX0c4XWC?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaYY+t0s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19EE1C4CEF7;
+	Mon, 23 Mar 2026 14:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774275603;
+	bh=BE6MT0FJ+XUj3GwSQ9qgEIvygG/gVGIFXxDyZdfpswc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IaYY+t0sUKB+Oai1ewL9iEqpzedfY6957Q+aYeuzYErZ0WG5KKgc6gjaLnkycEHHU
+	 57o8WJbTS+DqA7aYbaboA4yB0o5/jfOHE947fTNvOhMHinnJKpqXZDwsRMYxfQ8kXj
+	 vywA06bH2lkHXaBD113FOICmQFdGmMdmCWLsx9Iflf8eWt+sS8XJePjFf79ctuQN3W
+	 bFY+D/xocjGPxkylj4BVEh5/X235VYk24uo83lQvU3XJt8R1JAbGnDk+1zzwc0i5QM
+	 j6sNfhIBaBdcFpdspi3mCLi7Lbix2YLo4LPojb60zxr2qrxFpg6o0YeMW5murOwutt
+	 exiL7qU5k9gwg==
+Message-ID: <5c5b49aa-7819-44c6-b5f7-19ec780d73fa@kernel.org>
+Date: Mon, 23 Mar 2026 15:19:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 223e4322-4d2a-425b-52cd-08de88e3409a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2026 13:51:15.5640
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hFIUx9M3hFwnGOwehCjDnNel6QvH8CTlk1s1S10OXxTPHnniBGGtvovQM9k/aZ0/TLjDzZGkCMLic2nx5Hc+xA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8613
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/15] firmware: qcom: Add a generic PAS service
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-media@vger.kernel.org, netdev@vger.kernel.org,
+ linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+ linux-remoteproc@vger.kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+ akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+ jesszhan0024@gmail.com, marijn.suijten@somainline.org, airlied@gmail.com,
+ simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+ dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org,
+ elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ jjohnson@kernel.org, mathieu.poirier@linaro.org,
+ trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
+ pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
+ tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
+ srinivas.kandagatla@oss.qualcomm.com, amirreza.zarrabi@oss.qualcomm.com,
+ jens.wiklander@linaro.org, op-tee@lists.trustedfirmware.org,
+ apurupa@qti.qualcomm.com, skare@qti.qualcomm.com,
+ linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@oss.qualcomm.com>
+References: <20260312062756.694390-1-sumit.garg@kernel.org>
+ <20260312062756.694390-3-sumit.garg@kernel.org>
+ <28d63822-f191-400a-8005-5185dd480dbb@kernel.org>
+ <acE-kAi2tkPh2qie@sumit-xelite>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <acE-kAi2tkPh2qie@sumit-xelite>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Bjorn,
+On 23/03/2026 14:22, Sumit Garg wrote:
+> On Mon, Mar 16, 2026 at 08:51:16AM +0100, Krzysztof Kozlowski wrote:
+>> On 12/03/2026 07:27, Sumit Garg wrote:
+>>> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+>>>
+>>> Qcom platforms has the legacy of using non-standard SCM calls
+>>> splintered over the various kernel drivers. These SCM calls aren't
+>>> compliant with the standard SMC calling conventions which is a
+>>> prerequisite to enable migration to the FF-A specifications from Arm.
+>>>
+>>> OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
+>>> support these non-standard SCM calls. And even for newer architectures
+>>> with S-EL2 and Hafnium support, QTEE won't be able to support SCM
+>>> calls either with FF-A requirements coming in. And with both OP-TEE
+>>> and QTEE drivers well integrated in the TEE subsystem, it makes further
+>>> sense to reuse the TEE bus client drivers infrastructure.
+>>>
+>>> The added benefit of TEE bus infrastructure is that there is support
+>>> for discoverable/enumerable services. With that client drivers don't
+>>> have to manually invoke a special SCM call to know the service status.
+>>>
+>>> So enable the generic Peripheral Authentication Service (PAS) provided
+>>> by the firmware. It acts as the common layer with different TZ
+>>> backends plugged in whether it's an SCM implementation or a proper
+>>> TEE bus based PAS service implementation.
+>>>
+>>> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+>>> ---
+>>>  drivers/firmware/qcom/Kconfig          |   8 +
+>>>  drivers/firmware/qcom/Makefile         |   1 +
+>>>  drivers/firmware/qcom/qcom_pas.c       | 298 +++++++++++++++++++++++++
+>>>  drivers/firmware/qcom/qcom_pas.h       |  53 +++++
+>>>  include/linux/firmware/qcom/qcom_pas.h |  41 ++++
+>>>  5 files changed, 401 insertions(+)
+>>>  create mode 100644 drivers/firmware/qcom/qcom_pas.c
+>>>  create mode 100644 drivers/firmware/qcom/qcom_pas.h
+>>>  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
+>>>
+>>> diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
+>>> index b477d54b495a..8653639d06db 100644
+>>> --- a/drivers/firmware/qcom/Kconfig
+>>> +++ b/drivers/firmware/qcom/Kconfig
+>>> @@ -6,6 +6,14 @@
+>>>  
+>>>  menu "Qualcomm firmware drivers"
+>>>  
+>>> +config QCOM_PAS
+>>> +	tristate
+>>> +	help
+>>> +	  Enable the generic Peripheral Authentication Service (PAS) provided
+>>> +	  by the firmware. It acts as the common layer with different TZ
+>>> +	  backends plugged in whether it's an SCM implementation or a proper
+>>> +	  TEE bus based PAS service implementation.
+>>> +
+>>>  config QCOM_SCM
+>>>  	select QCOM_TZMEM
+>>>  	tristate
+>>> diff --git a/drivers/firmware/qcom/Makefile b/drivers/firmware/qcom/Makefile
+>>> index 0be40a1abc13..dc5ab45f906a 100644
+>>> --- a/drivers/firmware/qcom/Makefile
+>>> +++ b/drivers/firmware/qcom/Makefile
+>>> @@ -8,3 +8,4 @@ qcom-scm-objs += qcom_scm.o qcom_scm-smc.o qcom_scm-legacy.o
+>>>  obj-$(CONFIG_QCOM_TZMEM)	+= qcom_tzmem.o
+>>>  obj-$(CONFIG_QCOM_QSEECOM)	+= qcom_qseecom.o
+>>>  obj-$(CONFIG_QCOM_QSEECOM_UEFISECAPP) += qcom_qseecom_uefisecapp.o
+>>> +obj-$(CONFIG_QCOM_PAS)		+= qcom_pas.o
+>>> diff --git a/drivers/firmware/qcom/qcom_pas.c b/drivers/firmware/qcom/qcom_pas.c
+>>> new file mode 100644
+>>> index 000000000000..beb1bae55546
+>>> --- /dev/null
+>>> +++ b/drivers/firmware/qcom/qcom_pas.c
+>>> @@ -0,0 +1,298 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+>>> + */
+>>> +
+>>> +#include <linux/device/devres.h>
+>>> +#include <linux/firmware/qcom/qcom_pas.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/module.h>
+>>> +
+>>> +#include "qcom_pas.h"
+>>> +
+>>> +struct qcom_pas_ops *ops_ptr;
+>>
+>> Same comment as before. Don't create singletons. And for sure not global
+>> ones.
+> 
+> This pattern has been carried from the PAS API contract among kernel
+> clients and the SCM PAS service earlier. The clients don't hold a
+> reference to the PAS data like underlying platform or TEE device etc.
+> Hence the need to have a global data pointer to hold reference to the
+> ops data structure registered by drivers having different lifetime of
+> devices. Also, the PAS APIs can be called from very different client
+> driver contexts.
+> 
+> Surely, avoiding global data is always better given a better alternative
+> is there. Do you have any better alternative proposal here?
 
-> -----Original Message-----
-> From: Shenwei Wang
-> Sent: Friday, March 13, 2026 2:59 PM
-> To: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.o=
-rg>;
-> Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzyszto=
-f
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn
-> Andersson <andersson@kernel.org>; Mathieu Poirier
-> <mathieu.poirier@linaro.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> <s.hauer@pengutronix.de>; arnaud.pouliquen@foss.st.com
-> Cc: Shuah Khan <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org; l=
-inux-
-> doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix Kernel Tea=
-m
-> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Shenwei
-> Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
-> devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org; dl-linux-imx <=
-linux-
-> imx@nxp.com>; Bartosz Golaszewski <brgl@bgdev.pl>; Andrew Lunn
-> <andrew@lunn.ch>
-> Subject: [PATCH v12 3/5] gpio: rpmsg: add generic rpmsg GPIO driver
->=20
+Why it cannot be part of the context?
 
-Since I rewrote this version based on your earlier feedback=20
----
-"My expectation is that it will be better to just have two separate
-drivers - but reuse all the design-work done in the gpio-virtio."
----
-I'd glad to hear what you think about this patch.
+Look at your API, e.g.:
+qcom_pas_init_image(). It takes struct qcom_pas_context which should
+contain the ops.
 
-Thanks,
-Shenwei
-
-> On an AMP platform, the system may include two processors:
-> 	- An MCU running an RTOS
-> 	- An MPU running Linux
->=20
-> These processors communicate via the RPMSG protocol.
-> The driver implements the standard GPIO interface, allowing the Linux sid=
-e to
-> control GPIO controllers which reside in the remote processor via RPMSG
-> protocol.
->=20
-> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
-> ---
->  drivers/gpio/Kconfig      |  17 ++
->  drivers/gpio/Makefile     |   1 +
->  drivers/gpio/gpio-rpmsg.c | 596 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 614 insertions(+)
->  create mode 100644 drivers/gpio/gpio-rpmsg.c
->=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig index
-> b45fb799e36c..cff0fda8a283 100644
-
+Best regards,
+Krzysztof
