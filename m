@@ -1,332 +1,460 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A91D3F54BD;
-	Tue, 24 Mar 2026 12:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316DE39A7FB
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2026 12:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774356141; cv=none; b=XZctvoahhBals+jVaKwZquEEr+K/QtUVRNnfXrMev77fOvNVfLFYx/C0dtaaynh7C1UQLd2GERMZ0L421yafi7Bu+CmIhF4CVKYgxEqnOkdBj9PPPfRxC56VTpcKZJWVbxVz/GtS0XFCVhsQSX8DzNkoH/yvpEFv7RDryeqRzJU=
+	t=1774356961; cv=none; b=YJsQ1uQoe8CABqwnR+QmymapbjyJImUHih0xcwvtkii7vgmPhqgke8rrKbQwvqWMofvw2iHWfEoUa9WxDBgypzOywhMwwD6xiZ4cBYZJ+Q+Sumtme2oht53aaIFaKgK3pGV5gTVt2224VECnqnJOEkcJhfWJP69Fep7qSflaL+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774356141; c=relaxed/simple;
-	bh=qoquiz1TfLoJSq0TulMqWFGIEKMZcggZYXoiuuXxM5I=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=MpOlsNKSh8GKMYPKdzJvtDcD3UEww40e97lF11R14DHSp75TsSWht5LQ+Aa0cGJQGlvf6GSnQMhfw/m6/UpGzfOlzht/hKKpppJfnZ/QW0tBViDQRQgY9hxbHCXtgQiVo+3IDstH42wkWf7TGlRkEA7bqMu17pseK83tLXBVk/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nqs3h6Sk; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1774356961; c=relaxed/simple;
+	bh=OZzCm0pREu38XtnmAUWuZI8sCEhWjQNUyllQZ03yeAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+bdaiEym5fHkRk+WcdM8PYHLlPzIWm0ZOm5Tc+0jVwdpGzGHcdsEwTuI004CRPce2X02SZ6Njo1jboW/YqvTXIAZTCbbxNas56C4NVV3lI4quV0grQuif0AnLAN1KqMHTufHxf8cEskELTodQbqqS4WymlMBkckJ6l8gLFNs7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gTTemTDG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TZtrjJ2M; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nqs3h6Sk"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62O7DT6Q481575;
-	Tue, 24 Mar 2026 12:41:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=Shk48Guqth0dMGtPHiYWn3blJ70CgjGVRZHzaVpvLPY=; b=nqs3h6SkcQWZ
-	+OwoltQeMxOO6RblQPqe55tAVjsackvCM4KkhWNpCQq04FPsFlS93zfiGSC7Di4+
-	S9HKMl0Sjn5QTzbM3NfhhnAIAYBvkUkrdxOKSw7d0UM43AXyYRkeT8yYGAz8hak7
-	ZGJjdVwyS8NI2NFgL8wvwtd0s6FHAxSN4ucTbH9O2vRt2+dg7MkFcwB5Thprjrjc
-	U/howCgydGuthvICdFGdQd3XIc0EaU0k/lS6es2878jUgr/pm+7/onljXHYAZGv+
-	d2SOZp5c+3ZgwIjW+EEdkE2KjadPhRrKOtZM1Zuf8LiFRmTbl3wfp/kpxlXGAEqB
-	O8U48KsXUA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1ktxudx6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 12:41:31 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OC7Gcu008722;
-	Tue, 24 Mar 2026 12:41:30 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d26nnhuw0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 12:41:30 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OCf5V326608298
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Mar 2026 12:41:05 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 201225803F;
-	Tue, 24 Mar 2026 12:41:29 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 946D658055;
-	Tue, 24 Mar 2026 12:41:25 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 24 Mar 2026 12:41:25 +0000 (GMT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gTTemTDG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TZtrjJ2M"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OC381W1817310
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2026 12:55:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=R8roXgboVbXmLAakQqmWnWPH
+	OFL6HEqIKar4eXesNtE=; b=gTTemTDG1GsbjCLZHj6Vw8jfyIWzo9yapyLkPjnH
+	IINS/aD62jOEF6hwY0Rp8vIVS4tsWZkMZy0YNW2xLnKKLJWsnJ/HW/ApPTdOTVFF
+	bxGSalH0wwoivPMnk4u5sJvp6OLLRCoE9/Wq9ZdreZOl+7Uhr0qafFK7KT8KB8dR
+	Bzez5AOwy/s3c6pHFIVCqbsu0cECrx56j4JGq5WHdwAhl0hh+E4KmNcC6ApREkEv
+	VaE+63U2/P9UTHjr5wVymiEqFs3OJMO1qDil2AZt6hkwBCqxVZcDlj2V8Q0iT/YM
+	SzUXNQ4nSYegv/zENHqJu1paIzxJVftuIYbZbbJTCo3WBg==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d3t9eg7cf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2026 12:55:59 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2b079b4a8c3so42386185ad.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2026 05:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1774356958; x=1774961758; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R8roXgboVbXmLAakQqmWnWPHOFL6HEqIKar4eXesNtE=;
+        b=TZtrjJ2M7zllhtvRuT7wok7jqu7fGzZKB8vyfWFZvJAQOA5CcAMycSXiZ8GSk4hCdG
+         N3FATeoGvBSfxbb1Wtu/bULmbWU8YWySWhuI0ApafIXZqJNuYAwZ0uTNc8YfEc0RJsB/
+         R/94yx1PkJv5uKtVI1VVr/2NpsO5V0C7TAPL70adBzvcJqs18LBYzqepIYsWov13MDcl
+         L9p/RAL0fCP13vW+2Flq+oGEUyaxakUhk1tC2NNeKXrAO4GYB+D5+6I2PN7kLWGUqxgX
+         g3t9DueiRDsc5e/2cw+4zw1hWiDViOnlbMLOKV+rRSZ9Vv+9upMA9CWzeA9hgXAwpYNy
+         jLEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774356958; x=1774961758;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R8roXgboVbXmLAakQqmWnWPHOFL6HEqIKar4eXesNtE=;
+        b=iBxm+KQl8GdNN95h8IKdYZwlTyq1NEefjcgn9W4DThF42UCGIA6iLIRhtyxC6+RlVk
+         qWC+1wjU6s8BHuUGet+7I7aoOUNXvWnnyKUpOtVx7SG8yQt+7A24U0ijM8JcmdS/ev9j
+         rg8IHnjARhsHC60RB6FV51tOIuaG8fw9Pzfb74VCei/o7bZJb49KMn42G/mCunLjOfkj
+         R55VlaeXeulG4dM3eYuOl+j6OAFg6XmJTFkIrhoQv9bGeoz+dFy3Dic01CCEvFOi2XNf
+         P6oyLMnF4Dao6DBP6Y3/hXvDkQJnOfMUIabTWxJJeYdQsmUb9g4pF8DThF1LhhNMFhHx
+         i6/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVNRz4H4/Hea3vDnD3nCeb6XwtM2SStiZ/dKvYbVXfYryCAM0w7I7jhG1hD1etbJ04AzanY/0OeNXkJFln/I6kd@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyt6tbn+R8yzMv2DzjNRTsB+mxD4mDRbU52r9OjnaRYELwJBTQ
+	ZKwo06gDwWBoFdhkbebFmwnEDEOkn+OxE2+EJGpIk0id6EMIGncHh1Hh8BpmTpLwfIuMiFg3Ueb
+	ZS5jbB/h90YLzh1BF2s6PPf9Gj0JkUp2e36vfRA+MqOlwF2b+4GBrMSZUzbOKsXAfzt9FH1QBzQ
+	piIYKh
+X-Gm-Gg: ATEYQzyRXbmYhBG3i3M5m3U+p7DeewdK4/QTIe1d5DK/MuHU3gnnH43dfvR8nbRTHCT
+	lnppypMSrdEbHtsGRGVThwS5pKWFl4QjlPjugh4G2hiJH/uc+UNALuAO65oym7X2LJTtPGz6qN/
+	4MbpKB+Uhnj61C6heihJn7PnfaiQv4dZMIvlBxJvZqpDK36mSCFb6msxxDLkZJ3430QUf9G5tTj
+	qk84FoYAW4gga4TuSKcRdgDsvZRm13fMSOZefhi8S7NTpvlfmxWan1qeEaSkoBU1lV+LwS6eUDY
+	58945fYRKrRHpDAPHEqDvPeYcuDQYouCd010Zn183Uv7ZcBEnzUZSRHS+MDpbCRC6wlx5OCWC1W
+	MBu4X8JnBTRbPXCYD9loXzbzNsBJqRrls64k7FpedfvmMu36d
+X-Received: by 2002:a17:903:2b04:b0:2b0:51f6:d46e with SMTP id d9443c01a7336-2b0826f6ce5mr154647415ad.15.1774356958356;
+        Tue, 24 Mar 2026 05:55:58 -0700 (PDT)
+X-Received: by 2002:a17:903:2b04:b0:2b0:51f6:d46e with SMTP id d9443c01a7336-2b0826f6ce5mr154647155ad.15.1774356957830;
+        Tue, 24 Mar 2026 05:55:57 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b0835298acsm151649845ad.22.2026.03.24.05.55.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2026 05:55:57 -0700 (PDT)
+Date: Tue, 24 Mar 2026 18:25:52 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Map/unmap subsystem region
+ before auth_and_reset
+Message-ID: <20260324125552.q6czexiybos2r46x@hu-mojha-hyd.qualcomm.com>
+References: <20260310135205.2497789-2-mukesh.ojha@oss.qualcomm.com>
+ <202603190738.1VFMgKNm-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 24 Mar 2026 13:41:25 +0100
-From: Harald Freudenberger <freude@linux.ibm.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-        Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ioana
- Ciornei <ioana.ciornei@nxp.com>,
-        Nipun Gupta <nipun.gupta@amd.com>,
-        Nikhil
- Agarwal <nikhil.agarwal@amd.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-        Dexuan
- Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>,
-        Bjorn Helgaas
- <bhelgaas@google.com>, Armin Wolf <W_Armin@gmx.de>,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Vineeth Vijayan <vneethv@linux.ibm.com>,
-        Peter Oberparleiter
- <oberpar@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian
- Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle
- <svens@linux.ibm.com>,
-        Holger Dengler <dengler@linux.ibm.com>,
-        Mark Brown
- <broonie@kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang
- <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
-        Alex Williamson
- <alex@shazbot.org>, Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini
- <sstabellini@kernel.org>,
-        Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>,
-        "Christophe Leroy (CS GROUP)"
- <chleroy@kernel.org>,
-        linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
-        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
-        linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-spi@vger.kernel.org,
-        virtualization@lists.linux.dev, kvm@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 10/12] s390/ap: use generic driver_override infrastructure
-Reply-To: freude@linux.ibm.com
-Mail-Reply-To: freude@linux.ibm.com
-In-Reply-To: <20260324005919.2408620-11-dakr@kernel.org>
-References: <20260324005919.2408620-1-dakr@kernel.org>
- <20260324005919.2408620-11-dakr@kernel.org>
-Message-ID: <b5a80e06aa0240348dfa6826c20f3aec@linux.ibm.com>
-X-Sender: freude@linux.ibm.com
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=IqITsb/g c=1 sm=1 tr=0 ts=69c2867c cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=V8-k01nbhAtxNRQPXScA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDA5OCBTYWx0ZWRfX5BtF+dGcqKne
- ud3qOj4gTSLR9zLNfAq3JG6g/oOlaoDuAoL5ugYqpH9s9vpJjplhqsv+C5Fn13wLfcNuqTFjG2K
- 8B20fOIVvCqa5XvNqyGQnMAHAZ9m7lornaYpmzRxy2uj+A1xP4iQsysQ7y+S7A488UAEKXq5qZ6
- LBbN3vhPXZJ/bEjV349pY7YewQW80X8aJiv4wUe79X39dz6GUwBnh+wAamLPOldfeVWA3ylebkO
- fpE77uN6WRT54jS8FnW/ZhUlXkVn14gcYRIyrgSPpzwxEiZ3nS5fgK7DV0UKCoQQHx0EyIcKLvI
- sxcDzd1vSEY19GMOKPv1ZW+MN86TCAn4dq3ojgq1Xg0hwRVL0L3YGoz9QETDntcaSlj/0kKtlA6
- UfD/yUxgwr0WFEGPDCZ3E/gq/ajxwH4hTrddRdALUSslhqrcmAjUB1i/qil1QJJkf8vWuRKoJjs
- AJigNCQkv9LzvxCAnUQ==
-X-Proofpoint-GUID: YK3KYDPHgye9e3NvrRpemo-oOEIjjzeD
-X-Proofpoint-ORIG-GUID: IG7OyOmEsbO9ZGMbJn71CzQus0Ee1qWf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202603190738.1VFMgKNm-lkp@intel.com>
+X-Proofpoint-ORIG-GUID: yS1OeSJZw_BkgAacMIjjePDntzQDINAT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDEwMiBTYWx0ZWRfX6bghacY5CWhT
+ FmOcSrXuzNnfD6yTjIfdNXbLBKWAYPlP2fv4eHKuzivfvy8DaAt8X/HiT+3iCvMTTZhc0yA/wMO
+ a3kTL2PSPnd6AfI+GhIOedsz4ifn2Dj0MTGpmIqm2oCeYRh8nnXGt0lAtNhc1c1YNcD+eA7Jneb
+ QeQxj7Dgb2zLuvgoNRU7uGR0hjST6TkmFuQPR7Prxs4PexGaVbQJ6pyPkavj5yYH+FSWXJhrVf3
+ TSsveYICkCLD3YKwrioTXihCrcVTXlP39JPQXCsY+pNLyJhXtCei/2f9Hk4JZ1/oYUlrRxxmxVp
+ z+bodRh80UPmEQCVFuwPP88N4TrNASuQbxgTCHR09q7eu33kZFhnGNWflcyaa5bfjTLAuFNQR91
+ JHKT7LcqeU2sTmDmgNK++TAYDqgNqCtYOkKuxQF8RQtH+7VvOnVQLY71k4dpew96+l7Tmf5e4pQ
+ USOaLMcCN+Yn0N+uMtQ==
+X-Authority-Analysis: v=2.4 cv=DdAaa/tW c=1 sm=1 tr=0 ts=69c289df cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=NEAV23lmAAAA:8 a=4kh2CpByiCJpsNi5vckA:9 a=CjuIK1q_8ugA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: yS1OeSJZw_BkgAacMIjjePDntzQDINAT
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-24_02,2026-03-23_02,2025-10-01_01
+ definitions=2026-03-24_03,2026-03-23_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1011 spamscore=0 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240098
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240102
 
-On 2026-03-24 01:59, Danilo Krummrich wrote:
-> When the AP masks are updated via apmask_store() or aqmask_store(),
-> ap_bus_revise_bindings() is called after ap_attr_mutex has been
-> released.
-> 
-> This calls __ap_revise_reserved(), which accesses the driver_override
-> field without holding any lock, racing against a concurrent
-> driver_override_store() that may free the old string, resulting in a
-> potential UAF.
-> 
-> Fix this by using the driver-core driver_override infrastructure, which
-> protects all accesses with an internal spinlock.
-> 
-> Note that unlike most other buses, the AP bus does not check
-> driver_override in its match() callback; the override is checked in
-> ap_device_probe() and __ap_revise_reserved() instead.
-> 
-> Also note that we do not enable the driver_override feature of struct
-> bus_type, as AP - in contrast to most other buses - passes "" to
-> sysfs_emit() when the driver_override pointer is NULL. Thus, printing
-> "\n" instead of "(null)\n".
-> 
-> Additionally, AP has a custom counter that is modified in the
-> corresponding custom driver_override_store().
-> 
-> Fixes: d38a87d7c064 ("s390/ap: Support driver_override for AP queue 
-> devices")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  drivers/s390/crypto/ap_bus.c   | 34 +++++++++++++++++-----------------
->  drivers/s390/crypto/ap_bus.h   |  1 -
->  drivers/s390/crypto/ap_queue.c | 24 ++++++------------------
->  3 files changed, 23 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/s390/crypto/ap_bus.c 
-> b/drivers/s390/crypto/ap_bus.c
-> index d652df96a507..f24e27add721 100644
-> --- a/drivers/s390/crypto/ap_bus.c
-> +++ b/drivers/s390/crypto/ap_bus.c
-> @@ -859,25 +859,24 @@ static int
-> __ap_queue_devices_with_id_unregister(struct device *dev, void *data)
-> 
->  static int __ap_revise_reserved(struct device *dev, void *dummy)
->  {
-> -	int rc, card, queue, devres, drvres;
-> +	int rc, card, queue, devres, drvres, ovrd;
-> 
->  	if (is_queue_dev(dev)) {
->  		struct ap_driver *ap_drv = to_ap_drv(dev->driver);
->  		struct ap_queue *aq = to_ap_queue(dev);
-> -		struct ap_device *ap_dev = &aq->ap_dev;
-> 
->  		card = AP_QID_CARD(aq->qid);
->  		queue = AP_QID_QUEUE(aq->qid);
-> 
-> -		if (ap_dev->driver_override) {
-> -			if (strcmp(ap_dev->driver_override,
-> -				   ap_drv->driver.name)) {
-> -				pr_debug("reprobing queue=%02x.%04x\n", card, queue);
-> -				rc = device_reprobe(dev);
-> -				if (rc) {
-> -					AP_DBF_WARN("%s reprobing queue=%02x.%04x failed\n",
-> -						    __func__, card, queue);
-> -				}
-> +		ovrd = device_match_driver_override(dev, &ap_drv->driver);
-> +		if (ovrd > 0) {
-> +			/* override set and matches, nothing to do */
-> +		} else if (ovrd == 0) {
-> +			pr_debug("reprobing queue=%02x.%04x\n", card, queue);
-> +			rc = device_reprobe(dev);
-> +			if (rc) {
-> +				AP_DBF_WARN("%s reprobing queue=%02x.%04x failed\n",
-> +					    __func__, card, queue);
->  			}
->  		} else {
->  			mutex_lock(&ap_attr_mutex);
-> @@ -928,7 +927,7 @@ int ap_owned_by_def_drv(int card, int queue)
->  	if (aq) {
->  		const struct device_driver *drv = aq->ap_dev.device.driver;
->  		const struct ap_driver *ap_drv = to_ap_drv(drv);
-> -		bool override = !!aq->ap_dev.driver_override;
-> +		bool override = device_has_driver_override(&aq->ap_dev.device);
-> 
->  		if (override && drv && ap_drv->flags & AP_DRIVER_FLAG_DEFAULT)
->  			rc = 1;
-> @@ -977,7 +976,7 @@ static int ap_device_probe(struct device *dev)
->  {
->  	struct ap_device *ap_dev = to_ap_dev(dev);
->  	struct ap_driver *ap_drv = to_ap_drv(dev->driver);
-> -	int card, queue, devres, drvres, rc = -ENODEV;
-> +	int card, queue, devres, drvres, rc = -ENODEV, ovrd;
-> 
->  	if (!get_device(dev))
->  		return rc;
-> @@ -991,10 +990,11 @@ static int ap_device_probe(struct device *dev)
->  		 */
->  		card = AP_QID_CARD(to_ap_queue(dev)->qid);
->  		queue = AP_QID_QUEUE(to_ap_queue(dev)->qid);
-> -		if (ap_dev->driver_override) {
-> -			if (strcmp(ap_dev->driver_override,
-> -				   ap_drv->driver.name))
-> -				goto out;
-> +		ovrd = device_match_driver_override(dev, &ap_drv->driver);
-> +		if (ovrd > 0) {
-> +			/* override set and matches, nothing to do */
-> +		} else if (ovrd == 0) {
-> +			goto out;
->  		} else {
->  			mutex_lock(&ap_attr_mutex);
->  			devres = test_bit_inv(card, ap_perms.apm) &&
-> diff --git a/drivers/s390/crypto/ap_bus.h 
-> b/drivers/s390/crypto/ap_bus.h
-> index 51e08f27bd75..04ea256ecf91 100644
-> --- a/drivers/s390/crypto/ap_bus.h
-> +++ b/drivers/s390/crypto/ap_bus.h
-> @@ -166,7 +166,6 @@ void ap_driver_unregister(struct ap_driver *);
->  struct ap_device {
->  	struct device device;
->  	int device_type;		/* AP device type. */
-> -	const char *driver_override;
->  };
-> 
->  #define to_ap_dev(x) container_of((x), struct ap_device, device)
-> diff --git a/drivers/s390/crypto/ap_queue.c 
-> b/drivers/s390/crypto/ap_queue.c
-> index 3fe2e41c5c6b..ca9819e6f7e7 100644
-> --- a/drivers/s390/crypto/ap_queue.c
-> +++ b/drivers/s390/crypto/ap_queue.c
-> @@ -734,26 +734,14 @@ static ssize_t driver_override_show(struct device 
-> *dev,
->  				    struct device_attribute *attr,
->  				    char *buf)
->  {
-> -	struct ap_queue *aq = to_ap_queue(dev);
-> -	struct ap_device *ap_dev = &aq->ap_dev;
-> -	int rc;
-> -
-> -	device_lock(dev);
-> -	if (ap_dev->driver_override)
-> -		rc = sysfs_emit(buf, "%s\n", ap_dev->driver_override);
-> -	else
-> -		rc = sysfs_emit(buf, "\n");
-> -	device_unlock(dev);
-> -
-> -	return rc;
-> +	guard(spinlock)(&dev->driver_override.lock);
-> +	return sysfs_emit(buf, "%s\n", dev->driver_override.name ?: "");
->  }
-> 
->  static ssize_t driver_override_store(struct device *dev,
->  				     struct device_attribute *attr,
->  				     const char *buf, size_t count)
->  {
-> -	struct ap_queue *aq = to_ap_queue(dev);
-> -	struct ap_device *ap_dev = &aq->ap_dev;
->  	int rc = -EINVAL;
->  	bool old_value;
-> 
-> @@ -764,13 +752,13 @@ static ssize_t driver_override_store(struct 
-> device *dev,
->  	if (ap_apmask_aqmask_in_use)
->  		goto out;
-> 
-> -	old_value = ap_dev->driver_override ? true : false;
-> -	rc = driver_set_override(dev, &ap_dev->driver_override, buf, count);
-> +	old_value = device_has_driver_override(dev);
-> +	rc = __device_set_driver_override(dev, buf, count);
->  	if (rc)
->  		goto out;
-> -	if (old_value && !ap_dev->driver_override)
-> +	if (old_value && !device_has_driver_override(dev))
->  		--ap_driver_override_ctr;
-> -	else if (!old_value && ap_dev->driver_override)
-> +	else if (!old_value && device_has_driver_override(dev))
->  		++ap_driver_override_ctr;
-> 
->  	rc = count;
+On Thu, Mar 19, 2026 at 07:20:26AM +0800, kernel test robot wrote:
+[...]
 
-Thanks Danilo
-Reviewed-by: Harald Freudenberger <freude@linux.ibm.com>
+Bjorn,
+
+Some sparse error are even seen without my change, should we fix them ?
+
+-Mukesh
+> 
+> sparse warnings: (new ones prefixed by >>)
+>    drivers/remoteproc/qcom_q6v5_pas.c:141:25: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *mem_region @@     got void [noderef] __iomem * @@
+>    drivers/remoteproc/qcom_q6v5_pas.c:141:25: sparse:     expected void *mem_region
+>    drivers/remoteproc/qcom_q6v5_pas.c:141:25: sparse:     got void [noderef] __iomem *
+>    drivers/remoteproc/qcom_q6v5_pas.c:148:45: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const volatile [noderef] __iomem *src @@     got void * @@
+>    drivers/remoteproc/qcom_q6v5_pas.c:148:45: sparse:     expected void const volatile [noderef] __iomem *src
+>    drivers/remoteproc/qcom_q6v5_pas.c:148:45: sparse:     got void *
+>    drivers/remoteproc/qcom_q6v5_pas.c:250:37: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *dtb_mem_region @@     got void [noderef] __iomem * @@
+>    drivers/remoteproc/qcom_q6v5_pas.c:250:37: sparse:     expected void *dtb_mem_region
+>    drivers/remoteproc/qcom_q6v5_pas.c:250:37: sparse:     got void [noderef] __iomem *
+> >> drivers/remoteproc/qcom_q6v5_pas.c:260:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void *dtb_mem_region @@
+>    drivers/remoteproc/qcom_q6v5_pas.c:260:28: sparse:     expected void volatile [noderef] __iomem *addr
+>    drivers/remoteproc/qcom_q6v5_pas.c:260:28: sparse:     got void *dtb_mem_region
+>    drivers/remoteproc/qcom_q6v5_pas.c:344:33: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *mem_region @@     got void [noderef] __iomem * @@
+>    drivers/remoteproc/qcom_q6v5_pas.c:344:33: sparse:     expected void *mem_region
+>    drivers/remoteproc/qcom_q6v5_pas.c:344:33: sparse:     got void [noderef] __iomem *
+> >> drivers/remoteproc/qcom_q6v5_pas.c:354:20: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void *mem_region @@
+>    drivers/remoteproc/qcom_q6v5_pas.c:354:20: sparse:     expected void volatile [noderef] __iomem *addr
+>    drivers/remoteproc/qcom_q6v5_pas.c:354:20: sparse:     got void *mem_region
+>    drivers/remoteproc/qcom_q6v5_pas.c:481:25: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *mem_region @@     got void [noderef] __iomem * @@
+>    drivers/remoteproc/qcom_q6v5_pas.c:481:25: sparse:     expected void *mem_region
+>    drivers/remoteproc/qcom_q6v5_pas.c:481:25: sparse:     got void [noderef] __iomem *
+> 
+> vim +260 drivers/remoteproc/qcom_q6v5_pas.c
+> 
+>    124	
+>    125	static void qcom_pas_segment_dump(struct rproc *rproc,
+>    126					  struct rproc_dump_segment *segment,
+>    127					  void *dest, size_t offset, size_t size)
+>    128	{
+>    129		struct qcom_pas *pas = rproc->priv;
+>    130		int total_offset;
+>    131	
+>    132		total_offset = segment->da + segment->offset + offset - pas->mem_phys;
+>    133		if (total_offset < 0 || total_offset + size > pas->mem_size) {
+>    134			dev_err(pas->dev,
+>    135				"invalid copy request for segment %pad with offset %zu and size %zu)\n",
+>    136				&segment->da, offset, size);
+>    137			memset(dest, 0xff, size);
+>    138			return;
+>    139		}
+>    140	
+>  > 141		pas->mem_region = ioremap_wc(pas->mem_phys, pas->mem_size);
+>    142		if (!pas->mem_region) {
+>    143			dev_err(pas->dev, "unable to map memory region: %pa+%zx\n",
+>    144				&pas->mem_phys, pas->mem_size);
+>    145			return;
+>    146		}
+>    147	
+>    148		memcpy_fromio(dest, pas->mem_region + total_offset, size);
+>    149	}
+>    150	
+>    151	static void qcom_pas_minidump(struct rproc *rproc)
+>    152	{
+>    153		struct qcom_pas *pas = rproc->priv;
+>    154	
+>    155		if (rproc->dump_conf == RPROC_COREDUMP_DISABLED)
+>    156			return;
+>    157	
+>    158		qcom_minidump(rproc, pas->minidump_id, qcom_pas_segment_dump);
+>    159	}
+>    160	
+>    161	static int qcom_pas_pds_enable(struct qcom_pas *pas, struct device **pds,
+>    162				       size_t pd_count)
+>    163	{
+>    164		int ret;
+>    165		int i;
+>    166	
+>    167		for (i = 0; i < pd_count; i++) {
+>    168			dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
+>    169			ret = pm_runtime_get_sync(pds[i]);
+>    170			if (ret < 0) {
+>    171				pm_runtime_put_noidle(pds[i]);
+>    172				dev_pm_genpd_set_performance_state(pds[i], 0);
+>    173				goto unroll_pd_votes;
+>    174			}
+>    175		}
+>    176	
+>    177		return 0;
+>    178	
+>    179	unroll_pd_votes:
+>    180		for (i--; i >= 0; i--) {
+>    181			dev_pm_genpd_set_performance_state(pds[i], 0);
+>    182			pm_runtime_put(pds[i]);
+>    183		}
+>    184	
+>    185		return ret;
+>    186	};
+>    187	
+>    188	static void qcom_pas_pds_disable(struct qcom_pas *pas, struct device **pds,
+>    189					 size_t pd_count)
+>    190	{
+>    191		int i;
+>    192	
+>    193		for (i = 0; i < pd_count; i++) {
+>    194			dev_pm_genpd_set_performance_state(pds[i], 0);
+>    195			pm_runtime_put(pds[i]);
+>    196		}
+>    197	}
+>    198	
+>    199	static int qcom_pas_shutdown_poll_decrypt(struct qcom_pas *pas)
+>    200	{
+>    201		unsigned int retry_num = 50;
+>    202		int ret;
+>    203	
+>    204		do {
+>    205			msleep(QCOM_PAS_DECRYPT_SHUTDOWN_DELAY_MS);
+>    206			ret = qcom_scm_pas_shutdown(pas->pas_id);
+>    207		} while (ret == -EINVAL && --retry_num);
+>    208	
+>    209		return ret;
+>    210	}
+>    211	
+>    212	static int qcom_pas_unprepare(struct rproc *rproc)
+>    213	{
+>    214		struct qcom_pas *pas = rproc->priv;
+>    215	
+>    216		/*
+>    217		 * qcom_pas_load() did pass pas_metadata to the SCM driver for storing
+>    218		 * metadata context. It might have been released already if
+>    219		 * auth_and_reset() was successful, but in other cases clean it up
+>    220		 * here.
+>    221		 */
+>    222		qcom_scm_pas_metadata_release(pas->pas_ctx);
+>    223		if (pas->dtb_pas_id)
+>    224			qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>    225	
+>    226		return 0;
+>    227	}
+>    228	
+>    229	static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
+>    230	{
+>    231		struct qcom_pas *pas = rproc->priv;
+>    232		int ret;
+>    233	
+>    234		/* Store firmware handle to be used in qcom_pas_start() */
+>    235		pas->firmware = fw;
+>    236	
+>    237		if (pas->lite_pas_id)
+>    238			qcom_scm_pas_shutdown(pas->lite_pas_id);
+>    239		if (pas->lite_dtb_pas_id)
+>    240			qcom_scm_pas_shutdown(pas->lite_dtb_pas_id);
+>    241	
+>    242		if (pas->dtb_pas_id) {
+>    243			ret = request_firmware(&pas->dtb_firmware, pas->dtb_firmware_name, pas->dev);
+>    244			if (ret) {
+>    245				dev_err(pas->dev, "request_firmware failed for %s: %d\n",
+>    246					pas->dtb_firmware_name, ret);
+>    247				return ret;
+>    248			}
+>    249	
+>  > 250			pas->dtb_mem_region = ioremap_wc(pas->dtb_mem_phys, pas->dtb_mem_size);
+>    251			if (!pas->dtb_mem_region) {
+>    252				dev_err(pas->dev, "unable to map dtb memory region: %pa+%zx\n",
+>    253					&pas->dtb_mem_phys, pas->dtb_mem_size);
+>    254				goto release_dtb_metadata;
+>    255			}
+>    256	
+>    257			ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware,
+>    258						pas->dtb_firmware_name, pas->dtb_mem_region,
+>    259						&pas->dtb_mem_reloc);
+>  > 260			iounmap(pas->dtb_mem_region);
+>    261			pas->dtb_mem_region = NULL;
+>    262			if (ret)
+>    263				goto release_dtb_metadata;
+>    264		}
+>    265	
+>    266		return 0;
+>    267	
+>    268	release_dtb_metadata:
+>    269		if (pas->dtb_pas_id)
+>    270			qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>    271	
+>    272		release_firmware(pas->dtb_firmware);
+>    273	
+>    274		return ret;
+>    275	}
+>    276	
+>    277	static void qcom_pas_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
+>    278	{
+>    279		if (rproc->has_iommu)
+>    280			iommu_unmap(rproc->domain, mem_phys, size);
+>    281	}
+>    282	
+>    283	static int qcom_pas_map_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
+>    284	{
+>    285		int ret = 0;
+>    286	
+>    287		if (rproc->has_iommu)
+>    288			ret = iommu_map(rproc->domain, mem_phys, mem_phys, size,
+>    289					IOMMU_READ | IOMMU_WRITE, GFP_KERNEL);
+>    290		return ret;
+>    291	}
+>    292	
+>    293	static int qcom_pas_start(struct rproc *rproc)
+>    294	{
+>    295		struct qcom_pas *pas = rproc->priv;
+>    296		int ret;
+>    297	
+>    298		ret = qcom_q6v5_prepare(&pas->q6v5);
+>    299		if (ret)
+>    300			return ret;
+>    301	
+>    302		ret = qcom_pas_pds_enable(pas, pas->proxy_pds, pas->proxy_pd_count);
+>    303		if (ret < 0)
+>    304			goto disable_irqs;
+>    305	
+>    306		ret = clk_prepare_enable(pas->xo);
+>    307		if (ret)
+>    308			goto disable_proxy_pds;
+>    309	
+>    310		ret = clk_prepare_enable(pas->aggre2_clk);
+>    311		if (ret)
+>    312			goto disable_xo_clk;
+>    313	
+>    314		if (pas->cx_supply) {
+>    315			ret = regulator_enable(pas->cx_supply);
+>    316			if (ret)
+>    317				goto disable_aggre2_clk;
+>    318		}
+>    319	
+>    320		if (pas->px_supply) {
+>    321			ret = regulator_enable(pas->px_supply);
+>    322			if (ret)
+>    323				goto disable_cx_supply;
+>    324		}
+>    325	
+>    326		if (pas->dtb_pas_id) {
+>    327			ret = qcom_pas_map_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
+>    328			if (ret)
+>    329				goto disable_px_supply;
+>    330	
+>    331			ret = qcom_scm_pas_prepare_and_auth_reset(pas->dtb_pas_ctx);
+>    332			if (ret) {
+>    333				dev_err(pas->dev,
+>    334					"failed to authenticate dtb image and release reset\n");
+>    335				goto unmap_dtb_carveout;
+>    336			}
+>    337		}
+>    338	
+>    339		/*
+>    340		 * During subsystem restart, when coredump is enabled, region is mapped but
+>    341		 * not unmapped there, NULL check to reuse the mapping if its already mapped.
+>    342		 */
+>    343		if (!pas->mem_region) {
+>    344			pas->mem_region = ioremap_wc(pas->mem_phys, pas->mem_size);
+>    345			if (!pas->mem_region) {
+>    346				dev_err(pas->dev, "unable to map memory region: %pa+%zx\n",
+>    347					&pas->mem_phys, pas->mem_size);
+>    348				goto release_pas_metadata;
+>    349			}
+>    350		}
+>    351	
+>    352		ret = qcom_mdt_pas_load(pas->pas_ctx, pas->firmware, rproc->firmware,
+>    353					pas->mem_region, &pas->mem_reloc);
+>  > 354		iounmap(pas->mem_region);
+>    355		pas->mem_region = NULL;
+>    356		if (ret)
+>    357			goto release_pas_metadata;
+>    358	
+>    359		qcom_pil_info_store(pas->info_name, pas->mem_phys, pas->mem_size);
+>    360	
+>    361		ret = qcom_pas_map_carveout(rproc, pas->mem_phys, pas->mem_size);
+>    362		if (ret)
+>    363			goto release_pas_metadata;
+>    364	
+>    365		ret = qcom_scm_pas_prepare_and_auth_reset(pas->pas_ctx);
+>    366		if (ret) {
+>    367			dev_err(pas->dev,
+>    368				"failed to authenticate image and release reset\n");
+>    369			goto unmap_carveout;
+>    370		}
+>    371	
+>    372		ret = qcom_q6v5_wait_for_start(&pas->q6v5, msecs_to_jiffies(5000));
+>    373		if (ret == -ETIMEDOUT) {
+>    374			dev_err(pas->dev, "start timed out\n");
+>    375			qcom_scm_pas_shutdown(pas->pas_id);
+>    376			goto unmap_carveout;
+>    377		}
+>    378	
+>    379		qcom_scm_pas_metadata_release(pas->pas_ctx);
+>    380		if (pas->dtb_pas_id)
+>    381			qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>    382	
+>    383		/* firmware is used to pass reference from qcom_pas_start(), drop it now */
+>    384		pas->firmware = NULL;
+>    385	
+>    386		return 0;
+>    387	
+>    388	unmap_carveout:
+>    389		qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
+>    390	release_pas_metadata:
+>    391		qcom_scm_pas_metadata_release(pas->pas_ctx);
+>    392		if (pas->dtb_pas_id)
+>    393			qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
+>    394	
+>    395	unmap_dtb_carveout:
+>    396		if (pas->dtb_pas_id)
+>    397			qcom_pas_unmap_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
+>    398	disable_px_supply:
+>    399		if (pas->px_supply)
+>    400			regulator_disable(pas->px_supply);
+>    401	disable_cx_supply:
+>    402		if (pas->cx_supply)
+>    403			regulator_disable(pas->cx_supply);
+>    404	disable_aggre2_clk:
+>    405		clk_disable_unprepare(pas->aggre2_clk);
+>    406	disable_xo_clk:
+>    407		clk_disable_unprepare(pas->xo);
+>    408	disable_proxy_pds:
+>    409		qcom_pas_pds_disable(pas, pas->proxy_pds, pas->proxy_pd_count);
+>    410	disable_irqs:
+>    411		qcom_q6v5_unprepare(&pas->q6v5);
+>    412	
+>    413		/* firmware is used to pass reference from qcom_pas_start(), drop it now */
+>    414		pas->firmware = NULL;
+>    415	
+>    416		return ret;
+>    417	}
+>    418	
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+
+-- 
+-Mukesh Ojha
