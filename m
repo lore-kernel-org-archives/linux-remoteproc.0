@@ -1,98 +1,332 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8148634753F;
-	Tue, 24 Mar 2026 08:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A91D3F54BD;
+	Tue, 24 Mar 2026 12:42:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774339796; cv=none; b=eKjeTilkUGUb54VrYJTr9e0K4JRaPl+04p1gHZ+hTOdipknxRDZI9xmO6PMtBqn+IrHhk8cd/3xD3k7OdNXxOOiUIG3RbK96ykYwjyWV/PLdOErxFW61PtS5g25wpp1uNMlzFJmpAxrNJbADEfynBCbnVEM+bnks4B+UjbOHmsE=
+	t=1774356141; cv=none; b=XZctvoahhBals+jVaKwZquEEr+K/QtUVRNnfXrMev77fOvNVfLFYx/C0dtaaynh7C1UQLd2GERMZ0L421yafi7Bu+CmIhF4CVKYgxEqnOkdBj9PPPfRxC56VTpcKZJWVbxVz/GtS0XFCVhsQSX8DzNkoH/yvpEFv7RDryeqRzJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774339796; c=relaxed/simple;
-	bh=IKKPJZ+MZDaoxP4vPPsLme6gW/n7DEGEiTEMcgMuYp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eCstLSOCKQfQIGaM6HV7tt1KasuIH8E+yrqXSqmQoAQ2M0nlQdivOHAnptuHOs8xbUrgv2uHVABgExmtcefcsdmhCiUwI6TAdcfKHVR+O4nw1X5U7Qd7j25wcX4KWt5EeMmrLoP72FJuOC6tKq7fLB/E03U3WxVW/1CLncICSVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0L8IR6Pk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774356141; c=relaxed/simple;
+	bh=qoquiz1TfLoJSq0TulMqWFGIEKMZcggZYXoiuuXxM5I=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=MpOlsNKSh8GKMYPKdzJvtDcD3UEww40e97lF11R14DHSp75TsSWht5LQ+Aa0cGJQGlvf6GSnQMhfw/m6/UpGzfOlzht/hKKpppJfnZ/QW0tBViDQRQgY9hxbHCXtgQiVo+3IDstH42wkWf7TGlRkEA7bqMu17pseK83tLXBVk/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nqs3h6Sk; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0L8IR6Pk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B1B8C19424;
-	Tue, 24 Mar 2026 08:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1774339795;
-	bh=IKKPJZ+MZDaoxP4vPPsLme6gW/n7DEGEiTEMcgMuYp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0L8IR6Pk68bAp9++dR6ItzOnWZf2MgvBLl2UV5zaHXNUbsVb9RAc04NnLuD2YNf+G
-	 GmqZcQvouuvrdE0xPt4YHI6OTcY19NxN8kIn1pWJKzLM1zFnqP+nevgcl7t5hQ7vTE
-	 9EDRgh/2RJsqQNRl7woh8a9xc4H6xKdllWSA+5ec=
-Date: Tue, 24 Mar 2026 09:09:28 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Nipun Gupta <nipun.gupta@amd.com>,
-	Nikhil Agarwal <nikhil.agarwal@amd.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Long Li <longli@microsoft.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	Armin Wolf <W_Armin@gmx.de>, Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Vineeth Vijayan <vneethv@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Alex Williamson <alex@shazbot.org>, Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
-	linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-spi@vger.kernel.org,
-	virtualization@lists.linux.dev, kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 12/12] driver core: remove driver_set_override()
-Message-ID: <2026032412-finally-lubricant-7fe2@gregkh>
-References: <20260324005919.2408620-1-dakr@kernel.org>
- <20260324005919.2408620-13-dakr@kernel.org>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nqs3h6Sk"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62O7DT6Q481575;
+	Tue, 24 Mar 2026 12:41:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=Shk48Guqth0dMGtPHiYWn3blJ70CgjGVRZHzaVpvLPY=; b=nqs3h6SkcQWZ
+	+OwoltQeMxOO6RblQPqe55tAVjsackvCM4KkhWNpCQq04FPsFlS93zfiGSC7Di4+
+	S9HKMl0Sjn5QTzbM3NfhhnAIAYBvkUkrdxOKSw7d0UM43AXyYRkeT8yYGAz8hak7
+	ZGJjdVwyS8NI2NFgL8wvwtd0s6FHAxSN4ucTbH9O2vRt2+dg7MkFcwB5Thprjrjc
+	U/howCgydGuthvICdFGdQd3XIc0EaU0k/lS6es2878jUgr/pm+7/onljXHYAZGv+
+	d2SOZp5c+3ZgwIjW+EEdkE2KjadPhRrKOtZM1Zuf8LiFRmTbl3wfp/kpxlXGAEqB
+	O8U48KsXUA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1ktxudx6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Mar 2026 12:41:31 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OC7Gcu008722;
+	Tue, 24 Mar 2026 12:41:30 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d26nnhuw0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Mar 2026 12:41:30 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OCf5V326608298
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Mar 2026 12:41:05 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 201225803F;
+	Tue, 24 Mar 2026 12:41:29 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 946D658055;
+	Tue, 24 Mar 2026 12:41:25 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 24 Mar 2026 12:41:25 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260324005919.2408620-13-dakr@kernel.org>
+Date: Tue, 24 Mar 2026 13:41:25 +0100
+From: Harald Freudenberger <freude@linux.ibm.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ioana
+ Ciornei <ioana.ciornei@nxp.com>,
+        Nipun Gupta <nipun.gupta@amd.com>,
+        Nikhil
+ Agarwal <nikhil.agarwal@amd.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+        Dexuan
+ Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>,
+        Bjorn Helgaas
+ <bhelgaas@google.com>, Armin Wolf <W_Armin@gmx.de>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Vineeth Vijayan <vneethv@linux.ibm.com>,
+        Peter Oberparleiter
+ <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
+ <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian
+ Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>,
+        Holger Dengler <dengler@linux.ibm.com>,
+        Mark Brown
+ <broonie@kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang
+ <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+        Alex Williamson
+ <alex@shazbot.org>, Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini
+ <sstabellini@kernel.org>,
+        Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>,
+        "Christophe Leroy (CS GROUP)"
+ <chleroy@kernel.org>,
+        linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux.dev, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 10/12] s390/ap: use generic driver_override infrastructure
+Reply-To: freude@linux.ibm.com
+Mail-Reply-To: freude@linux.ibm.com
+In-Reply-To: <20260324005919.2408620-11-dakr@kernel.org>
+References: <20260324005919.2408620-1-dakr@kernel.org>
+ <20260324005919.2408620-11-dakr@kernel.org>
+Message-ID: <b5a80e06aa0240348dfa6826c20f3aec@linux.ibm.com>
+X-Sender: freude@linux.ibm.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Authority-Analysis: v=2.4 cv=IqITsb/g c=1 sm=1 tr=0 ts=69c2867c cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=VwQbUJbxAAAA:8
+ a=VnNF1IyMAAAA:8 a=V8-k01nbhAtxNRQPXScA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDA5OCBTYWx0ZWRfX5BtF+dGcqKne
+ ud3qOj4gTSLR9zLNfAq3JG6g/oOlaoDuAoL5ugYqpH9s9vpJjplhqsv+C5Fn13wLfcNuqTFjG2K
+ 8B20fOIVvCqa5XvNqyGQnMAHAZ9m7lornaYpmzRxy2uj+A1xP4iQsysQ7y+S7A488UAEKXq5qZ6
+ LBbN3vhPXZJ/bEjV349pY7YewQW80X8aJiv4wUe79X39dz6GUwBnh+wAamLPOldfeVWA3ylebkO
+ fpE77uN6WRT54jS8FnW/ZhUlXkVn14gcYRIyrgSPpzwxEiZ3nS5fgK7DV0UKCoQQHx0EyIcKLvI
+ sxcDzd1vSEY19GMOKPv1ZW+MN86TCAn4dq3ojgq1Xg0hwRVL0L3YGoz9QETDntcaSlj/0kKtlA6
+ UfD/yUxgwr0WFEGPDCZ3E/gq/ajxwH4hTrddRdALUSslhqrcmAjUB1i/qil1QJJkf8vWuRKoJjs
+ AJigNCQkv9LzvxCAnUQ==
+X-Proofpoint-GUID: YK3KYDPHgye9e3NvrRpemo-oOEIjjzeD
+X-Proofpoint-ORIG-GUID: IG7OyOmEsbO9ZGMbJn71CzQus0Ee1qWf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-24_02,2026-03-23_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1011 spamscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240098
 
-On Tue, Mar 24, 2026 at 01:59:16AM +0100, Danilo Krummrich wrote:
-> All buses have been converted from driver_set_override() to the generic
-> driver_override infrastructure introduced in commit cb3d1049f4ea
-> ("driver core: generalize driver_override in struct device").
+On 2026-03-24 01:59, Danilo Krummrich wrote:
+> When the AP masks are updated via apmask_store() or aqmask_store(),
+> ap_bus_revise_bindings() is called after ap_attr_mutex has been
+> released.
 > 
-> Buses now either opt into the generic sysfs callbacks via the
-> bus_type::driver_override flag, or use device_set_driver_override() /
-> __device_set_driver_override() directly.
+> This calls __ap_revise_reserved(), which accesses the driver_override
+> field without holding any lock, racing against a concurrent
+> driver_override_store() that may free the old string, resulting in a
+> potential UAF.
 > 
-> Thus, remove the now-unused driver_set_override() helper.
+> Fix this by using the driver-core driver_override infrastructure, which
+> protects all accesses with an internal spinlock.
 > 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=220789
+> Note that unlike most other buses, the AP bus does not check
+> driver_override in its match() callback; the override is checked in
+> ap_device_probe() and __ap_revise_reserved() instead.
+> 
+> Also note that we do not enable the driver_override feature of struct
+> bus_type, as AP - in contrast to most other buses - passes "" to
+> sysfs_emit() when the driver_override pointer is NULL. Thus, printing
+> "\n" instead of "(null)\n".
+> 
+> Additionally, AP has a custom counter that is modified in the
+> corresponding custom driver_override_store().
+> 
+> Fixes: d38a87d7c064 ("s390/ap: Support driver_override for AP queue 
+> devices")
 > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
->  drivers/base/driver.c         | 75 -----------------------------------
->  include/linux/device/driver.h |  2 -
->  2 files changed, 77 deletions(-)
+>  drivers/s390/crypto/ap_bus.c   | 34 +++++++++++++++++-----------------
+>  drivers/s390/crypto/ap_bus.h   |  1 -
+>  drivers/s390/crypto/ap_queue.c | 24 ++++++------------------
+>  3 files changed, 23 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/ap_bus.c 
+> b/drivers/s390/crypto/ap_bus.c
+> index d652df96a507..f24e27add721 100644
+> --- a/drivers/s390/crypto/ap_bus.c
+> +++ b/drivers/s390/crypto/ap_bus.c
+> @@ -859,25 +859,24 @@ static int
+> __ap_queue_devices_with_id_unregister(struct device *dev, void *data)
+> 
+>  static int __ap_revise_reserved(struct device *dev, void *dummy)
+>  {
+> -	int rc, card, queue, devres, drvres;
+> +	int rc, card, queue, devres, drvres, ovrd;
+> 
+>  	if (is_queue_dev(dev)) {
+>  		struct ap_driver *ap_drv = to_ap_drv(dev->driver);
+>  		struct ap_queue *aq = to_ap_queue(dev);
+> -		struct ap_device *ap_dev = &aq->ap_dev;
+> 
+>  		card = AP_QID_CARD(aq->qid);
+>  		queue = AP_QID_QUEUE(aq->qid);
+> 
+> -		if (ap_dev->driver_override) {
+> -			if (strcmp(ap_dev->driver_override,
+> -				   ap_drv->driver.name)) {
+> -				pr_debug("reprobing queue=%02x.%04x\n", card, queue);
+> -				rc = device_reprobe(dev);
+> -				if (rc) {
+> -					AP_DBF_WARN("%s reprobing queue=%02x.%04x failed\n",
+> -						    __func__, card, queue);
+> -				}
+> +		ovrd = device_match_driver_override(dev, &ap_drv->driver);
+> +		if (ovrd > 0) {
+> +			/* override set and matches, nothing to do */
+> +		} else if (ovrd == 0) {
+> +			pr_debug("reprobing queue=%02x.%04x\n", card, queue);
+> +			rc = device_reprobe(dev);
+> +			if (rc) {
+> +				AP_DBF_WARN("%s reprobing queue=%02x.%04x failed\n",
+> +					    __func__, card, queue);
+>  			}
+>  		} else {
+>  			mutex_lock(&ap_attr_mutex);
+> @@ -928,7 +927,7 @@ int ap_owned_by_def_drv(int card, int queue)
+>  	if (aq) {
+>  		const struct device_driver *drv = aq->ap_dev.device.driver;
+>  		const struct ap_driver *ap_drv = to_ap_drv(drv);
+> -		bool override = !!aq->ap_dev.driver_override;
+> +		bool override = device_has_driver_override(&aq->ap_dev.device);
+> 
+>  		if (override && drv && ap_drv->flags & AP_DRIVER_FLAG_DEFAULT)
+>  			rc = 1;
+> @@ -977,7 +976,7 @@ static int ap_device_probe(struct device *dev)
+>  {
+>  	struct ap_device *ap_dev = to_ap_dev(dev);
+>  	struct ap_driver *ap_drv = to_ap_drv(dev->driver);
+> -	int card, queue, devres, drvres, rc = -ENODEV;
+> +	int card, queue, devres, drvres, rc = -ENODEV, ovrd;
+> 
+>  	if (!get_device(dev))
+>  		return rc;
+> @@ -991,10 +990,11 @@ static int ap_device_probe(struct device *dev)
+>  		 */
+>  		card = AP_QID_CARD(to_ap_queue(dev)->qid);
+>  		queue = AP_QID_QUEUE(to_ap_queue(dev)->qid);
+> -		if (ap_dev->driver_override) {
+> -			if (strcmp(ap_dev->driver_override,
+> -				   ap_drv->driver.name))
+> -				goto out;
+> +		ovrd = device_match_driver_override(dev, &ap_drv->driver);
+> +		if (ovrd > 0) {
+> +			/* override set and matches, nothing to do */
+> +		} else if (ovrd == 0) {
+> +			goto out;
+>  		} else {
+>  			mutex_lock(&ap_attr_mutex);
+>  			devres = test_bit_inv(card, ap_perms.apm) &&
+> diff --git a/drivers/s390/crypto/ap_bus.h 
+> b/drivers/s390/crypto/ap_bus.h
+> index 51e08f27bd75..04ea256ecf91 100644
+> --- a/drivers/s390/crypto/ap_bus.h
+> +++ b/drivers/s390/crypto/ap_bus.h
+> @@ -166,7 +166,6 @@ void ap_driver_unregister(struct ap_driver *);
+>  struct ap_device {
+>  	struct device device;
+>  	int device_type;		/* AP device type. */
+> -	const char *driver_override;
+>  };
+> 
+>  #define to_ap_dev(x) container_of((x), struct ap_device, device)
+> diff --git a/drivers/s390/crypto/ap_queue.c 
+> b/drivers/s390/crypto/ap_queue.c
+> index 3fe2e41c5c6b..ca9819e6f7e7 100644
+> --- a/drivers/s390/crypto/ap_queue.c
+> +++ b/drivers/s390/crypto/ap_queue.c
+> @@ -734,26 +734,14 @@ static ssize_t driver_override_show(struct device 
+> *dev,
+>  				    struct device_attribute *attr,
+>  				    char *buf)
+>  {
+> -	struct ap_queue *aq = to_ap_queue(dev);
+> -	struct ap_device *ap_dev = &aq->ap_dev;
+> -	int rc;
+> -
+> -	device_lock(dev);
+> -	if (ap_dev->driver_override)
+> -		rc = sysfs_emit(buf, "%s\n", ap_dev->driver_override);
+> -	else
+> -		rc = sysfs_emit(buf, "\n");
+> -	device_unlock(dev);
+> -
+> -	return rc;
+> +	guard(spinlock)(&dev->driver_override.lock);
+> +	return sysfs_emit(buf, "%s\n", dev->driver_override.name ?: "");
+>  }
+> 
+>  static ssize_t driver_override_store(struct device *dev,
+>  				     struct device_attribute *attr,
+>  				     const char *buf, size_t count)
+>  {
+> -	struct ap_queue *aq = to_ap_queue(dev);
+> -	struct ap_device *ap_dev = &aq->ap_dev;
+>  	int rc = -EINVAL;
+>  	bool old_value;
+> 
+> @@ -764,13 +752,13 @@ static ssize_t driver_override_store(struct 
+> device *dev,
+>  	if (ap_apmask_aqmask_in_use)
+>  		goto out;
+> 
+> -	old_value = ap_dev->driver_override ? true : false;
+> -	rc = driver_set_override(dev, &ap_dev->driver_override, buf, count);
+> +	old_value = device_has_driver_override(dev);
+> +	rc = __device_set_driver_override(dev, buf, count);
+>  	if (rc)
+>  		goto out;
+> -	if (old_value && !ap_dev->driver_override)
+> +	if (old_value && !device_has_driver_override(dev))
+>  		--ap_driver_override_ctr;
+> -	else if (!old_value && ap_dev->driver_override)
+> +	else if (!old_value && device_has_driver_override(dev))
+>  		++ap_driver_override_ctr;
+> 
+>  	rc = count;
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks Danilo
+Reviewed-by: Harald Freudenberger <freude@linux.ibm.com>
