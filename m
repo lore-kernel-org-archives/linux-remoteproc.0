@@ -1,352 +1,184 @@
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C072B29DB6C
-	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Mar 2026 03:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.161.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774408105; cv=pass; b=MQDfmZtw8sMDb+3nd6lq5dDcirqBpnmgmMdXzouEf18VFJWx0y5yXqxUEa5GAQqL/MnlHBCXeqwOlKSKKLWIFahSinp4kZJBSoJmaa2PU5bPZB96GGphllWEggUOfyPGBl9f60ASgW/XkEIlgGcZm0Vf2iwEATpkDur3c0g16+Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774408105; c=relaxed/simple;
-	bh=hJdcGCQ3mHxI4qcvqZp/CCaqOJ76l13MZ1DRKNMUyZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DN+/sjBm49sUf7+zIBefu6p+Dpyj6813NIUEmHiR0DwKi+WM8aERw8kx/Pp1ccVHoaL39u9S8IdsakcXLOm5fDHaiKJtrC3T92EaT9cobxvMcCiDcVn8mWd9GGfJSpOB4/JQFqrrMZoh2B5DK6d3COa3qRVe9UUQSuLoPiTwA3Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QsG2jCun; arc=pass smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE542D5950
+	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Mar 2026 04:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774413267; cv=none; b=KssTeSFNQ+01jYktm650LJB+yxLzAx0VaV/guhYkGbYoaOOh52ZKh5YBqvELTrSroA9nZk/8IxXpkHYN7yJrJvVVmlh2waKTbUqD9onQDjVvVkQqzLdqbBlRk4u4045VS/lMAHAviX1Sd+JPvG4GDnfuVufEuYhODPaCiWqdXbs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774413267; c=relaxed/simple;
+	bh=HlMYOavZlom+8UZN2xckPAC6WFBM+19NyvW+PYf27tg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qOjo2hJtrRd8QigHNXAMsCfN5tDZ+RzPeRIkHeJf79W48qbBBQsf8QZlPe6LDujHhIdHR4LM0N/WEgrVnQy8odCAB8NiMZSHfZzvvBE8PVjFXjzhFbFhuE/NfS1a6A+SI4jsW41bx7KZL/V9kKiKJfdI52xLkFQN59qrifAEryM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UxXtUFqX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=clDNrIpq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsG2jCun"
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-67df51b26ddso1079241eaf.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2026 20:08:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774408102; cv=none;
-        d=google.com; s=arc-20240605;
-        b=MbJWaMWnLAzc1igKPvIsfDdksdQQbyPFRupKrkLHz5bF6GqImFV/zT0wS1nOH2NUMi
-         BawaXryKeO16D2kji8bvigIfUww0NBYo9wpeN7SyD/VVPHml3AuSID73J2IcbMP/TVsy
-         HOJRcPIzrSJGcyHdAFvbB4RbHyt5JHqg8BYsy+ACKysUQxaHegzSW3sSU2JCzOkHJXj+
-         1QicyUKRjkx8GL/wcE49HUqqdPBIcFTUyQP25hYuCdoX9mQKJb0toOkDbE5Wq6YrxCye
-         Bi7gtAkUUKmtJ3eMgkqR87QJpGl3k+0T6sYCpTLeRqpiDac4edUkMjHfHqvPVtw2dflH
-         jfzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=L1agqMYRVyCUyftxunjR/Gctujg8X1gDCx6TflvnIV4=;
-        fh=ORL+dbb5kUFCWy7hkPeB9QoJs0jdrVWOFcrfh8xBpwc=;
-        b=FDemI94Oa49OwzCe6j8P9EUCeZef/BsE3DbFAxvw9Ss+80PaostEan4n4096syxdcM
-         L/4T49S8PisYLgi+2MPGmTkuHHOzbqf+PVD7n2zd6mSPjmfB0UweyLPWmitGf4GERVOl
-         7fYi0OV3Q3z/o9FemKeqt4NVy5ltcU97fQUZTh0uPdQZc77MdamPfp5aG4+YC5JSMdtV
-         tv44vol8rcUgxXmKxJAsyr6kEqZ0hI5Y1Hc2ivnzTzhT9nYsvUpSAowpexq28ERX5HMW
-         daKTR1iYHjH1E5eItAIDJNrM8SHEV772qpdXX0Flu+pOFl3DUXHIVL65LaYSe2lZFA9+
-         J8+w==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UxXtUFqX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="clDNrIpq"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OJngZo2075351
+	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Mar 2026 04:34:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=EHUp7/16YUMBtKGES+yYYqc2
+	0LzNJsKIcI6vCitDSoc=; b=UxXtUFqX1/6g2nxsMa/K3D44muLA4QP/qfif7ikK
+	0PfGqXPH2DkXPdFnv2JwH9dBZrMi+CJqXZ0Fx5kAQPk9xIyNvrptcTe2T39UgZRD
+	PqQ9HCtVYJnygYaIfjzbz/TXWLO5j1HuJqsSRgROj20zluZNW1VYdXF495ZZnzmo
+	kQW5B/W7yOkgLxG3oM1WyUL0pFOI4P4e6nmddPEUOF8OeK5190ahq1G2S+KRAZLx
+	FjtOUwxDpHveFbF9HNRmUu11f7KytW5gnm2N/GHuedbMnGAxOs/bt4U7Z2UpMdLK
+	7xeadyqyfvYZQ6/nJzG5hnrxVaUQfMPYQJzdZGp34rGkDA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d41411e9y-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Mar 2026 04:34:24 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-50b317c40acso114573421cf.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Mar 2026 21:34:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774408102; x=1775012902; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L1agqMYRVyCUyftxunjR/Gctujg8X1gDCx6TflvnIV4=;
-        b=QsG2jCunF6U9HFdPFtYk1Fvt12375/QhCCqZnpk7qBrUJDtwoPwbZG00Jxz3BLNAhH
-         6yC6bntNmHyq7x7cP0+N6/uwrnu4b91f6kk14zUUgBqddni3wPt6K7GfK3VBO9vnm3J1
-         z+WYSyue1n99gDpMq448CDF5siFzxJf5yHSUwcyJx6VhvxvHBUVIoZCA8J8lRlFVzyE+
-         VVj1VO6NGN1ab9PiGjH0rUmDjcUZDFcwiB5b34LaaumYSy57XOpRmbzP5Qhozw3636yE
-         ih5IVdoV+6OvYilULBnmHxgj0HuKO1k2K64kakQdkM8JMyQ6HNVTAAeXTM51wOpVMwzo
-         g5Mw==
+        d=oss.qualcomm.com; s=google; t=1774413264; x=1775018064; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EHUp7/16YUMBtKGES+yYYqc20LzNJsKIcI6vCitDSoc=;
+        b=clDNrIpqUCNGjlX/2AeX//JhDezeWoIJO2ftoDRICVxfp5pUwECWRovFwdRHJoX5ma
+         UREm35ug8PJL87nkwPkXV587opJEB2FqAxVKXsBJRz6Ct209PLt6KGkuKv5E01O+L5Xw
+         uXNuiXYiEC3hghzrsFrejaRJI1FnTAEU9gr4Z5rjESO22V2o1YmUT+dckBZ8vZYDzoIn
+         zQSBuuWl4i6Dyhs2DYz+mcDLZR+O3YsI+bfjecoXMJBWcQtCIj7qejWut1oG7hG41D6Y
+         Slq8G+unvxYxMOjK+F7CjBJ1YXfZ5pH7+0AEFQ52RE82s8k6+4tGJUSgVigyQ4jSDGmB
+         QQvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774408102; x=1775012902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=L1agqMYRVyCUyftxunjR/Gctujg8X1gDCx6TflvnIV4=;
-        b=MoIW/d4d3G/joZpIYNW1eck4A+KcnB7709MBbX1+aDSb+17/P6+7e0WnrwDMydqzDy
-         xeZr1HE/fFgF4v8iJyXYx74hl2uH0Nxji34cNCrrudDEaPu7FLYWW2BOByvx3tGtJy7g
-         GU0O6erwqt/IT+P4tCPJEfEeecroUqOqDeaYsErNxsQC+pmLsWhipq9AjbDtSedfrjjf
-         nXOE6q0w4wyn/vwA1zFIRELubbUwP398x1KnQZw02uix4JRkt/ZmFJPpJmnpaowt4gKg
-         gVxHq6aKTthautOccKHJtSvbPO/vXnUsar0ObtkDZVYnboRBbh5oiwU6E//LonxkUngA
-         +nZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUR60QjkXqSZ8+EmtFZ1gmpUHpCuyS/2iyuRhov1z3n2Tf6XIjSya/aFPqDajL5nk26+fOjdOOH5tkRVqhu8yN7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+SAHCfgEcBX0K7uvi+OnkpNzJLrUZvDlZ6OH1b/0x9DVIJ2tt
-	pGVLhp4xqf4Oy0mgyMxZp4/JxygH5luye+IK7DjWSgdztEWc/Z/VFAN8TVL+c8FGawDDVHRcV/c
-	Nw+8RFv7sHhYRQ8SyT/Om/6UIi4Un5WE=
-X-Gm-Gg: ATEYQzy5+tVYCIkN3FjpcmYf4HL/QRc6fi0e3JAyHEqOdL4pB6TjzeB9M+9Wa5X2pRK
-	uedzcbW/hutx4kIFESJYRM6/JCv5kcCD47LJVMZNGdxRzmpxeNNotWjWM6kxcMnQB+sUoyXq4/x
-	MiANfgZ8m+JPu92MygyZkkHquhb+KvxaDdvQ9/LyrfJ5ao6jjsExb1CE76Gh4KO2rMxXXzxIPNV
-	sJqYob+ATekmr8J+YfqIsWrJNUkLQBFKeMcD6dET/UjHDKOQJNoC5Rg/CDsq1KisIzD6pzhkQ1h
-	ksORns9HeXmXZYQBhFRzfp0uXkOWCRALevSnpgPjxXS5Rd1ahXFVjseCAoJUvQfWXCaFX8cvLbj
-	Q1NMpwnI=
-X-Received: by 2002:a05:6820:1787:b0:67b:e203:6c8d with SMTP id
- 006d021491bc7-67dff53efc8mr1216692eaf.52.1774408101668; Tue, 24 Mar 2026
- 20:08:21 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1774413264; x=1775018064;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EHUp7/16YUMBtKGES+yYYqc20LzNJsKIcI6vCitDSoc=;
+        b=LjQPll52VRYEBgJ+YhpbALxFDTfr67XvAzCpDK47iTTVcd4CJ+KkcAiqYXXGlL1j8g
+         i9wR0qAnjk/0mKZ8mINpCCQZOHcGCxOMK0vt3NQNWusxq5O3xke9v2nzR+u/rYSK77SA
+         Io9nXVsYdFruKlvGEkSeod1MbE+Fn7sL43qKdWaLF0MRHHfsuU4yemkkhGwA8zvNlVUN
+         wQpsxy4pcPkRhswPxVFPqgwrW/CV0tPboWMjKyS2yqAZhTiowUHNEKGEgqYwe/Ro8Jju
+         CzZ+UIxbENwkdTP0CXA6PPwMe3c2QwBVnGHVU5A/de0996PlcOpuFAFBDF/eBOsaHK6r
+         9PQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFzzknn/TG4P9rwpmwrz69RNG8JwtrccoFnwBACJof8zG/eU2LOeVk/87AMk5co2QPj78ncGLPIySsxKubwg8d@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIw4yA21ijyw5dzDzu1nOWnsZWC9SczleH3qY+cwHZCjDhEvnn
+	n1gD8CPQOECquwPiqinNm2oVMnJrxFoh6aq7HXFBZ8VZzfz/URVZN0OxfNiLmSFnU3CtkR4aqod
+	x8aeOAjQyXSCwAJLa2zqn0C6CYgB69lbeFyi6mp85PY4RUcLGCqiGoPsS2goyt5VYcvff0RyQ
+X-Gm-Gg: ATEYQzzfkyR/ajt/mzJlN1xcA/ieGdJdkv+kYpyIVnByMZt37730VIarmjTJrjG/DL1
+	3K5dANV9et4LhNudsDQyrHWTutqyqaManc4COc+6w/rtZ29Lw/iLg3yrgvVuzLEaUoIljI87+4D
+	IBBx9WYmliOxzRDqMKmNYFqTGXfsJvD6EmL0wt8pfa+h77nnfLbtrnXwyFR0kPAXNlwQzXqqIXL
+	/cyTMmiLzSN7LNHr1iadkIzzLnnTcarBhOb72mEIPxI2sWissRd99AxEQDAS/tbASdKpYrCYDiU
+	orzWW5XbgIUnA4s8hHhjCsCJRoOqgHLYB4jOclVuJwWLOaYF69Eqb+wmynk2oQW2keS5NtrvD0+
+	+jb+9ii1ZC5PTRFxJ3gWGtTnk2bmxJ01r48d2D1X+dNjva1cUzW2xfsoFIpfDR7ylPnjYxrmYoU
+	8ejYPwPD+3J4mVn0gd9/Hf2FvZte3vdgdgCE8=
+X-Received: by 2002:a05:622a:4ce:b0:509:1987:7626 with SMTP id d75a77b69052e-50b80ed53b8mr28888421cf.68.1774413263894;
+        Tue, 24 Mar 2026 21:34:23 -0700 (PDT)
+X-Received: by 2002:a05:622a:4ce:b0:509:1987:7626 with SMTP id d75a77b69052e-50b80ed53b8mr28888091cf.68.1774413263409;
+        Tue, 24 Mar 2026 21:34:23 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5a285207500sm3648167e87.41.2026.03.24.21.34.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Mar 2026 21:34:21 -0700 (PDT)
+Date: Wed, 25 Mar 2026 06:34:18 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
+        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+        dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org,
+        elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        jjohnson@kernel.org, mathieu.poirier@linaro.org,
+        trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
+        pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
+        tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
+        srinivas.kandagatla@oss.qualcomm.com,
+        amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
+        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+        skare@qti.qualcomm.com, Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: Re: [PATCH 10/14] drm/msm: Switch to generic PAS TZ APIs
+Message-ID: <v4ffww2r4ljqqbmvsc5jcr4ztqjbpfb42xryjeuz4abqiwup3a@2gfeelhjzzz4>
+References: <20260306105027.290375-1-sumit.garg@kernel.org>
+ <20260306105027.290375-11-sumit.garg@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260324005919.2408620-1-dakr@kernel.org> <20260324005919.2408620-6-dakr@kernel.org>
-In-Reply-To: <20260324005919.2408620-6-dakr@kernel.org>
-From: Gui-Dong Han <hanguidong02@gmail.com>
-Date: Wed, 25 Mar 2026 11:08:11 +0800
-X-Gm-Features: AQROBzD64p8E8k4KuR51RUiYotZVMtC9NAESBq-7RvJsmuQyKbQ4KJC_uWmm37s
-Message-ID: <CALbr=La3gV5VmoXauF-fkmXveoJGtTvef1d1nrLtUZNHx2eF+w@mail.gmail.com>
-Subject: Re: [PATCH 05/12] PCI: use generic driver_override infrastructure
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Ioana Ciornei <ioana.ciornei@nxp.com>, 
-	Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Armin Wolf <W_Armin@gmx.de>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Vineeth Vijayan <vneethv@linux.ibm.com>, Peter Oberparleiter <oberpar@linux.ibm.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Harald Freudenberger <freude@linux.ibm.com>, 
-	Holger Dengler <dengler@linux.ibm.com>, Mark Brown <broonie@kernel.org>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Alex Williamson <alex@shazbot.org>, Juergen Gross <jgross@suse.com>, 
-	Stefano Stabellini <sstabellini@kernel.org>, 
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>, 
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>, linux-kernel@vger.kernel.org, 
-	driver-core@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
-	linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-spi@vger.kernel.org, virtualization@lists.linux.dev, 
-	kvm@vger.kernel.org, xen-devel@lists.xenproject.org, 
-	linux-arm-kernel@lists.infradead.org, Wang Jiayue <akaieurus@gmail.com>, 
-	Yao Zi <me@ziyao.cc>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260306105027.290375-11-sumit.garg@kernel.org>
+X-Authority-Analysis: v=2.4 cv=fOk0HJae c=1 sm=1 tr=0 ts=69c365d0 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8
+ a=kPJGyq6PTXsXdZOMel8A:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: H2f0TTrISn4EpvurtFZ6biH06WPIrPOK
+X-Proofpoint-ORIG-GUID: H2f0TTrISn4EpvurtFZ6biH06WPIrPOK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI1MDAyOCBTYWx0ZWRfXxPJf/QDxL+ta
+ HrLMGFYno0EcRPbojkackyPBC3YZ6begmct+NH06LXVKIe7SHroEJkQLd+LgCP83OAAGLkPbjRa
+ yFDw3XZnGveofHq23lvrmoMPW4pc/D7gHug0lBCde+rWGszHud616IV2bXiVFFuFK9yj84MREin
+ LFqq47j7C83ZUGQS+ZegOtY7hJAxCfGrIFwo3jOiLvSoww3K1jxm/yqV3OVTa1pJsqtKIvKWZhe
+ 69iK5La6PB1TZ1UTWHJegIr4rGzP21IKdoYz9Za+xfkfB74vTHPDzyqyHFPV/95YSLOcq0tHYEP
+ utoCdy9fONY4BXdF+4IJ8tNV9TXjPj1QIMb0AFEc4WyThIdTQumo3p891Df2/j1bN44var2l8V1
+ lkkgYTL9Akr0z+eTeEwZxXLe3eNgdbMb4orMhYHePxpZIjDbYDUGrm0t07CZ9ztBaD6F4p0vBYN
+ m45yV9OY7cvYaJrX+jQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-25_01,2026-03-24_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015 adultscore=0
+ lowpriorityscore=0 phishscore=0 spamscore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603250028
 
-On Tue, Mar 24, 2026 at 9:00=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
-wrote:
->
-> When a driver is probed through __driver_attach(), the bus' match()
-> callback is called without the device lock held, thus accessing the
-> driver_override field without a lock, which can cause a UAF.
->
-> Fix this by using the driver-core driver_override infrastructure taking
-> care of proper locking internally.
->
-> Note that calling match() from __driver_attach() without the device lock
-> held is intentional. [1]
->
-> Link: https://lore.kernel.org/driver-core/DGRGTIRHA62X.3RY09D9SOK77P@kern=
-el.org/ [1]
-> Reported-by: Gui-Dong Han <hanguidong02@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220789
-> Fixes: 782a985d7af2 ("PCI: Introduce new device binding path using pci_de=
-v.driver_override")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-
-Tested on QEMU PCI with multiple debug configs enabled. The original
-PoCs run cleanly without triggering the issue.
-
-Thanks Danilo.
-
-Tested-by: Gui-Dong Han <hanguidong02@gmail.com>
-Reviewed-by: Gui-Dong Han <hanguidong02@gmail.com>
-
+On Fri, Mar 06, 2026 at 04:20:23PM +0530, Sumit Garg wrote:
+> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> 
+> Switch drm/msm client drivers over to generic PAS TZ APIs. Generic PAS
+> TZ service allows to support multiple TZ implementation backends like QTEE
+> based SCM PAS service, OP-TEE based PAS service and any further future TZ
+> backend service.
+> 
+> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
 > ---
->  drivers/pci/pci-driver.c           | 11 +++++++----
->  drivers/pci/pci-sysfs.c            | 28 ----------------------------
->  drivers/pci/probe.c                |  1 -
->  drivers/vfio/pci/vfio_pci_core.c   |  5 ++---
->  drivers/xen/xen-pciback/pci_stub.c |  6 ++++--
->  include/linux/pci.h                |  6 ------
->  6 files changed, 13 insertions(+), 44 deletions(-)
->
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index dd9075403987..d10ece0889f0 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -138,9 +138,11 @@ static const struct pci_device_id *pci_match_device(=
-struct pci_driver *drv,
->  {
->         struct pci_dynid *dynid;
->         const struct pci_device_id *found_id =3D NULL, *ids;
-> +       int ret;
->
->         /* When driver_override is set, only bind to the matching driver =
-*/
-> -       if (dev->driver_override && strcmp(dev->driver_override, drv->nam=
-e))
-> +       ret =3D device_match_driver_override(&dev->dev, &drv->driver);
-> +       if (ret =3D=3D 0)
->                 return NULL;
->
->         /* Look at the dynamic ids first, before the static ones */
-> @@ -164,7 +166,7 @@ static const struct pci_device_id *pci_match_device(s=
-truct pci_driver *drv,
->                  * matching.
->                  */
->                 if (found_id->override_only) {
-> -                       if (dev->driver_override)
-> +                       if (ret > 0)
->                                 return found_id;
->                 } else {
->                         return found_id;
-> @@ -172,7 +174,7 @@ static const struct pci_device_id *pci_match_device(s=
-truct pci_driver *drv,
->         }
->
->         /* driver_override will always match, send a dummy id */
-> -       if (dev->driver_override)
-> +       if (ret > 0)
->                 return &pci_device_id_any;
->         return NULL;
->  }
-> @@ -452,7 +454,7 @@ static int __pci_device_probe(struct pci_driver *drv,=
- struct pci_dev *pci_dev)
->  static inline bool pci_device_can_probe(struct pci_dev *pdev)
->  {
->         return (!pdev->is_virtfn || pdev->physfn->sriov->drivers_autoprob=
-e ||
-> -               pdev->driver_override);
-> +               device_has_driver_override(&pdev->dev));
->  }
->  #else
->  static inline bool pci_device_can_probe(struct pci_dev *pdev)
-> @@ -1722,6 +1724,7 @@ static const struct cpumask *pci_device_irq_get_aff=
-inity(struct device *dev,
->
->  const struct bus_type pci_bus_type =3D {
->         .name           =3D "pci",
-> +       .driver_override =3D true,
->         .match          =3D pci_bus_match,
->         .uevent         =3D pci_uevent,
->         .probe          =3D pci_device_probe,
-> diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> index 16eaaf749ba9..a9006cf4e9c8 100644
-> --- a/drivers/pci/pci-sysfs.c
-> +++ b/drivers/pci/pci-sysfs.c
-> @@ -615,33 +615,6 @@ static ssize_t devspec_show(struct device *dev,
->  static DEVICE_ATTR_RO(devspec);
->  #endif
->
-> -static ssize_t driver_override_store(struct device *dev,
-> -                                    struct device_attribute *attr,
-> -                                    const char *buf, size_t count)
-> -{
-> -       struct pci_dev *pdev =3D to_pci_dev(dev);
-> -       int ret;
-> -
-> -       ret =3D driver_set_override(dev, &pdev->driver_override, buf, cou=
-nt);
-> -       if (ret)
-> -               return ret;
-> -
-> -       return count;
-> -}
-> -
-> -static ssize_t driver_override_show(struct device *dev,
-> -                                   struct device_attribute *attr, char *=
-buf)
-> -{
-> -       struct pci_dev *pdev =3D to_pci_dev(dev);
-> -       ssize_t len;
-> -
-> -       device_lock(dev);
-> -       len =3D sysfs_emit(buf, "%s\n", pdev->driver_override);
-> -       device_unlock(dev);
-> -       return len;
-> -}
-> -static DEVICE_ATTR_RW(driver_override);
-> -
->  static struct attribute *pci_dev_attrs[] =3D {
->         &dev_attr_power_state.attr,
->         &dev_attr_resource.attr,
-> @@ -669,7 +642,6 @@ static struct attribute *pci_dev_attrs[] =3D {
->  #ifdef CONFIG_OF
->         &dev_attr_devspec.attr,
->  #endif
-> -       &dev_attr_driver_override.attr,
->         &dev_attr_ari_enabled.attr,
->         NULL,
->  };
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index bccc7a4bdd79..b4707640e102 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2488,7 +2488,6 @@ static void pci_release_dev(struct device *dev)
->         pci_release_of_node(pci_dev);
->         pcibios_release_device(pci_dev);
->         pci_bus_put(pci_dev->bus);
-> -       kfree(pci_dev->driver_override);
->         bitmap_free(pci_dev->dma_alias_mask);
->         dev_dbg(dev, "device released\n");
->         kfree(pci_dev);
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci=
-_core.c
-> index d43745fe4c84..460852f79f29 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -1987,9 +1987,8 @@ static int vfio_pci_bus_notifier(struct notifier_bl=
-ock *nb,
->             pdev->is_virtfn && physfn =3D=3D vdev->pdev) {
->                 pci_info(vdev->pdev, "Captured SR-IOV VF %s driver_overri=
-de\n",
->                          pci_name(pdev));
-> -               pdev->driver_override =3D kasprintf(GFP_KERNEL, "%s",
-> -                                                 vdev->vdev.ops->name);
-> -               WARN_ON(!pdev->driver_override);
-> +               WARN_ON(device_set_driver_override(&pdev->dev,
-> +                                                  vdev->vdev.ops->name))=
-;
->         } else if (action =3D=3D BUS_NOTIFY_BOUND_DRIVER &&
->                    pdev->is_virtfn && physfn =3D=3D vdev->pdev) {
->                 struct pci_driver *drv =3D pci_dev_driver(pdev);
-> diff --git a/drivers/xen/xen-pciback/pci_stub.c b/drivers/xen/xen-pciback=
-/pci_stub.c
-> index e4b27aecbf05..79a2b5dfd694 100644
-> --- a/drivers/xen/xen-pciback/pci_stub.c
-> +++ b/drivers/xen/xen-pciback/pci_stub.c
-> @@ -598,6 +598,8 @@ static int pcistub_seize(struct pci_dev *dev,
->         return err;
->  }
->
-> +static struct pci_driver xen_pcibk_pci_driver;
-> +
->  /* Called when 'bind'. This means we must _NOT_ call pci_reset_function =
-or
->   * other functions that take the sysfs lock. */
->  static int pcistub_probe(struct pci_dev *dev, const struct pci_device_id=
- *id)
-> @@ -609,8 +611,8 @@ static int pcistub_probe(struct pci_dev *dev, const s=
-truct pci_device_id *id)
->
->         match =3D pcistub_match(dev);
->
-> -       if ((dev->driver_override &&
-> -            !strcmp(dev->driver_override, PCISTUB_DRIVER_NAME)) ||
-> +       if (device_match_driver_override(&dev->dev,
-> +                                        &xen_pcibk_pci_driver.driver) > =
-0 ||
->             match) {
->
->                 if (dev->hdr_type !=3D PCI_HEADER_TYPE_NORMAL
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 1c270f1d5123..57e9463e4347 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -575,12 +575,6 @@ struct pci_dev {
->         u8              supported_speeds; /* Supported Link Speeds Vector=
- */
->         phys_addr_t     rom;            /* Physical address if not from B=
-AR */
->         size_t          romlen;         /* Length if not from BAR */
-> -       /*
-> -        * Driver name to force a match.  Do not set directly, because co=
-re
-> -        * frees it.  Use driver_set_override() to set or clear it.
-> -        */
-> -       const char      *driver_override;
-> -
->         unsigned long   priv_flags;     /* Private flags for the PCI driv=
-er */
->
->         /* These methods index pci_reset_fn_methods[] */
-> --
-> 2.53.0
->
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  4 ++--
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 ++++++-----
+>  2 files changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> index ef9fd6171af7..3283852f9a14 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> @@ -5,7 +5,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/types.h>
+>  #include <linux/cpumask.h>
+> -#include <linux/firmware/qcom/qcom_scm.h>
+> +#include <linux/firmware/qcom/qcom_pas.h>
+
+Missing `select QCOM_PAS`.
+
+
+>  #include <linux/pm_opp.h>
+>  #include <linux/nvmem-consumer.h>
+>  #include <linux/slab.h>
+> @@ -653,7 +653,7 @@ static int a5xx_zap_shader_resume(struct msm_gpu *gpu)
+>  	if (adreno_is_a506(adreno_gpu))
+>  		return 0;
+>  
+> -	ret = qcom_scm_set_remote_state(SCM_GPU_ZAP_SHADER_RESUME, GPU_PAS_ID);
+> +	ret = qcom_pas_set_remote_state(SCM_GPU_ZAP_SHADER_RESUME, GPU_PAS_ID);
+>  	if (ret)
+>  		DRM_ERROR("%s: zap-shader resume failed: %d\n",
+>  			gpu->name, ret);
+
+-- 
+With best wishes
+Dmitry
