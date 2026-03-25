@@ -1,186 +1,190 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011007.outbound.protection.outlook.com [40.107.130.7])
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012011.outbound.protection.outlook.com [52.101.66.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACAA33ADAE;
-	Wed, 25 Mar 2026 08:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D0330C366;
+	Wed, 25 Mar 2026 08:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774427923; cv=fail; b=DGmxXlgP1bMWc8UpWBKftmXzDeRmW3Jg9ZKvv06eqxjHETD0Z8kyZxLJYwQ7TgfFEFgwJXqJg1xPDaWYIBQmjZ6ZBiTlFBywxqiVq0Qqg2SF1E4gTlOfnxqHb7XEpg8DCCaRDcToGFbJeUbM7GTsienaGXbqekswo5UzmbbaJ6k=
+	t=1774428914; cv=fail; b=LTUo0B4KdLZi4fvMlhXO63xYstsaJGOstLf1UnFXPzZlgN3LzyXNnf+cIK2qEhP89hUsZqDgzxXKYQttuqiU/efiu4+iCVihg2E+bBTV0HBWI4Pj5dilWzW/P5jbtj1RrDGPsnrMMOTbbIuUUZ+Bhzod0gk8/4YotQYsTjLUIaA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774427923; c=relaxed/simple;
-	bh=DtfpLLKkDJNhENfwYZDjKcbmmDmRcANF2t4zdrCJHso=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ard0iN0bDbXNtZHCxNQAGAY1bvfH4sRq72X8BgsLcY5tlvPOjLuSB+0BSbY9w+NwcXZVdwqX+RQ6bNxpzjW36rLHEhdB3I9v5MQBsKAFAvbsis7Zn3G/IKGDvbkPm3bT+/Q1Cem6z3mHv+LfzQXhaw4d4dich3zLK3v0w8rE+j8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=qD4qSFbn; arc=fail smtp.client-ip=40.107.130.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1774428914; c=relaxed/simple;
+	bh=ZHvUrtBtg9Y/JcSEcjjO9fx6OBfA7uTTz9ebVBZ2PkM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bnKs/OwRwQgrgSgHpqoIyj2axfL4wUUTKchPjAD0SuRvQAZtimRUayeC2J1PMDCJ5soSppEPQCpz+EZA41T96Ddgb54z0nzMJBSevw3OUq7U+Jdz8HcVm0igu6vtYAi/BBhWkIvT8lzwrwwDZop6/tExPmyFn4DarWBSkOP9JfY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=AbVE5cKs; arc=fail smtp.client-ip=52.101.66.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="qD4qSFbn"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="AbVE5cKs"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ahS/r1upF7jl2o2fbTRmLbcIsUCSSWM4lF7hT0N+RNShuj5cv7mZFrF//7+HB4xqCCE9UoNWZTq2mZcAAMnXS2RhZp8O8PqrqYTxRGutHMrb6bspqTeDyVIuA5g2R6o/LkW8Ek1fLS3B60XE4jtiISLLLExvAWug2lZXKagwV0muBvuNHl/wWqDA5JMN7/OiQ+BOZHB1mSXSXI8h0Uzdg1tve2jGzqPLCjLtuo9qDMmpeMEmGDrfg7QeBQDsRwY1qZ1reFvSTJCehK4HipT8209rmVSC5TsVtO729RTVJi/RtxY4/sSOh1YDW5WF+D9FB+YC3GdmuDOpQjCGfnFF/Q==
+ b=GkVu0ojK+wdpW5rTPkdwGR2J/2SZEPp/TT660v1ciruPl6g6TuvHLdP7eoyErRotfg/zpiTSMYuC/RV7h14DGUiR/k9/p51SBAFjBWE19iP44ig+cKNtMZTzy1ztfzMc31YxmCZ0icVRI0EWQh3uSjsG9ZUjVNl0+uBDmNqL+XG+yyWJAqKhO2F50yFI9BUttv2LNhtj6nXUizH7VPaX8raSX3TeyTWoZupCUARGmp8h9KrCJUHxtnza6QnSmuuXrz3IDQiaTxIp1JM/pADLE0NVJ50HWC3IgR3AGcCWAiI2M4jsIYwkoN4SBO+gtvQTkY+NajW04HJNEMO0A6e7aQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tPzfXns4gRv8hNT634QOr2rL315muN1QSz4pFBtttb0=;
- b=b7vUa6MpwI0qBziH2kl0LH2C4iiHpQ77j/1v9PXyu5Gtc8Wn6SUND3jwdxosQSFURNRKVA9KEVGwmHXTjGRX16gz/vw/SVZ5NA3cZmbmjhohVjbiO0O6NR6CUzpazBFs1SGkz3iHH9RJ+HgTv70zoRG1iNfSk6jdPo37aiG6mupsqxAVsDtEqg/64LVmlDYwoyiuj3zkWsZDDEhHPXlEMzChruEdy29APLarF9QJL2dP+vxJuGETcd4wv7KlB4ewmg4QNOUIcAru7ErXAHXRch/ZzwtDVST/Dq3BDbOuhWn5BM1capfL/K/EmX65xhXZSJ+nKIgUL50sQoZCtBddng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
+ bh=ZHvUrtBtg9Y/JcSEcjjO9fx6OBfA7uTTz9ebVBZ2PkM=;
+ b=orBTLt5HkqBPBxlU6L7Si+BR1HqrzAHPoOhGoMRlcdTlARHtgOivmkKjPzB98LRcm5mwvCiXanawk5VT1FhLHCa3NrLK3HySx3Jgkx23jbjakAW67Gyr52cFNjoEVO39W9p1MWRybM37LDoVKY5A5VDX2Ml0Y5TL1A2xSW9ylEFOCaI7S5LXB987divRdWrb7UVTEG9pxGM4AjXro/v0UDQoa7fKT4F89BQk0hAFod+Rzhnn+4sBArRxWhsiLw0HzT3BP+xkesRJJednGSkEr9MMZWrJc1ogEGLXo6wEjFWXaNklqijhpgLAn1fsaaAhihyKnIj6ucSRhEbLoVpkuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tPzfXns4gRv8hNT634QOr2rL315muN1QSz4pFBtttb0=;
- b=qD4qSFbn9n3017dUHBfjk6Atqo9pUsOHcRN5pLSrfySSkZQeVs4KERrnONIydfKGHG/79m04BCPhJRe4DrEq/9kZm3PEJWlaChDZyjTsGmDd2Ou8O8XVm9V+S6KcOwDx50nBFisPXhkBlMyP3JifWjjJo/ruMsu3qKn3h2SrW4xh5C3XESCSkhOaioSoosuhKMyowgM/rUTT2+7KMrIEjQCswIujjnZYfa2QpUl4x5VoAOugHp6pvg74tCndqerRtAlcrSzHL5FP4Yl31yQQOVtabtIEX0Hbkxjv0cpOKBnjKO3Gpci5UJqxYo6mLAQPPp6etAGQYkpcZAVugtcyzg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GVXPR04MB12316.eurprd04.prod.outlook.com (2603:10a6:150:2c6::8)
- by AS8PR04MB8102.eurprd04.prod.outlook.com (2603:10a6:20b:3f3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.25; Wed, 25 Mar
- 2026 08:38:26 +0000
-Received: from GVXPR04MB12316.eurprd04.prod.outlook.com
- ([fe80::fc6e:ca22:f065:def4]) by GVXPR04MB12316.eurprd04.prod.outlook.com
- ([fe80::fc6e:ca22:f065:def4%6]) with mapi id 15.20.9723.030; Wed, 25 Mar 2026
- 08:38:35 +0000
-Message-ID: <80c7815b-26d9-4876-a44f-3e17b6338dc6@oss.nxp.com>
-Date: Wed, 25 Mar 2026 10:41:29 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add i.MX94 remoteproc support and reset vector
- handling improvements
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Peng Fan <peng.fan@nxp.com>
-References: <20260312-imx943-rproc-v1-0-3e66596592a8@nxp.com>
- <b5e05fe6-97c4-40cd-b7cc-b417d8717aec@oss.nxp.com> <acFPGVNOornxsPG6@p14s>
-Content-Language: en-US
-From: Daniel Baluta <daniel.baluta@oss.nxp.com>
-In-Reply-To: <acFPGVNOornxsPG6@p14s>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0120.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:bb::8) To GVXPR04MB12316.eurprd04.prod.outlook.com
- (2603:10a6:150:2c6::8)
+ bh=ZHvUrtBtg9Y/JcSEcjjO9fx6OBfA7uTTz9ebVBZ2PkM=;
+ b=AbVE5cKsnFqdecdZ9G8uGgYn+l07m3LVQGUU5srOQfemUvXws/lAPvVM6UJA+Ce7cXTY6AEdWn9VI4Id+uqjFkOZBu2g32ee6OoWJlm0XePkMUpKbcnD1F/U3NuqyMXEYiQl5Ur4wDUvdki9jIDIZ0yfgl7WL/ob+IcpZ84YDGMYurceQjYGxpwuUqzIRPPPzv19+aovSpG3o61Fv8z2af7TYdfCj74XfBKrDbVz5InJJ4a9N86NpUx080CEmaqcl7vZRf1IzQjpgdoYcPRxOKEnN0yt2LWa4PTqMg1J6wYSqiIWXJSdiZk5/tGAhomUUcZKu5V2oVzdR93Nz/Sg4w==
+Received: from DUZPR01CA0336.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::21) by GV1PR10MB5940.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:150:5c::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
+ 2026 08:55:06 +0000
+Received: from DB5PEPF00014B88.eurprd02.prod.outlook.com
+ (2603:10a6:10:4b8:cafe::54) by DUZPR01CA0336.outlook.office365.com
+ (2603:10a6:10:4b8::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Wed,
+ 25 Mar 2026 08:55:01 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
+ smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.60; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.60) by
+ DB5PEPF00014B88.mail.protection.outlook.com (10.167.8.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Wed, 25 Mar 2026 08:55:05 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
+ (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Wed, 25 Mar
+ 2026 09:56:04 +0100
+Received: from [192.168.8.15] (10.48.87.74) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Wed, 25 Mar
+ 2026 09:53:26 +0100
+Message-ID: <802412f7dfe45c9472d436e4c2c4babc76590894.camel@foss.st.com>
+Subject: Re: [PATCH] hwspinlock: fix warning from sparse
+From: Antonio Borneo <antonio.borneo@foss.st.com>
+To: Bjorn Andersson <andersson@kernel.org>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Date: Wed, 25 Mar 2026 09:53:24 +0100
+In-Reply-To: <20260323102210.228551-1-antonio.borneo@foss.st.com>
+References: <20260323102210.228551-1-antonio.borneo@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR04MB12316:EE_|AS8PR04MB8102:EE_
-X-MS-Office365-Filtering-Correlation-Id: e871546c-fd3d-44ce-957c-08de8a49e751
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B88:EE_|GV1PR10MB5940:EE_
+X-MS-Office365-Filtering-Correlation-Id: 441675af-65ab-4bb8-9b7e-08de8a4c35ea
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|19092799006|22082099003|56012099003|18002099003;
+	BCL:0;ARA:13230040|376014|36860700016|82310400026|1800799024|22082099003|18002099003|56012099003;
 X-Microsoft-Antispam-Message-Info:
-	L5gdAFOOHYiOHV3JLmySnGASiNAEbB5T0ovA9NviGf5t6YbQm+EpFwr0bbmtpNSySx81YcEQzR2DVSw7v3VyPXNvvjcRVCgbS7niKRwasMZRzEIzFlznz7oMeZ0qodpN2ZkJuU9/E7qcaluHA7ZymwNYQukcIXPzd0JLfKSnya6pnxBgJKPDFYIe1Xl0JfzQnWRbnt7uoVUkrVyaQL6HuNtR1X3a37+YhCrMhAe3Vb40JBl6ErV9ka8sZO8eSLYtnXkYJ2vDN0ovGcDuExrbCHVBTNj8MJ1A2itIt97JDWMzy8kt0A+lnWILzIC75E9msVqOjMmTIKpv0I4FRLsz4qcvqbFj33Qeib77+3CtRd5QILnKdcGAvC2jUdNUZrHGlakoXvj0Dl6/Wp5uPon5ikZVD3lJ01PLIQA0CDOAjGmA0u9FN7GWM29KJLbn1FfPi9cjuR9Og1zWvIXtlgo/Wg0Gs91DnTajnowiq0O08x5pKjSDHr0FfYt/Dqmal2JNA8kgGiPmPtD92siSNcuSUTSOmLitsO9gdniYGXmpIPGAb5llXQ8A5XVIIgbWd+wR4CqXnoZ69BzfG7J3FE3vwgo22JSEHUoo4Pqdp27yK5JZJztieu4AAG2vR5x3JuxCVAvvScnhfff3cB3AwACmmSp9MOzw5p9veCZb9fExpHv20gaHdbV/YQ1oLtcgICIu
+	nx4fL27Mfton5ua26iXUp0wklXwQBr3fRsiILrPsY9LwdSzdkNm/Kbt5AfwniUNLu5bwma7y1C9KrF2Xd1GvG15Dsju1z98r1CV3UgMP+bdE2rK+5CJBSVTNSWuEsXBrG1Cj488XjS5tBIZE2c4ayTgSlW4jOGI+EGgQcyFNyN2Bv5znlk34CZkVRriwdFj6lAriJS/VbSpwtz3RX4+PZqXjL8yNTmCYud8i9nEOJCqRzk+LjqaqRvJf29SEOA6RSeZuG2Pe3bbasBTSVirXlKYKaI3N0VaiTkOhwb88l83SGNXylt8IxapQZc8Kocpb3PfJUJ4RlCGsHOEeJg8ABb5LAkSBIv9AyK4jCjvTvh820V+Eq4B+CiQM1hAJIRkKCbjvWrX1ctcLv+p3B0FptFA0/sgeAZQLJowgza7DrDI8MVK+Jn4ekkUCnQ2FfGt9GQwyPRiGHV3fQt1suiC42T/L6fvqIrg0gIW6e7fgYI7derAFdAUcw3NELZOX4/3ceSBWvIx79JxbeI+qCSSSe3H4R/vZCcJM5iZzHiWi+MOF5coSy7jBwV5mN1igRaFsuNxXvd+A+Q9VdRZkAIRRe2F/nEWkMpw3RWQN6dI164TDVECtQhbGcQRcLtY62OzC94BcpCTa+mgPqLQV/w8pBx/LdTnf9OrMsQ7Sc2OuM6uHvu1CiDkzczZlvG07dZoZBKDoLyDGvgd3XlCJevvkoA==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12316.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(19092799006)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cFdIKy9oSTJ2aHJ6Zko4NEVxTUx0N3RTMFpnaTZTR0dJWENpU0pTRHZoazhm?=
- =?utf-8?B?UnUxQUNJSXJNT2dmSmpvSUZVNnhwQ29XQXdkeTkzWlZKTnpKNGxBa0V4S1NS?=
- =?utf-8?B?VElnZnNWcWZzbFRJRHR5RlVCUFhVY2ZUTk5nR3FCRUc4TnFTZHVoRytOMUp0?=
- =?utf-8?B?andvVmZ2YlQzVkJ6ejcwejAwUHJPMDdhdnd2NitmVVE2ZlBGSHF4QzF1aDVv?=
- =?utf-8?B?ZUtsWUNNWVlqU0l6Mk5yZ0JFQ09IUElzKzg1WEY1KzEwa3JZaUtXZitlNEg1?=
- =?utf-8?B?eWEySENPSFBhMkU3R3k1WXl6VStGeEgzQ3RML2RRdExGY2MwMGFjZngxUnJB?=
- =?utf-8?B?aXNJY1lJZ2RtSTdheTU5TnBTSnZuTkV6STlNd1ZZdE9wayt4K1QweGkxZllW?=
- =?utf-8?B?aHNRaVduVjdZTExFbmRrbGxJcjFEWE1wdE1mL3hHVWFXVUNoTEtCQitNdWUv?=
- =?utf-8?B?Z2JtaTYvWExYSXBWZHM3bEhQYjE4TDducDlZSExoZzZadWRWVjhnNWdWN0Zp?=
- =?utf-8?B?VXN6QU04anRnSkNScnNLZEpmcXl4Tm5aeGh3aEJ2a3NPdHBJeFFrSXZUaHVE?=
- =?utf-8?B?MnliRmFkakJzamlSV1VQQWJuMXlmbVppSWZrdmxJU2w3d3F2WFpmdFgvMmZ4?=
- =?utf-8?B?bnF5R1JSdHAwcmdvU3JyN3QxY2YrcmIzVklFa29OaWFwNGRHQWEwWmkrVWdD?=
- =?utf-8?B?ZkN6L0JNUkhRQzNyNjJVbVFtQms5elJBOWVxelZmUzVFSDM4RkpmSy9ZalMw?=
- =?utf-8?B?TDk4bDNlS2ZEeUZ2cnM0SDcrNCtLWTF4SjdFSnRKc3FGY0dvcjR3MDFFN3R1?=
- =?utf-8?B?ZktCTGpVSEpxMUR4cFlYYWd0VCtMWjhXdys1Vi9yOFo3ZmtBcHpNbzZreFFt?=
- =?utf-8?B?SEhjYlJvdWxyVFF3VDNhUU5oSW9EU2JzTkZFMGxRd1AyUHU1eEZudHpZNE42?=
- =?utf-8?B?aW5ONEh2QzhXdHErcFNwOG9nU21WeTY5eUN3NjJod1BjZ3hqMGgvN0JPSlJ2?=
- =?utf-8?B?QXhNbUwzZk10VG1NV0FKUHNXMHI4VFlEbHlOb3JrL0p5d2FCWGprTVlQZnhw?=
- =?utf-8?B?T25NRGtyY2NEd09CWHdYQTY3YWg2SEk5amtjOG1xenBrQUo3eEszLzN4bFd3?=
- =?utf-8?B?MUZlTWJsVG5OMDErQkhrVE10RDdYcHA2b2hoQklNSWFJdUJpWjVTMUcwYWJh?=
- =?utf-8?B?c21XT2VaZzc1bXVPMzNwT2ZDRFdRczdCSkJKMDY0R2xmVm51RXd5R3JQQkpi?=
- =?utf-8?B?c2EwTDVzbHpNMHJoUFBCV21aWm1KSHBBelFqR2RHMldJZWJqYVBZR3NESFdv?=
- =?utf-8?B?VnZ4d3FBZHowRWUrSy9OZFJQaXdJd3dqekYyUVRGWmgrUkNKNWpTMWw0S1Y0?=
- =?utf-8?B?endCcm9kUllpSXRGZGo0czNITWM4OTBKeStwNEFGVzArNzVIZURmemMrNVdT?=
- =?utf-8?B?Y2lKOXFPNExLcDBTMXNaWVZiVTFaaVdPSW5vSHR5eEwxKzc5bisvaEJyQlJ5?=
- =?utf-8?B?VU95S3UxRUdjamNpei85N0lxVDZvRGI0bG4wMXVKVGRrWVBGMjVwek0yeXdV?=
- =?utf-8?B?NWNCMFNFUS81RWZ5bjJxU3NNWktjNHNoQk5WczFmbzhOajZMZmhUdlovbkQ4?=
- =?utf-8?B?VnZCdUpCZ0VEUGl6T05VcXZSTHZNdEpqRnlLWEw1d2lEYXAyNG5aMDY3SUN5?=
- =?utf-8?B?dGVrcXZNT3MwUU5ULzRlU1l4dEl0Ukh4N3dCS3ZRV0JLNjBmbCsvRU5GVWl1?=
- =?utf-8?B?VTlKNktKeFRKS2RXTU1ycERRbzB3dmNHKzZZS09GQkppTU05V0N3RzR3Rmx6?=
- =?utf-8?B?R0ZyaWhLL3RlbEgwRGpGL1FNWndsbE5zTVZGMjBoUWRVMzU5Y1RKMUVpT2hO?=
- =?utf-8?B?eS9CcGsrZXY5VkFKeEYzeGM0L1BoeWRqOUZkSlNkTjM1V0lPOVlHUm0zZHEx?=
- =?utf-8?B?bk9WVFpSL0hBclE2L1pna3RmMnN5MnNnYlc0d2lWQk5ZZFRlbGpLOEJURS9C?=
- =?utf-8?B?VFRlWkh1YVpjWUp6bGpzVEFVRU1sMVpMUDNTTFJrVFpjTFNCZ0hWSEhkcFc4?=
- =?utf-8?B?YXRhV0l4SjUxQko0QklGd1A0OWp3VTV0QUxJbnhoN2REUGlRYmNKQnRpSXV5?=
- =?utf-8?B?UlRNMENsZE1qQWhPa1lvZzEzcTB5bUlzVS8zbEdZMG8zanZ4SFhVMk1tdk1w?=
- =?utf-8?B?TGxUMTFqYlJYKzFpOTZtNkQ4T0tCMFR5ZWUzUlR0dEI5QmxVUEc3K1l0aSts?=
- =?utf-8?B?dVFPVzVQeDJHdTZibUZXUDBXbE9ackxSenJFd1d3RFMrUEhSRldrQ1lHUjFt?=
- =?utf-8?B?alp5SFZqM2haQ0VJNm9XUFNtSW1DYXpnSzFpYUNpTzVnYThQd2tlQT09?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e871546c-fd3d-44ce-957c-08de8a49e751
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12316.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 08:38:35.3891
+	cLIN7VYFugE3XsObXVm4PPpsy9XhyNMz2JnODP/xgXP4V/sAkk1R1iA4cH+7jwVWeOxWm6pxMO7jQDBlQ97GSu8UGNCaUWsci+Jhz+sHH1I/yAMA/F4sJnVOMZaA6/LhM+fTv5P7zXZJBpXiJWNh6Yb2xeIN/MlFHGvVvmlOXoK9I+HcKkiAwn/PoA9sg4kIvRtr2SEBnf+NUwMFpby7PtY+E02z8rEXWZataXyaWgsOj5vjQ00+ho9Rt8iqEvjCGturIA9+BmZ76+tCfJZf+Kq2wes8ssIpENXMWHmA++8g10gmiERUkF7ngegWcaZT8xR4xlQKIreW6sz8//UVI1qyd/HjfShLQwe8RRxn4UQr5FGcVlI6ek34dmhU43oOJ35JrQgcZOJCjvnzZLdJ8MFl5C4Jxs8Yuax9TzsHzNFhATyKVRneNDiU3dhlNXKT
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 08:55:05.8839
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vs6yunTsFYr4URzbd8g5OAHv7Cw1OA83PPZC+cNrPqn5olrbZw5dSbwEUG6NVgFYPLHAWaTDr6kqHOr4EuHFzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8102
+X-MS-Exchange-CrossTenant-Network-Message-Id: 441675af-65ab-4bb8-9b7e-08de8a4c35ea
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B88.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB5940
 
-On 3/23/26 16:32, Mathieu Poirier wrote:
-> On Fri, Mar 20, 2026 at 11:19:06AM +0200, Daniel Baluta wrote:
->> On 3/12/26 14:36, Peng Fan (OSS) wrote:
->>> This series adds remoteproc support for the i.MX94 family, including the
->>> CM70, CM71, and CM33S cores, and introduces a new device‑tree property to
->>> correctly derive the hardware reset vector for Cortex‑M processors whose
->>> ELF entry point does not directly correspond to the actual reset address.
->>>
->>> Background:
->>> Cortex‑M processors fetch their initial SP and PC from a fixed reset vector
->>> table. While ELF images embed the entry point (e_entry), this value is
->>> not always aligned to the hardware reset address. On platforms such as
->>> i.MX94 CM33S, masking is required to compute the correct reset vector
->>> address before programming the SoC reset registers.
->> What happens if the reset vector is at 0 and the e_entry point is at 0x800...?
->>
->> In this case masking will no longer work! Can we implement a generic approach?
->>
-> I will wait to see an R-B from Daniel before looking at this set.
->
-> Thanks,
-> Mathieu
->  
->
-Hi Mathieu, Peng,
+On Mon, 2026-03-23 at 11:22 +0100, Antonio Borneo wrote:
+> Sparse triggers the following warnings:
+>=20
+> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in as=
+signment (different address spaces)
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
+id **slot
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void [n=
+oderef] __rcu **
+> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in as=
+signment (different address spaces)
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
+id **slot
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void [n=
+oderef] __rcu **
+> drivers/hwspinlock/hwspinlock_core.c:393:48: warning: incorrect type in a=
+rgument 1 (different address spaces)
+> drivers/hwspinlock/hwspinlock_core.c:393:48:=C2=A0=C2=A0=C2=A0 expected v=
+oid [noderef] __rcu **slot
+> drivers/hwspinlock/hwspinlock_core.c:393:48:=C2=A0=C2=A0=C2=A0 got void *=
+*slot
+> drivers/hwspinlock/hwspinlock_core.c:397:30: warning: incorrect type in a=
+ssignment (different address spaces)
+> drivers/hwspinlock/hwspinlock_core.c:397:30:=C2=A0=C2=A0=C2=A0 expected v=
+oid **slot
+> drivers/hwspinlock/hwspinlock_core.c:397:30:=C2=A0=C2=A0=C2=A0 got void [=
+noderef] __rcu **
+> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in ar=
+gument 1 (different address spaces)
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
+id [noderef] __rcu **slot
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void **=
+slot
+> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in as=
+signment (different address spaces)
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
+id **slot
+> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void [n=
+oderef] __rcu **
+>=20
+> all linked to the same missing '__rcu' at declaration of 'slot'.
+>=20
+> Fix it!
+>=20
+> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+> ---
+> =C2=A0drivers/hwspinlock/hwspinlock_core.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hw=
+spinlock_core.c
+> index cc8e952a67727..50a875b2353f8 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -372,7 +372,7 @@ int of_hwspin_lock_get_id(struct device_node *np, int=
+ index)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct of_phandle_args ar=
+gs;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct hwspinlock *hwlock=
+;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct radix_tree_iter it=
+er;
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void **slot;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __rcu **slot;
 
-Patchseries mostly looks good to me. The only blocking issue here is how to correctly specify the hardware reset address.
+Please ignore this patch.
 
-I see two options here:
+While it fixes a minor warning from sparse, the analysis in
+http://sashiko.dev/#/patchset/20260323102210.228551-1-antonio.borneo%40foss=
+.st.com
+highlights a race if provider is unbind, plus I see another race between pr=
+ovider and consumer on async probe.
 
-1) Create a special section in TCM that holds the PC/Stack initial value as concluded here [1]. But this
+I'm checking to fix such races, addressing at the same time the warning fro=
+m sparse.
+Merging this patch now will only create unnecessary dependency for backport=
+ing in stable.
 
-doesn't work in all the cases 
-
-2) Add a per device data that holds the hardware reset mask that gets applied to entry address read from ELF.
-
-I'm fine going with option 2) and that's because this change is IMX rproc driver specific, it scales well and will be maintained by Peng.
-
-thanks,
-
-Daniel.
-
-[1] https://lore.kernel.org/linux-remoteproc/38476dd0-07a6-310f-1fba-2b3021a5b007@kontron.de/
+Regards,
+Antonio
 
