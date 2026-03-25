@@ -1,190 +1,229 @@
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012011.outbound.protection.outlook.com [52.101.66.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D0330C366;
-	Wed, 25 Mar 2026 08:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774428914; cv=fail; b=LTUo0B4KdLZi4fvMlhXO63xYstsaJGOstLf1UnFXPzZlgN3LzyXNnf+cIK2qEhP89hUsZqDgzxXKYQttuqiU/efiu4+iCVihg2E+bBTV0HBWI4Pj5dilWzW/P5jbtj1RrDGPsnrMMOTbbIuUUZ+Bhzod0gk8/4YotQYsTjLUIaA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774428914; c=relaxed/simple;
-	bh=ZHvUrtBtg9Y/JcSEcjjO9fx6OBfA7uTTz9ebVBZ2PkM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bnKs/OwRwQgrgSgHpqoIyj2axfL4wUUTKchPjAD0SuRvQAZtimRUayeC2J1PMDCJ5soSppEPQCpz+EZA41T96Ddgb54z0nzMJBSevw3OUq7U+Jdz8HcVm0igu6vtYAi/BBhWkIvT8lzwrwwDZop6/tExPmyFn4DarWBSkOP9JfY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=AbVE5cKs; arc=fail smtp.client-ip=52.101.66.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C46342511
+	for <linux-remoteproc@vger.kernel.org>; Wed, 25 Mar 2026 09:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774430999; cv=none; b=KNhzHvEBneqAVVDCocJ3IZs3O44nd3Ak6g8a9PBr8Q4IH+w0aI1QFohyuNUuC6IQJrVHDy7ONM9h8Lnnnj76K5UGVps38UmE6R+RC+2aajwJGEhdWGyt+LtREjK56fJOlwWQvhbvhUGXUHlxSs6strnPhve3p4Ow7EirC3yTDC8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774430999; c=relaxed/simple;
+	bh=hzAY3ZoPFk3ktxoVDsUh6drVK7glBEle7ZgqK1lKcjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMge4MKAsz/dN8Q5qhfJ0vatC8w7c5FKnv74rxzGR+0jCC707DVaRtBMiWuNiK2vNgGjwsw0bybheAnd5ZANBhUkWj0t0T+dgV8XGdtPlg19l0KW5Y6/X3NJriw82lCBgEG+CPkRNBPcXQMAAQs9eOOL3+BRpnQLVnN/t4+hhYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UIIwNU+n; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=JhpeRjpQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="AbVE5cKs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GkVu0ojK+wdpW5rTPkdwGR2J/2SZEPp/TT660v1ciruPl6g6TuvHLdP7eoyErRotfg/zpiTSMYuC/RV7h14DGUiR/k9/p51SBAFjBWE19iP44ig+cKNtMZTzy1ztfzMc31YxmCZ0icVRI0EWQh3uSjsG9ZUjVNl0+uBDmNqL+XG+yyWJAqKhO2F50yFI9BUttv2LNhtj6nXUizH7VPaX8raSX3TeyTWoZupCUARGmp8h9KrCJUHxtnza6QnSmuuXrz3IDQiaTxIp1JM/pADLE0NVJ50HWC3IgR3AGcCWAiI2M4jsIYwkoN4SBO+gtvQTkY+NajW04HJNEMO0A6e7aQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZHvUrtBtg9Y/JcSEcjjO9fx6OBfA7uTTz9ebVBZ2PkM=;
- b=orBTLt5HkqBPBxlU6L7Si+BR1HqrzAHPoOhGoMRlcdTlARHtgOivmkKjPzB98LRcm5mwvCiXanawk5VT1FhLHCa3NrLK3HySx3Jgkx23jbjakAW67Gyr52cFNjoEVO39W9p1MWRybM37LDoVKY5A5VDX2Ml0Y5TL1A2xSW9ylEFOCaI7S5LXB987divRdWrb7UVTEG9pxGM4AjXro/v0UDQoa7fKT4F89BQk0hAFod+Rzhnn+4sBArRxWhsiLw0HzT3BP+xkesRJJednGSkEr9MMZWrJc1ogEGLXo6wEjFWXaNklqijhpgLAn1fsaaAhihyKnIj6ucSRhEbLoVpkuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=kernel.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZHvUrtBtg9Y/JcSEcjjO9fx6OBfA7uTTz9ebVBZ2PkM=;
- b=AbVE5cKsnFqdecdZ9G8uGgYn+l07m3LVQGUU5srOQfemUvXws/lAPvVM6UJA+Ce7cXTY6AEdWn9VI4Id+uqjFkOZBu2g32ee6OoWJlm0XePkMUpKbcnD1F/U3NuqyMXEYiQl5Ur4wDUvdki9jIDIZ0yfgl7WL/ob+IcpZ84YDGMYurceQjYGxpwuUqzIRPPPzv19+aovSpG3o61Fv8z2af7TYdfCj74XfBKrDbVz5InJJ4a9N86NpUx080CEmaqcl7vZRf1IzQjpgdoYcPRxOKEnN0yt2LWa4PTqMg1J6wYSqiIWXJSdiZk5/tGAhomUUcZKu5V2oVzdR93Nz/Sg4w==
-Received: from DUZPR01CA0336.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b8::21) by GV1PR10MB5940.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:150:5c::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 08:55:06 +0000
-Received: from DB5PEPF00014B88.eurprd02.prod.outlook.com
- (2603:10a6:10:4b8:cafe::54) by DUZPR01CA0336.outlook.office365.com
- (2603:10a6:10:4b8::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Wed,
- 25 Mar 2026 08:55:01 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- DB5PEPF00014B88.mail.protection.outlook.com (10.167.8.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9723.19 via Frontend Transport; Wed, 25 Mar 2026 08:55:05 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Wed, 25 Mar
- 2026 09:56:04 +0100
-Received: from [192.168.8.15] (10.48.87.74) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.29; Wed, 25 Mar
- 2026 09:53:26 +0100
-Message-ID: <802412f7dfe45c9472d436e4c2c4babc76590894.camel@foss.st.com>
-Subject: Re: [PATCH] hwspinlock: fix warning from sparse
-From: Antonio Borneo <antonio.borneo@foss.st.com>
-To: Bjorn Andersson <andersson@kernel.org>, Baolin Wang
-	<baolin.wang@linux.alibaba.com>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Date: Wed, 25 Mar 2026 09:53:24 +0100
-In-Reply-To: <20260323102210.228551-1-antonio.borneo@foss.st.com>
-References: <20260323102210.228551-1-antonio.borneo@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UIIwNU+n";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="JhpeRjpQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1774430996;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/X6OQFIMMVlzQpHVcxvz5zk00vazKEddYu1a8TXBALA=;
+	b=UIIwNU+nPUJJvHBBie22wcCjzDVg3JpRuHuXBHiy0rjpN6rDxNAzNlOeQY2QG9m8DWuxEm
+	iaNmUUXhpXPFoYwUfpFYc/GchGtfpCQlnmZs/FYSLP7O1jEI3zV30Rr3AOr8Y9H0wsXSVL
+	jcPPi+BUVu4IYinrziQaqTXzZ8OPLkY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-C-76Mjs5PF6rkPPGMGNwcA-1; Wed, 25 Mar 2026 05:29:55 -0400
+X-MC-Unique: C-76Mjs5PF6rkPPGMGNwcA-1
+X-Mimecast-MFC-AGG-ID: C-76Mjs5PF6rkPPGMGNwcA_1774430994
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-43b4d3919e4so2320248f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 25 Mar 2026 02:29:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1774430994; x=1775035794; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/X6OQFIMMVlzQpHVcxvz5zk00vazKEddYu1a8TXBALA=;
+        b=JhpeRjpQEerF7GJ3cEBXJfXL4JOri2U0d5RqtfvHTpgkh71sO3rKFhA//EvtsgVwti
+         rfnOwsNQ4rTslJ40Fzk9I0TbeYYUZ5Xv+zq7TaUjVgRwEsyfKg8s9Pq15BcpYJETUtzy
+         GjGQegUGrxeQbyDwEtvCmuJ/etjn2Bc4A2bLwFUIE5xQiMyNNgnAbKrvUtZPa+3AgtlT
+         YSrq90f+jFYACy0hlMqgRYq76+qOcsEKLNZTY0NUghWrYxq5yY9PNJVoNX0sjXNzPxo2
+         M/ehcd6FIcjjB2W43nFQqKbujTW9hL8QGwdrnKMudE6yCBqYGN/Cv3ygswIH8iM7CfKC
+         7oDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774430994; x=1775035794;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/X6OQFIMMVlzQpHVcxvz5zk00vazKEddYu1a8TXBALA=;
+        b=STUuZMNejQaFPpUBKGcJTMsbwsL+3KGU2MHX445h+AfLO/GIydeY70Xt1RY0xmLgyK
+         dH69gQcqNRjF/J+ovL0yRvqgftlBvjNIOSibzdldvRoZVaVaLMeqg3c1iXXCTzpXYQNn
+         PPoqWHg8TYwoLPI0/mOk4GUnRluGdPmVsxcsLhqskCckM39TesmSXMxroRYBbYqJgKnV
+         msV8WXxY70XYFyuFLrb9LY+rDt9ifO75/gR6NV3MH48v9EqjntklXhvpfFrEnOmeEPza
+         taWoq1H6f5JZip9SbLO40HnFTZstRSn6p5j3hsqqH8bKJHCJRHQDQDtWd+2t2CYtZw8G
+         C2GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJuJo1UR/TnLaWK3WQnp4MrTs0ZmbotvMYZlxHr4o85pHyk53lAAMHAxcpZntl8j+u2nLXorfEGlJiYML0Tail@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4QHJpoiCcucRi9O8sNRTd3Q3kkE4+KUibNU2kXUcwiXfcr8Gm
+	+JtuLzrZ/AstRgUQopv7JdCm1icBdjw4esUTDRA4jsuMIvB93nRd6XJ5dosbtcgxwXTQzxf/Zpr
+	qqOp/X94DMEeH8GdBQYBHKHbeTjY00hfguQ0wAjisdFBN8WKwfQ+pwY1TrUsJS//ie/Ef0hM=
+X-Gm-Gg: ATEYQzyHSf9lGtamEqLDCwC8YhoyyEQriUOrWPQGlt97uiF4yL/noNySE9srV7+mPSl
+	Xo3JY/J/4gYSKS11SoyGMHOfk9cDedQOIW/pGugPVqLyF+tMyM9C1KGBYSw7qy0muaasq92mSiU
+	6yqAPkXu1oORh750SCWDUEQFeyanNblGvM8ou2/u8uGcdfA9DiGPdfndtNtemCwUh8OjtItJS1g
+	FXkJ7qMoOv1psqIM12SzPv0v+71axY4tTR/VFejKD7C/Ap0WrgoBD+TBbnaUl8qWjEC5L1sLbpP
+	4/CI/T54vv3f1vD8tE6TCZHLARW2fRfLo4gxp+GxcrAz0Mj7P6hzIHtrIeb4ul2P7Ty8kQerGdT
+	sYLYQl8lPCNov8JBR
+X-Received: by 2002:a05:6000:400c:b0:439:be78:e1e9 with SMTP id ffacd0b85a97d-43b88a3d3cdmr3692817f8f.14.1774430993602;
+        Wed, 25 Mar 2026 02:29:53 -0700 (PDT)
+X-Received: by 2002:a05:6000:400c:b0:439:be78:e1e9 with SMTP id ffacd0b85a97d-43b88a3d3cdmr3692727f8f.14.1774430992928;
+        Wed, 25 Mar 2026 02:29:52 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1525:da00:3ac2:1a22:72ff:4256])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43b6470380asm44280922f8f.24.2026.03.25.02.29.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2026 02:29:52 -0700 (PDT)
+Date: Wed, 25 Mar 2026 05:29:45 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>, Bjorn Helgaas <bhelgaas@google.com>,
+	Armin Wolf <W_Armin@gmx.de>, Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Mark Brown <broonie@kernel.org>, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Alex Williamson <alex@shazbot.org>, Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+	linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+	linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-spi@vger.kernel.org,
+	virtualization@lists.linux.dev, kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/12] treewide: Convert buses to use generic
+ driver_override
+Message-ID: <20260325052919-mutt-send-email-mst@kernel.org>
+References: <20260324005919.2408620-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5PEPF00014B88:EE_|GV1PR10MB5940:EE_
-X-MS-Office365-Filtering-Correlation-Id: 441675af-65ab-4bb8-9b7e-08de8a4c35ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700016|82310400026|1800799024|22082099003|18002099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	nx4fL27Mfton5ua26iXUp0wklXwQBr3fRsiILrPsY9LwdSzdkNm/Kbt5AfwniUNLu5bwma7y1C9KrF2Xd1GvG15Dsju1z98r1CV3UgMP+bdE2rK+5CJBSVTNSWuEsXBrG1Cj488XjS5tBIZE2c4ayTgSlW4jOGI+EGgQcyFNyN2Bv5znlk34CZkVRriwdFj6lAriJS/VbSpwtz3RX4+PZqXjL8yNTmCYud8i9nEOJCqRzk+LjqaqRvJf29SEOA6RSeZuG2Pe3bbasBTSVirXlKYKaI3N0VaiTkOhwb88l83SGNXylt8IxapQZc8Kocpb3PfJUJ4RlCGsHOEeJg8ABb5LAkSBIv9AyK4jCjvTvh820V+Eq4B+CiQM1hAJIRkKCbjvWrX1ctcLv+p3B0FptFA0/sgeAZQLJowgza7DrDI8MVK+Jn4ekkUCnQ2FfGt9GQwyPRiGHV3fQt1suiC42T/L6fvqIrg0gIW6e7fgYI7derAFdAUcw3NELZOX4/3ceSBWvIx79JxbeI+qCSSSe3H4R/vZCcJM5iZzHiWi+MOF5coSy7jBwV5mN1igRaFsuNxXvd+A+Q9VdRZkAIRRe2F/nEWkMpw3RWQN6dI164TDVECtQhbGcQRcLtY62OzC94BcpCTa+mgPqLQV/w8pBx/LdTnf9OrMsQ7Sc2OuM6uHvu1CiDkzczZlvG07dZoZBKDoLyDGvgd3XlCJevvkoA==
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	cLIN7VYFugE3XsObXVm4PPpsy9XhyNMz2JnODP/xgXP4V/sAkk1R1iA4cH+7jwVWeOxWm6pxMO7jQDBlQ97GSu8UGNCaUWsci+Jhz+sHH1I/yAMA/F4sJnVOMZaA6/LhM+fTv5P7zXZJBpXiJWNh6Yb2xeIN/MlFHGvVvmlOXoK9I+HcKkiAwn/PoA9sg4kIvRtr2SEBnf+NUwMFpby7PtY+E02z8rEXWZataXyaWgsOj5vjQ00+ho9Rt8iqEvjCGturIA9+BmZ76+tCfJZf+Kq2wes8ssIpENXMWHmA++8g10gmiERUkF7ngegWcaZT8xR4xlQKIreW6sz8//UVI1qyd/HjfShLQwe8RRxn4UQr5FGcVlI6ek34dmhU43oOJ35JrQgcZOJCjvnzZLdJ8MFl5C4Jxs8Yuax9TzsHzNFhATyKVRneNDiU3dhlNXKT
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 08:55:05.8839
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 441675af-65ab-4bb8-9b7e-08de8a4c35ea
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B88.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB5940
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260324005919.2408620-1-dakr@kernel.org>
 
-On Mon, 2026-03-23 at 11:22 +0100, Antonio Borneo wrote:
-> Sparse triggers the following warnings:
->=20
-> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in as=
-signment (different address spaces)
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
-id **slot
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void [n=
-oderef] __rcu **
-> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in as=
-signment (different address spaces)
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
-id **slot
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void [n=
-oderef] __rcu **
-> drivers/hwspinlock/hwspinlock_core.c:393:48: warning: incorrect type in a=
-rgument 1 (different address spaces)
-> drivers/hwspinlock/hwspinlock_core.c:393:48:=C2=A0=C2=A0=C2=A0 expected v=
-oid [noderef] __rcu **slot
-> drivers/hwspinlock/hwspinlock_core.c:393:48:=C2=A0=C2=A0=C2=A0 got void *=
-*slot
-> drivers/hwspinlock/hwspinlock_core.c:397:30: warning: incorrect type in a=
-ssignment (different address spaces)
-> drivers/hwspinlock/hwspinlock_core.c:397:30:=C2=A0=C2=A0=C2=A0 expected v=
-oid **slot
-> drivers/hwspinlock/hwspinlock_core.c:397:30:=C2=A0=C2=A0=C2=A0 got void [=
-noderef] __rcu **
-> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in ar=
-gument 1 (different address spaces)
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
-id [noderef] __rcu **slot
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void **=
-slot
-> drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in as=
-signment (different address spaces)
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 expected vo=
-id **slot
-> drivers/hwspinlock/hwspinlock_core.c:392:9:=C2=A0=C2=A0=C2=A0 got void [n=
-oderef] __rcu **
->=20
-> all linked to the same missing '__rcu' at declaration of 'slot'.
->=20
-> Fix it!
->=20
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
-> ---
-> =C2=A0drivers/hwspinlock/hwspinlock_core.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hw=
-spinlock_core.c
-> index cc8e952a67727..50a875b2353f8 100644
-> --- a/drivers/hwspinlock/hwspinlock_core.c
-> +++ b/drivers/hwspinlock/hwspinlock_core.c
-> @@ -372,7 +372,7 @@ int of_hwspin_lock_get_id(struct device_node *np, int=
- index)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct of_phandle_args ar=
-gs;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct hwspinlock *hwlock=
-;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct radix_tree_iter it=
-er;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void **slot;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0void __rcu **slot;
+On Tue, Mar 24, 2026 at 01:59:04AM +0100, Danilo Krummrich wrote:
+> This is the follow-up of the driver_override generalization in [1], converting
+> the remaining 11 busses and removing the now-unused driver_set_override()
+> helper.
+> 
+> All of them (except AP, which has a different race condition) are prone to the
+> potential UAF described in [2], caused by accessing the driver_override field
+> from their corresponding match() callback.
+> 
+> In order to address this, the generalized driver_override field in struct device
+> is protected with a spinlock. The driver-core provides accessors, such as
+> device_match_driver_override(), device_has_driver_override() and
+> device_set_driver_override(), which all ensure proper locking internally.
+> 
+> Additionally, the driver-core provides a driver_override flag in struct
+> bus_type, which, once enabled, automatically registers generic sysfs callbacks,
+> allowing userspace to modify the driver_override field.
+> 
+> SPI and AP are a bit special; both print "\n" when driver_override is not set,
+> whereas all other buses (and thus the driver-core) produce "(null)\n" in this
+> case.
+> 
+> Hence, SPI and AP do not take advantage of the driver_override flag in struct
+> bus_type; AP additionally maintains a counter in its custom sysfs store().
+> 
+> Technically, we could support a custom fallback string when driver_override is
+> unset in struct bus_type, but only SPI would benefit from this, since AP has
+> additional custom logic in store() anyways.
+> 
+> (I'm not sure if there are userspace programs that strictly rely on this;
+> driverctl seems to check for both, but I rather not break some userspace tool
+> I'm not aware of. :)
+> 
+> This series is based on v7.0-rc5 with no additional dependencies, hence those
+> patches can be picked up by subsystems individually.
+> 
+> [1] https://lore.kernel.org/driver-core/20260303115720.48783-1-dakr@kernel.org/
+> [2] https://bugzilla.kernel.org/show_bug.cgi?id=220789
+> [3] https://gitlab.com/driverctl/driverctl/-/blob/0.121/driverctl?ref_type=tags#L99
 
-Please ignore this patch.
+vdpa bits:
 
-While it fixes a minor warning from sparse, the analysis in
-http://sashiko.dev/#/patchset/20260323102210.228551-1-antonio.borneo%40foss=
-.st.com
-highlights a race if provider is unbind, plus I see another race between pr=
-ovider and consumer on async probe.
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 
-I'm checking to fix such races, addressing at the same time the warning fro=
-m sparse.
-Merging this patch now will only create unnecessary dependency for backport=
-ing in stable.
+I assume it'll all be merged together?
 
-Regards,
-Antonio
+> Danilo Krummrich (12):
+>   amba: use generic driver_override infrastructure
+>   bus: fsl-mc: use generic driver_override infrastructure
+>   cdx: use generic driver_override infrastructure
+>   hv: vmbus: use generic driver_override infrastructure
+>   PCI: use generic driver_override infrastructure
+>   platform/wmi: use generic driver_override infrastructure
+>   rpmsg: use generic driver_override infrastructure
+>   vdpa: use generic driver_override infrastructure
+>   s390/cio: use generic driver_override infrastructure
+>   s390/ap: use generic driver_override infrastructure
+>   spi: use generic driver_override infrastructure
+>   driver core: remove driver_set_override()
+> 
+>  drivers/amba/bus.c                 | 37 +++------------
+>  drivers/base/driver.c              | 75 ------------------------------
+>  drivers/bus/fsl-mc/fsl-mc-bus.c    | 43 +++--------------
+>  drivers/cdx/cdx.c                  | 40 ++--------------
+>  drivers/hv/vmbus_drv.c             | 36 ++------------
+>  drivers/pci/pci-driver.c           | 11 +++--
+>  drivers/pci/pci-sysfs.c            | 28 -----------
+>  drivers/pci/probe.c                |  1 -
+>  drivers/platform/wmi/core.c        | 36 ++------------
+>  drivers/rpmsg/qcom_glink_native.c  |  2 -
+>  drivers/rpmsg/rpmsg_core.c         | 43 +++--------------
+>  drivers/rpmsg/virtio_rpmsg_bus.c   |  1 -
+>  drivers/s390/cio/cio.h             |  5 --
+>  drivers/s390/cio/css.c             | 34 ++------------
+>  drivers/s390/crypto/ap_bus.c       | 34 +++++++-------
+>  drivers/s390/crypto/ap_bus.h       |  1 -
+>  drivers/s390/crypto/ap_queue.c     | 24 +++-------
+>  drivers/spi/spi.c                  | 19 +++-----
+>  drivers/vdpa/vdpa.c                | 48 ++-----------------
+>  drivers/vfio/fsl-mc/vfio_fsl_mc.c  |  4 +-
+>  drivers/vfio/pci/vfio_pci_core.c   |  5 +-
+>  drivers/xen/xen-pciback/pci_stub.c |  6 ++-
+>  include/linux/amba/bus.h           |  5 --
+>  include/linux/cdx/cdx_bus.h        |  4 --
+>  include/linux/device/driver.h      |  2 -
+>  include/linux/fsl/mc.h             |  4 --
+>  include/linux/hyperv.h             |  5 --
+>  include/linux/pci.h                |  6 ---
+>  include/linux/rpmsg.h              |  4 --
+>  include/linux/spi/spi.h            |  5 --
+>  include/linux/vdpa.h               |  4 --
+>  include/linux/wmi.h                |  4 --
+>  32 files changed, 88 insertions(+), 488 deletions(-)
+> 
+> 
+> base-commit: c369299895a591d96745d6492d4888259b004a9e
+> -- 
+> 2.53.0
 
