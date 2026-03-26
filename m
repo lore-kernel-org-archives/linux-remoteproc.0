@@ -1,118 +1,161 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AB929827E;
-	Thu, 26 Mar 2026 08:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3836C377ED2;
+	Thu, 26 Mar 2026 09:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774515019; cv=none; b=IwcTovHt5UmlAzMfoTnMkMZHlacBJ2Mq7BW+9KtxPX9gdfHoONtIgzAlYxKMSltUHS5p7TKczfacm/LFDhfE1A4sMqVNr+p0jf/Isjo9NdrWQlo4rZ9cnbw7b1fS2gg+teMH83RK0PqnUxurcMM5DatdY4cZGBbd4eoM/gxC3Uo=
+	t=1774518253; cv=none; b=u46vxLKb/9BSwp1TIQrLEF3R0OLgqBIRUYJQSCq6vlEQXHj+ouVsd++Lo4EAcdyfwVUS26aPQ1vdltPqa8u/ANaIhfPX4HYhsdgnwBVuzdOPUw1VYrlyvmhMOAbhMvLUAHNzELw4BE3SkwIjGE9GNoP1VRQMaOTC/hl/epr4OU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774515019; c=relaxed/simple;
-	bh=Nk3OQJcQa7+IWGZDgf0ivm4hL2jKChEzfHAOrtGBL30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SWM5s2p9rNuIMTwEBZ9mg6NenB/Omb+VUYMUNbJCzXVTUdvT+awH+dNvbR6HiGFo+iKgPKmJYNSPY7rQnpP4pPIpf1sWTeMjPmXowhWAexRS5B9id2/IW805gPiqHVt2ViXWtCsqfqpBjiBlJ7iD3wleENK+zgrdPzv3AW7hJn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWGx2gOL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774518253; c=relaxed/simple;
+	bh=G7X3A1FjDM7WiH77ZcPoedDF8U0V8w19yjC2Pc1U5kk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JIFS2fP4+c5QdroQ5sy1RgzUYcZNgUn79uYekNBhzVi86iY3HqPDGqgZ+/PQEqe/0t3jOp94PhVrilWemoIqM2YCPMWqnoFO2E7FWwH0NAD6AYkWsdBMta0ibCMj6esKS2OQWVX54Zkxe+kviifuiAJkvW86ikhUP1zVpu7i25U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=avrMFIfO; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWGx2gOL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42667C116C6;
-	Thu, 26 Mar 2026 08:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774515019;
-	bh=Nk3OQJcQa7+IWGZDgf0ivm4hL2jKChEzfHAOrtGBL30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eWGx2gOLvfHG1xA6EpBU5XssaH7AfwFrQA3TL8MLeYvE58DFfYB+nnd8vYfaFzkd5
-	 tZa3gLuhJniQtc+eMnqm0Ci4fM8aZ8bZw0zdRPKw8aPsmlkX0QrttqDtSHEKcGgU0P
-	 eSuGGXg+6WgNmt5i6568+PjflSOR56src4Ur83Ye/WgmFoofV3I6YFNt3sF/wd8bf3
-	 4D3T+8od5S/QtunojXburPPXiBzJzjIyK4/8BljTxruiOtlHbtOQXSsvFooGr9s8mY
-	 ENWjxKH8Ox3u0OzttcoWYRmtEVP+sj1YLfb6OvbG9+iC2I2DZ6VyEUFE/c+JHNVoVu
-	 SyL5V108Zuppg==
-Date: Thu, 26 Mar 2026 14:20:01 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
-	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
-	pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
-	tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com, Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH 10/14] drm/msm: Switch to generic PAS TZ APIs
-Message-ID: <acTzOTUVL6uYQZwh@sumit-xelite>
-References: <20260306105027.290375-1-sumit.garg@kernel.org>
- <20260306105027.290375-11-sumit.garg@kernel.org>
- <v4ffww2r4ljqqbmvsc5jcr4ztqjbpfb42xryjeuz4abqiwup3a@2gfeelhjzzz4>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="avrMFIfO"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62Q59Wqg1479684;
+	Thu, 26 Mar 2026 09:43:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=GQ61ku
+	hdrfqFul0L2FFBXSHRCVEg6otwfwoaX1TK3/E=; b=avrMFIfOdugi4S/4hndTN+
+	CLl/8HIMGz5Y/Oum5eOm3OxGCkgJK5eRyIT5itUmQlmpPCJa5rd7cEhD70kd89Vx
+	sIkj70/bP26p1m99XZIqnezWszE2fOzkNLz1UKG/M+ZIpYxEchD1eZtuvPGMylcs
+	oeHmw2eVFKJjsgFq0pWIzHhgjEoKzXSvm+Q3IfGfuYz/X6Rtw3ddqbg74qyboisW
+	7VhJFSlPA/npMVSA1RxAqkj0qgcs/ITsZmLD/UBiIHDv6wpIicKFko9HHa1mxW7e
+	FX0uQjKv616F5kTpsv6tLKCb9nFCwCPKBw3DJM+rLF0pILZ/li0SeQnt8POSnByw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kxqmkhe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Mar 2026 09:43:18 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62Q70AQB026695;
+	Thu, 26 Mar 2026 09:43:16 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d275m292g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 26 Mar 2026 09:43:16 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62Q9hCts51970526
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 26 Mar 2026 09:43:12 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 59BB320049;
+	Thu, 26 Mar 2026 09:43:12 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B3A6C20040;
+	Thu, 26 Mar 2026 09:43:11 +0000 (GMT)
+Received: from [9.52.196.90] (unknown [9.52.196.90])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 26 Mar 2026 09:43:11 +0000 (GMT)
+Message-ID: <e232e227-b022-40b7-ae9b-085398172aaa@linux.ibm.com>
+Date: Thu, 26 Mar 2026 10:43:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <v4ffww2r4ljqqbmvsc5jcr4ztqjbpfb42xryjeuz4abqiwup3a@2gfeelhjzzz4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/12] s390/cio: use generic driver_override
+ infrastructure
+To: Danilo Krummrich <dakr@kernel.org>, Russell King <linux@armlinux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Nipun Gupta <nipun.gupta@amd.com>,
+        Nikhil Agarwal <nikhil.agarwal@amd.com>,
+        "K. Y. Srinivasan"
+ <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+        Dexuan Cui <decui@microsoft.com>, Long Li <longli@microsoft.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Armin Wolf <W_Armin@gmx.de>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Holger Dengler <dengler@linux.ibm.com>,
+        Mark Brown <broonie@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>,
+        Alex Williamson <alex@shazbot.org>, Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini
+ <sstabellini@kernel.org>,
+        Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+        "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org, driver-core@lists.linux.dev,
+        linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org,
+        linux-pci@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-spi@vger.kernel.org,
+        virtualization@lists.linux.dev, kvm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-arm-kernel@lists.infradead.org,
+        Gui-Dong Han <hanguidong02@gmail.com>
+References: <20260324005919.2408620-1-dakr@kernel.org>
+ <20260324005919.2408620-10-dakr@kernel.org>
+Content-Language: en-US
+From: Vineeth Vijayan <vneethv@linux.ibm.com>
+In-Reply-To: <20260324005919.2408620-10-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-ORIG-GUID: lM9ihgFyzDaKKK4hT6xbAWnBu4HPvbko
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI2MDA2NyBTYWx0ZWRfX2in2v/sm6fVn
+ 1EOEfnIWW9XHJhqTtN1dackcJvrGoIn6RYtzj2jaFpMYQNlaN3XxkuZ6dzpRGfvaZaU5moxAo8x
+ trr+PwJfEqlepekJSKPo1fy9d5o6sgA5m683HkjOswpiKaLB0x2ZC2oGeSCAtUXbWtftJWxMU93
+ r9db17SA3IR04n61jqkqo5Bm6YDmBdYR4V4J415d1oOQfmhBzzcsrs5XSBy2lSc6eI3Yyn+zNJA
+ fVQxRgkOI9yEBwUOLE+1Bp0urJ3SQpsL6Mxqh1jqv0YqiavIDSQ9i78PTJ+7C/RudgHS8T2aNad
+ w9soTfL5Lep9UESaYSAmOjYsSO5EEkxvuZXANkgGYCQiRzjVScD+Gyn69Rf+vvAYsxJQFXrQuWu
+ UQoghhH9HNEe1gD65ozDrx3Bl3HFNi5z9FxZxdctIbC0r4+GoaXzUaZ2fC0g/Uri9kPCKMvcMLh
+ 7P5IIMyCHlQF+nN31cA==
+X-Authority-Analysis: v=2.4 cv=bLEb4f+Z c=1 sm=1 tr=0 ts=69c4ffb7 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=iQ6ETzBq9ecOQQE5vZCe:22 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=rH2cy8X4UbemT2jZliAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: sWD6kkjX1ahK5tMWR5AN0EWZ8NVBfHg-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-26_02,2026-03-24_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 clxscore=1011 phishscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603260067
 
-On Wed, Mar 25, 2026 at 06:34:18AM +0200, Dmitry Baryshkov wrote:
-> On Fri, Mar 06, 2026 at 04:20:23PM +0530, Sumit Garg wrote:
-> > From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > 
-> > Switch drm/msm client drivers over to generic PAS TZ APIs. Generic PAS
-> > TZ service allows to support multiple TZ implementation backends like QTEE
-> > based SCM PAS service, OP-TEE based PAS service and any further future TZ
-> > backend service.
-> > 
-> > Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > ---
-> >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  4 ++--
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 ++++++-----
-> >  2 files changed, 8 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > index ef9fd6171af7..3283852f9a14 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > @@ -5,7 +5,7 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/types.h>
-> >  #include <linux/cpumask.h>
-> > -#include <linux/firmware/qcom/qcom_scm.h>
-> > +#include <linux/firmware/qcom/qcom_pas.h>
-> 
-> Missing `select QCOM_PAS`.
 
-Sure, I will add that in next spin.
 
--Sumit
+On 3/24/26 01:59, Danilo Krummrich wrote:
+> When a driver is probed through __driver_attach(), the bus' match()
+> callback is called without the device lock held, thus accessing the
+> driver_override field without a lock, which can cause a UAF.
+> 
+> Fix this by using the driver-core driver_override infrastructure taking
+> care of proper locking internally.
+> 
+> Note that calling match() from __driver_attach() without the device lock
+> held is intentional. [1]
+> 
+> Link:https://lore.kernel.org/driver-core/DGRGTIRHA62X.3RY09D9SOK77P@kernel.org/ [1]
+> Reported-by: Gui-Dong Han<hanguidong02@gmail.com>
+> Closes:https://bugzilla.kernel.org/show_bug.cgi?id=220789
+> Fixes: ebc3d1791503 ("s390/cio: introduce driver_override on the css bus")
+> Signed-off-by: Danilo Krummrich<dakr@kernel.org>
+> ---
 
-> 
-> 
-> >  #include <linux/pm_opp.h>
-> >  #include <linux/nvmem-consumer.h>
-> >  #include <linux/slab.h>
-> > @@ -653,7 +653,7 @@ static int a5xx_zap_shader_resume(struct msm_gpu *gpu)
-> >  	if (adreno_is_a506(adreno_gpu))
-> >  		return 0;
-> >  
-> > -	ret = qcom_scm_set_remote_state(SCM_GPU_ZAP_SHADER_RESUME, GPU_PAS_ID);
-> > +	ret = qcom_pas_set_remote_state(SCM_GPU_ZAP_SHADER_RESUME, GPU_PAS_ID);
-> >  	if (ret)
-> >  		DRM_ERROR("%s: zap-shader resume failed: %d\n",
-> >  			gpu->name, ret);
-> 
-> -- 
-> With best wishes
-> Dmitry
-> 
+Thank you Danilo.
+
+Reviewed-by: Vineeth Vijayan <vneethv@linux.ibm.com>
