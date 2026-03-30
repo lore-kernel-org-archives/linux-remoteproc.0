@@ -1,168 +1,97 @@
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705A337F756
-	for <linux-remoteproc@vger.kernel.org>; Sun, 29 Mar 2026 16:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774802281; cv=pass; b=IZEYfDS+PrIAYMzRhPRmeZnS8z3oSdNCN8uN7Zsa0IWSEMRbNr4ZJsquxOcCrAKOL4vCH2qjJZv5bG1fsaMb0vVPWeN+gm0OQ+Zs1G0LWEttcy9vldLALAEGdN/xP3GJi/SPYJ3QAIzD91MYiyx5+OVF20RUoXeSJVJAfsQjuL0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774802281; c=relaxed/simple;
-	bh=Un4NvkRawM6rAPkV/uPmoGeL3zxZW5HI65PGH4JT81c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BLZ9VQnGOvW5f25BiSX4xkY7i9t3aqHfpCWogbXdIhki2H8IY3G/tq99Mit5M7rAPABawDL2hmwfS3dApSVH8g4btijMKYe+ykrIW958odcU9XX/7vWguemhBCFfw56P0kmkYHwQg7umpCsu7VwRU3cR5Af0cmWTF4T6R+FaTJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asY2dXVp; arc=pass smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C714B3939BD;
+	Mon, 30 Mar 2026 06:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774852200; cv=none; b=ZE8+zWOH/xFU4y0/V7Av4QvE3iF1mXtb2BRrU6M3nnuahze+9aoxdV/qYsh2QdxieB1f45IMcMLlFhpRiNJ+SP/OCjwyH2ORc5Tj3uGCH3q8+Jb/N2hOmgdmuyc7/aTWSVl36rnqXlksnuedHEXcnlcriLHhYR1P003ngQJ9wwY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774852200; c=relaxed/simple;
+	bh=035aYXpJRW2cnLWGbph4ptLu8VVBvXeKIlejv+8hpVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rKUB/HvM8idLE+VChDpRclsygw3OWSUrmo1TIejpatG0W/ADcsIyvc6h+ZF/sAIhlToychHSLMzLTFp6iCKD+Ks0Q7RYYQiV/FFpMzAmgeSFdNxeiZjCfimqeyjuJ3bhywmWeYDpF3vIXajMQhUNbuDd/ZV7ie5vlrtYCNUAZKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAap5ILN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asY2dXVp"
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7d7447778b9so1913423a34.2
-        for <linux-remoteproc@vger.kernel.org>; Sun, 29 Mar 2026 09:38:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774802279; cv=none;
-        d=google.com; s=arc-20240605;
-        b=HV0WWs+kGTqHKWXA5uyX4R14plTu85HJjhgYjJo7vnQpxCgN06tf0mOgStbUMZecuq
-         7PmTADjei/UoamMqavtG5xCDpkpAPAETf1ycTPewqdazShhYNwIgHWOAQFV7SNDkfrVc
-         yC3rO/cL8NR6WiCU7Sw8ApmXb1jQFGb0q4ny6An/+yE96bmGmAyrjwI3x53HOXBpVIQF
-         d2+hnsA20EVkw3btGT0xUZm/F15URpnUlsdn0pTShGrIfTQD3EzRvpEvIR3tJ/ge6jb1
-         BiPul4xCHl27kjlTkX5teA3WuMlEavcpwfc8Vm2xy3vRcbLObh3xqD06ydbj370pBlcg
-         CMww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=dHchNBTHeszL2iAU7JVezGRet8r4iYUcgXKLaaZE2S0=;
-        fh=6Y5Nl9TrSfQkj7ZqOtBcsIQOaV8RM7rNQInyHldw3cE=;
-        b=ST1lqXYjdKLzVdwvnpkuIuhvMMymW0g8R10CbF99sxmRm03xK/0BO1+ih/JYac6nFs
-         ukfCW+ezk7jpaxL4oZtkHnTam1cgxc6V6IpxsrLoJpJAMwIrhIesJtASQXP6FDW35FHO
-         s1HrwhAkiQK0D4nh2F5o3xC+xaW74Au+HIH0B+qM5wwEym7DXaaSrcuUMBrO0IbsMXFO
-         MGsIt2+/Hz3Q6nv+mgB1dsTaoXVQvtVdga6f1FktACVQcfyeOVQQT5IjqNkX5Ru6jhmU
-         7n9H8ej75cBqWLfLCPmpvJtg7YKNsSrMRYXGQcvEnnw+GIT7z1Eba+Ptbojwla/nQnUC
-         /wBw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1774802279; x=1775407079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dHchNBTHeszL2iAU7JVezGRet8r4iYUcgXKLaaZE2S0=;
-        b=asY2dXVpxvpz8lJteG65lYCNtyUpmNmnO08qATyXHbdfhTpLXLXEQcDkn3wiJDw0/v
-         IAUT47bU1YohMMVW3t0i15cwoFnZ/A1XnK6lAGdFmpPyDqyP0v3Sj8K5zhJaOMsr0Pa4
-         Gae2oRG1D/H/d5VJKWKz+V06JzIEXihwudKM8FppC8a38ZFBQ4d7dAla1RzTShr+DGK3
-         eBjrh6sVxyal94HaJubR4K6lzpAurRMoek5nsOy8YPtiKmMZCnm3UXuaOHe4Pxn0p8cA
-         SVgGCi3Avi/ytewaKL3blcV/H5JPcDGBAjLdWCNZKh6fNxPE+UvhA3q78dw91W6jnyWv
-         RLlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774802279; x=1775407079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dHchNBTHeszL2iAU7JVezGRet8r4iYUcgXKLaaZE2S0=;
-        b=S/Bw7gBFGeglIK9+QX9787kMVBU0ixJwJc9FWOHn/PiYLW+vQq89M9XabM5WgEcluK
-         Lopje9AQlTsodHFARO0aL5Ic1R2BpTwE/vPq/W907aq676nEIOwmXHX26q3Jq8lnsVrv
-         f+3hZm265ml5URvCt9rC0kfQY0hdNhGQyfxGqGp1Gp3Q7DLCNqYEdvOmDjGyZj3w+JmE
-         8EBlYzexPlQVvwRNx88P1GJkScNKwzYbvYrdC7d+Q59ov8d/434b7liAAh26ye4gj4h+
-         Giq2yEcDZfBB0vjYdAF9FPQPzD7DCz09kzEV5iq+PJOVUy7urJgjA0QKf71U6C4E+Hl2
-         yyNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbWS0Y6GRi/VqtHT4ur/ZM/rXPNODNznQVg2eBca6ysLtUw77hjs9ToYGqet9VvGkWpG5XsTIgIQ6m/74QM3Wo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzodm/vRtHC+1o1XIysHCdxgQy9hij/haX2HvtEe/y0c/QugfeA
-	hzv02U6CYeu/y7A0mB3fnapzljp4gHGQql2WnhgkouFxRDCGsvnNidRaH9bwEVWAJiqA5E97BHs
-	dz7F0zzibT8+V9lXJnsrqf2JjEDwhTqY=
-X-Gm-Gg: ATEYQzyPh7oq56ahKb/MbYIj2kYFjKxKv04vN2auGYvxIcat+cEwVVOBCVZqOd8VlcG
-	RT/ghbkzJG0GUxyX8U8xaARFylRsu04Wc6aOkYizuqn2k3NZ2IqICf58ZvGafSPS/rwveZ2TOcA
-	YwvVKjscC3M5gjKLfVZTDzJgBJ4sNXF6iFTUq5GWY6OdfPKzDkvQbMMh3+bFXbiNhtLKwA9xRoa
-	mHCIlGwxuUK6G3TwiCuboLA/5QuAshQLPBmZ9rn+kM0zqsIhU7YXHXb24yRIuZr8IA9xV6T8/a1
-	cBzcsbQp
-X-Received: by 2002:a05:6820:615:b0:67e:212:827d with SMTP id
- 006d021491bc7-67e1870c032mr5108712eaf.41.1774802279308; Sun, 29 Mar 2026
- 09:37:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAap5ILN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0708CC4CEF7;
+	Mon, 30 Mar 2026 06:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1774852200;
+	bh=035aYXpJRW2cnLWGbph4ptLu8VVBvXeKIlejv+8hpVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sAap5ILNduf99Z2ehiqgpjwUfo5MqIvhYLE72v04gGyFNT1vPdmm2znMIBN/1WPxv
+	 KFsmu4d/uEKwe4XwHGphBp0Vw7GsXJYYR6ENvjTAL0kG+11TPgBF7lAskT6NKaKXv3
+	 SqpRuekj2IYI74IFT03P/UKrpKruyJc/fJrbTlvXFEZhcfnBYmP2r3QBNjMbvr6xs6
+	 X0Rgga6H6yaX5JaJ96l+QcsN4bSAW7HOePJIybS6egOCDftuDv/k3vMpPAGFTMgv5p
+	 zdmnBwa7Ysw4rlo8bnuuyuRkb457dCwRAwGl8aiZEoem/hIHfd217rZEav/6X6pLnq
+	 CcrmVuNPPxuXw==
+Date: Mon, 30 Mar 2026 11:59:41 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
+	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
+	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
+	trilokkumar.soni@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
+	jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com,
+	vignesh.viswanathan@oss.qualcomm.com,
+	srinivas.kandagatla@oss.qualcomm.com,
+	amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
+	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: Re: [PATCH v2 02/15] firmware: qcom: Add a generic PAS service
+Message-ID: <acoYVdr4wBEqwFoM@sumit-xelite>
+References: <20260312062756.694390-1-sumit.garg@kernel.org>
+ <20260312062756.694390-3-sumit.garg@kernel.org>
+ <20260313072450.sx7vqtvh62nflhff@hu-mojha-hyd.qualcomm.com>
+ <acE3MR4SVCPUzcgR@sumit-xelite>
+ <2da6cbcc-677d-4ba8-9762-ecb47b157f21@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260209234430.512492-1-jassisinghbrar@gmail.com>
-In-Reply-To: <20260209234430.512492-1-jassisinghbrar@gmail.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Sun, 29 Mar 2026 11:37:48 -0500
-X-Gm-Features: AQROBzA4srQB3Tyl0-QvNWLKjLsllXJXeRbwqVU4oSS7jBz_4eYyCo9ihi_kk9w
-Message-ID: <CABb+yY3yyCDdN8THZXqsXm8jEyXsx9Sdgxhp9YHwo_0UWzvn8Q@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: add API to query available TX queue slots
-To: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Cc: tanmay.shah@amd.com, andersson@kernel.org, mathieu.poirier@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2da6cbcc-677d-4ba8-9762-ecb47b157f21@kernel.org>
 
-On Mon, Feb 9, 2026 at 5:44=E2=80=AFPM <jassisinghbrar@gmail.com> wrote:
->
-> From: Jassi Brar <jassisinghbrar@gmail.com>
->
-> Clients sometimes need to know whether the mailbox TX queue has room
-> before posting a new message. Rather than exposing internal queue state
-> through a struct field, provide a proper accessor function that returns
-> the number of available slots for a given channel.
->
-> This lets clients choose to back off when the queue is full instead of
-> hitting the -ENOBUFS error path and the misleading "Try increasing
-> MBOX_TX_QUEUE_LEN" warning.
->
-> Signed-off-by: Jassi Brar <jassisinghbrar@gmail.com>
-> ---
->  drivers/mailbox/mailbox.c      | 23 +++++++++++++++++++++++
->  include/linux/mailbox_client.h |  1 +
->  2 files changed, 24 insertions(+)
->
-> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-> index 2acc6ec229a4..22eb8f3213be 100644
-> --- a/drivers/mailbox/mailbox.c
-> +++ b/drivers/mailbox/mailbox.c
-> @@ -218,6 +218,29 @@ bool mbox_client_peek_data(struct mbox_chan *chan)
->  }
->  EXPORT_SYMBOL_GPL(mbox_client_peek_data);
->
-> +/**
-> + * mbox_chan_tx_slots_available - Query the number of available TX queue=
- slots.
-> + * @chan: Mailbox channel to query.
-> + *
-> + * Clients may call this to check how many messages can be queued via
-> + * mbox_send_message() before the channel's TX queue is full. This helps
-> + * clients avoid the -ENOBUFS error without needing to increase
-> + * MBOX_TX_QUEUE_LEN.
-> + * This can be called from atomic context.
-> + *
-> + * Return: Number of available slots in the channel's TX queue.
-> + */
-> +unsigned int mbox_chan_tx_slots_available(struct mbox_chan *chan)
-> +{
-> +       unsigned int ret;
-> +
-> +       guard(spinlock_irqsave)(&chan->lock);
-> +       ret =3D MBOX_TX_QUEUE_LEN - chan->msg_count;
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(mbox_chan_tx_slots_available);
-> +
->  /**
->   * mbox_send_message - For client to submit a message to be
->   *                             sent to the remote.
-> diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_clien=
-t.h
-> index c6eea9afb943..e5997120f45c 100644
-> --- a/include/linux/mailbox_client.h
-> +++ b/include/linux/mailbox_client.h
-> @@ -45,6 +45,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mss=
-g);
->  int mbox_flush(struct mbox_chan *chan, unsigned long timeout);
->  void mbox_client_txdone(struct mbox_chan *chan, int r); /* atomic */
->  bool mbox_client_peek_data(struct mbox_chan *chan); /* atomic */
-> +unsigned int mbox_chan_tx_slots_available(struct mbox_chan *chan); /* at=
-omic */
->  void mbox_free_channel(struct mbox_chan *chan); /* may sleep */
->
->  #endif /* __MAILBOX_CLIENT_H */
-> --
-> 2.43.0
->
-Applied to mailbox/for-next
+On Fri, Mar 27, 2026 at 02:39:24PM +0100, Krzysztof Kozlowski wrote:
+> On 23/03/2026 13:50, Sumit Garg wrote:
+> >>> +
+> >>> +#include <linux/device/devres.h>
+> >>> +#include <linux/firmware/qcom/qcom_pas.h>
+> >>> +#include <linux/kernel.h>
+> >>> +#include <linux/module.h>
+> >>> +
+> >>> +#include "qcom_pas.h"
+> >>> +
+> >>> +struct qcom_pas_ops *ops_ptr;
+> >>
+> >> Should this be static ?
+> > 
+> > It was static earlier in v1. I dropped it based on earlier v1 discussion
+> > with Krzysztof. Let me conclude that discussion on the other thread
+> > again.
+> 
+> The discussion was whether this should be singleton in the first place,
+> not making it a global singleton.
+> 
+> Of course it cannot be anything else than static - nothing should poke here.
+
+Sure, I have put the static back for v3.
+
+-Sumit
