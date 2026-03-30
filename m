@@ -1,262 +1,199 @@
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012071.outbound.protection.outlook.com [52.101.43.71])
+Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603472E7635;
-	Mon, 30 Mar 2026 18:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774896192; cv=fail; b=aakGv0tNllwKcwAOYmqPpIfx0e1KBy/Ao2vYIWWMVP9h3qL+Ha0bRyxiV/8ofIEktsfvSaSolLnUaEmG5e2JYRjeTzzypSCBzuS4jLN+LJ5A2+/qC4Qg3Y36ACPThHEiEN75aZUlR9qLWQCUe1K7TncSHpLLD/2UzUH5Ov5FT60=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774896192; c=relaxed/simple;
-	bh=2MgJPIwQciWvMWQZK0MbAUKDimfxgaBTVInecHLYPTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ruslq1UCNjiyPfE3veYXe6lMVAQtn6WZVdGeStnxVGDbzRSSzhQMsNQzgC5npsi0IDzxlFSJysW/jdP5D/D7LIR8mfNZQpdn7/gjZmypO/xdlZK8T+wKE7TTs7Lk2YLgtWXAMXuOdgKrT5CI7Hgr7CxzvxbhAj8gvtbLQQx1+W8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=CpEOurM8; arc=fail smtp.client-ip=52.101.43.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2035B377023;
+	Mon, 30 Mar 2026 20:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1774901459; cv=none; b=LCPETV2n5/rjlrwqONXv261RW3EwDFyEWnflEdGWillT7Q8uwGyYN2SNAgIQska92mUPzu2WCZhgOiB2ie0gM2GZmhXuqqSnWwQcOnJMeE8TyNpvnZQNJAt88FvpHVpU07/t2C+XeOiTsJQC67067qatBjEQ2Q6KkLr0xXcP9U8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1774901459; c=relaxed/simple;
+	bh=HVnPKL4GDfzYYaqgylKaMGdGqe750h3OqeetAX+ZooI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PoaEIn0DzqB0t7yHe2UAlQtSucETMbF9FA330BOLAVdxbcpdb7PWKudtV25Y3SLTrkMJR+X0IGwZ0UtLWWyBkl+uZ9hlVLA/md0TLQ7u0MYCPhsVEZD8a/2+bOSeWHb3xFlyoB2H8An+498MY4uCWhIdUYKwrNQWzNM/pRqOvRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=p3Q7z9HD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CAP30Hzc; arc=none smtp.client-ip=103.168.172.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="CpEOurM8"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ArSHvT16AOjcuOINQOpLkizSXi3C4k1lSXPH9hIAtzQY1rjdxXwCg8YTr30ggPavbWftCyo47rCUyYlSZXRrsGkHGcDdoKwTTphFbpVHu5p9dnF9gB/bouvg9YRAYVmEMT4jWZKvpdQ/UoT3vqN9n1JIrGtVtCjF7ecVVR8AvVKEL4PjVMvU3SzCPgyEn3ttukZ71rFTP4SwMqg5ql7Q4/SxY3SGsisTioWhjHjfXRaeg+H0Y9n2dmC/yFdxAvGY08tx5OazHjNI5ag3q50aL9kWkQWyUk2CZAUTlLMyqBIZugxWqarS6CTw/kNJ0cE4owIe+mHF+SbTUgGSZHIX5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2JtG3qiHfVLD9x21Uj/yg6J/FHLF+RDhEKwjuxASX9c=;
- b=Bs8bs+HoMzjah6Go9g++F8JwYA9JSLcKWf71IUK15lP/JVUaIgep7Y7MjpERoePiNE6l4GLF+BattHw8dk91boE3Lzx7BC2wcTa/AC987rVEi7DwmfAkPr5ntndZ1rCyasRVcQCadHtTVZREqbKqse9pBJsWyJvc/9oTvcXhHAjdgG3bpxmq/EfAZZXvrtAq2lyZBkeFnjHelzaViqOFJ2QiGo1JSUxEHzF2TZjH+bFzMtAxO3CZbKSSfdFJyM1EBIJmpzlR+6msPI7wDrzeCNmUbtcUBs7cmAUSoovtR/iKVEdlik3fuBBUsxrN046W8FGxKcEn8Q2ktqOI7mPfcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2JtG3qiHfVLD9x21Uj/yg6J/FHLF+RDhEKwjuxASX9c=;
- b=CpEOurM8u74568A3l8V+UjL9hMmWdpJDCCaC40iPF/+mWsNoib5rMS27lckv03BQAAcoL9rAhMATATagC+J0jEaQDEwwtxll5NVqKsvZ3fW7jmJRb/dLBaF3GMgR3YCyvxl6hpujyhQtV4XuvzpQnsNabaAyzeM7PxUYOjxAH3c=
-Received: from BYAPR05CA0037.namprd05.prod.outlook.com (2603:10b6:a03:74::14)
- by DS0PR12MB9324.namprd12.prod.outlook.com (2603:10b6:8:1b6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.15; Mon, 30 Mar
- 2026 18:43:05 +0000
-Received: from SJ5PEPF000001D1.namprd05.prod.outlook.com (2603:10b6:a03:74::4)
- by BYAPR05CA0037.outlook.office365.com (2603:10b6:a03:74::14) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.28
- via Frontend Transport; Mon, 30 Mar 2026 18:43:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ5PEPF000001D1.mail.protection.outlook.com (10.167.242.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.21 via Frontend Transport; Mon, 30 Mar 2026 18:43:04 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 30 Mar
- 2026 13:43:04 -0500
-Received: from [10.31.206.142] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 30 Mar 2026 13:43:03 -0500
-Message-ID: <3f557b06-ea34-4f96-b1ec-75bab7c0d828@amd.com>
-Date: Mon, 30 Mar 2026 13:43:03 -0500
+	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="p3Q7z9HD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CAP30Hzc"
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailflow.phl.internal (Postfix) with ESMTP id 32B1F1380404;
+	Mon, 30 Mar 2026 16:10:56 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Mon, 30 Mar 2026 16:10:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1774901456;
+	 x=1774908656; bh=l6vFZymkQIpCjGyZZ0waTIjtR5dYu9l/RauB0EHs2cg=; b=
+	p3Q7z9HDaMO9l49KzGyd6QCozBDRkYMrNAMT016WX/fHIPodDvJbWxfN7o7Rq7vD
+	ssq4dL3KEVXFE49rB8recUd5fVpSerRill0EPB9eG2k4c2akGO+Qp/G8D31RmPbX
+	7TlkrNox2UjWyTlfcttMC7E71kdY+trnef5Hm61drgcfUPakTcCNL6kKwNKjRSBV
+	U1uiNaG+fKZAZmTv0+H0872Gvi06OSqLLzx0vsDX2qjVrQBFMlsZacR2mbGsDkc/
+	gT6xVnpGv8MRHmzJBZo58FBd6w5IU+6ogcmojJLtPY3KydD8fWurT3VIXthGtQVM
+	kQSao6bXLTSzYllu1/tldQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774901456; x=
+	1774908656; bh=l6vFZymkQIpCjGyZZ0waTIjtR5dYu9l/RauB0EHs2cg=; b=C
+	AP30HzcjqUcGAYtq0Vy0npz+WQZ0xoM+V3KrqPMrmRQ5BSmU53GGUiyx5E4wI6yA
+	FyTr5/p4paazsu/Iipz8yYZU+1phMDKI7hagtD986FHeu0o1F4zYmBZsEakuW92m
+	weI9ASAX8aFEL8Rs0Uec3ctb/HnJ1MgKC92d8MBdvS6OH7G3ewGRc0+tfGddZ4Gk
+	WxhrjWBcLoGs93zMy/odTXwHEJHh5W5FS+Et9LrpEfOcBRgJ0bBAStrIpl6DkWE0
+	Q7ETKFm9iu5onjWSvKFXn0ELTMMUBd/OPVAOOtwXaNWNshQ6cuB1Amc/2nwRZfpT
+	eHg87urYI5Ec6Lkq0sXvA==
+X-ME-Sender: <xms:z9jKafG3C1ppH9T_m6ALHXE4Xg8LRK7hBmf8rBxsDTwjV0YmtGN7zQ>
+    <xme:z9jKafRfVIq8DMXZsvpeUjwD446zuGALRlY6oTA_zptsdyXkE-2d-NbNcA082cKf0
+    ss8FY21mgRpxHw-PTPA5PC2K5vCU9145ou0r7AQwqll0ampOmU>
+X-ME-Received: <xmr:z9jKaX5EMTRV_NaboCc_h79atFYxCsQIiTsRvvS3id2SmTFWS4FBTgmuiO8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeffeelledtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkjghfofggtgfgsehtjeertdertddvnecuhfhrohhmpeetlhgvgicu
+    hghilhhlihgrmhhsohhnuceorghlvgigsehshhgriigsohhtrdhorhhgqeenucggtffrrg
+    htthgvrhhnpeekheejieetffefueeiteejtdejffdvleelvdeuvdffvdefteeghfevkeeu
+    vdefvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghlvgigsehshhgriigsohhtrdhorhhg
+    pdhnsggprhgtphhtthhopeehuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
+    grkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjghhgseiiihgvphgvrdgtrgdp
+    rhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtoh
+    epghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohep
+    rhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohgrnhgrrdgtihhorh
+    hnvghisehngihprdgtohhmpdhrtghpthhtohepnhhiphhunhdrghhuphhtrgesrghmugdr
+    tghomhdprhgtphhtthhopehnihhkhhhilhdrrghgrghrfigrlhesrghmugdrtghomhdprh
+    gtphhtthhopehkhihssehmihgtrhhoshhofhhtrdgtohhm
+X-ME-Proxy: <xmx:z9jKaXPahdSu6NAxzDLCWHFq0SjTPnbaOV6q1JEVDN1n0TGZgvSOLg>
+    <xmx:z9jKaYs_pZi1AKnrgY4kd6IlWW19DwfnZAklgCAjMJf5o-edI-wG2g>
+    <xmx:z9jKaebkSHmk2-FfV3M99S1E_Kbm3scLKfLmyO_zzcLIBxoGL3vJxQ>
+    <xmx:z9jKacg_NAD9M03CgHB8mak7EEebVzjqapJHxaBa4zGAHu1ISFIb7w>
+    <xmx:0NjKafrBqSu7i3ficH69WDNrAzczvh4pW1jhPhZmK7WHcIBXnovlo-fr>
+Feedback-ID: i03f14258:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 30 Mar 2026 16:10:52 -0400 (EDT)
+Date: Mon, 30 Mar 2026 14:10:50 -0600
+From: Alex Williamson <alex@shazbot.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Jason Gunthorpe" <jgg@ziepe.ca>, "Russell King" <linux@armlinux.org.uk>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Ioana Ciornei" <ioana.ciornei@nxp.com>,
+ "Nipun Gupta" <nipun.gupta@amd.com>,
+ "Nikhil Agarwal" <nikhil.agarwal@amd.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ "Haiyang Zhang" <haiyangz@microsoft.com>, "Wei Liu" <wei.liu@kernel.org>,
+ "Dexuan Cui" <decui@microsoft.com>, "Long Li" <longli@microsoft.com>,
+ "Bjorn Helgaas" <bhelgaas@google.com>, "Armin Wolf" <W_Armin@gmx.de>,
+ "Bjorn Andersson" <andersson@kernel.org>,
+ "Mathieu Poirier" <mathieu.poirier@linaro.org>,
+ "Vineeth Vijayan" <vneethv@linux.ibm.com>,
+ "Peter Oberparleiter" <oberpar@linux.ibm.com>,
+ "Heiko Carstens" <hca@linux.ibm.com>,
+ "Vasily Gorbik" <gor@linux.ibm.com>,
+ "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ "Sven Schnelle" <svens@linux.ibm.com>,
+ "Harald Freudenberger" <freude@linux.ibm.com>,
+ "Holger Dengler" <dengler@linux.ibm.com>,
+ "Mark Brown" <broonie@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+ "Jason Wang" <jasowang@redhat.com>,
+ "Xuan Zhuo" <xuanzhuo@linux.alibaba.com>,
+ Eugenio =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+ "Juergen Gross" <jgross@suse.com>,
+ "Stefano Stabellini" <sstabellini@kernel.org>,
+ "Oleksandr Tyshchenko" <oleksandr_tyshchenko@epam.com>,
+ "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <driver-core@lists.linux.dev>,
+ <linuxppc-dev@lists.ozlabs.org>, <linux-hyperv@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+ <linux-s390@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+ <virtualization@lists.linux.dev>, <kvm@vger.kernel.org>,
+ <xen-devel@lists.xenproject.org>, <linux-arm-kernel@lists.infradead.org>,
+ "Gui-Dong Han" <hanguidong02@gmail.com>, alex@shazbot.org
+Subject: Re: [PATCH 05/12] PCI: use generic driver_override infrastructure
+Message-ID: <20260330141050.2cb47bd9@shazbot.org>
+In-Reply-To: <DHGATG6LJOM1.2AI7BYQ2O4DFU@kernel.org>
+References: <20260324005919.2408620-1-dakr@kernel.org>
+	<20260324005919.2408620-6-dakr@kernel.org>
+	<DHGATG6LJOM1.2AI7BYQ2O4DFU@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH] remoteproc: xlnx: reset virtio status during attach
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Tanmay Shah
-	<tanmay.shah@amd.com>
-CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20260317201251.3920841-1-tanmay.shah@amd.com>
- <acbhbnBgJCP7WETC@p14s>
-Content-Language: en-US
-From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <acbhbnBgJCP7WETC@p14s>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D1:EE_|DS0PR12MB9324:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2cd69157-6d70-410e-adb6-08de8e8c2dda
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700016|376014|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	V1oOVu3sqp4TN/BprC1cZBy4Onqx4vBjKDj49WAHD3uWY/qTF4KH4+CC8tgygLGzm8Uwv1t+9Bx9d4Sa9zuFoTLXEKnCwoUzQdSnaSJdmVTW70ALHf3+axjrlJEyBimUtiNTl2BbA8iu0SYnY/6kK8zVKtM8R7qWRMBHcxtpUDkwMyGVNX/LNRU3mQWynWXQC7c0wYY7gE/ra6GgBEoQyKsQTFLaswdcTM27oxwSlyX/MmXTG5aXW9D0Ap3tTWZSl0m9I+dROVBUYS/DbNfrgFzUlq7PcvdN+qc1cgljCm28cwMxhTVriq2FHCGEtwSMg0z3HYHkGSGKTMjZ7WAiHof2lkN3BpbWskck8fQK/NWIY8ELNDq5HLN4GsUnBOvIxqfemLxKTXU9rw6m/W/Y/ldEMAOc62e/sak8MGTVZ0GAmZmfaCSTA/KqfwjR34HUBaIfqtDBhcn1RlZz8ShNoi5x8GRfVq7m1A4vNpCnYxdeu5DWkqSHz5CbFmtcpNXQVrzQTZ/UQ8zFq+YKiGm2opRYJrUcUJkoQKWa4umJqP6U45UAcugCHcQRYu0UcpolOGPLoZTBZS37L2RKOnWzjtAkGw5i1jKKshi2Arm//XXd9JhiX0us13OuvaIYWnbOQ2D7E8wEnGeHeYavecQKAyGovmNrJouWu8U6pOrwuZnnob60FIMr7OuHBGkVEm9BmJi1a9rcBhklWQ8oZRxerX6ooY+6iZVEsIwKe0TU7eIQ8tvsMHgRYHr7l4CqQAIM5WKJi0FrA90JUYI+h8sKLA==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700016)(376014)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	vrNk3yTElidkN7GqcqwOfCmyLPXeWaWfVOAt9QocTwiNbbH+Eg++oSwYETPwlzdMa5o/ElVXfYTDR46Xqqzokq15PNalgWv79SOf6UTVAQF7SL4sYyYcWQmEfvcHmaChNwuhdU7Te7M/XO1X7jWs8PMooWSzguTP6lOs74MKReNYZlJ2SRIXiyZTt/vQe+6x/ICAn1mN0nqPQYQ9+q472x1Fs9cmQzmPZD2SKFxcvU05FSEIq+zZ9l0iW+jz2ZGQYoxyXZas/uyqA4KRX2gzYApuPE2UKl0Bm+P7EXrYZsoctVMddRgSRpn+ai6XCo/vhCAIb/lTKl1VEEttluv/4GUuIYj9sKMoInoGTpYONspuS8lEr7OQRJ14Rp0+iqoU4JPRi+FiXeOR8cBI1jfMYXcCsg2CmopICAWE/WO+PdO3zZqVASs0us9lp4ubqDhk
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2026 18:43:04.7713
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cd69157-6d70-410e-adb6-08de8e8c2dda
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9324
 
-Hello,
+On Mon, 30 Mar 2026 19:38:41 +0200
+"Danilo Krummrich" <dakr@kernel.org> wrote:
 
-Thanks for the reviews. Please find my comments below:
-
-On 3/27/2026 2:58 PM, Mathieu Poirier wrote:
-> On Tue, Mar 17, 2026 at 01:12:51PM -0700, Tanmay Shah wrote:
->> On AMD-Xilinx platforms cortex-A and cortex-R can be configured as
->> separate subsystems. In this case, both cores can boot independent of
->> each other. If Linux went through uncontrolled reboot during active
->> rpmsg communication, then during next boot it can find rpmsg virtio
->> status not in the reset state. In such case it is important to reset the
->> virtio status during attach callback and wait for sometime for the
->> remote to handle virtio driver reset.
+> (Cc: Jason)
 > 
-> I understand the user case, but won't that situation happen regardless of
-> whether cores operate sync or split mode?
+> On Tue Mar 24, 2026 at 1:59 AM CET, Danilo Krummrich wrote:
+> > diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> > index d43745fe4c84..460852f79f29 100644
+> > --- a/drivers/vfio/pci/vfio_pci_core.c
+> > +++ b/drivers/vfio/pci/vfio_pci_core.c
+> > @@ -1987,9 +1987,8 @@ static int vfio_pci_bus_notifier(struct notifier_block *nb,
+> >  	    pdev->is_virtfn && physfn == vdev->pdev) {
+> >  		pci_info(vdev->pdev, "Captured SR-IOV VF %s driver_override\n",
+> >  			 pci_name(pdev));
+> > -		pdev->driver_override = kasprintf(GFP_KERNEL, "%s",
+> > -						  vdev->vdev.ops->name);
+> > -		WARN_ON(!pdev->driver_override);
+> > +		WARN_ON(device_set_driver_override(&pdev->dev,
+> > +						   vdev->vdev.ops->name));  
 > 
+> Technically, this is a change in behavior. If vdev->vdev.ops->name is NULL, it
+> will trigger the WARN_ON(), whereas before it would have just written "(null)"
+> into driver_override.
 
-I want to make it clear that this is not same as Cortex-R cluster
-configured as lockstep vs split mode.
+It's worse than that.  Looking at the implementation in [1], we have:
 
-This is different configuration between Cortex-A cores and Cortex-R
-cores. It is a firmware driver configuration of how it treats cortex-A
-and Cortex-R subsystems.
++static inline int device_set_driver_override(struct device *dev, const char *s)
++{
++	return __device_set_driver_override(dev, s, strlen(s));
++}
 
-In the firmware driver, we can configure Cortex-A cluster as owner of
-Cortex-R cluster, and in that case, if Cortex-A reboots, the firmware
-will also reboot cortex-R cores. This policy makes Cortex-A as owner of
-Cortex-R cores. In this configuraton this patch is not needed, because
-if Cortex-A reboots then platform management firmware will also reboot
-Cortex-R cores as well and vdev status flag will be always 0.
+So if name is NULL, we oops in strlen() before we even hit the -EINVAL
+and WARN_ON().
 
-In another configuration in the firmware driver, Cortex-R cores can be
-independent of Cortex-A cores. This means, Cortex-A is not the owner of
-the Cortex-R cores. Both are independent subsystem. Only in this
-configuration, this patch applies because it is possible that Cortex-A
-reboots while Cortex-R doesn't and Cortex-R still runs as it is.
+I don't believe we have any vfio-pci variant drivers where the name is
+NULL, but kasprintf() handling NULL as "(null)" was a consideration in
+this design, that even if there is no name the device is sequestered
+with a driver_override that won't match an actual driver.
 
-So only in the second type of configuration, this patch is needed when
-COrtex-A running linux reboots and when driver probes and tries to
-attach it can find that vdev flag is not reset. In the first
-configuartion if linux reboots, then It's guranteed that vdev status
-flag will always be in the reset state.
+> I assume that vfio_pci_core drivers are expected to set the name in struct
+> vfio_device_ops in the first place and this code (silently) relies on this
+> invariant?
 
-If you prefer I can extend the commit message with all above details or
-put as comment in the attach() callback. Let me know which do you prefer.
+We do expect that, but it was previously safe either way to make sure
+VFs are only bound to the same ops driver or barring that, at least
+don't perform a standard driver match.  The last thing we want to
+happen automatically is for a user owned PF to create SR-IOV VFs that
+automatically bind to native kernel drivers.
+ 
+> Alex, Jason: Should we keep this hunk above as is and check for a proper name in
+> struct vfio_device_ops in vfio_pci_core_register_device() with a subsequent
+> patch?
 
->>
->> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->> ---
->>  drivers/remoteproc/xlnx_r5_remoteproc.c | 46 +++++++++++++++++++++++++
->>  1 file changed, 46 insertions(+)
->>
->> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
->> index 50a9974f3202..f08806f13800 100644
->> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
->> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
->> @@ -5,6 +5,7 @@
->>   */
->>  
->>  #include <dt-bindings/power/xlnx-zynqmp-power.h>
->> +#include <linux/delay.h>
->>  #include <linux/dma-mapping.h>
->>  #include <linux/firmware/xlnx-zynqmp.h>
->>  #include <linux/kernel.h>
->> @@ -29,6 +30,8 @@
->>  #define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
->>  				 (uint32_t)'m' << 8 | (uint32_t)'p')
->>  
->> +#define RPROC_ATTACH_TIMEOUT_US (100 * 1000)
->> +
-> 
-> There are some time constant already defined, please use them.
+Given the oops, my preference would be to roll it in here.  This change
+is what makes it a requirement that name cannot be NULL, where this was
+safely handled with kasprintf().  Thanks,
 
-Ack.
+Alex
+
+
+[1] https://lore.kernel.org/all/20260302002729.19438-2-dakr@kernel.org/
 
 > 
->>  /*
->>   * settings for RPU cluster mode which
->>   * reflects possible values of xlnx,cluster-mode dt-property
->> @@ -865,6 +868,49 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->>  
->>  static int zynqmp_r5_attach(struct rproc *rproc)
->>  {
->> +	struct device *dev = &rproc->dev;
->> +	bool wait_for_remote = false;
->> +	struct fw_rsc_vdev *rsc;
->> +	struct fw_rsc_hdr *hdr;
->> +	int i, offset, avail;
->> +
->> +	if (!rproc->table_ptr)
->> +		goto attach_success;
->> +
->> +	for (i = 0; i < rproc->table_ptr->num; i++) {
->> +		offset = rproc->table_ptr->offset[i];
->> +		hdr = (void *)rproc->table_ptr + offset;
->> +		avail = rproc->table_sz - offset - sizeof(*hdr);
->> +		rsc = (void *)hdr + sizeof(*hdr);
->> +
->> +		/* make sure table isn't truncated */
->> +		if (avail < 0) {
->> +			dev_err(dev, "rsc table is truncated\n");
->> +			return -EINVAL;
->> +		}
->> +
->> +		if (hdr->type != RSC_VDEV)
->> +			continue;
->> +
->> +		/*
->> +		 * reset vdev status, in case previous run didn't leave it in
->> +		 * a clean state.
->> +		 */
->> +		if (rsc->status) {
->> +			rsc->status = 0;
->> +			wait_for_remote = true;
->> +			break;
->> +		}
->> +	}
->> +
->> +	/* kick remote to notify about attach */
->> +	rproc->ops->kick(rproc, 0);
->> +
->> +	/* wait for sometime until remote is ready */
->> +	if (wait_for_remote)
->> +		usleep_range(100, RPROC_ATTACH_TIMEOUT_US);
-> 
-> Instead of waiting, would it be possible to return -EPROBE_DEFER and let the
-> driver core retry mechanic do it's work?
-> 
-
-It is not possible to do -EPROBE_DEFER, because attach() callback is not
-called only during driver probe.
-
-It is also called during following command sequence:
-
-attach() -> detach() -> attach()
-
-During second attach() callback, we can't do -EPROBE_DEFER, as it's not
-driver probe anymore. So I think will have to keep the usleep_range().
-
-> Thanks,
-> Mathieu
-> 
->> +
->> +attach_success:
->>  	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
->>  
->>  	return 0;
->>
->> base-commit: d4ef36fbd57e610d4c334123ce706a2a71187cae
->> -- 
->> 2.34.1
->>
+> >  	} else if (action == BUS_NOTIFY_BOUND_DRIVER &&
+> >  		   pdev->is_virtfn && physfn == vdev->pdev) {
+> >  		struct pci_driver *drv = pci_dev_driver(pdev);  
 
