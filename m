@@ -1,199 +1,109 @@
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2035B377023;
-	Mon, 30 Mar 2026 20:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD9E2F0C45
+	for <linux-remoteproc@vger.kernel.org>; Mon, 30 Mar 2026 22:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774901459; cv=none; b=LCPETV2n5/rjlrwqONXv261RW3EwDFyEWnflEdGWillT7Q8uwGyYN2SNAgIQska92mUPzu2WCZhgOiB2ie0gM2GZmhXuqqSnWwQcOnJMeE8TyNpvnZQNJAt88FvpHVpU07/t2C+XeOiTsJQC67067qatBjEQ2Q6KkLr0xXcP9U8=
+	t=1774910755; cv=none; b=GZAe4Jxv/kiuHEUFFEfBG82CMf3s5Xsdn8vo25PnriS4WPfqoW4FiVVJLIP7t46DMgOfjvR4jlr7LwrFM+xZanew2QkECp+TDOGAyKzX8CPTp2RnDP5Z4YK//vGas+OF40F99xShaCaiKCRsIoBO2hdpOM9RKwDYteQ1vueZXZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774901459; c=relaxed/simple;
-	bh=HVnPKL4GDfzYYaqgylKaMGdGqe750h3OqeetAX+ZooI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PoaEIn0DzqB0t7yHe2UAlQtSucETMbF9FA330BOLAVdxbcpdb7PWKudtV25Y3SLTrkMJR+X0IGwZ0UtLWWyBkl+uZ9hlVLA/md0TLQ7u0MYCPhsVEZD8a/2+bOSeWHb3xFlyoB2H8An+498MY4uCWhIdUYKwrNQWzNM/pRqOvRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=p3Q7z9HD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CAP30Hzc; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
+	s=arc-20240116; t=1774910755; c=relaxed/simple;
+	bh=udMGBRTWuIMst/vwlYKLv16Vnp+ZRSldKh91t/KDSP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dp0x1y0AF0KMaWFBKgurqoKUs88/bhRWjXpmx+qrIwQLSKrd+j/FOolUFApcy8BqFH+GVM9lvb8TJKd/BWGZ3uurYesT0mIeJSo7CHc+TY0lT/Zb2SgHm7K4AVUeUJd7jjaxDRNihub0eeMU7biD2j7vdXrQexJa7Lkb5hau8bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0HolFlU; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="p3Q7z9HD";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CAP30Hzc"
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailflow.phl.internal (Postfix) with ESMTP id 32B1F1380404;
-	Mon, 30 Mar 2026 16:10:56 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Mon, 30 Mar 2026 16:10:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1774901456;
-	 x=1774908656; bh=l6vFZymkQIpCjGyZZ0waTIjtR5dYu9l/RauB0EHs2cg=; b=
-	p3Q7z9HDaMO9l49KzGyd6QCozBDRkYMrNAMT016WX/fHIPodDvJbWxfN7o7Rq7vD
-	ssq4dL3KEVXFE49rB8recUd5fVpSerRill0EPB9eG2k4c2akGO+Qp/G8D31RmPbX
-	7TlkrNox2UjWyTlfcttMC7E71kdY+trnef5Hm61drgcfUPakTcCNL6kKwNKjRSBV
-	U1uiNaG+fKZAZmTv0+H0872Gvi06OSqLLzx0vsDX2qjVrQBFMlsZacR2mbGsDkc/
-	gT6xVnpGv8MRHmzJBZo58FBd6w5IU+6ogcmojJLtPY3KydD8fWurT3VIXthGtQVM
-	kQSao6bXLTSzYllu1/tldQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774901456; x=
-	1774908656; bh=l6vFZymkQIpCjGyZZ0waTIjtR5dYu9l/RauB0EHs2cg=; b=C
-	AP30HzcjqUcGAYtq0Vy0npz+WQZ0xoM+V3KrqPMrmRQ5BSmU53GGUiyx5E4wI6yA
-	FyTr5/p4paazsu/Iipz8yYZU+1phMDKI7hagtD986FHeu0o1F4zYmBZsEakuW92m
-	weI9ASAX8aFEL8Rs0Uec3ctb/HnJ1MgKC92d8MBdvS6OH7G3ewGRc0+tfGddZ4Gk
-	WxhrjWBcLoGs93zMy/odTXwHEJHh5W5FS+Et9LrpEfOcBRgJ0bBAStrIpl6DkWE0
-	Q7ETKFm9iu5onjWSvKFXn0ELTMMUBd/OPVAOOtwXaNWNshQ6cuB1Amc/2nwRZfpT
-	eHg87urYI5Ec6Lkq0sXvA==
-X-ME-Sender: <xms:z9jKafG3C1ppH9T_m6ALHXE4Xg8LRK7hBmf8rBxsDTwjV0YmtGN7zQ>
-    <xme:z9jKafRfVIq8DMXZsvpeUjwD446zuGALRlY6oTA_zptsdyXkE-2d-NbNcA082cKf0
-    ss8FY21mgRpxHw-PTPA5PC2K5vCU9145ou0r7AQwqll0ampOmU>
-X-ME-Received: <xmr:z9jKaX5EMTRV_NaboCc_h79atFYxCsQIiTsRvvS3id2SmTFWS4FBTgmuiO8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeffeelledtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkjghfofggtgfgsehtjeertdertddvnecuhfhrohhmpeetlhgvgicu
-    hghilhhlihgrmhhsohhnuceorghlvgigsehshhgriigsohhtrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeekheejieetffefueeiteejtdejffdvleelvdeuvdffvdefteeghfevkeeu
-    vdefvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghlvgigsehshhgriigsohhtrdhorhhg
-    pdhnsggprhgtphhtthhopeehuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
-    grkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjghhgseiiihgvphgvrdgtrgdp
-    rhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtoh
-    epghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohep
-    rhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohgrnhgrrdgtihhorh
-    hnvghisehngihprdgtohhmpdhrtghpthhtohepnhhiphhunhdrghhuphhtrgesrghmugdr
-    tghomhdprhgtphhtthhopehnihhkhhhilhdrrghgrghrfigrlhesrghmugdrtghomhdprh
-    gtphhtthhopehkhihssehmihgtrhhoshhofhhtrdgtohhm
-X-ME-Proxy: <xmx:z9jKaXPahdSu6NAxzDLCWHFq0SjTPnbaOV6q1JEVDN1n0TGZgvSOLg>
-    <xmx:z9jKaYs_pZi1AKnrgY4kd6IlWW19DwfnZAklgCAjMJf5o-edI-wG2g>
-    <xmx:z9jKaebkSHmk2-FfV3M99S1E_Kbm3scLKfLmyO_zzcLIBxoGL3vJxQ>
-    <xmx:z9jKacg_NAD9M03CgHB8mak7EEebVzjqapJHxaBa4zGAHu1ISFIb7w>
-    <xmx:0NjKafrBqSu7i3ficH69WDNrAzczvh4pW1jhPhZmK7WHcIBXnovlo-fr>
-Feedback-ID: i03f14258:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 30 Mar 2026 16:10:52 -0400 (EDT)
-Date: Mon, 30 Mar 2026 14:10:50 -0600
-From: Alex Williamson <alex@shazbot.org>
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Jason Gunthorpe" <jgg@ziepe.ca>, "Russell King" <linux@armlinux.org.uk>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Ioana Ciornei" <ioana.ciornei@nxp.com>,
- "Nipun Gupta" <nipun.gupta@amd.com>,
- "Nikhil Agarwal" <nikhil.agarwal@amd.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- "Haiyang Zhang" <haiyangz@microsoft.com>, "Wei Liu" <wei.liu@kernel.org>,
- "Dexuan Cui" <decui@microsoft.com>, "Long Li" <longli@microsoft.com>,
- "Bjorn Helgaas" <bhelgaas@google.com>, "Armin Wolf" <W_Armin@gmx.de>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Mathieu Poirier" <mathieu.poirier@linaro.org>,
- "Vineeth Vijayan" <vneethv@linux.ibm.com>,
- "Peter Oberparleiter" <oberpar@linux.ibm.com>,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "Vasily Gorbik" <gor@linux.ibm.com>,
- "Alexander Gordeev" <agordeev@linux.ibm.com>,
- "Christian Borntraeger" <borntraeger@linux.ibm.com>,
- "Sven Schnelle" <svens@linux.ibm.com>,
- "Harald Freudenberger" <freude@linux.ibm.com>,
- "Holger Dengler" <dengler@linux.ibm.com>,
- "Mark Brown" <broonie@kernel.org>, "Michael S. Tsirkin" <mst@redhat.com>,
- "Jason Wang" <jasowang@redhat.com>,
- "Xuan Zhuo" <xuanzhuo@linux.alibaba.com>,
- Eugenio =?UTF-8?B?UMOpcmV6?= <eperezma@redhat.com>,
- "Juergen Gross" <jgross@suse.com>,
- "Stefano Stabellini" <sstabellini@kernel.org>,
- "Oleksandr Tyshchenko" <oleksandr_tyshchenko@epam.com>,
- "Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
- <linux-kernel@vger.kernel.org>, <driver-core@lists.linux.dev>,
- <linuxppc-dev@lists.ozlabs.org>, <linux-hyperv@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>,
- <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
- <linux-s390@vger.kernel.org>, <linux-spi@vger.kernel.org>,
- <virtualization@lists.linux.dev>, <kvm@vger.kernel.org>,
- <xen-devel@lists.xenproject.org>, <linux-arm-kernel@lists.infradead.org>,
- "Gui-Dong Han" <hanguidong02@gmail.com>, alex@shazbot.org
-Subject: Re: [PATCH 05/12] PCI: use generic driver_override infrastructure
-Message-ID: <20260330141050.2cb47bd9@shazbot.org>
-In-Reply-To: <DHGATG6LJOM1.2AI7BYQ2O4DFU@kernel.org>
-References: <20260324005919.2408620-1-dakr@kernel.org>
-	<20260324005919.2408620-6-dakr@kernel.org>
-	<DHGATG6LJOM1.2AI7BYQ2O4DFU@kernel.org>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0HolFlU"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4853c1ca73aso50907735e9.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Mar 2026 15:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1774910750; x=1775515550; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ELJ8mz9PvTrWhl+sn0+GuiNyLK8+uHw4qBjdjLnnf+o=;
+        b=I0HolFlUS4ZyrRs3S4U7dCDEFR8tGyPaFwy4l/rBGMPFQ9YNPpKZwYW9D7tnx/xhvD
+         qEfhazkCaN00F1cl4mDweFqxN1yGa3RDdxc4/dIXk1nFeJyOXHeXla4M8SZ/kvZqFIMg
+         D+U+OnCZZiBIW0ByswDMwfA6C5aJVgXDk+CzqjgGd4l1Riwebai3YtExsIxOuDS7QxKi
+         ev3PdGojxXKZ2KQRICcW9jhHEAmGFo0We1XQ+WpW96ULrfbMyQenY5gCZ2/eid7kvca3
+         P/VxsgWufheqP1utAOnK6VYqOtUBnw0J7cLSk86mx/8h84a9pbF2rDWZmzttJtuWQ7Bn
+         rGRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774910750; x=1775515550;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ELJ8mz9PvTrWhl+sn0+GuiNyLK8+uHw4qBjdjLnnf+o=;
+        b=RPpJIc0h10VzM8yZqXvcpcbE0HuDf/kSnRG7/RkyyE91zdKaO5rTg96sO+dl7HE57t
+         m+Xs0kcWPE2MU26S7uRN0ws39Vy3M1u1jEbuRLcF/SXHz/P4jlM/cNxTn7/nRItGnajs
+         nUt+B5jpv2b+BDViw5+6Ch2H0O9KQpbdBRdN6MpcEnQtkO/vv7zH/1hvb/PP5qllVMkZ
+         89EEREW9LXTjysMyruRRB6bEyj5LIw2QK8X3HBK13KIolqdZ4xggDpFJOl4Z2eDoVs4C
+         Ayknnm68dX8tE1jI9yStcqva5FdIAFKHDZNAQG7oooOrub7p2qvTlUjI6rGdrsDa/Sht
+         vuHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8jQz5qGBQVL1+M3b8JiyEPZ7j/flD/mb7B46buiEyyWS56kAFvtGgqu55k9phKNXCEOPf3MrbIHjp5ScusUan@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4RZtA72Ohc11aTvJYBzPK+T+2Dc+zlm6K/va9Od+ojjHQNong
+	UDRd0tLFM+xCc1s/4+0tiqlsn1SnBU5LSItaZ1Vnyj9HJbegI8OEEEpuaTHYKeBxq2ERYg==
+X-Gm-Gg: ATEYQzzteDiXIjtLybcbh/9msMTGoLfHylb1k6ysPmwROj60WPm2AB/tMDdpB4ua0HV
+	yn2dD/H8pcfF+6kMWU3IKX84x/E8ql09u09mZd1nUG3K06u/bNqc2bZ7cF7qOA/e/+EyyVN2v3M
+	h2vp9vTW+2y4GDckKEz9Xt9b28lLL71CmPDt5Ufyb8H4q5nlOIzbiZ2xT3jQ2VlueBWEQfaIAvz
+	6dAa3l0bazJjgcw9jzHnLMkx5Bpo2J2L3q+n05ULGk4CpBJZBmYCe2DpPTQT9efmevr3kHyq73+
+	EquVDFjvHnMg0ZA6neQb8FYazcWxXpUq4WRhvFcfU5GOB7XXxGDMRvWyZwqWM2loAMKUIdrnjcq
+	624urO+VZm/V02piPKVsNof/pW44yMfAyOGWuDcpemErB8J06W3jUZEJ8kWR7t9RFZfwaOaxD4C
+	ZMcvUBw+v4nV/rC+XQQS4qIwkfI0DRyUr3Mp1gMBrwbi92Y5JHc0Oi6k8=
+X-Received: by 2002:a05:6000:40dd:b0:43b:445f:3177 with SMTP id ffacd0b85a97d-43b9e9e83f6mr23543434f8f.31.1774910749910;
+        Mon, 30 Mar 2026 15:45:49 -0700 (PDT)
+Received: from nixos-office (195-23-151-163.net.novis.pt. [195.23.151.163])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43cf2577cbdsm23159193f8f.33.2026.03.30.15.45.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2026 15:45:49 -0700 (PDT)
+Sender: Julian Braha <julian.braha@gmail.com>
+From: Julian Braha <julianbraha@gmail.com>
+To: mathieu.poirier@linaro.org,
+	andersson@kernel.org,
+	fabien.dessenne@st.com
+Cc: ludovic.barre@st.com,
+	loic.pallardy@st.com,
+	arnaud.pouliquen@st.com,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Julian Braha <julianbraha@gmail.com>
+Subject: [PATCH] remoteproc: dead code cleanup in Kconfig for STM32_RPROC
+Date: Mon, 30 Mar 2026 23:45:45 +0100
+Message-ID: <20260330224545.29769-1-julianbraha@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 30 Mar 2026 19:38:41 +0200
-"Danilo Krummrich" <dakr@kernel.org> wrote:
+There is already an 'if REMOTEPROC' condition wrapping this config option,
+making the 'depends on PCI' statement a duplicate dependency (dead code).
 
-> (Cc: Jason)
-> 
-> On Tue Mar 24, 2026 at 1:59 AM CET, Danilo Krummrich wrote:
-> > diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> > index d43745fe4c84..460852f79f29 100644
-> > --- a/drivers/vfio/pci/vfio_pci_core.c
-> > +++ b/drivers/vfio/pci/vfio_pci_core.c
-> > @@ -1987,9 +1987,8 @@ static int vfio_pci_bus_notifier(struct notifier_block *nb,
-> >  	    pdev->is_virtfn && physfn == vdev->pdev) {
-> >  		pci_info(vdev->pdev, "Captured SR-IOV VF %s driver_override\n",
-> >  			 pci_name(pdev));
-> > -		pdev->driver_override = kasprintf(GFP_KERNEL, "%s",
-> > -						  vdev->vdev.ops->name);
-> > -		WARN_ON(!pdev->driver_override);
-> > +		WARN_ON(device_set_driver_override(&pdev->dev,
-> > +						   vdev->vdev.ops->name));  
-> 
-> Technically, this is a change in behavior. If vdev->vdev.ops->name is NULL, it
-> will trigger the WARN_ON(), whereas before it would have just written "(null)"
-> into driver_override.
+I propose leaving the outer 'if REMOTEPROC...endif' and removing the
+individual 'depends on REMOTEPROC' statement.
 
-It's worse than that.  Looking at the implementation in [1], we have:
+This dead code was found by kconfirm, a static analysis tool for Kconfig.
 
-+static inline int device_set_driver_override(struct device *dev, const char *s)
-+{
-+	return __device_set_driver_override(dev, s, strlen(s));
-+}
+Signed-off-by: Julian Braha <julianbraha@gmail.com>
+---
+ drivers/remoteproc/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-So if name is NULL, we oops in strlen() before we even hit the -EINVAL
-and WARN_ON().
-
-I don't believe we have any vfio-pci variant drivers where the name is
-NULL, but kasprintf() handling NULL as "(null)" was a consideration in
-this design, that even if there is no name the device is sequestered
-with a driver_override that won't match an actual driver.
-
-> I assume that vfio_pci_core drivers are expected to set the name in struct
-> vfio_device_ops in the first place and this code (silently) relies on this
-> invariant?
-
-We do expect that, but it was previously safe either way to make sure
-VFs are only bound to the same ops driver or barring that, at least
-don't perform a standard driver match.  The last thing we want to
-happen automatically is for a user owned PF to create SR-IOV VFs that
-automatically bind to native kernel drivers.
- 
-> Alex, Jason: Should we keep this hunk above as is and check for a proper name in
-> struct vfio_device_ops in vfio_pci_core_register_device() with a subsequent
-> patch?
-
-Given the oops, my preference would be to roll it in here.  This change
-is what makes it a requirement that name cannot be NULL, where this was
-safely handled with kasprintf().  Thanks,
-
-Alex
-
-
-[1] https://lore.kernel.org/all/20260302002729.19438-2-dakr@kernel.org/
-
-> 
-> >  	} else if (action == BUS_NOTIFY_BOUND_DRIVER &&
-> >  		   pdev->is_virtfn && physfn == vdev->pdev) {
-> >  		struct pci_driver *drv = pci_dev_driver(pdev);  
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index ee54436fea5a..c78e431b7b2d 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -316,7 +316,6 @@ config ST_SLIM_REMOTEPROC
+ config STM32_RPROC
+ 	tristate "STM32 remoteproc support"
+ 	depends on ARCH_STM32 || COMPILE_TEST
+-	depends on REMOTEPROC
+ 	select MAILBOX
+ 	help
+ 	  Say y here to support STM32 MCU processors via the
+-- 
+2.51.2
 
