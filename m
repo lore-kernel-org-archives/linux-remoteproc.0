@@ -1,125 +1,200 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3288292B44;
-	Mon, 30 Mar 2026 07:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002AD35B63B
+	for <linux-remoteproc@vger.kernel.org>; Mon, 30 Mar 2026 09:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774854537; cv=none; b=vDNL3+qDNt0vxKPQ6WkLksI2WAMe3GBikAsSzG6VtPek7nK5qAR9D8eU5CgO9r5ZVFUbtWB/p+iECZv/IjwOjC5CRM1/evRQzhwfXwBxr8Vy0BSafvBp+gRkWz7aXzd5H8cLOb3wfh9tvv3gjzNgGEJk5JoF64XE/CqvJC+5kFg=
+	t=1774862673; cv=none; b=dw93n+Oks13M7J14cw7E3O1tP2gaF4cUBAgJpkh5I8t3p4rrXP42GcqjLsHcDUcIY94cjiad7nlPIMyK4XUrhVSZPFRuKGznJgh7Hr/jgXD4gNq+2pMXbvz1HMJWDc/b5iy8mZzww5f2FcLy51BrkpSYt/KFbMznAXlHtnDcVBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774854537; c=relaxed/simple;
-	bh=/jDwCS37ClQxnMNZi4IpdtAvb0wwJQBYhYWpxA7NdaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuNNaZ9Q1/LbtJsMGydPVKlJEIz3+kd8u9J1OkORbMntEM+Bgl4gC8ywBtGF0CD1fjLIBpcTMOAG4OfbdO+DLb7HRVxWUUHMvdDoUYE5D+Iah0ASiaARO3+ZGoZtSKX8HtZOGeAw0gb4ZgrlDm8JquG3mftcAU1+tIqDcFe/rc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWwAMHbX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1774862673; c=relaxed/simple;
+	bh=8FQXuUJcpQtjfEVJtChfXvc2WhQ4oxNz4YnKC3fcVzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pJUU74YJPyfGTYd7oZyF7xVmsXFP6J5TomCyIX1RSZQVx/oHKg78IKqdQhWGBgZukEU7+VeDO1DTLXqjMznU+WpZQlPb7IvlvDfptzVz0rZCoFPwFlr4tXi2nLcQvZW4X7MpBZLiFkSjC43W8BaL0wiV+Ds8uKFpC/RnL6vX2To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W0A7UMcQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fLFhXUWt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWwAMHbX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37DEC4CEF7;
-	Mon, 30 Mar 2026 07:08:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774854537;
-	bh=/jDwCS37ClQxnMNZi4IpdtAvb0wwJQBYhYWpxA7NdaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MWwAMHbXhHOam7pxS91Eazmz+hUaoDAf2swLU3Xxq0gOap3WbmlYuHlA7Lt16iHk/
-	 okQRjsC54iUTWRm7vbYcOl63AQeNSP1MNEgw1swjH48UQtjagL+B86CXREPNJzOwOq
-	 Cp8lf0iFOXffdYv5f1ZGoX72EDi3p7JUGh67peAHFMO9Q/7XBtMWuezArFeYv8+qt4
-	 fgq1SWLpceGxYsLEgK9CZjwsuKJFx4nOY6DeWoYA4vzLl8bC5lMBjrcNcnMwUkRVKt
-	 CDc0Q5JxKQzahwBZXb6knpLrYwg3kt1+XvW2qSNHe45aTGMzshmNSA4zgJNCA3qG5D
-	 kMXWwGLdrpl2w==
-Date: Mon, 30 Mar 2026 12:38:37 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
-	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
-	pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
-	tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v2 02/15] firmware: qcom: Add a generic PAS service
-Message-ID: <acohdYeKYSDQrKUZ@sumit-xelite>
-References: <20260312062756.694390-1-sumit.garg@kernel.org>
- <20260312062756.694390-3-sumit.garg@kernel.org>
- <28d63822-f191-400a-8005-5185dd480dbb@kernel.org>
- <acE-kAi2tkPh2qie@sumit-xelite>
- <5c5b49aa-7819-44c6-b5f7-19ec780d73fa@kernel.org>
- <2e55bdc3-54a1-4f18-b9ad-fe03f21fc4da@oss.qualcomm.com>
- <a0a7269d-7a09-4a78-a4b0-b39b67bc253b@kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W0A7UMcQ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fLFhXUWt"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62U4WREs2954754
+	for <linux-remoteproc@vger.kernel.org>; Mon, 30 Mar 2026 09:24:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8FQXuUJcpQtjfEVJtChfXvc2WhQ4oxNz4YnKC3fcVzA=; b=W0A7UMcQUcZUv9aq
+	AmNzC5rDL+GDEARwmB09E08qB+h0snZhmcJjHjPAo/7oRj2pTpgytzz40wDAZzyh
+	0E/2UgGa8tS7CtYDrlJD65vootkyH8+x5dG4Du+OOA6/ZdyCdet3pn0dKCN/c9nN
+	WBN+Q7mrjwjeFIAr9V1JmVQxTrP9cOHv6cZZZPns1uhWziOtoaI+iIl8lTZdhCon
+	EL5sBdNWzSS7U5RHcuRTsBGMx+N1xPrm8vC6lzKE0/ZmkdGXUT5Tx9H/OKFOzzG6
+	RLvH4UfLG92KbAD6jPLvtXo1Z1Z69I0wHiYlpIzZdBaaQX/JhTKjkk5c/0ARPUJK
+	NXuNxg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d6wqekaxc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 30 Mar 2026 09:24:31 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50947db2e97so11723551cf.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 30 Mar 2026 02:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1774862670; x=1775467470; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8FQXuUJcpQtjfEVJtChfXvc2WhQ4oxNz4YnKC3fcVzA=;
+        b=fLFhXUWtqiHKWy+V+zgc0cxlOw1rdIstZF2YAxMNfg1eSCM0pwyuPlCj/myFuXpAhM
+         6mwZnHoYJcbTtNvgh3ncpT4dEqI0xUEJWriGdhlT/TmanR/YljHfkyLqGkYiWrThQQFP
+         xLCJc+OAu7hw3GLYw6vVLAfclTCIkY4MAhDMnhJYfVkZvnyLITjGniwUnPBLKWfCcsoF
+         RyOz0JvG9FqB+pN/n6PCfDTnsz+gO/d0fOa/FOT4K4l91k1oo9HbXwOMVMb24Iz9YfY5
+         jLwBco5/sLRRhGF64BlsAPPodVoDNlj13As7fFyHuARHjk82N/PLEiXnAscnF3Ds1Er/
+         EXeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1774862670; x=1775467470;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8FQXuUJcpQtjfEVJtChfXvc2WhQ4oxNz4YnKC3fcVzA=;
+        b=hZpnv53kWH8XXCaDGYR7D4A6tppoEVwsV99BeH0wmpP7YWjFJ6EduFkMkumJygLzSv
+         LjeeRSlhwqQJOH4D8E79Wrqt4GMZX+xFcxxxu5UvZXsGjz018l5k8dTONCL9kEpFtezm
+         dPzyP/8NuB+8Q4KFXVIPYvuMbWuUwnQxKMGDYCZzPNHx7ovIuszZ2YOlKJ5NXg9lnDtH
+         8TUl8n9SlQFn+MEOnvkw4KHLHB+xsXVVPrOwEIg/dnUlhUGnCxWeMsgrUiGTpgJJAXqG
+         HPpwrH9NZJei7AmPor3/uXpNUAutPbcovg0hwFK10rcrUu5vGvRShD7fR51IR46z22//
+         Vovw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyMucaXsHnz5eSgfKSPNg1n/08810DgdpXgqDHb54Z41iRFEPJIsWEVx7SWea7gSegG6Am6HdlirNZF9ghvzjS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCHers7BV9aumUDpcP9OCiLpkaPr8dwOEXOEyqwehHrEG7vR4P
+	lfoMz/t+2g/nHJJnww+z1nc1f8yA5kgXx9WgDfi6m9M/uf/mY2fcNLzoO7JANXmT0l3v27Vrbwh
+	pBDoIgTgPJRfkfu6Qm7r8VYbwmwsm+rqvFXM2T6x1dWMSk81ymjDX4+CTSafzO9fV7ExR8GeJ
+X-Gm-Gg: ATEYQzwOiYIUGKRd+UACRhvnYyM4UTutj/147znUclBP2dmV66JA/HaQN5ga/FE8y1T
+	bBvmNGnFodhwXIDD6O5Q60nmTLbD5FgBeVahDye3yPoEOJHQP8IjC83FvCqIzkHSQLZVIJcjVgU
+	MTeoaPg2QrUxLH8M2uh7BDLPAQnLak0Ln7aMcwx4LA02rort2Ao/IG8SFlhFc8XQjwc+1sg452k
+	YecABIKyq56VFMBQZOy2U79p1HAMI9KWkBOeoNb7gqM7ISPCgr4SSVP/V+fTIGicvMMYoF9n324
+	BP4VsXP5m/Flmt5S3kvHonhyGhYl2BEbqmU2n6Fo7chce0KYw+X0FJMdhrlr5WU0eG/w/t/a3+o
+	d2gNp602JUhHSCiyphZVOheBMnl/dZkGl7nhoevxpMtcmE4uCMJ3cqX8OU+IXzEgA+mZjKtMQ9/
+	a/ctM=
+X-Received: by 2002:ac8:7c53:0:b0:509:47e2:9df3 with SMTP id d75a77b69052e-50ba3819907mr122971821cf.1.1774862670334;
+        Mon, 30 Mar 2026 02:24:30 -0700 (PDT)
+X-Received: by 2002:ac8:7c53:0:b0:509:47e2:9df3 with SMTP id d75a77b69052e-50ba3819907mr122971711cf.1.1774862669917;
+        Mon, 30 Mar 2026 02:24:29 -0700 (PDT)
+Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b9b7ae24151sm263968066b.8.2026.03.30.02.24.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Mar 2026 02:24:29 -0700 (PDT)
+Message-ID: <5de59ab0-4249-4396-85c9-e8501bfcc35b@oss.qualcomm.com>
+Date: Mon, 30 Mar 2026 11:24:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a0a7269d-7a09-4a78-a4b0-b39b67bc253b@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] dt-bindings: power: qcom-rpmpd: Split MSM8953 and
+ SDM632
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Stephan Gerhold
+ <stephan@gerhold.net>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20260327-sdm632-rpmpd-v1-0-6098dc997d66@mainlining.org>
+ <20260327-sdm632-rpmpd-v1-1-6098dc997d66@mainlining.org>
+ <ocrzwxmr256h3ef7ifwx3z6jgtzubiha3forfi7nao6gakb6wu@recertxxhlip>
+ <39a320e472ddc6d44c950a995b577e77@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <39a320e472ddc6d44c950a995b577e77@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Jo78bc4C c=1 sm=1 tr=0 ts=69ca414f cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=OuZLqq7tAAAA:8 a=svdJbqrqvjlJHIucFT4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22 a=AKGiAy9iJ-JzxKVHQNES:22
+X-Proofpoint-GUID: WwqkM9OWUPpUKUdG5FAnROL29uQMUUaK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMwMDA3MyBTYWx0ZWRfX2kLTmzH/yK5Q
+ 90uo1XBMPCfNOGFzMhStAtwHh0Uc/6HzVZ158k84oSrNPsPSuiHav5ROsZBXyqvYGrDQbFTWcOS
+ JB/B0iqdMLtuaGX3kOhDee9LFZoLgtaF57tbN+vYHPhJcuj3NGkelsxySy9lJVsvjMuJQEMdBek
+ CE5ixLwXjviOytCqVpfllR810OA4GUyUT+fFr7npDIs/eUgDFCEU6lyjcZUHDg+Y2UOBVVo8plY
+ 64yIZbiJVl2J3FKDQTRkNGDcXR4i8eKnYGsCvnaq4x1976df/duOCzHzwvsx6wCqV82K8BB+d60
+ IigT1kLUrY9rBUO1DXDZDHlj+CfjGcbo02b1JAJ/eam6O40PqT2ElctCHqYX5J1LYJZ+EdgLMr9
+ kGDO4H7ZyWJxrU8YM6EM3RsW0wrgCyt1bzsrjVnXSHBPN6NHEP/N6ww8V0iejhWb+VlBIDE1nNS
+ WN17hOMp/rxMlrV0sYw==
+X-Proofpoint-ORIG-GUID: WwqkM9OWUPpUKUdG5FAnROL29uQMUUaK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-29_05,2026-03-28_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603300073
 
-On Fri, Mar 27, 2026 at 02:56:40PM +0100, Krzysztof Kozlowski wrote:
-> On 23/03/2026 15:26, Konrad Dybcio wrote:
-> >>>
-> >>> This pattern has been carried from the PAS API contract among kernel
-> >>> clients and the SCM PAS service earlier. The clients don't hold a
-> >>> reference to the PAS data like underlying platform or TEE device etc.
-> >>> Hence the need to have a global data pointer to hold reference to the
-> >>> ops data structure registered by drivers having different lifetime of
-> >>> devices. Also, the PAS APIs can be called from very different client
-> >>> driver contexts.
-> >>>
-> >>> Surely, avoiding global data is always better given a better alternative
-> >>> is there. Do you have any better alternative proposal here?
-> >>
-> >> Why it cannot be part of the context?
-> >>
-> >> Look at your API, e.g.:
-> >> qcom_pas_init_image(). It takes struct qcom_pas_context which should
-> >> contain the ops.
+On 3/28/26 9:22 AM, Barnabás Czémán wrote:
+> On 2026-03-27 21:26, Dmitry Baryshkov wrote:
+>> On Fri, Mar 27, 2026 at 09:11:43PM +0100, Barnabás Czémán wrote:
+>>> Remove modem related bindings from MSM8953 rpmpd because MSM8953 MSS
+>>> is using mss-supply as a regulator usually it is pm8953_s1.
+>>> Split SDM632 bindings from MSM8953 because SDM632 is using mss-supply
+>>> as a pm domain.
+>>>
+>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>> ---
+>>>  .../devicetree/bindings/power/qcom,rpmpd.yaml        |  1 +
+>>>  include/dt-bindings/power/qcom-rpmpd.h               | 20 +++++++++++++-------
+>>>  2 files changed, 14 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+>>> index 8174ceeab572..659936d6a46e 100644
+>>> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+>>> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.yaml
+>>> @@ -48,6 +48,7 @@ properties:
+>>>            - qcom,sc7280-rpmhpd
+>>>            - qcom,sc8180x-rpmhpd
+>>>            - qcom,sc8280xp-rpmhpd
+>>> +          - qcom,sdm632-rpmpd
+>>>            - qcom,sdm660-rpmpd
+>>>            - qcom,sdm670-rpmhpd
+>>>            - qcom,sdm845-rpmhpd
+>>> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+>>> index 4371ac941f29..2d82434b993c 100644
+>>> --- a/include/dt-bindings/power/qcom-rpmpd.h
+>>> +++ b/include/dt-bindings/power/qcom-rpmpd.h
+>>> @@ -84,13 +84,11 @@
+>>>  #define QM215_VDDMX_AO        MSM8917_VDDMX_AO
+>>>
+>>>  /* MSM8953 Power Domain Indexes */
+>>> -#define MSM8953_VDDMD        0
+>>> -#define MSM8953_VDDMD_AO    1
+>>> -#define MSM8953_VDDCX        2
+>>> -#define MSM8953_VDDCX_AO    3
+>>> -#define MSM8953_VDDCX_VFL    4
+>>> -#define MSM8953_VDDMX        5
+>>> -#define MSM8953_VDDMX_AO    6
+>>> +#define MSM8953_VDDCX        RPMPD_VDDCX
+>>> +#define MSM8953_VDDCX_AO    RPMPD_VDDCX_AO
+>>> +#define MSM8953_VDDCX_VFL    RPMPD_VDDCX_VFL
+>>> +#define MSM8953_VDDMX        RPMPD_VDDMX
+>>> +#define MSM8953_VDDMX_AO    RPMPD_VDDMX_AO
+>>
+>> Well, no. This is an ABI break. It will make previous DT to stop from
+>> working. You can drop unused indices, but you can not change the values
+>> used by the existing domains.
+> Do these indices never can be changed?
 
-Have a look at all other PAS client APIs, the context isn't something
-that each client takes a reference and pass it on for every PAS
-invocation. And changing the PAS API contract for kernel clients is out
-of scope of this patch-set.
+Yes, values in include/dt-bindings are supposed to never change
 
-> > 
-> > This would make the client have to select the ops. The whole point is to
-> > avoid that, since the client has no clue (and is supposed not to have any).
-> 
-> Yeah, I see. The problem is that this patchset just keeps growing the
-> singletons so except existing 'struct qcom_scm *__scm' in qcom_scm.c,
-> this one brings at least three new: 'ops_ptr', 'qcom_pas_ops_scm' and
-> 'qcom_pas_ops_tee'.
+Here you're e.g. changing the "msm8953 domain 0" from translating into
+VDDMD to translating into VDDCX (because RPMPD_VDDCX is defined as 0)
 
-Not sure how you equate ops structure __pointer__ to the ops structure
-itself. Can you enlighten me how in the rest of the kernel ops data
-structures are shared among independent modules registering on different
-bus types?
+Some other older platforms were converted to use these macros, because
+the indices happened to match
 
-> 
-> I don't think you need all four in total, but only one which will hold
-> whatever pointers are necessary.
-
-Your arguments seems to be in favour of the existing monolithic SCM
-driver design but you need to understand that's not how underlying TZ
-services are implemented. The PAS service in TZ has nothing to do with
-the ICE service for inline crypto as an example.
-
-Please go through the motivation of this patch-set and the corresponding
-OP-TEE implementation as TZ which is all open source.
-
--Sumit
+Konrad
