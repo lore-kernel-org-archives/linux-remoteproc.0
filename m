@@ -1,87 +1,65 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013005.outbound.protection.outlook.com [40.93.201.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63293BA220
-	for <linux-remoteproc@vger.kernel.org>; Wed,  1 Apr 2026 08:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775032591; cv=none; b=FfvSUaU6Vr6AP1aYenvdrWiphGXYou+87PDx9uTXijPd/X4/yKAagOXP3sONFe/fPeB/j5TV3KgxeH7cHFj+b5idB+/GU9qdxB0qC9sr+Oh4mBc3yuxt0+AzkkHSo4xqcGqQI0o4YJEs2y28/roLhS/RBHPCteAEjqIdGPQLS3M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775032591; c=relaxed/simple;
-	bh=sb4RURzUAdCqXijAvVp/9BuaYDqBVppZ2cO+8U1LByU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R66nhHG0UTmZHChtWLIKGzKS11hcYBF/Af3xl3DW/1hUMRDnkziM9GOIQ274igrv3WUQUjUawc77mtZigYjz/CtqPPJ1HnfrIr/vQ0VdW8OIC3Fr3tz1BW6I3CpjONTxnsA/m3uCyzbhDWxWBJSejk/Cc4/iBLXdHz9WKybcgcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=msl5D8/d; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GWM4Wr4E; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4200E21B191;
+	Wed,  1 Apr 2026 15:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775057029; cv=fail; b=OJvv8YsmR8s+ZK5O9Wce0Bu6KGgjwNS1tvrGqH10wlDqZNGJ5+3QeXXQ74tg6Xlta09/Z8BO0kuAW0Ep3Gt9b7iEKc/Kyp3+/wCH8e+3fLGbjOOoAHLg0kT3eFrCtaAdsgAsDOi0YqYAyl0qNWLZrOgP5QA/p1koTrV3p8Up1+I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775057029; c=relaxed/simple;
+	bh=3456oneyn/8EH0nBhO3jRR9ncTHPdp5HvophDs4Z1KQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OwSgTz8h0f+nzIu1lIlFFKwaYhQ9iuLSrFuEoabKn7T98Nqxgz2O2rxjRsWqh0NS2xIMmX28edku+VIhhdHOQZ8r4mc+GI2lPPUEZGb6oo18PxljVhsimkKmuBb+nJ1P8Jusj8CN0oR7DXy2jYQPRD+ogdjgQu6/V1q2esoih28=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vljPzDxH; arc=fail smtp.client-ip=40.93.201.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="msl5D8/d";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GWM4Wr4E"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6317VD8Z1004315
-	for <linux-remoteproc@vger.kernel.org>; Wed, 1 Apr 2026 08:36:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pleoO2+ScDGyxUSTdQVNShDUCf231JLgHqq1UPZRoS8=; b=msl5D8/dfnYthOpJ
-	dbVvsd8FVXvemaeD6nIKQDvACvivDXAz362MYozJUPQMe9BAn7yRkrBI7F37KVA3
-	d9iSRVWmadkT/Dg3Gp5bTeJegxwjXkQdgmZNfGiRaOitfvIdOUww5ckJjJrb4L2+
-	OljxON1d4RrIS72MTRhY/IJbeJlOWimbaETPmwmWNNUj1RKUp/Be8gfFZ0E/31J5
-	G4Mr9MSkIQxbqol+o502En5G5y+cqkB0xzez4YKrsEqHBVWgkHvbLfR5OTTcUs+E
-	XcP7LN2zvkcF9waMtDoAQSOcpQwcj6T0lEBJziwgO+tVLS9D5Byfvt/Puy8m4uUu
-	8F4rRQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d8tfjhbqh-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 01 Apr 2026 08:36:29 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50b4bd8e77dso14205401cf.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 01 Apr 2026 01:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1775032588; x=1775637388; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pleoO2+ScDGyxUSTdQVNShDUCf231JLgHqq1UPZRoS8=;
-        b=GWM4Wr4Ek/HtKL2B10YxGrbZt86FHBabc1o3TpLDbc4Ba8Df7U5eoBZJBtSumQ/Pjh
-         2sGb7u0PZBLNxQp5zO4dfSpiAFLyFjB8XlKPm0TnJbUZCxyUvxtNd1bmnHGwfYVq0sUV
-         xxBFVhex+y1CNpOCVoZVsJ/sd6rLov6BHFHQqhyEOz5ZEhudF56FwDoEiVcUoe7ay/X2
-         zuptd3T+A2keZOHc/mJP45ObhrTCiFtQ9MNSGno+iC6yIQZxQfxYBNqShDjmOBTzqUxC
-         yHrUmJSBlVfEeZiU7h2Lzx8d0cNMS9l0zMs9sdS1RPWOwYAuW6V7b39JRQpKTpShYwsb
-         M1yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775032588; x=1775637388;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pleoO2+ScDGyxUSTdQVNShDUCf231JLgHqq1UPZRoS8=;
-        b=VY1vwW0bfifwezSXoxEpgfZPssmKtHeJBdwoPQQYOqohh1lSMUTbtSjH6Ma9r9VIN2
-         MJZCOqYquqFODRCL13ZhPDCGb5SK4NjPV/twX370oyNQrCXaei+3Qejb/WFinJQw4wUu
-         A6vQ8FFy0Yo768/O5Ebd70c1ihICEabyHkpJlJjCWtRMWoJEoeNaBabo7XOug1RY4xcv
-         iuDYGhpdkAlCKxdbnebuPx79aLtAYB21aeJoFzrWn/JExCpp3LOI5l97aX4ry9DOkz9X
-         ixrx2LPAOSU06Vgmf45Cd6b61gpm6nSpzkQcgr7IxlHZGppQy/NP1+Rds1vczWMOKZ65
-         RV3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXuUxa1U7lohW+6utHJJgAPMRS6v5Rln9e88lyzLWiefkSt5nWFxmma1cxs9NOJXnyeWtEeSqjchwp+Ww2sTg9K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9kC7HCb4jVQ9tTEbe5ZMvNB6daI5UBU4SjQ59e1Q+w8a3Qlg5
-	yNp7H4ByJMZEu6KwZZwX9iizyZo4larCKsV4FmAgQsZKtX+MdmbdtvEflxXIu2bpVa5zDp3KLkC
-	z8ZKL/gayDKLyKlgMmb9TRPkD4jTCqsbEMK9wmp3e3PGLhEu7I4+NQ07/aHt9drrHdnsSsOuy
-X-Gm-Gg: ATEYQzz9EMHzHucR6bAzwGqnZbY4/ae+RfM1CU1iyYMY1aEPvtAkIKHTgPRCx60VUqB
-	rCWhb1SkmMIDGCFwOV3ujxLzigO173tSDg8nWC6SdWAQp6SCy7J7JgObg2O8oA4/AahSdUqBQD7
-	tRflQ4pjAT+v+1NJVO86jErUwzsvwm9UtfbI3Y8qaEOcFZaMhENBc/35/IRLEq/T1d3ip5Jf5dK
-	FCArD8CqG+q/ykAqRUoT7MqRT50YVkBaGexRtyURs6jISvC+R+i8OAZQUGpeRBebMucyBR64OVi
-	+L7T3v3gt0J1jKzrCxTwK0+wG3zqSgV/qSZKT+xrKFqc9kzlRfuLzs9G2UHGivWSxwVm+txbUNM
-	dTeZ3gS9Izwr/9GfclDT9bZ23q4Sk2LD2qwOwqpC2n44VcjgZyv37l7VAYm0Xu/Luw8wg7+sOkp
-	pAKg0=
-X-Received: by 2002:a05:622a:1985:b0:50b:2275:8c1f with SMTP id d75a77b69052e-50d3ba26cbdmr26700931cf.0.1775032588005;
-        Wed, 01 Apr 2026 01:36:28 -0700 (PDT)
-X-Received: by 2002:a05:622a:1985:b0:50b:2275:8c1f with SMTP id d75a77b69052e-50d3ba26cbdmr26700761cf.0.1775032587543;
-        Wed, 01 Apr 2026 01:36:27 -0700 (PDT)
-Received: from [192.168.119.254] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-66b76078bc0sm4300932a12.23.2026.04.01.01.36.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2026 01:36:26 -0700 (PDT)
-Message-ID: <967f491e-5776-467f-83e3-fbe4ca10e550@oss.qualcomm.com>
-Date: Wed, 1 Apr 2026 10:36:23 +0200
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vljPzDxH"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=svXCKuHLIpOhZw3CaOKFNt0WNHbM2QUGmq3xOIQbNEMC1ZUbh54fZWYyGtk1lbpEFcT6TDy1Y8Ugln37vAlu9qt0N3f7CSMjlePBTducD/FxyQXHP1VClfPJ+oRMjOOUECwwgVuvIukA+pcGiaGvo9xTOk8b92DlfWwiFShmhIihANh/NSoPt+o84bnZ1stpVBhPZ3xkL7o2fnkv7yeNwA7Awh5o4OxQCLdANvUZN3x6+14q+bzuuk9qJH6rGdaULWp/20ZFwYl88Ygei7jqbfO6LvhZJQk/c2eK36VwHaaseqxR+D1lxFe5AzACBz0kvuh9gLm0jK3toU7DQOPXFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XZdiNlfwmKi8TxWrix/KBPXReuILkt7xNhTFPG2ykVU=;
+ b=FhUPyIkCj0acH05uDidIEyvkQlH/r7AjO4LRWwp1K6fCDOIUJUQY+Nb0nGSti7uZY+SY7Zi2YoxP+jaXv570UElxbQmwsBpVa6BUlcSpMkK964Ux7Jc2Towz4/h5aCH0VsyCO+//+GbHIHhbFSANe4yhQIiPSGS+elpRrNyU0lUXXjKXvOBx5w4lLvvPGVTl/gZ86RU4ubgR+37LCySjbYDNv5/uupTcZ7+Ps2b0N+qq2Bq50+EiJ4/0IaX3GdDEXvlJ3ovdZnc0D494NpPE1NIaLhUyw2+a7vofGJ+gcKlxQSX5hF0/eF7ZXPfMzk5MDKlxJXvXhmQpzTUAkFdbag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XZdiNlfwmKi8TxWrix/KBPXReuILkt7xNhTFPG2ykVU=;
+ b=vljPzDxHYC4BwKK12W8jE+TZWukqtEXZQjdIXlnGpLkRvdMUtgWedl4EBpmmjeYB5DisZcYjMmexM0hJZ+C3JsxcJon/oMzgGDNEDsGP/RyYJPr7RwBSGz1UXLxbQf5+g0mEU5AclOyVX6kmZK1HUL/2mfiJ2vLF32RrrlhnksY=
+Received: from BLAPR03CA0178.namprd03.prod.outlook.com (2603:10b6:208:32f::32)
+ by CH3PR12MB7644.namprd12.prod.outlook.com (2603:10b6:610:14f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Wed, 1 Apr
+ 2026 15:23:43 +0000
+Received: from BL02EPF0001A102.namprd05.prod.outlook.com
+ (2603:10b6:208:32f:cafe::ba) by BLAPR03CA0178.outlook.office365.com
+ (2603:10b6:208:32f::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.28 via Frontend Transport; Wed,
+ 1 Apr 2026 15:23:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BL02EPF0001A102.mail.protection.outlook.com (10.167.241.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.17 via Frontend Transport; Wed, 1 Apr 2026 15:23:42 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 1 Apr
+ 2026 10:23:42 -0500
+Received: from [10.31.206.142] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 1 Apr 2026 10:23:41 -0500
+Message-ID: <06f3c1bc-078c-4d67-8a22-933069ecb2ec@amd.com>
+Date: Wed, 1 Apr 2026 10:23:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -89,60 +67,235 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: qcom: Fix minidump out-of-bounds access on
- subsystems array
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260331171243.1962067-1-mukesh.ojha@oss.qualcomm.com>
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH] remoteproc: xlnx: reset virtio status during attach
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, <tanmay.shah@amd.com>
+CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20260317201251.3920841-1-tanmay.shah@amd.com>
+ <acbhbnBgJCP7WETC@p14s> <3f557b06-ea34-4f96-b1ec-75bab7c0d828@amd.com>
+ <acwKHzN84v_CipBh@p14s>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260331171243.1962067-1-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: "Shah, Tanmay" <tanmays@amd.com>
+In-Reply-To: <acwKHzN84v_CipBh@p14s>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: hu8I-VcekM54v8otrmaa2J6xu2-X7-iG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAxMDA3NiBTYWx0ZWRfX9+4+/bQ9CS7D
- I4hBMRR2IxMbu4Y5W2VMXens3OOPIg8jjf8uSo60IzJ6Qx7Z4ahTCopjCvquRYeiysYNVLLeI6F
- GIgsWUXdk02+9/XPbP2s+i9DAU6l+d4qIksYBG93+Mrd+2P2TRQHmw4UJFgQQnMoiP5xSV1J3xv
- ym/co0OyGL6ha97iKUcF8jFKlzzj6p/yydb07B8T8uEcPOqXlLB8DeLZ1MVRTGPygSzn39uFLe8
- EgYQJz5+c8itdNvVF/O57/HdXwld7ANBEM7s4E6UF/gf+2d25LJRGy+0o1o5Dxz5RxFfvBAg9pX
- LmcM76wqK1z6rubzhEu5hBTYkwNJ4wUVCaZZe+wIxXNuqI9WyIjWRa3QofEFMIZ4CqVW70Ec+pM
- /ITtxRNpGc+vGCu3RLmF9u/0FfOXLt6JWu5ss5CdJ5fW17kCGd92s0UR659cgyYVCtW1AUCL0v9
- nS3BHuwo1+wMpoaF1QA==
-X-Authority-Analysis: v=2.4 cv=fJc0HJae c=1 sm=1 tr=0 ts=69ccd90d cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=dHygj6CYKjtJtfZXbZ4A:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-ORIG-GUID: hu8I-VcekM54v8otrmaa2J6xu2-X7-iG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-01_02,2026-04-01_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 spamscore=0 clxscore=1015 bulkscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2604010076
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0001A102:EE_|CH3PR12MB7644:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7dd7307-421b-4f67-3e54-08de9002a87f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700016|82310400026|56012099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info:
+	JaEAkDbwP6JD0VZYJHk2GTVdYCe20FIj7Q52dwZ48qnoEgQjAuqJvm03j7ThW+doYlTlU2dOWZ/8LpZLC7lT9l1zdrGAs862gljoaTMLgBelaPsv69WXJMpAb1xmCRxz6Eg20Wupf98klfk1W7SI8OBbN7Kj6uuooswMJoAafbh2mHbM9E5Nn/S5LUbxp9gS+UQxTkGEU8YK2ZV8GW0Wp9pXPz7E32UVw3R230DOVxsEzJeDJSiBo9pR1HqVsv25Lza3aP5NdBL9CaPFGuEtrUV7FKJ3xd5oUyXbdq1ywJjPP5Z11uAJ4/BFmOH3gQXHKM8qDakvNBgarexNl1fAE3FAOs3mKFam+80Al+e3stfK/Y/XPbcxMRc914SQBIfnjI9GYlM//7q4owyIOBjMTd3wp/P3Cuyk7pKsAwEaufCZ3xOVrq1hvo84PdeNzwv0Gzm+uSUBg2ZlHdKLiV8oRXdfeauY2KaF6iY48Aw5RJQWnhv7yM3Auu7ldiAnrff4u2Sh/AffOTfJYZ1ZdkxBEE59+LgkXxvITavoPwoUlbkK4uyT/dH37TUDA1z7fhYu4MlXqgoVH77FQpe8eGKS8jnPjy7IGGu+vdzBYGJwyJcbNYwbCE5NCkZWlqIcvkCDiuU/wypwg9zH2gO3C8DeqX7s3sJb13z1dyzwlGdrjlB5tP4AprCu67z0UY2XjKipdE5A4AbClCFRmcPIzmOUwVWe/IrA4MriQ7IG6F7fcFUz80K0GskKTrFEFBYgvpbNkNUEn/yQwib366Il1VOpgQ==
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	1obrAFM2htfmuwEJGzVy/GjdlNXFAlqYO0pFqLRvc42L2IiHx5OnocGy0jUUgNZpJwfeUGfW0iBMZxQXcJw0+JINSRuEvs88EqkKQ37AjDw8FN5HYch/5+UNnQmkL+YIvh1iF4banXmPD6fp+C6vT/pR9LOW8fioRHAUeBqTpG+ZmsN1HQyFt64D7iLOchdSX99IKiasSxZUH4uAAA5BsxVMdgxHUZJera15eVbchEXIRnURPUP1jv6Ly3txFbqSCoQLMcTTiJT5UMcFXzjxYDsKv0uzajRKHydTixfqPo4PL60149Kd+JNXj4iSMNHjnaoaC29LvwfefsYJdQ6J3sa+j6o+f10V/ZtzQf8GXAs7inyxRpvUGuGdxo4xmxYTMOYIdmiakPdMpBiA/VyV2NSeYjaJyUb7OLjPS5pQarx3X5ymUjSOpSqVy2AlED33
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2026 15:23:42.3992
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7dd7307-421b-4f67-3e54-08de9002a87f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0001A102.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7644
 
-On 3/31/26 7:12 PM, Mukesh Ojha wrote:
-> MAX_NUM_OF_SS was hardcoded to 10 in the minidump_global_toc struct,
-> which is a direct overlay on an SMEM item allocated by the firmware.
-> Newer Qualcomm SoC firmware allocates space for more subsystems, while
-> older firmware only allocates space for 10. Bumping the constant would
-> cause Linux to read/write beyond the SMEM item boundary on older
-> platforms.
+
+
+On 3/31/2026 12:53 PM, Mathieu Poirier wrote:
+> On Mon, Mar 30, 2026 at 01:43:03PM -0500, Shah, Tanmay wrote:
+>> Hello,
+>>
+>> Thanks for the reviews. Please find my comments below:
+>>
+>> On 3/27/2026 2:58 PM, Mathieu Poirier wrote:
+>>> On Tue, Mar 17, 2026 at 01:12:51PM -0700, Tanmay Shah wrote:
+>>>> On AMD-Xilinx platforms cortex-A and cortex-R can be configured as
+>>>> separate subsystems. In this case, both cores can boot independent of
+>>>> each other. If Linux went through uncontrolled reboot during active
+>>>> rpmsg communication, then during next boot it can find rpmsg virtio
+>>>> status not in the reset state. In such case it is important to reset the
+>>>> virtio status during attach callback and wait for sometime for the
+>>>> remote to handle virtio driver reset.
+>>>
+>>> I understand the user case, but won't that situation happen regardless of
+>>> whether cores operate sync or split mode?
+>>>
+>>
+>> I want to make it clear that this is not same as Cortex-R cluster
+>> configured as lockstep vs split mode.
+>>
+>> This is different configuration between Cortex-A cores and Cortex-R
+>> cores. It is a firmware driver configuration of how it treats cortex-A
+>> and Cortex-R subsystems.
+>>
+>> In the firmware driver, we can configure Cortex-A cluster as owner of
+>> Cortex-R cluster, and in that case, if Cortex-A reboots, the firmware
+>> will also reboot cortex-R cores. This policy makes Cortex-A as owner of
+>> Cortex-R cores. In this configuraton this patch is not needed, because
+>> if Cortex-A reboots then platform management firmware will also reboot
+>> Cortex-R cores as well and vdev status flag will be always 0.
+>>
+>> In another configuration in the firmware driver, Cortex-R cores can be
+>> independent of Cortex-A cores. This means, Cortex-A is not the owner of
+>> the Cortex-R cores. Both are independent subsystem. Only in this
+>> configuration, this patch applies because it is possible that Cortex-A
+>> reboots while Cortex-R doesn't and Cortex-R still runs as it is.
+>>
+>> So only in the second type of configuration, this patch is needed when
+>> COrtex-A running linux reboots and when driver probes and tries to
+>> attach it can find that vdev flag is not reset. In the first
+>> configuartion if linux reboots, then It's guranteed that vdev status
+>> flag will always be in the reset state.
+>>
+>> If you prefer I can extend the commit message with all above details or
+>> put as comment in the attach() callback. Let me know which do you prefer.
 > 
-> Fix this by converting subsystems[] to a flexible array member and
-> deriving the actual number of subsystems at runtime from the size
-> returned by qcom_smem_get(). Add a bounds check on minidump_id against
-> the derived count before indexing into the array.
+> Ok, that clarifies a lot of things.  Please add the above as a comment in
+> attach().
 > 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
+>>
+>>>>
+>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>>>> ---
+>>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 46 +++++++++++++++++++++++++
+>>>>  1 file changed, 46 insertions(+)
+>>>>
+>>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>>> index 50a9974f3202..f08806f13800 100644
+>>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>>>> @@ -5,6 +5,7 @@
+>>>>   */
+>>>>  
+>>>>  #include <dt-bindings/power/xlnx-zynqmp-power.h>
+>>>> +#include <linux/delay.h>
+>>>>  #include <linux/dma-mapping.h>
+>>>>  #include <linux/firmware/xlnx-zynqmp.h>
+>>>>  #include <linux/kernel.h>
+>>>> @@ -29,6 +30,8 @@
+>>>>  #define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
+>>>>  				 (uint32_t)'m' << 8 | (uint32_t)'p')
+>>>>  
+>>>> +#define RPROC_ATTACH_TIMEOUT_US (100 * 1000)
+>>>> +
+>>>
+>>> There are some time constant already defined, please use them.
+>>
+>> Ack.
+>>
+>>>
+>>>>  /*
+>>>>   * settings for RPU cluster mode which
+>>>>   * reflects possible values of xlnx,cluster-mode dt-property
+>>>> @@ -865,6 +868,49 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+>>>>  
+>>>>  static int zynqmp_r5_attach(struct rproc *rproc)
+>>>>  {
+>>>> +	struct device *dev = &rproc->dev;
+>>>> +	bool wait_for_remote = false;
+>>>> +	struct fw_rsc_vdev *rsc;
+>>>> +	struct fw_rsc_hdr *hdr;
+>>>> +	int i, offset, avail;
+>>>> +
+>>>> +	if (!rproc->table_ptr)
+>>>> +		goto attach_success;
+>>>> +
+>>>> +	for (i = 0; i < rproc->table_ptr->num; i++) {
+>>>> +		offset = rproc->table_ptr->offset[i];
+>>>> +		hdr = (void *)rproc->table_ptr + offset;
+>>>> +		avail = rproc->table_sz - offset - sizeof(*hdr);
+>>>> +		rsc = (void *)hdr + sizeof(*hdr);
+>>>> +
+>>>> +		/* make sure table isn't truncated */
+>>>> +		if (avail < 0) {
+>>>> +			dev_err(dev, "rsc table is truncated\n");
+>>>> +			return -EINVAL;
+>>>> +		}
+>>>> +
+>>>> +		if (hdr->type != RSC_VDEV)
+>>>> +			continue;
+>>>> +
+>>>> +		/*
+>>>> +		 * reset vdev status, in case previous run didn't leave it in
+>>>> +		 * a clean state.
+>>>> +		 */
+>>>> +		if (rsc->status) {
+>>>> +			rsc->status = 0;
+>>>> +			wait_for_remote = true;
+>>>> +			break;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	/* kick remote to notify about attach */
+>>>> +	rproc->ops->kick(rproc, 0);
+>>>> +
+>>>> +	/* wait for sometime until remote is ready */
+>>>> +	if (wait_for_remote)
+>>>> +		usleep_range(100, RPROC_ATTACH_TIMEOUT_US);
+>>>
+>>> Instead of waiting, would it be possible to return -EPROBE_DEFER and let the
+>>> driver core retry mechanic do it's work?
+>>>
+>>
+>> It is not possible to do -EPROBE_DEFER, because attach() callback is not
+>> called only during driver probe.
+>>
+>> It is also called during following command sequence:
+>>
+>> attach() -> detach() -> attach()
+>>
+>> During second attach() callback, we can't do -EPROBE_DEFER, as it's not
+>> driver probe anymore. So I think will have to keep the usleep_range().
+> 
+> Right, but in this case the Cortex-A did not go through an uncontrolled reboot,
+> we know the state of the machine is sound.  Do you see a scenario where it would
+> not be the case?  
+> 
 
-Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Yes correct.  We will hit this issue only during probe, after that as
+long as detach() happens we are setting vdev status to 0.
 
-Konrad
+Another problem with the -EPROBE_DEFER mechanism is that the time
+between return from attach() and next attach() isn't fixed. after
+deferring current probe, when next probe and attach() happens, we will
+always find vdev status to 0, even if remote hasn't handled vdev reset
+event. So we don't know if the remote has handled virtio reset flag
+notification or not. Where 100ms fixed delay, gives fixed time to remote
+to handle vdev reset event. If needed this delay can be increased later.
+
+This brings up another question to make the solution more robust. Do we
+have any standard way of handling such a situation? Like in other virtio
+standards, can this situation happen where driver comes up and finds the
+virtio device status not in the reset state? How do they handle it?
+
+Also, is firmware required to restore the resource table to default or
+initial resource table after getting the virtio reset notification? Any
+standard decided for remtoeproc virtio devices around this?
+
+Thanks,
+Tanmay
+
+>>
+>>> Thanks,
+>>> Mathieu
+>>>
+>>>> +
+>>>> +attach_success:
+>>>>  	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
+>>>>  
+>>>>  	return 0;
+>>>>
+>>>> base-commit: d4ef36fbd57e610d4c334123ce706a2a71187cae
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>
+
