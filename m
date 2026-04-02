@@ -1,110 +1,89 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2143164AA
-	for <linux-remoteproc@vger.kernel.org>; Thu,  2 Apr 2026 19:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7C43B27EA
+	for <linux-remoteproc@vger.kernel.org>; Thu,  2 Apr 2026 23:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775157600; cv=none; b=PYUiVXDtW5JMxOOzu9HeZSZOeFfye7RN7g8Q0sx3mf8N6fJIQUMErDkhbeMc8DtTIpP8c/ogEpqXwLQm+48MyHp9I/Ayok0q/7K9/h6Yye08rQBBRy9x6Hu6d8lTZRLO35mj2qwC+ZDPwXXtsTM99WEWK3IGAgodlMe7e7C/Idk=
+	t=1775174363; cv=none; b=o8X4Ab0ZyKKHSiagFgRLsWd0m0Cl6BjbgaP2mfWAx6ujOWhlSTHFeGcZ7xGNxaAWFHiVZIoJBrDoBwIxHN8F+d8IkjRnyHCFqmGcwQTE/UZh+L5mj86ER+6ye5YfXFPx2bnhz3YcQIZBP0o8ojYOnqU/SzL7BMWmwpnt0Ng+Zr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775157600; c=relaxed/simple;
-	bh=YyI8jqYYhdko66cyM4N7pIbtGvQSQvESyQFAl7WZidE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W3N0uO7Da2bYfHU8eTENr9uBg1pQbVjKp3RlGMSAAy05OZ2Lb/65+vhDJA2bBtgMqZLFFja0BSLzzvlKyv2hkUJrWT3YrKjqBpouWrslPDuqg7VcuJKMS5hoP6xmndewNpqZO98LAm8cfiUmsncxZMEYMmOLcZT/5wU5tKxxQ64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vLjJdat+; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1775174363; c=relaxed/simple;
+	bh=DY3O2HwFeTdC1F182DLgbn1OXstRHIJAiV+APzAPx5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZNjCaNu+G91A0FrVXkGkMR5hRsp3wioW4LzmD4skZQ2UmN1FZvo3TqWkAtVet8rI9kbdezTylhAdDyYX1oqyREgJnUf4+HwB6bQEjJt3ZGyofs3Q4iKQAafG36KA/m5HXj0fik/NfsXFJiizYcgHYaS812y5rQ8ZS8G3VnrsMHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IsLy7Ryz; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vLjJdat+"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-82cd6614a90so567242b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Apr 2026 12:19:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IsLy7Ryz"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-486507134e4so18981945e9.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Apr 2026 16:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1775157599; x=1775762399; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v3jSt7uwE7EC589yxv0VmtI2sQo0+2W9n1Ml7lFclpo=;
-        b=vLjJdat+nTes6KzoUzRzUrAqvQYzV+TfH83iZ3JzefZNM6q2L34V6RooXq/e17I+uI
-         7/VwVx/FaGOQXe4si0mUTKNqRTvTMCbVWrX4rUmBCL0uwIl1eu0UZttmkg421TARFk7c
-         XDHbRsm7g73KiTZW9OHGfzMq/9mE3BQJptd2+9gyGqJV7NhzcQllfgXjmSOz9IRbybHt
-         XJUnz3bhgqmi/itjHk7hRMq/WGWw3g5sD131HHJFU6MOnjHULWQ1I9ZNGKAU9EmKDGy/
-         Ib8O5HmSSzX70yfAtopw8rVy9f0kIFvoI2GVRLy4YKBiqKmmp40qmWjyHcvqDiQEl+YT
-         M0kg==
+        d=gmail.com; s=20251104; t=1775174361; x=1775779161; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DY3O2HwFeTdC1F182DLgbn1OXstRHIJAiV+APzAPx5U=;
+        b=IsLy7RyzzbbXES8j4UR0qVLBC3pxoICC7Dm1CYCd+TPVxaT76ncYFLl1fYd0D3w53e
+         uSTiqVT0wGmrpuRBaOwJKIMfxDKwSm0QwM0afL6hNqPaR0LYT0UxxuIa8kASy0/aLSuk
+         u4P2SlvfO9iatH/3vFHA6JxW9GfWaxrabc40lE58bVAC4oEWEuqVkFAk3ugk4dpxAMjR
+         sqfieDWxGGJqqSSfOqDMFS7qg3UJl32lp2ridRVsYI8MzmLzIlNh4kwjzxDL6FqBENiE
+         icS39oU8FLox+bhMn4opkdL8COruua6gtmyYaxuxx3psvEIk/CKUTvRITa2gJXhpRSow
+         znBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775157599; x=1775762399;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v3jSt7uwE7EC589yxv0VmtI2sQo0+2W9n1Ml7lFclpo=;
-        b=LpCY/gw2huqS9noBryjpKgRY/tTDgrI/2+GB4JFd+yCaCwsu7hy7Gch1luo84mqJ+y
-         PWdB+73U0Lt85pBNLGFZ5yDCNPuyFqyoxRMxkJeAx/J8j09q96EAW572ia7ZUpBceCY2
-         buD2Yk/hvpjTIlUr+501Dc3oVk8tERtcl7cDe5TcPWRwfGS89+x7Gs42I4g8nl1lEplA
-         R/7+5bYqJOcY/sxM9GXwSzekf0/a48lTdVmoPZd+tF59mS7ZUtIVwT4DjEvEYNhEmOV7
-         puEv0JCNiKj+Y24DldkTe7H8/YXAd083kfi4Sro8HPRUa2rcA9mXXS86t+tGTQx8ln4W
-         TIBg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ZqiXCw67iXK3iLL+rpDEpEE71ejawXF0kuNCF45tMAVXyLa0y6TOnHI+lcd8gmLmkgx0j1ibpkYtfVEAZJmO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR7X5reROatMow3L9vs8mXaTabq0QuItplSG28y7iXY+YPyC3F
-	B4GqYJy21e/HQtcIgb6nTEL24K5/sISgd9YoNOF4Lg3w8Q78zVP0svShK3C2EBMsBYM=
-X-Gm-Gg: ATEYQzyiHfxxch44A6E6lW0XcRjJCdqDPKuTC1A4iN7RXxvZ9OHQ5GpWSRlGvDABrQr
-	vVu+DjgvFa67QOMpnhqkqyNCyAHNkp6BSSK8F2Dkp22oHZuX9PQfiVj/bWO4ZIn0E59p86CjKS1
-	h48Pg5V3vRKuCVgUzCxQzATBEA2S3KzRrc8otrTN6LQVoetKrDkW97jB0iwZAh+XNccVJmx23HI
-	7D/1/4hVJx1EgKczsKtTghHKTaH1Dm5NR3Gb/zB5Zxg6tUDpFTkRrI7cIimBLipXbY0MvSIuvff
-	oR3p16OTenmArTOlIdKtlrAx1HWQGcy/9s+On8OBYg/iSP1Qia3vQw6XMy1TEvg5VA71A20PwHa
-	AA7OWbuhyw/D7F6e4s82GSXQtK+Lkhrcy4FZcm6LXWEZ9fU6P1f2HgVjO/vh1d0dHO+pkMkLyN2
-	u3wuwkIsht9XdbykSF4ZtejYTFfpeaCFlFroQ=
-X-Received: by 2002:a05:6a00:178e:b0:827:455b:86b1 with SMTP id d2e1a72fcca58-82d0db693cemr329162b3a.28.1775157598929;
-        Thu, 02 Apr 2026 12:19:58 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:845:1274:f83b:b11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82cf9ca79basm4904770b3a.58.2026.04.02.12.19.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Apr 2026 12:19:58 -0700 (PDT)
-Date: Thu, 2 Apr 2026 13:19:55 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Julian Braha <julianbraha@gmail.com>
-Cc: andersson@kernel.org, fabien.dessenne@st.com, ludovic.barre@st.com,
-	loic.pallardy@st.com, arnaud.pouliquen@st.com,
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: dead code cleanup in Kconfig for STM32_RPROC
-Message-ID: <ac7BW9WLn7V9rDEY@p14s>
-References: <20260330224545.29769-1-julianbraha@gmail.com>
+        d=1e100.net; s=20251104; t=1775174361; x=1775779161;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DY3O2HwFeTdC1F182DLgbn1OXstRHIJAiV+APzAPx5U=;
+        b=nfz4LTwSnX6+VJENigbtuJUhhs7YaaYvXnzQQU2wHrS8yhVPiTVmaCwyIdQj303buS
+         SbT3YMYQRjNu0O3cFw0W8O/C1n4itI+zWMHozxaot2KgBJVUj885hZbbZrdassJwCsPp
+         seoHyDLnzf+gVkdpT5UgFGgVCjTa2/xWmxkmPNJn/994A47KZqVwvfLWFi40VWwz5o2w
+         cxRj+9SDswdj5rGJAa8UIapNm8V+RdKoyPj+tFGTpR8Y4WYnX23Rfg8qA4Cjj1szjCZX
+         kiBpqxOGugfX8WBaiprJKbcW29hNB5UIDwn+OoiqCsBK9eGaLAyqO4227IRkKaWZ9kFg
+         rnNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwJqcxM6z96SGSvuk+Q4rxerWwTI44cd7E97wVW/tyBiwElkvCFz1YJn6/Zu/HnP1/iz8Nca5PV/OTVbxoQ8Sp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+bER5fFtsdsrb1T00x29r6umQb5X9zXfhl1NRufvOiVi2mw5k
+	XcIUvLHWwB6ZAQy8O9iOYts74NQuZC3ETIOOfU9gTnIqbzL/LL66iGlz
+X-Gm-Gg: ATEYQzwYTAU6mmZ+kvcCR3AHdBH5kEx1A+ntLjH/9mjdfpbzMK+KwlLbq6Tc1qKBAJj
+	6Inyc0cNATzizNe/ic5aNv5YpXQw42vtQ+9aucobKn+w7IqI459AQHKST4kFnisfvLrz+nNYA4J
+	EwTewYfJlxwp51VkapG3IhG9LlaMyWsHUqFUffbloscYlBRm1kvn8EsaxYTIq1zNwADGMhg0a76
+	QS5rvSeZa17FUXOzvMvfCfAL4RzQnDVsba7D+I3PD8voZ9NXczdDkASOBWzMhUuhkdmkPPU5xA6
+	kkeb7+EVzjfd/CvaIssVgAreDvBE0ZDGxNpFcq8rOIazhuIbx2r4SbgDBVFZrd1Mh1Y9khnoLGc
+	X0F57nRhdKc3m3Y8nih2z1jeqDimGdqZsxYx9xtPnVtp7xvxvEPWaK7IwDFS1PvqkancUmrK96B
+	6c5IZmSCIBZmt2fe3fvQ727sxUApfXcr9+Tx4ZfCzpdXkWHECgYe20XphVs7OX0hjsV3kJSFiH9
+	w==
+X-Received: by 2002:a05:600c:3b19:b0:486:fab9:a578 with SMTP id 5b1f17b1804b1-4889976af3bmr14508015e9.11.1775174360646;
+        Thu, 02 Apr 2026 16:59:20 -0700 (PDT)
+Received: from ?IPV6:2001:8a0:e95c:5e00:5d9f:ef76:f3b8:8f4e? ([2001:8a0:e95c:5e00:5d9f:ef76:f3b8:8f4e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4888a72baa8sm98093075e9.15.2026.04.02.16.59.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Apr 2026 16:59:20 -0700 (PDT)
+Sender: Julian Braha <julian.braha@gmail.com>
+Message-ID: <09daccc7-0329-4410-ab5a-202ce2c1b77f@gmail.com>
+Date: Fri, 3 Apr 2026 00:59:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260330224545.29769-1-julianbraha@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: dead code cleanup in Kconfig for STM32_RPROC
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: andersson@kernel.org, fabien.dessenne@st.com, ludovic.barre@st.com,
+ loic.pallardy@st.com, arnaud.pouliquen@st.com, linux-kernel@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20260330224545.29769-1-julianbraha@gmail.com>
+ <ac7BW9WLn7V9rDEY@p14s>
+Content-Language: en-US
+From: Julian Braha <julianbraha@gmail.com>
+In-Reply-To: <ac7BW9WLn7V9rDEY@p14s>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 30, 2026 at 11:45:45PM +0100, Julian Braha wrote:
-> There is already an 'if REMOTEPROC' condition wrapping this config option,
-> making the 'depends on PCI' statement a duplicate dependency (dead code).
+Yes! Sorry about that, I had just sent out a similar patch:
+https://lore.kernel.org/all/20260330214549.16157-1-julianbraha@gmail.com/
 
-You likely meant "REMOTEPROC".
-
-> 
-> I propose leaving the outer 'if REMOTEPROC...endif' and removing the
-> individual 'depends on REMOTEPROC' statement.
-> 
-> This dead code was found by kconfirm, a static analysis tool for Kconfig.
-> 
-> Signed-off-by: Julian Braha <julianbraha@gmail.com>
-> ---
->  drivers/remoteproc/Kconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index ee54436fea5a..c78e431b7b2d 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -316,7 +316,6 @@ config ST_SLIM_REMOTEPROC
->  config STM32_RPROC
->  	tristate "STM32 remoteproc support"
->  	depends on ARCH_STM32 || COMPILE_TEST
-> -	depends on REMOTEPROC
->  	select MAILBOX
->  	help
->  	  Say y here to support STM32 MCU processors via the
-> -- 
-> 2.51.2
-> 
+and I copy-pasted the description in my email.
