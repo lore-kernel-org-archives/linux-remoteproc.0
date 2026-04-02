@@ -1,301 +1,616 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013005.outbound.protection.outlook.com [40.93.201.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4200E21B191;
-	Wed,  1 Apr 2026 15:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.5
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775057029; cv=fail; b=OJvv8YsmR8s+ZK5O9Wce0Bu6KGgjwNS1tvrGqH10wlDqZNGJ5+3QeXXQ74tg6Xlta09/Z8BO0kuAW0Ep3Gt9b7iEKc/Kyp3+/wCH8e+3fLGbjOOoAHLg0kT3eFrCtaAdsgAsDOi0YqYAyl0qNWLZrOgP5QA/p1koTrV3p8Up1+I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775057029; c=relaxed/simple;
-	bh=3456oneyn/8EH0nBhO3jRR9ncTHPdp5HvophDs4Z1KQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OwSgTz8h0f+nzIu1lIlFFKwaYhQ9iuLSrFuEoabKn7T98Nqxgz2O2rxjRsWqh0NS2xIMmX28edku+VIhhdHOQZ8r4mc+GI2lPPUEZGb6oo18PxljVhsimkKmuBb+nJ1P8Jusj8CN0oR7DXy2jYQPRD+ogdjgQu6/V1q2esoih28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vljPzDxH; arc=fail smtp.client-ip=40.93.201.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83848263F5E;
+	Thu,  2 Apr 2026 06:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775111011; cv=none; b=g79gS5VfS/ZtF8a8Ils5EToccfo9D/fj+0w1l/mLpd1DTO8dcR6IDU0Dxuk94AG8msD+NXyqxiNOvlGRecTV7YpP8pGJExAlNXl2+MCilpk7EjftD+Pwmp8CnP8HLRxnBE7Xa/IY2r3Ezm47NEY9xmi1UMPnvHh2Ur+PpzuzA0M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775111011; c=relaxed/simple;
+	bh=1hQ/0S8oRZgtSiNRnqfKOBu3rBMgkc0Kel/5lQ1b46A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIkxXBaVKZD3koNEkJlOHlKv5DEVZXzJH2j7tTVkJlaYgSqedd6HMmx88nD5hyhZHxxs141N9KOp01iioX8Yec2hgav19ZnWHDMi3UHvQVYqq6/XiZU8g0SFLh18uIOGpMcPP07gpWIJpNs05d5+ZHM9j0OQQckhDSRhyRY/feY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzUiQ4mf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vljPzDxH"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=svXCKuHLIpOhZw3CaOKFNt0WNHbM2QUGmq3xOIQbNEMC1ZUbh54fZWYyGtk1lbpEFcT6TDy1Y8Ugln37vAlu9qt0N3f7CSMjlePBTducD/FxyQXHP1VClfPJ+oRMjOOUECwwgVuvIukA+pcGiaGvo9xTOk8b92DlfWwiFShmhIihANh/NSoPt+o84bnZ1stpVBhPZ3xkL7o2fnkv7yeNwA7Awh5o4OxQCLdANvUZN3x6+14q+bzuuk9qJH6rGdaULWp/20ZFwYl88Ygei7jqbfO6LvhZJQk/c2eK36VwHaaseqxR+D1lxFe5AzACBz0kvuh9gLm0jK3toU7DQOPXFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XZdiNlfwmKi8TxWrix/KBPXReuILkt7xNhTFPG2ykVU=;
- b=FhUPyIkCj0acH05uDidIEyvkQlH/r7AjO4LRWwp1K6fCDOIUJUQY+Nb0nGSti7uZY+SY7Zi2YoxP+jaXv570UElxbQmwsBpVa6BUlcSpMkK964Ux7Jc2Towz4/h5aCH0VsyCO+//+GbHIHhbFSANe4yhQIiPSGS+elpRrNyU0lUXXjKXvOBx5w4lLvvPGVTl/gZ86RU4ubgR+37LCySjbYDNv5/uupTcZ7+Ps2b0N+qq2Bq50+EiJ4/0IaX3GdDEXvlJ3ovdZnc0D494NpPE1NIaLhUyw2+a7vofGJ+gcKlxQSX5hF0/eF7ZXPfMzk5MDKlxJXvXhmQpzTUAkFdbag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XZdiNlfwmKi8TxWrix/KBPXReuILkt7xNhTFPG2ykVU=;
- b=vljPzDxHYC4BwKK12W8jE+TZWukqtEXZQjdIXlnGpLkRvdMUtgWedl4EBpmmjeYB5DisZcYjMmexM0hJZ+C3JsxcJon/oMzgGDNEDsGP/RyYJPr7RwBSGz1UXLxbQf5+g0mEU5AclOyVX6kmZK1HUL/2mfiJ2vLF32RrrlhnksY=
-Received: from BLAPR03CA0178.namprd03.prod.outlook.com (2603:10b6:208:32f::32)
- by CH3PR12MB7644.namprd12.prod.outlook.com (2603:10b6:610:14f::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Wed, 1 Apr
- 2026 15:23:43 +0000
-Received: from BL02EPF0001A102.namprd05.prod.outlook.com
- (2603:10b6:208:32f:cafe::ba) by BLAPR03CA0178.outlook.office365.com
- (2603:10b6:208:32f::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.28 via Frontend Transport; Wed,
- 1 Apr 2026 15:23:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL02EPF0001A102.mail.protection.outlook.com (10.167.241.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17 via Frontend Transport; Wed, 1 Apr 2026 15:23:42 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 1 Apr
- 2026 10:23:42 -0500
-Received: from [10.31.206.142] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 1 Apr 2026 10:23:41 -0500
-Message-ID: <06f3c1bc-078c-4d67-8a22-933069ecb2ec@amd.com>
-Date: Wed, 1 Apr 2026 10:23:41 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzUiQ4mf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4408CC19423;
+	Thu,  2 Apr 2026 06:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775111011;
+	bh=1hQ/0S8oRZgtSiNRnqfKOBu3rBMgkc0Kel/5lQ1b46A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WzUiQ4mfFOS756slYDURtvWpR2Ytv3yQGpI4Sf4C+iWVOYt8cVr7mG7+EbAssI0Uz
+	 tKt3bupqMb0IGEo0l5QMWenRFYuepZSlE59dndMiGgTzN5OHCtgK+epcuRpDWewria
+	 OvFr5G45c/vo6qPb7lH7943uGc6KOcS5L1LUHhJfeEVaarY8UK/7QjnuXdvJaaQTIi
+	 WxkvdWbD/gpALn/M//30PYbtyIH5X9KuZbEjYsbnU/pdNp3gVzw9VWHkLaQVs/ICPH
+	 WXfTOkssuLue1cK7zBOnJggMvNmxsCQId3WDUEPpIDhAv4w/Y0VYE3FujAvPdKogIB
+	 EgNAsgH3eSveA==
+Date: Thu, 2 Apr 2026 11:53:12 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Harshal Dev <harshal.dev@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-media@vger.kernel.org, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
+	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
+	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
+	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
+	pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
+	tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
+	srinivas.kandagatla@oss.qualcomm.com,
+	amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
+	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: Re: [PATCH v3 04/15] firmware: qcom: Add a PAS TEE service
+Message-ID: <ac4LUJbR6jUIWNgI@sumit-xelite>
+References: <20260327131043.627120-1-sumit.garg@kernel.org>
+ <20260327131043.627120-5-sumit.garg@kernel.org>
+ <000abdb5-a8b4-47c4-860b-5666e650b545@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH] remoteproc: xlnx: reset virtio status during attach
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, <tanmay.shah@amd.com>
-CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20260317201251.3920841-1-tanmay.shah@amd.com>
- <acbhbnBgJCP7WETC@p14s> <3f557b06-ea34-4f96-b1ec-75bab7c0d828@amd.com>
- <acwKHzN84v_CipBh@p14s>
-Content-Language: en-US
-From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <acwKHzN84v_CipBh@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A102:EE_|CH3PR12MB7644:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7dd7307-421b-4f67-3e54-08de9002a87f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700016|82310400026|56012099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	JaEAkDbwP6JD0VZYJHk2GTVdYCe20FIj7Q52dwZ48qnoEgQjAuqJvm03j7ThW+doYlTlU2dOWZ/8LpZLC7lT9l1zdrGAs862gljoaTMLgBelaPsv69WXJMpAb1xmCRxz6Eg20Wupf98klfk1W7SI8OBbN7Kj6uuooswMJoAafbh2mHbM9E5Nn/S5LUbxp9gS+UQxTkGEU8YK2ZV8GW0Wp9pXPz7E32UVw3R230DOVxsEzJeDJSiBo9pR1HqVsv25Lza3aP5NdBL9CaPFGuEtrUV7FKJ3xd5oUyXbdq1ywJjPP5Z11uAJ4/BFmOH3gQXHKM8qDakvNBgarexNl1fAE3FAOs3mKFam+80Al+e3stfK/Y/XPbcxMRc914SQBIfnjI9GYlM//7q4owyIOBjMTd3wp/P3Cuyk7pKsAwEaufCZ3xOVrq1hvo84PdeNzwv0Gzm+uSUBg2ZlHdKLiV8oRXdfeauY2KaF6iY48Aw5RJQWnhv7yM3Auu7ldiAnrff4u2Sh/AffOTfJYZ1ZdkxBEE59+LgkXxvITavoPwoUlbkK4uyT/dH37TUDA1z7fhYu4MlXqgoVH77FQpe8eGKS8jnPjy7IGGu+vdzBYGJwyJcbNYwbCE5NCkZWlqIcvkCDiuU/wypwg9zH2gO3C8DeqX7s3sJb13z1dyzwlGdrjlB5tP4AprCu67z0UY2XjKipdE5A4AbClCFRmcPIzmOUwVWe/IrA4MriQ7IG6F7fcFUz80K0GskKTrFEFBYgvpbNkNUEn/yQwib366Il1VOpgQ==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(56012099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	1obrAFM2htfmuwEJGzVy/GjdlNXFAlqYO0pFqLRvc42L2IiHx5OnocGy0jUUgNZpJwfeUGfW0iBMZxQXcJw0+JINSRuEvs88EqkKQ37AjDw8FN5HYch/5+UNnQmkL+YIvh1iF4banXmPD6fp+C6vT/pR9LOW8fioRHAUeBqTpG+ZmsN1HQyFt64D7iLOchdSX99IKiasSxZUH4uAAA5BsxVMdgxHUZJera15eVbchEXIRnURPUP1jv6Ly3txFbqSCoQLMcTTiJT5UMcFXzjxYDsKv0uzajRKHydTixfqPo4PL60149Kd+JNXj4iSMNHjnaoaC29LvwfefsYJdQ6J3sa+j6o+f10V/ZtzQf8GXAs7inyxRpvUGuGdxo4xmxYTMOYIdmiakPdMpBiA/VyV2NSeYjaJyUb7OLjPS5pQarx3X5ymUjSOpSqVy2AlED33
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2026 15:23:42.3992
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7dd7307-421b-4f67-3e54-08de9002a87f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A102.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7644
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000abdb5-a8b4-47c4-860b-5666e650b545@oss.qualcomm.com>
 
-
-
-On 3/31/2026 12:53 PM, Mathieu Poirier wrote:
-> On Mon, Mar 30, 2026 at 01:43:03PM -0500, Shah, Tanmay wrote:
->> Hello,
->>
->> Thanks for the reviews. Please find my comments below:
->>
->> On 3/27/2026 2:58 PM, Mathieu Poirier wrote:
->>> On Tue, Mar 17, 2026 at 01:12:51PM -0700, Tanmay Shah wrote:
->>>> On AMD-Xilinx platforms cortex-A and cortex-R can be configured as
->>>> separate subsystems. In this case, both cores can boot independent of
->>>> each other. If Linux went through uncontrolled reboot during active
->>>> rpmsg communication, then during next boot it can find rpmsg virtio
->>>> status not in the reset state. In such case it is important to reset the
->>>> virtio status during attach callback and wait for sometime for the
->>>> remote to handle virtio driver reset.
->>>
->>> I understand the user case, but won't that situation happen regardless of
->>> whether cores operate sync or split mode?
->>>
->>
->> I want to make it clear that this is not same as Cortex-R cluster
->> configured as lockstep vs split mode.
->>
->> This is different configuration between Cortex-A cores and Cortex-R
->> cores. It is a firmware driver configuration of how it treats cortex-A
->> and Cortex-R subsystems.
->>
->> In the firmware driver, we can configure Cortex-A cluster as owner of
->> Cortex-R cluster, and in that case, if Cortex-A reboots, the firmware
->> will also reboot cortex-R cores. This policy makes Cortex-A as owner of
->> Cortex-R cores. In this configuraton this patch is not needed, because
->> if Cortex-A reboots then platform management firmware will also reboot
->> Cortex-R cores as well and vdev status flag will be always 0.
->>
->> In another configuration in the firmware driver, Cortex-R cores can be
->> independent of Cortex-A cores. This means, Cortex-A is not the owner of
->> the Cortex-R cores. Both are independent subsystem. Only in this
->> configuration, this patch applies because it is possible that Cortex-A
->> reboots while Cortex-R doesn't and Cortex-R still runs as it is.
->>
->> So only in the second type of configuration, this patch is needed when
->> COrtex-A running linux reboots and when driver probes and tries to
->> attach it can find that vdev flag is not reset. In the first
->> configuartion if linux reboots, then It's guranteed that vdev status
->> flag will always be in the reset state.
->>
->> If you prefer I can extend the commit message with all above details or
->> put as comment in the attach() callback. Let me know which do you prefer.
+On Mon, Mar 30, 2026 at 04:06:47PM +0530, Harshal Dev wrote:
 > 
-> Ok, that clarifies a lot of things.  Please add the above as a comment in
-> attach().
 > 
->>
->>>>
->>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>>> ---
->>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 46 +++++++++++++++++++++++++
->>>>  1 file changed, 46 insertions(+)
->>>>
->>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> index 50a9974f3202..f08806f13800 100644
->>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>> @@ -5,6 +5,7 @@
->>>>   */
->>>>  
->>>>  #include <dt-bindings/power/xlnx-zynqmp-power.h>
->>>> +#include <linux/delay.h>
->>>>  #include <linux/dma-mapping.h>
->>>>  #include <linux/firmware/xlnx-zynqmp.h>
->>>>  #include <linux/kernel.h>
->>>> @@ -29,6 +30,8 @@
->>>>  #define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
->>>>  				 (uint32_t)'m' << 8 | (uint32_t)'p')
->>>>  
->>>> +#define RPROC_ATTACH_TIMEOUT_US (100 * 1000)
->>>> +
->>>
->>> There are some time constant already defined, please use them.
->>
->> Ack.
->>
->>>
->>>>  /*
->>>>   * settings for RPU cluster mode which
->>>>   * reflects possible values of xlnx,cluster-mode dt-property
->>>> @@ -865,6 +868,49 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->>>>  
->>>>  static int zynqmp_r5_attach(struct rproc *rproc)
->>>>  {
->>>> +	struct device *dev = &rproc->dev;
->>>> +	bool wait_for_remote = false;
->>>> +	struct fw_rsc_vdev *rsc;
->>>> +	struct fw_rsc_hdr *hdr;
->>>> +	int i, offset, avail;
->>>> +
->>>> +	if (!rproc->table_ptr)
->>>> +		goto attach_success;
->>>> +
->>>> +	for (i = 0; i < rproc->table_ptr->num; i++) {
->>>> +		offset = rproc->table_ptr->offset[i];
->>>> +		hdr = (void *)rproc->table_ptr + offset;
->>>> +		avail = rproc->table_sz - offset - sizeof(*hdr);
->>>> +		rsc = (void *)hdr + sizeof(*hdr);
->>>> +
->>>> +		/* make sure table isn't truncated */
->>>> +		if (avail < 0) {
->>>> +			dev_err(dev, "rsc table is truncated\n");
->>>> +			return -EINVAL;
->>>> +		}
->>>> +
->>>> +		if (hdr->type != RSC_VDEV)
->>>> +			continue;
->>>> +
->>>> +		/*
->>>> +		 * reset vdev status, in case previous run didn't leave it in
->>>> +		 * a clean state.
->>>> +		 */
->>>> +		if (rsc->status) {
->>>> +			rsc->status = 0;
->>>> +			wait_for_remote = true;
->>>> +			break;
->>>> +		}
->>>> +	}
->>>> +
->>>> +	/* kick remote to notify about attach */
->>>> +	rproc->ops->kick(rproc, 0);
->>>> +
->>>> +	/* wait for sometime until remote is ready */
->>>> +	if (wait_for_remote)
->>>> +		usleep_range(100, RPROC_ATTACH_TIMEOUT_US);
->>>
->>> Instead of waiting, would it be possible to return -EPROBE_DEFER and let the
->>> driver core retry mechanic do it's work?
->>>
->>
->> It is not possible to do -EPROBE_DEFER, because attach() callback is not
->> called only during driver probe.
->>
->> It is also called during following command sequence:
->>
->> attach() -> detach() -> attach()
->>
->> During second attach() callback, we can't do -EPROBE_DEFER, as it's not
->> driver probe anymore. So I think will have to keep the usleep_range().
+> On 3/27/2026 6:40 PM, Sumit Garg wrote:
+> > From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> > 
+> > Add support for Peripheral Authentication Service (PAS) driver based
+> > on TEE bus with OP-TEE providing the backend PAS service implementation.
+> > 
+> > The TEE PAS service ABI is designed to be extensible with additional API
+> > as PTA_QCOM_PAS_CAPABILITIES. This allows to accommodate any future
+> > extensions of the PAS service needed while still maintaining backwards
+> > compatibility.
+> > 
+> > Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> > ---
+> >  drivers/firmware/qcom/Kconfig        |  10 +
+> >  drivers/firmware/qcom/Makefile       |   1 +
+> >  drivers/firmware/qcom/qcom_pas_tee.c | 478 +++++++++++++++++++++++++++
+> >  3 files changed, 489 insertions(+)
+> >  create mode 100644 drivers/firmware/qcom/qcom_pas_tee.c
+> >
+> [...]
 > 
-> Right, but in this case the Cortex-A did not go through an uncontrolled reboot,
-> we know the state of the machine is sound.  Do you see a scenario where it would
-> not be the case?  
+> > diff --git a/drivers/firmware/qcom/qcom_pas_tee.c b/drivers/firmware/qcom/qcom_pas_tee.c
+> > new file mode 100644
+> > index 000000000000..d63122c34f04
+> > --- /dev/null
+> > +++ b/drivers/firmware/qcom/qcom_pas_tee.c
+> > @@ -0,0 +1,478 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> > + */
+> > +
+> > +#include <linux/delay.h>
+> > +#include <linux/of.h>
+> > +#include <linux/firmware/qcom/qcom_pas.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/tee_drv.h>
+> > +#include <linux/uuid.h>
+> > +
+> > +#include "qcom_pas.h"
+> > +
+> > +/*
+> > + * Peripheral Authentication Service (PAS) supported.
+> > + *
+> > + * [in]  params[0].value.a:	Unique 32bit remote processor identifier
+> > + */
+> > +#define TA_QCOM_PAS_IS_SUPPORTED		1
+> > +
+> > +/*
+> > + * PAS capabilities.
+> > + *
+> > + * [in]  params[0].value.a:	Unique 32bit remote processor identifier
+> > + * [out] params[1].value.a:	PAS capability flags
+> > + */
+> > +#define TA_QCOM_PAS_CAPABILITIES		2
+> > +
+> > +/*
+> > + * PAS image initialization.
+> > + *
+> > + * [in]  params[0].value.a:	Unique 32bit remote processor identifier
+> > + * [in]  params[1].memref:	Loadable firmware metadata
+> > + */
+> > +#define TA_QCOM_PAS_INIT_IMAGE			3
+> > +
+> > +/*
+> > + * PAS memory setup.
+> > + *
+> > + * [in]  params[0].value.a:	Unique 32bit remote processor identifier
+> > + * [in]  params[0].value.b:	Relocatable firmware size
+> > + * [in]  params[1].value.a:	32bit LSB relocatable firmware memory address
+> > + * [in]  params[1].value.b:	32bit MSB relocatable firmware memory address
+> > + */
+> > +#define TA_QCOM_PAS_MEM_SETUP			4
+> > +
+> > +/*
+> > + * PAS get resource table.
+> > + *
+> > + * [in]     params[0].value.a:	Unique 32bit remote processor identifier
+> > + * [inout]  params[1].memref:	Resource table config
+> > + */
+> > +#define TA_QCOM_PAS_GET_RESOURCE_TABLE		5
+> > +
+> > +/*
+> > + * PAS image authentication and co-processor reset.
+> > + *
+> > + * [in]  params[0].value.a:	Unique 32bit remote processor identifier
+> > + * [in]  params[0].value.b:	Firmware size
+> > + * [in]  params[1].value.a:	32bit LSB firmware memory address
+> > + * [in]  params[1].value.b:	32bit MSB firmware memory address
+> > + * [in]  params[2].memref:	Optional fw memory space shared/lent
+> > + */
+> > +#define TA_QCOM_PAS_AUTH_AND_RESET		6
+> > +
+> > +/*
+> > + * PAS co-processor set suspend/resume state.
+> > + *
+> > + * [in]  params[0].value.a:	Unique 32bit remote processor identifier
+> > + * [in]  params[0].value.b:	Co-processor state identifier
+> > + */
+> > +#define TA_QCOM_PAS_SET_REMOTE_STATE		7
+> > +
+> > +/*
+> > + * PAS co-processor shutdown.
+> > + *
+> > + * [in]  params[0].value.a:	Unique 32bit remote processor identifier
+> > + */
+> > +#define TA_QCOM_PAS_SHUTDOWN			8
+> > +
+> > +#define TEE_NUM_PARAMS				4
+> > +
+> > +/**
+> > + * struct qcom_pas_tee_private - PAS service private data
+> > + * @dev:		PAS service device.
+> > + * @ctx:		TEE context handler.
+> > + * @session_id:		PAS TA session identifier.
+> 
+> Nit: Column alignment of comment descriptions.
+
+These are aligned if you look at them after applying the patch-set.
+Plain email text isn't good at showing the alignment here.
+
+> 
+> > + */
+> > +struct qcom_pas_tee_private {
+> > +	struct device *dev;
+> > +	struct tee_context *ctx;
+> > +	u32 session_id;
+> > +};
+> > +
+> > +static bool qcom_pas_tee_supported(struct device *dev, u32 pas_id)
+> > +{
+> > +	struct qcom_pas_tee_private *data = dev_get_drvdata(dev);
+> > +	struct tee_ioctl_invoke_arg inv_arg = {
+> > +		.func = TA_QCOM_PAS_IS_SUPPORTED,
+> > +		.session = data->session_id,
+> > +		.num_params = TEE_NUM_PARAMS
+> > +	};
+> > +	struct tee_param param[4] = {
+> > +		[0] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = pas_id
+> > +		}
+> > +	};
+> > +	int ret;
+> > +
+> > +	ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +	if (ret < 0 || inv_arg.ret != 0) {
+> > +		dev_err(dev, "PAS not supported, pas_id: %d, err: %x\n",
+> > +			pas_id, inv_arg.ret);
+> 
+> I can see that similar error handling pattern for tee_client_invoke_func() is
+> being done by other clients. But it seems that this error log doesn't really convey
+> whether we failed before or after entering OPTEE (or some other TEE) for invoking
+> the service.
+> 
+> Could be better if we print 'ret' when ret < 0. And print 'inv_arg.ret' when
+> inv_arg.ret != 0. So for example, if the param marshalling fails, or some other
+> issue is encountered when processing the params in a different back-end TEE
+> driver, we could know from the logs.
+
+Okay, I will add print for "ret" as well.
+
+> 
+> > +		return false;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static int qcom_pas_tee_init_image(struct device *dev, u32 pas_id,
+> > +				   const void *metadata, size_t size,
+> > +				   struct qcom_pas_context *ctx)
+> > +{
+> > +	struct qcom_pas_tee_private *data = dev_get_drvdata(dev);
+> > +	struct tee_ioctl_invoke_arg inv_arg = {
+> > +		.func = TA_QCOM_PAS_INIT_IMAGE,
+> > +		.session = data->session_id,
+> > +		.num_params = TEE_NUM_PARAMS
+> > +	};
+> > +	struct tee_param param[4] = {
+> > +		[0] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = pas_id
+> > +		},
+> > +		[1] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
+> > +		}
+> > +	};
+> > +	struct tee_shm *mdata_shm;
+> > +	u8 *mdata_buf = NULL;
+> > +	int ret;
+> > +
+> > +	if (!ctx)
+> > +		return -EINVAL;
+> > +
+> > +	mdata_shm = tee_shm_alloc_kernel_buf(data->ctx, size);
+> 
+> Why not move the DEFINE_FREE() above this function so we can use scoped free
+> here as well for mdata_shm?
+> 
+> struct tee_shm *mdata_shm __free(shm_free) = ...
+
+mdata_shm gets freed as part of qcom_pas_tee_metadata_release(), so no
+automatic free here.
+
+> 
+> > +	if (IS_ERR(mdata_shm)) {
+> > +		dev_err(dev, "mdata_shm allocation failed\n");
+> > +		return PTR_ERR(mdata_shm);
+> > +	}
+> > +
+> > +	mdata_buf = tee_shm_get_va(mdata_shm, 0);
+> > +	if (IS_ERR(mdata_buf)) {
+> > +		dev_err(dev, "mdata_buf get VA failed\n");
+> > +		tee_shm_free(mdata_shm);
+> > +		return PTR_ERR(mdata_buf);
+> > +	}
+> > +	memcpy(mdata_buf, metadata, size);
+> > +
+> > +	param[1].u.memref.shm = mdata_shm;
+> > +	param[1].u.memref.size = size;
+> > +
+> > +	ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +	if (ret < 0 || inv_arg.ret != 0) {
+> > +		dev_err(dev, "PAS init image failed, pas_id: %d, err: %x\n",
+> 
+> Nit: We can prefix %x with 0x. "err: 0x%x\n."
+
+Ack
+
+> 
+> > +			pas_id, inv_arg.ret);
+> > +		tee_shm_free(mdata_shm);
+> > +		return -EINVAL;
+> > +	}
+> > +	ctx->ptr = (void *)mdata_shm;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int qcom_pas_tee_mem_setup(struct device *dev, u32 pas_id,
+> > +				  phys_addr_t addr, phys_addr_t size)
+> > +{
+> > +	struct qcom_pas_tee_private *data = dev_get_drvdata(dev);
+> > +	struct tee_ioctl_invoke_arg inv_arg = {
+> > +		.func = TA_QCOM_PAS_MEM_SETUP,
+> > +		.session = data->session_id,
+> > +		.num_params = TEE_NUM_PARAMS
+> > +	};
+> > +	struct tee_param param[4] = {
+> > +		[0] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = pas_id,
+> > +			.u.value.b = size,
+> > +		},
+> > +		[1] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = lower_32_bits(addr),
+> > +			.u.value.b = upper_32_bits(addr),
+> > +		}
+> > +	};
+> > +	int ret;
+> > +
+> > +	ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +	if (ret < 0 || inv_arg.ret != 0) {
+> > +		dev_err(dev, "PAS mem setup failed, pas_id: %d, err: %x\n",
+> > +			pas_id, inv_arg.ret);
+> > +		return -EINVAL;
+> 
+> I can see that originally in-case of error, qcom_scm_pas_mem_setup() bubbles
+> up the return value from qcom_scm_call(). Perhaps we should do the same as well,
+> return ret here instead of hard-coded '-EINVAL' which overrides any useful
+> return values returned from the back-end TEE driver.
+
+ret can even be 0 while still error from TEE. Let's rather do following:
+
+	return ret ? ret : -EINVAL;
+
+>  
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +DEFINE_FREE(shm_free, struct tee_shm *, tee_shm_free(_T))
+> > +
+> > +static void *qcom_pas_tee_get_rsc_table(struct device *dev,
+> > +					struct qcom_pas_context *ctx,
+> > +					void *input_rt, size_t input_rt_size,
+> > +					size_t *output_rt_size)
+> > +{
+> > +	struct qcom_pas_tee_private *data = dev_get_drvdata(dev);
+> > +	struct tee_ioctl_invoke_arg inv_arg = {
+> > +		.func = TA_QCOM_PAS_GET_RESOURCE_TABLE,
+> > +		.session = data->session_id,
+> > +		.num_params = TEE_NUM_PARAMS
+> > +	};
+> > +	struct tee_param param[4] = {
+> > +		[0] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = ctx->pas_id,
+> > +		},
+> > +		[1] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
+> > +			.u.memref.size = input_rt_size,
+> > +		}
+> > +	};
+> > +	void *rt_buf = NULL;
+> > +	int ret;
+> > +
+> > +	ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +	if (ret < 0 || inv_arg.ret != 0) {
+> > +		dev_err(dev, "PAS get RT failed, pas_id: %d, err: %x\n",
+> > +			ctx->pas_id, inv_arg.ret);
+> > +		return ERR_PTR(-EINVAL);
+> 
+> Same comment here, we could return ERR_PTR(ret) instead of overriding to
+> '-EINVAL'.
+> 
+> > +	}
+> > +
+> > +	if (param[1].u.memref.size) {
+> > +		struct tee_shm *rt_shm __free(shm_free) =
+> > +			tee_shm_alloc_kernel_buf(data->ctx,
+> > +						 param[1].u.memref.size);
+> > +		void *rt_shm_va;
+> > +
+> > +		if (IS_ERR(rt_shm)) {
+> > +			dev_err(dev, "rt_shm allocation failed\n");
+> > +			return rt_shm;
+> > +		}
+> > +
+> > +		rt_shm_va = tee_shm_get_va(rt_shm, 0);
+> > +		if (IS_ERR_OR_NULL(rt_shm_va)) {
+> > +			dev_err(dev, "rt_shm get VA failed\n");
+> > +			return ERR_PTR(-EINVAL);
+> 
+> Why not just return rt_shm_va? It already encodes the error in the pointer.
+
+Again let me add a null check while returning rt_shm_va.
+
+> 
+> > +		}
+> > +		memcpy(rt_shm_va, input_rt, input_rt_size);
+> > +
+> > +		param[1].u.memref.shm = rt_shm;
+> > +		ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +		if (ret < 0 || inv_arg.ret != 0) {
+> > +			dev_err(dev, "PAS get RT failed, pas_id: %d, err: %x\n",
+> > +				ctx->pas_id, inv_arg.ret);
+> > +			return ERR_PTR(-EINVAL);
+> 
+> Same comment.
+> 
+> > +		}
+> > +
+> > +		if (param[1].u.memref.size) {
+> 
+> Is it possible for param[1].u.memref.size to be 0 after a successful tee_client_invoke_func()?
+
+Yeah it's possible if there is no resource table entry needed for a
+particular PAS id.
+
+> 
+> > +			*output_rt_size = param[1].u.memref.size;
+> > +			rt_buf = kmemdup(rt_shm_va, *output_rt_size, GFP_KERNEL);
+> > +			if (!rt_buf)
+> > +				return ERR_PTR(-ENOMEM);
+> > +		}
+> > +	}
+> > +
+> > +	return rt_buf;
+> > +}
+> > +
+> > +static int __qcom_pas_tee_auth_and_reset(struct device *dev, u32 pas_id,
+> > +					 phys_addr_t mem_phys, size_t mem_size)
+> > +{
+> > +	struct qcom_pas_tee_private *data = dev_get_drvdata(dev);
+> > +	struct tee_ioctl_invoke_arg inv_arg = {
+> > +		.func = TA_QCOM_PAS_AUTH_AND_RESET,
+> > +		.session = data->session_id,
+> > +		.num_params = TEE_NUM_PARAMS
+> > +	};
+> > +	struct tee_param param[4] = {
+> > +		[0] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = pas_id,
+> > +			.u.value.b = mem_size,
+> > +		},
+> > +		[1] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = lower_32_bits(mem_phys),
+> > +			.u.value.b = upper_32_bits(mem_phys),
+> > +		},
+> > +		/* Reserved for fw memory space to be shared or lent */
+> 
+> Can you explain this comment a bit more? Plan is to allow passing a MEM_REF here
+> which could be lent/shared to TEE via FFA ABI?
+
+This param is added for future compatibility where PAS firmware is
+loaded in arbitrarity allocated memory region by the kernel. Then that
+can be shared or lend with TZ for authentication and reset sequence.
+
+Right now the kernel is already loading the PAS firmware is fixed
+reserved memory regions, for which this param is unused.
+
+> 
+> > +		[2] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
+> > +		}
+> > +	};
+> > +	int ret;
+> > +
+> > +	ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +	if (ret < 0 || inv_arg.ret != 0) {
+> > +		dev_err(dev, "PAS auth reset failed, pas_id: %d, err: %x\n",
+> > +			pas_id, inv_arg.ret);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int qcom_pas_tee_auth_and_reset(struct device *dev, u32 pas_id)
+> 
+> I'm guessing once all clients have migrated to PAS, plan is to drop this wrapper?
+
+Yeah, this patch-set doesn't aim to change the kernel client PAS API
+contract apart from just renaming APIs. Surely future work can change
+the PAS API contract as needed.
+
+> 
+> > +{
+> > +	return __qcom_pas_tee_auth_and_reset(dev, pas_id, 0, 0);
+> > +}
+> > +
+> > +static int qcom_pas_tee_prepare_and_auth_reset(struct device *dev,
+> > +					       struct qcom_pas_context *ctx)
+> > +{
+> > +	return __qcom_pas_tee_auth_and_reset(dev, ctx->pas_id, ctx->mem_phys,
+> > +					     ctx->mem_size);
+> > +}
+> > +
+> > +static int qcom_pas_tee_set_remote_state(struct device *dev, u32 state,
+> > +					 u32 pas_id)
+> > +{
+> > +	struct qcom_pas_tee_private *data = dev_get_drvdata(dev);
+> > +	struct tee_ioctl_invoke_arg inv_arg = {
+> > +		.func = TA_QCOM_PAS_SET_REMOTE_STATE,
+> > +		.session = data->session_id,
+> > +		.num_params = TEE_NUM_PARAMS
+> > +	};
+> > +	struct tee_param param[4] = {
+> > +		[0] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = pas_id,
+> > +			.u.value.b = state,
+> > +		}
+> > +	};
+> > +	int ret;
+> 
+> Nit: Why not ret = 0 initialize and always use ret?
+
+zero init will still be redundant..
+
+> 
+> > +
+> > +	ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +	if (ret < 0 || inv_arg.ret != 0) {
+> > +		dev_err(dev, "PAS shutdown failed, pas_id: %d, err: %x\n",
+> > +			pas_id, inv_arg.ret);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+
+.. will rather change this to return ret.
+
+> > +}
+> > +
+> > +static int qcom_pas_tee_shutdown(struct device *dev, u32 pas_id)
+> > +{
+> > +	struct qcom_pas_tee_private *data = dev_get_drvdata(dev);
+> > +	struct tee_ioctl_invoke_arg inv_arg = {
+> > +		.func = TA_QCOM_PAS_SHUTDOWN,
+> > +		.session = data->session_id,
+> > +		.num_params = TEE_NUM_PARAMS
+> > +	};
+> > +	struct tee_param param[4] = {
+> > +		[0] = {
+> > +			.attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_INPUT,
+> > +			.u.value.a = pas_id
+> > +		}
+> > +	};
+> > +	int ret = 0;
+> > +
+> > +	ret = tee_client_invoke_func(data->ctx, &inv_arg, param);
+> > +	if (ret < 0 || inv_arg.ret != 0) {
+> > +		dev_err(dev, "PAS shutdown failed, pas_id: %d, err: %x\n",
+> > +			pas_id, inv_arg.ret);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> 
+> You could just return 'ret' here. :)
+
+Ack.
+
+> 
+> > +}
+> > +
+> > +static void qcom_pas_tee_metadata_release(struct device *dev,
+> > +					  struct qcom_pas_context *ctx)
+> > +{
+> > +	struct tee_shm *mdata_shm = ctx->ptr;
+> > +
+> 
+> Nit: Unnecessary extra line.
+
+Extra line is recommended after variables declaration.
+
+> 
+> > +	tee_shm_free(mdata_shm);
+> > +}
+> > +
+> 
+> [...]
+> 
+> > +
+> > +module_tee_client_driver(optee_pas_tee_driver);
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_DESCRIPTION("TEE bus based Qualcomm PAS driver");
+> 
+> Since this is a tee_client driver, isn't it self-explanatary that it's TEE bus based?
 > 
 
-Yes correct.  We will hit this issue only during probe, after that as
-long as detach() happens we are setting vdev status to 0.
+I can rather say:
 
-Another problem with the -EPROBE_DEFER mechanism is that the time
-between return from attach() and next attach() isn't fixed. after
-deferring current probe, when next probe and attach() happens, we will
-always find vdev status to 0, even if remote hasn't handled vdev reset
-event. So we don't know if the remote has handled virtio reset flag
-notification or not. Where 100ms fixed delay, gives fixed time to remote
-to handle vdev reset event. If needed this delay can be increased later.
+MODULE_DESCRIPTION("Qualcomm PAS TEE driver");
 
-This brings up another question to make the solution more robust. Do we
-have any standard way of handling such a situation? Like in other virtio
-standards, can this situation happen where driver comes up and finds the
-virtio device status not in the reset state? How do they handle it?
-
-Also, is firmware required to restore the resource table to default or
-initial resource table after getting the virtio reset notification? Any
-standard decided for remtoeproc virtio devices around this?
-
-Thanks,
-Tanmay
-
->>
->>> Thanks,
->>> Mathieu
->>>
->>>> +
->>>> +attach_success:
->>>>  	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
->>>>  
->>>>  	return 0;
->>>>
->>>> base-commit: d4ef36fbd57e610d4c334123ce706a2a71187cae
->>>> -- 
->>>> 2.34.1
->>>>
->>
-
+-Sumit
