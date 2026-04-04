@@ -1,177 +1,221 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BD9332EBD
-	for <linux-remoteproc@vger.kernel.org>; Fri,  3 Apr 2026 09:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238BA3B7A8;
+	Sat,  4 Apr 2026 15:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775209037; cv=none; b=RtLroVJ7Z8//mPupSUrYTQW1cOKU8nBvdsyALwrrJW0MFmX6iU0AJWEO3xz8U3NhOXFWWdrWSnr5r3gFjr/b4g0xB/d0Zbxo9jvrohKY+FjUKxpHO2BwF4h5j+SvsYpEfjel6xP5MQjXKT844S8stJiaFfsbeiM2cAegxnpzfFY=
+	t=1775314936; cv=none; b=hXy9wh6iRLHCgPLpwTcrMVazPACLWQ7Nh9iBsM8SymD9oawhjS87W3ieISdwGRqkxuPaO3agP6XPnj0eW8+V/n0gD+GqZAYcfzwKcbbTlbBR2BmRauKV9eOfq3mOPwl+K2JzC3zN0KUzvHiElzZrf0ypqZEr9Pfxj98ZpcnmBqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775209037; c=relaxed/simple;
-	bh=SocuiM4ILZ9cYRA8mSWtuuuo4+IGmqWsxZXNi9/pB0E=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pFr/8hbvZf7rlVqk1it2vEDt40NA3HyWI9K0ERB8+KuZMsJx0fhxrkb0zS/+zm+mImLsbL5eXEExAS57ZDElPqQAJgGMi7/+ORpAreC/6LKUChQqIxmLC6hNLLpdXH3CwGG7blWDccjcqOBb5zttoMAbuS3KthnWJ6g3/mIccM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=isxJvM2K; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YE6psOem; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1775314936; c=relaxed/simple;
+	bh=yS1a8GmMxhd+gaXjsrUMOyEcZUcN2vLf71oRyrhAVkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=U7whb4p0v2gfusZtNmzpc2g52jEEGYJwWhUfkdYnueaq0aVlNCTCg7MAvWKVqc6K91kFLa9il1ZJMXRQaqmhCo8VXCUU2Zh9MSNm5PXOjGXQ57XJ+RRvOcZVNMk8DUx3DQ7OfD6Ei/IAH07RXc/ud58vcvc9rrLW1G5sjTxG6o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcd1WH1u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="isxJvM2K";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YE6psOem"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63360FW23772536
-	for <linux-remoteproc@vger.kernel.org>; Fri, 3 Apr 2026 09:37:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=H0MsR4PHC7LRNEDJ02SXHtGh
-	86o8LwWKhT/z44z5dSo=; b=isxJvM2K/Cv3Pm0NShfaaEwkY51/yH2P37+roCBv
-	lYrCcgbdhQHUYJxt9ZaYRXWC20+urqqeQP2i3fq42SxtBdpAbOyHaIPnzRWp93qp
-	QhAms5skdcgdocGbuW8EEkhEUxZ3sTcKnETvEuiyk1+Pm3OocQu1n8HzYcRw66t4
-	536ts+kxzBAJIVeVFBFgH3T8x2hYC18mMhBZriiWcTHzQDNU9C8b+kQqmV4xadiD
-	mTBOHSS2dOrTwiGXGNamY2DF5T1mQ/6TJ4GlxtarDcpWup0gReaWKh75SsJBMArq
-	yJ0mRgfT8xA5wWGvPp4wQ33YQwu38eZi/2RiBGwkpqwHTg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4d9wcs2dvn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 03 Apr 2026 09:37:13 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-50b4fe4ff7bso36708771cf.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Apr 2026 02:37:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1775209032; x=1775813832; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H0MsR4PHC7LRNEDJ02SXHtGh86o8LwWKhT/z44z5dSo=;
-        b=YE6psOemUfR5HmLsDBfiwAdCvOyheUwag+N+QFNocDs05mVRaKN3hBok3UWv83YzwJ
-         5q3X/munSmgPy6tMSN2AIhu9r8q6ebIioemMEws792o7RYJO4M09gddepSUVkxv8A1r0
-         95vjY8WpNzZiKy6V0i8CSFppdBoyyw01Gvy9wMGz2OOiVjkwxjeo4bkoR9e7VLVastEM
-         78qMsrFC5W5pneWkMJymPpSODFuiSIX+5tZy+M0I5GqFTW/9MxRvbcOpx/6LWWjTnCwB
-         4a8DvcOi2oPqcu24m9fryxqNrfkVsqOnbt1z7Zo4ICOptY6cK/G5xkY3eaVTYscuLxOq
-         8jmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775209032; x=1775813832;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H0MsR4PHC7LRNEDJ02SXHtGh86o8LwWKhT/z44z5dSo=;
-        b=HMXNursmFLnqmBfoDjrNuzUovxn4arebrTPlj41mVSbDKECjqEXNyWDgt4qUSHGrKc
-         5p4Pb7MgKA7r6gdNohLNxe11JAHGUxatuLTTMsILam1+7ygd5ZUq2/Zw3OI95PW0N9Zh
-         mnkzTA0Geo+uuc+Bvw6G/5I3eUNSCg3vYW0YYXx4UaBABDMCAcdNL9yItbV8aKifc8jw
-         T+JddyBtaSBHeg3O8kwmGRfy/GqhvxIif2G37HYYWfDqnCg+2VFF64jDypY/Yz6a0xwH
-         8LWdGCAzuLu5PX8rGx6XkyI4F5O+w/hBsUSoB9hURE8eoDVjZsyKhauTvWjAx1RcyxV/
-         MylQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2KYycBv0lGSm12TLFMaosOMd+eN1sXLxxYzrciInED+npO6C/jMJxSbKYV7l2XGR3gaeMazpDVx6hcZqIf5+@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTsPMcoJUPYcrqk60uXVo/oeUKF+byEPPPcJjY4FKUgEzShAZL
-	fT/vRwEvzXUn/aKNUsjsfhFdHInB3YYt/DvsPSjSZn1ROdFpE4XGzn/HmqJ3f+C6wZpVilPt00T
-	k0nS/2HaeGccvKH1ugVa+dnZCYUcBBaZ/V304gcEvE2ebp1p1XtFVISDH5j4nvh7sOvFeksbI
-X-Gm-Gg: ATEYQzwDm6vcqMpw3FNuV9sWj6VHLl96Xhzbz73B3DR2g8O/JojjnnDuYQ90VLGfGlW
-	0sgQ3Db45hgDCUMjhxhOb+8NOSZjdbruY2U9G447JJHrP52kj3gizek4CVxkZwe1ESGzrBAY1zi
-	j3zkhC/o86y7nDWA1J1tuyu6ntWVB6kxh0KbJLd+RSFtseQstYFrWM/WOPcp+aMvxpEURd7HZrL
-	/HquPNcNxzBDE/iskrXhgQU8XtTDhEhrnYW4pGKZOioJp95Us18/fdsxHCg5ANNvl9k8jK7MwX7
-	EwkgAQmUiBGXNzsi2UQieC1TKC74lwCAN6ujirHo3cNBpB/fQW3ysMDjVDPL+M2k7GOIoLgRK6c
-	IXIz+X9aPIzs3naJTb4HQDup8/7hJINx4NRqew0+Kgh+MJ1Pw4hWsAudr
-X-Received: by 2002:ac8:7dc5:0:b0:509:202f:f03 with SMTP id d75a77b69052e-50d4fd24b4dmr66234621cf.38.1775209031725;
-        Fri, 03 Apr 2026 02:37:11 -0700 (PDT)
-X-Received: by 2002:ac8:7dc5:0:b0:509:202f:f03 with SMTP id d75a77b69052e-50d4fd24b4dmr66234201cf.38.1775209031263;
-        Fri, 03 Apr 2026 02:37:11 -0700 (PDT)
-Received: from trex (187.red-79-144-197.dynamicip.rima-tde.net. [79.144.197.187])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d1e2a6f13sm15010561f8f.3.2026.04.03.02.37.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Apr 2026 02:37:10 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Fri, 3 Apr 2026 11:37:07 +0200
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-        dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org,
-        elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        jjohnson@kernel.org, mathieu.poirier@linaro.org,
-        trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
-        pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
-        tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-        srinivas.kandagatla@oss.qualcomm.com,
-        amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-        skare@qti.qualcomm.com, harshal.dev@oss.qualcomm.com,
-        linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v3 11/15] media: qcom: Switch to generic PAS TZ APIs
-Message-ID: <ac-KQ7e8-syph1Zl@trex>
-References: <20260327131043.627120-1-sumit.garg@kernel.org>
- <20260327131043.627120-12-sumit.garg@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcd1WH1u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9BB2C19421;
+	Sat,  4 Apr 2026 15:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775314935;
+	bh=yS1a8GmMxhd+gaXjsrUMOyEcZUcN2vLf71oRyrhAVkk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fcd1WH1uMPDFcW95A5bP6twrmSlGywxDbhV9K4GUdxmnw9OhLho72J9OlIZREDDfv
+	 Evf5eg+FhGKnEBZMEi0xrGzL0W0wBBPFC5ZbOalQpNWyhGwDm3HuLGvy/jgjYAq60X
+	 Jsa257f9xIzRC/LnmHpxdh9mv/JRHNm7utYMn96WoZP6ZRATrlwe1+3BmjlR9bxRPR
+	 tiA87cPHB5ojtZQJ2zSKPbtecnXGON24oyWbrZcP9XuN+XivvmLrVCQGu5orrMZe/a
+	 +xDtWMIwREbTcGNYdTKbgyxE7aDCuXqmHaashK055GEOETa+XQlaspyrGVn7GrwOhI
+	 UHZOaAkc+kiUA==
+From: Danilo Krummrich <dakr@kernel.org>
+To: Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Armin Wolf <W_Armin@gmx.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Alex Williamson <alex@shazbot.org>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	driver-core@lists.linux.dev,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-hyperv@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-arm-kernel@lists.infradead.org,
+	Danilo Krummrich <dakr@kernel.org>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Gui-Dong Han <hanguidong02@gmail.com>
+Subject: [PATCH v2] Drivers: hv: vmbus: use generic driver_override infrastructure
+Date: Sat,  4 Apr 2026 17:01:49 +0200
+Message-ID: <20260404150155.3473682-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <BN7PR02MB414825D0532A1DFE16F3B671D449A@BN7PR02MB4148.namprd02.prod.outlook.com>
+References: <BN7PR02MB414825D0532A1DFE16F3B671D449A@BN7PR02MB4148.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260327131043.627120-12-sumit.garg@kernel.org>
-X-Proofpoint-ORIG-GUID: uHxiR_mlGPwtOK6YV-JrY-CvGjHvqgsV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDAzMDA4NSBTYWx0ZWRfX8oQ6ErjxFGL2
- /BlhxMlPV9VGJNA7cWN+TCwcJeg8Celn4sJZm/NDbP0/aywaZHUSLTs1I+IQ3RFxpcZ5ZoYB1vo
- xWXYdIve3p4GA2koE0HIn1uaGbiJxIyGXdj7OtYPoH4UpmeJSlTBZ9TiG19TKqmsPdkz2i+PxSP
- IUOKCg67kLHZJxJ0bxHJ7XEXcjyroC7xeFXGdmV/ygX8r2mUAjm0/fdrw/1ffkVeA2W6RtGNGkZ
- NA/5XZfb6tCGW6Gd6ThhWoDEAUKxURknP8zDjrTk3TOHiGQEQnqDIJ7xIGXeGIVpXFa+ru4qpRy
- SRGIzajIZ/5plppH5YiYPllWnUPem/qo/UdevghmP7s86L1nXFc6JL68mpK6siVCg66qXrSQDnk
- iT1W0IzMmWgqOYUhM4mwhli8FUnzQXRvw0T95LoZ0Ty8EIdP5NB0flOT0XFAw5TzuRP0B8DAdBq
- U4Ch8wKUREVNwlOwHBQ==
-X-Authority-Analysis: v=2.4 cv=ZuPg6t7G c=1 sm=1 tr=0 ts=69cf8a49 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=VPdg2FrOqWfiVCzsz0q0YA==:17
- a=kj9zAlcOel0A:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=vWT0tKtjkO2eN-vK3vkA:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: uHxiR_mlGPwtOK6YV-JrY-CvGjHvqgsV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-03_03,2026-04-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 clxscore=1015 impostorscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
- definitions=main-2604030085
+Content-Transfer-Encoding: 8bit
 
-On 27/03/26 18:40:39, Sumit Garg wrote:
-> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> 
-> Switch qcom media client drivers over to generic PAS TZ APIs. Generic PAS
-> TZ service allows to support multiple TZ implementation backends like QTEE
-> based SCM PAS service, OP-TEE based PAS service and any further future TZ
-> backend service.
+When a driver is probed through __driver_attach(), the bus' match()
+callback is called without the device lock held, thus accessing the
+driver_override field without a lock, which can cause a UAF.
 
-OP-TEE based PAS service relies on the linux driver to configure the
-iommu (just as it is done on the no_tz case). This generic patch does
-not cover that requirement.
+Fix this by using the driver-core driver_override infrastructure taking
+care of proper locking internally.
 
-Because of that, it is probably better if the commit message doesnt
-mention OP-TEE and instead maybe indicate that PAS wll support TEEs that
-implement the same restrictions that QTEE (ie, iommu configuration).
+Note that calling match() from __driver_attach() without the device lock
+held is intentional. [1]
 
-I can send an RFC for OP-TEE support based on the integration work being
-carried out here [1]
+Tested-by: Michael Kelley <mhklinux@outlook.com>
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Link: https://lore.kernel.org/driver-core/DGRGTIRHA62X.3RY09D9SOK77P@kernel.org/ [1]
+Reported-by: Gui-Dong Han <hanguidong02@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220789
+Fixes: d765edbb301c ("vmbus: add driver_override support")
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+---
+Changes in v2:
+  - Change patch subject and comments according to Michael's suggestion.
+---
+ drivers/hv/vmbus_drv.c | 43 ++++++++++--------------------------------
+ include/linux/hyperv.h |  5 -----
+ 2 files changed, 10 insertions(+), 38 deletions(-)
 
-[1] https://github.com/OP-TEE/optee_os/pull/7721#discussion_r3016923507
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index bc4fc1951ae1..ba7326ec6add 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -541,34 +541,6 @@ static ssize_t device_show(struct device *dev,
+ }
+ static DEVICE_ATTR_RO(device);
+ 
+-static ssize_t driver_override_store(struct device *dev,
+-				     struct device_attribute *attr,
+-				     const char *buf, size_t count)
+-{
+-	struct hv_device *hv_dev = device_to_hv_device(dev);
+-	int ret;
+-
+-	ret = driver_set_override(dev, &hv_dev->driver_override, buf, count);
+-	if (ret)
+-		return ret;
+-
+-	return count;
+-}
+-
+-static ssize_t driver_override_show(struct device *dev,
+-				    struct device_attribute *attr, char *buf)
+-{
+-	struct hv_device *hv_dev = device_to_hv_device(dev);
+-	ssize_t len;
+-
+-	device_lock(dev);
+-	len = sysfs_emit(buf, "%s\n", hv_dev->driver_override);
+-	device_unlock(dev);
+-
+-	return len;
+-}
+-static DEVICE_ATTR_RW(driver_override);
+-
+ /* Set up per device attributes in /sys/bus/vmbus/devices/<bus device> */
+ static struct attribute *vmbus_dev_attrs[] = {
+ 	&dev_attr_id.attr,
+@@ -599,7 +571,6 @@ static struct attribute *vmbus_dev_attrs[] = {
+ 	&dev_attr_channel_vp_mapping.attr,
+ 	&dev_attr_vendor.attr,
+ 	&dev_attr_device.attr,
+-	&dev_attr_driver_override.attr,
+ 	NULL,
+ };
+ 
+@@ -711,9 +682,11 @@ static const struct hv_vmbus_device_id *hv_vmbus_get_id(const struct hv_driver *
+ {
+ 	const guid_t *guid = &dev->dev_type;
+ 	const struct hv_vmbus_device_id *id;
++	int ret;
+ 
+-	/* When driver_override is set, only bind to the matching driver */
+-	if (dev->driver_override && strcmp(dev->driver_override, drv->name))
++	/* If a driver override is set, only bind to the matching driver */
++	ret = device_match_driver_override(&dev->device, &drv->driver);
++	if (ret == 0)
+ 		return NULL;
+ 
+ 	/* Look at the dynamic ids first, before the static ones */
+@@ -721,8 +694,11 @@ static const struct hv_vmbus_device_id *hv_vmbus_get_id(const struct hv_driver *
+ 	if (!id)
+ 		id = hv_vmbus_dev_match(drv->id_table, guid);
+ 
+-	/* driver_override will always match, send a dummy id */
+-	if (!id && dev->driver_override)
++	/*
++	 * If there's a matching driver override, this function should succeed,
++	 * thus return a dummy device ID if no matching ID is found.
++	 */
++	if (!id && ret > 0)
+ 		id = &vmbus_device_null;
+ 
+ 	return id;
+@@ -1024,6 +1000,7 @@ static const struct dev_pm_ops vmbus_pm = {
+ /* The one and only one */
+ static const struct bus_type  hv_bus = {
+ 	.name =		"vmbus",
++	.driver_override =	true,
+ 	.match =		vmbus_match,
+ 	.shutdown =		vmbus_shutdown,
+ 	.remove =		vmbus_remove,
+diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+index dfc516c1c719..bf689d07d750 100644
+--- a/include/linux/hyperv.h
++++ b/include/linux/hyperv.h
+@@ -1272,11 +1272,6 @@ struct hv_device {
+ 	u16 device_id;
+ 
+ 	struct device device;
+-	/*
+-	 * Driver name to force a match.  Do not set directly, because core
+-	 * frees it.  Use driver_set_override() to set or clear it.
+-	 */
+-	const char *driver_override;
+ 
+ 	struct vmbus_channel *channel;
+ 	struct kset	     *channels_kset;
+-- 
+2.53.0
 
-> 
-> Along with that pass proper PAS ID to set_remote_state API. As per testing
-> the SCM backend just ignores it while OP-TEE makes use of it to for proper
-> book keeping purpose.
-> 
-> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> ---
->  drivers/media/platform/qcom/iris/Kconfig      | 25 ++++++++++---------
->  .../media/platform/qcom/iris/iris_firmware.c  |  9 ++++---
->  drivers/media/platform/qcom/venus/Kconfig     |  1 +
->  drivers/media/platform/qcom/venus/firmware.c  | 11 ++++----
->  4 files changed, 25 insertions(+), 21 deletions(-)
-> 
