@@ -1,54 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768B71DED40;
-	Mon,  6 Apr 2026 15:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF46C286AC;
+	Mon,  6 Apr 2026 15:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775487848; cv=none; b=qj0PmXLYe0u1XpspFhHdYLD5Kp6HSMYgWp23JRrUVgdtI93udb5/3pLBOqWuMI5ic2wWpajEegKqzKLnVw1pCbx8a4XqjLgX/OhaQ8jSkQ36yXH+/TdHFWbgWz/BQBc+2n0RX0EpNwzfTnThtMbkKlLzlRmxW3/UN+yzDR0lRJg=
+	t=1775488174; cv=none; b=hU6FrpTc/nuRG6gj9q91EvbnCPwZw0DIh732cyUGB4H1kNRmD7v7g8DaN5S+VgswDGe1YCtbxDD4za3tautndc0PyBcfOoe9nUUEeFWYqe/DLzAGNSQMLuzLqOYjsbOua2z5uxJEnScYC4q10w3S1XKbvqAxEefbw7xtoyRQnZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775487848; c=relaxed/simple;
-	bh=r6R7hZuPu015w2NK2QhBDMq8ygaJ1fnexwwDlsaFU+c=;
+	s=arc-20240116; t=1775488174; c=relaxed/simple;
+	bh=O0tCVCwItPdB09X25AtxkzJho55vhQaNrcXsCz+9/zo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TbhoAK1rRncFAN30i7OSU1E6yASEk7oBmCD9jbDdhhKdrzKSiacfEXRRY0yTlbx73ge5DXO0z6y66Gkz4BDe0wV2CpWHh2dbZuHsfqtKp7dydyqF0teC6oOYRCXn+V5zs77TadymUlCT7zAQbo7CRTXaR21NNz/hSNlBQTPDXrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaOFsieP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZY8+6/BINGToA3Jm+F0WJsyFjJ0xgpaZ/6OB38pet85Msb/ukc0Psm3ZQit8WxPv0EUUdYvoIH+6b3aO7eHiVzp5JrIcTmSUXATl/d6T2HtLGNjajc1ZD3mZnv29bEUkw50xkPBvuMIm3Ha74RJdaWzSp8dLur7LGfHI2kUOBCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/y8R8bc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaOFsieP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A051C4CEF7;
-	Mon,  6 Apr 2026 15:04:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/y8R8bc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68937C4CEF7;
+	Mon,  6 Apr 2026 15:09:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775487848;
-	bh=r6R7hZuPu015w2NK2QhBDMq8ygaJ1fnexwwDlsaFU+c=;
+	s=k20201202; t=1775488174;
+	bh=O0tCVCwItPdB09X25AtxkzJho55vhQaNrcXsCz+9/zo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WaOFsiePOxquuVFbv6kGq5T/im+haH4hexvYmzAhq7Pc61NlgBhp2YIC7qnnwNnyR
-	 FnAQqY+cmwpBmS9ISCjErpcLOFJV48q7A7MiwkTuMPpszYmqS3YPxavrMoDA13ao0U
-	 1nzpuDQuHUCFIhnnQbswFXLp9txersyg9GhUTTesM+EORkRzbvbRUKkQ7UlMetEO/V
-	 ltqa7RoeQXOCvO+5DR5ka/v2SbIIEgLyPYw/EolXfmv3tr35tnxjpB3Nf8PUc6XHqM
-	 e0figdO4mkgKccLPQvi2auJgGrGwFmc+DBee8+eSLy5uvzZNGIF3wTqX5yjtu6n+ml
-	 +yy1rkLC3Jm1g==
-Date: Mon, 6 Apr 2026 10:04:03 -0500
+	b=o/y8R8bcEVTlTvK0zRqe4ZRyaVIKSa6J42j2BUFXyoXgcPkklW46Kgoxtfq3xc4VM
+	 UnpDKxOQHOgziuOFJafVPT/kkbzrMn0NTyIHGXhq1nhmibXsG8CRQn8fW9Z5xRvm6r
+	 jqbHL9x5r5Re4AXMglM3CIl2xrFIMtiWjQzb95Mf/YTxAHvxiUElkEENbA+NjWVumE
+	 djcnwUWumiNfqD7GNRjNdQK0j1EhLLJLaAR8g+BpR2pb6B3c/12zU6X3ceiH2mcr1E
+	 fGcgsON4etNkPZgmJXUa9y1CvfU2gSqfHWb0MkfGujSgNjES2IhSKNrLQUBf4k+ARS
+	 yDiUwKrLlpipw==
+Date: Mon, 6 Apr 2026 10:09:27 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Bartosz Golaszewski <brgl@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Luca Weiss <luca.weiss@fairphone.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH v4 5/7] remoteproc: core: set recovery_disabled when
- doing rproc_add()
-Message-ID: <adPLDWz6_QmBa8w1@baldur>
-References: <20260310-knp-soccp-v4-0-0a91575e0e7e@oss.qualcomm.com>
- <20260310-knp-soccp-v4-5-0a91575e0e7e@oss.qualcomm.com>
- <CAMRc=MedT32COu-B_TsrN+jCrHjde2v5gnA6WOUmMQ2dEBY6WQ@mail.gmail.com>
- <ce24a2sgg4b6wymoxwgl2ve6np2nxn2wuxfqxfpmvqqrpvgouf@xihd6ziqwu4m>
- <CAMRc=MfRxhXXdAEX+Gm-vJbQGJZ7QRL6RM2CbhcLiqicyvftdg@mail.gmail.com>
- <ymo3kf4bsaz5yh4uwpk6dapfuzujepru3szaa4ujge7vtv43ka@skc5xgejj6aw>
- <9bdc6b6d-ddf0-47af-b1ed-8d1e75bf30c2@oss.qualcomm.com>
- <c6qnvfiknlaofts2kdahbaweiufqitnuni6bhqoxznhxp5zdto@m4i5thd57wx7>
- <ef36a946-ba7d-4588-b94f-4287f3ea6105@oss.qualcomm.com>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-media@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, ath12k@lists.infradead.org, 
+	linux-remoteproc@vger.kernel.org, konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run, 
+	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev, 
+	jesszhan0024@gmail.com, marijn.suijten@somainline.org, airlied@gmail.com, 
+	simona@ffwll.ch, vikash.garodia@oss.qualcomm.com, 
+	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org, elder@kernel.org, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org, 
+	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com, 
+	jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com, 
+	srinivas.kandagatla@oss.qualcomm.com, amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org, 
+	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com, skare@qti.qualcomm.com, 
+	harshal.dev@oss.qualcomm.com, linux-kernel@vger.kernel.org, 
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: Re: [PATCH v3 00/15] firmware: qcom: Add OP-TEE PAS service support
+Message-ID: <adPLx3nCBb8IHz2b@baldur>
+References: <20260327131043.627120-1-sumit.garg@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -57,77 +57,138 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ef36a946-ba7d-4588-b94f-4287f3ea6105@oss.qualcomm.com>
+In-Reply-To: <20260327131043.627120-1-sumit.garg@kernel.org>
 
-On Thu, Mar 19, 2026 at 01:44:48PM +0800, Jingyi Wang wrote:
+On Fri, Mar 27, 2026 at 06:40:28PM +0530, Sumit Garg wrote:
+> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
 > 
+> Qcom platforms has the legacy of using non-standard SCM calls
+> splintered over the various kernel drivers. These SCM calls aren't
+> compliant with the standard SMC calling conventions which is a
+> prerequisite to enable migration to the FF-A specifications from Arm.
 > 
-> On 3/19/2026 1:23 PM, Dmitry Baryshkov wrote:
-> > On Thu, Mar 19, 2026 at 12:36:15PM +0800, Jingyi Wang wrote:
-> > > 
-> > > 
-> > > On 3/13/2026 10:37 AM, Dmitry Baryshkov wrote:
-> > > > On Wed, Mar 11, 2026 at 01:39:50AM -0700, Bartosz Golaszewski wrote:
-> > > > > On Wed, 11 Mar 2026 03:11:42 +0100, Dmitry Baryshkov
-> > > > > <dmitry.baryshkov@oss.qualcomm.com> said:
-> > > > > > On Tue, Mar 10, 2026 at 06:50:30AM -0700, Bartosz Golaszewski wrote:
-> > > > > > > 
-> > > > > > > Ideally things like this would be passed to the rproc core in some kind of a
-> > > > > > > config structure and only set when registration succeeds. This looks to me
-> > > > > > > like papering over the real issue and I think it's still racy as there's no
-> > > > > > > true synchronization.
-> > > > > > > 
-> > > > > > > Wouldn't it be better to take rproc->lock for the entire duration of
-> > > > > > > rproc_add()? It's already initialized in rproc_alloc().
-> > > > > > 
-> > > > > > It would still be racy as rproc_trigger_recovery() is called outside of
-> > > > > > the lock. Instead the error cleanup path (and BTW, rproc_del() path too)
-> > > > > > must explicitly call cancel_work_sync() on the crash_handler work (and
-> > > > > > any other work items that can be scheduled).
-> > > > > > 
-> > > > > 
-> > > > > This looks weird TBH. For example: rproc_crash_handler_work() takes the lock,
-> > > > > but releases it right before calling inspecting rproc->recovery_disabled and
-> > > > > calling rproc_trigger_recovery(). It looks wrong, I think it should keep the
-> > > > > lock and rptoc_trigger_recovery() should enforce it being taken before the
-> > > > > call.
-> > > > 
-> > > > Yes. Nevertheless the driver should cancel the work too.
-> > > > 
-> > > 
-> > > Hi Dmitry & Bartosz,
-> > > 
-> > > rproc_crash_handler_work() may call rproc_trigger_recovery() and
-> > > rproc_add() may call rproc_boot(), both the function have already
-> > > hold the lock. And the lock cannot protect resources like glink_subdev
-> > > in the patch.
-> > > 
-> > > And there is a possible case for cancel_work, rproc_add tear down call
-> > > cancel work and wait for the work finished, the reboot run successfully,
-> > > and the tear down continued and the resources all released, including sysfs
-> > > and glink_subdev.
-> > > 
-> > > Indeed recovery_disabled is kind of hacky.
-> > > The root cause for this issue is that for remoteproc with RPROC_OFFLINE
-> > > state, the rproc_start will be called asynchronously, but for the remoteproc
-> > > with RPROC_DETACHED, the attach function is called directly, the failure
-> > > in this path will cause the rproc_add() fail and the resource release.
-> > > I think the current patch can be dropped, we are thinking about make rproc_attach
-> > > called asynchronously to avoid this race.
-> > 
-> > Isn't this patch necessary for SoCCP bringup? If not, why did you
-> > include it into the series?
-> > 
-> yes, will squash to soccp patch in next versoin.
 
-I'm sorry, but that doesn't make sense to me.
-
-The SoCCP patch adds support for attaching SoCCP. This change tries to
-address a generic problem shared across all remoteproc drivers (that
-does attach?).
-
-I think you should interpret Dmitry's comment as "why is this part of
-this series, please fix this problem in a separate series".
+Please get our colleagues involved in this discussion, because this
+non-SCM interface does not match the direction we are taking.
 
 Regards,
 Bjorn
+
+> OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
+> support these non-standard SCM calls. And even for newer architectures
+> using S-EL2 with Hafnium support, QTEE won't be able to support SCM
+> calls either with FF-A requirements coming in. And with both OP-TEE
+> and QTEE drivers well integrated in the TEE subsystem, it makes further
+> sense to reuse the TEE bus client drivers infrastructure.
+> 
+> The added benefit of TEE bus infrastructure is that there is support
+> for discoverable/enumerable services. With that client drivers don't
+> have to manually invoke a special SCM call to know the service status.
+> 
+> So enable the generic Peripheral Authentication Service (PAS) provided
+> by the firmware. It acts as the common layer with different TZ
+> backends plugged in whether it's an SCM implementation or a proper
+> TEE bus based PAS service implementation.
+> 
+> The TEE PAS service ABI is designed to be extensible with additional API
+> as PTA_QCOM_PAS_CAPABILITIES. This allows to accommodate any future
+> extensions of the PAS service needed while still maintaining backwards
+> compatibility.
+> 
+> Currently OP-TEE support is being added to provide the backend PAS
+> service implementation which can be found as part of this PR [1].
+> This implementation has been tested on Kodiak/RB3Gen2 board with lemans
+> EVK board being the next target. In addition to that WIN/IPQ targets
+> planning to use OP-TEE will use this service too. Surely the backwards
+> compatibility is maintained and tested for SCM backend.
+> 
+> Patch summary:
+> - Patch #1: adds Kodiak EL2 overlay since boot stack with TF-A/OP-TEE
+>   only allow UEFI and Linux to boot in EL2.
+> - Patch #2: adds generic PAS service.
+> - Patch #3: migrates SCM backend to generic PAS service.
+> - Patch #4: adds TEE/OP-TEE backend for generic PAS service.
+> - Patch #5-#13: migrates all client drivers to generic PAS service.
+> - Patch #14: drops legacy PAS SCM exported APIs.
+> 
+> The patch-set is based on v7.0-rc5 tag and can be found in git tree here
+> [2].
+> 
+> Merge strategy:
+> 
+> It is expected due to APIs dependency, the entire patch-set to go via
+> the Qcom tree. All other subsystem maintainers, it will be great if I
+> can get acks for the corresponding subsystem patches.
+> 
+> [1] https://github.com/OP-TEE/optee_os/pull/7721
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/sumit.garg/linux.git/log/?h=qcom-pas-v3
+> 
+> ---
+> Changes in v3:
+> - Incorporated some style and misc. comments for patch #2, #3 and #4.
+> - Add QCOM_PAS Kconfig dependency for various subsystems.
+> - Switch from pseudo TA to proper TA invoke commands.
+> 
+> Changes in v2:
+> - Fixed kernel doc warnings.
+> - Polish commit message and comments for patch #2.
+> - Pass proper PAS ID in set_remote_state API for media firmware drivers.
+> - Added Maintainer entry and dropped MODULE_AUTHOR.
+> 
+> Mukesh Ojha (1):
+>   arm64: dts: qcom: kodiak: Add EL2 overlay
+> 
+> Sumit Garg (14):
+>   firmware: qcom: Add a generic PAS service
+>   firmware: qcom_scm: Migrate to generic PAS service
+>   firmware: qcom: Add a PAS TEE service
+>   remoteproc: qcom_q6v5_pas: Switch over to generic PAS TZ APIs
+>   remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs
+>   soc: qcom: mdtloader: Switch to generic PAS TZ APIs
+>   remoteproc: qcom_wcnss: Switch to generic PAS TZ APIs
+>   remoteproc: qcom: Select QCOM_PAS generic service
+>   drm/msm: Switch to generic PAS TZ APIs
+>   media: qcom: Switch to generic PAS TZ APIs
+>   net: ipa: Switch to generic PAS TZ APIs
+>   wifi: ath12k: Switch to generic PAS TZ APIs
+>   firmware: qcom_scm: Remove SCM PAS wrappers
+>   MAINTAINERS: Add maintainer entry for Qualcomm PAS TZ service
+> 
+>  MAINTAINERS                                   |   9 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   2 +
+>  arch/arm64/boot/dts/qcom/kodiak-el2.dtso      |  35 ++
+>  drivers/firmware/qcom/Kconfig                 |  19 +
+>  drivers/firmware/qcom/Makefile                |   2 +
+>  drivers/firmware/qcom/qcom_pas.c              | 288 +++++++++++
+>  drivers/firmware/qcom/qcom_pas.h              |  50 ++
+>  drivers/firmware/qcom/qcom_pas_tee.c          | 478 ++++++++++++++++++
+>  drivers/firmware/qcom/qcom_scm.c              | 302 ++++-------
+>  drivers/gpu/drm/msm/Kconfig                   |   1 +
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   4 +-
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  11 +-
+>  drivers/media/platform/qcom/iris/Kconfig      |  25 +-
+>  .../media/platform/qcom/iris/iris_firmware.c  |   9 +-
+>  drivers/media/platform/qcom/venus/Kconfig     |   1 +
+>  drivers/media/platform/qcom/venus/firmware.c  |  11 +-
+>  drivers/net/ipa/Kconfig                       |   2 +-
+>  drivers/net/ipa/ipa_main.c                    |  13 +-
+>  drivers/net/wireless/ath/ath12k/Kconfig       |   2 +-
+>  drivers/net/wireless/ath/ath12k/ahb.c         |   8 +-
+>  drivers/remoteproc/Kconfig                    |   1 +
+>  drivers/remoteproc/qcom_q6v5_mss.c            |   5 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c            |  51 +-
+>  drivers/remoteproc/qcom_wcnss.c               |  12 +-
+>  drivers/soc/qcom/mdt_loader.c                 |  12 +-
+>  include/linux/firmware/qcom/qcom_pas.h        |  43 ++
+>  include/linux/firmware/qcom/qcom_scm.h        |  29 --
+>  include/linux/soc/qcom/mdt_loader.h           |   6 +-
+>  28 files changed, 1114 insertions(+), 317 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/qcom/kodiak-el2.dtso
+>  create mode 100644 drivers/firmware/qcom/qcom_pas.c
+>  create mode 100644 drivers/firmware/qcom/qcom_pas.h
+>  create mode 100644 drivers/firmware/qcom/qcom_pas_tee.c
+>  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
+> 
+> -- 
+> 2.51.0
+> 
