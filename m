@@ -1,188 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6181C3CF02A
-	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Apr 2026 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C9D26C39E
+	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Apr 2026 15:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775660621; cv=none; b=TKZ4WA8oNTOF5EEhM50n89JfLJriN0wC8Z4UIu9XkpGVWvkPzKMCK2U5PzRf59sMghJwhZmifK1vo+agWpGcBfUt1yJojiDYvivmyw2LCDkGihbjHBw8cvmxfUNIfoSjeG6RsDTazOiR+MdVGxFWVWBPFODC2F1hHehzmZHf+v4=
+	t=1775663198; cv=none; b=lHzWNUMltzhFgFkU0ZQEvD0eDtSeaGxG68coz5xQ08QpHgakqKA/35nIFtSrtpBKvqwLeO2eF85dlDzylIrbBHo4HRqOMuStqLkiRpqnR7KSDoKEuxH8DCHpV4iNpBeCVvi9rlIUTd+1L+6qa12QsapRgVzjB/iY4Otvc6rXy5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775660621; c=relaxed/simple;
-	bh=Betpu6YlX50HXxx8cB8c4TNDrqRx4yczkSoAvANIAAE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dE4UUXfNQRyTinfQWRBx0PamqhtbY4Sg+OCBvBoS+XylltX0utJ74IxF4slcuOPPm0zso5PRqVyCfEp+9YbfL7CHXNA3rU1Due+XLrx7ogp6vzERk0PiR9x6kHWl/GKn9PhtP1naZTv4igXr3+TQUoSJ3JocSnrI0DKeXP0t3t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwWpSuEG; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1775663198; c=relaxed/simple;
+	bh=V1TTOcmexzvL0zMGH90+djDV/QILglULKt5i2NNrPeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PdM5WgAI4PEyD0R6EHxJA/KRupSjXnizsBuG3b+gni8PBZhUi9uVS1LE2EEHoHk9OA9KJo2uBbmAIp2Rv0n0yaKWTNJn3yJ9FyfAuXcguPAs8mXj2/Y7mp4KzR6dt8zNHGGmL2DLmVPSqM4PM0fm/rLvomfGJfaYug9xLnndZM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BA9JNBzd; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwWpSuEG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105A0C2BC9E
-	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Apr 2026 15:03:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1775660621;
-	bh=Betpu6YlX50HXxx8cB8c4TNDrqRx4yczkSoAvANIAAE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BwWpSuEGh33P1HdOPUETTUh2GGicfP/E1wJq2vWfnrd590+xMej5M0vHycujXFfQp
-	 rWbgI2U92dN7FtM1PzQlioqocdbGOStnfIKTvA7D2+9GJRM4ApH/w1NF7D527il5fS
-	 eK/Hq04JUjC2iaoyTGCoCRKPaNshlgIvprkWX39rJkKbfQSQcaTRkpdbxYIGs37WJ6
-	 E8S6dZLH5TbFDRE3oa4mjKzABmoD2ZP3tvhxJMPw5hBHHMvcQqgGcKta4zd/F+ChX2
-	 suRPLFMDhoLEi4pn4Gl2iohsYwXyPWa4rQfg0i3dwmg/XGaDu0pSOlAwu0yvCujwhX
-	 1gPzE2CTN/DHA==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-66eba04b29eso7501672a12.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Apr 2026 08:03:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVZ2y+pKPV2rA4sVzz7zeRBWDHB+GWYpoOaSYAOu5rf1I4wccTnb+KubAg3CA3VOwXPICYP2wjNCcbgrroC26A7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGM5odJaUTtS5B7zBuMM38vCm2Av0WQtelxx9uU9XAHoqIz8Bl
-	s2Wkbl7OU5vc9Rz45Xy8Unnh3GlJYlo5SVQcTIZIxGMRjs7JecJrnrLmMZv1Ec5rnd2W9G/whwg
-	pq4jQXmGINVikA2xcduyxBOpLsFvc2Q==
-X-Received: by 2002:a05:6402:34c5:b0:66e:43ef:2951 with SMTP id
- 4fb4d7f45d1cf-66e43ef2a4bmr10220819a12.4.1775660619555; Wed, 08 Apr 2026
- 08:03:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BA9JNBzd"
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-82c68339cf0so597705b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Apr 2026 08:46:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1775663196; x=1776267996; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=R5zH5Yy++LFl5X1883WPkm0h00qGtgJqcjU1g/XLy30=;
+        b=BA9JNBzd8Lb5daOid6hiG9Ov+QJr/xcwSHdoZnhDrGwyM/pXzemiBr/II69zar3dgK
+         rrZ+lUHwML0QwZUbzcBJsF+m85dKq4Kpbk/DS15pSiieEuDA4N7F05DzMRRXzt/gJyf1
+         PNxY+WxWcPbW1MO6Ih27q6ErPhRjAeRXkfZVul534Kf0j9mnENHwjhkKCpcBpt/kuRC6
+         9onxKxpLgQ8KORiXelstlPUtEJwYLNu55eUhBdL7WV0NCvroWZtLPsJqBrFM9Lww4vxb
+         ytcIrwDzBqjfCqdX4VAAXJLouQWyNq8qWeF0ojTVTbSMP2DQfYETg6YD0d1JLFCKH31V
+         dmcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1775663196; x=1776267996;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R5zH5Yy++LFl5X1883WPkm0h00qGtgJqcjU1g/XLy30=;
+        b=iPD6Bt4uPwMxci8H9wU9izcAqehQm3TZFErqmbafkRYTO0TZtasEMGaF1l8qjWAYfI
+         qL55rLlAb9Z3okG3ZZL/Gq5EW1MlsUlf55XPGblEg7CFaxWS8myJWS/N+99wFBTF0l0L
+         BOz0z8Q0kMxVf0OQgSYWIV1fn82GesiiFhYsXdjGUp11TjAkZpXiNE5cnRjjG+CBTRce
+         BisGEyuk8L019d+KflrVGFKlvd4mMG/+RaN5cO8cvWRijOYLJHnAeD7ai546BGWHQU4h
+         oXKyYIT3LFPmQt2nJuXbsNfv8ze3PDbGvkRkaK5h6ASHIMFAjMKGhRd2uSrKgEa8NBXv
+         X51w==
+X-Forwarded-Encrypted: i=1; AJvYcCUNzD6QQSP7aSW9NTTIVKuCRQ60W6eCRhGSgnBon9ijpabvL1IrAWs1lqeQH5o18qvwREFistHI9Q1J0KS80T+F@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLUxnVwflEumt1xXRcm8807sm9xMZdxXgfVBYAZAi3lmrW8r3B
+	HSjz6Q5lLy0kTZW6RaL5kYnqBy0Dph3aKVi6/Ferixv2Nk1A88bw/7tXsmihot4KDkc=
+X-Gm-Gg: AeBDievyd3jPaejP6CfkhTrc71ObjIz8QthULgTxdM23BN+PaZ0Qfcn7QYFVi9SgUCe
+	YWmQ8WPvR3W/7GtidWw53Bp5kEH6RRNdpiPt3y/vOtyexyvf4Xt9YcNeeMadNa/a4gNipeUjhgf
+	8K2oBQTIKEhzUWtE+JCc1T/71+R3k5HIe+L5pBQPP46Ge2/oYOa3FbOgyoNL/fBkQqAdZ1eLJtK
+	ksViVEeXAHlVCGM77oL6aTyy/de6OiyH4jN55D1J2U0Su466IRuZIXnifSvdnI0B+fJ+DOPvdgj
+	ApZKYRF9fqzPB6I/I2aTm1pMp/u6V1BxvdOMnqkNLm8tWMtcOru+xHU1VkIT2PEDlUx4X6izW6a
+	LkQi8tpN4Biv6Q7aRHeUBFnikZdHWOA5aaib93JZtxaTa5DF9tg/PT3DFYyoIsL23GuXPJirXnt
+	HjD5ruMAd6cM5GO072QLDMyyv6qg==
+X-Received: by 2002:a05:6a00:188e:b0:82a:170d:fe1d with SMTP id d2e1a72fcca58-82d001e92efmr22313731b3a.1.1775663196006;
+        Wed, 08 Apr 2026 08:46:36 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:bec3:28f:3ce4:6925])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82cf9c41bc6sm21534378b3a.29.2026.04.08.08.46.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Apr 2026 08:46:35 -0700 (PDT)
+Date: Wed, 8 Apr 2026 09:46:32 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <frank.li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to SM
+ CPU/LMM reset vector
+Message-ID: <adZ4WIaC6WN97JhR@p14s>
+References: <20260327-imx943-rproc-v2-0-a547a3588730@nxp.com>
+ <20260327-imx943-rproc-v2-2-a547a3588730@nxp.com>
+ <acqjS440STRl2sK2@p14s>
+ <acs2PAZq2k3zjmDW@shlinux89>
+ <adUghiyZbe3fmcNX@p14s>
+ <PAXPR04MB8459AA009C932EB9D6139A11885BA@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260318-topic-am62a-ioddr-dt-v6-19-v3-0-c41473cb23c3@baylibre.com>
-In-Reply-To: <20260318-topic-am62a-ioddr-dt-v6-19-v3-0-c41473cb23c3@baylibre.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 8 Apr 2026 10:03:27 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJq=3z7SQX_26MGGRcmysnGHVke8aTwyDCesvOuQjEN+g@mail.gmail.com>
-X-Gm-Features: AQROBzClMUtPoA2R9xbP9UQlxvhX-iW9IARKlNopJ52gDn5_0cggpUPCuN1htyU
-Message-ID: <CAL_JsqJq=3z7SQX_26MGGRcmysnGHVke8aTwyDCesvOuQjEN+g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/7] arm64: dts: ti: k3-am62a7-sk: Split r5f memory region
-To: "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>, 
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
-	Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR04MB8459AA009C932EB9D6139A11885BA@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Wed, Mar 18, 2026 at 10:14=E2=80=AFAM Markus Schneider-Pargmann (TI)
-<msp@baylibre.com> wrote:
->
-> Hi,
->
-> Split the firmware memory region in more specific parts so it is better
-> described where which information is stored. Specifically the LPM metadat=
-a
-> region is important as bootloader software like U-Boot has to know where
-> that data is to be able to read that data and resume from RAM.
->
-> IO+DDR is a deep sleep state in which a few pins are set to be sensitive
-> for wakeup while the DDR is kept in self refresh. Everything else is
-> powered off.
->
-> The changes in this series were suggested as part of the IO+DDR u-boot se=
-ries:
->   https://lore.kernel.org/r/814c211f-a9eb-4311-bb84-165b1a69755f@ti.com
->
-> There are currently no real users of the memory-region that is split in
-> this series. The size of the memory-region in total stays the same.
-> The new layout is derived from the software running on the r5f
-> processor:
->   https://github.com/TexasInstruments/mcupsdk-core-k3/blob/k3_main/exampl=
-es/drivers/ipc/ipc_rpmsg_echo_linux/am62ax-sk/r5fss0-0_freertos/ti-arm-clan=
-g/linker.cmd#L172
->   https://github.com/TexasInstruments/mcupsdk-core-k3/blob/k3_main/source=
-/drivers/device_manager/sciclient.h#L459
->
-> Additionally the two important devicetree nodes for resuming from IO+DDR
-> have the bootph-pre-ram flag added as this data needs to be read before
-> the RAM is in use.
->
-> Best
-> Markus
->
-> Signed-off-by: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
-> ---
-> Changes in v3:
-> - Squash the enforcement of the memory-region-names requirement in the
->   patch adding the memory-region-names, as suggested.
-> - Link to v2: https://lore.kernel.org/r/20260312-topic-am62a-ioddr-dt-v6-=
-19-v2-0-37cb7ceec658@baylibre.com
->
-> Changes in v2:
-> - Make memory-region-names required if memory-region is present
-> - Fixup memory-region and memory-region-names conditions. Require either
->   2 or 6 regions for memory-region and memory-region-names
-> - Reword and restructure the binding documentation for memory-region and
->   memory-region-names
-> - Add memory-region-names to all uses of memory-region
-> - Link to v1: https://lore.kernel.org/r/20260303-topic-am62a-ioddr-dt-v6-=
-19-v1-0-12fe72bb40d2@baylibre.com
->
-> ---
-> Markus Schneider-Pargmann (TI) (7):
->       dt-bindings: remoteproc: k3-r5f: Split up memory regions
->       dt-bindings: remoteproc: k3-r5f: Add memory-region-names
->       arm64: dts: ti: k3: Use memory-region-names for r5f
->       arm64: dts: ti: k3-am62a7-sk: Split r5f memory region
->       arm64: dts: ti: k3-am62p5-sk: Split r5f memory region
->       arm64: dts: ti: k3-am62a7-sk: Add r5f nodes to pre-ram bootphase
->       arm64: dts: ti: k3-am62p5-sk: Add r5f nodes to pre-ram bootphase
+On Wed, Apr 08, 2026 at 01:30:16AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to
+> > SM CPU/LMM reset vector
+> > 
+> [...]
+> > 
+> > >
+> > > Aligning the ELF entry point with the hardware reset base on
+> > Cortex‑M
+> > > systems is possible, but it comes with several risks.
+> > 
+> > I'm not asking to align the ELF entry point with the hardware reset base.
+> > All I want is to have the correct start address embedded in the ELF file
+> > to avoid having to use a mask.
+> 
+> I see, per my understanding:
+> FreeRTOS typically exposes __isr_vector, which corresponds to the hardware
+> reset / vector table base.
+> Zephyr (Cortex‑M) exposes _vector_table, which serves the same purpose.
+> I am not certain about other RTOSes, but the pattern seems consistent:
+> the vector table base is already available as a named ELF symbol.
+> 
+> Given that, if the preferred approach is to parse the ELF and explicitly
+> retrieve the hardware reset base, I can update the implementation accordingly.
+> If you prefer to parse the elf file to get the hardware reset base,
+> I could update to use them.
+> 
+> Options1: Something as below:
+> 1. Include rproc_elf_find_symbol in remoteproc_elf_loader.c
+> 2. Use below in imx_rproc.c
+> ret = rproc_elf_find_symbol(rproc, fw, "__isr_vector", &vector_base);
+> if (ret)
+>     ret = rproc_elf_find_symbol(rproc, fw, "__vector_table", &vector_base);
+> 
+> if (!ret)
+>     rproc->bootaddr = vector_base
+> else
+>    dev_info(dev, "no __isr_vector or __vector_table\n")
 
-TI folks, Please make sure these dts patches are picked up for 7.1.
-There's now a crap load of warnings in next with the binding change:
+No
 
-     58 (ti,am62-r5fss): r5f@78000000: 'memory-region-names' is a
-required property
-     30 (ti,am62-r5fss): r5f@79000000: 'memory-region-names' is a
-required property
-     22 (ti,j721s2-r5fss): r5f@5f00000: 'memory-region-names' is a
-required property
-     22 (ti,j721s2-r5fss): r5f@5e00000: 'memory-region-names' is a
-required property
-     22 (ti,j721s2-r5fss): r5f@5d00000: 'memory-region-names' is a
-required property
-     22 (ti,j721s2-r5fss): r5f@5c00000: 'memory-region-names' is a
-required property
-     22 (ti,j721s2-r5fss): r5f@41400000: 'memory-region-names' is a
-required property
-     22 (ti,j721s2-r5fss): r5f@41000000: 'memory-region-names' is a
-required property
-     21 (ti,am64-r5fss): r5f@78600000: 'memory-region-names' is a
-required property
-     21 (ti,am64-r5fss): r5f@78400000: 'memory-region-names' is a
-required property
-     21 (ti,am64-r5fss): r5f@78200000: 'memory-region-names' is a
-required property
-     21 (ti,am64-r5fss): r5f@78000000: 'memory-region-names' is a
-required property
-     12 (ti,j721s2-r5fss): r5f@5a00000: 'memory-region-names' is a
-required property
-     12 (ti,j721s2-r5fss): r5f@5900000: 'memory-region-names' is a
-required property
-     12 (ti,am654-r5fss): r5f@41400000: 'memory-region-names' is a
-required property
-     12 (ti,am654-r5fss): r5f@41000000: 'memory-region-names' is a
-required property
-      9 (ti,j721e-r5fss): r5f@5f00000: 'memory-region-names' is a
-required property
-      9 (ti,j721e-r5fss): r5f@5e00000: 'memory-region-names' is a
-required property
-      9 (ti,j721e-r5fss): r5f@5d00000: 'memory-region-names' is a
-required property
-      9 (ti,j721e-r5fss): r5f@5c00000: 'memory-region-names' is a
-required property
-      9 (ti,j721e-r5fss): r5f@41400000: 'memory-region-names' is a
-required property
-      9 (ti,j721e-r5fss): r5f@41000000: 'memory-region-names' is a
-required property
-      4 (ti,am62-r5fss): r5f@78400000: 'memory-region-names' is a
-required property
-      3 (ti,j7200-r5fss): r5f@5d00000: 'memory-region-names' is a
-required property
-      3 (ti,j7200-r5fss): r5f@5c00000: 'memory-region-names' is a
-required property
-      3 (ti,j7200-r5fss): r5f@41400000: 'memory-region-names' is a
-required property
-      3 (ti,j7200-r5fss): r5f@41000000: 'memory-region-names' is a
-required property
+> 
+> This makes the hardware reset base explicit, avoids masking e_entry.
+> 
+> Option 2: User‑provided reset symbol via sysfs 
+> As an alternative, we could expose a sysfs attribute,
+> e.g. reset_symbol, allowing users to specify the symbol name
+> to be used as the reset base:
+> 
+> echo __isr_vector > /sys/class/remoteproc/remoteprocX/reset_symbol
+> 
 
-If they aren't applied, making  'memory-region-names' required needs
-to be dropped from the binding.
+Definitely not.
 
-Rob
+The definition of e_entry in the specification is clear, i.e "the address of the
+entry point from where the process starts executing".  If masking is required
+because the tool that puts the image together gets the wrong address, then it
+should be fixed.
+
+> The remoteproc core would then resolve that symbol from
+> the ELF and set rproc->bootaddr accordingly.
+> This provides maximum flexibility but does introduce a new user‑visible ABI,
+> so I see it more as an opt‑in or fallback mechanism.
+> 
+> Please let me know which approach you prefer, and I will update
+> this series accordingly in v3..
+> 
+> Thanks,
+> Peng.
+> 
+> 
+> > 
+> > > 1, Semantic mismatch (ELF vs. hardware behavior) 2, Debuggers may
+> > > attempt to set breakpoints or start execution at the entry symbol
+> > >
