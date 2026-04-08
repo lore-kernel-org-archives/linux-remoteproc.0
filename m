@@ -1,204 +1,188 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53133822A4
-	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Apr 2026 07:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6181C3CF02A
+	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Apr 2026 15:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775633567; cv=none; b=WBu5ZvbvCVXL78rOHyzobNImArURZc3tWRXDOdfyDwZXIjuqZoVpW60ayGdc/pvF2YYcMftAzwZXK3WGtEa3dnzohLHd3O/rYy9cj+jpGiw99ca1yU7vO9nHKXuWWHkoMjkFi/jczUdIQ84bpRnMuV9OsGXqs+SVrWNTSqpKSd4=
+	t=1775660621; cv=none; b=TKZ4WA8oNTOF5EEhM50n89JfLJriN0wC8Z4UIu9XkpGVWvkPzKMCK2U5PzRf59sMghJwhZmifK1vo+agWpGcBfUt1yJojiDYvivmyw2LCDkGihbjHBw8cvmxfUNIfoSjeG6RsDTazOiR+MdVGxFWVWBPFODC2F1hHehzmZHf+v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775633567; c=relaxed/simple;
-	bh=OveXBMU2Rs8ereI1m9UptjRMaYvkzfBMcmK+hgcieTk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uR/bdKEKFkZkcWFzgJBMZuH6RRUTrubKl3YDRC8u5yA4mn/YF5LkF0rgtF1UoKRS+o7WL7aaNie/EGi02oNLpeZwBhZgWlMATkBWxr81e7AgidBcLHiMQYPU9rg9yXrnmsLWKrvdsvdGb7FpxK/5pazJARVTS08oxEOUPyQUCBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nW+T356e; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=G8s2Gcfg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1775660621; c=relaxed/simple;
+	bh=Betpu6YlX50HXxx8cB8c4TNDrqRx4yczkSoAvANIAAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dE4UUXfNQRyTinfQWRBx0PamqhtbY4Sg+OCBvBoS+XylltX0utJ74IxF4slcuOPPm0zso5PRqVyCfEp+9YbfL7CHXNA3rU1Due+XLrx7ogp6vzERk0PiR9x6kHWl/GKn9PhtP1naZTv4igXr3+TQUoSJ3JocSnrI0DKeXP0t3t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwWpSuEG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nW+T356e";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="G8s2Gcfg"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6385k6Hc250047
-	for <linux-remoteproc@vger.kernel.org>; Wed, 8 Apr 2026 07:32:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xckB8PPJx6+/vCorN26HvLDM
-	xAJX+r/dYxdwC1AmZgc=; b=nW+T356eFEiWlNV25OIPnYucbssv+TRN/QY2qRAf
-	QPRvHVVopBSmj/fSXs0NgBVDsJ9QE8h2ok+x0hvLsG6TiUlkCg3wObmLBv3a7kyl
-	m2nzw3uI4iNng+JA9e6cvv2Wr9/bVrWoP9AgCaOtYp8dKr0uxx8E/hlWlK1ZeVQ3
-	WEMSL+o4zXWOunDSRMY8navjM9E6q9a8BQsXTSnLcqh6IrTx2LaLgYKULpd1TeUY
-	/UDWZ7IRiI7V0ojXtEFPxFq2jCCBms5mBavoeF2GzEXNoWRAmbYzsK4rZpqtAOP2
-	9hwyvyzYAsDYq9cz/CCF+9umhTFAznHxI/Lr5T7DlLXzWQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dd8x99v1b-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 08 Apr 2026 07:32:45 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-50da31af14cso43415311cf.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Apr 2026 00:32:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1775633564; x=1776238364; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xckB8PPJx6+/vCorN26HvLDMxAJX+r/dYxdwC1AmZgc=;
-        b=G8s2GcfgR3N3BRGa/eA7J3eg62OdrDfrV8Z8FYnzHmvDsJHPp6ajS31K8uMIrOIGra
-         ghHUiQA6pJWPLPo7+CsyDhb/fpMY6HyJoyPTo1Mw2qgGMPBUIf+Pow6o1DM50L5FQZnF
-         drpFKklQe/3g8Id7wbMpRbjIZyEt1CSQ1DqX0csM16Ve2Sq0NMebaepg77wGptc0fMc7
-         ZV4tj3RUuK2WNkfDGpbNpc/wmKlKDytILdEkdKGeSwzwgSt1a9+nIU9ToPl2ZyX8nxjN
-         Ff8EwCqWeUbcv6SMeIsOgya5U85eVwvpF2zr4uY1VqXI5IfSMiDp5Iw4affzIz36tXMe
-         79sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1775633564; x=1776238364;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xckB8PPJx6+/vCorN26HvLDMxAJX+r/dYxdwC1AmZgc=;
-        b=cwG0mJ733/DwROUqLcXJjkcyQa3BuPtrrqum1aXJqzWqcLCin1ewzdmnRACs1TmNIc
-         70uatGfTsZ/LxVNYFIJqZjshDEa/CVr3o4rqD5t0NiAq7nq4E3EFnPk/TfdKrG+IGpD3
-         wNuyzvGGBam4mZ0QMFabwMUFL1woJBcMHJvzaSuEzw8iiCmmonvKhoHxCwK0JDKQBndG
-         yEAk3att7aX4XodELJ9S0pxBjK7mv6uJ4sOr1RpUV3lsHcVJOA3//vbvBFXdMgBtBm90
-         OkxbcL7k1QImMY5z7ZhxTOLrD+4QJ+BvAfFvmOtfnYqybvXfrigwHVS3T4p/dq7XG7ne
-         P5og==
-X-Forwarded-Encrypted: i=1; AJvYcCUVFkhWBhennhq/F0QkdF7rFKh9gxYW86+Akc6V/mkbReMdDNu83IMlDIPTtxokJpPh6LA8qo18I+AoNlFBXm8U@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD6R3qAOmsJ7jF7CKSrify031Y736utOXwWiU8Kc4HBk5oY4qR
-	PjuGXElIIQPY47YwNRlGVgKzrUhDssciE8M/Om73htUQrzbzFlkSbZdkCOsryfU/eOBXYGDf7Xc
-	KK7vMvUP8LSeheM9wXObrFq//N0C1uiF6U9NMer/iaImxOlUc6CjrhhhyK/1RnKmMS7vfNCBt
-X-Gm-Gg: AeBDieua1MFM9Vu+cWXNLndDHjDGHrfcgQ95yxDLRqQBb5hTSuKK2u5Ihgdy51uSEDF
-	ratMr4QnzZpkc9PKCRaD/5hiS9qD0JCysrFIn05l+Qr2AfYHIU3TbTawr/S/QB9MQ7BSAOU3uC3
-	uP68VYsJrRW+iiRtFRsBhoNToPMghRniUH6KQAA1ZDQQo5EmeYBCUul+CHnCi5klrMDel7nGu26
-	ewvrXtkP6qNuD+jm18bgXSPb8V037NRV2+8IoCULTjJqIzTSn7gLJITdflqQU6Dw+iClWxjkQeo
-	cYX1RAVztpVFoMUhtDKmDQ1XhnYAPvTkcp7+MlTWU4+Hrp9092wL8MxAFGXL03Sy58TIFRyF1WL
-	7DvazJ7zbzVd0bgBCyX80cN4vVY42HDZj27cb5qVi23TNS794KKXjys8A
-X-Received: by 2002:a05:622a:124b:b0:50d:83de:4933 with SMTP id d75a77b69052e-50d83de50cfmr202934041cf.20.1775633564109;
-        Wed, 08 Apr 2026 00:32:44 -0700 (PDT)
-X-Received: by 2002:a05:622a:124b:b0:50d:83de:4933 with SMTP id d75a77b69052e-50d83de50cfmr202933731cf.20.1775633563612;
-        Wed, 08 Apr 2026 00:32:43 -0700 (PDT)
-Received: from trex (187.red-79-144-197.dynamicip.rima-tde.net. [79.144.197.187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4889cb46adcsm383692655e9.4.2026.04.08.00.32.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Apr 2026 00:32:42 -0700 (PDT)
-From: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
-X-Google-Original-From: Jorge Ramirez <JorgeRamirez-Ortiz>
-Date: Wed, 8 Apr 2026 09:32:39 +0200
-To: Trilok Soni <trilokkumar.soni@oss.qualcomm.com>
-Cc: Sumit Garg <sumit.garg@kernel.org>,
-        Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
-        vikash.garodia@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-        andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, robin.clark@oss.qualcomm.com,
-        sean@poorly.run, akhilpo@oss.qualcomm.com, lumag@kernel.org,
-        abhinav.kumar@linux.dev, jesszhan0024@gmail.com,
-        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
-        dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org,
-        elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        jjohnson@kernel.org, mathieu.poirier@linaro.org,
-        mukesh.ojha@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
-        tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-        srinivas.kandagatla@oss.qualcomm.com,
-        amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-        skare@qti.qualcomm.com, harshal.dev@oss.qualcomm.com,
-        linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v3 11/15] media: qcom: Switch to generic PAS TZ APIs
-Message-ID: <adYElwM6eT5T8hZM@trex>
-References: <20260327131043.627120-1-sumit.garg@kernel.org>
- <20260327131043.627120-12-sumit.garg@kernel.org>
- <ac-KQ7e8-syph1Zl@trex>
- <adOcMsk8a_Clb4WZ@sumit-xelite>
- <439f9bbf-1ba1-465f-b5af-01ba0ebb86d4@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwWpSuEG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105A0C2BC9E
+	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Apr 2026 15:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775660621;
+	bh=Betpu6YlX50HXxx8cB8c4TNDrqRx4yczkSoAvANIAAE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BwWpSuEGh33P1HdOPUETTUh2GGicfP/E1wJq2vWfnrd590+xMej5M0vHycujXFfQp
+	 rWbgI2U92dN7FtM1PzQlioqocdbGOStnfIKTvA7D2+9GJRM4ApH/w1NF7D527il5fS
+	 eK/Hq04JUjC2iaoyTGCoCRKPaNshlgIvprkWX39rJkKbfQSQcaTRkpdbxYIGs37WJ6
+	 E8S6dZLH5TbFDRE3oa4mjKzABmoD2ZP3tvhxJMPw5hBHHMvcQqgGcKta4zd/F+ChX2
+	 suRPLFMDhoLEi4pn4Gl2iohsYwXyPWa4rQfg0i3dwmg/XGaDu0pSOlAwu0yvCujwhX
+	 1gPzE2CTN/DHA==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-66eba04b29eso7501672a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Apr 2026 08:03:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZ2y+pKPV2rA4sVzz7zeRBWDHB+GWYpoOaSYAOu5rf1I4wccTnb+KubAg3CA3VOwXPICYP2wjNCcbgrroC26A7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGM5odJaUTtS5B7zBuMM38vCm2Av0WQtelxx9uU9XAHoqIz8Bl
+	s2Wkbl7OU5vc9Rz45Xy8Unnh3GlJYlo5SVQcTIZIxGMRjs7JecJrnrLmMZv1Ec5rnd2W9G/whwg
+	pq4jQXmGINVikA2xcduyxBOpLsFvc2Q==
+X-Received: by 2002:a05:6402:34c5:b0:66e:43ef:2951 with SMTP id
+ 4fb4d7f45d1cf-66e43ef2a4bmr10220819a12.4.1775660619555; Wed, 08 Apr 2026
+ 08:03:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <439f9bbf-1ba1-465f-b5af-01ba0ebb86d4@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=Rr716imK c=1 sm=1 tr=0 ts=69d6049d cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=VPdg2FrOqWfiVCzsz0q0YA==:17
- a=kj9zAlcOel0A:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=YTLieAA4xaQwPRX2avwA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA4MDA2NyBTYWx0ZWRfXx6VMuEWDGw24
- PqqmKaSOGcnlCOI2OigfCeShWKrXBhJ1IsyfNMSeAkso2Frr764KBP7F+MRljj/oTXsUBxczorY
- NfWQyzDTtXXTyBLnNmTWAmiMqlNmx/YLKYGlj3NFnglnYswgAFSY/4CsKARiNCykpmwxVRdY13J
- K+bbN3l11FNkDnbSVhKlS/pu5Y7+BGhFs2G9//NjoE3thc154eWUw6M8OV7PGANuVkNLYOjdfPe
- zBjP3MXFZfb8cxSlUNUjvGkt9euOBKiiOKuNVMEXZZQVmWvUwnDJJsTnIxkxg6Ck+7jTCz2OcIv
- 1kUWVt9PodN9mAGHrSdul9fQuii230t+RVtfxQAYFovAWejRnJFbc/csSyUM3HSTV+dEEsm95O8
- yBh20NuK0fusIHw9dtoazFacGgRxfz0048Lsx8/w2bGG46ZES/WouXz8MZpwem8ZvU2wT+oPin+
- 5cnXZg9HhmSvkHIa0oQ==
-X-Proofpoint-ORIG-GUID: WRgyWfJqUl_qJ-GQLljyFu3Jhuxc0Vjd
-X-Proofpoint-GUID: WRgyWfJqUl_qJ-GQLljyFu3Jhuxc0Vjd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-08_03,2026-04-07_05,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
- clxscore=1015 bulkscore=0 phishscore=0 adultscore=0 spamscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604010000
- definitions=main-2604080067
+References: <20260318-topic-am62a-ioddr-dt-v6-19-v3-0-c41473cb23c3@baylibre.com>
+In-Reply-To: <20260318-topic-am62a-ioddr-dt-v6-19-v3-0-c41473cb23c3@baylibre.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 8 Apr 2026 10:03:27 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJq=3z7SQX_26MGGRcmysnGHVke8aTwyDCesvOuQjEN+g@mail.gmail.com>
+X-Gm-Features: AQROBzClMUtPoA2R9xbP9UQlxvhX-iW9IARKlNopJ52gDn5_0cggpUPCuN1htyU
+Message-ID: <CAL_JsqJq=3z7SQX_26MGGRcmysnGHVke8aTwyDCesvOuQjEN+g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] arm64: dts: ti: k3-am62a7-sk: Split r5f memory region
+To: "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>, 
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/04/26 15:14:22, Trilok Soni wrote:
-> On 4/6/2026 4:42 AM, Sumit Garg wrote:
-> > Hi Jorge,
-> > 
-> > On Fri, Apr 03, 2026 at 11:37:07AM +0200, Jorge Ramirez wrote:
-> >> On 27/03/26 18:40:39, Sumit Garg wrote:
-> >>> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> >>>
-> >>> Switch qcom media client drivers over to generic PAS TZ APIs. Generic PAS
-> >>> TZ service allows to support multiple TZ implementation backends like QTEE
-> >>> based SCM PAS service, OP-TEE based PAS service and any further future TZ
-> >>> backend service.
-> >>
-> >> OP-TEE based PAS service relies on the linux driver to configure the
-> >> iommu (just as it is done on the no_tz case). This generic patch does
-> >> not cover that requirement.
-> > 
-> > That's exactly the reason why the kodiak EL2 dtso disables venus by
-> > default in patch #1 due to missing IOMMU configuration.
-> > 
-> >>
-> >> Because of that, it is probably better if the commit message doesnt
-> >> mention OP-TEE and instead maybe indicate that PAS wll support TEEs that
-> >> implement the same restrictions that QTEE (ie, iommu configuration).
-> > 
-> > The scope for this patch is to just adopt the generic PAS layer without
-> > affecting the client functionality.
+On Wed, Mar 18, 2026 at 10:14=E2=80=AFAM Markus Schneider-Pargmann (TI)
+<msp@baylibre.com> wrote:
+>
+> Hi,
+>
+> Split the firmware memory region in more specific parts so it is better
+> described where which information is stored. Specifically the LPM metadat=
+a
+> region is important as bootloader software like U-Boot has to know where
+> that data is to be able to read that data and resume from RAM.
+>
+> IO+DDR is a deep sleep state in which a few pins are set to be sensitive
+> for wakeup while the DDR is kept in self refresh. Everything else is
+> powered off.
+>
+> The changes in this series were suggested as part of the IO+DDR u-boot se=
+ries:
+>   https://lore.kernel.org/r/814c211f-a9eb-4311-bb84-165b1a69755f@ti.com
+>
+> There are currently no real users of the memory-region that is split in
+> this series. The size of the memory-region in total stays the same.
+> The new layout is derived from the software running on the r5f
+> processor:
+>   https://github.com/TexasInstruments/mcupsdk-core-k3/blob/k3_main/exampl=
+es/drivers/ipc/ipc_rpmsg_echo_linux/am62ax-sk/r5fss0-0_freertos/ti-arm-clan=
+g/linker.cmd#L172
+>   https://github.com/TexasInstruments/mcupsdk-core-k3/blob/k3_main/source=
+/drivers/device_manager/sciclient.h#L459
+>
+> Additionally the two important devicetree nodes for resuming from IO+DDR
+> have the bootph-pre-ram flag added as this data needs to be read before
+> the RAM is in use.
+>
+> Best
+> Markus
+>
+> Signed-off-by: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
+> ---
+> Changes in v3:
+> - Squash the enforcement of the memory-region-names requirement in the
+>   patch adding the memory-region-names, as suggested.
+> - Link to v2: https://lore.kernel.org/r/20260312-topic-am62a-ioddr-dt-v6-=
+19-v2-0-37cb7ceec658@baylibre.com
+>
+> Changes in v2:
+> - Make memory-region-names required if memory-region is present
+> - Fixup memory-region and memory-region-names conditions. Require either
+>   2 or 6 regions for memory-region and memory-region-names
+> - Reword and restructure the binding documentation for memory-region and
+>   memory-region-names
+> - Add memory-region-names to all uses of memory-region
+> - Link to v1: https://lore.kernel.org/r/20260303-topic-am62a-ioddr-dt-v6-=
+19-v1-0-12fe72bb40d2@baylibre.com
+>
+> ---
+> Markus Schneider-Pargmann (TI) (7):
+>       dt-bindings: remoteproc: k3-r5f: Split up memory regions
+>       dt-bindings: remoteproc: k3-r5f: Add memory-region-names
+>       arm64: dts: ti: k3: Use memory-region-names for r5f
+>       arm64: dts: ti: k3-am62a7-sk: Split r5f memory region
+>       arm64: dts: ti: k3-am62p5-sk: Split r5f memory region
+>       arm64: dts: ti: k3-am62a7-sk: Add r5f nodes to pre-ram bootphase
+>       arm64: dts: ti: k3-am62p5-sk: Add r5f nodes to pre-ram bootphase
 
-the patchset cover letter + the commit message + the OP-TEE pull request
-being referenced gives the ilusion to users that with the current set
-they will get something functional (they will get a broken video
-platform instead if they try to use OP-TEE).
+TI folks, Please make sure these dts patches are picked up for 7.1.
+There's now a crap load of warnings in next with the binding change:
 
-That was the point I was making: IMO the commit message walks on a thin
-line of "completeness"
+     58 (ti,am62-r5fss): r5f@78000000: 'memory-region-names' is a
+required property
+     30 (ti,am62-r5fss): r5f@79000000: 'memory-region-names' is a
+required property
+     22 (ti,j721s2-r5fss): r5f@5f00000: 'memory-region-names' is a
+required property
+     22 (ti,j721s2-r5fss): r5f@5e00000: 'memory-region-names' is a
+required property
+     22 (ti,j721s2-r5fss): r5f@5d00000: 'memory-region-names' is a
+required property
+     22 (ti,j721s2-r5fss): r5f@5c00000: 'memory-region-names' is a
+required property
+     22 (ti,j721s2-r5fss): r5f@41400000: 'memory-region-names' is a
+required property
+     22 (ti,j721s2-r5fss): r5f@41000000: 'memory-region-names' is a
+required property
+     21 (ti,am64-r5fss): r5f@78600000: 'memory-region-names' is a
+required property
+     21 (ti,am64-r5fss): r5f@78400000: 'memory-region-names' is a
+required property
+     21 (ti,am64-r5fss): r5f@78200000: 'memory-region-names' is a
+required property
+     21 (ti,am64-r5fss): r5f@78000000: 'memory-region-names' is a
+required property
+     12 (ti,j721s2-r5fss): r5f@5a00000: 'memory-region-names' is a
+required property
+     12 (ti,j721s2-r5fss): r5f@5900000: 'memory-region-names' is a
+required property
+     12 (ti,am654-r5fss): r5f@41400000: 'memory-region-names' is a
+required property
+     12 (ti,am654-r5fss): r5f@41000000: 'memory-region-names' is a
+required property
+      9 (ti,j721e-r5fss): r5f@5f00000: 'memory-region-names' is a
+required property
+      9 (ti,j721e-r5fss): r5f@5e00000: 'memory-region-names' is a
+required property
+      9 (ti,j721e-r5fss): r5f@5d00000: 'memory-region-names' is a
+required property
+      9 (ti,j721e-r5fss): r5f@5c00000: 'memory-region-names' is a
+required property
+      9 (ti,j721e-r5fss): r5f@41400000: 'memory-region-names' is a
+required property
+      9 (ti,j721e-r5fss): r5f@41000000: 'memory-region-names' is a
+required property
+      4 (ti,am62-r5fss): r5f@78400000: 'memory-region-names' is a
+required property
+      3 (ti,j7200-r5fss): r5f@5d00000: 'memory-region-names' is a
+required property
+      3 (ti,j7200-r5fss): r5f@5c00000: 'memory-region-names' is a
+required property
+      3 (ti,j7200-r5fss): r5f@41400000: 'memory-region-names' is a
+required property
+      3 (ti,j7200-r5fss): r5f@41000000: 'memory-region-names' is a
+required property
 
-QTEE and OP-TEE at this time implement different use cases (Venus with
-QTEE runs with Linux on EL1 , OP-TEE runs with Linux on EL2). So maybe
-worth mentioning this divergence.
+If they aren't applied, making  'memory-region-names' required needs
+to be dropped from the binding.
 
-> > 
-> >>
-> >> I can send an RFC for OP-TEE support based on the integration work being
-> >> carried out here [1]
-> > 
-> > @Vikash may know better details about support for IOMMU configuration
-> > for venus since it's a generic functionality missing when Linux runs in
-> > EL2 whether it's with QTEE or OP-TEE.
-> > 
-> > However, feel free to propose your work to initiate discussions again.
-> 
-> Vikas and team depends on some of the IOMMU patches to get accepted 
-> before they enable the EL2 venus support. Please reach out to him
-> and Prakash Gupta at Qualcomm.
-
-isn't Vikash in this thread, he can ping me too no :) ? but sure, we'll
-synch later 
+Rob
