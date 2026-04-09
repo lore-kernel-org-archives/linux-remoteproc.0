@@ -1,78 +1,80 @@
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013058.outbound.protection.outlook.com [40.107.159.58])
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013045.outbound.protection.outlook.com [52.101.83.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263E7324B1F;
-	Wed,  8 Apr 2026 15:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA03175A87;
+	Thu,  9 Apr 2026 00:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775663873; cv=fail; b=QTqAC/EL9YI39kv+XfqqdMqrAjQ0tFbDsPGSshGzhXtEUrLItaAfzr+ZWNItjQYSnJlnFoC+y4VWipOrnxi7LtqxjVJa/GJsxge4tI5d+yCLiztBViQHs5MKFcme80+H33qW2QRu4v7Q21X7TcHiQAW8hPuYOY644MaWZWGt5ic=
+	t=1775694522; cv=fail; b=FGgL9zkUR0yVSZL5khAyip+xWCJv3Mc3i8tPgXmcvEqMnNGwGtSKy1g+WS4Nezn/bV9B3kegZBxYrsa2tQMEtmEXcLFEHZZJwULkCzclTW3lbQb3Lhp7FWQ6aBVdhwdmUHPdxxUZfgszBPTxbW46p18eSn3Y4dcRl6eMTen82mw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775663873; c=relaxed/simple;
-	bh=Eul1qg2VbSIYR6i9sl/EZUr0F4wEYn8fjcDHYoz5zbg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Do3zXSqD2wq67azlNKKKswIxlzjA+wolo2VbWTKKMyhfZND/71UuSvOK5Nvaij5MYknDQOlxnctWZ5VQvClX21t/Ewp6UAEs+WBMqpkMKSXiJx8fPY7zlfeQtzVOGKbiTMddTjgBa34TsqxiY9/KxMVhLVmlTnXa6yX20TzLSXM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=HDXEsEOO; arc=fail smtp.client-ip=40.107.159.58
+	s=arc-20240116; t=1775694522; c=relaxed/simple;
+	bh=NNwinLeNiQrlmKXUjbKrWJ9hZ3U7GTOcoSscSGmPcao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=T+g/1JdytLY9XvETq3Wa8wuSjOM7yARtrNMIplJ1Ae1RZ/Tx0Vm9lB6RQ0vJ9OoBps0Qd619rjGFwEi4vEuV29m4CyHfigQsiiwB1MrdNBFKfQhFp9eSF+a0+JUSJoGyF1uufuH/G1HiwlXytaE5MqWywAsvBXVlFrCZgekaQRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=mgxtkZzT; arc=fail smtp.client-ip=52.101.83.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="HDXEsEOO"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="mgxtkZzT"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=i+bt82G/yOd/kHpQyO9eTkpbEOzKLgdOk9OmFvi3Bh+7zF69Q5DQnBfoAVEo6HJL13p9FJFTOUf3BDNq5uIzL8O7XliKi5QbvtBb4MfrNU+jMDhM4Z44ihDYP0+8JxPqKUGGnXArSJBbZcDBhYn67tSJ5NbSFu39ukQJYOrOyIqAnSzKfMxzpCZHQDVcnq0pJe2tpDjcGTyzJz3RBXIx34UObH4Bo/Tu+I1axPNIwP+WV1SGDBr/gc4kyiGFSoBjVxSEwqlDLe3lK8ktECDE5b2iXCZIQLWgxEUlGvCjFmBM2cy5icOaDBeU1ZJFJD3o4et2+koPQ0nDukqvJvxp7A==
+ b=q1keNcvoSJJIjJfNO+ql5WWxMb+opqw8JiFXbKbI8GizTR3PQzj42Pd+Md4IeXDQbPmC9M3DKFcJA/nMukAmfUOiDV/inT1tDJcdUgmoNAFeLY1en5GUwNge0QjGJKidEL2PcpzDSM/ftbYRNkfSMyOxNyZgssxY0qABCF43V1Fkl/5RaHQdyIL14upf/qEE/Iw1S83O42MY9wOKsMgEqv/VvdDJjF82snv/r3CTD/dPz26SBVWW0yXU8jWGnC6EixGtQSFvblHkn9ecJHWd5tWeLvRDdaT20Oho6URQqa8WBP/4YDuu8jQDwSHODpJUxUyVAOWpDJgsggq/Oy8F+Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XqYuVsb2XjLL2Ixw7DBhfeBFbxiPyVwNWuKIeGN+N+c=;
- b=UX6F3n+lL4UXE2nPNk7cpMJBLe9xDZSmWP5hWpR0ZNT9GCX6ZnNApBBwtbxvklKLjlrpW3PtllVWmjuzkjd6xjaIEAe7fkG8GWcZ6FhZn0zMwo4oAmDKaC0lOi3r364IHQDuizgRRHtzsHK9bOvjaLNQivADFP9IkWu4PJtc6JcMZAj4+avDgsfcN3zZM3PsBLvYM/axpmN5IGKCM1uTQWngBD3YO7lZrbD9FD7GDtrK5xSD5ZfcLQHnJkS95k1/8cnYOLPOdbpTcrjCRm0lUJ5ob2vc5+KAvYnJKJAU1rAFDDWwpuwQBCGBftC42E7l1ayxomzFB4pbeIKvfzyzuw==
+ bh=Q5KZdkQz73VXmwaxOANgI+OJtLYoSri/GxY+gJ9gMeQ=;
+ b=BHL+1EDZ3IVCPhsD/um9v0dnPRoqRaKWAUh2J1/nshnzLxLmYKvwqtRKlYh1uHN2gLO0zGrQ+UCThw7+aceUNzFf4iJ6+/TQOj9Y+GaKokb/ITo24ABgEbzFI1A2dQHgAbIyu7twGUz0vsvbBlHDeCJKdFuFQ36e6/oC6bF6b1t4aAW+FRwkqrc/99S0D9ewnuBhmVXSEKye6ZOHPCPi2aVs31fbjkjq/RZJlRdspX8LeXb03KO6C6FlTgOEBnanyvJgqIHeXNSlc0+cypKLnKoYF2fEK1/XLd2IJIzej4y0W8f7j65gwAR8FDhVj3agkFmV9rksDb0+pi5nsiedrQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XqYuVsb2XjLL2Ixw7DBhfeBFbxiPyVwNWuKIeGN+N+c=;
- b=HDXEsEOOz63yxfthL5p6oJdm9dP9ds6jHcAauZuFL3U8DIhz9Jd32bheqwief3x5PgPjLo6hPjrr5N/qQMS0N5adk4SmGTUA+XAc8rlqjcyD/b/2sDaiHSw5+GHQJU0WX4ugxDSwMDLEmsKVGKl2ArCBmgzhwC2NI3azZEjAmTeCoy1jQzVVYWDsUQkuz1YPhmuSQm4nundikdevOt+sVrZYQJvw10jGUUMgySWqvPVZBHsUfHsWok8lQFJANDfP7UrWc7Uyg0L6vVHVs1AHeX3VZRyNkmKAwInYaefmnmGFjVnWGI9F8AmYLqc+Xr8T54tpYy3hd8d4ujYIREpECg==
+ bh=Q5KZdkQz73VXmwaxOANgI+OJtLYoSri/GxY+gJ9gMeQ=;
+ b=mgxtkZzTKjTV8XB9SQbvb7AYkyNxGdXF4O7ZshPYEbvGn+Mg1/6M+o/QzZT70Zjly2eNSUtjj8BT3qABaddfDUDbRDBVuC4VQ00mpwYIhUJk5z19biABsPyBef4LzWLccG/3MYo6AqWX54TlYM7BHT0PJQRo5BcZ/k3MjKwSH/nrBZWvNq2cHCapugmm3ljCmGPRaYgC7QxmAOjXdKrnLZn80QPK51IMm+jmAKLs146LAza9p2R/YM9fqCP2kcdiENR9Z88Qo9LkY24hgz5e0YjJT+A6ndAB5mIbbMN6qoYNQPdbTRXQKJOz1uiDEY67EkH5oy91Jdo7LKbw+UESIQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GVXPR04MB12316.eurprd04.prod.outlook.com (2603:10a6:150:2c6::8)
- by OSKPR04MB11317.eurprd04.prod.outlook.com (2603:10a6:e10:99::19) with
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM6PR04MB11267.eurprd04.prod.outlook.com (2603:10a6:20b:6d1::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Wed, 8 Apr
- 2026 15:57:48 +0000
-Received: from GVXPR04MB12316.eurprd04.prod.outlook.com
- ([fe80::fc6e:ca22:f065:def4]) by GVXPR04MB12316.eurprd04.prod.outlook.com
- ([fe80::fc6e:ca22:f065:def4%6]) with mapi id 15.20.9769.016; Wed, 8 Apr 2026
- 15:57:48 +0000
-Message-ID: <a9910b12-bffd-42ad-8dad-137f42960432@oss.nxp.com>
-Date: Wed, 8 Apr 2026 19:00:56 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to SM CPU/LMM
- reset vector
-To: Peng Fan <peng.fan@nxp.com>, Mathieu Poirier
- <mathieu.poirier@linaro.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Frank Li <frank.li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>,
- "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Thu, 9 Apr
+ 2026 00:28:35 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::4972:7eaa:b9f6:7b5e%3]) with mapi id 15.20.9723.030; Thu, 9 Apr 2026
+ 00:28:35 +0000
+Date: Thu, 9 Apr 2026 08:30:54 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Peng Fan <peng.fan@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <frank.li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to SM
+ CPU/LMM reset vector
+Message-ID: <adbzPl7ydUvb+MIS@shlinux89>
 References: <20260327-imx943-rproc-v2-0-a547a3588730@nxp.com>
- <20260327-imx943-rproc-v2-2-a547a3588730@nxp.com> <acqjS440STRl2sK2@p14s>
- <acs2PAZq2k3zjmDW@shlinux89> <adUghiyZbe3fmcNX@p14s>
+ <20260327-imx943-rproc-v2-2-a547a3588730@nxp.com>
+ <acqjS440STRl2sK2@p14s>
+ <acs2PAZq2k3zjmDW@shlinux89>
+ <adUghiyZbe3fmcNX@p14s>
  <PAXPR04MB8459AA009C932EB9D6139A11885BA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Daniel Baluta <daniel.baluta@oss.nxp.com>
-In-Reply-To: <PAXPR04MB8459AA009C932EB9D6139A11885BA@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+ <adZ4WIaC6WN97JhR@p14s>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS4P192CA0045.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:20b:658::25) To GVXPR04MB12316.eurprd04.prod.outlook.com
- (2603:10a6:150:2c6::8)
+In-Reply-To: <adZ4WIaC6WN97JhR@p14s>
+X-ClientProxiedBy: MA5P287CA0162.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:1ba::17) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -81,129 +83,171 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GVXPR04MB12316:EE_|OSKPR04MB11317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50531c0f-bc04-49fb-7b31-08de95879483
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM6PR04MB11267:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75220f92-dd26-4201-27b5-08de95ceefaf
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|19092799006|18002099003|56012099003|22082099003;
+	BCL:0;ARA:13230040|366016|52116014|376014|19092799006|7416014|1800799024|38350700014|18002099003|56012099003|22082099003;
 X-Microsoft-Antispam-Message-Info:
-	OLcvJzNpACPhkP2AsftbBKGPvTv+1rZy/XfaNusRmnX5cnz4xuhYYzsWfv10gqSvZUixvieT3cgQ49WXd5w9RPGOCTa4c9VQDKbhIFLJ929Xv2SXU50EM6wWD5ETzrPMMR4S2h55tp2/mp8I2KzukwCfXVE2IzhEK2MPS3IW8M0oyh7Q93m3LhiehSZQkWPzOpH76f1ZPYMHDLoJSerDGDC5UOwG/kiREbD/qyHMS2OTXPEwPbEQq2PhakK/RcONEIGQ9U9ONVsTufE39DMimA5j2EO1RxrW1w6HT0RWmJt7qu37TcGGcuUNFWuDzRzg+CncKWx5NwvdAM9wQHA0OGmxBWpPU7/nRtUAO8+naQ6tbveAQOIrzt7CZaJr9k3EhM66hUFhl4N2jbMhIXWXKYUIzmqIpJ59X+pzippEiSD2PgaGSMtLi5mDRWNcAlNaBWJv6JvsIpCs04Waofsx2VBzhnZaTXQD2Yrtc60DSFYHQST18xhfy1/BKn7RXbd6QYXc8lgcENd36nHOAFU8UXIT+TyFgnp9dVdhwQOsawBrZlcfq1kH0JuPpX5J77GRjaRYZXoflofYQFKT5PFKrV4zwae+fcyoTEjRRgPF4qAjkc0COwnzTlPEalcGpUEyolErEeGNRB31up+nSEKmHPDBMYmUMxwB0a2LWJ86q4k6vWEoKcwqqvU2YfVL1fT2qKxLsGWN9RjAUQ204lpMGDqqOf6ZBa65lLzKRL77RXk=
+	6mghSCfTn7tWfr2nMHH63oG4srDfxrQp72OeR8j+6Tha1XmCFNcFCoAsja2P8JYSzKVt6X12YJN8MzsopZP9x9xYkCzcllrX1XlQRbVMmp+BKJ+68psgGztV9u00JMC3AdT3Nmn4VofsxRKQKAwcL9W8HT6ggUNCRUdbpO82tknOCrmukrsj98ZPfO2Mf2fLE7vuVRaHTjGcNNJybRj7VDMkC1fBYD4Uo6BeV64gCeNwRM1gSAaDtN0iNScoZORbpvvk0x06178AIzPfEjL05PtKeONflM1Pfys71BoduDCvS60semGHQR9vwdngapDl7ZBR5M1rsgpMSoCnR18Z4ky0O+m67TWhXfcqG3TbgYqu656phvjRoX+LJnu74vox7fs8MskTeNx0DqExJ7Gefk5fK8rQQNT2JyRfDQ/kSqS63uwYOCwimkb54AU7SXpyCxfU5wFYpaQxeaB79TJUgUcrHF2pu5qz61CjARfZ7APgJC6m7vL4RK/YDnmoGJcJf8+2atavR0+0lRiovKoAF0YyjzX+baMOHNGVVy2Icu891qP66X6Kh2sizoh/sL4jgTbY46xGBAihw4gM6U/mZmJdIw3qoht4NQ4ZdfszyrBQ6dSzf7BpxapuKTIrYqIb5Ok1ST32XpjL6JZDXauAOSaYxUXm/l2m2GhzaAVFiQ7QYs4kY0T43dYsOfI5Ueq+RktlZYH7cHj4lXQRv+55jXkNC+1g4nXNi/QPjcFvUEzH5xQSps7Dy1QT6jdbCvY5tyB35aNzkm5lo7LwkYU8OAUM4DzjejgcXa0MCtYd4UE=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12316.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(19092799006)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(19092799006)(7416014)(1800799024)(38350700014)(18002099003)(56012099003)(22082099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NkR2NUI5RkJVZ1IyallzV0R1OFhqMEI2dTIzemRDWkUwaGFRbWl6M2h6dXY1?=
- =?utf-8?B?YWJBU2ZraVI0aWZBQXVBWWppcEZMS1BrSmYvZFFRR1dqVmgxbmVGVmNieElQ?=
- =?utf-8?B?RnUvQ0grWXcwbTk3TzhaQTdtVWFYc3ltdDUwUEFtTDVlcWhWcUJoREZGb0ZW?=
- =?utf-8?B?MDIvZmprb3I3MnJZczNZT3djaXA0aVVNMmtrZDNxVFRObGZMZlI1NlY3Zm44?=
- =?utf-8?B?MlpRb2VFd2NERDhRT2R0LzJWcHRsRjR1ZG84VTZQYWpBand0dUZIb3pkd25i?=
- =?utf-8?B?VnNhTkxpOWJXMVI3QWc4ckpQOE9VWGcxd0NZSXNZVFFXS1g5TlkxOVBMWXJv?=
- =?utf-8?B?VlVGSUZsZEN4Y2RRbUM2SE1kY25TOUwzUEFacko0THNUeFNJTGhTcjRma2NI?=
- =?utf-8?B?SjBNV0xyelNvelVzM1JRb0Z1anVZQWk4K09sZXUwSWZjTVBhemk5RGJINXk5?=
- =?utf-8?B?YXNrVDYrWktWNmRkUXgwcFhSdTd3WmtoQnBrWGRoOXEyL3pNeFZQT0VJc3JT?=
- =?utf-8?B?Zm5SSlpOUGp6aVlLZ1lqU3ZrZWlXQ3ZaSU9SVDVmaUgrQ1VkSWFoYW9GTWk5?=
- =?utf-8?B?cGV0OUdVYllaMWZhRGxIbkwxU21sNjRsVmtnTmtMenFuZy9sOGI3MlpkVWNR?=
- =?utf-8?B?Q0NsdUFoajBMMWhjQ3BSM2l4V0EwVG1CTVFaSUlIUEsvNmRaRTB3c0VOMGFT?=
- =?utf-8?B?U25uUjg5bzJYelNUNzlyY2dvQ285bHZyT2FKb0d0Rk5wQlVSbDVsVTk2Mi9t?=
- =?utf-8?B?clV3SGhtN3VUb3duZHZFOFFpeXpVQUZ1RVNDYU9TNFFicW4zMVd4R1dOdmZQ?=
- =?utf-8?B?ZnptQjdxTzk5dXo5dzM0ODZJRytxNkdwLzlkNU9naDJ6WlVNZDlFcHJ1NGUx?=
- =?utf-8?B?Wi9WTTdxbHJscHhaZzIrRCs4NldtUzIzd2pWRlVXZE5mWUZ4YVlIZTZtaSt3?=
- =?utf-8?B?My9BT05nUW1zMnBxTGJyaVZFeTh3Y3lZYkVjR2Y2cW1TVzJMTU5aRERkSjI2?=
- =?utf-8?B?Y1plUUxab3l1N2g2Q2JqSm1MYmgrb1poSWtEa2tPQkRRTXltdkVZSndaeFJx?=
- =?utf-8?B?YXVlVm0xTSt3SjNSRkRUL214V2c4WVpGWG1iZVF0WDJ0QkZzU0JpMmx3OVJ2?=
- =?utf-8?B?VHI5VVI2VEx6Y29zeDFHbnFScFMwL214dWMrY25MWkRpVjdmSW03amlKUGpM?=
- =?utf-8?B?NEhFYTlobm9MdSs2N1g5M0dxOHVUK1BOb0huc0R4Mk9jNnk3UllpUjh5ZG1W?=
- =?utf-8?B?ZG9TK1VJS2lXUnJzbnNmZ0RzTEowVHI3bGpWRXluZWRaMTNuOHI4am0rbFVi?=
- =?utf-8?B?eG9zWXlXMm5WcHNvZ3gvakhNTDc1Mit2MnNLdzRlL3NLekVtSGp2YlNkZzli?=
- =?utf-8?B?L3o5eVY0TnkwRGZtVDBXOGpqckM3eEFMd3FGallBVzh3dk96K0lGMzJ5ZHZM?=
- =?utf-8?B?NXRsc2xmQWdqSDAyTHRQZm55REpxclBxMGYxL1ovQVc3WVR4cEExb0Y4WXRY?=
- =?utf-8?B?ekhnYUVpcnlEVUpnSWkrN05sVitPWmpzWTkyQ1ZKdXJrQlZMU3NNRDNCZi8r?=
- =?utf-8?B?V1ExUHgrZkEva0JzS21KaStEa0tkWDd1OXpqZVk5TzJNellkMjVZSkJBL0w2?=
- =?utf-8?B?WWYzenBabjdqWGRpbmRMMjY0Z0R5QWtkbW1tVjZ0ZjJVUEl6eWlVa1ZZaXFI?=
- =?utf-8?B?M05oRlJhRFhLaURqRTJJbG5ZUTRJOUcyNlpQQ1NzOWhEZk9tRGNqWWVGVUIr?=
- =?utf-8?B?eXlSSmZJRk9xVlRHLzlsSzVnUUNDcURvSVFXQ25HYnlRNmk4WmY1YVZDanVS?=
- =?utf-8?B?eFhNNld5cDZBc1QyN0NGWnk1aUpPY2RkeVJqK0RQTjJJVUFaNTlsblJaT1lh?=
- =?utf-8?B?d2dTQ1VQWXNQNDQ1Z1A1QmpFTkcrdElLZlk5Uk5QY1FqU2ZmelJRb241TzN1?=
- =?utf-8?B?SS9LNThRcFhTU05hbkNoeDZKUUlvUFI5SHJRWlRCME5LUUsvcGlDODdoRGxV?=
- =?utf-8?B?WkRmNnhTcWkzRWdiaG5YelErcmNwVzQ4ckR2N1BRbjc3T3Y2ZHVBUklmRWtu?=
- =?utf-8?B?c2FKV0drUzBaZVhKNzAwcUFkc1o4K3lReFhkVmVpckVBK0xBTFlLUi92TFll?=
- =?utf-8?B?TEFBT1E2MmUyUHZGL2tCbmdMb2prcmhCNlJBaWZTTFkrVDlncURQZkh5SDM4?=
- =?utf-8?B?a3dCNUw1T2lFL0JnYkd2Nk1pZ05YRDB3eXArSElMRVM4Q0V5SEJZa1B2TUNH?=
- =?utf-8?B?U09heHlwVlZSZTErR1F5L01IWGdsaDcwRXpWaFpURjdwSjRkOXRDVy9Nckt6?=
- =?utf-8?B?T1dLaG9sTGNzU0U3MTV4QWZ1TkV6TitULy9RL2daWThiSEd3ejdUZz09?=
+	=?utf-8?B?dlBhMmZGbkUrSXlkZVlXWDBNN2V4LzlKOVVYWlhYckZEbk9xT3NNNVcvRzcv?=
+ =?utf-8?B?dFJtWXM5MFB5dmkzRk9nNVltMXhVb3NYU2N3MW9mOHB6RFd4Q0hjL25XRjht?=
+ =?utf-8?B?RGJpZ1oxbis3c3JUc1p2bm1zR1UxRDZDVVZiL0IwQmd6MXRYWjFqODBWdW05?=
+ =?utf-8?B?dTBOamtnbEFwRVFvZ01GRjNINzE1Q1MxbFdtekhWMzZCM3ZxU0ZtVDlRVDJG?=
+ =?utf-8?B?N3IwdERkbXpqZkF5Q1lyaGpNY3VCUnNFZi9SWjIvc0tpQ0JRTkJ3NXUyUjNr?=
+ =?utf-8?B?YTJlS0k1NU5qajJYNW5BWFViWFFwSmNPNmtFeDYwTjNMcEg4ODY1UXptd2Fs?=
+ =?utf-8?B?WUJSL2hXU0czU3luQWEvQWV2WmE3N01vRis5YnNkbWM4VWpqRUc0cUZrdHdI?=
+ =?utf-8?B?ck4xaTRzc2JrYVc0b29uQ2tBSDJ3VjlUUHY0WDF3eG0zbEsreFIzcHRTWXhn?=
+ =?utf-8?B?QWZUUTFVY0hHM1dYRHNxYUFSQVVra0g4MEdNZFR1N0JJNENucHFBM2IxTkVu?=
+ =?utf-8?B?UHh0ak92VW50cVVTUVc3aHhrck9naDVHK2FhRk1uTFFmOStrZk9kOTE2NWZX?=
+ =?utf-8?B?SlhoaEVHMHNscE5jbWxtUDF6a1NHZFJkMDR6MGRNZUtkOTNsQTg5cXk3Tmdj?=
+ =?utf-8?B?Sk1tSEdPRzlDZWFvYUg0NG1NaXJHZENvSG5WUFZ2VVQ2U2ZxWGI2bFB6bDNO?=
+ =?utf-8?B?VmZqWm5BWnpFeUpFYU1QMzEwbU9CZll3SFhOeXM1Unh3UDdHTDliZjh1bzVJ?=
+ =?utf-8?B?bWJYZTFjWXJsLy9DUTcvTTZOU2RTSmpkd3FzMklXRGc2VXJyL2NJaDdwNXRT?=
+ =?utf-8?B?NVVUMUM4Q0dLZkZEU0pDUWt6VUhqM0RrNGV5SzZ4WmJobVBkeVozUm5PT0RE?=
+ =?utf-8?B?L1NDODNzT2RsdW01NnJWcE53dmNUbmUxaVNTWkx3SXVFeHRKSklmZlhlQVB0?=
+ =?utf-8?B?Zko3ak9oSzBkVkR2T2NqNmdFeFlYcDZUWFAvR0xDdHVJRkl0VUMzcm9kbEJ0?=
+ =?utf-8?B?TUxaNW52Y2dYVzJxdHdENU5xSEtMSEoydWsvMXU1bXY5b2Ntd1NmTDd2MXFp?=
+ =?utf-8?B?V1NqN2FPZW9hdWpIM3dVcHdkaFNkR2ZPWHFQY1htS0ZLczJrcWFxTGVRTEhR?=
+ =?utf-8?B?MFQvWmlTUWFhWTZnUFVieWtzNlBIK0xyMTY4Qzhsa2p2bmdMek85aW5rNC9a?=
+ =?utf-8?B?Wm5Sb3NQNnFydEtTcFhueFNMR1hYNFByTDlzdllISGN2MlR5SDUySEF2TkhF?=
+ =?utf-8?B?eWdNZlk3RHFUT0REWTZlMXFMaU51USsyRUdkMXg5eldaQ2l5WVNNQkZQZzlG?=
+ =?utf-8?B?SFZIWnIyUmVMSDlKWUFHS1hmeGJoNCtDU25lS0g5NHVicVJ0QkR6Q0dLMm15?=
+ =?utf-8?B?MHZjSE5YdFdpYzA4ek9jbzNZSmdIN1pYRzRQWlJSZHJ1QUhSUFBtWmlnSUNw?=
+ =?utf-8?B?ZEEwNnA2Tnl1cDRUNEU0MndlbkJ5TlpkdmtYVEU1d09uTEZBbHVSUTZVZElk?=
+ =?utf-8?B?bDFIZFFldmRZS01rclExZ2tKYWh0elFOc3VacnMzcGZQd2Y5a1VJRFFYQWIv?=
+ =?utf-8?B?cUY2YmlUbXRuZWgrZ1lTNXhxRXNtMm01ZTBlNXhmVGhnWC80S29nVFdPMWpa?=
+ =?utf-8?B?TWM3V3lFQUNIV0RmTTM4VUliZ1hEajhBeFBoU2tDLzdxejNxempDWmVoTE15?=
+ =?utf-8?B?Q2gxcS9qRzdPbTVWVU1lMXhkb2RYcU8wajMvSGR2bDFmeVF6N2NxRUpCcFRt?=
+ =?utf-8?B?d3VHdXlvS2hPa0lsZFh1U0twWHFvNlpUcnpiVW1YM3ZCZzdmblRJYXhJby9h?=
+ =?utf-8?B?N1VkUUZvN09BODkweXZ5K3NsYXIyOGJHRUsxMTdlbWloOWl4YmoxYXVVYjdI?=
+ =?utf-8?B?STNzOUt2WHp1ZStYelJiQlhpMElmM0UzSmJWemVLOU1Sc2hDU0RhQ2c2SlVH?=
+ =?utf-8?B?VWNYamFucjJMaGRUeXZzQzN4cDJma21adjU1dTk3N2tJRWZZRHU0Y1BnZmpH?=
+ =?utf-8?B?TjhQdlRKYmsyWGl5NjJBMFppTWx6aG9KYzhjZG5ZaWxFQ21ubS92TFJVek5L?=
+ =?utf-8?B?Z0JuR1krK1VObGx1aGJPSDg1RWxXMjdscG04ZHIvb1kvZGlIYjlpSTNSc0VI?=
+ =?utf-8?B?SE04cFZNbUFrNnpLTlZWUXZVcUtmZDdPcDA0OXBIWjJRUWVWMHQxSzhZbEll?=
+ =?utf-8?B?ZFRzV0pQK2gzVi9nU0NFREtNTHlMU3RMRVQzTmVacExsaVcwSk5WN0NPTnUx?=
+ =?utf-8?B?amorTUNWUEdlWHV4Q2VCNFVGRmRRUDF4aXFLYnNYZ2JlUVVoVk03U1BmcU94?=
+ =?utf-8?B?RXMvYWJ1MHE2MXM3Sy9WTDF2R0xwWmtYVEUxSlNHNEwxS2dTdHdVQT09?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50531c0f-bc04-49fb-7b31-08de95879483
-X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12316.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75220f92-dd26-4201-27b5-08de95ceefaf
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 15:57:47.9902
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 00:28:35.4814
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hoJP/Lm5MjpleoG2nR5vOylzF+gIIirtSrT9VPXXMesIowCQR03oGNoaXD6kcBAVwfY9svm22z3PFs+9op+kKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSKPR04MB11317
+X-MS-Exchange-CrossTenant-UserPrincipalName: BifCW/+z/1jLkrY1vLR/L7VfjEFOIHq/kROO6/MUzy6HYJLbbrJkjayyiyo2qt6/C86NDKML7XL+owiDvKTMRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB11267
 
-On 4/8/26 04:30, Peng Fan wrote:
->> Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to
->> SM CPU/LMM reset vector
->>
-> [...]
->>> Aligning the ELF entry point with the hardware reset base on
->> Cortex‑M
->>> systems is possible, but it comes with several risks.
->> I'm not asking to align the ELF entry point with the hardware reset base.
->> All I want is to have the correct start address embedded in the ELF file
->> to avoid having to use a mask.
-> I see, per my understanding:
-> FreeRTOS typically exposes __isr_vector, which corresponds to the hardware
-> reset / vector table base.
-> Zephyr (Cortex‑M) exposes _vector_table, which serves the same purpose.
-> I am not certain about other RTOSes, but the pattern seems consistent:
-> the vector table base is already available as a named ELF symbol.
+On Wed, Apr 08, 2026 at 09:46:32AM -0600, Mathieu Poirier wrote:
+>On Wed, Apr 08, 2026 at 01:30:16AM +0000, Peng Fan wrote:
+>> > Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to
+>> > SM CPU/LMM reset vector
+>> > 
+>> [...]
+>> > 
+>> > >
+>> > > Aligning the ELF entry point with the hardware reset base on
+>> > Cortex‑M
+>> > > systems is possible, but it comes with several risks.
+>> > 
+>> > I'm not asking to align the ELF entry point with the hardware reset base.
+>> > All I want is to have the correct start address embedded in the ELF file
+>> > to avoid having to use a mask.
+>> 
+>> I see, per my understanding:
+>> FreeRTOS typically exposes __isr_vector, which corresponds to the hardware
+>> reset / vector table base.
+>> Zephyr (Cortex‑M) exposes _vector_table, which serves the same purpose.
+>> I am not certain about other RTOSes, but the pattern seems consistent:
+>> the vector table base is already available as a named ELF symbol.
+>> 
+>> Given that, if the preferred approach is to parse the ELF and explicitly
+>> retrieve the hardware reset base, I can update the implementation accordingly.
+>> If you prefer to parse the elf file to get the hardware reset base,
+>> I could update to use them.
+>> 
+>> Options1: Something as below:
+>> 1. Include rproc_elf_find_symbol in remoteproc_elf_loader.c
+>> 2. Use below in imx_rproc.c
+>> ret = rproc_elf_find_symbol(rproc, fw, "__isr_vector", &vector_base);
+>> if (ret)
+>>     ret = rproc_elf_find_symbol(rproc, fw, "__vector_table", &vector_base);
+>> 
+>> if (!ret)
+>>     rproc->bootaddr = vector_base
+>> else
+>>    dev_info(dev, "no __isr_vector or __vector_table\n")
 >
-> Given that, if the preferred approach is to parse the ELF and explicitly
-> retrieve the hardware reset base, I can update the implementation accordingly.
-> If you prefer to parse the elf file to get the hardware reset base,
-> I could update to use them.
->
-> Options1: Something as below:
-> 1. Include rproc_elf_find_symbol in remoteproc_elf_loader.c
-> 2. Use below in imx_rproc.c
-> ret = rproc_elf_find_symbol(rproc, fw, "__isr_vector", &vector_base);
-> if (ret)
->     ret = rproc_elf_find_symbol(rproc, fw, "__vector_table", &vector_base);
->
-> if (!ret)
->     rproc->bootaddr = vector_base
-> else
->    dev_info(dev, "no __isr_vector or __vector_table\n")
->
-> This makes the hardware reset base explicit, avoids masking e_entry.
->
-> Option 2: User‑provided reset symbol via sysfs 
-> As an alternative, we could expose a sysfs attribute,
-> e.g. reset_symbol, allowing users to specify the symbol name
-> to be used as the reset base:
->
-> echo __isr_vector > /sys/class/remoteproc/remoteprocX/reset_symbol
->
-> The remoteproc core would then resolve that symbol from
-> the ELF and set rproc->bootaddr accordingly.
-> This provides maximum flexibility but does introduce a new user‑visible ABI,
-> so I see it more as an opt‑in or fallback mechanism.
->
-> Please let me know which approach you prefer, and I will update
-> this series accordingly in v3..
+>No
 
-I would go with option 1) as this and having something like this:
+If your concern is about rproc->bootaddr, I could introduce
+imx_rproc->vector_base for i.MX.  Please help detail a bit.
 
-#define IMX_RPROC_DEFAULT_RST_VECTOR_NAME "..."
+>
+>> 
+>> This makes the hardware reset base explicit, avoids masking e_entry.
+>> 
+>> Option 2: User‑provided reset symbol via sysfs 
+>> As an alternative, we could expose a sysfs attribute,
+>> e.g. reset_symbol, allowing users to specify the symbol name
+>> to be used as the reset base:
+>> 
+>> echo __isr_vector > /sys/class/remoteproc/remoteprocX/reset_symbol
+>> 
+>
+>Definitely not.
+>
+>The definition of e_entry in the specification is clear, i.e "the address of the
+>entry point from where the process starts executing".  If masking is required
+>because the tool that puts the image together gets the wrong address, then it
+>should be fixed.
 
-later we can expand that with a configurable name via sysfs.
+The hardware reset base is the address from which the hardware fetches the
+initial stack pointer and program counter values and loads them into the SP
+and PC registers.  In contrast, bootaddr (i.e. e_entry) represents the address
+at which the CPU starts executing code (the PC value after reset). As you
+pointed out earlier, this distinction is clear.
 
-This was along my initial proposal where you would determine
+In our case, we need to obtain the hardware reset base and pass that value to
+the system firmware. However, e_entry should not be set to the hardware reset
+base. Doing so would introduce the issues I described in [1]. This means we
+should not modify the Zephyr or FreeRTOS build outputs to make e_entry equal
+to the hardware reset base.
 
-the reset vector address from the elf file.
+Given these constraints, the feasible solutions I can see are either:
+- option 1 (explicitly retrieving the hardware reset base), or
+- continuing to use masking.
 
+Please suggest.
+
+[1] https://lore.kernel.org/all/acs2PAZq2k3zjmDW@shlinux89/
+
+Thanks,
+Peng
+
+>
+>> The remoteproc core would then resolve that symbol from
+>> the ELF and set rproc->bootaddr accordingly.
+>> This provides maximum flexibility but does introduce a new user‑visible ABI,
+>> so I see it more as an opt‑in or fallback mechanism.
+>> 
+>> Please let me know which approach you prefer, and I will update
+>> this series accordingly in v3..
+>> 
+>> Thanks,
+>> Peng.
+>> 
+>> 
+>> > 
+>> > > 1, Semantic mismatch (ELF vs. hardware behavior) 2, Debuggers may
+>> > > attempt to set breakpoints or start execution at the entry symbol
+>> > >
