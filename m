@@ -1,332 +1,345 @@
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011052.outbound.protection.outlook.com [52.101.62.52])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924A933ADBA;
-	Fri, 10 Apr 2026 19:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775850350; cv=fail; b=OiR8IoaocV4MU1mouFxh07DJBuhBaTtU7SOrcO4GsAY99perNsvVEmBTF9wCTIdQqferw6UL1rFeROuSEVul0dED8okHUZ4co0il++VYcWhrQboZqSpvbJH+AJTpQMYPTtkdJjEoHayWbEbqBbUlYcN0dtCkstgaGvVEJyR0guc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775850350; c=relaxed/simple;
-	bh=2rjDTLawVSdsAOK7Mb9StDwjOOQz1zeuhW89GiBKwlc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=i1CiBHdxaVtFSlgCexVMMV7RBp8+I2sECdJ3eI0YF8IddOI+gy9gw8xc3RcIQNuBSg8Am22RN+/gNo9vVVhG7+eI2J0V5MFiBeDM9reZgpm0ZZ3gPeaz0+eS2LUR7fAbhGR8m42tWA360oy7nHadwcTzDNIASOOaOPDNydTQdAQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=eKhJJqdi; arc=fail smtp.client-ip=52.101.62.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB382264D3;
+	Sat, 11 Apr 2026 02:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1775876388; cv=none; b=Cl23kuE6vYLoEUIa2mRTx4xHNKiRxLh4RFUylRbID60uSDkr2oEvKS8AA5B4Iyc6ALU8Selsf/mTYpn5P3/t7giZ+eFPMT/WTgwXiOiqo//b0OlvNn+bZN8dKTrzQEWi9+iYj5OqFtY/byotNshPKH+8MZ+BucusFWhrJVLa5Bw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1775876388; c=relaxed/simple;
+	bh=mKa/7xqUoXqFSBxtgyn3RcyK5fmKhKgp08NgzWv5ehw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3JiBkkUND56/qEbJsmYTasgmpMRiJJosN0f122eAIial0uw2aAYOl8ak/uNh+4MuO7i+HpeQ61OGvBRfL78Z+mbqG1TSEAN85uaQD0Q7iPJiUMN6PHDe7wNyeP0ZqFi7WviendYM1qB3Gct5fzabcZBl9HP2GW6f2X35c6IgJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZkfz4dz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="eKhJJqdi"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U2kN3OE8n0Y4JvzRnsRGowxy6+Mp50WsKRcnWEG6VVjOwSFLV762R8ryDuCa3KQCqSMdJGGItCanbNKTMX/jLxbwz7Qtmj5X96L0mdTvPdjhwIVH7ro/OWdy0c0MCE5tPqSrans15fKDabXJafGgECNv8lXF23jZ++L7ieEAkwqvekOQXLIG1g5GwTvploE7jV5Fjb+byn2YukKvMSexVX9/+AM7IZk6Ic+JVuHyxeebvc/EWPLTrxy5QFHWMG4qTBwQ8q7jWt53gT1V3VN5eP0PGpyusiogPaJ4zL4fv/vzkg2qopC2D61XrhpCilCwRPJKes8IlTlgpplxaRyzGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fCQsEciYuFF5YReBT3FV7jTLZVTz94ebiZUqGtRwOG8=;
- b=Qvn51dK50aQSxp0fepKEPzLAw1TOGrdKLBpUGXmYjCBIDH32ODdGyEJETslMgfrk59J3FJeR1qLZqaC8uVgDbPuvoE6cimQlofv1/pdVy0U6/aPRflWx5Tsgap9MtS7i/SmI9BL0zpKD9kjwNfaMLeLDgPMe5BefP/WNXNNE5AJohoT2eErvbkLc/8livduL3GG1e+q/+09wh5EJqanSc/fyAjF6GSzUEANfWY5eGZyzOXD6BfNN4sfzTdjMHuj2JI+Ev3Kft4v4eXRoAJd89IKSAnvgkeA28hf0R/mh4SBEpeypqxLzNmswOsvRZZ0sU8PVKZfil0ywjzs2TErC8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fCQsEciYuFF5YReBT3FV7jTLZVTz94ebiZUqGtRwOG8=;
- b=eKhJJqdir9EKNPvjDKgb5LDR5SvGv7/Jj/BVvE+AiRFoCmLkBGUbaTNUdtPi21ux8qwVlpGskCeVY06SROjV1z/R+JQoyOZ/jjdWPltYy3QqaVnIEbe//6fJV7lp5HqJJT9J5PVLdLWn7r+1KxI48IDEesxAPNIFd2YjbjuLwBM=
-Received: from SA9PR13CA0048.namprd13.prod.outlook.com (2603:10b6:806:22::23)
- by CH1PPF2EB7CF87B.namprd12.prod.outlook.com (2603:10b6:61f:fc00::60b) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.10; Fri, 10 Apr
- 2026 19:45:43 +0000
-Received: from SN1PEPF0002529E.namprd05.prod.outlook.com
- (2603:10b6:806:22:cafe::7e) by SA9PR13CA0048.outlook.office365.com
- (2603:10b6:806:22::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.41 via Frontend Transport; Fri,
- 10 Apr 2026 19:45:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF0002529E.mail.protection.outlook.com (10.167.242.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17 via Frontend Transport; Fri, 10 Apr 2026 19:45:43 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 10 Apr
- 2026 14:45:43 -0500
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 10 Apr
- 2026 14:45:42 -0500
-Received: from [10.31.206.142] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Fri, 10 Apr 2026 14:45:42 -0500
-Message-ID: <b1017808-2124-4bff-9f18-7900c01c11b6@amd.com>
-Date: Fri, 10 Apr 2026 14:45:37 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZkfz4dz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6745EC19421;
+	Sat, 11 Apr 2026 02:59:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775876387;
+	bh=mKa/7xqUoXqFSBxtgyn3RcyK5fmKhKgp08NgzWv5ehw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TZkfz4dzsnKb4ymdtYLRzSivElOzUshNEXwqX0/TKZbctjUUrHCYh2xVeVGqIN1B2
+	 fyjLxdu3CBF+QxKdaWrLc3+xq53jGZxa4uzBV8JWBjpFLN8ahuxKUwI64iOcJ1ZkV9
+	 KTg0+9lQ3emLtWYacZRcbcPlcLLCYTf84G1ztaPp4+OInX5iecS9hMsgqtNfBrfZWe
+	 +kCnzPtcec5swiSLZ7+tyPGv0PyKWG/Gq0PNkJ5qCKb2Jr5yf+9nixCDAKOLldmam4
+	 tJpbZ8uLS4OnWAQp45R6A/BR6GsC5xIQgJbFQ+F5n/fYSsgEYBSV8LALWyyRO8ML5B
+	 7+8VNdRfHtl5Q==
+Date: Fri, 10 Apr 2026 21:59:44 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Luca Weiss <luca.weiss@fairphone.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
+	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+Subject: Re: [PATCH v5 4/5] remoteproc: qcom: pas: Add late attach support
+ for subsystems
+Message-ID: <adm37MruBfXAjLpZ@baldur>
+References: <20260409-knp-soccp-v5-0-805a492124da@oss.qualcomm.com>
+ <20260409-knp-soccp-v5-4-805a492124da@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH] remoteproc: xlnx: reset virtio status during attach
-From: "Shah, Tanmay" <tanmays@amd.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, <tanmay.shah@amd.com>
-CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20260317201251.3920841-1-tanmay.shah@amd.com>
- <acbhbnBgJCP7WETC@p14s> <3f557b06-ea34-4f96-b1ec-75bab7c0d828@amd.com>
- <acwKHzN84v_CipBh@p14s> <06f3c1bc-078c-4d67-8a22-933069ecb2ec@amd.com>
-Content-Language: en-US
-In-Reply-To: <06f3c1bc-078c-4d67-8a22-933069ecb2ec@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB03.amd.com: tanmays@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529E:EE_|CH1PPF2EB7CF87B:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd6a50bf-6703-45c1-77fd-08de9739c0ac
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|1800799024|82310400026|18002099003|22082099003|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	M0BS8oo6ESVtz0xbt0l09Bu4lOGNLfbiRXG9KtjTdPpdmsGg3YfJ51ogPk0FN8dln/TQjIVaysnh8j3RHEhmiPrZ274IDfFmR1xR7Fuf2nB62UKbNKK2wi4cpBN1WcPHNJWeq31a7skf7tDLB/kSTcXyhrl3Z/D6HEtd9cbh2w67YrKGb5Euz4DeJCCIV1c4VLwIhbQCjzEV3S5gHW4yNdm9VPwddv1bLRd31If01Ne1osFsIJ0EWdv6LPKSSGKCR/g3Wm9uRMKXnyj/0EDYXZ0760U2UW2EsB+CRJAHQEPAP1h7WYCEALtANr3gO23K7scRiSe2q4AhahpAAg8zsTgCPZ/j1kChVvVdpdsPSflfOJBhEG2J54NRrl+KRhn4oVPyzXmvDZmyYc/Lrd8o1KNrug/gx4L7m5uWUsJxU1GtvpApvtcSNKTxshGnz7wBW70uZMDSjWHtvwxePLUJHE4ODnlbs0E4CgevqdJAC64xK0rnMh8Ker5vLNKJF+R7MIJnozUZofd/OiFChtvyZCZK8WNf+jAAIPR8jw41OgrQmIa/xF5K7RqEQ2Rr9E6gJ/3PCgy8ILdXRzw9a9x2REs5hS7lWIV0yfFj4oEyOLZNdF/EYh0HOkrBY/0KwumMPKnKAE4fALzKWuiFQwnVCTnqDGcHlgp2/UVm05OKpmtyl3zOBd171tzDLcsjbjCBlZ8EWt84Zrl3d0HeUsSoPyELY7DAwfTvIPNpcm1N/fenUhRbPoH9TCQZH9vRey75gi1hGP1wCWMdqGK56RxDhw==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(1800799024)(82310400026)(18002099003)(22082099003)(56012099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	c0YMHo+qZ0xyn8C6qR9tiRpQ1Qw+yNFX8SmJLxB9Pojf3tkNY77i+qWtCBicQoaeszbna26lgEir7FCprAO764tmaJNCxDFKEQgXnjBgwm1Ao33Co3Ts7tgXpihDjQ/miUX5jVLjPiMrGT7EHIF+soGfCIFNRuEWTBwG6LvvT4uxqwkQ8PRtRqFlOqPVSNnDf6JymowXLwHNi/eu/VRb59lGhNStXDzkownMmRlDbgNz9Ky2258VbKgjWAaHt72FU3Negv2owe5qmhbzVLMyV5emFqz997qhFEvw96arPSCe85ObOn9sLsETZXd7o50GMtEmsSVIp71CsPNAjID9yXToFhrKGk2RyrG/vG0k3i+aCDCthMY07jylayPgnKuvebEX+wXFlnGQuIsOY2ZkY60APIA80pzz0CVBqDtykasb6zZTAJ7yiV5GGpPPZnQ1
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2026 19:45:43.3695
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd6a50bf-6703-45c1-77fd-08de9739c0ac
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529E.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPF2EB7CF87B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260409-knp-soccp-v5-4-805a492124da@oss.qualcomm.com>
 
-
-
-On 4/1/2026 10:23 AM, Shah, Tanmay wrote:
-> 
-> 
-> On 3/31/2026 12:53 PM, Mathieu Poirier wrote:
->> On Mon, Mar 30, 2026 at 01:43:03PM -0500, Shah, Tanmay wrote:
->>> Hello,
->>>
->>> Thanks for the reviews. Please find my comments below:
->>>
->>> On 3/27/2026 2:58 PM, Mathieu Poirier wrote:
->>>> On Tue, Mar 17, 2026 at 01:12:51PM -0700, Tanmay Shah wrote:
->>>>> On AMD-Xilinx platforms cortex-A and cortex-R can be configured as
->>>>> separate subsystems. In this case, both cores can boot independent of
->>>>> each other. If Linux went through uncontrolled reboot during active
->>>>> rpmsg communication, then during next boot it can find rpmsg virtio
->>>>> status not in the reset state. In such case it is important to reset the
->>>>> virtio status during attach callback and wait for sometime for the
->>>>> remote to handle virtio driver reset.
->>>>
->>>> I understand the user case, but won't that situation happen regardless of
->>>> whether cores operate sync or split mode?
->>>>
->>>
->>> I want to make it clear that this is not same as Cortex-R cluster
->>> configured as lockstep vs split mode.
->>>
->>> This is different configuration between Cortex-A cores and Cortex-R
->>> cores. It is a firmware driver configuration of how it treats cortex-A
->>> and Cortex-R subsystems.
->>>
->>> In the firmware driver, we can configure Cortex-A cluster as owner of
->>> Cortex-R cluster, and in that case, if Cortex-A reboots, the firmware
->>> will also reboot cortex-R cores. This policy makes Cortex-A as owner of
->>> Cortex-R cores. In this configuraton this patch is not needed, because
->>> if Cortex-A reboots then platform management firmware will also reboot
->>> Cortex-R cores as well and vdev status flag will be always 0.
->>>
->>> In another configuration in the firmware driver, Cortex-R cores can be
->>> independent of Cortex-A cores. This means, Cortex-A is not the owner of
->>> the Cortex-R cores. Both are independent subsystem. Only in this
->>> configuration, this patch applies because it is possible that Cortex-A
->>> reboots while Cortex-R doesn't and Cortex-R still runs as it is.
->>>
->>> So only in the second type of configuration, this patch is needed when
->>> COrtex-A running linux reboots and when driver probes and tries to
->>> attach it can find that vdev flag is not reset. In the first
->>> configuartion if linux reboots, then It's guranteed that vdev status
->>> flag will always be in the reset state.
->>>
->>> If you prefer I can extend the commit message with all above details or
->>> put as comment in the attach() callback. Let me know which do you prefer.
->>
->> Ok, that clarifies a lot of things.  Please add the above as a comment in
->> attach().
->>
->>>
->>>>>
->>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>>>> ---
->>>>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 46 +++++++++++++++++++++++++
->>>>>  1 file changed, 46 insertions(+)
->>>>>
->>>>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>>> index 50a9974f3202..f08806f13800 100644
->>>>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
->>>>> @@ -5,6 +5,7 @@
->>>>>   */
->>>>>  
->>>>>  #include <dt-bindings/power/xlnx-zynqmp-power.h>
->>>>> +#include <linux/delay.h>
->>>>>  #include <linux/dma-mapping.h>
->>>>>  #include <linux/firmware/xlnx-zynqmp.h>
->>>>>  #include <linux/kernel.h>
->>>>> @@ -29,6 +30,8 @@
->>>>>  #define RSC_TBL_XLNX_MAGIC	((uint32_t)'x' << 24 | (uint32_t)'a' << 16 | \
->>>>>  				 (uint32_t)'m' << 8 | (uint32_t)'p')
->>>>>  
->>>>> +#define RPROC_ATTACH_TIMEOUT_US (100 * 1000)
->>>>> +
->>>>
->>>> There are some time constant already defined, please use them.
->>>
->>> Ack.
->>>
->>>>
->>>>>  /*
->>>>>   * settings for RPU cluster mode which
->>>>>   * reflects possible values of xlnx,cluster-mode dt-property
->>>>> @@ -865,6 +868,49 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->>>>>  
->>>>>  static int zynqmp_r5_attach(struct rproc *rproc)
->>>>>  {
->>>>> +	struct device *dev = &rproc->dev;
->>>>> +	bool wait_for_remote = false;
->>>>> +	struct fw_rsc_vdev *rsc;
->>>>> +	struct fw_rsc_hdr *hdr;
->>>>> +	int i, offset, avail;
->>>>> +
->>>>> +	if (!rproc->table_ptr)
->>>>> +		goto attach_success;
->>>>> +
->>>>> +	for (i = 0; i < rproc->table_ptr->num; i++) {
->>>>> +		offset = rproc->table_ptr->offset[i];
->>>>> +		hdr = (void *)rproc->table_ptr + offset;
->>>>> +		avail = rproc->table_sz - offset - sizeof(*hdr);
->>>>> +		rsc = (void *)hdr + sizeof(*hdr);
->>>>> +
->>>>> +		/* make sure table isn't truncated */
->>>>> +		if (avail < 0) {
->>>>> +			dev_err(dev, "rsc table is truncated\n");
->>>>> +			return -EINVAL;
->>>>> +		}
->>>>> +
->>>>> +		if (hdr->type != RSC_VDEV)
->>>>> +			continue;
->>>>> +
->>>>> +		/*
->>>>> +		 * reset vdev status, in case previous run didn't leave it in
->>>>> +		 * a clean state.
->>>>> +		 */
->>>>> +		if (rsc->status) {
->>>>> +			rsc->status = 0;
->>>>> +			wait_for_remote = true;
->>>>> +			break;
->>>>> +		}
->>>>> +	}
->>>>> +
->>>>> +	/* kick remote to notify about attach */
->>>>> +	rproc->ops->kick(rproc, 0);
->>>>> +
->>>>> +	/* wait for sometime until remote is ready */
->>>>> +	if (wait_for_remote)
->>>>> +		usleep_range(100, RPROC_ATTACH_TIMEOUT_US);
->>>>
->>>> Instead of waiting, would it be possible to return -EPROBE_DEFER and let the
->>>> driver core retry mechanic do it's work?
->>>>
->>>
->>> It is not possible to do -EPROBE_DEFER, because attach() callback is not
->>> called only during driver probe.
->>>
->>> It is also called during following command sequence:
->>>
->>> attach() -> detach() -> attach()
->>>
->>> During second attach() callback, we can't do -EPROBE_DEFER, as it's not
->>> driver probe anymore. So I think will have to keep the usleep_range().
->>
->> Right, but in this case the Cortex-A did not go through an uncontrolled reboot,
->> we know the state of the machine is sound.  Do you see a scenario where it would
->> not be the case?  
->>
-> 
-> Yes correct.  We will hit this issue only during probe, after that as
-> long as detach() happens we are setting vdev status to 0.
-> 
-> Another problem with the -EPROBE_DEFER mechanism is that the time
-> between return from attach() and next attach() isn't fixed. after
-> deferring current probe, when next probe and attach() happens, we will
-> always find vdev status to 0, even if remote hasn't handled vdev reset
-> event. So we don't know if the remote has handled virtio reset flag
-> notification or not. Where 100ms fixed delay, gives fixed time to remote
-> to handle vdev reset event. If needed this delay can be increased later.
-> 
-> This brings up another question to make the solution more robust. Do we
-> have any standard way of handling such a situation? Like in other virtio
-> standards, can this situation happen where driver comes up and finds the
-> virtio device status not in the reset state? How do they handle it?
-> 
-> Also, is firmware required to restore the resource table to default or
-> initial resource table after getting the virtio reset notification? Any
-> standard decided for remtoeproc virtio devices around this?
-> 
-> Thanks,
-> Tanmay
+On Thu, Apr 09, 2026 at 01:52:27AM -0700, Jingyi Wang wrote:
+> Subsystems can be brought out of reset by entities such as bootloaders.
+> As the irq enablement could be later than subsystem bring up, the state
+> of subsystem should be checked by reading SMP2P bits and performing ping
+> test.
 > 
 
-All,
+I still don't understand.
 
-This issue was discussed on openamp-rp call, and it was concluded that
-the common solution that works for all vendors is needed for this problem.
+Are you saying that devm_request_threaded_irq() will succeed and then
+calling irq_get_irqchip_state() will not work? Or are you saying that
+SMP2P driver isn't reliable and we're loosing the ready or fatal bits?
 
-The design of the solution was discussed like this:
 
-1) Resource table will have standard resource that will be used to ask
-device to reset itself.
+In the reply to v4 you replied to me with "it's a downstream feature".
+That isn't a reason for performing this extra dance, either downstream
+or upstream.
 
-2) Device will set the virtio status flag to 0 after successful reset.
-
-3) Linux will poll non-zero virtio status until it is set to 0. If
-virtio status is not found 0, then driver probe will defer.
-
-I will implement above design and send new patch series. Please consider
-this patch series rejected.
-
-Thanks,
-Tanmay
->>>
->>>> Thanks,
->>>> Mathieu
->>>>
->>>>> +
->>>>> +attach_success:
->>>>>  	dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
->>>>>  
->>>>>  	return 0;
->>>>>
->>>>> base-commit: d4ef36fbd57e610d4c334123ce706a2a71187cae
->>>>> -- 
->>>>> 2.34.1
->>>>>
->>>
+> A new qcom_pas_attach() function is introduced. if a crash state is
+> detected for the subsystem, rproc_report_crash() is called. If the
+> subsystem is ready and the ping is successful, it will be marked as
+> "attached". If ready irq is not received, it could be the early boot
+> feature is not supported by other entities. In this case, the state will
+> be marked as RPROC_OFFLINE so that the PAS driver can load the firmware
+> and start the remoteproc.
 > 
+> Co-developed-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> Signed-off-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5.c     | 69 ++++++++++++++++++++++++++++++++
+>  drivers/remoteproc/qcom_q6v5.h     |  6 +++
+>  drivers/remoteproc/qcom_q6v5_pas.c | 80 ++++++++++++++++++++++++++++++++++++--
+>  3 files changed, 152 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> index 58d5b85e58cd..52247c17c38a 100644
+> --- a/drivers/remoteproc/qcom_q6v5.c
+> +++ b/drivers/remoteproc/qcom_q6v5.c
+> @@ -20,6 +20,7 @@
+>  
+>  #define Q6V5_LOAD_STATE_MSG_LEN	64
+>  #define Q6V5_PANIC_DELAY_MS	200
+> +#define Q6V5_PING_TIMEOUT_MS	500
 
+Changelog says you removed 5 second timeout, but you only removed 4.5
+seconds.
+
+Regards,
+Bjorn
+
+>  
+>  static int q6v5_load_state_toggle(struct qcom_q6v5 *q6v5, bool enable)
+>  {
+> @@ -234,6 +235,74 @@ unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>  
+> +static irqreturn_t q6v5_pong_interrupt(int irq, void *data)
+> +{
+> +	struct qcom_q6v5 *q6v5 = data;
+> +
+> +	complete(&q6v5->ping_done);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5)
+> +{
+> +	int ret;
+> +	int ping_failed = 0;
+> +
+> +	reinit_completion(&q6v5->ping_done);
+> +
+> +	/* Set master kernel Ping bit */
+> +	ret = qcom_smem_state_update_bits(q6v5->ping_state,
+> +					  BIT(q6v5->ping_bit), BIT(q6v5->ping_bit));
+> +	if (ret) {
+> +		dev_err(q6v5->dev, "Failed to update ping bits\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = wait_for_completion_timeout(&q6v5->ping_done, msecs_to_jiffies(Q6V5_PING_TIMEOUT_MS));
+> +	if (!ret) {
+> +		ping_failed = -ETIMEDOUT;
+> +		dev_err(q6v5->dev, "Failed to get back pong\n");
+> +	}
+> +
+> +	/* Clear ping bit master kernel */
+> +	ret = qcom_smem_state_update_bits(q6v5->ping_state, BIT(q6v5->ping_bit), 0);
+> +	if (ret) {
+> +		dev_err(q6v5->dev, "Failed to clear master kernel bits\n");
+> +		return ret;
+> +	}
+> +
+> +	return ping_failed;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem);
+> +
+> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev)
+> +{
+> +	int ret = -ENODEV;
+> +
+> +	q6v5->ping_state = devm_qcom_smem_state_get(&pdev->dev, "ping", &q6v5->ping_bit);
+> +	if (IS_ERR(q6v5->ping_state)) {
+> +		dev_err(&pdev->dev, "Failed to acquire smem state %ld\n",
+> +			PTR_ERR(q6v5->ping_state));
+> +		return PTR_ERR(q6v5->ping_state);
+> +	}
+> +
+> +	init_completion(&q6v5->ping_done);
+> +
+> +	q6v5->pong_irq = platform_get_irq_byname(pdev, "pong");
+> +	if (q6v5->pong_irq < 0)
+> +		return q6v5->pong_irq;
+> +
+> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->pong_irq, NULL,
+> +					q6v5_pong_interrupt, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+> +					"q6v5 pong", q6v5);
+> +	if (ret)
+> +		dev_err(&pdev->dev, "Failed to acquire pong IRQ\n");
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem_init);
+> +
+>  /**
+>   * qcom_q6v5_init() - initializer of the q6v5 common struct
+>   * @q6v5:	handle to be initialized
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 5a859c41896e..5025ffc4dbe8 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -17,22 +17,26 @@ struct qcom_q6v5 {
+>  	struct rproc *rproc;
+>  
+>  	struct qcom_smem_state *state;
+> +	struct qcom_smem_state *ping_state;
+>  	struct qmp *qmp;
+>  
+>  	struct icc_path *path;
+>  
+>  	unsigned stop_bit;
+> +	unsigned int ping_bit;
+>  
+>  	int wdog_irq;
+>  	int fatal_irq;
+>  	int ready_irq;
+>  	int handover_irq;
+>  	int stop_irq;
+> +	int pong_irq;
+>  
+>  	bool handover_issued;
+>  
+>  	struct completion start_done;
+>  	struct completion stop_done;
+> +	struct completion ping_done;
+>  
+>  	int crash_reason;
+>  
+> @@ -52,5 +56,7 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+>  int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon);
+>  int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+>  unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5);
+> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev);
+>  
+>  #endif
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index da27d1d3c9da..34b54cf832d0 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -60,6 +60,7 @@ struct qcom_pas_data {
+>  	int region_assign_count;
+>  	bool region_assign_shared;
+>  	int region_assign_vmid;
+> +	bool early_boot;
+>  };
+>  
+>  struct qcom_pas {
+> @@ -423,9 +424,15 @@ static int qcom_pas_stop(struct rproc *rproc)
+>  
+>  	qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
+>  
+> -	handover = qcom_q6v5_unprepare(&pas->q6v5);
+> -	if (handover)
+> -		qcom_pas_handover(&pas->q6v5);
+> +	/*
+> +	 * qcom_q6v5_prepare is not called in qcom_pas_attach, skip unprepare to
+> +	 * avoid mismatch.
+> +	 */
+> +	if (pas->rproc->state != RPROC_ATTACHED) {
+> +		handover = qcom_q6v5_unprepare(&pas->q6v5);
+> +		if (handover)
+> +			qcom_pas_handover(&pas->q6v5);
+> +	}
+>  
+>  	if (pas->smem_host_id)
+>  		ret = qcom_smem_bust_hwspin_lock_by_host(pas->smem_host_id);
+> @@ -510,6 +517,63 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
+>  	return qcom_q6v5_panic(&pas->q6v5);
+>  }
+>  
+> +static int qcom_pas_attach(struct rproc *rproc)
+> +{
+> +	int ret;
+> +	struct qcom_pas *pas = rproc->priv;
+> +	bool ready_state;
+> +	bool crash_state;
+> +
+> +	pas->q6v5.running = true;
+> +	ret = irq_get_irqchip_state(pas->q6v5.fatal_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
+> +
+> +	if (ret)
+> +		goto disable_running;
+> +
+> +	if (crash_state) {
+> +		dev_err(pas->dev, "Subsystem has crashed before driver probe\n");
+> +		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
+> +		ret = -EINVAL;
+> +		goto disable_running;
+> +	}
+> +
+> +	ret = irq_get_irqchip_state(pas->q6v5.ready_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &ready_state);
+> +
+> +	if (ret)
+> +		goto disable_running;
+> +
+> +	if (unlikely(!ready_state)) {
+> +		/*
+> +		 * The bootloader may not support early boot, mark the state as
+> +		 * RPROC_OFFLINE so that the PAS driver can load the firmware and
+> +		 * start the remoteproc.
+> +		 */
+> +		dev_err(pas->dev, "Failed to get subsystem ready interrupt\n");
+> +		pas->rproc->state = RPROC_OFFLINE;
+> +		ret = -EINVAL;
+> +		goto disable_running;
+> +	}
+> +
+> +	ret = qcom_q6v5_ping_subsystem(&pas->q6v5);
+> +
+> +	if (ret) {
+> +		dev_err(pas->dev, "Failed to ping subsystem, assuming device crashed\n");
+> +		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
+> +		goto disable_running;
+> +	}
+> +
+> +	pas->q6v5.handover_issued = true;
+> +
+> +	return 0;
+> +
+> +disable_running:
+> +	pas->q6v5.running = false;
+> +
+> +	return ret;
+> +}
+> +
+>  static const struct rproc_ops qcom_pas_ops = {
+>  	.unprepare = qcom_pas_unprepare,
+>  	.start = qcom_pas_start,
+> @@ -518,6 +582,7 @@ static const struct rproc_ops qcom_pas_ops = {
+>  	.parse_fw = qcom_pas_parse_firmware,
+>  	.load = qcom_pas_load,
+>  	.panic = qcom_pas_panic,
+> +	.attach = qcom_pas_attach,
+>  };
+>  
+>  static const struct rproc_ops qcom_pas_minidump_ops = {
+> @@ -855,6 +920,15 @@ static int qcom_pas_probe(struct platform_device *pdev)
+>  
+>  	pas->pas_ctx->use_tzmem = rproc->has_iommu;
+>  	pas->dtb_pas_ctx->use_tzmem = rproc->has_iommu;
+> +
+> +	if (desc->early_boot) {
+> +		ret = qcom_q6v5_ping_subsystem_init(&pas->q6v5, pdev);
+> +		if (ret)
+> +			dev_warn(&pdev->dev, "Falling back to firmware load\n");
+> +		else
+> +			pas->rproc->state = RPROC_DETACHED;
+> +	}
+> +
+>  	ret = rproc_add(rproc);
+>  	if (ret)
+>  		goto remove_ssr_sysmon;
+> 
+> -- 
+> 2.34.1
+> 
