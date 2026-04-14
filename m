@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488A730BB80;
-	Tue, 14 Apr 2026 17:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A501E2D94AF;
+	Tue, 14 Apr 2026 17:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776189225; cv=none; b=PMwq19zaA9BDvIXQOg2rIlQWwdUPfDOzA4/ZugwWhZV9iK02Vvapjoioj2y8KpHbaaKsC9iN9YYzGEfSGDPYVNVfahqgPcg/LFe7quYUN8Yopien/nCxzlg8+8aPEIvCIVgV7Y1eWDaGrg0sdaFNx4wLEz5kX2Kn38BjSHL/tqE=
+	t=1776189381; cv=none; b=EiZdCvxZtkz0WQbGdAp5tsLeXHthwBKsFSnbYe6R/IHC2yCMHfIJvNWECw/vge4DRH/4IaUg6KP9H/W6W406dlB0+GodmSWfoFyfd9dcqnOoZy4qT2Lh/QqrhmSdpvGA+SUHanYGt7MS+Vu2CQSqV9GdtXer6BqUrgtYcWdNtO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776189225; c=relaxed/simple;
-	bh=FPusdFb9xoFVuUwJITEKp9MXRZJcT0Vyg1zGUYkNRw0=;
+	s=arc-20240116; t=1776189381; c=relaxed/simple;
+	bh=ITnv3BrsSdGjP9wuxqeknqRZJkJsbYlTwOKIU4L4FcA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TAIHc4/xo5CZZX4TA3P03ejf/U57dt0+d2quhSBKvIYKz/nGmrOCIzAdcArebGWbeqOG1/65bcUW7DhN+oYHSrA+qJzkrJlOLdDqT7RVZGXxwjivMMFVEDzog1tncEFvejQU+QKKPkzdmAQ0YjEuLAX9kyCK8ujCDXPv45wGXxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgA+bQs5; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=FnAhg0zouANgb7BlORd6n3wxELFBRpQmJoHnO0H86ThXGiIV4X5dZpjip6/ysR++WMDnQKsjDT4vfE/LM2sP55V2frmxSog2sp8exQBd228gIPXVvX08hGk2V5YO/GxLvgdexruv5RcwSIhQT8ujWMg+v97zIFR/jvJYGFCSMyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D72A1F4H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgA+bQs5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910E3C19425;
-	Tue, 14 Apr 2026 17:53:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D72A1F4H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C97B2C19425;
+	Tue, 14 Apr 2026 17:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776189225;
-	bh=FPusdFb9xoFVuUwJITEKp9MXRZJcT0Vyg1zGUYkNRw0=;
+	s=k20201202; t=1776189381;
+	bh=ITnv3BrsSdGjP9wuxqeknqRZJkJsbYlTwOKIU4L4FcA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rgA+bQs52SPQ8MsyaWsh0Hr4xPOozfJ0C0UilpNNtrvHrit2cv38lqSrkryEb/n2K
-	 qhUIsg6ErtCthENptf5MY8ANxZ81v7d0gLXr/PF4Q+2qLm433zIP73+Ht2NSQJSc5c
-	 fNtUBBSQfRNjhOrV5ViVw1d91RfObaMCMpNjlQKOXMzo91njz5KKfKurhvR9Q//U+B
-	 WDkv8wJ3LvInML2zfVPg7fAIkzeAGaxWYb9yBrZKjfb7ICESZ5MzcKZue7QQQr2r/S
-	 eGANcyRnvbHiqrAi3pcTjttiEC0uIZJPrYmmU9+fN5H1sWtgBvX4IVoxGWa5AnTHIf
-	 /VCo1WrXLKBqA==
-Message-ID: <774a8e9f-cfd9-4584-aaf0-2fd1189f65e8@kernel.org>
-Date: Tue, 14 Apr 2026 19:53:40 +0200
+	b=D72A1F4HVtoExY4l7fzIXrXze9dlN7iNgtNw55wSz88M4IohOc7eHfFYRdH9Mp4Wu
+	 jmUoybPBRLnIliYAI78C7x4x0vgTsyd/TJ4y7VJyXIn6xKC9H4LKIZS7+QY3PqwUIQ
+	 Mbwp4Wlep1TlotgfDvlZL4YSn/wYbx/pHOiXGpOA4v1oJsfKwy2/iP5CJmzSMhTV15
+	 25H1+tCjEaCBd0ZH/YseTEv+5P9HwBstpT9KHERtW52Y/QDeA7GR7KfvnxvyWwPyQ/
+	 sb3gJna3w+My6RAAIvdKN5j+tjupnUL+yHsdjzmp+R1DvDkhroHS+z73NoQ4nx2FqA
+	 hEkyDBjvmSUnQ==
+Message-ID: <8e40020d-3471-4c72-9de9-ed5eb53433a7@kernel.org>
+Date: Tue, 14 Apr 2026 19:56:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,14 +35,14 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: add AMD MicroBlaze binding
+Subject: Re: [PATCH 2/2] remoteproc: add AMD MicroBlaze driver
 To: Ben Levinsky <ben.levinsky@amd.com>, andersson@kernel.org,
  mathieu.poirier@linaro.org
 Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, tanmay.shah@amd.com, michal.simek@amd.com
 References: <20260414161558.2579920-1-ben.levinsky@amd.com>
- <20260414161558.2579920-2-ben.levinsky@amd.com>
+ <20260414161558.2579920-3-ben.levinsky@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,96 +88,136 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20260414161558.2579920-2-ben.levinsky@amd.com>
+In-Reply-To: <20260414161558.2579920-3-ben.levinsky@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 14/04/2026 18:15, Ben Levinsky wrote:
+>  Add an AMD MicroBlaze remoteproc driver.
+> 
+>  The driver parses the executable firmware memory window from
+>  the remoteproc device node's reg property, interprets that
+>  address and size in the MicroBlaze-local address space, and
+>  then uses standard devicetree address translation through the
+>  parent bus ranges property to obtain the corresponding
+>  Linux-visible system physical address.
+> 
+>  The resulting translated region is registered as the executable
+>  remoteproc carveout and coredump segment.
+> 
+>  The MicroBlaze is controlled through an active-low reset GPIO and kept in
+>  reset until firmware loading completes.
+> 
+>  The firmware-name property is optional, allowing firmware to be
+>  assigned later through the remoteproc framework.
+> 
 
-A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
-prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+Fix your commit msg so it uses sane style, not some indentation.
 
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/amd,microblaze.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: AMD MicroBlaze remote processor
-> +
-> +maintainers:
-> +  - Ben Levinsky <ben.levinsky@amd.com>
-> +
-> +description:
-> +  MicroBlaze remote processor controlled by Linux through the remoteproc
-> +  framework.
+Look at how other commits are written, if you have doubts.
 
-Describe hardware, not Linux frameworks. IOW, Linux framework is here
-irrelevant.
-
-> +
-> +  The executable firmware memory window is described in the
-> +  MicroBlaze-local address space by the node's reg property and translated
-> +  to the system physical address space with standard devicetree address
-> +  translation provided by the parent bus node's ranges property.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^remoteproc@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    const: amd,microblaze
-
-microblaze is architecture, so this feels way too generic. You need SoC
-specific compatibles and I suggest do not reference architecture, but
-name or the function of the processor, if there are such.
-
+...
 
 > +
-> +  reg:
-> +    maxItems: 1
-> +    description:
-> +      MicroBlaze-local address and size of the executable firmware memory
-> +      window.
+> +static int mb_rproc_start(struct rproc *rproc)
+> +{
+> +	struct mb_rproc *mb = rproc->priv;
 > +
-> +  firmware-name:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reset-gpios
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    / {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      bus@b0000000 {
-> +        compatible = "simple-pm-bus";
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0x0 0x0 0xb0000000 0x40000>;
-> +
+> +	/* reset-gpios is declared active-low, so logical 0 releases reset */
 
-Drop all above.
+If reset-gpios is declared active-high, then logical 0 also releases reset.
 
-> +        remoteproc@0 {
-> +          compatible = "amd,microblaze";
-> +          reg = <0x0 0x40000>;
-> +          reset-gpios = <&mbv_reset_gpio 0 GPIO_ACTIVE_LOW>;
-> +        };
-> +      };
-> +    };
+Drop comment, not correct.
 
+> +	gpiod_set_value_cansleep(mb->reset, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mb_rproc_stop(struct rproc *rproc)
+> +{
+> +	struct mb_rproc *mb = rproc->priv;
+> +
+> +	/* reset-gpios is declared active-low, so logical 1 asserts reset */
+> +	gpiod_set_value_cansleep(mb->reset, 1);
+> +
+> +	return 0;
+> +}
+> +
+> +static int mb_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	int ret;
+> +
+> +	ret = rproc_elf_load_rsc_table(rproc, fw);
+> +	if (ret == -EINVAL) {
+> +		dev_dbg(&rproc->dev, "no resource table found\n");
+> +		return 0;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct rproc_ops mb_rproc_ops = {
+> +	.prepare	= mb_rproc_prepare,
+> +	.start		= mb_rproc_start,
+> +	.stop		= mb_rproc_stop,
+> +	.load		= rproc_elf_load_segments,
+> +	.sanity_check	= rproc_elf_sanity_check,
+> +	.get_boot_addr	= rproc_elf_get_boot_addr,
+> +	.parse_fw	= mb_rproc_parse_fw,
+> +};
+> +
+> +static int mb_rproc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mb_rproc *mb;
+> +	struct rproc *rproc;
+> +	const char *fw_name = NULL;
+> +	int ret;
+> +
+> +	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+> +	if (ret < 0 && ret != -EINVAL)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to parse firmware-name property\n");
+> +
+> +	rproc = devm_rproc_alloc(dev, dev_name(dev), &mb_rproc_ops, fw_name,
+> +				 sizeof(*mb));
+> +	if (!rproc)
+> +		return -ENOMEM;
+> +
+> +	mb = rproc->priv;
+> +	mb->dev = dev;
+> +
+> +	/*
+> +	 * Keep the MicroBlaze in reset until remoteproc has finished loading
+> +	 * firmware into the executable memory window described by reg and
+> +	 * translated through the parent bus ranges property.
+> +	 */
+> +	mb->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(mb->reset))
+> +		return dev_err_probe(dev, PTR_ERR(mb->reset),
+> +				     "failed to get reset gpio\n");
+> +
+> +	rproc->auto_boot = false;
+> +
+> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to set DMA mask\n");
+> +
+> +	platform_set_drvdata(pdev, rproc);
+> +
+> +	ret = devm_rproc_add(dev, rproc);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to register rproc\n");
+> +
+> +	dev_dbg(dev, "MicroBlaze remoteproc registered\n");
+
+Drop. This does not look like useful printk message. Drivers should be
+silent on success:
+https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/coding-style.rst#L913
+https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/debugging/driver_development_debugging_guide.rst#L79
+
+Core already gives way to see probe success.
 
 Best regards,
 Krzysztof
