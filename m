@@ -1,63 +1,63 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5663939A04F
-	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2026 08:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685303A6404
+	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2026 08:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776154418; cv=none; b=l293qBsio34LwdXfLKdyjA+9HSNfT43wsMmRKvLVC4EkV8QW+0nq2Tryn6tyP4W5n2qo5S4fHFilFcQLHQtvYke+Olw/AneazdP/ZskAj6cya/AIN2Iqb0bHUNoQQ+vDDyH4mEU94QfuiGEkKQhK+ZpD4I51QqhHkqyW0GtwV8k=
+	t=1776155263; cv=none; b=GK/IOhF6jmMG8txhoYPD5scIPD/47WbfXJzPZoEjJ4xKs/ayVYvj1kfOxHbAkssWjuQU1tZIVrRELX96ELYPcAZbhMDy4gpwnx4LobgL/gR85D7ptOsRGgYW4QwRXqpjbSlciKhEvnOCIuOkvU9/PazcfEnJLOXnlCgHR2rdjEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776154418; c=relaxed/simple;
-	bh=gT+pzsVIRW212TZcva4L+Ri/0g6hFNVEgkKfdytwY2A=;
+	s=arc-20240116; t=1776155263; c=relaxed/simple;
+	bh=seC81ngWogUab0Cv00JdZnlQAdPQmT479POgeSqYkGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M09s1td0GmOiuc8/np7K/PTaP2iRIjO0Z/AwF95yiqc4z1QGC7C+RChF6TT7lrvO2VO7Yz5/+Fnuy4W0SOXQCLKfZ4Z7J8q26YVsK8U54EJWRwQouXyx8zKpw1c5Iq90I33F+bTjbI6dfqOtla5wJEKswRzCRNZOTV66Z/q+E10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zvs3SPOU; arc=none smtp.client-ip=209.85.221.44
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3mT20qamBagblutFZDCXCq63MZdeecAX3vvy8/nvOx194Aq37MrNe2CJnHaxvxcrdW7iQvx8fqIgJRe2cfbuTeYVcQrdvY37vfs0gqPcvzhY2daU20D74gfKRM3vKrJA3vu+tJKmWI3Bz3//gC6m52vhKJzrTPzw9d8o9yqOW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OTzDxoIH; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zvs3SPOU"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-43d77f6092eso1353106f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2026 01:13:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OTzDxoIH"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-48334ee0aeaso50616585e9.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2026 01:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1776154416; x=1776759216; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1776155261; x=1776760061; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VoTqL997tPTbH+Ap01GQJYcrt0BpStuqMk4Cw3k+aSQ=;
-        b=zvs3SPOUWaJfZaTyoCV5ztGlEjHDSb7rGvmA9wRTfariTS9NPlz4kExcVNvDYIXhC2
-         lT0/iL+3PSgFmBkv0tsdzeFAwMWjrXlzFYZ17l0gUQ84Zu1JQrY8BQ/FvnFolMavNjsM
-         OW7vT1Z2chOpdbAu8MsQc5qsvPEePtFAtb7F6d15hWfxvFRlGIJG5u5hDKInuy23XeIG
-         fmYu2uDTUqcdMmFyhfKmHPQo1iPXE/R+mh0oL6L8ULsiXbZc0QP+223Kpu5xh0GxK/Pr
-         Q05Q9plzuxVA4HBbhxYQ9u0u4ZYg7pgZeEYdNH/0Y2iGwqhxQjJ+LQUyYjkYSDgIwLta
-         3SEw==
+        bh=vAoerfiNNrWz161JIQ3021f9av7AFwKNdNb1czdX2oQ=;
+        b=OTzDxoIHnHjGrJIglReSS+op8d69c7NjA/dUE2vUrftByBUm14vSKtzDXeDcfuBqrQ
+         uZpvg+LgvHIhQ78pBI0BC+d3saDQ73MkVrzbSMiWHh5C2QbNXmgsI2ryD/38hGLob87u
+         AvwG716H2XN/dxBJrUuNB0viLHltyJvL5N3ivM1PN5oMhD6pfJ68g/TDar1PZ026MiSb
+         tYqNBt2z2gjsQdiHsta01bl8X3uV4lYiJzHA/AMxZ5EbEExJaGXzsoMiDZUkPNrnfrP4
+         bAZqBnnEEd3k4xCSBWh966LktyGiZFaNaKyOM702s2o/iKzT/218SNyPq9uB1vmCzQkk
+         kIXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776154416; x=1776759216;
+        d=1e100.net; s=20251104; t=1776155261; x=1776760061;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VoTqL997tPTbH+Ap01GQJYcrt0BpStuqMk4Cw3k+aSQ=;
-        b=sQ/RaLxSCAMBGyH0di9C9hSZI0yOuNircjrm0vnaswt4UVA3dOEl8UvOHtM/YOcWVU
-         mr8s7rhams78bU2aIC7f3pDuYBYQ0U2jvxZZgtUReQD/Z2w/de0tW+sRQ1jaAPPX0803
-         g36GxZJ36TByOfFHCnip/JQRyeYPM8ELEY87XiST4/upselsnjo9H5191m3QdugQKc4I
-         OjyrCZK66l3rG6JrAf4CDvmELQre0CcL+/88cBE9CF0HC2BEHbtJNnHAO1dKupdj2cdM
-         ee1YVNnViVniSW3OuqfxlwGRSNDvhlLJYDmuTp2QtEH/u1caTZ4awTjjIxhN1wFvBu0Z
-         T5cg==
-X-Forwarded-Encrypted: i=1; AFNElJ/E6S6Qmpq44VySFSp8b/gEGogE5LBA3kzidKYNf815KxTjfH2rnTZX68eHMeZ8doCdMbF/XfXHd0+BlBtEuYwV@vger.kernel.org
-X-Gm-Message-State: AOJu0YztLfN7ZggP8kyB4r5c9hL9c4yhjDVPO3vlduHHh9KaaIQIoQk3
-	1J/SdzeM6GxnMbk5VM3i9PhORuyJ6/YxO19uxGoB3j3fsjOAaEXRSpSGWAOAwdijxF4=
-X-Gm-Gg: AeBDievlnwK22hkD7f51s9LDmJ+IwgB4mV3SjeTIrA+2wND7kRrFgYAQnuPsGi3MnCj
-	i+90ZUDpomgGgZfBjd0x0GRBMRZa/hCvB//QUNA1y4HVDyIA7wncakrW3XvfrtoY99XmL8iKSsv
-	imiMzKFLCl3GroK8IjW+JEj/zMdlTDENDAJM+CEAs7Vu5B8FB3xJoCOdwd0PoWVNSP+yWJbImPU
-	RonVl+PWP2nHMZt5uf+nRJm4Pu7uSw1ZyjK9mS+hDMAvWluNI4G3r8sw5JNgYMZ3a4xp1M0K5Ca
-	0DmYeM4P7z+BScSKM7FPhLwGYECFInnWjtvWFyXg3AmEyq0QVZifq/Nekx05b7vTOPzFsF85EHN
-	fFh2PGdh7efoOZAzByZIrbR5yYf6TugyjTz5auIpGLvz8XaAUywmwwR4i6KG0bEGW9Uo6JVUsT+
-	30Z/ZkBU8ltOwHgocHGB8LX99tKBg=
-X-Received: by 2002:a05:6000:268a:b0:43d:7403:4b60 with SMTP id ffacd0b85a97d-43d74034c72mr13905007f8f.3.1776154415587;
-        Tue, 14 Apr 2026 01:13:35 -0700 (PDT)
+        bh=vAoerfiNNrWz161JIQ3021f9av7AFwKNdNb1czdX2oQ=;
+        b=cCPQAJZwTsJMrsvqOjEZwfvQvSZfDvetxd4UXLdMHafTTYTzz3e+WBqfiHAVWT/OOF
+         +cyDzt7Rj9NJPxxQPRA+vFu9XXFyuPzUelFeLVf13bhGVj9opA78S+SAb/UuqtbNzX/J
+         5BHND0ecbDpW9pBXSoVp7JggwIlBV+4Vio0adhmpMoe/kbEfY63eymAqZFiVGHMELSsG
+         jVaeqqErKuQIZ4GH/4smJCTWglOvbSinZq0FM2D9ROs5/9re+85TYJf9ZnsLJqT8IDkP
+         s7OjfqR9fYn+/xLqHp/HgDxx0aOWrGZdBsJsuY0bRnnZhbsKWXXWzvqrK6mTz5JQuxHF
+         Iwtw==
+X-Forwarded-Encrypted: i=1; AFNElJ9HIrVZNW8swuYIG1ap0KnTU59Iu4QX8aDmdeiFjwedabJARntaLSKKV7WKUn2No4InnlYp06ReGzF7HA390wBm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzChY+6r9CaKU8o8W6Efh4d9OlBAXY8F1d/82NAubj5Ittnkanw
+	Dr/Umdx+vRCq/fy49WAidVMY7c3ZTKG44IvgasVbq/mVT/o5neWXsoZV55mPvwAnFwg=
+X-Gm-Gg: AeBDievBCqVH/i/oURcvURpgQabsENBdSz1gPW40IY/0E664/Z2o0xelMgoy4LBWnbR
+	txhbT432SAJqZ/qoVM7VzC/nLj7tNVtxE1674J96DcrTGRcQR18ykoiL5sJQcOo6Wd4CTCy4Bvy
+	h3wEh6JRm9xpdvFV/3shDXCFdDQvQ4q3es5A+IIi5eoQsIQzRDby/JkmcrycSfldJu8/F9rVyY0
+	Sp/3Es8Lqd1xo9W2U57ObIrcVdosvr6Yp3p7iMClDTpXfyToz/QA9uRve5P/phZz/V2T/BltIHi
+	tPu4wFoEiwJjDRCdS8ZIauVG+AOwAMNN6WGoIWhl3rFSeMjTLHiQTJv+kO31cux+771a2F9YQDx
+	WuLUo59fvs8My2U1Yf+rALZfCXIUqgrWFsKbnUlU86o++Zf8CoKTmkG88HEAYZAdfmqNg1etfSj
+	aTI8m/rStvcp7EJAB7Wa3797DxsGw=
+X-Received: by 2002:a05:600c:35c7:b0:483:64b4:79da with SMTP id 5b1f17b1804b1-488d68b27d6mr248949515e9.26.1776155260781;
+        Tue, 14 Apr 2026 01:27:40 -0700 (PDT)
 Received: from linaro.org ([77.64.147.31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-43d762decf6sm27040970f8f.8.2026.04.14.01.13.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-488eddb9751sm54594395e9.0.2026.04.14.01.27.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2026 01:13:35 -0700 (PDT)
-Date: Tue, 14 Apr 2026 10:13:31 +0200
+        Tue, 14 Apr 2026 01:27:40 -0700 (PDT)
+Date: Tue, 14 Apr 2026 10:27:38 +0200
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
 To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
@@ -65,16 +65,14 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
 	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH 1/2] remoteproc: core: Attach rproc asynchronously in
- rproc_add() path
-Message-ID: <ad33KwKYBNB6oE5e@linaro.org>
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: qcom: Check glink->edge in
+ glink_subdev_stop()
+Message-ID: <ad36erdhcvnIvFMH@linaro.org>
 References: <20260409-rproc-attach-issue-v1-0-088a1c348e7a@oss.qualcomm.com>
- <20260409-rproc-attach-issue-v1-1-088a1c348e7a@oss.qualcomm.com>
- <adkI8Si4ejf6T73T@linaro.org>
- <846cf4bb-43da-4d2a-a128-bdaf1371e19b@oss.qualcomm.com>
+ <20260409-rproc-attach-issue-v1-2-088a1c348e7a@oss.qualcomm.com>
+ <adkF7EY1KVRNO01o@linaro.org>
+ <c6a9936b-9f44-4bea-93a1-17d145e64eec@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -83,105 +81,106 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <846cf4bb-43da-4d2a-a128-bdaf1371e19b@oss.qualcomm.com>
+In-Reply-To: <c6a9936b-9f44-4bea-93a1-17d145e64eec@oss.qualcomm.com>
 
-On Tue, Apr 14, 2026 at 11:41:39AM +0800, Jingyi Wang wrote:
-> 
-> 
-> On 4/10/2026 10:28 PM, Stephan Gerhold wrote:
-> > +Cc Bartosz, Dmitry
-> > 
-> > On Thu, Apr 09, 2026 at 01:46:21AM -0700, Jingyi Wang wrote:
-> > > For rproc with state RPROC_DETACHED and auto_boot enabled, the attach
-> > > callback will be called in the rproc_add()->rproc_trigger_auto_boot()->
-> > > rproc_boot() path, the failure in this path will cause the rproc_add()
-> > > fail and the resource release, which will cause issue like rproc recovery
-> > > or falling back to firmware load fail. Add attach_work for rproc and call
-> > > it asynchronously in rproc_add() path like what rproc_start() do.
+On Tue, Apr 14, 2026 at 11:23:50AM +0800, Jingyi Wang wrote:
+> On 4/10/2026 10:15 PM, Stephan Gerhold wrote:
+> > On Thu, Apr 09, 2026 at 01:46:22AM -0700, Jingyi Wang wrote:
+> > > For rproc that doing attach, glink_subdev_start() is called only when
+> > > attach successfully. If rproc_report_crash() is called in the attach
+> > > function, rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() could
+> > > be called and cause NULL pointer dereference:
 > > > 
-> > > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> > > ---
-> > >   drivers/remoteproc/remoteproc_core.c | 20 ++++++++++++--------
-> > >   include/linux/remoteproc.h           |  1 +
-> > >   2 files changed, 13 insertions(+), 8 deletions(-)
+> > >   Unable to handle kernel NULL pointer dereference at virtual address 0000000000000300
+> > >   Mem abort info:
+> > >   ...
+> > >   pc : qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem]
+> > >   lr : glink_subdev_stop+0x1c/0x30 [qcom_common]
+> > >   ...
+> > >   Call trace:
+> > >    qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem] (P)
+> > >    glink_subdev_stop+0x1c/0x30 [qcom_common]
+> > >    rproc_stop+0x58/0x17c
+> > >    rproc_trigger_recovery+0xb0/0x150
+> > >    rproc_crash_handler_work+0xa4/0xc4
+> > >    process_scheduled_works+0x18c/0x2d8
+> > >    worker_thread+0x144/0x280
+> > >    kthread+0x124/0x138
+> > >    ret_from_fork+0x10/0x20
+> > >   Code: a9be7bfd 910003fd a90153f3 aa0003f3 (b9430000)
+> > >   ---[ end trace 0000000000000000 ]---
 > > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index b087ed21858a..f02db1113fae 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -1673,18 +1673,21 @@ static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
-> > >   	release_firmware(fw);
-> > >   }
-> > > +static void rproc_attach_work(struct work_struct *work)
-> > > +{
-> > > +	struct rproc *rproc = container_of(work, struct rproc, attach_work);
-> > > +
-> > > +	rproc_boot(rproc);
-> > > +}
-> > > +
-> > >   static int rproc_trigger_auto_boot(struct rproc *rproc)
-> > >   {
-> > >   	int ret;
-> > > -	/*
-> > > -	 * Since the remote processor is in a detached state, it has already
-> > > -	 * been booted by another entity.  As such there is no point in waiting
-> > > -	 * for a firmware image to be loaded, we can simply initiate the process
-> > > -	 * of attaching to it immediately.
-> > > -	 */
-> > > -	if (rproc->state == RPROC_DETACHED)
-> > > -		return rproc_boot(rproc);
-> > > +	if (rproc->state == RPROC_DETACHED) {
-> > > +		schedule_work(&rproc->attach_work);
-> > > +		return 0;
-> > > +	}
+> > > Add NULL pointer check in the glink_subdev_stop() to make sure
+> > > qcom_glink_smem_unregister() will not be called if glink_subdev_start()
+> > > is not called.
+> > > 
 > > 
-> > I think the change itself is reasonable to make "auto-attach" behavior
-> > consistent with "auto-boot". The commit message is a bit misleading
-> > though:
+> > You mention the actual root problem here: Why is glink_subdev_stop()
+> > called if glink_subdev_start() wasn't called?
 > > 
-> >   - You're really doing two separate functional changes here:
+> > The call to rproc_start_subdevices() in __rproc_attach() makes sure that
+> > all subdevices are in consistent state when exiting the function (either
+> > prepared+started or stopped+unprepared). Only if all subdevices were
+> > started successfully, the rproc->state is changed to RPROC_ATTACHED.
 > > 
-> >     (1) Ignore the return value of rproc_boot() during auto-boot attach,
-> >         to keep the remoteproc registered and available in sysfs even if
-> >         attaching fails.
-> >     (2) Run the rproc_boot() in the background using schedule_work().
-> >         [To improve boot performance? To work around some locking issues?]
+> > In your case, attaching the rproc failed so the rproc->state should be
+> > still RPROC_DETACHED. All subdevices should be stopped+unprepared. We
+> > shouldn't stop/unprepare any subdevices again in this state, they all
+> > might crash like glink does here.
 > > 
-> >   - The actual issue you are seeing sounds like a use-after-free in the
-> >     remoteproc core error cleanup path. I think this one is still
-> >     present, we should really have a call to
-> >     cancel_work_sync(&rproc->crash_handler) as Dmitry wrote in the
-> >     previous discussion [1].
+> > We know that subdevices are already stopped+unprepared in RPROC_DETACHED
+> > state, so I think you just need to skip rproc_stop_subdevices() and
+> > rproc_unprepare_subdevices() inside rproc_stop() in this case, see diff
+> > below.
 > > 
-> > Thanks,
-> > Stephan
-> > 
-> > [1]: https://lore.kernel.org/all/ce24a2sgg4b6wymoxwgl2ve6np2nxn2wuxfqxfpmvqqrpvgouf@xihd6ziqwu4m/
+> > @@ -1708,8 +1709,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+> >   	if (!rproc->ops->stop)
+> >   		return -EINVAL;
+> > -	/* Stop any subdevices for the remote processor */
+> > -	rproc_stop_subdevices(rproc, crashed);
+> > +	/* Stop any subdevices for the remote processor if it was attached */
+> > +	if (rproc->state != RPROC_DETACHED)
+> > +		rproc_stop_subdevices(rproc, crashed);
+> >   	/* the installed resource table is no longer accessible */
+> >   	ret = rproc_reset_rsc_table_on_stop(rproc);
+> > @@ -1726,7 +1728,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+> >   		return ret;
+> >   	}
+> > -	rproc_unprepare_subdevices(rproc);
+> > +	if (rproc->state != RPROC_DETACHED)
+> > +		rproc_unprepare_subdevices(rproc);
+> >   	rproc->state = RPROC_OFFLINE;
 > 
-> Hi Stephan,
-> 
-> Exactly as you say, what this change do is allowing rproc_attach return false.
-> It should be okay to keep this change and describe it more clear in commit msg
-> in next version?
+> In this case, rproc_crash_handler_work()->rproc_trigger_recovery()->
+> rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() is called,
+> "rproc->state = RPROC_CRASHED" is set in the rproc_crash_handler_work
+> before rproc_boot_recovery is called, so checking RPROC_DETACHED can
+> not work for this case.
 > 
 
-That's fine for me.
+You're right, I forgot about that. I think we need a more generic
+solution for this though. rproc_stop_subdevices() should not be called
+without a prior call to rproc_start_subdevices().
 
-> And the use-after-free issue is what we want to resolve in the patch2
-> in this series, I think cancel_work_sync() is a reasonable change
-> but it cannot resolve this issue as the worker could be executing when
-> we call this(and this is what it behaves when I did local test) and
-> the use-after-free issue still exists. Shall we send a separate patch
-> for this cancel_work_sync?
-> 
+I think there are a couple of options for this:
 
-cancel_work_sync() should wait until the worker execution has finished.
-If you call it before freeing the resources (= deleting the remoteproc),
-I would expect it should work as expected.
+ - Add a bool "subdevs_started" to struct rproc and manage that
+   separately from the rproc->state.
 
-It makes sense to have separate patches for this, one is about fixing
-the use-after-free issue, the other is more about the behavior when the
-initial auto-boot fails.
+ - Track the rproc state before the crash separately (something like
+   rproc->state_before_crash) and check that in the stop path.
+
+ - Add a new state RPROC_CRASHED_DETACHED to make sure the states are
+   unique.
+
+ - ...
+
+Does the same issue also exist in qcom_pas_stop() of "[PATCH v5 4/5]
+remoteproc: qcom: pas: Add late attach support for subsystems" [1]?
+There you check for pas->rproc->state != RPROC_ATTACHED, wouldn't this
+also fail for the RPROC_CRASHED case?
 
 Thanks,
 Stephan
+
+[1]: https://lore.kernel.org/linux-arm-msm/20260409-knp-soccp-v5-4-805a492124da@oss.qualcomm.com/
