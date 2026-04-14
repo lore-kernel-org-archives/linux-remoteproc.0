@@ -1,314 +1,222 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C87A3A9603
-	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Apr 2026 15:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776093062; cv=pass; b=dGqASg1oujh+vC8Xvp51cbd25Rwz2rGnNSyUsoKvFuY6YFn+JnIox0wh+NCU9hPAyUO6n5w45PLoD3odIt3b99Tchn7QE0do9CI3zd3WqDis8IK9gAsIn8TGRNhyv+9vdWG5EM67Vh22zsp3kSmdqbRmd5PHSjXcBG9lR7bOiYE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776093062; c=relaxed/simple;
-	bh=O2uW+LuabfBHowZLAE9KuPtlYpe9N2rpcgEj5BgA4ZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lkOLmb8Aiara0mnxb+BXO889UE8eILMnr3bDfgm6722eRwfsERTW5hkQRrwAYa/HfpU8VldouRD9JFoMGg0wDLgX7l6MAXQqU/0OCbXEg2wTma3xFWNdJkOj87gC7eemc5kcchogMEeZDDWaVN2GYQDBr9ImAgIOQjeMj5odzP8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VsnlDiQI; arc=pass smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617C3334C2B
+	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2026 03:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776137040; cv=none; b=Sx4YBgi0qKEFEh6E+O7odKiz8Zxl9uNgmXYV38UdVJbWDePPofT73ffkDM+Ldt3jzkbwQXWoUJZnaH2jzD5q+QArGP8CKXV73h6fvRhNfw9pAwDYMmDAXu1G1kl2f252fNoc3lZO8R7VjS1SNMn8HQerqzyfrtETcm/1fxtFU68=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776137040; c=relaxed/simple;
+	bh=e+fdpsXXxqmh5T4lJEbG0vYDdBdc8dvNKOqB0Z6MDVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NmNhApt4JADYOIt+EEG3fO4hF6juvpABMPYFjMFAqPo/Bm6uim4zVBoO91EgYs49/ulu76tIAKV12fGkd9aYgYC6Ui4KNva/ooIPV65f4MSONRuyAo8FQPL7XPZHhMcgREuhCwuQ1lc5DOXlccVYDHg+jlnETaAYlFkNVcFQ/bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JTl2+scl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JqKxplu9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VsnlDiQI"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6712fd40860so2613900a12.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Apr 2026 08:11:00 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776093059; cv=none;
-        d=google.com; s=arc-20240605;
-        b=ZBQE5Glfn4LAO/m2DsPb08mg5rGRu1/euXSavdLL30g28grNUfjEaq0lOz11lFUdyd
-         vLIRz3dQCbpKdt/k2HDPui/cswraz9jSZdAxdB9pihnHjkedeEnKQbhHBl991wu/ppNX
-         F+N9cAeIePeuxj02IL8RyfVDBnY0J9hxKO1THFYLAjpPld/HdMHDvrPyIIihBsuOsKVP
-         iMVM3obw8ajY8uVMkeQzVvUYpitQxzzyNCioqy9+R0Is6j4QSPXGfa/WUJHHqhxYvAK2
-         MLowMMQHdC9EuV9ph7mJ+MUxACHCc/0vRl6eb/+bPCmcVpVE09tkNUOzajww2qmIhJ0f
-         Fzwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=vM9wZdZcyMlqdDFu3IlYmYUvddN4NzeV7CdThu4jwmo=;
-        fh=tVER8nx75htjrc6o4dwc5I0wTuL8+HpRi59paBuDlHc=;
-        b=SmaQKWAnRkJ8jEHJ77VMVF68AkpfuXIZF9+SljCFzO3i6JKTR2n3IOuc8EjD7hVWeG
-         jVNuXGh+wlssNQbfuAk/H3Vugm6FcTJt0I0vPsFnoFcjVdpNOHiVQTvZyUV64C/V7opZ
-         9KIGwZOZwqL+4WYGbgATeFg60ev50YlNVpzOhuiSTbdkaoiT9dGsNcWU/m3cJGv4GiSk
-         +RuZRQ8CJxTJVJswdsQq4TzVQkjbuBqQr/newou26BB/QWB8i2AYZYyXqAHh2ZYE4/Fq
-         fyNMH5zFu8R2dqT0RfEudTiiGndfkTzE29EtP6B/CD9+vJWl52sTBAJ2uSmOm7xHGoO1
-         kIjw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JTl2+scl";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JqKxplu9"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63DLChCF3505410
+	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2026 03:23:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	o3R1wD2JeVV+ofiHbbAjdqUCiIXfouDrd59/7E1MjlA=; b=JTl2+sclBBXlfuol
+	B5wp6P+mXivyeOPE4L5lUwfXGDFzfiByOy97Fb49mWjfcJXGQB0Hxlco5yDsPzvE
+	CavE8jEHU04bR9UVfVK/dZiKfjQshn1E5BDIJF2dTuDTFZTy7gg2l/BvWomcyCJz
+	IkIZPKPx2KzfFbPmeeVNE5OtxKGrN85xp8FaBfHftwpbTYokfvnqonypRDCGAK5a
+	QIg57sFyonk4+7xN6D8npuEQBppy4+oixdF+cIP/lzfOAmGKquCd11rq//YyBs/L
+	APHEuFMgwKgDJYDzHygkTJAo9OduvSH0TxeyFSsdAGnFNZlk7/6ezGDfW7LuHvpF
+	wDjXhQ==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dh870gtjp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Apr 2026 03:23:56 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-358e95e81aeso11101667a91.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Apr 2026 20:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1776093059; x=1776697859; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vM9wZdZcyMlqdDFu3IlYmYUvddN4NzeV7CdThu4jwmo=;
-        b=VsnlDiQIO8eUcV1KUQ5gjlSjhr20I2vWg2VTIlezx/mF7GHAejK6QhCFWAI418Qudf
-         zolrwx/kY/EHGeMkN7vLuVdG9C1YttInw0Rak13j7W15gZKo9leU3gPSHx9Al278zvar
-         P/HWY+BJ/UIH+gWMGOhDvP76KvQEQbiZNWgALprm1dx0brw4+JNbkRsq6PHD5Oykj8/P
-         0GS3vk5fUuwkfsxypnadEh9DPHM+5dN6CUNS1bOXdtoYPqEfaIwxCymc4IvXC2A4/o+W
-         IpuZnjiawMiWBTtf94vimoMqGC8MZ8iZ2ULw/qCyjrFTe2cdtm/a0rdYfN5hah8yBty+
-         JRTQ==
+        d=oss.qualcomm.com; s=google; t=1776137036; x=1776741836; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o3R1wD2JeVV+ofiHbbAjdqUCiIXfouDrd59/7E1MjlA=;
+        b=JqKxplu9FTOcbI4uhjzCL3C4z0SEY+QdPzj1yNNsVGgojytrCRyUDFIirxHtin6FU7
+         awN6xHYvglxt7NbuhbIKo4Hiu4RCfNZdaO7A9+oLRU+COtvjW4coTZHQfsjy4bG2GaZh
+         jiQp0S28AmJG44HquCkSAi4YvJJpcKBONrUBdsUxrXwxA9Q+16FQtUIHyBA6Vph8o4rc
+         Xukgmw/6JT6gj+JvpWPx29tZDy9S+DsYm64I+NuhQsigpijBgWi4pTZufvYDiJZUwGFG
+         Z/wmf9YEPMUef+33bGai44xx5K6o7lQZWzJjC2y4vWTLS1JJXkM7MFfsMdjJOHhENJD8
+         Aouw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776093059; x=1776697859;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=vM9wZdZcyMlqdDFu3IlYmYUvddN4NzeV7CdThu4jwmo=;
-        b=sD4f/f1OV5twBtX5a56p7ctEZz/X7NkpMwXnlxNR1BL12gt+BiTVsVF3fEm18+S4DD
-         NfWr/xUUn4If680Gki71iHm8AaZAUJljD4mT9HroUSIkdAqPBDEtFQT7W0s6G6T/OQEX
-         PfCjK6+eIRyRUHmkWfYbOa3f20Z8dQCJWSrT/F2c6N6pgowDLUlYDD+fZHwFaihcK8hM
-         qJsP2Po2TlwQYWK6w8ynZODnGRwXyQ34TOrXAvIaJYiPbNDv70PTOSrN8QTbMVFpsV/h
-         9IxOz8JqRl/2/oIStzNaQs4HE+smcRFw+/7EC7dRIA4ho0U1RCp92fZ/bOjCio4jAoHs
-         EHDw==
-X-Forwarded-Encrypted: i=1; AFNElJ9PrOpag7RsARAHvqzJJUMd9r8j8+acEvCVZ9ZEoKWNM2IKeaEKCYrMT59/RHQm8Aq9JX9AWEj8K3xwWuww9Txa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx74l/w6d4PavPoLQxIrDGer/vV+A2EYeKXUw0AqMWJDdRwxDts
-	kf7Bssc83VF/3oR0/U559OG6y2i4igzpYRhBBrZos5X4BjpUqvMqV8zXuI1ysR1UcHCNz6XK4PO
-	IwanvGjfHOuSWb7/20TLlS5Yzupk1sEgQLg1UN14xPw==
-X-Gm-Gg: AeBDiesyzWnmCgldCg03QlEoxuC9f19ngf+vn/N1dvbWE5bJ6aO5mmKTz3mz9edkZfy
-	gbtkcJ1UCO6MFlnWwb3sLxObTdr3r9mLMQ+gAsrrhThuDH5HM+F+V2H5gVpYhNNJ7B3Atw9QhrG
-	55fMyMn0U9C/2T/zY6Zl/hruDNUjo/svC3zpCkF1Q39UOTUf69PxOkogWVNBwjgGI26hCb/7e/v
-	EwHjkzIF2Zc8kLJltxwsoddaTNyrqFQ1wJ/0HRWC9BYFnl3u1ERWa4ULlz4hBhf7o+wvQjqdaz3
-	FvKf9/C4mi6LbW6E8PUvZl9rQcqjZOfQl0jkVa3w
-X-Received: by 2002:a17:907:a806:b0:b9c:3ba2:2da8 with SMTP id
- a640c23a62f3a-b9d72aeb9b9mr837246866b.52.1776093058550; Mon, 13 Apr 2026
- 08:10:58 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1776137036; x=1776741836;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o3R1wD2JeVV+ofiHbbAjdqUCiIXfouDrd59/7E1MjlA=;
+        b=MsAPQh2yRvgDAtSj2xo0AOYjf+qLjWlXmjuekY+QaXuOnSS/GEvAhk0n8oliZv5a7K
+         TXSmm/XAS/fhXdA1iYgtu0wjduIFifAwfl9YvYCLzBCYlQ3vAQDZsgI9Ng2ELEk8ql3I
+         A0vOdVtufcGEkNI/9PXuMxv5Kfp12Z3xDDUhqSqdaMshOWxMmKwsxO8UemtyBFYsKMWV
+         Z2i9kEn8ShgEGDn3s5ONbor/UUFwG9TlWxCEvzUaZWW+qYjq+ebVkVZYv+AXsjpZzle3
+         u7yRsuVTRdx7JcQTQa5WK5VGZGMYGZq/tcjUm0Bi3EezIgefPFX5CBMHVX/8RtWAXfFR
+         cCHg==
+X-Forwarded-Encrypted: i=1; AFNElJ+PYvJIXhniKKqYDXJ0r1qlnaDq/KfI+lbRn7T0FzsYaRRHQH8m60pdnTrywv6hTKhgiXVcl2Xo5WbVc98iK75u@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCL9OfiEy9TMBKMQ6l3l9e57krnquOth5dGDQn8p9YRK16BYa3
+	ZOSvUGVVxp2dcjKpkW8Yo6o7yJdOvwa7GbUl2j8cv8dldEP9iPr3zWTrEdLAbsay2DMCpZUtBu5
+	MyTjo5WymEoOhcGw5eyfO4GZVuhlJSZTvbg44gcJ7Tr8BjRCKT6TInEY9zwRaOfYfhZckBKMg
+X-Gm-Gg: AeBDieuNbTWC34i6BpzqyjI6rb0C2BT1CA81BT3+WLfogvvkVNlgxUOfdDchg2Q+v/7
+	dOwuXNJKjykM0D395OhSuxU1bmS9lxON400wNEik3etTx6swQQFhgEwKMGZ1Xzed/nppe/S12pc
+	tZ0FMwsczgOl6W0ffbtT2ambozVnl/UYamcspGbBoTNMIVkXuSrkul/alEa3EjRTQ0cedPaoC1Z
+	ffEAlsmivgqec3nO1GXwiGXBjAwkWBs6ccUwNFBWzAl7ofXuQ3WC4+Z8wuYXQlXgn8Z52jw/8Cl
+	M64pCW2/u81T3RPnN3aup5DMopKoWMcw+NimnDGg1/apRhygmbzdzZhUfKCfAkgLRbUysJe4Avv
+	KOQ9NYMmA3QscmCqEKklkgsOqOQQUtQqgmvfpiWhZZEuaaJrEM9CM9GXMiAJdovP+keNB6tAAhe
+	dHHGoLL4tRQqWjjzA=
+X-Received: by 2002:a05:6a20:9155:b0:39f:5671:921 with SMTP id adf61e73a8af0-39fe3c9126bmr17960670637.3.1776137035679;
+        Mon, 13 Apr 2026 20:23:55 -0700 (PDT)
+X-Received: by 2002:a05:6a20:9155:b0:39f:5671:921 with SMTP id adf61e73a8af0-39fe3c9126bmr17960628637.3.1776137035223;
+        Mon, 13 Apr 2026 20:23:55 -0700 (PDT)
+Received: from [10.133.33.94] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c79218fc462sm12018562a12.8.2026.04.13.20.23.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Apr 2026 20:23:54 -0700 (PDT)
+Message-ID: <c6a9936b-9f44-4bea-93a1-17d145e64eec@oss.qualcomm.com>
+Date: Tue, 14 Apr 2026 11:23:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260327-imx943-rproc-v2-0-a547a3588730@nxp.com>
- <20260327-imx943-rproc-v2-2-a547a3588730@nxp.com> <acqjS440STRl2sK2@p14s>
- <acs2PAZq2k3zjmDW@shlinux89> <adUghiyZbe3fmcNX@p14s> <PAXPR04MB8459AA009C932EB9D6139A11885BA@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <adZ4WIaC6WN97JhR@p14s> <adbzPl7ydUvb+MIS@shlinux89> <adkcugNgyrkHtUML@p14s> <PAXPR04MB84591BCD80728EE880CA2AD888262@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB84591BCD80728EE880CA2AD888262@PAXPR04MB8459.eurprd04.prod.outlook.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 13 Apr 2026 09:10:45 -0600
-X-Gm-Features: AQROBzCaZSu11OL-gVz7edUov2FxFa3cn6A3jeYa2s3YGR-BUVKoLOxzFnKS1Lg
-Message-ID: <CANLsYkyn9aPg6Z9CTOXzmjKobRKiBo0_d=uhtxgUcszeW4-VGQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to SM CPU/LMM
- reset vector
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Frank Li <frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Daniel Baluta <daniel.baluta@nxp.com>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: qcom: Check glink->edge in
+ glink_subdev_stop()
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20260409-rproc-attach-issue-v1-0-088a1c348e7a@oss.qualcomm.com>
+ <20260409-rproc-attach-issue-v1-2-088a1c348e7a@oss.qualcomm.com>
+ <adkF7EY1KVRNO01o@linaro.org>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <adkF7EY1KVRNO01o@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE0MDAzMCBTYWx0ZWRfXzZYShtN1EZbT
+ MKMjTbcCoX3yywQO0a693yWrL1zc7MjbZMUSM4atyHGyHVlIA4KW3e99LhzhyLWbMA8H+w/L68j
+ 2crGdV5T5AFZ6AowcGimhNocPPRnf4sT1jguto/WrTd1HtjbQY+S+bkW6/ku6tbmqUG5rjlCzuc
+ aCQEASKUqYvj9m5oSh0dR4kP/YAzDaBhGeEIq2xTvNfdSqgeysuUvCCaIEWMJBXlVGkOXDh5Rvs
+ 99KlRd7XSFpek9RH4yZ8Vqnc92r06d4X8WNEfG0pnTJvrrwnkFeWVMKz1ahBZfGDZQF6v3oneX1
+ Jt6z9XL2C/BYFrkIybBkgRrOBL85SAqWz0Hfrz7gCZzyXGAm8R5mtzFBxorwtPNhduBVgcmuUV6
+ 5Rq5J8YSZzFb+9uc6QEMZ94OdejYDVe4pQZK+z+CPqpl3ed4SKcPa1VGl/+rSyuiycItnpGg+DD
+ iEvsX3WJzvkyVPaxuMQ==
+X-Proofpoint-ORIG-GUID: TEQIaeRKEPijXPWYr7GU8d02M4HRxA0B
+X-Proofpoint-GUID: TEQIaeRKEPijXPWYr7GU8d02M4HRxA0B
+X-Authority-Analysis: v=2.4 cv=btZ8wkai c=1 sm=1 tr=0 ts=69ddb34c cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=6NDAGjaxIoc3lUqdot4A:9 a=QEXdDO2ut3YA:10 a=O8hF6Hzn-FEA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-13_03,2026-04-13_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 spamscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 bulkscore=0 suspectscore=0 clxscore=1015 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604140030
 
-On Fri, 10 Apr 2026 at 21:01, Peng Fan <peng.fan@nxp.com> wrote:
->
-> > Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass bootaddr to
-> > SM CPU/LMM reset vector
-> >
-> > On Thu, Apr 09, 2026 at 08:30:54AM +0800, Peng Fan wrote:
-> > > On Wed, Apr 08, 2026 at 09:46:32AM -0600, Mathieu Poirier wrote:
-> > > >On Wed, Apr 08, 2026 at 01:30:16AM +0000, Peng Fan wrote:
-> > > >> > Subject: Re: [PATCH v2 2/3] remoteproc: imx_rproc: Pass
-> > bootaddr
-> > > >> > to SM CPU/LMM reset vector
-> > > >> >
-> > > >> [...]
-> > > >> >
-> > > >> > >
-> > > >> > > Aligning the ELF entry point with the hardware reset base on
-> > > >> > Cortex=E2=80=91M
-> > > >> > > systems is possible, but it comes with several risks.
-> > > >> >
-> > > >> > I'm not asking to align the ELF entry point with the hardware
-> > reset base.
-> > > >> > All I want is to have the correct start address embedded in the
-> > > >> > ELF file to avoid having to use a mask.
-> > > >>
-> > > >> I see, per my understanding:
-> > > >> FreeRTOS typically exposes __isr_vector, which corresponds to the
-> > > >> hardware reset / vector table base.
-> > > >> Zephyr (Cortex=E2=80=91M) exposes _vector_table, which serves the =
-same
-> > purpose.
-> > > >> I am not certain about other RTOSes, but the pattern seems
-> > consistent:
-> > > >> the vector table base is already available as a named ELF symbol.
-> > > >>
-> > > >> Given that, if the preferred approach is to parse the ELF and
-> > > >> explicitly retrieve the hardware reset base, I can update the
-> > implementation accordingly.
-> > > >> If you prefer to parse the elf file to get the hardware reset base=
-,
-> > > >> I could update to use them.
-> > > >>
-> > > >> Options1: Something as below:
-> > > >> 1. Include rproc_elf_find_symbol in remoteproc_elf_loader.c 2.
-> > Use
-> > > >> below in imx_rproc.c ret =3D rproc_elf_find_symbol(rproc, fw,
-> > > >> "__isr_vector", &vector_base); if (ret)
-> > > >>     ret =3D rproc_elf_find_symbol(rproc, fw, "__vector_table",
-> > > >> &vector_base);
-> > > >>
-> > > >> if (!ret)
-> > > >>     rproc->bootaddr =3D vector_base
-> > > >> else
-> > > >>    dev_info(dev, "no __isr_vector or __vector_table\n")
-> > > >
-> > > >No
-> > >
-> > > If your concern is about rproc->bootaddr, I could introduce
-> > > imx_rproc->vector_base for i.MX.  Please help detail a bit.
-> > >
-> > > >
-> > > >>
-> > > >> This makes the hardware reset base explicit, avoids masking
-> > e_entry.
-> > > >>
-> > > >> Option 2: User=E2=80=91provided reset symbol via sysfs As an alter=
-native,
-> > > >> we could expose a sysfs attribute, e.g. reset_symbol, allowing
-> > > >> users to specify the symbol name to be used as the reset base:
-> > > >>
-> > > >> echo __isr_vector >
-> > /sys/class/remoteproc/remoteprocX/reset_symbol
-> > > >>
-> > > >
-> > > >Definitely not.
-> > > >
-> > > >The definition of e_entry in the specification is clear, i.e "the
-> > > >address of the entry point from where the process starts executing".
-> > > >If masking is required because the tool that puts the image together
-> > > >gets the wrong address, then it should be fixed.
-> > >
-> > > The hardware reset base is the address from which the hardware
-> > fetches
-> > > the initial stack pointer and program counter values and loads them
-> > > into the SP and PC registers.  In contrast, bootaddr (i.e. e_entry)
-> > > represents the address at which the CPU starts executing code (the
-> > PC
-> > > value after reset). As you pointed out earlier, this distinction is c=
-lear.
-> > >
-> > > In our case, we need to obtain the hardware reset base and pass that
-> > > value to the system firmware. However, e_entry should not be set to
-> > > the hardware reset base. Doing so would introduce the issues I
-> > > described in [1]. This means we should not modify the Zephyr or
-> > > FreeRTOS build outputs to make e_entry equal to the hardware reset
-> > base.
-> >
-> >
-> > As I said earlier, I am _not_ suggesting to make e_entry equal to the
-> > hardware reset base.
->
-> Let me try to restate my understanding more precisely and please
-> correct me if I am still missing the point.
->
-> From your comment:
-> "
-> If masking is required because the tool that puts the image together gets=
- the
-> wrong address, then it should be fixed.
-> "
->
-> I understand this as saying that masking e_entry is not acceptable, becau=
-se
-> e_entry already has a clear and correct meaning: it is the execution entr=
-y
-> address, and the kernel should not reinterpret or =E2=80=9Cfix up=E2=80=
-=9D that value.
-> At the same time, we still need to provide the hardware reset vector base
-> to the system firmware, and that value is distinct from e_entry.
->
-> On i.MX94/5 platforms the reset base is software=E2=80=91programmable, bu=
-t that
-> information is not represented by e_entry, nor is there currently a
-> separate place in the remoteproc framework to convey a reset=E2=80=91vect=
-or
-> base independent of the execution entry point.
->
-> Given these constraints, I see limited options on the kernel side.
->
-> One conservative approach would be to rely on a fixed, platform=E2=80=91d=
-efined
-> reset base for the affected SoCs. And update RTOS linking script to put
-> the vector to the location of fixed hardware reset base.
->
 
-The problem with the current patchset is the overloading of
-rproc->bootaddr in function rproc_fw_boot() [1].  After that point
-rproc->bootaddr holds the hardware reset address communicated to the
-remote processor's firmware and not the beginning of execution as
-intended by the definition of e_entry.  This is very confusing to
-anyone reviewing the code without a clear understanding of the
-context.
 
-To fix this I suggest masking rproc->bootaddr in
-imx_rproc_sm_cpu_start() and imx_rproc_sm_lmm_start() with a copious
-amount of in-lined documentation.
-
-[1]. https://elixir.bootlin.com/linux/v7.0-rc7/source/drivers/remoteproc/re=
-moteproc_core.c#L1401
-
+On 4/10/2026 10:15 PM, Stephan Gerhold wrote:
+> On Thu, Apr 09, 2026 at 01:46:22AM -0700, Jingyi Wang wrote:
+>> For rproc that doing attach, glink_subdev_start() is called only when
+>> attach successfully. If rproc_report_crash() is called in the attach
+>> function, rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() could
+>> be called and cause NULL pointer dereference:
+>>
+>>   Unable to handle kernel NULL pointer dereference at virtual address 0000000000000300
+>>   Mem abort info:
+>>   ...
+>>   pc : qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem]
+>>   lr : glink_subdev_stop+0x1c/0x30 [qcom_common]
+>>   ...
+>>   Call trace:
+>>    qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem] (P)
+>>    glink_subdev_stop+0x1c/0x30 [qcom_common]
+>>    rproc_stop+0x58/0x17c
+>>    rproc_trigger_recovery+0xb0/0x150
+>>    rproc_crash_handler_work+0xa4/0xc4
+>>    process_scheduled_works+0x18c/0x2d8
+>>    worker_thread+0x144/0x280
+>>    kthread+0x124/0x138
+>>    ret_from_fork+0x10/0x20
+>>   Code: a9be7bfd 910003fd a90153f3 aa0003f3 (b9430000)
+>>   ---[ end trace 0000000000000000 ]---
+>>
+>> Add NULL pointer check in the glink_subdev_stop() to make sure
+>> qcom_glink_smem_unregister() will not be called if glink_subdev_start()
+>> is not called.
+>>
+> 
+> You mention the actual root problem here: Why is glink_subdev_stop()
+> called if glink_subdev_start() wasn't called?
+> 
+> The call to rproc_start_subdevices() in __rproc_attach() makes sure that
+> all subdevices are in consistent state when exiting the function (either
+> prepared+started or stopped+unprepared). Only if all subdevices were
+> started successfully, the rproc->state is changed to RPROC_ATTACHED.
+> 
+> In your case, attaching the rproc failed so the rproc->state should be
+> still RPROC_DETACHED. All subdevices should be stopped+unprepared. We
+> shouldn't stop/unprepare any subdevices again in this state, they all
+> might crash like glink does here.
+> 
+> We know that subdevices are already stopped+unprepared in RPROC_DETACHED
+> state, so I think you just need to skip rproc_stop_subdevices() and
+> rproc_unprepare_subdevices() inside rproc_stop() in this case, see diff
+> below.
+> 
 > Thanks,
-> Peng
->
-> >
-> > We are going in circles here.
-> >
-> > >
-> > > Given these constraints, the feasible solutions I can see are either:
-> > > - option 1 (explicitly retrieving the hardware reset base), or
-> > > - continuing to use masking.
-> > >
-> > > Please suggest.
-> > >
-> > > [1]
-> > >
-> > https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
-> > lore
-> > > .kernel.org%2Fall%2Facs2PAZq2k3zjmDW%40shlinux89%2F&data=3D0
-> > 5%7C02%7Cpen
-> > >
-> > g.fan%40nxp.com%7C8a5ce35d492b4adb2d3b08de97192cbb%7C686
-> > ea1d3bc2b4c6fa
-> > >
-> > 92cd99c5c301635%7C0%7C0%7C639114331565834960%7CUnknow
-> > n%7CTWFpbGZsb3d8e
-> > >
-> > yJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsI
-> > kFOIjoiTWF
-> > >
-> > pbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DPnkirz3BMEuLsJU9
-> > MHQNon84HIyMX
-> > > 08x1wCK04dS7VU%3D&reserved=3D0
-> > >
-> > > Thanks,
-> > > Peng
-> > >
-> > > >
-> > > >> The remoteproc core would then resolve that symbol from the ELF
-> > and
-> > > >> set rproc->bootaddr accordingly.
-> > > >> This provides maximum flexibility but does introduce a new
-> > > >> user=E2=80=91visible ABI, so I see it more as an opt=E2=80=91in or=
- fallback
-> > mechanism.
-> > > >>
-> > > >> Please let me know which approach you prefer, and I will update
-> > > >> this series accordingly in v3..
-> > > >>
-> > > >> Thanks,
-> > > >> Peng.
-> > > >>
-> > > >>
-> > > >> >
-> > > >> > > 1, Semantic mismatch (ELF vs. hardware behavior) 2,
-> > Debuggers
-> > > >> > > may attempt to set breakpoints or start execution at the entry
-> > > >> > > symbol
-> > > >> > >
+> Stephan
+> 
+> @@ -1708,8 +1709,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+>   	if (!rproc->ops->stop)
+>   		return -EINVAL;
+>   
+> -	/* Stop any subdevices for the remote processor */
+> -	rproc_stop_subdevices(rproc, crashed);
+> +	/* Stop any subdevices for the remote processor if it was attached */
+> +	if (rproc->state != RPROC_DETACHED)
+> +		rproc_stop_subdevices(rproc, crashed);
+>   
+>   	/* the installed resource table is no longer accessible */
+>   	ret = rproc_reset_rsc_table_on_stop(rproc);
+> @@ -1726,7 +1728,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+>   		return ret;
+>   	}
+>   
+> -	rproc_unprepare_subdevices(rproc);
+> +	if (rproc->state != RPROC_DETACHED)
+> +		rproc_unprepare_subdevices(rproc);
+>   
+>   	rproc->state = RPROC_OFFLINE;
+>   
+
+Hi Stephen,
+
+In this case, rproc_crash_handler_work()->rproc_trigger_recovery()->
+rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() is called,
+"rproc->state = RPROC_CRASHED" is set in the rproc_crash_handler_work
+before rproc_boot_recovery is called, so checking RPROC_DETACHED can
+not work for this case.
+
+Thanks,
+Jingyi
+
+
