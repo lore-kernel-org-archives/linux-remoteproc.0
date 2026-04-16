@@ -1,271 +1,252 @@
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010054.outbound.protection.outlook.com [52.101.56.54])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074D82EC09B;
-	Wed, 15 Apr 2026 12:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776256889; cv=fail; b=UVEVD1u9q0ix51ny8ZvjrNpx564VjBVvbYYUqufQlOdQHeRd8vDGXQtpmNazIX7qFhpkGeQebpr7/AZX/CX4psAXDZpYwjpNlzmMBiwbF1+IQn5/WnVJ3FPLIK1QVA8/ywvcFcc2AI7B964kfhr3xq2Nzj1e6CaFbuJLnhLpraE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776256889; c=relaxed/simple;
-	bh=2OEpigMUGV8lwd44NMgv3P6KIhAO9vImMpC9byohMK4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XhSzvTzIZ57pHmtADE1nzN3MqcAM5wmeLxUtcLSOkBpw1w3WR2pJmUaF+JEJqSpYeYZzZCFNDjITMEKj2bFCKH6TlVXEulaBwTyNMjToZ0POLFptKKVCwOsUL6G4fAKG12eDf8ETpvBH34iZXkcqgPFBVM6ZEQ43UHi66Tajcjo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0CTZbYwk; arc=fail smtp.client-ip=52.101.56.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749DE25DB1A
+	for <linux-remoteproc@vger.kernel.org>; Thu, 16 Apr 2026 02:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1776307946; cv=none; b=c66s7jlEPuqbRE053NyuMNYs9p5BWuHMzLQ15wR47AbwM5ebbzzwgVD/NZw60haKfXsNVE+a0HobaoluQrUQ69LlhgCvQ1MFBCDCstDs9c68/uhym2P/XewJ7L3sugj91VVD9YGFJrT90LPh6sysjlV8VQXFhgYRlS039pbSnBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1776307946; c=relaxed/simple;
+	bh=MIayYeKGsp0+wHyOm8gvKUDw3yj7EhYZIQu5YXn8d4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NFZWu2xp8ud/MsFRQutA0HwZ0vIy2ycOUfmdYaNjGXugkaPE9FuhE8PQc2HCjmcFjtkiBj7VOooIJj30aA3NHwjB/OEXdns2q1T6k1cWK/eRlTk5kWftzMom/rABxf9AWoNozZsaRKAZ2K6MKY11lTLAN88Li6CDVcQB4EcA4Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AN2sT/lz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MfUF98r0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0CTZbYwk"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jZfNlLYmR0DUefLycg2v61mwG6oAKTXbyGmdsFpl5nZKQUEEUDR+DKttOR/1zCQ0iVcyFuuwg+BdO83y5XqR2W9p4mb7il9jTDdsDxFokikV87FsYv36ucJoepDXpvnZ1roAsyZ4FW27uitFF48wxlN9GzbzrXH/2jPMlt9VS8F+q4gSOWKODqQnvoMb3V6zD0y5LPVfaJCAvwOGxm/n8VBr7Mj/bzmI7K2iwW9EezLts0hYce+HBU8Hl6+jPWWVxufsDQjCDn5/W/A1PwbHKYqpdkZhx7WyXcaYNHIfbqoz4w77jNnyjTJG/soAHd+X7+6tFuaRf/i819GShh48bA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ucMMToj9mOzz3JZhWdXm1FSGQX5XBUPUEq2LPbX0Yh0=;
- b=GeadLqLH5DAnT/EGi5Ov5b/T9JFNFzP1qtxjQ1ZzI6pyWzyIpSEF79YB64vUzicFbvbqkPtEH6Jk5HxfBpFsgenKZzvbv8CuOCBoMlRdn2/Jsl2QxN290JleXnVnmEXS86v3Ktf8Rsh8ibIyrqA/60ZegQGII3QOODKSciytG9EL0hI7+y0wz3RWdCvZONg156t7KljXavYc3uaFT9IESZYK6/jHmMWz4f5t25EwkrSgbGnVnobuByvtl/xe14C/PZ9+Yh54UagnwhCS4NIVh2VY86d7DoJn1FXeJJDJdnjSuFBlFJZA/uV5u/urBTz3R2sVf4P+JTYy+lm+ne9TzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ucMMToj9mOzz3JZhWdXm1FSGQX5XBUPUEq2LPbX0Yh0=;
- b=0CTZbYwkqdPPCYTUcKYQ982GwTXDIZtZYT0+DCH3fNHFwpvfZPMAc1T8LtiB6vF0HhXwlzKXLDLeqjz0KMmbLkaEO41qLVMFMnQLS6UmXZh2pBv8dUql9y8unS9n8UdP0KcH6/A2MdHbL+oKAPuJGKTgecWt2aZwcWsVSxup0yI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV5PR12MB9779.namprd12.prod.outlook.com (2603:10b6:408:301::14)
- by SJ0PR12MB7473.namprd12.prod.outlook.com (2603:10b6:a03:48d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.20; Wed, 15 Apr
- 2026 12:41:23 +0000
-Received: from LV5PR12MB9779.namprd12.prod.outlook.com
- ([fe80::8ac8:e862:8ae9:9287]) by LV5PR12MB9779.namprd12.prod.outlook.com
- ([fe80::8ac8:e862:8ae9:9287%3]) with mapi id 15.20.9818.017; Wed, 15 Apr 2026
- 12:41:23 +0000
-Message-ID: <b679fbff-21df-4f45-bdcc-787c00a8baef@amd.com>
-Date: Wed, 15 Apr 2026 14:41:17 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: add AMD MicroBlaze binding
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Ben Levinsky
- <ben.levinsky@amd.com>, andersson@kernel.org, mathieu.poirier@linaro.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, tanmay.shah@amd.com
-References: <20260414161558.2579920-1-ben.levinsky@amd.com>
- <20260414161558.2579920-2-ben.levinsky@amd.com>
- <774a8e9f-cfd9-4584-aaf0-2fd1189f65e8@kernel.org>
- <e82faa64-22fa-4dba-8cde-f02cf9f95e25@amd.com>
- <CAL_JsqKE1G+sdJnSZazVVyy=gV6iAz=HgtCOBXGz31qdzbUShQ@mail.gmail.com>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- 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
- mpwx1d8=
-In-Reply-To: <CAL_JsqKE1G+sdJnSZazVVyy=gV6iAz=HgtCOBXGz31qdzbUShQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PH5P222CA0005.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:510:34b::16) To LV5PR12MB9779.namprd12.prod.outlook.com
- (2603:10b6:408:301::14)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AN2sT/lz";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MfUF98r0"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63G2BT5A4052905
+	for <linux-remoteproc@vger.kernel.org>; Thu, 16 Apr 2026 02:52:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MM/4qGZSMye1GhW1lzkr3nXABQCTmZg+bPiPmHLZyAg=; b=AN2sT/lzBbm0oGJ2
+	vetKWU5LaXuFdmtAH5ycxVyn5M81wA3EGW7WBjCJbGl4/t9q9Azq0wc1nVFy8Jur
+	Iu6IBO8LwjSa+5dMj7E0dT3WMNj/6nLY4bYoJlfxVCJJDK9UGkN+mlR9jnO3TktV
+	yYnE4gn0HbtQQo2xUm3REGh/sFK1mdnOHEHryJC0eZ00FndGflnl53/tq+c1n3Nk
+	9aDq9Mgvfzgj5V2CpeEGUnbRkTggKOfgWki/1+6Mz9z+J57sP3Iq1taUdqixTanm
+	XQB4db3kV1nrf41sfAhI/E5yATgWKHQ4Mq5mzzCHv+xdcn3iWpFMyysp5NI+/xNJ
+	sFtspQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dj7s5u7tp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 16 Apr 2026 02:52:23 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2b454cac322so41055255ad.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Apr 2026 19:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1776307943; x=1776912743; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MM/4qGZSMye1GhW1lzkr3nXABQCTmZg+bPiPmHLZyAg=;
+        b=MfUF98r0ckXUXwL8qcL6u0gY9Z8lddWSdWGSjMiFqaGk5luoFAjicc1dLg9Gtg5NHb
+         JuOyEHOaDtbd2L72Xx+PtJqkVwAzfH8e3GZ71kvE8Zr+KJm2iTA61JVERz8bv+26qIil
+         3dx+eGROcxvsmndPTQzMh3Fv9kE444QrEvLLRAHUIyBgZkIyCpFGf4q3edEOb9JjspkJ
+         CmaRRmSkroMUyNnkBqFO9rjfu16LEP4OIAnSzm2GYIGooLFib17kfEYNtpIpxAaO0MK6
+         VzSu9rQE54RyJXvk0oeBm7HFMOf6jdDRxwg+PwzQ+xwY/57TZSCqTuUQFm4SlkZfNIXy
+         +6kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1776307943; x=1776912743;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MM/4qGZSMye1GhW1lzkr3nXABQCTmZg+bPiPmHLZyAg=;
+        b=EtgWpdEFCJ7dYS9CF7Ze5/+DNU0WSL6xewZTcCVhEmZgC0KLvQWB9s3beVuf5jVafL
+         7R6THc0fjY9Tefkyk8tQnX9ldzrRvsvjudXyfHYbmFLCscgtjZT3NU6vYOMq/QqoQC+K
+         oEiG0vrzecAcsQ4OKedSYr2JWMAVhRcTiPQHYVcbGk48WqyHcec3oRIohsL+htjI8UhM
+         mJTO8B3fPGYrzz23t0hwYKNdHiM0n7ziz6ahlI6o4uZPP0aHvojIvp2VFZMUifQTaFZV
+         3kE19Vjlh39dG4YoKKz7PUuErocUWezFedwOXyZMLgJnUu7BkNF8u7OhhZrLTZ5XRIAW
+         jSsg==
+X-Forwarded-Encrypted: i=1; AFNElJ/Bfx4FhJ3jTs2UOgAVW9vjHjjMctW44Q1L97UudlQIBGAR58qmQxlYW4wPyJIvY1dulau3II9YtNW1bgHYUZPP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmHEO7Yb8z9UxT4SR62qnvtVxq/Wf3GfXwUAYyXhkaChjg50vu
+	/HXTBkxldtXvsaxVGoiXOXW+7sABdVgyJp3rdl/QUQmJ0TdHHi98nRBsWCd5LK9q2DDxAvOIuqh
+	L3UQBBfZjL9AzobxvCJoKVQB6mHqxGfiOmDLbwJ9eNY2+zUnHim0MJKNrxtYSRERUJiIn19XJ
+X-Gm-Gg: AeBDies/io1cgw7Shj+JnfZRnKfwppSfSskXsxVKqW5WXQtRhxI7EsXx6BNMdnZaEnV
+	HpQBHO9eix6vHR4ripHX/Ga9sq6jYsXbCvbVskemeURSLw/6mEBsQZAP5ytlotWBvIM8tN9aR/f
+	Q2H9N/OV6uN3C+9SMgYsR6n8QA4HXeQYRkGvhrAtXio4qIMi0015D64S9PjBe3TkM14VjqC1dVZ
+	aIW9jQpadVwQ01AY2nYPjlqk7vWtSEtFSJqb950Dq1huawO51dWJ948LpTbyoC/kXF8IaqzvAes
+	QP1FQetzE2zEBiZAss2KYgbJfl8DnkkY3/TV9A/P5UI+Os84bcs31IVUkzLnKfG1PLKIs2l9+fn
+	M6KIbVWil4LTDOrE97k3R6VqXuT8lplGbBRW+yoWpAY1RDAoZPNgJoau8XqxJKfFoxMFR3n4h0U
+	iLboeA0R28T0rBJy7y
+X-Received: by 2002:a17:902:ea0a:b0:2b4:6106:cc65 with SMTP id d9443c01a7336-2b46106cdcfmr144733155ad.44.1776307942175;
+        Wed, 15 Apr 2026 19:52:22 -0700 (PDT)
+X-Received: by 2002:a17:902:ea0a:b0:2b4:6106:cc65 with SMTP id d9443c01a7336-2b46106cdcfmr144732515ad.44.1776307941487;
+        Wed, 15 Apr 2026 19:52:21 -0700 (PDT)
+Received: from [10.133.33.143] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b47826e306sm36720735ad.46.2026.04.15.19.52.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Apr 2026 19:52:21 -0700 (PDT)
+Message-ID: <e9720deb-d46c-4556-b69d-1dec00cc7892@oss.qualcomm.com>
+Date: Thu, 16 Apr 2026 10:52:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV5PR12MB9779:EE_|SJ0PR12MB7473:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3a85b09e-c3cc-481c-6915-08de9aec4d64
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|56012099003|18002099003|22082099003|20046099003;
-X-Microsoft-Antispam-Message-Info:
-	wmqATl15Tqk1Drp1Qm5IOs+LSjnn4plvwA3LUcidd/wKU5uJLC2ILzrusPH1BZxus52GCLv6MqKGbmCwLcbWwBLlFAW04AAK9rpG/tGPV5zA3wwn5KAWsJ2XFHhpxr/ZmcZ/L8hnrGzM6dZFDOunLlj4wfGnXuoLBZoCqAvmJqrBoiOPIcyaUJlg/HY0il2lNKcnozsJDzhO1ymQjBN/8FodfYVmfUuCqoYgsY1yZy+SzTOYJACWXTa+zTciE5nI2tBtmSlQGHcPjrSGtm27B7xTHcGdqX4R11dCOZyNVM9KpsV7bhWp+jvYOhxgI1zYZN/10Kom3sb0US+7xazQFy7R59258+DGekts4EHonKVrIjpZCu9oMQ9MERRTVN9ZT1Q7FA+7d7FXqulT5qqbIqZ70PnugRzmz3DA5VWFkfUVQ0+Drc1OYbzmBTo8bThyPX2Kw3A7icXYs11Mgi2MptH9aUr4zTXXgjGmrz+r4EIa90EvNd4dwV6IMUXviFFKwuwOXn8T4Cvo8u7HH3XDgo75xK3VbCqPRSuvqrUm0xfOgnHU4p8CJ15/JTLksT1sojnhGZiWI6caYWywJcywZmTDnTm3niI/X8oMP3XV7BBYN2obXT/wRIiMzslQBNvQ+bxilmTdu2Z8aKZWOm1WKiZIXLviCQ1lBtoOEGUfBDR7HgN+k2FiVXsXFAGQ2j4j
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV5PR12MB9779.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(56012099003)(18002099003)(22082099003)(20046099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjA5Wm4ybkplL1U3dUJnK0JJSTdsMFRpTENQZk83YytPS3BnS2hhRVNxTHJi?=
- =?utf-8?B?MC9xd1ViK0g1ZzNOcFE1UWlQa1hhb000OVJHYzE2Y0diN21BMU40cC9CTkFp?=
- =?utf-8?B?bzNKZ0lGWVpCUGMyc1NmOVNnWWlEOTMrcTF5ZWV2alg3SExIbDBLdFM1VmZW?=
- =?utf-8?B?VGJHcElDV3FSTFNxYzlzRndkU3BMYWpVd2MwV1F5NTJUT0ZRK3M4bFBaNzV4?=
- =?utf-8?B?OGdHSXFwWlZMaE10cXNFVHJiRkVzWXNxb0twcmZsMTVWaklKaHVzUmFaYmNj?=
- =?utf-8?B?WlNLVzd4WHV1dVo3cDB1Q1NpcG82dFgrSFJIcXZDOU56ejNtSit5WnBEUklG?=
- =?utf-8?B?cFhISGM5NVNBcTZzVzB5WWpTbkxBZXFHcDBjV29pRVMvMXVDMGZUQ2wyWEN1?=
- =?utf-8?B?WlhGVmkxd0Z0ZVhYOHlpUG1SdjhiT2QxM3JrR3B2c0wrRzdzY3U3dFVoN3hK?=
- =?utf-8?B?Rm1VQ2pWSFJubjN2alRjZktoMGVac2Z4dTVpQzV2SWo3SnY1eFpqOFBmNXQ3?=
- =?utf-8?B?MXp4UC9zOWhZSzlCNzFDZWt5OXVKcjFLT3dmVzUreFhsQzE1eFRsMEZ6eXE4?=
- =?utf-8?B?M0NDclpodVl0TTIwVVd6ZDBaWkJ3Z3FGdkFnTmEvT21HRm9LcEswU1k3SXVu?=
- =?utf-8?B?K1JNRUx3NUVVd29aMkZvVzJzNjhheHFNZW1nS2ZXM09NS2M5Zjh5dWZSaVRZ?=
- =?utf-8?B?RVQyMDVhRlJJYklmdzRSYjZOQXorMUZiakV0YVUyMmpJRlI2VGhyRThyOVQ3?=
- =?utf-8?B?WEdKeWpibWtNbzd1NVh2bW1ZQ0xTeklqMDlLaUU5bWhObDdoRHUwU0hkdG96?=
- =?utf-8?B?TDVUWXMwTTdTdnF5bnV2MWpURnBYSlYraG5jQ3lIS2t1SlhzWnJIZTlFTy85?=
- =?utf-8?B?cnZKaDNmaGdEbmFyZC90dDB5Q3V2aXRCSzYzcmVvVzR4TVFOT1Y3ZUsyR2Q2?=
- =?utf-8?B?dWVPN1lEaFFuZENQZFh1a1J6T2tRMjh3bVNvYkFyNHNWQUNMRHd6MnhxcGty?=
- =?utf-8?B?c1pSTC93UE9RMUNwL3JpTmx3dVc1bXAxOGhHZlI4MEI0SVJsUDQxcldFZlF2?=
- =?utf-8?B?c1M0cGx2RVQraVhReG9MY012UlRwYUhKcjlXTStwT1FFK0dIYVEvQmhxUFRO?=
- =?utf-8?B?d2pkdHdzQlpYQXd2V1F4cW9YTC9IVXlQV1pVdlBTN0ZETEFybVk1aGxuZTNF?=
- =?utf-8?B?L2Vtbkc5K3lQcWhRVndhZm5XVFJwUkNjcEV3b3JyWVZnRnRNbCt4NzY2cmwy?=
- =?utf-8?B?R3hRZTFOamJhdkVVRlZEU0lWVjc0R29lT2pKSEM2R1VERmZIVC9pMDNaWTQ2?=
- =?utf-8?B?MGVJaUowNzdDL05VcVhhU1FONEZadWdoTDFPc3RubUVsMGE0MzZHajFsbEZ2?=
- =?utf-8?B?SVJUTGJBc0pyeDljRmpObTVrUUNZcmkrbU9xLzdCY0xsOXUzeDVIYUxtY2Ft?=
- =?utf-8?B?MGNHRHJwRWNPVGM4SElmRnhibWlETmRJeFNpQkxMYVo2b2x3dzFreUJ3bmZD?=
- =?utf-8?B?YkdJYmVsQ3NvanZwbDZEUGU2SGhIQ0hzOGxCUDJxSGVnS3BMbHZhY0cyK2U4?=
- =?utf-8?B?NUw0a0lqNHIwL3JHUm0wL3ZLcUpObWtBQkNxOVJDRUc2a3JGL3hSbWhBbDl3?=
- =?utf-8?B?OVNKcC9JTDlrU2czWXA0OEVjMUdhMWJxZXBzUm04SGU2TTF1cktHSkFZemIr?=
- =?utf-8?B?Nmo1OGV6Tkl3UEZYV0pGVlhkZDVQb0k2QjBJTTlpYXJGTjMwK0V3VVdqTFl6?=
- =?utf-8?B?NVE4RENsWEs0YUNZNHJ1OE9mdTdleFpZRFFHZzhBR29HWGRpc1djcnNIbHJ5?=
- =?utf-8?B?SENYV0oxelpjY2VZNUZxd0p0Y05uNkJ3VEt4aWxMS2tXVUhZZ0lmeVcyQVZw?=
- =?utf-8?B?d2RIUUZTaUc3aE1WdU80S0hTb01YTEVTSTJuajREekZjTmdPWUd4ZUlPa3Rv?=
- =?utf-8?B?WHpJSnlDUGFKTDBxU1B5a2lDaFdidTZoNzN1THprekNzL1ZPN0dQTWRtejE0?=
- =?utf-8?B?OTNhSU5wdWp2SWs5QkRJSzRRV0Q2aVV3RXNHUzg0aWQ4TUJ5N0FlTmQ4Y3ZD?=
- =?utf-8?B?OTI0WVdubDhna3pIT1p4ZTI0a3ViditLWXVSMkFvK3VTMUZUOWgvNmJIckxB?=
- =?utf-8?B?U2hycTFtZ0pnNWV1VmV0dHN2Z1R1VHlUY3lVMnNjZW1PMXIrdG1lYWozcHVx?=
- =?utf-8?B?RGI1aVVoaTRyNURpRzk2RFRxUEZGNjVLZk81Rk5FNkdGdTlDT05Vd1BvYTRT?=
- =?utf-8?B?OXdXT05VRWxtWVFOVENyWGdJaDB4M1RnczY4TVdDSEd2MnlXVzJOUEplbk82?=
- =?utf-8?B?SFlsVHd5NEhJbFlmdldrOU4wUkIvN0FBbUQ3bVRTVmVja2JzVkFQUT09?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a85b09e-c3cc-481c-6915-08de9aec4d64
-X-MS-Exchange-CrossTenant-AuthSource: LV5PR12MB9779.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2026 12:41:23.5897
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gmd91NK6U/avmvJQhb6p4g0BtfK6Ueepit6A+xLW6DoWL+fNMDTA8lPnppdYtf4N
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7473
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: qcom: Check glink->edge in
+ glink_subdev_stop()
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20260409-rproc-attach-issue-v1-0-088a1c348e7a@oss.qualcomm.com>
+ <20260409-rproc-attach-issue-v1-2-088a1c348e7a@oss.qualcomm.com>
+ <adkF7EY1KVRNO01o@linaro.org>
+ <c6a9936b-9f44-4bea-93a1-17d145e64eec@oss.qualcomm.com>
+ <ad36erdhcvnIvFMH@linaro.org>
+Content-Language: en-US
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <ad36erdhcvnIvFMH@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=A7Zc+aWG c=1 sm=1 tr=0 ts=69e04ee7 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=0U6zEqSkkI0Ln9L63JMA:9 a=QEXdDO2ut3YA:10
+ a=O8hF6Hzn-FEA:10 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: 49TRk7bvrsEG7Svgm-3IQM0rcBjrvI8C
+X-Proofpoint-GUID: 49TRk7bvrsEG7Svgm-3IQM0rcBjrvI8C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDAyNSBTYWx0ZWRfX6xZa5PTmXCgn
+ XF5+fhhG1tqJ+x++jkRvRxItZ1GaCyWoGHRF+pSruygBpEt2YTTiEmFQxK9sCX5we82RMYYU7r9
+ dXXpVUmT0XeydBt46buqVGk1pc2QmcEr8I2fFjEflR8v+J3dU6W/FajCgs6QFkswLmUDNijbcp9
+ UCaBMcT0QEzYKwZQ6l3kAlOdnMvKQQ1hWXUMzi9tCNVljaE0P1CHzfQ3/mpUZX1AJKnFcgWMrL8
+ CYzjtSY7sWY77htK3tbyXaKMjcj/zngrEccrnZ4RAPWC/17E0nGR3W3uDTRMqvT+UTXzyL9FbuT
+ ADCga9iv4Q8dwPJp2jX6AJ/YV3UExMv/Gza/7lCpO/AHRyQD1ORJ59rpnMcIcVi0c8T0eSXP/qr
+ /lR/2W+ADscRlOg7q1a4AVWdCX9pngl4QrnbUDk/63gTTtVBm5BAGQynI/BInhIWSELhBqQrF9O
+ lCH+t3rbGV6rvQj7hYw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-16_01,2026-04-13_04,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 spamscore=0 adultscore=0 bulkscore=0 priorityscore=1501
+ phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604160025
 
 
 
-On 4/15/26 14:19, Rob Herring wrote:
-> On Wed, Apr 15, 2026 at 1:16 AM Michal Simek <michal.simek@amd.com> wrote:
+On 4/14/2026 4:27 PM, Stephan Gerhold wrote:
+> On Tue, Apr 14, 2026 at 11:23:50AM +0800, Jingyi Wang wrote:
+>> On 4/10/2026 10:15 PM, Stephan Gerhold wrote:
+>>> On Thu, Apr 09, 2026 at 01:46:22AM -0700, Jingyi Wang wrote:
+>>>> For rproc that doing attach, glink_subdev_start() is called only when
+>>>> attach successfully. If rproc_report_crash() is called in the attach
+>>>> function, rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() could
+>>>> be called and cause NULL pointer dereference:
+>>>>
+>>>>    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000300
+>>>>    Mem abort info:
+>>>>    ...
+>>>>    pc : qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem]
+>>>>    lr : glink_subdev_stop+0x1c/0x30 [qcom_common]
+>>>>    ...
+>>>>    Call trace:
+>>>>     qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem] (P)
+>>>>     glink_subdev_stop+0x1c/0x30 [qcom_common]
+>>>>     rproc_stop+0x58/0x17c
+>>>>     rproc_trigger_recovery+0xb0/0x150
+>>>>     rproc_crash_handler_work+0xa4/0xc4
+>>>>     process_scheduled_works+0x18c/0x2d8
+>>>>     worker_thread+0x144/0x280
+>>>>     kthread+0x124/0x138
+>>>>     ret_from_fork+0x10/0x20
+>>>>    Code: a9be7bfd 910003fd a90153f3 aa0003f3 (b9430000)
+>>>>    ---[ end trace 0000000000000000 ]---
+>>>>
+>>>> Add NULL pointer check in the glink_subdev_stop() to make sure
+>>>> qcom_glink_smem_unregister() will not be called if glink_subdev_start()
+>>>> is not called.
+>>>>
+>>>
+>>> You mention the actual root problem here: Why is glink_subdev_stop()
+>>> called if glink_subdev_start() wasn't called?
+>>>
+>>> The call to rproc_start_subdevices() in __rproc_attach() makes sure that
+>>> all subdevices are in consistent state when exiting the function (either
+>>> prepared+started or stopped+unprepared). Only if all subdevices were
+>>> started successfully, the rproc->state is changed to RPROC_ATTACHED.
+>>>
+>>> In your case, attaching the rproc failed so the rproc->state should be
+>>> still RPROC_DETACHED. All subdevices should be stopped+unprepared. We
+>>> shouldn't stop/unprepare any subdevices again in this state, they all
+>>> might crash like glink does here.
+>>>
+>>> We know that subdevices are already stopped+unprepared in RPROC_DETACHED
+>>> state, so I think you just need to skip rproc_stop_subdevices() and
+>>> rproc_unprepare_subdevices() inside rproc_stop() in this case, see diff
+>>> below.
+>>>
+>>> @@ -1708,8 +1709,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+>>>    	if (!rproc->ops->stop)
+>>>    		return -EINVAL;
+>>> -	/* Stop any subdevices for the remote processor */
+>>> -	rproc_stop_subdevices(rproc, crashed);
+>>> +	/* Stop any subdevices for the remote processor if it was attached */
+>>> +	if (rproc->state != RPROC_DETACHED)
+>>> +		rproc_stop_subdevices(rproc, crashed);
+>>>    	/* the installed resource table is no longer accessible */
+>>>    	ret = rproc_reset_rsc_table_on_stop(rproc);
+>>> @@ -1726,7 +1728,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+>>>    		return ret;
+>>>    	}
+>>> -	rproc_unprepare_subdevices(rproc);
+>>> +	if (rproc->state != RPROC_DETACHED)
+>>> +		rproc_unprepare_subdevices(rproc);
+>>>    	rproc->state = RPROC_OFFLINE;
 >>
+>> In this case, rproc_crash_handler_work()->rproc_trigger_recovery()->
+>> rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() is called,
+>> "rproc->state = RPROC_CRASHED" is set in the rproc_crash_handler_work
+>> before rproc_boot_recovery is called, so checking RPROC_DETACHED can
+>> not work for this case.
 >>
->>
->> On 4/14/26 19:53, Krzysztof Kozlowski wrote:
->>> On 14/04/2026 18:15, Ben Levinsky wrote:
->>>
->>> A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
->>> prefix is already stating that these are bindings.
->>> See also:
->>> https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
->>>
->>>> +---
->>>> +$id: http://devicetree.org/schemas/remoteproc/amd,microblaze.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: AMD MicroBlaze remote processor
->>>> +
->>>> +maintainers:
->>>> +  - Ben Levinsky <ben.levinsky@amd.com>
->>>> +
->>>> +description:
->>>> +  MicroBlaze remote processor controlled by Linux through the remoteproc
->>>> +  framework.
->>>
->>> Describe hardware, not Linux frameworks. IOW, Linux framework is here
->>> irrelevant.
->>>
->>>> +
->>>> +  The executable firmware memory window is described in the
->>>> +  MicroBlaze-local address space by the node's reg property and translated
->>>> +  to the system physical address space with standard devicetree address
->>>> +  translation provided by the parent bus node's ranges property.
->>>> +
->>>> +properties:
->>>> +  $nodename:
->>>> +    pattern: "^remoteproc@[0-9a-f]+$"
->>>> +
->>>> +  compatible:
->>>> +    const: amd,microblaze
->>>
->>> microblaze is architecture, so this feels way too generic. You need SoC
->>> specific compatibles and I suggest do not reference architecture, but
->>> name or the function of the processor, if there are such.
->>
->> I have been arguing internally that I think when you look at driver itself it
->> can be pretty much generic loader for any firmware and doesn't really matter if
->> target subsystem is Microblaze/Risc-V/whatever based. And I was suggesting them
->> to use more generic name.
 > 
-> Generic to AMD though, not everyone, right?
+> You're right, I forgot about that. I think we need a more generic
+> solution for this though. rproc_stop_subdevices() should not be called
+> without a prior call to rproc_start_subdevices().
 > 
-> I agree it probably doesn't matter what the processor arch is. The
-> compatible just needs to be specific enough when there's some
-> quirk/feature in the interface to the operating system, that we can
-> distinguish the specific implementation *without* a DT update.
-
-
-If any fpga vendor creates the same configuration description will be the same 
-for them too. But not a problem with having it generic to AMD only.
-
-I think the point is to come up with proper compatible string which you will 
-agree on.
-
-
+> I think there are a couple of options for this:
 > 
->> Because at the end of day reg property is pointing to location where firmware
->> should be loaded and gpio is a way how to start that subsystem and there is
->> nothing Microblaze specific.
->>
->> I can also imagine that the same driver could be extended with optional power
->> domain, power regulator and clock properties if there is a need to drive them
->> before subsystem gets out of reset.
+>   - Add a bool "subdevs_started" to struct rproc and manage that
+>     separately from the rproc->state.
 > 
-> That never works because then there's timing/ordering constraints for
-> enabling/disabling all those resources. Then we end up with a never
-> ending stream of properties added which results in a poorly designed
-> binding.
+>   - Track the rproc state before the crash separately (something like
+>     rproc->state_before_crash) and check that in the stop path.
+> 
+>   - Add a new state RPROC_CRASHED_DETACHED to make sure the states are
+>     unique.
+> 
+>   - ...
+> 
 
-Actually even current binding should have clock described and handled because 
-clock has to be enabled before releasing GPIO out of reset. If it is coming 
-outside of chip it should still be modeled.
+Sure, I think a bool like subdevs_started will be better for maintain?
 
-Anyway I don't think we have ever end in a never ending stream of properties for 
-our IP and this is not going to be the case too.
+> Does the same issue also exist in qcom_pas_stop() of "[PATCH v5 4/5]
+> remoteproc: qcom: pas: Add late attach support for subsystems" [1]?
+> There you check for pas->rproc->state != RPROC_ATTACHED, wouldn't this
+> also fail for the RPROC_CRASHED case?
+> 
+
+I tested calling rproc_report_crash directly during qcom_pas_attach but
+did not see issue, handover_issued is set only if attach is success
+so "handover = qcom_q6v5_unprepare(&pas->q6v5);" will return false and
+"qcom_pas_handover(&pas->q6v5);" will not be called.
 
 Thanks,
-Michal
+Jingyi
+
+> Thanks,
+> Stephan
+> 
+> [1]: https://lore.kernel.org/linux-arm-msm/20260409-knp-soccp-v5-4-805a492124da@oss.qualcomm.com/
 
