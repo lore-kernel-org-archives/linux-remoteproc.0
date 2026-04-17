@@ -1,131 +1,188 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC37535F5E4;
-	Thu, 16 Apr 2026 21:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4301C84BC;
+	Fri, 17 Apr 2026 20:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776373849; cv=none; b=VG1Unz8Ua3wSwgqoSq1AV6Edf1kn5qi++RXFg5EwEt6uN5IrVAq5jDH7PZIecUSqZxVqObg3Hc5lFrw5SsMP1DGH6SrtvO5UndLuPWMo0xpZ4ABvmLdPbFHGs7rBJdWEmpcE3l5GAERdj+WUomwDpZtvkK4KWnlgi6IQhu2nOL8=
+	t=1776456096; cv=none; b=a8pmQtpO+wjxppTq36bzbT7O4HlmRZXrXW9FahFr61Ow4hlvy0z1OU8pN3ECmcPFV0e+wIR9shl+tGzkkhwtk0yBMFDIupCcFpZuYLmdbBJQpsiTaZ9uTe/Iu8ZRKSwVYG5xiQnif/1XZAYtllUqtYgfTZBDDhqrDinhArMo85s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776373849; c=relaxed/simple;
-	bh=tK+Us+60ypdY+8xy5NOzQFC4IGCqHJkoia9xZDAS33s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B3uhsZYRKMVldKCP0gLJ67djskyO4Bxj0oonFH+pPBn1s4amtodhfFVQ/wNsXF6y20eqfVYu+XWKpEbF1oBcZeA1WYsy8dZIGAD9pQDdznHavZh9ybaP6HZ3G6ZO0HXDIk9T8wsKX3JcgDnKwnwgMdOBiha67q9Vg1mIDmbvJeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dqnX6oTM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1776456096; c=relaxed/simple;
+	bh=vwfjMzm/GROsxUn5anF0PgY/aDt4sTknxhszmicwFG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qtmVOX2fd1+PN0tgMsjc5ZFra1lyE0CFQ8TC53KH466u7Jt/0ia9AexLSTXFMDlA02Xhp3Kx1Is6uDxcxzHtlEcM0fS2FYLKTbA0bNej3JMp/7hpq+O9z3bjk5KAtRD9SH6+bMYh4y8++mT+xDnsZMuWSfUE7Du6liv7FQKyJFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JwZjWMEr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dqnX6oTM"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=pF+hcvOM+pTk5+aFxrJQ1Z7u1BA1J9lewId/mfJhv9E=; b=dqnX6oTMdHn41jQw2G4I273stF
-	o56JClDlwBgxP2oSZVA0wzadjEHwaZk03eXaAihQuBInpeJ6tb/80sZ+RbWSdXjk87ded4A1pWFna
-	DNJO0swuxArVAEF7YbVeEs3SXvV3VtAdnNdm+x/MZ7a1r5t6XaPpKyCh01uv6B8S1hUzxHIEQ/jyi
-	0oGnFS9cb1GB9CFSV/os9rNnkkbowU6kG31EDPPqX0OqBZBqoHV1LLBAm8HhZxCG44G9t9imQYSP0
-	9CsWRFFcc1ej4SA2EmAffaOvtrLkjb4C2V3UtSqpz009qqXubJkPsGiGfeAHglqcuFXxgR5mBxYJd
-	sJRzq/Fw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1wDTz0-000000033AF-1ZYy;
-	Thu, 16 Apr 2026 21:10:42 +0000
-Message-ID: <491d3249-1995-4499-9dc2-150e0fd2acef@infradead.org>
-Date: Thu, 16 Apr 2026 14:10:40 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JwZjWMEr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0EDC19425;
+	Fri, 17 Apr 2026 20:01:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776456096;
+	bh=vwfjMzm/GROsxUn5anF0PgY/aDt4sTknxhszmicwFG8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JwZjWMErD2J0QjZAxOzy7q6sf06Qdi73M0wH7m18GZYL+yC4iMB8N738SiPoLzZiN
+	 CUBRya83T8jmP9GX+ItFvE1ifOVNztOE3SPgtWQDJ80d7I9Q1swGExiDuyRhtkpusy
+	 MkDepeygXWraUjUBHAKbhtTlGgEjxUiOjDEuM7GBRzwuiKwQywr+z0+qxf4CnOFt3a
+	 5Fnx+Rox4qn5ur0D0cwH2Lz/NsJABinGcEJHqnYjFB9upxv6ZaI5ozZQA2F8DrhouB
+	 0vGi+wyYSqPgMGvq3snZhk7gIzge/M8jd5LNr2pM12+zzSZFYZ/vXi0Nxr/N6KDeWy
+	 HPicRSEZh+suw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
+	Andrew Davis <afd@ti.com>,
+	Chen Ni <nichen@iscas.ac.cn>,
+	Abel Vesa <abel.vesa@oss.qualcomm.com>,
+	Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
+	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+	Markus Schneider-Pargmann <msp@baylibre.com>,
+	Shawn Guo <shengchao.guo@oss.qualcomm.com>,
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Anas Iqbal <mohd.abd.6602@gmail.com>,
+	Ben Levinsky <ben.levinsky@amd.com>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Tim Michals <tcmichals@yahoo.com>
+Subject: [GIT PULL] remoteproc updates for v7.1
+Date: Fri, 17 Apr 2026 15:01:32 -0500
+Message-ID: <20260417200132.2581415-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: staging: fix various typos and grammar issues
-To: Zhang Xiaolei <zxl434815272@gmail.com>, corbet@lwn.net,
- ebiggers@kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: ardb@kernel.org, skhan@linuxfoundation.org, linux-crypto@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260416105854.788-1-zxl434815272@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20260416105854.788-1-zxl434815272@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
+The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
 
-On 4/16/26 3:58 AM, Zhang Xiaolei wrote:
-> Fix a few typographical and grammatical issues across several
-> staging documentation files to improve readability:
-> - crc32.rst: replace "decide in" with "decide on"
-> - lzo.rst: replace "independent on" with "independent of"
-> - remoteproc.rst: fix word order in dependent clause
-> - static-keys.rst: add hyphen to "low-level"
-> 
-> Signed-off-by: Zhang Xiaolei <zxl434815272@gmail.com>
+  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Thanks.
+are available in the Git repository at:
 
-> ---
->  Documentation/staging/crc32.rst       | 2 +-
->  Documentation/staging/lzo.rst         | 2 +-
->  Documentation/staging/remoteproc.rst  | 2 +-
->  Documentation/staging/static-keys.rst | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/staging/crc32.rst b/Documentation/staging/crc32.rst
-> index 64f3dd430a6c..fc0d9564b99c 100644
-> --- a/Documentation/staging/crc32.rst
-> +++ b/Documentation/staging/crc32.rst
-> @@ -119,7 +119,7 @@ the byte-at-a-time table method, popularized by Dilip V. Sarwate,
->  v.31 no.8 (August 1988) p. 1008-1013.
->  
->  Here, rather than just shifting one bit of the remainder to decide
-> -in the correct multiple to subtract, we can shift a byte at a time.
-> +on the correct multiple to subtract, we can shift a byte at a time.
->  This produces a 40-bit (rather than a 33-bit) intermediate remainder,
->  and the correct multiple of the polynomial to subtract is found using
->  a 256-entry lookup table indexed by the high 8 bits.
-> diff --git a/Documentation/staging/lzo.rst b/Documentation/staging/lzo.rst
-> index f65b51523014..2d48b2667dd2 100644
-> --- a/Documentation/staging/lzo.rst
-> +++ b/Documentation/staging/lzo.rst
-> @@ -75,7 +75,7 @@ Description
->       are called under the assumption that a certain number of bytes follow
->       because it has already been guaranteed before parsing the instructions.
->       They just have to "refill" this credit if they consume extra bytes. This
-> -     is an implementation design choice independent on the algorithm or
-> +     is an implementation design choice independent of the algorithm or
->       encoding.
->  
->  Versions
-> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-> index 5c226fa076d6..c117b060e76c 100644
-> --- a/Documentation/staging/remoteproc.rst
-> +++ b/Documentation/staging/remoteproc.rst
-> @@ -24,7 +24,7 @@ handlers, and then all rpmsg drivers will then just work
->  (for more information about the virtio-based rpmsg bus and its drivers,
->  please read Documentation/staging/rpmsg.rst).
->  Registration of other types of virtio devices is now also possible. Firmwares
-> -just need to publish what kind of virtio devices do they support, and then
-> +just need to publish what kind of virtio devices they support, and then
->  remoteproc will add those devices. This makes it possible to reuse the
->  existing virtio drivers with remote processor backends at a minimal development
->  cost.
-> diff --git a/Documentation/staging/static-keys.rst b/Documentation/staging/static-keys.rst
-> index b0a519f456cf..e8dc3a87c381 100644
-> --- a/Documentation/staging/static-keys.rst
-> +++ b/Documentation/staging/static-keys.rst
-> @@ -90,7 +90,7 @@ out-of-line true branch. Thus, changing branch direction is expensive but
->  branch selection is basically 'free'. That is the basic tradeoff of this
->  optimization.
->  
-> -This lowlevel patching mechanism is called 'jump label patching', and it gives
-> +This low-level patching mechanism is called 'jump label patching', and it gives
->  the basis for the static keys facility.
->  
->  Static key label API, usage and examples
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v7.1
 
--- 
-~Randy
+for you to fetch changes up to 56c1ec524284805da0181bc6e9ca656c0091b201:
+
+  remoteproc: qcom: pas: Add Eliza ADSP support (2026-04-06 09:49:21 -0500)
+
+----------------------------------------------------------------
+remoteproc updates for v7.1
+
+Move requesting of IRQs in TI Keystone driver to probe time instead of
+remoteproc start, to allow better handling of errors.
+
+Introduce support for more than 10 entries in the Qualcomm minidump
+implementation.
+
+Add audio DSP remoteproc support for the Qualcomm Eliza platform. Add
+modem remoteproc support for the Qualcomm MDM9607, MSM8917, MSM8937, and
+MSM8940 platforms.
+
+Add list of Qualcomm QMI service ids to the QMI header file, in order to
+avoid sprinkling them across the various drivers using them. Migrate
+sysmon to use this constant.
+
+Fix several issues related to DeviceTree parsing and mailbox handling in
+the Xilinx R5F remote processor driver.
+
+Fix incorrect error checks in reserved memory handling and polish the
+code across i.MX and TI drivers.
+
+----------------------------------------------------------------
+Abel Vesa (2):
+      dt-bindings: remoteproc: qcom,milos-pas: Document Eliza ADSP
+      remoteproc: qcom: pas: Add Eliza ADSP support
+
+Anas Iqbal (1):
+      remoteproc: use SIZE_MAX in rproc_u64_fit_in_size_t()
+
+Andrew Davis (6):
+      remoteproc: da8xx: Use dev_err_probe()
+      remoteproc: da8xx: Remove unused local struct data
+      remoteproc: da8xx: Reorder resource fetching in probe()
+      remoteproc: pru: Use rproc_of_parse_firmware() to get firmware name
+      remoteproc: pru: Remove empty remove callback
+      remoteproc: keystone: Request IRQs in probe()
+
+Barnabás Czémán (8):
+      remoteproc: qcom_q6v5_mss: Introduce need_pas_mem_setup
+      dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MDM9607
+      dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8917
+      remoteproc: qcom_q6v5_mss: Add MSM8917
+      dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8937
+      remoteproc: qcom_q6v5_mss: Add MSM8937
+      dt-bindings: remoteproc: qcom,msm8916-mss-pil: Add MSM8940
+      remoteproc: qcom_q6v5_mss: Add MSM8940
+
+Ben Levinsky (1):
+      remoteproc: xlnx: Only access buffer information if IPI is buffered
+
+Bjorn Andersson (1):
+      Merge branch '20260309230346.3584252-2-daniel.lezcano@oss.qualcomm.com' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into rproc-next
+
+Chen Ni (3):
+      remoteproc: imx_rproc: Check return value of regmap_attach_dev() in imx_rproc_mmio_detect_mode()
+      remoteproc: imx_rproc: Fix NULL vs IS_ERR() bug in imx_rproc_addr_init()
+      remoteproc: k3: Fix NULL vs IS_ERR() bug in k3_reserved_mem_init()
+
+Daniel Lezcano (2):
+      soc: qcom: qmi: Enumerate the service IDs of QMI
+      remoteproc: sysmon: Use the unified QMI service ID instead of defining it locally
+
+Jingyi Wang (2):
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali ADSP
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali CDSP
+
+Markus Schneider-Pargmann (TI) (2):
+      dt-bindings: remoteproc: k3-r5f: Split up memory regions
+      dt-bindings: remoteproc: k3-r5f: Add memory-region-names
+
+Mukesh Ojha (1):
+      remoteproc: qcom: Fix minidump out-of-bounds access on subsystems array
+
+Shawn Guo (2):
+      dt-bindings: remoteproc: qcom: Drop types for firmware-name
+      remoteproc: qcom: Add missing space before closing bracket
+
+Sibi Sankar (2):
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Glymur ADSP
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Glymur CDSP
+
+Stephan Gerhold (1):
+      remoteproc: qcom_q6v5_mss: Add MDM9607
+
+Tanmay Shah (2):
+      remoteproc: xlnx: Avoid mailbox setup
+      remoteproc: xlnx: Release mailbox channels on shutdown
+
+Tim Michals (1):
+      remoteproc: xlnx: Fix sram property parsing
+
+ .../bindings/remoteproc/qcom,milos-pas.yaml        |   3 +
+ .../bindings/remoteproc/qcom,msm8916-mss-pil.yaml  |  14 +-
+ .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml  |   1 -
+ .../bindings/remoteproc/qcom,sa8775p-pas.yaml      |   1 -
+ .../bindings/remoteproc/qcom,sc7180-mss-pil.yaml   |   1 -
+ .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml   |   1 -
+ .../bindings/remoteproc/qcom,sc8280xp-pas.yaml     |   2 +-
+ .../bindings/remoteproc/qcom,sdx55-pas.yaml        |   2 +-
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       |  15 +-
+ .../bindings/remoteproc/ti,k3-r5f-rproc.yaml       |  55 ++++-
+ drivers/remoteproc/da8xx_remoteproc.c              |  97 +++-----
+ drivers/remoteproc/imx_rproc.c                     |   8 +-
+ drivers/remoteproc/keystone_remoteproc.c           |  41 ++--
+ drivers/remoteproc/pru_rproc.c                     |  17 +-
+ drivers/remoteproc/qcom_common.c                   |  17 +-
+ drivers/remoteproc/qcom_q6v5_mss.c                 | 263 +++++++++++++++++++--
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 139 +++++------
+ drivers/remoteproc/qcom_sysmon.c                   |   2 +-
+ drivers/remoteproc/remoteproc_internal.h           |   2 +-
+ drivers/remoteproc/ti_k3_common.c                  |   2 +-
+ drivers/remoteproc/xlnx_r5_remoteproc.c            |  28 ++-
+ include/linux/soc/qcom/qmi.h                       |  12 +
+ 22 files changed, 497 insertions(+), 226 deletions(-)
