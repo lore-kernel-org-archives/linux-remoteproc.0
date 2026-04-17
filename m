@@ -1,76 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5333D2494D8;
-	Fri, 17 Apr 2026 20:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D7236B055;
+	Fri, 17 Apr 2026 21:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776456205; cv=none; b=dtPqGYOCNAvIc2l2Y3LPp21hzveEMmB8wpYTEpR8clkrgOIxkliOvtRCTUknTdq+VPf2Gh9onFtuwekKmMWYflQwbvxTuo3LNOu/LsBz8hErkpA3stKfsPzJDBILHdKumId4iTo+NHBZLdYcOBuh8yN9N9I3eCyUL+erpdFhAiA=
+	t=1776461074; cv=none; b=NdLwDHhCi4IA+i1eBw6Gvd5Wv4CLQp/d5O0089oXksxXcaJWJEemT5/WX1xKZx3zbAxTdGyf/LCSXp0/yUfFX7uUmSezD00R6J33zx+RwSkIuzLIzrBp8MH1GK1k8F+wk46KWsjzJx0d1vJE0tq3IdGzZEdDfm10Bs7wb5nBWLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776456205; c=relaxed/simple;
-	bh=KnlmDb+rqMlj2COiPZu3IRaJApa0qLpmYVfWdZX3qEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HQBVDv6c6g8SzK1Tgh+WhzcSBx2m2NfweYhnPYodwE4OSJy/eCtQ7BIYWGjJZxxNu/LWBjT/SrrT+grkXeriQTL+Ra2GWVI5NUfWEXSrt1J+NnnsZeSBgsnZfWVNDvuWgxRdQk2MrWi2slWlTHPvIi3bB1KYCzrqh6PNh+9vwzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T26j4lfb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776461074; c=relaxed/simple;
+	bh=NQL2g6Jw1eCPH38KwgUziinErPaEFr9qicR40L9Z9qA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WxB6kBJQtizj87n9wTQZJcod4fVGVx7F5zXaBOMkiv37Jpna3wpQe8J/wntEbdik2pLS0Gi0GN+h1ycTuTYYGLsfn7yh6XLlx6VssV5l29+Uh1JEaBuFl4hk5zDzumUIkx2B0pKH/lUtZ7ZuQFmuqtQYh0BAL+r4TsG77Qw3nSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e04hIcw6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T26j4lfb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770F9C19425;
-	Fri, 17 Apr 2026 20:03:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e04hIcw6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E74B6C19425;
+	Fri, 17 Apr 2026 21:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776456204;
-	bh=KnlmDb+rqMlj2COiPZu3IRaJApa0qLpmYVfWdZX3qEQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=T26j4lfb2x2PhS4QuXANHF4ZHID0wGk2bNdAUM5KZink1xFx7Js3nKgm2m4tHhuOy
-	 7Bg503GLpUAu3/Cu7ecmSG4NN96t2lJlKvtzDovsQsDvTBZi83oEFTZC1czihlTDBA
-	 nSJcwVKPFWKsZhUniBrEJzP7NdsWM1HiG9fdxAY85nUvlb9myI0na4BZmi8Ndl4Kdf
-	 BjIU9gToAlzuVOHTMzfmWqXvkQ+N+HuS1qPA18ZxUbxLpr4TptGj49EXvlcxED0tJA
-	 qgUoMyGkA4V5CBn8K5C3BzulxC6yMkLTHLdqjpnZPp/2SVHznZNpc0tO8NkigVO8XQ
-	 oz84AYaJ1pKOg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [GIT PULL] hwspinlock updates for v7.1
-Date: Fri, 17 Apr 2026 15:03:22 -0500
-Message-ID: <20260417200322.2582396-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	s=k20201202; t=1776461074;
+	bh=NQL2g6Jw1eCPH38KwgUziinErPaEFr9qicR40L9Z9qA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=e04hIcw6E2MZy7+jYhTeXF7ZzkMGx2y0iLRiYswoJCpbZk25YnBsrufdj/2nuNKkO
+	 JD44smmi+k03Ag5ETHPjXKrLsImfYBIP3TXS6lcuiRQ8Arjx+7ffCzZ58dXWrEkDU5
+	 cXSpYI3cAJpwPxMqPh0+pjom/5kim+kZW5xFqtulRLB7YydYo5xYm/NvlpOpuqtKbj
+	 RM1/10h9s967y4WpBg13SC++sx6Sl2UzJ2uKr+y+MMpucJCikOZ8HSJfoBsyEr8B+S
+	 CbqPXkrPLCmIOYTJIUiO+RlPzo3jT4hbsxlberxnCRzbz1sdTYA7/YdDJyEtK1IHM3
+	 qezGxHb4uVRcg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7CE15380CEE7;
+	Fri, 17 Apr 2026 21:24:02 +0000 (UTC)
+Subject: Re: [GIT PULL] remoteproc updates for v7.1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20260417200132.2581415-1-andersson@kernel.org>
+References: <20260417200132.2581415-1-andersson@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20260417200132.2581415-1-andersson@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v7.1
+X-PR-Tracked-Commit-Id: 56c1ec524284805da0181bc6e9ca656c0091b201
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d65218de87c4bfa879bc453c3050d3851c353dcc
+Message-Id: <177646104113.161623.1457579120410944221.pr-tracker-bot@kernel.org>
+Date: Fri, 17 Apr 2026 21:24:01 +0000
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, Andrew Davis <afd@ti.com>, Chen Ni <nichen@iscas.ac.cn>, Abel Vesa <abel.vesa@oss.qualcomm.com>, Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Markus Schneider-Pargmann <msp@baylibre.com>, Shawn Guo <shengchao.guo@oss.qualcomm.com>, Sibi Sankar <sibi.sankar@oss.qualcomm.com>, Tanmay Shah <tanmay.shah@amd.com>, Anas Iqbal <mohd.abd.6602@gmail.com>, Ben Levinsky <ben.levinsky@amd.com>, Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Stephan Gerhold <stephan@gerhold.net>, Tim Michals <tcmichals@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
+The pull request you sent on Fri, 17 Apr 2026 15:01:32 -0500:
 
-The following changes since commit 6de23f81a5e08be8fbf5e8d7e9febc72a5b5f27f:
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v7.1
 
-  Linux 7.0-rc1 (2026-02-22 13:18:59 -0800)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d65218de87c4bfa879bc453c3050d3851c353dcc
 
-are available in the Git repository at:
+Thank you!
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v7.1
-
-for you to fetch changes up to ad5fd5aeb65a4426635cf55ef06c96e60a66e648:
-
-  hwspinlock: remove now unused pdata from header file (2026-04-06 09:43:18 -0500)
-
-----------------------------------------------------------------
-hwspinlock updates for v7.1
-
-Remove the unused u8500 hardware spinlock driver, and clean out the
-hwspinlock_pdata struct as this was the last user of the struct.
-
-----------------------------------------------------------------
-Wolfram Sang (2):
-      hwspinlock: u8500: delete driver
-      hwspinlock: remove now unused pdata from header file
-
- MAINTAINERS                      |   1 -
- arch/arm/configs/u8500_defconfig |   1 -
- drivers/hwspinlock/Kconfig       |  10 ---
- drivers/hwspinlock/Makefile      |   1 -
- drivers/hwspinlock/u8500_hsem.c  | 155 ---------------------------------------
- include/linux/hwspinlock.h       |  28 -------
- 6 files changed, 196 deletions(-)
- delete mode 100644 drivers/hwspinlock/u8500_hsem.c
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
