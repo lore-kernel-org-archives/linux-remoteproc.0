@@ -1,213 +1,464 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39AD3D75C5
-	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Apr 2026 13:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2B93DCDBE;
+	Tue, 21 Apr 2026 19:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776779167; cv=none; b=KZnNfjwBVxZxr2SR9veTetNUVHwjyl+MImqsMTGf8kSZs2pFt8VAwM6Zd8bKCYwtODTVbCdsZ2It+cbiJqPBjZAPK4/N7547p3aoK8yqdpGmx6rXp41S6v+yDW4jTLLeJEVugn0078Mk8q/9nI8CDtY38yPP27Q/AYjpOxhwrjk=
+	t=1776801539; cv=none; b=mqgmPfXJHWoDHTYjdU3+UA7nrPNEqmWfWsr/0C7iHfG2nCC7LtXMlTqZeVKjKWDRz/ID2Fip8Ku1YeRpIIAvEJp71a0j2S7uznAftqPdX2RSPVf+ruG9zL3fK3ZHsSv9R56dsYyzXA4Ad+8l9WfUdoqEybM7ctjSwIM12ZB8O7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776779167; c=relaxed/simple;
-	bh=KcazhR1FwuJGOUvvuH2Fx0hl/HbIQAv1xGBiU5ejLO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c3AMtf52+rj4WM+1N/ahUYjYYE0+93hrHUb5o/txvmoxRRFHC+iWZvpjbS8G40SqkYzgEQRyA4EhAU4kd0j7iFLTPeFHdX+iLT5pGwx/pQPE1ljQ46zckQknKFWO8MIK1tKBZutFma3Kh0cINNfdE94FG1GqDwq7XV2yi3KEgBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ouVuohJk; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1776801539; c=relaxed/simple;
+	bh=6Y3XJTx7QfULoZhyBK7B6XVakPKj7Nc4iKBX0gVaDyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E0Eb8iS6u+6OngGqUmlgmMvJVHjh/RKgpxU0QdATMJwINWY2f0q8utUZ1jCh8Hnlqpueu5R1QVQT5HWF6TJGCGU2nFmCO4AYmfHII1ctCHRV5OqMum9Lsl01bXcfBuGzc3lF4HtcYTF6QLs/t8L7CLMRHK/qtQ3A3mKhgiuz49c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDyyT/G8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ouVuohJk"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4852a9c6309so38324725e9.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Apr 2026 06:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1776779162; x=1777383962; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PN2+x6/JKFYfRn3NRNCqOpga4ObXC7joWwnqrV4KVkY=;
-        b=ouVuohJk30aeWY7QVcfv6SJaSuQgxMjaveheY2DPkhQ5KLNNeNXvjpnUtTKln5Wj6H
-         X6cLUkrvZC0sNTGYwKYkpccHDMj0puC+ApK1qzFJnyS9/IlMs5ND0dxtQmRYt2NEmxJs
-         v1dnUMFCus/E7W+ytAGxlgkcqulQh0ElIzJkb74kOukuHnuigUDvAyiKWfcolW4QL7Uw
-         tO6hssSvw1k/uHbgxzDMsZNDdxohHbgW8M43/w/kjnuzJigWAbiFy1o+jypGfoJNy1Oj
-         u33To09w8mSLDYZoAbuZtT84h3M6QrvCgadSTQYG/0I4yCL9KenQUtWHRxKN5/QP1QP8
-         +QmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776779162; x=1777383962;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PN2+x6/JKFYfRn3NRNCqOpga4ObXC7joWwnqrV4KVkY=;
-        b=Do7EWpM/HsBkuGzhDb1JBB+ORybvOh3YpYUyVqfNcN1UNP98g81/PzruDEfQFPna56
-         5HNwIbAmck8U4bCnbcaRF0421TV0veqqkjFCe8pkSAn7E7rsCErfdG5d/l03kKo8BOli
-         Y+zccO7ApYYXMK4jA0EHh1Y425MxuA1sch4kkrsN34AhwIEsd+Q+oL+O3nu/bWIhWDeA
-         p8ozXM0sennwBgVhERMMb0bsXCZ0S31rZldbuE3HXR1dIKa8fvRX5SWAJDTeTBV+MBCF
-         Ci8E+Fg+D2WqdwD9Sd0/vSGpt/Y6ZLz4CJAOs/6KtQF9eKn56YZ7tRKc6B92e23ptqxk
-         ptIg==
-X-Forwarded-Encrypted: i=1; AFNElJ9tLaDlXQ/2qcuzzPNu+SGvlLd/xS+3DOoqIMVA7GKm4mSdDkstYEcpbIAXvWp3IbV1HKvfb1B8pVTuCc1jobPj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtPNOfkYIQshHHnANcCjQ9DCqocUqK3qAFoDo5e6QwJJkQTCQ4
-	HRAPABZ+VQ9zJYp1Dk0KLxZCuAKqyLI6ILqDdqPOwtMcRaRNLxXTJ0V22TApHW+IW1M=
-X-Gm-Gg: AeBDievfULqZNULQnoQx8IUQhaL/rErIG7F74/8d+uU3CAnyiJOVf9R10IDTasXdZb/
-	9mNuhfCexAUvxWYmxomhAte+a+TF4CdH6nsePIB5HSDfkZOL5iXIZ2o101uYyBJGCAtVDE853qc
-	bbGVZuww1wIdwfax+aZIKMaK7iVwix218MfBy22nkP9JUz9OLnIklWvqp0f31bjAIddf364lsKM
-	ZTP6wtrhM0dy89AHaieL7tUqK98IIRx/C3apUgYHRyOK27OcqoFp5OFa4ty1CpODpBXhrsjHslO
-	fb/gOz0VO5bcOyDVIatu73WcFWsAPmNlMNXJEzCkH2VCblUyV6C/dyulmnJh5/W38MMBNQw5xUb
-	rfAhVbVsOkKYR4VXo3NHJIRfQZoJJ51IVc43VhyDqIyRiyB/MPaTK3ZD4W02bh2/0/e2xi/2jDJ
-	rO89c/NJP9mAsVLMJ+taYeMG/v5Qoi/Jp2etZzcMW5
-X-Received: by 2002:a05:600c:890c:b0:485:3ff1:d5ed with SMTP id 5b1f17b1804b1-488fb739cd9mr209881105e9.1.1776779161867;
-        Tue, 21 Apr 2026 06:46:01 -0700 (PDT)
-Received: from linaro.org ([92.206.190.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4891d251b24sm48875415e9.7.2026.04.21.06.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Apr 2026 06:46:01 -0700 (PDT)
-Date: Tue, 21 Apr 2026 15:45:51 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDyyT/G8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B756C2BCB0;
+	Tue, 21 Apr 2026 19:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1776801538;
+	bh=6Y3XJTx7QfULoZhyBK7B6XVakPKj7Nc4iKBX0gVaDyQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QDyyT/G8eZH50ql5rjOLdalKdIqZE2fgMeHyyuy67vpqrYy+KhkwUuA/0xdO00XVl
+	 Vfx1OeFBwa6Ssr5eIjztzSOos+9xfG8Vkp/EVQHXKCnNlqVAx1f8O5kKRcY4tRK0wx
+	 Fy47U2hZXsEsHQaXu8SFJpMDLdICx/1SZ5j9ZyEvtTVvlRy/eiajhjsz5CuPG2UmVD
+	 Pajh++oAgO3eUkWIFUawc6HbdS9mLh/w1vAUHaCSAx2mUVCbEO8WyarGbjkCkjSEle
+	 ryJP2M2scBaHs85zbgfXy4jFugN+BqjkSaBkPOITh2/5bPniMWJxXYdWXzCqm3B6qi
+	 jkzWBcBv/lEbQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: qcom: Check glink->edge in
- glink_subdev_stop()
-Message-ID: <aed_jyMEuWLlQRDv@linaro.org>
-References: <20260409-rproc-attach-issue-v1-0-088a1c348e7a@oss.qualcomm.com>
- <20260409-rproc-attach-issue-v1-2-088a1c348e7a@oss.qualcomm.com>
- <adkF7EY1KVRNO01o@linaro.org>
- <c6a9936b-9f44-4bea-93a1-17d145e64eec@oss.qualcomm.com>
- <ad36erdhcvnIvFMH@linaro.org>
- <e9720deb-d46c-4556-b69d-1dec00cc7892@oss.qualcomm.com>
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yang Xiwen <forbidden405@outlook.com>,
+	Alex Elder <elder@kernel.org>,
+	Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+	Rao Mandadapu <quic_srivasam@quicinc.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Xu Yang <xu.yang_2@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath10k@lists.infradead.org,
+	ath11k@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] dt-bindings: Fix phandle-array constraints, again
+Date: Tue, 21 Apr 2026 14:55:25 -0500
+Message-ID: <20260421195836.1547469-1-robh@kernel.org>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9720deb-d46c-4556-b69d-1dec00cc7892@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 16, 2026 at 10:52:17AM +0800, Jingyi Wang wrote:
-> On 4/14/2026 4:27 PM, Stephan Gerhold wrote:
-> > On Tue, Apr 14, 2026 at 11:23:50AM +0800, Jingyi Wang wrote:
-> > > On 4/10/2026 10:15 PM, Stephan Gerhold wrote:
-> > > > On Thu, Apr 09, 2026 at 01:46:22AM -0700, Jingyi Wang wrote:
-> > > > > For rproc that doing attach, glink_subdev_start() is called only when
-> > > > > attach successfully. If rproc_report_crash() is called in the attach
-> > > > > function, rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() could
-> > > > > be called and cause NULL pointer dereference:
-> > > > > 
-> > > > >    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000300
-> > > > >    Mem abort info:
-> > > > >    ...
-> > > > >    pc : qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem]
-> > > > >    lr : glink_subdev_stop+0x1c/0x30 [qcom_common]
-> > > > >    ...
-> > > > >    Call trace:
-> > > > >     qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem] (P)
-> > > > >     glink_subdev_stop+0x1c/0x30 [qcom_common]
-> > > > >     rproc_stop+0x58/0x17c
-> > > > >     rproc_trigger_recovery+0xb0/0x150
-> > > > >     rproc_crash_handler_work+0xa4/0xc4
-> > > > >     process_scheduled_works+0x18c/0x2d8
-> > > > >     worker_thread+0x144/0x280
-> > > > >     kthread+0x124/0x138
-> > > > >     ret_from_fork+0x10/0x20
-> > > > >    Code: a9be7bfd 910003fd a90153f3 aa0003f3 (b9430000)
-> > > > >    ---[ end trace 0000000000000000 ]---
-> > > > > 
-> > > > > Add NULL pointer check in the glink_subdev_stop() to make sure
-> > > > > qcom_glink_smem_unregister() will not be called if glink_subdev_start()
-> > > > > is not called.
-> > > > > 
-> > > > 
-> > > > You mention the actual root problem here: Why is glink_subdev_stop()
-> > > > called if glink_subdev_start() wasn't called?
-> > > > 
-> > > > The call to rproc_start_subdevices() in __rproc_attach() makes sure that
-> > > > all subdevices are in consistent state when exiting the function (either
-> > > > prepared+started or stopped+unprepared). Only if all subdevices were
-> > > > started successfully, the rproc->state is changed to RPROC_ATTACHED.
-> > > > 
-> > > > In your case, attaching the rproc failed so the rproc->state should be
-> > > > still RPROC_DETACHED. All subdevices should be stopped+unprepared. We
-> > > > shouldn't stop/unprepare any subdevices again in this state, they all
-> > > > might crash like glink does here.
-> > > > 
-> > > > We know that subdevices are already stopped+unprepared in RPROC_DETACHED
-> > > > state, so I think you just need to skip rproc_stop_subdevices() and
-> > > > rproc_unprepare_subdevices() inside rproc_stop() in this case, see diff
-> > > > below.
-> > > > 
-> > > > @@ -1708,8 +1709,9 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
-> > > >    	if (!rproc->ops->stop)
-> > > >    		return -EINVAL;
-> > > > -	/* Stop any subdevices for the remote processor */
-> > > > -	rproc_stop_subdevices(rproc, crashed);
-> > > > +	/* Stop any subdevices for the remote processor if it was attached */
-> > > > +	if (rproc->state != RPROC_DETACHED)
-> > > > +		rproc_stop_subdevices(rproc, crashed);
-> > > >    	/* the installed resource table is no longer accessible */
-> > > >    	ret = rproc_reset_rsc_table_on_stop(rproc);
-> > > > @@ -1726,7 +1728,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
-> > > >    		return ret;
-> > > >    	}
-> > > > -	rproc_unprepare_subdevices(rproc);
-> > > > +	if (rproc->state != RPROC_DETACHED)
-> > > > +		rproc_unprepare_subdevices(rproc);
-> > > >    	rproc->state = RPROC_OFFLINE;
-> > > 
-> > > In this case, rproc_crash_handler_work()->rproc_trigger_recovery()->
-> > > rproc_boot_recovery()->rproc_stop()->glink_subdev_stop() is called,
-> > > "rproc->state = RPROC_CRASHED" is set in the rproc_crash_handler_work
-> > > before rproc_boot_recovery is called, so checking RPROC_DETACHED can
-> > > not work for this case.
-> > > 
-> > 
-> > You're right, I forgot about that. I think we need a more generic
-> > solution for this though. rproc_stop_subdevices() should not be called
-> > without a prior call to rproc_start_subdevices().
-> > 
-> > I think there are a couple of options for this:
-> > 
-> >   - Add a bool "subdevs_started" to struct rproc and manage that
-> >     separately from the rproc->state.
-> > 
-> >   - Track the rproc state before the crash separately (something like
-> >     rproc->state_before_crash) and check that in the stop path.
-> > 
-> >   - Add a new state RPROC_CRASHED_DETACHED to make sure the states are
-> >     unique.
-> > 
-> >   - ...
-> > 
-> 
-> Sure, I think a bool like subdevs_started will be better for maintain?
-> 
-> > Does the same issue also exist in qcom_pas_stop() of "[PATCH v5 4/5]
-> > remoteproc: qcom: pas: Add late attach support for subsystems" [1]?
-> > There you check for pas->rproc->state != RPROC_ATTACHED, wouldn't this
-> > also fail for the RPROC_CRASHED case?
-> > 
-> 
-> I tested calling rproc_report_crash directly during qcom_pas_attach but
-> did not see issue, handover_issued is set only if attach is success
-> so "handover = qcom_q6v5_unprepare(&pas->q6v5);" will return false and
-> "qcom_pas_handover(&pas->q6v5);" will not be called.
-> 
+The unfortunately named 'phandle-array' property type is really a matrix
+with phandle and fixed arg cells entries. A matrix property should have 2
+levels of items constraints.
 
-Hm, as you mention, if you call rproc_report_crash() during
-qcom_pas_attach() then handover_issued does not get set (so it's still
-set to false). But qcom_q6v5_unprepare() returns !q6v5->handover_issued
-(handover_issued negated), so !false -> true. So I think exactly the
-opposite will happen and qcom_pas_handover(&pas->q6v5); will get called?
-It should not be called in that case, because this will break the
-reference counting for the regulator/clock resources.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Can someone from QCom provide some descriptions for 'qcom,smem-states'
+properties.
+---
+ .../display/rockchip/rockchip,rk3399-cdn-dp.yaml         | 2 ++
+ .../bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml      | 7 ++++---
+ Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml | 6 ++++++
+ Documentation/devicetree/bindings/net/qcom,ipa.yaml      | 6 ++++++
+ .../devicetree/bindings/net/wireless/qcom,ath10k.yaml    | 5 ++++-
+ .../devicetree/bindings/net/wireless/qcom,ath11k.yaml    | 5 ++++-
+ .../bindings/net/wireless/qcom,ipq5332-wifi.yaml         | 9 +++++++++
+ .../devicetree/bindings/pci/toshiba,tc9563.yaml          | 5 +++--
+ .../bindings/remoteproc/qcom,msm8916-mss-pil.yaml        | 3 +++
+ .../bindings/remoteproc/qcom,msm8996-mss-pil.yaml        | 3 +++
+ .../devicetree/bindings/remoteproc/qcom,pas-common.yaml  | 4 ++++
+ .../bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml        | 4 ++++
+ .../bindings/remoteproc/qcom,sc7180-mss-pil.yaml         | 3 +++
+ .../bindings/remoteproc/qcom,sc7280-adsp-pil.yaml        | 3 +++
+ .../bindings/remoteproc/qcom,sc7280-mss-pil.yaml         | 3 +++
+ .../bindings/remoteproc/qcom,sc7280-wpss-pil.yaml        | 3 +++
+ .../bindings/remoteproc/qcom,sdm845-adsp-pil.yaml        | 3 +++
+ .../devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml   | 3 +++
+ Documentation/devicetree/bindings/sound/samsung,tm2.yaml | 2 ++
+ .../devicetree/bindings/spi/st,stm32mp25-ospi.yaml       | 5 +++--
+ .../devicetree/bindings/usb/chipidea,usb2-common.yaml    | 2 ++
+ Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml  | 7 ++++---
+ 22 files changed, 81 insertions(+), 12 deletions(-)
 
-In addition, even the disable_irq(q6v5->handover_irq); inside
-qcom_q6v5_unprepare() is problematic. enable_irq()/disable_irq() are
-also reference-counted, so disable_irq() should not be called without a
-prior enable_irq() or you end up having the IRQ permanently disabled.
-See e.g. commit 110be46f5afe2 ("remoteproc: qcom: q6v5: Avoid disabling
-handover IRQ twice").
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml
+index 1a33128e77f5..195f665970bf 100644
+--- a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml
++++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml
+@@ -41,7 +41,9 @@ properties:
+     minItems: 1
+     items:
+       - description: Extcon device providing the cable state for DP PHY device 0
++        maxItems: 1
+       - description: Extcon device providing the cable state for DP PHY device 1
++        maxItems: 1
+     description:
+       List of phandle to the extcon device providing the cable state for the DP PHY.
+ 
+diff --git a/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml
+index 41c9b22523e7..e447579e0f22 100644
+--- a/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml
++++ b/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml
+@@ -39,10 +39,11 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/phandle-array
+     description: |
+       DWMMC core on Hi3798MV2x SoCs has a delay-locked-loop(DLL) attached to card data input path.
+-      It is integrated into CRG core on the SoC and has to be controlled during tuning.
++      It is integrated into CRG core on the SoC and has to be controlled during tuning
+     items:
+-      - description: A phandle pointed to the CRG syscon node
+-      - description: Sample DLL register offset in CRG address space
++      - items:
++          - description: A phandle pointed to the CRG syscon node
++          - description: Sample DLL register offset in CRG address space
+ 
+ required:
+   - compatible
+diff --git a/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml b/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
+index b30544410d09..e47e1e09300a 100644
+--- a/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
++++ b/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
+@@ -42,7 +42,13 @@ properties:
+     description: State bits used by the AP to signal the modem.
+     items:
+       - description: Power control
++        items:
++          - description: Phandle to ???
++          - description: ???
+       - description: Power control acknowledgment
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: Names for the state bits used by the AP to signal the modem.
+diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.yaml b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+index c7f5f2ef7452..c53f63068b77 100644
+--- a/Documentation/devicetree/bindings/net/qcom,ipa.yaml
++++ b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
+@@ -123,7 +123,13 @@ properties:
+     description: State bits used in by the AP to signal the modem.
+     items:
+       - description: Whether the "ipa-clock-enabled" state bit is valid
++        items:
++          - description: Phandle to ???
++          - description: ???
+       - description: Whether the IPA clock is enabled (if valid)
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
+index f2440d39b7eb..5c580bc7df08 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
+@@ -158,7 +158,10 @@ properties:
+     description: State bits used by the AP to signal the WLAN Q6.
+     items:
+       - description: Signal bits used to enable/disable low power mode
+-                     on WCN in the case of WoW (Wake on Wireless).
++          on WCN in the case of WoW (Wake on Wireless).
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output.
+diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
+index 0cc1dbf2beef..326c1a94a1a0 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
+@@ -80,7 +80,10 @@ properties:
+     description: State bits used by the AP to signal the WLAN Q6.
+     items:
+       - description: Signal bits used to enable/disable low power mode
+-                     on WCN6750 in the case of WoW (Wake on Wireless).
++          on WCN6750 in the case of WoW (Wake on Wireless).
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output.
+diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml
+index 363a0ecb6ad9..ea8df6890478 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml
+@@ -167,8 +167,17 @@ properties:
+     description: States used by the AP to signal the remote processor
+     items:
+       - description: Shutdown WCSS pd
++        items:
++          - description: Phandle to ???
++          - description: ???
+       - description: Stop WCSS pd
++        items:
++          - description: Phandle to ???
++          - description: ???
+       - description: Spawn WCSS pd
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description:
+diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
+index fae466064780..b3ad05d90201 100644
+--- a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
++++ b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
+@@ -49,8 +49,9 @@ properties:
+       A phandle to the parent I2C node and the slave address of the device
+       used to configure tc9563 to change FTS, tx amplitude etc.
+     items:
+-      - description: Phandle to the I2C controller node
+-      - description: I2C slave address
++      - items:
++          - description: Phandle to the I2C controller node
++          - description: I2C slave address
+ 
+ patternProperties:
+   "^pcie@[1-3],0$":
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+index c179b560572b..3c614cb7ce88 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
+@@ -104,6 +104,9 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: Names of the states used by the AP to signal the Hexagon core
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
+index 4d2055f283ac..d459296df0c2 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
+@@ -101,6 +101,9 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: Names of the states used by the AP to signal the Hexagon core
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+index 68c17bf18987..6260f77b7e4b 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+@@ -60,6 +60,10 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
++
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
+index bca59394aef4..3e410cbd45cf 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
+@@ -92,6 +92,10 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
++
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+index b1402bef0ebe..f0bee69baf0d 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
+@@ -134,6 +134,9 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+index 94ca7a0cc203..3ea83207ae32 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
+@@ -91,6 +91,9 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+index 005cb21732af..1f1d73610510 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
+@@ -148,6 +148,9 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+index f4118b2da5f6..0111384d55d5 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
+@@ -104,6 +104,9 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+index a3c74871457f..b9325967b8a3 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
+@@ -92,6 +92,9 @@ properties:
+     description: States used by the AP to signal the Hexagon core
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
+index 117fb4d0c4ad..e009f8ed9e8c 100644
+--- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
+@@ -84,6 +84,9 @@ properties:
+       States used by the AP to signal the WCNSS core that it should shutdown
+     items:
+       - description: Stop the modem
++        items:
++          - description: Phandle to ???
++          - description: ???
+ 
+   qcom,smem-state-names:
+     description: The names of the state bits used for SMP2P output
+diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
+index 67586ba3e0a0..c752e4874e7f 100644
+--- a/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
++++ b/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
+@@ -46,7 +46,9 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+       - description: Phandle to I2S0.
++        maxItems: 1
+       - description: Phandle to I2S1.
++        maxItems: 1
+ 
+   mic-bias-gpios:
+     description: GPIO pin that enables the Main Mic bias regulator.
+diff --git a/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml b/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml
+index 272bc308726b..b6be47f67fcb 100644
+--- a/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml
++++ b/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml
+@@ -49,8 +49,9 @@ properties:
+     description: configure OCTOSPI delay block.
+     $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+-      - description: phandle to syscfg
+-      - description: register offset within syscfg
++      - items:
++          - description: phandle to syscfg
++          - description: register offset within syscfg
+ 
+   access-controllers:
+     description: phandle to the rifsc device to check access right
+diff --git a/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml b/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml
+index 10020af15afc..e6a5e79df348 100644
+--- a/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml
++++ b/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml
+@@ -97,7 +97,9 @@ properties:
+     minItems: 1
+     items:
+       - description: vbus extcon
++        maxItems: 1
+       - description: id extcon
++        maxItems: 1
+ 
+   phy-clkgate-delay-us:
+     description:
+diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
+index 691d6cf02c27..fec04702f530 100644
+--- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
++++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
+@@ -61,9 +61,10 @@ properties:
+       offset, and phy index
+     $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+-      - description: phandle to TCSR node
+-      - description: register offset
+-      - description: phy index
++      - items:
++          - description: phandle to TCSR node
++          - description: register offset
++          - description: phy index
+ 
+   nvidia,phy:
+     description: phandle of usb phy that connects to the port. Use "phys" instead.
+-- 
+2.53.0
 
-Thanks,
-Stephan
