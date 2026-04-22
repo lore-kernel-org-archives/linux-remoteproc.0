@@ -1,252 +1,230 @@
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010015.outbound.protection.outlook.com [52.101.46.15])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013060.outbound.protection.outlook.com [52.101.72.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DC6346E66;
-	Wed, 22 Apr 2026 20:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEF92D321B;
+	Wed, 22 Apr 2026 21:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.60
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776889606; cv=fail; b=fE4GY4Iwkb8m6A5ZS2tynVIxDa1ZFaf0ZsOn5TIvTEV6BYm4O2Te2QgHIaeXtIp64MBgqya83aOb06uS5ykBOzwyN4aeMf452xkLH/NdSIg4KOxb7+46PVZDWDrY4JUSjfLmI09OxM4ngzAIGpAqajMDxrh2mnk8yJK3nmwObOU=
+	t=1776893342; cv=fail; b=ka5b31UlfwGA7hmcNgbHFj9GO6pbHvUFUoZohoe/sPOHiUN8vhDNaRADgSWITCWJpKGPaVjodPgmB+Ax3isSRDLII5j8ada1nYGph+vEiy+Xkc24qlg1o6Vd7+6LHsTrI4DtKORLPSATm8ROfnbWklYQUPKSjwilYyDiC6JtQm0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776889606; c=relaxed/simple;
-	bh=ekA8LIByy8FzYKnwkNHa+vF26sKM5u1mhe1ASg0YlEg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NF9I9SALUNVYp9X3zL8Uz0cbDvq5nQe6YqNydyf735xCyWP5ikxxMaLq6vZoTIRL0u/2IcS92JZkTUwtNLlsz3bJX4Xp2d5kYlcNmHVPTZUnJ3CjPsRYCO5Wlyepm1lG7WFKvDkQLZ5Qo6jBy6Q6m0ygn63X3oZ4qvsKA3fNKjU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oOibfZCS; arc=fail smtp.client-ip=52.101.46.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1776893342; c=relaxed/simple;
+	bh=nTF2z7PAtgx0YfXP1d2J2qLUtYV9XCSYOmcw6SL1I7U=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=HKjvAYIh7mkbEqoRfDO7HnkD9x5FNqBwICuWkkCs4gxjnpAZTfuSItfxFK93ZLpjPx7b2h29wb3eUzzALqf+VOSppvLK5DjxPjyh3V617NLfmnes2YgWK/hQsWorld3pYmu/t947wNYDedf45e3Xg7Rs7PmR83oOJdJ3QIwJqzw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lu94MRNK; arc=fail smtp.client-ip=52.101.72.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oOibfZCS"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lu94MRNK"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FMkcx0zwTjejjAz+8ktxmCfmSmmeFNvSn7R1xC9qr0kA5ryN+J2hSXSao/1O1JUSsgPlPsoJP5s2eDolkyzCidgXz9556P6hf5wMrPIqF8ajapcj4/7mZNOSB8gzr7Nj0BC4Ty/2ZV45hwQcF77cFrwRObtjaw5ki3KHU0IAVdk6LKM1XLIkhZTAjmA/hi4xWF59dO1PEV2a38J9Q2sjcOM/Q64oFuXi/NZ1GXNlSbTIshJtvsd62tAHLK2+0dQJcr2mCFt0JeYod6tne8W9TzUJR9XQUTHNQ7rs0C9VWvFDZ0qdNeJjYdGfg2dTuxsmc8IKRO/GVGebgY/Yi9rBmA==
+ b=dV8U80yJf6b5H6Fvp2lcJt8seBI0paF6cuiAXJLURlCmTbM/iPoPAemukbKLxO4EkPUhERTkop65wy4dYIVItM1qlzVWiyXqwjTDKPQYkvkAUA0mfGak00nk/YyyQDTar2QpvaQk/NJTLnuLCNtIRx7Z/R4K/A+1AQCjmz6i5OwWxzQkQ/6u/Iom6RYpTKUVTBslH3/uD87J4B0MYMYgMbpd2zhsfthd0TZuBrE0nCc1Yd1DotEpWP4EzaV2l+jxHVPrvXKu2h51jzo+zyimzMoF5/mF+hkWHlrSM449+UUW3vCdMgdKgavVr3xlDvjIyVUQJgszMD5VrNwzhfhPUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aBv5jjdjxH5ULFbRv7VfJ+lpYWyW8XQDfsXEr7Cqu5o=;
- b=v6jrkzF0WJwc8w8RW+s81eErPi9m9EFDissqq5MBOljiNyc+whcUJV9hcd1Sd1/InzE9zOB6JsiONAIgDaOAAivdGcpJ7iv1z3c+I4rsW8CQl0//YB3XQ/onwd62lpS8noqf4yPdG6JtLdVvzh4Ef5ogJ+jt+8Pnrt5x74NP1qkuhwERsRJNZzjZXaIVNSNjJs1nerr+UEK05x0qKnpQTl06Uv+l6MT1rboC5WvfO0clRBEw5giEztOBJ6TQtVQhKESlFYUakpzJ4m+hey0WpqNZYbEV0lvv/3DVBVhyU/CQUYmI54y5dk03aDI9BK61Ykqkm/qhZjKpHJzYukgQuA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=gOa0Awtoo4Tqe+7lHnsL9MFZW+Qbe9IRu7HpBlOlc8M=;
+ b=tobiqU/000/OdXejPcIqbDoZ6zijioL6VWRknm88HGxUnZERx9OR3q/I/VednvKIvlVqCSxWkLXYrPazWG2Iprcjzma3gHcEyEGm/EwlAUBv9ahGqTcLrDRZmfs+0gayqFK0+CT22uKX8zTCwpJV7OJwaOlAG5HVjkmbmqsmJ+avPbzwTiVscAwjASOQqgkZ6/gtVKGcWE64ZUqci2IY18YJ+OZfkxKe2RMapkyC/vj502/KF1Bf4IYuvtpJeltxPgqFVMaL8kk6GXq5ijTFVJS6uNNUmocxmgXAWyBruhkGZ/PqV7jaAUrGx7W6Umi0hFtFa/7NADItG/ZyIx05/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aBv5jjdjxH5ULFbRv7VfJ+lpYWyW8XQDfsXEr7Cqu5o=;
- b=oOibfZCSzF/yoc0KfE3PxQjcIKiIKyG/13X34T3mEk7VeRLZiryIZLLA0frpA/VOlhZb6jK9pNlLMM1Yll+vvCz2FaQiK7Czp8POV5mwZJU5c1EJZzr+gJ8aQ336ya6lLzKuw7WckRoPEI8NjWlhgVT5xbV0uoD3mg4l45uto+4=
-Received: from PH5P220CA0007.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:34a::12)
- by CH3PR12MB8725.namprd12.prod.outlook.com (2603:10b6:610:170::14) with
+ bh=gOa0Awtoo4Tqe+7lHnsL9MFZW+Qbe9IRu7HpBlOlc8M=;
+ b=lu94MRNKvi14X6qESxxmvhyf5hBNLOV9JXZwsgSgfSt0vZeanh3vL4b6vzQcgFbgaVQL7rvND583RUAXFUfLHyOt+A30MVuHHlgA6YMVCoRSfXlY5BLqjNhOgSQ2GkKLPU3Uc/peeNcrMMXlbASmAy9e+pSXjotc5BAQB92yLdPtpIXmoe+juuHYNgON953ckn3+BEz8zct0wygvNQ469pcefdzeUOZtKFAg0fbRq6IhYwCv6bYM+WbFCIQaKDg1S3QxGLrkjIeggUhyz6JbF0dGR6zhtQ2PYA0UBBW0YWBlwnkRIitCvyhbiAi5br2LLL1wvhhPOj2NfEpVmjB6Sg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS8PR04MB9176.eurprd04.prod.outlook.com (2603:10a6:20b:44b::7)
+ by PR3PR04MB7449.eurprd04.prod.outlook.com (2603:10a6:102:86::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.17; Wed, 22 Apr
- 2026 20:26:39 +0000
-Received: from CY4PEPF0000E9CE.namprd03.prod.outlook.com
- (2603:10b6:510:34a:cafe::7f) by PH5P220CA0007.outlook.office365.com
- (2603:10b6:510:34a::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9791.48 via Frontend Transport; Wed,
- 22 Apr 2026 20:26:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CY4PEPF0000E9CE.mail.protection.outlook.com (10.167.241.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9846.18 via Frontend Transport; Wed, 22 Apr 2026 20:26:39 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 22 Apr
- 2026 15:26:27 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 22 Apr
- 2026 15:26:27 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Wed, 22 Apr 2026 15:26:27 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <michal.simek@amd.com>,
-	<ben.levinsky@amd.com>, <tanmay.shah@amd.com>
-CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] remoteproc: xlnx: enable auto boot feature
-Date: Wed, 22 Apr 2026 13:25:58 -0700
-Message-ID: <20260422202558.2362971-3-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260422202558.2362971-1-tanmay.shah@amd.com>
-References: <20260422202558.2362971-1-tanmay.shah@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.21; Wed, 22 Apr
+ 2026 21:28:55 +0000
+Received: from AS8PR04MB9176.eurprd04.prod.outlook.com
+ ([fe80::ba87:1cd1:53d9:fcd7]) by AS8PR04MB9176.eurprd04.prod.outlook.com
+ ([fe80::ba87:1cd1:53d9:fcd7%6]) with mapi id 15.20.9846.019; Wed, 22 Apr 2026
+ 21:28:55 +0000
+From: Shenwei Wang <shenwei.wang@nxp.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shuah Khan <skhan@linuxfoundation.org>,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-imx@nxp.com
+Subject: [PATCH v13 0/4] Enable Remote GPIO over RPMSG on i.MX Platform
+Date: Wed, 22 Apr 2026 16:28:45 -0500
+Message-ID: <20260422212849.1240591-1-shenwei.wang@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SA9PR13CA0063.namprd13.prod.outlook.com
+ (2603:10b6:806:23::8) To AS8PR04MB9176.eurprd04.prod.outlook.com
+ (2603:10a6:20b:44b::7)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CE:EE_|CH3PR12MB8725:EE_
-X-MS-Office365-Filtering-Correlation-Id: 02f0f7d9-76a7-4767-c407-08dea0ad7574
+X-MS-TrafficTypeDiagnostic: AS8PR04MB9176:EE_|PR3PR04MB7449:EE_
+X-MS-Office365-Filtering-Correlation-Id: daf015e9-2e57-49fb-844b-08dea0b627fe
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700016|22082099003|18002099003|56012099003;
+	BCL:0;ARA:13230040|7416014|52116014|376014|1800799024|19092799006|366016|921020|38350700014|56012099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	oo94xBkmNzOJBdk7PA5Novnkn7Jt6z1mQVm0+G4DQg/zJcbHYpfQMv0vF8qnLBzJiVd4gbqHx7XWjbaa1unVTC0vU9MoaGpeUmLklBY1xf8AbxmDgkHBH02qhdhexO512op8tc8CfuHfC5Ym1i6cB2BgzsYAhUJTeF+Q8i9b7y3OEYCGIS6O/3bSCS4zBhObImtb9k4QeAgQ/vBJk0gAO5QqdUcGOktkfsvTCWeUVAMTUr4tnxZxwaAF06SqchwL4Juqx4LpDOu/N9qp8Q8FeQkmhCTNAY9HwtkqITFgma3lLo905zkhE84Vqth4gCj2qlJ7B7xns+0tJUGGsUNQWOcWEMFUjUWcEErVoW/AmftfrPVkkB/rRNjFOnatPLDbgrIIQlxWtbq5kLX/qoDAH/tUPtF/8CbuSog0MMYY8hNSF5YxsK2V+N2eppRm5yFHU4/EbhrU0GYXrzzcgpe+vuA0tZtPFf2Mne0byM3DRaiduXV3f9BkmIHHVIS1jkLaAmVVdclKO4An+r7qMc0n3vSnpPNZNja3Hyc2qG7tLtgLDt3uvfkOTesm0nmO2dsyPwAOjf92njnCO190xOSjqVC0hUM5B4JB+U0a0TWp87M4dkuvLYNbQQMFf3EqHsBXgGVVaoH+tOk1hprqldgd8OSTrVCQrjn7j7cqMNPhslJdQvtdYSPa9VSZXfSLWPYp1nzvTtY9rWvRF/Tt52ihmZvt4PRQgrRk7jQtE/0OXn4gGumyHdMSBTI7quC/Nbj3lpxi9kMCH1RG1zxk961kBA==
+	Flli0DKa8/VpSNyInWYi5cOg039Uzlx0ldChUJ4ImzFxMXJYKlmeeQm6VkRroXkopvVl1EueLStBKdonHRKfYtg5Vp3vsoPYdbjGE9qvBjegom5jNqjnYHDD72ktd/ZxYb8OA7PffXCUDf+YO17krYJdILe39NZt4cbBo3TL2j2F9Kh2GTO0uJ3Z+tQyoFigIzNIwkL4ucdNR9t9yFjc9+zgDx5BjWopRDClK2d8hKDwvfXYsSSy7OFZr++g2SdVXXGeXPxOYRS7aHcp94aosunRX1Sj4HFZGC1bBi571QgvJY+Nyv+qWdNoNylVnNBGEiy4fg9AfJHwmLgyapIOXIcIYgTeKN8Wf7Q9RLhKOkOZywNBH46n7yqxEO1yXek2yNTFBSPqcNDGuk1SRLgNh6cRhjiXx3I97rN39kv+QVnhEYACHs0n7Tw7PoQDOnHAlth3NV5ysYZ4JAjb2EsExAKD7sHL3tq7bXbsweowWEigVVWBUZmE7GK5FxR3I7SNcdJSv3hk6bjnu3b5AIl6851r6HWxpJ4asUfj5YX7yzXXf8XAf6nT1huPiyoG1Xn7i4Mz5tQannSssjjLFT2IPsM2Gw/8j/QjCGLzg7fqqhAyb5xA7q9YFMRwsOVIUSzB0HKOwSoD/gHSY6+entDwpAdoJ/fZOmiwLasCIuoFI44iefIAEnv1dvR4dOR2aaM8jFzkXwHcZ4wcN8Rr3PJ3in8c9hw758A9CvRWXtO0ZiZA2u/09kBqDN5rdY2m8MelOQJyrMBGfLqxbH/8AnMuhwFEoWSU1OiOEeJEpdIdfP5hpc3eBBtN2p6WoK3IPXy0
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700016)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9176.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(1800799024)(19092799006)(366016)(921020)(38350700014)(56012099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	5bu3/w8l0g9uVpl1EMWUXFjxIvi7piAUvm7t6rfQVler+milCIkoHk8PLQYbqYSJQhgGsFipHH72VUvrxlSQG6vM61qZLDlp+3e8exadCf5E7FbLG1fQzAHM/h+//iiam7BIrFYxio+OapMQbyHdkJyF9FZWx6Uq41gqaBX/QuqOi8/kxyQavEv4+nN9bhIdsOhVQdSPz0Hc13/CMxQoEEbdLXcrj/1Z7AvR1fDEH6P4K9Omm0W8ryiFgRkO/Ke+eyhd0WE5oxZHeQqZsmx8vhATmY4dawR45xrirvAmFtOvaWOjfSwWmq8ZBBYJbN/jNvnRqsm4uroVVTBRF1rCWcRNFyFEQeGQd0+PYs6Afj3eXj2UX3Rqo9FddEU4S1LMO5ZGmM+VapZA2TrLZQTLw5yGChT53ve7OVoKVnn0Q+JNjjKMGdelR/A+8HfxXCGG
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2026 20:26:39.2730
+	=?us-ascii?Q?7jqZcojUuK0BJEtbQgivfZZ+HbdXp7ByYmSaj6/5Xp0CIimGOAiSYtWIsxxc?=
+ =?us-ascii?Q?m9+BzBasVtqEnejS3SzUnapnL7s4GahL8q5k5WbCd1VMmqnDCA7FBMRNZjQm?=
+ =?us-ascii?Q?hAnJtJ5ASblTjwHu/n75zJDw2UcxcNKBrGp779k5fTn0KSn+sOtj9hR+yNsG?=
+ =?us-ascii?Q?5rkwQaknlJF3SgyaSmGl1nOE0bMlty8NntYPn9HqFrvHsueLO5G+tYBw41Xg?=
+ =?us-ascii?Q?5bQKtU9zkqFHHQdTOWggFW00Jf8vyravvLSAx9ypZ4d5LOOeTovP22i28/79?=
+ =?us-ascii?Q?7pKlygef2DD2aJnIDB4un9RDsQr+vjGnKsLr3f286p540ldye8wjwbuWUvKT?=
+ =?us-ascii?Q?VE8wltMa6qUOlE9kDBldHRJxHRAddJNAZNtLOI+6wzfcD73j97tToaYSRwDO?=
+ =?us-ascii?Q?aKQisSV9kAqt5f43Tx4T7mwDeYtumcXKsuIYB1+RCwzI25eP5yYVrvN5oxEm?=
+ =?us-ascii?Q?VPHfIie+4RZ2V51/+2hRQQwfaU6xP8INTIeq92oSuPwCoym9zYiXxXjw+AVP?=
+ =?us-ascii?Q?wTW71KNvdmPwHlSLLOHd6mfzyKhWqYPaN7VoLEFBDzvddVZG4l5MUlqy76Nx?=
+ =?us-ascii?Q?IfFxoKNjoJNh4HN9gENhDKMXU0Mj+BG9cARq7V2Ne+/osXSnluFNyrIgeBAO?=
+ =?us-ascii?Q?1Gghjj0zsRBSplULqGsIuWWg6IJOiNSWjKYp6YBVtpFsgy/ATLgBphX1FJFV?=
+ =?us-ascii?Q?wSF9aRr7RJwCh7sx8bJ8SNrQ5WP/684kCe9xXs9vCEB+oe7IbWfufzM0eLxj?=
+ =?us-ascii?Q?0+wrFkvrUyiZzVcY8jIVTSnrbHKLRxKu5NF0LHut0/HWltEuYJmnlT8U6Y1e?=
+ =?us-ascii?Q?rCTSEHXhNm0F0ww+v4YQnkVeooWY/8Jkxpzdt4l35osIZ2a+VzPveYzYksLq?=
+ =?us-ascii?Q?pvW/6Kn4oxlkstVVuxhpSdUZHYQSMcA04kvMaOYcrXfdK81rcC5ql/C1qdYd?=
+ =?us-ascii?Q?YVEGvhxfiTLBedYukM7pMD2abyW/wjt2CoGGEAdoUAg9bTqE5iltEmXMtM+P?=
+ =?us-ascii?Q?E50RnBbipVA7YxbNVjtiVqKwuutzFeEBSX090Nf1zkxv+a5V/EEMa8QIBR/5?=
+ =?us-ascii?Q?wCehDgOmqazriMZ+qXFBOJO1eu0KFYZB+sWPp1R+z4Eu3ubVqanAMurmTO69?=
+ =?us-ascii?Q?OzHUpVR7EMegotwJxDzR2GzYdML8g5gSYHtdRKEfWDx62ftrGbUtxsqVLAgg?=
+ =?us-ascii?Q?At3tYhebDuYrgKfWxbxubOODdywIwKOH6d/rs1gshOlOQ2ipPH7ye4bAybPn?=
+ =?us-ascii?Q?QAVRSaRnt4znI6iwhHYc0voT0ZFhhT8B93/7CvuhDo40hmgOneM+4GQWSzBM?=
+ =?us-ascii?Q?+3+NKO3nQqAK/5MxaYLPaM4nwRd5A2KE+JTVMOLba9Pa0et7qkiSGAo24I8z?=
+ =?us-ascii?Q?0g3uH8yJpGPj7Dx2n+prEPhsLtttx6i4YMGlcnUWE2Ksgg5WzVO5pf5Xoj4x?=
+ =?us-ascii?Q?5MXfJe1L0EjMURYQOjsOZObjMPgPZYgLeY9QYjqjhro3no+6ZnTKCEJ2fzqj?=
+ =?us-ascii?Q?fmi6pY7fxlt/HCj4ibuhzYYJBaGSERqqtcbeGgPENQwmb1JJHVXIV2Maf9bE?=
+ =?us-ascii?Q?oOww/65xfIIn0aV+5gfLXdikpJreLQ/HLFQCYYSjEIZXCHHGKv9Pn223pej9?=
+ =?us-ascii?Q?9JNKxOR6bBfzjObTVZXkP0ccfNNCaNR+IChFuKGSyXBBL3OmyzEhAgiViSWX?=
+ =?us-ascii?Q?YMZ6Ui1fx4BEWce6sFGpKPhdWO/3Dmt3HeuozfMMdQ2YKb2284imHEX5WWUW?=
+ =?us-ascii?Q?kq0WqSI09w=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: daf015e9-2e57-49fb-844b-08dea0b627fe
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9176.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2026 21:28:55.1791
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02f0f7d9-76a7-4767-c407-08dea0ad7574
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9CE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8725
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: N0cNQtttzVWhkeMNaKqJhpEpBwE1DIgc0/OEMvXCGdlRE2aI2fQ9nqMJWanPiSSZZnkhHKJdbCmn/GkpUjcqSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7449
 
-remoteproc framework has capability to start (or attach to) the remote
-processor automatically if auto boot flag is set by the driver during
-probe. If remote core is not started before the Linux boot, and linux is
-expected to start the remote core then it uses "firmware-name" property
-to load default firmware during auto boot.
+Support the remote devices on the remote processor via the RPMSG bus on
+i.MX platform.
 
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
- drivers/remoteproc/xlnx_r5_remoteproc.c | 49 +++++++++++++++++--------
- 1 file changed, 34 insertions(+), 15 deletions(-)
+Changes in v13:
+ - drop the support for legacy NXP firmware.
+ - remove the fixed_up hooks from the rpmsg gpio driver.
+ - code cleanup.
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 50a9974f3202..c6ec8186b160 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -899,17 +899,18 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
- };
- 
- /**
-- * zynqmp_r5_add_rproc_core() - Add core data to framework.
-- * Allocate and add struct rproc object for each r5f core
-+ * zynqmp_r5_alloc_rproc_core() - alloc rproc core data structure
-+ * Allocate struct rproc object for each r5f core
-  * This is called for each individual r5f core
-  *
-  * @cdev: Device node of each r5 core
-  *
-  * Return: zynqmp_r5_core object for success else error code pointer
-  */
--static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
-+static struct zynqmp_r5_core *zynqmp_r5_alloc_rproc_core(struct device *cdev)
- {
- 	struct zynqmp_r5_core *r5_core;
-+	const char *fw_name = NULL;
- 	struct rproc *r5_rproc;
- 	int ret;
- 
-@@ -918,10 +919,15 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 	if (ret)
- 		return ERR_PTR(ret);
- 
-+	ret = rproc_of_parse_firmware(cdev, 0, &fw_name);
-+	if (ret < 0 && ret != -EINVAL)
-+		return ERR_PTR(dev_err_probe(cdev, ret,
-+					     "failed to parse firmware-name\n"));
-+
- 	/* Allocate remoteproc instance */
- 	r5_rproc = rproc_alloc(cdev, dev_name(cdev),
- 			       &zynqmp_r5_rproc_ops,
--			       NULL, sizeof(struct zynqmp_r5_core));
-+			       fw_name, sizeof(struct zynqmp_r5_core));
- 	if (!r5_rproc) {
- 		dev_err(cdev, "failed to allocate memory for rproc instance\n");
- 		return ERR_PTR(-ENOMEM);
-@@ -931,7 +937,7 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 
- 	r5_rproc->recovery_disabled = true;
- 	r5_rproc->has_iommu = false;
--	r5_rproc->auto_boot = false;
-+	r5_rproc->auto_boot = of_property_read_bool(dev_of_node(cdev), "auto-boot");
- 	r5_core = r5_rproc->priv;
- 	r5_core->dev = cdev;
- 	r5_core->np = dev_of_node(cdev);
-@@ -941,13 +947,6 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 		goto free_rproc;
- 	}
- 
--	/* Add R5 remoteproc core */
--	ret = rproc_add(r5_rproc);
--	if (ret) {
--		dev_err(cdev, "failed to add r5 remoteproc\n");
--		goto free_rproc;
--	}
--
- 	/*
- 	 * If firmware is already available in the memory then move rproc state
- 	 * to DETACHED. Firmware can be preloaded via debugger or by any other
-@@ -958,6 +957,11 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
- 	if (!zynqmp_r5_get_rsc_table_va(r5_core))
- 		r5_rproc->state = RPROC_DETACHED;
- 
-+	dev_dbg(cdev, "auto boot %s, rproc state %s, fw-name = %s\n",
-+		r5_rproc->auto_boot ? "enabled" : "disabled",
-+		(r5_rproc->state == RPROC_DETACHED) ? "detached" : "offline",
-+		!fw_name ? "NULL" : fw_name);
-+
- 	r5_core->rproc = r5_rproc;
- 	return r5_core;
- 
-@@ -1278,7 +1282,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 	enum rpu_oper_mode fw_reg_val;
- 	struct device **child_devs;
- 	enum rpu_tcm_comb tcm_mode;
--	int core_count, ret, i;
-+	int core_count, ret, i, j;
- 	struct mbox_info *ipi;
- 
- 	ret = of_property_read_u32(dev_node, "xlnx,cluster-mode", &cluster_mode);
-@@ -1364,7 +1368,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 		child_devs[i] = &child_pdev->dev;
- 
- 		/* create and add remoteproc instance of type struct rproc */
--		r5_cores[i] = zynqmp_r5_add_rproc_core(&child_pdev->dev);
-+		r5_cores[i] = zynqmp_r5_alloc_rproc_core(&child_pdev->dev);
- 		if (IS_ERR(r5_cores[i])) {
- 			ret = PTR_ERR(r5_cores[i]);
- 			r5_cores[i] = NULL;
-@@ -1409,6 +1413,22 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 		goto release_r5_cores;
- 	}
- 
-+	for (j = 0; j < cluster->core_count; j++) {
-+		/* Add R5 remoteproc core */
-+		ret = rproc_add(r5_cores[j]->rproc);
-+		if (ret) {
-+			dev_err_probe(r5_cores[j]->dev, ret,
-+				      "failed to add emoteproc\n");
-+			i = core_count - 1;
-+
-+			/* delete previous added rproc */
-+			while (--j >= 0)
-+				rproc_del(r5_cores[j]->rproc);
-+
-+			goto release_r5_cores;
-+		}
-+	}
-+
- 	kfree(child_devs);
- 	return 0;
- 
-@@ -1418,7 +1438,6 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
- 		if (r5_cores[i]) {
- 			zynqmp_r5_free_mbox(r5_cores[i]->ipi);
- 			of_reserved_mem_device_release(r5_cores[i]->dev);
--			rproc_del(r5_cores[i]->rproc);
- 			rproc_free(r5_cores[i]->rproc);
- 		}
- 		i--;
--- 
-2.34.1
+Changes in v12:
+ - Fixed the "underline" warning reported by Randy.
+
+Changes in v11:
+ - Expand RPMSG for the first time per Shuah's review comment.
+
+Changes in v10:
+ - Update gpio-rpmsg.rst according to Daniel Baluta's review comments.
+ - Add a kernel CONFIG for fixed up handlers and only enable it on
+   i.MX products.
+ - Fixed bugs reported by kernel test robot.
+
+Changes in v9:
+ - Reuse the gpio-virtio design for command and IRQ type definitions.
+ - Remove msg_id, version, and vendor fields from the generic protocol.
+ - Add fixed-up handlers to support legacy firmware.
+
+Changes in v8:
+ - Add "depends on REMOTEPROC" in Kconfig to fix the build error reported
+   by the kernel test robot.
+ - Move the .rst patch before the .yaml patch.
+ - Handle the "ngpios" DT property based on Andrew's feedback.
+
+Changes in v7:
+ - Reworked the driver to use the rpmsg_driver framework instead of
+   platform_driver, based on feedback from Bjorn and Arnaud.
+ - Updated gpio-rpmsg.yaml and imx_rproc.yaml according to comments from
+   Rob and Arnaud.
+ - Further refinements to gpio-rpmsg.yaml per Arnaud's feedback.
+
+Changes in v6:
+ - make the driver more generic with the actions below:
+     rename the driver file to gpio-rpmsg.c
+     remove the imx related info in the function and variable names
+     rename the imx_rpmsg.h to rpdev_info.h
+     create a gpio-rpmsg.yaml and refer it in imx_rproc.yaml
+ - update the gpio-rpmsg.rst according to the feedback from Andrew and
+   move the source file to driver-api/gpio
+ - fix the bug reported by Zhongqiu Han
+ - remove the I2C related info
+
+Changes in v5:
+ - move the gpio-rpmsg.rst from admin-guide to staging directory after
+   discussion with Randy Dunlap.
+ - add include files with some code improvements per Bartosz's comments.
+
+Changes in v4:
+ - add a documentation to describe the transport protocol per Andrew's
+   comments.
+ - add a new handler to get the gpio direction.
+
+Changes in v3:
+ - fix various format issue and return value check per Peng 's review
+   comments.
+ - add the logic to also populate the subnodes which are not in the
+   device map per Arnaud's request. (in imx_rproc.c)
+ - update the yaml per Frank's review comments.
+
+Changes in v2:
+ - re-implemented the gpio driver per Linus Walleij's feedback by using
+   GPIOLIB_IRQCHIP helper library.
+ - fix various format issue per Mathieu/Peng 's review comments.
+ - update the yaml doc per Rob's feedback
+
+Shenwei Wang (4):
+  docs: driver-api: gpio: rpmsg gpio driver over rpmsg bus
+  dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+  gpio: rpmsg: add generic rpmsg GPIO driver
+  arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+
+ .../devicetree/bindings/gpio/gpio-rpmsg.yaml  |  55 ++
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    |  53 ++
+ Documentation/driver-api/gpio/gpio-rpmsg.rst  | 266 ++++++++
+ Documentation/driver-api/gpio/index.rst       |   1 +
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  25 +
+ drivers/gpio/Kconfig                          |  17 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-rpmsg.c                     | 573 ++++++++++++++++++
+ 8 files changed, 991 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
+ create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
+ create mode 100644 drivers/gpio/gpio-rpmsg.c
+
+--
+2.43.0
 
