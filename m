@@ -1,71 +1,72 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DD726982C
-	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2026 14:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC419318EE7
+	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2026 14:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776869512; cv=none; b=kkN9TTqy6CeE2u8pwaPU4fkgcb1FNonodwFNwyeoGulo+OKueTi+k9JyjySbAxJH1GfYTkMAnYlObtlW0Tkflo9AC3BPGMm1aOzl/ej5Jls5lX3xioBgpksBLE8Q7bEJf1w9hpygTIi5LIkHiOmUfDq2G4BQ/GUEHHfKx5QIxmo=
+	t=1776869740; cv=none; b=rr9IOO2RmLFPAT/mvgr2p9A1LliEtp36v3cAQzpeYC7oFA0sPt6PuchhaS3uu1AMhQ+fmj3TfCN4UAD5MIhxOPErHeExkOKajCaLeZjiOPyya8YdQzavHMy1/RpNMaIgdiN5EYijDSxtcRhl/uJNrU6GuslxvsbWTZUSV3Jb7C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776869512; c=relaxed/simple;
-	bh=ahzeuw2Fr7v2Q6H4S+tVbXo/VAJSEVqnHn8ydmBa/aQ=;
+	s=arc-20240116; t=1776869740; c=relaxed/simple;
+	bh=mdFMI//Id30zN2aq8g2ejgZDnQWsIKMzLh12OdRaYN8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YeeZmjS7aPt5MvC4lNBhG3Xa2IS4lkrVCAOGfFzI4QfijyuCaaVwlgVqTTN87L6h+fwrfwIMMpH7MSMjZWpI6HPRekO7+VXNwcPgYW6jrZndj+ax1v64lDSxISh9wlMNMXBG6GFwRBr4FCCpGhu7NXvQhfntEVDPtnsxFBg9L48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmVGIkrn; arc=none smtp.client-ip=209.85.210.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6o8mP0NXohQfL5FYDhVEvgOXpGzof9Pf4hSjGBcN3L5Vf7T+x5qTuIjtbmXu4JwXVSIUuOkcL5QJ2+/C3htrTEo9b4IImUgAZyxNDngdwHTWsQ5aRPmziUPkrMbHvV33Z1UxR2p5aBNAzsNa3jBXWj4GHTVf5jUggmmLR4NTI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MP2ZhiPY; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmVGIkrn"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-82f1bfc9b8fso2517674b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2026 07:51:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MP2ZhiPY"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-35d965648a2so4811172a91.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Apr 2026 07:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1776869510; x=1777474310; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1776869737; x=1777474537; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rbt+BBcSmg7tGy8kUDRFXyu/cUFZjBGT0zn2Cx7Dl4A=;
-        b=mmVGIkrnSqCsk4pvbbf4vYCABl85xSKDXsXwh6yLjGT/D2gFxpj5bPmXv7jmwA1NH/
-         ebk5wuLJiOKpspb05w1dVE/FkBGbo7d/4BUF+0E4Mia96+Kso+6WFRU4v7oJ18m8Nrou
-         tSRTw3svC80GEY3ivCK+HCLnW6+dxZcWi8AEwkoDj+5kYKIaR3H1mDJqJLpGD5NIxQlE
-         cOR5XN0wcLw6nFQxkmD0sRVVhdzfW8/PbJvL9Z2zuf8slAhwfPQZjkDPed5dtO3BnkqC
-         fBmfUrCLzaz5/iPn6Zq3lfpdTe/pXMGhrS8DDt4IFRPxZzjGZop1KcBNLdmU42XBXE5/
-         qDbw==
+        bh=TgygZcdqXMYTxXtA4zUWZDxXXuEyYRzJdq/+ENx9HQQ=;
+        b=MP2ZhiPY7Mst+WnMtFyTXC9L6gJ/ZhzZocB4FafR22ANIzhW6BWoTIdSNJwjMRKie1
+         AU/wsv5xLpC3H5f46xrt1sMNm7+9udlX8LkTnpjHwSIV8kzvcvGJgvmzxoQlS2ZfGPl4
+         mCqhs0ugHKhgGt/B9KKTunNM6pWkxv3wdrDdKHg7sfqAzlqDSIEWazPuG7Oz049WO0eN
+         DbLHbRnRt4MwGhSLFi5IvKD6uVEMEt4CjwxMxE6u4aysueToy2Lfv5i2MQAaVfJTm0VT
+         RQ3+9zvE84LZ0TW2gp40WvozjsBTK26oWmYTTAlXorUQIsf8r5rbFIgmM94/a+kep8gx
+         Pulw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1776869510; x=1777474310;
+        d=1e100.net; s=20251104; t=1776869737; x=1777474537;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Rbt+BBcSmg7tGy8kUDRFXyu/cUFZjBGT0zn2Cx7Dl4A=;
-        b=VkByK+/3foJFYdmjRuzpJrDn1QT/3I/z6mvGrssQ/9691dfYEfT0SHpdywrwN4LhWZ
-         n/JWrOcABesRYwiYk+7maCI+u35wcHzn25Mg4RulGDjsOEuLBc60egojwhK+Kr2Z1You
-         roPUMMkrMtn72+ln48oGhrcwqSrUrLp29UnkJAZTJaVcACkTa0IhXNrZdrPKMCMg+Hog
-         T/cRMjTgZsjYVZoogC4bmDWXaT5Ww3XdVQdMpcVTqOwvoR/z0flVfgyzjmdiW+w6q4bD
-         91OTWF6d4tjBVbJBFfYoJBQfS1e13ahtNj/MkYw/KXGBEj8/hDZo/GyB+qYJx8eD+A0Z
-         YzCA==
-X-Forwarded-Encrypted: i=1; AFNElJ+hMaMWbLD48yfDeYTkCtw2FctyKFByqm7IHhBaMXCR3Z+yy+zqpJw9554kHO8rKAvlOMHY7NISH9Cx3uajQVWA@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV7xEwd+3eivxnYkbF+gmH2DKu0bg2pzUFGCW1wRIF8k3sQA2z
-	gJmX6nTvFR6dDKsq7Kry2IQHHiZoRYiy13ziv+L8d6yQJ2kfbzffcGxO5L5Xd3YKdXQcg66BkPN
-	7tCtc
-X-Gm-Gg: AeBDieuS35VfmMSoVNX2HJX1Wxx/0iBcXbgGb232Apx4mqhbuWvShbYUMwGpjD/mASr
-	dj76sjphgMeL+TNL4qnDhbajwE0rc8HH14deEr/rxjcPCLjeoe2f74ABC72fX4tEaFi0a88n81D
-	tEuQl3/dHdfx/0rLMLAFF/ELzltWAgB5EQqfdlRlvXkvpmywMgZmPa3osrvmwd3XwmX+/yBq41x
-	pKemF4cogaWnh9gUU+H1ljbuPobxR/5z9Yi4zANFC0dv9wsY4rLmjWq1WhUPkYmEdIZKR+hk6zH
-	gpwI9olEY+iKlf7lef2C49HDNxb7efZKa13BLT7764t+XjuE989xu1FEwngJS87wXKiocxs1jwA
-	tOUeN924r4Ean0E3vBOrEAbCv8L/GjSTfRQ01vh2kueAFw/pGnyz2UWTPMSJIzebP86/4YWYf4k
-	66rwejuB8gihMkQfDPyeZOXuq5vQbKxH45L0EJzw==
-X-Received: by 2002:a05:6a00:1bc4:b0:81f:4a36:1c7c with SMTP id d2e1a72fcca58-82f8c8c5b5fmr22866132b3a.23.1776869510056;
-        Wed, 22 Apr 2026 07:51:50 -0700 (PDT)
+        bh=TgygZcdqXMYTxXtA4zUWZDxXXuEyYRzJdq/+ENx9HQQ=;
+        b=RPxQsLAPdhULMIGHbCgH1TH1Ws+13gQxYk5M5rUwphFPoMXCIcYgtnvWyUQxZbxG85
+         dYo5XCkG5XpBuGBIPbxmNTVRYb/stBFr5dan3o/7I/COY26jFdGQsUtbZwH7dK9ixQbZ
+         qzt/UVtEH2UzoWZ+kNvN8VqGTMtgLthFKWCgmW2PEEquT4CTOO+mTJ62w7MMU5EnJ0qF
+         iZwVDaG11jcV6HcYCNvZilzTOQwN8J5lO8h9gsuklrtCGj8lAgvUUzGBk9CCBUlOzelW
+         +XedPUyqlZ6DdRaeuR5TRdgpCgTw9YCYjcQEJwaVe1s9c40pf0QgJh0nQUfw9pHvj+nT
+         k9EA==
+X-Forwarded-Encrypted: i=1; AFNElJ9Pbvv+P5PUKCyzE3t83DYxLv8XxdfmQocBqlkZHTMHJlcvoow32NWa/SFjleq8HgLkZDqSO1nxqtGVErom9Eoo@vger.kernel.org
+X-Gm-Message-State: AOJu0YxerdCFUf5B9ZczmJNDkd+CkrQbTNxCOAD/tuh05W6hWpJkosSm
+	da/Mo9A0edpyFukekNwp8lrPBGqtPvK+UNRd+YX1vFTZbuQonCYpEaoyNgALaLkP3Wc=
+X-Gm-Gg: AeBDievCA/wEmtGsqApI+YgoVvRc9w4Roddc79qyxYKky4CqDGuu62rQ68M13PYEGuB
+	Yj/2LxSLgSYyubnnePCOS9GzaLz538E6yeU9oavat0VRDLFVCiRmeksRsVy0rasyakqcQLyO0dP
+	4FY9muzJIs9Sb2MYgguXHecA4ShnMjwvOJuv6ib4m5Oc1qSWotN7MkjhpUlCiSpnJaAa65WdjRH
+	6PfEcIlKrhRCKlys5I9ae8wTjm6h1YcCitmU4YlJvN1Iy9q4+nwkS/S3zenbnSfzPE4VY15Kmz2
+	3BaxqZtUvCGsen3QZsHj+/b398DBJQBwmzeYPo2dFoPHi+px1nsUAhqLNrQaQOoXGKXFaNaa5b3
+	h3mKdAF6Ll/u7Iltd00J8QF/ReZwnTDfM4X+c7V7vXJ1Z/5JMJ37LF6ZhhAp69G/2S9EAom4dq3
+	ImAdvhE9lIO4mpr2npdQfOiOIAyEIGBTP6BSjZOJlICGEDyDsK
+X-Received: by 2002:a17:90b:2ecc:b0:35a:1762:92fc with SMTP id 98e67ed59e1d1-361404a0678mr23611737a91.26.1776869737067;
+        Wed, 22 Apr 2026 07:55:37 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:fd65:9224:aee7:cdd9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82f8ebe68ebsm19470018b3a.47.2026.04.22.07.51.48
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b5fab0cf81sm164424055ad.43.2026.04.22.07.55.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Apr 2026 07:51:49 -0700 (PDT)
-Date: Wed, 22 Apr 2026 08:51:47 -0600
+        Wed, 22 Apr 2026 07:55:36 -0700 (PDT)
+Date: Wed, 22 Apr 2026 08:55:33 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Yuho Choi <dbgh9129@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+To: Zhang Xiaolei <zxl434815272@gmail.com>
+Cc: corbet@lwn.net, ebiggers@kernel.org, andersson@kernel.org,
+	ardb@kernel.org, skhan@linuxfoundation.org,
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] rpmsg: char: fix use-after-free on probe error path
-Message-ID: <aejgg4J6ygbsP-kI@p14s>
-References: <20260416042338.10146-1-dbgh9129@gmail.com>
+Subject: Re: [PATCH] docs: staging: fix various typos and grammar issues
+Message-ID: <aejhZQl0Yke9ZDIa@p14s>
+References: <20260416105854.788-1-zxl434815272@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,90 +75,79 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260416042338.10146-1-dbgh9129@gmail.com>
+In-Reply-To: <20260416105854.788-1-zxl434815272@gmail.com>
 
-Good morning,
-
-On Thu, Apr 16, 2026 at 12:23:38AM -0400, Yuho Choi wrote:
-> rpmsg_chrdev_probe() stores the newly allocated eptdev in the default
-> endpoint's priv pointer before calling rpmsg_chrdev_eptdev_add(). If
-> rpmsg_chrdev_eptdev_add() then fails, its error path frees eptdev while
-> the default endpoint may still dispatch inbound messages through
-> rpmsg_ept_cb(), leaving the callback with a dangling priv pointer.
+On Thu, Apr 16, 2026 at 06:58:53PM +0800, Zhang Xiaolei wrote:
+> Fix a few typographical and grammatical issues across several
+> staging documentation files to improve readability:
+> - crc32.rst: replace "decide in" with "decide on"
+> - lzo.rst: replace "independent on" with "independent of"
+> - remoteproc.rst: fix word order in dependent clause
+> - static-keys.rst: add hyphen to "low-level"
 > 
-> Avoid publishing eptdev through the default endpoint until
-> rpmsg_chrdev_eptdev_add() succeeds. Any message that arrives before the
-> priv is published should be ignored, so make rpmsg_ept_cb() return
-> success when priv is NULL.
-> 
-> Fixes: bc69d10665690 ("rpmsg: char: Introduce the "rpmsg-raw" channel")
-
-The SHA should be 12 characters.
-
-> Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
+> Signed-off-by: Zhang Xiaolei <zxl434815272@gmail.com>
 > ---
->  drivers/rpmsg/rpmsg_char.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
+>  Documentation/staging/crc32.rst       | 2 +-
+>  Documentation/staging/lzo.rst         | 2 +-
+>  Documentation/staging/remoteproc.rst  | 2 +-
+
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>  Documentation/staging/static-keys.rst | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index ca9cf8858a5ef..549a24b70884d 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -11,6 +11,7 @@
->   * was based on TI & Google OMX rpmsg driver.
->   */
+> diff --git a/Documentation/staging/crc32.rst b/Documentation/staging/crc32.rst
+> index 64f3dd430a6c..fc0d9564b99c 100644
+> --- a/Documentation/staging/crc32.rst
+> +++ b/Documentation/staging/crc32.rst
+> @@ -119,7 +119,7 @@ the byte-at-a-time table method, popularized by Dilip V. Sarwate,
+>  v.31 no.8 (August 1988) p. 1008-1013.
 >  
-> +#include "asm-generic/rwonce.h"
-
-Why is this needed?
-
->  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+>  Here, rather than just shifting one bit of the remainder to decide
+> -in the correct multiple to subtract, we can shift a byte at a time.
+> +on the correct multiple to subtract, we can shift a byte at a time.
+>  This produces a 40-bit (rather than a 33-bit) intermediate remainder,
+>  and the correct multiple of the polynomial to subtract is found using
+>  a 256-entry lookup table indexed by the high 8 bits.
+> diff --git a/Documentation/staging/lzo.rst b/Documentation/staging/lzo.rst
+> index f65b51523014..2d48b2667dd2 100644
+> --- a/Documentation/staging/lzo.rst
+> +++ b/Documentation/staging/lzo.rst
+> @@ -75,7 +75,7 @@ Description
+>       are called under the assumption that a certain number of bytes follow
+>       because it has already been guaranteed before parsing the instructions.
+>       They just have to "refill" this credit if they consume extra bytes. This
+> -     is an implementation design choice independent on the algorithm or
+> +     is an implementation design choice independent of the algorithm or
+>       encoding.
 >  
->  #include <linux/cdev.h>
-> @@ -104,6 +105,9 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
->  	struct rpmsg_eptdev *eptdev = priv;
->  	struct sk_buff *skb;
+>  Versions
+> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
+> index 5c226fa076d6..c117b060e76c 100644
+> --- a/Documentation/staging/remoteproc.rst
+> +++ b/Documentation/staging/remoteproc.rst
+> @@ -24,7 +24,7 @@ handlers, and then all rpmsg drivers will then just work
+>  (for more information about the virtio-based rpmsg bus and its drivers,
+>  please read Documentation/staging/rpmsg.rst).
+>  Registration of other types of virtio devices is now also possible. Firmwares
+> -just need to publish what kind of virtio devices do they support, and then
+> +just need to publish what kind of virtio devices they support, and then
+>  remoteproc will add those devices. This makes it possible to reuse the
+>  existing virtio drivers with remote processor backends at a minimal development
+>  cost.
+> diff --git a/Documentation/staging/static-keys.rst b/Documentation/staging/static-keys.rst
+> index b0a519f456cf..e8dc3a87c381 100644
+> --- a/Documentation/staging/static-keys.rst
+> +++ b/Documentation/staging/static-keys.rst
+> @@ -90,7 +90,7 @@ out-of-line true branch. Thus, changing branch direction is expensive but
+>  branch selection is basically 'free'. That is the basic tradeoff of this
+>  optimization.
 >  
-> +	if (!eptdev)
-> +		return 0;
-> +
-
-If this is needed, the same check is probably needed in rpmsg_ept_flow_cb().
-
-Thanks,
-Mathieu
-
->  	skb = alloc_skb(len, GFP_ATOMIC);
->  	if (!skb)
->  		return -ENOMEM;
-> @@ -490,6 +494,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  	struct rpmsg_channel_info chinfo;
->  	struct rpmsg_eptdev *eptdev;
->  	struct device *dev = &rpdev->dev;
-> +	int ret;
+> -This lowlevel patching mechanism is called 'jump label patching', and it gives
+> +This low-level patching mechanism is called 'jump label patching', and it gives
+>  the basis for the static keys facility.
 >  
->  	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
->  	chinfo.src = rpdev->src;
-> @@ -502,13 +507,17 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
->  	/* Set the default_ept to the rpmsg device endpoint */
->  	eptdev->default_ept = rpdev->ept;
->  
-> +	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> +
-> +	if (ret)
-> +		return ret;
->  	/*
->  	 * The rpmsg_ept_cb uses *priv parameter to get its rpmsg_eptdev context.
-> -	 * Storedit in default_ept *priv field.
-> +	 * Stored it in default_ept *priv field.
->  	 */
->  	eptdev->default_ept->priv = eptdev;
->  
-> -	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> +	return 0;
->  }
->  
->  static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+>  Static key label API, usage and examples
 > -- 
-> 2.50.1 (Apple Git-155)
+> 2.53.0.windows.2
 > 
