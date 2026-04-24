@@ -1,175 +1,192 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2105.outbound.protection.partner.outlook.cn [139.219.17.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8179321CFEF;
-	Fri, 24 Apr 2026 03:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BABF23AB9D
+	for <linux-remoteproc@vger.kernel.org>; Fri, 24 Apr 2026 04:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777002815; cv=fail; b=te0F0yL0YzmnA25G2i9UgKUekZd314de5KhxJOrhJlQMFVmL//n8ZwuiqlSw5CCBECswy6nlGiYKqvkZpsmnoV0mG9jv2jVeAeYcDT8bcb7S3zOL6BxR7Ux9vTuOI9TFGLCUxRC3wzy4629Jaul4N2kGQVeXKRtBi74O+UxpGzI=
+	t=1777006146; cv=pass; b=tn3epTJThTs+mIlSbWOlrg80wbEU2PSSjxk3PSmlkcHErVlbEExOtH/4GaiNn6G1TqaW1Y3NbQhwKcVaxZRZsWqWLaDiqebneqry9KUsFnsf4ytRbgR2CQ06iWMeJiOpmkApbQa0IHARJrsTVleRrbLNRiAjPtWR1CNFz6WgkRw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777002815; c=relaxed/simple;
-	bh=aBSRmCNPBWQ2iGIufCy8/7TtmISQCQpoyf6jPRnJhrI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Dc8NukDWrKsRXgoNBXJXBnDKac8bIzTYJFCseZ2rXOnXRx/6ipfpaGYuLZOQ3G6bLTuCR5hTLpve/VugyTs/9cp2Gu6jPRjpy/y0ezATuWBKqC1Tbrsh3UXdGGMI5mz24fvD497nrPUocxzn1tblKorEsrjaCkz2JfBr613tkiw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NDfcCNY2iJzehLW1fknOryXFtjfqhWARK4eCRUaWiMCt0dsW+akIvvf0jvbwwePhAS9LQZWpipUSKkkbig1QNlVFpetl+GKGLFj/xkh1UA+b3Ye7Jr3zDJgT5xvNbPJIqAKh/TtddjUkid6w0q/2JbcDTqTbyqMQVoZHWXsm+I0ypClUisxwUlWt1o7QBM7feoFvXs+3/166TIoXfQf5auog3SeZfeAqp6noWeB57sMYyKkgqI62+bu+SPIWi7XQqna0FMYnORMfhTrehF1nvyD4/+WqjhSgA4e8XVctHk12rthLCwVJMsYhDL6bam5pRCWOudB6mUV78RWhsQsKcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TsVmp6o2aSuX0+CndiSOqIUGHbXJkDs+TQnKMWbKw5M=;
- b=W2o0nzLdzIblu8XRNq+eW+/AS/u0O22/srm7Ol5oU1jtudLRVvmp5uVVjac6UD2C7siEZlY8YjKb4RescIR7d7fxyrMhtBSdrurH0lRxv2yrs9Y6qMnsX7yrqMBqWlxwyON6X3Ic8IE1n91v62NXeOYdal28fwvw6YDGI0m5i6xN7jTaxTrixA50Qqv/TdCID7K7YKY/1qtI2gloGeJHNpBMFv0Kg1AN8KKWBafbIZZmo1LO2JHECY4ZyEjbuRD8+2lsWbdEOPzqg5zNLxRa73hVV7xegvxEM38BggjGCh5MSKBMSXrH+GMu3fm192pNncLkenD0FweINUgvG2TfJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:8::10) by NTZPR01MB0970.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:b::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.22; Fri, 24 Apr
- 2026 03:20:36 +0000
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- ([fe80::d8e2:3f39:6ae7:bdf2]) by
- NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::d8e2:3f39:6ae7:bdf2%6])
- with mapi id 15.20.9846.021; Fri, 24 Apr 2026 03:20:36 +0000
-From: Xingyu Wu <xingyu.wu@starfivetech.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Xingyu Wu <xingyu.wu@starfivetech.com>,
-	Mason Huo <mason.huo@starfivetech.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v1 1/2] dt-bindings: hwlock: Add the support of HWspinlock for StarFive JHB100
-Date: Fri, 24 Apr 2026 11:20:25 +0800
-Message-Id: <20260424032026.62301-2-xingyu.wu@starfivetech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260424032026.62301-1-xingyu.wu@starfivetech.com>
-References: <20260424032026.62301-1-xingyu.wu@starfivetech.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BJSPR01CA0010.CHNPR01.prod.partner.outlook.cn
- (10.43.34.150) To NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn (10.2.8.138)
+	s=arc-20240116; t=1777006146; c=relaxed/simple;
+	bh=cb2eWSw+22Qonpn9Tb22KQ4icCPJxn0cmAYICJrufNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SUtHgXk2w8TbnQWCEvB7WTeJHEmSYlYa/0i6YoCavTcv6OFV/Hi8d2m2L682E4ey/llVAEt/MNzyIVQsPSb4iwlCfs+mqNy58oWjYs5seNzevt8wk2AvY0UfbpwOgeQk5/+M98zEviIfBkwYF8Otn6xV/ZVTOcWPOX3Q4vPxfH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFFM/2q4; arc=pass smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFFM/2q4"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-670ab084a39so11248441a12.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Apr 2026 21:49:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1777006143; cv=none;
+        d=google.com; s=arc-20240605;
+        b=VscC06bya9PnKC3lbF1336CF82XvtIN8zqqgHxIQO5OllCXEnEFI+9XPsWx3Vu0vgP
+         5YGcUc/VwKtcHseBcAZ1g83hOg11XWUH45umFvolRfbQWQarDn6SxcBbjdGazAffjVCu
+         uGy9K1vr1vIDvhtdRY85cgzz41xCHP4OubHg/wCsP+ziJJRFrzjQgCuTO9DyBht7i5EJ
+         Qm5MhuAF1w3T+HoPApQPQpX5eDivajCi0ZX6WYi+dbJNC8OrK095xiMUwogsSKCgahmq
+         EmmYj3YtVEB1vj7/kTRgncVJs8ZraeC5bcG32FMwG3F8dRnnCpbW6io1dpuZjqEI5cvK
+         7SmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=PhaWClBL8TyGygG56i3QMPE/xAGru7icQmop6bWUldI=;
+        fh=f+wror7WeoYWLM79l/GrPIDeK6Xl0JR7XNG1srEbLXw=;
+        b=V4c8eSv5+msfFBa7xtD8V6Ifum/JNqtEeEXxUsZaVYrZZ4t/vmfmN4PpRcSQyy4DRw
+         P7aPQfiJ29IDCcjh27fe2wg2d5CB1gLCEvaU31VtoRJes9Y3uwgLXil7guuXgWPVML6h
+         3WLvnJpY8I1S5uTAMhQEW2WuX7MdDrFAkBocNvMoPdXkPUZmauYGIYDx5+Drz05h1cev
+         jescrqnP+yRnhsYQMNP8UErBzC8VWDVkgBQXWlvz1fll/9dX3wjPJnPpPoVhx4Wzb/pY
+         uMdFXhFdObv3lw9D4dqXIZewx1ndl33bTajEuHNRETSFc9OZIDttLMHBN7apfumHEhvk
+         aFeQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1777006143; x=1777610943; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PhaWClBL8TyGygG56i3QMPE/xAGru7icQmop6bWUldI=;
+        b=kFFM/2q4OHPa8iJZ5PYIFs1r5W1rr5zfFnPG/JxWkT5q9UrAHxNRXarld3Lou4vwVr
+         lh3KLqSmcNVPJ2LMLMN/zYAQQmJDnUdGLvMNsqJILSMDgmsLbhUbdfMNPk02L3irs5i1
+         SNk9zV12tMaJOMI/MipiL3cGeZFV/wZyu6dbI3mKTMDKUDQwz9ipwLbsIaVIH4t09H1O
+         4CJjvQymt/N0hlWh0CQ/UwPsnexPTYvnRJnLxz2jiFFrmY1p8XTvYrV/Gstrm69yU+Sp
+         WUyMVXNGMXOBAmA8Q5kfJ/xgFHP3y9AEKzz3rGoaOEPb7vIc0nsxD7hio8xP73mqTaWL
+         aAFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777006143; x=1777610943;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PhaWClBL8TyGygG56i3QMPE/xAGru7icQmop6bWUldI=;
+        b=dT7Wew8WRE7FDMljWU+6Ri2lU4+tGUnzuG0qIrVxRb74IVLj1emGaZ+tgDm9QkvMie
+         mdTmzLS2CxpSJbKigKfby7EtYaexwS91v+uxJ2ivOpOMYeiZc8hhoBxy2jC9opwDAIzL
+         B+6zlGQkX9hQi7IwZLXsA8WMvaQHOfL2/34rCZphWooF7tn38B9mbBMEUrirA86rrrgy
+         vlS481r7AKUD38i7HBtOffVhFzRugjy7EEJAZQqt61+djA0rvbvmE7o+FTp5SXknlCpM
+         ECYwFP/gDchfwl3tjQjJ0HIx0CqOyXrPZOnm4GheSozhn/4aiv1AYIXs9Ilbi6NfSe2w
+         tWTw==
+X-Forwarded-Encrypted: i=1; AFNElJ/m+ptZTE93SzyAfPN4WNCiAQa6rkZ/jCArqwHSU2eEOmoy5P2UEFFZoWx63AC43U2UVCbLNmNZzc6mtJ6UIB44@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXwX3Mv0kyyWV+sTn8JSn9r2t07xy05kxunKO4WF4vtoMrz43G
+	nad30rnWJrYP21boD3uE0cF2CiZTIsA87F+IsQbrkCvoQWuvXdUbIGUk+2+Zv1v8C399E86DqFw
+	15PWpZGuMoy68eIB2yg2bwWPRA+NIYdU=
+X-Gm-Gg: AeBDieutZGtGRC6yGKEjGFVSYhKUhSoOjSqitB4MOz1QmqT4wPnTgirCKv1yaDVKQ5H
+	MhuzV6bt4gUauRopdldatwAY6P8ynMgpH8Bk+0xbi0m446v7NBuIyV3yL5JLosUc6aiD2U2Dgl5
+	o4uIEyLmoyphUFw5G7TGxsbBh4Fs/HgrJQ0a+IQvG/AQs+MXjAmKMAaLgjQNMSwX7GBAKyBEk/N
+	NOGgN06RhNhf6qnhRDoWQR8SsefqfkKZPTeJVY64uev9V/MY1a+B1cAcS5MzBj7mCYoIsg+EvzG
+	AXZar/0k7lkqiRVhSJJMcn5gGtCQ
+X-Received: by 2002:a05:6402:28c8:b0:677:270f:6f4b with SMTP id
+ 4fb4d7f45d1cf-677270f7f6cmr3558097a12.1.1777006142494; Thu, 23 Apr 2026
+ 21:49:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: NTZPR01MB0956:EE_|NTZPR01MB0970:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4eca41e5-3526-41de-7d31-08dea1b073bf
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|22082099003|18002099003|38350700014|56012099003;
-X-Microsoft-Antispam-Message-Info:
-	5wTc5rI9BuEm1Wr6Wibee6L7umDekXy5Fw+fL3/qr+kowytExH1yw+TbnVRnotJIkrZkKAGNzvzTDYN2PdDCP6x17+mgEi7W4oIV11NhGWNN9BxXJ2WvGkYcwLUBOy7oK8zVnp92sBAqfNS2cWUjJWko61ovT/8YLlGJexNYZ+RfU8bLPy7P/LJTlP2KwAr6KpQMnWlIs1UZOsa/V29ES5sQr/rfUT/TQOB7IgvNXLGmjOqgDRNDV2VXCoRZ2VzLYZTYKmOCtmL7gO5HyxnjzXugkNEBgSQ6iwWeYOjgMd2BF4CTIzy3ezruNZl6dcLNoFEHQgRAegdjoXwBzHJr9oRJgSjxhY/DqV4kyygEycR1bO16A6oZCnmMlQIVFTpTaPOR8gcr5Fvghucgy+ELduHvsH5m4KguZVMc0i5u5DvYmIqr9eNXL9AiJHmq5C4Ymty3bD8WYpQr31m30rY08tWo+uZBcGycRUR1qQiQmoe946dzn/Fyzdu6vbVIcRCwNeUg290U48bc8DpYIjMG/KrQZaDUeAAijSfqs/VBp/nBgDPSdX91FgJwGVWaznkV2xKt5Bu6SG03u606uMAeRg==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(22082099003)(18002099003)(38350700014)(56012099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GHvyIhV5Cqg8h16N0vvmMt1FPYqFNfnwlEXu62lAoXSxNE8aufWe+qQgIKGv?=
- =?us-ascii?Q?/iiJ5kwM5KADrwaM7XXD17CWi+NxYztJT+j0qttS9Jv9SRJEkkcL3wn0CnPi?=
- =?us-ascii?Q?RjJJx29X0sIPDUE2K1aYaUyrG/SFDNS6i5Opk/je4VaCJONIoYMcuUU28hQA?=
- =?us-ascii?Q?oAI05+/lilyZVY1NPDMG9KaDqhcwMVR/iuQR7sT51kPaMlqp4nD4lvhSwCoj?=
- =?us-ascii?Q?tz/nOTBrYk3snZ3fO4CKGuua3K7M3V6nxoWOYW1l07E0q1LOKC7p5qZ3P07V?=
- =?us-ascii?Q?Qnhr6fPoB7rkUA0pjsvHprVRpg3OaLu6rxxXq3BEiKHvmabAbPM+vSpzmGOx?=
- =?us-ascii?Q?Ja5Gaq1nLx0qsNAIeX7zXREbZWMw5sR++jSHQbGwzo2nQ2kka6Tg2hYcitlP?=
- =?us-ascii?Q?iGF99vEv1NWAK2rh0+UnFCSfRns3XDugGCcmaM9XSnGWQcbdArVrhKhsEd6C?=
- =?us-ascii?Q?ld+g7iwtLoGbmApgCG5vlU6+9QfO1Dgxy4DHiz3EeCmR7lOh0hEqeZRTurah?=
- =?us-ascii?Q?uGjazWtjnWUZ5YowulbdXG53ocueIjhoailckewIUE/0e6AXLTWN5CpyHJae?=
- =?us-ascii?Q?yJJABxJqQugd9AkuVkQjcVknTv5TCG+jQaWgQDp7hsPZ9/6qJKS9xiy9dMHB?=
- =?us-ascii?Q?2G6xPyAXLWik/K8JYngKCLRH0BE5groIbHlANkyAplu5LB5Vvxf+xPysORan?=
- =?us-ascii?Q?37M0mJvkDOqynIKVf+ZoZ9ytq0kkpTUA444fFB0tYER4H3vQiSQIlD4kbuZl?=
- =?us-ascii?Q?xyuPrjIpnz0mid68YACfyshIz90tChSscvZoSijL+xEmbqWFwwpTBHFGCYcI?=
- =?us-ascii?Q?cb+7Ff3E/anph+yVLVK0NP04kHkL3MpwbfnLgOcLGcaG5NO7YgWOGPmxiz2D?=
- =?us-ascii?Q?iclaGSohznsofNI+tu+GqJi/67CFEpXGB4H/BcXkmN80YH2bsc1cUrJSLLcR?=
- =?us-ascii?Q?drxOpY6EjyyKIGZ/AMcKmdRcEYD4BixR00YEQaJrD6TRPt0j0Y0PvO3fA3Ak?=
- =?us-ascii?Q?mDGnxQBjm08Sxd3XMKOOv3U6wWTI5hndG52OSgjSfWse4GnGqjh9huJlaADw?=
- =?us-ascii?Q?AxxjkQ5P8u6z+Ts09cVfY4W++wQ6BLoJmRLGjgfG1RYApNoulWy1OsFmqVsf?=
- =?us-ascii?Q?BJONQtdiMvC7iVdGZgzo+z5uAb93ipQpA/4TO2prO+n4U3QyupQY5GHrqF4W?=
- =?us-ascii?Q?87YwmzEUpdqxHHOrClnO2A58RSgEAcRt/tEWUwhi2tFOApnEYH+eg9v2HJns?=
- =?us-ascii?Q?JmzTucUHHCBtIzfqad5W8PmUfrEYVgpkEBlLuU937mRa7RThaznlfSsrCF1a?=
- =?us-ascii?Q?6UmQMnfr6xSFWjockwDlX+TD6zmu7HGXZbOIxhkhLimYv72zx9gUK58BtL6K?=
- =?us-ascii?Q?6xWzgf9z+Lqs0gNEHKrfEAJ5X1zza+1qzXHGDaVuf3eBdXaY2+FeNc6k+mOP?=
- =?us-ascii?Q?aX4GFPKyftfSvJQWAJR/+GhwI7NH62Gpwn5tlfomcZyu/f+f+bn5BL9sMUJb?=
- =?us-ascii?Q?jsJS8dVI4maF0UZ7+k3GbOUgGQ/8VhTCxMXjfG9Sj9RTiTLwyC3BAGct02B4?=
- =?us-ascii?Q?CquwOTcKECMtS2/woExwxFaFxhpoOCcK6/fN1bMifIHFs6JNrYgt3vlnot+a?=
- =?us-ascii?Q?U+LwinjpyAchR9xZOZG83RJYzxtgviiclSrDJxdBfyFpFWK9aJ07sSF/mWat?=
- =?us-ascii?Q?lGQoWknQg1kbmdrwdclotC5eIWZi5uW9cqrAmEtqcV/oijkaatEKL8UQPuwU?=
- =?us-ascii?Q?yXkdEoGVc7eH9T7Fy6yXQdTGMXnQ6A4=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4eca41e5-3526-41de-7d31-08dea1b073bf
-X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 03:20:36.2903
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nOOpbBH2IIfJhf0UgUPV90V9gQXDs4n3GRiNviPs4RbHo69Q9kT/+EOSLmJApHzWOddQ9Xq5XxpZL5bxeehCGg8AU+5TE9PH46Uubnam3qE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB0970
+References: <20260416042338.10146-1-dbgh9129@gmail.com> <aejgg4J6ygbsP-kI@p14s>
+In-Reply-To: <aejgg4J6ygbsP-kI@p14s>
+From: =?UTF-8?B?7LWc7Jyg7Zi4?= <dbgh9129@gmail.com>
+Date: Fri, 24 Apr 2026 00:48:50 -0400
+X-Gm-Features: AQROBzAqD2os1JxswIMBqd-1RLnhiKI245OS-d0vpVsWAX4YRwsrQgCmPrLhX0A
+Message-ID: <CACrCO_VZgTCm5ZF9FN6MDftQW6TgODsA3trDghycFW0ufswk5A@mail.gmail.com>
+Subject: Re: [PATCH v1] rpmsg: char: fix use-after-free on probe error path
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add the new documentation of hardware spinlock for the StarFive JHB100 SoC.
+Dear Mathieu
 
-Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
----
- .../hwlock/starfive,jhb100-hwspinlock.yaml    | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/hwlock/starfive,jhb100-hwspinlock.yaml
+Thanks for the review.
 
-diff --git a/Documentation/devicetree/bindings/hwlock/starfive,jhb100-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/starfive,jhb100-hwspinlock.yaml
-new file mode 100644
-index 000000000000..b1b27fafe9bc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwlock/starfive,jhb100-hwspinlock.yaml
-@@ -0,0 +1,40 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwlock/starfive,jhb100-hwspinlock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: StarFive Hardware Spinlock
-+
-+maintainers:
-+  - Xingyu Wu <xingyu.wu@starfivetech.com>
-+
-+properties:
-+  compatible:
-+    const: starfive,jhb100-hwspinlock
-+
-+  reg:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  "#hwlock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - resets
-+  - "#hwlock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    hwspinlock@13012000 {
-+        compatible = "starfive,jhb100-hwspinlock";
-+        reg = <0x13012000 0x400>;
-+        resets = <&sys0crg 0>;
-+        #hwlock-cells = <1>;
-+    };
--- 
-2.34.1
+I will fix the Fixes tag and remove the header in v2.
+The check will be added in the next patch.
 
+Thanks,
+Yuho
+
+On Wed, 22 Apr 2026 at 10:51, Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
+>
+> Good morning,
+>
+> On Thu, Apr 16, 2026 at 12:23:38AM -0400, Yuho Choi wrote:
+> > rpmsg_chrdev_probe() stores the newly allocated eptdev in the default
+> > endpoint's priv pointer before calling rpmsg_chrdev_eptdev_add(). If
+> > rpmsg_chrdev_eptdev_add() then fails, its error path frees eptdev while
+> > the default endpoint may still dispatch inbound messages through
+> > rpmsg_ept_cb(), leaving the callback with a dangling priv pointer.
+> >
+> > Avoid publishing eptdev through the default endpoint until
+> > rpmsg_chrdev_eptdev_add() succeeds. Any message that arrives before the
+> > priv is published should be ignored, so make rpmsg_ept_cb() return
+> > success when priv is NULL.
+> >
+> > Fixes: bc69d10665690 ("rpmsg: char: Introduce the "rpmsg-raw" channel")
+>
+> The SHA should be 12 characters.
+>
+> > Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
+> > ---
+> >  drivers/rpmsg/rpmsg_char.c | 13 +++++++++++--
+> >  1 file changed, 11 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> > index ca9cf8858a5ef..549a24b70884d 100644
+> > --- a/drivers/rpmsg/rpmsg_char.c
+> > +++ b/drivers/rpmsg/rpmsg_char.c
+> > @@ -11,6 +11,7 @@
+> >   * was based on TI & Google OMX rpmsg driver.
+> >   */
+> >
+> > +#include "asm-generic/rwonce.h"
+>
+> Why is this needed?
+>
+> >  #define pr_fmt(fmt)  KBUILD_MODNAME ": " fmt
+> >
+> >  #include <linux/cdev.h>
+> > @@ -104,6 +105,9 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+> >       struct rpmsg_eptdev *eptdev = priv;
+> >       struct sk_buff *skb;
+> >
+> > +     if (!eptdev)
+> > +             return 0;
+> > +
+>
+> If this is needed, the same check is probably needed in rpmsg_ept_flow_cb().
+>
+> Thanks,
+> Mathieu
+>
+> >       skb = alloc_skb(len, GFP_ATOMIC);
+> >       if (!skb)
+> >               return -ENOMEM;
+> > @@ -490,6 +494,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> >       struct rpmsg_channel_info chinfo;
+> >       struct rpmsg_eptdev *eptdev;
+> >       struct device *dev = &rpdev->dev;
+> > +     int ret;
+> >
+> >       memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+> >       chinfo.src = rpdev->src;
+> > @@ -502,13 +507,17 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+> >       /* Set the default_ept to the rpmsg device endpoint */
+> >       eptdev->default_ept = rpdev->ept;
+> >
+> > +     ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> > +
+> > +     if (ret)
+> > +             return ret;
+> >       /*
+> >        * The rpmsg_ept_cb uses *priv parameter to get its rpmsg_eptdev context.
+> > -      * Storedit in default_ept *priv field.
+> > +      * Stored it in default_ept *priv field.
+> >        */
+> >       eptdev->default_ept->priv = eptdev;
+> >
+> > -     return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> > +     return 0;
+> >  }
+> >
+> >  static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> > --
+> > 2.50.1 (Apple Git-155)
+> >
