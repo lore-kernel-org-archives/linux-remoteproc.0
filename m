@@ -1,192 +1,139 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2100.outbound.protection.partner.outlook.cn [139.219.17.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BABF23AB9D
-	for <linux-remoteproc@vger.kernel.org>; Fri, 24 Apr 2026 04:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94234D531;
+	Fri, 24 Apr 2026 04:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.100
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777006146; cv=pass; b=tn3epTJThTs+mIlSbWOlrg80wbEU2PSSjxk3PSmlkcHErVlbEExOtH/4GaiNn6G1TqaW1Y3NbQhwKcVaxZRZsWqWLaDiqebneqry9KUsFnsf4ytRbgR2CQ06iWMeJiOpmkApbQa0IHARJrsTVleRrbLNRiAjPtWR1CNFz6WgkRw=
+	t=1777006429; cv=fail; b=dP2MaUxBN3y9T1+TpEOl3uJQ3Iv9tCnGLoIHvmdDw7+Fizf2+xJgdjWG0ZpgI87o5OJebe18eexfpxZMtcWk14tgEJV3v93uqudunJ/5qhJ08bPoyU4U9TF3chaXIY40O00EJQkZuYW6AQ3yoQlU5dnC0/y+frcI+ya5Va8y3zE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777006146; c=relaxed/simple;
-	bh=cb2eWSw+22Qonpn9Tb22KQ4icCPJxn0cmAYICJrufNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SUtHgXk2w8TbnQWCEvB7WTeJHEmSYlYa/0i6YoCavTcv6OFV/Hi8d2m2L682E4ey/llVAEt/MNzyIVQsPSb4iwlCfs+mqNy58oWjYs5seNzevt8wk2AvY0UfbpwOgeQk5/+M98zEviIfBkwYF8Otn6xV/ZVTOcWPOX3Q4vPxfH0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFFM/2q4; arc=pass smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFFM/2q4"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-670ab084a39so11248441a12.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Apr 2026 21:49:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1777006143; cv=none;
-        d=google.com; s=arc-20240605;
-        b=VscC06bya9PnKC3lbF1336CF82XvtIN8zqqgHxIQO5OllCXEnEFI+9XPsWx3Vu0vgP
-         5YGcUc/VwKtcHseBcAZ1g83hOg11XWUH45umFvolRfbQWQarDn6SxcBbjdGazAffjVCu
-         uGy9K1vr1vIDvhtdRY85cgzz41xCHP4OubHg/wCsP+ziJJRFrzjQgCuTO9DyBht7i5EJ
-         Qm5MhuAF1w3T+HoPApQPQpX5eDivajCi0ZX6WYi+dbJNC8OrK095xiMUwogsSKCgahmq
-         EmmYj3YtVEB1vj7/kTRgncVJs8ZraeC5bcG32FMwG3F8dRnnCpbW6io1dpuZjqEI5cvK
-         7SmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=PhaWClBL8TyGygG56i3QMPE/xAGru7icQmop6bWUldI=;
-        fh=f+wror7WeoYWLM79l/GrPIDeK6Xl0JR7XNG1srEbLXw=;
-        b=V4c8eSv5+msfFBa7xtD8V6Ifum/JNqtEeEXxUsZaVYrZZ4t/vmfmN4PpRcSQyy4DRw
-         P7aPQfiJ29IDCcjh27fe2wg2d5CB1gLCEvaU31VtoRJes9Y3uwgLXil7guuXgWPVML6h
-         3WLvnJpY8I1S5uTAMhQEW2WuX7MdDrFAkBocNvMoPdXkPUZmauYGIYDx5+Drz05h1cev
-         jescrqnP+yRnhsYQMNP8UErBzC8VWDVkgBQXWlvz1fll/9dX3wjPJnPpPoVhx4Wzb/pY
-         uMdFXhFdObv3lw9D4dqXIZewx1ndl33bTajEuHNRETSFc9OZIDttLMHBN7apfumHEhvk
-         aFeQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1777006143; x=1777610943; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PhaWClBL8TyGygG56i3QMPE/xAGru7icQmop6bWUldI=;
-        b=kFFM/2q4OHPa8iJZ5PYIFs1r5W1rr5zfFnPG/JxWkT5q9UrAHxNRXarld3Lou4vwVr
-         lh3KLqSmcNVPJ2LMLMN/zYAQQmJDnUdGLvMNsqJILSMDgmsLbhUbdfMNPk02L3irs5i1
-         SNk9zV12tMaJOMI/MipiL3cGeZFV/wZyu6dbI3mKTMDKUDQwz9ipwLbsIaVIH4t09H1O
-         4CJjvQymt/N0hlWh0CQ/UwPsnexPTYvnRJnLxz2jiFFrmY1p8XTvYrV/Gstrm69yU+Sp
-         WUyMVXNGMXOBAmA8Q5kfJ/xgFHP3y9AEKzz3rGoaOEPb7vIc0nsxD7hio8xP73mqTaWL
-         aAFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777006143; x=1777610943;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PhaWClBL8TyGygG56i3QMPE/xAGru7icQmop6bWUldI=;
-        b=dT7Wew8WRE7FDMljWU+6Ri2lU4+tGUnzuG0qIrVxRb74IVLj1emGaZ+tgDm9QkvMie
-         mdTmzLS2CxpSJbKigKfby7EtYaexwS91v+uxJ2ivOpOMYeiZc8hhoBxy2jC9opwDAIzL
-         B+6zlGQkX9hQi7IwZLXsA8WMvaQHOfL2/34rCZphWooF7tn38B9mbBMEUrirA86rrrgy
-         vlS481r7AKUD38i7HBtOffVhFzRugjy7EEJAZQqt61+djA0rvbvmE7o+FTp5SXknlCpM
-         ECYwFP/gDchfwl3tjQjJ0HIx0CqOyXrPZOnm4GheSozhn/4aiv1AYIXs9Ilbi6NfSe2w
-         tWTw==
-X-Forwarded-Encrypted: i=1; AFNElJ/m+ptZTE93SzyAfPN4WNCiAQa6rkZ/jCArqwHSU2eEOmoy5P2UEFFZoWx63AC43U2UVCbLNmNZzc6mtJ6UIB44@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXwX3Mv0kyyWV+sTn8JSn9r2t07xy05kxunKO4WF4vtoMrz43G
-	nad30rnWJrYP21boD3uE0cF2CiZTIsA87F+IsQbrkCvoQWuvXdUbIGUk+2+Zv1v8C399E86DqFw
-	15PWpZGuMoy68eIB2yg2bwWPRA+NIYdU=
-X-Gm-Gg: AeBDieutZGtGRC6yGKEjGFVSYhKUhSoOjSqitB4MOz1QmqT4wPnTgirCKv1yaDVKQ5H
-	MhuzV6bt4gUauRopdldatwAY6P8ynMgpH8Bk+0xbi0m446v7NBuIyV3yL5JLosUc6aiD2U2Dgl5
-	o4uIEyLmoyphUFw5G7TGxsbBh4Fs/HgrJQ0a+IQvG/AQs+MXjAmKMAaLgjQNMSwX7GBAKyBEk/N
-	NOGgN06RhNhf6qnhRDoWQR8SsefqfkKZPTeJVY64uev9V/MY1a+B1cAcS5MzBj7mCYoIsg+EvzG
-	AXZar/0k7lkqiRVhSJJMcn5gGtCQ
-X-Received: by 2002:a05:6402:28c8:b0:677:270f:6f4b with SMTP id
- 4fb4d7f45d1cf-677270f7f6cmr3558097a12.1.1777006142494; Thu, 23 Apr 2026
- 21:49:02 -0700 (PDT)
+	s=arc-20240116; t=1777006429; c=relaxed/simple;
+	bh=C++9BFbILSdS4m1XG1HFJmLLgUWjXTqtAhaCNmECAPU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ivkauGoi40Dgi22hW5PnLSmEq7Wmm0eCDjufhVCsMHKpPjhm77D1UtrI9q5QyWdF9kWGDn+7P2OMOFcbp8q68Sp8iMkdhdRPUTUr5fQEbjcRVjpWgipy+lhoDDHratVa1kPmBWduG3tbfK7vDXzlX4MNsp0AFzVM1TAYDVN1PDA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jixvBSqhdBESKYaYByPtR3DsOxl5HWS0MwDW6i9vt4yXKJhV33iwyKEy1RMbi2FFfpt5mRJTecLOWKyXazZ1DaBzjWZLiplCtzjdgiQieg5uxthsez0lTt6JVkWhqDTUjk6OrNZK/31jikRaP/Qv8R2c0UHDbl8XjU6dn2ImMXOzCoc1qGzvMB+JUGBFSXHFjwcE5zrF9JZCN/BOIDmf1MSV+WP2e3irFek7GeKyq+fF1E+NBPtOs9+VF6bwLFe18njAlvWtNeKigkRXZjWhrmwCY+IBxABBnYbYyqH5BUZKmx27QHBOtNNvamcjdeB8xrPNQ8dZ1m/PxtdqDplFpQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b0KR6ZEwGloTK2eVPMWfSHBgsLQNx+STCgYgMhUYS+E=;
+ b=Jz/Ni8JI2pZNw4YhAhC+h5Wfe9cD/4vVoY+xzH+bSRp7RgY5dTv9f0VS1lpM/8iXNBL772ocCudv9gclRb+Tj0RqMNnMK0z72WGjDalZjuHrulgNJBUDjHeoRlDme8y8xW4TTJS4l0hLMPTIqV+/w3eXGVm5/3xuI7zxfnqoYORp9mbA6QmqJ2gCBbj5UGmP9FSv++vqqdhMgA6eYnuWOumLCbnv1916U7VVrxbQZLX2F7N2JYw34HZGMy4BlBviU4zfr27Jv4St8NXQTjhMFXMJ/PwoZEyEzzS57oOH+KMrMhids6OaIecFOvqsqTfH+7oewpoDqne5WQdXjqeR7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB0970.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:b::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.22; Fri, 24 Apr
+ 2026 03:20:35 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::d8e2:3f39:6ae7:bdf2]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::d8e2:3f39:6ae7:bdf2%6])
+ with mapi id 15.20.9846.021; Fri, 24 Apr 2026 03:20:35 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Xingyu Wu <xingyu.wu@starfivetech.com>,
+	Mason Huo <mason.huo@starfivetech.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v1 0/2] Add hwspinlock driver for StarFive JHB100 SoC
+Date: Fri, 24 Apr 2026 11:20:24 +0800
+Message-Id: <20260424032026.62301-1-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BJSPR01CA0010.CHNPR01.prod.partner.outlook.cn
+ (10.43.34.150) To NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn (10.2.8.138)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260416042338.10146-1-dbgh9129@gmail.com> <aejgg4J6ygbsP-kI@p14s>
-In-Reply-To: <aejgg4J6ygbsP-kI@p14s>
-From: =?UTF-8?B?7LWc7Jyg7Zi4?= <dbgh9129@gmail.com>
-Date: Fri, 24 Apr 2026 00:48:50 -0400
-X-Gm-Features: AQROBzAqD2os1JxswIMBqd-1RLnhiKI245OS-d0vpVsWAX4YRwsrQgCmPrLhX0A
-Message-ID: <CACrCO_VZgTCm5ZF9FN6MDftQW6TgODsA3trDghycFW0ufswk5A@mail.gmail.com>
-Subject: Re: [PATCH v1] rpmsg: char: fix use-after-free on probe error path
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: NTZPR01MB0956:EE_|NTZPR01MB0970:EE_
+X-MS-Office365-Filtering-Correlation-Id: c42b1ddc-5b85-49c5-e585-08dea1b072f4
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|18002099003|38350700014|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	RtVqeb2RKuN6Pj/e0pKUBae3s7yYBUjusocFokNgkNmPZ3/g/vTla+xjOI8K4JpB/LTxEj0EBCFvmy6+FxPU1Eq0YztEDeORVxLKR7b25hfhHJ7lX5pIAdh8jiO3oRU6kl6Okg4hQImV2lTMKVS0pT2XNyqWz1bZK3FgXNsppIrfJ+XQGoCdKpI3tM444hJrvDjRJ3uQ1jg7a6boXwm/y31pCBrWrMDk+9vLe0WZ53vQHJ/o2p376JPE1C5C+pVs9fwvTOlM2TMFq7tcSA/t0s+II3RB0hUZR88lTymljhYA8YdbbfoO6pfKSCc6gsSIoC0LP+LbcMiqPefxoTPYq7NMxjCsLxP1Jj16iDtQstYWvL4Lr/IZF6tjmPUHEppMdNHHGGrklXXisCq5AOMJQmyWdc7VFnDySaJJCM/5QwxkOCyxq9Tuc8L/iQSBgUM/2MWKmT3gWpyHaEQjvGdQFkVHsxwVWZhDSBN+m9/BdEI86N038FiwHuZNPo18QgSYVfQmFL3dNNIBZ3SiWnLWeQ6id13bz47iG+E9xMoFoytRwcq5pd5irSINuNx2bQZEHSeGiW0dJZGyfa0iYK+VZ1d5U2PH/V6nq3e2B754hho=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(18002099003)(38350700014)(56012099003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?vXuGsM874JlXcQ/dpjaThbqE4/SUrcVC8BukyNSf02YzxmDXG1+IQNHkII8S?=
+ =?us-ascii?Q?32AHeCYksisC1U7GOEdYRxTwchumXRDo5Aw7GdNsRr0uOcnIi7H3v+ei2zeH?=
+ =?us-ascii?Q?2fTHRvBni3gdbYy9aZwuwffFWVYZHGzRXblIQFRUHAC8vkDIs8eON8O13p97?=
+ =?us-ascii?Q?YydVHt2/ddM9uMTdtmLRDx3JSsCXZ4e9pgu8O3cHQoS0dAe/c9edw+KRcQnM?=
+ =?us-ascii?Q?jGRC9TYYIHExbKUJSy+n0VWxICQVadNXVv9hrS8CnW78Rkx1EcCxTbqWpT50?=
+ =?us-ascii?Q?omwz/pHDAdjrphJh+nEHOxqwkl6labboIb+NLo3VsnphQcy21CtQ81RAu31e?=
+ =?us-ascii?Q?RCW6h7zTdkbi/EHFLIEkJF9vbs+Lb8HZg6dfB+5JIW4gYKvcjOsxTHnKO1dr?=
+ =?us-ascii?Q?KJIaMkOsXW2t5CjZ4DD6bYhnAqdyd9ejMKZ89iQsxZj7Al5DS0O5U3y48RGr?=
+ =?us-ascii?Q?W5k+oW0ACskn1RDnxsdCnMtp0Deh+dkWYh/445YZ/OmcBmScUiiID8d8sdQT?=
+ =?us-ascii?Q?vR/V3GtNgvVKnSwffl1gEZ8tCS6wsI7/yfl/3GfHV6/nwhicy1+rwq0a7pqA?=
+ =?us-ascii?Q?ogezOcha0/Aki52WkAvx5S9hdR9MW3/LXA+JtUDCGaKac0k1Oklp6BxGylYW?=
+ =?us-ascii?Q?smdbirSKTIKDnuWUHrA/N2iC77HLAgC+qChEMmhKa6DhinrY0ZtBCgceOpsG?=
+ =?us-ascii?Q?QdkAiQt2hi6A8pfdPZLWufS4stsD5VFGonLtVXviBoPWOYYJJuPvRCPLzCMf?=
+ =?us-ascii?Q?EdFmW9qucNc5MKqh9HD7UyNpfXlr1n41Ky6QzFs40xCV6Mg5buNfUzMqLku1?=
+ =?us-ascii?Q?TEc7wwYiUGdXlXBxHgI9jxJCpwcoJ51qZDRRJe1z4mQVejsMAgQz9OHdcfDd?=
+ =?us-ascii?Q?AroJsOD/Nqjo+ermsEROvJhrlvRd42GEBtVwXdKqrkdT09BT8gbJUkUox6CP?=
+ =?us-ascii?Q?GX27EWtcROCx8rlIXijUVy+5L/zznRfNebDBwJ5OWjePcr6yHQ21uQibcTXn?=
+ =?us-ascii?Q?EyuTOByyqj/5xyzVkir+KBfCaE3ze8P6c/FyPfvlxSQ0lzK+/rN4RwOU/7hD?=
+ =?us-ascii?Q?tAmMcCL+DWKKqLXvmPba+IXv57Q0wDIGa5KxFZrycUqpKLgg50uXWWxGvGOB?=
+ =?us-ascii?Q?UovJh6kfUBlmEdrG/8JhCCg7DJdYDvrta9G/7ZpKrJCrNhCimOagbeo0wyGF?=
+ =?us-ascii?Q?1lJ88eSlWHYFrafiR4ZWu/RhSPSsf9ictg98WH3Qhg9gyD7ZNfhuz56A7m3F?=
+ =?us-ascii?Q?GTjxQGpBTgFXlUeysEioGfeAy8twnWgaUIqdWq1Nl6ItGoZjs6tZj2pyOdXP?=
+ =?us-ascii?Q?ue/8HgCDPfFralAt/pSo+o2qg5XN73qbtVs6oBTU/SHMIrfHfjDjL9flxtpN?=
+ =?us-ascii?Q?oq08Z7Q//fYNORpMLr/8MKV+ahakh0OzPFkNs5lb3pMICygq2w59zi4CvezH?=
+ =?us-ascii?Q?EoQypGPr4oJcA6jlkG2XzLScVx8Rz3yZ9bCksS4r8WCzfDoHH2TJei9KTCog?=
+ =?us-ascii?Q?mnqyNtF6tBVWZY3jozAV72kkHG+jEwozYPHpK2rXca1ymLU51ZvJA9p16Fk1?=
+ =?us-ascii?Q?BaXrkfOwkEP2vZpjXV6B+LWIx3uoTj+isdCW+5l3L9Pm3Kl1bAhCjReMD645?=
+ =?us-ascii?Q?h1oOvkhGUpKJGwDYjOWcMu9jJg2C73ciDEJnOq9Zd3BoQeL4QXTyAE7mYuy3?=
+ =?us-ascii?Q?psALONrEvGlPeRo54//xhdBHLue7gwXt3fkcrm1i2FwaXz9NVgC8KDR9rqKD?=
+ =?us-ascii?Q?KwXvYMe/WkXVxRAz+45irvrG1s86Lek=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c42b1ddc-5b85-49c5-e585-08dea1b072f4
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 03:20:35.0757
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NVEphXB6Sq2el06mA9HRD6/O45ay4DkRSu7a0LAd4XWhLtqk7PRDNxQAc21Jd5m8MJenM7Q/rrdqvx6M6idkMab7TtERlp0mpYuhiCTRHMA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB0970
 
-Dear Mathieu
+This patch serises are to add hardware spinlock driver for the StarFive
+JHB100 SoC. The first patch adds documentation for StarFive Hardware
+Spinlock. The subsequent patch adds hwspinlock driver and support JHB100
+SoC.
 
-Thanks for the review.
+The StarFive hwspinlock supports 16 channels for using by secur core and
+AP core to restrict access and protect the memory area.
 
-I will fix the Fixes tag and remove the header in v2.
-The check will be added in the next patch.
+Xingyu Wu (2):
+  dt-bindings: hwlock: Add the support of HWspinlock for StarFive JHB100
+  hwspinlock: Add StarFive hwspinlock device
 
-Thanks,
-Yuho
+ .../hwlock/starfive,jhb100-hwspinlock.yaml    |  40 ++++++
+ MAINTAINERS                                   |   6 +
+ drivers/hwspinlock/Kconfig                    |   8 ++
+ drivers/hwspinlock/Makefile                   |   1 +
+ drivers/hwspinlock/starfive_hwspinlock.c      | 130 ++++++++++++++++++
+ 5 files changed, 185 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/starfive,jhb100-hwspinlock.yaml
+ create mode 100644 drivers/hwspinlock/starfive_hwspinlock.c
 
-On Wed, 22 Apr 2026 at 10:51, Mathieu Poirier
-<mathieu.poirier@linaro.org> wrote:
->
-> Good morning,
->
-> On Thu, Apr 16, 2026 at 12:23:38AM -0400, Yuho Choi wrote:
-> > rpmsg_chrdev_probe() stores the newly allocated eptdev in the default
-> > endpoint's priv pointer before calling rpmsg_chrdev_eptdev_add(). If
-> > rpmsg_chrdev_eptdev_add() then fails, its error path frees eptdev while
-> > the default endpoint may still dispatch inbound messages through
-> > rpmsg_ept_cb(), leaving the callback with a dangling priv pointer.
-> >
-> > Avoid publishing eptdev through the default endpoint until
-> > rpmsg_chrdev_eptdev_add() succeeds. Any message that arrives before the
-> > priv is published should be ignored, so make rpmsg_ept_cb() return
-> > success when priv is NULL.
-> >
-> > Fixes: bc69d10665690 ("rpmsg: char: Introduce the "rpmsg-raw" channel")
->
-> The SHA should be 12 characters.
->
-> > Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
-> > ---
-> >  drivers/rpmsg/rpmsg_char.c | 13 +++++++++++--
-> >  1 file changed, 11 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> > index ca9cf8858a5ef..549a24b70884d 100644
-> > --- a/drivers/rpmsg/rpmsg_char.c
-> > +++ b/drivers/rpmsg/rpmsg_char.c
-> > @@ -11,6 +11,7 @@
-> >   * was based on TI & Google OMX rpmsg driver.
-> >   */
-> >
-> > +#include "asm-generic/rwonce.h"
->
-> Why is this needed?
->
-> >  #define pr_fmt(fmt)  KBUILD_MODNAME ": " fmt
-> >
-> >  #include <linux/cdev.h>
-> > @@ -104,6 +105,9 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
-> >       struct rpmsg_eptdev *eptdev = priv;
-> >       struct sk_buff *skb;
-> >
-> > +     if (!eptdev)
-> > +             return 0;
-> > +
->
-> If this is needed, the same check is probably needed in rpmsg_ept_flow_cb().
->
-> Thanks,
-> Mathieu
->
-> >       skb = alloc_skb(len, GFP_ATOMIC);
-> >       if (!skb)
-> >               return -ENOMEM;
-> > @@ -490,6 +494,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
-> >       struct rpmsg_channel_info chinfo;
-> >       struct rpmsg_eptdev *eptdev;
-> >       struct device *dev = &rpdev->dev;
-> > +     int ret;
-> >
-> >       memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
-> >       chinfo.src = rpdev->src;
-> > @@ -502,13 +507,17 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
-> >       /* Set the default_ept to the rpmsg device endpoint */
-> >       eptdev->default_ept = rpdev->ept;
-> >
-> > +     ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> > +
-> > +     if (ret)
-> > +             return ret;
-> >       /*
-> >        * The rpmsg_ept_cb uses *priv parameter to get its rpmsg_eptdev context.
-> > -      * Storedit in default_ept *priv field.
-> > +      * Stored it in default_ept *priv field.
-> >        */
-> >       eptdev->default_ept->priv = eptdev;
-> >
-> > -     return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
-> > +     return 0;
-> >  }
-> >
-> >  static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
-> > --
-> > 2.50.1 (Apple Git-155)
-> >
+-- 
+2.34.1
+
