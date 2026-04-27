@@ -1,125 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709263B4E84;
-	Mon, 27 Apr 2026 10:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6030D3B0ACA;
+	Mon, 27 Apr 2026 10:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777284001; cv=none; b=vBciAurc8ZtzKUedooYIa+umxCqKGRcFGfWpJSzJDdGCMxoozt82Ygg5flIMKFh86/W0+ZZmYGyTRAU4yPr30JZoUuo21kSdAQEEBvrbgew7hHdTpjEIP6FKWCxzEaB2UKoO2aPgUp1TuAyrGEhXa/eP5+vkCwHWEiPCSbMnQ8E=
+	t=1777284091; cv=none; b=Ac4jJlw2Jz7gdjx/m4khCZa9H8taumd6MNHhgJ16YQwniWc5MmnkmbjDFKWLJMm2kiNp3CQqsJ0RLCd1OmNNFB7ggbwzfpaywJZFpJq/tkdod12e6ksKV1UbXe86zLgaL7o/Sod70fBOk4/WeucRywSwaxJnObwm/iD/sAFTB+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777284001; c=relaxed/simple;
-	bh=yEIG92a1FH3cEp3tne1pDeDmYK3WLKv3UmItU7XJzvM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uH7hnVCOrqcWht66RtnFFnCdXseIY4YeGKE2hVTVTucP7D2mX5IG9D1S5kG1alZZr/bBm+5u8omey/Qjwy88jRqToGUWwk7zIzPu1azuZTpEaDn88j9QRYlGpWDjTKKrCOEAyg/O1RUn8z3MPsK3sFZkQrsOdK5az+ayPNtNpqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qalb8bye; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1777284091; c=relaxed/simple;
+	bh=uzgaBr3/gy0BiPKNuVtfiYRLUSOLMrQVqn3rQh6e1N0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SHF8DiO1r5XdqBoleo8xTPSRJtrx/DEyqXquqX+BLIUaLf5fAOC/TYkx07ooy0hHhxRI+rW3TtAfBqbCkJrjAzlJbqqekRIqkpEHkbhNL3chhozcmjIIBHV5kNd10q5NCojmass/HmQrINpY2gQqYA3OurlIYjnX/cN4ZW7wNfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=LLsoOPsv; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qalb8bye"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9593AC19425;
-	Mon, 27 Apr 2026 09:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777284001;
-	bh=yEIG92a1FH3cEp3tne1pDeDmYK3WLKv3UmItU7XJzvM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qalb8byeKCMMPPdR3bDLqXrUNZ+T4+X41ohfZotvM9auPRR7bOGHhVHCLkIyfKCl8
-	 pnLK46wiHan9Xfxjjz36dxDwTNFxa5f9q4LKwuawCeJaN1aC4iu8LonbB4lhg3hzBi
-	 cQxKOxHaO3lDsjmAB2YLNEX1HNKTZWvz5RIPGamsOtkK1INwJuOQSjoVOKfHENFxUb
-	 jxEiO3i1TaeqM8gMtKbZAI+juIF4MJLlyBLRB626lxjmsdGrKo2PxNQMBYbRm4IQKV
-	 zoB8Xr2Lgq66lOSvjvahrZWUGtvZAIe8zo+PyiYBOO/4DBu2VMxc/6uw34FALVJp4R
-	 2+P8PGOw11Khg==
-From: Sumit Garg <sumit.garg@kernel.org>
-To: andersson@kernel.org,
-	konradybcio@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	robin.clark@oss.qualcomm.com,
-	sean@poorly.run,
-	akhilpo@oss.qualcomm.com,
-	lumag@kernel.org,
-	abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	vikash.garodia@oss.qualcomm.com,
-	dikshita.agarwal@oss.qualcomm.com,
-	bod@kernel.org,
-	mchehab@kernel.org,
-	elder@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	jjohnson@kernel.org,
-	mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com,
-	mukesh.ojha@oss.qualcomm.com,
-	pavan.kondeti@oss.qualcomm.com,
-	jorge.ramirez@oss.qualcomm.com,
-	tonyh@qti.qualcomm.com,
-	vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	amirreza.zarrabi@oss.qualcomm.com,
-	jens.wiklander@linaro.org,
-	op-tee@lists.trustedfirmware.org,
-	apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com,
-	linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: [PATCH v4 15/15] MAINTAINERS: Add maintainer entry for Qualcomm PAS TZ service
-Date: Mon, 27 Apr 2026 15:26:03 +0530
-Message-ID: <20260427095603.1157963-16-sumit.garg@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260427095603.1157963-1-sumit.garg@kernel.org>
-References: <20260427095603.1157963-1-sumit.garg@kernel.org>
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="LLsoOPsv"
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3013941098
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1777284089; bh=dAAsHzIohRCs7E69E+rpVjyFTWWgacfSQ85RrgmeH+E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=LLsoOPsvrCnkuSUviR1k1Met+YdkgY3i3VllilTFt83TiPNxfl/hm1cK3AaXxco2p
+	 VpaLdYfLIJT7u2QZlhJZacI6VTmC+dRsllSEnVoxgur9fcH9TD44R1Eopl7MzAndmK
+	 SUCPHaaML58XDaVxNR+e8ApgfjbAW9jzxGV7t9T4/myM8Ss6e4CUPYloZXjisLEwcz
+	 8OhHD1n0BFribYfA86Xrtr8Sj4+IzYtsSYgxEfp6tvXGlaHFQwcvjty8/t/RAreg5/
+	 BkW11gisduSodNrvweL967k8JMxDGyrRIOKWoh5O97HZFcVr4b0h3UHJQmU6Wm7rK2
+	 chE4NwePqEIOg==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 3013941098;
+	Mon, 27 Apr 2026 10:01:28 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Zhang Xiaolei <zxl434815272@gmail.com>, ebiggers@kernel.org,
+ andersson@kernel.org, mathieu.poirier@linaro.org
+Cc: ardb@kernel.org, skhan@linuxfoundation.org,
+ linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang
+ Xiaolei <zxl434815272@gmail.com>
+Subject: Re: [PATCH] docs: staging: fix various typos and grammar issues
+In-Reply-To: <20260416105854.788-1-zxl434815272@gmail.com>
+References: <20260416105854.788-1-zxl434815272@gmail.com>
+Date: Mon, 27 Apr 2026 04:01:25 -0600
+Message-ID: <87jytspvre.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+Zhang Xiaolei <zxl434815272@gmail.com> writes:
 
-Add Sumit Garg as the maintainer for the Qualcomm generic Peripheral
-Authentication Service (PAS) as well as the PAS TEE backend driver.
+> Fix a few typographical and grammatical issues across several
+> staging documentation files to improve readability:
+> - crc32.rst: replace "decide in" with "decide on"
+> - lzo.rst: replace "independent on" with "independent of"
+> - remoteproc.rst: fix word order in dependent clause
+> - static-keys.rst: add hyphen to "low-level"
+>
+> Signed-off-by: Zhang Xiaolei <zxl434815272@gmail.com>
+> ---
+>  Documentation/staging/crc32.rst       | 2 +-
+>  Documentation/staging/lzo.rst         | 2 +-
+>  Documentation/staging/remoteproc.rst  | 2 +-
+>  Documentation/staging/static-keys.rst | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
 
-Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Applied, thanks.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2fb1c75afd16..6d3fc5145f0a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -22007,6 +22007,15 @@ F:	Documentation/devicetree/bindings/media/*qcom*
- F:	drivers/media/platform/qcom
- F:	include/dt-bindings/media/*qcom*
- 
-+QUALCOMM PAS TZ SERVICE
-+M:	Sumit Garg <sumit.garg@oss.qualcomm.com>
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	drivers/firmware/qcom/qcom_pas.c
-+F:	drivers/firmware/qcom/qcom_pas.h
-+F:	drivers/firmware/qcom/qcom_pas_tee.c
-+F:	include/linux/firmware/qcom/qcom_pas.h
-+
- QUALCOMM SMB CHARGER DRIVER
- M:	Casey Connolly <casey.connolly@linaro.org>
- L:	linux-arm-msm@vger.kernel.org
--- 
-2.51.0
-
+jon
