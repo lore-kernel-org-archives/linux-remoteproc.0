@@ -1,132 +1,114 @@
-Received: from mail-qk1-f228.google.com (mail-qk1-f228.google.com [209.85.222.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7666F31E83B
-	for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 20:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC57366072;
+	Mon, 27 Apr 2026 20:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777320777; cv=none; b=OWXyc9oNNM/F74RCoB/m67gkInMnVyYA7ObR8UUIJchgJKexp6GfMMtuZXAMtVhX4laWArnBhwxcMgj12jTT2pIo7CCXXK4Dw9VIUKpKrdtW6YQjUN2RihQwrnjFB+Ts+wE+/VAIQEmIJrn0D1OT66tzZHHMQGUcz99agUm/6IU=
+	t=1777321697; cv=none; b=MUE2A+qG/oqG6MOYrIy/0ZGRKyWQAbEq9evW4wXj9Ft7u9Ih85fydQMkGgYTo0k6DSdMU3XudL7Y+Z7xlRUTX8Bv0F/abNtH9vG6vNiGuamf460O75CTDNuF7ZSnpIvbT8AyTGQ69pbAqitf5bDJo3UKq70MAaGVljhGBlM1D9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777320777; c=relaxed/simple;
-	bh=mBAgnSsUNn3fsc8pfQtWtaiDDL5qRMehlyaAO/YC9RA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bIE5BVbCMAMHcEJ0sRhTrmcFWDJWvhYtwyu3tk3Np6SvIOM0JOmvSSpBjnDXidO+kUU7obKJZsG72Kt+cWbgqKv5BnRV3GkjZCIF05iROyjdMK0E9mODsgqRGQSLmmqpWMvjSSxjGATtMT7rV8ipI03JTHrMHZpFTC2v+fwfOOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LTzf0Djn; arc=none smtp.client-ip=209.85.222.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1777321697; c=relaxed/simple;
+	bh=V23+FncfRih0vg6hWFTVq/hfs0/6m3e5YdaqQfSqJpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cp0gOh3NrGktw1goqqwoev8s42Kw+KMzyeC1HnhHK7kTqPpP+s1kjUzcs9N9D82xujnjz+wRqt+rnCH9m6FchYJXoqr/xnDUypAdRacsCtnqjD5KA/1IXazWfmREXs8cyw20Gn7vJl47HJEokyAPOaCqRWOUu6LY67U07H/8tR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rLlesqLi; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LTzf0Djn"
-Received: by mail-qk1-f228.google.com with SMTP id af79cd13be357-8ee7ffd738dso720760885a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 13:12:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777320774; x=1777925574;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e6HrkrEMv+Q+KsECCy2j5IGNVAW2RVCs/l06xUaahDY=;
-        b=bDyFb0zCpmlnMRan+J1k+RtyairER7cu+5tEyW58qj/VcR92lrqfst9ktQ7E9CYYEB
-         A7i/uGOWjKX/GyKKkBjjW2aKS/AnMomBRWmxKBQInMBXDY2Q5du/jHbkl4KmnT/GnZDq
-         dc5UA1AotEOm5SLjEM2bpCXsFTBZ+kMcZFTxxS9rZ2SCC6X1i/4Cm/HcmKMi7yJOaQls
-         wQZGDJdeq/lK+sIj6fKSymiuBbGdGN55YjSS+xMenNOrS4zIYHP8dTK7sl5U6j/KTG3k
-         i95PbOZ15s3Bns429QpvyFy6IPxDqkgTzgZ+qyMIuRzxq+3+SCIRCUpi26NblpLNwLPn
-         DJ/w==
-X-Forwarded-Encrypted: i=1; AFNElJ+pbO1wUcg4stAbkdWJSrVkU913UP9RlIzQcy+iSDl8m9GNe0TjL6yq/bAIdvWMFSibno5I0Ycba7cluxp8kxL5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxzNRa/acdG7PRuEaDYccSpBoP0HBDtwRRnL0smuV8Y0gKiBnj
-	TpDw4jgDkzyg7RLX69WvWSnRwAq8iuo2K60jeVCX5UBoRsIkxtuQxCnJaps/AaozW5sRXdTanvX
-	UspYxFHhII46Be6TjYYRu08U2lw1TzsI3MFRkYuY00rPGQgIq2P7lZ3ON4KvxQaiBTbcQgIoq3R
-	vSjRxiwacZTmw5nwkmoC5krJRTY6XORYeKqD1Tp8k7s6Zr8MNMWuX6xOYo1lFIv/9RoQHxj55hi
-	LJKg291Qkv+OlcLdAoOnA==
-X-Gm-Gg: AeBDietY14kc2jS4htEJwFjhkUpBcKYwbqr/UwSXMcLyP48yGEuJKKJKWQMWuuNEqyS
-	p0/yHXapCQ8W759ZSMmACdUZc2egmykkFGeEpBD3W5JKAdwak9bXOnMHhcUOWF0YucESSu+nYDB
-	Gm4TP99cvVJyWDo4ilbA9hAsSpEZlgP7572O9n1ROj3M5T6n2fF8je9gycIyy/vkU4RrvH+HOIl
-	wuEx8ss89XgHDtwf3ag39Oc+9wW5OoQ9JprorSnRJy/PIPQnBDm3H7L/iDm40McoHy+1Iar0B4L
-	e1xmRVttZbeRIEbQcqN1oxnHaa1NyvM2ktgBuWx3zsZZSdBGedmI+LdCDy46zNxz8SoeqiBl2/l
-	k82/4psXHM3ETF8fgOMBAJB+qkogz9wTDQAaXTIlmohTHF7VN7EMutqFaMJdM73UGuBGaD6mugi
-	1OniOyn8kO/JfW
-X-Received: by 2002:a05:622a:9017:b0:508:ffad:4bf4 with SMTP id d75a77b69052e-5100d9b1c90mr3470161cf.5.1777320774018;
-        Mon, 27 Apr 2026 13:12:54 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com ([144.49.247.127])
-        by smtp-relay.gmail.com with ESMTPS id d75a77b69052e-5100da56d16sm85711cf.9.2026.04.27.13.12.53
-        for <linux-remoteproc@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Apr 2026 13:12:54 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-2bdd327d970so6690930eec.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 13:12:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1777320773; x=1777925573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e6HrkrEMv+Q+KsECCy2j5IGNVAW2RVCs/l06xUaahDY=;
-        b=LTzf0DjnQdOVs+eFKAdGOQJcbwVDQS+sxGHPI8lkzd3/2rMk8STdgrFFl+PXAe3wCy
-         KJ5b/laJdCNnJksgRRfuNe3z0Mj1pScS83IjaNMvTMVPKqCID3TrtrwBKyj27fCRM2gm
-         o1dlIk4izQUSPOVPTBKExYAOy9M5vW+RWn728=
-X-Forwarded-Encrypted: i=1; AFNElJ+wuenU5/ydFQX6pwiFhukR2X1rJPqPuJYeVvsOFQMXBT06QBKC/1QzYzoix5Kq8Dao0bsovTITia7avDU4GIcg@vger.kernel.org
-X-Received: by 2002:a05:7300:dc85:b0:2c0:df3b:ec1e with SMTP id 5a478bee46e88-2ed0a530457mr90791eec.11.1777320772615;
-        Mon, 27 Apr 2026 13:12:52 -0700 (PDT)
-X-Received: by 2002:a05:7300:dc85:b0:2c0:df3b:ec1e with SMTP id 5a478bee46e88-2ed0a530457mr90770eec.11.1777320772079;
-        Mon, 27 Apr 2026 13:12:52 -0700 (PDT)
-Received: from mail.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ed09fb6b7fsm437136eec.10.2026.04.27.13.12.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Apr 2026 13:12:51 -0700 (PDT)
-From: Kamal Dasu <kamal.dasu@broadcom.com>
-To: andersson@kernel.org,
-	robh@kernel.org
-Cc: krzysztof.kozlowski@linaro.org,
-	conor+dt@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Kamal Dasu <kamal.dasu@broadcom.com>
-Subject: [PATCH v7 3/3] MAINTAINERS: adding entry for BRCMSTB HWSPINLOCK driver
-Date: Mon, 27 Apr 2026 16:12:33 -0400
-Message-Id: <20260427201233.380314-4-kamal.dasu@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260427201233.380314-1-kamal.dasu@broadcom.com>
-References: <20260427201233.380314-1-kamal.dasu@broadcom.com>
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rLlesqLi"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=bCKUIAH5AFpDTEzRcLChuiZZK/DaK7fLHicMM3GjPeU=; b=rLlesqLi6cgTfWUu5jNjMHVnJc
+	WFSU29sFZ7PYpE/EtDJrxlyl9K4R4lTFz3LpB3gxa3gy6IjKwY0rG8OaHwJUN5RJGxmXdMCZuuAfW
+	AhzQWMvhNGLPqSnoCVhJCMAATNyF4t3Z8rO3EO6V0Zj2ca/0yQjQaKX7UIsq5FxqX4+M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1wHSYk-000Dgw-4C; Mon, 27 Apr 2026 22:28:02 +0200
+Date: Mon, 27 Apr 2026 22:28:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: "Padhi, Beleswar" <b-padhi@ti.com>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Frank Li <frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	dl-linux-imx <linux-imx@nxp.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v13 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+Message-ID: <6412a758-4560-4cf1-a0d0-5b24d1a715f1@lunn.ch>
+References: <20260422212849.1240591-1-shenwei.wang@nxp.com>
+ <20260422212849.1240591-4-shenwei.wang@nxp.com>
+ <22fb5fac-2568-42be-a7e3-7e89d0017eb3@ti.com>
+ <PAXPR04MB91850A11C58419C03909145F89362@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB91850A11C58419C03909145F89362@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-Adding myself to the maintainers list for the hwspinlock
-driver on broadcom settop platforms.
+> > > +struct rpmsg_gpio_packet {
+> > > +     u8 type;        /* Message type */
+> > > +     u8 cmd;         /* Command code */
+> > > +     u8 port_idx;
+> > > +     u8 line;
+> > > +     u8 val1;
+> > > +     u8 val2;
+> > > +};
+> > 
+> > 
+> > Could you please document the fields in these structs (and the below ones too)?
+> > From the code, it looks like while sending a message from Linux to Firmware; val1
+> > and val2 are used to describe the values to set. Whereas while receiving a
+> > response, val1 represents a possible error code, and val2 represents the actual
+> > message of get type queries. If that is so, you might want to change the variable
+> > names to be more descriptive and also use a union.
+> > 
+> 
+> The fields in the two structs are fairly self-explanatory. Do we really need the additional comments?
+> The previous version of the patch used a union, which was updated to support the fixed_up hooks. 
+> Now that the fixed_up hooks have been removed, I can revert this back to the union-based implementation.
 
-Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I thought you had already adopted the virtio message format?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2fb1c75afd16..4f3dfc6a090c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5244,6 +5244,14 @@ S:	Supported
- F:	Documentation/devicetree/bindings/gpio/brcm,brcmstb-gpio.yaml
- F:	drivers/gpio/gpio-brcmstb.c
- 
-+BROADCOM BRCMSTB HWSPINLOCK DRIVER
-+M:	Kamal Dasu <kamal.dasu@broadcom.com>
-+R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-+L:	linux-remoteproc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/hwlock/brcm,bcm7038-sun-top-ctrl-semaphore.yaml
-+F:	drivers/hwspinlock/brcmstb_hwspinlock.c
-+
- BROADCOM BRCMSTB I2C DRIVER
- M:	Kamal Dasu <kamal.dasu@broadcom.com>
- R:	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
--- 
-2.34.1
 
+/* Possible values of the status field */
+#define VIRTIO_GPIO_STATUS_OK			0x0
+#define VIRTIO_GPIO_STATUS_ERR			0x1
+
+struct virtio_gpio_response {
+	__u8 status;
+	__u8 value;
+};
+
+Seems pretty obvious what status means. value depends on the request,
+get_direction actually uses it, and it can be one of
+
+#define VIRTIO_GPIO_DIRECTION_NONE		0x00
+#define VIRTIO_GPIO_DIRECTION_OUT		0x01
+#define VIRTIO_GPIO_DIRECTION_IN		0x02
+
+and gpio_get uses it as a bool for the state of the GPIO.
+
+Why do we need all the complexity for val1, val2, etc?
+
+  Andrew
