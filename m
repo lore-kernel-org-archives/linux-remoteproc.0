@@ -1,443 +1,316 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010061.outbound.protection.outlook.com [52.101.201.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C86C3A75BB;
-	Mon, 27 Apr 2026 16:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777307249; cv=fail; b=Szw309JMeU/RcL+PM24eUP7VV+/oiRRPSbrq5DbI3ts+WT/LIKS1EK6O3pU+ya3Z2qYOWfBQvavZ7hgb2zeoRYoHLciKVKxkAxmbS7m25UXHmjE0e7P4S1HKCr/RMcXn4BQM+fc5iz1WXJ4uerjkEHDzAr/MlUPgIxOdtdGnjuI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777307249; c=relaxed/simple;
-	bh=cfyVsswlRl2w+9lNQDO7oN7NUC3yTVDhXVyAEI4kfQw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gjD5xr+y32OMzaFXEZRIC6y1w1jejfKLYzxJeIRI+k6Ew/CDhhhkjgmboKSnYsL1ETo7tis+nIdG72Z40HOZvZsVeBfnkhvI5YUPef6G7cJadDaxke+eKu0+kOadAG4xxtFoN9l1bnegH6R56Fc7yNdH9X3GfdSSwPAgGBgOCJY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3QFwlV+b; arc=fail smtp.client-ip=52.101.201.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D2D3DBD4D
+	for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 17:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777312337; cv=none; b=jj/qyGreO7RVwg/sWMVfd/Jye38tc/ffkGTilKvXGNFzMv7rDMwRWIz2l+/eaGEUnxEcvmsvlbAl7/55rHEJIhiiGhPfcaqD0LsiV5JuDinwRS702aGu8+hzYs76++KUzKXU976TnQsLDqL0AOJkreXxSfu3rZnDDz552Z2Kzk8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777312337; c=relaxed/simple;
+	bh=YAXur/562b/UbMcLq5DBUXYkpoJBho4ufrLN2/+G/Kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bf8VGtaNSMGud72IVXQ9Ma+5x50kH5sGvsF/Sl/iUBsrEeYEJ5b2uAm36/b1bCHaY0BYOCk4/eF3jqRk0uBK7S0ntdzyZyfw1MMN+rQw2GKvnTT1TtqwoOXaFw/7vvXH57uvC7YAZp0mZKt9lEbdSlcZaCB8tcmritz5Hzehz1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sHGMcan2; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3QFwlV+b"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LpzX+GZkF5Ptdaz9wIXsa3Cioh0ho9JAo1kPG8/jwlOZ7Wl9KZS6mlSMG9UQ1aua+yehk1NkAlI7cmE3BvXk/tnhNyWfPdJ78PviNInX8+bn3nRBI4jmrR9ssWRrMnuHfzcZIIT5SZIaBZHeTd5IHcT8457WZku5En+achbk4i7k/25BvNEh93oHG+cQL8VI3ItXJh6A8SAwyFmuFeDXgt6b77rJCNgmzcH/ZvRhJeeBY6vwrNa2e/1IQvUZncqf+6WoCSdFQwbVeozVwlqdoxEkJG8kx+f+WHYJ8Ybjt47TYNqvRzzj9tbwi+lcTsB8t6j/ttxjfIMapt6Q/FKZmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YVnL8hFNETBRO2zgn3n1hUXK1AMH68s77ynzaZoOt+4=;
- b=IHbwvevzQHsZCCaVSr3+SJRetX0v8ZSy2ruCf89GikhKEt9/33jLp7MXwb0FU4vi3rOvJOIfBaiL1fe7dddxnvsq+DY0S/0d+vM/XviUs3CJMsly6/FiLmQxUhL6BSojSrlpWTW0GT5oX5qs3CBy9paB4N33MUsjCUURe4WP1eFJD9jKNF1uD2npkCjEvf3CHCX4wnjieCmLK3J5Vhnm7s/DbwPKdRTxguHXyTEpwyoyFfIK2LbOAdkhDfqw/cMOlJFubyclAaT1wB89WSBrCNa5esjOiFZaEAqV2VG7hu7RohkcGt85jD/DqnkVlP1MlAk/+W7zf7Y0r6SVSfs3qQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YVnL8hFNETBRO2zgn3n1hUXK1AMH68s77ynzaZoOt+4=;
- b=3QFwlV+bhQVw4bEwA4CDothvtX1WdV/t/S7RCgKILFTkcA6bdFrfvgmnRYUtwf/g+awTNu7q6OSKV/9RP5W1Q6nu+VyEFx5+4Yc/h13RlkLr8nWKCv5AUwPCCuwlynO+36mSOCXbZLM7NbNRqWLlhgYuhQGH1YUJdyGCk0BMu0E=
-Received: from BL1PR13CA0155.namprd13.prod.outlook.com (2603:10b6:208:2bd::10)
- by DS0PR12MB8813.namprd12.prod.outlook.com (2603:10b6:8:14e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.16; Mon, 27 Apr
- 2026 16:27:11 +0000
-Received: from BN2PEPF000044AC.namprd04.prod.outlook.com
- (2603:10b6:208:2bd:cafe::7a) by BL1PR13CA0155.outlook.office365.com
- (2603:10b6:208:2bd::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9846.26 via Frontend Transport; Mon,
- 27 Apr 2026 16:27:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- BN2PEPF000044AC.mail.protection.outlook.com (10.167.243.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9846.18 via Frontend Transport; Mon, 27 Apr 2026 16:27:11 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 27 Apr
- 2026 11:27:10 -0500
-Received: from xsjblevinsk51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 27 Apr 2026 11:27:09 -0500
-From: Ben Levinsky <ben.levinsky@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <michal.simek@amd.com>, <tanmay.shah@amd.com>, <ben.levinsky@amd.com>
-Subject: [PATCH v2 2/2] remoteproc: add AMD BRAM-based remote processor driver
-Date: Mon, 27 Apr 2026 09:27:03 -0700
-Message-ID: <20260427162703.1644103-3-ben.levinsky@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260427162703.1644103-1-ben.levinsky@amd.com>
-References: <20260427162703.1644103-1-ben.levinsky@amd.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sHGMcan2"
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-82cebbdbdccso6571153b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 10:52:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1777312336; x=1777917136; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qxZGUpn4MvoHBLfisdbbKtNH3JEOoB45Qqjjg7y6hXk=;
+        b=sHGMcan2MJJTU0d7no3D0ujBSy5rhkY39LFhoVPYNHnUveIfqmclPoM6yptCraQXG/
+         C68BIojb98bgNa29xUam4c+1PGvGF8+giBQ86BewDTRA2G8Zp2brHhJz/Dv/xZIErk0z
+         E+SLhhvoSY1x6J8W2+GR5V/WXKcjw0CsXSlSTHbMKt/g0kKIibeEd3cynhwpb9dt/q/J
+         oH6H52ov3NA+jXYwHBphku/W7DwmKsdG57uzn9+L8QVr3bWmtLnnopQVy1H29W58q6fz
+         rtJ5vcM5z5YUtpDMjvuBanvzJfx376CqH7fHB29jdJb7YuI82m3Px/5IbT2Sma6kpl/g
+         Hmwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1777312336; x=1777917136;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qxZGUpn4MvoHBLfisdbbKtNH3JEOoB45Qqjjg7y6hXk=;
+        b=pnZRzv4/vSzvTgyiq3gwmpeMC2YLAzJ1VBqmiM3i8pnnOSHCrA+gF7xclJAIVZp0Of
+         uC3oQ9KeYy33BsMS8PjJU3a3XpA3S2ITBeUT3SAs6bJ4kBWM04nckVWGEsWz7xfdpCLZ
+         JQWB1Yl0pdAQjGij2wGkt6qu/YEC+yvVUb0k4qOsWrewfkJIUQmJdutOKAoEK3fKFBOP
+         V2Z15Zl4UP+vzbXEzlGxPTnT7mavVC5Uz+fpcEiO6+oVBuINU/W3i9oDhpPYP7IWB5L1
+         VW8gEzeTMhck11YXEcI+H7M6OJCvvtbNm5v5w4ceUWN4L3QxXHGBlL+sXFAbOiELNUkE
+         Plug==
+X-Forwarded-Encrypted: i=1; AFNElJ8prdVEVMBhdQ3/67fbrzKgP/VGB402fobe9V+Hgr14Bpi2G7KgQAElLUWed4/Nofk+qvV1zNbzOTac9KY9i4ca@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhlwdJ1VzGHlJDNbPsSBXF5RKI+clz41LK6cOgDdO3U9f7F3mo
+	y/YM9VCx9C50WV+EZtrPw0WuotxHOoGRJFn3e6BMyZ0VyEWYXOLPyXD/E6wnPrpw7qI=
+X-Gm-Gg: AeBDiesMO2geJqSN+9GjJHElvRL00cIRUaZzF9wJuMK+sx8HcGDBp++iVmgPEkHtjK/
+	qObe9HSqVIY2PTCdL7xYwC/gzdiHtKGpu4cjJ7DeU0HP0ET6zvLAGj3/nJ9Xqkbfk5jFqrkETg2
+	lYHrvutVneFmJl3NUr5MCr14nug1UVMmHAWC1uP4mCi1CN9v+YBAa2si4s1RQ2M8RNRtPhUdkgJ
+	g4Z7G7ua7ymm823EPxCUBLOXnKH7x1JqAdDkDx34/3wADuMk2Lfn+Ig2CIA9EAc+Leo+G7CYhvv
+	mzjwm4tQlHz2nEYr4f1SIA6KklXTvsWgoDSdJ7rrku8kt3/4vKRgQT4wYF4tT5tfYUgJI7YR5jh
+	RZVZG3B3bUkTSBmIA10piv6MgtyAwiou6b4mMSrzGGdfFSxWeOaaT3CsIM6n+ZXbnFFPPfQPG43
+	K5VQkWOQXO+lVJAkBLQcLt8x2MRKHuT+IlnsPv
+X-Received: by 2002:a05:6a00:a254:b0:82f:6c51:a246 with SMTP id d2e1a72fcca58-834daecf158mr106298b3a.2.1777312335449;
+        Mon, 27 Apr 2026 10:52:15 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:9a8:9d0b:56bb:d830])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-834daf79e5bsm65718b3a.56.2026.04.27.10.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Apr 2026 10:52:14 -0700 (PDT)
+Date: Mon, 27 Apr 2026 11:52:12 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: tanmay.shah@amd.com
+Cc: "Padhi, Beleswar" <b-padhi@ti.com>, michal.simek@amd.com,
+	andersson@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: xlnx: check remote node state
+Message-ID: <ae-iTAk0KvtPvMSB@p14s>
+References: <20260425030231.3145225-1-tanmay.shah@amd.com>
+ <93ea5065-b8a4-49db-91b3-71170905fa15@ti.com>
+ <5aabddce-eeee-43de-be30-115bc58040dc@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044AC:EE_|DS0PR12MB8813:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ce62062-6101-4d0a-0928-08dea479d576
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	1TUvTDtsiM7tlLXiGq+HRElmKEX0rYq63oOWSiNbo0VoRF9vnSnOjxKFVT2dG2LAE1UiEHubXifJWOD94+sUIA97PKGY1bzjp3hPr3JuAbywvxX63ENFhE/YJMkk/drEVLayXJmEdrqvtkAumX+jsuVAsfLUEMlZpyL1IobuvB8bVH4ufcyKLsuDzvJXmS1uPZ6uoiJFkTaY547E4sd+4MVczvrPZ5p8QYLtCa+uXrtUAuY+Cvh7gIzt/txissse5by23P6GQifKIyfI3AOXo1PHzRQbNK4s0IUhDlBi5vdlOkdCb4Drd5mL0zBVtWjOFVUBrCn4W5dOodvgohZUtczmowpv1ILv3ohMouJN8wvg/U69LsBjQ2BrMIqyJ5guThoB6KewdHHR31Is4Bgo8dFGtJ/FChDnCoro/el1BYzRDkL47KFFUpaw0x1wyV8tR7YryGeZmQH+lcHY2kZ9CSo/FhYboA12wfO/yD+N3ZHYhkJ5VEK2+LTFdFWpfi7d1qlPEL2JURmxx8WLwZdlovbgkSfArUwWt1fgw57YiS1e3ySDk6cyzPXnit2NyVOcVnxmQ77AXWhicCdo6LQCeJTy4Ie3RnZYj7RIl9LtLMBS1XJPE5GNgTgTHZshZw1heWcS19FiUYtGdo1V7yYq8lJjvu8CXMYHd0C7hE5+nAK0IgG3PL46xaS9gl3Ypf18Fl8ZeC9hGpZJyxYHs1uYFsi9s2CKZaAfTRYNG2QYzkK+Vm/PHMcBembz2F8zUv4Ptf8ln0k/fRp396+qFkbT8g==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	1nOc+W/q2MqWxk00pUPBGHvF+fNW9xJJDG8r+W4YrBhwFKy/ezczxQ4s59ZnVf9xOPX19j26RyTLIeUQDt0/4iUnb4QTUYMNwz7cT4mF61tJye7/8/yEgvsQ74TRnmnUc7OdL6ye78ew0Cn1J/MOGlcS/NUnSb96en5Aj/0kwB3v5zeX0S/A/We9vV0sbkfLz5shh1cdQCdVHP6E8MlUx3fYYPn7lzUmoCaYmm+eAS9eVitTT3CxmYjo/gEuusPOJmznz5ua05Pp99nmsPW/DTdB2mpn07UvV/nTgyByrssaZoL7UaOm15YqP9V9wOum6Ss7/bmpAoCHj6sN5D6iBTjaiLg6oDH5OYASR4WWaXVrPDIQ4oL9lKnAO7m8egS7mqfqbrBm1eRRznbcQN6Bw2T1IWZSoxRK4eedc+kjERDnL5v5NH4z38aZ4DMrss3g
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2026 16:27:11.2041
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ce62062-6101-4d0a-0928-08dea479d576
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044AC.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8813
+In-Reply-To: <5aabddce-eeee-43de-be30-115bc58040dc@amd.com>
 
-Add a remoteproc driver for AMD soft-core processor subsystems
-instantiated in programmable logic and using dual-port BRAM for
-firmware storage and execution.
+Good morning
 
-The driver parses the firmware memory window from the remoteproc device
-node's reg property, interprets that address and size in the
-processor-local address space, and then uses standard devicetree
-address translation through the parent bus ranges property to obtain
-the corresponding Linux-visible system physical address.
+On Mon, Apr 27, 2026 at 11:15:29AM -0500, Shah, Tanmay wrote:
+> Hello Beleswar,
+> 
+> Thanks for reviews. Please find my answer below:
+> 
+> On 4/24/2026 10:51 PM, Padhi, Beleswar wrote:
+> > Hi Tanmay,
+> > 
+> > In $subject-line, s/remote node/remoteproc
+> > 
+> 
+> Ack. 'node' is platform management firmware term, which might not be
+> right here. subject line already contains remoteproc so no need to have
+> it again. Instead, will replace 'node' with 'core'. new subject:
+> 
+> remoteproc: xlnx: check remote core state.
+>
 
-The resulting translated region is registered as the executable
-remoteproc carveout and coredump segment.
-
-The processor is controlled through an active-low reset GPIO and a
-subsystem clock. The clock is enabled before reset is released, and the
-processor is kept in reset until firmware loading completes.
-
-The firmware-name property is optional, allowing the firmware image to
-be assigned later. Firmware images without a resource table are also
-accepted.
-
-Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
----
- MAINTAINERS                         |   7 +
- drivers/remoteproc/Kconfig          |  14 ++
- drivers/remoteproc/Makefile         |   1 +
- drivers/remoteproc/amd_bram_rproc.c | 243 ++++++++++++++++++++++++++++
- 4 files changed, 265 insertions(+)
- create mode 100644 drivers/remoteproc/amd_bram_rproc.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c871acf2179c..172539971950 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1037,6 +1037,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/w1/amd,axi-1wire-host.yaml
- F:	drivers/w1/masters/amd_axi_w1.c
+Much better.
  
-+AMD BRAM REMOTEPROC DRIVER
-+M:	Ben Levinsky <ben.levinsky@amd.com>
-+L:	linux-remoteproc@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/remoteproc/amd,bram-rproc.yaml
-+F:	drivers/remoteproc/amd_bram_rproc.c
-+
- AMD CDX BUS DRIVER
- M:	Nipun Gupta <nipun.gupta@amd.com>
- M:	Nikhil Agarwal <nikhil.agarwal@amd.com>
-diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-index ee54436fea5a..9a2a887ede8a 100644
---- a/drivers/remoteproc/Kconfig
-+++ b/drivers/remoteproc/Kconfig
-@@ -23,6 +23,20 @@ config REMOTEPROC_CDEV
- 
- 	  It's safe to say N if you don't want to use this interface.
- 
-+config AMD_BRAM_REMOTEPROC
-+	tristate "AMD BRAM-based remoteproc support"
-+	depends on OF && COMMON_CLK && (GPIOLIB || COMPILE_TEST)
-+	help
-+	  Say y or m here to support a BRAM-based remote processor managed
-+	  through the remoteproc framework.
-+
-+	  This driver matches designs where executable firmware memory is
-+	  described in the BRAM-local address space and translated to
-+	  the system physical address space with standard devicetree address
-+	  translation.
-+
-+	  If unsure, say N.
-+
- config IMX_REMOTEPROC
- 	tristate "i.MX remoteproc support"
- 	depends on ARCH_MXC
-diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-index 1c7598b8475d..5c39664b50c3 100644
---- a/drivers/remoteproc/Makefile
-+++ b/drivers/remoteproc/Makefile
-@@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_sysfs.o
- remoteproc-y				+= remoteproc_virtio.o
- remoteproc-y				+= remoteproc_elf_loader.o
- obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
-+obj-$(CONFIG_AMD_BRAM_REMOTEPROC)	+= amd_bram_rproc.o
- obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
- obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
- obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
-diff --git a/drivers/remoteproc/amd_bram_rproc.c b/drivers/remoteproc/amd_bram_rproc.c
-new file mode 100644
-index 000000000000..aa346b80e84c
---- /dev/null
-+++ b/drivers/remoteproc/amd_bram_rproc.c
-@@ -0,0 +1,243 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * AMD BRAM-based Remote Processor driver
-+ *
-+ * Copyright (C) 2026 Advanced Micro Devices, Inc.
-+ *
-+ * This driver supports soft-core processors (MicroBlaze, MicroBlaze-V, or
-+ * similar) instantiated in AMD programmable logic, using dual-port BRAM
-+ * for firmware storage and execution.
-+ *
-+ * The firmware memory (BRAM) is described in the processor-local address
-+ * space and translated to the Linux-visible system physical address with
-+ * standard devicetree address translation.
-+ *
-+ * Reset is controlled via GPIO connected to Processor System Reset IP.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/remoteproc.h>
-+
-+#include "remoteproc_internal.h"
-+
-+/**
-+ * struct amd_bram_rproc - AMD BRAM-based remoteproc private data
-+ * @dev: device pointer
-+ * @reset: GPIO descriptor for reset control (active-low)
-+ * @clk: processor clock
-+ */
-+struct amd_bram_rproc {
-+	struct device *dev;
-+	struct gpio_desc *reset;
-+	struct clk *clk;
-+};
-+
-+static int amd_bram_rproc_mem_map(struct rproc *rproc,
-+				  struct rproc_mem_entry *mem)
-+{
-+	void __iomem *va;
-+
-+	va = ioremap_wc(mem->dma, mem->len);
-+	if (!va)
-+		return -ENOMEM;
-+
-+	mem->va = (__force void *)va;
-+	mem->is_iomem = true;
-+
-+	return 0;
-+}
-+
-+static int amd_bram_rproc_mem_unmap(struct rproc *rproc,
-+				    struct rproc_mem_entry *mem)
-+{
-+	iounmap((void __iomem *)mem->va);
-+
-+	return 0;
-+}
-+
-+static int amd_bram_rproc_prepare(struct rproc *rproc)
-+{
-+	struct amd_bram_rproc *priv = rproc->priv;
-+	struct rproc_mem_entry *mem;
-+	struct resource res;
-+	u64 da, size;
-+	int ret;
-+
-+	ret = of_property_read_reg(priv->dev->of_node, 0, &da, &size);
-+	if (ret) {
-+		dev_err(priv->dev, "failed to parse executable memory reg\n");
-+		return ret;
-+	}
-+
-+	if (!size || size > U32_MAX) {
-+		dev_err(priv->dev, "invalid executable memory size\n");
-+		return -EINVAL;
-+	}
-+
-+	if (da > U32_MAX) {
-+		dev_err(priv->dev, "invalid executable memory address\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_address_to_resource(priv->dev->of_node, 0, &res);
-+	if (ret) {
-+		dev_err(priv->dev, "failed to translate executable memory reg\n");
-+		return ret;
-+	}
-+
-+	mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
-+				   (size_t)size, da,
-+				   amd_bram_rproc_mem_map,
-+				   amd_bram_rproc_mem_unmap,
-+				   dev_name(priv->dev));
-+	if (!mem)
-+		return -ENOMEM;
-+
-+	rproc_add_carveout(rproc, mem);
-+	rproc_coredump_add_segment(rproc, da, (size_t)size);
-+
-+	return 0;
-+}
-+
-+static int amd_bram_rproc_start(struct rproc *rproc)
-+{
-+	struct amd_bram_rproc *priv = rproc->priv;
-+	int ret;
-+
-+	/* Enable clock before releasing reset */
-+	ret = clk_prepare_enable(priv->clk);
-+	if (ret) {
-+		dev_err(priv->dev, "failed to enable clock: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Deassert reset and let the processor run. */
-+	ret = gpiod_set_value_cansleep(priv->reset, 0);
-+	if (ret) {
-+		dev_err(priv->dev, "failed to deassert reset: %d\n", ret);
-+		clk_disable_unprepare(priv->clk);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int amd_bram_rproc_stop(struct rproc *rproc)
-+{
-+	struct amd_bram_rproc *priv = rproc->priv;
-+	int ret;
-+
-+	/* Assert reset before disabling the processor clock. */
-+	ret = gpiod_set_value_cansleep(priv->reset, 1);
-+	if (ret) {
-+		dev_err(priv->dev, "failed to assert reset: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Disable clock after asserting reset */
-+	clk_disable_unprepare(priv->clk);
-+
-+	return 0;
-+}
-+
-+static int amd_bram_rproc_parse_fw(struct rproc *rproc,
-+				   const struct firmware *fw)
-+{
-+	int ret;
-+
-+	ret = rproc_elf_load_rsc_table(rproc, fw);
-+	if (ret == -EINVAL) {
-+		dev_dbg(&rproc->dev, "no resource table found\n");
-+		return 0;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct rproc_ops amd_bram_rproc_ops = {
-+	.prepare	= amd_bram_rproc_prepare,
-+	.start		= amd_bram_rproc_start,
-+	.stop		= amd_bram_rproc_stop,
-+	.load		= rproc_elf_load_segments,
-+	.sanity_check	= rproc_elf_sanity_check,
-+	.get_boot_addr	= rproc_elf_get_boot_addr,
-+	.parse_fw	= amd_bram_rproc_parse_fw,
-+};
-+
-+static int amd_bram_rproc_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct amd_bram_rproc *priv;
-+	const char *fw_name = NULL;
-+	struct rproc *rproc;
-+	int ret;
-+
-+	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
-+	if (ret < 0 && ret != -EINVAL)
-+		return dev_err_probe(dev, ret,
-+				     "failed to parse firmware-name property\n");
-+
-+	rproc = devm_rproc_alloc(dev, dev_name(dev), &amd_bram_rproc_ops,
-+				 fw_name, sizeof(*priv));
-+	if (!rproc)
-+		return -ENOMEM;
-+
-+	priv = rproc->priv;
-+	priv->dev = dev;
-+
-+	/* Get the processor clock */
-+	priv->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(priv->clk))
-+		return dev_err_probe(dev, PTR_ERR(priv->clk),
-+				     "failed to get clock\n");
-+
-+	/*
-+	 * Keep the processor in reset until remoteproc has finished loading
-+	 * firmware into the executable memory window described by reg and
-+	 * translated through the parent bus ranges property.
-+	 */
-+	priv->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->reset))
-+		return dev_err_probe(dev, PTR_ERR(priv->reset),
-+				     "failed to get reset gpio\n");
-+
-+	rproc->auto_boot = false;
-+
-+	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to set DMA mask\n");
-+
-+	platform_set_drvdata(pdev, rproc);
-+
-+	ret = devm_rproc_add(dev, rproc);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to register rproc\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id amd_bram_rproc_of_match[] = {
-+	{ .compatible = "amd,bram-rproc" },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, amd_bram_rproc_of_match);
-+
-+static struct platform_driver amd_bram_rproc_driver = {
-+	.probe = amd_bram_rproc_probe,
-+	.driver = {
-+		.name = "amd-bram-rproc",
-+		.of_match_table = amd_bram_rproc_of_match,
-+	},
-+};
-+module_platform_driver(amd_bram_rproc_driver);
-+
-+MODULE_DESCRIPTION("AMD BRAM-based Remote Processor driver");
-+MODULE_AUTHOR("Ben Levinsky <ben.levinsky@amd.com>");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
+> > On 4/25/2026 8:32 AM, Tanmay Shah wrote:
+> >> The remote state is set to RPROC_DETACHED if the resource table is found
+> >> in the memory. However, this can be wrong if the remote is not started,
+> >> but firmware is still loaded in the memory. Use PM_GET_NODE_STATUS call
+> >> to the firmware to request the state of the RPU node. If the RPU is
+> >> actually out of reset and running, only then move the remote state to
+> >> RPROC_DETACHED, otherwise keep the remote state to RPROC_OFFLINE.
+> > 
+> > 
+> > This is a good additional check. However, one thing to note is
+> > remoteproc core
+> > framework will load the firmware if the state is set to RPROC_OFFLINE. This
+> > will override the existing firmware in the memory, I hope that is not
+> > fatal for
+> > your usecase?
+> > 
+> 
+> That is expected. If remote core is 'offline' during driver probe then
+> any firmware already in the memory becomes irrelevant and new firmware
+> can be loaded.
+> 
+> >>
+> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >> ---
+> >>   drivers/firmware/xilinx/zynqmp.c        | 28 +++++++++++++++++++
+> >>   drivers/remoteproc/xlnx_r5_remoteproc.c | 37 ++++++++++++++++++-------
+> >>   include/linux/firmware/xlnx-zynqmp.h    | 21 ++++++++++++++
+> >>   3 files changed, 76 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/
+> >> xilinx/zynqmp.c
+> >> index fbe8510f4927..af838b2dc327 100644
+> >> --- a/drivers/firmware/xilinx/zynqmp.c
+> >> +++ b/drivers/firmware/xilinx/zynqmp.c
+> >> @@ -1450,6 +1450,34 @@ int zynqmp_pm_get_node_status(const u32 node,
+> >> u32 *const status,
+> >>   }
+> >>   EXPORT_SYMBOL_GPL(zynqmp_pm_get_node_status);
+> >>   +/**
+> >> + * zynqmp_pm_get_rpu_node_status - PM call to request a RPU node's
+> >> current power state
+> >> + * @node:        ID of the RPU component or sub-system in question
+> >> + * @status:        Current operating state of the requested RPU node.
+> >> + * @requirements:    Current requirements asserted on the RPU node.
+> >> + * @usage:        Usage information, used for RPU slave nodes only:
+> >> + *            PM_USAGE_NO_MASTER    - No master is currently using
+> >> + *                          the node
+> >> + *            PM_USAGE_CURRENT_MASTER    - Only requesting master is
+> >> + *                          currently using the node
+> >> + *            PM_USAGE_OTHER_MASTER    - Only other masters are
+> >> + *                          currently using the node
+> >> + *            PM_USAGE_BOTH_MASTERS    - Both the current and at least
+> >> + *                          one other master is currently
+> >> + *                          using the node
+> >> + *
+> >> + * Return:        Returns status, either success or error+reason
+> >> + */
+> >> +int zynqmp_pm_get_rpu_node_status(const u32 node, u32 *const status,
+> >> +                  u32 *const requirements, u32 *const usage)
+> >> +{
+> >> +    if (zynqmp_pm_feature(PM_GET_NODE_STATUS) < PM_API_VERSION_2)
+> >> +        return -EOPNOTSUPP;
+> >> +
+> >> +    return zynqmp_pm_get_node_status(node, status, requirements, usage);
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(zynqmp_pm_get_rpu_node_status);
+> >> +
+> >>   /**
+> >>    * zynqmp_pm_force_pwrdwn - PM call to request for another PU or
+> >> subsystem to
+> >>    *             be powered down forcefully
+> >> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/
+> >> remoteproc/xlnx_r5_remoteproc.c
+> >> index 50a9974f3202..e2f25d94177d 100644
+> >> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >> @@ -948,16 +948,6 @@ static struct zynqmp_r5_core
+> >> *zynqmp_r5_add_rproc_core(struct device *cdev)
+> >>           goto free_rproc;
+> >>       }
+> >>   -    /*
+> >> -     * If firmware is already available in the memory then move rproc
+> >> state
+> >> -     * to DETACHED. Firmware can be preloaded via debugger or by any
+> >> other
+> >> -     * agent (processors) in the system.
+> >> -     * If firmware isn't available in the memory and resource table
+> >> isn't
+> >> -     * found, then rproc state remains OFFLINE.
+> >> -     */
+> >> -    if (!zynqmp_r5_get_rsc_table_va(r5_core))
+> >> -        r5_rproc->state = RPROC_DETACHED;
+> >> -
+> >>       r5_core->rproc = r5_rproc;
+> >>       return r5_core;
+> >>   @@ -1210,6 +1200,7 @@ static int zynqmp_r5_core_init(struct
+> >> zynqmp_r5_cluster *cluster,
+> >>   {
+> >>       struct device *dev = cluster->dev;
+> >>       struct zynqmp_r5_core *r5_core;
+> >> +    u32 req, usage, status;
+> >>       int ret = -EINVAL, i;
+> >>         r5_core = cluster->r5_cores[0];
+> >> @@ -1255,6 +1246,32 @@ static int zynqmp_r5_core_init(struct
+> >> zynqmp_r5_cluster *cluster,
+> >>           ret = zynqmp_r5_get_sram_banks(r5_core);
+> >>           if (ret)
+> >>               return ret;
+> >> +
+> >> +        /*
+> >> +         * It is possible that firmware is loaded into the memory, but
+> >> +         * RPU (remote) is not running. In such case, RPU state will be
+> >> +         * moved to RPROC_DETACHED wrongfully. To avoid it first make
+> >> +         * sure RPU is power-on and out of reset before parsing for the
+> >> +         * resource table.
+> >> +         */
+> >> +        ret = zynqmp_pm_get_rpu_node_status(r5_core->pm_domain_id,
+> >> +                            &status, &req, &usage);
+> >> +        if (ret) {
+> >> +            dev_warn(r5_core->dev,
+> >> +                 "failed to get rpu node status, err %d\n", ret);
+> >> +            continue;
+> >> +        }
+> >> +
+> >> +        /*
+> >> +         * If RPU state is power on and out of reset i.e. running, then
+> >> +         * assign RPROC_DETACHED state. If the RPU is not out of reset
+> >> +         * then do not attempt to attach to the remote processor.
+> >> +         */
+> >> +        if (status == PM_NODE_RUNNING) {
+> >> +            if (zynqmp_r5_get_rsc_table_va(r5_core))
+> >> +                dev_dbg(r5_core->dev, "rsc tbl not found\n");
+> > 
+> > 
+> > Do you still want to set state = RPROC_DETACHED if resource table is not
+> > found in the
+> > memory?
+> > 
+> 
+> Yes. Not all the firmware that is running on remote core is expected to
+> have the resource table. The firmware might not use RPMsg at all, and in
+> that case resource table becomes irrelevant. However, we still need to
+> make sure that running core is not reported as offline.
+
+Please add the above explanation to the inlined comment.  Otherwise I'm good
+with this patch but I'll need an RB from Michael before moving forward.  
+
+Do you see this as a bug fix?  Is there a point adding this patch to the stable
+kernels?
+
+>
+> Thanks.
+> 
+> > Thanks,
+> > Beleswar
+> > 
+> >> +            r5_core->rproc->state = RPROC_DETACHED;
+> >> +        }
+> >>       }
+> >>         return 0;
+> >> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/
+> >> firmware/xlnx-zynqmp.h
+> >> index d70dcd462b44..7e27b0f7bf7e 100644
+> >> --- a/include/linux/firmware/xlnx-zynqmp.h
+> >> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> >> @@ -542,6 +542,18 @@ enum pm_gem_config_type {
+> >>       GEM_CONFIG_FIXED = 2,
+> >>   };
+> >>   +/**
+> >> + * enum pm_node_status - Device node status provided by xilpm fw
+> >> + * @PM_NODE_UNUSED: Device is not used
+> >> + * @PM_NODE_RUNNING: Device is power-on and out of reset
+> >> + * @PM_NODE_HALT: Device is power-on but in the reset state
+> >> + */
+> >> +enum pm_node_status {
+> >> +    PM_NODE_UNUSED = 0,
+> >> +    PM_NODE_RUNNING = 1,
+> >> +    PM_NODE_HALT = 12,
+> >> +};
+> >> +
+> >>   /**
+> >>    * struct zynqmp_pm_query_data - PM query data
+> >>    * @qid:    query ID
+> >> @@ -630,6 +642,8 @@ int zynqmp_pm_set_rpu_mode(u32 node_id, enum
+> >> rpu_oper_mode rpu_mode);
+> >>   int zynqmp_pm_set_tcm_config(u32 node_id, enum rpu_tcm_comb tcm_mode);
+> >>   int zynqmp_pm_get_node_status(const u32 node, u32 *const status,
+> >>                     u32 *const requirements, u32 *const usage);
+> >> +int zynqmp_pm_get_rpu_node_status(const u32 node, u32 *const status,
+> >> +                  u32 *const requirements, u32 *const usage);
+> >>   int zynqmp_pm_set_sd_config(u32 node, enum pm_sd_config_type config,
+> >> u32 value);
+> >>   int zynqmp_pm_set_gem_config(u32 node, enum pm_gem_config_type config,
+> >>                    u32 value);
+> >> @@ -939,6 +953,13 @@ static inline int zynqmp_pm_get_node_status(const
+> >> u32 node, u32 *const status,
+> >>       return -ENODEV;
+> >>   }
+> >>   +static inline int zynqmp_pm_get_rpu_node_status(const u32 node, u32
+> >> *const status,
+> >> +                        u32 *const requirements,
+> >> +                        u32 *const usage)
+> >> +{
+> >> +    return -ENODEV;
+> >> +}
+> >> +
+> >>   static inline int zynqmp_pm_set_sd_config(u32 node,
+> >>                         enum pm_sd_config_type config,
+> >>                         u32 value)
+> >>
+> >> base-commit: 6f860d238b44da8ac57be25289b9f4410691c4e2
+> 
