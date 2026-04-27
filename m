@@ -1,75 +1,77 @@
-Received: from mail-vs1-f100.google.com (mail-vs1-f100.google.com [209.85.217.100])
+Received: from mail-vk1-f228.google.com (mail-vk1-f228.google.com [209.85.221.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47AD02FD68B
-	for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 20:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969B631F984
+	for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 20:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777320765; cv=none; b=of13whDafvMbX04Shaa4B3oxIflntwftkG4BeY83lsFFm+kyGuDW7mdA39cA0hY8lc5zfI5Hn6gTxX24odXI3BSxcLUJOQrtCk1G+FRwU4PSLxGEUFA3k71+zP+hSrEeQoNTLReripq6FcsSw4SACRaOY21XUbC1Wi0KyQgwNeE=
+	t=1777320769; cv=none; b=BuRSMi45wRTJR1+UTdo1vdZv0IKt3/X1tuVsRRTlBKA72yjmh51owCVWeHU4x/kqANo15CgJoOEVYGTS6yHmKH/3AKf2tEFKp3r35x3AAtoxd/aE2GUUN5H0au9RQVjsigKZ2mTf4J6sHQSJoOHxTY6rlxeH4v1ZFT9uPbbju+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777320765; c=relaxed/simple;
-	bh=i71Bp36ualB1scUtZbDN1BlrOJCB/iUmDohv4h35vFM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xt+RCcq4hW/NmLFkINVFxJV/G9tyIO+wVLR+Wck0rdb9GeCI3OxTVOi+uXU/F9oYDDDaEDUSvU1wPH69dqzOqrzXi/Rntb30lwzu44SGV0uFhU1Yz2h9vdGv6VK4krJIunM4nBlfJWpHG1wiRweHPdKpoayoCA6P6HczHfIG9cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=O6C9Orh/; arc=none smtp.client-ip=209.85.217.100
+	s=arc-20240116; t=1777320769; c=relaxed/simple;
+	bh=TFlgFJMYMQlDmZikVgnpkrUHYORzj7/QkOS9IQvUAI0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J9KYUbXz7zPEuxJFWViZ0MrSf+e94H4EHRlql6LpGUkLOAuq++uZ4Pg4o1tXDssIhYexAhpEAzvPZ/Z0mShPEcecgupItfz3VCe4N9p3FMtA0Ut+JR5ZLNGR667R+WhCBlx2TFuAIy317JvkT1M0p8Q9LWILUc2qLQGOL5YKqJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hfIwASiH; arc=none smtp.client-ip=209.85.221.228
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="O6C9Orh/"
-Received: by mail-vs1-f100.google.com with SMTP id ada2fe7eead31-610f4cf6ddcso8135941137.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 13:12:44 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hfIwASiH"
+Received: by mail-vk1-f228.google.com with SMTP id 71dfb90a1353d-57387f8988dso499008e0c.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 13:12:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777320763; x=1777925563;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X88UXqkPXIfmwYlICLDKaIiVceuFJijGDlq2QP6KUmc=;
-        b=lEpC7Jn30AX0XkpGxwrxnxMHAktP54Uv30cT4+fp/9RO01Iy5oQuv/qt2OEZvO4HTE
-         2c/RR4G9MeYdPBJTbDRolTsiqvRw43EPhxJoa3Wq2SljQOLgh7jogMxbnwdWD+Kx3xur
-         tv3Q6KFhhHkaD6nTaJIfGWcxqDRO0x2UP66kndB9KGdT+WWCC5yqYRJbuWB0Q8ZffSVK
-         ETtBM9GSuOASIPo2gLCLUsM8GqB5/oHiW/+l+gRZ9V+EtC3LfWwI1ymoa6vd0UI4Uop0
-         IYGsdkbPUn15KtHDyzS4aeXKSQexeeglUJrp5yr7oYd6tdUiKJkhtsWfrxDfWOYwiYNY
-         d1TQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+aMck1tKuFU7aYz3h8J8GR97cW4W9CPwbf+NQm5IGILWzw0pxpQihrkhyEZ82IZh1z0dap7LFByr4umCkIw9N5@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK+bNUP0PlZTShgRgJoUJ7AWKkqtGsUNe9jqu+upnneqRh8C/j
-	Jtyx0yhHLj5E4JZE8dWDusF/NTW1rHEIY0M27cA34p6Q+GekfIp3OiLb9UGhCa3kF4kw6O8dG4D
-	A/YFNc/duB9keb3Gi8TxhbagAlC+4agVppOndPiUlLRl+iqSWPnaoDA94VcbTOzLfC/T05YgDSQ
-	dTwIhpQ1fpBsA5V+xMoJW/+0qqtj3VS9zSZaRz/QhTrHBbjnkLYhNp7EL1NDB4yvFck0x42K1NN
-	ZQeAsf/fVbPEK2Umcrsmw==
-X-Gm-Gg: AeBDietmhXNVt01NDxtBNSZfk8DFWIG6DfznuYK2kftdX2CbYBDYii3igyCKMcCPH8T
-	vf394U3AimpOsPfCBUdgautnrJZbvOM/Z9BvQ3FY1y2PFYduaybIXptODI+nS3nKJjzDWeQjaY/
-	Sqgl1KOSpUzEZ9FdtY7CezyKm8hlqa2DZhVKssjN+SzaGEW01nd5lSL9cGOlycBP6NgKq+HWXF5
-	MHEwclMnEtGBgnckwG6YY58PXFdlQ6ySWFvzzTchSgyQJhd9219Y+MFvybLZhDbnV2N67pYGAMt
-	rvBJr1JrQ2VnWP1mlwt1qC0z6JrRqag15ugCdLuyzn9mcoEAtwnOaBDTNQGJSsgsAQIkXchSJKy
-	TJerTidOvNSfOwwtz0jgO5Cl0g2xfb4SV/BQdAhpwr7WcV/XE+cLq0I2d6+tRf/T54zdPqXVVs7
-	HLH/vzUZ88nyx4
-X-Received: by 2002:a05:6102:f83:b0:5fd:eacf:27df with SMTP id ada2fe7eead31-6280720b3f6mr57083137.10.1777320763250;
-        Mon, 27 Apr 2026 13:12:43 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1777320766; x=1777925566;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xS47RVDKW8GFZppjjzYsYzUHq1wMuiBPcs650CNp/VE=;
+        b=R6qVidvOlJ7tHSvlEeSH78PSui0VLm9iJr8u4AFr80mexdz3cQUE+j7CNG8SsQ9izW
+         ZTD5UnRAQXM5oFTE9IO+jG3KrHElaXUq/XhsOoAiKDN/2349qiMp2qF1XP2fXeyxLaf/
+         SxJlivuc+7htGh4tO3RxKLjcJYdzEkvJrcLpd21TtBOZihYGDwXHDKEEtmo3GmfIL9KR
+         4T9GU16yJ5jNMV3ZT4uuObLttEeQeXoVS4OyI/itgT396zm9pgz+pQVXHuP4ntZoKeVc
+         oo4RU3/iO2ds26GFDRMNo2ryjf+4YLuvqGaCmcKs+zXTML0vSptMNFZE2UIpcV9/nu7F
+         lGZw==
+X-Forwarded-Encrypted: i=1; AFNElJ/Jm0+8Rnz4Y0nllh3IqSw6QHPHxVRJGG0/KVt9/6VvkhDy3MO+7yQbdtODEVsc2nrBxN7TdpxK6LdJ6Jk9AyDg@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNvE1mNmn4M9pIo7RgrO+55UcKjyZm5DfIefeQAa6RMtB+IeYK
+	TN3svEvoASMbGRcYr+87O+olfQ6uf+Xu2GtTdxS577Qnz4hedAhkYxEUw+4X9eFWOo90oLcXocM
+	fQgz4I8YfNRp0pB5Sm2ZWWeVCrDE3fb+ap6tSDGlmi0L4PDnDdfO0LGlbsgO1GuIdzFu5mVgfyv
+	AbMcigyvMo1vyzr5D3RF5YfpbLA2WZXT+dQ7+S+R0vN9APCATn9yjk0+0TPr5/foSkPvzseTd4D
+	EDMq+kEk39DNAZZ1ol6Gg==
+X-Gm-Gg: AeBDieuwl8VOYV0XQf6OKFKPppwpnZGfJAFDu4di5/p1ck5roMPSIVhnI1HwHd0uY8E
+	ZQ/K4ZdWzZtbtDNim5IhOUqdmvbjmibWmGnWessaQmiMGZhYC8YxSMEvhZcrMyJ/yGMbK3GppRS
+	7Ccwx1Qy8ThIZzWbcHZ2sY202QOA9BhNd+XT/0hjn2qCycBjN/6+O3eJfXTMMQd4RlvPOzsUe9S
+	U28ODlSLGaa1aZNdQo/2OQblue5C4yXPMVig0QIEW2tLI6w50uNn/8k8in6WFLupTUB35nbFnER
+	AFZXz5+Gh960Gsb+RWF9Dbtx3TSTMpT9j4xDWszPh4uUqL/DPPZHp84DBSyPNGt0wgQ1dWlQv6V
+	UjE+PZ8iWQHtHt7rCY5na02V1F/aLbu7k1cpgHOuIJjQTkAW11kIzQdFfVFnSZ3nC3bcna80oFO
+	f2R7kOdRCfVZ9v
+X-Received: by 2002:a05:6122:83c3:b0:56e:f262:9113 with SMTP id 71dfb90a1353d-573a574bd4emr115594e0c.14.1777320766221;
+        Mon, 27 Apr 2026 13:12:46 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com ([144.49.247.127])
-        by smtp-relay.gmail.com with ESMTPS id ada2fe7eead31-627f7c32f12sm13051137.18.2026.04.27.13.12.42
+        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-573a45b880asm26304e0c.6.2026.04.27.13.12.45
         for <linux-remoteproc@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Apr 2026 13:12:43 -0700 (PDT)
+        Mon, 27 Apr 2026 13:12:46 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-dy1-f199.google.com with SMTP id 5a478bee46e88-2bda35eab74so9540536eec.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 13:12:42 -0700 (PDT)
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-2d889997495so28345347eec.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 27 Apr 2026 13:12:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1777320762; x=1777925562; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=X88UXqkPXIfmwYlICLDKaIiVceuFJijGDlq2QP6KUmc=;
-        b=O6C9Orh/8U6Z9ADbc7/3mzc+hxoKaz8GdIKsyxWiMnmG35YoWHG9vqmA55U02muNHT
-         fXNgA/PCiS3hgIL9J2mhJ2mgUb1Wn1qy019nwcnoIvtaMUYsLgmInnNYfF3DC8a5y7I3
-         huxq5QUeDxPCw9sim/xc9/UKoqHgRGCfmszu4=
-X-Forwarded-Encrypted: i=1; AFNElJ9V903nk2ek0dRapQVdRuBD0PD6bG3rhjoOZ7Cj+oU3SBAa8RLHG09/pGgXAZlHL1XoY47DzeJVjN6Gbapw+hQc@vger.kernel.org
-X-Received: by 2002:a05:7300:7fa2:b0:2d1:9b35:4edb with SMTP id 5a478bee46e88-2ed0a5a2ddfmr107170eec.0.1777320761881;
-        Mon, 27 Apr 2026 13:12:41 -0700 (PDT)
-X-Received: by 2002:a05:7300:7fa2:b0:2d1:9b35:4edb with SMTP id 5a478bee46e88-2ed0a5a2ddfmr107159eec.0.1777320761283;
-        Mon, 27 Apr 2026 13:12:41 -0700 (PDT)
+        d=broadcom.com; s=google; t=1777320765; x=1777925565; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xS47RVDKW8GFZppjjzYsYzUHq1wMuiBPcs650CNp/VE=;
+        b=hfIwASiHtV4NAfRQ5fCzQDl88T7DtlNns2NdD8maisauaLVyOYDHfHHWTB5FDTkZAj
+         e1qfphJoQZPJewRxUHNgp/uOrokien3OAT+5ajPvDIzoBY67zbw7WkTTYVsK1Rv41Dmk
+         Znjc42rF2mVx31tdvdAiDiw96NwtxwWjUWAdc=
+X-Forwarded-Encrypted: i=1; AFNElJ87E3xEIL+ZaC1ErEvP8Rd6OUI2UJroQQtFkG+3wsE9BtSx+KmCQAMtrMDdzwvkiIjA0QbG6uuqNPR32EZFCiRg@vger.kernel.org
+X-Received: by 2002:a05:7300:7316:b0:2c0:e404:8b08 with SMTP id 5a478bee46e88-2ed0a19128emr207103eec.29.1777320764913;
+        Mon, 27 Apr 2026 13:12:44 -0700 (PDT)
+X-Received: by 2002:a05:7300:7316:b0:2c0:e404:8b08 with SMTP id 5a478bee46e88-2ed0a19128emr207074eec.29.1777320764314;
+        Mon, 27 Apr 2026 13:12:44 -0700 (PDT)
 Received: from mail.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ed09fb6b7fsm437136eec.10.2026.04.27.13.12.39
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2ed09fb6b7fsm437136eec.10.2026.04.27.13.12.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Apr 2026 13:12:40 -0700 (PDT)
+        Mon, 27 Apr 2026 13:12:43 -0700 (PDT)
 From: Kamal Dasu <kamal.dasu@broadcom.com>
 To: andersson@kernel.org,
 	robh@kernel.org
@@ -83,10 +85,12 @@ Cc: krzysztof.kozlowski@linaro.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Kamal Dasu <kamal.dasu@broadcom.com>
-Subject: [PATCH v7 0/3] Adding brcmstb-hwspinlock support
-Date: Mon, 27 Apr 2026 16:12:30 -0400
-Message-Id: <20260427201233.380314-1-kamal.dasu@broadcom.com>
+Subject: [PATCH v7 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock support
+Date: Mon, 27 Apr 2026 16:12:31 -0400
+Message-Id: <20260427201233.380314-2-kamal.dasu@broadcom.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260427201233.380314-1-kamal.dasu@broadcom.com>
+References: <20260427201233.380314-1-kamal.dasu@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -96,83 +100,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-This series adds hardware semaphore support for Broadcom set-top SoCs
-via the generic hwspinlock framework.
+The Broadcom settop SoCs have hardware semaphores as part of the
+"sundry" IP block which has other controls that do not belong anywhere
+else e.g. pin/mux controls, SoC identification, drive strength, reset
+controls, and other misc bits are part of this block.
 
-The semaphore registers live in the sundry block; the DT binding
-describes only the semaphore register range. The compatible is
-brcm,bcm7038-sun-top-ctrl-semaphore (BCM7038 is where this block first
-appeared on set-top chips).
+Adding brcmstb-hwspinlock bindings which allows the hwspinlock driver
+to iomap only the 16 hardware semaphore registers that are part of all
+settop SoCs. The semaphore registers are based on the BCM7038 SoC
+where they were first introduced in settop chips.
 
-The driver has been tested built-in and as a module.
-
-v7 changes :
- - Rebase: Whole series rebased onto Linux 7.1-rc1 (254f49634ee1) so it
-   applies cleanly on current upstream.
- - Reviewed-by tag (PATCH 1/3, dt-bindings): Krzysztof Kozlowski's
-
-v6 changes:
-Addressed review comments from Krzysztof Kozlowski:
- - Renamed DT binding YAML file from "brcm,brcmstb-hwspinlock.yaml"
-   to "brcm,bcm7038-sun-top-ctrl-semaphore.yaml" to match the
-   compatible string
- - Updated $id in the YAML to match the new filename
- - Updated MAINTAINERS F: entry to match the new filename
-
-v5 changes:
-Addressed review comments from Krzysztof Kozlowski:
- - Changed compatible to "brcm,bcm7038-sun-top-ctrl-semaphore"
-   using the SoC where the semaphore hardware was first introduced,
-   following the brcm,bcm7038-l1-intc convention
-
-v4 changes:
-Addressed review comments from Krzysztof Kozlowski and Rob Herring:
- - Renamed compatible from "brcm,brcmstb-hwspinlock" to
-   "brcm,brcmstb-sun-top-ctrl-semaphore" to use the hardware name
- - Added description block to the DT binding YAML explaining what
-   the semaphore registers are and their relationship to the sundry
-   block
- - Fixed typo in Kconfig "Setttop" -> "Settop"
- - Fixed email typo in MODULE_AUTHOR
-
-v3 changes:
-Added detailed explanation in the all commit messages as per review
-comments
- - Added description of 'sundry' ip block that the hardware semaphore
-   belongs to
- - Added reasoning for using common compatible string
-
-v2 changes:
-Addressed following review comments:
- - fixed ordering of obj brcmstb_hwspinlock.o in Makefile
- - fixed ordering of 'config HWSPINLOCK_BRCMSTB' block in Kconfig
- - Renamed BRCMSTB_MAX_SEMAPHORES to BRCMSTB_NUM_SEMAPHORES
- - Removed unnecessary platform_set_drvdata(pdev, bank);
-
-Also addressing duplicate PATCH 1/3 sent in error as part of v1 change.
-
-v1 changes:
-based on fixes made to Initial patch:
-Link: https://github.com/intel-lab-lkp/linux/commits/Kamal-Dasu/dt-bindings-brcmstb-hwspinlock-support-for-hwspinlock/20250712-034624
-Link: https://lore.kernel.org/r/20250711154221.928164-4-kamal.dasu%40broadcom.com
-  [PATCH 2/4] hwspinlock: brcmstb hardware semaphore support
-
-All the review comments and build warning have been fixed.
-
-Kamal Dasu (3):
-  dt-bindings: hwlock: Adding brcmstb-hwspinlock support
-  hwspinlock: brcmstb hardware semaphore support
-  MAINTAINERS: adding entry for BRCMSTB HWSPINLOCK driver
-
- .../brcm,bcm7038-sun-top-ctrl-semaphore.yaml  | 44 +++++++++
- MAINTAINERS                                   |  8 ++
- drivers/hwspinlock/Kconfig                    | 10 ++
- drivers/hwspinlock/Makefile                   |  1 +
- drivers/hwspinlock/brcmstb_hwspinlock.c       | 96 +++++++++++++++++++
- 5 files changed, 159 insertions(+)
+Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../brcm,bcm7038-sun-top-ctrl-semaphore.yaml  | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,bcm7038-sun-top-ctrl-semaphore.yaml
- create mode 100644 drivers/hwspinlock/brcmstb_hwspinlock.c
 
+diff --git a/Documentation/devicetree/bindings/hwlock/brcm,bcm7038-sun-top-ctrl-semaphore.yaml b/Documentation/devicetree/bindings/hwlock/brcm,bcm7038-sun-top-ctrl-semaphore.yaml
+new file mode 100644
+index 000000000000..552f334256b5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwlock/brcm,bcm7038-sun-top-ctrl-semaphore.yaml
+@@ -0,0 +1,44 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwlock/brcm,bcm7038-sun-top-ctrl-semaphore.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom Settop Sundry Block Hardware Semaphore
++
++description:
++  Broadcom settop SoCs contain 16 hardware semaphore registers
++  (SEMAPHORE_0 through SEMAPHORE_15) that provide hardware-arbitrated
++  mutual exclusion between drivers running on the SoC.
++
++  The semaphore registers belong to the sundry hardware block. The
++  node describes the semaphore register range carved out of the larger
++  sundry block address space.
++
++maintainers:
++  - Kamal Dasu <kamal.dasu@broadcom.com>
++
++properties:
++  compatible:
++    const: brcm,bcm7038-sun-top-ctrl-semaphore
++
++  "#hwlock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - "#hwlock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    hwlock@404038 {
++        compatible = "brcm,bcm7038-sun-top-ctrl-semaphore";
++        reg = <0x404038 0x40>;
++        #hwlock-cells = <1>;
++    };
 -- 
 2.34.1
 
