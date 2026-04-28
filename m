@@ -1,170 +1,214 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010021.outbound.protection.outlook.com [52.101.56.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C433B9DBA
-	for <linux-remoteproc@vger.kernel.org>; Tue, 28 Apr 2026 15:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777388764; cv=none; b=J/3IdOYD+8hzoFBnwh7KoJj7l/owgU1kxn44RQWIizZp+/eNi64L6zf0JIxtLXbH/PV1ocmXQRtXJT/wETaYPJI8CMd14Ghm6Z19uVR1Lgyt/0BQmx1cLRz2se+ON1ibNR9MrkKlNlsb9oJwG/47UQDttKFZhiirnOITWo8kMBU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777388764; c=relaxed/simple;
-	bh=xoNuD8JS3btCKdjzs3bUeyqzNLPY3psjI8zo9aZsx9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SK4/zkcXnHnf5avv9KiI5pNbDuCza8towS6z54t0yno/u0SiB7A0xDDi3IzXz3XxEwKVQSaDvIU7eGekkuQL2fOJKEJfC3nJwiBPaZzBVEnxZG0VSMnzn6P3VhCC4V5SRavj830KzGDkW7e0ZwUEI5ZjBsHJ4ToOntFx9ybv61Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UN9SJxP5; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4763CB2FD;
+	Tue, 28 Apr 2026 15:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777389104; cv=fail; b=sI0pD/+i0JJTDdrGRQHkF9I+nBPgOWeL0TF18JXbCTE5XDSXb8/7cAvtrPVqUlvgBZKFey9sTpvGwlzly1IRlJKCjLVTuX1PgexRM5R86eCk8ltpPsPtzmi0ok3dj3dXV3M7va2L9UyArS+08RgirSWYHme23hNtxH3b4/FJtsk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777389104; c=relaxed/simple;
+	bh=1ZjGeG1pBgb/Nv2ebxYCf6tSwxxTG6+YgGB/Ry0WVA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=q8zmDkZAvewP3MmzPvvRPCvk+CIUDbFrEHfiP8/LLTQ+QXALXe1RhdN/a7n5bWVBfHi8BAMm0ek2e31B4211rsj8nb7/wVYeA0q67/Bl8LovqGZmZTxHp3+y2NjaLpUvDDToPOqP+QrGmRVMWVIsqMx7xgpBOITfnWPACOaVXKo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FipIaiMK; arc=fail smtp.client-ip=52.101.56.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UN9SJxP5"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-35da9692ec3so9713073a91.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Apr 2026 08:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1777388762; x=1777993562; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OfbUgiQnGWlnScYJSuysWPKlVFUYfQRRK1nJfSaqXew=;
-        b=UN9SJxP5HB3RKaF/JdRZv/vGGWoElexyzugCEsllyNF7jV4PhYjOUBlkMQpISAgIAX
-         2IoAsemA3BY5tMKrd1tSR8X3nQF18eA1uoES6XpIJvEsUrYfFQ/4igETshOtuegeXjOd
-         NLfTujghDZPmHuck7W1q0fEu42zYwGEPgbDodGskhMEUDBpiOOOQTZ0sv7883hLnORHj
-         5gFlGdaTyS1lRbVhz9Lg9Nr6M9Jl5toAlBs62tG06EBtr2mZfqk7i7zLWUtZ26wCqkjR
-         rf4i/w6A77eKjCCxLyC/dOhi6J1/ZnjH+xeFEOSpDr/5RJX+MzvoT29mS0p5U4M4Imex
-         nogg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1777388762; x=1777993562;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OfbUgiQnGWlnScYJSuysWPKlVFUYfQRRK1nJfSaqXew=;
-        b=MXSDOCsFAP35amApcN03jW1VlvYxFClm80q71jr8w2fuI+5OITNMx8ASl94QWsF70h
-         /KPcPlPj5+nKt0hw+IOMgpdbkVEGj58hInbink5i4WE5b6xH+WvlAK07sgON8XfETjGb
-         OkooNIJ7whyBLIZXMQZfLFe+JOiy88D0a71UYUjRHLj+zf5H7D6yST6p4cp4RPZdjllN
-         0jsAA9SvHRuxcDhLMk8gJjt3QAsU3sfPMv+HgojNEkRfxqA+hNmaZjUzt7qKokxOV2zq
-         blL2zcmmvuIuwmyfmoTioNFsv6bw5ucPjQfo9fdIrNGEOeSGzm96A+MgWks9NvNAKAng
-         w5Jw==
-X-Forwarded-Encrypted: i=1; AFNElJ+UPG4W0LqGqitPox28j6lE9LORiGAcSOYMnwz0ZUMNqfFDHPDQOQes1wgMLksnOpgkQ7hk30vxywZY49joqQzp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5uRXV3gX1J6mYIQocs+MSrSyNquSdLjAuvDujsr3VK+u8D0Nk
-	JsJNpOLkD7dofLau9TBAlBfminmDlq+B8ClseLuXge3MNTaHSlJMJU4kZ93/o5LY0Dg=
-X-Gm-Gg: AeBDieuX+pPJzIBK1FBWRF5JnIBo8hL9HrZTtrEJgs7glmlWH8hFdJIAX7GqpzJr3Zn
-	sqTFKckBT+4giOc8rWmzkw9/nzVKAA8hloMaQM9JDfwypQFj7mUL3WRvnfjqiBTb3wnSmV8NYQV
-	cNDYU4RQKtxF0wHhkiWR3WhpLWbJk55+Fz7X0mfo7K0N3tkabLPyiWU6g555Fa+nvf39j2ywKtc
-	9qUuZ3PVWh6z7MGEUF9yRCiUaKDy9nawpMWW+X3/3HwzNW5YBPWgCC/ut/xAaPqR59Ka41sBP9v
-	6pvcLnNFhHQb+6mP7F15vXW4u6HatzUZtS5aFfUuhr2+OwRmbAJYiN24e/+HgP7q5vGrhk1Q78y
-	GT6mYb8YuBHcvXmXxBuybdhboljS3jdW9/cG0wfKsiKIcnEuKaEZ/QZSEfY/66Mb2zeKKq8hqjI
-	4Of14MV3CHEgrJCQp/MEctz16MV0MhMUZ5OBeeSA==
-X-Received: by 2002:a17:90b:5291:b0:35d:a90d:580e with SMTP id 98e67ed59e1d1-36492046369mr3453884a91.23.1777388761787;
-        Tue, 28 Apr 2026 08:06:01 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:a4ee:17e1:59a1:f1e1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2b97aa7b9d2sm29165775ad.11.2026.04.28.08.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Apr 2026 08:06:01 -0700 (PDT)
-Date: Tue, 28 Apr 2026 09:05:57 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v4 0/3] Add i.MX94 remoteproc support and reset vector
- handling improvements
-Message-ID: <afDM1Vhw77l3zpCr@p14s>
-References: <20260427-imx943-rproc-v4-0-68d7c7253acd@nxp.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FipIaiMK"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KQTS6Akx8e5lJdZKsXDT9hgdHx0oidbkLH58HKSIgxbBaft+H66C4RzOPpYpYfflTfJ3lHsgmNhFTODMwsZqx+SJhFnWAE6wXJhftLwnLciyU7ITf1cviCjri5kjc443zCoNd8MUmqu8bpsOnNYkKStg8OJd/LhO/LHtsq1cqE9L2/j5/7FCHy/G6uOHlPApXp6T4An98znT9TDFqZ2Tl+FLSqPAoND6m6IvOVzpg6WqZazs4vEOx5q9mL1kQ84/RX4cd+n8XCTddJmszLZ2iYtbgjIuyIJobTkfXhi8BtZbrcwAPpuLer+5wzbx05WaitEToPjasbsRiDiiiRXaDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K0c+qrs/gClkxq5tXcm9hTzsCZbcAtpodGQaBqTNm8o=;
+ b=g7Z386TzHpJi+ot375VInO3rV8Xp77Biye4DWHLQ1fUKkFH/oVLxohcGe98PUq+eQ2uZ8TaIl/Vft01iwlH6P/dT9zuPFXu4NKoxGopSuyJ5FjcS6RJihG5DFyhFHmMakQC8ZzEKSssQWMrPExD1sctRlVX1eBZHY6X9f515253sw0FYBXLGbHL/UreQe73u4jt+dDqD5D8sFHWg9vFNNgajTb+zBSMCKhGaB0IirOAxBEgf/IiLGqBsMyPoPH9pm/h9qQpylSZ8qJGOGFOREBrDIeUORlzm8HpR7D1HnMEuqmeO5GpHKxRrRIbULFH1gT4a1HxeFNoeEEZRDlVVvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.195) smtp.rcpttodomain=lunn.ch smtp.mailfrom=ti.com; dmarc=pass
+ (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
+ (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K0c+qrs/gClkxq5tXcm9hTzsCZbcAtpodGQaBqTNm8o=;
+ b=FipIaiMKuf6G8RaqN9zPdLQZbo0EnbyMyHx551RcVANun5FrMcXVd4sYxbsAx08twZmUkihH9xv/4MtAPxI3wWK7fcQtSthnGXI3Ra8tql/iUClFKudQjTrIy01Wd+nsMMFbsuTOdlV9bTPDIDMJpAZXcP1uOHQ+LVEla3o/6Zs=
+Received: from BYAPR02CA0050.namprd02.prod.outlook.com (2603:10b6:a03:54::27)
+ by DM3PPF3F503E3E3.namprd10.prod.outlook.com (2603:10b6:f:fc00::c21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Tue, 28 Apr
+ 2026 15:11:38 +0000
+Received: from CO1PEPF00012E64.namprd05.prod.outlook.com
+ (2603:10b6:a03:54:cafe::7b) by BYAPR02CA0050.outlook.office365.com
+ (2603:10b6:a03:54::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9846.27 via Frontend Transport; Tue,
+ 28 Apr 2026 15:11:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ CO1PEPF00012E64.mail.protection.outlook.com (10.167.249.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9846.18 via Frontend Transport; Tue, 28 Apr 2026 15:11:38 +0000
+Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Apr
+ 2026 10:11:37 -0500
+Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE211.ent.ti.com
+ (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Apr
+ 2026 10:11:37 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 28 Apr 2026 10:11:37 -0500
+Received: from [10.249.130.12] ([10.249.130.12])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 63SFBSel1195788;
+	Tue, 28 Apr 2026 10:11:29 -0500
+Message-ID: <32c119af-96ad-4da0-86f2-cdc4ba57ef0b@ti.com>
+Date: Tue, 28 Apr 2026 20:41:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260427-imx943-rproc-v4-0-68d7c7253acd@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXT] Re: [PATCH v13 3/4] gpio: rpmsg: add generic rpmsg GPIO
+ driver
+To: Shenwei Wang <shenwei.wang@nxp.com>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	"Mathieu Poirier" <mathieu.poirier@linaro.org>, Frank Li <frank.li@nxp.com>,
+	"Sascha Hauer" <s.hauer@pengutronix.de>
+CC: Shuah Khan <skhan@linuxfoundation.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan
+	<peng.fan@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
+	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>
+References: <20260422212849.1240591-1-shenwei.wang@nxp.com>
+ <20260422212849.1240591-4-shenwei.wang@nxp.com>
+ <22fb5fac-2568-42be-a7e3-7e89d0017eb3@ti.com>
+ <PAXPR04MB91850A11C58419C03909145F89362@PAXPR04MB9185.eurprd04.prod.outlook.com>
+ <29485742-6e49-482e-b73d-228295daaeec@ti.com>
+ <PAXPR04MB918568939EC7DAEB4BB6C8F989372@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: "Padhi, Beleswar" <b-padhi@ti.com>
+In-Reply-To: <PAXPR04MB918568939EC7DAEB4BB6C8F989372@PAXPR04MB9185.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF00012E64:EE_|DM3PPF3F503E3E3:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0106b3d0-ef24-49e4-75d1-08dea5387214
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700016|7416014|1800799024|56012099003|18002099003|22082099003|921020;
+X-Microsoft-Antispam-Message-Info:
+	FlyLp3yWrAZXBDlLKReKJdGAYPEfzPJQrEbgqZD8yHV9ELM6+9QHcnK+fB+J4ZJHcPRhNzSR/DsPNYR/4LmlMXG3oW43ej/jYa5QiWO37N9G59yVkwYpgfHy4c88h38mjBDM3vhz2MaW28d43Egl4rVYL8y5dUEHIC70XnR0OGjejjyxyOAESnj6P5lQ3kocQ0fHnOgULaj1aSmH3Z5WgAS5Nc6zbkHyYhouhxN8xDs8jIHtY3FlaQASZioeB3OTpdnAOBcveai2KebK4RJuYci4QvYjz0Juo1C3ZrkYBlIcTMo5XedrsU9FRGK7NfC1Nr7NJTTPYUbtrVNw36dG7LeZMg3M6V38pFDGhWOzOYX1XRS6GyBDaGPfp2gI1p9T2aixNCPgZkQH3JzPTPM4bpD/tZdxeqg17P/SBv7bggVc2dDgrn5xfSnwvJcdoVNU+Um0ClRISHQ3/Mw4TbWuYZWG5oLlkFOuDVHb/Zxb3H1C1iYR6ZeItIN5+GdH/K7ybkNDvP894+era3RgBKNBdSFDGAoCIz/2nxqHFgUnEkhoID97aVhLWAV+fZQ0I4pA1JKkxaRVT79POrD0HPSU/MUIars61hNUOUjXUM8MOE6mjo814Tx3/+Okpqx+usMZsowAr2hYOu2ohnsE5fy24wLcPaPwCdQsLS4M1Dwx8DZTcPEAQUJv/3e0fgAu5gXTXMotFi/MgYWNaTbReauM+rRRCvS7Kghy+PjRNcfd8x3OQ0uZRvYN7yMSAAslHjrVIeBZUNuANF9PwmZSIRRtsqVwx8W8ubJFgB9sqXm/Sjz76/k6CCZOyWiObJt2k1JI
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700016)(7416014)(1800799024)(56012099003)(18002099003)(22082099003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	15IchVaeXB35DYOSULofuzjNXMYdFPuNq5Vieos2zAKAkWDC1/MFKYVQZtSc9Va+poMYZvmQLuNSQfxnVMqqpV96iJZNVUbxO3citwAh0hIr/aO8K6mDTv/gUAyv135eXm9LhFDc3FzIezCR2a2vMcLEeIKUflYyikGsdyXRqpzNqaHz27wzb6qqoQbJl5DkeoSQ9hKOikxZJSQy/9IMw9W+cVtTsImnQHp8Mu0jA0LJaJTQEcDGOcOOiwEleUHwVh2KKpQXTHR8j/IlQosssiTh9SxTATg4FVK7h5xoPTNPJNOVX1IxsiiZpUcuhzg8VvGVWphfBL/LANRnkvgMIsSh4vMVOEVakLVt4IUlKRV1GmD8WADh3WugAGvGjL2srqftugGpssTWhNauwSFj074g7MpHco1TrlslbbuaNJcPQwycFVntFXJuy5j/vAnG
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2026 15:11:38.2595
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0106b3d0-ef24-49e4-75d1-08dea5387214
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF00012E64.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF3F503E3E3
 
-On Mon, Apr 27, 2026 at 10:41:23AM +0800, Peng Fan (OSS) wrote:
-> This series adds remoteproc support for the i.MX94 family, including the
-> CM70, CM71, and CM33S cores, and derive the hardware reset vector for
-> Cortex‑M processors whose ELF entry point does not directly correspond to
-> the actual reset address.
-> 
-> Background:
-> Cortex‑M processors fetch their initial SP and PC from a fixed reset vector
-> table. While ELF images embed the entry point (e_entry), this value is
-> not always aligned to the hardware reset address. On platforms such as
-> i.MX94 CM33S, masking is required to compute the correct reset vector
-> address before programming the SoC reset registers.
-> 
-> Similarly, on i.MX95, the existing implementation always programs a reset
-> vector of 0x0, which only works when executing entirely from TCM. When
-> firmware is loaded into DDR, the driver must pass the correct reset vector
-> to the SM CPU/LMM interfaces.
-> 
-> Summary of patches:
-> [1]dt-bindings: remoteproc: imx-rproc: Introduce fsl,reset-vector-mask
-> Adds a new DT property allowing SoCs to specify a mask for deriving the
-> hardware reset vector from the ELF entry point.
-> 
-> [2]remoteproc: imx_rproc: Program non-zero SM CPU/LMM reset vector
-> Ensures the correct reset vector is passed to SM APIs by introducing a
-> helper (imx_rproc_sm_get_reset_vector()) that applies the reset‑vector
-> mask.
-> 
-> [3]remoteproc: imx_rproc: Add support for i.MX94 remoteproc
-> Adds address translation tables and configuration data for CM70, CM71,
-> and CM33S, enabling full remoteproc operation on i.MX94.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Changes in v4:
-> - Daniel raised the M33S secure region was not included, but since I not
->   have image to test secure region, so drop the Secure alias region for
->   all. Updated DDR region. R-b kept since this is a minor change.
-> - Add R-b for patch 2
-> - Link to v3: https://lore.kernel.org/r/20260415-imx943-rproc-v3-0-9fa7528db8ca@nxp.com
+
+On 4/28/2026 8:13 PM, Shenwei Wang wrote:
 >
+>> -----Original Message-----
+>> From: Beleswar Prasad Padhi <b-padhi@ti.com>
+>> Sent: Tuesday, April 28, 2026 2:25 AM
+>> To: Shenwei Wang <shenwei.wang@nxp.com>; Linus Walleij
+>> <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>; Jonathan Corbet
+>> <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+>> <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn Andersson
+>> <andersson@kernel.org>; Mathieu Poirier <mathieu.poirier@linaro.org>; Frank Li
+>> <frank.li@nxp.com>; Sascha Hauer <s.hauer@pengutronix.de>
+>> Cc: Shuah Khan <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org; linux-
+>> doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix Kernel Team
+>> <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Peng Fan
+>> <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
+>> remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+>> kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Bartosz
+>> Golaszewski <brgl@bgdev.pl>; Andrew Lunn <andrew@lunn.ch>
+>> Subject: [EXT] Re: [PATCH v13 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+>> On 28/04/26 00:53, Shenwei Wang wrote:
+>> [...]
+>>
+>>>>> +     void *channel_devices[MAX_PORT_PER_CHANNEL];
+>>>> So this is technically a rpmsg endpoint (struct rpmsg_endpoint)
+>>>> without naming it "endpoint". Every rpmsg endpoint has a reference to
+>>>> its parent rpmsg channel (struct rpmsg_device) which represents the
+>>>> same information here. So we should use the framework standard here.
+>>>>
+>>> Yes, agree to use "endpoint_devices".
+>>
+>> I did not mean to say to just change the variable name from "channel_devices" to
+>> "endpoint_devices". Infact you would not need to have this field & struct
+>> anymore.
+>>
+>> Pseudo-code:
+>> 1. Add a 'struct rpmsg_endpoint *ept' field to struct rpmsg_gpio_port
+>>      to maintain the ept to port idx map.
+>>
+>> 2. Call port->ept = rpmsg_create_ept(rpdev,
+>>                                                              rpmsg_gpio_channel_callback,
+>>                                                              port, {rpdev.id.name,
+>>                                                              RPMSG_ADDR_ANY,
+>>                                                              RPMSG_ADDR_ANY})
+>>      from rpmsg_gpiochip_register().
+>>
+> On the Linux side, we invoke rpmsg_create_ept. What is expected from the remote system in this case?
 
-I have applied this set.
- 
-> Changes in v3:
-> - Patch 2: 
->   Drop R-b because of changes in V3
-> 
->   Following suggestion from Mathieu that apply reset vector in
->   scmi_imx_[cpu,lmm]_reset_vector_set(), not change the meaning of
->   rproc->bootaddr, add helper imx_rproc_sm_get_reset_vector() to get reset
->   vector and use the hlper in scmi_imx_[cpu,lmm]_reset_vector_set().
-> 
->   Add reset-vector-mask for i.MX95 CM7 to avoid breaking i.MX95 CM7
->   boot.
-> 
-> - Link to v2: https://lore.kernel.org/r/20260327-imx943-rproc-v2-0-a547a3588730@nxp.com
-> 
-> Changes in v2:
-> - Drop fsl,reset-vector-mask by using fixed value in driver for per device
-> - Add R-b for i.MX94 dt-binding
-> - Update commit log to include dev addr and sys addr
-> - Link to v1: https://lore.kernel.org/r/20260312-imx943-rproc-v1-0-3e66596592a8@nxp.com
-> 
-> ---
-> Peng Fan (3):
->       dt-bindings: remoteproc: imx-rproc: Support i.MX94
->       remoteproc: imx_rproc: Program non-zero SM CPU/LMM reset vector
->       remoteproc: imx_rproc: Add support for i.MX94
-> 
->  .../bindings/remoteproc/fsl,imx-rproc.yaml         |  3 +
->  drivers/remoteproc/imx_rproc.c                     | 92 +++++++++++++++++++++-
->  drivers/remoteproc/imx_rproc.h                     |  2 +
->  3 files changed, 95 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 724699d8d0523909da51fda8d1e10c1ff867b280
-> change-id: 20260311-imx943-rproc-2050e00b65f7
-> 
-> Best regards,
-> -- 
-> Peng Fan <peng.fan@nxp.com>
-> 
+
+Nothing extra in my opinion. rpmsg_create_ept() just creates a dynamic
+local endpoint address for Linux's usage. The firmware just has to make
+sure to reply to the same endpoint address where it received the
+message. This should already be in place IMO, because currently you are
+sending all messages in the default endpoint (rpdev->ept) which is also
+dynamic[1] and is created when the channel is created. And you receive
+the responses correctly. (Unless you have hard-coded the default ept
+address in the firmware)
+
+[1]: 
+https://github.com/torvalds/linux/blob/master/drivers/rpmsg/rpmsg_core.c#L480
+(chinfo.src is RPMSG_ADDR_ANY)
+
+Thanks,
+Beleswar
+
+> If the remote side does not need any extra support, this would be an excellent solution.
+>
+> Thanks,
+> Shenwei
+>
+>> 3. Send msgs from local ept in rpmsg_gpio_send_message() by:
+>>      rpmsg_send(port->ept, msg, sizeof(*msg));
+>>
+>> 4. Get the port info in rpmsg_gpio_channel_callback() by:
+>>      struct rpmsg_gpio_port *port = priv;
+>>
+>> Which also eliminates the need for struct rpdev_drvdata as you can just do
+>> rpmsg_get_rproc_node_name(rpdev) from rpmsg_gpiochip_register().
+>>
