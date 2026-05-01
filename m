@@ -1,181 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011036.outbound.protection.outlook.com [40.107.208.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCD63A6EFF;
-	Fri,  1 May 2026 14:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777644710; cv=none; b=ckRJVAa08IryTJntWqlnPSnMiUk3ZT/6x8GY6okV32GLK2N3gwVeiLfLba6nUZzB83p8sepGJarjXMmu5K2bDFGI+fOmAEc0Q5MLNHFGiYYCsjmqZW8Rn1wqE2t0nn03KlRJJ9A0HXkBHH3c+bMjfgT9hM+T3/WBRFWikIYzzSo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777644710; c=relaxed/simple;
-	bh=hcyctBNRRAQk+0InkpxlCS1lfZhqWYkgfIjb+wBB1nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WCAnlhmzY/WOyMTU3pSHd27Snq6E8nvf4UdGESxThaYSqwwfBQ5SrwZuJu95bVg8XcAGfsL9gs3RfO03m8l4xHNM7+9jR3GOb9XM36WT5CYwKg7/Hik1dEmaDMATtnMObdpbhtQ+TQ8xxsdWFhlghV6c8KGgxVqP+cSRPo0TNs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HxgY0soV; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6E423ABBE;
+	Fri,  1 May 2026 14:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1777646248; cv=fail; b=gP3JXNhooS1OYEz2JrctySdsgq2jVsZAz2c0W/Ucz7gcnHWSA6gjpU/uIiMGYw6rUfUe0DPwS42qYzSErj17VORPuJ329D6GPFneV7AzRoC5eIe2NQ1dQQnhfuQle1qo5WhmMIevaKFCcXGN76Y3kd5cZORVWFF+fo4jjep1j40=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1777646248; c=relaxed/simple;
+	bh=xv7L6gZw7Ak+58x/Ob5x2qyj4c6uD136vpBkEi1UC3I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j0+jtnRx1wxzBgmRhRkcxseT1I+vbCsRe/EaPvV725oEHK5WqtfPXxZ0V1H6g/aEwAvi+lGEEZDHqlzG1NpJWzvL1KXoI9SHUQaQi65r5SYKHene598tzMoL23PhDC3AmAWHA+2DIh6N6Bft0PKk2QXqAcw0SCvVte8BoRMOKiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RXO5gFaj; arc=fail smtp.client-ip=40.107.208.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HxgY0soV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B196C2BCB4;
-	Fri,  1 May 2026 14:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1777644709;
-	bh=hcyctBNRRAQk+0InkpxlCS1lfZhqWYkgfIjb+wBB1nw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HxgY0soVS2v6o2/czfldpnU5z90SDBiFfUg0+Lx9jN4IzjA78vFM0PA7EuR7QtUXv
-	 KTzVa20tzAgAgsyr+quSek2TYMS0jvllCBPIqOuE8JJ3IGSigLNnPV4LJT72OGMwmA
-	 0uWuf+WHwYuQXVvG+9BEibd7pyALC0voy0vyK9NtFGm0frPZm/vioEzems/XFfz7Rz
-	 +nriz1HsGO4t63crYPzKRzCKKyOO6qieoVJ3y+aVRM/FqhfouayJevY3ERPy6ePxm4
-	 3NcvH7LktzUYWJ/2wD4b0MC2sn3fxEj9Y8ue3HQ7RHle5pMlGmSxk1lUPCj8Xq1+o4
-	 Bv8gyJQsH346Q==
-Date: Fri, 1 May 2026 19:41:32 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	robin.clark@oss.qualcomm.com, sean@poorly.run,
-	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
-	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
-	jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com,
-	vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v4 10/15] drm/msm: Switch to generic PAS TZ APIs
-Message-ID: <afS0lAnzVW9jHsxi@sumit-xelite>
-References: <20260427095603.1157963-1-sumit.garg@kernel.org>
- <20260427095603.1157963-11-sumit.garg@kernel.org>
- <20260429135954.nvr6nyfadsjeymyt@hu-mojha-hyd.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RXO5gFaj"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QcairT8mYrt3usp959P+cR4SKljQgafFnAiOaVIUbKow0g5k1yeOrrvfKwXmFu/1V+QWqQWMy2VQyXKYh1s8qBC07bI+84wN8YOvASZouSAQoLc8zuZ6mTCzpmQuWYcY57BPNGKzumkT9xoenK69rujx+alSYWhsssrKE1Z59iD90u3MfniwoqIf8EUIKwqHsz1ddSpdfFAkM1+g/MVezomjRnipQBjPgNwpex5ZqtRoz+sx3bKeeS4RhvoUhNiNcMwPnWBcR76elyPifmls1S8h7BfK2M3RQHXtUsmSa5QcF74uOuOWGpdq9OloJPMgl/VwVwF0XuuotDN+pOIM0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7YMX8QoBlAii4ScInIphfevMfdmmxHjJm41L9KSRHpc=;
+ b=yCagJr4b6lILRBbNTZSatdJvnPdM47LwhGx21KCAhcMYJbuubNqZTrgB+7s2DSAwmBIMZrTopZdk4mW1H7FvpV4y2C98hTgMLrE5n761cJ8wdSWS7U0Jrw87rtQlhfhh1tdsd3yW9Aps8vHSidd3i9ROu3cuysMpzrxnOnv0+DtMcroM1wHw27E9uujRKEXK/oFGTN45zzt4Twrm6oNhHxVA3TDH3aIDTn0MG6osCyquoZh8diCGc7yR+xb0Rt1r3o5ui3a6SamqListNE+XPy4Nz3JKQl9uV5Zm4DqUaTZDb8UBcarcXzlvHTEfrKDuuerQwFxQLrCaV0KP9jx5Og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7YMX8QoBlAii4ScInIphfevMfdmmxHjJm41L9KSRHpc=;
+ b=RXO5gFajOhS20WqIgrhBSqxw3UjmsM3M9lf+WSeKQI09sbJ+fCa+Bx4xxKL81vT6QxyHjLtWkBx/seAQBPc9XeU+AP6Yc/dMpzQojtqArieSRJ8Q/KxNcaMEVg1IFyBEmAuURf9TgU7XICSK9TZdO83JGIoGATvYbNR2cXcU/34=
+Received: from PH8PR07CA0014.namprd07.prod.outlook.com (2603:10b6:510:2cd::25)
+ by IA1PR12MB6651.namprd12.prod.outlook.com (2603:10b6:208:3a0::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.17; Fri, 1 May
+ 2026 14:37:22 +0000
+Received: from CY4PEPF0000E9D3.namprd03.prod.outlook.com
+ (2603:10b6:510:2cd:cafe::a3) by PH8PR07CA0014.outlook.office365.com
+ (2603:10b6:510:2cd::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9870.23 via Frontend Transport; Fri,
+ 1 May 2026 14:37:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CY4PEPF0000E9D3.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9891.9 via Frontend Transport; Fri, 1 May 2026 14:37:21 +0000
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 1 May
+ 2026 09:37:20 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 1 May 2026 09:37:19 -0500
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <michal.simek@amd.com>,
+	<ben.levinsky@amd.com>, <tanmay.shah@amd.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/2] remoteproc: xlnx: add auto-boot support
+Date: Fri, 1 May 2026 07:37:05 -0700
+Message-ID: <20260501143707.1591110-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260429135954.nvr6nyfadsjeymyt@hu-mojha-hyd.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D3:EE_|IA1PR12MB6651:EE_
+X-MS-Office365-Filtering-Correlation-Id: dcc6ef6d-e2e8-42c9-b6ac-08dea78f279d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700016|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	XnJzAALLyzk0lGucjDoqgpDnEZXXXahzrwKH2xcivsSFPQWhyiXU26tZgMJRtQet7dz9ypFhluPgSNYC+WJTb5agQFkXUmFqRv8n2Yv0R0a/m0pWAZ/hAa99Vw03cAwJXCwjti+OHc1jRo+HvCEDOsowDDhqrWo+YFkhLHifqegZK8QyG3FJs25N4r6FH4d7mG52IC/nirGAwLNechjaRVQ0fVS08W2o5mLkEAIFCu4uqRNz4wd1cMPyPSC0vuEcVpVkIZ8bJhFZZY88zv6oeyTiCx5iZger5+QKsz0poOon6JrJx24e7Vu+kjZEBtcW0ktSaWZ/keeP6y1++evR7QBJbdmP57olo7tML8DxRy3Gswxh7OOlFm9XD4E0g/PTZ1H3KyvO8B5vRaEf70oJpLvf46UeTbXSww1F6Sf7idZ7t98ZSdl+7i2rPN4jtIHhCv/FI868TmqqEQ1e2aq76qXrQVglkc9h/Y/iwRDOlsNaMvrqKr17W8ufr8a2DZx11eRwe2XF660qFABWNuf5t/wvJeVIdcNSIFKZyZVsp/DpVsWtYB0iQGZjeGwPuASZn+aKqA7EkBy7TkrPsylFLeD1XfAE1mTwNKC5urn1L6+79iGEBjXkmdDxLRYikm6rEUZP4CgFsIiNOwWrfVODM7eTPJ3aV3S7RsBYJn+ft3Qkg7TI3GUoxQfVxRsBlP0tUfUobd9hbEZd83rTbKYA/uSlyTy6MvFeIo5Q3Umgi04=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700016)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	scCssobxJ2BLycoq1DfXJC9JYWMydMLp6PtQc22Q3EBrDMRE5bdK2PwunYLLSUtPJV1i0aeIMKivy0hJYCJ3SmU2o+Hh3vQRQMHL74O5QZL1p9cY4e6bg5JYRW4IjHgjxi+WuSHoAB8iKpxL13A22ijYiH7XfEZ2l+1TwzQjtO2d53e1yh6FIC1NO50qm0Qx3lxfYFWoEPPBlh4an3wawzGqrah6aX7bywAY2pZnXdjSAlv6bNa2IZRxHU9dn9XEKxhXfgXgMXGDEMWrCxiW3QUbRHKXx6TvpCFZK/7zFqCCZgecjqi/QuTCRcZZkiVgYT20qkO4PxzhTv5iBP30Io9Hl6kpceiOKQ0hZVPJHjWUdzpwb90ELKEJDrU6FNMfBfNd00MGaUdTW4qPOWTW5xej90HNAUHg+OWn6lezQzYm4mdv9qR2qykkbmay1Odc
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2026 14:37:21.9117
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: dcc6ef6d-e2e8-42c9-b6ac-08dea78f279d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6651
 
-On Wed, Apr 29, 2026 at 07:29:54PM +0530, Mukesh Ojha wrote:
-> On Mon, Apr 27, 2026 at 03:25:58PM +0530, Sumit Garg wrote:
-> > From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > 
-> > Switch drm/msm client drivers over to generic PAS TZ APIs. Generic PAS
-> > TZ service allows to support multiple TZ implementation backends like QTEE
-> > based SCM PAS service, OP-TEE based PAS service and any further future TZ
-> > backend service.
-> > 
-> > Acked-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > ---
-> >  drivers/gpu/drm/msm/Kconfig             |  1 +
-> >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c   |  4 ++--
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 ++++++-----
-> >  3 files changed, 9 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gdrivers/gpu/drm/msm/Kconfigpu/drm/msm/Kconfig
-> > index 250246f81ea9..09469d56513b 100644
-> > --- a/drivers/gpu/drm/msm/Kconfig
-> > +++ b/drivers/gpu/drm/msm/Kconfig
-> > @@ -21,6 +21,7 @@ config DRM_MSM
-> >  	select SHMEM
-> >  	select TMPFS
-> >  	select QCOM_SCM
-> 
-> do we need this ?
+The Cortex-R remote processors on AMD-Xilinx platforms can run
+before linux boot. Add auto-boot property to notify linux that remote
+processor is ready to be used, so linux can load fw and start it or
+attach to the running processor.
 
-Yeah we do..
 
-> 
-> > +	select QCOM_PAS
-> >  	select QCOM_UBWC_CONFIG
-> >  	select WANT_DEV_COREDUMP
-> >  	select SND_SOC_HDMI_CODEC if SND_SOC
-> > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > index 79acae11154a..b556da823897 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > @@ -5,7 +5,7 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/types.h>
-> >  #include <linux/cpumask.h>
-> > -#include <linux/firmware/qcom/qcom_scm.h>
-> > +#include <linux/firmware/qcom/qcom_pas.h>
-> >  #include <linux/pm_opp.h>
-> >  #include <linux/nvmem-consumer.h>
-> >  #include <linux/slab.h>
-> > @@ -653,7 +653,7 @@ static int a5xx_zap_shader_resume(struct msm_gpu *gpu)
-> >  	if (adreno_is_a506(adreno_gpu))
-> >  		return 0;
-> >  
-> > -	ret = qcom_scm_set_remote_state(SCM_GPU_ZAP_SHADER_RESUME, GPU_PAS_ID);
-> > +	ret = qcom_pas_set_remote_state(SCM_GPU_ZAP_SHADER_RESUME, GPU_PAS_ID);
-> >  	if (ret)
-> >  		DRM_ERROR("%s: zap-shader resume failed: %d\n",
-> >  			gpu->name, ret);
-> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > index 66f80f2d12f9..6d68edf0578c 100644
-> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> > @@ -8,6 +8,7 @@
-> >  
-> >  #include <linux/ascii85.h>
-> >  #include <linux/interconnect.h>
-> > +#include <linux/firmware/qcom/qcom_pas.h>
-> >  #include <linux/firmware/qcom/qcom_scm.h>
-> 
-> do we need this ?
-> 
+Tanmay Shah (2):
+  dt-bindings: remoteproc: xlnx: add firmware-name property
+  remoteproc: xlnx: enable auto boot feature
 
-..needed for qcom_scm_set_gpu_smmu_aperture() API.
+ .../remoteproc/xlnx,zynqmp-r5fss.yaml         |  4 ++
+ drivers/remoteproc/xlnx_r5_remoteproc.c       | 48 +++++++++++++------
+ 2 files changed, 38 insertions(+), 14 deletions(-)
 
-> >  #include <linux/kernel.h>
-> >  #include <linux/of_reserved_mem.h>
-> > @@ -146,10 +147,10 @@ static int zap_shader_load_mdt(struct msm_gpu *gpu, const char *fwname,
-> >  		goto out;
-> >  
-> >  	/* Send the image to the secure world */
-> > -	ret = qcom_scm_pas_auth_and_reset(pasid);
-> > +	ret = qcom_pas_auth_and_reset(pasid);
-> >  
-> >  	/*
-> > -	 * If the scm call returns -EOPNOTSUPP we assume that this target
-> > +	 * If the pas call returns -EOPNOTSUPP we assume that this target
-> >  	 * doesn't need/support the zap shader so quietly fail
-> >  	 */
-> >  	if (ret == -EOPNOTSUPP)
-> > @@ -175,9 +176,9 @@ int adreno_zap_shader_load(struct msm_gpu *gpu, u32 pasid)
-> >  	if (!zap_available)
-> >  		return -ENODEV;
-> >  
-> > -	/* We need SCM to be able to load the firmware */
-> > -	if (!qcom_scm_is_available()) {
-> > -		DRM_DEV_ERROR(&pdev->dev, "SCM is not available\n");
-> > +	/* We need PAS to be able to load the firmware */
-> > +	if (!qcom_pas_is_available()) {
-> > +		DRM_DEV_ERROR(&pdev->dev, "Qcom PAS is not available\n");
-> >  		return -EPROBE_DEFER;
-> >  	}
-> >  
-> > -- 
-> > 2.51.0
-> > 
-> 
-> Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com> 
-> 
 
-Thanks.
+base-commit: 54dacf6efe7196c1cd8ae4b5c691579d0510a8bd
+-- 
+2.34.1
 
--Sumit
