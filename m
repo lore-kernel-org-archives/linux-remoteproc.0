@@ -1,82 +1,82 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C84154774
-	for <linux-remoteproc@vger.kernel.org>; Wed,  6 May 2026 05:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFA92F8BC3
+	for <linux-remoteproc@vger.kernel.org>; Wed,  6 May 2026 05:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778043683; cv=none; b=bLj29gfxRcLKCBjgkwiuQOb2E4AzfM/Hucp6fukq003xWM+I1Wv8nENR/tfZiVBuZqBoDCs0nqhMLSqZP1uOKjdMqeBAduKE2uWXRJ4PlZew3EuLqcvLfP6sMtPAzi9DslaZbKezLmroFd4g0ppkzvBT5mrlh56xyHiNQsMjC4s=
+	t=1778043686; cv=none; b=t6vsJGlGRkKYv/CIW6ZZpL2pZCuQvCKx1rjI1oKSdJuw/0dEiH3zcMNcJXWlnh5ew35JgPkFplG1RIEdu4IZoFsutV45ZxXRfUkTY4Q4hm0l+bCvoV9GNlZ9aSe5ObbuoA1yTqdLdznGiDtIb6Alg71eOyNHLa3dtMwavWLNvo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778043683; c=relaxed/simple;
-	bh=WHvjyHgD1TItrJGH0FkNazHavYPr4xyCEpQSkCRX/Xc=;
+	s=arc-20240116; t=1778043686; c=relaxed/simple;
+	bh=5zpQdSqV6VmTxNYAMSNsJhL31D8kbXtfkRuD/nTWxHw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NM1GAkdFsbj7qlUO4gZtKtmR2uH4+Jo5OINk6+Zvjn7tPg+rwi7qmGRwbU3asMurNdqmV6l4/+jutD8VpqxbqZ9rDMNzWYFZG2IWmEHShIq3f28elWDXLbevEuEIqdUJlqgFvYKMOV0lX3SqNR3uBRKjMOUieDfFK+iFxfZPpwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GsFyOblt; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=gSc2K4fz; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version; b=hEBr0xZXiFC8IjwFaSapiBIZIUa0HnXWAFE0eWZTyClJuZEqvP/pIeS6iNcS3OzxcL0Xf9NoXuksAgEX/AfCF8/wT9qGcrjxnxar8tNELJP0E2VM/rPMD0VJ4HO/Ve/3YGd8EAjM4R9piL1ejYH7kzfaR15R1w+/lJr84Ye7hkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=biMxOZ/v; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=YsO+ZSvq; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GsFyOblt";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="gSc2K4fz"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6463i1UA2187316
-	for <linux-remoteproc@vger.kernel.org>; Wed, 6 May 2026 05:01:21 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="biMxOZ/v";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="YsO+ZSvq"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 645MNfIb3475616
+	for <linux-remoteproc@vger.kernel.org>; Wed, 6 May 2026 05:01:24 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=PiXhBeYotSE
-	4gHZOix5lHX+AUX2pHHBVag0+f6bRxcY=; b=GsFyObltNzTdzSvqk7fK4LUOjE6
-	G/OF8YhcbjY1YShm8FKH/dir5FZET4cED4DhIa25xGyFUi3rnRQTX2CHKuAVhLZ0
-	fuKZEvD3qCRXPUsa1pGeOgFWTKkAN7JnIccHmshXIt7mdsi0k/VrxBmW/33va9nl
-	VB2xw7bXuBe4AiNTBadCAK+Ewgkq1xiIHB/gYCsIOP/X5cPlAWVsxwwIY5OLKtmu
-	r/xYSEmM+kjWBxW6nJ8oCVARuBib1LqkYjuywlmGd4Zc1eCp5mx6OXxizVCZALb8
-	Qx3R6qOPKzDN9bd56f+kYaW0rkIY+fAQCZZ8xHs8oNE9RP30lGEkVPlxaqw==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dygce3gap-1
+	:mime-version:references:subject:to; s=qcppdkim1; bh=LKwytmYNAHb
+	suFxFyJ0lrz9c5UpNtf6ZMxghB57imjM=; b=biMxOZ/vCko+giNiOW9Y1dhfePb
+	3nxs7atEexqNgozB0WdXo1LNZMDv0q6Uc5nL98KEQ0XAp759O7AM7ZC+6F2Mryij
+	Pn2sdbfQCwmxCRaC00pl1Tmr+0WB7vJmArDcBcVZI+Ue7Pfa812iwC4Sh6jOh+4H
+	IC05yumKH8RJHWg6j7jGhNrq+n8WbNu6hLJnVxJjbnejw9WnEpSnbzZ71L8BDgBW
+	90D+nRAh03rJaDzbzt9zN2zDmlEBhn9DSctCpQ40f7yJst9ceu8RIgDxBPWveMGr
+	z/dVW/HiY7QTgGdg/nNAvMMMebdUku/8hiqzctBZUQ+9yDPWwYGttr5SltQ==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4dyhsgu510-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 06 May 2026 05:01:21 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c8247b55775so65290a12.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 05 May 2026 22:01:21 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 06 May 2026 05:01:24 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-8354503d9acso3679777b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 05 May 2026 22:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1778043681; x=1778648481; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1778043684; x=1778648484; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PiXhBeYotSE4gHZOix5lHX+AUX2pHHBVag0+f6bRxcY=;
-        b=gSc2K4fz9ehKaYs3HVq9M0oeoeSxrgV2vxKrldNoH3/SWG0Hg6pP8NOggQmGu9bXkH
-         1aExhVZv4MBch9/r/a3BdmqB2ZW+4+EWxCcVYQYwG8R+wIPDAFF5DURTcYSTVPmC9K2d
-         9r7ENCxgw9uKwC1A74uo0xhNFH1fFfF8nrYFHR1eEsi4GdpCwhoWlxf1g1RRvWJ3DUTP
-         VkZUrZRx+grUIKZX9hlam/Y9fFodzmmvGfDwhexE6FNYh9LiVSxnswH+c9lozq68NT/n
-         tKRLu/oN5/4p90r4KDQ/e6CWSP61zw81H/46CIeMZY1fyGwc8POTdQJm7lKK8dzPHxW5
-         ajUQ==
+        bh=LKwytmYNAHbsuFxFyJ0lrz9c5UpNtf6ZMxghB57imjM=;
+        b=YsO+ZSvqW45LDkFWAUZ6RbY+228mgFJKgd5KA5VAJPyhqPrl4imclCCZqbukFQSRmh
+         vYpe9Se1ZVV/LRqm9WbGG/F5fEO8wKAPPcCvHdWvhyKq1bmFALmutIjmO9x77WuFGDmy
+         a00U72jPfgJrjruH5HpdhFc6/Bc2Rib5kYlzogrXtJI+4duYBbHtwG8KXLZdYKa64/o5
+         gNuW9cZwuRTzW9zQkCONSipOhMXSVsqmOrTzl6TFVev5zR3eK+EQM7y15M3z9ho4QvXq
+         FpjkROT0N9uJdZ06R79l2jYD8Nijmu89Ppely9MGOdArtCq26CKYsqegG4JZqf/1x2Ab
+         DZTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778043681; x=1778648481;
+        d=1e100.net; s=20251104; t=1778043684; x=1778648484;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=PiXhBeYotSE4gHZOix5lHX+AUX2pHHBVag0+f6bRxcY=;
-        b=N4JnNXi5PvGriBhf+hev+0n6iOGupsQOPiepoTO6a5YqIkCiOrZMOJsjbrcPkTiJi+
-         PPT18tmjWom9Y+C3XUdSAMW7C5VlfCcolXMytJrCqhYmQDMt671tEiBOtkkSLwPQAIXt
-         aRiEgO1IiIQZnZ8a4z04Z2RCShqRzdDj9U/zGeb2Cr7BC4V+emsVxyoZXU62zEWyku5n
-         VSuH3vIAjyVC23ynJCCDtOUZ4GF+tIQKuTsIrlxtWcAG3yTfI110zxP25M5JfJILXkK+
-         smavdqNipe3yFmO9oMgFnQ7kq2Jb4AO9BqDL19uNdPSTYzBV/8Hq5PvFmk12vVj8zi/L
-         E3Gw==
-X-Forwarded-Encrypted: i=1; AFNElJ8VygjgDGH0CS1DjzaK4Sw2QX16xocI0otS2NOXzZristM/+bOj90QKtq1AEqCC8fulnfHJF8yZjtFeHcPiD9le@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFXbHtQhvq4Gv6slPpN9s/dtmtfHyPitn627VjrhCEvfTaJDIE
-	g+mH6Dhk7Q+pihKxSMLMtzctUDdM27pSGXPpyOoC/MMSL8p8YqiOGBWy8k/BmPMkSTXWPIaBWjS
-	uczXHkQzMoZmYildqYnpm7CygFyCfLShILB4+W1gyzkRBpcXV2IPX/92h/edoe7bbG3NxpLeb
-X-Gm-Gg: AeBDievjAsPuphL1SPEwZheYtfBhJrJzryTZKzLiV1UJ5BjdxdFFm5D+SxfFIxpZ5Qu
-	SSu0Sar9ctwg9G0v3TZwR4+S3iRY1SKZwZs8oU6Kgi0Cuv7VAkWtlzmECe3ZTaWlex085h/hOvg
-	vXK8oINRnljfKkbu8CKVrLWhl70z24L6MB//RBjEJSIiorN7+d9aiYkkREfFD0hhDj7hv76Yikk
-	1vhUW4cyqNiT5se8JRKFWRdLN0DBG3ErT1K2R9y0v/WGa/9i31KeBq1mrOHmRAkxSYymgPTyebf
-	6+B7SziwNEl5MB0NpTA1DqaoyGkNaosI7I1VrgaevmcJQclM7PiPTW5fxi+5LjQggArMJCGk410
-	NKP7bvgJBCLYts81n8A/6qIYHNjAcc4d/9Qn2Lyz5CqklUZTLqCMe82bwtz8=
-X-Received: by 2002:a05:6a00:a02:b0:82f:5051:f024 with SMTP id d2e1a72fcca58-83a5df484a2mr1768437b3a.27.1778043680480;
-        Tue, 05 May 2026 22:01:20 -0700 (PDT)
-X-Received: by 2002:a05:6a00:a02:b0:82f:5051:f024 with SMTP id d2e1a72fcca58-83a5df484a2mr1768404b3a.27.1778043679849;
-        Tue, 05 May 2026 22:01:19 -0700 (PDT)
+        bh=LKwytmYNAHbsuFxFyJ0lrz9c5UpNtf6ZMxghB57imjM=;
+        b=j7kpjWapeI00R4VLaP5o0wfnbP/3v5rMZz4kTsmB45QeWRG2oo+VNs7iHlAUEJo1FA
+         dw+Yv6wlsyA9d5KT9Xz8J579gYylRhwEtWpTkMXQCZqyomjn9GivBmfSH+BRkEOJyc+z
+         GD63koV9hTCjLDDJAWKvQf+iLy+qmFo2JJaxhdWejcaruDm38x20qitXnvYS66hWzZz0
+         Ax5T0M8KRaL2GxwWfdhuxto7xUz2Hwm7GIw16SHnQEp4mUwo8vO0+2EGSALnlE4V/xxF
+         ZyiFIP8mVa2tM2osSVQNj/dDGO2Ki7NOXGoPPV2buXAPamSL8iPDzExxF5DdlY7R7sCD
+         pigw==
+X-Forwarded-Encrypted: i=1; AFNElJ/i/v9TMaCYh0o/9Sl874dUakrUZsEqdpgY1tIOeopW6Fcn6pzuKzO7eTVylNLPTnCMg+HB06onuO6+5bS5qloF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1QlR18hB3lFWpRc/7BCgWPi5BwDxtpXcmgYkf7Bn9zGA23ots
+	lfTSOC/NYuETiQ13U5TbpClUsAqyn5OwqrWjogfH3Yg8C9aeK7+udYtF/WpxD2PQ9Up2U0Reoz2
+	4KZskUB/eIlymzDhtUo1xRdkWVW99hetJkIWfBbmCxo74uKzhAE1socQW3SaOotmLrpO2qPDF
+X-Gm-Gg: AeBDievX7vrJMdnA6Y7twicODtDPsxKkdIELxnhM5LfalMGsLkGwPTAMgUFpiA5C+ds
+	Yi+FOl0/4NP/gBJc4L+6DpFA2/atyLdNXSTmX4kVw2nY14fly51zFb6OTmCWLHUwjlHNDi2Qp22
+	1wMLlqZeb17ZFy1zDAXiRwASEHhUH140Hl8Or3A0Dk/xt9a9MJDiI1AOtGilke4XpLRwIlXbVl8
+	3WwSEp5geqeUZEEX0q4K3NLhNx9evv86CEWsd/dfWvUVjY8GYfI31eMNwoGQbIIxorCoVDnMo3A
+	9kDg1IW9Ry4rXChT+I0QAUrOAB+mQfRgrJd+sfxiB8yAraL8SXPMkcxGMatS5kRqumdgYtSr3Uu
+	ANJCwO7zcbBMB+zzyXNCs351j+5l6jy2KAiV7rAUhPYvsCfKeHWlu4KCBJMosk7qO+wYYIg==
+X-Received: by 2002:a05:6a00:198c:b0:82c:b808:4c59 with SMTP id d2e1a72fcca58-83a5ea3fe9bmr1729945b3a.46.1778043683423;
+        Tue, 05 May 2026 22:01:23 -0700 (PDT)
+X-Received: by 2002:a05:6a00:198c:b0:82c:b808:4c59 with SMTP id d2e1a72fcca58-83a5ea3fe9bmr1729889b3a.46.1778043682694;
+        Tue, 05 May 2026 22:01:22 -0700 (PDT)
 Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83967dbcfc0sm4891620b3a.42.2026.05.05.22.01.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83967dbcfc0sm4891620b3a.42.2026.05.05.22.01.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2026 22:01:19 -0700 (PDT)
+        Tue, 05 May 2026 22:01:22 -0700 (PDT)
 From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio <konradybcio@kernel.org>,
@@ -84,9 +84,9 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-remoteproc@vger.kernel.org,
         Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [PATCH 2/5] remoteproc: use rsc_table_for_each_entry() in rproc_handle_resources()
-Date: Wed,  6 May 2026 10:31:04 +0530
-Message-ID: <20260506050107.1985033-3-mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH 3/5] soc: qcom: mdt_loader: add qcom_mdt_pas_map/unmap_devmem_rscs()
+Date: Wed,  6 May 2026 10:31:05 +0530
+Message-ID: <20260506050107.1985033-4-mukesh.ojha@oss.qualcomm.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260506050107.1985033-1-mukesh.ojha@oss.qualcomm.com>
 References: <20260506050107.1985033-1-mukesh.ojha@oss.qualcomm.com>
@@ -97,216 +97,311 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA2MDA0NiBTYWx0ZWRfX7bUa/7w8MSSB
- IDzOB0yBDzuaEl0mZ0yH2rGu8ntFOIjge97Luge5q1TlMHmYKQfOb3gwkw1vxckJLEFinvGnBZo
- e84V/x6FAGvTWo9E54Jy/R8mNZ2T0+HkZPn2gIfRuJ4ig1uCezBl65rdPN4xj1TUYy4hIdCJYjz
- vbbFYLwV273+g7erNwCeU4TQQyQI010pPz+B9rAkceUUs0c7TgVeG95CnWf0EINUio9s9Sk61K8
- JtUEwQjzuNOoV10lEIFfoGczk+tVDLruheSToRGGRFt4J9/4r+SVJCNGnfFkCB0nsk6mFT8JEFt
- KZgmC0pJh/CntTXx9+Bn5spAZ/qrxx7ykWFwFV7v7/wkmkqpd7s5de34Arz3apbjrvEj8uoy/f+
- bgIR9wbhrTCcsboK21tY2ef/rz5x6S7npwNSOkDK9zwIASBJKy/VRRIPorLOuCmIsji6e9F+PGm
- MuN8ASfXz6ekXOSigFw==
-X-Proofpoint-GUID: HhLl3O1IAblB5E_IuIL8RmR29b66gmZH
-X-Proofpoint-ORIG-GUID: HhLl3O1IAblB5E_IuIL8RmR29b66gmZH
-X-Authority-Analysis: v=2.4 cv=b6KCJNGx c=1 sm=1 tr=0 ts=69facb21 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+X-Proofpoint-ORIG-GUID: Ifoqwsf0aqLPA35zQ9gce4EL-xpurRRA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA2MDA0NiBTYWx0ZWRfX6NLOvs1CxzlO
+ 4Or9fq8FQpF8x2frM3t/RBN8+58aNPoS2+CDWL9GPpDo2Vhf/tZGcmR1dw3Et+Bvgqu2OIf1JvI
+ myzs6R63W3LL1jMg3D5ekXDI5fXyu0BbxSRoCUb5cBjmBUla+8ulWyjGUKJqtRekM33oJMc8R4F
+ aAwWinJbRx2hfno4oEzBq9uL99vKuELKVXgCLOWjoSwh6J+ObeU/U4ZizRS+H3Vx9bwOj4pdfS1
+ l254LGVBiG/MWAl06xJ8O0GddXGetgIDuqRAbRUPQBoIAe5U0xBRS9MDObV1fTWlK/X2Hi8M9BQ
+ s6eZR+ejlioL47oEHeJ2lwp8Yiirw0znFzJAbTuwwYBi2IQGL2+696afD7u2udKZ4kIohhcXOQb
+ 5HV83kem+pftjKav+qAeoN7mBunWkBGzf0OLjUyRgafo/EyvuQ2Evib2M8+eBm8ZoX0u5CXCyt1
+ pZf+GtiLDXWVrGSE1zg==
+X-Authority-Analysis: v=2.4 cv=EPU2FVZC c=1 sm=1 tr=0 ts=69facb24 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22 a=EUspDBNiAAAA:8
- a=xRbkGY9h9Oi8AtJRHVsA:9 a=x9snwWr2DeNwDh03kgHS:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8
+ a=N53UB9TyAAAA:8 a=kQh6dVwvXRLgiowIQNEA:9 a=zc0IvFSfCIW2DFIPzwfm:22
+ a=DoZGhvB21A6Bz61VoUpf:22
+X-Proofpoint-GUID: Ifoqwsf0aqLPA35zQ9gce4EL-xpurRRA
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-05-05_02,2026-04-30_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 adultscore=0 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 suspectscore=0 clxscore=1015 malwarescore=0 spamscore=0
+ adultscore=0 malwarescore=0 impostorscore=0 clxscore=1015 bulkscore=0
+ phishscore=0 suspectscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605060046
 
-Replace the open-coded resource table iteration loop in
-rproc_handle_resources() with the rsc_table_for_each_entry() helper.
+Add qcom_mdt_pas_map_devmem_rscs() and qcom_mdt_pas_unmap_devmem_rscs()
+to IOMMU map/unmap RSC_DEVMEM resource table entries on SoCs where Linux
+runs as hypervisor at EL2 and owns the IOMMU mappings for remote
+processors.
 
-The remoteproc-specific dispatch logic (vendor resource handling via
-rproc_handle_rsc(), RSC_LAST bounds check, handler table lookup) is
-moved into a local callback rproc_handle_rsc_entry(), keeping the
-iteration mechanics in one canonical place.
-
-The callback receives the payload offset within the table so that
-handlers which write back into the resource table (e.g.
-rproc_handle_carveout() recording a dynamically allocated address via
-rsc_offset) continue to work correctly.
-
-No functional change.
+The map function fetches the resource table via
+qcom_scm_pas_get_rsc_table() and iterates over RSC_DEVMEM entries using
+rsc_table_for_each_entry(), calling iommu_map() for each. Mapped entries
+are tracked in a per-PAS linked list stored in a hash table keyed by
+pas_id for later lookup by the unmap function.
 
 Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 81 +++++++++++++---------------
- include/linux/rsc_table.h            | 53 ++++++++++++++++++
- 2 files changed, 91 insertions(+), 43 deletions(-)
+ drivers/soc/qcom/mdt_loader.c       | 189 ++++++++++++++++++++++++++++
+ include/linux/soc/qcom/mdt_loader.h |  22 ++++
+ 2 files changed, 211 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index b087ed21858a..f003be006b1b 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1011,60 +1011,55 @@ static rproc_handle_resource_t rproc_loading_handlers[RSC_LAST] = {
- 	[RSC_VDEV] = rproc_handle_vdev,
- };
+diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+index ed882dd43587..dd84d0eba152 100644
+--- a/drivers/soc/qcom/mdt_loader.c
++++ b/drivers/soc/qcom/mdt_loader.c
+@@ -11,14 +11,34 @@
+ #include <linux/device.h>
+ #include <linux/elf.h>
+ #include <linux/firmware.h>
++#include <linux/hashtable.h>
+ #include <linux/io.h>
++#include <linux/iommu.h>
+ #include <linux/kernel.h>
++#include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/firmware/qcom/qcom_scm.h>
++#include <linux/rsc_table.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/soc/qcom/mdt_loader.h>
  
--/* handle firmware resource entries before booting the remote processor */
--static int rproc_handle_resources(struct rproc *rproc,
--				  rproc_handle_resource_t handlers[RSC_LAST])
-+struct rproc_rsc_cb_data {
-+	struct rproc *rproc;
-+	rproc_handle_resource_t *handlers;
++#define RSC_TABLE_HASH_BITS	5  /* 32 buckets */
++
++static DEFINE_HASHTABLE(qcom_pas_rsc_table_map, RSC_TABLE_HASH_BITS);
++
++struct qcom_pas_devmem_rsc {
++	struct fw_rsc_devmem *devmem;
++	struct list_head node;
 +};
 +
-+static int rproc_handle_rsc_entry(u32 type, void *rsc, int offset,
-+				  int avail, void *data)
++struct qcom_pas_rsc_table_info {
++	struct resource_table *rsc_table;
++	struct list_head devmem_list;
++	struct hlist_node hnode;
++	int pas_id;
++};
++
+ static bool mdt_header_valid(const struct firmware *fw)
  {
-+	struct rproc_rsc_cb_data *d = data;
-+	struct rproc *rproc = d->rproc;
- 	struct device *dev = &rproc->dev;
- 	rproc_handle_resource_t handler;
--	int ret = 0, i;
--
--	if (!rproc->table_ptr)
--		return 0;
-+	int ret;
- 
--	for (i = 0; i < rproc->table_ptr->num; i++) {
--		int offset = rproc->table_ptr->offset[i];
--		struct fw_rsc_hdr *hdr = (void *)rproc->table_ptr + offset;
--		int avail = rproc->table_sz - offset - sizeof(*hdr);
--		void *rsc = (void *)hdr + sizeof(*hdr);
-+	dev_dbg(dev, "rsc: type %d\n", type);
- 
--		/* make sure table isn't truncated */
--		if (avail < 0) {
--			dev_err(dev, "rsc table is truncated\n");
--			return -EINVAL;
--		}
--
--		dev_dbg(dev, "rsc: type %d\n", hdr->type);
-+	if (type >= RSC_VENDOR_START && type <= RSC_VENDOR_END) {
-+		ret = rproc_handle_rsc(rproc, type, rsc, offset, avail);
-+		if (ret == RSC_HANDLED)
-+			return 0;
-+		if (ret < 0)
-+			return ret;
-+		dev_warn(dev, "unsupported vendor resource %d\n", type);
-+		return 0;
-+	}
- 
--		if (hdr->type >= RSC_VENDOR_START &&
--		    hdr->type <= RSC_VENDOR_END) {
--			ret = rproc_handle_rsc(rproc, hdr->type, rsc,
--					       offset + sizeof(*hdr), avail);
--			if (ret == RSC_HANDLED)
--				continue;
--			else if (ret < 0)
--				break;
-+	if (type >= RSC_LAST) {
-+		dev_warn(dev, "unsupported resource %d\n", type);
-+		return 0;
-+	}
- 
--			dev_warn(dev, "unsupported vendor resource %d\n",
--				 hdr->type);
--			continue;
--		}
-+	handler = d->handlers[type];
-+	if (!handler)
-+		return 0;
- 
--		if (hdr->type >= RSC_LAST) {
--			dev_warn(dev, "unsupported resource %d\n", hdr->type);
--			continue;
--		}
-+	return handler(rproc, rsc, offset, avail);
-+}
- 
--		handler = handlers[hdr->type];
--		if (!handler)
--			continue;
-+/* handle firmware resource entries before booting the remote processor */
-+static int rproc_handle_resources(struct rproc *rproc,
-+				  rproc_handle_resource_t handlers[RSC_LAST])
-+{
-+	struct rproc_rsc_cb_data d = { .rproc = rproc, .handlers = handlers };
- 
--		ret = handler(rproc, rsc, offset + sizeof(*hdr), avail);
--		if (ret)
--			break;
--	}
-+	if (!rproc->table_ptr)
-+		return 0;
- 
--	return ret;
-+	return rsc_table_for_each_entry(rproc->table_ptr, rproc->table_sz,
-+					&rproc->dev, rproc_handle_rsc_entry, &d);
+ 	const struct elf32_hdr *ehdr;
+@@ -507,5 +527,174 @@ int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx, const struct firmware *f
  }
+ EXPORT_SYMBOL_GPL(qcom_mdt_pas_load);
  
- static int rproc_prepare_subdevices(struct rproc *rproc)
-diff --git a/include/linux/rsc_table.h b/include/linux/rsc_table.h
-index c32c8b6cd2a7..c6d6d553d8f1 100644
---- a/include/linux/rsc_table.h
-+++ b/include/linux/rsc_table.h
-@@ -303,4 +303,57 @@ struct fw_rsc_vdev {
- 	struct fw_rsc_vdev_vring vring[];
- } __packed;
- 
-+/**
-+ * rsc_table_for_each_entry() - iterate over all entries in a resource table
-+ * @table:    pointer to the resource table
-+ * @table_sz: total size of the table buffer in bytes
-+ * @dev:      device used for error logging
-+ * @cb:       callback invoked for each entry:
-+ *              @type   - value from enum fw_resource_type
-+ *              @rsc    - pointer to the entry payload (past struct fw_rsc_hdr)
-+ *              @offset - byte offset of the payload within the table; callers
-+ *                        that write back into the table (e.g. to record a
-+ *                        dynamically allocated address) use this to locate the
-+ *                        entry for later update
-+ *              @avail  - bytes available in the payload
-+ *              @data   - caller-supplied private pointer
-+ *            Return 0 to continue iteration, non-zero to stop.
-+ * @data:     private pointer forwarded to @cb on every call
-+ *
-+ * Iterates over every resource entry in @table, performing the standard
-+ * truncation check, and invokes @cb for each one. Iteration stops on the
-+ * first non-zero return from @cb or on a malformed table.
-+ *
-+ * Returns 0 after a complete iteration, -EINVAL if the table is truncated,
-+ * or the first non-zero value returned by @cb.
-+ */
-+static inline int rsc_table_for_each_entry(struct resource_table *table,
-+					   size_t table_sz,
-+					   struct device *dev,
-+					   int (*cb)(u32 type, void *rsc,
-+						     int offset, int avail,
-+						     void *data),
-+					   void *data) {
-+	int i, ret;
++static void __qcom_mdt_unmap_devmem_rscs(struct qcom_pas_rsc_table_info *info,
++					 struct iommu_domain *domain)
++{
++	struct qcom_pas_devmem_rsc *entry, *tmp;
 +
-+	for (i = 0; i < table->num; i++) {
-+		int offset = table->offset[i];
-+		struct fw_rsc_hdr *hdr = (void *)table + offset;
-+		int avail = table_sz - offset - sizeof(*hdr);
-+		int rsc_offset = offset + sizeof(*hdr);
-+		void *rsc = (void *)hdr + sizeof(*hdr);
-+
-+		if (avail < 0) {
-+			dev_err(dev, "rsc table is truncated\n");
-+			return -EINVAL;
-+		}
-+
-+		ret = cb(hdr->type, rsc, rsc_offset, avail, data);
-+		if (ret)
-+			return ret;
++	list_for_each_entry_safe(entry, tmp, &info->devmem_list, node) {
++		iommu_unmap(domain, entry->devmem->da, entry->devmem->len);
++		list_del(&entry->node);
++		kfree(entry);
 +	}
++}
++
++/**
++ * qcom_mdt_pas_unmap_devmem_rscs() - IOMMU unmap device memory resources
++ *					for a given Peripheral
++ * @ctx:	pas context data structure
++ * @domain:	IOMMU domain
++ *
++ * Looks up the resource table info previously stored by
++ * qcom_mdt_pas_map_devmem_rscs(), unmaps all RSC_DEVMEM entries from the
++ * IOMMU domain, and releases the associated memory.
++ */
++void qcom_mdt_pas_unmap_devmem_rscs(struct qcom_scm_pas_context *ctx,
++				    struct iommu_domain *domain)
++{
++	struct qcom_pas_rsc_table_info *info;
++	struct hlist_node *tmp;
++
++	if (!ctx || !domain)
++		return;
++
++	hash_for_each_possible_safe(qcom_pas_rsc_table_map, info, tmp, hnode, ctx->pas_id) {
++		if (info->pas_id != ctx->pas_id)
++			continue;
++
++		__qcom_mdt_unmap_devmem_rscs(info, domain);
++		hash_del(&info->hnode);
++		kfree(info->rsc_table);
++		kfree(info);
++		break;
++	}
++}
++EXPORT_SYMBOL_GPL(qcom_mdt_pas_unmap_devmem_rscs);
++
++static int __qcom_mdt_map_devmem_rscs(struct device *dev, void *ptr, int avail,
++				      struct iommu_domain *domain,
++				      struct qcom_pas_rsc_table_info *info)
++{
++	struct qcom_pas_devmem_rsc *devmem_info;
++	struct fw_rsc_devmem *rsc = ptr;
++	int ret;
++
++	if (sizeof(*rsc) > avail) {
++		dev_err(dev, "devmem rsc is truncated\n");
++		return -EINVAL;
++	}
++
++	if (rsc->reserved) {
++		dev_err(dev, "devmem rsc has non zero reserved bytes\n");
++		return -EINVAL;
++	}
++
++	devmem_info = kzalloc(sizeof(*devmem_info), GFP_KERNEL);
++	if (!devmem_info)
++		return -ENOMEM;
++
++	ret = iommu_map(domain, rsc->da, rsc->pa, rsc->len, rsc->flags, GFP_KERNEL);
++	if (ret) {
++		dev_err(dev, "failed to map devmem: %d\n", ret);
++		kfree(devmem_info);
++		return ret;
++	}
++
++	devmem_info->devmem = rsc;
++	list_add_tail(&devmem_info->node, &info->devmem_list);
++
++	dev_dbg(dev, "mapped devmem pa 0x%x, da 0x%x, len 0x%x\n",
++		rsc->pa, rsc->da, rsc->len);
 +
 +	return 0;
 +}
 +
- #endif /* RSC_TABLE_H */
++struct qcom_mdt_map_cb_data {
++	struct device *dev;
++	struct iommu_domain *domain;
++	struct qcom_pas_rsc_table_info *info;
++};
++
++static int qcom_mdt_map_devmem_cb(u32 type, void *rsc, int offset,
++				  int avail, void *data)
++{
++	struct qcom_mdt_map_cb_data *d = data;
++
++	if (type != RSC_DEVMEM)
++		return 0;
++
++	return __qcom_mdt_map_devmem_rscs(d->dev, rsc, avail, d->domain,
++					  d->info);
++}
++
++/**
++ * qcom_mdt_pas_map_devmem_rscs() - IOMMU map device memory resources for
++ *				     a given Peripheral
++ *
++ * This routine should be called when it is known that the SoC is running
++ * with Linux as hypervisor at EL2 where it is in control of the IOMMU map
++ * of the resources for the remote processors.
++ *
++ * @ctx:	    pas context data structure
++ * @domain:	    IOMMU domain
++ * @input_rt:	    input resource table buffer when resource table is part of
++ *		    firmware binary; pass NULL if not available
++ * @input_rt_size:  size of @input_rt; pass zero if @input_rt is NULL
++ *
++ * Returns 0 on success, negative errno otherwise.
++ */
++int qcom_mdt_pas_map_devmem_rscs(struct qcom_scm_pas_context *ctx,
++				 struct iommu_domain *domain,
++				 void *input_rt, size_t input_rt_size)
++{
++	struct qcom_mdt_map_cb_data map_data;
++	size_t output_rt_size = QCOM_MDT_MAX_RSCTABLE_SIZE;
++	struct qcom_pas_rsc_table_info *info;
++	struct resource_table *rsc_table;
++	int ret;
++
++	if (!ctx || !domain)
++		return -EINVAL;
++
++	rsc_table = qcom_scm_pas_get_rsc_table(ctx, input_rt, input_rt_size,
++					       &output_rt_size);
++	if (IS_ERR(rsc_table)) {
++		ret = PTR_ERR(rsc_table);
++		dev_err(ctx->dev, "error %d getting resource_table\n", ret);
++		return ret;
++	}
++
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	if (!info) {
++		ret = -ENOMEM;
++		goto free_rsc_table;
++	}
++
++	map_data.dev = ctx->dev;
++	map_data.domain = domain;
++	map_data.info = info;
++	info->pas_id = ctx->pas_id;
++	info->rsc_table = rsc_table;
++	INIT_LIST_HEAD(&info->devmem_list);
++
++	ret = rsc_table_for_each_entry(rsc_table, output_rt_size, ctx->dev,
++				       qcom_mdt_map_devmem_cb, &map_data);
++	if (ret)
++		goto undo_mapping;
++
++	hash_add(qcom_pas_rsc_table_map, &info->hnode, ctx->pas_id);
++
++	return 0;
++
++undo_mapping:
++	__qcom_mdt_unmap_devmem_rscs(info, domain);
++	kfree(info);
++free_rsc_table:
++	kfree(rsc_table);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(qcom_mdt_pas_map_devmem_rscs);
++
+ MODULE_DESCRIPTION("Firmware parser for Qualcomm MDT format");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/soc/qcom/mdt_loader.h b/include/linux/soc/qcom/mdt_loader.h
+index 7c551b98e182..304aebb2b9cd 100644
+--- a/include/linux/soc/qcom/mdt_loader.h
++++ b/include/linux/soc/qcom/mdt_loader.h
+@@ -8,8 +8,11 @@
+ #define QCOM_MDT_TYPE_HASH	(2 << 24)
+ #define QCOM_MDT_RELOCATABLE	BIT(27)
+ 
++#define QCOM_MDT_MAX_RSCTABLE_SIZE	SZ_16K
++
+ struct device;
+ struct firmware;
++struct iommu_domain;
+ struct qcom_scm_pas_context;
+ 
+ #if IS_ENABLED(CONFIG_QCOM_MDT_LOADER)
+@@ -23,6 +26,12 @@ int qcom_mdt_load(struct device *dev, const struct firmware *fw,
+ int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx, const struct firmware *fw,
+ 		      const char *firmware, phys_addr_t *reloc_base);
+ 
++int qcom_mdt_pas_map_devmem_rscs(struct qcom_scm_pas_context *ctx,
++				 struct iommu_domain *domain,
++				 void *input_rt, size_t input_rt_size);
++void qcom_mdt_pas_unmap_devmem_rscs(struct qcom_scm_pas_context *ctx,
++				    struct iommu_domain *domain);
++
+ int qcom_mdt_load_no_init(struct device *dev, const struct firmware *fw,
+ 			  const char *fw_name, void *mem_region,
+ 			  phys_addr_t mem_phys, size_t mem_size,
+@@ -52,6 +61,19 @@ static inline int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx,
+ 	return -ENODEV;
+ }
+ 
++static inline int qcom_mdt_pas_map_devmem_rscs(struct qcom_scm_pas_context *ctx,
++					       struct iommu_domain *domain,
++					       void *input_rt,
++					       size_t input_rt_size)
++{
++	return -ENODEV;
++}
++
++static inline void qcom_mdt_pas_unmap_devmem_rscs(struct qcom_scm_pas_context *ctx,
++						  struct iommu_domain *domain)
++{
++}
++
+ static inline int qcom_mdt_load_no_init(struct device *dev,
+ 					const struct firmware *fw,
+ 					const char *fw_name, void *mem_region,
 -- 
 2.53.0
 
