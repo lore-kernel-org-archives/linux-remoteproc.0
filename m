@@ -1,106 +1,114 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1175B426686;
-	Wed,  6 May 2026 11:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1D743E9C5;
+	Wed,  6 May 2026 13:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778067908; cv=none; b=unnZQDwjJH85Z06A4YOq4wY0ZuAvvsy1SHriXhP4cOA7kGqjXrcR7ffH+b9bOcnFTsviJsT4WZA1wegQwJdAD/X9d7+81FqgmzAJ5TA4DrdLn206l1XFmlDy1Sb/XqJWOc4ISVtyDchFK1ayg56XGNbSaFmnWgC8uOzQ5mds3T4=
+	t=1778074332; cv=none; b=Z83EpbmIP4nuCzneJY+mtvin+5LbrC9fSAyINsNeXf+/re3jiGB/ulhCln/JRNcYlfCpa1bX3/G+e1efnra3zXg2xP7BY4MtmEH9cLO2gW2tuKalTeXnioZr+7J9qDBv7PzOmBohK0XMGDIqVmV/F3Sk5MJ45hxz3hIt1oJaLHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778067908; c=relaxed/simple;
-	bh=hhTrGP4S/BXwCHAiPhtKUBT3aM5H12HQDgaM3WyB8SM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YwaRt/WL54xGv3z5pz4pvrBJB7sBMmGQxySIPpq32nimsnDU5kTNXf5TU367gHC2gav1yu9zSM0hTRjP7e2wFe9gKYtVnzU4q0l2CeXxv5yVK/75yUu5JRwbhbOPNCKI56mXWE2+FY2b8lRUlyIn6SiC1dT266q0vG1fQBMQaPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JK9Rzoig; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778074332; c=relaxed/simple;
+	bh=7SyZS0ivEjgZA4nePQg5BQyqm+SCAEV96EdGsQWfh2I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qwmlrSV+jWlFKbKf5JBI50s60+DoMjpH63mgBNCDe+QQ7GKPs7RKxrU3pvweur+3btMnwRhzCKd/30V5Grij6DaTZNHekHrQzqB6VRwC4NoDEp+L82api7xKxe58uQBo8SnAt1gu8rBzBlvqw7/4pzUzj31N5qqd4NA6SmQEnUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=rP8jWi0S; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JK9Rzoig"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E248C2BCB8;
-	Wed,  6 May 2026 11:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778067907;
-	bh=hhTrGP4S/BXwCHAiPhtKUBT3aM5H12HQDgaM3WyB8SM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JK9RzoigiB1D3DXGs/HNMPpy5luVXNjQDMJ/gNJwQwvD3QX5cwaaDXLByrbYh0rD7
-	 unldqglV7SpdVuXWY+NgLy2tFLcj1HLkdrYiuAfhotSgVMFmyVebpugEr32x4ihMc0
-	 /tOg24M8MPx0qFmabWfnU+kelwaO+lTgzJKEa2z6qkJ7YGiJg6aNwzN4jGpgCTc8oc
-	 NVhfIHljXCC/NcCUwAOnt7rBjjzZnbCv+41BW+iXoF7z+oYkX7+01Kuy8XgtzhiqEs
-	 2wR7jxsdr6NctbnKkN145c3AfMYB1T4A8mwdhnVOx2bukV3wZrjpRg2SdK/mGdfwkf
-	 QLBVpImLnNOrQ==
-Date: Wed, 6 May 2026 17:14:50 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org,
-	Sowmiya Sree Elavalagan <sowmiya.elavalagan@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-media@vger.kernel.org, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	robin.clark@oss.qualcomm.com, sean@poorly.run,
-	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
-	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
-	pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
-	tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v5 14/16] wifi: ath12k: Switch to generic PAS TZ APIs
-Message-ID: <afspsrA8zT8Fb4z-@sumit-xelite>
-References: <20260504130603.1474043-1-sumit.garg@kernel.org>
- <20260504130603.1474043-15-sumit.garg@kernel.org>
- <3bfdc11c-115f-45ab-b0ab-75ad88dc6f31@oss.qualcomm.com>
- <ae68bdb3-d683-4e7a-a27f-739214656ce2@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="rP8jWi0S"
+X-UUID: f86054c6494f11f1a4e839cc21f16abe-20260506
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=kVrS/dHQWKD+3tc6CAAThNJdve9BvuJWPhVI1OXqr40=;
+	b=rP8jWi0SXFdbvuONLPyevH3YhsQaMs6fvbAyR3OFPfVKEqXvezjclJ64vkc3ogRHJbSaKg9P1/7ilMIs0qxqNmRNb+JrsPBsndL8GQY13+zoVjyi4JJVcX2djV0a27pYnwuBn4jwe4AyXaZ/QlCXn9aXvohvkEuP7/KuWKN2OLQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.12,REQID:595c8a3f-49c0-40e7-80a7-fccfd493f824,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:e7bac3a,CLOUDID:961ff5be-65a8-4b41-ac18-3671578a914d,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|865|888|898,TC:-5,Content:0|
+	15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:-1,COL:0,OSI:0
+	,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f86054c6494f11f1a4e839cc21f16abe-20260506
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <arnab.layek@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1006408303; Wed, 06 May 2026 21:32:04 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Wed, 6 May 2026 21:32:03 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.2562.29 via Frontend Transport; Wed, 6 May 2026 21:32:03 +0800
+From: Arnab Layek <arnab.layek@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Arnab Layek
+	<arnab.layek@mediatek.com>
+Subject: [PATCH] dt-bindings: remoteproc: mtk,scp: Allow multiple memory regions
+Date: Wed, 6 May 2026 21:31:57 +0800
+Message-ID: <20260506133157.3283204-1-arnab.layek@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae68bdb3-d683-4e7a-a27f-739214656ce2@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Tue, May 05, 2026 at 07:50:03AM -0700, Jeff Johnson wrote:
-> On 5/5/2026 7:27 AM, Jeff Johnson wrote:
-> > On 5/4/2026 6:06 AM, Sumit Garg wrote:
-> >> @@ -485,9 +485,9 @@ static void ath12k_ahb_power_down(struct ath12k_base *ab, bool is_suspend)
-> >>  		pasid = (u32_encode_bits(ab_ahb->userpd_id, ATH12K_USERPD_ID_MASK)) |
-> >>  			 ATH12K_AHB_UPD_SWID;
-> >>  		/* Release the firmware */
-> >> -		ret = qcom_scm_pas_shutdown(pasid);
-> >> +		ret = qcom_pas_shutdown(pasid);
-> >>  		if (ret)
-> >> -			ath12k_err(ab, "scm pas shutdown failed for userPD%d\n",
-> >> +			ath12k_err(ab, "pas shutdown failed for userPD%d: %d\n",
-> >>  				   ab_ahb->userpd_id);
-> > 
-> > at some point the "ret" param was dropped, and this now generates build warnings
-> The 'ret' param was dropped by:
-> 8fb66931fe31 ("wifi: ath12k: Enable IPQ5424 WiFi device support")
-> 
-> Not sure if that was on purpose or accidental. Sowmiya?
-> 
-> -       if (ret)
-> -               ath12k_err(ab, "scm pas shutdown failed for userPD%d: %d\n",
-> -                          ab_ahb->userpd_id, ret);
-> ...
-> +               if (ret)
-> +                       ath12k_err(ab, "scm pas shutdown failed for userPD%d\n",
-> +                                  ab_ahb->userpd_id);
->
+Update the memory-region property to support 1-2 reserved memory
+regions instead of exactly one. This is needed for newer MediaTek
+SoCs like MT8188 which require additional memory regions for SCP
+operation.
 
-Ah I see, not sure why I didn't see any build issues in the defconfig
-builds. Maybe this driver isn't enabled there?
+Tested on MT8188 Geralt platform.
 
-Anyhow I can add the "ret" back here.
+Signed-off-by: Arnab Layek <arnab.layek@mediatek.com>
+---
+ .../devicetree/bindings/remoteproc/mtk,scp.yaml        | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
--Sumit
+diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+index bdbb12118da4..9f6dca94ff40 100644
+--- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+@@ -55,7 +55,10 @@ properties:
+       initializing SCP.
+ 
+   memory-region:
+-    maxItems: 1
++    description:
++      Phandle to the reserved memory regions.
++    minItems: 1
++    maxItems: 2
+ 
+   cros-ec-rpmsg:
+     $ref: /schemas/embedded-controller/google,cros-ec.yaml
+@@ -123,7 +126,10 @@ patternProperties:
+           initializing sub cores of multi-core SCP.
+ 
+       memory-region:
+-        maxItems: 1
++        description:
++          Phandle to the reserved memory regions.
++        minItems: 1
++        maxItems: 2
+ 
+       cros-ec-rpmsg:
+         $ref: /schemas/embedded-controller/google,cros-ec.yaml
+-- 
+2.45.2
+
+
