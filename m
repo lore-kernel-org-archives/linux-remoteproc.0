@@ -1,201 +1,172 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EDA3F0A84
-	for <linux-remoteproc@vger.kernel.org>; Thu,  7 May 2026 13:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F993F660E
+	for <linux-remoteproc@vger.kernel.org>; Thu,  7 May 2026 13:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778159681; cv=none; b=SEFXBhA7CUX41WS/rVpV/xtd+7JgTdCUHkiGFw5l9FfqzsdbxOc7oXlp15LA/DKcEHKE7ePCDtHjmGN3qVYFYsO1i27mOPGLOz8RglGDW6h1ZEQ9efAPAKb4E0rKxTXbk3zVET+OUY+YuFmr7NDZQGmCzyxScMlJsE9RiFWex6s=
+	t=1778159754; cv=none; b=YO79NaLVCfg+qZAEsES5xWwpDjKJDboS/MTbFc18FVWtwY3yDsdrCC4V10RAj/gJ6GHXYcV6f34xyk4rgkw7LrQGb6IBPu+Wuua00lkAHfCmteCuN6xp9gP90BzomarjL3msuVayscigMBIgcfqWHrPH4SLlMGSCUHYcw+ykWEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778159681; c=relaxed/simple;
-	bh=ZhTdEpf2MNFijll5W3x2vK+23ZDC6tNbNnY9iCWqGvM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=fAPc/E+DqQi3cFmyUbQ8BvZKO2FTkyHRjRmqM1inoLZhlp0pcwCvINgroj2xty/J/dnAHy2a+dP1u6L3UG7oXDzATPdWSdeGL0uMPZgFYOcjVkKl0JGOM0+z16VGf32/w9wJCeX7xTlggo1RjyQxOV8kQNlqNn6Qx5Jl3gDva2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b=UNzrdjiu; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1778159754; c=relaxed/simple;
+	bh=43ZNwjCoR/Xdai8NvV6N12RLoUIGmkzxfRExATYKZ9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BIQYF9BkzCzzznbTSCV27e3e5fw/WMQt34vqI8PUa4DyHafKiUEUJAjouKSaaKUgvbq7sEkL1G8oYFba2VSfoRjN6VTkveUaOZfumGZKqBZdSfgZn9OuQPpCZfg7uKcRRwKt18Q3u2eczD9eflggRcXKrnzXVpsDpvZqnHQQP+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bqTgoeQA; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fAdFb3Ku; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20251104.gappssmtp.com header.i=@baylibre-com.20251104.gappssmtp.com header.b="UNzrdjiu"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-488d2079582so9323625e9.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 07 May 2026 06:14:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bqTgoeQA";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fAdFb3Ku"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64795pS03463973
+	for <linux-remoteproc@vger.kernel.org>; Thu, 7 May 2026 13:15:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	H0CO2I5xKatSdKnYvy9OIeCm6tMs6uEinaGoRfuKUHY=; b=bqTgoeQAwCVNNsGG
+	pWUSkhVD0TSIoLcUi2g4m7b3vltI2RLEymnB3+EHowInNh+Bk8lxOR5c5VPgN9cb
+	NKc2iZEUfQ/T0b43Onp0MYOqIP4kAaANBjEFIUeBgFbqqGJwU1FtIGYA52c7hFCk
+	bEeHOIUqS1sZf/PTTWYhMNl5bMEiO8ZMptbcrFeZtl2yosTYPtHYqgrS1IY10eKD
+	gqgqqLQ3gHbLqk1dLzlj6dfnFXmXQzY4d0BIy0Mr4WMGOf6Cp/AQgX7EXkO0vvVv
+	u/BpsFiCSgYmqESjxBL09ssAIt21Raf8jsHPh17ySaY8M1mBhd5bhwyoC1WRZ4QE
+	WJctuw==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e0hvn27cx-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 07 May 2026 13:15:51 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3594620fe97so1804943a91.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 07 May 2026 06:15:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20251104.gappssmtp.com; s=20251104; t=1778159677; x=1778764477; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PMTg4x+eEXsPu7Tgk5l8N+6jmxWHQBVR0ARsPIG0eJ8=;
-        b=UNzrdjiuoS4fURntiwfLsCitXt7+3TAnqCOn45Zk/ctypBCltkbr8ly38X6SvsdaIO
-         C0U9eQ5kAePnPtTTvj1T0xVZv48CBRWTPWx/xdFwBMPWb2y9zzBdhFOQ+Sua79Ht1SUp
-         MCXUchgU+6aSld2KG7BbfwuJ7eflw0cICGiBxM+3qelmsfmiWZoc8WCMRe18Kv4JvaBZ
-         v2FcdNBqX/OUaSjz5WoaouN7RmWPpI8rPScWgWMJu13n4OJ3bXn5fEaeW9E/6Sd6vbb8
-         l+RU12AS0ZYDJCmWYBx07hyqvNNPbKk12Qj/hghKtaxJN1AlfRUSLIIQ2pPCRVtnQXnE
-         niXw==
+        d=oss.qualcomm.com; s=google; t=1778159751; x=1778764551; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H0CO2I5xKatSdKnYvy9OIeCm6tMs6uEinaGoRfuKUHY=;
+        b=fAdFb3KuDIX4BgYEFAUGAxYAiXG+YjQrpbCuxaX4VmceF2TGgrKNWYZw2AcuIT1FH/
+         G3Si7AJiLHRa6uUMYeGYekPgl7Y9IwlxkFB1HftFV7XWzZsFgML8GScxYJCayeSVUhc3
+         aeBGA3ITF5pFM9pPCstvTxtQRAZYpEFtS6P7ljOIthp/+2k9QpLubyoTWaGK5jGyOGcA
+         FSeijz7ysKLZJxP0dwyGkFTcd4VLyKqvfrDBwGtCIVDwhuxUaDBbUKl5t4VVcS7eiYHP
+         fE6AhWHLA35YqYSdj6vSdO2hzWq451FPcXr3HaFt7Ykoh8x7rtP3jYPHIbNoq/qyergg
+         EezQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778159677; x=1778764477;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PMTg4x+eEXsPu7Tgk5l8N+6jmxWHQBVR0ARsPIG0eJ8=;
-        b=rZKJBZknyVeD26SjOC4/qvuMaJEnHAzFZV6juU2d7KwQyjMaLtTfgFu2pTfcaIlNM3
-         zrTiBexDDfLsk7uzmzxNQihkGBUiuOCH6PdFNkCF2Q6IJMW2CXyZbGH4XorxuJwigr7t
-         aCa/X0CYS+dvF907XoeglAc0/76YMkrI/Mybq5rSvpk2tKYPnIRquTkgDoDbMtn3XTTB
-         CWAkSD+d3VluaASiegmk5Guwdi/myQYtiwQbK64GyY87PZvvZh2RBvjubuQ5YvL1hHWZ
-         0jUxlRUCEkyBWrJZFEf/IrnkdEqz0UUDI/MxAVYkyRrdpjGz3Pvwrap88jj52cPMO0hL
-         PNjA==
-X-Forwarded-Encrypted: i=1; AFNElJ+pcQWl/pIsiI0tdPSutzdXDM+8z3sZqgO6NSIoztmZqkBTGhwHaVhkoESR1rEywf6JHPzXhKM6WkDwNGhTxDQu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpprM9/MBM5yNugV0VuHoAhtcZDen2inVtbLSXUVkW0Xnf0s16
-	quvGOpyjoaTSLZczk8+/m9fBZosg2eH7nD7cnAep6cFJ4+WDdGWTAhaAA4cTfK6w+f8=
-X-Gm-Gg: AeBDieunLn3tljVdl9h67atncqd8F94dWsVHnwa9Q0efoqK9bxuQj6Kn8SldTXgPsc3
-	S/GXslI7kZNJhyDNNDi57k4aKxbv0DlVgx1Ho3tuK91g6P1vscGGuQS4cGDN6OVsrcdql08ul1D
-	Ai0sNVHa51nODwurqP+C4j6ANIz4VExzGmiKiNc9MXCZ6w+9zIrskD/gmN+vBj6hoKC7Y1EyM5U
-	1n8mbFjAp+gNVbx9vKMp289dtX2tO9IpcEc9WNpn0/G4s1L2Emcvy8me8wQr6dyv8a16MCZztYL
-	1bWsbWOqKRiYd2eZRFOuXKW1N4lljbqxQN8GNGDt7bcm3giBMyp/l6P37fKIB6M8DwfCHuEDrxj
-	gGPD7Wd7eVDJhK+NriAcU5zad2u9q9XXmK9s425ruWhEoUpB4vmMg7wcX4fIfGHpEwGYCefBj6I
-	pTx+TI1EGo49ggRLWopXKEulvdSc9QCqzzXX3Cjv+B
-X-Received: by 2002:a05:600c:4f51:b0:48d:1a94:56c with SMTP id 5b1f17b1804b1-48e51f3054cmr140580965e9.18.1778159677055;
-        Thu, 07 May 2026 06:14:37 -0700 (PDT)
-Received: from localhost ([2001:4090:a246:83ca:9bf6:accf:de42:f1be])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-48e53891163sm136382465e9.2.2026.05.07.06.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2026 06:14:36 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778159751; x=1778764551;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H0CO2I5xKatSdKnYvy9OIeCm6tMs6uEinaGoRfuKUHY=;
+        b=Kwf/xGW5fDkiyH6kwIEkhAleGLZt6s+fuoAmKGZOyNAgaFdzzHfBj3VeqRNpg3UUkQ
+         KStqtdXnPi8tVgrhJDIRR4qLAqP5cqWvOhI5zo/N7UJVirSrVGdcowTIVfziOCnPqK4A
+         +h25JvxXiY/NR1I6aUp35PSLJ4RXuLANWCLf79eBN53LiSsZ1BdWt/aVvLA9n2W6RdVS
+         DrAUwGxqlA0bNpdE+lc650zW+FQv4y0U9T9g0mU9yykTVSUAVb5iuQQT0s/S3JR2kQtD
+         Glp6oodFlUh5UOyUCol2dnYHTP1C4hdTKR/M+XKCPfwyphpwLOILPF/a4udracBi7J4M
+         G8AQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/nnpPTeEyQy5u1D/Mub440kSM8ugXd2Zq/KwhkqVjeeU1eHcPin1c8qwWJRBBE0eNjj/c08xNuwe56vUVHrjQu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyTvr+U7wpFNMuTyXRrFUimvSSn9Dcesi1aXLqD7xI8zrpWtRw
+	baXSBhjnOcmlvt5ZO9VZy94Nrt2qE0xvCOe0V1J1dYUf8yYu+ptz1e9OOfNbizI89miCnxZkFwb
+	MBjcYundeLNMNyDI6W+k8HO7RQMG6SZm8NlhqDD6QVLdKRvwS5sFNvbONeYOczXkIifDlLaxntH
+	Sqixsj
+X-Gm-Gg: AeBDievyVm5DE0zfoGTgElnCs+ocbzJJnKgMPsaZAKu3nDSaGNyc5e+vpI4mn4BjwuE
+	2DEG3/2g6Cdopv8wy/Q4FFbpgCS/FIaUVzsIMe4BtaRUP0etBT2rOtL0f/BpMGeuFHeUbygWXo8
+	ySScZ2kr7Xowq22jIJUXHXdUXEe6pZtmFQvB3eCFmzco2M48lwEKvZWIF5WxJXRvByuL4BIjjMv
+	U+nP1aA7evvR/NaDAErtJPSQ9TJ+eUUyt9BwxFaBTMejuyIJdUhahZUGrlQ6th7xtPnM6CNB64T
+	Cs60Mb5UI9GTtuM3BVmj0jvZNdUZGKQK7Vjoqz3XLAm/vlDiRTgD6pspmzi2zWZwBoX0v+NNeN4
+	Ed+mWWQob4Rr/YnfGsALVvp++igLQtZMS8oSdgjUznU5C67BpG6YMWf9+OTg=
+X-Received: by 2002:a05:6a20:5493:b0:3a7:1d55:b634 with SMTP id adf61e73a8af0-3aa5abc6086mr8626729637.38.1778159750481;
+        Thu, 07 May 2026 06:15:50 -0700 (PDT)
+X-Received: by 2002:a05:6a20:5493:b0:3a7:1d55:b634 with SMTP id adf61e73a8af0-3aa5abc6086mr8626671637.38.1778159749922;
+        Thu, 07 May 2026 06:15:49 -0700 (PDT)
+Received: from [10.219.57.29] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c8253790c29sm2220707a12.11.2026.05.07.06.15.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2026 06:15:49 -0700 (PDT)
+Message-ID: <63723178-79e6-4339-88cc-c0fc4c4d7b6d@oss.qualcomm.com>
+Date: Thu, 7 May 2026 18:45:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=1cd2ce29e617ccf25a0057d7944a172c6840176cfdde9913103d3dc41b58;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 07 May 2026 15:14:25 +0200
-Message-Id: <DICGZTCMDWHK.HMQMCB8M32ZV@baylibre.com>
-Subject: Re: [PATCH v4 1/4] arm64: dts: ti: k3-am62a7-sk: Split r5f memory
- region
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Nishanth Menon" <nm@ti.com>, "Markus Schneider-Pargmann (TI)"
- <msp@baylibre.com>
-Cc: "Bjorn Andersson" <andersson@kernel.org>, "Mathieu Poirier"
- <mathieu.poirier@linaro.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Suman Anna" <s-anna@ti.com>, "Vignesh Raghavendra" <vigneshr@ti.com>,
- "Tero Kristo" <kristo@kernel.org>, "Vishal Mahaveer" <vishalm@ti.com>,
- "Kevin Hilman" <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>,
- "Sebin Francis" <sebin.francis@ti.com>, "Kendall Willis" <k-willis@ti.com>,
- "Akashdeep Kaur" <a-kaur@ti.com>, <linux-remoteproc@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>
-X-Mailer: aerc 0.21.0-126-g9e77103592fe
-References: <20260429-topic-am62a-ioddr-dt-v6-19-v4-0-fc27d6ac753c@baylibre.com> <20260429-topic-am62a-ioddr-dt-v6-19-v4-1-fc27d6ac753c@baylibre.com> <20260505124121.hffywentvo5pusfx@glowing>
-In-Reply-To: <20260505124121.hffywentvo5pusfx@glowing>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: soc: qcom: smd-rpm: Add Shikra rpm-smd
+ compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Sneh Mankad <sneh.mankad@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Jassi Brar
+ <jassisinghbrar@gmail.com>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+References: <20260430-shikra_mailbox_and_rpm_changes-v1-0-61ad7c57ef27@oss.qualcomm.com>
+ <20260430-shikra_mailbox_and_rpm_changes-v1-1-61ad7c57ef27@oss.qualcomm.com>
+ <20260504-romantic-smilodon-of-unity-71d7ce@quoll>
+Content-Language: en-US
+From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+In-Reply-To: <20260504-romantic-smilodon-of-unity-71d7ce@quoll>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA3MDEzMiBTYWx0ZWRfX4wUN/2m+02p7
+ zXiAi+eLjlOOdBta6AuvnB0kO2AubXGnLQFju4q9VtehQdrnTS4LZURvdwCxSUpawWDglwiqj0d
+ Y6vHSbNO5XySlEf+ba4Yc8/GolWrBKVOf07iDhlcqIQEyIWGwnqNF+WcF8AK7eILtP852RxkkPr
+ PjNa0yhnwWOdEzDnsluA5dXzNjMMoukUKzUaL/N/k0b0n9fffs2S/H8OzC5WvbW/aiswDegwob4
+ S8JuG7CB+aytzjbyzhxGH7jSwgF/56W3m9QFRzLg1Q8wNyxO6/FeuEXeRiBcdZ9MJjJxosUXx2+
+ F0eUhE/ldVw/BHQSb6VLF+keaJE/HOF5kFLp28VdsO4iYO7Gd2t2aVOFrjvH3E3+F3MCpF7EPn9
+ EpVpx/XRQxrwAWffgAAC8hLuI9DAxvA0Vyi5NzztPFvW5Q0VM//P4Sz1UsJ4afUNbYlZyOU5HjA
+ GkfNvWB+w/eCipLrQnA==
+X-Proofpoint-ORIG-GUID: rH9ehFyg5vG5UCI0dWAFrdjyAmGQ3oKr
+X-Proofpoint-GUID: rH9ehFyg5vG5UCI0dWAFrdjyAmGQ3oKr
+X-Authority-Analysis: v=2.4 cv=ZZ4t8MVA c=1 sm=1 tr=0 ts=69fc9087 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=EUspDBNiAAAA:8 a=-pAn52T9RjbIQf_sGhAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-07_01,2026-05-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ phishscore=0 clxscore=1011 impostorscore=0 malwarescore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605070132
 
---1cd2ce29e617ccf25a0057d7944a172c6840176cfdde9913103d3dc41b58
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Nishanth,
 
-On Tue May 5, 2026 at 2:41 PM CEST, Nishanth Menon wrote:
-> On 15:22-20260429, Markus Schneider-Pargmann (TI) wrote:
->> Split the firmware memory region in more specific parts so it is better
->> described where to find which information. Specifically the LPM metadata
->> region is important as bootloader software like U-Boot has to know where
->> that data is to be able to read that data.
->>=20
->> Signed-off-by: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
+
+On 5/4/2026 3:27 PM, Krzysztof Kozlowski wrote:
+> On Thu, Apr 30, 2026 at 03:14:56PM +0530, Sneh Mankad wrote:
+>> From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+>>
+>> Add compatible for the Qualcomm Shikra rpm-smd device.
+>>
+>> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+>> Signed-off-by: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
 >> ---
->>  arch/arm64/boot/dts/ti/k3-am62a7-sk.dts | 40 ++++++++++++++++++++++++++=
-+++++--
->>  1 file changed, 38 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/d=
-ts/ti/k3-am62a7-sk.dts
->> index c1e9067b3bdd5ab0591541d4685bb17a5dac4f65..6f2ee93c7be141ee5ae3f1e3=
-324d3a060db069f6 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
->> @@ -59,9 +59,33 @@ wkup_r5fss0_core0_dma_memory_region: memory@9c800000 =
-{
->>  			no-map;
->>  		};
->> =20
->> -		wkup_r5fss0_core0_memory_region: memory@9c900000 {
->> +		wkup_r5fss0_core0_ipc_region: memory@9c900000 {
+>>   Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+> Folks, please organize your patches per subsystem, e.g. all SoC patches
+> in one patchset. I saw you sent separate firmware, separate cache,
+> separate sram and separate SoC ID.
 >
-> Looks like you have'nt addressed Vignesh's comments from previous
-> revision.
->
-> https://lore.kernel.org/all/DHS46FH9ZYZB.3BG6HVH832NAE@baylibre.com/
+> I was already asking this.
 
-Sorry, I was trying to understand the issue in that thread but I didn't
-and didn't get a response so I couldn't really address it.
+I agree with your point and will send patches subsystem-wise in future.
+For this time, since some patches have already been reviewed and
+don’t need a new version, can we proceed as is?
+
+Thanks
+Komal
 
 >
-> We dropped wkup_r5fss0_core0_memory_region here..
+> Best regards,
+> Krzysztof
 >
->>  #include "k3-am62a-ti-ipc-firmware.dtsi"
-> In this file:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git/tree/arch/ar=
-m64/boot/dts/ti/k3-am62a-ti-ipc-firmware.dtsi#n27
 
-This file line 27 is
-	mcu_r5fss0_core0_memory_region: memory@9b900000 {
-		compatible =3D "shared-dma-pool";
-		reg =3D <0x00 0x9b900000 0x00 0xf00000>;
-		no-map;
-	};
-
-But my patch is removing wkup_r5fss0_core0_memory_region and not
-touching the mcu_* definitions.
-
-> https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git/tree/arch/ar=
-m64/boot/dts/ti/k3-am62a-ti-ipc-firmware.dtsi#n68
->
-> I am not clear where wkup_r5fss0_core0_memory_region is now defined.
-
-It is not defined anymore for k3-am62a7-sk.
-
-> BUT, in the patch, we introduce:
->
->> +
->> +&wkup_r5fss0_core0 {
->> +	memory-region =3D <&wkup_r5fss0_core0_dma_memory_region>,
->> +			<&wkup_r5fss0_core0_ipc_region>,
->> +			<&wkup_r5fss0_core0_lpm_fs_stub_region>,
->> +			<&wkup_r5fss0_core0_lpm_metadata_region>,
->> +			<&wkup_r5fss0_core0_lpm_rest_region>,
->> +			<&wkup_r5fss0_core0_dm_region>;
->> +	memory-region-names =3D "dma", "ipc", "lpm-stub",
->> +			      "lpm-metadata", "lpm-context",
->> +			      "dm-firmware";
->> +};
->
->
-> So we go ahead an override the definitions of ipc-firmware.dtsi for
-> wkup_r5fss0_core0 here - explaining why the build does'nt fail. I am
-> confused why the ipc firmware dtsi was'nt updated instead? is this
-> something different firmware dtsi now? if so, we should split the
-> ipc-firmware.dtsi accordingly. Commit message does'nt mention the same
-> either. This right solution is to make up our minds if ipc-firmware.dtsi
-> is meant for LPM mode support or not. if not, split the dtsi, if yes, do
-> the mods in the ipc.dtsi
-
-We can update the firmware definitions as well. I currently only did
-this for am62a and am62p as these require the new format so IO+DDR
-works. But if you prefer I can make the changes to firmware.dtsi
-instead.
-
-Best
-Markus
-
---1cd2ce29e617ccf25a0057d7944a172c6840176cfdde9913103d3dc41b58
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCafyQMxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMiwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlNz
-QwD+K6cqc767M67zBw7vaL0hUeEw8dOTuH2ND3M1gilCBQkBAMKU6KOE5lZ9FFu5
-88v+RbDSuYzP0g6h//QRzeC/V+UI
-=J7j8
------END PGP SIGNATURE-----
-
---1cd2ce29e617ccf25a0057d7944a172c6840176cfdde9913103d3dc41b58--
