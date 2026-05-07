@@ -1,139 +1,175 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2B334FF4F;
-	Wed,  6 May 2026 13:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE97285C84
+	for <linux-remoteproc@vger.kernel.org>; Thu,  7 May 2026 05:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778074605; cv=none; b=WnAJevQHWqO9hJDZgAQ+s947IGbL3kh8maHZaQ1b+Bars5D8FLHrMql252FDBiFnKn97rvioJsOXeUoKY3Sz2VPKtcQm0Fm6JuIIeWTPV6Fb3TM2Lf6L5t9u+QFx01CmC7pM4WFNT1KRZ6XyPpgBIIf7uJ7DhVRwh6tZoInGyfk=
+	t=1778130262; cv=none; b=LCYjvxrSmEV+0hLTT5Y/UDI9zvc7XmoPT/U/L/4P/v4aXg8zgR44PkJ7B0e00WAUNEr4nEohu1jQdw1PncGF+Shnj+EfFWhjyJZDW9X5PRGREv4II6R8CjcmUK9pwediqGnWn72ZA9nu/sfHNsBr9ldX4B32iU8cEfi22unvnxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778074605; c=relaxed/simple;
-	bh=7I7M1eUDVF5088ev2jyWTqkJf4GORVg6OfRPDZkIzIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J+X35gTRPyAqCDWp155h9r0eNRs0wwJDQw1WBiSWJ9e14HAEVz73cGDVRaH/dX1cOyNeKZ0xKkQNYzkA22Gug4TK5o7SFncf4SHMT2u2HGRmmOX3EWdt4s0sH4t3Emd8sNF3LoiSYw8IQIaZvhP9Dw5wiUeJoXI6fBbGPu5eiVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJbOClFH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778130262; c=relaxed/simple;
+	bh=hgqjW8KfkqTcrWolB9guuKyPRLtFQrE2y7JWIKYzEvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BM22qiAdO7YQXUGqNofg28dvJTHyZRbtnH65l3c3ywsfmzh0UvBM7c1pfkC9qyN5T0kJ2NScB5h3K79DMeE0e4HGxliKzlkCZG45nXDAbIwxqYP07Hlwj2rM/IScYJ2r4+KCIQVsxdpgkPVDhhGZnMLL2FdtgiZ7DZUyI5SBrts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LO7AI3SB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=P+Q6ElVk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJbOClFH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9692C2BCB8;
-	Wed,  6 May 2026 13:36:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778074605;
-	bh=7I7M1eUDVF5088ev2jyWTqkJf4GORVg6OfRPDZkIzIU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EJbOClFHa2CcPRVkMYmz3+QesZYjQNBc5i5M+WR8ZnFT9UmFA+x50oAQQSJHu+wKe
-	 CKDdBcu44jNL7MH1Pyrr3IenoyMDkNSEABAhwHqFAn/+ZNZ/Ru37bg++86Ty4aioHL
-	 N5IHrimxJBe6wi+A/9kPXXbRDlqhk8j7H69HKEnsRDr+nKqVonKkbB6FioOrf5bMWj
-	 9HGQy1nIB2gw9ozVOnTFkBJvuNpLhFXBGunovGg103oANtLK7ie1csTZoX2AXucpP1
-	 pD8b2yqX9SOWfN/J6LLnlsAkljS7Ud+emFKAVa3IviQ4g5dCqsvTx79S+JR1fMJmhu
-	 Rt40RKlmr6k9A==
-Message-ID: <f4212885-fcfe-4687-ba1f-b8713b1ecdad@kernel.org>
-Date: Wed, 6 May 2026 15:36:39 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LO7AI3SB";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="P+Q6ElVk"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64744dhQ151728
+	for <linux-remoteproc@vger.kernel.org>; Thu, 7 May 2026 05:04:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=udpIyFeLuuX33ymGmzPtSW/W
+	6I5xBEaw/yKDVf5r3nM=; b=LO7AI3SBaYnt4ROPEdpYdRP8zwPlm/jqsw3QVPs2
+	N2BFAHROpPN7i+v+QhuTpWO0uzfzEU0SSjkHITB047Eak/tvPxrEIdcGARAEyaDh
+	yUL+w25b34apgLNyaHZUS3wOqHTwgfsP+IYJHT8ZcRAlDeU+vCZl5/YhlNnl8gEg
+	7YH81a5IHJF7EOUoQsJZp38AlkRf6LN4plyXG2yU3TpN1thKeUlBsIj5APdx/RJf
+	u4jw4s6G5Tw/Vx3zOvAIdpKaSbwEK4dNWuQsNP3fRq04EKRT8S03bCGHV49TuNGj
+	xPukBWGxaC42wtX1PJ65PYJj/ypzP/AjGEth+pc65kehyw==
+Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com [74.125.82.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e0kctr4ry-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 07 May 2026 05:04:20 +0000 (GMT)
+Received: by mail-dl1-f69.google.com with SMTP id a92af1059eb24-130aab78a09so462835c88.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 06 May 2026 22:04:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1778130259; x=1778735059; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=udpIyFeLuuX33ymGmzPtSW/W6I5xBEaw/yKDVf5r3nM=;
+        b=P+Q6ElVkI7/poSx+Vq1A4Y4nwQDbfRE9OD4qt9v28wunZUXPdIYyWB8Cng0l0wTUtr
+         ftVIw0vt6qY1fRS8F2LFmlIHAdNW5rCL3mnXz4derxkirYUaWwkxBLU2qZo6omdlNOG9
+         ey+UT+/5XMEkBbsFGIgSB/QLGam8pwcfmlsnyeYQjVn8x8JLWNIb7UreZIUGGTgU/647
+         wzfIdEB1WpAiguZsJch/sPs5tsUT1bDtBNODF4YYQNVd4MTiQEQUZ5bcGPho+4LLUbUh
+         NmiNKYZvsIX41f4bG4e7jASsS93ZWxy6PYqZQhhfUFxZalaQmj+vHSkmEr6GQT4vPkzd
+         6GLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778130259; x=1778735059;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=udpIyFeLuuX33ymGmzPtSW/W6I5xBEaw/yKDVf5r3nM=;
+        b=pSd9oPMp3v2f+oEpjmSiiPSE5iAmZQ0FG6UNiXQZFGwkEqotPEjCUfp9z5ZSUaZbTL
+         tZn5WYMFH4X3lEizv1IwTgO8mABWaJxKLfGcDAp1IjSci4eRulRAuhbM1DswM2PAiJ2z
+         7nLDYjxZP8IEsq/2E7PERowrgiVAMtZeFGJOQxOaL+9S8Z0vTRCjPmPYBp3gc9FjTBU2
+         xWygVpEChDAHxCn4yCOSk4I8Gg0As09hCkYmFPUrb7qXamdXyEf82epgnTGcPP66X2oH
+         eEe1rSyIUije2wYAvaTBLqcaaPspa9KRqEx5SdTj2KrkmlAz8IRqZb649YnHP1KYAwDq
+         +bCg==
+X-Forwarded-Encrypted: i=1; AFNElJ9HD1iQiDcyI2uHbg9XQ3fhFQIC2JRHwnMnqmKUXgHBkdDU0dLYvUUsAiWWgjfJGclgJ5dqiendTvbzaVRG2SnS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2QFrtBAYK+YmYdzr5C0QQ4wAUl53LElHyiUDi7NRleOF+alMY
+	J7rUmoFgS8Wa5XmW+28wqmduoX7eiIvFwu8IpzlNtDvi+ABuafXNTBKNKTqhUzBAVlJUCh8nbA2
+	iXOnJ79kNFsGzoBMAi46nxINfPC64SBuHOjig3eMLRFGZvCWTpYbglnGd+aWxIvo1IZIK5PYI
+X-Gm-Gg: AeBDiesAsE6PU/1pe3Njv5/S4V7kmvAl5AgKDr2HMs4+ZcX0k4+DWdzuAZDx4afIyPc
+	Z5lqHjcfHn0AFPKzUG22CwarwthDueg2Up9Q1enRY/wWNvQ316RVv2smiV2gY5XR+tAooN4c/3q
+	2xevu4YO9K42TajaYYKQi78HiOH3AnDam23Fgctdkm4NZnw6bZ8l0AH0wk4W3S6yJ4jxpN/IAaV
+	3ftNRFOfgDFFymKACgvd/MrzkgtlZY9jK+0CfMNRbwUKS/HbnX4l//g4sMvW/4XDnOg+LS3STbp
+	QAcfLRNWVs90eiwfnW6ihindVciHFD2EWBNiKG26TfmKVUaKL1V4oRsa9cL9rW//LhO0rq5uw7h
+	rUXl6GJ0dHv2rsNtdrIuXJl+Eehgobk5tRw38ER4V7JPiBSI/TrAK6HyLzgivq6drXkSnrSQX95
+	0=
+X-Received: by 2002:a05:7022:f005:b0:12d:e539:98e0 with SMTP id a92af1059eb24-131963a0fa4mr3238567c88.39.1778130259271;
+        Wed, 06 May 2026 22:04:19 -0700 (PDT)
+X-Received: by 2002:a05:7022:f005:b0:12d:e539:98e0 with SMTP id a92af1059eb24-131963a0fa4mr3238544c88.39.1778130258627;
+        Wed, 06 May 2026 22:04:18 -0700 (PDT)
+Received: from QCOM-aGQu4IUr3Y (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-2f56cec592asm7142762eec.5.2026.05.06.22.04.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 May 2026 22:04:18 -0700 (PDT)
+Date: Thu, 7 May 2026 13:04:11 +0800
+From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+Subject: Re: [PATCH v5 4/5] remoteproc: qcom: pas: Add late attach support
+ for subsystems
+Message-ID: <afwdS5euY8bxxA16@QCOM-aGQu4IUr3Y>
+References: <20260409-knp-soccp-v5-0-805a492124da@oss.qualcomm.com>
+ <20260409-knp-soccp-v5-4-805a492124da@oss.qualcomm.com>
+ <adm37MruBfXAjLpZ@baldur>
+ <7bd01424-e611-449f-b5e0-7c823ad3b978@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: remoteproc: mtk,scp: Allow multiple memory
- regions
-To: Arnab Layek <arnab.layek@mediatek.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20260506133157.3283204-1-arnab.layek@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260506133157.3283204-1-arnab.layek@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7bd01424-e611-449f-b5e0-7c823ad3b978@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=XsPK/1F9 c=1 sm=1 tr=0 ts=69fc1d54 cx=c_pps
+ a=kVLUcbK0zfr7ocalXnG1qA==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=kj9zAlcOel0A:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=DzB75-1vIS7bBwd3HdEA:9 a=CjuIK1q_8ugA:10 a=vr4QvYf-bLy2KjpDp97w:22
+X-Proofpoint-GUID: rHicsYvDBcSiRYpw6HZuUPwB_PPW5qSG
+X-Proofpoint-ORIG-GUID: rHicsYvDBcSiRYpw6HZuUPwB_PPW5qSG
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA3MDA0NiBTYWx0ZWRfX5jXUnY+PRgXa
+ 0NoVzf5CNOUJZhqcfHKa8LmUnf3LtxvkpRqUmKzyklrFjCS7Ui8g2CHjZHn8HgOylpt3ESs7RcW
+ 79Grn5u+FRLh0pzWqSRl8KhYpwVCDN6ZIDXBtDParcTNhaWOGfM89Yi5wx09r4hNVGJmoQS7bBM
+ XymrxrkSGGXjfADd7tlQmo5ySgvXHQu6QoxWn4nVVflWXU8A2ceJvCStsPgLjU1kN02tCsG0K/s
+ 0Rpom/NL24LkMSP/rvorhnvr0tO7MlHEXbgcxkeJojlndOukSHvP7KMhh+p8kBiRiXqIL2PYpnP
+ IRhwPyum6gYHUySvdHN263ofLO7pMMZZK1M2/6YTLesxlcpvUYckAsKqcyoMBjpEvcBf6JxwXRa
+ 8OHSpTPBvMmmpTVfeOAB3sSGtCu4drGqdvkvqJbVhxAxwKuzDSgKhXTijf3c9mSAlgdXCOLJToP
+ LJmtp5mFNkr5h7NTLfw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-06_02,2026-05-06_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605070046
 
-On 06/05/2026 15:31, Arnab Layek wrote:
-> Update the memory-region property to support 1-2 reserved memory
-> regions instead of exactly one. This is needed for newer MediaTek
-> SoCs like MT8188 which require additional memory regions for SCP
-> operation.
-
-So where is the compatible? Already there?
-
+On Tue, Apr 14, 2026 at 12:56:11PM +0800, Jingyi Wang wrote:
 > 
-> Tested on MT8188 Geralt platform.
-
-You cannot test binding.
-
 > 
-> Signed-off-by: Arnab Layek <arnab.layek@mediatek.com>
-> ---
->  .../devicetree/bindings/remoteproc/mtk,scp.yaml        | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+> On 4/11/2026 10:59 AM, Bjorn Andersson wrote:
+> > On Thu, Apr 09, 2026 at 01:52:27AM -0700, Jingyi Wang wrote:
+> > > Subsystems can be brought out of reset by entities such as bootloaders.
+> > > As the irq enablement could be later than subsystem bring up, the state
+> > > of subsystem should be checked by reading SMP2P bits and performing ping
+> > > test.
+> > > 
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> index bdbb12118da4..9f6dca94ff40 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
-> @@ -55,7 +55,10 @@ properties:
->        initializing SCP.
->  
->    memory-region:
-> -    maxItems: 1
-> +    description:
-> +      Phandle to the reserved memory regions.
-> +    minItems: 1
-> +    maxItems: 2
+> Hi Bjorn,
+> 
+> > 
+> > I still don't understand.
+> > 
+> > Are you saying that devm_request_threaded_irq() will succeed and then
+> > calling irq_get_irqchip_state() will not work? Or are you saying that
+> > SMP2P driver isn't reliable and we're loosing the ready or fatal bits?
+> > 
+> 
+> This says the ready state is getting from irq_get_irqchip_state()
+> instead of q6v5_ready_interrupt(like what rproc start do)
 
-Just like I sent some patches long time ago for iommus Mediatek media
-bindings - fix it the same way. Pity the patches were not picked up,
-even though sending twice, but that does not give you easier way to get
-incorrect code in. You just multiple poor patterns...
+Hi Jingyi,
 
-Best regards,
-Krzysztof
+I guess Bjorn is questioning "performing ping test" part. Is that really
+required?
+
+I'm testing this patch with Nord ADSP which is brought up by bootloader.
+I have to remove the ping test to get the ADSP attached, as it appears
+that Nord ADSP doesn't support pong. Are we good to just check ready bit
+for telling whether a subsystem/dsp is already running and remoteproc
+should attach to instead of powering up it?
+
+May I ask you to copy me on the new posting of the series? I would like
+to make sure it works for Nord ADSP as well. Thanks!
+
+Shawn
