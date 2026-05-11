@@ -1,73 +1,86 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011018.outbound.protection.outlook.com [40.93.194.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2581ACA;
-	Mon, 11 May 2026 04:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778475527; cv=fail; b=PHBfkeJ4MNnuLZ2XcDz539QohUDLf6aFU/DQEChJ2vVIBSUxc+G75CYomqhQGEuYX7doTqzNpTFhrztKBHyYREcX2vzKlTJqi8rDqJ++V9ffdDrFH61AdB0U+wWC84dBxN1bG3ftKosrmaYlTGD1sjXyQuk0HcvT0GAMAnHQsXw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778475527; c=relaxed/simple;
-	bh=bkRDw7aU/ZER+EJZUXSfpzw3WIShzdWXONJoI2FKiFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qduNZrHRbrrwUr+XV7/glrW940PNpKrJsbdODaJLzND8s9fENLRUSOBJo0XgyQvoYDOFmQWlC8VdaLgA1NNcSwr1MBxrpbDftfKUSmkXoJk9syFovOCV+t9EDcP8TBjwMdNdGp44OhI6LhOujCVpyI701ewnKJ4v18xwMtWvvQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MOt3OaHm; arc=fail smtp.client-ip=40.93.194.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9680D377563
+	for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2026 05:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778477741; cv=none; b=noqYAHzOUvqsp5c8OAQ4X+mxs4TGjSJzMqnTOGy7SDGsK1UBPdoTdgotQcWVQuBa/DqBE7teN1+rbF5MqEiIJL+/MPa8jJ66zEKBQ1Cw2+WzyeyoYWCyMgqRTxikjAlC4KTWh4poaUG1Kcw1AsjEvoBR+ny8Qm2n6Qt4/1gRKQw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778477741; c=relaxed/simple;
+	bh=jwzVGwaK8X12Fmx6Z2iPx6BVLyjWslbMA1jpIWzu2w8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pTi0vZHNnEqUjW0z/ZE7W3lpZAsZxOntiUCO4nnaKUFu4ahqsxeMrJNXab/drynRMszCzsXtkSWD6h3epbDA0CaxwZLOjc3oUWuAD+Kmkaf1Ys8S6lc3YomSCjPwsBgoZRbeJkoB9zi04TMwFnYlsuAaD4VjanqUO22CG5/prSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=T0ZFJr9l; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aH+O2Jjs; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MOt3OaHm"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hVRhc8U4c5KcsVajCsZgoWdi/giJElYDzIBiUSCfNreiK1gMLoZGfOWFO1xgUecv2Kws5p9SiiAUaTc6NOqQByICCfdpLGBbQK3Qtn85v/C6lyInuNy60Pl9BzojxPfGovpXIBpSaFs+Xs42W1BEHeAQhtkb5CBIdylsbhMhfhH5tGeXQEWnWf/90Mb8jDifJuRmcKJbxMpQ9j5A249SLEs/3rmUsHmthIQswXgpAR8/vkyo40rrMYA7btOzn/s1ik1+fjBZpE6Xz6T46FwLTEWHCzNyt+go9otCmVhbXN2T+1+CTHND0EuBc+3u9eaO06DnWHZtIcLdyg8SscXTig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kuzrfR/Mxgy+d8rXhjvSkFvDcWPZJwXKSWBS7v4vGbQ=;
- b=ZS12Sf3cpl7TqThCwvUK5GIfDJrWaeD9+Z39Eqjt5XzGEQarWa1B9XWB9ZxC1mag0dLHvbyk8UDDTuVmEmSMDUpRwJ1PcwmbYMqKJJ3isJ7a4gffbu4TEE6H28zZ3xN7HvXeP2jn7WkhSsITAfr8ic/6jXYHI2vg0veqlWr+Yv2KYMQZaGh6DQebM0IU5c5Ql4VhxRbDcX2yYKmnAG6FS+hk/ubsyLHnjHuiULYjOlrgAPdC3dRsiily4t9Ta1e7eFOdD3cCvfwFU96B7ag7EHUjz203kDHp1BAF/AS8MxVktYpW2rvxZOYlXktfHfV5+JxFNw41OOErJjX1PBYG5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.195) smtp.rcpttodomain=bgdev.pl smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kuzrfR/Mxgy+d8rXhjvSkFvDcWPZJwXKSWBS7v4vGbQ=;
- b=MOt3OaHms7OTBsCywHsmoFHeYdUjFhWrN9mCIieb41ERLQMU123vQl+xwXQVoF+vQymx41nfwfru57FzllEdJ7iWFbrPP8X1laYcZUgCRc7JqoO6MDJy1d41rpWhVVNexYtFy+nXnwdiuJV6jyuV0zQPkjTad6fXD/yT43hUqOo=
-Received: from BYAPR05CA0004.namprd05.prod.outlook.com (2603:10b6:a03:c0::17)
- by CO6PR10MB5634.namprd10.prod.outlook.com (2603:10b6:303:149::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Mon, 11 May
- 2026 04:58:43 +0000
-Received: from MWH0EPF000C6191.namprd02.prod.outlook.com
- (2603:10b6:a03:c0:cafe::a1) by BYAPR05CA0004.outlook.office365.com
- (2603:10b6:a03:c0::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.14 via Frontend Transport; Mon, 11
- May 2026 04:58:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
-Received: from flwvzet201.ext.ti.com (198.47.21.195) by
- MWH0EPF000C6191.mail.protection.outlook.com (10.167.249.106) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.25.13 via Frontend Transport; Mon, 11 May 2026 04:58:39 +0000
-Received: from DFLE204.ent.ti.com (10.64.6.62) by flwvzet201.ext.ti.com
- (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Sun, 10 May
- 2026 23:58:38 -0500
-Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE204.ent.ti.com
- (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Sun, 10 May
- 2026 23:58:38 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37 via Frontend
- Transport; Sun, 10 May 2026 23:58:38 -0500
-Received: from [172.24.18.18] (ltpw09g66v.dhcp.ti.com [172.24.18.18])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 64B4wQLD2625874;
-	Sun, 10 May 2026 23:58:27 -0500
-Message-ID: <99819177-5911-4271-96b2-6f0eb7f9c42d@ti.com>
-Date: Mon, 11 May 2026 10:28:25 +0530
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="T0ZFJr9l";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aH+O2Jjs"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64AMQlGm3509047
+	for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2026 05:35:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yCDZHP2KRhvOmwGk8RIlLDxbs61cjpW1FARVt8QP0gc=; b=T0ZFJr9l3iq5llZT
+	mqi9ljNX+R/bdMi8xgHgSYCJjwZqfQbSe7gGca1QoqgdxsCsU8dCvuEZcuAFVUDV
+	ZoXxo6NlW1w4LOmRE+IS7jn0qLQMjau54rjA+F5Pd7UmYw0pY8hyIH6f3fPBScaX
+	CT1fD5JM2tg96KW8LstmSQkozNvcuYVkqgB4VPX+tA4IrYvOnG4SX4A4zQyJDD9l
+	N8Z5QUx8diQe3yx3uFcimLz+Q7G6NTpDDWjuxPhPMwVgDmuGt+eohOkSRQoVY4OR
+	LGF7wNaviY+FLop2CuXJH5CeOyLCyyn7KgE7ezZcwrjqqpd818uyqoSuezKQ318i
+	GDGOUg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e1t9q4xr2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2026 05:35:39 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2b458add85aso43191605ad.2
+        for <linux-remoteproc@vger.kernel.org>; Sun, 10 May 2026 22:35:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1778477738; x=1779082538; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yCDZHP2KRhvOmwGk8RIlLDxbs61cjpW1FARVt8QP0gc=;
+        b=aH+O2Jjs2LOpuOTGeoPB0H55JxKLLn4NXm5XHltNK1fQzvjLQTjyw6kwiNfpfyh9fq
+         hHmqmsAqhTUHS20+RCyiBYnSOK5SEk9yS8GHHdQM6zr8kB/wW6cKq75gz/uQySFdFC2s
+         AIHZfChr/j3iTKQrEcY9NemiK7qWaPdMqNi/745MXvbBL/39EH5sAKweQrwcEjBKyOO7
+         g7Usnn0t8ajxoh9puN64PFxpNT+Ru22HXqnESwdpEnjV87fmozrUnxdvBd4zshzqF1yV
+         yukSWwFC+rRNv7Hw0eZgmtAw84V489LEqfVCZNFSGArB4k4n96xkIyWjp+3iTOxdszk3
+         7RCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778477739; x=1779082539;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yCDZHP2KRhvOmwGk8RIlLDxbs61cjpW1FARVt8QP0gc=;
+        b=ZScg3R90I+WZ22X19VoHSfeNiPsKlrZ+7WFdzj10mc4dwYuyWHTOIbmHYRJTMmLS8A
+         8dyg3GoTVeMhtQHCI8WSSznUmqCH98Vwel37oQnBc/4OSXYN5ul0aUJ3JNmjUMm/7Qcz
+         xJcEZOUoWO4qVC8riumPDb91od55ckRpNB88+iU4jwNuUtSv5Y39YYTSNmKH+nUvlmYl
+         2ZjWvfhUkN5DEP6KYAKAUZrE8A6m7YriNCeTAY6cTG2uXgIrTVuME8WkEl+pGzngpNeJ
+         3BTGA/N8GY640h5HPYinWYy8xfGtDOZ1rpHI8IDotKz2CV9GpifJlCta3DXEY+mngTda
+         gVLg==
+X-Forwarded-Encrypted: i=1; AFNElJ++LCaj0WHrJN3Biby1qE2S6ACux+o39DnRMRLk8MhO5XhKr/0VA+kQJF+cG5oZodAXpIYUxHM13fSG7Wd+5Yn9@vger.kernel.org
+X-Gm-Message-State: AOJu0YybRZuW/lIxMU0rkXk/Fys5xblGgq1FfmgRh5MYZG7WordBxAFh
+	++EN/ZR2wBD5Ot1JHgwPgJMr2cHc+TVfOYTp6igA1NGUhbca2U85mK0XaRmdML0oxNBVtS3aUzy
+	rzAIhV6/4r/IqEcgueeqGduFTl6U/y78HirgETK6ehzuawq1UzZ/AU/Ff98m/bWxyrP6zKmmT
+X-Gm-Gg: Acq92OFzGFYHKXrI9nVNIjkBmdX1IUNcL0rDWxq6/d+MOx3uJzEcFUqrK9va6wWA6On
+	7AD2HvUfGmAptvxPqyMlj3XWKTyv2OUh05CL616ZYtsQWV5wQS2SH1h86UypzllBk3YFvqyYUF3
+	nO2LPeqtK5+onvzOV3R4dUjYYm8hWyByzq1oHkvYCe/Yna3DiPD/SWnny+BBUG7F5nqKxGB8QIu
+	Zn+wsxYMiShAZj2M34FJSasv7J7EHSakG2FHbAR/XRzhfLfAhXQUIjTPEKIfz/hj8pouLfP6fBt
+	Cdza/mi5rWoPWuRIS4VlGDA/Mo/5NsCHqh2+BYaNZwlZQ0j6J41uUoOidsYSL+ITL/4R8akxZP/
+	gI0Yd0CUaqcPHi7KQsXmtWKcyfnIhV7SttEl4XL7rjcQFkdQ2vA==
+X-Received: by 2002:a17:903:1a2c:b0:2b4:6470:760d with SMTP id d9443c01a7336-2ba78f473a2mr242876465ad.14.1778477738604;
+        Sun, 10 May 2026 22:35:38 -0700 (PDT)
+X-Received: by 2002:a17:903:1a2c:b0:2b4:6470:760d with SMTP id d9443c01a7336-2ba78f473a2mr242876025ad.14.1778477738092;
+        Sun, 10 May 2026 22:35:38 -0700 (PDT)
+Received: from [10.218.34.110] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2baf1d271b7sm88946045ad.14.2026.05.10.22.35.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 May 2026 22:35:37 -0700 (PDT)
+Message-ID: <b66df3a8-bff7-40d2-b378-43235b79a8c3@oss.qualcomm.com>
+Date: Mon, 11 May 2026 11:05:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -75,298 +88,87 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Arnaud POULIQUEN
-	<arnaud.pouliquen@foss.st.com>
-CC: Shenwei Wang <shenwei.wang@nxp.com>, Andrew Lunn <andrew@lunn.ch>, "Linus
- Walleij" <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	"Jonathan Corbet" <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
- Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	"Peng Fan" <peng.fan@nxp.com>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-remoteproc@vger.kernel.org"
-	<linux-remoteproc@vger.kernel.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-References: <CANLsYkwvL0Z3+12MD=J+Dc2yAU2T8ypizyG=6AhYoWOh55odHA@mail.gmail.com>
- <472f85bd-42c2-40c6-abfd-b76924797069@ti.com>
- <CANLsYkzt9xUczxSU28u-TfZAAjr0ufZKXAj8Eqfq=45gufXW3w@mail.gmail.com>
- <f7ef3417-eb84-4467-ac72-a9bc8b0c81e8@foss.st.com>
- <21de8440-adf7-454b-acfc-06e50882e075@ti.com>
- <4c526816-b127-43e7-86e9-eee4dc1152bc@foss.st.com>
- <268f8e00-91bc-43ea-ba95-077cf859e7f3@ti.com>
- <9e2492d3-8753-46c7-8db6-5f1a80b4f2e9@foss.st.com>
- <db4c18be-1c8d-4227-9fcc-1d25cec50e37@ti.com>
- <6917e3d7-8c6c-4e63-8eca-5308621ec3e8@foss.st.com> <afzIABSh1xtMEGbf@p14s>
+Subject: Re: [PATCH v2 4/4] mailbox: qcom-apcs-ipc: Add Shikra APCS IPC
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Jassi Brar
+ <jassisinghbrar@gmail.com>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+References: <20260508-shikra_mailbox_and_rpm_changes-v2-0-ab76fd9e71de@oss.qualcomm.com>
+ <20260508-shikra_mailbox_and_rpm_changes-v2-4-ab76fd9e71de@oss.qualcomm.com>
+ <n26qxqcft7rh24a77h454py2ye4kgzxiy6ib363vmuatp36mp6@otavb4hckcdw>
 Content-Language: en-US
-From: "Padhi, Beleswar" <b-padhi@ti.com>
-In-Reply-To: <afzIABSh1xtMEGbf@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000C6191:EE_|CO6PR10MB5634:EE_
-X-MS-Office365-Filtering-Correlation-Id: a713aac1-a590-47ff-2ff8-08deaf19f7d3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700016|82310400026|3023799003|56012099003|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	0l8M33VNjrJmmAL1vlwh62ffIswToR2MzaHhF3jrP/dRQ/sAiRPRJHJ54zN3LuYDpqNVX344iMXqZ75GC+XPbriowahUJBvBkUAXviEWRm2s1yhrn4ScalsV92n43Ib9RRZiwrbrXSvEcI2REpTXQ/wZ/69cejdMlSoLbYDFJpTLyZALgJf2K+flyD40fvVFUD8o9tEyHcacL63Odqt2oqCPJAYioSzhAp0Nm/rfx2LA2W2i8gQwZuiPaMI2+pVjZap1JXMQAV4wJQz2Hc9/OmNW7cTVmTuNWWseijjxdLxzMmeh7U36Fnkr3YOieb9MSUHtOHwsSB0zpM2SyIIC8V38e4zp1495F+HbUYuhZ7y2yJiOKpLMXp0Fzlq+vJbd2PYuIDWAJD9BQlgGIzw7sCwwGkKO35+VJOQc/dodHuDRg4zOHbS23PNXkV5DGKRIRhFI9mH65IiCmM34xz+et16MW9ruW528u8WUFHuIRTazG8bnegOqZtaDVurRQ+qHiyIjBsiy5YRNHiZlPheDQ7Ch/4V7VpTyrpEfyCaaw6wNxvYgyBtttuUuZKpNlg6s1RANV7fohoA4iCOJLyB7qbmh1vbAwmUAFAT0PaNZhPP1LbIJPiy5lz0iPSr8ygXHgzCJTmwvqvVfM12tCbtHmsCffwikK44TKBaFWTrdNcvDGLIH7r+IbgMkU6ZuVDkKOMY5vRM6+ngppxXsPh3IbK5R9cG4COdUOWU4kvO5i2U=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700016)(82310400026)(3023799003)(56012099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	tIGpsyd34siFj55QdOsRPFCB+7ljgbt8aE/CpnyLzhKFxKo4Na0+ocO4eabSXR6hahjJGHz2La1+ID2DDhJYw8D0qbe0k9C4FNvDMZVt66cXVOT4p5BiPCoALUr6If0LvNp1ibXzQvqqy2rLA9VLtiQmVGFH3R+IRai4SHKUbOoGSUBND5AMw5a85VuUSCpyOXAktxVgkFOERfb8BmxaHJtzQOMJrOqegsBpV7aqvVAzHuD89+NTbWsESSyCS00zl5CRjNwk1pWArAqMqzm0hai32NeeoXOsLEwPCCdndKpCdljnspB5/BmSwLYuyeSdYHdzstl7fKvuTj1JJpipgU02dqaRQ3eZeXFkDL8oUm6u3kgCDuz5cB3gDoA+dKHxLTZzk3k9wNNWEAz5ZLT8kPsKsZMdySeel/Sy6g0L3uVXX98dn3yVGGhwflIy6jC+
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 04:58:39.8752
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a713aac1-a590-47ff-2ff8-08deaf19f7d3
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000C6191.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR10MB5634
+From: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
+In-Reply-To: <n26qxqcft7rh24a77h454py2ye4kgzxiy6ib363vmuatp36mp6@otavb4hckcdw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: L5h35FXAgjthusk2yWpLlN5DVK29MgXH
+X-Proofpoint-ORIG-GUID: L5h35FXAgjthusk2yWpLlN5DVK29MgXH
+X-Authority-Analysis: v=2.4 cv=J7yaKgnS c=1 sm=1 tr=0 ts=6a016aab cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=EUspDBNiAAAA:8 a=f6HuTeiPA1jdPvv1JM8A:9 a=QEXdDO2ut3YA:10
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTExMDA1NiBTYWx0ZWRfX2fTaqm5jETru
+ owq68fdnv29V16G+ct07PEIcx9AmobVO8mjAcLwy3s+2s+KYNnBvuI3wwTRCv/5105MdlVN7UHt
+ CT+9xf4WBc8VJkA8zEXbyekuxplBCKRogaptFT+jSQc6VRbwMroFYWUzzZtOPL/U4/N7LKsxTen
+ 7cvYycWyZSUYhhBgxRp4lQ3llxnhDXonM8LrtiCiqsXFISlpDdWGgfFIGLT67FZ0wHpG4I1OFqD
+ JVB1/HPIYlVFY/Yob1rArDYKZtef20DEflZa0oijxQKrl7OlR+RdrOsUopXy126bA+h5CklNTs0
+ YRCjYPuC1OHkp0z2KQ2SZD/vnjOGMAnsG9olrAm/gqLUDpvkLvUfwEBsy5Js05Go8HTyXv2bTo6
+ vKgy75+VxuzFbZX63k95Lrke+bE3OE5Kd0BhDtuVrXewVb0EF3fXmnasbvzFmFnrDj91wvr7k3s
+ FyUp8HPkJKSG9xmxijQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-11_01,2026-05-08_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 impostorscore=0 clxscore=1015 suspectscore=0 priorityscore=1501
+ adultscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605110056
 
-Hi Mathieu,
 
-On 5/7/2026 10:42 PM, Mathieu Poirier wrote:
-> On Tue, May 05, 2026 at 10:46:11AM +0200, Arnaud POULIQUEN wrote:
->> Hi Beleswar
+On 08-May-26 3:27 PM, Dmitry Baryshkov wrote:
+> On Fri, May 08, 2026 at 12:49:50PM +0530, Sneh Mankad wrote:
+>> From: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
 >>
->> On 5/5/26 07:25, Beleswar Prasad Padhi wrote:
->>> Hi Arnaud,
->>>
->>> On 04/05/26 22:34, Arnaud POULIQUEN wrote:
->>>> Hi Beleswar,
->>>>
->>>> On 5/4/26 10:17, Beleswar Prasad Padhi wrote:
->>>>
->>> [...]
->>>
->>>>>> I may have misunderstood your solution. Could you please help me
->>>>>> understand your proposal by explaining how you would handle three
->>>>>> GPIO ports defined in the DT, considering that the endpoint
->>>>>> addresses on the Linux side can be random?
->>>>>> If I assume there is a unique endpoint on the remote side,
->>>>>> I do not understand how you can match, on the firmware side,
->>>>>> the Linux endpoint address to the GPIO port.
->>>>>
->>>>> Sure, let me take an example:
->>>>> Assumptions: 3 GPIO ports in DT, 3 endpoints in Linux (one per port),
->>>>> 1 endpoint in remote (0xd) and 1 rpmsg channel (rpmsg-io)
->>>>>
->>>>>           rpmsg {
->>>>>             rpmsg-io {
->>>>>               #address-cells = <1>;
->>>>>               #size-cells = <0>;
->>>>>
->>>>>               gpio@25 {
->>>>>                 compatible = "rpmsg-gpio";
->>>>>                 reg = <25>;
->>>>>                 gpio-controller;
->>>>>                 #gpio-cells = <2>;
->>>>>                 #interrupt-cells = <2>;
->>>>>                 interrupt-controller;
->>>>>               };
->>>>>
->>>>>               gpio@32 {
->>>>>                 compatible = "rpmsg-gpio";
->>>>>                 reg = <32>;
->>>>>                 gpio-controller;
->>>>>                 #gpio-cells = <2>;
->>>>>                 #interrupt-cells = <2>;
->>>>>                 interrupt-controller;
->>>>>               };
->>>>>
->>>>>               gpio@35 {
->>>>>                 compatible = "rpmsg-gpio";
->>>>>                 reg = <35>;
->>>>>                 gpio-controller;
->>>>>                 #gpio-cells = <2>;
->>>>>                 #interrupt-cells = <2>;
->>>>>                 interrupt-controller;
->>>>>               };
->>>>>             };
->>>>>           };
->>>>>
->>>>> Code Flow:
->>>>> 1. "rpmsg-io" channel is announced from remote firmware with unique dst
->>>>>        ept = 0xd.
->>>>>
->>>>> 2. rpmsg_core.c creates the default dynamic local ept for the channel
->>>>>        ept = 0x405.
->>>>>
->>>>> 3. rpmsg_core.c assigns the allocated addr to rpdev device:
->>>>>        rpdev->src = 0x405 and rpdev->dst = 0xd.
->>>>>
->>>>> 4. rpmsg_gpio_channel_probe() is triggered. For *each* of the GPIO ports
->>>>>        in DT, it will trigger rpmsg_gpiochip_register() which will now:
->>>>>           a. Call port->ept = rpmsg_create_ept(rpdev,
->>>>>                                                                       rpmsg_gpio_channel_callback,
->>>>>                                                                       port,
->>>>>                                                                      {rpdev.id.name,
->>>>>                                                                       RPMSG_ADDR_ANY,
->>>>>                                                                       RPMSG_ADDR_ANY});
->>>>>               Ex- port->ept->addr = 0x408
->>>>>
->>>>>           b. Prepare a 8-byte message having 2 fields:
->>>>>               port->ept->addr (0x408) and port->idx (25)
->>>>>
->>>>>           c. Send this message to remote firmware on default channel ept
->>>>>               (0x405 -> 0xd) by:
->>>>>               rpmsg_send(rpdev->ept, &message, sizeof(message));
->>>>>
->>>>>           d. Remote side receives this message and creates a map of the
->>>>>               linux_ept_addr to gpio_port. (0x408 <-> 25)
->>>>>
->>>>> 5. After this point, any gpio messages sent from Linux from gpio port
->>>>>        endpoints (Ex- 0x408) can be decoded at remote side by looking up
->>>>>        its map (Ex- map[0x408] = 25).
->>>>>
->>>>> 6. Any messages sent from remote to Linux for a particular gpio port can
->>>>>        also be decoded at Linux by simply fetching the priv pointer to get
->>>>>        the per-port device:
->>>>>        struct rpmsg_gpio_port *port = priv;
->>>>>
->>>> Thanks for the details!
->>>>
->>>> To sum up:
->>>> - the default endpoint acts as the GPIO controller (0x405),
->>>> - one extra Linux endpoint is created per port defined in DT.
->>>>
->>>> This should work, but my concerns remain the same:
->>>>
->>>>     1) This implementation forces the remote processor to handle a single
->>>>        endpoint instead of one endpoint per port. This may add complexity to
->>>>        the remote firmware if each port is managed in a separate thread.
->>>
->>> A. Not really, I just chose 1 remote endpoint for this example as you
->>>       suggested to. We can scale it for two-way communication via the
->>>       get_config message like you suggested below.
->>>
->>> B. Isn't it a bad design of the firmware if it is handling 10 gpio ports
->>>       in 10 threads? The logic to handle all the ports is the same, only
->>>       the parameters (e.g. line number, msg) is different.
->>>
->>>>     2) Linux, as a consumer, should not expose its capabilities to the remote
->>>>        side (in your proposal it enumerates the ports defined in the DT).     In my view, the remote processor should expose its capabilities as the
->>>>        provider.
->>>
->>> Agreed on this.
->>>
->>>>   From my perspective, based on your proposal:
->>>>    1) Linux should send a get_config message to the remote proc (0x405 -> 0xD). 2) The remote processor would respond with the list of ports, associated
->>>>       with an remote endpoint addresses.
->>>
->>> Agreed, we can scale it for multiple remote endpoints like this.
->>>
->>>>    3) Linux would parse the response, compare it with the DT, enable the GPIO
->>>>       ports accordingly, creating it local endpoint and associating it with
->>>>       the remote endpoint.
->>>> Using name service to identify the ports should avoid step 1 & 2 ...
->>>
->>> Yes, but won't that make a lot of hard-codings in the driver?
->>>
->>> +static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
->>> +    { .name = "rpmsg-io-25" },
->>> +    { .name = "rpmsg-io-32" },
->>> +    { .name = "rpmsg-io-35" },
->>> +    { },
->>> +};
->>>
->>> What if tomorrow another vendor decides to add more remoteproc
->>> controlled GPIO ports to Linux, they would have to update this struct in
->>> the driver everytime. And the port indexes (25/32/35) could also differ
->>> between vendors. We should make the driver dynamic i.e. vendor
->>> agnostic.
->>>
->>> I think querying the remote firmware at runtime (step 1 & 2 above) is a
->>> common design pattern and makes the driver vendor agnostic. But feel
->>> free to correct me.
->>>
->> You are right. My proposal would require a patch in rpmsg-core. The idea of
->> allowing a postfix in the compatible string has been discussed before, but,
->> if I remember correctly, it was not concluded.
+>> Enable Shikra APCS IPC support by adding the compatible.
+>> It reuses apps_shared_apcs_data.
+> With the DT bindings in place this patch is not required and useless.
+Yes Dmitry, I realized that and had raised v3 without the driver side patch.
+
+Thanks
+
+Sneh
+
+>> Signed-off-by: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+>> Signed-off-by: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
+>> ---
+>>   drivers/mailbox/qcom-apcs-ipc-mailbox.c | 1 +
+>>   1 file changed, 1 insertion(+)
 >>
-> I also remember discussing this.  I even reviewed one of Arnaud's patch
-> and submitted one myself.  This must have been in 2020 and the reason why it
-> wasn't merged has escaped my memory.
->   
->> /* rpmsg devices and drivers are matched using the service name */
->> static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
->> 				  const struct rpmsg_device_id *id)
->> {
->> 	size_t len;
+>> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> index d3a8f6b4a03b368821ef9a5b24fee78037104610..25f76965921ba695e3a1bf4df47ce643916a28cb 100644
+>> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> @@ -168,6 +168,7 @@ static const struct of_device_id qcom_apcs_ipc_of_match[] = {
+>>   	{ .compatible = "qcom,ipq8074-apcs-apps-global", .data = &ipq6018_apcs_data },
+>>   	{ .compatible = "qcom,sc7180-apss-shared", .data = &apps_shared_apcs_data },
+>>   	{ .compatible = "qcom,sc8180x-apss-shared", .data = &apps_shared_apcs_data },
+>> +	{ .compatible = "qcom,shikra-apss-shared", .data = &apps_shared_apcs_data },
+>>   	{ .compatible = "qcom,sm8150-apss-shared", .data = &apps_shared_apcs_data },
+>>   	{}
+>>   };
 >>
->> +	len = strnlen(id->name, RPMSG_NAME_SIZE);
->> +	if (len && id->name[len - 1] == '*')
->> +		return !strncmp(id->name, rpdev->id.name, len - 1);
+>> -- 
+>> 2.34.1
 >>
->> 	return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
->> }
->>
->> Then, in rpmsg-gpio, and possibly in other drivers such as rpmsg-tty and
->> a future rpmsg-i2c, we could use:
->> static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
->>      { .name = "rpmsg-io" },
->>      { .name = "rpmsg-io-*" },
->>      { },
->> };
-> That was my initial approach.  We don't even need an additional "rpmsg-io-*" in
-> rpmsg_gpio_channel_id_table[].  All we need is:
->
-> /* rpmsg devices and drivers are matched using the service name */
-> static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
->                                   const struct rpmsg_device_id *id)
-> {
->   +     size_t len = strnlen(id->name, RPMSG_NAME_SIZE);
->
->   -     return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
->   +     return strncmp(id->name, rpdev->id.name, len) == 0;
-> }
-
-
-This wildcard channel matching is interesting. It would be good to know
-the reasons/cons why this patch was not concluded.
-
->
-> And let the rpmsg-virtio-gpio driver parse @rpdev->id.name to match with a
-> GPIO controller in the DT.
->
->> If exact name matching is strongly required, then this proposal would not be
->> suitablea.
->>
->> A third option would be a combination of both approaches: instantiate the
->> device using the same name service from the remote side, as done in
->> rpmsg-tty. In that case, a get_config message, or a similar mechanism, would
->> also be needed to retrieve the port information from the remote side.
->>
-> I'm not overly fond of a get_config message because it is one more thing we
-> have to define and maintain.
->
-> Arnaud: is there a get_config message already defined for rpmsg_tty?
->
-> Beleswar: Can you provide a link to a virtio device that would use a get_config
-> message?
-
-
-VirtIO typically uses the feature bits for negotiation and discovery.
-And such a get_config message would not be needed in VirtIO layer, as
-there is no multiplexing. It's a 1:1 mapping of device to driver
-instance.
-
-Thanks,
-Beleswar
-
-[...]
-
