@@ -1,67 +1,63 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013068.outbound.protection.outlook.com [40.93.201.68])
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010011.outbound.protection.outlook.com [52.101.193.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7DA4D8D99;
-	Mon, 11 May 2026 21:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA5C4D8DA2;
+	Mon, 11 May 2026 21:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778534333; cv=fail; b=LTGZFRZ47S68CoDVDJCvg29nfTwA0y4ka/puGj4t1W4nHiprYifmSq/xh6PmzRqF2Ot4M9hSeXBu6WKxCcfiYDBjoo2um70FIyXUpQSgOAnq+2AEy5pRB4S5Fdir3Y/qSWXmpeVxI8eL6/NnNaepThq9ExS3sXyX4y6pXa4xbdQ=
+	t=1778534334; cv=fail; b=rVPfYD8XxH2hohCXtwSWSWvTaPrJ/RTQgtt3d8dIDLcb1poTqW9NnsMg39xs/+D9GK63aD7LzePVXwg1uH3IuMeFUhFJHmAXmzCt4B2Uq+zzTOHVUaKFIBR3vgRJWJVGB+ZOTwtgtm5HJgPZwyxgXfP+4deQHUb1L2BOgLYT8L0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778534333; c=relaxed/simple;
-	bh=lKtWS7wT7/faj1f9329oHG+2l6JGcCgx3qBhbmdk0T4=;
+	s=arc-20240116; t=1778534334; c=relaxed/simple;
+	bh=p/mA4phiWvbU/0vF1YcxsVK9wK3noKqa+IyyYLZKCT0=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZMGKe45WCIFpqqyo9ykj1hv/Y0jauAyvUgjsMAMuNMBmLVcEiWoPKJH5+BpLyi69pRkayj1Uu6z0onTZxPHV2t1+6z4uZOaiqFAWVHoz7g5oZCwHPIwFXTehbYI5Eu29ORWAfGBmgQWupw6TjLxO6G1Z5WjXB0steeYhhdSzGng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=My2CufKp; arc=fail smtp.client-ip=40.93.201.68
+	 MIME-Version:Content-Type; b=Vtw8EzW1/xtVbymhhMARbfYvoeYB8SuZKF7L6wTZtkPTMm3x+UH/T2WVotNE/qh7m+3y1uq1mFYINqQGoORKZq3Hyi3ewIJcoD8Fg+Q8oQ8WlBl1Lbi2xdRA6ifIylS8CBUjXbCEpgC7Nje4hpOzhUxx8GfpgF+5v9PCHvu3zf0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aRYgsQXr; arc=fail smtp.client-ip=52.101.193.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="My2CufKp"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aRYgsQXr"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tYN+lUSQhxfZfjBlC/2Rr7MNv5Yy8FewDA3MKRK8rblfu9Z20oENv6v6kYnNHehV4mKQ+tEL9IaYNRf2ZtIoUzjUZzSCrwRiCD/bqv0rM4iPwQJyp3+OtQwixAvkJVIAzu18MTPsNjIzWJWaXp5vR5CzheZ8nj5i+oZvWKsLtT/vyr+5T5crEKDeGA+svdUrMC732uCYrY6Ve4R2TJ1GIpbRXmmqu8V8Kuo0ONz4hzeHjnXs1VKsvU9BmNI8o7NiExWrhGnMF/UMeQ/Wif3wk2dC4dgOhrxqqv4B5BXLLphVGiyKBkxulGghnYF4wJycqXVyN+HVCghEjoVpvSAYCA==
+ b=Fwcq5nx/Qcnd5lep+py62O7h3cp2JaLTzsjEnxew6Aos4u49riaymfLuStmd/g/FPBGchdPHgEtBkRIwmvTdwXIzu7SCcnMLz+f0d2h7HRyIoluRdfd+bQpKt3JcpiO/hhI8PBknFj+MEJsOrfJ6XEectiVpx7cq6KFvjwqe0IyPSreOvTDNh6QE4QJiAHT/ySQftfdMg9jXfrJ1FvAvj33EOiUCT8XZZ9/Iv49Ae0a9s47vGhXdfYz6vM1MWsT/awopzlMXB1KYAWa1h5oepDmjmNo6mwIyeFFDU+agBXV44qjfPeDjuOK3LLaUtG0QE1Xqrdqy9JYbzvDkL5p5SA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pSBeNyxP/ruAZGXXJ4WWjx7AmL+RBdOwtT84bYwU3U8=;
- b=gMoFIX3IyJcnNQpFq+t01ipLAHdy8XXSCqRKFB7eonaiWXz+VbSRVTmpZd4oiw6kJd/tN6GZH6P1ZMSzaCDRjlMpT/xNpqo7p1DcK696BOcGT44gckNUNuDHZI5AcUeunRHmaE2PZ2887/4B6Z3/EkUZIZn1WsZ1c7Bz/kipxBYSKAIfbhY7Zi1ueDTpIRr8o5anZknSeOsAJ7FItxeemZpq4cmOu4iwu9Le7vNxZRlo40gkZzHD1YHnTefG+AHlQ7G+yvQ59FBDAO7poIqjBqcl2vzHsMFPn+2Mf8rJ23SazhWCUsgi7yQLuzBwEGGka7jCX8c/WVSRv/Sw3HTSXg==
+ bh=woeT7VU8Hjkb7K57SLCyIj0RlWrZOv5LgSO4QQP10cs=;
+ b=M0xVtsGfqGeFIDjdKGqWwQH0GVDSJo8cbz3ND0A5IZh3MLRGwlJWc2nVdHgacLSPFN5D/uSht47amvypa5AYv4I1U9dUGIL6e0ZCfmUPA8InmMzcOMoa7gZbYsDfl92zz5/dY0D/dLSKJ5aded51SNVd7u0QBYVJu2KeN5gUVBbjm5lVp4ptE69Baa+Zbmb1HdBPD4DKuopF+fc0bAXswNo14gwCQD2S69ZnAvHqMvU8diuNQ/VYCmGvsYPS3JZSr/7q6jUJ5+cG3p9lVqCLeMvehZXLY51x96UgL+xFKn/EqFP0MbbppzbSf8UMmNnPGFP9z3qhWaFGZqpQAP3AbA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pSBeNyxP/ruAZGXXJ4WWjx7AmL+RBdOwtT84bYwU3U8=;
- b=My2CufKpZfm5WOQNorbAFuKXR1Wavg2vfAeLq85iqV9JHoM4NhzUHk4GkHbcx/Y0G6SCyOv454qkyhlPyKAPQlfaqLUPqPPT/NPTSwddIh9Y+TXrU293+judvi/aOvd3wUu9WDjoG6OERop7xMpTSlWxlwQB9CfQir3jvnIKdmA=
-Received: from SA1P222CA0045.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:2d0::22)
- by LV8PR12MB9264.namprd12.prod.outlook.com (2603:10b6:408:1e8::8) with
+ bh=woeT7VU8Hjkb7K57SLCyIj0RlWrZOv5LgSO4QQP10cs=;
+ b=aRYgsQXrqA/by08gv/DsidmubamWQSM3Jfxmr6f118LJmXma9QHGYU6g5uDXVx4GEC00z9Wrrjw2Wa+6CKlnbG3zD6MpDw+Eu+/46AX72suPBmmyLP2sRHsE/Z5qUqqPkeCD9tzRgYbHJa06QAxABoXn9vKZVDBw0eYMsTG4ibc=
+Received: from PH7P220CA0146.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:327::32)
+ by MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.22; Mon, 11 May
- 2026 21:18:45 +0000
-Received: from SN1PEPF0002529F.namprd05.prod.outlook.com
- (2603:10b6:806:2d0:cafe::cb) by SA1P222CA0045.outlook.office365.com
- (2603:10b6:806:2d0::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Mon, 11 May
+ 2026 21:18:48 +0000
+Received: from CY4PEPF0000EE37.namprd05.prod.outlook.com
+ (2603:10b6:510:327:cafe::cd) by PH7P220CA0146.outlook.office365.com
+ (2603:10b6:510:327::32) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.23 via Frontend Transport; Mon,
- 11 May 2026 21:18:45 +0000
+ 11 May 2026 21:18:47 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF0002529F.mail.protection.outlook.com (10.167.242.6) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CY4PEPF0000EE37.mail.protection.outlook.com (10.167.242.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.25.13 via Frontend Transport; Mon, 11 May 2026 21:18:45 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.41; Mon, 11 May
- 2026 16:18:44 -0500
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 May
- 2026 16:18:44 -0500
+ 15.21.25.13 via Frontend Transport; Mon, 11 May 2026 21:18:47 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Mon, 11 May
+ 2026 16:18:47 -0500
 Received: from xsjblevinsk51.xilinx.com (10.180.168.240) by satlexmb08.amd.com
  (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Mon, 11 May 2026 16:18:43 -0500
+ Transport; Mon, 11 May 2026 16:18:46 -0500
 From: Ben Levinsky <ben.levinsky@amd.com>
 To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
 	<mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>
@@ -74,9 +70,9 @@ CC: Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
 	<linux-renesas-soc@vger.kernel.org>,
 	<linux-stm32@st-md-mailman.stormreply.com>, <tanmay.shah@amd.com>
-Subject: [PATCH 2/4] remoteproc: switch exact-match drivers to wc-ioremap callbacks
-Date: Mon, 11 May 2026 14:18:39 -0700
-Message-ID: <20260511211841.284809-3-ben.levinsky@amd.com>
+Subject: [PATCH 4/4] remoteproc: switch drivers to optional resource-table helper
+Date: Mon, 11 May 2026 14:18:41 -0700
+Message-ID: <20260511211841.284809-5-ben.levinsky@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260511211841.284809-1-ben.levinsky@amd.com>
 References: <20260511211841.284809-1-ben.levinsky@amd.com>
@@ -88,389 +84,212 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: ben.levinsky@amd.com does not
- designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002529F:EE_|LV8PR12MB9264:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9be63173-43ce-4da9-1a68-08deafa2e26e
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE37:EE_|MW4PR12MB7142:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48faee58-e905-4689-fde9-08deafa2e40a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|36860700016|376014|82310400026|56012099003|18002099003|22082099003|11063799003;
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700016|82310400026|18002099003|56012099003|22082099003|11063799003;
 X-Microsoft-Antispam-Message-Info:
-	rHAUq8Gi/G4zTNADbajA/aQoAlriMRdEw52rNV5kHvpD4ICCIBcU4th4iHHZZ1bVmrdE7DEEWueEVwKJ/PLjJOcw8H66ulqR+ddIAegZt/FaHfhtvXrU6rqkvDyeMf1eDWqcb94jDz0B36n+oKVkgPiQfNZXFVyF3g3U7pTB4et/YrIx5CpKjIpPMM5VMbXUobd7nRjsNDBQEZHfQZSBXLXLeC2CX43Om0cq/iNvXF1OvICiqp7x2Q/sN36VBhN3pmogfr1A3putZfyB5VxmJj0qSkEiJ0p4l8706YYbb9Z3DUHbd/LxMN4gtqhOMgfilSxI3XPDfRNQPLODsvmimQAm2LWV7tjRHkid9PzCGieRg35EHyCFlaZW1BEeZyFyZiofn3c1w9VfizKU7Q1RFXBom3z5Za4ccvIEixgRRrIqj9RCoTxe08vOd9eEudLI8HLlkeu4Z08y4ElqfQXcUaEbc2DmCJZJEmdJ/ilhPyIlfjGlt1T+ZWL7xh6yC5sHM4c2M0kitUjuCQsJPLh1U1waUcyBdRrqsxHKNrLK7jK/kOxDHdSOTBq3Hnt+lnte+whWt3fxzhPT1AjbvdXVmJnTzyui+Q1Ry4c5OuYpb8D7aSAoIfwzSst3zwQKR2WaxVArp7+nGeNaAtJ1ehla/BHIXWcKEJmZ/yi1Trjsti5vRtZ2NF4I3m+OcJ0h3a3n+d6BLr1k2ZJyBz4WqFpmXmnI7Jf9qgYolY9mlC7zPxU=
+	gRAtMP5vcLp0y4xyzIzNFqsULmkolI9p3M4TlYTsg2cQXaKZW9e/sIuB5WcGRmi4GqF7ky4oJS7UK2hflvQo0WVTyyluKTlOajjyUPuO/cHloshD+7F372BhlK9CYMFhLLXWfIpaCc287bUSsbtaAdAEG5rQo/jlaKB8j9iyysrJpUJVpqBRXm1zlQk3LEjnBYlQt+knBOxg8Jip2zQ2NytplufgugxIJdp9E4Zo2ooxubFUFO2MBIlM5NK3Cp7C8l8ccW/7xzef8iR4VIOgZdQolMGNOCvKNpD+yLpxOvpIanbFt/ab9XxrB/nCoyDttbAmfiiTw6MlvwEGh5dqd7MhL+hhFJfGdIg/F0ElNSmTwaCgwg73sPv/9be3VkTUj0DjNxCA3qlI8m8pmCXlAAM32Gul19Nd0Ucs5AnZaz9Ryla650xYEZVtWAXzSGFujKYA+IRoa8gZehSbvF/hrNOlOmzNvQqxRBuqTaLX9upd57iskKDom7RzhyGNHVaN/sjyl/z74jM9CiRjXHd8PVeb4TxQhBjX4EGlOjqp3+mCggkrVw+RV37bFUtX8RTduQsu5KUv0f/l1t13vVZUw7EiCxmGUwS1kf6+UaPPjBskB+dIpLUPMyrGDq+FKRLlJP5u0uxmd5uIXKDk5/SM7xyeG7kCfguxLKM6QjvbztoLHO7Xnduh6BUm4Ld13TGIWwuvB8k+abztubWxYSqf/Za4y+sL/pzas9u4iP6TbIw=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(36860700016)(376014)(82310400026)(56012099003)(18002099003)(22082099003)(11063799003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700016)(82310400026)(18002099003)(56012099003)(22082099003)(11063799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	ujqNltU4Imk8NgKwuPxeCXo4u8rqncPn8udQzONPsgyxCbHoSHGuUvYAXJgRjD1RAFuwJq+z/jqgZfQ7B4wJiwW4VT7cNcm17MBN1vGO2pyA4FM8Cl3yAG56tr7jZqwVA3SWdjo3su2EzZGZUoYDN/OQ0fbqXHjWiN+U5JmD2xK/idg3+2PUfsmnslEelCDJFmwzCjgBWoZ7M7BldTTCA/QqcSI7JI0TbP4KzRln4f30CFAmr0yF947A4I1NUtjBoI4LvYoz2zuDiLNh/bqZmB1JUgVBG4S5h87vl5sbX8dxMWygV0tzWKDUZFOssODFP6XmTBUlzkIoxGjMS7alkTHKqg+1AgqhIfIKruuzSy0GfNjHY9upnSw4s003HhaRUZ97IwhZ2fzOKhTbklO0b15aENSLtYQOQdmhW+8WQ0tNqlquXPLs/yjawoPgUdkx
+	A7pd9nnxIAUzo19PEwmsAStbum6d/dF4YGVT9J794k5bcen7zSbCyBa0eHQrNTBQMeJbe+bSkDDrXDLVNLmISMYSgJ6nzU+IupOvQf9iMk2puQXwA0OnobEnOlla826G1x+sXT9kqtmM4zTFQFN0zZyo0Ofp12tEPLK3MbBCWtL+jAtKjGonVF7Z+Rt/xTsyGDZLyvv84kLNFZTXjgdAJ/yHyUpS+vf1V81aKM5yrMaXvJfU39b7tm4N7dRifjAVFhLfS0BIkZoC+vgSWTabsNZAyo09OZiPQJXpRBoLtqZhQqn69Hyzvvw9bM6kml9P1EJeNK3LtYGyDDdzUOKJUvMXcCVddYQ6xiDvWq7nsaDX9a8rW6cJQ9X73goJ3h8Ore+/7P86HqahjewO8Qgl0KaZr1jkIcztsh86uMG1W/wyqk0S18TXh56vmPouxKPd
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 21:18:45.1247
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2026 21:18:47.7788
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9be63173-43ce-4da9-1a68-08deafa2e26e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48faee58-e905-4689-fde9-08deafa2e40a
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002529F.namprd05.prod.outlook.com
+	CY4PEPF0000EE37.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9264
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7142
 
-Replace the exact-match carveout map and unmap callbacks in the
-existing remoteproc drivers with the common wc-ioremap helpers. Leave
-the zynqmp R5 TCM callbacks alone because they also clear the mapped
-memory and are not exact matches.
+Use the shared optional resource-table helper in the remoteproc
+drivers that currently ignore a missing table. This keeps the missing
+resource-table case non-fatal while letting other parsing failures
+propagate to the caller.
 
 Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
 ---
- drivers/remoteproc/imx_dsp_rproc.c      | 36 ++++---------------
- drivers/remoteproc/imx_rproc.c          | 32 ++---------------
- drivers/remoteproc/rcar_rproc.c         | 33 ++---------------
- drivers/remoteproc/st_remoteproc.c      | 31 ++--------------
- drivers/remoteproc/stm32_rproc.c        | 34 ++----------------
- drivers/remoteproc/xlnx_r5_remoteproc.c | 47 +++----------------------
- 6 files changed, 18 insertions(+), 195 deletions(-)
+ drivers/remoteproc/imx_dsp_rproc.c      | 10 +--------
+ drivers/remoteproc/imx_rproc.c          | 13 +----------
+ drivers/remoteproc/rcar_rproc.c         | 13 +----------
+ drivers/remoteproc/stm32_rproc.c        | 10 +--------
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 29 +------------------------
+ 5 files changed, 5 insertions(+), 70 deletions(-)
 
 diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 008741af9f11..2d9f14fbef1d 100644
+index 2d9f14fbef1d..3e96e7978cd2 100644
 --- a/drivers/remoteproc/imx_dsp_rproc.c
 +++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -644,32 +644,6 @@ static void imx_dsp_rproc_free_mbox(struct imx_dsp_rproc *priv)
- 	mbox_free_channel(priv->rxdb_ch);
+@@ -954,14 +954,6 @@ static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct fir
+ 	return ret;
  }
  
--static int imx_dsp_rproc_mem_alloc(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
+-static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
 -{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	mem->va = va;
+-	if (rproc_elf_load_rsc_table(rproc, fw))
+-		dev_warn(&rproc->dev, "no resource table found for this firmware\n");
 -
 -	return 0;
 -}
 -
--static int imx_dsp_rproc_mem_release(struct rproc *rproc,
--				     struct rproc_mem_entry *mem)
--{
--	iounmap(mem->va);
--
--	return 0;
--}
--
- /**
-  * imx_dsp_rproc_add_carveout() - request mailbox channels
-  * @priv: private data pointer
-@@ -700,8 +674,10 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)att->sa,
--					   att->size, da, imx_dsp_rproc_mem_alloc,
--					   imx_dsp_rproc_mem_release, "dsp_mem");
-+					   att->size, da,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
-+					   "dsp_mem");
- 
- 		if (mem)
- 			rproc_coredump_add_segment(rproc, da, att->size);
-@@ -732,8 +708,8 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)res.start,
- 					   resource_size(&res), da,
--					    imx_dsp_rproc_mem_alloc,
--					    imx_dsp_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   "%.*s", strchrnul(res.name, '@') - res.name, res.name);
- 		if (!mem)
- 			return -ENOMEM;
+ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct imx_dsp_rproc *priv = rproc->priv;
+@@ -997,7 +989,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+ 	.stop		= imx_dsp_rproc_stop,
+ 	.kick		= imx_dsp_rproc_kick,
+ 	.load		= imx_dsp_rproc_load,
+-	.parse_fw	= imx_dsp_rproc_parse_fw,
++	.parse_fw	= rproc_elf_load_rsc_table_optional,
+ 	.handle_rsc	= imx_dsp_rproc_handle_rsc,
+ 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+ 	.sanity_check	= rproc_elf_sanity_check,
 diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 7f54322244ac..6249815b54d8 100644
+index 6249815b54d8..5509048f7e19 100644
 --- a/drivers/remoteproc/imx_rproc.c
 +++ b/drivers/remoteproc/imx_rproc.c
-@@ -600,35 +600,6 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *i
- 	return va;
+@@ -680,17 +680,6 @@ static int imx_rproc_prepare(struct rproc *rproc)
+ 	return 0;
  }
  
--static int imx_rproc_mem_alloc(struct rproc *rproc,
--			       struct rproc_mem_entry *mem)
+-static int imx_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
 -{
--	struct device *dev = rproc->dev.parent;
--	void *va;
+-	int ret;
 -
--	dev_dbg(dev, "map memory: %p+%zx\n", &mem->dma, mem->len);
--	va = ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va)) {
--		dev_err(dev, "Unable to map memory region: %p+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
+-	ret = rproc_elf_load_rsc_table(rproc, fw);
+-	if (ret)
+-		dev_info(&rproc->dev, "No resource table in elf\n");
 -
 -	return 0;
 -}
 -
--static int imx_rproc_mem_release(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int imx_rproc_sm_lmm_prepare(struct rproc *rproc)
+ static void imx_rproc_kick(struct rproc *rproc, int vqid)
  {
  	struct imx_rproc *priv = rproc->priv;
-@@ -692,7 +663,8 @@ static int imx_rproc_prepare(struct rproc *rproc)
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
- 					   resource_size(&res), da,
--					   imx_rproc_mem_alloc, imx_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   "%.*s", strchrnul(res.name, '@') - res.name,
- 					   res.name);
- 		if (!mem)
+@@ -777,7 +766,7 @@ static const struct rproc_ops imx_rproc_ops = {
+ 	.kick		= imx_rproc_kick,
+ 	.da_to_va       = imx_rproc_da_to_va,
+ 	.load		= rproc_elf_load_segments,
+-	.parse_fw	= imx_rproc_parse_fw,
++	.parse_fw	= rproc_elf_load_rsc_table_optional,
+ 	.find_loaded_rsc_table = imx_rproc_elf_find_loaded_rsc_table,
+ 	.get_loaded_rsc_table = imx_rproc_get_loaded_rsc_table,
+ 	.sanity_check	= rproc_elf_sanity_check,
 diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-index 3c25625f966d..e3121fadd292 100644
+index e3121fadd292..7adaa6d37b82 100644
 --- a/drivers/remoteproc/rcar_rproc.c
 +++ b/drivers/remoteproc/rcar_rproc.c
-@@ -19,35 +19,6 @@ struct rcar_rproc {
- 	struct reset_control *rst;
- };
- 
--static int rcar_rproc_mem_alloc(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	struct device *dev = &rproc->dev;
--	void *va;
--
--	dev_dbg(dev, "map memory: %pa+%zx\n", &mem->dma, mem->len);
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int rcar_rproc_mem_release(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	dev_dbg(&rproc->dev, "unmap memory: %pa\n", &mem->dma);
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int rcar_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -73,8 +44,8 @@ static int rcar_rproc_prepare(struct rproc *rproc)
- 		mem = rproc_mem_entry_init(dev, NULL,
- 					   res.start,
- 					   resource_size(&res), da,
--					   rcar_rproc_mem_alloc,
--					   rcar_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   res.name);
- 
- 		if (!mem)
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index a07edf7217d2..486180cdccb4 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -88,33 +88,6 @@ static void st_rproc_kick(struct rproc *rproc, int vqid)
- 		dev_err(dev, "failed to send message via mbox: %d\n", ret);
+@@ -55,17 +55,6 @@ static int rcar_rproc_prepare(struct rproc *rproc)
+ 	}
  }
  
--static int st_rproc_mem_alloc(struct rproc *rproc,
--			      struct rproc_mem_entry *mem)
+-static int rcar_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
 -{
--	struct device *dev = rproc->dev.parent;
--	void *va;
+-	int ret;
 -
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
+-	ret = rproc_elf_load_rsc_table(rproc, fw);
+-	if (ret)
+-		dev_info(&rproc->dev, "No resource table in elf\n");
 -
 -	return 0;
 -}
 -
--static int st_rproc_mem_release(struct rproc *rproc,
--				struct rproc_mem_entry *mem)
--{
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+ static int rcar_rproc_start(struct rproc *rproc)
  {
- 	struct device *dev = rproc->dev.parent;
-@@ -138,8 +111,8 @@ static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 			mem = rproc_mem_entry_init(dev, NULL,
- 						   (dma_addr_t)res.start,
- 						   resource_size(&res), res.start,
--						   st_rproc_mem_alloc,
--						   st_rproc_mem_release,
-+						   rproc_mem_entry_ioremap_wc,
-+						   rproc_mem_entry_iounmap,
- 						   "%.*s",
- 						   strchrnul(res.name, '@') - res.name,
- 						   res.name);
+ 	struct rcar_rproc *priv = rproc->priv;
+@@ -104,7 +93,7 @@ static struct rproc_ops rcar_rproc_ops = {
+ 	.start		= rcar_rproc_start,
+ 	.stop		= rcar_rproc_stop,
+ 	.load		= rproc_elf_load_segments,
+-	.parse_fw	= rcar_rproc_parse_fw,
++	.parse_fw	= rproc_elf_load_rsc_table_optional,
+ 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+ 	.sanity_check	= rproc_elf_sanity_check,
+ 	.get_boot_addr	= rproc_elf_get_boot_addr,
 diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 632614013dc6..7ac8265b60ac 100644
+index 7ac8265b60ac..007175dcd7af 100644
 --- a/drivers/remoteproc/stm32_rproc.c
 +++ b/drivers/remoteproc/stm32_rproc.c
-@@ -113,35 +113,6 @@ static int stm32_rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da)
- 	return -EINVAL;
+@@ -232,14 +232,6 @@ static int stm32_rproc_prepare(struct rproc *rproc)
+ 	}
  }
  
--static int stm32_rproc_mem_alloc(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
+-static int stm32_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
 -{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
--	va = (__force void *)ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va)) {
--		dev_err(dev, "Unable to map memory region: %pad+0x%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
+-	if (rproc_elf_load_rsc_table(rproc, fw))
+-		dev_warn(&rproc->dev, "no resource table found for this firmware\n");
 -
 -	return 0;
 -}
 -
--static int stm32_rproc_mem_release(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
--	iounmap((__force __iomem void *)mem->va);
--
--	return 0;
--}
--
- static int stm32_rproc_of_memory_translations(struct platform_device *pdev,
- 					      struct stm32_rproc *ddata)
+ static irqreturn_t stm32_rproc_wdg(int irq, void *data)
  {
-@@ -237,8 +208,8 @@ static int stm32_rproc_prepare(struct rproc *rproc)
- 			mem = rproc_mem_entry_init(dev, NULL,
- 						   (dma_addr_t)res.start,
- 						   resource_size(&res), da,
--						   stm32_rproc_mem_alloc,
--						   stm32_rproc_mem_release,
-+						   rproc_mem_entry_ioremap_wc,
-+						   rproc_mem_entry_iounmap,
- 						   "%.*s", strchrnul(res.name, '@') - res.name,
- 						   res.name);
- 			if (mem)
-@@ -957,4 +928,3 @@ MODULE_DESCRIPTION("STM32 Remote Processor Control Driver");
- MODULE_AUTHOR("Ludovic Barre <ludovic.barre@st.com>");
- MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
- MODULE_LICENSE("GPL v2");
--
+ 	struct platform_device *pdev = data;
+@@ -631,7 +623,7 @@ static const struct rproc_ops st_rproc_ops = {
+ 	.detach		= stm32_rproc_detach,
+ 	.kick		= stm32_rproc_kick,
+ 	.load		= rproc_elf_load_segments,
+-	.parse_fw	= stm32_rproc_parse_fw,
++	.parse_fw	= rproc_elf_load_rsc_table_optional,
+ 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+ 	.get_loaded_rsc_table = stm32_rproc_get_loaded_rsc_table,
+ 	.sanity_check	= rproc_elf_sanity_check,
 diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 45a62cb98072..e5d1903c9636 100644
+index e5d1903c9636..92c1f8972551 100644
 --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
 +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -447,45 +447,6 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+@@ -664,33 +664,6 @@ static int add_tcm_banks(struct rproc *rproc)
  	return ret;
  }
  
 -/*
-- * zynqmp_r5_mem_region_map()
+- * zynqmp_r5_parse_fw()
 - * @rproc: single R5 core's corresponding rproc instance
-- * @mem: mem descriptor to map reserved memory-regions
+- * @fw: ptr to firmware to be loaded onto r5 core
 - *
-- * Callback to map va for memory-region's carveout.
+- * get resource table if available
 - *
 - * return 0 on success, otherwise non-zero value on failure
 - */
--static int zynqmp_r5_mem_region_map(struct rproc *rproc,
--				    struct rproc_mem_entry *mem)
+-static int zynqmp_r5_parse_fw(struct rproc *rproc, const struct firmware *fw)
 -{
--	void __iomem *va;
+-	int ret;
 -
--	va = ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va))
--		return -ENOMEM;
--
--	mem->va = (void *)va;
--
--	return 0;
+-	ret = rproc_elf_load_rsc_table(rproc, fw);
+-	if (ret == -EINVAL) {
+-		/*
+-		 * resource table only required for IPC.
+-		 * if not present, this is not necessarily an error;
+-		 * for example, loading r5 hello world application
+-		 * so simply inform user and keep going.
+-		 */
+-		dev_info(&rproc->dev, "no resource table found.\n");
+-		ret = 0;
+-	}
+-	return ret;
 -}
 -
--/*
-- * zynqmp_r5_rproc_mem_unmap
-- * @rproc: single R5 core's corresponding rproc instance
-- * @mem: mem entry to unmap
-- *
-- * Unmap memory-region carveout
-- *
-- * return: always returns 0
-- */
--static int zynqmp_r5_mem_region_unmap(struct rproc *rproc,
--				      struct rproc_mem_entry *mem)
--{
--	iounmap((void __iomem *)mem->va);
--	return 0;
--}
--
- /*
-  * add_mem_regions_carveout()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -522,8 +483,8 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 			rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
- 							 (dma_addr_t)res.start,
- 							 resource_size(&res), res.start,
--							 zynqmp_r5_mem_region_map,
--							 zynqmp_r5_mem_region_unmap,
-+							 rproc_mem_entry_ioremap_wc,
-+							 rproc_mem_entry_iounmap,
- 							 "%.*s",
- 							 strchrnul(res.name, '@') - res.name,
- 							 res.name);
-@@ -560,8 +521,8 @@ static int add_sram_carveouts(struct rproc *rproc)
- 		rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
- 						 dma_addr,
- 						 len, da,
--						 zynqmp_r5_mem_region_map,
--						 zynqmp_r5_mem_region_unmap,
-+						 rproc_mem_entry_ioremap_wc,
-+						 rproc_mem_entry_iounmap,
- 						 sram->sram_res.name);
- 		if (!rproc_mem) {
- 			dev_err(&rproc->dev, "failed to add sram %s da=0x%x, size=0x%lx",
+ /**
+  * zynqmp_r5_rproc_prepare() - prepare core to boot/attach
+  * adds carveouts for TCM bank and reserved memory regions
+@@ -849,7 +822,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+ 	.start		= zynqmp_r5_rproc_start,
+ 	.stop		= zynqmp_r5_rproc_stop,
+ 	.load		= rproc_elf_load_segments,
+-	.parse_fw	= zynqmp_r5_parse_fw,
++	.parse_fw	= rproc_elf_load_rsc_table_optional,
+ 	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
+ 	.sanity_check	= rproc_elf_sanity_check,
+ 	.get_boot_addr	= rproc_elf_get_boot_addr,
 -- 
 2.34.1
 
