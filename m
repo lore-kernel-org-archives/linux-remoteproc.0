@@ -1,494 +1,525 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FCA43E9CB
-	for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2026 17:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F1840F8C5
+	for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2026 17:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778519692; cv=pass; b=KOO9UHzj74nOhgCNMh+E43WzNnuIeTzF85r72Nj1sADarFfYHm+M90QeGTeXK634N1Fie25g/fum18EEgj7P+XyLkTwiBj7h63g2yTbQHnLv2Uv8zp5Bi0rB//SaZSDj7coTPrhe40vzKalPG3MIwyXULtITEjNCMs7VDoIlR8s=
+	t=1778521302; cv=pass; b=GuaHfHCVZHFLVkcqeZoXcoVTtoiQVwFlYN0bqrgeJAwPCY4Q81aXd2U/o2FSE7RjiyagNOAu7DM/h6oCwePQxI/5iXrAiajwpT8DmHYURaQKTVhYgRejgjEON8XKpPB4GlKgYyl/6zF6McL0aGme/k8fV+kEzYCUuGCp2giLDZ8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778519692; c=relaxed/simple;
-	bh=ovWlW5zNHXt02wg8/HCKteqFVEsWvyBEaO3nlhqvff0=;
+	s=arc-20240116; t=1778521302; c=relaxed/simple;
+	bh=dNXvFDQ0lopFLzJ+Iut5KTk4e9zg8DE7QqZQb91KFas=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=NnQFLOY+JRv7qascwBmvY/jItbQEhgdz4URgJtQni0hx9Me5MVXaCh6EXovslMBK2amKBGgdieR8mwwUJ7KY2WqVa7Ad2AAPq1hGHhsRHN5boh1gFzvtPL/hfsr+Wuv04zGHZ9rrnWNtL4uiimiCKnnahRUcKeqRRFZhuxeBGAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k1Bo+AmY; arc=pass smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=piQy/jIWEvXx9Id8bUvN06TRjo8L5+IsHgMv+BmypL1tKVYOpDcTb/7Pg9LxTfXBclVwHT20c9G2IpZn7dE8eUXwcX+yK1//NQFRsBycxYKeTJMERgrpTQrp7sNJSAIWeXyt5kgDj/sRvQ5VRCy+jaRSGpdBn0ir+Ah5pqZNXr4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RK2ZVLRQ; arc=pass smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k1Bo+AmY"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-67c566cb519so8621189a12.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2026 10:14:46 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778519685; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RK2ZVLRQ"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-67c1e0229acso7086134a12.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 11 May 2026 10:41:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778521298; cv=none;
         d=google.com; s=arc-20240605;
-        b=A/UXrIy47iGop+JUyoLlhZumPhWZu0VAjH1SxZ1x+sKvx/W7gmCq+hNBgaIkthAwoo
-         yJxSwu3jf5hFntbGsWo7ojrVHKJJGZR4BPO/3OKE6K4qLiDljKfkerlNPfJCGMMz/g9A
-         jbVoXTRJBJGal4sxk0sf0jnCxzFIrFaCPOpBwszJiCoSNvOi7Isw08SXlR/qo3FwFuMB
-         4Glj1ofotAzIXMtEAZ05zyxtkMUpdtbIWiJ2kKvTH0DJTp8IWsJOrKheMtLyFPWmjGdo
-         me5aKWQ+ywqQTAXuNBlFJMCoTDVbZwWIe/wqbSX7eGG7kSVDj2pJjVB2TGk/+HmftU4y
-         K+5w==
+        b=PpSQhd6oKg7jnUdXeAIMiBLAJJSZxfCGu2OLi2ZCscmr53fxpMGSIiCNihmElnpJVd
+         UMYQDd/Q7DVOyi+eBZl93MzcC/Bxr3Xf62SXw1QYC9+DwJL2h7YJ14Z3qdSKQ4zjgf6l
+         HUaP+4uYG6QXkrwZLdt7L4q1dYs0g2Bw/fU9/GjrtDLQQkvRwL34nsyfheDhx4XS0QJq
+         fPQkSr0enXRelKtbttBvjO1DRFoK4sHftRgdYEGNhkmbNJQi7zxOIoVlIn7gZldtfTez
+         2AExoOgfTogsmKCxHioLLifJCqa/gsDCpfXesnwkpwB39/+0Rrb7xkWBcdn+hm4dMo71
+         hwig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :dkim-signature;
-        bh=KjJuvIOxNRqAoYDzFQhCMCPc/xwVg7FdKIPtDYr1918=;
-        fh=80sWRRawuya2oC411Xq7Tfrzdye3l2mIgBrrtsFXle4=;
-        b=I375stOUYdEm6lOXiOM0ra5ueA1ZuR129p7fa9ieGdYdVPXpy8xYRtErXQJ9OGjMkn
-         pWWHBYFAWWH+MZgcBFt9PB7wrJN1Lc8d2e+WfhaLFD6FYuguPN8naMrvEfijfoRxfyZo
-         J4lDzBY+ygyiedXsDtD9XbnUIGsWEHvBIGUx2+NgP88br6i/HXvWa/KROiuaDRQeno+m
-         IT1HSpThrUbMugWlTROB6qxB7fzAnFGhypk3SbA0wVFV+i5mXG7ipCx9iDZ3CFpXAakx
-         M00LH2Tr7t+/kdBrNhwHmvEbqhzkQEFtQRpEAQwbaKdVqgPPeqfLyzNlSWdAmoh7S9RN
-         bh+w==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=eVCNEzHhSGwtV7VOVKxNF9RhG1E8eWPZUzEKfdIupJk=;
+        fh=BvwiXslR71BV3k8cnnIhzzE9U6VffTrjc0xXN5L/U88=;
+        b=Vj23BclbCev3YNpvfyiuVkHfB+HDNEaBsdn95IUEOszeDNJxPGsK6Hg5yn1hxyLyB1
+         j9DRKxy5gFFthQZpMPeouupFsBny1wsDaUx1d88Nt5Fnx/PNv6PdrwKM9CNccziBKsE0
+         9Z7M1N8fFjqIy94TwbKqxVBcnowDkA/ik78DW3wssPwIoB0Ytvj5JWb5fXZhf4GlBrPq
+         /YDIFjHgfMuJissF51Y7OXBBiMaYsGp3sM9vjL0PuiYK2BkeYqJsL4D+He0v1/yvgAKm
+         wKJzZGLODWFL/c5uoaxPsl8wSsWOPulQ5jx8F1ywQLccYnEnLh/dX4bDtMYp1aCvUQPz
+         f3vw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1778519685; x=1779124485; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KjJuvIOxNRqAoYDzFQhCMCPc/xwVg7FdKIPtDYr1918=;
-        b=k1Bo+AmYbrHls2DuobmFxLCl1XweoU/ql+V50IcckorBnDdOJhUn8jpJbRKUaqnFE8
-         8sNdeFnnW12hnFaKUW1/RKl0ltHQdSjUBRdDCMym8HqY4mo//Mp3q//ApAKyo8BIdOip
-         Ym9xF3/nkVBNTZVDMk6GkeeJcadpCuZVzTumMLva59c6qsaDwTijCLUq0pDdJvi5EtoC
-         Tc1RWjGf8tEF2qqOWTj4AWUr9C6Nxe5QrwzBKQDkhutvhvbsdvDST+B9QP1mqgJ/UU75
-         Lm2bmvfToISrwxk23wx7yqQp3JAZfVX1rVcvU8JnwxI6HTVnrQU57OXwnJWXFUtqcPWP
-         eSBA==
+        d=linaro.org; s=google; t=1778521298; x=1779126098; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eVCNEzHhSGwtV7VOVKxNF9RhG1E8eWPZUzEKfdIupJk=;
+        b=RK2ZVLRQDTKO5/IENTNU7ZSNakUnve3qYojHzaLmBqvm8zHkT+2dwa2d25DcBmcBCO
+         TOQTerpKofocJyPOIlh7f6FcbOVNdNYzKS5ZmvPlSuw93XVSlBoJGik9E1DKwQVkjkjS
+         h+ZPVGSUXokEH/UmHhrAjXusq3/n4Rmst239bWEaZ2c7USmsD0sxifZtsTJXEA+ZNZvn
+         66ZfHmpQ7xod2oZjSGCR4olCecjC6rSfTiZHI/aBlfmL5lEBLIF94frwR/9cvYlhc0kt
+         vxsks9kVUjm9voXTNcNLKb9eqYJTJL0g4w2qWJf9yGtZ8e8M+gyNL6YfI5dtuRTo4u9O
+         5UvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778519685; x=1779124485;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KjJuvIOxNRqAoYDzFQhCMCPc/xwVg7FdKIPtDYr1918=;
-        b=palG0HX87NSfR97PKspb97fux6oIYg3dU8q9iLG7WVxmWHfPS0ZHaZfGM17O6BZQLs
-         RJm7LsVn/6RkrC9j1t+MDGJwBs2KImlYzsl1p4Z7w1m0CGV0lmtfSaT+8aRqkpIqYjxe
-         F3d9NX0wdzQlM7IZrUyYQKiZiuQezBw0CXwtvJc/rwdegU+N2tID6bKWhY11443L5/TK
-         YuAMAriRM7bNIPXZVTfF7ET2SvzTrbSgnOc+/qZx4rNW4x1q00kbNzmqlTW+6Rekpn3F
-         dG52ufkHS73I6Cdz7v9UcnfKwjmMahJeCpHDAtXIKWkybL1a9sWpyQ66M9+g5tCyEsOv
-         5CIg==
-X-Forwarded-Encrypted: i=1; AFNElJ+P2DST0J0Sjlzx60rrWPHpjrHVfd7KSExPuD4kqGnJofN2Hd7DZ4H3zFJksVbOI/LG80pMiGrGApv5r2Kpoq88@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTD8N45wq497lbgIyFZGAZg6zzLxhX6yY+caOHh23BNmYaHNpz
-	hHLacvRLKcmh2BXsEktek0Nvp3/zQs+7SHwwHmCTXlfjNbim3oS0TK8b+RbRA+7MUgWmYbxn4Qt
-	Y5WFklXNVp7ltwshpCdHXiUsch5E/rrZzg4KUu5Xubjlc9AtYXYFk
-X-Gm-Gg: Acq92OECRPbxmkwIYLiHYHJjMBtHSd96V0lJQycMS1tbBobugB/tK90G2UK4YoQkQja
-	0pPmhHHuR7tjGA4Ii90+4hPt2zCIvJrLOIl2U7S0QiLFXaGVrrb8LfUwQIMZP5pgfCEOxFycxyb
-	FRfHtFoyCA+PitOub2IDf7KTMof5cckwB9Jsi8WJ0TlKr24vx4xltjMYU0XLdly7x+aG4pbTDU4
-	H4enTUC81Gom05jjx1mSR16MVYIMY4OewM82vFTKNOIoCxqBoMvJXv7nTg1icJj+e4BRfhLoQWd
-	YTn47fvBqCjLCDTV2Zr8B72F4bjFqTHCvIiDIkeNdA==
-X-Received: by 2002:a05:6402:3511:b0:678:a507:e81b with SMTP id
- 4fb4d7f45d1cf-67d6489fad4mr13064016a12.21.1778519685055; Mon, 11 May 2026
- 10:14:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1778521298; x=1779126098;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eVCNEzHhSGwtV7VOVKxNF9RhG1E8eWPZUzEKfdIupJk=;
+        b=Iiv99e3JCPoF+kXLrQKci/dxxZSp6zjE2VyFVzpIDwZ/AgXfMEr4oDSlvSeXY2fnxn
+         WwoJenvuXsdgvij0289kqDHK3jp88WavcnpeiMtX2k61zpHki7fzVnnCObZ8SUB7amJQ
+         Ooxam8Wc7Abs/Zx6UIxURng+hDcVmssq16jKmcLKtWFV4jO/4UqNCUln5b8CJkIX/iSx
+         X3hRasoNuMInI6Zft7115ZePEm1cx5tPrVV0GbY1dLK3C2l4JvzbTUlH77OFGcVY1vqN
+         kO3IQEiDcq1ZHw35AqdJje0M+HEIBJ3BeqVPLFZV9tohk7Hr02rxoARmDMuu/C9NtfgI
+         7ckA==
+X-Forwarded-Encrypted: i=1; AFNElJ90CcTqbzVig/UAaWt/uBZsjwXIb560dIPuBv6rwxiVzGKuWOU4AfD7ZR1fCx8LELYEZaGZnXYMa8EtZ5Eb2ioQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzooOCI+CMODDgkXj9nrkMgsAOe2aAcgZfFmLmwfzbkhoBdq6U9
+	FOTTHm8qcFcZ8i099o2Gw7vz0KRTDngd6Dn34E7RJNwVtqk+/wIu195KIb9uWFL4HDo5UwRp+L7
+	6njIoEfTQzqxvpMNTBbV4Zac3tQgFhOGnu7By6AIHqQ==
+X-Gm-Gg: Acq92OGXISib/rqOd5YPtAKUsxULaf9Z2nO7Y6s7iZjIyaPuyk1h/5Fv4QyC0hO1q+j
+	5z6eANe8vxORGvBNiA0ug8v1rPfoYi2FL8I13bNGc9eDQjpkTbl5TwazeUJfocJXH+8F9rxpHZO
+	YtMT2LbUvjP/TNhY5lWBAMm/povAWwqTpdG5XTQyH4lk41Fk1R4gSOaWga1H21tiIpIVlkfSTzy
+	APJYXqaMNieD5oBpifXwvorYBmz7U2SX/2dXDHSf8F+hN/1QyDvuve61WLVlvypcYoETuhpdY/s
+	9+CT4rW/Eh2nfbybqtRLT/m+ThBgv1CIVOCyhvaKQw==
+X-Received: by 2002:a05:6402:3718:b0:67f:7972:1c6b with SMTP id
+ 4fb4d7f45d1cf-67f79721e67mr4858041a12.16.1778521298111; Mon, 11 May 2026
+ 10:41:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260511165942.2774868-1-robh@kernel.org>
-In-Reply-To: <20260511165942.2774868-1-robh@kernel.org>
+References: <20260428142633.1854251-1-ben.levinsky@amd.com>
+ <20260428142633.1854251-3-ben.levinsky@amd.com> <af4FoowZg6myMzMI@p14s> <d904a2da-9ef8-4a1a-aa4b-782bc75d21ae@amd.com>
+In-Reply-To: <d904a2da-9ef8-4a1a-aa4b-782bc75d21ae@amd.com>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 11 May 2026 11:14:33 -0600
-X-Gm-Features: AVHnY4Jf0CJE1hDSgg12DVeCV98dmImUPAtD_0hAQLFCE4wcBW8rBlS3kBvE434
-Message-ID: <CANLsYkxNTPg9hHRF6hcVUSUPvxg_gAvcyD8FJ81pOfXQ2W+KnA@mail.gmail.com>
-Subject: Fwd: [PATCH] dt-bindings: Consolidate "sram" property definition
-To: Beleswar Padhi <b-padhi@ti.com>, Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
-	linux-remoteproc <linux-remoteproc@vger.kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>, 
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>, "Shah, Tanmay" <tanmay.shah@amd.com>
+Date: Mon, 11 May 2026 11:41:27 -0600
+X-Gm-Features: AVHnY4Lc7yMFYqvRBx_DAzygCobWmgkxA5BCsVQh1BDi6TK2qflltqWWSgqin-s
+Message-ID: <CANLsYkwxErFjaOJ0q1wT_59C1WGp_24d0nOksFpk-LaGq6eDGg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] remoteproc: add AMD BRAM-based remote processor driver
+To: Ben Levinsky <blevinsk@amd.com>
+Cc: Ben Levinsky <ben.levinsky@amd.com>, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andersson@kernel.org, linux-kernel@vger.kernel.org, 
+	michal.simek@amd.com, tanmay.shah@amd.com
 Content-Type: text/plain; charset="UTF-8"
 
-Gentlemen, please test this patch on your respective platforms and
-provide "Tested-by:" tags publicly.
+On Fri, 8 May 2026 at 10:59, Ben Levinsky <blevinsk@amd.com> wrote:
+>
+> Hi Mathieu,
+>
+>
+> On 5/8/26 8:47 AM, Mathieu Poirier wrote:
+> > Good morning,
+> >
+> > On Tue, Apr 28, 2026 at 07:26:33AM -0700, Ben Levinsky wrote:
+> >> Add a remoteproc driver for AMD soft-core processor subsystems
+> >> instantiated in programmable logic and using dual-port BRAM for
+> >> firmware storage and execution.
+> >>
+> >> The driver parses the firmware memory window from the remoteproc device
+> >> node's reg property, interprets that address and size in the
+> >> processor-local address space, and then uses standard devicetree
+> >> address translation through the parent bus ranges property to obtain
+> >> the corresponding Linux-visible system physical address.
+> >>
+> >> The resulting translated region is registered as the executable
+> >> remoteproc carveout and coredump segment.
+> >>
+> >> The processor is controlled through an active-low reset GPIO and a
+> >> subsystem clock. The clock is enabled before reset is released, and the
+> >> processor is kept in reset until firmware loading completes.
+> >>
+> >> The firmware-name property is optional, allowing firmware to be
+> >> assigned later through the remoteproc framework. Firmware images
+> >> without a resource table are also accepted.
+> >>
+> >> Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+> >> ---
+> >>  MAINTAINERS                         |   7 +
+> >>  drivers/remoteproc/Kconfig          |  14 ++
+> >>  drivers/remoteproc/Makefile         |   1 +
+> >>  drivers/remoteproc/amd_bram_rproc.c | 243 ++++++++++++++++++++++++++++
+> >>  4 files changed, 265 insertions(+)
+> >>  create mode 100644 drivers/remoteproc/amd_bram_rproc.c
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index c871acf2179c..172539971950 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -1037,6 +1037,13 @@ S:    Maintained
+> >>  F:  Documentation/devicetree/bindings/w1/amd,axi-1wire-host.yaml
+> >>  F:  drivers/w1/masters/amd_axi_w1.c
+> >>
+> >> +AMD BRAM REMOTEPROC DRIVER
+> >> +M:  Ben Levinsky <ben.levinsky@amd.com>
+> >> +L:  linux-remoteproc@vger.kernel.org
+> >> +S:  Maintained
+> >> +F:  Documentation/devicetree/bindings/remoteproc/amd,bram-rproc.yaml
+> >> +F:  drivers/remoteproc/amd_bram_rproc.c
+> >> +
+> >
+> > There is no real advantage in adding this entry, checkpatch.pl should be
+> > sufficient.
+> >
+> >>  AMD CDX BUS DRIVER
+> >>  M:  Nipun Gupta <nipun.gupta@amd.com>
+> >>  M:  Nikhil Agarwal <nikhil.agarwal@amd.com>
+> >> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> >> index ee54436fea5a..9a2a887ede8a 100644
+> >> --- a/drivers/remoteproc/Kconfig
+> >> +++ b/drivers/remoteproc/Kconfig
+> >> @@ -23,6 +23,20 @@ config REMOTEPROC_CDEV
+> >>
+> >>        It's safe to say N if you don't want to use this interface.
+> >>
+> >> +config AMD_BRAM_REMOTEPROC
+> >> +    tristate "AMD BRAM-based remoteproc support"
+> >> +    depends on OF && COMMON_CLK && (GPIOLIB || COMPILE_TEST)
+> >> +    help
+> >> +      Say y or m here to support a BRAM-based remote processor managed
+> >> +      through the remoteproc framework.
+> >> +
+> >> +      This driver matches designs where executable firmware memory is
+> >> +      described in the BRAM-local address space and translated to
+> >> +      the system physical address space with standard devicetree address
+> >> +      translation.
+> >
+> > Not sure how this paragraph helps decide whether the driver should be enabled or
+> > not.  Please remove.
+> >
+> >> +
+> >> +      If unsure, say N.
+> >> +
+> >>  config IMX_REMOTEPROC
+> >>      tristate "i.MX remoteproc support"
+> >>      depends on ARCH_MXC
+> >> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> >> index 1c7598b8475d..5c39664b50c3 100644
+> >> --- a/drivers/remoteproc/Makefile
+> >> +++ b/drivers/remoteproc/Makefile
+> >> @@ -11,6 +11,7 @@ remoteproc-y                               += remoteproc_sysfs.o
+> >>  remoteproc-y                                += remoteproc_virtio.o
+> >>  remoteproc-y                                += remoteproc_elf_loader.o
+> >>  obj-$(CONFIG_REMOTEPROC_CDEV)               += remoteproc_cdev.o
+> >> +obj-$(CONFIG_AMD_BRAM_REMOTEPROC)   += amd_bram_rproc.o
+> >>  obj-$(CONFIG_IMX_REMOTEPROC)                += imx_rproc.o
+> >>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)    += imx_dsp_rproc.o
+> >>  obj-$(CONFIG_INGENIC_VPU_RPROC)             += ingenic_rproc.o
+> >> diff --git a/drivers/remoteproc/amd_bram_rproc.c b/drivers/remoteproc/amd_bram_rproc.c
+> >> new file mode 100644
+> >> index 000000000000..9383964b6046
+> >> --- /dev/null
+> >> +++ b/drivers/remoteproc/amd_bram_rproc.c
+> >> @@ -0,0 +1,243 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * AMD BRAM-based Remote Processor driver
+> >> + *
+> >> + * Copyright (C) 2026 Advanced Micro Devices, Inc.
+> >> + *
+> >> + * This driver supports soft-core processors (MicroBlaze, MicroBlaze-V, or
+> >> + * similar) instantiated in AMD programmable logic, using dual-port BRAM
+> >> + * for firmware storage and execution.
+> >> + *
+> >> + * The firmware memory (BRAM) is described in the processor-local address
+> >> + * space and translated to the Linux-visible system physical address with
+> >> + * standard devicetree address translation.
+> >> + *
+> >> + * Reset is controlled via GPIO connected to Processor System Reset IP.
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> >> +#include <linux/dma-mapping.h>
+> >> +#include <linux/gpio/consumer.h>
+> >> +#include <linux/io.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_address.h>
+> >> +#include <linux/platform_device.h>
+> >> +#include <linux/remoteproc.h>
+> >> +
+> >> +#include "remoteproc_internal.h"
+> >> +
+> >> +/**
+> >> + * struct amd_bram_rproc - AMD BRAM-based remoteproc private data
+> >> + * @dev: device pointer
+> >> + * @reset: GPIO descriptor for reset control (active-low)
+> >> + * @clk: processor clock
+> >> + */
+> >> +struct amd_bram_rproc {
+> >> +    struct device *dev;
+> >> +    struct gpio_desc *reset;
+> >> +    struct clk *clk;
+> >> +};
+> >> +
+> >> +static int amd_bram_rproc_mem_map(struct rproc *rproc,
+> >> +                              struct rproc_mem_entry *mem)
+> >> +{
+> >> +    void __iomem *va;
+> >> +
+> >> +    va = ioremap_wc(mem->dma, mem->len);
+> >> +    if (!va)
+> >> +            return -ENOMEM;
+> >> +
+> >> +    mem->va = (__force void *)va;
+> >> +    mem->is_iomem = true;
+> >> +
+> >> +    return 0;
+> >> +}
+> >> +
+> >> +static int amd_bram_rproc_mem_unmap(struct rproc *rproc,
+> >> +                                struct rproc_mem_entry *mem)
+> >> +{
+> >> +    iounmap((void __iomem *)mem->va);
+> >> +
+> >> +    return 0;
+> >> +}
+> >
+> > The above 2 are identical to what is found in xlnx_r5_remoteproc.c.  Please
+> > coordinate with Tanmay to split that into common code that can be reused by both
+> > drivers.
+> >
+> >> +
+> >> +static int amd_bram_rproc_prepare(struct rproc *rproc)
+> >> +{
+> >> +    struct amd_bram_rproc *priv = rproc->priv;
+> >> +    struct rproc_mem_entry *mem;
+> >> +    struct resource res;
+> >> +    u64 da, size;
+> >> +    int ret;
+> >> +
+> >> +    ret = of_property_read_reg(priv->dev->of_node, 0, &da, &size);
+> >> +    if (ret) {
+> >> +            dev_err(priv->dev, "failed to parse executable memory reg\n");
+> >> +            return ret;
+> >> +    }
+> >> +
+> >> +    if (!size || size > U32_MAX) {
+> >> +            dev_err(priv->dev, "invalid executable memory size\n");
+> >> +            return -EINVAL;
+> >> +    }
+> >> +
+> >> +    if (da > U32_MAX) {
+> >> +            dev_err(priv->dev, "invalid executable memory address\n");
+> >> +            return -EINVAL;
+> >> +    }
+> >> +
+> >> +    ret = of_address_to_resource(priv->dev->of_node, 0, &res);
+> >> +    if (ret) {
+> >> +            dev_err(priv->dev, "failed to translate executable memory reg\n");
+> >> +            return ret;
+> >> +    }
+> >> +
+> >> +    mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
+> >> +                               (size_t)size, da,
+> >> +                               amd_bram_rproc_mem_map,
+> >> +                               amd_bram_rproc_mem_unmap,
+> >> +                               dev_name(priv->dev));
+> >> +    if (!mem)
+> >> +            return -ENOMEM;
+> >> +
+> >> +    rproc_add_carveout(rproc, mem);
+> >> +    rproc_coredump_add_segment(rproc, da, (size_t)size);
+> >
+> > I'm pretty sure you want @res.start instead of @da, and resource_size(&res)
+> > instead of @size.
+> >
+> >> +
+> >> +    return 0;
+> >> +}
+> >> +
+> >> +static int amd_bram_rproc_start(struct rproc *rproc)
+> >> +{
+> >> +    struct amd_bram_rproc *priv = rproc->priv;
+> >> +    int ret;
+> >> +
+> >> +    /* Enable clock before releasing reset */
+> >> +    ret = clk_prepare_enable(priv->clk);
+> >> +    if (ret) {
+> >> +            dev_err(priv->dev, "failed to enable clock: %d\n", ret);
+> >> +            return ret;
+> >> +    }
+> >> +
+> >> +    /* Deassert reset and let the processor run. */
+> >> +    ret = gpiod_set_value_cansleep(priv->reset, 0);
+> >> +    if (ret) {
+> >> +            dev_err(priv->dev, "failed to deassert reset: %d\n", ret);
+> >> +            clk_disable_unprepare(priv->clk);
+> >> +            return ret;
+> >> +    }
+> >> +
+> >> +    return 0;
+> >> +}
+> >> +
+> >> +static int amd_bram_rproc_stop(struct rproc *rproc)
+> >> +{
+> >> +    struct amd_bram_rproc *priv = rproc->priv;
+> >> +    int ret;
+> >> +
+> >> +    /* Assert reset before disabling the processor clock. */
+> >> +    ret = gpiod_set_value_cansleep(priv->reset, 1);
+> >> +    if (ret) {
+> >> +            dev_err(priv->dev, "failed to assert reset: %d\n", ret);
+> >> +            return ret;
+> >> +    }
+> >> +
+> >> +    /* Disable clock after asserting reset */
+> >> +    clk_disable_unprepare(priv->clk);
+> >> +
+> >> +    return 0;
+> >> +}
+> >> +
+> >> +static int amd_bram_rproc_parse_fw(struct rproc *rproc,
+> >> +                               const struct firmware *fw)
+> >> +{
+> >> +    int ret;
+> >> +
+> >> +    ret = rproc_elf_load_rsc_table(rproc, fw);
+> >> +    if (ret == -EINVAL) {
+> >> +            dev_dbg(&rproc->dev, "no resource table found\n");
+> >> +            return 0;
+> >> +    }
+> >> +
+> >> +    return ret;
+> >> +}
+> >
+> > This too should go in common code or simply replaced by
+> > rproc_elf_load_rsc_table() in @amd_bram_rproc_ops - the choice is yours.
+> >
+> > Thanks,
+> > Mathieu
+>
+>   Thanks for the review.
+>
+>   I went through the remoteproc drivers to scope the cleanup points you
+>   called out.
+>
+>   For the plain carveout map/unmap callbacks, the same ioremap_wc()/iounmap()
+>   pattern exists not only in amd_bram_rproc and xlnx_r5_remoteproc, but also
+>   in rcar_rproc, st_remoteproc, stm32_rproc, imx_rproc, and imx_dsp_rproc.
+>
+>   The xlnx_r5 TCM path is close as well, but that one still needs a wrapper
+>   since it clears the memory after ioremap_wc().
+>
+>   For the optional resource-table parsing, amd_bram_rproc and xlnx_r5_remoteproc
+>   share the same pattern of treating only -EINVAL from rproc_elf_load_rsc_table()
+>   as non-fatal. PRU is similar, but has additional firmware parsing after that.
+>   Other drivers such as rcar/imx/imx_dsp/stm32 also tolerate missing resource
+>   tables, but their current behavior is not identical since they flatten all
+>   errors to success and only log.
+>
+>   For the next revision, would you prefer the following approach?
+>
+>   1. Add a small common helper for the plain carveout ioremap_wc()/iounmap()
+>      case and use it in amd_bram_rproc and xlnx_r5_remoteproc.
+>
+>   2. For the optional resource-table handling, either:
+>      - add a small common helper for the "missing table is OK" case
+>        (i.e. return 0 on -EINVAL and propagate other errors), and use that
+>        in amd_bram_rproc and xlnx_r5_remoteproc, or
 
----------- Forwarded message ---------
-From: Rob Herring (Arm) <robh@kernel.org>
-Date: Mon, 11 May 2026 at 10:59
-Subject: [PATCH] dt-bindings: Consolidate "sram" property definition
-To: Liu Ying <victor.liu@nxp.com>, Philipp Zabel
-<p.zabel@pengutronix.de>, Maarten Lankhorst
-<maarten.lankhorst@linux.intel.com>, Maxime Ripard
-<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
-Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Krzysztof
-Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-<festevam@gmail.com>, Rob Clark <robin.clark@oss.qualcomm.com>, Sean
-Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, Akhil
-P Oommen <akhilpo@oss.qualcomm.com>, Dmitry Baryshkov
-<lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica
-Zhang <jesszhan0024@gmail.com>, Marijn Suijten
-<marijn.suijten@somainline.org>, Vinod Koul <vkoul@kernel.org>, Nas
-Chung <nas.chung@chipsnmedia.com>, Jackson Lee
-<jackson.lee@chipsnmedia.com>, Mauro Carvalho Chehab
-<mchehab@kernel.org>, Mirela Rabulea <mirela.rabulea@nxp.com>, Detlev
-Casanova <detlev.casanova@collabora.com>, Ezequiel Garcia
-<ezequiel@vanguardiasur.com.ar>, Heiko Stuebner <heiko@sntech.de>,
-Hugues Fruchet <hugues.fruchet@foss.st.com>, Alain Volmat
-<alain.volmat@foss.st.com>, Maxime Coquelin
-<mcoquelin.stm32@gmail.com>, Alexandre Torgue
-<alexandre.torgue@foss.st.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-David S. Miller <davem@davemloft.net>, Eric Dumazet
-<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-<pabeni@redhat.com>, MD Danish Anwar <danishanwar@ti.com>, Roger
-Quadros <rogerq@kernel.org>, Parvathi Pudi <parvathi@couthit.com>,
-Mohan Reddy Putluru <pmohan@couthit.com>, Bjorn Andersson
-<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
-Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
-<khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, Martin
-Blumenstingl <martin.blumenstingl@googlemail.com>, Michal Simek
-<michal.simek@amd.com>, Mark Brown <broonie@kernel.org>, Matthias
-Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com>, Linus Walleij
-<linusw@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>, Felix
-Fietkau <nbd@nbd.name>, Andrew F. Davis <afd@ti.com>, Hussain Khaja
-<basharath@couthit.com>, Suman Anna <s-anna@ti.com>, Ben Levinsky
-<ben.levinsky@amd.com>, Tanmay Shah <tanmay.shah@amd.com>, Erwan Leray
-<erwan.leray@foss.st.com>, Fabrice Gasnier
-<fabrice.gasnier@foss.st.com>
-Cc: Roger Quadros <rogerq@ti.com>, <dri-devel@lists.freedesktop.org>,
-<devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-<linux-arm-kernel@lists.infradead.org>,
-<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-<freedreno@lists.freedesktop.org>, <dmaengine@vger.kernel.org>,
-<linux-media@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
-<linux-stm32@st-md-mailman.stormreply.com>, <netdev@vger.kernel.org>,
-<linux-remoteproc@vger.kernel.org>,
-<linux-amlogic@lists.infradead.org>, <linux-spi@vger.kernel.org>,
-<linux-mediatek@lists.infradead.org>
+I would prefer to go with the common helper that returns 0 on -EINVAL
+and propagates other errors, and apply it to other architectures such
+as stm32, rcar, imx and imx_dsp.
 
+>      - drop the custom AMD parse_fw() path and use rproc_elf_load_rsc_table()
+>        directly, which would make the resource table mandatory there.
+>
+>   Also, for the plain map/unmap helper, should I keep the cleanup scoped to
+>   the drivers directly involved here, or would you prefer that I fold the
+>   other exact-match users (rcar, st, stm32, imx, imx_dsp) into the same
+>   cleanup patch as well?
+>
 
-The "sram" property has become a de facto standard property, so create a
-common schema for it and drop all the duplicated definitions.
+Proceed with the other exact-match as well.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../imx/fsl,imx8qxp-dc-command-sequencer.yaml |  2 +-
- .../devicetree/bindings/display/msm/gpu.yaml  |  6 +----
- .../bindings/dma/stericsson,dma40.yaml        |  8 ++----
- .../bindings/media/cnm,wave521c.yaml          |  2 +-
- .../bindings/media/nxp,imx8-jpeg.yaml         |  6 ++---
- .../bindings/media/rockchip,vdec.yaml         |  5 ++--
- .../bindings/media/st,stm32-dcmi.yaml         |  6 ++---
- .../devicetree/bindings/net/mediatek,net.yaml |  3 +--
- .../bindings/net/ti,icssg-prueth.yaml         |  2 +-
- .../bindings/net/ti,icssm-prueth.yaml         |  2 +-
- .../remoteproc/amlogic,meson-mx-ao-arc.yaml   |  7 +----
- .../bindings/remoteproc/ti,k3-dsp-rproc.yaml  |  8 ------
- .../bindings/remoteproc/ti,k3-r5f-rproc.yaml  |  8 ------
- .../remoteproc/xlnx,zynqmp-r5fss.yaml         |  9 +------
- .../devicetree/bindings/spi/st,stm32-spi.yaml | 10 +++----
- .../bindings/sram/sram-consumer.yaml          | 26 +++++++++++++++++++
- 16 files changed, 48 insertions(+), 62 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sram/sram-consumer.yaml
+>   I want to make sure I take the direction you prefer before respinning.
 
-diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-command-sequencer.yaml
-b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-command-sequencer.yaml
-index 27118f4c0d28..fd095e5742c5 100644
---- a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-command-sequencer.yaml
-+++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-command-sequencer.yaml
-@@ -41,7 +41,7 @@ properties:
-       - const: sw3
+I think the best approach is to send out a cleanup patchset with the
+above changes, followed by another respin of this set once the cleanup
+is merged.
 
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
-+    maxItems: 1
-     description: phandle pointing to the mmio-sram device node
+Thanks for being proactive.
 
- required:
-diff --git a/Documentation/devicetree/bindings/display/msm/gpu.yaml
-b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-index 04b2328903ca..358759fad8dc 100644
---- a/Documentation/devicetree/bindings/display/msm/gpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/gpu.yaml
-@@ -84,13 +84,9 @@ properties:
-     maxItems: 64
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle-array
-     minItems: 1
-     maxItems: 4
--    items:
--      maxItems: 1
--    description: |
--      phandles to one or more reserved on-chip SRAM regions.
-+    description:
-       phandle to the On Chip Memory (OCMEM) that's present on some a3xx and
-       a4xx Snapdragon SoCs. See
-       Documentation/devicetree/bindings/sram/qcom,ocmem.yaml
-diff --git a/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
-b/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
-index 607da11e7baa..d8f92838f4c9 100644
---- a/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
-+++ b/Documentation/devicetree/bindings/dma/stericsson,dma40.yaml
-@@ -136,13 +136,9 @@ properties:
-     maxItems: 1
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle-array
--    description: A phandle array with inner size 1 (no arg cells).
--      First phandle is the LCPA (Logical Channel Parameter Address) memory.
--      Second phandle is the  LCLA (Logical Channel Link base Address) memory.
--    maxItems: 2
-     items:
--      maxItems: 1
-+      - description: LCPA (Logical Channel Parameter Address) memory.
-+      - description: LCLA (Logical Channel Link base Address) memory.
-
-   memcpy-channels:
-     $ref: /schemas/types.yaml#/definitions/uint32-array
-diff --git a/Documentation/devicetree/bindings/media/cnm,wave521c.yaml
-b/Documentation/devicetree/bindings/media/cnm,wave521c.yaml
-index 6a11c1d11fb5..6cd33dfd095d 100644
---- a/Documentation/devicetree/bindings/media/cnm,wave521c.yaml
-+++ b/Documentation/devicetree/bindings/media/cnm,wave521c.yaml
-@@ -37,7 +37,7 @@ properties:
-     maxItems: 1
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
-+    maxItems: 1
-     description:
-       The VPU uses the SRAM to store some of the reference data instead of
-       storing it on DMA memory. It is mainly used for the purpose of reducing
-diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml
-b/Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml
-index 18cc6315a821..6ba668aa633d 100644
---- a/Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml
-+++ b/Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml
-@@ -56,10 +56,10 @@ properties:
-     maxItems: 5               # Wrapper and 4 slots
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
-+    maxItems: 1
-     description:
--      Optional phandle to a reserved on-chip SRAM regions. The SRAM can
--      be used for descriptor storage, which may improve bus utilization.
-+      The SRAM can be used for descriptor storage, which may improve bus
-+      utilization.
-
- required:
-   - compatible
-diff --git a/Documentation/devicetree/bindings/media/rockchip,vdec.yaml
-b/Documentation/devicetree/bindings/media/rockchip,vdec.yaml
-index 42022401d0ff..4f38a0ef29d8 100644
---- a/Documentation/devicetree/bindings/media/rockchip,vdec.yaml
-+++ b/Documentation/devicetree/bindings/media/rockchip,vdec.yaml
-@@ -91,9 +91,8 @@ properties:
-     maxItems: 1
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description: |
--      phandle to a reserved on-chip SRAM regions.
-+    maxItems: 1
-+    description:
-       Some SoCs, like rk3588 provide on-chip SRAM to store temporary
-       buffers during decoding.
-
-diff --git a/Documentation/devicetree/bindings/media/st,stm32-dcmi.yaml
-b/Documentation/devicetree/bindings/media/st,stm32-dcmi.yaml
-index d9fbb90b0977..7c2ddd27780f 100644
---- a/Documentation/devicetree/bindings/media/st,stm32-dcmi.yaml
-+++ b/Documentation/devicetree/bindings/media/st,stm32-dcmi.yaml
-@@ -47,10 +47,10 @@ properties:
-     maxItems: 1
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
-+    maxItems: 1
-     description:
--      phandle to a reserved SRAM region which is used as temporary
--      storage memory between DMA and MDMA engines.
-+      SRAM region which is used as temporary storage memory between DMA and
-+      MDMA engines.
-
-   port:
-     $ref: /schemas/graph.yaml#/$defs/port-base
-diff --git a/Documentation/devicetree/bindings/net/mediatek,net.yaml
-b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-index cc346946291a..6bbd83c6aaf7 100644
---- a/Documentation/devicetree/bindings/net/mediatek,net.yaml
-+++ b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-@@ -67,8 +67,7 @@ properties:
-       - const: ppe
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description: phandle to mmio SRAM
-+    maxItems: 1
-
-   mediatek,ethsys:
-     $ref: /schemas/types.yaml#/definitions/phandle
-diff --git a/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
-b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
-index c296e5711848..883033b19b8f 100644
---- a/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
-+++ b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
-@@ -21,7 +21,7 @@ properties:
-       - ti,am654-sr1-icssg-prueth  # for AM65x SoC family, SR1.0
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
-+    maxItems: 1
-     description:
-       phandle to MSMC SRAM node
-
-diff --git a/Documentation/devicetree/bindings/net/ti,icssm-prueth.yaml
-b/Documentation/devicetree/bindings/net/ti,icssm-prueth.yaml
-index a98ad45ca66f..9370c43bc66a 100644
---- a/Documentation/devicetree/bindings/net/ti,icssm-prueth.yaml
-+++ b/Documentation/devicetree/bindings/net/ti,icssm-prueth.yaml
-@@ -24,7 +24,7 @@ properties:
-       - ti,am3359-prueth   # for AM33x SoC family
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
-+    maxItems: 1
-     description:
-       phandle to OCMC SRAM node
-
-diff --git a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
-b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
-index 76e8ca44906a..3f710433e937 100644
---- a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
-@@ -48,12 +48,7 @@ properties:
-     minItems: 1
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description:
--      phandles to a reserved SRAM region which is used as the memory of
--      the ARC core. The region should be defined as child nodes of the
--      AHB SRAM node as per the generic bindings in
--      Documentation/devicetree/bindings/sram/sram.yaml
-+    maxItems: 1
-
-   amlogic,secbus2:
-     $ref: /schemas/types.yaml#/definitions/phandle
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-index b51bb863d759..8b1ed384ef22 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -75,16 +75,8 @@ properties:
- # --------------------
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle-array
-     minItems: 1
-     maxItems: 4
--    items:
--      maxItems: 1
--    description: |
--      phandles to one or more reserved on-chip SRAM regions. The regions
--      should be defined as child nodes of the respective SRAM node, and
--      should be defined as per the generic bindings in,
--      Documentation/devicetree/bindings/sram/sram.yaml
-
- allOf:
-   - if:
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-index 775e9b3a1938..14e6b2f817b3 100644
---- a/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml
-@@ -224,16 +224,8 @@ patternProperties:
-           at 0x0) or 0 (BTCM at 0x0), default value is 1 if omitted.
-
-       sram:
--        $ref: /schemas/types.yaml#/definitions/phandle-array
-         minItems: 1
-         maxItems: 4
--        items:
--          maxItems: 1
--        description: |
--          phandles to one or more reserved on-chip SRAM regions. The regions
--          should be defined as child nodes of the respective SRAM node, and
--          should be defined as per the generic bindings in,
--          Documentation/devicetree/bindings/sram/sram.yaml
-
-     required:
-       - compatible
-diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-index ee63c03949c9..c7d5e58330d6 100644
---- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
-@@ -106,20 +106,13 @@ patternProperties:
-           - const: rx
-
-       sram:
--        $ref: /schemas/types.yaml#/definitions/phandle-array
-         minItems: 1
-         maxItems: 8
--        items:
--          maxItems: 1
--        description: |
-+        description:
-           phandles to one or more reserved on-chip SRAM regions.
-Other than TCM,
-           the RPU can execute instructions and access data from the OCM memory,
-           the main DDR memory, and other system memories.
-
--          The regions should be defined as child nodes of the respective SRAM
--          node, and should be defined as per the generic bindings in
--          Documentation/devicetree/bindings/sram/sram.yaml
--
-       memory-region:
-         description: |
-           List of phandles to the reserved memory regions associated with the
-diff --git a/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml
-b/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml
-index 472e92974714..6d7d595e4ab3 100644
---- a/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml
-+++ b/Documentation/devicetree/bindings/spi/st,stm32-spi.yaml
-@@ -89,12 +89,10 @@ properties:
-       - const: rxm2m
-
-   sram:
--    $ref: /schemas/types.yaml#/definitions/phandle
--    description: |
--      Phandles to a reserved SRAM region which is used as temporary
--      storage memory between DMA and MDMA engines.
--      The region should be defined as child node of the AHB SRAM node
--      as per the generic bindings in
-Documentation/devicetree/bindings/sram/sram.yaml
-+    maxItems: 1
-+    description:
-+      SRAM region which is used as temporary storage memory between DMA and
-+      MDMA engines.
-
-   power-domains:
-     maxItems: 1
-diff --git a/Documentation/devicetree/bindings/sram/sram-consumer.yaml
-b/Documentation/devicetree/bindings/sram/sram-consumer.yaml
-new file mode 100644
-index 000000000000..f00087bd2879
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sram/sram-consumer.yaml
-@@ -0,0 +1,26 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sram/sram-consumer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: SRAM Consumers
-+
-+maintainers:
-+  - Rob Herring <robh@kernel.org>
-+
-+select: true
-+
-+properties:
-+  sram:
-+    description:
-+      Phandles to one or more reserved on-chip SRAM regions. The regions
-+      should be defined as child nodes of the respective SRAM node, and
-+      should be defined as per the generic bindings in,
-+      Documentation/devicetree/bindings/sram/sram.yaml
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      maxItems: 1
-+
-+additionalProperties: true
-+...
---
-2.53.0
+>
+>   Thanks,
+>   Ben
+> >
+> >> +
+> >> +static const struct rproc_ops amd_bram_rproc_ops = {
+> >> +    .prepare        = amd_bram_rproc_prepare,
+> >> +    .start          = amd_bram_rproc_start,
+> >> +    .stop           = amd_bram_rproc_stop,
+> >> +    .load           = rproc_elf_load_segments,
+> >> +    .sanity_check   = rproc_elf_sanity_check,
+> >> +    .get_boot_addr  = rproc_elf_get_boot_addr,
+> >> +    .parse_fw       = amd_bram_rproc_parse_fw,
+> >> +};
+> >> +
+> >> +static int amd_bram_rproc_probe(struct platform_device *pdev)
+> >> +{
+> >> +    struct device *dev = &pdev->dev;
+> >> +    struct amd_bram_rproc *priv;
+> >> +    const char *fw_name = NULL;
+> >> +    struct rproc *rproc;
+> >> +    int ret;
+> >> +
+> >> +    ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+> >> +    if (ret < 0 && ret != -EINVAL)
+> >> +            return dev_err_probe(dev, ret,
+> >> +                                 "failed to parse firmware-name property\n");
+> >> +
+> >> +    rproc = devm_rproc_alloc(dev, dev_name(dev), &amd_bram_rproc_ops,
+> >> +                             fw_name, sizeof(*priv));
+> >> +    if (!rproc)
+> >> +            return -ENOMEM;
+> >> +
+> >> +    priv = rproc->priv;
+> >> +    priv->dev = dev;
+> >> +
+> >> +    /* Get the processor clock */
+> >> +    priv->clk = devm_clk_get(dev, NULL);
+> >> +    if (IS_ERR(priv->clk))
+> >> +            return dev_err_probe(dev, PTR_ERR(priv->clk),
+> >> +                                 "failed to get clock\n");
+> >> +
+> >> +    /*
+> >> +     * Keep the processor in reset until remoteproc has finished loading
+> >> +     * firmware into the executable memory window described by reg and
+> >> +     * translated through the parent bus ranges property.
+> >> +     */
+> >> +    priv->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> >> +    if (IS_ERR(priv->reset))
+> >> +            return dev_err_probe(dev, PTR_ERR(priv->reset),
+> >> +                                 "failed to get reset gpio\n");
+> >> +
+> >> +    rproc->auto_boot = false;
+> >> +
+> >> +    ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+> >> +    if (ret)
+> >> +            return dev_err_probe(dev, ret, "failed to set DMA mask\n");
+> >> +
+> >> +    platform_set_drvdata(pdev, rproc);
+> >> +
+> >> +    ret = devm_rproc_add(dev, rproc);
+> >> +    if (ret)
+> >> +            return dev_err_probe(dev, ret, "failed to register rproc\n");
+> >> +
+> >> +    return 0;
+> >> +}
+> >> +
+> >> +static const struct of_device_id amd_bram_rproc_of_match[] = {
+> >> +    { .compatible = "xlnx,zynqmp-bram-rproc" },
+> >> +    { /* sentinel */ },
+> >> +};
+> >> +MODULE_DEVICE_TABLE(of, amd_bram_rproc_of_match);
+> >> +
+> >> +static struct platform_driver amd_bram_rproc_driver = {
+> >> +    .probe = amd_bram_rproc_probe,
+> >> +    .driver = {
+> >> +            .name = "amd-bram-rproc",
+> >> +            .of_match_table = amd_bram_rproc_of_match,
+> >> +    },
+> >> +};
+> >> +module_platform_driver(amd_bram_rproc_driver);
+> >> +
+> >> +MODULE_DESCRIPTION("AMD BRAM-based Remote Processor driver");
+> >> +MODULE_AUTHOR("Ben Levinsky <ben.levinsky@amd.com>");
+> >> +MODULE_LICENSE("GPL");
+> >> --
+> >> 2.34.1
+> >>
+> >
+>
