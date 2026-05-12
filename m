@@ -1,62 +1,67 @@
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012003.outbound.protection.outlook.com [40.93.195.3])
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012004.outbound.protection.outlook.com [40.107.200.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8212C274B3B;
-	Tue, 12 May 2026 17:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625823D5C29;
+	Tue, 12 May 2026 17:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.4
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778606112; cv=fail; b=iONkmqTVwrB6koxoUJgiUGULqI4EgIT9EdD4SNRGaCp4jnOVdFxtdQJ+PhZqf9K893QSuZoZnWrsOPTmdHkP52gdVX6bW9deYU/GWZs4g2y5dgfvpLhxJfu06qZp0fn27qaMgFgGDjfmTpI/4MEk4h31ZjiLp1clyFxdPfb4Ezw=
+	t=1778606388; cv=fail; b=BB6CgvaFNAkTMH+SEPP+b9SPSwwLniVQKVbNK7/MyfxqUeoh/dJ9l+L3GRcwVnbHiHYhsIDikEudONg0sttW/RoEQ5Z00uhVoiHKxy6C5skGgeBX5LU/kOkkxc6/2fGeRK28bltauWne55bbB12WjIJBh8dj8ucZSgtJjTmcWC8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778606112; c=relaxed/simple;
-	bh=/HfTr+g1ITx2ftbX84e2IC86pIYqs4pd0SunBS8o3PM=;
+	s=arc-20240116; t=1778606388; c=relaxed/simple;
+	bh=/MdWfa6SZtBUwehd3P8YJ0VRrT52jHOA6DGWDYHikJg=;
 	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VyMI1/10pJKrzXQR9cBPalXtmt+P4z6RYHDe4zlCYG7d06+S2MzCFAh2Tx4MBhYBoBuwgsepPWTW3lvP8z9GqU67MHhXBwy6tk2B+aOrll79qjSxxZinIth74/t2zTsh9Ym5QurOpVa07/ITlMdxiiB1oMv7CG/nxTuJVDHq0RU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qu1pNOWc; arc=fail smtp.client-ip=40.93.195.3
+	 Content-Type:MIME-Version; b=cpRKy0sroauxXUmPFn2APYSQ2S0LG3VA05bmQ8qAa+30Coh9plMb2xJDm0TFOC7RPzGpoSHcT1eJgiECNRrlD3iAU3U4Z6f2ZjoaFAErbWyi0cOwF0cUzaqM5j1j/I0X3ctio1ULKNcYGfq2zm5jur/zVvPOn2wzh2S9VdW3nyU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XcJz08u1; arc=fail smtp.client-ip=40.107.200.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qu1pNOWc"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XcJz08u1"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CqNcPd9k3oy4oJEJz38SX7iB6gcrG0XqeP3EvnzzxRHxkwQjAye2ZdcM1leXOJHwt3sNkGoF/F7dUiubM0dYvdXhQ/ecF76LFTAZh63prhi34fLvfO9kZZpwh1Q239kztAp6YIZF4rEV7FnYE9E4gk00pi9/5RNL5bBXXUzqcFjL3Dt4oXMV0ful2bd8JAhXH3daKEjvdvDD52DYDsgwn3+vHgDHL5UHmijliZuMDt+CDQ7Gb0QeyMWwyIUTySyGbXeaQc0G3h54V68zVXTkN4mc7bIC3ipBH9I/GuVwTsbXiX7a1Iid+PJV/btWCQzpLI0YuGQT2v4yJ7qnoSZcrg==
+ b=g0NNxBv9VAjlbtdrsNK0rYPJ24M1wRHh6gWeQfBxdb3oqc6SBmQgMusno69qOiXsDaPB8CqKM8lqCd70O2y/YinXvz1IKXqaWQ49RKbDJ71MizHd7Y08KmnFlyCje+HaCLiYDfD7UBLb4JUgSn5iR487gZay4GkrBs9bTTJZ90vEyyBFf04Ju+tIru3bbJXoo2YcrFrWpHm8VWbE18VUN3PP7V4qIc2Or8W4XxT2WplWxHK/PthV1EBKMkVHHHGAV2EpQk592143P9aMDJ4vrCb2bl4Lsc7C0UYRz93YXrd0d/lAc/C4gUDNMYxtNGW/hsxlF68fZ9U/+AjutO928A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w/AoDDE4OkeBe3CLgRzPTmw7mPNw+go0G7XwVsvZMOc=;
- b=HT7naAsgG5G+WknTUR071zXKebOL1Ulu8frc23roogfsgrZg8BS+E6vkkAGcj4td5w012ieVr7GXprXABecvcocDCCOGEbYwVp6vEkpWDNfsSw+9+a4gJstgMKiPr1MriWRrFIU1Zr2ILaNXeeks4YS//CIHHqW0/5iHrh7n7Ct4oFL9z5G43/zxvcKgwp5v3+ejSnL8t+FKCxrw10wJzjkz5bQrs3eyDv8haVWcPwPK7bUZXTKJEGOAbGXgRjuG5/OM+W2YDH1SkBzheWjilVyh5ZVZ06wb2wHcQuMS9uJHTwTA/BwpQPr6+mNBiNNZagxbs6uD+El2PTg5/cv4UQ==
+ bh=cy+7exeeIfq5FKQxMtjAscZFi7SvMoUT7upvgBBofQk=;
+ b=t59MwtuauLiijw/taTyG6P/I/Xg270OR7/I7keWrVECY0Q13wMuZ1QitlRZPpZN8xuFTntLeXRm2YyGsaReGms6znJwIAi8KPZ262avbCO3M6zeeO66vudstTtpux85WSnRNeTpVq4lzjCHbOZIBu3tqwJ1pyE6xGrWmI5UTUQzWExqpy/xK1xluYRC/GCKZzef4/f6HA0Mv7XUfcPGy+Qf5/k+sVpJ2w2SNlLkPUUIAxAQSe9cwvGBpCYR0w4hDoEARme0gLXsHSEVm+tBkKYTm2Mt1wDm3YZwGJiNOKjXr66JBKItKwnhJr1tV3xjmEuqsPn8Tw1gIaW9tXHcWcw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w/AoDDE4OkeBe3CLgRzPTmw7mPNw+go0G7XwVsvZMOc=;
- b=qu1pNOWciw+wRz8jBcHEjoUSf0IOJjZj/0fHoukohZX1vDhqWWERQyzEPURkUhhaBvfuhUrSi7oZPSXVaDr8WDRiASAsC4t72s6Mlx3DzA0XfzLLld7nTwUGaNtT6xTirKgbLBo5x4sU9sV1Ck+mvLwGK22xtVUhvsOtLN326Ec=
+ bh=cy+7exeeIfq5FKQxMtjAscZFi7SvMoUT7upvgBBofQk=;
+ b=XcJz08u1tiSwrJaxsitOGV32Hr17XCtEAZpecShYlbMLVVRCCC9lY6ruh4Wulpc+RcXbdIXwiHvxbhRlt3rAXgwCgaP6UlqtrBOllW/YYgzsAc5hIi36BpO1pbPTw+98JX3G60Cxgm6ZA+4JIH5LATj3nG1UvI+jud09PAmKkTE=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from DM4PR12MB6448.namprd12.prod.outlook.com (2603:10b6:8:8a::7) by
- DM6PR12MB4435.namprd12.prod.outlook.com (2603:10b6:5:2a6::23) with Microsoft
+ PH0PR12MB7932.namprd12.prod.outlook.com (2603:10b6:510:280::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9913.11; Tue, 12 May 2026 17:15:04 +0000
+ 15.20.9891.19; Tue, 12 May 2026 17:19:39 +0000
 Received: from DM4PR12MB6448.namprd12.prod.outlook.com
  ([fe80::62c2:71cd:7fdc:987a]) by DM4PR12MB6448.namprd12.prod.outlook.com
  ([fe80::62c2:71cd:7fdc:987a%6]) with mapi id 15.20.9891.021; Tue, 12 May 2026
- 17:15:04 +0000
-Message-ID: <986f9f97-e990-4a61-bd25-d32f6cdea325@amd.com>
-Date: Tue, 12 May 2026 10:15:01 -0700
+ 17:19:39 +0000
+Message-ID: <cb737dc0-ffcc-40a1-ae8c-0a19714d0dc8@amd.com>
+Date: Tue, 12 May 2026 10:19:35 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] remoteproc: add common wc-ioremap carveout callbacks
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+Subject: Re: [PATCH 3/4] remoteproc: add helper for optional ELF resource
+ tables
+To: "Shah, Tanmay" <tanmay.shah@amd.com>,
+ Daniel Baluta <daniel.baluta@oss.nxp.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>,
  "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>
+ Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
 References: <20260511211841.284809-1-ben.levinsky@amd.com>
- <20260511211841.284809-2-ben.levinsky@amd.com>
- <bd083464-a5a2-4994-ad88-ddf42d2c765e@foss.st.com>
- <DM4PR12MB64482037D67096393D4668CE83392@DM4PR12MB6448.namprd12.prod.outlook.com>
+ <20260511211841.284809-4-ben.levinsky@amd.com>
+ <3b7f009c-dc4b-4fc0-becc-4d07eb4ff016@oss.nxp.com>
+ <9e3a88d9-1679-43ae-a96b-62a29bd45d9d@amd.com>
+ <DM4PR12MB6448B1E51D58F3F8B11171F683392@DM4PR12MB6448.namprd12.prod.outlook.com>
 Content-Language: en-US
 Cc: Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
  Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Magnus Damm <magnus.damm@gmail.com>,
+ Fabio Estevam <festevam@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
  Patrice Chotard <patrice.chotard@foss.st.com>,
  Maxime Coquelin <mcoquelin.stm32@gmail.com>,
  Alexandre Torgue <alexandre.torgue@foss.st.com>,
@@ -66,15 +71,13 @@ Cc: Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
  "linux-stm32@st-md-mailman.stormreply.com"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "Shah, Tanmay" <tanmay.shah@amd.com>
+ <linux-stm32@st-md-mailman.stormreply.com>
 From: Ben Levinsky <blevinsk@amd.com>
-In-Reply-To: <DM4PR12MB64482037D67096393D4668CE83392@DM4PR12MB6448.namprd12.prod.outlook.com>
+In-Reply-To: <DM4PR12MB6448B1E51D58F3F8B11171F683392@DM4PR12MB6448.namprd12.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR05CA0104.namprd05.prod.outlook.com
- (2603:10b6:a03:334::19) To DM4PR12MB6448.namprd12.prod.outlook.com
- (2603:10b6:8:8a::7)
+X-ClientProxiedBy: BYAPR01CA0064.prod.exchangelabs.com (2603:10b6:a03:94::41)
+ To DM4PR12MB6448.namprd12.prod.outlook.com (2603:10b6:8:8a::7)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -82,85 +85,85 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6448:EE_|DM6PR12MB4435:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc538916-cac6-4473-ccc6-08deb04a023f
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6448:EE_|PH0PR12MB7932:EE_
+X-MS-Office365-Filtering-Correlation-Id: c02c406e-28c3-47ef-f1a8-08deb04aa5c0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|11063799003|22082099003|18002099003|56012099003;
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|56012099003|22082099003|18002099003|11063799003;
 X-Microsoft-Antispam-Message-Info:
-	kUdizuQVqc09KA0KefFz7G1t49sTZJScKOrTzJo3Qns+nG4FLOeXKSGzE0JXByv8Ef4Y0XSVv7LEb6jpKMnNGNcjqUMy575Nus0Ue/JyP5JqxzmR9mvxlaLoX/dIO6ILrSVNFJCorqwsqhQiVTjoVSvgaojw3cfyAF08Gu7h+Yd1N6CNNyBwlYl13T1PTHlVQLDuPKfMfW/DZkjTQiH5b7ySLj9jOKiUl/iQeqSl966gu/xC/zs8RvCGP9LQtQ6JWgaNyUOrNbeslhzzCwovRoEyVkSfD9gdmdIYEmrpT7zKNdl0MPLth0VuCPPYuzlSe/zF6RrtPvkASNV0B3YdtFL6vQ9TqjhLBZPAZxQ3VMxlMFnTr9sDSXxsXkn/HF2aiibLEIHLg0K4G5Cal9Ju+8eJBAB12/ZD9afL5K7GwGjJJsiC6cMPy65U1pNktuZ3hUuRjk3cVJWWxTbZS1GMa8mfthkl7OvGGE6c+Ovg7/blE6zRMlKku2it2Nhj/0oFrx1YpbE2/A+KdZgd3xDfZGEl2w366RQj2/c/MOF1sUqVg/NqbXO8f0qrCUPQrVEF4V4IqELDcWBUKxpu0LdWOXYUD98PKYg0QpGiuZ8m78HJlpedjv/HslYdVXuytSL8s2IIrzujuSC8k0A6Feg+JoxauGA7VmXM1Z5YwvuxG7EU4ZQLz05M+CGQC7SZn8sH
+	XElNRuEe7gjXYrAU5oG0Q9GwSW7B7JY1ko/Bn0waUOB74ccm2/eKjhqPK/lAN4o0t7SOIYEqV4QS2U9YlLAtv5RPIbc7YYuBeVjX3CMgomwiGT2l54SjC7FOpwUqjHCSHfgoQjSCL6uuZUEC6Q2PbuGGlk+czd3wAAzsCmhhCu08QdNWZrwRQwl0iGE9Z4Bin+6UKjslbJI6dVd7F87uHnsHou6zU7hjW8fO9IuxUD2fTNoSE1YJ0t9Bm5klH9gbhgr+FpKTywzGX+cjN4baADscNSdz6gMH8g0xDmnKemhUBkIgn367cyMVf/WoCw44vhInBAd6fvumbVWo2Er//dEpos09nm1rAciuKjurheQ1RKmXezaJ6mcdBp4R7U928XcF/Lsp8cHgmqRYjrHm7QYGNMibV3mg8U5ed0FCnkEANz9mmCmXVvvDxyaTj1f3FpJW4TnCfI5UdhPSLRSv1QL42zFybD57thdY/gmbtQ6tPMsHHt3JdZ4vwVBFmFks3TS8Z+s1DCQFxam82rAst4A3KZshrkd9QVc3YrWSKSFx/Toe16e7AfFkSuh1er86Ra02ekJFz3kKzyjkIeA8PstpsaJ+3Hai//20heFDxnKr/y00CZqXwBGNHSCagiIFS9qmRW1Wgb0/UzpZkZwnxw==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6448.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(11063799003)(22082099003)(18002099003)(56012099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6448.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(56012099003)(22082099003)(18002099003)(11063799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R1hrNVRRdzd5Q3grRWhENTVCMGJ6REhsa0NycmhoaGpBZWpJMjRUYTM1OExt?=
- =?utf-8?B?NFl5VFk3NFdHclpJK0p2b1dRK01FWE1KYnFDVFBIRFlhSFY5QlA0bHN1NDU5?=
- =?utf-8?B?RzBBU0tscWFMSFdEOXpQNHF6N29RWnFOVTY0SFdpSUFpRVo4Z1VmNDdoakEx?=
- =?utf-8?B?c29BV2oyUVgvRjlqL0pmM3J4WnR5eWVYRk14NW4vbXdJbzdSN3UzaFNjVjFZ?=
- =?utf-8?B?anUrL1VPcmJrTXV4ekpQakxnNmc5bWJjQWlGQVptV1F3WUl3d3FuLzdWLzNX?=
- =?utf-8?B?cEhqbnJNelloTDdFbGZTSGhYSzRyaUhyL29uL01MS1BEeFR3V2Mya1dUd25i?=
- =?utf-8?B?RExkbVRWM1VOKzNRMmsvMHNKVDJ0dzNMMHJESDc0U2NuTzBBck5jY21wNFdT?=
- =?utf-8?B?QkxJNWVFUmhvdmNsQjB5Q3lHdnV0UHpUdnVLUnVhZzNKcDM0Vk1NeVNJVmFa?=
- =?utf-8?B?cm4wVjdOMU5Ja3hPdyt2RXZHTmNPUmRudXVCSEt1R3IyRUlIV2NGaFl5bERZ?=
- =?utf-8?B?TVJOMkF4MFp1OUttYWNXQ3NSMXd1Vm9mekJ3dzh5Ync4amI1WHBmWUFKQ1ZP?=
- =?utf-8?B?UkVPQ3BadnpIZ1FpdlJDTGE4Z1BGVUdSMHZ1ZU5qTjczRUFFKzF1N1gydnZr?=
- =?utf-8?B?Ni84N2NOeEhPQ2x6cVRtbnBadHp2QjVJQWZNdGQvMzV4aWh3NFFjcElFOGdl?=
- =?utf-8?B?VE5NbldzQXMzK1NYRGxISERHV0dzSkJnWDFSV0NDUVhxQ1VQTzVnSmp1anU1?=
- =?utf-8?B?bGl4MzhKK3lvRGdhMkh1SDlPR1FWSk1xaGZwQ0lYa0VPREgvZ0JjL2R4RFFR?=
- =?utf-8?B?dm15aXJSaUp1S2RwMUNSckQ3Tm9KRWlhblBnek16S2tTQ2xrWDdDVG9OZWpu?=
- =?utf-8?B?enIxQlF6QXc1WmRGRDRxbEQvYTdTMjZsRmhHWU5TaDZza1JXY0pTSzhON3lV?=
- =?utf-8?B?ZXovRitWUzFBZWRma3hNRHNYNHUyendWeTZYWTJ2Y2VUUitFZHFtbVNjeEtJ?=
- =?utf-8?B?MHphUDRVYVhzYzBFaVRZSmFmNVRvQzJDRVFqUUtDbkJQOXl5VzRCNjR3RE5X?=
- =?utf-8?B?cUZNOWUxTENtVkd0eDRrZHBkRU1oMytXbG5menN4ejh1NVFzYkVuZmJCMWJP?=
- =?utf-8?B?YXlIVGpqdjVPWVBDMU43N1F2ZmxaWXR2ZjJxUGlpYjc0dVd1bWQwWXRDTEFZ?=
- =?utf-8?B?ampRRkQ3RUJDMFF6T1JwdXVPVDFxdSt1d2F5VDJoajhiTGRESVlhL0hwd3VD?=
- =?utf-8?B?b1R6NUJKdFRveWViWnJwYXIzQmRNZW1uWVEwcTJzTllYQ21Tb29UN1hrc0Rw?=
- =?utf-8?B?cTlxQ0Fnd3kveTlxV0luUGRwUnRzSlhRS05uWW1STkZzTzJWTU44NVI5c1JP?=
- =?utf-8?B?ZktkUXI2SXo5bE5HMFZnWDJ5a0NKU2V4YjA1VU4xYkVpM0RoM0RmYVB6SmZi?=
- =?utf-8?B?a1M0SE5QVWJ1N3U0QXZRV3dhb1NyQlIvLzNkU3Jjdjg2TmhOclVmT1lXVzVh?=
- =?utf-8?B?VUwveDVjZExzL091ejF0ekgvZVZkcVAva2p6TkVKZ0FZZkNDSUVkUmJQNzNz?=
- =?utf-8?B?RDhhRnFiRmgxY2EzRmhVbHVrZEZkREIxRE1iWlFTQ2tMUzU0TjZBT3RLQ3Q1?=
- =?utf-8?B?OE5VT3lNQVQ1Q2VJZ0hTQytBUldRQVZEZ1BvYlF4T2lybUdFWkVIUS9kSTJV?=
- =?utf-8?B?dCtDQUhGMGh6S3cyaHFSdnE2V0dYL2Rhd2RRUXA1WlRXVy9LSUp3UTZHUVQ0?=
- =?utf-8?B?VG5wRkRjSk8xcyswK1luWHdNMkhEQlF5Z3RPQ0lJRngvVlZ4OG8xVUVoRzNP?=
- =?utf-8?B?OVFPaU51cTEyVlJPUm1KeVRYWHJleGh3d1RRNVducTUxUUlNSk9MRStSaWV3?=
- =?utf-8?B?YW5JclFRaGM5NTUxL29QRUEzT01qTWJySFRnWVFHMW4yUHkyZnZmMHNHcWJR?=
- =?utf-8?B?czd3YkVWUTZSK1ppM3VBWUVHdjVnMzhsbW9nOUNKdmN1OE1DSFZQRmJZcFNQ?=
- =?utf-8?B?cXprQjdWZGswMFc5OU5oY2ZQZWQ4U3p5ek11UkZLYlROQlRUUDd4YkE4ZklJ?=
- =?utf-8?B?bGxuUGhIM3pTV2M5dW5OUVFaQVg2REk2MHJGK0pxcFg4enN5bHI0VnZseXFR?=
- =?utf-8?B?aklMdklSZXhsWkJKNDQ5RkJHQUVMeE5nSE9oRjVPdzhkVVUxbHZ0VmVrWk8v?=
- =?utf-8?B?LzE1dUwvYjdJYjMyUVNSN0xNQVJBRDVNOGl4SGt2YUNZdjkyNGc5QnpzdXo2?=
- =?utf-8?B?aHY0Z1JZWm0zcUpPMS92QzFLd0l6WUE0VVdibnlzSkZ1THJ5akFiVzg1VzEy?=
- =?utf-8?B?TnBKOElsRUVUTS9KNE1BUjhXTFBDVVY4Uk1sa0kzYmZMR1NYakRUQT09?=
+	=?utf-8?B?OHl2bWpRclhEZHkzbTEyeVRVaS92VjZnMVZSbzlTZEVJcFJMMVlja1dkN1lF?=
+ =?utf-8?B?WklURjF3NTE3RGd0MWtLeEI5djI1b3VHbG5xSTFQUFB3NHR3d29VMTNiQXht?=
+ =?utf-8?B?M2RhSkswYXRCaENOeitZOGQzUFpVNkRCOWNyK3lCVG14eTVnMUpOamE3aXZY?=
+ =?utf-8?B?MGQxeUFVYjZCYjBCRURBY1RhMWZXYllRdExBYzJTTkU5ZkRxWC9wR3kwOGFi?=
+ =?utf-8?B?VG04SVZsR2dRK2Y0RHd2MnppaVFnb2NNSnBZcU9lK1VqbVRtZkZ5SDVTSW1m?=
+ =?utf-8?B?R0ppdWVrSjJmcFVDTFp5eklObktXMllMTy85VDRuVCsxbElPK1NFei9PMWl2?=
+ =?utf-8?B?UW1XUlpocDFmQnFhOEtJV2JqS00zdEtZMTZidFdwUGhtOTZxWDRNRkZhSjdS?=
+ =?utf-8?B?Z1JsVE9oQUVlWWl0TG5DRVpyVUdxcHJWb05NZ1g2cWtXMy9Kbk5lcHI3L1JC?=
+ =?utf-8?B?S1RhZnlEV0RkQXNwM01XMFVINlJlcVJnVk9GKzhNMG5qYXhCVXJlamVKcnRL?=
+ =?utf-8?B?QW4ySVhjcjN6WlFuS1RlYzRJTmVZMlRJT28waHdRL3ZlVi9PK0JranNKYXYy?=
+ =?utf-8?B?THZGV1o4emVXbEt4UTlqQUVvUjI5SEl1RDJMYnR0dGphNEM2UGtDNGRJK0JJ?=
+ =?utf-8?B?VkMwNGl0ZXhrNmRhbUQ5TlovYzVtQWNxbTFvY2dwU1BNZVpYLzhBdXJQbU9m?=
+ =?utf-8?B?bTNkU28zM1IwMWhRblNSQzU5WE9LcGEwazRwRjJ3Q1BrMVVsd05uWEZTQzVS?=
+ =?utf-8?B?Q1Q3Sm5Kc21HdHBDMnVSZzhUNC9RbURCRmpWd1dwaWExdXRTK3NVbEZNMmN1?=
+ =?utf-8?B?QnZ5RGV3aDgyb3p6VW5sbnlsZ1JQNy96UUo2UEpQSjl5ZXV2SzN2dGZHQVJ3?=
+ =?utf-8?B?a1lmNTVBUTIxRGI3cEcxUFNXRDg0RXQxV3EzQi9NY1h1ekVkdEw4WFhJRmtq?=
+ =?utf-8?B?RmdPMXA4bTVIZ3QyOCtad3M2UHd5L1paei9HeXlpWElTRkdteVZKRG40NDlM?=
+ =?utf-8?B?ZzRTWFllT0FlT3hGTXhsQ0tXWGo2ZEFDSnlhQWEzRFFwUGttZnVRQmNRVnVy?=
+ =?utf-8?B?ZFFwNExrcUtPM3dUV3gyclRYcVhRbEtyNFp2cSs1TzBTbStsNnN5dWQzR3pS?=
+ =?utf-8?B?VU56b2phK0s1QnZYSzlqMzJINFJYR0hsV0dyQVB5eGVRRU5WQUU2YXdteTcy?=
+ =?utf-8?B?RDM2YzA0alZYb0w4SGd4cTQwemp3eGMvY0VFTnFnUnYwYi9CaVpxclorMkp3?=
+ =?utf-8?B?TjlvbHY4bU9reDhxWnlvTUdJaTBRdWNHS0wzemJnTUEyMFdCcUJ3MkMrRTgv?=
+ =?utf-8?B?VjFuRVVUZnJIRlJSN1RPdjJXRjJUNkdOSU51Wk9TQ0tvQjNzMjlyZmp5UUZV?=
+ =?utf-8?B?dUJkQk1UdnZyZk5ZUS9DWWRQVUo2YmpXeFl0ZHF4bk5JUnVac254QjF1c001?=
+ =?utf-8?B?RDZnNHA5aEtWeXE3SkJHcmVqOHdZQzB2YlFNK1Y2Nk9ON3pudVBDY3gxcWhj?=
+ =?utf-8?B?cklCb0FXQmlQL1k3d25wdWkrTGRFcFIvSVhBQkwwTHNRNGFkN3gvZVJaSzd3?=
+ =?utf-8?B?UXRNbCtEeURtcE5LeU5CRnJYRmFqTmwxUW1lUVoyOXF3bEpGQlJ0bU5DTzdN?=
+ =?utf-8?B?RGZzQWNzVktFYzlaalEwVWJ2UjVoNTV3eHBSdUdSZyttejh4eFNxNzJDbkEv?=
+ =?utf-8?B?ZzJvL0g2ZCtXeDhDK3F2a3MrZmVDeTMxR0JtVXJGTHFoWjZMeXZkeDR5SVhR?=
+ =?utf-8?B?ZlVESTk3VnRMSzJWNTlFUlUwV1JnT0hWNkVVME0vaHFJZnZoeFhpM2YwalJ2?=
+ =?utf-8?B?OXVaenJyY29jTHNMcDFPck9CNkFIMUNJclI3cUlsdjFRVXNQejVmRWJ6L1Nz?=
+ =?utf-8?B?NEhLaWpoSXB2dUd3OEorUFZKSVhEWklMZ0VTQlpTc3ZkdGU3STQyTzFUWmZW?=
+ =?utf-8?B?WCtWaGI2TzJpZ3RzVHppb1M0V2djR0JuWHNYeHdvb3JYcElrWngyYStFRWtD?=
+ =?utf-8?B?ZDhFRFNjaVVHNmN5V3REdnZzcmtUK3JtUmtWYThvRDBzM24xQnk4ckdZR3Av?=
+ =?utf-8?B?YjBtbzRiVFpOUFk1Uy9FZWJaQTZWcTdnZWM2aExBNlRhcllOVFN3K3dvV1pV?=
+ =?utf-8?B?VXVEanl4Q21rNFdGV1hOS3FkdXJraUUyWFBiN3k2STZ1aVJkQ1RUV0lCcmtn?=
+ =?utf-8?B?WVhiSFArYm9FMXhYQXN5blRyQVBNU3pneUdYa0oxRXJ0eGlHVDJlb0NvOTVv?=
+ =?utf-8?B?N0ZxV1BYUFNkSnUwL1FQcUlNcjlZazBHY1YxS3pvdEhrYk9jWWRsWVc0YXc1?=
+ =?utf-8?B?NmpvWW53WEZzb2NMeUdueGlmZHhURnVUcVROb3A3d3N5R21iOU9yQT09?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc538916-cac6-4473-ccc6-08deb04a023f
+X-MS-Exchange-CrossTenant-Network-Message-Id: c02c406e-28c3-47ef-f1a8-08deb04aa5c0
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6448.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 17:15:04.6948
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 17:19:38.9582
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FguomXZaUmeL2pVsbvhw3ESKKszKE8w4HIgjLA80KwhY/xsT8iqSg/X1Qe8S4lyUeyyl3Wpjz8rKv8mIyAQ+IQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4435
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9yYRULqp1VlqE8l+RvoIZLcKoM5UG0P5RLG5jExPOlnK6ew8+8Yaw0FSo96f7ou3yTHct6PsCN/BscT0F7Z2Ww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7932
 
+Hi Daniel, Arnaud, Tanmay,
 
-Hi Arnaud, Geert,
+Please see my reply below
 
-See my replies below
-
-On 5/12/26 10:03 AM, Levinsky, Ben wrote:
+On 5/12/26 10:04 AM, Levinsky, Ben wrote:
 > AMD General
 > 
 > 
 > 
 > 
-> *From: *Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-> *Date: *Tuesday, May 12, 2026 at 2:45 AM
-> *To: *Levinsky, Ben <ben.levinsky@amd.com>; Bjorn Andersson 
-> <andersson@kernel.org>; Mathieu Poirier <mathieu.poirier@linaro.org>; linux- 
-> remoteproc@vger.kernel.org <linux-remoteproc@vger.kernel.org>
+> *From: *Shah, Tanmay <tanmays@amd.com>
+> *Date: *Tuesday, May 12, 2026 at 7:53 AM
+> *To: *Daniel Baluta <daniel.baluta@oss.nxp.com>; Levinsky, Ben 
+> <ben.levinsky@amd.com>; Bjorn Andersson <andersson@kernel.org>; Mathieu Poirier 
+> <mathieu.poirier@linaro.org>; linux-remoteproc@vger.kernel.org <linux- 
+> remoteproc@vger.kernel.org>
 > *Cc: *Frank Li <Frank.Li@nxp.com>; Sascha Hauer <s.hauer@pengutronix.de>; 
 > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam 
 > <festevam@gmail.com>; Geert Uytterhoeven <geert+renesas@glider.be>; Magnus Damm 
@@ -172,107 +175,79 @@ On 5/12/26 10:03 AM, Levinsky, Ben wrote:
 > soc@vger.kernel.org <linux-renesas-soc@vger.kernel.org>; linux-stm32@st-md- 
 > mailman.stormreply.com <linux-stm32@st-md-mailman.stormreply.com>; Shah, Tanmay 
 > <tanmay.shah@amd.com>
-> *Subject: *Re: [PATCH 1/4] remoteproc: add common wc-ioremap carveout callbacks
+> *Subject: *Re: [PATCH 3/4] remoteproc: add helper for optional ELF resource tables
 > 
 > 
 > 
-> On 5/11/26 23:18, Ben Levinsky wrote:
->  > Several remoteproc drivers open-code the same ioremap_wc() and
->  > iounmap() callbacks for carveout mappings. Add subsystem-private
->  > helpers in remoteproc_internal.h so those drivers can share the same
->  > implementation.
->  >
->  > Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
->  > ---
->  >   drivers/remoteproc/remoteproc_internal.h | 26 +++++++++++++++++++++++-
->  >   1 file changed, 25 insertions(+), 1 deletion(-)
->  >
->  > diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/ 
+> On 5/12/2026 2:55 AM, Daniel Baluta wrote:
+>  > On 5/12/26 00:18, Ben Levinsky wrote:
+>  >> [You don't often get email from ben.levinsky@amd.com. Learn why this is 
+> important at https://aka.ms/LearnAboutSenderIdentification <https://aka.ms/ 
+> LearnAboutSenderIdentification> ]
+>  >>
+>  >> Add a small helper around rproc_elf_load_rsc_table() for remoteproc
+>  >> drivers that treat a missing ELF resource table as optional. The helper
+>  >> returns success on -EINVAL and propagates other failures unchanged.
+>  >>
+>  >> Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+>  >> ---
+>  >>  drivers/remoteproc/remoteproc_internal.h | 12 ++++++++++++
+>  >>  1 file changed, 12 insertions(+)
+>  >>
+>  >> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/ 
 > remoteproc_internal.h
->  > index 0a5e15744b1d..3724a47a9748 100644
->  > --- a/drivers/remoteproc/remoteproc_internal.h
->  > +++ b/drivers/remoteproc/remoteproc_internal.h
->  > @@ -12,8 +12,9 @@
->  >   #ifndef REMOTEPROC_INTERNAL_H
->  >   #define REMOTEPROC_INTERNAL_H
+>  >> index 3724a47a9748..dff87e468837 100644
+>  >> --- a/drivers/remoteproc/remoteproc_internal.h
+>  >> +++ b/drivers/remoteproc/remoteproc_internal.h
+>  >> @@ -146,6 +146,18 @@ static inline int rproc_mem_entry_iounmap(struct rproc 
+> *rproc,
+>  >>         return 0;
+>  >>  }
+>  >>
+>  >> +static inline int rproc_elf_load_rsc_table_optional(struct rproc *rproc,
+>  >> +                                                   const struct firmware *fw)
+>  >> +{
+>  >> +       int ret;
+>  >> +
+>  >> +       ret = rproc_elf_load_rsc_table(rproc, fw);
+>  >> +       if (ret == -EINVAL)
+>  >> +               dev_dbg(&rproc->dev, "no resource table found\n");
 >  >
->  > -#include <linux/irqreturn.h>
->  >   #include <linux/firmware.h>
->  > +#include <linux/io.h>
->  > +#include <linux/irqreturn.h>
+>  > You are changing loglevel here. Initial drivers use dev_info or dev_warn. At 
+> least I'm used
+>  > with seeing this messages in the logs.
 >  >
->  >   struct rproc;
+>  > So, what do you think on adding at least dev_info to this instead of dev_dbg?
 >  >
->  > @@ -122,6 +123,29 @@ rproc_find_carveout_by_name(struct rproc *rproc, const 
-> char *name, ...);
->  >   void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev);
->  >   void rproc_remove_rvdev(struct rproc_vdev *rvdev);
->  >
->  > +static inline int rproc_mem_entry_ioremap_wc(struct rproc *rproc,
->  > +                                          struct rproc_mem_entry *mem)
->  > +{
->  > +     void __iomem *va;
->  > +
->  > +     va = ioremap_wc(mem->dma, mem->len);
->  > +     if (!va)
->  > +             return -ENOMEM;
 > 
-> Could you add error message here to help for debug
-> 
-> +               dev_err(dev, "Unable to map memory region: %pa+%zx\n",
-> +                       &mem->dma, mem->len);
->  > +
->  > +     mem->va = (__force void *)va;
->  > +     mem->is_iomem = true;
+> Actually can we leave that choice to the platform driver ? There are
+> many use cases where the remoteproc subsystem is used to load and start
+> the remote core and the firmware doesn't have the resource table. We
+> don't want to make info level log for such use cases, as the resource
+> table is not expected in the first place there.
 
-Hi Geert,
+Thanks for the feedback.
 
-Thanks for the review and the Reviewed-by for 4/4.
+I agree the helper should not impose a common log level. Some platforms intentionally run firmware without a resource table, so forcing a shared dev_info/dev_warn message from the helper would add
+noise in those cases.
 
-Here there is a real behavioral impact from not setting mem->is_iomem for carveouts backed by ioremap_wc(). In that case rproc_da_to_va() reports the region as normal memory, so the ELF load and
-coredump paths can end up using memcpy/memset/memcpy_fromio incorrectly instead of the io accessors.
-
-Given Arnaud's feedback, I'll split that out from the helper cleanup and explain it explicitly in a separate patch in v2.
+I'll rework this in v2 so the helper only handles the return-value behavior, while platform drivers keep control over whether the missing-table case is logged and at what level.
 
 Thanks,
 Ben
 
 > 
-> HHere, you set mem->is_iomem, but this is not done in platform drivers.
-> 
-> It seems better to add this in a separate commit after patch 2/4, with
-> an explanation of why it needs to be set.
-> 
-> Regards,
-> Arnaud
-
-Hi Arnaud,
-
-Thanks for the review.
-
-Agreed on both points. I'll add the missing map-failure error message in v2.
-
-For mem->is_iomem, I agree it should not be folded into this cleanup patch without its own justification. I'll keep the helper conversion behavior-neutral here and split
-it into a separate patch with an explanation of the impact on the remoteproc load/coredump paths.
-
-Thanks,
-Ben
-
-> 
->  > +
->  > +     return 0;
->  > +}
->  > +
->  > +static inline int rproc_mem_entry_iounmap(struct rproc *rproc,
->  > +                                       struct rproc_mem_entry *mem)
->  > +{
->  > +     iounmap((__force __iomem void *)mem->va);
->  > +
->  > +     return 0;
->  > +}
->  > +
->  >   static inline int rproc_prepare_device(struct rproc *rproc)
->  >   {
->  >        if (rproc->ops->prepare)
+>  >> +
+>  >> +       return ret == -EINVAL ? 0 : ret;
+>  >> +}
+>  >> +
+>  >>  static inline int rproc_prepare_device(struct rproc *rproc)
+>  >>  {
+>  >>         if (rproc->ops->prepare)
+>  >> --
+>  >> 2.34.1
+>  >>
+>  >>
+>  >
 > 
 
