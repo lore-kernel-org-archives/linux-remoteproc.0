@@ -1,174 +1,176 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11011015.outbound.protection.outlook.com [52.101.57.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5076B395AE6
-	for <linux-remoteproc@vger.kernel.org>; Tue, 12 May 2026 10:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778582309; cv=none; b=VmvSKStuwbE+A3hFP8EoaPD3zRVQTw9zHznJDZOGIB6pFO56HZPcR4+IekTYOmpIMB3g0gIagUvK+iIanuIFQ0g6SLDTVwWB76yFllTZfU3T3ZSg63NEeK5EFaB21hxteotzk6J2KV+eUR8Pp1NvO/IJ7wMD0pzBYirZRgDOE5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778582309; c=relaxed/simple;
-	bh=uSc4Uk5ndet+gTRsUAvT8KIaxikSv3hGFbqTwITcS5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VO37WAPU7mUzRDziQgjycF0LZEHpK79lk2ssWGzC/RYXq4EIpyNJumgRFWRjsNCG3o+YBkXZFFBgQFRPUq6AkmXDRhmMDWSP+yXZdfI+24e21VHRijbe8TojRruoJXzq+C7E4K6PyCLWovkYNIL2g4REXnFJxI1psMIwP0FNr98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jIrUGRBg; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F81835B644;
+	Tue, 12 May 2026 14:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778597635; cv=fail; b=O/Mt89lAdUpFtD84XUhzZnWkOanKymGnLzIrKxfKEkzzWtFGAKn539Okb4UPbCSSNnpEndeoBpJZzeGpry6QSEIosdL1vygQcJmhdj4BzFaAnLm2TpvUmOKkldzNQHdNaCw2NSmlslijzEp5fHLM+h7BpQULzJWcbCdqgATu5TE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778597635; c=relaxed/simple;
+	bh=ED7dmqZaBAmIOXVPxoE9ndNcVENFIuXeJ/pxd7W/IvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VD3XYZ+o1d2Ci4T+sKcIeVJVLBg7eUSspdj6KhgWErMeNn+5VerUarivwAeKQt9EtWpPQ160BwI4OERrOmIbL3pwSigMtAh1eZbrir7vLJw2SD4FgiOwdVv3AyuF+3/cId0ifcTGIXLhGNdQCn8DBruCZW+QhV7z7OU8iyqj/6Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IHbfPHG/; arc=fail smtp.client-ip=52.101.57.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jIrUGRBg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:mime-version:content-type; s=k1; bh=NOyfNCm4880N2TyZrQF+LofeXFP
-	siXAUsATS4C1WbbU=; b=jIrUGRBgAdUUHM9MizscSFTP3Jy8YfPchEVmqiu7iT9
-	aepJbPWKsS+LeTtOrCpRJjNN9RFjbsKg4BJlZEhdKnnehpPYB+QkotBzskK4IoyT
-	xAwjArSduNN5EzjOmYfwg6TZQVL7BZbxcXK8phn4LJ+FkLleVdHlkqh94hl9i7jN
-	LyEWncL1sXhLwJuroJi89pB3YQsaddwSwmiVaGzZuuXP9OEFiE5EfsUIV23ppvuv
-	u4GqQCnln2mRIlghFzEIaZo+4LxMA9TY0RiWyySUAcNljKVx4PsqcIhROYusIN+b
-	mawlFdBdolkyclREq77/ZS5ceWobGmScBVLxxCRHA+Q==
-Received: (qmail 2954428 invoked from network); 12 May 2026 12:38:20 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 May 2026 12:38:20 +0200
-X-UD-Smtp-Session: l3s3148p1@rboydpxRepUujns3
-Date: Tue, 12 May 2026 12:38:19 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-remoteproc@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PROPOSAL] hwspinlock: remove 'unregistering hwspinlock devices'
- from the core
-Message-ID: <agMDGwHuh-mqhk7y@ninjato>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IHbfPHG/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XZ6+ja7eu33zwPIPURlYkYHrK3wO1pMoNzuQSE648/ZJvcCLlyU8vAy/tbfNSI0bPYAR93AMcVcol9bjk6XodN4Ulx2M32ET17QAVyv/HMEhPs+WYjmjB9qiPN++EL7z1ue2y9tijtbWhk2Chy9EK2h6a1BIIFn16rVByZIBTlWFsTCGK9D/n16J/48i0RMKPolawDIst6WdpUeS9P6sPTS3sZF5EZTbWbiB0j0qttfVqNDrmutX+gH0QfUf7knYsChg041+vlEXC/y+uLHdgxAESdG0qVq9kkWqcdwvpkeXDWrPi4vcpY5mIGIfYnzrfAPaGuzGuY2gNXr1eX7UIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uzofhYUm9Mc1bK7p5TqwAz158lzxySiC+Tfppbo1rkU=;
+ b=oD5cFCtln6qE6Yg6EyZflMxz4bHgHyvECe4EAqPyAB3ZOKp5HDvhDAh2otVFrqmG1O9r9nlnsFWhm/XaEjLcB9VTRy6cDROpth9zXxdPlQE7SP3hdQLb8M4V+ALjS5oVX+k4iu3Q6Yp++Of+lfx2TW7gjlPQlxfaBf4klkOABoCbwy/RzMzm/1d4qE2lPAraWLVO2SgQiki3pvRPB1OIaMKiQmVaVmLw2GekjcxLKATB8w3w9CQIFtLts9JhXMzsJj9FQV8bK7X6IbzW8hmPFGy+VmnboKrPki9/WiDKGcU//xFMEo319ePuvn52V2ltW40PjO4v1649DpOEXW/xpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uzofhYUm9Mc1bK7p5TqwAz158lzxySiC+Tfppbo1rkU=;
+ b=IHbfPHG/3L4VI8DOeca2m8UduNLqZyD8JisJNJzlY8TnK+BgiMuxuH/h69rmOrxnmJm4W7oRPqDlDJLViCo3qi/5ryKExJRhvAdqhb6wpqcfOhkuo5HJzDtWjXqqu+gqp4bfpAtEx7P7A1kolQkb+TyuvfRVU8clqRUF5kPlZlY=
+Received: from DS1P223CA0003.NAMP223.PROD.OUTLOOK.COM (2603:10b6:8:453::8) by
+ BY5PR12MB4099.namprd12.prod.outlook.com (2603:10b6:a03:20f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.23; Tue, 12 May
+ 2026 14:53:47 +0000
+Received: from DS3PEPF0000C37B.namprd04.prod.outlook.com
+ (2603:10b6:8:453:cafe::73) by DS1P223CA0003.outlook.office365.com
+ (2603:10b6:8:453::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9870.24 via Frontend Transport; Tue,
+ 12 May 2026 14:53:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ DS3PEPF0000C37B.mail.protection.outlook.com (10.167.23.5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.25.13 via Frontend Transport; Tue, 12 May 2026 14:53:46 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 12 May
+ 2026 09:53:46 -0500
+Received: from [172.31.11.23] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
+ Transport; Tue, 12 May 2026 09:53:45 -0500
+Message-ID: <9e3a88d9-1679-43ae-a96b-62a29bd45d9d@amd.com>
+Date: Tue, 12 May 2026 09:53:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8KjfHD4l9zYmj8YX"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH 3/4] remoteproc: add helper for optional ELF resource
+ tables
+To: Daniel Baluta <daniel.baluta@oss.nxp.com>, Ben Levinsky
+	<ben.levinsky@amd.com>, Bjorn Andersson <andersson@kernel.org>, "Mathieu
+ Poirier" <mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>
+CC: Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "Magnus
+ Damm" <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <tanmay.shah@amd.com>
+References: <20260511211841.284809-1-ben.levinsky@amd.com>
+ <20260511211841.284809-4-ben.levinsky@amd.com>
+ <3b7f009c-dc4b-4fc0-becc-4d07eb4ff016@oss.nxp.com>
+Content-Language: en-US
+From: "Shah, Tanmay" <tanmays@amd.com>
+In-Reply-To: <3b7f009c-dc4b-4fc0-becc-4d07eb4ff016@oss.nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37B:EE_|BY5PR12MB4099:EE_
+X-MS-Office365-Filtering-Correlation-Id: 083f1460-c57f-47fd-966e-08deb036453a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700016|82310400026|1800799024|18002099003|22082099003|11063799003|56012099003;
+X-Microsoft-Antispam-Message-Info:
+	+o8GsQ1vLTFZs1Zu9UqH1HX9O3nauPjzkg3+kDyocOoXdPnp/r43RdW4rNbBaCXB/rZXK+4v9EW0+FwxJBtIqpQDUKbd0j6RA2iYHRgB2hdZeAoaUoCzNncrHm8yNT0MKy+obnxgkUaGWM9IORnRqJibApIVsIvEVu6JtuEEyCWJXVcea2brFsXfS8snjGBeJ/CydEZOG85x3ERrhHahf/T9xjiv8p7mwyfVFOFWL24fFyk6Kr5uzTF4Px0gJlUTDIq+TSljTuC0IFQkYUAofQUoTnu8Le8bI27jVrm9SGa7C8mYnoMOc5csEsnY4dOKgZWGG0JJyJbFgSO7LzDhRC7sS5EnjOqRRSoKOs7D3zRcOYNGo3Ip3IsX8WDtE1hh0Qrr+QNvmrJX3bZ/jyXVpLIwjocf6U8kJotjh23lp/cDwbfrFCeYc49XAAl9quonCuP8sfSEGt8CsLZa9zCt3G53AM39CRmU8/rMKDQgwlLTmFkDm4Ulpj4VmCyqGn6bt6m80RDys+S6f9nOgc2yrFLDz+/tfLdIhvlXcQdjDqppHSBnyg7GDNTCmvymXfZL5D8tRqpk1vIWOJ/zZ/SkEndNbWiiVR9vciJGpkQE+mq571uG27lJAqNGbYbr+GHb9hJJ3CwBQYLEbGtHmdVUh2ZfCfzRIP5suran8Bo4B+9LJeeBDBZXOI+2GGrsF/Rf+nbMMYCGc3mC4fgXydNvLNdCIqUht5RoOH5+bKy7DIU=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700016)(82310400026)(1800799024)(18002099003)(22082099003)(11063799003)(56012099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	3olwf2wK95yBFQGC5kzvb9Kj6X/UcEdzlYlBMveR18PNEr208F5vqlGVivvI/x9RNyjhuw+7N2ACi2Rj2F/8ur/hbmXyWGAb4A2r6Gc+048GUvqPBJcM9pIO/Dkc4h2EOOprj4TZUGunO61qGmTOSu0T6/O6m+vw5unkFo6PHMtRohvlNB5467dFC/W+aiLTkCT2Fd8jwHusykjG2zAxAoEubLfPmuMhqeFIuqRAU65f9YeL0mIs27ki8EPnE8epZDeMzLJmdAGRxpOo9caUCNPKyHPg/k2rw3y0W9mw7dQfLyt2FmOfn8TtkcllHQ8GTQyRhBQ+AzwPzpvP9W7SihsPu8abRz86zaR8AxJ5Ksu1IBomDMmMVQIcWBs8PxJXppy1T2vhwvEPtYOQHdYGIWJEYfxPzPoXhs8tbeCOHqPkAk0Lu7yiTMoB2D2AmR3X
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2026 14:53:46.8682
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 083f1460-c57f-47fd-966e-08deb036453a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4099
 
 
---8KjfHD4l9zYmj8YX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 5/12/2026 2:55 AM, Daniel Baluta wrote:
+> On 5/12/26 00:18, Ben Levinsky wrote:
+>> [You don't often get email from ben.levinsky@amd.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> Add a small helper around rproc_elf_load_rsc_table() for remoteproc
+>> drivers that treat a missing ELF resource table as optional. The helper
+>> returns success on -EINVAL and propagates other failures unchanged.
+>>
+>> Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+>> ---
+>>  drivers/remoteproc/remoteproc_internal.h | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+>> index 3724a47a9748..dff87e468837 100644
+>> --- a/drivers/remoteproc/remoteproc_internal.h
+>> +++ b/drivers/remoteproc/remoteproc_internal.h
+>> @@ -146,6 +146,18 @@ static inline int rproc_mem_entry_iounmap(struct rproc *rproc,
+>>         return 0;
+>>  }
+>>
+>> +static inline int rproc_elf_load_rsc_table_optional(struct rproc *rproc,
+>> +                                                   const struct firmware *fw)
+>> +{
+>> +       int ret;
+>> +
+>> +       ret = rproc_elf_load_rsc_table(rproc, fw);
+>> +       if (ret == -EINVAL)
+>> +               dev_dbg(&rproc->dev, "no resource table found\n");
+> 
+> You are changing loglevel here. Initial drivers use dev_info or dev_warn. At least I'm used
+> with seeing this messages in the logs. 
+> 
+> So, what do you think on adding at least dev_info to this instead of dev_dbg?
+> 
 
-TLDR: I think that unregistering hwspinlock devices is broken currently. A
-correct solution is complex. My intermediate proposal is to simply remove
-"unregistering" support until someone actually needs it.
+Actually can we leave that choice to the platform driver ? There are
+many use cases where the remoteproc subsystem is used to load and start
+the remote core and the firmware doesn't have the resource table. We
+don't want to make info level log for such use cases, as the resource
+table is not expected in the first place there.
 
-Longer read (I still try to keep it short):
+>> +
+>> +       return ret == -EINVAL ? 0 : ret;
+>> +}
+>> +
+>>  static inline int rproc_prepare_device(struct rproc *rproc)
+>>  {
+>>         if (rproc->ops->prepare)
+>> --
+>> 2.34.1
+>>
+>>
+> 
 
-Problem
-=3D=3D=3D=3D=3D=3D=3D
-
-I recently worked on hwspinlock device allocation being done in the core,
-rather than in drivers. This lead to a lengthy Sashiko review[1]. The comme=
-nts
-about leaking the new allocation are correct. But the underlying problems w=
-ere
-in the hwspinlock core even before my changes. See the current unregister
-function:
-
-566 int hwspin_lock_unregister(struct hwspinlock_device *bank)
-567 {
-568         struct hwspinlock *hwlock, *tmp;
-569         int i;
-570=20
-571         for (i =3D 0; i < bank->num_locks; i++) {
-572                 hwlock =3D &bank->lock[i];
-573=20
-574                 tmp =3D hwspin_lock_unregister_single(bank->base_id + i=
-);
-575                 if (!tmp)
-576                         return -EBUSY;
-577=20
-578                 /* self-sanity check that should never fail */
-579                 WARN_ON(tmp !=3D hwlock);
-580         }
-581=20
-582         return 0;
-583 }
-
-Let's say lock 5 is in use. Then, locks 0-4 will get unregistered. With loc=
-k 5,
--EBUSY will be returned. Two problems now:
-
-1) The only caller of this function (devm_hwspin_lock_unregister) ignores t=
-he
-   errno anyhow. All locks after 5 are leaked.
-
-2) Even if the errno was considered, a later try to unregister again will f=
-ail
-   immediately because lock 0 is no longer present.
-
-Correct solution
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-As I see it, the correct solution is to decouple the lifetime of a single l=
-ock
-=66rom the lifetime of a hwspinlock device. It reminds me of a similar prob=
-lem
-the I2C subsystem has. There, we also still need to decouple the lifetime o=
-f an
-I2C adapter from the lifetime of its users. Given the experience from I2C, =
-this
-is a complex and time-consuming job. I, at least, don't have this bandwidth.
-
-Simple intermediate solution?
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-
-Unlike I2C, I wonder if the hwspinlock subsystem really needs to unregister=
- its
-devices. All current users are IP cores within the SoC, not hot-pluggable. =
-This
-is unlikely to change in the near future. My proposal is now to see hwspinl=
-ock
-devices more like critical clocks which can be probed, but never removed. T=
-hat
-would mean for now, the unregister parts in the hwspinlock core can just be
-discarded.
-
-Benefits
-=3D=3D=3D=3D=3D=3D=3D=3D
-
-- no false promises made (unregistering doesn't really work)
-- simplifies the subsystem (less maintainer burden, especially given the
-  rising amount of AI generated bug reports)
-- simplifies further refactoring like device allocation in core
-- no oneway. Proper solution can be added any time if needed
-- I have bandwidth for this intermediate approach
-
-Looking forward to comments. I hope I am still seeing the forest for the tr=
-ees.
-
-   Wolfram
-
-[1] https://sashiko.dev/#/patchset/20260319105947.6237-1-wsa%2Brenesas%40sa=
-ng-engineering.com
-
---8KjfHD4l9zYmj8YX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmoDAxgACgkQFA3kzBSg
-KbYsUg//VestcAAbP5TQOz8whmTfo4EKSbvnLBNepZYuLq0TGKCdqibPtq7NL91H
-hZj/yh8PaoyqC1vest6gO63+jYbhIE/EI2JuQrCLf1KZRLqmjs8SWXxJKBzBP3eH
-S1sDkIJX17t37psL40XACCMwldIGboZt0dWuQdl+lVG/REMz8xa2G7JFgQBK7PCv
-KtdUIO1XYptBiQvd5JgFGK8hOgZd2KvW9Y2ykHBi9PsGKUd9v+XhwU5pkRNEn9I4
-43ik5QpEcitELlBMrddu6mA8jFyVvTVOYhKS0WdfBUtA5YtoaAktQ1mZhpIMVZKY
-xWk19b8gf4eDg2cr5ZNywesfoTODYegWC8OFMMyfC1wTdyVnv23Kw0gzz5cAh9RG
-bTmosmiat5sTrNjTjtzwY8JMyUzFeTn8wRrELgT3Dn4zxGnXz9dZOBQODfopYSYZ
-SgcLjQV2RvBqC+FQ4UiCWLjH2cbdpv4zngLiu6iSfoz8zBVtNfuL9dn5b5IcVNUa
-cFk2xHNhBs3wkYE0mV8faUYl1CFBHQrPskZBhcrS5TVhPpK6yT9W2JlKcyacel6f
-eVa5rbOeE3/Ccp2mQwqvx+9DistRPY79R4JPbCfjAbuJ/we4psHDgnrpJ39G7gUN
-LMm08FBOFDj+jRZLmZdN0bciiKpAeJ/7uhUZ2Ey49U46Vm3PxMs=
-=NZqf
------END PGP SIGNATURE-----
-
---8KjfHD4l9zYmj8YX--
