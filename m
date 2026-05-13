@@ -1,232 +1,110 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3063B3BF0
-	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 19:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B902C345724
+	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 19:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778699907; cv=none; b=S13DTrMhKC/0aNfI7n8xzApP+27jgwlm1j4hq5YWD+dW914l9uLV9cyov3BlEossp43ZD6QWRReEDJNZdrc7aGDmdIJ8rtuOykTVkh89Z/xdy44gzAO8vNEoq6YMM+syPyvWFFrz88R+Ya9dor6Url+XPSaaFbL7PRW9UrXnu78=
+	t=1778701444; cv=none; b=QS1RNYJKpzdv9Q2AS9CRoxCuzRLAdaJhi5KXAX95w/tfZO2XBhTOvPVrH6WakZvo/7r6A/O7yhKAlerHhKfh+vekxVyYAvycgekwXExtgrnqov0AybQLmvRq+lFyyj0AZhriqGMlxPk5kvQM67VyZsNRlcUl2hTvHYispKeaWdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778699907; c=relaxed/simple;
-	bh=TOFV5FhHLTg90n8Ys2jf0xrJ28wQs3Tgz03VtgjgC6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=epNfL8rNdqJcyC2eqBUIvT2W/z8DHsWidhBmlk6h0HB/W5J/Lb2ZbWi0p9X3RaUcvKTm4oJWU+t4DJBODwLjsRegmgngrKFd6JA79Aw5EjptmdCrAKV4vEBP8A8jnYdNDXFLdh3hJtPy7P/YJq0rnj3Iug22B1fQ40u0OsLwUgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fC9U2hIq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Np0VhrQH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1778701444; c=relaxed/simple;
+	bh=kqV9mWHtjvRnmvRodV/GNwY/ZqbTCeQN0qDRfYKxV/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=aOL1od5+wTcQQEFIL8oOX2xx4XiXsEki3bNhih1FbD0WIbMIcOFJMxPsT2X+5OsTVf8jtHXIJR/1xA4rnw+lw3IbA2gpahIlkIF8vNwHBCHJz/gYOl9c/LaEXt/yJWr76joVkyIpl0CkL549NgptgxVQNGPkwmaZRz0vx5L7JEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZqEZ6Ve; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fC9U2hIq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Np0VhrQH"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64DIW92b3324683
-	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 19:18:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=dPgTJ9BxVj52ozj6Tom5mPIW
-	gYq2r83+vLDiB7tPbgM=; b=fC9U2hIqlrwbWq+tyK8jBrdx5YSB/8GCiBVx+oxa
-	Vfdpv9GYH5aW769O2OO3xvamqnkKxhNmrPONO23qZBu8Bi1xMmn0CQdR155rmULY
-	rv4xi7JzjeO1VYN516jJ4PC3+Tw/ibVs2QgfbZWF5WTOtTWgT2DLxuWOKWKLSnRY
-	EKf159l2xFGvzl9K8EHIklIiLSY00hg6SI1VYgwYP9QsEq2kucCizcHvE2ZlEmT6
-	vr8qMEjRLgNo1teIfVC+hHHcIBncKLQn18+/vbwVC9vWP/XiSKiND+vYEZ09cvWI
-	qQR9KrB9SND7/UlnN3PInDLrcXyQoMzdnk10y0fu1wR3vA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e4kvdb5a6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 19:18:25 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-5147078691fso165309201cf.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 12:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1778699904; x=1779304704; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dPgTJ9BxVj52ozj6Tom5mPIWgYq2r83+vLDiB7tPbgM=;
-        b=Np0VhrQHtt+q86671yMKHOSRK4sYeJf7Owzv0qpGQ9hABh1qvlFOX3F8JJKzDgGL5e
-         JzB7HkM35+VFatWfXMNQyO08XmnoG3N0hqNyVTEmAnCTBu0UGyasFdNkskRwqNVomcl8
-         ApvGFCyXVyHYlAUh8YVwPGvbn6rTue7FmYiTxygRGqrFBGOtRkjIs/MJ8C5ecGp4P2BD
-         FX7OOq4NZ1Ix7X2VMcRUiUX7Qw98raE86wTSLT0uUHC6Ksy6xmeRd2GAexEzzModC2Gi
-         wrOSMVYvXUXu69JqGSoNVbfjcJXR/5G6RRv5LxzRsdRUaPqRYgx1Zm2l4/LALWonQalk
-         A/PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778699904; x=1779304704;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dPgTJ9BxVj52ozj6Tom5mPIWgYq2r83+vLDiB7tPbgM=;
-        b=UMDwDqaj7GrK6Mmi970IZmBhvw4LMloXPW7ksHXCTm2C8Tui79FqI/W7ujKYaJ+QnV
-         +DCfGEQF4Q2TQVsUarh7U8iWxjhiuQ3pQfHz6CoyHx0XjhwRBbeymyjJ8eQcp5orcvQ7
-         xc/mv/JNaKzlBeEIlkNEOeVIYoTP5kxthFOLSRasQVMhMtaUr1CbzN6ANB8dYhozqJeg
-         5mo5priJeNMR0iVju1M5LijFMsgchUSE04iFqgDR5F0O06p2xX/ufflXDnHB1yLSo4uO
-         qmK23ybMRVBc5WwbQKZqQ2Obn9DWgCGmlPiLt0sEJSVc7xUYdR41FHbmnog0DXs0MqHT
-         bfGQ==
-X-Forwarded-Encrypted: i=1; AFNElJ/IF7lkg9EFHqGGnjzYawN7GPwSYXCSb0nTtXWgYS5as/Ou81v0kbUJSQtKScGtzmJaFUtspgbFL152xJEMoEpL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys1Hs2pM8cJrmXH4qt0Jq69vqJhPjFNP0uikb76bAFBZ2FzgNi
-	h8B3Y68R6OeW72yPfEQAVC/U6mtsQ9rtTSUld+ZBD+7XGw5qVXwXomgGDIWbEBjJEBBptkHZ2KE
-	gecUDOPokb+ehCalC00vCx7WBR77EzEbjsGZm4k8hwF/b4Gm0Y9IxCzewoF39xL1+LaC5QlF6
-X-Gm-Gg: Acq92OFh0xJdThZJXvAVIwp2NgV06Fz8hkJqaGT1xIZ6S+m2XeUl2kiq3Z3p629pjU2
-	DSbiEe/sf4+QZQkoZsZYnYuomizrBREH7A97fsYIPRRrOwUbsjqgrYGjp+tyVXSOGjalno4EuGd
-	zZJRoonwUb/UPbQK06gscKEX3yFJJ/884orGq39JLp5sqNsMM+TPh1fH4HN8vtXaRA1oIqpP/aY
-	0eqZK6lslqm5vMaUMcPnThzmtKE3xGhNEk9DKG9Hg/jd0gAKNkagSvnaEymu/2UY5MY46HAvOXS
-	fWVNqYw7ceKtfD8UToKNVhfzWAMhASrZABfzZIe8d5wcMoCTjNNvRQW9izURgssKATgvn2n50Rx
-	YX234oQw3RXxIALeo3PPdXUx6N/C8smaTJ1nlBVnnNqrIX57Lqw8Szn8xTNMLMVYNTxc3XFoMTc
-	iqyQaxiWNNL96dSOb8PGWKf2vLqPMG26Ihmxk=
-X-Received: by 2002:a05:622a:190d:b0:50f:bc35:aae with SMTP id d75a77b69052e-5162ff73829mr61258791cf.52.1778699904415;
-        Wed, 13 May 2026 12:18:24 -0700 (PDT)
-X-Received: by 2002:a05:622a:190d:b0:50f:bc35:aae with SMTP id d75a77b69052e-5162ff73829mr61258141cf.52.1778699903767;
-        Wed, 13 May 2026 12:18:23 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3945cab2808sm626681fa.19.2026.05.13.12.18.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2026 12:18:22 -0700 (PDT)
-Date: Wed, 13 May 2026 22:18:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
-Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Add Shikra remoteproc support
-Message-ID: <g5wv5mi25l7jyq3vbe3dovriyxguw22m5uvyslkbjbyprbxfnq@kep4x3kxeqmj>
-References: <20260514-shikra-rproc-v1-0-9afdedeee002@oss.qualcomm.com>
- <20260514-shikra-rproc-v1-2-9afdedeee002@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZqEZ6Ve"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82E4C19425;
+	Wed, 13 May 2026 19:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778701444;
+	bh=kqV9mWHtjvRnmvRodV/GNwY/ZqbTCeQN0qDRfYKxV/M=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=JZqEZ6VeNukQ95gGCbu39xk2YrNI7yAKFrbbu2vyvcgM5ucustwbNmZgR8J9EDFPm
+	 2lUanpEuVLgj4qdYgKEA/zAje7qYcfjsjqUa0/DCHa5+NABEU95M01HWF0IRMZeY4Q
+	 SbEYODacrUPnvvMPBQSVGzZ394ZwZJGW4fK+VUbEUnb4GFdsCTPkCXL4+pSCNtVzuG
+	 vIaXIvny5gEZHsDOvTURcZlowGP5v6XmXPqFMGaTZHpzG7sjYkj1RCZGhGgBeppI8V
+	 xUF2OqXdmV8mu8Zanx35Ov8DmuXiFreqSW5W67EM27HQUPpFqm7fifZMNF5uLpZoLO
+	 ch/6CiYWRD3Ow==
+Message-ID: <75d76c4e-f04a-440f-8f43-7796c84036e3@kernel.org>
+Date: Wed, 13 May 2026 21:44:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260514-shikra-rproc-v1-2-9afdedeee002@oss.qualcomm.com>
-X-Proofpoint-GUID: sB7tucLYFDTXCs3VyFyTA0bw7gVeCWpk
-X-Proofpoint-ORIG-GUID: sB7tucLYFDTXCs3VyFyTA0bw7gVeCWpk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTEzMDE5MSBTYWx0ZWRfX+ccF3ACm62IN
- HeTonucB7e4Dsd8VhxQH/1nYDy6aWOV5yaFePaEpCrQ2XweKKBJVMw1YdtZ42eNAdhFDH3rB9J2
- XHTGBg60OsY832lF2doRsTs53bL7WQf13ZU/NwYfezwHF9UM7pXZlsbwC0UL46CoUSLRa7KtLMc
- 43W72vREmVw1cb/Miutjje95EXn2i91DCMHQh17Tkh+cFYmBQDyaLdZNjQmBZi5D2nElT0Gf0nD
- rVpSxerq59cVc+mWTtCMfzxd4EmT/eGHP87/tyW/oz2DMOgqgyfwPf9VS6b2/vdRMsC9mWfIP/0
- uGQc0ef0wRUDMXO4gOGK5/1GFWz3cbkC9baBc0f70AvTjyf3rN6cn4XptT/zdqzku+Iz50b4+gu
- +M5ZCWywLDCqGmkjRiC/ayTDvKN9ETyZGz3RxHumLHB7b9IO+w7U8TYcOtuuyuteP6Yw2m8yw9y
- a0wZOwJwegFhsWFMlfw==
-X-Authority-Analysis: v=2.4 cv=Iu0utr/g c=1 sm=1 tr=0 ts=6a04ce81 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22 a=EUspDBNiAAAA:8
- a=OX9z2a93DQOUP5chVv8A:9 a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-13_02,2026-05-13_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 spamscore=0 adultscore=0 impostorscore=0
- bulkscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605050000 definitions=main-2605130191
+User-Agent: Mozilla Thunderbird
+Subject: Re: Fwd: [PATCH] dt-bindings: Consolidate "sram" property definition
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Beleswar Padhi <b-padhi@ti.com>,
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+ linux-remoteproc <linux-remoteproc@vger.kernel.org>,
+ Daniel Baluta <daniel.baluta@nxp.com>, "Peng Fan (OSS)"
+ <peng.fan@oss.nxp.com>, "Shah, Tanmay" <tanmay.shah@amd.com>
+References: <20260511165942.2774868-1-robh@kernel.org>
+ <CANLsYkxNTPg9hHRF6hcVUSUPvxg_gAvcyD8FJ81pOfXQ2W+KnA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CANLsYkxNTPg9hHRF6hcVUSUPvxg_gAvcyD8FJ81pOfXQ2W+KnA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 14, 2026 at 12:17:31AM +0530, Komal Bajaj wrote:
-> From: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
-> 
-> Add the CDSP, LPAICP and MPSS Peripheral Authentication Service support
-> for the Qualcomm Shikra SoC.
-> 
-> Signed-off-by: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
-> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 51 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index da27d1d3c9da..4d43201b9ada 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -1457,6 +1457,54 @@ static const struct qcom_pas_data sc7280_wpss_resource = {
->  	.ssctl_id = 0x19,
->  };
->  
-> +static const struct qcom_pas_data shikra_cdsp_resource = {
-> +	.crash_reason_smem = 601,
-> +	.firmware_name = "cdsp.mbn",
-> +	.pas_id = 18,
-> +	.minidump_id = 7,
-> +	.auto_boot = false,
+On 11/05/2026 19:14, Mathieu Poirier wrote:
+> Gentlemen, please test this patch on your respective platforms and
+> provide "Tested-by:" tags publicly.
 
-Why? It should be true for CDSP.
 
-> +	.proxy_pd_names = (char *[]){
-> +		"cx",
-> +		NULL
-> +	},
+Instead of "Tested-by", please rather provide reviewed-by (if reviewing
+everything) or acked-by.
 
-Hmm, SM6115 didn't have proxy votes here. Is it requried?
+Testing in term of bindings is a build process and Rob + various bots
+already do that, thus tag is not really applicable. It's not possible to
+test a binding on the device.
 
-> +	.load_state = "cdsp",
-> +	.ssr_name = "cdsp",
-> +	.sysmon_name = "cdsp",
-> +	.ssctl_id = 0x17,
-> +	.smem_host_id = 5,
-> +	.region_assign_vmid = QCOM_SCM_VMID_CDSP,
 
-This makes no sense without region_assign_count
-
-> +};
-> +
-> +static const struct qcom_pas_data shikra_lpaicp_resource = {
-> +	.crash_reason_smem = 682,
-> +	.firmware_name = "lpaicp.mbn",
-> +	.dtb_firmware_name = "lpaicp_dtb.mbn",
-> +	.pas_id = 0x56,
-> +	.dtb_pas_id = 0x57,
-> +	.minidump_id = 0,
-> +	.auto_boot = true,
-> +	.ssr_name = "lpaicp",
-> +	.sysmon_name = "lpaicp",
-> +};
-> +
-> +static const struct qcom_pas_data shikra_mpss_resource = {
-> +	.crash_reason_smem = 421,
-> +	.firmware_name = "qdsp6sw.mbn",
-
-Why is it not modem.mbn?
-
-> +	.pas_id = 4,
-> +	.minidump_id = 3,
-> +	.auto_boot = false,
-> +	.decrypt_shutdown = true,
-> +	.proxy_pd_names = (char *[]){
-> +		"cx",
-> +		NULL
-> +	},
-> +	.load_state = "modem",
-> +	.ssr_name = "mpss",
-> +	.sysmon_name = "modem",
-> +	.ssctl_id = 0x12,
-> +	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
-
-Again, this doesn't make sense without region_assign_count. At which
-point you can use sc8180x_mpss_resource instead.
-
-> +};
-> +
->  static const struct qcom_pas_data sm8650_cdsp_resource = {
->  	.crash_reason_smem = 601,
->  	.firmware_name = "cdsp.mdt",
-> @@ -1571,6 +1619,9 @@ static const struct of_device_id qcom_pas_of_match[] = {
->  	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init },
->  	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource },
->  	{ .compatible = "qcom,sdx75-mpss-pas", .data = &sm8650_mpss_resource },
-> +	{ .compatible = "qcom,shikra-cdsp-pas", .data = &shikra_cdsp_resource },
-> +	{ .compatible = "qcom,shikra-lpaicp-pas", .data = &shikra_lpaicp_resource },
-> +	{ .compatible = "qcom,shikra-mpss-pas", .data = &shikra_mpss_resource },
->  	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init },
->  	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init },
->  	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource },
-> 
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Best regards,
+Krzysztof
