@@ -1,33 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D78848B38F;
-	Wed, 13 May 2026 17:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F51531B837
+	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 18:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778695192; cv=none; b=vAQkxPOxqD6Lb1NKOaQP2P5JW2kPdbt5KdTjz115xTREwYlCz2uqlqacVO+tX43ONPWPISSgn+xywZ3guKE/8WedJBjFTdz90rFJMZ7XT1NqWfvv2Bi+60StMX32v8/o6++O4umgoUG455hmCofo18YBD3I1rhk63RCeYGFACBo=
+	t=1778696371; cv=none; b=Y0a4ysg3yzHLSwUAuOpaF1kxQkrcVIRv+zPczOOCsd8YnClanuB8W/znDLasXyuowyU4aFBquP153Dol2XfXEtiPgQL7Cb7G5dsY+SuKnlXfx7vETQLajRpvETIfzOmnFHGl4Kb058upEG4YyM5sNx8K9DDIivMBr0m08aXVIQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778695192; c=relaxed/simple;
-	bh=dmsAP9VeVH8ZarAqxYjVIHNXsgqomDY2LxrLOfBtREs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pp1DK4OKoMgzxBigLzRmiG2gXpNRMMz8O8qXRVHaXiXx/xQPjc2hVTKEypq3bMShEYa5mYLSAUBk3ox751tlj6RzoWnQfygFvkDoNTTe/t1IpvTAhQEufaHFfqv92j1EyOO59AaaTQywR/jSU01pvNiC98LS8aYcopiA6M/FoVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9BOyPMw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778696371; c=relaxed/simple;
+	bh=OV4PfceyG19hBTR3s6fFftTS+Jdev4XVhsmwAWPNwj4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=FPaT6naw4TXv/OZi1Y15gV2qUdn3rR2UHqtrBOiJQ8KgFSLeUH/NvJpfV6xMbGKP7oTb/EvwrXD8ism2/5G5iUtgasb/0tJJ4UGbqssEJbDSfQ64QlxXOxn5opr23pBLTHxCusBQnUwdBpeh32mpuOFXmB3d0ZCeYWh/zmsIEto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U7liTCF+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=d8AjoiLw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9BOyPMw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B184C19425;
-	Wed, 13 May 2026 17:59:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778695191;
-	bh=dmsAP9VeVH8ZarAqxYjVIHNXsgqomDY2LxrLOfBtREs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K9BOyPMwzZtZ1o8TWVOTN1hX2Xu3tgzhJqLl//vPECR5ncJg6vT+X2ORxne0vrhno
-	 6LCPwrqbJ4UvLYBBpBKG0ht49nClZjpcu3cXU9ihJQtqITKu5/IHX7+HVg6LkoMbrr
-	 UcbH0CHuxtzo4+Xs1suhSAfPnTwdtLdIgAyJNDNPFZTDwESH/Hyn10gwCWuFtkGj7/
-	 gfsIm8/UdP9ly5bu93ZPeW6BfGtTGnTJ/EW10QAJmMlVUFYeOY9cpX0VZdLj39B+fi
-	 sAjvx1fDXB0APZBkkf5O1C6Ybk6yXtpAhC43Kj0yQKs5RVh1ZQsUyikf5tUiZZUbYq
-	 UmEqxTJSKhh9Q==
-Message-ID: <de3ae096-5edc-451e-8e93-74012797ce48@kernel.org>
-Date: Wed, 13 May 2026 19:59:33 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U7liTCF+";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="d8AjoiLw"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64DCc0dO2965290
+	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 18:19:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/2wytpUijrKO0T5ubOcr0fnwpc//VPFoJ2V9cgdQyr0=; b=U7liTCF+jEkricGz
+	tIQQDX5CwfAb0PWYCyQo9gN9nOGXa/OyPq88JGhzlPTxoE1z7OIzlKxn8EoudZu9
+	LVfnTCZNIwAWyctJghdVxjPt4KYW1gqa7SE1MmB/JNbWeY6tM3m1vYBDj7P9mZSI
+	33C9bH+zDaJKBZCgXCDRqVKdVqcKe9mF2meOdeV6raQE1vGgmNKFfAsUJal3bSH7
+	6ql83UFwZW1DiigvE3JlZ+9Y4uoKFvbz5/saWUUhbsD1y65davuYpo4Vn2kTKf9k
+	paqqODdiA5sMm5oDorqHQjS6oC7uXJOdy3JH8DaJihQIgA0+A4n7zuI3uk4uSLzo
+	ptX/zw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e4ma5arfn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 18:19:27 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-365e70c39d0so8917090a91.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 11:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1778696367; x=1779301167; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/2wytpUijrKO0T5ubOcr0fnwpc//VPFoJ2V9cgdQyr0=;
+        b=d8AjoiLwQGdmkNBLSgqGaNJYOF+ORmNJZnxhW533mBnYdYhI6HdmgYZxDDNQxnCKbQ
+         vGiuQ3sFwZEDxqkjypKI8uX0nez0jvGhjKx5R8eHqOvomseiPNtFL4/baQbg6DofmETt
+         jcsUii5gPb67EZgHE7hT34t4k57o67y/BhdLA4vLL6fTbXNsu02SrzQZp4lPv2HVoVKp
+         X/qk1spmtrAO7RNBnDijcL4HGb6Zcc8VKZRRoMb8So09KjY2xtutjzlwAk6jFqB+H+fn
+         Bm+vYloTbF8F0I/CklDfIjVIcOxvyhp6iFT+q0a6cBbrES8D+O+dfuGTnC/agRO7HIU8
+         rLfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778696367; x=1779301167;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/2wytpUijrKO0T5ubOcr0fnwpc//VPFoJ2V9cgdQyr0=;
+        b=UDdtMWa1rz+V43xPoGBpP7VpsnUSes4nCykT3xHEx1MBcNuPwiNck7T9d56+E2CtJG
+         E/1fzIF+hrQ2ms+zZcp1WG1cOqEfIYDgEfvS/gp6QPfd0wkWPNLSIpV5vAPqwd6dnv/j
+         QPlLcfzCjzzdnOcaWwvCAspdJTWJtRVOo6bX5FxI+v3uCwRb+LwyH4o7HiBpIDfpu3Ey
+         h2L1/vDrSmYrtMCl8uh348c8YpyCu6h25Bu5A+cZullkKiFPempJ7DLbqm+9+WtarSlh
+         rvdPhxaMoQPOh0ty1YydAfUuG/+/Z0w3cYLARN8KB0f8oZb2we5TBs+AZVfk4eGqqmd6
+         X0Dw==
+X-Forwarded-Encrypted: i=1; AFNElJ9560iw1nKYsXX9M2REAxQ850qQCyNOpM2wtwV2s4qwJk5U6joklOzXqQGHl/vIEAxQKcLx4F22rRd2MEM2iyYL@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyRRRKj7EYSpBZioC3JI+Kft53TPI9KI1QAjIaJ35aNq2D3sYZ
+	R84J0sL/K1AX85CPL99FhpB+aVO470Nq58/N/3H4ZW7qZiUg2Z8SZPIFjlejB3d3uH0YGxi296p
+	ZfD0QiR52U29msVc24sCmrrp6dTWIuHn7FCqU0Chgaud6SorgqIvpsaF08pePaQswZXDvppLq
+X-Gm-Gg: Acq92OErZysx9JrTFwRgKlfK7zftKpjeLjcrZsppqdM/VyW/WEXU1vG+WQMw3m/V4Dz
+	p87lQG9XYp95ygskEInD38hvwSzx8OxIei4LHdC78fBpSkcY2+OZiwiDlpAeELKNHHsVJ3ieJuv
+	RECwv9rnvhMdXsTYFJCov6p2nZVClm1xOe3afyRpSOJ14aosLUQggzcQsoDJKiSCGKMYmdEqcRf
+	YiZOV9dgV2UGiXHgfdgWPL/lK4l4WvbPF63Uu5suT9Q1pbWff8y7YSVfliEDxE9PH67v2UEGXs1
+	aPZEyPJOiTqCK6HikiJqY9dXKUKAKMq8enIyJPeyfbl5HkPwVkNAZ3DYLsjGEroSqJ9xdQcssY2
+	vw61kwT7iQpcwPtQo7YfMZztByiZpPXJGPUIgJoxXj0KeKqj1AUK8ue0Wc7AxlQ==
+X-Received: by 2002:a05:6a20:3d22:b0:39b:fbb2:5e46 with SMTP id adf61e73a8af0-3afb1a0a4fbmr4184391637.40.1778696366903;
+        Wed, 13 May 2026 11:19:26 -0700 (PDT)
+X-Received: by 2002:a05:6a20:3d22:b0:39b:fbb2:5e46 with SMTP id adf61e73a8af0-3afb1a0a4fbmr4184362637.40.1778696366337;
+        Wed, 13 May 2026 11:19:26 -0700 (PDT)
+Received: from [192.168.0.110] ([183.82.29.182])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c826768acf3sm18897017a12.10.2026.05.13.11.19.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 May 2026 11:19:25 -0700 (PDT)
+Message-ID: <e6311e97-0a26-4412-bcf0-d0313bf52c01@oss.qualcomm.com>
+Date: Wed, 13 May 2026 23:49:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,119 +88,227 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: Consolidate "sram" property definition
-To: "Rob Herring (Arm)" <robh@kernel.org>, Liu Ying <victor.liu@nxp.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Clark
- <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Akhil P Oommen <akhilpo@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
- Marijn Suijten <marijn.suijten@somainline.org>, Vinod Koul
- <vkoul@kernel.org>, Nas Chung <nas.chung@chipsnmedia.com>,
- Jackson Lee <jackson.lee@chipsnmedia.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Mirela Rabulea <mirela.rabulea@nxp.com>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>, Hugues Fruchet
- <hugues.fruchet@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- MD Danish Anwar <danishanwar@ti.com>, Roger Quadros <rogerq@kernel.org>,
- Parvathi Pudi <parvathi@couthit.com>,
- Mohan Reddy Putluru <pmohan@couthit.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michal Simek <michal.simek@amd.com>, Mark Brown <broonie@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Linus Walleij <linusw@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>,
- Felix Fietkau <nbd@nbd.name>, "Andrew F. Davis" <afd@ti.com>,
- Hussain Khaja <basharath@couthit.com>, Suman Anna <s-anna@ti.com>,
- Ben Levinsky <ben.levinsky@amd.com>, Tanmay Shah <tanmay.shah@amd.com>,
- Erwan Leray <erwan.leray@foss.st.com>,
- Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Cc: Roger Quadros <rogerq@ti.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- dmaengine@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, netdev@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-spi@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20260511165942.2774868-1-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v12 0/6] Add new driver for WCSS secure PIL loading
+To: Bjorn Andersson <andersson@kernel.org>
+References: <20260505102310.2925956-1-varadarajan.narayanan@oss.qualcomm.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20260511165942.2774868-1-robh@kernel.org>
+From: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+Cc: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
+        mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, konradybcio@kernel.org,
+        manikanta.mylavarapu@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20260505102310.2925956-1-varadarajan.narayanan@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTEzMDE4MiBTYWx0ZWRfX5spqYTbpF0pb
+ m2fZhjzyv/kyCOE5Km3NTP/BfaB8wARWEYLkYbYnLZojj9Vt7oeIcqpqr+FWihhmxnHAq7D4rgc
+ 21+Ecfx3ZalY44YNUToMEA/C0slYjl73SQBqZCSGcKVMN9Su44Fp76C1+kMdrx9kx9+catjm6FO
+ 5sj8ZI+Q1UcWHpjJChn0fUDW03g4c1wYAPgIiDXhoRQyVYF+1Ln9mqhjUewGpAlLYblyaig/SoE
+ u6+LJwlfM18E0CsOdFYfw6LKqz0Nlz2p/Pqs0VCWgE+/3CvMfpvco3425TajeXvOZEbpoUdAKsi
+ Qt+6U9IujQyp236xesPP/xCiM+FY2be28WHHLGJCc5fpOhtLWry42E6yF2aTHKc06ZsLtgHjwiw
+ 8p9KBnX1SMnkvdNONS+3OpldFMvF7kVY8fYZnMsqb286FuN+hQl2dpAZw5/myY/fpyGtDOrSvJy
+ jJiARIcJ2TdnUqW29ng==
+X-Proofpoint-ORIG-GUID: dtu6QkJNW683BSdjLcIhz0f0lBhWvk6I
+X-Authority-Analysis: v=2.4 cv=TJZ1jVla c=1 sm=1 tr=0 ts=6a04c0af cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=zhxe3pEVf5X/RQkgbsjYTw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=LpQP-O61AAAA:8 a=EUspDBNiAAAA:8
+ a=UqCG9HQmAAAA:8 a=2DIguSIwZBnVL4SAOv4A:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22 a=TjNXssC_j7lpFel5tvFf:22 a=pioyyrs4ZptJ924tMmac:22
+X-Proofpoint-GUID: dtu6QkJNW683BSdjLcIhz0f0lBhWvk6I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-13_02,2026-05-13_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 suspectscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
+ impostorscore=0 spamscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605050000 definitions=main-2605130182
 
-On 11/05/2026 18:59, Rob Herring (Arm) wrote:
-> The "sram" property has become a de facto standard property, so create a
-> common schema for it and drop all the duplicated definitions.
+Hi Bjorn,
+
+A gentle reminder to review this series. All the patches have picked
+up R-b tags. If it looks okay to you, could you please help pick
+it up in the current merge window.
+
+Thanks
+Vignesh
+
+On 5/5/2026 3:53 PM, Varadarajan Narayanan wrote:
+> As discussed in [4] posting this series after dropping IPQ5424 support
+> to remove dependency on Sricharan's tmel-qmp mailbox driver series v4 [1].
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> Imported from 20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com.
+> 
+> Imported from f20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com
+> I've resumed Gokul's work as the last submission dates back April 2025.
+> 
+> - Secure PIL is signed, firmware images which only TrustZone (TZ)
+>   can authenticate and load. Linux kernel will send a request to TZ to
+>   authenticate and load the PIL images.
+> 
+> - When secure PIL support was added to the existing wcss PIL driver
+>   earlier in [2], Bjorn suggested not to overload the existing WCSS
+>   rproc driver, instead post a new driver for PAS based IPQ WCSS driver.
+>   This series adds a new secure PIL driver for the same.
+> 
+> - Also adds changes to scm to pass metadata size as required for IPQ5332,
+>   reposted from [3].
+> 
+> [1]
+> https://patchwork.kernel.org/project/linux-arm-msm/cover/20250327181750.3733881-1-quic_srichara@quicinc.com/
+> 
+> [2]
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/1611984013-10201-3-git-send-email-gokulsri@codeaurora.org/
+> 
+> [3]
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240820055618.267554-6-quic_gokulsri@quicinc.com/
+> 
+> [4]
+> https://lore.kernel.org/linux-arm-msm/aUN7Aer%2FGG1d5Om9@hu-varada-blr.qualcomm.com/
+> 
+> Changes in v12:
+> 	- No code change
+> 	- Rebase to ToT
+> 	- Change quicinc mail ids to oss.qualcomm.com mail ids
+> 	- Link to v11: https://lore.kernel.org/linux-arm-msm/20260326043320.2507890-1-varadarajan.narayanan@oss.qualcomm.com/
+> 
+> Changes in v11:
+> 	- Add R-b tags
+> 	- Rebase the first patch ("firmware: qcom_scm: ipq5332: add support to pass metadata size") to top of tree
+> 	- No change in other patches
+> 	- Link to v10: https://lore.kernel.org/linux-arm-msm/20260113092021.1887980-1-varadarajan.narayanan@oss.qualcomm.com/
+> 
+> Changes in v10:
+> 	- Add R-b tags
+> 	- Remove unused fields from 'struct wcss_sec'
+> 	- Remove glink and ssr subdev if wcss_sec_probe() fails
+> 	- Link to v9: https://lore.kernel.org/linux-arm-msm/20260106105412.3529898-1-varadarajan.narayanan@oss.qualcomm.com/
+> 
+> Changes in v9:
+> 	- Add R-b from Konrad for dts patches
+> 	- Renamed qcom,wcss-sec-pil.yaml -> qcom,ipq5018-wcss-sec-pil.yaml
+> 	- Restore clocks & clock-names in above yaml
+> 	- Fix DCO on two patches
+> 	- Link to v8: https://lore.kernel.org/linux-arm-msm/20251219031010.2919875-1-varadarajan.narayanan@oss.qualcomm.com/
+> 
+> Changes in v8:
+> 	- Dropped Krzysztof's 'Reviewed-by' as the bindings file has changed significantly
+> 		* IPQ5018 support added in v6
+> 		* IPQ5424 support dropped in v8
+> 		* Updated to use IPQ9574 as example
+> 	- dt-bindings-check and dtbs-check passed
+> 	- Dropped IPQ5424 support from drivers/remoteproc/qcom_q6v5_wcss_sec.c
+> 	- Updated copyrights of drivers/remoteproc/qcom_q6v5_wcss_sec.c
+> 	- Change 'qcom,smem-state-names' order to resolve dt-bindings-check error in ipq5018.dtsi
+> 	- Dropped changes to ipq5424.dtsi
+> 	- Link to v7: https://lore.kernel.org/linux-arm-msm/20251215-ipq5018-wifi-v7-0-ec4adba941b5@outlook.com/
+> 
+> Changes in v7:
+> 	- correctly sorted QCOM_SCM_PIL_PAS_INIT_IMAGE_V2 by command ID
+> 	- correctly sorted smp2p-wcss nodes in dtsi files
+> 	- Link to v6: https://lore.kernel.org/r/20251208-ipq5018-wifi-v6-0-d0ce2facaa5f@outlook.com
+> 
+> Changes in v6:
+> 	- added patch to fix IPC register offset for ipq5424
+> 	- changed phandle description for mboxes property in dt-bindings
+> 	- updated bindings to define the right clocks per SoC based on
+> 	  compatible. Ran make dt_binding_check for validation of all
+> 	  SoCs
+> 	- use of more descriptive match data property (use_tmelcom) and
+> 	  added a condition in wcss_start to not error out if tmelcom
+> 	  isn't used
+> 	- mitigated potential off-by-one
+> 	- adopted use of of_reserved_mem_region_to_resource to acquire
+> 	  memory-region resource
+> 	- added driver support for ipq5018 SoC
+> 	- corrected size of reg properties as per Konrad's comments
+> 	- added patch to bring up Q6 in ipq5018 dtsi
+> 	- Link to v5: https://lore.kernel.org/r/20250417061245.497803-1-gokul.sriram.p@oss.qualcomm.com
+> 
+> Changes in v5:
+> 	- retained all the patches as in v3 and addressed comments in
+> 	  v3.
+> 	- reverted changes to dt-bindings done in v4 and retained as in
+> 	  v3 and fixed firmware format from .mdt to .mbn and retained
+> 	  reviewed-by.
+> 	- dropped 2 patches in v4 that adds support for q6 dtb loading.
+> 	  Will post them as a new series.
+> 
+> 	Following tests were done:
+> 	- checkpatch
+> 	- dt_binding_check and dtbs_check
+> 	- Link to v4: https://lore.kernel.org/r/20250327181750.3733881-1-quic_srichara@quicinc.com
+> 
+> Changes in v4:
+>         - changed q6 firmware image format from .mdt to .mbn
+>         - corrected arrangement of variable assignemnts as per comments
+>           in qcom_scm.c
+>         - added scm call to get board machid
+>         - added support for q6 dtb loading with support for additional
+>           reserved memory for q6 dtb in .mbn format
+>         - updated dt-bindings to include new dts entry qcom,q6-dtb-info
+>           and additional item in memory-region for q6 dtb region.
+>         - removed unnecessary dependency for QCOM_Q6V5_WCSS_SEC in
+>           Kconfig
+>         - removed unwanted header files in qcom_q6v5_wcss_sec.c
+>         - removed repeated dtb parsing during runtime in qcom_q6v5_wcss_sec.c
+>         - added required check for using tmelcom, if available. Enabled
+>           fallback to scm based authentication, if tmelcom is unavailable.
+>         - added necessary padding for 8digt hex address in dts
+> 	- Link to v3: https://lore.kernel.org/r/20250107101320.2078139-1-quic_gokulsri@quicinc.com
+> 
+> 	Following tests were done:
+> 	- checkpatch
+> 	- kernel-doc
+> 	- dt_binding_check and dtbs_check
+> 
+> Changes in v3:
+>         - fixed copyright years and markings based on Jeff's comments.
+>         - replaced devm_ioremap_wc() with ioremap_wc() in
+>           wcss_sec_copy_segment().
+>         - replaced rproc_alloc() and rproc_add() with their devres
+>           counterparts.
+>         - added mailbox call to tmelcom for secure image authentication
+>           as required for IPQ5424. Added ipq5424 APCS comatible required.
+>         - added changes to scm call to pass metadata size as required for
+>           IPQ5332.
+> 	- Link to v2: https://lore.kernel.org/r/20240829134021.1452711-1-quic_gokulsri@quicinc.com
+> 
+> Changes in v2:
+>         - Removed dependency of this series to q6 clock removal series
+>           as recommended by Krzysztof
+> 	- Link to v1: https://lore.kernel.org/r/20240820085517.435566-1-quic_gokulsri@quicinc.com
+> 
+> George Moussalem (1):
+>   arm64: dts: qcom: ipq5018: add nodes to bring up q6
+> 
+> Manikanta Mylavarapu (4):
+>   firmware: qcom_scm: ipq5332: add support to pass metadata size
+>   dt-bindings: remoteproc: qcom: document hexagon based WCSS secure PIL
+>   arm64: dts: qcom: ipq5332: add nodes to bring up q6
+>   arm64: dts: qcom: ipq9574: add nodes to bring up q6
+> 
+> Vignesh Viswanathan (1):
+>   remoteproc: qcom: add hexagon based WCSS secure PIL driver
+> 
+>  .../remoteproc/qcom,ipq5018-wcss-sec-pil.yaml | 178 ++++++++++
+>  arch/arm64/boot/dts/qcom/ipq5018.dtsi         |  64 ++++
+>  arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  64 +++-
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi         |  60 +++-
+>  drivers/firmware/qcom/qcom_scm.c              |  14 +-
+>  drivers/firmware/qcom/qcom_scm.h              |   1 +
+>  drivers/remoteproc/Kconfig                    |  19 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/qcom_q6v5_wcss_sec.c       | 325 ++++++++++++++++++
+>  include/linux/remoteproc.h                    |   2 +
+>  10 files changed, 723 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,ipq5018-wcss-sec-pil.yaml
+>  create mode 100644 drivers/remoteproc/qcom_q6v5_wcss_sec.c
+> 
+> 
+> base-commit: 9d0d467c3572e93c5faa2e5906a8bbcd70b24efd
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
