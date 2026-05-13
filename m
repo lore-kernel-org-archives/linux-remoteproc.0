@@ -1,96 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F683C9881;
-	Wed, 13 May 2026 22:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F8C1B6D1A;
+	Wed, 13 May 2026 23:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778709994; cv=none; b=mgH40f6/jXeUeejFtMuJGXwHjNU8585GFC9HYqtSun+3ItSqUktavktnIPRb+HUdNImTDG9KfrhwMzgkSPI0OFqQjZv0pyZbsOXX2pZlq9IXV6RIfrg+gia7NO3xvIj+x0XQgrJ5niW9kgNz8bQq8x3+Kp9tdKOaa05dmAp9H6M=
+	t=1778714409; cv=none; b=DNxGuov3wtiV/AHq43aBM2P8vK5uUuzztalMDdntANHwlog/wvShk9kuz7gWapRsjMaOkk8YxNxGdLJKQoH1ZQpsOazSaRnJ949geYecLst+xNY9cBsUKNItYsfsM2ClBRQb3FBFPBnWvrjQtouzed9hje/APB3073iNlwbtKOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778709994; c=relaxed/simple;
-	bh=nfkr0LjzpYH7pwPCcArAAuCzVZ5SrzrsddVDAOqZiNE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=WuRYcZuaIdkLJ+hM2xTK8mv3pfdPGJbPA8kzFO9zParPw3x55Qm/lRNMz3RFODjSNt0dK+mLrrRfUzBG20JujQUZuSpoFStJOYS0inHVnTAqlEUhRG7L3aff9W9TVR0CabYGCdO6iEheKlgtI8M9jWdDF2NgYs1niut8LPqer+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bunUZn/H; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778714409; c=relaxed/simple;
+	bh=7TTPL3LG2P8OfeFkwXeR/jGlgxkKCAcMwGn2yF3v1ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NuB4TnJoJZMzSbE9F1YZb7ITqAFeenQPL0Y2qGQRvabcYKDAY4jMEFaVvRRzMafFsa4GIfRLRZEOuuZyQUB/LUTzR3bhDeorrr/WhuL1jWV5aBqeddcvlwWKCpVGI2+knmoUY1syXbXHQDZUTzhUk2VWEQdLIb9dKqPN5shMMwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfEwWEpR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bunUZn/H"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE754C19425;
-	Wed, 13 May 2026 22:06:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfEwWEpR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14C6C19425;
+	Wed, 13 May 2026 23:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778709994;
-	bh=nfkr0LjzpYH7pwPCcArAAuCzVZ5SrzrsddVDAOqZiNE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=bunUZn/H5HxuQnKjMU0Y5mYkD5yA92rV2WgnSonxuFCiuIZ/DsdIm2rpFddUeMoYs
-	 H3/l+wK6QA7LGGRn/+URWh/VG52el1lGABi1Xc4HwYgPAlsYvGwu4p4uSDzZVUac9r
-	 0ScDPgrQO8qHZ7kmKQiXf9dEoJvdJYJiSzIwkBJlomU8l0pd4uRgsR8GTLJ3vqDbC6
-	 d9N1eSw7TQIsXvSL8wcPpyIIeoIeF8eC1Zca90pMzCdDk7yHZ6cuZzhU8LZEdEraSG
-	 48rCZUnqaYmNz42mXXc3l84AYBRN0t/dnCXoULvJznl/NUc8o28lNyxGGW/mhlGf+G
-	 ce7QNPZAXc/tQ==
-Date: Wed, 13 May 2026 17:06:31 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1778714409;
+	bh=7TTPL3LG2P8OfeFkwXeR/jGlgxkKCAcMwGn2yF3v1ps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VfEwWEpRqCWgqHbEsAlUAlh7rJ682620IbkoDzfP72lNq+dddibrzPBn0bgpn2mGI
+	 CnX7ah0OlV5cCs49ssmJXCgrP6CMTj/9S1yJ9mEtqqnZDl4MTjOCrc80jFvkzmiy0B
+	 sWJYPI4ht5twEABMIvEeFaTZ6RS4XHxHwr77THY7F8ZWI/4SqdLjOUTQN+vvIGr68U
+	 sOQ38I0HsXypNjjc9F7KRWhtZ7Ut8fS26Q8gIaMzi8o6beLsT2giSlGK3YoIkW3IfA
+	 G+rkHrox3WOlauYDLjDTNyrNJpG84PWvIPyAImMbpZzJfKa+OV6ozWS+FrjD3HTyMg
+	 B7TpUn6k7vBXw==
+Date: Wed, 13 May 2026 18:20:06 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Komal Bajaj <komal.bajaj@oss.qualcomm.com>,
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: soc: qcom: smd-rpm: Add Shikra
+ rpm-smd compatible
+Message-ID: <177871440571.2291174.6393021319553027315.robh@kernel.org>
+References: <20260508-shikra_mailbox_and_rpm_changes-v3-0-698f8e5fb339@oss.qualcomm.com>
+ <20260508-shikra_mailbox_and_rpm_changes-v3-1-698f8e5fb339@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, 
- Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-In-Reply-To: <20260514-shikra-rproc-v1-1-9afdedeee002@oss.qualcomm.com>
-References: <20260514-shikra-rproc-v1-0-9afdedeee002@oss.qualcomm.com>
- <20260514-shikra-rproc-v1-1-9afdedeee002@oss.qualcomm.com>
-Message-Id: <177870999113.1909237.18311226930391336416.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom,shikra-pas: Document
- Shikra PAS remoteprocs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260508-shikra_mailbox_and_rpm_changes-v3-1-698f8e5fb339@oss.qualcomm.com>
 
 
-On Thu, 14 May 2026 00:17:30 +0530, Komal Bajaj wrote:
-> Document the bindings for the CDSP, LPAICP and MPSS PAS on
-> the Shikra SoC.
+On Fri, 08 May 2026 16:10:46 +0530, Sneh Mankad wrote:
+> From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
 > 
-> Signed-off-by: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
+> Add compatible for the Qualcomm Shikra rpm-smd device.
+> 
 > Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> Signed-off-by: Sneh Mankad <sneh.mankad@oss.qualcomm.com>
 > ---
->  .../bindings/remoteproc/qcom,shikra-pas.yaml       | 141 +++++++++++++++++++++
->  1 file changed, 141 insertions(+)
+>  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.example.dts:27:18: fatal error: dt-bindings/interconnect/qcom,shikra.h: No such file or directory
-   27 |         #include <dt-bindings/interconnect/qcom,shikra.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:140: Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1639: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260514-shikra-rproc-v1-1-9afdedeee002@oss.qualcomm.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
