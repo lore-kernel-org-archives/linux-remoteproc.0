@@ -1,110 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B902C345724
-	for <linux-remoteproc@vger.kernel.org>; Wed, 13 May 2026 19:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F683C9881;
+	Wed, 13 May 2026 22:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778701444; cv=none; b=QS1RNYJKpzdv9Q2AS9CRoxCuzRLAdaJhi5KXAX95w/tfZO2XBhTOvPVrH6WakZvo/7r6A/O7yhKAlerHhKfh+vekxVyYAvycgekwXExtgrnqov0AybQLmvRq+lFyyj0AZhriqGMlxPk5kvQM67VyZsNRlcUl2hTvHYispKeaWdY=
+	t=1778709994; cv=none; b=mgH40f6/jXeUeejFtMuJGXwHjNU8585GFC9HYqtSun+3ItSqUktavktnIPRb+HUdNImTDG9KfrhwMzgkSPI0OFqQjZv0pyZbsOXX2pZlq9IXV6RIfrg+gia7NO3xvIj+x0XQgrJ5niW9kgNz8bQq8x3+Kp9tdKOaa05dmAp9H6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778701444; c=relaxed/simple;
-	bh=kqV9mWHtjvRnmvRodV/GNwY/ZqbTCeQN0qDRfYKxV/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aOL1od5+wTcQQEFIL8oOX2xx4XiXsEki3bNhih1FbD0WIbMIcOFJMxPsT2X+5OsTVf8jtHXIJR/1xA4rnw+lw3IbA2gpahIlkIF8vNwHBCHJz/gYOl9c/LaEXt/yJWr76joVkyIpl0CkL549NgptgxVQNGPkwmaZRz0vx5L7JEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JZqEZ6Ve; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778709994; c=relaxed/simple;
+	bh=nfkr0LjzpYH7pwPCcArAAuCzVZ5SrzrsddVDAOqZiNE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WuRYcZuaIdkLJ+hM2xTK8mv3pfdPGJbPA8kzFO9zParPw3x55Qm/lRNMz3RFODjSNt0dK+mLrrRfUzBG20JujQUZuSpoFStJOYS0inHVnTAqlEUhRG7L3aff9W9TVR0CabYGCdO6iEheKlgtI8M9jWdDF2NgYs1niut8LPqer+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bunUZn/H; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JZqEZ6Ve"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C82E4C19425;
-	Wed, 13 May 2026 19:44:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bunUZn/H"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE754C19425;
+	Wed, 13 May 2026 22:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778701444;
-	bh=kqV9mWHtjvRnmvRodV/GNwY/ZqbTCeQN0qDRfYKxV/M=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=JZqEZ6VeNukQ95gGCbu39xk2YrNI7yAKFrbbu2vyvcgM5ucustwbNmZgR8J9EDFPm
-	 2lUanpEuVLgj4qdYgKEA/zAje7qYcfjsjqUa0/DCHa5+NABEU95M01HWF0IRMZeY4Q
-	 SbEYODacrUPnvvMPBQSVGzZ394ZwZJGW4fK+VUbEUnb4GFdsCTPkCXL4+pSCNtVzuG
-	 vIaXIvny5gEZHsDOvTURcZlowGP5v6XmXPqFMGaTZHpzG7sjYkj1RCZGhGgBeppI8V
-	 xUF2OqXdmV8mu8Zanx35Ov8DmuXiFreqSW5W67EM27HQUPpFqm7fifZMNF5uLpZoLO
-	 ch/6CiYWRD3Ow==
-Message-ID: <75d76c4e-f04a-440f-8f43-7796c84036e3@kernel.org>
-Date: Wed, 13 May 2026 21:44:01 +0200
+	s=k20201202; t=1778709994;
+	bh=nfkr0LjzpYH7pwPCcArAAuCzVZ5SrzrsddVDAOqZiNE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=bunUZn/H5HxuQnKjMU0Y5mYkD5yA92rV2WgnSonxuFCiuIZ/DsdIm2rpFddUeMoYs
+	 H3/l+wK6QA7LGGRn/+URWh/VG52el1lGABi1Xc4HwYgPAlsYvGwu4p4uSDzZVUac9r
+	 0ScDPgrQO8qHZ7kmKQiXf9dEoJvdJYJiSzIwkBJlomU8l0pd4uRgsR8GTLJ3vqDbC6
+	 d9N1eSw7TQIsXvSL8wcPpyIIeoIeF8eC1Zca90pMzCdDk7yHZ6cuZzhU8LZEdEraSG
+	 48rCZUnqaYmNz42mXXc3l84AYBRN0t/dnCXoULvJznl/NUc8o28lNyxGGW/mhlGf+G
+	 ce7QNPZAXc/tQ==
+Date: Wed, 13 May 2026 17:06:31 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Fwd: [PATCH] dt-bindings: Consolidate "sram" property definition
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
- Beleswar Padhi <b-padhi@ti.com>,
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
- linux-remoteproc <linux-remoteproc@vger.kernel.org>,
- Daniel Baluta <daniel.baluta@nxp.com>, "Peng Fan (OSS)"
- <peng.fan@oss.nxp.com>, "Shah, Tanmay" <tanmay.shah@amd.com>
-References: <20260511165942.2774868-1-robh@kernel.org>
- <CANLsYkxNTPg9hHRF6hcVUSUPvxg_gAvcyD8FJ81pOfXQ2W+KnA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CANLsYkxNTPg9hHRF6hcVUSUPvxg_gAvcyD8FJ81pOfXQ2W+KnA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 11/05/2026 19:14, Mathieu Poirier wrote:
-> Gentlemen, please test this patch on your respective platforms and
-> provide "Tested-by:" tags publicly.
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-remoteproc@vger.kernel.org, 
+ Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>
+To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+In-Reply-To: <20260514-shikra-rproc-v1-1-9afdedeee002@oss.qualcomm.com>
+References: <20260514-shikra-rproc-v1-0-9afdedeee002@oss.qualcomm.com>
+ <20260514-shikra-rproc-v1-1-9afdedeee002@oss.qualcomm.com>
+Message-Id: <177870999113.1909237.18311226930391336416.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom,shikra-pas: Document
+ Shikra PAS remoteprocs
 
 
-Instead of "Tested-by", please rather provide reviewed-by (if reviewing
-everything) or acked-by.
+On Thu, 14 May 2026 00:17:30 +0530, Komal Bajaj wrote:
+> Document the bindings for the CDSP, LPAICP and MPSS PAS on
+> the Shikra SoC.
+> 
+> Signed-off-by: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
+> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> ---
+>  .../bindings/remoteproc/qcom,shikra-pas.yaml       | 141 +++++++++++++++++++++
+>  1 file changed, 141 insertions(+)
+> 
 
-Testing in term of bindings is a build process and Rob + various bots
-already do that, thus tag is not really applicable. It's not possible to
-test a binding on the device.
+My bot found errors running 'make dt_binding_check' on your patch:
 
+yamllint warnings/errors:
 
-Best regards,
-Krzysztof
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.example.dts:27:18: fatal error: dt-bindings/interconnect/qcom,shikra.h: No such file or directory
+   27 |         #include <dt-bindings/interconnect/qcom,shikra.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:140: Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1639: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260514-shikra-rproc-v1-1-9afdedeee002@oss.qualcomm.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
