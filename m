@@ -1,480 +1,290 @@
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010029.outbound.protection.outlook.com [52.101.61.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D7031E835;
-	Thu, 14 May 2026 16:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778775706; cv=fail; b=CAQnaPt7IyI8iVABfLf1iUXZdVyZoDys67/VlbKTr/FI/6E3AqVHIbLYjJ+amDL7kcIjGOynfIizuuQoATuNNkd95ckGZ8olkpoBSbo2xddc2Y5UYReZnHxWgG8K06oPblo26KagVTYoZd4Pa4V/gWMSHxDv1BWib37itci444k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778775706; c=relaxed/simple;
-	bh=jIEFWV8bQ5xTrRT1hX1ToJdHfD1YxKr+LI7h7Qck49E=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JMp9YzT87peTjaRbDznlpOk1IlZIYBxyu4Ye3qmBq3czILThb8YpK+I0ufP47YIBH+ygvdbysuSlKF/hXHifdtO3QBFx8mZS3xMuUp0bOVbWwxWg2OBpQfqIS54abcSrZCye67rD+K8Lue8OwPTrR9Rjx/EQ35yI/HobU43LfO8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=qWbfUAR1; arc=fail smtp.client-ip=52.101.61.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62CB2C21F1
+	for <linux-remoteproc@vger.kernel.org>; Thu, 14 May 2026 17:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1778780117; cv=none; b=hOG4MUJMlncUeEdmAnBBzYScc19xDx8msXzN8L7EzAimuwM90POQqH+rmuWwtdcSknsfz20IEKX3/JPM3OWzJyOmo1URSSRPlEiXa6DXx0YMC3XpoKtR4H9JtJOsd+iIuo/0fR9eb8mNSExA9rWzqJOChu4nRhWmi9YDpNBTw/Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1778780117; c=relaxed/simple;
+	bh=csxAARw7TMe4p9kUCeBN9DmScREv2ZSHrFWQS2btBrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kr4ubhnRAUrLR9PxC0rnNgzza7SBFe1u3L2jOIE8vApxW3heMEHLQ5OblpkV7bDajPF6SsuJwbzBMWIppK0fgfT2xHIqpxjkxHnhagppqr2f0TcwoQwNR0bfI9vlHBMNU5LZjoUAZyvm0kPZGr+mXO9y7LzqT7IPzK15MfNn45s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WIyUK0xp; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="qWbfUAR1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZABSdCNAdbpkzkQ13lXqCUtfmef+a45x0g0qrGs1ZYftIEKaawwHgwZzmc7tjCZMeeE8j/wpWIBGRCkcO+a6+5cIk4MpCc8QVRFr/F5RI++9gbDLSOydClnMA6HklqnTq0iUxWFmr7UX6xbfOZ1Wyr9T7cMnVAtBiXFGEUImnGXC5DRyKip1Qjirr+acWWGGXLCDAtiSA5Udri9pJLwYED9wH13Kd7PS/CzVlmi7dMRE/MgaWqzOZSd0EFgXXnedy1HPj76qwOJWZXvFhvwpvOkYNqUu60doN6jfoMuOHfDVvOOT2GMAG+7ELV9sJM6yZ3m4s3aEM9KA2DVviO1VXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cAlaUC+C7TO70Q5/EhBX948/0Dkd+NkfiadMk2VWktA=;
- b=GpiaAqYjMXi7xZ0sMevirc6+NQksDRAY1WEM1GirpTpPbAmdEOfOqgURE+wuPiv1JycW5SyFQNP5qlQ8OJzKo5ho1+ut/J8GE8AM2ozgSmpK300YYX3NQTux8OpGAGTBu+MXFnzKK4uK41+ZHeD4flehC1CzegtWnhbmyQXZW7CQJRQh5U9ynoZHHNH2EfphYQ2AsEu0Oswa1JRNqIzOLHFve9wX7reQ/zzJrA3nd3D7XQ8ZeeZfAMLmH0YIr7QCxlgV9TiGLDHWGYqyYwoVZybMgfJE0Bfat9WO+4dzhoy5C35ktYwl6qWg1ES4w+D+f2/Q3xK34OClJnbKKWmQkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cAlaUC+C7TO70Q5/EhBX948/0Dkd+NkfiadMk2VWktA=;
- b=qWbfUAR1sRRd/Y2x4ntmCLOrSbgmDINzpj87+eie8Zehi6JCylZgAaPoIDAdPudh7SscNIoyVgn46XgToAoOPQv4edRqmGTiB9jcNMAr0Qy3c5mzoPR/T3uEndMtP3wWxlj6I0/BcOPlZnVz9Sm2AbVrj90SZHsHxpx7wbqfGvI=
-Received: from CH5PR03CA0021.namprd03.prod.outlook.com (2603:10b6:610:1f1::15)
- by MN0PR12MB6269.namprd12.prod.outlook.com (2603:10b6:208:3c3::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.19; Thu, 14 May
- 2026 16:21:34 +0000
-Received: from CH2PEPF0000013D.namprd02.prod.outlook.com
- (2603:10b6:610:1f1:cafe::1a) by CH5PR03CA0021.outlook.office365.com
- (2603:10b6:610:1f1::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9913.13 via Frontend Transport; Thu,
- 14 May 2026 16:21:33 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CH2PEPF0000013D.mail.protection.outlook.com (10.167.244.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.25.13 via Frontend Transport; Thu, 14 May 2026 16:21:33 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.41; Thu, 14 May
- 2026 11:21:33 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 May
- 2026 11:21:33 -0500
-Received: from xsjblevinsk51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Thu, 14 May 2026 11:21:32 -0500
-From: Ben Levinsky <ben.levinsky@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-	<linux-remoteproc@vger.kernel.org>
-CC: <Frank.Li@nxp.com>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-	<festevam@gmail.com>, <geert+renesas@glider.be>, <magnus.damm@gmail.com>,
-	<patrice.chotard@foss.st.com>, <mcoquelin.stm32@gmail.com>,
-	<alexandre.torgue@foss.st.com>, <arnaud.pouliquen@foss.st.com>,
-	<daniel.baluta@nxp.com>, <tanmay.shah@amd.com>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>,
-	<linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v2 2/5] remoteproc: switch exact-match drivers to wc-ioremap callbacks
-Date: Thu, 14 May 2026 09:21:26 -0700
-Message-ID: <20260514162129.1504162-3-ben.levinsky@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260514162129.1504162-1-ben.levinsky@amd.com>
-References: <20260514162129.1504162-1-ben.levinsky@amd.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WIyUK0xp"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-8353fd1cb5fso60208b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 14 May 2026 10:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1778780112; x=1779384912; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JC+WHcUhpCEgLv+z/dz5uJKI5jcxrqy0Eu1amoyfn8U=;
+        b=WIyUK0xpwJjitfqZkL4ciFH0O1UeUmNjyy+6Z8DeOIHkCMX0kg/sttsqFq8LcoV5Wp
+         WP7XyM7xTxDLVe0/qpUvBcYj/3weEzGpKg/6IaPo68KgCvRwVQaiEUNsbDYWE6UHaXso
+         Tb0dbsopqHRtWE6ZRVBzzvAKeV6CO2/DCYTUQekX8EOppnNbz6FmiLiwXpJ+RBGtvh8m
+         yrysH+YuF2gGGSyFCnG0hEC4EUgjBl1C6gkYo2qjV+mYdLk0zd/RM+PV3C+fO0xGGRFI
+         yC+iHEeOvVy8FaLGnvIrjkLLRG7RNbOtuLzjdit+RP79/seDhyydaxhrc+z/3A6oybFU
+         G6Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1778780112; x=1779384912;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JC+WHcUhpCEgLv+z/dz5uJKI5jcxrqy0Eu1amoyfn8U=;
+        b=j37+PhP2ZYlzMJgKW4Do/lu6Kesh927fRF+uFJdexiHDHoBUKuN9k53StoEVbPrJ4n
+         M8Iaat4Tx/o+IKiK84ljLiYLOO3zjQJCsZ7JJhkB9JVs/FfTRGQJUeG+4NTisdzlQIL6
+         NfHOnKE8JBp4TnRwFH1M3AWuiJD7M0xT8VUV8tdxW4CTdAeMZxMVMqsyyH8X0G7Z0nXa
+         6MYv6TW0GEn7yKVl/eTRWpq7BHye5DMn9fH+fifjFAxyvPq5MV9n/1msMEDDT6HOar17
+         0Y8dbajGg/FLAArMDP1aO4mrBq61LA9nC8dpqB3o7EKz4UyuS18JtfZPMKXgDf05IsBG
+         fbYg==
+X-Forwarded-Encrypted: i=1; AFNElJ/jhmck2oMt1ZDAnMJL1B6wfIaBySSII+ImMFd1IRv/hjN2S54a6owZbUHFqimBy9WnibFiGI9gIKU8nQGrlcp/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywo3R93cldm0Oh17iSKbcWlkywauUOuqSjvMw7cEq4FOzWzWMB
+	4fufL+BZpK70DOE5H6g6bMlkqM/YhNf8Dkgqn2xPd5urPMJKt8/U5juo3Q/iDeaRIUw=
+X-Gm-Gg: Acq92OE7tJlpNylRu7oPwvZuLBHXYKG40meaJxktb46HftwlcJWpSXnf/R0hJS8ZLBr
+	FVa/oHg1rpTTkjS7yK1iam6MKCAuW8HOmB1eh6J/CX4uu4rA6O9ot4VP7NsE6h5VKsoEnnOXHeI
+	haM1YsbxHHFxbFvT2f8a+ya+CFcys8pohW43D3aSyfUh+6Lz3GHwNRtUTWD/npE7t08FTVMvi6j
+	/qKgtIqmxwnKH9yGMFDpk+0Fs6XD8pQPzKWHD/9UU751DmA//Dn8L57x1+Szsw733cWZYq/3sil
+	3oWPGbNCdos0AiFmngQXV+bxYd5+JJTU5jw5fPmXhjF7hJrN88/KXsffFzW/T9qtTF7qxlMKUru
+	CZtwoxHNNkAxEG8xdEnnQOeFVzc4bKhu7zxIhQOXCE/0uJsqhCPgwOIpXWapajXqYRHl3Tmwj1q
+	lobNzRXJ5MbpXES1Mq0O7fTjjQnNU=
+X-Received: by 2002:a05:6a00:909a:b0:837:6bb9:acc1 with SMTP id d2e1a72fcca58-83f18dbabc2mr4476063b3a.13.1778780112051;
+        Thu, 14 May 2026 10:35:12 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:30c0:f7f8:e305:407f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83f19c7ed3fsm3281092b3a.45.2026.05.14.10.35.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 May 2026 10:35:11 -0700 (PDT)
+Date: Thu, 14 May 2026 11:35:08 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	Beleswar Prasad Padhi <b-padhi@ti.com>,
+	Andrew Lunn <andrew@lunn.ch>, Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	dl-linux-imx <linux-imx@nxp.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v13 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+Message-ID: <agYHzH-nJLl1HFIn@p14s>
+References: <CANLsYkzt9xUczxSU28u-TfZAAjr0ufZKXAj8Eqfq=45gufXW3w@mail.gmail.com>
+ <f7ef3417-eb84-4467-ac72-a9bc8b0c81e8@foss.st.com>
+ <21de8440-adf7-454b-acfc-06e50882e075@ti.com>
+ <4c526816-b127-43e7-86e9-eee4dc1152bc@foss.st.com>
+ <268f8e00-91bc-43ea-ba95-077cf859e7f3@ti.com>
+ <9e2492d3-8753-46c7-8db6-5f1a80b4f2e9@foss.st.com>
+ <db4c18be-1c8d-4227-9fcc-1d25cec50e37@ti.com>
+ <6917e3d7-8c6c-4e63-8eca-5308621ec3e8@foss.st.com>
+ <afzIABSh1xtMEGbf@p14s>
+ <PAXPR04MB9185BFA6E7375FAD0B15B021893C2@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: ben.levinsky@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013D:EE_|MN0PR12MB6269:EE_
-X-MS-Office365-Filtering-Correlation-Id: 235cb102-1fdb-4574-8c74-08deb1d4dd66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|82310400026|7416014|376014|1800799024|18002099003|22082099003|56012099003|11063799003;
-X-Microsoft-Antispam-Message-Info:
-	2fTWhFuJHZMR8Eyzjed/0dAniZaYDIrLYELLg0AMjsGwpUyWvjMbi0vtbn92YkerVpcxteNM+5WRG2nMaKiLHf4qPKQuYUzXvCHrT5cNyBQteWCzS+gHKxihP+JmwPSXP3mdOE94YfEhM0L1pPdWgAlI5j/bev7UPKT4MW9WygLMktQmU20yrgU4U/D78QiSw1erRNu960ORJmGCUwOq6AQ9D0XCh9qfc6GFwat4XUlFcnBMDScCJyBzOAQUr6poaj+nNgl14D67+deeyxpTgQ4Wx65HNR4AMkx02Cd6PV02HGZDu9YhbgReMR8Loe/NLDUfctDrLn7Wk7Xlu6IyqybDK1l6GfM6bE4zwpec3NTtD8fsV7bb3V9+KmiFClz5X9QqVMiYsO+V7nfaKWXz6yffNdksVeMpEcfaMg0ShHCUHT7K/EW3GACm0ARDhs4EWgs1tb762HYlXPoUcywfc30SaoLkbh4e2P3ak+AghjK3EkPD8v84yDqY9YZgN/w1USSuAJv8GRkfvDyw1wSonQ/M8zj3rwgRHCeZKvyp/pGd7B2xH3+qi5MpB7rqgNhAYtW7J8twhmzFVyOQLpJJ6nxXtu4aTCIWSlmCJu/DrNLDApblnCs6LgO8/EZRA9X1L4gutg3YU6KBaUaYuBxrg5ReLG6t3w8syTruvv/ZLOB+cGRvNK/JcddrjSzZIATYd9y7+kSWjpGcyAnPTHCTGJUUQIuYGTio3cypVP8xJZ4=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(82310400026)(7416014)(376014)(1800799024)(18002099003)(22082099003)(56012099003)(11063799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	tARKXJ3ElxrQXgfEPDtpaw0TubPCtrppVtLnpevGm4I5ZsA2gUf0sS9Oz8SXi0JJM+TLgBlWb4GKqMzFzZrEGjkpEaEbXRUYdcrohKSVkLK4+WJYuO5A/Wm8jHHSgTjEY0WnU1vtthz7cXndSjDlIf9woGqjp5npr7UM5elhm5Q7Hdh3BL6yC9DRTOwmmck9qkna5FPksXwYedxwQJKJ0hsefufTZGlT6JqQN1IpA+JIhxCGZUiCzOsUs66pthekWcTkz1xbQktjReZ5eyVLol0/orknwB0d9aIuITNWqVYlDnZYdLm2csLaoulPW1SRgHMP3Q10uU68HqHITxltUsggHqUn1rXofITUytFA2hjZZYLiyw9NOygPR7Jp26KC0sPp290zb70tEfMe0GkFBgJFiN1c3gQX2pJ0Oa2ZcnfnO9Av6U01VBvU25lAHnfL
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2026 16:21:33.8323
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 235cb102-1fdb-4574-8c74-08deb1d4dd66
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013D.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6269
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9185BFA6E7375FAD0B15B021893C2@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-Replace the exact-match carveout map and unmap callbacks in the
-existing remoteproc drivers with the common wc-ioremap helpers. This
-covers xlnx_r5_remoteproc, rcar_rproc, st_remoteproc, stm32_rproc,
-imx_rproc, and imx_dsp_rproc.
+On Thu, May 07, 2026 at 07:43:33PM +0000, Shenwei Wang wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Sent: Thursday, May 7, 2026 12:13 PM
+> > To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+> > Cc: Beleswar Prasad Padhi <b-padhi@ti.com>; Shenwei Wang
+> > <shenwei.wang@nxp.com>; Andrew Lunn <andrew@lunn.ch>; Linus Walleij
+> > <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>; Jonathan Corbet
+> > <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof Kozlowski
+> > <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn Andersson
+> > <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
+> > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
+> > gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> > <festevam@gmail.com>; Peng Fan <peng.fan@nxp.com>;
+> > devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
+> > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org; dl-linux-imx <linux-
+> > imx@nxp.com>; Bartosz Golaszewski <brgl@bgdev.pl>
+> > Subject: [EXT] Re: [PATCH v13 3/4] gpio: rpmsg: add generic rpmsg GPIO driver
+> > > > >  From my perspective, based on your proposal:
+> > > > >   1) Linux should send a get_config message to the remote proc (0x405 ->
+> > 0xD). 2) The remote processor would respond with the list of ports, associated
+> > > > >      with an remote endpoint addresses.
+> > > >
+> > > >
+> > > > Agreed, we can scale it for multiple remote endpoints like this.
+> > > >
+> > > > >   3) Linux would parse the response, compare it with the DT, enable the
+> > GPIO
+> > > > >      ports accordingly, creating it local endpoint and associating it with
+> > > > >      the remote endpoint.
+> > > > > Using name service to identify the ports should avoid step 1 & 2 ...
+> > > >
+> > > >
+> > > > Yes, but won't that make a lot of hard-codings in the driver?
+> > > >
+> > > > +static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
+> > > > +    { .name = "rpmsg-io-25" },
+> > > > +    { .name = "rpmsg-io-32" },
+> > > > +    { .name = "rpmsg-io-35" },
+> > > > +    { },
+> > > > +};
+> > > >
+> > > > What if tomorrow another vendor decides to add more remoteproc
+> > > > controlled GPIO ports to Linux, they would have to update this
+> > > > struct in the driver everytime. And the port indexes (25/32/35)
+> > > > could also differ between vendors. We should make the driver dynamic
+> > > > i.e. vendor agnostic.
+> > > >
+> > > > I think querying the remote firmware at runtime (step 1 & 2 above)
+> > > > is a common design pattern and makes the driver vendor agnostic. But
+> > > > feel free to correct me.
+> > > >
+> > >
+> > > You are right. My proposal would require a patch in rpmsg-core. The
+> > > idea of allowing a postfix in the compatible string has been discussed
+> > > before, but, if I remember correctly, it was not concluded.
+> > >
+> > 
+> > I also remember discussing this.  I even reviewed one of Arnaud's patch and
+> > submitted one myself.  This must have been in 2020 and the reason why it wasn't
+> > merged has escaped my memory.
+> > 
+> > > /* rpmsg devices and drivers are matched using the service name */
+> > > static inline int rpmsg_id_match(const struct rpmsg_device *rpdev,
+> > >                                 const struct rpmsg_device_id *id) {
+> > >       size_t len;
+> > >
+> > > +     len = strnlen(id->name, RPMSG_NAME_SIZE);
+> > > +     if (len && id->name[len - 1] == '*')
+> > > +             return !strncmp(id->name, rpdev->id.name, len - 1);
+> > >
+> > >       return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+> > > }
+> > >
+> > > Then, in rpmsg-gpio, and possibly in other drivers such as rpmsg-tty
+> > > and a future rpmsg-i2c, we could use:
+> > > static struct rpmsg_device_id rpmsg_gpio_channel_id_table[] = {
+> > >     { .name = "rpmsg-io" },
+> > >     { .name = "rpmsg-io-*" },
+> > >     { },
+> > > };
+> > 
+> > That was my initial approach.  We don't even need an additional "rpmsg-io-*" in
+> > rpmsg_gpio_channel_id_table[].  All we need is:
+> > 
+> > /* rpmsg devices and drivers are matched using the service name */ static inline
+> > int rpmsg_id_match(const struct rpmsg_device *rpdev,
+> >                                  const struct rpmsg_device_id *id) {
+> >  +     size_t len = strnlen(id->name, RPMSG_NAME_SIZE);
+> > 
+> >  -     return strncmp(id->name, rpdev->id.name, RPMSG_NAME_SIZE) == 0;
+> >  +     return strncmp(id->name, rpdev->id.name, len) == 0;
+> > }
+> > 
+> 
+> If we encode the port index directly into ept->src, for example:
+> 
+>     ept->src = (baseaddr << 8) | port_index;
+>
 
-Leave the zynqmp R5 TCM callbacks alone because they also clear the
-mapped memory and are therefore not exact matches for the shared
-helpers.
+There is no rpmsg_endpoint::src.  You likely meant ept->addr.  This would work
+but not optimal on two front:
 
-Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> # renesas
----
- drivers/remoteproc/imx_dsp_rproc.c      | 36 ++++---------------
- drivers/remoteproc/imx_rproc.c          | 32 ++---------------
- drivers/remoteproc/rcar_rproc.c         | 33 ++---------------
- drivers/remoteproc/st_remoteproc.c      | 31 ++--------------
- drivers/remoteproc/stm32_rproc.c        | 34 ++----------------
- drivers/remoteproc/xlnx_r5_remoteproc.c | 47 +++----------------------
- 6 files changed, 18 insertions(+), 195 deletions(-)
+(1) rpms_endpoint::addr is a u32 and idr_alloc() returns an 'int'.  As such
+there is a possibility of conflict.  I concede the possibility is marginal, but
+it still exists.
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 008741af9f11..2d9f14fbef1d 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -644,32 +644,6 @@ static void imx_dsp_rproc_free_mbox(struct imx_dsp_rproc *priv)
- 	mbox_free_channel(priv->rxdb_ch);
- }
- 
--static int imx_dsp_rproc_mem_alloc(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	mem->va = va;
--
--	return 0;
--}
--
--static int imx_dsp_rproc_mem_release(struct rproc *rproc,
--				     struct rproc_mem_entry *mem)
--{
--	iounmap(mem->va);
--
--	return 0;
--}
--
- /**
-  * imx_dsp_rproc_add_carveout() - request mailbox channels
-  * @priv: private data pointer
-@@ -700,8 +674,10 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)att->sa,
--					   att->size, da, imx_dsp_rproc_mem_alloc,
--					   imx_dsp_rproc_mem_release, "dsp_mem");
-+					   att->size, da,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
-+					   "dsp_mem");
- 
- 		if (mem)
- 			rproc_coredump_add_segment(rproc, da, att->size);
-@@ -732,8 +708,8 @@ static int imx_dsp_rproc_add_carveout(struct imx_dsp_rproc *priv)
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(dev, NULL, (dma_addr_t)res.start,
- 					   resource_size(&res), da,
--					    imx_dsp_rproc_mem_alloc,
--					    imx_dsp_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   "%.*s", strchrnul(res.name, '@') - res.name, res.name);
- 		if (!mem)
- 			return -ENOMEM;
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 7f54322244ac..6249815b54d8 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -600,35 +600,6 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *i
- 	return va;
- }
- 
--static int imx_rproc_mem_alloc(struct rproc *rproc,
--			       struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	dev_dbg(dev, "map memory: %p+%zx\n", &mem->dma, mem->len);
--	va = ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va)) {
--		dev_err(dev, "Unable to map memory region: %p+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int imx_rproc_mem_release(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int imx_rproc_sm_lmm_prepare(struct rproc *rproc)
- {
- 	struct imx_rproc *priv = rproc->priv;
-@@ -692,7 +663,8 @@ static int imx_rproc_prepare(struct rproc *rproc)
- 		/* Register memory region */
- 		mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
- 					   resource_size(&res), da,
--					   imx_rproc_mem_alloc, imx_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   "%.*s", strchrnul(res.name, '@') - res.name,
- 					   res.name);
- 		if (!mem)
-diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
-index 3c25625f966d..e3121fadd292 100644
---- a/drivers/remoteproc/rcar_rproc.c
-+++ b/drivers/remoteproc/rcar_rproc.c
-@@ -19,35 +19,6 @@ struct rcar_rproc {
- 	struct reset_control *rst;
- };
- 
--static int rcar_rproc_mem_alloc(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	struct device *dev = &rproc->dev;
--	void *va;
--
--	dev_dbg(dev, "map memory: %pa+%zx\n", &mem->dma, mem->len);
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int rcar_rproc_mem_release(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	dev_dbg(&rproc->dev, "unmap memory: %pa\n", &mem->dma);
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int rcar_rproc_prepare(struct rproc *rproc)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -73,8 +44,8 @@ static int rcar_rproc_prepare(struct rproc *rproc)
- 		mem = rproc_mem_entry_init(dev, NULL,
- 					   res.start,
- 					   resource_size(&res), da,
--					   rcar_rproc_mem_alloc,
--					   rcar_rproc_mem_release,
-+					   rproc_mem_entry_ioremap_wc,
-+					   rproc_mem_entry_iounmap,
- 					   res.name);
- 
- 		if (!mem)
-diff --git a/drivers/remoteproc/st_remoteproc.c b/drivers/remoteproc/st_remoteproc.c
-index a07edf7217d2..486180cdccb4 100644
---- a/drivers/remoteproc/st_remoteproc.c
-+++ b/drivers/remoteproc/st_remoteproc.c
-@@ -88,33 +88,6 @@ static void st_rproc_kick(struct rproc *rproc, int vqid)
- 		dev_err(dev, "failed to send message via mbox: %d\n", ret);
- }
- 
--static int st_rproc_mem_alloc(struct rproc *rproc,
--			      struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	va = ioremap_wc(mem->dma, mem->len);
--	if (!va) {
--		dev_err(dev, "Unable to map memory region: %pa+%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int st_rproc_mem_release(struct rproc *rproc,
--				struct rproc_mem_entry *mem)
--{
--	iounmap(mem->va);
--
--	return 0;
--}
--
- static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct device *dev = rproc->dev.parent;
-@@ -138,8 +111,8 @@ static int st_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
- 			mem = rproc_mem_entry_init(dev, NULL,
- 						   (dma_addr_t)res.start,
- 						   resource_size(&res), res.start,
--						   st_rproc_mem_alloc,
--						   st_rproc_mem_release,
-+						   rproc_mem_entry_ioremap_wc,
-+						   rproc_mem_entry_iounmap,
- 						   "%.*s",
- 						   strchrnul(res.name, '@') - res.name,
- 						   res.name);
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 632614013dc6..7ac8265b60ac 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -113,35 +113,6 @@ static int stm32_rproc_pa_to_da(struct rproc *rproc, phys_addr_t pa, u64 *da)
- 	return -EINVAL;
- }
- 
--static int stm32_rproc_mem_alloc(struct rproc *rproc,
--				 struct rproc_mem_entry *mem)
--{
--	struct device *dev = rproc->dev.parent;
--	void *va;
--
--	dev_dbg(dev, "map memory: %pad+%zx\n", &mem->dma, mem->len);
--	va = (__force void *)ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va)) {
--		dev_err(dev, "Unable to map memory region: %pad+0x%zx\n",
--			&mem->dma, mem->len);
--		return -ENOMEM;
--	}
--
--	/* Update memory entry va */
--	mem->va = va;
--
--	return 0;
--}
--
--static int stm32_rproc_mem_release(struct rproc *rproc,
--				   struct rproc_mem_entry *mem)
--{
--	dev_dbg(rproc->dev.parent, "unmap memory: %pa\n", &mem->dma);
--	iounmap((__force __iomem void *)mem->va);
--
--	return 0;
--}
--
- static int stm32_rproc_of_memory_translations(struct platform_device *pdev,
- 					      struct stm32_rproc *ddata)
- {
-@@ -237,8 +208,8 @@ static int stm32_rproc_prepare(struct rproc *rproc)
- 			mem = rproc_mem_entry_init(dev, NULL,
- 						   (dma_addr_t)res.start,
- 						   resource_size(&res), da,
--						   stm32_rproc_mem_alloc,
--						   stm32_rproc_mem_release,
-+						   rproc_mem_entry_ioremap_wc,
-+						   rproc_mem_entry_iounmap,
- 						   "%.*s", strchrnul(res.name, '@') - res.name,
- 						   res.name);
- 			if (mem)
-@@ -957,4 +928,3 @@ MODULE_DESCRIPTION("STM32 Remote Processor Control Driver");
- MODULE_AUTHOR("Ludovic Barre <ludovic.barre@st.com>");
- MODULE_AUTHOR("Fabien Dessenne <fabien.dessenne@st.com>");
- MODULE_LICENSE("GPL v2");
--
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index 45a62cb98072..e5d1903c9636 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -447,45 +447,6 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
- 	return ret;
- }
- 
--/*
-- * zynqmp_r5_mem_region_map()
-- * @rproc: single R5 core's corresponding rproc instance
-- * @mem: mem descriptor to map reserved memory-regions
-- *
-- * Callback to map va for memory-region's carveout.
-- *
-- * return 0 on success, otherwise non-zero value on failure
-- */
--static int zynqmp_r5_mem_region_map(struct rproc *rproc,
--				    struct rproc_mem_entry *mem)
--{
--	void __iomem *va;
--
--	va = ioremap_wc(mem->dma, mem->len);
--	if (IS_ERR_OR_NULL(va))
--		return -ENOMEM;
--
--	mem->va = (void *)va;
--
--	return 0;
--}
--
--/*
-- * zynqmp_r5_rproc_mem_unmap
-- * @rproc: single R5 core's corresponding rproc instance
-- * @mem: mem entry to unmap
-- *
-- * Unmap memory-region carveout
-- *
-- * return: always returns 0
-- */
--static int zynqmp_r5_mem_region_unmap(struct rproc *rproc,
--				      struct rproc_mem_entry *mem)
--{
--	iounmap((void __iomem *)mem->va);
--	return 0;
--}
--
- /*
-  * add_mem_regions_carveout()
-  * @rproc: single R5 core's corresponding rproc instance
-@@ -522,8 +483,8 @@ static int add_mem_regions_carveout(struct rproc *rproc)
- 			rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
- 							 (dma_addr_t)res.start,
- 							 resource_size(&res), res.start,
--							 zynqmp_r5_mem_region_map,
--							 zynqmp_r5_mem_region_unmap,
-+							 rproc_mem_entry_ioremap_wc,
-+							 rproc_mem_entry_iounmap,
- 							 "%.*s",
- 							 strchrnul(res.name, '@') - res.name,
- 							 res.name);
-@@ -560,8 +521,8 @@ static int add_sram_carveouts(struct rproc *rproc)
- 		rproc_mem = rproc_mem_entry_init(&rproc->dev, NULL,
- 						 dma_addr,
- 						 len, da,
--						 zynqmp_r5_mem_region_map,
--						 zynqmp_r5_mem_region_unmap,
-+						 rproc_mem_entry_ioremap_wc,
-+						 rproc_mem_entry_iounmap,
- 						 sram->sram_res.name);
- 		if (!rproc_mem) {
- 			dev_err(&rproc->dev, "failed to add sram %s da=0x%x, size=0x%lx",
--- 
-2.34.1
+(2) By proceeding this way, the kernel exposes the GPIO controller it knows
+about.  It is preferrable to have the remote processor tell the kernel about the
+GPIO controller it wants.
 
+I am done reviewing this revision.  Given the amount of refactoring needed, I
+will not look at the code.  Please refer to this reply [1] for what I am
+expecting in the next revision. 
+
+[1]. https://lwn.net/ml/all/CANLsYkwBk0KbN-k9ce+5=oT+scdZ3nU5AOr3Fz4zT=0AFzghDA@mail.gmail.com/
+ 
+> where baseaddr can be derived from the channel address, we can avoid the possible address conflict.
+> 
+> With this approach, the patch to rpmsg-core would no longer be necessary.
+> 
+> Thanks,
+> Shenwei
+> 
+> > And let the rpmsg-virtio-gpio driver parse @rpdev->id.name to match with a
+> > GPIO controller in the DT.
+> > 
+> > >
+> > > If exact name matching is strongly required, then this proposal would
+> > > not be suitablea.
+> > >
+> > > A third option would be a combination of both approaches: instantiate
+> > > the device using the same name service from the remote side, as done
+> > > in rpmsg-tty. In that case, a get_config message, or a similar
+> > > mechanism, would also be needed to retrieve the port information from the
+> > remote side.
+> > >
+> > 
+> > I'm not overly fond of a get_config message because it is one more thing we have
+> > to define and maintain.
+> > 
+> > Arnaud: is there a get_config message already defined for rpmsg_tty?
+> > 
+> > Beleswar: Can you provide a link to a virtio device that would use a get_config
+> > message?
+> > 
+> > > Tanmaya also proposed another alternative based on reserved addresses.
+> > >
+> > > At this point, I suggest letting Mathieu review the discussion and
+> > > recommend the most suitable approach.
+> > >
+> > > Thanks,
+> > > Arnaud
+> > >
+> > > > >
+> > > > > At the end, whatever solution is implemented, my main concern is
+> > > > > that the Linux driver design should, if possible, avoid adding
+> > > > > unnecessary complexity or limitations on the remote side (for instance in
+> > openAMP project).
+> > > >
+> > > >
+> > > > Yes definitely, I want the same. Feel free to let me know if this
+> > > > does not suit with the OpenAMP project.
+> > > >
+> > > > Thanks,
+> > > > Beleswar
+> > > >
+> > > > >
+> > > > > Thanks,
+> > > > > Arnaud
+> > > > >
+> > > > >
+> > > > > > So Linux does not need to send the port idx everytime while
+> > > > > > sending a gpio message anymore.
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Beleswar
+> > > > > >
+> > > > > > [...]
+> > > > > >
+> > > > >
+> > >
