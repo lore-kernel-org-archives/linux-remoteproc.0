@@ -1,152 +1,236 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011032.outbound.protection.outlook.com [52.101.65.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B243BB48
-	for <linux-remoteproc@vger.kernel.org>; Mon, 18 May 2026 01:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779067065; cv=fail; b=YK51j4NUGY9PfKEf8fRS53k+iZlmn59xOU+Ray3kvD2NQ3E3UltCZSOBEnpHfoVPlsUjSZBu45xCnlTtbAz8oOsPXZpQXH0ETIIEbSwSb/zHRphj3AyBCUYSfOWu0Ecv2FbFjANjeotmc+Rtpp8WxU2Nx3rSOsthjUhjm+gBTYQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779067065; c=relaxed/simple;
-	bh=LPz2StI/9KrCbtLv7z8aOjRxUDUPx1pjJ2DTBR4yk70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FeM4C6m4spquxSaE0KTINg46vm4lXFe6grnwg7hyERNpF4L5el0cKtG9to/RoaEXtIuYLDzRCDrriEg+Z0Pajz/HNZSs+euoqwJv3//k3aRxEOEOURZeVcSun90mfCvLvvymRdiqqsWAGyAtLo/1OMXP14LyzWrzxKLSfGhMovs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=atcO629Y; arc=fail smtp.client-ip=52.101.65.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF18E3CFF6C;
+	Mon, 18 May 2026 07:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779089359; cv=none; b=hmZ0x9C4Bcam5cOoDSPhc/n4SAoccH/G0RmlV3vjgymbpXCItSq3cABVXjfyoqc06rXT+55yRzznGEsNnTZAI1JwT53ELqAVlUtf80fkru2TLFWqZn15CD1uGBo2CkKVZ1jSkAJn1ZTPLSCXscMNJmkCOsUnq4pFDMWIx2j02kg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779089359; c=relaxed/simple;
+	bh=rkHaZ1nlPXUbrziTJRIW5UaZLcD62A5hjX45NOsZBUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=avfU7AR0fPYugEd0L+5Atn0SwefqoE0tH1mrbCqD01O+YQIvaFUYQNvbdJbRgkznnXvT3wIt/zYLj5AqHv4Ngt26gkBt8GXsi1UsQ1VHnNtHEGcD2PezS2tIkNB88cadpc738+zwAxEyBVkdG4sSG2BH2IaS1D4Bz/AXUNj78i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nDvPedQF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="atcO629Y"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TVfZ8TkVVLs9pI5dOG8CQKJW8UaYvR5HtZYD9Ogcng4tBEYzr/ivREN2k0bXVL0Ec8CPUzGPB5EjtP4e/y/tlhd942m5O0QvnoTgRfLjHpLWZnra28NXVXT9fb1ki+f9RzBAX4JGxt2j2aHCzgnEK+qnpkHU9k3R9cMqlxzgWZ9Z85fDhZUHrEfC8l1+X9uTC7Hefpx3besMWlQQ5YHgaAjmN04aiVlxgMTfDli6mHo1s8a+i1dgHtSPdoeHINc0DVFkBhMy1ku9coSkNJm6pa14J8JpwA+TyLm5j+cuXu8W2kp9u2Mc8mE/SWvL4OMhSbPwvZMSUAWgAdwwKknqjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LPz2StI/9KrCbtLv7z8aOjRxUDUPx1pjJ2DTBR4yk70=;
- b=bHwZy6+qzVVMfvNDAb6TS6U0XyHwtv4vnAi4w0O+bVSNTy/P460mVHZEYkc71s6HTJPlcr2rldXGqi33V3GI8n1QgE31BoiL/gMkkHte0iDrGI5bCngmgbWRrTNzXOIwcXAyWIi5xRyd6nQUvrlT+uhZBeu3eUGsFOrsXVQPnoZ/MqeH2yGEATdkmRWQ2JCNIk6HR4vjFwfZZI4DcvF7oubB2V4f3MgLxyZ3ghW566ZS3xpHDyXYfRRisfnbhtc6wlOBRwtc/v4lLDKUyuZvXRdZ4NUzGjzYTpE/r5+eo61l1Z7V1ptX6hIGk1AOKytAWIOlqj9vZukjlvucfcq+tQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LPz2StI/9KrCbtLv7z8aOjRxUDUPx1pjJ2DTBR4yk70=;
- b=atcO629YZF95Ct2R+3QYQTMTJ4aL+gQPPyHkS+j+5dBI/lAqv0lUVJeONKT0DaXud2iU3WpHbPTh+/oYR/Z6sW3/FUc5b8C+GKrMB+GbouGVP303j1iMf//LwbDpb4oZeJjIxFeLu6jCnCD1nOk04TQbODOaLlOmR6iwEEneZSIVoWfzsi7WWwDHlwH4AxxPK7x/eWkwg8qdYPNdUKTWImR8rzcTmBPVqYwDAGqcu2U22YOCH6w1g3nHcsWa1l6gSEg8PBZK46yx8D8VXsPVz/o1CpLDESxlraYEmHr19MZ0k2VB1b2js20cSHWfvKZq4Jct7K7rurVvmclMo6AYwA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from MRWPR04MB12330.eurprd04.prod.outlook.com (2603:10a6:501:7f::23)
- by AS8PR04MB8087.eurprd04.prod.outlook.com (2603:10a6:20b:3fb::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.23; Mon, 18 May
- 2026 01:17:40 +0000
-Received: from MRWPR04MB12330.eurprd04.prod.outlook.com
- ([fe80::ca22:f8c8:6aca:7889]) by MRWPR04MB12330.eurprd04.prod.outlook.com
- ([fe80::ca22:f8c8:6aca:7889%6]) with mapi id 15.21.0025.020; Mon, 18 May 2026
- 01:17:40 +0000
-Date: Mon, 18 May 2026 09:20:33 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
-Cc: imx@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	andersson@kernel.org, mathieu.poirier@linaro.org, Frank.Li@nxp.com,
-	s.hauer@pengutronix.de, festevam@gmail.com
-Subject: Re: [PATCHv2] remoteproc: imx_rproc: add missing DRAM range for
- i.MX93
-Message-ID: <agppYVRcGLwflwCl@shlinux89>
-References: <20260517080301.24774-1-Zhiqiang.Hou@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260517080301.24774-1-Zhiqiang.Hou@nxp.com>
-X-ClientProxiedBy: MA5PR01CA0065.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:1b7::17) To MRWPR04MB12330.eurprd04.prod.outlook.com
- (2603:10a6:501:7f::23)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nDvPedQF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E1AC2BCB7;
+	Mon, 18 May 2026 07:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1779089359;
+	bh=rkHaZ1nlPXUbrziTJRIW5UaZLcD62A5hjX45NOsZBUI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nDvPedQFVsvlm5cLenIf9jhoFIEatRT92Jw8Ag/YETDDkHZOPF5jgRW/Yu7gfX9J0
+	 kc61jiqw16fasOrMB7pZv7ST+oUFtZrcAokT/k7CsIvWh23g+Od9ac70zOQbAcOym0
+	 +fyC+njjcc+arFDdhyTua/uRrRNbwBRvXFt8exugt1FeybU0/Ba9DoWVGqV1n71BfU
+	 ZR78v0kgnH0mW1QeVH2VFqjLXVQebuI5ncHPTOV+eqkM3Q/YOUMPiZho24NUljkAOv
+	 6qg2o5RjQnSLj4TABNPbJyXklsdZ19HXC4gacy4wzupvd4C866/gUcNjGx0QtTyCpQ
+	 pzj9kClTJgemw==
+From: Sumit Garg <sumit.garg@kernel.org>
+To: andersson@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robin.clark@oss.qualcomm.com,
+	sean@poorly.run,
+	akhilpo@oss.qualcomm.com,
+	lumag@kernel.org,
+	abhinav.kumar@linux.dev,
+	jesszhan0024@gmail.com,
+	marijn.suijten@somainline.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	vikash.garodia@oss.qualcomm.com,
+	dikshita.agarwal@oss.qualcomm.com,
+	bod@kernel.org,
+	mchehab@kernel.org,
+	elder@kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	jjohnson@kernel.org,
+	mathieu.poirier@linaro.org,
+	trilokkumar.soni@oss.qualcomm.com,
+	mukesh.ojha@oss.qualcomm.com,
+	pavan.kondeti@oss.qualcomm.com,
+	jorge.ramirez@oss.qualcomm.com,
+	tonyh@qti.qualcomm.com,
+	vignesh.viswanathan@oss.qualcomm.com,
+	srinivas.kandagatla@oss.qualcomm.com,
+	amirreza.zarrabi@oss.qualcomm.com,
+	jens.wiklander@linaro.org,
+	op-tee@lists.trustedfirmware.org,
+	apurupa@qti.qualcomm.com,
+	skare@qti.qualcomm.com,
+	linux-kernel@vger.kernel.org,
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: [PATCH v6 00/16] firmware: qcom: Add OP-TEE PAS service support
+Date: Mon, 18 May 2026 12:58:40 +0530
+Message-ID: <20260518072856.22790-1-sumit.garg@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MRWPR04MB12330:EE_|AS8PR04MB8087:EE_
-X-MS-Office365-Filtering-Correlation-Id: ec2a2ed9-9362-47b0-8526-08deb47b4171
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|376014|52116014|1800799024|18002099003|22082099003|56012099003|38350700014|11063799003;
-X-Microsoft-Antispam-Message-Info:
-	gS+kgQgZG+6O1zmMt/FashYJWVTj6Ttk86zhfjGRarZpYhZByXnmo73KvlHzouql+g53GnSpKwaYWF8zAIA8E+vtds5holuGs5O3hXQqy6+YrRp96vtRqreyT0+X3KOXbPAKXPOgKtoZfrgGOJ6ysH80iDepbA78jQyx0Im6yGZCvf+ora6rjv1FBtCnEW7glsXmeRchaFop7GVJaZYZp2/pIkoXQvQKQbY0q3ZyMEQPzjcQVE54MeHui0Z82liQZrgCa4dKgQqNkHJsLbQzJuHpRQ0WCevPg0TdxdhS5N8SmypvwM3ts4W/kMBg5lpjLsCDh3k4Kzxzqud6kH6FEgj2eZNHkK49NpMIGfwl5OXrfzzCFuq14iDRIgA3HYRrI33+RUDpowVSL63s7D7cgGpxLOoj/mLZiqzwtBPAkOONUiahzrmsL6HVhXTlAecmNz2+o+7XggLuSmjEwkCQbRosyxqy6Lj4DBxIwrrjfAQtlw8GLab+Dg6TM6m04V1ZSKSIxEOmwSKlSGKFfkuw0BD+ZQ+2h8jWeKkvLuPXLGoQZu9NRo4juDjvTwwJO6BPKqcxZhiJsUGw0qxTRh10I781Yfs66fYpTQkjww1kiUy1uq+uwgPVeJ9bHNs55W9dno6KJa42A5G0zqwxR/xZEbrfrElfHYACDiuMWpMA1zEJA3a3hT39NaJLlCjAB9df4bySm7za0RImobTyEbAnynDiWN3ephWaGC72PKK+xKLEmW3YQW+C8duP4k3lhx8g
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRWPR04MB12330.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(376014)(52116014)(1800799024)(18002099003)(22082099003)(56012099003)(38350700014)(11063799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Krgv5ioagnlGHUyDKwXLi6L9H5gN9sOtr9yoO32qb/+1lp6tI1UjclFg4R/S?=
- =?us-ascii?Q?Jz+/P63f7yANID31yn5CPx2kPT41W6LdNh14DMt2A9tD08CpP4hwsusK4LEL?=
- =?us-ascii?Q?B0W9ZH1x6DerCAVKbSpvaVpjJQJpC1XT9bcUHfnKklIRtnkwTI4evRkzXmrz?=
- =?us-ascii?Q?ONG0/1qUOR2HwycfZ9v1jziJ4wTlYQp50vHW6d2Jh7z2nN+haPjZKIZo3Z0d?=
- =?us-ascii?Q?uiWjxXZxrhztlsvkFfstdwY/HrdE/siMnmDLo3JXCh09Cvzm5em2QGPaRxV1?=
- =?us-ascii?Q?QI7NCpK/+riopSMIWdGhVaHtKMVnYUtLM8OuVQgGTjQKFvJc4wGP7nLdTl8x?=
- =?us-ascii?Q?DMzlQm0hlp+bTXYRlTrLCFD+Y39L+nIgkkLhWggfoXP90bo9+qAi8lip3Gzc?=
- =?us-ascii?Q?+Lrd+qFhzukVbRb1fyGVs0SifbwZmJexFxTGB/SxBnffsj3+xpZyK8/CdjFg?=
- =?us-ascii?Q?9QMPSIW50I7NV5bQAVn4FQyLasSuN7WsB9sxrD+YQEPuwmaJeUu/M4drJsIX?=
- =?us-ascii?Q?Hv28JhlbcTDsMM/eqYDKBUvwlojjnLuL9zk6gOkhiYqueJx8JcQdE1ynGGKl?=
- =?us-ascii?Q?qTEzBuplIWPvpTXseO1dwopxWMIPpghJ8U50+VwxTuTvnXeLNMiapiYqABmb?=
- =?us-ascii?Q?jQC3l4cnFXL2huyZz+acKIPIpwFDh+UpAjQ9zBGKQynJ7qu9RX4j6sJBdP/V?=
- =?us-ascii?Q?uPvbI3e9dQjQ2wua3WWrrwIxpD1aPxl4J93eLMt6D6/HVN2506NPZi05ly/v?=
- =?us-ascii?Q?VDex/0u3gronmZwGrgyO0UwKeo/+wmZoRpZH1U19gST6FJd+bvJnhHsQzcUT?=
- =?us-ascii?Q?3SsyaK/bvYlVpMGfXhDwAwID5tIHPbcd9+tTwimWA/1rGvwUWMqpqTU8yXCw?=
- =?us-ascii?Q?HuajagkGdIyyB3uKKGzdS+MgYh5WZF0gHkt9wHy8WIl5C04KuA9qFc94f1ys?=
- =?us-ascii?Q?Gy7SWfGjN5YpebJ5dbgR2y+V35lWCK0RGmXEZhtFnHkEkAyYxJ0B0DTvmI4x?=
- =?us-ascii?Q?DNTv6AVEkS86YLedNc5sRAmYnFmgWJV1iEaTs4P0K3WerUySrWsYaT/t61GJ?=
- =?us-ascii?Q?SiJmGMqOyb8j2wazYLN8SGRGBGhlzocnD/4JoWj3NcLDu4tZu9fcGsG5Hrht?=
- =?us-ascii?Q?DSuiAd8U4FK0GJPXZmObDseNCFl9eBXTqNgvTqT+6xuuw2DqX9BlY6e74Nzi?=
- =?us-ascii?Q?V5Q1QXWFlFJtVi6IRcIfx6vxlAqn/wPH62TcRQF87zzZBh696myoGF6MgxJ9?=
- =?us-ascii?Q?kzRIAYy4aOVOV3T0wBYjxOfryZnuWd3Yq5fwfX1u9/2p8NvarXePlRCPSvVw?=
- =?us-ascii?Q?ohOnQSsxyKT3PYEMGDqx1Trl4IcHbwrsihoMDy+hxTO64xx/0pDiQ/Jvsvld?=
- =?us-ascii?Q?WO+VV6QL0JSOmf9yDgG+sA41F+R4uQOz/x7CWJAEUlAnHGMup0yh20KpGHHh?=
- =?us-ascii?Q?YGjJ66gLrUUuFwFWICHiWa46xsD3yin6ZLx0XCg3UkorKuECTgP0W6h28+cq?=
- =?us-ascii?Q?CoBRv2y6Qpyq9cRe5aWhH/BdZHJgeYUKSoU9uofgWCu3AiI11Kh5ycgHhAwZ?=
- =?us-ascii?Q?1TRCj+zHP5ruY4QGDiHYJjWhBMwx8rVRKgTQZAqC8RTMGae2EhTlBCcZTujB?=
- =?us-ascii?Q?PK4aeSjhgJAZaIvOn4F1TbMgSHN2j+4D6SSHZrgl8ajEx06x72cFxDT+1JNW?=
- =?us-ascii?Q?G+0vcobKXL3S6PXsYVeACwIwkcOenBuvyUs3p1aFy/CEfO7M3Bp6CK9I//ye?=
- =?us-ascii?Q?se9oa04vTg=3D=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec2a2ed9-9362-47b0-8526-08deb47b4171
-X-MS-Exchange-CrossTenant-AuthSource: MRWPR04MB12330.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2026 01:17:40.7609
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8KW5A3eOjRk4opu7bQsYYcV3UAfnvxOoGOD9h36FXed0AMWQ8FKDGv30OQNkwbxpd9dDZg5le780niND+I9/lA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8087
+Content-Transfer-Encoding: 8bit
 
-Hi Zhiqiang,
+From: Sumit Garg <sumit.garg@oss.qualcomm.com>
 
-Thanks for your patch.
+Qcom platforms has the legacy of using non-standard SCM calls
+splintered over the various kernel drivers. These SCM calls aren't
+compliant with the standard SMC calling conventions which is a
+prerequisite to enable migration to the FF-A specifications from Arm.
 
-On Sun, May 17, 2026 at 04:03:01PM +0800, Zhiqiang Hou wrote:
->From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->
->The M33 DRAM view of 256MB ranges 0x[a,b]0000000 are mapped to
->0xa0000000 of A55 mapping view.
+OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
+support these non-standard SCM calls. And even for newer architectures
+using S-EL2 with Hafnium support, QTEE won't be able to support SCM
+calls either with FF-A requirements coming in. And with both OP-TEE
+and QTEE drivers well integrated in the TEE subsystem, it makes further
+sense to reuse the TEE bus client drivers infrastructure.
 
-Let's add more details, as below:
+The added benefit of TEE bus infrastructure is that there is support
+for discoverable/enumerable services. With that client drivers don't
+have to manually invoke a special SCM call to know the service status.
 
-The M33 DRAM address ranges 0xA0000000-0xAFFFFFFF(None Secure) and
-0xB0000000-0xBFFFFFFF(Secure) are both mapped to 0xA0000000-0xAFFFFFFF
-in the A55 address space.
+So enable the generic Peripheral Authentication Service (PAS) provided
+by the firmware. It acts as the common layer with different TZ
+backends plugged in whether it's an SCM implementation or a proper
+TEE bus based PAS service implementation.
 
-These ranges are currently missing from the i.MX93 remoteproc address
-translation table, which may lead to invalid address translation for
-firmware accessing these regions.
+The TEE PAS service ABI is designed to be extensible with additional API
+as PTA_QCOM_PAS_CAPABILITIES. This allows to accommodate any future
+extensions of the PAS service needed while still maintaining backwards
+compatibility.
 
-Add the missing mappings to complete the DRAM coverage.
+Currently OP-TEE support is being added to provide the backend PAS
+service implementation which can be found as part of this PR [1].
+This implementation has been tested on Kodiak/RB3Gen2 board with lemans
+EVK board being the next target. In addition to that WIN/IPQ targets
+planning to use OP-TEE will use this service too. Surely the backwards
+compatibility is maintained and tested for SCM backend.
 
->
+Note that kernel PAS service support while running in EL2 is at parity
+among OP-TEE vs QTEE. Especially the media (venus/iris) support depends
+on proper IOMMU support being worked out on the PAS client end.
 
-Add fix tag:
-Fixes: 9222fabf0e39d ("remoteproc: imx_rproc: Support i.MX93")
+Patch summary:
+- Patch #1: adds Kodiak EL2 overlay since boot stack with TF-A/OP-TEE
+  only allow UEFI and Linux to boot in EL2.
+- Patch #2: adds generic PAS service.
+- Patch #3: migrates SCM backend to generic PAS service.
+- Patch #4: adds TEE/OP-TEE backend for generic PAS service.
+- Patch #5-#14: migrates all client drivers to generic PAS service.
+- Patch #15: drops legacy PAS SCM exported APIs.
 
-Thanks
-Peng.
+The patch-set is based on v7.1-rc4 tag and can be found in git tree here
+[2].
+
+Merge strategy:
+
+It is expected due to APIs dependency, the entire patch-set to go via
+the Qcom tree. All other subsystem maintainers, it will be great if I
+can get acks for the corresponding subsystem patches.
+
+[1] https://github.com/OP-TEE/optee_os/pull/7721 (already merged)
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/sumit.garg/linux.git/log/?h=qcom-pas-v6
+
+---
+Changes in v6:
+- Rebased to v7.1-rc4 tag.
+- Patch #14: fixed ret error print.
+- Add Kconfig descriptions for PAS symbols such that they are visible
+  in menuconfig to update.
+
+Changes in v5:
+- Incorporated misc. comments from Mukesh.
+- Split up patch #11 into 2 to add an independent commit for passing
+  proper PAS ID to set_remote_state API.
+- Picked up tags.
+
+Changes in v4:
+- Incorporate misc. comments on patch #4.
+- Picked up an ack for patch #10.
+- Clarify in cover letter about state of media support.
+
+Changes in v3:
+- Incorporated some style and misc. comments for patch #2, #3 and #4.
+- Add QCOM_PAS Kconfig dependency for various subsystems.
+- Switch from pseudo TA to proper TA invoke commands.
+
+Changes in v2:
+- Fixed kernel doc warnings.
+- Polish commit message and comments for patch #2.
+- Pass proper PAS ID in set_remote_state API for media firmware drivers.
+- Added Maintainer entry and dropped MODULE_AUTHOR.
+
+Mukesh Ojha (1):
+  arm64: dts: qcom: kodiak: Add EL2 overlay
+
+Sumit Garg (15):
+  firmware: qcom: Add a generic PAS service
+  firmware: qcom_scm: Migrate to generic PAS service
+  firmware: qcom: Add a PAS TEE service
+  remoteproc: qcom_q6v5_pas: Switch over to generic PAS TZ APIs
+  remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs
+  soc: qcom: mdtloader: Switch to generic PAS TZ APIs
+  remoteproc: qcom_wcnss: Switch to generic PAS TZ APIs
+  remoteproc: qcom: Select QCOM_PAS generic service
+  drm/msm: Switch to generic PAS TZ APIs
+  media: qcom: Switch to generic PAS TZ APIs
+  media: qcom: Pass proper PAS ID to set_remote_state API
+  net: ipa: Switch to generic PAS TZ APIs
+  wifi: ath12k: Switch to generic PAS TZ APIs
+  firmware: qcom_scm: Remove SCM PAS wrappers
+  MAINTAINERS: Add maintainer entry for Qualcomm PAS TZ service
+
+ MAINTAINERS                                   |   9 +
+ arch/arm64/boot/dts/qcom/Makefile             |   2 +
+ arch/arm64/boot/dts/qcom/kodiak-el2.dtso      |  35 ++
+ drivers/firmware/qcom/Kconfig                 |  21 +-
+ drivers/firmware/qcom/Makefile                |   2 +
+ drivers/firmware/qcom/qcom_pas.c              | 291 +++++++++++
+ drivers/firmware/qcom/qcom_pas.h              |  50 ++
+ drivers/firmware/qcom/qcom_pas_tee.c          | 476 ++++++++++++++++++
+ drivers/firmware/qcom/qcom_scm.c              | 302 ++++-------
+ drivers/gpu/drm/msm/Kconfig                   |   1 +
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   4 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  11 +-
+ drivers/media/platform/qcom/iris/Kconfig      |  25 +-
+ .../media/platform/qcom/iris/iris_firmware.c  |   9 +-
+ drivers/media/platform/qcom/venus/Kconfig     |   1 +
+ drivers/media/platform/qcom/venus/firmware.c  |  11 +-
+ drivers/net/ipa/Kconfig                       |   2 +-
+ drivers/net/ipa/ipa_main.c                    |  13 +-
+ drivers/net/wireless/ath/ath12k/Kconfig       |   2 +-
+ drivers/net/wireless/ath/ath12k/ahb.c         |  10 +-
+ drivers/remoteproc/Kconfig                    |   4 +-
+ drivers/remoteproc/qcom_q6v5_mss.c            |   5 +-
+ drivers/remoteproc/qcom_q6v5_pas.c            |  51 +-
+ drivers/remoteproc/qcom_wcnss.c               |  12 +-
+ drivers/soc/qcom/mdt_loader.c                 |  12 +-
+ include/linux/firmware/qcom/qcom_pas.h        |  43 ++
+ include/linux/firmware/qcom/qcom_scm.h        |  29 --
+ include/linux/soc/qcom/mdt_loader.h           |   6 +-
+ 28 files changed, 1119 insertions(+), 320 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/kodiak-el2.dtso
+ create mode 100644 drivers/firmware/qcom/qcom_pas.c
+ create mode 100644 drivers/firmware/qcom/qcom_pas.h
+ create mode 100644 drivers/firmware/qcom/qcom_pas_tee.c
+ create mode 100644 include/linux/firmware/qcom/qcom_pas.h
+
+-- 
+2.51.0
+
