@@ -1,87 +1,87 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751013D3338
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 07:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297D93D3488
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 07:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779175474; cv=none; b=KwQWXxyqq1AnHzO3V9+QFbeTJ5Audb3s63v5uy0qgGGH5pPwXRTCsCOGkHwCwMfnHummI5MxFmKWflLd3MSgnYNLEeS3pSy9QyblzbkN+5pg+qLx1XU0PfCUumXAz6j//h0s83l4pu8hDgBtBW05Ul+L8dhj1oH32LCa2fkrPMg=
+	t=1779175475; cv=none; b=lCa3rP90Q87jAfHHRD9V47bLA8OuUnpejb2oRrKwRb1DI4oV2OVhEZvQkGb6CoFv1pilG+13yXh7TDn4ygUx22dxpfzrqqNmZTzglmhMmullcXmNrBCQmrSF2YHg3REGgpw9Szyur5HRl7dggd6y6/0xiVjsA3k0rbZanQnj8nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779175474; c=relaxed/simple;
-	bh=YuroHQl0RaEfqlcbPAw5LHxqeiE2B1J2dL3SPvMEUoA=;
+	s=arc-20240116; t=1779175475; c=relaxed/simple;
+	bh=QN6kQHSZ7wMJTaDZlVY9p4d8+XLr8TFnK5FsU73schM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EMjzJaYXXL644zQ42JXSuLxsIUkf+sBIANXIYY7eaWw7UHADx9N5f/Ms7I4Z9NBTXw/lCvfb8/DyzZ/zH3dODMgqzq2zQe0HhZDCMzijqjXy1y70dPk5LLwJBe0HoI1lPI03hdK99MPPz4Egl2NbIw7I/voH1F+wbux57K8oY8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dpMEkhGa; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JsggWxvs; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=g2rwjHCqWQFeJ/v1BkYEf91Chh3PgcR1A6HsjUWC1CNIVGVAZFUylDK95srtUbrTCy5QfBrY9xdz2G8GOUgHo3by/g0rw6qn9INzvaFY1ERPj+FeA9wZK7twz2s+WkiK1dFCl6zJ0xbTvWf/KdcU1GllvHFaJQKWgx/5LDm5iPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XS7djqFQ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=GuT4uFsH; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dpMEkhGa";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JsggWxvs"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64J1RSET1146359
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 07:24:31 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XS7djqFQ";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="GuT4uFsH"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64J5USEu2438091
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 07:24:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+Yxppoecnv6lUMs3okuA/xmMwVErI7Rlp5d15Pjd5Sk=; b=dpMEkhGaJ1IkON05
-	3cZqx7LPTijdBc+riBzQJSPNstSu0UhziAJkOcyjBxk6rwnCbqxcW3H6HMbtrkeD
-	LrXYa2aC+U6GwKL3fdJA6GS1soPOVPR8qj4zvSQKrLa+JImhLqNwyJmBSR/2YygZ
-	Ij+tQ30jWJCUaA54QjgOoD1YM0btNhogyopxITZfkTyeCECzTRNJnRBqKSgjRcCA
-	nNWp5IQQ8aSGEE0LNk0AZxXVaEgxjEOTNY442F/0Du4A5xl2ECT4dSPFncV+xNe6
-	hkf9ykNPqsN2MWkFtYY9KZWa5lpkgN5QIfsSEzhnaEda5ASmeB8i0vil5lKR5TqF
-	FUobmQ==
-Received: from mail-dl1-f70.google.com (mail-dl1-f70.google.com [74.125.82.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e8e7eh6x0-1
+	g8zBH03hz9ckfvwNSoaR7EiPr//dHF3WikoaKSBYWgQ=; b=XS7djqFQCZ4May5D
+	XJ5EU5SHHCyeoe8/QcplgSrKPENwT28a1tVte8qHp7h8YHkjq/xSk2OEUcP012dT
+	3y/z75qIqiEBdN+CxcoQ1WFe+5D6b126iIwaDlNKB/sb/E507IYLNSfaBwv9Xges
+	5XY8V4JzwVTdzbNCs2a7zXK0RdWXYmOZYerOopVsP3AHaxXJ40crKukdSh9CSBWa
+	STOEgVR/yZgrMoALNxohBCJ8VVMJImZHPXHwKCCFH3S7IVFewBoxqUCxcwqesifF
+	my+2pzpNrnD94Av5JkICB76aQYA1nsU8xn5O28iocmYYKXwUHWYMFNX56wAGvjAd
+	fxB6KQ==
+Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e834v3qeu-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 07:24:30 +0000 (GMT)
-Received: by mail-dl1-f70.google.com with SMTP id a92af1059eb24-1353bfdbf99so3566252c88.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 00:24:30 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 07:24:32 +0000 (GMT)
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-2fe1cf409a1so6223294eec.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 00:24:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779175470; x=1779780270; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1779175472; x=1779780272; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+Yxppoecnv6lUMs3okuA/xmMwVErI7Rlp5d15Pjd5Sk=;
-        b=JsggWxvs3/bdhN6NcQcjBcVENapOH64r58pEFaQd69FVsYYrSrSvVVF/C3hepMTCm3
-         U41rAMCBq0WmkgA9aTc7nti2FLXrXXhrUzBCB6cmDovrXSTuSg2pSKDwR1X9tOl1cXj1
-         QFoMbxy/SpMz64GyicQHgRruLteEmCV65Jpat54K2afpGOKxg29u+z4mAiV44QBN69DT
-         ipOV/TGFML3Ncimp1ptlVkx8PNBEaRZJJ9DwnZf679Pra6GqLe/E9mxeTwhUOCa5uYRZ
-         NXKVv3KZJQqIqJd7VawpAdjYFWOyEgooByFsLpq73iVSkSnJnWjKWd8wpn7bCVAiamJq
-         i/Ow==
+        bh=g8zBH03hz9ckfvwNSoaR7EiPr//dHF3WikoaKSBYWgQ=;
+        b=GuT4uFsHtTdD04WW4QYJqUHRizT9xlpkxwUuwKSeFtuKs2XZgu5Hqhs9tIj+wLXpLm
+         S7Syq09bIv9vACJ3MLHPfu2kjhgvDGZ5RsAcGzJlyIAgGeBdHTCVY29M1ZCKrcwLA6Nb
+         Q8z6MMF/IpC+0P5CD0+p+vhE9tNRgOCK/+c+7ZV5fNgMRcgtjleryT8bHi30eJnWMpjj
+         1ZoKFbs5ssJ52Ulqv9SdZp81+syfR9K9CCgseGg3DV/7HOagpS5Nyg0NVFzGQ8rU6rOV
+         3P2hwQ1Fa+GA3X9TX2hRViwVZINNRcgwA991UHCaxSATb73zGQ6M5MxFI8mQSKXxjJc6
+         qsCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779175470; x=1779780270;
+        d=1e100.net; s=20251104; t=1779175472; x=1779780272;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=+Yxppoecnv6lUMs3okuA/xmMwVErI7Rlp5d15Pjd5Sk=;
-        b=dDzzu8mZuExwxnHqC+JTigX62bxgLmcougf7rElsyKI7K/Hs0Wp0tnKe4VMgn8XGui
-         H7hMJBEJfzBOxgbX1qsU8yATNGbv9LKh0DNAG7XfU8XkTV2Ry6/O/o35J8Z3b68fAGVM
-         uhnTtZM5Se2Amy3qB7/VidHgPIrJnQT6z51SLN9ht/aN9K2/ND84J+CeNnsVE0GlmUc3
-         YcZo+m5sMbnq/2YjyJrBvAgzLLCap9dvW6h0rCbUKs6PLIKVTtyWQnbgxjTXcApbDF/G
-         xOsHjP4kyWKFbZ2r2dfxZHEmH0VdjGwOrLaJMGZOMmMHpCoP0OHeb3CX00Hi95oSvKjO
-         fTsQ==
-X-Forwarded-Encrypted: i=1; AFNElJ8xNy0Ojg2mtsFrX0Os8sbyHfzR4rdo2wsi6Bd3tI4z0H55oA9KXAbREgyWeM77SMYYhNItK2DKTZlQA3jRRBhW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyugwam+ev8tYHHHfuE0/xuLVAXnBY7ZVmdQBkID6BZ6cRAppkU
-	VBYep20HtlJ/UBwmLqlQ/0Y7V75Z9ivD4Ki+Fv4Hy/eSwYHLq/2Q7UlWR2Vv4CEBDmH6PisittL
-	8exZAIaz/G5jvqz3LSdE3U0AzTwW49zuAwUDEs03mmlHosJQCowy5BK2bNCQkRkFAMJkKri5S
-X-Gm-Gg: Acq92OG6sv16+dXE83/PmdQtMWSEWm3VJiFGoUXYQc2edT3Xz69aqEuwZlJ4NaGPUga
-	pxVbLeXZtLr9zjr81JcUddsViTaUERCwxifaLHJWfhIQDXAK+9j3BRWVe6vffwwVArjWzDNMrHI
-	e6C8BLrhbGtPeLdvwhy5P6tcxhqr197sgfDaGJVeHguetcMhHSoE311e117cduwHRE57p3w7xwk
-	+Gn30jt4RVGkxBq9tWW6B/8ZZiVKYmxID+wsgtLLKnyb9hla44oUyXSuFWzM+JZJY0gAJwqiLQz
-	FmxftIK8dKUrNqdSuTV0vWVV1hMLlVTdCQzEboTXEMA9UhxY44YFuGbiKBeBpocbA4c+fwuYKa6
-	uFa+xpq2UizGnefUdXJa2TRw4G+x+bfQyqeGKPft3Obr3/KdNj132V/v7JmHp9xZzLAAwpHV4
-X-Received: by 2002:a05:7022:6993:b0:134:df7f:910d with SMTP id a92af1059eb24-1350451e077mr7346427c88.7.1779175469971;
-        Tue, 19 May 2026 00:24:29 -0700 (PDT)
-X-Received: by 2002:a05:7022:6993:b0:134:df7f:910d with SMTP id a92af1059eb24-1350451e077mr7346409c88.7.1779175469331;
-        Tue, 19 May 2026 00:24:29 -0700 (PDT)
+        bh=g8zBH03hz9ckfvwNSoaR7EiPr//dHF3WikoaKSBYWgQ=;
+        b=ax0EEewZtPXjzCnP9ng5KkKJXa18GB9P0ejB/kAcsn3UUJHwQnSF0s/BYyqFiptBgz
+         hZqsG0pLSS5PApzFLisHdFIDe9B3Sy4N3l5ZDwe2OD7C4ZMFMZW+Uz2SA6Iam0azLHGp
+         vIut7VZbQRQXxn6Eu0nw5moPY08SuUbIXyXtjzKRCWDGXOkI0qKnRJNKiooC1giS4gBu
+         APwnDdHya5eO2hnR0kEi+yoM1jbVqfpfdXLJMjX7PlM8F6556gQQ2jkpG33qSeACT4Cb
+         ohOCUCu/LTmwhnY8OKQyxSerycv67Y8Md+5rSt/tS8oQEuODaR2qGjsn6ZF/qOH0oAei
+         vkVA==
+X-Forwarded-Encrypted: i=1; AFNElJ/rhwPBFq7Ob/tiFHGDKthJ8fGpf/0WePIYB1u6LJkmpZD3NWZvWxzBE9+E+23CUnyVQC+wA6WrLkk0eer/qvGi@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK2zrEYj7lz1FuVzOrRG5SvDi85kYcfcXwWGQ+zOFsxht0LRLG
+	Q2ewRbTu5Y1SSFct0aoEu3QFPN4rxuefplFFVVtL8IN8PKgzlcTG53lcR6QUoBZZilZDqkJfotD
+	2MJy60pkSj8sL0X6IfesbBwzB4f3IYENe11agdi4M5nCJSdb9Hu+LewI7FVwXM0jl4/7NnQcb
+X-Gm-Gg: Acq92OHp2+ydpXJWDCsJCirvB6XhDemRRcs7XGamx4bPwMZ7kkcBRee3N6URfIe/yYh
+	ixQfPbN+NMy2aBlmJdaudqLN4efN09avB6AYG7D58HqxYZy2MztQuxRQpaL/jmULsHPZ3RIyRM5
+	qxZjnESS+/+H42pVEb30eqIB47l4cIbDVoh2SIQF1JmejR5PgxJ80sr0d0fwrDIyHE2CgHrwZcA
+	nQgiz3GoYHDsgOldr2w92sKKbcu5sZIhqcr3PHnirjNJWE4LyUKV/Pz/BADPoAK5G1NxFTUCBbN
+	VfJc+NdgPmbXX8dN4mARv6oiXbo30vMPbvNWmIfqnVIQGnsE2jIwB2HPcqmg56vmNy/bsWefguX
+	n/RU8KYnkT/+OQFT1DAG86MTPizsz5jg/KcFx8mDeyEIR/U3C1+hM2rAg3lK/IUWyL72wDB0M
+X-Received: by 2002:a05:7022:388a:b0:12c:2cf8:2f30 with SMTP id a92af1059eb24-13504414f41mr7181984c88.15.1779175471652;
+        Tue, 19 May 2026 00:24:31 -0700 (PDT)
+X-Received: by 2002:a05:7022:388a:b0:12c:2cf8:2f30 with SMTP id a92af1059eb24-13504414f41mr7181967c88.15.1779175471087;
+        Tue, 19 May 2026 00:24:31 -0700 (PDT)
 Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbed2232sm23337779c88.7.2026.05.19.00.24.28
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-134cbed2232sm23337779c88.7.2026.05.19.00.24.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 May 2026 00:24:28 -0700 (PDT)
+        Tue, 19 May 2026 00:24:30 -0700 (PDT)
 From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Date: Tue, 19 May 2026 00:24:21 -0700
-Subject: [PATCH v6 3/6] dt-bindings: remoteproc: qcom: Document pas for
- SoCCP on Kaanapali and Glymur platforms
+Date: Tue, 19 May 2026 00:24:23 -0700
+Subject: [PATCH v6 5/6] remoteproc: qcom: pas: Add late attach support for
+ subsystems
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -90,7 +90,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20260519-knp-soccp-v6-3-cf5d0e194b5f@oss.qualcomm.com>
+Message-Id: <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
 References: <20260519-knp-soccp-v6-0-cf5d0e194b5f@oss.qualcomm.com>
 In-Reply-To: <20260519-knp-soccp-v6-0-cf5d0e194b5f@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -107,496 +107,156 @@ Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+        Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-3d134
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1779175464; l=16488;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1779175464; l=3683;
  i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
- bh=YuroHQl0RaEfqlcbPAw5LHxqeiE2B1J2dL3SPvMEUoA=;
- b=WceVYENDAM4QkQHqOexKGQbzvtkM0rugpnYE1bTY2zTOwPVPKlzrzYBwOiYxzdKwjByyICWPA
- Hd2EV4MVI0XA/y4jY8QotLtRkeVUNs3QOPwTRnVgEc0LgUzizQuQlXz
+ bh=QN6kQHSZ7wMJTaDZlVY9p4d8+XLr8TFnK5FsU73schM=;
+ b=U9glJukBAUOjsfvyNq+Nhh0TZrFm7DSDSVRT37fu3rqk+uheQ2fkKGE7qnfPlqsqQxPipbAGm
+ cvawG3nPFEHBEUhzhYx3DOPyNbKcbZ14h9gM6aKUHK85zqqLlI1CiK5
 X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
  pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
-X-Authority-Analysis: v=2.4 cv=Rt316imK c=1 sm=1 tr=0 ts=6a0c102e cx=c_pps
- a=SvEPeNj+VMjHSW//kvnxuw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+X-Authority-Analysis: v=2.4 cv=F9ZnsKhN c=1 sm=1 tr=0 ts=6a0c1030 cx=c_pps
+ a=Uww141gWH0fZj/3QKPojxA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=HRkYIiX3aUEsQExlndAA:9 a=QEXdDO2ut3YA:10
- a=Kq8ClHjjuc5pcCNDwlU0:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-Proofpoint-ORIG-GUID: w-3QcKD7FB-t8z41jrRbySgv5Y0WGAhL
-X-Proofpoint-GUID: w-3QcKD7FB-t8z41jrRbySgv5Y0WGAhL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE5MDA3MSBTYWx0ZWRfXyL4iIbVTH6Xa
- llsIPjPShhnOo+MjCLocGs47lwed48a/j6pgyHrdk5pBKKab3HRm+/9dIrHImUXsIpSdnQgCne0
- NV/MYjXaOiX2sP3RiC/5unodBiOY2uFvMO6x/1wigKTc49aqIk8LUPNGbZlAiDTzYiHDua+SxdA
- EcmJRDWUVXRUQ4Z98Y0tiE/j/kvKcwDH8McJmWEhZU7aZ2LQqO3J07+IVOEooM+cAcFNUeErIzS
- sofe67ABNvppwLrQ0s04giR9ogQhWTD1q1chZsrowB3AUJzZT00HUTPLlzGo3xWXtI0SYsdzbah
- W67vdjU2ciyQKS8cDFaKZ6RwFTg2Z71o9pKNsJHemKpaBXB+KOd4+ztHThhKPzDZU3lrP/AeZ2n
- z6iIR4tMvkIdrzbHBVVkijbebsNPzG+N+JvJo4na8LAEaMcOQyEedDfuu9ORGDXSKc0CepoJr9v
- 7VPBkR2Bmle/202sbew==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=EUspDBNiAAAA:8 a=jQEpcGcuKFcweVAcgyMA:9 a=QEXdDO2ut3YA:10
+ a=PxkB5W3o20Ba91AHUih5:22
+X-Proofpoint-ORIG-GUID: 8uco6nFkid9c4Zey-cWz52XOuqdUiVhh
+X-Proofpoint-GUID: 8uco6nFkid9c4Zey-cWz52XOuqdUiVhh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE5MDA3MSBTYWx0ZWRfX+cGH2bEe0fa5
+ DX2KH5rlw5JkA0sLcTMNMM/bkKOTevhITuW43NH3DWZ+mGAilap2j3BqyK47HndLGI3W4RVh81s
+ cUXHurKhRcWHY8ecYiFZMGw1xHBxJiZnQ12L5Kub7wLbh0jJyZlP5fMRKK3w5vKHbdulja7dNkc
+ tyyEljpzV9f9Fm2S4yCEMDGEOrU0gq9APte6tHUQ2jFt9Kzn10JX4KSdX1sfx/3zhbnXcX/vUPs
+ gLZ1IQZStN1DQaJSBS2+juxkxO4YDsxPxktBYtDBDyBdolMvy91qaCoxJPox7dMMFi8QW4mOr3m
+ NNzjeghChY003KD3EYm31zlc1y3a3mro+gDFCTwI013cumqcwcEZUHsW7D/4zZ/Ahd7yWMTrZdV
+ BEGWrbHWHaKgolCfcdCJS4ISrVIPQUpWDcQTrg1JO6lOWMI9/+dDMm3ezDZZAXq78wupbrro22W
+ PG915akFsF8FWYQvKPw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-05-19_02,2026-05-18_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 phishscore=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 suspectscore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605190071
+ impostorscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
+ suspectscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0
+ adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605190071
 
-Document the component used to boot SoCCP on Kaanapali SoC and add
-compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
-the "qcom,smem-states", "qcom,smem-state-names" in the pas-common
-and add maxItems constraints for SMEM properties in the documents
-that reference to pas-common.
+Subsystems can be brought out of reset by entities such as bootloaders.
+As the irq enablement could be later than subsystem bring up, the state
+of subsystem should be checked by reading SMP2P bits.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+A new qcom_pas_attach() function is introduced. if a crash state is
+detected for the subsystem, rproc_report_crash() is called. If the ready
+state is detected, it will be marked as "attached", otherwise it could
+be the early boot feature is not supported by other entities. In this
+case, the state will be marked as RPROC_OFFLINE so that the PAS driver
+can load the firmware and start the remoteproc.
+
+Co-developed-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+Signed-off-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
 Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 ---
- .../devicetree/bindings/remoteproc/qcom,adsp.yaml  |   8 ++
- .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 154 +++++++++++++++++++++
- .../bindings/remoteproc/qcom,milos-pas.yaml        |   8 ++
- .../bindings/remoteproc/qcom,pas-common.yaml       |   6 +-
- .../bindings/remoteproc/qcom,qcs404-pas.yaml       |   8 ++
- .../bindings/remoteproc/qcom,sa8775p-pas.yaml      |   8 ++
- .../bindings/remoteproc/qcom,sc7180-pas.yaml       |   8 ++
- .../bindings/remoteproc/qcom,sc8280xp-pas.yaml     |   8 ++
- .../bindings/remoteproc/qcom,sdx55-pas.yaml        |   8 ++
- .../bindings/remoteproc/qcom,sm6115-pas.yaml       |   8 ++
- .../bindings/remoteproc/qcom,sm6350-pas.yaml       |   8 ++
- .../bindings/remoteproc/qcom,sm6375-pas.yaml       |   8 ++
- .../bindings/remoteproc/qcom,sm8150-pas.yaml       |   8 ++
- .../bindings/remoteproc/qcom,sm8350-pas.yaml       |   8 ++
- .../bindings/remoteproc/qcom,sm8550-pas.yaml       |   8 ++
- 15 files changed, 263 insertions(+), 1 deletion(-)
+ drivers/remoteproc/qcom_q6v5_pas.c | 58 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index 16c35e15ee1b..7e8ecae8e6cb 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -73,6 +73,14 @@ properties:
-       - const: handover
-       - const: stop-ack
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index da27d1d3c9da..ac2a00aacd2e 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -60,6 +60,7 @@ struct qcom_pas_data {
+ 	int region_assign_count;
+ 	bool region_assign_shared;
+ 	int region_assign_vmid;
++	bool early_boot;
+ };
  
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - memory-region
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
-new file mode 100644
-index 000000000000..ce18460a949f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,kaanapali-soccp-pas.yaml
-@@ -0,0 +1,154 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/qcom,kaanapali-soccp-pas.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm Kaanapali SoCCP Peripheral Authentication Service
-+
-+maintainers:
-+  - Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-+
-+description:
-+  The SoC Control Processor (SoCCP) is a small RISC-V MCU that controls USB
-+  Type-C, battery charging and various other functions on Qualcomm SoCs, somewhat
-+  analogous to traditional PC Embedded Controllers. This document describes
-+  the Peripheral Authentication Service that loads and boots firmware for SoCCP.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - qcom,glymur-soccp-pas
-+          - const: qcom,kaanapali-soccp-pas
-+      - enum:
-+          - qcom,kaanapali-soccp-pas
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: XO clock
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+
-+  power-domains:
-+    items:
-+      - description: CX power domain
-+      - description: MX power domain
-+
-+  power-domain-names:
-+    items:
-+      - const: cx
-+      - const: mx
-+
-+  firmware-name:
-+    items:
-+      - description: Firmware name of the SoC Control Processor
-+      - description: Firmware name of the SoCCP Devicetree
-+
-+  memory-region:
-+    items:
-+      - description: Memory region for main Firmware authentication
-+      - description: Memory region for Devicetree Firmware authentication
-+
-+  interrupts:
-+    items:
-+      - description: Watchdog interrupt
-+      - description: Fatal interrupt
-+      - description: Ready interrupt
-+      - description: Handover interrupt
-+      - description: Stop acknowledge interrupt
-+      - description: Pong interrupt
-+
-+  interrupt-names:
-+    items:
-+      - const: wdog
-+      - const: fatal
-+      - const: ready
-+      - const: handover
-+      - const: stop-ack
-+      - const: pong
-+
-+  qcom,smem-states:
-+    minItems: 2
-+    description: States used by the AP to signal the SoC Control Processor
-+
-+  qcom,smem-state-names:
-+    minItems: 2
-+    description: The names of the state bits used for SMP2P output
-+
-+required:
-+  - compatible
-+  - reg
-+  - memory-region
-+  - power-domains
-+  - power-domain-names
-+
-+allOf:
-+  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/qcom,rpmh.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/mailbox/qcom-ipcc.h>
-+    #include <dt-bindings/power/qcom-rpmpd.h>
-+    #define IPCC_MPROC_SOCCP
-+
-+    remoteproc@d00000 {
-+        compatible = "qcom,kaanapali-soccp-pas";
-+        reg = <0x00d00000 0x200000>;
-+
-+        clocks = <&rpmhcc RPMH_CXO_CLK>;
-+        clock-names = "xo";
-+
-+        interrupts-extended = <&intc GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
-+                              <&soccp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+                              <&soccp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+                              <&soccp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+                              <&soccp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+                              <&soccp_smp2p_in 9 IRQ_TYPE_EDGE_RISING>;
-+        interrupt-names = "wdog",
-+                          "fatal",
-+                          "ready",
-+                          "handover",
-+                          "stop-ack",
-+                          "pong";
-+
-+        memory-region = <&soccp_mem>,
-+                        <&soccp_dtb_mem_mem>;
-+
-+        firmware-name = "qcom/kaanapali/soccp.mbn",
-+                        "qcom/kaanapali/soccp_dtb.mbn";
-+
-+        power-domains = <&rpmhpd RPMHPD_CX>,
-+                        <&rpmhpd RPMHPD_MX>;
-+        power-domain-names = "cx",
-+                             "mx";
-+
-+        qcom,smem-states = <&soccp_smp2p_out 0>,
-+                           <&soccp_smp2p_out 8>;
-+        qcom,smem-state-names = "stop",
-+                                "ping";
-+
-+        glink-edge {
-+            interrupts-extended = <&ipcc IPCC_MPROC_SOCCP
-+                                         IPCC_MPROC_SIGNAL_GLINK_QMP
-+                                         IRQ_TYPE_EDGE_RISING>;
-+            mboxes = <&ipcc IPCC_MPROC_SOCCP
-+                            IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+
-+            label = "soccp";
-+            qcom,remote-pid = <19>;
-+
-+            /* ... */
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml
-index d22d50c1e1ea..99d7337e58ec 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,milos-pas.yaml
-@@ -69,6 +69,14 @@ properties:
-       - description: Memory region for core Firmware authentication
-       - description: Memory region for Devicetree Firmware authentication
+ struct qcom_pas {
+@@ -510,6 +511,57 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
+ 	return qcom_q6v5_panic(&pas->q6v5);
+ }
  
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
++static int qcom_pas_attach(struct rproc *rproc)
++{
++	int ret;
++	struct qcom_pas *pas = rproc->priv;
++	bool ready_state;
++	bool crash_state;
 +
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
++	pas->q6v5.handover_issued = true;
++	enable_irq(pas->q6v5.handover_irq);
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-index dc5a9981c12c..e81ef400555a 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-@@ -46,13 +46,17 @@ properties:
-   qcom,smem-states:
-     $ref: /schemas/types.yaml#/definitions/phandle-array
-     description: States used by the AP to signal the Hexagon core
-+    minItems: 1
-     items:
--      - description: Stop the modem
-+      - description: Stop the remoteproc
-+      - description: ping the remoteproc
++	pas->q6v5.running = true;
++	ret = irq_get_irqchip_state(pas->q6v5.fatal_irq,
++				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
++
++	if (ret)
++		goto disable_running;
++
++	if (crash_state) {
++		dev_err(pas->dev, "Subsystem has crashed before driver probe\n");
++		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
++		ret = -EINVAL;
++		goto disable_running;
++	}
++
++	ret = irq_get_irqchip_state(pas->q6v5.ready_irq,
++				    IRQCHIP_STATE_LINE_LEVEL, &ready_state);
++
++	if (ret)
++		goto disable_running;
++
++	if (unlikely(!ready_state)) {
++		/*
++		 * The bootloader may not support early boot, mark the state as
++		 * RPROC_OFFLINE so that the PAS driver can load the firmware and
++		 * start the remoteproc.
++		 */
++		dev_err(pas->dev, "Failed to get subsystem ready interrupt\n");
++		pas->rproc->state = RPROC_OFFLINE;
++		disable_irq(pas->q6v5.handover_irq);
++		ret = -EINVAL;
++		goto disable_running;
++	}
++
++	return 0;
++
++disable_running:
++	pas->q6v5.running = false;
++
++	return ret;
++}
++
+ static const struct rproc_ops qcom_pas_ops = {
+ 	.unprepare = qcom_pas_unprepare,
+ 	.start = qcom_pas_start,
+@@ -518,6 +570,7 @@ static const struct rproc_ops qcom_pas_ops = {
+ 	.parse_fw = qcom_pas_parse_firmware,
+ 	.load = qcom_pas_load,
+ 	.panic = qcom_pas_panic,
++	.attach = qcom_pas_attach,
+ };
  
-   qcom,smem-state-names:
-     description: The names of the state bits used for SMP2P output
-+    minItems: 1
-     items:
-       - const: stop
-+      - const: ping
+ static const struct rproc_ops qcom_pas_minidump_ops = {
+@@ -529,6 +582,7 @@ static const struct rproc_ops qcom_pas_minidump_ops = {
+ 	.load = qcom_pas_load,
+ 	.panic = qcom_pas_panic,
+ 	.coredump = qcom_pas_minidump,
++	.attach = qcom_pas_attach,
+ };
  
-   smd-edge:
-     $ref: /schemas/remoteproc/qcom,smd-edge.yaml#
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-index 5854b3d2041d..bf9bf1af9ff1 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-pas.yaml
-@@ -59,6 +59,14 @@ properties:
-     maxItems: 1
-     description: Firmware name for the Hexagon core
+ static int qcom_pas_init_clock(struct qcom_pas *pas)
+@@ -855,6 +909,10 @@ static int qcom_pas_probe(struct platform_device *pdev)
  
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
+ 	pas->pas_ctx->use_tzmem = rproc->has_iommu;
+ 	pas->dtb_pas_ctx->use_tzmem = rproc->has_iommu;
 +
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
++	if (desc->early_boot)
++		pas->rproc->state = RPROC_DETACHED;
 +
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-index 7f287e55896e..dda2d144b720 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
-@@ -74,6 +74,14 @@ properties:
-       - const: handover
-       - const: stop-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-index cb0a61fc301d..b20780e5e26b 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
-@@ -68,6 +68,14 @@ properties:
-       - const: stop-ack
-       - const: shutdown-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-index fef9d7c39f3c..4bbe4a986c7c 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc8280xp-pas.yaml
-@@ -65,6 +65,14 @@ properties:
-       - const: stop-ack
-       - const: shutdown-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-index 2bbd427c6ea4..8c16b01c53e4 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sdx55-pas.yaml
-@@ -71,6 +71,14 @@ properties:
-     maxItems: 1
-     description: Firmware name for the Hexagon core
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-index 987fac433fae..454ba82bd6f1 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6115-pas.yaml
-@@ -71,6 +71,14 @@ properties:
-       - const: stop-ack
-       - const: shutdown-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-index 53ffb1ccd199..42e02c64347a 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6350-pas.yaml
-@@ -65,6 +65,14 @@ properties:
-       - const: stop-ack
-       - const: shutdown-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-index 6823a2a8d74e..274f87880e2e 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm6375-pas.yaml
-@@ -61,6 +61,14 @@ properties:
- 
-   smd-edge: false
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-index 8a1fae095a3b..5a7c5f8c92d1 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml
-@@ -81,6 +81,14 @@ properties:
-       - const: stop-ack
-       - const: shutdown-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-index 4ea7518db537..72d0db5698c5 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8350-pas.yaml
-@@ -75,6 +75,14 @@ properties:
-       - const: stop-ack
-       - const: shutdown-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-index 74df49b5fbe9..0b44141d31ee 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
-@@ -93,6 +93,14 @@ properties:
-       - const: stop-ack
-       - const: shutdown-ack
- 
-+  qcom,smem-states:
-+    maxItems: 1
-+    description: States used by the AP to signal the Hexagon core
-+
-+  qcom,smem-state-names:
-+    maxItems: 1
-+    description: The names of the state bits used for SMP2P output
-+
- required:
-   - compatible
-   - reg
+ 	ret = rproc_add(rproc);
+ 	if (ret)
+ 		goto remove_ssr_sysmon;
 
 -- 
 2.34.1
