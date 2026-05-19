@@ -1,271 +1,268 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC443AFD00
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 15:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7687340911D
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 16:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779202998; cv=none; b=rlJoVoD7lQZHksdKliYiTnJoqB87MqGUxDzGtlYyx106PgI4IwwZGWqeJ7C29vC3bXwbvbSx5cmA79K3/zn9Z+eb7DPGPbOHxkbHOu0a3f3XHBAc3Vo9t5/nb0gcD3n8DIJqMVmqWubPWIB2RH6N3MubY1lpZyN0n/ftyn1sPB0=
+	t=1779209829; cv=none; b=oDgQ4q0XDk3pWSniyMF7NfD6bmR0OulrpIxKRxXwkwksFbYx7sNL7Cy0gZOz3IyIwOHNCK2jE7/8Jo3YTnDPg2QjS0i48AyZQdd0q0W/BGIMytdm+QUzirc4zo1xl4Bnnrlrxfr4vUi9s64ogxzElXzGtVwgxaTLTsNNx3oyb20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779202998; c=relaxed/simple;
-	bh=goujWWgxDAtQW0ZT93RntvBrZJtIcLJ/PvUYvvYOj1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qf0OvpS5Zoto0sU9AO+tvrBGe/9/YyrP0r2irF6zh1CTNREjFLM0ZsSanOzTWkM2SaCGgvoJVaKOiLatzN1tw6AGWpq0yU97D178frWCiM0htNQzQGZVnGlz56mJ4G5fpOBV1rJ89uiEo9upLsnPDEXn/LIpOwO5i4msHk6/iPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WHXNz3Sw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BG/n4KUi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779209829; c=relaxed/simple;
+	bh=rACc8/WloSOC/Zd2rsPPzcyGTe2V6fn1OtG0ZQC9W9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HFSbgH6/qmzRqRye3qWCV2VsLclba2BGzmnW0B98sVGjzMPsjecCjVRhJq+LgwVwqxaRwFnWBbZjTkpEodzqk+VWj8Hc8a9jXWS04F6240vRJHZ9mOL+iJ7SuPSuo8BSywib9QM4tyLCQLTXRlDIGka2EEvu7BpMbNRidYz4tEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cvSK3FrB; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WHXNz3Sw";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BG/n4KUi"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64JEwm6C1725708
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 15:03:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mHGL90YYCdoIftFeeZBzlNxa7STv1/CtE4HjA6UIQ9U=; b=WHXNz3SwSJSCYQ+s
-	7IhJEqNVgCyByrk3m3ETi1RAAK8rw37mdOM5zyT/qdbXSe5NCyc0T4fdWaMPh+CZ
-	8+IE3Apt/t5mK8p0cz6Ju1z+KQlfxDjBSBKUMS9f92VJFdqE1MJLkXHluW/EaTYD
-	Tki68w+zlgF4uKRtCOw667m0TBKZLfnFzI7REiGveDjs2AHqx9cN96OllftkB8/9
-	PhCsnaTRdIXx+yc/OYpSixmMrEo+geli3WaiT7gmW/D/Goe1Ej4d7F71olOjXIlG
-	9RPT32szx9qWe2/NQ+BXPE413GJXqCoqDWckhFkKsX2+jVmcGOLaO+k/7Kc06LJZ
-	SefC2Q==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e8t3qg12n-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 15:03:15 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2bc7f9b2213so28178745ad.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 08:03:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cvSK3FrB"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-c827313dac0so2140894a12.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 09:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779202995; x=1779807795; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mHGL90YYCdoIftFeeZBzlNxa7STv1/CtE4HjA6UIQ9U=;
-        b=BG/n4KUi6+5JdhFFbCxhJkxsGpSO1gkSq3rIxGxP4Am/JVXLTz+jRTX/7ZmyzW9w/u
-         N5HO3Cs+SJAIZl/1Ri/CjcNoZmTQ+mEf2VLXt+jPhXZXUNdhiaM3yD04nmdo2UsN8ygA
-         toxXdMv6payCLvRnXR+ZDsquHi4SRYYqz824J3BGcwITbFJpVVM0zGTyjk2TeAyLzXi7
-         0PIljtkkLCKuGTG24pDHGER1d75PNxBqbnPbS+Mw3l1rn5mvpxNJs2X1pbNNSc5vIKG8
-         jHHXGWQuyuGQRFkXjnUSvMJVGV1dc0s5YoCpSdkPI2rRDprvYw2uSJySLbU5BgNMhtb6
-         Hp0g==
+        d=linaro.org; s=google; t=1779209827; x=1779814627; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3yPjxDDu/80GvSgD9GobJGh4VGw6zbzyMUSWm1FoK9g=;
+        b=cvSK3FrB+XKLd2QDlmHsVdU8FqYTlpWuNbXo1H6faXB3ASVE0zHncARQfNpe8ZiWvY
+         iBuQfTymS341drG9BnbzH07hqhLc3Kpjnm0hpH854Z79qQZpAclpl4ZV5t9kRghty81Q
+         32BO2QCro/One7WEuDJdIikZNXRaVQYJRsHrnPoK1uxOKdqpj2K9ZdFuo/yVZfgZrZ0p
+         GfczmbM74XsGO7+RXVB8T4R7jOJMc7+Ark480fQO/pY2r1uLTNQHkpLCYIJh1Xpt/+Jg
+         jlmhFp3OGmgP3HTRF5iHuoJeh/jC7YZ8aoNFUe4IVmmkqDarJBoDK83Rfgj+ezNiQ3fw
+         3JaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779202995; x=1779807795;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mHGL90YYCdoIftFeeZBzlNxa7STv1/CtE4HjA6UIQ9U=;
-        b=s17reit6r6WopLw0u/o/Z6JqPf3Vdw2dQR3tAUxwDz1mRvZpHdoKQx8JStQfJeeC/C
-         ElFSRi/oQgex8JVezYuRQ+9yVa/UuWhDBUC/F5hjfA46Ac/WqUGtx18Ruwf0Yjm6F8IJ
-         W8+eW/L+BTQBquQkBv5Ry3vOYtveZ7l4G3s5ajCObkIHzxPei95wtwAQVj1r9JR+yi7D
-         ijuv5zZ7AY/SvKXT5Orwh0i3r1o4h28G7tUzbvSthENXNMO73CrK/5doEx2PJsn/XHYP
-         YPn1X4VeK4HhWpnvM+qj7YSrszwqLq9b1ZnQ7ToON+Ku0ZVit0UT/HeLdMR7zkJmoFcT
-         4lHg==
-X-Forwarded-Encrypted: i=1; AFNElJ9XxO8G64vcFLPJCY11uMFMVD5/gs+iLWFNtnbjIMdezem26y2Uow3ScIC8sQPJ0td1DDvsM24X+awP4FmL7lTU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRBC2eDOmV18DoQ+VLtgTft0uYsymCK0mt5PG9LtXCdm++8C/1
-	MzrQue3qKLpjXwkvhtLjAjZYqnNTKsadqVxuXo+cJiA0EBZZB8I5m8bdu34ryOlce72EZQJgSIe
-	2TRtMn0o404TB3fxTE5ja9VkQAkcUO1Fffz7iNDkuImI1V9YpFEyAnm3ih68Sfjvw6Ra/tcnO
-X-Gm-Gg: Acq92OFRnIicAV+kI8OWZf9J6jZChJl07n93llc2cfm47YmB78vcA3s8f97lzgzdrgB
-	oN/zGFiaSBMWQjbw2My1n/i0L9ftzzjkxj8EhwzIyIBRC+sjekM0WQfltZKMiUX8Zxk45tGY7YZ
-	wxRlX/cRxQGuo6uiktG4AflJ9GZJNvOCnEfzfSBz8t9Q8T6tF9jFcgV12nDV8kRhX+hLewjBTcA
-	WCeK383M5nPleowKEun9d/TQMcf5//FQ6cCife2OAxqNWTo72bwBQ0FG5LOOuIxhBnL46hsfDR3
-	2mVr8I5s0ZViuGHpMDatolAlfEPhxsiqfkBT2rzvoLIS9/YoWLTap/UzpumkwsRgZtfvLE0tgSP
-	rL2886PQ5AzhHzPPdV+TFh12/y5pnrSq6twWY1BjyDTiivQ0S
-X-Received: by 2002:a17:903:280c:b0:2ba:6bd7:8efc with SMTP id d9443c01a7336-2bd7e991520mr120248525ad.40.1779202994469;
-        Tue, 19 May 2026 08:03:14 -0700 (PDT)
-X-Received: by 2002:a17:903:280c:b0:2ba:6bd7:8efc with SMTP id d9443c01a7336-2bd7e991520mr120248025ad.40.1779202993930;
-        Tue, 19 May 2026 08:03:13 -0700 (PDT)
-Received: from [10.219.57.29] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5d0fbc05sm185598545ad.57.2026.05.19.08.03.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 May 2026 08:03:13 -0700 (PDT)
-Message-ID: <fd67b063-a986-4d34-99e6-fe55e72d0187@oss.qualcomm.com>
-Date: Tue, 19 May 2026 20:33:08 +0530
+        d=1e100.net; s=20251104; t=1779209827; x=1779814627;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3yPjxDDu/80GvSgD9GobJGh4VGw6zbzyMUSWm1FoK9g=;
+        b=aoQKZWo4a817UwKZN8zgu06qh/qTZ0CA+e2QUyWhnISjwOWYPuemEIWozeFSiFrLIZ
+         xZMDLKK0k88Wh4m4LzCSVl+AOoUpHyHNHVDUvrk1sgbALUs+nIZli2lsaeTHu5IIPIgu
+         VWpdM1jzG/L9S2E2dVaHcj086igwmSAXqAfAOn4Pgq0vk+YA727Vw1izvYQq2itIr91F
+         8EB6KtjEbMNl3Jrvon77UZeOFaDZYGLFXvXLYsxrWROpeLcKo0hpyu9PjvQTnXNzpoXz
+         iA0fY+IN78vC8ti5EhMwDF+LOTNnyTMClzymEaCHqblgkRe12vs6hI+VmbqTKqhkEp5s
+         itTw==
+X-Forwarded-Encrypted: i=1; AFNElJ8+pVCgGGGd3BaRUfEWL/y3as/8C1H7PNObx42OCmpW0qbfp3qykkeLrOsIqjU4x7TXBILqOcDv/YG0NiCgiAHQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqqEd7HeZLAo4z+rLDh9i6ZHzTWOO11YLxOyZAGoohFi2d+nht
+	yt0hNg+yBOnRmH1ngszjxWAptJNSnqfTx5legUS2NdOGz2Am48RyCTQ7j6zIqWrm0OY=
+X-Gm-Gg: Acq92OGUcNhCvoUO6stoGGEXi+FgB/b1Ed/0UcOaIwlcfg9f7Iubv5JHEfAwrJQHcEE
+	jDugp+LJ1eeTDugtwZH7aT/F3ycm3tX13RukbkZ0BH5BrP9UxHVqTKkbZpYLtti0My6WFZ37Pht
+	zJpXO2UPOFSeAjLEe5IDh0xI8eH6AJc2LOGtgMaURJcOhnryhdOID82lERfxHYHChQBr5LUDZfG
+	KcSQTE0+kB8TBfBsBFw0lfJ9i/pW0b+tt4j2Bhp5T3mWbb6Ohe9UO5AcHH8qRyT6VILHr879o3m
+	wApDBj4JpamADYL+8sUwVh7y4BgmuMU5R8MH+oGyq7iM1xSgdffDdX5oLHGQkWEoDgh10t7GnL/
+	QizZUMSgxasBgE4wtgf2kSsOz0n12TokALr25ZC9MKgrPRQBmSp9yH/g3Q5IBo7cblaWTxZp4ds
+	srJ1s127sednmWpSxaiJjyMa9lT6E=
+X-Received: by 2002:a17:90a:d40b:b0:368:4942:50c4 with SMTP id 98e67ed59e1d1-3692363eecamr20596217a91.17.1779209826535;
+        Tue, 19 May 2026 09:57:06 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:17db:e96e:b240:ed21])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c82bb1006fbsm16484464a12.21.2026.05.19.09.57.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2026 09:57:05 -0700 (PDT)
+Date: Tue, 19 May 2026 10:57:03 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, arnaud.pouliquen@foss.st.com,
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] rpmsg: virtio_rpmsg_bus: allow different size of
+ tx and rx bufs
+Message-ID: <agyWX-y2GShRXQ_J@p14s>
+References: <20260429161052.528015-1-tanmay.shah@amd.com>
+ <20260429161052.528015-2-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Add Shikra remoteproc support
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
-References: <20260514-shikra-rproc-v1-0-9afdedeee002@oss.qualcomm.com>
- <20260514-shikra-rproc-v1-2-9afdedeee002@oss.qualcomm.com>
- <g5wv5mi25l7jyq3vbe3dovriyxguw22m5uvyslkbjbyprbxfnq@kep4x3kxeqmj>
-Content-Language: en-US
-From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-In-Reply-To: <g5wv5mi25l7jyq3vbe3dovriyxguw22m5uvyslkbjbyprbxfnq@kep4x3kxeqmj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE5MDE0OCBTYWx0ZWRfX2uMUclcbPqM1
- FTLKoRT/HleGDXUthbQ+URWm/QGpPHMF3b5NFTt1dNQzpnlnfpePFnsjCSV1+UHd6XNMxLQkX/3
- O7gMiOdcrAR9J9OIylxGG9yIgzznEfVBB6BrDZVnQOapcDzhwqnQHIJeKSUnUrSmVL2F9tU/6Q6
- /8stJR9r1V3PTBQS2nBGDZ0Ob8y1hkm0rm3f1Crdx4zeBqx9+rjC/QTvanw2nXD4Ri0duSiVpGh
- OQwX2lIDIXbARuZeCjZgEGaVTNQ7SLqU5c6GO1Z04IIc1+PkkWB5uOxIqo8Wr5Bc0tlr/2kLJ1Z
- vnjGE4QzyLULfkSF/cD4B5NMF8522D4MdoTSTLGBrvnTHfyc+JV91cXaLhOr0MkRBlMNxRI6ULj
- jVW61acDjH6seegCl6oO4iV9u+PM0qV14Dvo3D2/dOZwB1SotsJknuRhuDorkd7ivoD+eLmObfP
- zeuE1Mdpbt2O9DBGbKg==
-X-Authority-Analysis: v=2.4 cv=N9cZ0W9B c=1 sm=1 tr=0 ts=6a0c7bb3 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Mpj9RaW3nZ1247zTz0QA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: gJGzV3sJ1tUKu0KD9uMdEO_R2k4yf7km
-X-Proofpoint-ORIG-GUID: gJGzV3sJ1tUKu0KD9uMdEO_R2k4yf7km
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-19_04,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 adultscore=0 lowpriorityscore=0
- suspectscore=0 malwarescore=0 spamscore=0 phishscore=0 clxscore=1015
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
- definitions=main-2605190148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260429161052.528015-2-tanmay.shah@amd.com>
 
-On 5/14/2026 12:48 AM, Dmitry Baryshkov wrote:
-> On Thu, May 14, 2026 at 12:17:31AM +0530, Komal Bajaj wrote:
->> From: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
->>
->> Add the CDSP, LPAICP and MPSS Peripheral Authentication Service support
->> for the Qualcomm Shikra SoC.
->>
->> Signed-off-by: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
->> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
->> ---
->>   drivers/remoteproc/qcom_q6v5_pas.c | 51 ++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 51 insertions(+)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
->> index da27d1d3c9da..4d43201b9ada 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> @@ -1457,6 +1457,54 @@ static const struct qcom_pas_data sc7280_wpss_resource = {
->>   	.ssctl_id = 0x19,
->>   };
->>   
->> +static const struct qcom_pas_data shikra_cdsp_resource = {
->> +	.crash_reason_smem = 601,
->> +	.firmware_name = "cdsp.mbn",
->> +	.pas_id = 18,
->> +	.minidump_id = 7,
->> +	.auto_boot = false,
-> Why? It should be true for CDSP.
+Hi Tanmay
 
-Missed this, will mark it as true in next series.
+(Apologies for the late review)
 
->
->> +	.proxy_pd_names = (char *[]){
->> +		"cx",
->> +		NULL
->> +	},
-> Hmm, SM6115 didn't have proxy votes here. Is it requried?
+On Wed, Apr 29, 2026 at 09:10:51AM -0700, Tanmay Shah wrote:
+> Current design allocates memory for tx and rx buffers equally. The
+> throughput can be increased if the user is allowed to configure number
+> of tx and rx buffers as required. Hence, do not split number of tx & rx
+> buffers into half, but decide based on respective vring size.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+> 
+> Test performed:
+>   - Test this patch with existing firmware as it is, rpmsg working.
+> 
+> Changes in v2:
+>   - Change author
+>   - fix commit message with better explanation
+>   - %s/sbuf/tx_buf
+>   - %s/rbuf/rx_buf
+>   - %s/num_rbuf/num_rx_buf/
+>   - %s/num_sbuf/num_tx_buf/
 
+Please split this patch in two parts - one to do the refactoring of the
+tx/rx_buf and another one for the varying size.
 
-If we refer to sm6115 remoteproc-specific DT entries, there is a 
-power-domain entry (CX only). So we would need to fix this by adding a
-proxy_pd entry for the sm6115 CDSP PAS resource. Would you prefer this 
-to be done as part of this series?
-
-In newer Qualcomm targets, the corresponding CDSP PAS entries include a 
-proxy_pd vote for the power-domain in DT [1][2].
-Therefore, it should be safe to add proxy votes in Shikra’s CDSP PAS 
-data as well.
-
-[1]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/sm8550.dtsi?h=next-20260518#n6002
-[2]: 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/remoteproc/qcom_q6v5_pas.c?h=next-20260518#n1406
-
-
->
->> +	.load_state = "cdsp",
->> +	.ssr_name = "cdsp",
->> +	.sysmon_name = "cdsp",
->> +	.ssctl_id = 0x17,
->> +	.smem_host_id = 5,
->> +	.region_assign_vmid = QCOM_SCM_VMID_CDSP,
-> This makes no sense without region_assign_count
-
-Ack, Would address this in next revision. it would be NOP in this case 
-without region_assign_count and region_assign_idx.
-
->> +};
->> +
->> +static const struct qcom_pas_data shikra_lpaicp_resource = {
->> +	.crash_reason_smem = 682,
->> +	.firmware_name = "lpaicp.mbn",
->> +	.dtb_firmware_name = "lpaicp_dtb.mbn",
->> +	.pas_id = 0x56,
->> +	.dtb_pas_id = 0x57,
->> +	.minidump_id = 0,
->> +	.auto_boot = true,
->> +	.ssr_name = "lpaicp",
->> +	.sysmon_name = "lpaicp",
->> +};
->> +
->> +static const struct qcom_pas_data shikra_mpss_resource = {
->> +	.crash_reason_smem = 421,
->> +	.firmware_name = "qdsp6sw.mbn",
-> Why is it not modem.mbn?
-
-Previously, for testing, we used pil-squasher to combine the split 
-images into a single mbn, typically named modem.mbn.
-However, in official Qualcomm releases, the modem firmware is provided 
-as qdsp6sw.mbn. Since Shikra now has proper released binaries, switch to 
-using qdsp6sw.mbn as the firmware name.
-
->> +	.pas_id = 4,
->> +	.minidump_id = 3,
->> +	.auto_boot = false,
->> +	.decrypt_shutdown = true,
->> +	.proxy_pd_names = (char *[]){
->> +		"cx",
->> +		NULL
->> +	},
->> +	.load_state = "modem",
->> +	.ssr_name = "mpss",
->> +	.sysmon_name = "modem",
->> +	.ssctl_id = 0x12,
->> +	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
-> Again, this doesn't make sense without region_assign_count. At which
-
-Ack, I'll address it in next revision.
-
-> point you can use sc8180x_mpss_resource instead.
-
-minidump_id is required for Shikra. (decrypt_shutdown is not applicable 
-and will be removed in the next revision.)
-For minidump_id, we still need to use shikra_mpss_resource instead of 
-sc8180x_mpss_resource. <?>
-
->> +};
->> +
->>   static const struct qcom_pas_data sm8650_cdsp_resource = {
->>   	.crash_reason_smem = 601,
->>   	.firmware_name = "cdsp.mdt",
->> @@ -1571,6 +1619,9 @@ static const struct of_device_id qcom_pas_of_match[] = {
->>   	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init },
->>   	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource },
->>   	{ .compatible = "qcom,sdx75-mpss-pas", .data = &sm8650_mpss_resource },
->> +	{ .compatible = "qcom,shikra-cdsp-pas", .data = &shikra_cdsp_resource },
->> +	{ .compatible = "qcom,shikra-lpaicp-pas", .data = &shikra_lpaicp_resource },
->> +	{ .compatible = "qcom,shikra-mpss-pas", .data = &shikra_mpss_resource },
->>   	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init },
->>   	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init },
->>   	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource },
->>
->> -- 
->> 2.34.1
->>
-
+> 
+>  drivers/rpmsg/virtio_rpmsg_bus.c | 68 ++++++++++++++++----------------
+>  1 file changed, 34 insertions(+), 34 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 5ae15111fb4f..e59d8cf9b975 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -35,13 +35,14 @@
+>   * @vdev:	the virtio device
+>   * @rvq:	rx virtqueue
+>   * @svq:	tx virtqueue
+> - * @rbufs:	kernel address of rx buffers
+> - * @sbufs:	kernel address of tx buffers
+> - * @num_bufs:	total number of buffers for rx and tx
+> - * @buf_size:   size of one rx or tx buffer
+> + * @rx_bufs:	kernel address of rx buffers
+> + * @tx_bufs:	kernel address of tx buffers
+> + * @num_rx_buf:	total number of buffers for rx
+> + * @num_tx_buf:	total number of buffers for tx
+> + * @buf_size:	size of one rx or tx buffer
+>   * @last_sbuf:	index of last tx buffer used
+>   * @bufs_dma:	dma base addr of the buffers
+> - * @tx_lock:	protects svq and sbufs, to allow concurrent senders.
+> + * @tx_lock:	protects svq and tx_bufs, to allow concurrent senders.
+>   *		sending a message might require waking up a dozing remote
+>   *		processor, which involves sleeping, hence the mutex.
+>   * @endpoints:	idr of local endpoints, allows fast retrieval
+> @@ -55,8 +56,9 @@
+>  struct virtproc_info {
+>  	struct virtio_device *vdev;
+>  	struct virtqueue *rvq, *svq;
+> -	void *rbufs, *sbufs;
+> -	unsigned int num_bufs;
+> +	void *rx_bufs, *tx_bufs;
+> +	unsigned int num_rx_buf;
+> +	unsigned int num_tx_buf;
+>  	unsigned int buf_size;
+>  	int last_sbuf;
+>  	dma_addr_t bufs_dma;
+> @@ -110,7 +112,7 @@ struct virtio_rpmsg_channel {
+>  /*
+>   * We're allocating buffers of 512 bytes each for communications. The
+>   * number of buffers will be computed from the number of buffers supported
+> - * by the vring, upto a maximum of 512 buffers (256 in each direction).
+> + * by the vring, up to a maximum of 256 in each direction.
+>   *
+>   * Each buffer will have 16 bytes for the msg header and 496 bytes for
+>   * the payload.
+> @@ -125,7 +127,7 @@ struct virtio_rpmsg_channel {
+>   * can change this without changing anything in the firmware of the remote
+>   * processor.
+>   */
+> -#define MAX_RPMSG_NUM_BUFS	(512)
+> +#define MAX_RPMSG_NUM_BUFS	(256)
+>  #define MAX_RPMSG_BUF_SIZE	(512)
+>  
+>  /*
+> @@ -440,12 +442,9 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  
+>  	mutex_lock(&vrp->tx_lock);
+>  
+> -	/*
+> -	 * either pick the next unused tx buffer
+> -	 * (half of our buffers are used for sending messages)
+> -	 */
+> -	if (vrp->last_sbuf < vrp->num_bufs / 2)
+> -		ret = vrp->sbufs + vrp->buf_size * vrp->last_sbuf++;
+> +	/* either pick the next unused tx buffer */
+> +	if (vrp->last_sbuf < vrp->num_tx_buf)
+> +		ret = vrp->tx_bufs + vrp->buf_size * vrp->last_sbuf++;
+>  	/* or recycle a used one */
+>  	else
+>  		ret = virtqueue_get_buf(vrp->svq, &len);
+> @@ -631,11 +630,10 @@ static __poll_t virtio_rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>  
+>  	/*
+>  	 * check for a free buffer, either:
+> -	 * - we haven't used all of the available transmit buffers (half of the
+> -	 *   allocated buffers are used for transmit, hence num_bufs / 2), or,
+> +	 * - we haven't used all of the available transmit buffers or,
+>  	 * - we ask the virtqueue if there's a buffer available
+>  	 */
+> -	if (vrp->last_sbuf < vrp->num_bufs / 2 ||
+> +	if (vrp->last_sbuf < vrp->num_tx_buf ||
+>  	    !virtqueue_enable_cb(vrp->svq))
+>  		mask |= EPOLLOUT;
+>  
+> @@ -846,19 +844,20 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	vrp->rvq = vqs[0];
+>  	vrp->svq = vqs[1];
+>  
+> -	/* we expect symmetric tx/rx vrings */
+> -	WARN_ON(virtqueue_get_vring_size(vrp->rvq) !=
+> -		virtqueue_get_vring_size(vrp->svq));
+> -
+>  	/* we need less buffers if vrings are small */
+> -	if (virtqueue_get_vring_size(vrp->rvq) < MAX_RPMSG_NUM_BUFS / 2)
+> -		vrp->num_bufs = virtqueue_get_vring_size(vrp->rvq) * 2;
+> +	if (virtqueue_get_vring_size(vrp->rvq) < MAX_RPMSG_NUM_BUFS)
+> +		vrp->num_rx_buf = virtqueue_get_vring_size(vrp->rvq);
+> +	else
+> +		vrp->num_rx_buf = MAX_RPMSG_NUM_BUFS;
+> +
+> +	if (virtqueue_get_vring_size(vrp->svq) < MAX_RPMSG_NUM_BUFS)
+> +		vrp->num_tx_buf = virtqueue_get_vring_size(vrp->svq);
+>  	else
+> -		vrp->num_bufs = MAX_RPMSG_NUM_BUFS;
+> +		vrp->num_tx_buf = MAX_RPMSG_NUM_BUFS;
+>  
+>  	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+>  
+> -	total_buf_space = vrp->num_bufs * vrp->buf_size;
+> +	total_buf_space = (vrp->num_rx_buf + vrp->num_tx_buf) * vrp->buf_size;
+>  
+>  	/* allocate coherent memory for the buffers */
+>  	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+> @@ -872,16 +871,16 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
+>  		bufs_va, &vrp->bufs_dma);
+>  
+> -	/* half of the buffers is dedicated for RX */
+> -	vrp->rbufs = bufs_va;
+> +	/* first part of the buffers is dedicated for RX */
+> +	vrp->rx_bufs = bufs_va;
+>  
+> -	/* and half is dedicated for TX */
+> -	vrp->sbufs = bufs_va + total_buf_space / 2;
+> +	/* and second part is dedicated for TX */
+> +	vrp->tx_bufs = bufs_va + vrp->num_rx_buf * vrp->buf_size;
+>  
+>  	/* set up the receive buffers */
+> -	for (i = 0; i < vrp->num_bufs / 2; i++) {
+> +	for (i = 0; i < vrp->num_rx_buf; i++) {
+>  		struct scatterlist sg;
+> -		void *cpu_addr = vrp->rbufs + i * vrp->buf_size;
+> +		void *cpu_addr = vrp->rx_bufs + i * vrp->buf_size;
+>  
+>  		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+>  
+> @@ -966,7 +965,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+>  static void rpmsg_remove(struct virtio_device *vdev)
+>  {
+>  	struct virtproc_info *vrp = vdev->priv;
+> -	size_t total_buf_space = vrp->num_bufs * vrp->buf_size;
+> +	unsigned int num_bufs = vrp->num_rx_buf + vrp->num_tx_buf;
+> +	size_t total_buf_space = num_bufs * vrp->buf_size;
+>  	int ret;
+>  
+>  	virtio_reset_device(vdev);
+> @@ -980,7 +980,7 @@ static void rpmsg_remove(struct virtio_device *vdev)
+>  	vdev->config->del_vqs(vrp->vdev);
+>  
+>  	dma_free_coherent(vdev->dev.parent, total_buf_space,
+> -			  vrp->rbufs, vrp->bufs_dma);
+> +			  vrp->rx_bufs, vrp->bufs_dma);
+>  
+>  	kfree(vrp);
+>  }
+> -- 
+> 2.34.1
+> 
