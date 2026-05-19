@@ -1,527 +1,271 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D6D409625;
-	Tue, 19 May 2026 13:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC443AFD00
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 15:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779197289; cv=none; b=e/go8bMIVFTQb8NPeIEuxJgCP0qr0LoACFBd6dPpZ0T/DIGbZXxzK7c13ybNXbiamkOkAySwe+ZF/+0RmSIktPbytODP/C9e+e6m/qhaLPETHPCu/jAsSCESmfNUVh2f19HJ0JdT9sMdMvVeTXRDmRlss06O5PXsEocGtIQMOQI=
+	t=1779202998; cv=none; b=rlJoVoD7lQZHksdKliYiTnJoqB87MqGUxDzGtlYyx106PgI4IwwZGWqeJ7C29vC3bXwbvbSx5cmA79K3/zn9Z+eb7DPGPbOHxkbHOu0a3f3XHBAc3Vo9t5/nb0gcD3n8DIJqMVmqWubPWIB2RH6N3MubY1lpZyN0n/ftyn1sPB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779197289; c=relaxed/simple;
-	bh=EeAg59kEPP2hpdz2bMfBPgi3wIS3Ds0uUBpqk8/11Tc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtnDgOF/S4aLlG7fYNc0eW0VnROvr82aIO8jUqyCMOQP+I3WYEZBfBjzHWCG7fpioEBI4oO66Jq3+AeDJD/ECrHoTQdhQ/HZF5+5/OAxmWCcYa11rqhchF5qx/YK0r1aeKHyGIZkr9+QxoATo97F9A+zm/I/9/WiYbWegMtvi1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n81marzW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1779202998; c=relaxed/simple;
+	bh=goujWWgxDAtQW0ZT93RntvBrZJtIcLJ/PvUYvvYOj1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qf0OvpS5Zoto0sU9AO+tvrBGe/9/YyrP0r2irF6zh1CTNREjFLM0ZsSanOzTWkM2SaCGgvoJVaKOiLatzN1tw6AGWpq0yU97D178frWCiM0htNQzQGZVnGlz56mJ4G5fpOBV1rJ89uiEo9upLsnPDEXn/LIpOwO5i4msHk6/iPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WHXNz3Sw; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BG/n4KUi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n81marzW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E8B8C2BCB3;
-	Tue, 19 May 2026 13:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1779197288;
-	bh=EeAg59kEPP2hpdz2bMfBPgi3wIS3Ds0uUBpqk8/11Tc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n81marzW9tzYQzJ1v3TA1LmHbs1EHs8QPUUL8hw6VhfB6RIvcXT5rELPZaSlOCxko
-	 puWxJYdqvz7mhbaE91XsXW1DmItC1dDhy7sYXpw9PaV+x982BMU7AsQpu9JI5DlYbC
-	 cnp7RhCFgsXHgjoLN2MYeZr/xyjG5x1jvA+mw4T2ZyY8PEzWbNhke7aVOnS56Ok/2r
-	 L7/TKNJM5DTB7cZSfKQqHqWASLCj7c0RZew8peBTueIts1U4nFVgCzwUmbWXQRtX7k
-	 AKhfRTRZv/Psi6m18SIhAM2QPH/Y2MGtU4nrsqA+ENHPR5PCUSi6MnN1DgqLWo+zb/
-	 38gsU1oYBlZbg==
-Date: Tue, 19 May 2026 18:57:54 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Maxime Ripard <mripard@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Ulf Hansson <ulfh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson <jjohnson@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
-	ath11k@lists.infradead.org, linux-pci@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-spi@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: Fix phandle-array constraints, again
-Message-ID: <vnnqfkfflipeosu6fuxwn7fswayjfb4pq7lq6vqvl7tagmv4cg@ki6nnol7an6h>
-References: <20260507201749.2605365-1-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WHXNz3Sw";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BG/n4KUi"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64JEwm6C1725708
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 15:03:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mHGL90YYCdoIftFeeZBzlNxa7STv1/CtE4HjA6UIQ9U=; b=WHXNz3SwSJSCYQ+s
+	7IhJEqNVgCyByrk3m3ETi1RAAK8rw37mdOM5zyT/qdbXSe5NCyc0T4fdWaMPh+CZ
+	8+IE3Apt/t5mK8p0cz6Ju1z+KQlfxDjBSBKUMS9f92VJFdqE1MJLkXHluW/EaTYD
+	Tki68w+zlgF4uKRtCOw667m0TBKZLfnFzI7REiGveDjs2AHqx9cN96OllftkB8/9
+	PhCsnaTRdIXx+yc/OYpSixmMrEo+geli3WaiT7gmW/D/Goe1Ej4d7F71olOjXIlG
+	9RPT32szx9qWe2/NQ+BXPE413GJXqCoqDWckhFkKsX2+jVmcGOLaO+k/7Kc06LJZ
+	SefC2Q==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e8t3qg12n-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 15:03:15 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2bc7f9b2213so28178745ad.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 19 May 2026 08:03:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779202995; x=1779807795; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mHGL90YYCdoIftFeeZBzlNxa7STv1/CtE4HjA6UIQ9U=;
+        b=BG/n4KUi6+5JdhFFbCxhJkxsGpSO1gkSq3rIxGxP4Am/JVXLTz+jRTX/7ZmyzW9w/u
+         N5HO3Cs+SJAIZl/1Ri/CjcNoZmTQ+mEf2VLXt+jPhXZXUNdhiaM3yD04nmdo2UsN8ygA
+         toxXdMv6payCLvRnXR+ZDsquHi4SRYYqz824J3BGcwITbFJpVVM0zGTyjk2TeAyLzXi7
+         0PIljtkkLCKuGTG24pDHGER1d75PNxBqbnPbS+Mw3l1rn5mvpxNJs2X1pbNNSc5vIKG8
+         jHHXGWQuyuGQRFkXjnUSvMJVGV1dc0s5YoCpSdkPI2rRDprvYw2uSJySLbU5BgNMhtb6
+         Hp0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779202995; x=1779807795;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mHGL90YYCdoIftFeeZBzlNxa7STv1/CtE4HjA6UIQ9U=;
+        b=s17reit6r6WopLw0u/o/Z6JqPf3Vdw2dQR3tAUxwDz1mRvZpHdoKQx8JStQfJeeC/C
+         ElFSRi/oQgex8JVezYuRQ+9yVa/UuWhDBUC/F5hjfA46Ac/WqUGtx18Ruwf0Yjm6F8IJ
+         W8+eW/L+BTQBquQkBv5Ry3vOYtveZ7l4G3s5ajCObkIHzxPei95wtwAQVj1r9JR+yi7D
+         ijuv5zZ7AY/SvKXT5Orwh0i3r1o4h28G7tUzbvSthENXNMO73CrK/5doEx2PJsn/XHYP
+         YPn1X4VeK4HhWpnvM+qj7YSrszwqLq9b1ZnQ7ToON+Ku0ZVit0UT/HeLdMR7zkJmoFcT
+         4lHg==
+X-Forwarded-Encrypted: i=1; AFNElJ9XxO8G64vcFLPJCY11uMFMVD5/gs+iLWFNtnbjIMdezem26y2Uow3ScIC8sQPJ0td1DDvsM24X+awP4FmL7lTU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRBC2eDOmV18DoQ+VLtgTft0uYsymCK0mt5PG9LtXCdm++8C/1
+	MzrQue3qKLpjXwkvhtLjAjZYqnNTKsadqVxuXo+cJiA0EBZZB8I5m8bdu34ryOlce72EZQJgSIe
+	2TRtMn0o404TB3fxTE5ja9VkQAkcUO1Fffz7iNDkuImI1V9YpFEyAnm3ih68Sfjvw6Ra/tcnO
+X-Gm-Gg: Acq92OFRnIicAV+kI8OWZf9J6jZChJl07n93llc2cfm47YmB78vcA3s8f97lzgzdrgB
+	oN/zGFiaSBMWQjbw2My1n/i0L9ftzzjkxj8EhwzIyIBRC+sjekM0WQfltZKMiUX8Zxk45tGY7YZ
+	wxRlX/cRxQGuo6uiktG4AflJ9GZJNvOCnEfzfSBz8t9Q8T6tF9jFcgV12nDV8kRhX+hLewjBTcA
+	WCeK383M5nPleowKEun9d/TQMcf5//FQ6cCife2OAxqNWTo72bwBQ0FG5LOOuIxhBnL46hsfDR3
+	2mVr8I5s0ZViuGHpMDatolAlfEPhxsiqfkBT2rzvoLIS9/YoWLTap/UzpumkwsRgZtfvLE0tgSP
+	rL2886PQ5AzhHzPPdV+TFh12/y5pnrSq6twWY1BjyDTiivQ0S
+X-Received: by 2002:a17:903:280c:b0:2ba:6bd7:8efc with SMTP id d9443c01a7336-2bd7e991520mr120248525ad.40.1779202994469;
+        Tue, 19 May 2026 08:03:14 -0700 (PDT)
+X-Received: by 2002:a17:903:280c:b0:2ba:6bd7:8efc with SMTP id d9443c01a7336-2bd7e991520mr120248025ad.40.1779202993930;
+        Tue, 19 May 2026 08:03:13 -0700 (PDT)
+Received: from [10.219.57.29] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bd5d0fbc05sm185598545ad.57.2026.05.19.08.03.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 May 2026 08:03:13 -0700 (PDT)
+Message-ID: <fd67b063-a986-4d34-99e6-fe55e72d0187@oss.qualcomm.com>
+Date: Tue, 19 May 2026 20:33:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Add Shikra remoteproc support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
+References: <20260514-shikra-rproc-v1-0-9afdedeee002@oss.qualcomm.com>
+ <20260514-shikra-rproc-v1-2-9afdedeee002@oss.qualcomm.com>
+ <g5wv5mi25l7jyq3vbe3dovriyxguw22m5uvyslkbjbyprbxfnq@kep4x3kxeqmj>
+Content-Language: en-US
+From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+In-Reply-To: <g5wv5mi25l7jyq3vbe3dovriyxguw22m5uvyslkbjbyprbxfnq@kep4x3kxeqmj>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260507201749.2605365-1-robh@kernel.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE5MDE0OCBTYWx0ZWRfX2uMUclcbPqM1
+ FTLKoRT/HleGDXUthbQ+URWm/QGpPHMF3b5NFTt1dNQzpnlnfpePFnsjCSV1+UHd6XNMxLQkX/3
+ O7gMiOdcrAR9J9OIylxGG9yIgzznEfVBB6BrDZVnQOapcDzhwqnQHIJeKSUnUrSmVL2F9tU/6Q6
+ /8stJR9r1V3PTBQS2nBGDZ0Ob8y1hkm0rm3f1Crdx4zeBqx9+rjC/QTvanw2nXD4Ri0duSiVpGh
+ OQwX2lIDIXbARuZeCjZgEGaVTNQ7SLqU5c6GO1Z04IIc1+PkkWB5uOxIqo8Wr5Bc0tlr/2kLJ1Z
+ vnjGE4QzyLULfkSF/cD4B5NMF8522D4MdoTSTLGBrvnTHfyc+JV91cXaLhOr0MkRBlMNxRI6ULj
+ jVW61acDjH6seegCl6oO4iV9u+PM0qV14Dvo3D2/dOZwB1SotsJknuRhuDorkd7ivoD+eLmObfP
+ zeuE1Mdpbt2O9DBGbKg==
+X-Authority-Analysis: v=2.4 cv=N9cZ0W9B c=1 sm=1 tr=0 ts=6a0c7bb3 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=Mpj9RaW3nZ1247zTz0QA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: gJGzV3sJ1tUKu0KD9uMdEO_R2k4yf7km
+X-Proofpoint-ORIG-GUID: gJGzV3sJ1tUKu0KD9uMdEO_R2k4yf7km
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-19_04,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 adultscore=0 lowpriorityscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 phishscore=0 clxscore=1015
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605190148
 
-On Thu, May 07, 2026 at 03:16:00PM -0500, Rob Herring (Arm) wrote:
-> The unfortunately named 'phandle-array' property type is really a matrix
-> with phandle and fixed arg cells entries. A matrix property should have 2
-> levels of items constraints.
-> 
-> Acked-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On 5/14/2026 12:48 AM, Dmitry Baryshkov wrote:
+> On Thu, May 14, 2026 at 12:17:31AM +0530, Komal Bajaj wrote:
+>> From: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
+>>
+>> Add the CDSP, LPAICP and MPSS Peripheral Authentication Service support
+>> for the Qualcomm Shikra SoC.
+>>
+>> Signed-off-by: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
+>> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_pas.c | 51 ++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 51 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+>> index da27d1d3c9da..4d43201b9ada 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+>> @@ -1457,6 +1457,54 @@ static const struct qcom_pas_data sc7280_wpss_resource = {
+>>   	.ssctl_id = 0x19,
+>>   };
+>>   
+>> +static const struct qcom_pas_data shikra_cdsp_resource = {
+>> +	.crash_reason_smem = 601,
+>> +	.firmware_name = "cdsp.mbn",
+>> +	.pas_id = 18,
+>> +	.minidump_id = 7,
+>> +	.auto_boot = false,
+> Why? It should be true for CDSP.
 
-Acked-by: Manivannan Sadhasivam <mani@kernel.org> # PCI
+Missed this, will mark it as true in next series.
 
-- Mani
+>
+>> +	.proxy_pd_names = (char *[]){
+>> +		"cx",
+>> +		NULL
+>> +	},
+> Hmm, SM6115 didn't have proxy votes here. Is it requried?
 
-> ---
-> v2:
->  - Add proper descriptions for 'qcom,smem-states'. Thanks Krzysztof!
->  - Fix i2c-parent warning
->  - Fix extra blank lines
-> ---
->  .../rockchip/rockchip,rk3399-cdn-dp.yaml       |  2 ++
->  .../bindings/i2c/i2c-demux-pinctrl.yaml        |  1 +
->  .../mmc/hisilicon,hi3798cv200-dw-mshc.yaml     |  7 ++++---
->  .../devicetree/bindings/net/qcom,bam-dmux.yaml | 12 ++++++++++++
->  .../devicetree/bindings/net/qcom,ipa.yaml      | 12 ++++++++++++
->  .../bindings/net/wireless/qcom,ath10k.yaml     |  8 +++++++-
->  .../bindings/net/wireless/qcom,ath11k.yaml     |  8 +++++++-
->  .../net/wireless/qcom,ipq5332-wifi.yaml        | 18 ++++++++++++++++++
->  .../bindings/pci/toshiba,tc9563.yaml           |  5 +++--
->  .../remoteproc/qcom,msm8916-mss-pil.yaml       |  6 ++++++
->  .../remoteproc/qcom,msm8996-mss-pil.yaml       |  7 +++++++
->  .../bindings/remoteproc/qcom,pas-common.yaml   |  6 ++++++
->  .../remoteproc/qcom,qcs404-cdsp-pil.yaml       |  6 ++++++
->  .../remoteproc/qcom,sc7180-mss-pil.yaml        |  6 ++++++
->  .../remoteproc/qcom,sc7280-adsp-pil.yaml       |  6 ++++++
->  .../remoteproc/qcom,sc7280-mss-pil.yaml        |  6 ++++++
->  .../remoteproc/qcom,sc7280-wpss-pil.yaml       |  6 ++++++
->  .../remoteproc/qcom,sdm845-adsp-pil.yaml       |  6 ++++++
->  .../bindings/remoteproc/qcom,wcnss-pil.yaml    |  6 ++++++
->  .../devicetree/bindings/sound/samsung,tm2.yaml |  8 ++++++--
->  .../bindings/spi/st,stm32mp25-ospi.yaml        |  5 +++--
->  .../bindings/usb/chipidea,usb2-common.yaml     |  2 ++
->  .../devicetree/bindings/usb/ci-hdrc-usb2.yaml  |  7 ++++---
->  23 files changed, 142 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml
-> index 1a33128e77f5..195f665970bf 100644
-> --- a/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml
-> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,rk3399-cdn-dp.yaml
-> @@ -41,7 +41,9 @@ properties:
->      minItems: 1
->      items:
->        - description: Extcon device providing the cable state for DP PHY device 0
-> +        maxItems: 1
->        - description: Extcon device providing the cable state for DP PHY device 1
-> +        maxItems: 1
->      description:
->        List of phandle to the extcon device providing the cable state for the DP PHY.
->  
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml b/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml
-> index 1eaf00b90a77..deca72bfc8cf 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-demux-pinctrl.yaml
-> @@ -40,6 +40,7 @@ properties:
->  
->    i2c-parent:
->      $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    minItems: 2
->      items:
->        maxItems: 1
->      description:
-> diff --git a/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml b/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml
-> index 41c9b22523e7..e447579e0f22 100644
-> --- a/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/hisilicon,hi3798cv200-dw-mshc.yaml
-> @@ -39,10 +39,11 @@ properties:
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      description: |
->        DWMMC core on Hi3798MV2x SoCs has a delay-locked-loop(DLL) attached to card data input path.
-> -      It is integrated into CRG core on the SoC and has to be controlled during tuning.
-> +      It is integrated into CRG core on the SoC and has to be controlled during tuning
->      items:
-> -      - description: A phandle pointed to the CRG syscon node
-> -      - description: Sample DLL register offset in CRG address space
-> +      - items:
-> +          - description: A phandle pointed to the CRG syscon node
-> +          - description: Sample DLL register offset in CRG address space
->  
->  required:
->    - compatible
-> diff --git a/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml b/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
-> index b30544410d09..33746c238513 100644
-> --- a/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
-> +++ b/Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
-> @@ -42,7 +42,19 @@ properties:
->      description: State bits used by the AP to signal the modem.
->      items:
->        - description: Power control
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->        - description: Power control acknowledgment
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: Names for the state bits used by the AP to signal the modem.
-> diff --git a/Documentation/devicetree/bindings/net/qcom,ipa.yaml b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> index fdeaa81b9645..68ec76fe4473 100644
-> --- a/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> +++ b/Documentation/devicetree/bindings/net/qcom,ipa.yaml
-> @@ -128,7 +128,19 @@ properties:
->      description: State bits used in by the AP to signal the modem.
->      items:
->        - description: Whether the "ipa-clock-enabled" state bit is valid
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->        - description: Whether the IPA clock is enabled (if valid)
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-> index c21d66c7cd55..d4f4d72ee0d3 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath10k.yaml
-> @@ -158,7 +158,13 @@ properties:
->      description: State bits used by the AP to signal the WLAN Q6.
->      items:
->        - description: Signal bits used to enable/disable low power mode
-> -                     on WCN in the case of WoW (Wake on Wireless).
-> +          on WCN in the case of WoW (Wake on Wireless).
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output.
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
-> index 0cc1dbf2beef..d4aa56e2f823 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k.yaml
-> @@ -80,7 +80,13 @@ properties:
->      description: State bits used by the AP to signal the WLAN Q6.
->      items:
->        - description: Signal bits used to enable/disable low power mode
-> -                     on WCN6750 in the case of WoW (Wake on Wireless).
-> +          on WCN6750 in the case of WoW (Wake on Wireless).
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output.
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml
-> index 37d8a0da7780..18cd91e2728c 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml
-> @@ -168,8 +168,26 @@ properties:
->      description: States used by the AP to signal the remote processor
->      items:
->        - description: Shutdown WCSS pd
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->        - description: Stop WCSS pd
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->        - description: Spawn WCSS pd
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description:
-> diff --git a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> index fae466064780..b3ad05d90201 100644
-> --- a/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> +++ b/Documentation/devicetree/bindings/pci/toshiba,tc9563.yaml
-> @@ -49,8 +49,9 @@ properties:
->        A phandle to the parent I2C node and the slave address of the device
->        used to configure tc9563 to change FTS, tx amplitude etc.
->      items:
-> -      - description: Phandle to the I2C controller node
-> -      - description: I2C slave address
-> +      - items:
-> +          - description: Phandle to the I2C controller node
-> +          - description: I2C slave address
->  
->  patternProperties:
->    "^pcie@[1-3],0$":
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-> index faf2712e3d27..4049157dd83d 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8916-mss-pil.yaml
-> @@ -108,6 +108,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: Names of the states used by the AP to signal the Hexagon core
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
-> index 1b65813cc8ad..4a1b439f985e 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml
-> @@ -101,6 +101,13 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point or Shared
-> +              Memory Manager device handling the communication with a remote
-> +              processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: Names of the states used by the AP to signal the Hexagon core
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> index 68c17bf18987..4607b459131b 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> @@ -60,6 +60,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
-> index bca59394aef4..e5f5f92987e1 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,qcs404-cdsp-pil.yaml
-> @@ -92,6 +92,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-> index 7c9accac92d0..21c82cd3be03 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-mss-pil.yaml
-> @@ -133,6 +133,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-> index 94ca7a0cc203..23b8e3079f3b 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-adsp-pil.yaml
-> @@ -91,6 +91,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> index f349c303fa07..43dfb90ac18d 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-mss-pil.yaml
-> @@ -147,6 +147,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-> index f4118b2da5f6..f3f3432948ed 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7280-wpss-pil.yaml
-> @@ -104,6 +104,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-> index a3c74871457f..9666ebf1e7b6 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sdm845-adsp-pil.yaml
-> @@ -92,6 +92,12 @@ properties:
->      description: States used by the AP to signal the Hexagon core
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-> index 117fb4d0c4ad..a55e55f5f014 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,wcnss-pil.yaml
-> @@ -84,6 +84,12 @@ properties:
->        States used by the AP to signal the WCNSS core that it should shutdown
->      items:
->        - description: Stop the modem
-> +        items:
-> +          - description: Phandle to the Shared Memory Point 2 Point device
-> +              handling the communication with a remote processor
-> +          - description: Single bit index to toggle in the value sent to
-> +              the remote processor
-> +            maximum: 32
->  
->    qcom,smem-state-names:
->      description: The names of the state bits used for SMP2P output
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,tm2.yaml b/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
-> index 67586ba3e0a0..985b7d29cd33 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,tm2.yaml
-> @@ -45,8 +45,12 @@ properties:
->      description: Phandles to the I2S controllers.
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      items:
-> -      - description: Phandle to I2S0.
-> -      - description: Phandle to I2S1.
-> +      - items:
-> +          - description: Phandle to I2S0
-> +          - description: Unused
-> +      - items:
-> +          - description: Phandle to I2S1
-> +          - description: Unused
->  
->    mic-bias-gpios:
->      description: GPIO pin that enables the Main Mic bias regulator.
-> diff --git a/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml b/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml
-> index 272bc308726b..b6be47f67fcb 100644
-> --- a/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/st,stm32mp25-ospi.yaml
-> @@ -49,8 +49,9 @@ properties:
->      description: configure OCTOSPI delay block.
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      items:
-> -      - description: phandle to syscfg
-> -      - description: register offset within syscfg
-> +      - items:
-> +          - description: phandle to syscfg
-> +          - description: register offset within syscfg
->  
->    access-controllers:
->      description: phandle to the rifsc device to check access right
-> diff --git a/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml b/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml
-> index 10020af15afc..e6a5e79df348 100644
-> --- a/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml
-> +++ b/Documentation/devicetree/bindings/usb/chipidea,usb2-common.yaml
-> @@ -97,7 +97,9 @@ properties:
->      minItems: 1
->      items:
->        - description: vbus extcon
-> +        maxItems: 1
->        - description: id extcon
-> +        maxItems: 1
->  
->    phy-clkgate-delay-us:
->      description:
-> diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-> index 691d6cf02c27..fec04702f530 100644
-> --- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.yaml
-> @@ -61,9 +61,10 @@ properties:
->        offset, and phy index
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      items:
-> -      - description: phandle to TCSR node
-> -      - description: register offset
-> -      - description: phy index
-> +      - items:
-> +          - description: phandle to TCSR node
-> +          - description: register offset
-> +          - description: phy index
->  
->    nvidia,phy:
->      description: phandle of usb phy that connects to the port. Use "phys" instead.
-> -- 
-> 2.53.0
-> 
 
--- 
-மணிவண்ணன் சதாசிவம்
+If we refer to sm6115 remoteproc-specific DT entries, there is a 
+power-domain entry (CX only). So we would need to fix this by adding a
+proxy_pd entry for the sm6115 CDSP PAS resource. Would you prefer this 
+to be done as part of this series?
+
+In newer Qualcomm targets, the corresponding CDSP PAS entries include a 
+proxy_pd vote for the power-domain in DT [1][2].
+Therefore, it should be safe to add proxy votes in Shikra’s CDSP PAS 
+data as well.
+
+[1]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/sm8550.dtsi?h=next-20260518#n6002
+[2]: 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/remoteproc/qcom_q6v5_pas.c?h=next-20260518#n1406
+
+
+>
+>> +	.load_state = "cdsp",
+>> +	.ssr_name = "cdsp",
+>> +	.sysmon_name = "cdsp",
+>> +	.ssctl_id = 0x17,
+>> +	.smem_host_id = 5,
+>> +	.region_assign_vmid = QCOM_SCM_VMID_CDSP,
+> This makes no sense without region_assign_count
+
+Ack, Would address this in next revision. it would be NOP in this case 
+without region_assign_count and region_assign_idx.
+
+>> +};
+>> +
+>> +static const struct qcom_pas_data shikra_lpaicp_resource = {
+>> +	.crash_reason_smem = 682,
+>> +	.firmware_name = "lpaicp.mbn",
+>> +	.dtb_firmware_name = "lpaicp_dtb.mbn",
+>> +	.pas_id = 0x56,
+>> +	.dtb_pas_id = 0x57,
+>> +	.minidump_id = 0,
+>> +	.auto_boot = true,
+>> +	.ssr_name = "lpaicp",
+>> +	.sysmon_name = "lpaicp",
+>> +};
+>> +
+>> +static const struct qcom_pas_data shikra_mpss_resource = {
+>> +	.crash_reason_smem = 421,
+>> +	.firmware_name = "qdsp6sw.mbn",
+> Why is it not modem.mbn?
+
+Previously, for testing, we used pil-squasher to combine the split 
+images into a single mbn, typically named modem.mbn.
+However, in official Qualcomm releases, the modem firmware is provided 
+as qdsp6sw.mbn. Since Shikra now has proper released binaries, switch to 
+using qdsp6sw.mbn as the firmware name.
+
+>> +	.pas_id = 4,
+>> +	.minidump_id = 3,
+>> +	.auto_boot = false,
+>> +	.decrypt_shutdown = true,
+>> +	.proxy_pd_names = (char *[]){
+>> +		"cx",
+>> +		NULL
+>> +	},
+>> +	.load_state = "modem",
+>> +	.ssr_name = "mpss",
+>> +	.sysmon_name = "modem",
+>> +	.ssctl_id = 0x12,
+>> +	.region_assign_vmid = QCOM_SCM_VMID_MSS_MSA,
+> Again, this doesn't make sense without region_assign_count. At which
+
+Ack, I'll address it in next revision.
+
+> point you can use sc8180x_mpss_resource instead.
+
+minidump_id is required for Shikra. (decrypt_shutdown is not applicable 
+and will be removed in the next revision.)
+For minidump_id, we still need to use shikra_mpss_resource instead of 
+sc8180x_mpss_resource. <?>
+
+>> +};
+>> +
+>>   static const struct qcom_pas_data sm8650_cdsp_resource = {
+>>   	.crash_reason_smem = 601,
+>>   	.firmware_name = "cdsp.mdt",
+>> @@ -1571,6 +1619,9 @@ static const struct of_device_id qcom_pas_of_match[] = {
+>>   	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init },
+>>   	{ .compatible = "qcom,sdx55-mpss-pas", .data = &sdx55_mpss_resource },
+>>   	{ .compatible = "qcom,sdx75-mpss-pas", .data = &sm8650_mpss_resource },
+>> +	{ .compatible = "qcom,shikra-cdsp-pas", .data = &shikra_cdsp_resource },
+>> +	{ .compatible = "qcom,shikra-lpaicp-pas", .data = &shikra_lpaicp_resource },
+>> +	{ .compatible = "qcom,shikra-mpss-pas", .data = &shikra_mpss_resource },
+>>   	{ .compatible = "qcom,sm6115-adsp-pas", .data = &adsp_resource_init },
+>>   	{ .compatible = "qcom,sm6115-cdsp-pas", .data = &cdsp_resource_init },
+>>   	{ .compatible = "qcom,sm6115-mpss-pas", .data = &sc8180x_mpss_resource },
+>>
+>> -- 
+>> 2.34.1
+>>
+
