@@ -1,67 +1,87 @@
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011021.outbound.protection.outlook.com [40.107.130.21])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8386E3F1AA8;
-	Wed, 20 May 2026 15:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779291798; cv=fail; b=lvzxfVQXDZPmtjCPUVRELb65kPfHloNThKJsUQJEOe3aIU0P1CEgdMribtU1ZrrBTFU/3sZMWjw8zdGLmAICgBwKh84e2FIYhqsRWYI0h+S0MS0kFzOLoyMow8f5X71uLlhfdwKnF1CFrpTeg5BOLVHc3n/t5mUgOIjAPO/8+5c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779291798; c=relaxed/simple;
-	bh=iz2Bz/n8ZMTToYLvZ1fImFg1lpLSzjgPvIQKbc6iYLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DtTxf1NSecQPaBani86twQD0sJuIUkxLvOCIrSoju6dwhP4G5Dl+nooR7b8t+HILFZh3mm2zh9tSl1SMAsa85rkLAkaFliOxL3bjtNGhgxAZAoKsc1Kf0EPZcEaTtNfZ+P1I7g/aVgiNMinmTiIlAgwoA8emfGQNci3A1OmpgUM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=eQyOF4ih; arc=fail smtp.client-ip=40.107.130.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D2B3DCD9F
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 16:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779294434; cv=none; b=N2sxcbbWoJAQdDM3mWsZC3eaasyqUxsJ4Jmj1arAnkCihJaeGVKg+72hJyEwmIdM8W8ZJuo/9xqSLZUYi2orH7ZQhTW+7O4bbfLAax/KGMXEho8MYIjZAM05TNJv+StANDaRN0M/JWt7e109JBdxDkqZ/iL0int5blfCeYBr9Bg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779294434; c=relaxed/simple;
+	bh=f+dG9TIzUjhRvUAsEfKGG9zAI2ESdGT0E4fdHz9mDTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aYphiVsKJDZBs+BpZ88ImJWPppaGQP2/+xgZEHRCvkCp+jGSdBE4r3nOrEDS8AB6svnGzU+ISB3iAijgIzygtayl09ArVN1CbnVUsnqKYhCxo53TiH14c0c299+TxXjmoHioPzrllwht6PiCKSzWcEL/+emMDavv6+Xm0QGuHqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GdR1oXdM; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FkhKthQQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="eQyOF4ih"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T1DZ5L2Wusdl6Hhk6r71HQcLGEu0wK4mg+3YuU7BK4tHMZ2Hvh8qoRvDooWnFw4YAGML+C2tE+f/+3BaCUA5AB75h/FW9TKOwPTkJnmmifIyHDFobXYLcOwBqq+8moKLpey+mFJM9vZ+YP1LuN+EYngdCOp0MIdwI199eSPL5s/1h7EGBXroWv+B8uFj9HDcGrJsTeVSj19eUh0fYC52TS/uuNOiIc3bzReS2ZvL+CqLGgqkDi0CLiiqq/Ja7WvDVIG63OKAEB/8+XSJH0ld+cVhPWm4MWRgLQfCaW2YWLEnHfKD66H1otC7yOw6h8/PbdEGPYHY/kDnynr1vs07yA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i3OmxvLxkRBF48zes0X1Kx/4uk8zh8J0nTmCYrjltEE=;
- b=fWLQCgCa1C4rRgP/r5zGBV/FXSsSpnNvPrqw8+Jf5Et5uj5a5MdPS61tmfBm2/O65jEDxGctQPuTp2OoGjQvz8uCCmKu93+mFZ9jONCn4jwk3W7k/RMM6Tzo0XmexhzfyMRroQ1e7uRphpH6EzPmlmX8F8ivzdERI2evLN37aV9ZGOPB9oB6dm0W4UK60I5XoJdgE8X3i0lWEoM10dFopQQnEg+vcx7Qqw4LGMYynzvESiy/Bn0eazE93N7jx8kiSBuY3wqnaR23U6PTB9j+/jH15je8Hk26niVjAbENHBxVmY87Fg2Zr8PZmuR+3B7rqn4Jt+nTyw0rYOzE6TW3fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=amd.com smtp.mailfrom=foss.st.com; dmarc=fail
- (p=none sp=none pct=100) action=none header.from=foss.st.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i3OmxvLxkRBF48zes0X1Kx/4uk8zh8J0nTmCYrjltEE=;
- b=eQyOF4ihfD0uofQUBYXG+D0mWxP3GhmtX7h/J9Ku9T9H5vARDj04RCfAvrKkjbsELijSa+9CHe4NgEFE9jetMsbh66ktVkCvnhUYBVlplhDLfO7TVItOOA5wLtEmpfn/BxCGiexmJbC99T6cyc/+c2t5f+c0B2Z6DGomsxdn2nh+iJKbMYzElyu9LPWBP9yO+ePHVhzHPyKAu73y9+ey/DseZf8aXnr8KYjw4NdeMLTe/OiYvztBslCWiDRMbIwUI/C3F7m0rKu1FH5u8MIDcB0k79QBgarAQ3sh2fRrT5K7PcyGOSM9qq7IJ1Dc99Ma+8nrsyssJRjG/7E9770I2w==
-Received: from DUZPR01CA0329.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4ba::28) by PAWPR10MB7221.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:102:2e4::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Wed, 20 May
- 2026 15:43:09 +0000
-Received: from DB5PEPF00014B99.eurprd02.prod.outlook.com
- (2603:10a6:10:4ba:cafe::ad) by DUZPR01CA0329.outlook.office365.com
- (2603:10a6:10:4ba::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.48.16 via Frontend Transport; Wed, 20
- May 2026 15:43:09 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.59)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- DB5PEPF00014B99.mail.protection.outlook.com (10.167.8.166) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.48.11 via Frontend Transport; Wed, 20 May 2026 15:43:09 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Wed, 20 May
- 2026 17:47:02 +0200
-Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Wed, 20 May
- 2026 17:43:08 +0200
-Message-ID: <e9b697dc-52b8-482a-8d54-da3c4700f049@foss.st.com>
-Date: Wed, 20 May 2026 17:43:05 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GdR1oXdM";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FkhKthQQ"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64KGL5IX446597
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 16:27:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yDLA1uFh89hUYoc7hHwlt/GqNAgX4/LhiZU83C8g2Wg=; b=GdR1oXdMGPiV/UyL
+	GmRgMOjQyNdBFz98dduco6c3ld9VmhYxkarRT5XKZzJBXClsklr1Jc9bipbMHYQJ
+	1hg4r/TkKvCKcumPRS+F8P034HDgXtCAr29x5188qAkjmUarQdRb2mgF6cK8fjRp
+	VjLJ5q1jQA+/NMV/LgjZchOg9W5iNThMNTHR/XqWhkoe2wA6rqdZyWC1cQT2Ym2O
+	GrgeQ1VwB1zro+46xv1NiyhQcknwiRrwZZYBuNHms1032nqKX9dKJrNI1ZcadK04
+	VWBvWAFHJvmt+KvIE5zXRGrhrwRY5aborInFFJmgFtBMbJnBmP9tU8nSxSOxe3Ou
+	Pl8SkQ==
+Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e9anrhjdd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 16:27:10 +0000 (GMT)
+Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-2efc342ef15so6550343eec.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 09:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779294429; x=1779899229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yDLA1uFh89hUYoc7hHwlt/GqNAgX4/LhiZU83C8g2Wg=;
+        b=FkhKthQQod5LYHcLWzM6alXLmbh/kM4W7JScApZseNWjHh+76zIdyqtd5if9Xh6MiS
+         V8ddq1mA3DwcgRofwTaLTlDskElpN4QyfWfAYOo7ci20ThilI/GvNr13MNAF8pXsoSxk
+         cBuOsYqWoL1NrhbMoM0DLmOws3l6XqFdhP0/J/xXH4wLNGSGvPmlxkjIYxVb6xNVM6Bd
+         KrbOQvgCO+Wy5PvjD0DMZn1VKUZjM4u+qPvCFDJA+EFYvvpzu7R/3F3QAx1X5e3r2P/M
+         73Ozr7c3oD+4bFFBwdqhGHhVYrCl51XzTt0d9bOlTOTMBJUCxSmcvx/n0vBio4aSDU/V
+         yh6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779294429; x=1779899229;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yDLA1uFh89hUYoc7hHwlt/GqNAgX4/LhiZU83C8g2Wg=;
+        b=sRXwQZBHUGEkjiKWhqOTRUPkB/xG/Zso76Ff/MuDrObFVyUmLtAXrdbEp0ZT2qZduK
+         J5rEPg7dUumOGvRXu1e6F+cALP79ToUnLmSgANFfzQTS9L15e85O2omacAr1s+5zLyEj
+         Y5ZAWEdlslE8fiL68YWuy86YeRl1YoBxX1w3OBenH2w2s06m1A/fvMazR2gQel8ovuNX
+         d6mJEUEpkfwv0164/d7NA2XpYUctR5lOwaeQ032zMnBLkJQSnT4Vfo0y9G9CFUqPixGD
+         AwVjSVWhWfkPVGQPygXAGA3/b4hzWqVCsnKMng68PyGJc3VDYs/xychfAu7Re+vZ76wt
+         miqQ==
+X-Forwarded-Encrypted: i=1; AFNElJ/LFy3ciazPdap7s9RVYU4agiiQwBditUKf2eRHzJ8EPjYRGmo6ekGCYRsom7SlBsgJwA47Rm/xvRy1EseHcZXK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaPVfF4nd5wRWCG5GVXrwI3bmuxvMXYNVUKPgbGmnp3ugGUDZu
+	3yCYB5kCru3irFFh0IkQBS9Spj8xmKDmADmx1U5EmJeG5GImUs7JMK64jrnuAGGX0tV566uI0gh
+	KyNA8lZXFNqAerHEMAO9KXctJLh376w84hUPpvbyJ50H6T1exe0bISiLs2sqtB4THY0AK7Wl6
+X-Gm-Gg: Acq92OGtePAfAuSa3nKhFVz2CrfFmj4k9am9YZiPXit9ecGFB34jL0miLA5+xhGf6H0
+	q0l5X4+UuEO9rRHPXkCWiUvVwJ5rmebzi6mECAXSECkw8XcWHWChprnySglMG0zh1znpsIZqGa1
+	KXS179NMoIbBFkIYe66hzTiSwHS2z+7lZTvq8fapeqpZzgYqfTkNIV8x2jiFl6KA0SQThqoYPLH
+	YZrObbLcsv65qngF4S5GziChBbviDNo/aAv6InTzW6Y8MD1Y4/4vmaosX+ANPG/dXYf/kt8hoN6
+	z5tWT2gZUPWTrkcKrIfIIgdpdPM38c7QzoqEaqpt9yp97j8kesg1ZsIGpGyZofH/svmLxeuBel6
+	841x235wPngo8EVRhXouJTI7FUgXy/n6g8DmNLJ6g4cnU4bQkBcV6Q1Mli2OzMZYWj8YhafJsDm
+	IZj/Q3Zg==
+X-Received: by 2002:a05:7301:fa0b:b0:2cf:3de7:22ad with SMTP id 5a478bee46e88-303986a6856mr10450880eec.27.1779294429123;
+        Wed, 20 May 2026 09:27:09 -0700 (PDT)
+X-Received: by 2002:a05:7301:fa0b:b0:2cf:3de7:22ad with SMTP id 5a478bee46e88-303986a6856mr10450814eec.27.1779294428468;
+        Wed, 20 May 2026 09:27:08 -0700 (PDT)
+Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30293e2e3c0sm24600310eec.3.2026.05.20.09.27.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 May 2026 09:27:07 -0700 (PDT)
+Message-ID: <bc3eb187-d0a4-40ce-b72c-1724b33e28ea@oss.qualcomm.com>
+Date: Wed, 20 May 2026 09:27:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -69,383 +89,258 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] rpmsg: virtio_rpmsg_bus: get buffer size from
- config space
-To: <tanmay.shah@amd.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <andersson@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-remoteproc@vger.kernel.org>
-References: <20260429161052.528015-1-tanmay.shah@amd.com>
- <20260429161052.528015-3-tanmay.shah@amd.com> <agyfr-pxwQ4oKMAF@p14s>
- <0ea5801b-c435-4f67-b811-aed696bd64b7@foss.st.com>
- <313c02dd-0a19-48d4-bdaf-c53e2be1131b@amd.com>
+Subject: Re: [PATCH v6 00/16] firmware: qcom: Add OP-TEE PAS service support
+To: Sumit Garg <sumit.garg@kernel.org>, andersson@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, konradybcio@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        robin.clark@oss.qualcomm.com, sean@poorly.run,
+        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
+        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+        dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org,
+        elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        jjohnson@kernel.org, mathieu.poirier@linaro.org,
+        trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
+        pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
+        tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
+        srinivas.kandagatla@oss.qualcomm.com,
+        amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
+        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+        skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
+        Sumit Garg <sumit.garg@oss.qualcomm.com>
+References: <20260518072856.22790-1-sumit.garg@kernel.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
 Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <313c02dd-0a19-48d4-bdaf-c53e2be1131b@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB5PEPF00014B99:EE_|PAWPR10MB7221:EE_
-X-MS-Office365-Filtering-Correlation-Id: 624036e9-a4fd-4fd9-08f7-08deb6867e2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700016|376014|18002099003|22082099003|56012099003|13003099007|4143699003|11063799006|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	7/uKn7gHHCEEaQCkdHx4nIT9RGPJTdzEeDfAzyIkCmuorwIoCBbTsDBbLPBV5ScWyNQYhib3GWEt8YP9qRX34y3/RS/jCFa1UqQOqJHsOCIHpwCoib7cUIv4ZkXqoKjTzySe4mux75lL+tViAGlvwV/zc44dy0Y/YCNPxQ7FGDFh7nB8foLayICfodk18SIZVnESLk1IepI/i2HnUE3VQ9q9Iy7Y3UGFt7RdCYGhShHDOcpo/EbWGE7GkIZ6ZuIhQBYdYChJQaJxTfwInK6DR1s4T/Mu0nu7pgAcawseQFvvjSnpn0c6+0GYNKT1KXmJGqQgaGG8xaFy6NJg+e51suRp1dpZHf3cSmH6bj5puv7/K+/kSfoa+LE2p/qkSVXjSUbvEyGZJWigh4WK1H6kqEOG71NFEubkdG1MmHAA/mcz4aOhImpeJuhbUAusXiqBXNT+e6gxxXl4ag42VGIsYD4qnF+sHG3Uo6shi4y1gT+xhAleFbfLJIVLyZs5kKWonnfm1W3kqhLSUb30vnBAjqkhLuaCczT/Sjif0bxCPZ7mfveVOa4kHqLC+3zLCQVVUxYjdXhsaKGk/8eptoE9oNQuHKRnLm5e9USiMsp5n5rP4P5WgBX0MzG++plfRf1rf7xcUncOpJ76gB3pCfgiMHjA1KGSmsIV6vtLc6gxZoRrYtPUjkXSeIwBOdtmtkAS
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(18002099003)(22082099003)(56012099003)(13003099007)(4143699003)(11063799006)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	2zWxYTxG1UBFL+QxyNHSncT81IwSId1cQUPLOw6uMziaIf+A850hLqw9/unqJVf/mnNkKyf1Mtuc9wzYCbszyz5L6ZJAOOhi5L5QrR1pzFhQBvzcWXAwibJer1Lu+mx6Nx+gWu7+sy2qKRzeg6irk2mLOuHxhevcldqf4o9XigukVSfigqyr5XPM531uuBWvhue5imaoKVe8kZ5vKLt+E/Hjx/kU1bPws+V9OlN5OwV5DysiIgdvTWXBmJ3SG3+AnHUFX6brnVmhtmxfhm4nuBQdMBXbRI5BLsnst7jKG/4bYug5FRPe7HkpdjNMMq97Vx1JP8+4Ty/yAu0r8BieuAOOr09MiCsNruvfnJ9mnskIs1FRDeQ46+qNnOl+txsmPrjeyQgTvaBgzF4ZiZRj5AoGCwM8g3T6akHXyC4fXIKPVSDssrFyHtga6PKDNutV
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2026 15:43:09.0873
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 624036e9-a4fd-4fd9-08f7-08deb6867e2e
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B99.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB7221
+In-Reply-To: <20260518072856.22790-1-sumit.garg@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: iSGEgqA4ZR2VAZFyvagwczFjxIW1_F7O
+X-Proofpoint-ORIG-GUID: iSGEgqA4ZR2VAZFyvagwczFjxIW1_F7O
+X-Authority-Analysis: v=2.4 cv=UuJT8ewB c=1 sm=1 tr=0 ts=6a0de0de cx=c_pps
+ a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=rrczaL3BcTaDGf8zvC4A:9
+ a=QEXdDO2ut3YA:10 a=6Ab_bkdmUrQuMsNx7PHu:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIwMDE2MCBTYWx0ZWRfX09lVgBkrLJlw
+ KEdAHa0JbbK8x0YBIDebp+fbnU3lpu3RQQab22pgRj5srkpvhlsYmKl+7leW7faolJg7+vFIqka
+ 2oycH12cpeiPFmcn8cksrGuihAlVZSWnbi8S18soIM/IIFaoZW8AdN4NyiWZpShvNYGb9H+7Bxf
+ Zuuk2/bq9Z6gw2jGrd77BQ15gxTGVwGb2vTNVGaq6losCD50Q6MTnqRdBKfCF/Lo0Biwj6mvqyT
+ jHejuuRcU7ZmQxVQtbRBNi7G0LkuK+k+f1CBA2b0lSXeivbgDaiSOy8w+S3Gk0Ed4wtkO9hv1iW
+ Bli+Nl1n6ikH+5kPUXeFg+706FB8VZTsL3E4TIvpW4v46UfDrBcoMM2eG1jAs5YG/APQ5hP2nVH
+ hGWNY89V8Nzqc8833CVmlkP3r/0M1ijQFuq5uXRnq+0GtkD0rgaCx6yaeFh63lWKDLYzLMtppWy
+ vKFtSN0yby1zNuwPAgg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-20_03,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=0 spamscore=0 malwarescore=0 bulkscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
+ definitions=main-2605200160
 
-
-
-On 5/20/26 16:55, Shah, Tanmay wrote:
+On 5/18/2026 12:28 AM, Sumit Garg wrote:
+> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
 > 
+> Qcom platforms has the legacy of using non-standard SCM calls
+> splintered over the various kernel drivers. These SCM calls aren't
+> compliant with the standard SMC calling conventions which is a
+> prerequisite to enable migration to the FF-A specifications from Arm.
 > 
-> On 5/20/2026 2:44 AM, Arnaud POULIQUEN wrote:
->>
->>
->> On 5/19/26 19:36, Mathieu Poirier wrote:
->>> On Wed, Apr 29, 2026 at 09:10:52AM -0700, Tanmay Shah wrote:
->>>> 512 bytes isn't always suitable for all case, let firmware
->>>> maker decide the best value from resource table.
->>>> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
->>>>
->>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>>> ---
->>>>
->>>> Test done:
->>>>     - Verify this patch works with the existing firmware
->>>>     - Verify this patch works with the firmware that configures
->>>>       differt tx & rx buf size
->>>>
->>>> Changes in v2:
->>>>     - %s/sbuf_size/tx_buf_size/
->>>>     - %s/rbuf_size/rx_buf_size/
->>>>     - fix typo
->>>>     - do not use ALIGN on buf size, rely on allocator
->>>>     - make err msg more explicit, %s/vdev config:/bad vdev config/
->>>>     - fix license and add AMD copyrights in the header virtio_rpmsg.h
->>>>     - Assign bit 1 to VIRTIO_RPMSG_F_BUFSZ feature
->>>>     - use __virtio32 over __u32
->>>>     - add version field to virtio rpmsg config structure
->>>>     - move linux/virtio_rpmsg.h to linux/rpmsg/virtio_rpmsg.h
->>>>
->>>>    drivers/rpmsg/virtio_rpmsg_bus.c   | 70 ++++++++++++++++++++++--------
->>>>    include/linux/rpmsg/virtio_rpmsg.h | 27 ++++++++++++
->>>>    2 files changed, 79 insertions(+), 18 deletions(-)
->>>>    create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
->>>>
->>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/
->>>> virtio_rpmsg_bus.c
->>>> index e59d8cf9b975..8116d94413cc 100644
->>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->>>> @@ -20,6 +20,7 @@
->>>>    #include <linux/rpmsg.h>
->>>>    #include <linux/rpmsg/byteorder.h>
->>>>    #include <linux/rpmsg/ns.h>
->>>> +#include <linux/rpmsg/virtio_rpmsg.h>
->>>>    #include <linux/scatterlist.h>
->>>>    #include <linux/slab.h>
->>>>    #include <linux/sched.h>
->>>> @@ -39,7 +40,8 @@
->>>>     * @tx_bufs:    kernel address of tx buffers
->>>>     * @num_rx_buf:    total number of buffers for rx
->>>>     * @num_tx_buf:    total number of buffers for tx
->>>> - * @buf_size:    size of one rx or tx buffer
->>>> + * @rx_buf_size: size of one rx buffer
->>>> + * @tx_buf_size: size of one tx buffer
->>>>     * @last_sbuf:    index of last tx buffer used
->>>>     * @bufs_dma:    dma base addr of the buffers
->>>>     * @tx_lock:    protects svq and tx_bufs, to allow concurrent senders.
->>>> @@ -59,7 +61,8 @@ struct virtproc_info {
->>>>        void *rx_bufs, *tx_bufs;
->>>>        unsigned int num_rx_buf;
->>>>        unsigned int num_tx_buf;
->>>> -    unsigned int buf_size;
->>>> +    unsigned int rx_buf_size;
->>>> +    unsigned int tx_buf_size;
->>>>        int last_sbuf;
->>>>        dma_addr_t bufs_dma;
->>>>        struct mutex tx_lock;
->>>> @@ -68,9 +71,6 @@ struct virtproc_info {
->>>>        wait_queue_head_t sendq;
->>>>    };
->>>>    -/* The feature bitmap for virtio rpmsg */
->>>> -#define VIRTIO_RPMSG_F_NS    0 /* RP supports name service
->>>> notifications */
->>>> -
->>>>    /**
->>>>     * struct rpmsg_hdr - common header for all rpmsg messages
->>>>     * @src: source address
->>>> @@ -128,7 +128,7 @@ struct virtio_rpmsg_channel {
->>>>     * processor.
->>>>     */
->>>>    #define MAX_RPMSG_NUM_BUFS    (256)
->>>> -#define MAX_RPMSG_BUF_SIZE    (512)
->>>> +#define DEFAULT_RPMSG_BUF_SIZE    (512)
->>>>      /*
->>>>     * Local addresses are dynamically allocated on-demand.
->>>> @@ -444,7 +444,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
->>>>          /* either pick the next unused tx buffer */
->>>>        if (vrp->last_sbuf < vrp->num_tx_buf)
->>>> -        ret = vrp->tx_bufs + vrp->buf_size * vrp->last_sbuf++;
->>>> +        ret = vrp->tx_bufs + vrp->tx_buf_size * vrp->last_sbuf++;
->>>>        /* or recycle a used one */
->>>>        else
->>>>            ret = virtqueue_get_buf(vrp->svq, &len);
->>>> @@ -514,7 +514,7 @@ static int rpmsg_send_offchannel_raw(struct
->>>> rpmsg_device *rpdev,
->>>>         * messaging), or to improve the buffer allocator, to support
->>>>         * variable-length buffer sizes.
->>>>         */
->>>> -    if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
->>>> +    if (len > vrp->tx_buf_size - sizeof(struct rpmsg_hdr)) {
->>>>            dev_err(dev, "message is too big (%d)\n", len);
->>>>            return -EMSGSIZE;
->>>>        }
->>>> @@ -647,7 +647,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct
->>>> rpmsg_endpoint *ept)
->>>>        struct rpmsg_device *rpdev = ept->rpdev;
->>>>        struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
->>>>    -    return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
->>>> +    return vch->vrp->tx_buf_size - sizeof(struct rpmsg_hdr);
->>>>    }
->>>>      static int rpmsg_recv_single(struct virtproc_info *vrp, struct
->>>> device *dev,
->>>> @@ -673,7 +673,7 @@ static int rpmsg_recv_single(struct virtproc_info
->>>> *vrp, struct device *dev,
->>>>         * We currently use fixed-sized buffers, so trivially sanitize
->>>>         * the reported payload length.
->>>>         */
->>>> -    if (len > vrp->buf_size ||
->>>> +    if (len > vrp->rx_buf_size ||
->>>>            msg_len > (len - sizeof(struct rpmsg_hdr))) {
->>>>            dev_warn(dev, "inbound msg too big: (%d, %d)\n", len,
->>>> msg_len);
->>>>            return -EINVAL;
->>>> @@ -706,7 +706,7 @@ static int rpmsg_recv_single(struct virtproc_info
->>>> *vrp, struct device *dev,
->>>>            dev_warn_ratelimited(dev, "msg received with no recipient\n");
->>>>          /* publish the real size of the buffer */
->>>> -    rpmsg_sg_init(&sg, msg, vrp->buf_size);
->>>> +    rpmsg_sg_init(&sg, msg, vrp->rx_buf_size);
->>>>          /* add the buffer back to the remote processor's virtqueue */
->>>>        err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
->>>> @@ -824,6 +824,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>>>        int err = 0, i;
->>>>        size_t total_buf_space;
->>>>        bool notify;
->>>> +    u16 version;
->>>>          vrp = kzalloc_obj(*vrp);
->>>>        if (!vrp)
->>>> @@ -855,9 +856,41 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>>>        else
->>>>            vrp->num_tx_buf = MAX_RPMSG_NUM_BUFS;
->>>>    -    vrp->buf_size = MAX_RPMSG_BUF_SIZE;
->>>> +    /*
->>>> +     * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
->>>> +     * size from virtio device config space from the resource table.
->>>> +     * If the feature is not supported, then assign default buf size.
->>>> +     */
->>>> +    if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
->>>> +        /* note: virtio_rpmsg_config is defined from remote view */
->>>> +        version = 0;
->>>> +        virtio_cread(vdev, struct virtio_rpmsg_config,
->>>> +                 version, &version);
->>>> +        virtio_cread(vdev, struct virtio_rpmsg_config,
->>>> +                 txbuf_size, &vrp->rx_buf_size);
->>>> +        virtio_cread(vdev, struct virtio_rpmsg_config,
->>>> +                 rxbuf_size, &vrp->tx_buf_size);
->>>> +
->>>
->>> A check is also needed to make sure the version received from the
->>> resource table
->>> is '0'.
+> OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
+> support these non-standard SCM calls. And even for newer architectures
+> using S-EL2 with Hafnium support, QTEE won't be able to support SCM
+> calls either with FF-A requirements coming in. And with both OP-TEE
+> and QTEE drivers well integrated in the TEE subsystem, it makes further
+> sense to reuse the TEE bus client drivers infrastructure.
 > 
-> I think we should start with versaion = 1. So, can I check the version
-> number for 1 ?
+> The added benefit of TEE bus infrastructure is that there is support
+> for discoverable/enumerable services. With that client drivers don't
+> have to manually invoke a special SCM call to know the service status.
 > 
->>>
->>>> +        /* The buffers must hold at least the rpmsg header */
->>>> +        if (vrp->rx_buf_size < sizeof(struct rpmsg_hdr) ||
->>>> +            vrp->tx_buf_size < sizeof(struct rpmsg_hdr)) {
->>>> +            dev_err(&vdev->dev,
->>>> +                "bad vdev config: rx buf sz = %d, tx buf sz = %d\n",
->>>> +                vrp->rx_buf_size, vrp->tx_buf_size);
->>>> +            err = -EINVAL;
->>>> +            goto vqs_del;
->>>> +        }
->>>> +
->>>> +        dev_dbg(&vdev->dev,
->>>> +            "vdev config: version=%d, rx buf sz = 0x%x, tx buf sz =
->>>> 0x%x\n",
->>>> +            version, vrp->rx_buf_size, vrp->tx_buf_size);
->>>> +    } else {
->>>> +        vrp->rx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
->>>> +        vrp->tx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
->>>> +    }
->>>>    -    total_buf_space = (vrp->num_rx_buf + vrp->num_tx_buf) * vrp-
->>>>> buf_size;
->>>> +    total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
->>>> +              (vrp->num_tx_buf * vrp->tx_buf_size);
->>>>          /* allocate coherent memory for the buffers */
->>>>        bufs_va = dma_alloc_coherent(vdev->dev.parent,
->>>> @@ -875,14 +908,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>>>        vrp->rx_bufs = bufs_va;
->>>>          /* and second part is dedicated for TX */
->>>> -    vrp->tx_bufs = bufs_va + vrp->num_rx_buf * vrp->buf_size;
->>>> +    vrp->tx_bufs = bufs_va + (vrp->num_rx_buf * vrp->rx_buf_size);
->>>>          /* set up the receive buffers */
->>>>        for (i = 0; i < vrp->num_rx_buf; i++) {
->>>>            struct scatterlist sg;
->>>> -        void *cpu_addr = vrp->rx_bufs + i * vrp->buf_size;
->>>> +        void *cpu_addr = vrp->rx_bufs + i * vrp->rx_buf_size;
->>>>    -        rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
->>>> +        rpmsg_sg_init(&sg, cpu_addr, vrp->rx_buf_size);
->>>>              err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
->>>>                          GFP_KERNEL);
->>>> @@ -965,8 +998,8 @@ static int rpmsg_remove_device(struct device
->>>> *dev, void *data)
->>>>    static void rpmsg_remove(struct virtio_device *vdev)
->>>>    {
->>>>        struct virtproc_info *vrp = vdev->priv;
->>>> -    unsigned int num_bufs = vrp->num_rx_buf + vrp->num_tx_buf;
->>>> -    size_t total_buf_space = num_bufs * vrp->buf_size;
->>>> +    size_t total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
->>>> +                 (vrp->num_tx_buf * vrp->tx_buf_size);
->>>>        int ret;
->>>>          virtio_reset_device(vdev);
->>>> @@ -992,6 +1025,7 @@ static struct virtio_device_id id_table[] = {
->>>>      static unsigned int features[] = {
->>>>        VIRTIO_RPMSG_F_NS,
->>>> +    VIRTIO_RPMSG_F_BUFSZ,
->>>>    };
->>>>      static struct virtio_driver virtio_ipc_driver = {
->>>> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/
->>>> rpmsg/virtio_rpmsg.h
->>>> new file mode 100644
->>>> index 000000000000..285918be68b9
->>>> --- /dev/null
->>>> +++ b/include/linux/rpmsg/virtio_rpmsg.h
->>>> @@ -0,0 +1,27 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 */
->>>> +/*
->>>> + * Copyright (C) Pinecone Inc. 2019
->>>> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
->>>> + * Copyright (C) Advanced Micro Devices, Inc.
->>>> + */
->>>> +
->>>> +#ifndef _LINUX_VIRTIO_RPMSG_H
->>>> +#define _LINUX_VIRTIO_RPMSG_H
->>>> +
->>>> +#include <linux/types.h>
->>>> +#include <linux/virtio_types.h>
->>>> +
->>>> +/* The feature bitmap for virtio rpmsg */
->>>> +#define VIRTIO_RPMSG_F_NS    0 /* RP supports name service
->>>> notifications */
->>>> +#define VIRTIO_RPMSG_F_BUFSZ    1 /* RP get buffer size from config
->>>> space */
->>>> +
->>>> +struct virtio_rpmsg_config {
->>>> +    __virtio16 version;
->>>> +    /* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
->>>> +    __virtio32 txbuf_size;
->>>> +    __virtio32 rxbuf_size;
->>>> +    __virtio32 reserved[14]; /* Reserve for the future use */
->>>
->>> 66 byte for the configuratio space?  I'm puzzled about the
->>> reserved[14], how did
->>> you come up with that number?
+> So enable the generic Peripheral Authentication Service (PAS) provided
+> by the firmware. It acts as the common layer with different TZ
+> backends plugged in whether it's an SCM implementation or a proper
+> TEE bus based PAS service implementation.
 > 
-> I kept the reserved bytes from the original series as it is. The
-> original series did not contain version field. With version I don't
-> think we need reserved field at all. At best, if we want to append
-> padding bytes, then I think __virtio16 reserved; makes sense. That will
-> make the structure aligned to 4 byte.
+> The TEE PAS service ABI is designed to be extensible with additional API
+> as PTA_QCOM_PAS_CAPABILITIES. This allows to accommodate any future
+> extensions of the PAS service needed while still maintaining backwards
+> compatibility.
 > 
->>
->> Is it useful to define the reserved field?
+> Currently OP-TEE support is being added to provide the backend PAS
+> service implementation which can be found as part of this PR [1].
+> This implementation has been tested on Kodiak/RB3Gen2 board with lemans
+> EVK board being the next target. In addition to that WIN/IPQ targets
+> planning to use OP-TEE will use this service too. Surely the backwards
+> compatibility is maintained and tested for SCM backend.
 > 
-> I think reserved field is only useful to keep the structure size aligned
-> to 4 bytes.
+> Note that kernel PAS service support while running in EL2 is at parity
+> among OP-TEE vs QTEE. Especially the media (venus/iris) support depends
+> on proper IOMMU support being worked out on the PAS client end.
 > 
->> The version should allow us to determine the content.
+> Patch summary:
+> - Patch #1: adds Kodiak EL2 overlay since boot stack with TF-A/OP-TEE
+>   only allow UEFI and Linux to boot in EL2.
+> - Patch #2: adds generic PAS service.
+> - Patch #3: migrates SCM backend to generic PAS service.
+> - Patch #4: adds TEE/OP-TEE backend for generic PAS service.
+> - Patch #5-#14: migrates all client drivers to generic PAS service.
+> - Patch #15: drops legacy PAS SCM exported APIs.
 > 
-> Correct, but I think the structure can be aligned if used correct
-> reserved bytes.
+> The patch-set is based on v7.1-rc4 tag and can be found in git tree here
+> [2].
 > 
->> An other solution is to introduce a'size' field to determine the size of
->> the structure:
+> Merge strategy:
 > 
-> I think, the resource table already contains config_len field which is
-> size of the structure:
+> It is expected due to APIs dependency, the entire patch-set to go via
+> the Qcom tree. All other subsystem maintainers, it will be great if I
+> can get acks for the corresponding subsystem patches.
 > 
-> https://github.com/torvalds/linux/blob/27fa82620cbaa89a7fc11ac3057701d598813e87/include/linux/remoteproc.h#L275
-
-
-The resource table is the solution for the remoteproc virtio backend, 
-The solution should be able to work with some other virtio backends.
-In such case we can not rely on the resource table.
-
-The resource table is a solution for the remoteproc virtio backend. 
-However, the solution should also be able to work with other virtio 
-backends.
-In that case, it may not be possible to rely on the resource table.
-
-Regards,
-Arnaud
-
+> [1] https://github.com/OP-TEE/optee_os/pull/7721 (already merged)
+> [2] https://git.kernel.org/pub/scm/linux/kernel/git/sumit.garg/linux.git/log/?h=qcom-pas-v6
 > 
->> struct virtio_rpmsg_config {
->>      __virtio16 version;
->>      __virtio16 size; /* size of the configuration space */
->>      /* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
->>      __virtio32 txbuf_size;
->>      __virtio32 rxbuf_size;
->>      __u8 private[0]; /* customized config */
+> ---
+> Changes in v6:
+> - Rebased to v7.1-rc4 tag.
+> - Patch #14: fixed ret error print.
+> - Add Kconfig descriptions for PAS symbols such that they are visible
+>   in menuconfig to update.
 > 
-> Do we need customized config? I think I should remove this comment from
-> the original patch as well.
+> Changes in v5:
+> - Incorporated misc. comments from Mukesh.
+> - Split up patch #11 into 2 to add an independent commit for passing
+>   proper PAS ID to set_remote_state API.
+> - Picked up tags.
 > 
-> Thanks,
-> Tanmay
+> Changes in v4:
+> - Incorporate misc. comments on patch #4.
+> - Picked up an ack for patch #10.
+> - Clarify in cover letter about state of media support.
 > 
->> };
->>
->>>
->>> The rest looks good to me.
->>>
->>
->> Looks good to me too.
->>
->> Thanks,
->> Arnaud
->>
->>>> +    /* Put the customize config here */
->>>> +} __packed;
->>>> +
->>>> +#endif /* _LINUX_VIRTIO_RPMSG_H */
->>>> -- 
->>>> 2.34.1
->>>>
->>
+> Changes in v3:
+> - Incorporated some style and misc. comments for patch #2, #3 and #4.
+> - Add QCOM_PAS Kconfig dependency for various subsystems.
+> - Switch from pseudo TA to proper TA invoke commands.
+> 
+> Changes in v2:
+> - Fixed kernel doc warnings.
+> - Polish commit message and comments for patch #2.
+> - Pass proper PAS ID in set_remote_state API for media firmware drivers.
+> - Added Maintainer entry and dropped MODULE_AUTHOR.
+> 
+> Mukesh Ojha (1):
+>   arm64: dts: qcom: kodiak: Add EL2 overlay
+> 
+> Sumit Garg (15):
+>   firmware: qcom: Add a generic PAS service
+>   firmware: qcom_scm: Migrate to generic PAS service
+>   firmware: qcom: Add a PAS TEE service
+>   remoteproc: qcom_q6v5_pas: Switch over to generic PAS TZ APIs
+>   remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs
+>   soc: qcom: mdtloader: Switch to generic PAS TZ APIs
+>   remoteproc: qcom_wcnss: Switch to generic PAS TZ APIs
+>   remoteproc: qcom: Select QCOM_PAS generic service
+>   drm/msm: Switch to generic PAS TZ APIs
+>   media: qcom: Switch to generic PAS TZ APIs
+>   media: qcom: Pass proper PAS ID to set_remote_state API
+>   net: ipa: Switch to generic PAS TZ APIs
+>   wifi: ath12k: Switch to generic PAS TZ APIs
+>   firmware: qcom_scm: Remove SCM PAS wrappers
+>   MAINTAINERS: Add maintainer entry for Qualcomm PAS TZ service
+> 
+>  MAINTAINERS                                   |   9 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   2 +
+>  arch/arm64/boot/dts/qcom/kodiak-el2.dtso      |  35 ++
+>  drivers/firmware/qcom/Kconfig                 |  21 +-
+>  drivers/firmware/qcom/Makefile                |   2 +
+>  drivers/firmware/qcom/qcom_pas.c              | 291 +++++++++++
+>  drivers/firmware/qcom/qcom_pas.h              |  50 ++
+>  drivers/firmware/qcom/qcom_pas_tee.c          | 476 ++++++++++++++++++
+>  drivers/firmware/qcom/qcom_scm.c              | 302 ++++-------
+>  drivers/gpu/drm/msm/Kconfig                   |   1 +
+>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   4 +-
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  11 +-
+>  drivers/media/platform/qcom/iris/Kconfig      |  25 +-
+>  .../media/platform/qcom/iris/iris_firmware.c  |   9 +-
+>  drivers/media/platform/qcom/venus/Kconfig     |   1 +
+>  drivers/media/platform/qcom/venus/firmware.c  |  11 +-
+>  drivers/net/ipa/Kconfig                       |   2 +-
+>  drivers/net/ipa/ipa_main.c                    |  13 +-
+>  drivers/net/wireless/ath/ath12k/Kconfig       |   2 +-
+>  drivers/net/wireless/ath/ath12k/ahb.c         |  10 +-
+>  drivers/remoteproc/Kconfig                    |   4 +-
+>  drivers/remoteproc/qcom_q6v5_mss.c            |   5 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c            |  51 +-
+>  drivers/remoteproc/qcom_wcnss.c               |  12 +-
+>  drivers/soc/qcom/mdt_loader.c                 |  12 +-
+>  include/linux/firmware/qcom/qcom_pas.h        |  43 ++
+>  include/linux/firmware/qcom/qcom_scm.h        |  29 --
+>  include/linux/soc/qcom/mdt_loader.h           |   6 +-
+>  28 files changed, 1119 insertions(+), 320 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/qcom/kodiak-el2.dtso
+>  create mode 100644 drivers/firmware/qcom/qcom_pas.c
+>  create mode 100644 drivers/firmware/qcom/qcom_pas.h
+>  create mode 100644 drivers/firmware/qcom/qcom_pas_tee.c
+>  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
 > 
 
+In my automation I do bisection builds and it fails when I bisect.
+
+At "remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs":
+
+../drivers/remoteproc/qcom_q6v5_pas.c: In function 'qcom_pas_load':
+../drivers/remoteproc/qcom_q6v5_pas.c:244:44: error: passing argument 1 of 'qcom_mdt_pas_load' from incompatible pointer type [-Wincompatible-pointer-types]
+  244 |                 ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware,
+      |                                         ~~~^~~~~~~~~~~~~
+      |                                            |
+      |                                            struct qcom_pas_context *
+In file included from ../drivers/remoteproc/qcom_q6v5_pas.c:27:
+../include/linux/soc/qcom/mdt_loader.h:23:52: note: expected 'struct qcom_scm_pas_context *' but argument is of type 'struct qcom_pas_context *'
+   23 | int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx, const struct firmware *fw,
+      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+../drivers/remoteproc/qcom_q6v5_pas.c: In function 'qcom_pas_start':
+../drivers/remoteproc/qcom_q6v5_pas.c:322:36: error: passing argument 1 of 'qcom_mdt_pas_load' from incompatible pointer type [-Wincompatible-pointer-types]
+  322 |         ret = qcom_mdt_pas_load(pas->pas_ctx, pas->firmware, rproc->firmware,
+      |                                 ~~~^~~~~~~~~
+      |                                    |
+      |                                    struct qcom_pas_context *
+../include/linux/soc/qcom/mdt_loader.h:23:52: note: expected 'struct qcom_scm_pas_context *' but argument is of type 'struct qcom_pas_context *'
+   23 | int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx, const struct firmware *fw,
+      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+make[5]: *** [../scripts/Makefile.build:289: drivers/remoteproc/qcom_q6v5_pas.o] Error 1
+
+
+At "remoteproc: qcom_q6v5_pas: Switch over to generic PAS TZ APIs":
+
+../drivers/remoteproc/qcom_q6v5_pas.c: In function 'qcom_pas_load':
+../drivers/remoteproc/qcom_q6v5_pas.c:244:44: error: passing argument 1 of 'qcom_mdt_pas_load' from incompatible pointer type [-Wincompatible-pointer-types]
+  244 |                 ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware,
+      |                                         ~~~^~~~~~~~~~~~~
+      |                                            |
+      |                                            struct qcom_pas_context *
+In file included from ../drivers/remoteproc/qcom_q6v5_pas.c:27:
+../include/linux/soc/qcom/mdt_loader.h:23:52: note: expected 'struct qcom_scm_pas_context *' but argument is of type 'struct qcom_pas_context *'
+   23 | int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx, const struct firmware *fw,
+      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+../drivers/remoteproc/qcom_q6v5_pas.c: In function 'qcom_pas_start':
+../drivers/remoteproc/qcom_q6v5_pas.c:322:36: error: passing argument 1 of 'qcom_mdt_pas_load' from incompatible pointer type [-Wincompatible-pointer-types]
+  322 |         ret = qcom_mdt_pas_load(pas->pas_ctx, pas->firmware, rproc->firmware,
+      |                                 ~~~^~~~~~~~~
+      |                                    |
+      |                                    struct qcom_pas_context *
+../include/linux/soc/qcom/mdt_loader.h:23:52: note: expected 'struct qcom_scm_pas_context *' but argument is of type 'struct qcom_pas_context *'
+   23 | int qcom_mdt_pas_load(struct qcom_scm_pas_context *ctx, const struct firmware *fw,
+      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+make[5]: *** [../scripts/Makefile.build:289: drivers/remoteproc/qcom_q6v5_pas.o] Error 1
+
+
+This is because the 5/16 patch depends upon changes in the 7/16 patch.
+
+/jeff
