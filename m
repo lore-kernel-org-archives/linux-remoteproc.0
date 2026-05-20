@@ -1,398 +1,204 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013047.outbound.protection.outlook.com [52.101.83.47])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E218378803;
-	Wed, 20 May 2026 07:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779263088; cv=fail; b=jvA4cxlKKG3x8DkPSVUubjPWZEKr6d238EehN/QvlPzOIajMbnEIDc5MQW9Gfqqj/OEk8u/ToMJkdaXi7gY9+jtaIbuwG0FgTFqJ/3JaWxPCStjEqiK2458GHfo794r8wiBcty74CccrF7K9KUF39FLM5P4ZXjENPWo+zoPOg+w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779263088; c=relaxed/simple;
-	bh=jK0fLyiezfb4tPyysY52qsmMj0PiaOA9U4zUYvX6MNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SZ0bBmEur0ZwBYtgVWy+jXYh4aPGQPf1bw3SjcOeNcvuLXq+Hs7Ujuou7MluJtgycICtC3DXcS6qEkciBJJMf7jVORm6mnZzpNtRwr9wLFb/uq+PhQ3yVjKNr2Qro4MJydS6KbBbMautId2ocyXGWEAfr5G+Zqa6YfnSKYoHAPM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=lBuue8jD; arc=fail smtp.client-ip=52.101.83.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A543AC0EF
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 08:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779265681; cv=none; b=UdA75ZP5BC725ajAbXIETDan06ZOZHr3O5FAeFzPDmp6Ek5osjRtZEO7HJiUiR+7q/2Aa6UwdkU3rWUARu7ejUBWs2JUzzNc/s5oH1kX60JV2RGTmpFFgvU0S4uVs0tyQWVrurFJgCZfZaZU78eVM1U7R2z4g0Kfg2pn5QAwfvk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779265681; c=relaxed/simple;
+	bh=VxAoNW25Ujt504peYxTkE8zYDZN7ss6BYNIQX9Q7toM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sh9k2deHeAm/Z9vSFvNKCbkeXti0mmHNWAIxHUvyDfzx9DqppcFA2El054zRxvL2tAyeOdV0iu+LbVZdsQCTyX1xpupIMxG0945Igg9569TZf9XEh3Woc++/LVY4laFpPpAWEIvSKTXa1XISSx/O/Dl92GjU8QWvKIzXTyplzcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=P0L0DN5b; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ikHNApbH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="lBuue8jD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n3S37PHWaHA5y5nlSgxyqAS/wnOWt+4JqqyLFiAaBoRePNCSRogEu1OCvFOyDYNjSgFmL3XDq509YDoyCcjZq+7CbYB1JBZYNMORpXjR5pTFwqsYM+sTLGHQtmHbhoiy52pW+CvfW75TDfCkOFbxd6MivCO5L7+wFA9sZ9Mef0waECRULMpM4rhElUAYWWZbuPBA/3EVMMrAoDArn23fEEInEJFsYoU7BmqGjEKq+941nCu8y3fyNSqVhxbZ/VUdQSnyKbkAQMA49VOFiyyAPZZ7Na1NmyOP6S/BDqJg1SArU8MxUMjcmQKDGcT+C19I5myKSGhsDW/weedj6Ds3ZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PkGS5MhCVOKyZvgpGYrWVHhaA3FIEAwQaznbzAZt1aQ=;
- b=gci7h/vcb8889a9o3VPnrhbyN6o14kwhBIgqLR9bOg/8q9nqUoP/eXeKa3nMxb7tt7gJxZk3Szuc+fZHUTuv7Vm07a8EemtvdRPmyVABmdkzccgz41WS66sa4CrxnxJIu0lYcwbwbjYd+yORg8+lOIkAI+TE+VMi8KKhQ8PidoHdyCgWJ22n0dhgLyJ5GRFBBKFne10y3bSVbQQTg8z8NOBP8YVYKCT5FDne++sn7Kt+JcvOl2XQaOZtEoBsvQ4sQceMkzRKE7HScGK1WjoYfcNTCZkBYSiVXUZSc6TIHo4BBZN7j1yw2BsdTdh1EAN4pPJ07rGPXxK++qu2ySjMsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.60) smtp.rcpttodomain=linaro.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PkGS5MhCVOKyZvgpGYrWVHhaA3FIEAwQaznbzAZt1aQ=;
- b=lBuue8jDCRpAwJDd1iMmpqtHPkCHCfDyWU0twXKu0GEU4mHD7USKWixreM+D7eZQrSHDhBxK2P5h0iAamrO0bLFcGsWJXrWZTylmibn1zGofGQNek7Jp2J8CFecMJDJ+8PRG4Cz9kBVuK+fxz6J7UnQSInMowOAJ8RLIcYS999VAr7jifqNKqCT3v+bAavjHF3is/hGqK079BEFAANhUY7RDbxayw72WRnZfdUuKW7zsgQA4WOGGBDCUe8dRpD9RCMSTF7M6qfxj4w2rcnUvzkx5x1cH1WzNdUwB7+YDKgKAdHMDdMCex+YR8Y0GREWsP+K4xFs7iS2c9ivWNzp6vw==
-Received: from AM4PR0302CA0006.eurprd03.prod.outlook.com (2603:10a6:205:2::19)
- by AS4PR10MB7615.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:4ba::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.14; Wed, 20 May
- 2026 07:44:38 +0000
-Received: from AM3PEPF0000A799.eurprd04.prod.outlook.com
- (2603:10a6:205:2:cafe::f4) by AM4PR0302CA0006.outlook.office365.com
- (2603:10a6:205:2::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.48.14 via Frontend Transport; Wed, 20
- May 2026 07:44:38 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 164.130.1.60)
- smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.60 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.60; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.60) by
- AM3PEPF0000A799.mail.protection.outlook.com (10.167.16.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.48.11 via Frontend Transport; Wed, 20 May 2026 07:44:38 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpO365.st.com
- (10.250.44.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Wed, 20 May
- 2026 09:48:07 +0200
-Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.35; Wed, 20 May
- 2026 09:44:37 +0200
-Message-ID: <0ea5801b-c435-4f67-b811-aed696bd64b7@foss.st.com>
-Date: Wed, 20 May 2026 09:44:35 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="P0L0DN5b";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ikHNApbH"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64K77mFa1953991
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 08:27:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=dMP+5E3spei8NZdRJwHgG/2/
+	qxpbiRP3qgzbcSPUzi8=; b=P0L0DN5bZDsY4P75O1+TE5maTcjFcMq60HAljLUa
+	MrfNh2j5YGd8Z0K/32NLCKEIC9hkJj8buLdtTaifnGBcj8G6MeMva5aX4p6wJkfS
+	3/y+84tel81M4+QhUBq9+zp6aVGBj2EnDAlw7ac0rPnXD5vcjo/bC3mXRk48Sknq
+	N6sKK/eFQ5g8CbxGwCuwgUoL8cBK+t+PCacqGoe7iJ4LmqdpD5ssXygEe2EwitYB
+	9RuUgqDj7IUd5laM8Jew1iTLa5G9D1ZQHoasvbfHm6RPQflp7DZtZezwbOK7RD6G
+	9mU5KteR6s9elUK6ymy2W/NEX/aVwwWtLkRFRucX02TKBQ==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e8t3xutmq-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 08:27:57 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-82f756ebd0dso2771955b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 20 May 2026 01:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1779265677; x=1779870477; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dMP+5E3spei8NZdRJwHgG/2/qxpbiRP3qgzbcSPUzi8=;
+        b=ikHNApbH6UaggCHCJEGDCJzAarDhRpK+gsbUfa5B82HJJUYVGTA9M7aY2niLNPDVTA
+         8ZnGX1CEraedo2U3R2uY6LVWgShfw4rzRU8AGo5UGu5frj5xYSupzaV0qjFe/nXHwlUS
+         p+lyuScrySvzUqCok4OD3mjWH5YiH6eMUTwenl2nuJUZMZvbYmBmgF7ZJTOzC2rIVQuS
+         mkMXoZQ4nQ24HoFq3vh+RGQoRoGu8eKLqgX9qqzcQ/cboBFmurFx8YasJib3IXhz+FJ2
+         cQLnKEM/e4J/LElATdI5So8qe4Fh2J3MUvmqOdmbqAKxUxa9hLKaCLD0sF5v8Pgv2L+z
+         0Yvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1779265677; x=1779870477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dMP+5E3spei8NZdRJwHgG/2/qxpbiRP3qgzbcSPUzi8=;
+        b=tLWNHPTLeWYJHgGNnjN0G1GI9sN37GMa6SlZ6rOB8wSQjI/SaFziP70naSFEzlz6ZE
+         KAH4FZc2n7wco/qT7Bq7fG3XxhalIskyWEM7FaSuJ7TodNG6Paix9C1diT3Jjl6kDOab
+         vv8c73Q3BfEgxKqFJ+1/VzALT5KOKLYD96S+i2xak0X2ISCduq/kNPBigPlcivW8yw0D
+         aEXSHEjfzDIjH60jaRHxyMbXqsfEelMdo8iWUK+KFB98okxDZy3gpSHd4DKUnCUBJAuz
+         LNtZL3R2mUF4oH2WelsW8Nney35UYRTzYCxrPLCxpnluxnShE7P0lmXQU81NTCqIWWl9
+         7Yaw==
+X-Forwarded-Encrypted: i=1; AFNElJ89TYdJ22IPegsnwKlkYkUZBtkAir9NDLijReTmf21KVaj4OZbw2oPhSZy9DrfgzNzYZd+1ciIhlzE1sVXM88pc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9lr67lca1jPFozNT6UvRTxRF/w6Kbe7YJ/8AQzjEQCDnGlqeD
+	dG74PK2oksY8bAHFBvbCqBBJMJ1W/C93o9H9eTqO18OOtjeMOwtXsjiJ+WIa0ghTltc4+RDJ0RB
+	UjnOgh6SdU08tw5rtJsaLz73eMtUW3x/Pva7CkQpmsV0R92Id5B5LV1LIYRznhYW/KCYx20kX
+X-Gm-Gg: Acq92OFWkStzukUqXU6vWuKjz/9mIPTXqRupePR8HGlOQV1MZgUZ6lCXDFmV9vUzoJs
+	ZhdxBRJjDwkTYnrrgj1yZ7q8hQ7lLCKd/x5ihmWr0EDCuYyUbc+xLr0irHf/bVLrBcNOS84NLPQ
+	q+gPIb3iNGJqZ5Z4JLd98roP+ytcijSPaLgoFF76Ku7zTHX1y6K+XVEt7uz2mGs0YJjoHCaNNYL
+	LFJonycm84YRsRuE6du1KdOGfF9ll2cThX/7bFG8kDozX9PioGPXW3GVISWZ7PsTf4av1/S81bB
+	m08QtQF7LvUycGLf83/VWDYlTRbwAKmTsMplV/siMEJGkIlrUD1SMfMF9JVNQZJd7YvRBIR98tV
+	D6gDXZpg88MVAVtERne0SGD+KpFsUQkVjIIoIAwcF2Zi/102s
+X-Received: by 2002:a05:6a00:4c13:b0:83b:a723:d704 with SMTP id d2e1a72fcca58-83f33c2be4amr21997930b3a.19.1779265676917;
+        Wed, 20 May 2026 01:27:56 -0700 (PDT)
+X-Received: by 2002:a05:6a00:4c13:b0:83b:a723:d704 with SMTP id d2e1a72fcca58-83f33c2be4amr21997891b3a.19.1779265676390;
+        Wed, 20 May 2026 01:27:56 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-83f196638d0sm24595500b3a.7.2026.05.20.01.27.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 May 2026 01:27:56 -0700 (PDT)
+Date: Wed, 20 May 2026 13:57:47 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>, shengchao.guo@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+Subject: Re: [PATCH v6 5/6] remoteproc: qcom: pas: Add late attach support
+ for subsystems
+Message-ID: <20260520082747.7seyyua4gfv256ev@hu-mojha-hyd.qualcomm.com>
+References: <20260519-knp-soccp-v6-0-cf5d0e194b5f@oss.qualcomm.com>
+ <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] rpmsg: virtio_rpmsg_bus: get buffer size from
- config space
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Tanmay Shah
-	<tanmay.shah@amd.com>
-CC: <andersson@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-remoteproc@vger.kernel.org>
-References: <20260429161052.528015-1-tanmay.shah@amd.com>
- <20260429161052.528015-3-tanmay.shah@amd.com> <agyfr-pxwQ4oKMAF@p14s>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <agyfr-pxwQ4oKMAF@p14s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF0000A799:EE_|AS4PR10MB7615:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9c6b148-e259-4f01-a048-08deb643a531
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700016|22082099003|56012099003|18002099003|11063799006|4143699003;
-X-Microsoft-Antispam-Message-Info:
-	n4EfwlaN7UloyWpTWL7pe4OEdQhcGzdqmFN+pfl8hyMV35xGPfgYMuMmq2lGQDNkj/w+rLCYhah6FKbwi2L2/NkZSjAPGrm8AstRNXCsDMYfKm7CEeTtPXr+i3ELd2nzHEbyB0ao+TpHxPfhfL4kgWrdKNDwStfezda1XZu39p5nxH/V0gE1+KxJbXl1L6x9nuBFfyY8JcDKm3PQD0p6SxijTQyDYAbyNXDderIhv1l48PsjkNZgTXw3niZRZzbirGKsZC7UVUJHF8hEradF2LZcKr5lH28O71qERYgr7WMiNobLddP7EMiUbqVD7tKqmnq9auerevJkURfGReYUWF90FOBTvIz/6h8cwvDenMDUYVvu43ufTSvfzInGarhWcmN2czZurxeKvof9seLp7QlJGezGo5i4oc/2GyAfj+uQCc6b+Kt0pf6A0NjGMq9kKFBkZOAocThFIuptC56+u4EMnQvTRi/2ybjZBMCgCGtMml7fdhfFlK1hBwaI9onEYFFLzQOHyl1YS3PgHd/PF4Xn+5EPKkuBT/L4V/5oyktPFEL0PSFvVpVRJlhNCTS5ZPYEQ6FXg1mTHWIg5c2+x4X1SoakYmyMsZssiiqixVyibsObjDfB8YtB7BGWcVDaiHbW9t88CILfx+54EZRT+2PXs4/9iyaXlt9wvD2RpjLrY0Zy2GEEKjzhZxxgzivRbm5k7tDtHxVMC3YdLWooX8MT/HufY2y5tlPj80sMGqE=
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.60;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(22082099003)(56012099003)(18002099003)(11063799006)(4143699003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	Vrl+ubNilQeZYwmH6t412InZdK7J85WlNaF5GA+sjd95GskhzyCRrzNJUrr+mvI41Qr0hsugSpQVvdrdJLjEuJdBB2x2mXYNOGlqL1s44COlqSsD+qyoPd6gWuc7rWEUZ4QDs5Yw51RErU1STSfS2R3yFcer7qPw0rHey/PHSs8rdNGo5eC4Iwj2ue+PYnAZmdK+Jq5udqg0IzJGzvfj6K1iT/c82nn591tYIt8QXfMvQoApbv2d4SYWSTCUBbLxNbcds2jOgyJkt8jVA22LZs0rKAt6vW/wMS41hoO3Q0LEt13XIh+C/yeWz57JHjzVl/v3y8hNxuGdVqMg3u6p6xiSVrMczPP/1lidXSF0a3FzjCeCFUWMSVF7b+jGnkuFJbe5hxuegf874WES+AiPyH8RaED4ooEm1TMkx+diOPtp3fsOmohPXtaMEcyyGnCZ
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2026 07:44:38.2860
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9c6b148-e259-4f01-a048-08deb643a531
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.60];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB7615
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=WaY8rUhX c=1 sm=1 tr=0 ts=6a0d708d cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=4OTBKPfHZ21lbMHTwgYA:9 a=CjuIK1q_8ugA:10
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-GUID: WbScFqnZSM8uMGO2CFBKFYxEvr2w1zgZ
+X-Proofpoint-ORIG-GUID: WbScFqnZSM8uMGO2CFBKFYxEvr2w1zgZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIwMDA4MCBTYWx0ZWRfX+0vTf++fX8sk
+ MV4UeMeJDJBOUDIK9wxV9aA8Vg7VddapbBBMgWtGY/Hg7AjNK9ATbwYEiNoG+OAOnd5Hf5MpwUt
+ i2btWLDBinm2xGUBDYdlz8UW7UteYJwXs7mhsco1t6czJvOHs8UhT+rGtb6Th5WQg8bBQIZnqdg
+ xBgeQoYSXRqeHoxQVQ1Rtjd042zfyVkcbNGTe2DmKSn5wOraON9CUuZA3HLJN/6KD1AJpxJSkK9
+ MGnAQ0SesWDRiU8zsW4Gqsyq/8de+qAv1X5o70Nh74DqhRF+vjVxMn6CwRmxvT0JuA3yCQZxw93
+ 5pKjG/vJIw4JxKCmvaCK89OjHLlqQW+aMNq3jd8pISMKzVPdXHeEp5N+awj98bvQz5JpKEfs03G
+ nX+HC8Po1PudWF/5Zc8YunRrbqD/nCl0PNGetrcrJccOabXQl6hASOp00lgGFh2ATPaMEy3Nmkw
+ sL1U3dR3ArZAcqYxCtA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-20_01,2026-05-18_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 clxscore=1015 impostorscore=0 spamscore=0
+ suspectscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605200080
 
-
-
-On 5/19/26 19:36, Mathieu Poirier wrote:
-> On Wed, Apr 29, 2026 at 09:10:52AM -0700, Tanmay Shah wrote:
->> 512 bytes isn't always suitable for all case, let firmware
->> maker decide the best value from resource table.
->> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
->>
->> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->> ---
->>
->> Test done:
->>    - Verify this patch works with the existing firmware
->>    - Verify this patch works with the firmware that configures
->>      differt tx & rx buf size
->>
->> Changes in v2:
->>    - %s/sbuf_size/tx_buf_size/
->>    - %s/rbuf_size/rx_buf_size/
->>    - fix typo
->>    - do not use ALIGN on buf size, rely on allocator
->>    - make err msg more explicit, %s/vdev config:/bad vdev config/
->>    - fix license and add AMD copyrights in the header virtio_rpmsg.h
->>    - Assign bit 1 to VIRTIO_RPMSG_F_BUFSZ feature
->>    - use __virtio32 over __u32
->>    - add version field to virtio rpmsg config structure
->>    - move linux/virtio_rpmsg.h to linux/rpmsg/virtio_rpmsg.h
->>
->>   drivers/rpmsg/virtio_rpmsg_bus.c   | 70 ++++++++++++++++++++++--------
->>   include/linux/rpmsg/virtio_rpmsg.h | 27 ++++++++++++
->>   2 files changed, 79 insertions(+), 18 deletions(-)
->>   create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
->>
->> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
->> index e59d8cf9b975..8116d94413cc 100644
->> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->> @@ -20,6 +20,7 @@
->>   #include <linux/rpmsg.h>
->>   #include <linux/rpmsg/byteorder.h>
->>   #include <linux/rpmsg/ns.h>
->> +#include <linux/rpmsg/virtio_rpmsg.h>
->>   #include <linux/scatterlist.h>
->>   #include <linux/slab.h>
->>   #include <linux/sched.h>
->> @@ -39,7 +40,8 @@
->>    * @tx_bufs:	kernel address of tx buffers
->>    * @num_rx_buf:	total number of buffers for rx
->>    * @num_tx_buf:	total number of buffers for tx
->> - * @buf_size:	size of one rx or tx buffer
->> + * @rx_buf_size: size of one rx buffer
->> + * @tx_buf_size: size of one tx buffer
->>    * @last_sbuf:	index of last tx buffer used
->>    * @bufs_dma:	dma base addr of the buffers
->>    * @tx_lock:	protects svq and tx_bufs, to allow concurrent senders.
->> @@ -59,7 +61,8 @@ struct virtproc_info {
->>   	void *rx_bufs, *tx_bufs;
->>   	unsigned int num_rx_buf;
->>   	unsigned int num_tx_buf;
->> -	unsigned int buf_size;
->> +	unsigned int rx_buf_size;
->> +	unsigned int tx_buf_size;
->>   	int last_sbuf;
->>   	dma_addr_t bufs_dma;
->>   	struct mutex tx_lock;
->> @@ -68,9 +71,6 @@ struct virtproc_info {
->>   	wait_queue_head_t sendq;
->>   };
->>   
->> -/* The feature bitmap for virtio rpmsg */
->> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
->> -
->>   /**
->>    * struct rpmsg_hdr - common header for all rpmsg messages
->>    * @src: source address
->> @@ -128,7 +128,7 @@ struct virtio_rpmsg_channel {
->>    * processor.
->>    */
->>   #define MAX_RPMSG_NUM_BUFS	(256)
->> -#define MAX_RPMSG_BUF_SIZE	(512)
->> +#define DEFAULT_RPMSG_BUF_SIZE	(512)
->>   
->>   /*
->>    * Local addresses are dynamically allocated on-demand.
->> @@ -444,7 +444,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
->>   
->>   	/* either pick the next unused tx buffer */
->>   	if (vrp->last_sbuf < vrp->num_tx_buf)
->> -		ret = vrp->tx_bufs + vrp->buf_size * vrp->last_sbuf++;
->> +		ret = vrp->tx_bufs + vrp->tx_buf_size * vrp->last_sbuf++;
->>   	/* or recycle a used one */
->>   	else
->>   		ret = virtqueue_get_buf(vrp->svq, &len);
->> @@ -514,7 +514,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
->>   	 * messaging), or to improve the buffer allocator, to support
->>   	 * variable-length buffer sizes.
->>   	 */
->> -	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
->> +	if (len > vrp->tx_buf_size - sizeof(struct rpmsg_hdr)) {
->>   		dev_err(dev, "message is too big (%d)\n", len);
->>   		return -EMSGSIZE;
->>   	}
->> @@ -647,7 +647,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
->>   	struct rpmsg_device *rpdev = ept->rpdev;
->>   	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
->>   
->> -	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
->> +	return vch->vrp->tx_buf_size - sizeof(struct rpmsg_hdr);
->>   }
->>   
->>   static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->> @@ -673,7 +673,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->>   	 * We currently use fixed-sized buffers, so trivially sanitize
->>   	 * the reported payload length.
->>   	 */
->> -	if (len > vrp->buf_size ||
->> +	if (len > vrp->rx_buf_size ||
->>   	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
->>   		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
->>   		return -EINVAL;
->> @@ -706,7 +706,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->>   		dev_warn_ratelimited(dev, "msg received with no recipient\n");
->>   
->>   	/* publish the real size of the buffer */
->> -	rpmsg_sg_init(&sg, msg, vrp->buf_size);
->> +	rpmsg_sg_init(&sg, msg, vrp->rx_buf_size);
->>   
->>   	/* add the buffer back to the remote processor's virtqueue */
->>   	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
->> @@ -824,6 +824,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>   	int err = 0, i;
->>   	size_t total_buf_space;
->>   	bool notify;
->> +	u16 version;
->>   
->>   	vrp = kzalloc_obj(*vrp);
->>   	if (!vrp)
->> @@ -855,9 +856,41 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>   	else
->>   		vrp->num_tx_buf = MAX_RPMSG_NUM_BUFS;
->>   
->> -	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
->> +	/*
->> +	 * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
->> +	 * size from virtio device config space from the resource table.
->> +	 * If the feature is not supported, then assign default buf size.
->> +	 */
->> +	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
->> +		/* note: virtio_rpmsg_config is defined from remote view */
->> +		version = 0;
->> +		virtio_cread(vdev, struct virtio_rpmsg_config,
->> +			     version, &version);
->> +		virtio_cread(vdev, struct virtio_rpmsg_config,
->> +			     txbuf_size, &vrp->rx_buf_size);
->> +		virtio_cread(vdev, struct virtio_rpmsg_config,
->> +			     rxbuf_size, &vrp->tx_buf_size);
->> +
+On Tue, May 19, 2026 at 12:24:23AM -0700, Jingyi Wang wrote:
+> Subsystems can be brought out of reset by entities such as bootloaders.
+> As the irq enablement could be later than subsystem bring up, the state
+> of subsystem should be checked by reading SMP2P bits.
 > 
-> A check is also needed to make sure the version received from the resource table
-> is '0'.
+> A new qcom_pas_attach() function is introduced. if a crash state is
+> detected for the subsystem, rproc_report_crash() is called. If the ready
+> state is detected, it will be marked as "attached", otherwise it could
+> be the early boot feature is not supported by other entities. In this
+> case, the state will be marked as RPROC_OFFLINE so that the PAS driver
+> can load the firmware and start the remoteproc.
 > 
->> +		/* The buffers must hold at least the rpmsg header */
->> +		if (vrp->rx_buf_size < sizeof(struct rpmsg_hdr) ||
->> +		    vrp->tx_buf_size < sizeof(struct rpmsg_hdr)) {
->> +			dev_err(&vdev->dev,
->> +				"bad vdev config: rx buf sz = %d, tx buf sz = %d\n",
->> +				vrp->rx_buf_size, vrp->tx_buf_size);
->> +			err = -EINVAL;
->> +			goto vqs_del;
->> +		}
->> +
->> +		dev_dbg(&vdev->dev,
->> +			"vdev config: version=%d, rx buf sz = 0x%x, tx buf sz = 0x%x\n",
->> +			version, vrp->rx_buf_size, vrp->tx_buf_size);
->> +	} else {
->> +		vrp->rx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
->> +		vrp->tx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
->> +	}
->>   
->> -	total_buf_space = (vrp->num_rx_buf + vrp->num_tx_buf) * vrp->buf_size;
->> +	total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
->> +			  (vrp->num_tx_buf * vrp->tx_buf_size);
->>   
->>   	/* allocate coherent memory for the buffers */
->>   	bufs_va = dma_alloc_coherent(vdev->dev.parent,
->> @@ -875,14 +908,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
->>   	vrp->rx_bufs = bufs_va;
->>   
->>   	/* and second part is dedicated for TX */
->> -	vrp->tx_bufs = bufs_va + vrp->num_rx_buf * vrp->buf_size;
->> +	vrp->tx_bufs = bufs_va + (vrp->num_rx_buf * vrp->rx_buf_size);
->>   
->>   	/* set up the receive buffers */
->>   	for (i = 0; i < vrp->num_rx_buf; i++) {
->>   		struct scatterlist sg;
->> -		void *cpu_addr = vrp->rx_bufs + i * vrp->buf_size;
->> +		void *cpu_addr = vrp->rx_bufs + i * vrp->rx_buf_size;
->>   
->> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
->> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rx_buf_size);
->>   
->>   		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
->>   					  GFP_KERNEL);
->> @@ -965,8 +998,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
->>   static void rpmsg_remove(struct virtio_device *vdev)
->>   {
->>   	struct virtproc_info *vrp = vdev->priv;
->> -	unsigned int num_bufs = vrp->num_rx_buf + vrp->num_tx_buf;
->> -	size_t total_buf_space = num_bufs * vrp->buf_size;
->> +	size_t total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
->> +				 (vrp->num_tx_buf * vrp->tx_buf_size);
->>   	int ret;
->>   
->>   	virtio_reset_device(vdev);
->> @@ -992,6 +1025,7 @@ static struct virtio_device_id id_table[] = {
->>   
->>   static unsigned int features[] = {
->>   	VIRTIO_RPMSG_F_NS,
->> +	VIRTIO_RPMSG_F_BUFSZ,
->>   };
->>   
->>   static struct virtio_driver virtio_ipc_driver = {
->> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
->> new file mode 100644
->> index 000000000000..285918be68b9
->> --- /dev/null
->> +++ b/include/linux/rpmsg/virtio_rpmsg.h
->> @@ -0,0 +1,27 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) Pinecone Inc. 2019
->> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
->> + * Copyright (C) Advanced Micro Devices, Inc.
->> + */
->> +
->> +#ifndef _LINUX_VIRTIO_RPMSG_H
->> +#define _LINUX_VIRTIO_RPMSG_H
->> +
->> +#include <linux/types.h>
->> +#include <linux/virtio_types.h>
->> +
->> +/* The feature bitmap for virtio rpmsg */
->> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
->> +#define VIRTIO_RPMSG_F_BUFSZ	1 /* RP get buffer size from config space */
->> +
->> +struct virtio_rpmsg_config {
->> +	__virtio16 version;
->> +	/* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
->> +	__virtio32 txbuf_size;
->> +	__virtio32 rxbuf_size;
->> +	__virtio32 reserved[14]; /* Reserve for the future use */
+> Co-developed-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> Signed-off-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 58 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
 > 
-> 66 byte for the configuratio space?  I'm puzzled about the reserved[14], how did
-> you come up with that number?
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index da27d1d3c9da..ac2a00aacd2e 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -60,6 +60,7 @@ struct qcom_pas_data {
+>  	int region_assign_count;
+>  	bool region_assign_shared;
+>  	int region_assign_vmid;
+> +	bool early_boot;
+>  };
+>  
+>  struct qcom_pas {
+> @@ -510,6 +511,57 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
+>  	return qcom_q6v5_panic(&pas->q6v5);
+>  }
+>  
+> +static int qcom_pas_attach(struct rproc *rproc)
+> +{
+> +	int ret;
+> +	struct qcom_pas *pas = rproc->priv;
+> +	bool ready_state;
+> +	bool crash_state;
+> +
+> +	pas->q6v5.handover_issued = true;
+> +	enable_irq(pas->q6v5.handover_irq);
+> +
+> +	pas->q6v5.running = true;
+> +	ret = irq_get_irqchip_state(pas->q6v5.fatal_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
+> +
+> +	if (ret)
+> +		goto disable_running;
+> +
+> +	if (crash_state) {
+> +		dev_err(pas->dev, "Subsystem has crashed before driver probe\n");
+> +		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
 
-Is it useful to define the reserved field?
-The version should allow us to determine the content.
-An other solution is to introduce a'size' field to determine the size of
-the structure:
-struct virtio_rpmsg_config {
-	__virtio16 version;
-	__virtio16 size; /* size of the configuration space */
-	/* The tx/rx individual buffer size(if VIRTIO_RPMSG_F_BUFSZ) */
-	__virtio32 txbuf_size;
-	__virtio32 rxbuf_size;
-	__u8 private[0]; /* customized config */
-};
+I am not sure if this is already discussed, but what if it is the first
+crash with recovery and coredump enabled? What would be in the dump,
+nothing? As there is no segment, is it expected since Linux did not load
+this?
 
-> 
-> The rest looks good to me.
-> 
+This is even true if it is a crash after a successful attach.
 
-Looks good to me too.
+@Sibi, has this series been tested on Glymur with KVM?
+I don't see the iommu property in the below patch.
+https://lore.kernel.org/lkml/20260403-glymur-soccp-v3-1-f0e8d57f11ba@oss.qualcomm.com/
 
-Thanks,
-Arnaud
-
->> +	/* Put the customize config here */
->> +} __packed;
->> +
->> +#endif /* _LINUX_VIRTIO_RPMSG_H */
->> -- 
->> 2.34.1
->>
-
+-- 
+-Mukesh Ojha
