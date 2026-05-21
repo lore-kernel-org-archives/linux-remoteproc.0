@@ -1,232 +1,277 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330E23B27D0
-	for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 11:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DF23CFF73
+	for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 12:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779362538; cv=none; b=FndCXT6YWL9cNk1WzdmJykQ79FXcDF+/PjYVrdfSgGQbdkQCnJI3+r2mHxl/btnG443cse5DWG3NDCk9RxHXBeMIyXQia+sOvTx/2zYrBYmfP/76gp3kjBg6CnQMfB+XNt750hUVMX8YLoUcd5/v8tITvvLtkoF98RqXnzXQpvY=
+	t=1779366025; cv=none; b=AJwLqwTPfMLCUCPn5h8Cy93Q5OG1zTnTBD09BV07o9oc7Inm6CRlDtjA80fI3ob6+I6FR0B9N7A9vzb5AaKuyEK/Dx5Oql3H9HAaP11++iNsjIc+5qTiTrCVEWjMJn+hjsimAwmr9pXz0BJ9cLNj2TRAl/iKfQOLzNdCVfxQJd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779362538; c=relaxed/simple;
-	bh=J1KhW2ltIzpa2rePa4djf3RrBVwWOAY2xFAF5Pl7tbE=;
+	s=arc-20240116; t=1779366025; c=relaxed/simple;
+	bh=m5vq5lzBfI3cQdgIp7nM79N6LDabjGabpgW/KV4LQy8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lz6LCnp7kDiuu+5glfgtjoLDeR1oumv7LTAZA9OIZAiNmO7QUnz/7wJgCrT5JqXLtr9qPIXASjsFh+1MSKqJAlsSdf5SBBTiZeq3XiUAfrWx0HyWW3YvXy6Q/nmHBgcnKvKZ2saGYO5L7sWbl/2JBQzXfOR4MnYrFz1KbqxcsLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JtJ2zDA9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Rc6Dgeaz; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJKT1375N6E0/c4Io9eUsEd/a+1lAFgRL/f7A/n8F30vZCf6fFL2CssUUN2Wn0KlQEMrkRYCQwJh1hJbs26Qq5FmSTKnCVaoWW8gHt44xZJE019v36rLYpPvx7FHI6R7e7CiTRjTBtkulrwYJWz9HQVmeZETKAhSZtMDZPgTJ9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ImEv4Ai5; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cLMrNeV9; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JtJ2zDA9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Rc6Dgeaz"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64L99nn0517713
-	for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 11:22:16 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ImEv4Ai5";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cLMrNeV9"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64L9AL5j3555955
+	for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 12:20:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=4r+ZJjB/A49+K5p9aefAxCsw
-	o6iufgazJ25EeAlptdQ=; b=JtJ2zDA9frgdMoySGBS3ueizp0kl1FFrLP49qBKG
-	y+WUh74xVbyqE7TFudnPGQl5/OnyuurQSq57Hu77SYl/UFJbZwfywmT7WZTxpY2q
-	APMvKEv4rVOXajckwzut09l355HglZLA7DPPQ6sVsOVHrLM6GknKgkhBqidISe3K
-	eLRC42KazMFpX5pBY647GlQj+2ZN6e4LF7OLe/GL26evu4ZAky1A2QlIOfyc2jC5
-	Js30gClpWQuAUXKU/SxHbiOcUGn1DAguj3eNPo23C1DW+kFGxNgQZBNdILzwmyyY
-	IfxhHn7akogO68q1UPYkjrYJ1WXmDEG06Ey7Zw4PrBuVMQ==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e9saa1y9h-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TwK02OO4K1epQED36FGkSoJT4inoRnIOR99uClBefzI=; b=ImEv4Ai599CkKWct
+	28BA/t+9vRGd5MBP7ry2a53XDrFhmSAHGsRtyliCdQ5YKRfW1Bh1Gxns0N4G6ssK
+	HQET9yhe8qDT6Jy2C/JFNNPd/qE2aWrX3PEyGEQTTy8vHmvk76zfeWM7feJ3k5ga
+	RGKcE1FLRVm9bx55awCHNyRoLTicBQBYgsRo/1etey2TNkPVJX243Z6+PVqx5brP
+	qKocHiZtcdEL3XAQOUeWmmkrh8DCY2g2e844j7AFlirWv67+T15Vb3eu1Sc1fg/0
+	zZ9MMzUelSnBhh/QDqO992G3e4SyivLJq4ojL6/eu2cafltwEvyb+EILUw2EmW1J
+	zYPTCw==
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4e9fb6meu6-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 11:22:16 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-369467ab5bfso5399467a91.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 04:22:16 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 12:20:21 +0000 (GMT)
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c827adbf00cso2728762a12.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 21 May 2026 05:20:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779362536; x=1779967336; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4r+ZJjB/A49+K5p9aefAxCswo6iufgazJ25EeAlptdQ=;
-        b=Rc6DgeazyorsnQSnN8leVZaBM727bQpznJimbKVOYK1fndEkEXQVU/kCAjABK+WQ5O
-         wE0lYtRXllbVnSoSnpglN5Xs1neq4gzt+6HbZ/FiczeLgDWamfLCgpi1npdWasTbGwY4
-         BRqykM9/1p2q+fBS7Kl2E5BVVSxWyoqYhFVssl2trUxNnFG/tmMGOuLb3J4hvTRcQ2QN
-         8fXi+LbIPaSwYj6Zm2JwqhKcOQgkIgJV+BnTafdWSsWlPIZlptIhmO6za4cdkFhCBksH
-         JBPVILYPZ6Q+TZRaOv+pZ5q55mbv2UKHVR6je45kwKpghQfw1ouEZhiBfUX9sdi36o29
-         iVYA==
+        d=oss.qualcomm.com; s=google; t=1779366021; x=1779970821; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=TwK02OO4K1epQED36FGkSoJT4inoRnIOR99uClBefzI=;
+        b=cLMrNeV9Uh0cbmZtjrwnUReHA1vLzJ+Q+kSi8B6WTLxXsDUze+X+vbv627UMa0YCss
+         e63Bh1xM4L6X9ufiH7Ktpk1e5q0H93NJ9mbL3UaVzmj9aVdDvLxRdtz05jw1duM1sSYt
+         wOtsPLmJjrBolRQ6HwF6SNiaX8bniMgSfxwgvf85ZVgKPQPnhdlIREWcTrADlFUKYrUo
+         YZX/so/HsB/nUjm7guDF9Kzthvl9oerzKPJpx9BM64rPSij7AHapFKzUu1K8SH73FnBp
+         TkAKzVS/ad116VHg4oQx2gs1A5WxdjO9wXspQV1d5EaQFHHmvxWrSFMo8FuC9ko46/cb
+         LpLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779362536; x=1779967336;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4r+ZJjB/A49+K5p9aefAxCswo6iufgazJ25EeAlptdQ=;
-        b=mbO9Ka1dVdL0CM0/cn1fHSOnzYrWtrb35o4qnOizWtaAWks4oD+buM4V8yeJQWQBeY
-         bv0So30hMU/oOh76YPuRbrvRewvYWPTkfMTMdtgFpIv9eO1bvn05sT9ij4IvGsCKoi1A
-         ZKHPlxJZ6bwp+MWtyh52517+vj1haUZlG3vu1m+FBlZEI9VCnxo0aQv7gJ4/FRiykk5y
-         LJhrWUobjQUdHGcPB2EUAyC7zi9jpqaV1rPox2kYJHu/w5mfcm3eI9o6B7Use1oZGC4Q
-         /apREkinsYxLRysx7d6ty7dqSIWBQJiDShGbIAu4BDjapWgFg/nh6Elb6i9CV+LgwYYY
-         Gm/g==
-X-Forwarded-Encrypted: i=1; AFNElJ/WskNE/fJ3Pwq2SQJimwO2bGu+yYZQb07UhNv0bN2QYUamdWgYazdS1zZuYgiaeb6M8b4Esl1Y7SzT5yIuHH9h@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrEG32mnnTSOhIY1aCtZLzPAIKyCoawFeJjr92m5I35tkn7iQN
-	56qhMwnFSu6CgUcdgTw0AJck8niInH4JU0QeXSzuCX4id4eoQtJguirxn9WxE4kl4MZ0YhKcPmU
-	kI4C5NuoDsur2cZgFrYs2i/y011us1PrurinarKjty6xGZs6nqxa7KGekMvgLOq9Vt5RBI2/U
-X-Gm-Gg: Acq92OFory69djh/cd4g/y59ejbpUrQHgmRzQfPlfR3YGcLCd30TBXe+bj2oqiv4j7p
-	lQxyz+ws8gAp7rF0AX8JwXhhr4MTK2ZYnJk54G2JE9Q1TTN6m73r/cl88Dkilpl+uSs7pjcvW3o
-	c8ZTAkOI2/ybSHT6lCQ7M9xU4MPZI7nqKqUC4wUsngM15mBWDlTp8SgB/rH/CxYraPTOFeXJAMg
-	pSPY8LdYwgZEk2LAHn/SKeyvNX1orld+TnV80SC+l/IV8iFAaRFHlO6QDe4lsOS82lZ1VHxO2vl
-	dzFbml4SFLZLj21rRxRCQdz9c6cprHiVnXbt85aqENj2inXeq7Hwn86ImQhwsgOaMqEfZdi0aRB
-	vbg8dxX0mp3B6OOnoYeHtJjTW8OHjHv20Z66QiXx349Jmcx5pQnmIFqZ7kI4=
-X-Received: by 2002:a17:90b:1348:b0:366:7dbd:cd50 with SMTP id 98e67ed59e1d1-36a45c6950amr2756174a91.27.1779362535575;
-        Thu, 21 May 2026 04:22:15 -0700 (PDT)
-X-Received: by 2002:a17:90b:1348:b0:366:7dbd:cd50 with SMTP id 98e67ed59e1d1-36a45c6950amr2756138a91.27.1779362534935;
-        Thu, 21 May 2026 04:22:14 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779366021; x=1779970821;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TwK02OO4K1epQED36FGkSoJT4inoRnIOR99uClBefzI=;
+        b=b+SOIEDqLhSfE66tu0cybXbytXyyboDoDhhpop6KEDpeBvB2+5zSzQ8X36Ozw7daZH
+         Puhd0M4KOt6rp8nTr8SmRqszA2gOmeSP/HZErYOGtL/50VO9At0hjSCLSEk45wpw97UY
+         g5lVK5A4KKVjUTwIQTxPjfYfh3ehsI6JazRYsWVQ6VwVdlbQQvf7nM1qSi6gtOy/AO9x
+         TMf1ObAQGJTU92KUMw08PSwV/XfpFd5igkfmvhPXhKYh+LNO5NWLP5JZ6656WqWT12jl
+         MzcbW1OkvoxW/nMY5B+7KyMUC1AK3E4sU5vvgjK04SIw7jcEOQAE6Eyv+Me9hhInNpqM
+         nISQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+VU+Hhxn7Eb9FUNsEf7yQxU+AA/3I6oZ2F7MIycoYZzG3hc2xbxmTL0DmNvuWKDDCsajJHmGiqCL8/mAkThDgU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw956RH8ieCxUbZeHXOz+sNsPlZK4BO6BbM3YzCtSTB/8Wq7aLA
+	xo3kn4q9KkpCqFOw/BQrcSyffIUIOW3Bb4yM9vYKyBpWHdxxWpUduLkOLVgN9ZsestDhmBn9rf3
+	oSXWYBGjoXao8l0Rn4uektxhwKedvxTRRHlklg6IWUo2HjvJ3LipUHi9O5pcHyUU0Gt13kDEE
+X-Gm-Gg: Acq92OGqdrth17rbzRf/moKQh+t5xJwcMsgn3e4tvLhqhqZsbCZYjEuU1fY3gYvlHAW
+	60WdQbwiyzapEvLpu3mjDT/EEaeAxUHvUxQw+W/XicHKMTYlxtaTKxQaul4Sw6EwJgDu0STkE5n
+	aKv507ZUe4rSd/a/MiFojG8mHdtRIkbhkf7gCeBIVdZQUkvPA322hhihfpH3Qm2wZC5iDnxGgPc
+	A8rKNAlYzZarGjSLTz5tjM9t23orcM0cywm+BEMCJfhD73FSSfk7PVfMD0QLMKD5u3zcmkbbwCg
+	v1tmL30QLQHdQKxnKYGjSqwqNRxSIm0NJ4j1MT1SMB14YDxiIqIOwCRfxFCgcCU1GYQDL27HwJM
+	aADeKegkjXWv9bvYhzeWLU2oMB8nrnt1zLIPAZtRHPs8YLws3H2pYKOwjBRE=
+X-Received: by 2002:a05:6a20:9183:b0:398:6bb5:54c4 with SMTP id adf61e73a8af0-3b30854e9c4mr3264403637.5.1779366020816;
+        Thu, 21 May 2026 05:20:20 -0700 (PDT)
+X-Received: by 2002:a05:6a20:9183:b0:398:6bb5:54c4 with SMTP id adf61e73a8af0-3b30854e9c4mr3264348637.5.1779366020198;
+        Thu, 21 May 2026 05:20:20 -0700 (PDT)
 Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-36a45c7fe7fsm1144008a91.2.2026.05.21.04.22.09
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c851980bcdcsm240706a12.14.2026.05.21.05.20.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 May 2026 04:22:14 -0700 (PDT)
-Date: Thu, 21 May 2026 16:52:05 +0530
+        Thu, 21 May 2026 05:20:19 -0700 (PDT)
+Date: Thu, 21 May 2026 17:50:02 +0530
 From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
+        Eugen Hristev <eugen.hristev@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Dennis Zhou <dennis@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@gentwo.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        David Hildenbrand <david@kernel.org>, Lorenzo Stoakes <ljs@kernel.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Kees Cook <kees@kernel.org>, Brendan Jackman <jackmanb@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+        Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>,
+        Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>,
+        Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
+        Youngjun Park <youngjun.park@lge.com>, Petr Mladek <pmladek@suse.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>, shengchao.guo@oss.qualcomm.com,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        Saravana Kannan <saravanak@kernel.org>, workflows@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-Subject: Re: [PATCH v6 5/6] remoteproc: qcom: pas: Add late attach support
- for subsystems
-Message-ID: <20260521112205.rq6g6ev56l4u47uu@hu-mojha-hyd.qualcomm.com>
-References: <20260519-knp-soccp-v6-0-cf5d0e194b5f@oss.qualcomm.com>
- <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
- <20260520082747.7seyyua4gfv256ev@hu-mojha-hyd.qualcomm.com>
- <e67907bc-ce96-4654-b210-2ae8f35cacc7@oss.qualcomm.com>
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 00/25] Introduce meminspect
+Message-ID: <20260521122002.etqupwnjv67didat@hu-mojha-hyd.qualcomm.com>
+References: <20260311-minidump-v2-v2-0-f91cedc6f99e@oss.qualcomm.com>
+ <abdnp90cC5PI9wyz@baldur>
+ <20260316181647.m7x4ncmwdjho6yvr@hu-mojha-hyd.qualcomm.com>
+ <abtlUQqMOxj5PwGB@baldur>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e67907bc-ce96-4654-b210-2ae8f35cacc7@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIxMDExMyBTYWx0ZWRfX7NeEALD51EeP
- 8nt1NYIWeczcrJSEkP5Lm/kBSGQHQWSZ7erNXDErFWTAcoC67uuUJtD9uA/obc/NG/kpT+NxgdE
- ZPoakmRQTIhyNRuSSkjAiIZ2VLHyzfzoldZ2pYDe+SnsZn6bwPFNp+zoClxDeEJixCBNhoHp0mI
- Ws8zrQAqDz/InwBMpsceUaOq8rUEjpgq6OWOeal1Odp2HHFrxVBILKqSUYe7zPzi8yZTJXAj/pb
- 5PZUP4tohomvmXGiW4OPWxf5GWnWxDACOe1HMVq5w+DuCaHpC4X5OvOHDt1vprRU5CkpsXFMc0O
- 8n2VSlyowq5adjVSKhjTyAGsK9WYII6LvCb1jII1WSp2/kKYRU8E8CY5hjBH/XRzqQV57OQZhuA
- 8Hh/HA+fbXNxrVQppnaZg++CgZCCzvmi2Zq/fU0hl7vwAvqM8NSA/tOjKWuWmGZQAcRpHA99Q5i
- 5dzmmG5zwl7KRd2KkAA==
-X-Authority-Analysis: v=2.4 cv=Qe9WeMbv c=1 sm=1 tr=0 ts=6a0eeae8 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=KqSLSXJeGewGWCaGpY8A:9 a=CjuIK1q_8ugA:10
- a=iS9zxrgQBfv6-_F4QbHw:22
-X-Proofpoint-ORIG-GUID: PwsJIVWXM5-fdqlSsisTRvsNp_Aog18G
-X-Proofpoint-GUID: PwsJIVWXM5-fdqlSsisTRvsNp_Aog18G
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <abtlUQqMOxj5PwGB@baldur>
+X-Authority-Analysis: v=2.4 cv=do/rzVg4 c=1 sm=1 tr=0 ts=6a0ef885 cx=c_pps
+ a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=NEAV23lmAAAA:8 a=mDV3o1hIAAAA:8 a=0QWIX89dG7aUu2ROjmkA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
+X-Proofpoint-ORIG-GUID: JIHZl4orvt9DJVCAojpuLraw7IDRRUL6
+X-Proofpoint-GUID: JIHZl4orvt9DJVCAojpuLraw7IDRRUL6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIxMDEyMyBTYWx0ZWRfX5sRbmbg0wxhe
+ cCxx3VlAKVGS6hkKsnXIGTJwhI/6cSMaN5cjMllOmWXNeFirXuD38Y+ki9OdzIyfdCq9i08zEqV
+ RxEbjQ55BwyF3ytU2C9Z1c7GRV/lLSIGeS9KffQjCVKTo8depLGi3hyyZ9rZJRqiQ0ltaldTRUK
+ mpUwxWW6v7Csipe6AzY1PlQmTD46cQUL78DbjLaES7Gq5ttUNhhqMmL3abpVauactYcG4oH3LBO
+ XAL1TVimRO9XWVIaQs8NSd1XqtGj6USE3HBP2rf7r7rV9FaP4sgPfXNzDawrYcZh1sIUQ3VsL9x
+ GaJb65bfHQwpP+GpC1DDEltVZXCYFwcE46RkX8h17Cnhi2YNfw2bu4nTz4hEWFlclKx93os6X4z
+ Ay5+Xwi2IBcJ4Z0CkWYim1fpveM8ad1Hr4Qkjhi1LSq0eRY7tstDevY9k7V1iGteN3St4l6Eyka
+ WGqMVd1rGFVLG8fnXtA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-21_01,2026-05-18_01,2025-10-01_01
+ definitions=2026-05-21_02,2026-05-18_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 lowpriorityscore=0 adultscore=0 phishscore=0
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2605130000
- definitions=main-2605210113
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 clxscore=1015
+ spamscore=0 malwarescore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605210123
 
-On Thu, May 21, 2026 at 11:42:49AM +0800, Jingyi Wang wrote:
-> 
-> 
-> On 5/20/2026 4:27 PM, Mukesh Ojha wrote:
-> > On Tue, May 19, 2026 at 12:24:23AM -0700, Jingyi Wang wrote:
-> > > Subsystems can be brought out of reset by entities such as bootloaders.
-> > > As the irq enablement could be later than subsystem bring up, the state
-> > > of subsystem should be checked by reading SMP2P bits.
+On Wed, Mar 18, 2026 at 09:55:29PM -0500, Bjorn Andersson wrote:
+> On Mon, Mar 16, 2026 at 11:46:47PM +0530, Mukesh Ojha wrote:
+> > On Sun, Mar 15, 2026 at 09:24:39PM -0500, Bjorn Andersson wrote:
+> > > On Wed, Mar 11, 2026 at 01:45:44AM +0530, Mukesh Ojha wrote:
+> [..]
+> > > >, to get all the regions as
+> > > > separate files.  The tool from the host computer will list the regions
+> > > > in the order they were downloaded.
+> > > > 
+> > > > Once you have all the files simply use `cat` to put them all together,
+> > > > in the order of the indexes.  For my kernel config and setup, here is my
+> > > > cat command : (you can use a script or something, I haven't done that so
+> > > > far):
 > > > 
-> > > A new qcom_pas_attach() function is introduced. if a crash state is
-> > > detected for the subsystem, rproc_report_crash() is called. If the ready
-> > > state is detected, it will be marked as "attached", otherwise it could
-> > > be the early boot feature is not supported by other entities. In this
-> > > case, the state will be marked as RPROC_OFFLINE so that the PAS driver
-> > > can load the firmware and start the remoteproc.
+> > > So these need to be sorted in numerical order, by that number at the end
+> > > of the file name?
 > > > 
-> > > Co-developed-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-> > > Signed-off-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-> > > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> > > ---
-> > >   drivers/remoteproc/qcom_q6v5_pas.c | 58 ++++++++++++++++++++++++++++++++++++++
-> > >   1 file changed, 58 insertions(+)
-> > > 
-> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > index da27d1d3c9da..ac2a00aacd2e 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > @@ -60,6 +60,7 @@ struct qcom_pas_data {
-> > >   	int region_assign_count;
-> > >   	bool region_assign_shared;
-> > >   	int region_assign_vmid;
-> > > +	bool early_boot;
-> > >   };
-> > >   struct qcom_pas {
-> > > @@ -510,6 +511,57 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
-> > >   	return qcom_q6v5_panic(&pas->q6v5);
-> > >   }
-> > > +static int qcom_pas_attach(struct rproc *rproc)
-> > > +{
-> > > +	int ret;
-> > > +	struct qcom_pas *pas = rproc->priv;
-> > > +	bool ready_state;
-> > > +	bool crash_state;
-> > > +
-> > > +	pas->q6v5.handover_issued = true;
-> > > +	enable_irq(pas->q6v5.handover_irq);
-> > > +
-> > > +	pas->q6v5.running = true;
-> > > +	ret = irq_get_irqchip_state(pas->q6v5.fatal_irq,
-> > > +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
-> > > +
-> > > +	if (ret)
-> > > +		goto disable_running;
-> > > +
-> > > +	if (crash_state) {
-> > > +		dev_err(pas->dev, "Subsystem has crashed before driver probe\n");
-> > > +		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
+> > > Do you manually punch these in? How do we make this user friendly?
 > > 
-> > I am not sure if this is already discussed, but what if it is the first
-> > crash with recovery and coredump enabled? What would be in the dump,
-> > nothing? As there is no segment, is it expected since Linux did not load
-> > this?
-> > 
-> > This is even true if it is a crash after a successful attach.
+> > Yes, manually.. but I think we can do better. We could make
+> > this more user‑friendly by using the section header and string table in
+> > the md_KELF binary both of which existed in the earlier implementation.
+> > Then, we can write an upstream‑friendly script that reads this KELF
+> > metadata file, checks whether a binary with the registered name is
+> > present, and stitches everything together to form a complete ELF that
+> > the crash tool can consume.  Let me know if you have any suggestion..
 > > 
 > 
-> It is suggested by Bjorn:
-> https://lore.kernel.org/all/qfls6xlvfppqw7p6rjpmzqesh6sbob4myfc6dz47qh3jywqrjk@5xiutkbybk5d/
-> 
-> I did a hack to test the recovery by setting crash_state true, it can recovery
-> (stop and start) successfully with below patches:
-> https://lore.kernel.org/all/20260519-rproc-attach-issue-v2-0-caa1eaf75081@oss.qualcomm.com/
-> 
-> For coredump, it will return from the first "list_empty(&rproc->dump_segments)" check in
-> rproc_coredump as segments are not configured in attach.
+> Can we somehow identify that these regions belong to the minidump and
+> teach QDL to build the ELF for us?
+
+Raised PR for the QDL https://github.com/linux-msm/qdl/pull/243 which
+does not use numerating order and we can completely drop.
+
+With that PR, QDL will be generating minidump.elf .
+
+And I checked the latest crash tool with no extra patching and just the
+--minimal option (as we do not have everything in the minidump) and just
+dmesg.
 
 
-I was not against any of the stuff, but mostly checking, if we agreed on not collecting dump
-for first crash when soccp minidump is not initialized which falls back to full dump of the soccp.
-I see soccp minidump id in the downstream but we have not added in 6/6.
+$ ./crash  --minimal minidump/vmlinux ./minidump/minidump.elf
 
-> 
-> Thanks,
-> Jingyi
-> 
-> 
-> > @Sibi, has this series been tested on Glymur with KVM?
-> > I don't see the iommu property in the below patch.
-> > https://lore.kernel.org/lkml/20260403-glymur-soccp-v3-1-f0e8d57f11ba@oss.qualcomm.com/
-> > 
-> 
+crash 9.0.2++
+Copyright (C) 2002-2026  Red Hat, Inc.
+Copyright (C) 2004, 2005, 2006, 2010  IBM Corporation
+Copyright (C) 1999-2006  Hewlett-Packard Co
+Copyright (C) 2005, 2006, 2011, 2012  Fujitsu Limited
+Copyright (C) 2006, 2007  VA Linux Systems Japan K.K.
+Copyright (C) 2005, 2011, 2020-2024  NEC Corporation
+Copyright (C) 1999, 2002, 2007  Silicon Graphics, Inc.
+Copyright (C) 1999, 2000, 2001, 2002  Mission Critical Linux, Inc.
+Copyright (C) 2015, 2021  VMware, Inc.
+This program is free software, covered by the GNU General Public License,
+and you are welcome to change it and/or distribute copies of it under
+certain conditions.  Enter "help copying" to see the conditions.
+This program has absolutely no warranty.  Enter "help warranty" for details.
+
+GNU gdb (GDB) 16.2
+Copyright (C) 2024 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-pc-linux-gnu --target=aarch64-elf-linux".
+Type "show configuration" for configuration details.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+
+NOTE: minimal mode commands: log, dis, rd, sym, eval, set, extend and exit
+
+crash> log
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x512f0030]
+[    0.000000] Linux version 7.1.0-rc2-next-20260504-00228-g2595b97d6061 (@f134cd6ce783) (aarch64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #11 SMP PREEMPT Fri May 15 09:34:41 UTC 2026
+[    0.000000] KASLR disabled on command line
+[    0.000000] random: crng init done
+[    0.000000] Machine model: Qualcomm Technologies, Inc. XXXX
+[    0.000000] earlycon: qcom_geni0 at MMIO 0x0000000000a9c000 (options '')
+[    0.000000] printk: legacy bootconsole [qcom_geni0] enabled
+[    0.000000] efi: UEFI not found.
+...
+..
+
+
+[   48.488296] sysrq: Trigger a crash
+[   48.492004] Kernel panic - not syncing: sysrq triggered crash
+[   48.497944] CPU: 3 UID: 0 PID: 363 Comm: sh Tainted: G        W           7.1.0-rc2-next-20260504-00228-g2595b97d6061 #11 PREEMPT
+[   48.510055] Tainted: [W]=WARN
+[   48.513140] Hardware name: Qualcomm Technologies, Inc. XXXX
+[   48.519699] Call trace:
+[   48.522276]  show_stack+0x18/0x24 (C)
+[   48.526089]  dump_stack_lvl+0x34/0x8c
+[   48.529903]  dump_stack+0x18/0x24
+[   48.533366]  vpanic+0x47c/0x4dc
+[   48.536646]  do_panic_on_target_cpu+0x0/0x1c
+[   48.541078]  sysrq_reset_seq_param_set+0x0/0x94
+[   48.545788]  __handle_sysrq+0xd4/0x1b8
+[   48.549679]  write_sysrq_trigger+0xc0/0xd0
+[   48.553930]  proc_reg_write+0x9c/0xf0
+[   48.557737]  vfs_write+0xd4/0x358
+[   48.561187]  ksys_write+0x6c/0x104
+[   48.564724]  __arm64_sys_write+0x1c/0x28
+[   48.568809]  invoke_syscall+0x54/0x10c
+[   48.572704]  el0_svc_common.constprop.0+0xc0/0xe0
+[   48.577578]  do_el0_svc+0x1c/0x28
+[   48.581025]  el0_svc+0x38/0x138
+[   48.584317]  el0t_64_sync_handler+0xa0/0xe4
+[   48.588660]  el0t_64_sync+0x198/0x19c
+[   48.592474] SMP: stopping secondary CPUs
+[   48.796761] Kernel Offset: disabled
+[   48.806510] Memory Limit: none
+crash>
 
 -- 
 -Mukesh Ojha
