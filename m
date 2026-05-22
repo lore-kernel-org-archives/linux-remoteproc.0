@@ -1,164 +1,344 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4114D40960E
-	for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 14:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779459524; cv=none; b=dNl9OVDRU0O2vrzrppwzquOyXmAP6maFI0IMwOx9a02MHA4wXnsx23uK6J9ypI4w8K5xvPpkKz/nG/9dcsZEoIuc3xyQzfjFME6kwwgacsozaRaLQV0b+UhzQRdONITA9eMnsKHjtzV0C0RIjQ6i6rJfIo4sCQN5wAP9YUz2YX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779459524; c=relaxed/simple;
-	bh=rKk5kOKOEdac4MZDYNoEU/rAZHIAOQAi0IZqIe6ALQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uO+HAoJ4MjlQP6TgFG4HokdF6m5I17NTX0B57OjkVdF5YRfNIMyj1tDoEel9v9eqlBs/zx6cRer9Lycac72JKmmWmDkD/yiMuxwLCao2RkfuLuyKEiDmI4ghkdoNugmxKmlpsTlgPjOIYH8CR0050xphDIuGw6XpfeMdKiuuqUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lC/qTYdH; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LeXBEt02; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980FE4508F8
+	for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 14:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779460572; cv=pass; b=lGdlSPicwkmCcYm39yq3IfN0qqKmteZVlWTLf2C46kFX4NBf+ByFjpqNOc797VqmB5b4zs4FNruZ/+Y68wy8j4lK32Sl60hFd2PK0TYq4hUHL0ITsVkkbw3StffMVaih42IFI/4QPKIKhb2eWGU6FiZ/yNGYL2h182nE2BfHUUs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779460572; c=relaxed/simple;
+	bh=j38wf+VC5DAzbntAhpsUFIyPbbdFLRrkd6Xq9bT3rT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h7ZI9KcchqeDGh8rDjDi62CuKwfk48PiDOyxzStsMFSPGY6UJwlC+4fN8kRtez6OhywwcuAO37x8+KSTTz0czz1wsuwMcR0tHWTeDzgvF+LuQsKe6oXYvdGlq+zv2XkJ7ZW21fvJS2bxm42ZwWNYuPfBoo1Xx83o3M/n835HWUg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yp1Q2x57; arc=pass smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lC/qTYdH";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LeXBEt02"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64MA49CN3947396
-	for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 14:18:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WyDl8BgAmZhuooaEQjQQKYRZ
-	WgOcTk7HRhEVqKAFQSI=; b=lC/qTYdH8wki0e42+wogfuum9zXKCwai2CHMwcKw
-	PJ+cH5tx1IwjNH8N0iw1HEX8AlA+0Nu9wGx5TCFKI544nCNM+Mr/jn9XxWhbuY2G
-	SnyYUN2NHc3yXEkaVmG1T/LV7Iv/6rafb9c6Q8gcbB5ARKkKC89Aw8mFfhYgQJiZ
-	maCfjHbu/4k76yapW2UbxDr3awRSrYdIDxMk6g8UN4FvRt6EpuclhdzT4YyYjTqx
-	zLGh7YX5US3MgII4n3K60mM2dOiOqdYZjJKY02pKLFy+/AqkadlPKkIMwZvVpt4O
-	/CDmcNLt6gzxE7HKNMUsxWTMxT27C1pfnadWFMVeqUI9yg==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ean2ngv00-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 14:18:35 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-634ce585b41so3086476137.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 07:18:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yp1Q2x57"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-67b6da5a618so11915184a12.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 07:36:10 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1779460569; cv=none;
+        d=google.com; s=arc-20240605;
+        b=frmem0+RSq7I02ybda2sFOkj/3Kzx9vtVj1aqierD9S/DQpVBQkSP/OWLny71OtRkO
+         TXbtbih+f1hYiAXXoMvsuUjB+KpDw9syGkHhibG09saNM0r62EYfo5sjdsyHOdEEuriA
+         0S3o6fel2gNiieRFyee6/qIk9sFPH8mCMGPAplHXr5axpdMeTAFnKDhfITwMNzjqfJbt
+         e5s4CLD15bSAhM+6J41lfxUNIwd09m24J49/XsiZlwI9WM3NY+VG0ODXtDt88j3SXR8J
+         QBhb2+5RhggiGTwsUFhvQvIlZ8ZDuY+ylOSlQSu0B0gVo7w8s+pgqyJ3GBASLAPB4B5c
+         NwAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=iUwMeqcEfoa+UhA6Poo9oYBXifJqH1s4dgYVK+G4bjs=;
+        fh=WL5OT1wTeljQlAaL2rm5N98EFw18dYl3Adj4OvnsC+U=;
+        b=LJKklLKPL9p3PKK3FEGTKsA/E+Ge+LFBSOzpEoWG5OUIMR7bw6yGoyjxTqPzNM/uly
+         H0/37367OEuMTTCeDMH3R4aWN7iCHkY2E5LEYc4zxTfZd/E46uRKF30eMfDjkHqu3e5b
+         RHfymAgzZZf6FO7YwV+IYKFwX4nJsoE9NKdl0XR60/B1db9RwYpFHHHGv6THCDNUC5aF
+         HadaJcZoMpyvzxzHXQjLjB8fTegnfmLNOtbb3UV34Iu2/Y2wiZ4Anq/7LtCVOkNZ4pnv
+         Iny9HGMm+2h2DsAl1ZxUG4IF19ANXDSRBXIAEypGJ1xQpjWjVRwQAm41e/XFLwPs5woF
+         k+FA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779459514; x=1780064314; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WyDl8BgAmZhuooaEQjQQKYRZWgOcTk7HRhEVqKAFQSI=;
-        b=LeXBEt02HZSYEe7i2x+zIUub+62caNQExGmDpEA60faVSpgKUx15ZKLhcwaF9Z077u
-         Xi2adR/8wqxN46ZffvNvyLfzddmAM/jnSChT1R3lbf3Smu3Rr0C5HteBQJgsNtBYZhWe
-         LjyQXpKzU+0Ty3RM0aaGeNTES87Byvn+KA7oKmfNOPzIAsjTlshNeq6G86OCYRNGsX+/
-         1G7EK6kP+M4CkT9a83HP9HxnNifEE4aGPXgC3jfGRXTtvyMQ+unDEfOaW91dseLNHWnV
-         3TLfjRkwW7SCs7Nu0bjtxf7Po5HLGI8GTZOdgRSEEKnvqMsYK8Hb0U1VSe5wTl8CN7mZ
-         XW5A==
+        d=linaro.org; s=google; t=1779460569; x=1780065369; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iUwMeqcEfoa+UhA6Poo9oYBXifJqH1s4dgYVK+G4bjs=;
+        b=Yp1Q2x575F+qcN39AxBPIVrbtOThhSkgntmRkk08lyB2vTFWp/HtGliSYxwKxGpd8q
+         8hZa/72U3FbHKh8CVgTJC+3Yw3T165ceTzmdlQZllKBn212A31g+SgvIOhmIWF8pprft
+         A1DvHc8bb4yAaMAyp5hLXT/zYP4bWcm4dOGiOiDYSA8oSIUKr7MgGkRdO/a2WFKx1om7
+         EKgJjQxnnxu5mQbFTCUWnYad29hQ5JP8Y2FPer1EknCQ4Z66BPuXSxG0tkMH2qz0pn81
+         O1drDXBxvg5fMpM0oHNtOKOl7dnsBNGOk23huuPlLUYZ+AfEa/wH1FtksICDvdp8WX6S
+         Y2zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779459514; x=1780064314;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WyDl8BgAmZhuooaEQjQQKYRZWgOcTk7HRhEVqKAFQSI=;
-        b=fme6cXOwjrw4e1+VcCBDdXGDK4alrbNTOKDUwZf5Kb7bUQHt62K0yaUQzWTEl2J+Ae
-         X5HOA36ZxDyGP/9buCuz6hA2Fxy/vWLb3zq4xN56qwqOUZ0jS+BSMmX2X0qz1fLOz1bT
-         8+H1QfxRgN6uFE2ki+wJw7o4vabfNdgr6qRnlsPnOn5zPMueaWIDTFjKmgh9YoxZG+QQ
-         W+nV878ILRCD6PVoMU3T644BYjG0tAANXY764BaE12aIHKXvjQOk49uHYahL3rt2sfNi
-         nRxFQ0/FunGUgZmICTzYzJhwX3I0UzomjEXMxY06j45Lzy4Na9RW67TJ9D0IifbbCO6p
-         HoSA==
-X-Forwarded-Encrypted: i=1; AFNElJ81cJvtF2zxhH08EFS3foZquwC0aaxv+RKHHapiZPFXx0w1rWkuBz/gces23Ha3RLMBuK/LfnFAKSpVNWy3CCOE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuBEzP9e2+dgj/2ngN7t8UHDU8st1LOFMqim/FCNdMZuu57z7E
-	pYE0+aXNQJLFvyBZBkUnp0g5tulJ/d1zvKSD/FmHePPXEG+N79N27qebvKTj2FGNKn76qw/bwBH
-	blq8iLsQ7D5AOAhQ3X1gsgUCRcEkNuzJ+EiFa4EynETRUkJbLksy3lGNZPS4cTtCp+z3oufs5
-X-Gm-Gg: Acq92OGEwmUVO5ff+hYMWtiMfT2QiZ+xRWxuU45K2uaoCE8vBMStGeX4qGT/iOkNVHK
-	ep8rqoP+jGYkWR97O6xpirqvjvVM+hjVCVQnOwUJb0WM2+y2d/yecf3onqtZsGt+2Sx0mhVEnS0
-	tw0ezGMeLEpaBRwhh88mLUauUOxa/Oqt3AFoL0JD7noUDFec8cU8wEEAXgg53FmqJ2Mfv3hnq+a
-	RV6CL3LIq402bt3u+Ct0qO/9exefu1Zklkzr/fuGsUWGyp5SAxNx4JTXnxfMN2xDGdcqmDk2h/i
-	q9zt5pKxYM1L2yuTARBmpS2DR3Ot9LJ/WAhotZmvV9lHQxpiBYLDGBVmdtfuFicHJbcGCB56tFa
-	1pDEtyymIjETf8pue0vdwYNxLZi2pS/v4/z2/+WD3Xza0jB51EvaCtUvkmBmOpRQKN9XI8syiCo
-	bAOmcPCSjgKzk/uWkoAAedD0hw/SGv8XyY1Fw=
-X-Received: by 2002:a05:6102:3fa4:b0:634:16ce:aa3b with SMTP id ada2fe7eead31-67c7d976b13mr1838988137.15.1779459514020;
-        Fri, 22 May 2026 07:18:34 -0700 (PDT)
-X-Received: by 2002:a05:6102:3fa4:b0:634:16ce:aa3b with SMTP id ada2fe7eead31-67c7d976b13mr1838915137.15.1779459513473;
-        Fri, 22 May 2026 07:18:33 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-395dca031d5sm3900271fa.9.2026.05.22.07.18.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 07:18:32 -0700 (PDT)
-Date: Fri, 22 May 2026 17:18:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Komal Bajaj <komal.bajaj@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
-Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Add Shikra remoteproc support
-Message-ID: <zirwveacipcy2wamaqntykkwhhdirw5ln35qkqs7aqrv7v4evl@qyk2tygwrbdu>
-References: <20260514-shikra-rproc-v1-0-9afdedeee002@oss.qualcomm.com>
- <20260514-shikra-rproc-v1-2-9afdedeee002@oss.qualcomm.com>
- <g5wv5mi25l7jyq3vbe3dovriyxguw22m5uvyslkbjbyprbxfnq@kep4x3kxeqmj>
- <fd67b063-a986-4d34-99e6-fe55e72d0187@oss.qualcomm.com>
- <db13f51a-98d5-4793-9c7d-3edccc3a603c@oss.qualcomm.com>
+        d=1e100.net; s=20251104; t=1779460569; x=1780065369;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iUwMeqcEfoa+UhA6Poo9oYBXifJqH1s4dgYVK+G4bjs=;
+        b=VB6guLXlizLlGArstm+Z5BNu4TmHltLKAF1lMGTPesbsa/3/jGYIt36BtA1YTTlj9O
+         6+Ox1MPnOuuwco1ObpRgCCjY0ujFfkFDY0XOprA/2jK0Mdv3QE6MOCbvR+FC+5ibw61M
+         04rqEImfpllV3gCeEMdBfEPua+GR0VG0Tt5MZSNopSAUJX/QSTJtYmpDnT6+cRtosclR
+         /Ha1QjN+vJIdQGSyka5AkNM3uDGJJFb9xJF3eUVGegbWEzeDWGqJMNmOZnEv/ggtRa5X
+         I2owu5TryxoxBTdqVYiSbxwS1r+X98HrlgHXe9/l+0umdNCK0vKogC8H/ZHcivjLnduq
+         mYHw==
+X-Forwarded-Encrypted: i=1; AFNElJ8uqOksmJ+8g4X1gcrKw9cHB/Gh0Q8ODpODyct/pZydHF4xHRcrhBd7kqyuUWimHyIOChnFHOIx4hAyWlg0vdAg@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYEq9VXCE2LezgTaehtMD/Q/wo+dq4hDi6hBEFH6Lgonm4O9CD
+	sSDGvXwiR9LBIKdGhJ/jRLhqxEvhEWUUkX7O9ukQdfBjFKsk3FbwSF5O5bkaMeVylmyfvrL0Vj2
+	hPC86yEdLhALVLjyWtCtplV8kjHBEGryCjYlY/ko0wg==
+X-Gm-Gg: Acq92OGPz1z76dmaVd/SJLzNqhSV+7j6mnd3MS/1v4B07/PfmatAnz09JkYhrWrr126
+	pElJxlVLPHT560nYml5Qzu5BKQRkwu+kfFykat9MYOCFKUfct78QXNPtf8ynYnpHGpBpKk6gMxZ
+	Gq19N/WkpJqmd+1nDuhrhVE+su8qFCVVVb2a0LpfVREYFSEeSkwXpDaRZPBNwHD3kzyjfaYOEF2
+	8Zqzt9QFOYKcsoo/gBkZFEhCl715W92MKo8KxuYS2bpKPKXx2OgC9GvG/Z/JgnF1BGsySyW2OME
+	VZKpISNHDBNfAJ0AY2KxA/OV7oIFY9igeKPFdDnM
+X-Received: by 2002:a05:6402:4302:b0:678:edab:6f40 with SMTP id
+ 4fb4d7f45d1cf-6889c422bfemr2167605a12.4.1779460568984; Fri, 22 May 2026
+ 07:36:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db13f51a-98d5-4793-9c7d-3edccc3a603c@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=XvDK/1F9 c=1 sm=1 tr=0 ts=6a1065bb cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22 a=EUspDBNiAAAA:8
- a=jH77VO39CjRCDWMup1EA:9 a=CjuIK1q_8ugA:10 a=crWF4MFLhNY0qMRaF8an:22
-X-Proofpoint-GUID: 0cWvmqac5oEEi3kRhYJVSwpTD5rmMr-J
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTIyMDE0MiBTYWx0ZWRfX8OSiAdQIJ3CM
- K7dAci99VW6r68NqSM9a5xsD6GymPMe43z4LDaQom9AXnPejDIV8qJkN5Tb3Fki03N7Ghip2CuY
- ZPvULCAq46hV853l3PTIiSp6B0Iy//qxESmwII1oEah2gkOMuvWtjzDEeTHgAwghx6BZ4G2oHG3
- t442FyVHxT+v+OizTJjnO9KvDohFASj77dc+8IosTvKK/v5L1OiPVD83emSBQET4VXRTpMl2Z7u
- 71z+4AIlWL5Zn8o5mk+HXgduK/DTt5stqLbnbe1gDBTJaoinlctsQT6oejTL0U6FdadbEOX4SwT
- ci/Ar8h9xt+sArS9mMlx+eDvCtXqsjTOzMRHy4d+yZ3zNh0zLshAok0o4CgAMz5yg0T7vGn6UAj
- 4frc0tODYhKzpAo9H9C2f/+AgiR/jiwqHn5TavBywkOdLv1HEBnraBKrPvVX1XMHye43EGYMYuG
- Xfgh52P6GkJMJREAjUA==
-X-Proofpoint-ORIG-GUID: 0cWvmqac5oEEi3kRhYJVSwpTD5rmMr-J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-05-22_03,2026-05-18_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 lowpriorityscore=0 malwarescore=0 phishscore=0 spamscore=0
- impostorscore=0 adultscore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2605130000 definitions=main-2605220142
+References: <20260501143707.1591110-1-tanmay.shah@amd.com> <20260501143707.1591110-3-tanmay.shah@amd.com>
+ <ag9FcXeIIiJWdld7@p14s> <cbd418a3-1585-4592-8e86-b0750e19ec0f@amd.com> <be63e9a0-e325-46eb-9c03-54dc22878ed6@amd.com>
+In-Reply-To: <be63e9a0-e325-46eb-9c03-54dc22878ed6@amd.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 22 May 2026 08:35:57 -0600
+X-Gm-Features: AVHnY4LtwSS30HSBRhVWgPEV2L1wcvx433tVw1FA3kjt7ZBX0HcUlAqaB0u01-U
+Message-ID: <CANLsYkwqx38oafrjbFmKMhQ7Nat8X3W1GSY76BjN=Q+mavAE5w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] remoteproc: xlnx: enable auto boot feature
+To: tanmay.shah@amd.com
+Cc: andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, michal.simek@amd.com, ben.levinsky@amd.com, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 22, 2026 at 02:13:08PM +0200, Konrad Dybcio wrote:
-> On 5/19/26 5:03 PM, Komal Bajaj wrote:
-> > On 5/14/2026 12:48 AM, Dmitry Baryshkov wrote:
-> >> On Thu, May 14, 2026 at 12:17:31AM +0530, Komal Bajaj wrote:
-> >>> From: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
+On Thu, 21 May 2026 at 12:48, Shah, Tanmay <tanmays@amd.com> wrote:
+>
+>
+>
+> On 5/21/2026 1:38 PM, Shah, Tanmay wrote:
+> > Hello,
+> >
+> > Thank you for the reviews, please find my comments below:
+> >
+> > On 5/21/2026 12:48 PM, Mathieu Poirier wrote:
+> >> Good morning,
+> >>
+> >> I don't recal reviewing the first revision of this set.  Can you provide a link
+> >> to it so that I can read the comments that were provided?
+> >>
+> >
+> > Here it is:
+> > https://lore.kernel.org/linux-remoteproc/20260422202558.2362971-1-tanmay.shah@amd.com/
+> >
+> > The device-tree bindings needed rework in v1, so I sent v2, before we
+> > ever reviewed the driver part.
+> >
+> >
+> >> On Fri, May 01, 2026 at 07:37:07AM -0700, Tanmay Shah wrote:
+> >>> remoteproc framework has capability to start (or attach to) the remote
+> >>
+> >> The remoteproc framework...
+> >>
+> >
+> > Ack.
+> >
+> >>> processor automatically if auto boot flag is set by the driver during
+> >>> probe. If remote core is not started before the Linux boot, and linux is
+> >>> expected to start the remote core then it uses "firmware-name" property
+> >>> to load default firmware during auto boot.
 > >>>
-> >>> Add the CDSP, LPAICP and MPSS Peripheral Authentication Service support
-> >>> for the Qualcomm Shikra SoC.
-> >>>
-> >>> Signed-off-by: Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
-> >>> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> >>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 > >>> ---
-> 
-> [...]
-> 
-> > Ack, I'll address it in next revision.
-> > 
-> >> point you can use sc8180x_mpss_resource instead.
-> > 
-> > minidump_id is required for Shikra. (decrypt_shutdown is not applicable and will be removed in the next revision.)
-> > For minidump_id, we still need to use shikra_mpss_resource instead of sc8180x_mpss_resource. <?>
-> 
-> Is there a chance the same ID would be applicable to 8180 as well,
-> just that we missed it in the past?
+> >>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 48 +++++++++++++++++--------
+> >>>  1 file changed, 34 insertions(+), 14 deletions(-)
+> >>>
+> >>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>> index 45a62cb98072..652030f9cea2 100644
+> >>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >>> @@ -899,17 +899,18 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+> >>>  };
+> >>>
+> >>>  /**
+> >>> - * zynqmp_r5_add_rproc_core() - Add core data to framework.
+> >>> - * Allocate and add struct rproc object for each r5f core
+> >>> + * zynqmp_r5_alloc_rproc_core() - alloc rproc core data structure
+> >>> + * Allocate struct rproc object for each r5f core
+> >>>   * This is called for each individual r5f core
+> >>>   *
+> >>>   * @cdev: Device node of each r5 core
+> >>>   *
+> >>>   * Return: zynqmp_r5_core object for success else error code pointer
+> >>>   */
+> >>> -static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+> >>> +static struct zynqmp_r5_core *zynqmp_r5_alloc_rproc_core(struct device *cdev)
+> >>
+> >> Why is there a need to change the function's name?
+> >>
+> >
+> > Before, the function was actually adding the rproc core by calling
+> > rproc_add() function, but now it only allocates the memory by calling
+> > rproc_alloc(). For auto boot to work it's important to add rproc core
+> > after all the other hw is initialized (such as mbox, tcm, sram,
+> > power-domains etc). More details below [1].
+> >
+> >>>  {
+> >>>     struct zynqmp_r5_core *r5_core;
+> >>> +   const char *fw_name = NULL;
+> >>>     struct rproc *r5_rproc;
+> >>>     int ret;
+> >>>
+> >>> @@ -918,10 +919,15 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+> >>>     if (ret)
+> >>>             return ERR_PTR(ret);
+> >>>
+> >>> +   ret = rproc_of_parse_firmware(cdev, 0, &fw_name);
+> >>> +   if (ret < 0 && ret != -EINVAL)
+> >>> +           return ERR_PTR(dev_err_probe(cdev, ret,
+> >>> +                                        "failed to parse firmware-name\n"));
+> >>> +
+> >>>     /* Allocate remoteproc instance */
+> >>>     r5_rproc = rproc_alloc(cdev, dev_name(cdev),
+> >>>                            &zynqmp_r5_rproc_ops,
+> >>> -                          NULL, sizeof(struct zynqmp_r5_core));
+> >>> +                          fw_name, sizeof(struct zynqmp_r5_core));
+> >>>     if (!r5_rproc) {
+> >>>             dev_err(cdev, "failed to allocate memory for rproc instance\n");
+> >>>             return ERR_PTR(-ENOMEM);
+> >>> @@ -932,6 +938,11 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+> >>>     r5_rproc->recovery_disabled = true;
+> >>>     r5_rproc->has_iommu = false;
+> >>>     r5_rproc->auto_boot = false;
+> >>> +
+> >>> +   /* attempt to boot automatically if the firmware-name is provided */
+> >>> +   if (fw_name)
+> >>> +           r5_rproc->auto_boot = true;
+> >>> +
+> >>
+> >> What happens when a firmware name needs to be provided in the DT but you don't
+> >> want to automatically boot the remote processor?
+> >>
+> >
+> > I think that use case is not needed. If the user/system-designer doesn't
+> > want auto-boot, then having firmware-name in the device-tree serves no
+> > purpose. User can always load the firmware via sysfs once kernel boots.
+> >
+> >>>     r5_core = r5_rproc->priv;
+> >>>     r5_core->dev = cdev;
+> >>>     r5_core->np = dev_of_node(cdev);
+> >>> @@ -941,13 +952,6 @@ static struct zynqmp_r5_core *zynqmp_r5_add_rproc_core(struct device *cdev)
+> >>>             goto free_rproc;
+> >>>     }
+> >>>
+> >>> -   /* Add R5 remoteproc core */
+> >>> -   ret = rproc_add(r5_rproc);
+> >>> -   if (ret) {
+> >>> -           dev_err(cdev, "failed to add r5 remoteproc\n");
+> >>> -           goto free_rproc;
+> >>> -   }
+> >>> -
+> >>
+> >> I'm not sure why there is a need to move this to zynqmp_r5_cluster_init()?  Is
+> >> it simply to make the error path easier to handle?  If so, please do that in a
+> >> separate patch.
+> >>
+> >
+> > [1] This was moved to make auto-boot work. The remote core can auto-boot
+> > only after other hardware is initialized. The zynqmp_r5_core_init()
+> > initializes sram, TCM and power-domains of the core. Also, mailbox is
+> > requested before zynqmp_r5_core_init() as well. We can't auto-boot core
+> > directly without all this. So, I had to move rproc_add() at the end of
+> > the cluster init, and rename above function from
+> > zynqmp_r5_add_rproc_core to zynqmp_r5_alloc_rproc_core.
+> >
+> > If you prefer, I will add above explanation in the commit text, or as
+> > comment right before rproc_add().
+> >
+> >
+> >
+> >>>     r5_core->rproc = r5_rproc;
+> >>>     return r5_core;
+> >>>
+> >>> @@ -1280,6 +1284,7 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+> >>>                     if (zynqmp_r5_get_rsc_table_va(r5_core))
+> >>>                             dev_dbg(r5_core->dev, "rsc tbl not found\n");
+> >>>                     r5_core->rproc->state = RPROC_DETACHED;
+> >>> +                   r5_core->rproc->auto_boot = true;
+> >>
+> >> I thought this was done in zynqmp_r5_add_rproc_core() - what am I missing?
+> >>
+> >
+> > That function is now zynqmp_r5_alloc_core() as mentioned above. Also,
+> > until now, auto_boot was set to 'false' only to show that it is
+> > disabled. It is actually used and enabled now.
+> >
+>
+> "I thought this was done in zynqmp_r5_add_rproc_core() - what am I missing?"
+>
+> I probably misunderstood this comment. Here is the correct explanation:
+>
+> The auto_boot setting in the zynqmp_r5_alloc_core() is done if the
+> 'firmware-name' property is present in the device-tree.
+>
+> Here it is done, if the remote core is already running. This is to
+> support attach-detach use case.
+>
+> So, auto_boot is possible in two cases: 1) If firmware-name property is
+> available (Linux boots the remote), 2) If firmware is already loaded and
+> remote was started by the boot loader. (Linux attaches to the running
+> remote).
+>
+> This is the second use case.
+>
 
-Do we know, which platforms were the first to support minidump at all?
+Thanks for the clarifications, I'll have another look at this set.
 
-> 
-> Konrad
-
--- 
-With best wishes
-Dmitry
+> Thanks,
+> Tanmay
+>
+> >> Thanks,
+> >> Mathieu
+> >>
+> >>>             }
+> >>>     }
+> >>>
+> >>> @@ -1304,7 +1309,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+> >>>     enum rpu_oper_mode fw_reg_val;
+> >>>     struct device **child_devs;
+> >>>     enum rpu_tcm_comb tcm_mode;
+> >>> -   int core_count, ret, i;
+> >>> +   int core_count, ret, i, j;
+> >>>     struct mbox_info *ipi;
+> >>>
+> >>>     ret = of_property_read_u32(dev_node, "xlnx,cluster-mode", &cluster_mode);
+> >>> @@ -1390,7 +1395,7 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+> >>>             child_devs[i] = &child_pdev->dev;
+> >>>
+> >>>             /* create and add remoteproc instance of type struct rproc */
+> >>> -           r5_cores[i] = zynqmp_r5_add_rproc_core(&child_pdev->dev);
+> >>> +           r5_cores[i] = zynqmp_r5_alloc_rproc_core(&child_pdev->dev);
+> >>>             if (IS_ERR(r5_cores[i])) {
+> >>>                     ret = PTR_ERR(r5_cores[i]);
+> >>>                     r5_cores[i] = NULL;
+> >>> @@ -1435,16 +1440,31 @@ static int zynqmp_r5_cluster_init(struct zynqmp_r5_cluster *cluster)
+> >>>             goto release_r5_cores;
+> >>>     }
+> >>>
+> >>> +   for (j = 0; j < cluster->core_count; j++) {
+> >>> +           /* Add R5 remoteproc core */
+> >>> +           ret = rproc_add(r5_cores[j]->rproc);
+> >>> +           if (ret) {
+> >>> +                   dev_err_probe(r5_cores[j]->dev, ret,
+> >>> +                                 "failed to add remoteproc\n");
+> >>> +                   goto delete_r5_cores;
+> >>> +           }
+> >>> +   }
+> >>> +
+> >>>     kfree(child_devs);
+> >>>     return 0;
+> >>>
+> >>> +delete_r5_cores:
+> >>> +   i = core_count - 1;
+> >>> +   /* delete previous added rproc */
+> >>> +   while (--j >= 0)
+> >>> +           rproc_del(r5_cores[j]->rproc);
+> >>> +
+> >>>  release_r5_cores:
+> >>>     while (i >= 0) {
+> >>>             put_device(child_devs[i]);
+> >>>             if (r5_cores[i]) {
+> >>>                     zynqmp_r5_free_mbox(r5_cores[i]->ipi);
+> >>>                     of_reserved_mem_device_release(r5_cores[i]->dev);
+> >>> -                   rproc_del(r5_cores[i]->rproc);
+> >>>                     rproc_free(r5_cores[i]->rproc);
+> >>>             }
+> >>>             i--;
+> >>> --
+> >>> 2.34.1
+> >>>
+> >
+>
