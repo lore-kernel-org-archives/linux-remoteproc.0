@@ -1,147 +1,258 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013068.outbound.protection.outlook.com [40.107.159.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2722A376BEF
-	for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 12:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779451639; cv=none; b=akM5enH78IajpaUnejEiOFtsXCv05Cs0AmWC9v9lwiFLQaptxjebT4YPSqg09d0+W4bFFkdkOLGYB9M6sBle9+je8WWYiahxGTR677wCDuqQVdNGGFmtwy9OdY2luM5BXOwYfse3NahACWCasgvSpQnEsn/gowZWifytr1LZwCw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779451639; c=relaxed/simple;
-	bh=8igC6V5gCG3ORklcZkPqAGB8ALlBsuox//yt23Usl/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6p3ivLuIghbGX7TkbUhrM9jIyV7/kSmrbmLtTfqGJq9snMSLRHfMwnzqBcBqkRKfapIIWzVtXR4pjwAM+RVNKz5mBI11p32vTl49h+y3Wjutk/EMYH4gxfoW7mVmsk/phNPW9JEgt0o/pg2aLqMqnqpk9kVCMvrjmNdJ3Qpth8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xrXiQlFa; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E413036A352;
+	Fri, 22 May 2026 12:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779451697; cv=fail; b=fGg9o+kjlgQyjmooelNpDnTk2ycCJARaUObZD2KaOeZ7GTzSfc5DH4/0D+FnPZzH6/lGOeinUv3p52UmMb8IQHGUZapXOsNRtoCl3BC1C7dNjpz+qrCIBKjnDJlDS9GiTlZYxjafTyqa3tgBkyLemRy2IAzTLeuRkOnU3OQdhW8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779451697; c=relaxed/simple;
+	bh=IuP2bx0RKneN23jCleusTfeNY7Na9eb1D2+j6KC40xs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XkSCAPUeFeWQpwj3DsrHOT0l6YmOjQLYiJCHIKBhZLe/zgaLzSrZoyhna4+9+2OPQkOK6kB1XkaOWuSr+J83B/DUbHaMQSz6mwuUmtL93bwnsrrYmUTP0l8tacHpViPhAqx30APFV5VvVN1lpOusvg0IRLwlIqYO3e3XWVsxHBY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=vTV6ZZcT; arc=fail smtp.client-ip=40.107.159.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xrXiQlFa"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-4526a8170ceso3621576f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 05:07:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779451636; x=1780056436; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JRpKrzH+DoH1DNrXivPjGcJUPcnVpmZeapPmijxinYU=;
-        b=xrXiQlFaPJ/aLpbWyCLckZcJYzAZ0DHMvhSeQMnPl04u9uo62gl/6y6jHbMcehvrTc
-         VkEOcuMSU78CUwhaLf61XV1kAtBWm6v4o3yr8lCGpKNMI45gxKYxMyGulXAmZ5dxNKx2
-         ggFJ6Y05/bAw1WOzUiWD0RxZVXN5WU7ttsseAO0QdO6C5t8CzZF83Zyyp9qF4XaxbaKd
-         wHt02U/XPME2J54LjCnMufIhmXRPML1LUjQXYHSbZ19t3u0ES8hjMYfkvtAgt1y95B2p
-         xUCQdL4p9yBDCCVwQXHijbDz95vlaD6DCqEwrnxLEZcKZsn2YwttybTdbg7YkT4rPPyo
-         /uqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779451636; x=1780056436;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JRpKrzH+DoH1DNrXivPjGcJUPcnVpmZeapPmijxinYU=;
-        b=StIH3qN8NO02JBOBYrbDWFQxGxMigNrfrx+3wvorSbUGGTU8WVt4JlhGMJH5UHeDxS
-         omRIhKTBnGipd6U8pXPzHpsFx9vCFQlwyEgtKu0tyaFK7UCOIdH79V20tDjHb86vE2oU
-         7TdA3W5+w6tab447NTYKu/6pPodcZ7Y19wCeTuuKlShVXE1YakyaPkXA2q2BbB/XnkpW
-         9SK9596HcnWkDbdyHyynTAipJ81H/zsoB0BTp563cQTyPP9E75xFnLMnDXUbj5uLaGUu
-         cGnMc96/HDSdvvT7GFZJkdQw759CnBQvHDFSHOH2W9lGlsk95QkDpOkDz+f64YvYGXZU
-         er1Q==
-X-Forwarded-Encrypted: i=1; AFNElJ8l3FPW/PYkuXCWyMktmh2jDV8njfpOoLn0vEQNsHygwIk6yUW+ZT9EQ7fu9aEAudlK/pNueG3nXZxvBJake+aQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIMXE213SqI5Xx0bCABtIdrfHmQn9J3r6x130m776ZOwsYfCCr
-	bx+kAPR438OvHIVx02qk69FdmYghKORqAjPtU2EN18tvONhyGNpeWTn6RtBkcwmDXOU=
-X-Gm-Gg: Acq92OH6fHndzXYBTubayeaO2WXRi4fdJAI/l9yMcu5btNrrPEuzgX9FPYn5Ai3NdBF
-	qc0lju6JfBfbwXLCYYZ64EM5T9eeoFtMSpg5jXcfXL5JyDk2830NzL+0bGN4sg1usY26YiFCCFk
-	F2FTidDgZxoh2vMcfkGIRXBJ1dZWX+JWAcxAQHexLSLTR/MCrom00e15G4C8n8PbDqAzx7UtmYJ
-	FapALHuOowM5HJpVfKbTSe2AUSbei6j1nnEGK8dEwGkyTmFk28r26YcNh0NyHooaiHhqVlKsSVD
-	/rBlgylFHZxb7eFzRU4/2PaiwwxfhKdIdniY/6hSwWFeBFSrvLKJpxADgxhHiKDKmyXK30SmnPf
-	QmmZPUZTfAggy9QeUCducUEJpwQC67zqmlcQ/7LZzaeIMDCEz+XyfZ36R9QzsY9JWyyWa2bc253
-	W86tloeztzJS351JotNLrCC49kR1ik
-X-Received: by 2002:adf:e009:0:10b0:43d:c95b:c46f with SMTP id ffacd0b85a97d-45eb38bfdebmr3493505f8f.38.1779451636530;
-        Fri, 22 May 2026 05:07:16 -0700 (PDT)
-Received: from linaro.org ([77.64.147.221])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-45eb6c9f58dsm3678635f8f.5.2026.05.22.05.07.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 05:07:15 -0700 (PDT)
-Date: Fri, 22 May 2026 14:07:06 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	shengchao.guo@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-Subject: Re: [PATCH v6 5/6] remoteproc: qcom: pas: Add late attach support
- for subsystems
-Message-ID: <ahBG6jKYdSAboWjs@linaro.org>
-References: <20260519-knp-soccp-v6-0-cf5d0e194b5f@oss.qualcomm.com>
- <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="vTV6ZZcT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CvufNR6qJQpBYXgf50Tgsu3KlWEP51NwBrhAT/HRo+P1AgfD7Vs4Cxxkhp06UOUiuFftls3rcFwGHnU55gnC7iZCswHaqhUYh5UDGZyo2CUtTc2kSkG103kY1bbWLIbyDFpUBRz0x7hjMC+eQVRo8ZIonGig4Oi2NVFo8BU/Ok7Y/PJCM9R5OP1QzciwguSSx28paNYTlNckTjnM7E5qdAgTLGeQOyGknDupCN4XOJeDaRCKi3XCMNMbbC4mczWRQf7IJiSBl0w808UiR8eUBXeRskIKEQUAk4qKOiOtjkz8Ygx/8NosyuqNXQ93UWmlEyhQsfm9oEFGqubFPXucOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2ArHg5DL4QmZN4SVDzU3xgqgjiQWUHENX/SyoOWnX/U=;
+ b=fqOrbNzbU/jixsFM4TN8MYW5lV3BM+ZAWthQGhG0i4rg3edvZlLl6QCTxB9Pnr4VrbXttiayMOvo5oXfl8AwCC/haBg3TeOKlN/CCWdJOpWIkhkQ3ogKQyMtQU/WadLJNzoV4rDXM3Bsc6sH+FfDt/ja+chi//WTBcbLlxE8WPv9SS1qVL8xNN7hn7Yr0mw7MoECIQ6r8/BBUh1dNZOqSvAWw3IIeVOJrxhWXovxDwVsvLpvrj480Gm7X+u+zeLnrjd3N9gI0Dxn2M4SjfxIT19oO73R9GTknl8yUnYPN7SYDOwGu/B/vc6MyOfm3VQL9K3Re3sbf3IT3f0k//q+zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2ArHg5DL4QmZN4SVDzU3xgqgjiQWUHENX/SyoOWnX/U=;
+ b=vTV6ZZcTo2Ef6G2TD/3Ccvc+ekBjApdxfJf3B6yMIbK+hMhEgzDEWkVeicmIDqlOkfgmtzWpTlKGTaN9r1dj378D+i8clV6RxWHSnx4EXSFZLH1afnN+5at3L9HCwlnuiaXPJyJ38hpSqD2cbBRgVF39nooWlNohmQRsX1IBhZ1VrwYUcwi+NZNun2xzC/QIapveUGbuEGHa84uURImpY8pnWa00Wxqmv2rXXGfB+wyqMPKX5hJoczATHg6qwRvMGKfpoxk/v/0Bt9xN1N6vfC4jqPnOXWb5wL3wR+Lrccs6ZMDVaeLCmMtHYg/uvRNmUtBeij/sbP1U4NNhvANA2A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GVXPR04MB12316.eurprd04.prod.outlook.com (2603:10a6:150:2c6::8)
+ by AM8PR04MB8004.eurprd04.prod.outlook.com (2603:10a6:20b:248::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.17; Fri, 22 May
+ 2026 12:08:12 +0000
+Received: from GVXPR04MB12316.eurprd04.prod.outlook.com
+ ([fe80::fc6e:ca22:f065:def4]) by GVXPR04MB12316.eurprd04.prod.outlook.com
+ ([fe80::fc6e:ca22:f065:def4%6]) with mapi id 15.21.0048.016; Fri, 22 May 2026
+ 12:08:12 +0000
+Message-ID: <8651e526-2f7e-4345-ae3d-6cbbdbfbf789@oss.nxp.com>
+Date: Fri, 22 May 2026 15:11:26 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/5] arm64: dts: freescale: add DT overlay for
+ MX95-15x15-FRDM RPMSG usage
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20260522111849.783-1-laurentiumihalcea111@gmail.com>
+ <20260522111849.783-6-laurentiumihalcea111@gmail.com>
+Content-Language: en-US
+From: Daniel Baluta <daniel.baluta@oss.nxp.com>
+In-Reply-To: <20260522111849.783-6-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR4P281CA0294.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e7::15) To GVXPR04MB12316.eurprd04.prod.outlook.com
+ (2603:10a6:150:2c6::8)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GVXPR04MB12316:EE_|AM8PR04MB8004:EE_
+X-MS-Office365-Filtering-Correlation-Id: beb8a58e-4809-4144-922a-08deb7facb7c
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|376014|7416014|1800799024|366016|921020|6133799003|11063799006|4143699003|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	TCUrIC4/lN8bnDol5BMKYwAxCCEanRQhEg/pKzL+ncPrV7ZhjFS9NzJJfAXwmm/xeTN+KMNXq0P4AFQYRT0rffftKGZ+aN0BwUBiEUiBpxifBwQIzuL+Rm3SAj1fB/S1vGQRNCUmDQP5YkRfT/vORCaUN4hSuBndGn5fWuq/3Eos7vs4iQATa5G+v7p2fjPXPy1qCJwSOYu76/QM221lwArndrd9KrAV6Mo4Vb2cNjqHp7d803BaaVUHcIVgHev+ZbHrS/6/OJ/K87NyjlZAet6B7r0uzexWH+1w+ZdV+QcuAzZw/yzMk4sa1a3Uudu2LH0m1tMvEuuR7lkjK81pXuVOO7wXxnhxSqXEizSoV/UcrWOIXWa/IuVo2sfxmsY6BdQW+Rff+K4DfXDopa158a4jjq/TErGBlPmXKxCvTv6vJaMQP1Mi+CNhtRxyYTv+aqLyjYzAAxD1phIXFMVLvX0YhMrVvvc+uILYSgfpz1EdlkIJY5cEnORfNMwlV4Mla9/tLURWXElJ7L22NYav6jk+IOYz0X58Prfhcp8l5IRH6HPdgEVPruWQcmFqYRpPe4mRNamNqwqEuFp1e++yRq4CAfcaOGSSYJA41HeDRR3kqSBQx0Gvip2KQDBKxM+839OmYsNjevrJv9RdBeg6Z2Bb9R66z4t3eTpcO5tv9i5t044JN8mIolhSdBYGaawK0tBW/HK5n/eKEzmSocw011yGGXiUlWjazTNWiO3MT1Y=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR04MB12316.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(7416014)(1800799024)(366016)(921020)(6133799003)(11063799006)(4143699003)(22082099003)(56012099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YjJnaEZWSVFDbU5PKyttbGx0TkhhMlIvbUhDQUVrMFdYelpPeFVMdTcyKzFj?=
+ =?utf-8?B?TUplRXQ3UlhjWVprYUI0RFcxRUVHSVRreEtVOThQdDZJNXNSc0ZxcVN0MTlO?=
+ =?utf-8?B?WUdUOU9ORXJ2OE1jZXIvVTJxLy9WaVNnb1NWbnFhdU1mYjVmWFhRT3pEZmp2?=
+ =?utf-8?B?VEtQTitwdFJoMGk3VTh3QnE2MGJjNEJWNzRwK0Y1YmNncTFmSTN4YnNoNysv?=
+ =?utf-8?B?b0NPakxsSHhoYzk0bXpaWkJrUGV4UVBoejUxZGVrSDlxQnh6dWhibVg2Lysy?=
+ =?utf-8?B?YmFRRHo0bE15cDlvMFJSZzkxN2phQUlrc1VsNDY0bFZ0dmVNdC91b0IxbUc0?=
+ =?utf-8?B?a3A1dVBhOXZvUVFYMUdpVzhkQmNGY3h5UE9ONXprUXV3WE1oZTNUVGtsNWlE?=
+ =?utf-8?B?Z05yTWFCbzA0NytXeGtsejFaVWlkZUgvcDFhK29IeFVZdjNXRDNiYndxVDMx?=
+ =?utf-8?B?Uk9KVTNnTlFzV1pNaGZZdWVjK3lBTFllaGpKQ1pXMEtaMjdRUTRacnpadm1O?=
+ =?utf-8?B?SUwrNE4yenlLclJOLzRjb2lCeWpzSFc2S0J5NEYrRnY0Z205cVd2RU9DRVRs?=
+ =?utf-8?B?dnN0ZmxUYkxXTE9SME1LdFI1YStDL0FCN1R2VUdHNHBnOWdqbkVFM3BVa0pK?=
+ =?utf-8?B?RXRVa2tBVzAwUTlsalZSYmN3YXgwNUhWcWoyMyszazU4Sk16QUNLVWdGaWJ2?=
+ =?utf-8?B?K2l3bmJlcEpXWVNmd3dGeTJkKzZBRDhwcjVITG03ajBKVm9NWmYrWkZ0MklS?=
+ =?utf-8?B?L1NOVTI4NVBHTFM3K3lDKzB6bzZabnd5YUh2LzN5QXJHdExSMk84SXVFczJn?=
+ =?utf-8?B?blI3eDdLcFAwN3J4bHBMcTVrNDNReFUwcEFJcWcwbEduYlpXZFpxSWhIS2Ro?=
+ =?utf-8?B?OGZLZ2daZmtZenhOK1NuN3FUbVZSSiszdmxFOHJIaVFuN2tDWm12KytBUWxv?=
+ =?utf-8?B?bW9lbHN4cGFodVc5anN0ZlQrTjNlbXF4V2dyMWk5M2pzTTB4WGpJUy8xalFL?=
+ =?utf-8?B?cnJMc2pSQWQ2NEhLSVlVb05WL20wR21lK2w0NVU1OWk0amJBaHUxeitab1lR?=
+ =?utf-8?B?SjZWRXVBOFcvOGVvLzErRHVQTjNhc0JKUjlST3lSODZudkd0cktqeCtwODZ6?=
+ =?utf-8?B?cCs5OVJ2QktlSC9DcThPOFBCTExzOTR5S04zRVpENE5jemhhT2dyMlFkTkVI?=
+ =?utf-8?B?eFVkdVE1a281U3RZcWF6a1pGZlh0TCtpQUhiOGpnNDMvNllYRTBidTRJeFF6?=
+ =?utf-8?B?dHNzOVBvMGNmSUl0UXZabTlwOVkwS2J2amEybEJ5NUdkL1NHRVVsVHNGQUpu?=
+ =?utf-8?B?UWlwZEFDZ3h5TUdMcDZ5TjBFSnRodEhTUk5zMkVtZGVqMjFETFdqQjNqMVBo?=
+ =?utf-8?B?aGFyZDdpZmltaWNFMWwrU241RWk4QkxXaldTK1BqWUVnLzJ0M0dJdHJCRHR5?=
+ =?utf-8?B?MzFLRi9kdEpJQlY0UytXWE1HQmZxYUwyM3NCcXQ0a1ZWS1ZoWWxyTEhIOHho?=
+ =?utf-8?B?ME1iTzhwVXo5Tjd0R01wWFkrZXF5dWZpZzdMWHpiSXlBYmhGODJmR3hQTkZt?=
+ =?utf-8?B?YitUdFBLaWZTNWZiR3I4U29lZ2VnSXNmMU1KRnNuRkVSUUYzdVY4cHF0QWZD?=
+ =?utf-8?B?VHBKTW9uMm9FY2xiZzBKdzJXYmNUcFJnU09FZ1BlZFlBRVFXWHJxRE1jVTNZ?=
+ =?utf-8?B?VTBOSVZuM01Da1JMOGphZHRNMGFLTnE3b1ZZb1J5cEprMDEwWnVnS285SjZQ?=
+ =?utf-8?B?aWZXaWdtRzVCVXlxNDJneEx0OHdWOVdhQUJjZ2hTcUs1cFBMSlRHbDJrQm5K?=
+ =?utf-8?B?aEV2bjA1OWhNZ2QyOEhKNHRrSWdEajFkMW1wazZZazNNTk5mTzdRbWZ1Z0wr?=
+ =?utf-8?B?VUFmT2N3VHRaVU1MNW1wbDNqM0ZEb3Eyc2M5aWJvSXhQM2syRHlTemRieFR5?=
+ =?utf-8?B?TEdDWmxldDNFc29vWnZ1STEzTFFickZsdk9nOUJFOFY1SDBxOFNUeXpIejJG?=
+ =?utf-8?B?S1Jxb2lBc1cxMk1YRDJ5MjBPQmNxd3NDb2RFS1pWai8xRDNGRkFkMzNxTDdn?=
+ =?utf-8?B?VkRTa1RoQ2dXVy9ZOG10VnFYYlpmRXpVYm5ucEdMMzNnNnlNR1MyNmdYWGxF?=
+ =?utf-8?B?YktNV0QrMWtxS1lKUWFGc1VodWhzMW1kZGh2ZS8xMHYvRyttNnpscmIyRVMz?=
+ =?utf-8?B?T1V2QVFRSWtaUjFwZHQxY0dIR3BEMEZZdWh5VTFjcXdaM0VhQUQ4OUdrT2pB?=
+ =?utf-8?B?RDRTb2lSS2tzRDJUOVhVOWx3NXYyQ2pPVWVSa292MnBqNThabnZWVVRxQllX?=
+ =?utf-8?B?bmJLWkg5aGg5TTFiTVdiNmdLNlh0TnQxVEM0WXJHNG1LRE9tYUpTUT09?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: beb8a58e-4809-4144-922a-08deb7facb7c
+X-MS-Exchange-CrossTenant-AuthSource: GVXPR04MB12316.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 May 2026 12:08:11.9519
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WkZ5cIHiI6lVkoDrFOw3TcvIeQ+TEJh2pqrUxTLRejDhNxsrRg66VA3GyCGZ0+HPheRQoCcZZxaqEYAyoVIY6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB8004
 
-On Tue, May 19, 2026 at 12:24:23AM -0700, Jingyi Wang wrote:
-> Subsystems can be brought out of reset by entities such as bootloaders.
-> As the irq enablement could be later than subsystem bring up, the state
-> of subsystem should be checked by reading SMP2P bits.
+On 5/22/26 14:18, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 > 
-> A new qcom_pas_attach() function is introduced. if a crash state is
-> detected for the subsystem, rproc_report_crash() is called. If the ready
-> state is detected, it will be marked as "attached", otherwise it could
-> be the early boot feature is not supported by other entities. In this
-> case, the state will be marked as RPROC_OFFLINE so that the PAS driver
-> can load the firmware and start the remoteproc.
+> Add RPMSG DT overlay for the MX95-15x15-FRDM board. This overlay is meant
+> to be used with the mx95evkrpmsg system manager configuration for
+> remoteproc and audio over rpmsg-usecases.
 > 
-> Co-developed-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-> Signed-off-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/Makefile        |  3 +
+>  .../dts/freescale/imx95-15x15-frdm-rpmsg.dtso | 65 +++++++++++++++++++
+>  2 files changed, 68 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 513f61eb27b8..a30a99e42426 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -521,6 +521,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx943-evk-pcie0-ep.dtb imx943-evk-pcie1-ep.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-ab2.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-frdm.dtb
+> +dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-frdm-rpmsg.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-sof.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-toradex-smarc-dev.dtb
+> @@ -539,6 +540,8 @@ dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-mallow.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-yavia.dtb
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-zinnia.dtb
+>  
+> +imx95-15x15-frdm-rpmsg-dtbs = imx95-15x15-frdm.dtb imx95-15x15-frdm-rpmsg.dtbo
+> +
+>  imx95-15x15-evk-pcie-dtbs += imx95-15x15-evk.dtb imx-m2-pcie.dtbo
+>  dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk-pcie.dtb
+>  
+> diff --git a/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso
+> new file mode 100644
+> index 000000000000..b39444dde66e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso
+> @@ -0,0 +1,65 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright 2026 NXP
+> + *
+> + * This DT overlay is meant to be used alongside the mx95evkrpmsg SM
+> + * configuration for remoteproc and audio over rpmsg.
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&{/} {
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +
+> +		vdev0vring0: memory@88000000 {
+> +			reg = <0 0x88000000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0vring1: memory@88008000 {
+> +			reg = <0 0x88008000 0 0x8000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev0buffer: memory@88020000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0 0x88020000 0 0x100000>;
+> +			no-map;
+> +		};
+> +
+> +		rsc_table: memory@88220000 {
+> +			reg = <0 0x88220000 0 0x1000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	sound-micfil {
+> +		status = "disabled";
+> +	};
+> +};
+> +
+> +&cm7 {
+> +	memory-region = <&vdev0buffer>, <&vdev0vring0>,
+> +			<&vdev0vring1>, <&rsc_table>;
+> +	memory-region-names = "vdev0buffer", "vdev0vring0",
+> +			      "vdev0vring1", "rsc-table";
+> +	status = "okay";
+> +};
+> +
+> +&edma1 {
+> +	/* reserved for M7 */
+> +	dma-channel-mask = <0x40>;
+> +};
+> +
+> +&edma2 {
+> +	/* reserved for M7 and V2X */
+> +	dma-channel-mask = <0xf>;
+> +};
+> +
+> +&micfil {
+> +	/* reserved for M7 */
+> +	status = "disabled";
+> +};
 
-Unfortunately, removing the ping-pong functionality that was present in
-previous patch versions makes the whole mechanism a lot more fragile.
-I'm not entirely sure if this has changed in SMP2P v2 or more recent
-firmware versions, but in my experience the SMP2P "ready" bit does not
-tell you if the remoteproc is actually running. The problem is that the
-"ready" bit is asserted by the remoteproc when the firmware is ready,
-but it is not cleared when you shutdown or forcibly stop the remoteproc.
+For this usecase usually status needs to be set to "reserved".
 
-If this is still the case, you can easily reproduce that with the
-following test:
+Otherwise, 
 
- 1. Start the system as usual and let it attach the remoteproc
- 2. Manually stop the remoteproc in sysfs (echo stop > state)
- 3. modprobe -r qcom_q6v5_pas
- 4. modprobe qcom_q6v5_pas
- 5. If the "ready" bit is still set, the driver will try attaching the
-    remoteproc, but it's actually not running. No recovery will happen.
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
 
-In this situation, it is very difficult to detect the correct remoteproc
-state without relying on an additional query mechanism like the
-ping-pong feature.
 
-You can make it a bit more reliable if you also check the status of the
-"stop-ack" bit. This would tell you if the remoteproc was cleanly
-stopped with the SMP2P "stop" mechanism. However, that will typically
-still not fix the case above since nowadays remoteprocs are typically
-stopped via the QMI qcom_sysmon and the "stop-ack" is not set in that
-case. I believe this might set the separate "shutdown-ack" bit though
-that is described for some SoCs, I never finished testing that.
 
-And even if you check both "stop-ack" and "shutdown-ack", that doesn't
-tell you if the remoteproc was forcibly killed using
-qcom_scm_pas_shutdown() without gracefully stopping it first. The ideal
-solution would be querying the PAS API to tell us if the remoteproc is
-actively running, but the last time I checked I was unfortunately not
-able to find a documented call that would tell us that.
 
-Thanks,
-Stephan
