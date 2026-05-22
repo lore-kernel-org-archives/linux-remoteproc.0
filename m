@@ -1,75 +1,52 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0C13793C6
-	for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 12:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF81E41B366;
+	Fri, 22 May 2026 14:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779452092; cv=none; b=mguBLoDdtE9zpm6T827EljPu8c2BrUmo0AXbVv5d3SE3DNgX9lJwVJ8m1IlItaUZ7j58vtMpj8XivfMlXxb40v3dE3mIUd17SsdtBWvdj0vxAttvp5595iO2S0mrKOaCfvT7/liS3xPWSkr4LP/dJ3Zf5W3MGQjKWz0dshu0P0o=
+	t=1779458593; cv=none; b=f47lMy5F24E6p4GBEchg1vY+2FL/Gw+C4M0/zoMrS1iqA2GV5f7w9NJnBEKD0qqC3a3QvtDJJkiuxEiIssW8JmJaBA3j7Ukko00PADtj+06UQ6YbH4w1E3p/rYKQXeuggdn9aYBEBxDjiTH3tlmWegxTsoIb37b7omRBsykJVJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779452092; c=relaxed/simple;
-	bh=Z7WYvrDcaqVs+7anYHSzDEo0GveQb9WfUn9Sv2ufkrU=;
+	s=arc-20240116; t=1779458593; c=relaxed/simple;
+	bh=4kSaALWt2CYQtSO08OULmKTu6gRW0vwaKeECn92Cwu0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jArLyjEm3HsTXBCpW5BL8xt/+RDqO78WtRzSF8YU/Zf50WG6oGAsJ77Prdx9InAdF1UGRjSJDUKtWs8QadAZF7Qi7HyBiNK4LDkp0bXUCf0/nGzNOc0igV5HVG41r3RpqfyW7Ro7K7N9okAaQzK4Yf4WaGiUv+DhjJty/33VmeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m0Fsud1G; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=E30GGCwiPnKpWShrVR9EL0Cijpc4TZ1ZpgHV1kGQ0hbgaua2e6wyKXcBgFNN8NfJXws3CFZ+ITXZn+F+w3w+h0Y4jW1JcNhxNrSaVLp/AzVhaK32rA5wgIyOnIttzNmXvJnlZc6mbgT2Ew22ZpwLQxHoeXvbhfhl+kr4Nkzb7uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=iy8YrBTr; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m0Fsud1G"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-490426d72f7so7042335e9.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 22 May 2026 05:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1779452089; x=1780056889; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=90y7x6sel2hIxCCCCElmz6nzXLa/RsMCG0kg8p2DOaI=;
-        b=m0Fsud1Gxp0A8SkTR5C0pRKApqBj6JUPahFYoDWh2ptUal5BCx/UXuw2RUloFw91gf
-         q3JN5vRkU3sjFH96HQWK5i47SG4xsiaXIzrboaBJvLeXxqDgbV17aA4XwmZf8P25OlzG
-         mugxOEsLwPsvFz41oMp7hXimqM9Gta1TNm33zmhkGhjWN4Jl/XbLtuZ8sTALwmqRpMbr
-         WfOc0oTzYvEozAusYkjQZBR7uNbNvwUy9/E5ZhQLSLwzpKoz2TVxDYWt2p/QCeCYQeAN
-         GaylET7RT/8qNeI0QEY3dbf3FFdGznURXuppwfsrZK1nWaF7cOvU5JYYd5/4oyBU4ad8
-         eoqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779452089; x=1780056889;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=90y7x6sel2hIxCCCCElmz6nzXLa/RsMCG0kg8p2DOaI=;
-        b=aSV6KnV+CRIZslpviWL+W4Cx/0KBZOS+sBhJsQg9t8Eh5x+yWtOmXz/mjciZWU9VPG
-         V0vUt5YfpYwhUKEE2scVaC3TS6WMmvL1LrJOaXjUgG2/s05FG7WNH2n6wnMMq0KnSs4K
-         +fpQRa/oVbb6SZlrUlla/izqKOzaQhFNsYjm8v+P12Hdy6yovyTAH8CnNMOKT8Z9vdB1
-         yr4jBU+XK9V1Xf0cU+LM0ebA7mzdOULTpGd7bzWfrrPhoqdJunfTNXQcRVZBIrLi90DX
-         NpoaFApW5pBm0mLMqhjK+zto9AvTFwpx5Xw1SroKvHGQXo9jUXwnXYxHrkeAPQ3V2wB0
-         oFVw==
-X-Forwarded-Encrypted: i=1; AFNElJ+vrOKKSRSyktIsl+xSg7jMcEa1/7jiWSY+APn87BO/AXok4DV/qyk7nhRHQmA3mv4sRNsYJZzoohCPlBKiXyL+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV3/LajnWcMeGi4C2GWkxGu0URkfku/LRt8FBxUPPRMVqhhxFc
-	Pa7G/6AI5DNHP9JFfS7uoUWXckxg3+/0PJPOa3LwZFYLEqb/i38CT6d3toSzod3QfzQ=
-X-Gm-Gg: Acq92OGCTggq5bPJ5g6F7hhvHVDsl8Y502Cj/PM9WlS1F48GG8rSc+aBLuLPm6vuEjL
-	rDPRsX21YuA1Va1ApQNRk4HbwzfhM4DkVCggo+c4zs4iTh/cYXqUDFhV6i7vmD9eVR/t+y+WfhW
-	ELX/w4diWnS4k8ITA94VANJ0AiQfkqQxhYWnay/UfiagyXZFRfVPKIiqABQoyAh09Mkn9Uhelpf
-	CvCnNTd6egp0JK85/1BplKJElcTzc+1FviE2ViaciyDsGrZ+BFGZhCJk2UStbGBMzJoxBQI+SPc
-	fPkbPvSSCuOg2UgMrfYRNdl+EeGtNHuDWgOvCKRF304VB0j7Yev/ThoeBT3jbM9/H37AD8uXnbs
-	NrhbBGu1TRHjw1nIp+sYKx3t8oZDqXRzi9Rp7r4Ckfz99NdRoUUu6tu65X5fU2pDEBJqaw/BZ4X
-	pJUsGzSoJ+jH56r996a/F6RW5BrXzz
-X-Received: by 2002:a05:600c:4ecc:b0:488:a824:fdff with SMTP id 5b1f17b1804b1-490426d190cmr45585095e9.22.1779452088697;
-        Fri, 22 May 2026 05:14:48 -0700 (PDT)
-Received: from linaro.org ([77.64.147.221])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4904527526dsm43297775e9.4.2026.05.22.05.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2026 05:14:48 -0700 (PDT)
-Date: Fri, 22 May 2026 14:14:46 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="iy8YrBTr"
+Received: from francesco-nb (93-38-247-131.ip73.fastwebnet.it [93.38.247.131])
+	by mail11.truemail.it (Postfix) with ESMTPA id ECF911F81F;
+	Fri, 22 May 2026 16:03:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1779458584;
+	bh=aQfUzeILNu5tcktKZdX1Dp06noZVwCjrBQxp9UsjPno=; h=From:To:Subject;
+	b=iy8YrBTrKvM9jFeXPgme3Laz8+PEoMqJufzTCq0Rl15cX0EjncveuErsbv2FyD/AV
+	 HD3E7dH21SGFSibTVLc8JaNqku7hCeyD4JXOm8PGljjOqScxzWzO7iW4mikL2+qFbh
+	 DXGZgaVJs6rb7CTFZ5UJaUl8IxcEHMXrks+N3MLHXzBavEZRP87p0grvzodlGSpDrj
+	 UwzEI9CKcskxWgKh09aVYRS9rTS189LdqHRoG6XdjuiNfgXxUZv7DgJiM2jllfGUWN
+	 gVwYNY9OjYbhbMYs8cRHdpz0x0dxve4e/Z8078dANCCcHFfXXgWvliep7414eivNIJ
+	 TQqmQb2Mbj61Q==
+Date: Fri, 22 May 2026 16:02:57 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] remoteproc: core: Check subdev start status in
- rproc_stop()
-Message-ID: <ahBItk6iPQTGaZWT@linaro.org>
-References: <20260519-rproc-attach-issue-v2-0-caa1eaf75081@oss.qualcomm.com>
- <20260519-rproc-attach-issue-v2-2-caa1eaf75081@oss.qualcomm.com>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] arm64: dts: freescale: imx95-toradex-smarc: move CM7
+ node to SoC DTSI
+Message-ID: <20260522140257.GA93826@francesco-nb>
+References: <20260522111849.783-1-laurentiumihalcea111@gmail.com>
+ <20260522111849.783-4-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -78,71 +55,39 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260519-rproc-attach-issue-v2-2-caa1eaf75081@oss.qualcomm.com>
+In-Reply-To: <20260522111849.783-4-laurentiumihalcea111@gmail.com>
 
-On Tue, May 19, 2026 at 12:20:03AM -0700, Jingyi Wang wrote:
-> For rproc that doing attach, rproc_start_subdevices() is called only when
-> attach successfully. If rproc_report_crash() is called in the attach
-> function, rproc_boot_recovery()->rproc_stop()->rproc_stop_subdevices()->
-> glink_subdev_stop() could be called and cause NULL pointer dereference:
+On Fri, May 22, 2026 at 04:18:47AM -0700, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 > 
->  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000300
->  Mem abort info:
->  ...
->  pc : qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem]
->  lr : glink_subdev_stop+0x1c/0x30 [qcom_common]
->  ...
->  Call trace:
->   qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem] (P)
->   glink_subdev_stop+0x1c/0x30 [qcom_common]
->   rproc_stop+0x58/0x17c
->   rproc_trigger_recovery+0xb0/0x150
->   rproc_crash_handler_work+0xa4/0xc4
->   process_scheduled_works+0x18c/0x2d8
->   worker_thread+0x144/0x280
->   kthread+0x124/0x138
->   ret_from_fork+0x10/0x20
->  Code: a9be7bfd 910003fd a90153f3 aa0003f3 (b9430000)
->  ---[ end trace 0000000000000000 ]---
+> The CM7 remoteproc configuration is common to multiple MX95-based
+> platforms (e.g. MX95-19x19-EVK, MX95-15x15-FRDM, SMARC-IMX95, etc.).
+> Therefore, move the node to the MX95 SoC DTSI. While at it, split the mbox
+> channels using <>.
 > 
-> Introduce "subdevs_started" flag to indicate rproc_start_subdevices() has
-> been called successfully. Ensure subdevices are only stopped if they have
-> been started.
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 4 +++-
->  include/linux/remoteproc.h           | 2 ++
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f02db1113fae..6e23cb11e515 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1308,6 +1308,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  		goto stop_rproc;
->  	}
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+
+...
+
+> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
+> index 3e35c956a4d7..f8760ac067fa 100644
+> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
+> @@ -272,6 +272,13 @@ opp-1000000000 {
+>  		};
+>  	};
 >  
-> +	rproc->subdevs_started = true;
->  	rproc->state = RPROC_RUNNING;
->  
->  	dev_info(dev, "remote processor %s is now up\n", rproc->name);
-> @@ -1712,7 +1713,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
->  		return -EINVAL;
->  
->  	/* Stop any subdevices for the remote processor */
-> -	rproc_stop_subdevices(rproc, crashed);
-> +	if (rproc->subdevs_started)
-> +		rproc_stop_subdevices(rproc, crashed);
+> +	cm7: remoteproc-cm7 {
+> +		compatible = "fsl,imx95-cm7";
+> +		mboxes = <&mu7 0 1>, <&mu7 1 1>, <&mu7 3 1>;
+> +		mbox-names = "tx", "rx", "rxdb";
+> +		status = "disabled";
+> +	};
+> +
 
-Thanks, this approach looks better. But where do we clear this flag?
-Shouldn't we do that here?
+As sashiko noticed, this is introducing a regression. No-one is enabling
+this node anymore.
 
-In addition, I think we also need to set subdevs_started = true if
-attach succeeds. And clear it when detaching a remoteproc. I think you
-just need to update all the callers of rproc_stop_subdevices() and
-rproc_start_subdevices(). Or, which is probably simpler, just make the
-check directly inside these two functions to cover all users.
+Francesco
 
-Thanks,
-Stephan
+
