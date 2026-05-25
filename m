@@ -1,164 +1,140 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011014.outbound.protection.outlook.com [40.107.130.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083D43E314D
-	for <linux-remoteproc@vger.kernel.org>; Mon, 25 May 2026 09:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779701589; cv=none; b=eEZPb31hTJGz03Pa/cGJkQO0bqVQwJ9cKwjvxsH7AE8F84/Ph3MNFj0gEiGov01aftEhh6bGCBQzkaRSGmF28Gh6U2OVA17wr65qu7KrlUhCskBOIdytQEEDMNHr3kdpsmBGW0L1vdISwlN22EsZhcHdzQhli3P+hdYaqR/utv8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779701589; c=relaxed/simple;
-	bh=2+pxe1kU4fEfdSxs26jAJpTMIaMSl6lYnVxeYKl+0io=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vhs5gc48NYq/YIn7hu+VU/JeA9Ixk6ynZCkg0Fds/7y2rViIZnZ745/orTX2vy+o/5R3cjvlJ8ozWzu6IN4FPM4ggx3lL5iulXvtBgbbcAVFSODy9gMQY7v8ckBTVIMfSkTHiOFeTahKLMycgwBkQHrsWJEtLvnP6wsHOeZK8GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XY7Dy1J0; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CB23603D1
+	for <linux-remoteproc@vger.kernel.org>; Mon, 25 May 2026 12:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779711617; cv=fail; b=sBZystDwxjSWgBa0b436yAvKwwKTgU2/p9mdIxCeXHsa2ONz4/uM+pkRHZE5fUhK3yyw+ddaPdmGfwG7xPYRQ3kUxZfdJkZJ1O2vr6ZANhjQ3lgu3IxOSYzqZaEB/lJpV75CPUm6aKgeBoYNCzveiJCefk+0PNliTzCoSUWUCZ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779711617; c=relaxed/simple;
+	bh=+F2VWSbzex2wlf4uLfclOsooXWOJvhZHSpHC/aBKjSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=L/sfJJ8pkJFDOk9KUDCNj0h11BAVkmiP6WbBOAaSvPvAzTSwSZF6Akrqm6FpvT6zRIYs5nJ96R40UXPuHiushL9cvLyMO5Z8Bl8X0dZo0VpzkYBzmcGFoIjZH0W6+sTldIeDBAYhibcIj+4zVWOxD9gMADtUOkXJ2tG6oPY2s1Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=EFLgSpYT; arc=fail smtp.client-ip=40.107.130.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XY7Dy1J0"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-49048e043e5so18958695e9.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 25 May 2026 02:33:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779701586; x=1780306386; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DoERE+8L5vLj1dPanKPuhfMBdwOHVvuHRasN+h+wvto=;
-        b=XY7Dy1J0v9GjqHUP3kCcP+HunkHtpw3HSWpkzPjG3wO3iaWW+TmQPTmRL7ok3OstKU
-         atJTDISqf7EPVmQiTbaGlvCcByuWcug6z5NjcY8BymOblQxWfAWduXiBU7POLJC4QwF4
-         Hg0vvxKnVkLGiOTaIVua/zx0z4Lg5KIH6Y2SXfP4Ti9/zyCsgWgLdg00zpru25WzaBou
-         7HZNjPlxpW5X/h+KxBgVYLoUADWVVn/ysn9xmo7OZ8AmvQFtC8hh60muO8bcG8Qh4oK4
-         DOG6F5rN4o+TSu/UE2H0h6JjYpJ70Hqrgs3hTfZWlykiJmQKzGsRXla5I5zDXtAsLNEo
-         t+jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779701586; x=1780306386;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DoERE+8L5vLj1dPanKPuhfMBdwOHVvuHRasN+h+wvto=;
-        b=S6OssFEPEg1uFo/lt4oD/90KpDqdfajG07yxiosyocQ2maMjt1p7/crjyseBOYLVfb
-         gyn0WvJsyXq0KdjUwuVNaikU6i5/BSStLoqcjnQtLB0Wgh7c1NAbw5meYqqQ8gFem31B
-         TOdql/oIGm311tYepvbMdAgyhgXiZ64jj2Yp83hzmMcA8uobOU0vE+xWtMcif3wbj25C
-         AaMzW/sAUm0bgQDCuuW2eLU6ozX0udlQGwlfiJGfqIV1iqMIAv5kuzSDSptUeKwirlMa
-         khaX0BmfXss5cD5Fp0yh7ny+1BWes1+c8lkcznW2T3I7tghlKExaJkdIoMcm4awha81l
-         b6Hw==
-X-Forwarded-Encrypted: i=1; AFNElJ/0YiltEpTlH3p2zz3YjIniNnK2aXMpv5BYlBfsAgkzClJToJxYVIL2WEUpS5otTr+MibdHVc5lLAwQd7pBBrHx@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJzBwSiP5eATaSMak2FiFJ840ls1rUpZyHPBAWW7wqSn7orOHU
-	NssjjUZIKcTngI2xswpe1yMZ4iMW8KW2NIeEHYG/MosjdBsQNDJA8AnI
-X-Gm-Gg: Acq92OHh4xaI98gOMSt/Tg/BUrpSNRBBHPzIco3KeBENO/dGf74eZhpvtlkc4dc1KTL
-	NeD16bknv40cWI8ZuvZFI2Y38acufascgIEtt7GNYwmOQJwpdjtUw4201L9ewYmHYkmMiCHtRCS
-	43ZRMnt9sFyzBYhte/32mOzWFSsTRrJj6A6VVAtpdbcSeTI0+Ifw9DuG0Mg2XPfPa26cL0sZ3HX
-	YT5VHiHWgNlrxAUtOfEbDUibFuSZ6Pa12L2UBZqpfDtT8XFoKv8Y5BHtse4QeLjhzRhsXBV6bvf
-	daiGO70AOXDzKlX1oaqD5vSey0SjsSEZH0W96dO9T6pCEBXbSIHT4D1zWMZHki3cICmhXiShb5I
-	erafQ+egBItqeWlZXFDQly0SJtzndooBLylaOmT6dpuCNDsrBBOx0mKcHOQe0jNYYp4C7rJyIzN
-	HvMR/yQYFWYlXO1gx7rjSPdOJrPDImI3p5tH60IpYrxceX4Q2OAGkhIRtj
-X-Received: by 2002:a05:600c:8484:b0:490:3c94:a3c6 with SMTP id 5b1f17b1804b1-490428e205cmr231028375e9.26.1779701586132;
-        Mon, 25 May 2026 02:33:06 -0700 (PDT)
-Received: from [10.25.212.250] ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4904333146bsm135468715e9.0.2026.05.25.02.33.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2026 02:33:05 -0700 (PDT)
-Message-ID: <3c2bc7b9-33e8-4840-af41-ce6e7308ae2f@gmail.com>
-Date: Mon, 25 May 2026 02:33:02 -0700
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="EFLgSpYT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DHKr/RFstdx09xhH0G0Yx0zW14kn1CdmWOWnI28qzzIdpKSDkpn82mdDJagpPGicq6iBSE7wNiYuZxo9RJmap2Hb6XfKKIDFNXlSU7zGHG4uXI+Zt0wQT3DctYlktdxIygvVVlnxjqc8QFr+vl6nKNCGySF2vYRsQO3lPI/y9aFoz9iHZ+mCNYVeN0Fd2HnjCcdk/wJ2LqdHtkja4UIsdslSprhF38DdFl2sBpQn3v19Q3bsK29YvHzQMClmsxcDJ+1Gl48WMmvi6ci49jPCciTaWBQ6DmgM3WXcRozhVmMphxYxXWNmku4CUdcxKzllZ7wI2Wu/etL+8OHMGb+phQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+F2VWSbzex2wlf4uLfclOsooXWOJvhZHSpHC/aBKjSg=;
+ b=WzFGFUOfOjYfhh7iNiMvCTrstytONFU6s8Yok6x5VzbwLVkeC/sjcbRjPXfrFAUtRBEnIg1eexg5Kn7KRXaC+6WB4rK/yh9ScffMYcJQwYuDEXryqq71goiFmv62sHOHYDShZifAfMWg0GlfKMV4W+dp0Nm5z2aIax9MIRvMiE189mOsSCKyCcmMDeYfcWLZ+I0N6U3rQmahtf8P2ZdnNiErxbYbohgOeB0n8WiecBmXzJf/5zFt92rXwVovSKuKDxFWk7u4Y3hnVZVSrCrwKh653IKsUN30DJq6pOE8xQaBms+rEmxMORAWg27nGRRqkvQSD4g7sKF4LX50dzb++w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+F2VWSbzex2wlf4uLfclOsooXWOJvhZHSpHC/aBKjSg=;
+ b=EFLgSpYT4DZyURNG1FCf6lo0LJg7n6mi80v2DociqbFAyU921ss/XIIqo5szQvvoXavUWnP6E3I18ETcwBpmYJv90W3IfvpI/8J7mT9eW8Jw5XBtnvAAVOe3HOwdFVEswXBJjx9znNtKMWpdyk5zJTbcHW2BkdW8TDIe95HfaFhx6MT7weyXwfck3ufsr6Kl66Y4wfYvNlD4qUNCqxThc9ZPIKnDQPkhAc9RMb30O7V1Ybhmu3TCG2FCshVeoSQBwmNoY5npxvvYRMZ5RmAZQeRDdHgKOPtmIeV4mUQ+GPtA2uVrakYApOIWSTozqvHExjMCEGhcxQ7sM/l0ckVu8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from MRWPR04MB12330.eurprd04.prod.outlook.com (2603:10a6:501:7f::23)
+ by DU4PR04MB12009.eurprd04.prod.outlook.com (2603:10a6:10:641::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.19; Mon, 25 May
+ 2026 12:20:13 +0000
+Received: from MRWPR04MB12330.eurprd04.prod.outlook.com
+ ([fe80::ca22:f8c8:6aca:7889]) by MRWPR04MB12330.eurprd04.prod.outlook.com
+ ([fe80::ca22:f8c8:6aca:7889%6]) with mapi id 15.21.0048.016; Mon, 25 May 2026
+ 12:20:13 +0000
+Date: Mon, 25 May 2026 20:23:08 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Zhiqiang Hou <Zhiqiang.Hou@nxp.com>
+Cc: imx@lists.linux.dev, linux-remoteproc@vger.kernel.org,
+	andersson@kernel.org, mathieu.poirier@linaro.org, Frank.Li@nxp.com,
+	s.hauer@pengutronix.de, festevam@gmail.com
+Subject: Re: [PATCHv3] remoteproc: imx_rproc: add missing DRAM ranges for
+ i.MX93
+Message-ID: <ahQ/LIU4DrtiQERT@shlinux89>
+References: <20260525062031.24725-1-Zhiqiang.Hou@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260525062031.24725-1-Zhiqiang.Hou@nxp.com>
+X-ClientProxiedBy: SI3PR03CA0014.apcprd03.prod.outlook.com
+ (2603:1096:4:297::15) To MRWPR04MB12330.eurprd04.prod.outlook.com
+ (2603:10a6:501:7f::23)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] arm64: dts: freescale: imx95-toradex-smarc: move CM7
- node to SoC DTSI
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
- Fabio Estevam <festevam@gmail.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20260522111849.783-1-laurentiumihalcea111@gmail.com>
- <20260522111849.783-4-laurentiumihalcea111@gmail.com>
- <ahOwvnij7Fwxh3La@shlinux89>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <ahOwvnij7Fwxh3La@shlinux89>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MRWPR04MB12330:EE_|DU4PR04MB12009:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3c2a601-e346-4000-2240-08deba57f8a1
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|19092799006|376014|52116014|366016|56012099003|38350700014|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	BaII51QV9tp2b992LG4NHn+uvK9827NhHMw72on+YB3BFbDyC+Aqtf4v10G5d2AoeYFoKU7gEnpLIWbzsFhB8T+6GRMmNgDMyAe/3r6f6TrYX8ONlBi7zfYvYAIKwXiakbv/RjmFo2gyi/w6czHjZxhym05qsRbOVljEfGbEJeY+oYHYGVS0EUbEgvYGB8SM/mJtfB9DJKXt8k4yERkTVTvg1VrYnYdYS11H8oPitqSGgcwloSGRPTb40PFfBXUHmmvHqs7yMByUmDAcTDQDsANXSFomY+56TQmRMRyXdhKGR3+T+5X3xchcN5jzbVjhwd+e56iVDaOLsom2ZAHXEcqEFCwcaEunhfIAedXfRedM2ZfH1+zRyv/neeiVEBSLKQk0HInFCRSjg0Z2DR235J47rp55WfGff8Jzbixf2JKX2IKAtybECMFwzPj3x/nMBIxf+CUoYBnkvmYGKBf5zJZ263TIisHJFvYY4htOZjZXuHuX1US7TYaVlCFxfpX9AvzRgX3aR4Vv/xQt9807WFVWY8jzg/axZ7zj/gMRNLfu+0Va+Yo9LWWYZLdBGWWgOkmd/VawHbRdLVjPtefWDR7Yon3euSslW1lGqTqclDHvt8N2TXAFzAsDxlQg+H2iCkLwaY6MMvF4WQyGu+8SmcOhGoLXSL12a/TdXBoUtpCIcOs/66jrwGOJd88n502pVWNSDnlN32rRxUmoKkjSZnYlBoCpAUrtcgSPhUERhGRmcRDOZYVFhXrniUaKJMQc
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRWPR04MB12330.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(376014)(52116014)(366016)(56012099003)(38350700014)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QPFotWiXI3uNy+A9uSksN4R0+9OkDazkU5cyOeyTE94BUD5MYjrkT0CYaHZw?=
+ =?us-ascii?Q?SH2D91nZOgdjYB5Pe70WUODKUT2Xecl73d4VecEMZY9H1YmfFUlzlfBK33p8?=
+ =?us-ascii?Q?+xP8601bFbuFAkeE5y9bCTsI0XWpRALQEp3BRuGggpsO7mnXRScQYhPCcXp9?=
+ =?us-ascii?Q?Q62v/eAGMVkNlWzLU6ulSdzNRV2/BLum3wmWGEwx4OSDyTwpWa/4+1uyCSAG?=
+ =?us-ascii?Q?1Bip4yWzYega498bHNUrwhaW+10WeVbTCi5YME/7jzRM57X2VBVmcZo5eta6?=
+ =?us-ascii?Q?3ZnyCxOR0PuxogsEv0Lkyol+wDqw4c/n/41CDD6LDnGSS1aRloGWoGpEcwGH?=
+ =?us-ascii?Q?Hs8O9/hiCM3GLR+aWOUtMqHj5J/CnYShIsfZW/khmAVyt92NnhdzWgUpivi9?=
+ =?us-ascii?Q?J7TyPYpBcB+jhcVourkDxnk2iaQISkExKMMFhNut6s615iqWmAGbAhEm7aWe?=
+ =?us-ascii?Q?qY5IJ9QCNu7MSPAsNm1P9w8G/mnNv67qW3BmdLwnDQKLhJxokfrbM/6bJADF?=
+ =?us-ascii?Q?tsIX6TCBcEcG4OL/eo0nOCgIBy2o4EkgBCobeMTzbZflzjdKly5wy1OswdJN?=
+ =?us-ascii?Q?SLS96fMVrx34WemXmDya11i+qw3jZgsdVGd01qbZetFQs9ZvnsZFjzGOelOl?=
+ =?us-ascii?Q?kgQoGM9jGFxiZfU4NSuVSNPbRThT7lsBkoSP/0uVtTbCtF5BhjFDcJJpkAcf?=
+ =?us-ascii?Q?jatPYmKzKN2J4KOPdUkramCtRQHkG2aNXgI7tJy6oXOTJcZ5IhcQvtSJdpvt?=
+ =?us-ascii?Q?7RrDsdQgLyGKGpxmivl07C4vcvOPVi63uNOQ3k8+AstmfQGcSMGf8LijDiPs?=
+ =?us-ascii?Q?oxxER9g6AyA0lokqa4efzRttlYz5wmBx35C8+l1qu301Z4UOUfS6NtXzSB9d?=
+ =?us-ascii?Q?Qgwh8UJDpGzVCfkrlxQDkUThxA3EE6fWCjSi3GxpseG6Gg4vxWxp1mzNb6BF?=
+ =?us-ascii?Q?pTcvTmtzjKUKKycVp05VCvhB4TdCGC9Owfq64KlBRTX3cNiznyDqhYnVYgOd?=
+ =?us-ascii?Q?gBXr/QXiMRFm/YrXD8cyosQIbonmSuA8dHL+ALqn34yOeOIsjT4VRYyf4MXs?=
+ =?us-ascii?Q?pmx6PoNo3U9MFsm/mlLo0BSwYHsCcicQMsQgMg/KGMHVXL7eC+v0t9CPPv1a?=
+ =?us-ascii?Q?9EooEIArZPCRdRCJI0rqMHX7HfaAe0AHUiB+++UkW/6hAiOFTza2/N/+3hp6?=
+ =?us-ascii?Q?F+uc8S7Pin4ZU/6sldOQlszh8LVAfqCjtfwYBgqw+nYBy/ZDWZ+h9Oy34OhG?=
+ =?us-ascii?Q?0M2ef8bUykmfw9pmfQcfKvyQ1N1zwImz8RiSm6Q0VZUBAQwTrPeddzPRHIkO?=
+ =?us-ascii?Q?S5Zzfo1c9KYVFreB0HGqAw+NSC4KFbcPqBunKJQRmVTH+OwLDSCtkoHkefiq?=
+ =?us-ascii?Q?8QBVVeO91zY20zCP0qkrIhqdXREQhT5sieeVK7L3zvbjWDp+/BBOxokvwLEX?=
+ =?us-ascii?Q?UwTTtlTPAg75QenvTigsPDfw18O56Iot+DL9WuorIkUE+wL318GomYRqsN0T?=
+ =?us-ascii?Q?//3giWtVCrBcLcZGDiMCV0taubaApyoGilJusHxCJzuSP8CvN/uiB2tkoFLr?=
+ =?us-ascii?Q?WVPIGrDyfdosoyRo+q8S5njEgFCfjWcYxRD4SKk6cbB2TFk62XTk1Hd0i21i?=
+ =?us-ascii?Q?zVBeie4jtPmrESWCwxuUd0juBnOx6KLnGZ7/Y4vPMEAm/zsThCulwbs/OGoe?=
+ =?us-ascii?Q?ozcXVOyQO0ZPIGWjeVbpSTMmfwLt86ldkRBHqb8gJ28F03VLpoOvUxtciMDY?=
+ =?us-ascii?Q?w61CUKm66A=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3c2a601-e346-4000-2240-08deba57f8a1
+X-MS-Exchange-CrossTenant-AuthSource: MRWPR04MB12330.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2026 12:20:13.0797
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: x5FQBgMwnHMNPf/AvDTLB+rcmR2VR/phtkKFPKzV6/vH6RR06F5OtlVf840KbvejQdOYz/F/pxlPRheTY51Lsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB12009
 
+On Mon, May 25, 2026 at 02:20:31PM +0800, Zhiqiang Hou wrote:
+>From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>
+>The M33 DRAM address ranges 0xA0000000-0xAFFFFFFF(None Secure)
+>and 0xB0000000-0xBFFFFFFF(Secure) are both mapped to
+>0xA0000000-0xAFFFFFFF in the A55 address space.
+>
+>These ranges are currently missing from the i.MX93 remoteproc
+>address translation table, which may lead to invalid address
+>translation for firmware accessing these regions.
+>
+>Add the missing mappings to complete the DRAM coverage.
+>
+>Fixes: 9222fabf0e39d ("remoteproc: imx_rproc: Support i.MX93")
+>Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-
-On 5/24/2026 7:15 PM, Peng Fan wrote:
-> On Fri, May 22, 2026 at 04:18:47AM -0700, Laurentiu Mihalcea wrote:
->> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>
->> The CM7 remoteproc configuration is common to multiple MX95-based
->> platforms (e.g. MX95-19x19-EVK, MX95-15x15-FRDM, SMARC-IMX95, etc.).
->> Therefore, move the node to the MX95 SoC DTSI. While at it, split the mbox
->> channels using <>.
->>
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> ---
->> .../boot/dts/freescale/imx95-toradex-smarc.dtsi    | 14 ++++++--------
->> arch/arm64/boot/dts/freescale/imx95.dtsi           |  7 +++++++
->> 2 files changed, 13 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx95-toradex-smarc.dtsi b/arch/arm64/boot/dts/freescale/imx95-toradex-smarc.dtsi
->> index 7d760470201f..c94a63a3bf8f 100644
->> --- a/arch/arm64/boot/dts/freescale/imx95-toradex-smarc.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx95-toradex-smarc.dtsi
->> @@ -145,14 +145,6 @@ reg_wifi_en: regulator-wifi-en {
->> 		startup-delay-us = <2000>;
->> 	};
->>
->> -	remoteproc-cm7 {
->> -		compatible = "fsl,imx95-cm7";
->> -		mboxes = <&mu7 0 1 &mu7 1 1 &mu7 3 1>;
->> -		mbox-names = "tx", "rx", "rxdb";
->> -		memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
->> -				<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>, <&m7_reserved>;
->> -	};
->> -
->> 	reserved-memory {
->> 		#address-cells = <2>;
->> 		#size-cells = <2>;
->> @@ -204,6 +196,12 @@ vdevbuffer: vdevbuffer@88020000 {
->> 	};
->> };
->>
->> +&cm7 {
->> +	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
->> +			<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>, <&m7_reserved>;
->> +	status = "okay";
->> +};
->> +
->> /* SMARC GBE0 */
->> &enetc_port0 {
->> 	pinctrl-names = "default";
->> diff --git a/arch/arm64/boot/dts/freescale/imx95.dtsi b/arch/arm64/boot/dts/freescale/imx95.dtsi
->> index 3e35c956a4d7..f8760ac067fa 100644
->> --- a/arch/arm64/boot/dts/freescale/imx95.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx95.dtsi
->> @@ -272,6 +272,13 @@ opp-1000000000 {
->> 		};
->> 	};
->>
->> +	cm7: remoteproc-cm7 {
->> +		compatible = "fsl,imx95-cm7";
->> +		mboxes = <&mu7 0 1>, <&mu7 1 1>, <&mu7 3 1>;
->> +		mbox-names = "tx", "rx", "rxdb";
-> 
-> Please not put mboxes and mbox-names in dtsi. Some demos may not
-> require them and boards may use different MUs.
-> 
-> Regards
-> Peng
-> 
-
-Not going to insist on this.
-Frank Li, are you ok with dropping this patch and handling this at board/SoM level?
-
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
