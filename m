@@ -1,257 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011069.outbound.protection.outlook.com [40.107.130.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABFC1C01;
-	Tue, 26 May 2026 00:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779754006; cv=none; b=ncOtYlgoznFXJbwMtyNKZZaOxwJy7IL09IMyiIL98P/rZ3Te8Rz/TT4tR7gRRG3u+8n2UzN/GU3VBzdWRZYHG0thkib/uNRZenWxDAjQ5IwS+dvD3B7rSiYRjYGyxRIo7fdMPvu6QsywV3KL7iAfWBXaVrI8cjxEGdXzB10PMqs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779754006; c=relaxed/simple;
-	bh=BBx6ZGdBHi3bjVnefKJKonoxnT87uPyqCJPiJQmebQw=;
-	h=MIME-Version:Content-Type:Subject:From:To:Cc:In-Reply-To:
-	 References:Date:Message-Id; b=eoLyyx1q7UB7GnSjDfvGVM8bj2LDddN57IjMYoKTFadPDzm92UTXTgcjffDWA+XZZbGrt6T2FolQdJElOat1LgwtVFxvU5tYyAts6zGXqGk0qFNPcI+zT0vH8/SOorl/KrZI1hawNqZmIQltu3NVi7DdJlLeFAw0+ByxaznrfPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkpCMEzz; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01123274B4A;
+	Tue, 26 May 2026 00:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779756185; cv=fail; b=HPyWv8U1m/4IyKoMC5+os6Q9nifXsWsKep50s4o8rF3Ro9Ec/06Q9WPCT3GdqONEV/xEySTkO2+LM+J5aI6+1Xz/3UAtlyYDbQu7b2Njc4D3c2oqQmoiiamWwTsMWrhceTD/53wOduTP57xcrI6eoegicys7bkoW9Ut0pbPHnKk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779756185; c=relaxed/simple;
+	bh=gH/RctJtdkYSX0SWedJe1RlW/VK1yn2IQpQEB6I/Dxw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QyJj+95+BXH/IJ+dJE6tfXd1Ad51g5p8Ell/JD6pcLDJ+mv39j+khUY9oTe47eWNASinJyOSOMr1hn8pDdK30XnlOipBmFwFCoMOLfEiDwZNkLqE9U5sFTIOJt59OpsNfTyr48RVLIjw2DywfDe5g7YyL9ltdF2W0c4r4VP2s6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=iBjMiCMp; arc=fail smtp.client-ip=40.107.130.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkpCMEzz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0B81F000E9;
-	Tue, 26 May 2026 00:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779754004;
-	bh=aumDcQ91NTlPYKiVDjTe+d5zdzDpOboSbGddL23BwwA=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date;
-	b=nkpCMEzzr2iapxOKvs/dLoQdw1I8ErBt+eoCMGLZ9zd+m6PhqZcJjpXPnTnsJLe3G
-	 bTnmOo5x5BeHhxUTMNo3O9BvGX19jKLHrClIWuL8eaBc5c0vP1CvJp3qL0IqFDzqCq
-	 mJtxGvO2I6ymeIEJPZjXNTbB6OI8uaBrxUtO0xzhA+Faqwm9/wtI9keFYmi+j4iqq2
-	 WgjGydHiXQKEoiZJDsR+I4L8tByCkcyTESzidSj95jpiNhokG7GJ2RwBcpBT+3aunn
-	 cTgStVd11YXmb1ozSTgriOVrWqCz3dH2RRl2wmm0DfQu3ahJr+FXOKx9rIxNdwxRm3
-	 j1KA5gq9RzWiw==
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="iBjMiCMp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X7gKu0YuJSraVfCSTsqJ/lSquHi1qZf0PzwGEwSuHdMKDQhw6aD96B7tc/cGAvBsgiaY3plo1UCqJIEkzvFUtMXxCiCfCpC2KRfwGMnsMpMjpb4dplym5LWqtTRoDOvm/1My2dikWen72695a7GHmphW89LoeZFR+e/8ipbJiZ8dbiQfKSoQHhY1R5Cuod4FxKEE7Sgd2weennwIainr3DJWlnnV7DDzrthmYvwWNRY0kccoGUdZCUTiRx03Xim04zudo4TtBUBmccfYjYYfIXr8Oca3Fuiz+GsPVXHM9hfWFs+wO5xNl4GZZp43zLCjzzrFOu/FcOT+sHSgAimk3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gH/RctJtdkYSX0SWedJe1RlW/VK1yn2IQpQEB6I/Dxw=;
+ b=ZlJLGO+tePhVU0Z9x+GyTNd+bKP6zx6E8g92lDb6ISGa8CvnmTZqsFxvC9zOUY5E3y4HkC8BJv0DQODMQ/mvH8uQg2En/66TgyYVZ+Qev+BkiavUupNwC/2+GsuGI5JTSzGrQXCsODXs3b+xLLfzWHQWM1/pL4kmkm/6jy97HR4zwdl02vxjqjvmWVjxcxHE51qFthaZbNTbq68uSCzzQahYRuASzDzyKGdNcJJxyW2aqeJqIaH30epen8hx1PrO7hfNFqbmVnee2GoE7eLB5z3yYZghSx5WRKLKjl+dB+j4rvzw0JNfd1WAYXHqIadU1D27vGCMgyWPgTn3INFEVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gH/RctJtdkYSX0SWedJe1RlW/VK1yn2IQpQEB6I/Dxw=;
+ b=iBjMiCMpt7uBM+54q8pt5FMaBM1MTYKkf7h8I4KgrP5JtsEfMc19EWOFkF9evDj6r7zXk1XdWBDaUqWwJTEZffPSgnKCw7rWjs5+d5NASBs06omBaMbCrp3V/KvPG7LZ0iweoIUeoUPIgQZ+74FTW95YM+G2NYRjeWMxUSWN0W2YU97isUgNkS0aHjiLK4cxujhz511a+DDzFNl/BfQES70RGkxs5Y1ukEJSqnHUKWXjMQmGxYW3RuzfwbJEMRhF2iq09VTsbssc/GqYUQvjexW/qbdVDweBbjWp6jIxC7EPmo7BGYgish3+C+FQhhSCn7p4i81queZiXB59+jCTZw==
+Received: from MRWPR04MB12330.eurprd04.prod.outlook.com (2603:10a6:501:7f::23)
+ by GV2PR04MB11688.eurprd04.prod.outlook.com (2603:10a6:150:2ca::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.20; Tue, 26 May
+ 2026 00:42:59 +0000
+Received: from MRWPR04MB12330.eurprd04.prod.outlook.com
+ ([fe80::ca22:f8c8:6aca:7889]) by MRWPR04MB12330.eurprd04.prod.outlook.com
+ ([fe80::ca22:f8c8:6aca:7889%6]) with mapi id 15.21.0048.016; Tue, 26 May 2026
+ 00:42:59 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li
+	<frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/5] remoteproc: imx_rpoc: fix carveout name parsing
+Thread-Topic: [PATCH 2/5] remoteproc: imx_rpoc: fix carveout name parsing
+Thread-Index: AQHc6d0D7AvuRNwNBEKp4jwjIPn457YeBFyAgACstgCAAMxLcA==
+Date: Tue, 26 May 2026 00:42:58 +0000
+Message-ID:
+ <MRWPR04MB123307BD250F317565A0A94EE880B2@MRWPR04MB12330.eurprd04.prod.outlook.com>
+References: <20260522111849.783-1-laurentiumihalcea111@gmail.com>
+ <20260522111849.783-3-laurentiumihalcea111@gmail.com>
+ <ahOwO7LBXCYFIngw@shlinux89> <9fb59c65-8cee-4502-bc10-1375f276e25c@gmail.com>
+In-Reply-To: <9fb59c65-8cee-4502-bc10-1375f276e25c@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MRWPR04MB12330:EE_|GV2PR04MB11688:EE_
+x-ms-office365-filtering-correlation-id: 577e6f40-69d2-491b-7bca-08debabfbc08
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|19092799006|11063799006|56012099003|18002099003|22082099003|4143699003|38070700021;
+x-microsoft-antispam-message-info:
+ /6QR/jj36rCsZNe5moNdO1TLHjzQAGSblOQXhb4iVaPvbqqUjAD4FoQs7V/vX0WG4nPOQsYaAKkUflN/iFmcITDsTSGO2JLGL5w5g5RgmJaX4LUm4LjMqszO5Kk8NOwdnIRWFjj2AGihC24925yIJhvPg9Ify8vw2fdRliTO4sc5kehLQndkT8H3P8/Ssh2g/HE4/SwG9PwkOeGLqGjHQ6lPvyLvstRPLMIfNY0z9Jm3w1548KkX6k2jwxw9WJYp7iHzg00ACuN2tpMfCYvIKJhVXVHcdsUjMGBBOQMr3Z06qRBb7xf7TjMX10gnx4OzCkBeufR774hQXYvxoKALJ5eUk58h0aTXfEKlxIV8ixt5nQEWfMLoFMF3VpUddsOhYcErarycdTTNp1EwlMuXzRQtBCLmJ/3O5bDzxxCxNp+iwLn8DrEMcfyvARS3gGQe6WLnbAmjVr9HqKUqtp3i1/y9eR3Woh+V2Rh89dikjRt6jbgcxyg/ybd2L6ofGtozxLIJYMMY0ey+zNV0OpA+kTTQlN+HwF06paKDGYPzXrdvOhPPYIfX2+lZjsah/1by6PDRxeyyiJFZAvZG7334OZTndMWpwPBLDliNNEnBf2UUbT2FbuIL7/TgqPIm6IftFTDmiU9N+9LtJ+Or/HITFOkmuqtLUYDxyPfXSpmDWOIt9xgcCBCvcYoHqqnXUr8pvGbIcx4F78CrG1nNZJYgh0u9R2C/AgJeGa9+shAKjzc9ppieaL208WErvqHwv+Fp
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MRWPR04MB12330.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(19092799006)(11063799006)(56012099003)(18002099003)(22082099003)(4143699003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?STJVVTJjSTYvbzZIemRPVVdQWkdISFlFL1RlUUFnbFFYSUJzVGRCSVNKaDA1?=
+ =?utf-8?B?alpxZURqaGFMdEo0dU5VdndKZFdtOGNuYlZURWtPeW1FOWpNUWtVNC9BbVQ2?=
+ =?utf-8?B?c2swNjYrNFhiMUN3bVkydXVvbnY4M0VhZmFkVDh0SlI5di9ERWhqZnE1Tlhl?=
+ =?utf-8?B?ZFVpaXJ0b1REQkJrS2pWTjJ5cXpYZkUxbGxoMERPdUdCOW1MQy9wdHJ2dk14?=
+ =?utf-8?B?ajRoSU80LytyWDJ5SFNvWVg2YThEVlVSam5GZ1ZYZjJyaStHYmN3NFdqTjk0?=
+ =?utf-8?B?eUVpNE4vWDY1L0M3TUYxWU1NaXcya212eUVkRHBPM0pkRTE0UDFCQ1h5NVJk?=
+ =?utf-8?B?WkprU0lqckZQeEJpV3Q2bGFLMDRaM3JsSnh6Si9kdGZRQzRHVUdOWkxxVUZp?=
+ =?utf-8?B?cXBxZ1lTVzVlRkVGYm95NEQ3T2tSS2JzVEV3YlQxVUZ5SG55eWgwZ3hRckFW?=
+ =?utf-8?B?Rk95ajBjVlUwaDhWd2R5NzYvOTBoek43OU9YZHJSS0tCd3kybUpKb2t5YVFS?=
+ =?utf-8?B?T0p0VHB6QkVsUkZUUWZ0U1lsNEpCRWQ1RTJPbXJTelQzajFiQWFWR0pIa2FT?=
+ =?utf-8?B?dXZkYkNVa1pKTk41bHByWHlIRzlCWVZYOFpvSEVMencrbkpJTlB1dEtnNjlu?=
+ =?utf-8?B?L2dhbzRqNWh0aFM0eE1rTm5qWVY3azNFb2RaYldoaFQydVpFQ0ZEYUk2RkZK?=
+ =?utf-8?B?bE5uOVZUOW9uWHUxazJVWUFCY3NxSFlQM2U2N25yaHJSVm5wUk9jV0ZhSXVP?=
+ =?utf-8?B?dWJ2cTUyanBHUmFxL2xhMGhRakhEQVhMMTNEZjA3dkRlN1dUOU5zZFZNcDAx?=
+ =?utf-8?B?VTRpb002bHQ4L3JtNEZxY1VnSFFkekZwc1dET1FCRTF2SUcxc1Fjc0FsMUR1?=
+ =?utf-8?B?M242dHk4MEhEQ1pJK1B6d2l1TEtqdm90YzZENGhYblhiOXdnOVZkekNWVjVl?=
+ =?utf-8?B?ZisxMkswL0cvRStLeG1nM3hvZS9OR013SjA3K0Y1cGxSQTZXcjk1WXRoRVpr?=
+ =?utf-8?B?Y043SlR0YkVlS0gwcFoxY2xtQzBDTWloRmJ4a1dNMm1TSmtUTXVYL3JoMTAy?=
+ =?utf-8?B?NEx4NXFIQStMMnIra0JDZzBhclF4c3RhSTQxeVY5Qnp0Qng1d2d1dnFZYnJD?=
+ =?utf-8?B?L3gvbXV6VXN4Tmp2bXJ4cXJVK1RQakxIcXNyZFhhWUpSZTRnV0ZwbE02ekU2?=
+ =?utf-8?B?a3R6Q0hSeUI0dzRDaERMODJteWlpQ1UzVjB1TG9mMnNNeGU5ZWJ5WlIrYjRR?=
+ =?utf-8?B?VnA3YlJaMVlYeXI1enRROEZ5Z0VtL3BtZEZ6R1pGMnZzVGFXTXlBbnk1ZmRu?=
+ =?utf-8?B?MG5OZ2RGWThJa2EyamhSK3Q3cWMrbHRKbWpiVWt1MTRpcGRDdlZ4bXRIN3Zo?=
+ =?utf-8?B?TWZvak1RNTdvQkZBSll3VFZ0b1M0Z3dlMG9pbzBoNXlqcms3U0Q5TlBjRG83?=
+ =?utf-8?B?dTEvQ2xuZDlTTlB0OGFIQXFRU3h4aUJwcnNzTGY2bDhLZ2VENC8rYWRhWXFK?=
+ =?utf-8?B?NEpkT0ZFZzl0V2M5R2xCYTMrWlpRVkhFYlBaU1Q0UG03Z3JWMGNlbHF0M0dP?=
+ =?utf-8?B?Ym5MaUdhWW80WnQ4SmpBQ2pDT2J3SGQ4Um1KbWtXcks2QVBKWXk0SXhST0ds?=
+ =?utf-8?B?Y3gxWUpNVDZLREJyQUh1Vi9MV29COWpJbVZ2VDU1Y2Y3Rlo5Sk10aGwrUGJI?=
+ =?utf-8?B?V3NvYVFKSXVxbGhWTGw0UFJEQjlKb2diUWZvQm1uTjY5NHlNN1RnWVkzaUdW?=
+ =?utf-8?B?WDI4RmNCOG1RRjg5QUFCRVM0b2MrMGpuS1JMUzZXNktCWEo1OWE4WTYrL21r?=
+ =?utf-8?B?Nng1N1NUNUZyUkJHVGYzYzVmWXBQSVZLd085alEyQzRtUFpCOXIwWVhjdEI1?=
+ =?utf-8?B?QnFXZDl5K0EwR1RKb3V0SXlLWjJBdWNCdWdTcGhzNHZlV2lZVTliVHJ0WW1Q?=
+ =?utf-8?B?QTF6djMwY1BheENnS3JBaGJ5V0U0Q0xTTHhiS0tuUDd1ZnFOTDRjd2ZMM1dt?=
+ =?utf-8?B?M0tRc2NIc2FEV3gxSzh1bmNkN1kzR1NQWExlVCtmeWNWK2VseUlDczVaSkhT?=
+ =?utf-8?B?bWJpVTVDQVNnTTRJTkg2dEZCRDFoZktGaC9WUnVVQmtNRVNkOW1SYlFFT2Zn?=
+ =?utf-8?B?ZkVaUjAwN1BxN0kvVVVyZkxGbXJkZ2xRRDBOTlNhZnBUQ2JkMmRMVGh3aDY0?=
+ =?utf-8?B?YS9IUWxYK2tuYXY4SXdVVzlwSENGL28rWGZFSXBWaU5wdTJmT1BqSTdkdzZn?=
+ =?utf-8?B?Sm8yNW1oOGZ5bWZxL2hlaU9CNmlHNjdYcDdRMlBsWDdKSVJzZllmMGNzSkNu?=
+ =?utf-8?Q?FSE4kRLLmED3AOgPiA?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v7 00/15] firmware: qcom: Add OP-TEE PAS service
- support
-From: bod@kernel.org
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-media@vger.kernel.org, 
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
- ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run, 
- akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev, 
- jesszhan0024@gmail.com, marijn.suijten@somainline.org, airlied@gmail.com, 
- simona@ffwll.ch, vikash.garodia@oss.qualcomm.com, 
- dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org, 
- elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
- jjohnson@kernel.org, mathieu.poirier@linaro.org, 
- trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com, 
- pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com, 
- tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com, 
- srinivas.kandagatla@oss.qualcomm.com, amirreza.zarrabi@oss.qualcomm.com, 
- jens.wiklander@linaro.org, op-tee@lists.trustedfirmware.org, 
- apurupa@qti.qualcomm.com, skare@qti.qualcomm.com, 
- linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@oss.qualcomm.com>
-In-Reply-To: <20260522115936.201208-1-sumit.garg@kernel.org>
-References: <20260522115936.201208-1-sumit.garg@kernel.org>
-Date: Tue, 26 May 2026 01:06:33 +0100
-Message-Id: <177975399325.14006.12128272008783925649.b4-reply@b4>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8067; i=bod@kernel.org;
- h=from:subject:message-id; bh=BBx6ZGdBHi3bjVnefKJKonoxnT87uPyqCJPiJQmebQw=;
- b=owEBbQKS/ZANAwAKASJxO7Ohjcg6AcsmYgBqFOQKF61u+nix8KBErtxiaykNtnbP7n9PbP102
- zybULRYkRCJAjMEAAEKAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCahTkCgAKCRAicTuzoY3I
- OpYVEACFNMxta6jtHP0tJrj8PwZVliOSOpu8ZeXF9n0DeXu+WkBVxKnXWoi2oK3ZGxB8m8eXBmU
- 77+KpBxaNEIOjPeDmVM9sXyaqmw8qCUy1Q/L/oauir/L6SqguPgx2OqNgZdVs1vuo5DQmAuQcHy
- PYQexkFHbUe66eedE2OxX3RXAOVHA/WpFxedguhHScFUYEeUm2UcEQ/tON9E3X9S3fR5A8TwNgv
- kCqfcZLmCjSPKCHoLyDgheXhICpYuHUpL2/eY+wLrMU2ufqmo5DAU5vrlOKPcgMkluBI24ZMsGu
- tLUDL4cUAT7dk7z6c5FnfrfYU4EMmkdPJm0m341RO9ncaYksAr+etAI3dFTTTVAQ4W7fAuz3TuF
- GSdNaNJ8WpH43SVVcTwa2ThbST/sa+5bg9rqBWhKL7fbM5+M6nb6fnlp4zfsVnwJQrxs4AiIodd
- d7khYG+sIvCv8/tPfJRzUdY3MyJZZXMVsumnEMvoBKNu7ygoPCWS0hE/1eUiqYrpcHke3OnlGzS
- oMHQxur6QSIR5OJoZ037gQxOzA795e48SSuC4eqsn7U/o2wVHGnWRltMHmYwxO3Mk6UZjy9OuFn
- DqBk6zXkwmDIOCbjgstCWOlB1Hrkpq/5rn3u3SUagsD38xrcTOcHrpObR8fs8+i2FNs3Z6kknHy
- L97sV9IuA7+MokA==
-X-Developer-Key: i=bod@kernel.org; a=openpgp;
- fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MRWPR04MB12330.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 577e6f40-69d2-491b-7bca-08debabfbc08
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 May 2026 00:42:58.8824
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: iTrU7wxnBfNZikvjznOrgMdp+UlSbAikJTbQR2MVaBQQXoiS/LepYY4U+fbfZx8dkKtxywp0orhllGBH9NPD5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11688
 
-On 2026-05-22 17:29 +0530, Sumit Garg wrote:
-> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> 
-> Qcom platforms has the legacy of using non-standard SCM calls
-> splintered over the various kernel drivers. These SCM calls aren't
-> compliant with the standard SMC calling conventions which is a
-> prerequisite to enable migration to the FF-A specifications from Arm.
-> 
-> OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
-> support these non-standard SCM calls. And even for newer architectures
-> using S-EL2 with Hafnium support, QTEE won't be able to support SCM
-> calls either with FF-A requirements coming in. And with both OP-TEE
-> and QTEE drivers well integrated in the TEE subsystem, it makes further
-> sense to reuse the TEE bus client drivers infrastructure.
-> 
-> The added benefit of TEE bus infrastructure is that there is support
-> for discoverable/enumerable services. With that client drivers don't
-> have to manually invoke a special SCM call to know the service status.
-> 
-> So enable the generic Peripheral Authentication Service (PAS) provided
-> by the firmware. It acts as the common layer with different TZ
-> backends plugged in whether it's an SCM implementation or a proper
-> TEE bus based PAS service implementation.
-> 
-> The TEE PAS service ABI is designed to be extensible with additional API
-> as PTA_QCOM_PAS_CAPABILITIES. This allows to accommodate any future
-> extensions of the PAS service needed while still maintaining backwards
-> compatibility.
-> 
-> Currently OP-TEE support is being added to provide the backend PAS
-> service implementation which can be found as part of this PR [1].
-> This implementation has been tested on Kodiak/RB3Gen2 board with lemans
-> EVK board being the next target. In addition to that WIN/IPQ targets
-> planning to use OP-TEE will use this service too. Surely the backwards
-> compatibility is maintained and tested for SCM backend.
-> 
-> Note that kernel PAS service support while running in EL2 is at parity
-> among OP-TEE vs QTEE. Especially the media (venus/iris) support depends
-> on proper IOMMU support being worked out on the PAS client end.
-> 
-> Patch summary:
-> - Patch #1: adds Kodiak EL2 overlay since boot stack with TF-A/OP-TEE
->   only allow UEFI and Linux to boot in EL2.
-> - Patch #2: adds generic PAS service.
-> - Patch #3: migrates SCM backend to generic PAS service.
-> - Patch #4: adds TEE/OP-TEE backend for generic PAS service.
-> - Patch #5-#13: migrates all client drivers to generic PAS service.
-> - Patch #14: drops legacy PAS SCM exported APIs.
-> 
-> The patch-set is based on qcom tree tip [2] and can be found in git tree
-> here [3].
-> 
-> Merge strategy:
-> 
-> It is expected due to APIs dependency, the entire patch-set to go via
-> the Qcom tree. All other subsystem maintainers, it will be great if I
-> can get acks for the corresponding subsystem patches.
-> 
-> [1] https://github.com/OP-TEE/optee_os/pull/7721 (already merged)
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/log/?h=for-next
-> [3] https://git.kernel.org/pub/scm/linux/kernel/git/sumit.garg/linux.git/log/?h=qcom-pas-v7
-> 
-> ---
-> Changes in v7:
-> - Rebased to qcom tree (for-next branch) tip.
-> - Merged patch #5 and #7 due to build dependency.
-> - Disabled modem for kodiak EL2 as it isn't tested yet.
-> - Fix an issue found out by sashiko-bot for patch #4.
-
-This whole series needs to be broken up into different parts and sent in
-smaller chunks landing the core changes into the firmware, the drivers and
-finally the dts.
-
-For example applying the Iris stuff is impossible until the remoteproc
-stuff lands.
-
-Instead of sending one giant series which no one maintainer can apply send
-a number of series where one posts a dependency on the other.
-
-Lumping the TEE stuff in with video encoder, wifi, dts is spanning too many
-things and makes merging a NAK.
-
-Break this up into logical chunks and sequence a one series on top of the
-other - accpeting that you might, likely will have to keep on top of the
-various series and resend/rebase as things get merged.
-
-> Changes in v6:
-> - Rebased to v7.1-rc4 tag.
-> - Patch #14: fixed ret error print.
-> - Add Kconfig descriptions for PAS symbols such that they are visible
->   in menuconfig to update.
-> 
-> Changes in v5:
-> - Incorporated misc. comments from Mukesh.
-> - Split up patch #11 into 2 to add an independent commit for passing
->   proper PAS ID to set_remote_state API.
-> - Picked up tags.
-> 
-> Changes in v4:
-> - Incorporate misc. comments on patch #4.
-> - Picked up an ack for patch #10.
-> - Clarify in cover letter about state of media support.
-> 
-> Changes in v3:
-> - Incorporated some style and misc. comments for patch #2, #3 and #4.
-> - Add QCOM_PAS Kconfig dependency for various subsystems.
-> - Switch from pseudo TA to proper TA invoke commands.
-> 
-> Changes in v2:
-> - Fixed kernel doc warnings.
-> - Polish commit message and comments for patch #2.
-> - Pass proper PAS ID in set_remote_state API for media firmware drivers.
-> - Added Maintainer entry and dropped MODULE_AUTHOR.
-> 
-> Mukesh Ojha (1):
->   arm64: dts: qcom: kodiak: Add EL2 overlay
-> 
-> Sumit Garg (14):
->   firmware: qcom: Add a generic PAS service
->   firmware: qcom_scm: Migrate to generic PAS service
->   firmware: qcom: Add a PAS TEE service
->   remoteproc: qcom_q6v5_pas: Switch over to generic PAS TZ APIs
->   remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs
->   remoteproc: qcom_wcnss: Switch to generic PAS TZ APIs
->   remoteproc: qcom: Select QCOM_PAS generic service
->   drm/msm: Switch to generic PAS TZ APIs
->   media: qcom: Switch to generic PAS TZ APIs
->   media: qcom: Pass proper PAS ID to set_remote_state API
->   net: ipa: Switch to generic PAS TZ APIs
->   wifi: ath12k: Switch to generic PAS TZ APIs
->   firmware: qcom_scm: Remove SCM PAS wrappers
->   MAINTAINERS: Add maintainer entry for Qualcomm PAS TZ service
-> 
->  MAINTAINERS                                   |   9 +
->  arch/arm64/boot/dts/qcom/Makefile             |   2 +
->  arch/arm64/boot/dts/qcom/kodiak-el2.dtso      |  39 ++
->  drivers/firmware/qcom/Kconfig                 |  21 +-
->  drivers/firmware/qcom/Makefile                |   2 +
->  drivers/firmware/qcom/qcom_pas.c              | 291 +++++++++++
->  drivers/firmware/qcom/qcom_pas.h              |  50 ++
->  drivers/firmware/qcom/qcom_pas_tee.c          | 477 ++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.c              | 302 ++++-------
->  drivers/gpu/drm/msm/Kconfig                   |   1 +
->  drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   4 +-
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  11 +-
->  drivers/media/platform/qcom/iris/Kconfig      |  25 +-
->  .../media/platform/qcom/iris/iris_firmware.c  |   9 +-
->  drivers/media/platform/qcom/venus/Kconfig     |   1 +
->  drivers/media/platform/qcom/venus/firmware.c  |  11 +-
->  drivers/net/ipa/Kconfig                       |   2 +-
->  drivers/net/ipa/ipa_main.c                    |  13 +-
->  drivers/net/wireless/ath/ath12k/Kconfig       |   2 +-
->  drivers/net/wireless/ath/ath12k/ahb.c         |  10 +-
->  drivers/remoteproc/Kconfig                    |   4 +-
->  drivers/remoteproc/qcom_q6v5_mss.c            |   5 +-
->  drivers/remoteproc/qcom_q6v5_pas.c            |  51 +-
->  drivers/remoteproc/qcom_wcnss.c               |  12 +-
->  drivers/soc/qcom/mdt_loader.c                 |  12 +-
->  include/linux/firmware/qcom/qcom_pas.h        |  43 ++
->  include/linux/firmware/qcom/qcom_scm.h        |  29 --
->  include/linux/soc/qcom/mdt_loader.h           |   6 +-
->  28 files changed, 1124 insertions(+), 320 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/kodiak-el2.dtso
->  create mode 100644 drivers/firmware/qcom/qcom_pas.c
->  create mode 100644 drivers/firmware/qcom/qcom_pas.h
->  create mode 100644 drivers/firmware/qcom/qcom_pas_tee.c
->  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
-> 
-> -- 
-> 2.51.0
-> 
-> 
-
-
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDIvNV0gcmVtb3RlcHJvYzogaW14X3Jwb2M6IGZpeCBjYXJ2
+ZW91dCBuYW1lDQo+IHBhcnNpbmcNCj4gDQo+IA0KPiANCj4gT24gNS8yNC8yMDI2IDc6MTMgUE0s
+IFBlbmcgRmFuIHdyb3RlOg0KPiA+IE9uIEZyaSwgTWF5IDIyLCAyMDI2IGF0IDA0OjE4OjQ2QU0g
+LTA3MDAsIExhdXJlbnRpdSBNaWhhbGNlYQ0KPiB3cm90ZToNCj4gPj4gRnJvbTogTGF1cmVudGl1
+IE1paGFsY2VhIDxsYXVyZW50aXUubWloYWxjZWFAbnhwLmNvbT4NCj4gPj4NCj4gPj4gVGhlIGlt
+eCByZW1vdGVwcm9jIGRyaXZlciBhc3N1bWVzIHRoYXQgdGhlIG5hbWVzIG9mIHRoZSByZXNlcnZl
+ZA0KPiA+PiBtZW1vcnkgcmVnaW9ucyByZWZsZWN0IHRoZWlyIHVzYWdlIChlLmcuICJ2ZGV2YnVm
+ZmVyIiwgInZkZXYwdnJpbmcwIiwNCj4gPj4gZXRjLikuIFRoaXMgY29uZmxpY3RzIHdpdGggdGhl
+IGRldmljZXRyZWUgc3BlY2lmaWNhdGlvbidzDQo+ID4+IHJlY29tbWVuZGF0aW9uLCB3aGljaCBz
+dGF0ZXMgdGhhdCB0aGUgbmFtZXMgb2YgdGhlIGRldmljZXRyZWUNCj4gbm9kZXMgc2hvdWxkIGJl
+IGdlbmVyaWMuDQo+ID4+DQo+ID4+IFRoZXJlZm9yZSwgaW5zdGVhZCBvZiByZWx5aW5nIG9uIHRo
+ZSBub2RlIG5hbWVzLCB1c2UgdGhlIG5hbWVzDQo+IHBhc3NlZA0KPiA+PiB2aWEgdGhlICJtZW1v
+cnktcmVnaW9uLW5hbWVzIiBwcm9wZXJ0eSBpZiBwcmVzZW50LiBPdGhlcndpc2UsDQo+IGtlZXAN
+Cj4gPj4gdGhlIG9sZCBiZWhhdmlvci4NCj4gPj4NCj4gPj4gVGhlIGRlZmluaXRpb24gb2YgaW14
+X3Jwcm9jX3JtZW1fdG9fcmVzb3VyY2UoKSBpcyBhZGRlZCB0byBhDQo+IGNvbW1vbg0KPiA+PiBw
+bGFjZSBhcyBpbXhfZHNwX3Jwcm9jLmMgY2FuIGFsc28gdXNlIGl0IGdpdmVuIHRoYXQgaXQgc3Vm
+ZmVycyBmcm9tDQo+ID4+IHRoZSBzYW1lIGFmb3JlbWVudGlvbmVkIHByb2JsZW0uDQo+ID4+DQo+
+ID4+IFNpZ25lZC1vZmYtYnk6IExhdXJlbnRpdSBNaWhhbGNlYSA8bGF1cmVudGl1Lm1paGFsY2Vh
+QG54cC5jb20+DQo+ID4+IC0tLQ0KPiA+PiBkcml2ZXJzL3JlbW90ZXByb2MvaW14X3Jwcm9jLmMg
+fCAgNyArKysrKy0tDQo+ID4+IGRyaXZlcnMvcmVtb3RlcHJvYy9pbXhfcnByb2MuaCB8IDE5ICsr
+KysrKysrKysrKysrKysrKysNCj4gPj4gMiBmaWxlcyBjaGFuZ2VkLCAyNCBpbnNlcnRpb25zKCsp
+LCAyIGRlbGV0aW9ucygtKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9yZW1vdGVw
+cm9jL2lteF9ycHJvYy5jDQo+ID4+IGIvZHJpdmVycy9yZW1vdGVwcm9jL2lteF9ycHJvYy5jIGlu
+ZGV4DQo+IDdmNTQzMjIyNDRhYy4uMWVlMWM2NThkY2MxDQo+ID4+IDEwMDY0NA0KPiA+PiAtLS0g
+YS9kcml2ZXJzL3JlbW90ZXByb2MvaW14X3Jwcm9jLmMNCj4gPj4gKysrIGIvZHJpdmVycy9yZW1v
+dGVwcm9jL2lteF9ycHJvYy5jDQo+ID4+IEBAIC02NzIsNyArNjcyLDcgQEAgc3RhdGljIGludCBp
+bXhfcnByb2NfcHJlcGFyZShzdHJ1Y3QgcnByb2MNCj4gKnJwcm9jKQ0KPiA+PiAJCWludCBlcnI7
+DQo+ID4+IAkJc3RydWN0IHJlc291cmNlIHJlczsNCj4gPj4NCj4gPj4gLQkJZXJyID0gb2ZfcmVz
+ZXJ2ZWRfbWVtX3JlZ2lvbl90b19yZXNvdXJjZShucCwgaSsrLA0KPiAmcmVzKTsNCj4gPj4gKwkJ
+ZXJyID0gaW14X3Jwcm9jX3JtZW1fdG9fcmVzb3VyY2UobnAsIGkrKywgJnJlcyk7DQo+ID4+IAkJ
+aWYgKGVycikNCj4gPj4gCQkJYnJlYWs7DQo+ID4+DQo+ID4+IEBAIC04NTAsMTEgKzg1MCwxNCBA
+QCBzdGF0aWMgaW50IGlteF9ycHJvY19hZGRyX2luaXQoc3RydWN0DQo+IGlteF9ycHJvYyAqcHJp
+diwNCj4gPj4gCWlmIChucGggPD0gMCkNCj4gPj4gCQlyZXR1cm4gMDsNCj4gPj4NCj4gPj4gKwlp
+ZiAoIW9mX3Byb3BlcnR5X3ByZXNlbnQobnAsICJtZW1vcnktcmVnaW9uLW5hbWVzIikpDQo+ID4+
+ICsJCWRldl93YXJuKGRldiwgInVzaW5nIG5vZGUgbmFtZXMgZm9yIGNhcnZlb3V0cw0KPiBzaG91
+bGQgYmUNCj4gPj4gK2F2b2lkZWRcbiIpOw0KPiA+DQo+ID4gUGxlYXNlIGNoZWNrICdtZW1vcnkt
+cmVnaW9ucyAmJiAhbWVtb3J5LXJlZ2lvbi1uYW1lcycsIHNvbWUNCj4gZGVtb3MgbWF5DQo+ID4g
+bm90IG5lZWQgdG8gdXNlIG1lbW9yeSByZWdpb25zLg0KPiA+DQo+ID4gUmVnYXJkcw0KPiA+IFBl
+bmcNCj4gPg0KPiANCj4gV2hhdCBmb3I/IFlvdSdsbCBub3QgcmVhY2ggdGhpcyBjaGVjayB1bmxl
+c3MgIm1lbW9yeS1yZWdpb25zIiBpcw0KPiBzcGVjaWZpZWQ/DQoNClNvcnJ5LCBpZ25vcmUgbXkg
+bGFzdCBjb21tZW50Lg0KDQpUaGFua3MsDQpQZW5nLg0KDQo=
