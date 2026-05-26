@@ -1,268 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010040.outbound.protection.outlook.com [52.101.61.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027FC3B0AF3;
-	Tue, 26 May 2026 16:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779812015; cv=none; b=f3MfrkLmZ5wBRVR+uD19Wfj3bJOhUo7JwvFTWDqeAM17tOqYcUpq6MDG8dm9YSwp58Fv7JIMTvrxeZYfw6Z0+5RDgPmQ9odzEZtrg8SdTBUBBLNvHROPZYqgiBuXDEQ4ijU0M8i0cmd2csPDp98qI4ju1Sf33UdFn9Hsx+i8fMs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779812015; c=relaxed/simple;
-	bh=xW7mQnwXGedcSKCCtrk1aQP/FL3phBCCx5+Hkemnwac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qNSpMQpPsN7jvvBuLP065QSTefo8xdkX18U3h2fl/Oz/Qdn2Chr7gfE/893lddsd96ZrZgenVF4pii8auqwmCwnpQFt3+bV+568//4ePhWAWViwsuvyG+9NvRPScrB1UoFcbaihf64P2b7CM8uvIhRJvMNyi9i02LbyaKxPN8ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OpQ4xLvT; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E3538CFE7;
+	Tue, 26 May 2026 16:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779812829; cv=fail; b=POnpVLA4vlXl+9VEz0sOaWI9MGK1s8K9nANbWIUTtOWgeFKaOIN1uyt4FJu95itnEWGRgw38JxjtRUse0aL+75pAbRF9bmsgYErfFTCO7oVN5yaciyfgSUwqX9cs6Kv5rbTuORey4z8hjEM1a5MB/0aK36KSTOUbrNoMvnD9SNk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779812829; c=relaxed/simple;
+	bh=C9D/T9mUAIhL/TndfaI5/2SHq/vZZZlQjvnVG9kQxvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ubcxTd6kIr7nhUAn8dy8qr2ma2cM6NidvRUiCn7FFybf1gqNG1xfGL/IZdh45EEVOQldsf51Hb0wxaYdu5O2dTuwWh6snjn/CQQpIJmZEfxqBPz5TrgFPow8k3LZLxcxKDQHsPYzEE2ngUpKGyHnCMUk8E3k+jtgJOfpJq0hUwc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IMxoq8Md; arc=fail smtp.client-ip=52.101.61.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OpQ4xLvT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B75F1F000E9;
-	Tue, 26 May 2026 16:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779812013;
-	bh=HoQ502gwpeiNp5KJxRq0pIgzkr0RP/tEx2RDysEICWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=OpQ4xLvTA4MJ2XS4/Vzdju1ys4yv/uQ85topgEYflLbhAA+30vT7ARUmzmvcB/T77
-	 s1M3fGkNAq2adWMicf7Qw3bch7WWAf11yxvEGYj8io1m1Rs94FPDZ6bzh3UvkO5Owy
-	 5SMqjHw6gSZfdvJZOi+Qk+Sw6+qwprY11fe6oU5YpprUv9BPObJ16z4A8NQ21DAsBo
-	 BFgwbdoLUSLINdcXBiS25P4kP2OcrQgYYHLpItpcamJFTyGyVJQhyNYTsnMLowV6/9
-	 wXK0teGW1H8GSpIOWjz1Q0VXcoLj3vt0G/R8kD1l8WeX61h64NZ3Nq79MJ28Z5pDRC
-	 GqjLQst7v2aYw==
-Date: Tue, 26 May 2026 21:43:19 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: bod@kernel.org
-Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-	dikshita.agarwal@oss.qualcomm.com, mchehab@kernel.org,
-	elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	jjohnson@kernel.org, mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
-	pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
-	tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v7 00/15] firmware: qcom: Add OP-TEE PAS service support
-Message-ID: <ahXGn4wrEozWd_Ur@sumit-xelite>
-References: <20260522115936.201208-1-sumit.garg@kernel.org>
- <177975399325.14006.12128272008783925649.b4-reply@b4>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IMxoq8Md"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Lyuj5ammKjhfFAHccQ0zYfh1FhSUbjizmjpeSRQ0pojUvVlq3fuGAvC+INQcPKmovwQZ4ceHXSsLewSwBYzT7QfoD4CLiZDAbsFGBrN9luiZRnZN44+1DS0CXw8Bf8c/FikVp2NFSI155GsA0pJSKwfsPc5vSiTSeBs2+F+DcpXv4bQJMxPNt+EDWc2BoA5cN0gXaLcWN9bIQWMy5qxyOKIzXMkvksgjTyTaH9qB/qxJLwecdm1fIenYsQ8MS7CRV7ds+G3Mh7juplyS7mg9DksK6HvfcGkQISxqKEe0gBDEaB4yWw7yNszA8sU/tpzdYhfwZ3uNXimeXlEbLKcMQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vNH8mNCvT7Y84f1KPvVx2XqYYHFbe+NoCD6Ic0qm/HI=;
+ b=cAM1MK1YFc2MMoCkZ8FN7LOxpKEdwD37kSbjOl54/0h0LsWMy2Lr98Zo2iN+GoNsV5MEUvxhXKyg8AJ+I4+5vYqx7yFkdcnzBaeynTuYfW5Set1AISZ66yiKfM8XIdyjj+O3S61QOMZ2eZuIfghkyZcN3H0M5mALXPsHJSawZIt2uowOnLxfM91PVx8e3QhnKWS/zQkd8oiWjWP2zzU57YPZSrmOPQNURIRgLR0/XBnM5/Bqic4Xz4+qTyLBiKRBxZlMeE3ChaQ6qsI5exvu1h4tO00iZ2mx8dxsF5T3f5ONCtTHVbhnmcRlUZyDLgFLd8BWO7AexvPvuGoOIkq0wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vNH8mNCvT7Y84f1KPvVx2XqYYHFbe+NoCD6Ic0qm/HI=;
+ b=IMxoq8MdZEbWlLMBJ9/4K6gADq4vWYxOvsxm7+mT3Z9R1HOxS7tge69UAejmzRXGsgkNp9mHjX3YtOD1EqRb58e8w9evZYS7MLH+cpiSAJjKj7tm0mBHaweRl39yMaWC9edTPSTHo+pP8rDUOZ/7Sgich40bV410czumKh3bNAs=
+Received: from BYAPR21CA0007.namprd21.prod.outlook.com (2603:10b6:a03:114::17)
+ by DS7PR12MB6006.namprd12.prod.outlook.com (2603:10b6:8:7d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.11; Tue, 26 May
+ 2026 16:27:03 +0000
+Received: from SJ1PEPF00002325.namprd03.prod.outlook.com
+ (2603:10b6:a03:114:cafe::7f) by BYAPR21CA0007.outlook.office365.com
+ (2603:10b6:a03:114::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.92.3 via Frontend Transport; Tue, 26
+ May 2026 16:27:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SJ1PEPF00002325.mail.protection.outlook.com (10.167.242.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.71.7 via Frontend Transport; Tue, 26 May 2026 16:27:03 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 26 May
+ 2026 11:27:02 -0500
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 26 May
+ 2026 11:27:02 -0500
+Received: from [10.254.67.213] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
+ Transport; Tue, 26 May 2026 11:27:01 -0500
+Message-ID: <55312255-df5a-4bbd-8088-857f73949098@amd.com>
+Date: Tue, 26 May 2026 11:27:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <177975399325.14006.12128272008783925649.b4-reply@b4>
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH] remoteproc: xlnx: remove binding header dependency
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Tanmay Shah
+	<tanmay.shah@amd.com>
+CC: <andersson@kernel.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20260508174006.3783082-1-tanmay.shah@amd.com>
+ <ahWy2AxRwWYwg9o1@p14s>
+Content-Language: en-US
+From: "Shah, Tanmay" <tanmays@amd.com>
+In-Reply-To: <ahWy2AxRwWYwg9o1@p14s>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002325:EE_|DS7PR12MB6006:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff1318db-24b1-4919-4d85-08debb439ec6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700016|82310400026|376014|13003099007|18002099003|22082099003|56012099006|4143699003|3023799007|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	R1syoC37+rUpogqQM4w16miVm09HGb56g4ZseAuB3MFFm1jUcONt6TjFS4i+4OXIUprafAd4uZLkdHTFj8ORUO+aXxjxZWT03xPB4jb0W8Jmnt0c1uLA+ZId/+dWLvRHTqHZ3EIn8112i+uTcAuguewkoM1wwL66PfRFg0u9k6IIPCHRxHwo+GBEgVxvbh52y9Aip0SLyWhfGRHIQcn1CQe8MM0vnmRuF8I2/xUJFweWrDcEQtpycS05KFiOkTRqbzFnSP74Q6sP11OuZu3cs7GZJWWLfg+csON9eGIgMPr4CRtpcm02KQIS2MEmTtL62LX/fYYkkmy/tkjgvM2bOWX9uGGQPNlrvFG6b18Sb35NyGx0edegePNGVPqNncdyJiYKbWGE+c73ISWVNYPXWYQz66f3NlPeu6to60iw6onJraqZRHKUntZpb8m436FnAZn9qAFNgI59vwfeJK9qfLXwPJNU59QpNIl8Wjd0IorU6lr0tH7TYm8ydSjJ2n/7D54820Ht7TAOHb2eZP7WMM2iNu6Gxk5TiL0EPA4iwB2QBu8MdY/HaHxeyrdOrxinipFDAVZNRDyJEPl5WEEPgpuVNaQPHAUf9la5NnG0yNKjPts5VUo3yRDldNQKMcjhOpiaKOPJfsF/Ga7lpTjDkQuhM2GFf8T0ZXEurWlUobevYslEIB0yJBi1/Lyzov4VgU0n8sajZp5scY+v1ddEsOox7iqlIh5ER/h4FRQ9PlI=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700016)(82310400026)(376014)(13003099007)(18002099003)(22082099003)(56012099006)(4143699003)(3023799007)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	7x/Cz97vUGhgh9Jox+mTjVm9D2qDpaV10nQ+8GmdHHxq4k2w9ohritI4Dk2ojwujuzMtysNHYOpV4mZ/jBG609A6uzjQDs+mZsht2R8bNn2n85FijSRoVpd6V4ARZYHbZ16LaFIHznbn9llrQWXqZ/SLK/a83u+kK0S9MBrC+b8sgUw7n0n3mmvkS+mDQ6iwG/sOqsOqt1lSmnHKB3gl3tyIKQK4PagGZM5/nIr2XbrJAdwI5l+tXidDUMm9dPGjBqwkyW9TGuhBSf3VIdpRyYYO10zCuZ6ehLABJXp4jressvSxrpMTgYvEO/d0WPUMYz4ta0W5hYdLD8NO8SQW+lhKEsUQeLVfaamIL/M4fAJDztbVTTsyWvM9TnmWXSqmifn0D0aWjEtS6DncNwZEZ2psEdpL4CvIZzcp9AnwMVbiQV/qinA/H6DgV5FevxUq
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2026 16:27:03.3357
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff1318db-24b1-4919-4d85-08debb439ec6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002325.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6006
 
-Hey Brian,
 
-On Tue, May 26, 2026 at 01:06:33AM +0100, bod@kernel.org wrote:
-> On 2026-05-22 17:29 +0530, Sumit Garg wrote:
-> > From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > 
-> > Qcom platforms has the legacy of using non-standard SCM calls
-> > splintered over the various kernel drivers. These SCM calls aren't
-> > compliant with the standard SMC calling conventions which is a
-> > prerequisite to enable migration to the FF-A specifications from Arm.
-> > 
-> > OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
-> > support these non-standard SCM calls. And even for newer architectures
-> > using S-EL2 with Hafnium support, QTEE won't be able to support SCM
-> > calls either with FF-A requirements coming in. And with both OP-TEE
-> > and QTEE drivers well integrated in the TEE subsystem, it makes further
-> > sense to reuse the TEE bus client drivers infrastructure.
-> > 
-> > The added benefit of TEE bus infrastructure is that there is support
-> > for discoverable/enumerable services. With that client drivers don't
-> > have to manually invoke a special SCM call to know the service status.
-> > 
-> > So enable the generic Peripheral Authentication Service (PAS) provided
-> > by the firmware. It acts as the common layer with different TZ
-> > backends plugged in whether it's an SCM implementation or a proper
-> > TEE bus based PAS service implementation.
-> > 
-> > The TEE PAS service ABI is designed to be extensible with additional API
-> > as PTA_QCOM_PAS_CAPABILITIES. This allows to accommodate any future
-> > extensions of the PAS service needed while still maintaining backwards
-> > compatibility.
-> > 
-> > Currently OP-TEE support is being added to provide the backend PAS
-> > service implementation which can be found as part of this PR [1].
-> > This implementation has been tested on Kodiak/RB3Gen2 board with lemans
-> > EVK board being the next target. In addition to that WIN/IPQ targets
-> > planning to use OP-TEE will use this service too. Surely the backwards
-> > compatibility is maintained and tested for SCM backend.
-> > 
-> > Note that kernel PAS service support while running in EL2 is at parity
-> > among OP-TEE vs QTEE. Especially the media (venus/iris) support depends
-> > on proper IOMMU support being worked out on the PAS client end.
-> > 
-> > Patch summary:
-> > - Patch #1: adds Kodiak EL2 overlay since boot stack with TF-A/OP-TEE
-> >   only allow UEFI and Linux to boot in EL2.
-> > - Patch #2: adds generic PAS service.
-> > - Patch #3: migrates SCM backend to generic PAS service.
-> > - Patch #4: adds TEE/OP-TEE backend for generic PAS service.
-> > - Patch #5-#13: migrates all client drivers to generic PAS service.
-> > - Patch #14: drops legacy PAS SCM exported APIs.
-> > 
-> > The patch-set is based on qcom tree tip [2] and can be found in git tree
-> > here [3].
-> > 
-> > Merge strategy:
-> > 
-> > It is expected due to APIs dependency, the entire patch-set to go via
-> > the Qcom tree. All other subsystem maintainers, it will be great if I
-> > can get acks for the corresponding subsystem patches.
 
-It looks like you missed this merge strategy part of the cover letter.
-
-> > 
-> > [1] https://github.com/OP-TEE/optee_os/pull/7721 (already merged)
-> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/log/?h=for-next
-> > [3] https://git.kernel.org/pub/scm/linux/kernel/git/sumit.garg/linux.git/log/?h=qcom-pas-v7
-> > 
-> > ---
-> > Changes in v7:
-> > - Rebased to qcom tree (for-next branch) tip.
-> > - Merged patch #5 and #7 due to build dependency.
-> > - Disabled modem for kodiak EL2 as it isn't tested yet.
-> > - Fix an issue found out by sashiko-bot for patch #4.
+On 5/26/2026 9:48 AM, Mathieu Poirier wrote:
+> On Fri, May 08, 2026 at 10:40:06AM -0700, Tanmay Shah wrote:
+>> Bindings can be deprecated and driver should not include bindings
+>> headers directly. Instead define needed constants in the driver.
+>>
 > 
-> This whole series needs to be broken up into different parts and sent in
-> smaller chunks landing the core changes into the firmware, the drivers and
-> finally the dts.
+> Is there an official directive about not including bindings in drivers?  To me
+> it seems advantageous to have a focal point for the definition of constants,
+> guaranteeing eveyone uses the same values.
+>  
 
-The DTS EL2 change for Kodiak is totally independent one and that's why
-it's the first one in this series which can be picked independently.
+This is what I found from here:
+https://docs.kernel.org/process/maintainer-soc.html
 
-> 
-> For example applying the Iris stuff is impossible until the remoteproc
-> stuff lands.
-> 
-> Instead of sending one giant series which no one maintainer can apply send
-> a number of series where one posts a dependency on the other.
+2.3.2. Driver Branch Dependencies
 
-The subsystem changes like for Iris are just about renaming of the
-firmware APIs to be used which is moving away from SCM specific API to
-the generic PAS API. I don't think there is any clean way to merge the
-API renaming changes independently of when the new API gets introduced.
+"Avoid defining custom macros in include/dt-bindings/ for hardware
+constants that can be derived from a datasheet -- binding macros in
+header files should only be used as a last resort if there is no natural
+way to define a binding"
 
-> 
-> Lumping the TEE stuff in with video encoder, wifi, dts is spanning too many
-> things and makes merging a NAK.
-> 
-> Break this up into logical chunks and sequence a one series on top of the
-> other - accpeting that you might, likely will have to keep on top of the
-> various series and resend/rebase as things get merged.
+Also, bindings can be deprecated, so if the current binding gets
+deprecated, the header file can be removed from the include/dt-bindings.
 
-I tried my best for the logical split of the patches here keeping the
-subsystems changes to very minimal required (only renaming firmware
-APIs). I would be open to any further suggestions.
+>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+>> ---
+>>  drivers/remoteproc/xlnx_r5_remoteproc.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> index 45a62cb98072..f5b736fa3cb4 100644
+>> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+>> @@ -4,7 +4,6 @@
+>>   *
+>>   */
+>>  
+>> -#include <dt-bindings/power/xlnx-zynqmp-power.h>
+>>  #include <linux/dma-mapping.h>
+>>  #include <linux/firmware/xlnx-zynqmp.h>
+>>  #include <linux/kernel.h>
+>> @@ -19,6 +18,11 @@
+>>  
+>>  #include "remoteproc_internal.h"
+>>  
+>> +#define		PD_R5_0_ATCM	15
+>> +#define		PD_R5_0_BTCM	16
+>> +#define		PD_R5_1_ATCM	17
+>> +#define		PD_R5_1_BTCM	18
+>> +
+>>  /* IPI buffer MAX length */
+>>  #define IPI_BUF_LEN_MAX	32U
+>>  
+>>
+>> base-commit: 54dacf6efe7196c1cd8ae4b5c691579d0510a8bd
+>> -- 
+>> 2.34.1
+>>
 
-However, if you are happy with firmware APIs renaming for the media
-subsystem then it will be nice to get ack from you. I hope Bjorn can
-then pickup the entire series.
-
--Sumit
-
-> 
-> > Changes in v6:
-> > - Rebased to v7.1-rc4 tag.
-> > - Patch #14: fixed ret error print.
-> > - Add Kconfig descriptions for PAS symbols such that they are visible
-> >   in menuconfig to update.
-> > 
-> > Changes in v5:
-> > - Incorporated misc. comments from Mukesh.
-> > - Split up patch #11 into 2 to add an independent commit for passing
-> >   proper PAS ID to set_remote_state API.
-> > - Picked up tags.
-> > 
-> > Changes in v4:
-> > - Incorporate misc. comments on patch #4.
-> > - Picked up an ack for patch #10.
-> > - Clarify in cover letter about state of media support.
-> > 
-> > Changes in v3:
-> > - Incorporated some style and misc. comments for patch #2, #3 and #4.
-> > - Add QCOM_PAS Kconfig dependency for various subsystems.
-> > - Switch from pseudo TA to proper TA invoke commands.
-> > 
-> > Changes in v2:
-> > - Fixed kernel doc warnings.
-> > - Polish commit message and comments for patch #2.
-> > - Pass proper PAS ID in set_remote_state API for media firmware drivers.
-> > - Added Maintainer entry and dropped MODULE_AUTHOR.
-> > 
-> > Mukesh Ojha (1):
-> >   arm64: dts: qcom: kodiak: Add EL2 overlay
-> > 
-> > Sumit Garg (14):
-> >   firmware: qcom: Add a generic PAS service
-> >   firmware: qcom_scm: Migrate to generic PAS service
-> >   firmware: qcom: Add a PAS TEE service
-> >   remoteproc: qcom_q6v5_pas: Switch over to generic PAS TZ APIs
-> >   remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs
-> >   remoteproc: qcom_wcnss: Switch to generic PAS TZ APIs
-> >   remoteproc: qcom: Select QCOM_PAS generic service
-> >   drm/msm: Switch to generic PAS TZ APIs
-> >   media: qcom: Switch to generic PAS TZ APIs
-> >   media: qcom: Pass proper PAS ID to set_remote_state API
-> >   net: ipa: Switch to generic PAS TZ APIs
-> >   wifi: ath12k: Switch to generic PAS TZ APIs
-> >   firmware: qcom_scm: Remove SCM PAS wrappers
-> >   MAINTAINERS: Add maintainer entry for Qualcomm PAS TZ service
-> > 
-> >  MAINTAINERS                                   |   9 +
-> >  arch/arm64/boot/dts/qcom/Makefile             |   2 +
-> >  arch/arm64/boot/dts/qcom/kodiak-el2.dtso      |  39 ++
-> >  drivers/firmware/qcom/Kconfig                 |  21 +-
-> >  drivers/firmware/qcom/Makefile                |   2 +
-> >  drivers/firmware/qcom/qcom_pas.c              | 291 +++++++++++
-> >  drivers/firmware/qcom/qcom_pas.h              |  50 ++
-> >  drivers/firmware/qcom/qcom_pas_tee.c          | 477 ++++++++++++++++++
-> >  drivers/firmware/qcom/qcom_scm.c              | 302 ++++-------
-> >  drivers/gpu/drm/msm/Kconfig                   |   1 +
-> >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |   4 +-
-> >  drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  11 +-
-> >  drivers/media/platform/qcom/iris/Kconfig      |  25 +-
-> >  .../media/platform/qcom/iris/iris_firmware.c  |   9 +-
-> >  drivers/media/platform/qcom/venus/Kconfig     |   1 +
-> >  drivers/media/platform/qcom/venus/firmware.c  |  11 +-
-> >  drivers/net/ipa/Kconfig                       |   2 +-
-> >  drivers/net/ipa/ipa_main.c                    |  13 +-
-> >  drivers/net/wireless/ath/ath12k/Kconfig       |   2 +-
-> >  drivers/net/wireless/ath/ath12k/ahb.c         |  10 +-
-> >  drivers/remoteproc/Kconfig                    |   4 +-
-> >  drivers/remoteproc/qcom_q6v5_mss.c            |   5 +-
-> >  drivers/remoteproc/qcom_q6v5_pas.c            |  51 +-
-> >  drivers/remoteproc/qcom_wcnss.c               |  12 +-
-> >  drivers/soc/qcom/mdt_loader.c                 |  12 +-
-> >  include/linux/firmware/qcom/qcom_pas.h        |  43 ++
-> >  include/linux/firmware/qcom/qcom_scm.h        |  29 --
-> >  include/linux/soc/qcom/mdt_loader.h           |   6 +-
-> >  28 files changed, 1124 insertions(+), 320 deletions(-)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/kodiak-el2.dtso
-> >  create mode 100644 drivers/firmware/qcom/qcom_pas.c
-> >  create mode 100644 drivers/firmware/qcom/qcom_pas.h
-> >  create mode 100644 drivers/firmware/qcom/qcom_pas_tee.c
-> >  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
-> > 
-> > -- 
-> > 2.51.0
-> > 
-> > 
-> 
-> 
