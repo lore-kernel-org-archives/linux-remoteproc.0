@@ -1,211 +1,252 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD8A244687
-	for <linux-remoteproc@vger.kernel.org>; Thu, 28 May 2026 03:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490503F0AAD;
+	Thu, 28 May 2026 13:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779939085; cv=none; b=LlwDjF7SFZwqRTvnOsNiWDzJTw4qBLEfjgB8MdXCeQ8D4CWsfg0dZWiNJbM/z0lBq1E+NCPznWFfJQxUbskso0xVSCAeSsrTrqcDtB0BOF82xqMdVQskauQAu9pPKHe5/qRG9/qRMvw9GedY9L5hc9UNVLxbsmEhRjvbJF1q6YQ=
+	t=1779973881; cv=none; b=fXrIWavsX6CiwYjTi/SJmoksjHSxyE5+zHDv/SkI0/jgjt2oQFRWwe0M+sj23O3tP0OMQLoPVSnfFJxKhzVVe5r1EWta+2c/Kg8X4ze0FHv+8vNNJc8uDc8augLoM4Nr7yd0jPnFyB+6arHrzkcFgAdisDaFayWzTWWTqoOTxR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779939085; c=relaxed/simple;
-	bh=du2G9E0eYqG3UwmHKht+kFdDKGQAkHnhyxpzU8Jme40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q1XpP0gwMXmqKEoTo4AsU9XbwlrG5KofIIkM6V0SZRgMIrrWb0KB/8hXYG5vm4NnGArdpBN7FzGnU+9qGOqvtHscyACSeiGt/upG/j7Y8ZMkAHNtbRzMCkJqhcqIKaaPGMAWnUXgn78R3g4bS7JnlOfvt2qMHHn66WfKCgIc88A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BARKo82Y; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=A8DpJtb7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1779973881; c=relaxed/simple;
+	bh=DRxY+IRB0IqAgofhsecYlxPFiYO6P8tDS1HNVNN3odI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j7jeG1jBi3vSxuKAxmjCv8OLEUdoK/eBLN6NA/CVEX/Xo37SIJECOP1cSfyYulbehbOU3QAnwUSwd0koQRxqOitkN9rwEigrAJvxM/v72kfDjTQF9Dr322A7gPc8OlaNNRdEpLK5vJFQnoGS/dRI6+hAz5p1esUy5qNDmJudBng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2UHAKvV; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BARKo82Y";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="A8DpJtb7"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 64RKnJOs3010208
-	for <linux-remoteproc@vger.kernel.org>; Thu, 28 May 2026 03:31:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	obRGzyMev3GPdcUIXXbGVZQIyEJ+0cKopg6lhDeWLhY=; b=BARKo82YVAz1/2Pf
-	iP33St2iHDusefBDwPI/Ib5kGuxHg1UzrQfu3m395bj5WZfERCpO/HK0A8ToT+re
-	kS5b4DWPPSOkJPffttY+8Mfluc+gezUuII6izutjYKuyO5OYTLp+LFL1Tvl3mS4d
-	k+OcvzePvqb+aynMzoWlY4yBrue5sQEPdlxvSAV2flNQideFbxktB7BwFw6vDu+p
-	XzL5wUQk7FNt1KUH5V7AHsKfRj6rXqK3dJl+72b0Ie4Eng0Doaxk9xbM0lyJzeSd
-	JAritaE+yfiJTnszFxFP9ppJ5RGjC2hgqkVsvSjy37ftZaYWmD51pGrpYA3FFFqw
-	NPYyfw==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ee7yrh6cm-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 28 May 2026 03:31:23 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2b458add85aso136578455ad.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 27 May 2026 20:31:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1779939082; x=1780543882; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=obRGzyMev3GPdcUIXXbGVZQIyEJ+0cKopg6lhDeWLhY=;
-        b=A8DpJtb7gwl9gbxFdOUvQEfxpS45Lj2bsbgDOPW59upRM+zKRcTV1Wtauy/L4MyiNL
-         b9mnP0iFbmAnxS88ZaAmeD3q8tcI2JmFgAtQUs2m1PJyi7ayTZ5kHCFH5LDhX2N5OkkD
-         0+5QZjN8y16LERqmcyEvUvg2RJMSt/hQGzsSQPQcoySnBWGx5qaPngUE75aJNPRLzWlD
-         /T7oeeZOYkGfGVy7CXONZSjd650SrzbNmM9dAUcrNhX6ZCdWVqZftxIqMlm3of+d+/+n
-         PpYJMjhAU/FsZJWP4aNk0haHSRYV+VFpLpDXAjup59GgY3sqWTB5i3HL4kuU7/+u32qN
-         RoWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779939082; x=1780543882;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=obRGzyMev3GPdcUIXXbGVZQIyEJ+0cKopg6lhDeWLhY=;
-        b=UKrlZzFlHLvanoW5WsG3ocqsIGs22hk7p6PLZNIOYX7xXDOx5/nSCddju33LCLS1FK
-         v/nr0BWcTEef8RmVJAcs2Cdifa26jzKLQs9GYDireZdf3BibQyU31yBr3+IK9/uZ0keP
-         9Z0iYU5evavcWfcDr2yDzlP2gswTodOhgakuA84u5NWsGQLWqLeqnLIReuUphJnD/uen
-         cniJuzuCh9oHfcvdRr0wq2KI0zQwq3xTeNoFEARmBmoNHPWr+30nqivbt6M1TkNemB2e
-         n28wX7EuiF/ufKPekjNPdAqW+gBW3CiVogrXbuQKQ1mOcNwDy1v9xhUGBWIPqeJNIlue
-         M2Fw==
-X-Forwarded-Encrypted: i=1; AFNElJ9R1O90fsRgttVFhm4gjGJo3x4uFGGqygK1bkreJxLJNPepqDSaq0LkR+OShQmVJAr7vjcXy1teGQdD+EgwCoOf@vger.kernel.org
-X-Gm-Message-State: AOJu0Yytd0JXNlaugLe2Pb0H7VxTP7dzqbOQtqfrNgOuP4Mk4153kRGw
-	goMNfOs3Z56bE4pfVwuYHE7r8hpj56HI32evWeZJbqSghN9e3k6t9I03PDSZBczMRMcicBHhR0B
-	VwfdU7nXPDG6asl2+5ExU6ZccHM+ogxm5/yjCmOpPo9se1xWWx7mC4FjH1Wd8ivJYkYpHuFMQ
-X-Gm-Gg: Acq92OFPwXiomWrUK9h1uf+TTWZ9IGGERwLRt0d3d4yrlptd+gLVxVyyhEg4wOmKt9F
-	rmJygZOu2f77NuBEk2nAa2rVAf+XhLU0ponHJt5tv9PTK/e9281ePtHg7xXu54jkBVHgGbhHqIQ
-	QB3b0hMsYAyC/iwfmhJWJ15x0X+25cpEgZpoJicUw9m2nrQE/zpPI01Z1T1/Fdz4EzKEUj96QUF
-	fNgcM65ACd8OGPM9EZrBr70kqfooZC6U5IJoeWvZOkkD640oCWG7VmbZPYawA7DeeIyjggpGnIJ
-	4YmJf8j6sKfWSfq3aQCWoHSOY97f/Uo96GrEi8MMKQ1vY/Ld/WLt+XLaBXZS82Ppk2MArW3PjJ1
-	0w4oRpIu2rCEPC5Hf+eXOagMhz3r2UTgKdsj0EkPVPxvqby5Bm2xwvWiJsAyk5sc43Xl3n+uA6y
-	n6mfZEy2jN2BCCHQrtxQjgYq6zCP4=
-X-Received: by 2002:a17:902:e885:b0:2bf:26d:3f42 with SMTP id d9443c01a7336-2bf026d491emr19844385ad.18.1779939082511;
-        Wed, 27 May 2026 20:31:22 -0700 (PDT)
-X-Received: by 2002:a17:902:e885:b0:2bf:26d:3f42 with SMTP id d9443c01a7336-2bf026d491emr19843835ad.18.1779939081994;
-        Wed, 27 May 2026 20:31:21 -0700 (PDT)
-Received: from [10.133.33.221] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf0825ee37sm6238045ad.41.2026.05.27.20.31.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 May 2026 20:31:21 -0700 (PDT)
-Message-ID: <a15ce5d1-f2f3-4831-a79a-d6662390c409@oss.qualcomm.com>
-Date: Thu, 28 May 2026 11:31:17 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2UHAKvV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4393B1F000E9;
+	Thu, 28 May 2026 13:11:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1779973880;
+	bh=iDEo0j2nHsYSJgSqy1z8dWMjD802zHIig7qC3EKAx/k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=b2UHAKvVDwz9Q8zDeG5+gjEzAwHGNvWPrhFQu4UWecZMGU9oLFnYEUppHdL1JG96W
+	 ZyKfXbFlZkxgErlkIJ9vEDjHqhgkZYeEglVfzfyl1vwgy5OcQX/ILvYNtAw+Fw/u/n
+	 7Rf4HO5aTgBsh8Qrexyv+asWzwUvPXiN0B/LUktlwpZ7GWwIh5oxpK5VedspSPx+Bn
+	 nl+HsmBpJmBcRweXxwoqgm9Olo+josivuYToc2QW7vazCQsXTqNoHWp1knQYF/ENFG
+	 jtLGo1SiiASszWS5aZ18I7jEX0fOy1BKxNFyaZVCVtMBYw8PPdiTBmqYLjDYvMKN77
+	 k31LndrsIUjKg==
+Date: Thu, 28 May 2026 18:41:07 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
+	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
+	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
+	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
+	pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
+	tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
+	srinivas.kandagatla@oss.qualcomm.com, jens.wiklander@linaro.org,
+	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
+	Sumit Garg <sumit.garg@oss.qualcomm.com>,
+	Harshal Dev <harshal.dev@oss.qualcomm.com>
+Subject: Re: [PATCH v7 02/15] firmware: qcom: Add a generic PAS service
+Message-ID: <ahg-6-eLus-J7tC8@sumit-xelite>
+References: <20260522115936.201208-1-sumit.garg@kernel.org>
+ <20260522115936.201208-3-sumit.garg@kernel.org>
+ <37fb075c-3f48-4a7c-b05d-090b0b09e04a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] remoteproc: core: Check subdev start status in
- rproc_stop()
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20260519-rproc-attach-issue-v2-0-caa1eaf75081@oss.qualcomm.com>
- <20260519-rproc-attach-issue-v2-2-caa1eaf75081@oss.qualcomm.com>
- <ahBItk6iPQTGaZWT@linaro.org>
-Content-Language: en-US
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-In-Reply-To: <ahBItk6iPQTGaZWT@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTI4MDAzMSBTYWx0ZWRfX/fY5nZ8KcJNw
- Q66hkdFiQe8O8ofiy7Vc8cbjTbVZg7SaGdFNHoEsSxx+5v8uYW3Spi8utO3Z78SYQsBJAW0cQEb
- f5vfooE4hcqphVb8upUX6Hd2SlRPkNJ/vA0xQwD052LiDSxkShGdoak8NHw228UOSe4yfIejaVE
- 72UEPsoh2tHr77watLlyK8xhK8Oligq14Hzyo4lCCzqCdnYzpiIrXXDUDImwmpaUl6dXsE/8tz1
- Dbn4grO4wSUw3kaYP+1QiUdpbLEZIqg1R7NzJ61FPgEndPxt+SLZJnRP4ydN8VntDnNDYaO4hJG
- AEpzrneAZlJk9xGDLuOc3sRA5NZaGF1zlwxhpY8N70azfP2b1xLg/bKfLkIx7zUEIx+ZeM26rlU
- 3YQqKAzuFLOOdHDHnU1vtQsjkU0/FF0mE/FFnV3qySV39azj80aEYvlJrZgauOrSYPlVaxNM66B
- tzpRYDZZ4iFcUGuRoBw==
-X-Authority-Analysis: v=2.4 cv=PLo/P/qC c=1 sm=1 tr=0 ts=6a17b70b cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=NGcC8JguVDcA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=tv7k-BTZGpM39zBJeD4A:9 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: lTm0Ul_g8k4rCmKH7RBOUBpRZG_FIMbJ
-X-Proofpoint-ORIG-GUID: lTm0Ul_g8k4rCmKH7RBOUBpRZG_FIMbJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-05-28_01,2026-05-26_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0
- priorityscore=1501 adultscore=0 lowpriorityscore=0 suspectscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2605210000
- definitions=main-2605280031
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37fb075c-3f48-4a7c-b05d-090b0b09e04a@oss.qualcomm.com>
 
+Hi Amir,
 
-
-On 5/22/2026 8:14 PM, Stephan Gerhold wrote:
-> On Tue, May 19, 2026 at 12:20:03AM -0700, Jingyi Wang wrote:
->> For rproc that doing attach, rproc_start_subdevices() is called only when
->> attach successfully. If rproc_report_crash() is called in the attach
->> function, rproc_boot_recovery()->rproc_stop()->rproc_stop_subdevices()->
->> glink_subdev_stop() could be called and cause NULL pointer dereference:
->>
->>   Unable to handle kernel NULL pointer dereference at virtual address 0000000000000300
->>   Mem abort info:
->>   ...
->>   pc : qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem]
->>   lr : glink_subdev_stop+0x1c/0x30 [qcom_common]
->>   ...
->>   Call trace:
->>    qcom_glink_smem_unregister+0x14/0x48 [qcom_glink_smem] (P)
->>    glink_subdev_stop+0x1c/0x30 [qcom_common]
->>    rproc_stop+0x58/0x17c
->>    rproc_trigger_recovery+0xb0/0x150
->>    rproc_crash_handler_work+0xa4/0xc4
->>    process_scheduled_works+0x18c/0x2d8
->>    worker_thread+0x144/0x280
->>    kthread+0x124/0x138
->>    ret_from_fork+0x10/0x20
->>   Code: a9be7bfd 910003fd a90153f3 aa0003f3 (b9430000)
->>   ---[ end trace 0000000000000000 ]---
->>
->> Introduce "subdevs_started" flag to indicate rproc_start_subdevices() has
->> been called successfully. Ensure subdevices are only stopped if they have
->> been started.
->>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> ---
->>   drivers/remoteproc/remoteproc_core.c | 4 +++-
->>   include/linux/remoteproc.h           | 2 ++
->>   2 files changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->> index f02db1113fae..6e23cb11e515 100644
->> --- a/drivers/remoteproc/remoteproc_core.c
->> +++ b/drivers/remoteproc/remoteproc_core.c
->> @@ -1308,6 +1308,7 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->>   		goto stop_rproc;
->>   	}
->>   
->> +	rproc->subdevs_started = true;
->>   	rproc->state = RPROC_RUNNING;
->>   
->>   	dev_info(dev, "remote processor %s is now up\n", rproc->name);
->> @@ -1712,7 +1713,8 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
->>   		return -EINVAL;
->>   
->>   	/* Stop any subdevices for the remote processor */
->> -	rproc_stop_subdevices(rproc, crashed);
->> +	if (rproc->subdevs_started)
->> +		rproc_stop_subdevices(rproc, crashed);
+On Thu, May 28, 2026 at 10:45:32AM +1000, Amirreza Zarrabi wrote:
+> Hi Sumit,
 > 
-> Thanks, this approach looks better. But where do we clear this flag?
-> Shouldn't we do that here?
+> On 5/22/2026 9:59 PM, Sumit Garg wrote:
+> > From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> > 
+> > Qcom platforms has the legacy of using non-standard SCM calls
+> > splintered over the various kernel drivers. These SCM calls aren't
+> > compliant with the standard SMC calling conventions which is a
+> > prerequisite to enable migration to the FF-A specifications from Arm.
+> > 
+> > OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
+> > support these non-standard SCM calls. And even for newer architectures
+> > using S-EL2 with Hafnium support, QTEE won't be able to support SCM
+> > calls either with FF-A requirements coming in. And with both OP-TEE
+> > and QTEE drivers well integrated in the TEE subsystem, it makes further
+> > sense to reuse the TEE bus client drivers infrastructure.
+> > 
+> > The added benefit of TEE bus infrastructure is that there is support
+> > for discoverable/enumerable services. With that client drivers don't
+> > have to manually invoke a special SCM call to know the service status.
+> > 
+> > So enable the generic Peripheral Authentication Service (PAS) provided
+> > by the firmware. It acts as the common layer with different TZ
+> > backends plugged in whether it's an SCM implementation or a proper
+> > TEE bus based PAS service implementation.
+> > 
+> > Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > Tested-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com> # Lemans
+> > Reviewed-by: Harshal Dev <harshal.dev@oss.qualcomm.com>
+> > Tested-by: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com> # IPQ9650
+> > Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> > ---
+> >  drivers/firmware/qcom/Kconfig          |   8 +
+> >  drivers/firmware/qcom/Makefile         |   1 +
+> >  drivers/firmware/qcom/qcom_pas.c       | 291 +++++++++++++++++++++++++
+> >  drivers/firmware/qcom/qcom_pas.h       |  50 +++++
+> >  include/linux/firmware/qcom/qcom_pas.h |  43 ++++
+> >  5 files changed, 393 insertions(+)
+> >  create mode 100644 drivers/firmware/qcom/qcom_pas.c
+> >  create mode 100644 drivers/firmware/qcom/qcom_pas.h
+> >  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
+> > 
+> > diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
+> > index b477d54b495a..9f66cc774508 100644
+> > --- a/drivers/firmware/qcom/Kconfig
+> > +++ b/drivers/firmware/qcom/Kconfig
+> > @@ -6,6 +6,14 @@
+> >  
+> >  menu "Qualcomm firmware drivers"
+> >  
+> > +config QCOM_PAS
+> > +	tristate "Qualcomm generic PAS interface driver"
+> > +	help
+> > +	  Enable the generic Peripheral Authentication Service (PAS) provided
+> > +	  by the firmware. It acts as the common layer with different TZ
+> > +	  backends plugged in whether it's an SCM implementation or a proper
+> > +	  TEE bus based PAS service implementation.
+> > +
+> >  config QCOM_SCM
+> >  	select QCOM_TZMEM
+> >  	tristate
+> > diff --git a/drivers/firmware/qcom/Makefile b/drivers/firmware/qcom/Makefile
+> > index 0be40a1abc13..dc5ab45f906a 100644
+> > --- a/drivers/firmware/qcom/Makefile
+> > +++ b/drivers/firmware/qcom/Makefile
+> > @@ -8,3 +8,4 @@ qcom-scm-objs += qcom_scm.o qcom_scm-smc.o qcom_scm-legacy.o
+> >  obj-$(CONFIG_QCOM_TZMEM)	+= qcom_tzmem.o
+> >  obj-$(CONFIG_QCOM_QSEECOM)	+= qcom_qseecom.o
+> >  obj-$(CONFIG_QCOM_QSEECOM_UEFISECAPP) += qcom_qseecom_uefisecapp.o
+> > +obj-$(CONFIG_QCOM_PAS)		+= qcom_pas.o
+
+<snip>
+
+> > diff --git a/include/linux/firmware/qcom/qcom_pas.h b/include/linux/firmware/qcom/qcom_pas.h
+> > new file mode 100644
+> > index 000000000000..65b1c9564458
+> > --- /dev/null
+> > +++ b/include/linux/firmware/qcom/qcom_pas.h
+> > @@ -0,0 +1,43 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copyright (c) 2010-2015, 2018-2019 The Linux Foundation. All rights reserved.
+> > + * Copyright (C) 2015 Linaro Ltd.
+> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> > + */
+> > +
+> > +#ifndef __QCOM_PAS_H
+> > +#define __QCOM_PAS_H
+> > +
+> > +#include <linux/err.h>
+> > +#include <linux/types.h>
+> > +
+> > +struct qcom_pas_context {
+> > +	struct device *dev;
+> > +	u32 pas_id;
+> > +	phys_addr_t mem_phys;
+> > +	size_t mem_size;
+> > +	void *ptr;
+> > +	dma_addr_t phys;
+> > +	ssize_t size;
+> > +	bool use_tzmem;
+> > +};
+> > +
+> > +bool qcom_pas_is_available(void);
+> > +struct qcom_pas_context *devm_qcom_pas_context_alloc(struct device *dev,
+> > +						     u32 pas_id,
+> > +						     phys_addr_t mem_phys,
+> > +						     size_t mem_size);
+> > +int qcom_pas_init_image(u32 pas_id, const void *metadata, size_t size,
+> > +			struct qcom_pas_context *ctx);
+> > +struct resource_table *qcom_pas_get_rsc_table(struct qcom_pas_context *ctx,
+> > +					      void *input_rt, size_t input_rt_size,
+> > +					      size_t *output_rt_size);
+> > +int qcom_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
+> > +int qcom_pas_auth_and_reset(u32 pas_id);
+> > +int qcom_pas_prepare_and_auth_reset(struct qcom_pas_context *ctx);
+> > +int qcom_pas_set_remote_state(u32 state, u32 pas_id);
+> > +int qcom_pas_shutdown(u32 pas_id);
+> > +bool qcom_pas_supported(u32 pas_id);
+> > +void qcom_pas_metadata_release(struct qcom_pas_context *ctx);
+> > +
+> > +#endif /* __QCOM_PAS_H */
 > 
-> In addition, I think we also need to set subdevs_started = true if
-> attach succeeds. And clear it when detaching a remoteproc. I think you
-> just need to update all the callers of rproc_stop_subdevices() and
-> rproc_start_subdevices(). Or, which is probably simpler, just make the
-> check directly inside these two functions to cover all users.
+> I have a question about the shape of the generic PAS abstraction.
 > 
-> Thanks,
-> Stephan
+> Looking at the current interface, it seems that pas_id is still treated as
+> the primary identity for most PAS operations, while struct qcom_pas_context
+> is used as optional extended state for the operations that need it. I can see
+> how this maps well to the existing SCM PAS interface and keeps the transition
+> simple.
+> 
+> However, I wonder if this makes the abstraction less generic in the long term.
+> Some callbacks in struct qcom_pas_ops receive only pas_id, while others
+> receive struct qcom_pas_context *ctx. This works as long as pas_id is
+> sufficient for those operations. But if a backend needs per-peripheral
+> private state for operations such as auth_and_reset,
+> shutdown, or set_remote_state, it would need to reconstruct that state from
+> pas_id or maintain a separate pas_id to backend-context mapping.
+> 
+> Would it be cleaner to make struct qcom_pas_context the common
+> per-peripheral object and pass it consistently to all per-peripheral callbacks?
+> Existing backends could still use ctx->pas_id, but future backends would not
+> need to perform a separate lookup only because the callback was passed a raw
+> pas_id.
 
-Thx, I think it be better to modify the flag inside these two functions.
-Will fix in next version.
+The common evolution for a generic abstraction comes when it's needed.
+So once the client driver or the backend comes up with certain
+requirements then the generic PAS layer can be extended as needed. It
+should be possible for more APIs to migrate to using PAS context but
+there should be corresponding use-case requirements.
 
-Thanks,
-Jingyi
+> 
+> I also wonder whether struct qcom_pas_context is exposing some
+> implementation-specific state. Fields such as ptr, phys, size, and
+> use_tzmem seem to describe how the current SCM/QTEE implementations manage
+> metadata memory, rather than generic PAS state. For another backend, the
+> per-operation state might be a tee_shm, an FF-A memory handle, shared or lent
+> memory state, or something else transport-specific.
+> 
+> Would it make sense to keep only the common PAS fields in
+> struct qcom_pas_context, such as dev, pas_id, and possibly the firmware
+> memory address/size if those are truly generic, and add a backend-private
+> pointer for implementation-specific state?
 
+Currently, the 2 backends can re-use parts of the PAS context but I
+agree more abstraction can be done as needed for future backends.
 
+> 
+> I may be missing a reason why the pas_id-only callbacks are preferred, but if
+> this is intended to be the long-term generic PAS layer rather than mainly a
+> shim over the existing SCM API shape, using the context consistently and keeping
+> backend-specific state private seems easier to extend.
 
+As I mentioned above, the generic PAS layer isn't fixed but it will
+surely go through evolution as needed. Current abstraction handles the
+existing client driver and backend requirments.
+
+Moreover the subsystem maintainers are already complaining about this
+series being too large for the merge to happen.
+
+-Sumit
