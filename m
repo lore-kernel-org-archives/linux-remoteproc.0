@@ -1,252 +1,200 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010051.outbound.protection.outlook.com [40.93.198.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490503F0AAD;
-	Thu, 28 May 2026 13:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779973881; cv=none; b=fXrIWavsX6CiwYjTi/SJmoksjHSxyE5+zHDv/SkI0/jgjt2oQFRWwe0M+sj23O3tP0OMQLoPVSnfFJxKhzVVe5r1EWta+2c/Kg8X4ze0FHv+8vNNJc8uDc8augLoM4Nr7yd0jPnFyB+6arHrzkcFgAdisDaFayWzTWWTqoOTxR8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779973881; c=relaxed/simple;
-	bh=DRxY+IRB0IqAgofhsecYlxPFiYO6P8tDS1HNVNN3odI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j7jeG1jBi3vSxuKAxmjCv8OLEUdoK/eBLN6NA/CVEX/Xo37SIJECOP1cSfyYulbehbOU3QAnwUSwd0koQRxqOitkN9rwEigrAJvxM/v72kfDjTQF9Dr322A7gPc8OlaNNRdEpLK5vJFQnoGS/dRI6+hAz5p1esUy5qNDmJudBng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2UHAKvV; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E21F12F585;
+	Fri, 29 May 2026 02:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1780021016; cv=fail; b=MqVfZ8tij2WkOAPeV+uoEsR73540q2ItrYmj+bv1VhhqO+0FsLK7fEkUL4uR4PcDgEFhYFl6pTvPJ/C72q75r6gxY2WuPL14J02FIARvD8mg3k9smXAXd68TRXJd+KK6nuWtRJplQ09cQ4KkPGRN2XCLgz/raYE69nv17h4r6l8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1780021016; c=relaxed/simple;
+	bh=OkeGWMgrg+lcKosEBcVwvjGtaycwJqXdD61AxGpF8K4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PAxBZPSKWrVYCwqwBPXGHD93pfllNtWrpno1AzNXubdDaO/TxA9jitp2jYAjTm32WCCtclyDBJ9at1jrvfmkWsSHaq70k4HI/pJ8NAyxg6tbkR4V/DhYYUQOSu3biREKXR68P5fWgBmEE8tVG9aregGG6ihjAO9v0aVTa1CVpdw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fuusZ4gK; arc=fail smtp.client-ip=40.93.198.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2UHAKvV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4393B1F000E9;
-	Thu, 28 May 2026 13:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1779973880;
-	bh=iDEo0j2nHsYSJgSqy1z8dWMjD802zHIig7qC3EKAx/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=b2UHAKvVDwz9Q8zDeG5+gjEzAwHGNvWPrhFQu4UWecZMGU9oLFnYEUppHdL1JG96W
-	 ZyKfXbFlZkxgErlkIJ9vEDjHqhgkZYeEglVfzfyl1vwgy5OcQX/ILvYNtAw+Fw/u/n
-	 7Rf4HO5aTgBsh8Qrexyv+asWzwUvPXiN0B/LUktlwpZ7GWwIh5oxpK5VedspSPx+Bn
-	 nl+HsmBpJmBcRweXxwoqgm9Olo+josivuYToc2QW7vazCQsXTqNoHWp1knQYF/ENFG
-	 jtLGo1SiiASszWS5aZ18I7jEX0fOy1BKxNFyaZVCVtMBYw8PPdiTBmqYLjDYvMKN77
-	 k31LndrsIUjKg==
-Date: Thu, 28 May 2026 18:41:07 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-	akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-	airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-	dikshita.agarwal@oss.qualcomm.com, bod@kernel.org,
-	mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, jjohnson@kernel.org, mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
-	pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
-	tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com, jens.wiklander@linaro.org,
-	op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>,
-	Harshal Dev <harshal.dev@oss.qualcomm.com>
-Subject: Re: [PATCH v7 02/15] firmware: qcom: Add a generic PAS service
-Message-ID: <ahg-6-eLus-J7tC8@sumit-xelite>
-References: <20260522115936.201208-1-sumit.garg@kernel.org>
- <20260522115936.201208-3-sumit.garg@kernel.org>
- <37fb075c-3f48-4a7c-b05d-090b0b09e04a@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fuusZ4gK"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ywirGU4oKPcXWDoer7ak6POKi8gpDVlbveVrPHypPgnqPzJI+pwbtjMyJRYYlky2SAVGQPUsC1aY0IYP6F12JQtyk9HRiSzS7qL9Xw80OddD/5gMOYYFReu2S4QsbwYIOZr/4zzbbzyMsfkjBQMloBt44GKFsvi/XTgBIP3oJ3lwex+CgG8yRv2i/CEppPr/S0mvsj+oY9MnpjhxyP0Q0ujhszBXdQD/tC/Mp+ypKRXCEYkCvo2DZ9JX983S5OQmm/gYjriEWxUzsI9+PO+FYwj79VVnc/YHMGNq4sipuEb/vgq58vJZnh0sLSImWd3PJ9vNd7qYlpSw8qTaDAUBZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aOyBFhSSNMbaIW+cOVRW1MwQk5POdPbeF/sApCr12aM=;
+ b=goRF5ccQI7Cxxq3bS9ZJ+N99MGZ+SjWuxydE45tWiVLW1SAD51PvM7SP7UcbVni5Y+YzZTc0EdLcbjQnDKHS6vDlXKBcQIYC2ooHocAWvXaKuRBlJWgnRobi0Y/XKIa04a9hSXDu++gySeLA8RlLxRix3X4JfLQSufz+5sEINzkq/pXXfyVxSvRAxb/9nbdfP1NQSJDala3aOZWcwqf0MScIpmKqivhWY+ZzO2/DXby1TGdct19Is8Z2D/GZBkOANvMvtDnSgRHNyYBlMVzsjvQzkwPctFC0te056icMJ/Dt/iCSDaqUq5+PuNfoMQWBl3HQVjXm0WVdlKllVUct5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aOyBFhSSNMbaIW+cOVRW1MwQk5POdPbeF/sApCr12aM=;
+ b=fuusZ4gKqNBFjATmZ674kgs7hPHEOElmb6vuW0OkGehwFbtkwjUav7OfoAyTZOLMVUrZ5Nxcd+U7yxSJuyaBZ39Dfp8etGt4PM3TDGn9tui0AgajqM0HVtbNNEA7tOKzULMCJ2jucwJ3Y7IIf0VScd0l8RGu62p+8a57RDDVuNk=
+Received: from CH2PR08CA0003.namprd08.prod.outlook.com (2603:10b6:610:5a::13)
+ by IA1PR12MB8286.namprd12.prod.outlook.com (2603:10b6:208:3f8::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.71.14; Fri, 29 May
+ 2026 02:16:48 +0000
+Received: from CH3PEPF00000017.namprd21.prod.outlook.com
+ (2603:10b6:610:5a:cafe::2) by CH2PR08CA0003.outlook.office365.com
+ (2603:10b6:610:5a::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.71.13 via Frontend Transport; Fri, 29
+ May 2026 02:16:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CH3PEPF00000017.mail.protection.outlook.com (10.167.244.122) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.92.0 via Frontend Transport; Fri, 29 May 2026 02:16:48 +0000
+Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Thu, 28 May
+ 2026 21:16:48 -0500
+Received: from xsjblevinsk51.xilinx.com (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
+ Transport; Thu, 28 May 2026 21:16:47 -0500
+From: Ben Levinsky <ben.levinsky@amd.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, <linux-remoteproc@vger.kernel.org>,
+	<ben.levinsky@amd.com>
+CC: Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "Magnus
+ Damm" <magnus.damm@gmail.com>, Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+	<alexandre.torgue@foss.st.com>, Arnaud Pouliquen
+	<arnaud.pouliquen@foss.st.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	"Tanmay Shah" <tanmay.shah@amd.com>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v3 0/5] remoteproc: cleanup shared carveout and resource-table helpers
+Date: Thu, 28 May 2026 19:16:32 -0700
+Message-ID: <20260529021637.2077602-1-ben.levinsky@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37fb075c-3f48-4a7c-b05d-090b0b09e04a@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000017:EE_|IA1PR12MB8286:EE_
+X-MS-Office365-Filtering-Correlation-Id: 43601021-a797-416e-1074-08debd2856e1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700016|376014|7416014|1800799024|82310400026|18002099003|6133799003|56012099006|11063799006;
+X-Microsoft-Antispam-Message-Info:
+	TAKx7kjDXKtJIKMGl74gJwpgKJRHrtdys74sqk3r578CaJuk2rPDmZt6H57L1kSE6JOwAYO5kbjm5Q/Oj65dxWf1cC2JPKPeH72leSSFtkxgn+50j93nvFpqmfLNqlO1VXIgNdlPRTXS06gP1no0WipQ23/aOxApS+Ka+lerVFc1SbIy4f+uWgudziq8JobLTEtPHegd6NCHsBnPiENs60Fh5O39vEHZb6MNFJnPCXbc99VLQWnNteK+/LkizrXH/8MGKlV3FE1QsmbpbUU+f/Ai/YMhQqNoVh2g4dVt7FFTTDH+6kb/MgXu5nPuCCSO6syRm/LiGlUFzBA2Ztst1WTuWEIdsFlfSzdrX+fazwy3056BYRO6mjKSYBYA1uy1gsF0mXKhxV7vhLQWtor+/H6zfQR1tofkPISwcUfjfIoh+lgxK3PAvpHFoPNrM6RJ+jjF+Z29AOyZe6KwWFz11n2SkiSQbWCkDBogJKPkquc3U6En3HJ3dutEDc8R7iwzYKHCCU72uMccW5FqQrNrIrNOR8sFeQSKnm0aLvqr62eCGR0Xm4qUr8W9sKgx/r50C9uKxtlk73gK7J3vfpP839PuZHRsWBFPV9rAKGP3Kuz3u6WuxVohFnHQg/G+yCF5l+yqnBna4jN3IoNSuA9I6TVimDQgTpwH4cZnWBbJNtLAwaHBrDesnfKOr9wit1rbfltcqYD5SM6YcAXeO/sCJ6YiqYdId8akUzH6gMnzmSY=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(7416014)(1800799024)(82310400026)(18002099003)(6133799003)(56012099006)(11063799006);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	YgpkeqJMyc6hQ8dpnH63lMlr7TKnED7DW5zkzWFTeoDD0HqlZL6ZCgyx6O11EVjuNRng8p6IMPRhl+LRL4oDW3iXTZymb+RBzxS0vl4Fww5ChVK+w4026Ez1XgloGchSsUqkaexSbtlegG87S/ro3KTEoQv+KUEVdou/3Zcd15Fsfyz8S+lUqpHlbTihPbYqC7RNDjCxTa87fjjza7fs7RffMZlae4j6CWQtjbdZ2vJZNfDCDjjis0S+R+TpsQqqOCUPVdFqvq48nlLQ1y8UGUUnumOQ75TvD6tZrXYuaVkjwBVZXuqhqT8e1NeVwAHbM3g89Zg5JIqahl4jrX8WJ0ZE+erwDqCKt+EpHXOqbAv6Dq20AWwRJNMhDhI/TY7PyeekyCI9hSYyEAYVBnyZwrphv+1Xv813vDfrVDY+D9aiLhEl0Lk/xvhkdhVpscBr
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2026 02:16:48.6749
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 43601021-a797-416e-1074-08debd2856e1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000017.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8286
 
-Hi Amir,
+This series is a preparatory remoteproc cleanup split out from review of
+the AMD BRAM-based remoteproc series.
 
-On Thu, May 28, 2026 at 10:45:32AM +1000, Amirreza Zarrabi wrote:
-> Hi Sumit,
-> 
-> On 5/22/2026 9:59 PM, Sumit Garg wrote:
-> > From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > 
-> > Qcom platforms has the legacy of using non-standard SCM calls
-> > splintered over the various kernel drivers. These SCM calls aren't
-> > compliant with the standard SMC calling conventions which is a
-> > prerequisite to enable migration to the FF-A specifications from Arm.
-> > 
-> > OP-TEE as an alternative trusted OS to Qualcomm TEE (QTEE) can't
-> > support these non-standard SCM calls. And even for newer architectures
-> > using S-EL2 with Hafnium support, QTEE won't be able to support SCM
-> > calls either with FF-A requirements coming in. And with both OP-TEE
-> > and QTEE drivers well integrated in the TEE subsystem, it makes further
-> > sense to reuse the TEE bus client drivers infrastructure.
-> > 
-> > The added benefit of TEE bus infrastructure is that there is support
-> > for discoverable/enumerable services. With that client drivers don't
-> > have to manually invoke a special SCM call to know the service status.
-> > 
-> > So enable the generic Peripheral Authentication Service (PAS) provided
-> > by the firmware. It acts as the common layer with different TZ
-> > backends plugged in whether it's an SCM implementation or a proper
-> > TEE bus based PAS service implementation.
-> > 
-> > Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > Tested-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com> # Lemans
-> > Reviewed-by: Harshal Dev <harshal.dev@oss.qualcomm.com>
-> > Tested-by: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com> # IPQ9650
-> > Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > ---
-> >  drivers/firmware/qcom/Kconfig          |   8 +
-> >  drivers/firmware/qcom/Makefile         |   1 +
-> >  drivers/firmware/qcom/qcom_pas.c       | 291 +++++++++++++++++++++++++
-> >  drivers/firmware/qcom/qcom_pas.h       |  50 +++++
-> >  include/linux/firmware/qcom/qcom_pas.h |  43 ++++
-> >  5 files changed, 393 insertions(+)
-> >  create mode 100644 drivers/firmware/qcom/qcom_pas.c
-> >  create mode 100644 drivers/firmware/qcom/qcom_pas.h
-> >  create mode 100644 include/linux/firmware/qcom/qcom_pas.h
-> > 
-> > diff --git a/drivers/firmware/qcom/Kconfig b/drivers/firmware/qcom/Kconfig
-> > index b477d54b495a..9f66cc774508 100644
-> > --- a/drivers/firmware/qcom/Kconfig
-> > +++ b/drivers/firmware/qcom/Kconfig
-> > @@ -6,6 +6,14 @@
-> >  
-> >  menu "Qualcomm firmware drivers"
-> >  
-> > +config QCOM_PAS
-> > +	tristate "Qualcomm generic PAS interface driver"
-> > +	help
-> > +	  Enable the generic Peripheral Authentication Service (PAS) provided
-> > +	  by the firmware. It acts as the common layer with different TZ
-> > +	  backends plugged in whether it's an SCM implementation or a proper
-> > +	  TEE bus based PAS service implementation.
-> > +
-> >  config QCOM_SCM
-> >  	select QCOM_TZMEM
-> >  	tristate
-> > diff --git a/drivers/firmware/qcom/Makefile b/drivers/firmware/qcom/Makefile
-> > index 0be40a1abc13..dc5ab45f906a 100644
-> > --- a/drivers/firmware/qcom/Makefile
-> > +++ b/drivers/firmware/qcom/Makefile
-> > @@ -8,3 +8,4 @@ qcom-scm-objs += qcom_scm.o qcom_scm-smc.o qcom_scm-legacy.o
-> >  obj-$(CONFIG_QCOM_TZMEM)	+= qcom_tzmem.o
-> >  obj-$(CONFIG_QCOM_QSEECOM)	+= qcom_qseecom.o
-> >  obj-$(CONFIG_QCOM_QSEECOM_UEFISECAPP) += qcom_qseecom_uefisecapp.o
-> > +obj-$(CONFIG_QCOM_PAS)		+= qcom_pas.o
+During review, there was a request to move the duplicated plain
+ioremap_wc()/iounmap() carveout callbacks into common code and to
+factor the "missing resource table is OK" ELF parsing path into a
+common helper as well. There was also a request to send that cleanup as
+its own patchset first, with the AMD BRAM series respun afterwards on
+top once this cleanup is merged.
 
-<snip>
+This version keeps the same overall cleanup goals as v2, but reworks
+the optional resource-table pieces based on follow-up review:
 
-> > diff --git a/include/linux/firmware/qcom/qcom_pas.h b/include/linux/firmware/qcom/qcom_pas.h
-> > new file mode 100644
-> > index 000000000000..65b1c9564458
-> > --- /dev/null
-> > +++ b/include/linux/firmware/qcom/qcom_pas.h
-> > @@ -0,0 +1,43 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only */
-> > +/*
-> > + * Copyright (c) 2010-2015, 2018-2019 The Linux Foundation. All rights reserved.
-> > + * Copyright (C) 2015 Linaro Ltd.
-> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> > + */
-> > +
-> > +#ifndef __QCOM_PAS_H
-> > +#define __QCOM_PAS_H
-> > +
-> > +#include <linux/err.h>
-> > +#include <linux/types.h>
-> > +
-> > +struct qcom_pas_context {
-> > +	struct device *dev;
-> > +	u32 pas_id;
-> > +	phys_addr_t mem_phys;
-> > +	size_t mem_size;
-> > +	void *ptr;
-> > +	dma_addr_t phys;
-> > +	ssize_t size;
-> > +	bool use_tzmem;
-> > +};
-> > +
-> > +bool qcom_pas_is_available(void);
-> > +struct qcom_pas_context *devm_qcom_pas_context_alloc(struct device *dev,
-> > +						     u32 pas_id,
-> > +						     phys_addr_t mem_phys,
-> > +						     size_t mem_size);
-> > +int qcom_pas_init_image(u32 pas_id, const void *metadata, size_t size,
-> > +			struct qcom_pas_context *ctx);
-> > +struct resource_table *qcom_pas_get_rsc_table(struct qcom_pas_context *ctx,
-> > +					      void *input_rt, size_t input_rt_size,
-> > +					      size_t *output_rt_size);
-> > +int qcom_pas_mem_setup(u32 pas_id, phys_addr_t addr, phys_addr_t size);
-> > +int qcom_pas_auth_and_reset(u32 pas_id);
-> > +int qcom_pas_prepare_and_auth_reset(struct qcom_pas_context *ctx);
-> > +int qcom_pas_set_remote_state(u32 state, u32 pas_id);
-> > +int qcom_pas_shutdown(u32 pas_id);
-> > +bool qcom_pas_supported(u32 pas_id);
-> > +void qcom_pas_metadata_release(struct qcom_pas_context *ctx);
-> > +
-> > +#endif /* __QCOM_PAS_H */
-> 
-> I have a question about the shape of the generic PAS abstraction.
-> 
-> Looking at the current interface, it seems that pas_id is still treated as
-> the primary identity for most PAS operations, while struct qcom_pas_context
-> is used as optional extended state for the operations that need it. I can see
-> how this maps well to the existing SCM PAS interface and keeps the transition
-> simple.
-> 
-> However, I wonder if this makes the abstraction less generic in the long term.
-> Some callbacks in struct qcom_pas_ops receive only pas_id, while others
-> receive struct qcom_pas_context *ctx. This works as long as pas_id is
-> sufficient for those operations. But if a backend needs per-peripheral
-> private state for operations such as auth_and_reset,
-> shutdown, or set_remote_state, it would need to reconstruct that state from
-> pas_id or maintain a separate pas_id to backend-context mapping.
-> 
-> Would it be cleaner to make struct qcom_pas_context the common
-> per-peripheral object and pass it consistently to all per-peripheral callbacks?
-> Existing backends could still use ctx->pas_id, but future backends would not
-> need to perform a separate lookup only because the callback was passed a raw
-> pas_id.
+  - reshape the optional resource-table helper in patch 4 into the thin
+    parse_fw() wrapper form suggested on the thread
+  - switch the patch 5 clients over to that helper shape directly,
+    without post-helper rproc->table_ptr checks
+  - keep the driver-local parse_fw() wrappers and their existing log
+    messages and severity choices
+  - retain as much of the existing per-driver parse_fw() logic and code
+    placement as possible while moving the missing-table handling
+    through the shared helper
 
-The common evolution for a generic abstraction comes when it's needed.
-So once the client driver or the backend comes up with certain
-requirements then the generic PAS layer can be extended as needed. It
-should be possible for more APIs to migrate to using PAS context but
-there should be corresponding use-case requirements.
+This series now does that in five patches:
 
-> 
-> I also wonder whether struct qcom_pas_context is exposing some
-> implementation-specific state. Fields such as ptr, phys, size, and
-> use_tzmem seem to describe how the current SCM/QTEE implementations manage
-> metadata memory, rather than generic PAS state. For another backend, the
-> per-operation state might be a tee_shm, an FF-A memory handle, shared or lent
-> memory state, or something else transport-specific.
-> 
-> Would it make sense to keep only the common PAS fields in
-> struct qcom_pas_context, such as dev, pas_id, and possibly the firmware
-> memory address/size if those are truly generic, and add a backend-private
-> pointer for implementation-specific state?
+  1. add common subsystem-private callbacks for the exact-match
+     wc-ioremap carveout case
+  2. switch the in-tree exact-match users over to those callbacks
+  3. mark carveouts mapped through the shared wc-ioremap helper as
+     iomem so the framework uses the proper I/O accessors
+  4. add a common helper for drivers that treat a missing ELF resource
+     table as optional while keeping per-driver logging decisions local
+  5. switch the matching in-tree drivers over to that helper while
+     keeping thin local parse_fw() wrappers
 
-Currently, the 2 backends can re-use parts of the PAS context but I
-agree more abstraction can be done as needed for future backends.
+For the carveout map/unmap cleanup, this series covers the exact-match
+users called out in review: xlnx_r5_remoteproc, rcar_rproc,
+st_remoteproc, stm32_rproc, imx_rproc, and imx_dsp_rproc. The zynqmp R5
+TCM mapping path is left alone because it also clears the mapped memory
+and is not an exact match.
 
-> 
-> I may be missing a reason why the pas_id-only callbacks are preferred, but if
-> this is intended to be the long-term generic PAS layer rather than mainly a
-> shim over the existing SCM API shape, using the context consistently and keeping
-> backend-specific state private seems easier to extend.
+For the optional resource-table handling, this series converts
+xlnx_r5_remoteproc, rcar_rproc, stm32_rproc, imx_rproc, and
+imx_dsp_rproc. st_remoteproc is intentionally left unchanged because its
+parse_fw() callback also builds carveouts and is therefore not a direct
+match for the helper introduced here.
 
-As I mentioned above, the generic PAS layer isn't fixed but it will
-surely go through evolution as needed. Current abstraction handles the
-existing client driver and backend requirments.
+Changes in v3:
+  - rework patch 4 so the optional resource-table helper matches the
+    thin-wrapper form suggested in review
+  - note that patch 4 still triggers a checkpatch --strict warning for
+    the flow-control macro form, but that implementation follows the
+    maintainer's review suggestion for the thin parse_fw() wrapper shape
+  - update patch 5 to use that helper shape directly in the client
+    parse_fw() callbacks
+  - drop the post-helper rproc->table_ptr checks from the converted
+    drivers
+  - keep the converted parse_fw() wrappers otherwise close to their
+    existing structure and placement
+  - test xlnx_r5_remoteproc on the latest tree with firmware images
+    both with and without an ELF resource table
 
-Moreover the subsystem maintainers are already complaining about this
-series being too large for the merge to happen.
+Changes in v2:
+  - split the mem->is_iomem change out into a separate patch
+  - add a common error message on ioremap_wc() failure
+  - drop logging from the optional resource-table helper
+  - keep driver-local parse_fw() wrappers to preserve per-platform
+    missing-resource-table logging policy
 
--Sumit
+Ben Levinsky (5):
+  remoteproc: add common wc-ioremap carveout callbacks
+  remoteproc: switch exact-match drivers to wc-ioremap callbacks
+  remoteproc: mark wc-ioremap carveouts as iomem
+  remoteproc: add helper for optional ELF resource tables
+  remoteproc: switch drivers to optional resource-table helper
+
+ drivers/remoteproc/imx_dsp_rproc.c       | 41 +++-----------
+ drivers/remoteproc/imx_rproc.c           | 40 ++------------
+ drivers/remoteproc/rcar_rproc.c          | 41 ++------------
+ drivers/remoteproc/remoteproc_internal.h | 38 +++++++++++++
+ drivers/remoteproc/st_remoteproc.c       | 31 +----------
+ drivers/remoteproc/stm32_rproc.c         | 39 ++-----------
+ drivers/remoteproc/xlnx_r5_remoteproc.c  | 70 +++++-------------------
+ 7 files changed, 73 insertions(+), 227 deletions(-)
+
+-- 
+2.34.1
