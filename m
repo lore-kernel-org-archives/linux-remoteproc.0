@@ -1,87 +1,85 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6F2348C56
-	for <linux-remoteproc@vger.kernel.org>; Fri, 29 May 2026 08:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139801E7C12;
+	Fri, 29 May 2026 13:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780044157; cv=none; b=FPvEpabocaDfmWopiKQxaa0E3pNa7PTfPkITrUTJHB8hdHRBy67LUnil4fkQir8lC8w87OIP+RlO7e8m0QaBSqLLt6FM9sqyQecBD+tGrrXv3LEi/6u77IH66Dhby2vLVm2rKS4cucE0gdI0wHvFy/c1B2SkLmt2cQeDUSf2UY4=
+	t=1780059768; cv=none; b=amX1z/I181LsImE9srklGKSnhzq24W3aCG2g1y99Gi8o7o6HGqKNaeU5zGC29weuEeQqF/fyl+UTl3NoXMnXL2qP2JLBpmtVNzJ/FkPBuE1v6P29FYIquUWOG9a0JwYZ1xHC1ZmM7/s7CLd+VVXLN9ISoYLMq4tTAMdWEepOMDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780044157; c=relaxed/simple;
-	bh=dhvBvEeUWaRBcmi1D9gcF45RQptuP9c2wmKEYoNsPBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4dY7hbevHRqk+tFNivz95Rm9xkvx3CVIx0k3ZnPelAZ+UmU/19pmuN8rruBOsZ6oDTlPqMI4AdsIOM2ckpOWk3LgTYSft1Y3lVI/PuDmyTEfjz0Ll2J47zv+WjmV/+/2/05ogZmYDElKiTRGr4+U8C3JmPj37Q8JWIs8sb8e04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=VW2F7wM9; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1780059768; c=relaxed/simple;
+	bh=ApQz1V5CNU9O9EyceeC74ecs8b38MRpfa33XpuXW5mI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Ps9VXsqyKftbQpcKIUKS3fsi4nMkfbn1bLr8GC69D30TWPyZIp6evV9blVCGfbVgBLzIqrYGgSwZ7QzieJSvFF9HzWdSVuL+p5MyC+ziNtC6D6rbnCYtwIK5IbulP26/rEfHPxUq/qZmIdwLG0xipnFrkgjbIIDtDu0fFwXCC50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3HhoUKR; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="VW2F7wM9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=tXMJ
-	6g32FbF+vmYJskN+9ZRbeRax+mLSw7WMHME551k=; b=VW2F7wM9ULRSeNwaG7U5
-	3IAafL5JB8q+DQq/fKmYLtD4thpSmcOoY6t3yiePp4Z8Fa8v2Vx4EYm4T2kCurE0
-	QlEWJvg1n852Cf3prQfdgsFqdCcJAKdzBBQReX8UMs5Sipuy6pjTf92OfF8MMons
-	+n1frwEAiHL8QXyGPqp1zzt9Nbjp+fFCIPyfdRgtw7B24PqaX5YG3DXb0kMatn+k
-	8x1qshYwysFqxRkcRAI/PUwTRKnacK8bTj6YWYnE4Tze92etxh9C2vZ85kF7H8MU
-	cod7iGDtshg7AMcTwrVDdOEkN83CBkA4Sad+/O7/Yx0XZ0Z9RZ9VS8ys5Insj8ED
-	2g==
-Received: (qmail 1342587 invoked from network); 29 May 2026 10:42:30 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 May 2026 10:42:30 +0200
-X-UD-Smtp-Session: l3s3148p1@yp480/BSmuKSABmE
-Date: Fri, 29 May 2026 10:42:29 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Ben Levinsky <ben.levinsky@amd.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-remoteproc@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Tanmay Shah <tanmay.shah@amd.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v3 0/5] remoteproc: cleanup shared carveout and
- resource-table helpers
-Message-ID: <ahlRdSX24TsPPxCf@shikoro>
-References: <20260529021637.2077602-1-ben.levinsky@amd.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3HhoUKR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 757FE1F00893;
+	Fri, 29 May 2026 13:02:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1780059767;
+	bh=66jwmabnss1wzjbJ/pG7HLmk7a00oOo/dxDfODb4vpU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=E3HhoUKR/eThbMY+4+yrcHlS/pZyyLblbZn4d5+FNHlnJnEnizR352OFGeJTuCB/1
+	 fPEhuVfPJmr4NEfbWTKB0lHtHEPAjdcvACXXpCx8RwZZRfBH9Xpv2JHt6LoD9t2vyQ
+	 Io2fAnOB/CXyhFowtOqWtinEWkqw5c0UX/yWQw18xPOEGp/Gd0FCB9W66tKyyJWy/1
+	 sK0LuTYiEzwtdlVVDZH5dlH/pOkreTi1ZRDeUqQsJRzzEO8ivUCJK5DZjcWDYOJaym
+	 KFKrbDa46wfJC+p6Ioenp6HPCLM48/ac5dlXEfTJJyrJN1gstWyZUyrvcTU02aRhNh
+	 he+jdftUvhVKg==
+From: Srinivas Kandagatla <srini@kernel.org>
+To: konradybcio@kernel.org, andersson@kernel.org, 
+ Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, Alex Elder <elder@kernel.org>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Jeff Johnson <jjohnson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Kees Cook <kees@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, 
+ Wesley Cheng <quic_wcheng@quicinc.com>, netdev@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+ ath11k@lists.infradead.org, ath12k@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-sound@vger.kernel.org
+In-Reply-To: <20260316171419.2619620-1-daniel.lezcano@oss.qualcomm.com>
+References: <20260316171419.2619620-1-daniel.lezcano@oss.qualcomm.com>
+Subject: Re: (subset) [PATCH v2 0/4] Use the QMI service IDs from the QMI
+ header
+Message-Id: <178005976216.10291.3509337895172854457.b4-ty@kernel.org>
+Date: Fri, 29 May 2026 14:02:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260529021637.2077602-1-ben.levinsky@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-Hi Ben,
 
-> For the carveout map/unmap cleanup, this series covers the exact-match
-> users called out in review: xlnx_r5_remoteproc, rcar_rproc,
-> st_remoteproc, stm32_rproc, imx_rproc, and imx_dsp_rproc. The zynqmp R5
-> TCM mapping path is left alone because it also clears the mapped memory
-> and is not an exact match.
+On Mon, 16 Mar 2026 18:14:10 +0100, Daniel Lezcano wrote:
+> The different subsystems implementing the QMI service protocol are
+> using their own definition of the service id. It is not a problem but
+> it results on having those duplicated with different names but the
+> same value and without consistency in their name.
 > 
-> For the optional resource-table handling, this series converts
-> xlnx_r5_remoteproc, rcar_rproc, stm32_rproc, imx_rproc, and
-> imx_dsp_rproc. st_remoteproc is intentionally left unchanged because its
-> parse_fw() callback also builds carveouts and is therefore not a direct
-> match for the helper introduced here.
+> The QMI service IDs are defined in the qmi.h header file. Use those
+> instead of defining the IDs in the protocol implementation file. It
+> will result in unifying and providing a consistent way to represent
+> the supported protocols.
+> 
+> [...]
 
-Thank you for this work, much appreciated! I want to test the changes to
-the Renesas R-Car driver but can only do so early next week due to
-travels. I hope I have time for review comments earlier, though.
+Applied, thanks!
 
-Thanks and happy hacking,
+[3/4] slimbus: qcom-ngd-ctrl: Use the unified QMI service ID instead of defining it locally
+      commit: 05f3f5984121e1956867b309c76a750c1d4c9682
 
-   Wolfram
+Best regards,
+-- 
+Srinivas Kandagatla <srini@kernel.org>
 
