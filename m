@@ -1,115 +1,114 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB82F33BBA7
-	for <linux-remoteproc@vger.kernel.org>; Fri, 29 May 2026 15:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E683F1676
+	for <linux-remoteproc@vger.kernel.org>; Fri, 29 May 2026 16:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780067667; cv=none; b=RtloWnquPjRMMq7EuyPaaDFNRKJenWOq6D6K1E1dOeJB+Ubdq6cIBJP7/NCXXA2wwbDgpBLkVpNck6eEULisWJXRxNS7NlaQlJIeXQbEIRy+MCiA01uC118FS2PsPgPKqeBhvarVemqWLytlOmrTaQbZ6ToAtsWvYqkrj6fxfg8=
+	t=1780070481; cv=none; b=qOkoN87qOC9DggQUtBMUb1YpkQJ8DEdFdeheCgnpOMAm1l2rnzNJNj28T5sRxwCmfroSvJJKEOFwCN8RZGblOz9uwBR/yrf63FTQ2BxA9Bpc8YyxJK8TlQMPdO3X6JJ9PjaL33ZS25c/JFFGjBi3btzq5YQxx4mJPekBWs6Irqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780067667; c=relaxed/simple;
-	bh=JgHz+6t+/lLVkabEsSU683KM7P90wDLARi+pbBBrukI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuX2hrbQp+f+CVbqjixhm8w5zAtWCsbm+mWVWQ/klVAm8maTJdBrf7UwIuF8CDXdcGkNtrXOYz+xcZYMs9ZQRiGs7AqLaoPCmYw06qH3AYfSp6ioo8hzv9Y4WqCEjggQOjvT7ZGTsAEoiX/KX9u6WQUFPsHbDxKgDVumOZz/CVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=svoTaiG1; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1780070481; c=relaxed/simple;
+	bh=Vlvj9dptGi8Yd8FQGnQFcpe/MLXC7vtZfH62TXMBV5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Elprg5Rsu2jMgD1VzLsDNerVwKDWKzrmSSwHsm369yTiJ1y6hpR/C8hJqLv/CALQeVseFMpRSoqyH4BhxK0N21bMLR1deEC0JzQ/GCO5VLzoah+IwbOly7LVdusJtBfYzIB8vWDRmhMldrDOLvq6jD6Mqjbaad2dYOP7tFRYqnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2FQf+zoV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8UQeTzW4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="svoTaiG1"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2bf18c30bb2so9019505ad.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 29 May 2026 08:14:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1780067665; x=1780672465; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CjGV1ydNT4vhjd08DNoiUIAjJm6vDoz197TfHBqCPyQ=;
-        b=svoTaiG1kUykeMA6SaROpDrCS9Rv/ISQQLUOzYdtwXT6u80lFH70qZHu/Je3yQMUy7
-         jSuXlzzqN9qVmh81HJfQpVYOZ12SBXlyQt7/WF+PMOmZRaqCW1Nrjp0vfDk5kJ9r0+AH
-         8Kk1Iz4nTeiX3l/HJ6OjgJN3PmePjyTnvt9uwf7TH/3JD5QKftcD1LETMV+X3XcAeIxO
-         pgmQ9pPw9kNVRUvxJKsD6sqa4RWwxsoYYn+blNrx4b+g8IgbTr4DYEOI3XN2LTjWoX4G
-         q2IGlGsFxzowitBVbFCiCxsfjMdV6/Sv/OsyLgcg1qxWOXj+VJ5ovZwEvG7ZCf+wccPx
-         gi2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780067665; x=1780672465;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CjGV1ydNT4vhjd08DNoiUIAjJm6vDoz197TfHBqCPyQ=;
-        b=fZ1zDC4nYP8r+Qw+j4JdLBORrwkcrJ20zHPD3IvEnQEaitRjtxkuhYpZCR1YALwT3T
-         aMPVZ8wT5CtAG1CGM+B2MifvqN+PBH6J0Ytj53p7BYkry0r3Uo0oYmYUTCcjW3R6OKU3
-         TaAg0kAFSM9D+i2X8N+zklOgih7FjX0peUaKCfUQXipadXB730RrYmz9F8x4QA3jMBGa
-         85vW8EyKeHFwANweslNMkDcsuIIypKz6cMRlhstd7TD/hkmY1w4nCyrCY6tU4ix4j9yC
-         mbcKyiSSeAVoZ9SVzaZXtZKrvvUHJJBC4UtNdmvmEYiJoLA4KscEWq9QuV/ECuoYjE/k
-         LRcw==
-X-Forwarded-Encrypted: i=1; AFNElJ8c+hB3edKGxbU0WrquxkwNF7dlai8cr/CrkDN2lZjpS024OY8mF0cv/exaU6AjZBDNc/KSQUoaAKhiMmdofLiI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCKu/SisKu5MZ6J1/VVjCZ9TBXj+KB2jvqD9IyxddwKWnhcGYm
-	eSiq42ViKDaXIVaTVWuX8b4NALeYTvToa+gwbVb8Zn8eEiutZhdEjfCKLB9rjDdZY40=
-X-Gm-Gg: Acq92OH23wLpL/u7+6ex6tpVTKWbonCRIiiq37IXwUE8+5a0nUxt/pwnfC18Pw/uZkW
-	7NyIPuGfoHbkUdbHGjGFvErZmFrRnCY3EFsobnr+7juZ8jJBoFmwg/CNNV4EoD8RxrH1Z7Xw+mo
-	nFPqfTn1rj+JrIOGpvrjHBkEHYZk+oXu3mIHJyh1WiJOz/dJwW+zZScR5GG2FXEyQqiaQxzEksn
-	R3lamzzeeG23C/S3rsCNqAydK2kaR92GNdLye+n1hK+cEezpaZ5f/HWu08uibQbdd6D7qfapozx
-	JkgRA2DOGLM4OPagI9Uo+5qQJnIoa8IIrtN8eLVSAXbPLzY6agI9D7SyoqjDDkTDKMSECRPoZ5s
-	VwwVnm2U9/NwwKwPbBbQy8wbqleR9vg2kUenjxrTiZFXf733RrKJH/HXcgEWvTD8eUqEmSdyx+F
-	pDLe09LCEtDQai0/KlA4bqPSyNye6oescpH6K/Dw==
-X-Received: by 2002:a17:902:fc8e:b0:2ba:839e:15cb with SMTP id d9443c01a7336-2bf368463e6mr2923465ad.27.1780067664889;
-        Fri, 29 May 2026 08:14:24 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:fe93:5096:4a36:4399])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf239e5d83sm24992375ad.8.2026.05.29.08.14.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2026 08:14:24 -0700 (PDT)
-Date: Fri, 29 May 2026 09:14:21 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, michal.simek@amd.com, ben.levinsky@amd.com,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] remoteproc: xlnx: add auto-boot support
-Message-ID: <ahmtTVp9Kv2ZH-Ds@p14s>
-References: <20260527051611.194844-1-tanmay.shah@amd.com>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2FQf+zoV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8UQeTzW4"
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1780070477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T/oTAOOJ1Z4TFN7Yr5Hcs60Jolfhci9ej79a+pR3awY=;
+	b=2FQf+zoVYHyZMx55iz81hh2eO+Wn32lxoHRdPcg5lmlADigZh/T0t8QZCtaN733yXqdW32
+	5+5IoTjE91BPrOxXOf1Xo+q+XR/HX0fJrSnA/+ZiUeXqhu4C37L7LOBk/z2TRt+xg4N33L
+	TQP7R7aWHNUpghpH8odNPUVMleswH2OR6JmrG6+ZlvX05FSXc8KjHn1revDiyv/qSWWODz
+	T1rHASv3zd/3d8cNxzU9/EO5reIspIBiTxmzbUAK86395J8HaeOWAgyqQHlrgP1p76YZ47
+	xfSKIuZNqn2qymVuSgL3Cb2k48MO2MEg7NvTxWm5quNwB6hj43yVN0ZptM4Adg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1780070477;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T/oTAOOJ1Z4TFN7Yr5Hcs60Jolfhci9ej79a+pR3awY=;
+	b=8UQeTzW48huPWiCb0oKS963hXt6P4PSvE33NB5++XlRKFXUgoNFz4k3u/B8uLtXYnKxwHj
+	8RtyUnWv1J8Av5CA==
+To: linux-rt-devel@lists.linux.dev,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 0/5] mailbox: imx: Use threaded handler to avoid kworker in  imx's remoteproc
+Date: Fri, 29 May 2026 18:01:02 +0200
+Message-ID: <20260529-imx_mbox_rproc-v1-0-b8ffc36e11e5@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260527051611.194844-1-tanmay.shah@amd.com>
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20260529-imx_mbox_rproc-7d512f5a6f78
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 26, 2026 at 10:16:09PM -0700, Tanmay Shah wrote:
-> The Linux kernel remoteproc framework provides auto boot feature. When
-> enabled, the remote processor framework attempts to start the remote
-> processor based on the firmware-name provided in the device-tree or
-> attach to the remote processor if bootloader has already started the
-> remote processor. Enable this auto boot feature for all AMD-xilinx
-> platforms.
-> 
-> Changes in v3:
->   - add more descriptive commit message in the patch 2/2.
-> 
-> Changes in v2:
->   - remove the auto-boot property from bindings patch (1/2)
->   - rebase on latest remoteproc for-next branch
->   - refactor the driver patch (2/2) and detect the auto-boot runtime
-> 
-> 
-> Tanmay Shah (2):
->   dt-bindings: remoteproc: xlnx: add firmware-name property
->   remoteproc: xlnx: enable auto boot feature
-> 
->  .../remoteproc/xlnx,zynqmp-r5fss.yaml         |  4 ++
->  drivers/remoteproc/xlnx_r5_remoteproc.c       | 48 +++++++++++++------
->  2 files changed, 38 insertions(+), 14 deletions(-)
-> 
-
-Applied.
-
-Thanks,
-Mathieu
-
-> 
-> base-commit: 90de217305800ff32df4c0308e240925c8deb385
-> -- 
-> 2.34.1
-> 
+The imx's remoteproc driver uses a kworker from its mailbox callback to=0D
+complete the request. The reason is that the imx mailbox driver invokes=0D
+the callback from its interrupt handler and the remoteproc callback (at=0D
+least the rpmsg-tty) requires a preemptible context.=0D
+=0D
+This works but is problematic in a PREEMPT_RT environment where the=0D
+latency of the invocation is important. By scheduling a kworker the=0D
+high task priority from the threaded handler is lost and the kworker=0D
+competes for CPU ressources with every SCHED_OTHER task in the system.=0D
+This can lead to long delays on a busy system with other RT threads=0D
+which are less important than the completion of this request.=0D
+=0D
+Looking over other mailbox driver, like the arm_mhu for instance, they=0D
+use a threaded interrupt handler to invoke the callback. This avoids the=0D
+kworker detour.=0D
+=0D
+The here suggested change utilises a threaded interrupt to invoke the=0D
+callback. The primary handler mask the interrupt source so that the=0D
+handler can run without getting interrupted by the interrupt again.=0D
+Doing so avoids marking the interrupt IRQF_ONESHOT so that that in a=0D
+shared-interrupt environment the other interrupt can still fire while=0D
+the first one is masked.=0D
+=0D
+This change was tested on a im93 board with rpmsg-tty driver.=0D
+=0D
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>=0D
+---=0D
+Sebastian Andrzej Siewior (5):=0D
+      mailbox: imx: Start splitting the IRQ handler in primary and threaded=
+ handler=0D
+      mailbox: imx: Move the RX part of the mailbox into the threaded handl=
+er=0D
+      mailbox: imx: Move the RXDB part of the mailbox into the threaded han=
+dler=0D
+      mailbox: imx: Don't force-thread the primary handler=0D
+      remoteproc: imx_rproc: Invoke the callback directly=0D
+=0D
+ drivers/mailbox/imx-mailbox.c  | 65 +++++++++++++++++++++++++++++++++-----=
+----=0D
+ drivers/remoteproc/imx_rproc.c | 33 +--------------------=0D
+ 2 files changed, 53 insertions(+), 45 deletions(-)=0D
+---=0D
+base-commit: 9e171fc1d7d7ab847a750c03571c87ac3c17bd84=0D
+change-id: 20260529-imx_mbox_rproc-7d512f5a6f78=0D
+=0D
+Best regards,=0D
+-- =0D
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>=0D
+=0D
