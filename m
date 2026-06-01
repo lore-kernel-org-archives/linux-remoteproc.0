@@ -1,132 +1,115 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFAE367291
-	for <linux-remoteproc@vger.kernel.org>; Mon,  1 Jun 2026 08:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BDA37BE9F;
+	Mon,  1 Jun 2026 12:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780303624; cv=none; b=sR4+2akbLgxdDg6dtIIKfNfPEeE/ytKXPlUnieEcJi6CEtHc1Z0BOoRD8+IXuTGSOvVIOlF9JbBTJwCYPG0yv8Yaj+BAMX+OX2TE03eZUt5jfUIME3fp93GuZbBjBwrShvSDgNLeVju/UBqzyrrJZQT86fUkHOEEqAe4ZgbHKPg=
+	t=1780317787; cv=none; b=TWDV3bjqbJ1UpEkngzUCR11z3a1w3KlpewBU3Ll1flOYq8w1Cz/CJ3JvRQC97gYhdnNdgaqyRrCOu1GWHt7TvNgzkkbNPvyarQbBQHB+oan4plfR7JciNY1dQV/FeCdIzs+Ho56mugnXZM9Geng7akEaTDtAwkPGmF/OPLi2Z1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780303624; c=relaxed/simple;
-	bh=uAMXjM4R4ypUPu0O2chE4qQ0SBsBultATlgaeo4yXaA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QyxQJ21gTYkuL0xeSs5wl512uaYvfkNt5jnZ5tcfH0nJzoscUUN2P71ykQKEMo2Y24WqVoDtrIDcu5WSkD2oPpAt6f8CLTGtB1+v5yyZSgPa82igjJEeeZ+71+AUp6LuQ3OGdejH/t1TDoRCwjpavWJCYvxLMEBIiLetZI/JSnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=htYgICsa; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1780317787; c=relaxed/simple;
+	bh=HxCj1imFaDGqnqxOq1uQNFr3M4N4UQmU5zpkhhpFT54=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ijlEtBHRQrac76KQxdwQkFS2h6smYd8Rm/eJ0ROUitvqpDHYnpbIFZqfRQ+frDPmcR35XWC/Bz9FNNWa2Vo4Ms3tM6XXqZMIomeCVxlXGB5Ol6DWhM4giN/18MBO1xiDNdEjtnqlLH6Y6F5czI/drLBpZu5PyqDA5J9D29Lgr6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=MutP/+D7; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="htYgICsa"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-490aebf33e9so805145e9.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jun 2026 01:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1780303621; x=1780908421; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OmVPGxo5yViqGmt/Bu0RZOE4gHJiRjSg/HFe8p5NX6s=;
-        b=htYgICsapXhp6MgRr0p2heq/mQsEAaHWTOgMq0y45bgzYA8DI8rJDVahtnF5JmtfLD
-         vOzWbUYbOWT0Eb/mPg02uqX7cLGH2sC+uQ0MsCWlsGxvp9lJSXGoIWnirLGcQAzOUol8
-         QbnRJb0IsseHnoRBTC+YdfZ80VWPhBgih91KxmN/sS8qutsNC1xvWn41MMiy8cWe5s4c
-         ajtx0qzFCS7Yx09P2vluwSQnZFfae12H5xUq/aH0UPTh3yheR0DrecJIaOKDkP21cR7q
-         j9nTnDotbPHyywwzjPf2aOcxdlK9j1yy1nq2ziRYJQn/1xOf1ZK4BQgXc/EFv4KD5wLC
-         Q8Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780303621; x=1780908421;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OmVPGxo5yViqGmt/Bu0RZOE4gHJiRjSg/HFe8p5NX6s=;
-        b=WYrcETEFaIOjI3+6Tg5sM31dnZs17f/0wWEbylBgPM08cL5AOSeThhjVenNzeVJQ9Z
-         +UY+5CYS/KNjRTgH2rGNbaNlFMuVroa/zh+eS9H6swtrcNDpkJBf4wG0l3wPHpQPcON2
-         rTezk2tI275DdXqeUV7H8Fz0iegZo0wheA9UqHw5nqVQh2zEr6m4b95S7fVPlAEPrcwi
-         GFlzjEBFmgQDa5bNWa4YpU5neR+yFoopq61jwNJjnOYRl7DAroqXo/sq5N8Do3hKYQYo
-         KTTEVSqEwipicJXw5jKV3Z2T03p0y1yafXRNk4qeGTcgq48NzCOwazZzxUcOsR9HvlJ8
-         CiEA==
-X-Forwarded-Encrypted: i=1; AFNElJ+yu44TOc3lqqqh8l4TyohNYhBTohoPcsTxRQf11NuOQaRFsuFWQd1jyEvFpuIwUjIdX2hRaB2mnDjnBSvAnjVH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWrnAzYJw8+TpVXmnaTQ9VR3CqRgMNMfU/VR2qvkfCIqwqT0M1
-	QhOLdSYpIoqZ8O4aFk9QsvAw71EBs7fbVDNDMBil68sSKIKRfKm6H0leOHTaftp4XuA=
-X-Gm-Gg: Acq92OFV2IKDnCzw7o2NaOtxDvX9ePhAmSRAmrL7KcAOgQfIQPxwwEqWs8NkISTviBU
-	n6h+hGmhmln0KmzBTlGQOPxiqyFhaF/ZFcOw2GhNyppHhmVcWv4b0rrMcq1KA5GYy7IoDH+c5n6
-	FBWcpySaYl9rkrCsvZ8s/rDu84cwYMhNHn8FKcEFKhqbAUGIiwAuigFx0stoH7Y0J4/zl5LyKvJ
-	Qc+WtBCQBwOWVM4YkS99TI8Hn/IuGvhav8rh081n4/aCuR4pjPrPS/4fqKz9WxFniaOyY1iStcw
-	oT88yU0+0Nc1MmnnxSRrqwAaKlirAYUWwCiOFMH+Ibx6BK2mVdTKtvpRODkMb6AYIZbKeBnKORQ
-	TKFe7N3b7wSPJjvukisLImflYT1y0hH1XRALJt8OaP4//BjGO913BzOVuDMsZI5xv7RCzvK7F3l
-	adtCeheGCDe8SBhyysBGaUpF4+VdOcHaA=
-X-Received: by 2002:a05:600c:3b09:b0:490:a7ab:bbee with SMTP id 5b1f17b1804b1-490a7abbdcfmr125745245e9.15.1780303620937;
-        Mon, 01 Jun 2026 01:47:00 -0700 (PDT)
-Received: from localhost ([2001:4091:a246:8595:a745:3210:d732:4094])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4909c0e8c1bsm95750715e9.3.2026.06.01.01.47.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2026 01:47:00 -0700 (PDT)
-From: "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>
-Date: Mon, 01 Jun 2026 10:46:16 +0200
-Subject: [PATCH v5 5/5] arm64: dts: ti: k3-am62p-ti-ipc-firmware: Add r5f
- nodes to pre-ram bootphase
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="MutP/+D7"
+Received: from francesco-nb (xcpe-178-82-120-96.dyn.res.sunrise.net [178.82.120.96])
+	by mail11.truemail.it (Postfix) with ESMTPA id E771A1F95E;
+	Mon,  1 Jun 2026 14:43:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1780317783;
+	bh=H1hVXwtOto/IFcO7KNTvhV0DieY8ZM/C1FwXh7ymHAY=; h=From:To:Subject;
+	b=MutP/+D71iXBmL/0fGOHo9F2u8hZB9UQji9kB639/LAgliscV3Hw7Wt/xH02MwOJk
+	 2/oRWDP2SAFd9XJfJQT/fxT/koBEv8ukqJkfSmKnZcx8Cm9+KYoYSaNqw09kgOEQ4D
+	 4/TAsw7STe1eCA4Uz+SmNaiT4ajBkAXOEGrbPHdqT90PuwjqF8LJVe7ZgctcbZ8Dy1
+	 mBSwyp030QjaCmDhZ4gmtvrMiyVc9UxIqtCSowcBHh9m1qpx6Qm/Btm8xAtRBUqRmR
+	 8uLcz9nT39L3GHrPsDsS5ihGALoTOelLv2XVvhHLXzrIYd+4Cv6kyuftY0SU0eE+1i
+	 ZufKGOZ+OdGJA==
+Date: Mon, 1 Jun 2026 14:42:59 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>,
+	sashiko-reviews@lists.linux.dev
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Vishal Mahaveer <vishalm@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+	Sebin Francis <sebin.francis@ti.com>,
+	Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/5] arm64: dts: ti: k3-am62p-ti-ipc-firmware: Move
+ wkup reserved memory
+Message-ID: <20260601124259.GA76338@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260601-topic-am62a-ioddr-dt-v6-19-v5-5-3856a023aff2@baylibre.com>
-References: <20260601-topic-am62a-ioddr-dt-v6-19-v5-0-3856a023aff2@baylibre.com>
-In-Reply-To: <20260601-topic-am62a-ioddr-dt-v6-19-v5-0-3856a023aff2@baylibre.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>, 
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tero Kristo <kristo@kernel.org>
-Cc: Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>, 
- Dhruva Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
- Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1228; i=msp@baylibre.com;
- h=from:subject:message-id; bh=uAMXjM4R4ypUPu0O2chE4qQ0SBsBultATlgaeo4yXaA=;
- b=owGbwMvMwCXWejAsc4KoVzDjabUkhixZt8+x0gdne5pd9r24JXFq5taqTWvXVJ7LXO/GEhhwd
- 4HctQyhjlIWBjEuBlkxRZbOxNC0//I7jyUvWrYZZg4rE8gQBi5OAZjIC1tGhmeBiiHPoy61H7uv
- mRzM/9R59bHT++T02y4z56uKqPmtbmZk6CxfalM5ffPSf9vkqi/e8jAp650UeDDj6na7H9e0cne
- J8gIA
-X-Developer-Key: i=msp@baylibre.com; a=openpgp;
- fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260601090205.076BC1F00893@smtp.kernel.org>
+ <20260601-topic-am62a-ioddr-dt-v6-19-v5-2-3856a023aff2@baylibre.com>
 
-For IO+DDR the wkup_r5fss0_core0 and the
-wkup_r5fss0_core0_lpm_metadata_region need to be accessed before RAM
-setup is done. These are used to read the lpm metadata region in which
-data is stored to resume. This needs to be done before RAM is in use to
-avoid overwriting data.
+Hello Markus,
 
-Signed-off-by: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
----
- arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Jun 01, 2026 at 09:02:04AM +0000, sashiko-bot@kernel.org wrote:
+> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
+> - [High] Moving `wkup_r5fss0_core0_memory_region` to the shared `k3-am62p-ti-ipc-firmware.dtsi` silently truncates the reserved memory size for Verdin boards from 30MB to 15MB.
+> - [Medium] Moving `wkup_r5fss0_core0_memory_region` to the shared `k3-am62p-ti-ipc-firmware.dtsi` causes fatal `dtc` duplicate label errors and overlapping reserved memory regions for Var-SOM boards.
+> --
+> 
+> commit 65cd200377411c4597f1b662700915ea23cfe5f8
+> Author: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
+> 
+> arm64: dts: ti: k3-am62p-ti-ipc-firmware: Move wkup reserved memory
+> 
+> The commit moves the wkup_r5fss0_core0 memory regions to a common
+> k3-am62p-ti-ipc-firmware.dtsi file to combine identical definitions
+> across boards.
+> 
+> >     Move the reserved memory regions used for wkup_r5fss0_core0 to the
+> >     k3-am62p-ti-ipc-firmware.dtsi. These are all the same for the other
+> >     boards as well, so we can combine them here similar to what is already
+> >     done for the mcu_r5fss0_core0 memory regions.
+> 
+> [Severity: High]
+> Are these regions exactly the same for all other boards?
+> 
+> k3-am62p-verdin.dtsi explicitly defines the wkup_r5fss0_core0_memory_region
+> with a size of 30MB (0x01e00000):
+> 
+> wkup_r5fss0_core0_memory_region: memory@9c900000 {
+> 	compatible = "shared-dma-pool";
+> 	reg = <0x00 0x9c900000 0x00 0x01e00000>;
+> 	no-map;
+> };
+> 
+> Because k3-am62p-verdin.dtsi includes k3-am62p-ti-ipc-firmware.dtsi at the
+> very end of the file, dtc cleanly merges the identically-named node paths, and
+> the new generic definition silently overrides the board-specific 30MB size
+> down to 15MB.
+> 
+> Does this halving of the available memory for IPC on Verdin boards cause
+> firmware load failures or runtime out-of-memory crashes on the R5 core?
+> 
+> (Note: A subsequent patch in the series 'arm64: dts: ti:
+> k3-am62p-ti-ipc-firmware: Split r5f memory region' changes the label and size
+> to 1MB, which further truncates the region without fixing the underlying
+> overwrite.)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi
-index 437b1df02142c666019ad4ad3558fa066e04781d..27b8f0b6666091d0ad8fb51be07f000e4c10c439 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-ti-ipc-firmware.dtsi
-@@ -40,6 +40,7 @@ wkup_r5fss0_core0_lpm_metadata_region: memory@9ca08000 {
- 		compatible = "shared-dma-pool";
- 		reg = <0x00 0x9ca08000 0x00 0x1000>;
- 		no-map;
-+		bootph-pre-ram;
- 	};
- 
- 	wkup_r5fss0_core0_lpm_rest_region: memory@9ca09000 {
-@@ -89,6 +90,7 @@ &wkup_r5fss0_core0 {
- 			      "lpm-metadata", "lpm-context",
- 			      "dm-firmware";
- 	status = "okay";
-+	bootph-pre-ram;
- };
- 
- &mcu_r5fss0 {
+Can you have a look on this?
 
--- 
-2.53.0
+There is no specific reason for Verdin AM62P deviating from the TI SK
+board on this memory size topic, we should avoid duplication and
+silently overriding those however.
+
+Francesco
 
