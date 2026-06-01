@@ -1,52 +1,86 @@
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BDA37BE9F;
-	Mon,  1 Jun 2026 12:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DDF3BB69D
+	for <linux-remoteproc@vger.kernel.org>; Mon,  1 Jun 2026 14:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780317787; cv=none; b=TWDV3bjqbJ1UpEkngzUCR11z3a1w3KlpewBU3Ll1flOYq8w1Cz/CJ3JvRQC97gYhdnNdgaqyRrCOu1GWHt7TvNgzkkbNPvyarQbBQHB+oan4plfR7JciNY1dQV/FeCdIzs+Ho56mugnXZM9Geng7akEaTDtAwkPGmF/OPLi2Z1c=
+	t=1780324955; cv=none; b=DTNqFaFt4IAlcuyG6gMAoxfQldZqREniqoHhLaB/IbkbLGWgt5kZOSXbZGqkL1pQV3aPh44JRu2u+D5RCn5pgfHekfG8cRYQy41zXZsdEbNqzA+v0/di4neu9xFBpCv1FTFYXSlpwr1njZTnh6GSWk00sMHyZX2UrcjGusnthuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780317787; c=relaxed/simple;
-	bh=HxCj1imFaDGqnqxOq1uQNFr3M4N4UQmU5zpkhhpFT54=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ijlEtBHRQrac76KQxdwQkFS2h6smYd8Rm/eJ0ROUitvqpDHYnpbIFZqfRQ+frDPmcR35XWC/Bz9FNNWa2Vo4Ms3tM6XXqZMIomeCVxlXGB5Ol6DWhM4giN/18MBO1xiDNdEjtnqlLH6Y6F5czI/drLBpZu5PyqDA5J9D29Lgr6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=MutP/+D7; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+	s=arc-20240116; t=1780324955; c=relaxed/simple;
+	bh=KwKEkwDhKFllduxQFt6dT+HKbaAW3P77Mq493+G7AAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nNV6JiM9ieB5EY1+XsgMYE1Zp8LWBEtGtcwqx0/be6Y5eJc8ofME6gnvZHA9XGanVO0P1/fiThwbaVGqT7KXUZB8iXtmiGjRigVWgUioZLpPtR7qqMFDVp3I87NaDR68aEGJqZahaYnrFvQGUU2f/pay94a7b2fRtPYGIEKeWPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hfVplF3P; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="MutP/+D7"
-Received: from francesco-nb (xcpe-178-82-120-96.dyn.res.sunrise.net [178.82.120.96])
-	by mail11.truemail.it (Postfix) with ESMTPA id E771A1F95E;
-	Mon,  1 Jun 2026 14:43:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1780317783;
-	bh=H1hVXwtOto/IFcO7KNTvhV0DieY8ZM/C1FwXh7ymHAY=; h=From:To:Subject;
-	b=MutP/+D71iXBmL/0fGOHo9F2u8hZB9UQji9kB639/LAgliscV3Hw7Wt/xH02MwOJk
-	 2/oRWDP2SAFd9XJfJQT/fxT/koBEv8ukqJkfSmKnZcx8Cm9+KYoYSaNqw09kgOEQ4D
-	 4/TAsw7STe1eCA4Uz+SmNaiT4ajBkAXOEGrbPHdqT90PuwjqF8LJVe7ZgctcbZ8Dy1
-	 mBSwyp030QjaCmDhZ4gmtvrMiyVc9UxIqtCSowcBHh9m1qpx6Qm/Btm8xAtRBUqRmR
-	 8uLcz9nT39L3GHrPsDsS5ihGALoTOelLv2XVvhHLXzrIYd+4Cv6kyuftY0SU0eE+1i
-	 ZufKGOZ+OdGJA==
-Date: Mon, 1 Jun 2026 14:42:59 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: "Markus Schneider-Pargmann (TI)" <msp@baylibre.com>,
-	sashiko-reviews@lists.linux.dev
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hfVplF3P"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2c0c2d792c8so9506105ad.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jun 2026 07:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1780324953; x=1780929753; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I0dhUfw0XKND2zjq9zxpBDoT9bHm0cEZAjiXz5KStSE=;
+        b=hfVplF3PmsPoQqwZhHw84uwWoUUcR0wwcT/kGW6BmfQddv7vCn7DCId8KAEX1/ubBN
+         AFZ5FlwNFYyF9zGHO06WRF3m36qClaRkMERZvP6em5fLFm34C590b28M/fuODPuEEjbL
+         sK0rEa9KRseEUad4xJAKOE6JKLWBS+vvuWwxihpRWCOb3ge79HQ+vOMh9pwhItdCupcC
+         tMn3x9xF1dO04ykTM4boJaUYQer6RnF9CLDWNsgnqe2TabLbUTWMc10IQQVV3xpcF9t3
+         zzmJLQI0vny597fY0PKUgZEgcM9vUrRHwPxmXfEF7UWfWtC5itiUGKotVE8GY+DUZjB6
+         wTqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780324953; x=1780929753;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I0dhUfw0XKND2zjq9zxpBDoT9bHm0cEZAjiXz5KStSE=;
+        b=gB/SSeckfCmLKL9t88LmsAQk5dx/VtWM8kI66Q/mNLRJB9CBmJH72S7HuhTiOdxdER
+         4csHIU+PXeJCv8iMJuciJjXLCwjLzL9dcbsGFSc3BAOBdY1fEdjlLfY2ZnKRfSMx1ri+
+         P8fDgDj/eqs60lteLSppZkpySUs0Ff0kGdkEnqNEuVyBqXSx7u/jTDC55mcC7lIbWz62
+         IezvMbPKwkQ1t8rNwBI7CJ/1MFHTINC0WR2xkgk/vM2vJHLQwvSW3Bsw3fw5Y+/8TRcz
+         LFwQwemIX8cZyUpv4EesR07VWxmJ/ZEebvLlAUgaf0qSSs/p71F5lkD2Hkf1wakj5IsP
+         C5Gw==
+X-Forwarded-Encrypted: i=1; AFNElJ82SLeR7CUQe746gEk6+cauTzGqSzipQtsoviGSJVIGjDThSfS+ku2LiPBl73lb4B0/fYgUZksvkb+L+2TOMyNb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKvBP5CT5Qly4JQzVEtq9lWez1Wa2dbgYUAGgQV03oiO7pE/lE
+	KUg4WDNFoXnyBYr1aNg37V7VJ96l4rdvSYacAtkG1bq4oIIAdeo+vpVCiN8mZvjIRUw=
+X-Gm-Gg: Acq92OGRLtCQ40wsykwdc+4cZjIEJLmIxtfz8fj7SOumYmhj//Sfg92FS8mCr3zxsvS
+	qJdYDvWQH5d/3gkyu/nol90qrCKO2dYKSpF3xJKtmFREF2LOg6lhCaHQymOMX9QsefryCiRJkde
+	xJ/ch5zPAS43+EUdoqPPtZvtaMLti6kNBnoB7FFEOgsLyRManZD2xw1d3db0+AyyUjOWoOlFwcw
+	z+Z4dKP5vAfPLK5rlxY9YyOtidKexnI2sXc7C+Smq8NT9TSIRW1bcVS4+nln0xr58qcId348xdn
+	OI+tiWXwi2hxi2uKjyPQnAvo461qvth6+Rg2jt9pCcmoAId/pjAS1i5AM9wUyVbGKSDwdeYXBi4
+	HChXF1EaGJJp+JrbalMZhYt6Tqza8lqwG7KVL+Fxf4oDjq6zTWOL1bkGtqGSF5UwrTLA+Xf2KqS
+	TvVoZ/vu+662RlehEZeezzzCQGhb5hUZqT4s1gnS5HNieHTh86
+X-Received: by 2002:a17:902:e74b:b0:2bd:63dc:b7ad with SMTP id d9443c01a7336-2bf3679ebc4mr132076775ad.2.1780324953150;
+        Mon, 01 Jun 2026 07:42:33 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:86cc:b476:3696:fced])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf23c0842esm107038115ad.57.2026.06.01.07.42.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jun 2026 07:42:32 -0700 (PDT)
+Date: Mon, 1 Jun 2026 08:42:29 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Ben Levinsky <ben.levinsky@amd.com>, arnaud.pouliquen@foss.st.com,
+	daniel.baluta@nxp.com, peng.fan@oss.nxp.com
 Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Vishal Mahaveer <vishalm@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
-	Sebin Francis <sebin.francis@ti.com>,
-	Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/5] arm64: dts: ti: k3-am62p-ti-ipc-firmware: Move
- wkup reserved memory
-Message-ID: <20260601124259.GA76338@francesco-nb>
+	linux-remoteproc@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Tanmay Shah <tanmay.shah@amd.com>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 0/5] remoteproc: cleanup shared carveout and
+ resource-table helpers
+Message-ID: <ah2aVdlsLqy9aeHP@p14s>
+References: <20260529021637.2077602-1-ben.levinsky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -55,61 +89,105 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260601090205.076BC1F00893@smtp.kernel.org>
- <20260601-topic-am62a-ioddr-dt-v6-19-v5-2-3856a023aff2@baylibre.com>
+In-Reply-To: <20260529021637.2077602-1-ben.levinsky@amd.com>
 
-Hello Markus,
+Good morning,
 
-On Mon, Jun 01, 2026 at 09:02:04AM +0000, sashiko-bot@kernel.org wrote:
-> Thank you for your contribution! Sashiko AI review found 2 potential issue(s) to consider:
-> - [High] Moving `wkup_r5fss0_core0_memory_region` to the shared `k3-am62p-ti-ipc-firmware.dtsi` silently truncates the reserved memory size for Verdin boards from 30MB to 15MB.
-> - [Medium] Moving `wkup_r5fss0_core0_memory_region` to the shared `k3-am62p-ti-ipc-firmware.dtsi` causes fatal `dtc` duplicate label errors and overlapping reserved memory regions for Var-SOM boards.
-> --
+On Thu, May 28, 2026 at 07:16:32PM -0700, Ben Levinsky wrote:
+> This series is a preparatory remoteproc cleanup split out from review of
+> the AMD BRAM-based remoteproc series.
 > 
-> commit 65cd200377411c4597f1b662700915ea23cfe5f8
-> Author: Markus Schneider-Pargmann (TI) <msp@baylibre.com>
+> During review, there was a request to move the duplicated plain
+> ioremap_wc()/iounmap() carveout callbacks into common code and to
+> factor the "missing resource table is OK" ELF parsing path into a
+> common helper as well. There was also a request to send that cleanup as
+> its own patchset first, with the AMD BRAM series respun afterwards on
+> top once this cleanup is merged.
 > 
-> arm64: dts: ti: k3-am62p-ti-ipc-firmware: Move wkup reserved memory
+> This version keeps the same overall cleanup goals as v2, but reworks
+> the optional resource-table pieces based on follow-up review:
 > 
-> The commit moves the wkup_r5fss0_core0 memory regions to a common
-> k3-am62p-ti-ipc-firmware.dtsi file to combine identical definitions
-> across boards.
+>   - reshape the optional resource-table helper in patch 4 into the thin
+>     parse_fw() wrapper form suggested on the thread
+>   - switch the patch 5 clients over to that helper shape directly,
+>     without post-helper rproc->table_ptr checks
+>   - keep the driver-local parse_fw() wrappers and their existing log
+>     messages and severity choices
+>   - retain as much of the existing per-driver parse_fw() logic and code
+>     placement as possible while moving the missing-table handling
+>     through the shared helper
 > 
-> >     Move the reserved memory regions used for wkup_r5fss0_core0 to the
-> >     k3-am62p-ti-ipc-firmware.dtsi. These are all the same for the other
-> >     boards as well, so we can combine them here similar to what is already
-> >     done for the mcu_r5fss0_core0 memory regions.
+> This series now does that in five patches:
 > 
-> [Severity: High]
-> Are these regions exactly the same for all other boards?
+>   1. add common subsystem-private callbacks for the exact-match
+>      wc-ioremap carveout case
+>   2. switch the in-tree exact-match users over to those callbacks
+>   3. mark carveouts mapped through the shared wc-ioremap helper as
+>      iomem so the framework uses the proper I/O accessors
+>   4. add a common helper for drivers that treat a missing ELF resource
+>      table as optional while keeping per-driver logging decisions local
+>   5. switch the matching in-tree drivers over to that helper while
+>      keeping thin local parse_fw() wrappers
 > 
-> k3-am62p-verdin.dtsi explicitly defines the wkup_r5fss0_core0_memory_region
-> with a size of 30MB (0x01e00000):
+> For the carveout map/unmap cleanup, this series covers the exact-match
+> users called out in review: xlnx_r5_remoteproc, rcar_rproc,
+> st_remoteproc, stm32_rproc, imx_rproc, and imx_dsp_rproc. The zynqmp R5
+> TCM mapping path is left alone because it also clears the mapped memory
+> and is not an exact match.
 > 
-> wkup_r5fss0_core0_memory_region: memory@9c900000 {
-> 	compatible = "shared-dma-pool";
-> 	reg = <0x00 0x9c900000 0x00 0x01e00000>;
-> 	no-map;
-> };
+> For the optional resource-table handling, this series converts
+> xlnx_r5_remoteproc, rcar_rproc, stm32_rproc, imx_rproc, and
+> imx_dsp_rproc. st_remoteproc is intentionally left unchanged because its
+> parse_fw() callback also builds carveouts and is therefore not a direct
+> match for the helper introduced here.
 > 
-> Because k3-am62p-verdin.dtsi includes k3-am62p-ti-ipc-firmware.dtsi at the
-> very end of the file, dtc cleanly merges the identically-named node paths, and
-> the new generic definition silently overrides the board-specific 30MB size
-> down to 15MB.
+> Changes in v3:
+>   - rework patch 4 so the optional resource-table helper matches the
+>     thin-wrapper form suggested in review
+>   - note that patch 4 still triggers a checkpatch --strict warning for
+>     the flow-control macro form, but that implementation follows the
+>     maintainer's review suggestion for the thin parse_fw() wrapper shape
+>   - update patch 5 to use that helper shape directly in the client
+>     parse_fw() callbacks
+>   - drop the post-helper rproc->table_ptr checks from the converted
+>     drivers
+>   - keep the converted parse_fw() wrappers otherwise close to their
+>     existing structure and placement
+>   - test xlnx_r5_remoteproc on the latest tree with firmware images
+>     both with and without an ELF resource table
 > 
-> Does this halving of the available memory for IPC on Verdin boards cause
-> firmware load failures or runtime out-of-memory crashes on the R5 core?
+> Changes in v2:
+>   - split the mem->is_iomem change out into a separate patch
+>   - add a common error message on ioremap_wc() failure
+>   - drop logging from the optional resource-table helper
+>   - keep driver-local parse_fw() wrappers to preserve per-platform
+>     missing-resource-table logging policy
 > 
-> (Note: A subsequent patch in the series 'arm64: dts: ti:
-> k3-am62p-ti-ipc-firmware: Split r5f memory region' changes the label and size
-> to 1MB, which further truncates the region without fixing the underlying
-> overwrite.)
+> Ben Levinsky (5):
+>   remoteproc: add common wc-ioremap carveout callbacks
+>   remoteproc: switch exact-match drivers to wc-ioremap callbacks
+>   remoteproc: mark wc-ioremap carveouts as iomem
+>   remoteproc: add helper for optional ELF resource tables
+>   remoteproc: switch drivers to optional resource-table helper
+> 
+>  drivers/remoteproc/imx_dsp_rproc.c       | 41 +++-----------
+>  drivers/remoteproc/imx_rproc.c           | 40 ++------------
+>  drivers/remoteproc/rcar_rproc.c          | 41 ++------------
+>  drivers/remoteproc/remoteproc_internal.h | 38 +++++++++++++
+>  drivers/remoteproc/st_remoteproc.c       | 31 +----------
+>  drivers/remoteproc/stm32_rproc.c         | 39 ++-----------
+>  drivers/remoteproc/xlnx_r5_remoteproc.c  | 70 +++++-------------------
 
-Can you have a look on this?
+This set looks good to me.  I am fine with the checkpatch warning on the macro -
+given the redundancy it avoids, I think it can be tolerated.
 
-There is no specific reason for Verdin AM62P deviating from the TI SK
-board on this memory size topic, we should avoid duplication and
-silently overriding those however.
+Wolfram has already indicated he wanted to test these changes - Arnaud, Daniel
+and Peng, please do the same for your platforms.
 
-Francesco
+Thanks,
+Mathieu
 
+>  7 files changed, 73 insertions(+), 227 deletions(-)
+> 
+> -- 
+> 2.34.1
