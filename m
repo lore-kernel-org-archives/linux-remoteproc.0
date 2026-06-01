@@ -1,193 +1,152 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DDF3BB69D
-	for <linux-remoteproc@vger.kernel.org>; Mon,  1 Jun 2026 14:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A885D3E1201
+	for <linux-remoteproc@vger.kernel.org>; Mon,  1 Jun 2026 18:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780324955; cv=none; b=DTNqFaFt4IAlcuyG6gMAoxfQldZqREniqoHhLaB/IbkbLGWgt5kZOSXbZGqkL1pQV3aPh44JRu2u+D5RCn5pgfHekfG8cRYQy41zXZsdEbNqzA+v0/di4neu9xFBpCv1FTFYXSlpwr1njZTnh6GSWk00sMHyZX2UrcjGusnthuI=
+	t=1780338775; cv=none; b=Wkc+sT5qz+mgMJc3iWqv6WJuTU6WXlKHzDoXkruY2ozADNGzuJpjLzmkEw4UrIXHtBsdZTeREf79PAzkHlmOiVBPyUwlYPPSHwjjFFeAdrT4T0Z7MMKeBhV4hlrj6qbqpACECH7sRRFWwCIkGM7W72Gdwo9OLsj60JjvFgamLtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780324955; c=relaxed/simple;
-	bh=KwKEkwDhKFllduxQFt6dT+HKbaAW3P77Mq493+G7AAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNV6JiM9ieB5EY1+XsgMYE1Zp8LWBEtGtcwqx0/be6Y5eJc8ofME6gnvZHA9XGanVO0P1/fiThwbaVGqT7KXUZB8iXtmiGjRigVWgUioZLpPtR7qqMFDVp3I87NaDR68aEGJqZahaYnrFvQGUU2f/pay94a7b2fRtPYGIEKeWPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hfVplF3P; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1780338775; c=relaxed/simple;
+	bh=Y7RUPn+bAvsmJ/8/BG0ZaBGJijmKLA+fSDhd8Z8WAVc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TMU3mvWDJSqF4yR+ATMLTJBs2C45PlGltVTrlN3fc78Ur3JCmBB5ilPAPx72jOZPdIXOmb+cHcrFVrsZmT1+czT1mRriLC3jUoNdjOME/MY7PiraGmPbr6BB3rzzd1IrgACem5AuE4BD8mk3m+zz0pxQC5QJoehymr54KuCA/pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mj+fMJJL; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hfVplF3P"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2c0c2d792c8so9506105ad.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jun 2026 07:42:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mj+fMJJL"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-9154ca1aa1dso229822385a.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 01 Jun 2026 11:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1780324953; x=1780929753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I0dhUfw0XKND2zjq9zxpBDoT9bHm0cEZAjiXz5KStSE=;
-        b=hfVplF3PmsPoQqwZhHw84uwWoUUcR0wwcT/kGW6BmfQddv7vCn7DCId8KAEX1/ubBN
-         AFZ5FlwNFYyF9zGHO06WRF3m36qClaRkMERZvP6em5fLFm34C590b28M/fuODPuEEjbL
-         sK0rEa9KRseEUad4xJAKOE6JKLWBS+vvuWwxihpRWCOb3ge79HQ+vOMh9pwhItdCupcC
-         tMn3x9xF1dO04ykTM4boJaUYQer6RnF9CLDWNsgnqe2TabLbUTWMc10IQQVV3xpcF9t3
-         zzmJLQI0vny597fY0PKUgZEgcM9vUrRHwPxmXfEF7UWfWtC5itiUGKotVE8GY+DUZjB6
-         wTqA==
+        d=gmail.com; s=20251104; t=1780338774; x=1780943574; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tDSNkPnmmQDSy+EDLfUh0gYRkI6FbvhYsuUIdnXlfv4=;
+        b=Mj+fMJJL2e1wBG1Nt/cJW/4Z+iVrPBR+JngnZ1+kOrOIzTkG5jceEbVrVjZV5P04lB
+         NkZxnd27sX+L29/htWIIh0DAvCx8yoXjdEcnUFr7PiyiPaW50UMZ24xV8kfIzDpPm0bU
+         ntr1S/IiTyBSgnlyOw/u7gezVi9SiAHlWi6wdH1cXF7uS5gt0V5y0yv5gYmJoWvSRA0m
+         nIdxHmUDIqLCicfylIIFg8b0yiESZRc9qKMmflAMemZ1ESyJTMJlZgU2P1SS+P8jaFQe
+         aiR8f5cSh0dkbEuMhQehgzJy1JgXSKq+2U4KiWBmp3QxE+l5trpKCAG0ORlxu8XJh9EP
+         FH4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1780324953; x=1780929753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I0dhUfw0XKND2zjq9zxpBDoT9bHm0cEZAjiXz5KStSE=;
-        b=gB/SSeckfCmLKL9t88LmsAQk5dx/VtWM8kI66Q/mNLRJB9CBmJH72S7HuhTiOdxdER
-         4csHIU+PXeJCv8iMJuciJjXLCwjLzL9dcbsGFSc3BAOBdY1fEdjlLfY2ZnKRfSMx1ri+
-         P8fDgDj/eqs60lteLSppZkpySUs0Ff0kGdkEnqNEuVyBqXSx7u/jTDC55mcC7lIbWz62
-         IezvMbPKwkQ1t8rNwBI7CJ/1MFHTINC0WR2xkgk/vM2vJHLQwvSW3Bsw3fw5Y+/8TRcz
-         LFwQwemIX8cZyUpv4EesR07VWxmJ/ZEebvLlAUgaf0qSSs/p71F5lkD2Hkf1wakj5IsP
-         C5Gw==
-X-Forwarded-Encrypted: i=1; AFNElJ82SLeR7CUQe746gEk6+cauTzGqSzipQtsoviGSJVIGjDThSfS+ku2LiPBl73lb4B0/fYgUZksvkb+L+2TOMyNb@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKvBP5CT5Qly4JQzVEtq9lWez1Wa2dbgYUAGgQV03oiO7pE/lE
-	KUg4WDNFoXnyBYr1aNg37V7VJ96l4rdvSYacAtkG1bq4oIIAdeo+vpVCiN8mZvjIRUw=
-X-Gm-Gg: Acq92OGRLtCQ40wsykwdc+4cZjIEJLmIxtfz8fj7SOumYmhj//Sfg92FS8mCr3zxsvS
-	qJdYDvWQH5d/3gkyu/nol90qrCKO2dYKSpF3xJKtmFREF2LOg6lhCaHQymOMX9QsefryCiRJkde
-	xJ/ch5zPAS43+EUdoqPPtZvtaMLti6kNBnoB7FFEOgsLyRManZD2xw1d3db0+AyyUjOWoOlFwcw
-	z+Z4dKP5vAfPLK5rlxY9YyOtidKexnI2sXc7C+Smq8NT9TSIRW1bcVS4+nln0xr58qcId348xdn
-	OI+tiWXwi2hxi2uKjyPQnAvo461qvth6+Rg2jt9pCcmoAId/pjAS1i5AM9wUyVbGKSDwdeYXBi4
-	HChXF1EaGJJp+JrbalMZhYt6Tqza8lqwG7KVL+Fxf4oDjq6zTWOL1bkGtqGSF5UwrTLA+Xf2KqS
-	TvVoZ/vu+662RlehEZeezzzCQGhb5hUZqT4s1gnS5HNieHTh86
-X-Received: by 2002:a17:902:e74b:b0:2bd:63dc:b7ad with SMTP id d9443c01a7336-2bf3679ebc4mr132076775ad.2.1780324953150;
-        Mon, 01 Jun 2026 07:42:33 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:86cc:b476:3696:fced])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2bf23c0842esm107038115ad.57.2026.06.01.07.42.31
+        d=1e100.net; s=20251104; t=1780338774; x=1780943574;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tDSNkPnmmQDSy+EDLfUh0gYRkI6FbvhYsuUIdnXlfv4=;
+        b=gtuAq6+MRnQ52FqMCa5WMwTu7sN9Y6Vk83RHJJxfqSSy52ZcS1dSPvOvX+HzjxJ/Ew
+         /8QeVtDTJ5dkocrQ8F1ulIF6e1zKnoy+1qsp86tNhnZxoGP4d8daAATu8lVXmPwPJgO2
+         1QhFkYjjzGnus5r5vzOLJMCVNpIGhF+cn7Fb9q2Rv7q/dXJe336gZjmeOCY9uEOKf91q
+         LxUEjCoCjHF3BSqn3tmyDgzRZsED9NldVO0E1Clrzgt/16HTMvs2B2kLJsPHqAvFViLf
+         4OiixQpPFopggih1q9FDOsT4acCXGQnqiOV/3N0v0Pe+YVxkOG+Aww5Oph5na0rNQUyo
+         SvJg==
+X-Gm-Message-State: AOJu0Yyna8Sf8yPo8cOsqmH4XAo4NYm4JjkO/LQsWogxP3Vu0CnV1lRd
+	BBjolPUs8jMIA2ElNpUKmzINIhyhyxZlBvAn62s35KY+1KStWghqSm6shE5q58cEKOY=
+X-Gm-Gg: Acq92OHk7H0rdCrrEGW86dpU0CD+9Lu7+kgbe8H5TW2s99oq4DaJJFRxv1E+QIIptxH
+	VgX6xW1gSZkHBtcesFW9k5ffo5vuqayo4PshrXwMXQELczkkQhq1RpDtPhkrH9lfGHvDPIR43VH
+	HYreutcAqrh/En/80zT973dZyRigmZTHCpxjjye4fubQxw5XPdQA3T1q8KDff+OiFsJdSjYy1oF
+	PEpZwsOCD7W+TyCAyorvpFrF25mmqW3Uj2ZE9xzyh6uPBNpKO9fanxpJKTZA+bhoDvbjy8zWE9p
+	9F3vwLje/+f+1XnhxKODqw12yHc5IejHnp+eGGbsJujsVGQzy5XktNIielAOqP33euswClGD9Iw
+	cIfzNE6DxoJ9esnwpEFGnFr6zU/yndEz7vc/9vfszJCjQC4eCdcexpd5Mt6sew+pna3Q6hT4fgT
+	XG37t8aNOzgHdeB9/qhXCyF1QTS43X7p6+cqLEG/6p1uEpkRAk0MQ=
+X-Received: by 2002:a05:620a:254a:b0:90f:9d1d:7031 with SMTP id af79cd13be357-91577e80441mr118173285a.17.1780338773559;
+        Mon, 01 Jun 2026 11:32:53 -0700 (PDT)
+Received: from i4-gl-tmk5904.ad.psu.edu ([130.203.156.186])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-915721f7d75sm141863385a.18.2026.06.01.11.32.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Jun 2026 07:42:32 -0700 (PDT)
-Date: Mon, 1 Jun 2026 08:42:29 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Ben Levinsky <ben.levinsky@amd.com>, arnaud.pouliquen@foss.st.com,
-	daniel.baluta@nxp.com, peng.fan@oss.nxp.com
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Tanmay Shah <tanmay.shah@amd.com>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v3 0/5] remoteproc: cleanup shared carveout and
- resource-table helpers
-Message-ID: <ah2aVdlsLqy9aeHP@p14s>
-References: <20260529021637.2077602-1-ben.levinsky@amd.com>
+        Mon, 01 Jun 2026 11:32:53 -0700 (PDT)
+From: Yuho Choi <dbgh9129@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yuho Choi <dbgh9129@gmail.com>
+Subject: [PATCH v2] rpmsg: char: fix use-after-free on probe error path
+Date: Mon,  1 Jun 2026 14:32:47 -0400
+Message-ID: <20260601183247.1962010-1-dbgh9129@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260529021637.2077602-1-ben.levinsky@amd.com>
+Content-Transfer-Encoding: 8bit
 
-Good morning,
+rpmsg_chrdev_probe() stores the newly allocated eptdev in the default
+endpoint's priv pointer before calling rpmsg_chrdev_eptdev_add(). If
+rpmsg_chrdev_eptdev_add() then fails, its error path frees eptdev while
+the default endpoint may still dispatch callbacks with the stale priv
+pointer.
 
-On Thu, May 28, 2026 at 07:16:32PM -0700, Ben Levinsky wrote:
-> This series is a preparatory remoteproc cleanup split out from review of
-> the AMD BRAM-based remoteproc series.
-> 
-> During review, there was a request to move the duplicated plain
-> ioremap_wc()/iounmap() carveout callbacks into common code and to
-> factor the "missing resource table is OK" ELF parsing path into a
-> common helper as well. There was also a request to send that cleanup as
-> its own patchset first, with the AMD BRAM series respun afterwards on
-> top once this cleanup is merged.
-> 
-> This version keeps the same overall cleanup goals as v2, but reworks
-> the optional resource-table pieces based on follow-up review:
-> 
->   - reshape the optional resource-table helper in patch 4 into the thin
->     parse_fw() wrapper form suggested on the thread
->   - switch the patch 5 clients over to that helper shape directly,
->     without post-helper rproc->table_ptr checks
->   - keep the driver-local parse_fw() wrappers and their existing log
->     messages and severity choices
->   - retain as much of the existing per-driver parse_fw() logic and code
->     placement as possible while moving the missing-table handling
->     through the shared helper
-> 
-> This series now does that in five patches:
-> 
->   1. add common subsystem-private callbacks for the exact-match
->      wc-ioremap carveout case
->   2. switch the in-tree exact-match users over to those callbacks
->   3. mark carveouts mapped through the shared wc-ioremap helper as
->      iomem so the framework uses the proper I/O accessors
->   4. add a common helper for drivers that treat a missing ELF resource
->      table as optional while keeping per-driver logging decisions local
->   5. switch the matching in-tree drivers over to that helper while
->      keeping thin local parse_fw() wrappers
-> 
-> For the carveout map/unmap cleanup, this series covers the exact-match
-> users called out in review: xlnx_r5_remoteproc, rcar_rproc,
-> st_remoteproc, stm32_rproc, imx_rproc, and imx_dsp_rproc. The zynqmp R5
-> TCM mapping path is left alone because it also clears the mapped memory
-> and is not an exact match.
-> 
-> For the optional resource-table handling, this series converts
-> xlnx_r5_remoteproc, rcar_rproc, stm32_rproc, imx_rproc, and
-> imx_dsp_rproc. st_remoteproc is intentionally left unchanged because its
-> parse_fw() callback also builds carveouts and is therefore not a direct
-> match for the helper introduced here.
-> 
-> Changes in v3:
->   - rework patch 4 so the optional resource-table helper matches the
->     thin-wrapper form suggested in review
->   - note that patch 4 still triggers a checkpatch --strict warning for
->     the flow-control macro form, but that implementation follows the
->     maintainer's review suggestion for the thin parse_fw() wrapper shape
->   - update patch 5 to use that helper shape directly in the client
->     parse_fw() callbacks
->   - drop the post-helper rproc->table_ptr checks from the converted
->     drivers
->   - keep the converted parse_fw() wrappers otherwise close to their
->     existing structure and placement
->   - test xlnx_r5_remoteproc on the latest tree with firmware images
->     both with and without an ELF resource table
-> 
-> Changes in v2:
->   - split the mem->is_iomem change out into a separate patch
->   - add a common error message on ioremap_wc() failure
->   - drop logging from the optional resource-table helper
->   - keep driver-local parse_fw() wrappers to preserve per-platform
->     missing-resource-table logging policy
-> 
-> Ben Levinsky (5):
->   remoteproc: add common wc-ioremap carveout callbacks
->   remoteproc: switch exact-match drivers to wc-ioremap callbacks
->   remoteproc: mark wc-ioremap carveouts as iomem
->   remoteproc: add helper for optional ELF resource tables
->   remoteproc: switch drivers to optional resource-table helper
-> 
->  drivers/remoteproc/imx_dsp_rproc.c       | 41 +++-----------
->  drivers/remoteproc/imx_rproc.c           | 40 ++------------
->  drivers/remoteproc/rcar_rproc.c          | 41 ++------------
->  drivers/remoteproc/remoteproc_internal.h | 38 +++++++++++++
->  drivers/remoteproc/st_remoteproc.c       | 31 +----------
->  drivers/remoteproc/stm32_rproc.c         | 39 ++-----------
->  drivers/remoteproc/xlnx_r5_remoteproc.c  | 70 +++++-------------------
+Avoid publishing eptdev through the default endpoint until
+rpmsg_chrdev_eptdev_add() succeeds. Messages received before the priv
+pointer is published should be ignored by rpmsg_ept_cb(). Flow-control
+updates can hit rpmsg_ept_flow_cb() in the same window, so make both
+callbacks return success when priv is NULL.
 
-This set looks good to me.  I am fine with the checkpatch warning on the macro -
-given the redundancy it avoids, I think it can be tolerated.
+Fixes: bc69d1066569 ("rpmsg: char: Introduce the "rpmsg-raw" channel")
+Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
+---
+Changes in v2:
+- Use a 12-character Fixes SHA.
+- Drop the unnecessary asm-generic/rwonce.h include.
+- Handle NULL priv in rpmsg_ept_flow_cb() as well.
+ drivers/rpmsg/rpmsg_char.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-Wolfram has already indicated he wanted to test these changes - Arnaud, Daniel
-and Peng, please do the same for your platforms.
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index ca9cf8858a5e..bff5aefee212 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -104,6 +104,9 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+ 	struct rpmsg_eptdev *eptdev = priv;
+ 	struct sk_buff *skb;
+ 
++	if (!eptdev)
++		return 0;
++
+ 	skb = alloc_skb(len, GFP_ATOMIC);
+ 	if (!skb)
+ 		return -ENOMEM;
+@@ -124,6 +127,9 @@ static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable
+ {
+ 	struct rpmsg_eptdev *eptdev = priv;
+ 
++	if (!eptdev)
++		return 0;
++
+ 	eptdev->remote_flow_restricted = enable;
+ 	eptdev->remote_flow_updated = true;
+ 
+@@ -490,6 +496,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+ 	struct rpmsg_channel_info chinfo;
+ 	struct rpmsg_eptdev *eptdev;
+ 	struct device *dev = &rpdev->dev;
++	int ret;
+ 
+ 	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+ 	chinfo.src = rpdev->src;
+@@ -502,13 +509,17 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+ 	/* Set the default_ept to the rpmsg device endpoint */
+ 	eptdev->default_ept = rpdev->ept;
+ 
++	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
++
++	if (ret)
++		return ret;
+ 	/*
+ 	 * The rpmsg_ept_cb uses *priv parameter to get its rpmsg_eptdev context.
+-	 * Storedit in default_ept *priv field.
++	 * Stored it in default_ept *priv field.
+ 	 */
+ 	eptdev->default_ept->priv = eptdev;
+ 
+-	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
++	return 0;
+ }
+ 
+ static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+-- 
+2.43.0
 
-Thanks,
-Mathieu
-
->  7 files changed, 73 insertions(+), 227 deletions(-)
-> 
-> -- 
-> 2.34.1
