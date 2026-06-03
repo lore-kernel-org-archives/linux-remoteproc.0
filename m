@@ -1,22 +1,22 @@
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C2148122B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085A848124B;
 	Wed,  3 Jun 2026 13:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780491925; cv=none; b=XSDl9esZBHjH9SDC0q1HKdXkq67hulHG6b+6IsDWSox4xJkzjCyhbAzD5O79NDGnUz4j288s31lr85CGUG78xzRuQprI2GSlNuki8fuRsbUAAxs7xyF2gyZ7B4g7UO1EoK0+49EImMbeh+p/lgz6E6hXpWyCAFrMvvJs0/xwD6Q=
+	t=1780491926; cv=none; b=RGv5MhZalfEjTjt5Y4NZjPP4i+cGKYCZ03vzqbNMcQD87MJpPowZzlkkxxAvcy6ie7TG0680eihbDASSXSMeMCcz+YBME9d+f/l2R+At4qFPIVj3ix/SMSdlG9qKWE9fNfzrbRJHGVw5BBYZArs7qY/+qQ+ruJtcJef5L7gaecc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780491925; c=relaxed/simple;
-	bh=ar7weazsSFejktseea/mhSlOoaOx04l8Z/I5D2ICyyk=;
+	s=arc-20240116; t=1780491926; c=relaxed/simple;
+	bh=I3XlPjVeGaUl7tcqyQ8JubRrz/ZfqITkqWXd9ykonvs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d9ovE/K5F0ZMOPoxEvUeXd1Qp4Pz6k0YjbLlyjDHt7UpzDOjf7LjbDp2gV+t9j7zIRwOXWm+5acT3iWQeZ+HhfMucAYRBRxrnucfbDwsoS/R9OnpL5VSDhBndTCEIeZC+tgDTnBXYagwnLAn81IY2nY9jj4fF9MXF1EZjcqZf5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Z0pHmSo2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jeVfsNNS; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=X9JS3i8mpwSG7GzQZ2v2SwbnpElAjYzLUwS/j3Fokuj8R8IucazsWlBioJ4fP0+jr1GlFEE8o8gkDL3IXO3s00t7U9oAmekitTrbMZFkMJyE8r1bNi7Hi1FhlQqFEPkGunFjVZIFgGuRjGRFPtC/0yoNVlkbQtcRkCAbzjV1sRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wI2jUlzb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PtDBb86+; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Z0pHmSo2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jeVfsNNS"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wI2jUlzb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PtDBb86+"
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1780491921;
@@ -24,21 +24,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qsswPfnnXsB1CCpGvONqYTMOqIRDSE3ZuW24UofC3Kc=;
-	b=Z0pHmSo2e9HDjyvJRggfuyCHJ6y6zW13ZP/RkWeojZN3vR5/icaM16ZmgYP7Szm0s2XoT9
-	oM72YLKc6J5H/8Ab/7G+cmC/JXKbp+ZaVqQ7RPm2GOedLO+1QyBx/VzDrS4xuxXqQu8gbo
-	hF7Hk9AKHmz8K8j4DKqMLVaGIl9/JU2mmNgzaKeTn/B6zCYq9RtT+DwWX5FVJnqs8HwmBX
-	+M5qwo1M48PRouUa7kyhVMrspMwoKsqo+PVrwLQegYV5a7lrMQBI5buIo9Ht57CxlBGjOv
-	Cs3PtCIQ3UGRaJJZzS9Km1olhDdBIAxxZ79lnPP2idWG/NwtcXJhVm2hYxn3+w==
+	bh=wVrQgH307p2rx62VD32KF6aFAEvmCWdX4MSBe18SAfM=;
+	b=wI2jUlzb8ILVRCLjA2FboDh8h3YpRarNz0Kd9mme46WiQFy39clzl6/RhVJLY2FiTXUalx
+	ZDyhXisKCQZnIA0mumgW5DQu/fvCM82tna5U7p47JkUfdeJbNp46asqGQcbzbGkdHzm6ZB
+	BisMSSOQHC6rx3K9ghktMRmuyxhdrQB2DohacbR2T0GTotFyO/sAq/QYntfQrHHG5CPLhl
+	JAMkIE7g39M5iO3o4Y3bAses158jubYVVsEhdWVkwHewZolu38DKaF8hTJSrLv1o8slABf
+	9VeBB/4p/7zMzB8hDCwM3rRgmrY8rmqZjWKUO6M7zeNpmP6Exh9y6ILlZCvVpg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1780491921;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qsswPfnnXsB1CCpGvONqYTMOqIRDSE3ZuW24UofC3Kc=;
-	b=jeVfsNNSjrj1ZI/nR2d3BwMidOmkeqY6W5NaTimA1P5kTSMZHU8CUP1+/aw8SruGy8vidq
-	qOS0E3qXqa4qa+CQ==
+	bh=wVrQgH307p2rx62VD32KF6aFAEvmCWdX4MSBe18SAfM=;
+	b=PtDBb86+MufClB2Givo/ph5u3yuVMJSdhbUdE+JC6gje8EJ1jwcGPgzBd29HZoa2H3R6VX
+	X4HGzmoN9uILQ6Ag==
 To: linux-kernel@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
@@ -54,9 +54,9 @@ Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v2 5/9] mailbox: imx: Start splitting the IRQ handler in primary and threaded handler
-Date: Wed,  3 Jun 2026 15:05:08 +0200
-Message-ID: <20260603-imx_mbox_rproc-v2-5-a0059dc3b69a@linutronix.de>
+Subject: [PATCH v2 7/9] mailbox: imx: Move the RXDB part of the mailbox into the threaded handler
+Date: Wed,  3 Jun 2026 15:05:10 +0200
+Message-ID: <20260603-imx_mbox_rproc-v2-7-a0059dc3b69a@linutronix.de>
 In-Reply-To: <20260603-imx_mbox_rproc-v2-0-a0059dc3b69a@linutronix.de>
 References: <20260603-imx_mbox_rproc-v2-0-a0059dc3b69a@linutronix.de>
 Precedence: bulk
@@ -68,99 +68,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Split the mailbox irq handling into a primary handler (imx_mu_isr()) and
-a threaded handler (imx_mu_isr_th()). The primary handler masks the
-interrupt event so the threaded handler can run without raising the
-interrupt again. The threaded handler can invoke the actuall callback in
-preemtible context.
+Move RXDB callback handling into the threaded handler. This similar to
+the RX side except that we unmask it unconditionally in threaded
+handler.
 
-As a first step, prepare the logic and move TX handling part.
+Move RXDB callback handling into the threaded handler.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/mailbox/imx-mailbox.c | 33 ++++++++++++++++++++++++++++++---
- 1 file changed, 30 insertions(+), 3 deletions(-)
+ drivers/mailbox/imx-mailbox.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index d1de07cc0ed62..006aa76b74b62 100644
+index 6fe202593592f..f0a14449652f1 100644
 --- a/drivers/mailbox/imx-mailbox.c
 +++ b/drivers/mailbox/imx-mailbox.c
-@@ -81,6 +81,7 @@ struct imx_mu_con_priv {
- 	struct mbox_chan	*chan;
- 	struct work_struct 	txdb_work;
- 	bool			shutdown;
-+	bool			pending;
- };
+@@ -559,6 +559,12 @@ static irqreturn_t imx_mu_isr_th(int irq, void *p)
+ 			imx_mu_xcr_set_act(priv, cp, IMX_MU_RCR, IMX_MU_xCR_RIEn(priv->dcfg->ty=
+pe, cp->idx));
+ 		break;
 =20
- struct imx_mu_priv {
-@@ -539,11 +540,35 @@ static void imx_mu_txdb_work(struct work_struct *t)
- 	mbox_chan_txdone(cp->chan, 0);
- }
-=20
-+static irqreturn_t imx_mu_isr_th(int irq, void *p)
-+{
-+	struct mbox_chan *chan =3D p;
-+	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
-+	struct imx_mu_con_priv *cp =3D chan->con_priv;
-+
-+	if (!cp->pending)
-+		return IRQ_NONE;
-+
-+	switch (cp->type) {
-+	case IMX_MU_TYPE_TX:
++	case IMX_MU_TYPE_RXDB:
 +		cp->pending =3D false;
-+		mbox_chan_txdone(chan, 0);
++		priv->dcfg->rxdb(priv, cp);
++		imx_mu_xcr_set_act(priv, cp, IMX_MU_GIER, IMX_MU_xCR_GIEn(priv->dcfg->ty=
+pe, cp->idx));
 +		break;
 +
-+	default:
-+		dev_warn_ratelimited(priv->dev, "Unhandled channel type %d\n",
-+				     cp->type);
-+		return IRQ_NONE;
-+	}
-+	return IRQ_HANDLED;
-+}
-+
- static irqreturn_t imx_mu_isr(int irq, void *p)
- {
- 	struct mbox_chan *chan =3D p;
- 	struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
- 	struct imx_mu_con_priv *cp =3D chan->con_priv;
-+	irqreturn_t ret =3D IRQ_HANDLED;
- 	u32 val, ctrl;
-=20
- 	switch (cp->type) {
-@@ -579,7 +604,8 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
- 	if ((val =3D=3D IMX_MU_xSR_TEn(priv->dcfg->type, cp->idx)) &&
- 	    (cp->type =3D=3D IMX_MU_TYPE_TX)) {
- 		imx_mu_xcr_rmw(priv, IMX_MU_TCR, 0, IMX_MU_xCR_TIEn(priv->dcfg->type, cp=
-->idx));
--		mbox_chan_txdone(chan, 0);
+ 	default:
+ 		dev_warn_ratelimited(priv->dev, "Unhandled channel type %d\n",
+ 				     cp->type);
+@@ -617,7 +623,9 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
+ 		ret =3D IRQ_WAKE_THREAD;
+ 	} else if ((val =3D=3D IMX_MU_xSR_GIPn(priv->dcfg->type, cp->idx)) &&
+ 		   (cp->type =3D=3D IMX_MU_TYPE_RXDB)) {
+-		priv->dcfg->rxdb(priv, cp);
 +		cp->pending =3D true;
++		imx_mu_xcr_rmw(priv, IMX_MU_GIER, 0, IMX_MU_xCR_GIEn(priv->dcfg->type, c=
+p->idx));
 +		ret =3D IRQ_WAKE_THREAD;
- 	} else if ((val =3D=3D IMX_MU_xSR_RFn(priv->dcfg->type, cp->idx)) &&
- 		   (cp->type =3D=3D IMX_MU_TYPE_RX)) {
- 		priv->dcfg->rx(priv, cp);
-@@ -594,7 +620,7 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
- 	if (priv->suspend)
- 		pm_system_wakeup();
-=20
--	return IRQ_HANDLED;
-+	return ret;
- }
-=20
- static int imx_mu_send_data(struct mbox_chan *chan, void *data)
-@@ -629,7 +655,8 @@ static int imx_mu_startup(struct mbox_chan *chan)
- 	if (!(priv->dcfg->type & IMX_MU_V2_IRQ))
- 		irq_flag |=3D IRQF_SHARED;
-=20
--	ret =3D request_irq(priv->irq[cp->type], imx_mu_isr, irq_flag, cp->irq_de=
-sc, chan);
-+	ret =3D request_threaded_irq(priv->irq[cp->type], imx_mu_isr, imx_mu_isr_=
-th,
-+				   irq_flag, cp->irq_desc, chan);
- 	if (ret) {
- 		dev_err(priv->dev, "Unable to acquire IRQ %d\n", priv->irq[cp->type]);
- 		return ret;
+ 	} else {
+ 		dev_warn_ratelimited(priv->dev, "Not handled interrupt\n");
+ 		return IRQ_NONE;
 
 --=20
 2.53.0
