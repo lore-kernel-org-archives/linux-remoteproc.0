@@ -1,93 +1,161 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246B7466B44;
-	Thu,  4 Jun 2026 12:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CF9311C32
+	for <linux-remoteproc@vger.kernel.org>; Thu,  4 Jun 2026 18:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780576435; cv=none; b=EwNp0q6dLB0GKkwY4lG4Fg9iZNNO3NX3MY3KvqWETCAaS/Cb9ivLoSOZJ33Dy1eauFOxMtXNelrzom9svn5r6tesY2+hP7Gq8bZ8I2HrPCmfY1V76SPNWTrJEcNGi2IdJywnJ2NXjaXUOrAoKGbuBALX2NtGjO5l0GQGtjVJPDs=
+	t=1780596326; cv=none; b=P0F6z7FABdbMxo7N9bsCwGMHB2ahzW5WUNJDW5XwXKs9OGZU9izZHpaW9apDcdwqxNQz+2c3rgzi0nuurlgFUdqjWpAA1HrAgeklbJwJqcdyMbQAL2M0e16uXRqoWXbUjtL0aW/4Ai90B47JkRsvFyJ+is/GS9ObWO7P26cRVuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780576435; c=relaxed/simple;
-	bh=OJ3Uqeo1IwOJW6q6880uQtHS9eNIQRcj3ScJXz4WdBA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=RuEzXcTOLEw04K+0LjwtnN34nkgfb9HoPnnDQVh5g9rzJ+hUGXGZeb30k9MMCd/vHxMHY9rprCbXTNrOdQx6rR97+f/a4PJFvIVbYy6x0JVzCBdC8c0hVSL0CRTN7qKQdZi4f2Obt/pCGK5NMYaK3I6otHGkCiuHnHLAAYPb3dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=paFWhExG; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=+M4nbtGk; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1780596326; c=relaxed/simple;
+	bh=eiC2Sv92zgt1vHvdbV+SbNCuzy9QLGT/IwMB3G/ng7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObbZHRObs1Cfp2Kak2PEAtbHUt/ftQzAyyiCfSy2065hYlF5lYQfOJTTIFwGjUMDYfRSe1EcKl17CIWv12SsrUdGYDqbb14qOiHN+lzN2eXN7CF4TqkyULvljbRspeMn4UwRIjnSIVGbW+mGUqgfI0rIDReGw6b4i678tgjo2uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qQEpFsit; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="paFWhExG";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="+M4nbtGk"
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1780576420; bh=kU+i7g8pqOTCGjUW+H8X7o/
-	tBXoM+LzHFNQrdKZ87oQ=; b=paFWhExG6MmKynuibQT97ubMi6MiMrQApDPN/SYJcqYXKGlc/c
-	MKfUx0k+JTNU6L6Yub0lHAJNZMwCjVurPvmcLsNMmhp/b9oHKfJJJdxG2o/JyaI7kdhqeioTrXn
-	AZR52fWixg1iCgx8cAyoXFtj4EC6zth5ZTyCYFLn9xNp+xgxbp8g0uPWKogIhG07Rr+fPqakB7q
-	W87v0e7XSyYmTT3OD+TktXMw6NuhJ3igCFIIAxtCDBDr6KVN2C8iKNbi4FvZyJRrIldIbBLfHTD
-	RU9y3ekoO7XlCppdeD+PffOX/vf7M1tLz/CWC6Ado7uGJsqWtKhXc6LH7vw0UfMPXVw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1780576420; bh=kU+i7g8pqOTCGjUW+H8X7o/
-	tBXoM+LzHFNQrdKZ87oQ=; b=+M4nbtGke1FBzzH6cDhb7MIhnGK7ozUuqUnPCrz874rXusc+Ni
-	CKwO2yRl6XjT8tVdHa4Kv5cuumyS5YyRp7Bg==;
-Date: Thu, 04 Jun 2026 14:33:37 +0200
-From: =?ISO-8859-1?Q?Barnab=E1s_Cz=E9m=E1n?= <barnabas.czeman@mainlining.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>
-CC: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_3/7=5D_remoteproc=3A_qcom=5Fq6v5?=
- =?US-ASCII?Q?=5Fmss=3A_Use_mss_as_regulator_for_MSM8953?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <35e8f654-214d-4e8b-843f-87fa8cc1a782@oss.qualcomm.com>
-References: <20260327-sdm632-rpmpd-v1-0-6098dc997d66@mainlining.org> <20260327-sdm632-rpmpd-v1-3-6098dc997d66@mainlining.org> <35e8f654-214d-4e8b-843f-87fa8cc1a782@oss.qualcomm.com>
-Message-ID: <C5AF7872-093B-4039-9F3A-72BF855BB3D1@mainlining.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qQEpFsit"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2c0c2c7e0c5so7566575ad.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 04 Jun 2026 11:05:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1780596325; x=1781201125; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iVP3hFBo+HJYV4EfPNLFkfa8vrbFxQZdqZVYHfJ6hyM=;
+        b=qQEpFsitkWhqzf4ZfRNL4LnOTb4kJRT00UZbZH5dZ2/+p0N5LbhNv2J3aSqddO/D5l
+         DmwxHfcd7qz0Aj3wef9B2JLU2ASzTNRtkj6C/C62aRCJPAYIaZiHYsX40OsruKTIKXgb
+         iycKgnLLtwFF8A4+zyR4IAef9jAPfSKHruXGqskDYkwF04MpwV9R2CufeaVgyHIwv7wR
+         ror5DBgh7P5L1jDJBq/GbEz/q+FZRSbSJ5jCWAAUCgFQ7yx2NwV1UDMZl9RYbAr0YjM8
+         d4VHbbT7tzGhTB2lkBxEVl1MezztznpQpG9I40YXVCupJeSp4T49DuFK1HfobYwa5XDe
+         EEsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1780596325; x=1781201125;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iVP3hFBo+HJYV4EfPNLFkfa8vrbFxQZdqZVYHfJ6hyM=;
+        b=E/AvxfVVyLoVaH82fToXpJbzzvTfc85Fueg61CaMxNkxZsETxDSOF8jFirNjFtKaxa
+         OSE/YSCQaYVrS04uJCGmQHbXNRHK79Q26q3qS71df2L8ld+m+JDrg+fHb7epvymJPpwP
+         2yqRT/oYTOwsUAX+YrC3Znrc/BEJrRTKJVMYANui9suk52IbKAX+Dy+ANFE+IGKBhH/8
+         tlUMingZxbHHRyLH2IUJQD79zMd6fdo8Y9Kc3soQjrUERb0RcTj/P+6g63KcDSoUgdEC
+         NNnyERBIvjHVaCyJ8ZUmPca4WgBcu2KX4S+cC/gkGnuVTLiqSL1zfd5/2wMuJ0b38oZY
+         kwcA==
+X-Forwarded-Encrypted: i=1; AFNElJ9o4ohTtvNSb+i5AJN7oWv7DKW2tSLf9VLagNvlMIF5tRYv5C5Pv5fBeeTf5icjVAvj1JOu+YZ5Lp4aiiJPgqu7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0q1RCsfgkn/29qyr25r92E2SUp7xoXytrLcuAiM7nzgxO0WdI
+	+A46XhEfodM/5HxyhL/5zHIzK6GQ9M+A88RjwVggnqzIlVEMB4WKtBxDSzBxsdkoEJI=
+X-Gm-Gg: Acq92OEciGOj2pJp03wBhv8rJyJCJGyRQQF6ljkmEBR62cJm4hDP5Dpf/whNMQjq8um
+	g7UvfcZxtbAD1yGFXWap/QKKr9D0WIRKPAks0veKE6wIVZ1qyjVPnuadLTH3aUIBzrmLbtyMWG9
+	597ZjlfwOyT3OkQgQrtytBybLAh9LAKOTxZSxMu8jsamINAux3XecXrwTLHyUbiSpn3Hc9VmM6X
+	/zq6DOdijORR8/dxRQ8pfRbBMQwZDnTWkxDcoWCy5MxOYrLlKFix/q6MQ0i7bb30E8zlnDEJwqd
+	/tzaIFsCeJUFGOdqTmdfYkF/gliR4oJNeVqCMMtenSZBCiZCM+8Sj9xm6hP15QMLMMDs6TW8tRP
+	Xr5MlHl45zjtC1oUz0oo9VL/+EzMEE7RwRD/QvZ5KbugxAzWkk6HY78Dx1ZjwValPMvrcsPHZNJ
+	Ou9UrXEG8fIlLeivfC+7KmhnRMC/YGhOpEeCwgKQ==
+X-Received: by 2002:a17:903:3b85:b0:2c1:8fea:4dbf with SMTP id d9443c01a7336-2c18fea4df8mr64105455ad.8.1780596324785;
+        Thu, 04 Jun 2026 11:05:24 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:7a42:c699:9c48:5a81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c16649fcdfsm85352065ad.78.2026.06.04.11.05.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2026 11:05:24 -0700 (PDT)
+Date: Thu, 4 Jun 2026 12:05:21 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Yuho Choi <dbgh9129@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rpmsg: char: fix use-after-free on probe error path
+Message-ID: <aiG-YQi2W6iEY3oq@p14s>
+References: <20260601183247.1962010-1-dbgh9129@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260601183247.1962010-1-dbgh9129@gmail.com>
 
-
-
-On 16 April 2026 15:32:25 CEST, Konrad Dybcio <konrad=2Edybcio@oss=2Equalc=
-omm=2Ecom> wrote:
->On 3/27/26 9:11 PM, Barnab=C3=A1s Cz=C3=A9m=C3=A1n wrote:
->> MSM8953 MSS is using mss-supply as regulator what is usually pm8953_s1=
-=2E
->>=20
->> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas=2Eczeman@mainli=
-ning=2Eorg>
->> ---
->>  drivers/remoteproc/qcom_q6v5_mss=2Ec | 9 ++++++++-
->>  1 file changed, 8 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/remoteproc/qcom_q6v5_mss=2Ec b/drivers/remoteproc/=
-qcom_q6v5_mss=2Ec
->> index 4e9eb5bd11fa=2E=2E86edd826ede8 100644
->> --- a/drivers/remoteproc/qcom_q6v5_mss=2Ec
->> +++ b/drivers/remoteproc/qcom_q6v5_mss=2Ec
->> @@ -2705,6 +2705,14 @@ static const struct rproc_hexagon_res msm8953_ms=
-s =3D {
->>  		},
->>  		{}
->>  	},
->> +	=2Eactive_supply =3D (struct qcom_mss_reg_res[]) {
->> +		{
->> +			=2Esupply =3D "mss",
->> +			=2EuV =3D 1050000,
->> +			=2EuA =3D 100000,
+On Mon, Jun 01, 2026 at 02:32:47PM -0400, Yuho Choi wrote:
+> rpmsg_chrdev_probe() stores the newly allocated eptdev in the default
+> endpoint's priv pointer before calling rpmsg_chrdev_eptdev_add(). If
+> rpmsg_chrdev_eptdev_add() then fails, its error path frees eptdev while
+> the default endpoint may still dispatch callbacks with the stale priv
+> pointer.
+> 
+> Avoid publishing eptdev through the default endpoint until
+> rpmsg_chrdev_eptdev_add() succeeds. Messages received before the priv
+> pointer is published should be ignored by rpmsg_ept_cb(). Flow-control
+> updates can hit rpmsg_ept_flow_cb() in the same window, so make both
+> callbacks return success when priv is NULL.
+> 
+> Fixes: bc69d1066569 ("rpmsg: char: Introduce the "rpmsg-raw" channel")
+> Signed-off-by: Yuho Choi <dbgh9129@gmail.com>
+> ---
+> Changes in v2:
+> - Use a 12-character Fixes SHA.
+> - Drop the unnecessary asm-generic/rwonce.h include.
+> - Handle NULL priv in rpmsg_ept_flow_cb() as well.
+>  drivers/rpmsg/rpmsg_char.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
 >
->I don't know if it's a typo, but msm8953-regulator=2Edtsi on msm-3=2E18
->suggests one more zero
-I do not see any load values there only init-voltage what have six zeros=
-=2E
->
->Konrad
+
+Applied.
+
+Thanks,
+Mathieu
+ 
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index ca9cf8858a5e..bff5aefee212 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -104,6 +104,9 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+>  	struct rpmsg_eptdev *eptdev = priv;
+>  	struct sk_buff *skb;
+>  
+> +	if (!eptdev)
+> +		return 0;
+> +
+>  	skb = alloc_skb(len, GFP_ATOMIC);
+>  	if (!skb)
+>  		return -ENOMEM;
+> @@ -124,6 +127,9 @@ static int rpmsg_ept_flow_cb(struct rpmsg_device *rpdev, void *priv, bool enable
+>  {
+>  	struct rpmsg_eptdev *eptdev = priv;
+>  
+> +	if (!eptdev)
+> +		return 0;
+> +
+>  	eptdev->remote_flow_restricted = enable;
+>  	eptdev->remote_flow_updated = true;
+>  
+> @@ -490,6 +496,7 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>  	struct rpmsg_channel_info chinfo;
+>  	struct rpmsg_eptdev *eptdev;
+>  	struct device *dev = &rpdev->dev;
+> +	int ret;
+>  
+>  	memcpy(chinfo.name, rpdev->id.name, RPMSG_NAME_SIZE);
+>  	chinfo.src = rpdev->src;
+> @@ -502,13 +509,17 @@ static int rpmsg_chrdev_probe(struct rpmsg_device *rpdev)
+>  	/* Set the default_ept to the rpmsg device endpoint */
+>  	eptdev->default_ept = rpdev->ept;
+>  
+> +	ret = rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> +
+> +	if (ret)
+> +		return ret;
+>  	/*
+>  	 * The rpmsg_ept_cb uses *priv parameter to get its rpmsg_eptdev context.
+> -	 * Storedit in default_ept *priv field.
+> +	 * Stored it in default_ept *priv field.
+>  	 */
+>  	eptdev->default_ept->priv = eptdev;
+>  
+> -	return rpmsg_chrdev_eptdev_add(eptdev, chinfo);
+> +	return 0;
+>  }
+>  
+>  static void rpmsg_chrdev_remove(struct rpmsg_device *rpdev)
+> -- 
+> 2.43.0
+> 
