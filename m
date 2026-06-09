@@ -1,69 +1,156 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7282E9729;
-	Mon,  8 Jun 2026 18:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4D0233942;
+	Tue,  9 Jun 2026 02:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780942187; cv=none; b=mk6zDtBgX81R85mdjZ2gx1ITT4FzJVu3oTK9g+cAQThqv/PMRglUsYqIuukYO+Zt1ijjBjO/bN+rdRoF7sRM8XHRfRWRpnw80nQ7onVq/j2oCYnPoNEK7NNTCejBXhP1MxmIiLZyccGrAv/U3NCIQIjwzfx3Oj1Wi33qWHfnLqA=
+	t=1780972386; cv=none; b=mhkFypnoKlwbiq7gflrcfBxZwmrJLCzUOSV79wDyATXse4T3/3+QXF3kyDR4O2KTRj2HScB9V63jM5M4yKqBzRlHFcAlDFI56afYH1D+kys/dcBxy2bvfcPPw2XPSOPCJDTAOBW6mCo0/GyQbamwN2ASyvjiJQAHRRaT0WJlgsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780942187; c=relaxed/simple;
-	bh=yQi0FehVr0hnoiorPe50JtCERf51hXdcTjU/5ztdS7E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=DZzox2d2tQ+KysJ4OhdhCZcqzxAA9gEGk+MpzBRijU4raDW6noHw128WgU3mGZTjDoAFaXiAeMX9B1+3Dm69aWXCWEfXJpqqZZXGhnaJmj1z4R4swxaH7p+/0cBFsE7GJm7f7JQEbLTYW1IN6GhWBhsiEDqqFA58zMGy4DcBg58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOfrT7oT; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1780972386; c=relaxed/simple;
+	bh=VEVhjuAxx0lE5TrJAfzggkZGPv96OZWRnPsClvKS28E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEHs2JoSDOFUiETnWgZ7JHkMO5bxPRtvbllEpw9eRLOh3pIqr5d33Zz6eGmAG6ELcJow9xigonuSpwLK+903WkJQY+qmbnvaWvj3UsFthopd6up2I0vhXanCR6ZX6b8E6jhX19KI5UVmCWa6w5jWVolej7pGzJB7SIc3qRSQxRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/w5++Du; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOfrT7oT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02341F00893;
-	Mon,  8 Jun 2026 18:09:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/w5++Du"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2F701F00893;
+	Tue,  9 Jun 2026 02:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780942185;
-	bh=w6Sj9KBVpWBu0IRBBMFLVz+Qm72fUyU8TG/ZcqyT+mQ=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To;
-	b=iOfrT7oT1QEv19CjUppniUxpZRLrPye+538+5g/gjz57wWECexZHVxWR24m6NuN9I
-	 m8PgHRimnwWufc3+eE3slC2N+r5IXlAQj+v6g9U/HjqNbrujNxOZIghMt4V57rM/0D
-	 3Agrc/ozlytPfSNzJLxRD7NTONUSKNqZm5GGY+oBQfNFb81bnWCjgu0vuBPk2Kvax9
-	 1wtamivtMZZbWQvpr3RzXFoIs49Ihu9Kn9m2edgYFRY/zDkeR74v02PJAfNoxb0Ql3
-	 hFpn4DgBvYBRLXPPxFgY65Y6YL/b6pso964+Csv5zA0MZqiSX5BYL5QP8O98EBoFcR
-	 oOvrRw5Acxrdw==
+	s=k20260515; t=1780972385;
+	bh=ySf90SoK/xpVvcIjk9r/laYSraE3mRxguDgAhimCiLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=F/w5++DuTntLDVMTpU2d07x5fPv2M6QXWR7S4B2Now5s84ESWhejQlkTeTGDtdApX
+	 rS2qmXxscuVSSF8c0nSxWO9jr15PIRI8WnQq9B4RY4ifaD6diwj8ivEbYAzXsXwdmN
+	 t4rReT6P8OOd3lUa5YVLazqU/FzIAdr9vdsn/LSn3R5UqVWHpb/TUBZ953c5ZMhNvc
+	 sRZWXk6eoWy2lFBtaRJk2sU8IXgLpmFxglIc8aU8J1R/CciZLUdkaFQ2cRyM1Yw1lq
+	 hVXZXpApkLztfYabsnUqJurMdGXIvqHdIxONZJKDnFACq+hbYmtjyaIYRFzgUwndUv
+	 l/LdRJD94ZJeQ==
+Date: Mon, 8 Jun 2026 21:33:01 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Luca Weiss <luca.weiss@fairphone.com>, 
+	Bartosz Golaszewski <brgl@kernel.org>, Sibi Sankar <sibi.sankar@oss.qualcomm.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, shengchao.guo@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com, 
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+Subject: Re: [PATCH v6 5/6] remoteproc: qcom: pas: Add late attach support
+ for subsystems
+Message-ID: <aid5y4dd62fHi63l@baldur>
+References: <20260519-knp-soccp-v6-0-cf5d0e194b5f@oss.qualcomm.com>
+ <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
+ <20260520082747.7seyyua4gfv256ev@hu-mojha-hyd.qualcomm.com>
+ <e67907bc-ce96-4654-b210-2ae8f35cacc7@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 08 Jun 2026 20:09:40 +0200
-Message-Id: <DJ3VBAU543O4.1MCNNBJ7U9IRN@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 0/4] Convert remaining buses to generic
- driver_override handling
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
- <driver-core@lists.linux.dev>, <linux@armlinux.org.uk>,
- <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <kys@microsoft.com>,
- <haiyangz@microsoft.com>, <wei.liu@kernel.org>, <decui@microsoft.com>,
- <longli@microsoft.com>, <nipun.gupta@amd.com>, <nikhil.agarwal@amd.com>,
- <linux-remoteproc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-hyperv@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <jianhao.xu@seu.edu.cn>
-To: "Runyu Xiao" <runyu.xiao@seu.edu.cn>
-References: <20260602160829.560904-1-runyu.xiao@seu.edu.cn>
- <20260604035239.1711889-1-runyu.xiao@seu.edu.cn>
-In-Reply-To: <20260604035239.1711889-1-runyu.xiao@seu.edu.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e67907bc-ce96-4654-b210-2ae8f35cacc7@oss.qualcomm.com>
 
-On Thu Jun 4, 2026 at 5:52 AM CEST, Runyu Xiao wrote:
-> Runyu Xiao (4):
->   amba: use generic driver_override infrastructure
->   rpmsg: core: use generic driver_override infrastructure
->   vmbus: use generic driver_override infrastructure
->   cdx: use generic driver_override infrastructure
+On Thu, May 21, 2026 at 11:42:49AM +0800, Jingyi Wang wrote:
+> 
+> 
+> On 5/20/2026 4:27 PM, Mukesh Ojha wrote:
+> > On Tue, May 19, 2026 at 12:24:23AM -0700, Jingyi Wang wrote:
+> > > Subsystems can be brought out of reset by entities such as bootloaders.
+> > > As the irq enablement could be later than subsystem bring up, the state
+> > > of subsystem should be checked by reading SMP2P bits.
+> > > 
+> > > A new qcom_pas_attach() function is introduced. if a crash state is
+> > > detected for the subsystem, rproc_report_crash() is called. If the ready
+> > > state is detected, it will be marked as "attached", otherwise it could
+> > > be the early boot feature is not supported by other entities. In this
+> > > case, the state will be marked as RPROC_OFFLINE so that the PAS driver
+> > > can load the firmware and start the remoteproc.
+> > > 
+> > > Co-developed-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> > > Signed-off-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+> > > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > > ---
+> > >   drivers/remoteproc/qcom_q6v5_pas.c | 58 ++++++++++++++++++++++++++++++++++++++
+> > >   1 file changed, 58 insertions(+)
+> > > 
+> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > index da27d1d3c9da..ac2a00aacd2e 100644
+> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > @@ -60,6 +60,7 @@ struct qcom_pas_data {
+> > >   	int region_assign_count;
+> > >   	bool region_assign_shared;
+> > >   	int region_assign_vmid;
+> > > +	bool early_boot;
+> > >   };
+> > >   struct qcom_pas {
+> > > @@ -510,6 +511,57 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
+> > >   	return qcom_q6v5_panic(&pas->q6v5);
+> > >   }
+> > > +static int qcom_pas_attach(struct rproc *rproc)
+> > > +{
+> > > +	int ret;
+> > > +	struct qcom_pas *pas = rproc->priv;
+> > > +	bool ready_state;
+> > > +	bool crash_state;
+> > > +
+> > > +	pas->q6v5.handover_issued = true;
+> > > +	enable_irq(pas->q6v5.handover_irq);
+> > > +
+> > > +	pas->q6v5.running = true;
+> > > +	ret = irq_get_irqchip_state(pas->q6v5.fatal_irq,
+> > > +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
+> > > +
+> > > +	if (ret)
+> > > +		goto disable_running;
+> > > +
+> > > +	if (crash_state) {
+> > > +		dev_err(pas->dev, "Subsystem has crashed before driver probe\n");
+> > > +		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
+> > 
+> > I am not sure if this is already discussed, but what if it is the first
+> > crash with recovery and coredump enabled? What would be in the dump,
+> > nothing? As there is no segment, is it expected since Linux did not load
+> > this?
+> > 
+> > This is even true if it is a crash after a successful attach.
+> > 
+> 
+> It is suggested by Bjorn:
+> https://lore.kernel.org/all/qfls6xlvfppqw7p6rjpmzqesh6sbob4myfc6dz47qh3jywqrjk@5xiutkbybk5d/
+> 
 
-Given that you changed the approach to use the new driver_override
-infrastructure, I assume you read the message in [1]?
+I requested that we try to recover the subsystem if we determine that is
+has crashed, but Mukesh is talking about the fact that we don't have the
+ELF header for that image to there are no segments loaded to perform the
+coredump against.
 
-In this message I also explained that this all has been addressed and was m=
-erged
-into driver-core-next already.
+I'm not aware of a discussion related to this...
 
-[1] https://lore.kernel.org/all/DIYPR0K2CZW7.254R8K7ONBX5D@kernel.org/
+> I did a hack to test the recovery by setting crash_state true, it can recovery
+> (stop and start) successfully with below patches:
+> https://lore.kernel.org/all/20260519-rproc-attach-issue-v2-0-caa1eaf75081@oss.qualcomm.com/
+> 
+> For coredump, it will return from the first "list_empty(&rproc->dump_segments)" check in
+> rproc_coredump as segments are not configured in attach.
+> 
+
+This is what Mukesh is asking about.
+
+Regards,
+Bjorn
+
+> Thanks,
+> Jingyi
+> 
+> 
+> > @Sibi, has this series been tested on Glymur with KVM?
+> > I don't see the iommu property in the below patch.
+> > https://lore.kernel.org/lkml/20260403-glymur-soccp-v3-1-f0e8d57f11ba@oss.qualcomm.com/
+> > 
+> 
