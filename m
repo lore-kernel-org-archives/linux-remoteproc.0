@@ -1,42 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9924235F8AB;
-	Tue,  9 Jun 2026 02:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D684071DF;
+	Tue,  9 Jun 2026 03:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780973980; cv=none; b=EgJ7nrG3cvldGTJBT8t8zrqk+z3IBmS/cgoX+H0dtd5rRCwNqfZKI32G7XezC8QOBl0Rj+rjcl6Gs83JCj95bwNKi2x30GJgK8Sv/SQ6L0frEGQbk+Hs3Fcw3V24UXQI55Zcocc6mRP7HC1jnAtoIU4F2BP8RC0B9OllO3WpmBg=
+	t=1780974283; cv=none; b=tU8YS2EzCyUm16P64p13yZ6KkftlFxVJl8NMnxJKZgxfalndROQNwAWwfD5dB0Rt7irNE7eVBDv4FnPo7wnLMQndSYHwBKljLbskbeg4UD+cZULEC2DBXv578zzrrgJU1/9WRWMwEpn/M2mhuAIAsF5fbUPbXYQ3u6J0SFJZn/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780973980; c=relaxed/simple;
-	bh=CY7GnMNMxFLSCdOX9ba6ArdZuJL64a8mLbfFOJHf26A=;
+	s=arc-20240116; t=1780974283; c=relaxed/simple;
+	bh=yVoGTjwqbsGhqDmyNl4VIBapHM7wIP1YE9nW5TAH7FU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDq+fy37Up6xumQYKO3lnT8A1BtMV9Usx44C8lDGUGr1oMWnTs/qcEDSRNQF0YGT01BRttO3H/RZRYqUdvLZycEqGao7dd1iji/Hn3C5/X/NWXVV3Q1LNl/N2gqzBzijK+0Nns9I//FYMyiTUBFwhg66dA1kvY86v3dvdOTv41I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMHm1KWS; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=jyxpZisJZ1fUHwrqYEV38JoNAVfFASrkKsQyuqZs7ctkBpBNxFULyjRC2lGvi8U4rPjtreVOQCveov4kNx0xAg4QrYVt5Xla23d+FcX1z7ag7js1B8iwtNyFtPIzgV3IeLck5p0winCXhSD+8LK8h0xL1yoYjM2gecmgRp5AyGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ouZp1fRc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMHm1KWS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52BBE1F00893;
-	Tue,  9 Jun 2026 02:59:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ouZp1fRc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F6241F00893;
+	Tue,  9 Jun 2026 03:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1780973979;
-	bh=H5W6g+S3Ap/ynjfGlE97P7oY3ui6rxwMYGeYaKfbBII=;
+	s=k20260515; t=1780974282;
+	bh=5myXXeDCn5YVmIBgFVer+wIhNkBS248w938HxQWUeXs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=IMHm1KWS/orVR1gKwnzb+T1foGy6vE0DQgSIsjv+mUz1PPPe8N26o7+mPk8PI/C/3
-	 EuI2gc0DJaNJzhpU7mMKtBN09/3e8IwvfAknPEYqU10tiaoaEBL2kazUVZq2wp6DK8
-	 a6nOWI3Z+n5HafgR8X88oCaHzq/XuD4ETMtYHEacU0N0DGmnJcuCLxDSwMMNQjbzOG
-	 TebEiGrYuaBzMJHODe1OZVEhZMq8DhgGyVlOYAtd74sWgBW4d93hIp9VTr9fe0VcI3
-	 fPaz8RVwo53MpUjz1QwWF6zQdZ08B8R76Lc9TnUKJYC36ZTeKc6/Yezwn5Too1Y93V
-	 MXztN6HXmsNVA==
-Date: Mon, 8 Jun 2026 21:59:35 -0500
+	b=ouZp1fRcPQ/DaYVMHo8ivh9mNFLKsdlvnJsWyTFWnr8N+QkAHMa/OJwopdRkKpjLL
+	 IWeJM8USUMEIPOz2EfqlSyLljjU4KloeKw5MMw7rMerBFs1OFq+j9fpddGM/Ijct8G
+	 cRmusTWLaaLz5aJOD7pq08kUQgU1qe9+8q08dz0GcmZIVO8rbuZ1FQjvZ8hIovKErV
+	 aUrjzISO0FYMvZMlvPhMNohJ+vCeglUrqUMOtUMdDzSInMzCPWFHdFOpfoXm/rAQGX
+	 tqz4AXZUgU6KseCMGRQskG12td3D1EeKxIX7pD8unvJQdbsxER6tc45K44ejOdGLUu
+	 UvvgTlpjVH/nQ==
+Date: Mon, 8 Jun 2026 22:04:38 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, sumit.garg@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add support for IPQ9650 CDSP remoteproc
-Message-ID: <aieAnN35K_WarmUD@baldur>
-References: <20260520-ipq9650-remoteproc-v1-0-542feb6efb2a@oss.qualcomm.com>
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Kerigan Creighton <kerigancreighton@gmail.com>, linux-wireless@vger.kernel.org, loic.poulain@oss.qualcomm.com, 
+	wcn36xx@lists.infradead.org, mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v3 2/3] remoteproc: qcom_wcnss_iris: Add support for
+ WCN3610
+Message-ID: <aieCcYXkmDqfb0Bj@baldur>
+References: <20260306004344.10968-1-kerigancreighton@gmail.com>
+ <20260306004344.10968-3-kerigancreighton@gmail.com>
+ <4f94c20c-d06f-48e5-95fb-5380c84a1b99@kernel.org>
+ <ecad737b-ea4c-4f32-b519-f338cfd6d48e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -45,50 +50,40 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260520-ipq9650-remoteproc-v1-0-542feb6efb2a@oss.qualcomm.com>
+In-Reply-To: <ecad737b-ea4c-4f32-b519-f338cfd6d48e@oss.qualcomm.com>
 
-On Wed, May 20, 2026 at 12:56:16AM +0530, Vignesh Viswanathan wrote:
-> Add changes to enable IPQ9650 CDSP. This series adds new Devicetree
-> bindings for IPQ9650 PAS and also adds required changes in qcom_q6v5_pas
-> driver to support IPQ9650 CDSP remoteproc.
+On Fri, Jun 05, 2026 at 05:33:22PM -0700, Jeff Johnson wrote:
+> On 3/5/2026 11:25 PM, Krzysztof Kozlowski wrote:
+> > On 06/03/2026 01:43, Kerigan Creighton wrote:
+> >> WCN3610 has the same regulator requirements as
+> >> WCN3620, so in qcom_wcnss_iris, we can use wcn3620_data.
+> >>
+> >> A separate compatible is needed for WCN3610 because the
+> >> wcn36xx driver uses it for chip-specific configuration.
+> >> Specifically, it sets BTC (Bluetooth Coexistence) CFGs,
+> >> disables ENABLE_DYNAMIC_RA_START_RATE, and disables
+> >> STA_POWERSAVE for this specific chip for stable
+> >> functionality.
+> > 
+> > This goes to the binding description where you describe the hardware,
+> > how I asked.
+> > 
+> > Please wrap commit message according to Linux coding style / submission
+> > process (neither too early nor over the limit):
+> > https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+> This series is sitting in my patchwork queue.
+> Based upon Krzysztof's comments there should be a v4 that moves some
+> descriptive text from 2/3 to 1/3.
 > 
-> This series depends on [1], [2] and [3] to functionally bring up the CDSP
-> remoteproc on IPQ9650, but does not contain any compilation dependencies.
+> Bjorn: Once v4 lands, do you want to take this series or should I?
+> (Need to know if I should wait for ACK of 2/3 or give ACK for 3/3).
 > 
-> [1] https://lore.kernel.org/linux-arm-msm/20260518072856.22790-1-sumit.garg@kernel.org/
 
-I'm not able to determine why this is a dependency from cover letter,
-commit messages, or the patches. If you have a dependency on this series
-this isn't your typical PAS-based subsystem, so describing what it is in
-the cover letter would be wonderful.
-
-> [2] https://lore.kernel.org/linux-arm-msm/20260519-mp8899-regulator-driver-v1-0-30d14421b7f1@oss.qualcomm.com/T/#t
-> [3] https://lore.kernel.org/linux-arm-msm/20260520-cdsp-power-v1-0-85eb9501a1cd@oss.qualcomm.com/T/#t
-
-#3 is a fundamental part of the addition of this remoteproc driver and
-the solution would be better reviewed as a whole - so you should send
-the two parts in the same series.
-
-PS. If you run "git log --oneline" you will see that there shouldn't be
-a "drivers:" prefix in your subject.
+I don't see any build-time dependencies between patch {1,2} and {3}. So
+I'd suggest that I pick the two remoteproc patches and you pick the WiFi
+patch.
 
 Regards,
 Bjorn
 
-> 
-> ---
-> Vignesh Viswanathan (2):
->       dt-bindings: remoteproc: Document IPQ9650 Compute DSP
->       drivers: remoteproc: qcom_q6v5_pas: Add support for IPQ9650 CDSP
-> 
->  .../bindings/remoteproc/qcom,ipq9650-pas.yaml      | 136 +++++++++++++++++++++
->  drivers/remoteproc/qcom_q6v5_pas.c                 |  38 +++++-
->  2 files changed, 172 insertions(+), 2 deletions(-)
-> ---
-> base-commit: 6a50ba100ace43f43c87384367eb2d2605fcc16c
-> change-id: 20260520-ipq9650-remoteproc-9aa8c6d05de3
-> 
-> Best regards,
-> -- 
-> Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
-> 
+> /jeff
