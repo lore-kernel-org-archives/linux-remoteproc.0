@@ -1,194 +1,173 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011061.outbound.protection.outlook.com [52.101.65.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A678481222;
-	Tue,  9 Jun 2026 17:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03D943CEF9
+	for <linux-remoteproc@vger.kernel.org>; Tue,  9 Jun 2026 17:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781024817; cv=fail; b=hp660QzHS1NX5DQwwAqaM3gzRG2IeRWlQTyv1zj+9gqibBkDxBt0edQzOj/gY/PS1vFkkMWSG4ka3y284F4BgPbxxWSH+AnTSSFJzTRWVdbL6T3c7q3mPGBBBk3K38RNg03JrEhejpvB1h4L0TuqRE+UGBHm7L3lVHx5q7cItzc=
+	t=1781026397; cv=pass; b=U3hrYwHKtMgXhWMqilDUasiIjF++vSc58T3YTI2b7SBhgOGEo/vQGeGPbKAMphV9RkGUvBjneKh1sC7E24J9ODQu2MdckVc1+WlCPDHTm5zm9eC5Yv95yoSi553yVWKBeIodunLfOV/svoSXF1yIGTTq0jCMaxFFw0o8mmP3s7M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781024817; c=relaxed/simple;
-	bh=D1OTSu9HcJPCz4VC7X6twZ4DwzAiBmhqpY4VItaKVLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hYNNZ4/I+QWGp6ahxW/rW6oznZvwvEw1pN4lv37gQO9i3f/230DSEX9x/AX37aA5eWhA46Fi5EFQcxmW2FjvRI6bz8hErovf4c6+SmjGNIkzlcL6yds12g/DiwDwN3uZtiG34MTBu+CSRBtR2GERKVpVkjx1NMrV8Ov0vjqLCtE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Dg5zuFBw; arc=fail smtp.client-ip=52.101.65.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1781026397; c=relaxed/simple;
+	bh=jxQWVxKxN1OM9wmfJgsxdUMXh7ls1hDMi7sURvf3ApQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JK3BtVjWcTwVCEBYv8M+NfC7a0cloMpnO1YGjONJ+ZDLA27D1RH0OCP0Mm5rhp7BD9qEJ9AX4DCDsUeaPXGRWIAG+ji6zUa7R3o5uXKB60WQdzQ4JrBfb+iR49AuiNMvk4/xfbVlRos1XBwX3aLSommlXviN/eZgwpRi57fl1aU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SVgOJmvc; arc=pass smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Dg5zuFBw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mWE2IYLpNidGzKZ/PUW193yrxWWXJjqG8nyaVQpPyrL0s/XR9Wa9WofZdj9R4De5CQiBbWICPHf9n+mPYRuB9vYNd+U8icZn1pjl8o3IjsosNGFo1+y1Lk9hmfU5RTx9agGbAMFoeBKA8GPNiMaFdD6BAIk6FACBwWG7Sn5x6XcxMkfYn35SkKEpqJBpIE3loCgtYFe/gq1dhqnm3WgqJoFhwI+CVnF/LKqOqK8XChEBGwFCrzcmgX8s8ZS0XS2HuqmaDXnXbTnCQRuCj7f05RKBGQHjZTF5kwuEtUImguVUpFv/8yn5uxK1tWbv4hO+X5mSCcwUMBr/lgxjWQjcuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eRG0raM0hl8/ZVV+9zJpR2BhgfYZVaCfmmXZwTGzByA=;
- b=SeJzaVejwX0fTqR3z0e453tJ8GWuRr574JCwYnd6uBLrfVAqUBwZyEmLtU2AYMAtHG9JAD9xqDlD5Ul6ZabNI3C2tD3ak3QGcQqyNlO36njh49WyVcBLxceAJyYXWNZ66LOnf8q7BnU5jCo/8Kf5rUj1G29+oSBB/7hHsaWXjRi4W/AEnmJqOFC+reBBCP2XgSt8QKH7b2MTzwbkc4nyj0robJ7PJTwA/jgHL40J7GLHoAiSBV6HRMVGIHKYMDJ9/tI/G2JGOkIoO/j8e5YvDIT6tPmgEya3RS9d6tL8aTXNs4GrtXYlRHW3T1JtUAJrrWqiE/YFgnjrNTNU+pwWvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eRG0raM0hl8/ZVV+9zJpR2BhgfYZVaCfmmXZwTGzByA=;
- b=Dg5zuFBwsvC5SrGZTNbCxVpawY9295fpsm0v5lbJChyfp6Z2KwNA9RzBylpS3bBTlzX5WGNKe7jv739A+Oa47HmFy4rNBSFEsrtzxp6yThd3+yumJ3G09Gn9R8EvwIM/vAP3AbUMXAlney5bId9zOd+hWsKwIkwBC98yT+QjRsxryyfwD6LHwbz/vODq2/MkGo9cqKcsS1dNQLZ/SGgWWzTCApSW2KoJ8NHupSKiVJH7OX3Qr5hO9EL3LY62P0WOC5TNDW8FW6UOHtUxaRegwpephReumB3/78LNTTaaeGsNPOxKwPeAe1KwrLlJgRwyy2dVWk4Sb+tr7+1tk35fNw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by AS5PR04MB9854.eurprd04.prod.outlook.com (2603:10a6:20b:673::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.92.14; Tue, 9 Jun 2026
- 17:06:52 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%6]) with mapi id 15.21.0092.011; Tue, 9 Jun 2026
- 17:06:52 +0000
-Date: Tue, 9 Jun 2026 12:06:43 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@oss.nxp.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: imx_rproc: document
- optional "memory-region-names"
-Message-ID: <aihIIwt_9T7yYxP3@SMW015318>
-References: <20260605113621.1479-1-laurentiumihalcea111@gmail.com>
- <20260605113621.1479-2-laurentiumihalcea111@gmail.com>
- <aihB5rVLsVqzg6cb@p14s>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aihB5rVLsVqzg6cb@p14s>
-X-ClientProxiedBy: SA9PR03CA0012.namprd03.prod.outlook.com
- (2603:10b6:806:20::17) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SVgOJmvc"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-68852b58d87so10797515a12.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 09 Jun 2026 10:33:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1781026394; cv=none;
+        d=google.com; s=arc-20240605;
+        b=hdv6VXXM4OB1OkotgZXIkbflOlkz09sOPI4xSzCy9a7ycUHgOiHm9N4EyJtYPpS6Ta
+         y2UZ02gHkyLm5ACX8yShB0NWWSaxB9t8OvexB7xutZSjlKPALR90BTLnAXWUzDgoXO1G
+         SFgPrtQPgXsTbPnCafyKW27rgMz2kivOCbigVor3yzHreCxDPIb/EmD2o+umUPV3yHwE
+         QbE2+TXxUCBtqV0M1YPaV1/3RBKC361mRP+Q1zwmkN6ZCmjxxvnVWQvN1fM6GBRK1Ko6
+         jLlvvIhK8H+FirleUSSdITB93wnGsZhf0pjQR9xdpYSbxAi0vB/c7CVx4Jgm1iw2oxMZ
+         ccdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=qk5OSgpm2QKOum3ErlbYh3UpTiSxTWavV2qBzb8WH/o=;
+        fh=IhOwiHisQYjugoNgonu8/5lxPUX22rMkzGKin0J2nIM=;
+        b=IsGIyECHeL8peZUZ6X+CogTLdIRFcYHKitE6CrA0b3z6J8qe8h6wQHsog0vueTP9W4
+         DLX55VTay1nokY/izNuhsdFRdhAOKqhdAF4ju3Lv0NlzZOoMSHGKcc5ccYrFXOBXj/PM
+         ZFKR/+t3vN6SWTDgIUKHuQNcOOXMsijKP+xi1miJRWSrxATc1q6IePVGhPTskxDaY1Fw
+         bqwmP3F/45x3T0OpMx7lwIWe8UwzioidnU97vZZBdoes2yGwx58ifOaMa1j3fSIi5sI5
+         eMFtzI+0RrLvY6JbJPuPjHYWB6Y720nMpojNtg4N341Dxf4ajWu60x80+FGFsCBC3MjW
+         /6yw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1781026394; x=1781631194; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qk5OSgpm2QKOum3ErlbYh3UpTiSxTWavV2qBzb8WH/o=;
+        b=SVgOJmvcFoLOW/HEbCmF+l0Uga8kDmkZHWFybxBRHElCprDTKTzfkIFrH88qTQFPBh
+         1744NY2PbX01qOvEdu0B7/G9YmR7La4npRtB1q5bstedtJjfNFIAzLAiOSRLTyvvo8Nc
+         ikJdf+ADyTQLX94K6TaHMr4jZHwb5ZEKYK1JwhawdlVqUWjTgxH5u0THe3OqD6/2jKB5
+         cWz/Jl906f09xtRxccxTOgY/g4eeHLLAE/PduWmSfTuBa2Q8lB0A60acAS28sIEgOXyT
+         F2ri7QHwHog3AfeymIe7TD3N2qZZhEnTiqHa1WpN6zVPv75+gzcc49YD9Ppe+d2aFQYT
+         xVbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781026394; x=1781631194;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qk5OSgpm2QKOum3ErlbYh3UpTiSxTWavV2qBzb8WH/o=;
+        b=k/+vmS6DkJ7gHM0XxRpWX94CKzV2i1Bk2sy52I6SwEuIr1q/s+uC5SimcNIISeMhV2
+         IcFBJ0642/DqXL0azTjQJEwYa/Lpt8aPsu7/GStUCBhp76khsSoDigBejbtMyuB+E9aE
+         jmij3uMMztEU2XZuEoxYHHaigduBWCU0DVxfVO95oQO0uoOTBKsp/8jE6h/34kmcNBam
+         v4WYFv9fbpukAIAuv38HYJymSiu4ljuBwCilD/HGLzEMAzY5OPeeN63rHJKwNkTtY8cD
+         QPeDGV3ZseO3bEDSqM6GA5WZIgeujZY9wT7eo4PKXhHm04oX00EWcwwr1ZrZCmUL+hkt
+         aifQ==
+X-Forwarded-Encrypted: i=1; AFNElJ+e7CKsU9QxuXd1ezKxTd8YjuMseCy2QLvBGHFzr4N2AJQKev0y5HNWcrDY5Xhs65ZLn7Ep0xccYqSqgkFLhICo@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5qV9saWPgtO8xE7zABsxY8D1dEY4UssLn0I3RK0W4jCOlYm5F
+	ea1j2eRxMNo8XUS4pVwWeS50oE+DGbyf4loAYOWImKpi88lkhy3EPZY7LSNTBstlQ6vqztUJU6S
+	H/7FhgFywQAdI2074+kZEuaJSrH7bZrCObHpZYei/PA==
+X-Gm-Gg: Acq92OGQChseh1xTq5IYTDyVDy7VTukgGZ3YO84IQU1cBAGp0srr4NOcP0y7/fC54JR
+	te2TnGf6fxHSxnYdGKqiCDL1PeTcQWXWXnSmT83qh35lQbnr66KG/hJyXjAIYOAZH2R0dimGZxE
+	hrbqHJoNXdf5SNvcb/k1PNZ3cWl3iGhJG8aFhcuUaHfryMKs/5pk5A30fVfQqbjOdsQdkWvDo4f
+	Fa5QGDNmp+hgb9Y2gSBxIyMSyY7SxdwC6KV+ndl5oTZC33gtxsrN0cNoKdFUUx9CdznFeEqQJaH
+	z+PWQwKEAdUG3hZ5mVkQg/XBp/bxq+SfK613AlP/BNpnhBFwHVhS
+X-Received: by 2002:a05:6402:2686:b0:68c:3994:45f2 with SMTP id
+ 4fb4d7f45d1cf-68fa503fde8mr10046906a12.19.1781026394348; Tue, 09 Jun 2026
+ 10:33:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AS5PR04MB9854:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3faa01ee-a6f4-4e44-0bdb-08dec6498032
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|1800799024|7416014|376014|366016|18002099003|22082099003|3023799007|11063799006|4143699003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	gHts3zrHbzHd1GS7gFNAcnJh1+u3tekVudN6z1NjHCpccbX4E6v2Fq+vCEltl4+iFFObgkJF4+ujoKBO9YJ9bpbbt0bMPBIbuv4cwvMpT/o0sXr2zR/vaVy0yCCmPzHr8Km9tyVa/9c4YXyVGkT0SB5Js2fgvLxCkxJiOsPllMEc27xWqul1lGKQR+HCe4N3OWak/k6gm7Ol9ptUZlwzrm35oMITLXUhQEC07VkxiHaCOfqJWE3n5EpGLw0m1PRjd/Ml2CLUWS8E8oKZES1NfDWU35Wgrh6WXhQNrQ5dI9j3xqJTfdDqPQWCCiVrOElPt37dFM4ACu44YdNnEDxS/eQvG5viOAvJzwdLt0NE8MbyDlxadFtlN4GdHuabRI65rJStEJ9UsUMKMJ/VZVtDkc0RcRmbG/J7I0MJfRjEOeU6Vyv7BXGlNwxgHcfBZRW3LUUAPTgoSpWqqtNOKpJHfUiDmcqrkBtUWCO4sAmMzBcewWu58ZO05tYAEwHSgXlNQG+K14RNKuxrAzqBS6+5PXEpO8B/HY3SgZpMo6yv12QO8X+qwRm5BNmW5ZhS6acTLW0Y3Gvoy6Ohwk4Uv/BDa5cZp6UNa3WQqUC5+KsJHGX5uK42ClMlIjHkTArEcPm58TnDuQAXMc67CQHgYpNgGWU5Ep3vk6oOWB4MbedinN7GsaE6VXNGcDctnwZ63nYi
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(7416014)(376014)(366016)(18002099003)(22082099003)(3023799007)(11063799006)(4143699003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vd+tW7BAfwuuuHkGhaSn2yaP0PWIPT2dQC4TLpaIHD1HmcTVfKWoafNcl0A7?=
- =?us-ascii?Q?w4W+m8PvugQxf3VpieW9ugqekDfFH3Ka6t/PCwzs3db+23nXnTwNkORuhm4R?=
- =?us-ascii?Q?uOFFFs9IVd2e/yjqBzi4m4p5TqKCBM4tay0qAWBuBDdNbT5aflxL5Scths88?=
- =?us-ascii?Q?pbKMtoW317K046PSctAoQDwridl22f3epyvQqt2nCNpq2ySsSXDNJBQV90fl?=
- =?us-ascii?Q?RlIW0EF/i8zF9umxm+UhC365EwB29/hG0UOhvcjHTkfeRtGW40XL8LWTU/zB?=
- =?us-ascii?Q?RvYJ7vA081YS0fsU3XegjnlJb6vygRuqqwZn0vpyg8mT3z2bqGLVXVxfNzHO?=
- =?us-ascii?Q?6FMixQpRDemn1kbnn2IjVpzPZrE/bz9WkqqxykJM5v0ELqnpy1dTUfZxPUf3?=
- =?us-ascii?Q?qIqAlIA8mqTFDgjnvPtw8mrgE6kCrZz+KUqa3KZNBCeYootBLCZ4OCppTrFK?=
- =?us-ascii?Q?2qstebP6pVy6XKFSge3HepyZSsg6hHnuW+JHk7RxDjWszhsb4BgIWANKfDwy?=
- =?us-ascii?Q?o7M5V/JCtS/+dlT8qYeor/Ma6XnQmZce48GjA0R3mHYYcG10MqlRkqgx5xID?=
- =?us-ascii?Q?VNn4s6y/nRDJn7/eKyFFY1fB290CL6sXW8sPbKObDt21KibQeMK+50lED9zw?=
- =?us-ascii?Q?catyHO7j4hgXgEmBZ6ak6CwMSdlDt4Pv8AyD8booeGWRIOdOef5ob4SpaL9i?=
- =?us-ascii?Q?pWVSuBWy7WSm3USqDAXsX0TZLBcnc1j81yB+hiCpOYTjPkGQ+Pirh73xoOOl?=
- =?us-ascii?Q?EwcFhdeKlrpbkaK403mu1yFDN90FnRptG5+wUOBZz9hfNOaDPySm2A6zXmb8?=
- =?us-ascii?Q?waFslon6b/n3mZfSlC2vwhvnRc8XGTb/ETbLOhoqTLASiaRfoBC36TB9BDV+?=
- =?us-ascii?Q?uJ/E+0rHjxqgez1wffLhFM8PKB1T2rUem7zfoxbyBI2tKHlasBYZVumxypLj?=
- =?us-ascii?Q?E++4SS55J3TpiBWPDcd1u9LCPjGTmU1eq3vKYhvwWxpkYlteISDgd17s5i0/?=
- =?us-ascii?Q?+Mf6HDJCtUOHqZNeKH9iF1C9UEWX2DqUhuTAZW/zmYItePHrzv3j0zzI5jpQ?=
- =?us-ascii?Q?4w47x0QzaCANQj7gmj2zUnu+GfVKWSOSxk33IjbM9G2yNeUk6HTRCKBkFNh4?=
- =?us-ascii?Q?jYkPCFfla2SGkla91PeMQgb9eTe85nX8SETbttakCzynGK2x+NrWcVC/CmQ5?=
- =?us-ascii?Q?Nq37tesiC6HsLXj8W5zCoREvGIuzi2V0cAItjScm6tU7b6xs3EW+jvR79qAk?=
- =?us-ascii?Q?e/UNFmOxp2LhxjrrdhAqV5CNvZDuj3XS44f7ymkzv0IyiTuWw/QGIuH4YzcS?=
- =?us-ascii?Q?WIlISZiHSnHmS+AAvO+hrU5lQC1cnfAaKy/5+dnTojs2hEJk00ky0ONRGwxd?=
- =?us-ascii?Q?tEoS6WTcQH9xKfCm5sRyOcKTsX3aA1nh3paYtrTlSHQvu57cYkjQ6F1/hGKW?=
- =?us-ascii?Q?Ksktms72GbhVHGPbT+lLM+zCU8LcGIbhSheAR2ZgBCPn4/ropGNVopZkeBhw?=
- =?us-ascii?Q?055A4H1RijbHnjTHH16qLPBKHqJ1mOodBfxKgwpJh+jOQIClZuWb8+Cdco//?=
- =?us-ascii?Q?L7eNxgh6zTudjMgbS4e2sISv8QYLm41oOoeSviNldQRHB0NsHNr1IEPFz/Pr?=
- =?us-ascii?Q?PhJYZ9V03SwCZPB6bCZxmS5HTBFioBZ6uj8HhZu09LRoaoZ81ilrH62MsdUQ?=
- =?us-ascii?Q?Aud34z7mNUZp40q3UYM44aPDTOSXW4XYOSrj/9Rj9PiLYPEiqXpZpsTdjoj6?=
- =?us-ascii?Q?2wjntmbL0HHIc42Uvpm2WzjyCQxhLY4edENJ209VFqvRAtJ0yHVt?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3faa01ee-a6f4-4e44-0bdb-08dec6498032
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jun 2026 17:06:52.1777
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: E8zpqaBMLEngVdsZgnolDi3iq1kAt9p+X+E/DigLVyFwsfjJdgA8uOCswHmbWrF9Cr9O5MSgO46p1PG1QQvMH6AaPx+ht7oHlksm2ahI808fzRNtro3aHUrPby0g7L0O
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9854
+References: <20260605113621.1479-1-laurentiumihalcea111@gmail.com>
+ <20260605113621.1479-2-laurentiumihalcea111@gmail.com> <aihB5rVLsVqzg6cb@p14s>
+ <aihIIwt_9T7yYxP3@SMW015318>
+In-Reply-To: <aihIIwt_9T7yYxP3@SMW015318>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 9 Jun 2026 11:33:03 -0600
+X-Gm-Features: AVVi8CfajwXrk0zh9dxoFsW97FohDkxe-xDUhgkWnVGwuNvfV4UW4Y-xjQ1W9M4
+Message-ID: <CANLsYkxw6rbWNom8rNfKurKAXKpihqV1LTd51D5YXG4oFP6-wg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: imx_rproc: document
+ optional "memory-region-names"
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>, 
+	Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@oss.nxp.com>, 
+	Francesco Dolcini <francesco@dolcini.it>, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 09, 2026 at 10:40:06AM -0600, Mathieu Poirier wrote:
-> [You don't often get email from mathieu.poirier@linaro.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+On Tue, 9 Jun 2026 at 11:06, Frank Li <Frank.li@oss.nxp.com> wrote:
 >
-> On Fri, Jun 05, 2026 at 04:36:18AM -0700, Laurentiu Mihalcea wrote:
-> > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> On Tue, Jun 09, 2026 at 10:40:06AM -0600, Mathieu Poirier wrote:
+> > [You don't often get email from mathieu.poirier@linaro.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 > >
-> > The names of the carveout regions are derived using the names of the
-> > reserved memory devicetree nodes, which are referenced using the
-> > "memory-region" property. This adds a restriction on the names of said
-> > devicetree nodes, often bearing specific names such as: "vdevbuffer",
-> > "vdev0vring0", "rsc-table", etc... This goes against the devicetree
-> > specification's recommendation, which states that the devicetree node
-> > names should be generic.
+> > On Fri, Jun 05, 2026 at 04:36:18AM -0700, Laurentiu Mihalcea wrote:
+> > > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> > >
+> > > The names of the carveout regions are derived using the names of the
+> > > reserved memory devicetree nodes, which are referenced using the
+> > > "memory-region" property. This adds a restriction on the names of said
+> > > devicetree nodes, often bearing specific names such as: "vdevbuffer",
+> > > "vdev0vring0", "rsc-table", etc... This goes against the devicetree
+> > > specification's recommendation, which states that the devicetree node
+> > > names should be generic.
+> >
+> > I don't see what is so restrictive in using the node name of the reserved-memory
+> > regions.  Function of_reserved_mem_region_to_resource() is already doing all the
+> > parsing, packaging everything in a neat and easy to use "struct resource".  What
+> > will you gain with this new "memory-region-names" that can't be done with the
+> > current solution?
 >
-> I don't see what is so restrictive in using the node name of the reserved-memory
-> regions.  Function of_reserved_mem_region_to_resource() is already doing all the
-> parsing, packaging everything in a neat and easy to use "struct resource".  What
-> will you gain with this new "memory-region-names" that can't be done with the
-> current solution?
+> DT Binding check can't find such wrong if node name is not what expected.
+> Binding can't restrict memory's node name because there ware not specific
+> compatible string for it.
+>
 
-DT Binding check can't find such wrong if node name is not what expected.
-Binding can't restrict memory's node name because there ware not specific
-compatible string for it.
+But what "wrong" could that be, and what kind of restriction are you
+hoping to enforce?  What specific problem are you hoping to solve?
 
-Frank
+I'll wait to see what the DT people think about this - I personally
+don't see the value in it.
 
+> Frank
 >
 > >
-> > Fix this by documenting an additional, optional property:
-> > "memory-region-names". This way, the carveout names can use the values
-> > passed via "memory-region-names", while keeping the devicetree node
-> > names of the reserved memory regions generic.
+> > >
+> > > Fix this by documenting an additional, optional property:
+> > > "memory-region-names". This way, the carveout names can use the values
+> > > passed via "memory-region-names", while keeping the devicetree node
+> > > names of the reserved memory regions generic.
+> > >
+> > > There are no restrictions imposed on the values of the strings passed via
+> > > the new property since the software allows any name to be used, with some
+> > > names (e.g. "vdev%dbuffer", "vdev%dvring%d", "rsc-table") bearing a
+> > > special meaning.
+> > >
+> > > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> > > ---
+> > >  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> > > index c18f71b64889..8e3e6676a95e 100644
+> > > --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> > > +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> > > @@ -62,6 +62,10 @@ properties:
+> > >      minItems: 1
+> > >      maxItems: 32
+> > >
+> > > +  memory-region-names:
+> > > +    minItems: 1
+> > > +    maxItems: 32
+> > > +
+> > >    power-domains:
+> > >      minItems: 2
+> > >      maxItems: 8
+> > > --
+> > > 2.43.0
+> > >
 > >
-> > There are no restrictions imposed on the values of the strings passed via
-> > the new property since the software allows any name to be used, with some
-> > names (e.g. "vdev%dbuffer", "vdev%dvring%d", "rsc-table") bearing a
-> > special meaning.
-> >
-> > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> > ---
-> >  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > index c18f71b64889..8e3e6676a95e 100644
-> > --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> > @@ -62,6 +62,10 @@ properties:
-> >      minItems: 1
-> >      maxItems: 32
-> >
-> > +  memory-region-names:
-> > +    minItems: 1
-> > +    maxItems: 32
-> > +
-> >    power-domains:
-> >      minItems: 2
-> >      maxItems: 8
-> > --
-> > 2.43.0
-> >
->
