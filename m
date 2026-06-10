@@ -1,101 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD72D063E;
-	Wed, 10 Jun 2026 07:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987A638CFF8
+	for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jun 2026 09:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781077170; cv=none; b=Xmvp/WE5z8m5hiR+J6TxA8vudcwsyV7Oy7ll7yZ5fUxpY0KmrxjNJi6LP6FxO6+2zF61R9OZ9vxVlzz9rq5b+j9EW0U87QXLJ4TZenO8eEiRuZFYqcYcVD6qgP1BRFxHNaHJZ/f8PRpgFf+ZOqC25ToWrUzaYefQ1oOvhJtB62Y=
+	t=1781082644; cv=none; b=nD1XnW5Q+C2nTdIJF87B2K7QJacF2Jm4abrxRDNVSUG98MNQhp10hwBS7fh/oEEi1E1feW/inh5OgaOlH/W0n9urs+XVsP81RWqz+d8FQkmpTRj7ErvAiBtypfMZ2up6eILSrkt0nFoinYZS4v5b/864GjhQvEu+JzjuV4EdXos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781077170; c=relaxed/simple;
-	bh=UHh4kAwKMWiMrOtmQUAhWXpQL/uHaOELa989PLKrxWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=siHwCsTY+1ENd5ZKi+dfprYnEyuqtu5hezWxb6eP2v9SIWVSHG87F0ocL7RH4zgMl56m2MU6iv0Yt89LmAqChkBM4uozjF0jAb0g2J+H7UHoJkf5PKmhi2VWQtQ/dfbNgjO4Tjv7WrUk8fpNWZrmmNV1ydkRrCSb6TAyAG5blFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wn74MLRb; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781082644; c=relaxed/simple;
+	bh=1u/gyIAUL1eHXRk5cCApALdPFJbXqUR8YqK8IXcgoeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iID6vrSumpJbNtqRKde/YWcYs4Q9I1mDdZ4+N/VGk9nZDTjTLrjnB1avXRQsk5bmLc24tTTf+L5iNltFBwAlr1ww/xnS1X5qGKMF2r6WaiNetzsaDHk1nMpUaeCYgr88PWTSFl9tRgw9WJ1adbd9fL6VB8cO8wntOzZfWagYHJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGj7JP9k; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wn74MLRb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 906191F00893;
-	Wed, 10 Jun 2026 07:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781077169;
-	bh=FkWD23EcUZQ2Cyeh05Hbt+rL2iVJ4hm0EeKjVQhjWWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Wn74MLRboT3MeAzGFBKlg+dPoTuRE5phWzuvQGqsBy8/z+BUc+xZHAlPvvLP1kjHz
-	 7FDGuti1YRaOj651V4ia+GSH5vxGaUM6tIvY112szJnC2LnbcHyZQ3CUVDowYtLsLl
-	 /Ng8Kt1w8m1G3RG7kS3oI1ryWUfsz9QSD78mgqaon07DFDqNT1fWq1yBGkQxTXKrc1
-	 krpMFRZnFvPZ5XhSvQWCKLvos1XOp6YB65IKHkgLgtqECaHYLLqT9R8alcOIorMLl4
-	 wFUj/2VsBeUQGvXxNy3Jpr6T1f4IAguYFNHJ7NYW4vrfuoYBwyaNVC4jPrxhoU4zj/
-	 o8YrQX0ySMKfw==
-Date: Wed, 10 Jun 2026 09:39:25 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Frank Li <Frank.li@oss.nxp.com>, 
-	Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Peng Fan <peng.fan@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Daniel Baluta <daniel.baluta@oss.nxp.com>, Francesco Dolcini <francesco@dolcini.it>, 
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: imx_rproc: document
- optional "memory-region-names"
-Message-ID: <20260610-accomplished-antique-mink-cf0ead@quoll>
-References: <20260605113621.1479-1-laurentiumihalcea111@gmail.com>
- <20260605113621.1479-2-laurentiumihalcea111@gmail.com>
- <aihB5rVLsVqzg6cb@p14s>
- <aihIIwt_9T7yYxP3@SMW015318>
- <CANLsYkxw6rbWNom8rNfKurKAXKpihqV1LTd51D5YXG4oFP6-wg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGj7JP9k"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-490cf3000f0so38064685e9.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 10 Jun 2026 02:10:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1781082642; x=1781687442; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MVCneA61j9/Mv1FcSX1dBIQFass/grRjgoNTeP0soOo=;
+        b=XGj7JP9k/L0bePfwvsIXassJ26bIQZ0C8DM8q8RFio9zJaXCQj9q0dFhLMWo4+PMlu
+         rst6anKufe7OLTGG3hvija5XQtbKrIkGSidGpkSPLvxbD0G/koAwaGZUyOoeYIYbvCV0
+         ILIguntqjiJQZECWwVt/9pNt3g8fcb6r48g3afYj/5+DQ/M5Zg5bwvzxL2iJU+91dQEG
+         /XDPjc6icmzIXQuN0yeOWJP5cAIK+WMQSpPPCfykHXReyay4VcwONghYUXqJkrxIPVAo
+         JagpIFNjGFeeOYcHSObDh9igJOOX34lNrfAeeYo45EgNl6Iuq57yc6YXZNIKzc+RAsVp
+         fNVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781082642; x=1781687442;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MVCneA61j9/Mv1FcSX1dBIQFass/grRjgoNTeP0soOo=;
+        b=R7YfCNLePxdOLgeyiTAxASgkdKV9iXowIarSB/TUAmESuIX64uf+3LvLHKTUtjIeCE
+         NStUM+iw79kXKm90fVaLeNu4Kdg7vQRXRFfk8OW/lnrNkI2yzeRW55XxwyIiufyBvjPs
+         93g+JtI30Veb8HSREHDztLt1+dvm+4s9E8rMidj2gGATmqgJzjw6An2bNGKZGh6eUd65
+         u7D/g+lI/MOO68TVCV/96pTyol1NQyRRnz/p0veweAA2dsKddk+rd+fQaqJ2HQT+/4NH
+         D0hViC3MB3HSXjdMKo/Q/VgWdiD8VWrRRVJeEu+9sruyz15P/3I2ZO/LIyrfLR+Ya1ok
+         afsw==
+X-Forwarded-Encrypted: i=1; AFNElJ/SRdBwyiFEbjZTjr66M/tM5rB7KhoTy5s1+gcFw9m4oupnHsxqixmpbLZmGNijSg+884CgImekINzZpvpEe+Qr@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuYPusiQB+Rpm5BtonBbGltYNNr0WUOChnodqQZx/bTaIwevke
+	nmMeNlavwQozx9lrYbm8WIIVO5soUyCPLN0wNL61vrWgolS6xajJrx18
+X-Gm-Gg: Acq92OFjB3aVwVr4hyIsL1ZHQE6zwejZv3Y8cTDPfSBPqwLCoYkvmblAIJd+bCJPQrG
+	BZnJywtb0zxD8mVIlXSDS7lPpSNllV6NXqLeMOmPT/Ln7UBA37UHJo/uxqteqneJg+0Y/ruy7EB
+	+ykHcuzmeTOXuZyH66CX0gAUzWXV8yFwmPtpeEka3IUn8scTmf5es1a+cGsDqzilavqoGSJkyv6
+	169Uq+D5EHM0Yt2PIX6o/YDtzJ+igrJ5QwLmKGHuOhRdDL4RDatjeFqhZeodimPC20GqGJt1kI6
+	GcF2qPgvOsPl+/mnqMIvPfyzom3Ku7wetVZXY35Ze1i6Emx6R21WdLoFIuzrvU0DNhBoNLZ0Qvu
+	oR+z7Y/mKfQeDYw0AADqHRRbyec91c9z3t/OyJ8oZZM4fN9Xl9H6ryd7+bd+dgtzYxZq3ABlOo/
+	4LohTM2cf/LGNLtSSmwnz1H9hKzCdP52wffwmsRVPXoOzXM0SLP3+vcfQg+DRQFqOSQVQ=
+X-Received: by 2002:a05:600c:8518:b0:490:a298:3859 with SMTP id 5b1f17b1804b1-490c4993bdbmr423122135e9.24.1781082641859;
+        Wed, 10 Jun 2026 02:10:41 -0700 (PDT)
+Received: from [10.25.222.173] ([128.77.115.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490bc3b5b82sm579850645e9.1.2026.06.10.02.10.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2026 02:10:41 -0700 (PDT)
+Message-ID: <2fc48536-5af9-419e-b4df-746b678cb6ab@gmail.com>
+Date: Wed, 10 Jun 2026 02:10:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANLsYkxw6rbWNom8rNfKurKAXKpihqV1LTd51D5YXG4oFP6-wg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: imx_rproc: document
+ optional "memory-region-names"
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Peng Fan <peng.fan@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Daniel Baluta <daniel.baluta@oss.nxp.com>,
+ Francesco Dolcini <francesco@dolcini.it>, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260605113621.1479-1-laurentiumihalcea111@gmail.com>
+ <20260605113621.1479-2-laurentiumihalcea111@gmail.com>
+ <20260610-adventurous-granite-marmoset-e0eaa8@quoll>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20260610-adventurous-granite-marmoset-e0eaa8@quoll>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 09, 2026 at 11:33:03AM -0600, Mathieu Poirier wrote:
-> On Tue, 9 Jun 2026 at 11:06, Frank Li <Frank.li@oss.nxp.com> wrote:
-> >
-> > On Tue, Jun 09, 2026 at 10:40:06AM -0600, Mathieu Poirier wrote:
-> > > [You don't often get email from mathieu.poirier@linaro.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> > >
-> > > On Fri, Jun 05, 2026 at 04:36:18AM -0700, Laurentiu Mihalcea wrote:
-> > > > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> > > >
-> > > > The names of the carveout regions are derived using the names of the
-> > > > reserved memory devicetree nodes, which are referenced using the
-> > > > "memory-region" property. This adds a restriction on the names of said
-> > > > devicetree nodes, often bearing specific names such as: "vdevbuffer",
-> > > > "vdev0vring0", "rsc-table", etc... This goes against the devicetree
-> > > > specification's recommendation, which states that the devicetree node
-> > > > names should be generic.
-> > >
-> > > I don't see what is so restrictive in using the node name of the reserved-memory
-> > > regions.  Function of_reserved_mem_region_to_resource() is already doing all the
-> > > parsing, packaging everything in a neat and easy to use "struct resource".  What
-> > > will you gain with this new "memory-region-names" that can't be done with the
-> > > current solution?
-> >
-> > DT Binding check can't find such wrong if node name is not what expected.
-> > Binding can't restrict memory's node name because there ware not specific
-> > compatible string for it.
-> >
+
+
+On 6/10/2026 12:37 AM, Krzysztof Kozlowski wrote:
+> On Fri, Jun 05, 2026 at 04:36:18AM -0700, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> The names of the carveout regions are derived using the names of the
+>> reserved memory devicetree nodes, which are referenced using the
+>> "memory-region" property. This adds a restriction on the names of said
+>> devicetree nodes, often bearing specific names such as: "vdevbuffer",
+>> "vdev0vring0", "rsc-table", etc... This goes against the devicetree
+>> specification's recommendation, which states that the devicetree node
+>> names should be generic.
 > 
-> But what "wrong" could that be, and what kind of restriction are you
-> hoping to enforce?  What specific problem are you hoping to solve?
+> No, it does not. Names like rsc-table feels exactly like DT spec is
+> asking - for a name matching purpose. Are you sure you read the spec?
+
+Quoting from the spec:
+
+"The name of a node should be somewhat generic, reflecting the function of the
+device and not its precise programming model"
+
+and looking at the examples provided in "2.2.2 Generic Names Recommendation",
+wouldn't "memory" be a more appropriate choice for the DT node name instead of
+"rsc-table" since it's more generic, while still matching the purpose
+of the device? Or perhaps I'm interpreting this the wrong way?
+
 > 
-> I'll wait to see what the DT people think about this - I personally
-> don't see the value in it.
+>>
+>> Fix this by documenting an additional, optional property:
+>> "memory-region-names". This way, the carveout names can use the values
+>> passed via "memory-region-names", while keeping the devicetree node
+>> names of the reserved memory regions generic.
+> 
+> I don't see how anything here is fixed. memory-region-names has nothing
+> to do with node names.
 
-I see no point in this commit, but maybe because the commit msg is just
-misleading. It mixes node names with names for phandles which are two
-separate things.
+The idea here is that the names of the carveout regions can now be passed
+via the "memory-region-names" property. Previously, we were using the DT
+node names for that.
 
-Plus this change actually makes nothing - no names are restricted to any
-meaningful values!
+Thus, we can now use the more generic "memory" name for the DT nodes since we
+no longer use them for the carveout names.
 
-Best regards,
-Krzysztof
+> 
+> Best regards,
+> Krzysztof
 
