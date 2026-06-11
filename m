@@ -1,158 +1,162 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954743F20F4
-	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 17:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483AB34B66F
+	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 18:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781199981; cv=none; b=AX7Rn7UgpzvnMZIiIVYUY9eESt8DI7FrhaetWz3hgXkFs2mXzTyNaYAqi2H9FR1KikG13mN8ums2KQIiZYWG0VHU5kw6pOlUgCcCq8oJPOFlhxheTrlUM9b/vEUU76k6ZuyEQFpACFsrOumPqpOqKxXyaiYrZD+NYAKPdpSxCBQ=
+	t=1781201169; cv=none; b=BYWglZ0K/b5wdcCFepfQ3Ije+iH6tuxZ6QEmpHG/uucTkjpRaL72ZfPg+PPyf/0QSn/T2ApxMyAqofpPW62xXlBweh16Owjw4lyit6k5j7wmrQLM8osg+JcJquGOzdxV+sED5k72djNTo+8GveKaLxRQImkvG5SGU2P1xEGlwU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781199981; c=relaxed/simple;
-	bh=/VS4moAxewMl/vne0QAz7t4DDUEl2YS3zv0+upLp538=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/pPTNguZVhn5eLq4c7ZWjGJNvuXwM+j2bDEqalkvZ9jFvKrAMEIFDRni8MeQuK2qEQjv3z3x2xP9uxKWcMHkpIXd0f24v4Kt+Qs+HECSoAqdkyWH3TMkOUqQqm9PDFSnkqMN+XbsPaZRONUpir4PkyucWp0Vr1oakXam4b8T2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZUPfDl0j; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1781201169; c=relaxed/simple;
+	bh=c5sQCS7LrMJzekD/qu/OYTkJyoX2vnDlQUjk9HF20EE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YHbWhHgOY1lGW+d6k4p10tyCOhg44z/hLtqGbHe5wvyvJrngtQfOUyq1qsnXXLvo2VKHw0J6O1dUCebQ4AqISC1kNEX85y8czIuzIXyq1T9OGq2RVOwvQr35Nc/ck/aQpqoLpuV1jHTAH/nCv9T2lbWEERqXQT7oDB4hm4n6Jg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aDDFt+ka; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=XiEtSGxV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZUPfDl0j"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2bf1f074a12so1734465ad.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 10:46:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aDDFt+ka";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="XiEtSGxV"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65BEsHZA956206
+	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 18:06:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=Z6YZVFBXjGu1p9kk2tGdhqMn0/oSSfCgZ6i
+	CkmIQ98A=; b=aDDFt+kapEkV4JTTHA5xFOXxUd4cHvrc5eI93DxtK3b4wkE4u3S
+	SPaWlxeXqSRiyViBvKFCEjBmO+cfIlgIrgBUycHKf0XbowYH0NKNLUxxYFO3ZEkf
+	31fk0yRui5FFOloi/gVjdo7Q1XoEjG+HNDD9uvQcwXrgbtuk/+gNfR4fUq+iWmE5
+	J2FHoF8zoEUsC56rAOJu8EkykeY3EwaILTItx7/BOzc1lrND0A/MXCu+t9spJbkD
+	awrX6sQRmadBUCT155Ktul/1WqgQdGSMTnW8BDRItD05BXpDXAmheN4IyAmRruC3
+	eX7nNWlDPt05R1RCjK4aHxCNbDHycS5JbHA==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eqe704wg4-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 18:06:06 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-8428419982eso146555b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 11:06:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781199979; x=1781804779; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2N81ClsT3Q+ECsWMKxKdQQqfKQLKD2xchENp4OvvnmA=;
-        b=ZUPfDl0j9mZIjp3FJxv7IIBkNYEHtWSK8j3d3VenTHCSn+ukQd3BBDTHrwjCwWc0Ti
-         y0aUr+yfiY3j15hNdNP8+60gtBa9cBBPTElNFKZR2DTvsT48PKjofcd0ULzWAHuOkHFn
-         jWlBZ70MvUCpqCItvCOXi3+LiFjXcA0ZA8e8zIe+X4tPVAhLk1uTpcJVDF/Z5x+4gBx2
-         AuFgBUc2ld/NLueoXhAUo1NFqdbyy+YeUP+XGMi6noudK8RP3u88Mr3WrnqpIZ4d/zJ1
-         J77S+vr3/sT16p3BRhan5rSbnCNkTxzS4IF6qyEIjH+C7CjMJryXQBJp2G3CHFEqe1ko
-         6C5w==
+        d=oss.qualcomm.com; s=google; t=1781201166; x=1781805966; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z6YZVFBXjGu1p9kk2tGdhqMn0/oSSfCgZ6iCkmIQ98A=;
+        b=XiEtSGxVIGRvxYPD8dyGjk53h9Kr2kWuPO1897ZeHpWJ9cK4sHUhambxkCNuw1RQm7
+         9sdgjQkc2qrdKZJSqB20n2MkxT/UP+4qYxfmFhSk1FKi2GfyPxGgBopH+5lPXXc8JG8q
+         w0pCNHzDQiD6HkD19FuUZcfL6XfWayWlo/d3Q+ETNzGsVRap4S8zFqbYRE4/NCYXdSNj
+         3cZt6wOwMupxxRmaWkcwxQfkC+tcwSVIq2mnSxq5/uAbtgiJ4vRNQ1PBrSqKkwWZ0iTa
+         ZAo+i5bDEy8QaTFnbiGLfWs1OqMz846VMRET68/boe/4UVpsdAulfhg0kWgYIygFJG6f
+         UygQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781199979; x=1781804779;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2N81ClsT3Q+ECsWMKxKdQQqfKQLKD2xchENp4OvvnmA=;
-        b=I0vfBzxdVE14l1jiCbHa7qJWT3NigAYdL6gWNMSUYYC3JjCrYAF2WAKBC+qKdYnD2o
-         eJ3TZCWPc3SzCCRD9yo6h0KF66Wk/IUXgJijtat3uZ2SXLJlMtbPbu40XGlGkaASNUP1
-         j+9g6Y/1VqbXq9emBjXYKVvqi8RWiaeiGA5/M/0snAJlF/oEblGAs398nttJm/4YYHsc
-         +KkObV3atGzpeByY9HD0axTqPBrUfNVMWDwZyfz61T3WGkzZ47zG3X+XhJcyf+bNgSyz
-         8raEue81NOyqE/WjM9bFO2jClq/d50yIsnyPEkDkvSpGuWJ4NuYervwaHjOfRICL+kAx
-         HSwA==
-X-Forwarded-Encrypted: i=1; AFNElJ/N0edD/k2DEtTyMp4waRvSmw5RmzJI5XvKAVUzhmLovDvOOiG2luepYvCpQFMPPYhKIR2crTHCfYUpa1iPtEMF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3WOXFkxl5JwiZuFItRTEGHaTVoz5OuadLs2rJQeoBZ2fm/raR
-	j4e4FkMiOM3bN45wFQHuZ1fJ4zwDmg/vWDzyI9rA+zRQKdYWLSeSZigpHAYv+paw0b4=
-X-Gm-Gg: Acq92OHvh4+MjqPi0Jcp4fM/MAkfpkNal8L7XRWQ1/Vu8WWVmGDaf1OcOCCoaUPGM6R
-	L2XSbM9Zo2lL5CyUcyJv+vyHJZAv3vXxgCeJDXIKlMyoo9cTfr8hKdovPOYBL9zZhl6CQhRT1XQ
-	XnmapdTSPR1L38NxilFftsZyl6HuHUcq+Y9hXbQvmKXCaMaexozFJAAutjO/3tk+bPrAoGmBjwX
-	+yULqrUDRW/xLNuRTTbeik1Lnjexs7DOA5BPptbA2hqeeb9LM6mYCjHx1IREmbb2G7JSAkPW3mA
-	zImXUFLeVXdNH5LpNSd9Jgh+zp2lHabwp8r+/jYGJ++uEQNTYhM0T8QDV7+W5uJpdC+GovuJgyL
-	I9RU8uWOMABC5/tIYhXSPTf07lEujByRYAe3nJeRCEpkFil6Xsea0qpYYe++SEByodB+GtAllaD
-	w0Kuj6KjT/QSQl1Mvm4s483ITsjdE=
-X-Received: by 2002:a17:903:946:b0:2bf:379b:53f4 with SMTP id d9443c01a7336-2c2f1eba6a6mr42688705ad.19.1781199978790;
-        Thu, 11 Jun 2026 10:46:18 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:5bde:8634:433a:e780])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c16609e2e2sm280025525ad.49.2026.06.11.10.46.17
+        d=1e100.net; s=20251104; t=1781201166; x=1781805966;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z6YZVFBXjGu1p9kk2tGdhqMn0/oSSfCgZ6iCkmIQ98A=;
+        b=dWPqON216K+XL2WqYcJV/guUgDLvSsyyioiUSF5XmCxmogXR1NTKr6+Hpzggkv5T7b
+         ZyRQmxX9A1mSDaYcrJgbnvpTfAYy+a//qTqcJiUte2Mt0TgovGqrJA1ZsAMANh3cijrj
+         ZHzKts6b1u7DsP2od1HTQHhrdfx2VTGr/+C1klaaJS6I5+MLtdjabjErMwX7RbOWC1q1
+         xkvPvS/gz19OKneVPAp0vl58Kti5bRoWbA+j54pE00EV0ecdmO9I+WyrCd5yxF1n2A4m
+         oqHCGs3AUr9dSRD+f28L4dAdpOE9vjEZvahFqwyA97XsaTuM9WFGuVbORFBquXmBYpqy
+         Pjrw==
+X-Gm-Message-State: AOJu0YzW8hF4gtf2FyyJh9wkymACFvhs4CMpyMv1uE5EWnCI7IcBcnUC
+	ZAdovg7SfM4h89ZTo/TMwUAEzZeTzFniItIQ4PiAISY9l1Y7tgD8mszUvHLGy7dfw+PUyHPXqlR
+	Ze+ayAk0nOQMkHR3RgagLLZb1L0hSfBY2mJagjB7DiFa/b+f476s/g/vhdXoZEEtBciXpjXvM
+X-Gm-Gg: Acq92OHoUJgh0tD1/Dmgb3gCGv2WYzbJ158tV62FFpreHzbkR+FLNxUIGXuwrshKLdR
+	72JDktd43gNRFBJ1ZaCiDaHoErRMOOFtTH0u0ROfqnldyj4dUAn6I+iQ7UdmjODyKFz+2wr539b
+	8TieInZbTgCvMZKw6wUT9dZFN4uhZsa8xP5PLsZLQXAZGaR5xuyYz6EiPXH9LFProxHMZbRFZ2W
+	fYfG4O21AVtEcS1ZnViEQBkImGEYriYQqFrS5mCmN3jgY6p3Lyix4bCYGVzqxrXb6vI4WWUh6BP
+	jlM6CFfVCdZw2jlfefHxLWCHdooEHbD82W5zEu7ivd4fCES+jMjQiIvQ2g2wOBto3R4491oVB5v
+	pI+Rbfq9VswUw9FKf7iY5OFl8J5Tp6JAjR0ZfAb0h4OKp/Dbb
+X-Received: by 2002:a05:6a00:9513:b0:842:7296:dba with SMTP id d2e1a72fcca58-843367daee8mr4505419b3a.7.1781201165641;
+        Thu, 11 Jun 2026 11:06:05 -0700 (PDT)
+X-Received: by 2002:a05:6a00:9513:b0:842:7296:dba with SMTP id d2e1a72fcca58-843367daee8mr4505377b3a.7.1781201165076;
+        Thu, 11 Jun 2026 11:06:05 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-843382e6e80sm2597688b3a.42.2026.06.11.11.06.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2026 10:46:18 -0700 (PDT)
-Date: Thu, 11 Jun 2026 11:46:16 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: tanmay.shah@amd.com
-Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, andersson@kernel.org,
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	divin.raj@arm.com
-Subject: Re: [PATCH v3 4/4] samples: rpmsg: add MTU size info
-Message-ID: <air0aKkAtTb9YRjc@p14s>
-References: <20260529164327.1827121-1-tanmay.shah@amd.com>
- <20260529164327.1827121-5-tanmay.shah@amd.com>
- <44c03148-9ff2-4fad-846d-ffe3d71adac1@foss.st.com>
- <e0660a16-d9e4-4988-8e58-d682d1712f51@amd.com>
+        Thu, 11 Jun 2026 11:06:04 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH 1/3] remoteproc: fix coding style issues in remoteproc.h
+Date: Thu, 11 Jun 2026 23:35:48 +0530
+Message-ID: <20260611180550.2442641-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e0660a16-d9e4-4988-8e58-d682d1712f51@amd.com>
+X-Proofpoint-GUID: VXNAmD9fipMJVcVKsD6Em4WrtAJezG2P
+X-Authority-Analysis: v=2.4 cv=B9eJFutM c=1 sm=1 tr=0 ts=6a2af90e cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22 a=EUspDBNiAAAA:8
+ a=Gzwr2_xYWqWeu_vu82UA:9 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDE4MSBTYWx0ZWRfX/sGe/Gmh0Npt
+ u3m//i/etH/J6Hs3kA4O93sFxTsor7NMBAFH+Xua2fHvvu+DCojpQVzYSGm3xA0QhY0paW7Ribq
+ Rw5h6OCiUnZyVr7unI9absY72V7qoGWyS3LIQsgHJkzu3HkkI4pvdOwSO0pKpJIC18sHfn/O3BV
+ h9KqG7EFPgxGxs4816rMGxRdmFX35l/W/D8oxMAmvIWoBziiOdSK1KAJOuD4cTWj7LAMd4ZFImn
+ hOTavcbzHfUyr/x93g4WTvbMzjY7yKtN2OS6Gz0kgQvHsuVFGWFMPRL3b5FLz9gN3a1sLsUvjRB
+ RwJDjFQhYIL7io7FTyFcoi+0eXzaROSfRIugOsYUuWCROH0+80UAf2ZRFsgVavNuk188BCqRfWU
+ JxI4xGke6w5UfYuvCBQF0hRvQ8s9rmJeapWof8QgbaReTeYjGUzfrmU5sZY2ZQNKZ5GJ/U4BOn7
+ ksOMvbyVapuWULUqMsw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDE4MSBTYWx0ZWRfX11rRi9/4v6GK
+ toTOj10/5K1vj/Y76kzD0JGKU4Nu0sPR7AqzF9j7HXw22S2BFx9NtsQtQhyKaJPwYzKdfgEiPim
+ OnurjcOqnh4gz2+X8UnkQYdXi/mFKjc=
+X-Proofpoint-ORIG-GUID: VXNAmD9fipMJVcVKsD6Em4WrtAJezG2P
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-11_03,2026-06-11_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606110181
 
-On Thu, Jun 04, 2026 at 05:28:13PM -0500, Shah, Tanmay wrote:
-> 
-> 
-> On 6/2/2026 3:34 AM, Arnaud POULIQUEN wrote:
-> > 
-> > 
-> > On 5/29/26 18:43, Tanmay Shah wrote:
-> >> RPMsg MTU size can be variable now and no longer hardcoded to 512 bytes.
-> >> Add log to the sample driver that prints current MTU size of the rpmsg
-> >> buffer.
-> >>
-> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> >> ---
-> >>
-> >> Changes in v3:
-> >>    - Check for error when retrieving MTU size
-> >>    - %s/mtu/MTU/
-> >>
-> >>   samples/rpmsg/rpmsg_client_sample.c | 9 +++++++++
-> >>   1 file changed, 9 insertions(+)
-> >>
-> >> diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/
-> >> rpmsg_client_sample.c
-> >> index ae5081662283..55afa53189af 100644
-> >> --- a/samples/rpmsg/rpmsg_client_sample.c
-> >> +++ b/samples/rpmsg/rpmsg_client_sample.c
-> >> @@ -52,6 +52,7 @@ static int rpmsg_sample_probe(struct rpmsg_device
-> >> *rpdev)
-> >>   {
-> >>       int ret;
-> >>       struct instance_data *idata;
-> >> +    ssize_t mtu;
-> >>         dev_info(&rpdev->dev, "new channel: 0x%x -> 0x%x!\n",
-> >>                       rpdev->src, rpdev->dst);
-> >> @@ -62,6 +63,14 @@ static int rpmsg_sample_probe(struct rpmsg_device
-> >> *rpdev)
-> >>         dev_set_drvdata(&rpdev->dev, idata);
-> >>   +    mtu = rpmsg_get_mtu(rpdev->ept);
-> >> +    if (mtu < 0) {
-> >> +        dev_warn(&rpdev->dev, "invalid rpmsg MTU size = %ld\n", mtu);
-> >> +        return mtu;
-> >> +    }
-> >> +
-> >> +    dev_info(&rpdev->dev, "rpmsg MTU size = %ld\n", mtu);
-> >> +
-> > 
-> > Do you really need this commit? rpmsg_send should return an error if the
-> > buffer size is insufficient [1].
-> > 
-> > [1] https://elixir.bootlin.com/linux/v7.0.10/source/drivers/rpmsg/
-> > virtio_rpmsg_bus.c#L517
-> > 
-> 
-> Here, I just want to demonstrate rpmsg_get_mtu() API. Now we can have a
-> configurable size of the RPMsg buffer. So rpmsg_get_mtu() API can be
-> used to check correct buffer length before even using rpmsg_send() API.
->
+The function pointer declarations for find_loaded_rsc_table() and
+get_loaded_rsc_table() had their opening parenthesis at the end of
+the line. Move the first argument onto the same line as the opening
+parenthesis to fix the checkpatch warning.
 
-Since this is a demonstration, I think there is value in showing how to
-use the API correctly.  There is certainly no disadvantage in doing so.
+Also remove a spurious blank line after the opening brace in
+struct rproc_vdev.
+
+Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+---
+ include/linux/remoteproc.h | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 7c1546d48008..e0e212328acf 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -127,10 +127,10 @@ struct rproc_ops {
+ 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
+ 			  int offset, int avail);
+-	struct resource_table *(*find_loaded_rsc_table)(
+-				struct rproc *rproc, const struct firmware *fw);
+-	struct resource_table *(*get_loaded_rsc_table)(
+-				struct rproc *rproc, size_t *size);
++	struct resource_table *(*find_loaded_rsc_table)(struct rproc *rproc,
++							const struct firmware *fw);
++	struct resource_table *(*get_loaded_rsc_table)(struct rproc *rproc,
++						       size_t *size);
+ 	int (*load)(struct rproc *rproc, const struct firmware *fw);
+ 	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
+ 	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+@@ -375,7 +375,6 @@ struct rproc_vring {
+  * @index: vdev position versus other vdev declared in resource table
+  */
+ struct rproc_vdev {
+-
+ 	struct rproc_subdev subdev;
+ 	struct platform_device *pdev;
  
-> I think I should check msg length against mtu size as well.
-> 
+-- 
+2.53.0
 
-I agree.
-
-> 
-> > Regards,
-> > Arnaud
-> > 
-> >>       /* send a message to our remote processor */
-> >>       ret = rpmsg_send(rpdev->ept, MSG, strlen(MSG));
-> >>       if (ret) {
-> > 
-> 
