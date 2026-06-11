@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EE131197C;
-	Thu, 11 Jun 2026 12:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32583223DEA;
+	Thu, 11 Jun 2026 13:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781180625; cv=none; b=sJmVmTTBqeNIqv/OD1zsvEaezTHbNIG8E7EZws9GDED14JfAUdKj3Krpi7qEajW3G8DLYAy2Yw1g86/oZlOvAdprMoQeMJFlmXZh9HNIt1EDCmGnNJMHU4+jNOn+5khzvJQog/zNjyekYFZJ0W71fg45ft8xQ9HngaImpZ3qNLc=
+	t=1781185627; cv=none; b=QfHxZVR4CyO3WBbfdxyyKY1R8FrYPSJbNkP1vqc8+JEERplELOJ0IbG7YsEGjR29shJ8QL8ou77EhkHkLqErrf4Do+k4feVDF6HUkk9YwMI1O8qxwrgMBKylmKjMVsGl61DI9KNnPIUO4XrR7XeZLc83+tgYKCdgNJIFjC+Dq58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781180625; c=relaxed/simple;
-	bh=4lbSdoFTOaZXpKR2einrEErJx+yxV+xV0/fdZzLrFJQ=;
+	s=arc-20240116; t=1781185627; c=relaxed/simple;
+	bh=ZnqTSYFLPuIAAI41H7B6odkKfOHe+0vnleqlDhsPdDo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IaVfcwafDfn14w0aAQLTQOj+aNNX3zivgMj5Q2iD4wtx/Hda0nXDSx5X4tZ5YHlgMv/H/V1F/fyfrvIwnOYdybcQUpadPgYf61D50ORB+OHPMmWER34Zgs1qgeXs97Xie3BTbvxhi9hFXwK1G/TFb+6TCovVbiOY5KmcaJ5ZqlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGQDM3sa; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=RMAfVlVcwBGKQMUHjFUhDK7qfYxUAeggkd6R5Kkr44+5Cukqsxa49QWw95hTqJJPsQDJqm5nh3dUaXdPHmOK9HqG9+wc7ES3F2SL6J1pvx+KeH4MGCG+4PPug14RN5zOwdBdA7pAzVSyDwee9O61aqvUo0qCnQbkY2zvFNQL7dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/bn+hnq; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGQDM3sa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E72B1F00893;
-	Thu, 11 Jun 2026 12:23:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/bn+hnq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDD31F00893;
+	Thu, 11 Jun 2026 13:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781180624;
-	bh=QVCQD106udDWHycnJP8Mto0GsT4vXeGJ2ioaKMW4hdo=;
+	s=k20260515; t=1781185626;
+	bh=LuQMB79RbDDOwLhgW9lqQxbGn2D38BHbwMssyvZW/xw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=CGQDM3saVT+/zvD8OXDJMKEdC+DtM9BVP+xjWWl+FTsHr9ilCIJXLx/r1EgrLe7z1
-	 WipYQNCEC4t/HLntUaoE3BB+JXZnQuPT/hDz7pjaz6daaJ85tCIx8Rc0sJXyywaysQ
-	 4fvCQJpMO3U9pG5MOcB2Csd7t/S0F/ZWZE/HoU1hA8LlUpHBF5rAzC3CZLDgEscIHg
-	 gQPZEG7m+erXeUnferTM7aENuKkswGnqQoDFrktraNtC9kavkV8wNLjLerFTwnOhfA
-	 guPMJOEmG7ax9WZa8hAX5GAe+xtypuVSHtk8TBvJ2Fyil86QKsrif4aPyZGckbuMZt
-	 07FGc+RWQt03g==
-Message-ID: <d81bc78e-2c1d-45fd-90c9-f7ec462183a0@kernel.org>
-Date: Thu, 11 Jun 2026 14:23:37 +0200
+	b=Y/bn+hnqn1DELC5TA1uf7Uljt05HLXwE7yiLOtxH2HstVe/7RtnpiZqIFYpF0/eFc
+	 SHG/0vbJGhLm/WCVxZsNlzOwdg/B2DNipaAwRLkC/XkDt1pY56KWqt+7u95hw3qe3N
+	 p6R9vQxLDTkAN7kQ6UziiGSa4dPm8kF1xZ8vh51tqpSBYT5YpzRnMo4oPmTM5M1rkK
+	 iQRsN7FK4UPmXdICRIWzQG2V91V5SIbAcFhTzev+Z9GKq7QdaAOjEJIFM7g22AJ74l
+	 qKmBptqyXmuc/ydde4yobS3xpQLmaFAlJjxAKEnbmq2KoOk3XhMXD7lnA2r5xoYOTl
+	 AJTW1ujGi6QQw==
+Message-ID: <562096a5-6601-42ae-9d88-90a72ee075fc@kernel.org>
+Date: Thu, 11 Jun 2026 15:47:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,26 +35,25 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] dt-bindings: remoteproc: qcom,pas: add thermal
- mitigation properties
-To: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: imx_rproc: document
+ optional "memory-region-names"
+To: Frank Li <Frank.li@oss.nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
- Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-hardening@vger.kernel.org,
- Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-References: <20260609-qmi-tmd-v3-0-291a2ff4c634@oss.qualcomm.com>
- <20260609-qmi-tmd-v3-1-291a2ff4c634@oss.qualcomm.com>
- <20260610-ocelot-of-stimulating-excellence-bcb0fe@quoll>
- <03d863ee-2caa-41f2-94b5-7332fc930b42@oss.qualcomm.com>
+ <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Peng Fan <peng.fan@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Daniel Baluta <daniel.baluta@oss.nxp.com>,
+ Francesco Dolcini <francesco@dolcini.it>, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20260605113621.1479-1-laurentiumihalcea111@gmail.com>
+ <20260605113621.1479-2-laurentiumihalcea111@gmail.com>
+ <aihB5rVLsVqzg6cb@p14s> <aihIIwt_9T7yYxP3@SMW015318>
+ <CANLsYkxw6rbWNom8rNfKurKAXKpihqV1LTd51D5YXG4oFP6-wg@mail.gmail.com>
+ <20260610-accomplished-antique-mink-cf0ead@quoll>
+ <ail0sH1UhnQBPRkr@SMW015318>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -100,31 +99,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <03d863ee-2caa-41f2-94b5-7332fc930b42@oss.qualcomm.com>
+In-Reply-To: <ail0sH1UhnQBPRkr@SMW015318>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/06/2026 13:12, Gaurav Kohli wrote:
->> Why? And where is this generic property defined? You cannot just
->> sprinkle generic properties in random bindings.
->>
+On 10/06/2026 16:29, Frank Li wrote:
+> For example:
 > 
-> Ack, will add why part.
-> These names are matched with the thermal mitigation device identifiers
-> populated by remote firmware over QMI and define mitigation devices are 
-> exposed as cooling devices.
-
-No, -names correspond to values passed via DT, not some remote firmware.
-The remote firmware should give you interface which is explicit and does
-not need such properties.
-
+> rsc_table: rsc-table@90000000
+> {	ret  = <0x90000000>;
+> 	no-map;
+> }
 > 
-> Without tmd-names in DT, it is unclear which index corresponds to which
-> binding. With #cooling-cells, tmd-names in DT provides an explicit
-> name-to-index mapping. Please suggest.
+> m4 {
+> 	...
+> 	memory-region = <&rsc_table>;
+> }
+> 
+> If you change node name "rsc-table" to "memory", driver will failure
+> because it parse node name "rsc-table", which phandle point to. but no
+> binding to restrict node name to "rsc-table". So rsc-table became hidden
+> ABI.
 
-I don't get what is the index here. Index of what?
-
+Then you need to fix the driver to not parse the node names. Node names
+are not supposed to be ABI.
 
 Best regards,
 Krzysztof
