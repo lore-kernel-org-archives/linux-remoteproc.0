@@ -1,47 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C326425A354;
-	Thu, 11 Jun 2026 01:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DEB265620;
+	Thu, 11 Jun 2026 01:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781142474; cv=none; b=Kstmcf3jR14Buqkh+HJ9AEVsIgXjM7SkMj8FhWPznJ6qG6+bXgKVlNwKoyUno9YRAoaltOncC7c4rRxaVo67Y6tlNwtp9lgiNhj5khd/dl6WWRbu8Zy1Auwf3kv+bL/O+Rzs8EzJk13Oto74VL9NenW/Rk4/TusAgiyfH4Awdjk=
+	t=1781142475; cv=none; b=DZHmkgFqN7UqaMaHKdb27/E80b1uAiLfQeQJtJG7TnCsR366IVl//f4XA0RyR6UMQnYeE1KswRE0Fwl/ZOt9wjayalVOAbotcrYyt75wJzjL541IfMnZym1JaTqSEQR165YAwHaPRmTRGNMOE4tZ/15r5rn15aGkRxo2NDJlT+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781142474; c=relaxed/simple;
-	bh=ONxgRvNXqTNt9Je7E53qINzQ+b32OwqgeZpbAyWH7jE=;
+	s=arc-20240116; t=1781142475; c=relaxed/simple;
+	bh=GuQJgjKfeC8lE+5MU+T/2VjLycXSLPbj6ZOkqgaU8N4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JxGeJpb0s6LJpRnYuA+BwjmGt5L76CtFNF0mx1n3noKtDTNxt78aLfQIr3d120Y349M/DAx2gGv0fT14FOdH9Ad7WzqBfKrZrRRifSiHDmw/Sibo3VBUne542bKsGS2KOTBqs6bOc1DC8H/QDpQQQfjAeU5P7NXPfsskqIl30PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blWnunHk; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=sMzi9Fq9+eqvMQGLg9QH5PK89ABZIDGHrBCot1pJDc8mW4R3gm+y/CnI2L1i6nF6ITR14buyELLLVH5N+Frv7EDEU9WcY1qFE2OBtgLiFy/yA9nOgcIHD9sAwz5+SwI6kGsBQtZ7TNrenjIpuQkWJQz2k/liSiQOBLPLtUJPyJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eUNBz3PY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blWnunHk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC3BC1F0089A;
-	Thu, 11 Jun 2026 01:47:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eUNBz3PY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B89B21F00893;
+	Thu, 11 Jun 2026 01:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781142473;
-	bh=UDV9PR3pNhpsJfKmh7yBqBnapans18jcW5MtOlyoCH4=;
+	s=k20260515; t=1781142474;
+	bh=QgI9TH0K9M08zgUhlImJ1Lz1hSkKFM10JZT6HcfOXRM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=blWnunHkUTZwyJgU30vBPlq5dwSQcn6IRBpfTOCz2iaAAyDZRb4rGvRF0POstgi9C
-	 KFRoE3dk/2Sm3SpqWqx2WcZhtxsVviCwAS1/rVKGIDek3ks/bMXdV+7oae5da0mrnU
-	 WzKaGBd7gdhjssqwEKgwvTSVsw2yDjaAM++FiXyvODaO7tYg6jvFkGky+bjUTrB/Xi
-	 uxDHc2cw2TOdAOKSwovOA/oJhWpXepYYXvliJ8vQBglrXMOIiOePH8C0woYm3bOZ7O
-	 vs5B0ASuBF6qltqrNqzFwI6LggfFUHk/bXFpvxR41eq6modnZB8dHkQjNaQM5S/G0m
-	 g1XW2mupCCYDw==
+	b=eUNBz3PYM95OA5i57LYharcxwl9QvD3LG2sAhswZ+wx3oosYOKkThi0jxo5NG+H8O
+	 r6NqpL6j+uLFDn05TNmvoUxlWnhQyCRgvJqTwKq5GVNs/0xaKCNqpJcSEIlfHn4f3y
+	 dFEH5x0XQZO0MRWVZfbW6kcxMugToygTA0K7P/8WxDCzSRPXW68n65tjXYTQcI8ZsK
+	 nqJvhVG10CoHwEuWpXIkS4mTEfxlspuQql9dN+uSGkSAGfX/gRHsxAhNYveZcyltF1
+	 WLNAjj9hYOuplsZmVcvnNK8Xkpahqwo3lZwasfQBNl89KPXEmnzWh8ALXACvwzTPeu
+	 U4w1apG7nZMzw==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Govind Singh <govinds@codeaurora.org>,
-	Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] remoteproc: qcom_q6v5_wcss: drop redundant wcss_q6_bcr_reset
-Date: Wed, 10 Jun 2026 20:47:42 -0500
-Message-ID: <178114245714.590736.1315764992945434846.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH 1/2] dt-bindings: remoteproc: qcom,sm8550-pas: Add Hawi ADSP compatible
+Date: Wed, 10 Jun 2026 20:47:43 -0500
+Message-ID: <178114245711.590736.10294919878949624614.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20251208223315.3540680-1-mr.nuke.me@gmail.com>
-References: <20251208223315.3540680-1-mr.nuke.me@gmail.com>
+In-Reply-To: <20260427190614.3679937-1-mukesh.ojha@oss.qualcomm.com>
+References: <20260427190614.3679937-1-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -52,22 +53,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 08 Dec 2025 16:33:14 -0600, Alexandru Gagniuc wrote:
-> The wcss_q6_bcr_reset used on QCS404, and wcss_q6_reset used on IPQ
-> are the same. "BCR reset" is redundant, and likely a mistake. Use the
-> documented "wcss_q6_reset" instead. Drop ".wcss_q6_reset_required"
-> from the descriptor, since all targets now need it.
+On Tue, 28 Apr 2026 00:36:13 +0530, Mukesh Ojha wrote:
+> Document compatible string for the ADSP Peripheral Authentication
+> Service on the Hawi SoC, which is compatible with the Qualcomm SM8550
+> ADSP PAS and can fallback to SM8550 except for the one additional
+> interrupt ("shutdown-ack").
 > 
-> This changes the bindings expectations, however, it actually fixes the
-> driver to consume the intended ones (qcom,q6v5.txt), which lists
-> "wcss_q6_reset" and *not* "wcss_q6_bcr_reset"
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] remoteproc: qcom_q6v5_wcss: drop redundant wcss_q6_bcr_reset
-      commit: 6ad61d0acd41044a949e84f96a5f8e02284d350f
+[2/2] dt-bindings: remoteproc: qcom,sm8550-pas: Add Hawi CDSP compatible
+      commit: a9697e35887e7e3dc1135dd97efd39d46d910e73
 
 Best regards,
 -- 
