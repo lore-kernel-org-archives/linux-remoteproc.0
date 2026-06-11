@@ -1,87 +1,97 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7F838E8CC
-	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 09:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6D63C415C
+	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 09:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781169031; cv=none; b=QwsdhE053qdTyyegoWQnUB1qkmlNXfaf3MmyAuIoPBUulcs9FgZp1LD2zFqMg9zm3udGc8k8Lihiv9z/GO+TTFvLei7W1qQPXacFR376CIhBlxHjmYeOe0v3AgnB2NpcsuXSChMa3ehCATH3jrniJY/IjwmNsN2xOPv4FBj/KVk=
+	t=1781171341; cv=none; b=QaYt2ZKybse7ypW+WNc/1vTR8eTlamyecmX4FptV4NJdfnGsty9gcKIWus9ApFcEJxh1JDjdUN8LEGmO6b0CZYx3Y61NK7N74AICg6NO3wEiIuO7QQ4YbovCcvFDA7lLPoSfPdxuYGUcbfL9pL1RL+QXH30MUn/n+JTpqND/GJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781169031; c=relaxed/simple;
-	bh=j4eAY2w32SKbEshmvsYmWzB3GI+jB07TxlyNvC942Hk=;
+	s=arc-20240116; t=1781171341; c=relaxed/simple;
+	bh=MnCyhCrwDlxMgkrlhfV4TtEa13o1YzAgTfd9QKqA/RM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzEbQ6koEBiIHVFo6i6mFDaDxqVPxjhGWLUdgPJ1bmpHnPgBBZr94emTIE4crp0WLjvbOg9FGzEVfJAmCInU/Dp2o8AnR9du9lBRgpk/QP/vNXTAtn/h053QF+nXSvSC7jVOtMKAz+0DQJvhvsaIw2SYxsSFRHpY46n0soFcKsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QhS9STeM; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=reOnOBExymSvs7w75834WHnmSj625D8EP70M5owzIahaenYhR9nCLs2qQD4YIz8dk4SGW40esonTfJK1KKPshrwfZhc2ZmDfz4wO/VEiTvh1gtM6gmS3VuS6QefhPG8R59j0gbait+MVPOA44RN27aVhX4IsIcKCGACFFaDkZE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HTXYhWGE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=RfiwqYZP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhS9STeM"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-490bb83a3f6so62267145e9.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 02:10:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HTXYhWGE";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="RfiwqYZP"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65B5GQJ83817133
+	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 09:49:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7Knhl1ddna0y+c4FljL/Lxt/
+	HMyCo8T516/5MkE1l9I=; b=HTXYhWGELZhL6EGdTFiY6kPjdSwirLu9HgyPTmrs
+	1U4qi4GjKUAwbRr9T4IZYp2pja6Ct+4Jvy9VTdwKMp4962mtaHYLWkuqmoAchmeV
+	lU/PWww3BkhBgArI+IkxgVnGXhR5sJtOG8Ka4jLI8JHYw6kxxkyLoA47eb17qMEs
+	BUKcpRHf6OH6q6GmS5/2TE2rqL01AVN4EGzJretpTwTUrkjw57vaBX5w3UILUmkp
+	/NBVG9bWAZ7mUsszcuslcPrgNcgjEWpU8fEy14P4UMbkOwITXT/Khh9I2XmKAXX7
+	zCbYWJSdUJRPxcIQq2+igmIWqjG3+uW+6vn+Nm+txDJJDw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eqe6utryp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 09:48:59 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-842cb4c62f9so768010b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 11 Jun 2026 02:48:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1781169028; x=1781773828; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1781171339; x=1781776139; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9rWlq4as1LWNFg509PkNNd1MIv6uha19xNkTO/t/tj0=;
-        b=QhS9STeMaKgyQFeshDyAKCmjg2vUqzTDFdR3+d9RzDY9eQsoTqzBe6JisJt5NARLMj
-         DJf0/ebGlckLWWqXgbe8IRm5sflARdeJHtz0uYyWFNlJlfgc+khz8vzCkGWOmQjyHu29
-         SDodJnARar8AUsU3x5QySz3pJ2ov6PBJ6rkbxJvLTTpmB+zqfO9F8wd701CnwHwtVWL9
-         qzWcmtMJt69R9e75NkjvFstsQGJeCl57EFsxlY+76YwTAVQd9CwGdeNIIdOKS46y5sE1
-         hFhqDBftcBOQxplx2LM0TzGWKnGPb3RLA2nejnZ+GNLYSGSE42bGJvV+Gk4crYthxzRh
-         W7iA==
+        bh=7Knhl1ddna0y+c4FljL/Lxt/HMyCo8T516/5MkE1l9I=;
+        b=RfiwqYZPg9GSThRMq3IiUQZ4iO8Kun8N8MseeQQl+v5L6W6arM3y744b0kTFo9R2eZ
+         9eWGfxMsKp75o2C5h5gAxfT8edsH41JJ8zGelI2+i9nYkMVhJsRS0MaHZa2Ka7VcB9BQ
+         XFq11Mz/eQIXHCC5ccOZltYKOzm8jqJA4r/ZVec9AcGyWztgik7OX6I4skyWu84TQB3z
+         v4Oaq4CmFttvfY/m0pLZm8jCow4uh87jeVEAbyM3wlLHOJ23ZZ+peNUA7suHs45O+Ot9
+         zXopjSp1bpky/+bn7N8Jvd+uj9yPp9mW+ZWtskQ5UsCnnlbVu3+vWQLYito2t8B+83Ox
+         uyGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781169028; x=1781773828;
+        d=1e100.net; s=20251104; t=1781171339; x=1781776139;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9rWlq4as1LWNFg509PkNNd1MIv6uha19xNkTO/t/tj0=;
-        b=SpCWN8j4Vf5iD5J/T6X/LJGzFX/T+yI2s4krZwuqVr352fD9GVGTDiH+ACel63FGpE
-         M8XaQj+6VrOwbREwZ+t0Zzqwqrdayf5fyL+fh4RgM/tZ488REcatYjZ1Zvv6fCfkT4ld
-         K5V2CCcLqEQzaWJgoGv/AmkKC23QfyPeZWuVQhxZoxwwF23O3tcDQ16YCFNrHzn3nXiu
-         hvewifRs3L8BC5RFqaGAbtjz6lVEtpUhx67Matpp0W09WgfmVLiAl29RUShcRr9x3Tz1
-         3cQRQCes4dCb5ZGdRO26kN/Wnm/DPZsRjSwZNoeVbilrTDJfuCGeKMcCpW2lYGP8ScyV
-         4IAQ==
-X-Forwarded-Encrypted: i=1; AFNElJ9CPnImr4Eas3xWbhjwcuk3eMsHLUg3rS/GMzA5+Nf2+1ezpdtPaqk7PvvEsBL6O4cb2U9NjaO04KtynSSIThvt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYcQzeHwdTNPikDUsJ53HkxgBdAXd0fRs7NAWoH69by26AMknc
-	kGX1kP82u7vmHP2JVKrMsV7PxuKG/oPqYAGuKlfi6iTtFqolfFysVopF0/UjykY0hQA=
-X-Gm-Gg: Acq92OH8aSfDK3bwhHGCXh5Aa86M4RM/9TAw1ej2ba33HE3yWWaJVIWmcCbCCPTOCO1
-	OlhtF5CNCL/NZcaBI2YEPHm0GsEYJWKF1BG5UG5ypjK1JjLmuVORCAdmipYu8ks8RWi5FofFPKy
-	7wV5p9q+oWtGaMfAaG7sa/CcCORkp4gbwQynCVHPwFeQpYjQw23cSpd3F6NunJ3rdO8QFs8D5Q8
-	PVakcfkCyGtfOwW4S0hOXPn/XSS19ipnlKVa6nofcLmfQPRJ627Yu08TwPo6Y9lIclW+mKp3duX
-	j88S6XdsRDd7jNqMJxWh9QWY22WKB/F3J0wKpHW6I3nFrk/JW0YBXAlEkG/riliHYGzMBoeJG9u
-	nBtNL6kYQNNQIMUvE1VJUyy/2PCJvA9OeDIDjM/WNR9NbVZuD1FQpzAARm2DrMIGlulzQih3WCx
-	Uf7YNAi823CZ1oT8SdKr1JWh49/5lQqppNDKVFT5Z1P/L1OA==
-X-Received: by 2002:a05:600d:6414:20b0:490:ce99:d2ee with SMTP id 5b1f17b1804b1-490e55e962cmr16950155e9.15.1781169027922;
-        Thu, 11 Jun 2026 02:10:27 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff23:4410:7bb1:6476:9114:cf39])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-490e52ac9aasm33929275e9.4.2026.06.11.02.10.26
+        bh=7Knhl1ddna0y+c4FljL/Lxt/HMyCo8T516/5MkE1l9I=;
+        b=AJwl/l03g5rhKqDKVWHqAQpf41dpqTwvvBKW2Zd7LbIfg4i4nnP14RtV6Y/Y2W3iYE
+         qg5GdopT1JfHKOBLufud9cr2RImV5XSTz6bRHrtv6300oeEJsSaZBfWov6cNkNrWaf7i
+         nZ5M0es1cZqgMPRAEpCPm1V5cF8ADmAtV1UFo+vl0G3nGSf+l0oVf8zufYxkagbSj0Nt
+         aDO5jB1LWvMu36fc9MiT7O0lTkUPC4+jCNRNlaMCYLHumzVIxyGasBdynq0/WixWiKho
+         HZY409gUj7NGJhGq00MpJ0pftgqDibk08pWObi8isnxyqP+uhcGKTl8jSSKf+Eta4vCD
+         xfAQ==
+X-Forwarded-Encrypted: i=1; AFNElJ9NHaMkTZmIC+O207BkjZVLgQSOAW1LxZV4rm7y9X75vI8WNOAs6SPpGjoVq7epTMwAj5cIjT1jI/b/ashaMNqh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLzULCq8sGWDmPupBWxg3ovbBsyP90CO3LOFTexLjDrL9iNUgi
+	v1lJq16DKfUm+AA4FlpS+nVOzab1HG/jiF+Fnf4hAUqEgU4Xf1tXwPexalRiccqvgwZSNwY8rXQ
+	41UyBDxi9WUp339tqgDjbBTa4p/A6YHvTRRqkH6gykt+hIJ7eNDNw1GqiURREmWiK76Qri5iO
+X-Gm-Gg: Acq92OFWlVmJWIud3wP8DKakpZEIRK6EnDwYM350Y73bDvETI6EzoyVML55AMlxTrev
+	9TnbsTjpRe7Yq/MbTt/M27njXcNNmfI32d3CAwhOPF0Suo6IKbOWRISuASO7eCSZrjXp1/tzc9y
+	CsSmpeS4qdC4sa+qkqe5bAVWs15JRWTJWyM1iSsrGI1GJ4uA/vcSLddXySoozeyrALs3n+7yy+K
+	ku+AN7OlAro3d7RnxfZwd3WMQi13sk1qhlL67RXGF1jOTGQjEmCIJD4bLPYc1VBDMBCavz7n3eQ
+	vuOSLjgy/mpsad2TtbKDAALo/l5dmBvqQavYpzFnORVh0jgIqSdlGQDnq1IjYU1EBdxw0p1FiGz
+	yqKdpp/9QHMNegPZ3NGquRAYkop8ndJmNN6uVk6bdoav44xnZOmKKI7IKyBM=
+X-Received: by 2002:a05:6a00:32c7:b0:842:3804:590d with SMTP id d2e1a72fcca58-84335ca2a09mr1911946b3a.7.1781171338874;
+        Thu, 11 Jun 2026 02:48:58 -0700 (PDT)
+X-Received: by 2002:a05:6a00:32c7:b0:842:3804:590d with SMTP id d2e1a72fcca58-84335ca2a09mr1911929b3a.7.1781171338292;
+        Thu, 11 Jun 2026 02:48:58 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-843380c9590sm1945195b3a.31.2026.06.11.02.48.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jun 2026 02:10:26 -0700 (PDT)
-Date: Thu, 11 Jun 2026 11:10:21 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: "Aiqun(Maria) Yu" <aiqun.yu@oss.qualcomm.com>
-Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	shengchao.guo@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-Subject: Re: [PATCH v6 5/6] remoteproc: qcom: pas: Add late attach support
- for subsystems
-Message-ID: <aip7feoTn0ncwzL7@linaro.org>
-References: <20260519-knp-soccp-v6-0-cf5d0e194b5f@oss.qualcomm.com>
- <20260519-knp-soccp-v6-5-cf5d0e194b5f@oss.qualcomm.com>
- <ahBG6jKYdSAboWjs@linaro.org>
- <6df4c351-7287-4fb9-8af8-83b5deabfa07@oss.qualcomm.com>
+        Thu, 11 Jun 2026 02:48:57 -0700 (PDT)
+Date: Thu, 11 Jun 2026 15:18:51 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 2/3] remoteproc: abort subdev stop sequence on first
+ failure
+Message-ID: <20260611094851.dkg63rqztsv2pre7@hu-mojha-hyd.qualcomm.com>
+References: <20260609102254.2671238-1-mukesh.ojha@oss.qualcomm.com>
+ <20260609102254.2671238-3-mukesh.ojha@oss.qualcomm.com>
+ <aif8VS0pLYurFEho@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -90,102 +100,81 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6df4c351-7287-4fb9-8af8-83b5deabfa07@oss.qualcomm.com>
+In-Reply-To: <aif8VS0pLYurFEho@linaro.org>
+X-Authority-Analysis: v=2.4 cv=FJ8rAeos c=1 sm=1 tr=0 ts=6a2a848b cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
+ a=EUspDBNiAAAA:8 a=ot11TjGKcjkNMLPY8p0A:9 a=CjuIK1q_8ugA:10
+ a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjExMDA5OCBTYWx0ZWRfX4LSFc9G2Igsf
+ wDlD4COwoh89iB8wI23VfRmu6zuwl4hHIy9aRozJwu+YeJuGj/sD23fJ2tFmQ0WSmX1QwH8j70I
+ YGERW/WGGo3yyG1aCGYRISvNdv9iRVI=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjExMDA5OCBTYWx0ZWRfXwgi+5VNcDjlh
+ E50jwcQkxPjZA4E7GaoDKCp+MTKblhh1cPnEmm7p4akdas5q+hDObSg4T7IQInGCSDfhA0FzOM3
+ zSeK0LiTAxKw19dRceY4TckB5wX9j416nctOFbh07FjHGa7xQGxgIXC5ZzZrTwRq64vXdfe/Dbs
+ DKjjia2yVVShoQpIhEJEGNeTB0psPRD+IIeBH6SjdTnMnR2xRSDOqilKVwDVfE9BSqLXUBHtw/q
+ FqgKoRQc0l6I1qrUGnbXajChOlonY+QsN1W2UfjKPvxITJP49AazulxZcm4j8HnynYv/llJ8qe0
+ KqSFZCQ0+rwBWZZXnqeZP7Rwfb9avBvW2j++4ioQKqSriqBoIRFIc9qzF0ctrXSGT1R5Os02pKG
+ aeVs4s3GsYJST2gT7I3RNUMZ1i1hLPmLVd6wV+25uBE9YRhF8mPSGMLE2MMHUO/CJMRJAF05u8L
+ E69HMbour8/mjJhLcQA==
+X-Proofpoint-GUID: QPYRRVusFjDn0CHE5neTNJBDbx7fx36M
+X-Proofpoint-ORIG-GUID: QPYRRVusFjDn0CHE5neTNJBDbx7fx36M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-11_01,2026-06-09_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 adultscore=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606110098
 
-On Thu, Jun 11, 2026 at 11:10:25AM +0800, Aiqun(Maria) Yu wrote:
-> On 5/22/2026 8:07 PM, Stephan Gerhold wrote:
-> > On Tue, May 19, 2026 at 12:24:23AM -0700, Jingyi Wang wrote:
-> >> Subsystems can be brought out of reset by entities such as bootloaders.
-> >> As the irq enablement could be later than subsystem bring up, the state
-> >> of subsystem should be checked by reading SMP2P bits.
-> >>
-> >> A new qcom_pas_attach() function is introduced. if a crash state is
-> >> detected for the subsystem, rproc_report_crash() is called. If the ready
-> >> state is detected, it will be marked as "attached", otherwise it could
-> >> be the early boot feature is not supported by other entities. In this
-> >> case, the state will be marked as RPROC_OFFLINE so that the PAS driver
-> >> can load the firmware and start the remoteproc.
-> >>
-> >> Co-developed-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-> >> Signed-off-by: Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
-> >> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+On Tue, Jun 09, 2026 at 01:43:17PM +0200, Stephan Gerhold wrote:
+> On Tue, Jun 09, 2026 at 03:52:52PM +0530, Mukesh Ojha wrote:
+> > If a subdevice fails to stop, it indicates broken communication with the
+> > DSP. Continuing to stop further subdevices against an unresponsive
+> > remote processor could close rpmsg devices that could remove the memory
+> > mapping from HLOS and in case if remote processor touches those memory
+> > can result in SMMU fault.
 > > 
-> > Unfortunately, removing the ping-pong functionality that was present in
-> > previous patch versions makes the whole mechanism a lot more fragile.
-> > I'm not entirely sure if this has changed in SMP2P v2 or more recent
-> > firmware versions, but in my experience the SMP2P "ready" bit does not
-> > tell you if the remoteproc is actually running. The problem is that the
-> > "ready" bit is asserted by the remoteproc when the firmware is ready,
-> > but it is not cleared when you shutdown or forcibly stop the remoteproc.
+> > Change rproc_stop_subdevices() to return int and abort on the first
+> > failing subdev. Propagate the error through rproc_stop() and
+> > __rproc_detach() so callers are aware the teardown did not complete
+> > cleanly.
 > > 
-> > If this is still the case, you can easily reproduce that with the
-> > following test:
-> > 
-> >  1. Start the system as usual and let it attach the remoteproc
-> >  2. Manually stop the remoteproc in sysfs (echo stop > state)
-> >  3. modprobe -r qcom_q6v5_pas
-> >  4. modprobe qcom_q6v5_pas
-> >  5. If the "ready" bit is still set, the driver will try attaching the
-> >     remoteproc, but it's actually not running. No recovery will happen.
-> > 
-> > In this situation, it is very difficult to detect the correct remoteproc
-> > state without relying on an additional query mechanism like the
-> > ping-pong feature.
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > 
-> This a valid use case and concern. We had a discussion with Bjorn, and
-> want to take this scenario into consideration of the separate robustness
-> improvement series[1].
-> Stephan could you agree to have the basic function in this series can be
-> go in firstly.
-> 
-> [1]
-> https://lore.kernel.org/all/20260519-rproc-attach-issue-v2-0-caa1eaf75081@oss.qualcomm.com/
-> 
-> > 
-> > You can make it a bit more reliable if you also check the status of the
-> > "stop-ack" bit. This would tell you if the remoteproc was cleanly
-> > stopped with the SMP2P "stop" mechanism. However, that will typically
-> > still not fix the case above since nowadays remoteprocs are typically
-> > stopped via the QMI qcom_sysmon and the "stop-ack" is not set in that
-> > case. I believe this might set the separate "shutdown-ack" bit though
-> > that is described for some SoCs, I never finished testing that.
-> > 
-> > And even if you check both "stop-ack" and "shutdown-ack", that doesn't
-> > tell you if the remoteproc was forcibly killed using
-> > qcom_scm_pas_shutdown() without gracefully stopping it first. The ideal
-> > solution would be querying the PAS API to tell us if the remoteproc is
-> > actively running, but the last time I checked I was unfortunately not
-> > able to find a documented call that would tell us that.
-> 
-> It is a state currently kernel don't know whether the remoteproc is
-> offline or crashed when ready==1 && error==0 && ping-pong==0 scenario.
-> If it is re-modprob, the software don't have any data and only the
-> firmware can tell us whether if it is active or not per my understanding.
-> 
-> Maybe let's have this scenario and solution discussion in the other
-> series I mentioned before.
-> 
+> But what would callers do about this? If you abort the teardown sequence
+> half-way through you now have an inconsistent half-stopped state that
+> neither a new call to stop() nor a new call to start() could recover
+> from. That doesn't sound much better than the SMMU fault. Or am I
+> missing something here?
 
-If you add a new feature upstream, you must make sure that it is
-reasonably robust and reliable. The other series is about generic
-limitations in the remoteproc subsystem, so I don't think you should
-move QC-specific parts over there as well (personally, I would have
-probably kept all of it in one series to make it easier to understand,
-but that's subjective).
+SMMU fault result in device crash while other is non-functional remote
+processor. From Linux side, we do not know the state of remote processor
+when the timeout happens..cleaning the subdevices can result in the
+debug data being lost for hung remote processor.
 
-With the current firmware design, it's hard - probably impossible - to
-make the status detection perfectably reliable. I would therefore choose
-some reasonable compromise to start with. Given that Shawn (and actually
-me as well) would like to have attach working without firmware support
-for the ping-pong functionality, I think it would be reasonable to start
-with the basic detection scheme discussed above, i.e.
+> 
+> I would expect that we should either be able to tolerate the SMMU faults
+> with the resets involved in the remoteproc stop/start sequence, or that
+> DMA gets cancelled by the remoteproc stop sequence, before the buffers
+> are unmapped. Perhaps the order of our stop sequence is just wrong? Can
+> we unmap the buffers in the subdev unprepare() callback?
 
-  ready==1 && handover==1 && fatal==0 && stop-ack==0 && shutdown-ack==0
 
-The ping-pong functionality could be added later for platforms that
-support it. It would be good to have the interrupts already defined in
-the device tree, so you can tweak the driver without making DT changes
-later.
+IMO, Sequence of subdevice is fine 
 
-Thanks,
-Stephan
+ glink-> sysmon-> ssr     start
+
+ ssr -> sysmon-> glink    stop
+
+glink subdevice gets cleared due to which this issue happens.., it will
+not help as we are ignoring the timeout.
+
+
+> Thanks,
+> Stephan
+
+-- 
+-Mukesh Ojha
