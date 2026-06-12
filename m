@@ -1,39 +1,43 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F1A1E515;
-	Fri, 12 Jun 2026 21:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EFA3CFF5E
+	for <linux-remoteproc@vger.kernel.org>; Fri, 12 Jun 2026 22:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781301006; cv=none; b=uJh+fIKpC3mxNA+mzGjlqeeLzCNpkJoGwjKiduI6OwlKhSn+z8EShedKtT+w2Uqdyv1NT1FzrTgj1TcRLaNgVHLiN+Q0cqHKr/SVoDG843eWsb/ooV/buFx10XJQWSqv6WUFqKojFBr1z6vRxgax6SqZTyyr7dlxCl+ySu+QeAY=
+	t=1781303426; cv=none; b=ri9KxzVNyEyQde8WQvezueGXqu443NyKd7mpYyhVDpPZ3p3XQ7ZbVvLRGZTqHXZCyjBRmIAwHg9G7Uaq3e/SdKOP+yrSStXncAHU1CGQB8158E9zgNa8wTKSVQOnPodTDgYeyhloPwVb0dl1j49Yk+/x0FlHHA4dx5ALsdhxwdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781301006; c=relaxed/simple;
-	bh=HoP0t3X4806LumAvHUqdONnNt9e+c41S+yDwblHJXFw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hb1HmwONlj2uY7GyLfWkRMnnpKq1TD3Z8ERfg3/DKbulL/MJz5gTOrGE2tQoPxJCA/pRddc1dJieatwbJMEXex+e5QYodXJPketmIFB7H3FH/d0iWLQSzmhJB8SretKIAiR0RZbIbTW03p1LS5C1Z6KSr+TLh7kclZ+RFT88+PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkPwfOsz; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781303426; c=relaxed/simple;
+	bh=gZ3n+Kgll3kq73yQeqlls7ZLOEc1Z5XF5nmxX3h3XHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hVmKMM5AcA7JZ/y1sNl6gjZlHmP/YPlnde4QHz8tDLt4P/nGZTmRdI2EiG2N7fgppW2JYwFAn8gywwo8LeW1X2BVVwSkMvuFiFS4p9QONYCDS3MJOHrWPWsfhmuAJxNXXF+ai9GxDF+bda0NiaY5jFs1mt481bLVA5wKofWv0EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jyrBBV/D; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkPwfOsz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39B1C1F000E9;
-	Fri, 12 Jun 2026 21:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781301005;
-	bh=+KhLm1PdeFoofGdrL+J9J3T/pIpV9iZEAIAU52x8EsY=;
-	h=From:To:Cc:Subject:Date;
-	b=SkPwfOszRT1YpT1dul4bA7bJzSH5yaIg4CyTxVz/fpJyrnqPuEOx68GTtbwUQS5R+
-	 ViMUNTliwOUioLtWyYUYj0yIdAUY1FSs948RaVF5JW7fWJWV/cfRp7tUdYt4g92mdr
-	 cLbYsW0baK9yUkTQUwSdE97jrKPkahBAvUcXk2Wh4TW6iVwEamgST4+CM5JgAirCMu
-	 zR1TYBn9itf1T49fWLBCUdP79LrV84rKUsB/ucpE9l+nL1ccer4QhWW+lqCDs4xWZN
-	 PI/tQIi85UaXB+QrRSkQISyqj8WWcaoexlQxtxWthqWglPuydFeSw/JSkTnXSsbCM0
-	 piKiO6rTAOy/Q==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] remoteproc: Use presence checks for syscon props
-Date: Fri, 12 Jun 2026 16:49:58 -0500
-Message-ID: <20260612214959.1884404-1-robh@kernel.org>
-X-Mailer: git-send-email 2.53.0
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jyrBBV/D"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=Tk22QqNBn2VJgu
+	UCN3Zcaq5q3QspvH22rdnYl/88cck=; b=jyrBBV/DMGN01Wd5a/F5omJ2FWgbw1
+	weaFtqhnusNjTTTZbQ0ncC60SWDrP0XrAM4cAKxnashzfku5bRSgkFA5/aMlVryt
+	EBb41SnOw71yXENsuyLk2Pmg21ya5VnZ7dTIOTs9+7oO2HM7h8v5bXr1ZgNORSLR
+	Vdkn8Ud1eM+Zn+ry6UgSoS07pBwrBAj02pl7TelP97KASowfg1ZMaVUX+vTxz7MJ
+	dFOEg/NmM5EiNv7SqZ9O6SGmD/cQ2KIxiYIxQaTJ3nzR1ZPiGKmDmxgjmcKucK8Y
+	fBzbTaySOKqEVDUAaCpP3V73kjWcfRjPJWILs98U7DmaaCXssKwheusA==
+Received: (qmail 2665323 invoked from network); 13 Jun 2026 00:30:18 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jun 2026 00:30:18 +0200
+X-UD-Smtp-Session: l3s3148p1@WydzBRZUBoAujnsK
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: rcu@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH] hwspinlock: annotate slot pointer as RCU sensitive
+Date: Sat, 13 Jun 2026 00:27:21 +0200
+Message-ID: <20260612223002.13121-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -42,46 +46,51 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The OMAP and Keystone remoteproc drivers only need to know whether
-"ti,bootreg" and "ti,syscon-dev" are present before parsing them.
-Reading those properties as booleans misrepresents their DT encoding.
+Because 'slot' is used within an RCU read-lock, it must not be accessed
+directly but with RCU helpers. Annotate the pointer to enforce checking
+this. Sparse confirms the missing annotation:
 
-Use of_property_present() for the presence tests and keep the existing
-phandle parsing for the actual property values.
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
+drivers/hwspinlock/hwspinlock_core.c:393:48: warning: incorrect type in argument 1 (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:393:48:    expected void [noderef] __rcu **slot
+drivers/hwspinlock/hwspinlock_core.c:393:48:    got void **slot
+drivers/hwspinlock/hwspinlock_core.c:397:30: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:397:30:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:397:30:    got void [noderef] __rcu **
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in argument 1 (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void [noderef] __rcu **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
+drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
+drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
 
-Assisted-by: Codex:gpt-5-5
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/remoteproc/keystone_remoteproc.c | 2 +-
- drivers/remoteproc/omap_remoteproc.c     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index e7fde5509786..83763d640c4e 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -317,7 +317,7 @@ static int keystone_rproc_of_get_dev_syscon(struct platform_device *pdev,
- 	struct device_node *np = pdev->dev.of_node;
- 	struct device *dev = &pdev->dev;
+Just dived into the topic of __rcu annotations. I hope the commit
+description makes sense.
+
+ drivers/hwspinlock/hwspinlock_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index cc8e952a6772..50a875b2353f 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -372,7 +372,7 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ 	struct of_phandle_args args;
+ 	struct hwspinlock *hwlock;
+ 	struct radix_tree_iter iter;
+-	void **slot;
++	void __rcu **slot;
+ 	int id;
+ 	int ret;
  
--	if (!of_property_read_bool(np, "ti,syscon-dev")) {
-+	if (!of_property_present(np, "ti,syscon-dev")) {
- 		dev_err(dev, "ti,syscon-dev property is absent\n");
- 		return -EINVAL;
- 	}
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index cb01354248af..6ed0f28edac9 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -1140,7 +1140,7 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
- 	if (!data)
- 		return -ENODEV;
- 
--	if (!of_property_read_bool(np, "ti,bootreg"))
-+	if (!of_property_present(np, "ti,bootreg"))
- 		return 0;
- 
- 	oproc->boot_data = devm_kzalloc(&pdev->dev, sizeof(*oproc->boot_data),
 -- 
-2.53.0
+2.51.0
 
