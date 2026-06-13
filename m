@@ -1,33 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0108F319852;
-	Sat, 13 Jun 2026 07:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8923CE4A2
+	for <linux-remoteproc@vger.kernel.org>; Sat, 13 Jun 2026 11:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781336516; cv=none; b=uti0s52XjCTh1vM1b1FxiaK7RYJFvOB02MYU3emGH8LRwDudRDdPx6yxot015jjj5ZHbbzKpcV2NkMsz3vWUzcMEGCUsfCZCTOjxje5yBvbfMFX+lVbMtq+5qfKNV7N1d8WjRKh3qRtEniuGq13OqbGkS/SVjibmSE9iGweElF8=
+	t=1781348718; cv=none; b=GCtNDPoH8cQIop04rjuV7U0pj4D+qO95g3Ysrv2LEypd7OYbRxj3Y2gYHC3883Sy93PRMuzSISdwOJc1sNnN3UpNAxzvJEP5CitYzWbkcTwOmuIVc8EgUjKE9UYmjil2WnxbWY2VYmMZurGvcJ186Uwmb0pULaOFx5sw1BV1K3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781336516; c=relaxed/simple;
-	bh=/hcsLk1V6Ngby5CfiTulzkiqKYBFSoET/hvDV+H8KDY=;
+	s=arc-20240116; t=1781348718; c=relaxed/simple;
+	bh=hFuLzAKLku9zjjLmyY1LU1Y3IkgnibQ8as7e14dCSpU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D6OPWvBiQHU14e1mgHNeAZNR8XCbFnC7I1VwcZtGGSBrKEm9p4KECYf+1MFEomTlT371xJ9TLnYrwfhfN4F8hv/I9Go/fKSD1h1jTgLld+UFMDofKaDCe7qF8VR45x0zOgLVDI87it46fezlJphsSF8/p/G61WU9dVkRtW7MhXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwK6FT19; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=iTI/dgVRTKDq2UUrLIQWX0aBK1+4yxIJZi0newfXSqBovKEzSkiLd5XyzYh9JiehyEI2MomuDzorai9lMJBjcMo7Rqt8fdc8Ie+mXM18Nc5J4tx4CWONRRTM9TgCeTuPtkLLtekshfC4Wp6obxuc08EWYGAiSp2/3nXiSBifzDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=d+0kXTNF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LLsHKpje; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwK6FT19"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A771F000E9;
-	Sat, 13 Jun 2026 07:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781336514;
-	bh=2cw3WEl8qFceDsWwYnqsUnwAPOOKfYdIOk82bDCdpeY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=BwK6FT19KnoeonsICbwiO/JQcqL3vwKIPymITE8fxur6a7uSiRZAHq74TnRhZbV/K
-	 Mks1vqb6EfiVgi7wUh9SrCOudLewMgDzt/gFFTERkFebNjgVaJe9ePVHLTx5wLEaDx
-	 Rvz7v8LlwPp6lOZ+W5+AMeMzwZv+e6wuo4R9zraxMS/D3JxO4sWV51RhMIn8FpS59C
-	 3HOc6lxLLIXjHu56KLjJ+5zS33JfjTC8C59e8dTgt3/55PHgEauDiPPjP8pc9Vpncz
-	 heR37yD6w/ziEktzmfmLoFwgxrn6aC49rWDj9/3tGuEhZsCnl5+ZeOScLL9V+9elNY
-	 rcPPaVFQIwG1Q==
-Message-ID: <fcf93e0f-a2f0-4070-86ec-8a34e9344b76@kernel.org>
-Date: Sat, 13 Jun 2026 09:41:48 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="d+0kXTNF";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LLsHKpje"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65DB0TUs2640416
+	for <linux-remoteproc@vger.kernel.org>; Sat, 13 Jun 2026 11:05:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fRqve/iiEi4xLe1x8p2XFeA1tSQCSNKv74uJA29YfFI=; b=d+0kXTNFVgiLRzE+
+	p0EZbjEhCmptGdcfghbY0edkgREO5wWW4mkF+qxGEEFgU05qKexaKw+J2YIbE/Jj
+	7WzQbN6Fl4jlgjttjwrsuVCovdW7fEYk5XTcowxWAuAtSHUw8NFGXIDqPDfJQ66F
+	2QE0nmM3wkyJT9cqAXdbTPZEUTfEO49cCGMcKi9al0+vOgSS2bgoy2oFJ/CR6q6w
+	qxpzdDsyUycixWla2S74qN20ZjTgFZD/llKZt5sePyJ5HRchOo3o8ssmt/QyHTL6
+	I1xlM+gd769eNTsx3dy4sFT++VPAu+0DXps7Mm2DQOoNp9FTYWCsJdHWkjppGp2A
+	dxTZqQ==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eryk68uxg-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Sat, 13 Jun 2026 11:05:16 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-c85a2ed88c8so1770009a12.3
+        for <linux-remoteproc@vger.kernel.org>; Sat, 13 Jun 2026 04:05:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1781348715; x=1781953515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fRqve/iiEi4xLe1x8p2XFeA1tSQCSNKv74uJA29YfFI=;
+        b=LLsHKpjeQu6OhkG9dnxXSyAD8c83lLCc86oTgHfeKlb1IHK+GZbrYS1UXCGHi78zXq
+         YSq17K3K4eyHQ5EiitCjDmnLeKTuCL94TQTPoBEkgLETw1EAXH9guSJto0TEGW5bAEkN
+         +I7VehrIeteLr06M2hzYN4n7wolE8VxfQFI4iiOdOoiPMu/r/ie1Wsnqc7vycY8i+aGi
+         2Toqn2IA9mQyX+Yy53dJQyZp2riQAuOsjMR7d9swt4io+Dux5thvFxQAeABoEtH/8Hp3
+         BFi6jWg1cDxQlJbjhRBBWIKc021pFuYitnCdB6GFrySwuScJwLFCPqGxbs1nGZcOi8FR
+         TKnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1781348715; x=1781953515;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fRqve/iiEi4xLe1x8p2XFeA1tSQCSNKv74uJA29YfFI=;
+        b=cpegKhxdA+Qsqe4DaQuGGmXed1afvlRNZ87MacWPQDRXmADmwyj0l7tM1JE1V69Nkf
+         BBfz75qEF41t8pBpS44E7bWvqwqxn6vklr+FpaH5eqPCD9hP7BJP3d0bBelrlwc0BKUP
+         6VCApB3LDm1jVy1NO+YRwzJwrd2RvYsWBNo1ahqDteVRxvdUgeCYcvSlAYvgzmdTEobf
+         NtwqUVQfKJkrnm76kYYj2rsd+Vrmwz264RITaaiEat2e4nX/QdWttLwtwKQrNzhecyfd
+         sV9AJaIJjkwXJ3iiPqz3pQjEgYP7HuD3CX5Q3abK1CLO8IRIEasj5itNgDVnprfDWjFq
+         icoQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8J1Bw/kJTlqs8CvQBoJXIWUEt/8k90O4PaHe6MC1LzfZcrIKFSrDoXdmlyFC7qkSYCW8sigofJXrI2Bx+fnJZg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXtwv+948PpkEB3lyNjf9HF8alyx7/l+BkyB8y7VFlD8cTltdn
+	kOhvMuWoYiRvoYjH4ZcRETuUqnHjSrISb3oi0NMHv/icveQhS2oMb3mMzI/+7k3Ik//sTfgTiDd
+	b49jFykDige6sl3jcqVIXKGRnN73JrALm5eaF9hie3CjbdYlXhkKbHk+t+EMeJke1uZURKaTp
+X-Gm-Gg: Acq92OG7SnpqQpMQwO5lQxhFGRjAk6ls1V5nKdXKixXOiL6O5bnka+/szz5gfcPNI+9
+	DqEfdg7EGOzSrLGH9/MK77ikGpSk/bTuZWaQowenV1FIOOKW0ZMx89OwK8yfqWzUey1c0B9Pdjh
+	DmW8AiRVa6iUCF45/lR7gnGSf+1mXYLXzY+e3g/3gXqWFO3gvUAa7slF0TEIIt9JZiLfh7nvZXX
+	cinAna5BrUTQ3VnV7xAQNn8GSn/wIyBpcdnGTmrjUkZ91slJW8ATryFdc0hLTp38ALmnL2RnatR
+	JofFyBbyUzPYjJbqsdVU1wkg+WTKCBwDXhsnMYI03iYuiBEGc0gSUeSCBEq8J9I8uKLWLF9VOLW
+	h2ywFAXfmGe05DJQrmdkMicIYw+qxhWJUvBBWoty41BBU4mi8/sgH
+X-Received: by 2002:a05:6a21:7a8c:b0:3b3:1a06:e5 with SMTP id adf61e73a8af0-3b78416b85amr8312209637.33.1781348715518;
+        Sat, 13 Jun 2026 04:05:15 -0700 (PDT)
+X-Received: by 2002:a05:6a21:7a8c:b0:3b3:1a06:e5 with SMTP id adf61e73a8af0-3b78416b85amr8312188637.33.1781348715107;
+        Sat, 13 Jun 2026 04:05:15 -0700 (PDT)
+Received: from [192.168.1.13] ([106.222.231.34])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8434ac9bfe1sm5037247b3a.12.2026.06.13.04.05.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Jun 2026 04:05:14 -0700 (PDT)
+Message-ID: <ec65893d-873a-4a62-b0e2-5008b2130545@oss.qualcomm.com>
+Date: Sat, 13 Jun 2026 16:35:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -37,131 +90,135 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v3 1/8] dt-bindings: remoteproc: qcom,pas: add thermal
  mitigation properties
-To: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
- Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-hardening@vger.kernel.org,
- Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
+        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
 References: <20260609-qmi-tmd-v3-0-291a2ff4c634@oss.qualcomm.com>
  <20260609-qmi-tmd-v3-1-291a2ff4c634@oss.qualcomm.com>
  <20260610-ocelot-of-stimulating-excellence-bcb0fe@quoll>
  <03d863ee-2caa-41f2-94b5-7332fc930b42@oss.qualcomm.com>
  <d81bc78e-2c1d-45fd-90c9-f7ec462183a0@kernel.org>
  <7f1e46fb-15e3-4638-9930-8abc1dd5a778@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <fcf93e0f-a2f0-4070-86ec-8a34e9344b76@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
- /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
- s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
- EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
- rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
- DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
- IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
- vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
- oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
- sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
- vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
- Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
- BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
- 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
- f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
- WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
- XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
- IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
- YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
- p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
- GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
- YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
- vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
- ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
- QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
- +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
- wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
- c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
- K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
- n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
- qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <7f1e46fb-15e3-4638-9930-8abc1dd5a778@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+In-Reply-To: <fcf93e0f-a2f0-4070-86ec-8a34e9344b76@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjEzMDExMiBTYWx0ZWRfX4KgoaBupztWs
+ LkpQ8gdWbLnqXLj4gaRhACT90uba5cFtIwCmtzZjGjkeRr3QaD0+zBJC7jhVPo9/CqwfLb2R7HW
+ JhPYFM889w5E9uMSD+h0aRGNe1Lk9Fs=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjEzMDExMiBTYWx0ZWRfX1im2I4havFvL
+ 07IGk8t0t6hiDcmNaoRrEmwQWEH9N/L/5blcf3KHsGpGjZDjWkTv+D+SZdG4w0DnabWCK7dK8pZ
+ C0C6lZrlOYIG+mgKms83tsyToSZ81ya98Zdth7xc/tvju8p4B6kdi+8TKSAI4rrl2pjF9SrAit2
+ gxQS06futvqGg93L9nO40LVRsTols/VSvuQvWXIZ7x+jaJsIPxNsO3QyqhVbkvdQ6f2PREtQvqP
+ OjdLMIce4JAt+9ZlWkxUyvuZrqd7t6DC2oaJrJWauzHwHUqpEjXtf/n/LgSnCXH+ONyOcdCko5z
+ VG/NgtisxlkS0O4xXvLhttn9VoEQjuOLJtQOYdcXQG8FQ6sCgbt5cTmaWb3IvC7HCUPI1W7i+13
+ 8is6FQ/aunmcJMn3QQczhA6f/WdWoMF0y7vBgYu68cUOru3rw0mzcUKJsYwuSzZMgs1RA6Vdf6T
+ xxPtbpmOHvTpe/0JN6g==
+X-Authority-Analysis: v=2.4 cv=NrThtcdJ c=1 sm=1 tr=0 ts=6a2d396c cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=JaHktJlP2QtFIg7UHuVw+g==:17
+ a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
+ a=UvbFL3pLTf4PkRdXo8wA:9 a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: vIQ4iJxn9hix0zxnAMfkHh00x-wkEGTm
+X-Proofpoint-ORIG-GUID: vIQ4iJxn9hix0zxnAMfkHh00x-wkEGTm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-13_02,2026-06-12_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0
+ clxscore=1015 priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606040000 definitions=main-2606130112
 
-On 12/06/2026 15:52, Gaurav Kohli wrote:
-> 
-> 
-> On 6/11/2026 5:53 PM, Krzysztof Kozlowski wrote:
->> On 11/06/2026 13:12, Gaurav Kohli wrote:
->>>> Why? And where is this generic property defined? You cannot just
->>>> sprinkle generic properties in random bindings.
->>>>
->>>
->>> Ack, will add why part.
->>> These names are matched with the thermal mitigation device identifiers
->>> populated by remote firmware over QMI and define mitigation devices are
->>> exposed as cooling devices.
+
+
+On 6/13/2026 1:11 PM, Krzysztof Kozlowski wrote:
+> On 12/06/2026 15:52, Gaurav Kohli wrote:
 >>
->> No, -names correspond to values passed via DT, not some remote firmware.
->> The remote firmware should give you interface which is explicit and does
->> not need such properties.
+>>
+>> On 6/11/2026 5:53 PM, Krzysztof Kozlowski wrote:
+>>> On 11/06/2026 13:12, Gaurav Kohli wrote:
+>>>>> Why? And where is this generic property defined? You cannot just
+>>>>> sprinkle generic properties in random bindings.
+>>>>>
+>>>>
+>>>> Ack, will add why part.
+>>>> These names are matched with the thermal mitigation device identifiers
+>>>> populated by remote firmware over QMI and define mitigation devices are
+>>>> exposed as cooling devices.
+>>>
+>>> No, -names correspond to values passed via DT, not some remote firmware.
+>>> The remote firmware should give you interface which is explicit and does
+>>> not need such properties.
+>>
+>> thanks Krzysztof for review, We need tmd-names because of following reasons:
+>>
+>> Following Daniel's series [1], the thermal framework supports
+>> mapping multiple cooling devices per remoteproc/device via indexed
+>> cooling-cells.
+>>
+>> 1) The thermal framework's cooling-maps reference
+>> cooling devices by index (for #cooling-cells = <3>). Without tmd-names,
+>> there's no way to know which index corresponds to which TMD, as firmware
+>> may return tmd-names in any order.
+>>
+>> below are the changes post new thermal mapping changes:
+>> DT: tmd-names = "cdsp_sw", "xyz";
+>> Firmware: ["cdsp_sw", "xyz1", "xyz2",]
+>> Driver registers: Only "cdsp_sw" (index 0) and "xyz" (index 1)
 > 
-> thanks Krzysztof for review, We need tmd-names because of following reasons:
+> names property are not to instruct drivers to register or not to
+> register something.
 > 
-> Following Daniel's series [1], the thermal framework supports
-> mapping multiple cooling devices per remoteproc/device via indexed 
-> cooling-cells.
+> I don't understand the problem and explanation in the binding is
+> basically non-existing.
 > 
-> 1) The thermal framework's cooling-maps reference
-> cooling devices by index (for #cooling-cells = <3>). Without tmd-names,
-> there's no way to know which index corresponds to which TMD, as firmware 
-> may return tmd-names in any order.
+> Remember that all lists and indices ARE FIXED, so driver knows exactly
+> which index means what.
 > 
-> below are the changes post new thermal mapping changes:
-> DT: tmd-names = "cdsp_sw", "xyz";
-> Firmware: ["cdsp_sw", "xyz1", "xyz2",]
-> Driver registers: Only "cdsp_sw" (index 0) and "xyz" (index 1)
 
-names property are not to instruct drivers to register or not to
-register something.
+thanks for review, shall i use driver data, which is basically pas data 
+structure like below:
 
-I don't understand the problem and explanation in the binding is
-basically non-existing.
+static const struct qcom_pas_data {
+     .crash_reason_smem = 601,
+     .firmware_name = "cdsp.mdt",
+     .tmd_names = (const char *[]){"xyz", NULL},
+     .num_tmds = 1,
 
-Remember that all lists and indices ARE FIXED, so driver knows exactly
-which index means what.
-
+Is something like above acceptable? and this will also help to filter 
+tmd names as well?
 
 > 
-> This allows cooling-maps like below:
-> cooling-device = <&remoteproc 0 ...>  // "cdsp_sw"
-> cooling-device = <&remoteproc 1 ...>  // "xyz"
+>>
+>> This allows cooling-maps like below:
+>> cooling-device = <&remoteproc 0 ...>  // "cdsp_sw"
+>> cooling-device = <&remoteproc 1 ...>  // "xyz"
+>>
+>> 2) Not all firmware-provided TMDs should be
+>> exposed as cooling devices. The tmd-names property acts as a filter,
+>> allowing board-specific DT to select only the relevant TMDs for that
+>> platform.
 > 
-> 2) Not all firmware-provided TMDs should be
-> exposed as cooling devices. The tmd-names property acts as a filter,
-> allowing board-specific DT to select only the relevant TMDs for that
-> platform.
+> And driver filters, no need for DT property.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-And driver filters, no need for DT property.
-
-
-Best regards,
-Krzysztof
