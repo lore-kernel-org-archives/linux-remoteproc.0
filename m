@@ -1,96 +1,167 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EFA3CFF5E
-	for <linux-remoteproc@vger.kernel.org>; Fri, 12 Jun 2026 22:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0108F319852;
+	Sat, 13 Jun 2026 07:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781303426; cv=none; b=ri9KxzVNyEyQde8WQvezueGXqu443NyKd7mpYyhVDpPZ3p3XQ7ZbVvLRGZTqHXZCyjBRmIAwHg9G7Uaq3e/SdKOP+yrSStXncAHU1CGQB8158E9zgNa8wTKSVQOnPodTDgYeyhloPwVb0dl1j49Yk+/x0FlHHA4dx5ALsdhxwdU=
+	t=1781336516; cv=none; b=uti0s52XjCTh1vM1b1FxiaK7RYJFvOB02MYU3emGH8LRwDudRDdPx6yxot015jjj5ZHbbzKpcV2NkMsz3vWUzcMEGCUsfCZCTOjxje5yBvbfMFX+lVbMtq+5qfKNV7N1d8WjRKh3qRtEniuGq13OqbGkS/SVjibmSE9iGweElF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781303426; c=relaxed/simple;
-	bh=gZ3n+Kgll3kq73yQeqlls7ZLOEc1Z5XF5nmxX3h3XHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hVmKMM5AcA7JZ/y1sNl6gjZlHmP/YPlnde4QHz8tDLt4P/nGZTmRdI2EiG2N7fgppW2JYwFAn8gywwo8LeW1X2BVVwSkMvuFiFS4p9QONYCDS3MJOHrWPWsfhmuAJxNXXF+ai9GxDF+bda0NiaY5jFs1mt481bLVA5wKofWv0EE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jyrBBV/D; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1781336516; c=relaxed/simple;
+	bh=/hcsLk1V6Ngby5CfiTulzkiqKYBFSoET/hvDV+H8KDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6OPWvBiQHU14e1mgHNeAZNR8XCbFnC7I1VwcZtGGSBrKEm9p4KECYf+1MFEomTlT371xJ9TLnYrwfhfN4F8hv/I9Go/fKSD1h1jTgLld+UFMDofKaDCe7qF8VR45x0zOgLVDI87it46fezlJphsSF8/p/G61WU9dVkRtW7MhXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwK6FT19; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jyrBBV/D"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=Tk22QqNBn2VJgu
-	UCN3Zcaq5q3QspvH22rdnYl/88cck=; b=jyrBBV/DMGN01Wd5a/F5omJ2FWgbw1
-	weaFtqhnusNjTTTZbQ0ncC60SWDrP0XrAM4cAKxnashzfku5bRSgkFA5/aMlVryt
-	EBb41SnOw71yXENsuyLk2Pmg21ya5VnZ7dTIOTs9+7oO2HM7h8v5bXr1ZgNORSLR
-	Vdkn8Ud1eM+Zn+ry6UgSoS07pBwrBAj02pl7TelP97KASowfg1ZMaVUX+vTxz7MJ
-	dFOEg/NmM5EiNv7SqZ9O6SGmD/cQ2KIxiYIxQaTJ3nzR1ZPiGKmDmxgjmcKucK8Y
-	fBzbTaySOKqEVDUAaCpP3V73kjWcfRjPJWILs98U7DmaaCXssKwheusA==
-Received: (qmail 2665323 invoked from network); 13 Jun 2026 00:30:18 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jun 2026 00:30:18 +0200
-X-UD-Smtp-Session: l3s3148p1@WydzBRZUBoAujnsK
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: rcu@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH] hwspinlock: annotate slot pointer as RCU sensitive
-Date: Sat, 13 Jun 2026 00:27:21 +0200
-Message-ID: <20260612223002.13121-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.51.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwK6FT19"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A771F000E9;
+	Sat, 13 Jun 2026 07:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1781336514;
+	bh=2cw3WEl8qFceDsWwYnqsUnwAPOOKfYdIOk82bDCdpeY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=BwK6FT19KnoeonsICbwiO/JQcqL3vwKIPymITE8fxur6a7uSiRZAHq74TnRhZbV/K
+	 Mks1vqb6EfiVgi7wUh9SrCOudLewMgDzt/gFFTERkFebNjgVaJe9ePVHLTx5wLEaDx
+	 Rvz7v8LlwPp6lOZ+W5+AMeMzwZv+e6wuo4R9zraxMS/D3JxO4sWV51RhMIn8FpS59C
+	 3HOc6lxLLIXjHu56KLjJ+5zS33JfjTC8C59e8dTgt3/55PHgEauDiPPjP8pc9Vpncz
+	 heR37yD6w/ziEktzmfmLoFwgxrn6aC49rWDj9/3tGuEhZsCnl5+ZeOScLL9V+9elNY
+	 rcPPaVFQIwG1Q==
+Message-ID: <fcf93e0f-a2f0-4070-86ec-8a34e9344b76@kernel.org>
+Date: Sat, 13 Jun 2026 09:41:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] dt-bindings: remoteproc: qcom,pas: add thermal
+ mitigation properties
+To: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
+ Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-hardening@vger.kernel.org,
+ Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
+References: <20260609-qmi-tmd-v3-0-291a2ff4c634@oss.qualcomm.com>
+ <20260609-qmi-tmd-v3-1-291a2ff4c634@oss.qualcomm.com>
+ <20260610-ocelot-of-stimulating-excellence-bcb0fe@quoll>
+ <03d863ee-2caa-41f2-94b5-7332fc930b42@oss.qualcomm.com>
+ <d81bc78e-2c1d-45fd-90c9-f7ec462183a0@kernel.org>
+ <7f1e46fb-15e3-4638-9930-8abc1dd5a778@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <7f1e46fb-15e3-4638-9930-8abc1dd5a778@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Because 'slot' is used within an RCU read-lock, it must not be accessed
-directly but with RCU helpers. Annotate the pointer to enforce checking
-this. Sparse confirms the missing annotation:
+On 12/06/2026 15:52, Gaurav Kohli wrote:
+> 
+> 
+> On 6/11/2026 5:53 PM, Krzysztof Kozlowski wrote:
+>> On 11/06/2026 13:12, Gaurav Kohli wrote:
+>>>> Why? And where is this generic property defined? You cannot just
+>>>> sprinkle generic properties in random bindings.
+>>>>
+>>>
+>>> Ack, will add why part.
+>>> These names are matched with the thermal mitigation device identifiers
+>>> populated by remote firmware over QMI and define mitigation devices are
+>>> exposed as cooling devices.
+>>
+>> No, -names correspond to values passed via DT, not some remote firmware.
+>> The remote firmware should give you interface which is explicit and does
+>> not need such properties.
+> 
+> thanks Krzysztof for review, We need tmd-names because of following reasons:
+> 
+> Following Daniel's series [1], the thermal framework supports
+> mapping multiple cooling devices per remoteproc/device via indexed 
+> cooling-cells.
+> 
+> 1) The thermal framework's cooling-maps reference
+> cooling devices by index (for #cooling-cells = <3>). Without tmd-names,
+> there's no way to know which index corresponds to which TMD, as firmware 
+> may return tmd-names in any order.
+> 
+> below are the changes post new thermal mapping changes:
+> DT: tmd-names = "cdsp_sw", "xyz";
+> Firmware: ["cdsp_sw", "xyz1", "xyz2",]
+> Driver registers: Only "cdsp_sw" (index 0) and "xyz" (index 1)
 
-drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
-drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
-drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
-drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
-drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
-drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
-drivers/hwspinlock/hwspinlock_core.c:393:48: warning: incorrect type in argument 1 (different address spaces)
-drivers/hwspinlock/hwspinlock_core.c:393:48:    expected void [noderef] __rcu **slot
-drivers/hwspinlock/hwspinlock_core.c:393:48:    got void **slot
-drivers/hwspinlock/hwspinlock_core.c:397:30: warning: incorrect type in assignment (different address spaces)
-drivers/hwspinlock/hwspinlock_core.c:397:30:    expected void **slot
-drivers/hwspinlock/hwspinlock_core.c:397:30:    got void [noderef] __rcu **
-drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in argument 1 (different address spaces)
-drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void [noderef] __rcu **slot
-drivers/hwspinlock/hwspinlock_core.c:392:9:    got void **slot
-drivers/hwspinlock/hwspinlock_core.c:392:9: warning: incorrect type in assignment (different address spaces)
-drivers/hwspinlock/hwspinlock_core.c:392:9:    expected void **slot
-drivers/hwspinlock/hwspinlock_core.c:392:9:    got void [noderef] __rcu **
+names property are not to instruct drivers to register or not to
+register something.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+I don't understand the problem and explanation in the binding is
+basically non-existing.
 
-Just dived into the topic of __rcu annotations. I hope the commit
-description makes sense.
+Remember that all lists and indices ARE FIXED, so driver knows exactly
+which index means what.
 
- drivers/hwspinlock/hwspinlock_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index cc8e952a6772..50a875b2353f 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -372,7 +372,7 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
- 	struct of_phandle_args args;
- 	struct hwspinlock *hwlock;
- 	struct radix_tree_iter iter;
--	void **slot;
-+	void __rcu **slot;
- 	int id;
- 	int ret;
- 
--- 
-2.51.0
+> 
+> This allows cooling-maps like below:
+> cooling-device = <&remoteproc 0 ...>  // "cdsp_sw"
+> cooling-device = <&remoteproc 1 ...>  // "xyz"
+> 
+> 2) Not all firmware-provided TMDs should be
+> exposed as cooling devices. The tmd-names property acts as a filter,
+> allowing board-specific DT to select only the relevant TMDs for that
+> platform.
 
+And driver filters, no need for DT property.
+
+
+Best regards,
+Krzysztof
