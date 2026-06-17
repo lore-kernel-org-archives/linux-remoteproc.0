@@ -1,22 +1,22 @@
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E854F3B8405
-	for <linux-remoteproc@vger.kernel.org>; Wed, 17 Jun 2026 06:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA8A3B8D7B
+	for <linux-remoteproc@vger.kernel.org>; Wed, 17 Jun 2026 06:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781679348; cv=none; b=EhIHT15G09bgrYNZFxcMyCYfMg3H7wXrD5xF1GkyzDikyWvcTTkLnRhd1QbhNJtVwK/0mdH0SXOW41IILQpejoGZh0EG4KN+E/R1mB6whcsrmDH42/z2spqEOEuiIoEoKI7vQHpGVmaBt2ZqQMK8KVll7ZoPkgU9EftCzxrV4Rc=
+	t=1781679348; cv=none; b=JFY0Xsq9IHfDyL2VMwPkMTzcZQ8RSkieFqKCAGeexLzEENH+KtF/6MqTCRBM+6pq2pgAP3WQeTly1vOk5Fi/38iyHvu/LMJQJmeh0OhDRZzQy68PbprMYOP+sBb6lzP1meInVLhvMeqpEi3RMmvH52uqwD8sYZxvR/Afi16uLic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1781679348; c=relaxed/simple;
-	bh=5Pw8T1+jKgfblXAUJw8ZxdtyGBVQ2FjHPIKfg/XodJQ=;
+	bh=UQyPIeijde/GdD0Stq48wIZOtoGiOd8vylY/waEmQr0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O2MWgLR9kDucNtSZ0hLdOONWyJ5dym6tggSc6VIUmTxDWrWkNw1rVCe0DpP1Z0jb8pWFlbG/lUNa01P2/jed1JTkUB3+20uKYYtzSpK8VBADXHJk7eiqyUjHnCmXJePZXLhy468kD5s2l3QOVebXPlWKrZteLXpa4e1yKMCGLNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xhUXCBqq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o+qabkhs; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=CoDRh0S4jTTTMF4NHH6R0rlvg83VesNn9HiAQc7aMABwoIwM1ZiXqpVxe0ihmNf2lFQpsMT9O6+IsLtAjNRc8gcGHDgFmCccW4N89Abgu5sUzIQHi8P8tPqNAwQNJJdQ7L/RDRUg+In1/RxzFY5CPmk7uatuMmwz0jjCBEqEY3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yIsxAqn1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mMknssX2; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xhUXCBqq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o+qabkhs"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yIsxAqn1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mMknssX2"
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1781679344;
@@ -24,21 +24,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CBZwcNL1eAQUAHJfoFSR6vjSaP4CfP98WpLqLWH2NEc=;
-	b=xhUXCBqqY3ZTzw3Etoal/C+jfmal1HS4BCPmF9LgagPZls5uptQHmTDsi2iSC21DysjPT/
-	Wa4SMF0Az4k0H0AEZ87XdczztQ0tthR5x8FWO9ujVaOU/0q7wkupzxC1gUkjQh3chaNQwZ
-	JIZi4oxJo5O9L+s+N6w16Ed8HvN1Alk7jvnHMcC0zBVsIogfOduFGqp9CRUdfBEfE0u7mw
-	o+8ayhT6VIaj8C/LYVACJoVv5ifoxcyffwc2Ir/EcFwXkOwkYdknTnjQF4CMAeUQoFnNPu
-	S5JIGFb/H70/Iy7BvNl6SvuF+et+MD/pqfPMrGfCIPpEbEJ7cmpaCOmtIjDcrA==
+	bh=CPOpKVPNdPb4TOM3bAV+KOhZxWjDtfTT/2PKcxNL+lc=;
+	b=yIsxAqn1Qg1C2ffORupU3YGBYG9a6TtH56vcueHWecnXvqr4C6RhNyCT/856JnuMAYURwJ
+	emzriGnEvGE5ldCVZADsR04WvQ/Yl4RquNsL7Ss4wYEAJWsh9COfVWrYFxOXismhSo+aXA
+	Mm0o9Q8oUZsLbcK6ZSIAxL1yvs8uSG4KxEwHxb/ZBBrbS0T+BJLX01ZOtbrNS3ZM308Shn
+	PXmYdzzPP2eyhixaGFZ5IAi38VQwDV/R1p7pAFdTOtrP1UgvgjGHv8UrGljO2ij882fA7p
+	QqmN5VbkRxWMwsYrxbUoQEK6v0PViiNfmQbgk7CC5q0lfyI4TSjZst6cnzJRuA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1781679344;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CBZwcNL1eAQUAHJfoFSR6vjSaP4CfP98WpLqLWH2NEc=;
-	b=o+qabkhss1CF9txBm3J5BtgSGmHg0yjdOUdm0zBjW5oqk7OPywC5SzGdrcyaowwMDTWDTi
-	/3SCgpz/PEOIQtCw==
+	bh=CPOpKVPNdPb4TOM3bAV+KOhZxWjDtfTT/2PKcxNL+lc=;
+	b=mMknssX2ZyXne0SXjNOz7eCEHnUC24neDm8fTVGFkXEMrEMhgLqUUtICNeMRMnwXfINjaj
+	sp2ET7KY2f9/bFCA==
 To: linux-remoteproc@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
@@ -54,9 +54,9 @@ Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v3 02/10] mailbox: imx: Add a channel shutdown field
-Date: Wed, 17 Jun 2026 08:55:27 +0200
-Message-ID: <20260617-imx_mbox_rproc-v3-2-77948112defc@linutronix.de>
+Subject: [PATCH v3 03/10] mailbox: imx: Use devm_pm_runtime_enable()
+Date: Wed, 17 Jun 2026 08:55:28 +0200
+Message-ID: <20260617-imx_mbox_rproc-v3-3-77948112defc@linutronix.de>
 In-Reply-To: <20260617-imx_mbox_rproc-v3-0-77948112defc@linutronix.de>
 References: <20260617-imx_mbox_rproc-v3-0-77948112defc@linutronix.de>
 Precedence: bulk
@@ -68,134 +68,81 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-sashiko complained about possible teardown problem. The scenario
+sashiko complained about early usage of the device while probe isn't
+completed. This can be mitigated by delaying the pm_runtime_enable()
+into the removal path instead doing it early. This ensures that in an
+error case the device is removed (and imx_mu_shutdown()) before
+pm_runtime_disable() so we don't have to do this manually.
 
- CPU 0                              CPU 1
-  imx_mu_isr()                   imx_mu_shutdown()
-                                   imx_mu_xcr_rmw(priv, IMX_MU_RCR, 0, IMX_=
-MU_xCR_RIEn(priv->dcfg->type, cp->idx));
-    imx_mu_specific_rx()
-      imx_mu_xcr_rmw(priv, IMX_MU_RCR, IMX_MU_xCR_RIEn(priv->dcfg->type, 0)=
-, 0);
-                                   free_irq()
+For the order to work, lets move devm_mbox_controller_register() until
+after the pm-runtime part. So the reverse order will be mbox-controller
+removal followed by disabling pm runtime.
 
-The RX event remains enabled because in this short window the RX event
-was disabled in ->shutdown() while the interrupt was active and then
-enabled again by the ISR while ->shutdown waited in free_irq().
-
-This race requires timing and if happens can be problematic on shared
-handlers if the "removed" channel triggers an interrupt. In this case
-the irq-core will shutdown the interrupt with the "nobody cared"
-message.
-
-Introduce imx_mu_con_priv::shutdown to signal that the channel is
-shutting down. This flag is set with the lock held (by
-imx_mu_xcr_clr_shut()). The unmask side uses imx_mu_xcr_set_act() which
-only enables the event if the channel has not been shutdown and
-serialises on the same lock.
+Use devm_pm_runtime_enable(), remove manual pm_runtime_disable()
+invocations and move the pm_runtime handling in probe before
+devm_mbox_controller_register().
 
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/mailbox/imx-mailbox.c | 40 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 36 insertions(+), 4 deletions(-)
+ drivers/mailbox/imx-mailbox.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index 0028073be4a71..e261b382d5c90 100644
+index e261b382d5c90..516a05b64daa1 100644
 --- a/drivers/mailbox/imx-mailbox.c
 +++ b/drivers/mailbox/imx-mailbox.c
-@@ -80,6 +80,7 @@ struct imx_mu_con_priv {
- 	enum imx_mu_chan_type	type;
- 	struct mbox_chan	*chan;
- 	struct work_struct 	txdb_work;
-+	bool			shutdown;
- };
+@@ -966,38 +966,36 @@ static int imx_mu_probe(struct platform_device *pdev)
 =20
- struct imx_mu_priv {
-@@ -219,6 +220,36 @@ static u32 imx_mu_xcr_rmw(struct imx_mu_priv *priv, en=
-um imx_mu_xcr type, u32 se
- 	return val;
+ 	platform_set_drvdata(pdev, priv);
+=20
+-	ret =3D devm_mbox_controller_register(dev, &priv->mbox);
+-	if (ret)
++	ret =3D devm_pm_runtime_enable(dev);
++	if (ret < 0)
+ 		goto disable_clk;
+=20
+-	of_platform_populate(dev->of_node, NULL, NULL, dev);
+-
+-	pm_runtime_enable(dev);
+-
+ 	ret =3D pm_runtime_resume_and_get(dev);
+ 	if (ret < 0)
+-		goto disable_runtime_pm;
++		goto disable_clk;
+=20
+ 	ret =3D pm_runtime_put_sync(dev);
+ 	if (ret < 0)
+-		goto disable_runtime_pm;
++		goto disable_clk;
+=20
+ 	clk_disable_unprepare(priv->clk);
+=20
++	ret =3D devm_mbox_controller_register(dev, &priv->mbox);
++	if (ret)
++		goto err_out;
++
++	of_platform_populate(dev->of_node, NULL, NULL, dev);
++
+ 	return 0;
+=20
+-disable_runtime_pm:
+-	pm_runtime_disable(dev);
+ disable_clk:
+ 	clk_disable_unprepare(priv->clk);
++err_out:
+ 	return ret;
  }
 =20
-+static void imx_mu_xcr_clr_shut(struct imx_mu_priv *priv, struct imx_mu_co=
-n_priv *cp,
-+				enum imx_mu_xcr type, u32 clr)
-+{
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&priv->xcr_lock, flags);
-+	cp->shutdown =3D true;
-+
-+	val =3D imx_mu_read(priv, priv->dcfg->xCR[type]);
-+	val &=3D ~clr;
-+	imx_mu_write(priv, val, priv->dcfg->xCR[type]);
-+	spin_unlock_irqrestore(&priv->xcr_lock, flags);
-+}
-+
-+static void imx_mu_xcr_set_act(struct imx_mu_priv *priv, struct imx_mu_con=
-_priv *cp,
-+			       enum imx_mu_xcr type, u32 set)
-+{
-+	unsigned long flags;
-+	u32 val;
-+
-+	spin_lock_irqsave(&priv->xcr_lock, flags);
-+	if (!cp->shutdown) {
-+		val =3D imx_mu_read(priv, priv->dcfg->xCR[type]);
-+		val |=3D set;
-+		imx_mu_write(priv, val, priv->dcfg->xCR[type]);
-+	}
-+	spin_unlock_irqrestore(&priv->xcr_lock, flags);
-+}
-+
- static int imx_mu_generic_tx(struct imx_mu_priv *priv,
- 			     struct imx_mu_con_priv *cp,
- 			     void *data)
-@@ -377,7 +408,7 @@ static int imx_mu_specific_rx(struct imx_mu_priv *priv,=
- struct imx_mu_con_priv *
- 		*data++ =3D imx_mu_read(priv, priv->dcfg->xRR + (i % num_rr) * 4);
- 	}
+ static void imx_mu_remove(struct platform_device *pdev)
+ {
+-	struct imx_mu_priv *priv =3D platform_get_drvdata(pdev);
+-
+-	pm_runtime_disable(priv->dev);
+ }
 =20
--	imx_mu_xcr_rmw(priv, IMX_MU_RCR, IMX_MU_xCR_RIEn(priv->dcfg->type, 0), 0);
-+	imx_mu_xcr_set_act(priv, cp, IMX_MU_RCR, IMX_MU_xCR_RIEn(priv->dcfg->type=
-, 0));
- 	mbox_chan_received_data(cp->chan, (void *)priv->msg);
-=20
- 	return 0;
-@@ -605,6 +636,7 @@ static int imx_mu_startup(struct mbox_chan *chan)
- 		return ret;
- 	}
-=20
-+	cp->shutdown =3D false;
- 	switch (cp->type) {
- 	case IMX_MU_TYPE_RX:
- 		imx_mu_xcr_rmw(priv, IMX_MU_RCR, IMX_MU_xCR_RIEn(priv->dcfg->type, cp->i=
-dx), 0);
-@@ -639,13 +671,13 @@ static void imx_mu_shutdown(struct mbox_chan *chan)
-=20
- 	switch (cp->type) {
- 	case IMX_MU_TYPE_TX:
--		imx_mu_xcr_rmw(priv, IMX_MU_TCR, 0, IMX_MU_xCR_TIEn(priv->dcfg->type, cp=
-->idx));
-+		imx_mu_xcr_clr_shut(priv, cp, IMX_MU_TCR, IMX_MU_xCR_TIEn(priv->dcfg->ty=
-pe, cp->idx));
- 		break;
- 	case IMX_MU_TYPE_RX:
--		imx_mu_xcr_rmw(priv, IMX_MU_RCR, 0, IMX_MU_xCR_RIEn(priv->dcfg->type, cp=
-->idx));
-+		imx_mu_xcr_clr_shut(priv, cp, IMX_MU_RCR, IMX_MU_xCR_RIEn(priv->dcfg->ty=
-pe, cp->idx));
- 		break;
- 	case IMX_MU_TYPE_RXDB:
--		imx_mu_xcr_rmw(priv, IMX_MU_GIER, 0, IMX_MU_xCR_GIEn(priv->dcfg->type, c=
-p->idx));
-+		imx_mu_xcr_clr_shut(priv, cp, IMX_MU_GIER, IMX_MU_xCR_GIEn(priv->dcfg->t=
-ype, cp->idx));
- 		break;
- 	case IMX_MU_TYPE_RST:
- 		imx_mu_xcr_rmw(priv, IMX_MU_CR, IMX_MU_xCR_RST(priv->dcfg->type), 0);
+ static const struct imx_mu_dcfg imx_mu_cfg_imx6sx =3D {
 
 --=20
 2.53.0
