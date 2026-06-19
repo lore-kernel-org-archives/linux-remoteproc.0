@@ -1,267 +1,165 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C93015A85A
-	for <linux-remoteproc@vger.kernel.org>; Fri, 19 Jun 2026 05:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B61B31B833
+	for <linux-remoteproc@vger.kernel.org>; Fri, 19 Jun 2026 05:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781845303; cv=none; b=pkayVyXtMxYOf+Lb/G+NYZhU2Qu8ula+QzYXrxbtevwx6PBwjbO7lXSsRKrHiRkch/nOyuTEAbipB3BaAPBCgr1W7Xa/98B6+JVzKWY9wd072nUNadUopZ+VmSbH+hNMaA1T71x1EEOxXRwfnkzg5/wiqB/w0CnTxg+BrbU4aS4=
+	t=1781845602; cv=none; b=ubRK3CAW2zb0uUFFec0vUcEU3RYun4QvWF0Q8ThaHzGynbxnI/GTPTgwrDRSo3Cux0JmmQFTNBVrp+03y8HRen0G+vPfcPrfkVd/wNnVC/vuIujkkm519lQuQKH5Kzni3QZ+MeCgMZmhynku55Xhv6XFFpD05GYAeArUPXJzlTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781845303; c=relaxed/simple;
-	bh=gRJJKHkavlo6wAUcgkd7tDL0JMH4jNW4P94d0RtG4ng=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MAQ38a1HAGUwLXckNceFQt2bjltN+KSfUuB7efjA5LupcNEO4oDJqn96aPl/X4zMoUyVClM3CSs7CxRjp+UToxNG1a+vGW4L8SyVMb1WMQxokuHq/qKPGaLPEguI/j68N2mC7AQOi0tVLKaM4kBfRbKPNc8dZWAE1ECgYTDPpbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IqQrBs+q; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=O6sHwtpT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1781845602; c=relaxed/simple;
+	bh=i6WD8sG8BxHB9HFPWtd4YBGmmZ9gTCRtRhYGrpB2SrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCiapc9evRN5c1/d92qYphKAqK+8DrOD56FYXwDAJpuKhyALROWdIKXkwuRYzeT+59mmYgaGWdvTUe1McgNl0rxWv3OuL90NZbPe3FhEmx0GtGZR+LFatSFRphoxvg94+XWJxQZ8nquhVtQg2b45dPlsWRVA9m7yzOIxaNL+ia4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iOt01Cuq; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IqQrBs+q";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="O6sHwtpT"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65J2v2rM3465462
-	for <linux-remoteproc@vger.kernel.org>; Fri, 19 Jun 2026 05:01:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=37n4L8BkTX+xlkdInVGxTW
-	EzyLbrTOzGfYWCRWWK0m4=; b=IqQrBs+qWQctcaPtzAg3r+3HwZ4t00OebpeL/s
-	K3Vdn0H+UsJF79xdU0Jq7maj3qXdIIGfHgzEwk6lBLLSJWKt5GFH8GCYlpKfyIzp
-	rBKMj1dFK4KpVs22opgzTT1HGBW6vXXLH4dGBvTRZf76GDVurWRhXg9W5QqAjQ2m
-	MkT5czB2g7D9rvsI9RxC2/c7oWy6YEVpyiymTPJnZrZJbuHJqeb8lVtIZHAngqq5
-	sNlIhWonNbo4jcH467zHwSlTJAsqOGpWcBk3gIA9XS/Hu9NoGQqa4J+R7mwpDukl
-	CCaqpy7v78M151+G7kq+LfvavmXtdaMCxqSxkHnnO7C0hTqg==
-Received: from mail-dy1-f199.google.com (mail-dy1-f199.google.com [74.125.82.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4evp6s9xdq-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 19 Jun 2026 05:01:41 +0000 (GMT)
-Received: by mail-dy1-f199.google.com with SMTP id 5a478bee46e88-30bc5f826f2so3319752eec.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 18 Jun 2026 22:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1781845300; x=1782450100; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=37n4L8BkTX+xlkdInVGxTWEzyLbrTOzGfYWCRWWK0m4=;
-        b=O6sHwtpTrIe+PliRElafzMZL1dAB9RlwxhmGULibgA9yyD2iqBumFh+n9ICjClQn89
-         Muu0qzNlSjHW+Mz1lJp0ryCAD/MjaOfoAFOEM+mZGA+I7f30Np3m7P86zaDAjVDxZEs3
-         q01yKodawKaOiQIh8sRZX7KfOrimBkW9gFh1KD6RJha8zssjkxlGjzCdECWa/bUywmv4
-         0PdyJJ3fq6F0hkSu6a+D/e1laaR22ccKLspcEZbK/v7v4ylQWA7gjOj+4FoaWYgoVKbF
-         iCc4Wqzdal4MPqEN0B7drORjZXu/kWLgBl0lEtw82/S+h3iOpxQZ73nuNtJDFilkYcis
-         HZcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1781845300; x=1782450100;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=37n4L8BkTX+xlkdInVGxTWEzyLbrTOzGfYWCRWWK0m4=;
-        b=qUmA5zTZ616oGYnWq8V4L9aeX8PjvwW7rs5T7+TB1a6dLPP1OUPCutc6+h61/qaGCn
-         8fUVOXNY3tn755UCQxdLLoekk0hub0eeRjGNLuyF41ds+tGRU+dQFEYa58M1w+IuLjVj
-         2ziQKt//VtVFsW5202CWNBeGyXnne/HRq+GUlQkLYFwxKvn27cxQQqutAH63+bEw7m39
-         0J1mztIpdfR2rXzERBEGt245SurmoReUFdCiQVTSNU0n5VIay+8SgFZFgcy6E7UqeqmF
-         pZwRf3jc3yaYCc4CycS79N7whRHFoIXYUn6HvclDrsKpDU0mKCXG2zbHsPgSFSQ4csdn
-         JVSw==
-X-Forwarded-Encrypted: i=1; AFNElJ+OceTho5MORY0Sp40tjw9ParIF62U81u3qxXtsGIHboR6PdNfe0thxfhkZ/j3VyR529/mj5ewOd7eWmIF91XHj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAjGAAgnA93z1Bsuto6Dq9U/50RsuGsn6RfSEElslITmnY3w6m
-	epUb/VOgE4CI/MGTag2gzl5uKSP+qXFts9gIxbO90YvTyIeqinFEgBGVxUKdj4gjj8zhKXILIyw
-	K1WUGvSBLItd0ZhapP1Beijwo3WFJV1JWr7QvPeNdq7yMBA+erz/ips1C7JcuGHh9iIRd6gF3
-X-Gm-Gg: AfdE7ckHXCsIuvlF/lVjuSCtDjG7Ht93IFpdB5SMBsC9dVQf7nD5mT/kjal0sEh/KFB
-	LmwaWr2P/3aar2iLDdx79JApFX6d/i01Ce2q+vYdHssg2aC1BkLky6DO7r+4vTawX4saxPYLHgt
-	L1RG4Tt33PvoLszhvU/PFqBx5emlkrIsrm+0nNdU3MO5AlhM7o9jW1yF29ZqjzSOBxps3JIIoBM
-	dJ0mXwLAxCWeu14bVe6WbTOX2A19i6loxLuvqqjh2PR1KlRFs4iU6s3JAJ/WhhTdGYiabttPY57
-	EW4S6OHxpEAh6WpvlsBdwTqTq7CfJhMPj2IdyEYVzvEyl0m0A04uqOiK/OmjVgQa0KA0UNBoNXd
-	ibcu2A0nWZy43ZciODylKX5ZFR8CyLxFDOhsFA8YEKpgeHY8Rp1pzvJQsfN0raA6z5w==
-X-Received: by 2002:a05:7300:5b95:b0:2ed:e12:376b with SMTP id 5a478bee46e88-30c0d29fafbmr510996eec.33.1781845300001;
-        Thu, 18 Jun 2026 22:01:40 -0700 (PDT)
-X-Received: by 2002:a05:7300:5b95:b0:2ed:e12:376b with SMTP id 5a478bee46e88-30c0d29fafbmr510980eec.33.1781845299474;
-        Thu, 18 Jun 2026 22:01:39 -0700 (PDT)
-Received: from hu-chunkaid-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30c066cc0ecsm1451978eec.1.2026.06.18.22.01.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2026 22:01:39 -0700 (PDT)
-From: Chunkai Deng <chunkai.deng@oss.qualcomm.com>
-Date: Thu, 18 Jun 2026 22:01:37 -0700
-Subject: [PATCH] rpmsg: glink: Split protocol start out of native_probe
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iOt01Cuq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=8NRl
+	Tq8xnE9dQ4eFA6zBAm7QC/b5xEW5cy+ypmxdVoA=; b=iOt01Cuq/tPmrJFbzjfq
+	A2tPIFbIOSr1jd3ifOWnmHNI2vDxey9Qn3RFpQZdlCp5JWjXCaK+aAs2jRH3W09i
+	I71YruBumdPNO2sjZ4FUYF//d6RW+bvZdlbCwKOCNrGRTTPG6A+iGs8Vptq9Wp+V
+	JrQvhIGrSQegktbiiYYmbcuqwCkz7BhW5WxgpWO2/ocMSE+YndlHsHDEmikGgWsA
+	I53YgpsGvHMQdZbc4dWrKDCTbHjitxvXCkXGPkG7NqP4XOYyzlKRM26RxAyZ8/jO
+	jjPml31YWUXXc9vmWqztRK7JeSEjNoMnkBs5DlEnxvFpcil1PLRhUEIRn+xjXOrP
+	1A==
+Received: (qmail 820705 invoked from network); 19 Jun 2026 07:06:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Jun 2026 07:06:35 +0200
+X-UD-Smtp-Session: l3s3148p1@dyW6QZRU5Ikujnu2
+Date: Fri, 19 Jun 2026 07:06:34 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 1/2] hwspinlock: reverse logic for used channels
+Message-ID: <ajTOWqp38ZtTZGgD@shikoro>
+References: <20260618163422.17604-1-wsa+renesas@sang-engineering.com>
+ <20260618163422.17604-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260618-rpmsg-glink-split-protocol-start-v1-1-c4f93986cdb4@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIADDNNGoC/4WOyw6CMBREf8V07SUt8hBX/odh0RdQBVp7C9EQ/
- t2Cce1mkpNM5sxCUHujkVwOC/F6NmjsGIEdD0R2fGw1GBWZpDQtaEEz8G7AFtrejA9A15sAztt
- gpe0BA/cBTqopMyVULquMxBnndWNeu+JWfxkncdcybLtbozMYrH/vH2a29X6683/dzIABLfOq0
- VoIXomrRUyeE++lHYYkBqnXdf0AJVp5UukAAAA=
-X-Change-ID: 20260604-rpmsg-glink-split-protocol-start-3df74dbd5c94
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chris.lew@oss.qualcomm.com,
-        tony.truong@oss.qualcomm.com,
-        Chunkai Deng <chunkai.deng@oss.qualcomm.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1781845298; l=4370;
- i=chunkai.deng@oss.qualcomm.com; s=20260604; h=from:subject:message-id;
- bh=gRJJKHkavlo6wAUcgkd7tDL0JMH4jNW4P94d0RtG4ng=;
- b=MR1pC4sZTubdUcA3O8Xes3UJJhXqhh1+izdbIKQJXrYr4/25VtPuKjLgS38mcT/26Yhf7nhDN
- ZaMxxzeyavrBf3MNQReuetWkoHVokTkaGvb8K0WNiaFlGPnZ7TZSz0Y
-X-Developer-Key: i=chunkai.deng@oss.qualcomm.com; a=ed25519;
- pk=wWxCpsJRKQeVRzpZ8GLRnUX6ozLMowqE3hiz/j+j9O8=
-X-Proofpoint-GUID: gh3R0FlZYGPjjHmreBsWnYIsLUZSulXu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjE5MDA0MiBTYWx0ZWRfX/xucTRaf8/F3
- KDbkbVWxEOh3fOBZTFq7oix3Vzb+yFEPEHsfjSwrak2jsRYNagHM1G55ht26aTRsC84Mpce4d3d
- XodfMgFAt4A+NjXnml0p6tjH8xhw/Cs0QK2SyrvOi4crU+6vK6/jQrqSRkjsIt68zLWF5sk3cao
- 6qyL2bcAWVgffHJ3TaiVjvFUSSkBS9ToLSD7Fcy+5yAZDHVSeWJixRzvMVEOo9hBMvLDUg4hqWg
- LeacfdFoQRcWpjqvsGPra2JCQy74Xf03kPsr/q6zmtbAXEZ92ZlZC1A69bh8Q9I7Il23A5giaWW
- q30xHa83JGwQQyvf7FwDmrrOL6MZ5ZAnoTm2Xu9Mha93fPedGjrxv0grNQ5L6w+LPwWmH30aTjv
- 9wL3Huq5hxMR3yqpaFgO3pyrr0KDCF4HnYMA0xVYJwzudraNpx0fKhSKZCT6S/NqVoE40DnDlrP
- XmiIiG/SQsnVd62NQoA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjE5MDA0MiBTYWx0ZWRfX/lXRZXVxEx4R
- 4efj7Yz6B4Zsu6UqQ/gwEyVmBzLy751zU3xxzzc1zJBY46knXWarQrzn2dBibc/pqOihO+s53jc
- EAH49ADhl4iwsMaEJ6S6RK56rJVuI+0=
-X-Proofpoint-ORIG-GUID: gh3R0FlZYGPjjHmreBsWnYIsLUZSulXu
-X-Authority-Analysis: v=2.4 cv=KbzidwYD c=1 sm=1 tr=0 ts=6a34cd35 cx=c_pps
- a=cFYjgdjTJScbgFmBucgdfQ==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=EUspDBNiAAAA:8 a=oe6ozcHpWozmWDpEdRcA:9 a=QEXdDO2ut3YA:10
- a=scEy_gLbYbu1JhEsrz4S:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-19_01,2026-06-18_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- bulkscore=0 spamscore=0 impostorscore=0 adultscore=0 phishscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606190042
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ww3S/YEmt8LYNPqH"
+Content-Disposition: inline
+In-Reply-To: <20260618163422.17604-2-wsa+renesas@sang-engineering.com>
 
-The SMEM and RPM transports request their receive interrupt with
-IRQF_NO_AUTOEN and enable it only after qcom_glink_native_probe()
-returns. Since native_probe() sends the initial version command, the
-remote may ACK before the local IRQ is enabled, stalling the version
-handshake on a fast remote.
 
-Split the protocol start (qcom_glink_send_version() and
-qcom_glink_create_chrdev()) into a new qcom_glink_native_start().
-Transports now enable their IRQ first, then call native_start(), so the
-version ACK is guaranteed to be serviced.
+--ww3S/YEmt8LYNPqH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Chunkai Deng <chunkai.deng@oss.qualcomm.com>
----
- drivers/rpmsg/qcom_glink_native.c | 32 ++++++++++++++++++++++++++++----
- drivers/rpmsg/qcom_glink_native.h |  1 +
- drivers/rpmsg/qcom_glink_rpm.c    |  8 ++++++++
- drivers/rpmsg/qcom_glink_smem.c   |  8 ++++++++
- 4 files changed, 45 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index d9d4468e4cbd..2a284b22a037 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1928,17 +1928,41 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 	if (ret)
- 		dev_err(dev, "failed to add groups\n");
- 
-+	return glink;
-+}
-+EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
-+
-+/**
-+ * qcom_glink_native_start() - start the GLINK protocol handshake
-+ * @glink:	glink handle returned by qcom_glink_native_probe()
-+ *
-+ * Send the initial version command and register the chrdev. This is split
-+ * out from qcom_glink_native_probe() so that a transport can enable its
-+ * receive interrupt before the version handshake is initiated, ensuring the
-+ * version ACK from the remote is not missed.
-+ *
-+ * Failure to register the chrdev is not fatal and only logged, matching the
-+ * previous behaviour of qcom_glink_native_probe().
-+ *
-+ * Return: 0 on success, negative errno if sending the version command failed.
-+ */
-+int qcom_glink_native_start(struct qcom_glink *glink)
-+{
-+	int ret;
-+
- 	ret = qcom_glink_send_version(glink);
--	if (ret)
--		return ERR_PTR(ret);
-+	if (ret) {
-+		dev_err(glink->dev, "failed to send version: %d\n", ret);
-+		return ret;
-+	}
- 
- 	ret = qcom_glink_create_chrdev(glink);
- 	if (ret)
- 		dev_err(glink->dev, "failed to register chrdev\n");
- 
--	return glink;
-+	return 0;
- }
--EXPORT_SYMBOL_GPL(qcom_glink_native_probe);
-+EXPORT_SYMBOL_GPL(qcom_glink_native_start);
- 
- static int qcom_glink_remove_device(struct device *dev, void *data)
- {
-diff --git a/drivers/rpmsg/qcom_glink_native.h b/drivers/rpmsg/qcom_glink_native.h
-index 8dbec24de23e..783209980c3a 100644
---- a/drivers/rpmsg/qcom_glink_native.h
-+++ b/drivers/rpmsg/qcom_glink_native.h
-@@ -35,6 +35,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
- 					   struct qcom_glink_pipe *rx,
- 					   struct qcom_glink_pipe *tx,
- 					   bool intentless);
-+int qcom_glink_native_start(struct qcom_glink *glink);
- void qcom_glink_native_remove(struct qcom_glink *glink);
- void qcom_glink_native_rx(struct qcom_glink *glink);
- 
-diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
-index e3ba2c63a5fc..34f18c3e58c8 100644
---- a/drivers/rpmsg/qcom_glink_rpm.c
-+++ b/drivers/rpmsg/qcom_glink_rpm.c
-@@ -358,6 +358,14 @@ static int glink_rpm_probe(struct platform_device *pdev)
- 
- 	enable_irq(rpm->irq);
- 
-+	ret = qcom_glink_native_start(glink);
-+	if (ret) {
-+		disable_irq(rpm->irq);
-+		qcom_glink_native_remove(glink);
-+		mbox_free_channel(rpm->mbox_chan);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-index 62adc4db2317..28f6cfda6352 100644
---- a/drivers/rpmsg/qcom_glink_smem.c
-+++ b/drivers/rpmsg/qcom_glink_smem.c
-@@ -348,8 +348,16 @@ struct qcom_glink_smem *qcom_glink_smem_register(struct device *parent,
- 
- 	enable_irq(smem->irq);
- 
-+	ret = qcom_glink_native_start(glink);
-+	if (ret)
-+		goto err_disable_irq;
-+
- 	return smem;
- 
-+err_disable_irq:
-+	disable_irq(smem->irq);
-+	qcom_glink_native_remove(glink);
-+
- err_free_mbox:
- 	mbox_free_channel(smem->mbox_chan);
- 
+> > @@ -42,8 +42,8 @@
+> >   * used as the ID's of the hwspinlock instances).
+> >   *
+> >   * The radix tree API supports tagging items in the tree, which this
+> > - * framework uses to mark unused hwspinlock instances (see the
+> > - * HWSPINLOCK_UNUSED tag above). As a result, the process of querying =
+the
+> > + * framework uses to mark used hwspinlock instances (see the
+> > + * HWSPINLOCK_USED tag above). As a result, the process of querying the
+> >   * tree, looking for an unused hwspinlock instance, is now reduced to a
+> >   * single radix tree API call.
+> >   */
+>=20
+> [Severity: Low]
+> Is the documentation internally contradictory here? Because the tag is now
+> exclusively applied to USED locks, it seems impossible to query for an
+> UNUSED lock with a single tag-based API call.
 
----
-base-commit: a225caacc36546a09586e3ece36c0313146e7da9
-change-id: 20260604-rpmsg-glink-split-protocol-start-3df74dbd5c94
+Can reword to "getting the hwspinlock state". The core doesn't offer to
+look for just some unused hwlock. Only specific locks are looked for and
+their state is queried.
 
-Best regards,
---  
-Chunkai Deng <chunkai.deng@oss.qualcomm.com>
+> [Severity: High]
+> This isn't a bug introduced by this patch, but does
 
+Ignored.
+
+> > @@ -482,9 +482,9 @@ static struct hwspinlock *hwspin_lock_unregister_si=
+ngle(unsigned int id)
+> > =20
+> >  	mutex_lock(&hwspinlock_tree_lock);
+> > =20
+> > -	/* make sure the hwspinlock is not in use (tag is set) */
+> > -	ret =3D radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+> > -	if (ret =3D=3D 0) {
+> > +	/* make sure the hwspinlock is not in use */
+> > +	ret =3D radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_USED);
+> > +	if (ret) {
+> >  		pr_err("hwspinlock %d still in use (or not present)\n", id);
+> >  		goto out;
+> >  	}
+>=20
+> [Severity: Low]
+> Is the "(or not present)" portion of this error message unreachable?
+
+Can reword.
+
+> > @@ -798,8 +798,8 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+> >  	pm_runtime_put(dev);
+> > =20
+> >  	/* mark this hwspinlock as available */
+> > -	tmp =3D radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+> > -							HWSPINLOCK_UNUSED);
+> > +	tmp =3D radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
+> > +				   HWSPINLOCK_USED);
+> > =20
+> >  	/* sanity check (this shouldn't happen) */
+> >  	WARN_ON(tmp !=3D hwlock);
+>=20
+> [Severity: Medium]
+> Does hwspin_lock_free() now incorrectly return 1 instead of 0 on success?
+
+The quoted code is the wrong block, but the issue is correct. Will fix.
+
+> [Severity: Critical]
+> This is a pre-existing issue, but does accessing hwlock->bank->num_locks
+
+Ignored.
+
+> [Severity: High]
+> This is a pre-existing issue, but does hwspin_lock_unregister() fail to
+> rollback on an error?
+
+=2E..
+
+> [Severity: Critical]
+> This is a pre-existing issue, but does devm_hwspin_lock_unreg() ignore the
+> -EBUSY return value from hwspin_lock_unregister()?
+
+Unregistering has _many_ problems. This will be addressed in a seperate
+patch series.
+
+   Wolfram
+
+
+--ww3S/YEmt8LYNPqH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmo0zlYACgkQFA3kzBSg
+Kbbg9Q/+K5SEcy6iRHeVaFcC2D0wh29n6NHjB4Fynakm5cVAuH4scQh0uBYZQUZP
+/ucE6bf9Y/Yrw/KlhCprtWuaVpHPZSJmXR2ruuG1HRBWH0dY/x3uVCyDrYs3t08F
+LgvcQidTwuGS3OquMYOfr9unFKoA0CRLcLrMhfeS6TVlhbnuvd45OElNiTKtaMOB
+LOArdlslW7hxmIkEGxVH5kizOE6J2pCkybukJC7i1H7e+Sz/+uYzEsox8FFWU5+s
+D8F1srZjCQRDaUNoJ9RtZtuHEuY686S4EGjZfYoB6d45xzr/dlOT1sK3lRtmlJ3R
+POd0tFFT03NaRhK4iWR9w6ToGLCYO5AHYUC5U/2Eb+0wAIWImgVRogc2zVynvLL1
+lI4GzW8Mnom0HwvRQAfVkIcZ4QLQm6mwPpiPqRMQUCfdVkt65azk43cSfkcwOzbQ
+QTFEpYETzAEccw72ZY9z3LDBayGZYsfn2VAi95TFHuC9aWEIysddPQwzg6rpiUs/
+saub2gnFJCfk/FV8Dd7GiKmmLcY/TW+u8ozEYZeEiMN9HLumJ30DjO4fD/yAh2AZ
+9RGKhHkd55Oe9VOpnMkqVJuZiiUr9ZH5dMC+IN0OIHgdPKlhCjNG2IMvSLvHpVyH
+xjDSUjpM1UprglE4aI6/ynLUTShdj/6N9gq0R21JTZca1GPbsIE=
+=UYfl
+-----END PGP SIGNATURE-----
+
+--ww3S/YEmt8LYNPqH--
