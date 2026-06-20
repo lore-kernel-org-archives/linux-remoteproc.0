@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A103C21B192;
-	Sat, 20 Jun 2026 14:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF92627467F;
+	Sat, 20 Jun 2026 14:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1781966314; cv=none; b=KwcIivy99cRF4r3qETeZP1QGQsxhBGjXwEUflYbceTSUPmH2GNbKUbRLAJ42P6J+5BwdaSPD4oy1vF3TgP3/L+mBdRBIJNNKfSHwIs4pWJJ16RcIXFAwUXJJqR50mAe7PUZRGwPgPF92wViCDanOHvocIoju75I6rGBVOulYQYI=
+	t=1781966425; cv=none; b=j0F60l3e/zCl6wS6q1DFBS+jfsHVh6LcgH2zbls+DaEmFxykw/3cfjU+okST/WpPQ4HjI5wsgmGvxapHXMVwMPsSzjGyYG4l82hP3z9U8k0joH+5I+q3Qy6KkYMBK1sXKfF9OpRa3KAe76rjXRaBA8EXGwiNp/Gkr4oXHPZQuKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1781966314; c=relaxed/simple;
-	bh=f9cCJEcPcto+RKdr5HFhF5bFtP/yaCk0IVHXqjXLwss=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ABRi3NNmuZFt6W2+0uzRXxLxky7e75TigFV5PCS/d0AcoGOxealfmO6IGNG7KYF6Dt0xIGtbMi76Z2fXo5lS47vPB4UqFgVIP97j2/YmW2SC4msZW5OAImh6GCkNQkikp7vkqpnl0I4bOergprGYa4I6xjPj3zwgns/b5zcJ8dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTrf67rJ; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1781966425; c=relaxed/simple;
+	bh=T4/QQ5N2oTO25N4mvCnjvDYujPz5Tm54IrihURIqzBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QklxszH+ybGIxtERQx6IdUpkd1iAwTCRZVdOFwL45eek9eXLXgMfv4hnIPi5TuNoGcP4Myd1SEPWQVyzWKxjjb7WOXi073Fse4RObWZSQWDNqp5lrE3nzqIMsD3+clCYoC5PelKfFIwcm3lOs7m6Va1u3nA4B+PcascdZyg1k9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFhgyDeN; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTrf67rJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2B1B1F000E9;
-	Sat, 20 Jun 2026 14:38:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFhgyDeN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18AEE1F000E9;
+	Sat, 20 Jun 2026 14:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1781966313;
-	bh=ygAbj7hbvSRB4WLpPAHBP5VriXRhqzkQmLqrP1nmI+Q=;
+	s=k20260515; t=1781966424;
+	bh=siDd2LJyH7hBHrbO1Z0nS6aEIA8l3UGw2jGY7QUkeks=;
 	h=From:To:Cc:Subject:Date;
-	b=BTrf67rJ3eL5BBpa/FDZfsYOTBlVCDMjm/FD7OCntGsQse/IrOa80ORxAjYbi6T0n
-	 QYEyPK5n1AJ0LBC0s+t2r2gavnniq0QOvp+zVrcs2yMIUGAgu/F44AeU9Y+lXRugvw
-	 UyrdcrM8h0mZ4DsorTaMH+tgGfzH5lu9BfwAqqdJoxaHOZfCdBWRFUhtXg9r3xXdod
-	 +3IwLp4YZl2/8m4nSy4OX+744hW/thD82m+EIQrsZII2vi5hxF6pOll+Zs4ZPwghZF
-	 G2wHoglie1VFljDkVhKcKNagUTkmmnDGTQ2H9ypvCAun+IvuPDNQTuihpP8PCM7wmQ
-	 2hqw6Zdb8GP+g==
+	b=OFhgyDeNZIsv2aW0Kmuy1kIhG7n7ZwoYuKPyvshCl4NJ0yqKI7u9AOA8fesrvrEHF
+	 XkhFyLCOyL68sovqbCo/B13irG1jUzVsK5TW7gKUoziTBgV05qLbb4JPZdUq5E4WIH
+	 VugM5BAjrWdnm+TJ9qkUlOM28cFgMIuwcztXVo8Y8nLWgd/4wNoq3ycvQFct7k7GhN
+	 2XuuucXTQCFatpmdABeHmyEpakcmfZ4oBxI6Fb55FPqbmcUupx2dUZMOhNN/Lp0i2U
+	 jv4TqhTIIIIhPzKBayLX0SjllL/PocjYVnReG3faAaDT9hLtfxCJU0SXdUUR7duOZf
+	 Ne0mIszv0b5sw==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yuho Choi <dbgh9129@gmail.com>
-Subject: [GIT PULL] rpmsg update for v7.2
-Date: Sat, 20 Jun 2026 09:38:31 -0500
-Message-ID: <20260620143831.1112703-1-andersson@kernel.org>
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [GIT PULL] hwspinlock updates for v7.2
+Date: Sat, 20 Jun 2026 09:40:22 -0500
+Message-ID: <20260620144022.1113253-1-andersson@kernel.org>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -49,20 +49,20 @@ The following changes since commit 254f49634ee16a731174d2ae34bc50bd5f45e731:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v7.2
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/hwlock-v7.2
 
-for you to fetch changes up to 1ff3f528e67d20e2b1483dcaba899dc7832b2e6b:
+for you to fetch changes up to 8752c396ce3b2136b3d4c906fe103f6efb6782d9:
 
-  rpmsg: char: Fix use-after-free on probe error path (2026-06-04 11:58:37 -0600)
-
-----------------------------------------------------------------
-rpmsg update for v7.2
-
-Fix use-after-free in rpmsg-char driver.
+  hwspinlock: qcom: avoid uninitialized struct members (2026-06-08 21:51:12 -0500)
 
 ----------------------------------------------------------------
-Yuho Choi (1):
-      rpmsg: char: Fix use-after-free on probe error path
+hwspinlock updates for v7.2
 
- drivers/rpmsg/rpmsg_char.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Avoid uninitialized struct members in the Qualcomm hwspinlock driver.
+
+----------------------------------------------------------------
+Wolfram Sang (1):
+      hwspinlock: qcom: avoid uninitialized struct members
+
+ drivers/hwspinlock/qcom_hwspinlock.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
