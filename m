@@ -1,190 +1,378 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E0D367B8A
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 13:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C9D3BB12F;
+	Mon, 22 Jun 2026 13:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782135435; cv=none; b=KgIlUPgxAQYK0qW6qTRa7QCQVFLs7jBgYBWmViJFBfM062+OcY3SkXzrQdP1pDDztXrQNyIGp7CPvKDV63J1W/zFW3XNqPMU3qnvo1ZbNjuYO55ysoQM7BevZ2VRvw83RZFlhPDxdJnXAGovBx8bsRhlrqzKBQA51wLcD6IOSWc=
+	t=1782136772; cv=none; b=XhlnNXKYM+WDwbIovAi5bERdAzLhHLRYCmEGHWFa30IRntUqK+oF0IlRZY646g4pukahLHTGlmKB8dPFl8/rDaMZW/cDmAzErAwIKuHcDLv9yNT69qQqZ8wsRnGaBOf9kn4B6XAR3drsWClsNNeybByUM579eCuldkh0FgpInYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782135435; c=relaxed/simple;
-	bh=qNePZ2yyw2RzjTYGbgoDf2Xu+Qhz3jY2FpDHTgb+nEc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ukel8W22PIg560s8t5fVYQOJwB/YEsgA4BTNfmm4iZAiOLFlWv7YY36e/A83GJuOWKkXlJoeV/oSqh4dGM8J0TF8lxAEjWWrQUsuLUJMcW486MBlLnmxHWMhDQH9c0vSMw0W7C+hquZ27rie4enS4pK5HaQMdvT59Ufpg36y4RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lQUjJQxK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BrX6uklc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1782136772; c=relaxed/simple;
+	bh=FQE09fR0Ixu5Bl2Umm/99gcUwTCewvCEHOO3SMAKm+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eSbuc4Gpvva7TZ46GDkYnbnwbLUVGGoFG3VOvUHTi3MKFIjnKiwvWwxE8Wmp1NEnESVUOfPhO26fNAWPw1aBYhNPBjONB+2vid/6WW+8z58DWBk4+Wsd0y9+Vgfb5K44a8wfRBiyLrA7NDIu9LhilRhmKYv3/A4cBle+WKbHw2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YG6XSx1B; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lQUjJQxK";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BrX6uklc"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65MDFdLJ3532984
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 13:37:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BGAZiXTQHTlA7pjXyOhWPFIXo4iYevKMCgx+Q3SEXJY=; b=lQUjJQxKC+bFHWxv
-	rAlHPzsQscxFtSrNAlS3ZcAwDN/0EKB5/3UR3nQ4oXmGnuRPLNbCuoF38KHanWJ8
-	Y6U4w0H9TTz85j+ctaH0dK+nSlYU44L7k2uTUGkfZB2KjUf09XsCPXxfEIBjiD++
-	Id+2eoMS5XlPYYy95uD26flgckVjR60Pm9IIYRFUD6nTd48X1hgqd18Dm+lA2W/e
-	c2nKd6q7C4GR6dve+9v/gjF4cCIkd4+rfbKM7/VVKTQDOh88Md+4sCx5lhdlLnr/
-	cuG+y97AVrUVljrPmfZ5zfosYly6EMz4pXIqtg4jFfPZMWvs4fYd9yrkHHP3582e
-	dMxUiA==
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ey2yhrpbs-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 13:37:13 +0000 (GMT)
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-59eb55f6c0eso215813e0c.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 06:37:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782135433; x=1782740233; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BGAZiXTQHTlA7pjXyOhWPFIXo4iYevKMCgx+Q3SEXJY=;
-        b=BrX6uklcTbRpEW6kguNo+0m93aOPyK1MiTPAH8uaudpr4V24O6g3ZLV5M7YsB0JDEa
-         uFys2OhLsO8SdyQfEPS4PSe48mpsNaMRtAMiPciaBLEr2Kdop66PbYuxDaQ8HivX0rQL
-         PfatB5mBaI3yod4upKVVvpLS5J73ujHpsW7C2Wh9rWlsswskfEniPbxrENSZ4ylmOznW
-         4xMnH6q9kQn37Bh0zsbFSO3908H6cUII9JU8s9XcU5oKIaIZl1ybaGfCUE7vdDLaMbfQ
-         IyiLBHN8sOwcpSAUegsCrpagnY756XtTVhysy1S+zCduGb2BdIdKeQg2led4ZIBcI5zO
-         cEbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782135433; x=1782740233;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BGAZiXTQHTlA7pjXyOhWPFIXo4iYevKMCgx+Q3SEXJY=;
-        b=rAxUN61dBCCLTuaC3esinWzk/oKG8O4RMRgI3qIeIUc+JExOd3sv0VnnQ6dynYx++E
-         33cuGAegrhSHn60+bhCSupGYyJBjG54hUFHxNCfcTTHfTaZUuWiW8+bUJ6j/vxSog1V4
-         FURWdcZe40J3mB8fDFt5TBeyfg1ITfJKrUirKDvl6filvGpd6QPMlixJBGmO7wQWXued
-         xtmZJqV243PDKmbR7zSUr1NgPyOMtlhtIsG35whWsyBqP5RCJU7og28yNNQFren0T+ca
-         jwjvzDZGhGMg/8AK5b09D2L5CD98YgstIhnSs0lmNaHtBOxLQFdyR1HU7m152ndXb7Fm
-         jPKw==
-X-Forwarded-Encrypted: i=1; AFNElJ9dk4qOP2vnYkHWkOpta/eoer81qXhrStXzWu0Zw4Kn/sbKBmoXuF+SnS0QnP8kZY3cSHIwmztrvJ3Tg4zq1/sL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYolucVeFiHBf7Fo8z0LuiTJK6CopgX8CtBhNeAWIaztN220XC
-	WH1xPpbrW3TQPM81Se7ymWxKL8eNDDlwvgSjT1jqYVHnd/EuKGgECcM1CSvtlF1iP+fP1pDB+5R
-	5KALnZVXPd09Y9b+bes8SwHr9eShDT3P0BhBI15FzzrhTXwGV6t3RQ5Y936+RGhv3eNwXyUgi
-X-Gm-Gg: AfdE7cm21aRYS80vncqBL2KuXDeejeaCFGB/5OJ3ZJiBpc/9UcmJg4IzwyzT2q9WagU
-	oFWvIJ3ifn7sCiir+Nb8SoD0p5LQn44THJW1IB2JxLKl3eGW1k9zwVWlHLbkK63Ik2ksZ5VV1nw
-	pYdmN2Svwk3nelqwYNz9JMzXKon9rsQZTVFoavar5mvR2Wvesu/gZ81Oqx5GIHIZS8ljOpVB5aO
-	RCZm5yPThOSM5ebCxzdxGc+foMC6MiQ9BhyaifhNC4T5RPzGDRiUzQuogtrvHxVkaK9tzlunPpG
-	XU1pZccqexv0cP+ezPwUIRvpysEO7XQYye5tSvgLSdO87iSLKrGNRxKEBY5XLeUt4kw8pSY3uKT
-	42dfUyU8YRI1vmXis7tQvENVp5p/MD9sC4BE=
-X-Received: by 2002:a05:6102:3e2a:b0:633:3bf6:977c with SMTP id ada2fe7eead31-72b1402325fmr2041706137.1.1782135432909;
-        Mon, 22 Jun 2026 06:37:12 -0700 (PDT)
-X-Received: by 2002:a05:6102:3e2a:b0:633:3bf6:977c with SMTP id ada2fe7eead31-72b1402325fmr2041691137.1.1782135432502;
-        Mon, 22 Jun 2026 06:37:12 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c0c610e12f6sm376327566b.47.2026.06.22.06.37.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2026 06:37:11 -0700 (PDT)
-Message-ID: <d786b2bb-42da-458e-a952-5d80b97d8a58@oss.qualcomm.com>
-Date: Mon, 22 Jun 2026 15:37:09 +0200
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YG6XSx1B"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=16eXztzjvZz9uTEFcy3hhq0oL9gQGsESCUoQ/xCycio=; b=YG6XSx1BLx6vyZ0VAj2ajDZ1Ti
+	3BjGc0CKaz/I9U8nKkepT16/Hl/J9xaXxNJtDtnnJMS+gQ8lLL789ijeUd6DSRU+F9zMVBsAB8fcB
+	7ejtybN9oEJaC5XlmNoxIfOMiZ/v7lErBiWzF8v2sTobEowoLICDVaNyJuyIImEW7z6WLlcf0v112
+	Y/E4KThAi8Cd60R4bFGc4iPCu7dbk+YaJ3j+eRnmIhheN5WvfK1n45OHba+o5D/kt1I83f3OF7v09
+	iegQKiVhktxtGNJQx6987WAY8m4h5XV3TCjr2QTFEEdGZNt1cOUah4Wz2wuBu8r5x+5DGgkOIp8Yk
+	c1hvU8Og==;
+Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
+	id 1wbfBM-00000004LOh-080h;
+	Mon, 22 Jun 2026 13:59:24 +0000
+Date: Mon, 22 Jun 2026 14:59:23 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH v2 0/4] hwspinlock: add summary in debugfs
+Message-ID: <ajk_u7TVT-kL8z2A@casper.infradead.org>
+References: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] drivers/rpmsg: Fix copy of channel->name into open
- request
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-References: <20260608095523.2606-33-david.laight.linux@gmail.com>
- <79c1dda2-153e-4b7a-ad18-c72db1cf4a00@oss.qualcomm.com>
- <20260618155939.6cdbdbac@pumpkin>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260618155939.6cdbdbac@pumpkin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIyMDEzNCBTYWx0ZWRfXw/fRiSLhZ67u
- h49bpSqS86isbcFrg/YgQcXtT375PzCP5HcR4KYG615YuVxeYnpdLrE9JCQbQplTO2kQqYKhoO1
- X8TuJPzx6mlGBhaNNerzgxXmqVQq1PY=
-X-Proofpoint-ORIG-GUID: SOGgAg3uW7lXsNuZc9y7KO186fwQYyjl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIyMDEzNCBTYWx0ZWRfX1nECHUkU7pM4
- iOxHmPu6LOYHsLAlyfUqkxCibVINCD2msmVCYZLhEBARkUZEtBwjYCfwYOH39J9D98HPVA6cb6H
- FUZQM8xGEbZIg1X6xLG283lJiFZu3gObmbFEOuDcq7YWm+XehwEoMMEZBgVCaLZUhbxUu1YekO8
- 7WXzftSj6hS7kKYRyTfl4wiJbaNn29LuD1lq+79DFOrWfO1UPmIDiq30qFBMyoaNs5Wl8nFM2Na
- YQLwtxwUFWd3MpqStW8VzLfZqr36sALVRB0440uy2zj8G0fhlNzM4K607NevAcbzzM2UtzC5HMt
- ESzgzSx+KnVQL7Uqlfjq3pSHmfhZ8Gcrn23XCPEvSjKWb/Fy5VB4RfbUuHXAoUbbAIMyZfZZpfk
- S+0wYdezMnrIKD/j0hjtUoe4QdBMX7tcYmBWxFQOvnAa3uaDaOhqz3Kle19dB7phCIjy42Xx2ol
- GgFSPGczZDPgItTRwNQ==
-X-Proofpoint-GUID: SOGgAg3uW7lXsNuZc9y7KO186fwQYyjl
-X-Authority-Analysis: v=2.4 cv=cKbQdFeN c=1 sm=1 tr=0 ts=6a393a89 cx=c_pps
- a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=UhM6YWHzZrMyvu7RIJkA:9 a=QEXdDO2ut3YA:10
- a=hhpmQAJR8DioWGSBphRh:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-22_02,2026-06-22_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 adultscore=0 phishscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 suspectscore=0
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606220134
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
 
-On 6/18/26 4:59 PM, David Laight wrote:
-> On Thu, 18 Jun 2026 15:24:17 +0200
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> wrote:
+On Mon, Jun 22, 2026 at 10:51:59AM +0200, Wolfram Sang wrote:
+> Renesas R-Car SoCs have their spinlocks inside a unit called MFIS. Up to
+> R-Car Gen4, there was only one MFIS unit on the SoC. Gen5, though, has
+> multiple instances and, thus, multiple spinlock providers. The spinlocks
+> are meant for specific cases (AP<->AP, AP<->RT, AP<->SCP...). For
+> development on these systems, it is helpful to have an overview of
+> registered spinlocks in debugfs. This series adds support for that. The
+> first two patches update the radix-tree header to support more lock
+> types. The third patch fixes a missing RCU annotation for the slot
+> pointer. The fourth patch finally adds the desired functionality.
 > 
->> On 6/8/26 11:55 AM, david.laight.linux@gmail.com wrote:
->>> From: David Laight <david.laight.linux@gmail.com>
->>>
->>> Nothing obvious ensures that the name is less than GLINK_CMD_OPEN (32)  
->> 						     ^ GLINK_NAME_SIZE
-> 
-> I was writing a lot of commit messages, most with -m 'text'.
-> 
->> [...]
->>
->>> @@ -481,8 +481,7 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
->>>  				    struct glink_channel *channel)
->>>  {
->>>  	DEFINE_RAW_FLEX(struct glink_msg, req, data, GLINK_NAME_SIZE);
->>> -	int name_len = strlen(channel->name) + 1;
->>> -	int req_len = ALIGN(sizeof(*req) + name_len, 8);
->>> +	int name_len, req_len;
->>>  	int ret;
->>>  	unsigned long flags;
->>>  
->>> @@ -498,14 +497,20 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
->>>  
->>>  	channel->lcid = ret;
->>>  
->>> +	name_len = strscpy_pad(req->data, channel->name, GLINK_NAME_SIZE);
->>> +	if (name_len < 0)
->>> +		name_len = GLINK_NAME_SIZE;
->>> +	else
->>> +		name_len++;  
->>
->> Should we perhaps do something along the lines of:
->>
->> WARN_ON(strlen(name) > GLINK_NAME_SIZE)
->>
->> to prevent silent clipping?
-> 
-> strscpy() tells you whether the copy got truncated.
-> No point calling strlen() again.
+> Because the radix tree seems to have no dedicated tree nor maintainer, I
+> suggest that all these patches go in via hwspinlock. This also keeps the
+> dependencies zero.
 
-Right.
+The radix tree is deprecated.  I don't want to add any new functionality
+to it.  Here's a replacement patch to convert hwspinlock to use an
+XArray instead of a radix tree.  Compile tested only.
 
-> But I'm not really sure it is worth it.
-> Any length check of user-supplied names should be much earlier,
-> this is just ensuring this code doesn't overwrite its own stack.
-> (and ensuring stale stack doesn't get sent as padding).
+From 8ec88ed466e8153f546f7e8e69193cd5389488ee Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Mon, 22 Jun 2026 09:38:30 -0400
+Subject: [PATCH] hwspinlock: Convert to XArray
 
-Fair. I'll check that out separately.
+The radix tree is deprecated.  The XArray uses the same data structure
+with a nicer interface.  The hwspinlock_tree_lock is not needed as the
+spinlock built into the XArray is sufficient for all these cases.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+hwspin_lock_register_single() used to always return 0.  Its caller
+thinks it can return an errno, so I believe this to be a bug and so I
+have restored its ability to return an error.
 
-Konrad
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ drivers/hwspinlock/hwspinlock_core.c | 133 ++++++++++-----------------
+ 1 file changed, 50 insertions(+), 83 deletions(-)
+
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index cc8e952a6772..1dd68b8410dd 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -16,7 +16,7 @@
+ #include <linux/types.h>
+ #include <linux/err.h>
+ #include <linux/jiffies.h>
+-#include <linux/radix-tree.h>
++#include <linux/xarray.h>
+ #include <linux/hwspinlock.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/mutex.h>
+@@ -27,34 +27,21 @@
+ /* retry delay used in atomic context */
+ #define HWSPINLOCK_RETRY_DELAY_US	100
+ 
+-/* radix tree tags */
+-#define HWSPINLOCK_UNUSED	(0) /* tags an hwspinlock as unused */
++/* XArray search mark */
++#define HWSPINLOCK_UNUSED	XA_MARK_0 /* marks a hwspinlock as unused */
+ 
+ /*
+- * A radix tree is used to maintain the available hwspinlock instances.
++ * An XArray is used to maintain the available hwspinlock instances.
+  * The tree associates hwspinlock pointers with their integer key id,
+  * and provides easy-to-use API which makes the hwspinlock core code simple
+  * and easy to read.
+  *
+- * Radix trees are quick on lookups, and reasonably efficient in terms of
++ * XArrays are quick on lookups, and reasonably efficient in terms of
+  * storage, especially with high density usages such as this framework
+  * requires (a continuous range of integer keys, beginning with zero, is
+- * used as the ID's of the hwspinlock instances).
+- *
+- * The radix tree API supports tagging items in the tree, which this
+- * framework uses to mark unused hwspinlock instances (see the
+- * HWSPINLOCK_UNUSED tag above). As a result, the process of querying the
+- * tree, looking for an unused hwspinlock instance, is now reduced to a
+- * single radix tree API call.
+- */
+-static RADIX_TREE(hwspinlock_tree, GFP_KERNEL);
+-
+-/*
+- * Synchronization of access to the tree is achieved using this mutex,
+- * as the radix-tree API requires that users provide all synchronisation.
+- * A mutex is needed because we're using non-atomic radix tree allocations.
++ * used as the ID of the hwspinlock instances).
+  */
+-static DEFINE_MUTEX(hwspinlock_tree_lock);
++static DEFINE_XARRAY(hwspinlocks);
+ 
+ 
+ /**
+@@ -369,10 +356,9 @@ of_hwspin_lock_simple_xlate(const struct of_phandle_args *hwlock_spec)
+  */
+ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ {
++	XA_STATE(xas, &hwspinlocks, 0);
+ 	struct of_phandle_args args;
+ 	struct hwspinlock *hwlock;
+-	struct radix_tree_iter iter;
+-	void **slot;
+ 	int id;
+ 	int ret;
+ 
+@@ -389,15 +375,9 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ 	/* Find the hwspinlock device: we need its base_id */
+ 	ret = -EPROBE_DEFER;
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, &hwspinlock_tree, &iter, 0) {
+-		hwlock = radix_tree_deref_slot(slot);
+-		if (unlikely(!hwlock))
+-			continue;
+-		if (radix_tree_deref_retry(hwlock)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, hwlock, ULONG_MAX) {
++		if (xas_retry(&xas, hwlock))
+ 			continue;
+-		}
+-
+ 		if (device_match_of_node(hwlock->bank->dev, args.np)) {
+ 			ret = 0;
+ 			break;
+@@ -452,51 +432,47 @@ EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
+ 
+ static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
+ {
+-	struct hwspinlock *tmp;
++	XA_STATE(xas, &hwspinlocks, id);
++	struct hwspinlock *existing;
+ 	int ret;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
+-
+-	ret = radix_tree_insert(&hwspinlock_tree, id, hwlock);
+-	if (ret) {
+-		if (ret == -EEXIST)
+-			pr_err("hwspinlock id %d already exists!\n", id);
+-		goto out;
++	xas_lock(&xas);
++	existing = xas_load(&xas);
++	if (existing) {
++		pr_err("hwspinlock id %d already exists!\n", id);
++		xas_set_err(&xas, -EBUSY);
+ 	}
++	xas_store(&xas, hwlock);
+ 
+ 	/* mark this hwspinlock as available */
+-	tmp = radix_tree_tag_set(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
++	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
++	ret = xas_error(&xas);
++	xas_unlock(&xas);
+ 
+-	/* self-sanity check which should never fail */
+-	WARN_ON(tmp != hwlock);
+-
+-out:
+-	mutex_unlock(&hwspinlock_tree_lock);
+-	return 0;
++	return ret;
+ }
+ 
+ static struct hwspinlock *hwspin_lock_unregister_single(unsigned int id)
+ {
++	XA_STATE(xas, &hwspinlocks, id);
+ 	struct hwspinlock *hwlock = NULL;
+-	int ret;
++	bool marked;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
+ 
+-	/* make sure the hwspinlock is not in use (tag is set) */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+-	if (ret == 0) {
++	/* make sure the hwspinlock is not in use (mark is set) */
++	marked = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
++	if (!marked) {
+ 		pr_err("hwspinlock %d still in use (or not present)\n", id);
+ 		goto out;
+ 	}
+ 
+-	hwlock = radix_tree_delete(&hwspinlock_tree, id);
+-	if (!hwlock) {
+-		pr_err("failed to delete hwspinlock %d\n", id);
+-		goto out;
+-	}
++	hwlock = xas_store(&xas, NULL);
++	if (!hwlock)
++		pr_err("hwspinlock %d already deleted\n", id);
+ 
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return hwlock;
+ }
+ 
+@@ -667,19 +643,20 @@ EXPORT_SYMBOL_GPL(devm_hwspin_lock_register);
+ 
+ /**
+  * __hwspin_lock_request() - tag an hwspinlock as used and power it up
++ * @xas: XArray state
+  * @hwlock: the target hwspinlock
+  *
+  * This is an internal function that prepares an hwspinlock instance
+  * before it is given to the user. The function assumes that
+- * hwspinlock_tree_lock is taken.
++ * the xarray lock is held.
+  *
+  * Returns: %0 or positive to indicate success, and a negative value to
+  * indicate an error (with the appropriate error code)
+  */
+-static int __hwspin_lock_request(struct hwspinlock *hwlock)
++static int __hwspin_lock_request(struct xa_state *xas,
++		struct hwspinlock *hwlock)
+ {
+ 	struct device *dev = hwlock->bank->dev;
+-	struct hwspinlock *tmp;
+ 	int ret;
+ 
+ 	/* prevent underlying implementation from being removed */
+@@ -697,16 +674,9 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+ 		return ret;
+ 	}
+ 
+-	ret = 0;
++	xas_clear_mark(xas, HWSPINLOCK_UNUSED);
+ 
+-	/* mark hwspinlock as used, should not fail */
+-	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-
+-	/* self-sanity check that should never fail */
+-	WARN_ON(tmp != hwlock);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ /**
+@@ -724,13 +694,14 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+  */
+ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
+ {
++	XA_STATE(xas, &hwspinlocks, id);
+ 	struct hwspinlock *hwlock;
+ 	int ret;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
+ 
+ 	/* make sure this hwspinlock exists */
+-	hwlock = radix_tree_lookup(&hwspinlock_tree, id);
++	hwlock = xas_load(&xas);
+ 	if (!hwlock) {
+ 		pr_warn("hwspinlock %u does not exist\n", id);
+ 		goto out;
+@@ -740,7 +711,7 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
+ 	WARN_ON(hwlock_to_id(hwlock) != id);
+ 
+ 	/* make sure this hwspinlock is unused */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
++	ret = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
+ 	if (ret == 0) {
+ 		pr_warn("hwspinlock %u is already in use\n", id);
+ 		hwlock = NULL;
+@@ -748,12 +719,12 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
+ 	}
+ 
+ 	/* mark as used and power up */
+-	ret = __hwspin_lock_request(hwlock);
++	ret = __hwspin_lock_request(&xas, hwlock);
+ 	if (ret < 0)
+ 		hwlock = NULL;
+ 
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return hwlock;
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
+@@ -772,8 +743,8 @@ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
+  */
+ int hwspin_lock_free(struct hwspinlock *hwlock)
+ {
++	XA_STATE(xas, &hwspinlocks, 0);
+ 	struct device *dev;
+-	struct hwspinlock *tmp;
+ 	int ret;
+ 
+ 	if (!hwlock) {
+@@ -782,11 +753,11 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ 	}
+ 
+ 	dev = hwlock->bank->dev;
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
++	xas_set(&xas, hwlock_to_id(hwlock));
+ 
+ 	/* make sure the hwspinlock is used */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
++	ret = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
+ 	if (ret == 1) {
+ 		dev_err(dev, "%s: hwlock is already free\n", __func__);
+ 		dump_stack();
+@@ -798,16 +769,12 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ 	pm_runtime_put(dev);
+ 
+ 	/* mark this hwspinlock as available */
+-	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-
+-	/* sanity check (this shouldn't happen) */
+-	WARN_ON(tmp != hwlock);
++	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
+ 
+ 	module_put(dev->driver->owner);
+ 
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_free);
+-- 
+2.47.3
+
