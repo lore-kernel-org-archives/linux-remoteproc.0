@@ -1,342 +1,181 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E5B3B9D98
-	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 14:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782138926; cv=pass; b=OuLZB5PzNkvYq1ryEzpTloqX7e+nsfZf91S8G/0dlfAqZWJ/nfR0Kx9BrNWoWskdnIpFtpDu7oubUdug1s/Ku9mQqEaO2Qn5cKfiyWPV0pRszGmi+tku/Jl1wjQcRNMltzYPEoqdrfO03JkfgdQ4cGqQIiR632swKlWb+8X+pwE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782138926; c=relaxed/simple;
-	bh=ikHoNKliLry32LoDV0kQcgRAP5K54uiDSjkfPFbX4Ro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OecN86JjrQ4GGvcZYNHHKch7UWsk2ufJ5ASww5NZHy4BVvmYTjXIsQJjjpi7s/r57pL15T/DpiNAczYbLPpUAbDMnV9pOm5NAJSNd+0dM4pZQ3l5ahKBIwTPuwKe+yh0R2TNaUeyFJxV5xs8zaDO1wHrLw5P+PV8IvIpSVjvwfs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ULT2qNR0; arc=pass smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4B9311969
+	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 15:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782143460; cv=none; b=hrlVN+oxdRa/m6WjVLe0xfMSVa+98zdDxaUoWp/havd6GBGCPIe2GgMxrY/WKe8fPCniR1U8L2s7xi+uk2RZP7vgEcwT0KcdHfDMwBGrg4zBlS/pY0GMpdof0n7U5cWghPVMZirPmjxNWKoQlywlYYrr2bhFrFCXkqpdcppSjmw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782143460; c=relaxed/simple;
+	bh=YUr/EDfqhlUBd7GzzTUmu31ihTNj2fyZnm0Q69R8Wps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbadcxMemEDQj6rXOGe7EcuRkxmwNP0/eEd/ZSkvOPLFwZ7pzcF3UeRyjBvaOAxUq+jeZSbxxR4vP2dIuxiazak4XNwk73IcKYSIhdFO9eGax/6IqE58TMVKOeFeN6lKVjDq3n3tZbPh8/R38FdmKIQt3kLg4lAa8tW9caUIY1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kFkUdldc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=EM1dpGWP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ULT2qNR0"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-bed19623d6eso645273466b.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 07:35:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1782138923; cv=none;
-        d=google.com; s=arc-20240605;
-        b=lTgokvMX8i2gfTIvlWEtMrpTF+PeBSV6lSTUz6lCu2cOBpLVKHQ2LxvzN2yBYR5tph
-         WppUXOn+4347EKwl0TcJinvyaZGuB+rRzS3o9oq3liK/sl4xxlhyvQ5AVPt/QS8GtBPq
-         Zl5tNoW3GVyvhXF2hYsoYGqVaR5PPnKepOGH5xwxAqPaN75JtjdA2s6RG1pltUScJ0T6
-         9wfwfiRdsS7NI34k4tYbg74osK8JWkv6Xi3Ms71Fa7iTw5EK6lvnaNW3RsePNrpWuqDm
-         Pmy4FCzghgYRnruEybLM4LgCFKslS8f3yDHKbfR1wPctTW6MUZmSOz9W3UDTfD1qSfpe
-         PIQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=Cc6r7Lp9vGxajVjEiP+2jWn7h6KCdfXLIQ302v2pvac=;
-        fh=CJ7dDDKFqZW91EDkd/gMpMm7SGXCjmSZJHKTF3bfgSA=;
-        b=UhMtFgcAkr/UQoaX0Dlx7xvqx1Kf62aGEMzJKtTau0ArsbFuklrIlznjHOU1ygH9lA
-         G5wRwZkMxtUdKLcWd9h4WP/iiyS2KaGiM2OL5M4vwlqv2LgJYojEAtENUyG3nUjcWLFn
-         IbdyWoCtk3tlNBLIWtHcsgsOYas0zxNzUg+0UzxFXLmfC3jZviS2RECjdWifYYBEhuS+
-         NOy8Lfh0mPpEe7mRMwOuTe+nZOV/2CE+Q3jt3Q0fw40MinQAfouwWAdlneV8E+9YyLIg
-         C4m0A+A2gVSQln7qwcG1HOhTi8vzB8K136eyNC30FAOKP1oU9cTNPMvqo+HSgMEqmFC2
-         zp+Q==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kFkUdldc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="EM1dpGWP"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65MFXKEw1571257
+	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 15:50:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=LFwruN8t4Ou5IEqGe/3xdJLo
+	az/ZKII1FGmDkOw7dSI=; b=kFkUdldciq4Pv/mNc/7fEJgG5CJgyUc5E501BjRy
+	QVChqFDfp9cmjuCE7V/1/lkwA+6yahBjjbpVlbk166+T9Hvbah9MOObcz/zhKEEJ
+	QRLQVzcVQkjLOlBa8V7ncZwA2SdknX6/RN0HNSt4qS3S0fO1D/Xi2Uarx1YtjEd2
+	59lh3LRdizkNcAmJt3q2g4hsd9QY4VkSP6iNr7zsJYjPUvhDU2ufURc9xRp7OB9U
+	05edcEfQG2qOurJFkc9WKx6f7SxqebIi//zAaAX4wrVNW+nv+xrWCSOEemAQyIEY
+	ltMeGeNCP8CWILZ5M1Nk4eJrJZSQSuVojYSQ9Cp6GhZUQg==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4ey3eb93n5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 15:50:58 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2c0b1bb53a8so130255ad.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 08:50:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1782138923; x=1782743723; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cc6r7Lp9vGxajVjEiP+2jWn7h6KCdfXLIQ302v2pvac=;
-        b=ULT2qNR0NkdNp168RtmNVySM+lMEQeW0vjfvgUUgzg6PJ0eyjo/cLNwppR4bucPEBZ
-         AN56tUbwHDtrmqMmoEVNzEmtWveF4BZHkNJ+YRMmtxGbbPUjbG9SpYSp9jB7tTjx7rVv
-         EvbSJhQC144EyLHYjG5UwNcuGA6HZ3VDmd0d3rCli9xuerziNA0+bgKUEvD2sjX9re+3
-         7fFdi6AmUAwgZm3mPlXoyYRnSqEVPx6LeEpp0r+zB9SAI0D2CGYzE+RjIBIcM088dc3T
-         CwU92xjWSAb55Tspj3fcZe6FIpGJ6TbIclhB6uAW3VeqXLJmm8xr6L8uaYybv4hC21dY
-         OMVQ==
+        d=oss.qualcomm.com; s=google; t=1782143457; x=1782748257; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LFwruN8t4Ou5IEqGe/3xdJLoaz/ZKII1FGmDkOw7dSI=;
+        b=EM1dpGWPp3L3V38d4yeMFivl2E0l/dw1A3PrFCGCEzUSvgtTGuRz6F37XgbYf/9Aaw
+         6M7IRWLr09OPEob5AXcefo9zIFRJL8N1BAte/JCQWh8CIxK8uKAb3A/onQGTPnE1DiaR
+         aKl0qbZvl6cm1dOEMAliz4gvVDmXqiHTFergTZoEPNHhx6QOAJuQKXXPgfDvcCbu46bn
+         L+dhxW1LTxeX71VOnvAZqNTq44OPv1sXSCZCt98B2bbC63icj8Hl9Xy1vXG/NpPk+AUR
+         ohq8I3HMUDfVhLgNpiQWB7lwLJ/79QxN/xJJf0/Aqc7+RlGitPXfzsaX6JA4QuEbSBhA
+         HOOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782138923; x=1782743723;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cc6r7Lp9vGxajVjEiP+2jWn7h6KCdfXLIQ302v2pvac=;
-        b=UUv8H1CBzGXOZokW+iFqbQ3nDH5atyjYtp9aLmErUFHvCLimWHBGIONBCmhcTnECFV
-         +THtTdTb3q/Y20y1ORO4iqhkTp8zzuIeaRzj8Sn0XU1eJ/gZ/eYFwEdbBH9NzaJRkxTD
-         kuREl6ta92Bz3tcUcGj7BTTy6A8pX3ggMlqxJVFB4bO4y54f0V2mhESaY8i0VPfuiV3B
-         FC6qwaYMM/uZtOzwDf/X3smxSolx5Y4A/7qZChaQlQllLAup07RX5NOqHGhgvLd9V/hb
-         Pt6UtqYl956Ghgzx51luyZxaj+voI3/AHrPXG/+t3no7cwSfkzX1QDAS/y2V8Uuj9pMh
-         WAjQ==
-X-Forwarded-Encrypted: i=1; AFNElJ96VHxgWro393mh/TP8EskyOebvrvOjgk0qfnWgvnookh8zQgUXJmDrekR36f1eTKJtFSsgS5yN5glJekk7dVro@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpHMFK0O65t4va0ElCSu3f7ZljdFJDzlTj6W11ZXx2yMhWwJ+4
-	yYGwBIsZdrJQa8uPISenFH7lM2mILrcPaRhCbL9RET5CxxmIrBM9p+MPrfSdGqcNJjEQU+4gfgO
-	0hpJZnj2m7Xyq+yM5NfnAYb1ZIXNufEBceblUc/vpBw==
-X-Gm-Gg: AfdE7ck7wwk2kRWYWjcm5LA0gDeOUUOf/g33H5OpDCzPx0w+1L3x1LBV2Wi5vie3Cre
-	0Wa9nHjXP7lKmt58T0x3HWLZ0+2Ozb2/l/Bwz5M+LjRIUD0d1LEQ5cirslZBOLPpToUVZ9EYtGR
-	XslMHgFqMb9PEY0GLqt07tQDXKp8PY7HgHWdSrbBcCwV/aPP2ynJTfFFCV1sa90ooKLJQEJb+3D
-	vAYiFcJsM+NNLu8SKabwapAza7cvHrBis8cRMRZiXd5ci6e10SHMmAhh3NLKVY0nEg41Xt8sa2G
-	u3mw5sAvf9Ny6L64KA9xfGVb7q9ZGi0=
-X-Received: by 2002:a17:907:1c11:b0:c07:ef7f:61a4 with SMTP id
- a640c23a62f3a-c0b6273ff9amr705791366b.39.1782138921273; Mon, 22 Jun 2026
- 07:35:21 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1782143457; x=1782748257;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LFwruN8t4Ou5IEqGe/3xdJLoaz/ZKII1FGmDkOw7dSI=;
+        b=i6fcGywK3r4YBoyCLyAXia5hWmndawZaxB5k53jsL5rDpwNcJVPM4NYZ77RT038Klo
+         wjjdxZd6zaUJ7dKhV8Z69YabinT4r9cQhGHIUz+WmETjk3vD3A+SPvWDkDtWEkSEIqMO
+         BOSvLfV9BLC2so9jSMisxWicg76ODvduPPKX5SU5V9x4KTwG3ywZcy7Oocf57n9HE20j
+         n4sOeW6tiyj9Oy3c9CjysO9nqHmz9EQ+NAD1XIRNyGAltyxDuISq0nbr1COwKNhAMOS7
+         5QpVJOju7hjT6MWHUc96EmTxNWE9QnY6ozuZX5YHcxS1J/Pw+ozD+0SkNtHVozWEEJBW
+         7RuA==
+X-Forwarded-Encrypted: i=1; AHgh+Rq+oW//dp03w3c8cHhRZFYjgJRHCAlFWdFDd4DhaPdvyk7R4K7Zdyy07Na0AWfVJtO7mDJdn7IVtmCTO31xtqo3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUG1i5Svr6mu4BhTrCun9kke6qsixfU4Wnbmzz9kKM5C987q67
+	XvqLNvofVcH4w8xHkSpx+h7wQpW9QEy890OGMEh3k8xCr3bTZvqmQ2HoX4fY6PTRQrmgT2wf4WS
+	h2F1RnjThU31nWSPecvOhi+AiANWu3atKgQ26ZqkiXeNKRn2UovqRIUqEC6g+0nKGSXqYZloY
+X-Gm-Gg: AfdE7clNkIOTfbNxv1jw7ZkNMxQWYZ1Eu3HlAPlH6AGRDE/eYWZgBl62zGWyg5Tw6R8
+	/EzWC1TDRMZ+TnyWYPceMniBU3jfPxrrQ8sSYlyuSHZO32sbpavtE8vWq0LTvHlLirmdKiCi/wc
+	RDq3YJN2VMwWPFo6/oVoaL1BHlHuV1e7Y4l8XCvYwXA3Kn+gRzD+ho/TpuLfN27099YiZIW1x6U
+	KH1bUYTRFwZFBQgaYfWd398/++K5g2V1yKH+k5/BxjpkR0GE6yVtMiYiTVe2klDQ9D5c3B+c556
+	JU9z702MEs3UZ4RZl1Zh/fsNv4XF1Yu/eSIXlzCkh1CpVS8mTxvPWp7tT2hMUREPoP+OiBtyTxq
+	U66vMZkQ4pTld1xsEfAd1fZeMKXayuxcYbJLr/w==
+X-Received: by 2002:a17:903:28e:b0:2c0:af11:5cef with SMTP id d9443c01a7336-2c7c3edc1d4mr152145ad.15.1782143456967;
+        Mon, 22 Jun 2026 08:50:56 -0700 (PDT)
+X-Received: by 2002:a17:903:28e:b0:2c0:af11:5cef with SMTP id d9443c01a7336-2c7c3edc1d4mr151835ad.15.1782143456343;
+        Mon, 22 Jun 2026 08:50:56 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c743bfe441sm83075755ad.62.2026.06.22.08.50.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jun 2026 08:50:55 -0700 (PDT)
+Date: Mon, 22 Jun 2026 21:20:50 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] remoteproc: qcom: fix sparse warnings for __iomem
+ annotated mem_region
+Message-ID: <20260622155050.yvgffdapdjb5f4fh@hu-mojha-hyd.qualcomm.com>
+References: <20260430191253.4052025-1-mukesh.ojha@oss.qualcomm.com>
+ <20260430191253.4052025-2-mukesh.ojha@oss.qualcomm.com>
+ <62c91b74-ca1b-44be-8771-669aa686ddbe@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260610182711.1758544-1-tanmay.shah@amd.com> <20260610182711.1758544-3-tanmay.shah@amd.com>
- <ajFzbDgrCbWL8-ds@p14s> <f4809485-91d8-49c2-bed9-0d3bd0172cff@amd.com>
-In-Reply-To: <f4809485-91d8-49c2-bed9-0d3bd0172cff@amd.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 22 Jun 2026 08:35:09 -0600
-X-Gm-Features: AVVi8Cf052iLuY_mu1T_KasoU1qHYjMFWlaR5kaDnpVyfQvi4lxBS0uVaKtT8rY
-Message-ID: <CANLsYkxXvsFsVw-8u83rqSRePqx6nWmKyKyPh+RvxYV3e=t9eA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] remoteproc: xlnx: add crash detection mechanism
-To: tanmay.shah@amd.com
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62c91b74-ca1b-44be-8771-669aa686ddbe@oss.qualcomm.com>
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIyMDE1NyBTYWx0ZWRfX8YAFI6cHdTcj
+ ts1BT2yAbhKfumr44A+CAkXw08gsV9+RO23MhktrbUy0CU7kF3NteTK5KThE+5ys2JhHq9LYPIH
+ PCo3CbmwMpBgZsyiWRRSk7RVSKbBklA=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIyMDE1NyBTYWx0ZWRfX+NaIKmqTW8vp
+ srUd8MGfKE4DZO4/DmTOsnVRESXcJ1yAAH/E/qhgtSqoQjLq78SBaYVGdk9Ko3AHE6m5SkZA6Xe
+ CnP1GIBVQSK44ObtPvA1VqFrdrNKZxHkiQQ9HB4lIm1yoKxhG5AZ9KuH0DZenDylRm0p6dtNtY7
+ 1d3xyZVvqytgP8x6K5C8tNZksHegnF7fJhmzP9AqJiTrIVW+aiI5ppFh90l4HsMJbEL2ZH5W15R
+ sdmgYI8/RjlnWmo2lGepvQ9GJmr/oDWkvcmuc+MWi8Oik7oiH1vTtMeqVTnS0Q7X7FIPfCqA8Hg
+ d8faI92+ZrprNTw9B96UVJLz2DwKPkzWtlNFIFRL2pQ90zewUDolfN57Q/9Ai5VK4whAFHIMT0k
+ NqJ7iZ7kNlvDNyYMfU+CxWTYC4t2va1G6uwpRR/qCDTX9fKOCaU9cf3/k+SGpifa6Vzcw7fLevH
+ ZiVTnGY3Fp3yN9yVdvg==
+X-Authority-Analysis: v=2.4 cv=ILIyzAvG c=1 sm=1 tr=0 ts=6a3959e2 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=Leim0v9d-cC2b6exvXIA:9 a=CjuIK1q_8ugA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-GUID: ksSl7WN9dMZ_omSxgIe0F6IWS_4k0wHB
+X-Proofpoint-ORIG-GUID: ksSl7WN9dMZ_omSxgIe0F6IWS_4k0wHB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
+ definitions=2026-06-22_03,2026-06-22_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606220157
 
-On Tue, 16 Jun 2026 at 13:52, Shah, Tanmay <tanmays@amd.com> wrote:
->
-> Hello,
->
-> Please find my comments below:
->
-> On 6/16/2026 11:01 AM, Mathieu Poirier wrote:
-> > On Wed, Jun 10, 2026 at 11:27:11AM -0700, Tanmay Shah wrote:
-> >> Remote processor will report the crash reason via the resource table
-> >> and notify the host via mailbox notification. The host checks this
-> >> crash reason on every mailbox notification from the remote and report
-> >> to the rproc core framework. Then the rproc core framework will start
-> >> the recovery process.
-> >>
-> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
-> >> ---
-> >>
-> >> changes in v5
-> >>   - use local variable to access crash report pointer
-> >>   - End crash report string with '\0' without relying on fw
-> >>
-> >>  drivers/remoteproc/xlnx_r5_remoteproc.c | 73 ++++++++++++++++++++++++-
-> >>  1 file changed, 72 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> index 3349d1877751..86afff9f3b40 100644
-> >> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> >> @@ -112,6 +112,10 @@ struct rsc_tbl_data {
-> >>      const uintptr_t rsc_tbl;
-> >>  } __packed;
-> >>
-> >> +enum xlnx_rproc_fw_rsc {
-> >> +    XLNX_RPROC_FW_CRASH_REASON = RSC_VENDOR_START,
-> >
-> > I would call this XLNX_RPROC_FW_CRASH_REPORT
-> >
->
-> Ack.
->
-> >> +};
-> >> +
-> >>  /*
-> >>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
-> >>   * compatibility with device-tree that does not have TCM information.
-> >> @@ -131,9 +135,27 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> >>      {0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
-> >>  };
-> >>
-> >> +#define CRASH_REASON_STR_LEN 16
-> >> +
-> >> +/**
-> >> + * struct xlnx_rproc_crash_report - resource to know crash status and reason
-> >> + *
-> >> + * @version: version of this resource
-> >> + * @crash_state: if true, the rproc is notifying crash, time to recover
-> >> + * @crash_reason: number to describe reason of crash
-> >> + * @crash_reason_str: short string description of crash reason
-> >> + */
-> >> +struct xlnx_rproc_crash_report {
-> >> +    u8 version;
-> >> +    u8 crash_state;
-> >> +    u8 crash_reason;
-> >
-> > Do you need 2 variables?  Would it be possible for @crash_reason != 0 to
-> > indicate a crash, making @cash_state irrelevant?
-> >
->
-> Actually initially I had defined crash_reason only, but when I looked at
-> how crash reason/type is defined in the kernel, I got idea to keep
-> crash_state separate than crash_reason:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/include/linux/remoteproc.h?h=for-next#n183
->
-> enum rproc_crash_type {
->         RPROC_MMUFAULT,
->         RPROC_WATCHDOG,
->         RPROC_FATAL_ERROR,
-> };
->
-> So, if crash_reason is defined like above, then it's easy to make
-> mistake and not define no_crash = 0. Different firmware projects can
-> treat crash_reason differently. I would like to keep crash_state and
-> crash_reason separate and not impose policy on firmware projects on how
-> to define crash_reason.
->
+On Thu, Jun 18, 2026 at 03:53:22PM +0200, Konrad Dybcio wrote:
+> On 4/30/26 9:12 PM, Mukesh Ojha wrote:
+> > The firmware memory regions in qcom_adsp, qcom_pas and qcom_wcnss are
+> > mapped using devm_ioremap_wc() / devm_ioremap_resource_wc(), which
+> > return void __iomem *. However, the mem_region (and dtb_mem_region)
+> > fields in the respective driver structs were declared as plain void *,
+> > causing sparse to flag address space mismatches:
+> > 
+> > qcom_q6v5_adsp.c:639:26: warning: incorrect type in assignment (different address spaces)
+> > qcom_q6v5_adsp.c:639:26:    expected void *mem_region
+> > qcom_q6v5_adsp.c:639:26:    got void [noderef] __iomem *
+> > qcom_q6v5_pas.c:141:45: warning: incorrect type in argument 2 (different address spaces)
+> > qcom_q6v5_pas.c:141:45:    expected void const volatile [noderef] __iomem *src
+> > qcom_q6v5_pas.c:141:45:    got void *
+> > qcom_q6v5_pas.c:637:25: warning: incorrect type in assignment (different address spaces)
+> > qcom_q6v5_pas.c:637:25:    expected void *mem_region
+> > qcom_q6v5_pas.c:637:25:    got void [noderef] __iomem *
+> > qcom_q6v5_pas.c:654:29: warning: incorrect type in assignment (different address spaces)
+> > qcom_q6v5_pas.c:654:29:    expected void *dtb_mem_region
+> > qcom_q6v5_pas.c:654:29:    got void [noderef] __iomem *
+> > qcom_wcnss.c:540:27: warning: incorrect type in assignment (different address spaces)
+> > qcom_wcnss.c:540:27:    expected void *mem_region
+> > qcom_wcnss.c:540:27:    got void [noderef] __iomem *
+> > 
+> > Fix this by annotating the struct fields with __iomem to correctly
+> > reflect the address space of the underlying mapping.
+> > 
+> > These regions are subsequently passed to qcom_mdt_load(),
+> > qcom_mdt_load_no_init() and qcom_mdt_pas_load(), all of which take
+> > void * and use plain memcpy()/memset() internally to write firmware
+> > segments into the region. This is intentional and safe: the mappings
+> > are write-combining (WC), which on arm64 permits bulk CPU stores
+> > without requiring the memcpy_toio()/memset_io() accessors. Changing
+> > the MDT loader API to accept void __iomem * would be a more invasive
+> > change and would affect callers.
+> 
+> Zooming out a bit more, should we even be ioremapping these regions
+> in the first place? Are they not just RAM/Normal Memory in arm parlance?
 
-Thanks for the explanation.  I'll think about that a little longer.
+Yes, ioremap may not be required. Don't know why it was kept in the
+initial implementation, as for most Qualcomm SoCs this is going to be
+normal RAM and not SRAM or something, while other implementations like
+qcom_q6v5_mss still use memremap with MEMREMAP_WC.
 
-> >> +    char crash_reason_str[CRASH_REASON_STR_LEN];
-> >> +} __packed;
-> >> +
-> >>  /**
-> >>   * struct zynqmp_r5_core - remoteproc core's internal data
-> >>   *
-> >> + * @crash_report: rproc crash state and reason
-> >>   * @rsc_tbl_va: resource table virtual address
-> >>   * @sram: Array of sram memories assigned to this core
-> >>   * @num_sram: number of sram for this core
-> >> @@ -147,6 +169,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
-> >>   * @ipi: pointer to mailbox information
-> >>   */
-> >>  struct zynqmp_r5_core {
-> >> +    struct xlnx_rproc_crash_report *crash_report;
-> >>      void __iomem *rsc_tbl_va;
-> >>      struct zynqmp_sram_bank *sram;
-> >>      int num_sram;
-> >> @@ -204,11 +227,27 @@ static int event_notified_idr_cb(int id, void *ptr, void *data)
-> >>   */
-> >>  static void handle_event_notified(struct work_struct *work)
-> >>  {
-> >> +    struct xlnx_rproc_crash_report *report;
-> >> +    struct zynqmp_r5_core *r5_core;
-> >>      struct mbox_info *ipi;
-> >>      struct rproc *rproc;
-> >>
-> >>      ipi = container_of(work, struct mbox_info, mbox_work);
-> >>      rproc = ipi->r5_core->rproc;
-> >> +    r5_core = ipi->r5_core;
-> >> +    report = r5_core->crash_report;
-> >> +
-> >> +    /* report crash only if expected */
-> >> +    if (report && report->crash_state) {
-> >> +            if (rproc->state == RPROC_ATTACHED || rproc->state == RPROC_RUNNING) {
-> >> +                    report->crash_reason_str[CRASH_REASON_STR_LEN - 1] = '\0';
-> >> +                    dev_warn(&rproc->dev, "crash reason id: %d %s\n",
-> >> +                             report->crash_reason, report->crash_reason_str);
-> >> +                    rproc_report_crash(rproc, RPROC_FATAL_ERROR);
-> >> +                    report->crash_state = false;
-> >> +                    return;
-> >> +            }
-> >> +    }
-> >>
-> >>      /*
-> >>       * We only use IPI for interrupt. The RPU firmware side may or may
-> >> @@ -448,6 +487,13 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
-> >>      if (ret)
-> >>              dev_err(r5_core->dev, "core force power down failed\n");
-> >>
-> >> +    /*
-> >> +     * Clear attach on recovery flag during stop operation. The next state
-> >> +     * of the remote processor is expected to be "Running" state. In this
-> >> +     * state boot recovery method must take place over attach on recovery.
-> >> +     */
-> >> +    test_and_clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
-> >
-> > Why is there a need to play set/clear the RPROC_FEAT_ATTACH_ON_RECOVERY flag
-> > here and in zynqmp_r5_attach() and zynqmp_r5_detach()?  I think we talked about
-> > that before but can't remember the outcome of that conversation.
-> >
->
-> The remote processor can go through following life cycle:
->
-> attach() -> stop() -> start(). When this happens, ATTACH_ON_RECOVERY is
-> not valid anymore. At this point, it should be BOOT_RECOVERY which is
-> indicated by clearing ATTACH_RECOVERY flag. That is why it is important
-> to clear this bit on stop().
->
+> 
+> Would switching to devm_memremap(, MEMREMAP_WC) (like we do in RMTFS
+> today) be an even better solution here?
 
-Here too I'd like to review the current state machine.  I'll get back
-to you shortly.
+This looks fine and I do not see any immediate impact; however, I would
+like to hear from Bjorn on this, if there is any history..
 
-> Now in detach() it is not needed. I am just clearing the flag as part of
-> a cleanup sequence.
->
->  >> +
-> >>      return ret;
-> >>  }
-> >>
-> >> @@ -869,6 +915,9 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-> >>
-> >>  static int zynqmp_r5_attach(struct rproc *rproc)
-> >>  {
-> >> +    /* Enable attach on recovery method. Clear it during rproc stop. */
-> >> +    rproc_set_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
-> >> +
-> >>      dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
-> >>
-> >>      return 0;
-> >> @@ -883,9 +932,30 @@ static int zynqmp_r5_detach(struct rproc *rproc)
-> >>       */
-> >>      zynqmp_r5_rproc_kick(rproc, 0);
-> >>
-> >> +    clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
-> >> +
-> >>      return 0;
-> >>  }
-> >>
-> >> +static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
-> >> +                            int offset, int avail)
-> >> +{
-> >> +    struct zynqmp_r5_core *r5_core = rproc->priv;
-> >> +    void *rsc_offset = (r5_core->rsc_tbl_va + offset);
-> >> +
-> >
-> >         if (rsc_type != XLNX_RPROC_FW_CRASH_REASON)
-> >                 return RSC_IGNORED;
-> >
->
-> Ack.
->
-> >> +    if (rsc_type == XLNX_RPROC_FW_CRASH_REASON) {
-> >> +            r5_core->crash_report = rsc_offset;
-> >> +            /* reset all values */
-> >> +            r5_core->crash_report->crash_state = false;
-> >> +            r5_core->crash_report->crash_reason = 0;
-> >> +            r5_core->crash_report->crash_reason_str[0] = '\0';
-> >> +    } else {
-> >> +            return RSC_IGNORED;
-> >> +    }
-> >> +
-> >> +    return RSC_HANDLED;
-> >> +}
-> >> +
-> >>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
-> >>      .prepare        = zynqmp_r5_rproc_prepare,
-> >>      .unprepare      = zynqmp_r5_rproc_unprepare,
-> >> @@ -900,6 +970,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
-> >>      .get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
-> >>      .attach         = zynqmp_r5_attach,
-> >>      .detach         = zynqmp_r5_detach,
-> >> +    .handle_rsc     = zynqmp_r5_handle_rsc,
-> >>  };
-> >>
-> >>  /**
-> >> @@ -939,7 +1010,7 @@ static struct zynqmp_r5_core *zynqmp_r5_alloc_rproc_core(struct device *cdev)
-> >>
-> >>      rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
-> >>
-> >> -    r5_rproc->recovery_disabled = true;
-> >> +    r5_rproc->recovery_disabled = false;
-> >
-> > I'm good with the overall architecture of this set.
-> >
->
-> Okay. If above comments looks good, I will send v6 soon.
->
-> > Regards,
-> > Mathieu
-> >
-> >>      r5_rproc->has_iommu = false;
-> >>      r5_rproc->auto_boot = false;
-> >>
-> >> --
-> >> 2.34.1
-> >>
->
+-- 
+-Mukesh Ojha
