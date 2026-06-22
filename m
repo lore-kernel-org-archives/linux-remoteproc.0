@@ -1,378 +1,342 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C9D3BB12F;
-	Mon, 22 Jun 2026 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782136772; cv=none; b=XhlnNXKYM+WDwbIovAi5bERdAzLhHLRYCmEGHWFa30IRntUqK+oF0IlRZY646g4pukahLHTGlmKB8dPFl8/rDaMZW/cDmAzErAwIKuHcDLv9yNT69qQqZ8wsRnGaBOf9kn4B6XAR3drsWClsNNeybByUM579eCuldkh0FgpInYY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782136772; c=relaxed/simple;
-	bh=FQE09fR0Ixu5Bl2Umm/99gcUwTCewvCEHOO3SMAKm+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSbuc4Gpvva7TZ46GDkYnbnwbLUVGGoFG3VOvUHTi3MKFIjnKiwvWwxE8Wmp1NEnESVUOfPhO26fNAWPw1aBYhNPBjONB+2vid/6WW+8z58DWBk4+Wsd0y9+Vgfb5K44a8wfRBiyLrA7NDIu9LhilRhmKYv3/A4cBle+WKbHw2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=pass smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YG6XSx1B; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E5B3B9D98
+	for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 14:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782138926; cv=pass; b=OuLZB5PzNkvYq1ryEzpTloqX7e+nsfZf91S8G/0dlfAqZWJ/nfR0Kx9BrNWoWskdnIpFtpDu7oubUdug1s/Ku9mQqEaO2Qn5cKfiyWPV0pRszGmi+tku/Jl1wjQcRNMltzYPEoqdrfO03JkfgdQ4cGqQIiR632swKlWb+8X+pwE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782138926; c=relaxed/simple;
+	bh=ikHoNKliLry32LoDV0kQcgRAP5K54uiDSjkfPFbX4Ro=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OecN86JjrQ4GGvcZYNHHKch7UWsk2ufJ5ASww5NZHy4BVvmYTjXIsQJjjpi7s/r57pL15T/DpiNAczYbLPpUAbDMnV9pOm5NAJSNd+0dM4pZQ3l5ahKBIwTPuwKe+yh0R2TNaUeyFJxV5xs8zaDO1wHrLw5P+PV8IvIpSVjvwfs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ULT2qNR0; arc=pass smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YG6XSx1B"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=16eXztzjvZz9uTEFcy3hhq0oL9gQGsESCUoQ/xCycio=; b=YG6XSx1BLx6vyZ0VAj2ajDZ1Ti
-	3BjGc0CKaz/I9U8nKkepT16/Hl/J9xaXxNJtDtnnJMS+gQ8lLL789ijeUd6DSRU+F9zMVBsAB8fcB
-	7ejtybN9oEJaC5XlmNoxIfOMiZ/v7lErBiWzF8v2sTobEowoLICDVaNyJuyIImEW7z6WLlcf0v112
-	Y/E4KThAi8Cd60R4bFGc4iPCu7dbk+YaJ3j+eRnmIhheN5WvfK1n45OHba+o5D/kt1I83f3OF7v09
-	iegQKiVhktxtGNJQx6987WAY8m4h5XV3TCjr2QTFEEdGZNt1cOUah4Wz2wuBu8r5x+5DGgkOIp8Yk
-	c1hvU8Og==;
-Received: from willy by casper.infradead.org with local (Exim 4.99.1 #2 (Red Hat Linux))
-	id 1wbfBM-00000004LOh-080h;
-	Mon, 22 Jun 2026 13:59:24 +0000
-Date: Mon, 22 Jun 2026 14:59:23 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: Re: [PATCH v2 0/4] hwspinlock: add summary in debugfs
-Message-ID: <ajk_u7TVT-kL8z2A@casper.infradead.org>
-References: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ULT2qNR0"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-bed19623d6eso645273466b.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 22 Jun 2026 07:35:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782138923; cv=none;
+        d=google.com; s=arc-20240605;
+        b=lTgokvMX8i2gfTIvlWEtMrpTF+PeBSV6lSTUz6lCu2cOBpLVKHQ2LxvzN2yBYR5tph
+         WppUXOn+4347EKwl0TcJinvyaZGuB+rRzS3o9oq3liK/sl4xxlhyvQ5AVPt/QS8GtBPq
+         Zl5tNoW3GVyvhXF2hYsoYGqVaR5PPnKepOGH5xwxAqPaN75JtjdA2s6RG1pltUScJ0T6
+         9wfwfiRdsS7NI34k4tYbg74osK8JWkv6Xi3Ms71Fa7iTw5EK6lvnaNW3RsePNrpWuqDm
+         Pmy4FCzghgYRnruEybLM4LgCFKslS8f3yDHKbfR1wPctTW6MUZmSOz9W3UDTfD1qSfpe
+         PIQw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=Cc6r7Lp9vGxajVjEiP+2jWn7h6KCdfXLIQ302v2pvac=;
+        fh=CJ7dDDKFqZW91EDkd/gMpMm7SGXCjmSZJHKTF3bfgSA=;
+        b=UhMtFgcAkr/UQoaX0Dlx7xvqx1Kf62aGEMzJKtTau0ArsbFuklrIlznjHOU1ygH9lA
+         G5wRwZkMxtUdKLcWd9h4WP/iiyS2KaGiM2OL5M4vwlqv2LgJYojEAtENUyG3nUjcWLFn
+         IbdyWoCtk3tlNBLIWtHcsgsOYas0zxNzUg+0UzxFXLmfC3jZviS2RECjdWifYYBEhuS+
+         NOy8Lfh0mPpEe7mRMwOuTe+nZOV/2CE+Q3jt3Q0fw40MinQAfouwWAdlneV8E+9YyLIg
+         C4m0A+A2gVSQln7qwcG1HOhTi8vzB8K136eyNC30FAOKP1oU9cTNPMvqo+HSgMEqmFC2
+         zp+Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1782138923; x=1782743723; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cc6r7Lp9vGxajVjEiP+2jWn7h6KCdfXLIQ302v2pvac=;
+        b=ULT2qNR0NkdNp168RtmNVySM+lMEQeW0vjfvgUUgzg6PJ0eyjo/cLNwppR4bucPEBZ
+         AN56tUbwHDtrmqMmoEVNzEmtWveF4BZHkNJ+YRMmtxGbbPUjbG9SpYSp9jB7tTjx7rVv
+         EvbSJhQC144EyLHYjG5UwNcuGA6HZ3VDmd0d3rCli9xuerziNA0+bgKUEvD2sjX9re+3
+         7fFdi6AmUAwgZm3mPlXoyYRnSqEVPx6LeEpp0r+zB9SAI0D2CGYzE+RjIBIcM088dc3T
+         CwU92xjWSAb55Tspj3fcZe6FIpGJ6TbIclhB6uAW3VeqXLJmm8xr6L8uaYybv4hC21dY
+         OMVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1782138923; x=1782743723;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cc6r7Lp9vGxajVjEiP+2jWn7h6KCdfXLIQ302v2pvac=;
+        b=UUv8H1CBzGXOZokW+iFqbQ3nDH5atyjYtp9aLmErUFHvCLimWHBGIONBCmhcTnECFV
+         +THtTdTb3q/Y20y1ORO4iqhkTp8zzuIeaRzj8Sn0XU1eJ/gZ/eYFwEdbBH9NzaJRkxTD
+         kuREl6ta92Bz3tcUcGj7BTTy6A8pX3ggMlqxJVFB4bO4y54f0V2mhESaY8i0VPfuiV3B
+         FC6qwaYMM/uZtOzwDf/X3smxSolx5Y4A/7qZChaQlQllLAup07RX5NOqHGhgvLd9V/hb
+         Pt6UtqYl956Ghgzx51luyZxaj+voI3/AHrPXG/+t3no7cwSfkzX1QDAS/y2V8Uuj9pMh
+         WAjQ==
+X-Forwarded-Encrypted: i=1; AFNElJ96VHxgWro393mh/TP8EskyOebvrvOjgk0qfnWgvnookh8zQgUXJmDrekR36f1eTKJtFSsgS5yN5glJekk7dVro@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpHMFK0O65t4va0ElCSu3f7ZljdFJDzlTj6W11ZXx2yMhWwJ+4
+	yYGwBIsZdrJQa8uPISenFH7lM2mILrcPaRhCbL9RET5CxxmIrBM9p+MPrfSdGqcNJjEQU+4gfgO
+	0hpJZnj2m7Xyq+yM5NfnAYb1ZIXNufEBceblUc/vpBw==
+X-Gm-Gg: AfdE7ck7wwk2kRWYWjcm5LA0gDeOUUOf/g33H5OpDCzPx0w+1L3x1LBV2Wi5vie3Cre
+	0Wa9nHjXP7lKmt58T0x3HWLZ0+2Ozb2/l/Bwz5M+LjRIUD0d1LEQ5cirslZBOLPpToUVZ9EYtGR
+	XslMHgFqMb9PEY0GLqt07tQDXKp8PY7HgHWdSrbBcCwV/aPP2ynJTfFFCV1sa90ooKLJQEJb+3D
+	vAYiFcJsM+NNLu8SKabwapAza7cvHrBis8cRMRZiXd5ci6e10SHMmAhh3NLKVY0nEg41Xt8sa2G
+	u3mw5sAvf9Ny6L64KA9xfGVb7q9ZGi0=
+X-Received: by 2002:a17:907:1c11:b0:c07:ef7f:61a4 with SMTP id
+ a640c23a62f3a-c0b6273ff9amr705791366b.39.1782138921273; Mon, 22 Jun 2026
+ 07:35:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+References: <20260610182711.1758544-1-tanmay.shah@amd.com> <20260610182711.1758544-3-tanmay.shah@amd.com>
+ <ajFzbDgrCbWL8-ds@p14s> <f4809485-91d8-49c2-bed9-0d3bd0172cff@amd.com>
+In-Reply-To: <f4809485-91d8-49c2-bed9-0d3bd0172cff@amd.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Mon, 22 Jun 2026 08:35:09 -0600
+X-Gm-Features: AVVi8Cf052iLuY_mu1T_KasoU1qHYjMFWlaR5kaDnpVyfQvi4lxBS0uVaKtT8rY
+Message-ID: <CANLsYkxXvsFsVw-8u83rqSRePqx6nWmKyKyPh+RvxYV3e=t9eA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/2] remoteproc: xlnx: add crash detection mechanism
+To: tanmay.shah@amd.com
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 22, 2026 at 10:51:59AM +0200, Wolfram Sang wrote:
-> Renesas R-Car SoCs have their spinlocks inside a unit called MFIS. Up to
-> R-Car Gen4, there was only one MFIS unit on the SoC. Gen5, though, has
-> multiple instances and, thus, multiple spinlock providers. The spinlocks
-> are meant for specific cases (AP<->AP, AP<->RT, AP<->SCP...). For
-> development on these systems, it is helpful to have an overview of
-> registered spinlocks in debugfs. This series adds support for that. The
-> first two patches update the radix-tree header to support more lock
-> types. The third patch fixes a missing RCU annotation for the slot
-> pointer. The fourth patch finally adds the desired functionality.
-> 
-> Because the radix tree seems to have no dedicated tree nor maintainer, I
-> suggest that all these patches go in via hwspinlock. This also keeps the
-> dependencies zero.
+On Tue, 16 Jun 2026 at 13:52, Shah, Tanmay <tanmays@amd.com> wrote:
+>
+> Hello,
+>
+> Please find my comments below:
+>
+> On 6/16/2026 11:01 AM, Mathieu Poirier wrote:
+> > On Wed, Jun 10, 2026 at 11:27:11AM -0700, Tanmay Shah wrote:
+> >> Remote processor will report the crash reason via the resource table
+> >> and notify the host via mailbox notification. The host checks this
+> >> crash reason on every mailbox notification from the remote and report
+> >> to the rproc core framework. Then the rproc core framework will start
+> >> the recovery process.
+> >>
+> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >> ---
+> >>
+> >> changes in v5
+> >>   - use local variable to access crash report pointer
+> >>   - End crash report string with '\0' without relying on fw
+> >>
+> >>  drivers/remoteproc/xlnx_r5_remoteproc.c | 73 ++++++++++++++++++++++++-
+> >>  1 file changed, 72 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >> index 3349d1877751..86afff9f3b40 100644
+> >> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> >> @@ -112,6 +112,10 @@ struct rsc_tbl_data {
+> >>      const uintptr_t rsc_tbl;
+> >>  } __packed;
+> >>
+> >> +enum xlnx_rproc_fw_rsc {
+> >> +    XLNX_RPROC_FW_CRASH_REASON = RSC_VENDOR_START,
+> >
+> > I would call this XLNX_RPROC_FW_CRASH_REPORT
+> >
+>
+> Ack.
+>
+> >> +};
+> >> +
+> >>  /*
+> >>   * Hardcoded TCM bank values. This will stay in driver to maintain backward
+> >>   * compatibility with device-tree that does not have TCM information.
+> >> @@ -131,9 +135,27 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+> >>      {0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+> >>  };
+> >>
+> >> +#define CRASH_REASON_STR_LEN 16
+> >> +
+> >> +/**
+> >> + * struct xlnx_rproc_crash_report - resource to know crash status and reason
+> >> + *
+> >> + * @version: version of this resource
+> >> + * @crash_state: if true, the rproc is notifying crash, time to recover
+> >> + * @crash_reason: number to describe reason of crash
+> >> + * @crash_reason_str: short string description of crash reason
+> >> + */
+> >> +struct xlnx_rproc_crash_report {
+> >> +    u8 version;
+> >> +    u8 crash_state;
+> >> +    u8 crash_reason;
+> >
+> > Do you need 2 variables?  Would it be possible for @crash_reason != 0 to
+> > indicate a crash, making @cash_state irrelevant?
+> >
+>
+> Actually initially I had defined crash_reason only, but when I looked at
+> how crash reason/type is defined in the kernel, I got idea to keep
+> crash_state separate than crash_reason:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git/tree/include/linux/remoteproc.h?h=for-next#n183
+>
+> enum rproc_crash_type {
+>         RPROC_MMUFAULT,
+>         RPROC_WATCHDOG,
+>         RPROC_FATAL_ERROR,
+> };
+>
+> So, if crash_reason is defined like above, then it's easy to make
+> mistake and not define no_crash = 0. Different firmware projects can
+> treat crash_reason differently. I would like to keep crash_state and
+> crash_reason separate and not impose policy on firmware projects on how
+> to define crash_reason.
+>
 
-The radix tree is deprecated.  I don't want to add any new functionality
-to it.  Here's a replacement patch to convert hwspinlock to use an
-XArray instead of a radix tree.  Compile tested only.
+Thanks for the explanation.  I'll think about that a little longer.
 
-From 8ec88ed466e8153f546f7e8e69193cd5389488ee Mon Sep 17 00:00:00 2001
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Date: Mon, 22 Jun 2026 09:38:30 -0400
-Subject: [PATCH] hwspinlock: Convert to XArray
+> >> +    char crash_reason_str[CRASH_REASON_STR_LEN];
+> >> +} __packed;
+> >> +
+> >>  /**
+> >>   * struct zynqmp_r5_core - remoteproc core's internal data
+> >>   *
+> >> + * @crash_report: rproc crash state and reason
+> >>   * @rsc_tbl_va: resource table virtual address
+> >>   * @sram: Array of sram memories assigned to this core
+> >>   * @num_sram: number of sram for this core
+> >> @@ -147,6 +169,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+> >>   * @ipi: pointer to mailbox information
+> >>   */
+> >>  struct zynqmp_r5_core {
+> >> +    struct xlnx_rproc_crash_report *crash_report;
+> >>      void __iomem *rsc_tbl_va;
+> >>      struct zynqmp_sram_bank *sram;
+> >>      int num_sram;
+> >> @@ -204,11 +227,27 @@ static int event_notified_idr_cb(int id, void *ptr, void *data)
+> >>   */
+> >>  static void handle_event_notified(struct work_struct *work)
+> >>  {
+> >> +    struct xlnx_rproc_crash_report *report;
+> >> +    struct zynqmp_r5_core *r5_core;
+> >>      struct mbox_info *ipi;
+> >>      struct rproc *rproc;
+> >>
+> >>      ipi = container_of(work, struct mbox_info, mbox_work);
+> >>      rproc = ipi->r5_core->rproc;
+> >> +    r5_core = ipi->r5_core;
+> >> +    report = r5_core->crash_report;
+> >> +
+> >> +    /* report crash only if expected */
+> >> +    if (report && report->crash_state) {
+> >> +            if (rproc->state == RPROC_ATTACHED || rproc->state == RPROC_RUNNING) {
+> >> +                    report->crash_reason_str[CRASH_REASON_STR_LEN - 1] = '\0';
+> >> +                    dev_warn(&rproc->dev, "crash reason id: %d %s\n",
+> >> +                             report->crash_reason, report->crash_reason_str);
+> >> +                    rproc_report_crash(rproc, RPROC_FATAL_ERROR);
+> >> +                    report->crash_state = false;
+> >> +                    return;
+> >> +            }
+> >> +    }
+> >>
+> >>      /*
+> >>       * We only use IPI for interrupt. The RPU firmware side may or may
+> >> @@ -448,6 +487,13 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+> >>      if (ret)
+> >>              dev_err(r5_core->dev, "core force power down failed\n");
+> >>
+> >> +    /*
+> >> +     * Clear attach on recovery flag during stop operation. The next state
+> >> +     * of the remote processor is expected to be "Running" state. In this
+> >> +     * state boot recovery method must take place over attach on recovery.
+> >> +     */
+> >> +    test_and_clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
+> >
+> > Why is there a need to play set/clear the RPROC_FEAT_ATTACH_ON_RECOVERY flag
+> > here and in zynqmp_r5_attach() and zynqmp_r5_detach()?  I think we talked about
+> > that before but can't remember the outcome of that conversation.
+> >
+>
+> The remote processor can go through following life cycle:
+>
+> attach() -> stop() -> start(). When this happens, ATTACH_ON_RECOVERY is
+> not valid anymore. At this point, it should be BOOT_RECOVERY which is
+> indicated by clearing ATTACH_RECOVERY flag. That is why it is important
+> to clear this bit on stop().
+>
 
-The radix tree is deprecated.  The XArray uses the same data structure
-with a nicer interface.  The hwspinlock_tree_lock is not needed as the
-spinlock built into the XArray is sufficient for all these cases.
+Here too I'd like to review the current state machine.  I'll get back
+to you shortly.
 
-hwspin_lock_register_single() used to always return 0.  Its caller
-thinks it can return an errno, so I believe this to be a bug and so I
-have restored its ability to return an error.
-
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- drivers/hwspinlock/hwspinlock_core.c | 133 ++++++++++-----------------
- 1 file changed, 50 insertions(+), 83 deletions(-)
-
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index cc8e952a6772..1dd68b8410dd 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -16,7 +16,7 @@
- #include <linux/types.h>
- #include <linux/err.h>
- #include <linux/jiffies.h>
--#include <linux/radix-tree.h>
-+#include <linux/xarray.h>
- #include <linux/hwspinlock.h>
- #include <linux/pm_runtime.h>
- #include <linux/mutex.h>
-@@ -27,34 +27,21 @@
- /* retry delay used in atomic context */
- #define HWSPINLOCK_RETRY_DELAY_US	100
- 
--/* radix tree tags */
--#define HWSPINLOCK_UNUSED	(0) /* tags an hwspinlock as unused */
-+/* XArray search mark */
-+#define HWSPINLOCK_UNUSED	XA_MARK_0 /* marks a hwspinlock as unused */
- 
- /*
-- * A radix tree is used to maintain the available hwspinlock instances.
-+ * An XArray is used to maintain the available hwspinlock instances.
-  * The tree associates hwspinlock pointers with their integer key id,
-  * and provides easy-to-use API which makes the hwspinlock core code simple
-  * and easy to read.
-  *
-- * Radix trees are quick on lookups, and reasonably efficient in terms of
-+ * XArrays are quick on lookups, and reasonably efficient in terms of
-  * storage, especially with high density usages such as this framework
-  * requires (a continuous range of integer keys, beginning with zero, is
-- * used as the ID's of the hwspinlock instances).
-- *
-- * The radix tree API supports tagging items in the tree, which this
-- * framework uses to mark unused hwspinlock instances (see the
-- * HWSPINLOCK_UNUSED tag above). As a result, the process of querying the
-- * tree, looking for an unused hwspinlock instance, is now reduced to a
-- * single radix tree API call.
-- */
--static RADIX_TREE(hwspinlock_tree, GFP_KERNEL);
--
--/*
-- * Synchronization of access to the tree is achieved using this mutex,
-- * as the radix-tree API requires that users provide all synchronisation.
-- * A mutex is needed because we're using non-atomic radix tree allocations.
-+ * used as the ID of the hwspinlock instances).
-  */
--static DEFINE_MUTEX(hwspinlock_tree_lock);
-+static DEFINE_XARRAY(hwspinlocks);
- 
- 
- /**
-@@ -369,10 +356,9 @@ of_hwspin_lock_simple_xlate(const struct of_phandle_args *hwlock_spec)
-  */
- int of_hwspin_lock_get_id(struct device_node *np, int index)
- {
-+	XA_STATE(xas, &hwspinlocks, 0);
- 	struct of_phandle_args args;
- 	struct hwspinlock *hwlock;
--	struct radix_tree_iter iter;
--	void **slot;
- 	int id;
- 	int ret;
- 
-@@ -389,15 +375,9 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
- 	/* Find the hwspinlock device: we need its base_id */
- 	ret = -EPROBE_DEFER;
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &hwspinlock_tree, &iter, 0) {
--		hwlock = radix_tree_deref_slot(slot);
--		if (unlikely(!hwlock))
--			continue;
--		if (radix_tree_deref_retry(hwlock)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, hwlock, ULONG_MAX) {
-+		if (xas_retry(&xas, hwlock))
- 			continue;
--		}
--
- 		if (device_match_of_node(hwlock->bank->dev, args.np)) {
- 			ret = 0;
- 			break;
-@@ -452,51 +432,47 @@ EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
- 
- static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
- {
--	struct hwspinlock *tmp;
-+	XA_STATE(xas, &hwspinlocks, id);
-+	struct hwspinlock *existing;
- 	int ret;
- 
--	mutex_lock(&hwspinlock_tree_lock);
--
--	ret = radix_tree_insert(&hwspinlock_tree, id, hwlock);
--	if (ret) {
--		if (ret == -EEXIST)
--			pr_err("hwspinlock id %d already exists!\n", id);
--		goto out;
-+	xas_lock(&xas);
-+	existing = xas_load(&xas);
-+	if (existing) {
-+		pr_err("hwspinlock id %d already exists!\n", id);
-+		xas_set_err(&xas, -EBUSY);
- 	}
-+	xas_store(&xas, hwlock);
- 
- 	/* mark this hwspinlock as available */
--	tmp = radix_tree_tag_set(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
-+	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
-+	ret = xas_error(&xas);
-+	xas_unlock(&xas);
- 
--	/* self-sanity check which should never fail */
--	WARN_ON(tmp != hwlock);
--
--out:
--	mutex_unlock(&hwspinlock_tree_lock);
--	return 0;
-+	return ret;
- }
- 
- static struct hwspinlock *hwspin_lock_unregister_single(unsigned int id)
- {
-+	XA_STATE(xas, &hwspinlocks, id);
- 	struct hwspinlock *hwlock = NULL;
--	int ret;
-+	bool marked;
- 
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
- 
--	/* make sure the hwspinlock is not in use (tag is set) */
--	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
--	if (ret == 0) {
-+	/* make sure the hwspinlock is not in use (mark is set) */
-+	marked = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
-+	if (!marked) {
- 		pr_err("hwspinlock %d still in use (or not present)\n", id);
- 		goto out;
- 	}
- 
--	hwlock = radix_tree_delete(&hwspinlock_tree, id);
--	if (!hwlock) {
--		pr_err("failed to delete hwspinlock %d\n", id);
--		goto out;
--	}
-+	hwlock = xas_store(&xas, NULL);
-+	if (!hwlock)
-+		pr_err("hwspinlock %d already deleted\n", id);
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return hwlock;
- }
- 
-@@ -667,19 +643,20 @@ EXPORT_SYMBOL_GPL(devm_hwspin_lock_register);
- 
- /**
-  * __hwspin_lock_request() - tag an hwspinlock as used and power it up
-+ * @xas: XArray state
-  * @hwlock: the target hwspinlock
-  *
-  * This is an internal function that prepares an hwspinlock instance
-  * before it is given to the user. The function assumes that
-- * hwspinlock_tree_lock is taken.
-+ * the xarray lock is held.
-  *
-  * Returns: %0 or positive to indicate success, and a negative value to
-  * indicate an error (with the appropriate error code)
-  */
--static int __hwspin_lock_request(struct hwspinlock *hwlock)
-+static int __hwspin_lock_request(struct xa_state *xas,
-+		struct hwspinlock *hwlock)
- {
- 	struct device *dev = hwlock->bank->dev;
--	struct hwspinlock *tmp;
- 	int ret;
- 
- 	/* prevent underlying implementation from being removed */
-@@ -697,16 +674,9 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
- 		return ret;
- 	}
- 
--	ret = 0;
-+	xas_clear_mark(xas, HWSPINLOCK_UNUSED);
- 
--	/* mark hwspinlock as used, should not fail */
--	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
--
--	/* self-sanity check that should never fail */
--	WARN_ON(tmp != hwlock);
--
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -724,13 +694,14 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
-  */
- struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- {
-+	XA_STATE(xas, &hwspinlocks, id);
- 	struct hwspinlock *hwlock;
- 	int ret;
- 
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
- 
- 	/* make sure this hwspinlock exists */
--	hwlock = radix_tree_lookup(&hwspinlock_tree, id);
-+	hwlock = xas_load(&xas);
- 	if (!hwlock) {
- 		pr_warn("hwspinlock %u does not exist\n", id);
- 		goto out;
-@@ -740,7 +711,7 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- 	WARN_ON(hwlock_to_id(hwlock) != id);
- 
- 	/* make sure this hwspinlock is unused */
--	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
-+	ret = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
- 	if (ret == 0) {
- 		pr_warn("hwspinlock %u is already in use\n", id);
- 		hwlock = NULL;
-@@ -748,12 +719,12 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- 	}
- 
- 	/* mark as used and power up */
--	ret = __hwspin_lock_request(hwlock);
-+	ret = __hwspin_lock_request(&xas, hwlock);
- 	if (ret < 0)
- 		hwlock = NULL;
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return hwlock;
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
-@@ -772,8 +743,8 @@ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
-  */
- int hwspin_lock_free(struct hwspinlock *hwlock)
- {
-+	XA_STATE(xas, &hwspinlocks, 0);
- 	struct device *dev;
--	struct hwspinlock *tmp;
- 	int ret;
- 
- 	if (!hwlock) {
-@@ -782,11 +753,11 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- 	}
- 
- 	dev = hwlock->bank->dev;
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
-+	xas_set(&xas, hwlock_to_id(hwlock));
- 
- 	/* make sure the hwspinlock is used */
--	ret = radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
-+	ret = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
- 	if (ret == 1) {
- 		dev_err(dev, "%s: hwlock is already free\n", __func__);
- 		dump_stack();
-@@ -798,16 +769,12 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- 	pm_runtime_put(dev);
- 
- 	/* mark this hwspinlock as available */
--	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
--
--	/* sanity check (this shouldn't happen) */
--	WARN_ON(tmp != hwlock);
-+	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
- 
- 	module_put(dev->driver->owner);
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_free);
--- 
-2.47.3
-
+> Now in detach() it is not needed. I am just clearing the flag as part of
+> a cleanup sequence.
+>
+>  >> +
+> >>      return ret;
+> >>  }
+> >>
+> >> @@ -869,6 +915,9 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+> >>
+> >>  static int zynqmp_r5_attach(struct rproc *rproc)
+> >>  {
+> >> +    /* Enable attach on recovery method. Clear it during rproc stop. */
+> >> +    rproc_set_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY);
+> >> +
+> >>      dev_dbg(&rproc->dev, "rproc %d attached\n", rproc->index);
+> >>
+> >>      return 0;
+> >> @@ -883,9 +932,30 @@ static int zynqmp_r5_detach(struct rproc *rproc)
+> >>       */
+> >>      zynqmp_r5_rproc_kick(rproc, 0);
+> >>
+> >> +    clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
+> >> +
+> >>      return 0;
+> >>  }
+> >>
+> >> +static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
+> >> +                            int offset, int avail)
+> >> +{
+> >> +    struct zynqmp_r5_core *r5_core = rproc->priv;
+> >> +    void *rsc_offset = (r5_core->rsc_tbl_va + offset);
+> >> +
+> >
+> >         if (rsc_type != XLNX_RPROC_FW_CRASH_REASON)
+> >                 return RSC_IGNORED;
+> >
+>
+> Ack.
+>
+> >> +    if (rsc_type == XLNX_RPROC_FW_CRASH_REASON) {
+> >> +            r5_core->crash_report = rsc_offset;
+> >> +            /* reset all values */
+> >> +            r5_core->crash_report->crash_state = false;
+> >> +            r5_core->crash_report->crash_reason = 0;
+> >> +            r5_core->crash_report->crash_reason_str[0] = '\0';
+> >> +    } else {
+> >> +            return RSC_IGNORED;
+> >> +    }
+> >> +
+> >> +    return RSC_HANDLED;
+> >> +}
+> >> +
+> >>  static const struct rproc_ops zynqmp_r5_rproc_ops = {
+> >>      .prepare        = zynqmp_r5_rproc_prepare,
+> >>      .unprepare      = zynqmp_r5_rproc_unprepare,
+> >> @@ -900,6 +970,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+> >>      .get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
+> >>      .attach         = zynqmp_r5_attach,
+> >>      .detach         = zynqmp_r5_detach,
+> >> +    .handle_rsc     = zynqmp_r5_handle_rsc,
+> >>  };
+> >>
+> >>  /**
+> >> @@ -939,7 +1010,7 @@ static struct zynqmp_r5_core *zynqmp_r5_alloc_rproc_core(struct device *cdev)
+> >>
+> >>      rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+> >>
+> >> -    r5_rproc->recovery_disabled = true;
+> >> +    r5_rproc->recovery_disabled = false;
+> >
+> > I'm good with the overall architecture of this set.
+> >
+>
+> Okay. If above comments looks good, I will send v6 soon.
+>
+> > Regards,
+> > Mathieu
+> >
+> >>      r5_rproc->has_iommu = false;
+> >>      r5_rproc->auto_boot = false;
+> >>
+> >> --
+> >> 2.34.1
+> >>
+>
