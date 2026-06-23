@@ -1,40 +1,43 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47DA313543;
-	Tue, 23 Jun 2026 13:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9A2244694;
+	Tue, 23 Jun 2026 13:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782220842; cv=none; b=Pcs+mqhGcxEd3DZWUg62Ha9qpIgcanNVI8PuoX/QI90nMJfVK+RNp7qeYXeuYvPoK+RSqythX80UUCHF7DdnEw9sIS1uHNL/BmX/1xBPVECFE/hxe7Ul8rD1LCRSFjxoJb8/EmBsDC/EjI65bn6NeTx1ttfZyu8yPQUXpYTNOKI=
+	t=1782221971; cv=none; b=lXRJOGUWUpsTwmnR7Ghw2T4VE0/KmcJrulvEfoQgCtoknaA6vxV9SkZvmscsBMSzQGmFXXyKhTZ3LFM6jqLwYCUTAaUNuwFUKnNfjjaHXDBJCvjPNuDahO57/6pLy/RVl3PHQjkLJZ7nbhCLsQb5CdGsIXq8Gl7z24H59YWr5nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782220842; c=relaxed/simple;
-	bh=lnFEBwBLYEyDhXYWSp4bmV8exXrVHzF9WjvitZhZXoA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FlHJPXlSf+AdOsckGZks9SXVy1KpDqUTCOhZo++zo7GcXwNVF933ImCzIOCemf+FJ01ICXsXLZ22MdVNJ6Cim8D2ps/DwT9Shi5cXwHlPxpRoaTulOG5UR+vfhjvosF+6LPrmWYyAWyg9Mhpfzy1IyaQc2Mw3Rgurkrge+xwsj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PuT1RqsY; arc=none smtp.client-ip=220.197.31.4
+	s=arc-20240116; t=1782221971; c=relaxed/simple;
+	bh=/SvO2yKYHj73/T4PoOAjy2atAfh1CuEV64gs3LwX3rE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aabj7Hlz4dIoje0lKeARhgjsJNNjPpgUaNXFXd/aesuzV3KbMkeiHMBOsf7Wz0XdQhWFbuQtABUQtVzZvfc87e0D8Tny0Qg2NEEmwcBXF1QLYUCS+vcLvyzzPv4lT3Ez7dOSklwQx0I5Mabv1jhBwsVTovMPQJcgdOgNoZJZxW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cA2ZtEN3; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PuT1RqsY"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cA2ZtEN3"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=d+
-	EkAXSkXJaFfwL6xZ/6B+MeTA8cWIbxfbUkq1sHGh0=; b=PuT1RqsYQnOjdI13nG
-	aGyCs0ildz67/w2lZMEGAB7enDA7ubw0lb9+FMkIlTlDDuTT60cvGOmm9hawZl68
-	Zr0SsdYIWD42gVrXMUQQtq/6inXZy5Ht+YOJzTaZBdDpImF1fJgs3SjfwaME4azb
-	zGsEStaww/8Ov2ny+TP54d/8g=
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=lh
+	YDY/oGh1x20M8STDeHhSgFj7e0F2TfJzpcUG3q/j8=; b=cA2ZtEN36qzmUHUBYS
+	rgGGDT+6icfpsvztBXkCTVfmpSQPsTFZkLcHNWgFfqPM56nn6I4cUhxRq7kPgjVE
+	f34ZiBu9nd7LVRi/izIGo/qh+Po0iqdl3VJfXJHCg2D1gZkTutVnYVmvqFCzlkz/
+	bZUuNyduUDJBgXIaQIU/JnMmM=
 Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wBHTssQiDpqXX4dFQ--.52045S2;
-	Tue, 23 Jun 2026 21:20:18 +0800 (CST)
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3H5FkjDpqLOjlFQ--.48199S2;
+	Tue, 23 Jun 2026 21:38:46 +0800 (CST)
 From: Haoxiang Li <haoxiang_li2024@163.com>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org,
-	djakov@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	olivia.wen@mediatek.com
+Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
 	Haoxiang Li <haoxiang_li2024@163.com>
-Subject: [PATCH] remoteproc: qcom: q6v5: Release QMP handle on ICC path failure
-Date: Tue, 23 Jun 2026 21:20:15 +0800
-Message-Id: <20260623132015.2243317-1-haoxiang_li2024@163.com>
+Subject: [PATCH] remoteproc: mediatek: Unregister init IPI on share buffer failure
+Date: Tue, 23 Jun 2026 21:38:44 +0800
+Message-Id: <20260623133844.2255072-1-haoxiang_li2024@163.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -43,43 +46,51 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBHTssQiDpqXX4dFQ--.52045S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruw18Xr1DZFyrWr47tFW7twb_yoWkXwbE9F
-	Z29rs7Xr10kFykZw12yFWayFWfJw4xXwn7GF4Yq3WagrZ8Xr4fGryDXFsa93yfuw45WFW5
-	GrnIqF43ZF1xCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_89NUUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbC7RJPvWo6iBJd6gAA3w
+X-CM-TRANSID:_____wD3H5FkjDpqLOjlFQ--.48199S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr4rCryUCryUXF1xtFW5ZFb_yoW8XF13pa
+	43Kay3Kr48KFsrXrsrC3W8Z3W3ua18G3y29w4fJwnFvw1UJr92qas5tFyjvFWDCFWxXFW3
+	ZFWaqrWruFWUCaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piMGQDUUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbC7gZl02o6jGbYUgAA3u
 
-qcom_q6v5_init() acquires the QMP handle before getting the
-interconnect path. If devm_of_icc_get() fails, the function
-returns without releasing the QMP handle, leaking the device
-reference acquired by qmp_get().
+scp_rproc_init() registers the SCP init IPI before allocating the IPI
+share buffer. If the share buffer allocation fails, the error path jumps
+directly to release_dev_mem and leaves the init IPI registered.
 
-Release the QMP handle on the interconnect error path before returning.
+Route that error path through the IPI unregister label so the registered
+handler is cleared before unwinding the remaining resources.
 
-Fixes: 8d9be5c6bdcd ("remoteproc: qcom: q6v5: Add interconnect path proxy vote")
+Fixes: c08a82494500 ("remoteproc: mediatek: Support setting DRAM and IPI shared buffer sizes")
 Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 ---
- drivers/remoteproc/qcom_q6v5.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/remoteproc/mtk_scp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 58d5b85e58cd..b57041a37d28 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -347,9 +347,11 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+index 85a74c9ec521..648b69f96624 100644
+--- a/drivers/remoteproc/mtk_scp.c
++++ b/drivers/remoteproc/mtk_scp.c
+@@ -1227,7 +1227,7 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
+ 	if (!scp->share_buf) {
+ 		dev_err(dev, "Failed to allocate IPI share buffer\n");
+ 		ret = -ENOMEM;
+-		goto release_dev_mem;
++		goto unregister_ipi;
  	}
  
- 	q6v5->path = devm_of_icc_get(&pdev->dev, NULL);
--	if (IS_ERR(q6v5->path))
-+	if (IS_ERR(q6v5->path)) {
-+		qmp_put(q6v5->qmp);
- 		return dev_err_probe(&pdev->dev, PTR_ERR(q6v5->path),
- 				     "failed to acquire interconnect path\n");
-+	}
+ 	init_waitqueue_head(&scp->run.wq);
+@@ -1248,9 +1248,10 @@ static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
  
- 	return 0;
- }
+ remove_subdev:
+ 	scp_remove_rpmsg_subdev(scp);
+-	scp_ipi_unregister(scp, SCP_IPI_INIT);
+ 	kfree(scp->share_buf);
+ 	scp->share_buf = NULL;
++unregister_ipi:
++	scp_ipi_unregister(scp, SCP_IPI_INIT);
+ release_dev_mem:
+ 	scp_unmap_memory_region(scp);
+ 	for (i = 0; i < SCP_IPI_MAX; i++)
 -- 
 2.25.1
 
