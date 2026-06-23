@@ -1,86 +1,88 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2980240D596
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6C12C21EE
 	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 09:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782205545; cv=none; b=mIPkmNzFAF2RbCplvMeSdt9rQ/u7WIWaF6T5g8p1gCLGsXA0KBvD1NbRW8p+GHO+vKzRWZJaUY+bp/IqHlMgZCckngk+qRmCiBsb3IT9RIDuU0wTprOau4DgFisK70ABS8X2zTFOShsxo8YHMCn1jLNRJnQPH2k+lUMNqrKE5js=
+	t=1782205546; cv=none; b=O1jUA6ld/yi2xLCH3etUywqBLoorF5Uhl1Mpn/oHb8o8vVZzvUZfJCZaLiDpFb6KuSTuPR7KpVMwO7OMJKm28Te9dhPHsEQPgqu04yyqHS0KxmThm09C5FFkfAvgVY4fXppT3zNe1PBXaeEMn8HKLjUzatOxDhiR4na1EDSphCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782205545; c=relaxed/simple;
-	bh=tJ/lhsd06ekkim7NuWPjso8G4mEd5kfe/sEuS+RJYUk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VOk+0XgNO7lW7aRBW1h75LE6ZndLHhbvBm30HDE05jk2dNk8bmRpuPR6ahc1WfC7sSHjaZDnXwlnFdlSXf9bRifyCFJ0r0DgWXvzrhT/O5xkixoHTMo3uelTGnmj/kuj/2w0F8BoaXPMCQ53jDIV9g7Z5e+b9kawzVB/dffHR9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=e2n0UOx9; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JBA7+Eod; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1782205546; c=relaxed/simple;
+	bh=pu8w4P/nDuTNTkmnEBp8F0iOVLXwB6GH7+/giUwGfHk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LELlr0f1Z7Uf+XP+RZQUCr27q58fU5jEItQzw0DyPJ/VlR9YzEdRgsYmxsDNa1GszgIlQ6inBui8e0sVIic32x6SLDtvuWVzPms1+l97NFnIHnfVYT7W4XMMbN22dA52yWmGO17tJFqFpxYg52HyavyUCZZxPcdKdw8u3EAUAW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SE32l5HH; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZeU4sKjt; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="e2n0UOx9";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JBA7+Eod"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65N7jHeE1778233
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 09:05:43 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SE32l5HH";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZeU4sKjt"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65N8V3n03245013
+	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 09:05:44 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=gEjSX4RAO8IgOrvx6tsw4d
-	OpUHRVql3aBZzMOZKH1aA=; b=e2n0UOx93tYBQxtyNWmMGtfcX61PmMMwLPuhWT
-	jF5DTmsp99xxVzjgDFGdgNTf9LPR0Ca0Fn3tQ1jGFzO7mDZpvwh0kRi6UQtXPDhF
-	Fk4fMoRUMzosteD0dv1U1WdHadSo2qsmEEL0OKkciU56xoHhX+tV0dWhE9W+t8m6
-	/OHndnKO8d9IwEnu5L3rVwiNaopgsX+P3I90Dm1at0gSN9CT3sFZhynDvJQtw5pW
-	8rp/uv9biCo2524hqxZb6sFq0Bi5iWQgqvBCDe5G+OyTWvgj23LupsWFlE8fPvef
-	RZtqCtR5pMgH0pC/Xomb0qsxsJSTBgcNlET00B6agSXcGZgg==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FPLVsIWGYT3KSHtHr/4l9zFWb2GHXl0qHsEEPe9Dyfw=; b=SE32l5HHs2A7Ohz6
+	XL8BoQRdNrcOBJBZvuczAW2lVnP8Co1+ElVrSsaESurJwqA45zIUWcAoIpe6ZLji
+	Xj0dtXYARWTYTiTwOOYhoSj3jv0ClFwMLZTKqnCVetfWbhoIPxXdeg/VGQmM6Mhp
+	jNrm80mlYU0Ku7n7asKfuCpb65AiNg8Vh0jZeaBPciwu+k7IUvIDbykKLm2z9A1M
+	wc/CozAPl6teJbLjTg1v7O1m/2BD/Ieuu7UR/tpB3TQ4u7cQBVE/2yyNYY2Y8OTq
+	CJ8et922sEeZCTKXYBpYmkfH1Yr0GDKqUd95l4jFkxVkamOpB/O5kx11NVeJqGPg
+	ty0EGw==
 Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eyp1gr9xh-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eyppyg452-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 09:05:43 +0000 (GMT)
-Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-30bccca5620so7428018eec.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 02:05:43 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 09:05:44 +0000 (GMT)
+Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-30bcb065bfdso9844285eec.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 02:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=oss.qualcomm.com; s=google; t=1782205543; x=1782810343; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gEjSX4RAO8IgOrvx6tsw4dOpUHRVql3aBZzMOZKH1aA=;
-        b=JBA7+Eodz3TC6HA7cUF5F1HFOj/MGI5V/mjAD52f0s2cm7Tlbetb6O1hte5qlCboMb
-         n8G9mz+JHT71nMxGdnc51VC18+purZGXGQedCpR2YKeOm2fywkOvZPjTcpogvFYuqHYG
-         my+KetMQ0Jnqb31b5Po9PsSQLa5VsLjq47ZHX0ms1Yf08AVuvfAD86vvFFrluYsLl75o
-         xIs2drPZhOTEoQI4Bha3BH5eHRyShrgmAkwySV881qA3XKeQ5Ai8Vgrznehr2CP8woy6
-         RvXcvfRDEXYTzUfmS071KQVvms1pHXmGmsBFIqiWk6q3wjYbwYYkwKLU0P+RBZ/IKRd5
-         1yGg==
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FPLVsIWGYT3KSHtHr/4l9zFWb2GHXl0qHsEEPe9Dyfw=;
+        b=ZeU4sKjti8lJ6ujHBidLAi/1fAiqrb37jthvcLWzGg6qjWJ8HB4KtCOiT7RxU0UNcg
+         AICFKePwd04VtGfQiyIEf3tKRrru3IYYoFaPIKs/8fiJFMpUNPYdijCEyghs7Y0qof7M
+         xlQpcxDaTZBjTo8wDJpiNNS52DiDQNpZnIToXkYMaLsQ/ttuyFuaA8wi9h3UIYWbFHkD
+         lkQrJVdqKtD37cYMSDmse4cfoeGXRZ/WPa1fMiSCCsQofMoZv3mBmUw7EX+Br+CYi4xR
+         pwPBSjBnfeXNk5jPvZChjeQiW1RBzKOtGDSc5m0cPnp8rtG+j9tUDQo8dj/0y0EJGYAB
+         m8aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20251104; t=1782205543; x=1782810343;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gEjSX4RAO8IgOrvx6tsw4dOpUHRVql3aBZzMOZKH1aA=;
-        b=VmQcMVfxEmAfGSxJua1qZeAICvkXldzs/pv32sAcdJkPWWBId21EjHJlB8qiZFNUG7
-         0z4mVxuWY2MXKBiGQrAIuhLxzraKwj01WITdIGkP/3cqLAScIYiYq+Mdwijkp5KYteke
-         vA2n+vCiRONsWoPlXNtNuGZ3dmZ4+7LMsM1XNGajbVn/p3Pt4JkKLoBhSgOJcmGQVgQZ
-         JGRRJe+msGvDPJFaW/xSGizK9G4vxUw9vhqMWaS3ehIpFxXXIMxfKSPZkjc18bziv+Pe
-         fkDazCViHk3KFJnJ/TTJdy485yZzeULwHb3SzRIiM5GAOSPz7vDOLyLf/I7WK8y9J0bG
-         s8yA==
-X-Forwarded-Encrypted: i=1; AHgh+RodFkZ08sZjg2V4q96EUFjmCBR49mda8PG6fXItClh29tMRZ9kCOO1fGsci+nJ+cA9RQX4bgkYubrACqN+RMjQJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YznomdMSR/BX4J23rtKfVnKCC3PdrTtTo57KlM9ZFJbKvT+DUk+
-	SIkpMAiuK/x4/eZIvnZU4gqbmVn9PqQGMNg9L7HW/cWICxTH4ftblkInZLmc1XvmBfPnFgFyDED
-	iewnCU6jbHy325Mn0ITqjqcshH5MaBQTlrP1r+M0H+2FQ88ylyj5iCna/ypI60eT55Wc2dr4dat
-	KbHTndeCQ=
-X-Gm-Gg: AfdE7cm8o9fnrgs/yUD/N14RwBAYii8DX3IZpJstAoW9FW8SzLihs22n2E82Wo4VCXN
-	2XoEwilpK1yVeD86PGN57JXnP1Wcl4AlfSSiHkHNNAVFhen3TuRoMYC9p0/iXRBmpFISw1i4LCc
-	4jO5Rmr2GAQNVeIhkMwboNJf2BfOFVJxAE4l7X9RkOC6tiu4N+pXf3Q32PT2IQf0v93CaXR8RoC
-	/haUdBeL4+5J/ODC1nZam+fz4GeyDXWXoiDW7g+GhGvUEjPiiniPNrLQRqwfeYLpmBiIBG9lMmk
-	hcjXSVnR+LRM40ONNSbA0rJ2Q4DJ7qs8k6mPVnrQBJ1azgLk84AN0WpGjq6WfzXMWCxXIgDCOYt
-	Kqwjo5tasOhuP/nClmBvT+m61KgTnMDa+Mm4OrOtrkrttTvx2pUvRYtmdlcS9Fw==
-X-Received: by 2002:a05:7300:1341:b0:303:f2dc:8ab4 with SMTP id 5a478bee46e88-30c06e0e40bmr11902135eec.2.1782205542640;
-        Tue, 23 Jun 2026 02:05:42 -0700 (PDT)
-X-Received: by 2002:a05:7300:1341:b0:303:f2dc:8ab4 with SMTP id 5a478bee46e88-30c06e0e40bmr11902121eec.2.1782205542115;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FPLVsIWGYT3KSHtHr/4l9zFWb2GHXl0qHsEEPe9Dyfw=;
+        b=jWz5S0kXFHLLXb/yKBT7oX45DjlptfFMZKqkrN2E6G6K7P6WJmadn6INfPQXEQ0KlI
+         HK2qEs+zz+HLlWBhU5u8vvfK/pkwQJ3q469n++CmdketnrIKD9C0AHzmlRR95kyxHODe
+         l1HGHQP7xFX9TTGPRE/t5h+II6QmGLdHQwXxv8B9r4+K2m/UfGmTFgEqrrCanNETfFPe
+         fEDLocUoaZ4dH/eSsJrLSoC+5bAvc0r6F0I3f//uZFMwv0aoxT3ISXh1yJHS/y0YMLpI
+         Bb704BHw6fdvpyF2FRwVBnuQq0yQsrNrtGfQuNhBtiFbva3WSHFClDHOBS/UbOLYyOv1
+         A1Tw==
+X-Forwarded-Encrypted: i=1; AHgh+RoupN4bJq9foQMFQRa4QOiSWaV7+9zxtVi5/DWm9Pyf0vxdr8nX2lCM89IPJuRxBQnOEGrVi29i89Uh+OE68SCP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmqanIQxqiB6wCtZcpp+ZCc/X7952Jw4NVStdS5S1gxni9og38
+	Il63WpISo6BFhQQ6+Mkbjk1nqC+e5+iEik76hBiwjHAl0PmqQDPTU4LNxOJ3r0HJ10IHjN3AZT0
+	zow6jS0cs/apFLsuON5rYOanqAGIG+eoMmV3hDFVX1heufr8EJk+xTriz/Tigyf2qswwapNOHJq
+	FXGbninHg=
+X-Gm-Gg: AfdE7cmhtE3piW+p7Zl+kj8KtULbBJcTRKcLXzqbgUwZcohJA6QMVnOM/fA+wQWpsKW
+	9QBO6cvE74uGXftfLiLAN/oQNyNo/T+ykxT7QjVYNfpwDFXovG89qmhoEsVkHDKtbpA97cRhWuZ
+	9k5MlRNXJRAGOYmbkgGCNx3reHh+HWpgn7Sl9/5eQszzzozGLGxapiLXmCq3bPomZY+ZCmGK859
+	/M8cfmxOVKxQKR+Ji3TD0h8afzLo4rtsEgIi2NVFQZA9lP6kj+q51uwE26skEypSQKlHN0ftFPx
+	6zcNkERbE1rWAHfiMyt1U39zMiAsR7yUQqpSG5QV3V32ZtWG82GReGQKwimIL+Qz65HP1I/Zo8x
+	WbpZMA11a0vdh3ddTLguULfBIcg46ZXN0+BHfwzozuhcRsG6ASk8rtrBicp73JA==
+X-Received: by 2002:a05:7300:ca7:b0:30b:8893:8788 with SMTP id 5a478bee46e88-30c58ae0f2fmr1643879eec.13.1782205543298;
+        Tue, 23 Jun 2026 02:05:43 -0700 (PDT)
+X-Received: by 2002:a05:7300:ca7:b0:30b:8893:8788 with SMTP id 5a478bee46e88-30c58ae0f2fmr1643861eec.13.1782205542828;
         Tue, 23 Jun 2026 02:05:42 -0700 (PDT)
 Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30c1be5c5desm15202122eec.28.2026.06.23.02.05.41
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30c1be5c5desm15202122eec.28.2026.06.23.02.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2026 02:05:41 -0700 (PDT)
+        Tue, 23 Jun 2026 02:05:42 -0700 (PDT)
 From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Subject: [PATCH v3 0/3] remoteproc: improve robustness for rproc_attach
- fail cases
-Date: Tue, 23 Jun 2026 02:05:33 -0700
-Message-Id: <20260623-rproc-attach-issue-v3-0-8e24310707ce@oss.qualcomm.com>
+Date: Tue, 23 Jun 2026 02:05:34 -0700
+Subject: [PATCH v3 1/3] remoteproc: core: Attach rproc asynchronously in
+ rproc_add() path via schedule_work()
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -89,10 +91,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAF1MOmoC/22NwQ6CMBBEf4X07JK2hIqe/A/DYSmLbSIUu0A0h
- H+34NXLJC+ZmbcKpuiJxTVbRaTFsw9DguKUCetweBD4NrHQUhtpdAFxjMECThNaB555JkCJLXa
- oZdFUIg3HSJ1/H6f3OnGDTNBEHKzbr6RRZq85z1OIn0O9qL38s5Tq8s+yaJBgERVhdy5lpW6BO
- X/N+LSh7/MUot627Qtryisg0gAAAA==
+Message-Id: <20260623-rproc-attach-issue-v3-1-8e24310707ce@oss.qualcomm.com>
+References: <20260623-rproc-attach-issue-v3-0-8e24310707ce@oss.qualcomm.com>
+In-Reply-To: <20260623-rproc-attach-issue-v3-0-8e24310707ce@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
@@ -100,72 +101,124 @@ Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
         linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 X-Mailer: b4 0.15-dev-3d134
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1782205541; l=1316;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782205541; l=3261;
  i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
- bh=tJ/lhsd06ekkim7NuWPjso8G4mEd5kfe/sEuS+RJYUk=;
- b=Sgx10XD+tppToJkDvfASwTn7BlAFut76Dp8fDmEU1SzLMhj6xulm3q5Ww1OXUbBbCb5hW3+n+
- xwP5GEulA7FDMNlZeCpc6ulJcmSCE/d7DXMYKkMhT9W8AnE8L7d1voi
+ bh=pu8w4P/nDuTNTkmnEBp8F0iOVLXwB6GH7+/giUwGfHk=;
+ b=cLt+gooL3il/Tf1xqEhCZdB+z5FNWEQe1EGC6YjEQjK4GvUhtA2qsG8OOBMCmKcqIw2Y7XZmg
+ 3uUe3eDS8YGDMltQHDZxjJC8Ic1u43ucKdnl9ZgXOF+SDQDm47KV9MH
 X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
  pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
-X-Proofpoint-ORIG-GUID: W-qViwGdC9J4Ya--te0h7jgN9sk8UB-Q
-X-Proofpoint-GUID: W-qViwGdC9J4Ya--te0h7jgN9sk8UB-Q
-X-Authority-Analysis: v=2.4 cv=QJhYgALL c=1 sm=1 tr=0 ts=6a3a4c67 cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDA3MiBTYWx0ZWRfX2JL48KzTHZQ+
+ iVvHKms3XR9V7EBF9l6eDOeQJFPnaHUtGC12BRvBQjqPzDYDVhROG3sQQ2KzuWaO8xeEU7ygyYP
+ HMDOUKZS3BsjOpXY7a+jz4dgdbHbYdYLaBrbBtRj9a+fRtrqn8AbRf9A0bVgvVMt8HwV8+9wh1Q
+ rj9/pokGqESLx0VviGIGRGLdmMGCt/PEMw3JfhOJjP3GEIZn0dnWwMILF4gwMWdbY2kr3sjxDS8
+ pwb7nsYQYFIhlvVoeMhbaAy0kNAYR0MvpXJJ52QRZB90uHYY+iwCMu0+broeftdiRbEkeHY5ayM
+ 56Dl2Wb2ZwoufhVeNujpsj6ovWqhlzDQ2CWIbV9HAfIu80oZnl2DCYUnRX9QswIXjCasejE1rs3
+ 3Pq1QBA2+I9dDamornUhM+OrjhA0NFHRZgVkGHgXApAcSO3neUVd14KCvo28YSfRZjs71vvk7qP
+ hUsmEtiZmEzjhcdl60w==
+X-Proofpoint-GUID: DGGgd5jGwuhGRb4viy5KgIrE79wHVPTD
+X-Authority-Analysis: v=2.4 cv=dvfrzVg4 c=1 sm=1 tr=0 ts=6a3a4c68 cx=c_pps
  a=Uww141gWH0fZj/3QKPojxA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
  a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=-wlysWeROCUhhefnZiMA:9 a=QEXdDO2ut3YA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=EUspDBNiAAAA:8 a=SwIuEO_x4BL_LcR9stwA:9 a=QEXdDO2ut3YA:10
  a=PxkB5W3o20Ba91AHUih5:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDA3MiBTYWx0ZWRfX6LvUF0R/dNJ7
- nSgZYdcFWuMZ7mm3eK+2getgqd3S8bDhygtFbJC9xJNYV8Fi7MXwuMD4XwqIjmn6nwknYGvNuW2
- GuhmrgaqbIK/jCm9d4F/SNQVDVYNuo4=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDA3MiBTYWx0ZWRfX7vim4fZGYlp5
- hq+mUpzLX/BJLN6kyeketF3C1D018AbLdam21KJfKOy0OMvJApCl5KqIUtlGvX/TT3EeUayOSzW
- 9G5Jg9w6JF5rQi++i/qWLm2am6M7+ZMgYEjJHPRiLl+76DA5bp77srPbpvbAU0Gbr+fzhw59eNo
- 72QaDKkoIv/AZ8Xq5cpeSBiv4fQ3SFGltIph/MgIbBZ4HsP8bjrPGi/7HHcaQqwpqOw2s1QmaMY
- pwMabF1sKYq/c8z94Gu/Jfq2h28I8JplRm/Fu0GobidzCFiRpv0nMdV+UxXIuzIVU0rZQlH/JoJ
- i8iIV9O54q1VT/kILyN9Sl/qBRxmImem7Pq7HyQhqsHhMauPRmR7zZ/Hm14uW8jA2ECVDthzHDO
- PojU8nVrYkL+BdRuXLICRXv0GGb055PI8OyAI44jbbHfMR9dZoq1ED17vDr1CCyfe3Brat9RwJW
- u5ETJtgpIi08zTlwXHA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDA3MiBTYWx0ZWRfX8RKJIHCdRB8o
+ fRrMW+yAcG9spfOfYFETV1rvVhIl9SSKovY8Kkh1nUn2ofE6aEVqfIZIFgDmwzS+Lh0v+avt4Ho
+ UPHaNySm/ePf2djX82aZT3Jvk6EOFCQ=
+X-Proofpoint-ORIG-GUID: DGGgd5jGwuhGRb4viy5KgIrE79wHVPTD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-06-23_02,2026-06-22_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 bulkscore=0 adultscore=0 suspectscore=0
- lowpriorityscore=0 phishscore=0 malwarescore=0 priorityscore=1501
- clxscore=1015 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606230072
+ lowpriorityscore=0 phishscore=0 spamscore=0 adultscore=0 clxscore=1015
+ suspectscore=0 malwarescore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606230072
 
-Failure in rproc_attach() path can cause issues like NULL pointer
-dereference when doing recovery and rproc_add() fail, improve the
-robustness for rproc_attach fail cases.
+Unlike the remoteproc firmware load path where rproc_add() call
+rproc_auto_boot_callback() asynchronously and ignores the return value of
+rproc_boot(), the attach path calls rproc_boot() synchronously and
+propagates its return value back to rproc_add(). This means a failure
+during rproc_attach() causes rproc_add() to fail and triggers resource
+release, removing the remoteproc from sysfs and making it unavailable for
+recovery or further boot attempts.
+
+Align the remoteproc attach path with the firmware load path by
+introducing attach_work and scheduling rproc_boot() asynchronously via
+schedule_work(). This keeps the remoteproc registered and available in
+sysfs even if the initial attach attempt fails, and avoids blocking
+rproc_add() on the attach result.
 
 Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 ---
-Changes in v3:
-- update and check subdevs_started flag in rproc_start_subdevices()/rproc_stop_subdevices()
-- Link to v2: https://lore.kernel.org/r/20260519-rproc-attach-issue-v2-0-caa1eaf75081@oss.qualcomm.com
+ drivers/remoteproc/remoteproc_core.c | 20 ++++++++++++--------
+ include/linux/remoteproc.h           |  2 ++
+ 2 files changed, 14 insertions(+), 8 deletions(-)
 
-Changes in v2:
-- commit msg update
-- Introduce subdevs_started flag instead of check nullptr
-- Add change to cancel crash_handler work
-- Link to v1: https://lore.kernel.org/r/20260409-rproc-attach-issue-v1-0-088a1c348e7a@oss.qualcomm.com
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f003be006b1b..50f754e27d1a 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1668,18 +1668,21 @@ static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
+ 	release_firmware(fw);
+ }
+ 
++static void rproc_attach_work(struct work_struct *work)
++{
++	struct rproc *rproc = container_of(work, struct rproc, attach_work);
++
++	rproc_boot(rproc);
++}
++
+ static int rproc_trigger_auto_boot(struct rproc *rproc)
+ {
+ 	int ret;
+ 
+-	/*
+-	 * Since the remote processor is in a detached state, it has already
+-	 * been booted by another entity.  As such there is no point in waiting
+-	 * for a firmware image to be loaded, we can simply initiate the process
+-	 * of attaching to it immediately.
+-	 */
+-	if (rproc->state == RPROC_DETACHED)
+-		return rproc_boot(rproc);
++	if (rproc->state == RPROC_DETACHED) {
++		schedule_work(&rproc->attach_work);
++		return 0;
++	}
+ 
+ 	/*
+ 	 * We're initiating an asynchronous firmware loading, so we can
+@@ -2507,6 +2510,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->dump_segments);
+ 
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
++	INIT_WORK(&rproc->attach_work, rproc_attach_work);
+ 
+ 	rproc->state = RPROC_OFFLINE;
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index 7c1546d48008..f1d14d075bf3 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -259,6 +259,7 @@ enum rproc_features {
+  * @subdevs: list of subdevices, to following the running state
+  * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+  * @index: index of this rproc device
++ * @attach_work: workqueue for attaching rproc
+  * @crash_handler: workqueue for handling a crash
+  * @crash_cnt: crash counter
+  * @recovery_disabled: flag that state if recovery was disabled
+@@ -301,6 +302,7 @@ struct rproc {
+ 	struct list_head subdevs;
+ 	struct idr notifyids;
+ 	int index;
++	struct work_struct attach_work;
+ 	struct work_struct crash_handler;
+ 	unsigned int crash_cnt;
+ 	bool recovery_disabled;
 
----
-Jingyi Wang (3):
-      remoteproc: core: Attach rproc asynchronously in rproc_add() path via schedule_work()
-      remoteproc: qcom: Check subdev start status in rproc_stop()
-      remoteproc: core: cancel crash_handler work in rproc_add() error path
-
- drivers/remoteproc/remoteproc_core.c | 28 ++++++++++++++++++++--------
- include/linux/remoteproc.h           |  4 ++++
- 2 files changed, 24 insertions(+), 8 deletions(-)
----
-base-commit: 4fa3f5fabb30bf00d7475d5a33459ea83d639bf9
-change-id: 20260623-rproc-attach-issue-a0adafa203b8
-
-Best regards,
 -- 
-Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+2.34.1
 
