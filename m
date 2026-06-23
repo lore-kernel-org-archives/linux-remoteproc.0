@@ -1,110 +1,71 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5F630E0EE
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 16:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F39311968
+	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 17:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782232319; cv=none; b=LRsU4I+vFMh92zjTwKoSuQrNLXco46aWV+2ix3eHByATGVY7Mj9jIcsJFZfL4R6lVBHq/Epj63RZGKmHQAipLLj/di6JHQP4XP+k67zuKFGjKumXpvWdGU9gphEGoUBdb+ajX90pAIQOA94SrZXf9kYbaZHhBMcQMgqz9hmVMWk=
+	t=1782235284; cv=none; b=gAePZRt4aYDsFAntmajIi9bEhHIM1aHI9K9FzRp/KWhqDtbJbKGEeAYq86dReUfTXg2HFldADikEkStAMfpXT1KB4zdMgBlCvq69F2KICAFYqkhAsXb5Rc1N3Vu9ZGQQyfXCXHSafljbsmL9kw++6EjQX2B1+/HGf4iNYlhgcIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782232319; c=relaxed/simple;
-	bh=zYwRlwa37Rk2TVjMNmDVdga+Wy3uYUUgKg2SsmHDRN4=;
+	s=arc-20240116; t=1782235284; c=relaxed/simple;
+	bh=+phoKe1Zhp9F6a7ic43ra5LbUagn+hfIVxxKzBTfmdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k7O1NavDa4smJtQg3mViMBswsueiNQNKw08odHVCJjg+740CwHmRznRwU/H6dAdYs9EA7apIq+l8OFsse6bS3E/9BQJ80cqhfzSPcNMGLMNOmYo3oqlFbSl5ZS/RreZ9zSKW6Mi6JCHiC/G1zyklPrl0iN3bjT+g9TUaPyw5E7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ESUWwHoB; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZeCLsBGW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMWfvRgaRNZ9E7If91J+itG6i3HCxRAwLPmV9LdPJKPWzpT5yLGlFgLlLVsgz8wsPDiewwROexFqCCdsXWXAviJ1XB4etqlMr0q5tkIngNC3BOWXUnutJeRkaddT7kAZ+kcE56H7A9B2AVH62LwrLoxEQYf8NFq5AzjFVi0KVF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4IaCvnY; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ESUWwHoB";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZeCLsBGW"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65NDFqta271015
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 16:31:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=bpZit0nzAD1TX3LmUuhtrO8w
-	q8/DhirAmsH9yXDIezk=; b=ESUWwHoB/PYrdnzgspHK50aVHFG9HG0SsYqEfjcK
-	zy3aoaNgH/czKeAZ0dhYEzvc8zj5J+CgxxbnedXTsuYRgPWHLPc2PFl5NVhl71B5
-	RzAZ1QTHSeWoAg0DmOfZuqmnTFoJ98qSXI13pKXGoBq6v22b7zOvt8Tp8WiqEJju
-	p9oePXq6Oj8Um594mC8b1BhgZVi78fg1jRXMfsxb3w1ShooV4RrqzM57YviXD7BM
-	J8FvAdOBL4AMuiWP0Dh9PCHX85HUP9B4Te7sj9/puAK1R6J42yxzqKsFGGXnfzfV
-	5f8fJ05IbJCt/q4yfE+sukmirsLHgEPcUWhEzCioqzK8Zw==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4eytvh0vwn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 16:31:57 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c894c1c4aa9so10073a12.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 09:31:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4IaCvnY"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2bf1cda2b17so781945ad.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 23 Jun 2026 10:21:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782232316; x=1782837116; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1782235282; x=1782840082; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bpZit0nzAD1TX3LmUuhtrO8wq8/DhirAmsH9yXDIezk=;
-        b=ZeCLsBGWDpTcpqUZ7m+kJoXzdybP9sVnr9uhni7RsPtssRkevUfYkpg0e15VBb6MB+
-         4jyM/BRpcrHeD0BceuPNpZyqIqxpGiih5rDX2Dsrw/dz624tm6MiT807qRcx0EadQwTb
-         l66+LP16pxRmk3pdkkh1amrrIBHxV2JXTqghozOHz4CQHFAP2wcRdTW4BCuXL5RdvRcU
-         dMClolOLBOqMqMXLEzp6NCoIVX9Xju4qBN/TLtQ+5KFzDtVZhcpKn7ltCecRbwchpKfM
-         cHZZFOYwtAwBUDNmPAA3a2uhSr7Onc1G2Gj9Uo7QpHkSTKATUdu2rWU3anxAKQuVr0gJ
-         ArMA==
+        bh=jOHqWIE7DXXEQCPB3d/HpjT74nQL9GCMig6xnM0nZ/U=;
+        b=I4IaCvnYGpwqP83WhSjR/qt7WpEJ680K3Wr08v27dfaGlfVXOx7AXbyiUDF0ojyV47
+         IwwB+ZE19MjjIEfFVLmnHLG7m2GdIjsHuP4G5R4GrE/epAd/lVGAm3kFpFJE8do6z1gd
+         3MGuTwp3qUlur/9UGAO+T4aTP4bI5qnwTiECSROGFetI2LUZlnHDvmJ5pseU0bJUa+hW
+         UfwwT1boirHWpXdjfkJxhvJOmOkSX1C2/xMZqgezEd6phnevQoJ9jIJDmnevdmA5sa3L
+         4MLRWN2xHAIoYnmE7y9trND3KUXlhcxsP7B+YWY10WPGlisgyFC4UTX1pR8Q3xsgdb14
+         YgFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782232316; x=1782837116;
+        d=1e100.net; s=20251104; t=1782235282; x=1782840082;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bpZit0nzAD1TX3LmUuhtrO8wq8/DhirAmsH9yXDIezk=;
-        b=leFvOmwqGId/UQuH5CyLcR/g6G6ecJlwPZFd8irPz85Ef601iBwVLBqs8gTzVvly1s
-         0XtV0rX+/pYhFL9MTBCnAuDLX1WC6z0tKxwyg4XidUE92qZS6l8lL13bubDaMie4rZ1E
-         f0tdFrSi4qx6YGtyN5UEPtvvQSEgxLWxaX4fphsdbafJSTu2tzcVHxmqcBHy6t1n0Tkh
-         J159MxGxQC4mktxFe5JKuHoUPv5CZCnTqV6Aqnup6zBfPqZv7kyWyFxcl7sdsoo6xhIr
-         P35QftOTBiOtF8Wnq5yYhfeuKWyhdxzYAY76yCFNShk111Zq14DlKpmENcrxRs8D36zn
-         0WYg==
-X-Forwarded-Encrypted: i=1; AFNElJ/HvF+JxW0mCkyaVRuIUUavu0V7Wa3cV0o3YfG08m5pH6fGCEpb1D/dAhnjRvkJGDVL0BDr68NSrbKbkqofR5aM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3etCy/cUWmA8xxwNDay2VZASUuKwd+AKSoXZgFo8NAuHYqvdk
-	MigcwvKtmH3jYoxHFgZeOEEpEw2MVpEgyp2On7ONLxKQru0v99U/Wx5gn3AMF1JnRBmMe1/tLvH
-	Tq+9j2Lt4ahYTi9/NJW9n01AoiaCAl/j2wnTt2V2mDcPjGZKbhPJ+vS0UVQtcJ69aFl19o0AE
-X-Gm-Gg: AfdE7ckJJpeY5mJGWkz5DhHwreastRGMtiwJqOk6GF+p1RTEACPVeWpiCK60arB8JYA
-	OJ5x0CnrwgEMtTCq1mpd3ScAfSBBGSYGgxNtOV+sJP3e+N3vhsO1KflSPiIaTNuGi3AejbCIFqU
-	zeZAWWDWos9DTJd1Ao4vIn2UcEVeETz4jyFW1gNzEwHb0R6Uh6DrapZampL9zXvInYA2NMdpL9M
-	AtxjgOhcIT306KdzDcehi5lgWLZvBYnunfc45mueH5SHfQcZHx6R1v7mSB29Bg2JKz1LKWuxYr9
-	jDoe35/h6mVuwYgSVtxT0Xq/47/toH71E+F77jsmKkvPR8zO1zE+ceH7/UlAdaUpBX/Tcom8y/n
-	SnAQadfBuo+6kYaSiShcFO49NJeBlS0fxLysJIw==
-X-Received: by 2002:a05:6300:68c8:10b0:3b4:870e:6f44 with SMTP id adf61e73a8af0-3bd151fd460mr2827990637.35.1782232316117;
-        Tue, 23 Jun 2026 09:31:56 -0700 (PDT)
-X-Received: by 2002:a05:6300:68c8:10b0:3b4:870e:6f44 with SMTP id adf61e73a8af0-3bd151fd460mr2827936637.35.1782232315599;
-        Tue, 23 Jun 2026 09:31:55 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-c8bc5a1dd9csm9850337a12.22.2026.06.23.09.31.43
+        bh=jOHqWIE7DXXEQCPB3d/HpjT74nQL9GCMig6xnM0nZ/U=;
+        b=IvEkb+aD1xOyVa94uKmn0jhlFYrz+zt58Dg/6cqo9g16EfdrucAyZJ12ogjw5QbOTn
+         lbdrzz5IE1rnDgxlEJtIXpyi9qbQo/vbWzCc00h6CIW/xs7qU2xbAeL4tYRpwntRGICy
+         wu2vdlUU+ku59eEpafzXKfwnyruCCPIrZcwtd8sN1G8iIR+kQPJuqIOzoS3aLiWLJMCm
+         Xzv3tAIGgggZt5c1fpr9/AA/mXsYIXypihiIGaFnV4VaQJ1fFhPZBu9aCQUa8WeYpMQ/
+         gi5He5YKziRpvMKN+kBSzJr7YQ9zfImD1g1iY+QsmKHvq/6xp/J8Y42x8QKlSDkJqTDh
+         oq9w==
+X-Forwarded-Encrypted: i=1; AHgh+Rr93WQ0FIOIr1HwR2MkhUYbXdDsKPvBRqRDZ0FKcADYkwK0J+LiRMOFb/DZtQLkshxOzgWTM08iMgdXswAWH5Or@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY/fFfQ8bHZdBqCST0ljGb2twzsrv/9/mTdYTnAqreIULYZyeP
+	dLB1cQfdx7g67H+X6/zu9Kl8c8j1G+4k6WnBB9ILMDPjFyWEIqzOt6YxuqHOxJm12Dg=
+X-Gm-Gg: AfdE7ckNl7zUyNkDTbBQhFLu2oPwm4EopZdXybFOEmrNXWEmEYDMSy0uLuL3Ke5bLyW
+	lkcpk1aGkSm28KOBtr6ltE8AJIPUMKNu8jN3jIDSQwBgc1v5W2JEZa49WpQPkI5FIL9ZamzEFds
+	0VXVTrjzkV+0yOB2nTO6+lJBG+5kYoBYKTjvK1jchi/HeI97QcZ0fQgy8S1SKtPVtSNKAfU+tm4
+	zeSSbgBNoNAV/YECDNgBVGqi58YGP7GUyHU2hDThJjxnf5L++NlvDDEgbkHI05suGieclI0SQMz
+	sT9PYrCBjAScg0B1BxOt+5h++MOII+vEUFF19uapYPLjLKBpAbRMp1ihSWL4a7YkVL+IYVDGFNp
+	LM+ftCAHG5TABEB7+epor7Sbe/S149k/WcTApectCFRxsmzUA4Ii37ajhq0VAe6Phpw2SnFnlx9
+	fiDECA2Vicfrx7j2s/
+X-Received: by 2002:a17:902:d549:b0:2c7:c63a:2d69 with SMTP id d9443c01a7336-2c7c63a2ed4mr33756515ad.15.1782235282346;
+        Tue, 23 Jun 2026 10:21:22 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:864a:82f7:7789:bd1a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7436f90d4sm107525595ad.34.2026.06.23.10.21.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2026 09:31:55 -0700 (PDT)
-Date: Tue, 23 Jun 2026 22:01:40 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: andersson@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-media@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-remoteproc@vger.kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-        dikshita.agarwal@oss.qualcomm.com, bod@kernel.org, mchehab@kernel.org,
-        elder@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-        jjohnson@kernel.org, mathieu.poirier@linaro.org,
-        trilokkumar.soni@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
-        jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com,
-        vignesh.viswanathan@oss.qualcomm.com,
-        srinivas.kandagatla@oss.qualcomm.com,
-        amirreza.zarrabi@oss.qualcomm.com, jens.wiklander@linaro.org,
-        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-        skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v7 01/15] arm64: dts: qcom: kodiak: Add EL2 overlay
-Message-ID: <20260623163140.l7dvkqa5szqkej36@hu-mojha-hyd.qualcomm.com>
-References: <20260522115936.201208-1-sumit.garg@kernel.org>
- <20260522115936.201208-2-sumit.garg@kernel.org>
+        Tue, 23 Jun 2026 10:21:21 -0700 (PDT)
+Date: Tue, 23 Jun 2026 11:21:19 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: michal.simek@amd.com, andersson@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: xlnx: refactor start & stop ops
+Message-ID: <ajrAj2qfjvogDDrP@p14s>
+References: <20260619163854.410392-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -113,64 +74,253 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260522115936.201208-2-sumit.garg@kernel.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjIzMDEzNSBTYWx0ZWRfX4KW7SxKA5pyD
- BZ6j/67TbONtlHq5mZU6/Zas+gj8ofsiiMTxd3mC8g4lN7GtHZNvR8aemw+zhkqnvZ77KXdWc0q
- f4if4XLE94AZWb94dp/xuWr/LWw3cDVYPdy7meB62O7jflyUZrHMe7qjbVpnP1f/1fq/mDzQLwX
- UiRpglyJqjCK7Kac4vGG9H0zgzw6rX6X6I2NjnGEIwRFpqFbP0hNK4jukziSXmf/F18sMT1fgz3
- 4G3noRbyEt9tBTKi2LBAPWP1M/p7tz77Q0urcAhkgZjfzAXaOmIpbc+6Bq/FV/I28w6giYC1WI+
- 7UpqEsf74xV2xIF86llF2zLvBRqaW3rV42xLcK5eUEDhWweHKBsCC7muSW4DU1ReTZyEVrYwgoC
- qhZFItMY13bpnVfZoPS92/i+/UpTDF9tJT2RgxyOR2VnvnffDGW4Bueq2l9WXSQg3W9u78n/4SR
- HR6iWspo027yfV5hygg==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjIzMDEzNSBTYWx0ZWRfX5cHDhJRUsvSN
- mwWm/nWC4AsZ7IdFjz95CM+YKBvI5K1Tlws7q0RKdkEkt44FO8dUlUOC+PWojpYYAd82KZB0M+N
- DiNQneFfRVvxz/YD5Z9jKluxzwSSBGo=
-X-Proofpoint-GUID: Y4DiVTI2m2n9a8xROK7FyW8fgY5wlfAi
-X-Authority-Analysis: v=2.4 cv=AJDhMgPs c=1 sm=1 tr=0 ts=6a3ab4fd cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=scVuWRnFyv5x-Sid9UUA:9 a=CjuIK1q_8ugA:10
- a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-ORIG-GUID: Y4DiVTI2m2n9a8xROK7FyW8fgY5wlfAi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-23_03,2026-06-23_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 impostorscore=0 clxscore=1015 phishscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606230135
+In-Reply-To: <20260619163854.410392-1-tanmay.shah@amd.com>
 
-On Fri, May 22, 2026 at 05:29:22PM +0530, Sumit Garg wrote:
-> From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+On Fri, Jun 19, 2026 at 09:38:54AM -0700, Tanmay Shah wrote:
+> Current _start and _stop ops are implemented using various APIs from the
+> platform management firmware driver. Instead provide respective RPU
+> start and stop API in the firmware driver and move the logic to interact
+> with the PM firmware in the firmware driver. The remoteproc driver doesn't
+> need to know actual logic, but only the final result i.e. RPU start/stop
+> was success or not. This refactor keeps the remoteproc driver simple and
+> moves firmware interaction logic to the firmware driver.
 > 
-> All the existing variants Kodiak boards are using Gunyah hypervisor
-> which means that, so far, Linux-based OS could only boot in EL1 on those
-> devices.  However, it is possible for us to boot Linux at EL2 on these
-> devices [1].
-> 
-> When running under Gunyah, the remote processor firmware IOMMU
-> streams are controlled by Gunyah. However, without Gunyah, the IOMMU is
-> managed by the consumer of this DeviceTree. Therefore, describe the
-> firmware streams for each remote processor.
-> 
-> Add a EL2-specific DT overlay and apply it to Kodiak IOT variant
-> devices to create -el2.dtb for each of them alongside "normal" dtb.
-> 
-> Note that modem and media subsystems haven't been supported yet due
-> to missing dependencies. For GPU to work, zap shader is disabled and
-> in EL2 mode the kernel owns hardware watchdog which is enabled here.
-> 
-> [1]
-> https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-4/boot-developer-touchpoints.html#uefi
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> [SG: watchdog and modem fixup]
-> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+>  drivers/firmware/xilinx/zynqmp.c        | 93 +++++++++++++++++++++++++
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 68 ++----------------
 
-As discussed internally, I will be taking this patch separately and you
-can drop this from series.
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
--- 
--Mukesh Ojha
+>  include/linux/firmware/xlnx-zynqmp.h    | 12 ++++
+>  3 files changed, 110 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+> index af838b2dc327..f9a3a95b0638 100644
+> --- a/drivers/firmware/xilinx/zynqmp.c
+> +++ b/drivers/firmware/xilinx/zynqmp.c
+> @@ -1513,6 +1513,99 @@ int zynqmp_pm_request_wake(const u32 node,
+>  }
+>  EXPORT_SYMBOL_GPL(zynqmp_pm_request_wake);
+>  
+> +/**
+> + * zynqmp_pm_start_rpu - Boot Real-time Processing Unit (Cortex-R) on SoC
+> + *
+> + * @node: power-domains id of the core
+> + * @bootaddr: Boot address of elf
+> + *
+> + * Return: status, either success or error+reason
+> + */
+> +int zynqmp_pm_start_rpu(const u32 node, const u64 bootaddr)
+> +{
+> +	enum rpu_boot_mem bootmem;
+> +	int ret;
+> +
+> +	/*
+> +	 * The exception vector pointers (EVP) refer to the base-address of
+> +	 * exception vectors (for reset, IRQ, FIQ, etc). The reset-vector
+> +	 * starts at the base-address and subsequent vectors are on 4-byte
+> +	 * boundaries.
+> +	 *
+> +	 * Exception vectors can start either from 0x0000_0000 (LOVEC) or
+> +	 * from 0xFFFF_0000 (HIVEC) which is mapped in the OCM (On-Chip Memory)
+> +	 *
+> +	 * Usually firmware will put Exception vectors at LOVEC.
+> +	 *
+> +	 * It is not recommend that you change the exception vector.
+> +	 * Changing the EVP to HIVEC will result in increased interrupt latency
+> +	 * and jitter. Also, if the OCM is secured and the Cortex-R5F processor
+> +	 * is non-secured, then the Cortex-R5F processor cannot access the
+> +	 * HIVEC exception vectors in the OCM.
+> +	 */
+> +	bootmem = (bootaddr >= 0xFFFC0000) ?
+> +		   PM_RPU_BOOTMEM_HIVEC : PM_RPU_BOOTMEM_LOVEC;
+> +
+> +	pr_debug("RPU boot addr 0x%llx from %s.", bootaddr,
+> +		 bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
+> +
+> +	/* Request node before starting RPU core if new version of API is supported */
+> +	if (zynqmp_pm_feature(PM_REQUEST_NODE) > PM_API_VERSION_1) {
+> +		ret = zynqmp_pm_request_node(node,
+> +					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> +					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +		if (ret < 0) {
+> +			pr_err("failed to request 0x%x", node);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = zynqmp_pm_request_wake(node, true,
+> +				     bootmem, ZYNQMP_PM_REQUEST_ACK_NO);
+> +	if (ret)
+> +		pr_err("failed to start RPU = 0x%x\n", node);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(zynqmp_pm_start_rpu);
+> +
+> +/**
+> + * zynqmp_pm_stop_rpu - Stop Real-time Processing Unit (Cortex-R) on SoC
+> + *
+> + * @node: power-domains id of the core
+> + *
+> + * Return: status, either success or error+reason
+> + */
+> +int zynqmp_pm_stop_rpu(const u32 node)
+> +{
+> +	int ret;
+> +
+> +	/* Use release node API to stop core if new version of API is supported */
+> +	if (zynqmp_pm_feature(PM_RELEASE_NODE) > PM_API_VERSION_1) {
+> +		ret = zynqmp_pm_release_node(node);
+> +		if (ret)
+> +			pr_err("failed to stop remoteproc RPU %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * Check expected version of EEMI call before calling it. This avoids
+> +	 * any error or warning prints from firmware as it is expected that fw
+> +	 * doesn't support it.
+> +	 */
+> +	if (zynqmp_pm_feature(PM_FORCE_POWERDOWN) != PM_API_VERSION_1) {
+> +		pr_debug("EEMI interface %d ver 1 not supported\n",
+> +			 PM_FORCE_POWERDOWN);
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	/* maintain force pwr down for backward compatibility */
+> +	ret = zynqmp_pm_force_pwrdwn(node, ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +	if (ret)
+> +		pr_err("core force power down failed\n");
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(zynqmp_pm_stop_rpu);
+> +
+>  /**
+>   * zynqmp_pm_set_requirement() - PM call to set requirement for PM slaves
+>   * @node:		Node ID of the slave
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index 3349d1877751..dcd8a93f031c 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -364,49 +364,12 @@ static void zynqmp_r5_rproc_kick(struct rproc *rproc, int vqid)
+>  static int zynqmp_r5_rproc_start(struct rproc *rproc)
+>  {
+>  	struct zynqmp_r5_core *r5_core = rproc->priv;
+> -	enum rpu_boot_mem bootmem;
+>  	int ret;
+>  
+> -	/*
+> -	 * The exception vector pointers (EVP) refer to the base-address of
+> -	 * exception vectors (for reset, IRQ, FIQ, etc). The reset-vector
+> -	 * starts at the base-address and subsequent vectors are on 4-byte
+> -	 * boundaries.
+> -	 *
+> -	 * Exception vectors can start either from 0x0000_0000 (LOVEC) or
+> -	 * from 0xFFFF_0000 (HIVEC) which is mapped in the OCM (On-Chip Memory)
+> -	 *
+> -	 * Usually firmware will put Exception vectors at LOVEC.
+> -	 *
+> -	 * It is not recommend that you change the exception vector.
+> -	 * Changing the EVP to HIVEC will result in increased interrupt latency
+> -	 * and jitter. Also, if the OCM is secured and the Cortex-R5F processor
+> -	 * is non-secured, then the Cortex-R5F processor cannot access the
+> -	 * HIVEC exception vectors in the OCM.
+> -	 */
+> -	bootmem = (rproc->bootaddr >= 0xFFFC0000) ?
+> -		   PM_RPU_BOOTMEM_HIVEC : PM_RPU_BOOTMEM_LOVEC;
+> -
+> -	dev_dbg(r5_core->dev, "RPU boot addr 0x%llx from %s.", rproc->bootaddr,
+> -		bootmem == PM_RPU_BOOTMEM_HIVEC ? "OCM" : "TCM");
+> -
+> -	/* Request node before starting RPU core if new version of API is supported */
+> -	if (zynqmp_pm_feature(PM_REQUEST_NODE) > 1) {
+> -		ret = zynqmp_pm_request_node(r5_core->pm_domain_id,
+> -					     ZYNQMP_PM_CAPABILITY_ACCESS, 0,
+> -					     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> -		if (ret < 0) {
+> -			dev_err(r5_core->dev, "failed to request 0x%x",
+> -				r5_core->pm_domain_id);
+> -			return ret;
+> -		}
+> -	}
+> -
+> -	ret = zynqmp_pm_request_wake(r5_core->pm_domain_id, 1,
+> -				     bootmem, ZYNQMP_PM_REQUEST_ACK_NO);
+> +	ret = zynqmp_pm_start_rpu(r5_core->pm_domain_id, rproc->bootaddr);
+>  	if (ret)
+> -		dev_err(r5_core->dev,
+> -			"failed to start RPU = 0x%x\n", r5_core->pm_domain_id);
+> +		dev_err(&rproc->dev, "failed to start RPU\n");
+> +
+>  	return ret;
+>  }
+>  
+> @@ -423,30 +386,9 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+>  	struct zynqmp_r5_core *r5_core = rproc->priv;
+>  	int ret;
+>  
+> -	/* Use release node API to stop core if new version of API is supported */
+> -	if (zynqmp_pm_feature(PM_RELEASE_NODE) > 1) {
+> -		ret = zynqmp_pm_release_node(r5_core->pm_domain_id);
+> -		if (ret)
+> -			dev_err(r5_core->dev, "failed to stop remoteproc RPU %d\n", ret);
+> -		return ret;
+> -	}
+> -
+> -	/*
+> -	 * Check expected version of EEMI call before calling it. This avoids
+> -	 * any error or warning prints from firmware as it is expected that fw
+> -	 * doesn't support it.
+> -	 */
+> -	if (zynqmp_pm_feature(PM_FORCE_POWERDOWN) != 1) {
+> -		dev_dbg(r5_core->dev, "EEMI interface %d ver 1 not supported\n",
+> -			PM_FORCE_POWERDOWN);
+> -		return -EOPNOTSUPP;
+> -	}
+> -
+> -	/* maintain force pwr down for backward compatibility */
+> -	ret = zynqmp_pm_force_pwrdwn(r5_core->pm_domain_id,
+> -				     ZYNQMP_PM_REQUEST_ACK_BLOCKING);
+> +	ret = zynqmp_pm_stop_rpu(r5_core->pm_domain_id);
+>  	if (ret)
+> -		dev_err(r5_core->dev, "core force power down failed\n");
+> +		dev_err(&rproc->dev, "failed to stop RPU\n");
+>  
+>  	return ret;
+>  }
+> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+> index 7e27b0f7bf7e..347df66ee176 100644
+> --- a/include/linux/firmware/xlnx-zynqmp.h
+> +++ b/include/linux/firmware/xlnx-zynqmp.h
+> @@ -644,6 +644,8 @@ int zynqmp_pm_get_node_status(const u32 node, u32 *const status,
+>  			      u32 *const requirements, u32 *const usage);
+>  int zynqmp_pm_get_rpu_node_status(const u32 node, u32 *const status,
+>  				  u32 *const requirements, u32 *const usage);
+> +int zynqmp_pm_start_rpu(const u32 node, const u64 bootaddr);
+> +int zynqmp_pm_stop_rpu(const u32 node);
+>  int zynqmp_pm_set_sd_config(u32 node, enum pm_sd_config_type config, u32 value);
+>  int zynqmp_pm_set_gem_config(u32 node, enum pm_gem_config_type config,
+>  			     u32 value);
+> @@ -960,6 +962,16 @@ static inline int zynqmp_pm_get_rpu_node_status(const u32 node, u32 *const statu
+>  	return -ENODEV;
+>  }
+>  
+> +static inline int zynqmp_pm_start_rpu(const u32 node, const u64 bootaddr)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +static inline int zynqmp_pm_stop_rpu(const u32 node)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+>  static inline int zynqmp_pm_set_sd_config(u32 node,
+>  					  enum pm_sd_config_type config,
+>  					  u32 value)
+> 
+> base-commit: 721396afea31eac476d88f5db10ba111ba4b8382
+> -- 
+> 2.34.1
+> 
