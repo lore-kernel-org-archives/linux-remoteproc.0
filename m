@@ -1,145 +1,189 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE45A223708
-	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 11:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782301640; cv=none; b=r7qpnbG3Tuo1WANu23RCmrvDNw6FC+cGD91atBUb4mOt7EsNfxuWleaomEyHX0Hwt9pUxKQjNExsnAWYJbvLN+S3p2x5PiO4vWPNj45ZGK/kg5A0MamqbkBBQ68OKcJqMbV0KnmR/7EkXMGN2SumjkGJlOALmMMxwM96/IrcYwo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782301640; c=relaxed/simple;
-	bh=m+D2Ojfh7y2W4IfWhV1bnkOXK2cyeKGPtIt9xTv5Rkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U8VRsRldRGzT6+q24acIA9HRSTd6fjG75M4LPbSLEKHKibGIMbWbpke82U7NGxK1b/tRhfPqwkOhmc41eahH43sx5ZrV4nDyBRLqj0zf24thYAjAH/mb+Ou6xYLoRaREXmo8jOs7MJ03zwpdXISAH42xbfKz/nNDBojB5AFPy4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VJtoS7QT; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=B+oMECoG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16A930D417
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 14:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782309771; cv=pass; b=OuzD5uoUfMZjim3jLBwv3+gMwrsQ+yUXmpMR80Bd4RY/OXkVPCgK/j0vLq3E8S81pU8iRmpOyv7gFzZ5wC9/bwakjlM7cMrwHGGySaqRulC6XyAOUfo7x9wFaO98nLNpNH4CJhk1jQSALj0WlYboO8ssojlwZGfxWd6cH4v68BY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782309771; c=relaxed/simple;
+	bh=K8hYqDMpOHlsxH5VoHeLx0MZ5HDU2sHdFlaOaz0fzUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qB0cx+LteHKDrVQRn4YFIHkffK+cFzXJjWkMgsPsWuHu5hf0PKJZ8KMvRDTiY34dPBZmHeWHVMNLoBliS0B+JTlcgsIGkQHa0nCD31fjkNB3YszS2IOcVB20u8DidzVfB9XkfIvU0DSxJ5JD4qI3O/t+dVyNv5Dt59sNaCkqE+A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iBIv3LKw; arc=pass smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VJtoS7QT";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="B+oMECoG"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65OANmfM4180623
-	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 11:47:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	n5rGXAB1X6Zoy3PV4+JclHBHuvTkW+lSntNrPMGPmo0=; b=VJtoS7QTmjlblt5a
-	0Vp0WIWI/qwiYPZIkT8JdvhcAj82SgaETXuS+uTALGptiqawWymcm7vX4/H1++7u
-	+r8MXBFllLH043xuA4CCu8+G0pNTCHt1anzUN4IVWVgn+lsCVm2jLRT/3z6J8vRK
-	bZy8CGYIWmw7gOjTsGYdUC+nno3GQ+KrZovpavtp75s2+Zq6nbd+xBDFawR+QEt0
-	5w2TnkAtqrf8ZhkuZDE8AcDAqBIVDTjMw43iw101wbv37VFcogyRse0gDvlrKT5G
-	HDnRqEsqd9tFW0zKrIAXAYM4Vf8P8E45g0DDVQYtozN90i74aLR1Knqh+kjOSKLO
-	C1rHIg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f0aqp91fb-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 11:47:17 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-51a07295d67so3138511cf.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 04:47:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iBIv3LKw"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-693c69b97e7so1980705a12.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 07:02:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782309768; cv=none;
+        d=google.com; s=arc-20240605;
+        b=IqTXYUlPnn5sMIH5n9Ag8QXWonvhS34TYM+M8pJdxU4bzyWwin1HdWGS2o1A0pgEb5
+         txuUKC7x/ctNeKsfyAunH+HdUnhJYjrcDJiIJkeFvqeH3nEuskVwbTuDVUPlvGUqijsV
+         66HXMhU+I10dyk/VNvQ8E+3z4x8NFL4P/u4ui0/HekhQfs2lglZgweOpPGBgmjEVjyOg
+         6mjw/UyH8Hqc/k6bpEMAF81jCKaCp2Iswikiq8bXz8Hqds1CdbFOsBmxZ2Z2U+bEhWHS
+         Y1YIVVvA1YzFLbw71z47YrG1dyb/MC8TxNmO+wWIEBVC6N+2Fe0UaRDcaIZKhnokVfVZ
+         Fjrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=C5vPsYKU56GjNxiaGkkNL7c3r/LVlhBv4KmGsmspM40=;
+        fh=c5j8Se2p3q8XcHl/MS+P4kAvO+caXq3AdHUo3yZXen0=;
+        b=MklVefQ380+CHLe9wq76KGRzP8DGhAJbKBT2xIYnXFbcfwNwZDSpRqJdcRaqtGHpyw
+         4iAaKh3Dl90G7r5KYzpflGoAQFRalr9X8Ht80RYLa5IAhshP3KNxUHDiOzjV5OhURpjW
+         2SP2834XIX2F95k3eZdVacc+lVU5k7QT2QsSKx33jh7c+u/jn0JYX5p/hiOZ87FZO4zF
+         JXPCXCQ9AYyAeccTu9YO9LoHMEFuHqkqpkzIXLAGCVdmi7zsDSo13NxMuGS67tSyTVWb
+         NEnPvuzrcp0LzQJwIZRoiv8CQrMJbS2IwX7RyjcTSA8rfakVfjknBkr/DPfAltaK7TAc
+         H7mQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782301636; x=1782906436; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n5rGXAB1X6Zoy3PV4+JclHBHuvTkW+lSntNrPMGPmo0=;
-        b=B+oMECoGog20wv6NwPW2BbK9ofUQd+xOrI2NuehNA9QBUJ3tUwCVMrobDtJPxSZzjz
-         xY2pNbiH2UupA3wq8zrYmR9vdIxn6UHVJxcxA2Vqg0YF7gds+mnI2bN5KPk49Zdm3WpR
-         rna0ngqVspoqMl2fvXXPWGewkwMPmG+hvi/YtDbU/0eeNehSQWINPz4NpYtrUGhaVkDB
-         8f04RmOJdyH+O3ruAB78VxDbGMtUsJLlJToFce1V5yEXWPY0vzp+gwNf1J6dY5l9d3YJ
-         /1HLOQT5XinyEZe7So+Xy21AZ5o6MgKGEaOUswskjOSwz9/JfnQ6H3VuUp+QfS67XvZI
-         PkDw==
+        d=linaro.org; s=google; t=1782309768; x=1782914568; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5vPsYKU56GjNxiaGkkNL7c3r/LVlhBv4KmGsmspM40=;
+        b=iBIv3LKwNlL3KNBostvpufccZxAtQ9taA6ifXbnc+bS0wQaUpXLP1t4yPllyFjuGAH
+         SWFNTOO0VjgMusAKWS0+jcyp+VugD8EflkxzREKwugKIBw6c7d/mypiKrppem92VSByc
+         gIxkEHK9gdbn/b0jflutoGT7xT+TwtdWGimR5tOVLtxVfYwiAWtdzP65m9uKPX7lxOkj
+         iqwZOBnYzHRjixODncObXOHujPaOQlrjGzfYsQAGqGNBWepG7G7bmehtrgsf2ZaBxaAr
+         P5OFBqLrCAUke2wFPfyTaQEHpZPHx4FlY1QEXqElqWL2gz+rELMvqFya/SDc2k4t2tRt
+         5E7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782301636; x=1782906436;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n5rGXAB1X6Zoy3PV4+JclHBHuvTkW+lSntNrPMGPmo0=;
-        b=TOyWJiG42dWWVW7apg/ANZNjfGou6DLswVrPjUJWDLB19cjMemp0fa4HyP6T3SpHE+
-         z+ye0KanMg0cXXn3H0R3XYtGnNW9MjD8QQhON5gDmwUjS/YeQBf0KZs6PvBFnsZ+yclK
-         vJfPrIICe+R+le01uOwW3wCBYN8dY1ld4oiCZg7mTA3KNyZAH43H5UzyqA+MscJmQnAW
-         gxjqvCd9fnYmwZElBEralBo+XPPD/wLHiX5IgKEQBXdhcsz3/DNW7NF8fZ09Er94Z8i7
-         S47qA41IFmj0QpLM7rPDMekXybkstLF2cj7OMtwWqsr7rwQgHalXnKGzTXt1xslN75tV
-         JJOA==
-X-Forwarded-Encrypted: i=1; AFNElJ9ESiKVS/oA5JYiiHndB92vkhyuTVrIxtie9gD4XoE2k6ah0UEnMd0hRFiHmcUFlzrIyRH4cQ/xl4rI3YVScZQY@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr7JAPxx7lgYakPI2TrDlxmqRcl+Z6zkpiLFbgfbFFuL6RcPVb
-	0dgpxhzhlkGSz5GtsI+2LiDtez9Eri9VMUu1FOOlMGAx1Ou0HvF7jWblB+2ggimB2xI5vqGjx0/
-	8SmF2Fp85RlWLA/BUT3PIEiKKYXxypA4F5nL3KNFY4ReeLSUgUQgDvMF+m9orrnxVBbHhVLjb
-X-Gm-Gg: AfdE7cnarqm2J/5C1dmOVplxKXCmz+fVP6FVLpaovBnQAgAGmN5ncj52tvsAQZKfAaa
-	X3MupV2+H66xaejVgThgjPMwLtc23Xl/wKjTXM+z5f+a7pXiuUJns+GjIJVFQ1MkXsTyCl49xOa
-	hEEbx41vjQL3kW5IFcvfuB8v1hgmpB0V+JQwvFP4i8Fy5WNTOmVXgRBvdh1tbtVmSt7ZkAFYAIh
-	mut/+nYaQ+iFzY9IWJpUGg1bVbOoMw1GTynrrRnxstyS6KZBZ5hfRZjJxbtBHY8j4KjNKFPAV63
-	vlz/ed2wcJCxwOOs4ykUFSuzL8Q04kPgH5FJZyH5V+PTfEXYQX3a6Rj025P9e4DafM9GVpfdfvJ
-	dQbIOzxDjW8WjXNJSdhJwdGl/fllJNInJVDs=
-X-Received: by 2002:a05:622a:489:b0:50e:5cc1:1de9 with SMTP id d75a77b69052e-51a4f502a89mr88876671cf.7.1782301636088;
-        Wed, 24 Jun 2026 04:47:16 -0700 (PDT)
-X-Received: by 2002:a05:622a:489:b0:50e:5cc1:1de9 with SMTP id d75a77b69052e-51a4f502a89mr88876511cf.7.1782301635696;
-        Wed, 24 Jun 2026 04:47:15 -0700 (PDT)
-Received: from [192.168.120.170] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-697f4bd44d0sm977210a12.29.2026.06.24.04.47.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jun 2026 04:47:14 -0700 (PDT)
-Message-ID: <7fbaa271-1eb2-43e5-bdf3-ff35dec3bd40@oss.qualcomm.com>
-Date: Wed, 24 Jun 2026 13:47:13 +0200
+        d=1e100.net; s=20251104; t=1782309768; x=1782914568;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C5vPsYKU56GjNxiaGkkNL7c3r/LVlhBv4KmGsmspM40=;
+        b=ffB1RKWcXb3myyWRr2ttnK4NCU6+j+GVj1LJsXSf29+UqlP0+fMq6ZVYJio70siRZ0
+         LZ52gah6khBkut2w5U1Iq3cRl1621YgKEKV5f2KeGIWbmvOEOqNMd0D9O3sbiY1E17CE
+         uMRKk1vb+Hc8Sr3SBxZnTF89dnskQ2lpH2+x58QhQDTdqlv8UQoYR/RYPIUJweV0nxVx
+         XZrC/U1JdwdiWO7HRQb5fz2pFuPCKb7xcrI6lHdkf0qMfgGfEiychmZJSJnPJjXc70ao
+         z057GT8XK2J1k9EYu8luvuVFeuG2OxAv5pDK7l8AbR4unA9yXVP/HHjA2P2LCIT193K5
+         WtcA==
+X-Forwarded-Encrypted: i=1; AHgh+RrLJtDWJxcG4lNZWUq2muNarDvKta7Y613tTzEv1m5U/YpAQBYhWvNKa/Crg182J2Tszrcc6q5tNn/s4eTJgEui@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIKCSvVdMhAKxbNftpmDI1aaNDfRikwePEMynp6FdfSLH5e41n
+	8x6An9mA6LaojqsfBNk2Z0soeWXm8SV2z/Qj9rq4pVBhfaPBNOR76vJwUqfN6MyEFbuHxQ5rGaS
+	7KOjMdblEtoaj12Z565xTNINIvRORknkzMBBO2mhsag==
+X-Gm-Gg: AfdE7cmVohAOKAUZNmeJIaP2kc5qJAA91W6LwnO3/4j4J1KWcMLMKWoP/ibEdheH+uv
+	D4ACxXz+2I69O0ByCU5TR6mcs6Y/gvtHisSIoIIEbln4eESXUJX56H/R3xf4udwcISOK83IerbU
+	7SHNi6OJc1xP5KUiksIkZIxPDvdp0mjq/czZslSOSoPs8K1BvYcweBIAR2ifhEhfNxhwkSb0I9U
+	Oo3neevLIFVImULOKpng01AVWU5gJCRvBdZkVjkYmOIKV1NUcRAG23Kj4+XZs3u6Rl6xHz4nyQ9
+	EIGbuKomwPdzLqvUSHUJc3duWPWgqOE=
+X-Received: by 2002:a05:6402:440b:b0:697:e953:d14d with SMTP id
+ 4fb4d7f45d1cf-697f3aa2104mr2007565a12.17.1782309765856; Wed, 24 Jun 2026
+ 07:02:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/6] remoteproc: qcom: pas: Drop unused dtb_mem_region
- field
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-References: <20260430191253.4052025-1-mukesh.ojha@oss.qualcomm.com>
- <20260430191253.4052025-6-mukesh.ojha@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260430191253.4052025-6-mukesh.ojha@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: jtgriL_0Gp9uYlRGJRHrhWJb1i_nvUvN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI0MDA5NyBTYWx0ZWRfX53RGvVfWAPZd
- /jhf6xoSjvuA2dwLq/hYu1bEec7I8NMGvGiU8/hkWZPOzdi7AGV4VA30mQD4FnIeMaBZ7sm0yqY
- B/ehUWpTl0UJn5UfGAABJJObGuE89Kb27g6Pm3zxdiI3PWLjRgxOjRQ71CLRoCMPk5wOc/6EEWu
- dMJaMJe/BBN0ofYJ/ZhXmSvLC9z3zo034RR9829CvvsVUMHGZsOaCFdM4TR1lS03QYK2H++I9F9
- jSgwqEE0rlMw+twt6+hs5xzL9MtcFjUa8IESvwRnVKRmdMQ8uyl+CBn0wXvFexURhl1/ejlgla4
- nDdGuxvagofKLOmIuarGfz8QV/9VFvQdOYlwnbxkkgvxsz3iKiIBxMGyO4vSbUeyiPIa1nzJf9S
- nZ4rZD0nboOyWDwdaUuS4AHEDPv8ig==
-X-Authority-Analysis: v=2.4 cv=QLhYgALL c=1 sm=1 tr=0 ts=6a3bc3c5 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=l34an3bRNhP6mDLsExEA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI0MDA5NyBTYWx0ZWRfX2hEazVFV+zLZ
- 4xJtsH1qAplnhfPRatLGH+hGcYtPnDqSLEv4+4kIZRn2tj3oW7cTUE+4OH8I56+sBHTACj8Kp2f
- nZLSgj1Oe5DRoIVcZaJsD3i/c4LQFPk=
-X-Proofpoint-GUID: jtgriL_0Gp9uYlRGJRHrhWJb1i_nvUvN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-24_03,2026-06-23_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 malwarescore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- spamscore=0 phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2606240097
+References: <20260619163854.410392-1-tanmay.shah@amd.com> <4a4e518a-61e6-4beb-aaeb-5056fbe2a07a@amd.com>
+ <a9baf2c9-d4d9-4152-9188-c33fce2daf15@amd.com> <59d9a4c9-1f12-4de9-a0d6-613d2f5e9852@amd.com>
+In-Reply-To: <59d9a4c9-1f12-4de9-a0d6-613d2f5e9852@amd.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 24 Jun 2026 08:02:31 -0600
+X-Gm-Features: AVVi8CeQVOpe99Jjc0PPT9NZRQIiG1kyiEoqLQu9TzeJnqoNqUneCuzFYP-6rA4
+Message-ID: <CANLsYkyChucfAY1wKvxAt9-tCX=2B5L9=4bbBA6XvnpBnLZD5Q@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: xlnx: refactor start & stop ops
+To: Michal Simek <michal.simek@amd.com>
+Cc: tanmay.shah@amd.com, andersson@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/30/26 9:12 PM, Mukesh Ojha wrote:
-> dtb_mem_region is no longer referenced after the ioremap was moved
-> to respective places where mapping is required. Remove it from
-> struct qcom_pas.
-> 
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
+On Wed, 24 Jun 2026 at 00:12, Michal Simek <michal.simek@amd.com> wrote:
+>
+>
+>
+> On 6/23/26 00:29, Shah, Tanmay wrote:
+> > Hello,
+> >
+> >
+> > On 6/22/2026 7:25 AM, Michal Simek wrote:
+> >>
+> >>
+> >> On 6/19/26 18:38, Tanmay Shah wrote:
+> >>> Current _start and _stop ops are implemented using various APIs from the
+> >>> platform management firmware driver. Instead provide respective RPU
+> >>> start and stop API in the firmware driver and move the logic to interact
+> >>> with the PM firmware in the firmware driver. The remoteproc driver
+> >>> doesn't
+> >>> need to know actual logic, but only the final result i.e. RPU start/stop
+> >>> was success or not. This refactor keeps the remoteproc driver simple and
+> >>> moves firmware interaction logic to the firmware driver.
+> >>>
+> >>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >>> ---
+> >>>    drivers/firmware/xilinx/zynqmp.c        | 93 +++++++++++++++++++++++++
+> >>>    drivers/remoteproc/xlnx_r5_remoteproc.c | 68 ++----------------
+> >>>    include/linux/firmware/xlnx-zynqmp.h    | 12 ++++
+> >>>    3 files changed, 110 insertions(+), 63 deletions(-)
+> >>>
+> >>> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/
+> >>> xilinx/zynqmp.c
+> >>> index af838b2dc327..f9a3a95b0638 100644
+> >>> --- a/drivers/firmware/xilinx/zynqmp.c
+> >>> +++ b/drivers/firmware/xilinx/zynqmp.c
+> >>> @@ -1513,6 +1513,99 @@ int zynqmp_pm_request_wake(const u32 node,
+> >>>    }
+> >>>    EXPORT_SYMBOL_GPL(zynqmp_pm_request_wake);
+> >>>    +/**
+> >>> + * zynqmp_pm_start_rpu - Boot Real-time Processing Unit (Cortex-R) on
+> >>> SoC
+> >>> + *
+> >>> + * @node: power-domains id of the core
+> >>> + * @bootaddr: Boot address of elf
+> >>> + *
+> >>> + * Return: status, either success or error+reason
+> >>> + */
+> >>> +int zynqmp_pm_start_rpu(const u32 node, const u64 bootaddr)
+> >>> +{
+> >>> +    enum rpu_boot_mem bootmem;
+> >>> +    int ret;
+> >>> +
+> >>> +    /*
+> >>> +     * The exception vector pointers (EVP) refer to the base-address of
+> >>> +     * exception vectors (for reset, IRQ, FIQ, etc). The reset-vector
+> >>> +     * starts at the base-address and subsequent vectors are on 4-byte
+> >>> +     * boundaries.
+> >>> +     *
+> >>> +     * Exception vectors can start either from 0x0000_0000 (LOVEC) or
+> >>> +     * from 0xFFFF_0000 (HIVEC) which is mapped in the OCM (On-Chip
+> >>> Memory)
+> >>
+> >> here
+> >>
+> >>> +     *
+> >>> +     * Usually firmware will put Exception vectors at LOVEC.
+> >>> +     *
+> >>> +     * It is not recommend that you change the exception vector.
+> >>> +     * Changing the EVP to HIVEC will result in increased interrupt
+> >>> latency
+> >>> +     * and jitter. Also, if the OCM is secured and the Cortex-R5F
+> >>> processor
+> >>> +     * is non-secured, then the Cortex-R5F processor cannot access the
+> >>> +     * HIVEC exception vectors in the OCM.
+> >>> +     */
+> >>> +    bootmem = (bootaddr >= 0xFFFC0000) ?
+> >>
+> >> and here you have different values without any explanation why.
+> >>
+> >
+> > The value in the comment is correct, but the check is done for all of
+> > OCM address range. This is just refactoring of the interfaces and not
+> > the actual logic. There is a separate patch which actually refactors the
+> > logic, I will send it later. I would like to keep this as it is because
+> > this was originally there, and the intent of the commit is not to modify it.
+>
+> ok.
+>
+> Acked-by: Michal Simek <michal.simek@amd.com>
+>
 
-I'dve squashed it into the previous patch but it's ok
+Michal - do you prefer that I pick this patch on the remoteproc side?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
+> Thanks,
+> Michal
