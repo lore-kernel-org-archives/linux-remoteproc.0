@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1B224113D;
-	Wed, 24 Jun 2026 06:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9857138888E;
+	Wed, 24 Jun 2026 06:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782282795; cv=none; b=pWWN1omvkTqoeWqw6nA7PJOrYt5TfzKMfvW7yuUVMVqdiLYr4yl5vF5gsXI1b7uUC5P34ERPwgv4lOKF7G8fYu5vCFrJOs7U6CMmJkTNxprGV2H0mlA+gv+P9WMd5sjZkoWPdCRgRXu6LPehvU4sT4PJxW24zRc48Zz93jTNbXw=
+	t=1782282947; cv=none; b=jw9HM/dPREFAkZDywdrgMZQ4fxaptQVk8Xj/p3tw2haf3xKn/0YE3rep6H1ZBZ9lXIn2JwXt6LoMZT/lDftJq7/+z6jYzXT6oxFQtgHpeEXlJATwjENoHjiQd4nUegnP6EjwUfH2GiGiKzLoFgwpJ4iGZDdKVBxjPMkMKDnoQVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782282795; c=relaxed/simple;
-	bh=dLnd+Wbfy4SW4UN9Emy4MvJ2CunNk5063uskrvzLphE=;
+	s=arc-20240116; t=1782282947; c=relaxed/simple;
+	bh=hnVKMhY2BVYc+cQ14fmM/CYvjPjEY+o419up8PN8i9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aDg5WKMfew+Av0eaU24VL0D8yX8PGb+TT3Yhs9V4+VvJOPXISmLlHFBLW8u6m2zAavJdPwAKsyCeVSIHMO8v5a0rSZYcifixKaDVtqu2akghO6R/H9QtVvDlqTq2BKSbsvHdqQaIb1qCg7AyvYyXDvxJkPIe/MfWkFEzbaNXz3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mi1zcSBl; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=bseBmttHCngrfZLHwDCmf3Y+A0TbaT3lGNQNxL98/rfoX7EnPdWfo6DIuZL+3hByVzLRfSC912aRHgu0uSjWvLmEa+9Nw60L1zLdU73M4+GmOBjcNTKIdzuXAazYVd34992osJzNip1RMzGc5Cw0SCdq8zWdlai91gjsajhpUa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOlLePsU; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mi1zcSBl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CAD1F000E9;
-	Wed, 24 Jun 2026 06:33:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOlLePsU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7805B1F000E9;
+	Wed, 24 Jun 2026 06:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782282794;
-	bh=YTzmz7s4sgU/DkI7GovlLvowhAIO6Ancu8TmZ2NG5Nw=;
+	s=k20260515; t=1782282946;
+	bh=4JndaUv0XMl810tXFwMuRvcee+tipt/pSZDJa540npw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=mi1zcSBlnZwj/ho4otdLBksbLvYcKwmHRmkUnAwZHxVxq8TTR+cRR4xV1R4dlY7fa
-	 KYHnPNdu5s0QalZsV1NRpnOlsxhENlz4OLWzdiq5n9+PRvNTh/rX5Yt3F3T3cyHmkN
-	 Jo4LxlRUhVlq/AllvTTA/e2zaG/oEusiw8T9CL+7+6kiMuYyoxgN3jVi1nVTvfmn3d
-	 nxb2p4vOtN6fS1IfW+dZeRHHFtpJaiAl+pMdjREh9dSKdw0yB+BcOQOMNn3odYVtjx
-	 zbwFFEnNrrKC9aDoV244BVuF3Pz8OlOHBnDGWoZcWj/ei3/zivrCnFlUHxSMJjckhB
-	 7Y0vN84WlZbhw==
-Date: Wed, 24 Jun 2026 08:33:10 +0200
+	b=LOlLePsU0lXjcAzsjIKZ/xqYP3yEZRuzcqeBDer3sqfou9rkmSBzQy1GTPr8Vk4cl
+	 /6oUjNDfgSy2G9DmxszD0i1YXxIxM0Ki78f0YAkPZhdyfG19o5NElBVcoQrP0Sizvp
+	 f8EpvjXDnSzEVoKeqLSI7tw2CGFkY3z+eMf/HQdZIPUe6PNeQ5/3k9CAulM0YFyInk
+	 f+orVLjsgzH7LRsbeuT9ven4hO/t9stqaH5qcR0JWFz0QBOMPvxYVeCUBd0drZhdHp
+	 wBEfTLdJ2FRwuxxORA8diUVXcxmHJlhcLnKoT+XXbF+bE/MtybKq1VJfTRHYCoHPpu
+	 iO24ArMf3aRvg==
+Date: Wed, 24 Jun 2026 08:35:42 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -38,11 +38,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
 	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/6] dt-bindings: remoteproc: qcom: move interrupts
- and interrupt-names list out of pas-common
-Message-ID: <20260624-alluring-fast-silkworm-4da65d@quoll>
+Subject: Re: [PATCH v7 3/6] dt-bindings: remoteproc: qcom: Document pas for
+ SoCCP on Kaanapali and Glymur platforms
+Message-ID: <20260624-lush-sapphire-hound-71bec5@quoll>
 References: <20260623-knp-soccp-v7-0-1ec7bb5c9fec@oss.qualcomm.com>
- <20260623-knp-soccp-v7-2-1ec7bb5c9fec@oss.qualcomm.com>
+ <20260623-knp-soccp-v7-3-1ec7bb5c9fec@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,11 +51,14 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260623-knp-soccp-v7-2-1ec7bb5c9fec@oss.qualcomm.com>
+In-Reply-To: <20260623-knp-soccp-v7-3-1ec7bb5c9fec@oss.qualcomm.com>
 
-On Tue, Jun 23, 2026 at 03:05:18AM -0700, Jingyi Wang wrote:
-> Move interrupts and interrupt-names list out of pas-common since they
-> will be redefined differently for Kaanapali SoCCP.
+On Tue, Jun 23, 2026 at 03:05:19AM -0700, Jingyi Wang wrote:
+> Document the component used to boot SoCCP on Kaanapali SoC and add
+> compatible for Glymur SoCCP which could fallback to Kaanapali. Extend
+> the "qcom,smem-states", "qcom,smem-state-names" in the pas-common
+> and add maxItems constraints for SMEM properties in the documents
+> that reference to pas-common.
 > 
 > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 > ---
