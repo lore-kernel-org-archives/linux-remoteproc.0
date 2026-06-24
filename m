@@ -1,218 +1,275 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D9A3DD52C
-	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 17:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F863DD536
+	for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 17:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782323650; cv=none; b=OXR4551lgPpeH2egGWNu1lR29FEScyeuXN+QskMIeOBdCG7uQngm8+y4ipC78EE2f89C4VV5qCqVKTl4Sffl/2y2Z5GqkeVmpNRwF16+2yaPLhuSFurSIgMboDV99/3pyvKLNuRmx6Qh9Ewbui6DembTU0Dbbt36xN066du2uuM=
+	t=1782323705; cv=none; b=IeqpCnJtLRnsrqEoijO9jjkyBAI2eX4uCdAtB5hJ7wr/ZYwwcnpPHEIBwgW63i6eBvuROaUJIabv+6O+WjoL5+IL3eC3oZjsziWrYFim1Riss2Xri6cWP4CaMy83lETy12g3aIHGa35FhHFqzqs0YPI1FNHu8mSsp/WZFlZFZ3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782323650; c=relaxed/simple;
-	bh=zS39eoSU0MQzmQzeMb7eknSjOrzat2yPax7g0/+bddU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qb20JOt3sdbQMF2xGPBdouFHBinOqeLUDRVBTEQucRUZO4kBjr4ToHMnaD3teA14prHusrLOb5dbRWdwbXan1wfc3TF3rSZaE8FPULlZIcNQ7vHkSRk2K3o0TpX0tk+W7m1tMugd6+6raeVMtOvk2G+W/Vr+7jskRXfLYUc+UmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2tyEOMX; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1782323705; c=relaxed/simple;
+	bh=wwnho7hEdXTC6ab0TaoU8pKnUrHIJ2RB2ggTwseerv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1XiKLuqlQwOeO/sTaM6llK3ty2YCZyhqK7enkyom05DCVPIYbIqdEFxnOfKiejDNfpATd2KCcQjpVVbxc0rET5P6Sn8AE1uD5Tg5/roGWEBKvILhCAzp0EemzzvxU7JKeAoDb25hvZkFXug1pC4vghAuiFvlY2j8rB7XJfi7CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xu4wCQtl; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2tyEOMX"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-8422a816c89so178302b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 10:54:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xu4wCQtl"
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-37cae9b7536so999359a91.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 24 Jun 2026 10:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1782323647; x=1782928447; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=anmA2l3MxALUQm7PPnRPt/zM8+X9tbioRc5oCtucAME=;
-        b=Y2tyEOMX7zJdGggLPN87Kvsj0sJrKinBXyB7Cvp8a6iGCU2szgUtgG9kV6+gD7AMYw
-         i7Pr2cIJ1P0wacjrsQtvS8lXz6MqRsiIRSCTr4t43S0TzfpoE4f+ocWqe9XJS8phCstW
-         6A8Ts7J5ciIhwCN0b8f1PfAZPh9Pfkg9xkj4cQxGK2NwO3b/OZNGWAPiSoaBbVNt+Z7H
-         I660wwhd4vlz93tOlqdIs4yWgugDPeRzaii4uEAWEmz5i9VH3cXrJE3BDpZMai+wDECW
-         39YQHKnJuU9mDRRTr/zBXvp/rWP0h0viv8NEvUA8z+FKWTJceEXPdyKFqIFcMOVB604/
-         iQ2g==
+        d=linaro.org; s=google; t=1782323703; x=1782928503; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4NlwdAQFxJRK87l+yQ/+R9Mq1tuhwUOP4+/t1hmPNl0=;
+        b=Xu4wCQtl5QsY42R07fX/KaLSN4VMfBSEw2+6dTpScpfb1Som20gCfvEabNyD/gB6m/
+         4n9tn0amevgflvxV43WYqHig6fIcXu2CXwH7ubvMCd2lLIFEqSsP+bPuzLSsHSArol3Z
+         Iq7WTWqFu/PYgqg05oYkKycmS2K2vftO/VJ+YOB9fw/2cKWWVHCvOzHxqA7IaF2slyPH
+         FuA0NLLuT4rPphmXMPDgeQ3v1IOsGj0/oi6Rxlk4z2Ye4k4Q86nJuanwV+JFNl8KrEHu
+         mTbtpEHINF7swKCqsg4zE4wHAtqheAYk35QQ1/LgLnNpgpaC4JN0R2lT4/HbmHZz9dUe
+         QeEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782323647; x=1782928447;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=anmA2l3MxALUQm7PPnRPt/zM8+X9tbioRc5oCtucAME=;
-        b=bsBIvOILaAHEIE59l8YLYufO98vNJhZ8bMCoXzDSQcdO25Xedk7GvJjdDNSjX7f2hD
-         bM/3wp5Uc8vG98qCCYC91Aq/Aow6EsGDjfT3MZh1xlNV41JUMlXxv+ycuW0Mjf5XhPHU
-         Y1fyX949PcvjSPIYHhANx9TojJYuPqAGx+/YRjr9UXRYWRw84J4nSnEccFkKc/Gtw3/N
-         5lIVoemaRawx1QjVAuv18OO1Bqg5QrY2Dz2VSoQu7al9+cBBCzeL1nV1Wv0Nxp9vXRJV
-         j+ZFW5HGoPiJTfi6cvvl3O0yWlnrPoT0wLgKw9E28stWL9BCYfZa/ZxBqwMlCxpWCDTx
-         ErVw==
-X-Forwarded-Encrypted: i=1; AHgh+RoFvSa2u1dJL1z49/RPobqat/Fi1vz/e6CIhLVUswXwdFA4w5atbqxAfvKwo7Nz7aiRzZjFa9Gr+4s+mjgFcy/G@vger.kernel.org
-X-Gm-Message-State: AOJu0YyinaWgfv4CdS443r8rmrYt6WTwi7kqbeKyRFO+Dy8k6SqbGMBR
-	Glmjg7kzFElRvVUuEApvhjE+XfbN58+OxnRAI87hyX+u3s1tpdDnjdJO
-X-Gm-Gg: AfdE7clqdETyzhPeWeGoo0Q5ZfsVw+v4ZK+FUlv6bgnjJdTvyHRGQeSxDvrDPXdNdT3
-	a6q+YyGUTR6MQycjeoJsa+CZIr528oLiGR/pZqfQiIlb+ELNOT3w9S9iXigAWGQtywzq4z5CYNq
-	6fooyouiqVfn6bzu1uWymcS65o+8BuJYVNWb8WwKbz49IxVIPTGzA9yK35n5K3dnGzGKEsmeXQJ
-	xCNl+aDb4cOk/Xi/CxN5TPWnBq+fTphJKTDHakBO39/S8pnhRu/NrYBkJZitNeMwcokxw7e22Hm
-	GTvE2D6c6zH4BX8bM/OcMQwtSZSh6pnmSqJvvYZo3NGdFqr2G69TtNGDN0QMfCq4oSSekOGjpyy
-	kCbfHAG1FdqCrW2qXV6RNNl/+6sin+o9BnYUm3JbLzKzt2UC15fAAnKKL7iI0eFkLDs1llpUzPS
-	35zJ4H5KkJfrlEtGPj0xO3AcZB9NNsT6DDHd/Ex4o=
-X-Received: by 2002:a17:902:db0d:b0:2c7:f524:a8e with SMTP id d9443c01a7336-2c7f52411f8mr4584005ad.3.1782323647155;
-        Wed, 24 Jun 2026 10:54:07 -0700 (PDT)
-Received: from localhost.localdomain ([202.164.135.140])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c7f5afb1e0sm3629865ad.29.2026.06.24.10.54.04
+        d=1e100.net; s=20251104; t=1782323703; x=1782928503;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4NlwdAQFxJRK87l+yQ/+R9Mq1tuhwUOP4+/t1hmPNl0=;
+        b=Rt8SuZDGsuizFq/3p/iVaiHjApMnaMG2VIT8huuqghVLjhfBlThPiw1AMhh2dRzh9a
+         1tzM2CYwdm79U6q3akDUZFMGfxAGoUmHT0qSvCuQNdUED21VzG9BeTXQka66aHDajJ0Y
+         lt4rk31wvUn9ehhymEF4ggwBA350vaGN2IvMQZ/3CRHRmfLjQn90kZ39R9Fhi8FxBPEH
+         Dk7GjzoZ1GXmsDWKFR3qn1Bw9RxNZABo2uQJTaSUEiXJvjQWkwUFaLnRRh+1+uwyrsGx
+         CrRCKZRnJHISbOnKvWPO7SIQ3dXRCD0JRZuEEDLyWohz5fSR3/ef64DXIQJtY4I08304
+         yHPA==
+X-Forwarded-Encrypted: i=1; AHgh+RoTt20EUIUiJjydEPuwaWEj+3p2SydSTeJtOpITPpuAGFHgLXBDpi+qpA6bj2dAFk2+OsrArZoL5jPQ6SWtpq8D@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIvJYUkmKc1caJb9mIV6vBgzEROL/uEaWn2i/n4rQXDlGB3Y0Y
+	jJYNQXig6OeGfnFxNS0df0QJkvezYrqMoEErBaxjifVSeSCX/P4m9w8yP6FX0/EtqNQ=
+X-Gm-Gg: AfdE7ckBrt2DnAEBvz02/Dh86ywVjJ4Sii2dLlGBHzZThnoE0M5F4A0rr2t+4O0GExi
+	XAWzwa5hByQ195AoFVqoDy2zWbOq3u64/aIKY7mypCtSDkZpRpGFLqVxuNI4IAmXEXfpceJk16k
+	BzY9I1lMY26iPBWW6U6xQR1MJ3WmTgEG77prMrBjxmfqHMM1vpgK8kI01/Iz0kYblAyOWSrcCVy
+	LYw2zkh3ctn5nqTatRKZ6QLGwab8ZIYeWWBPoZMVuuREOh0DNUe0tKuWwggDE8gbdRMloY10f5O
+	H8IUCn7QduQJzGS6BAZS9ljkjxHkWQbT0Mhw/vrN2ZDVmP9b4UljUCM8EgyqiIENb8R6j2sOo2u
+	8bdI1O5KHugpqiUjVoSWTFNL6ti0hsJ3gaBtlq2OWaJ7RWAhy2VDGiudg3/35+4q3NpeYqkL4If
+	W9Q8Y3Qb0TodIb7va7
+X-Received: by 2002:a17:90b:2543:b0:36a:c4b:76cf with SMTP id 98e67ed59e1d1-37de43b6c88mr5058783a91.23.1782323703018;
+        Wed, 24 Jun 2026 10:55:03 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:c087:d655:ef04:fbeb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-37df36c34basm273518a91.0.2026.06.24.10.55.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2026 10:54:06 -0700 (PDT)
-From: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-To: andersson@kernel.org
-Cc: mathieu.poirier@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	saileshnandanavanam@gmail.com
-Subject: [PATCH v2] remoteproc: qcom_q6v5_pas: Fix dtb firmware lifecycle and leak
-Date: Wed, 24 Jun 2026 23:23:35 +0530
-Message-Id: <20260624175335.22799-1-saileshnandanavanam@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260622064141.zfakbyenknx6vbm5@hu-mojha-hyd.qualcomm.com>
-References: <20260622064141.zfakbyenknx6vbm5@hu-mojha-hyd.qualcomm.com>
+        Wed, 24 Jun 2026 10:55:02 -0700 (PDT)
+Date: Wed, 24 Jun 2026 11:55:00 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: virtio: support dynamic number of vrings
+Message-ID: <ajwZ9EPnrYu2M6G-@p14s>
+References: <20260621-vring_flex-v1-1-c6c582fbe94b@valla.it>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260621-vring_flex-v1-1-c6c582fbe94b@valla.it>
 
-DTB co-firmware was previously requested and loaded in
-qcom_pas_load(), but its lifetime did not match the actual
-start/stop lifecycle of the remoteproc. As a result, the firmware
-reference could be retained across restart cycles, leading to a
-leak for each successful boot.
+Hi Francesco,
 
-Additionally, if qcom_pas_start() failed after loading the DTB
-firmware, the remoteproc core would not invoke .stop(), leaving
-no opportunity to release the associated firmware reference.
+On Sun, Jun 21, 2026 at 11:57:31PM +0200, Francesco Valla wrote:
+> The number of vrings for each vdev has been fixed to 2 since the
+> introduction of multi-vdev support [1]; this is completely fine for the
+> rpmsg usecase, but can conflict with other virtio devices (CAN for
+> example requires 3 virtqueues, entropy only 1, network a variable number
+> and so on).
 
-Fix this by moving DTB firmware request and loading into
-qcom_pas_start(), so that its lifetime is strictly tied to the
-remoteproc start sequence.
+I suppose the remoteproc subsystem is involved because these other virtio
+devices are behind a remote processor?  If so, how does virtio drivers for the
+devices get called?
 
-Update qcom_pas_start() to ensure proper cleanup on all paths:
-- release PAS metadata on failure
-- release DTB firmware on both success and failure paths
-- unmap DTB carveout where applicable
+Otherwise I'm good with the code.
 
-Remove DTB firmware handling from qcom_pas_load(), as it does not
-match the correct ownership and lifecycle model.
+Thanks,
+Mathieu
 
-With this change, request_firmware() and release_firmware() are
-properly paired within the start path, avoiding leaks and ensuring
-consistent behavior across restart and failure scenarios.
-
-Fixes: 29814986b82e ("remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading")
-Signed-off-by: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
----
-v2:
-- Move DTB firmware request/load from qcom_pas_load() to qcom_pas_start()
-- Fix firmware reference leak across restart cycles
-- Handle start() failure paths where .stop() is not invoked
-- Ensure firmware is released on all success and failure paths
-- Remove DTB handling from load() and drop release from stop()
----
- drivers/remoteproc/qcom_q6v5_pas.c | 54 ++++++++++++++++--------------
- 1 file changed, 29 insertions(+), 25 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index da27d1d3c9da..090f1f09dba3 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -232,28 +232,7 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
- 	if (pas->lite_dtb_pas_id)
- 		qcom_scm_pas_shutdown(pas->lite_dtb_pas_id);
- 
--	if (pas->dtb_pas_id) {
--		ret = request_firmware(&pas->dtb_firmware, pas->dtb_firmware_name, pas->dev);
--		if (ret) {
--			dev_err(pas->dev, "request_firmware failed for %s: %d\n",
--				pas->dtb_firmware_name, ret);
--			return ret;
--		}
--
--		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware,
--					pas->dtb_firmware_name, pas->dtb_mem_region,
--					&pas->dtb_mem_reloc);
--		if (ret)
--			goto release_dtb_metadata;
--	}
--
- 	return 0;
--
--release_dtb_metadata:
--	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
--	release_firmware(pas->dtb_firmware);
--
--	return ret;
- }
- 
- static void qcom_pas_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
-@@ -277,9 +256,24 @@ static int qcom_pas_start(struct rproc *rproc)
- 	struct qcom_pas *pas = rproc->priv;
- 	int ret;
- 
-+	if (pas->dtb_pas_id) {
-+		ret = request_firmware(&pas->dtb_firmware, pas->dtb_firmware_name, pas->dev);
-+		if (ret) {
-+			dev_err(pas->dev, "request_firmware failed for %s: %d\n",
-+					pas->dtb_firmware_name, ret);
-+			return ret;
-+		}
-+
-+		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware,
-+				pas->dtb_firmware_name, pas->dtb_mem_region,
-+				&pas->dtb_mem_reloc);
-+		if (ret)
-+			goto release_dtb_metadata;
-+	}
-+
- 	ret = qcom_q6v5_prepare(&pas->q6v5);
- 	if (ret)
--		return ret;
-+		goto release_dtb_metadata;
- 
- 	ret = qcom_pas_pds_enable(pas, pas->proxy_pds, pas->proxy_pd_count);
- 	if (ret < 0)
-@@ -350,15 +344,17 @@ static int qcom_pas_start(struct rproc *rproc)
- 	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
- 	pas->firmware = NULL;
- 
-+	if (pas->dtb_firmware) {
-+		release_firmware(pas->dtb_firmware);
-+		pas->dtb_firmware = NULL;
-+	}
-+
- 	return 0;
- 
- unmap_carveout:
- 	qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
- release_pas_metadata:
- 	qcom_scm_pas_metadata_release(pas->pas_ctx);
--	if (pas->dtb_pas_id)
--		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
--
- unmap_dtb_carveout:
- 	if (pas->dtb_pas_id)
- 		qcom_pas_unmap_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
-@@ -376,6 +372,14 @@ static int qcom_pas_start(struct rproc *rproc)
- 	qcom_pas_pds_disable(pas, pas->proxy_pds, pas->proxy_pd_count);
- disable_irqs:
- 	qcom_q6v5_unprepare(&pas->q6v5);
-+release_dtb_metadata:
-+	if (pas->dtb_pas_id)
-+		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-+release_dtb_firmware:
-+	if (pas->dtb_firmware) {
-+		release_firmware(pas->dtb_firmware);
-+		pas->dtb_firmware = NULL;
-+	}
- 
- 	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
- 	pas->firmware = NULL;
--- 
-2.34.1
-
+> 
+> Remove the static vring allocation, transforming it to a flex array that
+> is allocated at vdev probe time; for the existent usecases (i.e.: mainly
+> rpmsg) this leads to no functional change, except the additional memory
+> used for the counter associated to the new array.
+> 
+> The maximum number of virtqueues is limited to 256 due to the uint8_t
+> value used inside the resource table to indicate the number of vring to
+> allocate; for this reason, no additional plausibility check is performed
+> on the number of vrings indicated by the resource table.
+> 
+> As a side effect, this also fixes the single virtqueue usecase, which
+> was apparently supported also before but for which the remove action
+> caused an error (because the remove action was trying to unmap also the
+> second vring, which was in fact not mapped).
+> 
+> [1] https://lore.kernel.org/all/1330589497-4139-5-git-send-email-ohad@wizery.com/
+> 
+> Signed-off-by: Francesco Valla <francesco@valla.it>
+> ---
+>  drivers/remoteproc/remoteproc_core.c   |  7 -------
+>  drivers/remoteproc/remoteproc_virtio.c | 21 +++++++++++++--------
+>  include/linux/remoteproc.h             | 10 ++++------
+>  3 files changed, 17 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index f003be006b1b..88504d6eed93 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -473,7 +473,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  {
+>  	struct fw_rsc_vdev *rsc = ptr;
+>  	struct device *dev = &rproc->dev;
+> -	struct rproc_vdev *rvdev;
+>  	size_t rsc_size;
+>  	struct rproc_vdev_data rvdev_data;
+>  	struct platform_device *pdev;
+> @@ -494,12 +493,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  	dev_dbg(dev, "vdev rsc: id %d, dfeatures 0x%x, cfg len %d, %d vrings\n",
+>  		rsc->id, rsc->dfeatures, rsc->config_len, rsc->num_of_vrings);
+>  
+> -	/* we currently support only two vrings per rvdev */
+> -	if (rsc->num_of_vrings > ARRAY_SIZE(rvdev->vring)) {
+> -		dev_err(dev, "too many vrings: %d\n", rsc->num_of_vrings);
+> -		return -EINVAL;
+> -	}
+> -
+>  	rvdev_data.id = rsc->id;
+>  	rvdev_data.index = rproc->nb_vdev++;
+>  	rvdev_data.rsc_offset = offset;
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index d5e9ff045a28..96f13f828b8e 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -115,8 +115,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
+>  	void *addr;
+>  	int num, size;
+>  
+> -	/* we're temporarily limited to two virtqueues per rvdev */
+> -	if (id >= ARRAY_SIZE(rvdev->vring))
+> +	if (id >= rvdev->num_vrings)
+>  		return ERR_PTR(-EINVAL);
+>  
+>  	if (!name)
+> @@ -503,17 +502,20 @@ static int rproc_virtio_probe(struct platform_device *pdev)
+>  	if (!rvdev_data)
+>  		return -EINVAL;
+>  
+> -	rvdev = devm_kzalloc(dev, sizeof(*rvdev), GFP_KERNEL);
+> +	rsc = rvdev_data->rsc;
+> +
+> +	rvdev = kzalloc_flex(*rvdev, vring, rsc->num_of_vrings);
+>  	if (!rvdev)
+>  		return -ENOMEM;
+>  
+>  	rvdev->id = rvdev_data->id;
+>  	rvdev->rproc = rproc;
+>  	rvdev->index = rvdev_data->index;
+> +	rvdev->num_vrings = rsc->num_of_vrings;
+>  
+>  	ret = copy_dma_range_map(dev, rproc->dev.parent);
+>  	if (ret)
+> -		return ret;
+> +		goto free_rvdev;
+>  
+>  	/* Make device dma capable by inheriting from parent's capabilities */
+>  	set_dma_ops(dev, get_dma_ops(rproc->dev.parent));
+> @@ -527,13 +529,11 @@ static int rproc_virtio_probe(struct platform_device *pdev)
+>  	platform_set_drvdata(pdev, rvdev);
+>  	rvdev->pdev = pdev;
+>  
+> -	rsc = rvdev_data->rsc;
+> -
+>  	/* parse the vrings */
+>  	for (i = 0; i < rsc->num_of_vrings; i++) {
+>  		ret = rproc_parse_vring(rvdev, rsc, i);
+>  		if (ret)
+> -			return ret;
+> +			goto free_rvdev;
+>  	}
+>  
+>  	/* remember the resource offset*/
+> @@ -569,6 +569,9 @@ static int rproc_virtio_probe(struct platform_device *pdev)
+>  	for (i--; i >= 0; i--)
+>  		rproc_free_vring(&rvdev->vring[i]);
+>  
+> +free_rvdev:
+> +	kfree(rvdev);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -579,7 +582,7 @@ static void rproc_virtio_remove(struct platform_device *pdev)
+>  	struct rproc_vring *rvring;
+>  	int id;
+>  
+> -	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
+> +	for (id = 0; id < rvdev->num_vrings; id++) {
+>  		rvring = &rvdev->vring[id];
+>  		rproc_free_vring(rvring);
+>  	}
+> @@ -588,6 +591,8 @@ static void rproc_virtio_remove(struct platform_device *pdev)
+>  	rproc_remove_rvdev(rvdev);
+>  
+>  	put_device(&rproc->dev);
+> +
+> +	kfree(rvdev);
+>  }
+>  
+>  /* Platform driver */
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 7c1546d48008..222e1a56cebc 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -339,10 +339,6 @@ struct rproc_subdev {
+>  	void (*unprepare)(struct rproc_subdev *subdev);
+>  };
+>  
+> -/* we currently support only two vrings per rvdev */
+> -
+> -#define RVDEV_NUM_VRINGS 2
+> -
+>  /**
+>   * struct rproc_vring - remoteproc vring state
+>   * @va:	virtual address
+> @@ -370,9 +366,10 @@ struct rproc_vring {
+>   * @id: virtio device id (as in virtio_ids.h)
+>   * @node: list node
+>   * @rproc: the rproc handle
+> - * @vring: the vrings for this vdev
+>   * @rsc_offset: offset of the vdev's resource entry
+>   * @index: vdev position versus other vdev declared in resource table
+> + * @num_vrings: the number of vrings for this vdev
+> + * @vring: the vrings for this vdev
+>   */
+>  struct rproc_vdev {
+>  
+> @@ -382,9 +379,10 @@ struct rproc_vdev {
+>  	unsigned int id;
+>  	struct list_head node;
+>  	struct rproc *rproc;
+> -	struct rproc_vring vring[RVDEV_NUM_VRINGS];
+>  	u32 rsc_offset;
+>  	u32 index;
+> +	unsigned int num_vrings;
+> +	struct rproc_vring vring[] __counted_by(num_vrings);
+>  };
+>  
+>  struct rproc *rproc_get_by_phandle(phandle phandle);
+> 
+> ---
+> base-commit: ef0c9f75a19532d7675384708fc8621e10850104
+> change-id: 20260618-vring_flex-b4d23d1974ba
+> 
+> Best regards,
+> --  
+> Francesco Valla <francesco@valla.it>
+> 
