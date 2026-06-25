@@ -1,293 +1,253 @@
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazolkn19013080.outbound.protection.outlook.com [52.103.14.80])
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011025.outbound.protection.outlook.com [52.101.65.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E8536DA1F;
-	Thu, 25 Jun 2026 14:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC0E309EE2;
+	Thu, 25 Jun 2026 15:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.25
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782397508; cv=fail; b=Ek2JH4jCmWi43dktpJjyx+mRIbW80YeZRaYU/bSQ2UOI/wFr50PS9vohCgOnfIFmOV7YKaNVgC/LP6IQ1LkN0XXpx6x/3J0i2H+QN5126pGKcvs2EAoVRhLA6RUEexyhKlG0mig103Ay9S0MFUrWBSeL+hFaiSy4ti6sosapS00=
+	t=1782402893; cv=fail; b=f8X10Q/2Jjh1Os+3kq32KLCndPnpIYNHPqFPJkX9EC6JOcZd8Tw+P52zI5YTMbYKXmYH38QG38r12RulaIyZ8JiSPliBurAgaLTD4G0LWYsmLrqbm9r2XPNl601yJg56rbVKlFbHCWIUdQw3+n3vXi4AJFQMIgTQHx9lSSM+ujc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782397508; c=relaxed/simple;
-	bh=QXMjPsbLeLaacEWqZ4530hUF414/zTYYbViKR2WL638=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XbOYNyj+0CEqubFmP+ciV3gl5CaoNqJ+bjRN4SxPZOYFO4b2p0OMxWgZubOYtZq7hnUs2r4jf2usaVLRTeDIFR834NO2oLTgElDPK3fOXSGUWqn7PARVpxyXyI5XDgXvmmirxJ9dbNUlLmGtnhlaJ1mTiyPKHcc0tSF/I3iBLe0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=f9FsrxA8; arc=fail smtp.client-ip=52.103.14.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1782402893; c=relaxed/simple;
+	bh=4GWGcwkIVWq/nRl/nlRCPoW5cR4x3rnoz3tOWWYhgWc=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Y9jv2nfV6SMPe8ZKjgBrktfTNQAwnnCOvIrQLjZQ6wvaudfuGYJNUwPsMeKfJFMcTekZZOZX7rp7bRU5mZzqebRQPCeXNGXgKnUydd228IzlkrIor4PuNnVvhyoHcmkazmF3CjfgDi4H9ygU2NHQRApKIEZlj2qoa5FFUUIgf4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=BJSAFm4K; arc=fail smtp.client-ip=52.101.65.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="f9FsrxA8"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="BJSAFm4K"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ztx/9WQrzyr+G5Bd8QPV5r+D3VUujlwT7m1F0olZ+8cg3vDlYsC4h0tHqsjfJenU4LvWS9dPgelfglrcptA/ar/gr4MwA4VZlY7eye/i1V0m3zzij+0zC9iDqT9173fzAsWV6AflLESAbwFrRwiagvU8I/vay5ngcTQsOveoZE26gLtUbURF2ih0LsbmtmtXxdU508jNXmd0xR/cVM/yj2CY6Fx06pWl3w2vZ0dUYJaBQJe3uFDsytt+54VghwBAbXW4JyQuJ6g00oeuRoQdyQdzJu9PDaWReuMGnZ+t/TZqPC9eXiRwgBwWmdBL5S09awaO82BhHjbNwJSMgi2Z8A==
+ b=nXR8AdGqPBrvzWV0aohXE1ddNRDtiDm+WibZvPcyVdyGlx0a6J4h8XedGBy13orbfEqOXhcQA2T8r0sEFIAkTixXTwXFTKQbv+EGR7W0R6m3jkyy42PEcUX0M65Ze/PE2UUKUbDIpv3W5pQubERVA6b2tpjP8Eau12RB0jxWeEJ+gyTCzpWZN3Wc30X/1WtfDLEbA/bn5HKvNEDMqsfL5h/vN4GrPPJ+j+3sLxC1OEppE1Xivc+lPLKA81i/enbaGhApVndHP6D0lGnPNijMn7wcWXwaq8AT3ELJ07uTaDeXYMHco5oGLgecrSisoKGlEtWSWbst3ZSW/ddUTMbk5A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g5f9VsYJwLq4AYpPqV2rvGHdoEUUyi99/rKpR3Dw37Y=;
- b=cek61uSJ93+otlWMo5I1t+ldsRLns4beCfUod7ErJ8vXZjN8TLysCRRjg+BU3/F6JRGp/8vcdHV5F3SlDqWaTLN4mrnwjyTMIM72FW/ujaUZb75YW3SGqZoIXJmcCtpm9C2cAhCLEPclQmHdL3rDiS9a0libSWFJ0kd9G9I2AJZopsGXsfUujPc7RfRO4m0mrBNkQR11X9zoyqWVYPWXyI0/gw/p8wfHfWuZ+/QjxTmmoCIVlEBNI7zdu0yYcwLB1AcUnM8i+nI8pKj5YJjIIEAnZ58eiu4DNtnnUai5Qmfa1ZuSwNOrBNu9czNHBjGPXzAkBU7QwzRETiXi+ptZUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=5lc7nqnZVTFoTmi8443OB2OKCYSrRnEC97oLbbWI59w=;
+ b=Le8kX0AJ2m6dToYvI++L7Uxn0CBYPbHs4lbrsC8NzBkdAqSFNVwUU0aRqaijo+b9k6XcKU/qDUtW+1btHnenKAToX/kHqsLUF6ze+2HDqXskoqS/ldThvD7Ps4i1tyy5DX0JIpHQO7I+ObiXvCLCkgr+WsyuR+xdnND9Kv6MvNRj95yAR2fl7kSO7lZKh/xHs04XaTc7mg8VXDdO6NqVHUw+j8ZwRe9olwVm+NFPwNvk6i0WslP9liO+CIXksDNcWc3UV0D8yvbVpf9H1AuCN2UiXqvwOCc1GcAsFl3NW7psj+PcnUDBovK39nn8ilEa7lg8XBFN4hg9OcJ/xUdmEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g5f9VsYJwLq4AYpPqV2rvGHdoEUUyi99/rKpR3Dw37Y=;
- b=f9FsrxA8GpiEXy9hRHeSNNccVs6Iv0eoNcunMXs9Lc1P6fVnF43gIegeahd1vJ1KPPqtsLYRaR9Nd7ARgYG6kUQM/jCYn5l0RPgXAydBtLgfr6WSwSef9isEpdDJxM7Xn7eB830SvWhbxNLjES685imqGdcaHKilJNWf7bzOVgCMwaKG0JpMVqspuCZChRYqwOTFF0E/l//CbW3Q5kxevI1SFx/WGdStJ683bgjQnFxpQyYsyCSmUu0Z54WReX/3eRApdA4CBaCKQBt7UvQ36/gokKxbcRLC2jLDEL2GAfA2tawftvGGSj8okr9H/Dz+h0la8dHnDF7BA4Zh2mE5/g==
-Received: from SN7PR19MB6736.namprd19.prod.outlook.com (2603:10b6:806:263::12)
- by SJ0PR19MB4622.namprd19.prod.outlook.com (2603:10b6:a03:28b::11) with
+ bh=5lc7nqnZVTFoTmi8443OB2OKCYSrRnEC97oLbbWI59w=;
+ b=BJSAFm4Kuh5ZGmTFQtlScvbdzl646VxGDlPlzOWh/gAWnJfVYqOdU1LFGtZKBrGjetPnfSAWMhpOABSPcnt26+k6AEi9R6Xu4kTvvfmb+/u3LSzPzKvOf2P3FHkOdnzW2550wwj00Dood7q5QLdoOleoe+5bjCfhLZVQszN/gxMdfdvQ38q7cmCNMCn4BG3p/iZV4rG8D5tldFCAFqxc7KX9Scz2zl+4ZBBqHIxTXwLiOdWlv81cB1YIyg6BJYRzIIthLqMd0VJo08ByE5fKVh52rMNeJOte9ICfC5UyvFnJ59Wz7ajucYDHBTKMqAth7O4qXzpKBqldsrBAPVSX/w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from VI1PR04MB7135.eurprd04.prod.outlook.com (2603:10a6:800:12c::22)
+ by VI1PR04MB9812.eurprd04.prod.outlook.com (2603:10a6:800:1d2::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.16; Thu, 25 Jun
- 2026 14:25:03 +0000
-Received: from SN7PR19MB6736.namprd19.prod.outlook.com
- ([fe80::4b6c:b84f:b71c:d0a]) by SN7PR19MB6736.namprd19.prod.outlook.com
- ([fe80::4b6c:b84f:b71c:d0a%3]) with mapi id 15.21.0159.007; Thu, 25 Jun 2026
- 14:25:02 +0000
-Message-ID:
- <SN7PR19MB6736656C55BC6DA32A3E75CA9DEC2@SN7PR19MB6736.namprd19.prod.outlook.com>
-Date: Thu, 25 Jun 2026 18:24:48 +0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] remoteproc: qcom: Add M0 BTSS secure PIL driver
-To: Philipp Zabel <p.zabel@pengutronix.de>, Jens Axboe <axboe@kernel.dk>,
- Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Johannes Berg <johannes@sipsolutions.net>,
- Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
- Rocky Liao <quic_rjliao@quicinc.com>, Saravana Kannan
- <saravanak@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
- netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20260625-ipq5018-bluetooth-v1-0-d999be0e04f7@outlook.com>
- <20260625-ipq5018-bluetooth-v1-2-d999be0e04f7@outlook.com>
- <439f76c3fcafdfb91cca426fcae17ef776776eab.camel@pengutronix.de>
-Content-Language: en-US
-From: George Moussalem <george.moussalem@outlook.com>
-In-Reply-To: <439f76c3fcafdfb91cca426fcae17ef776776eab.camel@pengutronix.de>
+ 2026 15:54:38 +0000
+Received: from VI1PR04MB7135.eurprd04.prod.outlook.com
+ ([fe80::322f:adc4:8d65:2ba4]) by VI1PR04MB7135.eurprd04.prod.outlook.com
+ ([fe80::322f:adc4:8d65:2ba4%6]) with mapi id 15.21.0159.015; Thu, 25 Jun 2026
+ 15:54:38 +0000
+From: Shenwei Wang <shenwei.wang@oss.nxp.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shuah Khan <skhan@linuxfoundation.org>,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-imx@nxp.com,
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	b-padhi@ti.com,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v14 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+Date: Thu, 25 Jun 2026 10:54:25 -0500
+Message-ID: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
+X-Mailer: git-send-email 2.43.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P195CA0034.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:20b:65a::22) To SN7PR19MB6736.namprd19.prod.outlook.com
- (2603:10b6:806:263::12)
-X-Microsoft-Original-Message-ID:
- <aab339ca-6b5c-472b-9737-87d41e49e8a4@outlook.com>
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR13CA0009.namprd13.prod.outlook.com
+ (2603:10b6:806:130::14) To VI1PR04MB7135.eurprd04.prod.outlook.com
+ (2603:10a6:800:12c::22)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR19MB6736:EE_|SJ0PR19MB4622:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12ef7d2f-83b5-4fcb-7ca9-08ded2c58b11
-X-MS-Exchange-SLBlob-MailProps:
-	dx7TrgQSB6cUe9t9Fs5HiQGsDL5YS4Qs2BZu8RFnRVvnmRZ50OLmZvuZddTIKQYBJDJ3dcbD3MjGALgl4piH4lEY7nWQfLnigh26shyJrzR0iaVV0q/zQmEsbLxBgIDkXm/L1wyOMTKpF4jB9lK/Unf5SU4v8/ESc9wgvqTMq0MrxksKbrAQTsTXwdzjINiNXm0UixeQvUY7A0jx2niOf7+HoH4MOdqXKrQhRUf3eZGFIZj35V8cuGwjSwJu0r7baLWc3mS0UrIAoio0GAN/VU/Dl1ajWzzrNzt1SxtV9F5YQB8jyK7yJOxvz/06QOulIsIMkr+NhX9MthJE4CelwFV17hOMH8VOn9lZpayf1DZvj6ZEDkaEHSOIVEJw6bsdrpc96XyCPCRtUn5/xvESko9bdjAiH75lblNu12hhw5gcY/BY63eLQsRfInl7bFo5R57kMuU1meV12GG8oalsj4uRpRFzzehxtwgE2Eb7/RtrOO774ixxsSWmPxziJ0lnvgJ59BVO8MEb8Y1S8jb+eI5NmKQnWUNUcN/7n4Cx/6N+j6/xvkUvDzcJSnGTPbIGYaONdiWM/4J0mkpUPAl8xPjs/KzfK+I7r1BNRKugDkdxx2XZP5pKs83uj5Df1tbX7FqfCk9rAF5Mx4DTZNULrTQ8pIuFIO83XkemQZQRcAMQurIZ0twiA1547/NBhk8LG4J5+eSqiceHopoO2Pw+wPKW96tBakwxBGnks+VWBDhWeLpQF8rnPq4bXYmZ4U6FWju6HWmJ7i4=
+X-MS-TrafficTypeDiagnostic: VI1PR04MB7135:EE_|VI1PR04MB9812:EE_
+X-MS-Office365-Filtering-Correlation-Id: a251b707-2f02-4bc4-4d41-08ded2d20f96
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|4140399003|15080799012|25010399006|23021999003|37011999003|19110799012|5072599009|8060799015|41001999006|6090799003|24021099003|53005399003|40105399003|41105399003|3412199025|440099028|12091999003;
+	BCL:0;ARA:13230040|23010399003|7416014|376014|19092799006|366016|1800799024|921020|11063799006|56012099006|18002099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZjQyTmMzNVBJYW54eHdzekd0Rktoem9kYm5IanIvRHFWZjNuSllVZGp4cVFj?=
- =?utf-8?B?WTZlWDRvRXFOeXZMekNxV2VFd0F3cjBUM3MzQW9zTWUyemM2c3puZzMxTzR1?=
- =?utf-8?B?U0Y3UWZtaGNZMTkzWS9lZmgxVkdaWUpLVlBYYmdDcmltQkdVdThtR2cxbjVH?=
- =?utf-8?B?aVhZcjNrT1MwUVE4TW1Lc0RFa2pRUnVYVnpGdnFSd0hxeXFsZ3JzbDJnNUEr?=
- =?utf-8?B?Skk0SEdFWTJLMEN5OGFOcG8xWVdkVGZ2SEJ1SzA3aVAxMC9nbVN2WDU1Y0pH?=
- =?utf-8?B?TG54VmEzc3htVmdjM1F1QmhxYVJFQjJQMWVaaTVxcjAzVHA4eVowNXNCcm5Y?=
- =?utf-8?B?dWx4UFFXUzladW5GQ1Fzc2ZVbCtPTGExRmpMTHAxNnFXQk1aUFFBOXRiaUZQ?=
- =?utf-8?B?Q1QyeGV3Mmp1ajNUS0k5dUpDWm5QN2pXbDdDSG1OVGl1Sjg2cGhlODVoSFhj?=
- =?utf-8?B?NWs5ZFRlNU1XbkpzSEU1UGdFYUkzY3g0bzU1blVPUjQzaTNycmQzQ3dEckhN?=
- =?utf-8?B?Z2RGS29BdzRmWlVBS2tvdTQ2dWc0SklhditwVVFkME43bEdMUXMwNGxVWnUz?=
- =?utf-8?B?dVR0dEMwM1JNMGZjSmFuMXh2ZjUxMXBHd3ErQldPbWhwdG1VcUJ6cWtSMW4y?=
- =?utf-8?B?UndWTVJKOHdaN2FRZjcyV0ZIdHo3MFlKdmJ1eVpjc2xJdGxHbnh6UjhLbWJi?=
- =?utf-8?B?TlZYODM3eUhTOGxuNytnME9vVTVyYi9EcnBpZmZ2MUdtM1JSdkhzZngwZWV1?=
- =?utf-8?B?RUVrdGFnQTZNbXB5Q015RTdQOWtSU3IvMjRtVlQ1a1JsdVBYMzZibjl0VTBH?=
- =?utf-8?B?bStwMEUrdmRHSTJMcWFCVWxkRjF4cGF6RWNaL2kxai9LdWhWQzNrVnJLS05a?=
- =?utf-8?B?RmlMM1diTE1aYkIyWXpNSVJaMTYyZ09takFwQkdHbGFNT3hSM0h4VmNFalA5?=
- =?utf-8?B?OE9ieGtxaWxHeW5EemwrL29GQmNPYjB3NENkK1gvbG1JUE5CSTBNSE8yU0ph?=
- =?utf-8?B?S2NyLzhEcE8rVWViUU41dnYxeDlLVGNZdXNvRDVUTXlkeHVROW10RGg2eklk?=
- =?utf-8?B?MGpzcWVQcktER2UzQ2U5TFMzTWdxY0ZTb1o2KzZtN3JBSHMrL0JMaUJrTEJF?=
- =?utf-8?B?TWFlaG0valFEbTdZNGZJK2g0WFdlb2RHZFBjYU9sbXJpWlJ5RUJEdHZmVFV4?=
- =?utf-8?B?TlBYVTBVdDZTUndhRmtOVGxSWDcwRitWYnJzUmdZWHdQTlFSR3owWDdnVkl4?=
- =?utf-8?B?ck9ub0phSElodjZSMXM4TS9xVzRHTXNsYTZFYVNFVUp3RFpoUHdGWm1QSlNK?=
- =?utf-8?B?TmpnZENWWjEwa0R5a1ZHM3FoaHZudWo2czZMVU5GMXBTdXNiWjVVUzBDem1a?=
- =?utf-8?B?MDJpYXBLQlJ4V0FydUluNFBNOE9tSFAzVHZBSStYSjcwZWJjN0hjZWpwUllZ?=
- =?utf-8?B?elJMS0hacjgrZXlDQ3Q3bEcxSVQ4YmJqTkYyNGtTQjM0bVVFVEo1TU02MTNO?=
- =?utf-8?Q?BvQPYo=3D?=
+	akx6FwOlf6cs/CRAc1v7ZUOp6/NHX43dNYGHRZFHXd1/gzGOJ5dPrQM1MGk6QMbVZ+HFBIyKwnN4pY/UAuYpDdE2iDK0gg01M1yRF09r5DDFIVWSX3mjHkpJA10BhAOmRw2YnSWm26smTrrteZ6n2wRKXwF56rCv4CAaG5UhZEZ3uTXyz+FIX3QO0cCtiaXNwuHOFK0zTQAmecJFHHNHbCgMw2h/1hYWMT4N82fBcEm+/hfxdITEg22zi05VMqIJLPFAL71wlb9x4ZceMu1VpPUku8e2lkyGGtgOUfuZh+N+76mM7u9gfVRizeMJJbbXwlF3nNo+Inaeo4h6Fj5gTIhmX+/Gw21yJI/TqksS0uxoOAphqwKV8gfv6MuyQu6ZyFqLljGRDLGDy4VFIglsXrwKXoLo5AA2ZzaoZSnynMAPWWn94k4XyzfP50wxuM8+uooPvq90mkiQoVzh4Ltw7Tp+Y9PLllXLgMzeLYoPljP4+oIgOETIe3Qwb5ErwcegvctYZATnQO79OJ6VtlSqt4SC0OMF6ACqgN0E+LEdphgrFZAUS0ip41i9qFzPLMAixp2/jMLYx+KJ0zqHAXhmzjjhat3xtgizydZM4fbwTaTOMnUg8KDAFWjimUrrasD8/HxCDihja75KmbZhMuJm1IZC6aFNSaeFGkPJ4iBL9MPWDouDjeNOIJ/E35eCVt68M9C43a9d/iQga0zM1Ucxog==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB7135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(376014)(19092799006)(366016)(1800799024)(921020)(11063799006)(56012099006)(18002099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cnVVd3c3UCt3UUVtdGp6WklMdlowTWhaaDdxdUZiZHdkbGtaSGZMejBPQmU3?=
- =?utf-8?B?UkxkemhUTHEzWnFjU2xNc3Vtcngyc2IzdHJSS0xTSzJlTW9uZm5JU2FwUTJz?=
- =?utf-8?B?dWlHZTAxcjVJbWgxNzF6WFNVKzh3S3MvT2J6RTN3RlFKem4rOFh5ZmZpK2Va?=
- =?utf-8?B?VUs2VSs4OEg3L2VVQW5iRWhlWUNXQ0FQSTMvVEdXem4ycmNpTUI1SmRURWxO?=
- =?utf-8?B?c2ZVb25UY0wreFphb0NVZDlUSm96eDduTEJtQ21vZWl6Z1dQTjd4YVdKdXNo?=
- =?utf-8?B?VkJub2xEbE1SNTlLelNvMVJUeTdRdURiYktjbmRTY2RNdWRrSzhBRWpXMDFq?=
- =?utf-8?B?NmVIODVmR0xTcEdjOUE3Y1YrVVBOcTcwY1ZuNVN2dkhPTFF3MEpHZU5BT3o0?=
- =?utf-8?B?eGx5Z05WQitDZkNkNGNsRHNRS1c4RXBZUmhiUTNnbWtXSDRSZEN0UGNWamp2?=
- =?utf-8?B?MnJqUVJKYWVONHRYK3M2OTlhYXpKcGlDNytjZXZ2VUQzdmlmOVdUVXR6NWdw?=
- =?utf-8?B?SDZ1bVhEWnVoN2gxQzRiTDFXWGxSd2V5dk9zbDkyZUJKbXgyRzFQcHA4bWIv?=
- =?utf-8?B?bHA3c0hFeGN3K0JIZFhOdjBFWTlnRHYyYXRXRzlEZmlUWEFteVBEdVl5N3lx?=
- =?utf-8?B?SjA2VThTUDMreTFqamprcTBpajZYMW9PaTM1UW9IVnF3Rm5xODQza01Yb3Ex?=
- =?utf-8?B?SEw3MXlvK2VnOVU4dlNPaWZDaXJBSXBOTVhJWXllQ3kzWXdFcVNVSjI5cG5a?=
- =?utf-8?B?VmpvbHF1ZUFRVHRCMytvdHhZUXZ3SkdqKzVhS21rYno1SEZYMjV3ZUI0Zkx2?=
- =?utf-8?B?RVRIdmcrTUdSdWlhWFJPcktxK0NLNTRPaWVHd0JnVUVzblpmSm8wSmlGdTkx?=
- =?utf-8?B?bnFkSDZqZEJaZ1M4Q0pMaDluQlBneURRODF5M2RZNDB4SDZzZk92L2pINXQ0?=
- =?utf-8?B?NXlRRzM3NDE5R2hMQTk1VXo3a0NIeXlPU0UyRXU2TkJFalh4WnpvYjlCSTJF?=
- =?utf-8?B?aUN1MC9yTW1NYVhSNENmQkRtcE85QlBCZ3NETGVmOFZiSWxoSmptc25JOGJD?=
- =?utf-8?B?L3FCQXUwWlVzbWRXT1RBdFdYcnJmWTZtODZwb0piZmRHa0YyNENqUXVoNDZM?=
- =?utf-8?B?bGx3bVpnR1l0Q1NYYVpQRmx1NENDcnV4VytyaHRIZCtiVFcyU1o1M3I5QVpI?=
- =?utf-8?B?VVpiWlB4bW1OMkVzZVc3VHFJdzlVMUV4cWk4akZNZDBBZFdCZDc1QUc5UlNC?=
- =?utf-8?B?R0hWNXAvdG1BVzFsbS9wbFZiR3lLK1FkMnVyYURIY2VaWXhsVnM1MitxcXcw?=
- =?utf-8?B?M3ZtdDFoMU5NS3RLLzc4aFdxeGZERW9nRHp1a2RZODVFaUI4eUZIdm5BcHRs?=
- =?utf-8?B?aHZwdXBJU0swRGdMU2lqWU54bTl4bElDS2Z0a0tHYllLL3IxZkxUVlZwcXhx?=
- =?utf-8?B?eStWV1RGRWJBZEs0QVE1UlpoSFVrdGYxVGdURXd1L3lCbHhHZUFtTktQQjI4?=
- =?utf-8?B?OWlPdFhISVFQVWRVcnQxVk1HejdaRGc3OTRMT0VqWFVQc0NxVVZSNmZxd1Qw?=
- =?utf-8?B?Z1VOZWY2ZE5ISVpvUkRrS1QvVXN3T08vZk5SZ3RPWXFPamduNEVvaWIySmhh?=
- =?utf-8?B?U2lRWWJFNnBSUEhVOWdsUEdnTXEyTW1abXB5K1UxeEVXQlp3YnM1eUJXOXdD?=
- =?utf-8?B?MjUvOUUrSG0rRjZBNU1tc1lKUXRNc0tMVDYzYUV1cmdJRExaTnVLdUpka0Q3?=
- =?utf-8?B?TXRtbHNCTjVCekM2MzBRTnNCTkhVY29mR1dCMVNsMzd5ZTJlQVZtTFczUEVi?=
- =?utf-8?B?YmpuSkFQRzdiYm1TMGM3OS8xUFcwZ1RHZThqVWZVV0FsQkVIdFhoNUNLdGgv?=
- =?utf-8?B?OGc4M3R6emlIN1c5dWZsVStpdlVMQWVkNXIySStLV0l2aFE9PQ==?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12ef7d2f-83b5-4fcb-7ca9-08ded2c58b11
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR19MB6736.namprd19.prod.outlook.com
+	=?utf-8?B?ekg5b0lGV2lxeS8reG5jcG5yVHcxZFpSRThmMWtHZWd1RTBteS81N1lBVFp3?=
+ =?utf-8?B?N2tHeGpnU1pJcnZaOXI1WEduTkpXNSsrWEl5QXMva3hySFZvcGpVRGJHaTlJ?=
+ =?utf-8?B?bE94MEE2ajJjUzJySktBVHhRTmRBMytiUm9Mams3SGxxNURYaFV6LzUwZkFY?=
+ =?utf-8?B?TEx4eVkwdkExSFY4SkROWDJudWtQVmVkT1Jyem5EeXFSMzVDam9LYlA1YTla?=
+ =?utf-8?B?UWI5elRWM0hRZEtPNXBQRTYrZ082YU56ME01cDd6ZnRTZHdxbW5pNTUxV3RH?=
+ =?utf-8?B?UDZPbEswTCtybGJPNHEvc0NYNDkvOVlIbThuL0xyd0FIRUxDSk9zdXhiQlBl?=
+ =?utf-8?B?dlJjdkI3dkRmeUtUVUdmeXhSVnhVcHpEbFBqRDZLaDgvdU9rb0ZyNGpxc3hR?=
+ =?utf-8?B?UGxsQ05TM2Y2QUtvRlVCTS8xQmVOOGQ3VENIeHRqbjVYUlgyU1k0MWJkVGZ6?=
+ =?utf-8?B?dCsydnFsQU1Sc2l4aDZlRUF1ZElVMk8rZC9IdXhUMGxhMWV6OWovam1xencz?=
+ =?utf-8?B?UGg2ZjR1S3V2TmExRmVuVmJuaUoxOXZDZmlVVVFxdVVQQXNYNTFnN3BmRWtB?=
+ =?utf-8?B?YWZRMytqTmxIU256cE9HMUhuWW1lTHVQTXk5M2JlTkpMd1hhV0J4YzRFay9M?=
+ =?utf-8?B?cEpJVjFHV3E4bDNRQ0tJeDRkTURFQ1l0aHdjbjE3MEw5dWJMYUZLa05Vd0F3?=
+ =?utf-8?B?N2hiZTdZaG5GUkxXTldoaEluTmU5ZmF1MW1kU0J4N0VZNEM2Zk03WE91ZER2?=
+ =?utf-8?B?TnB6NjdGMHZ1ak9Dc3V1TlFRZmh5OVZGMHBRSDZZaDJhQW9sNGZBZDlwSmMv?=
+ =?utf-8?B?eDRjRUZMb09LbzNPRmYrVXEwSkFCTk5Yc3lGaVdNR2RIaDdzK2Y3Tk1rdzlq?=
+ =?utf-8?B?bDlrOEVpaGpIRTZxWDZraEp2N3ZHdm4vaFFhODYvUW8wTE5wZmVLWDl6M0dE?=
+ =?utf-8?B?Z1lSbHJjRFlnWndIRXpJeG5mSEZSUWN2U054WEt1QXlBRnFzOGxFbzhHbjF2?=
+ =?utf-8?B?SFhudTRMR29wSEVBL2JDcUVpWlE3WTRiVnRPZ1VnaTROOUVNT1k5RGF0emZi?=
+ =?utf-8?B?TldFdnZxd0pJUHBiUTZkcmx2L1N2N3E1N2Fqei9WQWRaVGJ4SGlacW40N3dX?=
+ =?utf-8?B?VDdta2xjQWdPbVRYZzBoR2F4eStxNHBVNnkvc05PUHVqTmg1L0ZSeVRyOCtv?=
+ =?utf-8?B?NkpKMnMxSUpGdTNaVTdwTzYzZlNLNFk0NGpDRnZhSUNSZnZOUE44MkNzM3Zh?=
+ =?utf-8?B?c1ZKNGFzM2o3ckZlTy9xekg3cHlDR1dEeFRtOFl2MjFFQkpkU1ZWbERLeW9P?=
+ =?utf-8?B?aWdxNDdVM2pxajNiTWtsRy9hZWU1YnJBYzYwRmN5Z216L3VtZVV1T0l4cEF2?=
+ =?utf-8?B?SngycjNneXJ4MXdxVnlsRGJRdmErSVYwQUovRWFGbFpET1BGTm5RRFF4YVQw?=
+ =?utf-8?B?Vzc4ZlB1OE5xdXowSHVDSFdYVXdCbUhScGNUK0VkcXZwM2FDUzJiejBEUzU4?=
+ =?utf-8?B?QVRmSGFIdGhxVkVnd2J1VkxJWWtxOVA2UnVFcFZnUktMQ2doN3MyTmZLY1RZ?=
+ =?utf-8?B?dXNOdmg5OXZyUVJ6OVRqcG1uNE5JQWlpcHJuUXIzTDNRUGl2Q1c0QisyN1pm?=
+ =?utf-8?B?RnpCblp3YU5hZ1lDaVQrR1FyMzNYNUlrMU56bkhMU2hJRktiUlJGT2xPZ3hH?=
+ =?utf-8?B?K1daWTU3K2VNY3JDOGFGSWFrejVsVUF1d1JQTkQ4blJPMGJtUmFnbzl6SEF1?=
+ =?utf-8?B?aEJJckxjcjZ4eXp6dmJsV2VNd1kzWkN1RHZQd1lXNG4zcWpjOWphOW16UFJo?=
+ =?utf-8?B?TDlPa0ozbEdXbTBRb1hFWXRqVzI4MmhHUU5ZYnFtYlBBRHdNU2ptUkUxbDNz?=
+ =?utf-8?B?VmRBV0pvNWR1ZytWNExzYlY2Q2xPZjZ5eXpxdnE0V2lGZGhyaXVWaFBKbWpE?=
+ =?utf-8?B?a1lZcy85NXV2eWFlQkNrRmZrcmk0Rk9GWTR4MEpySzJzaTNWSlhrK2lNQm9u?=
+ =?utf-8?B?NzFUSkZNdTV5TjFYNXhMTlBhMkRzMlAxN1Z5SjE2TUFid3BhbkRUVndlNHNz?=
+ =?utf-8?B?ejBRZnZWVHo0eDlyeklYU3FOR3U1ZHc0VFJTZ2QvRktmUlhBMWRHNjA1TnU3?=
+ =?utf-8?B?UXZ1a1lxcjhrRThnbmhpR2twUjBtd20yTHhjV0Uyd1lGQzZpUWpQTmluUGJw?=
+ =?utf-8?B?SkxZMkZKcDZKdFBPa0VDeFFrRjBTVzk2Y3VyRkxCNWF1L1kvaUovWWRqY1VU?=
+ =?utf-8?B?cnk2Q0dPeGducyt3dS9PVUhwRTBPanZHNlNzM2E5UVpnczFTYlpMZ2U0YURi?=
+ =?utf-8?B?dkQvczBnQ0c0SmFkOXJTZEVNSTFMaVVNQ3drUWVxT3JiVjhNZ2VyRjJlaUFa?=
+ =?utf-8?Q?cKEAuAGwRONNLgeK44Q9u8i9/8W6HT8MMCBem?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a251b707-2f02-4bc4-4d41-08ded2d20f96
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB7135.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2026 14:25:02.2196
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2026 15:54:38.1000
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR19MB4622
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kPYLBna1O7E5fCOzFXBLnp11IsohCMfel/vulb1yvPbPHbqvbSkHfZ5W5Bu65GNCcP2E5llQjDG5SsUUzF6A2PjCTAL+fIp3gMCr5GlEvp1H9zHQSynQvpRgHXJ/MBF/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9812
 
-Thanks, that was quick!
+From: Shenwei Wang <shenwei.wang@nxp.com>
 
-On 6/25/26 18:18, Philipp Zabel wrote:
-> On Do, 2026-06-25 at 18:10 +0400, George Moussalem via B4 Relay wrote:
->> From: George Moussalem <george.moussalem@outlook.com>
->>
->> Add support to bring up the M0 core of the bluetooth subsystem found in
->> the IPQ5018 SoC.
->>
->> The signed firmware loaded is authenticated by TrustZone. If successful,
->> the M0 core boots the firmware and the peripheral is taken out of reset
->> using a Secure Channel Manager call to TrustZone.
->>
->> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
->> ---
->>  drivers/remoteproc/Kconfig            |  12 ++
->>  drivers/remoteproc/Makefile           |   1 +
->>  drivers/remoteproc/qcom_m0_btss_pil.c | 261 ++++++++++++++++++++++++++++++++++
->>  3 files changed, 274 insertions(+)
->>
-> [...]
->> diff --git a/drivers/remoteproc/qcom_m0_btss_pil.c b/drivers/remoteproc/qcom_m0_btss_pil.c
->> new file mode 100644
->> index 000000000000..7168e270e4d4
->> --- /dev/null
->> +++ b/drivers/remoteproc/qcom_m0_btss_pil.c
->> @@ -0,0 +1,261 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2026 The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/delay.h>
->> +#include <linux/elf.h>
->> +#include <linux/firmware/qcom/qcom_scm.h>
->> +#include <linux/io.h>
->> +#include <linux/kernel.h>
->> +#include <linux/of_reserved_mem.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/reset.h>
->> +#include <linux/soc/qcom/mdt_loader.h>
->> +
->> +#include "qcom_common.h"
->> +
->> +#define BTSS_PAS_ID	0xc
->> +
->> +struct m0_btss {
->> +	struct device *dev;
->> +	phys_addr_t mem_phys;
->> +	phys_addr_t mem_reloc;
->> +	void __iomem *mem_region;
->> +	size_t mem_size;
->> +	struct reset_control *btss_reset;
-> 
-> Why is this stored here? It doesn't seem to be used.
+Support the remote devices on the remote processor via the RPMSG bus on
+i.MX platform.
 
-will remove it and use devm_reset_control_get_exclusive_deasserted as
-suggested below.
+Changes in v14:
+ - Update gpio-rpmsg.rst per Mathieu’s feedback.
+ - Align the rpmsg-gpio driver with the revised gpio-rpmsg.rst.
+ - Modify rpmsg-core to enable prefix-based matching of RPMSG device IDs.
 
-> 
-> [...]
->> +static int m0_btss_pil_probe(struct platform_device *pdev)
->> +{
->> +	// struct reset_control *btss_reset;
-> 
-> It looks like this shouldn't be commented out.
-> 
->> +	struct device *dev = &pdev->dev;
->> +	const char *fw_name = NULL;
->> +	struct m0_btss *desc;
->> +	struct clk *lpo_clk;
->> +	struct rproc *rproc;
->> +	int ret;
->> +
->> +	ret = of_property_read_string(dev->of_node, "firmware-name",
->> +				      &fw_name);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	rproc = devm_rproc_alloc(dev, "m0btss", &m0_btss_ops,
->> +				 fw_name, sizeof(*desc));
->> +	if (!rproc) {
->> +		dev_err(dev, "failed to allocate rproc\n");
->> +		return -ENOMEM;
->> +	}
->> +
->> +	desc = rproc->priv;
->> +	desc->dev = dev;
->> +
->> +	ret = m0_btss_alloc_memory_region(desc);
->> +	if (ret)
->> +		return ret;
->> +
->> +	lpo_clk = devm_clk_get_enabled(dev, "btss_lpo_clk");
->> +	if (IS_ERR(lpo_clk))
->> +		return dev_err_probe(dev, PTR_ERR(lpo_clk),
->> +				     "Failed to get lpo clock\n");
->> +
->> +	desc->btss_reset = devm_reset_control_get(dev, "btss_reset");
-> 
-> Please use devm_reset_control_get_exclusive() directly.
-> 
->> +	if (IS_ERR_OR_NULL(desc->btss_reset))
->> +		return dev_err_probe(dev, PTR_ERR(desc->btss_reset),
->> +				     "unable to acquire btss_reset\n");
->> +
->> +	ret = reset_control_deassert(desc->btss_reset);
->> +	if (ret)
->> +		return dev_err_probe(rproc->dev.parent, ret,
->> +				     "Failed to deassert reset\n");
-> 
-> Shouldn't this be asserted on remove? Otherwise after an unbind/bind
-> cycle probe will enable the clock with reset already deasserted.
-> That may or may not be problematic.
-> 
-> Consider using devm_reset_control_get_exclusive_deasserted().
-> 
-> 
-> regards
-> Philipp
+Changes in v13:
+ - drop the support for legacy NXP firmware.
+ - remove the fixed_up hooks from the rpmsg gpio driver.
+ - code cleanup.
 
-Regards,
-George
+Changes in v12:
+ - Fixed the "underline" warning reported by Randy.
+
+Changes in v11:
+ - Expand RPMSG for the first time per Shuah's review comment.
+
+Changes in v10:
+ - Update gpio-rpmsg.rst according to Daniel Baluta's review comments.
+ - Add a kernel CONFIG for fixed up handlers and only enable it on
+   i.MX products.
+ - Fixed bugs reported by kernel test robot.
+
+Changes in v9:
+ - Reuse the gpio-virtio design for command and IRQ type definitions.
+ - Remove msg_id, version, and vendor fields from the generic protocol.
+ - Add fixed-up handlers to support legacy firmware.
+
+Changes in v8:
+ - Add "depends on REMOTEPROC" in Kconfig to fix the build error reported
+   by the kernel test robot.
+ - Move the .rst patch before the .yaml patch.
+ - Handle the "ngpios" DT property based on Andrew's feedback.
+
+Changes in v7:
+ - Reworked the driver to use the rpmsg_driver framework instead of
+   platform_driver, based on feedback from Bjorn and Arnaud.
+ - Updated gpio-rpmsg.yaml and imx_rproc.yaml according to comments from
+   Rob and Arnaud.
+ - Further refinements to gpio-rpmsg.yaml per Arnaud's feedback.
+
+Changes in v6:
+ - make the driver more generic with the actions below:
+     rename the driver file to gpio-rpmsg.c
+     remove the imx related info in the function and variable names
+     rename the imx_rpmsg.h to rpdev_info.h
+     create a gpio-rpmsg.yaml and refer it in imx_rproc.yaml
+ - update the gpio-rpmsg.rst according to the feedback from Andrew and
+   move the source file to driver-api/gpio
+ - fix the bug reported by Zhongqiu Han
+ - remove the I2C related info
+
+Changes in v5:
+ - move the gpio-rpmsg.rst from admin-guide to staging directory after
+   discussion with Randy Dunlap.
+ - add include files with some code improvements per Bartosz's comments.
+
+Changes in v4:
+ - add a documentation to describe the transport protocol per Andrew's
+   comments.
+ - add a new handler to get the gpio direction.
+
+Changes in v3:
+ - fix various format issue and return value check per Peng 's review
+   comments.
+ - add the logic to also populate the subnodes which are not in the
+   device map per Arnaud's request. (in imx_rproc.c)
+ - update the yaml per Frank's review comments.
+
+Changes in v2:
+ - re-implemented the gpio driver per Linus Walleij's feedback by using
+   GPIOLIB_IRQCHIP helper library.
+ - fix various format issue per Mathieu/Peng 's review comments.
+ - update the yaml doc per Rob's feedback
+
+Shenwei Wang (5):
+  docs: driver-api: gpio: rpmsg gpio driver over rpmsg bus
+  dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+  rpmsg: core: match rpmsg device IDs by prefix
+  gpio: rpmsg: add generic rpmsg GPIO driver
+  arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+
+ .../devicetree/bindings/gpio/gpio-rpmsg.yaml  |  55 ++
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    |  53 ++
+ Documentation/driver-api/gpio/gpio-rpmsg.rst  | 271 +++++++++
+ Documentation/driver-api/gpio/index.rst       |   1 +
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  25 +
+ drivers/gpio/Kconfig                          |  17 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-rpmsg.c                     | 568 ++++++++++++++++++
+ drivers/rpmsg/rpmsg_core.c                    |   4 +-
+ 9 files changed, 994 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
+ create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
+ create mode 100644 drivers/gpio/gpio-rpmsg.c
+
+--
+2.43.0
 
