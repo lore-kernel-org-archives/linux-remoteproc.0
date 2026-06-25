@@ -1,227 +1,153 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7080E373BFE
-	for <linux-remoteproc@vger.kernel.org>; Thu, 25 Jun 2026 07:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7393033F5;
+	Thu, 25 Jun 2026 14:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782373897; cv=none; b=gM308iYCl3JPClaMCk00zy64/ksw3LjzmUvXXgVqW3ZCng/dPHliqfHvO9PBCmhHzdOdLwHHRLimj34EakZR6ymUVFnQUTf4lQqdFewrqrYPPP8pEmHRYa2wej2YSFCrrZoaXV3+SF+1g5pTwwt/Pm8gpYwzFChG4tPUbLnVLDw=
+	t=1782396631; cv=none; b=nnNeG56L53zcsgyTQA8uC2rCoG/UA//QzUh1qJLuEXk/H7oxmQYf7vaMONw3R8jCRLEPZKVPZUuv+2M0Ev4svrju0mlXRouo6XregYIq1Bd2jNg56PvE6TCcQo/9OfkNT67+5RgZnGSAIL4eeyAn2NfEe/GbNCJLXGNBm7hV9HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782373897; c=relaxed/simple;
-	bh=IhddJ8wJua/m+ug2p6DPU/19D/1A9Q5EUbXR5cH3xDI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GHVkvySZ/V1qWQOTYcYBi1vzra1H/2mx5QKIWCGVzY5brCdBKctpT6KomV1AB9QEtcw39d7uAnA7+IKBvlJxpCujVZHit+RYSgjTbVmld/5kUGXlxxr03r2OU95/u87wQTcxGdhtVGXEuaEkO+hYpniGcUarHuUpxYi8ZWFKVZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A6UJJ4mc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=K7uRlQAC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1782396631; c=relaxed/simple;
+	bh=D6SplHxUa3QnaLv8HkHyckjDvA/Fprxyfd+YMfQx7G8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EpYCjUIWjjNUWSOXd2Ux+nJJ6R/ou/hkQUGddnLjevnHuiUv2mIXXp8Vf63G2GNxEnQF1JaVx9MSfCIZH367ISAZTu1Kwptua2TeFyzSvYv5jYHlIlqEVnh0/5oPba+2T2+y8mDT2El4siOfR5wpzFkauu/z6VE9l0JgXBrPSYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ubJVFQTV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A6UJJ4mc";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="K7uRlQAC"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65P3eaFe1192394
-	for <linux-remoteproc@vger.kernel.org>; Thu, 25 Jun 2026 07:51:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7LTkSUI+YJToHS8a4HwcpVIMbbMkUqrCKJ7kdKLzNKU=; b=A6UJJ4mcHbqUjDYf
-	Eov29aBmQqnUI2JQSICLlh0i0+MV00o7JJvg9xvz5n1S6+aG7QBrZz41TdGOc/uF
-	bJ4kdfCziNq1+LH5/CfpAihwd0FUY3CzWG3ECu76F5EckGc93d4Zn/uzRhvTE3Uj
-	8w74YPmuvmcqRpXwzBjdSPkJ0KXQFVb0BN8azOgT9Fud6GRbLEjarsrS0esqTu3v
-	qiY2Cmy862MhkpMmk+GkSzse58g+tIT4Qu4rt9PgOHHRyRCCLHRnlwQ5l90uRzGR
-	5KM75Lw3bPNwe1Ki2vS3GvAu4iqTtWeKYmYI2EuHX3ixxnIS/u9EqNGdNOkWopr/
-	AZwVLw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f0uhmh4w0-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 25 Jun 2026 07:51:35 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-9214bfa3b98so325617985a.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 25 Jun 2026 00:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782373895; x=1782978695; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7LTkSUI+YJToHS8a4HwcpVIMbbMkUqrCKJ7kdKLzNKU=;
-        b=K7uRlQAC/ikvfan9mqqZUR34aLjwV0HLiIZIVI/aMmxcxrl5xiqNGWuNQNN6OhK5PM
-         Be6FSHrKJs3a/miPD5noQBovGRrrdikJWZMuTFZsTYL0QR6fH+Ba3VeuDr1bXx97IkTh
-         7/+BnE2LlSPvEZ6w0bQyKxaBa0EbJWknLE71lIYrQn6cGTE65IQZctaN1eVqO6GMzpEq
-         evi077Q75vDtnmxsNXsyKEzRETqAKhKy66o/Vkub8VktpnqieNtxMDNCMe6gbhpwYbih
-         mClxu5mydYimYOVspdeWMuPZsJue7T2CzcjRFS4W/Jj11fEPFR1c16ZgnpQWmi5IXObE
-         A1FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782373895; x=1782978695;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7LTkSUI+YJToHS8a4HwcpVIMbbMkUqrCKJ7kdKLzNKU=;
-        b=Jie9EDSgvGsCSYToBld9imR9mP6B99Mi0sBhrBSfFDAuaMxuJ35RHwdmoGFSgTNhWc
-         xyFBORuJnbpqhQsoDvLX81zOh7EXJrGiehYol18T5yGW9UZS/OTWekxn3LsiA5Op/K08
-         7vpxkBr2Q1/nr1ITCH5dOUgFBhJih2L9+tkh0pib7RgEWATAa993QPWDzeBjj8fXoumM
-         b/um8lXi0OMZQSRKlTAaxvZr08y2XzHl1l/wTtuh3fOCuAuLmIPJ93xEyDXmteihnVlM
-         e/000kIR5H08Q0oB1Ikw0JlihyxzBvsTEWskizPhnr4P2eR4Hjw1FIIuTf1rj1pFGm+5
-         ZmGQ==
-X-Forwarded-Encrypted: i=1; AFNElJ+CA2AdQYHLa5pvuXpvdGNkszCT5mHtoany9ZpxPj88DOfSx8wovGkcQm1TsGA7Wun2G0YECeI9EaXurlkFRDVY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOmbFjZ2tIG3XJryXo/or7d8qui75kDg2zI1ljxqxhQUv4/JFi
-	7dmM7nBdLVF7e7/rHOMynBhSrBFTXjJpcf1k5kNs1q+LqGWR20XgNroLLsxTokk2a9jxMw+PYRr
-	x4Guaqy2EnE63p13G+1aNCFqCERKp8HiGyNe0ojArS17TS2UwUFYFdzpTRdVGi3oR4NuHgGLH
-X-Gm-Gg: AfdE7cnwj+gIWrSCgxJEXFqwmxRPbMoTkPf3lsrTJ5i8F5ZcsUAkGF+09r/Ucn+RJ6b
-	S4nyObmI7U0qkrDEFDVsAcMxUMcZi3PnVAUa+//kne7A20ujHrcokHT9WmP6wj3bh1yFkbE0Fup
-	ov+eqkRNNNKdukXpcHLskdPzqW9dSgVz7x6F1Q5b/hwcgE9nLRb88cfDLJsUojhrWLeIhRy56f4
-	72YFpI8/7kJbZVsmdkeQctjHYCFQMIIxs5yDznjB1j8rWYDooOqKwyOGmt8dZ4T6GUMLxYMt7jv
-	8e6qOcTrnN0l/sdVqL8N7Mln8okX9jA1vQcyhOQTSIlANIeEeYB4UDBBkUOnnMxpeIjuawPEZtD
-	/eaIxyzDCP2yPtNhkA+uVKamuOyNvgTY49Dhln5q01tIc8y/k0Rhz7Pwouk2615W/LTD8AViyZg
-	==
-X-Received: by 2002:a05:620a:4106:b0:915:79c8:ec94 with SMTP id af79cd13be357-9293d8b33f1mr194382485a.39.1782373894613;
-        Thu, 25 Jun 2026 00:51:34 -0700 (PDT)
-X-Received: by 2002:a05:620a:4106:b0:915:79c8:ec94 with SMTP id af79cd13be357-9293d8b33f1mr194378785a.39.1782373894204;
-        Thu, 25 Jun 2026 00:51:34 -0700 (PDT)
-Received: from [192.168.10.101] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-46c1ee01d9csm14999506f8f.12.2026.06.25.00.51.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jun 2026 00:51:33 -0700 (PDT)
-Message-ID: <af39bf37-4ab4-44d9-b91b-b8fa1784783a@oss.qualcomm.com>
-Date: Thu, 25 Jun 2026 09:51:32 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ubJVFQTV"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DFD19C2BCB3;
+	Thu, 25 Jun 2026 14:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1782396631;
+	bh=D6SplHxUa3QnaLv8HkHyckjDvA/Fprxyfd+YMfQx7G8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=ubJVFQTV+/Y0T9PjEfy0BIHmEqqIZ5iLhuPzgkeMBStfEWlJB970ldJ7/RumWT8hI
+	 zNxpj6Zj20HuZiXZ0SMVJa6B0eG+ZlOKhOEofnmlnntB09dgIbWChXVpJFOx4XvSBD
+	 224CQRtOsHY4d3HDnf6KWfomftv+4ZZx2sx37y5WNlN3MCY8VVDeCjwF+LThs2MjkB
+	 Uwq1qFwSuw5cL0umlvYHmIIWPsH3Fx09cgR5Ld8xz10IQ6l6MF7PFK5UCQNiwPnJKy
+	 TZSN/9+D7vLIPiq5zcxQIMhyrayx6JagYhZpKPZ+JBTGaC2kVtOp7mcisE1TILXtms
+	 HCt9LiTQV99Yg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8ECDCDE001;
+	Thu, 25 Jun 2026 14:10:30 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Subject: [PATCH 0/6] Add support for IPQ5018 Bluetooth
+Date: Thu, 25 Jun 2026 18:10:04 +0400
+Message-Id: <20260625-ipq5018-bluetooth-v1-0-d999be0e04f7@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] dt-bindings: remoteproc: qcom,pas: add thermal
- mitigation properties
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-hardening@vger.kernel.org,
-        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260609-qmi-tmd-v3-0-291a2ff4c634@oss.qualcomm.com>
- <20260609-qmi-tmd-v3-1-291a2ff4c634@oss.qualcomm.com>
- <20260610-ocelot-of-stimulating-excellence-bcb0fe@quoll>
- <03d863ee-2caa-41f2-94b5-7332fc930b42@oss.qualcomm.com>
- <d81bc78e-2c1d-45fd-90c9-f7ec462183a0@kernel.org>
- <7f1e46fb-15e3-4638-9930-8abc1dd5a778@oss.qualcomm.com>
- <fcf93e0f-a2f0-4070-86ec-8a34e9344b76@kernel.org>
- <ec65893d-873a-4a62-b0e2-5008b2130545@oss.qualcomm.com>
- <3cbcaf8c-357e-42d2-91c1-9d1a32c55ed0@oss.qualcomm.com>
- <ae43a691-4879-4bfa-8c7c-1be16945480c@oss.qualcomm.com>
- <9a31bb29-75d7-42fa-b8a8-4155cf85cadf@oss.qualcomm.com>
- <c32e263c-ba4e-4899-a935-e129de0f1269@kernel.org>
- <61765401-3397-497d-a0ca-e9bf9d76cc6a@oss.qualcomm.com>
- <5b0f1f39-ddaa-4a2e-ab29-34aacc9ff672@kernel.org>
- <ae0ec05e-607b-4022-a006-2eb1a283144d@oss.qualcomm.com>
- <d9582027-8555-49e2-9a36-c3b952dc61d4@kernel.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-In-Reply-To: <d9582027-8555-49e2-9a36-c3b952dc61d4@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=cqerVV4i c=1 sm=1 tr=0 ts=6a3cde07 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=uw/3876vWhRnNVL35W6mqQ==:17
- a=IkcTkHD0fZMA:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=RTo7OxITtARzf4XpFQgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjI1MDA2NiBTYWx0ZWRfX9CB9p4bW6bNW
- e1xfKdFrsXo1AJ+fb0aL26QbigzZ3ibQEYm/siQIxx5Cgb6r6UlzNFtdn6G4rJMRr5qYfpNt3Bl
- av1IXkqk0hEokIhtqBG9Y3EnLX+RpFuez+VAy3tb5RVJzbzFWKhMeI3oHjQ3MvXh4cGDbE28aoV
- DnXwZqKDy+Zy4Ja5ZF70nUXkbkqBGueFrzDZsGoG0beE8djK6gnK3iqL2nc7mdcUfPsVLqTBj09
- X8VvPunjslO5k8k9G0wZ3hBrfbZlRcD7JETn7tsL/SN2KFsy5Uxo5Utg6it/E29gEquvNh5aJ2F
- ZgV9+aO8BfE8/LA7EJTy1CT56h8ouc3MvHj8dhgQJh87z9It1fBVkRsABJtaWOwwC8KYO4saior
- 4Ndhyw8EDFncWhor2/p1iQt/HFhekkb80KmBAtIPNQyiWyhU0y6MHIvwZQK2QJt6/NhrL7aevHq
- HzZ6bYiIWp2jZITqLYw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjI1MDA2NiBTYWx0ZWRfX5aerDTnkOE15
- QdZz0cA48g2GfyvCT1DMCjx123/mho/Uh6LHxVodSl5Jtr7u22oBGCYhfftWrKY+zxyGnQkuy16
- fQ4uLq0xD5CVk36G6xPxvBoE8zqS15g=
-X-Proofpoint-GUID: 5AlcVmG7G1rNqpLCdHeemJyf3eDUNMRS
-X-Proofpoint-ORIG-GUID: 5AlcVmG7G1rNqpLCdHeemJyf3eDUNMRS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-25_01,2026-06-24_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0 priorityscore=1501
- malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606250066
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yWNQQrCMBREr1Ky9kuammiLiPeQLpL0R4NN0+a3R
+ RDvbrSbgTcwb96MMHkk1hRvlnD15OOQodwVzD70cEfwXWYmuFBcCQl+nCQvT2D6BecY5wdw5Zx
+ Stu6OsmJ5NyZ0/vV33tqNE05LVs9byQIS6b+6Kc6buRTZGO0TNMGwBgywSuBQS+Sm4s65ml8j0
+ X5adG9jCPscl9+b0YTwa/zcFIeu1KYSB2fNkbWfzxfm+j9+3wAAAA==
+X-Change-ID: 20260625-ipq5018-bluetooth-06ff66c9d753
+To: Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulfh@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Jeff Johnson <jjohnson@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, 
+ Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+ Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, 
+ Rocky Liao <quic_rjliao@quicinc.com>, 
+ Saravana Kannan <saravanak@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1782396628; l=3321;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=D6SplHxUa3QnaLv8HkHyckjDvA/Fprxyfd+YMfQx7G8=;
+ b=6MKZWbfvyN9Pd5FoUIlXKVCW9PgXMLB8ekM5lOyqEenPO3HzLmd7aZqmcGLCiB4/V1w9BQ4rO
+ W7+WbfMcF11AMEj2N5zJ0b/Tu+DnFmNpy3aZ9Tv7SmbNEM6abwmYVk2
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
+Hello,
 
+This patch series introduces Bluetooth support for IPQ5018.
 
-Le 25/06/2026 à 08:48, Krzysztof Kozlowski a écrit :
-> On 24/06/2026 17:56, Daniel Lezcano wrote:
->> On 6/24/26 12:42, Krzysztof Kozlowski wrote:
->>
->> [ ... ]
->>
->>> Therefore I still do not see the need of tmd-names. You know the name of
->>> cooling device, because you have strict one-to-one mapping.
->>
->>
->> There is one remote proc with one or multiple cooling devices attached.
->>
->> We describe those in the remoteproc node with the tmd-names.
->>
->> Anyway, we should be able to list the tmd names in the driver itself if
->> we ensure a consistency with the index by defining them in a shared
->> header eg. include/dt-bindings/firmware/qcom,cdsp.h
->>
->> #define HAMOA_TMD_CDSP_SW 0
->> #define HAMOA_TMD_CDSP_HW 1
->> #define HAMOA_TMD_CP0UV_RESTRICTION_COLD 2
->>
->> In the driver:
->>
->> struct tmd_name {
->> 	const char *name;
->> 	int id;
->> 	bool disabled;
->> };
->>
->> static struct tmd_name tmd_names[] = {
->> 	{ .name = "cdsp_sw", HAMOA_TMD_CDSP_SW },
->> 	{ .name = "cdsp_hw", HAMOA_TMD_CDSP_HW, .disabled = true },
->> 	{ .name = "cpuv_restriction_cold", HAMOA_TMD_CP0UV_RESTRICTION_COLD,
->> .disabled = true },
->> };
->>
->> ...
->> 	for (int i = 0; i < ARRAY_SIZE(tmd_names); i++) {
->>
->> 		if (tmd_names[i].disabled)
->> 			continue;
->> 		devm_cooling_of_device_register(rprocdev,
->> 			tmd_names[i].name, tmd_names[i].id, ...);
->> 	}
->>
->>
->> In the device tree:
->>
->> 	cooling-maps = <&rproc HAMOA_TMD_CDSP_SW min max>;
->>
->> I think that is somehow what Konrad and Dmitry were suggesting
->>
->> Does it sound better ?
-> 
-> Yes and I am surprised that it came now. So you had TMD index available
-> thus the ID was defined. If device has unique and fixed ID, you should
-> not have any more properties defining it, because that ID is enough. Any
-> names could be only for users, e.g. label, but that is not the case here.
-Yes indeed, having the constraint of cooling index and tmd(name, id) for 
-the connection between the cooling device and the thermal zone was a bit 
-confusing in our discussion.
+Bluetooth firmware on the IPQ5018 platform runs on the M0 co-processor.
+The firmware is loaded by the host into a dedicated reserved memory
+carveout and authenticated by TrustZone. A Secure Channel Manager (SCM)
+call safely brings the peripheral core out of reset.
 
-Thanks for the review
+A shared memory ring buffer topology handles runtime data frame
+transport between the host APSS and the M0 core. An outgoing APCS IPC
+bit and an incoming GIC interrupt handle host/guest signaling.
+
+This series has been tested and verified on various IPQ5018 router
+boards utilizing firmware extracted from GPL distributions, using both
+mdt and mbn file formats.
+
+[   14.781511] Bluetooth: hci0: QCA Product ID   :0x00000016
+[   14.781583] Bluetooth: hci0: QCA SOC Version  :0x20180100
+[   14.785926] Bluetooth: hci0: QCA ROM Version  :0x00000100
+[   14.791546] Bluetooth: hci0: QCA Patch Version:0x00003ded
+[   14.796698] Bluetooth: hci0: QCA controller version 0x01000100
+[   14.802217] Bluetooth: hci0: QCA Downloading qca/mpnv10.bin
+[   16.393850] Bluetooth: hci0: QCA Build Info: BTFW.MAPLE.1.0.0-00102-MPL_ROM_PATCHZ-1
+
+Best regards,
+George Moussalem
+
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+George Moussalem (6):
+      dt-bindings: remoteproc: document M0 Bluetooth Subsystem secure PIL
+      remoteproc: qcom: Add M0 BTSS secure PIL driver
+      Bluetooth: btqca: Add IPQ5018 support
+      dt-bindings: net: bluetooth: Document Qualcomm IPQ5018 Bluetooth controller
+      Bluetooth: Introduce Qualcomm IPQ5018 IPC based HCI driver
+      arm64: dts: qcom: ipq5018: add nodes required for Bluetooth support
+
+ .../bindings/net/bluetooth/qcom,ipq5018-bt.yaml    |  63 ++
+ .../bindings/remoteproc/qcom,m0-btss-pil.yaml      |  72 ++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi              |  34 +-
+ drivers/bluetooth/Kconfig                          |  11 +
+ drivers/bluetooth/Makefile                         |   1 +
+ drivers/bluetooth/btqca.c                          |  16 +
+ drivers/bluetooth/btqca.h                          |   3 +
+ drivers/bluetooth/btqcomipc.c                      | 939 +++++++++++++++++++++
+ drivers/remoteproc/Kconfig                         |  12 +
+ drivers/remoteproc/Makefile                        |   1 +
+ drivers/remoteproc/qcom_m0_btss_pil.c              | 261 ++++++
+ 11 files changed, 1412 insertions(+), 1 deletion(-)
+---
+base-commit: 4d1ab324fcb7d20df5a071edb0304461846fdc12
+change-id: 20260625-ipq5018-bluetooth-06ff66c9d753
+prerequisite-message-id: <20260612-block-as-nvmem-v5-0-95e0b30fff90@oss.qualcomm.com>
+prerequisite-patch-id: 6ce8686c1683f468d86b4502f5ec9d19c392a382
+prerequisite-patch-id: e362f7fcbacff716b7ef720e6780786a7d88c013
+prerequisite-patch-id: 9168930e40551e842c8171d5433a6f39ad4b78a4
+prerequisite-patch-id: 64fecfbd1e085d7d2ab0ae23295ca34ec8e14c5e
+prerequisite-patch-id: 566804aaa690ee9aa285d0fd75fd16d94fbadebf
+prerequisite-patch-id: dc18bec338f54b3051f4523f9d1d3c0566a20ccd
+prerequisite-patch-id: b6b3eb46429936ab49423d295433daf47981db0f
+prerequisite-patch-id: 75caa99e3bbcdf41b6462b9f5f703bea1d4a65fa
+prerequisite-patch-id: 35e9968f482f78ca233eb0306d9c5fdbff093175
+
+Best regards,
+-- 
+George Moussalem <george.moussalem@outlook.com>
+
 
