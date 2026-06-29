@@ -1,329 +1,205 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010041.outbound.protection.outlook.com [52.101.84.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F228453498
-	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jun 2026 16:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782751422; cv=none; b=sJB2DLapjK7SsMVWED+S/s68B5awMR3xMAumLfLUB2ol47AYAmHxhgbGXaOkouPhNdqFb116Fj1hNT/6zgGvUgQJ2qk2uGZqdAqawX8WeMNc8vQ4BUmoEc0KER2tC9L3iGbywBTATbNqWGD1HG4DLLDrjQ4hOlDERSjnlXGGDVU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782751422; c=relaxed/simple;
-	bh=TrFQtQEp+bE6O/CFdbgivT5heIeRCPa1pLQCKyjbYlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BPe8WjA/BedNoYWxDx+ySnt0mlbYUsmoIUcCkqkJQBVlGWYBq0tkIgZfg5K/3QpMJUk+TVXDW7tImf5tWgBUOoIj5P8mYlK2taXVD7NLHOo+vW2WHb0uHTHrNOfZ9iiXj/SoEKnO2p2BGqll1PCvYfsvKDuOgI4RFg8Ut43C934=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CNiYo+As; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE718385D61;
+	Mon, 29 Jun 2026 18:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782757600; cv=fail; b=uOdbWHd9M0ux2KXo/Lrk5I1mVDcHSdQZOXtkotVTQXBwCPhVzRm3L78YyIYcrHCh6moAdWqRXqaIFUQR466Y0EWel/sLWp3VTl7ktvH9+SYtTioZ7yCwsw8QLIrIYAfMZtU7ITDhyTgV80ObjrJYcQSx2kjBgysi/vaTk86pXs8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782757600; c=relaxed/simple;
+	bh=K5WsiiBDz6fl7qo97RpJozgkxj0/SdUo6MG4pkIyHTo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YVeO81WnEOGtCjRKx5KndoLuPJJ2wsqGAlZ+d2eYy5h5LxbSjZk7FNzcqWRRINR3J7BkFUD2iwpz1618m5CqhqfftYGIwWEohvYbR8YvGniNrgMIHIFNyxBhfmMrT8pG+13QDRCBNC/95SqIGOG7cSliXiznEccwzPcMkSabXSM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=k/HhT1e8; arc=fail smtp.client-ip=52.101.84.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CNiYo+As"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2c95a0c0aa2so24932225ad.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jun 2026 09:43:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1782751418; x=1783356218; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtZBVd8yePFKbqBw2Sj49p+P306FRw4PXhxNd+NXf2U=;
-        b=CNiYo+AshtfKiAcDtR65MDqdfm+PmKCyJH6NNU0KaUB4gqdC1+HFYK+fAaSQeiYG0v
-         qPM+n1IJxuqvxbElujxEcQSDIRPXynWeDBoonykYBblZFxoy12OZd+V7k7NiHGKNzKfz
-         4T5xjjLJKqJipvAsbnQnOxcRzcHNb7812H4z+WM3yA+da2g+t1qbFKapzoN0U6Kth1ok
-         C8kcYURIzXyx/pl2ONEuYQzQPQ3BN+RJz5VXZLgBARBR81aXbXJbDoJjlz/fSoNjC8+5
-         UQXykXCoz9nyxF0gfjYoHfcY0IXKGY6vf/S7uBCzH9RUM8Ksc0ZpgbyZvr4qQWXpUYw2
-         nlbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782751418; x=1783356218;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qtZBVd8yePFKbqBw2Sj49p+P306FRw4PXhxNd+NXf2U=;
-        b=n6vCQYyl2/8GMawaTnpk9ybNZXEEu/LQkYg0SKxBS/8u8zxvTr9CZackYpZbxHAtb5
-         2kOa5ZfVA4Wc9AZL3WZF07kEcUhLwsqFeLlnnsaFuRJDMeQXnYXudAw91OxpQViURfHC
-         x3m1tzfc1tFX51eWlKSBmmcXGZwFxWabkB6hjpfBHJ36X5e933qiIgFf3bRt6qH42pYc
-         ZrqbCUDZ4hu+d5IQ8DssnLvTnSEg28Q32L6LH68MUwoBt/fRVEDIN6dSdZCZ7yWOASZB
-         PnINnPA07mvKGJd/HKpCU8t1T+M/rwpydVSTuOXzsd3xTgvmAHmowkYE0c//172g1FDg
-         iFRQ==
-X-Forwarded-Encrypted: i=1; AHgh+RpbWfRYv2+kUmeywxvrFFC+RTO8YluHbVAMWANK+tFVbXhNaUBQWNAFP4X6mjiSgQNTz9aqx5hBxa6FBGEIoau1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTusrW3EIb65h9i0x8o0oXcoMx1GRqWomhlxImdrdh3ILDTR/5
-	vAeawAVDJ/A2BYBUszFFlII/f8F6iwGLuXbZLhywD7nVmQ5oi3Vh+wiVWxaPWXXL/HQ=
-X-Gm-Gg: AfdE7ckZaMDj51Oc8cLyKiac7wZdNUZd7kbay6buNS5AlvAxdNc2nVXHtd7/3sSwGLb
-	N2pQVam8SfApA+3kkj2lyzRiX497uUrYvgRLxXXH9J/XHqUEVs4mZybLzTlb6zeFdxjkpkze0e8
-	Xixo/13aWYDwzASCy4u9lMFoOWVaXEO34h9aCDkK7q/Ea2KChZE/PvHRE8XZDW3OdcqpJSTjWx6
-	zzSCbnNZPdNIug2Hie8QmcVwL0bjW3jGVZ48B3RFhfTfsBD8jOmB6QURsmac8NGIe3PvCwDbM3c
-	WMFKFTSCSIntf79dhaWeMGO7QnGqWXgc2LJi1W6csKCpgyQUHSCwfp9tWKwbAlg+oKDr0Ufu5rP
-	4cjJIzP9bDU2U/tZsrfs2z8Ez7ZjuiLf4g0WXO5VD15JfcEThOId5gFGKFbKKaeF3ftQxarESUB
-	iOdTLj7g9NeunmeGXK
-X-Received: by 2002:a17:902:ce8c:b0:2c9:c46b:129b with SMTP id d9443c01a7336-2ca2d5288fdmr1527855ad.5.1782751418355;
-        Mon, 29 Jun 2026 09:43:38 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:aa83:261a:68a7:9974])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2c9b8e62a18sm47420495ad.22.2026.06.29.09.43.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2026 09:43:37 -0700 (PDT)
-Date: Mon, 29 Jun 2026 10:43:35 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Francesco Valla <francesco@valla.it>
-Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: virtio: support dynamic number of vrings
-Message-ID: <akKgtwY5iGo0xsPD@p14s>
-References: <20260621-vring_flex-v1-1-c6c582fbe94b@valla.it>
- <ajwZ9EPnrYu2M6G-@p14s>
- <aj2PQGRj4N_xWnyp@bywater>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="k/HhT1e8"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fiSC3JjpzDQrt2wKkrgecSeKisMhULdnOeYucj4tEC1ylPfhDFOA842O14a68osA54bQTkOK3F5+rsjfSNeOizUOnkrH5O+0gU5kJMC3xFcR2RcFNOaTzr327GHI1P5qqGWNnFSg8tR1IXdhM+5FC+qCGlqfEZurrV6kDqLQA1T6pBKXFwqHuNYn53ZRqZUYJrIVAaQlhryVBU7fglTIWMpLIml39mH1tcnDkd1xjZSuNeQQX9t/rfXe44wWN5DvEu2UY4MwGfxsDAKUQZN9tX5wwFvhdSMStX+nier+C9PwDv/2YITr13Mb/YcPBfgkTiVN0FWFg/2uOK3/+LjMDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K5WsiiBDz6fl7qo97RpJozgkxj0/SdUo6MG4pkIyHTo=;
+ b=C5pR4IhhVfkX7+ELJYYPxO0YTbMYlRvv1xBVRAsrJexzmOYx1j88xnHR1oDUAejsRu7jgKl8OeY0x++7+SijfjCxqZxQiGEj6K2os9OodG23H/h8/3MpTx4GO29fgtAFuUtC6dss5H0+sReL34j3NZafir7DGrMayr3dvuPcsYmrakH6ImyYCz55nv3c5mcM0CfhfdTXqaCUwpvfOa6w5vbmliVZLd4sjBZqtHvG7zRLOfquBz8pDVFfpVt7+2mQ6n9Qc32VWNoKnqHFmlhrVel93W4luj8ahg0SY8EoYi/af4sg+OXo9RabwLABV7Lmc98wC/XJVRoqBL0ACw57Qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K5WsiiBDz6fl7qo97RpJozgkxj0/SdUo6MG4pkIyHTo=;
+ b=k/HhT1e8cObedHKAOK3OQmXcpYqctLJ+C3itC7L/GgkmxYHrIv7kM83hlCBQcQNNbD8GrASfXLa0C+ogIsJCI8MKes9yg8I1UxiB2dcaOFAK+1vO0ATjj2sjFbhG3oUjo9R4xKlZh1y5EUFVYce0xXYVmDddVDGWqNJYSXredKZlhC5IwKvGQHS/+BExsu0JCBIwXav7ozAEMlCpfIeSB548tHnrhB/RQgN+s4L4uVVRJHHCXtqS5vAo5eqrZ/ukJYXLF5ZvOJBJZ+dj99DzMHtZuXdWrH/IohbWnYThQGYFvazjuDRboVLIUv/zSLPJ8SgOHJ6qqDMO+pi5l9Bpug==
+Received: from DB8PR04MB7129.eurprd04.prod.outlook.com (2603:10a6:10:127::12)
+ by VI0PR04MB10370.eurprd04.prod.outlook.com (2603:10a6:800:214::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Mon, 29 Jun
+ 2026 18:26:34 +0000
+Received: from DB8PR04MB7129.eurprd04.prod.outlook.com
+ ([fe80::2f1f:4609:d75e:9629]) by DB8PR04MB7129.eurprd04.prod.outlook.com
+ ([fe80::2f1f:4609:d75e:9629%5]) with mapi id 15.21.0159.018; Mon, 29 Jun 2026
+ 18:26:34 +0000
+From: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
+To: Andrew Davis <afd@ti.com>, Linus Walleij <linusw@kernel.org>, Bartosz
+ Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Mathieu
+ Poirier <mathieu.poirier@linaro.org>, Frank Li <frank.li@nxp.com>, Sascha
+ Hauer <s.hauer@pengutronix.de>
+CC: Shuah Khan <skhan@linuxfoundation.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Shenwei Wang
+	<shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, "b-padhi@ti.com"
+	<b-padhi@ti.com>, Andrew Lunn <andrew@lunn.ch>, Bartosz Golaszewski
+	<brgl@bgdev.pl>
+Subject: RE: [PATCH v14 4/5] gpio: rpmsg: add generic rpmsg GPIO driver
+Thread-Topic: [PATCH v14 4/5] gpio: rpmsg: add generic rpmsg GPIO driver
+Thread-Index: AQHdBLr3f0ChmNZre06GPApXto491rZPufCAgAYKl6A=
+Date: Mon, 29 Jun 2026 18:26:34 +0000
+Message-ID:
+ <DB8PR04MB712990DF9806BBCF36B1076DC8E82@DB8PR04MB7129.eurprd04.prod.outlook.com>
+References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
+ <20260625155432.815185-5-shenwei.wang@oss.nxp.com>
+ <655ef1d6-08fd-43a9-8507-c2d478c058d8@ti.com>
+In-Reply-To: <655ef1d6-08fd-43a9-8507-c2d478c058d8@ti.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DB8PR04MB7129:EE_|VI0PR04MB10370:EE_
+x-ms-office365-filtering-correlation-id: d77f88f9-4536-4b1d-64c7-08ded60bf31b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|23010399003|7416014|19092799006|376014|1800799024|366016|921020|38070700021|4143699003|3023799007|56012099006|6133799003|11063799006|22082099003|18002099003;
+x-microsoft-antispam-message-info:
+ hRV7VwGN9vZWeKHMz0d8+nw4lCvXP3m4TXfFiunsaGmi2zO86A0f1pCwVubAmZTaHjYBpkMytvkt/5I5HtP2XR7CNAbXKMO7Bsuvl76oEviRoH0K8sI4lbWnFrk2gM65rLrP4jmovKXZBtinYbKH5E8y0O+BGgo2HAxL5erDl2okLwY4vmKIRu/z7G6DnqvwEG2covfPB6a9rDTFhRsHzMU0zzxtApGzz6IzU1M/N/nqrCUitZ5Bvvf263ovaPhsG1LRUDZMDJi5E6TEYSOurfHBnbTIpFATqfpqCtZ7oq8rUTSIGT44IDTjn/actr5uJi404Nc2GjNva3vXMKi+niMGliKTw4s9befy+6hI4+p/E/2OyAJmTc843w+hvCbanaY1qEqMXXWMMWPwkgy93OzttQNwsVqMBpWINzDs3fdjsIoKcWOlTKxVimDm+WB/Bi8Ac555K+6siObjoBba0dxKyLjSO/mAfMEG9Woct/868TTr6OuG+zRSwvLkiFDrxIaMvgaOOHpdcB6fWqUE91Jx1ZK3heB4CYKu9tmRb478QV4cOr1h7jvbX1NhM1II0KxyXiXhPyY+7FBD79oRUvajuJD8WAb17gZ8Esk1IOn/Yc4GleNw6XAKqadGYIuhku+65HtzMLD9AeCTjjXrd4jMuv7bCEkN2g+0lwVOWb+bSFsK89GNcJNay8ChiKYJeKFkfOyunUUyVy3uvKdVeuNvl7cOLm9pAabFt+HWauM6e9OAcgBk60ONLqjLZuh8
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB8PR04MB7129.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(7416014)(19092799006)(376014)(1800799024)(366016)(921020)(38070700021)(4143699003)(3023799007)(56012099006)(6133799003)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?WVFNeXUvYnkxZ2pJVndCR1cyeVU2SEsycVZuTzVZcmtFTDVaOXdta2dvUjR2?=
+ =?utf-8?B?L0lqclZFM045aDY2YkJoK1JmRGs2TXZxZUFpTW8rSWRQbzgyMWt1U0V4Tm9Y?=
+ =?utf-8?B?VitaNUdhd3ZaVTAwRVU0UTdwZGhMYU93aFh1Uk85dm4yK3RKNTBYdG11OEdy?=
+ =?utf-8?B?UnVqOWFUOGJsN3l5d3lESHhoUlY4NFgwS1hNLzJXYlk1SFhTYW1wZUNpTlBs?=
+ =?utf-8?B?azVxQk5UR1EwaTJCVkc4alQ1cFM1RnI5bURqRlV3ZXNBQ1h3Rm1HNVJWNiti?=
+ =?utf-8?B?aVY5cEhUblhDSlgxZVJUcTRjL3IxZmgydWl3R0xLVDBEN00wdktOVUMxUHl2?=
+ =?utf-8?B?aUtlVFRwL05QUHdYdENnQVFnQm1CQmFtaWczYmZuWE1CMGUvVlNmOHdURXFJ?=
+ =?utf-8?B?WFNraDRnNDN6Y2VwamNvQUN0V1dOSFNPWXF4ekNYb1A5RGpiZUcyU3JlK1lz?=
+ =?utf-8?B?emZOM21MZGJPazhoRnhEQXVpTUh5Um5XRnBmWmluOWxBbXBiSUZITTQ2Q2cv?=
+ =?utf-8?B?d0dtOGlzY1FJL25UQ0FhMFJLaWEzSHNLMWlZOWpjbjljRzBrWjNVa1RBVE5i?=
+ =?utf-8?B?N3ZZNU5IR05pbE5qTm9DM1RrMWdMQjIzZ3JFY3ZyQ1FYU3N3bCsrNmRWSkl1?=
+ =?utf-8?B?TlF0aEt4U1lPY0FoVHNzODdjeE1LTlUxdWxnV2t2SG5iY3JqbU55cGFPVVd5?=
+ =?utf-8?B?Y0ZXSlBpNXZQTmtZdlF6OUwxTDFjeFhjYkdiUml0c2cyWHJ1VTZ5Y29YRXBR?=
+ =?utf-8?B?Y0NSckszOW1pYlpSV2laRXZESzVFdjJGdm1WSkpJRmxNU0VFS2ZjcWxxRHhU?=
+ =?utf-8?B?dnMvTUZRVW9ZK3dxUzNjZ2dRSWZwMG51NHNhcGZnMkE0R3E4bzJVeWdGalZQ?=
+ =?utf-8?B?bmRxb3NSWUJWUi9qVC9HSkIyV29QT1YvOTI5T0hGd3cxai9YWWdkTWhkSHBG?=
+ =?utf-8?B?RTI5dkhrNDFkU1h3QTRUdWNOSm5ndFJuK2tPUTg2NlNWaDhkVjIwNjFZVGUr?=
+ =?utf-8?B?Tm80VFk3Rk5ycDJZSENjbnpUTjV5QmNPQmIvc09xVkZMQk1WM0EzZUN5SUFW?=
+ =?utf-8?B?ZVAxSndqbkhPRWdITFRTNm1rSjhyS095S0ZrQmg5RUFvMklQdmptcXlVSi83?=
+ =?utf-8?B?eE9NRXJVbkNUWHIwZnd4N2lvcWZqZlhjcUxESzZvRjR0dVlwTW9nR2pxdU5j?=
+ =?utf-8?B?dFBtUzFQUXkzTnRlQlZlM1dKcEl0S3FJOWZZRjZmYWZPVkNONHZkdlhtbjF0?=
+ =?utf-8?B?ekVmOXkvaDJzWmQzMURPRVpHQVlhb3dxSVpzK3lWYkZRdVZCMHVQWEVoRldy?=
+ =?utf-8?B?L2UvV2VUUkIrcmc3YzVkSnlYeUx1ZTN1R2NxaEg4QXJ4ZmdMOFJHVis4NURR?=
+ =?utf-8?B?WWdFSlpuTWFqSGJYNTVXbHF5Ty9wM2t0bE9jblV0QVpCL0E3Wm5admt6MlNH?=
+ =?utf-8?B?UnkxQXEyZDZoRmlYOUhxamxxL0Nzbk1QalhSdkNZTUs5TXJCNjNmQWdYVE1a?=
+ =?utf-8?B?bFJBWFlYTkhUSXlOLzZvK1FKRlZyTElvenB6MGdEVVZXYUhYd1crbzRxY2VE?=
+ =?utf-8?B?VEZsaGU4Q2IxRmxSc3NtY0VYY0QwcUlwanpML1I2Mi9GS1gvQUFvT1Q1QXda?=
+ =?utf-8?B?Q2EweDdtbzVHWkpDKzdRamFMdC9sTy9YR1Erb1h0TWZpQlV4Z1hYdHdMQ1l6?=
+ =?utf-8?B?SjhBY1dPSDBsNUt1VE5tMlhiQXRJc0s3Yi9SQnFOWlExSVdSSUhMK3QvVDBS?=
+ =?utf-8?B?OTh2dytqVnFPeGpmTWlDOXFydENDemdPMTlrSnhSSzc5MTUwSnhpTVZSb2xi?=
+ =?utf-8?B?M0xOMEtZL0R6TkRDdTZjc0IwVG1BS3dieGQ3VEZxQ3ZyZUlUMlZDWnZMOS82?=
+ =?utf-8?B?K3BFTWZ1TjQ1NWVYUjh0eHRDSG43Z2dEeHJWZFNnUjhtRE40VDlXNGdiY0Vy?=
+ =?utf-8?B?cnRXWUEwS2M0Zk1ka0MrYnVncTdOWXpveG9hRzM1VlMxZkNKdHlzYmdiMyt2?=
+ =?utf-8?B?c0hjUWNoQXpsRFFod0d4SG44akprbnNtdVJOQ2pERGdjT2VHUkNMSlI2RkIx?=
+ =?utf-8?B?NVNucGd0M0sxbGZYcGFVZHZGOFZTS0JQREppalpPU3RRWWtzVlF3MG4vK01C?=
+ =?utf-8?B?WWsrSkFPaVJ3VzZEOHJkVTExWk1NUnF1WUx6cU9laERPUUFmMDB2WEEvTXds?=
+ =?utf-8?B?VVVNczVZcGpVZXNVeVAzWU9sQmN0eHJiLzl2Ni9ZdkhVRjlCc0oxYmRMWFdl?=
+ =?utf-8?B?alI2UmhyUXptYzcrUnk2SG92bDFmTEtMNUk1RnI5VGs5RUp3Q0N1VUxtYzlu?=
+ =?utf-8?B?SytnTXRpYVFqWlc1ZmxuYUJFWFBhRC9FWlROWGRRbytWK3pWMVJNa1JoNGpU?=
+ =?utf-8?Q?6ifHjPsWIiLr9Qjos5GjT6+pSTHuyZtZGkX2R?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aj2PQGRj4N_xWnyp@bywater>
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB8PR04MB7129.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d77f88f9-4536-4b1d-64c7-08ded60bf31b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2026 18:26:34.4594
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 52TghDtBR2UdOYNhlYwhGPEY+ayBtI9do4/UvlR7qGLHLo+Ddk0B5eu/sfBIMbXVj81PgiQQTCkD20pTHKRFv5J66oou8xVHCG/9XHKvTUDp/kIzfASumN2tS8HFtPg/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10370
 
-On Thu, Jun 25, 2026 at 10:54:05PM +0200, Francesco Valla wrote:
-> Hi Mathieu,
-> 
-> On Wed, Jun 24, 2026 at 11:55:00AM -0600, Mathieu Poirier wrote:
-> > Hi Francesco,
-> > 
-> > On Sun, Jun 21, 2026 at 11:57:31PM +0200, Francesco Valla wrote:
-> > > The number of vrings for each vdev has been fixed to 2 since the
-> > > introduction of multi-vdev support [1]; this is completely fine for the
-> > > rpmsg usecase, but can conflict with other virtio devices (CAN for
-> > > example requires 3 virtqueues, entropy only 1, network a variable number
-> > > and so on).
-> > 
-> > I suppose the remoteproc subsystem is involved because these other virtio
-> > devices are behind a remote processor?  If so, how does virtio drivers for the
-> > devices get called?
-> > 
-> 
-> Yes, the idea is to have virtio devices provided by a remote processor.
-> I am investingating the possibility after several years of custom
-> solutions (especially for CAN buses, now covered by the recent virtio
-> CAN device), as well as a brief discussion on the possibility of using
-> virtio-gpu for screen sharing in mixed-criticality systems instead of
-> rpmsg-based solutions (like the one presented recently by TI [1]).
-> 
-> AFAIU, the resource table format used by the remoteproc framework was
-> designed to support any kind of virtio device, and in fact the
-> rproc-virtio driver is not restricting the device type to a subset of
-> allowed device IDs wehn calling register_virtio_device() [2].
-> 
-> In practice, only two virtio drivers are usable over the proc framework
-> today, them being rpmsg and virtio console, since they are the only two
-> that allocate their transfer buffers from the memory provided by the
-> rproc framework (using dma_alloc_coherent()) and then properly translate
-> the addresses used inside the scatter-gather lists used for vring
-> transfers [3] [4].
-> 
-> I am still unsure on how to tackle the other drivers - I have a PoC for
-> a modified virtio-rng driver, but other solutions are emerging, like the
-> hypervisorless virtio effort [5] and virtio-msg [6].
->
-
-My goal in asking for more details was to see if you had done your research on
-this topic - and you have.  
- 
-> During this investigation, I stumbled on the limitation posed by the
-> fixed number of vrings and decided to send a patch for it.
-> 
-
-Please resend this patch as part of the patchset that provides support for (one)
-of the devices you are interested in and we'll take it from there.
-
-> > Otherwise I'm good with the code.
-> > 
-> > Thanks,
-> > Mathieu
-> > 
-> 
-> Thank you!
-> 
-> Reagrds,
-> Francesco
-> 
-> [1] https://cfp.embedded-recipes.org/media/er2026/submissions/PCYPJP/resources/rpmsg-kms-dispay-em_QToijxj.pdf
-> [2] https://elixir.bootlin.com/linux/v7.1.1/source/drivers/remoteproc/remoteproc_virtio.c#L446
-> [3] https://elixir.bootlin.com/linux/v7.1.1/source/drivers/rpmsg/virtio_rpmsg_bus.c#L864
-> [4] https://elixir.bootlin.com/linux/v7.1.1/source/drivers/char/virtio_console.c#L426
-> [5] https://openamp.readthedocs.io/en/latest/hypervisorless_virtio_zcu102/README_hypervisorless_virtio.html
-> [6] https://lore.kernel.org/all/cover.1781514628.git.bertrand.marquis@arm.com/
-> 
-> > > 
-> > > Remove the static vring allocation, transforming it to a flex array that
-> > > is allocated at vdev probe time; for the existent usecases (i.e.: mainly
-> > > rpmsg) this leads to no functional change, except the additional memory
-> > > used for the counter associated to the new array.
-> > > 
-> > > The maximum number of virtqueues is limited to 256 due to the uint8_t
-> > > value used inside the resource table to indicate the number of vring to
-> > > allocate; for this reason, no additional plausibility check is performed
-> > > on the number of vrings indicated by the resource table.
-> > > 
-> > > As a side effect, this also fixes the single virtqueue usecase, which
-> > > was apparently supported also before but for which the remove action
-> > > caused an error (because the remove action was trying to unmap also the
-> > > second vring, which was in fact not mapped).
-> > > 
-> > > [1] https://lore.kernel.org/all/1330589497-4139-5-git-send-email-ohad@wizery.com/
-> > > 
-> > > Signed-off-by: Francesco Valla <francesco@valla.it>
-> > > ---
-> > >  drivers/remoteproc/remoteproc_core.c   |  7 -------
-> > >  drivers/remoteproc/remoteproc_virtio.c | 21 +++++++++++++--------
-> > >  include/linux/remoteproc.h             | 10 ++++------
-> > >  3 files changed, 17 insertions(+), 21 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > index f003be006b1b..88504d6eed93 100644
-> > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > @@ -473,7 +473,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
-> > >  {
-> > >  	struct fw_rsc_vdev *rsc = ptr;
-> > >  	struct device *dev = &rproc->dev;
-> > > -	struct rproc_vdev *rvdev;
-> > >  	size_t rsc_size;
-> > >  	struct rproc_vdev_data rvdev_data;
-> > >  	struct platform_device *pdev;
-> > > @@ -494,12 +493,6 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
-> > >  	dev_dbg(dev, "vdev rsc: id %d, dfeatures 0x%x, cfg len %d, %d vrings\n",
-> > >  		rsc->id, rsc->dfeatures, rsc->config_len, rsc->num_of_vrings);
-> > >  
-> > > -	/* we currently support only two vrings per rvdev */
-> > > -	if (rsc->num_of_vrings > ARRAY_SIZE(rvdev->vring)) {
-> > > -		dev_err(dev, "too many vrings: %d\n", rsc->num_of_vrings);
-> > > -		return -EINVAL;
-> > > -	}
-> > > -
-> > >  	rvdev_data.id = rsc->id;
-> > >  	rvdev_data.index = rproc->nb_vdev++;
-> > >  	rvdev_data.rsc_offset = offset;
-> > > diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> > > index d5e9ff045a28..96f13f828b8e 100644
-> > > --- a/drivers/remoteproc/remoteproc_virtio.c
-> > > +++ b/drivers/remoteproc/remoteproc_virtio.c
-> > > @@ -115,8 +115,7 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
-> > >  	void *addr;
-> > >  	int num, size;
-> > >  
-> > > -	/* we're temporarily limited to two virtqueues per rvdev */
-> > > -	if (id >= ARRAY_SIZE(rvdev->vring))
-> > > +	if (id >= rvdev->num_vrings)
-> > >  		return ERR_PTR(-EINVAL);
-> > >  
-> > >  	if (!name)
-> > > @@ -503,17 +502,20 @@ static int rproc_virtio_probe(struct platform_device *pdev)
-> > >  	if (!rvdev_data)
-> > >  		return -EINVAL;
-> > >  
-> > > -	rvdev = devm_kzalloc(dev, sizeof(*rvdev), GFP_KERNEL);
-> > > +	rsc = rvdev_data->rsc;
-> > > +
-> > > +	rvdev = kzalloc_flex(*rvdev, vring, rsc->num_of_vrings);
-> > >  	if (!rvdev)
-> > >  		return -ENOMEM;
-> > >  
-> > >  	rvdev->id = rvdev_data->id;
-> > >  	rvdev->rproc = rproc;
-> > >  	rvdev->index = rvdev_data->index;
-> > > +	rvdev->num_vrings = rsc->num_of_vrings;
-> > >  
-> > >  	ret = copy_dma_range_map(dev, rproc->dev.parent);
-> > >  	if (ret)
-> > > -		return ret;
-> > > +		goto free_rvdev;
-> > >  
-> > >  	/* Make device dma capable by inheriting from parent's capabilities */
-> > >  	set_dma_ops(dev, get_dma_ops(rproc->dev.parent));
-> > > @@ -527,13 +529,11 @@ static int rproc_virtio_probe(struct platform_device *pdev)
-> > >  	platform_set_drvdata(pdev, rvdev);
-> > >  	rvdev->pdev = pdev;
-> > >  
-> > > -	rsc = rvdev_data->rsc;
-> > > -
-> > >  	/* parse the vrings */
-> > >  	for (i = 0; i < rsc->num_of_vrings; i++) {
-> > >  		ret = rproc_parse_vring(rvdev, rsc, i);
-> > >  		if (ret)
-> > > -			return ret;
-> > > +			goto free_rvdev;
-> > >  	}
-> > >  
-> > >  	/* remember the resource offset*/
-> > > @@ -569,6 +569,9 @@ static int rproc_virtio_probe(struct platform_device *pdev)
-> > >  	for (i--; i >= 0; i--)
-> > >  		rproc_free_vring(&rvdev->vring[i]);
-> > >  
-> > > +free_rvdev:
-> > > +	kfree(rvdev);
-> > > +
-> > >  	return ret;
-> > >  }
-> > >  
-> > > @@ -579,7 +582,7 @@ static void rproc_virtio_remove(struct platform_device *pdev)
-> > >  	struct rproc_vring *rvring;
-> > >  	int id;
-> > >  
-> > > -	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
-> > > +	for (id = 0; id < rvdev->num_vrings; id++) {
-> > >  		rvring = &rvdev->vring[id];
-> > >  		rproc_free_vring(rvring);
-> > >  	}
-> > > @@ -588,6 +591,8 @@ static void rproc_virtio_remove(struct platform_device *pdev)
-> > >  	rproc_remove_rvdev(rvdev);
-> > >  
-> > >  	put_device(&rproc->dev);
-> > > +
-> > > +	kfree(rvdev);
-> > >  }
-> > >  
-> > >  /* Platform driver */
-> > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > > index 7c1546d48008..222e1a56cebc 100644
-> > > --- a/include/linux/remoteproc.h
-> > > +++ b/include/linux/remoteproc.h
-> > > @@ -339,10 +339,6 @@ struct rproc_subdev {
-> > >  	void (*unprepare)(struct rproc_subdev *subdev);
-> > >  };
-> > >  
-> > > -/* we currently support only two vrings per rvdev */
-> > > -
-> > > -#define RVDEV_NUM_VRINGS 2
-> > > -
-> > >  /**
-> > >   * struct rproc_vring - remoteproc vring state
-> > >   * @va:	virtual address
-> > > @@ -370,9 +366,10 @@ struct rproc_vring {
-> > >   * @id: virtio device id (as in virtio_ids.h)
-> > >   * @node: list node
-> > >   * @rproc: the rproc handle
-> > > - * @vring: the vrings for this vdev
-> > >   * @rsc_offset: offset of the vdev's resource entry
-> > >   * @index: vdev position versus other vdev declared in resource table
-> > > + * @num_vrings: the number of vrings for this vdev
-> > > + * @vring: the vrings for this vdev
-> > >   */
-> > >  struct rproc_vdev {
-> > >  
-> > > @@ -382,9 +379,10 @@ struct rproc_vdev {
-> > >  	unsigned int id;
-> > >  	struct list_head node;
-> > >  	struct rproc *rproc;
-> > > -	struct rproc_vring vring[RVDEV_NUM_VRINGS];
-> > >  	u32 rsc_offset;
-> > >  	u32 index;
-> > > +	unsigned int num_vrings;
-> > > +	struct rproc_vring vring[] __counted_by(num_vrings);
-> > >  };
-> > >  
-> > >  struct rproc *rproc_get_by_phandle(phandle phandle);
-> > > 
-> > > ---
-> > > base-commit: ef0c9f75a19532d7675384708fc8621e10850104
-> > > change-id: 20260618-vring_flex-b4d23d1974ba
-> > > 
-> > > Best regards,
-> > > --  
-> > > Francesco Valla <francesco@valla.it>
-> > > 
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3IERhdmlzIDxh
+ZmRAdGkuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgSnVuZSAyNSwgMjAyNiAzOjMyIFBNDQoNCi4u
+Lg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYxNCA0LzVdIGdwaW86IHJwbXNnOiBhZGQgZ2VuZXJp
+YyBycG1zZyBHUElPIGRyaXZlcg0KPiA+ICsgICAgICAgU2F5IHllcyBoZXJlIHRvIHN1cHBvcnQg
+dGhlIGdlbmVyaWMgR1BJTyBmdW5jdGlvbnMgb3ZlciB0aGUgUlBNU0cNCj4gPiArICAgICAgIGJ1
+cy4gQ3VycmVudGx5IHN1cHBvcnRlZCBkZXZpY2VzOiBpLk1YN1VMUCwgaS5NWDhVTFAsIGkuTVg4
+eCwgYW5kDQo+ID4gKyAgICAgICBpLk1YOXguDQo+IA0KPiBUaGUgc3VwcG9ydCB3b3VsZCBkZXBl
+bmQgb24gaWYgdGhlIHJpZ2h0IGZpcm13YXJlIGlzIGxvYWRlZC9ydW5uaW5nIG9uIHRoZSBnaXZl
+bg0KPiByZW1vdGUgY29yZS4gQWxzbyBpZiB5b3Ugd2FudCB0byBtYWtlIHRoaXMgZ2VuZXJpYywg
+dGhlbiBhbnkgdmVuZG9yIHNob3VsZCBiZQ0KPiBhYmxlIHRvIG1ha2UgYSBmaXJtd2FyZSB0aGF0
+IGltcGxlbWVudHMgdGhpcyBwcm90b2NvbCBhbmQgbWFrZSB1c2Ugb2YgdGhpcw0KPiBkcml2ZXIu
+DQo+IFN1Z2dlc3QgZHJvcHBpbmcgdGhpcyBOWFAgc3BlY2lmaWMgZGV2aWNlIGxpc3QuDQo+IA0K
+DQpBZ3JlZS4NCg0KPiA+ICsNCj4gPiArICAgICAgIElmIHVuc3VyZSwgc2F5IE4uDQo+ID4gKw0K
+PiA+ICtlbmRtZW51DQo+ID4gKw0KPiA+ICAgbWVudSAiU1BJIEdQSU8gZXhwYW5kZXJzIg0KPiA+
+ICAgICAgIGRlcGVuZHMgb24gU1BJX01BU1RFUg0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3Bpby9NYWtlZmlsZSBiL2RyaXZlcnMvZ3Bpby9NYWtlZmlsZSBpbmRleA0KPiA+IGIyNjc1
+OThiNTE3ZC4uZWU3NWMwZTY1YjhiIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvZ3Bpby9NYWtl
+ZmlsZQ0KPiA+ICsrKyBiL2RyaXZlcnMvZ3Bpby9NYWtlZmlsZQ0KPiA+IEBAIC0xNTcsNiArMTU3
+LDcgQEAgb2JqLSQoQ09ORklHX0dQSU9fUkRDMzIxWCkgICAgICAgICAgICAgICAgKz0gZ3Bpby0N
+Cg0KLi4uDQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IHJwbXNnX2dwaW9fY2hhbm5lbF9wcm9iZShz
+dHJ1Y3QgcnBtc2dfZGV2aWNlICpycGRldikgew0KPiA+ICsgICAgIHN0cnVjdCBkZXZpY2UgKmRl
+diA9ICZycGRldi0+ZGV2Ow0KPiA+ICsgICAgIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnA7DQo+ID4g
+KyAgICAgY29uc3QgY2hhciAqcnByb2NfbmFtZTsNCj4gPiArICAgICBpbnQgaWR4Ow0KPiA+ICsN
+Cj4gPiArICAgICBpZHggPSBycG1zZ19nZXRfZ3Bpb19pbmRleChycGRldi0+aWQubmFtZSwgQ0hB
+Tl9OQU1FX1BSRUZJWCk7DQo+ID4gKyAgICAgaWYgKGlkeCA8IDApDQo+ID4gKyAgICAgICAgICAg
+ICByZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKyAgICAgaWYgKCFkZXYtPm9mX25vZGUpIHsN
+Cj4gPiArICAgICAgICAgICAgIG5wID0gcnBtc2dfZ2V0X2NoYW5uZWxfb2Zub2RlKHJwZGV2LCBH
+UElPX0NPTVBBVF9TVFIsIGlkeCk7DQo+ID4gKyAgICAgICAgICAgICBpZiAoIW5wKQ0KPiA+ICsg
+ICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVOT0RFVjsNCj4gDQo+IFRoaXMgc2VlbXMgdG8g
+aW1wbHkgdGhhdCBEVCBub2RlcyBhcmUgcmVxdWlyZWQuIFJQTVNHIGlzIGEgZGlzY292ZXJhYmxl
+IGJ1cw0KPiB3aXRoIGEgbmFtZXNlcnZpY2UgdGhhdCBjYW4gYmluZC9wcm9iZSBuZXcgZGV2aWNl
+cy4gV2hpbGUgdGhlbiBvcHRpb25hbGx5DQo+IGJpbmRpbmcgdG8gYSBEVCBub2RlIHdoZW4gYXZh
+aWxhYmxlIHNvIHN1Yi1kZXZpY2VzIGNhbiBiZSBkZXNjcmliZWQgaW4gRFQgaXMgZmluZSwNCj4g
+SSBkb24ndCBzZWUgd2h5IGl0IHNob3VsZCBiZSByZXF1aXJlZC4NCj4gDQoNCkZpcnN0LCBhIEdQ
+SU8gbm9kZSB0eXBpY2FsbHkgYWN0cyBhcyBhIHByb3ZpZGVyIGZvciBvdGhlciBkZXZpY2VzLg0K
+U2Vjb25kLCBieSByZXF1aXJpbmcgYSBEVCBub2RlLCB3ZSBjYW4gZW5zdXJlIHRoYXQgb25seSBl
+eHBsaWNpdGx5IGVuYWJsZWQgR1BJTyByZXNvdXJjZXMgYXJlIG1hbmFnZWQgYW5kIGFjY2Vzc2li
+bGUuDQoNCj4gPiArc3RhdGljIHN0cnVjdCBycG1zZ19kcml2ZXIgcnBtc2dfZ3Bpb19jaGFubmVs
+X2NsaWVudCA9IHsNCj4gPiArICAgICAuY2FsbGJhY2sgICAgICAgPSBycG1zZ19ncGlvX2NoYW5u
+ZWxfY2FsbGJhY2ssDQo+ID4gKyAgICAgLmlkX3RhYmxlICAgICAgID0gcnBtc2dfZ3Bpb19jaGFu
+bmVsX2lkX3RhYmxlLA0KPiA+ICsgICAgIC5wcm9iZSAgICAgICAgICA9IHJwbXNnX2dwaW9fY2hh
+bm5lbF9wcm9iZSwNCj4gPiArICAgICAuZHJ2ICAgICAgICAgICAgPSB7DQo+ID4gKyAgICAgICAg
+ICAgICAubmFtZSAgID0gS0JVSUxEX01PRE5BTUUsDQo+ID4gKyAgICAgICAgICAgICAub2ZfbWF0
+Y2hfdGFibGUgPSBycG1zZ19ncGlvX2R0X2lkcywNCj4gDQo+IERvZXMgdGhpcyBsaW5lIGFjdHVh
+bGx5IGRvIGFueXRoaW5nIGFueW1vcmU/IE1heWJlIGl0IGRpZCB3aGVuIHRoaXMgd2FzIGENCj4g
+cGxhdGZvcm1fZHJpdmVyLCBidXQgdGhpcyBpcyBhIHJwbXNnX2RyaXZlciBhbmQgd2lsbCBwcm9i
+ZSB0aG91Z2ggLmlkX3RhYmxlDQo+IG1hdGNoZXMuDQo+IA0KDQpZZXMsIGl0IGNhbiBiZSByZW1v
+dmVkIGJlY2F1c2UgdGhlIGRyaXZlciB3aWxsIGZpbmQgdGhlIGR0IG5vZGUgb24gaXRzIG93bi4N
+Cg0KVGhhbmtzLA0KU2hlbndlaQ0KDQo+IEFuZHJldw0KPiANCj4gPiArICAgICB9LA0KPiA+ICt9
+Ow0KPiA+ICttb2R1bGVfcnBtc2dfZHJpdmVyKHJwbXNnX2dwaW9fY2hhbm5lbF9jbGllbnQpOw0K
+PiA+ICsNCj4gPiArTU9EVUxFX0FVVEhPUigiU2hlbndlaSBXYW5nIDxzaGVud2VpLndhbmdAbnhw
+LmNvbT4iKTsNCj4gPiArTU9EVUxFX0RFU0NSSVBUSU9OKCJnZW5lcmljIHJwbXNnIGdwaW8gZHJp
+dmVyIik7DQo+ID4gK01PRFVMRV9MSUNFTlNFKCJHUEwiKTsNCj4gDQoNCg==
