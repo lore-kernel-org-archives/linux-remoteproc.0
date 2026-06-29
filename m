@@ -1,55 +1,46 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A4D18B0A;
-	Sun, 28 Jun 2026 03:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7263F86EE
+	for <linux-remoteproc@vger.kernel.org>; Mon, 29 Jun 2026 08:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782616132; cv=none; b=MTpUry8fHBxXkJ2yQPAVwon/bT7YUpjOFHUvUM/Bb5TkYhTBDuCHufY2DwCqNfboW/78CCcGpXZ4l5NjBLw6a6gpditF2TSj4125KgP6GaGiYMUAE7omRaCQRHQMNSTgSFCv2XfzHpMZd93jxjKOf30xGkdtFpZjVBB/Vuh3cY4=
+	t=1782723441; cv=none; b=D8w9rqhmg+maUnLZAEQPgUkL0STjglbhjMdeqYfj7Sw/qXRbjvhcqOH2usoPNyaH2n0mLNfzCwAfhcLE/U8qz3sykxyZ9Scyf9WUUWpEMjkQ4cFtZIaAbwB5KH0drgP51UIzj6PnFi36bGnSYNv+8f0Ak8bKktRsMiurD+PUKVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782616132; c=relaxed/simple;
-	bh=F13cvcxhy3d55n7MjK8iW6eyN6upRu2rZr5RBuse3J4=;
+	s=arc-20240116; t=1782723441; c=relaxed/simple;
+	bh=Cn0Hdsnc/OYau8eYKqRpxB5lCuUUIKG4vrn2ICVjz3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+yq8J8XCsacC3DSr2s4I544cB8U/bulCCpoACOHTxBnDtI1gtnXlZG/puoOvb8ChfVk6pDVHdpGrV9MuKiNd9Mgg0IK4veeGsXwZok3WK28qAWebRByG5IZNKzJtDCengYsvfEwnkPC5dHqhC3o1NrqKBKypDogjp+nNdP1Vt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOnRIRYa; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=swSLE211dMEGHv8cyPV/wopzHcyG7R88aJDmKFkVonfnxW4HV/2cRmFzyUxalEgDwLd+1C7hvs0kDVegMp6FRnUIk7CnQWSBV42A6oHTdolz5c4Fo2tol1U7jwqAElXXGkmNrzs4lUydgqfzdblBiAdMKwQM5zBkku9BmuthFBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DAR6X1dx; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOnRIRYa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA3291F000E9;
-	Sun, 28 Jun 2026 03:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1782616131;
-	bh=mB14dzokXviAWew5o/D1323LSbv37Vmdi+prndaBPPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=MOnRIRYaRdO5vvVGeU7z0bd3sUm5jr4IF5E7H3Drrc/mhZ6J38Qgq2KfeWfZdyiZF
-	 MyPP0RbCyJey4DDEUnHd/WLuffNAb8sTTBthLHXIGJyqrQSSPkIx6uWA/liBTX+5lW
-	 MrlHQ5wgAlRACR0pP+fZlMCwm6ZXwW2hMDDiaTArIgZesUqxLqEhUgCYnpG+5qr0Hj
-	 uKSDOrLyTeD9isVpYKdNW0tZpinsYRBlVXmHhM4YAegP3rdvy1dlnWzXSqBQtEmPm3
-	 0+QfU26iTUBVvK4ZJZA1rRf5Di3ctOCXGbhevxIzBFqBQWEaeaX29sq0WMzJFx/G1K
-	 t0d4zembWGl2A==
-Date: Sat, 27 Jun 2026 22:08:46 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: george.moussalem@outlook.com, Jens Axboe <axboe@kernel.dk>, 
-	Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jeff Johnson <jjohnson@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, 
-	Rocky Liao <quic_rjliao@quicinc.com>, Saravana Kannan <saravanak@kernel.org>, 
-	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	ath10k@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 2/6] remoteproc: qcom: Add M0 BTSS secure PIL driver
-Message-ID: <akCQA-bLpp31QVGV@baldur>
-References: <20260625-ipq5018-bluetooth-v1-0-d999be0e04f7@outlook.com>
- <20260625-ipq5018-bluetooth-v1-2-d999be0e04f7@outlook.com>
- <38aceb33-b28e-4994-b277-de070b6dae2b@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DAR6X1dx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=kWrD
+	HiKeyxwtEZPkBVnyaEj82oKV48RkCbwlxtlTE3k=; b=DAR6X1dxI+c9njC5WYif
+	IKdw/eDXluaqJ7k+HnfoclL/TJkOCMhdY0VCxlNpKT1avqyoIh5z7VGZHkQLRj4x
+	C74XKZNkQLLrxoMBQTQQVZd2j1uy3ySwYhHjFIHtsIYjFaRSDOXdHXp6WCCecK0P
+	3T4mcy9f5NCHnAj8apwJ0mGv1GInX3z4kWCa7dCaZNHzUdThyhk8SMRRnE/OcEz4
+	gEsbZQJC7qrncwjV5V12IAytX8fqDkirs3OInKMozLMAo28zy1awzSG3k/J0k+3W
+	tuEF5C2YYK8Wk6/u5oeti7EdX7qr23GMa/daTPSKoZ/lmKKYJZwzAy6KujEhU6vD
+	tg==
+Received: (qmail 307330 invoked from network); 29 Jun 2026 10:57:14 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jun 2026 10:57:14 +0200
+X-UD-Smtp-Session: l3s3148p1@f4UIpWBVrtIujntC
+Date: Mon, 29 Jun 2026 10:57:14 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH v2 0/4] hwspinlock: add summary in debugfs
+Message-ID: <akIzahjROM4GAlOR@ninjato>
+References: <20260622085204.54248-1-wsa+renesas@sang-engineering.com>
+ <ajk_u7TVT-kL8z2A@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -58,30 +49,91 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <38aceb33-b28e-4994-b277-de070b6dae2b@oss.qualcomm.com>
+In-Reply-To: <ajk_u7TVT-kL8z2A@casper.infradead.org>
 
-On Fri, Jun 26, 2026 at 01:20:25PM +0200, Konrad Dybcio wrote:
-> On 6/25/26 4:10 PM, George Moussalem via B4 Relay wrote:
-> > From: George Moussalem <george.moussalem@outlook.com>
-> > 
-> > Add support to bring up the M0 core of the bluetooth subsystem found in
-> > the IPQ5018 SoC.
-> > 
-> > The signed firmware loaded is authenticated by TrustZone. If successful,
-> > the M0 core boots the firmware and the peripheral is taken out of reset
-> > using a Secure Channel Manager call to TrustZone.
-> > 
-> > Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> > ---
+Hi Matthew,
+
+> > Because the radix tree seems to have no dedicated tree nor maintainer, I
+> > suggest that all these patches go in via hwspinlock. This also keeps the
+> > dependencies zero.
 > 
-> Can this not fit inside the existing PAS driver?
+> The radix tree is deprecated.  I don't want to add any new functionality
+> to it.  Here's a replacement patch to convert hwspinlock to use an
+> XArray instead of a radix tree.  Compile tested only.
+
+Okay, seems to work so far. Thank you again! Will merge your patch into
+my series with your credits. Now I just need to wrap XArray into struct
+seq_operations. Seems no one has needed that in the kernel so far.
+
+Some comments and questions to get a better understanding.
+
+> From 8ec88ed466e8153f546f7e8e69193cd5389488ee Mon Sep 17 00:00:00 2001
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Date: Mon, 22 Jun 2026 09:38:30 -0400
+> Subject: [PATCH] hwspinlock: Convert to XArray
 > 
+> The radix tree is deprecated.  The XArray uses the same data structure
+> with a nicer interface.  The hwspinlock_tree_lock is not needed as the
+> spinlock built into the XArray is sufficient for all these cases.
+> 
+> hwspin_lock_register_single() used to always return 0.  Its caller
+> thinks it can return an errno, so I believe this to be a bug and so I
+> have restored its ability to return an error.
 
-While the start/stop SCM calls look the same, this doesn't follow any of
-the surrounding concepts. So I think this should follow the other
-non-remoteproc uses of mdt_loader and scm directly instead.
+I sent a patch for that previously and would rebase your patch on mine
+to keep the one patch per issue ration.
 
-Regards,
-Bjorn
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  drivers/hwspinlock/hwspinlock_core.c | 133 ++++++++++-----------------
+>  1 file changed, 50 insertions(+), 83 deletions(-)
+> 
+> diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+> index cc8e952a6772..1dd68b8410dd 100644
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -16,7 +16,7 @@
+>  #include <linux/types.h>
+>  #include <linux/err.h>
+>  #include <linux/jiffies.h>
+> -#include <linux/radix-tree.h>
+> +#include <linux/xarray.h>
 
-> Konrad
+According to some quick grepping, there are 102 users of XArray
+including this header and 423 users which are not including this header.
+Do you think this is a useful improvement to add the header directly
+(per subsystem to keep the number of patches limited)?
+
+> -	void **slot;
+
+Great, this obsoletes a fix concerning RCU annotations I have sent
+previously!
+
+> @@ -389,15 +375,9 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+>  	/* Find the hwspinlock device: we need its base_id */
+>  	ret = -EPROBE_DEFER;
+>  	rcu_read_lock();
+> -	radix_tree_for_each_slot(slot, &hwspinlock_tree, &iter, 0) {
+> -		hwlock = radix_tree_deref_slot(slot);
+> -		if (unlikely(!hwlock))
+> -			continue;
+> -		if (radix_tree_deref_retry(hwlock)) {
+> -			slot = radix_tree_iter_retry(&iter);
+> +	xas_for_each(&xas, hwlock, ULONG_MAX) {
+> +		if (xas_retry(&xas, hwlock))
+
+So, the unlikely(!hwlock) case cannot happen with XArray?
+
+> -	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+> +	ret = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
+
+xas_get_mark() returns bool, so I will update the code to match that.
+Makes it more readable, too, IMO.
+
+The rest I could understand, I think. Looks much leaner, in deed. Will
+keep you in the loop once my next iteration is ready.
+
+Happy hacking,
+
+   Wolfram
+
