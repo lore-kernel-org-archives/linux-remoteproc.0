@@ -1,291 +1,210 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azolkn19012021.outbound.protection.outlook.com [52.103.10.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EB53E2AD6
-	for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jun 2026 07:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782806152; cv=none; b=BhkljN8K/Pg/Ch312vNT1eGrUaJqDmI2CD9M0GBrHCYJMUin3K9TwOqcGUrWDmA1S/9Y+3evSZAug8WTgbxYkajSsbhNv7Aeim/be94eqTAxn1lVDlYUwWrJ0gRucPVJNNK8u8XXLFEQtKeTyQQczZoNZ8yiHQ83WAfHPzt+f2c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782806152; c=relaxed/simple;
-	bh=cRykOdJcg82LY/zQAD7pq4ibR7qbi1H6EcAU8FKPdFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CecrSDn53VyejXb8W3x/ZQG6uzk24hbohiN7BiWM9ZrL3i+LKg1WxMN0EVyH2kgqpDpBbR5WbN4zhy4+VDxCJ6+I+Z/6Qokazu7gIpOl8MRpc9bUgnU1QgvlgUw5ZtG/IvgRFND4SbzDofTPFXkLf2I9Z+tngIEfd7U0zbLkyGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NEKrKVrO; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bLacls/R; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091D33E3DA4;
+	Tue, 30 Jun 2026 07:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.10.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1782806174; cv=fail; b=PQNx/22uz6yZPdQCRI9J47vHCzTF5/Nk//7VZ2UDN2xJ/zlRr+iVnhvujyrGypj2oMI7/ZV4NnguNMsWCE3m8gcC2Oj6NHookxSuz8Oeu2mRsEvRkFe4fj5mDOo7MARLlHc1VEoadDQTXUIFOhDbQfsggep9SCYsKdS2sYW80m8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1782806174; c=relaxed/simple;
+	bh=FrIOYRWoqIDjuNiMKH6CdXMiAA8eR3s/YtQIHLHG94E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SrLt+M/mb8DPce0mBePk2pAbAIgkSxYgjHz5fISBrK++7IvSZb+gghAckAAFC0Ej+7XbAEabCDagaAv95IRnqv7RwD2/62l8JvJxkXYtEbBBH9M3ygiJD77KmqJA5m+34O5rQmkxOjsEB58w5TeiTPHwkDjjIf6lekehpec/zyA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=LgymLp+h; arc=fail smtp.client-ip=52.103.10.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NEKrKVrO";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bLacls/R"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 65U6Cdd31074123
-	for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jun 2026 07:55:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=mqpNY3U/BBW/1jq7tUqFwqPx
-	2Jgckwa966PpuubyQb4=; b=NEKrKVrOvnmAJZFZpqtVsPhOi8xUrMDGZH2JBrza
-	q/nnn5B5u2HL6I7OtB7KwWe0+HftoNYWg93TFf9B/JHmBWcAAKe+/bBEomMGzsop
-	ih0l2aHP/TgRU1teiKwmiS128MO1f+LbUudj/RlCoBfD5azIkMWGdr7dIJyGRwKs
-	iBAr1MGHu+wM/Ddmuxm+GfkJibRGUCBCRg7h/izAbpx6unFMlFDAa9QVMtWItqug
-	NDtXsNLtoGG2SGdKJEniib29uivKu8BOWcGs5zbt4S8dHsypMWfvqKcqipzBVexs
-	eZKBiGnnljFIMeLU5xmQm6b/20O26TxqXYUF/oxAa3pJDw==
-Received: from mail-dl1-f69.google.com (mail-dl1-f69.google.com [74.125.82.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f3y9k296h-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jun 2026 07:55:50 +0000 (GMT)
-Received: by mail-dl1-f69.google.com with SMTP id a92af1059eb24-13b2bede3d4so462029c88.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 30 Jun 2026 00:55:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1782806149; x=1783410949; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mqpNY3U/BBW/1jq7tUqFwqPx2Jgckwa966PpuubyQb4=;
-        b=bLacls/R4qVVttXVMgFlPvrZfp1uSieL88bFdvmXTvCO90UYH5RPvEC9n9KqvyBieD
-         jG3WyryMVjiR0AtVg+6KjVyiyhhPxYXTHq7z3ice9FolNKYWxIagqAPoHiMYmSd62N9y
-         hO+CBrJ2xjXXhnlriX8xZ/dmbL/NSHTRtUQxmIapfg3sf+8ZQ1o8xHcIPJxrqOO/+WNF
-         v1dzDXik8Fh4eMHHMPCMamNSQ3OwnYJ+SrHkd0srX9x5OOB5BYBWyykJ5rW64eQP0prf
-         Dm/8GCYowrYbivFgB8gePdTxPeAyI3Ue/GYqgLv3Z7w5+fPKAMY97MoER5vxSckrL65/
-         X6dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1782806149; x=1783410949;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mqpNY3U/BBW/1jq7tUqFwqPx2Jgckwa966PpuubyQb4=;
-        b=cailOM2N8vPZiW7v18HsWmHfbtQCio9G9d6lV1NUZGWrcaYVFEki53K76t8TGriElo
-         RVJsUzH2drOSDA4D36Hn6bRQATa4+cYsFOm2Yey06ykZN1MZpqGD0oG9IXs0/60HEWRO
-         z+pZrhOKlpC7eugMj+Sef+4mMHexg8MDRMMi52nfy/n9bAto4352Bpt8xYwjJSLbFfWV
-         37x6iH6Vor/GCB7J9MPGHoefsQCBuEWzxvdj3smPBNh2l5LZZ5Kh//cxteaDqVFByHEh
-         1Q9GZENGomdAwAwZ/EmMxqQIsVJve1EYJZKXKGNGn77Uj70cp5eoim5iBBMcZVNfEIBS
-         BXXg==
-X-Forwarded-Encrypted: i=1; AFNElJ8lDIaep7m1lK7uF2Fju6rNvLjYNuuek3f2BWDwKP0Q/yjBgYwukQdKdZdKCPXkB9DTf6jiZHy0WPaZX5FXCWXv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyhKTndLtYnAPEur2OeygEfBUClYXj+K5udXkilqdfx5WNOTNv
-	NRHYYO8vRyh8hkmoSwaLNifBVM2kp+SevgDO0T8ys+54481wgXRwe6UoCQ/viymL1pqtA2eJ3Dq
-	Tl4cGI+1Hr+XXYMv1zNE53+fRb44F5us0apQkaZivJ/h5T8ZFh+L27Fr1M4qH8eL8N3/fQK+V
-X-Gm-Gg: AfdE7cnEUKQsGRj8VESJn6IArHmQ0raatNIboNlOHQNpA/CAJNFr2nxvICbAf8n5BmG
-	o0v3fd7P2FT4pBgPQ1Fi5/Z0U/6wRgZDx7rMxAB/HsnhsJl0pkHDkfQtj6ST6xFRlhavBmaijd9
-	mISrnHutsZ+KcobFY5C0xDDIaAApZRMr7b8DwNEIErbyApl+3X9CMuuzfWAoMNT1Hngu2aoRsLU
-	/Rlk5Kl29axpKGti/2emPlPqVKuqy/crRnZi0/6G17gG3MpMK7bJ5ajo+AMeCsNKVZaw0+OetuV
-	c5UjtF4zUTWBcCSxDu4IWIybILcvo0LplIjdwPPyZYXThuQhMZyFwUXUox/X04jfZjtlY6dpxNE
-	BUdevUaPiCbWm3Ph1FM0FbplmBEe+aew+tEr46g==
-X-Received: by 2002:a05:7022:f8c:b0:13b:1bd2:389d with SMTP id a92af1059eb24-13b2e3438cdmr517203c88.24.1782806149208;
-        Tue, 30 Jun 2026 00:55:49 -0700 (PDT)
-X-Received: by 2002:a05:7022:f8c:b0:13b:1bd2:389d with SMTP id a92af1059eb24-13b2e3438cdmr517169c88.24.1782806148279;
-        Tue, 30 Jun 2026 00:55:48 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13b2abbba8dsm5647940c88.13.2026.06.30.00.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2026 00:55:47 -0700 (PDT)
-Date: Tue, 30 Jun 2026 13:25:42 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: qcom_q6v5_pas: Fix dtb firmware lifecycle
- and leak
-Message-ID: <20260630075542.lipjayqvrcgepx7z@hu-mojha-hyd.qualcomm.com>
-References: <20260622064141.zfakbyenknx6vbm5@hu-mojha-hyd.qualcomm.com>
- <20260624175335.22799-1-saileshnandanavanam@gmail.com>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="LgymLp+h"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f20rxSDyYGrYDRFKokMvBl+YfNmUNNen2C6mFlLTgNIGoXfGua2NY1vxO2tZnhmmzAgxgP6EE4U6tJeTxnxDAhzg/trrxlfmBa1M5KfS+bbwC0dWsuLCthxXhY/r4n4fngjOzZHwMSDNoEuRi3GUT6Wf1x/zOuTLpyOfnj7UUcGk2I8qtQDtzVxHIS85v8fXXjCfbMqftoUDx63MnbGIWCTpzEb16SjK+VuZC5Kdfhui4kgynj1jG+xfkHe2ArseOLJ5qo22ei2aBDHmc+eOuZ4bMnGZocGNXMcCmn4I84YjSx+K22hciVcNgyp65J4NTPN/+UBJHkum2g0xU3hfkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lcU75L4NhYOOqpBJVd+2XoryhV9nYIl5d1UbdDMYNbQ=;
+ b=VfqFofwSO7RHXY9LdV2jOF/AT1UcIOpL26jvAa//666fVgMN5zL3ARE0litXVq5+0BS+Lyv+CjjiV3PvVIuSvoVxGIdC8odrOO8F8UIwjzebDTlsXHBYCGwosodt+TzK8kEezPoE7YnckHwhDmdOaXSUqLSIPKmsPKG6IEhcjEYTLScTyshYeXPajj4xIeuKI5ykzLl9eYwzan+fdUJQpIYxtyiWMhBJ/iex3okBU5EH6pguNPRIiWkClT4WQOWFCDxET3OozCCuLeix0C0PnM1ZLbdpRkDKX64Ug7h6LQq2HCGkcQBJdL5lRduIj8GlSRQsvqw1orJ2cADufWQSQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lcU75L4NhYOOqpBJVd+2XoryhV9nYIl5d1UbdDMYNbQ=;
+ b=LgymLp+h5XtN4LJNxtXOtL+2WHzp2F+klbFNo0+UwiLtjS2YzybJ7rqGK3cjdp7YQk5iwlLa17UCi26tLv1nl9oyWs1xMSbsOq9hNmus7/uXLbSdRVTnAGxhPtZtWLONfkdSRFYnlW5UrQDchQw8FFUFOvvb7ZDH7Pu4VODhGu7AXLHTysOzDzomduzcOG3dwBzJGGUTIuQXLQi03cZT1vNzjGHsIysU6T722YjtwQahg4mL7/u5+wOSy0P8684XYCKlVdE1E5R1fvUrHQlp0nRagNX8L4G7Qy5ktTPDFs3A20JZzryliOJOiAnbxhC43GkA8141PCHXu37hwdXYFw==
+Received: from SN7PR19MB6736.namprd19.prod.outlook.com (2603:10b6:806:263::12)
+ by PH0PR19MB5129.namprd19.prod.outlook.com (2603:10b6:510:97::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Tue, 30 Jun
+ 2026 07:56:09 +0000
+Received: from SN7PR19MB6736.namprd19.prod.outlook.com
+ ([fe80::4b6c:b84f:b71c:d0a]) by SN7PR19MB6736.namprd19.prod.outlook.com
+ ([fe80::4b6c:b84f:b71c:d0a%3]) with mapi id 15.21.0181.008; Tue, 30 Jun 2026
+ 07:56:09 +0000
+Message-ID:
+ <SN7PR19MB6736BB58C4F6E648CB3910949DF72@SN7PR19MB6736.namprd19.prod.outlook.com>
+Date: Tue, 30 Jun 2026 11:55:54 +0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: net: bluetooth: Document Qualcomm
+ IPQ5018 Bluetooth controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulfh@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Johannes Berg
+ <johannes@sipsolutions.net>, Jeff Johnson <jjohnson@kernel.org>,
+ Bartosz Golaszewski <brgl@kernel.org>, Marcel Holtmann
+ <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+ Rocky Liao <quic_rjliao@quicinc.com>, Saravana Kannan
+ <saravanak@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ath10k@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+References: <20260629-ipq5018-bluetooth-v2-0-02770f03b6bb@outlook.com>
+ <20260629-ipq5018-bluetooth-v2-1-02770f03b6bb@outlook.com>
+ <20260630-wondrous-lean-stoat-be0b9a@quoll>
+ <SN7PR19MB67361ED99501853D6BD968E69DF72@SN7PR19MB6736.namprd19.prod.outlook.com>
+ <ccbd320f-5a17-45f3-96cf-3fa0c9bd1e8f@kernel.org>
+Content-Language: en-US
+From: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <ccbd320f-5a17-45f3-96cf-3fa0c9bd1e8f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DX0P273CA0010.AREP273.PROD.OUTLOOK.COM
+ (2603:1086:300:26::16) To SN7PR19MB6736.namprd19.prod.outlook.com
+ (2603:10b6:806:263::12)
+X-Microsoft-Original-Message-ID:
+ <2268b3c6-6723-46ff-9ec5-4834ef6a1194@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260624175335.22799-1-saileshnandanavanam@gmail.com>
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNjMwMDA2OSBTYWx0ZWRfXwwYxaUFwhrXv
- 3lrBMdeYVjDw2WQXgwG/syImz1XsE9bqZDmdyP96wLPE+SA/dMaagXF13OMocUvR9ClTdI/GrZ2
- Zjp0VI4BuS/EIKBgbLivsRKSRLZ6ftM=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNjMwMDA2OSBTYWx0ZWRfX4cWGOqzvaE36
- VJw8hQmsTYW4AybpvQ6J0X+U0vbvg8sHSEdx1+R/4b87eQWytfjVKmMK4EeMNpy3FLnEKP7ZCX3
- 7Dzc2lwud16sAQMhH08mnIfuUnCnfyuLbZ81BDSMzmO+0rJ8rMM6AKYx50j5AcV2T7ZDsMf03M+
- 7y2b/uHgmiWLCMr6UASOp0gLSb/qWOFB8tMRWS887pQoJSline/DsfFw3ZMlA6l9lDY6JuJ/GF9
- FNKm5IaRpFD3wijbz2z4JXen6fecuEMAHOJWsERFbqYqfa+jXDdm+mWpcrk16tZt3TZ+kbgAhLk
- DzOlpoVAfyu50Iu+h6CvdqIXjBBP1EUZ/M0/0nOodXpyoAk8FGwAB1AONkqlydDyysIu66XkJi6
- 0TfYXqgg4Qr/6fXo+2ZMpGUqhAr5zrNLD5OCrmSIIDDWiX2DTcyKrKnr21Ik/kFDpHTPl8rvnCC
- kIhQLm3pTzKQHLQH38w==
-X-Proofpoint-ORIG-GUID: IaOYGbWyD6jq9Bmf3_QJB9xCv5vFURRL
-X-Authority-Analysis: v=2.4 cv=TeqmcxQh c=1 sm=1 tr=0 ts=6a437686 cx=c_pps
- a=kVLUcbK0zfr7ocalXnG1qA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=FelO9ux0wxsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=pGLkceISAAAA:8 a=_ByhrIy0lgGYLjqKynUA:9 a=CjuIK1q_8ugA:10
- a=vr4QvYf-bLy2KjpDp97w:22
-X-Proofpoint-GUID: IaOYGbWyD6jq9Bmf3_QJB9xCv5vFURRL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-06-30_02,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 phishscore=0 priorityscore=1501 malwarescore=0
- spamscore=0 adultscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2606300069
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR19MB6736:EE_|PH0PR19MB5129:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0a2a74d7-5785-4a63-e70a-08ded67d0bcc
+X-MS-Exchange-SLBlob-MailProps:
+	znQPCv1HvwUXBahuwteIkQeW30lJPuxOInnodx1UWtcjPExcipIPL7OdG3FFcmWfddTO34i850KWHEjmLS+Iwoi11fMyZRd7VfNaFJyglxLmbvHWrXho3u4xt3TPxjFLM4pwgHDB7tbq27fr0+NdiveNVTbF3lB6KMPZ7VSrOxQy2R7iPsrINwumXW5RtN8i+O6Rhd2jZJhP7Ie/ErBLLrvzr32QbcBK7emqApROqyXt3UraOjgT8fFvYwxTEZCq0clQz+rkwEbepgUr9l7i+gJvE12xuvwjcGDbNlfa80i1Z9on+zLCgxAUvM/r2aRb5HMVVrozyaRNF004djosvaQI4ForwDQHUyxhsA+o90gqvWLHCt9NPbe03KteZWR5MCqmuXHAuk7xfzV1VKuU/Pci1/i/lcgpbIypQPGPlR2sN7fpwGDKSWISjjQzXddwKsuFJ/QCodfK7AgeGR5eWxHaxBMRvKiY6CGerUJrvFLvLSwZjQBgsmD/EKL+IiovTuCG5zFBHno5S9BHi2RWaxyvL7mt4bStcjQMVAO20KDRnXOdCL2K6QDHQtg7Z4RD+JGZ5jqLBD0xDa7NSJeMrhPtt7bvuNCy2NRABabX88+3Lb6VWkvSns2FAXnwFFtfc5gcR7Q5yn59K0TTg8j67VI76c1Lelwb/UtsyWffE+jKceK+dNOaX7K1oatzg1TWlgs1wHwprGYi+IHmGMd3Ov/dOmpoOzD1iz6qRd1pI/QULTK9d+djcB312smYvUyv121K3kZaz0c=
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|6090799003|51005399006|15080799012|19110799012|23021999003|8060799015|24021099003|37011999003|5072599009|25010399006|40105399003|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aE5iMDlzVFAwNFNXMUwrZld6K2xNVFh6TjZ5R29UN01BVzFjd3FSWkVyRFBL?=
+ =?utf-8?B?QnozaVpPaGNmeHArYWxhZDBneVFkMFFUSzU2bnJTemZoRElFUTdzRDZjSmJj?=
+ =?utf-8?B?SkRBSGZvRjdsNmE1TUJSTkgxSGpMUStkUUZieWFYNWZ3UEpGNUJmTi9TQU1t?=
+ =?utf-8?B?Znl4cUtCVVZPTGNEL1NHdGtDWHFvM0drRnNZVm4zbTJtNEViajFuOThNS3h0?=
+ =?utf-8?B?M29xbjlHWmpXQlMvU0pLdXc2Y1ZVa0l4R2UwbUFDWHJibGxzcjZwSnhrS0x5?=
+ =?utf-8?B?RExJcThsNCt2V1lEd0J4dCs3YmRmTUw2dzFqVHJSdkFUQ2VEMDNNUXI5bmND?=
+ =?utf-8?B?TWN5MGpuQUxPUmFsdERzaklKejRxa2VaMUpIMjVxSmYvZmpvUjdQOVh2NVBH?=
+ =?utf-8?B?eVpzTTkrYUJkU1VMc2ZPMGhTaTVQV2lRL25FN1E0cVdrc3BPNW5xUDJoS2hX?=
+ =?utf-8?B?a3haRWYvZDQwNmlkNkhRZzJpcm9JUFZQOFo5anBNUTBDYW1Mb2xFL3IwVytR?=
+ =?utf-8?B?Q2ljQ2Nka0NxZnVueDJhY2hVY0VwRjg1U2xabUg4bXE3UVVTclNJYUlYcTFU?=
+ =?utf-8?B?NGlidEtvWUFoVjdhUCt1Tng0K0JMOVExTFlXSHZjbGxydHQ1MW0ySUFXMStU?=
+ =?utf-8?B?Y2g1bEtOdEc4Zkgrd1NQM3VOckwvRHRsa2VvN2hiY2s1SVh1WlJQa1FlNWE4?=
+ =?utf-8?B?Njl3S09oQnF5N3piNmlvc0pzejBzVG9UTlpwcjVpUWpMQnNpclIxWGpGVXUz?=
+ =?utf-8?B?NndpdWZaRmd5WGRsZG5sQVVCZEI3Y214S3E4UFdGa0xBekovQXI4ajFnSFR3?=
+ =?utf-8?B?NSs4dXVQSjdrV0tYWTFLaGViS1RWZkZtNUVsY1RPQkcvaCs1bEZJYjlYc1Ro?=
+ =?utf-8?B?bGwvWE1lWWpFUWF0Q00wUXRWY0xDRUJUaEcySGJNa3Y2RDF0RTVpTHYxaE9t?=
+ =?utf-8?B?S0pFMVZKR0JNa2tteE5DSXRVRjM4RElkVitLVUxWb1ljOEduMjI3b3lJRkVi?=
+ =?utf-8?B?QW9ONDVvWHlrY0Z3K1F5dlFsZFhLMHhPMlNJdDEwYUV6ZjlweGFESmtRa21F?=
+ =?utf-8?B?MVVGRGtUMDdDTUtMTzdydXFJN0xnRXRXaXFUWFRGdUI0cUpZVDFxNEd1UTdF?=
+ =?utf-8?B?bXdEYVl2RFk0cThDdDZJQ0VuU2lndCs1RzhoYitNK0RZU002Z0pSbUxqbENT?=
+ =?utf-8?B?aFppNGtJSHRJaDNNL3BveVV6MGdPaUM1MHkxaW1yQWRCK1hmbGs0RjE4cER0?=
+ =?utf-8?B?R1RjU1pFZVNjb1RPZ2Q5QWlNV3BsVUV2QjIwTndmTS85R1lRbjdxWVBkbElq?=
+ =?utf-8?Q?dnlfgIId0yX3oD1FZp2kc4MuX6kH54E1p7?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ck9TYnhIc0N3bERialkvWWFmVncyYVdPRlRyc3MzVWhneVFPSE1VVitiZjEz?=
+ =?utf-8?B?WEFlUkI2a0NuRDVtKytrcFNkalN1SUUrSXp3dVlDVVRVd3VVcjRHbDZyNmNn?=
+ =?utf-8?B?Vmh6b1NiSk5wUERDU3VMdjZ6WFM1QjU2NkExenNSNExvRjFDcW16ZTI3bGxW?=
+ =?utf-8?B?WDkraGxuUkYvbDVSeU5aekM2SU5LNnZuc0ozc2tORXdIZGRPU0dHMG5sKzVr?=
+ =?utf-8?B?anAxTjMzQ2VTdndWOVduOXNHYkltN291enNYcUFZVGFYWEdMZWJ1L3hxbm9I?=
+ =?utf-8?B?ODFBNThzR0Iwa0ptYnlvVjAyTXpFTG5qaHNzVDgzZVplZFZaU044elE0Zi9N?=
+ =?utf-8?B?MysvWjk0eEdJYWJaYmN1MEhrM3B0WjcyQXROMEZnY0hPWU1Ib3FTY24raEt4?=
+ =?utf-8?B?NjVVZk43OHZINFRtQ2huUVFLZFhGYzV2VTRlMU9JQjhBRHhwWnB6SGtkUzJx?=
+ =?utf-8?B?UklrRS82SHp4WlBVbjBseFRobWdscnM3QkE0MjMvR1o3K3BQNmNMaWdUTWtJ?=
+ =?utf-8?B?UU1mUTA4R0lvYnNZTWFudTdBdXlmb1Jmd1cxdDVmVUk4THFwLzFhOURNdmpG?=
+ =?utf-8?B?eDIxM1ZpOHQrcFA3TDJlVHdNVUNFS2NQczdhb0JPK01odW5Ma3VialVhR09O?=
+ =?utf-8?B?aGdXbUVaeDZvWmdVMnczUWxMbHdpalBqTUVKdlRkQ2NvVWdNUGdaajlGcmZ4?=
+ =?utf-8?B?aHJXZDZRK3dkd0h5QmtEYjFMTks2dmpuYjhNK0hUUmFndTBzZDJpU250ZnZ2?=
+ =?utf-8?B?WEE3VW5lT2NnMTlWTGlnN3BsRVZIcExxSXEyZUtKajd0T1BJVDJPTlAyQmhi?=
+ =?utf-8?B?T1d4RkVRVkNaYVljaWVGK2FvenFHcGoyUC9wL0hWVXc2UFZjbXN5WTBrcE1s?=
+ =?utf-8?B?ajVJQm1nb0tIWWg1QkxGZk9EMjhzZU1lZGZuMGgxNWo5bHhnRmFySWtvUmp2?=
+ =?utf-8?B?S2VBSHNSUmg2Yk50eHR3enNXS25iWjdQYUhlTVM3T1FiL2dXbkVSR2s3RmZu?=
+ =?utf-8?B?c0p0bEFaN2Z5aWs0ODkzdGZmTXg2d3BISHFlK2Rvb0UwK1NRQ0E0MlFFWWlt?=
+ =?utf-8?B?bGNnakN0THJnL2hZMnFWSzNtWlcxSXpjV2RERGR2TW9tNHBOTVZrSWs3Wmcw?=
+ =?utf-8?B?N0dhQVpHZ2VDVG9zWFJ1TjlsbmhyM0IxL2RPWHJzR01YbG5seEY2WjA1aUUr?=
+ =?utf-8?B?Y2g1NkRZVnE0N2hMNzVGTTFqSldXQzRzS0RXNEV2ZnlTbWdQWDYvL2tMcDNP?=
+ =?utf-8?B?aHpuSHV4RkV2RG11SXN6VFJKSWVMWHVMc0VoOWI3TkEyb2pSMTA3WUZUYlAr?=
+ =?utf-8?B?em4xQVdHK2ZETG84UFpVZ3FMZktRaGRJWS9SYXZkQlMvRHFycTdsbDM1RDdy?=
+ =?utf-8?B?VUQ3bzJFUUh4ZmxYYkZjYTFlQUNDSTNQeHI0ZU5DUWIvNnlzZ2hqWnRaWlRP?=
+ =?utf-8?B?OFdTK0ZTLzlDWFRPcWY5bUJjL214Wms4WDU2WEVmaGx5Y295dHkyY0I3Q0Qy?=
+ =?utf-8?B?STBndEpkQmtUeUsxTEhPNmtEbXJaOUlsTXJCaS9LQ0dpNlYxT1JIZWdNc1Jo?=
+ =?utf-8?B?VmdkSFFIanpvcGt2NmVXS1QyZVg0TndLelpTc2hTbmMwQS9GZTRGQitrUXd2?=
+ =?utf-8?B?WlZqYi9tSDZmNXdCWTQ0SitmREY0Q09sN2s3VHBWWlNqRFM2Kzk3c3ZONDl1?=
+ =?utf-8?B?ZkxFbFRPUVNqRXJXZWFrTWRLQUt2b05VOTlYTklsb3Q2eG00bjA5RHJCRlFz?=
+ =?utf-8?B?b1RnbGxQS3BhcWlTdWxRejhyZ2pRZzVHSlgzZ2J4SjQ4TmZmVmo3VGUxb0Q4?=
+ =?utf-8?B?eHhWRE9mamZtQ0dqSEUzSFZDWTZoUTlxVXFlTlpHTlZ3OW5WSzB5ajQ4czhG?=
+ =?utf-8?B?RGlueHpMQkFxblhlTjdkWFQva0p3c25FSXZkZS80R0d0cUE9PQ==?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a2a74d7-5785-4a63-e70a-08ded67d0bcc
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR19MB6736.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2026 07:56:09.4689
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR19MB5129
 
-On Wed, Jun 24, 2026 at 11:23:35PM +0530, Sailesh Nandanavanam wrote:
-> DTB co-firmware was previously requested and loaded in
-> qcom_pas_load(), but its lifetime did not match the actual
-> start/stop lifecycle of the remoteproc. As a result, the firmware
-> reference could be retained across restart cycles, leading to a
-> leak for each successful boot.
+On 6/30/26 11:40, Krzysztof Kozlowski wrote:
+> On 30/06/2026 09:31, George Moussalem wrote:
+>> On 6/30/26 11:15, Krzysztof Kozlowski wrote:
+>>> On Mon, Jun 29, 2026 at 05:01:44PM +0400, George Moussalem wrote:
+>>>> +unevaluatedProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    #include <dt-bindings/clock/qcom,gcc-ipq5018.h>
+>>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>> +    #include <dt-bindings/reset/qcom,gcc-ipq5018.h>
+>>>> +
+>>>> +    bluetooth {
+>>>
+>>> Don't send new versions while discussion is still going. I need to
+>>> repeat my question - what bus does that sit on?
+>>>
+>>> Device nodes represent real devices. Real devices sit on a bus, usually.
+>>> Do you have here a bus?
+>>
+>> I'm afraid I don't have a definitive answer. Again, my understanding
+>> based on downstream code is that the 'controller' is basically a Cortex
+>> M0 processor running Bluetooth firmware connected to an RF. Data
+>> transport is over a shared memory carveout with APPS signaling the
+>> controller through writes to an IPC mailbox register, while the
+>> controller has an interrupt line back to signal APPS.
 > 
-> Additionally, if qcom_pas_start() failed after loading the DTB
-> firmware, the remoteproc core would not invoke .stop(), leaving
-> no opportunity to release the associated firmware reference.
+> So this looks like should be squashed into remoteproc node. There is no
+> reason or no data to express it as two separate device nodes.
+
+In this version, I've squashed them into one already but as a Bluetooth
+controller as that's what the 'processor' is dedicated to, also in line
+with Bjorn's guidance to manage the lifecycle of this processor and all
+other resources in one. Kindly let me know if this approach is satisfactory.
+
 > 
-> Fix this by moving DTB firmware request and loading into
-> qcom_pas_start(), so that its lifetime is strictly tied to the
-> remoteproc start sequence.
-> 
-> Update qcom_pas_start() to ensure proper cleanup on all paths:
-> - release PAS metadata on failure
-> - release DTB firmware on both success and failure paths
-> - unmap DTB carveout where applicable
-> 
-> Remove DTB firmware handling from qcom_pas_load(), as it does not
-> match the correct ownership and lifecycle model.
-> 
-> With this change, request_firmware() and release_firmware() are
-> properly paired within the start path, avoiding leaks and ensuring
-> consistent behavior across restart and failure scenarios.
-> 
-> Fixes: 29814986b82e ("remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading")
-> Signed-off-by: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
+> Best regards,
+> Krzysztof
 
-Revision of the patch should be sent separately and not as reply
-of the earlier revision.
-
-
-> ---
-> v2:
-> - Move DTB firmware request/load from qcom_pas_load() to qcom_pas_start()
-> - Fix firmware reference leak across restart cycles
-> - Handle start() failure paths where .stop() is not invoked
-> - Ensure firmware is released on all success and failure paths
-> - Remove DTB handling from load() and drop release from stop()
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 54 ++++++++++++++++--------------
->  1 file changed, 29 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index da27d1d3c9da..090f1f09dba3 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -232,28 +232,7 @@ static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
->  	if (pas->lite_dtb_pas_id)
->  		qcom_scm_pas_shutdown(pas->lite_dtb_pas_id);
->  
-> -	if (pas->dtb_pas_id) {
-> -		ret = request_firmware(&pas->dtb_firmware, pas->dtb_firmware_name, pas->dev);
-> -		if (ret) {
-> -			dev_err(pas->dev, "request_firmware failed for %s: %d\n",
-> -				pas->dtb_firmware_name, ret);
-> -			return ret;
-> -		}
-> -
-> -		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware,
-> -					pas->dtb_firmware_name, pas->dtb_mem_region,
-> -					&pas->dtb_mem_reloc);
-> -		if (ret)
-> -			goto release_dtb_metadata;
-> -	}
-> -
->  	return 0;
-> -
-> -release_dtb_metadata:
-> -	qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> -	release_firmware(pas->dtb_firmware);
-> -
-> -	return ret;
->  }
->  
->  static void qcom_pas_unmap_carveout(struct rproc *rproc, phys_addr_t mem_phys, size_t size)
-> @@ -277,9 +256,24 @@ static int qcom_pas_start(struct rproc *rproc)
->  	struct qcom_pas *pas = rproc->priv;
->  	int ret;
->  
-> +	if (pas->dtb_pas_id) {
-> +		ret = request_firmware(&pas->dtb_firmware, pas->dtb_firmware_name, pas->dev);
-> +		if (ret) {
-> +			dev_err(pas->dev, "request_firmware failed for %s: %d\n",
-> +					pas->dtb_firmware_name, ret);
-
-Check the align of the line.
-
-
-> +			return ret;
-> +		}
-> +
-> +		ret = qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firmware,
-> +				pas->dtb_firmware_name, pas->dtb_mem_region,
-> +				&pas->dtb_mem_reloc);
-
-Here, as well.
-
-> +		if (ret)
-> +			goto release_dtb_metadata;
-> +	}
-> +
->  	ret = qcom_q6v5_prepare(&pas->q6v5);
->  	if (ret)
-> -		return ret;
-> +		goto release_dtb_metadata;
->  
->  	ret = qcom_pas_pds_enable(pas, pas->proxy_pds, pas->proxy_pd_count);
->  	if (ret < 0)
-> @@ -350,15 +344,17 @@ static int qcom_pas_start(struct rproc *rproc)
->  	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
->  	pas->firmware = NULL;
->  
-> +	if (pas->dtb_firmware) {
-> +		release_firmware(pas->dtb_firmware);
-> +		pas->dtb_firmware = NULL;
-> +	}
-
-you can put this under check pas->dtb_pas_id which is already
-there.
-
-> +
->  	return 0;
->  
->  unmap_carveout:
->  	qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
->  release_pas_metadata:
->  	qcom_scm_pas_metadata_release(pas->pas_ctx);
-> -	if (pas->dtb_pas_id)
-> -		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> -
->  unmap_dtb_carveout:
->  	if (pas->dtb_pas_id)
->  		qcom_pas_unmap_carveout(rproc, pas->dtb_mem_phys, pas->dtb_mem_size);
-> @@ -376,6 +372,14 @@ static int qcom_pas_start(struct rproc *rproc)
->  	qcom_pas_pds_disable(pas, pas->proxy_pds, pas->proxy_pd_count);
->  disable_irqs:
->  	qcom_q6v5_unprepare(&pas->q6v5);
-> +release_dtb_metadata:
-> +	if (pas->dtb_pas_id)
-> +		qcom_scm_pas_metadata_release(pas->dtb_pas_ctx);
-> +release_dtb_firmware:
-
-who is the user of this label ?
-
-
-> +	if (pas->dtb_firmware) {
-
-dtb_pas_id check should be fine here..
-
-
-> +		release_firmware(pas->dtb_firmware);
-> +		pas->dtb_firmware = NULL;
-> +	}
->  
->  	/* firmware is used to pass reference from qcom_pas_start(), drop it now */
->  	pas->firmware = NULL;
-> -- 
-> 2.34.1
-> 
-
--- 
--Mukesh Ojha
+Best regards,
+George
