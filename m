@@ -1,74 +1,76 @@
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011056.outbound.protection.outlook.com [52.101.62.56])
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011052.outbound.protection.outlook.com [52.101.52.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DB31A0BF1;
-	Tue, 30 Jun 2026 00:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C05520C029;
+	Tue, 30 Jun 2026 00:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1782780518; cv=fail; b=LPF4l7kSMBFJVUnpPUmOTpAiFlFd9BZLfiJMntYiB7dgspa52u5RI/h1yTI+UHtX8uJgPuk+iuz5DqQw0Hz7QJ8gR70NHUXBrrhVkKGRAtd6R12eZaNTy3c7Sl+jSMxcsBeFtuShSteUk1dlqw3pIDWUzYTeAR7NijiFbi55Zoc=
+	t=1782780520; cv=fail; b=ZH1oQ9mSydw7fR4YowqKbYwW7Cm2dailQX0kgbYUCT0L04uUhVNazH0fuux3TuZprBgDNP7LD3oKF7wVQ2da34LTPduePdC/yo21th8BMIu15yzNEuFUmRMoZUZ5k3HOQbYipgOt2qAPEmXZkOJJqWC60424PErBtVzv45225fs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1782780518; c=relaxed/simple;
-	bh=CFdAc9rVLgAqxJMi8jm5KMvo/2vkYhix2CdMNUXXg2g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a11Df6VQkVwAuha6XZLi3hs33KwTdeg1AK0qagTtdd1eN0A2RGymTThon72WyiTd3m411Zt2C9icxqgDCoTmIRZpojKoyfx8onOlTufPXo+1uGNn9y//bo3tvAkQtM00rA8AgqS3OMH8qNSyTCfDMkWRKNC4qCH3TZtFprBQLO0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YXr6asca; arc=fail smtp.client-ip=52.101.62.56
+	s=arc-20240116; t=1782780520; c=relaxed/simple;
+	bh=ok/HinOKMBEQBBTF11egt00iXwMc6hSZfBpUDnBQXeU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rj0MsDz4dX/V9w13mHJTN9NKIS8LZee4M7mvJ53oFScxDYcKUPJZbHMsEcJkSYgF3YTNpVHwzHnVVvk4hIu7Q0A9zCZdQTOYFR9Z/t58tqEhUUuQqV9HfyL9ohtTp54wvskIFv+3aRXZcb3WgfWRgrs6aMuXWkswFbUzszPQwys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MvYNWa9N; arc=fail smtp.client-ip=52.101.52.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YXr6asca"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MvYNWa9N"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jf7DVFI8r9X/ICgv77ORYyHoy9/JR135hFKuPiL3tCs5EiDGPuu7IG6GjGxtf44BLQ5qey2taqJ4Fdn2vA3ILkmMSyZxKSSHgF+UtOfogQkQiroKB+Kc/NqAutiNlzSNPsLihi03TUktlX92nBaKDZMmwAKmnrWhVUSme9pota58TnO1xL5VehZ+Txz3x6yusjmFmnKto4ohSnf0nxb2FdjwPubRLK2eSEuZcT+4nNY6jIvNk23WYfxoOkBzdnglvDzdQhE09NP7CZCKt6T6oXVxcVtWl62UTnFwwMS/xkwe7MvbadjDC5FdSQKOcd7mdw4a9VhH6TYhDUzB1zliJA==
+ b=AOjf4vsYfp2SG2DUtbwB0p7Xg5jYXn2xI4Tg15DRUOarS1yTMZI1exHOUX5tAHKNpe1WvRJjJ2tZNAwaMDLyeDG+H9bd2tqZ+xPkpt6AJHwyF3iU+WPDVUnofWo9zZk1NOj5/PULj6O1VRb+LByzcFkTgAMf0fPKj4bWTToP0+NFvTWYuRs0UJND3iCUekC6UPVi9ptep//nrFlvMRd8E0Z2WuaRhorw0W600VNzJQaVHmtAwxpjGHCP11QG8nnnflPWO+TN2Dp16ctXrXKgRhtetmjsbup55JECwVrhyxU/AJCwEXx1vtQENG48ht7MW+esBF6mCQ+bU8Vl+oa9kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5pJndMpqhUHvOqpEkR5ZttRurFzt3mnqnp0PWGjWQwY=;
- b=RI6pko1u4CG3OOgrnCu7847w6vIEihVaPGzB7OJ24x2/nWGbcXFKmM8Hs4zkz+LoFp0K3DR0oW+HMR123wRrppWQ6CBigB7RzQr4YFkuIPLCJafyWSgDZZxxncNZcsLKPJ5iMCsZ5i5LR+um3zShMlGYB6M9w1/JGLMPaW+fwTSOds/QBl5WKhAsxQnEwWcd9AWmFOXUMceEOpc73u8zPD1XfiWGDKp+8dN8O8TfFD0sNtBoEmQB8i+5xd29AsLx0DKB3lQ+wZa/psAAzPwgUo03MVe5htyetEtYK2jj4ajodqaA7lMOyPosXx0+lGjlRZAiDnzoyezat5+ngSIlSg==
+ bh=aTgCdSaXegdpDN3Kglu4JYvCPurqWh9S+HQnBOvq9G8=;
+ b=K/uftjPX7bo9IvBEXiaSHr15ITao1yWMrb2J2GwY/pDCBm+X3h94dIc0wm9DWgInnhzv7EafquteZCSp6SotaTMHKsp8eoYV+BNATWc8kxI52Tx/2oc0MJsJMtiK8G+LdbLvlLKLwl6K+AdjVQXC9s/olThlX9EjvJUcoah7BNH2ckhSVjCDYI8fUEBq9zrqclx3rW6OJ3A3JAms9cuFm+WbnsIxzCPi9ktWWBW0uv4w+zp7MG7x9cSgeZc8zE126lnLtOzho04Ch4xNJDBbcZfUt+1YIw/iBclIcdCz0mOC6Yrqi1UoAQSQmlz3IjGhsoBcu0Hnt01vVi9l0a0Ktg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5pJndMpqhUHvOqpEkR5ZttRurFzt3mnqnp0PWGjWQwY=;
- b=YXr6ascaTcOsN8ltKL9bjgw1LHEMgYtCrBCMBVYusSLEZfFI+XN8CptaAGFPz5rqpyml8iDGe0m2511iLItx8klNZ5Jy5rdqkb/mPi/4Q/UjI/mgEZoIzjmaIcGNUbLa2E49hagxs2ddTv23UGC9RO07KmeDd1Cag24yQSH6uh8=
-Received: from DM6PR21CA0027.namprd21.prod.outlook.com (2603:10b6:5:174::37)
- by CH3PR12MB8281.namprd12.prod.outlook.com (2603:10b6:610:128::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.159.19; Tue, 30 Jun
- 2026 00:48:31 +0000
-Received: from SN1PEPF0002BA4B.namprd03.prod.outlook.com
- (2603:10b6:5:174:cafe::51) by DM6PR21CA0027.outlook.office365.com
- (2603:10b6:5:174::37) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.0 via Frontend Transport; Tue, 30
- Jun 2026 00:48:31 +0000
+ bh=aTgCdSaXegdpDN3Kglu4JYvCPurqWh9S+HQnBOvq9G8=;
+ b=MvYNWa9N1Q0Fc3Pec07NZaARJqnbgcTlZY+Bj9/fg961X6bpqDmZ7BFtQXRzxps87pxNbgOLFK22vuRoxNCVra2ZydvWUnEzUeUuV8Beos5C0f3fMq10islqyShoNQWGoluyATlDiY3E51hCXnMCGo0zhGvo9ZEpCfRNfLpbEsI=
+Received: from DS7PR05CA0094.namprd05.prod.outlook.com (2603:10b6:8:56::11) by
+ DS7PR12MB9041.namprd12.prod.outlook.com (2603:10b6:8:ea::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.159.19; Tue, 30 Jun 2026 00:48:34 +0000
+Received: from CY4PEPF0000EDD4.namprd03.prod.outlook.com
+ (2603:10b6:8:56:cafe::16) by DS7PR05CA0094.outlook.office365.com
+ (2603:10b6:8:56::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.181.8 via Frontend Transport; Tue, 30
+ Jun 2026 00:48:34 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF0002BA4B.mail.protection.outlook.com (10.167.242.68) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CY4PEPF0000EDD4.mail.protection.outlook.com (10.167.241.200) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Tue, 30 Jun 2026 00:48:31 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.181.6 via Frontend Transport; Tue, 30 Jun 2026 00:48:34 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Mon, 29 Jun
- 2026 19:48:30 -0500
+ 2026 19:48:32 -0500
 Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
  (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Mon, 29 Jun
- 2026 17:48:30 -0700
+ 2026 17:48:31 -0700
 Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Mon, 29 Jun 2026 19:48:30 -0500
+ Transport; Mon, 29 Jun 2026 19:48:31 -0500
 From: Tanmay Shah <tanmay.shah@amd.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
 CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
  Shah <tanmay.shah@amd.com>
-Subject: [PATCH v6 0/2] remoteproc: xlnx: remote crash recovery
-Date: Mon, 29 Jun 2026 17:48:04 -0700
-Message-ID: <20260630004806.3835488-1-tanmay.shah@amd.com>
+Subject: [PATCH v6 2/2] remoteproc: xlnx: add crash detection mechanism
+Date: Mon, 29 Jun 2026 17:48:06 -0700
+Message-ID: <20260630004806.3835488-3-tanmay.shah@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260630004806.3835488-1-tanmay.shah@amd.com>
+References: <20260630004806.3835488-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -79,175 +81,187 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4B:EE_|CH3PR12MB8281:EE_
-X-MS-Office365-Filtering-Correlation-Id: 00970c33-6ddf-4a7d-c369-08ded6414ea8
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD4:EE_|DS7PR12MB9041:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ddf8f30-179b-4a76-536b-08ded641505b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|23010399003|376014|82310400026|1800799024|18002099003|11063799006|56012099006|6133799003;
+	BCL:0;ARA:13230040|82310400026|36860700016|1800799024|376014|23010399003|56012099006|22082099003|11063799006|18002099003|6133799003;
 X-Microsoft-Antispam-Message-Info:
-	GoXoq1wei5JkLnk4j7T2+6v0u/AM/pneRjlzZAcoEYXFzh7bHul6RogiiPbXQ2RicxUfITEw1K5Hkj426yVu/mMHkrmn1g9IKDleLFFSt3qwemMjJWuTYKiKLsViS1x6Pqd0VFY5QJeu4W4/wfX4pYKpRgZWP6sPtUbTzBb7js/3LnblRebhK2PLozYOTdMIDEo0CG/hEX1I3xFAWj/VWJrohm9tyoEcqmrf3cCiEJEACDSgYwj/c4zr5936grXQZVtL74nkdRcZiZoANoWeO9AUNXZjxK3o+Sa6TB/0S+o4a9pAqyq08bFWlwqhmxJYANBG0effYVjk6RIstDPu2cpxi93QoCgOtD4Mi0kJCF/TdrIiXNjZTokPqbV9AGsM+nTLncaQbr1eupvPP1r6l3mEOl00Sv9RtNx/iRipdc4iAl2/Y0TYGUqsJsTnHQR5hcxkjf9p8EmXu4DSuiTrjb8lobD0SNHODTAie1fMy3X0TfcWqG1sYZM/1be6hnmpyEvpTrX0pslY8mYgtvGivEXa0kY6dZduJCSYM8L2ZG/QWgyMBhY48jZjove/wmOx5qimFXep8xAaJpcLrgTEiNtjAGyGO4MM6my5DURZ16T1nwkQ/fzk5g/TUGPQl7ssAOOkhXSiAa+FcXV/Hel8zpWCUtp/isYZwzlKkbg7KLJffCILffwufjkV6zb7V1rCR65Gk5VQpLxhurBKpNrjoA==
+	EIkm27DOCfxNrWoIE2vnJcgychH162Q1ZAJut1ErRamW4f2SJpk83R9YqsRxtQ9eoTcR8oynFe9XN8KvVBSCdv2QQbJQ9ESBgYj5REDasvOPz/pKAOh7VK1nnlD8XFpSLYjfsKbt18HmRButlXDB//WVxVXSenp+frE9wIZbT4XBlqgIZXPL1fVihgQOWkusD1PojZFiqngHGXovSLP+sUOgqk3tKpHacpT0TraZBRzP9OMLk1Yvc9EyqfvG55a1ZVDxH2aS1tNDpph/AYP4f5EriH7WxxIqdxVK6fvreJyfKWQGt1g5N0E5+WStGN74EHcrNYD1V3KoGE1TVHlqULYgh23j4NDxF/asKW5QHA6p+p9/+zjC+NNFjRvRuEkZAew0b0PFwDfVTrACgEeePuhmxEaat43P9M7dWWj8WmGD4KmnM5YiGZwk1UDxT3QYY9hju74qvRiHVh6+u/G4dDnmnZMZ3nJ5taK87CObAoJ5a3AGOC6IPUFUMHWLcjggeC1MRwoMMV7vUC69MFtocKpjiQw7gl1RQE9nxn/Gcou5ZjI88dqih0mOKSYlfQPLFdUtJJfg/sTMf/+HBov7cP5hU8aKjUb4tSOukfkzCKU73Bh1faG3azUtzUgdRrm6JHrE4l5aaDq5wWxF3TzzdkK8XlUphJL9aSWDC8e1KFzf6iKuBbZzNGhPMHv82OOUEW5EGwl1Lq3qSL2+U7bypg==
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(376014)(82310400026)(1800799024)(18002099003)(11063799006)(56012099006)(6133799003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(1800799024)(376014)(23010399003)(56012099006)(22082099003)(11063799006)(18002099003)(6133799003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	41TibGsWfkhSEcaBN3UdLpCmnvCkOUl+jVOX1mviGZLehXAv9U0SMAfPWwM43x89br0f7ScCvYfNNSW0xnMkOBHEKGu/TAB+AS204E1/4w4puQgNm/g8CWzORZmsO8qrUOjSlZl1Ipbfu/fJ0MxAna71LsxYQAXBFUyovt6eybf5LN4TUslo6WMcjhEqJ0ZWvRwzYR3Fao4SzEqwkU/vxLMdtMujVrCOgLTILJk+38RF8i6th56W1gF0inKHzRTqkv2abqLC2kPRc/hmJOp0ZAFi6TWkJpao+aCSGX/N9HxWQE5c2O9E++XLMGBLlFJl9pJ+GEOabCyMW8M6j8RLWq9g8SxcZPU1UsaUARUe3dipv6p4OQvnICc2VcDOvktVtDszOZK8bnJC9ZkLd3DSWJi/0ELCiQJZ/vk5EG4VOXmlVlgqq491zR3yyazHYsWW
+	gZbYaIYUccuG1Ocxk2jfsyoPia1vuBBx1G5mYensoSl/qcBx1fQYjch84PcCsqEUZAkTzcL501EPOJMq9R8Nczy1iw+MVl/JgxYU0OGoVVMEGZUBMBIQh3Kqi0M01owOw9YJV1KAQMPl+ZNrCMdoEfN1zLSgYr737BnZZacjbpT9fBIZ8EEyex64btKWhEFlJ3wTiHy0gdXgzfC8/FHh725lYCOXrH9sbh3jXBw/wzYSv52QIczn59q2qn9KDlwkGszYw0N65ONe2eHC8Zjpj9gcHhR75Bbeqg/vMdSR36WuYZF/BrijQ88R6ANd0tEuoggGS7NHSxri3hHz/yfnOUREeKykN9N6aNMeSnerl85aHaPm4PeO8aGnrHo2VPGakcRBhbTTauGMj0MYGvgEXzhXRhWTqHHBJ8Y5vOj4xUZ5Z+qIKvvDCAG8kEI7iN43
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2026 00:48:31.3721
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2026 00:48:34.1704
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00970c33-6ddf-4a7d-c369-08ded6414ea8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ddf8f30-179b-4a76-536b-08ded641505b
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA4B.namprd03.prod.outlook.com
+	CY4PEPF0000EDD4.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8281
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9041
 
-Remote processor can crash or hang during normal execution. Linux
-remoteproc framework supports different mechanisms to recover the
-remote processor and re-establish the RPMsg communication in such case.
+Remote processor will report the crash reason via the resource table
+and notify the host via mailbox notification. The host checks this
+crash reason on every mailbox notification from the remote and report
+to the rproc core framework. Then the rproc core framework will start
+the recovery process.
 
-Crash reporting on AMD-Xilinx platform:
-
-1) Using debugfs node
-
-User can report the crash to the core framework via debugfs node using
-following command:
-
-echo 1 > /sys/kernel/debug/remoteproc/remoteproc0/crash
-
-2) Remoteproc notify to the host about crash state and crash reason
-via the resource table
-
-This is a platform specific method where the remote firmware contains
-vendor specific resource to update the crash state and the crash
-reason. Then the remote notifies the crash to the host via mailbox
-notification. The host then will check this resource on every mbox
-notification and reports the crash to the core framework if needed.
-
-Crash recovery mechanism on AMD-Xilnx platform:
-
-There are two mechanisms available to recover the remote processor from
-the crash. 1) boot recovery, 2) attach on recovery
-
-Remoteproc core framework will choose proper mechanism based on the
-rproc features set by the platform driver.
-
-1) Boot recovery
-
-This is the default mechanism to recover the remote processor.
-In this method core framework will first stop the remote processor,
-load the firmware again and then starts the remote processor. On
-AMD-Xilinx platforms this method is supported. The default coredump
-method is supported.
-
-2) Attach on recovery
-
-If RPROC_ATTACH_ON_RECOVERY feature is enabled by the platform driver,
-then the core framework will choose this method for recovery.
-
-On versal and later platforms following is the sequence of events expected
-during remoteproc crash and attach on recovery:
-
-a) Remoteproc attach/detach flow is working, and RPMsg comm is established
-b) Remote processor (RPU) crashed (crash not reported yet)
-c) Platform management controller is instructed to stop and reload elf
-   on inactive remote processor before reboot (platform specific method)
-d) Platform management controller reboots the remote processor
-e) Remote processor boots again, and detects previous crash (platform
-   specific mechanism to detect the crash)
-f) Remote processor Reports crash to the Linux (Host) and wait for
-   the recovery.
-g) Linux performs full detach and reattach to remote processor.
-h) Normal RPMsg communication is established.
-
-It is required to destroy all RPMsg related resources and recreate them
-during recovery to establish successful RPMsg communication. To achieve
-this complete rproc_detach followed by rproc_boot calls are needed. That
-is what this patch-series is fixing along with adding rproc recovery
-methods for AMD-Xilinx platforms.
-
-Change log:
-
-Changes in v6:
-  - %s/XLNX_RPROC_FW_CRASH_REASON/XLNX_RPROC_FW_CRASH_REPORT/
-  - fix if else condition to reduce indent level
-  - %s/crash_state/crashed
-  - move setting rproc feature during probe
-  - remove redundant clearing of the features during detach() op
-
-Changes in v5:
-  - cache crash report to a local variable then act on it.
-  - End crash report string with '\0' without relying on fw
-
-Changes in v4:
-  - Optimize crash resource memory by changing type to u32 to u8
-  - Introduce version field in the crash resource
-  - Check crash related condition before rproc state related condition
-  - Move crash reporting to the bottom half of the isr instead of
-    actual irq handler
-  - Introduce 16 bytes array in the crash report to store crash reason
-    in the string format
-  - Remove redundant type cast
-
-Changes in v3:
-  - %s/kick/mailbox notification/
-  - %s/core framework/rproc core framework/
-  - fold simple function within zynqmp_r5_handle_rsc().
-  - remove spurious change
-  - reset crash state after reporting the crash
-  - document set and reset of ATTACH_ON_RECOVERY flag
-  - set recovery_disabled flag to false
-  - check condition rproc->crash_reason != NULL
-
-
-Changes in v5:
-  - use local variable to access crash report pointer
-  - End crash report string with '\0' without relying on fw
-
-Changes in v4:
-  - move pieces needed from rproc_detach() to rproc_attach_recovery() to
-    cleanup the resources
-  - use rproc_attach() over __rproc_attach() to create resources again
-  - keep rproc_trigger_recovery() unmodified
-  - Optimize crash resource memory by changing type to u32 to u8
-  - Introduce version field in the crash resource
-  - Check crash related condition before rproc state related condition
-  - Move crash reporting to the bottom half of the isr instead of
-    actual irq handler
-  - Introduce 16 bytes array in the crash report to store crash reason
-    in the string format
-  - Remove redundant type cast
-
-Changes in 3: 
-  - both rproc_attach_recovery() and
-    rproc_boot_recovery() are called the same way.
-  - remove unrelated changes
-  - %s/kick/mailbox notification/
-  - %s/core framework/rproc core framework/
-  - fold simple function within zynqmp_r5_handle_rsc().
-  - remove spurious change
-  - reset crash state after reporting the crash
-  - document set and reset of ATTACH_ON_RECOVERY flag
-  - set recovery_disabled flag to false
-  - check condition rproc->crash_reason != NULL
-
-Changes in v2:
-  - use rproc_boot instead of rproc_attach
-  - move debug message early in the function
-  - clear attach recovery boot flag during detach and stop ops
-
-Tanmay Shah (2):
-  remoteproc: core: full attach detach during recovery
-  remoteproc: xlnx: add crash detection mechanism
-
- drivers/remoteproc/remoteproc_core.c    | 15 +++++-
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
  drivers/remoteproc/xlnx_r5_remoteproc.c | 70 ++++++++++++++++++++++++-
- 2 files changed, 83 insertions(+), 2 deletions(-)
+ 1 file changed, 69 insertions(+), 1 deletion(-)
 
-
-base-commit: 78fb7968943f5064766af7f33d82e6bfe90e0db0
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 7014d48c1228..c685bb5fa62c 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -112,6 +112,10 @@ struct rsc_tbl_data {
+ 	const uintptr_t rsc_tbl;
+ } __packed;
+ 
++enum xlnx_rproc_fw_rsc {
++	XLNX_RPROC_FW_CRASH_REPORT = RSC_VENDOR_START,
++};
++
+ /*
+  * Hardcoded TCM bank values. This will stay in driver to maintain backward
+  * compatibility with device-tree that does not have TCM information.
+@@ -131,9 +135,27 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+ 	{0xffe30000UL, 0x30000, 0x10000UL, PD_R5_1_BTCM, "btcm1"},
+ };
+ 
++#define CRASH_REASON_STR_LEN 16
++
++/**
++ * struct xlnx_rproc_crash_report - resource to know crash status and reason
++ *
++ * @version: version of this resource
++ * @crashed: if true, the rproc is notifying crash, time to recover
++ * @crash_reason: number to describe reason of crash
++ * @crash_reason_str: short string description of crash reason
++ */
++struct xlnx_rproc_crash_report {
++	u8 version;
++	u8 crashed;
++	u8 crash_reason;
++	char crash_reason_str[CRASH_REASON_STR_LEN];
++} __packed;
++
+ /**
+  * struct zynqmp_r5_core - remoteproc core's internal data
+  *
++ * @crash_report: rproc crash state and reason
+  * @rsc_tbl_va: resource table virtual address
+  * @sram: Array of sram memories assigned to this core
+  * @num_sram: number of sram for this core
+@@ -147,6 +169,7 @@ static const struct mem_bank_data zynqmp_tcm_banks_lockstep[] = {
+  * @ipi: pointer to mailbox information
+  */
+ struct zynqmp_r5_core {
++	struct xlnx_rproc_crash_report *crash_report;
+ 	void __iomem *rsc_tbl_va;
+ 	struct zynqmp_sram_bank *sram;
+ 	int num_sram;
+@@ -204,11 +227,27 @@ static int event_notified_idr_cb(int id, void *ptr, void *data)
+  */
+ static void handle_event_notified(struct work_struct *work)
+ {
++	struct xlnx_rproc_crash_report *report;
++	struct zynqmp_r5_core *r5_core;
+ 	struct mbox_info *ipi;
+ 	struct rproc *rproc;
+ 
+ 	ipi = container_of(work, struct mbox_info, mbox_work);
+ 	rproc = ipi->r5_core->rproc;
++	r5_core = ipi->r5_core;
++	report = r5_core->crash_report;
++
++	/* report crash only if expected */
++	if (report && report->crashed) {
++		if (rproc->state == RPROC_ATTACHED || rproc->state == RPROC_RUNNING) {
++			report->crash_reason_str[CRASH_REASON_STR_LEN - 1] = '\0';
++			dev_warn(&rproc->dev, "crash reason id: %d %s\n",
++				 report->crash_reason, report->crash_reason_str);
++			rproc_report_crash(rproc, RPROC_FATAL_ERROR);
++			report->crashed = false;
++			return;
++		}
++	}
+ 
+ 	/*
+ 	 * We only use IPI for interrupt. The RPU firmware side may or may
+@@ -390,6 +429,13 @@ static int zynqmp_r5_rproc_stop(struct rproc *rproc)
+ 	if (ret)
+ 		dev_err(&rproc->dev, "failed to stop RPU\n");
+ 
++	/*
++	 * Clear attach on recovery flag during stop operation. The next state
++	 * of the remote processor is expected to be in "Running" state. In this
++	 * state, boot recovery method must take place over attach on recovery.
++	 */
++	test_and_clear_bit(RPROC_FEAT_ATTACH_ON_RECOVERY, rproc->features);
++
+ 	return ret;
+ }
+ 
+@@ -784,6 +830,24 @@ static int zynqmp_r5_detach(struct rproc *rproc)
+ 	return 0;
+ }
+ 
++static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
++				int offset, int avail)
++{
++	struct zynqmp_r5_core *r5_core = rproc->priv;
++	void *rsc_offset = (r5_core->rsc_tbl_va + offset);
++
++	if (rsc_type != XLNX_RPROC_FW_CRASH_REPORT)
++		return RSC_IGNORED;
++
++	r5_core->crash_report = rsc_offset;
++	/* reset all values */
++	r5_core->crash_report->crashed = false;
++	r5_core->crash_report->crash_reason = 0;
++	r5_core->crash_report->crash_reason_str[0] = '\0';
++
++	return RSC_HANDLED;
++}
++
+ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+ 	.prepare	= zynqmp_r5_rproc_prepare,
+ 	.unprepare	= zynqmp_r5_rproc_unprepare,
+@@ -798,6 +862,7 @@ static const struct rproc_ops zynqmp_r5_rproc_ops = {
+ 	.get_loaded_rsc_table = zynqmp_r5_get_loaded_rsc_table,
+ 	.attach		= zynqmp_r5_attach,
+ 	.detach		= zynqmp_r5_detach,
++	.handle_rsc	= zynqmp_r5_handle_rsc,
+ };
+ 
+ /**
+@@ -837,7 +902,7 @@ static struct zynqmp_r5_core *zynqmp_r5_alloc_rproc_core(struct device *cdev)
+ 
+ 	rproc_coredump_set_elf_info(r5_rproc, ELFCLASS32, EM_ARM);
+ 
+-	r5_rproc->recovery_disabled = true;
++	r5_rproc->recovery_disabled = false;
+ 	r5_rproc->has_iommu = false;
+ 	r5_rproc->auto_boot = false;
+ 
+@@ -1186,6 +1251,9 @@ static int zynqmp_r5_core_init(struct zynqmp_r5_cluster *cluster,
+ 			if (zynqmp_r5_get_rsc_table_va(r5_core))
+ 				dev_dbg(r5_core->dev, "rsc tbl not found\n");
+ 			r5_core->rproc->state = RPROC_DETACHED;
++			/* Enable attach on recovery method. Clear it during rproc stop. */
++			rproc_set_feature(r5_core->rproc,
++					  RPROC_FEAT_ATTACH_ON_RECOVERY);
+ 			r5_core->rproc->auto_boot = true;
+ 		}
+ 	}
 -- 
 2.34.1
 
