@@ -1,359 +1,382 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2B425DB0D
-	for <linux-remoteproc@vger.kernel.org>; Fri,  3 Jul 2026 15:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3AD2E2DF2
+	for <linux-remoteproc@vger.kernel.org>; Fri,  3 Jul 2026 16:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783093722; cv=none; b=Oliu1SFYs9NI/nBmrX7Jk1l+Vhwz2uksPMpg+tZe/RV9oyba7saTB4nDNhOCF4mHWi62XkobDs+SC9XBFb37Leq3X/Kmi/BmM7F5DJeurH2avhHB9FF/5YHGM+kVwleCO1qa3Ygc3QlJT9NnwRngQWIUw/9/9+LVEJv5At+mDGw=
+	t=1783096796; cv=none; b=dUoFKLO6MEhMOo1qEu7IL/Jv7qBE0BjnYiPxpYRSS6HIyGkTWswEwrWK7W0a+P0UMT2bGXQsiFx22UkX4aIu9FwXgqM0YD1aHdXGH9Xl/ctCq/9zDKQKchlg84muOqMI4Pxo1ZQaxM+1fp/ETcDO+yi2E/ak0bwFAh6MQFrhY7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783093722; c=relaxed/simple;
-	bh=+kphoTvANLDKHMDgJNzN8NAjl3dMOmN6aFLAl4/R3qs=;
+	s=arc-20240116; t=1783096796; c=relaxed/simple;
+	bh=LKxYQdMO3xIVUXEfa8wh12+/MzspUqSyzGM3N1ZJ1E0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DP8JYD6BAIGa5tkhhKuwHzBWUInfQQYczZN1mPrLCRD2HA73f+wyKYEdlMpGfpzeN8mMjuSnoaSUvAy9R2DQMoxwLYY8oHYTd9qqM2PQDrsPDTZRYNY25+/GOz4KtgyHZ0CDPFtQq+BRHdGdq6pLmi8BhnXof86d8jrGkvoufB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dYBxKI8z; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JkShtexq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=VOo8xmv1lcp9KJgNbK4Lhx4qC+ZIB768lHme4JQhkNKlb3R+vaCPEMstLG6BHIGk+wKSp9nwz0togUvSl31wzU8Jq/V4TqV9hhRfkpe+HYNe1R8qkNFNneIW2GTz0ODol1WxCDVokWM8LAjWH6QOz3sVyQd5aaRqS9LT+NWQb0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LgrytPUW; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dYBxKI8z";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JkShtexq"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 663A39OP3773578
-	for <linux-remoteproc@vger.kernel.org>; Fri, 3 Jul 2026 15:48:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6uEU2G8CSSk6Zshq/zPfEKAJegI9f9YQqTxeUAIwcCk=; b=dYBxKI8zcY3WHh5P
-	jPgSz3GQTvE6Zv2Z+SZKtYPmIqL5Y8kP0ydk5D+y6iAoBbW0BgP5AwPQw7h/q9GY
-	nNaxhQ4ijGe/wq87kbgyqipDDCB5GcbQu3YYSsQfsorkTYW06eOU0Y2g2q3s95u9
-	DUmwN6jOKDYnySPFykHDwvw2sWLBcaBF5JeGR6HJ8o3I9Hweqj1xQGc7cDLP3bKz
-	Kbg5AXqKe5lAjAY/hlBw5m/rmObsumiS4urriyjMAPCKG5xNYAnwHwtiJ0Zvc/bK
-	KJgyLuRaYs0Sl1JV0/fM4tfJpmfReEbb9JS6uOB74q0924VtduYXcBNbQV7KEQdm
-	QZ+B3A==
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com [209.85.221.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f6b0398cp-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jul 2026 15:48:39 +0000 (GMT)
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-5bda012e304so206189e0c.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jul 2026 08:48:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LgrytPUW"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2ca11143dbbso5626045ad.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jul 2026 09:39:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783093719; x=1783698519; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6uEU2G8CSSk6Zshq/zPfEKAJegI9f9YQqTxeUAIwcCk=;
-        b=JkShtexqH6RzXwU+XAxyabd9/GkNTaEtXv5mOpVjUPqcHZyJAagYHEPRI0b6VGS5Sp
-         i0eQ1hLaYQI9ltLFDFnFHk12KEdIJNWqlHQ9jms4va2XU/let8ac8Mo2LZ7rZ31oph37
-         fTytd4cRQTudmR0S+EkQvQfsJByDv6m2iGTs4+SJMCWcCLkcmyeFymTrF4adw+46+Lyh
-         MlwE7MrAbpODMLznzdrIrKMDv7Gw/JkimHQKDzXL1eFj3QEXQuYh4a7WrcCxVVTi/SMS
-         TVJrRU3fI7Yzmd8zgAS/H1OQ7Kjd6LliXQOE1Hm6ICJmpUPNZEE6574O8Md2aVpcX1Sx
-         ebhA==
+        d=linaro.org; s=google; t=1783096793; x=1783701593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpObt3Bc3TYpwm8R/YBWw43ULoUW+dnc9dBb5ROKkRI=;
+        b=LgrytPUW1CZ5IMCJUB3nEduWPxoKJAdPUu9hiuWDYNcTY7ZM4DAxSEXq+zzNinju8l
+         QBOLbhmsPLKEBTiCkTLX1bTf3QwJqGXBIjft/hd2Ek+75waKQPf3zp1VQ+Dd0rCXC7ki
+         kKUFhLNXuwH7VDptFF2p9Hsg1Mj2zPL3Mc8KOt7hYDIuyW8kA+TrbPc2jmwHsrWI4ORQ
+         s/kMC/46IIVDk4bL5VGZriJ/wBSTP5Giw6B4iJZyghAXRnDbpSJhrl1RW99/TBu+xpGE
+         A16tb3hvaxYqb6/zL2T6HB+DZr7wH38faSKmRvm7xLijuQcah0gnc5npzOrMhcGEUoTV
+         bFug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783093719; x=1783698519;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6uEU2G8CSSk6Zshq/zPfEKAJegI9f9YQqTxeUAIwcCk=;
-        b=ZMwpnUlDLP2cM+p4kxNU9YFSJpGDnm0ChRF8Y3GWBLHoYfH4pEQrpk620Uba1L3F5t
-         arlQPsfrdkDGJjadz4nEFlb5xoBoI1mxVwgEsWW7xkxagzXFItDMtuV+BR8yv73NlfcX
-         tVNW3MGF1ZmnWZgHKxQn8YivWSiPxIkN2uQ3INmh37RIQXn0M7Q14Ti2sXd6aR0g0SGN
-         opqyWd93D/493El9TdUOqgh/CkLsHy8q0RKgQXmokN1ZPu/Spopg63PU29pFqT/vBZGC
-         e6OJsM8Q+lVshVrEMiJ6tnSbX27Nt50Tbs2Rlgt0+a/npaari8F013GY4ojzFz9Q+tPd
-         FeHQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqADcczaW+ZpHMa7Gq7PxNsvBjX+bjztpYj8wViUSGbHbs63eVbcFrfZ2GPjIoaPsdnUg38zRqMasEKOJbb3tr2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7NiIXVbaMDsxIvFl+rxvUjOPWrlC6szxCzxPFVzsSrvmNAURJ
-	UWJ/5CgCmN3hTSbpc4R7gEfi4waHYalyEJ0QHtkYQ85iytLFQbITE8otPsH/fro7M4XroKKYZvH
-	OrbSlWXCd3IPdVL6g91HWa2yDrUfkQsSJyr0W0nS9xgHp76JVDI0Be2vXZsFtO5ANXKdN5b/o
-X-Gm-Gg: AfdE7cnTB89bsPIXmYnrj8AiNhEvMPD4pHHflaevYn5ogleF9a+9/QkZeGTqMKnrTn4
-	0OhqK32G94khOP7gjt5LrNo5Byb3iLigTvHV5RAoJxnaW8R7zoaQsbwe7i9JRv+kG3snGFstjdC
-	7s1ExWGcLnrBTvbNTlQpjABdCscJ7dCPFTsj9ItPaygn6Bc+8/TonKUYoCO8KJwWT+IolTlBkud
-	G8Ons+/2cd5D/a6vj5ji01ZAiTxr6yB4TVElhoXK72GBljKIcDtzi3y8QxRtPj0OoF0pm5ZKQvn
-	2ClYhgd657vVhV31VYIfGOii4knDoDWwdgAzVCY7PqIl2krPcgCB0DRYxGsOJ8FsdiBpBc11sYX
-	rKzxYDD27+6PypNnqvgdywrldJ2QAVxBgIHtzXrpnQ2u+SrRlpdEBKnE0HEk0aMPwQqaRbty287
-	H6Mcb58bxqC3FkOkaH4lmjRTC5
-X-Received: by 2002:a05:6122:c83:b0:5bd:742d:ba77 with SMTP id 71dfb90a1353d-5be1028b9c1mr26710e0c.10.1783093718717;
-        Fri, 03 Jul 2026 08:48:38 -0700 (PDT)
-X-Received: by 2002:a05:6122:c83:b0:5bd:742d:ba77 with SMTP id 71dfb90a1353d-5be1028b9c1mr26696e0c.10.1783093718195;
-        Fri, 03 Jul 2026 08:48:38 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aed137705dsm571958e87.32.2026.07.03.08.48.34
+        d=1e100.net; s=20251104; t=1783096793; x=1783701593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FpObt3Bc3TYpwm8R/YBWw43ULoUW+dnc9dBb5ROKkRI=;
+        b=q61FELw6gJMEiSyznC1dgZFcXL5uPPcpr2iPJFxyI/zBsdbIYlZVvzNMcKlX3ewezW
+         ESNlAGmve2Ufi8vFFFV7+4JF91t9Yv2RPCd6/X5uk//dSfWIvCYr5i6QKckIFx60DaMz
+         i+mZbeuMg1aQOvHXRcJJLW7xpDfkX1ejMolGAK9Sv3hEkjVW+z+BNU29KhhPiNvMp0xS
+         2UDWLqUFr/VUuaA0cv+IERTBpNlEwbR5y27e2HyWyUH1gINanlI5RL4lGjduf4dyKFAY
+         pU/ff2LHEEqlE3WuliJ+D81VeaEfWKn8RYobH2/LZsRf2g53DCq4AOFUaCSFrn7v/cew
+         Fy/w==
+X-Forwarded-Encrypted: i=1; AHgh+RrC0reLhIE2N8bGkHpTWg5vhqLj/m5pLCTJReDfdrncgOqrBG9rVYuKMlZoexG2kDJRzBQJCgFGD74rqy4bhLKl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzkb6+6ttPjIAcDQKuFzbAvnfYfp7Kk6ZaZgF4AOQsW1/h8KxuV
+	QFDn36BrXalPDiQfCe9XDUozbu5PTF+LQFgRRwvP8BCvYTLavC8a8qECGY8wqNHkp0k=
+X-Gm-Gg: AfdE7cnQ9Bgk9m7kMXxxq7s6jzC17w6SS3QaQnBDsDZSM0m0ZZ2YjreTu4cFk9p64rA
+	3eDuIXy5vY/omFccs+VpH/FccRN/RHiFrM2+uGoX/zuPs0EY9BFDoPyLCMQ3v4MLIiM+Vvrr19f
+	66tR6IYGs0YrG4AGHeZfraT/pt1btcmYf8fIfmmLZOQJot3Ebl4NbIdVkDBUnbe6mn6VnKnocFK
+	aa2yTQ1dd5VdeCFuN1Bo7yDsc3EpysZxC8rf2ikbjnL4w20GH7HAijWpPbeyCwihuwC9EVh3cdM
+	TS95QyQHXD9vbFH2gSX/+4kWBhHr0o6YBYT9RQ1abB3xqpTb6aJwtGjcIqsZEuUn3jaJfK0taGe
+	8wsc1OzjPZZCaiFMudmH5PI0fsJ0rGk/84mI6tQPbCM748RfupD25raUR7tu+q/aV/baxCugqam
+	jueyHf9FXaINAZOjYpxhMr2QBnqb0=
+X-Received: by 2002:a17:903:3bcb:b0:2c8:1f56:9fc5 with SMTP id d9443c01a7336-2cbb9ec70a6mr364975ad.35.1783096792703;
+        Fri, 03 Jul 2026 09:39:52 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:9267:5e0f:f6d7:b6d0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cad7144e1asm12149005ad.31.2026.07.03.09.39.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 08:48:35 -0700 (PDT)
-Date: Fri, 3 Jul 2026 18:48:33 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
-        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-hardening@vger.kernel.org,
-        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-Subject: Re: [PATCH v4 06/10] arm64: dts: qcom: kodiak: Enable CDSP & Modem
- cooling
-Message-ID: <pli4napz5xis7i24oum73wnaecvqz53nxy7ek6mftlxsq7qkyt@nc7jp6oi4fix>
-References: <20260703-qmi-tmd-v4-0-3882189c1f83@oss.qualcomm.com>
- <20260703-qmi-tmd-v4-6-3882189c1f83@oss.qualcomm.com>
+        Fri, 03 Jul 2026 09:39:52 -0700 (PDT)
+Date: Fri, 3 Jul 2026 10:39:49 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Ben Levinsky <ben.levinsky@amd.com>
+Cc: andersson@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tanmay.shah@amd.com, michal.simek@amd.com
+Subject: Re: [PATCH v4 2/2] remoteproc: add AMD BRAM-based remote processor
+ driver
+Message-ID: <akfl1Uhn9QHRwE6n@p14s>
+References: <20260629164003.3940208-1-ben.levinsky@amd.com>
+ <20260629164003.3940208-3-ben.levinsky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260703-qmi-tmd-v4-6-3882189c1f83@oss.qualcomm.com>
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDE1NyBTYWx0ZWRfX/S91+HIwP59m
- v/tC7se6a6B4pNqoFPm1l2i5nhyVT3tnsUJPDJCwd4TKtkV2kiKYWOq1X1ISL3z7wlul80nFraL
- 2MEIhYeFpWUU6bk/qeDyLSayHAL4YaM=
-X-Proofpoint-GUID: LHl5jClY7F4PhF7qWWqDBSrruq79tbQ-
-X-Authority-Analysis: v=2.4 cv=FoY1OWrq c=1 sm=1 tr=0 ts=6a47d9d7 cx=c_pps
- a=1Os3MKEOqt8YzSjcPV0cFA==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=EUspDBNiAAAA:8
- a=FiV8zanugsH5vQb0BJEA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
- a=hhpmQAJR8DioWGSBphRh:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDE1NyBTYWx0ZWRfX0+5oDhx9+Pal
- NprNAykw9yLWFInPLiUv6MIsXAwjf9D985naecU2RzRj1cJFnVSGOSoHCIdA8JLyfIeUzYsbeta
- FEEH7WjPHB5QLwdVU0+ftu3f+DepxrziiKWGXC1QzT/GUiHmYr5e9jr6n/DPV/0jXiLtPdXxzoY
- PFI4AOH6oZZwvR+xaT5IBztvgJ4wuF6zlgPx+yYS2QAblLbOu2H91mdXxHprqHEaQ4esLcqWfKE
- gyma5tuSL9tio2P0eLDhceTHU/jW28z0De9kvtHmJ92pDxoVHMagaIbpW5whmveSRtFJx/3Ndtb
- L0rhpZ2CkXbvuB9TCCZdft57QaKNY2MAnNSh1AnJRD9itf/iMyVRh+nkQNlg+Fe04Qu/3PQmtEk
- Ycy415jNHf2Usdr11fx1OOGYu/4ij4r7xquuxZ2OJLb2aiP8CFjy41P1iaGINY+k4kCS4UCmX/l
- DBspg9HNxmTxYHx246A==
-X-Proofpoint-ORIG-GUID: LHl5jClY7F4PhF7qWWqDBSrruq79tbQ-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-07-03_02,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 malwarescore=0 adultscore=0 suspectscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607030157
+In-Reply-To: <20260629164003.3940208-3-ben.levinsky@amd.com>
 
-On Fri, Jul 03, 2026 at 10:33:09AM +0530, Gaurav Kohli wrote:
-> Unlike the CPU, the CDSP/Modem does not throttle its speed automatically
-> when it reaches high temperatures in kodiak.
+Hi Ben,
+
+On Mon, Jun 29, 2026 at 09:40:03AM -0700, Ben Levinsky wrote:
+> Add a remoteproc driver for AMD soft-core processor subsystems
+> instantiated in programmable logic and using dual-port BRAM for
+> firmware storage and execution.
 > 
-> Set up CDSP cooling by throttling the cdsp when it reaches 100°C and
-> for modem when it reaches to 95°C.
+> The driver parses the firmware memory window from the remoteproc device
+> node's reg property, interprets that address and size in the
+> processor-local address space, and then uses standard devicetree
+> address translation through the parent bus ranges property to obtain
+> the corresponding Linux-visible system physical address.
 > 
-> Since the remoteproc_mpss node doesn't exist on non modem boards, the
-> cooling-maps that reference it cause DT compilation errors. To fix that
-> remove inherited mdmss cooling-map nodes.
+> The resulting translated region is registered as the executable
+> remoteproc carveout and coredump segment.
 > 
-> Signed-off-by: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+> The processor is controlled through an active-low reset GPIO and a
+> subsystem clock. The clock is enabled before reset is released, and the
+> processor is kept in reset until firmware loading completes.
+> 
+> The firmware-name property is optional, allowing firmware to be
+> assigned later through the remoteproc framework. Firmware images
+> without a resource table are also accepted.
+>
+> Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
 > ---
->  arch/arm64/boot/dts/qcom/kodiak.dtsi               | 134 ++++++++++++++++++++-
->  .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     |  17 +++
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |  17 +++
->  .../dts/qcom/qcs6490-thundercomm-minipc-g1iot.dts  |  17 +++
->  .../boot/dts/qcom/qcs6490-thundercomm-rubikpi3.dts |  17 +++
->  .../boot/dts/qcom/sc7280-herobrine-lte-sku.dtsi    |  17 +++
->  .../boot/dts/qcom/sc7280-herobrine-wifi-sku.dtsi   |  16 +++
->  7 files changed, 231 insertions(+), 4 deletions(-)
+>  drivers/remoteproc/Kconfig          |  11 ++
+>  drivers/remoteproc/Makefile         |   1 +
+>  drivers/remoteproc/amd_bram_rproc.c | 213 ++++++++++++++++++++++++++++
+>  3 files changed, 225 insertions(+)
+>  create mode 100644 drivers/remoteproc/amd_bram_rproc.c
 > 
-> @@ -7716,6 +7722,8 @@ map0 {
->  		};
+> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> index c521c744e7db..58fa566b609f 100644
+> --- a/drivers/remoteproc/Kconfig
+> +++ b/drivers/remoteproc/Kconfig
+> @@ -23,6 +23,17 @@ config REMOTEPROC_CDEV
 >  
->  		nspss0-thermal {
-> +			polling-delay-passive = <200>;
-
-Why? This applies to all added polling delays.
-
-> +
->  			thermal-sensors = <&tsens1 3>;
+>  	  It's safe to say N if you don't want to use this interface.
 >  
->  			trips {
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts b/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
-> index bb5a42b038f1..400d128132fc 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
-> @@ -24,6 +24,23 @@
->  /delete-node/ &adsp_mem;
->  /delete-node/ &cdsp_mem;
->  /delete-node/ &ipa_fw_mem;
+> +config AMD_BRAM_REMOTEPROC
+> +	tristate "AMD BRAM-based remoteproc support"
+> +	depends on OF && COMMON_CLK && (GPIOLIB || COMPILE_TEST)
+> +	help
+> +	  Say y or m here to support a BRAM-based remote processor managed
+> +	  through the remoteproc framework.
 > +
-> +&mdmss0_thermal {
-> +	/delete-node/ cooling-maps;
+> +	  The processor is controlled through a reset GPIO and clock.
+> +
 
-Don't kill what is unnecessary to be killed. Remove only MPSS maps.
+This last sentence doesn't belong here - please remove.
 
-> +};
-> +
-> +&mdmss1_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss2_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss3_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
->  /delete-node/ &mpss_mem;
->  /delete-node/ &remoteproc_mpss;
->  /delete-node/ &remoteproc_wpss;
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index 37a3b51323ce..187bc2899191 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -25,6 +25,23 @@
->  /delete-node/ &rmtfs_mem;
->  /delete-node/ &adsp_mem;
->  /delete-node/ &cdsp_mem;
-> +
-> +&mdmss0_thermal {
-> +	/delete-node/ cooling-maps;
+Looking at the bindings and this Kconfig I wonder why the emphasis of the naming
+convention, i.e "BRAM-based remoteproc" is placed on the kind of memory the
+remote processor is connected to rather than the remote processor itself.
 
-But MPSS is there. Why are you removing it?
+Wouldn't it be better to have something like "AMD MicroBlaze/V remote
+processor"?  What happens when we get another AMD softcore that is completely
+different than MicroBlaze/V that is also connected to the same type of memory?
 
+I'm good with the implemenation, I just wonder about the name...
+
+> +	  If unsure, say N.
+> +
+>  config IMX_REMOTEPROC
+>  	tristate "i.MX remoteproc support"
+>  	depends on ARCH_MXC
+> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> index 1c7598b8475d..5c39664b50c3 100644
+> --- a/drivers/remoteproc/Makefile
+> +++ b/drivers/remoteproc/Makefile
+> @@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+>  remoteproc-y				+= remoteproc_virtio.o
+>  remoteproc-y				+= remoteproc_elf_loader.o
+>  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+> +obj-$(CONFIG_AMD_BRAM_REMOTEPROC)	+= amd_bram_rproc.o
+>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
+>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+> diff --git a/drivers/remoteproc/amd_bram_rproc.c b/drivers/remoteproc/amd_bram_rproc.c
+> new file mode 100644
+> index 000000000000..a595875f9ce8
+> --- /dev/null
+> +++ b/drivers/remoteproc/amd_bram_rproc.c
+> @@ -0,0 +1,213 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * AMD BRAM-based Remote Processor driver
+> + *
+> + * Copyright (C) 2026 Advanced Micro Devices, Inc.
+> + *
+> + * This driver supports soft-core processors (MicroBlaze, MicroBlaze-V, or
+> + * similar) instantiated in AMD programmable logic, using dual-port BRAM
+> + * for firmware storage and execution.
+> + *
+> + * The firmware memory (BRAM) is described in the processor-local address
+> + * space and translated to the Linux-visible system physical address with
+> + * standard devicetree address translation.
+> + *
+> + * Reset is controlled via GPIO connected to Processor System Reset IP.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/remoteproc.h>
+> +
+> +#include "remoteproc_internal.h"
+> +
+> +/**
+> + * struct amd_bram_rproc - AMD BRAM-based remoteproc private data
+> + * @dev: device pointer
+> + * @reset: GPIO descriptor for reset control (active-low)
+> + * @clk: processor clock
+> + */
+> +struct amd_bram_rproc {
+> +	struct device *dev;
+> +	struct gpio_desc *reset;
+> +	struct clk *clk;
 > +};
 > +
-> +&mdmss1_thermal {
-> +	/delete-node/ cooling-maps;
+> +static int amd_bram_rproc_prepare(struct rproc *rproc)
+> +{
+> +	struct amd_bram_rproc *priv = rproc->priv;
+> +	struct rproc_mem_entry *mem;
+> +	struct resource res;
+> +	u64 da, size;
+> +	int ret;
+> +
+> +	ret = of_property_read_reg(priv->dev->of_node, 0, &da, &size);
+> +	if (ret) {
+> +		dev_err(priv->dev, "failed to parse executable memory reg\n");
+> +		return ret;
+> +	}
+> +
+> +	if (!size || size > U32_MAX) {
+> +		dev_err(priv->dev, "invalid executable memory size\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (da > U32_MAX) {
+> +		dev_err(priv->dev, "invalid executable memory address\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = of_address_to_resource(priv->dev->of_node, 0, &res);
+> +	if (ret) {
+> +		dev_err(priv->dev, "failed to translate executable memory reg\n");
+> +		return ret;
+> +	}
+> +
+> +	mem = rproc_mem_entry_init(priv->dev, NULL, (dma_addr_t)res.start,
+> +				   resource_size(&res), da,
+> +				   rproc_mem_entry_ioremap_wc,
+> +				   rproc_mem_entry_iounmap,
+> +				   dev_name(priv->dev));
+> +	if (!mem)
+> +		return -ENOMEM;
+> +
+> +	rproc_add_carveout(rproc, mem);
+> +	rproc_coredump_add_segment(rproc, da, resource_size(&res));
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_bram_rproc_start(struct rproc *rproc)
+> +{
+> +	struct amd_bram_rproc *priv = rproc->priv;
+> +	int ret;
+> +
+> +	/* Enable clock before releasing reset */
+> +	ret = clk_prepare_enable(priv->clk);
+> +	if (ret) {
+> +		dev_err(priv->dev, "failed to enable clock: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Deassert reset and let the processor run. */
+> +	ret = gpiod_set_value_cansleep(priv->reset, 0);
+> +	if (ret) {
+> +		dev_err(priv->dev, "failed to deassert reset: %d\n", ret);
+> +		clk_disable_unprepare(priv->clk);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_bram_rproc_stop(struct rproc *rproc)
+> +{
+> +	struct amd_bram_rproc *priv = rproc->priv;
+> +	int ret;
+> +
+> +	/* Assert reset before disabling the processor clock. */
+> +	ret = gpiod_set_value_cansleep(priv->reset, 1);
+> +	if (ret) {
+> +		dev_err(priv->dev, "failed to assert reset: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Disable clock after asserting reset */
+> +	clk_disable_unprepare(priv->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int amd_bram_rproc_parse_fw(struct rproc *rproc,
+> +				   const struct firmware *fw)
+> +{
+> +	rproc_elf_load_rsc_table_optional(rproc, fw, dev_dbg,
+> +					  "no resource table found\n");
+> +	return 0;
+> +}
+> +
+> +static const struct rproc_ops amd_bram_rproc_ops = {
+> +	.prepare	= amd_bram_rproc_prepare,
+> +	.start		= amd_bram_rproc_start,
+> +	.stop		= amd_bram_rproc_stop,
+> +	.load		= rproc_elf_load_segments,
+> +	.sanity_check	= rproc_elf_sanity_check,
+> +	.get_boot_addr	= rproc_elf_get_boot_addr,
+> +	.parse_fw	= amd_bram_rproc_parse_fw,
 > +};
 > +
-> +&mdmss2_thermal {
-> +	/delete-node/ cooling-maps;
+> +static int amd_bram_rproc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct amd_bram_rproc *priv;
+> +	const char *fw_name = NULL;
+> +	struct rproc *rproc;
+> +	int ret;
+> +
+> +	ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+> +	if (ret < 0 && ret != -EINVAL)
+> +		return dev_err_probe(dev, ret,
+> +				     "failed to parse firmware-name property\n");
+> +
+> +	rproc = devm_rproc_alloc(dev, dev_name(dev), &amd_bram_rproc_ops,
+> +				 fw_name, sizeof(*priv));
+> +	if (!rproc)
+> +		return -ENOMEM;
+> +
+> +	priv = rproc->priv;
+> +	priv->dev = dev;
+> +
+> +	/* Get the processor clock */
+> +	priv->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(priv->clk))
+> +		return dev_err_probe(dev, PTR_ERR(priv->clk),
+> +				     "failed to get clock\n");
+> +
+> +	/*
+> +	 * Keep the processor in reset until remoteproc has finished loading
+> +	 * firmware into the executable memory window described by reg and
+> +	 * translated through the parent bus ranges property.
+> +	 */
+> +	priv->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(priv->reset))
+> +		return dev_err_probe(dev, PTR_ERR(priv->reset),
+> +				     "failed to get reset gpio\n");
+> +
+> +	rproc->auto_boot = false;
+> +
+> +	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to set DMA mask\n");
+> +
+> +	platform_set_drvdata(pdev, rproc);
+> +
+> +	ret = devm_rproc_add(dev, rproc);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to register rproc\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id amd_bram_rproc_of_match[] = {
+> +	{ .compatible = "xlnx,zynqmp-bram-rproc" },
+> +	{ /* sentinel */ },
 > +};
+> +MODULE_DEVICE_TABLE(of, amd_bram_rproc_of_match);
 > +
-> +&mdmss3_thermal {
-> +	/delete-node/ cooling-maps;
+> +static struct platform_driver amd_bram_rproc_driver = {
+> +	.probe = amd_bram_rproc_probe,
+> +	.driver = {
+> +		.name = "amd-bram-rproc",
+> +		.of_match_table = amd_bram_rproc_of_match,
+> +	},
 > +};
+> +module_platform_driver(amd_bram_rproc_driver);
 > +
->  /delete-node/ &video_mem;
->  /delete-node/ &wlan_ce_mem;
->  /delete-node/ &wpss_mem;
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-minipc-g1iot.dts b/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-minipc-g1iot.dts
-> index a5ad796cb65d..1e190ed18ae5 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-minipc-g1iot.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-minipc-g1iot.dts
-> @@ -22,6 +22,23 @@
->  /delete-node/ &cdsp_mem;
->  /delete-node/ &ipa_fw_mem;
->  /delete-node/ &mpss_mem;
-> +
-> +&mdmss0_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss1_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss2_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss3_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
->  /delete-node/ &remoteproc_mpss;
->  /delete-node/ &remoteproc_wpss;
->  /delete-node/ &rmtfs_mem;
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-rubikpi3.dts b/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-rubikpi3.dts
-> index f47efca42d48..8e8dd4efd8c0 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-rubikpi3.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-thundercomm-rubikpi3.dts
-> @@ -23,6 +23,23 @@
->  /delete-node/ &adsp_mem;
->  /delete-node/ &cdsp_mem;
->  /delete-node/ &ipa_fw_mem;
-> +
-> +&mdmss0_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss1_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss2_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss3_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
->  /delete-node/ &mpss_mem;
->  /delete-node/ &remoteproc_mpss;
->  /delete-node/ &remoteproc_wpss;
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine-lte-sku.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine-lte-sku.dtsi
-> index b721a8546800..1e9d7e7b5fa2 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine-lte-sku.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine-lte-sku.dtsi
-> @@ -26,8 +26,25 @@ &ipa {
->  	status = "okay";
->  };
->  
-> +&mdmss0_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss1_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss2_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss3_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
->  &remoteproc_mpss {
->  	compatible = "qcom,sc7280-mss-pil";
-> +	/delete-property/ #cooling-cells;
->  	reg = <0 0x04080000 0 0x10000>, <0 0x04180000 0 0x48>;
->  	reg-names = "qdsp6", "rmb";
->  
-> diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine-wifi-sku.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine-wifi-sku.dtsi
-> index 3ebc915f0dc2..6642076f62c4 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7280-herobrine-wifi-sku.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine-wifi-sku.dtsi
-> @@ -7,6 +7,22 @@
->  
->  /* WIFI SKUs save 256M by not having modem/mba/rmtfs memory regions defined. */
->  
-> +&mdmss0_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss1_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss2_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
-> +&mdmss3_thermal {
-> +	/delete-node/ cooling-maps;
-> +};
-> +
->  /delete-node/ &mpss_mem;
->  /delete-node/ &remoteproc_mpss;
->  /delete-node/ &rmtfs_mem;
-> 
+> +MODULE_DESCRIPTION("AMD BRAM-based Remote Processor driver");
+> +MODULE_AUTHOR("Ben Levinsky <ben.levinsky@amd.com>");
+> +MODULE_LICENSE("GPL");
 > -- 
 > 2.34.1
 > 
-
--- 
-With best wishes
-Dmitry
