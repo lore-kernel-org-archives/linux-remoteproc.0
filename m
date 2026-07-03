@@ -1,86 +1,88 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5F3335091
-	for <linux-remoteproc@vger.kernel.org>; Fri,  3 Jul 2026 05:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDA23546E9
+	for <linux-remoteproc@vger.kernel.org>; Fri,  3 Jul 2026 05:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783055038; cv=none; b=IZP89Xiou5BI4hoRAajISjVz601B04froamCQ+tY+BYRgSE2ttg68O1vRHGh00KMtCzkyGW9VMy4DgSZ9Bng7oSg7HVo8sxI9hIrTwIgwJpkkWDO06H9BrP+ulALyN2hbBh4SFXoZNVMAk9HycxiRMTvVmIvEjtZPaGIoGpY+QE=
+	t=1783055044; cv=none; b=Bz7AC2FGiyz3kE/mcyiUQb0gexDDfkIrvokh0xkY8HATrQDuaYXkvMwya57nynxtzaH1/w76a/GE5eBLZ+bvXTKqpdFAv5BRWMx6JnsengKpAIOQViAQwI7dtram5aJizUrjo9ZVW6RPHB/RXtcmUoAVI5q7s8HYZPcFhvVfPdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783055038; c=relaxed/simple;
-	bh=rVXcKV7+kz5ldKBXO/tHbbJCCqeIj4iVBlRaSUOippg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kaETwcRzOsPqjfg57ZvO7f+U2c/qlapaQ3LGqq931uoZrbP1NiOre4Zxc3LsC4C5Ejj68gsoc/nl3YvIFwG0/rNI5EH6dpfIDjoQb/vJ7aUgCTBBk+DRydc4MvBTtSSiJ8cucNAKUE6MYHVxC3OfNi95LdJ/+iapVv1aGUN6NDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Kz9PX4ou; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=D7jqo7Y8; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1783055044; c=relaxed/simple;
+	bh=Z/WKNegsFatsDkLsxVMEZ3HsqNDu3wLrVIGJkYC/vDQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hHIdNra4ZHyRDFnlKoRyPrZN3hMqHNILfXvHk0kLwbrdE+ug8x942JKAAJ16mJm9t5a2ik63MAmLUDU/d3KK7XCUPr6bX6wdcelQalJnWPSmokwlJyLUcAS8sjsylW9Gfnsvcp3PezHssF2Qjs0XXOplGvcSJDn/4rYvQ7exI/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Tfu0MG8E; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=LsROdTFK; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Kz9PX4ou";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="D7jqo7Y8"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66342waE2838509
-	for <linux-remoteproc@vger.kernel.org>; Fri, 3 Jul 2026 05:03:43 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Tfu0MG8E";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="LsROdTFK"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66342fi62777604
+	for <linux-remoteproc@vger.kernel.org>; Fri, 3 Jul 2026 05:03:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=NRBgE59QoTQV38VfgncqRJ
-	YraRggkHBcu/Lnxj9AfME=; b=Kz9PX4ou0E2rzYJfU2YnTUQ9yhZCPBQNqiPR9p
-	CEFvDPQWZjHGBADxTGLxRQqpJ0xB4605ahj3MquNKlSEoIwfn9qSQYiEM+G7JvH4
-	ejAU3XxaBOVO0OhkPDQRMLKZJ5yyUZJlSyVZDopfFRao5i1BYVqOR4R9Zxt0SH3p
-	rtN/n2J+N1PgsV0Kj5AxPnGAwhLc0MYB1TdeaODbQF+OU96HilRFmC0dg/PY2Zpg
-	udjrrHUeXr69qolFQApg6uVlrvU826UNzdT3yUgozsVxmAc1+HzKSYXZzWd8PAhu
-	hXwjqv7JeCyQlCRz0wdGOfuVoro8fyFJD8Qvx6a1kr9CqdGA==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f5mvwvdbn-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FZk/vWN/O5F/ZDLqPE8QMw1fE1YoVN9Nf7DQqyExBlM=; b=Tfu0MG8ETJE7D4iT
+	uEJssPb+iZky/iJo7Quo0oveYgdgvaMU08mTQfgH8FmVX0OdTrKudsKIPK3OXMMr
+	xHXP4kFO5O92LGX7YEQJAaLCVFGdpej2o7MWjmpvQXcxLTudZGh7omqo6HZb0RkQ
+	ZpTscgnmX0NxD0Gi7lTYgJ5SdR1pbTNLBgwLqoyXvXE2ZiofeX1P8gONhrMVGH/O
+	L3Qvv0rE6ERxjHF7V4OwZjDJ+4kfO0xdyhDHq4wrSDt1MhpFg7Q522RV+R9uq7Tc
+	6ruzztQn0zOz/30W/fAjAxnqci4zuJ6D2orYD+Z0suEMNxUtfZC72J75Qf/e1xbk
+	u3gt9w==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f5s2536q3-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jul 2026 05:03:43 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-380a638fb5bso273469a91.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Jul 2026 22:03:43 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jul 2026 05:03:50 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-c88da04b719so164011a12.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 02 Jul 2026 22:03:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783055023; x=1783659823; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=NRBgE59QoTQV38VfgncqRJYraRggkHBcu/Lnxj9AfME=;
-        b=D7jqo7Y8b6FRz9ZPg9+iDqieoYuvmbG68XKkCUkwzlXth4Mi/deGtFmSiYvaDWOswk
-         x/QPqGy+2cTgFIcGfqpKPWj3yT1HUAy4EaRUg4dIA5kR7KUOmXhRx1j0n8dldwMW46dM
-         FV1vcXjjbR/BZgVsLUfCXJhJ17LETb10vHAkPsTRclB6J90aeTUW7i8uv9hM8yQ3gPmA
-         FvoyFBQgYJAAqNlrN1eLeScGFwb5iU42147NbkmVw6XXg3hMQ/M/sTmJq+cN/AYJWmhA
-         m3slKeVS938WdR8n9G5mQjq1B9HiX5L3hPs74hkpvF9d7x5tnFJe6L3eAChTwj5lGGud
-         WpXA==
+        d=oss.qualcomm.com; s=google; t=1783055029; x=1783659829; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=FZk/vWN/O5F/ZDLqPE8QMw1fE1YoVN9Nf7DQqyExBlM=;
+        b=LsROdTFKp2alb6Zt5orjcg4a2SbRtYbHKKTQ2yc+f1ZzIkdaJ3ogfDrFfeeZLpZIRq
+         m4kN2CJJC06elcwbg+BRj3rcNvA6BPMW/Kj+dxFzgLGIwdz8VsZA2wwwTdIMSJ3WZF8I
+         w7+QtZkMgNzW4I52YCYdPr7ekonxL/MPiNW7mL+i/Rd8gCqDL7YC7etGk5Vm545L2Z+l
+         kUItNuSju+snavAe4mOmH9oqSn90ue0ahOzDOl61aRLcsglfwjuWX5m1O0U6wAJZjxuG
+         aOsMqduQ1wtwMO9lWZIc4P06j1lxrU7EO0qKlM4/ctusUXqE2dlXZQVe3DcqCefzVw3w
+         A/Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783055023; x=1783659823;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=NRBgE59QoTQV38VfgncqRJYraRggkHBcu/Lnxj9AfME=;
-        b=kduEEuKp36nUoItONFyPTZvZYw+5YVIo1QfoXSKaig6S4UnRDNjb1ktGWDEsZq0pQc
-         LeIZzQbAKCtZUfWu3+X/UTnnKqmRHgQ14cAqfCG9DX4J4lFJC80cCmbh3l2dc0G2HYjV
-         BpXE03XNDlbHkCJdHFhn9arMvyltV8Dwc4T6J7L6z0QrGOWaEs3l/XvErhDhlbB1G5B+
-         OnzXQ9D+/BDyiIsT0T1R8X35j5XQ4uJUGGCOc+cqJRcW36fRzCd+1De9cva7M2yXvpw/
-         MQGJCdQXFD5b8Y5hLtzR1FlCZRWapGPqiC2hGkUUyI70GUwn49ydx3AVlpnLCuEavkcE
-         N6uA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro9wyvrXjgMK58OIBKOY0e9PFdbH3xHQIjqR8ZmdfjXvwaIutubFpctVlUhUJSHZWrJ6eeP/8FUCSSVvjmoRO5J@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5ihGIS/towU+cdrb+H1azvYdAByoY7SSr1G0fC/6jyITmVL/i
-	1Hj6SfcoIqiWOzddOzQyUgZby+WahgqMD81px6a44oUR0x0dZGuiOLETmo3inylbQtzrnzqJjDv
-	SCIVBMRvdwilInAnrWhNORTRJvXd8eEs8jKCxoTkNDAbOxgOXHZwaoKf4An6cud8M5tfgP2xD
-X-Gm-Gg: AfdE7ckJ/MOvMDwxgtM9TFFUJwRJCJVFT1G4l3nRvZYKfMapADyjCJkUkDziYd3RLrT
-	jwKYbg+v68oy7I87dCLumZwB+voQja1N0ElXowspiuIaC5M7qMJBMhj2S9mNrawgKvBqycoxcyW
-	gfigok800gQ/d0GZselRSohHc/LjddpKfnZZe01hGVaZAT+TfTG9k8P27yTZF6a75fKw6O127us
-	WmEYofnVjq7AkxMGV5EO88xJV48Qf76BFiExiu0g4at2eiPk9DVV6z8M6cRwiJJ6KxlpmQJrHIl
-	y8nfY5rIJuBGaB2h/n7fj1KtsKwyWlPZH/V06kRhjXA+MOtpE3neIlcxklSJ1gtrpLIigCO0aCe
-	SxUGK5RnRI6Tb325kjs0HLz5cctYZZmEP9Mjm5cXm
-X-Received: by 2002:a17:90a:e7cd:b0:37f:464d:ea38 with SMTP id 98e67ed59e1d1-380ba70e00cmr8071240a91.0.1783055022910;
-        Thu, 02 Jul 2026 22:03:42 -0700 (PDT)
-X-Received: by 2002:a17:90a:e7cd:b0:37f:464d:ea38 with SMTP id 98e67ed59e1d1-380ba70e00cmr8071215a91.0.1783055022356;
-        Thu, 02 Jul 2026 22:03:42 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783055029; x=1783659829;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=FZk/vWN/O5F/ZDLqPE8QMw1fE1YoVN9Nf7DQqyExBlM=;
+        b=QOXyRAezx1VIyzcPTIQjRfzc3porIb8EDIxbvHv3JVH8VfMgngn6SBaYVTIYZ+xUEp
+         gIJuJEW7UfUWc6Z3n8Wk0RAw8mSQPwbJKrS1EOsOwGRrD7wmGWCi8W66zo21oNtsXnbN
+         v+juE7ifGmvP+zs0E5P+WG457iuNMRJm3BI6ogs4NXsYyKrmmrw3cAp7fE/mODWxF8J7
+         tMZxVg0HqZDEojOPUj1RNWCdymcLnymtMYMH51VOtbcHRYEM7+fQFneSdEHQcXNDc4YP
+         TevSFH/4rW6Zyc6TbW/7nMssprhP4fUUBDME4a4TGFsDD/gLkpsBqi4phZ6d3VAUSJ3O
+         BoLQ==
+X-Forwarded-Encrypted: i=1; AFNElJ8vVCwEq+Mrub8pFHxa4fr07kcI/0QLA372Fg1H5Gashd7JZn9flFHTYhVuJ3+1f0sL8NLT8TSYBUxB4v3vJwgh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL2CAPLCHWFNHQgTWcIMs1ZuE7O9SrLXjKcTe/6yCjEYp6wXeC
+	7NybJTD2c+MI5RO3sGAVrjquducoKa+ASiw94jXOwYEjFFyvImCdGP+x7h2JYwmk0khz1D2Xwpp
+	H8AxmCqvZEmKExTnVbyJowO9rrsAGN2sV53NSbEdqap1llCUjLcEFcqK465UgScVaxp6l9qEn
+X-Gm-Gg: AfdE7clVWflQ2RCYauVXC1Bjegmr5b9RqKM5c04YCCHvAkph4MDZMMk5qESMZ79nBab
+	Gkufz7xHZ04ghBRLndO4xT+euNyYS+pe0rn+glVr+GdQ0qaHZlpvXd2rP1B7a7u7lfJmQmV6Dwa
+	PRw0g9xsgxjNh+tP07t3Pj+DYDrsi4EGC79zEHj0QmoRDOjrDmEdBfZl7D+VdAdl/kv5QTlziEv
+	eM936EqlO7FxRPWp43L+FSojrai7rVL6CazvMJNjS2mQgxh//+iBPY/izdpX4rqwF9yX+NLgQcS
+	SfLioHGjy5A3zHqvPDLB0gt3v8PXDnyHcjkWiis6P4GL5hcutcMF9X7cqzXoZmVfS5jiaE2GMpk
+	kPn3ApBql80APn1iIqAnQi/XY9w7vYL6lloZOQ3e8
+X-Received: by 2002:a05:6300:6715:b0:3bf:b0b8:58b5 with SMTP id adf61e73a8af0-3bff422d1d6mr9767414637.36.1783055029092;
+        Thu, 02 Jul 2026 22:03:49 -0700 (PDT)
+X-Received: by 2002:a05:6300:6715:b0:3bf:b0b8:58b5 with SMTP id adf61e73a8af0-3bff422d1d6mr9767367637.36.1783055028571;
+        Thu, 02 Jul 2026 22:03:48 -0700 (PDT)
 Received: from hu-gkohli-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f0bbd2362sm16771941eec.20.2026.07.02.22.03.35
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f0bbd2362sm16771941eec.20.2026.07.02.22.03.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2026 22:03:41 -0700 (PDT)
+        Thu, 02 Jul 2026 22:03:48 -0700 (PDT)
 From: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-Subject: [PATCH v4 00/10] Add support for Qualcomm remoteproc subsystem
- cooling
-Date: Fri, 03 Jul 2026 10:33:03 +0530
-Message-Id: <20260703-qmi-tmd-v4-0-3882189c1f83@oss.qualcomm.com>
+Date: Fri, 03 Jul 2026 10:33:04 +0530
+Subject: [PATCH v4 01/10] dt-bindings: firmware: qcom: tmd: add TMD device
+ type constants
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -89,11 +91,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIdCR2oC/22Oyw6CMBBFf4V07TR9QAuu/A/jooECjZRKC42G8
- O8WXOjCzSTn5t6TWVHQ3uiAztmKvI4mGDcmyE8Zqns1dhpMkxgxwgQRpILJGphtA7zkDSeaKkE
- USu2H1615HqbrLXFvwuz86xBHuqcfB2WSFoVkDDNZSVlyoNCpxauI764fzMWFgKdFDbWzFqeDd
- lvkX8PvF5EDAVZRxdo2rwXP/8y3bXsDcQqP+ucAAAA=
-X-Change-ID: 20260609-qmi-tmd-383d30e1a60a
+Message-Id: <20260703-qmi-tmd-v4-1-3882189c1f83@oss.qualcomm.com>
+References: <20260703-qmi-tmd-v4-0-3882189c1f83@oss.qualcomm.com>
+In-Reply-To: <20260703-qmi-tmd-v4-0-3882189c1f83@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh@kernel.org>,
@@ -110,149 +110,106 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>,
-        Casey Connolly <casey.connolly@linaro.org>,
-        Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>
+        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783055015; l=5096;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783055015; l=2444;
  i=gaurav.kohli@oss.qualcomm.com; s=20260302; h=from:subject:message-id;
- bh=rVXcKV7+kz5ldKBXO/tHbbJCCqeIj4iVBlRaSUOippg=;
- b=R2N3EEztkFyImqucagAgpKp8NzRoJaFo2Sly8zMCuJ5DzVuyF7baMMSOJEkNjXzA4AoxyDzI0
- fvQigP25c7XALoF87dIZF4/9xQBqzwSOoTuPeWkBpRKZn6kC7pLZ0/f
+ bh=Z/WKNegsFatsDkLsxVMEZ3HsqNDu3wLrVIGJkYC/vDQ=;
+ b=4rAKxVmboxTEsxT7HFUBnFpo6MQMdbnmWvyZUSL6xjXKCseXH82IXoJP7DNAKZwcClya1CWVA
+ a/S+elRIqK6B9a3GaJd8IrCbMsNhTm75h0rXG2Xf0nt9X2cyTRbxdFd
 X-Developer-Key: i=gaurav.kohli@oss.qualcomm.com; a=ed25519;
  pk=IdNsqe8rWsF6dbpGHfwPEH9zM0nbOdRH72HxUT9qPak=
-X-Proofpoint-GUID: R2Xhc6bfjl_oO8_W0EnVDzyOArbWZRvH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDA0NSBTYWx0ZWRfX0GaEP0BdXYJ4
- MP0Yz/reESUfkNpGiYaYzqSoYHGPj3PZTMCOU8cv8HVxJkrVyUvwb5G6B4dM626SG2Efud5G9PF
- XlwtjZT5ViovL2wCf4De1hJTeX6iQbILotbLiZmRM/IP4YQgU4YzqSRJTRuwu4NFR5AgQU75wGN
- v/MasLewjWJLrmkB7o7RyVVjL3XKeMDVCAwgGzaR5Ay//xebZdDh5pxSZWV8Wi8mSyEukFCSCDx
- 6BvyMBmkfAiN36yz6lfWvDrxHXlQVgD62zyag2pGHdQwwDT50xjYc9xL4tOyLMmLR4A7tb8SxF1
- gTk3he32fM0yPvaLQ8vRmSgENQuMhoBMjeLQNItHWD1ib7Ns4J3Mb2l+70IKGG0NO2ue7QEsypJ
- uqJ0mZuk43wGDu2IbfRKf4QgrE+QaxAbODcEG/iFlTt2IfD6FwbbwvLpLk+Wq7rLiagHZoAOJei
- zU5mx1cBDgJgWIEjQ3A==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDA0NSBTYWx0ZWRfX8LyINXG6IKmU
- mm3DCPCsP3jzEb2TEPayYsaBu9Ye9oCsFhVWFzVZvmR63JcHq5dVbRCnuMIWbSYhwcwg4cGo047
- xMVWwYmWK5Kh0j8x07+Lhi9pHKM1n7U=
-X-Authority-Analysis: v=2.4 cv=N+UZ0W9B c=1 sm=1 tr=0 ts=6a4742af cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+X-Authority-Analysis: v=2.4 cv=U7uiy+ru c=1 sm=1 tr=0 ts=6a4742b6 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=elwFi30hILXyiLWNHsYA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: R2Xhc6bfjl_oO8_W0EnVDzyOArbWZRvH
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
+ a=EUspDBNiAAAA:8 a=aPnvGIK-T0NEGnooipsA:9 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-ORIG-GUID: lE1seRrzdUHsBEDe6ksfh7t8YObkYonc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDA0NSBTYWx0ZWRfX6JgrBEaQPhYp
+ wfTivFFtxNBEG4zGHuFPTTb5HF2UmBs6Z4ZTMaM7bYmfKJ/Ni2MTO4gmh0X5h7qk4p+gnH9eYFn
+ cOcQT/F2fBZM0CzWhi4tNpe8jqg52AxbtB/GFThWLu9WrboHDhyUAz+DbPyATo3LNIC3k3lJdPI
+ /YNXzwNJTbQlWm10dzMxS/w/WPR+YNnUD0ufiKIpWxI84tER4FKdFvr2Fk/7rTYHV8I83zTAKGU
+ 82mvW0V5hNrj8WRGPQp5KMr6hcK2AjX3KzWSAIRn9Dhy855KOgxG+gMBfuxd5TxGsp5uE8txTn8
+ aWXTlPKTDsjvQ+byGMJ6HbYRhuoqkEHrZ27Qwo8zTg0IQ7pedmY0s5g2ioSNTaUu5gjvG62YnaK
+ ChB8tD+XatlUqnfY4v/6qYWJ152hOyekLgnMjhAELGZqV2W8ChrjYviNsxmVu0Qp8U1NWo16OS6
+ Vu0iykKJUSEgN5ptxOg==
+X-Proofpoint-GUID: lE1seRrzdUHsBEDe6ksfh7t8YObkYonc
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDA0NSBTYWx0ZWRfXyYlb0opSqcTj
+ ZEifToEogGW16doDhKEzcpLzfrhyUjuWtGWsjudbWAS4gLcUi/GsZ0J/vxCDPdX6RFQzB1GHm5R
+ 3qMObySByPuTTS22UhyiL+O/o0ZDNvk=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
  definitions=2026-07-03_01,2026-06-26_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 spamscore=0
- priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 malwarescore=0
+ spamscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607030045
 
-This series introduces Qualcomm Messaging Interface based Thermal
-Mitigation Device (QMI TMD) support to control thermal mitigation
-on remote subsystems such as the Modem and CDSP.
+Add Device Tree binding constants for Qualcomm Thermal Mitigation
+Device (TMD) types used by remoteproc-backed thermal cooling devices.
 
-The QMI TMD is an interface that instructs a remote subsystem to adjust
-the performance level of the devices it manages, reducing power consumption
-in response to critically low battery charge, overcurrent alerts, or
-overheating conditions.
+Qualcomm remote processors expose thermal mitigation endpoints
+through QMI. These endpoints can be registered with the thermal
+framework via the `#cooling-cells` property on the remoteproc node.
 
-The series is organized as follows:
+The QMI TMD protocol identifies devices using string names (for example,
+"pa", "modem", and "cdsp_sw"), while the DT cooling-device binding with
+`#cooling-cells = <3>` requires numeric device id in the form:
 
- - Add a shared dt-bindings header mapping TMD device indices for use
-   in DT cooling-maps, ensuring a consistent binding between the thermal
-   zone and the QMI TMD driver.
+  <&phandle device_id min_state max_state>
 
- - Extend the remoteproc PAS binding with the optional #cooling-cells
-   property to allow remoteproc nodes to be referenced as cooling devices.
+Define common TMD device index constants shared across currently
+supported platforms. If a future target requires a different mapping,
+additional target-specific constants can be introduced while preserving
+existing DT ABI.
 
- - Add QMI TMD support in the remoteproc PAS framework, hooking into
-   the probe/unregister lifecycle to register and unregister cooling
-   devices with the thermal framework.
-
- - Enable CDSP and Modem cooling on kodiak, lemans, talos, monaco and
-   hamoa platforms using the new binding.
-
-This work revives the earlier QMI cooling series by Casey Connolly [1],
-with the following key differences:
- - Uses an id based API for cooling-device binding
- - Integrates QMI TMD directly into the remoteproc PAS framework and
-   hooks into the probe/unregister lifecycle.
- - Removes unused code and cleans up macro names
-
-This series depends on cooling device id support from Daniel Lezcano [2].
-
- [1] https://lore.kernel.org/linux-devicetree/20230905-caleb-qmi_cooling-v1-0-5aa39d4164a7@linaro.org/
- [2] https://lore.kernel.org/all/20260526140802.1059293-12-daniel.lezcano@oss.qualcomm.com/
-
+Signed-off-by: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
 ---
-Changes in v4:
-- Drop the tmd-names DT property.
-- Move TMD instance id and tmd device name into PAS platform data.
-- Add a shared dt-bindings header to define numeric constant for TMD id. 
-- Add mutex documentation comments for get/set state callbacks.
-- Link to v3: https://lore.kernel.org/r/20260609-qmi-tmd-v3-0-291a2ff4c634@oss.qualcomm.com
+ MAINTAINERS                                 |  1 +
+ include/dt-bindings/firmware/qcom,qmi-tmd.h | 20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+)
 
-Changes in v3:
-- Removed the remoteproc-cooling abstraction approach.
-- Integerated QMI TMD with remoteproc core framework.
-- Cleaned the macro names and removed unused code.
-- Switched to index-based thermal_of_cooling_device_register() api.
-- Link to v2: https://lore.kernel.org/linux-devicetree/20260127155722.2797783-1-gaurav.kohli@oss.qualcomm.com/
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 57656ec0e9d5..ffd85fd1dd80 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3410,6 +3410,7 @@ F:	drivers/firmware/qcom/
+ F:	drivers/soc/qcom/
+ F:	drivers/watchdog/gunyah_wdt.c
+ F:	include/dt-bindings/arm/qcom,ids.h
++F:	include/dt-bindings/firmware/qcom,qmi-tmd.h
+ F:	include/dt-bindings/firmware/qcom,scm.h
+ F:	include/dt-bindings/soc/qcom*
+ F:	include/linux/firmware/qcom
+diff --git a/include/dt-bindings/firmware/qcom,qmi-tmd.h b/include/dt-bindings/firmware/qcom,qmi-tmd.h
+new file mode 100644
+index 000000000000..73efecef0f3c
+--- /dev/null
++++ b/include/dt-bindings/firmware/qcom,qmi-tmd.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
++/*
++ * Qualcomm QMI TMD (Thermal Mitigation Device) cooling device indices
++ *
++ * These indices are used in device tree cooling-maps to reference
++ * specific TMD devices provided by remote processors via QMI.
++ *
++ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
++ */
++#ifndef _DT_BINDINGS_FIRMWARE_QCOM_QMI_TMD_H
++#define _DT_BINDINGS_FIRMWARE_QCOM_QMI_TMD_H
++
++/* CDSP thermal mitigation device id */
++#define QCOM_CDSP_TMD_CDSP_SW	0
++
++/* Modem thermal mitigation device id */
++#define QCOM_MODEM_TMD_PA	0
++#define QCOM_MODEM_TMD_MODEM	1
++
++#endif /* _DT_BINDINGS_FIRMWARE_QCOM_QMI_TMD_H */
 
-Changes in v2:
-- Update Remoreproc thermal config to tristate and removed unnecessary NULL checks.
-- Fixed dt binding file format and added generic name support for cdsp.
-- Fixed memory leak and cleaned up qmi-cooling driver file.
-- Corrected DT formatting errors and commit descriptions for all targets.
-- Link to v1: https://lore.kernel.org/linux-devicetree/20251223123227.1317244-1-gaurav.kohli@oss.qualcomm.com/
----
-
----
-Casey Connolly (1):
-      soc: qcom: Add QMI TMD support for remote thermal mitigation
-
-Dipa Ramesh Mantre (1):
-      arm64: dts: qcom: hamoa: Enable CDSP cooling
-
-Gaurav Kohli (8):
-      dt-bindings: firmware: qcom: tmd: add TMD device type constants
-      dt-bindings: remoteproc: qcom,pas: add #cooling-cells property
-      remoteproc: qcom: pas: add support for TMD thermal cooling devices
-      remoteproc: qcom_q6v5_pas: enable QMI TMD cooling support
-      arm64: dts: qcom: kodiak: Enable CDSP & Modem cooling
-      arm64: dts: qcom: lemans: Enable CDSP cooling
-      arm64: dts: qcom: talos: Enable CDSP cooling
-      arm64: dts: qcom: monaco: Enable CDSP cooling
-
- .../bindings/remoteproc/qcom,pas-common.yaml       |  39 ++
- MAINTAINERS                                        |   7 +
- arch/arm64/boot/dts/qcom/hamoa.dtsi                |  63 +++
- arch/arm64/boot/dts/qcom/kodiak.dtsi               | 134 ++++-
- arch/arm64/boot/dts/qcom/lemans.dtsi               | 125 ++++-
- arch/arm64/boot/dts/qcom/monaco.dtsi               |  99 ++++
- .../boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts     |  17 +
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |  17 +
- .../dts/qcom/qcs6490-thundercomm-minipc-g1iot.dts  |  17 +
- .../boot/dts/qcom/qcs6490-thundercomm-rubikpi3.dts |  17 +
- .../boot/dts/qcom/sc7280-herobrine-lte-sku.dtsi    |  17 +
- .../boot/dts/qcom/sc7280-herobrine-wifi-sku.dtsi   |  16 +
- arch/arm64/boot/dts/qcom/talos.dtsi                |  19 +
- drivers/remoteproc/Kconfig                         |   1 +
- drivers/remoteproc/qcom_q6v5_pas.c                 | 120 ++++-
- drivers/soc/qcom/Kconfig                           |  10 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/qmi_tmd.c                         | 581 +++++++++++++++++++++
- include/dt-bindings/firmware/qcom,qmi-tmd.h        |  20 +
- include/linux/soc/qcom/qmi.h                       |   1 +
- include/linux/soc/qcom/qmi_tmd.h                   |  23 +
- 21 files changed, 1327 insertions(+), 17 deletions(-)
----
-base-commit: a87737435cfa134f9cdcc696ba3080759d04cf72
-change-id: 20260609-qmi-tmd-383d30e1a60a
-
-Best regards,
 -- 
-Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+2.34.1
 
