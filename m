@@ -1,231 +1,134 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F883D3D11
-	for <linux-remoteproc@vger.kernel.org>; Fri,  3 Jul 2026 12:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAEA34041E;
+	Fri,  3 Jul 2026 12:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783081909; cv=none; b=Ufby1nHqXFvAKVYKaPu0tajnWOT4kgnb5iDyubFYguyxsJnY9JWjByMH+iPwbY3gj5kCi6a8Vf0vcbrGvEa0NVtKQs1+uYLh77XSEj32w7z58pLsTA1RSUjG9XvtatAqZQWDYRmFsrNj2rS/XbHen9rFQ8JSKpY6Lq4h7utI3tU=
+	t=1783082689; cv=none; b=KMz6Gg19noKMqIikx7semi9l3oNdJ5Jl4b6Eka/7Tbf24HrgpLAVb3X/UBjQDgMB2JNe10g5xqRyOMSSukuqieUdk6kZVcNbTNQJB1XSkeUhNRT2p05z5gRyzGi3s+N1SvvWg41U5VGvHkkTFiti+EK6igGqskzUffWXCbAQ4Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783081909; c=relaxed/simple;
-	bh=K630DEUTV191Dc2qesPz0mTnQpvjdlnARO12sy8EzHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ciWe5MiNVgslzyMzClqFJFpli/b+sYswJgz1/RZuhVpZM0ccDsrlgJdFeVn6xreuvFrFU3jMSKWSKaHjHt92T+0BZe8/KD1V4lPYkFoiHHwQGmbIsjMKgYqHTVAqXW7s+TKygwUXF5bK+9FEJYY3GLgnjC8r5ldipEPwQ4EDJjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=mCiXXfj6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=joRIQ7Q0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783082689; c=relaxed/simple;
+	bh=b/WWAPYdRAjKErf0Eu7ZRh2UjM2MygsTpmXF+WndGzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p8IFxk+kOS/X8CQDbKBaJ1e5CJ/YMWORJCAuXenGoyir7j+FbMCsUO8OdErSzrR6EVbEFxZvYj/N0mnspBGYvmZwc0ScBwsM+RZOaJJPhUTWPc2L1PdlQl20+gENW93xK504kS5j+/b84eJhgFcyCYHtzPZ6g1EWXMaEv8buJv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kafx6H3s; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="mCiXXfj6";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="joRIQ7Q0"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 663A2tHh3772693
-	for <linux-remoteproc@vger.kernel.org>; Fri, 3 Jul 2026 12:31:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	f5gceR25GDxCt2R/xD4eNZ9chDQhURP0qVt+vjHMpG0=; b=mCiXXfj6s/wbPan2
-	IsFCSR91R+q2R1ow2ZiLIilUCKeYpzzT7kE5xOlqZELuOlKyDvukSkClL3YJ6XXT
-	dGLkx2Yy3XFTxwBb0/GVOmnQsgzaFTeFH2KgPasHhZu8FW1QT6bwzZ4mYArYNXbL
-	9p79xZZFFcV6j173jW7RDx76u+XerlP++9oN2JEzfXMph0fI5jwR6JTgnJ/ysm8W
-	nJ0xwMCJhHgpsqrupWkB4YkP5sqvtlA1Wq8pmxtCq8Tu90QTT+tjsSdUhdcUIdTc
-	DukVJ0nXg624yiqfzpytdPCrPJLor40ia8ohnuNPU/oXi1rCiP/LUQqdROqXNtQi
-	QYOGcw==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f6b038k03-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jul 2026 12:31:41 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-380ddac2b02so786790a91.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 03 Jul 2026 05:31:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783081900; x=1783686700; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f5gceR25GDxCt2R/xD4eNZ9chDQhURP0qVt+vjHMpG0=;
-        b=joRIQ7Q07GiE7AVugw2AuuCQQGJYeuF0TVdZ82H5fnn9Zr8AehO9utDuh31hAB6e1S
-         QjtiddDSOlmZap0BKev3sScikKqm6rwpDZmt9bF/N5pTXfH3Al5H3I+e571aUUK5loip
-         bt9cRAacY7/xWzyPYG+o+eet5gcETgFd2XFRFPJZfLgUyya/lObjyU4BgxUnpzaDT2GP
-         xCIMghuDQJOgkrOPzxsXeY/8IrljP0xsecy25S9WS+R7jrE3+yGj3lUnE+uJfdYdwY9N
-         6Fp/OIYOVxx7QTg8kyqCqEj7recyBDQcYLmkWE5mTagEFFaNycsNohBGxk1s8AfAxSQF
-         DydQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783081900; x=1783686700;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=f5gceR25GDxCt2R/xD4eNZ9chDQhURP0qVt+vjHMpG0=;
-        b=Ca/xZ5B78RCPVW1BMuvphRQdcW8lrSZcJm1IdYyCiTjH7BxbJGUx1q17mGncK5y7wW
-         iIK4o0Yxbz7LOKNPJR490rrCnQarOm3a91XKHmSPTQWs1hswbQlEyYnUrRa/iZEPV7NY
-         pWt10yrHnZdRG/huWAgMfGbq+wu+7Mi6GTNJEFV3NnOX2aSw38jePuEngskxdXueslrP
-         hs0ywP5ChwUJXiZ6boAT+Jmae+UejIKJ49wtiVhc2huL63LGmPvP3aUz6xcK1B9qO4sP
-         8nyDBNhw5qvOXAzIElgxxlmsntMSpjTWf7BZhEAzVWaynbjz0lbKgMiERqf3mPWjcOLB
-         1Ivg==
-X-Forwarded-Encrypted: i=1; AHgh+RohnMWrHjTdCu2KRJQughBdyV+jt1oIjN5+kjukEu2/rmUPmBLK9JZYsMPDvrDlxXJD6TawJ9sJsz/wiFGpC/xp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK8os5YHQ81/ECv95XtxhZUPoG5nQteRL5GoNioX5RSaXU9R0I
-	s0wktP/GWP3qy128JV3aJRU+9no06Qfa8F3Nu5v5x9OaPBPU1UYautUyT6e7byuOUjqL19oacGa
-	q/opAv1zxM/mUD6RgzXVPdndWaXOLjF7oDmANaun6rJB9zmjM6SW+dhdPLz4m6jz4aURhP9KS
-X-Gm-Gg: AfdE7ckRhJG6xnz91EmgME5UUqppRPWbQcxlwbTLMORBZa3m2XEVHDIJ54fWTdvUWJB
-	FAJgI00xZRrclez2bHAiCGcHukj/8+J5yw9dtun8vzrBQg6Hr1b3CqQW/NWwcczkFe/o6bHV2sH
-	3eDVpEa169VxN4weRHdi5TWJ1ZXHSrNQwaWOZYjBxu7dyIq6X0JdScKJySu84apIa4PIOnmF9Z/
-	cv+1AGT1bQn5PSPRhbt3S/iRMQJvc5aKR7ir4m/md/8i7bYyqFEb9s7OMMWeXoz4bHvfAMmaNJa
-	ecpaHLADu6+szLfLOK0pgUndQIwbdW8iNpZrCmdqmnW8Yw3nnjEa7v4H38bZJEX5uaEfv3Wgffb
-	NfBioHvlPfq2JbavXferiROp30mo3Rp13orp2q4gCvVZkN/sYJ46WbeJy8FZG
-X-Received: by 2002:a17:90b:1c06:b0:37f:e177:f58 with SMTP id 98e67ed59e1d1-380aa09a404mr10133010a91.9.1783081900181;
-        Fri, 03 Jul 2026 05:31:40 -0700 (PDT)
-X-Received: by 2002:a17:90b:1c06:b0:37f:e177:f58 with SMTP id 98e67ed59e1d1-380aa09a404mr10132973a91.9.1783081899548;
-        Fri, 03 Jul 2026 05:31:39 -0700 (PDT)
-Received: from hu-anancv-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30f0bbd223esm20949375eec.21.2026.07.03.05.31.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2026 05:31:39 -0700 (PDT)
-From: Ananthu C V <ananthu.cv@oss.qualcomm.com>
-Date: Fri, 03 Jul 2026 05:31:13 -0700
-Subject: [PATCH v4 3/3] arm64: dts: qcom: add SoCCP DT node for Glymur
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kafx6H3s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 462C51F000E9;
+	Fri,  3 Jul 2026 12:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783082688;
+	bh=BBDSXJplzut526vw//w0ovqRNPrNaoNvABnT0V7Jts8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=kafx6H3se9JnIJCJzSSqdrVMxZ4SceV6FHYnKgaPo5VVgfTFajAT91h/PSoTlzV6U
+	 k2AOUFkFMfuJ0LL2YcP6Sc9m7cKme+LWW1TGpHF9f+XeS57L6nh27kkonOmMcZWhkN
+	 3iDg62JXqpfvT2QhTGw4QQ2Oi4YYpEMis2dnKtT92Niws0ly+GEu9E1IoYHN7dS7Gj
+	 3jdX8jIJxjGw/rlrt6fDU7hi42kVMv81H26bUqgB+1EVNhueHb1Fh8/W++BfqVNwI8
+	 RMF7Jv59tDEMARo5jBRa3IgWWFcjiqtNwaoYgJu2y62zxNqMyw77sHt4JuyP/n7R+r
+	 o3p07xJHya24A==
+Message-ID: <579360fe-9276-4d5b-9da3-e479ab8e5e37@kernel.org>
+Date: Fri, 3 Jul 2026 14:44:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260703-glymur-soccp-v4-3-b706c4c9b3e2@oss.qualcomm.com>
-References: <20260703-glymur-soccp-v4-0-b706c4c9b3e2@oss.qualcomm.com>
-In-Reply-To: <20260703-glymur-soccp-v4-0-b706c4c9b3e2@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] remoteproc: qcom: pas: add needs_tzmem flag to
+ force shmbridge creation
+To: Ananthu C V <ananthu.cv@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Ananthu C V <ananthu.cv@oss.qualcomm.com>,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-X-Mailer: b4 0.15.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783081896; l=2909;
- i=ananthu.cv@oss.qualcomm.com; s=20260327; h=from:subject:message-id;
- bh=p4NFAc7UYqZOf2Vhd5hWCbhRVXgxqVSfX1RnoN8Hnjo=;
- b=5zpjbDkcSFTosziGt9rFJPCWbhZl6r+iXwOm63BXvLpO1Y1Z2MdtGb+rEVk6uNcR4rSl5N+yq
- fywu2wKWdylCOkNzu4iNRrpoaGMb/k/cL3JehcDPOW4156SzxByY2pI
-X-Developer-Key: i=ananthu.cv@oss.qualcomm.com; a=ed25519;
- pk=Yyv4ldZGagB5zyqtlYRdUX/L9FZ6y/INQAXO9L3wfl4=
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzAzMDEyMiBTYWx0ZWRfX4RMsOyLKUAYx
- tDvBqecmw4BwMHiOk+TXIKPaBHAQ155e0dQOnSv/h38n1YUpRg9qLs+Ff5McEFElN/NkfWlvrBc
- Oq6YyWGFn9g/45krErIm5gbvmTz22Y8=
-X-Proofpoint-GUID: DsIp9KIB6zapyl0ypE5ht5_PZXFIHFs0
-X-Authority-Analysis: v=2.4 cv=FoY1OWrq c=1 sm=1 tr=0 ts=6a47abad cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=EUspDBNiAAAA:8 a=9f4fzsQZ2b4kEiPl2jAA:9 a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19
- a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzAzMDEyMiBTYWx0ZWRfX/k2Kr2kckQ3r
- YLskpEHfxT2rdStc1f/Z9t/JPRtgf3cBbhXGOL3ssr3/H5Lz0pcuGuYK1L4AeI3BamKM6foPZJU
- 4Vg/Z9BJWglwdWaRQjuiHkoMEVekwG/6G6Mn0e9UFeSkHRL1cOrrAq5e481s+q8gSAzkhmPPpx9
- uNPLWdTl/TeGAEpqLm0rgOTcALeqjUP0GGEg80MrkXbVsHZuNKN0JZ5/gECLEi06PhW51U7FjuP
- UMgEB06DuAqNxj+jqXKJQcCU50gu4RYyWL68UE+7Qe9Ud/7Vgwba85RuNTLkr+aPnDfzQpHj+Wy
- jxXK6cVPmySMc5YAivkbdQhYb01oAdmlSNSiNAlaJWQJUPEC3iHOzJhstP2nVP2FvG1H+6F0+Vw
- sWom64p77YOKxD/b7bPrQcSV4TA8Ltui1jwggA+LKRblj2Zgv5chSD4TMH8wniX2WGu//mf+Fyk
- n6yWf90JMX/7Xv3QmhA==
-X-Proofpoint-ORIG-GUID: DsIp9KIB6zapyl0ypE5ht5_PZXFIHFs0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.125,FMLib:17.12.100.49
- definitions=2026-07-03_02,2026-06-26_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 malwarescore=0 adultscore=0 suspectscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607030122
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+References: <20260703-glymur-soccp-v4-0-b706c4c9b3e2@oss.qualcomm.com>
+ <20260703-glymur-soccp-v4-1-b706c4c9b3e2@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <20260703-glymur-soccp-v4-1-b706c4c9b3e2@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+On 03/07/2026 14:31, Ananthu C V wrote:
+> Most Qualcomm platforms feature Gunyah hypervisor, which typically
+> handles Stage 2 IOMMU configuration. Additionally, SHM bridge setup
+> is required to enable memory protection for both remoteproc metadata
+> and its memory regions. When the aforementioned hypervisor is absent,
+> the operating system must perform these configurations instead. We've
+> been relying on the iommu property being present for this, but for
+> remoteprocs that are already running like SoCCP the mappings are already
+> in place, and any attempt to recreate them while active would lead to smmu
+> faults and a non-functional remoteproc. Fix this by adding a needs_tzmem
+> flag which ensures tzmem and SHM bridge setup is performed independent to
+> the iommu property being present.
 
-The SoC Control Processor (SoCCP) is a small RISC-V MCU that controls
-USB Type-C, battery charging and various other functions on Qualcomm SoCs.
-It provides a solution for control-plane processing, reducing per-subsystem
-microcontroller reinvention. Add PAS loader for SoCCP on Glymur DT.
+Looks awfully like LLM written and considering obvious problem, this
+feels vibe coded.
 
-Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Co-developed-by: Ananthu C V <ananthu.cv@oss.qualcomm.com>
-Signed-off-by: Ananthu C V <ananthu.cv@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/glymur-crd.dtsi |  7 +++++
- arch/arm64/boot/dts/qcom/glymur.dtsi     | 44 ++++++++++++++++++++++++++++++++
- 2 files changed, 51 insertions(+)
+According to current docs YOU SHOULD add vibe-coding tag to the commit
+when doing that.
 
-diff --git a/arch/arm64/boot/dts/qcom/glymur-crd.dtsi b/arch/arm64/boot/dts/qcom/glymur-crd.dtsi
-index e784b538f42e..328eb513140f 100644
---- a/arch/arm64/boot/dts/qcom/glymur-crd.dtsi
-+++ b/arch/arm64/boot/dts/qcom/glymur-crd.dtsi
-@@ -585,6 +585,13 @@ &remoteproc_cdsp {
- 	status = "okay";
- };
- 
-+&remoteproc_soccp {
-+	firmware-name = "qcom/glymur/soccp.mbn",
-+			"qcom/glymur/soccp_dtb.mbn";
-+
-+	status = "okay";
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <4 4>, /* EC TZ Secure I3C */
- 			       <10 2>, /* OOB UART */
-diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
-index 5f44f68efde2..bc259dfbaf0e 100644
---- a/arch/arm64/boot/dts/qcom/glymur.dtsi
-+++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
-@@ -2297,6 +2297,50 @@ &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
- 			};
- 		};
- 
-+		remoteproc_soccp: remoteproc@d00000 {
-+			compatible = "qcom,glymur-soccp-pas";
-+			reg = <0x0 0x00d00000 0x0 0x200000>;
-+
-+			interrupts-extended = <&intc GIC_SPI 167 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+					      <&soccp_smp2p_in 9 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog",
-+					  "fatal",
-+					  "ready",
-+					  "handover",
-+					  "stop-ack",
-+					  "pong";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&rpmhpd RPMHPD_CX>,
-+					<&rpmhpd RPMHPD_MX>;
-+			power-domain-names = "cx",
-+					     "mx";
-+
-+			memory-region = <&soccp_mem>,
-+					<&soccpdtb_mem>;
-+
-+			qcom,smem-states = <&soccp_smp2p_out 0>,
-+					   <&soccp_smp2p_out 8>;
-+			qcom,smem-state-names = "stop",
-+						"ping";
-+
-+			glink-edge {
-+				interrupts-extended = <&ipcc IPCC_MPROC_SOCCP
-+							     IPCC_MPROC_SIGNAL_GLINK_QMP
-+							     IRQ_TYPE_EDGE_RISING>;
-+				mboxes = <&ipcc IPCC_MPROC_SOCCP
-+						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-+				qcom,remote-pid = <19>;
-+				label = "soccp";
-+			};
-+		};
-+
- 		usb_hs_phy: phy@fa0000 {
- 			compatible = "qcom,glymur-m31-eusb2-phy",
- 				     "qcom,sm8750-m31-eusb2-phy";
+>  static const struct of_device_id qcom_pas_of_match[] = {
+>  	{ .compatible = "qcom,eliza-adsp-pas", .data = &sm8550_adsp_resource },
+> +	{ .compatible = "qcom,glymur-soccp-pas", .data = &glymur_soccp_resource },
 
--- 
-2.43.0
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
+>  	{ .compatible = "qcom,kaanapali-soccp-pas", .data = &kaanapali_soccp_resource },
+>  	{ .compatible = "qcom,milos-adsp-pas", .data = &sm8550_adsp_resource },
+>  	{ .compatible = "qcom,milos-cdsp-pas", .data = &milos_cdsp_resource },
+> 
+
+
+Best regards,
+Krzysztof
