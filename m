@@ -1,169 +1,164 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F94430CE5
-	for <linux-remoteproc@vger.kernel.org>; Mon,  6 Jul 2026 15:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783353481; cv=pass; b=jVzJ9ucalRYq7hUN0RJved4SwLFqdLbeYc8mgY+5zl5+J97gcZfll4QTPxwPRIaaWqhRZHgdKhRF4d/82Hv0hOHp5FkMAe2z/CW/mesZQ8ZWYCPKe4vFbw//SH8sU/FM+kS2Al1rOGZ0CbdskPE/fwuHf6uCCnlB/1veuscNVCs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783353481; c=relaxed/simple;
-	bh=gCs9HokUb+6ZMGzRlYcfJL9jBr5oqoU0ENUXdBhbWys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UoxfwRCADJwTwsSx9D8VPEir9A3ZzjUjQozN9JHZdEMyYVXM4W+9deCEoXXOSnMjg+RlSFpLtmQs2Iq/H0pPJFcluGNM4idDMe19VNqKems4o3FqzvteHfU+dctXz5X8+xZWtXij2LDsjTqtvjEtSpM8uUt5IqUnVAEay9Ol1u4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z+/eLfFN; arc=pass smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CB942F6ED
+	for <linux-remoteproc@vger.kernel.org>; Mon,  6 Jul 2026 15:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1783353601; cv=none; b=dX+JuQ5dKTfSQg9d19CX/IlzPKsLDbnSqm4aqEI6hruA3fyonInWq0rx2OBwCALTwLg4mxXBvNwu7gZJjoj1Zf4nf5yjzXr1IWn2qu4HHOi7fBi2Zt6Fp4JQt9waYs52d0acdRAsSb1kTlQGSTIrxTjlZET4l50Kyj1C5cL5Tbs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1783353601; c=relaxed/simple;
+	bh=hx9hFVRpS614H5BAyhPDMyQPp4NKocJkb05aPAhprV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kYHi8NtaszFXVf0HvUQ9WBwjArWZdyPYmVlVBcuwZ2f/8EBx3nTTT/b1U//K3/mGm24VvUxD4RYtKvK+2yfPXRNv85Xf0eNzTngcC60AEU2EaSsu4Ze5TkuuE3aMdao0KkEou9BQTq0dfxFj+fyu3XPT4sOwHCHOv5leca/PLf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EmOt1d4z; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=e/iDLJlf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z+/eLfFN"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-c126f9c9567so384958566b.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Jul 2026 08:57:59 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1783353478; cv=none;
-        d=google.com; s=arc-20260327;
-        b=BL2DhwHnPQP2sRo9lDHzLmcCVVPaTVTv6ZMrCF9S816r8XIhMIJxweESsrWgo2b7aa
-         cHe/FtGcUG55GVZkl62chr44PHt5ckrWu+n7I4GjxLYKK+/b1xeJGWGbaQlySlocKALA
-         vZVch5QaZ1tINJMBWEirS1OSBIl0tyPfEdsxBNMs2UU6uJq9TOWp4TAVKz9vy7HFOxuZ
-         Bd1eemdVgXEVy1H0kyerpgDE4+3uN6yUgBhkj0a89Hff4DNmoQfix23D7qbQ0mff0je2
-         A7BrxHV1YTFYq479L0FU5v5eR4KQ1nubxOQqGmQuqtmieJ8ZHR/fz4wd/w6U/FMoS7Z6
-         TW5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=lGxnHQcUvM+Wk9iuDAhV9iKJOnzCJXCRMoquKntthQc=;
-        fh=sRksV3uMnFIbCzzhklTpTI6f/RZIJdTluxqfgLi1OWk=;
-        b=OjJqGHOBri6S6wQSvi6Dxm3GvqF+lEpWTmug5xJz6pApvHOCnF4r2IyBWHrSrqRqm5
-         K1ZrYcUNfl2u7mfPvCZq62QFzdBvT8mNN5QG8PSIKXTa1xCMQqmw4FsQEJt4qX5JcXxZ
-         Ht+czZ04rwoFvomuViSIBq01hqJlJELAhgpDHDTDJMFozE2ZMN3ejlwcu3rAh/uw1lL0
-         5eYeQYZd8Sk5/gmlHGRBX5vXQVmzWnsifNcXOgv3ff4phU+EAogD7VCVV/jeHOq0XzGy
-         dhpgRewQHqosGo3YIkEElAcNYuADbPw/n91fYfkT4x/zNO+uInMEbBHKJ4T80FcIg69X
-         nZWQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EmOt1d4z";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="e/iDLJlf"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 666FF0kA825599
+	for <linux-remoteproc@vger.kernel.org>; Mon, 6 Jul 2026 15:59:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7l389H1fOTwZSkP2cKRpQJfFvQtVaFL+y7C5m61EiFU=; b=EmOt1d4zvYCEMKXn
+	PgJjgDRRZG8LwLCtni3y5WUAcFOwLe+/abXrYliwUq0Op8d//m/1Chm9/kez0v8i
+	buZExoeYovTt4zCeZwDh97lkTYH5A3OhjAe3miPujOBJ06WrjCd7gdz8k94pERVw
+	OqNT50N9Oc6FLlBHJ2BnhshkLSHy7+BYqhjWABfoKP7vIr0pRczeQs2dGDgsa9Ua
+	ZkDwoMkyGv/HTZWsTrvc3xnjN8O4y0aJWJVzVshOd+o4DUaiWbYNlqdjf0hMLwIH
+	64Q7xVArmGKZ/4/t+/zm3klnSa2ttaAAwoY5yX1avyStweGTtmZg9rmg7y0+tgL0
+	c6rh9w==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f88t8a0nh-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 06 Jul 2026 15:59:58 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-51bfa45b280so8779451cf.3
+        for <linux-remoteproc@vger.kernel.org>; Mon, 06 Jul 2026 08:59:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1783353478; x=1783958278; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lGxnHQcUvM+Wk9iuDAhV9iKJOnzCJXCRMoquKntthQc=;
-        b=Z+/eLfFN6xCQ/JXzVDa72FWOBSmvZ2SHuV4SdsDbvXjEyKc7QtkRbACuGnlZmMG1kS
-         21xIPFkDIo19WZWh4MCGa4sk2CXpayXD+H7uysfPymrkR11lVhaYQsy9vLo9bLKb8A6Y
-         J7RgKGvrNJf78fC8qhM7hy4ya+8hxs5TsxX7lhtYNglg6SzH2zpVinycyfn84YPIu6H5
-         s0TrKrmW0KzxtTjJuha8xi0nxCtR5aqldd/QyCQfIfdFotfXtR3TKSAdS6pRs9vAXOZm
-         d8f1EjuuZdwgNaLvS6tH4uHhS9ttCCosKo2FD8YrHuH4jO28GtDw3mVpSPdp8lR97Dso
-         z2ww==
+        d=oss.qualcomm.com; s=google; t=1783353597; x=1783958397; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7l389H1fOTwZSkP2cKRpQJfFvQtVaFL+y7C5m61EiFU=;
+        b=e/iDLJlfcER5ixMqjWEbZnOTeIqenw76t6N9wJ7gsRO3qIrNCytX6X4BF9rQwEfgaT
+         Fw3Rt22SM4bk04nIH9qWlNYJNwxJLRTj527kIR6RwcJBrGbfHDbMygTldGusT9ld15mP
+         5SlWR4dbEl34e8W3SN35gLDjPoZd/BqK0+lnOLXKDJfbQxIbWmbhHd9fvQO07DvkY6bF
+         4bju6ZKImdqnSRQMm1zoRRapsEMDS2TCGSgzP6P5wGbrpcyzoYGHe1uWlFt2iRRvG502
+         A+QcSdYENY1RwGeVOaaZt4adURGjCR5n9K3Og2kj/E2xFbp5F+FNDK+BrZgNqPzh6rsQ
+         x6kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783353478; x=1783958278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lGxnHQcUvM+Wk9iuDAhV9iKJOnzCJXCRMoquKntthQc=;
-        b=XHlnbAOslDmqoMnoarz+kELgaQSiLcWsVxpylmrK2fMkTr5PnnQKr21+F4P3BWWBwC
-         j87M2UVkj4GeUiiu7LNdjOGx947b36NqlqHzrY7zP6c5qgcSelvedvOJiuoeQa4DonIU
-         DPDVQVnzr1chPO417KcJPPYeelEBTxqXrEXUnyYILVUI4kYFooGvB2B6u1RhAt2/PYct
-         4TyLLYvn7vSi5PGPrgLm2ZsdAz6VPZQNnGFZ2P5oLIXD3Z8FPo1y3lLJ6pri/lbPowJQ
-         JfpxGI+r1QYjdo55vUBh0kP6/dWOAHa+tVFqlj1SbhO+evebeDoRoxRdkvIm6qlKUDk3
-         iYPA==
-X-Forwarded-Encrypted: i=1; AHgh+Roih6ZN8kijCGi/Qzt6yYbbReTLDQF8xhn2hJWPkwQEVfXWXnOQqJhmQB4uRaSBToWr3pmTQy+BMh3NJpwbNJSE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOcMdW9gz45OSzax6F6v/0MDP7AS6T5Urw9BAbBvyG5Tkx3WfS
-	qEIJ96Jsry9fEwTRm93Odg1uAUATcVFs45DWKQWR+Zq6uFsnQgSl6LMTZFkSeidgTMba4bb/+ku
-	pmADbZeBJBFLMKjpMwKRZEv0ZrP0EAFCB2RJtLq1IMA==
-X-Gm-Gg: AfdE7clCM8HIAxFiKtvSC6cPaxXSoKsKFnGos+ZBw6B4GaT73Ao+Aid8I5SwZUKPnXg
-	miRGyHb6cAfW1uZo1Ku3kwPUZvFaYGG2F5jArkqSbFRxDPOrg7Zi3hdD/mH/U7PR+YIUNmwItJb
-	SBwC3jkOhWeHJS0F1zFtfLoL12xUJ3+H1rHWcCZ0NMSjElPLSCERK7ps9Y/HEEe5q239qSbOJz+
-	UzgQciOk05T1Fh9IA9kEWRVxeo/16k/xwn0ECyVPvzre18I/4Q1TIwTBkmdnRPtlojWedBJqX0E
-	XefIhOch4jZzXlIWsxIl9Q5IAMfp
-X-Received: by 2002:a17:906:3ce:b0:c12:992b:16d4 with SMTP id
- a640c23a62f3a-c15a68cf56fmr47982566b.41.1783353478105; Mon, 06 Jul 2026
- 08:57:58 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1783353597; x=1783958397;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=7l389H1fOTwZSkP2cKRpQJfFvQtVaFL+y7C5m61EiFU=;
+        b=VzFlLUe1r/yNDCDuhG8pOIO91VE+6jES8tp4YiKstzZslm9Ttp9/2AXzGN/xJLOv/V
+         OkNObD0jPMF93U9bf9Nb3gJ0nwymXbtjTeF0vcRBurDHZQ5cxEVK8mwJOv4K8WMpbBDS
+         G9IjAxcundGd41gdyYHSy4hf0r0HVsGq94CTS6EWSK5OKpD5eapRD0OVk8YlQQa+xPrC
+         Ii1d3HgT20pPvdCZ1aFCsAbje0hTJL/qzyRX5i5LHlIPCGht1hVsvjzP7VaW7O05FVth
+         J5tb58MBulmyVAhVWIzZE+TSZVzCEseN0+XNbE5Jb5qXkMltSy00/yzRpdWnl5561dh0
+         vLXQ==
+X-Forwarded-Encrypted: i=1; AHgh+RpPswTDIbs9xy9qfCphRDJb58U57ohhQ5iOxoc36aH/21yRbJTR3EHx+JWxGrHXQnpVtJ4oHjyCqx4O43JBntER@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG5Ieh8dnEawJ0z5vDsjmTJSkfis/nfEMx0wUdRCR6pBK4RR/e
+	25v2yUf/laI0mcExr+l6PvH6jGkq/lSfCSHoMQic3uS9A64q7nbyVcGj8y5pzodlS2hp7Kct0kf
+	XqCK01Bhgv5Aeg/SyaOBvKxmxOXTA/Ixba7z2qW2GVlIrwe+UDToUmB6X38UeKxG8RspfuJKlaX
+	59o93g
+X-Gm-Gg: AfdE7cmwGdnLT8a/mg/5a6UxVfrd7dWZCvtIsU//bOsvL3ckPQ+DDHUUgSe+21pF21y
+	o9GIm9HfPINNYHbUfVXmuvPVMlyvTjXer5rzMzVfktmyFSyG95MxeFCx/eXh3Xdn1bf0++aWz5H
+	H6Fk/aF+0pw+wNQlcdj01fAz/QsesWHx40uv39HfSZFA4ciuEop9eUsor6nNrqXuoMIQZDkbsZU
+	Bpxr4vA2AsWOY9NZ/163YjQjNA7C7CbyzdXMW+5j4EHHD9HQ6axJonHpF6uNlsuWJly+WyCHqr5
+	zlQEVJCeIQK+SgCzJBO8Cjx2oZ16Nf1uZUOvjogmRcBiAKt1LPr6ho/+CpOs0wrgHV8rCyiL3OE
+	xVTrrg7Hk/+UsXXNSe562wwWpUo19y/jUiOg=
+X-Received: by 2002:ac8:7f93:0:b0:51a:8c9b:64a5 with SMTP id d75a77b69052e-51c4bf181ddmr100375201cf.9.1783353597322;
+        Mon, 06 Jul 2026 08:59:57 -0700 (PDT)
+X-Received: by 2002:ac8:7f93:0:b0:51a:8c9b:64a5 with SMTP id d75a77b69052e-51c4bf181ddmr100374851cf.9.1783353596808;
+        Mon, 06 Jul 2026 08:59:56 -0700 (PDT)
+Received: from [192.168.120.193] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c12b6091ba1sm771602066b.17.2026.07.06.08.59.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Jul 2026 08:59:55 -0700 (PDT)
+Message-ID: <dc99e50a-76ae-4f92-8eae-eedbbf39c58d@oss.qualcomm.com>
+Date: Mon, 6 Jul 2026 17:59:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com> <PAXPR04MB91855056638F0028BCC5F9EF89F12@PAXPR04MB9185.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB91855056638F0028BCC5F9EF89F12@PAXPR04MB9185.eurprd04.prod.outlook.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 6 Jul 2026 09:57:47 -0600
-X-Gm-Features: AVVi8CfCK8RZVsOnom89zz62dC_eh8WB0dnPwnnTYPsAfwJakdAft3ffWaiSkNg
-Message-ID: <CANLsYkxmf=QfNUe=BLrrP7kBtZKq2Z1BkQDLnzmcQsW-kYzTPQ@mail.gmail.com>
-Subject: Re: [PATCH v14 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
-To: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>, 
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, "b-padhi@ti.com" <b-padhi@ti.com>, 
-	Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] remoteproc: qcom_q6v5_mss: Fix MDM9607 subsystem
+ control instance ID
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20260706-qcom-q6v5-mss-mdm9607-ssctl-id-v1-0-f59e728af621@linaro.org>
+ <20260706-qcom-q6v5-mss-mdm9607-ssctl-id-v1-2-f59e728af621@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20260706-qcom-q6v5-mss-mdm9607-ssctl-id-v1-2-f59e728af621@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA2MDE2MiBTYWx0ZWRfX68q5yGcWltx7
+ D3h8M+kwq5KVr+mA+WC+ogBwrtYp/b0eRddw9XvK5gPgY3OyTHpS1q3UQYDn+J2KAZ9Y5oO6j7P
+ hfAWMakRFqUwcZXdSRkHUBZ7DIF1030=
+X-Proofpoint-GUID: OvhrvU_HCcW07FMx5EWWEs5liQGBKlUJ
+X-Authority-Analysis: v=2.4 cv=C6zZDwP+ c=1 sm=1 tr=0 ts=6a4bd0fe cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=NXwEpaCvRp95LVLdM_UA:9 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: OvhrvU_HCcW07FMx5EWWEs5liQGBKlUJ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA2MDE2MiBTYWx0ZWRfXwmxalneQg9cu
+ YzX+LYmitwOYggyIFDqqwrjsqCWMBHEYtI+KKtp5PK+9Cntt8LhoAW0nQR2K/rZghON6POfoEM3
+ kArBnhgOxqFhRW1MdvUoQ1VBedmD8M/wezB19uyHM72ZKGYS1mxBjAGz8vLGaSh4nbQNGPR0pi4
+ uwQd4uJJ4g40/YAEryHzYWSDRbFwe1EESArw/M06V4coZuznJysF+GdHlCQEEXjyX9mICezzRH7
+ t6bL/lUxVIksgUdZ0E11dRKl2CJWqJ7x3zO1+6oX1ZAUzqMC4FtOKl19ZfXVyfursedQR78CR/B
+ FaXBTIDuSXDQJXPRXwHEXaiG+nlzSLiPwdJe6kLMldU5kbq3GN0g/exykrXfqGM2GfM/jrMS7G6
+ Teu6yhIzaoUl50yuZRmhL0rbSelt/ZZ1R1zbzOvav+e8KvdanagwNguUbD8V+brdjYxod+4v9UY
+ TEeMcN0mbtJzVGO4uCg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-06_02,2026-07-06_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 clxscore=1015 spamscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607060162
 
-On Mon, 6 Jul 2026 at 09:40, Shenwei Wang (OSS)
-<shenwei.wang@oss.nxp.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Shenwei Wang (OSS)
-> > Sent: Thursday, June 25, 2026 10:55 AM
-> > To: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel=
-.org>;
-> > Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysz=
-tof
-> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjo=
-rn
-> > Andersson <andersson@kernel.org>; Mathieu Poirier
-> > <mathieu.poirier@linaro.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > <s.hauer@pengutronix.de>
-> > Cc: Shuah Khan <skhan@linuxfoundation.org>; linux-gpio@vger.kernel.org;=
- linux-
-> > doc@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix Kernel T=
-eam
-> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Shenwei
-> > Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
-> > devicetree@vger.kernel.org; linux-remoteproc@vger.kernel.org;
-> > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org; dl-linux-imx=
- <linux-
-> > imx@nxp.com>; Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>; b-
-> > padhi@ti.com; Andrew Lunn <andrew@lunn.ch>
-> > Subject: [PATCH v14 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
-> >
-> > From: Shenwei Wang <shenwei.wang@nxp.com>
-> >
-> > Support the remote devices on the remote processor via the RPMSG bus on=
- i.MX
-> > platform.
-> >
-> > Changes in v14:
-> >  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback.
->
-> Hi Mathieu,
->
-> Could you please let me know if you have any further comments on this ver=
-sion?
+On 7/6/26 5:37 PM, Stephan Gerhold wrote:
+> On MDM9607, the modem firmware exposes the QMI subsystem control service
+> with instance ID 0x22 (34), as visible e.g. with qrtr-lookup:
+> 
+>   $ qrtr-lookup
+>   Service Version Instance Node  Port
+>        43       2       34    3     1 Subsystem control service
+> 
+> Currently, qcom_q6v5_mss uses ssctl_id 0x12 for all platforms. The QMI
+> service never shows up with this ID, leading to the following error when
+> trying to shutdown the modem:
+> 
+>   qcom-q6v5-mss 4080000.remoteproc: timeout waiting for ssctl service
+> 
+> Set the correct ssctl_id to allow clean shutdown of the modem firmware with
+> the subsystem control service. ssctl_id 0x22 is also used by other
+> modem-only Qualcomm platforms in qcom_q6v5_pas, such as SDX55.
+> 
+> Fixes: 4fe236a1d024 ("remoteproc: qcom_q6v5_mss: Add MDM9607")
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
 
-I intend to review your patches but other people's work is ahead of yours.
+The downstream DT hasn't caught that.. but we can clearly see
+otherwise in the output of the command you provided
 
->
-> Thanks,
-> Shenwei
->
-> >  - Align the rpmsg-gpio driver with the revised gpio-rpmsg.rst.
-> >  - Modify rpmsg-core to enable prefix-based matching of RPMSG device ID=
-s.
-> >
-> > Changes in v13:
-> >  - drop the support for legacy NXP firmware.
-> >  - remove the fixed_up hooks from the rpmsg gpio driver.
-> >  - code cleanup.
-> >
->
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
