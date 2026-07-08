@@ -1,235 +1,201 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593DD3FFAAA
-	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Jul 2026 14:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C8642DA37
+	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Jul 2026 16:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783520717; cv=none; b=WxjPaFcFf8qimsxeY6E+lIkyBAxZ2H84nant9/s5hU9i2Wd8wkMfYl9jwle7JjVUddEpQZRwK8qNmHAqcbufPzi99bMUHAYUJ9TBdnnbnJLkcTU+321wW409jEdiTvMHpFQTvQrC/S43/lfB1jLD2dkVpCyufyvZLjoUQjjkf2o=
+	t=1783527825; cv=none; b=fWHRtgG5UNFACLaVX4yZilYduEw72yMl1jMgzWpyEbNUCytTAP4HDzqL/TdfKNckINkoJ8bVDpe/Pi5vLFBGleWZS2FW49zSYjGMbe//Eh+axZzcF9EcIDjFSHzbFtYL7yK30daBeaSqqFssUca2YdWgtTBtSCpRhD92jxgpLc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783520717; c=relaxed/simple;
-	bh=sSmsdnmJrwAPWW1KiyJRt8MCa+4Zum/gNQgF63z/D1o=;
+	s=arc-20240116; t=1783527825; c=relaxed/simple;
+	bh=8azP0Cijh1nnaagGzwRqUiPDjacYh/Giv4QUGa1YjZY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=azUMloxi4EVsGO+Gg+9bynTWJnAtxCsN8p0SOWFZP5X8BtN+W1l/fDNEO6PoyCgsEo3kec5gaL1I5u+T4cRPdu3zOSx9A4AZUj7AaAXgngpTlHKwYkq98j2E0/kMtzY5gzegNRWokMJ5zsNfQ9SeOQ8SALS+PEEEoDUGZJgrzx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PyP7HEO3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=dan5kR8T; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=s/O6iEKJ/WWLydqz7ymGsD6Qm0pYpynyiMTK4YZqW6+OTwFe+zvxeFajsB0RzgPRNRu04PYxs5UOKMuFKXPgsotfRzkLHY0bRk1IEc40xaTTysppd/HLbWvXS7rdPyESD/62B7DjOl2TF/qstz/9p6AD8EARHI0j9TYjiz49opw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NeFfCW/5; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PyP7HEO3";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="dan5kR8T"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 668C3iC82715598
-	for <linux-remoteproc@vger.kernel.org>; Wed, 8 Jul 2026 14:25:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GvPOfAqnErBt8ztKSYP7B2XU9RLRHl2bIpX+eaysQj4=; b=PyP7HEO3JF6XT+gG
-	EJuLTNmpvlkCRZfJUJSEB8ReOvor7VAA44TxaSxdLDVWeJhZ6vdU3jOojmVKBHtl
-	ks1eKw/63ND/vu+kjFJcAMFIQVKNeu62WpXECEAsV+Zx5uViAopvuE18Hue+ETs6
-	vSMurlyjcDwN+wwrH9JXxDvSlwPsxelBvAnh44CsYBtQIlnLvB6Vc4pq9JjgFEnb
-	B2REVAaXWJDnIJtMRZK9aa5158Eyen0EhQpPn7Sv2N+wEe9MlW745VtzHyXR3x8f
-	crwjvf1Bhs8ylRMHihreF1s8nJw2Wg7FZElD+gi2mcfUVv4Bio04PUNzn4lAMJl5
-	EttpbA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f95fd4vb2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 08 Jul 2026 14:25:14 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8f08560ea44so11067856d6.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Jul 2026 07:25:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NeFfCW/5"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2cc7e86e7aeso9833455ad.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Jul 2026 09:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783520713; x=1784125513; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=GvPOfAqnErBt8ztKSYP7B2XU9RLRHl2bIpX+eaysQj4=;
-        b=dan5kR8T6ByjDP4ZG+eaMSlY7jUlHNL12huGe3rrgMZjEpIHdYy694N5aMUjREoLtD
-         LfhlC4yVrq9a/XNVbbGx4Ax+K5RPwzgnOgOXkUEo8b/Zo48ekW33l6A/HYPXFuNXFvHC
-         bu3iJTxPlxPnqzHkgStBnDNzP9/wBB6i34THe/NFlFLJYre6XMFVQOFRqHbqJPd12tUV
-         uKXnSUeaix04NnvFC+Fv1/4a0hURX+VR/M+TZBTQQzsP2KOM4A2RM0bHEneeOs+SI5iR
-         Iayiowl926BXcOKrizkOjp8VIkAPr74J+JgjCptiSghkin4I91OxNtpXmBp5JkjUXk5P
-         Y53w==
+        d=linaro.org; s=google; t=1783527824; x=1784132624; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=MJyOd6fr7Ceor1quC3ITK7yhzshrFTskwqPW5tLgVUo=;
+        b=NeFfCW/5jHuCuALUsTeOA5DH52BkVTcpvarJm1mguF5Fk2/qJd6sBo8VmLz+QoxLwv
+         HVyHIWNkV2n/2medWI01pvhuGMQX5XKmhYfTV4LU9KWT3X8yiMl+s+QnXc4ekOw8eJjD
+         hH6ULsuaDGELEyJa3FOFcgBwraVmeTrv7HKjnrv0fovtCtz+AlgUphx0E9EyHP77S2cQ
+         gi/pXeLsHb992f7xLNiBhFlf5rxXksML950voh3rEzbgtcuxbg0Sy6glTdTTi+DGajSJ
+         u3dtUzvMXLMho/zFQhrE8R5DBq9HyAOqbZ9IzvBKAC0rF/b+WH5sPLRNYFiLGNXH39FQ
+         HARg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783520713; x=1784125513;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=GvPOfAqnErBt8ztKSYP7B2XU9RLRHl2bIpX+eaysQj4=;
-        b=PumTwUEFmUg42lAHa4y9WiumWCIAlNdT7YZPTpq0j+m4wfEJ/+A2PufiZ0N4PId/VH
-         o6EKmslqlqwwWypx0XKiKhvAND6nt2aMJ1pReW5jKjFLoUySrDgQX8K8nvbrHF0R/ZTl
-         4u5kxtZ9wNxexYbhZNSPBo1wfgV1c/BKgDXADmfVTgsWusjVSQp3qswsFDvvSn428EDI
-         vO6ReV0JEJibLlvL6+RFjKN7oN/spwLHjnnEpy03RC7CihR/FNHgS74g5uxi/CZ/3aCI
-         AbveE2pX6/8bssraGBIVDoAB4HQQ9gLtbc/Et6RnM/uvTyIOy2+7BtDV7zA5OUVp5TqV
-         SNGw==
-X-Forwarded-Encrypted: i=1; AHgh+Rr8qStWbEIPgjQ0Y4wgI2QS2UrFrrazATUOYk5uQzExJNBunlHAQKmdHePf2nAhA86x6VcQh1KsJrwTT6KeMMs9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQNmol1SydiZ/Y2cXfkKQYVA5y423G0AKwt09QVbDTPLSrtiPj
-	gfQybDrYc4st58RNy4TWvcVfPfOfo2jJQMexYZvQDri7b6q+2O8vFuM/94sjHrZ7TkMI42kAsXN
-	5PW4TcusBmJVeR27tkerze0SqBo5bjhrNUWN7u0FOoTBfeTSaEAfpw1uPkiBqqdm3AlezyO96
-X-Gm-Gg: AfdE7cntRbyhXwwEqID1CbNwrT7ABc8hmZGiacDc/9zrAtKN291m/y3PibtUPIOJNaB
-	rSVxs/t4efxph3t9TF4wavEYO2G1booqPPaWPOkSeFM3n6NnjFcSw2qeRUSOYeMgN5h9e9vJrme
-	KftWiEqWQnWXwuL41XJhPnax1KHqrq8rRUpWawxP7x1Kmv6GjXGNM/y/GtZuabLnIuIwe9NTogt
-	lUd+PeUA3gmJ0I7B37dbNa6E5wqyVcVv1lGiIL7d0JJIAMb9Kgf3eY1irhtRdMFgOuqKGlNbUm6
-	g06GZXuD4h0K4sQ7/yAvdP/PJQevjPJU0x+UCd1Zkr1pfBpf9OD/ZCbNmUUGetnLfr0yV69YsDh
-	+TaFSnopLj/D8CbrbJvQCMBd2WJ6PNBejeRCCvfdyqTzkUoO3aMpbsjlXS8cg0i1lDt9X3N1r1Z
-	6uPJmFc6Az6/A3oMrxv9EI3hgB
-X-Received: by 2002:a05:622a:1e1a:b0:51c:ecf:4eb3 with SMTP id d75a77b69052e-51c8b3cc299mr27193231cf.44.1783520713501;
-        Wed, 08 Jul 2026 07:25:13 -0700 (PDT)
-X-Received: by 2002:a05:622a:1e1a:b0:51c:ecf:4eb3 with SMTP id d75a77b69052e-51c8b3cc299mr27192631cf.44.1783520712722;
-        Wed, 08 Jul 2026 07:25:12 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5aed13c1c4dsm4527420e87.66.2026.07.08.07.25.10
+        d=1e100.net; s=20251104; t=1783527824; x=1784132624;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MJyOd6fr7Ceor1quC3ITK7yhzshrFTskwqPW5tLgVUo=;
+        b=GKrwQa5l5Q9lIZukJAaSXJ+E2PhaAPaYTKIse6rjMR9djLX/MkPzC8t7pEXlLOHSJX
+         a7cbrhDlpNJEfUl+mubrKCqLKsezyyUhxfNzs3fBJr09MxYrK2xWJaPN3Yrscpgk06ri
+         K9Sl87SrNnpB930k8/wJytzSARlFV9S7QhE5Vsb9LcTjgmSeyb4oTQW1kPTDF51MQzxG
+         8I+zJmdgi/pqmhahW4auW+mVH2KTbHLyC5wnbyhXDTV2TWaMHe9Lp/5TxabJDkXHz9zw
+         n0C/8FKzDknmQUNQUmwVplV6ngusKi1elddRCofRZ9m/OtCPxtrI7hUSJG8Z+JLC2dzz
+         TUrA==
+X-Forwarded-Encrypted: i=1; AHgh+RqHC3RwSp6TrY7FIulh2I81vHIz7m4AQMEEL8w0wsHTYA6WMyT6sKfPLaY8BcoSDzB6qDaPEIeC5eYgPGux6Z1Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0rMumbPBQW+dRBXVW6mWeF3ubBN6FjFP0Ja7uTQAXG8gKWTNj
+	V4QVrHVlTl9tqyeCTME4oMOAvJsMB6Um/kA/CrwktmPUKqWNj5VtF/RgW6Q9buu7J28=
+X-Gm-Gg: AfdE7ckPgo3GaSqC2aJOam2qfZQm6Xzi7Qs3RuXLOEVYMCPpy/eNeL7q/ge5Gny/xKn
+	8vEw6jMZt2WWVEDlgKA1kwfFfaGguVLaSk+oEJFmda4jUfPgTghG3NzJdLkxXfsZKKkAX+0WwRq
+	7UOMVH6UCiKsN3nkp66oYHC92eq6H6wonsrhyWXYWq+6PGZpTc/Q6ZybtGTfFU9hbXeORrXkDUO
+	sLgZyzHkGjdwA4hZeb3z96SjpTD3FmNZ0lGFCi0MN6DBxpHS58uqz3nJfky/5txjvFC5L+BIVdy
+	RjNmqIQIhrgK7AHbmlmaS/d1hL6TCOdlm8k0SCZ498RCMUzl/Ezj0R3ZaNdslTQudjxmc7R16Jb
+	p6ueAMUmap6hd0XYTT5QxcTKjZHPnEkoaV2ogB/PDTs5lPA4jcODcqsyotmS982GB1twFi1bHu0
+	Ffhd57rrHjrm6/90/D
+X-Received: by 2002:a17:902:c94e:b0:2ca:4cfd:a6df with SMTP id d9443c01a7336-2ccea45f347mr36685055ad.43.1783527823391;
+        Wed, 08 Jul 2026 09:23:43 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:da71:a4fe:1ac2:9750])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ccc9bdb73asm30310015ad.17.2026.07.08.09.23.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 07:25:11 -0700 (PDT)
-Date: Wed, 8 Jul 2026 17:25:09 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-Cc: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-hardening@vger.kernel.org,
-        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-Subject: Re: [PATCH v4 01/10] dt-bindings: firmware: qcom: tmd: add TMD
- device type constants
-Message-ID: <2tu35aavp7sc2npni33ky5bve57idzy3bzp2pk7eh5lryq3r4v@gmm3dhayu4cf>
-References: <20260703-qmi-tmd-v4-0-3882189c1f83@oss.qualcomm.com>
- <20260703-qmi-tmd-v4-1-3882189c1f83@oss.qualcomm.com>
- <977711ef-c1fb-4735-b82a-4ca2f4797f51@oss.qualcomm.com>
- <8ad14017-bce7-485e-9677-9cbf8ecb2742@oss.qualcomm.com>
- <yvggh2zs6qkuyuzvwydkecswnjoyba2d7t27br6xpk6d2csp53@i25g6okdktz5>
- <10a346d8-fbb1-4142-a650-507c3917b8f6@oss.qualcomm.com>
- <dv4n4ntnfvhouv23asgshgs7wcolkmqs7lbuni52maexo4s44x@4bqhf33x4fr6>
- <1aca8d60-8e39-4532-9095-a5260bba76ac@oss.qualcomm.com>
- <e7eho7ezujbrdzgumshapf2r7hu2jaujib7lvotrqvcj5er5ut@xpd6l2kgipqu>
- <9dc4b29e-e9fb-421a-b789-eb16a68ff915@oss.qualcomm.com>
+        Wed, 08 Jul 2026 09:23:42 -0700 (PDT)
+Date: Wed, 8 Jul 2026 10:23:40 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Michal Simek <michal.simek@amd.com>
+Cc: Ben Levinsky <ben.levinsky@amd.com>, andersson@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tanmay.shah@amd.com
+Subject: Re: [PATCH v4 2/2] remoteproc: add AMD BRAM-based remote processor
+ driver
+Message-ID: <ak55jBBfQMJ71Afj@p14s>
+References: <20260629164003.3940208-1-ben.levinsky@amd.com>
+ <20260629164003.3940208-3-ben.levinsky@amd.com>
+ <akfl1Uhn9QHRwE6n@p14s>
+ <30c8d353-f0ec-4ee2-bbaa-0d21e2b985f1@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9dc4b29e-e9fb-421a-b789-eb16a68ff915@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDE0MSBTYWx0ZWRfXyjXVz4qdpVuP
- Ql/ybWXK1+bH3V8ZQE6HVZ7SHkxRmzmAvh75N1wB5WfYPoYjGH/mZHXNQH2VketE0NUNnaeH7q8
- DNFmcpvj7BXVMqVSrvrHwxvtGdaAl8DOZS8kJgMmnDNhr6s/3/0Wr+0rg9n0jPXDb0/+5nfAUQj
- yz47CYsTC2kV7SniTSkNoEi3xbZyXdkEvw0khzYY+I4DTUQTCvbNsyVyyTJCWoOATzM5t2YLtSZ
- Sm1r6oxG5L2P0AGv1K9uqsULQjgERjWz156XE306/0P5TbqcBYsm/umEqNFHb3N16btUtZU/cf4
- zlPFXotw05N1FAUWI6zdgDG1FCRXOldX0AWriJioOGgOicOgxfGVuwVHrM8cPjMT3HKxg7pfTfN
- bnORuXyA2IjG2CDB39tbFI51B3q35jpoauMnP2FznIomb07xV1XDsvJL80OfLi/+tVV2XJW0U0i
- 6BWeKNX7EisMDSBUZig==
-X-Authority-Analysis: v=2.4 cv=VZLH+lp9 c=1 sm=1 tr=0 ts=6a4e5dca cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22 a=EUspDBNiAAAA:8
- a=DU7i0n-ryPtEfpeWOdgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22
-X-Proofpoint-ORIG-GUID: jiuWI9_INjU1FRWSMRh3LI-LlKx3eDOZ
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDE0MSBTYWx0ZWRfX83lfpmAqZlPb
- ZJ+/UiZ8ReY+1GfawEpMHjVEUvXgLfOEWTvQkDoVywW73HZULtbX8gk1r5N2unof08INco/uUoK
- +h+HIDcOikBwG7blOZrlMTSp5Yx9N6I=
-X-Proofpoint-GUID: jiuWI9_INjU1FRWSMRh3LI-LlKx3eDOZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-08_02,2026-07-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0 clxscore=1015
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607080141
+In-Reply-To: <30c8d353-f0ec-4ee2-bbaa-0d21e2b985f1@amd.com>
 
-On Tue, Jul 07, 2026 at 03:55:13PM +0530, Gaurav Kohli wrote:
+On Tue, Jul 07, 2026 at 10:59:55AM +0200, Michal Simek wrote:
 > 
 > 
-> On 7/7/2026 1:04 AM, Dmitry Baryshkov wrote:
-> > On Mon, Jul 06, 2026 at 08:11:35PM +0200, Daniel Lezcano wrote:
-> > > On 7/6/26 19:47, Dmitry Baryshkov wrote:
-> > > > On Mon, Jul 06, 2026 at 07:03:18PM +0200, Daniel Lezcano wrote:
-> > > > > On 7/3/26 17:42, Dmitry Baryshkov wrote:
-> > > > > > On Fri, Jul 03, 2026 at 07:43:39PM +0530, Gaurav Kohli wrote:
-> > > > > > > 
-> > > > > > > 
-> > > > > > > On 7/3/2026 1:23 PM, Konrad Dybcio wrote:
-> > > > > > > > On 7/3/26 7:03 AM, Gaurav Kohli wrote:
-> > > > > > > > > Add Device Tree binding constants for Qualcomm Thermal Mitigation
-> > > > > > > > > Device (TMD) types used by remoteproc-backed thermal cooling devices.
-> > > > > > > > > 
-> > > > > > > > > Qualcomm remote processors expose thermal mitigation endpoints
-> > > > > > > > > through QMI. These endpoints can be registered with the thermal
-> > > > > > > > > framework via the `#cooling-cells` property on the remoteproc node.
-> > > > > > > > > 
-> > > > > > > > > The QMI TMD protocol identifies devices using string names (for example,
-> > > > > > > > > "pa", "modem", and "cdsp_sw"), while the DT cooling-device binding with
-> > > > > > > > > `#cooling-cells = <3>` requires numeric device id in the form:
-> > > > > > > > > 
-> > > > > > > > >       <&phandle device_id min_state max_state>
-> > > > > > > > > 
-> > > > > > > > > Define common TMD device index constants shared across currently
-> > > > > > > > > supported platforms. If a future target requires a different mapping,
-> > > > > > > > > additional target-specific constants can be introduced while preserving
-> > > > > > > > > existing DT ABI.
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-> > > 
-> > > [ ... ]
-> > > 
-> > > > > > Why are you using only those TMD devices?
-> > > > > > 
-> > > > > > > More constants can be added as needed.
-> > > > > > 
-> > > > > > Kodiak is one of the supported platforms.
-> > > > > 
-> > > > > What would be the benefit of having more than thirteen cooling devices
-> > > > > declared in the thermal framework and having only a couple of them mapped in
-> > > > > a thermal zone ?
-> > > > > 
-> > > > > I agree there are more TMDs but if they are unused for the moment, why do we
-> > > > > need to add them ? Can we do that incrementally ?
-> > > > 
-> > > > That's what I am trying to understand: why the implementation uses only
-> > > > the selected two devices, if the modem on Kodiak supports others. How
-> > > > can we find out, which TMDs to use on other devices.
-> > > 
-> > > My understanding is that is an initial thermal setup. Gaurav will add them
-> > > step by step while setting up all the thermal zones instead of sending a big
-> > > patchset. And TBH, that will be much easier to review.
+> On 7/3/26 18:39, Mathieu Poirier wrote:
+> > Hi Ben,
 > > 
-> > In such a case it should be noted in the commit message and/or cover
-> > letter.
-> 
-> Thanks for the review/guidance. Not all TMD endpoints are relevant for
-> kernel thermal zone binding — some like BCL and cold temperature are handled
-> from userspace when needed. The constants here cover only
-
-What if there is no userspace? Or the userspace is different from what
-you expect? I doubt we have TMD-speaking userspace yet.
-
-> what is needed for modem and CDSP thermal zones on the currently posted
-> targets.
-
-Again, SLPI, ADSP?
-
-> 
-> Will add a note in the cover letter clarifying for current tmd's.
-> Please let me if this is fine.
-> 
+> > On Mon, Jun 29, 2026 at 09:40:03AM -0700, Ben Levinsky wrote:
+> > > Add a remoteproc driver for AMD soft-core processor subsystems
+> > > instantiated in programmable logic and using dual-port BRAM for
+> > > firmware storage and execution.
+> > > 
+> > > The driver parses the firmware memory window from the remoteproc device
+> > > node's reg property, interprets that address and size in the
+> > > processor-local address space, and then uses standard devicetree
+> > > address translation through the parent bus ranges property to obtain
+> > > the corresponding Linux-visible system physical address.
+> > > 
+> > > The resulting translated region is registered as the executable
+> > > remoteproc carveout and coredump segment.
+> > > 
+> > > The processor is controlled through an active-low reset GPIO and a
+> > > subsystem clock. The clock is enabled before reset is released, and the
+> > > processor is kept in reset until firmware loading completes.
+> > > 
+> > > The firmware-name property is optional, allowing firmware to be
+> > > assigned later through the remoteproc framework. Firmware images
+> > > without a resource table are also accepted.
+> > > 
+> > > Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+> > > ---
+> > >   drivers/remoteproc/Kconfig          |  11 ++
+> > >   drivers/remoteproc/Makefile         |   1 +
+> > >   drivers/remoteproc/amd_bram_rproc.c | 213 ++++++++++++++++++++++++++++
+> > >   3 files changed, 225 insertions(+)
+> > >   create mode 100644 drivers/remoteproc/amd_bram_rproc.c
+> > > 
+> > > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> > > index c521c744e7db..58fa566b609f 100644
+> > > --- a/drivers/remoteproc/Kconfig
+> > > +++ b/drivers/remoteproc/Kconfig
+> > > @@ -23,6 +23,17 @@ config REMOTEPROC_CDEV
+> > >   	  It's safe to say N if you don't want to use this interface.
+> > > +config AMD_BRAM_REMOTEPROC
+> > > +	tristate "AMD BRAM-based remoteproc support"
+> > > +	depends on OF && COMMON_CLK && (GPIOLIB || COMPILE_TEST)
+> > > +	help
+> > > +	  Say y or m here to support a BRAM-based remote processor managed
+> > > +	  through the remoteproc framework.
+> > > +
+> > > +	  The processor is controlled through a reset GPIO and clock.
+> > > +
 > > 
+> > This last sentence doesn't belong here - please remove.
 > > 
+> > Looking at the bindings and this Kconfig I wonder why the emphasis of the naming
+> > convention, i.e "BRAM-based remoteproc" is placed on the kind of memory the
+> > remote processor is connected to rather than the remote processor itself.
+> > 
+> > Wouldn't it be better to have something like "AMD MicroBlaze/V remote
+> > processor"?  What happens when we get another AMD softcore that is completely
+> > different than MicroBlaze/V that is also connected to the same type of memory?
+> > 
+> > I'm good with the implemenation, I just wonder about the name...
+> 
+> We started with very generic amd,bram-proc compatible string and then based
+> on discussion
+> https://lore.kernel.org/all/20260427162703.1644103-2-ben.levinsky@amd.com/
+
+Thanks for the link, it provides useful context.
+
+> we got recommendation to treat is as soc specific instead of generic.
+> Which give us back to origin point if driver should be more soc specific or not.
+> 
+> I think no issue with AMD prefix.
+
+Agreed.
+
+> 
+> BRAM - that's technology used for access. And I see value in symbol to state
+> it because access to different memory can be done differently too.
 > 
 
--- 
-With best wishes
-Dmitry
+Agreed.
+
+> Shouldn't be there any soc string? This is for zynqmp, versal* SOCs that's
+> why hard to choose which one.
+> 
+
+Why not just adding a Zynqmp somewhere in there?  But admittedly, the relation
+between Zynqmp and MicroBlaze/V is unknown to me.
+
+> The driver is written in very generic way that if there is arm, mips, ppc,
+> different risc-v or others access will be the same. Our primary target is
+> obviously MicroBlaze/V and I don't think it is a problem to change
+> description to just reference them even it is technically possible to
+> connect different cpus too.
+> 
+> Is this enough?
+> 
+> -	tristate "AMD BRAM-based remoteproc support"
+> +	tristate "AMD MicroBlaze/V BRAM-based remoteproc support"
+
+Yes, that would be just fine. "AMD Zynqmp BRAM-based remoteproc support" would
+also work.
+
+> 
+> Are you fine with AMD_BRAM_REMOTEPROC symbol name?
+
+AMD_MBV_BRAM_REMOTEPROC or AMD_ZQ_BRAM_REMOTEPROC
+
+I'm good with anything that is slightly more descriptive, just pick the one that
+makes the most sense.  
+
+> 
+> Thanks,
+> Michal
