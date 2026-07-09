@@ -1,259 +1,194 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422613DDB0E
-	for <linux-remoteproc@vger.kernel.org>; Thu,  9 Jul 2026 07:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE2F340419
+	for <linux-remoteproc@vger.kernel.org>; Thu,  9 Jul 2026 08:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783583918; cv=none; b=N5KYxJA+taXOzOrWCGDtVs9IUJtmXEHek8ICS3aQlgiwO+G5wTLkzxW/k/v+rcJNu7qCkYJmquATjZ5CBXFvka0BfZr4R0z026Q7Q142WRqykGnDC3W0BIrDS2v3ElzZUcKUbJMrx4Lo9EbDrFo2tJqqbiDMBa6fMjhkXZCM1Pg=
+	t=1783584979; cv=none; b=JeUmch6hZCxAC9211ohwbr7PEfFWo3aBInGgCOrzKdmd7T3l44WUGDtpngI6aRAI0eNZTqmwmMrv8qluW/bJT1W1j8EmO8OOhbhOO7qrCL7jZx77Vzz23M5JGN5TOqtdUCe6tuZFLYe3p1lvOc+iBTaN7qUr3tcoXXXMdL/yIa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783583918; c=relaxed/simple;
-	bh=CRMMeKMYr/uFkbFihLtIDhSkzHmLcV1nUBdzd1/G2T4=;
+	s=arc-20240116; t=1783584979; c=relaxed/simple;
+	bh=vMvzVDyhwRVZ9mU/uGek2iqLm5M9Oc3aOzpsUrM1kxM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5LbC/XcPcRo0fDaiK2Bc5JQs5EQCUsbYOilFYZArFsSO6LOT14BsRghpvYrNOJyRTZCPRm7OK4+PQMmFnM02Q2aVHE0MUIEIYk5BFBnMOgfbfpTc9bkbawASOxs6c8Wft/fNprPFGR0NSgnAcZ3uP2HrQSj4CeFBa9BCB4Ax/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UQpqkWK8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MArVtA5i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBneuLA8DOwefoUOmM1dHS2a1ZsZYUs30Tc6Uo1HU4R19dHfv7ww02jHNu2b/OsM9UAL3zOx5kSrZpelYEr1R16UsN7JwqsuP45Rn6TWXhAUsqGr5PPzF/F7UvDWeKun1CJXDm5VtnReo+fNNp8TffL+Vw23KIdKJ4kCOme2++Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BvFrVRoe; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UQpqkWK8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MArVtA5i"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66960HoK749755
-	for <linux-remoteproc@vger.kernel.org>; Thu, 9 Jul 2026 07:58:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6wdOtbgBM/5Qv1dBByCOfeS0K8UvhwHlRKLvCJbRTSQ=; b=UQpqkWK8LYeS2fez
-	0r0MQIMp2KhwUUdw6mBqJ3xpU5R50LgaOAAXL4Q9+cWoSeBRvS6UytRQkPQC1GP/
-	e1p10P+I5qowIhEljqLRuK7q8BLF/TQsZqtrO89BfRB2sjB17/s2sNNp3WYiCPBv
-	ocVOw8xZ8lG+uqoiA61R16GgwCmt2Fi7lms/Wqhmw0kuzcp6lDulXtIYgXe66le1
-	Qi5RZWN1VbKuH4hBchk9Pk4MycGkzAhP5RMQzS3hcNRvSmiHKIKsXWXV80MqqOyN
-	AeS+kwCMdFudC0cD51m39hnXZB7gHHO3llWb5tPSDCV/qpPTc4t3lB/6anc4cal9
-	LQl0gQ==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9wwft0kn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 09 Jul 2026 07:58:36 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-744e7c36621so392705137.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Jul 2026 00:58:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BvFrVRoe"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-493b61b52b6so14769455e9.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 09 Jul 2026 01:16:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783583915; x=1784188715; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=6wdOtbgBM/5Qv1dBByCOfeS0K8UvhwHlRKLvCJbRTSQ=;
-        b=MArVtA5icLsumrMiJHcS0yEIPcLVtNNU5TLEXqRuNZX9oEHKGx5dij0slGvJPQvo4N
-         7vE7izUXWhAK5tK4QFBYofg7Dt0MA5sYhY1oh2qqdMuHtJMbdr/lLOZ1Fd+o/DGAGXAP
-         Yz+0qHpiFhZUBqn72T535ViaE3faqRAiH6uyg6IW1aY+YIwZ28+kp6zS4JTF9h5v7J+3
-         KtXqpDGHGyEBL/OumBH36kexEJy9ndtub/nq00V3Vbtc/gxVQfJWpth8FORWExGcN6/B
-         vxyB5JCHtWxNTNQUC1UNH1gJgKyWm1SiU9sX9aIhDndQaCCI0Q/KeHCOZxUOvgx2liEX
-         no3w==
+        d=suse.com; s=google; t=1783584976; x=1784189776; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=z+CFlNGgVOBUKoyPjKhrOhvumBe76lgJlilpAZoLH+g=;
+        b=BvFrVRoeLdX9K67kasMhrWS3/kUZ3sUPj+VTdiYOPJrmUJ2OVcYURmwa5PSTGOl80p
+         EKMqIJlyhLMJIDKcjk/Uupo22TEgpkVnjJ3miA+2E6zuDJECj4soGqwzKsL0HzzQUH4c
+         kmSzGWLSqlgnxW9Kig//yvcbRE58E7qwLWaM70bo6Y8pu6+BQMQtY6J1ytMSDWQIHRYk
+         BhSVn9FzF8ZLqhxyoL+F20K+CvCwkYwbkpIRWa3zP6tf04lYKxrWcOk0koGiilHLjWyh
+         0/xUZkcbeb1xgpVL7F6EvzAeQHxKAf+g5kby0g8tvIK6H0+8v+A32sHsdg2XmTJ6iuSL
+         jnKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783583915; x=1784188715;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=6wdOtbgBM/5Qv1dBByCOfeS0K8UvhwHlRKLvCJbRTSQ=;
-        b=YobDw022XekCYz3rsdOmfa0AMsXat66NRccZUBQo5a17WX+mAtyhdw/j2k41RKV9li
-         S7YxC61k+9GOfcaCTQ1VQjEy3QA0OKKGIMKD5CEDJM3ODR8KnectA1GCN+V3o7wHxNBG
-         jhkRw2zvhoEJVND0k+/f3Gmh8gXBHaBJLsW7NFJ1AUC+h+lwMlEsXMj0eNWLlbybpu+O
-         bKieNw/REKwqpZp2bJ7eFW7gcvsu6v/WzlGUPKH78siRb6U9H+wumbUTSXMcSmkBqi8P
-         +rkdCWRCTkg2qIto3Ve1WGEe+PLagToY9Kyi8F610t6UeVfbwGEDeDj0MsLJ+/fOH6Uc
-         /4Qg==
-X-Forwarded-Encrypted: i=1; AHgh+RqnhAsnjm1JKkoK5XEixumONdVVkvSmdpzsP6ukh5MFHVc4hoLL1NHBGrsE31/7KS1NM1t2gRU+QFLSodFT55v3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyNks5Hsg0N5I2uIBoiWmaWrjf/94KEKTj1OI7qxfmAHGfi4ET
-	5rznHVjJbTDULCaxyaTOn0/zo7F5MUExLlVbHXlxfwrxnsDVp9N6JV5LVOa6fqatEoxecNNFIm1
-	GHIoCTEkm5kOsUJwWvJFNV7aKpmaTVIzu9494oWlzl8YlUsdwrdUX+m1H864eXF5X5NfI6t2c
-X-Gm-Gg: AfdE7clKr0ml0eMTOcAww08mWxEbNm7V2/adkqTqLQrlzWZdV4rT86K7593nA+dUP+L
-	N9YvrxT6RuA589ntk4wm/YhmZ5L5oQfuIbLiQUQd/zjqpwNETKucNAA4uEXTh6lXLfsa3Ii80eD
-	jKC+6PT+lDqZ1EDVMjI5CBhZCTXp+0088lcTFF7exhCGZe1eVrOprDI1oMk8Rlj10Dh+nwMJBZL
-	CTGPYLD3BW7RcnfiZiKCedtfTXHXMQvhDYhxyqX2+YN2eVnE7cdr1JljPuZ3Iy3m5YsAIalvK8Z
-	F/UQ32yBK83ThRKOPQD/bAQvm9iXY7hXQaucYOIgBS0v9fpM2JmL02ccFpOu8fgwuSY7yFwxgDm
-	bOCnAqxCx2K1+5mAasb/gRotnsdGjJshsXHeA5cDqQr8bpU5F7mAz1h5ZSJpK/guK7v7dHRNys+
-	2LM/0gkw7dZlHmiBHUL9h07wX8
-X-Received: by 2002:a05:6102:c0f:b0:739:626d:4473 with SMTP id ada2fe7eead31-744dfbf230bmr3721770137.0.1783583915241;
-        Thu, 09 Jul 2026 00:58:35 -0700 (PDT)
-X-Received: by 2002:a05:6102:c0f:b0:739:626d:4473 with SMTP id ada2fe7eead31-744dfbf230bmr3721735137.0.1783583914774;
-        Thu, 09 Jul 2026 00:58:34 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b007f68765sm2199158e87.10.2026.07.09.00.58.33
+        d=1e100.net; s=20251104; t=1783584976; x=1784189776;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=z+CFlNGgVOBUKoyPjKhrOhvumBe76lgJlilpAZoLH+g=;
+        b=s1o/RvEmChtSx7ko63uYUOz0aSj/FYsxT/WKqZu2pDWOSwgU/ebofmPVk/oueGKXUL
+         5WNbSBzrhZcQjfQA3MpVL9q7F1/OCVEczrpJ/gUp+mCdnzHnEyv+bTHFkC34JIpBGG1n
+         J2WUKJ+yCGc+zqbQdiwTHWQgl7JTMijAszri9Ja0DcDyxyrUoK46sYC+7fHUTTOauj8B
+         hi3axxHfEsyJ0PdOYYg6y8PRGViuLDqAEMil2KC1/ChfnjJgl2W6eg8oADXguun9NFOA
+         G3BC9KScOFgCAQouMlLJ5pQFlBQmE1tOOkIbAI5rzn7MgvGE5IA9SaUogLg91tgy2yL6
+         yqYQ==
+X-Forwarded-Encrypted: i=1; AHgh+RouaGGaJ2B+rgHDL4kMbMc5QoNyTnyT4uuI491xGgJhc+fXbU5C0f7tZcl2iDOHve+8s/HEA/If+JIYHfj25/R5@vger.kernel.org
+X-Gm-Message-State: AOJu0YztOPmVo70kZAjVUOp3MewTTAmY/jZkGYY56v3QOWUSTnhdfxAX
+	DEJjZJSw45oOmVtsdFLHUHPCCqNBevvUdFNPWXGdGWAyZRMFKna2p/bvGPkZhZTW2Vk=
+X-Gm-Gg: AfdE7cmDyGFtDKmxxrEui0xtAEjyR9AoTxp/lAbawCzqTzHt9BTLWXZMHB0vk/rQbDd
+	DsFY5fvH0OaV+mlJNjCjDt6hEwtQ1mEvyZMK3Ual4r2b1XEWlyfurFcO1rDtOGGQxyT7tAnCUTk
+	waPkmv/DAeq5VJLqWVklNmrZEMybfBT6/zyDQpt8KRa50kcC0ZXS/gCEg7B2OWiYSIWAA3dqmDB
+	QUGoGcpGRKAQbySqElE+wbTdAfuOdweaIYDDT3yAG0bR4Ez6tuckNq30nlLAe/IY5GNiBodDvrT
+	AeeBqOJLnKRCiouKHWqnAhub2Y+hr+XPUrvH5DbpAX6G+rfLIOPw2nBKcvwRJA3D6Y4pMsfpqaQ
+	tpA89JAWWyA+IHeew+/5/I7kuBQen7qGu5f1Acn48ljvYww1Xn1kriPAUqDDeDvV2zI68WGU2OR
+	ecS8Wsb1h5fDgOHtM=
+X-Received: by 2002:a05:600c:1d1e:b0:492:7084:32af with SMTP id 5b1f17b1804b1-493e68bf03amr56205565e9.23.1783584976164;
+        Thu, 09 Jul 2026 01:16:16 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-493ee2bcac0sm20177645e9.0.2026.07.09.01.16.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2026 00:58:33 -0700 (PDT)
-Date: Thu, 9 Jul 2026 10:58:31 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>
-Cc: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-hardening@vger.kernel.org,
-        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-Subject: Re: [PATCH v4 01/10] dt-bindings: firmware: qcom: tmd: add TMD
- device type constants
-Message-ID: <d7dqqj3qctbqdani5frdwpooppo2sq5odru6s4hxoj6d42sihb@fad3nuhunazt>
-References: <yvggh2zs6qkuyuzvwydkecswnjoyba2d7t27br6xpk6d2csp53@i25g6okdktz5>
- <10a346d8-fbb1-4142-a650-507c3917b8f6@oss.qualcomm.com>
- <dv4n4ntnfvhouv23asgshgs7wcolkmqs7lbuni52maexo4s44x@4bqhf33x4fr6>
- <1aca8d60-8e39-4532-9095-a5260bba76ac@oss.qualcomm.com>
- <e7eho7ezujbrdzgumshapf2r7hu2jaujib7lvotrqvcj5er5ut@xpd6l2kgipqu>
- <9dc4b29e-e9fb-421a-b789-eb16a68ff915@oss.qualcomm.com>
- <2tu35aavp7sc2npni33ky5bve57idzy3bzp2pk7eh5lryq3r4v@gmm3dhayu4cf>
- <6f179f96-fdd1-4fa9-b26c-df7372eb6d20@oss.qualcomm.com>
- <tq3g6lpb2go4nen3ferx7kzs5g6sshc45ayfyvhjmc3rv3jv7p@fhixqlwbtooa>
- <54250163-678f-41e7-97d0-6596123367f1@oss.qualcomm.com>
+        Thu, 09 Jul 2026 01:16:15 -0700 (PDT)
+Date: Thu, 9 Jul 2026 10:16:12 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Lorenzo Stoakes <ljs@kernel.org>
+Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Eugen Hristev <ehristev@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@gentwo.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	David Hildenbrand <david@kernel.org>,
+	"Liam R. Howlett" <liam@infradead.org>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+	Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <baoquan.he@linux.dev>,
+	Barry Song <baohua@kernel.org>,
+	Youngjun Park <youngjun.park@lge.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@kernel.org>, workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 21/26] printk: Register information into meminspect
+Message-ID: <ak9YzK_Puejpg_du@pathway.suse.cz>
+References: <20260708-meminspect-v3-v3-0-7aa5a0a74d5c@oss.qualcomm.com>
+ <20260708-meminspect-v3-v3-21-7aa5a0a74d5c@oss.qualcomm.com>
+ <ak4Cr5GEMdo8xWqu@lucifer>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <54250163-678f-41e7-97d0-6596123367f1@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA5MDA3NCBTYWx0ZWRfX3FO1eoBLoxw6
- gXmrvi6HMGX1roETW4Sqh16hhgxLIniwoc/NIWmlRIohSODYeux9bSL04wHhKMTBTxOrj4lHLNH
- C6UlFcEYWALFYtEunlw2v+LnNZiOLdwIn10cZc/IrEB6hc20WiVr/oqIBm2QFk/K1a0ykJ9Jnu1
- WukdT9tWCmqD9laU6FW5AFjypGZRaCIBgjkYqYUYnWjfGnBDFzJQL0nEP2anSSW0Vj+z3O8Zgc1
- B3v7Sm2M6KNcTlrcGG6SDw42v2UB9gLr4c6CuVerAoObQ49sJAzdE31IEN3cv3KXtEaqINsxojo
- 4WtzhJQ30g3nzUKwTJcd9EiLqfVIZtCpVoHDk5FMCbBRHJ0tsh46iFyTYTKwpqSrSnMF6nCL0jG
- fn/oCkK16o5T4K4tIQJBHyZ4swOoReuWF2386/8kckOvWHc1SgqCH44tdmtJpwkkBBu6RP33V20
- C7P2OfpUI4UWe2GI49w==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA5MDA3NCBTYWx0ZWRfXxiFbAw2F/O9z
- JQqxRLBXrscM1uyObOFrrwm4ZGFkLCJqY2SRykYd9+So12NkZy1yGF0m+D5qMuuuxuZfx3VK/6Y
- sMY0Uyt7xoSqBO1kWG8ZhID23AKZLCI=
-X-Proofpoint-ORIG-GUID: rltg53IkT51I-3Q6xpW9cmEQwZJknPTt
-X-Proofpoint-GUID: rltg53IkT51I-3Q6xpW9cmEQwZJknPTt
-X-Authority-Analysis: v=2.4 cv=Krh9H2WN c=1 sm=1 tr=0 ts=6a4f54ac cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22 a=NEAV23lmAAAA:8
- a=EUspDBNiAAAA:8 a=eKure5Gis9_f7ihs6EMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=crWF4MFLhNY0qMRaF8an:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-09_01,2026-07-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0 bulkscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607090074
+In-Reply-To: <ak4Cr5GEMdo8xWqu@lucifer>
 
-On Thu, Jul 09, 2026 at 09:42:04AM +0200, Daniel Lezcano wrote:
+On Wed 2026-07-08 08:59:26, Lorenzo Stoakes wrote:
+> On Wed, Jul 08, 2026 at 11:02:00AM +0530, Mukesh Ojha wrote:
+> > Annotate vital static, dynamic information into meminspect for debugging
+> >
+> > Static:
+> >  - prb_descs
+> >  - prb_infos
+> >  - prb
+> >  - prb_data
+> >  - clear_seq
+> >  - printk_rb_static
+> >  - printk_rb_dynamic
+> >
+> > Dynamic:
+> >  - new_descs
+> >  - new_infos
+> >  - new_log_buf
+> >
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -49,6 +49,7 @@
+> >  #include <linux/sched/debug.h>
+> >  #include <linux/sched/task_stack.h>
+> >  #include <linux/panic.h>
+> > +#include <linux/meminspect.h>
+> >
+> >  #include <linux/uaccess.h>
+> >  #include <asm/sections.h>
+> > @@ -518,10 +519,17 @@ static u32 log_buf_len = __LOG_BUF_LEN;
+> >  #endif
+> >  _DEFINE_PRINTKRB(printk_rb_static, CONFIG_LOG_BUF_SHIFT - PRB_AVGBITS,
+> >  		 PRB_AVGBITS, &__log_buf[0]);
+> > +MEMINSPECT_NAMED_ENTRY(prb_descs, _printk_rb_static_descs);
+> > +MEMINSPECT_NAMED_ENTRY(prb_infos, _printk_rb_static_infos);
+> > +MEMINSPECT_NAMED_ENTRY(prb_data, __log_buf);
+> > +MEMINSPECT_SIMPLE_ENTRY(printk_rb_static);
+> >
+> >  static struct printk_ringbuffer printk_rb_dynamic;
+> > +MEMINSPECT_SIMPLE_ENTRY(printk_rb_dynamic);
+> >
+> >  struct printk_ringbuffer *prb = &printk_rb_static;
+> > +MEMINSPECT_SIMPLE_ENTRY(prb);
+> > +MEMINSPECT_SIMPLE_ENTRY(clear_seq);
+> >
+> >  /*
+> >   * We cannot access per-CPU data (e.g. per-CPU flush irq_work) before
+> > @@ -1238,6 +1246,10 @@ void __init setup_log_buf(int early)
+> >
+> >  	local_irq_restore(flags);
+> >
+> > +	meminspect_lock_register_va(new_log_buf, new_log_buf_len);
+> > +	meminspect_lock_register_va(new_descs, new_descs_size);
+> > +	meminspect_lock_register_va(new_infos, new_infos_size);
+> > +
+> >  	/*
+> >  	 * Copy any remaining messages that might have appeared from
+> >  	 * NMI context after copying but before switching to the
 > 
-> 
-> Le 09/07/2026 à 09:37, Dmitry Baryshkov a écrit :
-> > On Thu, Jul 09, 2026 at 10:54:26AM +0530, Gaurav Kohli wrote:
-> > > 
-> > > 
-> > > On 7/8/2026 7:55 PM, Dmitry Baryshkov wrote:
-> > > > On Tue, Jul 07, 2026 at 03:55:13PM +0530, Gaurav Kohli wrote:
-> > > > > 
-> > > > > 
-> > > > > On 7/7/2026 1:04 AM, Dmitry Baryshkov wrote:
-> > > > > > On Mon, Jul 06, 2026 at 08:11:35PM +0200, Daniel Lezcano wrote:
-> > > > > > > On 7/6/26 19:47, Dmitry Baryshkov wrote:
-> > > > > > > > On Mon, Jul 06, 2026 at 07:03:18PM +0200, Daniel Lezcano wrote:
-> > > > > > > > > On 7/3/26 17:42, Dmitry Baryshkov wrote:
-> > > > > > > > > > On Fri, Jul 03, 2026 at 07:43:39PM +0530, Gaurav Kohli wrote:
-> > > > > > > > > > > 
-> > > > > > > > > > > 
-> > > > > > > > > > > On 7/3/2026 1:23 PM, Konrad Dybcio wrote:
-> > > > > > > > > > > > On 7/3/26 7:03 AM, Gaurav Kohli wrote:
-> > > > > > > > > > > > > Add Device Tree binding constants for Qualcomm Thermal Mitigation
-> > > > > > > > > > > > > Device (TMD) types used by remoteproc-backed thermal cooling devices.
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > Qualcomm remote processors expose thermal mitigation endpoints
-> > > > > > > > > > > > > through QMI. These endpoints can be registered with the thermal
-> > > > > > > > > > > > > framework via the `#cooling-cells` property on the remoteproc node.
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > The QMI TMD protocol identifies devices using string names (for example,
-> > > > > > > > > > > > > "pa", "modem", and "cdsp_sw"), while the DT cooling-device binding with
-> > > > > > > > > > > > > `#cooling-cells = <3>` requires numeric device id in the form:
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > >         <&phandle device_id min_state max_state>
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > Define common TMD device index constants shared across currently
-> > > > > > > > > > > > > supported platforms. If a future target requires a different mapping,
-> > > > > > > > > > > > > additional target-specific constants can be introduced while preserving
-> > > > > > > > > > > > > existing DT ABI.
-> > > > > > > > > > > > > 
-> > > > > > > > > > > > > Signed-off-by: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-> > > > > > > 
-> > > > > > > [ ... ]
-> > > > > > > 
-> > > > > > > > > > Why are you using only those TMD devices?
-> > > > > > > > > > 
-> > > > > > > > > > > More constants can be added as needed.
-> > > > > > > > > > 
-> > > > > > > > > > Kodiak is one of the supported platforms.
-> > > > > > > > > 
-> > > > > > > > > What would be the benefit of having more than thirteen cooling devices
-> > > > > > > > > declared in the thermal framework and having only a couple of them mapped in
-> > > > > > > > > a thermal zone ?
-> > > > > > > > > 
-> > > > > > > > > I agree there are more TMDs but if they are unused for the moment, why do we
-> > > > > > > > > need to add them ? Can we do that incrementally ?
-> > > > > > > > 
-> > > > > > > > That's what I am trying to understand: why the implementation uses only
-> > > > > > > > the selected two devices, if the modem on Kodiak supports others. How
-> > > > > > > > can we find out, which TMDs to use on other devices.
-> > > > > > > 
-> > > > > > > My understanding is that is an initial thermal setup. Gaurav will add them
-> > > > > > > step by step while setting up all the thermal zones instead of sending a big
-> > > > > > > patchset. And TBH, that will be much easier to review.
-> > > > > > 
-> > > > > > In such a case it should be noted in the commit message and/or cover
-> > > > > > letter.
-> > > > > 
-> > > > > Thanks for the review/guidance. Not all TMD endpoints are relevant for
-> > > > > kernel thermal zone binding — some like BCL and cold temperature are handled
-> > > > > from userspace when needed. The constants here cover only
-> > > > 
-> > > > What if there is no userspace? Or the userspace is different from what
-> > > > you expect? I doubt we have TMD-speaking userspace yet.
-> > > 
-> > > Thanks for mail, The TMD userspace implementation is available upstream at
-> > > https://github.com/qualcomm/qmi-framework.
-> > 
-> > Is it?
-> > 
-> > lumag@rohan:/tmp/qmi-framework$ git grep -i tmd
-> > lumag@rohan:/tmp/qmi-framework$
-> > 
-> > I found no traces of TMD there. Moreover, I don't see why QMI framework
-> > implementation would react to thermal events.
-> > 
-> > > > > what is needed for modem and CDSP thermal zones on the currently posted
-> > > > > targets.
-> > > > 
-> > > > Again, SLPI, ADSP?
-> > > 
-> > > Sorry, I should have said "generic subsystems" rather than listing specific
-> > > ones. SLPI and ADSP do not require active thermal mitigation on these
-> > > platforms.
-> > 
-> > Could you please provide details, then. What is cpuv_restriction_cold
-> > TMD?
-> 
-> It warms up the zone when the temperature is too cold
+> Overall exposing live dynamic printk information to drivers seems unwise, but
+> not quite as insane as some of the other stuff thus exposed...
 
-So, if we ever get back to supporting warming up, these TMDs would
-become relevant. Am I right?
+I agree that we should be careful with exporting symbols.
 
+Well, if I get it correctly then at least the printk-related symbols
+are already exported a similar way using vmcore_info.h API,
+see log_buf_vmcoreinfo_setup().
 
--- 
-With best wishes
-Dmitry
+Best Regards,
+Petr
