@@ -1,221 +1,134 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1F0364059
-	for <linux-remoteproc@vger.kernel.org>; Wed,  8 Jul 2026 19:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1762D77E5;
+	Thu,  9 Jul 2026 03:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783537562; cv=none; b=joN6/PXKy2UsvUrkrIWJHcUA3rcJIihO3rmYxnjIhxUlxRhLeiZzXfOd0yQPeOFGtPydAebp5nucekxu7DzKipCgqm3iFooJwufpoe4m3ASCQEsFEa7cq21DmpaZUZSXAf/czYvtqVcxRZbD9lsOqlAiWqwJU6NgGN0SnJvSiRk=
+	t=1783567642; cv=none; b=S3P66ABydJDAmE/dPCQf3xN1sQ1g2F/NhvldCnOYCBeYbnr20xFNN5p6PrXsyZhqK08xYxv+ao8HII7VrWf2qc+gZTiSFGE9cjiLfN+ZZjYNO2MHdI3pCWgINy+Ldrc8jPrkwmPpt1KLmOVKraMAedQ23lqgH7c8Sj+BMZ2X7WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783537562; c=relaxed/simple;
-	bh=YItqT8T7it2rqu0Ag40WP8xbh00oL0oNgmOzd217gSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQDHBxsKf2kQaCt9x835gUMivt8IwkAgZMTcy8Ue1D/zfVyB4DYbRVV8fgIdkaY87uGf1RT6sfbdEBTFX57VobZOQ4srcGmSAVqyB0tDr99HG1iMom66EvCZ4vP4hrhpX8vdzH/GGWNYxVbQDRzYGLec8PKex4OU6sJ79AcyYuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=C/Z3O8TS; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TaVdRaOB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783567642; c=relaxed/simple;
+	bh=5q6IKp8NWuO+mOAkqzdM5WrL8V65dmw8cIVwkMaDawY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QHmNR6PhyD/Vk1qBSmaloimXFqFf+ME1WFNW45S6rtEP2Sc9HQ1zbyzBLGy0A5zytuJ3O5rB1tIr7k4N0eLnlUhwjgDXHLz0uBnDARybpkC8RnvQYYTOBhH0YRT/c+z7fqsUkVpxfeF9fCrRAqDJaK2D6CpCiZSIDp6nB8vTdj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQSu0Up6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="C/Z3O8TS";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TaVdRaOB"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 668GLFmj3304954
-	for <linux-remoteproc@vger.kernel.org>; Wed, 8 Jul 2026 19:05:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=CeHf8ZnOmdDt8+90mSP4wYI2
-	u2NYKjn3Be4iJ272f5Q=; b=C/Z3O8TSU/K6ST7I/5NLvaXUbyaBPKdv0+DgP40l
-	nQUMyIiRO9eb0HkYDoQACetPWHg33l4B4SndJBK78czyFY2O72YHuNe0IwlvvEDO
-	e3Y5cvI4c3FPt59an/wepDFFpz+Z03T8w+4iB0iNKikofEJk+NSkHJqWjAuBGuDu
-	AtCF25xZE9fajt5L8vuDM1kN1dXUr3yeqChMyf4fl6dNiYLugaM5q29YztM8AH9s
-	XpjSoOZW0vNUVP2e+nShpv9KxBXbZv+Ku+p0c6/+UfEDrWTF5ZEDyfUzfYbgBzid
-	ORzfs/9zn+9EvdTrpupSEOicov9omFUig51PTAzYEyTiVA==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9rq31308-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 08 Jul 2026 19:05:56 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-c85798977dcso1598903a12.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Jul 2026 12:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783537555; x=1784142355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=CeHf8ZnOmdDt8+90mSP4wYI2u2NYKjn3Be4iJ272f5Q=;
-        b=TaVdRaOBpzvB3sQFBAEcWmcDx/oLzP0IrwweH/DQly4YNfb7bLluGOkH4f1e0ugFbx
-         7D8Oz5PvtAfizYXfXJReHdylvgLKwS/72bPb/+nKhmOxA0rw4RZh8GpHfG1QsyhhAfs0
-         LRY4AnHCrtUfwi1tOOk1XN6vt0c7XFjJud2Yn31KcQojtpTOqfewVFEvDjfKdwgm2ln/
-         uxUP0AozutmPGMBpF7a/oIcbPJunJuML5IgueBPTHDv566YUWrCCBWQr38wQslEe43Er
-         pEoLSczQAXe1n8ZDDpdUD6RSR/djvXl8LL/KFsGpbGm12Wrimwt5mzMxT9L9KzzxQ/cf
-         Kxcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783537555; x=1784142355;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=CeHf8ZnOmdDt8+90mSP4wYI2u2NYKjn3Be4iJ272f5Q=;
-        b=f5O+ECVbOeTj62JFOaiwrCBVlc21ndEdnj3FO/rCzL+1NHQNXWhNFX4gmzl/LyQNwK
-         8AF/bu3S8ZjdALFAL44o8cuGLB3gYNrMQn6wozeBC4GjV4vSwZCtzb6vkAMzeNSQSf11
-         fxADZC+XEdsu7ywtS1RFYcMV0gYDijxBiahzJw2gxnctK6Ml2MXt+CPp6crpWeNFlxJm
-         XRgD31knACzVxshcNpRwIqz6OoghbLtqpJnLkYHvgYPwOEl1zjWulLWNrWz0jyup6U5j
-         O/jzkBo5e11Q7v8m2cOfuFvhbWAJTE6RrzIRIhOBK8yZqVu/LC2m65NXGdB4AoF6BRNV
-         XSpw==
-X-Forwarded-Encrypted: i=1; AHgh+RrIveaidsjD7BpgEp0F9oqDOODQz9lbOWAFaw2I1bkSO/wGP8Bjdos/jK3zUrZd7NUJq7LKAXH3PycssyvnLRc6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeHQxU0WnoQGEcAlUXDCFtHvhJpx1m+zrjmFVJQhh+OM8v4mcw
-	jfMTlraOin7sNKA/6VwD8qtZF+dULNx49l1WZgvoIYuta/4mGwWVmhQBsdPZFGqcvMxQjhNXNxe
-	7ccY6typGMyLp5x6TC83ZlwjAFHuSHKZlWGl8vAvhYJAtBeh4VWxC0sbtn2wdvWidUISgu+iw
-X-Gm-Gg: AfdE7cmOvMw+rGwddKDXkwg9s9pZjzShj7zYKohYxL10YtuxwygsGCyBM0eJosG6jqT
-	rGrVAAsU4ucUSTh8Y0RpYxM7Q/lVrQyS82pzR7hozWfipdE1xaqPmu6GYSpoS9dHIg3sQjnFU00
-	MonOqCI9FpHfHc5CwGreRxoURebkAk/yLY8PViBjk4DwvF11xXcQIjoWMCpT4UIqvvezdsjZvze
-	sBTjTTf4kj4aY7ECgy9X16/9ahUCtv1QdX7YKOnyrxCP7gpyrHN+uNOTwCYweeXmp42KeJT7qhT
-	DwoLpFpGxb8GHweD+T/9ZHQLyP6N5zESj2EZVs8N6WoiMkvsPJvW7bdueiVVJOez+zEPjTfzWKV
-	jzj47L/LbcoBteyLsVhKcJ2G/81rZ/QXlv+uHBQ==
-X-Received: by 2002:a17:90b:4d8d:b0:37f:db06:229c with SMTP id 98e67ed59e1d1-38942f7105cmr3621994a91.22.1783537555397;
-        Wed, 08 Jul 2026 12:05:55 -0700 (PDT)
-X-Received: by 2002:a17:90b:4d8d:b0:37f:db06:229c with SMTP id 98e67ed59e1d1-38942f7105cmr3621916a91.22.1783537554731;
-        Wed, 08 Jul 2026 12:05:54 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-31174ae6cd9sm24772373eec.31.2026.07.08.12.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2026 12:05:54 -0700 (PDT)
-Date: Thu, 9 Jul 2026 00:35:35 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Lorenzo Stoakes <ljs@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <skhan@linuxfoundation.org>,
-        Eugen Hristev <ehristev@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Christoph Lameter <cl@gentwo.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-        Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        K Prateek Nayak <kprateek.nayak@amd.com>,
-        David Hildenbrand <david@kernel.org>,
-        "Liam R. Howlett" <liam@infradead.org>,
-        Vlastimil Babka <vbabka@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Brendan Jackman <jackmanb@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-        Chris Li <chrisl@kernel.org>, Kairui Song <kasong@tencent.com>,
-        Kemeng Shi <shikemeng@huaweicloud.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <baoquan.he@linux.dev>, Barry Song <baohua@kernel.org>,
-        Youngjun Park <youngjun.park@lge.com>, Petr Mladek <pmladek@suse.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Saravana Kannan <saravanak@kernel.org>, workflows@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 11/26] mm/swapfile: Annotate static information into
- meminspect
-Message-ID: <20260708190535.fhqaddicljho44eq@hu-mojha-hyd.qualcomm.com>
-References: <20260708-meminspect-v3-v3-0-7aa5a0a74d5c@oss.qualcomm.com>
- <20260708-meminspect-v3-v3-11-7aa5a0a74d5c@oss.qualcomm.com>
- <ak4AgXqMnkn8rVGE@lucifer>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQSu0Up6"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D0B4C2BCB7;
+	Thu,  9 Jul 2026 03:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1783567641;
+	bh=5q6IKp8NWuO+mOAkqzdM5WrL8V65dmw8cIVwkMaDawY=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=sQSu0Up67jYX7vCEPZucbTO/LMRi0qBKMjvxEO0F0AT1JusG7+Ww+EkkG9JigOb9A
+	 pybCAdn/HXf5kRqY1JwFm66Ia59zGkLuwntNSgt6nF5BWNbK4TgdDWsz8TmyUbtYH9
+	 urmIrjDvT+fIU4UmAzieE4oD4L/Kx3CeBEjjPruMJMOFaltqIjNbGWkbWUtLYO4VKE
+	 90rLygyK8Ek+geQVjC5QpVYOX6eBIfiQe0ZBI0pkCPrUP5AlsU5esafhlSgRHt5Q3t
+	 YTTYe6ecgfmhokq4/uDJp2YrTl4Nkxna03l4KPOAUORDE8d/xDacn8ohqy70hyynaj
+	 TNXkArutkJ2ww==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC92C43458;
+	Thu,  9 Jul 2026 03:27:21 +0000 (UTC)
+From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
+Date: Wed, 08 Jul 2026 23:27:19 -0400
+Subject: [PATCH RFC] remoteproc: qcom: q6v5: Only print handover error once
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ak4AgXqMnkn8rVGE@lucifer>
-X-Proofpoint-ORIG-GUID: WjEZLvEJaJHMkJRMkpj137lS2rNUvFT2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA4MDE4NyBTYWx0ZWRfX1V6oNEodu/8u
- k2gBQU/qC3U4JgmQ/f6da/BdfcSRkPCWKeHwDdUgr72eaJ6+7FPDPwS5g8DQwCAJ5LP+q9MqrUM
- 7ikNxStjUgjEpfeIvpCwh0VuNPPFUbLyBhCU8basiB1pHbnWqCeaxBRtNwuNOPnuG0pL+nlkv7l
- 3Ja/ZXJZ3Kkw0ahhyyp32deqc0xYrQv9P+wz6lDV2gYKCCEsgp03jNTp+S17Pn3oO3acwClZNZ9
- amlW1DT/dOlMpb8OsNK+fMJCynRO4xu7p5rWHazQIFi0XOIo+yIDTBjF2xefSBZ8G4H/GjWF1BA
- 7nu8SoKiGWz/hrY01m6mmLPf/5HbRo6G388dyNc50/d4rfxi8i7lsOIGH2J6E2LS+Py4k6pU2Zm
- aSYO/QsFG4QfEAmMeIsgvpgsX8+//eJqs9BfZzosSt3aBEvaufMNvkuxliedStdmhJ+MIOtwIeT
- MmpeJrOefjTumMSvacQ==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA4MDE4NyBTYWx0ZWRfX1zyjDYmMgUj1
- cEjENf0bOyRXVD3zA8ZI8kZc+ZgwGvz8mG0gYz2oMkMA0f5DCbePopACsmD3iLO3eZ0gQcuXuhp
- NRs97Ff/eeQjohzlgtSUKo4jQ51cBfE=
-X-Authority-Analysis: v=2.4 cv=PYPPQChd c=1 sm=1 tr=0 ts=6a4e9f94 cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=cq8IU3OeMPPiwu34qS0A:9
- a=CjuIK1q_8ugA:10 a=x9snwWr2DeNwDh03kgHS:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: WjEZLvEJaJHMkJRMkpj137lS2rNUvFT2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-08_03,2026-07-08_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 lowpriorityscore=0 impostorscore=0
- malwarescore=0 adultscore=0 clxscore=1015 bulkscore=0 spamscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607080187
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260708-q6v5-handover-v1-1-be0e6cba0b13@proton.me>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzMDcwML3UKzMlNdoExKfllqka5ZWkqyWVKKSbKRmakSUE9BUWpaZgXYvGi
+ lIDdnpViIYHFpUlZqcgnIJKXaWgCo/mfAdgAAAA==
+X-Change-ID: 20260708-q6v5-handover-6fdc6bd4c265
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Esteban Urrutia <esteuwu@proton.me>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1783567638; l=3032;
+ i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
+ bh=WRlfOb7BJH4o0RSa6fkA/yjtgThVqiPMGxbi8obWNd8=;
+ b=JVR7n/XYUHkKIyj/tQfYG1a6mCkyNlzGhoLwffr/0okHdWF1GdMkjmjJ5soa6tdsKHxUl/+p3
+ SU5Xed8HCi0ApqYqxWzSG7XSGsfKB4cvRAuY6T2bEIildFd4qYKfObC
+X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
+ pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
+X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
+ auth_id=835
+X-Original-From: Esteban Urrutia <esteuwu@proton.me>
+Reply-To: esteuwu@proton.me
 
-On Wed, Jul 08, 2026 at 08:47:51AM +0100, Lorenzo Stoakes wrote:
-> On Wed, Jul 08, 2026 at 11:01:50AM +0530, Mukesh Ojha wrote:
-> > From: Eugen Hristev <ehristev@kernel.org>
-> >
-> > Annotate vital static information into inspection table:
-> >  - nr_swapfiles
-> >
-> > Information on these variables is stored in a dedicated meminspect
-> > section.
-> >
-> > Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > ---
-> >  mm/swapfile.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/mm/swapfile.c b/mm/swapfile.c
-> > index a602e5820513..d480727e4987 100644
-> > --- a/mm/swapfile.c
-> > +++ b/mm/swapfile.c
-> > @@ -42,6 +42,7 @@
-> >  #include <linux/suspend.h>
-> >  #include <linux/zswap.h>
-> >  #include <linux/plist.h>
-> > +#include <linux/meminspect.h>
-> >
-> >  #include <asm/tlbflush.h>
-> >  #include <linux/leafops.h>
-> > @@ -65,6 +66,7 @@ static void move_cluster(struct swap_info_struct *si,
-> >   */
-> >  static DEFINE_SPINLOCK(swap_lock);
-> >  static unsigned int nr_swapfiles;
-> > +MEMINSPECT_SIMPLE_ENTRY(nr_swapfiles);
-> 
-> Now the EXPORT_SYMBOL_GPL() is an EXPORT_SYMBOL() in effect no?
+From: Esteban Urrutia <esteuwu@proton.me>
 
-The whole reason we had to tag most of the MM symbols is that
-the crash tool looks for this information while launching itself.
+On some devices, firmware for the remote processors can signal a handover
+more than once.
+In the worst case, the kernel buffer will be spammed with this error
+message, leading to the kernel buffer consisting of just this:
 
-e.g.,
+[  106.305033] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  106.506070] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  106.707103] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  106.908612] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  107.108158] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  107.309944] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  107.510795] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  107.712183] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  107.912834] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+[  108.114217] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
 
-./crash --no_modules --no_panic --no_kmem_cache --zero_excluded ./vmlinux  ./minidump.elf
+Instead of printing an error every time a processor signals a handover more
+than once, only print an error once.
+This way, the error is still present, but it won't fill up the kernel
+buffer.
+
+Fixes: 54898664e1eb ("remoteproc: qcom: q6v5: Avoid handling handover twice")
+Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
+---
+I've been using the mainline kernel for a while now on motorola-bronco,
+which is an SM8475 based device.
+This device's firmware for the remoteprocs, specially for the SLPI,
+seems to signal handovers way too frequently.
+As of now, the Q6V5 driver will print an error each time a remoteproc
+signals a handover twice, which leads to the kernel buffer filling up
+pretty quickly.
+I would like to suggest replacing the call to dev_err() with
+dev_err_once() and would like feedback as to whether this is the proper
+way of handling firmwares with this behavior.
+This way, the error would still be printed, but only once, and this
+issue would become much less of an annoyance for devices with buggy
+firmware like this.
+
+Regards,
+Esteban
+---
+ drivers/remoteproc/qcom_q6v5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+index 58d5b85e58cd..81e894cc8634 100644
+--- a/drivers/remoteproc/qcom_q6v5.c
++++ b/drivers/remoteproc/qcom_q6v5.c
+@@ -165,7 +165,7 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+ 	struct qcom_q6v5 *q6v5 = data;
+ 
+ 	if (q6v5->handover_issued) {
+-		dev_err(q6v5->dev, "Handover signaled, but it already happened\n");
++		dev_err_once(q6v5->dev, "Handover signaled, but it already happened\n");
+ 		return IRQ_HANDLED;
+ 	}
+ 
+
+---
+base-commit: 3d5670d672ae08b8c534b7beed6f57c8b44e7b43
+change-id: 20260708-q6v5-handover-6fdc6bd4c265
+
+Best regards,
+--  
+Esteban Urrutia <esteuwu@proton.me>
 
 
-> 
-> >  atomic_long_t nr_swap_pages;
-> >  /*
-> >   * Some modules use swappable objects and may try to swap them out under
-> >
-> > --
-> > 2.53.0
-> >
-
--- 
--Mukesh Ojha
