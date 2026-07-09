@@ -1,76 +1,79 @@
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013008.outbound.protection.outlook.com [40.93.201.8])
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010004.outbound.protection.outlook.com [52.101.56.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20509386C0A;
-	Thu,  9 Jul 2026 14:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC45389460;
+	Thu,  9 Jul 2026 14:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.4
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783609140; cv=fail; b=sSgZSxd3kuoTU76MB08maUkei3q5aHpG4TCcJ2hHeAWZoF12jVLO5e4xCjQpg1MWN+xJjDwfVigDjUAGDaH0FR6sdP4ijyYfHK9kBkfQpkFL/My/W8HPYktiXWqyJlqFD9kfCiYXn+cqrhUhPSZL8lEB0dO+zpbetBLiVv/9VqQ=
+	t=1783609141; cv=fail; b=H7RsVcnEW2OuIEkBzE3b+Noi+wbatclz9i3p+ovHQFDo6TYRQhlpryt2J1kKWCQ2IIGRoCgzKNA6JtGGRCEjU+n+24wcjjFlTKkyedTLy28I7dmyy1FlJy/ID/HxeNmrvzvXLmLQYALX4BD2wPQFnLeme3Sf4lX9OuJZ2ELApgI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783609140; c=relaxed/simple;
-	bh=eRWXM6yoWLd863VmHBqmlSaMlCz4T99TAK6T8TfU9a0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ws6X5CP67PRIr/LG3X2qb12qsDhytSbqlfmmRsft36vGZYdp8YMGihiDzEz/hsqNVWYPR9q/7tpS3f292MIikVOZstbY74LY2b/Hfd6wsEHLrjnR96mPfJre5yfdCZy8UCorL5RWnqi26vKKJtF4Yxxdish4DtLTmu4Gs8Kah9U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tjWdGkX0; arc=fail smtp.client-ip=40.93.201.8
+	s=arc-20240116; t=1783609141; c=relaxed/simple;
+	bh=ZynCHSKyrnbO/rLG5BA6OLP3a0IM9mwBrNxWKsPBd9Y=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IhVV5xNe2OF2r9TDBEYwDeradoeFaGJl6/lKgCqkmzbYQ2t2wjS7QwRnfRMTMt34kz2YIW3tl7yPt81eH1127HC9GPJdwhPsJ/yOk+D+4CZIPco1f8SWLx6QudMqnMuBw3tNxwX08wRDfUVHhVa41U4xZhMKj3TL8jkZnoNHo3U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NPXvkMnq; arc=fail smtp.client-ip=52.101.56.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tjWdGkX0"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NPXvkMnq"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oC1RWQI5FF1E4HzCPBimNZuP5+D7dvOHxQ+VKWt+vwv9Qi15+pBXCyhHUkevy6Xfl9I80Iwt569WqZmEftnAVP3t+7RnHdCiRw51hYu9HgwnIu6CvlETk1RcsA13Pgdz/5d6otbT6K83eIjhWamVc0Vt5TEte/aJ/EkQaW1ekMKqnug45xjJDs7WtzpQLsdkBDbQSgwkaKQQS5pHlwcnnck6EOdaFNiYyLePYFbpZrfXd/T4MDByL/E53lHDd6e/iDAvND7NQp44/pAc67sIJTgvSKqT9fvq2WTCSJAFmHiVKZdV5pYHjikPs8cIAk/4IhHnopGIwf3bWaAQ9Egp/Q==
+ b=R964biU+RHc1U0U95ePJvcmPF75vh5A0PPeLeYJE0dl9Hzrm7w+mBNaorNo9V3oPEWbkW82Pe0QJmcC1sU3ZylGKZZrZ0e61VQ9EwdXrjNDaXZWnq+Bh9Xu4FC3Melkx8SQ5VMJhhKQXIGoAmpqsyxEEqLSW5JoeIPFRTe98xGddGST5LLTnHkv74NmDzXaeuUnQOVkK23gbDxWf9kAt7gNHCXYh5YlZBIepuLLlRJ2SL/p+0dcQz5Sjdciuu37Ay+n5zrlqjEST+8ICJYS+YmApt7/jqNgDF1W8kpS5zM0iYdjtFigrXmuhARqYyQuOR+E94UGhbsIT/z6TcX/qzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Wj5D4rXJ8PZvtTARpSNMHa4ItC1GHQ8Xwm7LSBa3Go=;
- b=Tf2kHeFb5LUSTSAXo4DkRa25yeN/tj1zXqvJr2QXufF1OK2costtrDX5FEJQK/IwECq8dj+ziNtlk9Do35q3hwpq5ptMLRw0eOXd4hfxCFObizJafkwaQIN/9QuS4Ps7IHM+eMEPhG2iqFUASUjqyqjFrQnS2XWzcQFesPkxSGzGWaMQiivN3b+QNITXmBY40OxzUnhZFKxk9XumzL3MdWiFMqcHuSlnkM20cjD5B3qX46O06boRrmUA1TueZof+CToyl0fngaXANocUrA71IcCd/VQyWaSPAV4FT6PwtpVtv/p68MqqFLPoJPq9C2YY89a1lgv8p1rc9k5twbTaGw==
+ bh=hHekJfsbS9KeAXm4wLEzMsv5eOU/UolRAsiSs8dx7Yk=;
+ b=A4+P0qhx6EXxZxehAjD26kkQvC7S+327XtsD2Bn/9lRdQOlLSdOuegdCVJXoFJodbsijfCjpDiLvj38pUSa+WbW/RtIy+f1KzDEdHzi5cbi26DnhxOevW8n3E1rDrGFulOSqty7dpZwkWnjNfU/HZnIYAn5Aegbz/ctXAqldzfhydaIX24yrm516KnaTQyfo1NtclUZtpaUwT/EkkreWgjkTKBNKzD8GPh8fW0zWpAKfxyDprtm+Bjb8o6rDHWL/875HfglK/NULa/VrSGc9TCM7IidnRdILl0zqq4a1XdfLC5bCuXsNfVltREZ5N4kjQFaZn8J6v1/v03qHT4o84A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Wj5D4rXJ8PZvtTARpSNMHa4ItC1GHQ8Xwm7LSBa3Go=;
- b=tjWdGkX0GFI73+EeoUC9hV63vF0cKFqDKAWULYI3+EgtI4LfxbsbT84MQkf6pJpV+T+5P49KfJ4P0ImvS/IASKS96+1ZvI/fv5xc7R2tNzKSDYAlyw5HbvYzYRokv4FZ6XlBWQo8ai1IVDRQimeYsP4t00HcF03cCu3Ua7/3akw=
-Received: from CH0PR07CA0011.namprd07.prod.outlook.com (2603:10b6:610:32::16)
- by EAYPR12MB999180.namprd12.prod.outlook.com (2603:10b6:303:2c2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.8; Thu, 9 Jul 2026
- 14:58:55 +0000
-Received: from DS2PEPF00003443.namprd04.prod.outlook.com
- (2603:10b6:610:32:cafe::9f) by CH0PR07CA0011.outlook.office365.com
- (2603:10b6:610:32::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.202.11 via Frontend Transport; Thu, 9
- Jul 2026 14:58:52 +0000
+ bh=hHekJfsbS9KeAXm4wLEzMsv5eOU/UolRAsiSs8dx7Yk=;
+ b=NPXvkMnqIeBe2NC3IfvRaWKs9vEoSF5rWFJVUd9+DiZRZdy0/eTbYaDQggAQp5gUSw+JVdJizS9VeGGDnzpWuqUJ9LDY/s3Ca0T9vLVCIymODe5bIKNoK/Xx26ltroNw1J79h5nIQpu/ZPWHrhYWDbB5UtBjGMkCXPEzFK3FNn4=
+Received: from SN6PR2101CA0025.namprd21.prod.outlook.com
+ (2603:10b6:805:106::35) by DS7PR12MB6071.namprd12.prod.outlook.com
+ (2603:10b6:8:9d::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.181.10; Thu, 9 Jul
+ 2026 14:58:49 +0000
+Received: from SA2PEPF0000150B.namprd04.prod.outlook.com
+ (2603:10b6:805:106:cafe::1f) by SN6PR2101CA0025.outlook.office365.com
+ (2603:10b6:805:106::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.223.4 via Frontend Transport; Thu, 9
+ Jul 2026 14:58:49 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
 Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS2PEPF00003443.mail.protection.outlook.com (10.167.17.70) with Microsoft
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ SA2PEPF0000150B.mail.protection.outlook.com (10.167.242.43) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.181.6 via Frontend Transport; Thu, 9 Jul 2026 14:58:52 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ 15.21.181.6 via Frontend Transport; Thu, 9 Jul 2026 14:58:49 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Thu, 9 Jul
- 2026 09:58:13 -0500
+ 2026 09:58:48 -0500
 Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
  (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Thu, 9 Jul
- 2026 09:57:12 -0500
+ 2026 09:57:14 -0500
 Received: from xsjblevinsk51.xilinx.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Thu, 9 Jul 2026 09:57:12 -0500
+ Transport; Thu, 9 Jul 2026 09:57:13 -0500
 From: Ben Levinsky <ben.levinsky@amd.com>
 To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
 CC: <ben.levinsky@amd.com>, <tanmay.shah@amd.com>, <michal.simek@amd.com>
-Subject: [PATCH v5 0/2] remoteproc: add AMD MicroBlaze/V BRAM-based remote processor driver
-Date: Thu, 9 Jul 2026 07:57:10 -0700
-Message-ID: <20260709145712.951146-1-ben.levinsky@amd.com>
+Subject: [PATCH v5 1/2] dt-bindings: remoteproc: document AMD MicroBlaze/V BRAM-based rproc
+Date: Thu, 9 Jul 2026 07:57:11 -0700
+Message-ID: <20260709145712.951146-2-ben.levinsky@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260709145712.951146-1-ben.levinsky@amd.com>
+References: <20260709145712.951146-1-ben.levinsky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -81,136 +84,164 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003443:EE_|EAYPR12MB999180:EE_
-X-MS-Office365-Filtering-Correlation-Id: 259c273e-5f74-4a88-b9c0-08deddca9741
+X-MS-TrafficTypeDiagnostic: SA2PEPF0000150B:EE_|DS7PR12MB6071:EE_
+X-MS-Office365-Filtering-Correlation-Id: a23dc091-1ca9-4a7f-0e32-08deddca957c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|23010399003|376014|1800799024|82310400026|18002099003|13003099007|3023799007|11063799006|56012099006|6133799003;
+	BCL:0;ARA:13230040|82310400026|23010399003|36860700016|30052699003|1800799024|376014|3023799007|56012099006|11063799006|20046099003|22082099003|18002099003|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	nGRfuNALyDlpN8wGN/GPRjQkaRtcPYm9hA71uphmM8GeNKJ8cte7q9KK3POw1tlgDkDvSaU7uA70zkUCSLMXWkf8bZyn5K5I8H/quteZqisc/SBK5fLQCg3YPt36u95N1y5Mvd64cWotxHM5zvRfqfla6y+IGjtl7oGUZThJOXMiZmrrwmVNeFvML/N+mUf9SzPi3mRKRniH+scfGlvupEmV9tbQyrTb3ru/NCiBvmhAWF09ZpagaI7kAvLjnrJrZ7s/tsIV0AapTZN0fckTgS4F37vVI6DJ7bQB00aPvhHELqTD5VRnkSvmQNjgo1zqYDajHsTxORhVCuaFAuRxTxaZukAIu0meMwwasai2B+7IHsRZA00U/T37Mh25c+duh38zgL5o0SAGUwCXJiSVfGEkjoVzVr42Fsqn7yIG2i3+81u8i164s3gvtaEosK9K0opp/4c3mJdvl16cVycPblSJkBULMUfrphpjiQchjXCHYXEJ4uUCUmZLFVZ1dmARuZQ5h5Iya30mXp1N4Tf12vAUxrhTCypZ5CNqbDhqe2uM1Qd4WXnriO3fa/5AlCUSWNA0oCRZXJUbZV1dpF8fPA5sMsHtwMz3+hrCxiSLQTgulrfk2gCsv9dhkDuLiZJlLSeecInSWB3kkm67cQuAnYC3jNnkZtK00rJfE10lAVZsWpAvk5pjE6Q/Ng9N5dKpuemEGOBy+eJ85LfZJfSDbg==
+	7n4iJn4CzrMwigGnoL0IcokA6Ve3A8GMCV4tbxCsQUm3ndtNQV0fDE3/0xk/R8VL4e3vjumTvGdyd/AmXlT3skssIIsgUGe8Pw1F2Qb3FJzgSMMR1ToMQR/9z+tQFttTmaGKl1H26JwZZXYFIK0iAGMBxo4RKQyktQyNYRB4tXVu9qn0AlVFn3O+4vXXOmI2xCI37xxq5232DLj5oL34hHtI0sFGr8XDCmGaFlQcJomygYaW8oDYSrhjMYTNMtLPbkpQJzwlTf6FXpFfN+O9JOQXRKsqNCjKZSqA8vXN3g3vDXbmFjDrDB4tb0uwx1D253Vs1p9Y13qjMeZzHJWD0Zat1ihe/DFXjYIWub9ToyKVBHquZaHvxDaWs6mcDexEIG2I7ETcs6wc8LpM5mZyVA9ePAh3tVFJnUSRZskL9SpIrqpO7BmY9+59mJTbtzquc67Hlapk2oiuRPlruO4blAZYcTAaZDG4s85wvYRJav8q7kcUo1xB/QmgCO7ik/N7swn0grvGDJXLJDZYLZXuB37cv+WUzA9tc8YhZaod+5YPJaetgkGSrYFA9o32S6PM2VS2LigYvBY/DrT5zPysdIYjWiVYq+3fhepIwpKMNel7PPx4XM/ikMg25uY/EsQKR1/dgEoXQVcjVbyEIpdYgA==
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(23010399003)(376014)(1800799024)(82310400026)(18002099003)(13003099007)(3023799007)(11063799006)(56012099006)(6133799003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(23010399003)(36860700016)(30052699003)(1800799024)(376014)(3023799007)(56012099006)(11063799006)(20046099003)(22082099003)(18002099003)(13003099007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	iZg5VXuQKvI19VD3kCeTYUVpo5W8BPWq3d7or58gSG2fwmqYvZ3RBI34FDRA1afS1C0MxkRgljD2LjFF4vlOcRAnTV/teMdPOAPFuTA7sGxk6QD8PkHrj1oic8mH5EJGErSchpHNwUn5Iigf3u2/KXN5/YCChUdW/dfEX3fUjAq27lCRWs7IvFdlmSCqmAGzzpy7vJ8m0KC6NbxhQdibFmSMuHnHqx/7o7pLeAikB1VdKU8oR1cRzzP+O9h7BY1tnTQ8uMvLAuepjfiP7iyd8RvSsEtD1VaPY6zUxeOEa0cER57L5S8y1PSUW0R3KJ2tGMkgj4WMl+yDocx9mVUaiV1lDlMBJvA3/mkxFeHTQMuY+RqvIpducvZEOA0t3+6sZoJqGPpv8IJHJPdZBoTF6Cz+0Jk364V63qwvTgDaggGSCGMa1qChAqzasQltGLBe
+	JYj/VAR0nKDz56oSO62C3Xiyl6ZdUgIsXjdekt8AbBZQWu3UcdN1U5NKtILx3SMIZvk2VYCK0NCscjthuGTOaIBEO8mASNH8joqNuATXUgu3tC4TJOjOtvi+a8jA52PeYDftFqq6PzrvzyUJOttAK3F79kqSEtA6WhXwoFIPNFaCNjVm1zIhAIq82YSslEKX+u0cWfF4gwu0tAQU3LIeP4XgtLcL3F02ahe5aR02mlpJ02r1OT5U+k2YFA8LJofQEmdhJEkyged9Y56msGLw3QFpQ0nFi59veRlkUS+iOw5W/MwmdB2IDO6c5FairyL9Rd+Fn3KNhy39dcVoixnC3pxuk/kh7HReDAYg2445L37vsZdaTyPcFwIu9yq1+gSRar7rEPJdU9DPqPXRF08f06OfqCmIJv9RLs3u5xDBlb3jMG8NlosD/wjysEQHoGKt
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 14:58:52.3501
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2026 14:58:49.3867
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 259c273e-5f74-4a88-b9c0-08deddca9741
+X-MS-Exchange-CrossTenant-Network-Message-Id: a23dc091-1ca9-4a7f-0e32-08deddca957c
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003443.namprd04.prod.outlook.com
+	SA2PEPF0000150B.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: EAYPR12MB999180
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6071
 
-Add a MicroBlaze/V BRAM-based remoteproc driver and corresponding binding
-for AMD soft processors located in programmable logic.
+Describe an AMD MicroBlaze/V BRAM-based remote processor controlled
+through the remoteproc framework.
 
-The series models a soft-core processor subsystem that executes firmware
-from dual-port BRAM. The BRAM window is described in the processor-local
-address space and translated to the Linux-visible system physical address
-through the parent bus ranges property.
+The binding models a soft-core processor subsystem instantiated in AMD
+programmable logic and using dual-port BRAM for firmware storage and
+execution. The remoteproc device is represented as a child node whose
+reg property describes the firmware memory window in the processor-local
+address space. The parent bus node provides standard devicetree address
+translation through ranges so Linux can access the same BRAM through the
+system physical address space.
 
-This series depends on the remoteproc cleanup series available here:
+A clock input feeds the soft-core processor subsystem, and an active-low
+reset GPIO holds the processor in reset until firmware loading completes.
+The firmware-name property is optional.
 
-  https://lore.kernel.org/linux-remoteproc/ah2aVdlsLqy9aeHP@p14s/
-
-That series adds the common WC ioremap carveout callbacks and optional
-ELF resource-table helper used by patch 2.
-
-v5:
-  Patch 1, dt-bindings: remoteproc: document AMD MicroBlaze/V BRAM-based
-  rproc
-
-  - Updated the binding title and patch wording to use MicroBlaze/V.
-  - Added Reviewed-by from Krzysztof Kozlowski.
-
-  Patch 2, remoteproc: add AMD MicroBlaze/V BRAM-based remote processor
-  driver
-
-  - Renamed the Kconfig symbol to AMD_MBV_BRAM_REMOTEPROC.
-  - Updated the Kconfig prompt to use MicroBlaze/V.
-  - Removed the reset GPIO and clock sentence from the Kconfig help text.
-  - Updated the driver and module descriptions to use MicroBlaze/V.
-
-v4:
-  Patch 1, dt-bindings: remoteproc: document AMD BRAM-based rproc
-
-  - Sorted the SoC-specific compatible enum by name.
-
-  Patch 2, remoteproc: add AMD BRAM-based remote processor driver
-
-  - Dropped the driver-specific MAINTAINERS entry.
-  - Trimmed the Kconfig help text.
-  - Reused the common WC ioremap/iounmap carveout callbacks.
-  - Reused the common optional ELF resource-table helper.
-  - Used resource_size(&res) for the translated memory window size.
-  - Kept the coredump segment address as the processor-local device
-    address. The coredump path resolves segment addresses through
-    rproc_da_to_va() against the registered carveout device address, while
-    res.start is the Linux-visible system physical address after DT
-    translation and may differ from the processor-local BRAM address.
-
-v3:
-  This version updates the binding to use SoC-specific compatibles with
-  the fallback form discussed on the thread.
-
-  Patch 1, dt-bindings: remoteproc: document AMD BRAM-based rproc
-
-  - Reworked the compatible schema to use SoC-specific compatibles.
-  - Added amd,versal2-bram-rproc to the supported compatible list.
-  - Used xlnx,zynqmp-bram-rproc as the fallback compatible.
-  - Updated the example to match the new compatible scheme.
-
-  Patch 2, remoteproc: add AMD BRAM-based remote processor driver
-
-  - Updated the driver OF match table to bind via the
-    xlnx,zynqmp-bram-rproc fallback compatible.
-
-v2:
-  This version pivots the series away from a MicroBlaze-specific binding
-  and driver shape and instead models a BRAM-based soft-core processor
-  subsystem more generally.
-
-  This follows the upstream feedback that amd,microblaze was too tied to
-  the processor architecture while also being too generic as a DT
-  compatible for the hardware interface being described.
-
-  Patch 1, dt-bindings: remoteproc: document AMD BRAM-based rproc
-
-  - Renamed the binding away from amd,microblaze and reframed it around a
-    BRAM-based soft-core processor subsystem.
-  - Dropped the redundant trailing "binding" wording from the patch
-    subject.
-  - Rewrote the binding text to describe the hardware rather than the Linux
-    remoteproc framework.
-  - Reworked the example to address the original dt_binding_check
-    complaints about the root node and simple-pm-bus example shape.
-  - Added a clocks property for the soft-core subsystem.
-
-  Patch 2, remoteproc: add AMD BRAM-based remote processor driver
-
-  - Renamed the driver away from the MicroBlaze-specific name to match the
-    BRAM-based binding.
-  - Added clock handling for the soft-core subsystem and the matching
-    COMMON_CLK dependency in Kconfig.
-  - Cleaned up the reset comments and removed the success dev_dbg() message
-    called out in review.
-
-Ben Levinsky (2):
-  dt-bindings: remoteproc: document AMD MicroBlaze/V BRAM-based rproc
-  remoteproc: add AMD MicroBlaze/V BRAM-based remote processor driver
-
- .../bindings/remoteproc/amd,bram-rproc.yaml   | 105 +++++++++
- drivers/remoteproc/Kconfig                    |   9 +
- drivers/remoteproc/Makefile                   |   1 +
- drivers/remoteproc/amd_bram_rproc.c           | 213 ++++++++++++++++++
- 4 files changed, 328 insertions(+)
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+---
+ .../bindings/remoteproc/amd,bram-rproc.yaml   | 105 ++++++++++++++++++
+ 1 file changed, 105 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/remoteproc/amd,bram-rproc.yaml
- create mode 100644 drivers/remoteproc/amd_bram_rproc.c
 
+diff --git a/Documentation/devicetree/bindings/remoteproc/amd,bram-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/amd,bram-rproc.yaml
+new file mode 100644
+index 000000000000..c0359f447ea8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/amd,bram-rproc.yaml
+@@ -0,0 +1,105 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/amd,bram-rproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: AMD MicroBlaze/V BRAM-based Remote Processor
++
++maintainers:
++  - Ben Levinsky <ben.levinsky@amd.com>
++
++description: |
++  Soft-core processor subsystem instantiated in AMD programmable logic and
++  using dual-port BRAM for firmware storage and execution.
++
++  Hardware Architecture:
++
++    Host (PS)                        Programmable Logic (PL)
++    =========                        ======================
++
++    AXI Interface -----------------> AXI BRAM Controller (Host Port)
++                                             |
++                                             | Port A
++                                             v
++                                     +-----------------+
++                                     |  Dual-Port BRAM |
++                                     | (shared memory) |
++                                     +-----------------+
++                                             ^
++                                             | Port B
++                                             |
++                                     AXI BRAM Controller (Soft-core Port)
++                                             ^
++                                             | LMB
++                                             |
++                                     Soft-core CPU (MicroBlaze/V)
++
++    GPIO --------------------------> Proc Sys Reset ----> CPU Reset Signal
++
++    Clock -------------------------> Clock Distribution -> CPU Clock
++
++  Memory Architecture:
++
++    The dual-port BRAM allows simultaneous access from both processors:
++      - Port A: Connected to the host AXI BRAM controller for firmware loading
++      - Port B: Connected to the soft-core local memory bus for execution
++
++  The reg property describes the executable BRAM window in the processor-local
++  address space. The parent bus node translates that window to the system
++  physical address space by using standard devicetree address translation
++  through ranges. A clock input and a reset GPIO control the subsystem.
++
++properties:
++  compatible:
++    oneOf:
++      - const: xlnx,zynqmp-bram-rproc
++      - items:
++          - enum:
++              - amd,versal2-bram-rproc
++              - xlnx,versal-bram-rproc
++              - xlnx,versal-net-bram-rproc
++          - const: xlnx,zynqmp-bram-rproc
++
++  reg:
++    maxItems: 1
++    description:
++      Processor-local address and size of the BRAM firmware memory window,
++      as seen by the soft-core processor (typically 0x0 for reset vector).
++      The parent bus ranges property must translate this window to the
++      corresponding system physical address.
++
++  clocks:
++    maxItems: 1
++    description:
++      Clock input for the soft-core processor subsystem.
++
++  firmware-name:
++    maxItems: 1
++    description:
++      Name of the firmware ELF file to load.
++
++  reset-gpios:
++    maxItems: 1
++    description:
++      GPIO specifier controlling the soft-core reset input.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - reset-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    remoteproc@0 {
++      compatible = "xlnx,zynqmp-bram-rproc";
++      reg = <0x0 0x40000>;
++      clocks = <&pl_clk>;
++      firmware-name = "firmware.elf";
++      reset-gpios = <&gpio0 0 GPIO_ACTIVE_LOW>;
++    };
++...
 -- 
 2.34.1
+
