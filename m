@@ -1,134 +1,247 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1762D77E5;
-	Thu,  9 Jul 2026 03:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61CBC384CE7
+	for <linux-remoteproc@vger.kernel.org>; Thu,  9 Jul 2026 05:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783567642; cv=none; b=S3P66ABydJDAmE/dPCQf3xN1sQ1g2F/NhvldCnOYCBeYbnr20xFNN5p6PrXsyZhqK08xYxv+ao8HII7VrWf2qc+gZTiSFGE9cjiLfN+ZZjYNO2MHdI3pCWgINy+Ldrc8jPrkwmPpt1KLmOVKraMAedQ23lqgH7c8Sj+BMZ2X7WY=
+	t=1783574679; cv=none; b=ryUyXEOkOvoPY62vrJehUXnR5dRY5lMiVqKMkNST5WaMK4YXZc313gk+AqrTjDZhw45DMo99idtChCQZPZfKJar/jCSmicMvU7s8Gv/3beI/gvnBkmyZfhgrHW7gemf3dUkltWkXF17vWuZqgSCUaZdXrdClCMcwTuRMvJ0t34k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783567642; c=relaxed/simple;
-	bh=5q6IKp8NWuO+mOAkqzdM5WrL8V65dmw8cIVwkMaDawY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QHmNR6PhyD/Vk1qBSmaloimXFqFf+ME1WFNW45S6rtEP2Sc9HQ1zbyzBLGy0A5zytuJ3O5rB1tIr7k4N0eLnlUhwjgDXHLz0uBnDARybpkC8RnvQYYTOBhH0YRT/c+z7fqsUkVpxfeF9fCrRAqDJaK2D6CpCiZSIDp6nB8vTdj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQSu0Up6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1783574679; c=relaxed/simple;
+	bh=eCEmFNBKDCUgi/XpzjhkSQjXE6ML/LWB346kaTFfFn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JUhGEevUv3E/DssfA3MgvVZ9FoXN82QwxchknfX6/sXzBstYkX8/KuxsRlu+mV4+Yoem2nr1oF/ZFqqsjfxuspCvg0O+lV/ILR4yKgE0cANusiIXLuM92l3dhJQnSUzZDZQf1MDIkco9083ExfepHVhj+msmJxheevfrMy2tsd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=a35GQmGs; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Xmko6yvi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQSu0Up6"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D0B4C2BCB7;
-	Thu,  9 Jul 2026 03:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1783567641;
-	bh=5q6IKp8NWuO+mOAkqzdM5WrL8V65dmw8cIVwkMaDawY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=sQSu0Up67jYX7vCEPZucbTO/LMRi0qBKMjvxEO0F0AT1JusG7+Ww+EkkG9JigOb9A
-	 pybCAdn/HXf5kRqY1JwFm66Ia59zGkLuwntNSgt6nF5BWNbK4TgdDWsz8TmyUbtYH9
-	 urmIrjDvT+fIU4UmAzieE4oD4L/Kx3CeBEjjPruMJMOFaltqIjNbGWkbWUtLYO4VKE
-	 90rLygyK8Ek+geQVjC5QpVYOX6eBIfiQe0ZBI0pkCPrUP5AlsU5esafhlSgRHt5Q3t
-	 YTTYe6ecgfmhokq4/uDJp2YrTl4Nkxna03l4KPOAUORDE8d/xDacn8ohqy70hyynaj
-	 TNXkArutkJ2ww==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC92C43458;
-	Thu,  9 Jul 2026 03:27:21 +0000 (UTC)
-From: Esteban Urrutia via B4 Relay <devnull+esteuwu.proton.me@kernel.org>
-Date: Wed, 08 Jul 2026 23:27:19 -0400
-Subject: [PATCH RFC] remoteproc: qcom: q6v5: Only print handover error once
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="a35GQmGs";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Xmko6yvi"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 668N9N5G041584
+	for <linux-remoteproc@vger.kernel.org>; Thu, 9 Jul 2026 05:24:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VD1AdfG2BjNXiv/VHQwI0Lnl5qw+Uds4QKa09TDo4ds=; b=a35GQmGs9wr7rn+0
+	ZhoGjA7yyYan+76zASJR+jiS752KDbhgRM8t7qeoBOi20HePqfqTSRypLPDCpRAd
+	cDO7i2YEaOafS22jzgsocg2l5OCEh7Q6VqxI4r+DhrQ1IOMSrh7qzpzrMsTVLMaa
+	jtqtK5e/b5in5sCvRTAHuwrQq/kBtbUZWA5/oaGtm+99M6SPaSWOI3TDxBSljlUm
+	S9QvOav5tq6V59VvbeilyXBY6UbYSOQr0R8IAQ1L7Ga1E7lpz0abA1Efq3GW+8D7
+	wHdIjX/wgLt3XeH1j1TDCiUDCD4QhXNa+GJfecbvFsWjC5kNA/0q1SG+LQ8rJ4Cf
+	MZwquA==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4f9sqsag9e-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 09 Jul 2026 05:24:35 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-847ac21582cso1855144b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 08 Jul 2026 22:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1783574674; x=1784179474; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=VD1AdfG2BjNXiv/VHQwI0Lnl5qw+Uds4QKa09TDo4ds=;
+        b=Xmko6yviZxwnc0Y5jFf8MudMF/CzgrsLOlhn6AlGCDY+oxfRMFunB1tixTiaM7In96
+         C0v6xkXhLg86djeXv5XqcaZNjcyWZUE+f4bHYPSDwR9+hFrufDlC11sS91eFV4DMK2xJ
+         MM3GYdBN92glMtUYIe6E67S33Ue9zHxARTilQzIzN7lrB1PUHqGsCRoLROcY+i5UCPKT
+         kDq692v2Tsu1Dxiq34HupMBSVAeLYWAQvMe8KwsGbskIqORb0iGyPikaT7Ln7KXdggnT
+         DzQ4vvPOg5Km/elKl5AyY+VqM0rhYfYaPcImkDZtYhfHxTzi5uzG/mVf86re6UphnLG6
+         ZSLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1783574674; x=1784179474;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=VD1AdfG2BjNXiv/VHQwI0Lnl5qw+Uds4QKa09TDo4ds=;
+        b=RQ3N54tljkMfammKj271M3Y/d1DLNHu/8cM4oVw0QstlV7D+78fYPk494AT/+c1qm5
+         +LqH2ee84/6HX09MP44PN8INNPaFjJTM88uVfsSrGp9bdO8LY89TWzCdlTViidYXkHQl
+         qfMbPh9HWmHDie0xVE8mN/7n4CTylt84qNanvR0Y4nqxM8X4PaqUNbi+zuYDz+b86Rrw
+         5X+FN287nGs6BSGM0p2UCOOqLmSDZL0ajI0pCMF7T+Oy05E7e0LrTR8+dKpQTtXL1yZ6
+         rMgeDbQzyZ5sMGBeWv5Z0yvCAIE+7KvA36FWilJO7DqkdD5gkMYvgyUtczfyPHMNfhDP
+         CwKw==
+X-Forwarded-Encrypted: i=1; AHgh+RqdVZDnVY3DqkC+Jb/63vBW5oiYdVpIfzbumK+UBcJWnnbJZ6O+LsuM62Qf+2cXg8obBn3mXRvb2W1vHwxgSj+c@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4u4JoaWCNxGzv0NPcHjiHKOedDAb0n8vC8juszu4+N0/Cp/eI
+	cmRQtsJU6k9fVncU/K5lBuvQHBfDrn3xzhwswkBb2iyBfAK8zz6mCQ6RB94XCLpXBvkHIJr6Nhh
+	s+iHgwy498TxuJkSXptE2wgNDkEj9eAwdue8tNBJWejFRBrqr5hYcXwoVuZtYFcynEPMgTAq6
+X-Gm-Gg: AfdE7cmqXm3nGXeSAS6+DLKNIEdhkKlGkqxlbLOUnJjByQAtYwuvkwDXw0n4RmL7Ev0
+	WmUWXatm1xtDILbcjwUi13oiyHqehEf9kgzzHxAra+a0uWdlddU1CyR4EGaC0jQORIQgq2z8ZZk
+	QoXEDEJ6SZmh2FgputDcZRbmi3GtVTWjyQNgRFstZRjKHvP+wvaL8m+zWB3EeIo6JtkF3n3Wcso
+	xOiAsRYIGDXN4R20lrsvmvq1JFh/SCd6XIclhGMdcduu2Yl6u8BS211q1BSqfiqitozUjXXLRf6
+	GWoXbXEqo4Oq4ZydSZDSxJQX9SzBTrC1Kp0GyQCesG9vhdpXN+0Yuu3/LUAX1CziPNtUgH7RTAg
+	QW4EoeYvbUWl8VXWRHF4uZIVf+ZdXYJCr/CCXUQIEDw==
+X-Received: by 2002:a05:6a00:c88:b0:846:de21:3da4 with SMTP id d2e1a72fcca58-84842ebc27cmr4969633b3a.3.1783574674330;
+        Wed, 08 Jul 2026 22:24:34 -0700 (PDT)
+X-Received: by 2002:a05:6a00:c88:b0:846:de21:3da4 with SMTP id d2e1a72fcca58-84842ebc27cmr4969596b3a.3.1783574673765;
+        Wed, 08 Jul 2026 22:24:33 -0700 (PDT)
+Received: from [10.217.199.117] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8483d117a1dsm2382038b3a.37.2026.07.08.22.24.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jul 2026 22:24:33 -0700 (PDT)
+Message-ID: <6f179f96-fdd1-4fa9-b26c-df7372eb6d20@oss.qualcomm.com>
+Date: Thu, 9 Jul 2026 10:54:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260708-q6v5-handover-v1-1-be0e6cba0b13@proton.me>
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzMDcwML3UKzMlNdoExKfllqka5ZWkqyWVKKSbKRmakSUE9BUWpaZgXYvGi
- lIDdnpViIYHFpUlZqcgnIJKXaWgCo/mfAdgAAAA==
-X-Change-ID: 20260708-q6v5-handover-6fdc6bd4c265
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Esteban Urrutia <esteuwu@proton.me>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1783567638; l=3032;
- i=esteuwu@proton.me; s=20260622; h=from:subject:message-id;
- bh=WRlfOb7BJH4o0RSa6fkA/yjtgThVqiPMGxbi8obWNd8=;
- b=JVR7n/XYUHkKIyj/tQfYG1a6mCkyNlzGhoLwffr/0okHdWF1GdMkjmjJ5soa6tdsKHxUl/+p3
- SU5Xed8HCi0ApqYqxWzSG7XSGsfKB4cvRAuY6T2bEIildFd4qYKfObC
-X-Developer-Key: i=esteuwu@proton.me; a=ed25519;
- pk=wToFt4mOAWkzbqb15Ye1hrhevI13vK9BcMUFiQ/me1M=
-X-Endpoint-Received: by B4 Relay for esteuwu@proton.me/20260622 with
- auth_id=835
-X-Original-From: Esteban Urrutia <esteuwu@proton.me>
-Reply-To: esteuwu@proton.me
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/10] dt-bindings: firmware: qcom: tmd: add TMD device
+ type constants
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
+References: <20260703-qmi-tmd-v4-0-3882189c1f83@oss.qualcomm.com>
+ <20260703-qmi-tmd-v4-1-3882189c1f83@oss.qualcomm.com>
+ <977711ef-c1fb-4735-b82a-4ca2f4797f51@oss.qualcomm.com>
+ <8ad14017-bce7-485e-9677-9cbf8ecb2742@oss.qualcomm.com>
+ <yvggh2zs6qkuyuzvwydkecswnjoyba2d7t27br6xpk6d2csp53@i25g6okdktz5>
+ <10a346d8-fbb1-4142-a650-507c3917b8f6@oss.qualcomm.com>
+ <dv4n4ntnfvhouv23asgshgs7wcolkmqs7lbuni52maexo4s44x@4bqhf33x4fr6>
+ <1aca8d60-8e39-4532-9095-a5260bba76ac@oss.qualcomm.com>
+ <e7eho7ezujbrdzgumshapf2r7hu2jaujib7lvotrqvcj5er5ut@xpd6l2kgipqu>
+ <9dc4b29e-e9fb-421a-b789-eb16a68ff915@oss.qualcomm.com>
+ <2tu35aavp7sc2npni33ky5bve57idzy3bzp2pk7eh5lryq3r4v@gmm3dhayu4cf>
+Content-Language: en-US
+From: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+In-Reply-To: <2tu35aavp7sc2npni33ky5bve57idzy3bzp2pk7eh5lryq3r4v@gmm3dhayu4cf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzA5MDA0OCBTYWx0ZWRfX5IypXRVwD6IX
+ 5CYdTOJUoIcuWQjQU2hnwKBnh0EXAk42oVXJq4E5IKTff9+1ubsd4Q+nBjJc8r3SYbb6/pqVDnJ
+ zmDUPrVaokIvz/d7gC7JVHh+RsmGMoY=
+X-Proofpoint-GUID: 4Lj7krFv7hQuqIzSls3pgs8OfQwaB50o
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzA5MDA0OCBTYWx0ZWRfX3lEG25jbFCRj
+ z7geMrUzmkHgobNCYr2FCTs/jmjZGSe0Ea4YbhLD2FCJbXr0lr1YAqWLPRqkXBmho7ZuDt1LUSI
+ MbKlLeUkzcHRwbi26GGq38bEo3X9jblT1rRHEEcCGfjZvc/kxHO7u+ONcuNH3S4M6zQ4yV+qHWh
+ vGd73kYJU3McX16ajcWEuq4f6nVPAdfvxJoqvAtCMVKEoB5KH0MoDltQHJwd36iX96jiopNrkEd
+ sm0hI0w5WhvBahRk/oHsCfz6MJFIHGkLYknrDK2BFQDWB619z+L8UxPDW3voH3Sy2PVNdzoASnV
+ DVQL0AyTC4BYdymd3K9GZS4ueTbmIl3QNx62D4YIt/VLXXV+wON1rkJEAzzStms+pMrBSwNaU0y
+ y+bR40SJFh7psXuhD+jqrd69vmMY4VbMmxRRkF2uXXSEN4UcexsaCVaW6yknsPDPufycF/XkuNF
+ J9eemqxcaqTd0uNKw2Q==
+X-Authority-Analysis: v=2.4 cv=Sv2gLvO0 c=1 sm=1 tr=0 ts=6a4f3093 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=tNnYrs7vTIEjkU0joGkA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-ORIG-GUID: 4Lj7krFv7hQuqIzSls3pgs8OfQwaB50o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-08_05,2026-07-08_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607090048
 
-From: Esteban Urrutia <esteuwu@proton.me>
 
-On some devices, firmware for the remote processors can signal a handover
-more than once.
-In the worst case, the kernel buffer will be spammed with this error
-message, leading to the kernel buffer consisting of just this:
 
-[  106.305033] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  106.506070] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  106.707103] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  106.908612] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  107.108158] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  107.309944] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  107.510795] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  107.712183] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  107.912834] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
-[  108.114217] qcom_q6v5_pas 2400000.remoteproc: Handover signaled, but it already happened
+On 7/8/2026 7:55 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 07, 2026 at 03:55:13PM +0530, Gaurav Kohli wrote:
+>>
+>>
+>> On 7/7/2026 1:04 AM, Dmitry Baryshkov wrote:
+>>> On Mon, Jul 06, 2026 at 08:11:35PM +0200, Daniel Lezcano wrote:
+>>>> On 7/6/26 19:47, Dmitry Baryshkov wrote:
+>>>>> On Mon, Jul 06, 2026 at 07:03:18PM +0200, Daniel Lezcano wrote:
+>>>>>> On 7/3/26 17:42, Dmitry Baryshkov wrote:
+>>>>>>> On Fri, Jul 03, 2026 at 07:43:39PM +0530, Gaurav Kohli wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 7/3/2026 1:23 PM, Konrad Dybcio wrote:
+>>>>>>>>> On 7/3/26 7:03 AM, Gaurav Kohli wrote:
+>>>>>>>>>> Add Device Tree binding constants for Qualcomm Thermal Mitigation
+>>>>>>>>>> Device (TMD) types used by remoteproc-backed thermal cooling devices.
+>>>>>>>>>>
+>>>>>>>>>> Qualcomm remote processors expose thermal mitigation endpoints
+>>>>>>>>>> through QMI. These endpoints can be registered with the thermal
+>>>>>>>>>> framework via the `#cooling-cells` property on the remoteproc node.
+>>>>>>>>>>
+>>>>>>>>>> The QMI TMD protocol identifies devices using string names (for example,
+>>>>>>>>>> "pa", "modem", and "cdsp_sw"), while the DT cooling-device binding with
+>>>>>>>>>> `#cooling-cells = <3>` requires numeric device id in the form:
+>>>>>>>>>>
+>>>>>>>>>>        <&phandle device_id min_state max_state>
+>>>>>>>>>>
+>>>>>>>>>> Define common TMD device index constants shared across currently
+>>>>>>>>>> supported platforms. If a future target requires a different mapping,
+>>>>>>>>>> additional target-specific constants can be introduced while preserving
+>>>>>>>>>> existing DT ABI.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+>>>>
+>>>> [ ... ]
+>>>>
+>>>>>>> Why are you using only those TMD devices?
+>>>>>>>
+>>>>>>>> More constants can be added as needed.
+>>>>>>>
+>>>>>>> Kodiak is one of the supported platforms.
+>>>>>>
+>>>>>> What would be the benefit of having more than thirteen cooling devices
+>>>>>> declared in the thermal framework and having only a couple of them mapped in
+>>>>>> a thermal zone ?
+>>>>>>
+>>>>>> I agree there are more TMDs but if they are unused for the moment, why do we
+>>>>>> need to add them ? Can we do that incrementally ?
+>>>>>
+>>>>> That's what I am trying to understand: why the implementation uses only
+>>>>> the selected two devices, if the modem on Kodiak supports others. How
+>>>>> can we find out, which TMDs to use on other devices.
+>>>>
+>>>> My understanding is that is an initial thermal setup. Gaurav will add them
+>>>> step by step while setting up all the thermal zones instead of sending a big
+>>>> patchset. And TBH, that will be much easier to review.
+>>>
+>>> In such a case it should be noted in the commit message and/or cover
+>>> letter.
+>>
+>> Thanks for the review/guidance. Not all TMD endpoints are relevant for
+>> kernel thermal zone binding — some like BCL and cold temperature are handled
+>> from userspace when needed. The constants here cover only
+> 
+> What if there is no userspace? Or the userspace is different from what
+> you expect? I doubt we have TMD-speaking userspace yet.
 
-Instead of printing an error every time a processor signals a handover more
-than once, only print an error once.
-This way, the error is still present, but it won't fill up the kernel
-buffer.
+Thanks for mail, The TMD userspace implementation is available upstream 
+at https://github.com/qualcomm/qmi-framework.
 
-Fixes: 54898664e1eb ("remoteproc: qcom: q6v5: Avoid handling handover twice")
-Signed-off-by: Esteban Urrutia <esteuwu@proton.me>
----
-I've been using the mainline kernel for a while now on motorola-bronco,
-which is an SM8475 based device.
-This device's firmware for the remoteprocs, specially for the SLPI,
-seems to signal handovers way too frequently.
-As of now, the Q6V5 driver will print an error each time a remoteproc
-signals a handover twice, which leads to the kernel buffer filling up
-pretty quickly.
-I would like to suggest replacing the call to dev_err() with
-dev_err_once() and would like feedback as to whether this is the proper
-way of handling firmwares with this behavior.
-This way, the error would still be printed, but only once, and this
-issue would become much less of an annoyance for devices with buggy
-firmware like this.
+> 
+>> what is needed for modem and CDSP thermal zones on the currently posted
+>> targets.
+> 
+> Again, SLPI, ADSP?
 
-Regards,
-Esteban
----
- drivers/remoteproc/qcom_q6v5.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry, I should have said "generic subsystems" rather than listing 
+specific ones. SLPI and ADSP do not require active thermal mitigation on 
+these platforms.
 
-diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-index 58d5b85e58cd..81e894cc8634 100644
---- a/drivers/remoteproc/qcom_q6v5.c
-+++ b/drivers/remoteproc/qcom_q6v5.c
-@@ -165,7 +165,7 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
- 	struct qcom_q6v5 *q6v5 = data;
- 
- 	if (q6v5->handover_issued) {
--		dev_err(q6v5->dev, "Handover signaled, but it already happened\n");
-+		dev_err_once(q6v5->dev, "Handover signaled, but it already happened\n");
- 		return IRQ_HANDLED;
- 	}
- 
-
----
-base-commit: 3d5670d672ae08b8c534b7beed6f57c8b44e7b43
-change-id: 20260708-q6v5-handover-6fdc6bd4c265
-
-Best regards,
---  
-Esteban Urrutia <esteuwu@proton.me>
-
+> 
+>>
+>> Will add a note in the cover letter clarifying for current tmd's.
+>> Please let me if this is fine.
+>>
+>>>
+>>>
+>>
+> 
 
