@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04F737B030;
-	Fri, 10 Jul 2026 18:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05E737C0F7;
+	Fri, 10 Jul 2026 18:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783706847; cv=none; b=E75vZYoWMJs8d9d94cFuUkS+UPn94+Tux0TN/fZJ+wJdfot+N4Gv4dk1Diof32Elq209zcuOITQcTatanRuSeYw4Kq+YbWp43W5C/5nz6Y6/Lu2TthLfNzyY2njU/xWqMK7eHU9YSogtGgIw8GkwkjEqdcHEyaXTOeEoU2bjTzw=
+	t=1783706847; cv=none; b=atD/cqILollJZqHxyzVjfoajDmSLcvfjOALaUHh/WhA46KxOgIKstIrfM3xfhu9xrtaXG52vKC9vfImQTR63b0bDyQQCS3aJeZoDNQR64TVeJvqDw/okbjeKbF/neuhFojH9Yew+VEhN4nJRIcB8dA1ILwJEKwqyxp/01/q60rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783706847; c=relaxed/simple;
-	bh=xHIwWL0dX+YWn+8QyAMd1J+rQZqZVU/cJAIObDBdM80=;
+	bh=eAITFPOCEuW56hJol+BRhwmU47JapVeAE6fdtHRutWE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uhtjPbeyiEoVrr+hQfaKhTAvYEwaf0Sg7X5KqeNGqWJDuGXsrVSI/nqOUvSOwUVKTtksavyePmi4NcpGeYFVphEUc0CHdgdK3z55ZmmFayau+iF6SsgboCbYs7xezM4USaoUGUhmfm20XMx9rIoJBN06PbbMxv11ns0eeLvR4DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3H8n1AP; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=PbdmgIFDw6/Eigr9EPbbEmD911alVCpm6PGy6ALksf6eT9Xxm0KdXGmNZw0Zf8mK33AmUvM+xAaBVJ//niHksiIxlzrJy1pIRFkaFmss8cuVoXaa6v5fgQpkZXTYT7qz3ofRbMBKj0JUkcZXNFf5HZ+mY4WkDNU6JiD+BvAf2QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nv/sA7Mc; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3H8n1AP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B3111F000E9;
-	Fri, 10 Jul 2026 18:07:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nv/sA7Mc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF0D81F00A3D;
+	Fri, 10 Jul 2026 18:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783706844;
-	bh=6eKX8o7IaMPFMG1RzwBI922PAO9IdZivnMP6ZdfSKq4=;
+	s=k20260515; t=1783706845;
+	bh=EFkeIeU2FBGbEqfcB14GA6QRcO1JY2uvLVTQLi5eGUU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=V3H8n1APnhEYIQwa3Q0JQ5iWvNpMHdydSWmCnuw3SIxSRP/Jaldxs7V3jUBAxeIzF
-	 qFOs5aE20yjVDxcguvehrugqU/1/PVt+d0UxAAhfpjiLn0U79+eV/y9RmfH14XfFVS
-	 oHNwtY07N2XO8/G3VPIR+dgbjE4NilwDzMjuOg9tbefQSGD0Zn4A7w3e30ZY0vBF3e
-	 dQC1JTMcK/IeQBT1yxbGiO2PfV/XAnl7xIbTDXpbc5b21vR3E7LQgtz6RgTpNN02B6
-	 ZolMxkxfe8PkLD7KbXLxztD8FGuo/VZYxTieF3JZJHLMBk3neCXd++Ai2y+ai7Ilk4
-	 NyUpJ1nAHs/rA==
+	b=nv/sA7McvirQ8iJD+fR1bLLLazEgXdvuEpdtkHhcl2rUVUwrl6VHvYdddrb0PMH5J
+	 n/40Ffim08ig/rcuOQhq0pt1iOaz7JBOpu1OB1ks9yCCgqAP/Kl4WNKNvA8zoMru+B
+	 nKMcHOGBW+Rpf8oTizPXN42+nSsGXQ0bmG4lMF2O4mWuMoC35SRSviBBHMiqcMp4W1
+	 gls4lv4dt0Y/1pvI5pHR4Ag2/dF5aL7f0E3vatZw+xViWr08HyOwXeg491vocBMoR6
+	 3PGl9s9feCv3+8tfyOb8KSoRTir0tSPLsFEEeyIJmihBr2AsyyGdNvmTX6MTX8Nfpb
+	 Sy6kyPbMrIe+A==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	deepak.singh@oss.qualcomm.com,
-	Chris Lew <christopher.lew@oss.qualcomm.com>
-Subject: Re: [PATCH] rpmsg: char: Check for ongoing chrdev destroy
-Date: Fri, 10 Jul 2026 13:07:08 -0500
-Message-ID: <178370682984.2572738.15869457982021218567.b4-ty@kernel.org>
+To: linux-renesas-soc@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ohad Ben-Cohen <ohad@wizery.com>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] hwspinlock: propagate errno when registering single lock
+Date: Fri, 10 Jul 2026 13:07:10 -0500
+Message-ID: <178370682988.2572738.9921265128936208294.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260406-rpmsg-char-fix-chrdev-destroy-race-v1-1-7317434fa246@oss.qualcomm.com>
-References: <20260406-rpmsg-char-fix-chrdev-destroy-race-v1-1-7317434fa246@oss.qualcomm.com>
+In-Reply-To: <20260512084856.30497-2-wsa+renesas@sang-engineering.com>
+References: <20260512084856.30497-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -49,21 +48,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 06 Apr 2026 09:59:50 +0530, Vishnu Santhosh wrote:
-> A null pointer panic is observed when stopping a remoteproc and closing
-> a character device using the RPMSG_DESTROY_EPT_IOCTL. There is a race
-> where each context calls rpmsg_chrdev_eptdev_destroy(). The thread that
-> runs second will call cdev_device_del() for a second time, which fails
-> because the first call already removed the device from sysfs. Add a
-> check at the beginning of destroy and exit early if the destroy call
-> has already been done.
+On Tue, 12 May 2026 10:48:23 +0200, Wolfram Sang wrote:
+> hwspin_lock_register_single() always returns 0 despite checking the
+> result from radix_tree_insert(). Propagate the errno to make sanity
+> checks in callers of this function actually meaningful.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] rpmsg: char: Check for ongoing chrdev destroy
-      commit: 1f9c2897afb0fe86c1fdf4f5e23c5fb8f7442f6d
+[1/1] hwspinlock: propagate errno when registering single lock
+      commit: e088ffa9a00eaaaf90da74763e774ca160969c26
 
 Best regards,
 -- 
