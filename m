@@ -1,58 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D43937B415;
-	Fri, 10 Jul 2026 18:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECD3233D9E;
+	Fri, 10 Jul 2026 18:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783706846; cv=none; b=US62I42sZSloN3+dqyhhqZh/ctqp8i6GCVXmvGV35OAVByQecna34zdfImBm4OdXVhEt2D3z5zNgmAnz5vNkuPsqRoBHZmmJn3Etxsm4OlGABh8/D+P77VrA24PWmQs+fZsUKBB7QswMZJwXnrFnG+oX7ICJe72kBu1qUFCDLfM=
+	t=1783706846; cv=none; b=DPbirMRPd0EfFxypeOUIntThSU6SkOICV/IlxwWX5f93+knZRyFgWUuA1I/wS6RXd1lc3C4ZUJnLiHBljFqnCQMHgQOHsvwqBHpO55IL7ZIR28FwtnBuHoFfg6bvILMOpJtM5yxRqkypvZEYKKSK5cAWo4wZ15fJbXD88OW2oaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1783706846; c=relaxed/simple;
-	bh=lcpICsyTNqKGxTwAISCqIqc1zQK9fexyXV9marLETHk=;
+	bh=w1oOzUgiUQPXYy3SofXoxAqDEEtFQFAe7W79zy10r+s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NllHFZwTt4CqObPcMlLXDuXfRSr3grbLPnQe3bCYzC9sYOPSAOD9T0pwNtmS7FSpup1PmC559PJYVm/n3MSlGrOxIE0v/UD752WL/5jUajjO5DUUQKgsGA7u0lfoDg+FdSW3G1HOxY+96lufIHeXe2z+i/6hHSR6/RVH4eAMwdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkavSFY6; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=qiXAlP9F0YqqqWNNdci0E6W7n7pmHb1NPq+iCC+WowTm3+Vsrh1O3RaQaHFDMw6NHdFcb+vamVeHfeYcaVqkpYjoQ4R7kkuSVGF0yv3BN/5DLWk9dtEoSouiHFuJtxXymIokCs2rr04OleYfRCWyOXARTp/L2eXFDu8VJSkSjw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBrCvt+5; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkavSFY6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDBA1F00A3F;
-	Fri, 10 Jul 2026 18:07:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBrCvt+5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DA1E1F00A3A;
+	Fri, 10 Jul 2026 18:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783706843;
-	bh=4G+nAEbDkSf79QMV/VmVVdOvQKG969j3uYzdvbfr1YQ=;
+	s=k20260515; t=1783706844;
+	bh=v4hTSXpz/g4Rq0ck6FVl5vTd241lb/PScfMRg3d8FFE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=dkavSFY62Auhika3QZ0PRVc9ADe2tkbwq27tSizdqnfHX5gERCYyQe9zNd5RrT88i
-	 P3FzInuzog0a8hTeSNMcLExpSuYi3ftDEtQJabZHKhZE/1SH5CTjylRJKvcorRNlVS
-	 UMWZKqFoldUpyeC9xTgE9wKLkuFXoD0lcwVsC9YmpbJIyFpJe7wifI1CGNuCXak9EF
-	 O9S1FDP5sWdmT4kbRgYr357br2cTvPyY3NtyEuqT7BtleRnlCdGmCDipdLmuFSmRSx
-	 LPYR8OwT/Ga3KBKzZLX3pl0M1w/iVzlG3isCSHWt8V//Dlyk/2hRg5ZLDY6N+zbuHH
-	 fWzRyd2UFwIQw==
+	b=NBrCvt+5Iiv/2AFmV2+KxKbGxBkl0TrZhENKAqZuvHQr4viJRJhw+sALCWO8sQl37
+	 1aHf+PSaYMsqddi2tQ5HMMpI0ONt7x+hXcbiys2VyCyNYJkdXeNQeIsKs6sfmajaKq
+	 wwkdqT96AWw4804JCwSCU60BOtuDhc4toaSdSSMOrh+B3NotMRyqo+9GSkq1MOHQvd
+	 J1QiXcHPm1Wo536VvBl7XwenYOIvis6XLBlK7xwMtapBFQ1tLM1Xp+e1t3lWh4Rwvq
+	 9FruilzvirTwngNeFKyZxxEtvcIao4lDwTvpkV4x/EcYMjKqIYPsBboZsXjJjjuwai
+	 wcGyDC+KOWxmQ==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Val Packett <val@packett.cool>
-Cc: =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
-	Luca Weiss <luca@lucaweiss.eu>,
-	Vladimir Lypak <vladimir.lypak@gmail.com>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	~postmarketos/upstreaming@lists.sr.ht,
-	linux@mainlining.org,
-	phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	deepak.singh@oss.qualcomm.com,
+	chris.lew@oss.qualcomm.com,
+	Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v2] remoteproc: qcom_wcnss: Fix handling the lack of PD regulators in v3
-Date: Fri, 10 Jul 2026 13:07:07 -0500
-Message-ID: <178370682982.2572738.1804514769753985254.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+Subject: Re: [PATCH] rpmsg: glink: Replace strcpy() with strscpy()
+Date: Fri, 10 Jul 2026 13:07:09 -0500
+Message-ID: <178370682976.2572738.17769908949059020506.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260201210230.911220-1-val@packett.cool>
-References: <20260201210230.911220-1-val@packett.cool>
+In-Reply-To: <20251211-rpmsg-glink-strcpy-replace-v1-1-be06308e5724@oss.qualcomm.com>
+References: <20251211-rpmsg-glink-strcpy-replace-v1-1-be06308e5724@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -63,24 +51,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 01 Feb 2026 17:55:03 -0300, Val Packett wrote:
-> The changes introduced to handle single power domain platforms have
-> swapped the info pointer increment from num_pd_vregs to num_pds, which
-> would shift the info pointer past the end of the array for pronto-v3,
-> which does not list power domain regulators in vregs.
+On Thu, 11 Dec 2025 14:18:34 +0530, Vishnu Santhosh wrote:
+> Replace strcpy() with the safer strscpy() to address unsafe API
+> usage warnings[1] from static analysis tools, as strcpy() performs
+> no bounds checking on the destination buffer.
 > 
-> This showed up as a difference between GCC- and LLVM-compiled kernels
-> on SDM632 devices, where only with LLVM one would get the
-> "regulator request with no identifier" error, because the out-of-bounds
-> memory ended up being zeroed. Fix by skipping the increment when there
-> are more power domains than regulators.
+> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] remoteproc: qcom_wcnss: Fix handling the lack of PD regulators in v3
-      commit: 3dbc90b9c22ea96e37bf55f6011e63b5123ec668
+[1/1] rpmsg: glink: Replace strcpy() with strscpy()
+      commit: ad6d7795388dbfc8a4c8980b49ad43648b1d6efe
 
 Best regards,
 -- 
