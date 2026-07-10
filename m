@@ -1,45 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04CE37C0E1;
-	Fri, 10 Jul 2026 18:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D43937B415;
+	Fri, 10 Jul 2026 18:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783706842; cv=none; b=owXRJAgBuXs4YI7L0ZJnQj3mgIgPdwdNQhjpKZpAHZ7aw6oerVibTsJ7sUepyNTGW5+f0SzpsUTdcFjZnQ6PTnhIu6To1xHbtkh26IULYW0+t6CKySvLs7UBP97ZGm1owT9Sl5mAhvj4fX8BuffEpFaYiPDLZxoW1l+92x6LpAk=
+	t=1783706846; cv=none; b=US62I42sZSloN3+dqyhhqZh/ctqp8i6GCVXmvGV35OAVByQecna34zdfImBm4OdXVhEt2D3z5zNgmAnz5vNkuPsqRoBHZmmJn3Etxsm4OlGABh8/D+P77VrA24PWmQs+fZsUKBB7QswMZJwXnrFnG+oX7ICJe72kBu1qUFCDLfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783706842; c=relaxed/simple;
-	bh=tnw7FAdtaAybU6L4IAEPAISIrMlltfpeStH7YQBdL4A=;
+	s=arc-20240116; t=1783706846; c=relaxed/simple;
+	bh=lcpICsyTNqKGxTwAISCqIqc1zQK9fexyXV9marLETHk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sWQzzkptznOgoQWzaFh6TZ2+3x5NxMt9S6xAYRwH+WYbh6t//lEK4U44zggv9NidU3sTdE0n6wbiai2xhFwykYOO0Xc3HBKTgVZPOupwMShJvkToWmu0EGK94YSuwlKEiMyDvKcfJT2NrW8xToP4JcqEsrupflujYpPANQiQ4jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKV2WcTv; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=NllHFZwTt4CqObPcMlLXDuXfRSr3grbLPnQe3bCYzC9sYOPSAOD9T0pwNtmS7FSpup1PmC559PJYVm/n3MSlGrOxIE0v/UD752WL/5jUajjO5DUUQKgsGA7u0lfoDg+FdSW3G1HOxY+96lufIHeXe2z+i/6hHSR6/RVH4eAMwdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dkavSFY6; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKV2WcTv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E5CE1F000E9;
-	Fri, 10 Jul 2026 18:07:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkavSFY6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDBA1F00A3F;
+	Fri, 10 Jul 2026 18:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783706841;
-	bh=IDASqxy4pZTBIbj9QbK6E3ArCs4zatN5FPTCPmPK/3A=;
+	s=k20260515; t=1783706843;
+	bh=4G+nAEbDkSf79QMV/VmVVdOvQKG969j3uYzdvbfr1YQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=BKV2WcTvjwD1qc7gVRmSJNrvvJcJ7MUEoVRI820cOQdPqmoRPhU2pWGTAF1d0NLyy
-	 QR5pTK+Siujr2NFWObyKM3LQ3C8BeCQWoDd8GxYpIlQZiTUzQVAGQbRjXkPzauhkqR
-	 AvlxQ+mkFkvQwPclpZhzF+Q61y1njEMPraHSqIF4a43D8g4MjO775+SDEj5EHazw5Z
-	 RIhUY1CQMr/ayXP8o5kqnsO+BaHEJNWgfqRgGgYcfxtZOc2OM3xVVT69b+WOUqJZZ8
-	 A/ocsvAsX/Gyp0I4M/t2+e0DWaYcIQpvBrKK3Qnh6R0kkMeIPy6CCzNJSIBWVk3li0
-	 xt5GeikEbB+AA==
+	b=dkavSFY62Auhika3QZ0PRVc9ADe2tkbwq27tSizdqnfHX5gERCYyQe9zNd5RrT88i
+	 P3FzInuzog0a8hTeSNMcLExpSuYi3ftDEtQJabZHKhZE/1SH5CTjylRJKvcorRNlVS
+	 UMWZKqFoldUpyeC9xTgE9wKLkuFXoD0lcwVsC9YmpbJIyFpJe7wifI1CGNuCXak9EF
+	 O9S1FDP5sWdmT4kbRgYr357br2cTvPyY3NtyEuqT7BtleRnlCdGmCDipdLmuFSmRSx
+	 LPYR8OwT/Ga3KBKzZLX3pl0M1w/iVzlG3isCSHWt8V//Dlyk/2hRg5ZLDY6N+zbuHH
+	 fWzRyd2UFwIQw==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Val Packett <val@packett.cool>
+Cc: =?UTF-8?q?Matti=20Lehtim=C3=A4ki?= <matti.lehtimaki@gmail.com>,
+	Luca Weiss <luca@lucaweiss.eu>,
+	Vladimir Lypak <vladimir.lypak@gmail.com>,
 	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	~postmarketos/upstreaming@lists.sr.ht,
+	linux@mainlining.org,
+	phone-devel@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] remoteproc: qcom_q6v5_mss: Fix MDM9607 subsystem control instance ID
-Date: Fri, 10 Jul 2026 13:07:05 -0500
-Message-ID: <178370682990.2572738.16410202237322359346.b4-ty@kernel.org>
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2] remoteproc: qcom_wcnss: Fix handling the lack of PD regulators in v3
+Date: Fri, 10 Jul 2026 13:07:07 -0500
+Message-ID: <178370682982.2572738.1804514769753985254.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260706-qcom-q6v5-mss-mdm9607-ssctl-id-v1-0-f59e728af621@linaro.org>
-References: <20260706-qcom-q6v5-mss-mdm9607-ssctl-id-v1-0-f59e728af621@linaro.org>
+In-Reply-To: <20260201210230.911220-1-val@packett.cool>
+References: <20260201210230.911220-1-val@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,24 +63,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 06 Jul 2026 17:37:15 +0200, Stephan Gerhold wrote:
-> Currently, trying to shutdown the modem firmware on MDM9607 results in the
-> following error:
+On Sun, 01 Feb 2026 17:55:03 -0300, Val Packett wrote:
+> The changes introduced to handle single power domain platforms have
+> swapped the info pointer increment from num_pd_vregs to num_pds, which
+> would shift the info pointer past the end of the array for pronto-v3,
+> which does not list power domain regulators in vregs.
 > 
->   qcom-q6v5-mss 4080000.remoteproc: timeout waiting for ssctl service
-> 
-> This is because qcom_q6v5_mss defines the wrong instance ID for the QMI
-> subsystem control service of the modem firmware. Make this configurable per
-> platform and fix the issue by defining the correct ssctl_id for MDM9607.
+> This showed up as a difference between GCC- and LLVM-compiled kernels
+> on SDM632 devices, where only with LLVM one would get the
+> "regulator request with no identifier" error, because the out-of-bounds
+> memory ended up being zeroed. Fix by skipping the increment when there
+> are more power domains than regulators.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] remoteproc: qcom_q6v5_mss: Make ssctl_id configurable per platform
-      commit: b19a43659ae4d34479ba2194961353827e659367
-[2/2] remoteproc: qcom_q6v5_mss: Fix MDM9607 subsystem control instance ID
-      commit: 4684c0491387814a2a7ebad55fc0f387dd4d4f69
+[1/1] remoteproc: qcom_wcnss: Fix handling the lack of PD regulators in v3
+      commit: 3dbc90b9c22ea96e37bf55f6011e63b5123ec668
 
 Best regards,
 -- 
