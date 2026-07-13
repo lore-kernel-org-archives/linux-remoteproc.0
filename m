@@ -1,444 +1,236 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9164274658
-	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 17:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436EA3546C7
+	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 18:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783963018; cv=none; b=BKiO2xBqZkn4j0a//V9Z+H7bNMCRWo3xN1WhtYdpsKDMCA+MhMKXeHce8NLojskkVKeHXSeUSLYuyXL/HTCChlN9WpajbfvttToYoD40LtOiOUdxLuu6F3vIsbYzpFaAcdS6YItTVkthggzIb0BR/c9MP9JNLPpys5kgkT0zc5U=
+	t=1783969123; cv=none; b=RYB5IvnW9yeZFzx+VKO9yuk5t88bOWQnAmXtensCL4bqmZ5SRIMIkRlC3424bdRHv8SyUpEr9O5BoVBMtAkRx7PGJHjKY4HpUl9SztaFhX5ATfZ00V95JXszGyF6w+1JhTy+A6eYejfLq06q2cG6Y9Q1wtUosC3t1XV2ICkbIiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783963018; c=relaxed/simple;
-	bh=D2R8QizWQ1Oql3WPKOFAzvhJaMnvI8vie8NTAJWg3Yo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEU2ykVU5/raJts+bfVyinZM0SAl2ghd33mzFOJ34DFaC/upNNfOOJREp4UkWHkfQosHytP9uoOIT5Vlq5s1Nd+D3P8nXyDhAUHCf8u832OOszyPp21qv60D8jST9z7R20GNXmSjvI7PsdQPuZyWGOIPJJk2iIP0KqtQOU/mr0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xofpQroK; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1783969123; c=relaxed/simple;
+	bh=Q4FlDRCpngp1x0aC0AgdewQ8wbrSnrUV0YCYHer0W7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gAKLr4aLI7CaSH6z3U5a+/SpHmPVOaozL3UYTikj1wqX3Mq3gHcLz0SH9SBqQsy5DLiNgu4cPlS9wzfMwFJKCRHDXH7q0KERzyfFDW0Hi6H/b/EE78XkW9weANF6gwOiaIZVZlZi+9T0+inVitzK9UksFVaIwlUcW4yrpSlk/RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WdU4k/7w; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IjgjV8tY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xofpQroK"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-8486672f03cso3028962b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 10:16:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WdU4k/7w";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IjgjV8tY"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66DF8kfL1908342
+	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 18:58:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EGm08z2QRTZQR1FZakby7UHoEn+vMY549zyGYn80n3k=; b=WdU4k/7wJY4565Q3
+	OBIv/l/9/g9bOCtXtJdW5RUd40bhhXJJtBGCi5XyLAHtadKYz5hVdLU8knWINlps
+	bNUIkviKqHLWLxv9gNI9iqXdGJ2UVEa6jsENcnQVNwq4EoYLEz470KHRNeHUHT8o
+	sa+g5Qw8UDN99M8RL+ra2kDJC1ovboKK5zPW4s1STq08y2RwX3+UBJFecEuQ8H0O
+	9XnFwJm6nPXYLi65NhRQ+zIzTRuprHoYo7OT+5G6P0c+/w8vIfA0qbM/PnP+tnvS
+	HmjjtQxXp4vx87eHAWKG9gGELlUiYgWMLYLOoSeiuwkqWt+92FJ1lGBo9st/xAKt
+	nCGidg==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fcwda28dn-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 18:58:40 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-cb11535e6a1so44394a12.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 11:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1783963016; x=1784567816; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=QMgQ2I83fSpv8VMH24bAJ52LUeteHATXzfSwUe6AnTM=;
-        b=xofpQroK4pwX9J6S9Vcf6aTb52C7dX8F49tJEuXn+7UCvrlGoSL5wOWiHE9AfQdA1F
-         kcxdtKzrKb7xgcD6IP+Tv2BSOU/ouqnDzk+tEurIhV6AKunMbxsiIc6bJWKnFjH3Ju7E
-         vnqi/8SDiV1thofzLe9w6sg+JwAxoBBByNbRUqKZgnTceVaGvqt9AzuhQVweFNbxJYir
-         hV7cCGOg8vHJKDkwyBk8AbibWMTQA3Z3/HiElK6WSU8I3f72RwhMrDOe4tB4Fuy41iCe
-         JnFm91Ky/R0uQxuUCaduXxgaJalnrD/IxIiHIrH2M3bUIW07M4Pv07XnIxEXIHkqc48Q
-         3JeA==
+        d=oss.qualcomm.com; s=google; t=1783969120; x=1784573920; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EGm08z2QRTZQR1FZakby7UHoEn+vMY549zyGYn80n3k=;
+        b=IjgjV8tYOBtwKq394jANMNx59r6lzns1gtRUHwX5v7l1Q9zJYLUKbHXNR52tQSXVUr
+         ZOeEtRot9hVlcPw7uMa7gqFshIpNN2qUSDiBIrTPtG3R3yllId9kw/DF45Fguja1uhnR
+         33otf8h84juUsW3oMxzdl7kXKZYUMfhnXsX3UnO9Uk3w5ah+ZWvmdFMM+I0FNMc9W7OW
+         360eAFp5JhphHlymvmT1BfFDfd0XE0BKmVXOQ1pf/C+89h3UDNcgc22JV/nVcYNFtJuq
+         UVPHEr1dyJsG2BkXGHj7FK6bNxx+Taj9EcloALrolP2R2SfSTrU6MC1ocUF2YO1KuG+d
+         qd/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783963016; x=1784567816;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=QMgQ2I83fSpv8VMH24bAJ52LUeteHATXzfSwUe6AnTM=;
-        b=mbsoIouA998UsReFVCqn/KPlEpQPXqTeQhM7g9JnKTrJe5VgOrjZveeUmiJRDFNdYf
-         ddAXD0mkyKHbQ2SFPvBYHwzefWt3Ego2e64hgGBrEBSEkVrybjgzAv1aZ20V1Sz8HlIs
-         QeAZrK3L3DWBoHP/YXlgiUOf82MrGhFtCTXAsSGYLJUSabx0enFNqOBlCBG4VD89DAad
-         k0crAPpt290/+R/ov+japZFR/rrDm/ZMg5wG6reqM6JqW8CZzj6V9pTHmdoLq00AoHym
-         2srX1cHixnn+ftqPfywLGbLE6Zn0qny0CB/qyd2ej0FrmYd4EKv1sDE1iRAae8aBJMrb
-         HayA==
-X-Forwarded-Encrypted: i=1; AHgh+RonMUTF7JJ6EfKUCQTzxLVu54xdXvDAIrtRKwpSmOGlkqXJfObNsOJ+OxmBein214A6TBvWxdmXCnlIGYvZmnPL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRSQMsnf3AUaJuxlBZUU3OIxT678w5zdVD8M8MHaWFT5Y81qVH
-	s+MzhGdVlbZDBg4AVP2EpkSpV+3PINlP4RhTA7XVfFtxQ1mHMFTHs/jALSb1qCRjyD0=
-X-Gm-Gg: AfdE7clJdaUGVEm7gS9Q3C+RmNJ6pLPlkzPDjgFb+dOtTny57OSDhek+fiKOhsSMWoE
-	+I1K9HSX7HgyzeDiiUOIGaQbHbUfLrq1+i+qwjslnRI80OzgXlSrAvMq6uAR6F/9b1SBmCBQVxb
-	JF0cX64hs3BiD+BnpnLDIIZkDn0t63xkbIKn7MevqeER3BEi7PTREOM3oV+MROFJBtXgFK8drFW
-	8+Wxi0VMTIzYDxAXuVXYZLrXUJkioDKGFJDttA+LNzSGNUEe3iaEEXkHPafTopuxrq+L7teyeCU
-	2UklpkMrAK2k3W9t0unX3M5qQDUhzaa5hJOIUoRQgH828SJrhvin2MYO2pdKz0SfB/tCi2BYOH3
-	ltKkNO28X6mymIFkgsBekhUFTzQyOY7No8KqU4XKo9CEpCToNi94MFQgxBlXE5Ll4aZ4YaH1BsA
-	/EfuwRcbpdb//cYH6+NavNgZUCZO8=
-X-Received: by 2002:a05:6a00:4405:b0:848:2f7a:2e56 with SMTP id d2e1a72fcca58-84889753bcfmr8957113b3a.69.1783963016003;
-        Mon, 13 Jul 2026 10:16:56 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:3ead:2a56:27bf:77cb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84a4f819117sm137812b3a.59.2026.07.13.10.16.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2026 10:16:55 -0700 (PDT)
-Date: Mon, 13 Jul 2026 11:16:51 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Shenwei Wang <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-Message-ID: <alUdg9iTysXCFUa5@p14s>
-References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
- <20260625155432.815185-2-shenwei.wang@oss.nxp.com>
+        d=1e100.net; s=20251104; t=1783969120; x=1784573920;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EGm08z2QRTZQR1FZakby7UHoEn+vMY549zyGYn80n3k=;
+        b=IlVEi0TmujQY1o4+6sONxQDMgOLc0qFJtBjcIZH7dry9wIbcMzqioAeUPIZNy+MXQJ
+         RUtgNN/6DZKvwJJCIiU5sbKIRi6H3VSgsCBeo9moMucOLZ3dL0FmmvAWGMMC0OCT9Fsq
+         KFipV00FkPo+xe71LCC2PX7EPNEOhFxq3b8wJlfaFpqrnKHOewOU6yBC1DvEEY6kqzdP
+         DQgCsWgikUTlMOQ4PEfWcaSWhAvYBJaUKgre+xtr7Gn2YAgUkl3V3ogfzGqsVUNZxNwY
+         s3eMt9DlnbAHun5IyJh3UH3jP4aOF1m7F3AwBaigG35UiPLbj1LPbPAn8VDKi05M2oZ9
+         NtrQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqjiMVgjcjbdrIKz2phWc49bzMy4c/YqCkmw6UzRsIygKdSr3JIv3dFlcv1TZsz9Wt4B5XDbf1Q5kTaDgOCwoeh@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWzNiDNTzixNce7373MjcjNjfn+P3VbD19A9pEst9436nvtC2M
+	9SwS3cZBikRCBeDZEqjCu815TZeBjmIeQ2ZqMChqhrxHph4uZ+uoD29FCwHHbqdnbidpNT8J7IO
+	k+ONOpU5EGVgqZyKAKNwqHqgoKb33wylzEkPRxMufsTxox9b098NTVg+hmaKIvCE3SgzKmh1r
+X-Gm-Gg: AfdE7cnZ3kc8DISoCGmslcdCbAP0T+UAWzXWqqxZNQrO9IxPccjDSlqIPYwnM5qxrCF
+	68E/+mPC7gnsuHXaxl3mhl6o1w6QBycN5ToUq3J+XSPY6yBZ0wHL0IJtId6jX2H7p4vvZYohZfJ
+	tdc+wOkDTD0u6+jPTkOilIgbRn3XpgG5Nv6l/DXLkgftQRrNxUt+tt+OXQ7DkTCDRCTw4NpBN1g
+	1Y4h73owMK3GVf59Sn4w4Cyxpmn4O96QmRkUvSvtoot15Q5S1PJhLGEb2mLSvoNX8Pr678j/axc
+	2aPyhvq7+1Z1FXLoL5Yelcjssx2n5ipTySo9S5jgnkyGGRfST7H6Ykud8hXkHGFiw83wykcK8sO
+	frhtEVB/WqHbiBO13qSQu+X10jcSxN9DXRG9mly8L7AGYsshcsIGhmZ46qzaEW27TuVNe
+X-Received: by 2002:a05:6a20:b7a7:b0:3bf:63af:859 with SMTP id adf61e73a8af0-3c110ad2e6amr11568642637.45.1783969119593;
+        Mon, 13 Jul 2026 11:58:39 -0700 (PDT)
+X-Received: by 2002:a05:6a20:b7a7:b0:3bf:63af:859 with SMTP id adf61e73a8af0-3c110ad2e6amr11568594637.45.1783969119131;
+        Mon, 13 Jul 2026 11:58:39 -0700 (PDT)
+Received: from [192.168.1.11] (15.sub-75-218-246.myvzw.com. [75.218.246.15])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3118ee6091dsm83117734eec.14.2026.07.13.11.58.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2026 11:58:38 -0700 (PDT)
+Message-ID: <09e17504-d1b3-4e3a-b547-3c3c1040015c@oss.qualcomm.com>
+Date: Mon, 13 Jul 2026 11:58:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260625155432.815185-2-shenwei.wang@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 12/14] wifi: ath12k: Switch to generic PAS TZ APIs
+To: Sumit Garg <sumit.garg@kernel.org>, andersson@kernel.org,
+        konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
+        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
+        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
+        bod@kernel.org, mchehab@kernel.org, elder@kernel.org,
+        andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, jjohnson@kernel.org,
+        mathieu.poirier@linaro.org, trilokkumar.soni@oss.qualcomm.com,
+        mukesh.ojha@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
+        jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com,
+        vignesh.viswanathan@oss.qualcomm.com,
+        srinivas.kandagatla@oss.qualcomm.com,
+        amirreza.zarrabi@oss.qualcomm.com, jenswi@kernel.org,
+        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
+        skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
+        Sumit Garg <sumit.garg@oss.qualcomm.com>
+References: <20260702115835.167602-1-sumit.garg@kernel.org>
+ <20260702115835.167602-13-sumit.garg@kernel.org>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20260702115835.167602-13-sumit.garg@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEzMDE5NyBTYWx0ZWRfX/Bfrzp55leBW
+ cvwYZiwY8Fk/z7w7QYsVqB8hHsMNvGWMu9Z/rbCJUWCd64XOzQ8ODza8bRDzujBwHId0KAQF9ij
+ O2PKOsbcjuY31xqukQaor2GWNP43LN0=
+X-Authority-Analysis: v=2.4 cv=cNbQdFeN c=1 sm=1 tr=0 ts=6a553560 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=6VQYfvmiyQ8t40WkS/mQdw==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=CBpSC656wZACrugyqBAA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-GUID: 3uHUVzDIDjfKhIp60GYFA6yciHIKXV-m
+X-Proofpoint-ORIG-GUID: 3uHUVzDIDjfKhIp60GYFA6yciHIKXV-m
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEzMDE5NyBTYWx0ZWRfX+YGkUsSHjSfj
+ ERuHu9ZV5OGc4yujiIDOPHIMfGaUd+DHjcaJtNAI8qPYtl4wZxK0et13q/EXbNJmfPN4JglI1Kd
+ dFBAv3a2cXLO9VjATk4bfGCQP/xP4PpuYW/XXtTGYUL21AsVzg3o/jDnVSzS4hYM7iLA1gd/Mo2
+ F5VfxcIcDds9vGCN/blm59FVNWUFOtBjDp/lc+MHqfxOK0AjIrDIvEtyB2JbSY/q2HC0QneDe4u
+ 0o5+OoefT4Q+7SrtBNM8I74pbMO5+vZ/PvcyQT0OV4N2QEAvpY+S5GOJwSNmOmh8gAG1S9IPsYm
+ xwRa5buXt5/mrR7xoRol7nzdWTH8x1ToZCkLRB18BYml2J7JqsH2fMy2UTtVa6EwLzrQi4hEW7F
+ VT20EDPDni168lUfz6iagap+SeKMTPkS6F4adZKUH03RcDqilquUb4O7ht47jHzQhdcrh/prbS6
+ Q7NVmMhWnbDSgWKqXkA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-13_04,2026-07-10_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 bulkscore=0 spamscore=0 suspectscore=0 impostorscore=0
+ phishscore=0 clxscore=1015 adultscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607130197
 
-On Thu, Jun 25, 2026 at 10:54:26AM -0500, Shenwei Wang wrote:
-> From: Shenwei Wang <shenwei.wang@nxp.com>
+On 7/2/2026 4:58 AM, Sumit Garg wrote:
+> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
 > 
-> Describes the gpio rpmsg transport protocol over the rpmsg bus between
-> the remote system and Linux.
+> Switch ath12k client driver over to generic PAS TZ APIs. Generic PAS TZ
+> service allows to support multiple TZ implementation backends like QTEE
+> based SCM PAS service, OP-TEE based PAS service and any further future TZ
+> backend service.
 > 
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> Acked-by: Jeff Johnson <jjohnson@kernel.org>
+> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
 > ---
->  Documentation/driver-api/gpio/gpio-rpmsg.rst | 271 +++++++++++++++++++
->  Documentation/driver-api/gpio/index.rst      |   1 +
->  2 files changed, 272 insertions(+)
->  create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
+>  drivers/net/wireless/ath/ath12k/Kconfig |  2 +-
+>  drivers/net/wireless/ath/ath12k/ahb.c   | 10 +++++-----
+>  2 files changed, 6 insertions(+), 6 deletions(-)
 > 
-> diff --git a/Documentation/driver-api/gpio/gpio-rpmsg.rst b/Documentation/driver-api/gpio/gpio-rpmsg.rst
-> new file mode 100644
-> index 000000000000..7d351ff0adb0
-> --- /dev/null
-> +++ b/Documentation/driver-api/gpio/gpio-rpmsg.rst
-> @@ -0,0 +1,271 @@
-> +.. SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +GPIO RPMSG (Remote Processor Messaging) Protocol
-> +================================================
-> +
-> +The GPIO RPMSG transport protocol is used for communication and interaction
-> +with GPIO controllers on remote processors via the RPMSG bus.
-> +
-> +Message Format
-> +--------------
-> +
-> +The RPMSG message consists of a 8-byte packet with the following layout:
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+------+------+------+------+------+------+
-> +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> +   |     cmd     |    line     |           value           |
-> +   +------+------+------+------+------+------+------+------+
-> +
-> +- **cmd**: Command code, used for GPIO_RPMSG_SEND messages.
-> +
-> +- **line**: The GPIO line (pin) index of the port.
-
-Here and throughout, please remove any mention of 'port'.  This is handled by
-the endpoint device, i.e one GPIO controller (port) per endpoint.
-
-> +
-> +- **value**: See details in the command description below.
-> +
-> +
-> +GPIO Commands
-> +-------------
-> +
-> +Commands are specified in the **Cmd** field.
-> +
-> +The SEND message is always sent from Linux to the remote firmware. Each
-> +SEND corresponds to a single REPLY message. The GPIO driver should
-> +serialize messages and determine whether a REPLY message is required. If a
-> +REPLY message is expected but not received within the specified timeout
-> +period (currently 1 second in the Linux driver), the driver should return
-> +-ETIMEOUT.
-> +
-> +GET_DIRECTION (Cmd=2)
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+------+------+------+------+------+------+
-> +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> +   |      2      |    line     |             0             |
-> +   +------+------+------+------+------+------+------+------+
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+--------+--------+
-> +   | 0x00 |  0x01  |  0x02  |
-> +   |   1  | status | value  |
-> +   +------+--------+--------+
-> +
-> +- **status**:
-> +
-> +  - 0: Ok
-> +  - 1: Error
-> +
-> +- **value**: Direction.
-> +
-> +  - 0: None
-> +  - 1: Output
-> +  - 2: Input
-> +
-> +
-> +SET_DIRECTION (Cmd=3)
-> +~~~~~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+------+------+------+------+------+------+
-> +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> +   |      3      |    line     |           value           |
-> +   +------+------+------+------+------+------+------+------+
-> +
-> +- **value**: Direction.
-> +
-> +  - 0: None
-> +  - 1: Output
-> +  - 2: Input
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+--------+--------+
-> +   | 0x00 |  0x01  |  0x02  |
-> +   |   1  | status |    0   |
-> +   +------+--------+--------+
-> +
-> +- **status**:
-> +
-> +  - 0: Ok
-> +  - 1: Error
-> +
-> +
-> +GET_VALUE (Cmd=4)
-> +~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+------+------+------+------+------+------+
-> +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> +   |      4      |    line     |             0             |
-> +   +------+------+------+------+------+------+------+------+
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+--------+--------+
-> +   | 0x00 |  0x01  |  0x02  |
-> +   |   1  | status | value  |
-> +   +------+--------+--------+
-> +
-> +- **status**:
-> +
-> +  - 0: Ok
-> +  - 1: Error
-> +
-> +- **value**: Level.
-> +
-> +  - 0: Low
-> +  - 1: High
-> +
-> +
-> +SET_VALUE (Cmd=5)
-> +~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+------+------+------+------+------+------+
-> +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> +   |      5      |    line     |           value           |
-> +   +------+------+------+------+------+------+------+------+
-> +
-> +- **value**: Output level.
-> +
-> +  - 0: Low
-> +  - 1: High
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+--------+--------+
-> +   | 0x00 |  0x01  |  0x02  |
-> +   |   1  | status |    0   |
-> +   +------+--------+--------+
-> +
-> +- **status**:
-> +
-> +  - 0: Ok
-> +  - 1: Error
-> +
-> +
-> +SET_IRQ_TYPE (Cmd=6)
-> +~~~~~~~~~~~~~~~~~~~~
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+------+------+------+------+------+------+
-> +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> +   |      6      |    line     |           value           |
-> +   +------+------+------+------+------+------+------+------+
-> +
-> +- **value**: IRQ types.
-> +
-> +  - 0: Interrupt disabled
-> +  - 1: Rising edge trigger
-> +  - 2: Falling edge trigger
-> +  - 3: Both edge trigger
-> +  - 4: High level trigger
-> +  - 8: Low level trigger
-
-I'm in agreement with cmd 3, 4, 5 and 6.  
-
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+--------+--------+
-> +   | 0x00 |  0x01  |  0x02  |
-> +   |   1  | status |    0   |
-> +   +------+--------+--------+
-> +
-> +- **status**:
-> +
-> +  - 0: Ok
-> +  - 1: Error
-> +
-> +SET_WAKEUP (Cmd=16)
-> +~~~~~~~~~~~~~~~~~~~
-
-I already commented on messages that are not part of the virtio-gpio
-specification.  
-
-> +
-> +**Request:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+------+------+------+------+------+------+
-> +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> +   |      1      |    line     |           value           |
-> +   +------+------+------+------+------+------+------+------+
-> +
-> +- **value**: Wakeup enable.
-> +
-> +  The remote system should always aim to stay in a power-efficient state by
-> +  shutting down or clock-gating the GPIO blocks that aren't in use. Since
-> +  the remoteproc driver is responsible for managing the power states of the
-> +  remote firmware, the GPIO driver does not require to know the firmware's
-> +  running states.
-> +
-> +  When the wakeup bit is set, the remote firmware should configure the line
-> +  as a wakeup source. The firmware should send the notification message to
-> +  Linux after it is woken from the GPIO line.
-> +
-> +  - 0: Disable wakeup from GPIO
-> +  - 1: Enable wakeup from GPIO
-> +
-> +**Reply:**
-> +
-> +.. code-block:: none
-> +
-> +   +------+--------+--------+
-> +   | 0x00 |  0x01  |  0x02  |
-> +   |   1  | status |    0   |
-> +   +------+--------+--------+
-> +
-> +- **status**:
-> +
-> +  - 0: Ok
-> +  - 1: Error
-> +
-> +Notification Message
-> +--------------------
-
-"Interrupt Messages"
-
-> +
-> +Notifications are sent by the remote core and they have
-> +**Type=2 (GPIO_RPMSG_NOTIFY)**:
-> +
-> +When a GPIO line asserts an interrupt on the remote processor, the firmware
-> +should immediately mask the corresponding interrupt source and send a
-> +notification message to the Linux. Upon completion of the interrupt
-> +handling on the Linux side, the driver should issue a
-> +command **SET_IRQ_TYPE** to the firmware to unmask the interrupt.
-> +
-> +A Notification message can arrive between a SEND and its REPLY message,
-> +and the driver is expected to handle this scenario.
-> +
-> +.. code-block:: none
-> +
-> +   +------+------+--------+
-> +   | 0x00 | 0x01 |  0x02  |
-> +   |   2  | line | trigger|
-> +   +------+------+--------+
-
-2 things here:
-
-1) You did not include messages that mask and unmask interrupts at the driver
-side.
-
-2) We are carrying virtio-gpio messages on top of RPMSG and as such, this whole
-protocol should be about thar:  
-
-+------+------+--------+--------
-| 0x00 |       payload         |          
-|  Q   |                       | 
-+------+------+--------+--------
-
-Q = 0 requestq
-Q = 1 eventq
-
-The "payload" part is simply the format of the messages as found in the
-virtio-gpio specification.  From there, the only thing left to mention is which
-messages are not supported, i.e get line names.
-
-> +
-> +- **line**: The GPIO line (pin) index of the port.
-> +
-> +- **trigger**: Optional parameter to indicate the trigger event type.
-
-Not part of the spec - remove.
-
-Given the refactoring work that is still needed, I will not look at the
-implementation.
-
-Thanks,
-Mathieu
-
-> +
-> diff --git a/Documentation/driver-api/gpio/index.rst b/Documentation/driver-api/gpio/index.rst
-> index bee58f709b9a..e5eb1f82f01f 100644
-> --- a/Documentation/driver-api/gpio/index.rst
-> +++ b/Documentation/driver-api/gpio/index.rst
-> @@ -16,6 +16,7 @@ Contents:
->     drivers-on-gpio
->     bt8xxgpio
->     pca953x
-> +   gpio-rpmsg
+> diff --git a/drivers/net/wireless/ath/ath12k/Kconfig b/drivers/net/wireless/ath/ath12k/Kconfig
+> index 4a2b240f967a..0d5d1c55bfc1 100644
+> --- a/drivers/net/wireless/ath/ath12k/Kconfig
+> +++ b/drivers/net/wireless/ath/ath12k/Kconfig
+> @@ -18,7 +18,7 @@ config ATH12K_AHB
+>  	bool "Qualcomm ath12k AHB support"
+>  	depends on ATH12K && REMOTEPROC
+>  	select QCOM_MDT_LOADER
+> -	select QCOM_SCM
+> +	select QCOM_PAS
+>  	help
+>  	  Enable support for Ath12k AHB bus chipsets, example IPQ5332.
 >  
->  Core
->  ====
-> -- 
-> 2.43.0
-> 
+> diff --git a/drivers/net/wireless/ath/ath12k/ahb.c b/drivers/net/wireless/ath/ath12k/ahb.c
+> index 30733a244454..69e21214e629 100644
+> --- a/drivers/net/wireless/ath/ath12k/ahb.c
+> +++ b/drivers/net/wireless/ath/ath12k/ahb.c
+> @@ -5,7 +5,7 @@
+>   */
+>  
+>  #include <linux/dma-mapping.h>
+> -#include <linux/firmware/qcom/qcom_scm.h>
+> +#include <linux/firmware/qcom/qcom_pas.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/platform_device.h>
+> @@ -420,7 +420,7 @@ static int ath12k_ahb_power_up(struct ath12k_base *ab)
+>  
+>  	if (ab_ahb->scm_auth_enabled) {
+>  		/* Authenticate FW image using peripheral ID */
+> -		ret = qcom_scm_pas_auth_and_reset(pasid);
+> +		ret = qcom_pas_auth_and_reset(pasid);
+>  		if (ret) {
+>  			ath12k_err(ab, "failed to boot the remote processor %d\n", ret);
+>  			goto err_fw2;
+> @@ -485,10 +485,10 @@ static void ath12k_ahb_power_down(struct ath12k_base *ab, bool is_suspend)
+>  		pasid = (u32_encode_bits(ab_ahb->userpd_id, ATH12K_USERPD_ID_MASK)) |
+>  			 ATH12K_AHB_UPD_SWID;
+>  		/* Release the firmware */
+> -		ret = qcom_scm_pas_shutdown(pasid);
+> +		ret = qcom_pas_shutdown(pasid);
+>  		if (ret)
+> -			ath12k_err(ab, "scm pas shutdown failed for userPD%d\n",
+> -				   ab_ahb->userpd_id);
+> +			ath12k_err(ab, "PAS shutdown failed for userPD%d: %d\n",
+> +				   ab_ahb->userpd_id, ret);
+>  	}
+>  }
+>  
+
+My code review agent is flagging:
+
+**Missing probe-defer guard** (`ahb.c:422`) — `qcom_pas_is_available()` is
+explicitly documented as mandatory before any PAS call. The OP-TEE backend
+registers its ops asynchronously; without an `if (!qcom_pas_is_available())
+return -EPROBE_DEFER` in the probe path, firmware auth silently returns
+`-ENODEV` with no retry.
+
+Is it an existing deficiency in ath12k that there is no probe deferral?
+Or did the qcom_scm_*() calls somehow guarantee something that is no longer
+true with the qcom_pas_*() calls?
+
+And also for future cleanup:
+**Misleading field name** (`ahb.c:384`) — `scm_auth_enabled` should be
+`pas_auth_enabled` to match the backend-agnostic API it now guards.
+
+I plan on taking this patch as-is through the ath tree since it is currently
+just simple API changes. Any additional changes can come separately.
+
+/jeff
+
+
