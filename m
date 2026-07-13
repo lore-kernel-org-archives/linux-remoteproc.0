@@ -1,43 +1,47 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2027F40D56A
-	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 12:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960840C5D4
+	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 12:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783946793; cv=none; b=mGwpa4A5CjNTHWdWxaj8739CXjUY0D7ds5fjxWdLzpkiRywTMGMVPhZk9luocZYm49v9sbwdPywFiZ3Jp7cCSz9Olccu/qmWfqUmfwGTieYH/NZ/ya7L9mbxYnUZjSwVj2oUqh3ZQz9KJ6abo8318fUbx3Q0+N3JomDB2PWn8aA=
+	t=1783946794; cv=none; b=R58Nj2N7lGdA/mGyUFBlrQHudQI1ltAKkAtKONEC8iz1bzKpJIbDJ+XHmAmZcmrR758TB9WgPQeEDlOQ9xxLjFzzf+4JpwwhVOgFL2lDBRyFyUZiNyyRNZ+IyG1rcPTICywZzEvIRwCegnimrD12pbGOIFGYTtRnLn6Bzevya58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783946793; c=relaxed/simple;
-	bh=rz8CWkSn+49i2NJWWC5d6JiBRZXfpOPZXkL5SqKfX1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Aa49ldmn1ElAxH3+OsFrUFLXZR/3M6CoP2ybTaDImdiRFrcAqKUT27CCJt1wW+2jbLoK1nhdhFGG5b6dykpzbszmHHN+IdyRUlOFJmFy86iDFZ43qS5QrY+29kYiKIQ7YTLAIpgCw3DrB7tLhtCda7pFSTxULwMJwS4/CJSwP64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FHKBIU8C; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1783946794; c=relaxed/simple;
+	bh=Hv07QRhhVF1DwO+pIY2fQERR+gvrBOayIFFnmll4AeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M1FafT7PT37lEvSyo1ltnUBoJEVpmQtLNnQximlzfAr/yMjL+mvrLkGoz7Ti/NV24ahJrYiUwNzDQC+0MN+IzteY/7t6UGUKAag/bx8T8VBBmWPBlLBUFxKp4cR9o+g96iYCCIyhSsyr5qGIdJ0Ln4FSvKID4AZyKQ0rkuUrQ3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=h+d0wNJT; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FHKBIU8C"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="h+d0wNJT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=KYKAFdYP7u5NJk
-	Po0f0N0TXThdhpbi/KyYDSFQfHFD0=; b=FHKBIU8C3yMW0i7XDKRbDguGSLSqPi
-	rgax/OsneLaabCCU13LeFQ1D0iC1fZYTwFjvjZ2vpGII1NQiMPsaWCDUCTuwO8m8
-	qKEIRPOLPDzEq8PsZm7D4XaDiNW8ED8iw/N30JzcwjHEH5/wwJu0bTl49mdJvjg6
-	AYb76rJMxWFqUU0GPBFXl/fuwxfZqplRxVSP96YPuGRPnGa2aRp6mcL7WiQ2ohuR
-	1PidZHzv9EK/Btxy9vYc63WBBMkVPdXacFRoroWBO1wrrqlRynNLgRZOQnWvoJa7
-	As/Vh3Y/nbDiegbf4SiM6ZJ+xiH3kgnxEGi3a3FOU9VNsBIyGAz+rjAg==
-Received: (qmail 2634198 invoked from network); 13 Jul 2026 14:46:24 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jul 2026 14:46:24 +0200
-X-UD-Smtp-Session: l3s3148p1@86Reen1WuNEujntq
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=86wLsPRtTRFHCf74+RL0VqB/6gvDzyqgEHtR+ImBwaQ=; b=h+d0wN
+	JTNxP0r6c7PJXUHJWVWjyB4i+Ty7kzZjwAKPiPlI2IkKRgdhUFgUnL71E3jVY0n0
+	C/hL9JJDM1kfMa+IFA6h6lcXUZETvgIvlCBjk47lP1kA+XP6CKPQ1TgR6jgPhUtn
+	tcPd/Iq5aEYkc2f2GFcsKCH3zmnQu0Vly92icwYLUYRZGtFMCM7j4KrECn6XK8p8
+	hkAds/HzCEbOX+cXMvL2kBUvrqddOnH0AuvCsTgRT5R+YMszwc490hofH8QbCbyJ
+	6sCCs3kqtXa5oxvRUGFG0n7bUA76HTu9U9eqtUadVPWmba8C1V2CxRfi/vebwnlV
+	Iv6UYhdMjJ+GI1nA==
+Received: (qmail 2634281 invoked from network); 13 Jul 2026 14:46:25 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Jul 2026 14:46:25 +0200
+X-UD-Smtp-Session: l3s3148p1@0/91en1WytEujntq
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Matthew Wilcox <willy@infradead.org>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v3 0/2] hwspinlock: convert to XArray and add summary in debugfs
-Date: Mon, 13 Jul 2026 14:46:20 +0200
-Message-ID: <20260713124622.63181-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 2/2] hwspinlock: add list of mailboxes to debugfs
+Date: Mon, 13 Jul 2026 14:46:22 +0200
+Message-ID: <20260713124622.63181-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260713124622.63181-1-wsa+renesas@sang-engineering.com>
+References: <20260713124622.63181-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -46,44 +50,112 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-TLDR: Changes since v2:
+To help debugging, offer a list of registered hwspinlocks in debugfs. It
+will also print the responsible hwspinlock_device and if the spinlock is
+currently used. It does not show if the lock is taken because of
+side-effects. Often, reading a lock means actually taking it.
 
-* don't hack radix-tree, convert to XArray instead
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-Renesas R-Car SoCs have their spinlocks inside a unit called MFIS. Up to
-R-Car Gen4, there was only one MFIS unit on the SoC. Gen5, though, has
-multiple instances and, thus, multiple spinlock providers. The spinlocks
-are meant for specific cases (AP<->AP, AP<->RT, AP<->SCP...). For
-development on these systems, it is helpful to have an overview of
-registered spinlocks in debugfs. This series adds support for that. The
-first patch converts the subsystem from the deprecated radix-tree to the
-easier to handle XArray (Thank you again, Matthew!). The second patch
-adds the summary in debugfs based on the new XArray implementation.
+Changes since v2:
+* totally rewritten because it traverses an XArray now instead of a
+  radix tree
 
-Patches are based on linux-next as of today plus the already applied
-patch[1] "[PATCH] hwspinlock: propagate errno when registering single lock"
+ drivers/hwspinlock/hwspinlock_core.c | 67 ++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-[1] https://lore.kernel.org/r/178370682988.2572738.9921265128936208294.b4-ty@kernel.org
-
-A branch for testing is here:
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mfis/hwspinlock
-
-It has been tested on a SparrowHawk board (R-Car V4H) with one MFIS
-instance and an Ironhide board (R-Car X5H) with two MFIS instances.
-
-Looking forward to comments.
-
-
-Matthew Wilcox (Oracle) (1):
-  hwspinlock: Convert to XArray
-
-Wolfram Sang (1):
-  hwspinlock: add list of mailboxes to debugfs
-
- drivers/hwspinlock/hwspinlock_core.c | 220 ++++++++++++++++-----------
- 1 file changed, 127 insertions(+), 93 deletions(-)
-
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index 55a5fa6aa200..d5c6807631d3 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -9,6 +9,7 @@
+ 
+ #define pr_fmt(fmt)    "%s: " fmt, __func__
+ 
++#include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -21,6 +22,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include <linux/seq_file.h>
+ 
+ #include "hwspinlock_internal.h"
+ 
+@@ -855,5 +857,70 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
+ 
++#ifdef CONFIG_DEBUG_FS
++static void *hwspinlock_seq_start(struct seq_file *s, loff_t *ppos)
++{
++	unsigned long index = *ppos;
++	struct hwspinlock *hwlock;
++
++	rcu_read_lock();
++	hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
++	*ppos = index;
++
++	return hwlock;
++}
++
++static void *hwspinlock_seq_next(struct seq_file *s, void *v, loff_t *ppos)
++{
++	/* Increase ppos here to avoid endless loops. Don't use xa_find_after() */
++	unsigned long index = *ppos + 1;
++	struct hwspinlock *hwlock;
++
++	hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
++	*ppos = index;
++
++	return hwlock;
++}
++
++static void hwspinlock_seq_stop(struct seq_file *s, void *v)
++{
++	rcu_read_unlock();
++}
++
++static int hwspinlock_seq_show(struct seq_file *s, void *v)
++{
++	struct hwspinlock *hwlock = v;
++	bool unused = xa_get_mark(&hwspinlocks, s->index, HWSPINLOCK_UNUSED);
++
++	seq_printf(s, "%4llu:\t%s\t%s\n", s->index, unused ? "free" : "in use",
++		   dev_name(hwlock->bank->dev));
++	return 0;
++}
++
++static const struct seq_operations hwspinlock_sops = {
++	.start = hwspinlock_seq_start,
++	.next = hwspinlock_seq_next,
++	.stop = hwspinlock_seq_stop,
++	.show = hwspinlock_seq_show,
++};
++DEFINE_SEQ_ATTRIBUTE(hwspinlock);
++
++/*
++ * subsys_initcall() is used here but controllers may already have been
++ * registered earlier or will be later. The rationale is that debugfs is
++ * accessed only late, i.e. from userspace. So, files created here must make no
++ * assumptions about initcall ordering.
++ */
++static int __init hwspinlock_init(void)
++{
++	struct dentry *hwspinlock_debugfs = debugfs_create_dir("hwspinlock", NULL);
++
++	debugfs_create_file("hwspinlock_summary", 0444, hwspinlock_debugfs,
++			    NULL, &hwspinlock_fops);
++	return 0;
++}
++subsys_initcall(hwspinlock_init);
++#endif	/* DEBUG_FS */
++
+ MODULE_DESCRIPTION("Hardware spinlock interface");
+ MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
 -- 
 2.47.3
 
