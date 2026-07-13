@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDE1399346;
-	Mon, 13 Jul 2026 07:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F4F358369;
+	Mon, 13 Jul 2026 08:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783929444; cv=none; b=jp2wNyA+AEMB6CA36E/d9K8+n9TYvmIeHJAMIS2eW0a6q7q08U1uVUOmDl9gCJyfPyQzlJ5vqNX6nvWRDWcFmk+d1IjJDHgpRCFfDHslgE6VMp/+HCXXbtF0CzG7YPuYTVTDJlgzYdWDNVjcON4ubhsqLW2o9eQQVXof2lh/u3w=
+	t=1783929632; cv=none; b=qRsi6+Jb5cvws3V+MHBVIcRQgoRuZ8cqDsF3dPfLdP3khHXBWsXP6Alb9/P2cNApe3uDi/k1WvofmNtfE9g0ZnSZnc/Nr17ioB5kSXkCHBNlRmmtNb9hGFmz3iZUmkzeNJIEkDeGZ44PZyvSpueVEvXMz5qGVsM1GwJtMzHtOG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783929444; c=relaxed/simple;
-	bh=1PAtUj5SRfv3Gr9nXV8I5gZTcKtngRO156x71HXlxSg=;
+	s=arc-20240116; t=1783929632; c=relaxed/simple;
+	bh=FfRXvpHZCJqj5naLH8gsyxQOlrbUnYCrgLR3/h5n9/M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HU8ZgmvrEYBCliFhMXOCWlvx98JVkX5KGU8KjXKkaS1fJ1HVnXEmgEBfXlMiATd785CSkqc9muKNuWxgi4SwetkjUJXwrmE9da8L19wl53gbl/vhvXPGpqvlsoDYD0ITEuJsLCdylX8cKsPuudzVTNZliuzOxogMSbbiqYjzq5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/ll8Sz7; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=q3qbHpXU7TgXSgDDnC8cR9NdAjP1rYssmcyPteirmtNiVcS7uwKa5vFJGQUgM9r0BHXddPKyAjqp65eqHXdnvvZJ/5dDUoxIwtSnoKEyH+kL5984RAAE6ClfKlQNalaDQPPJPpJWUQSYnTieBxK7Qy/g9wAZYHAJFwdwPbHhOjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohKB1KDA; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/ll8Sz7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC0771F000E9;
-	Mon, 13 Jul 2026 07:57:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohKB1KDA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A491F00A3A;
+	Mon, 13 Jul 2026 08:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783929443;
-	bh=hKBliu9mK6W6P1rOGcVusSeufzA2yIQpU5x+urkivwE=;
+	s=k20260515; t=1783929631;
+	bh=NOX5kOE7Z6Rk/uRRaEVLPGEGh/G3VUeBHyG9CWi4Kh4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=I/ll8Sz7mL4SQcAbSqgYeJ+amQTV26MZUXYytUpfohYHIvKD/FVanKn9XJp2QtCQJ
-	 Zwy4CTfmJ7dhkXteNdv/7eyKSqqmLub5nawFTH5e4wgKypuE+DXqKXd6y2kf2gu7lm
-	 sxdDdAHCLZeKoN/UrmSBsB69Uy0QSCqn7VZrSn06rH3SPlcrIom27WD8ZnoN637SM/
-	 eIZpV/mCGFLr32CWo9OqpulOGrJ2LhQsdXp/3qwGV5evwlXjEQMtHBoQ4Ua8s1+Lrq
-	 OVhub0f8+GhRbdmTLQgBAoPV14Qq2uRaMV0nRpv6uIi3l9JwxkgUtIkxYE8a8YID7G
-	 /dvI7X/UXb1Rg==
-Message-ID: <2ddadbc0-0d67-4b1d-bb49-87c08172b442@kernel.org>
-Date: Mon, 13 Jul 2026 09:57:16 +0200
+	b=ohKB1KDAL313pRdVhCKRIJt2+XNzdYQQ+xSysFbjZ5TS9+fi/mZZAojqoNDtMjGHV
+	 TzU+LgQ8dHqBKObYWko7oAzo3rABGEpftO0EcDS2tCj12ArGjcjvLiguBkzYshU6ki
+	 j+wmybgzLMLWCc7sZ/5/WwhjqD3vRe69k9Xcys1ebgSEsi2wPuOFoYb8NLwk4GxnTL
+	 VRdOlotpZtIBSUMxyvMcY1jM2G9E8qZ0XNC2crqfhOhwz4NyaNV/eFp9N5vPqynmgL
+	 ELjPXR8XUZIIYfBe6NtXaqVNpM+E4in8nOfg7Wl8CfXP4bcmiEJcYsTgeiNWZn55Wb
+	 aZ7IgNtEH9V/w==
+Message-ID: <4fa8ab68-a513-483a-ac72-c157260692a1@kernel.org>
+Date: Mon, 13 Jul 2026 10:00:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,19 +35,23 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 0/6] Add new driver for WCSS secure PIL loading
+Subject: Re: [PATCH v13 2/6] dt-bindings: remoteproc: qcom: document hexagon
+ based WCSS secure PIL
 To: Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, konradybcio@kernel.org,
- manikanta.mylavarapu@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manikanta Mylavarapu <manikanta.mylavarapu@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20260505102310.2925956-1-varadarajan.narayanan@oss.qualcomm.com>
- <e6311e97-0a26-4412-bcf0-d0313bf52c01@oss.qualcomm.com>
- <4a4e0e9c-8541-4fcc-8019-10a576840109@oss.qualcomm.com>
- <alAEKQzBXqjESAbo@baldur> <alSIffOraVCzfboW@hu-varada-blr.qualcomm.com>
+ Gokul Sriram Palanisamy <gokul.sriram.p@oss.qualcomm.com>,
+ George Moussalem <george.moussalem@outlook.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+ Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+References: <20260713-rproc-v13-0-41011cbcda3e@oss.qualcomm.com>
+ <20260713-rproc-v13-2-41011cbcda3e@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,28 +97,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <alSIffOraVCzfboW@hu-varada-blr.qualcomm.com>
+In-Reply-To: <20260713-rproc-v13-2-41011cbcda3e@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/07/2026 08:41, Varadarajan Narayanan wrote:
-> On Thu, Jul 09, 2026 at 03:31:15PM -0500, Bjorn Andersson wrote:
->> On Thu, Jul 09, 2026 at 11:25:17AM +0530, Vignesh Viswanathan wrote:
->>> Hi Bjorn,
->>>
->>> Could you please help review and pick this series if it looks okay to you.
->>>
->>
->> Sorry for not keeping up with this corner of my inbox.
->>
->> Series looks good, please rebase on the PAS changes that should show up
->> in the next linux-next.
-> 
-> Have posted v13 - https://lore.kernel.org/linux-arm-msm/20260713-rproc-v13-0-41011cbcda3e@oss.qualcomm.com/.
-> Please review.
+On 13/07/2026 08:32, Varadarajan Narayanan wrote:
+> +
+> +  mboxes:
+> +    items:
+> +      - description: TMECom mailbox driver
 
-And v13 caries fake test tag and FAILS the test actually. What does such
-test tag mean if it was not actually tested?
+Drop "driver", this is not a phandle to a driver.
+
+> +
+> +  qcom,smem-states:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: States used by the AP to signal the remote processor
+> +    items:
+> +      - description: Stop Q6
+> +      - description: Shutdown Q6
+
+Code already changed, you need to adapt this.
+
 
 Best regards,
 Krzysztof
