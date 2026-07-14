@@ -1,148 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D209374E48;
-	Tue, 14 Jul 2026 03:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E222233EC;
+	Tue, 14 Jul 2026 03:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783998674; cv=none; b=kuunH21v915qcjY2VxUVxYzKV7pLL9Sr9kU5pX9C4arw3gF0gXB2NiJP98bEF/IQg3IZpEQU9yKqd+q6wEIGrp3Orv2lva1uDf+b6XSAq0VZZ/uwCAPYk98HlSbXm8mo2xXBTOnGeic+/LZb/r9Sn6+DgpKiL/McMCdW80pKyv0=
+	t=1783999513; cv=none; b=OQ/d3TX4O82oRmwv0cYwhW+5nzaEGIlLfRzIsX5jWAV4zIWOnQd+e2njHjfa7eTBDCfOWvXY46CEeMoYO+V+onRey9FnuH3MHRuxMME26DK4GMPDbeK/8CrzzgA951Lw2qiDf22ig5Ljlir++OOu7oTiSnUNq4g5M4MMtcL83g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783998674; c=relaxed/simple;
-	bh=LjjT35fSVOzy3i17prl0SgCWMsEEM3TXbI6hNpMBiCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=feT28XERVazFu1cigHEjrRQAazgsxbj3PCgdQV1d2rTncK8DTglo33ajreb9iGBF4YFEkc44RC2D0Baky+s/vPHj4tnlcdDdF7ENT2xBh2XEi4westKC7jDXZLo/LOBHkwU98Nexcy6jl/vmkMcmqY2kfvbUoB98XvkdtDeyhkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGufD2QM; arc=none smtp.client-ip=100.103.45.18
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGufD2QM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB4E1F000E9;
-	Tue, 14 Jul 2026 03:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1783998673;
-	bh=WQO27JXCZrAXB48JPGlTU+aqgSxyvxXOkxoRWPDVquw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=AGufD2QMN1KY/qkzOtIvKJk80WJP4i/txLpkQ8UIlCc70eb6KBHdvKJu8ff0Qj5hE
-	 Xg3cYVZxCP/Hkfvby3BpC6m+3YLL7uL51AV/9Yf8Ex0680BiHmiKtRfwYCNDCI9ilQ
-	 kmdUXYgxss5mk/jnHCJIrVP9yevkr53llp5e2FqFOQRdy3wWKA1x8Jw9UhkmCHZ8iM
-	 HnNF2jefm1b+f/Qyamm+ssCRgbnIwUVbIZYndDnVGpSc3tcYoe6+3uBHFA0u+8gL3b
-	 gyWrLoI65XKs6T+83J3BlITlzWSiry3lpw9UZ8cLp8FdBg43ryLA96m0u/vg/baUMm
-	 WUvFl27ie2tOQ==
-Date: Mon, 13 Jul 2026 22:11:10 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Chunkai Deng <chunkai.deng@oss.qualcomm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	chris.lew@oss.qualcomm.com, tony.truong@oss.qualcomm.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rpmsg: glink: smem: Add WARN_ON_ONCE for FIFO
- index invariants
-Message-ID: <alWlzzi7uxbSkw8c@baldur>
-References: <20260617-rpmsg-improvements-v2-0-477d4eb569dc@oss.qualcomm.com>
- <20260617-rpmsg-improvements-v2-2-477d4eb569dc@oss.qualcomm.com>
+	s=arc-20240116; t=1783999513; c=relaxed/simple;
+	bh=57INZ5EIZXPkNkQ5ksZwJnwQ5tsWiS7zNlFQbIGZ1Zw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nTsf0WZecSPrjIL8/NhtsYa+ZZkckj+NQbN7Ad2AF3k918Z2CccRXSqO5Rls9zsNW3a0Hmg0J0FHu78oLU4x2dci72SD0TQtSOgRRsPvv56z8EkFCS0SjaPyPk8ZcAPhoLC82nJ1rPWe69zetdtILQBphvkANL1TjuIaf7fpvBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [36.110.52.2])
+	by APP-03 (Coremail) with SMTP id rQCowADXyK8SrFVqM8qkFw--.52595S2;
+	Tue, 14 Jul 2026 11:25:06 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] remoteproc: qcom_q6v5_wcss: remove unneeded semicolon
+Date: Tue, 14 Jul 2026 11:22:53 +0800
+Message-Id: <20260714032253.2768008-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260617-rpmsg-improvements-v2-2-477d4eb569dc@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowADXyK8SrFVqM8qkFw--.52595S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFy8Ww4DtF1kZw1DJr4xWFg_yoW8GrW8pF
+	sxWa10kry7tw4FgFsxZr4kAF15uay7tFyxGrsrG34xXw1YyryUJF4rGFy8tFZ5XFZYg3y3
+	XFsF9r1UuF17AFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvj14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7
+	v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS
+	14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWU
+	twCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU5k
+	u4UUUUU
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Wed, Jun 17, 2026 at 07:07:14PM +0800, Chunkai Deng wrote:
-> The FIFO read/write helpers assume the head and tail indices stay within
-> [0, pipe->native.length) and use them directly as offsets into the
-> mapped FIFO region. If that invariant is ever broken, the subsequent
-> memcpy or memcpy_fromio would access memory outside the FIFO.
-> 
-> Add WARN_ON_ONCE checks in these helpers so a broken invariant is
-> caught and reported once, and the out-of-bounds access is skipped
-> instead of proceeding silently.
-> 
-> Fixes: caf989c350e8 ("rpmsg: glink: Introduce glink smem based transport")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Chunkai Deng <chunkai.deng@oss.qualcomm.com>
-> ---
->  drivers/rpmsg/qcom_glink_smem.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
-> index edab912557ac..42ad315d7910 100644
-> --- a/drivers/rpmsg/qcom_glink_smem.c
-> +++ b/drivers/rpmsg/qcom_glink_smem.c
-> @@ -86,9 +86,14 @@ static size_t glink_smem_rx_avail(struct qcom_glink_pipe *np)
->  	tail = le32_to_cpu(*pipe->tail);
->  
->  	if (head < tail)
-> -		return pipe->native.length - tail + head;
-> +		len = pipe->native.length - tail + head;
->  	else
-> -		return head - tail;
-> +		len = head - tail;
-> +
-> +	if (WARN_ON_ONCE(len > pipe->native.length))
-> +		len = 0;
-> +
-> +	return len;
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-Looks good.
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
->  }
->  
->  static void glink_smem_rx_peek(struct qcom_glink_pipe *np,
-> @@ -103,6 +108,9 @@ static void glink_smem_rx_peek(struct qcom_glink_pipe *np,
->  	if (tail >= pipe->native.length)
->  		tail -= pipe->native.length;
->  
-> +	if (WARN_ON_ONCE(tail >= pipe->native.length))
-> +		return;
-> +
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index a6737b2d96da..318bb1a490b3 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -263,7 +263,7 @@ static int q6v7_wcss_reset(struct q6v5_wcss *wcss, struct rproc *rproc)
+ 	if (ret) {
+ 		dev_err(wcss->dev, "failed to enable clocks, err=%d\n", ret);
+ 		return ret;
+-	};
++	}
+ 
+ 	/* Write bootaddr to Q6WCSS */
+ 	writel(rproc->bootaddr >> 4, wcss->reg_base + Q6SS_RST_EVB);
+@@ -324,7 +324,7 @@ static int q6v7_wcss_reset(struct q6v5_wcss *wcss, struct rproc *rproc)
+ 	if (ret) {
+ 		dev_err(wcss->dev, "failed to enable clocks, err=%d\n", ret);
+ 		goto assert_aon_reset;
+-	};
++	}
+ 
+ 	return 0;
+ 
+@@ -424,7 +424,7 @@ static int q6v5_wcss_qcs404_power_on(struct q6v5_wcss *wcss)
+ 	if (ret) {
+ 		dev_err(wcss->dev, "failed to enable q6 clocks, err=%d\n", ret);
+ 		goto disable_gcc_abhs_cbcr_clk;
+-	};
++	}
+ 
+ 	/* Enable the Q6AHBS CBC, Q6SSTOP_Q6SS_AHBS_CBCR clock */
+ 	ret = clk_prepare_enable(wcss->ahbs_cbcr);
+-- 
+2.25.1
 
-Wouldn't it be preferable to check the original "tail", before the
-addition and subtraction?
-
-Perhaps also validate that `offset + count < pipe->native.length`?
-
->  	len = min_t(size_t, count, pipe->native.length - tail);
->  	if (len)
->  		memcpy_fromio(data, pipe->fifo + tail, len);
-> @@ -141,6 +149,9 @@ static size_t glink_smem_tx_avail(struct qcom_glink_pipe *np)
->  	else
->  		avail = tail - head;
->  
-> +	if (WARN_ON_ONCE(avail > pipe->native.length))
-> +		avail = 0;
-
-`head - tail < length` does not guarantee that head and tail are valid
-offsets within the fifo, so I think you should check both of them
-instead of the difference.
-
-> +
->  	if (avail < (FIFO_FULL_RESERVE + TX_BLOCKED_CMD_RESERVE))
->  		avail = 0;
->  	else
-> @@ -155,6 +166,9 @@ static unsigned int glink_smem_tx_write_one(struct glink_smem_pipe *pipe,
->  {
->  	size_t len;
->  
-> +	if (WARN_ON_ONCE(head >= pipe->native.length))
-> +		return head;
-
-This makes glink_smem_tx_write_one() do nothing, twice. But then we
-return to glink_smem_tx_write() which will adjust and update pipe->head;
-possible subtract head into the valid range.
-
-I think it would be better to move this check up to
-glink_smem_tx_write().
-
-And also check that `hlen + dlen < pipe->native.length`?
-
-Regards,
-Bjorn
-
-> +
->  	len = min_t(size_t, count, pipe->native.length - head);
->  	if (len)
->  		memcpy(pipe->fifo + head, data, len);
-> 
-> -- 
-> 2.34.1
-> 
