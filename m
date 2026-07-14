@@ -1,252 +1,171 @@
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013002.outbound.protection.outlook.com [52.101.83.2])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BF7445AFC;
-	Tue, 14 Jul 2026 19:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784055863; cv=fail; b=TZRpprJCfieZm/kmRdE+UGhlBaYRP5qiozRpC4SZ6jzN2nwqVLHKTziVj8W/v80zvTnBKJggcvRO3/MxENDj8Cr3oY9ou+u/mlamc53WyHagRGwD2uQI6yfnifxFCI6weXAtNO0vviHp5BgPLV1YOvqeo9iKYQ6phzZdSTu6Qx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784055863; c=relaxed/simple;
-	bh=d2q+awOc96mR/+WZiGLFt8owLdiHE3pVyFNFajLWHmg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aBXTvtBZwMf+QqmignF+/UqtImR8Lwb05zsiGWZvxHS5jGRWFWyPoBJA99zYYRv7h2b8UXeMMjoVW9ODapQQw73DEnjUk94KALpiUvvk8sqtbVO5f47MNRGIcRlvb3zRVA0zyp2O8IwLRIYe8TRwT5T1t8lNwHEPiuvCIODY57Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=VzuQ3YrS; arc=fail smtp.client-ip=52.101.83.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14351433052
+	for <linux-remoteproc@vger.kernel.org>; Tue, 14 Jul 2026 19:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784058569; cv=none; b=d/0qpz5e3LyGA+IoHxE8bfz3vOw7i/F8gofmPhUu+supYfImbs4sszhJVwgv33gZJq5nNwIRH6lJqeaCcSoJInRtZ3KN7tJeqtWaefE0mTl8jL+L7nAhUuqUUlvw/KVDVB6OwF9HkoC9Omac3XDauNksRtjDJgeRCj5lSzRpcpk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784058569; c=relaxed/simple;
+	bh=k6+VP1SX60/bmY8wSfRpTfm09Y4HS0013REOICnTljs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQBFp0MvQSkMcaUGEswR1xBso22V4FJsjEvE/aFAyUWSt8/mEqfbINuqS2WwpWiU5nkp/TqfvPNKVGY+ef1Y40zt+2M48c0NqHy9DXtLy6viAjtcrPPA5c3+aG7YTOE8cDkHqTh5F66N1t/uM1dGz1CLjt9PKub4wB3PixZJIG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BW9KuNKO; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="VzuQ3YrS"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xsZ/yWDRb3bNf2JZvDRcNraztLZRvthx8Gf/qlobCrAkgSou0Qs8JFV8zWCAa3/ibd8dZgShUOjsx9VsPozHT/TdjnUZjo+gHgGObXhXylC5UPncPYJz8Ednj5Rf6U8CoseredPXiYFsRJCOy96/94bbnFkFoIBHeS5Lj6dmlo0zbvCfl+/adFEv37wTNytocvkfGUruxTFSVJG1h1XXizXakW1Lg2yPuMDZXdt9fv2xqOgJpHPA8dxOyCdz0V7HQbCSEzdku3aSvALfM2H9uCYorCSV35OOSseYElZqjiChRs0kuFVRI9fEOGf+WBqXbBf54zwmtIB7IKTdF1gjhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uWc34plD7LITbpAEnDxcw/AuXqrg6UcPptcYyu0lPAc=;
- b=nC2BJqlN0qKYh9afH5P97OIPKI0omuvDzHgcqrEd1pWEtMNaFtzITlxnTflkQKIQLmdLjssZ3KKPq4OmMU8Iw99cvyQFD4SeZdmxEIkW5sF+HIW6cozq3IGgY8d4wAvIWx1owSLlFwwdeFGZFGJAcHn6n2H6RwcwIPYPyNZG4/ErK7OXWQ+pSUhCZgZsP03ujAVszVOhd+i34wHld9L8CBc4/Y8dSFdwM8bPfYrazCXgAVDuTKICAz0gU6ZJhckWboGOZZ8XzyWWmQlAkgKkj6pjUmrdeAy70ENts/g7q76SVuyRqHK69a5HQOhOpd6rIzhO95EwkShasfC9r7qzJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uWc34plD7LITbpAEnDxcw/AuXqrg6UcPptcYyu0lPAc=;
- b=VzuQ3YrSI2w6MUSCu9r8XPLjrL5Bz0OTrbc7/62Nv3Vx8nl38TXKTPhT6p3QB0X2ZmPN9Ri7NI+EDi/myd38dm4nmgKK/5nZFzdyfcb9NUv1BrtvxEtcqYE06FaIlY1Pgj8TAK9ShXEV3FmXRDFgti0cy7TTvxJB2CpKCrBhtnETMVLpJIuvzvmnWSmU5sfGF/iCsVI5/eZhN4MSnh+cwdqVXSjPX66RgMxCufA3mF/Q1KpVl3EdU1ZVK44C1xE4MaSEiDtezQbF5gyGlSEUln4BtFAEuzQdewO5Ev+t25Dv78y2yUH7Wd9+HIfaeO9SsiI/Gn/FbhJHoxpC4sr3Dw==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by AM9PR04MB8619.eurprd04.prod.outlook.com (2603:10a6:20b:43a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.9; Tue, 14 Jul
- 2026 19:04:09 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb%5]) with mapi id 15.21.0181.016; Tue, 14 Jul 2026
- 19:04:09 +0000
-From: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, "Shenwei Wang (OSS)"
-	<shenwei.wang@oss.nxp.com>
-CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
- Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, "b-padhi@ti.com"
-	<b-padhi@ti.com>, Andrew Lunn <andrew@lunn.ch>
-Subject: RE: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-Thread-Topic: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-Thread-Index: AQHdE8OM5Pma2BJDKkCxecbC057kzQ==
-Date: Tue, 14 Jul 2026 19:04:08 +0000
-Message-ID:
- <PAXPR04MB918568AE7B2364EC9D16427689F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
- <20260625155432.815185-2-shenwei.wang@oss.nxp.com> <alUdg9iTysXCFUa5@p14s>
-In-Reply-To: <alUdg9iTysXCFUa5@p14s>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|AM9PR04MB8619:EE_
-x-ms-office365-filtering-correlation-id: 81f697b2-6ebf-47ed-4b0b-08dee1daaf12
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|19092799006|23010399003|1800799024|38070700021|18002099003|22082099003|6133799003|4143699003|11063799006|56012099006|3023799007;
-x-microsoft-antispam-message-info:
- q2fOOLnnfCik6wDK8HNfIOvYT8Kg/7Wipaz5GoqOiBNjsrZ78jGhel32YmyCIoH1Z6tGjSnMdH8cX4eNabA/WiKQ4caaeWGRLXRe3euMmKRYVKpNJTHhPvjfWcRa3Iu4TWmHF9u4N7w1SL6WRYSqcGZPZc/thMhfksYpOzuNESToM8UBaruBBlY7CIiFZq9o3G4pJaLRZwSd8EgsxNJfIL28kc40hhripNQhg/IZh6mjtidmVvZEGqUWHKOV5ifKZvcfSvshE3x1kSWk2mvdrAEs3Qfdes3V+dJJXlgXac60vd+8GfYe8Ww1prfiQusIpegptB7qwzhwbm9ICMdYEjLfpStutOD91LzxMhl+Qwh+y2emYT9jwDGe0MHXfPrw4D3kOvliJHqF0HoKRxm/OjiWcXWgfB4QkO9PelMRAwhWt+Clknc087UQdOrfTg+Q/TDOli8G/nUfejknbB3Zpsp4jE/4zFamvgJJR230q6h54GAdljcv2kmGs+Q6ggTTgGC1FRdO9lsj9bgUvIgFHz3aPOtlCtiWHs7RSKWND8yV2P6xtHhSzN5zLznOPkxcW8+nWV/LSLlOqnPtDlCPqxQsUpwLXqMdPFw01apKJfsymN6dtlORHrSSUOE1bg3AfKXfNFLDv5gHZJhdjT5MlNG1enDlah42MnvUQOPJ29pIvxoLKqlrgwTzRaSxNzzWPCF3vhPz5tg3+R+9ZPKsVuLbfVr0yrcSbPqBarLcxBo=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(19092799006)(23010399003)(1800799024)(38070700021)(18002099003)(22082099003)(6133799003)(4143699003)(11063799006)(56012099006)(3023799007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?1N9FwYfVJRePMqYbI8cUdofuFpOQJNiIGoa9Vv91nP6X+b86UyXdEqkKMvGk?=
- =?us-ascii?Q?wY2ikyuWHydUJAZ6TzTHSU/m+GJ9UlcWaM+3su2DX6DoTBYdiZMZTNqWsuLe?=
- =?us-ascii?Q?gBdn90c5QOEsWFyDUBjijsqsA02TUrXX0pEUouhYqGmxd+vd1UyIEbBIdRa6?=
- =?us-ascii?Q?fpfwL+PkH8tqhNUqoQJGBEBkZ8wQun2me2exc77r5iSAPhMO1j0kNl0eD48Z?=
- =?us-ascii?Q?UP7Vm07woULaLoxQ57xzZcL4XJoDIy0NMxioQgi59VXBUsQ47o2kRpveaMJj?=
- =?us-ascii?Q?s196PCti4Mk/kTcGk7p8oyxOaiB6AN5Ajc7FXLgR3Sv4fV+HyNn9/5hd7UbS?=
- =?us-ascii?Q?Er3jN1YAnW6hGaiicCIiUiUCTGYZVVPcu5Pa+SpUTXWwRMvtozOGGJKBunbG?=
- =?us-ascii?Q?v8K2VwpNIzR2XSTtKA9fo0mAxQk5oGCWodjBCLJq9ZYgQYZp8j0l7uKd+dw2?=
- =?us-ascii?Q?K51Ru3dc+5sWmBj6CgZRA/Qpc44uAl0jb3LO+9ey6CIuSFW2GRDrmPcG1hW4?=
- =?us-ascii?Q?XL4RBJzNQEIfMstOIvNqvVEu1zvUs2HHP4vT/W3m/86RsAUi6UMqT6n0pkHA?=
- =?us-ascii?Q?3osmtRlX8dqOpqKQagH9b4E7LFAiyPD6j3HAiXHsinUsQ/v859PDPrlub+CT?=
- =?us-ascii?Q?o1WvHArXzyoT5/MSen15kPDLoR2BJDoaoav7pGmr1+Ocy9U/m4n1MFdC9xjw?=
- =?us-ascii?Q?reZpDqw6UHvAf18OQhJtvX8tRvvjxIi1UOGzFWR76f/DuYzow2eiVLyxzhsc?=
- =?us-ascii?Q?1DPadaMmgLr+tilgHHHFr3wx7jPkWzIrEExN07x2Utq4OGK7amyNmz4uwaPW?=
- =?us-ascii?Q?AzNv0bjOqupsS0uvFxF2FjDPUvJa/4BMu+1o4ZW0WxyaAp4GqGviRSrHAwFP?=
- =?us-ascii?Q?TWDhqOs0NIIVhzCmuhI3IPZJAgqMHkQD/p1/pNx+peZZNcK6KrC4w7ekHmJp?=
- =?us-ascii?Q?lBPAc9gfw3QgVZG4BioHuJXIGwrTJx8Dq1lPqL8ypf3vIyGS82o7sn8Eug8n?=
- =?us-ascii?Q?qyT+yA9BT77ngskru5a6On/IExNFJ07MAXTCqO0iIDmc0wMaWRlTPK66KQgp?=
- =?us-ascii?Q?jJ+AtNJucR/UON9dWk7r3ndgD/Uq5mcTcoXShJMmpkhKt3XHZY1T4hYEjPNV?=
- =?us-ascii?Q?to6tp8NNVlvadjJyb9v2MN7lDEKY4oLhtnh4Iq8ugPL18sOVv8/zSJoxS9m9?=
- =?us-ascii?Q?9ryqJIi2mQKqdBpH0EUdl+VEUR7+GyldHnol/S6mgPDCPGQG/w32Iv1tO8FZ?=
- =?us-ascii?Q?IlYkreT4ywoPQLkHdzCUCmqKWpULAqklQMgdW1ojahDwOhLRsoG/uk/odzoD?=
- =?us-ascii?Q?0UGA1CxbKQ3R5jJLGjvHUVcszMp10vMDgLpjTlLV9jyuRvMtJbRI7a7vJ6ow?=
- =?us-ascii?Q?+e0qCVszp3DOVVqpK2zUsC7mY0Tfiyf/RwSImD7DLgVslJOF+WLDnmuCD3dn?=
- =?us-ascii?Q?ndcKxcpFGwFbuxLAtqVA8Qy0+nmbe8nZBrF6Flm0XXW0jW8iwYviPsKWO589?=
- =?us-ascii?Q?c9agzM411vMkrgqPCMIQBPQwklzdrZ1Y5ms3S1Qt78nF/QuI3swPP2ZOyvzR?=
- =?us-ascii?Q?U9xdS3xXAE0z/8z9vdgQDOs1z206Y5OqCDcbPDOTPgurRn6KeuNqMWGYaBTQ?=
- =?us-ascii?Q?ywg+ZigE7XfaCxOC3YMsbNKGSa5w2GFXZTHlkJpvZm6NayaEpv2a0grrCzQA?=
- =?us-ascii?Q?sDqPkY9KF8j/3VK8NCjPBhTu20JTo9C2nb+vtyg02qoN57X2qK4p2FKfxP5T?=
- =?us-ascii?Q?YCKgyICY9g=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BW9KuNKO"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=q/jo
+	yTvNyWzfmfEaywKEK4n2acD6YNyjE4reTwEnX9U=; b=BW9KuNKOnJizdtCVQ4i4
+	T7qry5YmjclsWQVY8nqFzCFtCmF+twVGXvSessWREv8PaSMraK0Y9WOn0Sfmbyn5
+	IKE7a8l79AeDaB9ilUkz+exJU0NTsPMk9CVeeTEMu0jo5ExKyfBRk1NF510+hD47
+	hxjiqVTVdmTAB70QJKfwIfvCbzyJUfTW4PWakqiSUkwZxcxSH+Kx5bLlHJF7pZpA
+	EUnRucbWCFMa0zO7b/ybLtmAXhyVRbHfgR2r+BGwr04N3uZRcGub2c/zxHxBPGVb
+	p74RX14Sd8U+iQ9sOjVQWbz6CTuddYrXai1vzr5ZsHKFhfMlnBHVk7vuJIUqH/Ax
+	Ug==
+Received: (qmail 397523 invoked from network); 14 Jul 2026 21:49:20 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Jul 2026 21:49:20 +0200
+X-UD-Smtp-Session: l3s3148p1@0Ki/gJdWlOcujnsO
+Date: Tue, 14 Jul 2026 21:49:19 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-remoteproc@vger.kernel.org, sashiko-reviews@lists.linux.dev
+Subject: 3 XArray questions (was: Re: [PATCH v3 1/2] hwspinlock: Convert to
+ XArray)
+Message-ID: <alaSvyTylYZ0csVd@shikoro>
+References: <20260713124622.63181-1-wsa+renesas@sang-engineering.com>
+ <20260713124622.63181-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81f697b2-6ebf-47ed-4b0b-08dee1daaf12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2026 19:04:08.9275
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fcHfkZAHCi4UMv+H3KhovtF8UQtlpG7qHUmpXt0swtXDOiXeO2KHc/uFC42y0ZKxYcdUycU1o6HJC6wlUtakzw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8619
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260713124622.63181-2-wsa+renesas@sang-engineering.com>
 
+Hi Matthew,
 
+Sashiko found issues with the XArray conversion[1]. I tried to educate
+myself enough to evaluate its findings. Yet, I'd be happy if you could
+double-check my reasoning. Note: I left all issues with use-after-free
+aside. Reason is that the hwspinlock subsystem has so many problems with
+removing locks that I proposed to remove the removal[2].
 
-> -----Original Message-----
-> From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Sent: Monday, July 13, 2026 12:17 PM
-> To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
-> Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.o=
-rg>;
-> Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzyszto=
-f
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn
-> Andersson <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hau=
-er
-> <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
-> gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel=
-.org;
-> Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> <festevam@gmail.com>; Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan
-> <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
-> remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Arnaud
-> POULIQUEN <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
-> <andrew@lunn.ch>
-> Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver ov=
-er rpmsg
-> bus
->=20
-> > +
-> > +The RPMSG message consists of a 8-byte packet with the following layou=
-t:
-> > +
-> > +.. code-block:: none
-> > +.. code-block:: none
-> > +
-> > +   +------+------+--------+
-> > +   | 0x00 | 0x01 |  0x02  |
-> > +   |   2  | line | trigger|
-> > +   +------+------+--------+
->=20
-> 2 things here:
->=20
-> 1) You did not include messages that mask and unmask interrupts at the dr=
-iver
-> side.
->=20
-> 2) We are carrying virtio-gpio messages on top of RPMSG and as such, this=
- whole
-> protocol should be about thar:
->=20
-> +------+------+--------+--------
-> | 0x00 |       payload         |
-> |  Q   |                       |
-> +------+------+--------+--------
->=20
-> Q =3D 0 requestq
-> Q =3D 1 eventq
->=20
-> The "payload" part is simply the format of the messages as found in the v=
-irtio-
-> gpio specification.  From there, the only thing left to mention is which =
-messages
-> are not supported, i.e get line names.
->=20
-> > +
-> > +- **line**: The GPIO line (pin) index of the port.
-> > +
-> > +- **trigger**: Optional parameter to indicate the trigger event type.
->=20
-> Not part of the spec - remove.
->=20
+[1] https://sashiko.dev/#/patchset/20260713124622.63181-1-wsa%2Brenesas%40sang-engineering.com
+[2] https://lkml.iu.edu/2605.1/07475.html
 
-The two fields above are required for rpmsg-gpio, but not for virtio-gpio.
+Now for the issues:
 
-In the rpmsg-gpio case, interrupt detection and handling occur on the remot=
-e processor. The=20
-interrupt information (such as the GPIO line and trigger type) must therefo=
-re be sent to Linux=20
-through this notification message.
+> > +	xas_lock(&xas);
+> > +	existing = xas_load(&xas);
+> > +	if (existing) {
+> > +		pr_err("hwspinlock id %d already exists!\n", id);
+> > +		xas_set_err(&xas, -EBUSY);
+> >  	}
+> > +	xas_store(&xas, hwlock);
+> 
+> [Severity: High]
+> Could xas_store() fail with -ENOMEM under mild memory fragmentation?
+> 
+> Because xas_lock() acquires a spinlock, XArray's internal node allocations
+> are restricted to GFP_NOWAIT. XArray typically requires callers modifying the
+> array under a lock to wrap the operation in a xas_nomem() retry loop,
+> similar to:
+> 
+>     do {
+>         xas_lock(&xas);
+>         ...
+>         xas_store(&xas, hwlock);
+>         ...
+>         xas_unlock(&xas);
+>     } while (xas_nomem(&xas, GFP_KERNEL));
+> 
+> Without this loop, the GFP_NOWAIT allocation failure would be fatal. Could
+> this cause hardware spinlock registration to fail spuriously?
 
-In contrast, for virtio-gpio, interrupt handling is performed on the local =
-processor. Since Linux already=20
-has all the necessary interrupt context, the information is not needed.
+Reading the documentation of xas_nomem(), I think Sashiko is right and
+such a loop is needed, or?
 
-Shenwei
+> >  	/* mark this hwspinlock as available */
+> > -	tmp = radix_tree_tag_set(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+> > +	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
+> > +	ret = xas_error(&xas);
+> > +	xas_unlock(&xas);
+> >  
+> > -	/* self-sanity check which should never fail */
+> > -	WARN_ON(tmp != hwlock);
+> > -
+> > -out:
+> > -	mutex_lock(&hwspinlock_tree_lock);
+> >  	return ret;
+> >  }
+> >  
+> >  static struct hwspinlock *hwspin_lock_unregister_single(unsigned int id)
+> >  {
+> > +	XA_STATE(xas, &hwspinlocks, id);
+> >  	struct hwspinlock *hwlock = NULL;
+> > -	int ret;
+> > +	bool unused;
+> >  
+> > -	mutex_lock(&hwspinlock_tree_lock);
+> > +	xas_lock(&xas);
+> >  
+> > -	/* make sure the hwspinlock is not in use (tag is set) */
+> > -	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+> > -	if (ret == 0) {
+> > +	/* make sure the hwspinlock is not in use (mark is set) */
+> > +	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
+> 
+> [Severity: High]
+> Does xas_get_mark() return the correct value here?
+> 
+> Since the XA_STATE is freshly initialized and xas_load() hasn't been called
+> to walk the tree, xas->xa_node is NULL. In this state, xas_get_mark() queries
+> the global root mark of the XArray.
+> 
+> If any lock in the XArray is unused, won't this return true, potentially
+> allowing active locks to be erroneously deleted?
 
-> Given the refactoring work that is still needed, I will not look at the
-> implementation.
->=20
-> Thanks,
-> Mathieu
->=20
-> > +
-> > diff --git a/Documentation/driver-api/gpio/index.rst
-> > b/Documentation/driver-api/gpio/index.rst
-> > index bee58f709b9a..e5eb1f82f01f 100644
-> > --- a/Documentation/driver-api/gpio/index.rst
-> > +++ b/Documentation/driver-api/gpio/index.rst
-> > @@ -16,6 +16,7 @@ Contents:
-> >     drivers-on-gpio
-> >     bt8xxgpio
-> >     pca953x
-> > +   gpio-rpmsg
-> >
-> >  Core
-> >  =3D=3D=3D=3D
-> > --
-> > 2.43.0
-> >
+Despite I intend to remove this function in the future anyhow, the fix
+for this issue is a simple 'xas_load(&xas);' right before
+'xas_get_mark()'?
+
+> > @@ -782,12 +753,12 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+> >  	}
+> >  
+> >  	dev = hwlock->bank->dev;
+> > -	mutex_lock(&hwspinlock_tree_lock);
+> > +	xas_lock(&xas);
+> > +	xas_set(&xas, hwlock_to_id(hwlock));
+> >  
+> >  	/* make sure the hwspinlock is used */
+> > -	ret = radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
+> > -							HWSPINLOCK_UNUSED);
+> > -	if (ret == 1) {
+> > +	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
+> 
+> [Severity: High]
+> Will xas_get_mark() silently abort here?
+> 
+> Calling xas_set() initializes the state to XAS_RESTART, which makes
+> xas_invalid() evaluate to true. Because of this, both xas_get_mark() and the
+> subsequent xas_set_mark() further down will silently return or abort without
+> performing their intended operations.
+> 
+> Could this prevent the lock from being marked as available again, effectively
+> leaking it permanently?
+
+Not sure if I parse this correctly, but I think xas_load() is also
+needed after xas_set() and before xas_get_mark()?
+
+Thanks and happy hacking,
+
+   Wolfram
+
