@@ -1,236 +1,129 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436EA3546C7
-	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 18:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBCC378D7D;
+	Tue, 14 Jul 2026 02:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1783969123; cv=none; b=RYB5IvnW9yeZFzx+VKO9yuk5t88bOWQnAmXtensCL4bqmZ5SRIMIkRlC3424bdRHv8SyUpEr9O5BoVBMtAkRx7PGJHjKY4HpUl9SztaFhX5ATfZ00V95JXszGyF6w+1JhTy+A6eYejfLq06q2cG6Y9Q1wtUosC3t1XV2ICkbIiA=
+	t=1783997610; cv=none; b=MdzEGFT4AJ81VYgNhDsVToDrW7o8MuZMznaes9IHMsaNvoNsJ+HOxDAXZ0jVpc3rLa14DcGyTaiDuTV16mqqn99DJQH17SXwanz7Ld+CDSty223TFbx/ODXS+5GtdEj1affUqKiQ3P6XsysB3PpLDedByWooxaGwFiKk2q6QRTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1783969123; c=relaxed/simple;
-	bh=Q4FlDRCpngp1x0aC0AgdewQ8wbrSnrUV0YCYHer0W7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gAKLr4aLI7CaSH6z3U5a+/SpHmPVOaozL3UYTikj1wqX3Mq3gHcLz0SH9SBqQsy5DLiNgu4cPlS9wzfMwFJKCRHDXH7q0KERzyfFDW0Hi6H/b/EE78XkW9weANF6gwOiaIZVZlZi+9T0+inVitzK9UksFVaIwlUcW4yrpSlk/RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WdU4k/7w; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IjgjV8tY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1783997610; c=relaxed/simple;
+	bh=NVJEBYnjUAbOEmeXumg06ZQmEpkEW60hwM7Li9XCGLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RTK68kkAIQzidMfTStgJ/gdpZ0F1yhewuJDjJ42UdPGmiJM2PZl/rQvyww6EO/xzD+CqjdAUwA0nzZPdt+X0D5LAatec6Oy3/mlH3YnuTbCSFDwVFkBeb3ysEAqlBleLbKFZij4DcJO9gq+zrt43QwQjXbg8z3kvxxbX8AnX7Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUcKxUjY; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WdU4k/7w";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IjgjV8tY"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66DF8kfL1908342
-	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 18:58:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EGm08z2QRTZQR1FZakby7UHoEn+vMY549zyGYn80n3k=; b=WdU4k/7wJY4565Q3
-	OBIv/l/9/g9bOCtXtJdW5RUd40bhhXJJtBGCi5XyLAHtadKYz5hVdLU8knWINlps
-	bNUIkviKqHLWLxv9gNI9iqXdGJ2UVEa6jsENcnQVNwq4EoYLEz470KHRNeHUHT8o
-	sa+g5Qw8UDN99M8RL+ra2kDJC1ovboKK5zPW4s1STq08y2RwX3+UBJFecEuQ8H0O
-	9XnFwJm6nPXYLi65NhRQ+zIzTRuprHoYo7OT+5G6P0c+/w8vIfA0qbM/PnP+tnvS
-	HmjjtQxXp4vx87eHAWKG9gGELlUiYgWMLYLOoSeiuwkqWt+92FJ1lGBo9st/xAKt
-	nCGidg==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fcwda28dn-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 18:58:40 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-cb11535e6a1so44394a12.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 13 Jul 2026 11:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1783969120; x=1784573920; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=EGm08z2QRTZQR1FZakby7UHoEn+vMY549zyGYn80n3k=;
-        b=IjgjV8tYOBtwKq394jANMNx59r6lzns1gtRUHwX5v7l1Q9zJYLUKbHXNR52tQSXVUr
-         ZOeEtRot9hVlcPw7uMa7gqFshIpNN2qUSDiBIrTPtG3R3yllId9kw/DF45Fguja1uhnR
-         33otf8h84juUsW3oMxzdl7kXKZYUMfhnXsX3UnO9Uk3w5ah+ZWvmdFMM+I0FNMc9W7OW
-         360eAFp5JhphHlymvmT1BfFDfd0XE0BKmVXOQ1pf/C+89h3UDNcgc22JV/nVcYNFtJuq
-         UVPHEr1dyJsG2BkXGHj7FK6bNxx+Taj9EcloALrolP2R2SfSTrU6MC1ocUF2YO1KuG+d
-         qd/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1783969120; x=1784573920;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=EGm08z2QRTZQR1FZakby7UHoEn+vMY549zyGYn80n3k=;
-        b=IlVEi0TmujQY1o4+6sONxQDMgOLc0qFJtBjcIZH7dry9wIbcMzqioAeUPIZNy+MXQJ
-         RUtgNN/6DZKvwJJCIiU5sbKIRi6H3VSgsCBeo9moMucOLZ3dL0FmmvAWGMMC0OCT9Fsq
-         KFipV00FkPo+xe71LCC2PX7EPNEOhFxq3b8wJlfaFpqrnKHOewOU6yBC1DvEEY6kqzdP
-         DQgCsWgikUTlMOQ4PEfWcaSWhAvYBJaUKgre+xtr7Gn2YAgUkl3V3ogfzGqsVUNZxNwY
-         s3eMt9DlnbAHun5IyJh3UH3jP4aOF1m7F3AwBaigG35UiPLbj1LPbPAn8VDKi05M2oZ9
-         NtrQ==
-X-Forwarded-Encrypted: i=1; AHgh+RqjiMVgjcjbdrIKz2phWc49bzMy4c/YqCkmw6UzRsIygKdSr3JIv3dFlcv1TZsz9Wt4B5XDbf1Q5kTaDgOCwoeh@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWzNiDNTzixNce7373MjcjNjfn+P3VbD19A9pEst9436nvtC2M
-	9SwS3cZBikRCBeDZEqjCu815TZeBjmIeQ2ZqMChqhrxHph4uZ+uoD29FCwHHbqdnbidpNT8J7IO
-	k+ONOpU5EGVgqZyKAKNwqHqgoKb33wylzEkPRxMufsTxox9b098NTVg+hmaKIvCE3SgzKmh1r
-X-Gm-Gg: AfdE7cnZ3kc8DISoCGmslcdCbAP0T+UAWzXWqqxZNQrO9IxPccjDSlqIPYwnM5qxrCF
-	68E/+mPC7gnsuHXaxl3mhl6o1w6QBycN5ToUq3J+XSPY6yBZ0wHL0IJtId6jX2H7p4vvZYohZfJ
-	tdc+wOkDTD0u6+jPTkOilIgbRn3XpgG5Nv6l/DXLkgftQRrNxUt+tt+OXQ7DkTCDRCTw4NpBN1g
-	1Y4h73owMK3GVf59Sn4w4Cyxpmn4O96QmRkUvSvtoot15Q5S1PJhLGEb2mLSvoNX8Pr678j/axc
-	2aPyhvq7+1Z1FXLoL5Yelcjssx2n5ipTySo9S5jgnkyGGRfST7H6Ykud8hXkHGFiw83wykcK8sO
-	frhtEVB/WqHbiBO13qSQu+X10jcSxN9DXRG9mly8L7AGYsshcsIGhmZ46qzaEW27TuVNe
-X-Received: by 2002:a05:6a20:b7a7:b0:3bf:63af:859 with SMTP id adf61e73a8af0-3c110ad2e6amr11568642637.45.1783969119593;
-        Mon, 13 Jul 2026 11:58:39 -0700 (PDT)
-X-Received: by 2002:a05:6a20:b7a7:b0:3bf:63af:859 with SMTP id adf61e73a8af0-3c110ad2e6amr11568594637.45.1783969119131;
-        Mon, 13 Jul 2026 11:58:39 -0700 (PDT)
-Received: from [192.168.1.11] (15.sub-75-218-246.myvzw.com. [75.218.246.15])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3118ee6091dsm83117734eec.14.2026.07.13.11.58.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jul 2026 11:58:38 -0700 (PDT)
-Message-ID: <09e17504-d1b3-4e3a-b547-3c3c1040015c@oss.qualcomm.com>
-Date: Mon, 13 Jul 2026 11:58:34 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUcKxUjY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A45B1F000E9;
+	Tue, 14 Jul 2026 02:53:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1783997608;
+	bh=b0YkISUvD66GFsQjNiTygrNgFmIa2vyWu5o957KGl9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=LUcKxUjYDlMXLD5VlEfPVWx7qilnoL0KFfalNjDtbZFA/WlZReayDkAuql3+lJizP
+	 VSwkAQABOxzE+OKlyuBQ2NQqc4OgdzReR0lNMpxbuIOQz6gMCiApxk/W50R5DM1JM5
+	 5+M3ZWnJcovaEH9p7F6RgkSF7cxiUKouDHsYxhbe6lvN3NJB1tp7mBXvoAv0ezNyOR
+	 629BpT3YPWM18rrbv7VbLjkKaPywhY7RdTeBzNvWgQd3d1ZZnolTXEmjI10xsjkNZ1
+	 dAqUn+WK7fo8DVldZ0Hu8qbBoK0nryBiDdlm2vnwVGYaBb5Bbe5k0eHCCgg6vrHxhA
+	 sZirHSNj3qH1g==
+Date: Mon, 13 Jul 2026 21:53:25 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bjorn.andersson@oss.qualcomm.com, chris.lew@oss.qualcomm.com, 
+	Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+Subject: Re: [PATCH] rpmsg: glink: fix deadlock in endpoint destroy during
+ driver detach
+Message-ID: <alWkl-eYfVym4iCk@baldur>
+References: <20260604-rpmsg-glink-fix-deadlock-destroy-ept-v1-1-b8a54ad1e4fd@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 12/14] wifi: ath12k: Switch to generic PAS TZ APIs
-To: Sumit Garg <sumit.garg@kernel.org>, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-        bod@kernel.org, mchehab@kernel.org, elder@kernel.org,
-        andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, jjohnson@kernel.org,
-        mathieu.poirier@linaro.org, trilokkumar.soni@oss.qualcomm.com,
-        mukesh.ojha@oss.qualcomm.com, pavan.kondeti@oss.qualcomm.com,
-        jorge.ramirez@oss.qualcomm.com, tonyh@qti.qualcomm.com,
-        vignesh.viswanathan@oss.qualcomm.com,
-        srinivas.kandagatla@oss.qualcomm.com,
-        amirreza.zarrabi@oss.qualcomm.com, jenswi@kernel.org,
-        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-        skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>
-References: <20260702115835.167602-1-sumit.garg@kernel.org>
- <20260702115835.167602-13-sumit.garg@kernel.org>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20260702115835.167602-13-sumit.garg@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzEzMDE5NyBTYWx0ZWRfX/Bfrzp55leBW
- cvwYZiwY8Fk/z7w7QYsVqB8hHsMNvGWMu9Z/rbCJUWCd64XOzQ8ODza8bRDzujBwHId0KAQF9ij
- O2PKOsbcjuY31xqukQaor2GWNP43LN0=
-X-Authority-Analysis: v=2.4 cv=cNbQdFeN c=1 sm=1 tr=0 ts=6a553560 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=6VQYfvmiyQ8t40WkS/mQdw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=CBpSC656wZACrugyqBAA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-GUID: 3uHUVzDIDjfKhIp60GYFA6yciHIKXV-m
-X-Proofpoint-ORIG-GUID: 3uHUVzDIDjfKhIp60GYFA6yciHIKXV-m
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzEzMDE5NyBTYWx0ZWRfX+YGkUsSHjSfj
- ERuHu9ZV5OGc4yujiIDOPHIMfGaUd+DHjcaJtNAI8qPYtl4wZxK0et13q/EXbNJmfPN4JglI1Kd
- dFBAv3a2cXLO9VjATk4bfGCQP/xP4PpuYW/XXtTGYUL21AsVzg3o/jDnVSzS4hYM7iLA1gd/Mo2
- F5VfxcIcDds9vGCN/blm59FVNWUFOtBjDp/lc+MHqfxOK0AjIrDIvEtyB2JbSY/q2HC0QneDe4u
- 0o5+OoefT4Q+7SrtBNM8I74pbMO5+vZ/PvcyQT0OV4N2QEAvpY+S5GOJwSNmOmh8gAG1S9IPsYm
- xwRa5buXt5/mrR7xoRol7nzdWTH8x1ToZCkLRB18BYml2J7JqsH2fMy2UTtVa6EwLzrQi4hEW7F
- VT20EDPDni168lUfz6iagap+SeKMTPkS6F4adZKUH03RcDqilquUb4O7ht47jHzQhdcrh/prbS6
- Q7NVmMhWnbDSgWKqXkA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-13_04,2026-07-10_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 bulkscore=0 spamscore=0 suspectscore=0 impostorscore=0
- phishscore=0 clxscore=1015 adultscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607130197
+In-Reply-To: <20260604-rpmsg-glink-fix-deadlock-destroy-ept-v1-1-b8a54ad1e4fd@oss.qualcomm.com>
 
-On 7/2/2026 4:58 AM, Sumit Garg wrote:
-> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+On Thu, Jun 04, 2026 at 02:12:53PM +0530, Vishnu Santhosh wrote:
+> During driver detach, the device core holds the device mutex throughout
+> the driver's remove callback chain.  When the rpmsg endpoint is
+> destroyed as part of that teardown, the GLINK endpoint destroy
+> implementation attempts to unregister the underlying rpmsg device.
+> That unregistration calls device_del(), which tries to re-acquire the
+> same device mutex already held higher up the stack, causing rmmod to
+> hang indefinitely.
 > 
-> Switch ath12k client driver over to generic PAS TZ APIs. Generic PAS TZ
-> service allows to support multiple TZ implementation backends like QTEE
-> based SCM PAS service, OP-TEE based PAS service and any further future TZ
-> backend service.
+> The deadlock manifests with the following call chain:
 > 
-> Acked-by: Jeff Johnson <jjohnson@kernel.org>
-> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> [<0>] device_del+0x44/0x414  <- tries to acquire same mutex
+> [<0>] device_unregister+0x18/0x34
+> [<0>] rpmsg_unregister_device+0x28/0x4c
+> [<0>] qcom_glink_remove_rpmsg_device+0x70/0xc0
+> [<0>] qcom_glink_destroy_ept+0x58/0xbc
+> [<0>] rpmsg_dev_remove+0x50/0x60
+> [<0>] device_remove+0x4c/0x80
+> [<0>] device_release_driver_internal+0x1cc/0x228  <- acquires device mutex
+> [<0>] driver_detach+0x4c/0x98
+> [<0>] bus_remove_driver+0x6c/0xbc
+> [<0>] driver_unregister+0x30/0x60
+> [<0>] unregister_rpmsg_driver+0x10/0x1c
+> [<0>] fastrpc_exit+0x28/0x38 [fastrpc]
+> [<0>] __arm64_sys_delete_module+0x1b8/0x294
+> [<0>] invoke_syscall+0x48/0x10c
+> [<0>] el0_svc_common.constprop.0+0xc0/0xe0
+> [<0>] do_el0_svc+0x1c/0x28
+> [<0>] el0_svc+0x34/0x108
+> [<0>] el0t_64_sync_handler+0xa0/0xe4
+> [<0>] el0t_64_sync+0x198/0x19c
+> 
+> The rpmsg device unregistration inside endpoint destroy is redundant.
+> In both contexts where endpoint destruction is triggered:
+> 
+> - Driver detach path: the driver core already tears down the rpmsg
+>   device.
+> 
+> - Channel close path: the rpmsg device is already unregistered before
+>   endpoint destruction is reached.
+> 
+> Remove the redundant unregistration to fix the deadlock.
+> 
+> Co-developed-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+> Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+> Signed-off-by: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+
+Tested-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+
+Regards,
+Bjorn
+
 > ---
->  drivers/net/wireless/ath/ath12k/Kconfig |  2 +-
->  drivers/net/wireless/ath/ath12k/ahb.c   | 10 +++++-----
->  2 files changed, 6 insertions(+), 6 deletions(-)
+>  drivers/rpmsg/qcom_glink_native.c | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> diff --git a/drivers/net/wireless/ath/ath12k/Kconfig b/drivers/net/wireless/ath/ath12k/Kconfig
-> index 4a2b240f967a..0d5d1c55bfc1 100644
-> --- a/drivers/net/wireless/ath/ath12k/Kconfig
-> +++ b/drivers/net/wireless/ath/ath12k/Kconfig
-> @@ -18,7 +18,7 @@ config ATH12K_AHB
->  	bool "Qualcomm ath12k AHB support"
->  	depends on ATH12K && REMOTEPROC
->  	select QCOM_MDT_LOADER
-> -	select QCOM_SCM
-> +	select QCOM_PAS
->  	help
->  	  Enable support for Ath12k AHB bus chipsets, example IPQ5332.
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 401a4ece0c9777398837d4427746fae0a5003e88..ab7ff3d2f56bf797592fc4227ce5b730bce72226 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -1418,9 +1418,6 @@ static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
+>  	channel->ept.cb = NULL;
+>  	spin_unlock_irqrestore(&channel->recv_lock, flags);
 >  
-> diff --git a/drivers/net/wireless/ath/ath12k/ahb.c b/drivers/net/wireless/ath/ath12k/ahb.c
-> index 30733a244454..69e21214e629 100644
-> --- a/drivers/net/wireless/ath/ath12k/ahb.c
-> +++ b/drivers/net/wireless/ath/ath12k/ahb.c
-> @@ -5,7 +5,7 @@
->   */
->  
->  #include <linux/dma-mapping.h>
-> -#include <linux/firmware/qcom/qcom_scm.h>
-> +#include <linux/firmware/qcom/qcom_pas.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> @@ -420,7 +420,7 @@ static int ath12k_ahb_power_up(struct ath12k_base *ab)
->  
->  	if (ab_ahb->scm_auth_enabled) {
->  		/* Authenticate FW image using peripheral ID */
-> -		ret = qcom_scm_pas_auth_and_reset(pasid);
-> +		ret = qcom_pas_auth_and_reset(pasid);
->  		if (ret) {
->  			ath12k_err(ab, "failed to boot the remote processor %d\n", ret);
->  			goto err_fw2;
-> @@ -485,10 +485,10 @@ static void ath12k_ahb_power_down(struct ath12k_base *ab, bool is_suspend)
->  		pasid = (u32_encode_bits(ab_ahb->userpd_id, ATH12K_USERPD_ID_MASK)) |
->  			 ATH12K_AHB_UPD_SWID;
->  		/* Release the firmware */
-> -		ret = qcom_scm_pas_shutdown(pasid);
-> +		ret = qcom_pas_shutdown(pasid);
->  		if (ret)
-> -			ath12k_err(ab, "scm pas shutdown failed for userPD%d\n",
-> -				   ab_ahb->userpd_id);
-> +			ath12k_err(ab, "PAS shutdown failed for userPD%d: %d\n",
-> +				   ab_ahb->userpd_id, ret);
->  	}
+> -	/* Decouple the potential rpdev from the channel */
+> -	qcom_glink_remove_rpmsg_device(glink, channel);
+> -
+>  	qcom_glink_send_close_req(glink, channel);
 >  }
 >  
-
-My code review agent is flagging:
-
-**Missing probe-defer guard** (`ahb.c:422`) — `qcom_pas_is_available()` is
-explicitly documented as mandatory before any PAS call. The OP-TEE backend
-registers its ops asynchronously; without an `if (!qcom_pas_is_available())
-return -EPROBE_DEFER` in the probe path, firmware auth silently returns
-`-ENODEV` with no retry.
-
-Is it an existing deficiency in ath12k that there is no probe deferral?
-Or did the qcom_scm_*() calls somehow guarantee something that is no longer
-true with the qcom_pas_*() calls?
-
-And also for future cleanup:
-**Misleading field name** (`ahb.c:384`) — `scm_auth_enabled` should be
-`pas_auth_enabled` to match the backend-agnostic API it now guards.
-
-I plan on taking this patch as-is through the ath tree since it is currently
-just simple API changes. Any additional changes can come separately.
-
-/jeff
-
-
+> 
+> ---
+> base-commit: ba3e43a9e601636f5edb54e259a74f96ca3b8fd8
+> change-id: 20260416-rpmsg-glink-fix-deadlock-destroy-ept-5cc7aac522a0
+> 
+> Best regards,
+> -- 
+> Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+> 
