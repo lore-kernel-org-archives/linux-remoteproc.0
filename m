@@ -1,127 +1,205 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B834508F8
-	for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 12:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.170
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784118326; cv=pass; b=EG0CaekFSW2EA1T1a0x0ewycTR29HahotSbVxNCcNwkKYDz7+uvpnGn23ysgeVVh8hRDd0+MBs4ccogVPmeS70Nze4sAoSu+I6ZjqHk/qbL3O7mLYfZ5QGy9PArPfKVCR0D3UTH59F/+djk+DpUcz9t0BRQPse92kW8/yX2tCI8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784118326; c=relaxed/simple;
-	bh=s1XP3CBX1vjLoCZEqWTUBRju6xstvuxvI2ntg39GLR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IwQINXy1bTzgIUluye1nxFNN+C1z7CIGED5lrk4rYy5MUcTYn/9QvfRVUiMkA6PUTA8WANKaMOUD5XJYMg45yKpdnfcPJED9VbFmCyZ8/+/DYSPRwIlRRtTtvWWm6hMrDJucUGvKGWHixG/aUNCxgHujvBvxgJhJRQf2Rc5hBXw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nmd5qbkr; arc=pass smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED6B47B42C
+	for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 15:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784128255; cv=none; b=kEBuw81S9ey0hy02nOiJipbNv6iKymMdT1V4D/DdrSXOSSMPxh8uhTxbZYbDB1bgSZ1ypXbsSC1bC3E5nLNJ3ZZFF7YmbsKXurSrQjrhCmdAcfbUw4JbDji6+4GBmfm4HRrS3eh2N4QWnSEErJBoGzvuIJ2vhFhDDIYrWFcproA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784128255; c=relaxed/simple;
+	bh=cUtM9nCXCjAw/x4a+bjTLJgqufLVfuAa653qViepFAQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWWfJbSvdVz+5UAxoVhUNYgu8frTriOphz76InU9BYRbbSevy3efsl7P/Xgc7vLX3WyR66E8YPvQ83Eossv3lzNobZ9HQrFYj9wcCT4R/FQZJIOByElZTC1v35vNHYWAQE12aYnP8gPOlwl6izSawQpbxDXIjcVCmohVqA0mK/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O1HKQw9f; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nmd5qbkr"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-39c8dbf4f38so20012011fa.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 05:25:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784118323; cv=none;
-        d=google.com; s=arc-20260327;
-        b=MLA9faBWeYY/ro1ww/IaFSuH+AcND4Hjk7+Wx76dQGQjrO67uxY3sMCFYohq0Ey4z4
-         /VMcORrNfPEPGjXLRH6N+d7fvKgZ3/aDN7NoVHdbm5TGkljTfarPJgyUXqHS72UhEj7S
-         5ecoDv2uw4BjnIxOZ3m7Stj3llxjhEiU57gO2v9G3ke0+EMtkxEDUHjSbiHpW3YJuz7e
-         U4Q+PLH4FCqRyTBklMTMLLsSPap39p7SyWLBa5W5fuXE62ypHZvGTSL7X4DJCnv36YEF
-         27fpFliGV+vpzQKp5aAy5Orl1om15CpXtPqFkBfh8VKatwQuTdzwFvU9DOmRcG1Q0v66
-         ec2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=phmAAV/S+5KnjhMYpBu8jVRdoI1pgmVSU2EZUZpX/q0=;
-        fh=5yKRW8REYSkPYUh/Jr85pyWd2iWsxj9kEhBkOO8dFVk=;
-        b=SLRsnui6/ySqHOZ/c+6EJdopQW3Q4oAQhtPWM6i2J5xm4JXj6bAiliLQT8dJ3mZ8uR
-         UKJE5Q5BL75Gd/tm1TYgyEL29D3Fszc/FR0qLDWmki8r/5Ti9tkyAoqVjuE97vEW7i1Q
-         N3X+d+DaDvrTc9uKq6IgIb2+95mnzrolRJEZns1vqlD5Bkz/W59ADo3jE/kuEqkQlFyy
-         Kt1ASCeWVgHF6Fa6tAClTFzkoJBaR2plTSvyEKZIDBjtbUmuGC6YEuyk0aV6r7zXGAk7
-         AXDkTCtcN2RDisyDYKwMZ0zD864IDxFGOJ7TIxmc2W/h46Fc744kFkfR2j5a81923rjT
-         arMw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O1HKQw9f"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2cad4170e8eso69504075ad.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 08:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784118323; x=1784723123; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=linaro.org; s=google; t=1784128253; x=1784733053; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=phmAAV/S+5KnjhMYpBu8jVRdoI1pgmVSU2EZUZpX/q0=;
-        b=Nmd5qbkrQU1E/3wSaxS0GjfkyNQPU/XKhIN0gqXHgslyspryt/Ry8Qeh3y3DUvwToD
-         xtL88Z5iqc29xv5Lf5VQmdGs/hwfJ7GMSjZa3ww0Jp8xdG7wZB3M/Wovsuz8BxAfY3P+
-         XRWbePAgM+9J6wXomvVr2AUmTvsFA/5ZmJkzw9MYkC0sD8Ye3Oc4MI2WWOHFJEe6r0tH
-         kqWH+i1gyku9/bsUMfgktvZ3PbwNJ01N9n36vcsi3l6266boZ2T2Xxpj/vptRSRy/8Bm
-         DcleDt6cRa4WBSWevcJXlf+JVDmZjremtqQZP/qzkcYSrKLrlYW5mRbbItDD6Hn4Kdtx
-         q8DA==
+        bh=0f1V+XLP/pNL55h1xnCAtGPJkQJwQhVW+vGDr0a9svY=;
+        b=O1HKQw9fEgpdfYOoz8qtNNfuoqq3VjHjMVlXTBIiJpbDpxJc/yrdlbr0zIph+DZvFw
+         RVnzX4o26YKYYCg6lYyEAfFUXGiApYSLbnIj+qlojX8iNsB4BkLC+CMLgT3KF8N2pdfa
+         C7+EAMkF8ogIZuSz+QG65wPG2MTRQ5DTrsqCZzWfle5Z+hXoflzA5UwphE+2UThjQOpd
+         OBbdWpM+lmH4JAX54XmoSNi5aQJcDhJZfZhL+P2izgdWnlV7xsBzFZpDrtNL+mM2LB2M
+         MjCudTCPm56wKAOnvRsw36sJb4K9E1nGFWcgdQ4U7GpQN3dBlorHH/BnFnpSm2ukapat
+         TOlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784118323; x=1784723123;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1784128253; x=1784733053;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=phmAAV/S+5KnjhMYpBu8jVRdoI1pgmVSU2EZUZpX/q0=;
-        b=L/k4QsLNNxTCYcy6ubEIdpoGl++aUwwXOeY23wrf8PMyjb5QA6bI6R91FX2Ix6PpL9
-         I0H+L372bv71vEjdDnQ6ORi/c0HYoIYhzaWfhUMPlVLxGiNcIU9KBxs3I62KeUlUuMrV
-         ophFBIDGZLe5YmVhyWPgrrByr+/AbEpfv1MovkaQFlRerdUMefnTvg0nYEdJOm9FPb/E
-         5JIbK01dc1x77M6iveJfYNwaw4fIUU2bWJfAiekmozYg/W6yDGZOF6OZYWpU3j6tGrMA
-         FhX+Obx0SR+kiszXKVNh4rmjpp+3MfDyvTJIrN0Popb0PguYSK7ZO984uo1TDCdb6W+r
-         vAIQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rr0iTUrOgTdLqSxzjZD2C8U4XL+RXonWiKcWKTh2asfMP72wl4zmEMan6Sv9hnrAmuVmc80uCEHfvjdPTn/ALFX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc5kjj9uQCYzAM+v9otwUtLdUGcB25h+hTLFkrfSOD2P0FAcXQ
-	sqX8g10CJbu0RnshTxlnOMYXTa7jw1Fngm/4O0rUhMHtQza55GhTtYDuEktExMTTCQ7mTTrorjW
-	cC6FQs4Jcueb40p32AI2SoeXgQeVQKNw=
-X-Gm-Gg: AfdE7cmzRLXuYFIk9+1NXEPscOdYH4Vg7ilC2V34Vh4TYh97cFNmP9KpsJRlB6e6LHA
-	A1Lvil023Usc40I6ey0wLZSpctRPLRmIQhAFkMSO3RAzZL0QnuzNROcxmIzk9i4beMrxstUH6Cy
-	OiL3oZqg6RjcvSlWHGS7y1eoGr2m0bvicyxbxRQpSIjdNTvpkSWz2D4UFRn9Nwq0kEPUXN6sHN/
-	cslYUZ8X8zwc6QVFNz6M/5vjd1q0YuhqrTBvmOPgGMJVXUlQaJnSVSgxPLP9n30/IAWKtemZyf2
-	yeP9LNVFn4pkv2uJu3lGLMhS/jCe2lw//IwilCwwN5cnHCdOaVU5vg==
-X-Received: by 2002:a2e:a994:0:b0:394:3b62:b6aa with SMTP id
- 38308e7fff4ca-39caa14ea59mr36819751fa.12.1784118322672; Wed, 15 Jul 2026
- 05:25:22 -0700 (PDT)
+        bh=0f1V+XLP/pNL55h1xnCAtGPJkQJwQhVW+vGDr0a9svY=;
+        b=R70vDlYVeDWDbcv4yB2Xjin5PzGtBpLWtkXPlfHBiNdtYSp57MjNkO+Mm4nnLdmlVe
+         oOYWDDbSnXouYEnURlZ9iaUbb8lfCxH1L0Bnt90CtAHJdO0gJQLxo6PvR4Tbubf6+3BO
+         JuS3GNmX+karSEF/pCzV8N2sHsytft16la9U0u4mVi/yPDMegdnF4hff28tJVqU/fy2e
+         0EYoy93Hvt3l+O8JAwyr6r75/wLunw33SSEHVwglkQBVJfvMxM7G38mwlw2e8QZPwrLU
+         cHVBZF/YsOZMbmv4kNJWZZpyIhUHDDDD+DcmoqfuRBcOA5bZkk72tueO0FzA07c9HCre
+         +qAA==
+X-Forwarded-Encrypted: i=1; AHgh+RrV20br46rBHvPrFXc7YHWoOW6QnodiUPGyUGEuA4+d0n/58Q+GFXT/yXm0RWSG1vhji9dzTJZo0LFYMK2vD5XQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfmSRlNCCfT4MUhDoEuXMkUz0eSLimOOMKrFovC1lqAkAJAqsH
+	qdqJG1sikDi4wE7ipl238MGfM4oEGiFUAsco4WV4KoHP15mNrUM8MjhBGToXMBChcnl1h9vrwi1
+	opsmMGzE=
+X-Gm-Gg: AfdE7ckJ2peI1hUYZBMdqQ0BjOh0Zxer9vF4zRfl0QPru83Q/hAvQ3kgqXOXDAXJ43w
+	6vBIdGV7dDt8LWYlm2ieOpg1FAf677UYz8bIZtRaktOF/+ST21wOUWBY09xns4rFksY4cLl3xzl
+	867TfOE2IsI+pl03QxUQDf+tj82JvoYvqV8WU7fuVA4hELykjsKB6He25Nid/rqrSHfJConrLz3
+	Vxt+ZfGnoTPKsfizncPmPtpkHbiTyiJmLnZ9lDL62lBTPwdUIWv+h3iVXS2naLvgf5B+FcHKpp8
+	o8Wizr4PjMKyD4MuTFEF5UGicK+dxHK1o5doY++tmk3uhhmlJphH7F8dfoASOx+w+l/OxXy11LB
+	YvbV846Ov1srqLN5avKuWbXxPGqqU+FvcXvMgrvaMp6dJRRpRsxauZEwoERLmdPL3swVT43uqg9
+	ulPq3tQeV+JeIWEkeAUfO1Ack09Yc=
+X-Received: by 2002:a17:903:1a2e:b0:2cc:eec6:558 with SMTP id d9443c01a7336-2cef14ad047mr75726665ad.39.1784128252771;
+        Wed, 15 Jul 2026 08:10:52 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:4f38:9a5e:fd18:7a9b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf0fdb3a0asm4417715ad.0.2026.07.15.08.10.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2026 08:10:52 -0700 (PDT)
+Date: Wed, 15 Jul 2026 09:10:49 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	dl-linux-imx <linux-imx@nxp.com>,
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	"b-padhi@ti.com" <b-padhi@ti.com>, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
+ rpmsg bus
+Message-ID: <alei-dNIXo7Z7uT1@p14s>
+References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
+ <20260625155432.815185-2-shenwei.wang@oss.nxp.com>
+ <alUdg9iTysXCFUa5@p14s>
+ <PAXPR04MB918568AE7B2364EC9D16427689F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260109043352.3072933-1-mr.nuke.me@gmail.com>
- <178370682987.2572738.13491033810212556744.b4-ty@kernel.org> <jhl7fic36ec36pyaduw6xtmgvr75sxurngdykljbovdbt2j23g@ezon25dsv3hg>
-In-Reply-To: <jhl7fic36ec36pyaduw6xtmgvr75sxurngdykljbovdbt2j23g@ezon25dsv3hg>
-From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Date: Wed, 15 Jul 2026 07:25:11 -0500
-X-Gm-Features: AUfX_mxYH4-79PzEKbul0S_jMoxLx16udW5ZOUTVeJXUFPAxj9_qNMvYlkM_evo
-Message-ID: <CADi83T4bioudCtHk03hLkOf7PG2up0gwoDTWGaseGh2m3R7ecA@mail.gmail.com>
-Subject: Re: (subset) [PATCH v2 0/9] remoteproc: qcom_q6v5_wcss: add native
- ipq9574 support
-To: =?UTF-8?B?TWFyZWsgQmVow7pu?= <marek.behun@nic.cz>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Varadarajan Narayanan <varadarajan.narayanan@oss.qualcomm.com>, krzk+dt@kernel.org, 
-	mturquette@baylibre.com, linux-remoteproc@vger.kernel.org, 
-	mathieu.poirier@linaro.org, robh@kernel.org, conor+dt@kernel.org, 
-	konradybcio@kernel.org, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB918568AE7B2364EC9D16427689F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-Hi Marek,
+On Tue, Jul 14, 2026 at 07:04:08PM +0000, Shenwei Wang (OSS) wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > Sent: Monday, July 13, 2026 12:17 PM
+> > To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
+> > Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>;
+> > Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof
+> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn
+> > Andersson <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
+> > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
+> > gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
+> > <festevam@gmail.com>; Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan
+> > <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
+> > remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
+> > kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Arnaud
+> > POULIQUEN <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
+> > <andrew@lunn.ch>
+> > Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over rpmsg
+> > bus
+> > 
+> > > +
+> > > +The RPMSG message consists of a 8-byte packet with the following layout:
+> > > +
+> > > +.. code-block:: none
+> > > +.. code-block:: none
+> > > +
+> > > +   +------+------+--------+
+> > > +   | 0x00 | 0x01 |  0x02  |
+> > > +   |   2  | line | trigger|
+> > > +   +------+------+--------+
+> > 
+> > 2 things here:
+> > 
+> > 1) You did not include messages that mask and unmask interrupts at the driver
+> > side.
+> > 
+> > 2) We are carrying virtio-gpio messages on top of RPMSG and as such, this whole
+> > protocol should be about thar:
+> > 
+> > +------+------+--------+--------
+> > | 0x00 |       payload         |
+> > |  Q   |                       |
+> > +------+------+--------+--------
+> > 
+> > Q = 0 requestq
+> > Q = 1 eventq
+> > 
+> > The "payload" part is simply the format of the messages as found in the virtio-
+> > gpio specification.  From there, the only thing left to mention is which messages
+> > are not supported, i.e get line names.
+> > 
+> > > +
+> > > +- **line**: The GPIO line (pin) index of the port.
+> > > +
+> > > +- **trigger**: Optional parameter to indicate the trigger event type.
+> > 
+> > Not part of the spec - remove.
+> > 
+> 
+> The two fields above are required for rpmsg-gpio, but not for virtio-gpio.
 
-On Wed, Jul 15, 2026 at 2:58=E2=80=AFAM Marek Beh=C3=BAn <marek.behun@nic.c=
-z> wrote:
->
-> Bjorn, Alexandru,
->
-> there is another, much newer series by Varadarajan adding ipq9574 to
-> wcss PIL driver,
->
->   https://lore.kernel.org/linux-remoteproc/20260713-rproc-v13-0-41011cbcd=
-a3e@oss.qualcomm.com/
->
-> I suspect these two series are incompatible.
+I agree that the line is required but not the trigger.  The driver (using the
+same terminology as the specification) knows what trigger the pin has been
+configured for.  Adding the trigger information to the interrupt notification is
+redundant.
 
-The compatibility of the two series was discussed [1] with the Qualcomm fol=
-k,
-with agreement that "it is good to have [native IPQ9574]". I don't see an
-incompatibility with how Bjorn applied this subset.
-
-[1] https://lkml.org/lkml/2026/1/14/300
-
-Alex
+> 
+> In the rpmsg-gpio case, interrupt detection and handling occur on the remote processor. The 
+> interrupt information (such as the GPIO line and trigger type) must therefore be sent to Linux 
+> through this notification message.
+> 
+> In contrast, for virtio-gpio, interrupt handling is performed on the local processor. Since Linux already 
+> has all the necessary interrupt context, the information is not needed.
+> 
+> Shenwei
+> 
+> > Given the refactoring work that is still needed, I will not look at the
+> > implementation.
+> > 
+> > Thanks,
+> > Mathieu
+> > 
+> > > +
+> > > diff --git a/Documentation/driver-api/gpio/index.rst
+> > > b/Documentation/driver-api/gpio/index.rst
+> > > index bee58f709b9a..e5eb1f82f01f 100644
+> > > --- a/Documentation/driver-api/gpio/index.rst
+> > > +++ b/Documentation/driver-api/gpio/index.rst
+> > > @@ -16,6 +16,7 @@ Contents:
+> > >     drivers-on-gpio
+> > >     bt8xxgpio
+> > >     pca953x
+> > > +   gpio-rpmsg
+> > >
+> > >  Core
+> > >  ====
+> > > --
+> > > 2.43.0
+> > >
