@@ -1,442 +1,442 @@
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011019.outbound.protection.outlook.com [52.101.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C820A4508F8;
-	Wed, 15 Jul 2026 15:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784130917; cv=fail; b=Pa+Gp92MgNvoZq3dCR5L1rNuHUNyA4mY7mgkgjiLnU6stNVeonVEKGfUQxH96TUvbsJ8TGP1/CtSDYZozFB3Hi/vR4HdmHYb/hFkVGzN192agAqikrcqpmmjaGyztC1k52gTKmsr9gOKhaInra0QgKAJEcMaN9k5kVmD5Nfpaa8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784130917; c=relaxed/simple;
-	bh=vwo4hPmvBpTykMI7tgFOSHkTLmPMNX8a7LCtXMI+osU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VeV+OyDM8wtNr2JO+WaSvfoSxyoKM40p4eKK+GbbuOR3TySPSst68gWok/1EXVk0AwFC68q2DK8muykxnpL3c2Sr8u0LgzxSP37/qh9oSfJ6YH6on8/iYOuU0nZqtM8F1TbPVIavCc2aWAECBBPqnrrtibh175NYKSY3nZD5TLg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=xfVo1ON6; arc=fail smtp.client-ip=52.101.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CE43AE6E6
+	for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 16:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784132654; cv=none; b=eI7qYotIUTlx8ZUZfo1QN7vZwPobAOUkOCznFx0Lq3bO8itRiiGEeLLmN0zECFBhl/3zEiIgprRuvz3hqmMYfdG4M8FnTJIlvNwKx3rhmQZsCz4/Hd+T/flKP6MlRIaZBElCVmCTdq3tl/1OO8rfLqX6zMbG6wBo4SpS0vTnZP0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784132654; c=relaxed/simple;
+	bh=rQEsat0ZyoRePy6ExhTA4Hcs9DIGDJb8nGwfd0ardqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZQF995TcD5aky5gwRJ/PUm/cYVDU9HJ3U0ocBtvLGJ249JtYeYTpZlsNpvR0mZsm5xCWBAwtxnnuPbQWceW4KTmBtshXMOWNYpkOh/Qzmv+SSq2fx+yYRDgD2jkYduDQdeW091Q8HUnAvd4FhHzZAk4TmoZFGmckqQ7D48q6mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XwR1ypOb; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="xfVo1ON6"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qu2q7VtsID9gOj8Zeuy81ufNZND1sGbC3Hf0HWF7zTupO7YCRDCEo7RfuLeN2Or7BcA0Ksqn6N91FqNVeKpz43e8c/fRWKCU16g+I/w+gMm2VGxUeA8+EoFOSub/F4+fWBuIgHKjMoA38VfXTni1qKulusjwSdf12SXOISBmQ49qoB8X7EG+7VLe8jVimysWBtP9tm6ndKP2Wc1H+lVb/c4T2ATZeajvfTIW+xvVk2ICP/uS0HR2tGSQ5vUKgZtLuJpbSF/62/Jww/iTToBgJXsm12ciO1Amh+jaGQlbQ1yuN2lxnOhYKEUkrpRXZTyRFVcpHnyZnDz4fn3Y0ZjtPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Uj/D97tP66a6PhG3Rmx+W8XCDU1/jqzHgu3LhD/3zvs=;
- b=RVkRgXi83gJudVbGCvUwTb4fZdES87vjsY6ZvZqprZ3ap/tc4HUxi7oYpFJxBNYGRMEVJmzGNlzmqrNVQyGQDcM8x3DM8INXtNWBhEiRdGTxmuNRxm5rQonzue3o9wfxL29m9eGOqi2AryNi5Sa9oHN8lqjY/rDG/Yikd7ejn/+i+KGmXHYFhC/3BR+Q4kkTLTykUuYUWrehaLjcjYXqkApHo9xsDBa+3v0FXZKsSWPNBklAzBmaUhmqFKBxDaXtYioEo3tKSI1laOcXKttc/P6jArlR28Cwpo9pvTY6ZfWqcRCqqPBnT/fxH6W1RftDu2DaofqaJf6UrNPly/KWsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uj/D97tP66a6PhG3Rmx+W8XCDU1/jqzHgu3LhD/3zvs=;
- b=xfVo1ON6qyLizk7IKN2a5XR8x7V0JdYJCrDcNpVvoDdTcUoOA/OsVCOsVjgUsJS2oD4hV4CaQ32MzrkDKcPsURGv9OmfZfPFhDacnXHgxrAiuV4Oam+yT3HsFt2MXu7NU30Qqq9M8KvxIsLIhGtwj+mItlOS5APVCOOx4d41H7cF8TopJc9NE5zUlQbzaiwYFoHdSr0p4yAYeMFUQkEZ/jzp11sNSjEr8YyoSmubxjQ+kHHqQkhDL22pgQdo7CCu/JSNtXo+VBpzV9OKL3UXg0gmo2w7/0Yu8lXB2AcJ/whixfz0NeLX254GfNPcNLF7NAe/A+BoCq1GllG+FhfNrw==
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com (2603:10a6:102:231::11)
- by AM0PR04MB6834.eurprd04.prod.outlook.com (2603:10a6:208:17e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.9; Wed, 15 Jul
- 2026 15:55:02 +0000
-Received: from PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb]) by PAXPR04MB9185.eurprd04.prod.outlook.com
- ([fe80::b4c0:6119:2228:2ceb%5]) with mapi id 15.21.0181.016; Wed, 15 Jul 2026
- 15:55:02 +0000
-From: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, "Shenwei Wang (OSS)"
-	<shenwei.wang@oss.nxp.com>
-CC: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn
- Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, dl-linux-imx <linux-imx@nxp.com>,
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, "b-padhi@ti.com"
-	<b-padhi@ti.com>, Andrew Lunn <andrew@lunn.ch>
-Subject: RE: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-Thread-Topic: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-Thread-Index: AQHdFHJKYE+KgnspHka7JiCq8WMI9Q==
-Date: Wed, 15 Jul 2026 15:55:00 +0000
-Message-ID:
- <PAXPR04MB9185DC31980327326D289C4C89F82@PAXPR04MB9185.eurprd04.prod.outlook.com>
-References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
- <20260625155432.815185-2-shenwei.wang@oss.nxp.com> <alUdg9iTysXCFUa5@p14s>
- <PAXPR04MB91852808D2C7491AEF98CF1589F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <alZlZvQQwq-g6VL3@p14s>
- <PAXPR04MB9185B1A3F16D82E8C0C76EE689F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <alemgbM2ktRLE9wT@p14s>
-In-Reply-To: <alemgbM2ktRLE9wT@p14s>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB9185:EE_|AM0PR04MB6834:EE_
-x-ms-office365-filtering-correlation-id: 29fe51b5-0dc5-409c-5ba7-08dee2896d77
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|23010399003|19092799006|1800799024|10067099003|38070700021|3023799007|6133799003|4143699003|22082099003|56012099006|11063799006|18002099003;
-x-microsoft-antispam-message-info:
- wwbSVvuCj7l9QdGd5kTkjXqQy7wnSht+avqBQoMkB4zYk5LSNPtDaJWKjAzq+kZ3uSuWjFF3ngzV/Xy73U+MtTNOwAT5GxV1oIghGEACYxMRqXLxK32DDky9VctDnHaACMZVq/6dWZdQxeqbMtid2FDzdN0QcLWQtEVcYH6/vdLq7WHFnWarrVedjQ7967UpSKk45fxPOgV8FXI2pvwyoNwjh8P6sg6hWlQrYu/dUxisY0iBW9CNIi4VUb+k9hV1mBChhaF8VgKphEkX8Sa1r1wPAS7pHT+uMfS2cn5PjELROPnMkVSH6zSeyzgWYj1r5e5yZIT8WrOdMFm3vwHfuUw+LHX+cJ+UYuHTb6XAbDa2VGC5ffFZuEZZNnrVbI+3D14fQJfPA0MpKeXprA4N+DGXBojMEHiviuq+bUcAGUDaexUshVnElMCM/Z08csVxjnxLSViiCMjfiaIKPNv/i+a/Aq0pjtwCftcDR6fYkdSmzkHAW5DnLULtmUnzlD0VGivG/QyZZHpx84OYWUm3hbIoUsX9MM42oo+6ezqx9pAL0Nast8Q7J4Z16cvACSE6NepSAaXRt9J6hrVSB+fvPTI15R3koBwJ8nfadIvjE2IXBIhAS/WEaBJwdLAAR2DHp4Qu62jwcysmOjgOZ9W+myRSqBNBBm5dF6dZNlI+NgIEkTwsfVJ9Je03GOgmHiKgViGnxTk0s0hOrJtAUZrAfSO0k2ne5JuUb+HcrRSK8NI=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9185.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(23010399003)(19092799006)(1800799024)(10067099003)(38070700021)(3023799007)(6133799003)(4143699003)(22082099003)(56012099006)(11063799006)(18002099003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?9piLKfhogqz65zwDi4oOuu+2k0vfOeAk5ZBdj54nXW0zmYo4p+k8TGDOlP0o?=
- =?us-ascii?Q?fRgLYINiQmzZTTgf3GMEbF+Ebxlp4OAHz5Q88ayt+ftdDGQwuDQf/qrpnb9T?=
- =?us-ascii?Q?lilZpDnwIrgPhOnY3b8yP8mabL1wGnFSvYnx0VPlAd680Ok3UWlTSJ08OrsH?=
- =?us-ascii?Q?ojx1X+h73OF0JRMTrVtd1/lFY0n0pzhU5uVCFw05mpcw4cdo542EgFSgee/w?=
- =?us-ascii?Q?BpnPSLmhw9Bi2dGgh9Zprdp71AlwiMgTeu1tE+kp2NGQP7t9nZ5i989aJQlK?=
- =?us-ascii?Q?DSqbdprR3OKdyQJ02xZ1Nj2gldPp59+Sk7rGpCAwP4xO/FaMK96srTTwrlrH?=
- =?us-ascii?Q?0+oHaiFoGi0JzTMqUmvNlQ3CZCaMMoU8+yBiYSTn9SGWnGjHCJLp6HrzE6mv?=
- =?us-ascii?Q?RTZrVDlUi/yK1XLqlZoD9WbpLRSaiQrjueDTyXkHlWeFfd5qk3Ogj+YFVNR+?=
- =?us-ascii?Q?mahxI7tzP/VbjA9z+NONoaj2nrAhNGQqVur3FUZeYSWpWp0QPjWCL8ZLsxBN?=
- =?us-ascii?Q?MvslyZhTrriOnaBIpjGB4/m/0AorZPorgbXHCM8/08fdH1vl8/5WhhStN8QD?=
- =?us-ascii?Q?0JRsWnZOB5/XSl7D0Y63kIgMwJdB0Su4kETLGqqxLsN6wSxWsigYf4VoRi71?=
- =?us-ascii?Q?pYd83ecqbPiOeCz5/U2hrVvP/5v9Lz9cdMpOLFNq9NptAEbF70zDAjsReFPM?=
- =?us-ascii?Q?SkEWABRxyspbsRShTuhTEXimGM9TUd6Q6gHVo5S9vROJllJ0sjaNN7JSIHCm?=
- =?us-ascii?Q?nv/EEbw5LMJSmGZkLdrodkbHs+RrFpSK8b9Pkv0L1jXlWiDMUd61/oG5RTnm?=
- =?us-ascii?Q?xQty6kQJwI9WG8QxMUdX849eQFkgt8N08oZBxVVFAkLaIMekAObos3S1H0CI?=
- =?us-ascii?Q?HXwVHpwL4u5WcnMP2ckQztpmJCxk1ty0NXcpC1MTyD6xI8T5KurYrPKlW9+4?=
- =?us-ascii?Q?jjjnRyXXDqlPWS68cha2yXWlTUoPLQHf29Zoh2Qdck7VnYyGtlcaZ7zQc7Ei?=
- =?us-ascii?Q?bd6Bzz+iW3WEc/DAhmQTyQxLKThS7MSmoY74g1qn2zfxUJpD5hA97BvSC61N?=
- =?us-ascii?Q?atyNBff1EWGCSrMGdC6sGdN9aVW0KTOXsoBUdqv8P+drv/pgg8SvRbBLcjdO?=
- =?us-ascii?Q?KRTAKJVbC9CzaJObtl6iZjqYSg20CIljpZ8F3o/7u/zLynCda8Zayw2fjTAf?=
- =?us-ascii?Q?h6dfdYdgDbeIqBCVeJ3p/M9gkcEe74bQHlXQT8qJq0wixYbF2eToELz7aa4c?=
- =?us-ascii?Q?9jVmRxCWGjmTJbDOUN9ji7Mgc7iIXxRUrxCOJhttxo6vjBcQsRZe8sQfkAU3?=
- =?us-ascii?Q?Nty6ox1l8JQQDf46TxS6QiUtH/SR/Ar8z6WYKxn2d0Uowh17dPzKdAqItfSQ?=
- =?us-ascii?Q?vV49Y+2hAoQrb4k+vj8BAl+a10UQGFH8X4ibjc8BVCCs4mX51DR9wGCwusGS?=
- =?us-ascii?Q?Ipthd1sMG6fFtrdt/tN8FRh+iVwCLAWvr52o8wvcAJpa4cQjh/OPdAdLAb9h?=
- =?us-ascii?Q?grsvoNOEWknpaEWPgPUjfgGCXXBAtn58yKLypXDtRCu4nbuHM6eiztz234bH?=
- =?us-ascii?Q?cKxqwab5++Ndyr7mF/qnNAnDhiFzfxH4vCuMZHkovRFz0OQsIodTr/0/y019?=
- =?us-ascii?Q?zD/fRbSeY8NDjHDCDeNWItVUyhfqEcMNZ0I3+dJqjkbHxQNSDwjmhTGVduwz?=
- =?us-ascii?Q?4LfS7FeaJ15drGUL2gIyWlAISWsmV69Qz8/GyHfZww9Baer96gAZbdre6G8l?=
- =?us-ascii?Q?+qkqw0JONQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XwR1ypOb"
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-84867f07d63so6441857b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 09:24:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1784132651; x=1784737451; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=MA2j7b6lNgekV6OtvU07MxZTxb5cuXxS2zxtWG+Q/kc=;
+        b=XwR1ypObR8I6704ki0V8SlEEOC8CdPQr9Td1l1soVGj5IR0x+WrQIYs5wW1D5EEU2v
+         6NRF7Qppm15bP4HdVa7ssPgSFnv1GDQzmNFFxsyC2IMTxMbybvOV2/VN/vf9z9hjWRJi
+         7ApUzM741IaRp0nQyc2sVcCG848FNhLUUhlnMCpooA0FkBIRolo0tdvUAeEpLTz1okIF
+         lbWyVBHvFV/UnNyb6yu54Ez1jbfZx6mObImAtnRCtHUyk+bE+2ya1uHNAhoxXn2ePrH2
+         Z3GviVvScw01/FMPuhXsjE/raaAwunAsyZjgIUXSH957TFvpNT8cDcPNuu53M7RhnSwE
+         Lilw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784132651; x=1784737451;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MA2j7b6lNgekV6OtvU07MxZTxb5cuXxS2zxtWG+Q/kc=;
+        b=Bqmrqw75S/q0HpLTHwK9N8Hhle0U4bEeu0gLXpH7Fj1wDJkWUi8Jo8Z/9Mmm2Z7I3e
+         GOmAy/VRMRL9eBLufVn6GN9wFHYjnE4HeOo66fuOZd4XyrD1we8wH8UzO5+hs7ozj2Wq
+         wSqZiiuyWUXM5FsJiOrOLYlGK2/omX63nQQsRpONjvLMgAQT3LRmMG1mguEVGKbV6rFJ
+         Eab9aPm86IagYru6nCVci7wyCLOkGBQyzMUF2+4FVdGneyQjP6Ocd8/RmKU2KhcStDJv
+         da0AOg3osdJFBnR7/xBW2B6pr3Qd28ANjLE+JERLhzNssukpS3HisfhgnJa1SydlPBgy
+         s7qg==
+X-Forwarded-Encrypted: i=1; AHgh+RpZsWrJ/P0e4gWWWjvWPwzJAejPY3oWkqO1JmEKINUP5Dj1UiXdpwnUowcBaVzOndQFF6U9kh0gw7opWqo/BWAb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVgGKJgbejes1I7kPosMC1LeYGJvIGp98ukmxCQmopsP8poA7m
+	WBbVy5Lj8EScKpptlf2JrIUqbdB0LTjbGbLh6DcUQQMbQuZjr3s+GEn7tgMyueahCbI=
+X-Gm-Gg: AfdE7ckBi/QMnZJQ7M0S0HJ05ajM0Wv0EGTLtA0FRMSoz48aKwZ97mPt8+Bg01Z9aRB
+	5aScnWvgIJxYI3o8uA5/4spAt35u7FOTQK11hVqlj/84ZEXAShJ/jvRgbKsb+c5evEwM2YE6CtZ
+	ISQKbzQ71L4iRNy3F55KPPx6AJ9D6rpW498XtFIp/4AxQgM6l94SdHwpenWgdKpR4z7MvTDtZ2l
+	GtTtMIxmHqDOvYHslhHXANfr1I5ROIq/jlrtxmWd+x7ctzv37YkM1bo+AW5KWZPj6CwMWDBQxL/
+	j/hEiINf05zNLCZoahHi2tB6Qg1CRti8MitGAsWuzY+4EpK5tJLepNQbKbjCfzCeXOq++qaCESv
+	H605UbZ4GuQtVimJlekj0ojLCOFx+o3ckUOOsE/b1I8hRl7n8KkF8mChTMBunjSWjO05bmIxn+l
+	TwRkpJcOJptC4s6NHU
+X-Received: by 2002:a05:6a00:3d49:b0:847:902a:57c1 with SMTP id d2e1a72fcca58-84a672ea37emr3024809b3a.57.1784132651262;
+        Wed, 15 Jul 2026 09:24:11 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:4f38:9a5e:fd18:7a9b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84a4f26d82bsm3552572b3a.14.2026.07.15.09.24.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2026 09:24:10 -0700 (PDT)
+Date: Wed, 15 Jul 2026 10:24:08 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] rpmsg: virtio_rpmsg_bus: get buffer size from
+ config space
+Message-ID: <ale0KIu6hXNvN0q9@p14s>
+References: <20260710192831.3440427-1-tanmay.shah@amd.com>
+ <20260710192831.3440427-4-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9185.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29fe51b5-0dc5-409c-5ba7-08dee2896d77
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2026 15:55:00.7630
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kUBEh5A23Ek8vcdH3QQy+Lb/BvTLDYqYGyydrRnhcQwuTpaonb3CzvMs3SstQTb8iRajJPEFnjqw80SGk6y40g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6834
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260710192831.3440427-4-tanmay.shah@amd.com>
 
+On Fri, Jul 10, 2026 at 12:28:29PM -0700, Tanmay Shah wrote:
+> 512 bytes isn't always suitable for all case, let firmware
+> maker decide the best value from resource table.
+> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> ---
+> Changes in v5:
+> 
+>   - fix documentation about alignment of the buffer size
+>   - change version field from u16 to u8
+>   - remove buffer alignment check
+>   - Separate buffer alignment vs MTU of a single buffer
+>   - Use buffer alignment only to get next buffer address at alignment
+>     boundary
+> 
+> Changes in v4:
+> 
+>   - Introduce new patch to modify rpmsg.rst documentation
+>   - check version is always 1.
+>   - check size field is same as size of struct virtio_rpmsg_config
+>   - introduce alignment field
+>   - check alignment field is power of 2
+>   - check tx and rx buf size is aligned with alignment passed in the
+>     structure
+> 
+> Changes in v3:
+> 
+>   - change version field from u16 to u8
+>   - introduce size field in the rpmsg_virtio_config structure
+>   - check version field is set to any non-zero value.
+>   - check size field is not 0.
+>   - Remove field for private config, as not needed for now.
+>   - add documentation of rpmsg_virtio_config structure
+> 
+>  drivers/rpmsg/virtio_rpmsg_bus.c   | 130 ++++++++++++++++++++++++-----
+>  include/linux/rpmsg/virtio_rpmsg.h |  48 +++++++++++
+>  2 files changed, 159 insertions(+), 19 deletions(-)
+>  create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index c84b6cec9caf..5e5473f4adeb 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -15,11 +15,13 @@
+>  #include <linux/idr.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/kernel.h>
+> +#include <linux/log2.h>
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/rpmsg.h>
+>  #include <linux/rpmsg/byteorder.h>
+>  #include <linux/rpmsg/ns.h>
+> +#include <linux/rpmsg/virtio_rpmsg.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/slab.h>
+>  #include <linux/sched.h>
+> @@ -39,7 +41,10 @@
+>   * @tx_bufs:	kernel address of tx buffers
+>   * @num_rx_buf: total number of rx buffers
+>   * @num_tx_buf: total number of tx buffers
+> - * @buf_size:   size of one rx or tx buffer
+> + * @rx_buf_size: size of one rx buffer
+> + * @tx_buf_size: size of one tx buffer
+> + * @rx_buf_size_aligned: aligned size of one rx buffer
+> + * @tx_buf_size_aligned: aligned size of one tx buffer
+>   * @last_tx_buf: index of last tx buffer used
+>   * @bufs_dma:	dma base addr of the buffers
+>   * @tx_lock:	protects svq and tx_bufs, to allow concurrent senders.
+> @@ -59,7 +64,10 @@ struct virtproc_info {
+>  	void *rx_bufs, *tx_bufs;
+>  	unsigned int num_rx_buf;
+>  	unsigned int num_tx_buf;
+> -	unsigned int buf_size;
+> +	unsigned int rx_buf_size;
+> +	unsigned int tx_buf_size;
+> +	unsigned int rx_buf_size_aligned;
+> +	unsigned int tx_buf_size_aligned;
+>  	int last_tx_buf;
+>  	dma_addr_t bufs_dma;
+>  	struct mutex tx_lock;
+> @@ -68,9 +76,6 @@ struct virtproc_info {
+>  	wait_queue_head_t sendq;
+>  };
+>  
+> -/* The feature bitmap for virtio rpmsg */
+> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> -
+>  /**
+>   * struct rpmsg_hdr - common header for all rpmsg messages
+>   * @src: source address
+> @@ -128,7 +133,7 @@ struct virtio_rpmsg_channel {
+>   * processor.
+>   */
+>  #define MAX_RPMSG_NUM_BUFS	(256)
+> -#define MAX_RPMSG_BUF_SIZE	(512)
+> +#define DEFAULT_RPMSG_BUF_SIZE	(512)
+>  
+>  /*
+>   * Local addresses are dynamically allocated on-demand.
+> @@ -443,7 +448,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  
+>  	/* either pick the next unused tx buffer */
+>  	if (vrp->last_tx_buf < vrp->num_tx_buf)
+> -		ret = vrp->tx_bufs + vrp->buf_size * vrp->last_tx_buf++;
+> +		ret = vrp->tx_bufs + vrp->tx_buf_size_aligned * vrp->last_tx_buf++;
+>  	/* or recycle a used one */
+>  	else
+>  		ret = virtqueue_get_buf(vrp->svq, &len);
+> @@ -513,7 +518,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  	 * messaging), or to improve the buffer allocator, to support
+>  	 * variable-length buffer sizes.
+>  	 */
+> -	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+> +	if (len > vrp->tx_buf_size - sizeof(struct rpmsg_hdr)) {
+>  		dev_err(dev, "message is too big (%d)\n", len);
+>  		return -EMSGSIZE;
+>  	}
+> @@ -646,7 +651,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>  	struct rpmsg_device *rpdev = ept->rpdev;
+>  	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+>  
+> -	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
+> +	return vch->vrp->tx_buf_size - sizeof(struct rpmsg_hdr);
+>  }
+>  
+>  static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> @@ -672,7 +677,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  	 * We currently use fixed-sized buffers, so trivially sanitize
+>  	 * the reported payload length.
+>  	 */
+> -	if (len > vrp->buf_size ||
+> +	if (len > vrp->rx_buf_size ||
+>  	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
+>  		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
+>  		return -EINVAL;
+> @@ -705,7 +710,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  		dev_warn_ratelimited(dev, "msg received with no recipient\n");
+>  
+>  	/* publish the real size of the buffer */
+> -	rpmsg_sg_init(&sg, msg, vrp->buf_size);
+> +	rpmsg_sg_init(&sg, msg, vrp->rx_buf_size);
+>  
+>  	/* add the buffer back to the remote processor's virtqueue */
+>  	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+> @@ -819,10 +824,13 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	struct virtproc_info *vrp;
+>  	struct virtio_rpmsg_channel *vch = NULL;
+>  	struct rpmsg_device *rpdev_ns, *rpdev_ctrl;
+> +	u16 rpmsg_buf_align = 0;
+>  	void *bufs_va;
+>  	int err = 0, i;
+>  	size_t total_buf_space;
+>  	bool notify;
+> +	u8 version;
+> +	u16 size;
+>  
+>  	vrp = kzalloc_obj(*vrp);
+>  	if (!vrp)
+> @@ -854,9 +862,87 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	else
+>  		vrp->num_tx_buf = MAX_RPMSG_NUM_BUFS;
+>  
+> -	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+> +	/*
+> +	 * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
+> +	 * size from virtio device config space from the resource table.
+> +	 * If the feature is not supported, then assign default buf size.
+> +	 */
+> +	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     version, &version);
+> +
+> +		/* for now we support only v1 */
+> +		if (version != RPMSG_VDEV_CONFIG_V1) {
+> +			dev_err(&vdev->dev,
+> +				"unsupported vdev config version %u\n", version);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+> +
+> +		/* size of the config space must match */
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     size, &size);
+> +		if (size != sizeof(struct virtio_rpmsg_config)) {
+> +			dev_err(&vdev->dev, "invalid size of vdev config %u\n",
+> +				size);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+>  
+> -	total_buf_space = (vrp->num_rx_buf + vrp->num_tx_buf) * vrp->buf_size;
+> +		/*
+> +		 * Optional alignment applied to each buffer size and to the TX
+> +		 * buffer base address (e.g. to align buffers on a cache line).
+> +		 * It must be a power of two; zero means no extra alignment.
+> +		 */
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     rpmsg_buf_align, &rpmsg_buf_align);
+> +		if (rpmsg_buf_align && !is_power_of_2(rpmsg_buf_align)) {
+> +			dev_err(&vdev->dev,
+> +				"bad vdev config: rpmsg_buf_align %u is not a power of 2\n",
+> +				rpmsg_buf_align);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+> +
+> +		/* note: tx and rx are defined from remote view */
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     txbuf_size, &vrp->rx_buf_size);
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     rxbuf_size, &vrp->tx_buf_size);
+> +
+> +		/* The buffers must hold at least the rpmsg header */
+> +		if (vrp->rx_buf_size < sizeof(struct rpmsg_hdr) ||
+> +		    vrp->tx_buf_size < sizeof(struct rpmsg_hdr)) {
+> +			dev_err(&vdev->dev,
+> +				"bad vdev config: rx buf sz = %u, tx buf sz = %u\n",
+> +				vrp->rx_buf_size, vrp->tx_buf_size);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+> +
+> +		if (rpmsg_buf_align) {
+> +			vrp->rx_buf_size_aligned = ALIGN(vrp->rx_buf_size,
+> +							 rpmsg_buf_align);
+> +			vrp->tx_buf_size_aligned = ALIGN(vrp->tx_buf_size,
+> +							 rpmsg_buf_align);
+> +		} else {
+> +			vrp->rx_buf_size_aligned = vrp->rx_buf_size;
+> +			vrp->tx_buf_size_aligned = vrp->tx_buf_size;
+> +		}
+> +
+> +		dev_dbg(&vdev->dev,
+> +			"vdev config: ver=%u, align=0x%x, rx sz = 0x%x, tx sz = 0x%x\n",
+> +			version, rpmsg_buf_align, vrp->rx_buf_size,
+> +			vrp->tx_buf_size);
+> +	} else {
+> +		vrp->rx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
+> +		vrp->tx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
+> +		vrp->rx_buf_size_aligned = vrp->rx_buf_size;
+> +		vrp->tx_buf_size_aligned = vrp->tx_buf_size;
+> +	}
+> +
+> +	total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size_aligned) +
+> +			  (vrp->num_tx_buf * vrp->tx_buf_size_aligned);
+>  
+>  	/* allocate coherent memory for the buffers */
+>  	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+> @@ -873,15 +959,20 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	/* first part of the buffers is dedicated for RX */
+>  	vrp->rx_bufs = bufs_va;
+>  
+> -	/* and second part is dedicated for TX */
+> -	vrp->tx_bufs = bufs_va + vrp->num_rx_buf * vrp->buf_size;
+> +	/*
+> +	 * Here buf_va is aligned to a page. Also rx buf size is aligned with
+> +	 * cache line alignment provided by the firmware, so tx buf's start
+> +	 * address is guranteed to be aligned with the alignment provided by
+> +	 * the firmware.
+> +	 */
+> +	vrp->tx_bufs = bufs_va + (vrp->num_rx_buf * vrp->rx_buf_size_aligned);
+>  
+>  	/* set up the receive buffers */
+>  	for (i = 0; i < vrp->num_rx_buf; i++) {
+>  		struct scatterlist sg;
+> -		void *cpu_addr = vrp->rx_bufs + i * vrp->buf_size;
+> +		void *cpu_addr = vrp->rx_bufs + i * vrp->rx_buf_size_aligned;
+>  
+> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rx_buf_size);
+>  
+>  		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+>  					  GFP_KERNEL);
+> @@ -964,8 +1055,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+>  static void rpmsg_remove(struct virtio_device *vdev)
+>  {
+>  	struct virtproc_info *vrp = vdev->priv;
+> -	unsigned int num_bufs = vrp->num_rx_buf + vrp->num_tx_buf;
+> -	size_t total_buf_space = num_bufs * vrp->buf_size;
+> +	size_t total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size_aligned) +
+> +				 (vrp->num_tx_buf * vrp->tx_buf_size_aligned);
+>  	int ret;
+>  
+>  	virtio_reset_device(vdev);
+> @@ -991,6 +1082,7 @@ static struct virtio_device_id id_table[] = {
+>  
+>  static unsigned int features[] = {
+>  	VIRTIO_RPMSG_F_NS,
+> +	VIRTIO_RPMSG_F_BUFSZ,
+>  };
+>  
+>  static struct virtio_driver virtio_ipc_driver = {
+> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
+> new file mode 100644
+> index 000000000000..735a947d5582
+> --- /dev/null
+> +++ b/include/linux/rpmsg/virtio_rpmsg.h
+> @@ -0,0 +1,48 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) Pinecone Inc. 2019
+> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
+> + * Copyright (C) Advanced Micro Devices, Inc. 2026
+> + */
+> +
+> +#ifndef _LINUX_VIRTIO_RPMSG_H
+> +#define _LINUX_VIRTIO_RPMSG_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/virtio_types.h>
+> +
+> +/* The feature bitmap for virtio rpmsg */
+> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> +#define VIRTIO_RPMSG_F_BUFSZ	1 /* RP get buffer size from config space */
+> +
+> +/* Version of struct virtio_rpmsg_config understood by this driver */
+> +#define RPMSG_VDEV_CONFIG_V1	1
+> +
+> +/**
+> + * struct virtio_rpmsg_config - config space for rpmsg virtio device
+> + *
+> + * @version:	version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
+> + * @size:	size of this structure in bytes.
+> + * @rpmsg_buf_align: alignment in bytes for each buffer. Must be a power of
+> + *		     two. If 0 then no alignment will be done. This alignment
+> + *		     will not decide actual size of the buffer but will be
+> + *		     used to decided the start address of the buffer. The
+> + *		     actual size of the buffer can be different than the
+> + *		     aligned size of the buffer.
 
+Is there really a need to have a buffer size different from its alignment?  It's
+not like the (small) delta between the buffer size and its alignment will be
+used for something else.  I'm fine with a buffer alignment requirement but in
+those cases, the firmware should set the size of the buffer in accordance with
+its alignment requirement.  Otherwise, the complexity needed to manage the
+discrpancy between the two yields a driver that is hard to maintain and prone to
+bugs.
 
-> -----Original Message-----
-> From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Sent: Wednesday, July 15, 2026 10:26 AM
-> To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
-> Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.o=
-rg>;
-> Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzyszto=
-f
-> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn
-> Andersson <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hau=
-er
-> <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
-> gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel=
-.org;
-> Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> <festevam@gmail.com>; Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan
-> <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
-> remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Arnaud
-> POULIQUEN <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
-> <andrew@lunn.ch>
-> Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver ov=
-er rpmsg
-> bus
->=20
-> On Tue, Jul 14, 2026 at 06:43:30PM +0000, Shenwei Wang (OSS) wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > > Sent: Tuesday, July 14, 2026 11:36 AM
-> > > To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
-> > > Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski
-> > > <brgl@kernel.org>; Jonathan Corbet <corbet@lwn.net>; Rob Herring
-> > > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor
-> > > Dooley <conor+dt@kernel.org>; Bjorn Andersson
-> > > <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>;
-> > > linux- gpio@vger.kernel.org; linux-doc@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org; Pengutronix Kernel Team
-> > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Shenwei
-> > > Wang <shenwei.wang@nxp.com>; Peng Fan <peng.fan@nxp.com>;
-> > > devicetree@vger.kernel.org; linux- remoteproc@vger.kernel.org;
-> > > imx@lists.linux.dev; linux-arm- kernel@lists.infradead.org;
-> > > dl-linux-imx <linux-imx@nxp.com>; Arnaud POULIQUEN
-> > > <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
-> > > <andrew@lunn.ch>
-> > > Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio
-> > > driver over rpmsg bus
-> > >
-> > > On Tue, Jul 14, 2026 at 02:29:12PM +0000, Shenwei Wang (OSS) wrote:
-> > d
-> > > > > > +  - 3: Both edge trigger
-> > > > > > +  - 4: High level trigger
-> > > > > > +  - 8: Low level trigger
-> > > > >
-> > > > > I'm in agreement with cmd 3, 4, 5 and 6.
-> > > > >
-> > > >
-> > > > How about cmd 2?
-> > >
-> > > Yes, I forgot cmd 2.
-> > >
-> > > >
-> > > > > > +
-> > > > > > +**Reply:**
-> > > > > > +
-> > > > > > +.. code-block:: none
-> > > > > > +
-> > > > > > +   +------+--------+--------+
-> > > > > > +   | 0x00 |  0x01  |  0x02  |
-> > > > > > +   |   1  | status |    0   |
-> > > > > > +   +------+--------+--------+
-> > > > > > +
-> > > > > > +- **status**:
-> > > > > > +
-> > > > > > +  - 0: Ok
-> > > > > > +  - 1: Error
-> > > > > > +
-> > > > > > +SET_WAKEUP (Cmd=3D16)
-> > > > > > +~~~~~~~~~~~~~~~~~~~
-> > > > >
-> > > > > I already commented on messages that are not part of the
-> > > > > virtio-gpio specification.
-> > > > >
-> > > >
-> > > > I don't believe virtio-gpio needs a SET_WAKEUP command.
-> > > >
-> > > > In the RPMSG case, SET_WAKEUP is required because it performs an
-> > > > operation on the remote processor, so the remote side must be
-> > > > explicitly
-> > > notified.
-> > >
-> > > What operations would that be?
-> > >
-> >
-> > The operation is enabling the line as a wakeup source. In practice,
-> > this involves configuring hardware-specific wakeup settings (e.g.,
-> > register bits) on the remote processor, so the remote side must be expl=
-icitly
-> notified through SET_WAKEUP.
-> >
->=20
-> As I said before, we are not enhancing the virtio-gpio specification.  If=
- the
-> functionality is not part of the specification, it is not part of this pr=
-otocol.
->=20
-
-It's about the functionality, not the specification.
-
-Without SET_WAKEUP, a virtio-GPIO line can still be used as a wakeup source=
-, but=20
-an RPMSG implementation cannot because the remote processor is never notifi=
-ed=20
-to configure its wakeup settings.
-
-So both implementations may follow the same virtio-gpio specification, but =
-they do=20
-not provide the same wakeup functionality.
-
-Anyway, if you want to drop the function, the command can be removed.
-
-Shenwei
-
-> >
-> > > >
-> > > > For virtio-gpio, however, everything is handled locally. The other
-> > > > side does not need to perform any action, so sending a SET_WAKEUP
-> > > > command
-> > > appears unnecessary.
-> > >
-> > > What is "everything"?
-> > >
-> >
-> > I mean masking, unmasking, and marking the interrupt as a wakeup
-> > source. All of these operations are handled on local processor.
->=20
-> There may be enough capability in your remote processor to do all that, b=
-ut we
-> can't assume the same applies to all implementations.  rpmsg-gpio is not =
-about
-> inventing a new protocol or delegating actions to the remote processor.  =
-It is
-> about carrying virtio-gpio packets on top of RPMSG.  It needs to operate
-> _exactly_ the same way as virtio-gpio.
->=20
-> >
-> > Shenwei
-> >
-> > > >
-> > > >
-> > > > > > +
-> > > > > > +**Request:**
-> > > > > > +
-> > > > > > +.. code-block:: none
-> > > > > > +
-> > > > > > +   +------+------+------+------+------+------+------+------+
-> > > > > > +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> > > > > > +   |      1      |    line     |           value           |
-> > > > > > +   +------+------+------+------+------+------+------+------+
-> > > > > > +
-> > > > > > +- **value**: Wakeup enable.
-> > > > > > +
-> > > > > > +  The remote system should always aim to stay in a
-> > > > > > + power-efficient state by  shutting down or clock-gating the
-> > > > > > + GPIO blocks that aren't in use. Since  the remoteproc driver
-> > > > > > + is responsible for managing the power states of the  remote
-> > > > > > + firmware, the GPIO driver does not require to know the
-> > > > > > + firmware's
-> > > running states.
-> > > > > > +
-> > > > > > +  When the wakeup bit is set, the remote firmware should
-> > > > > > + configure the line  as a wakeup source. The firmware should
-> > > > > > + send the notification message to  Linux after it is woken fro=
-m the GPIO
-> line.
-> > > > > > +
-> > > > > > +  - 0: Disable wakeup from GPIO
-> > > > > > +  - 1: Enable wakeup from GPIO
-> > > > > > +
-> > > > > > +**Reply:**
-> > > > > > +
-> > > > > > +.. code-block:: none
-> > > > > > +
-> > > > > > +   +------+--------+--------+
-> > > > > > +   | 0x00 |  0x01  |  0x02  |
-> > > > > > +   |   1  | status |    0   |
-> > > > > > +   +------+--------+--------+
-> > > > > > +
-> > > > > > +- **status**:
-> > > > > > +
-> > > > > > +  - 0: Ok
-> > > > > > +  - 1: Error
-> > > > > > +
-> > > > > > +Notification Message
-> > > > > > +--------------------
-> > > > >
-> > > > > "Interrupt Messages"
-> > > > >
-> > > > > > +
-> > > > > > +Notifications are sent by the remote core and they have
-> > > > > > +**Type=3D2 (GPIO_RPMSG_NOTIFY)**:
-> > > > > > +
-> > > > > > +When a GPIO line asserts an interrupt on the remote
-> > > > > > +processor, the firmware should immediately mask the
-> > > > > > +corresponding interrupt source and send a notification
-> > > > > > +message to the Linux. Upon completion of the interrupt
-> > > > > > +handling on the Linux side, the driver should issue a command
-> > > > > > +**SET_IRQ_TYPE** to the firmware to
-> > > unmask the interrupt.
-> > > > > > +
-> > > > > > +A Notification message can arrive between a SEND and its
-> > > > > > +REPLY message, and the driver is expected to handle this scena=
-rio.
-> > > > > > +
-> > > > > > +.. code-block:: none
-> > > > > > +
-> > > > > > +   +------+------+--------+
-> > > > > > +   | 0x00 | 0x01 |  0x02  |
-> > > > > > +   |   2  | line | trigger|
-> > > > > > +   +------+------+--------+
-> > > > >
-> > > > > 2 things here:
-> > > > >
-> > > > > 1) You did not include messages that mask and unmask interrupts
-> > > > > at the driver side.
-> > > >
-> > > > Interrupt masking and unmasking are handled entirely on the local
-> processor.
-> > > >
-> > > > When an interrupt occurs, the remote system masks the interrupt
-> > > > and then sends a notification to Linux. After Linux processes the
-> > > > notification, it sends a SET_IRQ_TYPE message back to the remote
-> > > > system,
-> > > which then unmasks the interrupt.
-> > >
-> > > This is the kind of information that should be part of this documenta=
-tion.
-> > >
-> > > >
-> > > > Thanks,
-> > > > Shenwei
-> > > >
-> > > > >
-> > > > > 2) We are carrying virtio-gpio messages on top of RPMSG and as
-> > > > > such, this whole protocol should be about thar:
-> > > > >
-> > > > > +------+------+--------+--------
-> > > > > | 0x00 |       payload         |
-> > > > > |  Q   |                       |
-> > > > > +------+------+--------+--------
-> > > > >
-> > > > > Q =3D 0 requestq
-> > > > > Q =3D 1 eventq
-> > > > >
-> > > > > The "payload" part is simply the format of the messages as found
-> > > > > in the virtio- gpio specification.  From there, the only thing
-> > > > > left to mention is which messages are not supported, i.e get line=
- names.
-> > > > >
-> > > > > > +
-> > > > > > +- **line**: The GPIO line (pin) index of the port.
-> > > > > > +
-> > > > > > +- **trigger**: Optional parameter to indicate the trigger even=
-t type.
-> > > > >
-> > > > > Not part of the spec - remove.
-> > > > >
-> > > > > Given the refactoring work that is still needed, I will not look
-> > > > > at the implementation.
-> > > > >
-> > > > > Thanks,
-> > > > > Mathieu
-> > > > >
-> > > > > > +
-> > > > > > diff --git a/Documentation/driver-api/gpio/index.rst
-> > > > > > b/Documentation/driver-api/gpio/index.rst
-> > > > > > index bee58f709b9a..e5eb1f82f01f 100644
-> > > > > > --- a/Documentation/driver-api/gpio/index.rst
-> > > > > > +++ b/Documentation/driver-api/gpio/index.rst
-> > > > > > @@ -16,6 +16,7 @@ Contents:
-> > > > > >     drivers-on-gpio
-> > > > > >     bt8xxgpio
-> > > > > >     pca953x
-> > > > > > +   gpio-rpmsg
-> > > > > >
-> > > > > >  Core
-> > > > > >  =3D=3D=3D=3D
-> > > > > > --
-> > > > > > 2.43.0
-> > > > > >
+> + * @txbuf_size:	Tx buf size from remote's view. For Linux this is rx buf size.
+> + * @rxbuf_size:	Rx buf size from remote's view. For Linux this is tx buf size.
+> + *
+> + * This is the configuration structure shared by the device and the driver,
+> + * read when %VIRTIO_RPMSG_F_BUFSZ is negotiated. The fields are laid out so
+> + * the structure is naturally 32-bit aligned.
+> + */
+> +struct virtio_rpmsg_config {
+> +	u8 version;
+> +	__virtio16 size;
+> +	__virtio16 rpmsg_buf_align;
+> +	/* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
+> +	__virtio32 txbuf_size;
+> +	__virtio32 rxbuf_size;
+> +} __packed;
+> +
+> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+> -- 
+> 2.34.1
+> 
