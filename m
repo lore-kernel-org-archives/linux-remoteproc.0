@@ -1,97 +1,81 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89107481224
-	for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 15:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4727D48BD29
+	for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 15:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784129160; cv=none; b=OUgts6vA+teBl9CXrCquysQG+05LxV6hndJAl3+T27bouIyOJJeTMyJKA3/dV8KqYJjfjsk7WhswRYc4+rhO682gJO7dh5zVxxOvZLbxVzStJJE+t5w3XJab0dw/RicggMRG8OSbhJFpWKeND5wy2DuGc1kVNZPlHcRyFXG5ahU=
+	t=1784129608; cv=none; b=dqzNVP61ncqYtfYAJQSKgioSG9Oe2bmqIgN8h6bSPvA3djCUb7X4ZVAcYAuoaeh0Nmt9QCK9pOduw3CgoIDpKSlQMfkVVh80yOzLsB5pw2ehfER+/njknE2ruNWh7FpvaH0sXYRliOneiUnCkIC9ke+aQHWTvV34AaCQZp7f+i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784129160; c=relaxed/simple;
-	bh=8IfDTW8a3b3sS/iPv7vB1ZiuTNxkT5DDhwcjj8R2JRs=;
+	s=arc-20240116; t=1784129608; c=relaxed/simple;
+	bh=XlgeT48VhEJN+z+/Jm1GZXVXZJyPe264p/t33nYnq68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=olstnocsvTpsLdCGiiuSeMQ7F+0SMcx6Yo4o9lC/90Y150M+XfrGtjCc4vMaDL+DVMISBHYd5RsRRVxMCXlZXgcWRz7KFTA8Dz0EccFwxL/gGh3N/8tImFelf86QSi2GAA6kHc7D27fNgOWZNOxRjx5SXIISMtN+megUpWY99Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vr4JN4/a; arc=none smtp.client-ip=209.85.214.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=eQxohV+UP/56H1+Cozb+/zIlbne9LjyyDlCvoYeNH336KQA3c7ckpx3Lvr/zWhTtKI4JN1N3VL7F3Q/idNPlz+eBzhqJDwLSGn+DUv4p22frEy3x+aSL7jVmNXTLp2Y6teN+R1ac9oN5fcJdZvE7Rsd6F/xUpMVkhRHhILzzvg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ic/oxLZF; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vr4JN4/a"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2cca0c5799eso28911435ad.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 08:25:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ic/oxLZF"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-84847482584so1766676b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 15 Jul 2026 08:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784129158; x=1784733958; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1784129606; x=1784734406; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=2kgwyk0OObBT++oiW1zqAAqUnSr/tbzGEYYjYm7Tx6U=;
-        b=vr4JN4/aw/QYNhmQOV0ZnlVY5dKDn3e7X95fQ89WDWofYJKR+v3BI/DUWFO+eh+1Rd
-         OVyR/TN17p0tIeF9lIbaNl2D5Cr2QR5roDiU5O6vzPX75TUZTmnWU5quxf3N/vKDmhqc
-         kZVYd5U9gEZ15MY+jj8kf641j8V+U21+hegrWPeAKaefNxFhd28GyJvsCqMR3VgaEvHv
-         7Fz6QpKquKfnsli/YMICBB2ZfAVERQG6sq2uDTyYXM8uwr9LniIZdlnJDvju34YhrF2C
-         ZswQfpDaQj3msWkGru5R6JNulpUGf83CcCptWwVEZeC+aTgigESMzibOd3efi2rz0m16
-         QSZw==
+        bh=0mg3ZeFY1mH/lkxcwLQcXVtiMYVBxfdswbYpOEBR4q8=;
+        b=ic/oxLZF2hecycdO3MdphqdPJ/wkdZdiZkvrJatIqL0K08BuycpBMwP7GQME0z7nbI
+         i92kO99CvKSuBzquqWCPHXqN7dI2XFWgONMRwmj5Bf5OhsVgeWyb0Ayma0ROJB0BOec6
+         Is13ZA+r7kCktFtEJMwVOX1vc3JFdD88ugU+FtDDDDtjAqKIG6mKy6rUMEsceHe2oy/+
+         7UONUyaBiLty2sAsy/jt02B2p3ZZOdODADvqpo7VAJbxwS18XIJApdDK/24FvD4EkACo
+         sFX+x1Uu8XKfBhKCeP95FsOWAzNwWAwn0NrfiKhvrfQVtH0RbngvZWFK9k0XTY/COFdx
+         D6JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784129158; x=1784733958;
+        d=1e100.net; s=20251104; t=1784129606; x=1784734406;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2kgwyk0OObBT++oiW1zqAAqUnSr/tbzGEYYjYm7Tx6U=;
-        b=PQsgOo/EckEx7vkACcdgcYwM0EQaTR7ibuYOxu7Y8Qg+jlu/gngBt77yJSy3u+QesZ
-         dRkZbVFVHILEoI+N5nTAlWCbWVw/DmPX4K4fjiFEGgLN3ORcweTOLNMxGJJSgHzB4yCf
-         lsEpiY2nQeWDpdRZc1BdlAx6tHJqYGKqu+sN+L5vrER5vJv9pgR0VhBwwY8yoSdmxY7s
-         rXhjTTOgPdmi/h/bUCr/yyl96yDWlpBzzI7WbrMFUC4tnq2N+InYro7SHdzrLuRYdOUR
-         tykXG9sY2fA52u0XyFxJrEn97/jJMlYhkrvopVmwZiKGAyoKE/lcYbwg+JAhiPz0A0rC
-         bA0A==
-X-Forwarded-Encrypted: i=1; AHgh+Ro9tUzJLWUrrZN0zZAjj98NKwcx2qW66TN4M3VSBFoDOk/bPvnSNpfrgkHzIiyCPCjqn8aCXq4HkMP16iHeFuXP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7KIyRg+LkV79dHk47dWzsH/opXTPs46iz2osFxtrMnGf6ba2V
-	6/gn33G5r5Dl+PjvPB7TwIPnUfD3mKMwoP2jr0ojl6RLzJw+83eFjHiyHo/h0Hpfl8A=
-X-Gm-Gg: AfdE7cn3NV8oRSduK65QR+EcLP/9Gm27HGipikof+mFj9wqcnGkoAo6B4pzKRa2G2Z9
-	dpDrSkysWraP8DaQ6JX4ac41mqdX5qfGFJ5QCtMbsEldNofRuNf//WVcJpZ//GBVRQCf5yLSqTK
-	O8S5iaknCaiT0ql0tEpJBYaI8XMTGhuZWoa6g4QP3VC59AU2Jp1j5Ys7t1h6ae/XyboWJBmbOQV
-	+oJ8wVGX8jJaVNigtPm2M0nqwxywXrdA9F07N6j+vOAfogc6ZbEzGeJP2kVTamblKliHGxJ1VZB
-	g9lU8TWrxXb1f4apWNHe+XQQa4dAi5qebtZazlmNuVl5L0qUsYKJnI9Bv/gQ9cXONSrMTn2D7A1
-	KJtxcD7AXv1jaMJGTL006i9rv3l5TmW7aiVEoTiMuUwjbDo2rYFn/1PgIYKuHa3vtYNYuTlMX00
-	EOsupqae1TMfqMk7RC
-X-Received: by 2002:a17:902:f787:b0:2ce:d957:59c4 with SMTP id d9443c01a7336-2ced9575addmr115795235ad.6.1784129157763;
-        Wed, 15 Jul 2026 08:25:57 -0700 (PDT)
+        bh=0mg3ZeFY1mH/lkxcwLQcXVtiMYVBxfdswbYpOEBR4q8=;
+        b=C2G3MWvx+5W6OuYNhm0jJhdYxPz3SuqGdL3J7wC5648yUzGKfHiJey3df8AD7MJlc0
+         fUq02eYqdWgVommE5Aa7kUp9AEbYQ5lnBKMqw/1BUJj8grGe7LibNqpqEqFpqwd+xhaA
+         Z2TCeLPv+E2fgKkBjIBmJmdShqcKb7V6HEDTd+aRPuuHt0EghCGBUTWYC7nDdcC264Ei
+         yoFm9FMi6ZLJij0CXwClvpPsLJJoJTUnFxY9TXaqqPpWwLymQp7+Blsg/ZcOjFGiPUFq
+         UzlcrOAAExs3NeWxkNwD3aUlFbk9vi4ADX/yQLrVXPEnszOfXP6m+pSSXiwV9N6W3mhQ
+         AkyQ==
+X-Forwarded-Encrypted: i=1; AHgh+RqfmSeOoVlpnaY2LsVnfhO9TmhtFJHKLlhmXL5DXkJmeOQAC7R5S+HBw3XxPquyFHSmeku6xmDk/xGiBA/cEfUl@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYz1+N7XHSGqQ1l5mNWbc3aWgSDCydG4m2lRlH2Xa5bpskBDAm
+	debcXTQ74kMQTSy4GxkUS3+m2b2GQIgOdZfBfuXcmyzyk2c833aXI6WK6p+RPh8WW6Q=
+X-Gm-Gg: AfdE7cmPU6nV08WHfcasBmLE81WMDZ/VGYZcpYrxlDbqwHp9qPAyR4Y0birxBrPA9Kh
+	CWJy65+m2Kttd75jjsq86bLdwP79YuyVgOfML21TAiifXMw8ZRHXogpzJpAFw2OpM4kk/8+5ZTF
+	1WNCF+gCv8rJ1hX5hzSNFL3+0l9+Xg8ikx5FwLwbo9NKlKkb49wpcIY885PdkyXDEPhudrOqE4U
+	aiCs4MnuDnC47yNb/vu1pE1wzXjseDyNxMLxgQRdWHMzJdUOtSHnVxoUkp5DiefzQFj0R7QJK8t
+	5hMqaRPVI7tywSClTOw+9HrQUZtfKxXVq8CAAdZh3ywh/1U21z0vf3Z2OnlyrsUNGAlT4iackyd
+	HUV54JJkSC3OAZPgwfqLyKa7O9XrIrzrL/eMAtdevK7KxegPzk4/lY5uwMNOQ+tMQvDzpEE2KYl
+	uNc8MLN4Ku/+9VJYEQ
+X-Received: by 2002:a05:6a00:4f95:b0:847:9803:ec6f with SMTP id d2e1a72fcca58-84870373138mr20935586b3a.10.1784129606555;
+        Wed, 15 Jul 2026 08:33:26 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:4f38:9a5e:fd18:7a9b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf10156d29sm4394455ad.30.2026.07.15.08.25.55
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84a4f7de23asm3373865b3a.49.2026.07.15.08.33.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2026 08:25:57 -0700 (PDT)
-Date: Wed, 15 Jul 2026 09:25:53 -0600
+        Wed, 15 Jul 2026 08:33:26 -0700 (PDT)
+Date: Wed, 15 Jul 2026 09:33:23 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	"b-padhi@ti.com" <b-padhi@ti.com>, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over
- rpmsg bus
-Message-ID: <alemgbM2ktRLE9wT@p14s>
-References: <20260625155432.815185-1-shenwei.wang@oss.nxp.com>
- <20260625155432.815185-2-shenwei.wang@oss.nxp.com>
- <alUdg9iTysXCFUa5@p14s>
- <PAXPR04MB91852808D2C7491AEF98CF1589F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
- <alZlZvQQwq-g6VL3@p14s>
- <PAXPR04MB9185B1A3F16D82E8C0C76EE689F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Suman Anna <s-anna@ti.com>, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: Drop redundant $ref of
+ firmware-name property
+Message-ID: <aleoQy-YePWJC0sW@p14s>
+References: <20260712145718.126492-2-krzysztof.kozlowski@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -100,234 +84,51 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB9185B1A3F16D82E8C0C76EE689F92@PAXPR04MB9185.eurprd04.prod.outlook.com>
+In-Reply-To: <20260712145718.126492-2-krzysztof.kozlowski@oss.qualcomm.com>
 
-On Tue, Jul 14, 2026 at 06:43:30PM +0000, Shenwei Wang (OSS) wrote:
+On Sun, Jul 12, 2026 at 04:57:19PM +0200, Krzysztof Kozlowski wrote:
+> The DT schema core defines the type ($ref) of 'firmware-name' property
+> as string-array, so individual schemas do not need to.  They also should
+> not redefine it to a single string, but instead just set number of
+> expected firmware names.
 > 
-> 
-> > -----Original Message-----
-> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Sent: Tuesday, July 14, 2026 11:36 AM
-> > To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
-> > Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>;
-> > Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof
-> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn
-> > Andersson <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
-> > gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > <festevam@gmail.com>; Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan
-> > <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
-> > remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> > kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Arnaud
-> > POULIQUEN <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
-> > <andrew@lunn.ch>
-> > Subject: Re: [PATCH v14 1/5] docs: driver-api: gpio: rpmsg gpio driver over rpmsg
-> > bus
-> > 
-> > On Tue, Jul 14, 2026 at 02:29:12PM +0000, Shenwei Wang (OSS) wrote:
-> d
-> > > > > +  - 3: Both edge trigger
-> > > > > +  - 4: High level trigger
-> > > > > +  - 8: Low level trigger
-> > > >
-> > > > I'm in agreement with cmd 3, 4, 5 and 6.
-> > > >
-> > >
-> > > How about cmd 2?
-> > 
-> > Yes, I forgot cmd 2.
-> > 
-> > >
-> > > > > +
-> > > > > +**Reply:**
-> > > > > +
-> > > > > +.. code-block:: none
-> > > > > +
-> > > > > +   +------+--------+--------+
-> > > > > +   | 0x00 |  0x01  |  0x02  |
-> > > > > +   |   1  | status |    0   |
-> > > > > +   +------+--------+--------+
-> > > > > +
-> > > > > +- **status**:
-> > > > > +
-> > > > > +  - 0: Ok
-> > > > > +  - 1: Error
-> > > > > +
-> > > > > +SET_WAKEUP (Cmd=16)
-> > > > > +~~~~~~~~~~~~~~~~~~~
-> > > >
-> > > > I already commented on messages that are not part of the virtio-gpio
-> > > > specification.
-> > > >
-> > >
-> > > I don't believe virtio-gpio needs a SET_WAKEUP command.
-> > >
-> > > In the RPMSG case, SET_WAKEUP is required because it performs an
-> > > operation on the remote processor, so the remote side must be explicitly
-> > notified.
-> > 
-> > What operations would that be?
-> > 
-> 
-> The operation is enabling the line as a wakeup source. In practice, this involves configuring 
-> hardware-specific wakeup settings (e.g., register bits) on the remote processor, so the remote 
-> side must be explicitly notified through SET_WAKEUP.
->
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml | 2 +-
+>  .../devicetree/bindings/remoteproc/ti,pru-consumer.yaml         | 1 -
+>  2 files changed, 1 insertion(+), 2 deletions(-)
 
-As I said before, we are not enhancing the virtio-gpio specification.  If the
-functionality is not part of the specification, it is not part of this protocol.
- 
-> 
-> > >
-> > > For virtio-gpio, however, everything is handled locally. The other
-> > > side does not need to perform any action, so sending a SET_WAKEUP command
-> > appears unnecessary.
-> > 
-> > What is "everything"?
-> > 
-> 
-> I mean masking, unmasking, and marking the interrupt as a wakeup source. All of 
-> these operations are handled on local processor.
+Applied.
 
-There may be enough capability in your remote processor to do all that, but we
-can't assume the same applies to all implementations.  rpmsg-gpio is not about
-inventing a new protocol or delegating actions to the remote processor.  It is
-about carrying virtio-gpio packets on top of RPMSG.  It needs to operate
-_exactly_ the same way as virtio-gpio.
+Thanks,
+Mathieu
 
 > 
-> Shenwei
+> diff --git a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> index 3f710433e937..4cd5121b9a4e 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/amlogic,meson-mx-ao-arc.yaml
+> @@ -25,7 +25,7 @@ properties:
+>        - const: amlogic,meson-mx-ao-arc
+>  
+>    firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string
+> +    maxItems: 1
+>      description:
+>        The name of the firmware which should be loaded for this remote
+>        processor.
+> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> index 2811334515d1..591471e5f93a 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-consumer.yaml
+> @@ -30,7 +30,6 @@ properties:
+>        maxItems: 1
+>  
+>    firmware-name:
+> -    $ref: /schemas/types.yaml#/definitions/string-array
+>      minItems: 1
+>      maxItems: 6
+>      description: |
+> -- 
+> 2.53.0
 > 
-> > >
-> > >
-> > > > > +
-> > > > > +**Request:**
-> > > > > +
-> > > > > +.. code-block:: none
-> > > > > +
-> > > > > +   +------+------+------+------+------+------+------+------+
-> > > > > +   | 0x00 | 0x01 | 0x02 | 0x03 | 0x04 | 0x05 | 0x06 | 0x07 |
-> > > > > +   |      1      |    line     |           value           |
-> > > > > +   +------+------+------+------+------+------+------+------+
-> > > > > +
-> > > > > +- **value**: Wakeup enable.
-> > > > > +
-> > > > > +  The remote system should always aim to stay in a
-> > > > > + power-efficient state by  shutting down or clock-gating the GPIO
-> > > > > + blocks that aren't in use. Since  the remoteproc driver is
-> > > > > + responsible for managing the power states of the  remote
-> > > > > + firmware, the GPIO driver does not require to know the firmware's
-> > running states.
-> > > > > +
-> > > > > +  When the wakeup bit is set, the remote firmware should
-> > > > > + configure the line  as a wakeup source. The firmware should send
-> > > > > + the notification message to  Linux after it is woken from the GPIO line.
-> > > > > +
-> > > > > +  - 0: Disable wakeup from GPIO
-> > > > > +  - 1: Enable wakeup from GPIO
-> > > > > +
-> > > > > +**Reply:**
-> > > > > +
-> > > > > +.. code-block:: none
-> > > > > +
-> > > > > +   +------+--------+--------+
-> > > > > +   | 0x00 |  0x01  |  0x02  |
-> > > > > +   |   1  | status |    0   |
-> > > > > +   +------+--------+--------+
-> > > > > +
-> > > > > +- **status**:
-> > > > > +
-> > > > > +  - 0: Ok
-> > > > > +  - 1: Error
-> > > > > +
-> > > > > +Notification Message
-> > > > > +--------------------
-> > > >
-> > > > "Interrupt Messages"
-> > > >
-> > > > > +
-> > > > > +Notifications are sent by the remote core and they have
-> > > > > +**Type=2 (GPIO_RPMSG_NOTIFY)**:
-> > > > > +
-> > > > > +When a GPIO line asserts an interrupt on the remote processor,
-> > > > > +the firmware should immediately mask the corresponding interrupt
-> > > > > +source and send a notification message to the Linux. Upon
-> > > > > +completion of the interrupt handling on the Linux side, the
-> > > > > +driver should issue a command **SET_IRQ_TYPE** to the firmware to
-> > unmask the interrupt.
-> > > > > +
-> > > > > +A Notification message can arrive between a SEND and its REPLY
-> > > > > +message, and the driver is expected to handle this scenario.
-> > > > > +
-> > > > > +.. code-block:: none
-> > > > > +
-> > > > > +   +------+------+--------+
-> > > > > +   | 0x00 | 0x01 |  0x02  |
-> > > > > +   |   2  | line | trigger|
-> > > > > +   +------+------+--------+
-> > > >
-> > > > 2 things here:
-> > > >
-> > > > 1) You did not include messages that mask and unmask interrupts at
-> > > > the driver side.
-> > >
-> > > Interrupt masking and unmasking are handled entirely on the local processor.
-> > >
-> > > When an interrupt occurs, the remote system masks the interrupt and
-> > > then sends a notification to Linux. After Linux processes the
-> > > notification, it sends a SET_IRQ_TYPE message back to the remote system,
-> > which then unmasks the interrupt.
-> > 
-> > This is the kind of information that should be part of this documentation.
-> > 
-> > >
-> > > Thanks,
-> > > Shenwei
-> > >
-> > > >
-> > > > 2) We are carrying virtio-gpio messages on top of RPMSG and as such,
-> > > > this whole protocol should be about thar:
-> > > >
-> > > > +------+------+--------+--------
-> > > > | 0x00 |       payload         |
-> > > > |  Q   |                       |
-> > > > +------+------+--------+--------
-> > > >
-> > > > Q = 0 requestq
-> > > > Q = 1 eventq
-> > > >
-> > > > The "payload" part is simply the format of the messages as found in
-> > > > the virtio- gpio specification.  From there, the only thing left to
-> > > > mention is which messages are not supported, i.e get line names.
-> > > >
-> > > > > +
-> > > > > +- **line**: The GPIO line (pin) index of the port.
-> > > > > +
-> > > > > +- **trigger**: Optional parameter to indicate the trigger event type.
-> > > >
-> > > > Not part of the spec - remove.
-> > > >
-> > > > Given the refactoring work that is still needed, I will not look at
-> > > > the implementation.
-> > > >
-> > > > Thanks,
-> > > > Mathieu
-> > > >
-> > > > > +
-> > > > > diff --git a/Documentation/driver-api/gpio/index.rst
-> > > > > b/Documentation/driver-api/gpio/index.rst
-> > > > > index bee58f709b9a..e5eb1f82f01f 100644
-> > > > > --- a/Documentation/driver-api/gpio/index.rst
-> > > > > +++ b/Documentation/driver-api/gpio/index.rst
-> > > > > @@ -16,6 +16,7 @@ Contents:
-> > > > >     drivers-on-gpio
-> > > > >     bt8xxgpio
-> > > > >     pca953x
-> > > > > +   gpio-rpmsg
-> > > > >
-> > > > >  Core
-> > > > >  ====
-> > > > > --
-> > > > > 2.43.0
-> > > > >
