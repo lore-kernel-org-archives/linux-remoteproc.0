@@ -1,170 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A951A29E117;
-	Thu, 16 Jul 2026 20:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7668A18FDDE;
+	Fri, 17 Jul 2026 02:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784232050; cv=none; b=aT/WXnQ166OIvQJ5rfJoN5RoJfOazThOutuoovOZ5G+hCANkel4fM4Oh3rW8mdHSEwxqZNo1HQBaXEziy6wzwSFOtFa3zk8wePm9w8uykAyGQMBfpSMAWkjIS+JGiD5sTLZN3Dnk3heoXLgViW6WO/xdRlSMh+rnWXSUdnHpcfk=
+	t=1784255485; cv=none; b=nSpWwUCDlqNQlBfIoTzDNCmsPon3pDdnn4sk/gn3EDOv7ptj0x0DKo8+v3J7zm/Wa3cZhsI/rOm1c8o+YT/x4cL9dtKQMOjXFmczBOFy0ekFsEsKYjkpaoMxuu/bF9jlwa2kwerI3fsSA5CUANLckyYcTBUMol60kX02Getf3L0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784232050; c=relaxed/simple;
-	bh=B4VshDhGQfD/1AyTCWO9i4wlJk3e/ooqPZauVlVVDnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bW2rTdxnEkC/qAYXeHZdmvsyeEBDxkhePjj4SPvTZWAi6sEdXpjFIAHbqkj7ML4/AkVWigtnIPaEabzrPkve3rILdb1PYM5U5zb54mu0qiw1nr63Ot0HS1PwsCF9VtmF4ItmHSCqrTvaSD+zWcvuMAoLyKUgfzyax1dQZ9XHEgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5qGtpAk; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1784255485; c=relaxed/simple;
+	bh=8UNfSkQ/lo+3RzytxmFNw/DwEd/7+2gwxlKGFTRPp70=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Dv3J0OoupBHc7yJGBHrwD3MCQaixxpdjgAm/wFaK4TDmYb3nxZggBhzYppGrStv6E2gHvVayz7SOLHUeHAFd50cHyBGV5lBVdFxYgFjAPDjg4M6wAbf/GmMQegGu+jRwBko1e1GkK1ubmZCZMTeV4cfmFHMkdkVdo5ubLtLGdQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=Dz3sc9qC; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5qGtpAk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5241F000E9;
-	Thu, 16 Jul 2026 20:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784232049;
-	bh=SkbdCLvPFiAZcCyqV3OjTuTi5o9qsDoHdIygT4AGL4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=a5qGtpAkwNEV9jsxYeN/Q7n89zdNsN11G1zMfSI/etA7Yi8LAH8wgTwX8UoL8G6L3
-	 QtafStp+dmSt5fFR0M7Ai+HhZRfgGrSBdmRSVU1fjHDIuAp1dKdasuz9jt0aJrxD3/
-	 m0tYK1IMkzPighZh3SmtIb3LTdl0mWbQQGJdURYx9sNiNa31kAqFcPx603ZWrA8Z5J
-	 JfUlu+YJIGtuoeaFb2374D//LRjheitSmsxEZ9JXEZaPg3WYZES56yqM6EQ9jdxYlv
-	 mgAQgo5RIr1XNkCB+v1k0eQV6pruyKIOj7Rs+S8wE73+oNZNKsm6QaBr6/beqAO5pH
-	 tJpkEALlcnrlg==
-Date: Thu, 16 Jul 2026 15:00:48 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Alexey Brodkin <abrodkin@synopsys.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Eddie James <eajames@linux.ibm.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <thierry.reding@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ge Gordon <gordon.ge@bst.ai>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ulf Hansson <ulfh@kernel.org>,
-	Saravana Kannan <saravanak@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Peter Chen <peter.chen@cixtech.com>,
-	Fugang Duan <fugang.duan@cixtech.com>,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-	BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
-	Fabio Estevam <festevam@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-	kernel@collabora.com, linux-tegra@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	imx@lists.linux.dev, sound-open-firmware@alsa-project.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 01/42] of: reserved_mem: Introduce devres-managed
- initialization functions
-Message-ID: <20260716200048.GA1183026-robh@kernel.org>
-References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
- <20260703193855.110619-2-mukesh.ojha@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="Dz3sc9qC"
+Received: from PC-202605011814.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4684dd695;
+	Fri, 17 Jul 2026 10:31:15 +0800 (GMT+08:00)
+From: Runyu Xiao <runyu.xiao@seu.edu.cn>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Tanmay Shah <tanmay.shah@amd.com>,
+	Jianhao Xu <jianhao.xu@seu.edu.cn>,
+	Runyu Xiao <runyu.xiao@seu.edu.cn>,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v2] remoteproc: xlnx: initialize mailbox work before requesting channels
+Date: Fri, 17 Jul 2026 10:31:08 +0800
+Message-Id: <20260717023108.4191518-1-runyu.xiao@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260619074835.2069212-1-runyu.xiao@seu.edu.cn>
+References: <20260619074835.2069212-1-runyu.xiao@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260703193855.110619-2-mukesh.ojha@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9f6de9f0a703a1kunm0b44854c1fc95
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZTx0eVkgaTBlNHkhCGE9KHVYeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Dz3sc9qCqSis/kMzFti1aIPbBDTz2aNQfEjICYPz/tGtZoP2rnntiBmFZRLoIwfTRFMgut9jLZoBOygpTXsDo4XmkFIJUyb2JGqvj6bG6YRMlzmXxaLrnfOpbD42ouI+LtE/N0OTlX/7yqkEJlO/rdzLd/nu8SELN20rQUzpXNI=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=08fv89TCTjg4EZWjHu4je72N/2yjQhrc4zHzUhEf0yM=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sat, Jul 04, 2026 at 01:08:14AM +0530, Mukesh Ojha wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Introduce devres-based helpers for of_reserved_mem_device_init(_by_idx)
-> to help fight dangling references and ever so slightly reduce the
-> number of boilerplate deinitialization calls.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  drivers/of/of_reserved_mem.c    | 41 +++++++++++++++++++++++++++++++++
->  include/linux/of_reserved_mem.h | 25 ++++++++++++++++++++
->  2 files changed, 66 insertions(+)
-> 
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index 82222bd45ac6..b35541e9fbe8 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -787,6 +787,47 @@ void of_reserved_mem_device_release(struct device *dev)
->  }
->  EXPORT_SYMBOL_GPL(of_reserved_mem_device_release);
->  
-> +static void devm_of_reserved_mem_device_release(struct device *dev, void *res)
-> +{
-> +	of_reserved_mem_device_release(*(struct device **)res);
-> +}
-> +
-> +/**
-> + * devm_of_reserved_mem_device_init_by_idx() - Resource managed of_reserved_mem_device_init_by_idx()
-> + * @dev: Pointer to the device to configure
-> + * @np: Pointer to the device node with 'memory-region' property
-> + * @idx: Index of selected region
-> + *
-> + * This is a resource managed version of of_reserved_mem_device_init_by_idx().
-> + * The reserved memory region will be released automatically when the device
-> + * is unbound.
-> + *
-> + * Returns: Negative errno on failure or zero on success.
-> + */
-> +int devm_of_reserved_mem_device_init_by_idx(struct device *dev,
-> +					    struct device_node *np, int idx)
+zynqmp_r5_setup_mbox() installs zynqmp_r5_mb_rx_cb() as the mailbox RX
+callback before requesting the mailbox channels, but initializes
+ipi->mbox_work only after both channels have been requested. Once the RX
+channel is active, a notification delivered before the late INIT_WORK()
+would make the callback queue an uninitialized work item.
 
-It looks to me like the only 2? users of this could be converted to 
-devm_of_reserved_mem_device_init() instead. The mmc one obviously can. 
-The imx one depends if np is dev->of_node. I'm not a fan of APIs with 
-only a few users.
+Initialize the work item before requesting channels. Also drain the work
+before freeing the mailbox state, after the channels have been released so
+no new callbacks can queue it.
 
-Rob
+This issue was found by our static analysis tool and then confirmed by
+manual review of the mailbox setup sequence. The callback is published
+before the channel requests complete, so the work item should be ready
+before the mailbox provider can invoke it.
+
+A QEMU PoC modeled a mailbox notification delivered after the RX callback
+became reachable but before the delayed INIT_WORK(). DEBUG_OBJECTS reported
+queueing an uninitialized work item from the zynqmp_r5_setup_mbox() path.
+
+This is sent as an RFC because the practical trigger depends on the ZynqMP
+IPI mailbox provider and firmware delivery timing. If the provider cannot
+invoke the RX callback until after setup returns, this is a defensive
+lifecycle cleanup rather than a reachable race on current systems.
+
+Fixes: 5dfb28c257b7 ("remoteproc: xilinx: Add mailbox channels for rpmsg")
+Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
+---
+Changes in v2:
+- Follow Tanmay's suggestion and keep zynqmp_r5_setup_mbox() taking the
+  child device pointer. Do not move the r5_core assignment in this patch.
+- Only move INIT_WORK() before channel requests and drain the work in
+  zynqmp_r5_free_mbox().
+
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index 3349d1877751..e36918b8d234 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -279,6 +279,8 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
+ 	if (!ipi)
+ 		return NULL;
+ 
++	INIT_WORK(&ipi->mbox_work, handle_event_notified);
++
+ 	mbox_cl = &ipi->mbox_cl;
+ 	mbox_cl->rx_callback = zynqmp_r5_mb_rx_cb;
+ 	mbox_cl->tx_block = false;
+@@ -305,8 +307,6 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
+ 		return NULL;
+ 	}
+ 
+-	INIT_WORK(&ipi->mbox_work, handle_event_notified);
+-
+ 	return ipi;
+ }
+ 
+@@ -325,6 +325,8 @@ static void zynqmp_r5_free_mbox(struct mbox_info *ipi)
+ 		ipi->rx_chan = NULL;
+ 	}
+ 
++	cancel_work_sync(&ipi->mbox_work);
++
+ 	kfree(ipi);
+ }
+ 
+-- 
+2.34.1
+
