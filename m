@@ -1,185 +1,253 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011030.outbound.protection.outlook.com [40.93.194.30])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CF3D8128;
-	Fri, 17 Jul 2026 13:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784294029; cv=fail; b=eo6Gim2h/K5cDXJi9wQfrRZ1iDWdMOseCgt9sAevH7+yKhCQKDO9jSNDlVRmmZBImKfnRKNGzsIuy8inOavxpSejSrGu6/bnH1mQKC4tbTFj96/FknyPtGiDUKuBoUC9UPaRKm46CcrF6irOl+bDcKPkDQG3MBhxPTsBp2xhH4Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784294029; c=relaxed/simple;
-	bh=E/2Be5vKfhaGkFKP+TL5DvpefAqGg8xFtnVKMQlwCNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K7Oe5VEo8QhPZ9wFRiqU7RdpWcbJbyfHHhbNJBSGlClK7mTbpdGceBJSF1PXOtbLIOu6stCBNUFMapGKKWvs1/AGg/pU9Qls1gDbuykXZK/2RXr5+rYkZGqXGuIwfieK/U7PDKQz9Yry9AxjHUaj/PJzyE0r3GpN5sYVBEmNhK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IgEspzGF; arc=fail smtp.client-ip=40.93.194.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B201B34041B
+	for <linux-remoteproc@vger.kernel.org>; Fri, 17 Jul 2026 15:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784302704; cv=none; b=tQUkwZHJSuerE5D9lXt3bQ+PF2CAXwHjgJno44X6U0B+xM+Jl9fkTpvz3vfAqDzbYrqhi2vGCSnkIWMiFLyJdjD/FSg3CcE2XCqqYBKU/bm9BkvggUitMNcEpU/wlz12nr2oXDzSLKXhfNOqYMAo+2aVleC2aJ1iiUgC8Nn1c+M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784302704; c=relaxed/simple;
+	bh=o05B1sznnG0EFm5f12G7gh70bDdeJZm8AZ8ddNvmIWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qiYqAtcZfD2lKVFRywkcKZJtRIl7Lu0Uk4Cz0n1hyLQ5LDplLNlMdfG+Cr4tBA/0k4lR/ES8ND0ROrodQCQlmCAiswOlmX3yOq2GVgmWS6rmENtrOP6h3GUihmEdIyOkLNE51MNFnTjUmSSsS8F2VjOIlqtwBq5qjt0xPIHEJPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ym4T26FG; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Qe8ODGeP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IgEspzGF"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AEnb3Lo4sLb5eCtJKwc2WDaW4MYWJ8DWOXH8bSvYMgKl9twEFfy6DJdWCWtA85aASndPVpqFpmZFXp4qBCxLPqXKpb+PH4yc28mmbSTI3UArMVy0uRDOz4HFNGX9I7mj8B4ZuDkawPNJoLBafkEDFcTVupUffjU8C5LkGGzqXX3qVFdyxOjzh9QoSNhSNANUYu44cshcYRIAuwfZsYGomreq/k6OcMbH6HQ03K/bSaB6BZMfqfI54Qnr/iyPe3QaTFKH0p4Uy7IO2mWCCnygsAp7yzI74vYSLnel5jtvmfr01SbYSn66AdVErt+bFiB0ECy2bkfjFq5JG9qoQS7THw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wK5wgv9/yMaKV0JxT2Yg8n9xzhWZ7SefE96ZQfcNXWE=;
- b=Q0uRZKFP4WOojKSyACq/gGsv8NSw8GHfCPJNZK/JCwqkS+dNDaY+vkIP4lEVYcXPXh7fE1S28joXMsPxtwdpedqDhJs0RXyCYgH1b0Vlua8ptfMSHQo9aXWpaXa1raI3bCjjSCcV8Xnj4rVagUMyuuyjMIDUA9CXE2/pMhNYqdkBlzjpCEFpiLorRgAYaj9uJUZZTB9T7fmuWdaD5GaONPKk09Ic4qpUcvGIbTtzWfQlyZkevBR6+MyYPT2v99xF31a9CSeNKhtuyJ2LfHV3mC502hkDXbPt+P7Z/UO49azdfQGQBnktLXWSQaEDtuUWOheWQG9OUzpJabICboOzWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=seu.edu.cn smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wK5wgv9/yMaKV0JxT2Yg8n9xzhWZ7SefE96ZQfcNXWE=;
- b=IgEspzGFY5sTWl+IOG6YC6gYY/f6pfZbIHu8zUHyTJz1wnJGiWclW0Ba3poxNPxZgCGCPklsmcuscfhNB67lE0b2q5rZRU5QKSTvQcObYV2ofm1cSOccnPmySArhngdaFLy22L7yj/Q8ayzu3QJI8TEL/j9mp1ZNGgmdFKFawRk=
-Received: from BN9P222CA0016.NAMP222.PROD.OUTLOOK.COM (2603:10b6:408:10c::21)
- by SA1PR12MB7221.namprd12.prod.outlook.com (2603:10b6:806:2bd::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.12; Fri, 17 Jul
- 2026 13:13:42 +0000
-Received: from BN3PEPF0000B078.namprd04.prod.outlook.com
- (2603:10b6:408:10c:cafe::a5) by BN9P222CA0016.outlook.office365.com
- (2603:10b6:408:10c::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.223.13 via Frontend Transport; Fri,
- 17 Jul 2026 13:13:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BN3PEPF0000B078.mail.protection.outlook.com (10.167.243.123) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.245.5 via Frontend Transport; Fri, 17 Jul 2026 13:13:42 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Fri, 17 Jul
- 2026 08:13:42 -0500
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Fri, 17 Jul
- 2026 08:13:41 -0500
-Received: from [172.31.134.241] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Fri, 17 Jul 2026 08:13:41 -0500
-Message-ID: <fab76b4d-aecc-42d1-be68-00a375defb5c@amd.com>
-Date: Fri, 17 Jul 2026 08:13:36 -0500
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ym4T26FG";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Qe8ODGeP"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66HE81XT2044140
+	for <linux-remoteproc@vger.kernel.org>; Fri, 17 Jul 2026 15:38:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=mU5plK4wOuXslrH5tzmT1Lzf
+	M6TA652cX7f9RNduBGg=; b=Ym4T26FGSboWTOc59JBr4POlPj3J+PuT82mbDSwY
+	XRzYDLR7OkRMjCjKvvmpRPZUEZNEZMcUJ1TZdM4i/OaecTGpd6cyft7WENJinH3I
+	tt+dg/pjeYGey+bAGfsUAHGHYuXb2P2XVE+y2CZlw+s3g6Hy/zxMT+dzsg7x9s5B
+	aEFFYNAT2NBk2//h4axm8Mdozm7fS+2wo7KaY/Zvpq078psWnAojwMnMNp90TaNv
+	f4rpRtOOsOiOi80JUSgnZflxbXIVULuHMQJnsoJ97l4BNPwX9SwsLB1iLasZBlsI
+	jxlOgKg2QlM/2l2jEprhcugzH/8XqpQggUULE2Sxb8hRsA==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fff812288-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 17 Jul 2026 15:38:15 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38869800848so11959439a91.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Jul 2026 08:38:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1784302695; x=1784907495; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=mU5plK4wOuXslrH5tzmT1LzfM6TA652cX7f9RNduBGg=;
+        b=Qe8ODGePh7YfXTWW9qjKTlZtZ4ULDflIub9HeAZx8JKwfFTLv7aaBkUKa3bUesSM1T
+         DEAJFviAVQqpMbjJpOboIBegBg9Ex5eghprdXRcEWoqeKDGDSbwRzjXqsBj0JB3kRIMN
+         d/MtDUdo/HmJhkS90p+EpyAv3sfBIBhW9r9SVoS+ws8jvDWDCcIcOBN64WshEasD6/03
+         QvBPb7MDGZy2/s6TUx1aO9qddMs8of3W2GmYe3hZgHawBLoaCCfqUhvSa5u6Q/U+q06N
+         1uZga5cZZ6wuK6F9rx976FxWf1LkmQRYzHRsOxebASSNUiH7YWjCTWyMmvY1ICk/BTk3
+         2CPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1784302695; x=1784907495;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=mU5plK4wOuXslrH5tzmT1LzfM6TA652cX7f9RNduBGg=;
+        b=Ho5rRL/tZksxGHUOtbBVhzb37BeEuqLG9UGY806Q/8twgGCiYLjRIrweu1tKePCAJG
+         ORWwC1AvJZgCSaMHEnJrYGVcaHsxOB1N96LXUfNLoTgEG2GMA1Dle/8P3+SByukeaz+x
+         vue/p+rXtB8A4MAOuy9oVKOmJTveTumT+ApIt5P/PC2AE17PzG8uCPDDsJhrU+kGoOg6
+         oxH/o0TlTg2xMNVmD5nIdSZkjvfqH6Ae5A5mR68mou3OqAeTtPI1EgWKt3Fgtxx12Bcp
+         w4sy1OAkrLutTTUND+rQtF6DdJuHGbFqDVYRmKhCrFv8n2bbuznI1e8NyLL3rAjAtdL8
+         XXQg==
+X-Forwarded-Encrypted: i=1; AHgh+RoGcmJvPV/C1M55svsWXradraMKRp1TfvDE9AelgsmXaU6IZSUjY6FZt387Wbnk9bQvUGsXyNwFI6EqO4oi57Lv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8zr4B9RsiQ9DMhV5OA+9O6eW7DhrOFjrZHybQRVFkr7jsPXvc
+	jGVOYmDDlse9++TsOTJ3gL7CQepqY9wCEvdbrF8n+Gwy2VmgoOeW46Zi6YWUglVnA+gExR682g6
+	SBIOoU9nuTU+x5tXwK6RtloQ/oCux3hVnhHwpEXgW1kE0mfgeWEpzYEi8u4H8y505O/egMVQw
+X-Gm-Gg: AfdE7cn9WPhNJdjor4HaLF4wy8J5zGPYcDCbO35vzogDvUKRIwnqvsCwU6q2omtzfB5
+	fEigLDpRiSJwnc3UAD2Ftx74VBioPumJEoF8c/oadGis39aqqJj+4xZcGKctkt5sCbGsrmGDG9U
+	/EzfMVyxUkgRjHwf1fhS+6wog6MKiW341SHzQeBd+Nkw6VMKfLbo1PliuA0FId4qrgvwN8zKHhW
+	HCO87KdP6Wp4sNfkjQva3L4kGPOPm0jhRXbz8Ce8BkOjwmnwO6ZGKM7OB5WEQC0Tx5lA2VDd2rk
+	gYCZ/p7AW592bc4iy8rGb1eul2jRM58khipeMkb/LP9Em8d0rqr5A+GhBSUx2hXKtHQ6m4zI2zI
+	aChgEemm1zkgWqP3y+vtFPx57tQE=
+X-Received: by 2002:a17:90b:2684:b0:38d:f5bb:e0f4 with SMTP id 98e67ed59e1d1-38e4b3e1473mr3203825a91.1.1784302694251;
+        Fri, 17 Jul 2026 08:38:14 -0700 (PDT)
+X-Received: by 2002:a17:90b:2684:b0:38d:f5bb:e0f4 with SMTP id 98e67ed59e1d1-38e4b3e1473mr3203716a91.1.1784302693542;
+        Fri, 17 Jul 2026 08:38:13 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3142a1ddeb6sm10087302eec.20.2026.07.17.08.37.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2026 08:38:13 -0700 (PDT)
+Date: Fri, 17 Jul 2026 21:07:45 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Paul Kocialkowski <paulk@sys-base.io>,
+        Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Samuel Holland <samuel@sholland.org>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Michal Simek <michal.simek@amd.com>,
+        Daniel Scally <dan.scally@ideasonboard.com>,
+        Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eddie James <eajames@linux.ibm.com>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Yunfei Dong <yunfei.dong@mediatek.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>,
+        Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Thierry Reding <thierry.reding@kernel.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Srinivas Kandagatla <srini@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ge Gordon <gordon.ge@bst.ai>, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulfh@kernel.org>, Saravana Kannan <saravanak@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Shengjiu Wang <shengjiu.wang@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+        Bard Liao <yung-chuan.liao@linux.intel.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Peter Chen <peter.chen@cixtech.com>,
+        Fugang Duan <fugang.duan@cixtech.com>,
+        Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
+        BST Linux Kernel Upstream Group <bst-upstream@bstai.top>,
+        Fabio Estevam <festevam@gmail.com>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-sunxi@lists.linux.dev, linux-media@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        kernel@collabora.com, linux-tegra@vger.kernel.org,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        imx@lists.linux.dev, sound-open-firmware@alsa-project.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 01/42] of: reserved_mem: Introduce devres-managed
+ initialization functions
+Message-ID: <20260717153745.geqmmgm4o3j3vhom@hu-mojha-hyd.qualcomm.com>
+References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
+ <20260703193855.110619-2-mukesh.ojha@oss.qualcomm.com>
+ <20260716200048.GA1183026-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [RFC PATCH v2] remoteproc: xlnx: initialize mailbox work before
- requesting channels
-To: Runyu Xiao <runyu.xiao@seu.edu.cn>, Bjorn Andersson
-	<andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Tanmay Shah <tanmay.shah@amd.com>, Jianhao Xu <jianhao.xu@seu.edu.cn>,
-	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20260619074835.2069212-1-runyu.xiao@seu.edu.cn>
- <20260717023108.4191518-1-runyu.xiao@seu.edu.cn>
-Content-Language: en-US
-From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <20260717023108.4191518-1-runyu.xiao@seu.edu.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B078:EE_|SA1PR12MB7221:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f8b8d55-0698-4a8b-8d38-08dee405397e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|23010399003|376014|82310400026|36860700016|18002099003|22082099003|10067099003|5023799004|56012099006|4143699003|11063799006|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	xf955a3K3MTcHdcf6cSQRFxGP7LNrZdJI6xVKeX85s0fDEJA/vBnN0NMBpgx5tfW46CUDFwi4nzlBGasO7GlVLXr4USfl4i5f/WuTC5UtJvKAG2YNO6mR0t0D7BwQhMmAM9rkuAB3TME+OWv+nSzJ/KeMqXbJR8BnyUE3V6OYW8PdHo8jzi6YSOLM1B7Z8kzZWrEV/nubBIYYloCSRl16hkuoCN+u/32omA0pSWOx9BoZmMOx6HkVB8A6XckqqDwsK3UD9NroFUTVScHqYFFhyUUvdmeJbaeTu5Nj5oycMzIsBzMJiX2EI8lyKtlkrkaPWq9R64aMNL3qB9K9dXc+DbDRrDGQjtdDYY4njMcZDV7fIoBAai0zkzi/kK7N7jcXmUMozsU+3i33BD7Ra/IHwRSwjj98frxJzRTl3KL189ODOVed1GOCqddLlztH2MX3ADqYp7yRJnTEr1+GPE69BjWdi2Qrr2A2CY4vVWbTGjzQU/2VK5AWiWruWnKjq3Ci6bIR4fzejl98/24VoZwrpbyw3H7p0zHvsLBa8lsZU7tD5XnACeufm/SCei9hVH3F1QAQ1v4xkqkNZjKhLE/gYqE/lPm1L/3/tPRFyswHZzYADuUlrRQXiyy+NnEB2Q3Z3ggRSa6c0KHVg8OAl8e74AVeqGkJZl/k2iBTtgYwZuG58gbPCiEBym22vooai64vXRiT1VCvORoSawskuOVmQ==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(82310400026)(36860700016)(18002099003)(22082099003)(10067099003)(5023799004)(56012099006)(4143699003)(11063799006)(6133799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	SPS4DMFd2C2v6VAymzeDsCZPglwK7JsN2Ci/ToeyQJU/B/VnS43jqthaobAzogIRI49WhXQLodeSqdD+D2ERzx6Q6CdAPEbcCHEQnDNtBqs6tecHIhnnZy8ZFtIeCHe/HFM5ejqPOyzhL3glpYy6YfMzkrtP0oDJrhIZrcBdER8TvzzsbCXToh6fjgLyPsvx8Lw9u15Ajw1Mdki7bfqSd8ITIm1I0bF26T2XwdmdhYUPHhs18myddvM563DPOdSTK3GmKmQPDAshsSNa6EnEa2kMndP1uf8F+0CKRA89eX8CFh5Do7FhxUQUDXl4bBCg++hmRiqJsgAQ8E6qmK+lstl0uPlE/XdwbO+YwwPtdLM2kfoWn3xqvAf/WA4wM/wU6dtLkbesjtqVjP9662YqT6fNKEUb1GU7cgktGZZVgnin+RqgvVnxVAShK0IZUk+B
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2026 13:13:42.3333
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f8b8d55-0698-4a8b-8d38-08dee405397e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B078.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7221
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260716200048.GA1183026-robh@kernel.org>
+X-Authority-Analysis: v=2.4 cv=RbqgzVtv c=1 sm=1 tr=0 ts=6a5a4c67 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=9JV1VVRos5_Q502CX78A:9 a=CjuIK1q_8ugA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-GUID: iqo_Pz07I2yXMxjk7y2LTSIii1LekQfZ
+X-Proofpoint-ORIG-GUID: iqo_Pz07I2yXMxjk7y2LTSIii1LekQfZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzE3MDE2MCBTYWx0ZWRfX/xG+y98pPhTJ
+ LdZ4SFsrTpdhq7tZza1Bmu5f4ZoapF8T4/B4DNt8roZ+0MbqtKKS9KJD83ltbfW6gHGygKoIgKA
+ uunLW06z2hZGhFa5w9MroQbzse5uiD0O2iovY/s8H0tfM0DniHWHd+koBwGldAvlOHScZR0WW1Q
+ mKNgqBsrpUyU0umljcMDJFyObFZzPyULOd/fghTDjRCnuBUJhBav+K/Z2g8irWENzA0BsmY/iGy
+ buULtxHH9XGvAYIeUaMubzszyPU0SCQF3LzmQIpW96yN8rKDr6Ohu4xrzqT6nZcQ4pKyVVUSoVq
+ zENaSkr25biN9MdYTxc6qZc6K6IsNFAsKH+3OpLxvnB+N/3+6KCMVoYLhIHUFW/NQSgPzkpDnN8
+ h77wS3+y1L5Snuc+xPhmxV4SGPwJIXrApe6Xgo0+C/WAzqeW+Br6Iym3IIK1UWEZHWkewCSkHgN
+ W26Y50MDwt9HOplB4cw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzE3MDE2MCBTYWx0ZWRfX/CF+ovjQs4i8
+ Sj8QRun/CB79WW7SEJvTC4j/BBMQRh5WYXfoi/dCfsMFYxaXMLz4oy2G1xgG6G8aiD2G0M4PS21
+ /t/6HJ6N7vZUSHSyfamSimfBnv9GJss=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-17_04,2026-07-17_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 suspectscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 phishscore=0 adultscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607170160
 
-Reviewed-by: Tanmay Shah <tanmay.shah@amd.com>
+On Thu, Jul 16, 2026 at 03:00:48PM -0500, Rob Herring wrote:
+> On Sat, Jul 04, 2026 at 01:08:14AM +0530, Mukesh Ojha wrote:
+> > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > 
+> > Introduce devres-based helpers for of_reserved_mem_device_init(_by_idx)
+> > to help fight dangling references and ever so slightly reduce the
+> > number of boilerplate deinitialization calls.
+> > 
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > ---
+> >  drivers/of/of_reserved_mem.c    | 41 +++++++++++++++++++++++++++++++++
+> >  include/linux/of_reserved_mem.h | 25 ++++++++++++++++++++
+> >  2 files changed, 66 insertions(+)
+> > 
+> > diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> > index 82222bd45ac6..b35541e9fbe8 100644
+> > --- a/drivers/of/of_reserved_mem.c
+> > +++ b/drivers/of/of_reserved_mem.c
+> > @@ -787,6 +787,47 @@ void of_reserved_mem_device_release(struct device *dev)
+> >  }
+> >  EXPORT_SYMBOL_GPL(of_reserved_mem_device_release);
+> >  
+> > +static void devm_of_reserved_mem_device_release(struct device *dev, void *res)
+> > +{
+> > +	of_reserved_mem_device_release(*(struct device **)res);
+> > +}
+> > +
+> > +/**
+> > + * devm_of_reserved_mem_device_init_by_idx() - Resource managed of_reserved_mem_device_init_by_idx()
+> > + * @dev: Pointer to the device to configure
+> > + * @np: Pointer to the device node with 'memory-region' property
+> > + * @idx: Index of selected region
+> > + *
+> > + * This is a resource managed version of of_reserved_mem_device_init_by_idx().
+> > + * The reserved memory region will be released automatically when the device
+> > + * is unbound.
+> > + *
+> > + * Returns: Negative errno on failure or zero on success.
+> > + */
+> > +int devm_of_reserved_mem_device_init_by_idx(struct device *dev,
+> > +					    struct device_node *np, int idx)
+> 
+> It looks to me like the only 2? users of this could be converted to 
+> devm_of_reserved_mem_device_init() instead. The mmc one obviously can. 
+> The imx one depends if np is dev->of_node. I'm not a fan of APIs with 
+> only a few users.
 
-On 7/16/2026 9:31 PM, Runyu Xiao wrote:
-> zynqmp_r5_setup_mbox() installs zynqmp_r5_mb_rx_cb() as the mailbox RX
-> callback before requesting the mailbox channels, but initializes
-> ipi->mbox_work only after both channels have been requested. Once the RX
-> channel is active, a notification delivered before the late INIT_WORK()
-> would make the callback queue an uninitialized work item.
-> 
-> Initialize the work item before requesting channels. Also drain the work
-> before freeing thmailbox state, after the channels have been released so
-> no new callbacks can queue it.
-> 
-> This issue was found by our static analysis tool and then confirmed by
-> manual review of the mailbox setup sequence. The callback is published
-> before the channel requests complete, so the work item should be ready
-> before the mailbox provider can invoke it.
-> 
-> A QEMU PoC modeled a mailbox notification delivered after the RX callback
-> became reachable but before the delayed INIT_WORK(). DEBUG_OBJECTS reported
-> queueing an uninitialized work item from the zynqmp_r5_setup_mbox() path.
-> 
-> This is sent as an RFC because the practical trigger depends on the ZynqMP
-> IPI mailbox provider and firmware delivery timing. If the provider cannot
-> invoke the RX callback until after setup returns, this is a defensive
-> lifecycle cleanup rather than a reachable race on current systems.
-> 
-> Fixes: 5dfb28c257b7 ("remoteproc: xilinx: Add mailbox channels for rpmsg")
-> Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
-> ---
-> Changes in v2:
-> - Follow Tanmay's suggestion and keep zynqmp_r5_setup_mbox() taking the
->   child device pointer. Do not move the r5_core assignment in this patch.
-> - Only move INIT_WORK() before channel requests and drain the work in
->   zynqmp_r5_free_mbox().
-> 
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index 3349d1877751..e36918b8d234 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -279,6 +279,8 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
->  	if (!ipi)
->  		return NULL;
->  
-> +	INIT_WORK(&ipi->mbox_work, handle_event_notified);
-> +
->  	mbox_cl = &ipi->mbox_cl;
->  	mbox_cl->rx_callback = zynqmp_r5_mb_rx_cb;
->  	mbox_cl->tx_block = false;
-> @@ -305,8 +307,6 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
->  		return NULL;
->  	}
->  
-> -	INIT_WORK(&ipi->mbox_work, handle_event_notified);
-> -
->  	return ipi;
->  }
->  
-> @@ -325,6 +325,8 @@ static void zynqmp_r5_free_mbox(struct mbox_info *ipi)
->  		ipi->rx_chan = NULL;
->  	}
->  
-> +	cancel_work_sync(&ipi->mbox_work);
-> +
->  	kfree(ipi);
->  }
->  
+You are right, mmc can be but imx can't. I can make this static and drop
+the API usage from imx but fix the leak by release function.
 
+-- 
+-Mukesh Ojha
