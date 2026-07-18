@@ -1,34 +1,34 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB13D45D0
-	for <linux-remoteproc@vger.kernel.org>; Sat, 18 Jul 2026 16:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851C53DDB11
+	for <linux-remoteproc@vger.kernel.org>; Sat, 18 Jul 2026 16:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784392243; cv=none; b=GSctKDEQcZed+SaM/33B7dDUWfgtmEq3/7aS4V7bftMbaRYEpggRxcM69o4EWxlzEvhPsupCRmFcIP9DDh0JVo7bjh/wGrvez4FLC2E3UhIMNCWfhIfy+wpyHa0d/dGV411LcKQl7WZyGwJLkKSy7k/IX6BCs/RPziXfog4ZXDc=
+	t=1784392243; cv=none; b=ZRC1BdZ1lJ9j8uV+GLVXx8hquO24BgebgsDLlMnbRJRaXr7lgF3lF+2q6uYurrr2zGU2MdC1BBN8R5bQVpNWgBnQssgGgKYMPsRYfnlCB2SFa4vUXvMOSHH7Jb2Seqn2abZOVldOZvXxPlEUKDoiDqkHdjs+AXnw90ngtv9t70E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1784392243; c=relaxed/simple;
-	bh=zXY4szWNyycp/26dnbAw14LSmLq1Nm84Mt8Mi+rNwzk=;
+	bh=6QV4ya1kC0ny9ALRWnN4X8VXEmw0RdYYw3fUU/YJock=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LSWqOv5WNYmnWmKZbqjtu7mO4A13sSeI5dd9ZWYrWUXYcTl63ZuF4LhPdEtdOF7LYJ72CDlKv4fz7x3zRPDPjSFGDBV9XKPcg6bwo72uiJUdqldXcPwL0R/kWUD5AeVoT6fzLWu02lLZlzdDc0aQnftzL5ElBvgew1WOGUvS/UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=U6M4NuqJ; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=UY9esffiEKMw7FjCBMGnuerfxuOia5j+c9dkAyp98RypCLkX08Nvx1AJRQe5zObrNTm6qYh8dDnF/f4dxMsVeGJV5TVS3JLDbYyu+gyOd35PP1A0Opx3yq67Qh0JA+GmO7yMZrp9fKG0DRGsFhRQmWC1Wc1kbq9hGyhO0E1Xrks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=XwcdYU2u; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="U6M4NuqJ"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="XwcdYU2u"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=XvVPYIu5IJBFa4YggBlNpJtLCUcLtdHOITJmUpwWG5Q=; b=U6M4Nu
-	qJ7lzwZSAK2a6/X3LAE0QMwoH2G9aPxTdBcNkNMIkxRB3RSksC6PhlYdyLzZwCHR
-	0oPVk3tlHCXjvyHuo0drYbg5CriA/KJxr1Vrx4BJMnpTgQEsR8IoL5HOrA0wIUKL
-	R6ZsmQ6v7ANHIGq6S/U0KzHg+VsJtgq46Amo8O5ln28wPu2hwNnkTz0zl4L7q82e
-	uhZQXl/EabGbHT7rKHz2ic/aYy1muKjxvc2/Sa6LN/3wXj2hNb9UqPtMeTru8QxD
-	4fT6Em8fJgJIuWyRbT0MdvR6yGFNLonfUpso7vDz6jixcPiXvQqphjpxDg9D4EVx
-	Lkv6Qf4L2CvwiCmA==
-Received: (qmail 1799917 invoked from network); 18 Jul 2026 18:30:31 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jul 2026 18:30:31 +0200
-X-UD-Smtp-Session: l3s3148p1@MU4VMeVWZ2htKXE8
+	 s=k1; bh=6fuvpky/vj2k5JeMwrjaeyYY7HfOB3M6cQnDR7IDEgQ=; b=XwcdYU
+	2uvCIlqZeWaf/DYDtN8px+QmUlhbi8FtMuC1z/uwxY6G/sKVzlHM7A1yxRf40bSa
+	g9l7mq37JDopsmiuTjYCIsBMfQzWfw1x8/srlbxHrvuPQIeM3FRowBm/gsT+aLmM
+	gxjOVyLtDsG1FJHV2j6htthNoKhIEjTNODq5IZ/KAzcOPNBXQJHhLb+aN52PzbIj
+	BNOvAXcYFP80ndeUjj6SoWWwAHir0BLX3eWJ4xG/ZiJgBLk0y3tZ0+typ17EauPY
+	1uch9r5vFsOeciULIDL7BUCN6skj4TEJ6W9AWCvYVBcqCpSkdXb5VysNGd+VHkDX
+	nqAb8Ta/OHqaRTtQ==
+Received: (qmail 1799972 invoked from network); 18 Jul 2026 18:30:32 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jul 2026 18:30:32 +0200
+X-UD-Smtp-Session: l3s3148p1@3+wlMeVWAiJtKXE8
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
 Cc: Matthew Wilcox <willy@infradead.org>,
@@ -37,9 +37,9 @@ Cc: Matthew Wilcox <willy@infradead.org>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v4 1/3] hwspinlock: Convert to XArray
-Date: Sat, 18 Jul 2026 18:30:21 +0200
-Message-ID: <20260718163024.1726-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v4 2/3] hwspinlock: add list of mailboxes to debugfs
+Date: Sat, 18 Jul 2026 18:30:22 +0200
+Message-ID: <20260718163024.1726-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260718163024.1726-1-wsa+renesas@sang-engineering.com>
 References: <20260718163024.1726-1-wsa+renesas@sang-engineering.com>
@@ -51,327 +51,107 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To help debugging, offer a list of registered hwspinlocks in debugfs. It
+will also print the responsible hwspinlock_device and if the spinlock is
+currently used. It does not show if the lock is taken because of
+side-effects. Often, reading a lock means actually taking it.
 
-The radix tree is deprecated.  The XArray uses the same data structure
-with a nicer interface.  The hwspinlock_tree_lock is not needed as the
-spinlock built into the XArray is sufficient for all these cases after
-we split a larger critical section in hwspin_lock_request_specific()
-into two smaller ones.
-
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Co-developed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/hwspinlock/hwspinlock_core.c | 160 +++++++++++----------------
- 1 file changed, 65 insertions(+), 95 deletions(-)
+ drivers/hwspinlock/hwspinlock_core.c | 67 ++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
 diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index a509b73da190..e2b7a2271de6 100644
+index e2b7a2271de6..84e9aae6ef44 100644
 --- a/drivers/hwspinlock/hwspinlock_core.c
 +++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -16,7 +16,7 @@
- #include <linux/types.h>
- #include <linux/err.h>
- #include <linux/jiffies.h>
--#include <linux/radix-tree.h>
-+#include <linux/xarray.h>
- #include <linux/hwspinlock.h>
+@@ -9,6 +9,7 @@
+ 
+ #define pr_fmt(fmt)    "%s: " fmt, __func__
+ 
++#include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -21,6 +22,7 @@
  #include <linux/pm_runtime.h>
  #include <linux/mutex.h>
-@@ -27,35 +27,21 @@
- /* retry delay used in atomic context */
- #define HWSPINLOCK_RETRY_DELAY_US	100
+ #include <linux/of.h>
++#include <linux/seq_file.h>
  
--/* radix tree tags */
--#define HWSPINLOCK_UNUSED	(0) /* tags an hwspinlock as unused */
-+/* XArray search mark */
-+#define HWSPINLOCK_UNUSED	XA_MARK_0 /* marks a hwspinlock as unused */
+ #include "hwspinlock_internal.h"
  
- /*
-- * A radix tree is used to maintain the available hwspinlock instances.
-+ * An XArray is used to maintain the available hwspinlock instances.
-  * The tree associates hwspinlock pointers with their integer key id,
-  * and provides easy-to-use API which makes the hwspinlock core code simple
-  * and easy to read.
-  *
-- * Radix trees are quick on lookups, and reasonably efficient in terms of
-+ * XArrays are quick on lookups, and reasonably efficient in terms of
-  * storage, especially with high density usages such as this framework
-  * requires (a continuous range of integer keys, beginning with zero, is
-- * used as the ID's of the hwspinlock instances).
-- *
-- * The radix tree API supports tagging items in the tree, which this
-- * framework uses to mark unused hwspinlock instances (see the
-- * HWSPINLOCK_UNUSED tag above). As a result, the process of querying the
-- * tree, looking for an unused hwspinlock instance, is now reduced to a
-- * single radix tree API call.
-- */
--static RADIX_TREE(hwspinlock_tree, GFP_KERNEL);
--
--/*
-- * Synchronization of access to the tree is achieved using this mutex,
-- * as the radix-tree API requires that users provide all synchronisation.
-- * A mutex is needed because we're using non-atomic radix tree allocations.
-+ * used as the ID of the hwspinlock instances).
-  */
--static DEFINE_MUTEX(hwspinlock_tree_lock);
--
-+static DEFINE_XARRAY(hwspinlocks);
- 
- /**
-  * __hwspin_trylock() - attempt to lock a specific hwspinlock
-@@ -369,10 +355,9 @@ of_hwspin_lock_simple_xlate(const struct of_phandle_args *hwlock_spec)
-  */
- int of_hwspin_lock_get_id(struct device_node *np, int index)
- {
-+	XA_STATE(xas, &hwspinlocks, 0);
- 	struct of_phandle_args args;
- 	struct hwspinlock *hwlock;
--	struct radix_tree_iter iter;
--	void **slot;
- 	int id;
- 	int ret;
- 
-@@ -389,15 +374,9 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
- 	/* Find the hwspinlock device: we need its base_id */
- 	ret = -EPROBE_DEFER;
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &hwspinlock_tree, &iter, 0) {
--		hwlock = radix_tree_deref_slot(slot);
--		if (unlikely(!hwlock))
--			continue;
--		if (radix_tree_deref_retry(hwlock)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, hwlock, ULONG_MAX) {
-+		if (xas_retry(&xas, hwlock))
- 			continue;
--		}
--
- 		if (device_match_of_node(hwlock->bank->dev, args.np)) {
- 			ret = 0;
- 			break;
-@@ -452,51 +431,50 @@ EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
- 
- static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
- {
--	struct hwspinlock *tmp;
-+	XA_STATE(xas, &hwspinlocks, id);
-+	struct hwspinlock *existing;
- 	int ret;
- 
--	mutex_lock(&hwspinlock_tree_lock);
--
--	ret = radix_tree_insert(&hwspinlock_tree, id, hwlock);
--	if (ret) {
--		if (ret == -EEXIST)
-+	do {
-+		xas_lock(&xas);
-+		existing = xas_load(&xas);
-+		if (existing) {
- 			pr_err("hwspinlock id %d already exists!\n", id);
--		goto out;
--	}
--
--	/* mark this hwspinlock as available */
--	tmp = radix_tree_tag_set(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
-+			xas_set_err(&xas, -EBUSY);
-+		}
-+		xas_store(&xas, hwlock);
- 
--	/* self-sanity check which should never fail */
--	WARN_ON(tmp != hwlock);
-+		/* mark this hwspinlock as available */
-+		xas_set_mark(&xas, HWSPINLOCK_UNUSED);
-+		ret = xas_error(&xas);
-+		xas_unlock(&xas);
-+	} while (xas_nomem(&xas, GFP_KERNEL));
- 
--out:
--	mutex_unlock(&hwspinlock_tree_lock);
- 	return ret;
+@@ -858,5 +860,70 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
  }
+ EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
  
- static struct hwspinlock *hwspin_lock_unregister_single(unsigned int id)
- {
-+	XA_STATE(xas, &hwspinlocks, id);
- 	struct hwspinlock *hwlock = NULL;
--	int ret;
-+	bool unused;
- 
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
-+	xas_load(&xas);
- 
--	/* make sure the hwspinlock is not in use (tag is set) */
--	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
--	if (ret == 0) {
-+	/* make sure the hwspinlock is not in use (mark is set) */
-+	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
-+	if (!unused) {
- 		pr_err("hwspinlock %d still in use (or not present)\n", id);
- 		goto out;
- 	}
- 
--	hwlock = radix_tree_delete(&hwspinlock_tree, id);
--	if (!hwlock) {
--		pr_err("failed to delete hwspinlock %d\n", id);
--		goto out;
--	}
-+	hwlock = xas_store(&xas, NULL);
-+	if (!hwlock)
-+		pr_err("hwspinlock %d already deleted\n", id);
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return hwlock;
- }
- 
-@@ -666,20 +644,18 @@ int devm_hwspin_lock_register(struct device *dev,
- EXPORT_SYMBOL_GPL(devm_hwspin_lock_register);
- 
- /**
-- * __hwspin_lock_request() - tag an hwspinlock as used and power it up
-+ * hwspin_lock_prepare() - prepare a hwspinlock
-  * @hwlock: the target hwspinlock
-  *
-  * This is an internal function that prepares an hwspinlock instance
-- * before it is given to the user. The function assumes that
-- * hwspinlock_tree_lock is taken.
-+ * before it is given to the user.
-  *
-  * Returns: %0 or positive to indicate success, and a negative value to
-  * indicate an error (with the appropriate error code)
-  */
--static int __hwspin_lock_request(struct hwspinlock *hwlock)
-+static int hwspin_lock_prepare(struct hwspinlock *hwlock)
- {
- 	struct device *dev = hwlock->bank->dev;
--	struct hwspinlock *tmp;
- 	int ret;
- 
- 	/* prevent underlying implementation from being removed */
-@@ -697,16 +673,7 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
- 		return ret;
- 	}
- 
--	ret = 0;
--
--	/* mark hwspinlock as used, should not fail */
--	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
--
--	/* self-sanity check that should never fail */
--	WARN_ON(tmp != hwlock);
--
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -724,13 +691,14 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
-  */
- struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- {
-+	XA_STATE(xas, &hwspinlocks, id);
- 	struct hwspinlock *hwlock;
-+	bool unused;
- 	int ret;
- 
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
- 
--	/* make sure this hwspinlock exists */
--	hwlock = radix_tree_lookup(&hwspinlock_tree, id);
-+	hwlock = xas_load(&xas);
- 	if (!hwlock) {
- 		pr_warn("hwspinlock %u does not exist\n", id);
- 		goto out;
-@@ -739,21 +707,25 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
- 	/* sanity check (this shouldn't happen) */
- 	WARN_ON(hwlock_to_id(hwlock) != id);
- 
--	/* make sure this hwspinlock is unused */
--	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
--	if (ret == 0) {
-+	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
-+	if (!unused) {
- 		pr_warn("hwspinlock %u is already in use\n", id);
- 		hwlock = NULL;
- 		goto out;
- 	}
- 
--	/* mark as used and power up */
--	ret = __hwspin_lock_request(hwlock);
--	if (ret < 0)
--		hwlock = NULL;
-+	xas_clear_mark(&xas, HWSPINLOCK_UNUSED);
-+	xas_unlock(&xas);
- 
-+	ret = hwspin_lock_prepare(hwlock);
++#ifdef CONFIG_DEBUG_FS
++static void *hwspin_lock_seq_start(struct seq_file *s, loff_t *ppos)
++{
++	unsigned long index = *ppos;
++	struct hwspinlock *hwlock;
 +
-+	xas_lock(&xas);
-+	if (ret < 0) {
-+		hwlock = NULL;
-+		xas_set_mark(&xas, HWSPINLOCK_UNUSED);
-+	}
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return hwlock;
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
-@@ -772,9 +744,10 @@ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
-  */
- int hwspin_lock_free(struct hwspinlock *hwlock)
- {
-+	XA_STATE(xas, &hwspinlocks, 0);
- 	struct device *dev;
--	struct hwspinlock *tmp;
--	int ret;
-+	bool unused;
-+	int ret = 0;
- 
- 	if (!hwlock) {
- 		pr_err("invalid hwlock\n");
-@@ -782,12 +755,13 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- 	}
- 
- 	dev = hwlock->bank->dev;
--	mutex_lock(&hwspinlock_tree_lock);
-+	xas_lock(&xas);
-+	xas_set(&xas, hwlock_to_id(hwlock));
-+	xas_load(&xas);
- 
- 	/* make sure the hwspinlock is used */
--	ret = radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
--	if (ret == 1) {
-+	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
-+	if (unused) {
- 		dev_err(dev, "%s: hwlock is already free\n", __func__);
- 		dump_stack();
- 		ret = -EINVAL;
-@@ -798,16 +772,12 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
- 	pm_runtime_put(dev);
- 
- 	/* mark this hwspinlock as available */
--	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
--							HWSPINLOCK_UNUSED);
--
--	/* sanity check (this shouldn't happen) */
--	WARN_ON(tmp != hwlock);
-+	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
- 
- 	module_put(dev->driver->owner);
- 
- out:
--	mutex_unlock(&hwspinlock_tree_lock);
-+	xas_unlock(&xas);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(hwspin_lock_free);
++	rcu_read_lock();
++	hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
++	*ppos = index;
++
++	return hwlock;
++}
++
++static void *hwspin_lock_seq_next(struct seq_file *s, void *v, loff_t *ppos)
++{
++	/* Increase ppos here to avoid endless loops. Don't use xa_find_after() */
++	unsigned long index = *ppos + 1;
++	struct hwspinlock *hwlock;
++
++	hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
++	*ppos = index;
++
++	return hwlock;
++}
++
++static void hwspin_lock_seq_stop(struct seq_file *s, void *v)
++{
++	rcu_read_unlock();
++}
++
++static int hwspin_lock_seq_show(struct seq_file *s, void *v)
++{
++	struct hwspinlock *hwlock = v;
++	bool unused = xa_get_mark(&hwspinlocks, s->index, HWSPINLOCK_UNUSED);
++
++	seq_printf(s, "%4llu:\t%s\t%s\n", s->index, unused ? "free" : "in use",
++		   dev_name(hwlock->bank->dev));
++	return 0;
++}
++
++static const struct seq_operations hwspinlock_sops = {
++	.start = hwspin_lock_seq_start,
++	.next = hwspin_lock_seq_next,
++	.stop = hwspin_lock_seq_stop,
++	.show = hwspin_lock_seq_show,
++};
++DEFINE_SEQ_ATTRIBUTE(hwspinlock);
++
++/*
++ * subsys_initcall() is used here but controllers may already have been
++ * registered earlier or will be later. The rationale is that debugfs is
++ * accessed only late, i.e. from userspace. So, files created here must make no
++ * assumptions about initcall ordering.
++ */
++static int __init hwspin_lock_init(void)
++{
++	struct dentry *hwspinlock_debugfs = debugfs_create_dir("hwspinlock", NULL);
++
++	debugfs_create_file("hwspinlock_summary", 0444, hwspinlock_debugfs,
++			    NULL, &hwspinlock_fops);
++	return 0;
++}
++subsys_initcall(hwspin_lock_init);
++#endif	/* DEBUG_FS */
++
+ MODULE_DESCRIPTION("Hardware spinlock interface");
+ MODULE_AUTHOR("Ohad Ben-Cohen <ohad@wizery.com>");
 -- 
 2.51.0
 
