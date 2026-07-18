@@ -1,158 +1,377 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB84A391851
-	for <linux-remoteproc@vger.kernel.org>; Fri, 17 Jul 2026 19:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784318236; cv=pass; b=aKE65W9SEOXuJBl0xMcUP0VFD6fH8iiVxeVXMoLBsIW3TIlSsu0D+rHrvl/+D2NBOog5Jb5cotw9IhGZN9I2ulWOfvZtMgLBVk68R3L2COperbkSYQeIfMaFc9Y87mqp5frsWzY6uUxkIRc4ES9ujrmUHAoX3vPyo0MIx7cCcyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784318236; c=relaxed/simple;
-	bh=uuOeXfineAaSKEkzm9ZAfY9YAcij/EcCbR2zNaGpEpY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ktFDmYhqYjlkoqRLE/KdxDR3PWvkGjIEriW2wmYewWYbOHCub3V2o38Q4lMBbp84WC6X9UxqK2C/XdQIjwpSCPVxqtjjwX5R8vx+RKgJu38nU4Bi98ZYRcbdIzk2wufdI3R+papCHk2iIdpe3ExylHK4/723nkRaCNsPnsY9iKo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNyTUgU7; arc=pass smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB13D45D0
+	for <linux-remoteproc@vger.kernel.org>; Sat, 18 Jul 2026 16:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784392243; cv=none; b=GSctKDEQcZed+SaM/33B7dDUWfgtmEq3/7aS4V7bftMbaRYEpggRxcM69o4EWxlzEvhPsupCRmFcIP9DDh0JVo7bjh/wGrvez4FLC2E3UhIMNCWfhIfy+wpyHa0d/dGV411LcKQl7WZyGwJLkKSy7k/IX6BCs/RPziXfog4ZXDc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784392243; c=relaxed/simple;
+	bh=zXY4szWNyycp/26dnbAw14LSmLq1Nm84Mt8Mi+rNwzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LSWqOv5WNYmnWmKZbqjtu7mO4A13sSeI5dd9ZWYrWUXYcTl63ZuF4LhPdEtdOF7LYJ72CDlKv4fz7x3zRPDPjSFGDBV9XKPcg6bwo72uiJUdqldXcPwL0R/kWUD5AeVoT6fzLWu02lLZlzdDc0aQnftzL5ElBvgew1WOGUvS/UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=U6M4NuqJ; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNyTUgU7"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-80c4d1520c9so7412187b3.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 17 Jul 2026 12:57:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784318234; cv=none;
-        d=google.com; s=arc-20260327;
-        b=F6rc949wn4nDCAUC6NqojeHGnlkh4dagImSDsUgFYoLZU4hv+0P/PmO22muNPbODuc
-         dOTM19NDXfU/4VkPa7PMoJYeBzo1F7Z06zOUxwl5dmyiuN58sxPj3GKm65fX3X9Suxko
-         E0p7YNAMsNTjfeAwja3YuINuRtlVkF7axzjsJQWBBcHdATgkkwi2vZCZ2ODlf+a0x10q
-         XDBPCzb8Dla6qj/djbw3LRqv96kI5zbIof+lr0JaJQ4bfzBHdRmqvoxHTMIUp3EFFL9X
-         ssIeQJ69bfWXcTYmL3eu8d+sicOwQCTd/hjTUmTGx3m9WzzX405A4eUccRhdJS++7Gyt
-         EWFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=+4r4qpI7ZYUqwhCzIi/TmFSyDrOhyXUmyBS8Pxgob6U=;
-        fh=mlu4cKR3yiMwTAsPEEBsoO99uKLbXE/P5vaTb5rKMuk=;
-        b=jznkWGvjYSjOLwopaQeTyp/EoCBT6rIeVji6andwGsdCDGaWtODAq8ZlpLq7Ygj4BE
-         rTkfr5FY1Qv9llNWOqiyzY5r30ICDNLzYPcYTV3k8pNYZREPl4ZpGobd9pUxB1bu7W2D
-         UKnlyjiR1SBpyK1Kg0cVLP5Mk4I7GqT9xw4EZ8dXbz2BofKidWyOlTj217oRFJK954bY
-         fKuSC3gwSMGaDS3KRbf5U77GabtvDIPyUgjvfxtzOkdomtykg3CIc2ds8Bb/WfuBC3NH
-         J8qDK1g4NR88fZUzk4FqFeZrYpixaR0XuhwoOWvQoN3/u1ABYQBD8YY2Nan990gz5jBd
-         zMaA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784318234; x=1784923034; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=+4r4qpI7ZYUqwhCzIi/TmFSyDrOhyXUmyBS8Pxgob6U=;
-        b=eNyTUgU7+U1nHHE1U6fzUA7qpVfYDsJJijHQjAeZO0w1wW7uOJ41TEqaFbAzE+BS+d
-         d09C3s/Z1dhWrBSqEyF03kqvbjLIM/edSCUE8o7HIPrVfHsJvTKWnC0huxT1dLsXvjGn
-         LJDMiEJleiYcAZp2TTXA+q+tgxucslh4QgJdjVLJtCuTeWKyzrDDMc2HjSFsOLGMks90
-         9IM6kIdiSI+vno4ut+CVj8hnqDRSLWEBll2k3SovxxUB0KsyTsP9x534BwlcxY8YCpUt
-         +yXwacWfP/aKsYHUvFPncVjv3mlzzSLzO0FuCyiEdBnHVOqmtB/pZk4GKbzV2qPP2cmI
-         xo1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784318234; x=1784923034;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=+4r4qpI7ZYUqwhCzIi/TmFSyDrOhyXUmyBS8Pxgob6U=;
-        b=tKESW4/MlRTPIYDfn2nsvx5/xTLdIUE6iY3/8lQtHT85X2BrswaROMdY1nS76NdMda
-         AwWnorlFifkrddXgll3Fz1mM6O8ad/cHvRJbcN2MvmVbm5B68s81GS5pQ/Wqy9m6B7gF
-         9Ov1flPoLjxGpOhcLHHfeQJXhPvFaQo+XkCMmfsv6+HOQ4dk8Y2PXpaH1/NbjiLbTpkm
-         cOtJifn5WT+wvya7+CPzEmf5KGKzn8Ou0BngHu3f7djY+4ZO8Fk3e70hntib2ayvjLJJ
-         /rg7J+55Vw79vl28PvnBKmTFm3+jW7HLiuTbnKBntXDHtDimcHf79K2Qzr5wPmMVRcS8
-         /zqQ==
-X-Forwarded-Encrypted: i=1; AHgh+RofjTAzLXEvWRG3pDNdH/S2yZ3X5+QIzcknlfHRC8+N13WdLlxilnN/ZYv4apmmWLxm1f5R4FM/JscFpzdPkSkG@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywog6xwiGG75Z5VlZbMBvx8ovHPwZdIo0NRkLtgZUbGLBmtMNHJ
-	DAZzNPsthkNV+aghpoTkk4Bm8UecQmlEbMUK3+8MuH9CCbImU9tMkVueoU7s7YvFcZBrXAvmr4L
-	RzJitasTQh+9YDJegIkPr8D7eom7eaCU=
-X-Gm-Gg: AfdE7cklCzP4fatmt5nn6t/SqD/QltIuWojws0GsMJgpzb3NLfB6itRoGi2fGVByzhD
-	cIcblvuQODmYTWn2YOZY7rppnMbJ+0eNOxU3xThB0vh7vYbnDVeX32D2nhAbHJeQheB/HupgNwM
-	6seP8bvOQzNAZt6CsqoBbl5LzO+SFsPXOHq89CeYKsQIkVUv+5G4MRvvMt3nsx0mnOc8qcLu1cV
-	5JgWhTMb1H4FAcJbtmGO5XU5iLm6Skh4QvRUfmQeqxf9oLsvKcjxC1a5MQgoT6fPFsvr0rQ4Cw=
-X-Received: by 2002:a05:690c:60c3:b0:80d:8bad:2ceb with SMTP id
- 00721157ae682-81ef217a008mr13797247b3.0.1784318233761; Fri, 17 Jul 2026
- 12:57:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="U6M4NuqJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:in-reply-to:references:mime-version:content-transfer-encoding;
+	 s=k1; bh=XvVPYIu5IJBFa4YggBlNpJtLCUcLtdHOITJmUpwWG5Q=; b=U6M4Nu
+	qJ7lzwZSAK2a6/X3LAE0QMwoH2G9aPxTdBcNkNMIkxRB3RSksC6PhlYdyLzZwCHR
+	0oPVk3tlHCXjvyHuo0drYbg5CriA/KJxr1Vrx4BJMnpTgQEsR8IoL5HOrA0wIUKL
+	R6ZsmQ6v7ANHIGq6S/U0KzHg+VsJtgq46Amo8O5ln28wPu2hwNnkTz0zl4L7q82e
+	uhZQXl/EabGbHT7rKHz2ic/aYy1muKjxvc2/Sa6LN/3wXj2hNb9UqPtMeTru8QxD
+	4fT6Em8fJgJIuWyRbT0MdvR6yGFNLonfUpso7vDz6jixcPiXvQqphjpxDg9D4EVx
+	Lkv6Qf4L2CvwiCmA==
+Received: (qmail 1799917 invoked from network); 18 Jul 2026 18:30:31 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jul 2026 18:30:31 +0200
+X-UD-Smtp-Session: l3s3148p1@MU4VMeVWZ2htKXE8
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Matthew Wilcox <willy@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	linux-remoteproc@vger.kernel.org
+Subject: [PATCH v4 1/3] hwspinlock: Convert to XArray
+Date: Sat, 18 Jul 2026 18:30:21 +0200
+Message-ID: <20260718163024.1726-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260718163024.1726-1-wsa+renesas@sang-engineering.com>
+References: <20260718163024.1726-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260710194638.1502-1-saileshnandanavanam@gmail.com> <bc13f78b-287c-4832-b2f1-a68e7b35b57d@oss.qualcomm.com>
-In-Reply-To: <bc13f78b-287c-4832-b2f1-a68e7b35b57d@oss.qualcomm.com>
-From: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-Date: Sat, 18 Jul 2026 01:27:09 +0530
-X-Gm-Features: AUfX_mybpP0ipFenvhQ7910IFz9oFbDJFCxR2LMB6JHjtp_vKzBdXraXDoqWrzE
-Message-ID: <CAF+TLO0F9jQ0+pPei7iFDqcC-gKd44gc5SXa-o_dBKzNsHKU=g@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: Fix off-by-one error in
- regulator error cleanup
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	quic_akdwived@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On 7/17/26 3:01 PM, Konrad Dybcio wrote:
-> The first two labels only unwind a single regulator
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Thanks for taking a look. Could you clarify whether this is a
-correctness concern (e.g. the fallthrough from err_enable/err_set_load
-into err_set_voltage not doing what you'd expect), or more a
-structural/style preference (e.g. avoiding three chained labels in
-favor of a different approach)? Happy to send a v2 once I understand
-what you'd like changed.
+The radix tree is deprecated.  The XArray uses the same data structure
+with a nicer interface.  The hwspinlock_tree_lock is not needed as the
+spinlock built into the XArray is sufficient for all these cases after
+we split a larger critical section in hwspin_lock_request_specific()
+into two smaller ones.
 
-Thanks,
-Sailesh
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Co-developed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/hwspinlock/hwspinlock_core.c | 160 +++++++++++----------------
+ 1 file changed, 65 insertions(+), 95 deletions(-)
 
+diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
+index a509b73da190..e2b7a2271de6 100644
+--- a/drivers/hwspinlock/hwspinlock_core.c
++++ b/drivers/hwspinlock/hwspinlock_core.c
+@@ -16,7 +16,7 @@
+ #include <linux/types.h>
+ #include <linux/err.h>
+ #include <linux/jiffies.h>
+-#include <linux/radix-tree.h>
++#include <linux/xarray.h>
+ #include <linux/hwspinlock.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/mutex.h>
+@@ -27,35 +27,21 @@
+ /* retry delay used in atomic context */
+ #define HWSPINLOCK_RETRY_DELAY_US	100
+ 
+-/* radix tree tags */
+-#define HWSPINLOCK_UNUSED	(0) /* tags an hwspinlock as unused */
++/* XArray search mark */
++#define HWSPINLOCK_UNUSED	XA_MARK_0 /* marks a hwspinlock as unused */
+ 
+ /*
+- * A radix tree is used to maintain the available hwspinlock instances.
++ * An XArray is used to maintain the available hwspinlock instances.
+  * The tree associates hwspinlock pointers with their integer key id,
+  * and provides easy-to-use API which makes the hwspinlock core code simple
+  * and easy to read.
+  *
+- * Radix trees are quick on lookups, and reasonably efficient in terms of
++ * XArrays are quick on lookups, and reasonably efficient in terms of
+  * storage, especially with high density usages such as this framework
+  * requires (a continuous range of integer keys, beginning with zero, is
+- * used as the ID's of the hwspinlock instances).
+- *
+- * The radix tree API supports tagging items in the tree, which this
+- * framework uses to mark unused hwspinlock instances (see the
+- * HWSPINLOCK_UNUSED tag above). As a result, the process of querying the
+- * tree, looking for an unused hwspinlock instance, is now reduced to a
+- * single radix tree API call.
+- */
+-static RADIX_TREE(hwspinlock_tree, GFP_KERNEL);
+-
+-/*
+- * Synchronization of access to the tree is achieved using this mutex,
+- * as the radix-tree API requires that users provide all synchronisation.
+- * A mutex is needed because we're using non-atomic radix tree allocations.
++ * used as the ID of the hwspinlock instances).
+  */
+-static DEFINE_MUTEX(hwspinlock_tree_lock);
+-
++static DEFINE_XARRAY(hwspinlocks);
+ 
+ /**
+  * __hwspin_trylock() - attempt to lock a specific hwspinlock
+@@ -369,10 +355,9 @@ of_hwspin_lock_simple_xlate(const struct of_phandle_args *hwlock_spec)
+  */
+ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ {
++	XA_STATE(xas, &hwspinlocks, 0);
+ 	struct of_phandle_args args;
+ 	struct hwspinlock *hwlock;
+-	struct radix_tree_iter iter;
+-	void **slot;
+ 	int id;
+ 	int ret;
+ 
+@@ -389,15 +374,9 @@ int of_hwspin_lock_get_id(struct device_node *np, int index)
+ 	/* Find the hwspinlock device: we need its base_id */
+ 	ret = -EPROBE_DEFER;
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, &hwspinlock_tree, &iter, 0) {
+-		hwlock = radix_tree_deref_slot(slot);
+-		if (unlikely(!hwlock))
+-			continue;
+-		if (radix_tree_deref_retry(hwlock)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, hwlock, ULONG_MAX) {
++		if (xas_retry(&xas, hwlock))
+ 			continue;
+-		}
+-
+ 		if (device_match_of_node(hwlock->bank->dev, args.np)) {
+ 			ret = 0;
+ 			break;
+@@ -452,51 +431,50 @@ EXPORT_SYMBOL_GPL(of_hwspin_lock_get_id_byname);
+ 
+ static int hwspin_lock_register_single(struct hwspinlock *hwlock, int id)
+ {
+-	struct hwspinlock *tmp;
++	XA_STATE(xas, &hwspinlocks, id);
++	struct hwspinlock *existing;
+ 	int ret;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
+-
+-	ret = radix_tree_insert(&hwspinlock_tree, id, hwlock);
+-	if (ret) {
+-		if (ret == -EEXIST)
++	do {
++		xas_lock(&xas);
++		existing = xas_load(&xas);
++		if (existing) {
+ 			pr_err("hwspinlock id %d already exists!\n", id);
+-		goto out;
+-	}
+-
+-	/* mark this hwspinlock as available */
+-	tmp = radix_tree_tag_set(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
++			xas_set_err(&xas, -EBUSY);
++		}
++		xas_store(&xas, hwlock);
+ 
+-	/* self-sanity check which should never fail */
+-	WARN_ON(tmp != hwlock);
++		/* mark this hwspinlock as available */
++		xas_set_mark(&xas, HWSPINLOCK_UNUSED);
++		ret = xas_error(&xas);
++		xas_unlock(&xas);
++	} while (xas_nomem(&xas, GFP_KERNEL));
+ 
+-out:
+-	mutex_unlock(&hwspinlock_tree_lock);
+ 	return ret;
+ }
+ 
+ static struct hwspinlock *hwspin_lock_unregister_single(unsigned int id)
+ {
++	XA_STATE(xas, &hwspinlocks, id);
+ 	struct hwspinlock *hwlock = NULL;
+-	int ret;
++	bool unused;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
++	xas_load(&xas);
+ 
+-	/* make sure the hwspinlock is not in use (tag is set) */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+-	if (ret == 0) {
++	/* make sure the hwspinlock is not in use (mark is set) */
++	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
++	if (!unused) {
+ 		pr_err("hwspinlock %d still in use (or not present)\n", id);
+ 		goto out;
+ 	}
+ 
+-	hwlock = radix_tree_delete(&hwspinlock_tree, id);
+-	if (!hwlock) {
+-		pr_err("failed to delete hwspinlock %d\n", id);
+-		goto out;
+-	}
++	hwlock = xas_store(&xas, NULL);
++	if (!hwlock)
++		pr_err("hwspinlock %d already deleted\n", id);
+ 
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return hwlock;
+ }
+ 
+@@ -666,20 +644,18 @@ int devm_hwspin_lock_register(struct device *dev,
+ EXPORT_SYMBOL_GPL(devm_hwspin_lock_register);
+ 
+ /**
+- * __hwspin_lock_request() - tag an hwspinlock as used and power it up
++ * hwspin_lock_prepare() - prepare a hwspinlock
+  * @hwlock: the target hwspinlock
+  *
+  * This is an internal function that prepares an hwspinlock instance
+- * before it is given to the user. The function assumes that
+- * hwspinlock_tree_lock is taken.
++ * before it is given to the user.
+  *
+  * Returns: %0 or positive to indicate success, and a negative value to
+  * indicate an error (with the appropriate error code)
+  */
+-static int __hwspin_lock_request(struct hwspinlock *hwlock)
++static int hwspin_lock_prepare(struct hwspinlock *hwlock)
+ {
+ 	struct device *dev = hwlock->bank->dev;
+-	struct hwspinlock *tmp;
+ 	int ret;
+ 
+ 	/* prevent underlying implementation from being removed */
+@@ -697,16 +673,7 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+ 		return ret;
+ 	}
+ 
+-	ret = 0;
+-
+-	/* mark hwspinlock as used, should not fail */
+-	tmp = radix_tree_tag_clear(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-
+-	/* self-sanity check that should never fail */
+-	WARN_ON(tmp != hwlock);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ /**
+@@ -724,13 +691,14 @@ static int __hwspin_lock_request(struct hwspinlock *hwlock)
+  */
+ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
+ {
++	XA_STATE(xas, &hwspinlocks, id);
+ 	struct hwspinlock *hwlock;
++	bool unused;
+ 	int ret;
+ 
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
+ 
+-	/* make sure this hwspinlock exists */
+-	hwlock = radix_tree_lookup(&hwspinlock_tree, id);
++	hwlock = xas_load(&xas);
+ 	if (!hwlock) {
+ 		pr_warn("hwspinlock %u does not exist\n", id);
+ 		goto out;
+@@ -739,21 +707,25 @@ struct hwspinlock *hwspin_lock_request_specific(unsigned int id)
+ 	/* sanity check (this shouldn't happen) */
+ 	WARN_ON(hwlock_to_id(hwlock) != id);
+ 
+-	/* make sure this hwspinlock is unused */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, id, HWSPINLOCK_UNUSED);
+-	if (ret == 0) {
++	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
++	if (!unused) {
+ 		pr_warn("hwspinlock %u is already in use\n", id);
+ 		hwlock = NULL;
+ 		goto out;
+ 	}
+ 
+-	/* mark as used and power up */
+-	ret = __hwspin_lock_request(hwlock);
+-	if (ret < 0)
+-		hwlock = NULL;
++	xas_clear_mark(&xas, HWSPINLOCK_UNUSED);
++	xas_unlock(&xas);
+ 
++	ret = hwspin_lock_prepare(hwlock);
++
++	xas_lock(&xas);
++	if (ret < 0) {
++		hwlock = NULL;
++		xas_set_mark(&xas, HWSPINLOCK_UNUSED);
++	}
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return hwlock;
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
+@@ -772,9 +744,10 @@ EXPORT_SYMBOL_GPL(hwspin_lock_request_specific);
+  */
+ int hwspin_lock_free(struct hwspinlock *hwlock)
+ {
++	XA_STATE(xas, &hwspinlocks, 0);
+ 	struct device *dev;
+-	struct hwspinlock *tmp;
+-	int ret;
++	bool unused;
++	int ret = 0;
+ 
+ 	if (!hwlock) {
+ 		pr_err("invalid hwlock\n");
+@@ -782,12 +755,13 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ 	}
+ 
+ 	dev = hwlock->bank->dev;
+-	mutex_lock(&hwspinlock_tree_lock);
++	xas_lock(&xas);
++	xas_set(&xas, hwlock_to_id(hwlock));
++	xas_load(&xas);
+ 
+ 	/* make sure the hwspinlock is used */
+-	ret = radix_tree_tag_get(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-	if (ret == 1) {
++	unused = xas_get_mark(&xas, HWSPINLOCK_UNUSED);
++	if (unused) {
+ 		dev_err(dev, "%s: hwlock is already free\n", __func__);
+ 		dump_stack();
+ 		ret = -EINVAL;
+@@ -798,16 +772,12 @@ int hwspin_lock_free(struct hwspinlock *hwlock)
+ 	pm_runtime_put(dev);
+ 
+ 	/* mark this hwspinlock as available */
+-	tmp = radix_tree_tag_set(&hwspinlock_tree, hwlock_to_id(hwlock),
+-							HWSPINLOCK_UNUSED);
+-
+-	/* sanity check (this shouldn't happen) */
+-	WARN_ON(tmp != hwlock);
++	xas_set_mark(&xas, HWSPINLOCK_UNUSED);
+ 
+ 	module_put(dev->driver->owner);
+ 
+ out:
+-	mutex_unlock(&hwspinlock_tree_lock);
++	xas_unlock(&xas);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hwspin_lock_free);
+-- 
+2.51.0
 
-On Fri, Jul 17, 2026 at 3:01=E2=80=AFPM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 7/10/26 9:46 PM, Sailesh Nandanavanam wrote:
-> > In q6v5_regulator_enable(), when any operation fails for regulator at
-> > index 'i', the error cleanup path unconditionally calls
-> > regulator_disable() starting from index 'i'. However, regulator 'i'
-> > was never successfully enabled at this point, resulting in an
-> > unbalanced disable.
-> >
-> > There are three distinct failure points:
-> > - regulator_set_voltage() failure: voltage was never set, load was
-> > never set, regulator was never enabled.
-> > - regulator_set_load() failure: voltage was set, but regulator was
-> > never enabled.
-> > - regulator_enable() failure: voltage and load were set, but
-> > regulator was never enabled.
-> >
-> > Fix this by introducing three separate error labels to handle each
-> > failure point correctly. For the failing regulator at index 'i',
-> > only reset the resources that were actually configured, without
-> > calling regulator_disable(). Then roll back all previously enabled
-> > regulators using 'i--' in the for loop initializer to skip the
-> > never-enabled regulator.
-> >
-> > Fixes: 19f902b53b47 ("remoteproc: qcom: Initialize and enable proxy and=
- active regulators.")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-> > ---
->
-> [...]
->
-> > -err:
-> > -     for (; i >=3D 0; i--) {
-> > +err_enable:
-> > +     if (regs[i].uA > 0)
-> > +             regulator_set_load(regs[i].reg, 0);
-> > +err_set_load:
-> > +     if (regs[i].uV > 0)
-> > +             regulator_set_voltage(regs[i].reg, 0, INT_MAX);
->
-> The first two labels only unwind a single regulator
->
-> Konrad
