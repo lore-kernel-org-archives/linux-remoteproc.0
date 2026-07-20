@@ -1,151 +1,93 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BC71FD4
-	for <linux-remoteproc@vger.kernel.org>; Mon, 20 Jul 2026 00:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.128.172
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784506626; cv=pass; b=m3i1INW7AbNdFDpK33xXIq0v6WR4C0GfklXJRqHZHziJ7TSvMfalfi+E0mH73JX7jWYdsubkjtusYAnD/okQ0mTnQmw3ph2GOyGe8SjE677iUuUJixf9c1eiIZDNef2oi2vWOOkpFBz11PLm47uRZiEab+zbvZcJ/M4qieZyA+U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784506626; c=relaxed/simple;
-	bh=O9cP6nGCNqeHN2Xq8wqQS3LjGvGODOTi/nxM+kFvsiY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Wpqt2dEQS4ccE/7c5dP75GbZLq+y7PFH9Vs8Y7M/3SHwbzBl2j2I3as8JjlmLYUo6iGLS6GyYCoA5xiJNDK5+POqVBBAfWI4LVG3lUbZKcFqcEe3/ETw/055iopSt1Ne9RwluxNTzyAnxqM3bSMn6gFzcTGs0fVokX8en2lDKak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pr5a9s6a; arc=pass smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD6E3ACA42;
+	Mon, 20 Jul 2026 06:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1784527856; cv=none; b=fXoRKK+7Pk0gAS3o9aJUoKV9DkN/1CgzwwAgTwt+/mh9UOfBOm9D5iqDD8drT9G/IhOaibZQLjNkg+IzkBpkPVPSHDJb/Qi0AyZFYoTDzoJrnCrtkFZlH8CHB3orhoayL4SmuVAuZ3C23/8GWpwV8xVBC8Wuf1HPTT0OaUa+lwU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1784527856; c=relaxed/simple;
+	bh=H4SAhF7VUo7u1LxDOpPD56os1KWxbeGpeP0AW7Wd850=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xd0Y6UMl7cHFiK4bZJggvBuZf3FEw9WmBkjsI1uRwvG2z9/yYrAARbO1QKXAL18D3GUFq7wHGsAOepn94RID6idECUqYYMZEFut9hbDFmrxjs3Wb/+2nvqlNoesadbG13pvNarKldNWUwH6NR37QjVBUYPfh+bmNsudXdjiDHnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGE5K/q7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pr5a9s6a"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-81ed2a00f12so68316577b3.2
-        for <linux-remoteproc@vger.kernel.org>; Sun, 19 Jul 2026 17:17:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1784506624; cv=none;
-        d=google.com; s=arc-20260327;
-        b=oSwK/F92TCGPtSdxeX58z0Ptw3PK0JX3oYWNUhfmWeSYcfsdtgOUHwhJ1bqSUFayuG
-         cUxtKEUkh+qkTAB/1bjywVfwsK0XFnhPf4FVe4etwVaFe02L7OzwqW+toM36ZN0aYrEO
-         nqBORlULA93YPFurGGhR34v5SYEiTG5hXPT29e5fKaGK/MuhTdiecRrTe+P4AEvKouQH
-         yJXvMeHbkkk1RBReyDe0QvRlt1XVYu4r3bk4m3MgJQnBHSWpQeUEdUO/dpdMpa/KkbiC
-         pRGWR4bNaLLn5YXfyTCum0/S3/DXiRS78a17L9DXyXT/8adocEF1kVIhdrSS2DEfkyWi
-         h+hA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:dkim-signature;
-        bh=S20JVaLKnRGihstk26kL2qltfogiNg0YzdjITHbQXu0=;
-        fh=FwlTtNH8hfbmBYww7vnCx/fOJTEpnYMMg7Eb7qTph/U=;
-        b=J1EYwz6XgtYJMFfRSTCLxOzZqaguqRHMlTKADBk3CRlsdKItUqrWv7cUqjWv1IIPrx
-         mkeo0Fp0bvsuwoS8pyaWTthtjUxb7/zTz+NhnbNhAyvA6MvhRx9JQ7ot9FvwABQ3b88w
-         jVlIPoO2aWsec6N1bvofA7/+r3Yij1kf/Dl21Vt0QouZjilMg/nnScowQpnPRn9OtKrh
-         1X1oMEE8KSgxskL5RgL+jLf8y4FjXYw5k8qiJJ32LcXHfko/9daLsJERjC58N9kJomeZ
-         35D318sa/TpSMwOb5xrFhmHqZoh4nYcLDCMBaes9xjyJYUBebpHn5hcO+5+m1nX0YYg0
-         oZRw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1784506624; x=1785111424; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=S20JVaLKnRGihstk26kL2qltfogiNg0YzdjITHbQXu0=;
-        b=Pr5a9s6ajjbsTsGEp1roOGYMM2xJ/4JbKUa4XMPKBK2tnBRzv/K3WvmWbEEIag1aoS
-         JsdwlZfc5GyI0Gk9TroTIhm9Fg5K6mj6LlYH3F1WrTtkc7yw9XlxbYuEqn7h9l1Vt3XH
-         lRVYQEzXF/atecafyK1sgb6LocTA1DsymaWuDr6UlRrsgcxkkrre7MN4OuzNImvCJpjo
-         l4hnmQenQREbP8uU0VMDG25c93Hqwvd5tRFgSTv5AszbhjHBohVyJb9o4/8L1Zkpb6f5
-         8MzFSjLhplMbUXA2yfdrlxxELhTF36W/ktX37n0doohE9DTXD0xf+Jo/tvQkvvQsp3qa
-         asKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784506624; x=1785111424;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=S20JVaLKnRGihstk26kL2qltfogiNg0YzdjITHbQXu0=;
-        b=DUzaVGPD2lmXaNq/T3QhPnQOqd6Uce9gjhTefpNQO21zBgo0MPi6YBsBFAnQ3W4GC4
-         oo8Ny8bboL8oFTLW6NFG/HYlWI1g1LsHzJoLbKbO32U28jatArIhdgJdnUba25NSd2nM
-         mag7Sd/cgxx/JDBWjWOEq27Jm26YKNneYyreipzRGcVvIQe+aZStD0bZQKp6i+dhPNbd
-         C1epvBsehfNNHd1CYpJ2zuF1zzZDoeDtGQmyke01zOqZRHFhr34L8qNYNXunVPpmYMBa
-         MOfPChjmmFtCnPMjR+Zt1Y8XfR/rIN5xvRJ3YAezXJRkzvMH0Qb2q+wV4Oi+TMTuetrA
-         sBLw==
-X-Forwarded-Encrypted: i=1; AHgh+Rpul3JCO5B4pJhHuqh971S0ipvPg/8A84i6GKW6No9zNSRfYcIjdafhFrNhiVKVB6Ne/+MAnTP1XBjPl/IfPNBs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/2sldJA94ajbCWbMVrVfqhe9Y6wPxm8jxm5JSjOczsggF5CoW
-	OuEbabyIIA0Zoirs3PTYUwbTqj3ufv2uyojHIcivqtkDhveTrMiTSvzA90AZk5xPiPah7f9Kro9
-	DiGmtcB2pkKN/PHn0gr50SExLl0fhrVc=
-X-Gm-Gg: AfdE7cmTLu5ZotUlppKiMGiAK9Zkc1Q6m0iqbS/KGvjXLtKs3ud/zkm2yzTY045l6W9
-	WTgOxO6a62A3sypMsrBvxsQyYMiAkRbLTKshZg8oO6JhNpYlompGcJvIKoDH0R+7AQhmvOej01a
-	rVdCxCXMRRf3l+2tZKvI/dJdsZBj1reFcTOcdzNbMYkmkLp9J75mIu0Y8VfMUqdrntqgJuab9pR
-	v1h2gUZ0+jpM8ZwVFtYHOQfun23x0vprfPNY0LPRt6qN//Va1Xsy0MRca2j3GZIXk1PqMM5AMt5
-	OwwH3XTCTUda4LEaxbulYgstLlA54w==
-X-Received: by 2002:a05:690c:b9e:b0:81e:d000:b364 with SMTP id
- 00721157ae682-81ef288783emr38868497b3.72.1784506623642; Sun, 19 Jul 2026
- 17:17:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGE5K/q7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AB411F000E9;
+	Mon, 20 Jul 2026 06:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1784527845;
+	bh=V5eTTzERtM2s1SmY9yq6I4KJKoS1ghT2lt8nAkrxXS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=CGE5K/q7PY49cKwbG3R0P0wVR8L7JhHrDVFH9hCHbeLWyIQwEcDouRZu8RR3bSFzw
+	 1D/icMwk0/tLPnCfwckatt0MTNa1772Gebt4y5ZmbNLsTiMeWWf0oSz/HwhzplgU7/
+	 cVcS5/hbM47LMhrmfj8igNR8bSZcB3uPFlfL5sHP1l9SozOJfH81oR93Z3rMSmr+yw
+	 hOb0CDNMmeyi/xXgrBvRPkneD7m5HxxY47HuxdEk3VqG6wQ4pLe5Z9eSn3P6ioSt45
+	 W23Sj6ech8TOelwLnobBlMrfWCc83SLzhvZGK2MdbB3Dm/4dQP7nHIE7rgU/I/pd8Y
+	 +3+ai5WsxzIBg==
+Date: Mon, 20 Jul 2026 08:10:41 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pratyush Meduri <pratyush.meduri@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: remoteproc: qcom,pas-common: allow
+ up to 3 iommus
+Message-ID: <20260720-steadfast-swinging-shrimp-196ac6@quoll>
+References: <20260717095825.3962666-1-pratyush.meduri@oss.qualcomm.com>
+ <20260717095825.3962666-2-pratyush.meduri@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?B?TGFqb3Now6F6aSBMw6FzemzDsyBHZXJnZWx5?= <lajoshazilg@gmail.com>
-Date: Mon, 20 Jul 2026 02:16:52 +0200
-X-Gm-Features: AUfX_mznxPsRpnpalvP1z-mBxFg7xLZ6MbxIhdS_1lAqtpMcu-Hb4Vp3hyS88LU
-Message-ID: <CAAD3nBebR3GPbufLyc95QVwueLBUWmGpxQhqtSt3EBEswjpdVw@mail.gmail.com>
-Subject: SDM632 SLIMbus: ADSP framer never gets frame-sync under q6v5-pas
- (works under downstream pil-tz, identical firmware) - what physical
- precondition is PAS missing?
-To: Srinivas Kandagatla <srini@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Luca Weiss <luca.weiss@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260717095825.3962666-2-pratyush.meduri@oss.qualcomm.com>
 
-Hi Srinivas, all,
+On Fri, Jul 17, 2026 at 03:28:23PM +0530, Pratyush Meduri wrote:
+> The ADSP PAS on several Qualcomm SoCs (e.g. SA8775P/lemans, QCS8300,
+> Monaco) needs more than a single SMMU stream ID for the audio ML
+> (machine-learning) offload use case. In addition to the primary
+> ADSP stream ID, the DSP/SPF issues DMA transactions through extra
+> stream IDs that are not covered by the existing single-entry mapping.
+> 
+> Relax the iommus constraint to allow between 1 and 3 entries so the
+> additional ML offload stream IDs can be described, fixing dtb_check
+> schema violations on device trees that add them.
 
-On the Fairphone 3 (SDM632/msm8953, WCD9326 codec) mainline SLIMbus audio
-is silent: the NGD reports "capability exchange timed-out STATUS=3D0x40c
-CFG=3D0x0 INT_STAT=3D0x0" and the codec never gets a logical address. Same
-hardware works on the downstream 4.9 stack (A/B slots, same phone). With Cl=
-aude
-code I've localized it to one register-level difference and I'm stuck
-on the last step.
+What dtb_check violations? Do not reference non-existing warnings. If
+this is real, then place the warning here - and be sure we can actually
+reproduce it.
 
-The only variable is the ADSP boot method: downstream subsys-pil-tz vs
-mainline qcom_q6v5_pas. adsp.mbn and its devcfg are byte-identical; the
-AP-side QMI sequence is byte-identical and ACKed in both cases; current
-mainline HEAD (including the merged qcom-ngd-ctrl fix series) reproduces
-it, cold-boot retested.
+> 
+> Signed-off-by: Pratyush Meduri <pratyush.meduri@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,pas-common.yaml        | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> index 11faf655f530..fb656bda8527 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> @@ -33,7 +33,8 @@ properties:
+>      maxItems: 6
+>  
+>    iommus:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 3
 
-Reading the SLIMbus block (0x0c140000) and LPASS-CC (0x0c000000) via
-/dev/mem on both slots:
+So now all devices have three streams as well? Or only these three? You
+said only newer, so why are you raising this also for sm8150?
 
-  reg (0x0c140000 +off)      downstream/PIL   mainline/PAS
-  FRM_CFG   +0x400            0x000D0C83       0x000D0C83   identical
-  INTF_CFG  +0x600            0x00000001       0x00000001   identical
-  FRM_STAT  +0x404            0x060D1901       0x00000000
-  INTF_STAT +0x604            0x00003E04       0x00000000
+Beside, you need to list the items.
 
-LPASS-CC is byte-identical over the whole aperture (SLIMbus root RCGR
-CFG=3D0x509, branch CLK_OFF=3D0 on both -- the 24.576 MHz root clock runs o=
-n
-the dead side too). So the framer is configured and clocked identically;
-only the status registers read 0 under PAS: INTF_STAT bits FS/SFS/MS
-(frame/super-frame/master sync) never set -- the interface never acquires
-sync on the physical bus. The stock firmware's own bring-up confirms it
-waits on hardware: it polls the FS bit, times out ("Hardware failed to
-enumerate ... (FS:0)(SFS:0)(MS:0)"), and its subsequent HW reset succeeds,
-so ADSP register access is fine. The firmware maps no separate PHY/analog
-block. On msm8953 I find no AP-side lever either: no lpasscc, nothing
-SLIMbus in gcc, no LPASS GDSC (unlike msm8996, which frames the same codec
-family under PAS).
+Best regards,
+Krzysztof
 
-Two questions:
-
-(1) What physical precondition (rail / reset-deassert / pad / LPASS-interna=
-l
-enable) must hold for the SLIMbus interface to acquire frame-sync on
-SDM632, and where does the pil-tz path establish it that q6v5_pas does not?
-
-(2) Is that step AP-reachable from mainline (SCM call, reset, regulator
-vote, clock, DT), or only TZ/PIL-internal -- i.e. is this fixable with a
-kernel patch at all, or does it need a vendor-side change?
-
-Full write-up, two-sided register dumps, binary diffs and the annotated
-firmware disassembly: https://github.com/msm8953-mainline/linux/issues/255
-
-Thanks for any pointer,
-L=C3=A1szl=C3=B3
