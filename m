@@ -1,156 +1,225 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865C14D2EFD
-	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 15:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068ED4D90C0
+	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 15:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784646611; cv=none; b=b7OaRmvD30ASsxa9V23Clg6k5MUOxJCmW/32vDVjqT566s2yh9HLlvpGz72nxk9X/YPBpt6X/uC/x3mcKW9uayHr9YYfm2Ixo9PA8c8imWHRZ4hcs/RqCIa9Opl1Ebqz8ZFrj73NQ13M71GVty5zZz2hjLZj6iSC6QphB/27918=
+	t=1784646880; cv=none; b=GE9leDb5l13ubD9wHUZdvvaNtBaEPnLZ6lOMTBbbIM0r4ddSxTLZ18qgT2I1ocuRekD5vI5BothOg/dPUfkUCUQxandnOdmep+I2y8Kxv9FNSfMoHVQW/JN+ce9nlpo9k+V1LaSe8ekxw2aN3tX+Yxkk9WSX2+gmtR55J7GvNbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784646611; c=relaxed/simple;
-	bh=osUi5ANQSKW6zxpnFDg4GdYDSPknTXsQi77Jpa5yPUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JLVKF3uY8Lj2AqgnrhHuyG0KXO+JK/ZiqYECVbLh3GiUmxh8hUwVkvwYe4mK6gLjEiuX0eTLLvY5az3GFYSv94gel5yz1uYkvT8RSjTa/e0gMpdkZWldFiuy/LDGZNifRbgLgkBQnEVwii/oPI1wnGskO+tbY2DeZNR/4IV0GXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aSpA5Fa8; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=auSu1+Ck; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1784646880; c=relaxed/simple;
+	bh=dcvWL694LiuZkymBYI79WUNwhSlu6FHKFwvtl5wq/Sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uo8/R/pBWu7L9wS9vP5S+Uq43sL/m2jQqavE/60JqNsJo29n7vfoJ7in587N3t6fW+bpuZbS1wMyBglCqHY739pdYiojMW+bX9eJzCt5VkLhz8ySFhLDUKQXhiG83ceR1iKRZAgL6WFoazpZ/jFelx4dZr7YCMyp4uTRVAr9Ppg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c6uolYbS; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aSpA5Fa8";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="auSu1+Ck"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66LDg6XZ1707990
-	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 15:10:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	15+AHTyLjpbpDshovEjtdc1p7nuqFsEDH8IjDdAKdfw=; b=aSpA5Fa8Al4wGSHo
-	6i3Jcfqt6ps1SZqAz3aRiHcGX17EpL/D3euvYMUPF70+Qaw8ZI2h/Ropbrks0fiD
-	2sjH85bNY9w+RJS9BYWSf+sL0+918bsbdh/D+4/Cvvo0/bfOmrOlFHXBQvlGggNU
-	QjCyOOHdeITwIsVxaGWJMmGp2mMwN3q3D7CwniDCqBMLIfgNSaiJ+tOIkz0ZAZnk
-	RRDod5MT4zIxQJWWoJZH4F1876OFKdpOCm2ttrJTws8AbadiuyB62A6ZEITRdBX8
-	lgpy2nnqyc8e0AjtH8I8SmdwjjLomSGMr5lV6j4x2nnW+HMWeXJsF6EeO7/mz7km
-	jy+ObA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fj9ae8mqg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 15:10:09 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-51c1c7f135bso167236381cf.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 08:10:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c6uolYbS"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2cce6a0c9c3so103632605ad.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 08:14:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784646609; x=1785251409; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=15+AHTyLjpbpDshovEjtdc1p7nuqFsEDH8IjDdAKdfw=;
-        b=auSu1+Ck641h887TA4W69hnuoG6AfX0P13YgHT7AEpFlfJZVyfZM3nU4wr7RqkFfPx
-         /Yfs77qKQgXi4v/SAXuvEnnsoNELI6WAl/QV5S8yrBF4SNOa5ahplVqKqSpkAtx+SLdy
-         4QGTMBjrzKWiK0QsP5a+yvmLX+y1XW7sYdt+8MyALK1wpw66F4qadxh53vC2nmaZPQEt
-         Evu70Yz2lRSOUDn0hOGdfuwPjnPBFZYl1XUL7PnjO/KDz/vs02wxuEP9ATuK4HJE8orL
-         H/M0EZr9zvrZZ2BODWMbbl0jLS/UOOMycxdK+f7QwIde8J1txuws9XPJCCmFysiCB7FG
-         KMJw==
+        d=linaro.org; s=google; t=1784646878; x=1785251678; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=0NzLnpEpcxO5DD6T26b2jUHl7f+urYYWu7UR8jPYSDY=;
+        b=c6uolYbSdbQzjSOAp02ZRKfgGh9asA9KOh9bdDtAYjoOZ5kZR7VrQ0AZDI3oUaEUjh
+         0UN3PLVXYx/AhvEYewNKbukK3Yun/NRRzIPTXN7scFOAkCBd+gY+Ri4sG/woFfbgh7yU
+         210UzaugXKiDQyPo9q2TVX89QIPty9XXGToL8H2uBlRjA7Zd1sXq3Vozu2lyE8OKKi5R
+         01ux2rHpaAGTieq7zYVOTWPykFKTyilQBYXBJ+HzcyUODNkngeufIlVpRulHq1xnGfwU
+         gfkaDTBwKdo2a4MSXSpbU92gcUzDLNdHTR5v0fHMT60Ga7VZTVJDUu+WFD1L0uXYVaBD
+         +QDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784646609; x=1785251409;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=15+AHTyLjpbpDshovEjtdc1p7nuqFsEDH8IjDdAKdfw=;
-        b=f3wCTovUETqoWT8DeTrdjBmPHDwzBpWWk0eFLGxu9qGfB1CkekWWXOIOClpoG2lSzW
-         GApsffghVNNIUKWjqlpoP1flFeGRbXCnPRTZLLBS/T+gx1dxmQ16hGq3MIvHM1PNy7Lb
-         gQIxMAIWqyoyGyGP//KquV0csO599bebsVgae5OzUJXCZMsGPUrIG+EpQGfahVMGkR2p
-         sXD01TnkDXjvcS1mfPphbvOR+Cwg6q1C5qhHCVggW3afNk5sGC/r7VSU9BvbeEYXfSag
-         Q7GYklnmUgvC4E4YRlATJUGTE9wqf/CwJZjOnfuwkA+rvgspQ8MP1Y3Jak9Y4A7K+9fC
-         2Lww==
-X-Forwarded-Encrypted: i=1; AHgh+RpRWxr1V2ne7/0JVUJtjFkt5e6QGH8/WhUEdTVCLfVtbJO2r2Qku48qbO6LBpCjxQKnjNRgbg1JhB5swhpOIMxm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3iMYXFNAKr8DLHr9eTiFLR9PrKsVi/zF45EpLyx822UVZ2DyQ
-	D1DJz7xA3NzFh6XxyCAYKqPfO6UzJnnoywTF8naqaDQKEkZ1LVpDomuY+V1GsiWaTK3wJH/3Pgv
-	1vnHHbgKzq5j3Rkb532sCw5UZZa9BkTrlQOe8zH3yg4bdvTJTZ0H0cfp0VlJIiN96/DTWV+PL
-X-Gm-Gg: AfdE7ckuV6q5Ow/uzbBdedaVK9IkLYyrZ+FDhkCvTIzSoz928i4xChduhkdna28nob2
-	zGI5T3SK7fNzCKSNPolWfDJohvu4pb1taNXXQ6kVRHOGIEtXf6ONEy+2xLKsH3R9bK/kG5lPCp+
-	DLYeKkJArGdNlm07VAcwFudY5qlxZttL2bB30hD+dgHYaqC/EhXvPjdiuxkMNdJL8brbbvnr60r
-	FZBaikRWS7O3lEuQVIiSmo0Qhq8OaeVwzxmoIRIfBCVJxIMQiiARanPy4ecJEua9HrJ+Ugxl40s
-	PAyLSdhkBXJGcjbHJLjnzE0GSAfQqxlZ3uspIhb1TqudYRH+nmwbd/O0rzlVUEvXw7XDyCRaSeQ
-	6QdoUsuWvt9iKQVENF2XfMG/yeJlWLw==
-X-Received: by 2002:a05:622a:578c:b0:527:8770:8a51 with SMTP id d75a77b69052e-52787708be8mr5190631cf.47.1784646608705;
-        Tue, 21 Jul 2026 08:10:08 -0700 (PDT)
-X-Received: by 2002:a05:622a:578c:b0:527:8770:8a51 with SMTP id d75a77b69052e-52787708be8mr5189951cf.47.1784646607824;
-        Tue, 21 Jul 2026 08:10:07 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.223.174])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49564011868sm88085495e9.3.2026.07.21.08.10.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jul 2026 08:10:07 -0700 (PDT)
-Message-ID: <8fa3cdf1-dba5-41ad-9b1e-dc5f77bdc284@oss.qualcomm.com>
-Date: Tue, 21 Jul 2026 17:10:04 +0200
+        d=1e100.net; s=20251104; t=1784646878; x=1785251678;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=0NzLnpEpcxO5DD6T26b2jUHl7f+urYYWu7UR8jPYSDY=;
+        b=CnQ6LNg5mJNtV3mGvECt/RWrwGrbRbNcsx5MX2kJwezJXXfYHO4vNg3bi42yso3FVg
+         OXDCJn1cbNhJzpL0yP/6VrossAintaHqq6ltRwOu78QQJJvUiy9mF5E23ejKf0IA5HqL
+         NeIcuYkVoS2+LgBvqM0/0dDXwm50at0jAsa+KxZ4Tz5MnAmVPicRcL+akKK1EXv75Iz1
+         L/R+ULgqJg8CB1FT9KbuKCcvTesp6xL03NVwhnfehmzov/DhZLtIxFJQSBuw3sVKjZpb
+         GGnOf3Z1odhLpJT7JZkukn1fsPuGz9f+VwoX5zIMpH51KsWLwzojZitSWb2799fnlBus
+         Zfqw==
+X-Forwarded-Encrypted: i=1; AHgh+RotemSSzpFyS94n4U9V0yDqvuduWgt/BtMXl+AkH9T2+auJmhkB22RVF+iNDM4WWZj1/hG0vz2N+X5qVgXvYuW2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuHn9U6eCb9M04jQoL+oKIODx8R0UNZ4DqTW2kx4eFMUsx7qIV
+	mOheD19jXOamiIkVn4SZFPgk+JnvinWf7iMvdD3Pu16UjbfYwZ6B7QG42BLHAhDOY4c=
+X-Gm-Gg: AR+sD11G+6vZFZ1dSKrOuszF3WM/B7mrBVj/5mjzALGQUIyYFzMKo3I5enSHFzY8vb5
+	FB3XBhtqy9ePaa6y1rPAv80WDvdZww4J13ogtIQJNdrmfvStbeyu7Y4OjmHlNMEMoFROTqbgyKb
+	MahYS6Af7qjyolSmtjekacqGkIQjcavHaGThT4gUFmJrOlPBhq6thX9J31JeUGywQ3nCClVpepo
+	IiA8L9JGB9KBQ0QlddIpcBsHr76hBzHFehiL6lxQ7waLrJTPshWXmMb5c0Q4Z5bo7QKYpgnIlZA
+	t+CRQPT4sxDTdWDthteJNxGLp+ZdVh/gPCipFWHg420tmHZlPPpVBSiKux0hZeH812G47by0abF
+	5aC6+W/UugGiHKC8OeyIpYlNFfp3v7Q8lmmo1a4rLPjMv1B9auNFk2zoX9IF64S1X5FugLjHC3R
+	WAOSHB6w==
+X-Received: by 2002:a17:902:f681:b0:2c9:a9c0:80b6 with SMTP id d9443c01a7336-2cf34a48e5dmr210192335ad.34.1784646878053;
+        Tue, 21 Jul 2026 08:14:38 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:d5fc:59b3:7d06:7bd9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf3448ef6asm78278065ad.9.2026.07.21.08.14.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jul 2026 08:14:37 -0700 (PDT)
+Date: Tue, 21 Jul 2026 09:14:35 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Bjorn Andersson <andersson@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v5 REPOST] remoteproc: imx_rproc: Invoke the callback
+ directly
+Message-ID: <al-M2xoMM9P_DKK_@p14s>
+References: <20260721-imx_mbox_rproc-v5-1-6386a2cf8524@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: eliza: Add fallback compatible for
- ADSP remoteproc
-To: Abel Vesa <abel.vesa@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20260721-dts-qcom-eliza-fix-adsp-binding-v1-0-3a0b03af2ec7@oss.qualcomm.com>
- <20260721-dts-qcom-eliza-fix-adsp-binding-v1-2-3a0b03af2ec7@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20260721-dts-qcom-eliza-fix-adsp-binding-v1-2-3a0b03af2ec7@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: vHiOGFa8PPTQsLlot_4ld3awV78RcRIy
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIxMDE2MCBTYWx0ZWRfX1q49U3eBq8BZ
- ADv9snFvz539evy17yWdauMpmgGeNqc6oqu2/eOcjOebNF8giE6TsjF2ZDrfUw1OlEOmhWBj7r2
- tZ5Lfjd6s/phmg9lN3PTOphr0t0wiSU=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIxMDE2MCBTYWx0ZWRfX+acoO7lmqTBd
- gbFGNX4b/XLaIaFp+IKRr60kA6dnjtIATCPy2Zk69B4BXGKIBq61NDZPD3aw8KRugf8USbm7wG8
- a7zZZIFm+OmcUhMj4Ud/bqtWwcakYMHAqxCFWUfpigFwuniZwAyZFtClq8EjuO1YE7UnQddPzdd
- i+5oqNYOztUvwXoIT5gVCpFxCO+omLVP42hh7Lq8NgXQURoXEhtW1xfKWIAumBVjhteZaCGCL/3
- qLm0aHWvI5rRpxr0AtW5tq+uxWqze7knn9NeAEWfWSszgCaNg2FSzI5hv9RvwbNFx1XfXAfdzav
- mmZl8QopMtpkkKjpt+KOtFyX7l5ijSYSX3hZ9eM7S4W334jd/1zHugTcyEeeM1lo9xtjIBrCjJ1
- dVDbCm4usajqo6F8rQGc63xKMahf87PuKtu7GmG/p2XGLP6w7NTSPHu76WejCYJfsHe51q8Z3E9
- q9WNgH63qsgp8KpP9FA==
-X-Proofpoint-GUID: vHiOGFa8PPTQsLlot_4ld3awV78RcRIy
-X-Authority-Analysis: v=2.4 cv=Cr6PtH4D c=1 sm=1 tr=0 ts=6a5f8bd1 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=N6niishs+lR9UBL1FN3Qrw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=pKSKXMcIEd6FydBdNeAA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-21_03,2026-07-20_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 clxscore=1015 suspectscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2607210160
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260721-imx_mbox_rproc-v5-1-6386a2cf8524@linutronix.de>
 
-On 21/07/2026 13:35, Abel Vesa wrote:
-> The ADSP found on Eliza SoC is actually fully compatible with the ones
-> from SM8750 class. So add the SM8550 compatible as fallback, just like
-> the rest from the SM8750 class SoCs.
+On Tue, Jul 21, 2026 at 04:09:06PM +0200, Sebastian Andrzej Siewior wrote:
+> The imx-mailbox driver moved the callback invocation into the threaded
+> IRQ handler. This means the callback is invoked in preemptible context
+> and there is no need to schedule the kworker for the
+> imx_rproc_notified_idr_cb() invocation.
 > 
-> Fixes: 88ddafb01ec0 ("arm64: dts: qcom: eliza: Describe the ADSP and USB related nodes")
-> Signed-off-by: Abel Vesa <abel.vesa@oss.qualcomm.com>
+> This was tested with the rpmsg-tty driver on imx93.
+> 
+> Remove the workqueue handling and invoke the imx_rproc_notified_idr_cb()
+> callback directly.
+> 
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Jassi - can you pick this up?
+
 > ---
->  arch/arm64/boot/dts/qcom/eliza.dtsi | 2 +-
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-
-Best regards,
-Krzysztof
+> This change was tested on a im93 board with rpmsg-tty driver.
+> 
+> v4…v5: https://lore.kernel.org/all/20260703-imx_mbox_rproc-v4-1-67b10560a861@linutronix.de/
+>   - Repost
+>
+> v3…v4: https://lore.kernel.org/r/20260617-imx_mbox_rproc-v3-0-77948112defc@linutronix.de
+>   - The mailbox bits are part of v7.2-rc1. This is just a repost of the
+>     imx_rproc driver which is left.
+>    
+> v2…v3: https://lore.kernel.org/r/20260603-imx_mbox_rproc-v2-0-a0059dc3b69a@linutronix.de
+>   - Forward the error in imx_mu_generic_tx() to the caller (new patch
+>     #1)
+>   - Extend the patch description a bit for for "Start splitting the IRQ
+>     handler" to briefly explain why callbacks are moved to the threaded
+>     handler.
+>   - Drop imx_mu_con_priv::pending. The primary handler wakes its
+>     threaded handler. Once the handler is woken, the pending flag must
+>     be set and there is no need to set/ clear it.
+>   - Avoid the double clk_disable_unprepare() if
+>     devm_mbox_controller_register() fails.
+> 
+> v1…v2: https://lore.kernel.org/r/20260529-imx_mbox_rproc-v1-0-b8ffc36e11e5@linutronix.de
+>   - Using correct register to enable RXDB event.
+>   - Update commit description for the "threaded interrupt", "unmasks the
+>     interrupt" => "masks the interrupt event".
+>   - Add a shutdown field so that the interrupt does not unmask the
+>     interrupt if it has been already disabled because the channel is
+>     about to be shutdown.  A possible race mentioned by sashiko.
+>   - Use devm_pm_runtime_enable(). This should avoid a possible race
+>     sashiko mentioned.
+>   - Use devm_of_platform_populate().
+> ---
+>  drivers/remoteproc/imx_rproc.c | 33 +--------------------------------
+>  1 file changed, 1 insertion(+), 32 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+> index 7662ebd9d2f49..e18ae33a5cf85 100644
+> --- a/drivers/remoteproc/imx_rproc.c
+> +++ b/drivers/remoteproc/imx_rproc.c
+> @@ -24,7 +24,6 @@
+>  #include <linux/regmap.h>
+>  #include <linux/remoteproc.h>
+>  #include <linux/scmi_imx_protocol.h>
+> -#include <linux/workqueue.h>
+>  
+>  #include "imx_rproc.h"
+>  #include "remoteproc_internal.h"
+> @@ -115,8 +114,6 @@ struct imx_rproc {
+>  	struct mbox_client		cl;
+>  	struct mbox_chan		*tx_ch;
+>  	struct mbox_chan		*rx_ch;
+> -	struct work_struct		rproc_work;
+> -	struct workqueue_struct		*workqueue;
+>  	void __iomem			*rsc_table;
+>  	struct imx_sc_ipc		*ipc_handle;
+>  	struct notifier_block		rproc_nb;
+> @@ -892,21 +889,11 @@ static int imx_rproc_notified_idr_cb(int id, void *ptr, void *data)
+>  	return 0;
+>  }
+>  
+> -static void imx_rproc_vq_work(struct work_struct *work)
+> -{
+> -	struct imx_rproc *priv = container_of(work, struct imx_rproc,
+> -					      rproc_work);
+> -	struct rproc *rproc = priv->rproc;
+> -
+> -	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
+> -}
+> -
+>  static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
+>  {
+>  	struct rproc *rproc = dev_get_drvdata(cl->dev);
+> -	struct imx_rproc *priv = rproc->priv;
+>  
+> -	queue_work(priv->workqueue, &priv->rproc_work);
+> +	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
+>  }
+>  
+>  static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_block)
+> @@ -1271,13 +1258,6 @@ static int imx_rproc_sys_off_handler(struct sys_off_data *data)
+>  	return NOTIFY_DONE;
+>  }
+>  
+> -static void imx_rproc_destroy_workqueue(void *data)
+> -{
+> -	struct workqueue_struct *workqueue = data;
+> -
+> -	destroy_workqueue(workqueue);
+> -}
+> -
+>  static int imx_rproc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1305,17 +1285,6 @@ static int imx_rproc_probe(struct platform_device *pdev)
+>  		priv->ops = dcfg->ops;
+>  
+>  	dev_set_drvdata(dev, rproc);
+> -	priv->workqueue = create_workqueue(dev_name(dev));
+> -	if (!priv->workqueue) {
+> -		dev_err(dev, "cannot create workqueue\n");
+> -		return -ENOMEM;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(dev, imx_rproc_destroy_workqueue, priv->workqueue);
+> -	if (ret)
+> -		return dev_err_probe(dev, ret, "Failed to add devm destroy workqueue action\n");
+> -
+> -	INIT_WORK(&priv->rproc_work, imx_rproc_vq_work);
+>  
+>  	ret = imx_rproc_xtr_mbox_init(rproc, true);
+>  	if (ret)
+> 
+> ---
+> base-commit: b3f94b2b3f3e51ab880a51fc6510e1dafba654ed
+> change-id: 20260529-imx_mbox_rproc-7d512f5a6f78
+> 
+> Best regards,
+> -- 
+> Sebastian Andrzej Siewior <bigeasy@linutronix.de>
