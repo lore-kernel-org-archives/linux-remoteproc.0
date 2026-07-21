@@ -1,45 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418653C10B1;
-	Tue, 21 Jul 2026 08:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AD400979;
+	Tue, 21 Jul 2026 09:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784624055; cv=none; b=ozI5GtRURPLnmmyynA7YS9Z5xAcJKunk7kUFoeZLkwBkq/Cajq6n3R3rjr7rKkmwRr+IT10rqjU/pcLHmvjyrrm4Zbkd7WsdJbqHPImHORSq+dKUBy7Y2np2aZLvuoK/RJueEa4/9kG2bAiSiQzocPi04aF58zbUiZku+XNHisg=
+	t=1784625776; cv=none; b=Ed8x0Yq84xF1A9yNqvoUSJcp+rMXFECu35SXydTTTllMteUkA/8IOqjtpsOAvreuXxrFAfk9GAqIfYTjSGlLUWZJhbxgWP8pVfTg/YvQi5J96b6tHNU+ecDxYtYPpJkTlqw6DuLmvsky8fSAM7+UOUeQX3DS1sLCmBiHbTpTtCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784624055; c=relaxed/simple;
-	bh=ogdtKDULKivB+pd10MS+cA9ThlYxgoCbhvBxXtoBxhs=;
+	s=arc-20240116; t=1784625776; c=relaxed/simple;
+	bh=Lu5keEFRDwqee3nCJAsX7LDBzrYe1RjtLunYjoaVNv8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfFIvAx8GNHOQP5AbuVg5ueTdRhEzI1mMFdHRK3s8UAnZI9yR64oFsgABghGeJ0Nrd8EJRlPuqOspcgUCPsMhuHspOl46ZwJ386Oqv5+Z01FIvuqYLquxpR4vZ1opoJiU8a1RrTa6bXs5+pG8ZwD1Tr8uV1JU8HwVgqgqYIf/Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgKReqT8; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cb0kw912+LBJnkgj0pTHvYLlWTVMd658xlFwlxUHyDdHoH7V/CP87VFp5i6RbuvfGHLuKg/1VqWUClmYZHbDfvbkFQVoSK1oZ6QR3yr9r3BOqdw7LCwQ+1NhmVfrGdKgGx59AYX1jyP39KcN/MK45v6FmyTfPb97GrbYcS7s/0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwVH6EZO; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgKReqT8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 723F31F000E9;
-	Tue, 21 Jul 2026 08:54:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwVH6EZO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D73EF1F00A3A;
+	Tue, 21 Jul 2026 09:22:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1784624051;
-	bh=QF1yjCwSE6ADGuG48vym8l388SJcmoB7CoDUZDSwGcE=;
+	s=k20260515; t=1784625775;
+	bh=+0fGWALh5ozcq728JJWZQDIb8rxjjGcKn/1h1M0KIHc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=RgKReqT84My5hFok/HIjqth5uFLHqNuLadgyLUsCyXGq/1fAtPZgantSeLWXJhO1l
-	 RIHlkzPg467XrjM77+ABXK6Yp+AW1nrV3SPNW6jX+Izcghv+SrOOEvBrLvCxyn5sA7
-	 gunqvtyGkH1NsvooBzaZIdhPqmLwzH6BlgsjEcQmQRgo8F83gD8LHO1Nt8hcOREXxv
-	 nqtoyunHfkXr2xeWtDj6hS7jtDfkdOdOhXelynAzfkvWzng9C4/qIP3PuZMGJ40lx5
-	 +KuTKAZrf9nDfaXUhkLCOvMZxP+2OI/s46VVg/ZgxkPXktzpQhCwPei8GREfc/cD0A
-	 EbPZYBNEqJHJw==
-Date: Tue, 21 Jul 2026 10:54:07 +0200
+	b=CwVH6EZOdsQpumSciexncfSJ+Deogdm8dZ+1XDoFi/9raTHWV/0VTh/gCyBOO7lsZ
+	 WSeI0gyqj3a6trSzCithf8pyV8W9kMqUn0W7hFGjT/aCvze+X9ou08UxrVrIdtg1pZ
+	 AEzjVqm/fB3owPKMWBiWXrKYgBLhfbaM0zahlT3S5AEzFECJNO1UeeABpbYa+JxX7z
+	 8JMnOZmhBwdAaMSm23O/XbiuanW3g59GXOPF9tGtYOEVyOdjXg1n9fZXWx87RLuGHE
+	 tLchi5tFhFu+U2ViXEchudyw8YH6qvsRro2DRy1V/WTQ395aRYfXRlSmLF55hZSPmi
+	 2TO2a3nXNlOMQ==
+Date: Tue, 21 Jul 2026 11:22:52 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Abel Vesa <abel.vesa@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
 	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Luca Weiss <luca.weiss@fairphone.com>, 
 	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: remoteproc: qcom,sm8550-pas: Document
- Nord ADSP
-Message-ID: <20260721-sepia-kraken-of-authority-a5ff1b@quoll>
-References: <20260709085149.4072181-1-shengchao.guo@oss.qualcomm.com>
- <20260709085149.4072181-3-shengchao.guo@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: qcom,milos-pas: Add Eliza
+ CDSP compatible
+Message-ID: <20260721-benevolent-wonderful-kakapo-ca8c2c@quoll>
+References: <20260714-remoteproc-eliza-cdsp-v1-0-32eb7a1f2c59@oss.qualcomm.com>
+ <20260714-remoteproc-eliza-cdsp-v1-1-32eb7a1f2c59@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -48,17 +48,29 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260709085149.4072181-3-shengchao.guo@oss.qualcomm.com>
+In-Reply-To: <20260714-remoteproc-eliza-cdsp-v1-1-32eb7a1f2c59@oss.qualcomm.com>
 
-On Thu, Jul 09, 2026 at 04:51:48PM +0800, Shawn Guo wrote:
-> Document ADSP (HPASS DSP) for Nord SoC.
-> 
-> The Nord ADSP use CX and MX power domains, so add a new conditional
-> block to enforce the correct power-domain-names for it.
+On Tue, Jul 14, 2026 at 03:24:01PM +0300, Abel Vesa wrote:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,eliza-cdsp-pas
+> +    then:
+> +      properties:
+> +        power-domains:
+> +          items:
+> +            - description: CX power domain
+> +            - description: MX power domain
+> +            - description: NSP power domain
+> +        power-domain-names:
+> +          items:
+> +            - const: cx
+> +            - const: mx
+> +            - const: nsp
 
-Then this does not fit here and you should rather find other binding
-which fits your device. The entire point of splitting the binding was to
-avoid 20-if-then-cases because they are unmaintainable.
+No, do not grow the ifs. Eliza belongs to class of SM8750, so I don't
+get why it was and it is being added here.
 
 Best regards,
 Krzysztof
