@@ -1,280 +1,259 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012034.outbound.protection.outlook.com [52.101.53.34])
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011064.outbound.protection.outlook.com [40.107.130.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD6F46D56B;
-	Tue, 21 Jul 2026 16:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED333B1ECC;
+	Tue, 21 Jul 2026 20:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784649930; cv=fail; b=d+1GiZbRYpYv8Qne26RzE/5zSR8WIrI7CjFmjNOC1gcHmoNAIr48AqDaQqT4qjMJDy26eO+Vmb4Lm92CR9VEU+ExTpripn4F7iTqsxxm4khNtkgH7t3tuxGjrtAysIv38LeIFm5DwZGUDIbB3uCXCFfghsTJX8l1Ntfc1cIAgX8=
+	t=1784666901; cv=fail; b=gC1ts4NzEIzHuZVTR6DXkCkFsY0qFY12Fe5wwa8FD6auyZwLb9tn3s5TBBcPQvtSLR/zoPEkjzOkXQ6EpfDKw/xhZstztIWheBBDZDn17/UeTNAQPgSzE2QU5UiphxRQuOYSQzAx5fgcWhGFXsA5Nz1V6IowNO/wXzZu3QP+H08=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784649930; c=relaxed/simple;
-	bh=oDfmfYOjrDmGiXRpZ0Xx2oV5r0ioASGFEerVjiljlTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=smVb3hZ06r65K7ObUxyu9WhBH15Vj8UhIlYpPZYbs1/6uN3dGQ8DKmTSp6b9ROsEuD5BBO2LjCHsOfEOJRyKdnq6XRB4n+EyYUqIgRx9IGKRBazJ27VIXEI6lKejykum26LmJAXW9LksIshwNNCAXC0d5mAjXdNtPrTDhgdGmz8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=epPgJ66s; arc=fail smtp.client-ip=52.101.53.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1784666901; c=relaxed/simple;
+	bh=RjFnSPR+8+r+QFiJnHrLIDaSp8m1gDCwilV6nCh7Sys=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=PGVyz/WBsNCpDD8Ql1+taR5zBzuTlZBuA3g29K1UU6IPZsWMS1+DtdBNmlhtKjKMc6B/ucXWVxsRLXnruLpKjep0FPFxx32RQ8iryNqaCN+lYAjp0ZaVwuJJPACb9ISZpjCsgFXor3QaF90dMZ+wKFa4G5S3lQgpRhSm2HmGLpM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=is6+Yr9o; arc=fail smtp.client-ip=40.107.130.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="epPgJ66s"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="is6+Yr9o"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nAsszuUA/YM8JQvuIA6ts73l4WljFtqBsB2PQuAMkXGwtyBYqZdGPcQpHTILc8EH3psvvoCEO0HamRMlrKGAfXoB/VLvQcbDNm4ymInhtJvEoBxjVpeAbkfvs5w4Tnj29SK9a/3xMad7DA5UYXDUkA5cJoCz1w/XAR4o+zIdfJWcasE5Vt9ahav3L7JwpQzXUktXRsxUUNmDsCyTtFF33eTgSF7x25Y8ERJao5IVcHxrpre7A8m7uGTp2LdrCN+oAAbg01nyDCyGFvsdMkkGzW97vKf/00MAH/PIDFhapxyaxSbHLQcJan8fcWpANRwsGsSGSUpJ4N4t0T1Nn2dCZQ==
+ b=gO+RkIna1JToXgOZdtCzQ0yItkrRspGKvlaHrR3o2qpO9zplUU10L4CE6vB25nb1o264P0S2VpJjgq+Ru57pwhHJm/V4gBZbIBEIYp7BXdKpFZb54Yj05I1AjadpPVOKdO5WXyr2WsQOid7sqA3J382Yg9fDOqtgyjwn6hTA4402/f6br7YY2jrqguq21fyxpK3dFQPIfmX2oi8iNApITa0KrSnYVTD43uU6dH0M7keitPbZ5fvPR/McAAipx7eP/3WyPv5yk9uTohGw660SVuiyAEDT9EpfS1JPl3mx++yhgKYLAJ5pAlb9XWlWUnarZNy3Jw9/2DiKZJSal4C1Ag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2ZkAVrGZ8fm/FJ/NHaCQiM6uDGWBlWsg8eVFbRsjTfQ=;
- b=QyI6bUEzZNHV5yf+oGiu3xSzuY34hAwjAfvKEeJZJcfWZkFuus9D6xLRjFH/GvKAANJVJnb9OxsGjsvUcEnDqclpx7MqJ9LOkXi/QuXjF6kdk/htMSHdfvdDKek0Inxnx8EEO1RwtGG+5WMkTJQvWav0iFRDBE3BcGyUoJo9NJFiW22uTUl+xm1W7KZZll5o3u+dmUHY+MuGvzqoykbqKKoqMRSWFhZSmaHI0skGhqd0GxBUxG5DEZxzeFP0HozQQeIX64npqPrr57jI0v2lSIcF8wc2xtN58HzP+xh5V4ISPFN2OOKtCH2+RCTb7gSgqny6+9m/MyyYfzmsLuEzmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=J3UNPgPIaUOks1O8aeL/wb1Z44+mt7SyMd3JXMTju+Q=;
+ b=OClSevf0IF3MY6BigU4/Pikdy9Umpvyna45iyEp1b7CYuwG0fIHVSkLRhMIB++wkE3Un9p505uPjkFPx6x9t8j7KfOy+HaQtu07VQVD96XKe8OA2aCU2psKnCiuh4cGjLyMqS/7x2W9uzvA4mdV9+I1SnhfZawxOW69V8fNQu3Q1ZbFCQTJEUs8tBXh4DIKfu82dlAPPK98p7xgAdIShhuGsMuYCzFIPygGtztX7n9CXkVFJzn035jCqHDrPBg5+hPV6hKdUF2OMPkBSsRnHgofVs8cCUFt3ykYj0gMjtvc2Mv5DADXpA+g8t/J5w6P2GgPIS6yvghyLuEpB6ADmLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2ZkAVrGZ8fm/FJ/NHaCQiM6uDGWBlWsg8eVFbRsjTfQ=;
- b=epPgJ66sJwLgPGBCKUqHJZQ6Nm/O+qnGXGDgS8p/ZRwBDgDIUBpmk43mx4wRxjZktrlu3yXXfDmk03dae+CMprPwiTtJTJly0vdNYko22fLRIpSKv4tJ/l8u2eUmb1AORuVQY4y+2GX8/j3i1C0xiIcmL6yKDbKdAlPvtR/UUrM=
-Received: from PH5P222CA0001.NAMP222.PROD.OUTLOOK.COM (2603:10b6:510:34b::12)
- by CH1PR12MB9648.namprd12.prod.outlook.com (2603:10b6:610:2b0::15) with
+ bh=J3UNPgPIaUOks1O8aeL/wb1Z44+mt7SyMd3JXMTju+Q=;
+ b=is6+Yr9o5Wo467/8uCAyUHV4yK3ghWY9URzKNHjhLE54FKEhF5BAEsalYBggyU8uH1/ihHJmAO7wEq/rCeGN/jAyTdjtv3zOydVhQZBzMCOFi02TeOR9OUHBE+gBfmIBGpaDb53LwD6KO7OIeY6RqArQv8ktJPqHmXHxHk8uuJ01A5rsVRG8od4hiORfFvWwmaYeKgQB/vznQUnEtLopLjbRXt8uQ3AB+W8oxl/FTKf95hGOzhZXFSAxONJo5w5Qq5jPbJnqrQ4Mr3LjWXukWjF15uiLtXEwmDkCtXc1Q2lBatV04QyHdJbbyGu982JcrecUhnszd1ufQncfDerqZw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from VI1PR04MB7135.eurprd04.prod.outlook.com (2603:10a6:800:12c::22)
+ by DB9PR04MB8284.eurprd04.prod.outlook.com (2603:10a6:10:25e::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.223.10; Tue, 21 Jul
- 2026 16:05:22 +0000
-Received: from CY4PEPF0000EDD6.namprd03.prod.outlook.com
- (2603:10b6:510:34b:cafe::9e) by PH5P222CA0001.outlook.office365.com
- (2603:10b6:510:34b::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.10 via Frontend Transport; Tue,
- 21 Jul 2026 16:05:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- CY4PEPF0000EDD6.mail.protection.outlook.com (10.167.241.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.245.5 via Frontend Transport; Tue, 21 Jul 2026 16:05:21 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 21 Jul
- 2026 11:05:21 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.41; Tue, 21 Jul
- 2026 11:02:19 -0500
-Received: from [172.31.134.241] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.41 via Frontend
- Transport; Tue, 21 Jul 2026 11:02:18 -0500
-Message-ID: <a37bb772-2b27-44fa-9bf1-30707c419141@amd.com>
-Date: Tue, 21 Jul 2026 11:02:13 -0500
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.10; Tue, 21 Jul
+ 2026 20:48:08 +0000
+Received: from VI1PR04MB7135.eurprd04.prod.outlook.com
+ ([fe80::322f:adc4:8d65:2ba4]) by VI1PR04MB7135.eurprd04.prod.outlook.com
+ ([fe80::322f:adc4:8d65:2ba4%5]) with mapi id 15.21.0223.017; Tue, 21 Jul 2026
+ 20:48:08 +0000
+From: Shenwei Wang <shenwei.wang@oss.nxp.com>
+To: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shuah Khan <skhan@linuxfoundation.org>,
+	linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-imx@nxp.com,
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	b-padhi@ti.com,
+	Andrew Lunn <andrew@lunn.ch>,
+	Shenwei Wang <shenwei.wang@oss.nxp.com>
+Subject: [PATCH v15 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+Date: Tue, 21 Jul 2026 15:46:43 -0500
+Message-ID: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0075.namprd11.prod.outlook.com
+ (2603:10b6:806:d2::20) To VI1PR04MB7135.eurprd04.prod.outlook.com
+ (2603:10a6:800:12c::22)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH v5 3/5] rpmsg: virtio_rpmsg_bus: get buffer size from
- config space
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, <tanmay.shah@amd.com>
-CC: <andersson@kernel.org>, <corbet@lwn.net>, <skhan@linuxfoundation.org>,
-	<linux-remoteproc@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20260710192831.3440427-1-tanmay.shah@amd.com>
- <20260710192831.3440427-4-tanmay.shah@amd.com> <ale0KIu6hXNvN0q9@p14s>
- <66e4a85c-be14-4bd8-8328-bf17d2437994@amd.com>
- <CANLsYkyL8_YSb39QqbC0Z+udahMtCV1e+OeoKGvmGSxQ6h3_qA@mail.gmail.com>
- <c8f62152-fb7b-4771-87d7-9420c7e3f452@amd.com> <al-VRUCcl6NWzQkY@p14s>
-Content-Language: en-US
-From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <al-VRUCcl6NWzQkY@p14s>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD6:EE_|CH1PR12MB9648:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4c9db08f-aca3-491d-82d6-08dee741de20
+X-MS-TrafficTypeDiagnostic: VI1PR04MB7135:EE_|DB9PR04MB8284:EE_
+X-MS-Office365-Filtering-Correlation-Id: 42bab1e9-cac6-4950-7c20-08dee7695e48
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|1800799024|36860700016|82310400026|11063799006|4143699003|22082099003|56012099006|18002099003|3023799007|6133799003|10067099003;
+	BCL:0;ARA:13230040|19092799006|1800799024|366016|376014|23010399003|7416014|18002099003|11063799006|3023799007|10067099003|56012099006|921020;
 X-Microsoft-Antispam-Message-Info:
-	tLKL1kzBAwF701dHelBb/RtYEisACDqaD3HN7x5ulrLRXj4JhkvkBAnISuEJZyUuVFtIne5DHQvaRI8Vjj9pnuQX1jZChvuYr8HFYxk4mSvHruDL1Fq2wwFwfV2Mupapg+oEVHQ5zMoD99DJBof/os/Kl7IefBpd/SfoWyXTcF73OPW+ukj5Eu/M/uSY1luzHgVKu2yViOVOJnQcTGAtthvpYbGgYFoV+pQN50QH4dwpWavzMvR12LoXCXn46cMshxgB4SwLsjX6vzXx3/f89MGd71nXPtvRmkWNjYbLSVIn5Vd+ATI2FPIXudiYdKiNkc8O3apjbuCF72JzRm+Fa/ik7rpvEZT7I186QEi4BLirsbk4ewzFpzfOogmq3YvRu1/+JxFjTXgsKnS7FuEv9UgIo8vMKe7qVXLZ3mJ9eVSQcVH9iZ+0IWeO3V4tzU3TAQj1X7ID+ZW0iVV02qlOxp+XKLabVuIH+9smw7NumbBpnW1GSy44fq/MDwQktTP3OsvFrflqCW5mgpqObHozxraOlJ9u/zERBwPLnI6fepe2J6wTsMd0ksNXhushp7VRqxzh9lpaxlcuMG8sWKatzt6ghl5Lua9NhmMzbM5DrE3SS51BN+2esE43ql28tBMPT2ZFh7hDVD3kEgp1XXDWuyU6yDdpMwZILd+pJsJPxEUOnsqRm6RZBfJ3Ruci3sa7n7K/vNDmvYPygjPclFpykQ==
+	X6C4FGo4UN3ST/TKZItAV+09WjFik7sxAW7pQ0FaTt/bv7J7bsTB4I/GOch9OE1dhnm1LAnuury/IxIe91R4fdch7ZOXy0QbLRluo06XxVIZdALU8DPzyfrHHpvElZEsJ/e4ZCiz1HW8qsh3NXdOUOGBI+He7IZRWBlSKLpn5j7zvGxxrYCRLZJvWyfPz9XjXKJ3Eon0KgU1zP/UeeYmLn50wQJ+ZcJTEIFAsZ6+6Jc5BNyC2BXZvQtCbR1vDCDY7RrJqDonANieV29mvW/HZqOI2iWxh8/RfjeHnRlSk3TA/S5BVJd+mp9lBhi0zUENlfSAL3immR2/GNezRjKUjto5U4EdOYydVJ9XhGrkI+wh62ylgPuuVFyotcT6A/phjRL9nEEanfz142j7MOVfxMI9pvdaGHuvaaL5u5O7b1u6M3Q7ej+PFCPuKUSLf4ami2u0UGwyEFW87ofdgfO98ly4QCaXC3jT6uo9KKsfipQdqpPDS3hgXdtiWNrrGJ8BrxtzNzgA7zlSXON++h3LtBckyeqVQHVjQEvks1FUgaS9s6KTDkIWEqVBlg4nhCW5UFYLN11n5uPBXuf9OGr4sJCBaN6ZfWFV6igrQ1YxuOgu3mr5xJwqD951ehJ224vtN2nSEAF5Zkzw6TEZxFVhZRIpL4BxHcUbSCY5NL81V2h5iji04lXI0DRId/vDTuarAmQ/PErX3vYxXSyFM5vNlw==
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(23010399003)(1800799024)(36860700016)(82310400026)(11063799006)(4143699003)(22082099003)(56012099006)(18002099003)(3023799007)(6133799003)(10067099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB7135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016)(376014)(23010399003)(7416014)(18002099003)(11063799006)(3023799007)(10067099003)(56012099006)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	p2pwyctQmRiMJj2CVwhQW3roNokkWxP6ahIuof8flBDO/wICPb1V1rnT0olIirvm0WCxj8467VMlT5w76dkKmDJUQV7FYh/3ZrieE53mkEJ00Sw57jiipQgkCvvg4iJyn0WytknNBgh5vWug9Ci8hTkO4Iu7Nsv3A1sN0jIc9vkW0hblaiUXh+v1wWY3HjRCgH7cAfYYkEvNTD5+1x9kverYMot5fIslNcEj+QAMqIf1A+bC2Pcup8I0S9gTXQAJGI6+aUYQ3b/KgesxhgzNCjT5EnLCKZon++xzamrwIATBhuvtkC1e7OnFQD/pMBm7s8uC6x7oKUFW2I3vXI8umiG/REkQ5Ugt+xuCrmbspkBtlkE7yAiwMijGPYzKCHy24Tukp+RRGpQ9zBq+xUSv6pzr6NlLgxvr9XELbJLsjpZoyk2Qc1uSCznlV2oOBlgq
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 16:05:21.7875
+	=?utf-8?B?bmZVU01XTlRnQUxCRS9vaS92aVFhaU0xU3o1Z3NSTXVMeUxPM1ZoYUVkdXhR?=
+ =?utf-8?B?T0RJNndvYnVWKyt2QmpEYitGeFlGeWEwYkNnUkF2bHRUZlQ1M3U0Um5kcm5s?=
+ =?utf-8?B?M3ZaK1FzVWRERHdWYmxYVDkrMlkzYWFIUXJrK2Q0NEpRdXBpSC9ENWFRUFlW?=
+ =?utf-8?B?dWtJbTlrMzh5bHVKdVJnTTJkN1IxcHVCdmJLM284UmNMaUFRdWd6Q3J6a2RK?=
+ =?utf-8?B?OXVpa1Q2TUlNR1lDUFlyOEgrTzhyTU9UYjhraEtLQWFNYkh2VDdMdmlTK0o1?=
+ =?utf-8?B?Y1ArcXNwbEFiNXJkRGtPVDVpd3JpYjZXc2FjdDRKM05OTXlKbnBFdk44Z1Uz?=
+ =?utf-8?B?VGZnaGZWbllOMENmMTY2UFYxWWZheXpmM0NZSDVxZHc0QzhLdVFlQmJRdkZN?=
+ =?utf-8?B?VHpnZ3UwbldsNlhxbVdFTTBYQWJLVFFmUmVGa2xLYlRseWhWZjNOMDhvTFlw?=
+ =?utf-8?B?MUpaeUNieFJWcE5QU0xUYTFxOGJmYWlucTQ2Umg1M3BOeTZ4RitLbUY0NWRO?=
+ =?utf-8?B?YjB1OTJiVnhNSDVhZTF1TE5kKzkvTVFmcE9rRUNKVVRtZHpjdmQwM0hkeU8r?=
+ =?utf-8?B?Ukx6WVZURWhTWGxMc2NNeDJwUm1NVnhweEY0SWpHT2QvSHB3Q2FFcjJLVGFk?=
+ =?utf-8?B?T0kwZEt4WlFGN1V5ZmpvbHo4YTk0SDBtM3FXcXdraHYyZEJ5SE9oMUtib3Fy?=
+ =?utf-8?B?M2F1emduWlhBMTVsQTg5bjZiQmZSYTd5ZGcwM3FBYXpnNHBjRlN0N0toZ1NC?=
+ =?utf-8?B?R3VVbVdDSVJ0QVJoS2IzM1BMVjZvR0ZPQUtPUkZpMytWbDQ5TWI5YVFBUjRD?=
+ =?utf-8?B?bVVhcm8yQk5kZUo1bXQzYW5SdmRaRU5QRlZjN01SRjZoOG94TlpSbENPbGFs?=
+ =?utf-8?B?Mk5Cd0w0ZkpVd3Q0Wm9MRjQ5QmNDVWJaL0xyQ05yN1hWdFREL0dPU0tFbXUv?=
+ =?utf-8?B?ZThuMlgvbjIrNmtVZjlTdmFCZ0xPUG5mem5PMXpPZm5pQjJRZ1pNV1lNQkU2?=
+ =?utf-8?B?VUUvNzladmtBanN4Mks5cC9PSE0zdlRmL1FmQ3YrN1Y3b1V3WGorSUtJR0Ir?=
+ =?utf-8?B?dXNkaENRYUFjVkV2S0hSeEwyWnVUYkRQYmpjSSsyT1M4Mm1hajA2ekNhak9q?=
+ =?utf-8?B?S0srR2RBK0lZRnNZTnFBbytxemdncjU4clNhNVVodG5PcU1Udmw4WGY1K2Vt?=
+ =?utf-8?B?UjRVVzFyemszUktKKzZha1QvaXdRaGRidGVLaWNaalhJZmVyMEoyb3BNRmFy?=
+ =?utf-8?B?YTlUQ3VRNStLVXpYRE5rdUJZcHFkeDhuSG91YitpVjJrQTZPS0JMMmF1RkNK?=
+ =?utf-8?B?d2srQ0crbUpKaDBnelFJdU1tWHNuZlhlUmxEZjZMV2k2ZURZWnZaY3p2YlU0?=
+ =?utf-8?B?TUl4RkpXQkFoK1BvaEZCcTNQNDJCTWxQZWJLUmFZRk5sTmgyS00zYzVZdW1H?=
+ =?utf-8?B?bkNXMk9uRDVzWmJ2a1dkMkRGRm5WQ1V2UWk5dVNubzYzUUJ1LzFyQ3dBV3Z5?=
+ =?utf-8?B?WFl6V2tkMjNtckhBVlR1V2VOOUhLT0R6MTUwQjJvNkx4eWJhV1Q4NjJQTEFt?=
+ =?utf-8?B?QlNteGNqakg0RSt1OXBkTkVXaG1sTHZaTm9Mb1drS25LVFFORnQxNUIxZnBS?=
+ =?utf-8?B?R3VGeVhONS9iSlMyVE9TVkJrczZWUVMrRHFOUkJOY2JNK3BXODRrODVDMFlo?=
+ =?utf-8?B?QlhQYTJBbEQ4ZE0rRC9ZUmw2SDRLZVd4NDZOdDZCZGNyWGtUQkRUQTN5ZUp3?=
+ =?utf-8?B?WjhjMXdxRG5GZFlOd1diMHBDNVE2TURUZkZMZWorMllVbXV2V1ZGdUdJUDNz?=
+ =?utf-8?B?eXdFRko5WEhqU3VieXRlKzVpRFU3cHViV2tLWTR4Tk1iSVQ4QUthNEgrdEdZ?=
+ =?utf-8?B?alFkdW11eUJRTlhLSllJRmpRTWhwSVA0eGhCS3g2d3lpNnZLNnMya1JSMnpJ?=
+ =?utf-8?B?c2N3VFR3RUlvYjZxSEVnTlhoZ2drbVRMVVNxdGEvZVNSd043Q0hyVzRCNWR4?=
+ =?utf-8?B?NHhubjFscGVwZ1F2TEFaV08vZzhvMWZKMXdHbGowM1lZQVA0RUdkRklNQkRF?=
+ =?utf-8?B?TDJpYkpWTkhZQU4vUGtGTy9CN2p2WGNLR2prbWFFcFVFQVcyUXpaeHVHOGE1?=
+ =?utf-8?B?MWM5L2F1N3ZNZUI5V2xTT2ZqamNvbkxKOVgrQndEK25YUHVWRnlqc2dSQmEv?=
+ =?utf-8?B?ZVNIdXJjVmZYV3ltSEVRWDVuam5uVmN2OVIxQk9FZnYvZzJoUC84Z0MzMWts?=
+ =?utf-8?B?WHFIQ1lCdjl3OGZSUEQwMTlaSFVnbEcwWUs1QTd3V2NvbzRpcldoWEJxdGNB?=
+ =?utf-8?B?ZWVaeElaTmxPUGdQeDFoSGQyWlJXMTZKUnhCSzcrWVhaODF6L1lqeE9vbnNr?=
+ =?utf-8?Q?xRHIxjgCa4YIITWiJEPi7NP0xENkqmuNJfdbv?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42bab1e9-cac6-4950-7c20-08dee7695e48
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB7135.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jul 2026 20:48:08.2172
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c9db08f-aca3-491d-82d6-08dee741de20
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD6.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9648
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fX8l01pPAJngcjbQhWDUUgs6ikH1ImYO5dnk0F006a1Ztmylw5JMwkjm4vpbvG8K67BORLOSl4Q+pD8plZATpr7vm7g5P1ZpoRwfpG7R1XO09D3pkVq5Mon14SfGUBhw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8284
 
+Support the remote devices on the remote processor via the RPMSG bus on
+i.MX platform.
 
+Changes in v15:
+ - Update Kconfig description per AndrewD and Julian's feedback
+ - Enable the GPIO driver even without a DT node per AndrewD's feedback
+ - Update gpio-rpmsg.rst per Mathieu’s feedback
+ - Code cleanup according the new gpio-rpmsg.rst and sashiko-bot's review
+   feedback
 
-On 7/21/2026 10:50 AM, Mathieu Poirier wrote:
-> On Thu, Jul 16, 2026 at 11:12:55AM -0500, Shah, Tanmay wrote:
->>
->>
->> On 7/16/2026 10:48 AM, Mathieu Poirier wrote:
->>> On Wed, 15 Jul 2026 at 11:28, Shah, Tanmay <tanmays@amd.com> wrote:
->>>>
->>>> Hi,
->>>>
->>>> Please find my response below:
->>>>
->>>> On 7/15/2026 11:24 AM, Mathieu Poirier wrote:
->>>>> On Fri, Jul 10, 2026 at 12:28:29PM -0700, Tanmay Shah wrote:
->>>>>> 512 bytes isn't always suitable for all case, let firmware
->>>>>> maker decide the best value from resource table.
->>>>>> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
->>>>>>
->>>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>>>>> ---
->>>>>> Changes in v5:
->>>>>>
->>>>>>   - fix documentation about alignment of the buffer size
->>>>>>   - change version field from u16 to u8
->>>>>>   - remove buffer alignment check
->>>>>>   - Separate buffer alignment vs MTU of a single buffer
->>>>>>   - Use buffer alignment only to get next buffer address at alignment
->>>>>>     boundary
->>>>>>
->>>>
->>>> [...]
->>>>
->>>>>> +#ifndef _LINUX_VIRTIO_RPMSG_H
->>>>>> +#define _LINUX_VIRTIO_RPMSG_H
->>>>>> +
->>>>>> +#include <linux/types.h>
->>>>>> +#include <linux/virtio_types.h>
->>>>>> +
->>>>>> +/* The feature bitmap for virtio rpmsg */
->>>>>> +#define VIRTIO_RPMSG_F_NS   0 /* RP supports name service notifications */
->>>>>> +#define VIRTIO_RPMSG_F_BUFSZ        1 /* RP get buffer size from config space */
->>>>>> +
->>>>>> +/* Version of struct virtio_rpmsg_config understood by this driver */
->>>>>> +#define RPMSG_VDEV_CONFIG_V1        1
->>>>>> +
->>>>>> +/**
->>>>>> + * struct virtio_rpmsg_config - config space for rpmsg virtio device
->>>>>> + *
->>>>>> + * @version:        version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
->>>>>> + * @size:   size of this structure in bytes.
->>>>>> + * @rpmsg_buf_align: alignment in bytes for each buffer. Must be a power of
->>>>>> + *               two. If 0 then no alignment will be done. This alignment
->>>>>> + *               will not decide actual size of the buffer but will be
->>>>>> + *               used to decided the start address of the buffer. The
->>>>>> + *               actual size of the buffer can be different than the
->>>>>> + *               aligned size of the buffer.
->>>>>
->>>>> Is there really a need to have a buffer size different from its alignment?  It's
->>>>> not like the (small) delta between the buffer size and its alignment will be
->>>>> used for something else.  I'm fine with a buffer alignment requirement but in
->>>>> those cases, the firmware should set the size of the buffer in accordance with
->>>>> its alignment requirement.  Otherwise, the complexity needed to manage the
->>>>> discrpancy between the two yields a driver that is hard to maintain and prone to
->>>>> bugs.
->>>>>
->>>>
->>>> I had the same concern before. However, following example changed my mind:
->>>>
->>>> So, a single buffer size is the MTU size of a packet for the protocol
->>>> supported by the firmware. Now that can be different than the aligned
->>>> size of the buffer.
->>>>
->>>> For example, the higher level protocol (not rpmsg) has 430 bytes as the
->>>> max size of a payload. However, cache line alignment is 64-bytes. Then
->>>> in that case, the aligned buffer size is 448 bytes. But, that doesn't
->>>> mean we can say protocol's MTU size is 448 bytes. If user end up
->>>> treating MTU size 448 bytes and use space beyond 430 bytes, then the
->>>> higher level apps might discard that data and communication may fail.
->>>>
->>>
->>> How is that scenario different from today's 512 byte buffer size?
->>> Most users don't use all 512 bytes and we don't run in the problem
->>> described above?
->>>
->>
->> 512 buffer size is hardcoded, so it is enforced on the protocol by the
->> framework. But by allowing the configuration of the buffer size we are
->> allowing the protocol to decide what the buffer size should be. So, when
->> user request the buffer via rpmsg_get_mtu() API, then that should be the
->> original buffer size which is expected by the protocol, which may not be
->> same as the aligned buffer size.
-> 
-> Regardless of the buffer size, whether it is set to 512 byte or some arbitrary
-> value by the remote processsor's firmware, there is a possibility of a
-> discrepancy with what is expected by the protocol.  Right now rpmsg_get_mtu()
-> returns 512 regardless of what a protocol uses.  The only thing that should be
-> important to the protocol is not to exceed that limit.
-> 
+Changes in v14:
+ - Update gpio-rpmsg.rst per Mathieu’s feedback.
+ - Align the rpmsg-gpio driver with the revised gpio-rpmsg.rst.
+ - Modify rpmsg-core to enable prefix-based matching of RPMSG device IDs.
 
-I think I am missing something. Are you saying that buffer size can not
-be configured greater than 512 bytes?
+Changes in v13:
+ - drop the support for legacy NXP firmware.
+ - remove the fixed_up hooks from the rpmsg gpio driver.
+ - code cleanup.
 
-If the higher level protocol (not RPMsg) wants to use 4030 bytes for
-single packet payload then that is what the MTU size should be. And so
-the firmware will configure 4030 bytes as single buffer size in the vdev
-config space. That is why alignment should be treated separately.
-Because it is not equal to payload size needed by higher level protocol.
+Changes in v12:
+ - Fixed the "underline" warning reported by Randy.
 
->>
->> If for internal management we want to treat buffer size = aligned buffer
->> size, I am okay. But rpmsg_get_mtu() must give unaligned buffer size
->> which is expected by the protocol.
-> 
-> I agree with the first sentence but not the second.  The only thing protocols
-> should care about is the start address of a buffer and that its size is
-> sufficient for what it needs.
-> 
->>
->> Thanks,
->> Tanmay
->>
->>>> The alignment field is used only to decide where the next buffer start
->>>> address is to ease cache operations.
->>>>
->>>> Sure, we need to maintain this complexity, but I think it's worth it.
->>>>
->>>
->>> The same as in my previous email to Arnaud applies here - is this an
->>> immediate requirement of something we think may be happening in the
->>> future?
->>>
->>
->> IMHO, vendors will use it if the feature is available, otherwise the
->> need to optimize alignment is not easily encountered.
->>
->>>
->>>> Thanks,
->>>> Tanmay
->>>>
->>>>>> + * @txbuf_size:     Tx buf size from remote's view. For Linux this is rx buf size.
->>>>>> + * @rxbuf_size:     Rx buf size from remote's view. For Linux this is tx buf size.
->>>>>> + *
->>>>>> + * This is the configuration structure shared by the device and the driver,
->>>>>> + * read when %VIRTIO_RPMSG_F_BUFSZ is negotiated. The fields are laid out so
->>>>>> + * the structure is naturally 32-bit aligned.
->>>>>> + */
->>>>>> +struct virtio_rpmsg_config {
->>>>>> +    u8 version;
->>>>>> +    __virtio16 size;
->>>>>> +    __virtio16 rpmsg_buf_align;
->>>>>> +    /* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
->>>>>> +    __virtio32 txbuf_size;
->>>>>> +    __virtio32 rxbuf_size;
->>>>>> +} __packed;
->>>>>> +
->>>>>> +#endif /* _LINUX_VIRTIO_RPMSG_H */
->>>>>> --
->>>>>> 2.34.1
->>>>>>
->>>>
->>
+Changes in v11:
+ - Expand RPMSG for the first time per Shuah's review comment.
+
+Changes in v10:
+ - Update gpio-rpmsg.rst according to Daniel Baluta's review comments.
+ - Add a kernel CONFIG for fixed up handlers and only enable it on
+   i.MX products.
+ - Fixed bugs reported by kernel test robot.
+
+Changes in v9:
+ - Reuse the gpio-virtio design for command and IRQ type definitions.
+ - Remove msg_id, version, and vendor fields from the generic protocol.
+ - Add fixed-up handlers to support legacy firmware.
+
+Changes in v8:
+ - Add "depends on REMOTEPROC" in Kconfig to fix the build error reported
+   by the kernel test robot.
+ - Move the .rst patch before the .yaml patch.
+ - Handle the "ngpios" DT property based on Andrew's feedback.
+
+Changes in v7:
+ - Reworked the driver to use the rpmsg_driver framework instead of
+   platform_driver, based on feedback from Bjorn and Arnaud.
+ - Updated gpio-rpmsg.yaml and imx_rproc.yaml according to comments from
+   Rob and Arnaud.
+ - Further refinements to gpio-rpmsg.yaml per Arnaud's feedback.
+
+Changes in v6:
+ - make the driver more generic with the actions below:
+     rename the driver file to gpio-rpmsg.c
+     remove the imx related info in the function and variable names
+     rename the imx_rpmsg.h to rpdev_info.h
+     create a gpio-rpmsg.yaml and refer it in imx_rproc.yaml
+ - update the gpio-rpmsg.rst according to the feedback from Andrew and
+   move the source file to driver-api/gpio
+ - fix the bug reported by Zhongqiu Han
+ - remove the I2C related info
+
+Changes in v5:
+ - move the gpio-rpmsg.rst from admin-guide to staging directory after
+   discussion with Randy Dunlap.
+ - add include files with some code improvements per Bartosz's comments.
+
+Changes in v4:
+ - add a documentation to describe the transport protocol per Andrew's
+   comments.
+ - add a new handler to get the gpio direction.
+
+Changes in v3:
+ - fix various format issue and return value check per Peng 's review
+   comments.
+ - add the logic to also populate the subnodes which are not in the
+   device map per Arnaud's request. (in imx_rproc.c)
+ - update the yaml per Frank's review comments.
+
+Changes in v2:
+ - re-implemented the gpio driver per Linus Walleij's feedback by using
+   GPIOLIB_IRQCHIP helper library.
+ - fix various format issue per Mathieu/Peng 's review comments.
+ - update the yaml doc per Rob's feedback
+
+Shenwei Wang (5):
+  docs: driver-api: gpio: rpmsg gpio driver over rpmsg bus
+  dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+  rpmsg: core: match rpmsg device IDs by prefix
+  gpio: rpmsg: add generic rpmsg GPIO driver
+  arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+
+ .../devicetree/bindings/gpio/gpio-rpmsg.yaml  |  55 ++
+ .../bindings/remoteproc/fsl,imx-rproc.yaml    |  53 ++
+ Documentation/driver-api/gpio/gpio-rpmsg.rst  | 242 ++++++++
+ Documentation/driver-api/gpio/index.rst       |   1 +
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  25 +
+ drivers/gpio/Kconfig                          |  17 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-rpmsg.c                     | 587 ++++++++++++++++++
+ drivers/rpmsg/rpmsg_core.c                    |   4 +-
+ 9 files changed, 984 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
+ create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
+ create mode 100644 drivers/gpio/gpio-rpmsg.c
+
+--
+2.43.0
 
