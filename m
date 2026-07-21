@@ -1,225 +1,235 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068ED4D90C0
-	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 15:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B711F46A5FD
+	for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 15:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784646880; cv=none; b=GE9leDb5l13ubD9wHUZdvvaNtBaEPnLZ6lOMTBbbIM0r4ddSxTLZ18qgT2I1ocuRekD5vI5BothOg/dPUfkUCUQxandnOdmep+I2y8Kxv9FNSfMoHVQW/JN+ce9nlpo9k+V1LaSe8ekxw2aN3tX+Yxkk9WSX2+gmtR55J7GvNbU=
+	t=1784649035; cv=none; b=f6iKthbetdLna5ak/5DcGjueCeDJdVd5z5IM0AV5MMdWp7YNMXvKP0RFSCE8D0uIqcFHYNHPMrnfRHgvV1TGWz330tGUvJZIjIm8plYm2++ElghWcOvGskl60zRHmjn/1+/p8NvosFvAD/vswcY5zid+aIzqJTn+QlvkAfHGjQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784646880; c=relaxed/simple;
-	bh=dcvWL694LiuZkymBYI79WUNwhSlu6FHKFwvtl5wq/Sw=;
+	s=arc-20240116; t=1784649035; c=relaxed/simple;
+	bh=7CVdcgzMEBtOLHi624QRfV7vyVwmvtKlpwd38gFsLuY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uo8/R/pBWu7L9wS9vP5S+Uq43sL/m2jQqavE/60JqNsJo29n7vfoJ7in587N3t6fW+bpuZbS1wMyBglCqHY739pdYiojMW+bX9eJzCt5VkLhz8ySFhLDUKQXhiG83ceR1iKRZAgL6WFoazpZ/jFelx4dZr7YCMyp4uTRVAr9Ppg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c6uolYbS; arc=none smtp.client-ip=209.85.214.175
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1dD1qswsDhJruDVylRUwy5lAgsMm+oiMzVff8q49HmDau+51xKT61YwE77w6oU72Uh69mhuP+WfUKSunJ+GP8QlUEYcHuuCk5v0ygjhNkEbL29SCJnUoJgntf8tIcB39AzSJDvSVYV5jhVhQ+POBFHEHx6e1xfH0u8tdYyTljQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r0Lkx3mI; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c6uolYbS"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2cce6a0c9c3so103632605ad.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 08:14:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r0Lkx3mI"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-8487088510aso11644353b3a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 21 Jul 2026 08:50:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1784646878; x=1785251678; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=0NzLnpEpcxO5DD6T26b2jUHl7f+urYYWu7UR8jPYSDY=;
-        b=c6uolYbSdbQzjSOAp02ZRKfgGh9asA9KOh9bdDtAYjoOZ5kZR7VrQ0AZDI3oUaEUjh
-         0UN3PLVXYx/AhvEYewNKbukK3Yun/NRRzIPTXN7scFOAkCBd+gY+Ri4sG/woFfbgh7yU
-         210UzaugXKiDQyPo9q2TVX89QIPty9XXGToL8H2uBlRjA7Zd1sXq3Vozu2lyE8OKKi5R
-         01ux2rHpaAGTieq7zYVOTWPykFKTyilQBYXBJ+HzcyUODNkngeufIlVpRulHq1xnGfwU
-         gfkaDTBwKdo2a4MSXSpbU92gcUzDLNdHTR5v0fHMT60Ga7VZTVJDUu+WFD1L0uXYVaBD
-         +QDw==
+        d=linaro.org; s=google; t=1784649033; x=1785253833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=NTPRHwIAQMAZCQdln6Y6l/vUpdn4JkUqUfExMvJBVXc=;
+        b=r0Lkx3mIfgGyuk22YnC/ZyiHAUEBEChNWl/CIEk98FrjBOA8zhLzWswzI1PQnYgep3
+         bce74GmdFqWqhKuqUGHgr2JjCbWFMcrStNN9ESKFVvPXE8dVF0I4XNBgtby0bmFGaVZo
+         SiJCHax5dpN5Txme42VjTc8efMqzQtpeRXX+Ajus9gYZ2+5xegCDbtpN8fW8ge7nZKNC
+         nJV0ml4gVIrPQ8f9A3PR2I5547cWxTNZSeW0HgtPyBG3CwYYioxz2qJZs1wBXceQ2fcN
+         OsCekNiBc8rl3mlsZTGUVw4Gbla8j3lQkL8ADSBjJIg60MKV10Zkuje/+Cr9Xmq6b+q5
+         ubaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784646878; x=1785251678;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :content-type:mime-version:references:message-id:subject:cc:to:from
-         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=0NzLnpEpcxO5DD6T26b2jUHl7f+urYYWu7UR8jPYSDY=;
-        b=CnQ6LNg5mJNtV3mGvECt/RWrwGrbRbNcsx5MX2kJwezJXXfYHO4vNg3bi42yso3FVg
-         OXDCJn1cbNhJzpL0yP/6VrossAintaHqq6ltRwOu78QQJJvUiy9mF5E23ejKf0IA5HqL
-         NeIcuYkVoS2+LgBvqM0/0dDXwm50at0jAsa+KxZ4Tz5MnAmVPicRcL+akKK1EXv75Iz1
-         L/R+ULgqJg8CB1FT9KbuKCcvTesp6xL03NVwhnfehmzov/DhZLtIxFJQSBuw3sVKjZpb
-         GGnOf3Z1odhLpJT7JZkukn1fsPuGz9f+VwoX5zIMpH51KsWLwzojZitSWb2799fnlBus
-         Zfqw==
-X-Forwarded-Encrypted: i=1; AHgh+RotemSSzpFyS94n4U9V0yDqvuduWgt/BtMXl+AkH9T2+auJmhkB22RVF+iNDM4WWZj1/hG0vz2N+X5qVgXvYuW2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuHn9U6eCb9M04jQoL+oKIODx8R0UNZ4DqTW2kx4eFMUsx7qIV
-	mOheD19jXOamiIkVn4SZFPgk+JnvinWf7iMvdD3Pu16UjbfYwZ6B7QG42BLHAhDOY4c=
-X-Gm-Gg: AR+sD11G+6vZFZ1dSKrOuszF3WM/B7mrBVj/5mjzALGQUIyYFzMKo3I5enSHFzY8vb5
-	FB3XBhtqy9ePaa6y1rPAv80WDvdZww4J13ogtIQJNdrmfvStbeyu7Y4OjmHlNMEMoFROTqbgyKb
-	MahYS6Af7qjyolSmtjekacqGkIQjcavHaGThT4gUFmJrOlPBhq6thX9J31JeUGywQ3nCClVpepo
-	IiA8L9JGB9KBQ0QlddIpcBsHr76hBzHFehiL6lxQ7waLrJTPshWXmMb5c0Q4Z5bo7QKYpgnIlZA
-	t+CRQPT4sxDTdWDthteJNxGLp+ZdVh/gPCipFWHg420tmHZlPPpVBSiKux0hZeH812G47by0abF
-	5aC6+W/UugGiHKC8OeyIpYlNFfp3v7Q8lmmo1a4rLPjMv1B9auNFk2zoX9IF64S1X5FugLjHC3R
-	WAOSHB6w==
-X-Received: by 2002:a17:902:f681:b0:2c9:a9c0:80b6 with SMTP id d9443c01a7336-2cf34a48e5dmr210192335ad.34.1784646878053;
-        Tue, 21 Jul 2026 08:14:38 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1784649033; x=1785253833;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=NTPRHwIAQMAZCQdln6Y6l/vUpdn4JkUqUfExMvJBVXc=;
+        b=diVOv8Aa5vwJ/jaa5ftV+V0BqJS7iFM8QAtCJ1NDi+y0058GckDTygxgvqBP8y+7j7
+         8eGzX5f1yIdyGuDFYbyIohLQdcWSUfj2ODQNatocyhCY3vxtvfgYOiDMtRoqG30YaHH8
+         ny3LJbU33q8gd5RipzkwW+aXFqCK2beol/x5y+qS2gMgPaexfbhafptARftqm/aeMMuK
+         NiEmiHUM432ePHc3eTvanH2k44a3TEdfWSP7sLKO5MfhpSe+LdCH701Rgo4e3Q2naym3
+         bN8Gpf5Ypqp6NDx63zrpS/FQvuvfmQwaGjkbwRRO5r+gVZGGpngjh3JNOQSKaGdDY6Mi
+         V3ew==
+X-Forwarded-Encrypted: i=1; AHgh+RowXP8TO5NePYJVVE2R856U8yOG0Aodj5FB5f4xhZRIujb/mvbxTIgNFm4MnX5BNsGtcFyoXSOclld+MF6jEfyJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh6X5NvZc70zHyibBhROvLlO2VIYPg1iBRZtL7lBJfk5v9pkE0
+	/0uBON1UmSMePILsRj3C6aD9wYX4xGCqC2Pl2omudJchycUPcH6CF9/dwy4tSieIt+0=
+X-Gm-Gg: AR+sD10mYByocnegtcGRj2mHNu1aQxaTh1kHB+Z26bza4Pw0ahlTV4BTEFuSAywTozD
+	fBFZ3tW2PhGUbO7sr2WqkZKwWhjSvQuzKE2vWb6STK+IwEwzT+Y+/Epfif8sG0AfM+udhOeKoiI
+	URKQY938vKgqMGw1HZPE/vDDB4a7V9j17ZexcrLYdqN4RHX084ni5S/hKBWSkhV/Xz6nZ/ZR1kE
+	VLEKv375LdKXiVxaCQKmBQEuArEjBeZ3r6Br0dZMIdvbLw4RhOnRlKNCcJqSfFApJlOM2Ir70Xz
+	pPB2LGv06Ywb7g355OLncvozjSd9jF14QqZ0siUNlaXmFTSPlDyWETRS/pO7ecNW7FWkxGbh139
+	w/jmVteEWYlYXv1ZpyYjL6cfSeuj2PZGDIYD+LKIE8VZo5Jav7jQeq5O+OuaAXRz+FkYAKCY/ja
+	KFCy3YHQ==
+X-Received: by 2002:a05:6a00:600a:b0:848:2f73:8ffd with SMTP id d2e1a72fcca58-84c29527f98mr18553911b3a.70.1784649032854;
+        Tue, 21 Jul 2026 08:50:32 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:d5fc:59b3:7d06:7bd9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2cf3448ef6asm78278065ad.9.2026.07.21.08.14.36
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84c2af9ef6dsm7830107b3a.57.2026.07.21.08.50.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jul 2026 08:14:37 -0700 (PDT)
-Date: Tue, 21 Jul 2026 09:14:35 -0600
+        Tue, 21 Jul 2026 08:50:32 -0700 (PDT)
+Date: Tue, 21 Jul 2026 09:50:29 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Bjorn Andersson <andersson@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v5 REPOST] remoteproc: imx_rproc: Invoke the callback
- directly
-Message-ID: <al-M2xoMM9P_DKK_@p14s>
-References: <20260721-imx_mbox_rproc-v5-1-6386a2cf8524@linutronix.de>
+To: tanmay.shah@amd.com
+Cc: andersson@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] rpmsg: virtio_rpmsg_bus: get buffer size from
+ config space
+Message-ID: <al-VRUCcl6NWzQkY@p14s>
+References: <20260710192831.3440427-1-tanmay.shah@amd.com>
+ <20260710192831.3440427-4-tanmay.shah@amd.com>
+ <ale0KIu6hXNvN0q9@p14s>
+ <66e4a85c-be14-4bd8-8328-bf17d2437994@amd.com>
+ <CANLsYkyL8_YSb39QqbC0Z+udahMtCV1e+OeoKGvmGSxQ6h3_qA@mail.gmail.com>
+ <c8f62152-fb7b-4771-87d7-9420c7e3f452@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260721-imx_mbox_rproc-v5-1-6386a2cf8524@linutronix.de>
+In-Reply-To: <c8f62152-fb7b-4771-87d7-9420c7e3f452@amd.com>
 
-On Tue, Jul 21, 2026 at 04:09:06PM +0200, Sebastian Andrzej Siewior wrote:
-> The imx-mailbox driver moved the callback invocation into the threaded
-> IRQ handler. This means the callback is invoked in preemptible context
-> and there is no need to schedule the kworker for the
-> imx_rproc_notified_idr_cb() invocation.
+On Thu, Jul 16, 2026 at 11:12:55AM -0500, Shah, Tanmay wrote:
 > 
-> This was tested with the rpmsg-tty driver on imx93.
 > 
-> Remove the workqueue handling and invoke the imx_rproc_notified_idr_cb()
-> callback directly.
+> On 7/16/2026 10:48 AM, Mathieu Poirier wrote:
+> > On Wed, 15 Jul 2026 at 11:28, Shah, Tanmay <tanmays@amd.com> wrote:
+> >>
+> >> Hi,
+> >>
+> >> Please find my response below:
+> >>
+> >> On 7/15/2026 11:24 AM, Mathieu Poirier wrote:
+> >>> On Fri, Jul 10, 2026 at 12:28:29PM -0700, Tanmay Shah wrote:
+> >>>> 512 bytes isn't always suitable for all case, let firmware
+> >>>> maker decide the best value from resource table.
+> >>>> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
+> >>>>
+> >>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >>>> ---
+> >>>> Changes in v5:
+> >>>>
+> >>>>   - fix documentation about alignment of the buffer size
+> >>>>   - change version field from u16 to u8
+> >>>>   - remove buffer alignment check
+> >>>>   - Separate buffer alignment vs MTU of a single buffer
+> >>>>   - Use buffer alignment only to get next buffer address at alignment
+> >>>>     boundary
+> >>>>
+> >>
+> >> [...]
+> >>
+> >>>> +#ifndef _LINUX_VIRTIO_RPMSG_H
+> >>>> +#define _LINUX_VIRTIO_RPMSG_H
+> >>>> +
+> >>>> +#include <linux/types.h>
+> >>>> +#include <linux/virtio_types.h>
+> >>>> +
+> >>>> +/* The feature bitmap for virtio rpmsg */
+> >>>> +#define VIRTIO_RPMSG_F_NS   0 /* RP supports name service notifications */
+> >>>> +#define VIRTIO_RPMSG_F_BUFSZ        1 /* RP get buffer size from config space */
+> >>>> +
+> >>>> +/* Version of struct virtio_rpmsg_config understood by this driver */
+> >>>> +#define RPMSG_VDEV_CONFIG_V1        1
+> >>>> +
+> >>>> +/**
+> >>>> + * struct virtio_rpmsg_config - config space for rpmsg virtio device
+> >>>> + *
+> >>>> + * @version:        version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
+> >>>> + * @size:   size of this structure in bytes.
+> >>>> + * @rpmsg_buf_align: alignment in bytes for each buffer. Must be a power of
+> >>>> + *               two. If 0 then no alignment will be done. This alignment
+> >>>> + *               will not decide actual size of the buffer but will be
+> >>>> + *               used to decided the start address of the buffer. The
+> >>>> + *               actual size of the buffer can be different than the
+> >>>> + *               aligned size of the buffer.
+> >>>
+> >>> Is there really a need to have a buffer size different from its alignment?  It's
+> >>> not like the (small) delta between the buffer size and its alignment will be
+> >>> used for something else.  I'm fine with a buffer alignment requirement but in
+> >>> those cases, the firmware should set the size of the buffer in accordance with
+> >>> its alignment requirement.  Otherwise, the complexity needed to manage the
+> >>> discrpancy between the two yields a driver that is hard to maintain and prone to
+> >>> bugs.
+> >>>
+> >>
+> >> I had the same concern before. However, following example changed my mind:
+> >>
+> >> So, a single buffer size is the MTU size of a packet for the protocol
+> >> supported by the firmware. Now that can be different than the aligned
+> >> size of the buffer.
+> >>
+> >> For example, the higher level protocol (not rpmsg) has 430 bytes as the
+> >> max size of a payload. However, cache line alignment is 64-bytes. Then
+> >> in that case, the aligned buffer size is 448 bytes. But, that doesn't
+> >> mean we can say protocol's MTU size is 448 bytes. If user end up
+> >> treating MTU size 448 bytes and use space beyond 430 bytes, then the
+> >> higher level apps might discard that data and communication may fail.
+> >>
+> > 
+> > How is that scenario different from today's 512 byte buffer size?
+> > Most users don't use all 512 bytes and we don't run in the problem
+> > described above?
+> > 
 > 
-> Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> 512 buffer size is hardcoded, so it is enforced on the protocol by the
+> framework. But by allowing the configuration of the buffer size we are
+> allowing the protocol to decide what the buffer size should be. So, when
+> user request the buffer via rpmsg_get_mtu() API, then that should be the
+> original buffer size which is expected by the protocol, which may not be
+> same as the aligned buffer size.
 
-Jassi - can you pick this up?
+Regardless of the buffer size, whether it is set to 512 byte or some arbitrary
+value by the remote processsor's firmware, there is a possibility of a
+discrepancy with what is expected by the protocol.  Right now rpmsg_get_mtu()
+returns 512 regardless of what a protocol uses.  The only thing that should be
+important to the protocol is not to exceed that limit.
 
-> ---
-> This change was tested on a im93 board with rpmsg-tty driver.
 > 
-> v4…v5: https://lore.kernel.org/all/20260703-imx_mbox_rproc-v4-1-67b10560a861@linutronix.de/
->   - Repost
->
-> v3…v4: https://lore.kernel.org/r/20260617-imx_mbox_rproc-v3-0-77948112defc@linutronix.de
->   - The mailbox bits are part of v7.2-rc1. This is just a repost of the
->     imx_rproc driver which is left.
->    
-> v2…v3: https://lore.kernel.org/r/20260603-imx_mbox_rproc-v2-0-a0059dc3b69a@linutronix.de
->   - Forward the error in imx_mu_generic_tx() to the caller (new patch
->     #1)
->   - Extend the patch description a bit for for "Start splitting the IRQ
->     handler" to briefly explain why callbacks are moved to the threaded
->     handler.
->   - Drop imx_mu_con_priv::pending. The primary handler wakes its
->     threaded handler. Once the handler is woken, the pending flag must
->     be set and there is no need to set/ clear it.
->   - Avoid the double clk_disable_unprepare() if
->     devm_mbox_controller_register() fails.
+> If for internal management we want to treat buffer size = aligned buffer
+> size, I am okay. But rpmsg_get_mtu() must give unaligned buffer size
+> which is expected by the protocol.
+
+I agree with the first sentence but not the second.  The only thing protocols
+should care about is the start address of a buffer and that its size is
+sufficient for what it needs.
+
 > 
-> v1…v2: https://lore.kernel.org/r/20260529-imx_mbox_rproc-v1-0-b8ffc36e11e5@linutronix.de
->   - Using correct register to enable RXDB event.
->   - Update commit description for the "threaded interrupt", "unmasks the
->     interrupt" => "masks the interrupt event".
->   - Add a shutdown field so that the interrupt does not unmask the
->     interrupt if it has been already disabled because the channel is
->     about to be shutdown.  A possible race mentioned by sashiko.
->   - Use devm_pm_runtime_enable(). This should avoid a possible race
->     sashiko mentioned.
->   - Use devm_of_platform_populate().
-> ---
->  drivers/remoteproc/imx_rproc.c | 33 +--------------------------------
->  1 file changed, 1 insertion(+), 32 deletions(-)
+> Thanks,
+> Tanmay
 > 
-> diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-> index 7662ebd9d2f49..e18ae33a5cf85 100644
-> --- a/drivers/remoteproc/imx_rproc.c
-> +++ b/drivers/remoteproc/imx_rproc.c
-> @@ -24,7 +24,6 @@
->  #include <linux/regmap.h>
->  #include <linux/remoteproc.h>
->  #include <linux/scmi_imx_protocol.h>
-> -#include <linux/workqueue.h>
->  
->  #include "imx_rproc.h"
->  #include "remoteproc_internal.h"
-> @@ -115,8 +114,6 @@ struct imx_rproc {
->  	struct mbox_client		cl;
->  	struct mbox_chan		*tx_ch;
->  	struct mbox_chan		*rx_ch;
-> -	struct work_struct		rproc_work;
-> -	struct workqueue_struct		*workqueue;
->  	void __iomem			*rsc_table;
->  	struct imx_sc_ipc		*ipc_handle;
->  	struct notifier_block		rproc_nb;
-> @@ -892,21 +889,11 @@ static int imx_rproc_notified_idr_cb(int id, void *ptr, void *data)
->  	return 0;
->  }
->  
-> -static void imx_rproc_vq_work(struct work_struct *work)
-> -{
-> -	struct imx_rproc *priv = container_of(work, struct imx_rproc,
-> -					      rproc_work);
-> -	struct rproc *rproc = priv->rproc;
-> -
-> -	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
-> -}
-> -
->  static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
->  {
->  	struct rproc *rproc = dev_get_drvdata(cl->dev);
-> -	struct imx_rproc *priv = rproc->priv;
->  
-> -	queue_work(priv->workqueue, &priv->rproc_work);
-> +	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
->  }
->  
->  static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_block)
-> @@ -1271,13 +1258,6 @@ static int imx_rproc_sys_off_handler(struct sys_off_data *data)
->  	return NOTIFY_DONE;
->  }
->  
-> -static void imx_rproc_destroy_workqueue(void *data)
-> -{
-> -	struct workqueue_struct *workqueue = data;
-> -
-> -	destroy_workqueue(workqueue);
-> -}
-> -
->  static int imx_rproc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -1305,17 +1285,6 @@ static int imx_rproc_probe(struct platform_device *pdev)
->  		priv->ops = dcfg->ops;
->  
->  	dev_set_drvdata(dev, rproc);
-> -	priv->workqueue = create_workqueue(dev_name(dev));
-> -	if (!priv->workqueue) {
-> -		dev_err(dev, "cannot create workqueue\n");
-> -		return -ENOMEM;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(dev, imx_rproc_destroy_workqueue, priv->workqueue);
-> -	if (ret)
-> -		return dev_err_probe(dev, ret, "Failed to add devm destroy workqueue action\n");
-> -
-> -	INIT_WORK(&priv->rproc_work, imx_rproc_vq_work);
->  
->  	ret = imx_rproc_xtr_mbox_init(rproc, true);
->  	if (ret)
+> >> The alignment field is used only to decide where the next buffer start
+> >> address is to ease cache operations.
+> >>
+> >> Sure, we need to maintain this complexity, but I think it's worth it.
+> >>
+> > 
+> > The same as in my previous email to Arnaud applies here - is this an
+> > immediate requirement of something we think may be happening in the
+> > future?
+> > 
 > 
-> ---
-> base-commit: b3f94b2b3f3e51ab880a51fc6510e1dafba654ed
-> change-id: 20260529-imx_mbox_rproc-7d512f5a6f78
+> IMHO, vendors will use it if the feature is available, otherwise the
+> need to optimize alignment is not easily encountered.
 > 
-> Best regards,
-> -- 
-> Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > 
+> >> Thanks,
+> >> Tanmay
+> >>
+> >>>> + * @txbuf_size:     Tx buf size from remote's view. For Linux this is rx buf size.
+> >>>> + * @rxbuf_size:     Rx buf size from remote's view. For Linux this is tx buf size.
+> >>>> + *
+> >>>> + * This is the configuration structure shared by the device and the driver,
+> >>>> + * read when %VIRTIO_RPMSG_F_BUFSZ is negotiated. The fields are laid out so
+> >>>> + * the structure is naturally 32-bit aligned.
+> >>>> + */
+> >>>> +struct virtio_rpmsg_config {
+> >>>> +    u8 version;
+> >>>> +    __virtio16 size;
+> >>>> +    __virtio16 rpmsg_buf_align;
+> >>>> +    /* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
+> >>>> +    __virtio32 txbuf_size;
+> >>>> +    __virtio32 rxbuf_size;
+> >>>> +} __packed;
+> >>>> +
+> >>>> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+> >>>> --
+> >>>> 2.34.1
+> >>>>
+> >>
+> 
