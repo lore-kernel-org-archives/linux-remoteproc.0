@@ -1,231 +1,268 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891CB24676D
-	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 13:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBBC369D5D
+	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 14:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784727502; cv=none; b=UQZHFEI0fzEgKLk0jNCC2ho9l8NVaqtUH35O/Wsq4Hnp8eohOe7yLIG3++aalJ4nIhwTUpG9gTePKE7SpNEhweOX13c5qbu5q3rbsWm7CKhORzUfmXBDyNfS0hDYnLPt4vbDbt6XOCEzFMzHb0VmzM4RLcca5qVyvLXBt51k+0U=
+	t=1784731792; cv=none; b=n/yLGCeP3R3qaeJ/s2oWdfOiwoZ72BmcftXd2djlsC+vx6I53gf3qUBdqtCtVOdSfJ7s3YNYU2jSwnbNMrBRSbbdlpHBlSJW+gCQlv40nAEbjS3EZAdZ72EBxTzAGB4vQ9syOa1L957FfuEfXc8jb9yekFZh+hISVgEkpes0ObQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784727502; c=relaxed/simple;
-	bh=Tn4zmq2o9A4/NAroW01ut1DtvvZJ3tnPOffipBKBe2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yc2Jeakg0slvoW0fdqabr7R0WY432mx8m11MJ0kjDrOt0ERlRu66b6beKH66LrQj+TqA1jnmU6MdJ97Js1z0Afb4EAS+Cy+ZhFo3bQwenS5LALOQfbM7w3w8TSjvP7xPQ7iVvCJ6FFHF5Hoo4s+ZQulUKoKs682wJCWiFZSvnVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kqE6IwFh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hJk2/uWh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1784731792; c=relaxed/simple;
+	bh=FRw3L2TolAFwQfgd99bn9X5rZKhPPZ+brWSdo6BpVLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VDSqwt/Xuro1EC6Liqswkh9YE+GhuNfcNzW8VvWx138TnX618hc1X260NL3M77Xy+KKf6omP2cKKIyBEnUKe2Ln1EdTYnItXTmj7b4LKER1Ebm/5tPuNfuMgnemhebmZoh/hcp5bq8T8FHUTS/AWdVwnHULgYcZn9OMJm4ZQm+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ptawoV4K; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kqE6IwFh";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hJk2/uWh"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66MDWM7n646335
-	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 13:38:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2l3UPMiH4BMjDVBQXY9WDYnPDDLaNtRsBeyRv5rmKZ4=; b=kqE6IwFhwLt8xaS8
-	uFN2hqohGlBHEeDOLzkUJR0/fBwzxJy6qye3Yq715iXb+72l1ZT0fgHjRm/abXxa
-	8GAYkV72G4Ow/eqPl9u/Qk1d5CCDkwiM9iJo8CebjECRPzr22eImqmstSRx9Og77
-	rOEj9bAnK4zBaDHbFt7d+A3vApPxTB8iB7SX1pmSHzPWUETByQr9XGTeLh26hpPZ
-	xlkMSeF9wCVLfehXZa3Fb5zeZpRvJLq6b8OkEkMLE0nfRunxCsP6pu5gPwF8IY1C
-	RhthE1UW7kNQlm8IkovmLQM3bkrIEZb+Afb35/J5neUihZ+Q/XZNNgOEGDh5XnY9
-	KvLQeA==
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com [209.85.210.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fju2292d8-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 13:38:20 +0000 (GMT)
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-7eb89852728so8350977a34.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 06:38:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ptawoV4K"
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-84862b0d5f8so7543042b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 07:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784727500; x=1785332300; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=2l3UPMiH4BMjDVBQXY9WDYnPDDLaNtRsBeyRv5rmKZ4=;
-        b=hJk2/uWhL/2mKhO52NaoqqpHKTuXDIdtjX8cfC0fmhGBGM5WMrtufXUvwCS4xAsuUK
-         GnbaYxrTEiKudNUPCXMTzOuhHXjTeMyUIr+B0bBe8LMmofO+X8X6pT3ZoFehZDg3gj+Z
-         WkC4cJnb6c6EQAw+DgWgjmc8RDyGFmDb9ShO8F9s/XAzuMTxyp5xMVFrct6f0a82WAEF
-         ZlA8OmQHIOConbsNEKKQUPAHXyZR6d4wuTtmJL7sMWmNaNTrgScc1iT1pbiyv1fhUzN7
-         poPStKqZWqo01trBBykdJNnO/2fDKTZ7RVPeYOpBqjR0qTvNzDk1DTY6Yl8oucrKGFTD
-         88wQ==
+        d=linaro.org; s=google; t=1784731790; x=1785336590; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=zSdvhGvgLhUhnHE4OmhWyoNK/rsRW9LOiDp1/0CytrQ=;
+        b=ptawoV4KzpCFek8pAS5EjT/DiDccef6jAnjdyjT9W8wkryDrY2j+KXk8Ly/35N2u3q
+         2T+Cl28AyXCjJOFdbgLC8sdcKkjrdX7VIGF1xvoAx37aTvas/Lrvf26Wmfcf8hW0aEO5
+         317XeXErrcHEKSyFf2ChQhIYu18w0LRJkGD6ZqOYG8wYTuGkwJM8J6j/saIYrn6y2RGW
+         Epdy6qZebftQfIHud/ZziWqOYWbdqB8LbfndigR7ZmFr1rdmcC4TPF89O05M9UU+cP7f
+         Hfl+tAse5myW9geomXqoiT/tkzNucAaC5gM50LARvHmWrBxuMjXZQY9sPtL2gpzpWZdX
+         GKvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784727500; x=1785332300;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=2l3UPMiH4BMjDVBQXY9WDYnPDDLaNtRsBeyRv5rmKZ4=;
-        b=IJll2Pt1qAYSmFei6UV3IF6ia6iV/5xx9ACLtGUZF3n2RGUWB/J0Aq6mLnJPda/LlC
-         xEIVrfNEQw6j4o78OP3Qb+DzFwEa5VhsYEtoDKTZjoyKRiXGwJ3djN1/eMQMQPi/IVtO
-         Wac+ELjgxgSBtWmuqyTTqD30vnNkTZQhELSgW11uMCRQI7E9W2usP05Gjv9z27eFHpwi
-         ALTh6LAK6my0usgECpzz7poqQ2mrdWUacaDh9lNlF9jTwlan/9NSgTAyKcSbR4PXy06n
-         0RNDwCcYmJcYml738PxdhO2CBMWEh2wwW1Dc3GDzAA77pJS0MRzI/j8TXGE2beKKtqZV
-         ET+g==
-X-Forwarded-Encrypted: i=1; AHgh+RqnlpwGYUk3vxBbnpfRfaLsd8MLCA+SYodLfmgEKLNTRTdKe193mi58DvtmErRJd08Twz+oWFP/jltwiKUEpoTG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/peBeZIErw0+e+FFijsiAOL/S12hAN06wx7KfFuXA/4rmrnc3
-	OTDkGiD+ocpqVIkccfH9JWu/yS9H7z2718mK/6znxGwI66CDPgQoni6HHXLhgYrZ9tk61SERUZj
-	dmXPXRcsdBnaTC4/Y+k9waqgeYsWG3JeWWtRQmM6BXX10c/9vZB6OFdmNiLHD8/g74OxDA3mW
-X-Gm-Gg: AR+sD11JToZW8FRpgCwG3qt2fmf0ou8jbaywuHibniAtsBrgC0YslRxgXoJP3PgYHJL
-	3hjOmezK7nUxgqmDsINnzPnwT8hJvJewIctMz5jVK+12M2oUa1Mn/QiQ4BN2z76Xx/fB7cqjOWn
-	xF4CNp83GC9759jPwao0zwE1AmHc6+ILXCR1Pt5u4KPzVIJt4otHjPJ2W4Yd5TJgrBpeV2VUl+W
-	Oz0Yze4sHV5cUmuD0W25pFG5JPR96R/mc+QY/jXiGWlMd8HkJyN/RmjLaYCBXpuzQ0yBzsj0Bct
-	L3NNSu7q9W4rNGdPYVANhkLTXVLSFXfLW/gnbn/wRtZOyLP2KaBRDDe6+kMTSydP1P64vIvRbhW
-	751K+is2YplbuGjLidE7xn0ftDOy3/W/m
-X-Received: by 2002:a05:6830:8387:b0:7e9:b4d0:53ac with SMTP id 46e09a7af769-7eda4d479b2mr11916585a34.29.1784727500128;
-        Wed, 22 Jul 2026 06:38:20 -0700 (PDT)
-X-Received: by 2002:a05:6830:8387:b0:7e9:b4d0:53ac with SMTP id 46e09a7af769-7eda4d479b2mr11916547a34.29.1784727499674;
-        Wed, 22 Jul 2026 06:38:19 -0700 (PDT)
-Received: from [192.168.1.11] ([106.222.235.129])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7ee29db292esm1359458a34.6.2026.07.22.06.38.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jul 2026 06:38:19 -0700 (PDT)
-Message-ID: <f3864ed8-34bb-42e2-a821-ac2d1a653076@oss.qualcomm.com>
-Date: Wed, 22 Jul 2026 19:08:07 +0530
+        d=1e100.net; s=20251104; t=1784731790; x=1785336590;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=zSdvhGvgLhUhnHE4OmhWyoNK/rsRW9LOiDp1/0CytrQ=;
+        b=gHBQnqx9RjUuzAjjJcePtTFH0zZLXXjV8V/PMZ2Kt2iaq3DhlSdRUT7yGs6rhO7wJf
+         P+AeneFggHfwQiE6xqUQjFOyG6hBPVa8pULyY0qGU4BB01ufmQ1WxlecfucurAKRLloc
+         wNfgIBLb1A7B6iaY/kl4LzzxXqvI7LRxyg/qaGJfiZf8z1/93AZWVTJBwN7+QCCP7sS9
+         uHu/GuxEpWT913oF1dcBVIBEPV+Ts397jB4X3PPh7QKvKIq1v0zeFOkPAqoPJzX5czdB
+         b2k9YBD0kGfb6HvsMLnValGoWluNXKHWZDi6QWqcK+M4PoSlFvR4t9z0u+xy5MQU188B
+         IJ3w==
+X-Forwarded-Encrypted: i=1; AHgh+Rq38wrA7yFhSICR7S1fIduewfS2d6vfUs2dPfM8UQZjJvlgEQEP4J8lNalChtY4iXpuXist9GHQELQ3PqdnYYV2@vger.kernel.org
+X-Gm-Message-State: AOJu0YygjS1v9GdIuVP9PR1eKmGWZmMQ/UQMhZTOZElwH9trUvFI3hXJ
+	Lq6AndtWUG+xhB8BMAo72jnJ41pmeGqRhkw2CIFUceReNyul2p3ZNd7o16AKRdRtKeE=
+X-Gm-Gg: AR+sD13RPUAYx9rj0taY44FFee8ODwH7gG2JdBRk5muJ/HMPnW35BC2UYuon3IpXtLN
+	022xOAKtHDl2QKONgKA0Ifqejb3s07tPDI3VgRnPnBImDD8KFzCu1g3Rczh5d9trumTJITut6WX
+	hcqD9IcnLS6KIu4q6lXoo9EFQkGuqQZ+iPOuDJ/na0jY6/Ll0xB06xLnaz4Gwn5+xDzpIPupMHX
+	zNHXruUTTDrjwISCLcZ9w+DuTFhdQzYqXnCQ6cTIOpnY76C8A66jKDzLx7FqMfwh3jjT0Uw8WF7
+	ZT6klRucEoc0XMs8xQcEsFAkUZkFzPyVeJ5Ng1ORhwGVx93G1RAqIsNnvQwoJpuptHmY0yzphyl
+	HND8FBjVINFbKaYCjE7cxcT7+hk3+L4p7AzB2okf3QuTwyVKujWbku6whQzbcIlwEgbnrLJ10gS
+	ql5S1rBA==
+X-Received: by 2002:a05:6a00:3a2a:b0:845:e04b:565f with SMTP id d2e1a72fcca58-84c292634e4mr24038102b3a.14.1784731790039;
+        Wed, 22 Jul 2026 07:49:50 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:ffc8:5f3a:2bec:f5de])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-84e1760025esm1494629b3a.57.2026.07.22.07.49.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jul 2026 07:49:49 -0700 (PDT)
+Date: Wed, 22 Jul 2026 08:49:47 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: tanmay.shah@amd.com
+Cc: andersson@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] rpmsg: virtio_rpmsg_bus: get buffer size from
+ config space
+Message-ID: <amDYiyTFFLkkTv5K@p14s>
+References: <20260710192831.3440427-1-tanmay.shah@amd.com>
+ <20260710192831.3440427-4-tanmay.shah@amd.com>
+ <ale0KIu6hXNvN0q9@p14s>
+ <66e4a85c-be14-4bd8-8328-bf17d2437994@amd.com>
+ <CANLsYkyL8_YSb39QqbC0Z+udahMtCV1e+OeoKGvmGSxQ6h3_qA@mail.gmail.com>
+ <c8f62152-fb7b-4771-87d7-9420c7e3f452@amd.com>
+ <al-VRUCcl6NWzQkY@p14s>
+ <a37bb772-2b27-44fa-9bf1-30707c419141@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/9] dt-bindings: remoteproc: qcom,pas: add
- #cooling-cells property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
-        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Rafael J. Wysocki"
- <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-hardening@vger.kernel.org, manaf.pallikunhi@oss.qualcomm.com
-References: <20260721-b4-qmi-tmd-v5-0-99620e07f505@oss.qualcomm.com>
- <20260721-b4-qmi-tmd-v5-1-99620e07f505@oss.qualcomm.com>
- <20260722-active-kangaroo-of-order-ebb28f@quoll>
-Content-Language: en-US
-From: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-In-Reply-To: <20260722-active-kangaroo-of-order-ebb28f@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=X4Bi7mTe c=1 sm=1 tr=0 ts=6a60c7cc cx=c_pps
- a=7uPEO8VhqeOX8vTJ3z8K6Q==:117 a=/HV6WY1oXUpe+KOgORLkYw==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=NFQhSzq1V_q7mLtt_zYA:9 a=QEXdDO2ut3YA:10
- a=EXS-LbY8YePsIyqnH6vw:22
-X-Proofpoint-GUID: CCmlkcw9fv20j8YSAY94nRaNH1CR0k7b
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIyMDEzMiBTYWx0ZWRfX9sFpoOIKzTap
- PPebht5b0G5JrUJEopZUqiJN0sPLDcwtNMd8R+qdgJE2twJmTU6WCTBvULeMvJfwFSX+8Z+JLsW
- cV0uf45cNfZQGS23Z0IJ3TWymN6iG0c=
-X-Proofpoint-ORIG-GUID: CCmlkcw9fv20j8YSAY94nRaNH1CR0k7b
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIyMDEzMiBTYWx0ZWRfX4goYfX7AvdzX
- wA0T+KMTSl/H4cgdgUxpQPzxUmZxmJZrSmq6SoCQwcIIPEgXiZwSoiNixiTT16sJsUclEtTrnmz
- pKXcb/uI9wwgw2ynQUWDGEJSNh9AM00t+CHJWddFn8/WAuEQP8v0M2fIXPAyjSfTiyEiUtMG3UQ
- gorT/0nCGnH7QcPWBaPZQHOiCcJV0U1Hf5BJ6bqWOB+gOQjbZ2fLRFW7STlvlgtEvURonqtaj1G
- beBUpauNWrGulIdgOOX2p0zc3dQvjQ60DDUOgl2EXKteSkNyMj1GwWsXm1vmHHYC+Ea1dnwfZbq
- CF39pDs0Ea5o6WcZSViDY3Zk8gA6910eB9/zIbciE8jv/DL9xVJKtprii8epaAzeJbNoX1bfYWt
- OdPD3yIVQYbkXP+IABvqUFXFmmW+G9Z+7ZKgmcEaQ/tRT/8sILbFLjxoXrOIfVvecqZwZNRrCU/
- 9f+C+YMOCgn5MlH0YSQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-22_04,2026-07-22_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0 malwarescore=0
- clxscore=1015 priorityscore=1501 spamscore=0 adultscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607220132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a37bb772-2b27-44fa-9bf1-30707c419141@amd.com>
 
-
-
-On 7/22/2026 12:36 PM, Krzysztof Kozlowski wrote:
-> On Tue, Jul 21, 2026 at 11:58:58AM +0530, Gaurav Kohli wrote:
->> Document the optional #cooling-cells property for Qualcomm PAS
->> remoteproc nodes so they can be used as thermal cooling devices via
->> the QMI Thermal Mitigation Device (TMD) interface.
->>
->> Qualcomm remote processors expose TMD endpoints that support thermal
->> throttling through firmware. The cooling-device specifier uses 3 cells:
->>
->>    <&phandle device_id min_state max_state>
->>
->> where device_id selects the TMD endpoint (for example PA, modem, or
->> CDSP software mitigation), with constants defined in:
->> include/dt-bindings/thermal/qcom,qmi-tmd.h
->>
->> Example usage in a thermal zone:
->>
->>    cooling-maps {
->>        map0 {
->>            trip = <&cpu_alert>;
->>            cooling-device = <&remoteproc_cdsp
->>                             QCOM_TMD_CDSP_SW
->>                             0 THERMAL_NO_LIMIT>;
->>        };
->>    };
->>
->> Signed-off-by: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
->> ---
->>   .../bindings/remoteproc/qcom,pas-common.yaml         |  9 +++++++++
->>   MAINTAINERS                                          |  1 +
->>   include/dt-bindings/thermal/qcom,qmi-tmd.h           | 20 ++++++++++++++++++++
->>   3 files changed, 30 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
->> index 11faf655f530..39e79a1c1079 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
->> @@ -77,6 +77,15 @@ properties:
->>         channels and devices related to the ADSP.
->>       unevaluatedProperties: false
->>   
->> +  '#cooling-cells':
->> +    description: |
->> +      Cooling device with three cells:
->> +        Cell 0: Cooling device id as defined in
->> +                include/dt-bindings/thermal/qcom,qmi-tmd.h
->> +        Cell 1: Minimum cooling state
->> +        Cell 2: Maximum cooling state
->> +    const: 3
->> +
->>     glink-edge:
->>       $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
->>       description:
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index dcffe9fc54f6..2d4d19201aec 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -3423,6 +3423,7 @@ F:	drivers/watchdog/gunyah_wdt.c
->>   F:	include/dt-bindings/arm/qcom,ids.h
->>   F:	include/dt-bindings/firmware/qcom,scm.h
->>   F:	include/dt-bindings/soc/qcom*
->> +F:	include/dt-bindings/thermal/qcom,qmi-tmd.h
->>   F:	include/linux/firmware/qcom
->>   F:	include/linux/soc/qcom/
->>   F:	include/soc/qcom/
->> diff --git a/include/dt-bindings/thermal/qcom,qmi-tmd.h b/include/dt-bindings/thermal/qcom,qmi-tmd.h
+On Tue, Jul 21, 2026 at 11:02:13AM -0500, Shah, Tanmay wrote:
 > 
-> Filename must match compatible. There are no qcom,qmi-tmd or qcom,.*tmd
-> or qcom,.*qmi compatibles.
 > 
-> Which device is providing this ABI? PAS?
+> On 7/21/2026 10:50 AM, Mathieu Poirier wrote:
+> > On Thu, Jul 16, 2026 at 11:12:55AM -0500, Shah, Tanmay wrote:
+> >>
+> >>
+> >> On 7/16/2026 10:48 AM, Mathieu Poirier wrote:
+> >>> On Wed, 15 Jul 2026 at 11:28, Shah, Tanmay <tanmays@amd.com> wrote:
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>>> Please find my response below:
+> >>>>
+> >>>> On 7/15/2026 11:24 AM, Mathieu Poirier wrote:
+> >>>>> On Fri, Jul 10, 2026 at 12:28:29PM -0700, Tanmay Shah wrote:
+> >>>>>> 512 bytes isn't always suitable for all case, let firmware
+> >>>>>> maker decide the best value from resource table.
+> >>>>>> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
+> >>>>>>
+> >>>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >>>>>> ---
+> >>>>>> Changes in v5:
+> >>>>>>
+> >>>>>>   - fix documentation about alignment of the buffer size
+> >>>>>>   - change version field from u16 to u8
+> >>>>>>   - remove buffer alignment check
+> >>>>>>   - Separate buffer alignment vs MTU of a single buffer
+> >>>>>>   - Use buffer alignment only to get next buffer address at alignment
+> >>>>>>     boundary
+> >>>>>>
+> >>>>
+> >>>> [...]
+> >>>>
+> >>>>>> +#ifndef _LINUX_VIRTIO_RPMSG_H
+> >>>>>> +#define _LINUX_VIRTIO_RPMSG_H
+> >>>>>> +
+> >>>>>> +#include <linux/types.h>
+> >>>>>> +#include <linux/virtio_types.h>
+> >>>>>> +
+> >>>>>> +/* The feature bitmap for virtio rpmsg */
+> >>>>>> +#define VIRTIO_RPMSG_F_NS   0 /* RP supports name service notifications */
+> >>>>>> +#define VIRTIO_RPMSG_F_BUFSZ        1 /* RP get buffer size from config space */
+> >>>>>> +
+> >>>>>> +/* Version of struct virtio_rpmsg_config understood by this driver */
+> >>>>>> +#define RPMSG_VDEV_CONFIG_V1        1
+> >>>>>> +
+> >>>>>> +/**
+> >>>>>> + * struct virtio_rpmsg_config - config space for rpmsg virtio device
+> >>>>>> + *
+> >>>>>> + * @version:        version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
+> >>>>>> + * @size:   size of this structure in bytes.
+> >>>>>> + * @rpmsg_buf_align: alignment in bytes for each buffer. Must be a power of
+> >>>>>> + *               two. If 0 then no alignment will be done. This alignment
+> >>>>>> + *               will not decide actual size of the buffer but will be
+> >>>>>> + *               used to decided the start address of the buffer. The
+> >>>>>> + *               actual size of the buffer can be different than the
+> >>>>>> + *               aligned size of the buffer.
+> >>>>>
+> >>>>> Is there really a need to have a buffer size different from its alignment?  It's
+> >>>>> not like the (small) delta between the buffer size and its alignment will be
+> >>>>> used for something else.  I'm fine with a buffer alignment requirement but in
+> >>>>> those cases, the firmware should set the size of the buffer in accordance with
+> >>>>> its alignment requirement.  Otherwise, the complexity needed to manage the
+> >>>>> discrpancy between the two yields a driver that is hard to maintain and prone to
+> >>>>> bugs.
+> >>>>>
+> >>>>
+> >>>> I had the same concern before. However, following example changed my mind:
+> >>>>
+> >>>> So, a single buffer size is the MTU size of a packet for the protocol
+> >>>> supported by the firmware. Now that can be different than the aligned
+> >>>> size of the buffer.
+> >>>>
+> >>>> For example, the higher level protocol (not rpmsg) has 430 bytes as the
+> >>>> max size of a payload. However, cache line alignment is 64-bytes. Then
+> >>>> in that case, the aligned buffer size is 448 bytes. But, that doesn't
+> >>>> mean we can say protocol's MTU size is 448 bytes. If user end up
+> >>>> treating MTU size 448 bytes and use space beyond 430 bytes, then the
+> >>>> higher level apps might discard that data and communication may fail.
+> >>>>
+> >>>
+> >>> How is that scenario different from today's 512 byte buffer size?
+> >>> Most users don't use all 512 bytes and we don't run in the problem
+> >>> described above?
+> >>>
+> >>
+> >> 512 buffer size is hardcoded, so it is enforced on the protocol by the
+> >> framework. But by allowing the configuration of the buffer size we are
+> >> allowing the protocol to decide what the buffer size should be. So, when
+> >> user request the buffer via rpmsg_get_mtu() API, then that should be the
+> >> original buffer size which is expected by the protocol, which may not be
+> >> same as the aligned buffer size.
+> > 
+> > Regardless of the buffer size, whether it is set to 512 byte or some arbitrary
+> > value by the remote processsor's firmware, there is a possibility of a
+> > discrepancy with what is expected by the protocol.  Right now rpmsg_get_mtu()
+> > returns 512 regardless of what a protocol uses.  The only thing that should be
+> > important to the protocol is not to exceed that limit.
+> > 
+> 
+> I think I am missing something. Are you saying that buffer size can not
+> be configured greater than 512 bytes?
 
-thanks for review.
-Yes, this belongs under PAS. Should i rename the file to pas?
+I am not.
+
+What I am saying is that if alignment is important to a remote processor, it
+should choose the buffer size accordingly.  rpmsg_get_mtu() should return the
+value of the buffer size, exactly the way it is today. 
 
 > 
-> Best regards,
-> Krzysztof
-> 
+> If the higher level protocol (not RPMsg) wants to use 4030 bytes for
+> single packet payload then that is what the MTU size should be. And so
+> the firmware will configure 4030 bytes as single buffer size in the vdev
+> config space. That is why alignment should be treated separately.
+> Because it is not equal to payload size needed by higher level protocol.
 
+In that case and assuming alignment is required, the buffer size should be 4096
+and rpmsg_get_mtu() should also return 4096.  How a higher protocol uses the
+buffer space is none of our concern.
+
+Currently, the buffer size is set to 512 and users don't always fill the entire
+buffer.  I don't see why things should be different with a configurable buffer
+size.   
+
+> 
+> >>
+> >> If for internal management we want to treat buffer size = aligned buffer
+> >> size, I am okay. But rpmsg_get_mtu() must give unaligned buffer size
+> >> which is expected by the protocol.
+> > 
+> > I agree with the first sentence but not the second.  The only thing protocols
+> > should care about is the start address of a buffer and that its size is
+> > sufficient for what it needs.
+> > 
+> >>
+> >> Thanks,
+> >> Tanmay
+> >>
+> >>>> The alignment field is used only to decide where the next buffer start
+> >>>> address is to ease cache operations.
+> >>>>
+> >>>> Sure, we need to maintain this complexity, but I think it's worth it.
+> >>>>
+> >>>
+> >>> The same as in my previous email to Arnaud applies here - is this an
+> >>> immediate requirement of something we think may be happening in the
+> >>> future?
+> >>>
+> >>
+> >> IMHO, vendors will use it if the feature is available, otherwise the
+> >> need to optimize alignment is not easily encountered.
+> >>
+> >>>
+> >>>> Thanks,
+> >>>> Tanmay
+> >>>>
+> >>>>>> + * @txbuf_size:     Tx buf size from remote's view. For Linux this is rx buf size.
+> >>>>>> + * @rxbuf_size:     Rx buf size from remote's view. For Linux this is tx buf size.
+> >>>>>> + *
+> >>>>>> + * This is the configuration structure shared by the device and the driver,
+> >>>>>> + * read when %VIRTIO_RPMSG_F_BUFSZ is negotiated. The fields are laid out so
+> >>>>>> + * the structure is naturally 32-bit aligned.
+> >>>>>> + */
+> >>>>>> +struct virtio_rpmsg_config {
+> >>>>>> +    u8 version;
+> >>>>>> +    __virtio16 size;
+> >>>>>> +    __virtio16 rpmsg_buf_align;
+> >>>>>> +    /* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
+> >>>>>> +    __virtio32 txbuf_size;
+> >>>>>> +    __virtio32 rxbuf_size;
+> >>>>>> +} __packed;
+> >>>>>> +
+> >>>>>> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+> >>>>>> --
+> >>>>>> 2.34.1
+> >>>>>>
+> >>>>
+> >>
+> 
