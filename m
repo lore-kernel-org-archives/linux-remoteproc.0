@@ -1,85 +1,87 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795E934F474
-	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 03:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BFF3603F7
+	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 03:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784778768; cv=none; b=Dn1hNLIdCy7d4rqB2q0fHbttmtNFOcJJXJwQ3vFq5VKiO+zFMBCK0TvOAHhE6Zd8dY4Eh4Ehck4A8fMfOHzQH0keUComet68SNLRRZZ3kjOV585EA2BTmc6RH4uHhdwyy1On8MyceNTGczxs69iBkoC4L8uq9fSvWxHEO8FVcus=
+	t=1784778770; cv=none; b=pBtcQBS8Mh2vGJIsd/M73PNByrcKy9hZDyJxwrXxhKviNmHoU49U8r196xrq1Ocebzyrin81QTdQ40LzXBZOAbnimWxBFWHuWRRi+6ilBsv47zRyB4eUKxwsPWbE78spN5wUHBAI1TdsAMqC1P4Y4i50VgOwRaQ4I3aQvCdIBd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784778768; c=relaxed/simple;
-	bh=jlWppMMNCG4So8M5/jDBMwGAOo+9cMnyj+UZA8JE2Q4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HirzC2gZN+3M4uifYwGV/D5yuM1ezM4wGe3vQjsV+xloYOxbc0hsEMwWu55kqdIVL7NGEWkYywk0BIEw4uoBEuS61uKSoc3ByamSGVcZwk7UBEvkZWnIK4+3MPyLmEaWpppnaxvBK1QcahLpOz+VzgmOrftAx9u6fKc9IEknLbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BD4K7n9J; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=hJteY7Jw; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1784778770; c=relaxed/simple;
+	bh=pwMxl4llW1/mlAOue/QMpARpxTropptCg8LeYp2N+k8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LH8OzJ3SMI6qAXH9KtpK5cFF5CAaO9BEA5YY6wnrSMFyj+AcA/R2YI+SjTTAsKtqSCNuVJUfQIHA8iOy5Ncgq+/KjzbHGKDZAH0okqMmzZlI/9YrCEARqBpj5Z74N9BtuO+j7bI1fh4GCNCnmZXrVpyU1UZjuxfvAoI5dqXUnz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZoiqDsVc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ts0b8nn7; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BD4K7n9J";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="hJteY7Jw"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZoiqDsVc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ts0b8nn7"
 Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66N0XSBb2539108
-	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 03:52:46 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66N0XSBc2539108
+	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 03:52:47 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=OcHcMA+JRLaD5Kh0rZuCYU
-	zuONUITqpfx6ybSNI25rM=; b=BD4K7n9J07O7PkJP8QIhn0PGsqXMnXbirGq8+Y
-	r5laEvg0uNmdJdnecekY5m6nxLl0Jz4tlfUgZZCmzUKIEKCWLMALcNk0lET+Y1tf
-	9AtF3vm5rJgmcS9osGGe+8uxpWVuBPd6RN6bpHPFu76M7vGgZekgdPGja6mUX4Nl
-	fsQNOVu4krIQ5GHdAqTLpISlfgjwyjf+eTHrbER5XgM2l+uW7pGV6GmY9D1fzT/S
-	Kr6dazW9sLSLSEsPd6jndf9L6Ual7EoYcXi/QH+waU8wak2HhJL3Fo8fcCyZeq+B
-	wGZq5+dLIFSPcJQXscryRfiZav4NIBzxKLqJwbJ01PkdSTAA==
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fk5cc18g3-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rgykcy6Hc2CX22fNjmd0CTN8zd4sRXFgA/FqOczh40g=; b=ZoiqDsVcFXLi0Zoy
+	dpanq19udGWYQDayj8NixRjf+Gcie7W64h3BFFC8MKhHNlz6qnYCvmsmcxLBVb9X
+	X9blgO5VBLXf0rBKUpzAr+TUiHjIxReJEAJxRZHTueWE4rLrfejCYKZz1CLPKqey
+	pcqI/H51RiQiggcXrj7rZW84JoP4iRnq/z6xjrHjDFrXQ2O+dXn+4LhCg+O9EpSR
+	oKi3q7TqMB7U5lYl7Nq3v+mPLIg/aXEm+cxJtpT67WThOu1KkoeUU3ToKZEUUP5j
+	4orMX7w6/yeeFIuMXl4kYxa50y0J+HTiOmNRr0OBv2rDl1OT85aOUqtbOyItcYs6
+	QQxq1A==
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fk5cc18g5-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 03:52:46 +0000 (GMT)
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-48e2ce64834so101611b6e.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 20:52:46 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 03:52:47 +0000 (GMT)
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7e9e2db9914so9217a34.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 22 Jul 2026 20:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784778766; x=1785383566; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=OcHcMA+JRLaD5Kh0rZuCYUzuONUITqpfx6ybSNI25rM=;
-        b=hJteY7JwYF9bD3Vo3LeBnEjvtJR5LgQE2hMwTrUWj790pY87r1luqJ518Ay1MpjQjz
-         six2sbjJ81hGCQJp2KjdRACBeoQekQCrgKUE2rPQHwoGoax7V5zAlONc/hS0u40vJFlt
-         ZWTWCZGAIzPQ30L+hJjALxovEL/QUmUhGNBvHmHeNcXbVyeS9VRiXGAZM7b0d6GkMsYj
-         KoRjf3ZBvM1bUtuBhbOw/vawRFlnlGpxUyArSvrV/7i/XrBJx5YK9ZpSJm+09FHRSRTS
-         5LFBnc5rvDp4GAMxK/bzqwSkMH3k2DB09d0XpMtSrJ7v8qzNZnndS+KDidC82ObL556U
-         DtcQ==
+        d=oss.qualcomm.com; s=google; t=1784778767; x=1785383567; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=rgykcy6Hc2CX22fNjmd0CTN8zd4sRXFgA/FqOczh40g=;
+        b=Ts0b8nn7gj3o0Q31K3Ux8kkCmke5ruYm2KXH3AyU9sBZHKAaXgFXANJByKZ11js9Lm
+         TIDsEEdO6jdXfq58wOqrQQHICv6hb/BlGSZHclY1sByHd/8l94gjCTac2smBUPc55rwf
+         riav+hoQv10lO4VqDD79CdNwRmj/Xu7CUvbxaeg4EiX6eq2WpfctSE/2C131vxb+lsbQ
+         zd+bMb0Q1bNIKOelcp4NUhwEIruT0+PLdzC7Ij9v9UgW3Bd0UH5AnB0wbCxLs+Q95pjc
+         XmILGQ7NFi3CPF2sZuKVVEwocmJPm26kKLspnYn1DZ2g0wn7Kd6Ijwv3T1B7NJhjO/gP
+         1uIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784778766; x=1785383566;
-        h=cc:to:content-transfer-encoding:content-type:mime-version
-         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=OcHcMA+JRLaD5Kh0rZuCYUzuONUITqpfx6ybSNI25rM=;
-        b=sqC0KIuv9xNBCp7F85KK/QXcQHl66C4zy3Fxj2qx7nNo1GKBW2k68itP6hahN2cva8
-         UcOdfY/U3dlaEHvyFE+vVktNRQE3MQ1+h+ruMy/0WNac1QoWaLL99YGWWJZSPFTlZQjV
-         qrc0ag8JaLR7PXZjAvms82M9+M0mv9f6ji3sF1x/UM5RYTV5hLLcj6RGImm2oWceN1/f
-         W947+fubXA/LFc7NS5xqmf6Ky0M3AKt5Rd2eV5AIvktBej9v05yPmJDOzzEJVPw8pW5Q
-         1itP2uDpKAmwvSK/Z834GebI+PADHcOQ1cBlnQjc/emXWauaUKiY5QvRmwA05GVxs+4i
-         PeRA==
-X-Forwarded-Encrypted: i=1; AHgh+Roahb+Wz8a5/yGSZ4osrVaP0Js6BIl+0DFznVdM//LMveiefJuf++WuEsLIgU6H/9wZU2UvU27XFjBXCusRd2js@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEr9nHrEeg7PCRgOOyablL2cnyo+0xj+gp4MzH1IHecr6Cn4+J
-	aM4e/opAfXmAw6P86328q0n2jh1B7tk5uYxSXv+OLkRtMDDkuxywARDamFsV7BnnUrqn32dhI0A
-	SUzkcWb1+mf2zRhskYyPf9bSf2XW1X1XFF+gdUfMBf22xFEhM1tIbcADMR5TJDr+Z9qihT2LO
-X-Gm-Gg: AR+sD13bjVwkvcoAiRqG1jEhbg4CeCZO7CaQ5wRWLe5yTpniPAR4nd3JvFy3CqoGizF
-	sqfd1VqvaeEYAmLPuya9FN3cNcf3EJHroV5kRztCuUFMa28wZT22LmQKwxPs7+O2g+PCWZtSBJo
-	TpXsxu90YGGW0dTjwA3wJvN7Z9Ck+ZuRUBw5V+uzlET+Q1JQF/fy7ynFE4ilDpTD9Mr/oC6mEau
-	Azi3eJX7bj1VovYz1UO+nIKjVDk4zW106ygB0JxAxUvY9ukU94udMwo9+CAcDnZlDbWcvXPKEOZ
-	RsyM+vz+V6etPan7e0CM/pA2BaxcJ0sB3o2YdjZwCG3+kPeanjyCWIbp3Uv8sVskqU+rbbsr9WX
-	zRlejSj4U8o5x2+htcp0=
-X-Received: by 2002:a05:6808:f8b:b0:4a4:1dd8:5e35 with SMTP id 5614622812f47-4ab352d61fbmr818548b6e.8.1784778765671;
-        Wed, 22 Jul 2026 20:52:45 -0700 (PDT)
-X-Received: by 2002:a05:6808:f8b:b0:4a4:1dd8:5e35 with SMTP id 5614622812f47-4ab352d61fbmr818528b6e.8.1784778765159;
-        Wed, 22 Jul 2026 20:52:45 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1784778767; x=1785383567;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :content-type:mime-version:subject:date:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=rgykcy6Hc2CX22fNjmd0CTN8zd4sRXFgA/FqOczh40g=;
+        b=VxLIS0/jlI4mPmVlBytFfoWDI1L8+sHDfQt2vbhMQNnfbiw3HV6o2XDMpR3i/DQe5U
+         JTTfCxYG1Jov6nFBy2AQl9E0OB/yYvevrHfRE7kBZwuFOIiz8+xY2GK0uuQ6AAxsI80l
+         Bt0zSYfGr4Pn9wKJ8Y8HsJ4IzPf9phqE35pMAqMU5SaDXbYAfobXyxdsZ0+DAMFSPk6t
+         +Vzt1xV4dhA4UYxtfLQU83N3s2ScofvgzIxx+UJoCZKn4WKsoaADXf66sdFr4HqFByTT
+         O557VRy2lFbndnF4ivkFQuh8XE5D8UmC3JJPCebxorKkHRidJ+/co3wDYlFDoK7EHZb5
+         9Tpg==
+X-Forwarded-Encrypted: i=1; AHgh+RqA1SXzscw+RNMA3VTXetzHxyYEDiiR9/2moko//w9HVeh1ITC11uS0VblFUtcVjgYX2/fW+jDPPyMnP3O6EjeJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrAveATqeyudQL8xrgtxWkX0WiV6ErofXqvVP69UofiXv1le5h
+	Ol9TuyXmkU3MzexCnWueH/35261GTs37ROdzCcatexL/MdQNKuOyI0QK4QIdBBXOTvtTAt5dPC1
+	CEf8/E5Z6nL7PoGH+uUVDPlq0M4efORnAvxQVseDvafAtH5XoH1sQa0hfjpKYInQY52I2Jnm5
+X-Gm-Gg: AR+sD12/UV6C1j/S5ijfKwqy49tX7coq7m8uM0qGZoNZK/B3TledGae3q5l952nF/xV
+	JvLSL/tvkGH9CRgOWlvLZeGXhyWkGmsu4FSTo0UVtLui5R3dlzE30d273bvK5SK8Mp1f9LsncjX
+	i6sep3tJayUx9Cbyii6IgPZC9uUpG+7XlEcUMXs55SJJvOwDsZuJskdBrpu+6YMwQuub/YZ6HiQ
+	GjDjogqMdYE89Fvd83hH0ZzKMf8Vl/fEtUpIUKcIcZbdrV/hyu+ajbSaOeTAsklNk4byPNJJ7i5
+	F46VdyrBgt9SZ+kXnmDXPZ/OKz5I9oNC3NLOnRwAKF/eUzX1IM6i/a/DcBNr+8WsIuvkV0OEV/v
+	ozQhqj/5NgIThrH9JZ1c=
+X-Received: by 2002:a05:6820:4d03:b0:69d:7fdb:3416 with SMTP id 006d021491bc7-6aad4f94077mr476831eaf.21.1784778767071;
+        Wed, 22 Jul 2026 20:52:47 -0700 (PDT)
+X-Received: by 2002:a05:6820:4d03:b0:69d:7fdb:3416 with SMTP id 006d021491bc7-6aad4f94077mr476822eaf.21.1784778766715;
+        Wed, 22 Jul 2026 20:52:46 -0700 (PDT)
 Received: from [172.17.0.2] ([104.57.184.186])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-45766f238b0sm3302323fac.8.2026.07.22.20.52.43
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-45766f238b0sm3302323fac.8.2026.07.22.20.52.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2026 20:52:44 -0700 (PDT)
+        Wed, 22 Jul 2026 20:52:45 -0700 (PDT)
 From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: [PATCH 0/3] remoteproc: Improve removal of remoteproc drivers
-Date: Thu, 23 Jul 2026 03:52:26 +0000
-Message-Id: <20260723-rproc-rmmod-not-crashing-v1-0-546dfd5de0e6@oss.qualcomm.com>
+Date: Thu, 23 Jul 2026 03:52:27 +0000
+Subject: [PATCH 1/3] remoteproc: Allow shutdown of crashed processors
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -88,10 +90,9 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPqPYWoC/yXMTQ6CQAxA4auQrm2Cg+HHqxgXdaZASZghLRoTw
- t0dYfkt3tvAWIUN7sUGyh8xSTHjeinAjxQHRgnZ4EpXl42rUBdNHnWeU8CYVvRKNkocMHSualu
- iW0MEOV+Ue/ke68fztL1fE/v1/4N9/wHUSe33fAAAAA==
-X-Change-ID: 20260723-rproc-rmmod-not-crashing-d92388aa47aa
+Message-Id: <20260723-rproc-rmmod-not-crashing-v1-1-546dfd5de0e6@oss.qualcomm.com>
+References: <20260723-rproc-rmmod-not-crashing-v1-0-546dfd5de0e6@oss.qualcomm.com>
+In-Reply-To: <20260723-rproc-rmmod-not-crashing-v1-0-546dfd5de0e6@oss.qualcomm.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Shengjiu Wang <shengjiu.wang@nxp.com>,
@@ -101,42 +102,42 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2059;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1810;
  i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
- bh=jlWppMMNCG4So8M5/jDBMwGAOo+9cMnyj+UZA8JE2Q4=;
- b=owEBfAKD/ZANAwAKAQsfOT8Nma3FAcsmYgBqYZAKwOjLGPmXSIEMNb1IDVew0y8dQxp6Qeib/
- Zb6lZGLK/aJAkIEAAEKACwWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCamGQCg4cYmpvcm5Aa3J5
- by5zZQAKCRALHzk/DZmtxd1IEADJnVpQdpo44gSt79zRuSgntJ+9Oaay72ukWK3CyZbPDjD6/fH
- 07LfljRoUZEDcfvO1DOYmWNy+GAQmmv5Ty2fekelx/ywRflJu/UXTEHZfhgMn1G1nyLX47pOwbT
- 5azsNCLyE5DzDyhq+3T6SchE5fwY0MfDkMrr21b9+g52PKqzCB4QTuKS5eZGrB8LrzotYt9eagR
- HFB6xTVNswWzSmMCJc7N5pH5dr+Rp/zcoPbnCZt7U55VgdTqbhRGKBUhNXZA2DkDgmh/Sjik19t
- N7ZtEBewqUnTw1Wx+sRAyna5UPicniUMezaizwiEgddLsk+8MPKdaoCXKhzDdr8tsYWPjw6dD69
- HhzgYbvWtOFpu4k5ROlL4l4kCaKqHgRXTlTReKoNR7isUANw6hWKMztV1w8Fcpub7BcH2/1DFIv
- 6EFXoFn2HOv9+w2OHLFy1TugIfjYnUTWmvKEU+8iMTug+JvZP1pYov1oIlZDEAb5Vu0ZTqdBPcP
- oxCNXLDzWdGpOv5vYBlQamzjfIhxur++CkCeWsFNqBZ0aVL+2Sob+5+tp/xtjXwKZsbNckfUgr+
- rcI07Ds26sXliU1GaEnME5xIoO4Qszw0o0WHCacvaUSZK32VFjWKsSlB4cEqGUXA9ouiU/T4UnB
- c2GjIcVr39iFAPbLKEBAHrMVc6ggdMVOH3Q==
+ bh=pwMxl4llW1/mlAOue/QMpARpxTropptCg8LeYp2N+k8=;
+ b=owEBfAKD/ZANAwAKAQsfOT8Nma3FAcsmYgBqYZALuNEvaMqMuJklvHLIFqUCE+M0izJ/lakts
+ +J1nvWj9AuJAkIEAAEKACwWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCamGQCw4cYmpvcm5Aa3J5
+ by5zZQAKCRALHzk/DZmtxZbbD/wKH9vAp3wW6aKPXk4JQuMqXiJD6AREiizeAWE9SVp4cX65TGg
+ XLlQit5LgUuRooVxX+G12KF9GlSf6cZU5ZwdOdq9u8yOGNCzZorurYj5lr77ISxj7z5kq7JQTog
+ sQ0ETFWKSPni8e/3BxH1DyHiODEdt5rtaidKajSeF+lJyyT/ImsbvNjSkFIBGSRcDNqxkxdCRXE
+ +bmAH7mSUL4RgvfwqhbhGVLes8BORpljHzVz2IWaSvh5gVtwXeF7TG+l3QgUhfW2N54xEuglwLm
+ KCnbFL0K8UqyiSTZFSNyr1j2AcDk4eDjtjFIxGdVtVAYNl9cL+MTXwHBs7R/LXv/zJ/es/FsPRJ
+ 5JSlBAGBRXzBPZYHdCkVF8MU1f4G68dwAzrPrEZUOxlUUSYHmXH95EEGFyVVsbMRk9bbOHiMIi5
+ jMK87hZkTUQ5Bh+3VKm9kWX2bht/qRLq7AflOY1qwL4jZwdqzfnm2bL+MtxAYN4navKpgL2DTFF
+ 02rtXUDPyDyrMfpU/hcMjFCxyWEsKWby26Jbxf2MdbZG+FfB0J3uLj5asWK0X+ogBEgD6g3Bhtc
+ Zq+kfA7xpP9YwnhOc4kSOR6hqL0NeimZDtYPt+VXN36I9FAnXjtcctdL7VWO9K69x5lBqvVePCj
+ KAtPu5y0ntJH+gF/oydRMHTtqeiSoTPMNqA==
 X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
  fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
-X-Proofpoint-ORIG-GUID: voALWGBRUlTWpfMRHhbuc0fKUegYpplM
-X-Proofpoint-GUID: voALWGBRUlTWpfMRHhbuc0fKUegYpplM
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIzMDAzNCBTYWx0ZWRfX4nJpHrbr9eR+
- a7WEq+qdMU+2YXEHw4I/0dHNUj38npbJ4IuWVtrotEHIZY5Hv3SkHMbinF6y6sCndu8GhFWnZU9
- XQ35n1Za9v/rc0SzGAN/ErFSWGhrvNs=
-X-Authority-Analysis: v=2.4 cv=L/ItheT8 c=1 sm=1 tr=0 ts=6a61900e cx=c_pps
- a=AKZTfHrQPB8q3CcvmcIuDA==:117 a=DaeiM5VmU20ml6RIjrOvYw==:17
+X-Proofpoint-ORIG-GUID: AwLCF9QOulZc86CTCn4gweILLj7ePtB_
+X-Proofpoint-GUID: AwLCF9QOulZc86CTCn4gweILLj7ePtB_
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIzMDAzNCBTYWx0ZWRfXzmCfvw1Boue3
+ xTEEMLJsi9NFy4VEdhAYPvxpxO5auGGjXVH5yXu2IKBlOUXssDvLya6QtICiXCVoBUD3IUsQSJH
+ /fbO20WpCWOf1eTdCbkSU9MFzGGM8C0=
+X-Authority-Analysis: v=2.4 cv=L/ItheT8 c=1 sm=1 tr=0 ts=6a61900f cx=c_pps
+ a=OI0sxtj7PyCX9F1bxD/puw==:117 a=DaeiM5VmU20ml6RIjrOvYw==:17
  a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
- a=EUspDBNiAAAA:8 a=9dRw-LnU2mmOUw1Ut40A:9 a=QEXdDO2ut3YA:10
- a=pF_qn-MSjDawc0seGVz6:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIzMDAzNCBTYWx0ZWRfX5aU8k0R7AoCU
- arv9v7fVsfoUtGf/Vud9/ij78eoF5ITLvNHjxm9zRf4noSOzvEflQyB8fWxAMgb3BYz0BBzZr+h
- dtYGpmok1yErAfXL8R+lpd1vgz8OCp9hyjRpH978/jCr/j1T1XuZwuKU7YcEFFvP1GhJJHKbTHX
- szEVa5IjQYUMkZwUkqYCfSEQlYcUT9CZDDQnAKS6uY9lYHvGOOlfL5tRclMXhr8+AXPwkixqLpm
- UAQ1b0STT7XaxMtqLkivffh0b+nCc4p7LReuyDsC+1Clh1PQ3F8Xt/Q0QO1YSwGNwKB4OkkDqre
- itrZ3iIA4mDwSc6YkWdhBPWdHKxqCVNJBFTUkxx90ubGyBXAYi51GV7zRFLGOY/rjuV+A/oiXyG
- NgbSyiIDqpfLXW4eEES/qu8pZWYwA50aHdmZTPyKVU8H2GbklzN5JF7wDnvn1A7kWA7PS+KQUwn
- VFmgt8pELXdQCahnHzA==
+ a=EUspDBNiAAAA:8 a=BSaFMngucRZOfh4nmS4A:9 a=QEXdDO2ut3YA:10
+ a=Z1Yy7GAxqfX1iEi80vsk:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIzMDAzNCBTYWx0ZWRfX5PXcZqC6Tovu
+ KJtRyWWdjwKAuuA3X+pN+SLShYYnQtctQ/Da9jPsIZ+zL7PDM6lwnhfOeXrfUcdKn6YlSyy8gqr
+ f7rcKeJ65tFSxX843kCiggIp9+l0zwY2oRR9DoC0SeClwmT7ERE1CCocZA/rUw5qCvSwluSY00u
+ vJVtn4VkLsa6XGbcLIrV12eo3tVWoOM6tteGmNqtixkp49zhp11HnWExtj29pUgu8kDAPPGX2z/
+ tP9A+X5z1IR2vk9cZm2Z4MmDXVyg5eVzaKE0yCqFib7ts+D9Tf2dQBJ8IypKvWcMpKlZNNof1Iw
+ yoaNXHZWiaRcZj3hMoKORr6TaUIB8Uv78be7soGPYhBoAN9o4BR7ktz5Qh2yrSH9R7bBb0GodEw
+ lGn0yl67yN4O9taeiLBDHJZxU2XmnDJTHv6o2Ho4bKMENwyspfTMhqm2y3V/7l32l5ooG2fEmZN
+ DvyRNYEAeVCH283N+Hw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-23_01,2026-07-22_02,2025-10-01_01
@@ -147,50 +148,57 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
  definitions=main-2607230034
 
-Stopping a remoteproc that has entered a crash loop can be problematic,
-as shutdown is only allowed while the instance is in its running state.
+rproc_shutdown() rejects a remoteproc in RPROC_CRASHED state, and
+rproc_del() ignores that error. The result of these two decisions is
+that a user cannot stop a remoteproc that with recovery disabled that
+has entered a crash state, and removal of an associated remoteproc
+driver will release resources without first stopping the remoteproc.
 
-One effect of this is that a remoteproc which has entered a crash state,
-with `recovery_disabled` can not be stopped, without first attempting
-the recovery.
+Allow rproc_shutdown() to stop crashed processors. Propagate the crash
+state to subdevice teardown, to allow subdevices to dismantle things
+appropriately.
 
-This becomes of particular interest if the user rmmod a remoteproc
-driver in such state, since the return value of rproc_shutdown() and
-rproc_del() are ignored, which means that the remoteproc is left running
-while the remoteproc driver will unmap memory and shut down critical
-resources under its feet.
-
-Another variant of this issue comes from the lack of synchronization
-between rproc_del() and the crash handler worker, which might be
-scheduled concurrently with the removal. Mutual exclusion does ensure
-that concurrent progress isn't made, but nothing prevent rproc_del()
-from returning to the remoteproc driver and have all the resources
-freed/unmapped while the worker is still running.
-
-Lastly, another way to trigger this faulty state is to bump the refcount
-for the remoteproc, in which case rproc_shutdown() becomes a nop,
-again leaving the remoteproc running while the remoteproc driver removes
-critical resources.
-
-There's certainly more work needed in these code paths, but this settles
-a few obvious issues.
-
+Assisted-by: OpenCode:GPT-5.5
+Fixes: 5e6a0e05270e ("remoteproc: core: Move state checking to remoteproc_core")
 Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 ---
-Bjorn Andersson (3):
-      remoteproc: Allow shutdown of crashed processors
-      remoteproc: Prevent crash handling to race with rproc_del()
-      remoteproc: Force shutdown during device removal
+ drivers/remoteproc/remoteproc_core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
- drivers/remoteproc/remoteproc_core.c  | 104 ++++++++++++++++++++++------------
- drivers/remoteproc/remoteproc_sysfs.c |   1 -
- include/linux/remoteproc.h            |  13 +++--
- 3 files changed, 76 insertions(+), 42 deletions(-)
----
-base-commit: 290aaf24a551d5a0dce037e3fab30820f9113a10
-change-id: 20260723-rproc-rmmod-not-crashing-d92388aa47aa
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 0583d3a56212..3cd4570513c2 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2002,6 +2002,7 @@ EXPORT_SYMBOL(rproc_boot);
+ int rproc_shutdown(struct rproc *rproc)
+ {
+ 	struct device *dev = &rproc->dev;
++	bool crashed;
+ 	int ret;
+ 
+ 	ret = mutex_lock_interruptible(&rproc->lock);
+@@ -2011,16 +2012,18 @@ int rproc_shutdown(struct rproc *rproc)
+ 	}
+ 
+ 	if (rproc->state != RPROC_RUNNING &&
+-	    rproc->state != RPROC_ATTACHED) {
++	    rproc->state != RPROC_ATTACHED &&
++	    rproc->state != RPROC_CRASHED) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
++	crashed = rproc->state == RPROC_CRASHED;
+ 
+ 	/* if the remote proc is still needed, bail out */
+ 	if (!atomic_dec_and_test(&rproc->power))
+ 		goto out;
+ 
+-	ret = rproc_stop(rproc, false);
++	ret = rproc_stop(rproc, crashed);
+ 	if (ret) {
+ 		atomic_inc(&rproc->power);
+ 		goto out;
 
-Best regards,
---  
-Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+-- 
+2.53.0
 
