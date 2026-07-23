@@ -1,129 +1,124 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7237E429CF0
-	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 09:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06FF418A34
+	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 10:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784800793; cv=none; b=VrvlgaR0pPwKv7MRu9Oonc71xnTEiKratCnQD3oq/01pwCFbs2iBXsiKXgq7MHtIaOqlwJAt7I87nGjhwEz3Y2Az7hDRektlijUa33WAdjwzy/UgdoAok+bScewZRy3eynS3yvq+eUc46JQNr3GfQczm2Svu8SgPChHOXlYbEwE=
+	t=1784800836; cv=none; b=TfkxXbihMoaT5BsuZH/MXF4syppzN5y00b4W+2m4YEAzy8Qb6QD5G6xLz5NRL2ird3d7oILDpfwlR97N7O2TrY7hF+61fVAfwC1gIOBHgT8316xXr6uswwInnkE2Wt1wswLf3eN56v2fwG94FAjQEDWXeTvsFuyXGo9wGfd1Ctc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784800793; c=relaxed/simple;
-	bh=wu6r3ZNw+XXWQmsPOWxPu9W7TaRQ182lxP6eznQUIGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H/CjGIp94BeZfavyGfTqxAzXGjMrKpWL4dTJC4REeF0RkfZSxLPJBvuSGX1TFHSul+/rvVNuHizBl7XyNW05rcOxBnFu1elsVy/IbPpgJytyd4GN7RJd7Xl5MA/CRyPzofidY/k95tyUu2lPRiD5Eh61PxEC0lM/+IOuQ6aN6fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ch3hcOWh; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=IZgIU+pj; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1784800836; c=relaxed/simple;
+	bh=VLw6u5uJQ0A0aDtacuxkHmJKmF7uVFvEbyUyO50WYAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWDATDq8i3h7IQUMjM4ASyyHT11bvb/wpv88Rpl3y3mwvfoevyU3Nvg/HEEj+4pwkBnMsJjYvXEK0UKmlGoEbvhvMZIZq4o7kVlzZQLv7XqyFyT7RxsUlGBVVimMRDhw3qGCIOZwMWu1YD3XD7OQTadx4Q75FImMOYE+e4QmgBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HLKjhQ5k; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AfQ7jQji; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ch3hcOWh";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="IZgIU+pj"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HLKjhQ5k";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AfQ7jQji"
 Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66N8qVfS3648545
-	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 09:59:50 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66N8qZ773648591
+	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 10:00:34 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1eKyXYHNKvqtAF4BG5ZtxDXRV5EfpzhdAHu/XxYkUIU=; b=ch3hcOWhUJ42rYKA
-	Z2FyeXeu6NKQBuVtRhq4fhTr0SrEAkguYgySdPG3c9H8ZNV5fIDzrBLbDcbOXDBQ
-	FTF1SiUlDJ1WyzpqFDiUdFqZZM3PZEKiy4g9s+RGVULfeyVCpSeDK80H5sU6ppvc
-	eQtAQaW+4Evj6fKFfSJXCByanU6N/G/qHaeNtk7++vPDU66YzjDQ9xYisA5zkPKI
-	m+Lko1wNDRButeN/QS7sp9pqla5leEnIF9dSbG5Kb70mdaUBUyLRa/2BpFMpdoU4
-	wspqgBCh1wHPbhMs7rChaCCoEid9mm3yJS9+6XxDHwNLxAn1eLMQddyXI+xUQ39W
-	r62myQ==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fk6c7jdtg-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=MCAPhmwzwrd8RGe5r/R4THSX
+	uofPqZMNQCsZGRPWI8Q=; b=HLKjhQ5kOFJmzUZ6j5w0zuO1mTqzz//wqjgA3VqG
+	92j01WMU0EKKMcYTo0PdA0ofJeSt/RgG63lMudiSSiKzk4snytGB76c4yPitCn9h
+	DLCxsKp4fQuAh3mWK///agGv9u8jYLLqbvfTwG9wYjPYGaU0rngxRORq8jRONV8b
+	pPs40skveGvQL4HbLCcWifE18el4GuznvJRcqQR8xRyxd4vG0qWrcfdCXOX/sNdx
+	ec1Zpw+ocuKbeq0E+2EkAl9MPQwhoXoGJWoMADjYOjiA8Mz50kaTWTFGZ07n5Lc6
+	iSZXDMJQEJx96Q6YPbLZUX2xZ5A7/F/jFoQsijZWpwl1RA==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fk6c7jdxp-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 09:59:50 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93102454272so17432285a.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 02:59:50 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 10:00:33 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2ce7dff6253so3198545ad.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 23 Jul 2026 03:00:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784800790; x=1785405590; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=1eKyXYHNKvqtAF4BG5ZtxDXRV5EfpzhdAHu/XxYkUIU=;
-        b=IZgIU+pjA9qAqYO5dMWKtM4TrA1K8OvZ7rAyOzsMM3lNIUKvMxfTcTHEcsw+/u2O8R
-         ST5DlLdfoTXebj1CyRm15WpAq028Zv9ABZNxjNmTMHn7ec/QK/9MV5o9ooDVFmcfRjhD
-         HU4Uf2Tp1QFVWQXy89bJU+yd7H+VS1onjenyTRWhDpYXR6gMnNoxZrTplC50DjFXinmi
-         UQM1zN7TO5z5BK7hRYwivWNVJMIMZ0nYQTP0VyaGJVubxLffiicsNtNrW7J7WcCIWtBh
-         ZqD3INKLXbpO4HZOl9T7GGf2Eff8JLaf+EjdePumnzWgzh5FoI1+2Id1oS0rf/8hoxIb
-         +k7g==
+        d=oss.qualcomm.com; s=google; t=1784800833; x=1785405633; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=MCAPhmwzwrd8RGe5r/R4THSXuofPqZMNQCsZGRPWI8Q=;
+        b=AfQ7jQjivVtcsmz/+JXByx0Wux2pwx6IJjpLcOk8z4xGz30RcyWsytDMqJHH58C6Jn
+         cBmpKfcaLVE/8Kf/rodlWMlzNrUHloRXgvNw5FdqOB/QUkCE2EM8fkk7jc44GkwtDoPE
+         YhOs2wairsUTrlyw4ILHn+oRVxvnjUME2qHM670N20+bT+Y81IfOoNDMEpafpEsCzV9F
+         toiZb8AaZXARHmcsHNfYJY+jsSpGMLhaqWYsL5RhoXbHt6B6lzJYHngtg1RQgbYXo68o
+         QXJhkqAalueFkblKzIZtt2SULqO8jxUrNFxSst8trYz8p+de8TQbDhWqnClVWcughvM/
+         pZ2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784800790; x=1785405590;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=1eKyXYHNKvqtAF4BG5ZtxDXRV5EfpzhdAHu/XxYkUIU=;
-        b=NnwVbL3YS/L1QREgZty2CZH8PfKa/a6hJZaR9NSVGAQwgV6Zt2OC09E3cK8tlkVUKM
-         TkIooQXO6+xWgXUYtPLUuRA3NausnqKsRQdVutQRLvmvZRctYYheCjHWgE1VK74Wki7E
-         DyAuaVtKPWrFuLgdzU017B7DRFhXHFwgaLDqmtu2aBvLIm82nji3s4NhcqtMapprA4CY
-         jbD4GgiDm+EXGi/XqSPWNHMbNcDFFlKlzUwYnAkb8CfIYw2X7oDOcf+PAnecTlQ20Dtg
-         xvy0N0fTFzsbePzpKUAKN/SBYs7IFxswlSdO+KYfHUuLIERC5zzwf8Z2iPi3GtHnC0M6
-         ULEA==
-X-Forwarded-Encrypted: i=1; AHgh+RrmCULpXszQPc0Ovmx3Rxy9zUb9qTTZwmjrkA/ue8rTrLrVC82f6neZped1Fl8B1UedFTr/TFhNWy549NSCSM3X@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgqHjLBkEb5FSY89gkEYVvg0vr3JqdXEAyyl4GZ1YVsqKFBBZ9
-	PXXDku6scE9UVD5iBaKEgXiAY4r0T0lOvzpn4bQxV9f7mvjEryLMureYT6QQxYn3yPlNEOMfU3+
-	Y7MdhCeJuRfnYTZQK3qL0C1munSu15WLOJBP8J1CCFN+SEOhAj/YMqJiqLg05Xf8xioCaFW8a
-X-Gm-Gg: AR+sD11expo3eEKwz0UwDXmk+XW656FV1yKwx15qBh8xfm5VPLG4Wy4gcsJ2uYQ7lbe
-	2ygDSM/LHCFQist63yiplqwI7EgxTcS/DhuSNX77ocJduqe6D80A7dlgjAZ2jEJ9Hcdx2dhIdBG
-	bEf4iEnczNKgApdgoXy5OERSPuf7YE3lTIaqwcYQwZasFtakoSAAPuEcg3NsRDItZux1oNMf5DW
-	tlKBb8f3/NgjUTv9QpEnUKTIrRtkKVKmGLDBH0NQ4CPAA6P146vfvF1wpY9Px4GObf6S90UxqoO
-	GF+HuR9xbCj7d5cgwggcJwVk7PzPs2nM9N9h5WujS/d1GRwOz/2HAZiqjBNQZf5dzU7arrlUBJh
-	ImcRdv/VUz0c1uan7R0KQ8N0f
-X-Received: by 2002:a05:620a:2a07:b0:930:f930:a09f with SMTP id af79cd13be357-931036542b6mr185431085a.1.1784800789727;
-        Thu, 23 Jul 2026 02:59:49 -0700 (PDT)
-X-Received: by 2002:a05:620a:2a07:b0:930:f930:a09f with SMTP id af79cd13be357-931036542b6mr185429785a.1.1784800789324;
-        Thu, 23 Jul 2026 02:59:49 -0700 (PDT)
-Received: from [192.168.120.193] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c1c32c8ea94sm210349966b.41.2026.07.23.02.59.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jul 2026 02:59:48 -0700 (PDT)
-Message-ID: <895453d7-2087-4639-87cd-ba3fcca9f657@oss.qualcomm.com>
-Date: Thu, 23 Jul 2026 11:59:46 +0200
+        d=1e100.net; s=20251104; t=1784800833; x=1785405633;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=MCAPhmwzwrd8RGe5r/R4THSXuofPqZMNQCsZGRPWI8Q=;
+        b=Chh87kuTxMEdONzDC6Cln2mQgixlvYkj9mttTP5O1xj6a/EIrOqaQeo0MJVXsIrEa/
+         /G4ZKDRZrBSYqWnzxVTP3QSSMx1+lpfzyr1KHyug72VsFuApZzEXfJzxAYTbeY7SXnhF
+         iCIupVVxB2xunFzrfA9Djp0Ii18cqGkvJhZtGsqGyO/TqGJXWktHoo28VRZpB9dRe1/b
+         AOVd+/cV1DfXen4ybYBW4hJfoRRHyawrRovAUGQxJ4aL1dPH4JFaBpZ8RgT9brTXeDlV
+         y+ptzeYnVMz5q2ovAphpiy4msW7qt4GkUwkaOR+6qCefS/6iUPVXV4+S+Oi90sFLVX19
+         8J9w==
+X-Forwarded-Encrypted: i=1; AHgh+RozBV+CTRoFAzn8N6No8KoIsunpMW/vq5KkbS3YWVwqwvbB5w52aTmXYsKDAwry9Rwux5IYNVy/sBBNobk/Sy8n@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhF45i2OZANrjoBlqjlUOgeJeHLbJB1XJIchV0nPQ1wy2Jw05F
+	qinTMnLakdwXxriy74AvryfPaNiOLsBPYC8MJ/H4cIb7yaIz2kaFs4apw92BbnPUusHKPw5PWVo
+	uHAM8SYR6BjW+CO3CaWOHkaKXbipMb8NNUd0Fik2yRJ0XJ0tgFs7JickkWz64k/d3jZKj+0SJ
+X-Gm-Gg: AR+sD12KHOfPgOsQyhOwmNhpxvfp1DmlGx6DiJLvqFYxhHtpl1cOAnmx4X/mrjnc9ip
+	t5KwuAiNeU/7Gh0Wn8Fwx0VmChq1NS1F9T7RnXLgjVAeEoCmQpAhHbCZGFNojeLkkqe32omlwoK
+	eQMQbK4cPuu0qb2zZiP8DsS0ObOnXEBD5S8p5Bt/4o4IUzUD980LlVDJr1X3AG+vXQMsEAaJnYv
+	VvZgCtT/TxpLE06LpAA3QWdtgvukRfRcQlFA3tBAYMyxGx5tlwUI+pAAogT3+hSju7t/Iy06tn3
+	gKYxbpCyeQ2tOkMTGT5/dJo9i2dv3GGX1Bg9RDRo91LHizLoa892yGpnyX1B0O9uWglkYoyQri2
+	upReFnRlrlF6qXeLRigBw82pq0NA=
+X-Received: by 2002:a17:903:4b50:b0:2ce:b3e5:3249 with SMTP id d9443c01a7336-2cfa95213b0mr21245745ad.18.1784800832926;
+        Thu, 23 Jul 2026 03:00:32 -0700 (PDT)
+X-Received: by 2002:a17:903:4b50:b0:2ce:b3e5:3249 with SMTP id d9443c01a7336-2cfa95213b0mr21245295ad.18.1784800832306;
+        Thu, 23 Jul 2026 03:00:32 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3149198adb8sm8920572eec.4.2026.07.23.03.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2026 03:00:31 -0700 (PDT)
+Date: Thu, 23 Jul 2026 15:30:25 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Fernando Guzman Lugo <fernando.lugo@ti.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] remoteproc: Allow shutdown of crashed processors
+Message-ID: <20260723100025.75rgmzv2drb7ufgo@hu-mojha-hyd.qualcomm.com>
+References: <20260723-rproc-rmmod-not-crashing-v1-0-546dfd5de0e6@oss.qualcomm.com>
+ <20260723-rproc-rmmod-not-crashing-v1-1-546dfd5de0e6@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] remoteproc: Force shutdown during device removal
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Fernando Guzman Lugo <fernando.lugo@ti.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260723-rproc-rmmod-not-crashing-v1-0-546dfd5de0e6@oss.qualcomm.com>
- <20260723-rproc-rmmod-not-crashing-v1-3-546dfd5de0e6@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260723-rproc-rmmod-not-crashing-v1-3-546dfd5de0e6@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ltm7cNlgO2egm1BIv20VHtBelghuOcJj
-X-Proofpoint-ORIG-GUID: ltm7cNlgO2egm1BIv20VHtBelghuOcJj
-X-Authority-Analysis: v=2.4 cv=baZbluPB c=1 sm=1 tr=0 ts=6a61e616 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260723-rproc-rmmod-not-crashing-v1-1-546dfd5de0e6@oss.qualcomm.com>
+X-Proofpoint-GUID: _Y1XW64HM3r82O1dkROGToXpMzSiiFAI
+X-Proofpoint-ORIG-GUID: _Y1XW64HM3r82O1dkROGToXpMzSiiFAI
+X-Authority-Analysis: v=2.4 cv=baZbluPB c=1 sm=1 tr=0 ts=6a61e641 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
  a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=Pig3eebz42euybiH1koA:9 a=QEXdDO2ut3YA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIzMDA5NyBTYWx0ZWRfXyzuzcpbFj5N6
- iWqjY5ZtsLqXcKzyBJmydAaSnzzXUBgV6mm7BwkLcwX9mF+ngWBzVGiVEA+wQchaV/nXVu+aPXc
- mrIVo53f4h/jIRS0oJNFaSTRC8f3aB4=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIzMDA5NyBTYWx0ZWRfX6hEKMEqtB4q4
- aBH6ISeVzfDIPmmEWV1Ui4wI/kRqkUn0nu8vPC/2HdYWpUfhRsykI4lNdsJODQ0ta0+LxCqyHJj
- ZE2ldXjoOHYVRuF45RjIdE5/K2Vk7VeAIqxLEkHOZwIjkyo2bitf9b//XiGtn/y4Uh2Rr52lMdc
- XaX0nY3P6cY05eFgtxGPvHx0DdS9QYrcyHEXvymuftNFwvxxdr7Ib8WMv4dsomf6vW6o7IFPPod
- Y1+rNvrQgQBB4kbm91IAx9+W4z70YVlhbNXEdug5WG4BLzNsK3pG0JtgszJyPBaU+lKR6q4eJkE
- Ue1LirmWAD3oILZDauxiWqdrLK0paVMFxAg9S47jNjWeVvjVoif48pP2ddFHS/8H+/WEgn5H8+v
- BczDkVTz96vB66B3n4Jj6eoKUelhbAyBZ2c8IG0yrxOtZ9R30laL93NOfXc8TJNQmISyG9mhzP5
- 1QIoohHQCtB+OUZbVfg==
+ a=EUspDBNiAAAA:8 a=olGLvaFp8OSokbd0vAoA:9 a=CjuIK1q_8ugA:10
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzIzMDA5NyBTYWx0ZWRfXzSggLPsM3GKV
+ dG2p/O4Sd8HBe7MO0iE+As1LAUbG1m4e6jIpZM0iawgZ56IdFBuGGbmCHNdwxlbiL8ZNNNzyEAD
+ WWkx/xiuHOMwNM4PGfb+l0Y/i3X6g04=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzIzMDA5NyBTYWx0ZWRfX02clZw40u1v1
+ rfgwtNTCFQhs+zq3IgF7j6HZC33MNQQIKD/gkJ3CMBs2rr58H/2+9Wkxzl3fD0U/7X2fTLkvvud
+ MwV1idW3N+/S0gsufEvz01QRHI4xEAo+05DcQ4+KGlZMa3RVr1ivmfUoGdFFTJoRU8stJBu94tJ
+ slWpsS0ZYhgEN3hukAIRxJbbE7Z4jpM+2s5tsoG3i7GOEunkCd60ahsMWlpmCARV+SGsfVR8W2Z
+ rN0jegI9HjdPNETZLDWh95+CkoLnuFlfQ0C8U23B+XAXlIy3FB7NBrV46iJ0yHeWIJocrgNvYw/
+ rSV86rMyIe9NksB7FoF/M37mzuf6ngyfihxSpEBDSdkGs2U4BQiQIyYpqyL03AvcSgCHOfgv4s1
+ rsMNu+gV++gJYbTmMbbcZ5QMVpFcFhWa5CRY0LwVGpFsurvFFUn/qE1wmEsf1YwwQugZSqqLWRl
+ vyI7mYg0e4S+bdP5ROw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-07-23_03,2026-07-22_02,2025-10-01_01
@@ -133,18 +128,63 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607230097
 
-On 7/23/26 5:52 AM, Bjorn Andersson wrote:
-> rproc_del() is subjected to the reference counted shutdown path, as such
-> a remoteproc with more than one reference will be left running as its
-> resources are released underneath it.
+On Thu, Jul 23, 2026 at 03:52:27AM +0000, Bjorn Andersson wrote:
+> rproc_shutdown() rejects a remoteproc in RPROC_CRASHED state, and
+i> rproc_del() ignores that error. The result of these two decisions is
+> that a user cannot stop a remoteproc that with recovery disabled that
+> has entered a crash state, and removal of an associated remoteproc
+> driver will release resources without first stopping the remoteproc.
 > 
-> Refactor the shutdown path such that the reference count value is
-> ignored when called from rproc_del().
+> Allow rproc_shutdown() to stop crashed processors. Propagate the crash
+> state to subdevice teardown, to allow subdevices to dismantle things
+> appropriately.
 > 
 > Assisted-by: OpenCode:GPT-5.5
+> Fixes: 5e6a0e05270e ("remoteproc: core: Move state checking to remoteproc_core")
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > ---
+>  drivers/remoteproc/remoteproc_core.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 0583d3a56212..3cd4570513c2 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -2002,6 +2002,7 @@ EXPORT_SYMBOL(rproc_boot);
+>  int rproc_shutdown(struct rproc *rproc)
+>  {
+>  	struct device *dev = &rproc->dev;
+> +	bool crashed;
+>  	int ret;
+>  
+>  	ret = mutex_lock_interruptible(&rproc->lock);
+> @@ -2011,16 +2012,18 @@ int rproc_shutdown(struct rproc *rproc)
+>  	}
+>  
+>  	if (rproc->state != RPROC_RUNNING &&
+> -	    rproc->state != RPROC_ATTACHED) {
+> +	    rproc->state != RPROC_ATTACHED &&
+> +	    rproc->state != RPROC_CRASHED) {
+>  		ret = -EINVAL;
+>  		goto out;
+>  	}
+> +	crashed = rproc->state == RPROC_CRASHED;
+>  
+>  	/* if the remote proc is still needed, bail out */
+>  	if (!atomic_dec_and_test(&rproc->power))
+>  		goto out;
+>  
+> -	ret = rproc_stop(rproc, false);
+> +	ret = rproc_stop(rproc, crashed);
+>  	if (ret) {
+>  		atomic_inc(&rproc->power);
+>  		goto out;
+> 
+> -- 
+> 2.53.0
+>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 
-Konrad
+-- 
+-Mukesh Ojha
