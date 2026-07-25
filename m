@@ -1,175 +1,232 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B93544E67A
-	for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jul 2026 18:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F34353A61
+	for <linux-remoteproc@vger.kernel.org>; Sat, 25 Jul 2026 20:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1784918515; cv=none; b=dx5fhsiesfph9L102E4Rlxci0+kIeTRWJvwRjVvlc6A0FUth4+2t2jsZNz3lT6GdSi7dcTjimHU6AF6Bt28iUt2FbthIrDA3zZkGjMoGa46HkjKnGAxf7AIijwpotNJXEB/ihCJsEhn4d9v3ZbLOZ10+byTo8oGI/1nh0kkRsG8=
+	t=1785009906; cv=none; b=TmpMI54S+NRmwq9udtVflww6plGAFlTM8FZWRmRhMPletNsowgp2g+4hSWldk7EKlmnM6HTbRfzsNwE/ItzOBl3RE6MLhc5I8g6v0AQ2FAkb3ida5OdF3Q91Qn/LsqC2X5HUdVKSUA9AU3XE83kmH6+vAsDPmy1cxbctqkh1ls8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1784918515; c=relaxed/simple;
-	bh=qNZvK7+AlNN2rB1roG+QzHztK+rI+mX+6qlTqpAyUSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MYPo5v7t63bK6AmkLwQ8Z1dFSCkYJrBkZ1/rLeCQNv5e393S7OlSvwKP47JGYEeQOIr6lkvHoSj5xqs2A/tByRdCTU50K+gBUpzMBl6pv83U/cJ9C9XZ2xsndrusWQv0tg//se9kdc/dQ/tD2b2NouZYMq8gLfkn9ZUPVlVzHUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bNu8HQQA; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ckRk2eti; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1785009906; c=relaxed/simple;
+	bh=nIlnJRPNwvzsEQ9oqxaZZWX8opcLYnBostsYhgueMJg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RsQlZ5+BrgfLzZ17iBsGwM12Nl+NkBH8lPPMYYBxA5I6wA3KvuKQFoUfgwWQJQ9UgMQW/iCCkTxFJOHifRREHYBAJON2z5mkeclvPeNpa6DJ6Xn2dk4v0PbYkY5eoHMEh3C9PyjVnsW19wJh253UsncuMDAF0YHD0WCHabf1tzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEoKA0T2; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bNu8HQQA";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ckRk2eti"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66OGqrcu3793999
-	for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jul 2026 18:41:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=7o4JihoclNc
-	NdJZNe0ixXAAbiKqntyluapfzy3jSsTs=; b=bNu8HQQA9zdcauZol1AcpFm/tW1
-	r8rvsJTazUbRV+po27H/CEkb2FcawQ7vhFc5p10O1WqMMhGpf3PHzNPz/4GMA6cK
-	7zMsV56Lvvn8twfoxGhHd3htRTuV7RfBrN/DOVIizuinipXFlc/ebUIfXU68g6pT
-	xlwPCdMYJAGWUpr5HrpfIoKlcmCoR0u6sovfCpOZxprwZ+dbC2IgMXcueFyxdP1t
-	4P7aBC6s4JqHmhnr+Zp+MPS23Omu10SrJkCnawCj4Tr9Z4S0kHOAq9UVbTn77gme
-	66czs+XGjXF9NS94Qr5qxd2Xa7DGpkfHP3X3dBnzIgeUYAUELTUhqokYKXw==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fm8cf19wg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jul 2026 18:41:53 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-cb835525b10so798915a12.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 24 Jul 2026 11:41:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEoKA0T2"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-cb20b0a387bso194768a12.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 25 Jul 2026 13:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1784918513; x=1785523313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=7o4JihoclNcNdJZNe0ixXAAbiKqntyluapfzy3jSsTs=;
-        b=ckRk2etiK4GSdvmXXikpk/UP4gXFiSwfo0ST2NB42kLp+U70pwPF0Lu8Vu9+2pwcxl
-         VJckcb9Hl8GnTNkExoapZhcu58YZzyKbrFTF1JVpDwvww7oripD+3Eut2RRBIGqKw0Vk
-         ANWyj/tigmubTMJz7gIOJaq0Ja5qlor3vMDBTsroI9nzU3Q1JBr1cM5H48tI5ean/0Xw
-         hX14sSU099ySMs7iAt6AR/KCAWv8ZEvfP0Ur0SCDwPeT7lcm+By2l0iHVe5a3AzSR0gr
-         2v3DynjsAtxEyQ+CMtj8XaFc7wlGqgUHrVhw3/H8UgWBLupiAXxL/qHgSkZmeRVOiTKB
-         CCMw==
+        d=gmail.com; s=20251104; t=1785009904; x=1785614704; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=I7YnUNHQ+9mCV7Z3kMgXnU2VDcDD/IXSwFksJNwhhcY=;
+        b=KEoKA0T2mEkyJvTNPM5Vm/Xvyp9hwRzZlnqM16eRfXhdZf9OzsMXH4xKHwsYMihsgl
+         +CEkEZrkc7BWEl0rFWev1ZHfXhTadwHc8TDPcPOXfOulOtkK8lftpWZgPp3bBL2wxyaM
+         EV8YsQ+RnT7g3beOC+Ip5S4ouExrx0EH0XrZwTRMKlydNm8OdQyv7o/52ib17sXK4875
+         iRHrRi+ZIAzzZhGVhPsgmR16r66pqpRQvlzzeOug/VTSXjnvNVWptfVtm2QOQqtHvhMm
+         iHql2kwTLRPwibP38CgFUQtYF4rNR9j9QzolLsjDqYcs5LrvmGJpR6FNen4TF1bis1kH
+         fFeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1784918513; x=1785523313;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=7o4JihoclNcNdJZNe0ixXAAbiKqntyluapfzy3jSsTs=;
-        b=Gm66n3BzzJ5YGBCXQbNayyYCMIYrIUvbkKaefkZs+mz7YdJgTz1Ny5heCmuiu4KAfR
-         m4daPIZZkl1JV3sLMyb7ffd1K7oZTZva6ZTzJ6n6ebmfVg3VLm5xN9nTgX4okpieseRN
-         z+h+YPqJPgTCtsnQ4dmiZUmoUz+3uq4WV0MV76wA1tH1VpdiZxYcjIl6jm92168izAt1
-         2sR/JX4Rhoo1QhOrKfjMR6Tr4qwxSZn9TZJEjH1sloN1AjjLdLAweggt3O1D19rylXCO
-         qQLXN5RJeeUqJYP1rhHH7TmJ0Iswbn3EFfNfUBAxgNZd6dwV5iemr/QrL0Hyi8Wuj5SG
-         ze9A==
-X-Forwarded-Encrypted: i=1; AHgh+RrZcN698QJhylWhchBd7hV15UtQfyyJQWAeYDEX9dbvCFnPbfm5MpqoUGnyP84SEoz/VBgb/9hh/u2/I4ByROAw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/eza2SP+G7uY4XneptttwPMWB2nNwmlfc4t111P3u5iCSxiBP
-	Lhfr8dV3h75srwy4s5jLL/oQthFr4rwBp9JElfZtyaIE0SUsuArlK2VUz/k+PiNFtP3pLgB/aT4
-	VU/nv+r4kUicMUYT+uHsTT0m+BELbdARiYlqcbuJ151tXk3HQy3prTyZGVJL4y1xui0ZnoqMP
-X-Gm-Gg: AR+sD120x0e7gOSUICTuqucWC5wbDa3J1v39RSs+7PUD0BOpzf5VPxMC7N6ehYxpm2m
-	djXRkfSGOcUaHnvlUk2pZTWc6ej1JAHq8VWKPqfCofzsU56V0q6tKyl4mjTXEe/EajjfRzLRqid
-	ikg3Kxoykh1zJBLuV5SFqfc761y/nNoGcGkhQJh3mWfMMp1+rTX6aAWjsHWf1O0p+hWAkMJnd3t
-	jmOxWAql0GfM9HotvkHGsb2qkWALTJ1ugmnJuTiJ8SJaEuXI2H/5EcJlGvhvxrCtt+rjL9Ih+NL
-	RZT/2BIjklGuUMKneXkK7+r3fi87j1/ZXUe8l95yJhu/2LMTwCjBJLjxcKbubCPzxixjI29vYdm
-	Tg2pTknKcRUQmy0vW5uz3RcLcNWo=
-X-Received: by 2002:a05:6a20:2d28:b0:3b4:81b4:9b79 with SMTP id adf61e73a8af0-3c44b18d9cbmr10519005637.40.1784918512861;
-        Fri, 24 Jul 2026 11:41:52 -0700 (PDT)
-X-Received: by 2002:a05:6a20:2d28:b0:3b4:81b4:9b79 with SMTP id adf61e73a8af0-3c44b18d9cbmr10518978637.40.1784918512352;
-        Fri, 24 Jul 2026 11:41:52 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc5cb670sm2222283eec.31.2026.07.24.11.41.50
+        d=1e100.net; s=20251104; t=1785009904; x=1785614704;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=I7YnUNHQ+9mCV7Z3kMgXnU2VDcDD/IXSwFksJNwhhcY=;
+        b=mYpkZIqvircWV0cGly5jwu5m+tBEvYJ1QkMSVZU99nslVv6DR5SM6e8IQcXBHNwuN7
+         zlUa6r2GrPn/WrCiWYOOvisa/mM0e7eZytNz22xYX0sY2Sw0sv8gtkwbXuU03uCd8wi5
+         TPIee0+jrrB4F5nbhFlFyC+EkUvSz8oTPT4lh8/qAJxq2n0gH2lE3yMCKh7yCBLr/jex
+         g5AtCMRB3yMdyIgxP82x0KpPJIENbvfbZAdskqmCFJr+YqNzudsRxGjT7GrHHGe0e0/W
+         G/8N8vMHe7iD0CkUaiFqgOI3vpQ00g5H/GNlSKKgNM5QYwJ6SzFuuyy8TI+mG+PWYSP1
+         UoCQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rr3j3xhNayUIgVS+8N9ItViRwJHOg5vA5jG6aUWnuK/6IhVSWTR8yWjdolxN72BrEKmu9VWFA0fL2y+dYoRBdBF@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgpOPhVRhu0wDR0NYlvNo81ijZTxLVrBtO4lHcxzoeEwr+YFPp
+	ATnDxiy19adAJdNG54UzR3N2zNpLUIQ9cspIG1NGsSLdUpchFdaqDJwF
+X-Gm-Gg: AR+sD12F3Z2PtbhveH3dYINzTxYdyMj7Rn/ue53VAEUqzaHhR4vAurgOoOAs67f8M6c
+	pNiA2zklw0wHor0a4Ijbkbhqa+sxmjp6SapyrOSY/3Z+S32XXwS0aSSjTr5JmDqMCSfmXev6hya
+	xDb2VBE1VLBxoIyb4MUBtXpD7wkI2pTSxuNTOaFZBMQYDCU9bGUaMpvxvr7RrehyLkcIXnSJfDc
+	e1vOZQa3hyA/LRLA9SHOQ+FHRKTefpAIPq9L4nZB+cxKjTPRo9ao5Htf8rw1CYfqM0KZEp4LWpq
+	fyo2yjFaRhrUCYTtwP/w7iHbrxEaXPPS8n21U7Fs0uN/pYeWnt+Ti6XQ030Ovu0FTEHN/AxwHI4
+	U/gESohsqhHHCqi5NauBSXaU9dJxRoKmG+sUiPfgg4zC3uPbK0hf0M7ja3E7NTZhh/Grsc4KEdo
+	g/ZW59ddq0z2MznTc=
+X-Received: by 2002:a17:902:d485:b0:2cf:9e90:8be with SMTP id d9443c01a7336-2cfde882c08mr26162755ad.4.1785009904026;
+        Sat, 25 Jul 2026 13:05:04 -0700 (PDT)
+Received: from [172.28.140.252] ([2409:40c2:5424:789e:7bf2:671d:d7ae:b910])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-314bc548e29sm13487817eec.15.2026.07.25.13.04.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2026 11:41:51 -0700 (PDT)
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: [PATCH v2 5/5] remoteproc: fix OOB read via signed offset in rsc_table_for_each_entry()
-Date: Sat, 25 Jul 2026 00:11:32 +0530
-Message-ID: <20260724184132.1878077-6-mukesh.ojha@oss.qualcomm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260724184132.1878077-1-mukesh.ojha@oss.qualcomm.com>
-References: <20260724184132.1878077-1-mukesh.ojha@oss.qualcomm.com>
+        Sat, 25 Jul 2026 13:05:03 -0700 (PDT)
+From: Bhargav Joshi <j.bhargav.u@gmail.com>
+Date: Sun, 26 Jul 2026 01:34:08 +0530
+Subject: [PATCH] dt-bindings: clock: ti,keystone-gate: Convert to DT schema
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI0MDE2OCBTYWx0ZWRfXyZrc1UYJ+QsQ
- dP3kqo5LIHnHVeRDXzXGbLSvimHV8nN7gl2RCO6zPYU+ovV+1S6bx+9B56aXlnugd0OyFZAoWfx
- 2NzIilavu0XZ+hmzYen2wq0thbWOWb8=
-X-Proofpoint-GUID: cBw3_NKwMEF5fwuVRY3vBUyb1f-NnJS4
-X-Proofpoint-ORIG-GUID: cBw3_NKwMEF5fwuVRY3vBUyb1f-NnJS4
-X-Authority-Analysis: v=2.4 cv=er/vCIpX c=1 sm=1 tr=0 ts=6a63b1f1 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22 a=EUspDBNiAAAA:8
- a=_5PO8_XNLmbmSLjM89cA:9 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI0MDE2OCBTYWx0ZWRfX9EjGMFMoM+Ge
- O3teETSmFNPZp0HoLrUcjPKxxsmi0jXVVQ3COHGCnoKu1R3ZInq3Jyj/VRiVPfn3ZRTpO+UBJNy
- 0TzkInCZcWi5RcPUjGBDxPKRLKb+Af4OMNYbgdF5ICdUPWJTDwtdC1twHKg6430indIwUAbXzRy
- /wk4MBSWbWXT//kAZcZLToFJnJkrKpNwO4aSEjjMMmfMe6//B66dEMAcWlCI0BQMpzY+HpqatB2
- iymFwUO/U49GvNtpu7IoSC5O26bnkJ1fYUkUl5McOw41mm4KQUZQGckdkBrsXrDPuc73HN/7CJL
- 4BuPz1ZweiBoAtsBMFiahqD+FmUz7XVT1Q7GW47yCBxGAlCeKCyRFbzeBN1HCTibTh1+l9S7NA+
- fVoDTB8EdiXbAP3m1BBV3qkRzhdMoGAdT6cN0drKQo4MqT1Vn1sOnKiCNiITDZ0NrHolDXEvP+s
- F7o6GSIC4zuBvQlMY9Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-07-24_04,2026-07-24_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 impostorscore=0 spamscore=0 clxscore=1015
- bulkscore=0 malwarescore=0 phishscore=0 lowpriorityscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607240168
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260726-ti-keystone-gate-clk-v1-1-5b2449bc31ee@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x2MSwqAMBDFriKzdqBWqJ+riIuiTx2UKm0RRby7x
+ WUgyUMBXhCozR7yOCXI7hIUeUbDYt0MljExaaWNqrThKLziDnF34NlG8LCtXE41StWYpFSU0sN
+ jkuvfdv37filDG2BmAAAA
+X-Change-ID: 20260726-ti-keystone-gate-clk-3f8e30966077
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Santosh Shilimkar <santosh.shilimkar@ti.com>, 
+ Murali Karicheri <m-karicheri2@ti.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ goledhruva@gmail.com, m-chawdhry@ti.com, daniel.baluta@gmail.com, 
+ simona.toaca@nxp.com, j.bhargav.u@gmail.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1785009889; l=4399;
+ i=j.bhargav.u@gmail.com; h=from:subject:message-id;
+ bh=nIlnJRPNwvzsEQ9oqxaZZWX8opcLYnBostsYhgueMJg=;
+ b=tD0xE+8Vd2J6xBsPdrE5/hOSJEeWwG8G8stlnOTdRmfvqtVdO53Vho6dZ2rPDvV+knjEL6iUJ
+ bPQ6WZZhneaADjLF+fTE1J4fS/IhkSeWm+0n6P1IYvLMad/RkBc+I3J
+X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
+ pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-table->offset[i] is a u32 from firmware, but was stored into a signed
-int.  A crafted offset like 0xFFFFFFF0 becomes -16, placing hdr 16 bytes
-before the table buffer.  The subsequent avail check was bypassed
-because the negative int was promoted to a large size_t in the
-expression "table_sz - offset - sizeof(*hdr)", yielding a large positive
-avail and letting the out-of-bounds hdr->type read proceed undetected.
+Convert Texas Instruments keystone PSC clock binding to DT schema.
 
-Store the offset as u32 and validate it with unsigned comparisons before
-any pointer arithmetic.
+The vendor-specific 'domain-id' property is intentionally kept without a
+"ti," prefix to preserve existing ABI since driver and existing board
+file use property without "ti," prefix.
 
-Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Also update the reference to this binding in ti,keystone-rproc.txt to
+point at the new filename.
+
+Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
 ---
- include/linux/rsc_table.h | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/clock/keystone-gate.txt    | 27 ----------
+ .../bindings/clock/ti,keystone,psc-clock.yaml      | 60 ++++++++++++++++++++++
+ .../bindings/remoteproc/ti,keystone-rproc.txt      |  2 +-
+ 3 files changed, 61 insertions(+), 28 deletions(-)
 
-diff --git a/include/linux/rsc_table.h b/include/linux/rsc_table.h
-index b78c4760d83e..f9c5628e16cd 100644
---- a/include/linux/rsc_table.h
-+++ b/include/linux/rsc_table.h
-@@ -338,17 +338,22 @@ static inline int rsc_table_for_each_entry(struct resource_table *table,
- 	int i, ret;
- 
- 	for (i = 0; i < table->num; i++) {
--		int offset = table->offset[i];
--		struct fw_rsc_hdr *hdr = (void *)table + offset;
--		int avail = table_sz - offset - sizeof(*hdr);
--		int rsc_offset = offset + sizeof(*hdr);
--		void *rsc = (void *)hdr + sizeof(*hdr);
-+		u32 offset = table->offset[i];
-+		struct fw_rsc_hdr *hdr;
-+		int avail, rsc_offset;
-+		void *rsc;
- 
--		if (avail < 0) {
-+		if (offset < sizeof(*table) || offset >= table_sz ||
-+		    table_sz - offset < sizeof(*hdr)) {
- 			dev_err(dev, "rsc table is truncated\n");
- 			return -EINVAL;
- 		}
- 
-+		hdr = (void *)table + offset;
-+		avail = table_sz - offset - sizeof(*hdr);
-+		rsc_offset = offset + sizeof(*hdr);
-+		rsc = (void *)hdr + sizeof(*hdr);
+diff --git a/Documentation/devicetree/bindings/clock/keystone-gate.txt b/Documentation/devicetree/bindings/clock/keystone-gate.txt
+deleted file mode 100644
+index 43f6fb6c9392..000000000000
+--- a/Documentation/devicetree/bindings/clock/keystone-gate.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-Binding for Keystone gate control driver which uses PSC controller IP.
+-
+-This binding uses the common clock binding[1].
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible : shall be "ti,keystone,psc-clock".
+-- #clock-cells : from common clock binding; shall be set to 0.
+-- clocks : parent clock phandle
+-- reg :	psc control and domain address address space
+-- reg-names : psc control and domain registers
+-- domain-id : psc domain id needed to check the transition state register
+-
+-Optional properties:
+-- clock-output-names : From common clock binding to override the
+-			default output clock name
+-Example:
+-	clkusb: clkusb {
+-		#clock-cells = <0>;
+-		compatible = "ti,keystone,psc-clock";
+-		clocks = <&chipclk16>;
+-		clock-output-names = "usb";
+-		reg = <0x02350008 0xb00>, <0x02350000 0x400>;
+-		reg-names = "control", "domain";
+-		domain-id = <0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml b/Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
+new file mode 100644
+index 000000000000..ed42adb27832
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,keystone,psc-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 		ret = cb(hdr->type, rsc, rsc_offset, avail, data);
- 		if (ret)
- 			return ret;
++title: TI Keystone PSC clock
++
++maintainers:
++  - Santosh Shilimkar <santosh.shilimkar@ti.com>
++  - Murali Karicheri <m-karicheri2@ti.com>
++
++properties:
++  compatible:
++    const: ti,keystone,psc-clock
++
++  reg:
++    items:
++      - description: PSC control
++      - description: Domain
++
++  reg-names:
++    items:
++      - const: control
++      - const: domain
++
++  domain-id:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: PSC domain id needed to check the transition state register
++
++  clocks:
++    maxItems: 1
++
++  clock-output-names:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - domain-id
++  - clocks
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    clkusb@2350008 {
++        compatible = "ti,keystone,psc-clock";
++        reg = <0x02350008 0xb00>, <0x02350000 0x400>;
++        reg-names = "control", "domain";
++        domain-id = <0>;
++        clocks = <&chipclk16>;
++        clock-output-names = "usb";
++        #clock-cells = <0>;
++    };
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+index 91f0a3b0c0b2..847552133633 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
++++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+@@ -75,7 +75,7 @@ SoCs only:
+ 
+ - clocks: 		Should contain the device's input clock, and should be
+ 			defined as per the bindings in,
+-			Documentation/devicetree/bindings/clock/keystone-gate.txt
++			Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
+ 
+ The following are mandatory properties for Keystone 2 66AK2G SoCs only:
+ 
+
+---
+base-commit: 0ce37745d4bfbc493f718169c3974898ffec8ee7
+change-id: 20260726-ti-keystone-gate-clk-3f8e30966077
+
+Best regards,
 -- 
-2.53.0
+Bhargav
 
