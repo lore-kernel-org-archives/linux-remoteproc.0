@@ -1,117 +1,92 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1B537DE85
-	for <linux-remoteproc@vger.kernel.org>; Sun, 26 Jul 2026 21:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE4A36404B
+	for <linux-remoteproc@vger.kernel.org>; Sun, 26 Jul 2026 21:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785101204; cv=none; b=khdRTayT4NivCSvFY4bqk4FMzXZkNJnYOj9OhVjCjNWG5gPTXmPVqVV3CMuJm5QH0Ejph+KdmAAR17cFAxJKZHvc6acvnZyrpbzgPa9S5/hRnN+kYN2hDTvZ119r1x5vmJwzz3uCkM7fAPPLrPhMSlPjVUPa8Sg9XlOw/iwcOSU=
+	t=1785102160; cv=none; b=UtVrzP2tgvlKLEVU7KNQSiJjAh5AxvpVWqKf9irAeU5nIGULcRFNvAl9ITvJXeJFfd71w4VH7lrTk1KspcIJg4yZWBi1jvKJ7OhRGInzluDsniC9LBTo9yVNU9oAQSOP9e2p1ggsyDn/cMdP+DLlF6D/8pbsKmWw2ua6Vhfi3Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785101204; c=relaxed/simple;
-	bh=gBhQFqI2dKG9qfaD5pwmU/NWcDbEkP3Nw3AxTVGTNMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CuK/9xHu5yIZtUvV5Nu8RBZUkZkHSxRjeDlyi7ssxYAXLZA0mhfKkQjsDTZY5jzhhGuhaIrSNfqxZYQ5BT4LkHH+Ri+dlQ1bimMCoOb19VSww9zJdotZkXqmFvyHsFF126cMRNnzRcf0q7IwxjI9kJBlJZs8ACmijZjagJUAERs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=aldk/zlQ; arc=none smtp.client-ip=194.117.254.33
+	s=arc-20240116; t=1785102160; c=relaxed/simple;
+	bh=H3GLbf6k7oCfeZthKcNg9O9r7TeUuasD3M7s8+JNdDs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJybGeK82ezgZHeLW9pkv2pHnVFHuApk74CJtrBYbu8CX7QfCtdrGsR03JFYnkYfW0OKjwR9FCP14B5/fpc/3AMxR6WTLU303OtIMs+W1ZSY0umKz2xmJHiqAkrOt4VlrwENPRzKIjp4Z9VrwwvhmA9qFzPItmjpPIyCB7DYJuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=UQvQjm+9; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="aldk/zlQ"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UQvQjm+9"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=fOXt
-	0+DW8AwoHMy364Zh96oH5kpK8jw2a5xo15FcbZs=; b=aldk/zlQqt+KXBhkLoUZ
-	LHwhB1FjVUohxf+en3aZCaVaXBXWJoVWGtnQkEe41zNYIRFWem1n+owocDbwRH0I
-	6NFkIZ1tBEyYq/FBB2hiRojsWZ1oY3d7fNS/r9y2DnG3/qBDbjg3szMu0aZUw6SU
-	KoLnWxiC6JHOG3skd3IfZkNdFnBrQqTh7wJe2Il4ybsEJJ+vPNmDR0sJ8BASbuKE
-	Ep9SpEl7B5BoE9GELAhyjDqT+EMEVQDBfKwwrXxreqToysWAp97Ytt4I6wIe6rMx
-	qRCPbwI5B8nYf+5pvLxIvwPCo7UxkpdZ8Rl+BXw6i2ab2BEj9gMXfLYD8q1VArSf
-	Jw==
-Received: (qmail 381745 invoked from network); 26 Jul 2026 23:26:40 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2026 23:26:40 +0200
-X-UD-Smtp-Session: l3s3148p1@vTHoQopXQpUujnsw
-Date: Sun, 26 Jul 2026 23:26:39 +0200
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=Y+Hbs9vNai3Nyz
+	cCh9dwLoAtkQ3B9+h1czgHOCz2f4U=; b=UQvQjm+9ai9LHTanb6L42+WdY7XEs8
+	CGU273I5SL5Z2EoNithL+8CFfDWA2cBXHGk914nSwFp5BEBeXOJt3lMPdCvxey2A
+	sXvcJhWMh6yOHg1FeC2WZtBoMKs8Y/+5V9SH3TUyuiFcA7jYAM2JnzLDHh3/Z5nq
+	pI9+kNznbh5pbLfsFN4sMhfGOh2+BwGsHsw02lFOdD6bj1Y+W9rJdNGlUmg6rgqe
+	GqLT4VXwgamPKzltD5VDsxCGYSA2/f/7QaBZF3Aainf2tpE6Nl4S/uh5Nb9VOnEJ
+	cDgQzb4u8h8Uxx58KN999Hxd18UxtV9iY0dGTqC61kSWmHz+TbO4q70A==
+Received: (qmail 384125 invoked from network); 26 Jul 2026 23:42:36 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2026 23:42:36 +0200
+X-UD-Smtp-Session: l3s3148p1@DcHue4pXip4ujnsw
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-renesas-soc@vger.kernel.org
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
+Cc: Matthew Wilcox <willy@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Bjorn Andersson <andersson@kernel.org>,
 	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] hwspinlock: add low level debug capabilities
-Message-ID: <amZ7j59YnuQBaz2m@ninjato>
-References: <20260718163024.1726-1-wsa+renesas@sang-engineering.com>
- <20260718163024.1726-4-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v5 0/3] hwspinlock: convert to XArray and add debug capabilities
+Date: Sun, 26 Jul 2026 23:42:19 +0200
+Message-ID: <20260726214219.17703-5-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260718163024.1726-4-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 
+Changes since v4 in the individual patches. Nothing high-level, though.
 
-> > +static struct hwspinlock *hwspin_lock_ll_debug_get(u64 id)
-> > +{
-> > +	struct hwspinlock *hwlock;
-> > +	unsigned long index = id;
-> 
-> [Severity: Low]
-> Does casting the u64 id to an unsigned long truncate the value on
-> 32-bit architectures, causing operations to mistakenly target a different
-> lock if the provided ID exceeds 32 bits?
+I will not add more functionality to upcoming versions of this series,
+only address review comments. I do have a list of issues I still want to
+fix in hwspinlock, but only once this series is applied. So, I hope we
+can upstream this soon.
 
-Addressed in v5.
+Renesas R-Car SoCs have their spinlocks inside a unit called MFIS. Up to
+R-Car Gen4, there was only one MFIS unit on the SoC. Gen5, though, has
+multiple instances and, thus, multiple spinlock providers. The spinlocks
+are meant for specific cases (AP<->AP, AP<->RT, AP<->SCP...). For
+development on these systems, it is helpful to have an overview of
+registered spinlocks in debugfs. Also, for debugging the hwspinlock
+core, it is helpful to change lock states from userspace to trigger
+corner cases.  This series adds support for all that. The first patch
+converts the subsystem from the deprecated radix-tree to the easier to
+handle XArray (Thank you again, Matthew!). The second patch adds the
+summary in debugfs based on the new XArray implementation. The third
+patch implements the low level debug interface.
 
-> 
-> > +
-> > +	rcu_read_lock();
-> > +	hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
-> 
-> [Severity: Medium]
-> Since xa_find() searches for the first present entry at or above the index
-> and updates the index variable, will this silently operate on an
-> unrelated active lock if the exact requested id is not present, instead
-> of using xa_load() for an exact-ID lookup?
+Patches are based on linux-next as of 20260723, no more dependencies.
+A branch for testing is here:
 
-Addressed in v5.
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/mfis/hwspinlock
 
-> [Severity: Low]
-> hwspin_lock_request_specific() expects an unsigned int id. Does passing
-> the u64 id here silently truncate it on 64-bit architectures as well?
+It has been tested on a SparrowHawk board (R-Car V4H) with one MFIS
+instance and an Ironhide board (R-Car X5H) with two MFIS instances.
 
-Addressed in v5.
+Looking forward to comments.
 
-> > +static int fops_trylock_raw_set(void *data, u64 id)
-> > +{
-> > +	struct hwspinlock *hwlock = hwspin_lock_ll_debug_get(id);
-> > +
-> > +	return hwlock ? hwspin_trylock_raw(hwlock) : -ENOENT;
-> > +}
-> 
-> [Severity: High]
-> Do these raw debugfs accessors invoke memory-mapped I/O registers without
-> ensuring the device's clocks and power domains are active?
-> 
-> Since this interface explicitly allows operating on unrequested locks
-> (which are likely powered off), can accessing the registers trigger an
-> asynchronous external abort or synchronous bus fault on typical SoCs?
+Matthew Wilcox (Oracle) (1):
+  hwspinlock: Convert to XArray
 
-True but it is still a great debugging help. I extended the comment to
-explain this potential problem.
+Wolfram Sang (2):
+  hwspinlock: add list of mailboxes to debugfs
+  hwspinlock: add low level debug capabilities
 
-> > +		ret = hwspin_trylock(hwlock);
-> > +		if (ret != -EBUSY) {
-> > +			hwspin_lock_free(hwlock);
-> > +			return -EACCES;
-> > +		}
-> 
-> [Severity: High]
-> If the second hwspin_trylock() unexpectedly succeeds, it enters this
-> error path and returns -EACCES. Since the first hwspin_trylock()
-> disabled preemption and took the hardware lock, does returning here
-> without calling hwspin_unlock() leave preemption permanently disabled?
+ drivers/hwspinlock/hwspinlock_core.c | 369 ++++++++++++++++++++-------
+ 1 file changed, 270 insertions(+), 99 deletions(-)
 
-Addressed in v5.
+-- 
+2.47.3
 
-The rest were pre-existing UAF issues to be fixed in the next series.
