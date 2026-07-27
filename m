@@ -1,48 +1,95 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mx0b-0002e601.pphosted.com (mx0b-0002e601.pphosted.com [148.163.154.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2563DAAB5
-	for <linux-remoteproc@vger.kernel.org>; Sun, 26 Jul 2026 21:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785102164; cv=none; b=NvejCzLmJbMQtorw9td5PvCDGbV750SbNkxURruAojFl9rVuhHNgezq/f64U3ZPTQnGCNHyid1NeuDVS+PTKTrPWgLainSN7JUMAFzQApOANzimqLo9AwVJZ/FYmMGJrBacgkru3xE+wVV9cfHkoCFB1gJMSjDrVbCVZpo+1j+U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785102164; c=relaxed/simple;
-	bh=2gvSTrZsnYvbSP1CDaoJ9CnSuuG5eOC6nCW2VpsSqjo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WFJcFYUYgT/mhXjh7prX1Vbb8m83iumWi1XELJOrj7sB9oqnOxCRJHGKh5G5eVYoc430h9guPTYj5FzBo+EbORwtIMNfw4F0hAy36axW8a6YmrRBavZY3B08KG/UxvQ6mPTDKZq6JSZRNoXzPvYK7+dUjrkN6eoRh8rvWGZty8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=M3qQVeOp; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5FC346AC2;
+	Mon, 27 Jul 2026 06:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.154.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785133761; cv=fail; b=WRaW9ODHH3gwUuUIgtM9jxdzdGCQ1Tqp8masqtkd1u0wSvEmYER8EJ+ADGGxaFUmZMe+mm7eG1pRjv5P1/hvz6ZL7/HMA4WVdzZFeAYz1kvpVbkj5vbyTZ9FtjBwOs2a71Z3UyJOgUtm6qsG+hDpxhW7RIgbPGlB3xjDOQaba+8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785133761; c=relaxed/simple;
+	bh=ViAPafTgdVDKtYrdNmWSankqr9umZShQSkRLpWg/6sI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MSXjhhIR5yLRtgam0DR2tZCdL/p8M6dXej7YWYy+7g2UtvNo3ONvR4XvVFS+xY3fYX2XupcZaEMyEnintOvgeQpF71wOwnzbwCno0jo2h+FhFAqcnN23Shz8ChKDaGf0NXpD+n+0ms6KRqEoqPKl9meg164ZavuJPVk86VanAhQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b=i1+vUUbV; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xB1XpP+v; arc=fail smtp.client-ip=148.163.154.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="M3qQVeOp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=+kyx9J4g1BRLkyvElM35nh3/+hlYGbAHFxsFZtAcgEQ=; b=M3qQVe
-	OpQvAZcJzeXPkO7yizks3dl8SNkguMKVDVchh3sPcA67AkvWJeWwHHxZY+ANNFgT
-	dy0vJGpFx/N5GqNSdArGTQP7Dg4DRgNS1llSs96sAU9CMqwN2i+ILkvkaJhXgnf+
-	aC7tTIOX3+3uLrwZt1qR5l9qST4MCvw5TEYYrRx46iSYSRm/ttZ0juevjxhV3HfY
-	T/nYRIXq2erRrdh+ra9mzCq9zTFYzN8KFHKF0TOqaFx5xkh525heonzzYICJeUaO
-	5i5HzsWxZQr0D++0atqE+d8+0+BJCPN6ENk+Hb7Z4pZIvtCZZ3COtcxoyjdaI0FM
-	JKLcx0gPwOBpu9ZA==
-Received: (qmail 384242 invoked from network); 26 Jul 2026 23:42:38 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jul 2026 23:42:38 +0200
-X-UD-Smtp-Session: l3s3148p1@QoMPfIpXmp4ujnsw
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Matthew Wilcox <willy@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v5 3/3] hwspinlock: add low level debug capabilities
-Date: Sun, 26 Jul 2026 23:42:22 +0200
-Message-ID: <20260726214219.17703-8-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260726214219.17703-5-wsa+renesas@sang-engineering.com>
-References: <20260726214219.17703-5-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=ti.com header.i=@ti.com header.b="i1+vUUbV";
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xB1XpP+v"
+Received: from pps.filterd (m0374956.ppops.net [127.0.0.1])
+	by mx0b-0002e601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66R1j9IN3689769;
+	Mon, 27 Jul 2026 01:29:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=proofpoint-05-2026; bh=A6JetovDK51ah
+	fFEi0BU5h7kuKEpieMyqPy61mnGK1A=; b=i1+vUUbVNBSVHWveq6emQ5LvpunAg
+	+H5VlVkQ5wL3cLXthps6LIckh8Vc47qD1HiZ7q1yFtaEPgdzeAEvjZPV5ECd1sQp
+	AkJDDJC6soh3bGvbYQ/51Yy8TqvceL8xz0xYZ+LXKZsfmxZVen4JEHBMnq9bquDZ
+	zZBVu+ez8569CwVCvqbvSN6pUeAPbGxS6uCp4oMesh5LxowouBdcA9Zke0+W5n6I
+	on+1BaJEyQtdeM7xIU4+uC37SdsOl36Lzy5HSuv8eumg2+PB2JIsaFxrHQtzRT5C
+	Sus6CbKhAYzSjGs9o7qsTiPOyE7ZdbPywXoILC1Akm1ybRVpLN7ejgXhA==
+Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012029.outbound.protection.outlook.com [40.107.209.29])
+	by mx0b-0002e601.pphosted.com (PPS) with ESMTPS id 4fnh5rbf8b-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 27 Jul 2026 01:29:16 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AM5axlkBRAX9DomcR5xxye57AldtvKOURl7b3qlzwG6FZYDw2VVVavw7GQLz5k/QlTlheGn9xXcVXKCfNNrcc4pBneqHi2TkxwGdJbQDEdPmQboVrwUe7PQZtO1SZPU/TmbdEULHB4ROU01YWmC0Cj010359HAnN7zKbLUtBHnGfqh2jyzlV2eOqmMDLUGPtJ3bLDwzMabVFM70bG4HcwBGFNvAYfQ/a8aPOS2ZTpWmbjdM0JiHl42fR/rgFV1xcS9H09lqBEZ92Lcx/RYH5Ch80Ux0bhmTaERWllhVE8IS3bQR7c+xioMOLwpkoXT1KYXZIAdYvl3Q03fMAtmGCxA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A6JetovDK51ahfFEi0BU5h7kuKEpieMyqPy61mnGK1A=;
+ b=icZsy0Lhm2yHNpeV3n34pQuHL5PjCaSkhefFw3rj19oWjp26i261+tHpEhZdRHFVVXHJwFNlTO6HSJ+Oa/yL75o4zijU57fsAA/DKyAuWJ7iMAckRokySCThSMxPNO+f3veoIzqegYr6kGFN2amfh+dXo29L3B4fpiCgSPsXzna1LDu1Y98wXZGipA/jLi9d2bLGO0z4P9+A6ac66DGS6ZFSWqfcF/4wG/neYChl1R8KFcB82mcFmjJ/7Ajsg9BksSdQ8EpiNGWPm8bULF8CH/LjTI42SfkOFafHqU3MuVy4FwaieTTOtXpMnwraDUFgAbvz5YKOVE5cqKqT6NKTEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A6JetovDK51ahfFEi0BU5h7kuKEpieMyqPy61mnGK1A=;
+ b=xB1XpP+voSb7iJfHpcUfyQsHU//8EpRFBE268MHh+qt47c5GsSGT6U2BQmBIdoEtpYIYqkJTOUgLSmP6dHsdmy6at+kodbR/MlzbaVl1pNYF3fj1uSnaLidOOoUmt/wyFSqFlulSyDas221Cl+hK3dQJePDLOpAzcB5Y5lA5dmI=
+Received: from IA1P220CA0018.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:464::9)
+ by IA0PR10MB7384.namprd10.prod.outlook.com (2603:10b6:208:43d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Mon, 27 Jul
+ 2026 06:29:13 +0000
+Received: from BL6PEPF0001AB51.namprd04.prod.outlook.com
+ (2603:10b6:208:464:cafe::56) by IA1P220CA0018.outlook.office365.com
+ (2603:10b6:208:464::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.245.13 via Frontend Transport; Mon,
+ 27 Jul 2026 06:29:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.195; helo=flwvzet201.ext.ti.com; pr=C
+Received: from flwvzet201.ext.ti.com (198.47.21.195) by
+ BL6PEPF0001AB51.mail.protection.outlook.com (10.167.242.75) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.270.5 via Frontend Transport; Mon, 27 Jul 2026 06:29:11 +0000
+Received: from DFLE208.ent.ti.com (10.64.6.66) by flwvzet201.ext.ti.com
+ (10.248.192.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Mon, 27 Jul
+ 2026 01:28:55 -0500
+Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE208.ent.ti.com
+ (10.64.6.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Mon, 27 Jul
+ 2026 01:28:55 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37 via Frontend
+ Transport; Mon, 27 Jul 2026 01:28:55 -0500
+Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [10.24.50.162])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 66R6Sqrq4130487;
+	Mon, 27 Jul 2026 01:28:53 -0500
+From: Beleswar Padhi <b-padhi@ti.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <afd@ti.com>, <hnagalla@ti.com>, <u-kumar1@ti.com>, <b-padhi@ti.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] Add 48-bit DMA mask for TI K3 remoteproc devices
+Date: Mon, 27 Jul 2026 11:58:49 +0530
+Message-ID: <20260727062851.2934443-1-b-padhi@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,181 +97,87 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB51:EE_|IA0PR10MB7384:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8885920d-0166-4976-3813-08deeba85f37
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|23010399003|376014|82310400026|36860700016|10067099003|56012099006|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	zt5NzTjYZCYbllSNMayPgADWkWHpM9TgtTbL2JXdU0FIH7xQ4h61CiUi3y4UcbPRoE6IkAJIETZpkt92z42XGyCIRybQQvyyKFZQiItrPndYA762/upnq4hg3M2YvYf7nIklQOCsUXj18SsRz3U0erZdV/4/5fyuqV/JtJ+d39iylhqtHRT08GmeZsiIxEmqvIeo6HLPgG13r61j0NR7titCYZt4P0TGqYgEgjd7gf/X3aZpahlJpnm0q/5Jy3j6AfvMBOtFVfu8cNLEYnKBocqbsxRqxI2UJVaeVe7arYvkGKvEQwpLd9tcEmvZ+IY3oV+sHT5Iao2QwopfjSOp7wYr7iujla24o4YQXq6JOmzJlrQ2zZ/CHsWXGK5JQxrGJQ22UGTmcUsAEqSo4t4VZo7TXKeumiCmfAwkIp56VdcnMMfX3m/FnXR4etXpjynG6jEqjpQ3Pr6ZcArYJf3XpSQzPQEDo6qT1eHjYSbY2onTsWfKcvRKXXfb8asUPfaa+AC1EZp51OYATmG7OJKh3OkAMQJcc7JlMc2U1wqCc94qcHzCwgnYEdrxQQWfVtJcOVjjzE0CDSSB9MHTx8zcPCU6nmSFP60Rm/Ke6EI3sYRE1ix0owS1h12lQATMpqS58x9fiUSDMCSwIpGrBEr9R/Y0Y/9AlwpJxZPUecYNJX5X6gi7E78JBgbl4nGd+qKXPschjlBbCj+JTErGGbuseg==
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet201.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(23010399003)(376014)(82310400026)(36860700016)(10067099003)(56012099006)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	u4c38bKhfu7Rs55j6c1kad6v0J10Mketb0TLJLfKfzUNJVElhgLj6CTxM9bdSpuMwOuHz+jtgM8cp6jXZayMNw1ohtUERd7bQzEutIw80/p+cGHa8V69+llFlg4M0dtvJ8YhnQ34lCMCeJ0ux5J3YoT7l5K9rf+cEF7QpZne92xp3p9cBmjEePF/NJvigP/f373DDu9912/8lPETUsRPUYf6Yttu76n5fUIi8oDWGKsb429wZ1XRLNwMAFCm0s94QKUHVv8/Li3CANr68p+hBPR+TEBljGzb2u0vaktDUf5PlRDcgDESwBQlZnb7qfVMQadfRG6vn7GhgLDg/sFMr2ESnbjlyflq06cJLnEYOQi1y0Kq9SJbevVjdJVokVK7I+Ml9fjUxpCqZIHjoY0O+adsCJd4TgumLrhSxK30ZlgFVY6WqmP2FiEbFqFVNvqy
+X-Exchange-RoutingPolicyChecked:
+	DGNSBHIsMqA38KZWy/ul5vcBTt0bIaTfkuODZjRlY0+vxX5e19KonAihybdZtXWibZMq0iF4Jgi9/hUgcqRn0Wqqik+stC3Is0sB3NLFGrH86RSwF4k5p9bvjkGTFg3C1pHBPcX24+4jsndEMnd7UqpAc55rn0Hfqas4F23G7LHxMCrg4EUvnLXF36qQkLnJZpsWGRrkQjo4hEBQ3uHF/H5+HScF5GG2Vz2l0PVFnd9ZWnAiM0FcShN4dOYWtQIAIK6PO/MF4PEFnZ/ornQSsWu/gYiVq96pyPrgTk0S60J9fzLndwvZ4VwNvhVNw4FflQ91bys4cTI1UK7f6iJGSw==
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2026 06:29:11.6529
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8885920d-0166-4976-3813-08deeba85f37
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.195];Helo=[flwvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB51.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB7384
+X-Proofpoint-ORIG-GUID: GAEsZ7RHPiNArSdtXYobcbC0D26ofJkH
+X-Authority-Analysis: v=2.4 cv=DNq/JSNb c=1 sm=1 tr=0 ts=6a66fabc cx=c_pps
+ a=WJg1qJ+8ll6SXBP1xA03Zg==:117 a=tJyPKKxUohctrY4NYmUjkA==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=RAioF0-LDSMA:10 a=V5UXEbMT0ywA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=Z8NIEmU8O1QQgoT56wFK:22 a=jwouBfj2j3NM8CExmVVE:22
+ a=EgXKMweb6dZznZ-9Kp0A:9 a=zZCYzV9kfG8A:10
+X-Proofpoint-GUID: GAEsZ7RHPiNArSdtXYobcbC0D26ofJkH
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI3MDA2MiBTYWx0ZWRfX6+yzbZgjem6A
+ GeMHMq1DZc9y/5Va2Dj2ErifjQO0avTQbja/a3cM6BZ7rEPGQfVr4ru0nsveUvOPT6dRUK3DMuQ
+ FL+oHie+zia2YW/eNXwSuqRgZTtSNjE=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI3MDA2MiBTYWx0ZWRfX5pAIHgV/Q4UO
+ 0o591qM21RGuPUgPrYJPQrkwTsaNY4KLrJLrMO9+mTPWfVHnUMdhxVfzN38pdDJgUaJYyA4xKL2
+ t36lEa2hFqAmk+4Wku2P15xaVBnnw2RKPCuynM/+1Uw86dxgJ3VY7KLUl1yl2/2hkb1tSJ6CrMG
+ j+gWLH6f/tZbBBc+Y45NVr43ExPJS+229scYDP5PNtHDW8F4lHJwosBOc9Y0aGGdMgHOlDJIqOa
+ 5mQoguWad+AYBQOfFBrz6TNBEdXp2/IneW4Znn7RL1QBVztOrWyuCBk5ts5lzDX7R56DhvpIqTL
+ 2hjX4Mv3uI/gjaouKjbTCUFKp7Gr/7e4c0d8iMZfptfmBriN39BMD62mgpuJUJQ81CdbwrNtLwJ
+ Nfa1zM9OtYq1yELwK+cnsA4DkgVJzLbayiIu6wSkD2IGJVgm0ZZqPov9F+3u+Xkxo4ALyEaO3Ex
+ kQGauH2ccHHtKT7yiXw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-27_01,2026-07-24_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1011 bulkscore=0 spamscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607270062
 
-While developing the hwspinlock core or a device driver, it can be
-really helpful to change states from userspace. Add a debugsfs interface
-to request, free, lock, unlock, and test hwspinlocks. Because this is a
-potentially dangerous interface, it can only be enabled via source code.
-Similar to writeable attributes for clocks where this idea stems from.
-The created files take a single id for a single lock. To test all locks
-in a system, one could use this oneliner while in the debugfs directory:
+The TI K3 R5F and C6x cores can address 48-bit memory space through the
+Region Address Translator (RAT) unit. Whereas the TI K3 C7x has a native
+48-bit address bus. RAT is usually programmed from the firmware itself.
+Configure the remoteproc device DMA mask to 48 bits to enable full
+addressing capability for DMA operations.
 
-for l in $(cut -d: -f1 hwspinlock_summary); do echo $l > test_lock; done
+Testing done:
+1. Verified above devices are able to access 48-bit addresses with
+   compatible firmware.
+2. Verified IPC with Cortex-R5F and C7x DSPs on TI J784S4 EVM.
+3. Verified none of the patch generate any new warning/errors.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks,
+Beleswar
 
-Changes since v4:
+Rahul T R (2):
+  remoteproc: k3-r5: Set a 48-bit DMA mask for remoteproc device
+  remoteproc: k3-dsp: Set a 48-bit DMA mask for remoteproc device
 
-* prefer xa_load() over xa_find() because we want a specific id
-* check if u64 exceeds unsigned long
-* when testing, unlock if the second lock operation unexpectedly succeeded
-* updated a comment pointing out that taking a lock without requesting
-  it may need another requested lock to have the provider fully prepared
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 4 ++++
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 4 ++++
+ 2 files changed, 8 insertions(+)
 
- drivers/hwspinlock/hwspinlock_core.c | 132 +++++++++++++++++++++++++++
- 1 file changed, 132 insertions(+)
-
-diff --git a/drivers/hwspinlock/hwspinlock_core.c b/drivers/hwspinlock/hwspinlock_core.c
-index 947b4d4fa153..5d56ee9539bc 100644
---- a/drivers/hwspinlock/hwspinlock_core.c
-+++ b/drivers/hwspinlock/hwspinlock_core.c
-@@ -910,6 +910,120 @@ static const struct seq_operations hwspinlock_sops = {
- };
- DEFINE_SEQ_ATTRIBUTE(hwspinlock);
- 
-+/*
-+ * This can be dangerous, therefore don't provide any real compile time
-+ * configuration option for this feature.
-+ * People who want to use this will need to modify the source code directly.
-+ */
-+#undef HWSPINLOCK_LOW_LEVEL_DEBUG
-+#ifdef HWSPINLOCK_LOW_LEVEL_DEBUG
-+
-+static int fops_request_set(void *data, u64 id)
-+{
-+	if (id > ULONG_MAX)
-+		return -EINVAL;
-+
-+	return hwspin_lock_request_specific(id) ? 0 : -ENOENT;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_request, NULL, fops_request_set, "%llu\n");
-+
-+static int fops_free_set(void *data, u64 id)
-+{
-+	struct hwspinlock *hwlock;
-+
-+	if (id > ULONG_MAX)
-+		return -EINVAL;
-+
-+	hwlock = xa_load(&hwspinlocks, id);
-+
-+	return hwlock ? hwspin_lock_free(hwlock) : -ENOENT;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_free, NULL, fops_free_set, "%llu\n");
-+
-+/*
-+ * It is intentionally allowed to lock/free hwspinlocks which have not been
-+ * requested before. Like error injection, these inconsistent states can be
-+ * very useful for debugging. Be aware that you might need another properly
-+ * requested lock on a provider to ensure that its clocks etc are enabled!
-+ */
-+static int fops_trylock_raw_set(void *data, u64 id)
-+{
-+	struct hwspinlock *hwlock;
-+
-+	if (id > ULONG_MAX)
-+		return -EINVAL;
-+
-+	hwlock = xa_load(&hwspinlocks, id);
-+
-+	return hwlock ? hwspin_trylock_raw(hwlock) : -ENOENT;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_trylock_raw, NULL, fops_trylock_raw_set, "%llu\n");
-+
-+static int fops_unlock_raw_set(void *data, u64 id)
-+{
-+	struct hwspinlock *hwlock;
-+
-+	if (id > ULONG_MAX)
-+		return -EINVAL;
-+
-+	hwlock = xa_load(&hwspinlocks, id);
-+	if (hwlock)
-+		hwspin_unlock_raw(hwlock);
-+
-+	return 0;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_unlock_raw, NULL, fops_unlock_raw_set, "%llu\n");
-+
-+static int fops_test_set(void *data, u64 id)
-+{
-+	struct hwspinlock *hwlock;
-+	int ret;
-+
-+	if (id > ULONG_MAX)
-+		return -EINVAL;
-+
-+	hwlock = hwspin_lock_request_specific(id);
-+	if (!hwlock)
-+		return -ENOENT;
-+
-+	/* Try twice to see if unlocking was also successful */
-+	for (int i = 0; i < 2; i++) {
-+		ret = hwspin_trylock(hwlock);
-+		if (ret) {
-+			hwspin_lock_free(hwlock);
-+			return ret;
-+		}
-+
-+		ret = hwspin_trylock(hwlock);
-+		if (ret != -EBUSY) {
-+			if (ret == 0)
-+				hwspin_unlock(hwlock);
-+			hwspin_lock_free(hwlock);
-+			return -EACCES;
-+		}
-+
-+		hwspin_unlock(hwlock);
-+	}
-+
-+	ret = hwspin_lock_free(hwlock);
-+	if (ret)
-+		return ret;
-+
-+	pr_info("Successfully tested lock %llu\n", id);
-+	return 0;
-+}
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_test, NULL, fops_test_set, "%llu\n");
-+
-+static void hwspin_lock_low_level_debug_init(struct dentry *rootdir)
-+{
-+	debugfs_create_file("request", 0200, rootdir, NULL, &fops_request);
-+	debugfs_create_file("free", 0200, rootdir, NULL, &fops_free);
-+	debugfs_create_file("lock", 0200, rootdir, NULL, &fops_trylock_raw);
-+	debugfs_create_file("unlock", 0200, rootdir, NULL, &fops_unlock_raw);
-+	debugfs_create_file("test_lock", 0200, rootdir, NULL, &fops_test);
-+}
-+#endif
-+
- /*
-  * subsys_initcall() is used here but controllers may already have been
-  * registered earlier or will be later. The rationale is that debugfs is
-@@ -922,6 +1036,24 @@ static int __init hwspin_lock_init(void)
- 
- 	debugfs_create_file("hwspinlock_summary", 0444, hwspinlock_debugfs,
- 			    NULL, &hwspinlock_fops);
-+
-+#ifdef HWSPINLOCK_LOW_LEVEL_DEBUG
-+	pr_warn("**********************************************************\n");
-+	pr_warn("**   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **\n");
-+	pr_warn("**                                                      **\n");
-+	pr_warn("**    Low Level Debug for hwspinlocks is compiled in!   **\n");
-+	pr_warn("**                                                      **\n");
-+	pr_warn("** This means safety, security, stability can be easily **\n");
-+	pr_warn("** compromised from userspace!                          **\n");
-+	pr_warn("**                                                      **\n");
-+	pr_warn("** If you see this message and you are not debugging    **\n");
-+	pr_warn("** the kernel, report this immediately to your vendor!  **\n");
-+	pr_warn("**                                                      **\n");
-+	pr_warn("**   NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE NOTICE   **\n");
-+	pr_warn("**********************************************************\n");
-+	hwspin_lock_low_level_debug_init(hwspinlock_debugfs);
-+#endif
-+
- 	return 0;
- }
- subsys_initcall(hwspin_lock_init);
 -- 
-2.47.3
+2.34.1
 
