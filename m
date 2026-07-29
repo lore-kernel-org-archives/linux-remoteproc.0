@@ -1,90 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE363B1035;
-	Tue, 28 Jul 2026 20:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB151351C2F
+	for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jul 2026 02:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785270511; cv=none; b=uC377OL+gIFbqhoNbwc0RWqzfZYCdIPrWZTGb1qxIsiU4IFn/JnjELkEQkYLEFFVjwQPyYX+9Ps84OgN5dQJmcUb7iZc0c3PlbeAWoD29Wp2mtWv1D7AfLJtzArOtaXrn0n2Lh9e+Cclc41LJZ1ImDmwaaxQgTJh8jxAIDnHre0=
+	t=1785292526; cv=none; b=eQcukj18s4j9N5ZxNeat86Hwtf8pqtcWfzYQmNgfSPSHQiLWUtmMVLplb+Wnjk0hrkRYl2NBaMjSOqhlRIh/PUDPTippY2CZqBgMdn/2ibjuVLioIIcAyS87U/ch5b9g4LeblUSeVu4izc2Blt2Eze7Z4ZlXujs47F0YDUlJPNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785270511; c=relaxed/simple;
-	bh=83Ji1ZQIh9D9BnQjtFlI3edA7ksjzJ2jVH+DpANYlt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fEvQd7AyL0ZyXHBU2pdMfs0x8IebXffHPzIiCyqknptNwFK8BbBTfRLPbWzMyh9u+4ZYNfsqnV5YK0mEvH5zvyLTWP/3sVgTfaaR4SF//9PTgV3f1Pe2AoVgsTVrcSU8D+DJZqHDo/n7irTG4ME28ZcnHMytMX5r+4HGWrrMZTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRt7e4Gr; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785292526; c=relaxed/simple;
+	bh=0nNf7hD7ukvCS6YHx2HZxlJdOJMn6TNLoM7PLeT/zSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oE90iSfucFBtoKxtu2sgBKDErW/vFYRH+fXLp3Q5i0WUZO9cZ5DCk9wWHry1ZZyARZG5b+MOj8+w/9dhwF6jXtSDpm5jXw+t+YrZDHd5xQjpGpuF+b1mML11+0TEVbFWGGgAGCX3OfNuFzwVm+lxICPyX/9jQPYC+D/2QhCOdu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hYgmJRC+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HyzkMtkl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRt7e4Gr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4C31F00AC4;
-	Tue, 28 Jul 2026 20:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785270510;
-	bh=gf94lJZVG4BoofGzRXVIxsr9PbR+MmrDqKd31M1KM2A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=MRt7e4GrdVKzZJVay972yNDnGpgjuD+iAAtnBaBAfDUBX0bdWQjgpVu4G5v5T0OLB
-	 hUQDuL/Gi9MAzlrBinDuj5wtIqT3fP+MSFi5omXo1qXuHSGC96fcZiUSysauE4MjsH
-	 9IITKW5e2B7FBBpaMHgDhf2WMkjoz+O8cjQR50H57VKT+T3SeqDoHDS9WfkAqIwxmM
-	 r4h0ZLGKoqJMwkhaslanZwjQcLV/VuzGao8/Mu1pRuz42zqV8T/dU0Ic73y0M1sh4S
-	 OdNT7feu6+QlFyNdfL5x3pJldxg2Zyo+EYO/e8D/WCqsEv/VE9l/gW3zfZx8HEhGpx
-	 G4BrToLHJw7vA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Maulik Shah <maulik.shah@oss.qualcomm.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Qiang Yu <qiang.yu@oss.qualcomm.com>,
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
-	Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-	Ananthu C V <ananthu.cv@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>,
-	Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v6 0/4] Add remoteproc PAS loader for SoCCP on Glymur DT
-Date: Tue, 28 Jul 2026 15:28:23 -0500
-Message-ID: <178527048953.46540.1157722671525593677.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260709-glymur-soccp-v6-0-16f70227547d@oss.qualcomm.com>
-References: <20260709-glymur-soccp-v6-0-16f70227547d@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hYgmJRC+";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HyzkMtkl"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66T1H7fH1463875
+	for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jul 2026 02:35:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=G2NjSTd4divZ6uJ4pY0wPN3fFU6UA3ky1PA
+	YtUtTjPo=; b=hYgmJRC+HZSKUAp5pjzct8TOlBof8q9PtDqEQwjbGH30wUIVpNj
+	IpR+Kh94o9t0pOiK+MnmQiIPX/UUk1qRzDq5542W1sPc68lBIHG7hetlcqf5yLyc
+	48JbjaU99IT6n/VSQhx9gtqYtwJDKuqLF0xBki+T4j5IDwv/niwHg8HWK/R15ln1
+	ih+EQLjnCE7udsVypcBLHvdg8R87+Jn8+f+CtE9X/NzxDO+RleqcgNTI2x8a9yVm
+	0zyCOETmJT1yPkJOG9d2LPEDqTTQRA/Ns8mUERYYW+bBSdYJcNN5N2y+wGouhE2p
+	SDhGR3f3dHmIdhmTrkSGLTFGw7FN9Wvpbiw==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fpvxxkd29-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 29 Jul 2026 02:35:24 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38e667368f0so762386a91.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 28 Jul 2026 19:35:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1785292524; x=1785897324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=G2NjSTd4divZ6uJ4pY0wPN3fFU6UA3ky1PAYtUtTjPo=;
+        b=HyzkMtklKq43iHK0T/goky//5UGQy4F6C1JrZpc45tH94WlT3CHXYwJn0h7iPVoFO8
+         UyiMQhZq2e3HFirM55HXhRD6w/WXCAOeEUaBRh0JD26XPFktNi8RtD3fQxX6oAkFaCEX
+         9EBy3GhBawuuEoo5GX+uujqtTFwKYbQs9ngnqO2zTkkYDJCAaFxWWqjW63T5gE1SM4/l
+         XR3jY4LRWUzyw3TmFmh9A9ulZz7tVC9GcxSjakjIEEE5XdRRgTADwSsMnRV7h7gDY1Cy
+         S3O3rrs30V37fBQzoVt0Qh3ZeQjewNR1cNUfmoRY/YOlIIMBzj4qjTRaDiWu8bNaIoEt
+         3jrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785292524; x=1785897324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=G2NjSTd4divZ6uJ4pY0wPN3fFU6UA3ky1PAYtUtTjPo=;
+        b=K5XuVrl/yA4sG/d0B39Vjg8VVwip2tz8oHXk1sqSJBdFjhj77A4LClxeFgVuSX9gi7
+         zj0mffQjPp/BE6dbYwApb3/J9e4+hZzj7yu0/lLpyU0jY/cv9Pok+RyRes98RP/jwpDx
+         Vz/P1e9I/sbD8VbmscNyuuSqz9QeNycp8c4yRFRuFSUE6Fr5mkurL/DogMcG2cW6wbVx
+         qc+rEvAeRXZyXAg4iehI9keZkvYJcSfSwZ36wNDm0gTsBnae6vDuA3in1GPEs+Up2YOa
+         WqyoFHq710zIOCdzd0Q5zzyH3qQMyi+k5LF6st0OZyaMc0Nh7MRYS2azR05IUhrfJHfI
+         TpIQ==
+X-Forwarded-Encrypted: i=1; AHgh+Rqi2F00nFod6Z+d/G9lG0+IFSSwamcx3QhPr46rkffeWDf8cR3oRbeRA0XLmuWWULZ+duYOYJw+YI/oqzRaUfrT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya6+jigAH5E7b6OlPuhlHhjLqvF8l6jSWmN9HTJpDXV65sv0ol
+	aXzGXtr94LSAOoJkk+Nnh8sA9YGhRr6Cw4YSW4scc9nToej6AZahUW29bs0io1u6qFsY3mwxpvZ
+	JAgG5OKrTGrSkY9eW60FhqHPppxvbtYwrHwPMj/CMTcvjAYBWTRWTTwkRuTuGA8P3PtBfTjXZ
+X-Gm-Gg: AR+sD132B4343+UF+W7qLdxfQWyBu1wqCXoYcaFTiK2mw2qf1vzj7f1Qvuk5LW6weBm
+	bij/I1ZRJ5svVZdt73G1wntcFvayFpLCVGQo3ww8jHCL6hMtyD+grzNqhiUD1UAmfGaNiqadb2q
+	5fSuehc7ygAT54yVmxcp/Zs/NRsUseaod2Uqgn9Gtwppl92/473RU8lIi7T9h+rvmhvyl0sk42v
+	RQS5jzF8QYa+HBUixFDHNb16NKWEaoomEuSCuXxqUxBNKKx+CJZxVnbSICoNlBKIg/yNiztti29
+	9S/7U6JSLRuH/7uTICGm4YtCvlhI5b2ljuzuTp3eEb6Ju9FG3JN40MZTMn/55uALsMJW7j3GqhB
+	SdYd3z97cnuwiPs4Vu3WXtazo46mKo/pSQwhPoiTQ/bv8j2TD5gDK1FMgBT3S
+X-Received: by 2002:a05:6a21:6196:b0:3c4:3b16:2979 with SMTP id adf61e73a8af0-3c8ba478a1cmr5970563637.30.1785292524099;
+        Tue, 28 Jul 2026 19:35:24 -0700 (PDT)
+X-Received: by 2002:a05:6a21:6196:b0:3c4:3b16:2979 with SMTP id adf61e73a8af0-3c8ba478a1cmr5970537637.30.1785292523655;
+        Tue, 28 Jul 2026 19:35:23 -0700 (PDT)
+Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-13e7265be48sm3899837c88.8.2026.07.28.19.35.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2026 19:35:23 -0700 (PDT)
+From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shawn Guo <shengchao.guo@oss.qualcomm.com>
+Subject: [PATCH v5 0/3] Add ADSP and CDSP support for Nord SoC
+Date: Wed, 29 Jul 2026 10:35:05 +0800
+Message-ID: <20260729023508.879752-1-shengchao.guo@oss.qualcomm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzI5MDAxOCBTYWx0ZWRfX5tLwhHHfoGR0
+ AppFKjRJJEUglzkzbyfArBOnL+WH3lhF6br6vBB47vK+MzAMZonxO7W2T1AnBASQbGIHHt4+CQt
+ IEq3mIAJLuKUavvROXbjfCb4PoxN5YpnZDwem2pNA5LRBBjDEn7nc+0bay3nmuzGehc8ra5UVho
+ BJVes3NRZfvolusawNLb0ROwXtKgbESFkHJlPa+ojxJnyxV8cqhI8QxEquANsnCKWaLOWX8iNXs
+ AzgbJuMeOOFZgiJeFla2kLwgM6MA1UrQRucF3mBl4wLxPbWEqNjJ02HU+k3yfrqg9boblzNKGn6
+ gL+Yrx7Gy4mW2ITHCMX3YYnJzT1f3VxcvPIWuiVTVXLqLAQvLEiu1QPUXY7PWBgK608hX3pl90F
+ QvRX8mdYOYYXl5fdAMrpJVgZq6CfZGkM2ZjhFVWQ3IQrBl80b8w6CHAU7nTlqsuz02sxvALyMR8
+ 6jXzG5BtRg0qxmGO+ZA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzI5MDAxOCBTYWx0ZWRfX4SfKsk1g6Vgx
+ L/Vt4nLpLTgA/wqg4JQ2SfkIMO6P4GZcoApsm2bEq53eqOn1V5zO1i8wt99+pxRNnh0RsOrLwGF
+ 3M0a9dkKRPAdPoU50a7J2CahzIeIAw0=
+X-Proofpoint-GUID: GU4JLY0s_RtmRBg6k0UT81cXJ_dTQSLi
+X-Proofpoint-ORIG-GUID: GU4JLY0s_RtmRBg6k0UT81cXJ_dTQSLi
+X-Authority-Analysis: v=2.4 cv=PeDPQChd c=1 sm=1 tr=0 ts=6a6966ec cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=YTZeY_j4NDz4IKi_2jwA:9 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-29_01,2026-07-28_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 adultscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2607290018
+
+The series documents AOSS side channel, adds ADSP (HPASS DSP) and
+4 CDSPs support for Nord SoC.
+
+Nord SoC actually has 3 ADSPs. This series only enables ADSP0 which
+can work independently. The rest two instances have dependencies on
+ADSP0 regarding start/stop and SSR. And remoteproc framework doesn't
+seem to support such "slave" instances yet.
+
+Changes for v5:
+- Use .mbn instead of .mdt for qcom_pas_data.firmware_name
+- Link to v4: https://lore.kernel.org/all/20260728084012.685036-1-shengchao.guo@oss.qualcomm.com/
+
+Changes for v4:
+- Add Nord PAS entries to qcom_pas_of_match[] in alphabetical order
+- Link to v3: https://lore.kernel.org/all/20260727074621.561661-1-shengchao.guo@oss.qualcomm.com/
+
+Changes for v3:
+- Fix qcom,nord-pas bindings to define "minItems: 3" for CDSPs with
+  an else clause
+- Link to v2: https://lore.kernel.org/all/20260724103848.233804-1-shengchao.guo@oss.qualcomm.com/
+
+Changes for v2:
+- Create a new qcom,nord-pas.yaml to cover Nord ADSP and CDSP
+- Include CDSPs support into the series
+- Link to v1: https://lore.kernel.org/all/20260709085149.4072181-1-shengchao.guo@oss.qualcomm.com/
 
 
-On Thu, 09 Jul 2026 23:39:41 -0700, Ananthu C V wrote:
-> The SoC Control Processor (SoCCP) is a small RISC-V MCU that controls
-> USB Type-C, battery charging and various other functions on Qualcomm SoCs.
-> This series add the nodes required to enable SoCCP on Glymur/Mahua SoCs.
-> 
-> It also introduces the needs_tzmem flag which would cover for certain edge
-> cases by serving as an alternate trigger to the PAS helpers to ensure that
-> SHM bridge is established on SoCs running non-Gunyah based Hypervisors. This
-> change is required for SSR to work on SoCCP on Glymur.
-> 
-> [...]
+Shawn Guo (3):
+  dt-bindings: soc: qcom,aoss-qmp: Document Nord AOSS side channel
+  dt-bindings: remoteproc: qcom,nord-pas: Document Nord PAS
+  remoteproc: qcom: pas: Add Nord ADSP and CDSP support
 
-Applied, thanks!
+ .../bindings/remoteproc/qcom,nord-pas.yaml    | 173 ++++++++++++++++++
+ .../bindings/soc/qcom/qcom,aoss-qmp.yaml      |   1 +
+ drivers/remoteproc/qcom_q6v5_pas.c            | 110 +++++++++++
+ 3 files changed, 284 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,nord-pas.yaml
 
-[3/4] arm64: dts: qcom: fix SoCCP memory mappings for Glymur
-      commit: 61e5b39e96aadeafa884ab96c1477b781dccf145
-[4/4] arm64: dts: qcom: add SoCCP DT node for Glymur
-      commit: fe76d6b32eb2d3193c65c834693fa4f58b558080
-
-Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.43.0
+
