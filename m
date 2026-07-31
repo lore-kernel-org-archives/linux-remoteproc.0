@@ -1,208 +1,246 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD17E411F97
-	for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 13:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0110355F57
+	for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 13:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785504149; cv=none; b=Js+RkYa8DQg16M7iBmNbk8bkjtrlmuXsaxVoGf3CpPbknFM6P1kVXV/ZGprXtz098nWOaNMcR3wpQM8Ejf/vL91Geo9DaZygTSDpY2ufK38s9V4Tc/Y0qgHCpaFzmbFXI0YiUhKgmwNBgz+Axxae0469d1IgkcJlwhgfcNIFTXY=
+	t=1785504161; cv=none; b=NxN07aZhuRbNGYrrtP1ClyvCx9GRTysXj6Y/M3zrpa711ua/Lqan+REkOwKlZdM3j5BcT6Z52/IThyZJo2JzBhlPlVWfb3gs+1I/0pPkTXlLlkqyw/XrjUnKp6dbJj0nr2HjR1+X107DUVl168vF5lxNke8hGLcmkSaGt4Bj0cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785504149; c=relaxed/simple;
-	bh=EMll0PbljGbKP6F7UEqAZRjgfB35f4AO+IrlRnOX0eU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hi/E4c9TdF7wvO6zeGeblAAmydFWcOE64H3vZUjWo3yqmAXf9n8hM+1k2Cka6aXEAU54/ezBG1CoKs9Kbl/TcWLcUy68z8Vlnu8tZ1RqT12jdcHYqRW2uhC/i4V28kAURLq/yPez/8+Qm3DHHUc6k9kHNt2m+xdlM+Stsb3VMjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tIPjTwX+; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1785504161; c=relaxed/simple;
+	bh=uuo89+sAtKtyJaPS4V9rNIjPQmeUr9B7tn/iPGDAsbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mD/Dh+IK9qa6nYKHh9aTjOXIxa9ZSILiNBtuK5jKczBeDeXBcTjZKoPfMvXkkPDxKCzhQvI/I8InA2kt9WC9rjq+NSP6TdvFSyV6AcnphafhGPbwdKrsG6cfuHkstsguYNhhaQOBXW5gjL1d9VonLbIPLsjSR1ErIh5hdIuWbA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AYF4gbzA; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MVMjiSKF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tIPjTwX+"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-69e2266b07fso1651507a12.2
-        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 06:22:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AYF4gbzA";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MVMjiSKF"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66VBcsRW4185494
+	for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 13:22:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	v+9qjsOSKXBQy8fGWCIsCrOpr3B6XcgBZrg078GxUsY=; b=AYF4gbzAlx2+5pWP
+	UCsAFA9KAm9t1IY/bhHWSy0pT0/7pqVfjP/h/VN2f5SEhaeebEeWqnsmiUtqS0Xk
+	llekquycx4Zalnc2uTsNorHi+T1+Y87HYc5a/T4gHNePogc56F2ZJ5kdsQ2SXSw3
+	2T2TZ74706nU8VOh+f97wuGPiiPWgndMLlarDYH/FyNn8Gn0ccujkF3AeD8F08wd
+	vxerm1UDTMeLa/v0nA0X6OulBlJinHr+kubgPc9uOaIg/9RY3VmtQ2sOhMPnwZGG
+	HqCDT75yycY4dbVJDJns5o7mesOWd6sQeCE9obPPlm25QvvxNIElRnHTmNztmO9I
+	UXq0SA==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4fru130d8r-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 13:22:37 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2cfbf3e4a63so26828025ad.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 06:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1785504146; x=1786108946; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=VUFjbQK9o5Mqb0VtfKbOwJNUfzh35y+PLUoGryk+0Hw=;
-        b=tIPjTwX+3lusJoGPrYS6tKXpMbGQG8YUMH+yZJDjngYBiPti60s7imaKvfwrTrM9JK
-         DV0uPdFENAvV3wzLeYLxeNYx2kBU0uOsP5m0wyUCGUoHrceZ3xmpOq0Yo8nFayQ7dt+B
-         7g0bpNEnkYLHiomPE2b9jgvvh75GGChpTgGr/WdM4ftNXrbyjz5T+nK9qhXgAB9wb9rt
-         QXJEPJcDBjIgz4JgFNPaNfuuh3LPXGeqbpKsPftlqEzRjFi9Ulymm6lYbdmBP/yIz36y
-         AY/TyqBd40IIrNa1n37P2nwTj/jh9OZBHChdAdAKfxFBOVsn5smje7PX4ZbIFsxphiEJ
-         HGNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785504146; x=1786108946;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1785504157; x=1786108957; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=VUFjbQK9o5Mqb0VtfKbOwJNUfzh35y+PLUoGryk+0Hw=;
-        b=g3ntZj5Wlbbozs4j1xyzuQa+/h4Afap09f43QTOQ50Tyv9sJLLr8g2BOSGdBlGW0yW
-         b1M09glBorr2Tq6mcKVWFoRqHzY6A5B/fyppmnp7wRY0OYcl27tIbLeacVwhvirjdahg
-         fOG/ISdlxINaz0jQbZVhwqT0ClFTVOJmPjgNzWpP6TsaGvnTKbVFhpV9d2tgT4KszTvS
-         eZz0xYxWEMoFkx+7V7Scd0T9lIlMPG3QnnKB+fc/qqsRws4PWpCmrYm51XVoaeOc+Mm0
-         ZhXUN8zHKSUsXj+r2aTEnH36WuIb3IJQEdO+XHhAbstmZnKH1RP4iGGLGlxNFU43O9uy
-         c/bg==
-X-Forwarded-Encrypted: i=1; AHgh+RqsEKUpscKSboZhaUS0Ew/9rfFhZuFyUeLrr7LfsIKbRXzSsHJYaki66pT8YanCvoCIDuwpN/wwnn73JeED5f7i@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFRucGnY6F3VGmzqQxrDlHWoIqIGyksBLJDsqGvTj1TZEKsKf9
-	pedn1fqPQzgDsh5bFLzEBlcRedgYCKja8dTiGkbCkDTc/hGLLjBqNvSw2Zm+k8c1TPs=
-X-Gm-Gg: AR+sD13LUH32B5r1gRLPVGhkjRmj3NkZPX9s1RyWNkwFPh826Q52+/oe6VYEKKM1x6i
-	x0PEaMNs0OGQ5fuCljK81+/iXjkZgWxNn2/DCm9BpCJOqml8X1P2Qmmh3dOe6zv97AHwsSUVnG4
-	oKditJGP+okn6beSqo37WivOnp2h+CI+MoqRjH5m58bJmL7lo+q1crRHHzVWY+r9giHDfOueMtL
-	WlH+c7Cz9u9Ksovgq4F0sfDAI0uoQf9OlRp7rq/voZaGI51qzbtunO42BBJgkFmDNloWrMr1ik5
-	H847GFLUYzx7UwID4v3uCrJBcJUww3o5C6VxvHgkO47wMbZK8SVN5AjPppsg5fVwaP0tSVtyv5X
-	9GyrC0kYV2DYIVMzuBfn745U7EuVBDOcc8PyM+Y3jpFRD135Tr1XwKuvWOfdVBGGwZfNNk0WhpS
-	LR1ytlY/vlQgluyho8P/Wu2PAlnJQXQlyALmBoj/SvExN406haV3ctr5nNwatEKxdZwmJUAvgF
-X-Received: by 2002:a05:6402:3224:b0:69a:9355:d1d5 with SMTP id 4fb4d7f45d1cf-6a098f26745mr1168464a12.41.1785504145926;
-        Fri, 31 Jul 2026 06:22:25 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff24:7210:4eea:ae3f:f2e0:1952])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6a09c655446sm1571952a12.21.2026.07.31.06.22.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2026 06:22:25 -0700 (PDT)
-Date: Fri, 31 Jul 2026 15:22:15 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: qcom: q6v5: Ignore stale handover IRQ
- delivered on attach
-Message-ID: <amyhh8lNMT9rgK_X@linaro.org>
-References: <20260731025655.2642860-1-shengchao.guo@oss.qualcomm.com>
- <20260731025655.2642860-3-shengchao.guo@oss.qualcomm.com>
- <amxf7MODINj26a4m@linaro.org>
- <amyc3MTsuCBg82WH@QCOM-aGQu4IUr3Y>
+        bh=v+9qjsOSKXBQy8fGWCIsCrOpr3B6XcgBZrg078GxUsY=;
+        b=MVMjiSKFzWt5zZsNc7PPWTuwWrsE5alsvRGEdNIzfXxNz32pNsK5vmIaqlFjmLIaps
+         XcKJYzEVabxjCK0XpdN0b2RWpCkDWkr65qgErjmcQAZg4AkYZfCr8Zz+frSrvlAsaokQ
+         PEOWO0WriNaxPip0k5FdvA9fvKtunhM02wRrHeGC3l4MHdImcbP8/LKsKhatJG7zLl98
+         CEXoUqe0H6XuIwHzZbpNwSDQAp/QgOIWvj5RU7M/PleJepJ480SK5UgZkIUIwdulu/6x
+         5W4ung6/R3Tz1PEYy7EKprn58iLUzOmOpT5iSBIIknYMQ/wf+ZbnsS8SRhw9NJZ1WiEl
+         xcMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785504157; x=1786108957;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=v+9qjsOSKXBQy8fGWCIsCrOpr3B6XcgBZrg078GxUsY=;
+        b=Zx0NGV83IQK7gKRUPGZtyNjKpaIJ5JyzOvta0C5X6OvvhUeKT6EQEyxk2sj7I4NkXY
+         IIwsLb3VuTGewZRXRXpJCmeewkLcZkoFSzNoTloGR73qIrk/JBt+bDIPdlmFw0EBNrVD
+         M8NDx2dEpxM7M/blyRzcfLebjAK/8JY6PaFnA9e9oa1TXiQ/BHNj6qhHK07ZkhwIdBEi
+         rLQt5B+9+WFTp9RkM2CV8XEIYVChq02mpAwiXzBg1ogKYb078S9ItPYA/OVCoqtl+aJa
+         B+J73HNDkNOzJzytCf8rgtgBAcVzr4pKf/HlxLR+AGTdvnKlhgn/pXBrDbyKiYi7JPTv
+         3rqw==
+X-Forwarded-Encrypted: i=1; AHgh+RptdybT7vmpe+Edp7HgccbtaCrIu8EDZrA7lIdneczjLlUrxgJoRpn+0Gjj9NpikGrAifY2K73XhIocUFaSEszi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXUKR1s09DQtKz4mIESj3Mp6+MmH7CGI/x3Qn47HINqhDn0FqD
+	1JQVPtJYbufRTSV0yPKevidYt1+SaR/iW43sUJhKwzaBdqBddx501R+15b+nCjb3LwyAKbEcaBr
+	A6zzzIhuj9O6yLPxS3B7/1CLsP5Mz1XnNtMPU44J8Yh3xbpfCsKO9mc9hvU2pfXLe2f04WZWl
+X-Gm-Gg: AR+sD12FeMnB3AOX1XOMTD6cNRbxymrnDiJnFv+BV4KctcmOAxcRLGz0qg9SX6Jc6do
+	Q1I8jSVms6bSWv2mEMhDJMG8vgc7OwVUeiPhjs36Q+TlKz+auZWlFkt0ZTvKid7iMOj1dvVAMgV
+	2rS8/duW5U4+s6tr0svRrcIREQ1Tqud1pevy3XMkCN955zxXc5DNTFte/MXBhS6DCeF3C9bm8jQ
+	UYko63KoZUep49T2j+iQmDrOwiCX3zLeLdlvoX1Q+79vWTSErpz+9Qj7o0almE26PwcWxr8n+wi
+	aUjwLjFGj5ymy01jk3w4azt77vHsys5U35fvVPNzEYtOzJl7p1/K6xy2myVrlLsjtdJLq/rBOn9
+	alT6hFWPZNYwlcu4x+vB6jTYpNOwXC9w=
+X-Received: by 2002:a17:902:e84d:b0:2cf:84bb:1ebc with SMTP id d9443c01a7336-2d0521e9e05mr385415ad.15.1785504156920;
+        Fri, 31 Jul 2026 06:22:36 -0700 (PDT)
+X-Received: by 2002:a17:902:e84d:b0:2cf:84bb:1ebc with SMTP id d9443c01a7336-2d0521e9e05mr384975ad.15.1785504156518;
+        Fri, 31 Jul 2026 06:22:36 -0700 (PDT)
+Received: from [192.168.1.16] ([106.222.229.34])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d04ae19ecfsm5401795ad.10.2026.07.31.06.22.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Jul 2026 06:22:36 -0700 (PDT)
+Message-ID: <34998a81-864e-42fa-904f-2e5f3490fcf3@oss.qualcomm.com>
+Date: Fri, 31 Jul 2026 18:52:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <amyc3MTsuCBg82WH@QCOM-aGQu4IUr3Y>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 9/9] arm64: dts: qcom: hamoa: Enable CDSP cooling
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
+        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Rafael J. Wysocki"
+ <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>, Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-hardening@vger.kernel.org, manaf.pallikunhi@oss.qualcomm.com,
+        Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20260731-b4-qmi-tmd-v7-0-3befd44403d5@oss.qualcomm.com>
+ <20260731-b4-qmi-tmd-v7-9-3befd44403d5@oss.qualcomm.com>
+ <amyFARId5K-Izco1@linaro.org>
+Content-Language: en-US
+From: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+In-Reply-To: <amyFARId5K-Izco1@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYwNzMxMDEwMSBTYWx0ZWRfXx3TAS8r8kavF
+ F976UxKy1dGl72RVq7X9HI/RU8vMN9/Qyu2/dnBd6jyJARaepgyhTxL71VEnnBCb4BWdktVYPTZ
+ sSE/NsC/mfrgnVFuu/isStXvY1/RKXI=
+X-Proofpoint-GUID: UkTx96dAo4bxLYvvgUvMR7edDUm42D6y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNzMxMDEwMSBTYWx0ZWRfXwAQm9PVm/Wmd
+ Z9dum8O3hh//XBSjN7crYKAx7mPe+0C8OMpxla7MbsY5Ql2gh7c5zGWPD6SfcBMu9H+zig8HuFg
+ 5CXyS6LcO0Ueebj5iGOGnqEQzPAYldonpemBoVZzOsccqR5Pc2N1olintmlM7sqsoTllXNFsyck
+ VuyAkob66YTamXP4Y6Uoo59FePPpKvhZTdQdZVmDEZHHYH+sH+8LhfQrDuF2/wkd5tW174afpjW
+ qZ+Fz6mp+vl4KnpSn7kmCb9tnmP1tCxoho0skEUMKv6F1ZFrwiG8EAnEExnMLvt+hAts2Gpx21m
+ Ye1zJgZLG0V0qooSXMuOntuZhoSGuRpYuAF9ETBQB1QQ64wcW7P5OMDnm637ghcs4d3bqzTK78l
+ MH+42ukT8K1JQvhWnMmkVP88cSnkRJ6U+gpkeerE77bGzv7HwrjHVTWGmOwq/QrrmsBlydvNlWk
+ S2RkNR4G27Yso4RYm/w==
+X-Proofpoint-ORIG-GUID: UkTx96dAo4bxLYvvgUvMR7edDUm42D6y
+X-Authority-Analysis: v=2.4 cv=CYI4Irrl c=1 sm=1 tr=0 ts=6a6ca19e cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=x3UvaR+l8cLCJ1uKBUlNag==:17
+ a=IkcTkHD0fZMA:10 a=RAioF0-LDSMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=EUspDBNiAAAA:8 a=mOqVw97Yt21F7phKvS8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-31_04,2026-07-30_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2607310101
 
-On Fri, Jul 31, 2026 at 09:02:20PM +0800, Shawn Guo wrote:
-> On Fri, Jul 31, 2026 at 10:42:20AM +0200, Stephan Gerhold wrote:
-> > On Fri, Jul 31, 2026 at 10:56:54AM +0800, Shawn Guo wrote:
-> > > Commit bb7c5d6f5b41 ("remoteproc: qcom: q6v5: Make handover IRQ one-shot")
-> > > dropped the check that ignored a handover interrupt after handover
-> > > had already been issued, relying instead on disabling the IRQ after
-> > > its first delivery to make it one-shot.
-> > > 
-> > > That is not sufficient for qcom_pas_attach(): when attaching to a
-> > > remote processor that was already booted by the bootloader, handover
-> > > has already happened out-of-band, before this driver ever probed.
-> > > qcom_pas_attach() sets handover_issued = true and unmasks the
-> > > handover IRQ to keep the enable/disable tracking consistent, but the
-> > > transition that signals handover is latched at the interrupt
-> > > controller while masked, so unmasking still delivers that one IRQ.
-> > > 
-> > > Since this driver instance never ran qcom_pas_start() for that boot,
-> > > it never took the proxy power-domain/clock/regulator votes that
-> > > q6v5->handover() releases. Running the handover callback for this
-> > > stale, already-accounted-for signal disables those votes without a
-> > > matching enable, producing:
-> > > 
-> > >   genpd genpd:0:4c00000.remoteproc: Runtime PM usage count underflow!
-> > >   genpd genpd:1:4c00000.remoteproc: Runtime PM usage count underflow!
-> > > 
-> > > Restore the early-return when handover_issued is already set, so a
-> > > stale IRQ delivered on attach is dropped after being disabled instead
-> > > of re-running the handover callback.
-> > > 
-> > > Fixes: bb7c5d6f5b41 ("remoteproc: qcom: q6v5: Make handover IRQ one-shot")
-> > > Assisted-by: Claude:claude-sonnet-5
-> > > Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-> > > ---
-> > >  drivers/remoteproc/qcom_q6v5.c | 17 +++++++++++++++--
-> > >  1 file changed, 15 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
-> > > index 10fa38f264c8..e715083846aa 100644
-> > > --- a/drivers/remoteproc/qcom_q6v5.c
-> > > +++ b/drivers/remoteproc/qcom_q6v5.c
-> > > @@ -210,10 +210,23 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
-> > >  {
-> > >  	struct qcom_q6v5 *q6v5 = data;
-> > >  
-> > > -	q6v5->handover_issued = true;
-> > > -
-> > >  	qcom_q6v5_handover_irq_disable(q6v5, false);
-> > >  
-> > > +	/*
-> > > +	 * When attaching to an already-running remote processor,
-> > > +	 * handover_issued is set before the IRQ is unmasked, since the
-> > > +	 * handover already happened out-of-band, before this driver probed.
-> > > +	 * The transition that signals it is latched at the interrupt
-> > > +	 * controller while masked, so unmasking still delivers this one
-> > > +	 * IRQ. Ignore it: this driver instance never enabled the resources
-> > > +	 * (proxy PDs, clocks, etc.) that the handover callback would tear
-> > > +	 * down.
-> > > +	 */
-> > > +	if (q6v5->handover_issued)
-> > > +		return IRQ_HANDLED;
-> > > +
-> > 
-> > The goal of Abel's patch was to have the handover interrupt unmasked
-> > only when needed. If you just bail out here and do nothing then there
-> > was no need to unmask it in the first place. Can you just drop enabling
-> > the handover IRQ in qcom_pas_attach()?
-> 
-> Hi Stephen,
-> 
-> Thanks for the comment!
-> 
-> Although it seems working in my limited testing, I'm not sure it's
-> entirely safe to drop the handover IRQ enable in qcom_pas_attach().
-> 
-> The handover IRQ is requested with IRQF_TRIGGER_RISING. When we attach
-> to a remote processor the bootloader already booted, that rising edge
-> happened while the IRQ was masked. Masking doesn't prevent the edge
-> from being latched at the interrupt controller -- it just defers
-> delivery. The pending bit sits there until the IRQ is unmasked and
-> actually taken; unmasking alone doesn't clear it.
-> 
-> If qcom_pas_attach() never unmasks the IRQ, that stale pending edge
-> doesn't go away -- it just waits for the next unmask, which is the
-> next real qcom_q6v5_prepare() (i.e. the next stop/start cycle). But by
-> then handover_issued has already been reset to false for that new
-> boot (qcom_q6v5_prepare() does this before re-enabling the IRQ), so
-> the stale edge would be indistinguishable from a genuine handover for
-> the new cycle. It could run q6v5->handover() and tear down proxy
-> PDs/clocks/interconnect immediately on prepare, before the firmware
-> for that cycle has even signaled ready.
-> 
-> So the enable_irq() in attach() isn't dead weight -- it's there to
-> deliberately unmask and flush that stale latched edge right away,
-> while handover_issued is still true from attach(), so the IRQ fires
-> once, gets caught by the one-shot ISR, is dropped harmlessly (because
-> handover_issued is already set), and the IRQ ends up masked again.
-> Removing the enable would just defer the spurious handover to a later
-> and more damaging point instead of eliminating it.
-> 
-> If you agree with the theory above, I can follow up with a comment
-> update in q6v5_handover_interrupt() to make this rationale explicit,
-> so it's clear that the attach-time enable exists to flush the latched
-> edge.
-> 
 
-It's a fair point (that I also considered before writing my original
-comment), but I think it does not apply here.
 
-There is no real interrupt controller for the SMP2P interrupts, all the
-handling happens in software inside drivers/soc/qcom/smp2p.c. The driver
-does not implement any latching. If the interrupt is masked, the bit in
-entry->irq_enabled is not set and qcom_smp2p_notify_in() simply skips
-signaling the event.
+On 7/31/2026 4:50 PM, Stephan Gerhold wrote:
+> On Fri, Jul 31, 2026 at 04:03:49PM +0530, Gaurav Kohli wrote:
+>> From: Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>
+>>
+>> Unlike the CPU, the CDSP does not throttle its speed automatically
+>> when it reaches high temperatures in hamoa.
+>>
+>> Set up CDSP cooling by throttling the cdsp, when it reaches 95°C.
+>>
+>> Add polling-delay-passive so the governor periodically evaluates
+>> the zone during passive cooling and steps up cooling levels when
+>> temperature stabilizes below the next trip.
+>>
+> 
+> Would be good to mention why you are treating hamoa-iot-evk differently.
 
-We rely on this also for the normal boot case. After the initial
-handover is completed, the handover IRQ is disabled by Abel's patch and
-then you have the exact same situation as in the attach case. There may
-be additional handover IRQs coming in, but they should not get latched
-for the next boot of the remoteproc.
+thanks for review, will add the reasoning.
 
-Thanks,
-Stephan
+> 
+>> Signed-off-by: Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>> Signed-off-by: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 32 +++++++++++++++
+>>   arch/arm64/boot/dts/qcom/hamoa.dtsi        | 63 ++++++++++++++++++++++++++++++
+>>   2 files changed, 95 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+>> index 9fa86bb6438e..a146be1cb5fb 100644
+>> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+>> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+>> @@ -1684,4 +1684,36 @@ trip-point0 {
+>>   			};
+>>   		};
+>>   	};
+>> +
+>> +	nsp0-thermal {
+>> +		trips {
+>> +			trip-point1 {
+>> +				temperature = <105000>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	nsp1-thermal {
+>> +		trips {
+>> +			trip-point1 {
+>> +				temperature = <105000>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	nsp2-thermal {
+>> +		trips {
+>> +			trip-point1 {
+>> +				temperature = <105000>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	nsp3-thermal {
+>> +		trips {
+>> +			trip-point1 {
+>> +				temperature = <105000>;
+>> +			};
+>> +		};
+>> +	};
+>>   };
+> 
+> Please avoid overriding node values like this... One quick rename of one
+> of the involved nodes and this will be silently broken without compile
+> error. Nowadays dtbs_check will *probably* catch these, but if you
+> override values using the label reference you would notice it
+> immediately when compiling.
+> 
+> All those nodes already have a label you can use:
+> 
+> &nsp0_alert0 {
+> 	temperature = <105000>;
+> };
+> 
+> &nsp1_alert0 {
+> 	temperature = <105000>;
+> };
+> 
+> If the same pattern is already used for other thermal overrides in
+> hamoa-iot-evk.dts, it would be good to prepend a patch to fix those too.
+
+thanks for review, will update this.
+
+> 
+> Thanks,
+> Stephan
+
