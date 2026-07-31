@@ -1,185 +1,221 @@
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010009.outbound.protection.outlook.com [52.101.84.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B87D3E8340;
-	Fri, 31 Jul 2026 14:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BC24499B8
+	for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 17:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785508506; cv=fail; b=dwocd6jhEaB56MNgeNR24CktKDBTVu0aJsjIGQFvO+1VNUd8HXMbYMYbG1h7fWJbE/Hmko24KfG89L81OTFlX+KB+151O//bmBiAlEFfQQc5rSdLTWnuokh64IpmrDvyNv69UGPZ5RFoInhx07PfHZH+SvYVjjF8OPSNnNwDutA=
+	t=1785517893; cv=pass; b=VKFqhF8gemQVo2gb4nbBOf6aOwubUN8iB1E4TLEaop1/ErPIPqskx70aX0MHSmyyALNEJLiMVyRmByp3ytkRYDpu596ox4uWDcPkHQtyl9EUYyvnOhz1kjvl2bF7YM62w+5QCglsjboDJ9Aof6W7l0aH3MN8j9AqLyGzEmp+0Tk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785508506; c=relaxed/simple;
-	bh=dh0P+93L51GCFKh+rO746awBEldTxRICqKOYXZ0Q0r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AXzgxdpvP5gM2QFXWdaHmKPyxtHd+r3/kC889kAx5TfAPwZ0Qkaxz2k3TsgQWNrR68vcWQRtYq0OSkvHpKBTOS4VebyqPyYF/LtVXyVazaE5v4eXpUKBYYvc6dsumf3kYX6AvlhMwxLpDwNzs5sWjKK/lQ8zR8NS932pzdnSzIA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Ue4Xa/R+; arc=fail smtp.client-ip=52.101.84.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1785517893; c=relaxed/simple;
+	bh=Uhh8q41hmOlByjiX1nPXF362Jh+d49ZbfzvIl+Q5Sug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BRNAWbWzRMkmf4I4y7qEfjae+g0AstFnWEa6HlmLPtt+yR8XyKa1btNb2GejesWWwBXnuWcxY9XJJ4DFQ6o3Bl3yqFafsVwH4EDeo91Z38IAAI+rSnnE9IoNNsLn6Tw3dG0fA8NsLH/dT5WXTG5o9MkLUj8mWUGRe16upObwlYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Exy5EQ16; arc=pass smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Ue4Xa/R+"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IkyFM2M9tYWO5/l14ia0mQk4Je16skcW2HwGBfVP5Mj9k0Ujo1glUBMp8fyAYbspmxMvxWvSVs8694JKsXc7ZCJ2JTrGXQHCWMRo4K8zNTlwX8JVMLYqVnRzHG77CKiEdRpwjWbun7GwpFOjVcCncJDeoitFJd/dMyxCctyR0DM9IdZAFzFxWAANah3bT9NEr24i738t9ahxCIFOKhiBbmWxDfcLCZkm3FUhW1WAJgGYtH1rJDNK2dzhuRVxtZsuzYyU+m8ACvmi/wxEdc6LluheZEXa9wqorOKd44pp9sb6T9Fjg0UIX98SCGwUxtLhb2fihXhnga20LQ5B8n6ppA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vkkF2QADZ7tjd6CuduAI5HuDQ1qKaOJGa1srS6n09ho=;
- b=DrUkTdSRIqzPmV6x3T4ASzokO7ovBy8qp4vFwfKNkiV83FVEctQwQsjHDpMEDkHmdg7ZBTWgWFsYcLsDWdEhlnGRod7BJ3ihM/+7FDGAeT72I7+rjQfe10n4iws+eet4aYrqYoYciqvg6Hr0e4Mh2s2lwoz6wbYteqKvAtVXaGr2S+9atswVFL3b8QYuXvYQgmtN8K5ZDnogsIBSu0XFdPUEgmwDI4QAWQCLN/o/c7muIfhJ9ERikC4q8COUBvAPbrxyZpoy0DBRcRYX0WOshaar8i8bHAGS+0zeHbzu1KiAapxycrFEGC8qZIb42zCRKfAIr+n+yNBynXWwXas58Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vkkF2QADZ7tjd6CuduAI5HuDQ1qKaOJGa1srS6n09ho=;
- b=Ue4Xa/R+Hr84lCYZTx9caTOQ+aO3NZ6XK1LzQYfQetHKtalTdakhONKUUQaEUW3772Bu+2b9wxdQRQdou9t+sHr+438iWfJQZmKSViFS11jjerps0ZDiAPjl9k7gGNj7lUxR7EA/JikbJQYrhXodMcDpNZz8Fp8rFMD2KuG/0V6t47hmruqAIjGwoqQ6USFFEvpNDZTjSeCi4zd9hECQW2YC+xmXHrSnBSgkSIk9dcI90hY8iiUhO5obi56aL8cImeWzf1UxEIWjrPBKyZnACL95s9cY57R1AXtDInVc5WKnYy+hlK198i3GpkmVn+0wWk8JwsZQVZBm8VdMfTdt/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by DU4PR04MB11032.eurprd04.prod.outlook.com (2603:10a6:10:58a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.16; Fri, 31 Jul
- 2026 14:35:02 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0270.012; Fri, 31 Jul 2026
- 14:35:02 +0000
-Date: Fri, 31 Jul 2026 09:34:52 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, Peng Fan <peng.fan@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@oss.nxp.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: remoteproc: imx_rproc: document
- optional "memory-region-names"
-Message-ID: <amyyjM-LOw7rVNnG@SMW015318>
-References: <20260730163412.1145-1-laurentiumihalcea111@gmail.com>
- <20260730163412.1145-2-laurentiumihalcea111@gmail.com>
- <20260731-merciful-whispering-serpent-3a8eef@quoll>
- <5267c0e8-e20c-4e9c-a1fc-da27433e8523@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5267c0e8-e20c-4e9c-a1fc-da27433e8523@kernel.org>
-X-ClientProxiedBy: SA0PR13CA0007.namprd13.prod.outlook.com
- (2603:10b6:806:130::12) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Exy5EQ16"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6983f20a8bfso2164643a12.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 10:11:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1785517890; cv=none;
+        d=google.com; s=arc-20260327;
+        b=UyqfM9LZafvCCuMs6X0qjUYVSrL2FYiUq+ZfUqR43Gt+0AVRX1TCShVjjND3zbYa+w
+         n3YQ0l1KukJ8DaFZ6Th33PEzj2daoZGXeST0dswBSJwQSsOhwMfAeWP8Zl9SzTo4/HRj
+         UZQrn0EsG89uwCaKpMUh/5aDPl9UbKp0NOXoaKr/vYNG5WA4QmQ94F03zfZTnONzlOxq
+         l0CUmFHU3EXZ3wbI04CEvKyW59WekJjJf2J72yaaTiUuVjiEvfTHir1VhW+6hOLx1Qmx
+         pEvlzE1Vkw1TDY19JzyUaeHqgwBQC80hJlZxiw5VDbLfXYsR9FT6becIKwUIRTVNYg4e
+         y7Eg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
+        fh=HFqKxqb+ty2IHNL/5mtGcMNpO0nAPeXlifSDshoTi2I=;
+        b=pOLxdZWLmigLWF+hduBNK6MoYkwmzEeZqJHMVMC36tDyEPhKmzvWax5NYC8Ek+dxZm
+         2rGPSN4m+6DEipVxI7Np/WIP5ce2/mWlxxjH1GeVJGTqkedBQ1q5yyK4qNG1/W2/V8y3
+         5YVLS1TNoIIS5GJyZpunRmNwA97fDu4o6jg2vVyJjDVvnyn8NqfIqYDW8HsUMCOJ0RiM
+         IN47E6WWtd4Z0GEzuQhip0Kia7sa2Pg4gDJJWVw3e7qpEDF+rwk8J3DkAlXQ/sZqT95l
+         EgJ4VmljzC/k/h3rwQulRbyt/LuddoAnn22ShzxbsRmLgEv2N2YOW8GAqqRInaKoknGB
+         F09g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1785517890; x=1786122690; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
+        b=Exy5EQ162dvgPIB46DJfZCIj898OhNHYTDXIQagaTUngdPry8jW88hSxi6aVeP31S7
+         YzgozmElj0AURbi6rlolpsPiLByD3Dd4Ii6jY6wqjM621Fqqa0b22PEBuASgo8mAw4De
+         q9L3mNgaXd9xOA1YKaScbjzyuSCFbwu3UiiXTk2ghLdVxl1k256wj9vTvGHuymhzwrX5
+         N1QWFADLLAUwVNfVysAJrQvM98upHj4eMDVgmRkgOseJP/GEExxCmGqFNrQL6nBDdWuh
+         5q9mOh7bcYV0Wbl5Q5V2ykhADYOUtuUfmzcCHvOZ5sPgDDKDntg7uK7b27OmDy1F3uAo
+         XHEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1785517890; x=1786122690;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
+        b=I/2U1wkxqM5rdp4yS8v8yTSLxcUqicNTv9oO9j11yIiJgZM0X/bzDDodYjk58llPs6
+         DSBl+g6b1iXZ/V9stIXvscEFvY/KkkSwksX2NwAizuJeTa1D1iq4njLImyTKqprw+IJ2
+         10ySgGvDrn0A575Gu4cPdS60g4cHP+YDzuoFHcY6/iqz7K8SQYmB0gd96EVh07Gl3I8+
+         yNzHKSdhoHfUSeEyKj4ahfRqNNwqptZ++kSVbcfznm9xkoZTiQuu6fYD5wsbawv2PoxV
+         n/zm17a5AdvuvP+mPYOnAw9GrgQ1zmmfyvnf23qLr2tZxCCq96JaxPndSlxD5p+T+avi
+         SwGg==
+X-Forwarded-Encrypted: i=1; AHgh+RrzqrboYnrjG9KjGBffp8ysSyvkE3NWlojwh6CTJKMzld5h5s73obl6qRdvahk7qeiQNIWXmFX+CiIaXRJ6tYpv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUBs0oZAy7p2x8+oyfSIBucXvUAeItF7cJNVaC6f4ztZo9gojb
+	1O7G3iNcRXhZ306loY7ZkteoafdSDI79JGr4HlkWVP267wC8HpEGOGZM7uHb3qBT9eH7g6RJTgu
+	7MgcGZhpnBDqVPq6hrtFpa57suA/cHAmXokZ0xSGVJA==
+X-Gm-Gg: AR+sD107ahL6EVMVHBP0kkO8g418SmA5m4mZD0qOoVsXbpXgZlOtdYinApeFzWeIXxf
+	AU3GaXYpKTA5t59fPaVXUyVfICnouXbkEDyrx5zhm06jgLnRXyRqcwsidR2EVhM+H+DasrH+euZ
+	weVbOp5DGCmqIvGCoybmWDEXCbP3Tvk8DH3v3O4llgT81fuz4SjDtuuAIxwaI4g3o6zjGtR54gD
+	9qvwNWzOfwdXveTeT5w+NxmdfictIeTAkgqGfSbd6uLCaa1+SaL0Ni9TWnQVFJ4j+deVfekdVAf
+	/5YzsAUi9drGoXXl2SA/C/xTvarDdQoLySc1KubMcZo+uXWW4Y5L2HmSV0yYDOHYYSug7OWP05i
+	7En+KiUF83zY32g==
+X-Received: by 2002:a05:6402:449a:b0:697:de29:c802 with SMTP id
+ 4fb4d7f45d1cf-6a0a7ccb364mr275774a12.18.1785517889487; Fri, 31 Jul 2026
+ 10:11:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|DU4PR04MB11032:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8eec6497-b7ea-49d6-fe8e-08deef10e776
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|23010399003|376014|7416014|19092799006|22082099003|18002099003|11063799006|4143699003|56012099006|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	WwTiirl3kYtYhtqRQqOazH+knDtNp/LF+Nt/PNZ1iEvSKJ1phjAJ00jkD2YHyPJL8zPM3DbMZalmdY6DFNThlJ9qw9qIrVwg/TgrqstF+aTbLE5Rpjz81QRveR56UCA032N8RY1GugJVv/+vMlNEJA93Tkfe8BE+P4wy+wa9eT3CoDpSKLXj6ys7Q1EwOqsUIwjGqskSB3hXr6nA54/axJhdxkFWfpn0iXG/5ATL5o0O+Nk3ZntURsmDIPpvqhi9uNYI/WlOSejqN2LdEjLBQi9jaA3JnrAd8R/g60TS2FxPX0AjokNatDQM6AZuxeGhYlEkiq1s9f236cFu4G5+NXTRwatUz7IsLWockLedir4ksj18TIZdWdZPsvFeg5lxSvVyyXoMUTcEH2rsU12ocTz8GXf0m1PwHs5LrU/S1NSPoZBJQ/+wbAPKPtJxIhjrovNM2Cg3uNzKLcNtdhxAHxLncwPZj8hJeQ9FkO+awb5B0pHO7lQqaNR12NODugfTel0IYWnWu30kvcvJBxqMkRyQyYsW2GaST3bdPd+wHdn0iXOT9d34bNmiTAKws81Ba7oRUlK9l6Pqrwgxx1Z8FE27ubP/ikbXmXQXNFGJZ6GdM9oDqZZ9WNCnW/xe3fkXwy8IhvyTFOu87WI4AhPcdeFO8k8ZI7QOOV5yeGYLDXM=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(7416014)(19092799006)(22082099003)(18002099003)(11063799006)(4143699003)(56012099006)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+wesstRqGeuNas/JdJMGI/gc8mhBtQMH4ozi0a0CNbTHlmyRFKGX46XipYcZ?=
- =?us-ascii?Q?YU1CJI68MhxX8+pMXLJ3ghF0qCvWcTocFAUHo1Zbc0tmPWi1ZFk61gBX2Yy7?=
- =?us-ascii?Q?x3OFgpDauTJxzuLETLZZYa4G6ah7i4ZvxjCba1uJ6s0PptvEKeODMk/CtdWo?=
- =?us-ascii?Q?Ho79yc7YsRDU+9NEEs7pVuiBEBJZKDwOjHJ6BukWdU0NF/fq6gWCtiHpeJGL?=
- =?us-ascii?Q?+KxDZJhZ91J9Vj9d386bCjuP9QG4D1R93jblnsFJ/jYtyurIyU/1qxMX+HOO?=
- =?us-ascii?Q?OXxUTLxnIMwV5acbxHqy7VyvpdTOHmoOo2noXRb9R8ABev96FJJGyxllxPSH?=
- =?us-ascii?Q?D/v7PU40DAVy4861RVVhHw5fiHnNuYusu8aGEfwVhG6MIN+JxnOIm4q5N3n5?=
- =?us-ascii?Q?gnpAgeAZ8ofyYV0ihWl/2Hug6bk6ONReoQSZw1OHxb+QURC4O3Rcnp8ekyXW?=
- =?us-ascii?Q?55CCko3qGl1365JzIFppez4IUqv49Kc1LRwKVgaKCSGfQWkIR2bxuOWB1U6b?=
- =?us-ascii?Q?bFGuvu+yD/q9xZ8vP923pXqVcwbk/Uy9kreIkf6BFlAerGaxK8LS9H5PdZRf?=
- =?us-ascii?Q?saq10ARCR7YFxQJpAHUvn896Zda1Y+pYlSrfq+RLzDOnAjJfftO8+2LpRf9p?=
- =?us-ascii?Q?g9jwIzkfn1rpkxPPxvIxmUD6qz9G1FydF6PQk33OSK6bTsxRRarflnDvJEne?=
- =?us-ascii?Q?csLU2WfcibdplEKBNbXO1OO9i3d5F+ETjn2KQx3ZEGI0jIOvEdAFBlvlRuS7?=
- =?us-ascii?Q?4El2p3kgMGHepVLD0WRcaPKHyy1zKsqljsbnboK5QminHbp2aNMcqsJiD7P0?=
- =?us-ascii?Q?ltFp0tlmNIUCE0/CN+kL5TvCSHs8ofpFntNChiGJU7z3zcnRYAc/2uRmT+y5?=
- =?us-ascii?Q?iCaa8hoP9oo6i7GhPkcLRJPfpEqmVr74lPY+SPpd5Xv64WBK8pnNT1WNcA23?=
- =?us-ascii?Q?alJaNb1XI1yl4ChZmXnJdHMbBn8TIlm96IyMUH+TSsp7Q+tJWOr4nWrbUF4j?=
- =?us-ascii?Q?PSvg8A7UaNHAp/XP2kcERe4C2Yo9UcetDwQFwpUKqaVacFzr/l21RowMrycU?=
- =?us-ascii?Q?/Q9bsyBlTJgqeHoqAVNRh0kDJK+z6Kt7HHnH3IsxT05nzXWxyw1uLsNdmJa4?=
- =?us-ascii?Q?r64ZQcU0Mh097gPkF6aSj8f6LUhkIXZmehBumHxLu1QNJnl0S0yD70PnhSD4?=
- =?us-ascii?Q?ofFhHa/aXEztJJLDwCRIFwBzfpaKU2csKbaBFfQ9OGR9c0Njh98fQeEWoyRk?=
- =?us-ascii?Q?W7gKDtKnLTyQqKmYyICCD5yd1ECOIvBDRc3jDAujecQg2u8HBE2jrJwL92CF?=
- =?us-ascii?Q?gBdNHsX5OFpklV9nhrAhlqm7eCQj2m7Re5c0/qFwM79X5a3u/GBP/QXYXcZL?=
- =?us-ascii?Q?AtCXJgizd08dWFNLlzt0jA2LzdmQy8iBNyjqyK5ggRMT3yHOIy9BSB6zigIY?=
- =?us-ascii?Q?JkufZeljOsUyZQcaYxDvGZe/+H1xaaq5/YYT3a7bONw3CDS6dZ/SUcWnmBzV?=
- =?us-ascii?Q?7ieZfIzSICd9vBfxfc7CdPTVNphxOjg8ggcCw2d5p8kQYLF319dfSSzPOBw1?=
- =?us-ascii?Q?4ACnm2NSL4rndq8/iOQYVrkBKidb9M9vSWJ9A+ulnzbozdwafRi7lTH+Nkcc?=
- =?us-ascii?Q?zud5FIJ3DJcAL6o6PmehZXQfawsYjWoRF5DqoRZRdzM44B3JnevLbJ0Z7DM4?=
- =?us-ascii?Q?8Ggx6afxoFG8h9pFE+D4XBUjOMdzhHAV+vkwi7OyTvlcEjR55PFLFeGtUMrU?=
- =?us-ascii?Q?pMo91O3AEUxCE0CEa++8+UnfC+YwYqpFMN1Ydc/9TyN1y7TP9YSL?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8eec6497-b7ea-49d6-fe8e-08deef10e776
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2026 14:35:01.8864
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9yjewblRIc4wPMmGeqPxLldj6Ec/KSfov7owjKAztpGj52dVm6OX6Bu+VuXOyc2oHMMkqPODJz4U2yOA2jskOvhPfJ7pCyovP1mLPQdCrdlEA1ObI9Fd3d3N4eySnkqb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB11032
+References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
+In-Reply-To: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 31 Jul 2026 11:11:17 -0600
+X-Gm-Features: AUfX_mwyptmYyOf4p0ZyWTJXkdByXi3n4edVXueGHxTjG-w_nq_PAPMefUUmQKw
+Message-ID: <CANLsYkyJ=qOz_7x8igcwkiHsJQWP8JizB4-q5QV5gv-s+e6eVA@mail.gmail.com>
+Subject: Re: [PATCH v15 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
+To: Shenwei Wang <shenwei.wang@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
+	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 31, 2026 at 11:39:52AM +0200, Krzysztof Kozlowski wrote:
-> On 31/07/2026 11:37, Krzysztof Kozlowski wrote:
-> > On Thu, Jul 30, 2026 at 09:34:09AM -0700, Laurentiu Mihalcea wrote:
-> >> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> >>
-> >> The carveout region names are derived based on the DT node names. Because
-> >> of this, the DT node names are ABI, which is not supposed to happen.
-> >>
-> >> Fix this by documenting an additional, optional property:
-> >> "memory-region-names". This way, the software will have a way to build the
-> >> carveout region names without relying on the DT node names.
-> >
-> > That's not the point of xxx-names property. It only serves as a helper
-> > to get the resource.
-> >
-> >>
-> >> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> >> ---
-> >>  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 4 ++++
-> >>  1 file changed, 4 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> >> index c18f71b64889..8e3e6676a95e 100644
-> >> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> >> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> >> @@ -62,6 +62,10 @@ properties:
-> >>      minItems: 1
-> >>      maxItems: 32
-> >>
-> >> +  memory-region-names:
-> >> +    minItems: 1
-> >> +    maxItems: 32
-> >
-> > This cannot be flexible and unspecific. Why "yellow submarine" would be
-> > a correct name?
-> >
+I won't be able to review this patchset until the week starting August 17th=
+.
+
+On Tue, 21 Jul 2026 at 14:48, Shenwei Wang <shenwei.wang@oss.nxp.com> wrote=
+:
 >
-> And I already SAID that at v2, so you just keep pushing this without
-> implementing feedback.
+> Support the remote devices on the remote processor via the RPMSG bus on
+> i.MX platform.
 >
-> NAK
-
-Thanks you review these patch and I already sent out suggestion, could you
-wait for me check it firstly to off load your work.
-
-Frank
-
+> Changes in v15:
+>  - Update Kconfig description per AndrewD and Julian's feedback
+>  - Enable the GPIO driver even without a DT node per AndrewD's feedback
+>  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback
+>  - Code cleanup according the new gpio-rpmsg.rst and sashiko-bot's review
+>    feedback
 >
-> Best regards,
-> Krzysztof
+> Changes in v14:
+>  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback.
+>  - Align the rpmsg-gpio driver with the revised gpio-rpmsg.rst.
+>  - Modify rpmsg-core to enable prefix-based matching of RPMSG device IDs.
+>
+> Changes in v13:
+>  - drop the support for legacy NXP firmware.
+>  - remove the fixed_up hooks from the rpmsg gpio driver.
+>  - code cleanup.
+>
+> Changes in v12:
+>  - Fixed the "underline" warning reported by Randy.
+>
+> Changes in v11:
+>  - Expand RPMSG for the first time per Shuah's review comment.
+>
+> Changes in v10:
+>  - Update gpio-rpmsg.rst according to Daniel Baluta's review comments.
+>  - Add a kernel CONFIG for fixed up handlers and only enable it on
+>    i.MX products.
+>  - Fixed bugs reported by kernel test robot.
+>
+> Changes in v9:
+>  - Reuse the gpio-virtio design for command and IRQ type definitions.
+>  - Remove msg_id, version, and vendor fields from the generic protocol.
+>  - Add fixed-up handlers to support legacy firmware.
+>
+> Changes in v8:
+>  - Add "depends on REMOTEPROC" in Kconfig to fix the build error reported
+>    by the kernel test robot.
+>  - Move the .rst patch before the .yaml patch.
+>  - Handle the "ngpios" DT property based on Andrew's feedback.
+>
+> Changes in v7:
+>  - Reworked the driver to use the rpmsg_driver framework instead of
+>    platform_driver, based on feedback from Bjorn and Arnaud.
+>  - Updated gpio-rpmsg.yaml and imx_rproc.yaml according to comments from
+>    Rob and Arnaud.
+>  - Further refinements to gpio-rpmsg.yaml per Arnaud's feedback.
+>
+> Changes in v6:
+>  - make the driver more generic with the actions below:
+>      rename the driver file to gpio-rpmsg.c
+>      remove the imx related info in the function and variable names
+>      rename the imx_rpmsg.h to rpdev_info.h
+>      create a gpio-rpmsg.yaml and refer it in imx_rproc.yaml
+>  - update the gpio-rpmsg.rst according to the feedback from Andrew and
+>    move the source file to driver-api/gpio
+>  - fix the bug reported by Zhongqiu Han
+>  - remove the I2C related info
+>
+> Changes in v5:
+>  - move the gpio-rpmsg.rst from admin-guide to staging directory after
+>    discussion with Randy Dunlap.
+>  - add include files with some code improvements per Bartosz's comments.
+>
+> Changes in v4:
+>  - add a documentation to describe the transport protocol per Andrew's
+>    comments.
+>  - add a new handler to get the gpio direction.
+>
+> Changes in v3:
+>  - fix various format issue and return value check per Peng 's review
+>    comments.
+>  - add the logic to also populate the subnodes which are not in the
+>    device map per Arnaud's request. (in imx_rproc.c)
+>  - update the yaml per Frank's review comments.
+>
+> Changes in v2:
+>  - re-implemented the gpio driver per Linus Walleij's feedback by using
+>    GPIOLIB_IRQCHIP helper library.
+>  - fix various format issue per Mathieu/Peng 's review comments.
+>  - update the yaml doc per Rob's feedback
+>
+> Shenwei Wang (5):
+>   docs: driver-api: gpio: rpmsg gpio driver over rpmsg bus
+>   dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
+>   rpmsg: core: match rpmsg device IDs by prefix
+>   gpio: rpmsg: add generic rpmsg GPIO driver
+>   arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
+>
+>  .../devicetree/bindings/gpio/gpio-rpmsg.yaml  |  55 ++
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml    |  53 ++
+>  Documentation/driver-api/gpio/gpio-rpmsg.rst  | 242 ++++++++
+>  Documentation/driver-api/gpio/index.rst       |   1 +
+>  arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  25 +
+>  drivers/gpio/Kconfig                          |  17 +
+>  drivers/gpio/Makefile                         |   1 +
+>  drivers/gpio/gpio-rpmsg.c                     | 587 ++++++++++++++++++
+>  drivers/rpmsg/rpmsg_core.c                    |   4 +-
+>  9 files changed, 984 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yam=
+l
+>  create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
+>  create mode 100644 drivers/gpio/gpio-rpmsg.c
+>
+> --
+> 2.43.0
 >
