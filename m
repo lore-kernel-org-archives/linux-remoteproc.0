@@ -1,221 +1,254 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BC24499B8
-	for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 17:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785517893; cv=pass; b=VKFqhF8gemQVo2gb4nbBOf6aOwubUN8iB1E4TLEaop1/ErPIPqskx70aX0MHSmyyALNEJLiMVyRmByp3ytkRYDpu596ox4uWDcPkHQtyl9EUYyvnOhz1kjvl2bF7YM62w+5QCglsjboDJ9Aof6W7l0aH3MN8j9AqLyGzEmp+0Tk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785517893; c=relaxed/simple;
-	bh=Uhh8q41hmOlByjiX1nPXF362Jh+d49ZbfzvIl+Q5Sug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BRNAWbWzRMkmf4I4y7qEfjae+g0AstFnWEa6HlmLPtt+yR8XyKa1btNb2GejesWWwBXnuWcxY9XJJ4DFQ6o3Bl3yqFafsVwH4EDeo91Z38IAAI+rSnnE9IoNNsLn6Tw3dG0fA8NsLH/dT5WXTG5o9MkLUj8mWUGRe16upObwlYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Exy5EQ16; arc=pass smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AF6394EB7
+	for <linux-remoteproc@vger.kernel.org>; Sat,  1 Aug 2026 01:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1785546010; cv=none; b=q3KtVQHNV0N12+rPkQ0RkXXFj00Z5ygdxl93mm2gT5rwCT5d1vcPXaewHuX8aL03RBNocNyX5LX1XCOFY1AxUBXfjI09vkFxQ9vTqx9uJR1iNpVYW2pohzMTlVyTLsdQA0n8puyJbg2s/ETQmymcYRshenvS/mJNHpT3KUW6vTE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1785546010; c=relaxed/simple;
+	bh=k7IIENyVvsEfARfIatk9sz0DfXh6dweeMavMLiwzvtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mz/HA9M2mi18YeBxy+dSjNQSrKXHDP4cBTl8dDaKjV0TS68Q1PPpZpEV8/wWUtL3hLASzFpTN6xAWWZW4zqt3cdrYdalbgrBr78YfOmu0UMCtRJyHtnKD2X/rZRIP5LtJUu45YcU+oMW5KnnycNTaYdvLLVP1nJCPpyRNNkkf1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eU3y+TKy; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Krrofmlt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Exy5EQ16"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6983f20a8bfso2164643a12.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 10:11:31 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785517890; cv=none;
-        d=google.com; s=arc-20260327;
-        b=UyqfM9LZafvCCuMs6X0qjUYVSrL2FYiUq+ZfUqR43Gt+0AVRX1TCShVjjND3zbYa+w
-         n3YQ0l1KukJ8DaFZ6Th33PEzj2daoZGXeST0dswBSJwQSsOhwMfAeWP8Zl9SzTo4/HRj
-         UZQrn0EsG89uwCaKpMUh/5aDPl9UbKp0NOXoaKr/vYNG5WA4QmQ94F03zfZTnONzlOxq
-         l0CUmFHU3EXZ3wbI04CEvKyW59WekJjJf2J72yaaTiUuVjiEvfTHir1VhW+6hOLx1Qmx
-         pEvlzE1Vkw1TDY19JzyUaeHqgwBQC80hJlZxiw5VDbLfXYsR9FT6becIKwUIRTVNYg4e
-         y7Eg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
-        fh=HFqKxqb+ty2IHNL/5mtGcMNpO0nAPeXlifSDshoTi2I=;
-        b=pOLxdZWLmigLWF+hduBNK6MoYkwmzEeZqJHMVMC36tDyEPhKmzvWax5NYC8Ek+dxZm
-         2rGPSN4m+6DEipVxI7Np/WIP5ce2/mWlxxjH1GeVJGTqkedBQ1q5yyK4qNG1/W2/V8y3
-         5YVLS1TNoIIS5GJyZpunRmNwA97fDu4o6jg2vVyJjDVvnyn8NqfIqYDW8HsUMCOJ0RiM
-         IN47E6WWtd4Z0GEzuQhip0Kia7sa2Pg4gDJJWVw3e7qpEDF+rwk8J3DkAlXQ/sZqT95l
-         EgJ4VmljzC/k/h3rwQulRbyt/LuddoAnn22ShzxbsRmLgEv2N2YOW8GAqqRInaKoknGB
-         F09g==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eU3y+TKy";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Krrofmlt"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 66VM0d9g909834
+	for <linux-remoteproc@vger.kernel.org>; Sat, 1 Aug 2026 01:00:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=c42abJTL5cQsi9p9dq0hFd/N
+	52pXVYMvGI8d2QNfMHM=; b=eU3y+TKy1B80IuuIFMTxt61+5vy63AIK/wMVwoSI
+	qCxYhcxp1GQAzKJum3nL4UV8MIvCmkhjgILavFIdqMivhmFQGadt+PU46M71fkv4
+	XmdIUS77XrjnJ/nZjI7bQ0iPn2nNvGJTeVJkSCyVNkWJGJKKOm2AKU+4RIIcswYJ
+	hHLJhViUmafKPaO1RhKhi0LMhhAROuVXjzmOofTL/Uc++Br0M9a6NKJ4w6OYJuN4
+	Uu8iuZXEmRbt2jftsUFrv07Emslw0cyxepjpo2MuEgyzWkB9ltw2vdsoB68wbTjV
+	bS9prd+g6eF9Sljr9nQGEPtLMRje4wmQ3HGT/Uv8rohSnw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4frugh2y9s-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Sat, 01 Aug 2026 01:00:08 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2ccb6823efcso12790405ad.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 31 Jul 2026 18:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1785517890; x=1786122690; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=oss.qualcomm.com; s=google; t=1785546007; x=1786150807; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
-        b=Exy5EQ162dvgPIB46DJfZCIj898OhNHYTDXIQagaTUngdPry8jW88hSxi6aVeP31S7
-         YzgozmElj0AURbi6rlolpsPiLByD3Dd4Ii6jY6wqjM621Fqqa0b22PEBuASgo8mAw4De
-         q9L3mNgaXd9xOA1YKaScbjzyuSCFbwu3UiiXTk2ghLdVxl1k256wj9vTvGHuymhzwrX5
-         N1QWFADLLAUwVNfVysAJrQvM98upHj4eMDVgmRkgOseJP/GEExxCmGqFNrQL6nBDdWuh
-         5q9mOh7bcYV0Wbl5Q5V2ykhADYOUtuUfmzcCHvOZ5sPgDDKDntg7uK7b27OmDy1F3uAo
-         XHEQ==
+        bh=c42abJTL5cQsi9p9dq0hFd/N52pXVYMvGI8d2QNfMHM=;
+        b=KrrofmltAmmxktHoUJ3NLYl/79vLtyfOi5Rhbm7rZUdTRsaXJGFR97SIFE7cvwuQ1d
+         8CcVdtTXqMSHJo15FtYC6ifUIw/r7vmyVimQDfl92Mig8geiHqgvcOIbKmdSu+v/sSsf
+         EmzJhObEosXGJPWQctJzcjsWaV2mqQluRoz2y4JjJuyEZ0Rp1Us9aUxCZR0VOXUuZLQr
+         H6F7Cg07DwIYGyh1LaJbRYXdHEWChZK2cGBKgnvACzREvfgnQWST1Pgr7qJu1Qc2KxnL
+         k6WW4vg91wuEJoBr65b1gvIArbyaFnm3mCTSoxupJU9H0A1Ix9JfWUj5p+SNqGHA9bZz
+         iP4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1785517890; x=1786122690;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20251104; t=1785546007; x=1786150807;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=tfzdRxKMzAqp/+9ZSx+vlyqKp24vqwGUERSU+Y5G+a0=;
-        b=I/2U1wkxqM5rdp4yS8v8yTSLxcUqicNTv9oO9j11yIiJgZM0X/bzDDodYjk58llPs6
-         DSBl+g6b1iXZ/V9stIXvscEFvY/KkkSwksX2NwAizuJeTa1D1iq4njLImyTKqprw+IJ2
-         10ySgGvDrn0A575Gu4cPdS60g4cHP+YDzuoFHcY6/iqz7K8SQYmB0gd96EVh07Gl3I8+
-         yNzHKSdhoHfUSeEyKj4ahfRqNNwqptZ++kSVbcfznm9xkoZTiQuu6fYD5wsbawv2PoxV
-         n/zm17a5AdvuvP+mPYOnAw9GrgQ1zmmfyvnf23qLr2tZxCCq96JaxPndSlxD5p+T+avi
-         SwGg==
-X-Forwarded-Encrypted: i=1; AHgh+RrzqrboYnrjG9KjGBffp8ysSyvkE3NWlojwh6CTJKMzld5h5s73obl6qRdvahk7qeiQNIWXmFX+CiIaXRJ6tYpv@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUBs0oZAy7p2x8+oyfSIBucXvUAeItF7cJNVaC6f4ztZo9gojb
-	1O7G3iNcRXhZ306loY7ZkteoafdSDI79JGr4HlkWVP267wC8HpEGOGZM7uHb3qBT9eH7g6RJTgu
-	7MgcGZhpnBDqVPq6hrtFpa57suA/cHAmXokZ0xSGVJA==
-X-Gm-Gg: AR+sD107ahL6EVMVHBP0kkO8g418SmA5m4mZD0qOoVsXbpXgZlOtdYinApeFzWeIXxf
-	AU3GaXYpKTA5t59fPaVXUyVfICnouXbkEDyrx5zhm06jgLnRXyRqcwsidR2EVhM+H+DasrH+euZ
-	weVbOp5DGCmqIvGCoybmWDEXCbP3Tvk8DH3v3O4llgT81fuz4SjDtuuAIxwaI4g3o6zjGtR54gD
-	9qvwNWzOfwdXveTeT5w+NxmdfictIeTAkgqGfSbd6uLCaa1+SaL0Ni9TWnQVFJ4j+deVfekdVAf
-	/5YzsAUi9drGoXXl2SA/C/xTvarDdQoLySc1KubMcZo+uXWW4Y5L2HmSV0yYDOHYYSug7OWP05i
-	7En+KiUF83zY32g==
-X-Received: by 2002:a05:6402:449a:b0:697:de29:c802 with SMTP id
- 4fb4d7f45d1cf-6a0a7ccb364mr275774a12.18.1785517889487; Fri, 31 Jul 2026
- 10:11:29 -0700 (PDT)
+        bh=c42abJTL5cQsi9p9dq0hFd/N52pXVYMvGI8d2QNfMHM=;
+        b=NID9N47YnH6oCveg8mehD4+drO6QYpqU4br2AsMt9QO6YvOz2Blsr/R3qZcH60stSk
+         FY1uucGYDovnBKIAjD0+O9DNrJYX5fxLMx+wLB1EJkBtZyUv8cn9PcEbKLhKAUd9noMv
+         81FtXJUtZ+UlqVMRRwRj5SooC8b+7xpoSmkv8ZlelJBOb8wCydDCZpO0+BvyenrKa8VD
+         mkKT9Xbhx6IRwCwNqIRhi6Sk8x1W2ojHx3TpQ0lv0bJYCNNpz4aPDgPvNGpS0jfbAkbH
+         /S5RTYu9WSbU+qbaN2o9qpZRcvui3eRoKPQTfH+4MHVW15013iHmEynTfHXdNSPSFFT6
+         Vm2A==
+X-Forwarded-Encrypted: i=1; AHgh+RpjZ+Kx8G0LJf6WWRcWr12vV5TYahjKbsr5GXbIo2GG3Q8heiCWH65xXvpoJKKLoRRk0Q8Ode/vKkp7/gavfWv4@vger.kernel.org
+X-Gm-Message-State: AOJu0YysO+V4dKwAxkV31VswUgFNibE2w+OtM8ziFen4Uu/yK5YICwfP
+	JmqfX0DY9KC56A8BPHR80BpHsi+5VlGcQWSmGJe6gNqaJ2qsMh6Vf8VZMlIXEp4jquLD0stJ5R0
+	TGhZ3Jzg9CDl6Hb8mkuO4R/bQ8HfBeCu2cZik1g/ffoV/NzaOnjR5qxTKuN9MsAo7iwxKIrkxXf
+	UKFCO86cI=
+X-Gm-Gg: AR+sD12RALmKLS73xLLKvsXLhUEcqNW+nK6jTQiUpRPvak5cTxrNkOWgZlm7bIgTMyv
+	wxbk6UG9B1YzmjI7Z3w4KkwkxflupRICbh2AiRMzcw2yHSqdGy947ZSAFKfz4yb9FgHUTx2p2VC
+	I1dG1wirrQTCCAW6kHvA2CIe3uKDG8BftzHMYTsYrASBAo98opAOGG1C65pSwzxWsOxoWq8yPTl
+	2HkJv8uS5ewlL1i9lfABNyL9B+g2yHyWZP6q/aH/vXmo1GfB3wMrmAy6g8GuRx4iJq7bZtRBcFh
+	lk7xv7AGXT/C5nq5j6nVMyxExX38BapU4/X676rTcAUAC4lZ4NSL95p6YloXd7VuQVpJRhiHsni
+	GFOV9RYyg1KJXcGi4e2MFuRhiUp9acabYKQ3H6DoP3PY=
+X-Received: by 2002:a05:6a21:6f07:b0:3c3:93ce:663 with SMTP id adf61e73a8af0-3c92a5e1612mr1614627637.26.1785546007301;
+        Fri, 31 Jul 2026 18:00:07 -0700 (PDT)
+X-Received: by 2002:a05:6a21:6f07:b0:3c3:93ce:663 with SMTP id adf61e73a8af0-3c92a5e1612mr1614605637.26.1785546006831;
+        Fri, 31 Jul 2026 18:00:06 -0700 (PDT)
+Received: from QCOM-aGQu4IUr3Y (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3153e045016sm15804960eec.19.2026.07.31.18.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jul 2026 18:00:06 -0700 (PDT)
+Date: Sat, 1 Aug 2026 09:00:01 +0800
+From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] remoteproc: qcom: q6v5: Ignore stale handover IRQ
+ delivered on attach
+Message-ID: <am1FEXJkgoZ0yCiv@QCOM-aGQu4IUr3Y>
+References: <20260731025655.2642860-1-shengchao.guo@oss.qualcomm.com>
+ <20260731025655.2642860-3-shengchao.guo@oss.qualcomm.com>
+ <amxf7MODINj26a4m@linaro.org>
+ <amyc3MTsuCBg82WH@QCOM-aGQu4IUr3Y>
+ <amyhh8lNMT9rgK_X@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
-In-Reply-To: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Fri, 31 Jul 2026 11:11:17 -0600
-X-Gm-Features: AUfX_mwyptmYyOf4p0ZyWTJXkdByXi3n4edVXueGHxTjG-w_nq_PAPMefUUmQKw
-Message-ID: <CANLsYkyJ=qOz_7x8igcwkiHsJQWP8JizB4-q5QV5gv-s+e6eVA@mail.gmail.com>
-Subject: Re: [PATCH v15 0/5] Enable Remote GPIO over RPMSG on i.MX Platform
-To: Shenwei Wang <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <amyhh8lNMT9rgK_X@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAxMDAwNCBTYWx0ZWRfX3At5efwAsGpw
+ AvjvazqTCbh6msvu2Xwob6QVkPVdhVur6HN6pxF1A0rB5THL3lLQsKc8F8+cWhPB57EpiEyLdiK
+ 0Mg1lcSye9wdJSO2YWwoROBPgDIR8vmOkGDow3ZAjBTJSE6xvC2jqe0qhJmioPY3oUfVAFWNETm
+ wFgS0BpWl7+hoBguuW2wRh1HZxFykRm9GliasA9uLyTbFt0DP+tcY1jW/EFGn1jw6HowQuexwro
+ 11pN/emdWB46aJoI4seM41nY+YKwNapiTDkOXF2Do+gZp3rD9UuAc4GTJ6nKPBUOmHycrio4BU5
+ mJ1Gf0UbDB8JlmAIz6KQLFO8Cijp/oYOYVTFi2oJenc4bkMGNuf1aGQmovC+SqGwhxgl4nBrcR/
+ HAsBdtQlpWXqNlYIXMSBd9FOwPsaWIpburYg64Lnk9yArmtZsV5DHkqzJS/EztI1W8ZKmI0rO21
+ aECUBLbce/D6BhnWPVA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODAxMDAwNCBTYWx0ZWRfX+3r/CB9zext1
+ PaXW/ME+IvR30uM79tIN6EP81LmYY7hvW8iItTtsBTa+zqlwTXo+gM2q7cNBJuTvyWlDe++n5G8
+ 9K64qck1z70U0GQlEhHipR9OxuOWG90=
+X-Authority-Analysis: v=2.4 cv=U+iiy+ru c=1 sm=1 tr=0 ts=6a6d4518 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=kj9zAlcOel0A:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=EUspDBNiAAAA:8 a=CrmoIpH0fVBdSVDkB_AA:9 a=CjuIK1q_8ugA:10
+ a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: vtsADcBh7Xw9pjRSGZZOrTk7K6Z6SkC1
+X-Proofpoint-GUID: vtsADcBh7Xw9pjRSGZZOrTk7K6Z6SkC1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-07-31_07,2026-07-30_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608010004
 
-I won't be able to review this patchset until the week starting August 17th=
-.
+On Fri, Jul 31, 2026 at 03:22:15PM +0200, Stephan Gerhold wrote:
+> On Fri, Jul 31, 2026 at 09:02:20PM +0800, Shawn Guo wrote:
+> > On Fri, Jul 31, 2026 at 10:42:20AM +0200, Stephan Gerhold wrote:
+> > > On Fri, Jul 31, 2026 at 10:56:54AM +0800, Shawn Guo wrote:
+> > > > Commit bb7c5d6f5b41 ("remoteproc: qcom: q6v5: Make handover IRQ one-shot")
+> > > > dropped the check that ignored a handover interrupt after handover
+> > > > had already been issued, relying instead on disabling the IRQ after
+> > > > its first delivery to make it one-shot.
+> > > > 
+> > > > That is not sufficient for qcom_pas_attach(): when attaching to a
+> > > > remote processor that was already booted by the bootloader, handover
+> > > > has already happened out-of-band, before this driver ever probed.
+> > > > qcom_pas_attach() sets handover_issued = true and unmasks the
+> > > > handover IRQ to keep the enable/disable tracking consistent, but the
+> > > > transition that signals handover is latched at the interrupt
+> > > > controller while masked, so unmasking still delivers that one IRQ.
+> > > > 
+> > > > Since this driver instance never ran qcom_pas_start() for that boot,
+> > > > it never took the proxy power-domain/clock/regulator votes that
+> > > > q6v5->handover() releases. Running the handover callback for this
+> > > > stale, already-accounted-for signal disables those votes without a
+> > > > matching enable, producing:
+> > > > 
+> > > >   genpd genpd:0:4c00000.remoteproc: Runtime PM usage count underflow!
+> > > >   genpd genpd:1:4c00000.remoteproc: Runtime PM usage count underflow!
+> > > > 
+> > > > Restore the early-return when handover_issued is already set, so a
+> > > > stale IRQ delivered on attach is dropped after being disabled instead
+> > > > of re-running the handover callback.
+> > > > 
+> > > > Fixes: bb7c5d6f5b41 ("remoteproc: qcom: q6v5: Make handover IRQ one-shot")
+> > > > Assisted-by: Claude:claude-sonnet-5
+> > > > Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+> > > > ---
+> > > >  drivers/remoteproc/qcom_q6v5.c | 17 +++++++++++++++--
+> > > >  1 file changed, 15 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> > > > index 10fa38f264c8..e715083846aa 100644
+> > > > --- a/drivers/remoteproc/qcom_q6v5.c
+> > > > +++ b/drivers/remoteproc/qcom_q6v5.c
+> > > > @@ -210,10 +210,23 @@ static irqreturn_t q6v5_handover_interrupt(int irq, void *data)
+> > > >  {
+> > > >  	struct qcom_q6v5 *q6v5 = data;
+> > > >  
+> > > > -	q6v5->handover_issued = true;
+> > > > -
+> > > >  	qcom_q6v5_handover_irq_disable(q6v5, false);
+> > > >  
+> > > > +	/*
+> > > > +	 * When attaching to an already-running remote processor,
+> > > > +	 * handover_issued is set before the IRQ is unmasked, since the
+> > > > +	 * handover already happened out-of-band, before this driver probed.
+> > > > +	 * The transition that signals it is latched at the interrupt
+> > > > +	 * controller while masked, so unmasking still delivers this one
+> > > > +	 * IRQ. Ignore it: this driver instance never enabled the resources
+> > > > +	 * (proxy PDs, clocks, etc.) that the handover callback would tear
+> > > > +	 * down.
+> > > > +	 */
+> > > > +	if (q6v5->handover_issued)
+> > > > +		return IRQ_HANDLED;
+> > > > +
+> > > 
+> > > The goal of Abel's patch was to have the handover interrupt unmasked
+> > > only when needed. If you just bail out here and do nothing then there
+> > > was no need to unmask it in the first place. Can you just drop enabling
+> > > the handover IRQ in qcom_pas_attach()?
+> > 
+> > Hi Stephen,
+> > 
+> > Thanks for the comment!
+> > 
+> > Although it seems working in my limited testing, I'm not sure it's
+> > entirely safe to drop the handover IRQ enable in qcom_pas_attach().
+> > 
+> > The handover IRQ is requested with IRQF_TRIGGER_RISING. When we attach
+> > to a remote processor the bootloader already booted, that rising edge
+> > happened while the IRQ was masked. Masking doesn't prevent the edge
+> > from being latched at the interrupt controller -- it just defers
+> > delivery. The pending bit sits there until the IRQ is unmasked and
+> > actually taken; unmasking alone doesn't clear it.
+> > 
+> > If qcom_pas_attach() never unmasks the IRQ, that stale pending edge
+> > doesn't go away -- it just waits for the next unmask, which is the
+> > next real qcom_q6v5_prepare() (i.e. the next stop/start cycle). But by
+> > then handover_issued has already been reset to false for that new
+> > boot (qcom_q6v5_prepare() does this before re-enabling the IRQ), so
+> > the stale edge would be indistinguishable from a genuine handover for
+> > the new cycle. It could run q6v5->handover() and tear down proxy
+> > PDs/clocks/interconnect immediately on prepare, before the firmware
+> > for that cycle has even signaled ready.
+> > 
+> > So the enable_irq() in attach() isn't dead weight -- it's there to
+> > deliberately unmask and flush that stale latched edge right away,
+> > while handover_issued is still true from attach(), so the IRQ fires
+> > once, gets caught by the one-shot ISR, is dropped harmlessly (because
+> > handover_issued is already set), and the IRQ ends up masked again.
+> > Removing the enable would just defer the spurious handover to a later
+> > and more damaging point instead of eliminating it.
+> > 
+> > If you agree with the theory above, I can follow up with a comment
+> > update in q6v5_handover_interrupt() to make this rationale explicit,
+> > so it's clear that the attach-time enable exists to flush the latched
+> > edge.
+> > 
+> 
+> It's a fair point (that I also considered before writing my original
+> comment), but I think it does not apply here.
+> 
+> There is no real interrupt controller for the SMP2P interrupts, all the
+> handling happens in software inside drivers/soc/qcom/smp2p.c. The driver
+> does not implement any latching. If the interrupt is masked, the bit in
+> entry->irq_enabled is not set and qcom_smp2p_notify_in() simply skips
+> signaling the event.
 
-On Tue, 21 Jul 2026 at 14:48, Shenwei Wang <shenwei.wang@oss.nxp.com> wrote=
-:
->
-> Support the remote devices on the remote processor via the RPMSG bus on
-> i.MX platform.
->
-> Changes in v15:
->  - Update Kconfig description per AndrewD and Julian's feedback
->  - Enable the GPIO driver even without a DT node per AndrewD's feedback
->  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback
->  - Code cleanup according the new gpio-rpmsg.rst and sashiko-bot's review
->    feedback
->
-> Changes in v14:
->  - Update gpio-rpmsg.rst per Mathieu=E2=80=99s feedback.
->  - Align the rpmsg-gpio driver with the revised gpio-rpmsg.rst.
->  - Modify rpmsg-core to enable prefix-based matching of RPMSG device IDs.
->
-> Changes in v13:
->  - drop the support for legacy NXP firmware.
->  - remove the fixed_up hooks from the rpmsg gpio driver.
->  - code cleanup.
->
-> Changes in v12:
->  - Fixed the "underline" warning reported by Randy.
->
-> Changes in v11:
->  - Expand RPMSG for the first time per Shuah's review comment.
->
-> Changes in v10:
->  - Update gpio-rpmsg.rst according to Daniel Baluta's review comments.
->  - Add a kernel CONFIG for fixed up handlers and only enable it on
->    i.MX products.
->  - Fixed bugs reported by kernel test robot.
->
-> Changes in v9:
->  - Reuse the gpio-virtio design for command and IRQ type definitions.
->  - Remove msg_id, version, and vendor fields from the generic protocol.
->  - Add fixed-up handlers to support legacy firmware.
->
-> Changes in v8:
->  - Add "depends on REMOTEPROC" in Kconfig to fix the build error reported
->    by the kernel test robot.
->  - Move the .rst patch before the .yaml patch.
->  - Handle the "ngpios" DT property based on Andrew's feedback.
->
-> Changes in v7:
->  - Reworked the driver to use the rpmsg_driver framework instead of
->    platform_driver, based on feedback from Bjorn and Arnaud.
->  - Updated gpio-rpmsg.yaml and imx_rproc.yaml according to comments from
->    Rob and Arnaud.
->  - Further refinements to gpio-rpmsg.yaml per Arnaud's feedback.
->
-> Changes in v6:
->  - make the driver more generic with the actions below:
->      rename the driver file to gpio-rpmsg.c
->      remove the imx related info in the function and variable names
->      rename the imx_rpmsg.h to rpdev_info.h
->      create a gpio-rpmsg.yaml and refer it in imx_rproc.yaml
->  - update the gpio-rpmsg.rst according to the feedback from Andrew and
->    move the source file to driver-api/gpio
->  - fix the bug reported by Zhongqiu Han
->  - remove the I2C related info
->
-> Changes in v5:
->  - move the gpio-rpmsg.rst from admin-guide to staging directory after
->    discussion with Randy Dunlap.
->  - add include files with some code improvements per Bartosz's comments.
->
-> Changes in v4:
->  - add a documentation to describe the transport protocol per Andrew's
->    comments.
->  - add a new handler to get the gpio direction.
->
-> Changes in v3:
->  - fix various format issue and return value check per Peng 's review
->    comments.
->  - add the logic to also populate the subnodes which are not in the
->    device map per Arnaud's request. (in imx_rproc.c)
->  - update the yaml per Frank's review comments.
->
-> Changes in v2:
->  - re-implemented the gpio driver per Linus Walleij's feedback by using
->    GPIOLIB_IRQCHIP helper library.
->  - fix various format issue per Mathieu/Peng 's review comments.
->  - update the yaml doc per Rob's feedback
->
-> Shenwei Wang (5):
->   docs: driver-api: gpio: rpmsg gpio driver over rpmsg bus
->   dt-bindings: remoteproc: imx_rproc: Add "rpmsg" subnode support
->   rpmsg: core: match rpmsg device IDs by prefix
->   gpio: rpmsg: add generic rpmsg GPIO driver
->   arm64: dts: imx8ulp: Add rpmsg node under imx_rproc
->
->  .../devicetree/bindings/gpio/gpio-rpmsg.yaml  |  55 ++
->  .../bindings/remoteproc/fsl,imx-rproc.yaml    |  53 ++
->  Documentation/driver-api/gpio/gpio-rpmsg.rst  | 242 ++++++++
->  Documentation/driver-api/gpio/index.rst       |   1 +
->  arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  25 +
->  drivers/gpio/Kconfig                          |  17 +
->  drivers/gpio/Makefile                         |   1 +
->  drivers/gpio/gpio-rpmsg.c                     | 587 ++++++++++++++++++
->  drivers/rpmsg/rpmsg_core.c                    |   4 +-
->  9 files changed, 984 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yam=
-l
->  create mode 100644 Documentation/driver-api/gpio/gpio-rpmsg.rst
->  create mode 100644 drivers/gpio/gpio-rpmsg.c
->
-> --
-> 2.43.0
->
+You are right! I will send v2 to just drop handover IRQ enable in
+qcom_pas_attach().
+
+Thank you for pushing on this, Stephen!
+
+Shawn
