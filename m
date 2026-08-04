@@ -1,139 +1,148 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ADA3914FA;
-	Tue,  4 Aug 2026 15:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CC73F7899;
+	Tue,  4 Aug 2026 15:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785857152; cv=none; b=LhaB/lIIb7yLGAjMudNgemE1oAejMnyCToEgL+3vf7lvOiNTJNcCb6gAJv+C3jnbbehcOiLrd9BtB97qo2ZW/QAIZ3ll0Q3JL9x8g/d29wPgElV4p+aAsvNa0auio+FTDFoqEXQdu/FHn2/4DW0L+UUhSyhKS6QizHJr9E1GTNk=
+	t=1785857918; cv=none; b=MHtmlna2Uht5SMNw/2vvvydwL5kHLIrdZ7xn72paI0BOs+TOADBvpCg66363RXB1xIZfulmPoNw/ckZRo+SiGzFrBJxgd4foL/MdYDI+UQT911Qbh0DNYSer3lP50GZvoeH+3W1P1b0iH/xYoyKFIK6sZJ85O9mtUSwzYj5mhVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785857152; c=relaxed/simple;
-	bh=CYLNbnvT7ghWT8jxl5999erttU6OijUzkgDVnXb+WUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HzRVAeWg3puOdZeLkydnBRXrfkaUvGQRyQ/cpCzBz1Cj6liJbds/W8V59Srh5H7mjjcwmSxPybKGKU8iPi/l9USiCnfuzIKnTY5ReEOqMIe2yuUk9oUmZCaLaup75KKTXX1Z8YQWuhisOd5qkvyr0hJG45VJwVcYzZR9CivqE2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebyAwbo3; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1785857918; c=relaxed/simple;
+	bh=eh2BQOQm5KSzzSGW9l8H5doD+YZaMC+W8qiQhvuWldQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VwIOjpGKDToUIvMy4noe6vxWtZhbDqaBLcr31WVNwOZSYMXu2YBsMmmY+g1xCte8XquKGodCYuAyxqu9HRg1L06w5rBaCUBFPteZQkeP+Q9m4kRotRaC13cjffBxQ26aiEMpCzupz11mHusg8O2SWuEIJFWM6+lM5i1LBFJYGW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aEMPGjb7; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebyAwbo3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA77A1F000E9;
-	Tue,  4 Aug 2026 15:25:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aEMPGjb7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2681F000E9;
+	Tue,  4 Aug 2026 15:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785857150;
-	bh=/s9NThA/sYEI18erFo6p3ldLzRi+2p3xyxPrg8abB4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ebyAwbo3SH1t9kF2JQapLEh3BRQBdQs1988APkK8zVcfo6Ma0OBn1Id5I7UfXnKp4
-	 Q08mNXjc+Vk85/hZOMNWU/tvjeRTneYlvJamiVwrToZ0WH9hVvz7nY6WjsbTL1vCKm
-	 L944JloOt0MHL1fZrI3YT+CeFFCnaXIN0/xh3tbLjgxkQZDC7UT7t1OSKdFCFeQfmn
-	 b8ejC/Z7KcGOI5wYSALK5XzA416FBPUnLU48+RJ+Wb8PhHpS/AlK07DwGXLJx00f+x
-	 kCFlrVfOfKgsMwr0BRCxoRNtvmn49R/lxnmC7hEi2IEsqXBlSdbRP+k0McQfkHN68f
-	 1YPilbdANL1Qg==
-Date: Tue, 4 Aug 2026 10:25:46 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Sumit Garg <sumit.garg@oss.qualcomm.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v5 6/6] firmware: qcom: scm: introduce keep_mdt_buf flag
- in PAS context
-Message-ID: <anIEWEkcfFCd5Inc@baldur>
-References: <20260724182858.1868271-1-mukesh.ojha@oss.qualcomm.com>
- <20260724182858.1868271-7-mukesh.ojha@oss.qualcomm.com>
- <am7Aj5UdrrtGUHjA@baldur>
- <20260803090645.d5avpt66f2ahoggy@hu-mojha-hyd.qualcomm.com>
+	s=k20260515; t=1785857916;
+	bh=heMtMxAU7DLcCiXJWZqfk6WJKR4j0rKL6OYx7YZwycY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=aEMPGjb7GqBdfvHtpLS0nqswNqnkaBtTCOO02PwPEVRtho80RUsudHmFE78433flh
+	 ZU+eSY96zl2YgA29qUcVZyQO/GsZSKaGOyA4/A/0xSFC90etuXABhN/zHuv/JXdxco
+	 SgRFwjhxcAYcQlIu3zaA3xfK5i2tVigfsyCYqGuLM2jpoUns94Dsc2IO6scaE77a01
+	 uQ3Uach+AHwApuKQjQkEEcrtIphqX/RCdHEbgllXBhwcIDZDMm1Nb0P0hd8f3wNuBe
+	 L1O0AEj7VVrsay587M5gHTSXi1ycexHR8eoHNRL0e/kolYsS5bGkgyb4nafUsWR7CJ
+	 TpDhI2sNhGoMA==
+Message-ID: <cbc62091-ace6-4e4b-8cae-fdf9b83b118d@kernel.org>
+Date: Tue, 4 Aug 2026 17:38:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260803090645.d5avpt66f2ahoggy@hu-mojha-hyd.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: remoteproc: qcom,shikra-pas: Allow
+ bam-dmux subnode
+To: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kumar Patro <bibek.patro@oss.qualcomm.com>,
+ Komal Bajaj <komal.bajaj@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+References: <20260729-shikra-pas-bam-dmux-binding-v2-1-d85fea84c141@oss.qualcomm.com>
+ <20260730-organic-chimpanzee-of-excellence-ebbcca@quoll>
+ <c1f8b5bc-6d50-42bc-b671-7e91d76cb975@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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
+In-Reply-To: <c1f8b5bc-6d50-42bc-b671-7e91d76cb975@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 03, 2026 at 02:36:45PM +0530, Mukesh Ojha wrote:
-> On Sat, Aug 01, 2026 at 11:08:30PM -0500, Bjorn Andersson wrote:
-> > On Fri, Jul 24, 2026 at 11:58:58PM +0530, Mukesh Ojha wrote:
-> > > The PAS image initialization path always retains the metadata buffer
-> > > when a valid qcom_scm_pas_context is provided, even if the caller does
-> > > not require it. This implicit behavior leads to unclear buffer ownership
-> > > and forces new users of qcom_mdt_pas_load() to manually release
-> > > metadata, which is error‑ prone and incorrect.
-> > > 
-> > > Add a keep_mdt_buf flag to struct qcom_scm_pas_context to make metadata
-> > > retention explicit.  Metadata buffers are now freed by default and are
-> > > only preserved when this flag is set. qcom_q6v5_pas enables this during
-> > > probe for contexts that require retained metadata for subsequent PAS
-> > > operations, while existing callers continue to work unchanged.
-> > > 
-> > 
-> > I presume given that this was sent together with the remoteproc patches
-> > that this can't be merged until those other changes has made it into the
-> > tree.
-> > 
-> > Please confirm if there is an actual dependency here.
+On 04/08/2026 17:18, Vishnu Santhosh wrote:
 > 
-> I had an expectation that Sumit's patches would get picked up completely
-> somehow, which would avoid me adding the extra variable keep_mdt_buf to the
-> temporary data structure qcom_scm_pas_context. That's the only dependency.
+> On 30-07-2026 12:53 pm, Krzysztof Kozlowski wrote:
+>> On Wed, Jul 29, 2026 at 02:21:01PM +0530, Vishnu Santhosh wrote:
+>>> The BAM-DMUX node lives as a direct child of the modem PAS remoteproc
+>> No, it does not. Look:
+>>
+>>    $  git describe
+>>    next-20260729
+>>    $ git grep bam-dmux
+>>    No child node shown
 > 
+> The commit message overstated this. The dt changes are yet to be merged.
+> I'll correct it in v3.
+> 
+>>
+>> Why isn't this part of Shikra remoteproc commit/patch? How any code
+>> could pass validation otherwise?
+> 
+> By the time the BAM-DMUX support was brought up and validated, the
+> remoteproc changes was already in a stable state. Therefore, the
 
-How on earth do you expect me to figure that out!?
+No, it was not in stable state if it was not merged.
 
-Regards,
-Bjorn
+> bam-dmux change is being submitted separately.
 
-> > 
-> > > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> > > ---
-> > >  drivers/firmware/qcom/qcom_scm.c       | 18 +++++++++++++++---
-> > >  drivers/remoteproc/qcom_q6v5_pas.c     |  3 +++
-> > >  include/linux/firmware/qcom/qcom_pas.h |  1 +
-> > >  3 files changed, 19 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-> > > index 16ae42e6c434..54ffec97cc26 100644
-> > > --- a/drivers/firmware/qcom/qcom_scm.c
-> > > +++ b/drivers/firmware/qcom/qcom_scm.c
-> > > @@ -625,7 +625,7 @@ static int qcom_scm_pas_prep_and_init_image(struct device *dev,
-> > >  	mdata_phys = qcom_tzmem_to_phys(mdata_buf);
-> > >  
-> > >  	ret = __qcom_scm_pas_init_image(dev, ctx->pas_id, mdata_phys, &res);
-> > > -	if (ret < 0)
-> > > +	if (ret < 0 || !ctx->keep_mdt_buf)
-> > >  		qcom_tzmem_free(mdata_buf);
-> > >  	else
-> > >  		ctx->ptr = mdata_buf;
-> > > @@ -664,9 +664,21 @@ static int qcom_scm_pas_init_image(struct device *dev, u32 pas_id,
-> > >  	memcpy(mdata_buf, metadata, size);
-> > >  
-> > >  	ret = __qcom_scm_pas_init_image(dev, pas_id, mdata_phys, &res);
-> > > -	if (ret < 0 || !ctx) {
-> > > +
-> > > +	/*
-> > > +	 * Some clients still pass the PAS context as NULL. Until all clients
-> > > +	 * switch to qcom_mdt_pas_load() and provide a valid PAS context, check
-> > > +	 * for NULL before dereferencing it.
-> > 
-> > Why don't we fix the problematic clients? There's no point in working
-> > around such things.
+No, bindings should be complete.
+
 > 
-> Was waiting for Sumit's patches to land so that I could convert
-> every client to use PAS ctx.
+>>> node, but qcom,shikra-pas.yaml has unevaluatedProperties: false and
+>>> does not list bam-dmux, so any DT adding this subnode fails schema
+>>> validation.
+>> Fails how? How can I reproduce the error?
+>>
+>> There is no bam-dma in this binding example.
+>>
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> > 
-> > > +	 *
-> > > +	 * When a valid context is provided, keep_mdt_buf controls whether the
-> > > +	 * metadata buffer is retained after PAS_INIT. PAS remoteproc subsystems
-> > > +	 * set this flag so metadata persists until auth_and_reset() completes,
-> > > +	 * as TrustZone keeps the buffers locked until then. Other callers leave
-> > > +	 * it unset and metadata is freed immediately after the PAS_INIT call.
-> > 
-> > Please rewrite this to make it more succinct. It seems you could say the
-> > same thing with just the words "free the metadata on error or if client
-> > didn't request us to keep it".
-> 
-> Sure.
-> 
-> -- 
-> -Mukesh Ojha
+> Did you mean bam-dmux (the property this patch adds)? If so, I'll add
+> an example with a bam-dmux subnode in v3.
+
+You claim something fails. Prove it.
+
+
+Best regards,
+Krzysztof
