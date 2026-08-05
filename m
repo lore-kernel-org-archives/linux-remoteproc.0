@@ -1,86 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C3B3CB57D;
-	Tue,  4 Aug 2026 22:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1363B36167B;
+	Wed,  5 Aug 2026 03:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1785882691; cv=none; b=BZiJOrFvG6HsAZ89OVdRw9yBDJpyeGpgFoSKp+KV8cpD1sJNQegoRWxQ7QRng8bzaz16wlKDNh5p8V45wecAAG/3knADj07N6/ITY+cd/d8USevJ7wW3mtCiGpjxgPM3RoxDvqKl3//jX0ioqVHj4aQy4jzcvUaOMEhym+OdcZY=
+	t=1785900884; cv=none; b=oSXtYCRqlML5fdwye/v7kjrJPrbld20U7x87hqsVCMw8jcpsSNL4+Ao1REiAZI8ffNq5cfwTF25AVN78oUvFUTkWak04wHUEyyK9VXn2jbAO29L+3GUYGNxL/VnB2ByffEevoI59flfuIVEtrLg94mCAa2u/9cvh58dBcf5gik8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1785882691; c=relaxed/simple;
-	bh=mG1SLwAJIubIVjXdTFNOBu8EzWB7e3//i6VKXIlyBlc=;
+	s=arc-20240116; t=1785900884; c=relaxed/simple;
+	bh=YomxDnQvrOZHACzdJPPTb0Xgjl5Rvi0n5TX2XNoTAbU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GIL1tRAGhXa2ctKkf5q1cZGh/dhagDAxBuUz/sibERw+Q8EyZq4g69hlfdhP4QhkNKKW+KpY47Kn+D1OgRsRabMMPLwLXIj69zf7G0mP18vHixzPs7KmvYQBKYPHRU1CWTJJHxHvixNl7kP+ruUPSBHWo++ZHcvMEb/x/PrR+bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSdW48Lc; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=kzbfkH17FmfMGkAJoibcIe5IJ/9Dm8NStf/QVlbBOvQBtGR0EiicU/GtfUbiA05bCaiTpgjdR8oH99YwuZtmQFOlQmrCpK6PU84FgDNnvjFqDZA5oZcsayGp5avRGrZRD6O4GUZU95kFuEbBVRqZiVXX2Ewo1V0H4vq1AAbbI5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1RS8uHe; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSdW48Lc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77C731F00A3D;
-	Tue,  4 Aug 2026 22:31:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1RS8uHe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17EBA1F000E9;
+	Wed,  5 Aug 2026 03:34:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1785882685;
-	bh=1rNKgpIx6sZKzmYQ6FweqLBwIUVjPux1He9OuvdAw/w=;
+	s=k20260515; t=1785900882;
+	bh=VTpSfLNumSoqLwGxOMiaXBblUQIarcv5sDNPHm85AtQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=VSdW48Lc4jRQjSvOYK6+1RkSCe23ufhDsOsXhNt4Ddw8D/YQHxmW320dvP2P7ORz+
-	 Nzz4hCaj/lJheSxjNhu3iK8vKtbjkdRaSYOp9A3xKfMCmjo1wFCtcIoxttJJ7CHyTW
-	 6FMLdwzCEAHkqLj2FEznUUNVP76O0jKtDVItxv3ED11ABBaD/MjbZTwf7dKQLMYfYP
-	 dEaRKsKWQs/SpA7P9pNqP15pttyCi9lzKbUd8DJdKNkfS4l3ybZmwCkpxRabdDxoZc
-	 l51MfSH06sfXgb8HFBXSqbR2LPPJEGwI4O/DC9mCeNnBGbOkIY2Ycs3abL1ZRO0ZNw
-	 8giP29bCtxPug==
+	b=G1RS8uHe4YbpPFYuGxwKSZh/AqzJ7GtblYzjtOG+YDPrjR87TsjJy42GP03CgqJ1K
+	 0lrViYtmQrSmc+O5+EbMjoN3siqvLzhBEvHT12GZgTRceN0DLDfqQc4pox5Qx0L0bS
+	 gCIvXAoEzIMwkYg5ZQ9RMZzEpYuFagyBldFk3f7/+yngxAjnpw+kYKkfd7yHwjJS10
+	 iG+Q5IdP/itHetHTR1mEXKku2UJVpTv9TvfmxCCsvZSxWHme1hTThA45iHIkk/Nl0k
+	 1m9MRMClpUyQyPExDmdyyhP4gzlNUZ+RrOBUTlMGMK1NecnX8/J57MnH2Qe50uoZ/J
+	 Mq6x0yGvGHfkQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: konradybcio@kernel.org,
-	Sumit Garg <sumit.garg@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	robin.clark@oss.qualcomm.com,
-	sean@poorly.run,
-	akhilpo@oss.qualcomm.com,
-	lumag@kernel.org,
-	abhinav.kumar@linux.dev,
-	jesszhan0024@gmail.com,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	vikash.garodia@oss.qualcomm.com,
-	bod@kernel.org,
-	mchehab@kernel.org,
-	elder@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	jjohnson@kernel.org,
-	mathieu.poirier@linaro.org,
-	trilokkumar.soni@oss.qualcomm.com,
-	mukesh.ojha@oss.qualcomm.com,
-	pavan.kondeti@oss.qualcomm.com,
-	jorge.ramirez@oss.qualcomm.com,
-	tonyh@qti.qualcomm.com,
-	vignesh.viswanathan@oss.qualcomm.com,
-	srinivas.kandagatla@oss.qualcomm.com,
-	amirreza.zarrabi@oss.qualcomm.com,
-	jenswi@kernel.org,
-	op-tee@lists.trustedfirmware.org,
-	apurupa@qti.qualcomm.com,
-	skare@qti.qualcomm.com,
-	linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v9 00/14] firmware: qcom: Add OP-TEE PAS service support
-Date: Tue,  4 Aug 2026 17:31:15 -0500
-Message-ID: <178588267268.451855.11887423649046062153.b4-ty@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] remoteproc: Misc. RSC table changes
+Date: Tue,  4 Aug 2026 22:34:39 -0500
+Message-ID: <178590087572.459445.17756435651859779909.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260702115835.167602-1-sumit.garg@kernel.org>
-References: <20260702115835.167602-1-sumit.garg@kernel.org>
+In-Reply-To: <20260803114331.3277263-1-mukesh.ojha@oss.qualcomm.com>
+References: <20260803114331.3277263-1-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -91,20 +47,31 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 02 Jul 2026 17:28:16 +0530, Sumit Garg wrote:
-> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+On Mon, 03 Aug 2026 17:13:26 +0530, Mukesh Ojha wrote:
+> This series contains a mix of header hygiene and a security fix for
+> rsc_table_for_each_entry().
 > 
-> Qcom platforms has the legacy of using non-standard SCM calls
-> splintered over the various kernel drivers. These SCM calls aren't
-> compliant with the standard SMC calling conventions which is a
-> prerequisite to enable migration to the FF-A specifications from Arm.
+> Patch 1 adds rsc_table.h to the REMOTEPROC MAINTAINERS entry, which was
+> missing since the header was split out from remoteproc.h.
+> 
+> Patches 2-4 clean up remoteproc.h and rsc_table.h: a checkpatch style
+> fix for function pointer alignment and two SPDX-License-Identifier
+> conversions replacing the verbose BSD-3-Clause blurb.
 > 
 > [...]
 
 Applied, thanks!
 
-[09/14] media: qcom: Switch to generic PAS TZ APIs
-        commit: 94d3305d990b055e1561e3b78275344b1f40c86e
+[1/5] MAINTAINERS: add rsc_table.h to remoteproc entry
+      commit: b08aeb36957e7a6bd1afc3802a82c3be52066aba
+[2/5] remoteproc: fix coding style issues in remoteproc.h
+      commit: bcacae90e8c1a2be0716895dda663fb5fdf9f85e
+[3/5] remoteproc: replace BSD blurb with SPDX identifier in remoteproc.h
+      commit: 7c1f35380d22971572856be8642fb46de6229d94
+[4/5] remoteproc: replace BSD blurb with SPDX identifier in rsc_table.h
+      commit: bf9053b22ccbb4d481135d0000fac7302d060af0
+[5/5] remoteproc: fix OOB read via signed offset in rsc_table_for_each_entry()
+      commit: bb840ea69347aff7bde5a208e7b5b180669a7656
 
 Best regards,
 -- 
