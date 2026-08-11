@@ -1,237 +1,148 @@
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011050.outbound.protection.outlook.com [52.101.70.50])
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB73842D778;
-	Mon, 10 Aug 2026 16:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786381196; cv=fail; b=N6sct2IAigxRZesuLLt/Ve38sIDZNN2AeV+WxAbYTYc7vSnVO4v4crj78thwx6q01DYKCUszFr/ggGCK+qtlRkY8ypmF5LzhAKpS+Ah76r2Uy6KlP9J4D7u1KC/PpAv4N6sQezvekPaLZyObgmAbILKS0CGqUJk9i9xZHa0IYLQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786381196; c=relaxed/simple;
-	bh=lCQKRultQX2qktd+1CfSTKwMEXofKBnmPE/mOvFpBu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YhR3aSxWbCKYPG0MhmykyLOPCL1NWQ15Sg1I4QVv1Ql4PIkiGEL/Y5xV7DCDaMIEOMgfOIJ6iywmeFo504nn26+JmkfauTuzy8XmtdOWS0E7IW/Y8+Oe0v/ctExVRhmX8fFtqY/tzdpMoacR6Pi/RTPtSfTMGHcjzYSWUWZIjmg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=QUiLiQm1; arc=fail smtp.client-ip=52.101.70.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0AA3290C7
+	for <linux-remoteproc@vger.kernel.org>; Tue, 11 Aug 2026 17:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1786468552; cv=none; b=DV1C0UnHaGIqzvXraNVDf3CrjInbZCJPLNCNb9jqdbuzcPAPfBMO4t/zbyWG6xlv5N1IejAXT0sQWnrs9y4CzoZmB7UWu/z2UnrEMjfcMLTl67BXXBoxSQlmnm8xl2kAuMdviUbr42tI458qmoWUuewuLC2PA1Nux79G1y38Sdc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1786468552; c=relaxed/simple;
+	bh=Kfz2zWMfzB9wq23vgHVGrRpmrC6gJaa3/SRAlOXdmx0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=K+2qMieNQ/LCDlRXkohOuwkatS+XUi3JXoNB6jn2f+ulnkfAPm8311qVAtJaXDZzaOqAjub3kyHA8NWya0hYZQuAO/SWXznS8EiTk2p9Iflzb4kAAQIuiIGXkM9fJWX1K3Ojfo8hnv2HB6pQKiUlTPa4/qgcMvGTCcpzECtmppw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=humanlearning.ch; spf=pass smtp.mailfrom=humanlearning.ch; dkim=pass (2048-bit key) header.d=humanlearning.ch header.i=@humanlearning.ch header.b=Yjpe2RLI; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=humanlearning.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=humanlearning.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="QUiLiQm1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NyiInBaU/0LbFLvK86Uh2s8dfyJUCAPC/tOR3+R6+Qal2Tt5h38NiKnILk4hCu4ZnVqeLKaI+5Sa8hiQkPlRfuiCFstd2CmbM5BjQQlkjUSEIF06e7o7bg+lafxPWR1vRzmBPiSAzNnsxe7KySUby+esrBnroS8LPtq+nmxOMzqS5+QF9pCOlGupIQb8x0GEchMIuztnQSvZzdPfyhhPk0k3b7Su03Fy309vQMbys4Ge+opsQRVKMYDJzpXPuXUq3Jrqc/Y8SHqwKkQCzzon+xfYiIcQBRBYN3Dek9rkyFpJyHYGyeM0Vl/mQfJH9xTSOSlnDA4C+Pzi/nNpp5SO9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uq1HWShj2dy+FswgkhnvBcCXG0s9+cNcUvUbFzImDtw=;
- b=nOyw7tS1vEEDa1p/vXis/jsYHnKrT0bnqoRPaSdh0gk+cuu1xmelI9uD8ZROW+4X8AI2HXHDLNqdsAXrHNaJuVZVIxAnDCXQx7avAEMdR18j9qL0ZL36/Mm4ybXRq80/PFWSWSEqahMb4HnxXsTmCqsRIX+yI9+ClAOSyhmrzXMFJjID+yRyMUim3fsxl2P2cr2Qg2No3v9mN1Bnu3U6965x8h48/H0039eIrzCJqlEXIMOvhMCeL8l6majVcBd0fJTP/IFqUmCKkE3oFxFY0QXHxpTud+XTx3chc4NQ28b/+oVhbSmLzCKRfVbj0IptjU2tKIWTYyKw4VshNWHQgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uq1HWShj2dy+FswgkhnvBcCXG0s9+cNcUvUbFzImDtw=;
- b=QUiLiQm16V94OjgAXvLaOtCYwH5yAwfxNA1le/dMLW7x6XYdny9YA1TMYeDOtsAdL7i3eNK65O/m+HEJoSD/bHOLgDffeeFPzj++bnNBTgnpWY5lRsewnDLCpxivvt4dE/qovCdVxPg0UDCPLjzzPMBMURA4M8Sx6OwHO4UGQ//shPS5WMMMbOH2eM5s8H7P/z4yNri96pAVgT7R9t1PzBWMSEhJAsIXXc4+rse8Sl1df8vvDkPpqKnnrkcsDIwrrlYcSR9qR/eN6r4rdSqiGtT/BZsSZt97SALXsrajZUD52OxgUKP7XNbX2J3SeNmHfGxq52yKwqWeMp7bvypteg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
- by DU0PR04MB9297.eurprd04.prod.outlook.com (2603:10a6:10:354::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Mon, 10 Aug
- 2026 16:59:46 +0000
-Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
- ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0292.024; Mon, 10 Aug 2026
- 16:59:46 +0000
-Date: Mon, 10 Aug 2026 11:59:36 -0500
-From: Frank Li <Frank.li@oss.nxp.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (2048-bit key) header.d=humanlearning.ch header.i=@humanlearning.ch header.b="Yjpe2RLI"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hKJDM0t0Hz140G;
+	Tue, 11 Aug 2026 19:15:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=humanlearning.ch;
+	s=20250828; t=1786468546;
+	bh=hs40Ijp9TC+Mg0TnXGwnwbT5DvC/p/SgByQCuC8GYJo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Yjpe2RLIgxlHdSH4JM2D1XB7BXEIwS/HB++W7ybj3jLHf82Dz6H6gpp3X1cRVCFJK
+	 diLjYp3N2Zo1cuaJFVR1qNS4BbEyZ2+CPTto15Ea9DA7rKwlc40jHaLfku8v/ptIJ/
+	 zmmcSZvBsrPb5dCK7gqLIPi7YRNu7PuyxMlGsdTmeB7zaAfLIB96BKhUUAbiBUUeW8
+	 I27diKDzXPwRUYK2qMHjAF1WC1v2Poph3RGi/QRMylbfAD3c+/L04p4oMmqnHnCVnP
+	 Z6KGK1VdyGS5q9o4AZiyYcs2evLkFOT+TnumBUR5tUaJxPMImvVGO0R2CKzSNrvwQc
+	 TPtW0fZU7DjtQ==
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4hKJDL361kzDwt;
+	Tue, 11 Aug 2026 19:15:46 +0200 (CEST)
+From: =?UTF-8?q?Fran=C3=A7ois=20Roux?= <info@humanlearning.ch>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, Frank Li <frank.li@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Daniel Baluta (OSS)" <daniel.baluta@oss.nxp.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: remoteproc: imx_rproc: document
- optional "memory-region-names"
-Message-ID: <anoDeJ3OCPzWA4k0@SMW015318>
-References: <20260730163412.1145-1-laurentiumihalcea111@gmail.com>
- <20260730163412.1145-2-laurentiumihalcea111@gmail.com>
- <amuUbkDM60eFzvJo@lizhi-Precision-Tower-5810>
- <MRWPR04MB123301AA9F074FA2976AC36C288D52@MRWPR04MB12330.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MRWPR04MB123301AA9F074FA2976AC36C288D52@MRWPR04MB12330.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: SA9PR13CA0120.namprd13.prod.outlook.com
- (2603:10b6:806:24::35) To GV2PR04MB11799.eurprd04.prod.outlook.com
- (2603:10a6:150:2cf::9)
+	linux-remoteproc@vger.kernel.org
+Subject: [BUG] qcom_q6v5_pas: NULL deref in recovery when using attach-only ops (qcom,broken-reset)
+Date: Tue, 11 Aug 2026 19:15:46 +0200
+Message-ID: <20260811171546.188660-1-info@humanlearning.ch>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|DU0PR04MB9297:EE_
-X-MS-Office365-Filtering-Correlation-Id: de9027c2-a464-4a0b-9e0c-08def700c7eb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|23010399003|18002099003|22082099003|10067099003|56012099006|4143699003|11063799006;
-X-Microsoft-Antispam-Message-Info:
-	0+iotYzC7HFCWpLmb28xju0iXgc3eZ2qDhztq2bGVI3a6mNaQ4q6mXmYQGae2YGaUr7vt6/CUeHaw92zF7J1eIrZBjAqnj1ckSsgC8GFTQ7fydo7vNql2FjuAY2+zVQuakrVay8jzdnS2V9Jha6CC4SUZ3AYgce+auBKotpOnRF4r8mNC/785x2udFkGPVoqFQxystMUOWPacflBO1NyxkCmqZTD0RqM9GFXTE24rH2TKsyRr7QUJfIIdohcLeOp6pU9H97VumKbrylMjjaT2K2bApzcLDijzlNb7uMgAAaN/pIny706+JWdI39O8jfOoauGx1VU87lc8mK9qdEfdI76WhezpFmZH1EDmxHQmJAU2IAoJV8sMokSENQLBu1T+aOiq3OTvShcs03aTHiUcpIkHwgLaDep3I1/Acaf9OHHJrAnsXWeDwEoGSRAB4L+BIhMqNfMOeC3iWiI2XDrXm3M2ZLu3WUk30NFHgm2TrLPJVINGpiex31o188pEVVVQ3WE+7WLgQiMuFJ+eQwZACUkSaZ247cAnK2/gRpuSEyuH8gJS2715Hy8Rftsm5/R264RAL7ZLhHmCSPCmfBM9xbRwC/uPTmcgEH8vdlSFA44ySFltTplHnchlwM2lyxLlkHZ19RCiOJxhAVV0fwUcWNO8w+hAHlMlN/aZ6UrTsc=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(23010399003)(18002099003)(22082099003)(10067099003)(56012099006)(4143699003)(11063799006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qh8tJQlJpR8DKQZHIOv4PVHGkzcDKYDs9lP/C5WggU9VwxgWkrsr2gPtIoJg?=
- =?us-ascii?Q?eMeZLjrIcilM2BUsAWWKQximmhjhyzxG/7q7NKmP6lm9LcDEQ6xTOTWd+334?=
- =?us-ascii?Q?wg37Hl/QQFzr8Q9IQKgW22EWGX5hQRByeRfj9yQkTAoJzWrlbVNj+feXrVj9?=
- =?us-ascii?Q?Xs8bFeXCaAZ7TB5tJ64P/L9Nv9QZqmVBxmwjpfpzdOkoVN4tXyMf3M2MHzlZ?=
- =?us-ascii?Q?1wBjOcdrrFpTkSjOSBeaxwGSJF63gzbNIrx9DrjjovPLzClhChTCdmzRrXq3?=
- =?us-ascii?Q?WK23sYLeBTKH9NTW7Vtwp3uyZ4NHbNujMP0C86QAW84I57rOOa5PnGh5EzWG?=
- =?us-ascii?Q?KZiPa8lrKcerrnWVBwV7BTglCMCHdQ6I+QWuc8kGl1Ny5tFZHwQUCB1jBC/R?=
- =?us-ascii?Q?+MJROL8ucuqOmk5Q8gSJOZ8fPyq/fASy6Kr2uYWmq3r8ypH9fGFpRNzYhA6T?=
- =?us-ascii?Q?qzL4gofM+OKfO+8vrrHuoAgQyv02zVe/BLMzGnR6irAl1j2HQvtIElEmVPFo?=
- =?us-ascii?Q?35jkm/VKo3iJwJJq7U57QScaDoHWWdCnu7Klus64akY/c5xybIiuCLShpX1d?=
- =?us-ascii?Q?qFls5ZYewdKMfBjwPVfKzcBR7fKjM/puFmHgxz2u+PbwBJUIRULJnu/ZWMeI?=
- =?us-ascii?Q?p87TwOcOSfKtLjMGbNQPhYF8cfYln9uCv8kLp5/5X24pnN70F7tlayx2OZuh?=
- =?us-ascii?Q?FQWXrrJ9px/7k+6x5jYdPMCzKFpRHMeFDuMEcVaC8u5QZ5ln3nuLteinBOpQ?=
- =?us-ascii?Q?72IdefDQLPCrnrxyxHW64HxJKwa2uGhmYMsLVV83hhQQuqTmPEL+2mRKqW2p?=
- =?us-ascii?Q?W0cUWWJY2lFpSOyqI65Sf54GpoeOhnpY/+IbLgZaaJr6bZRAPealQjyWsbmu?=
- =?us-ascii?Q?3/JLeqvHlWyL+ChoNspC6B5RmEr17XFD4PxhWFHuy/MwrCSUCtIHXkSB7353?=
- =?us-ascii?Q?LJKbPHuuR9Qnf/4VoOedWUp0kLQ5VkfjMG6H3RFrfhCb3FauPZIBbU3su7OA?=
- =?us-ascii?Q?QMyvKvWn8EK2Eko5VpkIDC8DPnc+MUhwYw05Z/eAl9ZTb+32eYEzdXIcYfMF?=
- =?us-ascii?Q?uwYt8LTrSMxeVORrjJS/Qey6xad2lJ4jJ03/Kzng4ZXN0vdmsfXhIEbyo7it?=
- =?us-ascii?Q?qshs0pexJDe84HnRRI83rOhYVpFYpdjABY/Rh0Fld7g7NfqekR0Pv6WDvRG3?=
- =?us-ascii?Q?K1ReRXwMD1iYQBzHqnvWRWpmDpUO+cH6vWfWjKTLMFgMYZnWMZAn0vxPPqCE?=
- =?us-ascii?Q?MoDQj9sJvCrKcQoUJq+zYJ9oKoIcTGxkfYO9UqVecJWzEDXoBL5HY++YO9jy?=
- =?us-ascii?Q?TIktQ017SfSjaGz6SC/J9Kdiooi0KrDU179FK+NiQIEwYUj2FEZg5h67LrkX?=
- =?us-ascii?Q?m1BnEluJjF78ZLsYXQZOIvazIRwoZ4QCSv3E9l3FXwr9OUGFau2bg51zKhzs?=
- =?us-ascii?Q?G0UF2G2w8pzjcG6kV2PRoHeiNsF3q/0MW5w3Ay8Wmr+qxOSN4jA+3Uf8mLcu?=
- =?us-ascii?Q?lnSHdcEvQIBnP6KQStLXeIeZJeqT6l9CaVJqSxlp4YxNJUAudSy2ArozUwmN?=
- =?us-ascii?Q?foneD0VWhjwHlEzC+pXJhAwK7NMUpxmQMsnz7BEtVm+mJkQBluXojxHIiH1p?=
- =?us-ascii?Q?7WX8mMzY4x6aVtiQa8jzPppcBAVFJsZdlPXrRgkqVfnsbSVVOjjWkUCg9amj?=
- =?us-ascii?Q?9B5fqRixgK9Q8FVzIhF99lmo8fy258S74XUQHCjWGnnU6ojlkEHTjFEGl0wR?=
- =?us-ascii?Q?b0gORjcJi5TEEmf/kmu9g3o/t0nHBz35BIybhf76qVRul/IPTd1w?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de9027c2-a464-4a0b-9e0c-08def700c7eb
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2026 16:59:46.2520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ugn+Vu0b+WIXFFRIuF+baehE6ObUuw+50n6vSsboKW9JN38zKdzjud+63M5jwPUh/gw9/YWVmRRZwjo/oOYOinncfnJt8CcEpLYAMb9RJkjEvyPFx2FBC7pAxF5emZtq
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9297
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On Mon, Aug 03, 2026 at 09:03:58AM +0000, Peng Fan (OSS) wrote:
-> > Subject: Re: [PATCH v3 1/4] dt-bindings: remoteproc: imx_rproc:
-> > document optional "memory-region-names"
-> >
-> > On Thu, Jul 30, 2026 at 09:34:09AM -0700, Laurentiu Mihalcea wrote:
-> > > From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> > >
-> > > The carveout region names are derived based on the DT node names.
-> > > Because of this, the DT node names are ABI, which is not supposed to
-> > happen.
-> > >
-> > > Fix this by documenting an additional, optional property:
-> > > "memory-region-names". This way, the software will have a way to
-> > build
-> > > the carveout region names without relying on the DT node names.
-> >
-> > "After update all existing DT tree, this will be required.
-> >
-> > >
-> > > Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> > > ---
-> >
-> > Additional information to help understand why it is important.
-> >
-> > 1. at thread wrong use vdevbuffer insteand vdev0buffer as node name
-> > https://lore.kernel.org/imx/20260705202439.3F5771F000E9@smtp.k
-> > ernel.org/
-> > 2. similar case happen at
-> > https://lore.kernel.org/imx/20260715071741.79CA81F000E9@smtp.k
-> > ernel.org/
-> >
-> > Suppose these problem should be detected by dt binding check instead
-> > of sashkio ai.
-> >
-> >
-> > >  .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/remoteproc/fsl,imx-
-> > rproc.yaml
-> > > b/Documentation/devicetree/bindings/remoteproc/fsl,imx-
-> > rproc.yaml
-> > > index c18f71b64889..8e3e6676a95e 100644
-> > > --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-
-> > rproc.yaml
-> > > +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-
-> > rproc.yaml
-> > > @@ -62,6 +62,10 @@ properties:
-> > >      minItems: 1
-> > >      maxItems: 32
-> > >
-> > > +  memory-region-names:
-> > > +    minItems: 1
-> > > +    maxItems: 32
-> > > +
-> >
-> > Need restrict names
-> >
-> >   memory-region-names:
-> >     description:
-> >       Names for the memory-region phandles. Each entry must be one of
-> > the
-> >       following recognized names. "vdev0buffer" is the shared buffer for
-> >       virtio device 0, handled automatically by the rproc virtio framework.
-> >       "vdev<n>ring<n>" (e.g. "vdev0vring0", "vdev0vring1") are the virtio
-> >       vring buffers for device N, also managed by the virtio framework.
-> >       "rsc-table" is the resource table region used to share the resource
-> >       table between Linux and the remote processor when it is pre-
-> > loaded in
-> >       memory. All other entries are treated as generic carveout regions
-> > that
-> >       are mapped and made available to the remote processor.
-> >     minItems: 1
-> >     maxItems: 32
-> >     items:
-> >       anyOf:
-> >         - const: rsc-table
-> >         - pattern: "^vdev[0-9]+buffer$"
-> >         - pattern: "^vdev[0-9]+vring[0-9]+$"
->
-> There might be other entries such as m4_reserved or m7_reserved
+Hi Stephan,
 
-You can add
-	- pattern: "^m(4|7)_reserved"
+Running your remoteproc "attach" series on a Surface Pro 12in (X1P42100) at
+EL2, I hit a kernel oops when the CDSP crashed on its own during a long
+build. I was not trying to break anything -- this was a 28-minute kernel
+compile as a stability test, and the DSP failed unprompted.
 
-Frank
+Reproducer: any remoteproc using qcom_pas_ops_no_reset (i.e. a node with
+qcom,broken-reset) that crashes at runtime. No user action needed.
 
->
-> Regards
-> Peng.
->
-> >
-> > Frank
-> >
-> > >    power-domains:
-> > >      minItems: 2
-> > >      maxItems: 8
-> > > --
-> > > 2.53.0
-> > >
+What happens
+============
+
+	qcom_q6v5_pas 32300000.remoteproc: fatal error received: sleep_statsi.c:537:
+	remoteproc remoteproc1: crash detected in cdsp: type fatal error
+	remoteproc remoteproc1: handling crash #1 in cdsp
+	remoteproc remoteproc1: recovering cdsp
+	remoteproc remoteproc1: stopped remote processor cdsp
+	Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+	Mem abort info:
+	  ESR = 0x0000000086000004
+	  EC = 0x21: IABT (current EL), IL = 32 bits
+	  FSC = 0x04: level 0 translation fault
+	Internal error: Oops: 0000000086000004 [#1]  SMP
+	CPU: 3 UID: 0 PID: 82168 Comm: kworker/u34:5 Not tainted 7.1.0-next-20260626 #10
+	Hardware name: Microsoft Corporation Surface Pro 12in 1st Ed with Snapdragon
+	Workqueue: rproc_recovery_wq rproc_crash_handler_work
+	pc : 0x0
+	lr : rproc_start+0xc0/0x164
+	Call trace:
+	 rproc_trigger_recovery+0x148/0x164
+	 rproc_crash_handler_work+0xb4/0xb8
+	 process_one_work+0x15c/0x29c
+	 worker_thread+0x18c/0x2e0
+	 kthread+0x11c/0x13c
+	 ret_from_fork+0x10/0x20
+
+Analysis
+========
+
+The link register points at rproc_start+0xc0, and the instruction before it
+is the indirect call:
+
+	rproc_start+0xbc:  ldr x1, [x0, #16]   <- rproc->ops->start
+	                   blr x1              <- x1 == NULL
+
+which is remoteproc_core.c:1292:
+
+	ret = rproc->ops->start(rproc);
+
+rproc_start() calls ops->start unconditionally, and qcom_pas_ops_no_reset
+does not provide one:
+
+	static const struct rproc_ops qcom_pas_ops_no_reset = {
+		.attach    = qcom_pas_attach,
+		.da_to_va  = qcom_pas_da_to_va,
+		.stop      = qcom_pas_stop,
+		.panic     = qcom_pas_panic,
+	};
+
+The reason that path is reached at all is the branch in
+rproc_trigger_recovery():
+
+	if (rproc_has_feature(rproc, RPROC_FEAT_ATTACH_ON_RECOVERY))
+		ret = rproc_attach_recovery(rproc);
+	else
+		ret = rproc_boot_recovery(rproc);
+
+qcom_q6v5_pas.c never calls rproc_set_feature(..., RPROC_FEAT_ATTACH_ON_RECOVERY)
+-- in this tree only imx_rproc.c does. So an attach-only remoteproc takes the
+boot path on recovery, which tries to load firmware and start it, neither of
+which it can do.
+
+Suggested direction (untested)
+==============================
+
+Setting RPROC_FEAT_ATTACH_ON_RECOVERY when qcom_pas_ops_no_reset is selected
+looks like the natural fix, so recovery goes through rproc_attach_recovery().
+Note that path calls __rproc_detach() first, and .detach is also absent from
+qcom_pas_ops_no_reset -- but __rproc_detach() does check for it and returns
+an error rather than dereferencing NULL, so the failure would at least be
+graceful.
+
+I have not tried either change: I have exactly one machine, the crash is not
+something I can trigger on demand, and I would rather report the trace than
+guess at a patch I cannot exercise.
+
+Practical consequence, for what it is worth: after this, the CDSP stays
+offline until reboot. The ADSP was unaffected and audio kept working, and the
+build completed normally -- only the recovery worker died.
+
+Environment: linux-next next-20260626 plus your 16-patch attach series, EL2
+via slbounce, Arch Linux ARM (aarch64). The DTB is derived from the vendor
+one, with qcom,broken-reset on both remoteproc nodes.
+
+Thanks,
+François Roux
