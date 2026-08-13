@@ -1,244 +1,143 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from ixit.cz (ixit.cz [84.42.129.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CE13603D8
-	for <linux-remoteproc@vger.kernel.org>; Thu, 13 Aug 2026 08:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57B432D0F5;
+	Thu, 13 Aug 2026 09:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.42.129.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786609327; cv=none; b=QYL7wjzEZ8b6HA5VVViNb/6avmFgakffKx5m5gR2yitA71N7CyQRMSkhuHVKpI0w20ROvH3PRT/IgYuOlRnhU6qawj3E1TB747TDzfpUBj9kDHqykdejnlYfjQ97IDt11ej7zz3iB1OVBahIzdw8hMaBXbdjxw74yluOIkyQjVI=
+	t=1786612831; cv=none; b=pc9cq6Q0YmGs1plpSl7cb4qXT2mwP9BPVpA+O1vLLYIu/fRkkZppodZ5Wna29qPOKamntEdYkgzdmBuM1xwAyYss1ZGObQmF/ZAp67enW6XPKKY3M6pAS1Emil3A8E3qdKfZcMfjfhQhGAhS5jBFKS5dvWzDIU/k2k1YnO9ytXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786609327; c=relaxed/simple;
-	bh=WgRRDaoWPZwOJuVMjX7/03GgTdkqCeXOBG68VI6CWMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=mdmucoFn4itFxPkdT/Jij64Hw7rihGqsUevR0PZBGr9w7usaEv3unm/ImaDnugFhLCyt8KcqKuR+GBkANr/TSeOvWln7BUj1dwh1ivmDrFPi5SSz/y0FJLtjBrK814eycmpdwH98JCUpRXvkGJ7tzlubzPQmfZIjYg67RonOAKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eD96uLUc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y3ptXPA5; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1786612831; c=relaxed/simple;
+	bh=XSbxuFNDxlXVpQ/cS578M2yFcGMkc7DG8pgNdZPizcw=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=r6MS6xcjUZisslsbzqA12opEBkddOi83zt8xbCOO2KUxk8K1Alxq1JFmsyNhRMdRcyA75EwzAqKvpz/KlsemzRLbfzwH5DeylfJdWt4h1YA/n8rMvHY9+HA5aCb+9rjrx28+gQPrEuxVEBcVNTTmU+qx3xxGv+Kn0vkYzDf9V54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=LZXlAaqM; arc=none smtp.client-ip=84.42.129.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eD96uLUc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y3ptXPA5"
-Date: Thu, 13 Aug 2026 10:22:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1786609324;
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="LZXlAaqM"
+Received: from smtpclient.apple (85-70-170-181.rcd.o2.cz [85.70.170.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id BC3165340217;
+	Thu, 13 Aug 2026 11:20:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1786612821;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bnFio1oNNrm91Jw4PTtNlaJV8syzqd0jiUAgXBq7K3U=;
-	b=eD96uLUciE8j2GP/q4QeItW5OshyUxrCgZupSZvzlDVdpsPxWU85h6hJgZKrB1Ky/U8urP
-	VlxOJngoFCNBCVGoLwlHK8tLAeSMAqAw9Jo7gIb2VAJ6f9WNg3jmOPq6/9ffbdpAvPIPxz
-	EXyMBaA9yjmv52alX57wgmIryq0frLHKY6Ms3bNUoDp+ti15ZxCxwjd+t8iroYVyGxFOwE
-	0kxWY0XeK9YnGI2jBJOa4yejen99R1qfO6KMLPBgfJ7pAdA1S3oauMWBgzHvTnI4Hk9UhK
-	seqSwHDybl1N0TJaBZdQW7OKPuhHUi/yzMvRmDPRxDR9JeQYVWTXnjg6IbcanA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1786609324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bnFio1oNNrm91Jw4PTtNlaJV8syzqd0jiUAgXBq7K3U=;
-	b=y3ptXPA5Lo3wMSLHcgJ/kGZiDctoIQm8sXXnCRX+BOuwbubQh9IBV4PZZ11vLNFWeqaWTI
-	M7h8yC7HygwGtqDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>, Peng Fan <peng.fan@nxp.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH REPOST REPOST v6] remoteproc: imx_rproc: Invoke the callback
- directly
-Message-ID: <20260813-imx_mbox_rproc-v6-1-6903a93b0456@linutronix.de>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XSbxuFNDxlXVpQ/cS578M2yFcGMkc7DG8pgNdZPizcw=;
+	b=LZXlAaqMDuz1Eu1qoATS2mQYnT7CsZwlU8A/IXlgD06ajK8b+e6H1n9LYw4UJuCZm5U/K1
+	45EC+UwLTUEFW7hK5NTe7T8cn5/fV82S+8GeZjkxTS2flC4JayGWz1E96Y3dcIj8ur1J4R
+	hWWn2JaZ0EhUTvH7hyEn/4YiTGlPbJw=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: David Heidelberg <david@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XOTW6DMBAF4Ksgr+vIY+Mfsuo9qigyZtxYKjgxB
- BFF3L0OWSQqdPlGM9+8O+kxBezJvriThGPoQ+xyUB8FcSfbfSMNTc6EM66Y5BUN7XRs6zgd0zl
- FR3UjgXtpldeG5KNzQh+mBfw6PHPCyzW7w3NIatsjdbFtw7AvRr3jNDlNHrun0A8x3ZYuIyzL/
- 70dgTJaG++dUAiA8vMndNchxS5MuwYXbuQvQjGxIngmLGOyapyoVWW3CPFGgF4RIhNaV6UB4A1
- 6t0WUL0JvtCgpUKVrYFIxaxRsEfKN4LAi5IMQRlnuvJG8/EvM8/wLYGsYQegBAAA=
-X-Change-ID: 20260529-imx_mbox_rproc-7d512f5a6f78
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 00/33] Add support for Qualcomm Snapdragon SM7150 SoC and Google Pixel 4a
+Date: Thu, 13 Aug 2026 11:20:11 +0200
+Message-Id: <7B026D92-3826-494D-B1A9-EF01D41B4461@ixit.cz>
+References: <b15b2687-0c2e-43b2-ac9e-78e04e77e065@mainlining.org>
+Cc: Jens Reidel <adrian@mainlining.org>,
+ Danila Tikhonov <danila@jiaxyga.com>, Miro Mraz <mraz.miro@seznam.cz>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
+ netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ neil.armstrong@linaro.org, linux-hardening@vger.kernel.org,
+ linux@mainlining.org, Connor Mitchell <c.dog29@hotmail.com>
+In-Reply-To: <b15b2687-0c2e-43b2-ac9e-78e04e77e065@mainlining.org>
+To: Danila Tikhonov <danila@mainlining.org>
+X-Mailer: iPhone Mail (23G71)
 
-The imx-mailbox driver moved the callback invocation into the threaded
-IRQ handler. This means the callback is invoked in preemptible context
-and there is no need to schedule the kworker for the
-imx_rproc_notified_idr_cb() invocation.
 
-This was tested with the rpmsg-tty driver on imx93.
+> On 12. 8. 2026, at 22:54, Danila Tikhonov <danila@mainlining.org> wrote:
+>=20
+> =EF=BB=BFHi David,
+>=20
+> Thank you for your comment.
+>=20
+>> On 12/08/2026 14:40, David Heidelberg wrote:
+>>=20
+>>=20
+>>> On 23/04/2025 09:26, Neil Armstrong wrote:
+>>> Hi,
+>>>=20
+>>> On 23/04/2025 00:07, Jens Reidel wrote:
+>>>> Hi everyone,
+>>>>=20
+>>>> apologies for the mess this created. Danila's mail provider ratelimited=
+ him halfway through sending the series and the attempt to re-try sending th=
+e second half an hour later ended up with a new message ID (I think due to n=
+ot using --in-reply-to).
+>>>> He asked me to let you know that this will be resolved later and the wh=
+ole series will be re-sent once the problems are resolved.
+>>>=20
+>>> The b4 web submission is a great alternative when the mail provider is r=
+ate limited:
+>>> https://b4.docs.kernel.org/en/latest/contributor/send.html#web-endpoint
+>>>=20
+>>=20
+>> I see people interested in moving Pixel 4a forward, but it seems this was=
+ never upstreamed? I looked at sm7150 repository [1] where I see FROMLIST, b=
+ut these patches never arrived to the list and this series is from 2025.
+>>=20
+>> Should we expect v2 (re)based on recent tree?
+>>=20
+>=20
+> I'd definitely like to get back to upstreaming SM7150 and the devices
+> based on it, but I don't think there's much value in continuing with
+> this particular series as-is. A lot has changed in the kernel over the
+> past year, which would require substantial changes throughout the series
+> and would effectively force the maintainers to review it from scratch
+> anyway.
 
-Remove the workqueue handling and invoke the imx_rproc_notified_idr_cb()
-callback directly.
+After longer period of time maintainers will have to do full review anyway. S=
+ure, the reviews needs to be addressed :)
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
-The imx's remoteproc driver uses a kworker from its mailbox callback to
-complete the request. The reason is that the imx mailbox driver invokes
-the callback from its interrupt handler and the remoteproc callback (at
-least the rpmsg-tty) requires a preemptible context.
+>=20
+> I'd also like to split the series up to avoid targeting such a large
+> number of maintainers in a single submission.
 
-This works but is problematic in a PREEMPT_RT environment where the
-latency of the invocation is important. By scheduling a kworker the
-high task priority from the threaded handler is lost and the kworker
-competes for CPU ressources with every SCHED_OTHER task in the system.
-This can lead to long delays on a busy system with other RT threads
-which are less important than the completion of this request.
+Yes, that=E2=80=99s exactly what=E2=80=99s needed (at least for the part pat=
+ches I saw).
 
-Looking over other mailbox driver, like the arm_mhu for instance, they
-use a threaded interrupt handler to invoke the callback. This avoids the
-kworker detour.
+> Hopefully, I'll be able to
+> find some time to work on this in the near future.
 
-The here suggested change utilises a threaded interrupt to invoke the
-callback. The primary handler mask the interrupt source so that the
-handler can run without getting interrupted by the interrupt again.
-Doing so avoids marking the interrupt IRQF_ONESHOT so that in a
-shared-interrupt environment the other interrupt can still fire while
-the first is masked.
+Where the most recent patchset can be found? Just in case someone wanted to p=
+ush some bits in meantime.
 
-The first four patches are result of the sashiko review. Does not look
-critical.
+Thanks
+David
 
-This change was tested on a im93 board with rpmsg-tty driver.
-
-v5=E2=80=A6v6: https://patch.msgid.link/20260721-imx_mbox_rproc-v5-1-6386a2=
-cf8524@linutronix.de
-  - Repost. Adding Greg and akpm, hoping someone will apply it.
-
-v4=E2=80=A6v5: https://lore.kernel.org/all/20260703-imx_mbox_rproc-v4-1-67b=
-10560a861@linutronix.de/
-  - Repost
-
-v3=E2=80=A6v4: https://lore.kernel.org/r/20260617-imx_mbox_rproc-v3-0-77948=
-112defc@linutronix.de
-  - The mailbox bits are part of v7.2-rc1. This is just a repost of the
-    imx_rproc driver which is left.
-
-v2=E2=80=A6v3: https://lore.kernel.org/r/20260603-imx_mbox_rproc-v2-0-a0059=
-dc3b69a@linutronix.de
-  - Forward the error in imx_mu_generic_tx() to the caller (new patch
-    #1)
-  - Extend the patch description a bit for for "Start splitting the IRQ
-    handler" to briefly explain why callbacks are moved to the threaded
-    handler.
-  - Drop imx_mu_con_priv::pending. The primary handler wakes its
-    threaded handler. Once the handler is woken, the pending flag must
-    be set and there is no need to set/ clear it.
-  - Avoid the double clk_disable_unprepare() if
-    devm_mbox_controller_register() fails.
-
-v1=E2=80=A6v2: https://lore.kernel.org/r/20260529-imx_mbox_rproc-v1-0-b8ffc=
-36e11e5@linutronix.de
-  - Using correct register to enable RXDB event.
-  - Update commit description for the "threaded interrupt", "unmasks the
-    interrupt" =3D> "masks the interrupt event".
-  - Add a shutdown field so that the interrupt does not unmask the
-    interrupt if it has been already disabled because the channel is
-    about to be shutdown.  A possible race mentioned by sashiko.
-  - Use devm_pm_runtime_enable(). This should avoid a possible race
-    sashiko mentioned.
-  - Use devm_of_platform_populate().
----
- drivers/remoteproc/imx_rproc.c | 33 +--------------------------------
- 1 file changed, 1 insertion(+), 32 deletions(-)
-
-diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
-index 7662ebd9d2f49..e18ae33a5cf85 100644
---- a/drivers/remoteproc/imx_rproc.c
-+++ b/drivers/remoteproc/imx_rproc.c
-@@ -24,7 +24,6 @@
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
- #include <linux/scmi_imx_protocol.h>
--#include <linux/workqueue.h>
-=20
- #include "imx_rproc.h"
- #include "remoteproc_internal.h"
-@@ -115,8 +114,6 @@ struct imx_rproc {
- 	struct mbox_client		cl;
- 	struct mbox_chan		*tx_ch;
- 	struct mbox_chan		*rx_ch;
--	struct work_struct		rproc_work;
--	struct workqueue_struct		*workqueue;
- 	void __iomem			*rsc_table;
- 	struct imx_sc_ipc		*ipc_handle;
- 	struct notifier_block		rproc_nb;
-@@ -892,21 +889,11 @@ static int imx_rproc_notified_idr_cb(int id, void *pt=
-r, void *data)
- 	return 0;
- }
-=20
--static void imx_rproc_vq_work(struct work_struct *work)
--{
--	struct imx_rproc *priv =3D container_of(work, struct imx_rproc,
--					      rproc_work);
--	struct rproc *rproc =3D priv->rproc;
--
--	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
--}
--
- static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
- {
- 	struct rproc *rproc =3D dev_get_drvdata(cl->dev);
--	struct imx_rproc *priv =3D rproc->priv;
-=20
--	queue_work(priv->workqueue, &priv->rproc_work);
-+	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
- }
-=20
- static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_block)
-@@ -1271,13 +1258,6 @@ static int imx_rproc_sys_off_handler(struct sys_off_=
-data *data)
- 	return NOTIFY_DONE;
- }
-=20
--static void imx_rproc_destroy_workqueue(void *data)
--{
--	struct workqueue_struct *workqueue =3D data;
--
--	destroy_workqueue(workqueue);
--}
--
- static int imx_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
-@@ -1305,17 +1285,6 @@ static int imx_rproc_probe(struct platform_device *p=
-dev)
- 		priv->ops =3D dcfg->ops;
-=20
- 	dev_set_drvdata(dev, rproc);
--	priv->workqueue =3D create_workqueue(dev_name(dev));
--	if (!priv->workqueue) {
--		dev_err(dev, "cannot create workqueue\n");
--		return -ENOMEM;
--	}
--
--	ret =3D devm_add_action_or_reset(dev, imx_rproc_destroy_workqueue, priv->=
-workqueue);
--	if (ret)
--		return dev_err_probe(dev, ret, "Failed to add devm destroy workqueue act=
-ion\n");
--
--	INIT_WORK(&priv->rproc_work, imx_rproc_vq_work);
-=20
- 	ret =3D imx_rproc_xtr_mbox_init(rproc, true);
- 	if (ret)
-
----
-base-commit: 2ee859ebf156157609f71060ae472711c8cbc326
-change-id: 20260529-imx_mbox_rproc-7d512f5a6f78
-
-Best regards,
--- =20
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>=20
+>=20
+>> Thanks
+>> David
+>>=20
+>> [1] https://github.com/sm7150-mainline/linux/commit/7ea41523c678e94a7c048=
+936052b5b1b1b109cdd
+>>=20
+>>> Neil
+>>>=20
+>>>>=20
+>>>> Best regards,
+>>>> Jens
+>>>=20
+>>>=20
+> ---
+> Best regards,
+> Danila
