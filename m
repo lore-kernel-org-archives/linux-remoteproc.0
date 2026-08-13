@@ -1,168 +1,244 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B0B373BFE;
-	Thu, 13 Aug 2026 07:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CE13603D8
+	for <linux-remoteproc@vger.kernel.org>; Thu, 13 Aug 2026 08:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786607501; cv=none; b=Lh1pAe4Ko2FTOadJfL4durCgQdlOYJRs7edCNE76rJRWdBh2MlivYDXU26qRQ26M7+SI54roKtX77yJ1T6x72XYja5x0NWA4Lopqc/i32ieJrlWK0ebJNb3FdXL+gRqb9BE4uxkJZS+/XGWdwlMhcsd9y9dIbd0FVbkc1KRxMyU=
+	t=1786609327; cv=none; b=QYL7wjzEZ8b6HA5VVViNb/6avmFgakffKx5m5gR2yitA71N7CyQRMSkhuHVKpI0w20ROvH3PRT/IgYuOlRnhU6qawj3E1TB747TDzfpUBj9kDHqykdejnlYfjQ97IDt11ej7zz3iB1OVBahIzdw8hMaBXbdjxw74yluOIkyQjVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786607501; c=relaxed/simple;
-	bh=3M4bP5YdwYlYzOi57R+lqJMq26KLUWXVwsuDknQZCZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EwiCcUPocxp9E4RWbjGZw2Qco5MLP6uuW8lZrnci7rPZ32e/6FTGS1q4WuPXWDG140SX9Tx/HQIWA729ECRy/QLh2kXzWmMsmWqki+ML62Rt8E7ouq2TX5WlmW8KGI6NPjf9Tke2DwrBIWkgwbDb5GcKLVLmb4rDz5a0amIAAcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9pJm7oK; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1786609327; c=relaxed/simple;
+	bh=WgRRDaoWPZwOJuVMjX7/03GgTdkqCeXOBG68VI6CWMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mdmucoFn4itFxPkdT/Jij64Hw7rihGqsUevR0PZBGr9w7usaEv3unm/ImaDnugFhLCyt8KcqKuR+GBkANr/TSeOvWln7BUj1dwh1ivmDrFPi5SSz/y0FJLtjBrK814eycmpdwH98JCUpRXvkGJ7tzlubzPQmfZIjYg67RonOAKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eD96uLUc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y3ptXPA5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9pJm7oK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B29881F000E9;
-	Thu, 13 Aug 2026 07:51:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1786607499;
-	bh=3wuuODMHgyrByvTWu/ibKnUW8XtB70+kgrR0tvo8mUU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=H9pJm7oK2S0/YLM2cu+Ws7oMX1Qgt2NyE122ammj7QoomQ38XYWj6hkYOhI4xbmj0
-	 i6MuOT9FInINzrBj6Hg5xMjuaav/0xPaxnS9UMXyJaQO7cvfO3KJZy6Im6V9rroap2
-	 9+v5pyrYgO1aTem/03TEltA2fk2JKPyQdXb6okRinVON9isntC7Qt695roEz9UndH/
-	 wfXyUVi0FY8QZF1as9b4V8r1Wah9U5myMcJommm5RB2MWIA+xO5P8qWKMGuFQYoCYe
-	 E9+NkFCYRyriu/flUo/Ko++Y+L7NwN/hl5qdqE6oKS3XL0jUiEN2KtnzYr5D5jYCtt
-	 7WPFsuPZC6kew==
-Message-ID: <80dfac6e-3408-4f62-887d-9da39c827dd5@kernel.org>
-Date: Thu, 13 Aug 2026 09:51:31 +0200
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eD96uLUc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y3ptXPA5"
+Date: Thu, 13 Aug 2026 10:22:02 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1786609324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bnFio1oNNrm91Jw4PTtNlaJV8syzqd0jiUAgXBq7K3U=;
+	b=eD96uLUciE8j2GP/q4QeItW5OshyUxrCgZupSZvzlDVdpsPxWU85h6hJgZKrB1Ky/U8urP
+	VlxOJngoFCNBCVGoLwlHK8tLAeSMAqAw9Jo7gIb2VAJ6f9WNg3jmOPq6/9ffbdpAvPIPxz
+	EXyMBaA9yjmv52alX57wgmIryq0frLHKY6Ms3bNUoDp+ti15ZxCxwjd+t8iroYVyGxFOwE
+	0kxWY0XeK9YnGI2jBJOa4yejen99R1qfO6KMLPBgfJ7pAdA1S3oauMWBgzHvTnI4Hk9UhK
+	seqSwHDybl1N0TJaBZdQW7OKPuhHUi/yzMvRmDPRxDR9JeQYVWTXnjg6IbcanA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1786609324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bnFio1oNNrm91Jw4PTtNlaJV8syzqd0jiUAgXBq7K3U=;
+	b=y3ptXPA5Lo3wMSLHcgJ/kGZiDctoIQm8sXXnCRX+BOuwbubQh9IBV4PZZ11vLNFWeqaWTI
+	M7h8yC7HygwGtqDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>, Peng Fan <peng.fan@nxp.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH REPOST REPOST v6] remoteproc: imx_rproc: Invoke the callback
+ directly
+Message-ID: <20260813-imx_mbox_rproc-v6-1-6903a93b0456@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: remoteproc: add imx-rproc-psci
-To: Jiafei Pan <Jiafei.Pan@nxp.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
- krzysztof.kozlowski@linaro.org, peng.fan@nxp.com, Frank.Li@nxp.com,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zhiqiang.Hou@nxp.com, mingkai.hu@nxp.com
-References: <20260511023928.39640-2-Jiafei.Pan@nxp.com>
- <20260812104633.22420-1-Jiafei.Pan@nxp.com>
- <20260812104633.22420-2-Jiafei.Pan@nxp.com>
- <20260813-imposing-blazing-gharial-fbb19c@quoll>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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
-In-Reply-To: <20260813-imposing-blazing-gharial-fbb19c@quoll>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/3XOTW6DMBAF4Ksgr+vIY+Mfsuo9qigyZtxYKjgxB
+ BFF3L0OWSQqdPlGM9+8O+kxBezJvriThGPoQ+xyUB8FcSfbfSMNTc6EM66Y5BUN7XRs6zgd0zl
+ FR3UjgXtpldeG5KNzQh+mBfw6PHPCyzW7w3NIatsjdbFtw7AvRr3jNDlNHrun0A8x3ZYuIyzL/
+ 70dgTJaG++dUAiA8vMndNchxS5MuwYXbuQvQjGxIngmLGOyapyoVWW3CPFGgF4RIhNaV6UB4A1
+ 6t0WUL0JvtCgpUKVrYFIxaxRsEfKN4LAi5IMQRlnuvJG8/EvM8/wLYGsYQegBAAA=
+X-Change-ID: 20260529-imx_mbox_rproc-7d512f5a6f78
 
-On 13/08/2026 09:49, Krzysztof Kozlowski wrote:
-> On Wed, Aug 12, 2026 at 06:46:30PM +0800, Jiafei Pan wrote:
->> Add compatible string "fsl,imx-rproc-psci" for i.MX Cortex-A Core's
->> remoteproc support.
->>
->> Signed-off-by: Jiafei Pan <Jiafei.Pan@nxp.com>
->>
->> ---
->> Changes in v4:
->> - Updated description to describe the hardware instead of the binding
->> - Changed compatible to SoC-specific "fsl,imx93-rproc-psci" with
->>   generic fallback "fsl,imx-rproc-psci"
->> - Fixed example node name from "remoteproc-ca55-1" to "remoteproc"
-> 
-> You need to start using b4 to send patches or send them correctly... Why
-> is this response to some other thread?
-> 
->>
->> ---
->>  .../remoteproc/fsl,imx-rproc-psci.yaml        | 54 +++++++++++++++++++
->>  1 file changed, 54 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc-psci.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc-psci.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc-psci.yaml
->> new file mode 100644
->> index 000000000000..7d0d0da383a2
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc-psci.yaml
->> @@ -0,0 +1,54 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/remoteproc/fsl,imx-rproc-psci.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: NXP i.MX Cortex-A Core Remote Processor via PSCI
->> +
->> +maintainers:
->> +  - Jiafei Pan <Jiafei.Pan@nxp.com>
->> +
->> +description:
->> +  NXP i.MX SoCs integrate multiple Cortex-A cores. On certain i.MX
->> +  platforms, one or more of these cores can be offloaded to run RTOS
->> +  or bare-metal firmware as a remote processor, while the remaining
->> +  cores run Linux. The cores are powered on and off via PSCI (Power
->> +  State Coordination Interface) CPU_ON/CPU_OFF calls to the firmware.
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - enum:
->> +          - fsl,imx93-ca55-rproc
->> +      - const: fsl,imx-rproc-psci
-> 
-> Hm? So you just ignored the feedback?
-> 
+The imx-mailbox driver moved the callback invocation into the threaded
+IRQ handler. This means the callback is invoked in preemptible context
+and there is no need to schedule the kworker for the
+imx_rproc_notified_idr_cb() invocation.
 
+This was tested with the rpmsg-tty driver on imx93.
 
-Ah, you just did not bother even to wait for my reply!
+Remove the workqueue handling and invoke the imx_rproc_notified_idr_cb()
+callback directly.
 
-After three months after my review, you send reply to my comments and
-IMMEDIATELY you send v4 without waiting for me to address them.
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+The imx's remoteproc driver uses a kworker from its mailbox callback to
+complete the request. The reason is that the imx mailbox driver invokes
+the callback from its interrupt handler and the remoteproc callback (at
+least the rpmsg-tty) requires a preemptible context.
 
-Srsly, if you have three months, then don't you think I deserve more
-than 1 hour?
+This works but is problematic in a PREEMPT_RT environment where the
+latency of the invocation is important. By scheduling a kworker the
+high task priority from the threaded handler is lost and the kworker
+competes for CPU ressources with every SCHED_OTHER task in the system.
+This can lead to long delays on a busy system with other RT threads
+which are less important than the completion of this request.
 
-NAK
+Looking over other mailbox driver, like the arm_mhu for instance, they
+use a threaded interrupt handler to invoke the callback. This avoids the
+kworker detour.
+
+The here suggested change utilises a threaded interrupt to invoke the
+callback. The primary handler mask the interrupt source so that the
+handler can run without getting interrupted by the interrupt again.
+Doing so avoids marking the interrupt IRQF_ONESHOT so that in a
+shared-interrupt environment the other interrupt can still fire while
+the first is masked.
+
+The first four patches are result of the sashiko review. Does not look
+critical.
+
+This change was tested on a im93 board with rpmsg-tty driver.
+
+v5=E2=80=A6v6: https://patch.msgid.link/20260721-imx_mbox_rproc-v5-1-6386a2=
+cf8524@linutronix.de
+  - Repost. Adding Greg and akpm, hoping someone will apply it.
+
+v4=E2=80=A6v5: https://lore.kernel.org/all/20260703-imx_mbox_rproc-v4-1-67b=
+10560a861@linutronix.de/
+  - Repost
+
+v3=E2=80=A6v4: https://lore.kernel.org/r/20260617-imx_mbox_rproc-v3-0-77948=
+112defc@linutronix.de
+  - The mailbox bits are part of v7.2-rc1. This is just a repost of the
+    imx_rproc driver which is left.
+
+v2=E2=80=A6v3: https://lore.kernel.org/r/20260603-imx_mbox_rproc-v2-0-a0059=
+dc3b69a@linutronix.de
+  - Forward the error in imx_mu_generic_tx() to the caller (new patch
+    #1)
+  - Extend the patch description a bit for for "Start splitting the IRQ
+    handler" to briefly explain why callbacks are moved to the threaded
+    handler.
+  - Drop imx_mu_con_priv::pending. The primary handler wakes its
+    threaded handler. Once the handler is woken, the pending flag must
+    be set and there is no need to set/ clear it.
+  - Avoid the double clk_disable_unprepare() if
+    devm_mbox_controller_register() fails.
+
+v1=E2=80=A6v2: https://lore.kernel.org/r/20260529-imx_mbox_rproc-v1-0-b8ffc=
+36e11e5@linutronix.de
+  - Using correct register to enable RXDB event.
+  - Update commit description for the "threaded interrupt", "unmasks the
+    interrupt" =3D> "masks the interrupt event".
+  - Add a shutdown field so that the interrupt does not unmask the
+    interrupt if it has been already disabled because the channel is
+    about to be shutdown.  A possible race mentioned by sashiko.
+  - Use devm_pm_runtime_enable(). This should avoid a possible race
+    sashiko mentioned.
+  - Use devm_of_platform_populate().
+---
+ drivers/remoteproc/imx_rproc.c | 33 +--------------------------------
+ 1 file changed, 1 insertion(+), 32 deletions(-)
+
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 7662ebd9d2f49..e18ae33a5cf85 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -24,7 +24,6 @@
+ #include <linux/regmap.h>
+ #include <linux/remoteproc.h>
+ #include <linux/scmi_imx_protocol.h>
+-#include <linux/workqueue.h>
+=20
+ #include "imx_rproc.h"
+ #include "remoteproc_internal.h"
+@@ -115,8 +114,6 @@ struct imx_rproc {
+ 	struct mbox_client		cl;
+ 	struct mbox_chan		*tx_ch;
+ 	struct mbox_chan		*rx_ch;
+-	struct work_struct		rproc_work;
+-	struct workqueue_struct		*workqueue;
+ 	void __iomem			*rsc_table;
+ 	struct imx_sc_ipc		*ipc_handle;
+ 	struct notifier_block		rproc_nb;
+@@ -892,21 +889,11 @@ static int imx_rproc_notified_idr_cb(int id, void *pt=
+r, void *data)
+ 	return 0;
+ }
+=20
+-static void imx_rproc_vq_work(struct work_struct *work)
+-{
+-	struct imx_rproc *priv =3D container_of(work, struct imx_rproc,
+-					      rproc_work);
+-	struct rproc *rproc =3D priv->rproc;
+-
+-	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
+-}
+-
+ static void imx_rproc_rx_callback(struct mbox_client *cl, void *msg)
+ {
+ 	struct rproc *rproc =3D dev_get_drvdata(cl->dev);
+-	struct imx_rproc *priv =3D rproc->priv;
+=20
+-	queue_work(priv->workqueue, &priv->rproc_work);
++	idr_for_each(&rproc->notifyids, imx_rproc_notified_idr_cb, rproc);
+ }
+=20
+ static int imx_rproc_xtr_mbox_init(struct rproc *rproc, bool tx_block)
+@@ -1271,13 +1258,6 @@ static int imx_rproc_sys_off_handler(struct sys_off_=
+data *data)
+ 	return NOTIFY_DONE;
+ }
+=20
+-static void imx_rproc_destroy_workqueue(void *data)
+-{
+-	struct workqueue_struct *workqueue =3D data;
+-
+-	destroy_workqueue(workqueue);
+-}
+-
+ static int imx_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev =3D &pdev->dev;
+@@ -1305,17 +1285,6 @@ static int imx_rproc_probe(struct platform_device *p=
+dev)
+ 		priv->ops =3D dcfg->ops;
+=20
+ 	dev_set_drvdata(dev, rproc);
+-	priv->workqueue =3D create_workqueue(dev_name(dev));
+-	if (!priv->workqueue) {
+-		dev_err(dev, "cannot create workqueue\n");
+-		return -ENOMEM;
+-	}
+-
+-	ret =3D devm_add_action_or_reset(dev, imx_rproc_destroy_workqueue, priv->=
+workqueue);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to add devm destroy workqueue act=
+ion\n");
+-
+-	INIT_WORK(&priv->rproc_work, imx_rproc_vq_work);
+=20
+ 	ret =3D imx_rproc_xtr_mbox_init(rproc, true);
+ 	if (ret)
+
+---
+base-commit: 2ee859ebf156157609f71060ae472711c8cbc326
+change-id: 20260529-imx_mbox_rproc-7d512f5a6f78
 
 Best regards,
-Krzysztof
+-- =20
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>
