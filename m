@@ -1,205 +1,149 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A1D441636
-	for <linux-remoteproc@vger.kernel.org>; Mon, 17 Aug 2026 15:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E64448BB5
+	for <linux-remoteproc@vger.kernel.org>; Mon, 17 Aug 2026 16:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1786981279; cv=none; b=kDSFwW8mjQXFxBwGOiopWuoTGABPg0daOhzwG10sIyXqdA33KNpP8/inN2RxXxl7YMYqyhxUtnL9E9pE0zf8e6nsXKidl7ZL+qjkMxtadC91ohqSG9WBlmWmuT88xcwhq0wM0GbvjqgbiFxRUY2/q8phT+Rfuj7ZCAWf+F3BZW0=
+	t=1786984749; cv=none; b=uyyxj2G/e/DaZ9T5CdNFIJMHdEsnfal9L/g3rb5wVs2QHY79CiHELtknVyAwDJEGJXzSnk5h2dEbHUGnvwvCsIyJKyK5brLfRe9gNGZyIGDrIHFPcwHHIeLk6n14/+cAyNk5KShkic3QqsnY91yNclA3NKy94Wx2vw7J3EHcf1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1786981279; c=relaxed/simple;
-	bh=k+dY+mjQTyIfFH9G1nyagfSApaJYPRf5aPzLSO40tRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B9MpBDleXBbvFV5kORQUKR5PajTUiPLKkN9yI9QQA3RZ3KXJml+wgx8WZiRsXQhMvZyDWvnAwXParjMdzsAUct9+LmqdsctpnhGsWaD3tT7/WyQu8BN4Q7zIQZ47Sj/WHhsj0grRyei+4/OhOU1rIXzHKBhWBJpj9wkxJygi7+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DbsfDcfU; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1786984749; c=relaxed/simple;
+	bh=7kYNWja8CyH8mpneiEndqSwrG6PwJCW7ROzqwDBd8PA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/3CK/QFCoHdrY0gcLkOeSjVdjzGVNstdWWgy9UuzOE5ahLUMNELYTEV86E/aIJwJpginu/JwDBPtHHw9LwwKP3WjmZ5U9mGWTUV/n8FoWQoa0qW4zFEA24ijtCkhfISVkK5I1HPQXhDmqmCkyPxOzM4nEm7jpn4/6r78gInRGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e75rfP92; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DbsfDcfU"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c197eaaab00so666879366b.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Aug 2026 08:41:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e75rfP92"
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-38759bcd877so4262170a91.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 17 Aug 2026 09:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1786981276; x=1787586076; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=VoBtZfhuywbVuLLdP5All4NoUQGWiUJ7pstL6sIhZxI=;
-        b=DbsfDcfUa8Cvowgke5R67j5EPPeKisPJCnlWY8gDrym/XG/P7NTflnUM/XaLputeQX
-         UcBMfUtDvVgW4uyxm1uIxuMuUAFg6AzPQsttcbxUbdyC/jnwRyRIZyMJeQFJAFTG8IP+
-         1quEc/apiDOXDgR9+awoXZLjfRp99/IK+frZfNslHNwPsGRefr+Y812K+OL5n9wk3Vpc
-         7b50eynvxpJg0mFPQ4k0sZmdCzcK9rUSZi7qDXvZABvMLCcK9kQ5fhBgcjsPoEiysj7Q
-         A9Cq8MFti0tSj1ewOmzM/h/ltnhppQ+FpCXIlUP1W1gtWZD8AfZgZJm1uhLdZGgJst5V
-         UzBA==
+        d=linaro.org; s=google; t=1786984744; x=1787589544; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=sDW6+B1/6deHWJRz59EqQ3HrDNwA7V1iNa634fXxC5I=;
+        b=e75rfP92+8fC/1P2vLDf9aR73+Q/sr1lBCoUtZEM0XorrxWlzLRgh89CTB0XHb9N3W
+         lwvaei9B5oXOCEtWpYe+3RE5/Vvxb5rNH/XCbhDsjkKGIUcNfVDVCk5/KfCIlpqNNlg1
+         C15A5Bd8nc2cL2tCqBbevxNKLGQEVgLH5tyOZZD16FfJaQhyFm3/2MH7Nf2CW0/46sUz
+         J/X3sd4IdpdZz9UgpUzHXxiI8JdZFXi2LpW3ySBEzyhF7CF2z3SU5g3u1KDFzN2MxAFG
+         JoRk4QvmsiST+OmcIgO6W6tNR3q2trVW42SBS5TWYN/aDkU2dlEknCfq2reM5QNizYtr
+         Ka/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1786981276; x=1787586076;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=VoBtZfhuywbVuLLdP5All4NoUQGWiUJ7pstL6sIhZxI=;
-        b=LBErSyT/LMpkXBfN1WcRERqB9sWwK6GUgUxi4K5eGvHcGhGeL5fVfbmF+/+oeUszBZ
-         x3Zl/9hpo4HgrTNzULFUa8F/2mpvkTJDiVbULq5u+ozfalCGonVtETbwLou59W+DsdHv
-         l+i++TOkLOP34Fms8q+QgLpSORRlh6qmyX3kBegxGTb3OgjEpPwXrQ06eV44q4D2agbh
-         gdA4B7o7PBTq+lYbVQP11E+S5SF9ltbGWwCxnfuIyihiWAeh3E+sgw5bkOuCCsEYe4/Q
-         MCQX77Jtvy2VAAMWRlGvwRA/msRO2w51beHowOmoJwlvK5gL5A9ZoqGCwRGZq7zDQKXm
-         mq6A==
-X-Forwarded-Encrypted: i=1; AHgh+RoyrBFnZv22MH5HYsMpOaafJJVZnLASsPw56tD4yWlHHpOzxIAH3tpi2SuUYxT/dOqXmZ59/v/8zAV3a+iiIVix@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ8TOELU9IlSOisiOhprG8cTkIPHfBLVywzy8xGka1ili0//fs
-	YuignBYmt9C4a0eXUHzy1ne2DkvujTAxEWsx4tGIZlmf19WQtz6l6v1v
-X-Gm-Gg: AR+sD13t4FGUKCnnxj2Eya/338ss6fDDj9X5A9LmMgyGtSpwmRK1s/twyLpct8Rp+wK
-	n2gFBlJ2xm0vtvSSl0N9l/ZozESE7OtQbBGIbi2OFJhTvLL2NiYBQzm5VUOFzfDX1Ygo+TRlkk/
-	F4Z4wHX888lXzcJEUqt+h9z7S3l9dqI4HvhFBO7XerL/An2fh4b6D8+JKOZOeahHpx+bwCqRJuV
-	aVLRBLGatF8vZvDp+lga3sChc+1yxnfzLT1UblVUmmUeny/EuE/cQbuTQaLSBeY1D388GHjCmYy
-	gW1Gofs88653B7FukGbtRSqAmd/VdJF/g615vZ4weGdtzyKr1dC3kqpltl9H5fdMH8Rb0DRUiZ1
-	6+XpOO4fBgggL2FDDWJVrhIS/ePNyawGI35+SQyer/j998+HoGYwHoOLXopYKuXGH28WcsTEYuW
-	2A19akfq/YlemZyP837+dz4N0tD4P1eYH8tbPOtkxmt26SmSERpQCqWCKALwYM08M1zVI/Ry6e
-X-Received: by 2002:a17:906:ee84:b0:c20:eeaa:ec85 with SMTP id a640c23a62f3a-c212a1857cfmr1355311566b.17.1786981275977;
-        Mon, 17 Aug 2026 08:41:15 -0700 (PDT)
-Received: from [192.168.120.193] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c2185bc9697sm44467766b.61.2026.08.17.08.41.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2026 08:41:15 -0700 (PDT)
-Message-ID: <b63e93e4-2f4c-4cad-b726-e1b0565379d7@gmail.com>
-Date: Mon, 17 Aug 2026 17:41:11 +0200
+        d=1e100.net; s=20251104; t=1786984744; x=1787589544;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=sDW6+B1/6deHWJRz59EqQ3HrDNwA7V1iNa634fXxC5I=;
+        b=YRRDzE5iD7KJESs80rmvA5LczZmXpo3H4G09ovxl/6r8hcwovIpAF9gGJ7j0LAQ5kc
+         ds22XzPVESA6dvYyH5xvbVvpd4JRiPjTi7GKfZHK5MKWOxd/mC+UZ3sgQMhBBrRxMJ2v
+         YOndVdB27SvJqpks7AhZinrOHEBEvk5VHYubHtMWXPlDdmimFyO/iMzIMd3PR43adjPu
+         wVX5ewQEpEluouL168V8+Vofd+OP6sloVWKG73qbbrIw7wctSjMJaGSbFzWrZDMFMFLx
+         eM2G80KD6VwJEscrwVOz98R8SwUqkYiMe4gae2huU6hcKI5YaoweB4sLa/d4F6PEvFYD
+         A7zg==
+X-Forwarded-Encrypted: i=1; AHgh+RoEQ//ZHmXCIQTDjqyKs37C6/7Di5d1kH2xpxcFRT/bdBB9XB5jHcy0AVKOA/nIW/0JNtPGI2Oh10PfnIvLq7Bw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2dFd8zHXcZt5A7L7Z+paR/GRG7tyem6CcxJD1Gm4Vt9OQkmjv
+	OHI1O0xZTzT0hJE8h6coFaMd2ihuoviQ00RDBiHqcoOfpEezCVuL1TlZwnVHTtmFftw=
+X-Gm-Gg: AR+sD13Ej2yM4d780exRD4h8+s/y3v9fjjergWeQsrNzl905k1f8NAs3uIguywOXkBA
+	hJKB1gOELqzfo+TkS9dsx+tn3qHtiLdgigKV8Rd6PkRh7eSmxea25Oz0vvYp0ljmAHTcIKJey2H
+	4DoWtKC0dgYyj5xe5hDT/L10zGLqCCiWoUpvsFbo+XvE5+zuO9jZpsZeRXQPkUP6j6hpQ8y/AhW
+	NI4HauBDuz5igOpZrKxJTCzcMWe66put4ru8/znikth4GV2N1SRHuZlhjV3T9bMqcVwcyxPlV+E
+	cMDoiVjKgAG0MwX3m0bY3HD9F0700VJCRoFCr2pAu7vrPYX41YSxiDMprzkvNioIw2iAVYeQ9Lr
+	DGUjqsv2a97FTE9e06XFEQjIbk/cDCsRW61aXcFUM9mRxHC2jeEg+i6EZGacBIiM8gS3B/cB1i9
+	ceqgtPj/bNfOxD84uzcqp+syrzGg6Dyb8s/082TJA/Q+4ShYZhycHnnCQCWIsY+4ux
+X-Received: by 2002:a17:90b:2e4c:b0:390:b41a:b92a with SMTP id 98e67ed59e1d1-3933bd0d632mr29846740a91.4.1786984743634;
+        Mon, 17 Aug 2026 09:39:03 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:4474:5926:fe69:196a])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3954d3b3b91sm3029317a91.13.2026.08.17.09.39.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2026 09:39:03 -0700 (PDT)
+Date: Mon, 17 Aug 2026 10:39:00 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Jiafei Pan <jiafei.pan@nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	"andersson@kernel.org" <andersson@kernel.org>,
+	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
+	Peng Fan <peng.fan@nxp.com>, Frank Li <frank.li@nxp.com>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Z.Q. Hou" <zhiqiang.hou@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>
+Subject: Re: [EXT] Re: [PATCH v4 1/4] dt-bindings: remoteproc: add
+ imx-rproc-psci
+Message-ID: <aoM5JKcbc4AxoyO_@p14s>
+References: <20260511023928.39640-2-Jiafei.Pan@nxp.com>
+ <20260812104633.22420-1-Jiafei.Pan@nxp.com>
+ <20260812104633.22420-2-Jiafei.Pan@nxp.com>
+ <20260813-imposing-blazing-gharial-fbb19c@quoll>
+ <80dfac6e-3408-4f62-887d-9da39c827dd5@kernel.org>
+ <MRWPR04MB12277AD3869C2AA396ED9A5BA8ADA2@MRWPR04MB12277.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] qcom PAS TZ API migration breaks GPU and modem on
- TrustZone without PAS (sc7180 trogdor)
-To: Paul Hollinsky <phollinsky@holtechnik.com>, sumit.garg@oss.qualcomm.com,
- andersson@kernel.org
-Cc: mathieu.poirier@linaro.org, robin.clark@oss.qualcomm.com,
- lumag@kernel.org, abhinav.kumar@linux.dev, akhilpo@oss.qualcomm.com,
- konradybcio@kernel.org, mukesh.ojha@oss.qualcomm.com,
- cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev
-References: <20260808034716.58888-1-phollinsky@holtechnik.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@gmail.com>
-In-Reply-To: <20260808034716.58888-1-phollinsky@holtechnik.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <MRWPR04MB12277AD3869C2AA396ED9A5BA8ADA2@MRWPR04MB12277.eurprd04.prod.outlook.com>
 
-On 8/8/26 5:47 AM, Paul Hollinsky wrote:
-> Hi,
+On Fri, Aug 14, 2026 at 07:37:36AM +0000, Jiafei Pan wrote:
 > 
-> Two commits from the "firmware: qcom: Add OP-TEE PAS service support"
-> series break the GPU and the modem on SC7180 Chromebooks (trogdor):
+> NXP Confidential
+> > On 13/08/2026 09:49, Krzysztof Kozlowski wrote:
+> > > On Wed, Aug 12, 2026 at 06:46:30PM +0800, Jiafei Pan wrote:
+> > >> +
+> > >> +description:
+> > >> +  NXP i.MX SoCs integrate multiple Cortex-A cores. On certain i.MX
+> > >> +  platforms, one or more of these cores can be offloaded to run RTOS
+> > >> +  or bare-metal firmware as a remote processor, while the remaining
+> > >> +  cores run Linux. The cores are powered on and off via PSCI (Power
+> > >> +  State Coordination Interface) CPU_ON/CPU_OFF calls to the firmware.
+> > >> +
+> > >> +properties:
+> > >> +  compatible:
+> > >> +    items:
+> > >> +      - enum:
+> > >> +          - fsl,imx93-ca55-rproc
+> > >> +      - const: fsl,imx-rproc-psci
+> > >
+> > > Hm? So you just ignored the feedback?
+> > >
+> >
+> >
+> > Ah, you just did not bother even to wait for my reply!
+> >
+> > After three months after my review, you send reply to my comments and
+> > IMMEDIATELY you send v4 without waiting for me to address them.
+> >
+> > Srsly, if you have three months, then don't you think I deserve more than 1 hour?
+> >
+> > NAK
+> >
+> > Best regards,
+> > Krzysztof:
 > 
->   f3b1357673dd ("remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs")
->   0be72be03ca7 ("drm/msm: Switch to generic PAS TZ APIs")
 > 
-> Both are in linux-next as of next-20260805 and neither is in a released
-> kernel yet, so there is still time to fix this before v7.3.
+> Hi Mathieu,
 
-First of all, thank you for the amazingly thorough write-up. I've been on
-holiday so I couldn't look into it quicker.
+You probably meant "Krzysztof".
 
-[...]
-
-> Suggested fix, drm/msm
-> ======================
 > 
-> Given the above, I think the right fix is to move the availability check
-> behind the DT discovery rather than restore the SCM check. Boards with no
-> zap-shader node then never consult PAS at all, and boards that do have one
-> keep the qcom_pas_is_available() gate the original patch was going for:
+> I sincerely apologize for the poor timing. I was not familiar with the upstream contribution workflow — I did not realize I should wait for you to respond to my replies before sending a new version. I sent v4 immediately after replying to your comments out of ignorance, not disrespect.
 > 
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -52,6 +52,12 @@
->  		return -ENODEV;
->  	}
->  
-> +	/* We need PAS to be able to load the firmware */
-> +	if (!qcom_pas_is_available()) {
-> +		DRM_DEV_ERROR(dev, "PAS is not available\n");
-> +		return -EPROBE_DEFER;
-> +	}
-> +
->  	ret = of_reserved_mem_region_to_resource(np, 0, &r);
->  	if (ret) {
->  		zap_available = false;
-> @@ -170,18 +176,11 @@
->  int adreno_zap_shader_load(struct msm_gpu *gpu, u32 pasid)
->  {
->  	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-> -	struct platform_device *pdev = gpu->pdev;
->  
->  	/* Short cut if we determine the zap shader isn't available/needed */
->  	if (!zap_available)
->  		return -ENODEV;
->  
-> -	/* We need PAS to be able to load the firmware */
-> -	if (!qcom_pas_is_available()) {
-> -		DRM_DEV_ERROR(&pdev->dev, "PAS is not available\n");
-> -		return -EPROBE_DEFER;
-> -	}
-> -
->  	return zap_shader_load_mdt(gpu, adreno_gpu->info->zapfw, pasid);
->  }
-
-I believe this is the right fix
-
-> I have this booting here: the GPU initialises and logs "Zap shader not
-> enabled - using SECVID_TRUST_CNTL instead", as it did before the
-> regression.
+> You are absolutely right, and I should have given you adequate time to review my responses. I will make sure this does not happen again.
 > 
+> I will wait for your feedback before sending any further versions.
 > 
-> Suggested fix, remoteproc
-> =========================
+> Thank you for your patience.
 > 
-> Keep an SCM gate for need_mem_protection and add a separate PAS gate for
-> need_pas_mem_setup. This is what I did to get it working:
+> Best regards, Jiafei
 > 
-> --- a/drivers/remoteproc/qcom_q6v5_mss.c
-> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
-> @@ -2079,7 +2079,16 @@ static int q6v5_probe(struct platform_device *pdev)
->  	if (!desc)
->  		return -EINVAL;
->  
-> -	if (desc->need_mem_protection && !qcom_pas_is_available())
-> +	/*
-> +	 * Memory protection is done through qcom_scm_assign_mem(), which needs
-> +	 * SCM but not PAS. Only the memory setup path issues PAS calls, so
-> +	 * requiring PAS for every need_mem_protection platform prevents the
-> +	 * modem from probing at all on TZ firmware that offers no PAS.
-> +	 */
-> +	if (desc->need_mem_protection && !qcom_scm_is_available())
-> +		return -EPROBE_DEFER;
-> +
-> +	if (desc->need_pas_mem_setup && !qcom_pas_is_available())
->  		return -EPROBE_DEFER;
-
-And likewise this looks like the correct fix too, feel free to submit
-both as patches
-
-[...]
-
-> On the API contract
-> ===================
-> 
-> For what it is worth, the kernel-doc for qcom_pas_is_available()
-> (qcom_pas.c:256) reads:
-> 
->   Note that it is mandatory for any PAS client to invoke this API.
->   If it returns true then only any other PAS API can be invoked.
-> 
-> That is a guard to call before invoking a PAS API, not a statement that a
-> driver touching TZ at all should refuse to probe without PAS.
-> ipa_main.c:764 consults it only on the loader path that genuinely needs
-> PAS rather than as a blanket probe precondition, which is the shape both
-> fixes above are aiming for.
-
-This is a sloppiness that got through the transition patchset.. previously
-as you mentioned, qcom_scm_is_available() was a blanket "can we talk to TZ
-yet"?, and as the conversion happened, it was largely just find-and-replaced..
-
-Konrad
