@@ -1,143 +1,120 @@
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A522BEC45;
-	Tue, 18 Aug 2026 10:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB77221FB6
+	for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 14:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787047938; cv=none; b=Ipvfz7fjULpNi6cyRquOh2a7Fgio/n9iiV4f9q0dL1Wma1G2Ln9/+Z2hJOdS17s+wAzHHFSm5Fyf4TMOAgGO73U10lWhXmh86vXyvv/gg7pjFS+SGCVP3Bq+JJPJoiqVPYCBacY/MRIbTB+bDfJBsNExDa9k2kI1BpvFfs0UUv8=
+	t=1787062508; cv=none; b=nx6iJg4kSOs1gKgKuELmflwx3ghjFdHAZNUwq2IvZpSYhDOlqn8H/FZcPDZxtXRJNMp5OQPNzx4AqSHHk4epnFdKenF1mnX3PlVD+d3K4X6qD8hclFYoFpPFRx3nEz19yFn//XuJgf7Cr0P2C0dKdo/6XyAI5RcYZS6ihgPghhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787047938; c=relaxed/simple;
-	bh=M8WnBADrs36FeNrBmeaF4amARZJ7jbPoQycXSMBjQXk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eAvAYea5t1A6jHdpsFIKt8BL8sl1k/T1nwl67A6T2TmWBm8XJ5y/UovZD5stNU8+81FBatf0ExqDtxFmVXlXDOp9VcxoYn4fGJ8F6XjKAx+hkmHeTfiCWHC4ZAdVC3evd2zh34AbkPqno4uwGTb2RhH0Lz8heF/LhCk3tv7JPLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=M8hIkm9G; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+	s=arc-20240116; t=1787062508; c=relaxed/simple;
+	bh=E02vUtIxVtGgBprT3efbHTZd4SSgMX7E6KNVUOmDUAI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MwwxDBd+mpTk9X7Wa/bvP+qS3S9i2jaQhbDAlijkREbcCS/PBm7TbhBtCJ4S6G5bkFlSQXPSo25LqDsFFemKr/IZiB6d+Vb1qgKZ9JnIdg2MM3Dl/tV5cF8blwpm3NXJreQlVD6qsCiUXf/teRwLdyYICWFDPsyWdHfdB+WbiJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=humanlearning.ch; spf=pass smtp.mailfrom=humanlearning.ch; dkim=pass (2048-bit key) header.d=humanlearning.ch header.i=@humanlearning.ch header.b=XKp2qKJo; arc=none smtp.client-ip=185.125.25.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=humanlearning.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=humanlearning.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="M8hIkm9G"
-Received: from PC-202605011814.localdomain (unknown [222.191.246.242])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 4a66b0a0a;
-	Tue, 18 Aug 2026 18:12:08 +0800 (GMT+08:00)
-From: Runyu Xiao <runyu.xiao@seu.edu.cn>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Tanmay Shah <tanmay.shah@amd.com>,
-	Jianhao Xu <jianhao.xu@seu.edu.cn>,
-	Runyu Xiao <runyu.xiao@seu.edu.cn>,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3] remoteproc: xlnx: initialize mailbox work before requesting channels
-Date: Tue, 18 Aug 2026 18:12:01 +0800
-Message-Id: <20260818101201.1603947-1-runyu.xiao@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260619074835.2069212-1-runyu.xiao@seu.edu.cn>
-References: <20260619074835.2069212-1-runyu.xiao@seu.edu.cn>
+	dkim=pass (2048-bit key) header.d=humanlearning.ch header.i=@humanlearning.ch header.b="XKp2qKJo"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hPWtT32gcz19mT;
+	Tue, 18 Aug 2026 16:14:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=humanlearning.ch;
+	s=20250828; t=1787062497;
+	bh=0sodEiVPUIKveUv59uC88GsmtokX2XDvr12aUHa0t6c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XKp2qKJoM378zYcdQnshZ9oBEixGV3kJ1ufMKfA7I29q+Fq4UTjmdajvdxTEf1idE
+	 99CdIICH2AHqjijf/Eh+e339EcsEY+J+MxDnJ4SlVITpxU3hrp7H+4bJkZLYDCFFg9
+	 Aoz6lghHziAWTb7Wbk5wRjx+0SgL97tbVqP9XVGOQbiNWs3iOJzQCNqU+TgJnpHCNi
+	 Ni0epb7dIchhgNFKBylzxtGsQAd1tOTeqwqaDdjsqI/t9F3bOgnHxE6SjgZuKe7Ipq
+	 xqwnn4qKWiNNRwdgbKZtI234tGMxzZ0qYok40E69tPX+y47q5q+lKHhds5SqiBUnUP
+	 PTPlnrnDkMj+w==
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hPWtS6DWvzQQg;
+	Tue, 18 Aug 2026 16:14:56 +0200 (CEST)
+From: =?UTF-8?q?Fran=C3=A7ois=20Roux?= <info@humanlearning.ch>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [BUG] qcom_q6v5_pas: NULL deref in recovery when using attach-only ops (qcom,broken-reset)
+Date: Tue, 18 Aug 2026 16:14:56 +0200
+Message-ID: <20260818141456.3708-1-info@humanlearning.ch>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <anx6j8UX3BzvZ7JN@linaro.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa0145b642203a1kunm8b1f824210b154
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVkZTx0dVklISUxJSRkaSEsYTFYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUlVSkJKVUlPTVVJT0lZV1kWGg8SFR0UWUFZT0tIVUpLSE
-	pPSExVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=M8hIkm9G5iWD6HCy9ZUGrhhXgx3uqF9J/9smD2lM7CMGIGPNGbYGTi/v86O541QWVOLcduadl1NrWnfkvl3ei2+8LKLcd9n/t5jBaBpybN4nzZwla553JcLc1L4qj0KQ0MibbS5BSWyFbc7iOxsriLib/mRGW9G9xwyO//GiMrY=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
-	bh=Al4GIDgElN7vobz7SNAE7nvT1kt+CjojK1tOK6HONrk=;
-	h=date:mime-version:subject:message-id:from;
+X-Infomaniak-Routing: alpha
 
-zynqmp_r5_setup_mbox() installs zynqmp_r5_mb_rx_cb() as the mailbox RX
-callback before requesting the mailbox channels, but initializes
-ipi->mbox_work only after both channels have been requested. Once the RX
-channel is active, a notification delivered before the late INIT_WORK()
-would make the callback queue an uninitialized work item.
+Hi Stephan,
 
-Initialize the work item before requesting channels. Also drain the work
-before freeing the mailbox state, after the channels have been released so
-no new callbacks can queue it. Use the same drain before freeing ipi from
-the channel request error paths, since the callback is already published
-there as well.
+Thanks -- and you are right on both counts. Attaching a crashed remoteproc
+makes no sense, so my suggested RPROC_FEAT_ATTACH_ON_RECOVERY was the wrong
+answer. I also have a correction to make: I wrote that the crash could not be
+triggered on demand. That was wrong, debugfs exposes exactly that, and I
+should have looked before claiming otherwise.
 
-This issue was found by our static analysis tool and then confirmed by
-manual review of the mailbox setup sequence. The callback is published
-before the channel requests complete, so the work item should be ready
-before the mailbox provider can invoke it.
+So I tested your suggestion instead of guessing. Both runs on the same boot,
+same trigger, only rproc->recovery_disabled differing.
 
-A QEMU PoC modeled a mailbox notification delivered after the RX callback
-became reachable but before the delayed INIT_WORK(). DEBUG_OBJECTS reported
-queueing an uninitialized work item from the zynqmp_r5_setup_mbox() path.
+With recovery_disabled = true
+=============================
 
-This is sent as an RFC because the practical trigger depends on the ZynqMP
-IPI mailbox provider and firmware delivery timing. If the provider cannot
-invoke the RX callback until after setup returns, this is a defensive
-lifecycle cleanup rather than a reachable race on current systems.
+	# echo disabled > /sys/kernel/debug/remoteproc/remoteproc1/recovery
+	# echo 2 > /sys/kernel/debug/remoteproc/remoteproc1/crash
 
-Fixes: 5dfb28c257b7 ("remoteproc: xilinx: Add mailbox channels for rpmsg")
-Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
----
-Changes in v3:
-- Follow Mathieu's feedback and call cancel_work_sync() before freeing ipi
-  from the tx/rx channel request error paths.
+	remoteproc remoteproc1: crash detected in cdsp: type fatal error
+	remoteproc remoteproc1: handling crash #1 in cdsp
 
-Changes in v2:
-- Follow Tanmay's suggestion and keep zynqmp_r5_setup_mbox() taking the
-  child device pointer. Do not move the r5_core assignment in this patch.
-- Only move INIT_WORK() before channel requests and drain the work in
-  zynqmp_r5_free_mbox().
+That is all of it. No recovery attempt, no oops, kernel untainted. The state
+goes to "crashed" rather than "offline", which is also more honest: nothing
+stopped the DSP, it is simply known to be dead.
 
- drivers/remoteproc/xlnx_r5_remoteproc.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Control, recovery re-enabled
+============================
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index c685bb5fa62c..d47fbf143acd 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -318,6 +318,8 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
- 	if (!ipi)
- 		return NULL;
- 
-+	INIT_WORK(&ipi->mbox_work, handle_event_notified);
-+
- 	mbox_cl = &ipi->mbox_cl;
- 	mbox_cl->rx_callback = zynqmp_r5_mb_rx_cb;
- 	mbox_cl->tx_block = false;
-@@ -329,6 +331,7 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
- 	ipi->tx_chan = mbox_request_channel_byname(mbox_cl, "tx");
- 	if (IS_ERR(ipi->tx_chan)) {
- 		ipi->tx_chan = NULL;
-+		cancel_work_sync(&ipi->mbox_work);
- 		kfree(ipi);
- 		dev_warn(cdev, "mbox tx channel request failed\n");
- 		return NULL;
-@@ -339,13 +342,12 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
- 		mbox_free_channel(ipi->tx_chan);
- 		ipi->rx_chan = NULL;
- 		ipi->tx_chan = NULL;
-+		cancel_work_sync(&ipi->mbox_work);
- 		kfree(ipi);
- 		dev_warn(cdev, "mbox rx channel request failed\n");
- 		return NULL;
- 	}
- 
--	INIT_WORK(&ipi->mbox_work, handle_event_notified);
--
- 	return ipi;
- }
- 
-@@ -364,6 +366,8 @@ static void zynqmp_r5_free_mbox(struct mbox_info *ipi)
- 		ipi->rx_chan = NULL;
- 	}
- 
-+	cancel_work_sync(&ipi->mbox_work);
-+
- 	kfree(ipi);
- }
- 
--- 
-2.34.1
+	# echo enabled > /sys/kernel/debug/remoteproc/remoteproc1/recovery
 
+	remoteproc remoteproc1: recovering cdsp
+	remoteproc remoteproc1: stopped remote processor cdsp
+	Unable to handle kernel NULL pointer dereference at virtual address 0
+	Internal error: Oops: 0000000086000004 [#1]  SMP
+	pc : 0x0
+	lr : rproc_start+0xc0/0x164
+	Call trace:
+	 rproc_trigger_recovery+0x148/0x164
+	 rproc_recovery_write+0x16c/0x180
+
+Same fault, same lr, as the spontaneous CDSP crash I reported -- only the
+entry point differs, debugfs write instead of rproc_crash_handler_work. The
+writing process took a SIGSEGV, since the oops happened in its write() path.
+
+So: recovery_disabled = true fixes it, verified on hardware.
+
+One observation, take it or leave it: rproc_start() calls ops->start without
+checking it, and rproc_boot_recovery() does the same for ops->coredump. Even
+with the flag set correctly by every driver, an rproc_ops missing .start
+remains one debugfs write away from a NULL call. A check there would turn a
+driver bug into an error return.
+
+On qcom,broken-reset being controversial and possibly never posted upstream:
+understood, and thanks for saying so plainly rather than leaving it implied.
+I have written that caveat into my notes next to the workaround, so anyone
+picking it up from there knows it is not headed for mainline as it stands.
+The machine is a Surface Pro 12in (X1P42100) booted at EL2 via slbounce,
+where the DSPs are started by the UEFI driver before ExitBootServices; your
+series is what makes audio work there at all, so it has been worth having
+even in this state.
+
+Thanks again,
+François Roux
+
+--
+This reply, and the report before it, were drafted with AI assistance; the
+testing and the machine are mine.
