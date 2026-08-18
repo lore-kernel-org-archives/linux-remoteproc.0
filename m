@@ -1,180 +1,138 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA67A3D7D97
-	for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 16:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918803A7F41
+	for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 17:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787072080; cv=pass; b=aHZKZRaDYnfHLr/KX45CQXBXoBfhWRl78IjiNeWiKB4bdmXmb0Nz7P+T+7uc/64/BSh6JA0oYsXxPNaCaD+hwM3tvBi31ExZ/IWl0iR+mTsu+PUVytgH3lwbDPVgN6jpkNKabQKkuMVvPxdn6vUA4R1K/aWB157jwBR04Yfygs4=
+	t=1787073013; cv=pass; b=XMKtyDQSBfrRNL06MrAKa8rexROlsG+rYAnTD2q+LMkZQVCxi2vOcsdZFRFz+mUMktbkVWk2fwAKUkebcSG8aoylYGPhFZPiw6mC1MUYF7gIoPs4JK8cWaamctF6gnlcJEv/FVwOvkUj9I1iNOquY34Pj4bpoCDADwuUKdPw9Js=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787072080; c=relaxed/simple;
-	bh=K6JRBFMTMMeCQjUjKz4YsqcfOU3JmzHuVBlvM0ZERJ8=;
+	s=arc-20240116; t=1787073013; c=relaxed/simple;
+	bh=TLqBAuXIMWD2IzV7nIVKt67l8/ZmoxLkqIXugLlhzvU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bydzkM7KDvfy5s+y54B65uJQU5b0//XUy4hJL/w3tESHKQd3VI9WAoyL1LmQkTsyxnQbH2nvTuNeUUWrsAMSIrWhP8vCEMvAkZgugPrLBTu/QNT+nxy0w1UjgzOeWG7iRWUBPw1Ry9QSDcCAp1e6nXIPtew3UZfhEvyvuBm6wJo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lMjRkV2G; arc=pass smtp.client-ip=209.85.208.50
+	 To:Cc:Content-Type; b=DwSo01+KseIIfzCR9CvmOGA7o71M6btJsEXT7do9tfesErrME68nIgCbSFA/fv1xg9Tcy0HMXtuaEEc4Z1yvjtPHeBAtX5a5T8IfZpDyQO9YgtBnevKIbJuP8Gghgnc5YCIAxi1LN1eW3BR8ewUKggiAhD3OnXWlCfBZEYW2GrU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NDKnue1M; arc=pass smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lMjRkV2G"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6a0a4a18180so135590a12.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 09:54:38 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787072077; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NDKnue1M"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6a173ad7cf4so100658a12.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 10:10:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787073010; cv=none;
         d=google.com; s=arc-20260327;
-        b=hKhPQDIHrgi2pQLPSm6U3ulTXZa0dzTu6D/fDIXC3GB2FCbTdg1Pm4fkQzwTv39LfK
-         XMEOdsftUncC3mFSxAPAjmoYBRH50p6AhbwU/xm10LVj1UMuyxmTWtdwXYT6dZAuUcB1
-         AezLhyqBR7CDcCVOO4Ag6QwPgCNUooovzHsJq2pqjrKjnqejzjtNvNSkzKdvGsylw75J
-         HuMTT7138/uuq1pgZZeFkcBvwt3jaO1JOZpOK9I7qGjgWrf5W1dMQQAC4zgMp0D/vVMM
-         m9ZbJTnLwkAE+3WlbUE+iOkXpWK01WxugFnsR2QiPl/mCigvoGGdtLg+2kXUTH9rcXTS
-         2L6A==
+        b=hb6cF+eRXFm5KrVL5qxzuZtefB0bcpXD5iUYJKwVAuo02sfKK7HQLphWZIJVberkQ+
+         lH2DWvgqqvuwzI28gWYx0YlBdRR5EHwzwO8ip6Ujah+sO29onU4Xz6gSWvBh3Y31pW8n
+         UJXj1fPlFMTH6BSANBgKE83PHUQAZ7/wC+Up5xx1icjwGBPZbZ/Lhc+bEzome/mFgsyt
+         +runFQHS93Cx+FkBqiiIEtcy7u7FgLt5szpKVfGeutB6OnHjhpo/8h9aUKSHsh0haEAX
+         elG6Ecwe9K11bOcaTv/F3iqG+c7ouFThW3m+OAHH4OiYr13TiHl/EWJpQIImpKtU3V/C
+         Pm0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=zqnxS9XoHpZEQIA/IKT4Qw6OuI1D+BX+6z9DjXQWeUg=;
-        fh=qZIYN/WY/dhffQP+u0lCOh3LFGbz6L1TdrpZyOTfjRM=;
-        b=Lf+7PBoinCF/obi6XKeMGjhbfznv2G3N6chzCBg51OxXjplZTp5EVwWAJYGYWcly+C
-         qmOAm//3zhgiy0evDFegYC5fm5YEXy+t8nHRMhSDUaNzFSF5ftTdPLYjc//c+kGYsAp2
-         KtgysN7AiXRZo7mzGKctDZVgt0myBj+3rsJ/ri8BrLW5YOo5+ZzCfUXklxwLrZu4gapc
-         aT061H796tHdom3DVvmYzewMeJb8C1Cmjv+XwKOtXAo7G/XXzYRxXq1lwQLeNvUGzywi
-         0h10Wy08jk+n13t8N/Npj465WGQETPdIIaqCx/ymJJRaNmf3Dpxg91uYnVI8aJhZHU4M
-         sRTg==;
+        bh=uBZk4YT8qgXdmFVphk3af38SH0U45FRNDQkqVdk1COs=;
+        fh=h1hSbl5Tdd37IOPBFKIscfXFKqLc9Sd+bx5gGZ8McjA=;
+        b=stp8UXvUY5x++bS0rrNsrHHPjzkdg6nuvfeNfbJyYM7RDQUXbj8j01LEO7jzmnGsGo
+         qhlSOFvpEpxhQNXUcP5cgmLIUbsAIedZapv/cO20SSvDyNJodoRg4aFSfYNCKYDdMFBb
+         iFiktABAxAvpG9zbt8FhWvb7eho3VhX/zUuOGlJbO10jrf923L9bTmj5TgQDUmTk9lP+
+         7d/spbjsRHI0MkgxT+u6kn4hw6b5IHoJfZBdtvCgZMUred4jxUH6GlfAkVhB0CSD+dai
+         MpUWbiLXhjpOsNkI6UkBlkPb4gMICUhZrpk5IkgmT4jizgn4uoG302I1rcnHUHiW9J/H
+         4N2g==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1787072077; x=1787676877; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1787073010; x=1787677810; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=zqnxS9XoHpZEQIA/IKT4Qw6OuI1D+BX+6z9DjXQWeUg=;
-        b=lMjRkV2Gy0NCo769OJ7IHG/qlgYh4EOfWt/skdJsdwy/T0yORIcdcKuWlcsPCQ9Yaz
-         hRQ1xtxWVGtAfiCZJ7f3/zi0ahdACKRwnTd3RwNxnnOnfDIgeqB5WBeYPJCj6LnftJ0f
-         3e5A0q0yd5Ys48lkcgpL+6KdPkR/hF9fdeiwmYhhaapS2MDC4dp+APtPM7HiotAP+nmL
-         vpx57ewoMvGdUNECkLclwco9z6OkadyhjZfMVIrYIAgP59JGBNLO50KaHXQ638Vg90ex
-         8IxfV2WlHUs0V5fDKbCuFPhiGnILrm52m95w6X9Ppwqjxyju9ynUMimXT/gNegs6VWGI
-         H9dQ==
+        bh=uBZk4YT8qgXdmFVphk3af38SH0U45FRNDQkqVdk1COs=;
+        b=NDKnue1Mx60bb4wUB/9xVKsZ6B6d6aBnp+64OqG7wPmASn/QOtf7UOlZm786epeOQb
+         9b+pFDxqnmkD5aV/w2d7AFi9BsQu9p700riDAgihrGM+95PEiM22F2tAWn25EmaK3UNA
+         Ly02/5sbtVwKNgQeHySZ/E1XtiuYpquGSaDxHUQhul6gKLTwl494r+w+b4id2bQ8L+mA
+         aGqOQRxux118KivAmd9znAmeHFvQMBmpOWymDFKEiJ9BSCAuVDE09q9uAHuK6jewupQC
+         yq2+902n3k/bquNSufjJxfjl15PpTjNeLEz9mdTHcCVeEsoSufWYBm0w0yUnMx2lVjEW
+         fcJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787072077; x=1787676877;
+        d=1e100.net; s=20251104; t=1787073010; x=1787677810;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=zqnxS9XoHpZEQIA/IKT4Qw6OuI1D+BX+6z9DjXQWeUg=;
-        b=I6iT10xstyp1Oh91pyXNkP1+DZysXu5Pta9CG/rtFVJ8+DgQojCFYoG4BMXAWM3OIe
-         ehJ8ilYEe2vuFc09UlPCLJtUSck0OajkLl9eukcYEiOsIGpQztYiLnMEr5WUOvLQ1tCy
-         i7E7oJhaN32LSEfHZTgflUaAdtHR+ulXaHTA4a11RMBLovOKrCb9OPWPneSquJcnaLkT
-         ESW4IOX3Sd86QQu6cZ0WTJvtaFCikDNriAcGLA5Ra0MR0cgSmZYfW2AITgP4ulmpjNLa
-         nWfnZmMoOeZ2oPniX4/YAEpA8n5QhnQYr6WY1+XR5Amnm4N8p/E+njiSuFIVck70ih01
-         yviA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro/A/CJ6w8loJZXKewwfQXwNg0QOHMs4MuSKZByrDmyLSX9NacBJ3VH6vnYREBtmEvE1VDJoRO+lcwJZu8koFTy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJsWrCyOkNzUykqooxDVUppg+KMKLkJiP7g8egDxaGBwAruIHM
-	2YrrBridJ+Hd1e7STwj5gsI8P5BvvoExLmTvmIMpannWuOE7kgLSufyWaeSnDs1+UhK06KV6JQ4
-	ncvTfLQfQVUFUQdfETz/9iLMWn/taOZrbow3ObpOUcuXerAcI+D1G
-X-Gm-Gg: AR+sD102GONEa9ELJtRqxTazSuC7isc7KN15uzWNJCYchF5SrId5JKJQ8tq8V0DM1Sd
-	pmflAQ+F/ZpfXDabL0Iclc7f8q+TPb58SMJhU3jaHSUmkFwMsOaI9WOVFBItER4o1EitKmP8O9r
-	CVd8lEKrSm9dXc4xebG8Nzn4kiyuVY9tXcB+4ANOWim4GGYsooIIelDxU2fG+pLveEOxm4cS/DY
-	wUIM/LWs8BjHLKB0JKP4webwQdXHxJOSoWvw1Oclh4J8zzORnazkwXvfSKpFxZ3Sw2dOxQDEJJ5
-	0Gmng2nbwH8+iGoUDTYgikAab/6PunjWOlCwZZ3d3RMK0JwQUyMMQ8ORflxVRlYtVHTqBsBMNfO
-	PST4=
-X-Received: by 2002:a05:6402:1ccf:b0:698:9e5e:5df8 with SMTP id
- 4fb4d7f45d1cf-6a38a903b19mr18652311a12.7.1787072077127; Tue, 18 Aug 2026
- 09:54:37 -0700 (PDT)
+        bh=uBZk4YT8qgXdmFVphk3af38SH0U45FRNDQkqVdk1COs=;
+        b=YGNtTkUoH6+8gKmPzDD/zGb/EbSRg8fzOy7tDFp4Jl42pf2lLse+39xm4uZInnFuZ3
+         jL4rj+0jhpJc8r/GavgXN18nxttGzaCs1iNUjHfNzsKbkV1SvzwmdVvIrW8KN3Gy7cs7
+         fl5ZCAR3TDDCg8OjSlhbKYPstMpzIdLGtYR8qrkQX+/aaiBaNwY102smB+MZl6k7VRbt
+         7pE7C9I9aapws9nEIp7bWmc962KOG0/I+Ky2iw4E52IVCetVYdPMrnuLhdpkSqffyQKH
+         l/R+CNtF7iaFZgsx4cOPKzgkSWL4SGquRp57HwIxqr2q9v/pmrqJ2+FgcsfMKcf2zDRx
+         7Ghw==
+X-Forwarded-Encrypted: i=1; AHgh+Rq6z5gB4GBk4jyy7YsP8lPrPKL6EjqyVkykagSufZNEpcXJAnuhwTbtxskXhiRI+OkSDILobZqDMn4RTaTMctLe@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTwaawkLbGsWG+uL1vWKsZ2PVuK6hIZnDbCTLm4Xq0GZExQwsc
+	7WhCI6zKSbxdJClpZq2Z1MsvorO1zo3pOiXF6Ud1UZsPQnsGUX3B31yh9RMSO205G0ciWed/Z6z
+	mkHxp2uOm1DVk3uX27d13isYeac/Y5VqbCmsFTKd27A==
+X-Gm-Gg: AR+sD12o23HWw7jPmQyq78IeANcwruA9jaABDQvFs4A0vrHYn7DYSKcYx3ENMcrsMue
+	hBX48EBnJ2+aIH9uUdgGMy52YFPVGAwxHOiYuFfZ/BT2+Dsx0iTH5FaHLQYUzHgZm739UNMbxVc
+	OijpIzyD4XJX1S4QJqXBbutzwmMNKiZLLAW7/Ztw++X01I9CCw5/eoBWb6RFpEpN47r2LZRIm/i
+	Hv3v0qDvyTudtNrsum/qTBduGKgV2MtNpJRUHpUZEYdYgbxq75YfnCbOqAQzBCLTxll3wkDRN/1
+	x/vrOdAvcDcFLjbJwSHCk/CGjooD2dI8ty5Mq79zao/N5b++6Id9Xrqfo6UpiIF2gy4xXAwjMHR
+	jTFk=
+X-Received: by 2002:a05:6402:51c7:b0:6a3:867f:edd0 with SMTP id
+ 4fb4d7f45d1cf-6a38a927568mr15910469a12.5.1787073009842; Tue, 18 Aug 2026
+ 10:10:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260730052922.1610116-1-rdunlap@infradead.org>
-In-Reply-To: <20260730052922.1610116-1-rdunlap@infradead.org>
+References: <20260810051907.27136-1-phucduc.bui@gmail.com>
+In-Reply-To: <20260810051907.27136-1-phucduc.bui@gmail.com>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 18 Aug 2026 10:54:25 -0600
-X-Gm-Features: AcwNN1WRiHu7mLOcW9xRfRWwYQaB85hzyIV1qts_LBhRnwuiHjt6jJlCq5ufVcY
-Message-ID: <CANLsYkwOOU9YC73BgzjRjELzfcS1DwOmU9++ZmorHkG-4L=ooA@mail.gmail.com>
-Subject: Re: [PATCH] rpmsg: ctrl: use kernel-doc format for ioctl macros
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	linux-remoteproc@vger.kernel.org
+Date: Tue, 18 Aug 2026 11:09:58 -0600
+X-Gm-Features: AcwNN1W0aiakkr2e92E9x-HbBeSLfkJ2O2xbcsCE6IBCSzoDBvWOIXWBuDs1O54
+Message-ID: <CANLsYkzHog8P=0Zxnn58zOQZP+RWiVpQxw3EDb4TkPdYxdYMfw@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: stm32_rproc: Propagate errors from optional
+ IRQ lookup
+To: phucduc.bui@gmail.com
+Cc: Bjorn Andersson <andersson@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-remoteproc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 29 Jul 2026 at 23:29, Randy Dunlap <rdunlap@infradead.org> wrote:
+On Sun, 9 Aug 2026 at 23:19, <phucduc.bui@gmail.com> wrote:
 >
-> Convert the ioctl macros to kernel-doc format to avoid kernel-doc
-> warnings:
+> From: bui duc phuc <phucduc.bui@gmail.com>
 >
-> Warning: include/uapi/linux/rpmsg.h:26 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Instantiate a new rmpsg char device endpoint.
-> Warning: include/uapi/linux/rpmsg.h:31 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Destroy a rpmsg char device endpoint created by the RPMSG_CREATE_EPT_IOCTL.
-> Warning: include/uapi/linux/rpmsg.h:36 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Instantiate a new local rpmsg service device.
-> Warning: include/uapi/linux/rpmsg.h:41 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Release a local rpmsg device.
-> Warning: include/uapi/linux/rpmsg.h:46 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Get the flow control state of the remote rpmsg char device.
-> Warning: include/uapi/linux/rpmsg.h:51 This comment starts with '/**',
->  but isn't a kernel-doc comment.
->  * Set the flow control state of the local rpmsg char device.
+> platform_get_irq_optional() returns a positive IRQ number on success or
+> a negative error code on failure. For an optional IRQ, -ENXIO indicates
+> that no IRQ is available, while other errors should be propagated.
 >
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Instead of only checking for -EPROBE_DEFER, propagate all error codes
+> returned by platform_get_irq_optional() other than -ENXIO, so that
+> failures are properly reported to the caller.
+>
+> Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
 > ---
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: linux-remoteproc@vger.kernel.org
+>  drivers/remoteproc/stm32_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 
-If Bjorn doesn't do so in his PR for this merge window, I'll pick this
-up when rc1 comes out.
+I'll pick this up when rc1 comes out.
 
 Thanks,
 Mathieu
 
->  include/uapi/linux/rpmsg.h |   15 +++++++++------
->  1 file changed, 9 insertions(+), 6 deletions(-)
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 632614013dc6..9301e1dab830 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -705,7 +705,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+>         int err, irq;
 >
-> --- linux-next-20260729.orig/include/uapi/linux/rpmsg.h
-> +++ linux-next-20260729/include/uapi/linux/rpmsg.h
-> @@ -24,32 +24,35 @@ struct rpmsg_endpoint_info {
->  };
+>         irq = platform_get_irq_optional(pdev, 0);
+> -       if (irq == -EPROBE_DEFER)
+> +       if (irq < 0 && irq != -ENXIO)
+>                 return irq;
 >
->  /**
-> - * Instantiate a new rmpsg char device endpoint.
-> + * RPMSG_CREATE_EPT_IOCTL - Instantiate a new rmpsg char device endpoint.
->   */
->  #define RPMSG_CREATE_EPT_IOCTL _IOW(0xb5, 0x1, struct rpmsg_endpoint_info)
->
->  /**
-> - * Destroy a rpmsg char device endpoint created by the RPMSG_CREATE_EPT_IOCTL.
-> + * RPMSG_DESTROY_EPT_IOCTL - Destroy a rpmsg char device endpoint created
-> + * by the RPMSG_CREATE_EPT_IOCTL.
->   */
->  #define RPMSG_DESTROY_EPT_IOCTL        _IO(0xb5, 0x2)
->
->  /**
-> - * Instantiate a new local rpmsg service device.
-> + * RPMSG_CREATE_DEV_IOCTL - Instantiate a new local rpmsg service device.
->   */
->  #define RPMSG_CREATE_DEV_IOCTL _IOW(0xb5, 0x3, struct rpmsg_endpoint_info)
->
->  /**
-> - * Release a local rpmsg device.
-> + * RPMSG_RELEASE_DEV_IOCTL - Release a local rpmsg device.
->   */
->  #define RPMSG_RELEASE_DEV_IOCTL        _IOW(0xb5, 0x4, struct rpmsg_endpoint_info)
->
->  /**
-> - * Get the flow control state of the remote rpmsg char device.
-> + * RPMSG_GET_OUTGOING_FLOWCONTROL - Get the flow control state of the
-> + * remote rpmsg char device.
->   */
->  #define RPMSG_GET_OUTGOING_FLOWCONTROL _IOR(0xb5, 0x5, int)
->
->  /**
-> - * Set the flow control state of the local rpmsg char device.
-> + * RPMSG_SET_INCOMING_FLOWCONTROL - Set the flow control state of the
-> + * local rpmsg char device.
->   */
->  #define RPMSG_SET_INCOMING_FLOWCONTROL _IOR(0xb5, 0x6, int)
+>         if (irq > 0) {
+> --
+> 2.43.0
 >
