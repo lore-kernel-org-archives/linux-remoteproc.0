@@ -1,120 +1,184 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB77221FB6
-	for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 14:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787062508; cv=none; b=nx6iJg4kSOs1gKgKuELmflwx3ghjFdHAZNUwq2IvZpSYhDOlqn8H/FZcPDZxtXRJNMp5OQPNzx4AqSHHk4epnFdKenF1mnX3PlVD+d3K4X6qD8hclFYoFpPFRx3nEz19yFn//XuJgf7Cr0P2C0dKdo/6XyAI5RcYZS6ihgPghhg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787062508; c=relaxed/simple;
-	bh=E02vUtIxVtGgBprT3efbHTZd4SSgMX7E6KNVUOmDUAI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MwwxDBd+mpTk9X7Wa/bvP+qS3S9i2jaQhbDAlijkREbcCS/PBm7TbhBtCJ4S6G5bkFlSQXPSo25LqDsFFemKr/IZiB6d+Vb1qgKZ9JnIdg2MM3Dl/tV5cF8blwpm3NXJreQlVD6qsCiUXf/teRwLdyYICWFDPsyWdHfdB+WbiJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=humanlearning.ch; spf=pass smtp.mailfrom=humanlearning.ch; dkim=pass (2048-bit key) header.d=humanlearning.ch header.i=@humanlearning.ch header.b=XKp2qKJo; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=humanlearning.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=humanlearning.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C63247DD55
+	for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 16:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.218.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787071349; cv=pass; b=VyliAZSLp8jH//KsmRimIvh/HFkCn53kMqsCI989x5tTAkwVUfkhNnDZeXHhcm8xcs016rc1XGYAqL8LhmArJ9vLyNXx8jjQmT7XQH6e8ckYALrw/+M6G1uIRxL6hdZ2Km+xVla6hLGgUBqB5hRSwSdxnKpRkrwdYo8tSDpIk4I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787071349; c=relaxed/simple;
+	bh=jOe/Qgt4xrTB740jyMnCQA6XR47zjyEenVDyBo7Zhk0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+plSDdDbCRXosVMVl7HchPrwATzZNDciLjMhIvsT3px0JB9wyH+j/SGKx7K4tz2ZitVXxJ7hyC/pp3IcsYBmKjcsKURsMm+P9h8MvBtyRKcq5/yIRD7HlY39LTfgHaQ1tePM7xyv6ZXqYkdMu7HYTkCHk7tGuC7s1n5tVZcYXQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YuYk0qcY; arc=pass smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=humanlearning.ch header.i=@humanlearning.ch header.b="XKp2qKJo"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4hPWtT32gcz19mT;
-	Tue, 18 Aug 2026 16:14:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=humanlearning.ch;
-	s=20250828; t=1787062497;
-	bh=0sodEiVPUIKveUv59uC88GsmtokX2XDvr12aUHa0t6c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XKp2qKJoM378zYcdQnshZ9oBEixGV3kJ1ufMKfA7I29q+Fq4UTjmdajvdxTEf1idE
-	 99CdIICH2AHqjijf/Eh+e339EcsEY+J+MxDnJ4SlVITpxU3hrp7H+4bJkZLYDCFFg9
-	 Aoz6lghHziAWTb7Wbk5wRjx+0SgL97tbVqP9XVGOQbiNWs3iOJzQCNqU+TgJnpHCNi
-	 Ni0epb7dIchhgNFKBylzxtGsQAd1tOTeqwqaDdjsqI/t9F3bOgnHxE6SjgZuKe7Ipq
-	 xqwnn4qKWiNNRwdgbKZtI234tGMxzZ0qYok40E69tPX+y47q5q+lKHhds5SqiBUnUP
-	 PTPlnrnDkMj+w==
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4hPWtS6DWvzQQg;
-	Tue, 18 Aug 2026 16:14:56 +0200 (CEST)
-From: =?UTF-8?q?Fran=C3=A7ois=20Roux?= <info@humanlearning.ch>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: [BUG] qcom_q6v5_pas: NULL deref in recovery when using attach-only ops (qcom,broken-reset)
-Date: Tue, 18 Aug 2026 16:14:56 +0200
-Message-ID: <20260818141456.3708-1-info@humanlearning.ch>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <anx6j8UX3BzvZ7JN@linaro.org>
-References: 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YuYk0qcY"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-c1c52d920b8so655217766b.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 18 Aug 2026 09:42:27 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787071345; cv=none;
+        d=google.com; s=arc-20260327;
+        b=TDfE55WoqGMLrXzGibH6spEPNHFbo+OyOSlFKZky/gu0+hL4IGZrh1EK//4gcYB+T8
+         6xoxDwuddSgW9OrkvrSgdzvhF+SCRbVQY0KDNlsa+V9nYcHgqJP9mPEuWUh5JpzAtQ4g
+         Fpx6lPhxpy5Gx1/8AptCrbOekpq7uDhvEfgbK1Kk7V2OVu7/EF4sB++WQxaUO9uZkDi1
+         8PgGPsCmPxw6zbAHvxFYknGWWS3E7lsIdpktMnQow42gEajEmOAyfArJjOv01MpLDMF4
+         ogXX8sCfuXcWtrY3QiqWWtZZGGPJDorE0RHBeufDiqddRMrPHz1PQrriOkTrKSBC983x
+         MawA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=C1LqKy0ru7P4gjurmwOxAwwAQ13L5hLvH14rjfrn234=;
+        fh=AVcRgPhY/mRf6sYu2/adnV3YsMWyHzJLJw652qGRMgU=;
+        b=rSPglLViGnL05ms8KZsxtDRVmiL1cIO+3C+YwA8/XLZecHZwCZi5qvzYOQVdjR4yP6
+         erGJup52Nh+1bRxj/rGuEl8ie+Qf+2ju5YMcZFhaKKii+zs0meMKX7ANXnuKi2KxkwQP
+         037PV+Y3dyq/sjp+vWhBOobIdzDV4hcY5p658klC33qJ67RtxYFJyU7NZmpEfcl/8rrB
+         3iJ64WmiH9lxpQJCdiCkczbPNRaB332JOqMQAG5mcT7ehVtNk5jjDrAgxxfdrk5r4bY5
+         q4oNtkXm/V225l//MF9/+BLgXWh09PucfYQuruk4b4d71wARpRyqulkDSCYjcacUK7/b
+         JRUA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1787071345; x=1787676145; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=C1LqKy0ru7P4gjurmwOxAwwAQ13L5hLvH14rjfrn234=;
+        b=YuYk0qcYp+B9Da9akzhGyBvG2mwKu0oPcbyR+lAN3uqA9ustGgs81phGUHsFIOdNC4
+         zemkPkWxLyATn4kfUk6YVzoDclod3dJcdKJ8GLIpzSbSVfZ1z4oumMIATu+1F5Kvxim5
+         /J+dxgRX9DDUYiueXjwyavosbr2WWQ9LFyO1zPV4J8MxnKbPmG/LcMAFxKwdQASu0t6u
+         rcBzFPivg8Vq1xrpjn2OvX9Ub3RO3q3rHkgDuDc03DXbN5pGpB3YSZCh9lR87Ag0Qwgc
+         PoHNNGyQNhiuP5jsHSmq7AyG4w5ZXiRlPLeTixxuyP0Syptl7gRUY+0afUESaqEnZ/9Q
+         mbzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787071345; x=1787676145;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=C1LqKy0ru7P4gjurmwOxAwwAQ13L5hLvH14rjfrn234=;
+        b=pNhpGd8DA5ZnAVB7DwncSTb2Eg04kSjpQv8Z1TNn1hYEeGHs2QoRir4hJW1lBgKKGJ
+         jn3rebj1LhChaOK5QgKC0LWsfn49+QudOHpSfWBFqfEr9anWdSUtZw/VyjCt0Xy0HfzE
+         hpzzwYEB54Sw0uV4HXC9Sy1AFBs+c8+cNuqDLMYOf9E3NweVQICsIp0Gsh2ONeetVxo1
+         83h1aU0SC5zEQ+y1HPMA8Wr+7clSTN2A12OcSR29P35V75AjvXANvqHIaiHn4sglADqn
+         PNjPq8EqDR/MXCJRsxzwpVbJ++G/+2afqkT3ZjQhpGbWgrPX0NxfNxWsjJ+9AYs0SYmF
+         KcPQ==
+X-Forwarded-Encrypted: i=1; AHgh+RoqgZPVEtWqU6BJPxShacI0mNF5mRXuZMQAWzT8Xj1jI+40GEu2fv+KyQBoYuTDrU6aAilZbqFtJKWVL6H1r+O+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaJSfhB40Nh7mJgAht4neZ9+LibzFaaz27o5RJO9H0b6wHiOhe
+	PKkRnYaNYR7CsPECa8/aIez7giooxw8gSU4EZG9s2BOilZpK5nId0YECUQhf1MTxod/0HvwLvF3
+	RRlFFfCGAbuTyg0yZY8l0HNeFqLDB8+kw5MqRDt9xWZb7AyiMQKBL
+X-Gm-Gg: AR+sD102twlmCzxjJKBLkiVCl3Ok3h2HJjSF7wqKwSFjh++F65VBWwiDE7b/xs3eOCf
+	V8kHkx1evbYtR47ucYYo/P22x317Lj5xxZG4y09kU4/WPaa18MvpL6CVF0e6JRxnSEj6DO6c3kr
+	r65ppC/fbk/WYLgog3gZF08pOG7Irt59qwRrlNC38sJ64gTS2DaBVsKHkcyeQDK6splidQtNNJR
+	FfCW38WV5/PvCXMli1V5/EPGzNJ8+pi0fE3A+ztkqAbLTcY6SjXstNNLN1/+E7KzkHETwWD5qkx
+	8te+B1s/QTulLGG2MPCANG+Lg/PktIWzIHCWWVx6pQFlY38vShCvjO6ujbe502coE+dupxh6hlk
+	j04k=
+X-Received: by 2002:a17:907:934a:b0:c15:deea:a178 with SMTP id
+ a640c23a62f3a-c212a33b977mr1431132566b.25.1787071345467; Tue, 18 Aug 2026
+ 09:42:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20260724025322.2341205-1-sammiee5311@gmail.com>
+In-Reply-To: <20260724025322.2341205-1-sammiee5311@gmail.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 18 Aug 2026 10:42:13 -0600
+X-Gm-Features: AcwNN1W6syuqo9XFENbuqu8SdO9PAKceH7Oqq3zh7WyLsaBRbVXAC33BZH8edaI
+Message-ID: <CANLsYkz+h6ONmvhgdfGLNu21J+LrMSySFw9sxRcR4ZxLwPfbsg@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: elf_loader: bound the section header table
+To: HyeongJun An <sammiee5311@gmail.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Stephan,
+Good day,
 
-Thanks -- and you are right on both counts. Attaching a crashed remoteproc
-makes no sense, so my suggested RPROC_FEAT_ATTACH_ON_RECOVERY was the wrong
-answer. I also have a correction to make: I wrote that the crash could not be
-triggered on demand. That was wrong, debugfs exposes exactly that, and I
-should have looked before claiming otherwise.
+On Thu, 23 Jul 2026 at 20:53, HyeongJun An <sammiee5311@gmail.com> wrote:
+>
+> The rproc_elf_sanity_check() only checks the image is big enough to hold
+> one section header. But find_table() walks e_shnum of them, and first
+> dereferences the header at e_shstrndx to locate the section name table.
+> Both fields are u16 and both come from the image, so an e_shstrndx of
+> 65535 reads about 4 MB past the buffer.
+>
+> The commit 9f9967fed9d0 ("soc: qcom: mdt_loader: Ensure we don't read
+> past the ELF header") added the same check to the MDT loader, and says
+> the header "is sanitized beforehand" under remoteproc. That is what this
+> patch makes true.
+>
+> Check e_shoff against the image size first, so the two bounds can use
+> size_add() without an e_shoff above SIZE_MAX wrapping on 32-bit. The
+> bounds are separate because e_shnum may be zero while find_table() still
+> reads the e_shstrndx header.
+>
+> Fixes: 400e64df6b23 ("remoteproc: add framework for controlling remote processors")
+> Cc: stable@vger.kernel.org
+> Assisted-by: Claude:claude-opus-4-8
+> Signed-off-by: HyeongJun An <sammiee5311@gmail.com>
+> ---
+>  drivers/remoteproc/remoteproc_elf_loader.c | 23 ++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index 94177e416047..da3cddbe7d4c 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -46,8 +46,9 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>         struct elf32_hdr *ehdr;
+>         u32 elf_shdr_get_size;
+>         u64 phoff, shoff;
+> +       size_t shend;
+>         char class;
+> -       u16 phnum;
+> +       u16 phnum, shnum, shstrndx;
+>
+>         if (!fw) {
+>                 dev_err(dev, "failed to load %s\n", name);
+> @@ -90,9 +91,27 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+>         phoff = elf_hdr_get_e_phoff(class, fw->data);
+>         shoff = elf_hdr_get_e_shoff(class, fw->data);
+>         phnum =  elf_hdr_get_e_phnum(class, fw->data);
+> +       shnum = elf_hdr_get_e_shnum(class, fw->data);
+> +       shstrndx = elf_hdr_get_e_shstrndx(class, fw->data);
+>         elf_shdr_get_size = elf_size_of_shdr(class);
+>
+> -       if (fw->size < shoff + elf_shdr_get_size) {
+> +       /* keeps shoff in size_t range for the two bounds below */
+> +       if (shoff > fw->size) {
+> +               dev_err(dev, "Section header table is out of bounds\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (shnum) {
+> +               shend = size_add(size_mul(elf_shdr_get_size, shnum), shoff);
+> +               if (shend > fw->size) {
+> +                       dev_err(dev, "Section headers are out of bounds\n");
+> +                       return -EINVAL;
+> +               }
+> +       }
+> +
+> +       /* find_table() reads the header at shstrndx even with no sections */
 
-So I tested your suggestion instead of guessing. Both runs on the same boot,
-same trigger, only rproc->recovery_disabled differing.
+Right, but if there is no sections, @shnum in find_tables is 0 and not
+arm is done.
 
-With recovery_disabled = true
-=============================
+> +       shend = size_add(size_mul(elf_shdr_get_size, (size_t)shstrndx + 1), shoff);
 
-	# echo disabled > /sys/kernel/debug/remoteproc/remoteproc1/recovery
-	# echo 2 > /sys/kernel/debug/remoteproc/remoteproc1/crash
+Why the shstrndx + 1?
 
-	remoteproc remoteproc1: crash detected in cdsp: type fatal error
-	remoteproc remoteproc1: handling crash #1 in cdsp
+Also, there is no point in doing this check if @shnum is 0.  Please
+move this block in the "if (shnum)".
 
-That is all of it. No recovery attempt, no oops, kernel untainted. The state
-goes to "crashed" rather than "offline", which is also more honest: nothing
-stopped the DSP, it is simply known to be dead.
+Thanks,
+Mathieu
 
-Control, recovery re-enabled
-============================
-
-	# echo enabled > /sys/kernel/debug/remoteproc/remoteproc1/recovery
-
-	remoteproc remoteproc1: recovering cdsp
-	remoteproc remoteproc1: stopped remote processor cdsp
-	Unable to handle kernel NULL pointer dereference at virtual address 0
-	Internal error: Oops: 0000000086000004 [#1]  SMP
-	pc : 0x0
-	lr : rproc_start+0xc0/0x164
-	Call trace:
-	 rproc_trigger_recovery+0x148/0x164
-	 rproc_recovery_write+0x16c/0x180
-
-Same fault, same lr, as the spontaneous CDSP crash I reported -- only the
-entry point differs, debugfs write instead of rproc_crash_handler_work. The
-writing process took a SIGSEGV, since the oops happened in its write() path.
-
-So: recovery_disabled = true fixes it, verified on hardware.
-
-One observation, take it or leave it: rproc_start() calls ops->start without
-checking it, and rproc_boot_recovery() does the same for ops->coredump. Even
-with the flag set correctly by every driver, an rproc_ops missing .start
-remains one debugfs write away from a NULL call. A check there would turn a
-driver bug into an error return.
-
-On qcom,broken-reset being controversial and possibly never posted upstream:
-understood, and thanks for saying so plainly rather than leaving it implied.
-I have written that caveat into my notes next to the workaround, so anyone
-picking it up from there knows it is not headed for mainline as it stands.
-The machine is a Surface Pro 12in (X1P42100) booted at EL2 via slbounce,
-where the DSPs are started by the UEFI driver before ExitBootServices; your
-series is what makes audio work there at all, so it has been worth having
-even in this state.
-
-Thanks again,
-François Roux
-
---
-This reply, and the report before it, were drafted with AI assistance; the
-testing and the machine are mine.
+> +       if (shend > fw->size) {
+>                 dev_err(dev, "Image is too small\n");
+>                 return -EINVAL;
+>         }
+> --
+> 2.43.0
+>
