@@ -1,132 +1,138 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A076392838
-	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Aug 2026 15:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787154711; cv=pass; b=JFv0TCbdLzQ2FD7ruEQy/5ibssT22/8I4aKBZiL6mOdSRx+x0ZGK6BnI1R/S884hCuq/JeV6epn2TWYEQk1s2PuQBIPf7k7GpT6rynf+AFpTKdtvu7G2emqfWGRMBwVJyiMUC4ByHKePFldnIPqrJ6xn5BjWmwysBzHzuA88jr0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787154711; c=relaxed/simple;
-	bh=M1gPc2bvaiQxb6vPvYuvFaGv1R/+I7N9bwofWz8Ps/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ET7I0/InIs2yuG0onYETJTzmcogOnXfBoJ5KSe3DdWnbSQZvllYNA7NmH1TRAdKx6gnokZfqBkZxE1tIN06v0aS2xmJXwGVULbmc47fjYu9Nbz/j7fVPRRO5IeHoIvaBnClGJCnQAHvB8xz5/cNrFdh1TsYXpz/zn4Og2/Dsu3s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v2cxfMV9; arc=pass smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66C248AE38
+	for <linux-remoteproc@vger.kernel.org>; Wed, 19 Aug 2026 16:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787157874; cv=none; b=IDREA9QNY3a8+oh+ieJzhIigscKefg815V8Ilub9hvWy3sdahNysc2i4bT70SSN4m8zUsWcyTsbeO3UT7Kha8jkMm/41dv54TZQ1B4us0jGmL18CUTCQKjSHzDii0mFJneSI9pUmtJomOVttW+3CjhTefoYNUwjoqrQJNyGO/oQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787157874; c=relaxed/simple;
+	bh=EoEAV7ejpSZmFcizF6/IsRWD8DS5esh3O+yCY1FlMaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P2XgFAEkyF9jRb68/Ep6+gJsRBdEWTBznJ7xOyIMhWxDzi6ZHlp4KSHQWwiyCFUjIhRMX+trRWlZBdfda0LzG0YehSch8n7DTtYU2gihaqTUg1RRyOKlzobUEsMEqZRgFsDYgdImvNJjlU+AL8DYBbm/vdiJoTX62Gu8wrQhO84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PNhoL/hJ; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v2cxfMV9"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6a0a4a17f91so2046947a12.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Aug 2026 08:51:50 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787154709; cv=none;
-        d=google.com; s=arc-20260327;
-        b=n23KfEvQbhzN4GPtc3Y0zOMKEWcUYFZaILcXAAm2Q/1LlTptt+RcAdKx2gsiss9LOl
-         8E98P2lrmjHDQC8U7xiiE/gL0Yif/U8NrUzvi3aU0nH92oU7Wv++YBmK8rdtyqP8IlG+
-         YDJiWi+6ITLV6LDqRvKKJs6H2vnxOHQzg/8XArGThYiXKDUEwNhTmHrpKfZDOxMazOB0
-         RuIa9SybauSbgm26lF5MtagdLntJCVbopYoAzgMZwBHExyltNP2fq4ypzwSOyUoeW2V7
-         N/PUdh0+W6ow2G1j2iwe2Pk3eipvUDMuZeQcmzyJTx23FOXx64J3Uqawigds3NzBi4Nw
-         s5RQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=FabclObMJFzoWdO6v3shf/pjOMMfD4e/jw+3OS9LCWk=;
-        fh=wYVpeM4+t4evSXeecNnGuyj/H1XD/CR6cFyfm1+gzIo=;
-        b=mYZhqwzG2yov0MIEIanggSJypMbH960UMSMYyj+Wsi1YPQCujufJCA8zC29I8qiHjY
-         stihIEPx6GKykL8S8UkkPlEv9ibkcd0h1G0EKwHusRWtpHy9XZb618O9wbqb6npoFRk6
-         E4akaMgMTPRaAZu59Li5E7bSqOEo0Ke2KL+NZ2gcZf/zMzoNRg+Q8NGxl+LS9lzkro1U
-         AVbpB/RGcfbEPV1NG0KM2I15bovZsnA6dPeOFjP55i5QPerKPhf2GLL8KR9WONrCgebj
-         EFape6u0G6BjLL+dKG9KgpKdaRBt+3QSB3PN8uBQIyCmzjYULdVpLB5EHr2wg9i0AvTt
-         /BVw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PNhoL/hJ"
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-38a0c7e841fso1842995a91.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 19 Aug 2026 09:44:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1787154709; x=1787759509; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=FabclObMJFzoWdO6v3shf/pjOMMfD4e/jw+3OS9LCWk=;
-        b=v2cxfMV9dmR1TC/N50BGwg8O9M5MzbLaiZRem0gN+mjlwJZ2SVxhiU7A3U4EL34rVz
-         yeNmqPIWWvFWoS0T6a+AWKYm1jzDvL/V+8uMdApVARpRSdQYb0mlEpFseiyqlGE/8Ws9
-         SNlyZaet6XtwN01wxteLI/wNx3gFr6wX//bma5aW+COommN0JrM0b5Hlx8VhwQTaCWEX
-         VPowmLzL7PhdEwgj0HoFz8xuqX7ybN3bFdIkhfRkAijvTH0ZOZBrJ2lC3N7Q8Jmuv6aa
-         NPJOUbCwE05+4GxibHxoxyCsC9JOdTeeiFYwwCSxGA+e5MYl3LYkm/sHVffBHQmV7c42
-         iZjw==
+        d=linaro.org; s=google; t=1787157872; x=1787762672; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=yUEL7Dgw3Ry1NoMw4a3dL5pN8hzybwWwVDY4tsypHy0=;
+        b=PNhoL/hJ18e8GzZaMZubgsLB+q6DTppt3JgF1Qamz6G9PF5BvaUfcWaa3dQTDm7MM8
+         ZRTrfq+DExEBoQpruWtV84dNDm3ICJTu5215Rtf8xsbEzig62XWzDUtOT51Bd/QNZWrZ
+         6M5eXPNLTYuhNLfjvtGNPiN1mwfLzMSi4bF+pnmB0bQXy7nvyoqFzB0ss2SHNWqeQGwi
+         +jLP0+p0uPmX2Ibpvyz1zV7sVindmU7eIHXbu3ZIams7yqVtpVcOjsTLL9r4aH02yQ1O
+         78RTZEmPrhVDL8/H0L1a/mnrNV8ecKMpSkma3nGPqrtPKekYno5zPMriWFYjLZnJ8Tw7
+         j1HA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787154709; x=1787759509;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=FabclObMJFzoWdO6v3shf/pjOMMfD4e/jw+3OS9LCWk=;
-        b=qx8PROjBJ0RN/D97Cnj0fHbF5UI/r46vjmaxfibP3TZbAzHAtuh3Msd6u7uhZAH4Ut
-         sQIhzP8lp4rO7eIFy8oDRwZ+Ib/K4SUIIfJjF90FBF5HpXWP+hasnosRgHwgpmrJQ81J
-         EmNALhJrykANbvXuqmYmGHHd4ahTW48tAJ/iK4YHEfklqOBQ++zGX3Od3j8QQSYm0Fkg
-         b+2fDHBv/Q/nZziAO16wTFCv9SQ86OBFMLUPs1RhgUFvUfPI4cw1jdwLbbUMlE1iQvBl
-         V7mRPWm/MYC1yImA2lD3dYgXD/suJcuhASB4Zb3C6IaduwjVK6LbNMXxouc0N8JQiJta
-         LVWA==
-X-Forwarded-Encrypted: i=1; AHgh+Ro5D7ZqHQY4HLO4qFNGBU90JtpxU9Akr342/sR4XxU+ctqmplIjn/Wl268jBPcYYG1aTt7Q0pXJ8GkfRHE2ww/8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt26Z7J9fdc7IHcX9FvXqUs7wvyOXuDisPnXxSwhESYecFt2LT
-	1Jo16qwhtlEGR0TYZKHjznUzKYVss1Tjmc2rnMpFvwWPZtknhRSnuzMe9tAFEoSnX0xZiwPnkII
-	JXroBgfczHIQOAnfMsMUarg0us6JIzvbE4rL8+mIRjw==
-X-Gm-Gg: AR+sD139boMkeJDhbeFxb0uhyQADF5jFSQzPic5VlU6aSQd2nXg2UmW9tKn0soROVJZ
-	Ma0dIzmGhxYfuhlbPg6Vf6a5wcK43t84gwXMcTq9MCRzavKV4nIDRbXLTDAjapJzHnRusP6nWyf
-	seaXxRDm2X0TQxjUfojNACYd4eCwWZJfUrxXk2eBC6k9OzftalDuhSPP9nri4KK9u+XnQe0QoO9
-	zEOLbu2KhqIvefIPdOswknVXD9vpYe+vy2dKgQ6nTBatEV6YMbVpxkbVedaUjazZ5aOV4t9hLw4
-	iOCKsoj07+buzkrTDEcSfovkbUJARlnaIweKxd0tPCiXv0rl0qFzIpnb/VjvT1EuGhXEzDhe0oT
-	korA=
-X-Received: by 2002:a05:6402:2422:b0:6a3:867f:edd0 with SMTP id
- 4fb4d7f45d1cf-6a4032a68a1mr4118517a12.5.1787154708670; Wed, 19 Aug 2026
- 08:51:48 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787157872; x=1787762672;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=yUEL7Dgw3Ry1NoMw4a3dL5pN8hzybwWwVDY4tsypHy0=;
+        b=jyAQd+Bob2dZorDLcwQOZukfR35OUEVoeWnKH7JV2SZ9pBmSIhAA8ueeB4NA2G/tP0
+         Lkd4azYR96/sGLeOVyQcxYpdbBCO8TMfFZDy1r8acN86MltN94okkOkhSHyv+x4Zsyug
+         SP+C8iVVaW86s+EZBpvSL9xmyYcrBhx+sB/akIAug8idRuYl2Cg2E+XXO3v0V63WScBL
+         pVKHea2OrYaJgLy0QCujAN4p7c8olYlCWHwVhHadvTs42G0yWzMBr/5W6CLUCvHXwJJv
+         ZPYtkgjovrTbVNrokTmq69hjAnftw8n57BafsmP7DTmKpYAuOtFTkvILWjAzzNFxJyxQ
+         C9tg==
+X-Forwarded-Encrypted: i=1; AHgh+RpxJztFrp889xg0jZOyqT8uvUPp/s0Rq4yarT10R8Ytg4KcEooZpRMT7bMdTqSC1lJ0Aa3MYRefZBO2KNSE/inX@vger.kernel.org
+X-Gm-Message-State: AFuF++kOoeHtYD05Mf3MGtB9hQWKo+kBNV+K9YaSjWSeZlqBXGiDPhgA
+	SuEkMDG7m13ueyr6f0FFEzlapV5Npa2CGc4cBQsBl6MNoKpgxdmPtXowBELc1hvEomo=
+X-Gm-Gg: AR+sD11/7Zih2BYjseCzPU3rdjyb7FmR9vDx8u0eIpQoQOk3fgg+ECtllRt0VqVYsh6
+	fek0Oev44EJD06ddbTLeESqoQ2QSFZqlX68sQohsUsfespFFM09AFM3DpgtBvGgIaIZJ30ImRsf
+	pM2EPryRt/Q51ZoHnVTt5GILb93c3+ZrCmYB0CykUlX3brVKducadPsGSFT+Fnq7b3Pn/mh0Of6
+	zXhzfZSCcu+vFLLWD2kNB8rZnCl7yZFkKVLM/syUYSJzINFahwQjZKDm8WSwvreXDX6vxajjYYe
+	3QtocSoKBzADYD3griLI2fhOjcXQy8+blVJg8hd/+M9HIKIisibWft++x7e0bY/Qcru0Qc7yAT/
+	FhoVpAXnuPqLnUMR6vCuCAAcAxFLYlzeQNBXQo+NBF7WciHdUiR8FjoaLVNlzPkVWd94iToGLx4
+	BKyALq0JE0ZlB9p+qbwoUalGeAOQALIoqm/2F7mDwky/Kxn8TGwnWaeI1kGtzcKBxv
+X-Received: by 2002:a17:90b:3a05:b0:38e:bbf1:de34 with SMTP id 98e67ed59e1d1-39580aa6b77mr11612863a91.7.1787157871904;
+        Wed, 19 Aug 2026 09:44:31 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:97bc:8ed5:dd4f:e433])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3957f96cd4asm3436661a91.3.2026.08.19.09.44.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2026 09:44:31 -0700 (PDT)
+Date: Wed, 19 Aug 2026 10:44:28 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: HyeongJun An <sammiee5311@gmail.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: elf_loader: bound the section header table
+Message-ID: <aoXdbENOmRRx2o6l@p14s>
+References: <20260724025322.2341205-1-sammiee5311@gmail.com>
+ <CANLsYkz+h6ONmvhgdfGLNu21J+LrMSySFw9sxRcR4ZxLwPfbsg@mail.gmail.com>
+ <CAJciObG2OahhKz+t9pbA1yCHz4pFQLK6EKmZMwY2zxqD33SgQg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260818083506.79567-2-krzysztof.kozlowski@oss.qualcomm.com>
-In-Reply-To: <20260818083506.79567-2-krzysztof.kozlowski@oss.qualcomm.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Wed, 19 Aug 2026 09:51:36 -0600
-X-Gm-Features: AcwNN1XRTsmCPwB72DvdE_IQEeyvcZekdfwlWqyBEHToVcymOI-eY1KBrpFJDYU
-Message-ID: <CANLsYkzzzooMBri9_BbSavFE3h_mhMzrjCU6+Y22fFC6SrsPcg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: remoteproc: ti,am3352-wkup-m3: Drop
- redundant reset-names dependency
-To: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>, 
-	Bhargav Joshi <j.bhargav.u@gmail.com>, linux-remoteproc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJciObG2OahhKz+t9pbA1yCHz4pFQLK6EKmZMwY2zxqD33SgQg@mail.gmail.com>
 
-On Tue, 18 Aug 2026 at 02:35, Krzysztof Kozlowski
-<krzysztof.kozlowski@oss.qualcomm.com> wrote:
->
-> Core schema already defines dependency of reset-names on resets, thus
-> code here is duplicated.  The only meaningful new dependency is reversed
-> one - resets depending on presence of reset-names.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/remoteproc/ti,am3352-wkup-m3.yaml        | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,am3352-wkup-m3.yaml b/Documentation/devicetree/bindings/remoteproc/ti,am3352-wkup-m3.yaml
-> index 9e8a03acdec4..997be06ceeb1 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,am3352-wkup-m3.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,am3352-wkup-m3.yaml
-> @@ -62,7 +62,6 @@ required:
->
->  dependencies:
->    resets: [reset-names]
-> -  reset-names: [resets]
->
+On Wed, Aug 19, 2026 at 09:15:27PM +0900, HyeongJun An wrote:
+> Thanks for taking a look!
+> 
+> On Wed, Aug 19, 2026 at 1:42 AM Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
+> > On Thu, 23 Jul 2026 at 20:53, HyeongJun An <sammiee5311@gmail.com> wrote:
+> > > +       /* find_table() reads the header at shstrndx even with no sections */
+> >
+> > Right, but if there is no sections, @shnum in find_tables is 0 and not
+> > arm is done.
+> 
+> The loop is skipped, but there is one load before it:
+> 
+>   :266  name_table_shdr = shdr + (shstrndx * elf_shdr_get_size);
+>   :268  name_table = elf_data + elf_shdr_get_sh_offset(class, name_table_shdr);
+>   :270  for (i = 0; i < shnum; i++, shdr += elf_shdr_get_size) {
+> 
+> :268 reads sh_offset out of the header at index shstrndx, before shnum is
+> tested at :270.  Both callers, :336 and :380, reach find_table() without
+> checking shnum.  The value is unused when shnum is 0, so it is a 4 or 8
+> byte read past the buffer and nothing worse.
+> 
+> > > +       shend = size_add(size_mul(elf_shdr_get_size, (size_t)shstrndx + 1), shoff);
+> >
+> > Why the shstrndx + 1?
+> 
+> To hold the header at index shstrndx the table needs shstrndx + 1 entries.
 
-I'll pick this up when rc1 comes out.
+You are correct.
+
+I would assume that if e_shnum is 0, then e_shstrndx would also be 0.  If it
+isn't the case then your patch is valid.  I will queue it when rc1 comes out.
 
 Thanks,
 Mathieu
 
->  additionalProperties: false
->
-> --
-> 2.53.0
->
+> It is keyed on shstrndx and not shnum because nothing here requires
+> e_shstrndx < e_shnum.
+> 
+> > Also, there is no point in doing this check if @shnum is 0.  Please
+> > move this block in the "if (shnum)".
+> 
+> The check it replaces, :95, sits outside any shnum test today, so moving
+> it in loses what master already has.
+> 
+> If you want it inside, the way there is to drop the read:
+> 
+> if (!shnum)
+> return NULL;
+> 
+> at the top of find_table().  The loop already falls through to return NULL
+> at :313, so it changes nothing today, and the bound can then go inside
+> "if (shnum)".
+> 
+> I am happy to do either.  Let me know which you would prefer for v2.
+> 
+> Thanks a lot!
