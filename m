@@ -1,86 +1,51 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [188.68.63.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D732FFF89
-	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Aug 2026 07:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC8341169B;
+	Fri, 21 Aug 2026 06:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.68.63.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787212072; cv=none; b=sKPganp1pir5X7YLMmFM79GoMjZKNTQWtiqsOjBREXiJE/vLAMuIdY1cMMb4HQlrfEMbl1nTKxtLdJL6G4oWYxmipN/YWXpdJgn2pue/uL0FEQdW3iX9Jtb2bpI9plWFe1C0PnxltrpUHviZZY8WDMnjQg+TkVC70ELqOp9rqYU=
+	t=1787294170; cv=none; b=dumhqS1V5KeOAZLYMMSyo56mk9MUWKfDUQL8BNVAFP+bFqMJQv4KwwZ9Z6qpGvzgym2AVQUe9cotBmnva7yOLkS7fQNz+c3//sVxUnC90pqNlLUWx150qP157arsdfdFNDr0BAsk37EF94fn1l3u+ShNtGeYocQDLZm2m6dERQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787212072; c=relaxed/simple;
-	bh=dyoha8dpk++8RF2C9T4lFV6Pmg1VpR1S32nduflGSsw=;
+	s=arc-20240116; t=1787294170; c=relaxed/simple;
+	bh=fWzhvxr4a/sLeJPe/1v2NF5fNebBN1hiMDIf/zflUEI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PC4PPdBSdhT+ZL+78s62x6+0gmsuf43ms7QHcUYL9rbaU8ziinHVNgFZCphu8kSUzPzxNYTsH9vCzyfHKvO8wmI9/3zb2NJ8vZVVJMcuLdks3XqKhQVHtGTuqM7ZHlCDJ5DEfqiFhLKWaMNY3rYIIzlis/XSzVKyNpeehkHRuqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nRW1Xv8j; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TzhfC6R1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 In-Reply-To:Content-Type; b=WZQ9X5KlpQi2awd4+XQxyiO7RnAN0sJ2RUt+bumQOuSmownwCWVEEzCOP5KKhzRzvtpSuaL/nwng2RR6zjlDMqbI8WG2IE2WeocCkhzdxz+IFF/GV2dlyyboMdfiN8CSnpGabZPjgSOp5oaDdQL0lKFwNNLRCDqI/SblD30oFyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Kv6D9hrV; arc=none smtp.client-ip=188.68.63.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nRW1Xv8j";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TzhfC6R1"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67K6NHAB490435
-	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Aug 2026 07:47:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	//kT4S659YrxCLxrC89SElD2a6l456qXua0Jo1L5E2M=; b=nRW1Xv8jqppNtn/z
-	0p+mTcDyP103xwzfRZtPJdozyRYtWQr4z8dUfJDVJRxWBuKv3D2uSV+ElmX1FEOG
-	39xua+7a+Fz/gIjVaEg7eJooDo+vPQkJnDSv4K4PfK/gjjMdryoRYRDBWkX5QwGb
-	Ph84XEVYMn23hdhIzLmKz3qNGkTPSRPJW6p37/UFmwdZQQ29x8x0dL+VSSHAu9Yc
-	z3t9v+DZackWu+TONl3NAsFYQ8kfRRA78TvtQWw2OEzw2HJOlrjzRJKROWtjMA+R
-	niwNVaBgNgH52l8wF1Wi1cMNhgx5feR3yI7OihPzsDn5V9OQDZnIXWcbSl2vLoHW
-	pcZ89Q==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g5ervku1q-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 20 Aug 2026 07:47:50 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e5fc4c7e9so252323485a.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 20 Aug 2026 00:47:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787212069; x=1787816869; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=//kT4S659YrxCLxrC89SElD2a6l456qXua0Jo1L5E2M=;
-        b=TzhfC6R1XPtlajIqHLHrSpY8hAlhtG2akUOG75R/JuICv5QBN3Hs3VwGOlCRdufxEL
-         MPo9BTQTBMEZWDBMV2VHuLo8MPeigJzz5d55xB/snUS730KlOMz1bFa6z7d+cx2HGNw5
-         7iI6LKn87GWuJc7J2qSftzfLUmODTB7sDVTG7OpizBwNgSxrZhtyX3fLmHe6sEB/g9pY
-         ynUj1xJloXUNq1BR+GcHThDw48jP/6py6XNDZ9CfZ99jHxdQ4YbdXHuHyc5kQ6sS0CZ+
-         cpaDzsIUHf6Ief8PY65nOi3i/F2ZK7URpYsYyh63/sgWC+LJrgWgspv0P2arFeBTznI9
-         itQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787212069; x=1787816869;
-        h=content-transfer-encoding:content-type:in-reply-to:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=//kT4S659YrxCLxrC89SElD2a6l456qXua0Jo1L5E2M=;
-        b=cq78KDx1noEGg6Ic28HI+7RjtrC0aGnWM1enxry4p2kWCqzfXrI1734eMxTkRIdddx
-         JcgS0yUkDtdbnNVdGNlzJtcTaFEnQ15JRsQgACJ2WMGNCCGbsDoiR5Q+87A+79ZsgFWO
-         CBgIqtYKq9nBekBCCNVQKzLPHw7UFMFkr54jp7oT0pb819dwZNhxGaW9feh+7Gl7pu3V
-         h7kSGkf0U+dC3SVT/SzEKLnUAd3I3TWorWCkGhaCSW2VKjUK7foqCWGLRg7wEIIQfsR5
-         fuHdxJLg46K81T5lmU+0epEy0MX/oj003SkBdLQQ6SWeQCrECwDoqn6IPV7idrwqQtoT
-         24sg==
-X-Forwarded-Encrypted: i=1; AHgh+Rrsix/imnonGecf7c9ke8pI7DjFTHZB0L5NrQLw2cDh4Bd+1fUV4c/mDDyht/3q6bUoCN9OHxadeoDc7T7qaU8r@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqeBdr/9W5+anbq6yiWpfkkzEbEDYwD785GmJmokvZRl44aiHy
-	upnuvPpZT2fzGXRlPTFLPeJprnHbnDonm40RDMZa5PSlt3FdoROld/XLD0yEeYmR2Pq36m6zVnU
-	yinKC+u/BVrqkJkqMguU9e+Nkv8w6BF2R1YC1oAPjBgrBwUl6Kx2xejwfXhs/7cQqkcuwKafo
-X-Gm-Gg: AR+sD11zz9b3pNe5XEMdqcIP1bnpN+5/k0OFvSHuxbUCbRrzNFwmAdzwRMP5EHLrJ3C
-	XrhxKwatnlcRYHOlozuFryz/6a+dor5Lepv+jCoHFKpMmtz+2K3KSoU9r7ItyWG8K1th1GpXERy
-	QuVUfdqzlHph0Pu2KUR+ewjwKDspTqOLIYiYnqW9nR6oVXtFeZqHiiQDDYk6Fr8iQXozZmF36RR
-	nWaEiNgRoqE1Xs7nWAXsBy5D6cSz9iQoaZZelLjl9XdiZ+TD8GIr3kKdrmK7eRqAPDO+pUZlzAI
-	ASFJQe28SmdfO7VycGLlFqyy72Vfc3ZizHYYg1jcU8TKYMxTxL4Y6GjB9sK2hr1TNKIXCrfhXw7
-	o9sZxvOYsiG3c5ZvfXz9JyQIsLBfW
-X-Received: by 2002:a05:620a:4415:b0:915:5cbd:1d96 with SMTP id af79cd13be357-9371e6ee08bmr938306285a.33.1787212069374;
-        Thu, 20 Aug 2026 00:47:49 -0700 (PDT)
-X-Received: by 2002:a05:620a:4415:b0:915:5cbd:1d96 with SMTP id af79cd13be357-9371e6ee08bmr938304285a.33.1787212068889;
-        Thu, 20 Aug 2026 00:47:48 -0700 (PDT)
-Received: from [192.168.1.110] ([178.197.219.214])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-499b212fc11sm20514795e9.1.2026.08.20.00.47.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Aug 2026 00:47:48 -0700 (PDT)
-Message-ID: <edb61715-a676-402e-a269-613bede12639@oss.qualcomm.com>
-Date: Thu, 20 Aug 2026 09:47:44 +0200
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Kv6D9hrV"
+Received: from mors-relay-2502.netcup.net (localhost [127.0.0.1])
+	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4hR9Wz1T2Wz69S2;
+	Fri, 21 Aug 2026 08:34:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=leemhuis.info;
+	s=key2; t=1787294079;
+	bh=fWzhvxr4a/sLeJPe/1v2NF5fNebBN1hiMDIf/zflUEI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Kv6D9hrVcE3tlzweEpaFeqbL12Wunuz7tbgpAiOGwkkpguPK3N6sioxGtcdEQWd40
+	 B4ofRsI6L/U8vXmHbyoqfY8Z81YThU+CDMslPhFs+UJn+xGYbz+Saiz0osxpGRoZZ9
+	 40XBfZ7FSehAGA5+8KASM/+9jW6cQGUy7muhgTV1eKA4alMPEJ9tRjyuNy8gMkPO6A
+	 OpikIkqiQcKNkMKllvqYnBLBkZYfvZ9kqMB0JeuHM2hDeCde6wfTz9QAUFzU3n67AG
+	 IOoJRe9RM1P4icGUKh/885jgANtqszshPnR8i1E0VI9w42eEWxAUhpNdITLsOzONjB
+	 ElOBd6VNT5OHQ==
+Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
+	by mors-relay-2502.netcup.net (Postfix) with ESMTPS id 4hR9VV6CK4z4yWc;
+	Fri, 21 Aug 2026 08:33:22 +0200 (CEST)
+Received: from mxe9fb.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4hR9VT3rfvz8sch;
+	Fri, 21 Aug 2026 08:33:21 +0200 (CEST)
+Received: from [IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f] (unknown [IPv6:2a02:8108:8984:1d00:a0cf:1912:4be:477f])
+	by mxe9fb.netcup.net (Postfix) with ESMTPSA id 7B9D35F9C0;
+	Fri, 21 Aug 2026 08:33:20 +0200 (CEST)
+Authentication-Results: mxe9fb;
+        spf=pass (sender IP is 2a02:8108:8984:1d00:a0cf:1912:4be:477f) smtp.mailfrom=regressions@leemhuis.info smtp.helo=[IPV6:2a02:8108:8984:1d00:a0cf:1912:4be:477f]
+Received-SPF: pass (mxe9fb: connection is authenticated)
+Message-ID: <943d1db3-f117-4e9c-94db-7221b47d9d29@leemhuis.info>
+Date: Fri, 21 Aug 2026 08:33:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -88,80 +53,152 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/9] Add support for Qualcomm remoteproc subsystem
- cooling
-To: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org,
-        manaf.pallikunhi@oss.qualcomm.com,
-        Casey Connolly
- <casey.connolly@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@oss.qualcomm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
-        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Rafael J. Wysocki"
- <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-References: <20260809-b4-qmi-tmd-v8-0-b15d47adc379@oss.qualcomm.com>
- <9eb142ae-9f79-4f7f-91ae-6a49a7103dfd@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <9eb142ae-9f79-4f7f-91ae-6a49a7103dfd@oss.qualcomm.com>
+Subject: Re: [REGRESSION] qcom PAS TZ API migration breaks GPU and modem on
+ TrustZone without PAS (sc7180 trogdor)
+To: Konrad Dybcio <konradybcio@gmail.com>,
+ Paul Hollinsky <phollinsky@holtechnik.com>, sumit.garg@oss.qualcomm.com,
+ andersson@kernel.org
+Cc: mathieu.poirier@linaro.org, robin.clark@oss.qualcomm.com,
+ lumag@kernel.org, abhinav.kumar@linux.dev, akhilpo@oss.qualcomm.com,
+ konradybcio@kernel.org, mukesh.ojha@oss.qualcomm.com,
+ cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <20260808034716.58888-1-phollinsky@holtechnik.com>
+ <b63e93e4-2f4c-4cad-b726-e1b0565379d7@gmail.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: de-DE, en-US
+In-Reply-To: <b63e93e4-2f4c-4cad-b726-e1b0565379d7@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: bFzvPUHIcGlEGv3qJXrXPIvB3r6H1uXD
-X-Authority-Analysis: v=2.4 cv=VZ3H+lp9 c=1 sm=1 tr=0 ts=6a86b126 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=+bKQE0WJfmhK2875HamI0Q==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=DJpcGTmdVt4CTyJn9g5Z:22
- a=dTLPQwhzsRM4EjPZVQoA:9 a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIwMDA1NSBTYWx0ZWRfXy81jS0VnwtJE
- V5ax5FWCFzsCHKroC9WmNoAxKQq5P8kTB1Ab5tJ6K8l+MsGHVlmnHx6COTE2sJfeZmdJf9AwHEM
- OfpVSZqQk4/KFLk8gN0Q3iscQ86cPhV6wDfGe4mk0Fl/6Y3jrVlCoqOKheJrY6IbzbReTCPjzOZ
- D5XEYLzi/4bosyPocpkt1ga/VVBxYNw29morpQFa846rNVAwkkwj0kLP+k4kmtqrATdxpObe6iU
- 3xVYcS8R10tlFDBkD8vL2AX/crLOFHVt/sax15gg0JTQ1RTHjYbiJicoGJG/ovb/lcUpDpW2dc9
- hgcJcErjNy5HMYDbmu0/PuDyN5xe7bUjFTRR6VHWCk6Ru8ZFvtc1LcD0mwALaRPDpfOGwx7F/m7
- E1O/+kHoKAQxGWSOptapUw0yTcn8K+GZoyl8KBwbgRxefZ4bvll2h3tu61R1N6apcaXA4n2LRDO
- 1WtQE0UzCgHtyNlxHOQ==
-X-Proofpoint-ORIG-GUID: bFzvPUHIcGlEGv3qJXrXPIvB3r6H1uXD
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODIwMDA1NSBTYWx0ZWRfX+3BVf536/+Xp
- 8zHTVjGITGK5+kvwWmiwHxOKp3/f6A6rgnsJeinQsYimbgq4YjnG24vV+EuAcUT0WL8H9vwMBMA
- kp7GWRFrB1ZacQN4SuFRS3HwHCzmtFM=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-19_06,2026-08-19_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608200055
+X-PPP-Message-ID: <178729400123.2293361.5180616562923228567@mxe9fb.netcup.net>
+X-NC-CID: mdasp+gq17ABdqs7sDaa4dURyEqNXzgIFUK85nSdbZpvVCs/raw=
 
-On 20/08/2026 08:32, Gaurav Kohli wrote:
-> Hi Bjorn, Mathieu,
+On 8/17/26 17:41, Konrad Dybcio wrote:
+> On 8/8/26 5:47 AM, Paul Hollinsky wrote:
+>> Two commits from the "firmware: qcom: Add OP-TEE PAS service support"
+>> series break the GPU and the modem on SC7180 Chromebooks (trogdor):
+>>
+>>   f3b1357673dd ("remoteproc: qcom_q6v5_mss: Switch to generic PAS TZ APIs")
+>>   0be72be03ca7 ("drm/msm: Switch to generic PAS TZ APIs")
+>>
+>> Both are in linux-next as of next-20260805 and neither is in a released
+>> kernel yet, so there is still time to fix this before v7.3.
 > 
-> Just wanted to kindly check if this series can be picked up.
+> First of all, thank you for the amazingly thorough write-up. I've been on
+> holiday so I couldn't look into it quicker.
 > 
-> Patch 1 has Krzysztof's Reviewed-by and Daniel's Acked-by, and the later
-> patches carry the review tags received in previous versions.
+> [...]
 > 
-> Please let me know if you would prefer any changes or a resend.
+>> Suggested fix, drm/msm
+>> ======================
+>>
+>> Given the above, I think the right fix is to move the availability check
+>> behind the DT discovery rather than restore the SCM check. Boards with no
+>> zap-shader node then never consult PAS at all, and boards that do have one
+>> keep the qcom_pas_is_available() gate the original patch was going for:
+>>
+>> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+>> @@ -52,6 +52,12 @@
+>>  		return -ENODEV;
+>>  	}
+>>  
+>> +	/* We need PAS to be able to load the firmware */
+>> +	if (!qcom_pas_is_available()) {
+>> +		DRM_DEV_ERROR(dev, "PAS is not available\n");
+>> +		return -EPROBE_DEFER;
+>> +	}
+>> +
+>>  	ret = of_reserved_mem_region_to_resource(np, 0, &r);
+>>  	if (ret) {
+>>  		zap_available = false;
+>> @@ -170,18 +176,11 @@
+>>  int adreno_zap_shader_load(struct msm_gpu *gpu, u32 pasid)
+>>  {
+>>  	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+>> -	struct platform_device *pdev = gpu->pdev;
+>>  
+>>  	/* Short cut if we determine the zap shader isn't available/needed */
+>>  	if (!zap_available)
+>>  		return -ENODEV;
+>>  
+>> -	/* We need PAS to be able to load the firmware */
+>> -	if (!qcom_pas_is_available()) {
+>> -		DRM_DEV_ERROR(&pdev->dev, "PAS is not available\n");
+>> -		return -EPROBE_DEFER;
+>> -	}
+>> -
+>>  	return zap_shader_load_mdt(gpu, adreno_gpu->info->zapfw, pasid);
+>>  }
+> 
+> I believe this is the right fix
 
-What not to do during the merge window? Ping.
+Just wondering: who will submit the proper fix to ideally fix this
+before the culprit hits mainline (as Linus afaik does not like it much
+if changes that are know to cause regressions in -next enter his tree)
+-- or at least before -rc1 is out?
 
+The culprit afaics was authored by Sumit Garg, whose last msg on Lore is
+from 260731 -- which indicates a well deserved vacation or something
+like that, so waiting for Sumit to act might take too long.
 
-Best regards,
-Krzysztof
+Ciao, Thorsten
+>> I have this booting here: the GPU initialises and logs "Zap shader not
+>> enabled - using SECVID_TRUST_CNTL instead", as it did before the
+>> regression.
+>>
+>>
+>> Suggested fix, remoteproc
+>> =========================
+>>
+>> Keep an SCM gate for need_mem_protection and add a separate PAS gate for
+>> need_pas_mem_setup. This is what I did to get it working:
+>>
+>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> @@ -2079,7 +2079,16 @@ static int q6v5_probe(struct platform_device *pdev)
+>>  	if (!desc)
+>>  		return -EINVAL;
+>>  
+>> -	if (desc->need_mem_protection && !qcom_pas_is_available())
+>> +	/*
+>> +	 * Memory protection is done through qcom_scm_assign_mem(), which needs
+>> +	 * SCM but not PAS. Only the memory setup path issues PAS calls, so
+>> +	 * requiring PAS for every need_mem_protection platform prevents the
+>> +	 * modem from probing at all on TZ firmware that offers no PAS.
+>> +	 */
+>> +	if (desc->need_mem_protection && !qcom_scm_is_available())
+>> +		return -EPROBE_DEFER;
+>> +
+>> +	if (desc->need_pas_mem_setup && !qcom_pas_is_available())
+>>  		return -EPROBE_DEFER;
+> 
+> And likewise this looks like the correct fix too, feel free to submit
+> both as patches
+> 
+> [...]
+> 
+>> On the API contract
+>> ===================
+>>
+>> For what it is worth, the kernel-doc for qcom_pas_is_available()
+>> (qcom_pas.c:256) reads:
+>>
+>>   Note that it is mandatory for any PAS client to invoke this API.
+>>   If it returns true then only any other PAS API can be invoked.
+>>
+>> That is a guard to call before invoking a PAS API, not a statement that a
+>> driver touching TZ at all should refuse to probe without PAS.
+>> ipa_main.c:764 consults it only on the loader path that genuinely needs
+>> PAS rather than as a blanket probe precondition, which is the shape both
+>> fixes above are aiming for.
+> 
+> This is a sloppiness that got through the transition patchset.. previously
+> as you mentioned, qcom_scm_is_available() was a blanket "can we talk to TZ
+> yet"?, and as the conversion happened, it was largely just find-and-replaced..
+> 
+> Konrad
+> 
+
