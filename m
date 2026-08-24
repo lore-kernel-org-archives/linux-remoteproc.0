@@ -1,268 +1,384 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7E943CE59
-	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Aug 2026 14:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787582334; cv=pass; b=YoKbSwHxdGDJB2M6Fywfvvskv174XZf3NQ9ZTvVtgPliXyGEST5uvQwBM3Ku5DL12Q4zft0Vi7CXYSVP/7Zor9FOlF2VIvTVGGbTiOqzBcpAPmeXI77Q7EOR2yutZEIofBKeVh2Ozda00S46SQNUQ3MibTzXpteqOpF63a9p+H8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787582334; c=relaxed/simple;
-	bh=uIVVpMDmMGX0h/fu4HXu0BYDldpKQW0ZxH1umBAPys0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MjLGq6JXLKc8sT6qe8dzk+8l5ZeIZMZvNvrXIApPYREWenhHzwJXvK27jSXfBBM2qHuPMdzM1mdlYV9tre35O9csR97WzRdvW6CWEEkyyHLkTWTEeoCg7Lp5KT09K5x8D4CsuZYSDpr0NSb1NZ2trEUM/hjNaI/lwezSVMRhZfg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VvZkwirj; arc=pass smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BA236E473
+	for <linux-remoteproc@vger.kernel.org>; Mon, 24 Aug 2026 16:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787589156; cv=none; b=M+HdyIdalV+Ftxv/0R0eaUrCAOilOA89pyXiQO61B60DWLK4qsFWECYJZJTEAtXiswaI1b2MpBn4xl+tnyJ1KJFDF02o3x8zUfBm9Eq+JywAXDcR/qnVpSo3UEou4vDYNDmUznJzcMzXiah0m+tQ67IcTFsascnSjEf1yxM8Bf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787589156; c=relaxed/simple;
+	bh=7ythZQ3YvY7GBoX0Pj6V+z/0bxp4EG7mwm+w2adSPLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7BULJngYVBGvRIPzOXnFrqC4VRYPcIPdaUFZHc9OOlrP336rzoE388pBQcOyE97gPZHz8LzT/kT29o057QL+umxvX3w9iHGZMi04ksLHR/fRXQEokMR43LqnsAUQ9Tr05zlgxHIvXkVG4sKYhyhcVGfV2BHWNMWv1YcuH6JmSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GA2/jdyD; arc=none smtp.client-ip=209.85.214.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VvZkwirj"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6a1542cdb53so4351814a12.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Aug 2026 07:38:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787582330; cv=none;
-        d=google.com; s=arc-20260327;
-        b=XAcA6fih9LhKMdJrtlZouO4XWdAUslNa+MFEeVNrxx4+EwhnUszv258uOgV4I4pl+W
-         IpB90yT/lTRW2OREawdVTaPYIq9zdYKG2SRCOEP4A2qkTMh2dmqCY/rkd4dKlJaiOO0g
-         PTG27WSew6NHcU0yqrnhD/J2daS2R0EflHcpm9ixCPU3qt/j9HOPtvnbmZhbzqkrcBMI
-         LO1RU3Z4KnDLOBBELc9EnWcTbNeT0tRoVpxuxDEwU1FkeVDsSvcuBITpUTrT5iMFK1Go
-         loe5ow+13ZeuM9NCKs5SCVGdkIpbCv22p0YLIRCpNsSbp3Qcy/qdrmXtdJjSGJPG1UTQ
-         gVEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=Vm1p9M4lR0nH2xefCtH9dUaY37Y2P9W6T0kJp4WGVyI=;
-        fh=ZgfsZQ0PPe8+LcFyt/MbLyWF2iW303ajEH3ZNnnstCU=;
-        b=RWWtyBW8ys0dtjsXMNUnTXKL/lmrzEclGxr+seWyaUuadzdTV2m02+1fvB8f2srbgw
-         JjlElaCaEg060iAvm2F6oJobQSkT//i1h+gqw/NGFc14JDIeHsTCZgD5Cg1BQWP8YL6j
-         gJiqMqL5xQvp4sPenxvO+G96LPqszWeDYI37XHBrQZ8mWvah0MFWi3eo26wPp4tOpe0q
-         xmH7JstTcEXOGfYiZzfFmHOn4WwYUwXKbi9X9WIpDyprAtLMACn4screCCnrFFhsAaV3
-         YXtq7bTRrSChh0jgTTZLoNoccdBnZCsmdAJQgwQfmIjNFweX9kI+VhW3j3NHMT0LVCFo
-         5ecw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GA2/jdyD"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2ce98cb8165so993555ad.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 24 Aug 2026 09:32:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1787582330; x=1788187130; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Vm1p9M4lR0nH2xefCtH9dUaY37Y2P9W6T0kJp4WGVyI=;
-        b=VvZkwirjYSsd3dI2r3gNzvi5pI3wSfJrsSArNnW9Y2ROIlS/8QRqNL7LGDH9aypVsc
-         23FFX6uhpzplKWd9Tpj7WM7Upx/qo58j3lnRS+OpS2bSjfCKL2vV60oEyXYqJFvszkS3
-         sOj43oeVmWALH3aG3FgepLaidHbJf1cZ1J2UMl+DbxeRlgCMuebqjY0i3h492P9LXFSD
-         Ku5qlv5/1IaE5Bryclv5tUNCFYY1gbwZYrSNXeAWy40WyrDTiPMH0h9YsmThxk+ATW1s
-         pzvzRncB89LCfhFdxCyWHj2T2ytuIhdFRSNun2OBa5y4UKTa9XL1y6pTWgkNMqdkytUa
-         Tqzw==
+        d=linaro.org; s=google; t=1787589153; x=1788193953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=obEKnqCk5k+mpnKRq/ybUf1jSm4j71h3dTtcMTYrTDE=;
+        b=GA2/jdyDCvwOGJT1fDZ6Bxq6nNt3ZSKLPxRqybJuIol+EMvQ/Ta0ypTqTEnPew4jr6
+         MtrhD00pWof2TkAyDjKvEh+FwzBU43SgcNIUzy3/74XBhSk8DYQuMPBPsXvAqUalLqh5
+         15iKub251sz8dlT/pV4AsQvWiIR4VMU/yp0Eq/PUqgqBbUhed0XguWZywrt4/oSfcDqW
+         cJYqaQzhizqljcK2fIuHCAbzazm9Puo18ntIC0Md3gHHDXo4X023moghdLCK7CwPdnox
+         EPbcov2pBPIwbmUI9cfhBj/I0aYEegDQNEGmcO9z61+wnCvpQCitp20+ZV72E8854kM1
+         fGgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787582330; x=1788187130;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=Vm1p9M4lR0nH2xefCtH9dUaY37Y2P9W6T0kJp4WGVyI=;
-        b=Ncp+jS/vy+ZH18b8CHrCZsZD5nQ+OQtu0JSwsq8qYHioRRlW2CBeleBLCcmqRknChP
-         FuPUM8TatZ9Drfq8fu23LSV9j/+pljc3zHnUX5eCKi/x5vGGSkoHAN0FER7/ZoVXKzIt
-         6rsGuucK0ZMV4MBJDq2oG/XV2vQQu4nHdBNiDNBOl9io+OT60znY5cEq7lbR7BTEh7f9
-         Buq/m6jS23NYK+2uf4l+DIjMYxTD1XpoCAeUdr6O4GlYW6A+VIiHMjoE4YolsFvv7SbU
-         EOhRmTGxfQQiQv7Ueykb/b9SUe82hCl5HjxwcVBJSCwfGRJday6LYDBIfR3DgjlyXyjS
-         m+zw==
-X-Forwarded-Encrypted: i=1; AHgh+RoA807/SRgltVEggxZLIeVjxDPJmXzy3eabIcmRrEUq581z1Qf35cVwdGlM5r900UWT1yi82GEnpWqd0dXYEm6E@vger.kernel.org
-X-Gm-Message-State: AFuF++n2mZ5Qk9Fu+RjlKH6OO3iR7xLN//vuJK2xEyQhQPe/uaXyoHmr
-	fOCFRLqbOhasHRitTtLvRJ0qhY1tlp8FGuiZh+ms+tMwbYbjOuVO/4bEkOad3rpEcB0Ng/Jl0rP
-	QIMWPb4pRdg1zG9R2Z5ZFyMBPtemH2ZPzfuskViOW3A==
-X-Gm-Gg: AR+sD13ZnF5zK7PPSUzzmleyXfOtJTl6I+qYB5xr9oXQ3QNMogKyRyQ/cTCf+Pg0o31
-	sGZEnkFqxSQAYMHBD7EQnmuvueVaQkiAS6DgKNahCs4Gr0Cn3w1yW5iaH0JkyLBGJLp9OxA2QNK
-	28PFWXMRsrJnXL9br6B/zqa5H0Gfdi9y/kYm9zRZes3PdvAaiWv8BEFTDUofy8K3NiQsdJT73dM
-	QiLKyKOrUSbjGV1aZyqQnp8GN7jb9Xef8neUmaKQUBXSfEhdaGQ/1DQRWCOFpz1MERasx8veu8I
-	8O+slt6lNsNZXtAAt5Xjfrfvfijr7Ghi92rcXHDx+cXsrr1LmOOQD2+FA1CQuX9pj8WfkE0L/WH
-	cYJI=
-X-Received: by 2002:a05:6402:a50a:10b0:6a4:cc9:e32b with SMTP id
- 4fb4d7f45d1cf-6a582b608b0mr13946214a12.9.1787582330522; Mon, 24 Aug 2026
- 07:38:50 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1787589153; x=1788193953;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=obEKnqCk5k+mpnKRq/ybUf1jSm4j71h3dTtcMTYrTDE=;
+        b=AzITXj6aAfl1boz2HAc3wU9ZTapsafQxBtS/kqGzx4UVU1g76nKEMX6mCjhxofFiim
+         9VSV3iYOwpvS0AzgFpLovmYu5y12D3EaK3MVJuadgQgGQRnmu8Rmtdy0fCn645NhFjH9
+         zCesOBWkKUODqmvhATxxTtR9GbHLSqS+TGc4HZAdsFK5OfIo88gsK71cMoFkhlciYQWl
+         8lrJsQoJiwkj3Z6rzXfVaaslDvSw0C1m7H4csJ19M5k+j7jQ8apV4Ww093So2uDnXlgu
+         F3yXud3x5KFxuXOaz97LIldhNJTXtNpkO+B90QobbdBTTFSCqjQyR5SFMmLYqTlOBXGL
+         RJPg==
+X-Forwarded-Encrypted: i=1; AHgh+RqGDL2blP8azIwR/LWdp5MY+F2Z5WDsrhW7B/r+ly+9y2PYhjoXLRCH46hwDn5DI4KFBUDygv+0uyr/d1wwonAo@vger.kernel.org
+X-Gm-Message-State: AFuF++n/SHHv9UHLg/GSl6VCrCS2Mu1aYuVKez45+22kykNEafvvStr1
+	EWti757706gzUYS41rsdHPuqNOcrSI9VAq069YanfaKg6OqxHJCuEtUO7eZqAMJne8Q=
+X-Gm-Gg: AR+sD104GP5mWhTmeJEpFyMR+4SorSPOHi6EZ06nR725HBWtFFv52rJECx+UMcq+jbN
+	Q1O6m80MGrKirpyHAcvvwgQFdug6hISziQ+j0kkp8lbVguR6GAHK6r+1odPo556vexMpL8g+htQ
+	KOs0UTq047HFnuo8YUrl+2Blj+AiMYlKcVOjA70bMnwmzEof39mT3CH/LVvtw/4fxY5ZHmsK10e
+	NfK09XTBcYo52B3nuPM4fgPUPaB3gKTQhO+seuAiTwiL4QlS/efDq8eB6KN7QDPMIfckoWjvTLY
+	V1Fun/P5JKr90n0JxJYUVFYhkxFCHH/CmdcszlGew+5A/46L1jqVznUJ8pjNjMYhBADMJeimUzH
+	Vm6zLIaVWnqcrFe5BDDIaKWF+as3ZSYFlXGrYdMy+p9q//8QvKx0T3AqvDVvjT+QhTTskJQ257u
+	FgczLOUDA5lpN9mvhqlaNFCX/YWp7TdPLHMR8mMUkG2bc/6I+n18oELBu4tFK3rY5y
+X-Received: by 2002:a17:902:f548:b0:2ce:b3cd:7539 with SMTP id d9443c01a7336-2d6dca35173mr4640435ad.6.1787589152623;
+        Mon, 24 Aug 2026 09:32:32 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:82f2:24c5:571b:87b2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d676791d44sm20277145ad.24.2026.08.24.09.32.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Aug 2026 09:32:31 -0700 (PDT)
+Date: Mon, 24 Aug 2026 10:32:29 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Tanmay Shah <tanmay.shah@amd.com>
+Cc: andersson@kernel.org, corbet@lwn.net, skhan@linuxfoundation.org,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 3/5] rpmsg: virtio_rpmsg_bus: get buffer size from
+ config space
+Message-ID: <aoxyHVkMxR1BUwDD@p14s>
+References: <20260814044238.518296-1-tanmay.shah@amd.com>
+ <20260814044238.518296-4-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com> <20260721204704.400781-3-shenwei.wang@oss.nxp.com>
-In-Reply-To: <20260721204704.400781-3-shenwei.wang@oss.nxp.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Mon, 24 Aug 2026 08:38:38 -0600
-X-Gm-Features: AcwNN1WkCFZbvWxe4PQA8OwbQcV2Qi4oWD0S_a9VEHwbP89HadQ5rWBGiqMxI74
-Message-ID: <CANLsYkxZbr9hKaJJGXwYXErLwQ-A07eb-oeNXY1CceHHa0Tdmg@mail.gmail.com>
-Subject: Re: [PATCH v15 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-To: Shenwei Wang <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>, Bartosz Golaszewski <brgl@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shuah Khan <skhan@linuxfoundation.org>, 
-	linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com, 
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260814044238.518296-4-tanmay.shah@amd.com>
 
-On Tue, 21 Jul 2026 at 14:48, Shenwei Wang <shenwei.wang@oss.nxp.com> wrote:
->
-> From: Shenwei Wang <shenwei.wang@nxp.com>
->
-> Remote processors may announce multiple GPIO controllers over an RPMSG
-> channel. These GPIO controllers may require corresponding device tree
-> nodes, especially when acting as providers, to supply phandles for their
-> consumers.
->
-> Define an RPMSG node to work as a container for a group of RPMSG channels
-> under the imx_rproc node. Each subnode within "rpmsg" represents an
-> individual RPMSG channel. The name of each subnode corresponds to the
-> channel name as defined by the remote processor.
->
-> All remote devices associated with a given channel are defined as child
-> nodes under the corresponding channel node.
->
-> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+On Thu, Aug 13, 2026 at 09:42:36PM -0700, Tanmay Shah wrote:
+> 512 bytes isn't always suitable for all case, let firmware
+> maker decide the best value from resource table.
+> enable by VIRTIO_RPMSG_F_BUFSZ feature bit.
+
+s/enable/Enabled
+
+> 
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 > ---
->  .../devicetree/bindings/gpio/gpio-rpmsg.yaml  | 55 +++++++++++++++++++
->  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 53 ++++++++++++++++++
->  2 files changed, 108 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
->
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml b/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
+> 
+> changes in v6:
+>   - remove buffer alignment from config space
+> 
+> Changes in v5:
+> 
+>   - fix documentation about alignment of the buffer size
+>   - change version field from u16 to u8
+>   - remove buffer alignment check
+>   - Separate buffer alignment vs MTU of a single buffer
+>   - Use buffer alignment only to get next buffer address at alignment
+>     boundary
+> 
+> Changes in v4:
+> 
+>   - Introduce new patch to modify rpmsg.rst documentation
+>   - check version is always 1.
+>   - check size field is same as size of struct virtio_rpmsg_config
+>   - introduce alignment field
+>   - check alignment field is power of 2
+>   - check tx and rx buf size is aligned with alignment passed in the
+>     structure
+> 
+> Changes in v3:
+> 
+>   - change version field from u16 to u8
+>   - introduce size field in the rpmsg_virtio_config structure
+>   - check version field is set to any non-zero value.
+>   - check size field is not 0.
+>   - Remove field for private config, as not needed for now.
+>   - add documentation of rpmsg_virtio_config structure
+> 
+>  drivers/rpmsg/virtio_rpmsg_bus.c   | 90 +++++++++++++++++++++++-------
+>  include/linux/rpmsg/virtio_rpmsg.h | 41 ++++++++++++++
+>  2 files changed, 112 insertions(+), 19 deletions(-)
+>  create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
+> 
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index c84b6cec9caf..4235e09dc3b7 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/rpmsg.h>
+>  #include <linux/rpmsg/byteorder.h>
+>  #include <linux/rpmsg/ns.h>
+> +#include <linux/rpmsg/virtio_rpmsg.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/slab.h>
+>  #include <linux/sched.h>
+> @@ -39,7 +40,8 @@
+>   * @tx_bufs:	kernel address of tx buffers
+>   * @num_rx_buf: total number of rx buffers
+>   * @num_tx_buf: total number of tx buffers
+> - * @buf_size:   size of one rx or tx buffer
+> + * @rx_buf_size: size of one rx buffer
+> + * @tx_buf_size: size of one tx buffer
+>   * @last_tx_buf: index of last tx buffer used
+>   * @bufs_dma:	dma base addr of the buffers
+>   * @tx_lock:	protects svq and tx_bufs, to allow concurrent senders.
+> @@ -59,7 +61,8 @@ struct virtproc_info {
+>  	void *rx_bufs, *tx_bufs;
+>  	unsigned int num_rx_buf;
+>  	unsigned int num_tx_buf;
+> -	unsigned int buf_size;
+> +	unsigned int rx_buf_size;
+> +	unsigned int tx_buf_size;
+>  	int last_tx_buf;
+>  	dma_addr_t bufs_dma;
+>  	struct mutex tx_lock;
+> @@ -68,9 +71,6 @@ struct virtproc_info {
+>  	wait_queue_head_t sendq;
+>  };
+>  
+> -/* The feature bitmap for virtio rpmsg */
+> -#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> -
+>  /**
+>   * struct rpmsg_hdr - common header for all rpmsg messages
+>   * @src: source address
+> @@ -128,7 +128,7 @@ struct virtio_rpmsg_channel {
+>   * processor.
+>   */
+>  #define MAX_RPMSG_NUM_BUFS	(256)
+> -#define MAX_RPMSG_BUF_SIZE	(512)
+> +#define DEFAULT_RPMSG_BUF_SIZE	(512)
+>  
+>  /*
+>   * Local addresses are dynamically allocated on-demand.
+> @@ -443,7 +443,7 @@ static void *get_a_tx_buf(struct virtproc_info *vrp)
+>  
+>  	/* either pick the next unused tx buffer */
+>  	if (vrp->last_tx_buf < vrp->num_tx_buf)
+> -		ret = vrp->tx_bufs + vrp->buf_size * vrp->last_tx_buf++;
+> +		ret = vrp->tx_bufs + vrp->tx_buf_size * vrp->last_tx_buf++;
+>  	/* or recycle a used one */
+>  	else
+>  		ret = virtqueue_get_buf(vrp->svq, &len);
+> @@ -513,7 +513,7 @@ static int rpmsg_send_offchannel_raw(struct rpmsg_device *rpdev,
+>  	 * messaging), or to improve the buffer allocator, to support
+>  	 * variable-length buffer sizes.
+>  	 */
+> -	if (len > vrp->buf_size - sizeof(struct rpmsg_hdr)) {
+> +	if (len > vrp->tx_buf_size - sizeof(struct rpmsg_hdr)) {
+>  		dev_err(dev, "message is too big (%d)\n", len);
+>  		return -EMSGSIZE;
+>  	}
+> @@ -646,7 +646,7 @@ static ssize_t virtio_rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>  	struct rpmsg_device *rpdev = ept->rpdev;
+>  	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+>  
+> -	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
+> +	return vch->vrp->tx_buf_size - sizeof(struct rpmsg_hdr);
+>  }
+>  
+>  static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+> @@ -672,7 +672,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  	 * We currently use fixed-sized buffers, so trivially sanitize
+>  	 * the reported payload length.
+>  	 */
+> -	if (len > vrp->buf_size ||
+> +	if (len > vrp->rx_buf_size ||
+>  	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
+>  		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
+>  		return -EINVAL;
+> @@ -705,7 +705,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>  		dev_warn_ratelimited(dev, "msg received with no recipient\n");
+>  
+>  	/* publish the real size of the buffer */
+> -	rpmsg_sg_init(&sg, msg, vrp->buf_size);
+> +	rpmsg_sg_init(&sg, msg, vrp->rx_buf_size);
+>  
+>  	/* add the buffer back to the remote processor's virtqueue */
+>  	err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, msg, GFP_KERNEL);
+> @@ -823,6 +823,8 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	int err = 0, i;
+>  	size_t total_buf_space;
+>  	bool notify;
+> +	u8 version;
+> +	u16 size;
+>  
+>  	vrp = kzalloc_obj(*vrp);
+>  	if (!vrp)
+> @@ -854,9 +856,59 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	else
+>  		vrp->num_tx_buf = MAX_RPMSG_NUM_BUFS;
+>  
+> -	vrp->buf_size = MAX_RPMSG_BUF_SIZE;
+> +	/*
+> +	 * If VIRTIO_RPMSG_F_BUFSZ feature is supported, then configure buf
+> +	 * size from virtio device config space from the resource table.
+> +	 * If the feature is not supported, then assign default buf size.
+> +	 */
+> +	if (virtio_has_feature(vdev, VIRTIO_RPMSG_F_BUFSZ)) {
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     version, &version);
+> +
+> +		/* for now we support only v1 */
+> +		if (version != RPMSG_VDEV_CONFIG_V1) {
+> +			dev_err(&vdev->dev,
+> +				"unsupported vdev config version %u\n", version);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+> +
+> +		/* size of the config space must match */
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     size, &size);
+> +		if (size != sizeof(struct virtio_rpmsg_config)) {
+> +			dev_err(&vdev->dev, "invalid size of vdev config %u\n",
+> +				size);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+> +
+> +		/* note: tx and rx are defined from remote view */
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     txbuf_size, &vrp->rx_buf_size);
+> +		virtio_cread(vdev, struct virtio_rpmsg_config,
+> +			     rxbuf_size, &vrp->tx_buf_size);
+> +
+> +		/* The buffers must hold at least the rpmsg header */
+> +		if (vrp->rx_buf_size < sizeof(struct rpmsg_hdr) ||
+> +		    vrp->tx_buf_size < sizeof(struct rpmsg_hdr)) {
+> +			dev_err(&vdev->dev,
+> +				"bad vdev config: rx buf sz = %u, tx buf sz = %u\n",
+> +				vrp->rx_buf_size, vrp->tx_buf_size);
+> +			err = -EINVAL;
+> +			goto vqs_del;
+> +		}
+> +
+> +		dev_dbg(&vdev->dev,
+> +			"vdev config: ver=%u, rx sz = 0x%x, tx sz = 0x%x\n",
+> +			version, vrp->rx_buf_size, vrp->tx_buf_size);
+> +	} else {
+> +		vrp->rx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
+> +		vrp->tx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
+> +	}
+>  
+> -	total_buf_space = (vrp->num_rx_buf + vrp->num_tx_buf) * vrp->buf_size;
+> +	total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
+> +			  (vrp->num_tx_buf * vrp->tx_buf_size);
+>  
+>  	/* allocate coherent memory for the buffers */
+>  	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+> @@ -873,15 +925,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>  	/* first part of the buffers is dedicated for RX */
+>  	vrp->rx_bufs = bufs_va;
+>  
+> -	/* and second part is dedicated for TX */
+> -	vrp->tx_bufs = bufs_va + vrp->num_rx_buf * vrp->buf_size;
+> +	vrp->tx_bufs = bufs_va + (vrp->num_rx_buf * vrp->rx_buf_size);
+>  
+>  	/* set up the receive buffers */
+>  	for (i = 0; i < vrp->num_rx_buf; i++) {
+>  		struct scatterlist sg;
+> -		void *cpu_addr = vrp->rx_bufs + i * vrp->buf_size;
+> +		void *cpu_addr = vrp->rx_bufs + i * vrp->rx_buf_size;
+>  
+> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rx_buf_size);
+>  
+>  		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+>  					  GFP_KERNEL);
+> @@ -964,8 +1015,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+>  static void rpmsg_remove(struct virtio_device *vdev)
+>  {
+>  	struct virtproc_info *vrp = vdev->priv;
+> -	unsigned int num_bufs = vrp->num_rx_buf + vrp->num_tx_buf;
+> -	size_t total_buf_space = num_bufs * vrp->buf_size;
+> +	size_t total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
+> +				 (vrp->num_tx_buf * vrp->tx_buf_size);
+>  	int ret;
+>  
+>  	virtio_reset_device(vdev);
+> @@ -991,6 +1042,7 @@ static struct virtio_device_id id_table[] = {
+>  
+>  static unsigned int features[] = {
+>  	VIRTIO_RPMSG_F_NS,
+> +	VIRTIO_RPMSG_F_BUFSZ,
+>  };
+>  
+>  static struct virtio_driver virtio_ipc_driver = {
+> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
 > new file mode 100644
-> index 000000000000..41eb2e149942
+> index 000000000000..e28144253a12
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
-> @@ -0,0 +1,55 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/gpio-rpmsg.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/include/linux/rpmsg/virtio_rpmsg.h
+> @@ -0,0 +1,41 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) Pinecone Inc. 2019
+> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
+> + * Copyright (C) Advanced Micro Devices, Inc. 2026
+> + */
 > +
-> +title: Generic RPMSG GPIO Controller
+> +#ifndef _LINUX_VIRTIO_RPMSG_H
+> +#define _LINUX_VIRTIO_RPMSG_H
 > +
-> +maintainers:
-> +  - Shenwei Wang <shenwei.wang@nxp.com>
+> +#include <linux/types.h>
+> +#include <linux/virtio_types.h>
 > +
-> +description:
-> +  On an AMP platform, some GPIO controllers are exposed by the remote processor
-> +  through the RPMSG bus. The RPMSG GPIO transport protocol defines the packet
-> +  structure and communication flow between Linux and the remote firmware. Those
-> +  controllers are managed via this transport protocol. For more details of the
-> +  protocol, check the document below.
-> +  Documentation/driver-api/gpio/gpio-rpmsg.rst
+> +/* The feature bitmap for virtio rpmsg */
+> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+> +#define VIRTIO_RPMSG_F_BUFSZ	1 /* RP get buffer size from config space */
 > +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - fsl,rpmsg-gpio
-> +          - const: rpmsg-gpio
-> +      - const: rpmsg-gpio
+> +/* Version of struct virtio_rpmsg_config understood by this driver */
+> +#define RPMSG_VDEV_CONFIG_V1	1
 > +
-> +  reg:
-> +    description:
-> +      The reg property represents the index of the GPIO controllers. Since
-> +      the driver manages controllers on a remote system, this index tells
-> +      the remote system which controller to operate.
-> +    maxItems: 1
+> +/**
+> + * struct virtio_rpmsg_config - config space for rpmsg virtio device
+> + *
+> + * @version:	version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
+> + * @size:	size of this structure in bytes.
+> + * @txbuf_size:	Tx buf size from remote's view. For Linux this is rx buf size.
+> + * @rxbuf_size:	Rx buf size from remote's view. For Linux this is tx buf size.
+> + *
+> + * This is the configuration structure shared by the device and the driver,
+> + * read when %VIRTIO_RPMSG_F_BUFSZ is negotiated. The fields are laid out so
+> + * the structure is naturally 32-bit aligned.
+> + */
+> +struct virtio_rpmsg_config {
+> +	u8 version;
+> +	__virtio16 size;
+> +	/* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
+> +	__virtio32 txbuf_size;
+> +	__virtio32 rxbuf_size;
+> +} __packed;
 > +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#gpio-cells"
-> +  - gpio-controller
-> +
-> +allOf:
-> +  - $ref: /schemas/gpio/gpio.yaml#
-> +
-> +unevaluatedProperties: false
-> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> index c18f71b64889..b9b559b186af 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
-> @@ -88,6 +88,34 @@ properties:
->        This property is to specify the resource id of the remote processor in SoC
->        which supports SCFW
->
-> +  rpmsg:
-> +    type: object
-> +    additionalProperties: false
-> +    description:
-> +      Represents the RPMSG bus between Linux and the remote system. Contains
-> +      a group of RPMSG channel devices running on the bus.
-> +
-> +    properties:
-> +      rpmsg-io:
-> +        type: object
-> +        additionalProperties: false
-> +        properties:
-> +          '#address-cells':
-> +            const: 1
-> +
-> +          '#size-cells':
-> +            const: 0
-> +
-> +        patternProperties:
-> +          "^gpio@[0-9a-f]+$":
-> +            type: object
-> +            $ref: /schemas/gpio/gpio-rpmsg.yaml#
-> +            unevaluatedProperties: false
-> +
-> +        required:
-> +          - '#address-cells'
-> +          - '#size-cells'
-> +
->  required:
->    - compatible
->
-> @@ -150,5 +178,30 @@ examples:
->                  &mu 3 1>;
->        memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
->        syscon = <&src>;
-> +
-> +      rpmsg {
-> +        rpmsg-io {
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          gpio@0 {
-> +            compatible = "rpmsg-gpio";
-> +            reg = <0>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            #interrupt-cells = <2>;
-> +            interrupt-controller;
-> +          };
-> +
-> +          gpio@1 {
-> +            compatible = "rpmsg-gpio";
-> +            reg = <1>;
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +            #interrupt-cells = <2>;
-> +            interrupt-controller;
-> +          };
-> +        };
-
-As I (and Arnaud) have stated before, I don't think this is the best
-way to lay out bindings for rpmsg-gpio nodes.  I am currently thinking
-about a representation that aligns better with other virtio devices.
-
-> +      };
->      };
->  ...
-> --
+> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+> -- 
 > 2.43.0
->
+> 
