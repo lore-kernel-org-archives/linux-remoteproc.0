@@ -1,178 +1,180 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0504229BA
-	for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 12:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09C0342538
+	for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 16:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787660717; cv=none; b=e2vy3wT2ZIyQNiuyO1kv399ge+C6l4pkRq1XKriOtRxk2pIImOlt35ixwIdfWKoFiFT88kqxg29utZi9MjHGy/UozaNe6+hOhL9WSNROvBmkuqubYueKudwl7Rs/FamaoqltLY7wD7g37vDUUVLz3jFuooaEz3laMl3a1mssRqw=
+	t=1787676843; cv=none; b=uLQmNM9HRrvhJjnD0oyo38f0ccoq5Rn+TpAWnt5vSXzE1DG0Fj+WsXDWP7LylIk1ho84RmHQemz+FE3bdFgX8UVpMlW78neF3qTom3A70vmoTv6NVwJgYZFS4hleriw2hLg8W4e88V5wGKCt50rQx43sKRTDvw2PDms7W/Slnmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787660717; c=relaxed/simple;
-	bh=JpvP2FsKNOLwyzEV35Oy7RuDzh4oUbBOacuQEwMmnbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oq7k7vlyhteoDrWJxVN7C2dkMVU0qpf+BotG1FMZJtSumcMEjoKzkOF3xPi1WvSymcU3uUa/xUYH8bCMkLsDpGj11rBX0OdPrBsQd9zfgXOvDP3iIk/TLViAsFdYq9b7XSZuT8slGb9bLZEfMm11cMR7mATyAaD3Dw/ZiaJYI88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JKGA+KsV; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bDO76iKi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1787676843; c=relaxed/simple;
+	bh=Ca37yuRHz/MjCH4jQokbkUInXVw9LqDJxavtQ0LvVQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EkQf6+bZ+N+OEdsPttY4uglN170HbU+9+WMI3GH0WmRICSWiarmiyIzCjGg7H9p23o9PereKI6jXOpN1AJdgPAsEyxS0IZa1MCBj9XEohIRd2/KMEfmf8A8ZnCph50r5ljD6EzoDeQPtP4k1sSvLuVUlmi1DiHZnYWdIBTt+v2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nhdn4QCf; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JKGA+KsV";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bDO76iKi"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67PAv05q2773019
-	for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 12:25:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IxvYHaduN6TNCEf+tZMW4tMw4ZUU9VGjbq8UEfNnSPw=; b=JKGA+KsVLsBLyuvw
-	xVq7fI4ge6xMju05qBRPExADjgpuVwDLbXTXFPEtaYaajwe6c1ZHgkhSFeJaMNY9
-	Ju052pqAkgFZ31gdzFjlFfjgNBXHL8OYV/r765siaLeUnLE4JPk23+/ARmDYMa9x
-	XyUWZFzt2CJHoV6EvjW4D4L9RREnzTHnLQmAdnRCXSEJpwZ7iISQPEqs+AlWZLpJ
-	oc6XP+uHUCgngzpLKqzKmwzAXzqnc5IOzheGpsSddWKZor0+TEWc/5bGv0GDn1EH
-	YF/JPAlC6My1LxuyAExsenqNkDwUTFvjOTbC6JcvBEX9fCikEyFKGeT4HT/uXnT6
-	yptwJQ==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g8swrbycg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 12:25:15 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2d54187d8b0so57501285ad.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 05:25:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nhdn4QCf"
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-848761b5897so44981b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 09:54:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787660714; x=1788265514; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=IxvYHaduN6TNCEf+tZMW4tMw4ZUU9VGjbq8UEfNnSPw=;
-        b=bDO76iKioX3lqGxCWSUCWSszaVJYfScGH8eO6GwdL7dL0+cSTRcdeT5FySRYEd8pIr
-         JGIst0FsyujKMw8VXcqX8e8iIpHJVEaHAI52R2Mcws+2JPM5PWlrPGMwRO76CJ26aYW8
-         KptNwWPnETmhFdCUEC7eCtq+DxnSr7csN1kZsYaFQf+NjcWu7WvMF8hIBOppaVTkdT5O
-         7oz4Zrhongh0/MLbzQlMuOfUky/oEKDhg8JT8avbZqhhtht0k4pBiO+D/7yeIWPd+oW4
-         CnMyyYRqxMMMNYLf886TixjdWzQ29xgFgrw3dPNlhHiU+5JuF+BDVTnO+8MJJ8sK9jBK
-         4Pgg==
+        d=linaro.org; s=google; t=1787676841; x=1788281641; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=b0HNwMNcfxr0yy/VrvRBV5In/7S/p3PA0JfIjamu/jU=;
+        b=nhdn4QCfpRQMP64206vMrIz7tD546apcrKMB6Vqyq6bAi8AhrPFzk1QvIGeAiRz/XG
+         X7j18koufGd/hvQFacu1IUrz505Z0P4eu4UfA1DNWsOzQHOedz9xJDrsq7fg5jA+bNnu
+         f9Ww4G0f+EIVD37M5zwaz5AiWqvlq+9DiDf0KZek92MPKhNzUn2QG9GzZPkYpWYyhlka
+         5L2zQ5AKCpAqd3AV9E75X3xNVVK/djlHtFcOWGR+B8UDXLNpN74rh9D5H5191/NcrV5Y
+         BPioohd9dnm+G5ikuVSZozpl69dkDJjnRTRprlMasMHIPkq3dMhU9YflIJ443Ea9+xkw
+         JptQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787660714; x=1788265514;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=IxvYHaduN6TNCEf+tZMW4tMw4ZUU9VGjbq8UEfNnSPw=;
-        b=mzesNjrIZWXiN2tApfTOJ8yUg/zVEC+XPxjcBzVrH73HZ1KQP6hN/d3m8qiCnwc4Ha
-         xHxntW8BHUjsjtnQ5AdKorTMrJ5YpMmXnhGiJbpU/hCxB+ZmIGxIivC3Dsrx9YYg1Q7a
-         JLSdA/qNY+c6GKBlnHmfgF5xz+s+fBrpCf4fM4qhhJ8FJq9vlR3zbSS5fh224WE6lQfz
-         oRUg94pcr/6ltqYRximi6PuGey+mDVmvclGR2mr3DLtipe6f8Ewef6YrRp7/ZQV7IVs1
-         Evd7oDkcOVrQYKblNo7CrlSUUsw1jOPFmTS92o8bna+bLQ5Jg1MdxArKtvjOpqMX3bnr
-         Kp7g==
-X-Forwarded-Encrypted: i=1; AHgh+Rozu4f2wgumZ5rjjfnZNRrw7dCKXpYwGn4SkknQFxm4kwsNfwHKPBtDsz3xGFHDti4qwZQxVxc05eBNSppE8bZy@vger.kernel.org
-X-Gm-Message-State: AFuF++kP3gganjdSCgZJNFP3jkXu2Y5zALM4RtkktOHyggtaqP7JWgiz
-	i8kMiu/SaJHDhnipubO3RShv/jpdWsAXy3+SFCRnWZE/HQRgLRZZCBcM/AUd2t+xiL24WsHZXDA
-	s9dnxiO3AJDNY3U+x06+5mON9BqnNcugU5WA9DBC538ZyXy/Lbd9tUy3q8+i/n/DHOElXX7mZ
-X-Gm-Gg: AR+sD12MLhfz7UQn4eTAaVXqlujLoJv+iTBUKy5m55R1bzr449Xl9NY3dsDmcbka2dv
-	B//SVFi+Ai7i0zAmEv31ol1YC82T/aO4u3ljdDaibCvbnlh7OqdSjVl2hmFQ5TMjWDz7qWOctPp
-	oW21wXDMsD8yMB+uBsSvyKLiHDeDavCL7NDDk5ZLdE+hfN7K8ZMnH7xt4VS8Yk99nFEoUVyphH7
-	51Q2JVzvTwWJsaPCA1fk7fQ6rTsLmQq+yNVcx1vPOYw7e0yoo5Ph1kvIItFlGdjAXnJznaTwuDL
-	ouC6smsZANgLBP9mH3bue7IZHAvWHEdgdUwGckloFGycHpvikij05YNMHCOXHC6h1U92GsfcdY1
-	gFrTUFUaUDiv+59pqPTF/OGoRUINug/8=
-X-Received: by 2002:a17:902:ce8c:b0:2d6:2901:6265 with SMTP id d9443c01a7336-2d6dcaddacfmr124084805ad.2.1787660714335;
-        Tue, 25 Aug 2026 05:25:14 -0700 (PDT)
-X-Received: by 2002:a17:902:ce8c:b0:2d6:2901:6265 with SMTP id d9443c01a7336-2d6dcaddacfmr124083815ad.2.1787660713917;
-        Tue, 25 Aug 2026 05:25:13 -0700 (PDT)
-Received: from [192.168.1.16] ([106.222.229.34])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2d6768ba291sm27562625ad.64.2026.08.25.05.25.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Aug 2026 05:25:13 -0700 (PDT)
-Message-ID: <ff0c8c22-bd37-451f-80bb-35389ba162c6@oss.qualcomm.com>
-Date: Tue, 25 Aug 2026 17:55:05 +0530
+        d=1e100.net; s=20251104; t=1787676841; x=1788281641;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=b0HNwMNcfxr0yy/VrvRBV5In/7S/p3PA0JfIjamu/jU=;
+        b=BLsWgK+r6a2CvqCFqmWFtOOEZ2SuYNlt6j7gwIWcCIBH1oogIgJDCYg3C7CUa3FAn1
+         8EYt8AKw8cJzeX1LTy6SZ0MwkVcjKop7t8qUs8/EbWqCbkI+zrouHZRR5GGUd6XaTnNc
+         4ez8cC6TcR//fPFHRt1FaHv0ugXrDla3qRC/V6/jtA1Ew2//AdHIIa9PdV4nJgOGO+B5
+         QyKv1Qqm6PLTNqL0sKYCOpwpmkYJChxE+e1BPPww83B4hWicOiwthxb87J/1ijIIs8rl
+         4M/bP2xRnwYkD5TWembBz3RL9XJOrdKrKx/XJ1RGUZG9lFlJPMK2sw3+CLYV6kPJiyP+
+         1yyw==
+X-Forwarded-Encrypted: i=1; AHgh+RoFBuxXiOYm0+I3EEOUBUdRUjCoachsDA1ali2asg5hrl6FRMAZsiiVt3u4PNbOqL57h7dvg07C9GMVoyVbgEQK@vger.kernel.org
+X-Gm-Message-State: AFuF++lSkJfE8DY+uqd/WnKUoU6ewQGUbZJuICqmsREt9TmABQDtgZqY
+	jttlBAK+vZAaGTGAlJbVDN2jZy+Z/55kec6G7hhSMWSHq7BWbZra6xKaew2Psc26gfo=
+X-Gm-Gg: AR+sD13qw4uwOgUJ0fI2wOEaJz1U8SGGY0P2qYjrySX0NYLBtfXw3/LtzPy6810wH2F
+	iqIYAmr+vX8kjRG71GdXTdkdCGnlpyejuq5zsy29CMJhhNvZW6h3lgzitPYNe+yu1zgDk/BIcfh
+	3IkMAwgC6nl7E+9moze/yaza/EalmbDHfrEOEeqD/5mmUkb3OUN9HQWjhDTJ8LSPJamSKEmOMFq
+	SwYKCfWtIkugsHSN81+QKbLCSMifHQ12lnkTHKWx0QWJp1BqEiK+IDuE9BJVJPCr29E+FGzFhpA
+	WcGFFUk/EP0kiPH3pOJvPXiry/X0579vcpy2vg1E9LBeSeuzPMT63RT6ILiAQUdPk96lNLrkrSL
+	r3LqzPf2TnkGgPPgkwFTia0AiLU6jc9oap8C6mUFqOvsut1vh7dBWhtgjEj26BZCfymK5/2t4Sn
+	VOuabNYORt2/uQGxfaf86eUk43lQSlHT/UUb1qdGNDiL3tXAi8lzkVFQFgnUmxBmFM
+X-Received: by 2002:a05:6a00:6c87:b0:845:bda6:574b with SMTP id d2e1a72fcca58-853736ab6abmr158400b3a.5.1787676840868;
+        Tue, 25 Aug 2026 09:54:00 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a37a:292f:1363:c0af])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8535ceee96fsm97869b3a.41.2026.08.25.09.53.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Aug 2026 09:54:00 -0700 (PDT)
+Date: Tue, 25 Aug 2026 10:53:57 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Runyu Xiao <runyu.xiao@seu.edu.cn>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Jianhao Xu <jianhao.xu@seu.edu.cn>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3] remoteproc: xlnx: initialize mailbox work before
+ requesting channels
+Message-ID: <ao3IpdsQDjDXXawj@p14s>
+References: <20260619074835.2069212-1-runyu.xiao@seu.edu.cn>
+ <20260818101201.1603947-1-runyu.xiao@seu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 8/9] arm64: dts: qcom: monaco: Enable CDSP cooling
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
-        Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Rafael J. Wysocki"
- <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Manivannan Sadhasivam <mani@kernel.org>, Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-hardening@vger.kernel.org,
-        manaf.pallikunhi@oss.qualcomm.com,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20260809-b4-qmi-tmd-v8-0-b15d47adc379@oss.qualcomm.com>
- <20260809-b4-qmi-tmd-v8-8-b15d47adc379@oss.qualcomm.com>
- <01cd0d90-2908-42cb-9ae8-29828d4c03a0@oss.qualcomm.com>
-Content-Language: en-US
-From: Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-In-Reply-To: <01cd0d90-2908-42cb-9ae8-29828d4c03a0@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: AuiL0C1ZSYFPUAOl_5UNzel43_lH4Jx7
-X-Proofpoint-GUID: AuiL0C1ZSYFPUAOl_5UNzel43_lH4Jx7
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI1MDEwNSBTYWx0ZWRfX10AcFIJj9v30
- syeqnmiOqcaZkkTXnkCTGPJokTBazc3iq2mt9UAcDcu6ntWGcP/aK2xdSvx+cDyJrEPHdDaPmOy
- utK+KebjeR4SOd21M4bFkDkeOM3ZGLI=
-X-Authority-Analysis: v=2.4 cv=TqPWQjXh c=1 sm=1 tr=0 ts=6a8d89ab cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=x3UvaR+l8cLCJ1uKBUlNag==:17
- a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=ctB7yVnqyLGUopViubUA:9 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI1MDEwNSBTYWx0ZWRfX/xI/lTB0uA1X
- I75EYd5iMnXP0uUrI2dHtqL74dWg+IjZ/GF5bFSwdkOPY8yES9IH2RBjMvpVpSFhCPKRQyg7a21
- 97t3Jlqrh2bYJUE5ovcAqXdw5fINl/RC76tAtIfYesbOQGAaN9fCFHk4/hCYkDkI0ExnL1NUU5x
- LZmufgyb8LkBlkmI14AOggMi+JHXAEnhpJTBnFJXHRa/0gJdtpRMADXgqOuV15l3JMqWAExkLNe
- 4b2tFTl+A9rtYPjkXAjdhQ3aLmognOF7pOR6EnugZJKOCj2ffPM/4fvsbG0FoUvCJBR/Ia0qJFn
- cmVW4RzF93AFWWKCX4URwj013W/3gY07yDcUk5LADbKbdbwvnWd5XK0A+zFCiAIIJQUqLUzBqzp
- nWHCE6HjYcUPXnmjcHWD0RftT3DmnKcqUKt3+yKIY2StCTsk+16yHQas1YVVUY1vHCGpfDU1nOJ
- a8tasDvuZTiRDgMMitw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-25_03,2026-08-24_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 impostorscore=0 malwarescore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 clxscore=1015 suspectscore=0 priorityscore=1501
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608250105
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260818101201.1603947-1-runyu.xiao@seu.edu.cn>
 
-
-
-On 8/24/2026 7:49 PM, Konrad Dybcio wrote:
-> On 8/9/26 2:29 PM, Gaurav Kohli wrote:
->> Unlike the CPU, the CDSP does not throttle its speed automatically
->> when it reaches high temperatures in monaco.
+On Tue, Aug 18, 2026 at 06:12:01PM +0800, Runyu Xiao wrote:
+> zynqmp_r5_setup_mbox() installs zynqmp_r5_mb_rx_cb() as the mailbox RX
+> callback before requesting the mailbox channels, but initializes
+> ipi->mbox_work only after both channels have been requested. Once the RX
+> channel is active, a notification delivered before the late INIT_WORK()
+> would make the callback queue an uninitialized work item.
 > 
-> [...]
+> Initialize the work item before requesting channels. Also drain the work
+> before freeing the mailbox state, after the channels have been released so
+> no new callbacks can queue it. Use the same drain before freeing ipi from
+> the channel request error paths, since the callback is already published
+> there as well.
 > 
->>   		nsp-0-0-0-thermal {
->> +			polling-delay-passive = <200>;
+> This issue was found by our static analysis tool and then confirmed by
+> manual review of the mailbox setup sequence. The callback is published
+> before the channel requests complete, so the work item should be ready
+> before the mailbox provider can invoke it.
 > 
-> ..and here it's 200 - I really think there should be a single value
-> that makes sense, this seems no less than random
-
-Thanks for the review, Konrad.
-
-All targets added in this series use polling-delay-passive = <200> 
-except Lemans, where the DTS already has polling-delay-passive = <10>. 
-This series only adds the cooling maps there.
-
-As per internal profiling, 200 ms was chosen for remoteproc/QMI-based 
-cooling. I can send a separate follow-up patch to normalize Lemans to 
-200 ms as well.
-
+> A QEMU PoC modeled a mailbox notification delivered after the RX callback
+> became reachable but before the delayed INIT_WORK(). DEBUG_OBJECTS reported
+> queueing an uninitialized work item from the zynqmp_r5_setup_mbox() path.
 > 
-> Konrad
+> This is sent as an RFC because the practical trigger depends on the ZynqMP
+> IPI mailbox provider and firmware delivery timing. If the provider cannot
+> invoke the RX callback until after setup returns, this is a defensive
+> lifecycle cleanup rather than a reachable race on current systems.
+> 
+> Fixes: 5dfb28c257b7 ("remoteproc: xilinx: Add mailbox channels for rpmsg")
+> Signed-off-by: Runyu Xiao <runyu.xiao@seu.edu.cn>
+> ---
+> Changes in v3:
+> - Follow Mathieu's feedback and call cancel_work_sync() before freeing ipi
+>   from the tx/rx channel request error paths.
+> 
+> Changes in v2:
+> - Follow Tanmay's suggestion and keep zynqmp_r5_setup_mbox() taking the
+>   child device pointer. Do not move the r5_core assignment in this patch.
+> - Only move INIT_WORK() before channel requests and drain the work in
+>   zynqmp_r5_free_mbox().
+> 
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
 
+I will pick this up when RC1 comes out next week.
+
+Thanks,
+Mathieu
+ 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index c685bb5fa62c..d47fbf143acd 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -318,6 +318,8 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
+>  	if (!ipi)
+>  		return NULL;
+>  
+> +	INIT_WORK(&ipi->mbox_work, handle_event_notified);
+> +
+>  	mbox_cl = &ipi->mbox_cl;
+>  	mbox_cl->rx_callback = zynqmp_r5_mb_rx_cb;
+>  	mbox_cl->tx_block = false;
+> @@ -329,6 +331,7 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
+>  	ipi->tx_chan = mbox_request_channel_byname(mbox_cl, "tx");
+>  	if (IS_ERR(ipi->tx_chan)) {
+>  		ipi->tx_chan = NULL;
+> +		cancel_work_sync(&ipi->mbox_work);
+>  		kfree(ipi);
+>  		dev_warn(cdev, "mbox tx channel request failed\n");
+>  		return NULL;
+> @@ -339,13 +342,12 @@ static struct mbox_info *zynqmp_r5_setup_mbox(struct device *cdev)
+>  		mbox_free_channel(ipi->tx_chan);
+>  		ipi->rx_chan = NULL;
+>  		ipi->tx_chan = NULL;
+> +		cancel_work_sync(&ipi->mbox_work);
+>  		kfree(ipi);
+>  		dev_warn(cdev, "mbox rx channel request failed\n");
+>  		return NULL;
+>  	}
+>  
+> -	INIT_WORK(&ipi->mbox_work, handle_event_notified);
+> -
+>  	return ipi;
+>  }
+>  
+> @@ -364,6 +366,8 @@ static void zynqmp_r5_free_mbox(struct mbox_info *ipi)
+>  		ipi->rx_chan = NULL;
+>  	}
+>  
+> +	cancel_work_sync(&ipi->mbox_work);
+> +
+>  	kfree(ipi);
+>  }
+>  
+> -- 
+> 2.34.1
+> 
