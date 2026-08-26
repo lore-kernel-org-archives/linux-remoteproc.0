@@ -1,86 +1,86 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83C42D949F
-	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Aug 2026 02:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8032EACF9
+	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Aug 2026 02:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787712141; cv=none; b=nbTmmpaiXHuFrJyrsP3HXvZLp7LJK1Bl3xJlAS7ZGs0reGeJXP0MYoqTBDJarOfghgvq60lQQr+drTfF/BEqeuW+DjK0HIBY35aH9iwl3RC7MD35wR/F+b+MJyW75jyXyO7H/l2GtK1JR9yp0d+DolwddrCjhGljAabJS4INtU8=
+	t=1787712914; cv=none; b=Uqi9i0+5eEBjHzLttjuW4d8WdLUuTSnXvNmZ6l8nBVoZkWATrPMP04F4rqXviGqkRUBcKdmc1Oc37s52FnXCmiV96kJlI2G9EDQjAj13QWxws6szOVRNYgfuZsnNAPUA6f/m/Rt4Nio3JzSGxiD8pHmBxi3a62ivjuru3BhIRLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787712141; c=relaxed/simple;
-	bh=MK2sz8rhggG8cCbmuFgTlkrX3wHAnXA2sf+rDggNIsY=;
+	s=arc-20240116; t=1787712914; c=relaxed/simple;
+	bh=EAdT7SxED4NjI7nW0nd4WdQ7ZlHtubM69ukQVXmyiCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ig/clc4qkZXcSQ1EFq2Jw2DrKxOgO1o4Dn9mTeEXCI21VoUJf/8F0FXyXKStwJ05ew1POb6U9GwmYggL90f0AcJNrX8kwty6nT7JOl95oUOSdE09QjqAqEz6NwFNnuY7hP3JWDH659ZhQ+zznagED5O7I7cYwnHUk97xOqIHJE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SPCJvolR; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SBtGXrnM; arc=none smtp.client-ip=205.220.180.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksN+giAxF//0qLIrM+2yb1egdmptCAfCGVj22qlQZOi/o+dyCeuxeQP2u1DL/giG9x4vbQFFgMquuUSHAxJBhKg+cxChAAif4g5jNz0JBwrarMxfrUlmgzByQvHRmulNspLIaozyXc2ej8FF9aHn3sVfSl68iUQg9D2+4zB1LAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PRQLu387; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kq7f7KGu; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SPCJvolR";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SBtGXrnM"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67Q076rs2962804
-	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Aug 2026 02:42:19 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PRQLu387";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kq7f7KGu"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67Q08ExW3817584
+	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Aug 2026 02:55:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=g7YJVDPj8WToA4pt+4ykVGH2
-	7m0lY/z7+T+UCmN3BYc=; b=SPCJvolRxNsgh7RWZAA8Ea0GlE2FwwseljVsf/dq
-	3FFvuxZ6W7oifGUl9hReHyein9Hd5pGnvSu6Aq33bFkdb/g8eHsfayq+heMPfYR6
-	RSU2SE1QII4a5Hc7TvIG+6BObIKI4N7HRqsB5+Tmtk1yQ5WtIt8RB1OPMnwzKEHi
-	HixaysAhUFiBIHUg71wK6Jm07MJ6JD5jyMZX09raRy9iPdBwc0YQkHeNt/B/SzkF
-	xHE0sbi0Lau634x5eF2O/QDnx9PAAId9l58iHwIMCvoeQ3qoArUEBPq+WBAmez0m
-	pC13ZDUv/R47TGHOuXZhifrUCMAMgufDpQGtNI+ZSEuP2A==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g9cgu2jcw-1
+	:references:subject:to; s=qcppdkim1; bh=qZwlu9DXHbG3KJS9HtD5YN5O
+	QJT84r4Ko7CZVuzE2Ls=; b=PRQLu387WeMLi7r71RcObG9DOZLhwKIC3x6olCTA
+	7LRAO/lCJtJrSsqKkoHmM2FTPphE4epZkoSUtx2M7LPDujh3KZxc0NsZSAM05WyD
+	Dqt+CsknW7V1QNuV2EchYXINnuFJOXklc3nxCxzT+AkZZKyxdvcgg6OkI8o79Xrw
+	hIaYQ5AIWa7ExGZZmZp0c5VISXYW0m1ZSslzz6U/Pt68gk9nDHfWS6kXX2LT0rmK
+	17SNCvaX0/6rKrrF4cvS5wDTg0xk/CYEUL2pRA0H2w3mWJ8NiUwEM/HzR2d/w/Bb
+	H/6+GGes7crB8F1PiZgj/XkjADY/NexFhYmbwnM5kkkvLw==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4g9fgr1pa6-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Aug 2026 02:42:18 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2d04908139bso7698375ad.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 19:42:18 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 26 Aug 2026 02:55:11 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-38dbf293831so1313363a91.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 25 Aug 2026 19:55:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1787712138; x=1788316938; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1787712911; x=1788317711; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=g7YJVDPj8WToA4pt+4ykVGH27m0lY/z7+T+UCmN3BYc=;
-        b=SBtGXrnM15u9hWJoncYTYCAQzFGlqaK1lIb1pRgcvuv4Xs8Xiy3HVWQOgO2aIZmDFC
-         IR00SjrDbSV/hX+Qm1VjyhAMdJdUQSBIZrlHdV2HZtCChL8LRoIcDMWKZosktzXOBljZ
-         KcsVy4IEAa3PofYmy30KroOPGf1M+g/S6PAM5vglNXKgBmnWVuZIos8aacfX9jTe1ZRr
-         BhVkFS0h/y26a+2g7SNhaLYQ5usvK6ZiXUpiorxrDLAe2xJlwhSxXNTdupuA8LMeo5zT
-         4BmNzTMExDJYT7vak7lGK2ploIv7xPC2Pbad1av+H9qdeFRAJvR/c8MAI04nNeVE84XL
-         ekJw==
+        bh=qZwlu9DXHbG3KJS9HtD5YN5OQJT84r4Ko7CZVuzE2Ls=;
+        b=kq7f7KGu2/3pbUOcafBtJbwxh/LTAmskgCPifgC7EFTKR/Ra6/8RNx3djzhzeF+m7O
+         GoGWNQsMcRQnNFP/IaQ2AIzTBjV2wnPOcrXjwyD1BYTJ/1RqJTPqwVGd/f3nI5lVj2pV
+         UCVEXrIGTdQ3e3k5YguwwfJEqU92ElSxdsYYu4GnH0IMuakrx1RZjVVWbHjhOaHvvYAG
+         FWwPDOUax6CpC666xrx9QeC4geFwQRWYZcThN+UpUauqUcf5+LWn3CZj09tPlvjwmah6
+         FOiEKLRG1QC5TFnq/r0A5IckLHZJMSZoYiS6LgJHTd42Fo5As5/BWY1NR5ifw46M/6Mc
+         CZdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787712138; x=1788316938;
+        d=1e100.net; s=20251104; t=1787712911; x=1788317711;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=g7YJVDPj8WToA4pt+4ykVGH27m0lY/z7+T+UCmN3BYc=;
-        b=Nh8w1bl1+Gat2lxsRsdYCVuMU8uKIfWjyrfNngYYRapW8LIdGwLbhqMR0hNdxTDF5I
-         6J0ZTBaTQDukiu/9dQGLuR+tr56BwmQXH1p8WAYb9iO/Ys0q7s9ntoDUl3ThHCwPEPe1
-         bHQH7Pyku9mmR5fDxzd2yJYGXfdLfPaqzOcG4+c3MwZUqmaBRtWXHh4GU6N5UaklXKrf
-         TyEZ4g79IqFfFTbMwDrqbG786a4EEv5dehIFDqUe+q7yAcLCmuMpvFLjHtxo+Z6gCIrg
-         lcE+MShzjuFwhZo7AdNhVV8gA2BXdlZNvL+fQyT0zBl4R1LLtIEJqmgP6TthDLDit6MS
-         Xsfw==
-X-Forwarded-Encrypted: i=1; AHgh+RpcXR4WXEdbXg2DLQ/XANysxI5q1LC054Qi3gl964lWC0mez9U4TRWeIWpZs2o832zWBNy/a2EMquVHyuvmXWJM@vger.kernel.org
-X-Gm-Message-State: AFuF++nx9pfDlvu/VrzYJp4nqTF2+FO66MUsyU9gTg3sLH7xRIQlAbws
-	r/5LI+V4bjCd3VX989qMf4bbjCid3tdu2IOzI5Zy/yrhUeT1/i6DuJV9gE62QiLzbgtRahVBRF+
-	N6iuC1FveJ8jZkmKnDugvpFrHT3UkPKUEzYayKxCl8tWwKMdUBig28Zen+rdmOfQ/+nfL64gB
-X-Gm-Gg: AR+sD12tzrEpMqrJY6irbCFtNYtNT/FQDc7gXGtZ+hmIOsNRqq9fqRRxvo/HnZhyylC
-	YTD8dcUhFYMNcb1HxelYPGFzbwcyChWsOPQXksWApP8wFAAGErpR3vbRBkO5dDV9htQQ3zBTtCS
-	8Mmr55b4SJPRbPoRym++/TwzDrrzR1zg1Oob9txC7Xhlnte23BV26gH+0PYJRXc4UdLvcX7/ZUK
-	UAlJQIONMpq/wUH2PYuVBKLYM73hqDwJ7iq5KesI7SLFc2M2oJKNnmTqyEkxwlRoM/K2AB1im3c
-	gQ9cLbVtMMRpbVxkYblKUsLhlKJLvyNI/MY+I1iWUZiUMXo60Rmq3MvtWGl8VXU2anvfFPqBzSq
-	pA2wkJH/Ea8+2B/pK8bJexmScShEHBCBfCjR0yxgJYLw=
-X-Received: by 2002:a17:903:19ed:b0:2cc:864b:539 with SMTP id d9443c01a7336-2d7079ffa9fmr55063925ad.6.1787712137683;
-        Tue, 25 Aug 2026 19:42:17 -0700 (PDT)
-X-Received: by 2002:a17:903:19ed:b0:2cc:864b:539 with SMTP id d9443c01a7336-2d7079ffa9fmr55063225ad.6.1787712137255;
-        Tue, 25 Aug 2026 19:42:17 -0700 (PDT)
+        bh=qZwlu9DXHbG3KJS9HtD5YN5OQJT84r4Ko7CZVuzE2Ls=;
+        b=cJxbnUKYUwPHJxRq6gQ3NbJbQoUJlqmoeNtgvGvaUqHtq+GGJ3Fl3VQD5RTZwjBmpQ
+         T+bSEeWduK14kVQc4DWWUtwS5R0JG5hhWAQcyOjZ0jjXIDv5DI+0KWRyCNRlDWVrzHWx
+         RcMlpqFZjAXt02luWQYGRAag16msP4P1h73TrMin07M8AW5Tqx1eENU3J7rfy/VQ5AUU
+         hBqgiBq0Qi/4329xmA3TK/aleZvn1ipb1DKjTC9u6AXEMmRjj5kO7wZ3t50iBwioPqyg
+         FBAeuP/vHIm6oHkEwOX8GeEOG8W1gwbohRf16rYcTznbFl3c8oJYWaOaKK6cdiClPXjl
+         AtlA==
+X-Forwarded-Encrypted: i=1; AHgh+RqwO23ZSSFktCaFB4ggaoowLCpp/0SqHDZ8e/5KbNwmv59ewQTBZiQmAgNbLo4V7UrP2V/g/dm5uftg3/SzPU/h@vger.kernel.org
+X-Gm-Message-State: AFuF++n9cBziBdYmwqLu54DiQ/8nxk7Sz68pweLRMxxO793AXSwvYcYX
+	hGuz6gWd5+PSH7oK5akw9gCcnbJa7qtzkIeAg1l1zZJSOdd4bn/XkuxHhNcQPr8Ma5ItjZtW3B1
+	tZTDaHwjhtvZAFcWkcNOD5oEblAR+Ie6xzcDlWQ84Qu39q8iPJwe1UcA0I7VKul1pS5g56Asr
+X-Gm-Gg: AR+sD12WjDhiwk6kCOnPHiX9+JmiZ6wm0XLycGlq+aZsL8kzN8QRpT+noj4ne/5TIER
+	vB+3NC3v6iI45bn8q33jD4Q4VqsOAHQnLKZsQ9tiXZfkMZ90UQsiFrZwB5nTNs8JyMFthZK9X9J
+	Vskb2nldOoqel8JhvaDgI/7Sev6pAKpqCu0Yuqlmh2GU1Z8LI73vG2Px7IX9L8bAXn640EdzS5q
+	kHD5xcGhmt1fTAIOoIIHrrnoDlCpbDQUhJDgZfE969P0VTeSpmpyREqXTVblxA/3iK3Up+L6+Nw
+	QM1Ya+aMqNmxtWkzDMMF9hKXSIGjMX6i10ljmjao369gI6yZw/tshBA6WcFPFmDWs26MrJzi4M0
+	IyqWluRIM33Crq79koiYCqL7n/+2JSTKev85SSILbgNY=
+X-Received: by 2002:a17:90a:d44c:b0:396:5f7f:52f5 with SMTP id 98e67ed59e1d1-3966d366aa3mr7354679a91.3.1787712911043;
+        Tue, 25 Aug 2026 19:55:11 -0700 (PDT)
+X-Received: by 2002:a17:90a:d44c:b0:396:5f7f:52f5 with SMTP id 98e67ed59e1d1-3966d366aa3mr7354472a91.3.1787712909866;
+        Tue, 25 Aug 2026 19:55:09 -0700 (PDT)
 Received: from QCOM-aGQu4IUr3Y (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3283d730c57sm3775785eec.12.2026.08.25.19.42.13
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3283d8d208csm3503170eec.23.2026.08.25.19.55.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2026 19:42:16 -0700 (PDT)
-Date: Wed, 26 Aug 2026 10:42:11 +0800
+        Tue, 25 Aug 2026 19:55:09 -0700 (PDT)
+Date: Wed, 26 Aug 2026 10:55:03 +0800
 From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh@kernel.org>,
@@ -90,12 +90,10 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
         Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/8] dt-bindings: remoteproc: qcom,nord-pas: Add
- qcom,cluster-root property
-Message-ID: <ao5Sg6QE9NN0P2zk@QCOM-aGQu4IUr3Y>
+Subject: Re: [PATCH 0/8] remoteproc: qcom: Support the Nord HPASS ADSP cluster
+Message-ID: <ao5Vh_d_dAlJknpl@QCOM-aGQu4IUr3Y>
 References: <20260815132541.1575121-1-shengchao.guo@oss.qualcomm.com>
- <20260815132541.1575121-2-shengchao.guo@oss.qualcomm.com>
- <20260820-controversial-mussel-from-vega-aaba16@quoll>
+ <81b85f8f-e4d4-4d19-aa47-97739eac030b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -104,100 +102,73 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260820-controversial-mussel-from-vega-aaba16@quoll>
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI2MDAyMSBTYWx0ZWRfX7viQExzMczMz
- prbkPTUsYXUYeGRUfBxMtqBCUraz8UscxT/++LBbUOr8Bmep7k7Qu/CTbHJTeyv92wEMXj+4ial
- a19tUZWvakSvLpr2nxuqkG8N9nl9y1s=
-X-Proofpoint-ORIG-GUID: iwOx_8uwClaSxwYeIYBSwJPxUR0wWBXW
-X-Proofpoint-GUID: iwOx_8uwClaSxwYeIYBSwJPxUR0wWBXW
-X-Authority-Analysis: v=2.4 cv=Sb7HsPRu c=1 sm=1 tr=0 ts=6a8e528a cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+In-Reply-To: <81b85f8f-e4d4-4d19-aa47-97739eac030b@oss.qualcomm.com>
+X-Proofpoint-GUID: kI0b0F5iTyxk0abrE3Sidx8EwKHZz6gV
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI2MDAyMiBTYWx0ZWRfX3ezMplpRhMiu
+ 7iUj7bycMKu6hrjkpCh9EqYAnkRAPQqtvwhDt3S5/rxo7tyLoAW+twhnek5TMF7j6O6nrBhKNwW
+ abBtr8ujQ2/2x+yny114YJeJkW+ti6I=
+X-Proofpoint-ORIG-GUID: kI0b0F5iTyxk0abrE3Sidx8EwKHZz6gV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI2MDAyMiBTYWx0ZWRfXx4m93KqnCd6R
+ bXscl9gyyZmswzfGPnBA1X0BJUJKw7Cm2SPnKeeNJ/eSMCf/NLKAhqNhevo7k9SmpE5SlkQ/m1X
+ sJPESZvlfOrwqgMROFr6/3uoOqz/v6ssNhK/e1ZSW2V4+qlCg9M5r6cX9Wq0/dLTm+YTBbnFnNI
+ yItBlGdRrXknhWXk7YllBgvMeOXP+XaVBBHJymrcmT/79DmurVTO2A95Nhk8blhp48okxzj0p24
+ EcrE1xPCIQ4RkwB042Nj6zvEnHOXGD5hW3WgQw8G838ee2UOjeLkhT1Yq/fbb0HAfOL2pj14kLC
+ RR1nqQq8g8wtSKpNLP1xQmxtfelJ6o9bcENsKATeRhjTDyXC6AwibSsqcCEE+1ri3EJo1oErFC9
+ A3ZrssBFX9fgVor7A3j10/F5jcOaIixqjAzzxiGnvMVz0LM8E32HHjvh73jl5xQfFPJtOuKV/HZ
+ xa84ul2LFTNTH6OAIqQ==
+X-Authority-Analysis: v=2.4 cv=TvfWQjXh c=1 sm=1 tr=0 ts=6a8e5590 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
  a=kj9zAlcOel0A:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yx91gb_oNiZeI1HMLzn7:22
- a=EUspDBNiAAAA:8 a=0bSYeviQ84LFTGsDHmkA:9 a=CjuIK1q_8ugA:10
- a=324X-CrmTo6CU4MGRt3R:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI2MDAyMSBTYWx0ZWRfX3oJY1u2S7r2U
- oFl2qYMQ8A9O8NI5YaidHXEYCKDnjoakX28zc8dYoi2kJc84zwGWocPw3ekWymWdl97K8WgyZeB
- hU7cvwC7OWmZrrZHUWQgv66e00hBn3wsEBXzY9gKWV8lkKYXGc4VHLc3bE8KW8VdVzf4wg9RulB
- YcHwNfR41qIzjdogdmNVJojipKx5M2zjCuZQ0SRDwWmsGEA3tIU6WdqIn7PjsXtXnsVq2KikHpF
- ofK9SUFaO36wjkRUDaOVkYij2qNfCf4IYPyoK5uUCFQum0PAvwu/W7LqtNWOMA+YGqIzpxYKg6V
- eaNaiEQkaRolnW1DcOh3+n4wsh0dyYhOGl9duMz05OV8zehWcTogH6e++lQKP2XTn8cXdRFT0QQ
- QKbUr+PeYdZ7yYlnZZN1YvxWKwDksVTmWJu8ctJLF0mhiJfNSMjYzkmbgqulyg4CJKRQG70y8Nc
- YlUVZAEGhFB0nFafAAA==
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
+ a=szNJ_9HOGHvmntdxT5MA:9 a=CjuIK1q_8ugA:10 a=iS9zxrgQBfv6-_F4QbHw:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-08-25_07,2026-08-24_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 phishscore=0 spamscore=0 adultscore=0
- suspectscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2608260021
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ phishscore=0 priorityscore=1501 spamscore=0 malwarescore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608260022
 
-On Thu, Aug 20, 2026 at 08:59:48AM +0200, Krzysztof Kozlowski wrote:
-> On Sat, Aug 15, 2026 at 09:25:34PM +0800, Shawn Guo wrote:
-> > Document the qcom,cluster-root phandle property used to describe HPASS's
-> > ADSP0/1/2 cluster relationship. Every member of a cluster carries the
-> > property, including the instance owning the shared resources, which
-> > references itself; instances referencing the same node form one cluster
-> > that boots in order and is torn down as a single unit.
+On Mon, Aug 17, 2026 at 03:19:56PM +0200, Konrad Dybcio wrote:
+> On 8/15/26 3:25 PM, Shawn Guo wrote:
+> > The HPASS audio subsystem on the Qualcomm Nord SoC has three QDSP6
+> > instances, ADSP0/1/2. They are not independent: ADSP0 owns the resources
+> > the other two need (PLLs, AG_NOC, RSCp, CESTA, THROTTLE, QTMR) and
+> > initializes them as part of its own boot, so ADSP1/ADSP2 can only cold
+> > boot once ADSP0 is up. Their firmware also cannot tolerate one instance
+> > going down on its own -- stopping or restarting a single member leaves
+> > sysmon/glink_ssr notify requests to the siblings timing out, and the
+> > whole cluster unable to recover without manually stopping all three and
+> > restarting them in dependency order.
 > > 
-> > The relationship is described with a phandle rather than by containment
-> > in a parent node, as ti,k3-r5f-rproc and xlnx,zynqmp-r5fss do, because
-> > the hardware does not express it by containment either: the three QDSP6SS
-> > blocks are register-independent, with no shared register window for a
-> > container node to describe.
+> > This series models that constraint. A new "qcom,cluster-root" phandle
+> > groups the instances; every member carries it, the resource-owning
+> > instance included, whose phandle references itself, so both cluster
+> > membership and root-ness are answerable from the node being probed alone.
+> > Instances without the property -- which is every PAS instance on every
+> > other SoC -- keep qcom_pas.cluster NULL and are completely unaffected.
 > > 
-> > Also add the qcom,nord-adsp1-pas and qcom,nord-adsp2-pas compatible
-> > strings used by the non-root cluster members.
+> > Two invariants fall out of the hardware, and are implemented
+> > independently of each other:
 > > 
-> > Assisted-by: LLM
-> > Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-> > ---
-> >  .../bindings/remoteproc/qcom,nord-pas.yaml      | 17 +++++++++++++++++
-> >  1 file changed, 17 insertions(+)
+> >  - Root-first bring-up. A dependent member's start blocks until the root
+> >    has booted.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,nord-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,nord-pas.yaml
-> > index e90d2953ba69..58d88cb07e52 100644
-> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,nord-pas.yaml
-> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,nord-pas.yaml
-> > @@ -17,6 +17,8 @@ properties:
-> >    compatible:
-> >      enum:
-> >        - qcom,nord-adsp-pas
-> > +      - qcom,nord-adsp1-pas
-> > +      - qcom,nord-adsp2-pas
-> >        - qcom,nord-cdsp0-pas
-> >        - qcom,nord-cdsp1-pas
-> >        - qcom,nord-cdsp2-pas
-> > @@ -89,6 +91,19 @@ properties:
-> >      maxItems: 1
-> >      description: The names of the state bits used for SMP2P output
-> >  
-> > +  qcom,cluster-root:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      Reference to the Peripheral Authentication Service instance that owns the
-> > +      resources shared across this DSP's cluster. HPASS shares clock/reset/NoC
-> > +      resources between its ADSP0/1/2 QDSP6 instances, and the owning instance
-> > +      (ADSP0) has to boot first to initialize them before ADSP1/ADSP2 can cold
+> >  - Coupled, two-phase teardown. Stopping or crashing any member takes
+> >    the whole cluster down. Hardware testing showed that whichever
+> >    member's PAS/TZ power-off happens chronologically last always fails
+> >    its own graceful shutdown ack -- both the sysmon SSCTL QMI ack and
+> >    the SMEM-bit/IRQ ack -- regardless of whether that member is the
+> >    root. So phase 1 fans the stop out to every participant concurrently
 > 
-> This feels way too much SW. We design hardware resources in
-> owner-independent, meaning each device is the owner. Most of Linux
-> frameworks, including listed clock, reset and ICC, support resource
-> sharing for multi-owner case.
+> What!? Is that intended by design? Sounds like a crazy DoS attack surface :/
 
-It's my fault. I should have made it clear that the shared HPASS resources
-(CRM_COMMON clock/reset and the AG_NOC bridge) are not visible to the OS.
-Instead, they are programmed by TZ, on the owning ADSP's behalf.
+I'm trying to confirm internally whether this is by design. But at least
+this is what I can conclude based on my testing and experimenting.
 
-> If this is not SW related, then I claim that compatible defines whether
-> services is owner of the hardware or not.
+> Are we perhaps missing something to let the uncrashed DSPs keep running?
 
-Good point! I will drop the property and try to derive from compatibles.
-
-> Also, unresponded Sashiko comments.
-
-Yes, just wanted to get human/maintainer's view first.
+Let's see what I can get from the internal team.
 
 Shawn
