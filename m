@@ -1,201 +1,238 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013024.outbound.protection.outlook.com [40.93.196.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71F45FFC1
-	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 16:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9C4140E5F;
+	Thu, 27 Aug 2026 20:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.24
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787848144; cv=pass; b=EG3VwPGIw/Csr17de284YVwrQr2o8VJAOE22Ae5UEniFNmZQSnuPYM+XyI6UnuVL+nPwwXVys5j6v9NdruFu50Ig6cvjx6lFYFnSZ0ukndgMuYyUdLFGRAxUzQRzhyRTm37b3xq6A/DxFJkf94y4iJ58xtENr6p7luSECBo8lHc=
+	t=1787860884; cv=fail; b=JFWioK4Z7ldv/2Xc64nYVzPm2KB3y3ufnCruSojkvBqJN4UUEPmOgPuN9jpifj23s6abvZh5Y4Z5CnLDYuEwExIWoaRoINWHR8FbJbBDAjKkukNKjHIwyhhzTtQ13Dv4hU96aUKzc608WW5UySCTq0Tj+PD54cVmWxDAKuvjCNI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787848144; c=relaxed/simple;
-	bh=WzbhF/qUfb2BU0ixoBiTtd1LisXtP2gSY8BUX/GTghc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P9X1qieaAl6vVQ8migbJdkKC62BFnwkFhXXmeSlGf1s/tPGtTK7rMD106RkRLbFup5Zq3TYFArIEhzZaxhQB5PZHWuwFuSvuEfIXmzbEFl1j8xC7XcOuiFlba//CJxjYgTsO/mUyqy27xdrBkYxQwGxuBibvOk+oN8r3xKfZ/iA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QQICBUUM; arc=pass smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1787860884; c=relaxed/simple;
+	bh=d/SlU8DWYaSTpPYtGu+6AnfAVth2bf3EUVm6BN/HxDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Kg/GMcwXx+laQApgsLlCR2pJvR+k4lUalhsW5/Uly/akZNzbRQXqHP+RloZ+CHllGjGu9Pw2O6VuhoeGER6HdsQK+DrZshI0b7XhUrCzL6T/uDWFOLmyFlpIelV8bGWOyp93SS0SoPvd3zQHOZZwRwdSqekXhMqJvBn/vAeD0oI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ti+uauxr; arc=fail smtp.client-ip=40.93.196.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QQICBUUM"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6a5e971c970so1951976a12.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 09:29:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787848141; cv=none;
-        d=google.com; s=arc-20260327;
-        b=GU0hdxeOG7VY0oUtw2XmJ+MoqppLxurcCKOjA4VwRupN4YI+EoU99DgzD9lj4k8XRp
-         728qFQyVz0q1yn/Qid6m7KrUJaCPwTwFTMVhIIVS325WHXrXeH5xM2GJbb1y1eE+73ih
-         5mrsNtBI6eFW4a8UPLVZy+bpwlpDTFW9IsJnNXZeuzQOL5/iQb++RjQgf08WgP9vx1cH
-         KO7iO2eo1VkiOd83mhsZSA9eP0ttuQLau14x38WpoeLDhFhPfIhVa3Fmqn4kryPXllkY
-         fEnXQ0PeNW/l/1EnLQi/PMu2heSFYxHAu0jAMv+j3UlQdA/v+Wk2eAfMFZ3ZTq63X6LX
-         rTFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=a1IeL4ebzv3UkySj4bOM0KyNJSdUD22zYAnAwZBxGLY=;
-        fh=beBg6uaWITAltbuC8qtQu419Vwrlb0wjnFFB9m/A0h0=;
-        b=ljmhdAbXbCOy/zSUohkEb8fSrdvii5DIdOzttDedWXQoX5PqdsydekTsq7nRNb2urI
-         MBYuXHGxZaNMO1XrTfIjpTEd17ru6/lH1MzIWR2VOcYkozBYQlEChoMBSYrLFavMDUln
-         AE5AWc3tzEbPPIK4yATMSm/nABh2yl4po4VmZWQa+u30z3hM19w+1WFtQt62/IW7P9uf
-         lVTb3N5pqHpnNSZ+2Huj2AWjpwRd+udTRGVCZXsBw4A60FdyW9ZNWIO/kX+Uz22F/hHx
-         pr3v2A4cc+RIW5x2SOgvyCSXbCBytF86f6fC02YQPvY+xUuN+61BElpAiYg5LIakUkYN
-         5uVw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1787848141; x=1788452941; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=a1IeL4ebzv3UkySj4bOM0KyNJSdUD22zYAnAwZBxGLY=;
-        b=QQICBUUMdyKNKYhin/5VMBgedobylXZlkIXFuVoPyXgfTWIzEK6gM/Z01MMXI3mqWt
-         nxlRe4dB2A2IGcJt9/DlCE+UZGILv4t04uZj48Qd6E/YrAl0nrriQNWEWJfgwJI0IPiB
-         noAxOiDbLdaVV4cp6f54ybAE+A7dRbCWXtBsGz0CFEXXe82lxsVxrUloBlzOoMj9SaPb
-         6D6lxVnttpBEhmzJfk01xWWLQSvIA8B+bcznLFbMQclpyQuJrazFzpEffYn9ZnCyI8KT
-         EnDFl2qUnFMH2HjANzKLBWJVPKmeNcklO6S3Qp2lLrDXBVt9dB1KyO6xRzlgNGPWwg+R
-         T0Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787848141; x=1788452941;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=a1IeL4ebzv3UkySj4bOM0KyNJSdUD22zYAnAwZBxGLY=;
-        b=Sh+l63oo8XAgmJoaiPMqSXUmyzDa6pyFz8XDHP4AGMEWRUGTfcaKZ2C2+EwD0p/EBM
-         drAV6Bb8m3pDTqPofMwJe+kdXPfE7r8dt8Q848K5wTQfY98Ti1XixZhJ0YwXqO2ZJ+lz
-         7qn4fSCjKwkOMlLOCNk7DKRi+vx+E43IADagYPNHzJewwmBUJWRqRhBnzrQge3xF2LWL
-         jilem7dwosp22wzmHQqetGeOi5DvBVnO4Vz0MJF2vreunXFx8hA0mPK3t7pR/UHri2PV
-         BppPmMTknbeqG6emMmlDKoRD6wS1U35TynZRa+BKlAtceFjHGNJ6xW1MSZNRcDmYDj+c
-         bZmg==
-X-Gm-Message-State: AFuF++kfaV7MT4OtpcfATgTLDZ9b9lv57HIdVLrIA2mqKMLM7+XoodCp
-	wXZyYWdtWKOUWMKWjjbeJD0S8KWGOBm4fDHBKNNKPymy3V0iPTShV5cdV/G4oz+u4cbYIrJCtj4
-	MBD9bsauASE1Vib4MSqenG6+WluCcVlbcvBLNuLV7MdM/5dcRGtDy
-X-Gm-Gg: AR+sD12LsrWUfSTTwO3Rbattqt+1iUvxVFSlbF1UeI+KyYVJ8Lu3LcTZtQ7okoxDj/q
-	ELjZYI39Dfag0QNsJ8VTdAkJR+NdOoflRut+K7yLDfzhJwafUrmwa+bbpPij6JL6mMXDtvqHktR
-	vO8tfFrsoGkdtBI/CMmqYVU1XjVdvkighLc9pRyOWjG3RvvbED+oize2fIW7Uta2XcbR/F97OiV
-	C3DUZ0xT2e2GQp3XDSzr8/84d3k7VCZcfspTf7210acaI9Tt7uLzn96FLYAOc5elGm6U7+F4zMp
-	7CrEELFHTQjlNjIbk+qEBJ8jfxANmd824RKG2TKWRMUVqZVDu5NywHsNaWhm4MRh/p1Obaeq8cq
-	d9w==
-X-Received: by 2002:a05:6402:501b:b0:6a3:5685:703 with SMTP id
- 4fb4d7f45d1cf-6a60c56c561mr306339a12.3.1787848140731; Thu, 27 Aug 2026
- 09:29:00 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ti+uauxr"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zE7wUoxcf+iGLZQSQxuNW9zQFs9J9rHQ8ACh9uRrWUt6GMrNKpXLEHHM4nOGrtR+ECnUG/R774obLHb2jgOhZb+KB3trYFtOuQQcyFqbW8N7DZan3P1HLWEVC/eOepOuWgUbx6fI0zqFhd1Skn+YxPEySst/rm5z0AMzW8+ht1JQr9i601N/ACtbbbkqaus7Lma0EZ+6wrW3FOqUoBYXHkhGFGz9Av9ZqBCado0mb7Yel72oASix3Kj7EnIm5R1WXk2XbtffbomYKZbRDEYVcsO5Ra5iPe7iNUe+JASyxzSiFB7LHnsmxy3YH1/FkVdlI5rU2J56fC8CGE+5aoHUKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2TqS+OXWk9z7ecsFV6+SxTeEsshU6oAb9aJdlqk8Hc0=;
+ b=q7gLVYOgl2CU3H+EWShHusI72Fmsn139wZW5D5QlR7lJmD2hSbRanMRxkRH9NyVzZT8NC4woAsCiJUswCYJIfGZd6+NpjPjfuMbt7lD1LDfMryVsb3INsRdbYpeoeqCdqxHQfgosUUQ5SSLWg5wvni/mJTl1PnyTc/gmD3D9XbrdSADvKCCBTtweUnj4sM1nPHrj3WWCEb6+qRjj1NMvfOtZjyVTGDReYfxHxVCb21WnOJPDuiWbVOOSYuoMq/WPpxcxG/+og7gntvWH/9RNbEfergjC0eF/KQC0zdcS0co0Lw6/sWX1al+/yMQgWn8Z0qL6mZEZ0uY32cPlVAswCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2TqS+OXWk9z7ecsFV6+SxTeEsshU6oAb9aJdlqk8Hc0=;
+ b=ti+uauxrsU4vlRr25LTjOcajuvhX1b1BdRiilAwvK/SPPYL7AgHxJUrOttid/1SZOxmCbm/VvzTpxez+fuTEljrUQS3p9i0zJaiOUE0JuOdvQXTtkbOnGe0wjrIdLhvYgf//Gh01jqW8ZjZYBZCh56UjfvVwqAcTUSOkt98xVjY=
+Received: from BN1PR10CA0002.namprd10.prod.outlook.com (2603:10b6:408:e0::7)
+ by SJ1PR12MB6052.namprd12.prod.outlook.com (2603:10b6:a03:489::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.8; Thu, 27 Aug
+ 2026 20:01:08 +0000
+Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
+ (2603:10b6:408:e0:cafe::44) by BN1PR10CA0002.outlook.office365.com
+ (2603:10b6:408:e0::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.10 via Frontend Transport; Thu,
+ 27 Aug 2026 20:01:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.382.0 via Frontend Transport; Thu, 27 Aug 2026 20:01:07 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Thu, 27 Aug
+ 2026 15:01:07 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Thu, 27 Aug
+ 2026 15:01:07 -0500
+Received: from [192.168.1.205] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.45 via Frontend
+ Transport; Thu, 27 Aug 2026 15:01:07 -0500
+Message-ID: <b17047b9-ae6a-460a-b806-ba78e454674a@amd.com>
+Date: Thu, 27 Aug 2026 15:01:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202608190009.uCbYi1Y5-lkp@intel.com> <CANLsYkxW7EeVQwH6pJryE6PzfVzVVodGCKbFOmycqffRLZ_SLA@mail.gmail.com>
- <fc762f68-5c8b-4d35-b6a4-d876b9d4272a@amd.com>
-In-Reply-To: <fc762f68-5c8b-4d35-b6a4-d876b9d4272a@amd.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 27 Aug 2026 10:28:49 -0600
-X-Gm-Features: AcwNN1V5W_G9-IgI1DzPTdDEbjYOVPatgOVJPMIN4PGXvVSOyiA9WqSyMHSXj5Q
-Message-ID: <CANLsYkzRTxxCg2UquW0StCrDCaWZaqZUM=jzQz4bf3xsnrP5rw@mail.gmail.com>
-Subject: Re: Fwd: [linux-next:master 2763/15982] drivers/remoteproc/xlnx_r5_remoteproc.c:837:49:
- sparse: sparse: incorrect type in initializer (different address spaces)
-To: tanmay.shah@amd.com
-Cc: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH v6 3/5] rpmsg: virtio_rpmsg_bus: get buffer size from
+ config space
+To: Mathieu Poirier <mathieu.poirier@linaro.org>, Tanmay Shah
+	<tanmay.shah@amd.com>
+CC: <andersson@kernel.org>, <corbet@lwn.net>, <skhan@linuxfoundation.org>,
+	<linux-remoteproc@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20260814044238.518296-1-tanmay.shah@amd.com>
+ <20260814044238.518296-4-tanmay.shah@amd.com> <aoxywkQPy7VPaIFm@p14s>
+Content-Language: en-US
+From: "Shah, Tanmay" <tanmays@amd.com>
+In-Reply-To: <aoxywkQPy7VPaIFm@p14s>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|SJ1PR12MB6052:EE_
+X-MS-Office365-Filtering-Correlation-Id: bab01074-2ed7-4d29-5d08-08df0475ef36
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700016|82310400026|1800799024|23010399003|10067099003|56012099006|4143699003|6133799003|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	avRy3tkWwc2aFDqUggjt4KnOvIn6Od0GtKJw5fSppgoW6m4pmC7KBbpeYe2Tz0YHPmLMoNbHucOI/GLW4NIvWEAWr5mwiLvVwcbR1lmAizedkbH9V+ovm3FIJAi0lNpK9pPxjrXehD1JGRZ589Kzf0CdRgZ7JN59TsyI7qJlfW5gEtB8ZPe7ERjdGe9hmyiEkFBUb7iIQW56avR0tNfVcbWgSe3BGyX0+RmTgWCOajbhNYeoVbHDDVE3udFs4KCbIOJENQH5BWFMRYZweDPoHrCYERti5p+eEo9K/iZl+tiMa55a0MmN9y+oHW/acCemDXrCkxi0OcasCrqAphPunnsbn1aEvUf88OTcz2n9pk9mrhdQFzsOjk5i4rmRsSEvLPx49sv2YiAkIk3UBS1L7UaDsjocvlTxLk6c+hNJovCOhccoA0VQJ3Je+dyxizqXOYqRGtB6fguHDHWJg8QQ6AVHkClyrOFZUWQgKoIi1Q/CrPCk2avl2t3QcZ77Wn/D0BWThu3bIPOTvJ9hh0UFx/wANEjSiXbRG5WttyyOGBcoE6lfy9E4fT6VUs4s02Yg60UO0hnTQPXTrIKM6Jpp4anAWfVg+W4jRQjH3iPE4cGyAIRr5Kb+bZzm/pUkiWlf/CqjNNIbQvk/+CZ/r6QzRzAieplel1x+SUYx7+YndKQoKtJBEEyTD0yeesy0+k0Z
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(23010399003)(10067099003)(56012099006)(4143699003)(6133799003)(11063799006)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	OhEhWpGth8m7YmKO5T5u2eroy7ilQq9Fo6/+E+C5bvBxmijc9k/z2tMTJKqvtowsbz6AluGpsWAIt0mJUXTSWmLmW36tJ6NeCTCn9c+ZNDLfHkFIiiUffK4TPEbo5n77oS/iaVHlBpE7gUotvXbKB6X6mI5SHLcZ4KyAeUXOLOat6igBAXRmPUgRXEZ08fScAHk4fGcNTBLpZlRdGReBUfLIG/HyLGGUEfo0EXBGQ/DqRIzlsXxebTclbrG7VFL4WbF0qFx571tGgVCHsX4CC7AcAc6o70EM/A86ZSA3QXSWNe2LA8mNhoHGXNMHdsgqI112NKGyx1balBphTJ8AT6vedljVgCdFu08rL57ZBEhshPqaAw3lDm/M/aMmxDiCAsB6JvYovuETRKcMBQ91EtaMnArtlr+ZwdNZTJHAHXDZas2jLqEX5dPaz8fPt331
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2026 20:01:07.9600
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bab01074-2ed7-4d29-5d08-08df0475ef36
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B370.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6052
 
-On Wed, 26 Aug 2026 at 15:05, Shah, Tanmay <tanmays@amd.com> wrote:
->
->
->
-> On 8/19/2026 10:33 AM, Mathieu Poirier wrote:
-> > Tanmay - please have a look.
-> >
->
-> Hello Mathieu,
->
-> I looked into this. So, I can silent sparse by using __force sparse
-> annotation, but that's not the full solution. I think to properly
-> address these warnings use of ioremap*() APIs should be replaced with
-> memremap() API. This ensures that DDR reserved memory is not mapped as
-> iomem, and correct pointer type is returned.
->
 
-Sparse complains when an __iomem * gets typecasted to anything other
-than a void *.  I don't think there is a need to use the memremap()
-API because all that does is assigned the value of ioremap_xyz() to a
-void * before returning the value.
 
-Looking at the errors reported herein, it is possible to use a void *
-and then casting that to another type to keep sparse happy.
+On 8/24/2026 11:35 AM, Mathieu Poirier wrote:
 
-> However, this needs serious restructure in the driver. It will take me
-> some more time to address this issue. Until then I prefer to keep the
-> sparse warnings.
->
-> Thank You,
-> Tanmay
->
-> > ---------- Forwarded message ---------
-> > From: kernel test robot <lkp@intel.com>
-> > Date: Tue, 18 Aug 2026 at 10:59
-> > Subject: [linux-next:master 2763/15982]
-> > drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse:
-> > incorrect type in initializer (different address spaces)
-> > To: Tanmay Shah <tanmay.shah@amd.com>
-> > Cc: <oe-kbuild-all@lists.linux.dev>, Mathieu Poirier
-> > <mathieu.poirier@linaro.org>
-> >
-> >
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> > master
-> > head:   e6664f2b33db9b6811eb4cec109f06cb2b4f458d
-> > commit: 5ae3dc078874693a0a7fd1cf32660bd473fe544d [2763/15982]
-> > remoteproc: xlnx: Add crash detection mechanism
-> > config: arm64-randconfig-r111-20260818
-> > (https://download.01.org/0day-ci/archive/20260819/202608190009.uCbYi1Y5-lkp@intel.com/config)
-> > compiler: clang version 24.0.0git
-> > (https://github.com/llvm/llvm-project
-> > 844a18e753e822736c9805ab779144b647a2c186)
-> > rustc: rustc 1.96.0 (ac68faa20 2026-05-25)
-> > sparse: v0.6.5-rc1
-> > reproduce (this is a W=1 build):
-> > (https://download.01.org/0day-ci/archive/20260819/202608190009.uCbYi1Y5-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202608190009.uCbYi1Y5-lkp@intel.com/
-> >
-> > sparse warnings: (new ones prefixed by >>)
-> >    drivers/remoteproc/xlnx_r5_remoteproc.c:571:20: sparse: sparse:
-> > cast removes address space '__iomem' of expression
-> >    drivers/remoteproc/xlnx_r5_remoteproc.c:749:17: sparse: sparse:
-> > cast removes address space '__iomem' of expression
-> >    drivers/remoteproc/xlnx_r5_remoteproc.c:773:24: sparse: sparse:
-> > cast removes address space '__iomem' of expression
-> >    drivers/remoteproc/xlnx_r5_remoteproc.c:797:25: sparse: sparse:
-> > cast removes address space '__iomem' of expression
-> >>> drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void *rsc_offset @@     got void [noderef] __iomem * @@
-> >    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:
-> > expected void *rsc_offset
-> >    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:     got
-> > void [noderef] __iomem *
-> >
-> > vim +837 drivers/remoteproc/xlnx_r5_remoteproc.c
-> >
-> >    832
-> >    833  static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32
-> > rsc_type, void *rsc,
-> >    834                                  int offset, int avail)
-> >    835  {
-> >    836          struct zynqmp_r5_core *r5_core = rproc->priv;
-> >  > 837          void *rsc_offset = (r5_core->rsc_tbl_va + offset);
-> >    838
-> >    839          if (rsc_type != XLNX_RPROC_FW_CRASH_REPORT)
-> >    840                  return RSC_IGNORED;
-> >    841
-> >    842          r5_core->crash_report = rsc_offset;
-> >    843          /* reset all values */
-> >    844          r5_core->crash_report->crashed = false;
-> >    845          r5_core->crash_report->crash_reason = 0;
-> >    846          r5_core->crash_report->crash_reason_str[0] = '\0';
-> >    847
-> >    848          return RSC_HANDLED;
-> >    849  }
-> >    850
-> >
-> > --
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
->
+>> +		dev_dbg(&vdev->dev,
+>> +			"vdev config: ver=%u, rx sz = 0x%x, tx sz = 0x%x\n",
+>> +			version, vrp->rx_buf_size, vrp->tx_buf_size);
+>> +	} else {
+>> +		vrp->rx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
+>> +		vrp->tx_buf_size = DEFAULT_RPMSG_BUF_SIZE;
+>> +	}
+>>
+> 
+> Please move the above to a distinct funtion.
+> 
+> I am done reviewing this set.
+> 
+> Thanks,
+> Mathieu
+>   
+
+Thank You Mathieu.
+
+I started addressing the comments, but missed to ack here. I agree to
+all the comments and will be addressed in the next revision.
+
+Tanmay
+
+>> -	total_buf_space = (vrp->num_rx_buf + vrp->num_tx_buf) * vrp->buf_size;
+>> +	total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
+>> +			  (vrp->num_tx_buf * vrp->tx_buf_size);
+>>  
+>>  	/* allocate coherent memory for the buffers */
+>>  	bufs_va = dma_alloc_coherent(vdev->dev.parent,
+>> @@ -873,15 +925,14 @@ static int rpmsg_probe(struct virtio_device *vdev)
+>>  	/* first part of the buffers is dedicated for RX */
+>>  	vrp->rx_bufs = bufs_va;
+>>  
+>> -	/* and second part is dedicated for TX */
+>> -	vrp->tx_bufs = bufs_va + vrp->num_rx_buf * vrp->buf_size;
+>> +	vrp->tx_bufs = bufs_va + (vrp->num_rx_buf * vrp->rx_buf_size);
+>>  
+>>  	/* set up the receive buffers */
+>>  	for (i = 0; i < vrp->num_rx_buf; i++) {
+>>  		struct scatterlist sg;
+>> -		void *cpu_addr = vrp->rx_bufs + i * vrp->buf_size;
+>> +		void *cpu_addr = vrp->rx_bufs + i * vrp->rx_buf_size;
+>>  
+>> -		rpmsg_sg_init(&sg, cpu_addr, vrp->buf_size);
+>> +		rpmsg_sg_init(&sg, cpu_addr, vrp->rx_buf_size);
+>>  
+>>  		err = virtqueue_add_inbuf(vrp->rvq, &sg, 1, cpu_addr,
+>>  					  GFP_KERNEL);
+>> @@ -964,8 +1015,8 @@ static int rpmsg_remove_device(struct device *dev, void *data)
+>>  static void rpmsg_remove(struct virtio_device *vdev)
+>>  {
+>>  	struct virtproc_info *vrp = vdev->priv;
+>> -	unsigned int num_bufs = vrp->num_rx_buf + vrp->num_tx_buf;
+>> -	size_t total_buf_space = num_bufs * vrp->buf_size;
+>> +	size_t total_buf_space = (vrp->num_rx_buf * vrp->rx_buf_size) +
+>> +				 (vrp->num_tx_buf * vrp->tx_buf_size);
+>>  	int ret;
+>>  
+>>  	virtio_reset_device(vdev);
+>> @@ -991,6 +1042,7 @@ static struct virtio_device_id id_table[] = {
+>>  
+>>  static unsigned int features[] = {
+>>  	VIRTIO_RPMSG_F_NS,
+>> +	VIRTIO_RPMSG_F_BUFSZ,
+>>  };
+>>  
+>>  static struct virtio_driver virtio_ipc_driver = {
+>> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
+>> new file mode 100644
+>> index 000000000000..e28144253a12
+>> --- /dev/null
+>> +++ b/include/linux/rpmsg/virtio_rpmsg.h
+>> @@ -0,0 +1,41 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) Pinecone Inc. 2019
+>> + * Copyright (C) Xiang Xiao <xiaoxiang@pinecone.net>
+>> + * Copyright (C) Advanced Micro Devices, Inc. 2026
+>> + */
+>> +
+>> +#ifndef _LINUX_VIRTIO_RPMSG_H
+>> +#define _LINUX_VIRTIO_RPMSG_H
+>> +
+>> +#include <linux/types.h>
+>> +#include <linux/virtio_types.h>
+>> +
+>> +/* The feature bitmap for virtio rpmsg */
+>> +#define VIRTIO_RPMSG_F_NS	0 /* RP supports name service notifications */
+>> +#define VIRTIO_RPMSG_F_BUFSZ	1 /* RP get buffer size from config space */
+>> +
+>> +/* Version of struct virtio_rpmsg_config understood by this driver */
+>> +#define RPMSG_VDEV_CONFIG_V1	1
+>> +
+>> +/**
+>> + * struct virtio_rpmsg_config - config space for rpmsg virtio device
+>> + *
+>> + * @version:	version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
+>> + * @size:	size of this structure in bytes.
+>> + * @txbuf_size:	Tx buf size from remote's view. For Linux this is rx buf size.
+>> + * @rxbuf_size:	Rx buf size from remote's view. For Linux this is tx buf size.
+>> + *
+>> + * This is the configuration structure shared by the device and the driver,
+>> + * read when %VIRTIO_RPMSG_F_BUFSZ is negotiated. The fields are laid out so
+>> + * the structure is naturally 32-bit aligned.
+>> + */
+>> +struct virtio_rpmsg_config {
+>> +	u8 version;
+>> +	__virtio16 size;
+>> +	/* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
+>> +	__virtio32 txbuf_size;
+>> +	__virtio32 rxbuf_size;
+>> +} __packed;
+>> +
+>> +#endif /* _LINUX_VIRTIO_RPMSG_H */
+>> -- 
+>> 2.43.0
+>>
+
