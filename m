@@ -1,156 +1,201 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34647252C
-	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 15:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787844986; cv=none; b=fQLWysOazwSwpWldT+LDZgiX2qsX0vSb2CtZikSWLxrimvqXQ/9eenF5cti2o0BRm3lxGeiLtyd7CCi+Y2Ge8ITtBJIaPMCGq89C9jAYP4R07nZUi/VnSoAd6SZOlJhVTPPRKTUSKC9rC3XYSyWmT39z9kQ5ThOIgO2Ad9NQ1yY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787844986; c=relaxed/simple;
-	bh=IXit39jokJOkDKdV9ozjAq5puFGqOrTpsC39d5ly7YQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lZO9oKTpHhp7VFpoA14Omfqgp2RiJfKcUk1oTxCW8mT0Rp97mpd5F8hviQoX9mTyhoG1U8j0YPpcOide0eZazM9GnBKztNORJ+/B+hJfa8d84C3pYiInhr5kw7hr+A+Ko+tSmayl2286kLmdouGHQk8/GEoTK0hIurM70OjCnGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ndE2+w2+; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71F45FFC1
+	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 16:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787848144; cv=pass; b=EG3VwPGIw/Csr17de284YVwrQr2o8VJAOE22Ae5UEniFNmZQSnuPYM+XyI6UnuVL+nPwwXVys5j6v9NdruFu50Ig6cvjx6lFYFnSZ0ukndgMuYyUdLFGRAxUzQRzhyRTm37b3xq6A/DxFJkf94y4iJ58xtENr6p7luSECBo8lHc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787848144; c=relaxed/simple;
+	bh=WzbhF/qUfb2BU0ixoBiTtd1LisXtP2gSY8BUX/GTghc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P9X1qieaAl6vVQ8migbJdkKC62BFnwkFhXXmeSlGf1s/tPGtTK7rMD106RkRLbFup5Zq3TYFArIEhzZaxhQB5PZHWuwFuSvuEfIXmzbEFl1j8xC7XcOuiFlba//CJxjYgTsO/mUyqy27xdrBkYxQwGxuBibvOk+oN8r3xKfZ/iA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QQICBUUM; arc=pass smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ndE2+w2+"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-38dc69c74b8so138823a91.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 08:36:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QQICBUUM"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6a5e971c970so1951976a12.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 09:29:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787848141; cv=none;
+        d=google.com; s=arc-20260327;
+        b=GU0hdxeOG7VY0oUtw2XmJ+MoqppLxurcCKOjA4VwRupN4YI+EoU99DgzD9lj4k8XRp
+         728qFQyVz0q1yn/Qid6m7KrUJaCPwTwFTMVhIIVS325WHXrXeH5xM2GJbb1y1eE+73ih
+         5mrsNtBI6eFW4a8UPLVZy+bpwlpDTFW9IsJnNXZeuzQOL5/iQb++RjQgf08WgP9vx1cH
+         KO7iO2eo1VkiOd83mhsZSA9eP0ttuQLau14x38WpoeLDhFhPfIhVa3Fmqn4kryPXllkY
+         fEnXQ0PeNW/l/1EnLQi/PMu2heSFYxHAu0jAMv+j3UlQdA/v+Wk2eAfMFZ3ZTq63X6LX
+         rTFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=a1IeL4ebzv3UkySj4bOM0KyNJSdUD22zYAnAwZBxGLY=;
+        fh=beBg6uaWITAltbuC8qtQu419Vwrlb0wjnFFB9m/A0h0=;
+        b=ljmhdAbXbCOy/zSUohkEb8fSrdvii5DIdOzttDedWXQoX5PqdsydekTsq7nRNb2urI
+         MBYuXHGxZaNMO1XrTfIjpTEd17ru6/lH1MzIWR2VOcYkozBYQlEChoMBSYrLFavMDUln
+         AE5AWc3tzEbPPIK4yATMSm/nABh2yl4po4VmZWQa+u30z3hM19w+1WFtQt62/IW7P9uf
+         lVTb3N5pqHpnNSZ+2Huj2AWjpwRd+udTRGVCZXsBw4A60FdyW9ZNWIO/kX+Uz22F/hHx
+         pr3v2A4cc+RIW5x2SOgvyCSXbCBytF86f6fC02YQPvY+xUuN+61BElpAiYg5LIakUkYN
+         5uVw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1787844984; x=1788449784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=u0GbLwFaHwwzrHQZ6KyEJK5JW6SPWToNlMJADlPNRPk=;
-        b=ndE2+w2++9Cg8O4juXiYVelRJmQ8+HFiDcLp7iuv2/g7qeuZ7eILSSdAxdPszUz7Ru
-         2wdqKVTcdG4fFxooYcxMwvcd48PmQYg9OnSktXlAtGgzXVuWhF7323RDH/BceKPxVGl9
-         HZxfOc3C1ZZ584so24PKu3406w1E3Chggu+jPmz8dhJcJqcHPIcCJLC2HWvVoFcbxNq7
-         6BcamcvNRXPIyXosEwaDEpEEAfjtdzd2gDDajE53qYvQeB46xQJIPmae0qfhglOxForA
-         RZ6ubRz/zBjMWcj8WQKKz2h7UFeLPdh2FPgTU2Aig03NFM8CrzTHhUBSci1vLGA7tU4+
-         Rsdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787844984; x=1788449784;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=linaro.org; s=google; t=1787848141; x=1788452941; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=u0GbLwFaHwwzrHQZ6KyEJK5JW6SPWToNlMJADlPNRPk=;
-        b=SldEowyCCtMcotYDRYXiB/otZrZNkYqxoGCVRrxVvZud6t3SwKVYQTM7oVDOOP49K0
-         qqBt+LV1WK0SotqdrHAObB0QnCGNoKU2ApMufAqp3EfxysBNRzWhQ9IIng/eGNMS3H21
-         ixCSPKzoojWy5zuBOquE3705fKcXAlYtrnZ8j9wcebGNewIpqF/dm0ujw+JMFb1Zv+8r
-         7rRK3RAN2yyDOh1eMqiuEOYI734Kmeljd+Vq5Gm1OkZmyOhEyuYsh/9qOYxBquneocfz
-         jFlNK3eMtDeopAq20KWukI3zUfsym3dMq90sTs1y9TVbPZ5CitPpqZMjHFLz8NE18KrP
-         4MNA==
-X-Forwarded-Encrypted: i=1; AHgh+Rro7GRPzFX4eWAU4prcWZpV3gTfcH/U3dLhjWZAtS+Slya+w+NYk2kZz4oEHqfNlUZBVJmRvMSZ8EghPKx3/VsV@vger.kernel.org
-X-Gm-Message-State: AFuF++mEbFwJ44VeHJShNZ+jlc79UVqDgD4dJawOQU6O6rvevVyaui94
-	Hll2uSRWufPrV4kO7HBWQrrNdThAv+pGiircqNVpqg+OKgV4cHH5oW6Q/xwUNlBp2Yc=
-X-Gm-Gg: AR+sD11QPpF5DxO6L6TtCGDo2VRd688hpjNN90G8CFdVNBuD28HQC0gW9kKeD2i1bpw
-	xm5dbrq22CnxZHnA8dysYnyX8a+aYvfaOo2LZl8TZFmd8yfb1unOuwGPgV+YvZX3+TFjamdvSY3
-	3TvRb+MXVF2Fm5SYEkE+g9IlXD0vlKsplXWiVgZ2zetUSavF1+Y2B4Tby+aZYIjBklcFEtIJsMx
-	IyWIX23taQmIgcyGpDrtnwLZm6wcJvAXsL9FGhHqW83jamUrPzAvh7AvxwKXMjX5zTp6gcmYwuk
-	B0zRBLsnbqx/hmW2hwpCDX6CvvpOa1Wfp84zpxWb93FWdoyBDZGrKKhcEHbnYHFfEnbpWb5Ad3E
-	YzEQrlfp5ZYBiV7+EUckKek7XIlBxqN5rk6BHum2EGfJI4YAKbA4Ft1QNu47HS0gx64zHb36oeT
-	UechejMZZi158DS1HBPirw8hQhxxGR4zL0aMWmg1WWBF2CjFNRgs0QpZ/4cyHFGnDN
-X-Received: by 2002:a17:90b:5188:b0:396:5fce:8e24 with SMTP id 98e67ed59e1d1-396d0ea530emr169425a91.4.1787844984074;
-        Thu, 27 Aug 2026 08:36:24 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:887f:45b3:fb30:8d79])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-396b0fd5c34sm3187307a91.8.2026.08.27.08.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2026 08:36:23 -0700 (PDT)
-Date: Thu, 27 Aug 2026 09:36:20 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Shenwei Wang (OSS)" <shenwei.wang@oss.nxp.com>
-Cc: Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <frank.li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	dl-linux-imx <linux-imx@nxp.com>,
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	"b-padhi@ti.com" <b-padhi@ti.com>, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v15 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Message-ID: <apBZdNozfoCUp515@p14s>
-References: <20260721204704.400781-1-shenwei.wang@oss.nxp.com>
- <20260721204704.400781-3-shenwei.wang@oss.nxp.com>
- <CANLsYkxZbr9hKaJJGXwYXErLwQ-A07eb-oeNXY1CceHHa0Tdmg@mail.gmail.com>
- <PAXPR04MB8093FA9283357BF9604BE39F89AE2@PAXPR04MB8093.eurprd04.prod.outlook.com>
+        bh=a1IeL4ebzv3UkySj4bOM0KyNJSdUD22zYAnAwZBxGLY=;
+        b=QQICBUUMdyKNKYhin/5VMBgedobylXZlkIXFuVoPyXgfTWIzEK6gM/Z01MMXI3mqWt
+         nxlRe4dB2A2IGcJt9/DlCE+UZGILv4t04uZj48Qd6E/YrAl0nrriQNWEWJfgwJI0IPiB
+         noAxOiDbLdaVV4cp6f54ybAE+A7dRbCWXtBsGz0CFEXXe82lxsVxrUloBlzOoMj9SaPb
+         6D6lxVnttpBEhmzJfk01xWWLQSvIA8B+bcznLFbMQclpyQuJrazFzpEffYn9ZnCyI8KT
+         EnDFl2qUnFMH2HjANzKLBWJVPKmeNcklO6S3Qp2lLrDXBVt9dB1KyO6xRzlgNGPWwg+R
+         T0Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787848141; x=1788452941;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=a1IeL4ebzv3UkySj4bOM0KyNJSdUD22zYAnAwZBxGLY=;
+        b=Sh+l63oo8XAgmJoaiPMqSXUmyzDa6pyFz8XDHP4AGMEWRUGTfcaKZ2C2+EwD0p/EBM
+         drAV6Bb8m3pDTqPofMwJe+kdXPfE7r8dt8Q848K5wTQfY98Ti1XixZhJ0YwXqO2ZJ+lz
+         7qn4fSCjKwkOMlLOCNk7DKRi+vx+E43IADagYPNHzJewwmBUJWRqRhBnzrQge3xF2LWL
+         jilem7dwosp22wzmHQqetGeOi5DvBVnO4Vz0MJF2vreunXFx8hA0mPK3t7pR/UHri2PV
+         BppPmMTknbeqG6emMmlDKoRD6wS1U35TynZRa+BKlAtceFjHGNJ6xW1MSZNRcDmYDj+c
+         bZmg==
+X-Gm-Message-State: AFuF++kfaV7MT4OtpcfATgTLDZ9b9lv57HIdVLrIA2mqKMLM7+XoodCp
+	wXZyYWdtWKOUWMKWjjbeJD0S8KWGOBm4fDHBKNNKPymy3V0iPTShV5cdV/G4oz+u4cbYIrJCtj4
+	MBD9bsauASE1Vib4MSqenG6+WluCcVlbcvBLNuLV7MdM/5dcRGtDy
+X-Gm-Gg: AR+sD12LsrWUfSTTwO3Rbattqt+1iUvxVFSlbF1UeI+KyYVJ8Lu3LcTZtQ7okoxDj/q
+	ELjZYI39Dfag0QNsJ8VTdAkJR+NdOoflRut+K7yLDfzhJwafUrmwa+bbpPij6JL6mMXDtvqHktR
+	vO8tfFrsoGkdtBI/CMmqYVU1XjVdvkighLc9pRyOWjG3RvvbED+oize2fIW7Uta2XcbR/F97OiV
+	C3DUZ0xT2e2GQp3XDSzr8/84d3k7VCZcfspTf7210acaI9Tt7uLzn96FLYAOc5elGm6U7+F4zMp
+	7CrEELFHTQjlNjIbk+qEBJ8jfxANmd824RKG2TKWRMUVqZVDu5NywHsNaWhm4MRh/p1Obaeq8cq
+	d9w==
+X-Received: by 2002:a05:6402:501b:b0:6a3:5685:703 with SMTP id
+ 4fb4d7f45d1cf-6a60c56c561mr306339a12.3.1787848140731; Thu, 27 Aug 2026
+ 09:29:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8093FA9283357BF9604BE39F89AE2@PAXPR04MB8093.eurprd04.prod.outlook.com>
+References: <202608190009.uCbYi1Y5-lkp@intel.com> <CANLsYkxW7EeVQwH6pJryE6PzfVzVVodGCKbFOmycqffRLZ_SLA@mail.gmail.com>
+ <fc762f68-5c8b-4d35-b6a4-d876b9d4272a@amd.com>
+In-Reply-To: <fc762f68-5c8b-4d35-b6a4-d876b9d4272a@amd.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 27 Aug 2026 10:28:49 -0600
+X-Gm-Features: AcwNN1V5W_G9-IgI1DzPTdDEbjYOVPatgOVJPMIN4PGXvVSOyiA9WqSyMHSXj5Q
+Message-ID: <CANLsYkzRTxxCg2UquW0StCrDCaWZaqZUM=jzQz4bf3xsnrP5rw@mail.gmail.com>
+Subject: Re: Fwd: [linux-next:master 2763/15982] drivers/remoteproc/xlnx_r5_remoteproc.c:837:49:
+ sparse: sparse: incorrect type in initializer (different address spaces)
+To: tanmay.shah@amd.com
+Cc: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 26, 2026 at 06:36:54PM +0000, Shenwei Wang (OSS) wrote:
-> 
-> 
-> 
-> NXP Public
-> > -----Original Message-----
-> > From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> > Sent: Monday, August 24, 2026 9:39 AM
-> > To: Shenwei Wang (OSS) <shenwei.wang@oss.nxp.com>
-> > Cc: Linus Walleij <linusw@kernel.org>; Bartosz Golaszewski <brgl@kernel.org>;
-> > Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>; Krzysztof
-> > Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Bjorn
-> > Andersson <andersson@kernel.org>; Frank Li <frank.li@nxp.com>; Sascha Hauer
-> > <s.hauer@pengutronix.de>; Shuah Khan <skhan@linuxfoundation.org>; linux-
-> > gpio@vger.kernel.org; linux-doc@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > Pengutronix Kernel Team <kernel@pengutronix.de>; Fabio Estevam
-> > <festevam@gmail.com>; Shenwei Wang <shenwei.wang@nxp.com>; Peng Fan
-> > <peng.fan@nxp.com>; devicetree@vger.kernel.org; linux-
-> > remoteproc@vger.kernel.org; imx@lists.linux.dev; linux-arm-
-> > kernel@lists.infradead.org; dl-linux-imx <linux-imx@nxp.com>; Arnaud
-> > POULIQUEN <arnaud.pouliquen@foss.st.com>; b-padhi@ti.com; Andrew Lunn
-> > <andrew@lunn.ch>
-> > Subject: Re: [PATCH v15 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
-> > subnode support
-> > > +          gpio@1 {
-> > > +            compatible = "rpmsg-gpio";
-> > > +            reg = <1>;
-> > > +            gpio-controller;
-> > > +            #gpio-cells = <2>;
-> > > +            #interrupt-cells = <2>;
-> > > +            interrupt-controller;
-> > > +          };
-> > > +        };
+On Wed, 26 Aug 2026 at 15:05, Shah, Tanmay <tanmays@amd.com> wrote:
+>
+>
+>
+> On 8/19/2026 10:33 AM, Mathieu Poirier wrote:
+> > Tanmay - please have a look.
 > >
-> > As I (and Arnaud) have stated before, I don't think this is the best way to lay out
-> > bindings for rpmsg-gpio nodes.  I am currently thinking about a representation
-> > that aligns better with other virtio devices.
-> >
-> 
-> Hi Mathieu,
-> 
-> Would you prefer that I wait until you finalize the layout before submitting the next version?
+>
+> Hello Mathieu,
+>
+> I looked into this. So, I can silent sparse by using __force sparse
+> annotation, but that's not the full solution. I think to properly
+> address these warnings use of ioremap*() APIs should be replaced with
+> memremap() API. This ensures that DDR reserved memory is not mapped as
+> iomem, and correct pointer type is returned.
 >
 
-Let's wait until the DT format if is finalised.
- 
-> Shenwei
-> 
-> > > +      };
-> > >      };
-> > >  ...
-> > > --
-> > > 2.43.0
-> > >
+Sparse complains when an __iomem * gets typecasted to anything other
+than a void *.  I don't think there is a need to use the memremap()
+API because all that does is assigned the value of ioremap_xyz() to a
+void * before returning the value.
+
+Looking at the errors reported herein, it is possible to use a void *
+and then casting that to another type to keep sparse happy.
+
+> However, this needs serious restructure in the driver. It will take me
+> some more time to address this issue. Until then I prefer to keep the
+> sparse warnings.
+>
+> Thank You,
+> Tanmay
+>
+> > ---------- Forwarded message ---------
+> > From: kernel test robot <lkp@intel.com>
+> > Date: Tue, 18 Aug 2026 at 10:59
+> > Subject: [linux-next:master 2763/15982]
+> > drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse:
+> > incorrect type in initializer (different address spaces)
+> > To: Tanmay Shah <tanmay.shah@amd.com>
+> > Cc: <oe-kbuild-all@lists.linux.dev>, Mathieu Poirier
+> > <mathieu.poirier@linaro.org>
+> >
+> >
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > master
+> > head:   e6664f2b33db9b6811eb4cec109f06cb2b4f458d
+> > commit: 5ae3dc078874693a0a7fd1cf32660bd473fe544d [2763/15982]
+> > remoteproc: xlnx: Add crash detection mechanism
+> > config: arm64-randconfig-r111-20260818
+> > (https://download.01.org/0day-ci/archive/20260819/202608190009.uCbYi1Y5-lkp@intel.com/config)
+> > compiler: clang version 24.0.0git
+> > (https://github.com/llvm/llvm-project
+> > 844a18e753e822736c9805ab779144b647a2c186)
+> > rustc: rustc 1.96.0 (ac68faa20 2026-05-25)
+> > sparse: v0.6.5-rc1
+> > reproduce (this is a W=1 build):
+> > (https://download.01.org/0day-ci/archive/20260819/202608190009.uCbYi1Y5-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202608190009.uCbYi1Y5-lkp@intel.com/
+> >
+> > sparse warnings: (new ones prefixed by >>)
+> >    drivers/remoteproc/xlnx_r5_remoteproc.c:571:20: sparse: sparse:
+> > cast removes address space '__iomem' of expression
+> >    drivers/remoteproc/xlnx_r5_remoteproc.c:749:17: sparse: sparse:
+> > cast removes address space '__iomem' of expression
+> >    drivers/remoteproc/xlnx_r5_remoteproc.c:773:24: sparse: sparse:
+> > cast removes address space '__iomem' of expression
+> >    drivers/remoteproc/xlnx_r5_remoteproc.c:797:25: sparse: sparse:
+> > cast removes address space '__iomem' of expression
+> >>> drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void *rsc_offset @@     got void [noderef] __iomem * @@
+> >    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:
+> > expected void *rsc_offset
+> >    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:     got
+> > void [noderef] __iomem *
+> >
+> > vim +837 drivers/remoteproc/xlnx_r5_remoteproc.c
+> >
+> >    832
+> >    833  static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32
+> > rsc_type, void *rsc,
+> >    834                                  int offset, int avail)
+> >    835  {
+> >    836          struct zynqmp_r5_core *r5_core = rproc->priv;
+> >  > 837          void *rsc_offset = (r5_core->rsc_tbl_va + offset);
+> >    838
+> >    839          if (rsc_type != XLNX_RPROC_FW_CRASH_REPORT)
+> >    840                  return RSC_IGNORED;
+> >    841
+> >    842          r5_core->crash_report = rsc_offset;
+> >    843          /* reset all values */
+> >    844          r5_core->crash_report->crashed = false;
+> >    845          r5_core->crash_report->crash_reason = 0;
+> >    846          r5_core->crash_report->crash_reason_str[0] = '\0';
+> >    847
+> >    848          return RSC_HANDLED;
+> >    849  }
+> >    850
+> >
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+>
