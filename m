@@ -1,73 +1,48 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hofmaniac.de (v2202607385953487451.hotsrv.de [45.157.178.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5A635AC05
-	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 07:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121911643B;
+	Thu, 27 Aug 2026 12:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.178.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787815665; cv=none; b=b8rb+qzV0kTUmZqqMzNsI0zQXIPk813RZa9muhZvoBrRWfmeMC61nDI11r2uxpOQtVxK2bIQNHFk9pADqI9LIf7WCeJ5W3FDI7cmZUA6F1evE7pTjzMu9pVcYeYddQVuXH9pOvptCdU7VdTG8HAJUMXxg+MUmABWPdPANbngX6g=
+	t=1787833914; cv=none; b=G/oRg9osb77GUj5Rr8rTZ8RhTEpl+U2wFjjxSJWY6GFmoG81l4eUFSouHlCZ+6VtwfpFGON08gXMfJCn0jwljvufk7DdQw+I60nERY0APfa6QwX3v8KGEzTVtOK5ZLySW5gDbMPkD23y1dcboB0XtGhrK7hx5L7mKtCiKuxGjb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787815665; c=relaxed/simple;
-	bh=RW+2FLygnkT7VKSaO3nDahuHx/wOKYtQk2ensP7S75Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L6+aaqZnUNdhcR4RqBbG5tX+Go5Bks7M+YmF5JV5GzKZpBDJKSlHN/R3NKgpuiX7DdhM5iYw7ponbCvBodx2PkMERn0XQhLM7o6NJBBKIZ/TTZdVBnLgADTgTevFQsKrNu2/U4r3LxnHRQT16kVDcoMCdGWHI1xs/Zme8MwBo4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H4KA730I; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1787833914; c=relaxed/simple;
+	bh=epm4upELTA6FgrAxEbKumsN5HtwBJh9YKjZmI9HLtzs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UOJp1GVUjGrXdFQPuikbAPLltOAhtBtAzUGboJryx19dHUUyUYcrOKBZB8aJd/4/coVrNOVG/48SKdZp3jgcj+qFpSL2+9V1YDRMAhXgH5iYCw/KTwUrfh26Xu/qhAz/6kiBcOrYI7ysFzRun1zD8nWWoqM9nlGxrDWkaBek2hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hofmania.de; spf=pass smtp.mailfrom=hofmania.de; dkim=permerror (0-bit key) header.d=hofmania.de header.i=@hofmania.de header.b=ZmrWa2zV; dkim=temperror (0-bit key) header.d=hofmania.de header.i=@hofmania.de header.b=lecdQvSn; arc=none smtp.client-ip=45.157.178.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hofmania.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hofmania.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H4KA730I"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2d71d1cc8b2so9587875ad.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 00:27:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1787815663; x=1788420463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=jhgeScSczCiBwmHIIxWPTFb5OADckPp/7bxTknyDE6w=;
-        b=H4KA730IG6fHs1R2p4nUSj+Hpok6dD6Zd8Ij3DbHqbsvjqCXkquc4CLaaGRtSA5tYb
-         ddcYs9ZEaJ4h7TQ1C9iQq+/yn+XlLgKIGX/Ia2ZAF6/45jsFTj5f4kL5Z8EEX5x0q1Hf
-         fYqyu7ipVheyDM9e1sAODuAAdIZeB9a58kVlGgeah9GiJs851R4c1tNylJb8ZaFWWgdd
-         GQIzG0bUYapTzerdza2VUEH5t5Qum5s6PE9SqXITOkObM60r9S2i9UNMgW1MuNfJGDXv
-         9u0BDbZ7dn2oLGDJTCiM/ZrrzQdJfH7eE58kKhxqosk0nBCZU8n1+j4q+IuuOfZ6RT6u
-         NVXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787815663; x=1788420463;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=jhgeScSczCiBwmHIIxWPTFb5OADckPp/7bxTknyDE6w=;
-        b=mMAofCAgrWyiST6htGaDrODeerh/1TkJn5w3qR8kPTcL2MV4R3xmDchKiUGIsjNmOf
-         xgpjrZMlp3HH/X2dma02IT+lmc7eMgORqWOxWcYEoa1/3w+wH1GwBCKhMemLxiNZVKDF
-         +XIb9fEkP4fzQG7kjK3DgeIWKgpi0Rww2oihULKLCTRLsTe7A6GbRkxMgktYTdz9yx52
-         6ETsq5i58al4b8hIhtmXP19/Sn8Ml55yz/lQrtSvBf/qEz/Hr+wq+cjzB+xZ7c/0cYmh
-         TfANaaenJSVkBL6KgQxkDFgMXgsrsQeWY9gTYDj2Wpg/DMbvO9TqLrTQoX2XnlLaCRRg
-         HUkw==
-X-Forwarded-Encrypted: i=1; AHgh+RoXqLBWdmlwfXBf0GKraT7uso9rH1isaFlR+qIou2s0kWVu7w6cGTyptryJNizPGDi4AHCsdLp4Dr6HN/VNGQwo@vger.kernel.org
-X-Gm-Message-State: AFuF++lxIPoRYvDf0zMbYVDQrSzNwuTiXv2be2E47OFka4QX4tLxVXHJ
-	638PMC1+AY8jx+SftQAltLc24v4+HOCrQ1Ypc3PFUJ8FYzUyfW/PWgNR1NzvhtaekWBiJzqJ
-X-Gm-Gg: AR+sD10V9OBI1OzXTLfxsfcCEMTMfv5bLh7SX6e+pRebY8B2KIl8hI1LR3brXQCDuEh
-	PMCZ3a+08CdeUMwdeQVs/49IvHS3F5/lwIOnOWOLPcDRr2KqJsvzRX2530k8vj2P3QsRKDQYo8Y
-	CDWMcJrmvD6ThoFvEtXCVS24RGaqNAKiikeguDojczSGb7/GS4e9sd9Gs7gVba3F/IF6kKmVaLE
-	86XAdsNr0GMRN50K0HgBLN7gNFYDH/ecyAlINwDXfi1oG2ygYl5ergfUuGGEVNcomRpg8Rps6kX
-	3K5PPon9tXxpcACA7CTNobmxoihQ2MK6NVdL2jaH400QwVtQyXrC/u9Sf157BpSs5EzZZJQTaGW
-	ytRf0b5bN+SteQEMcHhHs5b98qDBZjw8RuZNEeTjIOhUYdwQ7BtQdKtFIB46jI4BdGjcwZBFj3Q
-	EajtC17jVSyHt+fqrjUv/q786p+XfzY668bP+GqntxFS/Mkh4BuD4sEzYgIHgL9YSGDjqmdLQV6
-	QrzK5vrAkNQRAPQMDv9ki6lvZXestjlb+lq6A==
-X-Received: by 2002:a17:90b:4c8e:b0:396:65dd:4093 with SMTP id 98e67ed59e1d1-3966d44daf1mr21255453a91.14.1787815663140;
-        Thu, 27 Aug 2026 00:27:43 -0700 (PDT)
-Received: from urmom.192.168.1.1 ([14.170.170.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-396705f6106sm1791052a91.0.2026.08.27.00.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2026 00:27:42 -0700 (PDT)
-From: Lucas Sproule <lucas.sproule.42@gmail.com>
+	dkim=permerror (0-bit key) header.d=hofmania.de header.i=@hofmania.de header.b="ZmrWa2zV";
+	dkim=temperror (0-bit key) header.d=hofmania.de header.i=@hofmania.de header.b="lecdQvSn"
+DKIM-Signature: v=1; a=ed25519-sha256; s=v1-ed25519-20260822; d=hofmania.de; c=relaxed/relaxed; r=y;
+	h=Message-ID:Date:Subject:To:From; t=1787833859; bh=2Oz1MxgiShj1tL2/lO3VGad
+	AAeQQwfjBsEUSB93W3OE=; b=ZmrWa2zVKvLaXkN/HK6B0JHnsjdWOV02a4JsaJyFo/PHL8k9ea
+	FvNqqkO+N/Dq7DNKwtXpmrYFYhqFbFBuYNAw==;
+DKIM-Signature: v=1; a=rsa-sha256; s=v1-rsa-20260822; d=hofmania.de; c=relaxed/relaxed; r=y;
+	h=Message-ID:Date:Subject:To:From; t=1787833859; bh=2Oz1MxgiShj1tL2/lO3VGad
+	AAeQQwfjBsEUSB93W3OE=; b=lecdQvSnAe7FSEmVAXM7cp+vUV9wiZdVyFNt8QMvKNShN3mibJ
+	PT9Xv9A2Z/r1Vt75ey8Z9PlBYGPJzk23zcP+D6Se6d6Gnes0ZOk3cNNORIT8ZVuPfJNz3ttM3T2
+	FT5cIXMGaQcroUlyi+bx174OqL2Lm8v/AV0wILPiRbVDySrSCMO7kHUoo6ziU6+1XcphQ+nJest
+	/qt4Gb0+CoXuuXhgDGXux2x8eDCemBNevaEuQ1/DAuohcBaSZoMsTrOhGl+bZWQoO7j3BqI2HsI
+	yLv7S2UHnJ2ZAgabeU9Tq/EiixsH2hJgGuQGWQiGCN4r5NxVPMT+fFTMg8s7/tcD29g==;
+From: Marcel Hofmann <marcel@hofmania.de>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+Cc: Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
 	linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] remoteproc: qcom_wcnss: Fix error check after devm_ioremap_wc() switch
-Date: Thu, 27 Aug 2026 14:27:33 +0700
-Message-ID: <20260827072735.2262888-1-lucas.sproule.42@gmail.com>
+	Marcel Hofmann <marcel.hofmann@ingenics-digital.com>
+Subject: [PATCH v2] remoteproc: imx_rproc: allow mappings ending at region boundary
+Date: Thu, 27 Aug 2026 14:31:36 +0200
+Message-ID: <20260827123136.438798-1-marcel@hofmania.de>
 X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -77,43 +52,102 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit f9b888599418 ("remoteproc: qcom_wcnss: Fix reserved region
-mapping failure") switched back from devm_ioremap_resource_wc() to
-devm_ioremap_wc(), but kept the IS_ERR() check that had been added to
-match the resource variant.
+From: Marcel Hofmann <marcel.hofmann@ingenics-digital.com>
 
-devm_ioremap_wc() returns NULL on failure rather than an error pointer,
-so IS_ERR() never fires and wcnss_alloc_memory_region() returns success
-with wcnss->mem_region left NULL.  Probe completes, and every subsequent
-firmware boot then fails with a bare -EINVAL from qcom_mdt_load_no_init(),
-masking the real mapping failure.
+The address range checks in imx_rproc_da_to_sys() and
+imx_rproc_da_to_va() use a strict comparison for the exclusive end
+address of the requested range.
 
-Check for NULL instead, and return -ENOMEM to match the other remoteproc
-drivers.
+As a result, a valid request that ends exactly at the end of an address
+translation or mapped memory region is rejected. For a region
+[start, start + size), a request [addr, addr + len) is contained when:
 
-Fixes: f9b888599418 ("remoteproc: qcom_wcnss: Fix reserved region mapping failure")
-Cc: stable@vger.kernel.org # v7.0+
-Signed-off-by: Lucas Sproule <lucas.sproule.42@gmail.com>
+    addr >= start && addr + len <= start + size
+
+This occurs when a loadable ELF segment fills an entire mapped memory
+region. This can be produced by a linker script that extends the
+resource table section to the end of its designated region:
+
+    .resource_table :
+    {
+      . = ALIGN(8);
+      KEEP(*(.resource_table)) /* Resource table */
+      . = ALIGN(8);
+      . = ORIGIN(m_rsc_tbl) + LENGTH(m_rsc_tbl);
+    } > m_rsc_tbl =0x00
+
+This produces a ELF program header like:
+
+    LOAD  0x010000 0xa4220000 0xa4220000 0x01000 0x01000 R   0x1000
+
+In this case, the segment size matches the mapped region size exactly,
+causing the address translation to fail with:
+
+    bad phdr da 0xa4220000 mem 0x1000
+
+Rework the upper-bound checks to allow ranges ending exactly at the region
+boundary while guarding against integer overflow. 
+
+Fixes: a0ff4aa6f010 ("remoteproc: imx_rproc: add a NXP/Freescale imx_rproc driver")
+Signed-off-by: Marcel Hofmann <marcel.hofmann@ingenics-digital.com>
 ---
- drivers/remoteproc/qcom_wcnss.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_wcnss.c b/drivers/remoteproc/qcom_wcnss.c
-index c856a92af43c..90747af237f7 100644
---- a/drivers/remoteproc/qcom_wcnss.c
-+++ b/drivers/remoteproc/qcom_wcnss.c
-@@ -542,9 +542,9 @@ static int wcnss_alloc_memory_region(struct qcom_wcnss *wcnss)
-  wcnss->mem_phys = wcnss->mem_reloc = res.start;
-  wcnss->mem_size = resource_size(&res);
-  wcnss->mem_region = devm_ioremap_wc(wcnss->dev, wcnss->mem_phys, wcnss->mem_size);
-- if (IS_ERR(wcnss->mem_region)) {
-+ if (!wcnss->mem_region) {
-    dev_err(wcnss->dev, "unable to map memory region: %pR\n", &res);
--   return PTR_ERR(wcnss->mem_region);
-+   return -ENOMEM;
-  }
+Changes in v2: 
+- Reworked the bounds check to guard against 64-bit integer overflow
+- Use u64 for offset instead of unsigned integer
+- calculate offset first and then validate len against remaining region
+  size
+
+v1: https://lore.kernel.org/r/20260826155123.AEB731F000E9@smtp.kernel.org/
+
+ drivers/remoteproc/imx_rproc.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/remoteproc/imx_rproc.c b/drivers/remoteproc/imx_rproc.c
+index 745ce52cd822..ea852ca143bb 100644
+--- a/drivers/remoteproc/imx_rproc.c
++++ b/drivers/remoteproc/imx_rproc.c
+@@ -540,6 +540,7 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+ 	/* parse address translation table */
+ 	for (i = 0; i < dcfg->att_size; i++) {
+ 		const struct imx_rproc_att *att = &dcfg->att[i];
++		u64 offset;
  
-  return 0;
+ 		/*
+ 		 * Ignore entries not belong to current core:
+@@ -552,9 +553,11 @@ static int imx_rproc_da_to_sys(struct imx_rproc *priv, u64 da,
+ 				continue;
+ 		}
+ 
+-		if (da >= att->da && da + len < att->da + att->size) {
+-			unsigned int offset = da - att->da;
++		if (da < att->da)
++			continue;
+ 
++		offset = da - att->da;
++		if (offset <= att->size && len <= att->size - offset) {
+ 			*sys = att->sa + offset;
+ 			if (is_iomem)
+ 				*is_iomem = att->flags & ATT_IOMEM;
+@@ -585,9 +588,14 @@ static void *imx_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *i
+ 		return NULL;
+ 
+ 	for (i = 0; i < IMX_RPROC_MEM_MAX; i++) {
+-		if (sys >= priv->mem[i].sys_addr && sys + len <
+-		    priv->mem[i].sys_addr +  priv->mem[i].size) {
+-			unsigned int offset = sys - priv->mem[i].sys_addr;
++		u64 offset;
++
++		if (sys < priv->mem[i].sys_addr)
++			continue;
++
++		offset = sys - priv->mem[i].sys_addr;
++		if (offset <= priv->mem[i].size &&
++		    len <= priv->mem[i].size - offset) {
+ 			/* __force to make sparse happy with type conversion */
+ 			va = (__force void *)(priv->mem[i].cpu_addr + offset);
+ 			break;
 -- 
-2.53.0
+2.55.0
+
 
