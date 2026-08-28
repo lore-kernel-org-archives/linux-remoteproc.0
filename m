@@ -1,187 +1,170 @@
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010036.outbound.protection.outlook.com [52.101.201.36])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8C9363C5A;
-	Fri, 28 Aug 2026 15:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787932740; cv=fail; b=k0eoMvAuaQDiKdg5B+MilBWFK0xCQHm/ttRW18nzjp54msI9QjGjV3BP9KQWgAcaxrNoLhobJqY1tjtcApZvcjpURQUaL9HkhXfc5y7hh7zIlGdXa9DCK6qA8P0AGwV4DCEhqQ11VmngUz8smc7iX7Lx3sbFRh5HWYmCRbzqJm0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787932740; c=relaxed/simple;
-	bh=msQTHLfNigfRN1E0CKXQqyHZ+7Cjhb+qnBZJTELpgQc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gB2MI0cPamSl33CSKIyQlz/VRnSrFaJ1pImhkZZriRBHpfwsel3QudKgYSqFXJtk69ZgFESZ5bXYZ/LirIrLW6Pbn3Y8D+Wmbn5F7fbtpiu9OuBwo3tV+X0I2zZfn8ZV8LAfz2HUOAwon1K9QUShlFMFZMRckdsgs0xLUk/irxM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RY90ggaB; arc=fail smtp.client-ip=52.101.201.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5922537AA9C
+	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Aug 2026 18:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1787940809; cv=none; b=ZIyAQ/wLpzZN2lBy/Nqgg3giq9l5gpMG7cWAmo5skiHf7rEf7aD1xhslY50ZqBH+TXXHissV/1clSmIsP5hwgyQJhUGVHqyjBTwLcypr1sYA9UtonQ3rZoEvNx7Ua1/l2dfhbcn0uJvULp/1s/joENRB8vB7C1MwuPNZjfLCpqk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1787940809; c=relaxed/simple;
+	bh=wYYWSG+g5rJxNGdLsHvUT8ALBgROjTho7i+pGT1YCrk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AJZzZi98Dt/AbCB9JBn7zT+hsbshYPxGswugF1oVob1eLn+ew5j2/2EV7AuuU46WdZfjIF6e5KkoTLnWOA3PSqDv3/wP7KHVRKSi3EU8mPjJnbNpHejJjRc58UVI//4GMIzT5jwN5BOOofsH6RrM/mg709fVF29/UG/9J756ams=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Jr1l7avN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=bd1gaxhK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RY90ggaB"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P7b1kIsD3Hnohd0mNWAEbT4WBPdVbeV0U1eyy4EuFLMufJi02OsdhPKpaKp8Mi7cEmI8eyaDZ4NRURwtugSdsSZxlVJWKg4ypn/mSgTM5IaX1Ly+N34ZY8fH35k0lZ49GUP46blWTsnS6Pz/ye8PKQgLjr4wQsC4+JiFqsIXMqKtYLhFHKAQ398WhRa4fh7+KHUGr2NQ1oIspWSLsHGDIEKZUPAU0oy8pZLiOAgsJN3DHEBV0BmRYv7t2g+uiKwWvwnwMdmbihaRvie3mUvkgW8dDgi2KLEvSFQwe+Lxu1ql1G+TXrWOfmPOsAHl2sjd0/SzKqOgjyUMrSzatpxWZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=84j+bQJbfvihfJrNw1VqOMPjnu65Bgl81X3G39Ddd6M=;
- b=HJqxrYyadYxTjy9c1HuTrvUdFc3mvmBVumlc1QLKx6tSp5kowPKQUVn7Y/oekOFWav1a2jl5ROTr6Ty4YDzdboi4nw7QySLmc1bICpw04nPns53lz3fkacgweJ6D08CWphJ6hxYJFfcn8ByTYfGfKNI0Oez0sj6h4WqjlrXSHhzbMfioVlOkGQMUHz06BsSpH4qNHYJGfWSnq0TMu+WuWOmc+wJ0HG6wjRJ6/K70mYsCiHJyJWS2EoW8Ydcyw7TwwtukuKqKMpmarPac+SYYyHO9D4uLzsNSC3bFZXfingxc2vqc3cEexT9E1J30fDvkIgTrQT+BsFOvq3cxRJL6sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=84j+bQJbfvihfJrNw1VqOMPjnu65Bgl81X3G39Ddd6M=;
- b=RY90ggaBiK82bI9EILYY8nM1gFfRT8BE0UtKlpfQzCxItYBofW5hQALdpJpfjZAGSjD9BcW0KYJ1AWi9r4GBzLsbcV/2QQqShsrTaitiu4dvWxV5PRZzjh15NGGUnZ5Ka752ARY+5xcATT/a97rBRm9Gyjj2DuzKmBi1I+FrH58=
-Received: from CH0PR03CA0375.namprd03.prod.outlook.com (2603:10b6:610:119::25)
- by IA0PR12MB8974.namprd12.prod.outlook.com (2603:10b6:208:488::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.6; Fri, 28 Aug
- 2026 15:58:55 +0000
-Received: from BL6PEPF0001AB74.namprd02.prod.outlook.com
- (2603:10b6:610:119:cafe::1b) by CH0PR03CA0375.outlook.office365.com
- (2603:10b6:610:119::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.11 via Frontend Transport; Fri,
- 28 Aug 2026 15:58:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL6PEPF0001AB74.mail.protection.outlook.com (10.167.242.167) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.360.3 via Frontend Transport; Fri, 28 Aug 2026 15:58:54 +0000
-Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Fri, 28 Aug
- 2026 10:58:53 -0500
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
- (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Fri, 28 Aug
- 2026 10:58:53 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.45 via Frontend
- Transport; Fri, 28 Aug 2026 10:58:53 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
- Shah <tanmay.shah@amd.com>, kernel test robot <lkp@intel.com>
-Subject: [PATCH] remoteproc: xlnx: fix typecast warnings
-Date: Fri, 28 Aug 2026 08:58:46 -0700
-Message-ID: <20260828155846.2883035-1-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Jr1l7avN";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="bd1gaxhK"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 67SGJxCu3568385
+	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Aug 2026 18:13:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6wyeLvY0Aww/5SEbMa6o+A
+	s4j34Z6vghChaACXvQVfU=; b=Jr1l7avNibfrw4kGsGnI42wmSGIAInxEJzxfg6
+	gBlLqvYw0pj1hn6EG2TI2zlPcE+WvZcx+PONTjAaXQd4kMJ3mpng/kYmyUwZ5TCo
+	KTtIjDaOllU3IZO0FEdPGghslH4mu1z4Sd7Nncp+GGaODU4MCicn2N3u9sGm6Ucr
+	xwk9SeHYJzdB1YVSRrI8V09HCyazX2bkaPlGPRuuRo6XRR3HgCN3udW38lY2nksp
+	xNPoGH/35rOw5lacQr6PRxIa5ndg4eYIXKQiwklKetjYM6CjNadQnimIiN2o4r+k
+	u8Dz1daQqKsy5sSP7cYFxkpMPSKmKZbiGq/RTUhTOQEMAWDA==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gb3mxu2hk-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 28 Aug 2026 18:13:27 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-cb11535e6a1so1573697a12.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 28 Aug 2026 11:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1787940806; x=1788545606; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=6wyeLvY0Aww/5SEbMa6o+As4j34Z6vghChaACXvQVfU=;
+        b=bd1gaxhKRQgkzyN0rzDGg7XB5lmcA38u7WzK7+tallo6i4JAw8kSfP+HU5s3DLsnFb
+         LtGHae3+czppRsxJI5TsIGpiSWq5ARwTDjQOXD2XqbnAG2Ktn+j9jVmxkIZSqzWyIHT1
+         T+JwgGssxxujptaJUJxUjYj8y8pAlBdCEAVUHv6L75I1ZPcXOmfynRxmojC9jw22dqWS
+         ApN+voCYbCW0sVZTC9uUMi2ar4FRdlE3CVgyeujR90eO5MucDMosCs9w7raWsT3ODi0f
+         GHG1VHSV72phf5tc9QvRHgTNirMLbf2I2yg1W5rn1trES+klg32h523BlTkDTybY0exs
+         WmQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1787940806; x=1788545606;
+        h=content-transfer-encoding:content-type:mime-version:message-id:date
+         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=6wyeLvY0Aww/5SEbMa6o+As4j34Z6vghChaACXvQVfU=;
+        b=aGDcVYzyn3DqyFDQJniowdmrkDZ3JP2lWrcDLxxBIbuMdoajbHfHysC2LygLUbqDTb
+         +wpjLt0WfwaAgHWDLG6fOWu/fxk7u2s9HQ/QhNxL88X9tcYRZkjE93qhZmE9FzN5pv45
+         tPsoIIK3jIB6G5h7g4G5UKToUKxojWaqbmw+FHyptVS53nJcr+ya54EWh8Ov/jAyCYRx
+         5DuUbz0pJU4AEJJ6/jAsStpxl1tTdlCmrn7k4ch6dA4egt6aROWi2pArV7ovIwiE1wfe
+         31FO4dcZNLuqse0JTt/QSnVbfhGF6CZj6T6tgUAYNoP58ZBbKauDyYhhcBTrl0KezWO6
+         srLw==
+X-Forwarded-Encrypted: i=1; AHgh+RqDD1T/ab7uuo7n86wQsyZXPr54HDImloURDzLyRSZmLzmpZZAYe79SwOSbZw+uIBcSBb/4cU76nHR2yY0gscjh@vger.kernel.org
+X-Gm-Message-State: AFuF++nERIeoWpLSupW2k15dAf7Ozg8OUSRu53C6Eu7EYnsm3yvglweP
+	PIDctgPNh0Zp00XZd6Dcr9Y8qRj+b75PL05jNDMaA1SYnyK8mSdhyIZ14AjZlouAIriHXPygDEy
+	lOuSQpPaG5Z/DEPeDKyEq3v2q4cPHBVWZiDEEJ19rCmCOiO5AnD2D07K0iKCdn+RsinvAT0QN
+X-Gm-Gg: AR+sD12kKQbUVROfbTLzYHUT8hpCYYSOOOe+0V754dZvOGuLABm5E+V/7HcpwJwwMl5
+	VcuBG3ryfZXF4TbfBQh3cC3Y9Pg16wCc2E8/UAJIrCT3MUD7hBT68ppdXLbyoCxUpTblhcUu/Zy
+	WxfOg3sMQwuTEWNrTsrTtTMATHZUJ5F2aKWOIAw8DxTgUkyA7INhufZPUO0Tz8XCGCoNO09NZ35
+	jym+JXrkUlufuZGDV1v8W4+x1eP4JyYJV2v49qDX2SEfkbJgjv1lGSkBKcDRFBuCVZsmv8acX4N
+	qVJzu35g/dse0XsX661QbhIjfpmcw2anTqT0zezmtcHmJPYMNDTPxDnorwZ1Ujagt9KrxC7hPrE
+	OAkcojhhylP5/Nxkya+Y11MhHjxI=
+X-Received: by 2002:a05:6a20:244f:b0:3bf:9b3d:61bb with SMTP id adf61e73a8af0-3d26839c4b1mr17128037637.16.1787940806038;
+        Fri, 28 Aug 2026 11:13:26 -0700 (PDT)
+X-Received: by 2002:a05:6a20:244f:b0:3bf:9b3d:61bb with SMTP id adf61e73a8af0-3d26839c4b1mr17127949637.16.1787940805478;
+        Fri, 28 Aug 2026 11:13:25 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3286f784845sm8575600eec.2.2026.08.28.11.13.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Aug 2026 11:13:25 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH 1/3] remoteproc: qcom_q6v5_pas: Fix unbalanced enable for handover IRQ after attach
+Date: Fri, 28 Aug 2026 23:43:09 +0530
+Message-ID: <20260828181311.4038346-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB74:EE_|IA0PR12MB8974:EE_
-X-MS-Office365-Filtering-Correlation-Id: 11d48928-1b64-4ca0-3b9f-08df051d42ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700016|82310400026|1800799024|23010399003|10067099003|56012099006|11063799006|18002099003|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	50S+A0YilGerYWSQj8oMvMZEyAmZHThK3nLmJj+bBIaeh2OKkxzxwyvwXG9VivG/sgUv7ihKkVcOG6laZwxcTU01W40ZEh5PJ6vLxsO/U0QSUjdBzs9hTADeq/Gra9TvS4M5jMNwcpnVVsk7Pky6IjHpIhy3yzapv3gSAp/SA3XtF3ZBseXMyW7AYVEvzxJxkRhePteoos0JW6gk7bpvP5YHribLk3LVfVKg9kpmvW4mTBchaJLrK8zjOVhVl9tREVjz6g+aHgcTdBx1KDQ6XLZCStEgAFDvLcOTOF0ZeHk6gDk1ewEw2nr6Y7MKw+GTyIZrB85+M8FsnsrgXksdZKB9rKNOlVmjEJ8T7KB9e48MqVKZR7IhVNSDdZVGcdABrUYexNXQK5t1V3KLMUXufa30ZB5vwRJRRYhfQcNgG7l2NcSFz8qyHnzGsMTwtopVsoLBGQV0YJloz0i8YGa1V6bZr+xlOjUfW9S0vscTmQ9zlDcsUrZT/z8N4fMfEB+aC8kaWfK3Pj0E0w/pqpx9rlkPWm0KiSZ2QDWQ8wzLOwem3mdupCJY+8mvj/c1SIBwHswmsE4FNYuvE97n4muuY+2gch3HpMrZ5znTSMcAEooBS4RNeMiYoKi/yBiSoLZVXK8w8PAy2ad3X9K+hPly8T2wyfmQhv/xzlCJYRRwIZqoGob4pR+Anppm/obYsXjK1Et+P85pXvJ8ce1mxAyuNw==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(23010399003)(10067099003)(56012099006)(11063799006)(18002099003)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	AKeCoTq3CYiA80X790fXiRn+LZ98+Q5p6U5tppgToOQ5qMc7BAQI5zoY0eRr9dsoqRUyJvEuE/ZspefcDEYCXxh2RgcGZYhW5eHHnfKZaQpOw2Dy6btHL1L6nCfeg3O7QUNLHZMF9WmfPn8M9084PCjAqcjwTtnRUorNomIUxMzwZiHH3dZV2XSTzFIQhWfHcZBruMQX7ETIk1lB5ZCKS6gGqQlhftKFZ+8IsFqvsRIUlve8fvxDjeq1XV0TmWE7FJgSywgPwlNIVV6jA1VGzfVkUdZAQnYbt/HhZPM67K51vatReBZ+f90PgGMPFKGlhPrvIPMJt6/CM1gwv2LxnS9tRNUlKciyhYZK+SDtRQGKlXUv1CZJYFeuMgYeqh8fp2+4MMnpsm7p9egllwyA0id0ExGzD75AqibpbGX+V9tHi6gBCRupau3CGdcEyLII
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2026 15:58:54.4549
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11d48928-1b64-4ca0-3b9f-08df051d42ee
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB74.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8974
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI4MDE1OSBTYWx0ZWRfXxHqqCSNKf5T2
+ ZahGCNvBEiVmV5ZSfEiTvUmkLwfb5B7UeF06jLfZFHZz9rNVgCxM2vyH/1uPzijEJ8py27EUdv6
+ XDlWOAUooYNF/Etbs3D0vMxJb4a/wBS16wNr9h9GkpiFjvEbndlCV+KCz7QHsMBcarZPTglK/5V
+ zSEzb0OxTYnO6Q+3SWzL+pxcufC3hdb8YtRVZTDdqTxQcJllpVt/qRnERGqs3wTAboVr6vOokKj
+ Oxfjk+/kJJuanUasrPIi5dundJV2Tn3vniQSXTQpUxRCRwwi221tpgtY5YtaasAwAIRsHRDZmJj
+ QPt3BZUNXp3WAlY0HXFuSRmBIpXcKpu2PuAtLkW606cnjGB9rfTDwCVHk5c34DX4FC9Gb2R0JXq
+ wvIGKIaTOm+5vA59cWnR4qYyw3SZD/nwbXcZ6lpbTIa/YUEX5Mrb5iSqLeRlXB2r1AjXJLcAjFD
+ Y2gGibd2YUoRedqfTgg==
+X-Authority-Analysis: v=2.4 cv=MONQXsZl c=1 sm=1 tr=0 ts=6a91cfc7 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=Sv0fKeRqtYgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
+ a=EUspDBNiAAAA:8 a=YWewlzZ8vdepzDDFAG0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODI4MDE1OSBTYWx0ZWRfX8VbBJg/Tj0dF
+ HA8FFka7eeDqTVcFikhQSocDeKsRzkcdtn8RqH6JRDXfAsFbIvH+J/B5vYGN4qJnPmtdkr4VkBS
+ c35dAWsrtZIh1W2M5NrDe22VJFa2dus=
+X-Proofpoint-ORIG-GUID: 9PBOKo62-fbTBklUnkozPL3RcAy_V3Iv
+X-Proofpoint-GUID: 9PBOKo62-fbTBklUnkozPL3RcAy_V3Iv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-28_05,2026-08-27_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2606150000 definitions=main-2608280159
 
-Fix following sparse warnings by using __force attribute:
+qcom_pas_attach() calls enable_irq() directly for subsystems already
+running at kernel probe time, but never sets handover_irq_enabled.
+This leaves the IRQ physically enabled with the tracking flag false.
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/remoteproc/xlnx_r5_remoteproc.c:571:20: sparse: sparse:
-cast removes address space '__iomem' of expression
-   drivers/remoteproc/xlnx_r5_remoteproc.c:749:17: sparse: sparse:
-cast removes address space '__iomem' of expression
-   drivers/remoteproc/xlnx_r5_remoteproc.c:773:24: sparse: sparse:
-cast removes address space '__iomem' of expression
-   drivers/remoteproc/xlnx_r5_remoteproc.c:797:25: sparse: sparse:
-cast removes address space '__iomem' of expression
+On the first stop+restart cycle, qcom_q6v5_unprepare() consults
+handover_irq_enabled, finds it false, and skips the disable_irq_nosync()
+call—leaving the IRQ enabled. When qcom_q6v5_prepare() then calls
+enable_irq() on the already-enabled IRQ (depth=0), the kernel emits:
 
->> drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse:
-incorrect type in initializer (different address spaces) @@     expected
-void *rsc_offset @@     got void [noderef] __iomem * @@
-   drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:
-expected void *rsc_offset
-   drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:     got
-void [noderef] __iomem *
+  WARNING: Unbalanced enable for IRQ 239
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202608190009.uCbYi1Y5-lkp@intel.com/
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+Fix by mirroring the enable_irq()/disable_irq() calls in qcom_pas_attach()
+with matching handover_irq_enabled assignments, keeping the flag consistent
+with actual hardware state.
+
+Fixes: 16472c99f469 ("remoteproc: qcom: pas: Add late attach support for subsystems")
+Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 ---
- drivers/remoteproc/xlnx_r5_remoteproc.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pas.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-index c685bb5fa62c..f9cdd3c024dc 100644
---- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-+++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-@@ -568,7 +568,7 @@ static int tcm_mem_map(struct rproc *rproc,
- 		return -ENOMEM;
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index ca8e61254c44..25942200ba03 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -524,6 +524,7 @@ static int qcom_pas_attach(struct rproc *rproc)
+ 	int ret;
  
- 	/* Update memory entry va */
--	mem->va = (void *)va;
-+	mem->va = (__force void *)va;
+ 	pas->q6v5.handover_issued = true;
++	pas->q6v5.handover_irq_enabled = true;
+ 	enable_irq(pas->q6v5.handover_irq);
  
- 	/* clear TCMs */
- 	memset_io(va, 0, mem->len);
-@@ -746,7 +746,7 @@ static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc
+ 	pas->q6v5.running = true;
+@@ -570,6 +571,7 @@ static int qcom_pas_attach(struct rproc *rproc)
+ 	pas->rproc->state = RPROC_OFFLINE;
+ 	ret = -EINVAL;
+ disable_running:
++	pas->q6v5.handover_irq_enabled = false;
+ 	disable_irq(pas->q6v5.handover_irq);
+ 	pas->q6v5.running = false;
  
- 	*size = r5_core->rsc_tbl_size;
- 
--	return (struct resource_table *)r5_core->rsc_tbl_va;
-+	return (__force struct resource_table *)r5_core->rsc_tbl_va;
- }
- 
- static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-@@ -770,7 +770,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
- 		return -EINVAL;
- 	}
- 
--	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
-+	rsc_data_va = (__force struct rsc_tbl_data *)ioremap_wc(res_mem.start,
- 							sizeof(struct rsc_tbl_data));
- 	if (!rsc_data_va) {
- 		dev_err(dev, "failed to map resource table data address\n");
-@@ -794,7 +794,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
- 		return -EINVAL;
- 	}
- 
--	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
-+	rsc_tbl_addr = (__force struct resource_table *)r5_core->rsc_tbl_va;
- 
- 	/*
- 	 * As of now resource table version 1 is expected. Don't fail to attach
-@@ -834,7 +834,7 @@ static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
- 				int offset, int avail)
- {
- 	struct zynqmp_r5_core *r5_core = rproc->priv;
--	void *rsc_offset = (r5_core->rsc_tbl_va + offset);
-+	void *rsc_offset = (__force void *)(r5_core->rsc_tbl_va + offset);
- 
- 	if (rsc_type != XLNX_RPROC_FW_CRASH_REPORT)
- 		return RSC_IGNORED;
-
-base-commit: d4d61a4b0a52e8f3cdb3e1578602850a3452ec3e
 -- 
-2.43.0
+2.55.0
 
