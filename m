@@ -1,132 +1,71 @@
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com [209.85.221.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E194362154
-	for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 20:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15A3359A6F;
+	Fri, 28 Aug 2026 10:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787862714; cv=none; b=MsJ5fHsUoS3Jo3EPmR5IZeF4YEYYkq3ofP5efADc5DpXOrKqO8hZPLXkQwoxa4w+3vzj5MvkKDz5getxZrlPEMZRwx2BXugDuYOgx6P81a6acLbN1L4NoPFt0ApxwKQNx4GtanCTUbcaji3A6P8VFZpXiTjCtBEZ/cRZswWNTL4=
+	t=1787912399; cv=none; b=e6e1Udve50uwAGUjg2SGo7c1jTicl6PTdW31L13JipOGWinA+IpxxPV90hxC4p4jcyyi1R6oSGveHrjF5kvQ6jOBtPFHlkzV7QPM92zhIDcpSYhht6uvrzCirt8cNyTnfDXVEL7EsYYH05DwUSWl5jv82s39OLjtWjOnBPM+iJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787862714; c=relaxed/simple;
-	bh=nzmzWlnZwidaKfSfKM+uub0Vafp1TYNjiKAN5DG9grE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eYunh1/Xz0e/f0xGQ/e71jiCsDVzPqanQxwniPNP8sAsfVFMlcb/oW1yuJg2trvmQ7KJbXkJ/VFJis7Ugr3RtWhzbv6pjCIGoVt4SfZW/CTpamfhdjE/70XXz601sRnhpMJHjGK+bNdMIntcnDelHwR0q/I87JrYztLw2D3+HhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v+5liMXC; arc=none smtp.client-ip=209.85.221.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
+	s=arc-20240116; t=1787912399; c=relaxed/simple;
+	bh=futw2XCGMDSHhn54S5oyl06SQBKtFTxkqn6eWMqTvwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/OHnq5KhWYYJd6QmblTAiH4SkUX5oyq9WeyhIMxOFJWaPh6GFsHCDIED3jwMEeOzqrmTI8KRJZW/AvsEglcDqiyqNPCx40MojBwVYiK8CIY7Dv7NQ80v3bc3VMXWnfWE3KdDMCmfpzrlzcEJvOz+C7M+G2t6H5ZeDVwzK/Kl9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYrFOERr; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v+5liMXC"
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-47f4bff865cso102248f8f.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 27 Aug 2026 13:31:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20251104; t=1787862707; x=1788467507; darn=vger.kernel.org;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=se85jEeQNMIVMtpgzOiz4dZeEIx9etLZFXPS4ngtOk4=;
-        b=v+5liMXCU3F78rpzsp20nU7IOLKNqXUX4DIIshNStE2duhNNhH9x0hxI3UgvYsGQk9
-         c65yFl9ehyI5vOu+wPoWgjuVX8v2A5M7DrhUJPpPBqU+Gq46pYy4O9Zb5yBTZ0bP7H4P
-         3VqgU34ya6ceDUzTlDvXchr6hLAHT1Y4IXK6zzbl/yXf63SaQkoh+oFlbPOhMTXW36Qi
-         V/lRXYN2Nx0K1obClZN3mUvaOsZ8KKj1oh26UQF3/0vQ2fpPl9wiU9+9XDKSNqsijEpn
-         qcMf64RDQR38uMgkukOW6LsZA0RZDB5wIf1Fi7YaH4pyOReo2DGWFrWrwyVStbRIHfuS
-         RB+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1787862707; x=1788467507;
-        h=content-type:cc:to:from:subject:message-id:mime-version:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=se85jEeQNMIVMtpgzOiz4dZeEIx9etLZFXPS4ngtOk4=;
-        b=lu/8kzbSxjdQ0h1txYLPJTssL+jXHaAYjgihfF64iXTX4awsLIridPknkP+npCwC/V
-         nY7B0ly2i18Lu5Kvi3I+YdoCfCbovaN1EGeUxhkBfN5g0PW6LEASleasClLMaWG0OWaa
-         6MKiHN9/yNxzNJU9xSglaEbKeSlpCPyPjqWMJM70kDVVZh4m32vB9kFemt8aTAQENv7S
-         KNF970xiTo1xPyM8F8Z/MZNjti6FJ6An6luh4XOK4/vpRzhHBstclSk5R4uY1rsfnDJs
-         QM8aNAIBp753NUHRDuaqfJhrwxXDR/72YMm6LvY+ZArA4tqhSO3mYwa/mtki/NDt5GY9
-         9+vQ==
-X-Forwarded-Encrypted: i=1; AHgh+Rq+J4/uPc4TP5oQQubtYDv7l17mMWC6WOUaPKkEkvR55OUsa+27+WKf3EdLgXz+CcLN6xwG7aFUNz5gMt53q4ND@vger.kernel.org
-X-Gm-Message-State: AFuF++nBgUKmFYmr9u/mj5Lp/1/ymLPQEGYfcBMHZA0EsTkzc20CNo3z
-	/z29SytXSZrJURPZdWcilvpV8liiJse2bBiNfphzqxVUOMgAGlY8eRIK+u+udQoDd1VqtuaB76a
-	fl7QYE7GeSR9Drg==
-X-Received: from wmqt11.prod.google.com ([2002:a05:600c:198b:b0:493:e006:3161])
- (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1992:b0:499:593b:a15b with SMTP id 5b1f17b1804b1-49b91c1fc56mr22979755e9.1.1787862707433;
- Thu, 27 Aug 2026 13:31:47 -0700 (PDT)
-Date: Thu, 27 Aug 2026 20:30:55 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYrFOERr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57131F000E9;
+	Fri, 28 Aug 2026 10:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1787912398;
+	bh=pRy3lgN/Xwo8qBRzB5MhwKwC7cwSFWthQleG5prfkCo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=mYrFOERrQWMi7EdJudyROCstHFurvf43wJNxTFcIxow2BfuKTr5Yhcw9uyv79Ayyi
+	 EdtMp6cQTXnxBmQdFQFmVl+3DBhPVHKZzP9PgRw3EF5ILVAtz14bVIY/ZQ8xXlMamC
+	 FbaaKovJ397C1UMe4hpED91oPN3ZYSuBXdlpV2A42dbwRSzy0aNQ9njydXhoEWCmGc
+	 UchYwRfj7p58xmvF69hB0eBhbxvnhASoFCXpU/wLMvvmjDIWrhu3csSM/WDY9epWhG
+	 9FEm/feyNEySsuS9GSPTFFgNBWpnOs53eU24pLgR7XqsXmJSror9Tua6Y1fxf1MVuR
+	 URV+E77FCF8bQ==
+Date: Fri, 28 Aug 2026 12:19:55 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+Cc: Ulf Hansson <ulfh@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+	Abel Vesa <abel.vesa@oss.qualcomm.com>, Bartosz Golaszewski <brgl@kernel.org>, 
+	Anurag Pateriya <anurag.pateriya@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: power: qcom,rpmhpd: Add NMXC power
+ domain index
+Message-ID: <20260828-colossal-festive-kestrel-f2c77a@quoll>
+References: <20260826102746.633076-1-shengchao.guo@oss.qualcomm.com>
+ <20260826102746.633076-2-shengchao.guo@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.55.0.897.gb25b4bd76c-goog
-Message-ID: <20260827203055.640116-1-smostafa@google.com>
-Subject: [PATCH] remoteproc: qcom_q6v5_adsp: Fix iommu_unmap() usage
-From: Mostafa Saleh <smostafa@google.com>
-To: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	quic_srivasam@quicinc.com, Mostafa Saleh <smostafa@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20260826102746.633076-2-shengchao.guo@oss.qualcomm.com>
 
-During adsp_map_carveout, the IOVA is computed by combining the
-physical address and the SID:
-    iova = adsp->mem_phys | (sid << 32);
+On Wed, Aug 26, 2026 at 06:27:43PM +0800, Shawn Guo wrote:
+> From: Anurag Pateriya <anurag.pateriya@oss.qualcomm.com>
+> 
+> Nord routes the NSP (compute DSP) memory rail through a dedicated NMXC
+> resource instead of the shared MX rail. Add the index so device trees can
+> reference it.
+> 
+> Signed-off-by: Anurag Pateriya <anurag.pateriya@oss.qualcomm.com>
+> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+> ---
+>  include/dt-bindings/power/qcom,rpmhpd.h | 1 +
+>  1 file changed, 1 insertion(+)
 
-However, adsp_unmap_carveout() uses the physical address and not
-the IOVA in iommu_unmap(), causing the unmap to fail or leak
-mappings because the address doesn't match the original IOVA.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
-Cache the constructed IOVA within the qcom_adsp device struct
-during mapping and use it during unmapping.
-
-Fixes: f22eedff28af ("remoteproc: qcom: Add support for memory sandbox")
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
----
-I found this using gemini while auditing the iommu API usage based on
-unrelated bug report.
-https://lore.kernel.org/all/20260827145855.1616223-1-xiangzao@linux.alibaba.com/
----
- drivers/remoteproc/qcom_q6v5_adsp.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
-index 39654206781d..2e5fb5954fa9 100644
---- a/drivers/remoteproc/qcom_q6v5_adsp.c
-+++ b/drivers/remoteproc/qcom_q6v5_adsp.c
-@@ -104,6 +104,7 @@ struct qcom_adsp {
- 	struct completion stop_done;
- 
- 	phys_addr_t mem_phys;
-+	unsigned long iova;
- 	phys_addr_t mem_reloc;
- 	void __iomem *mem_region;
- 	size_t mem_size;
-@@ -333,7 +334,7 @@ static void adsp_unmap_carveout(struct rproc *rproc)
- 	struct qcom_adsp *adsp = rproc->priv;
- 
- 	if (adsp->has_iommu)
--		iommu_unmap(rproc->domain, adsp->mem_phys, adsp->mem_size);
-+		iommu_unmap(rproc->domain, adsp->iova, adsp->mem_size);
- }
- 
- static int adsp_map_carveout(struct rproc *rproc)
-@@ -341,7 +342,6 @@ static int adsp_map_carveout(struct rproc *rproc)
- 	struct qcom_adsp *adsp = rproc->priv;
- 	struct of_phandle_args args;
- 	long long sid;
--	unsigned long iova;
- 	int ret;
- 
- 	if (!adsp->has_iommu)
-@@ -358,9 +358,9 @@ static int adsp_map_carveout(struct rproc *rproc)
- 	of_node_put(args.np);
- 
- 	/* Add SID configuration for ADSP Firmware to SMMU */
--	iova =  adsp->mem_phys | (sid << 32);
-+	adsp->iova = adsp->mem_phys | (sid << 32);
- 
--	ret = iommu_map(rproc->domain, iova, adsp->mem_phys,
-+	ret = iommu_map(rproc->domain, adsp->iova, adsp->mem_phys,
- 			adsp->mem_size,	IOMMU_READ | IOMMU_WRITE,
- 			GFP_KERNEL);
- 	if (ret) {
--- 
-2.55.0.897.gb25b4bd76c-goog
+Best regards,
+Krzysztof
 
