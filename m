@@ -1,46 +1,45 @@
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010063.outbound.protection.outlook.com [52.101.85.63])
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010036.outbound.protection.outlook.com [52.101.201.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC89F47254D;
-	Fri, 28 Aug 2026 14:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA8C9363C5A;
+	Fri, 28 Aug 2026 15:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.36
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1787929170; cv=fail; b=rjfcmGe8/WEM1AkYpSLWV0Ycwr4wK6D6HfAZ765P5iuhfVGlZXjpNpLScmCabEZnllX3qSMRiPTraZhs3S3DGGxDoATFvQ1726dGcJE5yx37lng6ppZlXnnrL+XZZKwRFhemc4bxmNTWAjonHLKQaWyMdhlAu5gKAiLqW1A5Zn4=
+	t=1787932740; cv=fail; b=k0eoMvAuaQDiKdg5B+MilBWFK0xCQHm/ttRW18nzjp54msI9QjGjV3BP9KQWgAcaxrNoLhobJqY1tjtcApZvcjpURQUaL9HkhXfc5y7hh7zIlGdXa9DCK6qA8P0AGwV4DCEhqQ11VmngUz8smc7iX7Lx3sbFRh5HWYmCRbzqJm0=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1787929170; c=relaxed/simple;
-	bh=6FSaRj4736or+Zf8/4PcIrsZ2LP6BCg2fP7s+siedfY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d+Eh29xDdnbjp0jwPHmBFmsaeLqbuO0r15Yl/HaRdJCOz2rXj/BbOWboki3REFCYK04nPDFflyogNiTuq+/5FYKVTakRcmHldG0bn5xAAC1DER8FRwLzM6wBbUvrbA4GKZjJew5rCp5CjbVfhBNeH9YZ2ElENuVT6s+qKWTvfW0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xjCFvRzq; arc=fail smtp.client-ip=52.101.85.63
+	s=arc-20240116; t=1787932740; c=relaxed/simple;
+	bh=msQTHLfNigfRN1E0CKXQqyHZ+7Cjhb+qnBZJTELpgQc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gB2MI0cPamSl33CSKIyQlz/VRnSrFaJ1pImhkZZriRBHpfwsel3QudKgYSqFXJtk69ZgFESZ5bXYZ/LirIrLW6Pbn3Y8D+Wmbn5F7fbtpiu9OuBwo3tV+X0I2zZfn8ZV8LAfz2HUOAwon1K9QUShlFMFZMRckdsgs0xLUk/irxM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RY90ggaB; arc=fail smtp.client-ip=52.101.201.36
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xjCFvRzq"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RY90ggaB"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MTrsI+/uRpMYAs8swx6wNpLmPMiuiqoZU5oV0Jdg+5dwpoylogYx1EW+CWHmxn7Tsj4BB3iXnRDpym0canLqAUJdjQgcNqHOcO3OSXkyLWFRNyaUm/ymyGE+sMUZpW75+MDrYvr4FQStDGzD1O2KBUQvSlc+GaXKV3EHq9oak0zCz6bID1XwTJOF2mEfUimZT9VpNYWTBI5bMaFiXFZK34qp3C3JokWmD7ARbwppgiuDrbn3Tc8H9V6j7iOXCTjViQlteknhAwKcJ66lGr2o8ezkjffxd0nt2GvWVEJA3cJY6wKsz5ja0n4gklP8/z23O2MP0sQ5U0O3QnhRQgmOIQ==
+ b=P7b1kIsD3Hnohd0mNWAEbT4WBPdVbeV0U1eyy4EuFLMufJi02OsdhPKpaKp8Mi7cEmI8eyaDZ4NRURwtugSdsSZxlVJWKg4ypn/mSgTM5IaX1Ly+N34ZY8fH35k0lZ49GUP46blWTsnS6Pz/ye8PKQgLjr4wQsC4+JiFqsIXMqKtYLhFHKAQ398WhRa4fh7+KHUGr2NQ1oIspWSLsHGDIEKZUPAU0oy8pZLiOAgsJN3DHEBV0BmRYv7t2g+uiKwWvwnwMdmbihaRvie3mUvkgW8dDgi2KLEvSFQwe+Lxu1ql1G+TXrWOfmPOsAHl2sjd0/SzKqOgjyUMrSzatpxWZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4J769HliW4fxBV194xJirW2tOnrEtylKNpQmkp74aF4=;
- b=apRABBaDup0Y9GbXCMu6hR6gXVotrqiwmW5yjWNTP+kKcXhdDbBYR572YWcd+hDXZDtRnlD2TltdihSpLSkPeprgk3o9gV3BXWo1acjdM61DG0Zc1CnuE1aDl6vCc1l7jsGzVa7Xxetjdu24VlwYKdncWn/QmhBpsvyjEPfP+D76Q+q/PZYVMgzyFm23OYQmG+aXACq8xgj9z3AcyHKtqIqWVMY4sa1s3bn0JRAOHI9BTrNN2E79JQN1UEU0XjnssL5rzMVpd5FiWuqi23Y7x5SNIBUcg8u85XvYkKmhvbS9dSlmk3HCFLWFAkxaXH/txdUeOyyumzEsrRUws/J0QQ==
+ bh=84j+bQJbfvihfJrNw1VqOMPjnu65Bgl81X3G39Ddd6M=;
+ b=HJqxrYyadYxTjy9c1HuTrvUdFc3mvmBVumlc1QLKx6tSp5kowPKQUVn7Y/oekOFWav1a2jl5ROTr6Ty4YDzdboi4nw7QySLmc1bICpw04nPns53lz3fkacgweJ6D08CWphJ6hxYJFfcn8ByTYfGfKNI0Oez0sj6h4WqjlrXSHhzbMfioVlOkGQMUHz06BsSpH4qNHYJGfWSnq0TMu+WuWOmc+wJ0HG6wjRJ6/K70mYsCiHJyJWS2EoW8Ydcyw7TwwtukuKqKMpmarPac+SYYyHO9D4uLzsNSC3bFZXfingxc2vqc3cEexT9E1J30fDvkIgTrQT+BsFOvq3cxRJL6sw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4J769HliW4fxBV194xJirW2tOnrEtylKNpQmkp74aF4=;
- b=xjCFvRzqFJTro0F2pFzBcF4UqwVz+hrFfdu4RkKsnIlcxB5rehvU+iqjm/oRsISKiiJdvboiIx3Rcx+YDMMVcj12mXBMuarkcER/Pqs/xsgDbXQPs/DdsLdg+PomKvYSVumUTG9z6eom8/K/ZVKw7R/hys0lFooKnlpd5x2ifMM=
-Received: from BN9P221CA0023.NAMP221.PROD.OUTLOOK.COM (2603:10b6:408:10a::11)
- by DS7PR12MB6310.namprd12.prod.outlook.com (2603:10b6:8:95::21) with
+ bh=84j+bQJbfvihfJrNw1VqOMPjnu65Bgl81X3G39Ddd6M=;
+ b=RY90ggaBiK82bI9EILYY8nM1gFfRT8BE0UtKlpfQzCxItYBofW5hQALdpJpfjZAGSjD9BcW0KYJ1AWi9r4GBzLsbcV/2QQqShsrTaitiu4dvWxV5PRZzjh15NGGUnZ5Ka752ARY+5xcATT/a97rBRm9Gyjj2DuzKmBi1I+FrH58=
+Received: from CH0PR03CA0375.namprd03.prod.outlook.com (2603:10b6:610:119::25)
+ by IA0PR12MB8974.namprd12.prod.outlook.com (2603:10b6:208:488::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.10; Fri, 28 Aug
- 2026 14:59:20 +0000
-Received: from BL02EPF0001A104.namprd05.prod.outlook.com
- (2603:10b6:408:10a:cafe::25) by BN9P221CA0023.outlook.office365.com
- (2603:10b6:408:10a::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.8 via Frontend Transport; Fri, 28
- Aug 2026 14:59:19 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.6; Fri, 28 Aug
+ 2026 15:58:55 +0000
+Received: from BL6PEPF0001AB74.namprd02.prod.outlook.com
+ (2603:10b6:610:119:cafe::1b) by CH0PR03CA0375.outlook.office365.com
+ (2603:10b6:610:119::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.360.11 via Frontend Transport; Fri,
+ 28 Aug 2026 15:58:54 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -48,27 +47,28 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- BL02EPF0001A104.mail.protection.outlook.com (10.167.241.135) with Microsoft
+ BL6PEPF0001AB74.mail.protection.outlook.com (10.167.242.167) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.382.8 via Frontend Transport; Fri, 28 Aug 2026 14:59:19 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
+ 15.21.360.3 via Frontend Transport; Fri, 28 Aug 2026 15:58:54 +0000
+Received: from Satlexmb09.amd.com (10.181.42.218) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Fri, 28 Aug
- 2026 09:59:15 -0500
+ 2026 10:58:53 -0500
+Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb09.amd.com
+ (10.181.42.218) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Fri, 28 Aug
+ 2026 10:58:53 -0500
 Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.45 via Frontend
- Transport; Fri, 28 Aug 2026 09:59:15 -0500
+ Transport; Fri, 28 Aug 2026 10:58:53 -0500
 From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <corbet@lwn.net>,
-	<skhan@linuxfoundation.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Tanmay Shah <tanmay.shah@amd.com>
-Subject: [PATCH v8 5/5] samples: rpmsg: add MTU size info
-Date: Fri, 28 Aug 2026 07:58:52 -0700
-Message-ID: <20260828145853.2843486-6-tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
+ Shah <tanmay.shah@amd.com>, kernel test robot <lkp@intel.com>
+Subject: [PATCH] remoteproc: xlnx: fix typecast warnings
+Date: Fri, 28 Aug 2026 08:58:46 -0700
+Message-ID: <20260828155846.2883035-1-tanmay.shah@amd.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260828145853.2843486-1-tanmay.shah@amd.com>
-References: <20260828145853.2843486-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -79,87 +79,109 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A104:EE_|DS7PR12MB6310:EE_
-X-MS-Office365-Filtering-Correlation-Id: af4d636c-c393-4bf4-30c4-08df0514f058
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB74:EE_|IA0PR12MB8974:EE_
+X-MS-Office365-Filtering-Correlation-Id: 11d48928-1b64-4ca0-3b9f-08df051d42ee
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|23010399003|82310400026|36860700016|1800799024|22082099003|56012099006|10067099003|11063799006|18002099003;
+	BCL:0;ARA:13230040|376014|36860700016|82310400026|1800799024|23010399003|10067099003|56012099006|11063799006|18002099003|13003099007;
 X-Microsoft-Antispam-Message-Info:
-	YzHWGKvxLLaEKhUJHxHsMIT2O0/sk5fWSm00snKPLzyTIGH9aUgZdimRFfrGgvNkRS+p+AbLNpcS4jpEFWWd7GllYXKJ9f9nz+whBsyH/o96BNnHfcKfW4keCol0MZIWrEKuOWqHwWKl7OKWgZHPukpR5OQCLGuEAlfhAQ/Aw7fszDsq3HPoEszSDo/u58aU00E4LnGVVsmp93ks/G9P7SE4ETxwd0sTmu76xGJ0tOzeirUktf96CQ9b5cCmnUrnJrX9ZWbSafZ6ighNfoknBH02waE2Ujcu5I5/AIPLI27x/gmU4rgzHsZDRD1ExXdLoKaPcw5c+MqWmHciDpal3szJzyzE4JWzXDzmQ2NdHNMg2k+MbNcgeuGFkdQZA3oWJa5/Dk5i3SJPBokg5zSy7gvE99KZer1uak0qJMUrB35XXVjDKD0qrXa7B5gXZcy2CWyUL3H9QweOOT3gE1JhV8se8h1NP/qmhRcd9T+YXkfk1rh80KE6eLeofBUvlg7OC7OfNurzzInZl1DDKLMAfq4tDdqCuQ9h9i7jechXdZW8XP4CQyxsfy0Wa2q1KZmoaH+eS6yDiAOcQBpBHSAqm7QZjulj52g4Nyw5HZFqVPe2+ic2/rmSiVdV9wnuKLbPimFSmPblKQ1dps+33e4BY1ay/B5pIETWEFUrV8+D/unAnvp65rfCwpEyXHbvxs0SEyk0R7Zriz7XXgF4NaMEiA==
+	50S+A0YilGerYWSQj8oMvMZEyAmZHThK3nLmJj+bBIaeh2OKkxzxwyvwXG9VivG/sgUv7ihKkVcOG6laZwxcTU01W40ZEh5PJ6vLxsO/U0QSUjdBzs9hTADeq/Gra9TvS4M5jMNwcpnVVsk7Pky6IjHpIhy3yzapv3gSAp/SA3XtF3ZBseXMyW7AYVEvzxJxkRhePteoos0JW6gk7bpvP5YHribLk3LVfVKg9kpmvW4mTBchaJLrK8zjOVhVl9tREVjz6g+aHgcTdBx1KDQ6XLZCStEgAFDvLcOTOF0ZeHk6gDk1ewEw2nr6Y7MKw+GTyIZrB85+M8FsnsrgXksdZKB9rKNOlVmjEJ8T7KB9e48MqVKZR7IhVNSDdZVGcdABrUYexNXQK5t1V3KLMUXufa30ZB5vwRJRRYhfQcNgG7l2NcSFz8qyHnzGsMTwtopVsoLBGQV0YJloz0i8YGa1V6bZr+xlOjUfW9S0vscTmQ9zlDcsUrZT/z8N4fMfEB+aC8kaWfK3Pj0E0w/pqpx9rlkPWm0KiSZ2QDWQ8wzLOwem3mdupCJY+8mvj/c1SIBwHswmsE4FNYuvE97n4muuY+2gch3HpMrZ5znTSMcAEooBS4RNeMiYoKi/yBiSoLZVXK8w8PAy2ad3X9K+hPly8T2wyfmQhv/xzlCJYRRwIZqoGob4pR+Anppm/obYsXjK1Et+P85pXvJ8ce1mxAyuNw==
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(23010399003)(82310400026)(36860700016)(1800799024)(22082099003)(56012099006)(10067099003)(11063799006)(18002099003);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(23010399003)(10067099003)(56012099006)(11063799006)(18002099003)(13003099007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	SYEa0z6NLS/XI+q7m70mLAZ9wAMFbJqjSeE31teDAPqZgRdPVi1UUD9katlo7+DtUGXBoj58naeeQ2pc5JA4URE5FGlStgl414tOVOvOfb0D1GO0vzNnq4rDzYChhtjczcYv/JSbUMP491CO3nrAqg4nobiixQbD4/XI7MhUhBQu5nHWgWvy0OC+f+xU1IEjsxqFFE8H3lyaQoj80rGrZPrBasjH4ZS5jjg4U2EXex8AOCKNwnkXpHCTY30CVe+Dl1YC/CCg4JqzR2GCEZHSLoFvUiodRnGTiBgkNGYJphjd2n9glG21gy+JOUpBm9jW8db4vFja5j40h3aSbZoToF1ZWXe3dk0qen58iLe5c3pw7LAX3Q1Gwy93LkWImW/Ie0xHWBdguYjOfUpnPfiR+u8u6Y2f2e+I5siONBkJN0Y+1sxNgcCv8+8c/eLIY82S
+	AKeCoTq3CYiA80X790fXiRn+LZ98+Q5p6U5tppgToOQ5qMc7BAQI5zoY0eRr9dsoqRUyJvEuE/ZspefcDEYCXxh2RgcGZYhW5eHHnfKZaQpOw2Dy6btHL1L6nCfeg3O7QUNLHZMF9WmfPn8M9084PCjAqcjwTtnRUorNomIUxMzwZiHH3dZV2XSTzFIQhWfHcZBruMQX7ETIk1lB5ZCKS6gGqQlhftKFZ+8IsFqvsRIUlve8fvxDjeq1XV0TmWE7FJgSywgPwlNIVV6jA1VGzfVkUdZAQnYbt/HhZPM67K51vatReBZ+f90PgGMPFKGlhPrvIPMJt6/CM1gwv2LxnS9tRNUlKciyhYZK+SDtRQGKlXUv1CZJYFeuMgYeqh8fp2+4MMnpsm7p9egllwyA0id0ExGzD75AqibpbGX+V9tHi6gBCRupau3CGdcEyLII
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2026 14:59:19.9342
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2026 15:58:54.4549
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: af4d636c-c393-4bf4-30c4-08df0514f058
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11d48928-1b64-4ca0-3b9f-08df051d42ee
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A104.namprd05.prod.outlook.com
+	BL6PEPF0001AB74.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6310
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8974
 
-RPMsg MTU size can be variable now and no longer hardcoded to 512 bytes.
-Add log to the sample driver that prints current MTU size of the rpmsg
-buffer.
+Fix following sparse warnings by using __force attribute:
 
+sparse warnings: (new ones prefixed by >>)
+   drivers/remoteproc/xlnx_r5_remoteproc.c:571:20: sparse: sparse:
+cast removes address space '__iomem' of expression
+   drivers/remoteproc/xlnx_r5_remoteproc.c:749:17: sparse: sparse:
+cast removes address space '__iomem' of expression
+   drivers/remoteproc/xlnx_r5_remoteproc.c:773:24: sparse: sparse:
+cast removes address space '__iomem' of expression
+   drivers/remoteproc/xlnx_r5_remoteproc.c:797:25: sparse: sparse:
+cast removes address space '__iomem' of expression
+
+>> drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse:
+incorrect type in initializer (different address spaces) @@     expected
+void *rsc_offset @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:
+expected void *rsc_offset
+   drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:     got
+void [noderef] __iomem *
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202608190009.uCbYi1Y5-lkp@intel.com/
 Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 ---
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Changes in v4:
-  - check msg size is < MTU size
-
-Changes in v3:
-  - Check for error when retrieving MTU size
-  - %s/mtu/MTU/
-
- samples/rpmsg/rpmsg_client_sample.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/samples/rpmsg/rpmsg_client_sample.c b/samples/rpmsg/rpmsg_client_sample.c
-index ae5081662283..4c43436aadb6 100644
---- a/samples/rpmsg/rpmsg_client_sample.c
-+++ b/samples/rpmsg/rpmsg_client_sample.c
-@@ -52,6 +52,7 @@ static int rpmsg_sample_probe(struct rpmsg_device *rpdev)
+diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+index c685bb5fa62c..f9cdd3c024dc 100644
+--- a/drivers/remoteproc/xlnx_r5_remoteproc.c
++++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+@@ -568,7 +568,7 @@ static int tcm_mem_map(struct rproc *rproc,
+ 		return -ENOMEM;
+ 
+ 	/* Update memory entry va */
+-	mem->va = (void *)va;
++	mem->va = (__force void *)va;
+ 
+ 	/* clear TCMs */
+ 	memset_io(va, 0, mem->len);
+@@ -746,7 +746,7 @@ static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc
+ 
+ 	*size = r5_core->rsc_tbl_size;
+ 
+-	return (struct resource_table *)r5_core->rsc_tbl_va;
++	return (__force struct resource_table *)r5_core->rsc_tbl_va;
+ }
+ 
+ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+@@ -770,7 +770,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+ 		return -EINVAL;
+ 	}
+ 
+-	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
++	rsc_data_va = (__force struct rsc_tbl_data *)ioremap_wc(res_mem.start,
+ 							sizeof(struct rsc_tbl_data));
+ 	if (!rsc_data_va) {
+ 		dev_err(dev, "failed to map resource table data address\n");
+@@ -794,7 +794,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+ 		return -EINVAL;
+ 	}
+ 
+-	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
++	rsc_tbl_addr = (__force struct resource_table *)r5_core->rsc_tbl_va;
+ 
+ 	/*
+ 	 * As of now resource table version 1 is expected. Don't fail to attach
+@@ -834,7 +834,7 @@ static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
+ 				int offset, int avail)
  {
- 	int ret;
- 	struct instance_data *idata;
-+	ssize_t mtu, msg_len;
+ 	struct zynqmp_r5_core *r5_core = rproc->priv;
+-	void *rsc_offset = (r5_core->rsc_tbl_va + offset);
++	void *rsc_offset = (__force void *)(r5_core->rsc_tbl_va + offset);
  
- 	dev_info(&rpdev->dev, "new channel: 0x%x -> 0x%x!\n",
- 					rpdev->src, rpdev->dst);
-@@ -62,8 +63,25 @@ static int rpmsg_sample_probe(struct rpmsg_device *rpdev)
- 
- 	dev_set_drvdata(&rpdev->dev, idata);
- 
-+	mtu = rpmsg_get_mtu(rpdev->ept);
-+	if (mtu < 0) {
-+		dev_warn(&rpdev->dev, "invalid rpmsg MTU size = %ld\n", mtu);
-+		return mtu;
-+	}
-+
-+	dev_info(&rpdev->dev, "rpmsg MTU size = %ld\n", mtu);
-+
-+	msg_len = strlen(MSG);
-+	/* make sure our message fits in a single rpmsg buffer */
-+	if (msg_len > mtu) {
-+		dev_err(&rpdev->dev,
-+			"message size %zu exceeds rpmsg MTU size %ld\n",
-+			strlen(MSG), mtu);
-+		return -EMSGSIZE;
-+	}
-+
- 	/* send a message to our remote processor */
--	ret = rpmsg_send(rpdev->ept, MSG, strlen(MSG));
-+	ret = rpmsg_send(rpdev->ept, MSG, msg_len);
- 	if (ret) {
- 		dev_err(&rpdev->dev, "rpmsg_send failed: %d\n", ret);
- 		return ret;
+ 	if (rsc_type != XLNX_RPROC_FW_CRASH_REPORT)
+ 		return RSC_IGNORED;
+
+base-commit: d4d61a4b0a52e8f3cdb3e1578602850a3452ec3e
 -- 
 2.43.0
 
