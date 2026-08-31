@@ -1,49 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9641837F32D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251CC37F738;
 	Mon, 31 Aug 2026 16:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788194939; cv=none; b=hncf/mLFDAVyC/yQ/hsJfCP5uioKo2kHyNlUTgqE8Gb/lDnFKPcpn66jsZb1n+Ja6qwGtIwSpCl+eCpIYY2gq99GnSgrJ923okoOzJU4tjaJpCT2TiETYr8siWkQ652TzRFNqC9p7PvHU+dy4oU4fPHDT3lSj3dj5V94V2id+sU=
+	t=1788194940; cv=none; b=Y3CoFU8j6rzrBYbgFRZ3x3wXQiPER9S6+ACFe4JsDHZ//OA1OnC2MExZIBWhCJO+nyNnomCFLu27V3IH0aIGLt+eYkJxdWXWGUtwOt1WrfpfDxWbzxIFrLaWZ544BoYKI7HLZF0rdiLKywgRYw9SEq63AH9LXxHopP58TwWHwp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788194939; c=relaxed/simple;
-	bh=+mbccWJe/LNwe6qvSFMqcyMQrPDeMoVrOFT+Cwn13Bg=;
+	s=arc-20240116; t=1788194940; c=relaxed/simple;
+	bh=LY4z+Aw1VCy6enQDJRc5LkyRsacT3IMun22T+Y2uWgc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dzK1EN5j+VSpRHTBNzMvKcmU/k4HukYL4fAq0igHEKdzVESvLa5Knr7Zdc7P0GzFeoTFC+hkTmi/D5KEfZiNTgEjQ/kWkNR+i895q+qN7TFwsAPID8C+ZEQR1Gs9n3X3juBrUCrEpWCZ8SwPaSdTt8/JD6ga3ZNFvK//RDsVR0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFju6E9t; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=KpKme0j/51cWehkIUB6MdGLLnsNAYjOt+G9X8jeeOfHPZxvwoL9xHATPB4aZX9Y8s3y+kTlzL04YLcU9f/5ICQhB7Oy4NXhC+mBSFP2TxiAhCwkKHAz3xwbcM+eJms1wWWWK5d2QT9pDy5TmIKjOnu7bnWIstNAA0nOjbr15U0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JASK4iIi; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFju6E9t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3002C1F00A3D;
-	Mon, 31 Aug 2026 16:48:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JASK4iIi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F1D81F000E9;
+	Mon, 31 Aug 2026 16:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
 	s=k20260515; t=1788194938;
-	bh=e33bE7hzJ3NMDwG88fk/40Dn2cUN5pTKclvyVN70rN8=;
+	bh=MZYyFNn3q6VIRtfvDoxSvICAp/9kJyvM6DT8zuQtreA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=IFju6E9tesUOeqz+rW2sOr0gzqOqgFNzsUM7BBUlJcnoBfta9h7m3dOJzzBcdp377
-	 EAD9Zx3mSUEFitgOPLKiYO3zTOR8O+xkQbXFwx9LXVqz4GLMjhb3lZn0+FD8jMc9A3
-	 yIhZofhFWP1wl3SeMOWv9pfpt+zVxPZRVSUPL8Q1dfsSdOl3rAOkPVaCsWYDFsNAwu
-	 8kfzX1awNcv2x94X1YMnsRnXr3Ekk4FEm8Pc54MnuROFIRF08M4qeosQVgQm9mw0GB
-	 0kGOgE0y2rNHPK11VjyDWkia9M8puHjK8HqZCBj6pw6EXZcOAC6TAId/asXTJP3dWy
-	 DgdpmjwentDqA==
+	b=JASK4iIiInhGoTMmZ9EZkPHipkn6OMjOiHwd3xjiLi39pvUrLGvGWaN1btGBnhaJB
+	 RaVR4ckf352fhFwn7N8HAjFOOumhakg1qRJMqlH9UApgHYs5ar0yzIJoz9DTaQDy0r
+	 eoQCMqp4Cvq/zvbh8vjOJAqbIa73USF410OZbsuuxrlGGm9qabwbI5bgF+D5Op296k
+	 jN+52oAPw3uXPI3ujvyjkOUsieL6MWCgobPZYRFqwuTdA4yX7IAsa9wcdWJTsot5/s
+	 ZiuJmY8EwRRBj/xoqd2Ca0nG42Z77yMKBHqtlo9vCzcUbX9nJgtQMeHSgKud5Ur0mz
+	 h1L1u+Uqtk/Ig==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Paul Hollinsky <phollinsky@holtechnik.com>
-Cc: Sumit Garg <sumit.garg@oss.qualcomm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Konrad Dybcio <konradybcio@gmail.com>,
-	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	cros-qcom-dts-watchers@chromium.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev
-Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: Don't require PAS for memory protection
-Date: Mon, 31 Aug 2026 11:48:48 -0500
-Message-ID: <178819492785.1319417.2319914259657057100.b4-ty@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH] rpmsg: ctrl: use kernel-doc format for ioctl macros
+Date: Mon, 31 Aug 2026 11:48:49 -0500
+Message-ID: <178819492789.1319417.16735429960694747271.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260821081540.89137-1-phollinsky@holtechnik.com>
-References: <20260821081540.89137-1-phollinsky@holtechnik.com>
+In-Reply-To: <20260730052922.1610116-1-rdunlap@infradead.org>
+References: <20260730052922.1610116-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -54,20 +47,35 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 21 Aug 2026 01:15:40 -0700, Paul Hollinsky wrote:
-> Commit f3b1357673dd ("remoteproc: qcom_q6v5_mss: Switch to generic PAS
-> TZ APIs") changed the probe-time gate for need_mem_protection platforms
-> from qcom_scm_is_available() to qcom_pas_is_available(). Memory
-> protection in this driver is implemented with qcom_scm_assign_mem(),
-> which is a TZ service distinct from PAS. The only PAS call in the driver
-> is qcom_pas_mem_setup(), and it is already guarded by need_pas_mem_setup.
+On Wed, 29 Jul 2026 22:29:22 -0700, Randy Dunlap wrote:
+> Convert the ioctl macros to kernel-doc format to avoid kernel-doc
+> warnings:
+> 
+> Warning: include/uapi/linux/rpmsg.h:26 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Instantiate a new rmpsg char device endpoint.
+> Warning: include/uapi/linux/rpmsg.h:31 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Destroy a rpmsg char device endpoint created by the RPMSG_CREATE_EPT_IOCTL.
+> Warning: include/uapi/linux/rpmsg.h:36 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Instantiate a new local rpmsg service device.
+> Warning: include/uapi/linux/rpmsg.h:41 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Release a local rpmsg device.
+> Warning: include/uapi/linux/rpmsg.h:46 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Get the flow control state of the remote rpmsg char device.
+> Warning: include/uapi/linux/rpmsg.h:51 This comment starts with '/**',
+>  but isn't a kernel-doc comment.
+>  * Set the flow control state of the local rpmsg char device.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] remoteproc: qcom_q6v5_mss: Don't require PAS for memory protection
-      commit: b853857293584dd1f52183f70a2bdeca692a1e71
+[1/1] rpmsg: ctrl: use kernel-doc format for ioctl macros
+      commit: 6c4fbf1ce49390aaa9db84cdaff5cf18cae46da8
 
 Best regards,
 -- 
