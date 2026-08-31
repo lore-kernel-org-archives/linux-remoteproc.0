@@ -1,44 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D5247604E;
-	Mon, 31 Aug 2026 15:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7FB361DDC;
+	Mon, 31 Aug 2026 16:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788191877; cv=none; b=JQ3insOmAU9liUvPwLlWxbZgkG7YNZPsaArlKspDhHGcW3ZbSC9OA4GlFUDPbQYcoauQYEwwHE9q8n/Agliyr1ZuK9CwL03hseAoZbSkan/08cTJI+N8CuWSIRItAnfkUOpNVVzHo3K1PbNkXUJmttS4WEYeYvtKs11G6nNKAGs=
+	t=1788194497; cv=none; b=sqgaF/w802AFzYu4ONaAYCaORlH6fysjOGSShXNK9Rl2XEVfMkTjMWT2Os30HU/zPdIp+ALNkD6cnfSNGDPEXqP54JZc/Sawy5mn+tT/4R9dxeM6T+Fpo/f+O0Eq2cmYDXSEn+gP29CH7nVP7jpTGY4sae5rIttaEx9PJPbDsPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788191877; c=relaxed/simple;
-	bh=WDLVHm9dkrUOpib9zOihdq4kmMvOMIvt1+jftbydDh8=;
+	s=arc-20240116; t=1788194497; c=relaxed/simple;
+	bh=H4uLsh4+x7BMINmUx/uXuXQj6VNdABwRJ7gGtqwrrDc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kopX5lVu5XzU6o5pMR4WcNzKzagl1Vz7XCnANJ4aRpM8i615TLR+0eyQxwVvWLoK15K/ruVbZ/9tT6FolUMTRCc1MzybPD5DAzSBOEHGvHzdgnqwIvPIRiRw7Ge9I5GIQ1dp1+i0LAq3rdEITMLTGpXUip7phCxH+pEmRQAG54s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrlRxcK4; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=YV9Yr+9t98ASoOMwAWIDZN0At4PPYvoeXTiV3gYncCWEZPKAdxxbELfBlJO2LXPj8heLX1uBhGir9QM/fvXoIuOm/aUTylDiJ6dGFFLMvH9odd9Xz83qCiiv3e47WWm7WPUQbz/JeBfv6Oj3h05p2TM75PF20LkhNTsKJjs+ZNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=al/lyN5c; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrlRxcK4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 074EC1F000E9;
-	Mon, 31 Aug 2026 15:57:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="al/lyN5c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B2041F000E9;
+	Mon, 31 Aug 2026 16:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788191875;
-	bh=RtOp+UDyPYy2p1IS2wZS1YkImAbCRp6YCurH/tnLLJg=;
+	s=k20260515; t=1788194496;
+	bh=b3pOHSjHHgrHY/ZzY4kD/4G1luZ2J0OAOvWRgeJCqIA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=FrlRxcK47QCzWgsa6+UzCSWYdbDStTYzDdARRCTel7dCPSWLHP7o1IqtehdgVoGM8
-	 H0QS0qxpTYfV137K0eJsaxeNVGYiLF/216/PoL+drGlM3c1Izp3Ja80VpsZ7napxVc
-	 1ec/Ze2uM7o+Ko6BRvWneU+hxn1OIB0bTawZcxltXk/wp2RbPKosvhMBDqtNdMKWXb
-	 DzyTvsdY+CDss2GdAcdFxL/cwSRbQmEe1CNczNXYM/A2igGKlPqpudqTphVjXKKAL8
-	 VrlNAVo/wIZwyv24a7TC1p93zgzfl8Ot3iIs032H7QF1sdci84AMvCIcxvDbC2eZlQ
-	 3rsOqwPafWZjA==
-Date: Mon, 31 Aug 2026 10:57:52 -0500
+	b=al/lyN5cPpPIhEbFkCZrxd9p7Pj9vIx/0Ww8TzaWr1+Lqw2idxDrLIafHbqtKfdJ9
+	 j/3wDoxmz/hi965oi3jtJtYDb9IdMqeMl0p0moBmy1jo0MVX7R88yhzDYvgcotSxvv
+	 AyYOF9blWibKkzyvZw/hg/Q01J3DTzK3A7INVBLFAt+XDxpEm+a0gV9hQLEE9PpLIZ
+	 b7kGHVVrDLhvFtPrH1Q3fyMU6vDIeE7HRV9NRR9VUvghQEAgI9xeWIyAhDZzmS6nte
+	 +wYY3C6VIpNWAcci0HvI7zI49FiEkL6F/sIJ70S9UvmRd6qae4n4rmpmzPRAcGYjOs
+	 ztmPRK513ROiQ==
+Date: Mon, 31 Aug 2026 11:41:33 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
-	Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] remoteproc: qcom_q6v5: Skip handover callback if
- already issued
-Message-ID: <apWkZhJ6ZZAkcd2V@baldur>
-References: <20260828181311.4038346-1-mukesh.ojha@oss.qualcomm.com>
- <20260828181311.4038346-2-mukesh.ojha@oss.qualcomm.com>
- <apUWoCCfgthl40AZ@linaro.org>
+To: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kumar Patro <bibek.patro@oss.qualcomm.com>, Komal Bajaj <komal.bajaj@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+Subject: Re: [PATCH v3] dt-bindings: remoteproc: qcom,shikra-pas: Allow
+ bam-dmux subnode
+Message-ID: <apWtSgfpTz4RQWPh@baldur>
+References: <20260813-shikra-pas-bam-dmux-binding-v3-1-167a3fb50d21@oss.qualcomm.com>
+ <20260814-modest-rose-salmon-7bb60b@quoll>
+ <b523b910-c645-44b1-9e76-1d25fac16468@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -47,44 +49,61 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <apUWoCCfgthl40AZ@linaro.org>
+In-Reply-To: <b523b910-c645-44b1-9e76-1d25fac16468@oss.qualcomm.com>
 
-On Mon, Aug 31, 2026 at 07:52:32AM +0200, Stephan Gerhold wrote:
-> On Fri, Aug 28, 2026 at 11:43:10PM +0530, Mukesh Ojha wrote:
-> > When qcom_pas_attach() is called (subsystem already running at kernel
-> > probe time), it sets handover_issued = true before enabling the handover
-> > IRQ. The handover line may be high already (from bootloader boot), causing
-> > the IRQ to fire immediately. Since proxy resources were never acquired via
-> > qcom_pas_pds_enable() in the attach path, the resulting handover callback
-> > calls pm_runtime_put() on proxy power domains with usage count = 0:
-> > 
-> >   genpd genpd:0:d00000.remoteproc: Runtime PM usage count underflow!
-> >   genpd genpd:1:d00000.remoteproc: Runtime PM usage count underflow!
-> > 
-> > Also, because the old code left handover_irq_enabled = false after attach
-> > (fixed separately), the handover IRQ was never disabled inside the handler,
-> > allowing it to fire repeatedly and generating multiple underflows.
-> > 
-> > Fix by recording whether handover_issued was already set before the IRQ
-> > fires and skipping the handover callback in that case. The callback
-> > releases proxy resources that are only held when the normal start path
-> > ran qcom_pas_pds_enable(); if handover was already marked as issued,
-> > those resources were never acquired and must not be released.
-> > 
-> > Fixes: 16472c99f469 ("remoteproc: qcom: pas: Add late attach support for subsystems")
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+On Wed, Aug 19, 2026 at 04:53:36PM +0530, Vishnu Santhosh wrote:
 > 
-> Shawn sent the same patch already and the same comment applies here:
-> https://lore.kernel.org/linux-arm-msm/amxf7MODINj26a4m@linaro.org/
+> On 14-08-2026 02:35 pm, Krzysztof Kozlowski wrote:
+> > On Thu, Aug 13, 2026 at 04:55:54PM +0530, Vishnu Santhosh wrote:
+> > > Allow an optional bam-dmux subnode under qcom,shikra-mpss-pas by
+> > > referencing qcom,bam-dmux.yaml.
+> > I still miss the answer why. Last time you said in present tense that
+> > this node exists there, which I objected. The answer to my objections is
+> > to provide proper reason why you are adding this, why you are doing it.
+> > Answer almost never is: repeat what the diff is doing.
+> > 
+> > You change something in the bindings because something exists in the
+> > hardware and it was missed in initial submission, and you explain the
+> > impact of that "missing".
+> > 
+> > Best regards,
+> > Krzysztof
 > 
-> v2 fixes it properly:
-> https://lore.kernel.org/linux-arm-msm/20260801011731.1084591-1-shengchao.guo@oss.qualcomm.com/
+> Understood. The reason is not that there is already an in-tree DTS that
+> fails validation today. Rather, it is driven by the intended Shikra MPSS
+> topology.
 > 
 
-Thanks for the pointer, Stephan. That looks better.
+If that's the actual problem, then the fix seems to be to just remove
+the offending snippet! But this isn't the actual problem you're trying
+to solve.
+
+> In the earlier Shikra BAM-DMUX DTS posting, the bam-dmux node was initially
+> placed outside the modem remoteproc node. Based on review feedback from
+> Stephan [1], it was requested that bam-dmux be moved under the modem remoteproc
+> node instead. The rationale was that placing the bam-dmux node at the top level
+> makes it impossible for userspace to associate it with a remoteproc instance
+> (in this case, the modem). This binding change therefore exists to describe
+> the intended Shikra MPSS child-node topology.
+> 
+> The DTS user of this binding has not been merged yet. Its next revision is being
+> held until a separate discussion regarding an XPU violation is concluded. Our
+> intention is to get the required binding changes merged first so that the DT patch
+> can be sent once those discussions are complete.
+> 
+> Please let me know if adding the above context to the commit message is what you
+> are expecting.
+> 
+
+Don't describe the path that took you here, explain why there should be
+a bam-dmux subnode.
 
 Regards,
 Bjorn
 
+> [1] https://lore.kernel.org/all/airpBYZ2pRdNaE1v@linaro.org/
+> 
 > Thanks,
-> Stephan
+> Vishnu
+> 
+> > 
