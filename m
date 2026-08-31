@@ -1,45 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E0937F8C6;
-	Mon, 31 Aug 2026 16:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F33803C2;
+	Mon, 31 Aug 2026 16:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788194941; cv=none; b=Tx8Kphb2wDXhrphnG+cZZMo6L/KStqPCZXX0larEGKab9SQPiTL0Lq2vp4bpVWJL1WVknO7LylVP9RP+MfwsMy+l8eD+m2aOwt4gAyHoTNfEYR6car9eNBxOm4yyipEGXS8n2NG2lx4o9R0DmFbs+YbjMrXpYike/7vLo2LvAHA=
+	t=1788194942; cv=none; b=rx8Rfq3vVswy9E6pX9OTTkDMM7WUA+sov2fqiSN6E7JPEmZJWzr8hCxhc6zut8EpnezdNb9q/Acp1+qRrOovtvdyTq80Sam7ShNQPlYkJOUeTIDykIOG8C6EawqSKr8fhSNj69jb5QupgbHM1dQqXZ9vcFv9MIvhdDaI/cDDSg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788194941; c=relaxed/simple;
-	bh=VZG3uUFhIPgFmzl/+YW9UcNyfkvQR3HbVdRDyFsWZX4=;
+	s=arc-20240116; t=1788194942; c=relaxed/simple;
+	bh=zOOIMdM1klzMNOs5TJyKUqXl3NTNigb9NRp5spCnGpI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BXOcf1cLnvC9ynbQVYm8v77J4Wv0bhazn9kovl0RUaxie43BLCvDCauPaOL0IFjyekUyUCmTgKi6M5v5oHgttM7Qmr1JHCNi90+TSsYJsiPA2CuNlapuJ2vpP6agH76jvLywWlikXjS8XbQ08lbIeF/psM5YPdO3Z4M/fgvq42w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icq89GsA; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=i9Lk8MCcFHhLEvfeO+grbB7f1exjTVAj6jZ5hOvm+BY+WgvsDMuo4RRaOXC/XvS2VBAxO3i4hmc6rcdC7tHYURaNzRjOgU0ZDNy0tV+5H6iq2Y9hP3eOk15F7tPi/Z6RL4affb2jMq2MAjBsi22a8dpnvpAXI6OGcuOEg4EW8qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLp/NmwI; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icq89GsA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 254E01F00A3F;
-	Mon, 31 Aug 2026 16:48:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLp/NmwI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC5F1F00A3D;
+	Mon, 31 Aug 2026 16:49:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788194939;
-	bh=DrijZiHp1MSMmPFn9jwJHrO6WTjvq2apKpiKao66RNE=;
+	s=k20260515; t=1788194940;
+	bh=rw7luT/IeyftNDEBEVjmYgE0j0ygqs8r0hiMXZzI8NI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=icq89GsAU1ga6ZC0TRbu7aJvRRaRHXyPQ3MthHppNxeR45ofWUeXZorPD9t87kRTV
-	 agegYRKR2Tz2fa1h+Y6UdlY+gZQAJRVVSC3j2iG82tpSGaEM7OfxtUaTIveSGW76Wa
-	 zlwIte7qlzIz4rDRLINJPguRArT4KhR577uZU1j4uueLB7nRSpOMfY8re757mfZhzU
-	 PTHOSQuqxYcHLvlZWVNRGXCpWTVc5Ah5vRh6YJzjBRusKyDRb4wXZv0cUBzBw85zDZ
-	 umcpaWK0qRrt0kzOEH2sbGn4Sk6ZnFsz0vEw458EMAtfuCjN8T2HUsTVK3m0pSYuDy
-	 SUL/1n4WPRoTA==
+	b=TLp/NmwIlr2tAddRKlOfrnJl0HtczZgSJFkAXvu1uNnuC7hZVEK2xidMKWZ6wCAxS
+	 OG5jJiJ5tUj7pMA9teqgTEBEc2B5v7+b7FC3VzsA/7phkSxa6/vrhnpPZPggmkihmr
+	 9kZiz6JodfAxs/Veel8HCtgyFnXLeYfLVP9/XqSPLnBMyBtU+W2jeCLPXCMBlmlnur
+	 opJf+8mYA3+pctfW/6Firvka8taP0Vy3dx6E0Vy+ZMDIpPtC3ceLS9yeTiD/4Ygkh/
+	 DdVcjCVN+cbq0GyVJmygAe2SEx1mFJG6GqMSDdK6GasrSCgVIqLjORQ1mtbjw2nMiC
+	 3RYpQXsA2Mzkg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
+To: linux-arm-msm@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: qcom: q6v5_pas: Don't enable handover IRQ on attach
-Date: Mon, 31 Aug 2026 11:48:50 -0500
-Message-ID: <178819492780.1319417.12142205913064250494.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Mostafa Saleh <smostafa@google.com>
+Cc: mathieu.poirier@linaro.org,
+	quic_srivasam@quicinc.com
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_adsp: Fix iommu_unmap() usage
+Date: Mon, 31 Aug 2026 11:48:51 -0500
+Message-ID: <178819492787.1319417.4343430940727987436.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260801011731.1084591-1-shengchao.guo@oss.qualcomm.com>
-References: <20260801011731.1084591-1-shengchao.guo@oss.qualcomm.com>
+In-Reply-To: <20260827203055.640116-1-smostafa@google.com>
+References: <20260827203055.640116-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -50,24 +49,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sat, 01 Aug 2026 09:17:31 +0800, Shawn Guo wrote:
-> qcom_pas_attach() unmasks the handover IRQ and marks handover_issued
-> even though this driver instance never runs qcom_q6v5_prepare() for
-> the boot it is attaching to. This was believed necessary to flush a
-> stale interrupt latched at the interrupt controller while masked, but
-> the handover IRQ is a Qualcomm SMP2P soft IRQ, not a real edge-latched
-> hardware interrupt. The Linux SMP2P driver updates its cached value
-> unconditionally on every notification and only delivers the nested IRQ
-> for bits currently enabled in its own software bitmap, so a transition
-> that happens while masked is simply dropped, never replayed on a later
-> unmask.
+On Thu, 27 Aug 2026 20:30:55 +0000, Mostafa Saleh wrote:
+> During adsp_map_carveout, the IOVA is computed by combining the
+> physical address and the SID:
+>     iova = adsp->mem_phys | (sid << 32);
+> 
+> However, adsp_unmap_carveout() uses the physical address and not
+> the IOVA in iommu_unmap(), causing the unmap to fail or leak
+> mappings because the address doesn't match the original IOVA.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] remoteproc: qcom: q6v5_pas: Don't enable handover IRQ on attach
-      commit: 34b8b2d78b6276dc2dc4ebc06625a39956f266e4
+[1/1] remoteproc: qcom_q6v5_adsp: Fix iommu_unmap() usage
+      commit: 0d8e2195bce6f08c1c53c5ef4d7347fe46418101
 
 Best regards,
 -- 
