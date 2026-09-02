@@ -1,82 +1,262 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.mindbit.ro (xs1.mindbit.ro [80.86.107.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B906E47ECF2;
-	Tue,  1 Sep 2026 16:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02EE353A69;
+	Wed,  2 Sep 2026 02:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.86.107.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788280166; cv=none; b=MIGAcJSaJArg/rPJNSjnVrh8IICKWUg4CBOgW5lyXM2jCZ2w1EZuPNSKD10YTB9B3f5NI9iIQ6sHgsE0EqSQ6OCZaMQuaGpc7cG2T4TAgKsyTIh/VTa8EPAc9LVTHMUSfSGJ2UP/mYiCAi3+qk0SIhpgtPY7vbabNi+chXYFN3E=
+	t=1788314879; cv=none; b=W7sc/pBRVmj5IlwQ+du90II7E78r4aWfkQlxW2u5QCGiezWxSZ3b3txvE0iqyPFNTsPka5VOb7Ugm+yqg7H6WGxNYXSYk+Q4Ps+YUzCGMGCzXx253OaodxuCNR+M2PS4X1FBsAGNjuSHCDEgQvyMGah/E/Nnrlgv5zgSB+kTQww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788280166; c=relaxed/simple;
-	bh=th4ubNF8dBGbLsDXD6EYwk0jOfUaxe8JIQ8RaSUqxww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qBaHecFFK1wI8bM81n+qGwo/Fym0GfVJz/EsJvZsTVZKrL2wDsmeG+qBdB/d5ijXn+Cm0s5Eqh3vVtm3Owy2QdodEq8Rl78cyNLpplkECw6lhCl1XZk25Fpyba9//agotJ8tEzrhh6r7GyODoeN7CPh48QxkrXlFg079CtX4NBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZH69xuDE; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1788314879; c=relaxed/simple;
+	bh=X6SEXN1MtL4C4qVSQL1EWtj1D+RmSsIzlH9OBqfHTv0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=evfUv5QofrLjJjkNF11HEJCXC2X69DA03AiSCH2Q7hmFQI66MuQehgL5CkoO87EH+uePJWl6HcBX2UhyYzad/4iLQZBHXtrtEGWC7yXdjn0jpZgETtG+LOMYSKOvFpqrqy1hOi07WHVsW8/ByzLAMEFJ43OMTVDSPSBzr7g+OX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rendec.net; spf=pass smtp.mailfrom=rendec.net; dkim=pass (2048-bit key) header.d=rendec.net header.i=@rendec.net header.b=N/CTSOZd; arc=none smtp.client-ip=80.86.107.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rendec.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rendec.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZH69xuDE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E67541F000E9;
-	Tue,  1 Sep 2026 16:29:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1788280165;
-	bh=tI6rVXujdWCxuL6bz98vqTArf9TgDE5iPNcNe4oZjdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZH69xuDEu9qMTb7wZRAoizE/yzVDfWfHRcIpDG7EGeH6oYao+6RTn4k8gv5c2cn7Z
-	 QYL08MopEfIbEFdhwkDMBnAaOjHwdOql1FQShfRyWQCbYfuo7pekZ+WVZipHU3qa0A
-	 Qbc8se//N3LFA0NhgAqEg4+f79BU7xefEUNb84o8fk1ay7diSLqbDi9nANJauoSlUM
-	 pi3iyFa9guZUPtb3b9rNWcPmEPVzAwo0VNP+59qb1a9cunV5A+Dq1WbS6+zLGqwM3L
-	 DBYdtsFBAM3PFIj30EXdXqso+arCiA7uESctM66loOPRZmh+X+U8TiXwH/IjbbDn6K
-	 PvYnBqeE5pogw==
-Date: Tue, 1 Sep 2026 11:28:45 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Gokul Krishna Krishnakumar <gokul.krishnakumar@oss.qualcomm.com>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] remoteproc: qcom_q6v5_pas: Add per-PD proxy
- performance states for Hawi CDSP
-Message-ID: <apb86I2HGXcUAoG9@baldur>
-References: <20260828181311.4038346-1-mukesh.ojha@oss.qualcomm.com>
- <20260828181311.4038346-3-mukesh.ojha@oss.qualcomm.com>
- <apWhseqV8vdufajf@baldur>
- <20260831191621.ogqnsmvzv3o5mlbq@hu-mojha-hyd.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=rendec.net header.i=@rendec.net header.b="N/CTSOZd"
+Received: from dog.kanata.rendec.net (pool-174-112-193-187.cpe.net.cable.rogers.com [174.112.193.187])
+	by mail.mindbit.ro (Postfix) with ESMTPSA id C79DDCC9F8;
+	Wed,  2 Sep 2026 05:07:49 +0300 (EEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.mindbit.ro C79DDCC9F8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rendec.net;
+	s=default; t=1788314871;
+	bh=Cjajgd/jUGPexmsDns+dmEhiuhxFtpao5LJ1FXoMN8E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N/CTSOZdaQOM2dFSaa0XYxSOkFNS8jOjJjrqSyAplr9N9JlK5lfFZqnQYCy9njs2R
+	 CSkqk9d2pUZ1xVqeB0vDrk5uaw3bmoUEz+aiINuTEHqUjTUrcwC4QTHau6fOGMIdpd
+	 6W5oSsKuLhR8SQxhH207eVulAu9aEiU+c9VLZ1PUtSYg39k/6XirpLSr9YDeE3CmVd
+	 4U9rerhuJony2/aqgDB5CBMHyS0XOC+XbAKa9VCRqvCnYjqX92GNrJorRdiBCwbg+e
+	 OnsHtMGdn9J9xQfP9RHMOYRkX590pPMyPqC5PcCDhbXcx1tltRlN0+8Lwu9yC+/WBh
+	 y8u8zpmVMzvOA==
+From: Radu Rendec <radu@rendec.net>
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowangio@gmail.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: virtualization@lists.linux.dev,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] virtio: avoid hanging forever in reset
+Date: Tue,  1 Sep 2026 22:07:41 -0400
+Message-ID: <20260902020741.3686084-1-radu@rendec.net>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260831191621.ogqnsmvzv3o5mlbq@hu-mojha-hyd.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 01, 2026 at 12:46:21AM +0530, Mukesh Ojha wrote:
-> On Mon, Aug 31, 2026 at 10:56:55AM -0500, Bjorn Andersson wrote:
-> > On Fri, Aug 28, 2026 at 11:43:11PM +0530, Mukesh Ojha wrote:
-> > > The proxy power domain enable path currently requests INT_MAX performance
-> > > state for every proxy PD.  While this serves as a "take highest available"
-> > > hint, some SoCs require specific per-domain RPMH levels for correct
-> > > operation during firmware load rather than a blanket maximum.
-> > > 
-> > > Introduce a proxy_pd_performance_states array in qcom_pas_data to allow
-> > > each proxy PD to declare its required RPMH performance level explicitly.
-> > > Platforms that do not populate this field retain the existing INT_MAX
-> > > behaviour.
-> > > 
-> > 
-> > Is it possible to encode this using an optional opp-table instead of
-> > filling the driver with such details? (This is a question, not a direct
-> > suggestion)
-> 
-> Technically yes, via required-opps, each proxy PD would need its own
-> opp-table and the remoteproc node would reference specific OPP entries via
-> phandles. That is heavyweight machinery for three scalar values used only
-> during the transient firmware-load window. But let me know if you see the
-> benefit.
-> 
+Under certain conditions(*) vp_modern_get_status() can always return
+0xff. This has a ripple effect that ultimately makes the system fail to
+boot if the drivers are built-in and the virtio devices are probed
+during boot:
+ * vp_reset() for the virtio-net-pci device spins forever in the loop
+   around vp_modern_get_status(mdev), which always returns 0xff.
+ * vp_reset() is called in the context of the probe() function for the
+   virtio-net-pci device, so probe() never returns.
+ * the init task gets stuck in wait_for_device_probe() before it
+   executes the real init binary.
 
-I don't like sprinkling these details throughout drivers, but if that's
-the alternative I guess your proposed solution is the lesser of two
-evils.
+Add a timeout to the reset function and make the device probing fail if
+the reset function times out.
 
-Thank you,
-Bjorn
+(*) This is not a theoretical problem. It happens on imx8mp-evk under
+Qemu due to a relatively recent change to the dw_pcie driver that's
+incompatible with the dw_pcie emulation in Qemu. I reported that bug
+separately as a follow up to the patch that introduced it:
+https://lore.kernel.org/all/ed86629d74368c6811e9f3b8f169584c0faf71ce.camel@rendec.net/
+
+Signed-off-by: Radu Rendec <radu@rendec.net>
+---
+ drivers/remoteproc/remoteproc_virtio.c |  4 +++-
+ drivers/virtio/virtio.c                |  8 +++++---
+ drivers/virtio/virtio_mmio.c           |  5 ++++-
+ drivers/virtio/virtio_pci_legacy.c     |  4 +++-
+ drivers/virtio/virtio_pci_modern.c     | 15 ++++++++++++---
+ include/linux/virtio.h                 |  2 +-
+ include/linux/virtio_config.h          |  2 +-
+ 7 files changed, 29 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index d5e9ff045a28..d103b80b1faf 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -231,7 +231,7 @@ static void rproc_virtio_set_status(struct virtio_device *vdev, u8 status)
+ 	dev_dbg(&vdev->dev, "status: %d\n", status);
+ }
+ 
+-static void rproc_virtio_reset(struct virtio_device *vdev)
++static int rproc_virtio_reset(struct virtio_device *vdev)
+ {
+ 	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
+ 	struct fw_rsc_vdev *rsc;
+@@ -240,6 +240,8 @@ static void rproc_virtio_reset(struct virtio_device *vdev)
+ 
+ 	rsc->status = 0;
+ 	dev_dbg(&vdev->dev, "reset !\n");
++
++	return 0;
+ }
+ 
+ /* provide the vdev features as retrieved from the firmware */
+diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+index 75bb4ffe3b87..9542e4f7cb31 100644
+--- a/drivers/virtio/virtio.c
++++ b/drivers/virtio/virtio.c
+@@ -250,7 +250,7 @@ static int virtio_features_ok(struct virtio_device *dev)
+  * call/workqueue/bh.  Invoking virtio_break_device then flushing any such
+  * contexts is one way to handle that.
+  * */
+-void virtio_reset_device(struct virtio_device *dev)
++int virtio_reset_device(struct virtio_device *dev)
+ {
+ #ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
+ 	/*
+@@ -263,7 +263,7 @@ void virtio_reset_device(struct virtio_device *dev)
+ 	virtio_synchronize_cbs(dev);
+ #endif
+ 
+-	dev->config->reset(dev);
++	return dev->config->reset(dev);
+ }
+ EXPORT_SYMBOL_GPL(virtio_reset_device);
+ 
+@@ -567,7 +567,9 @@ int register_virtio_device(struct virtio_device *dev)
+ 
+ 	/* We always start by resetting the device, in case a previous
+ 	 * driver messed it up.  This also tests that code path a little. */
+-	virtio_reset_device(dev);
++	err = virtio_reset_device(dev);
++	if (err)
++		goto out_of_node_put;
+ 
+ 	/* Acknowledge that we've seen the device. */
+ 	virtio_add_status(dev, VIRTIO_CONFIG_S_ACKNOWLEDGE);
+diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+index 316f03b97356..537d38841331 100644
+--- a/drivers/virtio/virtio_mmio.c
++++ b/drivers/virtio/virtio_mmio.c
+@@ -249,7 +249,7 @@ static void vm_set_status(struct virtio_device *vdev, u8 status)
+ 	writel(status, vm_dev->base + VIRTIO_MMIO_STATUS);
+ }
+ 
+-static void vm_reset(struct virtio_device *vdev)
++static int vm_reset(struct virtio_device *vdev)
+ {
+ 	struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
+ 
+@@ -260,7 +260,10 @@ static void vm_reset(struct virtio_device *vdev)
+ 		/* Wait for reset to complete. */
+ 		while (vm_get_status(vdev))
+ 			fsleep(1000);
++		/* TODO: add timeout */
+ 	}
++
++	return 0;
+ }
+ 
+ 
+diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
+index d9cbb02b35a1..2882756c7084 100644
+--- a/drivers/virtio/virtio_pci_legacy.c
++++ b/drivers/virtio/virtio_pci_legacy.c
+@@ -90,7 +90,7 @@ static void vp_set_status(struct virtio_device *vdev, u8 status)
+ 	vp_legacy_set_status(&vp_dev->ldev, status);
+ }
+ 
+-static void vp_reset(struct virtio_device *vdev)
++static int vp_reset(struct virtio_device *vdev)
+ {
+ 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+ 	/* 0 status means a reset. */
+@@ -100,6 +100,8 @@ static void vp_reset(struct virtio_device *vdev)
+ 	vp_legacy_get_status(&vp_dev->ldev);
+ 	/* Flush pending VQ/configuration callbacks. */
+ 	vp_synchronize_vectors(vdev);
++
++	return 0;
+ }
+ 
+ static u16 vp_config_vector(struct virtio_pci_device *vp_dev, u16 vector)
+diff --git a/drivers/virtio/virtio_pci_modern.c b/drivers/virtio/virtio_pci_modern.c
+index 6d8ae2a6a8ca..4a6906a18cfa 100644
+--- a/drivers/virtio/virtio_pci_modern.c
++++ b/drivers/virtio/virtio_pci_modern.c
+@@ -21,6 +21,7 @@
+ #include "virtio_pci_common.h"
+ 
+ #define VIRTIO_AVQ_SGS_MAX	4
++#define VIRTIO_PCI_RESET_TIMEOUT_MS 1000
+ 
+ static void vp_get_features(struct virtio_device *vdev, u64 *features)
+ {
+@@ -543,10 +544,11 @@ static void vp_set_status(struct virtio_device *vdev, u8 status)
+ 		vp_modern_avq_activate(vdev);
+ }
+ 
+-static void vp_reset(struct virtio_device *vdev)
++static int vp_reset(struct virtio_device *vdev)
+ {
+ 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+ 	struct virtio_pci_modern_device *mdev = &vp_dev->mdev;
++	int timeout = VIRTIO_PCI_RESET_TIMEOUT_MS;
+ 
+ 	/* 0 status means a reset. */
+ 	vp_modern_set_status(mdev, 0);
+@@ -555,13 +557,20 @@ static void vp_reset(struct virtio_device *vdev)
+ 	 * This will flush out the status write, and flush in device writes,
+ 	 * including MSI-X interrupts, if any.
+ 	 */
+-	while (vp_modern_get_status(mdev))
+-		msleep(1);
++	while (vp_modern_get_status(mdev)) {
++		if (!timeout--) {
++			dev_warn(&vdev->dev, "reset timeout");
++			return -ETIMEDOUT;
++		}
++		msleep(1000);
++	}
+ 
+ 	vp_modern_avq_cleanup(vdev);
+ 
+ 	/* Flush pending VQ/configuration callbacks. */
+ 	vp_synchronize_vectors(vdev);
++
++	return 0;
+ }
+ 
+ static int vp_active_vq(struct virtqueue *vq, u16 msix_vec)
+diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+index f923e42cfd01..568e1bd95e4c 100644
+--- a/include/linux/virtio.h
++++ b/include/linux/virtio.h
+@@ -212,7 +212,7 @@ void virtio_config_driver_enable(struct virtio_device *dev);
+ int virtio_device_freeze(struct virtio_device *dev);
+ int virtio_device_restore(struct virtio_device *dev);
+ #endif
+-void virtio_reset_device(struct virtio_device *dev);
++int virtio_reset_device(struct virtio_device *dev);
+ void virtio_device_shutdown(struct virtio_device *dev);
+ int virtio_device_reset_prepare(struct virtio_device *dev);
+ int virtio_device_reset_done(struct virtio_device *dev);
+diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+index 69f84ea85d71..153426b0ae79 100644
+--- a/include/linux/virtio_config.h
++++ b/include/linux/virtio_config.h
+@@ -117,7 +117,7 @@ struct virtio_config_ops {
+ 	u32 (*generation)(struct virtio_device *vdev);
+ 	u8 (*get_status)(struct virtio_device *vdev);
+ 	void (*set_status)(struct virtio_device *vdev, u8 status);
+-	void (*reset)(struct virtio_device *vdev);
++	int (*reset)(struct virtio_device *vdev);
+ 	int (*find_vqs)(struct virtio_device *vdev, unsigned int nvqs,
+ 			struct virtqueue *vqs[],
+ 			struct virtqueue_info vqs_info[],
+-- 
+2.55.0
+
