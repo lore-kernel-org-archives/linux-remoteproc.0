@@ -1,226 +1,180 @@
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011026.outbound.protection.outlook.com [40.93.194.26])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C244DB57C;
-	Thu,  3 Sep 2026 15:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788449299; cv=fail; b=Sxhi74L3+kEtQashjc8cBzO8djm7Jr/mAf0lUayBYjyACqfq6fTMjGnxwOZ5r1rCnAA6cdQCsjNy7SRMC2E1dUO0ziyaolMvb+eaYg3DEpjHL7rYHdBjiGfb+zqXLsHZHYKcx7PPdMeMZU0raIimyRxGWE2sc7acFDDjPEGgMbg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788449299; c=relaxed/simple;
-	bh=DAEr7x6Sd8S71CZ2PRvVFCq1aJJn3FZMUtoiVij0WIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lkmuMH9Ae0EiEVFChpUNMnxJ9kwq2fDmfhCtlnhxHxUKa9CjA3NtYmRXZ5T0sxM/ACletWEABy6D8132h0+2ACAHRW1W4qjQEdpsNUIcwrURUuwmVuBGWGcqXUlNSv1JHw5RXOPpufvzs5eHAC3SiqpPkx5TNVOJ51aQ/AtnXy4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ttCDdxHQ; arc=fail smtp.client-ip=40.93.194.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADCF4EBAE7
+	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Sep 2026 16:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788451646; cv=none; b=mVdQIM0reJ0XkiECcevOayX99KYiE+aNItq9k4N34vTumddz4aWIajabnRcLrZeClsi0Om22YIa/7WJbhmyEoYUzs/gRfTPcCegp4rKzQKFNacAEVwFmBT73YwhFrln+PbZFZIR6zrMUL+7RDVRZ//pKTeaDUG7sZ9PsqV2akwg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788451646; c=relaxed/simple;
+	bh=jXCCj/bQhP5fW7MLDqzm75BnmROw7pKkSIkICqJG7PU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bN8jbAL1M6lV5l1ApLtRaNXkgOT0XvUjyy04BlodD2p2COdk36bXV5JLf6a4fl3rnKCHzi0ZdC3Yj9kL56hRnKmucCbTMWLcvMsVOyvMjKFTzpS0ywL/tAFRWtbweiTgyWz5/OM78iXLKmYw61ey8UZmVWPVE6ezn49daENsW4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OOE9o1GX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=I+UoruRS; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ttCDdxHQ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yZXv1bGBRu7DSmiaIOOhpc4NvplSSFFCq7XmqY3Wz0xKx5gkggReOpKzoCx8uD/Rwa7i3LM1U/at+BbLkagG6dTGgR11dm4nINdLZ5/rFZYZF5BlDYaqlLbccd1owcUk0FVRj2jTivRdQ9qNiBRjXSQuhmgzEP1BCqB/UdTpaNUUDMLtJ7TTdZGK5ewu98qu33Mp/CNm491SHlmmiWtCppwWFjmfliSOLq7aLN/RoomLqMQ3KCo6yYlRyHO2c5C6qslpse3M9fAKcbjRg4gZ8dX9+Y7KsaLI715xdYxsF2lFjL0SgsD72txBXoLlcOIoClXAzTavQtcSvF63+5FmFQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UNmdBRiIBXqd62yl+gjkdtrSwY0R2ELG/xzMT4F1Rl4=;
- b=zR4FJEskXlZycl6fAP3v66inTFFoG/utg5hd7TzL3MZfXmS2Q7qx1GYKccc09Ma4OFyKlM9uiPb4Hu4ro/gGgeDbFds645jUWZlDwqrM3SINelwgoYw4LYBb4ZQp0JQY4aP65m7OU11Q8sUYRCViHV5GLHjgf5LSfh3TbmuAghDiVYM9nb1n+3dsjsUrOmxBchQT5L+bo01cx6tXFmynmSrUnUhrnjDKc2LvdMzjzF2gs4z2UNZ2n/QyX/B+etAoYWsrmESBmgaMaS6tWJLszMun/TcD2MwyjREUAP6k7qNJn1BoiCGvjZfUWYse8Qb8Eii8ohIL05prywT4aOuZHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=foss.st.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UNmdBRiIBXqd62yl+gjkdtrSwY0R2ELG/xzMT4F1Rl4=;
- b=ttCDdxHQ88ttXvyYo7UuAvC7M16apv3sa4btsMiQW9b0ka8hOZBIBOyG31SyJdFAo9oO/f4LOm7bnipXqQmWAD+W7sqGvpWhm0NtC1f+Gmr2LQiiQqKJG118xSn1va8PPrD4KAtNVxALK4RGVZ/GDuf5Rr/B2CcL8S/PtP0Ri8c=
-Received: from BN0PR07CA0005.namprd07.prod.outlook.com (2603:10b6:408:141::20)
- by SN7PR12MB6671.namprd12.prod.outlook.com (2603:10b6:806:26d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Thu, 3 Sep
- 2026 15:28:11 +0000
-Received: from BL02EPF0001A108.namprd05.prod.outlook.com
- (2603:10b6:408:141:cafe::58) by BN0PR07CA0005.outlook.office365.com
- (2603:10b6:408:141::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.12 via Frontend Transport; Thu, 3
- Sep 2026 15:28:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL02EPF0001A108.mail.protection.outlook.com (10.167.241.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.382.8 via Frontend Transport; Thu, 3 Sep 2026 15:28:11 +0000
-Received: from satlexmb07.amd.com (10.181.42.216) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Thu, 3 Sep
- 2026 10:28:10 -0500
-Received: from [192.168.1.205] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.46 via Frontend
- Transport; Thu, 3 Sep 2026 10:28:10 -0500
-Message-ID: <20f53e0f-4b9a-44fe-bb6a-ea0f988b64b9@amd.com>
-Date: Thu, 3 Sep 2026 10:28:09 -0500
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OOE9o1GX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="I+UoruRS"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 683G35rI2088659
+	for <linux-remoteproc@vger.kernel.org>; Thu, 3 Sep 2026 16:07:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6zwWKPqIMuJyW8MrQ/3doI
+	2w0uf0NXevVdzDlnZBlSA=; b=OOE9o1GXyuEUNr1/67OW/9e6vmLZI7l/cinOc3
+	q0IGABvgBBbfBNLULJkjlHJtXVYdXYTyYuJsU/tsmy3r5jQrPxyBlPRO9NTd88nO
+	/rPehc9XE5dY5Bz/G/JMZuRYxQ0zoA0wm+M/2n8Vq+Q05D048+Or6dE7f6iQFwsp
+	oND6K3SHzyIxFla0C467wsuOGfg3jEefl7l2BJbnXbtl2SM/VCSM4Sng66TAzvRh
+	PK2oJiUNQvin7zuSDoydijf1u6k3XFG9Ma+BHvO2sWiKF7eALLb6kGoeJaEMIJmC
+	EmtkIFINczm/E/9NyNIM8Risdd8I3VMl8FZkDm4FAjLTvqsg==
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gf9b18wub-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2026 16:07:23 +0000 (GMT)
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7e99ff505c2so3369588a34.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2026 09:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1788451643; x=1789056443; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=6zwWKPqIMuJyW8MrQ/3doI2w0uf0NXevVdzDlnZBlSA=;
+        b=I+UoruRScgUCGDnnoWms5240W3+9FYsB0pteg1UUIy+zasYzHZpc+b6cXp9T4TiF90
+         bbLolAY7Hs7pO0PadZtUCQ1mToOgX6AZH+ARpGOFQvhq2ljuQrgzJAU4fXy5vEmkNPgj
+         /qucntD2lEeLkRU1DqSy4tbVO7timdeo2qLXNuPOCMuDSHt1hpYCOYswmgMi37aKyM6V
+         G9cw/qT19TvXIGKaOlcXsQ1eIYB8F2ZiyRpa2dx4qauIa97dHimCHfcbyy1K8h42oZDJ
+         gx5cKDxmASlaYkBE/qGbyhnxcMDbdpUnALDjfj30Eq0YdRZEZCf17kzLDlw6ajLo/RGO
+         0+TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788451643; x=1789056443;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=6zwWKPqIMuJyW8MrQ/3doI2w0uf0NXevVdzDlnZBlSA=;
+        b=mEYINE29d0pRGY+ypwFd2LOqKC4HEUjYsOMBDfgKVLjoqLQLQyMfBW9P++0Q57pa7h
+         i8HxT2Cq3PBn7piKkV/dUNXC72hrtCRYy6XkUCr+MQiNrzHR0TxzwuO4k330zbCLgMJ3
+         GxYLBYnomOaTeN8GLt2E6zFu9yLg7D1+gezYDahmWC2F8TYWxudtKLQ6zuMLXluPQTD3
+         MWtIMimTlEA5ddDDBUJAma2uXcV5L5z0oETrBdQAnYGdw3HuNnQQil7Wef4GKytAKy/C
+         5PEpBxEyl3U2HCGYNlTJb/k1J5/Q+IfoMlFf9639Ruacw3RU3f11BICE9wyK4sLAldEU
+         75/w==
+X-Forwarded-Encrypted: i=1; AKwUvBxD+/4sfCYX0FrZX2FInfB2NhW3w+uyVi5kBmXa/ezZgh8MOU5I0l2AJFzR8PaoOdwhIUzJK6wwrYUmUvRQ2R4N@vger.kernel.org
+X-Gm-Message-State: AFuF++nz/jd+p8lRUCnUuEgDo+l2gTzZASOiW1HGyiEo3w+RWx1uWcWo
+	KHnXXjsfTynNYlHfs5onMd2kJhxDosEnvrJVLOrJ2tO/xT/zmL9mrNFxCAT9gXlOSBrvtuvMj3W
+	LR3ewQovKTFOH7JPqIN6tIXwPOM3FtSVU65jtso/vtcJZB+THAgUbOAoYHTLlcPcmLLAGdBsB
+X-Gm-Gg: AYBFou25AbTG4FwqPIY0w+ba3vY6E3iBpR8l375SIrc9FKq0aF1F/jI4Zm5FepkgA5t
+	MagbWGBrxUaLikvpxvL94lh0M2ornk3L/UjLpLDqI8uF4u+V8xpzT/Ro1zyqofBOUj/dMBpNP+j
+	kb0AYGh3CGqSTwGQyJgT8C+fm86/V//IlSaygV9B4Hgw344iq83RXm0Q0HRsc/1Bne26ZehaJpw
+	Bv4NPL8HAbOjX3r+ij/n+lehyjcvr2yPXqit+cMs12BY+KDWHiRqwMxFo2MuZHbXGrh/bllXqgP
+	yVmhdsYX+dgOokXnEqeFFNpEwu0Cy0p++G50nP/Nvpx9NdpvvsEe2YGlDpbViQrB3ShOBrpJAEn
+	EPtB2A96dRjl7hEN8x7u/IKWVNFwgCsz/oRax9g==
+X-Received: by 2002:a05:6830:6b04:b0:7f8:4ebe:2854 with SMTP id 46e09a7af769-7f84ebe297emr9395501a34.4.1788451642826;
+        Thu, 03 Sep 2026 09:07:22 -0700 (PDT)
+X-Received: by 2002:a05:6830:6b04:b0:7f8:4ebe:2854 with SMTP id 46e09a7af769-7f84ebe297emr9395434a34.4.1788451642251;
+        Thu, 03 Sep 2026 09:07:22 -0700 (PDT)
+Received: from hu-anupvish-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7f9f6daa20bsm319118a34.14.2026.09.03.09.07.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 09:07:21 -0700 (PDT)
+From: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
+Date: Thu, 03 Sep 2026 21:37:14 +0530
+Subject: [PATCH] remoteproc: qcom_q6v5_mss: Fix qmp reference leak on probe
+ failure
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH v8 0/5] Enhance RPMsg buffer management
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>, Tanmay Shah
-	<tanmay.shah@amd.com>, <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-	<corbet@lwn.net>, <skhan@linuxfoundation.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20260828145853.2843486-1-tanmay.shah@amd.com>
- <4f8cc4b4-8c44-4d2d-befd-63911afe27a5@foss.st.com>
-Content-Language: en-US
-From: "Shah, Tanmay" <tanmays@amd.com>
-In-Reply-To: <4f8cc4b4-8c44-4d2d-befd-63911afe27a5@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A108:EE_|SN7PR12MB6671:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1d93cd95-9017-449e-adfc-08df09cff6b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700016|376014|23010399003|82310400026|1800799024|6133799003|22082099003|10067099003|56012099006|11063799006|4143699003|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	X9JVL7UGuYnq0SomKap1H5lJpQ5hqKr9OgoW920DXyNMFIuqz7ZdFdpHi/+7SjZ0gdBTMfobU1RQ4s4aNPOSeIjK8lhOT5aM+uHc3PKqk6Y5yNaesMbrlVvNnxC3wPq4ZNz5mr7kAfNj+OJ9hR8C/96eOatGNWyEGkJYWSIj9R1zQA9pYkplrMyqHQ/FEPMm6XeDne4LkON+jVo7p/RQ28x59vJ8m0SmXEAKnA6LAZtp2CA7gEzGkQkHzpJfLAdHs/6KqAowjQk2LxiW9Om6AkQMh/mYZJusLzkr9reqxeL6opaV7T1LYfxkvJAEz6r5nIAPoYMQzclVW0r66YlgOroiY1rlUOrR4Wupf7ZLCz8bwWICWav+P/x6SP6n5dpCwDz6ZEfYgFlciM+lsqJ0I32TKECzb2IB7T4dQvWgw24qaUqXpZCvmd65RbMnZp7bEgwJt52ODuz3OWsGg8rb++WcOeUfXKhSlxHyYDYU1h+35XfO+FW6ay34IzlLjtEKgDafuIB0GMjVOoGLQaaqA3hTi2S1Zr43tLV6/A4/XHLY4xUaB8MgIwwDdSC5TDPUAEMAQYxtDKrvnG8qdqCPWnDUiRIUieifDUfWbaBAehFEfuokpGPjcIog6KmKb410Xxk7Ogn+Qxr96W7RJY6co9Ysw0OFAr3SemKH8YCzqXOd8E3O0BIYwkIbb7pISxt8B690UuSc7+ZMUr5QTBeLsw==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700016)(376014)(23010399003)(82310400026)(1800799024)(6133799003)(22082099003)(10067099003)(56012099006)(11063799006)(4143699003)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	uFl9DTcsL8sdEnEFWW6w0UPJHDtx0rMetU75UfWIjMNwXBIDXLwBgqnxh4QyvxBUFsEfzhwsS6dxBNwErwsjlJ2nWppT+6+feFocQLPlCjyOR0qXWTVCJcPHmO0mEouDHdmUuGowGWFGEmk76WrGsWiX8T/GDpqAYKjw+x9qkLIWIzN3aSRmV1ZH4prnUUF6EFKpoYLxHVMN9e+YO2ALq9yWUMxe4e8rbOaffa0xBoJtFYwPg2JwAGLZLvNyYlLmAL4U8gxZk9c8whmqc95pki7jRJ49WX4ugBQaHvDlTICAyUfMYEPp589u8LfetTBXaS5KzCz1gJ4N2STIZ2g7LGCEWK/Kkhidadh3Vl+qQwhFh1P91P5RY7lwgNf9ME5ya1z0S+Ov00HNzVB9F3+b49detbvTHJDvv84N40FSZ+ATRi/ixwu1kdajAMOydVc0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2026 15:28:11.1113
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1d93cd95-9017-449e-adfc-08df09cff6b0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A108.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6671
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260903-b4-q6v5_mss_probe_deinit_upstream-v1-1-c40a6d317be4@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIADGbmWoC/yXNQQ7CIBBA0as0s5YEsWDqVYwhBaY6JqXI0Mak6
+ d1Ldfk2/6/AmAkZbs0KGRdimmLF+dSAf/XxiYJCNSipjOzkRbhWfMyi7chsU54c2oAUqdg5ccn
+ Yj6JTw9UE1Lr1HmonZRzo+3vcH3/z7N7oyxGGbdsBMTJTLoUAAAA=
+X-Change-ID: 20260903-b4-q6v5_mss_probe_deinit_upstream-92f76de554cc
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1788451638; l=1712;
+ i=anup.vishwakarma@oss.qualcomm.com; s=20260805; h=from:subject:message-id;
+ bh=jXCCj/bQhP5fW7MLDqzm75BnmROw7pKkSIkICqJG7PU=;
+ b=8f7qDFqEYaOd0T11ptNz5B4pDq6p6HS81mlDguz8t3ODm2LGHeUmpBWH6vvcRsERQwvVIXGEM
+ IVVKiHXPdDKA0rCKBsgV9uBlnpYSCehvxt6FwU/E0uUusMonPlsCm8x
+X-Developer-Key: i=anup.vishwakarma@oss.qualcomm.com; a=ed25519;
+ pk=Y9ilCu91UQrzHOM14SG2IjnmQ1QSroH5uVeBSWEmEDM=
+X-Proofpoint-ORIG-GUID: 3iqoGH5qhdFW5tLTxS2-UXF6WRaKuJaD
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDE0MCBTYWx0ZWRfXxnyPwSgvftZz
+ 2tKdgmmaAfsCk5Nmd/MJPRTVo3cIaGPTJpOUfjZK9jusxPx+Le1kwk8lPf4bD0ic4A3hF6OI2fI
+ FpQDSwbgz7l7kyW7OjJZmDyVEXkCooY=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDE0MCBTYWx0ZWRfXzUEz4ikuuGkE
+ 7X7EuOU30yAqmeM1GBsNRBrS4Bjt1wWs3/u2HFOBtRlhWZ2H4dZGDWIefwWeCycTjFAiJw66gx7
+ +VBbBnqb3KVjIqR8M2AUZcuuoqIrBdTJR/D6HKl0uFqJ5ArD6K2l5ym/D102KJ2T0tYMlEKSwXV
+ 0fTe50mAZq/qMKOFUsdkswE4j37iz0ZPksepC8gP03nZI5rlk+DBi1s3HyQzaiT7C6IUuf3FgaN
+ d8CRM0SsEasg/GrIIslT1qWxCJDMh1PwksOfh/fc+mXuzZKcSpxAfjPtVp+oz12TWIHSoDsZkQ8
+ gqz+HTdmVTBV8C2v/Pb6OL9hnuzwH5N0GOM2DVS8/vNJlo9fK448FRsczXY2nBJgoF2ijiETkBv
+ jOUgfBtfErO63SJjQUQDWz+zHg0T6NHhcDBNSFHcmsfhvL+ll1ieZcNAZ7X5sIni+my4S0XAZD5
+ FReGJlY+4ztWNeq8OTw==
+X-Authority-Analysis: v=2.4 cv=NNTlPU6g c=1 sm=1 tr=0 ts=6a999b3b cx=c_pps
+ a=OI0sxtj7PyCX9F1bxD/puw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=EUspDBNiAAAA:8 a=_IghOn1l7u8uKlrmoJ0A:9 a=QEXdDO2ut3YA:10
+ a=Z1Yy7GAxqfX1iEi80vsk:22
+X-Proofpoint-GUID: 3iqoGH5qhdFW5tLTxS2-UXF6WRaKuJaD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-03_05,2026-09-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
+ malwarescore=0 clxscore=1015 suspectscore=0 impostorscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2609030140
 
+q6v5_probe() calls qcom_q6v5_init(), which acquires a qmp device
+reference via qmp_get(). If qcom_add_sysmon_subdev() or rproc_add()
+subsequently fails, the error unwind falls through remove_subdevs:
+without ever calling qcom_q6v5_deinit(), leaking the reference.
 
+The three sibling drivers (qcom_q6v5_adsp.c, qcom_q6v5_pas.c,
+qcom_q6v5_wcss.c) all correctly call qcom_q6v5_deinit() in their
+probe error unwind. Add the missing call at the end of
+remove_subdevs:, right before detach_proxy_pds:, so
+qcom_q6v5_init()'s own failure path (which jumps directly to
+detach_proxy_pds:) still correctly skips it.
 
-On 9/1/2026 8:03 AM, Arnaud POULIQUEN wrote:
-> 
-> 
-> On 8/28/26 16:58, Tanmay Shah wrote:
->> Current design uses fixed (512 bytes) rpmsg buffer size in both rx and
->> tx directions. This design is not suitable if the payload is larger than
->> 512 bytes or the payload is very small and doesn't need that much
->> memory. Instead introduce new virtio feature to retrieve rpmsg tx buf
->> size and rx buf size from the virtio config space in the resource table.
-> 
-> This version seems good to me, with or without my suggestion in patch 4/5
-> 
-> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> 
-> Thanks!
-> 
-> Arnaud
-> 
+Fixes: c1fe10d238c0 ("remoteproc: qcom: q6v5: Use qmp_send to update co-processor load state")
+Signed-off-by: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/remoteproc/qcom_q6v5_mss.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thank You Arnaud.
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 2f71ed2feff6..387538ead2df 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -2224,6 +2224,7 @@ static int q6v5_probe(struct platform_device *pdev)
+ 	qcom_remove_ssr_subdev(rproc, &qproc->ssr_subdev);
+ 	qcom_remove_smd_subdev(rproc, &qproc->smd_subdev);
+ 	qcom_remove_glink_subdev(rproc, &qproc->glink_subdev);
++	qcom_q6v5_deinit(&qproc->q6v5);
+ detach_proxy_pds:
+ 	q6v5_pds_detach(qproc, qproc->proxy_pds, qproc->proxy_pd_count);
+ 
 
-If I end up spinning another revision with any more comments, then I
-will address suggestion in the patch 4/5 as well. If I get Mathieu's RB
-for this series, then we can merge this series as it is.
+---
+base-commit: 32b6ef9a5d0eca44f9cd91f52f4faa89f145a0de
+change-id: 20260903-b4-q6v5_mss_probe_deinit_upstream-92f76de554cc
 
-Tanmay
-
->>
->> Changes in v8:
->>    - fix commit message of 3/5, "%s/enable/Enabled"
->>    - introduce new function to get buffer size for the vdev device
->>    - fix description of VIRTIO_RPMSG_F_BUFSZ define
->>    - "%s/or differnt RX and TX sizes)/or different RX and TX queue
->> sizes)/"
->>
->> Changes in v7:
->>    - Fix 5/5 commit text, and move change log out of commit text
->>
->> Changes in v6:
->>    - remove buffer alignment from config space
->>    - rpmsg.rst: modify alignment related documentation
->>
->> Changes in v5:
->>    - fix documentation about alignment of the buffer size
->>    - change version field from u16 to u8
->>    - remove buffer alignment check
->>    - Separate buffer alignment vs MTU of a single buffer
->>    - Use buffer alignment only to get next buffer address at alignment
->>      boundary
->>
->> Changes in v4:
->>    - Introduce new patch to modify rpmsg.rst documentation
->>    - check version is always 1.
->>    - check size field is same as size of struct virtio_rpmsg_config
->>    - introduce alignment field
->>    - check alignment field is power of 2
->>    - check tx and rx buf size is aligned with alignment passed in the
->>      structure
->>    - check msg size is < MTU size
->>
->> Changes in v3:
->>    - new patch [1/4] that renames variables with clear names.
->>    - %s/rbufs/rx_bufs/
->>    - %s/sbufs/tx_bufs/
->>    - %s/last_sbuf/last_tx_buf/
->>    - add num_rx_buf and num_tx_buf in the documentation
->>    - change version field from u16 to u8
->>    - introduce size field in the rpmsg_virtio_config structure
->>    - check version field is set to any non-zero value.
->>    - check size field is not 0.
->>    - Remove field for private config, as not needed for now.
->>    - add documentation of rpmsg_virtio_config structure
->>    - Check for error when retrieving MTU size in the sample driver
->>    - %s/mtu/MTU/
->>
->> Changes in v2:
->>    - Change author
->>    - fix commit message with better explanation
->>    - %s/sbuf/tx_buf
->>    - %s/rbuf/rx_buf
->>    - %s/num_rbuf/num_rx_buf/
->>    - %s/num_sbuf/num_tx_buf/
->>    - %s/sbuf_size/tx_buf_size/
->>    - %s/rbuf_size/rx_buf_size/
->>    - fix typo
->>    - do not use ALIGN on buf size, rely on allocator
->>    - make err msg more explicit, %s/vdev config:/bad vdev config/
->>    - fix license and add AMD copyrights in the header virtio_rpmsg.h
->>    - Assign bit 1 to VIRTIO_RPMSG_F_BUFSZ feature
->>    - use __virtio32 over __u32
->>    - add version field to virtio rpmsg config structure
->>    - Introduce new patch to print rpmsg mtu size in the sample rpmsg
->> driver
->>    - move linux/virtio_rpmsg.h to linux/rpmsg/virtio_rpmsg.h
->>
->>
->> Tanmay Shah (5):
->>    rpmsg: virtio_rpmsg_bus: rename rbufs and sbufs
->>    rpmsg: virtio_rpmsg_bus: allow different size of tx and rx bufs
->>    rpmsg: virtio_rpmsg_bus: get buffer size from config space
->>    docs: rpmsg: add virtio config space details
->>    samples: rpmsg: add MTU size info
->>
->>   Documentation/staging/rpmsg.rst     |  17 +++
->>   drivers/rpmsg/virtio_rpmsg_bus.c    | 156 +++++++++++++++++++---------
->>   include/linux/rpmsg/virtio_rpmsg.h  |  41 ++++++++
->>   samples/rpmsg/rpmsg_client_sample.c |  20 +++-
->>   4 files changed, 186 insertions(+), 48 deletions(-)
->>   create mode 100644 include/linux/rpmsg/virtio_rpmsg.h
->>
->>
->> base-commit: d4d61a4b0a52e8f3cdb3e1578602850a3452ec3e
-> 
+Best regards,
+--  
+Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
 
