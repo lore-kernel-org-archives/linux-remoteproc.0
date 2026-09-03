@@ -1,289 +1,176 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330E13C1D5F
-	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Sep 2026 06:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFA137755C
+	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Sep 2026 07:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788415847; cv=none; b=szqKVsHZLyNNzCMcr+68rO3bIM/zk4hKogQRglOdjZeTB1DaIz42LEhdaDISMV3+yfslT3V4d//V5xkBls4aYKKgLVjwNJNGmJqvTGlNN0mUq7LvvZ2xErtm6Z0gcn5b+vqVX0UrPViX9WBK8NRog9CFQ7f/vMGQZjSWPQUviAU=
+	t=1788421535; cv=none; b=DyKirsn9QwSXm7gJngedJcsYK7lfYkAW5b7pw+boNTqtj811Znom3PWBUSXWMMRPzZVwsrsdBsaBKQuVJEI/JotZI2HcA73CP1STKxbwAHbqsFqXafgx81t8F4ZjJX55A4tU+uCMN6NKhgZWr59UmybPCTIIPsTNSplsLuOmnrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788415847; c=relaxed/simple;
-	bh=TL14WKnq3VP7H6+KE6bwqJt9IOv7RxYKeVsj5vtJSSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aG0oUmBQ8lJJn+teyYbZHjAcTochHc6LCFBTrvrl2s6CLVT0qjqliy9LrG7ipoKyJ0XEPecezJ1R+Uk0GoaWVlOrXKJVY5PkQz5RpdZRRTLwqk9YVfx0ZCgFtxInAARzPWHUIn7bAAhb5k6EkrSOzNEr564Rf1DbI3Wu8R66YlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DCRDpbru; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=iLaal9kd; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1788421535; c=relaxed/simple;
+	bh=ZpH0V3BiX1xeS5UP5XkVFneyRdbxvPFWZs3TtaJJwL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFtDsSrGoWYeECo4kNLTc+EZB8rabR/uNwBGLulbCmBQmvJbf8AOqJSx/xPZbDcQQ6nraf9b2Fx+iilZR8owPV19fsLfqJbFRgmpzh/E+2NUoTKX4Brw1hDr2lPx26gtxrEmJuy7Ij9VKbz9GXxP1Ea46CAYsTeTju9Rp7YgSkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EOq7cMxI; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=cA40WU6A; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DCRDpbru";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="iLaal9kd"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6835lVKM3749563
-	for <linux-remoteproc@vger.kernel.org>; Thu, 3 Sep 2026 06:10:45 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EOq7cMxI";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="cA40WU6A"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6835lP2f721803
+	for <linux-remoteproc@vger.kernel.org>; Thu, 3 Sep 2026 07:45:33 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	91AZ6ySo2GU0comiuHGaun1xtRTKFM9Pkah81PE5WJ4=; b=DCRDpbruN1ez9GpU
-	KfgUTky2Y+FAuqvRGCYnir8of1GF7scmCKO0PRr6PK8H9E59xlbsA+I0f41BWsI4
-	o/jv6eb80z6IUT6IqVE5O6nPdNGEk2/HfcWVd0MPs4kOSCIPMqbt5i3eXAPXSdYY
-	LSTN0xNcwAYZILx3QOB0VNj7B71eQCXwqD7en6AAOvKX8EZitq5D2OgIhLptoF4D
-	3Q+417+fdVzzOkml60jA8GlvBpFXhlSiqjz9vDx/lDs2WqZd8kjKWzKOMkNKPTiL
-	pJiAYhKqsU3KLjA8cb3HlHRHeSK8j+li+i/92/rVeSFwODJo6fFqyGc320UwKWME
-	RYqw+A==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gepv5u4dv-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7CSoZYq3KBXVxdgrzwHcBQJR
+	+p1brH+pLBCnK12LtNQ=; b=EOq7cMxIfefwSGLvo7J5uYpH0oNc58JxoM6BMyuZ
+	7SZwqLFNR+zcC/4rC73OVoyhN+r5KNn38gMc/rESMzrO6yWNuaYVnWsPiX3498aH
+	7I4qcsyPgVptaeM+pv20/ynqTdClOCtzp5YQ59bEPJBoovY6QuYP0UFOiOIwr3aS
+	16ZTd1282+fK1ddFs7dd2h8gbS+cKr++9oK1lLhgWqhBESUm0CWJR4hkM9bPI/6j
+	yeLFWCiDRcAN1wb2fmEJqC7nTY4rOZXwOx9lsQZhEotrbOg7oS7ZD4hNhJTs37KE
+	z6vP4xZZA73xixI4s4hteZWmRwBVWObSUvkpuiZHtVMmdQ==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4genrnkwhy-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2026 06:10:44 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-cc1ca15334cso2827370a12.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 02 Sep 2026 23:10:44 -0700 (PDT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2026 07:45:33 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-92e4f946461so428637685a.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2026 00:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788415844; x=1789020644; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=91AZ6ySo2GU0comiuHGaun1xtRTKFM9Pkah81PE5WJ4=;
-        b=iLaal9kdz4BW4y5WkFgSQgUmdDQZCk+ngTSRw2pycjBS1YrzS8Ynhw/0Hi9j64EeHQ
-         C0WZiN7aWiUNzIC7Zh0iPOwL1+nLc15HUJS3TMNTC42nsYkMYyhEmcC9RlEWuOR48o88
-         5mVL9oblCcXQOT8aJ4KsUOY2qF9RBi5db7AsuZMZkSTqLBpLL3tp0XzaKZ4yak7xsQVq
-         IlMmNAngWGNmkVaiXrpDbqVQmOzLrGjxX403B+TQZXtv6wR4TH5u5Z2bYfW3XjZo5Gdr
-         JHyRKr33tCLj1ThYYfPyNIvn+7wOSM6RU/ke5ilWCc29Qmz8aC2kxJBk16r6VLL9RYSE
-         CmdA==
+        d=oss.qualcomm.com; s=google; t=1788421532; x=1789026332; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=7CSoZYq3KBXVxdgrzwHcBQJR+p1brH+pLBCnK12LtNQ=;
+        b=cA40WU6ACOW1NLwNj+51HAoAB4w6xe8usiHpbj5RM1Q3yHqrqMiR+6iwjr2LcEsy4k
+         filNJLfy2WKqSbWtitFoSi+rATxbRMuLPknx0i7VYWY1rmPE6b4rKKMzASAyvd/yrLry
+         Nex/LmSWzKKhYtECANpRSt6OLCNSRdArbeR4JYh8Cj169Q4HxbVFPLkR0Ouj/aI6+pKo
+         t/wyQi5UhRfmFITCx7R8yV3XCgt1CB7UFEsNHP0Egeeiqa+74NZulpUtLV1r/cK140fo
+         /fAVLctN72G3pROMEUiOiMxTIFjHtj/nmaqRtRqBbuMPFWeGaNQoqMulRztqX/qT11Q0
+         4IWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788415844; x=1789020644;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=91AZ6ySo2GU0comiuHGaun1xtRTKFM9Pkah81PE5WJ4=;
-        b=gKPyTLNPW4fQ0+yHjj+1et+KP92bL6SSyXPGUA6PANUjG6xAl8xd5D6Aibk3sR22HV
-         LXWrOVi66AT3dLD2LQo3oOJ6hnU9nrCldGDHLv/XtY2u9NYr5VOoITO1TTKu4EFKu31X
-         Ir8CBXOTflAHXhOiwySyIN2KvAkkSsrzuCaC3VRpM6XDvLb+bCZPiE8ok0lnybuRYMO4
-         b7ZTqKMfieF5QSIIXuGgVpgrKSOmtzso1R8sJ8YH0ki604XXVMx1qcYuOUtAfjJLnMWQ
-         jtscvqAApT0FBKAKkBvJ/pQkqNzHmdtFDfjow+V7JVtEsjWY4sxWpGTT/4SoBxwpK7ER
-         CAag==
-X-Forwarded-Encrypted: i=1; AKwUvBw91zrsjj4tZ4mSW0rAfK8RvxgS3jEjDeL9AKbMQc3mgDaP8qTGd9fl/bqwpjcRGBmHt8VwfFzckz6R2eL+5Aef@vger.kernel.org
-X-Gm-Message-State: AFuF++kwWsxA5YOxx4M02GohxdP7DNvk+QtNGNTdoqTYNfcFcUxZ52c7
-	twS1hgt8lp6ObTCdiulZJIeO3Pu3z0GcWEC3AkCC1sxxY3QgUJ3+kWihYfk2pfWY3c9KcBAvoN0
-	8dBs7tUYAp6YXkCNh8kzYt8V9oVR7jMkhpZ4w/xkWMFRkAqgmENCPPd6t4JiySznN7ZCoD4/O
-X-Gm-Gg: AYBFou0EwHPa/FWIoUBDgKS3so3S2bbFnh7wLoZ/B0L0kK0+oNPJI7MnkENlIRwCOJ8
-	Hbw9FKRkUjxsdkI0ZWoYwrwEAf3/zQKNTXG3WU+zizE+5ZnDu9euUe4xMN/j4f3FdsJ4pUVce6C
-	kAkaSImFtz+/llrf9WDMIdE2IBo6a1V825jz+8dpsEdYb7bycF5hsNlYhLy9+IRZIyuJJ3eYutX
-	M0Ps1br9uWNpBcWMS05S8bSOYMajHlvYbYqS7GGCUepucncoxrYSscLgfn9AvJsvh0pU7zjLZS1
-	Ut1zhL7AZu/PBSvjGyJeTcLoHpymDYYykFf+Yji2y7s0hHiDxWI6KaG2+jFC+09wyr+JaxKVZsZ
-	qcjauI4oI+fJIc98HL+QH/9ROhfacjl12Ug==
-X-Received: by 2002:a05:6a20:4304:b0:3d3:ae0f:526a with SMTP id adf61e73a8af0-3d9b0420a54mr14305565637.22.1788415843869;
-        Wed, 02 Sep 2026 23:10:43 -0700 (PDT)
-X-Received: by 2002:a05:6a20:4304:b0:3d3:ae0f:526a with SMTP id adf61e73a8af0-3d9b0420a54mr14305487637.22.1788415843240;
-        Wed, 02 Sep 2026 23:10:43 -0700 (PDT)
-Received: from [172.20.10.2] ([152.59.48.67])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-332501e5447sm4873959eec.0.2026.09.02.23.10.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 02 Sep 2026 23:10:42 -0700 (PDT)
-Message-ID: <9103ca95-5e27-4979-994c-e14f123cec7e@oss.qualcomm.com>
-Date: Thu, 3 Sep 2026 11:40:36 +0530
+        d=1e100.net; s=20251104; t=1788421532; x=1789026332;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=7CSoZYq3KBXVxdgrzwHcBQJR+p1brH+pLBCnK12LtNQ=;
+        b=ev6mc1jRvRet0g4Hdi2Gi6ygk5lndntcxXfwplB5fjkrlfnMQqS1DKZ2HDct1HdG5b
+         hi4hLgxszVLFAFPg1nZqn1ajt3CtOyQin7kHSwayH5hrV2PyNMHGAzjdJrJ2SzeBgp7O
+         mFfl4aO2aerveIUowDJR/7dYcactvRAPz2YnvKKy4NmxYU29IZEnQsYPk3aALkikKfFV
+         HCtqmhlLPHrdLiB8/SOAkURhUVFULALFor2kNoADRfueqlN8jdcS2tWwQjhSxQT6PMT3
+         hEzcmv8k52KxuK9NkaFBmwOf7nmlLeuo+E0s/7ajr+q5qLtX+zGp/YDTkol55osfknvW
+         I8hw==
+X-Forwarded-Encrypted: i=1; AKwUvBzzhwD09Kp8D3IwTNR9vDmlFANuUTG4iNdYNstEjMQYaPW7cjEf8nmkUMkLt0ZKta3cSlW9C0gqwYFiDRBQYGY0@vger.kernel.org
+X-Gm-Message-State: AFuF++l7k9N9BQl+imxmPFM5zt3P+j5t5qJTRBghh6P1tbFRvrw7GijQ
+	+KdxAsbW5M/+O8njCFIiTKGWOc+NuMsHXT2B4EsM6bN+805/8Y0cQry5OqEtxW1GheMLiKe/Ju4
+	So0wLR0YeFDtEAYQdYQK9K1C49uSb4nwnBKFR1MUD1dFe1sviKIcflnTXPD/0HBvnR0AXzfah
+X-Gm-Gg: AYBFou0Ol6953vsZwGqVxXmsy9/23M34C0Hg9tZnFM3b+o0pHCHexRC4vvG9BpfT4O7
+	T8K83LRWFHKkb6+4D5eVExnkmozAX36tugVjuCxfuDsUGyQiICJZ/1k2U16nB8HOTh08A3vcshe
+	IagXZQLEwf8PGwlaqRqeZ35JmnmR16xEtQf/L0vcch/omYaye/X+oCDommFxkB/eQ4tqSbfzo9o
+	eOv8tcvwgJ6pRg5tIrldiX972B6kemzIi4EMmLLKBT4X4Tkz4DpyvuxFGc4zVnMmBy6W4FdyJ8D
+	/h81sYJZWhpNK4WmK+inMZtI5Q1gKr6iudps0qgjoJ++wADNO5FQkyj0IA57PYOkuK8HgC9+XoM
+	Ckhq/kolohcphJ1wyLEKv343r4iBN2gMOEosi/w7DOZQE4kvVac2AIrKXYP1/3j+7ZQc+PwD19M
+	jbnI7PMrd4qoI3
+X-Received: by 2002:a05:620a:468c:b0:92e:745c:6c5a with SMTP id af79cd13be357-93960dd6fa7mr1181097785a.14.1788421527115;
+        Thu, 03 Sep 2026 00:45:27 -0700 (PDT)
+X-Received: by 2002:a05:620a:468c:b0:92e:745c:6c5a with SMTP id af79cd13be357-93960dd6fa7mr1181062185a.14.1788421521913;
+        Thu, 03 Sep 2026 00:45:21 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a073-af00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a073:af00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b606b0f173sm1111969e87.7.2026.09.03.00.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Sep 2026 00:45:20 -0700 (PDT)
+Date: Thu, 3 Sep 2026 10:45:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] remoteproc: qcom_q6v5_pas: propagate
+ dev_pm_genpd_set_performance_state() errors
+Message-ID: <kaad7btqyhq2puyjjnm2lp5e75hjizhpnaiyaol74icpkcfjlm@7yzadtvizm2e>
+References: <20260902204334.2061226-1-mukesh.ojha@oss.qualcomm.com>
+ <20260902204334.2061226-2-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: IPQ5332 multipd: missing text PD level and qcom,rproc ownership
-To: Hideo Sumi <hideo.sumi@mugops.com>
-Cc: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        ath12k@lists.infradead.org, linux-wireless@vger.kernel.org
-References: <20260902041339.7665-1-hideo.sumi@mugops.com>
- <741d7c3e-6eea-4a84-bf4c-8d8eb8032c83@oss.qualcomm.com>
- <20260902192434.54709-1-hideo.sumi@mugops.com>
-Content-Language: en-US
-From: Aaradhana Sahu <aaradhana.sahu@oss.qualcomm.com>
-In-Reply-To: <20260902192434.54709-1-hideo.sumi@mugops.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=T8y8ifKQ c=1 sm=1 tr=0 ts=6a990f64 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=xmPyY564vjej6uAyVk/9Uw==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=N4V0GIZ52OFWYRwfAJIA:9 a=QEXdDO2ut3YA:10
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-GUID: Jz3S_Ok6SnYmOXyHuheMCytsEf-joLOw
-X-Proofpoint-ORIG-GUID: Jz3S_Ok6SnYmOXyHuheMCytsEf-joLOw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA1MyBTYWx0ZWRfX+Q3j7cNVBE3l
- LGWK2X9IF4JNpTuLq1n0UAx3yS/ueuxT/FYDGeMViNfY07a1UhkAF08bfuHVxPHj+tqreeVKCiK
- saqurddGZcIcNuefPHL/ayzUCpo5103g7fKZSRljl8N/8lUlqOXymf0NA3wQCrCq+Zdf/PuwN5G
- CFLl603kMWPj27pT1RdIM7ZwSv2DUPPZRBJTz8u/dnH+Z8RpBFNsHHvG/oqSQIE6cI++9ecJHmo
- IrEfoEh2EraG+pjRGYifMeaogznuWH9JOZWtSzXdZD7QI0iGsIBAAiA/IvmLtNvKiqh87tbk+VY
- aYb2Qy1d9Xw9glwLUsM0SIeLO7blmbz7xiXb0zGCz0GJjiPwPy3SSwKGg+itXa9KMD7wFpxNoAR
- Dph8sO07kOh7pYWTRAI2ONAZozk0B+xn/SjET+TGXaPAEQXgq6MFrIs7B/qyfYsAPz0l5eZUlwQ
- qRL66iIYwx8akFBvkTA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA1MyBTYWx0ZWRfX7YbvfRarVRyQ
- iavFpDTy2Ri7vRGOdermNw/VzNFUyRwVYRrZQgagk6e225iJq/ds0Kp2ZtPtES39wO/X4wpHkEp
- YnH100g878JJKU6qQ8UAkHgIIlCoEfs=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260902204334.2061226-2-mukesh.ojha@oss.qualcomm.com>
+X-Proofpoint-GUID: tEAS15vdBc_sIVI6c4FZiuzpoA2uN8Rc
+X-Proofpoint-ORIG-GUID: tEAS15vdBc_sIVI6c4FZiuzpoA2uN8Rc
+X-Authority-Analysis: v=2.4 cv=YKuvDxGx c=1 sm=1 tr=0 ts=6a99259d cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22 a=EUspDBNiAAAA:8
+ a=h89225zfqaSm5xtrkw8A:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA2NyBTYWx0ZWRfX9at+wdH/rZiQ
+ 13XCd2Bt2Axm3v3JSXrJSA/t/A0p1P83pro34OtktlKq5r00usaUgsjbHDiwOrppVDNTM6vTeRP
+ 03U+8a2JFLt18/KEWHo+IxV0nZicdfisOC7VAgzlAgzcDoO/ndkEnIo0iov0vlMAqVPX7sQ5a+y
+ iMyI089csCXIx7EFdiqq1dRfMTT/p+Ha6917aFgJJhYIgJK/WiZdygf9bmUN5XpzI6b5dB708i8
+ q8PsCq/VoJ68t9i8RUIxxFr8oEJZLM8pEO6YFslAnekxEMuqdMMB7uUtamccNxyQ0l3vXhYgKWY
+ B3JfkrldXvizVl4lxdgAx7X/3pZ5Se/2dWn5u9vsR9fvzoohhD7QOdrkt1aTLelwAcudODV7Rwg
+ ZVqer8qMIa7beEi1GQEnmt9GV5hDqLE+eYTjlzDdTKAYlCrX9or4+dP/gRvPN2jIqI7sqgA7GHE
+ xhbY5N8mHFNdKyuVZBw==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA2NyBTYWx0ZWRfX8UJH0GhaSy55
+ pjU3kJR75GK7ydKaGm80WLYTH4sY8yVhWbpvfj5jYG/k67J268bQsXjjdupFhFJuwFuG1q81crM
+ pcXosu5MgNw+fwIwrlk7qy9Y7iYsjD0=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-03_02,2026-09-02_04,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 impostorscore=0 adultscore=0 spamscore=0
- clxscore=1015 suspectscore=0 lowpriorityscore=0 priorityscore=1501
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609030053
+ bulkscore=0 spamscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
+ definitions=main-2609030067
 
+On Thu, Sep 03, 2026 at 02:13:32AM +0530, Mukesh Ojha wrote:
+> The proxy power domain enable path discards the return value of
+> dev_pm_genpd_set_performance_state(), masking failures silently.
+> When the call fails the performance state is not applied, yet
+> firmware load proceeds without any indication of the problem.
+> 
+> Capture the return value and emit a warning on failure. Firmware
+> load continues regardless a performance state failure is non-fatal
+> but the warning provides a visible signal for debugging.
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>  drivers/remoteproc/qcom_q6v5_pas.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index a005546c265d..01dc0194e130 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -167,7 +167,11 @@ static int qcom_pas_pds_enable(struct qcom_pas *pas, struct device **pds,
+>  	int i;
+>  
+>  	for (i = 0; i < pd_count; i++) {
+> -		dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
+> +		ret = dev_pm_genpd_set_performance_state(pds[i], INT_MAX);
+> +		if (ret)
+> +			dev_warn(pas->dev,
+> +				 "failed to set proxy PD %d state %u: %d\n",
+> +				 i, INT_MAX, ret);
 
+Should it be turned into an error?
 
-On 9/3/2026 12:54 AM, Hideo Sumi wrote:
-> On 9/2/2026 7:47 PM, Aaradhana Sahu wrote:
->> The intended model is that the root PD is completely managed by
->> qcom_q6v5_mpd, while the Text PD and WiFi User PDs are managed by ath12k.
->> ...
->> So, qcom,rproc in the ath12k DT is expected to point to the root PD.
+>  		ret = pm_runtime_get_sync(pds[i]);
+>  		if (ret < 0) {
+>  			pm_runtime_put_noidle(pds[i]);
+> -- 
+> 2.55.0
 > 
-> Thank you, that settles both questions, and the shared firmware patch is
-> exactly the piece I was missing. I built the model you describe and ran it
-> on the board. It gets a good way in and then stops, and the last problem
-> does not look like something a board can fix, so I am reporting what I
-> found rather than guessing at it.
-> 
-> What I built, on 6.18.44 with backports 7.2:
-> 
->   - ath12k loads the shared read-only image itself, your patch [1] ported
->     to this tree (it predates the common/Wi-Fi 7 split, so the mapping
->     comes from power_up() rather than from rproc_info)
->   - the text PD node is gone from the DT
->   - the user PD nodes are gone from the DT, so qcom_q6v5_mpd does not
->     instantiate them
->   - qcom,rproc points at the root PD
-> 
-> Three things came up on the way. The first two are, I think, plain bugs;
-> I have patches for both and will send them separately if you agree.
-> 
-> 1. ath12k subscribes to the SSR notifier by rproc->name
->    --------------------------------------------------
-> 
-> ath12k_ahb_register_rproc_notifier() does
-> 
->   qcom_register_ssr_notifier(ab_ahb->tgt_rproc->name, &ab_ahb->root_pd_nb);
-> 
-> but that lookup is keyed by the SSR name a driver passes to
-> qcom_add_ssr_subdev(), not by rproc->name. qcom_q6v5_mpd registers
-> "q6wcss" -- the same short name qcom_q6v5_wcss.c uses -- while rproc->name
-> is the DT node name, "d100000.remoteproc" here. So the notifier registers
-> against a name nothing signals:
-> 
->   remoteproc remoteproc0: remote processor d100000.remoteproc is now up
->   ath12k_ahb c000000.wifi: RootPD ready wait timed out
->   ath12k_ahb c000000.wifi: probe with driver ath12k_ahb failed: -110
-> 
-> Subscribing with "q6wcss" fixes it.
-> 
-> 2. wifi0's memory-region[0] does not contain the images
->    ---------------------------------------------------
-> 
-> ipq5332.dtsi points it at q6_ipq5332_data. The shared read-only image and
-> the user PD images link below that:
-> 
->   q6_fw3 (shared RO)   0x4aefd000 - 0x4b296000
->   q6_fw1 (pd1)         0x4b2a3000 - 0x4b55b000
->   q6_ipq5332_data      0x4bd00000 - 0x4ca00000
->   q6_region            0x4a900000 - 0x4ca00000
-> 
-> so qcom_mdt_load() refuses them:
-> 
->   ath12k_ahb c000000.wifi: segment outside memory range
->   ath12k_ahb c000000.wifi: failed to load shared firmware: -22
-> 
-> Pointing memory-region[0] at q6_region loads both. If ath12k is to own
-> these images, the region it loads them into has to be the one they are
-> linked for, and on this SoC that is the root PD's window.
-> 
-> 3. The user PD nodes: removing them is what the model requires, and
->    also what breaks it
->    ---------------------------------------------------------------
-> 
-> This is the one I cannot resolve from here.
-> 
-> Leaving pd-1/pd-2 in the DT does reproduce the IRQ conflict, exactly as
-> you said:
-> 
->   genirq: Flags mismatch irq 31. 00002001 (UserPD1-spawn)
->           vs. 00002001 (q6v5_wcss_userpd1_spawn-ack)
->   ath12k_ahb c000000.wifi: Request spawn irq failed: -16
-> 
-> Removing them clears that. But the root PD then stops during its own boot.
-> Its crash record says:
-> 
->   pd_stubs.c:137  Invalid user-pd CS load address 0x0
->   Thread name : sys_m_smsm   Process name : kernel
->   PC : 0xc000ae58  SSR : 0x018f0027  BADVA : 0x00000000
-> 
-> and ath12k ends at "UserPD spawn wait timed out", probe -110.
-> 
-> The address it is missing comes from SMEM item 507, written by
-> qcom_q6v5_mpd's share_upd_bootinfo_to_q6() before the root PD is started:
-> 
->   list_for_each_entry(upd_rproc, &upd_rproc_list, node) {
->           upd_bootinfo.pid       = upd_wcss->pd_asid + 1;
->           upd_bootinfo.bootaddr  = rproc_get_boot_addr(upd_rproc, fw);
->           upd_bootinfo.data_size = qcom_mdt_get_size(fw);
->   }
-> 
-> upd_rproc_list holds the user PD rprocs qcom_q6v5_mpd created. With the
-> user PD nodes removed it is empty, so nothing is published and the root PD
-> faults on a zero address. With them present, remoteproc owns the spawn
-> interrupt. As it stands the two requirements exclude each other.
-> 
-> So my question is: in the intended model, who publishes the user PD boot
-> info to SMEM 507? Three shapes seem possible and I did not want to pick
-> one blind:
-> 
->   - ath12k writes it, since it owns the images and knows their addresses.
->     That would mean moving share_upd_bootinfo_to_q6() out of remoteproc,
->     or exporting it.
->   - qcom_q6v5_mpd keeps writing it, reading the user PD nodes for their
->     firmware-name but not creating rprocs for them. The nodes would stay
->     in the DT and describe the PDs without claiming them.
->   - Something else covers it that I have not found -- the shared firmware
->     patch does not touch SMEM 507, so if there is a companion change I
->     have missed it.
-> 
-> I do not think [1] alone is enough to boot this without one of those, but
-> I may well be reading the wrong tree; if this is fixed in ath12k-ng or in
-> a series I have not seen, that is a fine answer and I will go and read it.
-> 
-> For reference: reading the Q6's crash record needed a change of its own.
-> q6v5_fatal_interrupt() calls
-> 
->   qcom_smem_get(QCOM_SMEM_HOST_ANY, q6v5->crash_reason, &len);
-> 
-> and QCOM_SMEM_HOST_ANY is -1, so smem.c only searches the global
-> partition. On this part the record is in the WCSS private partition, host
-> 1, and qcom_q6v5_mpd already defines WCSS_SMEM_HOST as 1 for it without
-> using it, because qcom_q6v5_init() has no way to pass a host through.
-> Until I read it from host 1 every one of these failures printed only
-> "fatal error without message". I am happy to send that as a patch too if
-> it is wanted.
-> 
-> Board is on a serial console with a recoverable second firmware bank, so I
-> can test whatever is useful.
-> 
-> [1] https://lore.kernel.org/linux-wireless/20260811054316.518494-1-aaradhana.sahu@oss.qualcomm.com/
-> 
-> Regards,
-> Hideo Sumi
 
-Before we look into the SMEM handling, could you please confirm whether you are using the
-latest ath.git ToT and whether the remoteproc v14 series is included?
-
-Remoteproc series:
-https://patchwork.kernel.org/project/linux-arm-msm/cover/20260803-rproc-v14-0-a1f87b0b0ad2@oss.qualcomm.com/
-
-Could you also share the complete DT changes and the firmware version you are using?
-It would help to know how many WiFi devices/User PDs are attached on your platform.
-
-Once I have these details, I can check whether the issue is already addressed in the latest patches
-or whether an additional change is needed.
+-- 
+With best wishes
+Dmitry
