@@ -1,154 +1,175 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from outbound.ms.icloud.com (ms-2002a-snip4-11.eps.apple.com [57.103.74.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73081492180
-	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Sep 2026 10:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB294AA569
+	for <linux-remoteproc@vger.kernel.org>; Thu,  3 Sep 2026 12:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.74.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788432897; cv=none; b=fP2f1tB4UO9Copp8TLg3pvAj69QnCO0UR+wqdg7JTpnVBq4jW6PVqI31lq0DXKs42+EDFztOvv+J6MaUNnpaSelywjIluUv3P6Uk8J4UcWzh2PLKsMEdOLSrypbkaTr4yEBgPS8nLjgNJY8zSC9ccUWTDtyZZBM9fltIrrpzFA4=
+	t=1788439389; cv=none; b=HFANBC+67YuYKb832p1g+Q4kVg12NjPUtwrWh5qZ310zFKGdnHZcKk6ZGXm5uewe5hMtwqtMByqsajHbnNbIAF2EUqZQuV7Do+Y8kHy3xlKhllEmRoYOWBQvsv2SCm+HDIPIoXRGJfyb4JvMpL6rU55qdwbOxMw0+BgQ8BWGSLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788432897; c=relaxed/simple;
-	bh=kI6mBMisckds5bhX1KvYBpiAzm2JBa/PQnpgMUAGgpE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a4R51GqVzIBP6fzQZz5Nt27n516JSdmcdTQN2NWfGBrBU1U2qedHCfsbO1K8quMswqRSROIoW361pqJb1hjocuX3MXqpAgjwZnClRcQpohqAkzm9mIPN/1Z3eBVVNUpf3m+HxLfV7Lz3QyF5YZC6wa+fU7SJFN3Z+eT3lsYFYHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TOP02KLq; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=fYRTuAJ6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1788439389; c=relaxed/simple;
+	bh=DOCuQ4V0ymN1NKV54jkjinTJeafVjP35V9w6RCsvWOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JC5IQCcjG5dEJ59bImAZuGKlRBC7d4RiZ1XgF4npOTroqn9mzQ+EGII1Vpy2jTFJtNDZAusU6SUvnNBLGBQ0ci1rT1+kCZM+2Ht0rPWEJFIFps46RhHOAVdfxKzJt7ZAizKnXK++K/o3jYHSgrFMnbGRSbt5ZdxoV6q5jXdWS2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mugops.com; spf=pass smtp.mailfrom=mugops.com; dkim=pass (2048-bit key) header.d=mugops.com header.i=@mugops.com header.b=qha+5i3C; arc=none smtp.client-ip=57.103.74.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mugops.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mugops.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TOP02KLq";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="fYRTuAJ6"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 683AHBlG1328202
-	for <linux-remoteproc@vger.kernel.org>; Thu, 3 Sep 2026 10:54:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3z3SYNxLPifOc3S2NiNgUDiFUQuwZnxnUvCNNI817Vo=; b=TOP02KLq8bQsPjTc
-	+YIG5oM6Ud41ipP0HnINmIwo9VJXoDmW7qhR7RHI6xZDXdWbu/98/lFjTRtlWzA/
-	dGIQeR7SenF1eIPlNmxYH/Hm0K80/29oESfqTjBwLmzDUyo7NmcQ+RmfpWJq8/0Q
-	DYwEZsKGFjWbUOoR/Svz0nLi9uTJzoi2KzLjhPb0EatWAh6WBAiFSDJ/UdBsaoY1
-	8Gvj+L2csG85ki3v4ELvyyXFytiunHzhyIPAuIsLpMxJTn9BD1brzgIeR4L3RpIh
-	8g/7SBs7d98bJJIvYSeteqglfjiLWds0Kyg77iR1v4foqWRykb/Vjz9MFjEKEJ92
-	rhuAOg==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4genrnmnd7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2026 10:54:55 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-93494b1e35cso46403485a.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 03 Sep 2026 03:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788432895; x=1789037695; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3z3SYNxLPifOc3S2NiNgUDiFUQuwZnxnUvCNNI817Vo=;
-        b=fYRTuAJ6koVMbGH9MMUkPpkvED1ZApdBL64spdvCMjkNzMCAFmthZKBFFnzJ5yEPPY
-         YQO0sVTrZ9AMo1VyAVK6uW87uSTrhluwmfqpcPefNHZVAWtgc+CypHhfZpki3Eu96lWj
-         AIiUMWURJD1memqkU6G18wd1W5PdztbCZ7mS3fGH37DHkLOj3R8x6jZuPZJq+tr9hdW+
-         /ENPOfGfC5bfghOJHJe4AqGmIogquPtz40HyA1AzKNbZmnlQetsAws2qsRdJjudolccn
-         Ned/mHNrpGYrLw35mfk0PCjMQpmr3vM3W9uaEIGHhz9WLQL7IRJnkLsGdzLXMYoSOa3Z
-         LduQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788432895; x=1789037695;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=3z3SYNxLPifOc3S2NiNgUDiFUQuwZnxnUvCNNI817Vo=;
-        b=GU5F7/AzWJ3mxr6dcOiCL37l3pcJKSTUBED0lG9bdcyWu2pdZeV0YsGAdyKnTymFx+
-         JJfC9DFy7O+pMgeBLQGUp+c/w2GHPqBvFsWj7E8OlIiXa9ZKJJAMQwmyX8WO4Lg8hOzj
-         AatAB/MRpykA/wNaQz9wAyvY1slTz4DcB3jiecG+fBYNGUDGAVLNxYV6oAjQKH7gmNq9
-         2RwnHZHESDkayFsC2f49roFgZhSe0p5yFBPD7mCLZgfBztkLiZrkemuTx9DIQ9o9cmmM
-         GIj02zxugjPA7N0MuxnDJrDhCkj4HPImyyJj9+x9sy2pRTIzWn83qmK/tJyYQC4avdFm
-         PG+A==
-X-Forwarded-Encrypted: i=1; AKwUvBwbaOP834buQwM1ikxUQssjCWN7FS4EKT/5UF1NvsRojqhGXLjFeG1Q8WnN2PDxolD6IueH/oBQgIOjRi+xqb0N@vger.kernel.org
-X-Gm-Message-State: AFuF++lKizakgI2n1QbJIzAPDutlfHEMl/JGVNtcdNN56gdNEXpKOrEq
-	M7f3ZNxgx5rsiHWPXB6lSPgTTTx4x06PL066Hex+Cv7npLLXBS/0KZZOeZBLmQBZK6U15NBVvVU
-	Fv6sb+88IMuhrQdjjL8/AtbVuVJXJAd2Ol19O8udbhSCDBXvxoC2lTeUywrpQg8Nxbjcx1Qmu
-X-Gm-Gg: AYBFou3XqbdITBtL/S48zrOqeaDiKbshyIjM5L2fWlWDoOg9mytiXaiIhLdeypKsk4z
-	BF+9kVNFEXxV5fsqY7Ug5SK7Z/5pL0ys04Rm+72smMD/CZs2dq2290A/grR19TnddlkqN6ujYTK
-	0OCeTbWpB7v9wO1pmN2ORuxlIwHwB3kBTSm/EnIRORInHjhX8FY0SzfkZKmIzui+MNtlI7+Aiid
-	kwLH8diix7SxSj3pvxUfxWnhFfsTjA78SLHOAqY9mdXkh+fnYCu1cSOqRKiz2BUTEIFfCU8BjhP
-	+iG5Im7DURTloD0bA0iiQd+jOib1KdJTNTyTcT5STb6/PBHX6PeZO25UVG5G4h3CW28kD9wHCFY
-	KvIvbQ4nxjH1eJZ98zXoAng==
-X-Received: by 2002:a05:620a:640f:b0:939:17ec:8a81 with SMTP id af79cd13be357-93960f8a9afmr818594585a.3.1788432894721;
-        Thu, 03 Sep 2026 03:54:54 -0700 (PDT)
-X-Received: by 2002:a05:620a:640f:b0:939:17ec:8a81 with SMTP id af79cd13be357-93960f8a9afmr818591985a.3.1788432894307;
-        Thu, 03 Sep 2026 03:54:54 -0700 (PDT)
-Received: from [192.168.202.12] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c25f42861c1sm82421366b.63.2026.09.03.03.54.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2026 03:54:53 -0700 (PDT)
-Message-ID: <2a4287e0-639d-4bef-bbfc-a6e192084b59@oss.qualcomm.com>
-Date: Thu, 3 Sep 2026 12:54:51 +0200
+	dkim=pass (2048-bit key) header.d=mugops.com header.i=@mugops.com header.b="qha+5i3C"
+Received: from outbound.ms.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-west-3a-60-percent-7 (Postfix) with ESMTPS id EA1451800127;
+	Thu, 03 Sep 2026 12:43:04 +0000 (UTC)
+X-ICL-RepId: 01a0674b-5353-7c1d-9f0a-ac4a131db511
+X-ICL-Out-Info: HUtFAUMHWwJACUgATUQeDx5WFlZNRAJCTQhKB0MDXxxBAEAdVQFLVxQEEFoJUgQcA0wVWi1aHlUfSQsdDlgGEhZdRV4YUARCAxcbXAAXGVFNCEgTBVIHXU1WDUcPWB5cFBcVQENeCF4fTBwdDlgGEgBNCg42BlkFXglWA0MFNhIUXUVeGFAEQgMXG1wAFwZbFAREAV0FXQJJCUsCXwNZAUgXTQpUB1MfQRQQWglSBBwDTBVaLVoeVR9JCx0OWAYMUE0BQwgKCEcDTRdeMlMEXxFQFg==
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mugops.com; s=sig1; t=1788439385; x=1791031385; bh=3kGf9SwZXN+BBQTc+zQUIoGFVBNm5rRQNe5woeRka4Q=; h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme; b=qha+5i3ClmSF7Fxs1Rj6X46tU2Ss4oZeXDh3TKlY4L7bATgk5c8ZBY4ThVNpalo7Gn6lQSNJ9yg4pQS5xMNYmdxr2b+8YUCqUQSbDywF2EBVHeMP3YZNFSyC3mYACB8buQUAUzpjZVbejXvPrAsDVLMFNnmGMeNvV2a50nSV4JydwxyhmKVpz52svsy7CSgRoMDMkiwFZ0usgUrj2xGJeQEzcPGRuUV9KuUbwLjYdZAwEhvFuwpbvzHKYi4z7JLtngQ0698WYtHiINzHWAjCOYDT2BCVK4rf3yJFyor3C/D/V71CG/nnqVqEKMO8g7MAmTZ0nUOTQE9aD/90bEtIzg==
+mail-alias-created-date: 1773467597841
+Received: from localhost.localdomain (unknown [17.156.208.39])
+	by p00-icloudmta-asmtp-us-west-3a-60-percent-7 (Postfix) with ESMTPSA id 1E9501800347;
+	Thu, 03 Sep 2026 12:43:03 +0000 (UTC)
+From: Hideo Sumi <hideo.sumi@mugops.com>
+To: aaradhana.sahu@oss.qualcomm.com
+Cc: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	ath12k@lists.infradead.org,
+	linux-wireless@vger.kernel.org,
+	Hideo Sumi <hideo.sumi@mugops.com>
+Subject: Re: IPQ5332 multipd: missing text PD level and qcom,rproc ownership
+Date: Thu,  3 Sep 2026 21:42:38 +0900
+Message-ID: <20260903124238.59908-1-hideo.sumi@mugops.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <9103ca95-5e27-4979-994c-e14f123cec7e@oss.qualcomm.com>
+References: <20260902041339.7665-1-hideo.sumi@mugops.com> <741d7c3e-6eea-4a84-bf4c-8d8eb8032c83@oss.qualcomm.com> <20260902192434.54709-1-hideo.sumi@mugops.com> <9103ca95-5e27-4979-994c-e14f123cec7e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] rpmsg: glink: Request the RX interrupt already
- enabled
-To: Chunkai Deng <chunkai.deng@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chris.lew@oss.qualcomm.com,
-        tony.truong@oss.qualcomm.com, tao.zhang1@oss.qualcomm.com,
-        peter.chen@oss.qualcomm.com
-References: <20260824-rpmsg-glink-split-protocol-start-v2-0-362d7c233f66@oss.qualcomm.com>
- <20260824-rpmsg-glink-split-protocol-start-v2-2-362d7c233f66@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260824-rpmsg-glink-split-protocol-start-v2-2-362d7c233f66@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ijcBgH8UW3OgdVV40KHfz9-RQjKoamdD
-X-Proofpoint-ORIG-GUID: ijcBgH8UW3OgdVV40KHfz9-RQjKoamdD
-X-Authority-Analysis: v=2.4 cv=YKuvDxGx c=1 sm=1 tr=0 ts=6a9951ff cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=qvpHLerMFRTuEK5DOsEA:9 a=QEXdDO2ut3YA:10 a=ZXulRonScM0A:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA5NCBTYWx0ZWRfX6WGyrxFsKxvu
- JY1Fu2sGxKW8GqUzenVanPomwH8+3dyoSOD9PVNt2zh16yeNyyk07HQQ+/J/fU/OnN1saFPkePN
- 4NFXnTzpoulwkKqWGiFWl8Ck5c2wOP/YtCXtpx+FXJquDkq6WpLNQf3tuuOWEcSJN1jVINKNnyl
- 1oI5UvePNOR47Zn7qZrTRJBM56JkBwOMXGMK+0nZwtJWZXnsgaQ6DFpLVPP1tSZJfMgkoFX+Li1
- 2Ny/hFwkfcVt68HI8u25P4Lr0gsxgHv9Dzr5ywwAzZf5bB+yWoW0/MyPoyOvFUJj4zjAGE/MQM/
- 1ErrfaV8lSqb/5+Yibc2M8NFeADBzRbE4ySAASe/YAVzP2EbIXWPxZKbwMUSKEc7L+8JRnEg83y
- 2oF4cVu8wGMAvxmRf4fPXL2pc38iZpQx76xAr9Ww18tBEMICRG/sLuVFmyjNnggfpItb4668DgS
- 3rnkknur0dO8PUKl4pA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA5NCBTYWx0ZWRfX0y63+ZF8cvw7
- aS3LGmXtBuMJP37LLubk5jZs57UUvkbWkc2X79GbpbUguPJsmIHaFk/iF8+ZLTj9UMG8wfywHzO
- N0Ie2eqQQqObdUqoeX8lV56dJEXWCgA=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-03_03,2026-09-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609030094
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDExMCBTYWx0ZWRfX9Byj5Hr75JY/
+ okKGDzwSJLaZBjADxkP0r1HYQQvnycqOLAtPR4EkgW5H+x0eskkzm9arkhNmTEQPgEIi79GX+r0
+ yBV5T4JHdAdN8aww+mF9BuSwfpss+i9oEQ6XD9hD8qIcuS69QL2JIIzC+XXYpbeooUQUjJrvhid
+ EBqQi8s1htGMC+raDg240mhJyQ1sKCwKVGIdVeEPiLW8aoeFrelFf+NFu33ayCv6/M7TjdNOjxy
+ 9kGE3f3U9L1p9/+OK+0CHeykqKtJ2ur5oWmt4OwLKgcyYiUJuxyNKjMwqiGRP9NxCDzeM2VAAR8
+ gqPq+EVyBjN7tDwPCidlRuMCb6bhhVAB6VeavWyTNkrLQdLZYY2NP6867I+drI=
+X-Proofpoint-ORIG-GUID: fJGpXCPCm4865Lp24sjlw02uyE5evvgb
+X-Authority-Info-Out: v=2.4 cv=JpD8bc4C c=1 sm=1 tr=0 ts=6a996b59
+ cx=c_apl:c_pps:t_out a=kRaGL2Q7qLiahLf3O6OaIA==:117
+ a=kRaGL2Q7qLiahLf3O6OaIA==:17 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=DQ8r9CIClS4u8aE-f4MA:9
+X-Proofpoint-GUID: fJGpXCPCm4865Lp24sjlw02uyE5evvgb
+X-JNJ: AAAAAAABsVGxVvdrxWYo/wJ3mE214TkUdo81P/0LhmPGT57FjVoK77pnffZRUt+mi1OEsSGLHtBB4AiYWtxRCOhDhj61iwj8jHGZrpOKx69uf5WiI8As1c4pvRup3X9vPOrFKAaa3UHm/QCbdqueglTFCSD+E6zfwYT8G5RbYA2+p5QI4mDkwHv34JyGGhRmlvYxh7wxSXIGDeRTIhkdI3sxlDmAqNAAQnnwvRzG/wcpwMXGONqHBqOFEJhNX35MVFVmCwErPJJJmC4NqEe+J+qJ6rkOxhyon3e4qGiznGqFW0pHVexTNNkAMaNRVpn8dbRc8qCabX2SotGLxZc/pXuntl+KeW5JLR1fRsBvIJFEpuIoz8pPs31QC5bxmuDxPAYyxcVK8GZARbIYtEdm7qAx17nc1VWs26r06SonnxEVhxDKo/SnOzTs6dD7n2+ZtwA7wrzFvDgC4xBnT07+CuJ6FnI1ISx3vYZX9SMAG/KeJiYae2ujp8X5vcqwzAdQ2dO1f8ilkCrv6BoP8WHALFoXVA4sthBEOmh46uC3B0tbrUpqqYN79RYb2q2XdP2cLQcQpNf+NMLPUOuH6w7ECebl4isSxqzZbQtJIOtO2icXJxRgkYRgK1zI4It8kdwcwsB7f+/HsTSbZFQThnislVz1/GUaiTj16G7t3tPT4usOVCOPUrY5L00sn+Gf3OlprUSIGj1v2BdpB6Lau9wj/5FcjxPeJ7QykGFz+ytqyp83LHontzY4ndG/NJqmG7uphWYNm0R8pT74FqURJy2VOdRw1DMDXulrD3lQUyuqsN7PQjDwrlsEnj7Uzr4eVoNni/+Mt62IkmeGeoA4Mo3NfGJjDmsM6hznosx02HooIwN1sduuAffS7SFMrcvQ/D0lq9rf20stZf3ApHzgvSUj+8tDQCDPPUq4CURygkpVSucvRZ3uZ5cSO39vx46IhTJx9YNnYhXioThcOAki9FT1un+Mnv24VAN
+ 0GX+hW8omDewbncqIYSPKzfK/Cx6DtKP4lBnxb9LuDUNLYGca9600gbik8O03Z/hmIZxrkLrOAOrWcZXI+7yo18qH5PXd1NSpXAtyBq8ozMFvegnSSnfz+cPG4OEKrBigFnf4dIX0Rj8CxBGaVAYk75uX3GzWRieHMp8/Y+7hnzGNS6/09Xu89LqttubOnG6hZIE42vTbgD4n3C/MmkXZWjAvnw8XlyeEbyzpQjQnzBieAVHyRXTaBpuESsQgK53xbDkiNhPgql95iOT6vtXnnk4ponSaA0MlZ/0avWv2ghE8vphiTRo7MTA+EW8KvXbiE1qJnNPBp04eQlxXoYU=
 
-On 8/24/26 9:05 AM, Chunkai Deng wrote:
-> The receive interrupt is requested masked early in probe and enabled
-> further down, once the glink instance has been stored in the transport.
-> Now that the version command is no longer sent from
-> qcom_glink_native_probe(), nothing needs to happen between those two
-> points.
-> 
-> Request the interrupt where it used to be enabled, and drop
-> IRQF_NO_AUTOEN along with the enable_irq() call. The RPM error path
-> becomes a set of labels, the way SMEM already unwinds.
-> 
-> Signed-off-by: Chunkai Deng <chunkai.deng@oss.qualcomm.com>
-> Assisted-by: Claude:claude-opus-5
-> ---
+On 9/3/2026, Aaradhana Sahu wrote:
+> Before we look into the SMEM handling, could you please confirm whether
+> you are using the latest ath.git ToT and whether the remoteproc v14
+> series is included?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+No on both counts, and thank you for the pointer -- I had not seen v14.
+Let me be precise about the base so we compare like for like, and then
+ask you the one question that would settle most of this.
 
-Konrad
+This is an OpenWrt build, not ath.git ToT:
+
+  - kernel 6.18.44
+  - ath12k from the OpenWrt "backports-6.18.39" package
+  - the multipd remoteproc support is the *old* series: Manikanta
+    Mylavarapu's original multipd patches (Nov 2023) plus Ziyang Huang's
+    "split q6_wcss to rootpd and userpd" fixes (Sep 2024), carried as
+    OpenWrt target patches.
+
+It does not include your v14 series. So it is very possible the issues I
+raised are already addressed there, and I do not want to send you
+chasing a three-year-old base.
+
+The core of my first mail was a *text PD* level between the root PD and
+the user PDs, which the vendor firmware for this part requires and which
+the 2023/2024 series does not model, so I added it locally:
+
+  q6v5_wcss   qcom,ipq5332-q6-mpd         q6_fw0.mdt   root PD
+    text-pd   qcom,ipq5332-mpd-upd-text   q6_fw3.mdt   shared RO text
+      pd1                                 q6_fw1.mdt   user PD
+      pd2                                 q6_fw2.mdt   user PD
+
+So the question that would settle it: does the v14 series introduce this
+text-PD level (a shared read-only text image loaded between root and
+user PDs)? If it does, my local patch is redundant and the right move is
+simply to use v14 -- no need to debug the old base at all. You wrote the
+series, so you can answer that far faster than I can by porting it.
+
+I am glad to help validate v14 on this hardware if that is useful -- if
+you can point me at the base it is meant to apply on (ath.git ToT plus
+the series, or a branch), I will build it for IPQ5332 and report what
+reproduces. I would just rather not promise a blind full rebase, since
+2.4 GHz already works here on the old base and I do not want to trade a
+working setup for guesswork. The OpenWrt device support proceeds on the
+current base regardless; the upstream question is only about landing on
+your track correctly.
+
+The details you asked for, in any case:
+
+Firmware version, from the Q6 error record:
+
+  WLAN.WBE.1.3.2-00067-QCAHKSWPL_SILICONZ-1.128291.1.135427.1
+
+Platform: Qualcomm IPQ5332 (Xiaomi BE3600 Pro). Two on-chip WiFi
+devices, two user PDs, both attached to the single Q6 root PD via the
+shared text PD:
+
+  - wifi0 / pd1: on-chip QCA5332, 2.4 GHz, AHB
+  - wifi1 / pd2: QCN6432, 5 GHz
+
+The multipd DT (our downstream form on the old base):
+
+  &q6v5_wcss {
+      firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw0.mdt",
+                      "ath12k/IPQ5332/hw1.0/iu_fw.mdt",
+                      "ath12k/QCN6432/hw1.0/iu_fw.mdt";
+      status = "okay";
+
+      text-pd3 {
+          compatible = "qcom,ipq5332-mpd-upd-text";
+          firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw3.mdt";
+
+          pd1 {  /* wifi0, 2.4 GHz */
+              firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw1.mdt";
+              interrupts-extended =
+                  <&wcss_smp2p_in 8 IRQ_TYPE_NONE>,
+                  <&wcss_smp2p_in 9 IRQ_TYPE_NONE>,
+                  <&wcss_smp2p_in 12 IRQ_TYPE_NONE>,
+                  <&wcss_smp2p_in 11 IRQ_TYPE_NONE>;
+              interrupt-names = "fatal", "ready",
+                                "spawn-ack", "stop-ack";
+              qcom,smem-states = <&wcss_smp2p_out 8>,
+                                 <&wcss_smp2p_out 9>,
+                                 <&wcss_smp2p_out 10>;
+              qcom,smem-state-names = "shutdown", "stop", "spawn";
+          };
+
+          pd2 {  /* wifi1, 5 GHz */
+              firmware-name = "ath12k/IPQ5332/hw1.0/q6_fw2.mdt";
+              interrupts-extended =
+                  <&wcss_smp2p_in 16 IRQ_TYPE_NONE>,
+                  <&wcss_smp2p_in 17 IRQ_TYPE_NONE>,
+                  <&wcss_smp2p_in 20 IRQ_TYPE_NONE>,
+                  <&wcss_smp2p_in 19 IRQ_TYPE_NONE>;
+              interrupt-names = "fatal", "ready",
+                                "spawn-ack", "stop-ack";
+              qcom,smem-states = <&wcss_smp2p_out 16>,
+                                 <&wcss_smp2p_out 17>,
+                                 <&wcss_smp2p_out 18>;
+              qcom,smem-state-names = "shutdown", "stop", "spawn";
+          };
+      };
+  };
+
+  &wifi0 { qcom,rproc = <&wcss_upd1>; status = "okay"; };  /* pd1 */
+  &wifi1 { qcom,rproc = <&wcss_upd2>; status = "okay"; };  /* pd2 */
+
+Thanks,
+Hideo
