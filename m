@@ -1,114 +1,119 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AD23E7625
-	for <linux-remoteproc@vger.kernel.org>; Fri,  4 Sep 2026 08:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.210.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788512025; cv=pass; b=oyp5x159Dp2AZ5kGhKKlRjwiMzFrROeGOF9QEcqYm9pAQUQU4r5ZmQHbhNcLka01AQ9GaLZTh7qz0cQ6rIrvEOh7sQguUaBnhdWD0r5xHcrCKdEiLo6oX//EJwoboX8JbllBiG951nlLTSFYg91j/1ocjP9kyhu+kp2tvsk/pLI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788512025; c=relaxed/simple;
-	bh=cAIBUjFQ+3Ly1pIl7XaJ88bzL4A1FyWiRTzQz4fZMtA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EQZbKfFGX48PoAf98TCb28o4geZo12NRs5jvIy+87I+zD2iLMkkJcVFlgkOX36fC/s+36kHXyuxHR7Wi4mOUdYQtbPAzbr5bwbOHmgyVRXJhWrWa3oYZL48+YDIVh5DA9T67lYAlw7qaIGgFJD7rE/L/ByWXnUGQHi6l02Dd0ys=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZJulo9j; arc=pass smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A5F40B109
+	for <linux-remoteproc@vger.kernel.org>; Fri,  4 Sep 2026 09:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1788513182; cv=none; b=sL5AkXUfZyvNGv0CejPiZNngCPfNLz0gHn/bNeJ2Rz8Xt3G1JlQepXjZ1MKgexgPjtCZP6BDQjD9Y9Xj02Nsabfk6E4dqNfwL89VEQWJ5+bnrwfqf0nxDD9aeUibni3uImBLyYlENodyp2y2GKaiG5R5kQZeLX6td+8u2NTNlS4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1788513182; c=relaxed/simple;
+	bh=UlKtSFgJbq4itWjVY4UghG+VhKebOP6CuaZQzBNuzME=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SOUwGyo4J+i7rLD3KB7G6dfVcTDl/8JHabku1IMPpP5wRxBjYrigolUgG0198lPB4YgTflU/I/ppI7gyId9SfUn0oE+UI7m6qVs8h30IUbkW3WoXRXCHJKtLNzkxzQlAK0vbA6D+unMGULhVXJxrG7yVNRwIU1Z4NHqHgCaensE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSZtgP70; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZJulo9j"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-84f38f3b36eso567718b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Sep 2026 01:53:42 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788512022; cv=none;
-        d=google.com; s=arc-20260327;
-        b=HJ42C8+Ow3Lq9JvHcGjTkctYbKdse1fPrD9fmHNy0FWZviGvWTX5E+4KbkT7+wNv0q
-         iopEgMlF+I8vzUHttVzMCmyyD+AAXK6Erkc83DutYgXnDIAjpWAQryduseh8UdD0zXGG
-         gFuiXaBfkkq4QM3vl0sCWRZ3zeTfq9X0ycBiM0xI1oqby/UOblReCkn0vRAshI8FlYLH
-         rL5qC8ROkMsGgH7CyF8+BGsQjVKKlD1ACIkS90h29q772Wy0KhyEj6hyBkWJV8rFXdZh
-         uJ769v5vBton0z4uYPCpSwnPyerrZluqMYc8TAPYK3j5IYOpJQUuo099B/JeBsD4tusN
-         dB5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=cAIBUjFQ+3Ly1pIl7XaJ88bzL4A1FyWiRTzQz4fZMtA=;
-        fh=oGr/q284tUmzmlAZzqZwT0GDVrnOzF4mbaosYuiMWVk=;
-        b=pJTCNTuQkDrFopT54u8giWb2Fb825jBxIdLzovsaLNWGXOO+WM8vpNZkCByypTL0uQ
-         EX1t71W0bLM9eZvlccP65NVoQll/3M3XPidFjsuP45QgStI2J8/24WBKCjM9ZDn5pNMB
-         Am51s4C0CQVX7tbkox1Nfu9OH3tMWx54PHhtnjot0tLGjnxsyZWIXrouLOIl3NfhuPAB
-         Zn0KFaXpXnvRJu46RJICGCEvgyy85wiUfLdEMqe/GcWeVPN0SwPZrMSsAeI6Al2Ze3dd
-         dMOgQgVUR7XHJLYuxewra7qM+zkO6GUdS3J70OUTPHGwDbpluvLhlmkH4AhLzpGKY3Xs
-         tSxw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSZtgP70"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2d91ded8174so6673595ad.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 04 Sep 2026 02:12:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788512022; x=1789116822; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=cAIBUjFQ+3Ly1pIl7XaJ88bzL4A1FyWiRTzQz4fZMtA=;
-        b=BZJulo9jQqiYoxnm5Zm5YU/Jfpw4cSfSc72+jWkeVqaWiGQBQLd6+5KWCMZNJzwfFn
-         hwT5m3yeuLwJ/pMcOXnHNH+JpHVuBxAU4y/Cz1hUM5W/8a/APGW9NdUBSm0OPDLocIsO
-         cwvYdcHZqZv23Rrqo53E06UNywpha5Fnm2+r2dNVlmTBI9kM166BMVZYlCvuTT86h57K
-         ki9J/TQqJXM8EWszs/CrMs5t6ozbthcuQZRh/wtuCQbXqPkvTFLwOPKTv9TsMUnvebvG
-         zS7FY2hM6bDCEUccVs0LUsIE61bgwFlwAsf1T9hf1dDD7Zfhp9OKk+oaxksUrbE1TsQv
-         iZBQ==
+        d=gmail.com; s=20251104; t=1788513175; x=1789117975; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=f2uDduOSprb24UTS5mMjO2bGXJg9YYeJ4jGweCvX+II=;
+        b=GSZtgP70jCU/DHrqqoL+9YJEfIo0QLn+YCts6OD2xMSUQ6ahZUwdMo6lbNun1R84fK
+         1edHF5c2sJV4qG1f2+CLFBeVqj984hIL9x784fN+Wx5Qex4dnyPscoYVCOXnzl4P8vsU
+         UaJBkZon623OKBz8Ch/eETmrICss1SfYq0kZSuIBFcmlwKuKH28UOJ5ptSlb/KloshZq
+         nG9aP0OYB64mHWKeeS9YudgtPdb8s7qKCHWGjEb/WZG+6HayJjWTo6s/q/f0HN7ZsGDD
+         9+R46yJDbVAZ/hBaqj5/akMOq8coJPbxwjUaKaThf6M8SnY3RVUgbl7n705oKrEsas49
+         d5UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788512022; x=1789116822;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=cAIBUjFQ+3Ly1pIl7XaJ88bzL4A1FyWiRTzQz4fZMtA=;
-        b=Qw0FgOllyHyw0m1ci/jr34sg+mAO8LMi+BaIlQYWRaSi7ZsGoPwEpXrFYbYnE5JgBd
-         C3Dg75Zm+8UnovTHzgajNCK4P9EXq8EVdNUO5rkqRtFkLQQZ6kA1xWUY+HpqMIFE/qhY
-         FMnn6dls7PSXSj+8VQs7IrOFJe+yHRM11N6kVCkrcqq7RrW2hdvALRNsnIoZnmMCLBc0
-         b4DXmjKl8SKJs3sDBQ+e6yIN9gW2cGbVac9+YgozYCVhGt0GNP47yCecYn0+HUmBTzGQ
-         lvf5Ojiex2u4g+wljPwEIC51VfQrIhWoQ+FQkS5mCiEPab0ZhQoOa0NMF5Heyfwn1Xg9
-         1eZw==
-X-Forwarded-Encrypted: i=1; AKwUvBz9/DDk5HdDRSbDmjMFy7P5+NJU8MliOtIsNCYIH8SDv1MXSsO8JwLZeMgKikeyhf4pnXrTFcOs1CAImRrsDfEq@vger.kernel.org
-X-Gm-Message-State: AFuF++kxZ8T3QcfC7qn7VXL4go8kst8Nzy/bpmQRAw8cNq5H70Ra6f2R
-	65ppoaAtdWgzoNhf7vbR/ngPN4qt6hGQwWjJQRPF5/msMc+EdCztBFxC8sm7MUPgBNLSwSjKVUY
-	x9GaCVCa/aQpp4JuwTO/4fsDKwO+jwKE=
-X-Gm-Gg: AYBFou3vMm7GRjaJArSXMoITToobSolzcZQNys2Sq3lk1m30jombQmj0ensoM1oBIXd
-	Z88eKb4PlGq5wXoSGCbkjEsGFoCdNTkK26+KZzRDAulxlhtA8uS5M1GKcI9xMXFQJ6rnycsN8iK
-	Uc57oBsFuj4lfUX6f/V13NvKHrun1alxxg4RGkMuZTxPJx8y1djl0IRm6NRpLnRfNYYqgD+rfAp
-	MPwgqFPXWvqI1Kzg3865EGoWnmrmxSbtu3Bs1n1jbClRXCaY+Uxlm3MzhqaKPumY08CjtLCGOCq
-	rruvYvBvl5QcSSmFlqDP0Bb3ayYMTdCjok5s+MAUPXxrU3S+uLYUh13f105L5pi6ZRZhXYyeYW/
-	kWAdne3xIfY10X+oLLBX7kDt8N6uvoK7CrW4zGLrXYpLXFQjn8V8NeLgl
-X-Received: by 2002:a05:6a21:487:b0:3c3:9df0:2d66 with SMTP id
- adf61e73a8af0-3da39b71849mr6947233637.6.1788512022315; Fri, 04 Sep 2026
- 01:53:42 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1788513175; x=1789117975;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=f2uDduOSprb24UTS5mMjO2bGXJg9YYeJ4jGweCvX+II=;
+        b=U30cKCRBrJiiVktgo+YuLZ5AHcwTuhgGwhdwd04UihC5ALPSRpVQOmTZYzm29hfuq/
+         TaP/r/lbEWhliBURpS629q62LFz005Q837FtToC4j3ZwoKEXDvwbSC20SPf5dwaG3HGw
+         /iMoLk12q8i7pC/+fzTK8OYRN6Bs8n9d2YN8utvpIxebaun1kiBsKtmlQvmrjWqna9Zq
+         ZR4nyXo+YaPzADprxw4XqVQmb34mtUUktl3VxRDbKQ2vxwgtn2BDDaNwiADud6PZ/XIx
+         F1g8zUhm3alPbE4JrPzrL+pUxNCA78N6x3BDpg0yhoYKNNSc10Hvg4/66d4NMGrKPDED
+         r6aA==
+X-Forwarded-Encrypted: i=1; AKwUvBwG6ti7lGe4119i5boQk28imKcqACxt2+78VWLeshmM4KVlqxudgZWDbIR4LFCjB61KIZBIs9DuC/daKAT1c4kD@vger.kernel.org
+X-Gm-Message-State: AFuF++msjJ82Dj6C+7ipu/gaimxHXPQMSBRNB3vpHjWDKcaTGYylY2dw
+	rNEcYXP+FYZtYvk0U1Cgf36AuV4z9pcuUjxmW5yV4C3sJ8yL8s4MRtXnPvWpRQ==
+X-Gm-Gg: AYBFou0K49z3Da7BRpBVhaBEbIs2dIYQ5iDPBCUcUu9cPDeYuBLRjdOZ62NFIW86xOx
+	WeY1D3bkLmON2QB6akPCPwnGvmIKMTn4kB/1afQbUuM+2oeS+OICoSg+TmExIjqEYgnOcj3g3kg
+	1FTzfV2AXnXtgqqy5HOBoL73RMJsmutnvda45Pqy6biAq065oAdri8E57GtvEYHb7QiVuPHkYsA
+	nouoJPJHtef+VyBJIT7K/aMt0Cx3jyUaFy8RWb4fYs5/JsYEsaADTKhPQcxoZZWXaRW8uBTLxme
+	FdTETEu/Kt8h8W6wrmde2mjZ9XtMEYrMUTlVqswqj/sOYeo5GNMdYgAT8eriyUVh3aoHg99T0zs
+	P4x4kUsspHqoCcOeYvX1p+nvtAcB8ETRjWtmB8naJZYd21XkF7sitHWeXsFcOmiGxTKoiZX5T2a
+	s8ZCHakF0AMW/6xplvKcxNfP0hdDCdCPWidYMH6lYNrGrcdbwCC2nHAtRyQg5ZxGhQ1sRM5pwRK
+	Zrdnvnxe3RdzLX7y8l6H07yZhVmBSfV+gR5cQMUJhBT5VuJOUCL+u4elQzyvfP0HbQwdE4LMwQD
+	Sfhb
+X-Received: by 2002:a17:90b:394e:b0:37f:fd1f:d30f with SMTP id 98e67ed59e1d1-39b26272d76mr7654274a91.12.1788513175260;
+        Fri, 04 Sep 2026 02:12:55 -0700 (PDT)
+Received: from phuc-desktop.. ([183.91.15.56])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39b2612d3f1sm3443708a91.13.2026.09.04.02.12.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Sep 2026 02:12:55 -0700 (PDT)
+From: phucduc.bui@gmail.com
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	bui duc phuc <phucduc.bui@gmail.com>
+Subject: [PATCH v2] remoteproc: stm32_rproc: Propagate errors from optional IRQ lookup
+Date: Fri,  4 Sep 2026 16:12:30 +0700
+Message-ID: <20260904091230.58665-1-phucduc.bui@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260810051907.27136-1-phucduc.bui@gmail.com> <fe85bcab-0467-4cab-97e0-8427387358cc@foss.st.com>
-In-Reply-To: <fe85bcab-0467-4cab-97e0-8427387358cc@foss.st.com>
-From: Bui Duc Phuc <phucduc.bui@gmail.com>
-Date: Fri, 4 Sep 2026 15:53:29 +0700
-X-Gm-Features: AcwNN1WTqdbmh2TSlvmQXAuzUgfnu8PThlxFIUq7F0eBJ6BcdpQVRvfvYmsXbIc
-Message-ID: <CAABR9nFsV2dSbw1NSeVwoEPJ9YvNCLD9-D9vin+43LrCaKqWmg@mail.gmail.com>
-Subject: Re: [Linux-stm32] [PATCH] remoteproc: stm32_rproc: Propagate errors
- from optional IRQ lookup
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	linux-remoteproc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Arnaud,
+From: bui duc phuc <phucduc.bui@gmail.com>
 
-Thank you for the Acked-by tag!
+platform_get_irq_optional() returns a positive IRQ number on success or
+a negative error code on failure. For an optional IRQ, -ENXIO indicates
+that no IRQ is available, while other errors should be propagated.
 
-> >
-> > Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
->
-> Acked-by: Arnaud Pouliquen arnaud.pouliquen@foss.st.com
->
+Instead of only checking for -EPROBE_DEFER, propagate all error codes
+returned by platform_get_irq_optional() other than -ENXIO, so that
+failures are properly reported to the caller.
 
-I noticed that the tag is missing the angle brackets around your email address.
-I'll fix that and send v2 shortly.
+Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Signed-off-by: bui duc phuc <phucduc.bui@gmail.com>
+---
 
-Best regards,
-Phuc
+Changes in v2:
+ - Add Arnaud Pouliquen's Acked-by tag.
+
+ drivers/remoteproc/stm32_rproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index 1fe4cdc0a13a..a47e040c6db8 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -675,7 +675,7 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+ 	int err, irq;
+ 
+ 	irq = platform_get_irq_optional(pdev, 0);
+-	if (irq == -EPROBE_DEFER)
++	if (irq < 0 && irq != -ENXIO)
+ 		return irq;
+ 
+ 	if (irq > 0) {
+-- 
+2.43.0
+
