@@ -1,280 +1,225 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9306B32B131
-	for <linux-remoteproc@vger.kernel.org>; Tue,  8 Sep 2026 07:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940D63AE19D
+	for <linux-remoteproc@vger.kernel.org>; Tue,  8 Sep 2026 08:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788850917; cv=none; b=QW6N1Tekw9ANmfJrhlnMohpwGpTTebcjmnasf05/PG271uVjBR3PwrOI0ESEMaj/2bFHT4Gsjo7qbIf2Lfb7Fpw/tD15ICFHwHMeCzCxGSgUMqGv/dqqFB3nGXP6ia9B/yN+Kvo0pB8u8JcYOnMAmFuIVOpwcNhqTu6ubsfSLrY=
+	t=1788854810; cv=none; b=eeHkFxvggZl81rrctsLztAgwFajUfYdUNZ/6dg3cw0t3GvN6iMUdQXsTS7+RFddw9KTbzuP2LJqLc+Oh9uBlswehwK0ZIolyMPuf1nWvSaiVM9bXyYsXDC3lFrPVwTxqmLWQIVljvpUr+YYTKsiRS2hhwZrrLjKVfOQ1+7Kxx5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788850917; c=relaxed/simple;
-	bh=woDkwfEuwfC4HRUIw5dO9ioa2u5fHtmv49TNTjh7IRc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=RVLVwe1oJDvIrznAv899Fhe+X0b9LcOnTUFTZBBa6iYe9lPnuz5tfiQf80BQmX3fHpdmtzrz6rvfNKdYhjeCcbZf386UuBJzAGyfcwirZFbFgssBWV5XZzkB23NH9J+qqWYOGyw92U4em8eONDnSx/FAtAxjAaiRO//eRA1Fi0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnBxDwkw; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1788854810; c=relaxed/simple;
+	bh=AivX6AuleTT2UUgXHx1AcQwy3wqdj43sykXnred/aXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWKxmSLwa2gsUdUYK4/YwMuA9luexzLv+z3Jvao/64sinifrfMCyFt7CO9ereeOmZDsEobGxcreGBbkJz7NkvZQhuOMeYeUZxzR8Zc+NdWqDN4BJEkgbA60FVeQdW4i3SmfKmKKSJOFsOBcL3nj+ML+i27j6G40f0wlKAMBzYIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agqUC0k3; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=SbMqKPWX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnBxDwkw"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-49b8e527d63so51161535e9.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Sep 2026 00:01:55 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agqUC0k3";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="SbMqKPWX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1788854807;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qlpA25HriXdx9v6T6FYmtvmjD7yzSHEf8Vv9SuYbJrQ=;
+	b=agqUC0k3rfHzEHi/BNs8nDCpNVfMLArazlyCV5N1zSj+YV4+qXFkO3UgmsWMOrSM2VEMd0
+	zS8IHuhyYRQpWdgHuvl3UzqHb1e04JKR5E6BCOnJZLw5Q86k8zpZQZXNzgyxIHKUMR2d2h
+	xG23I1WTxi5JtxnhSVjfoQ9Czt3GyHY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-195-OdbJxB82M8uyOcrl_AwlfQ-1; Tue, 08 Sep 2026 04:06:46 -0400
+X-MC-Unique: OdbJxB82M8uyOcrl_AwlfQ-1
+X-Mimecast-MFC-AGG-ID: OdbJxB82M8uyOcrl_AwlfQ_1788854805
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-496bbcf7d1eso39429795e9.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Sep 2026 01:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1788850914; x=1789455714; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=LwflIzcBWQAlCH5G1lHkwk2yyve824n1VD85Tvhgohg=;
-        b=RnBxDwkw7EVTyjvF443+sxnRHTt4XpyamutejmOuGgzQwz/Me/143o+SkL2li0mIUH
-         kp7AWndd+lwGR28dJOXONXKRPvFlAy8pFUc6Iver2KKiXeHWKXT1rQ9DqHJW/bML9pPE
-         IS+2GY6Az7aDFvuQtG9qd/hnQy2MkIszVTDtfpVWfiTxIqYK46iEInL3HQ0MmG0wD3t6
-         MV7JvvyqwaEzzTy2vXTJQJcjDPQeST4wvqOJIhFDSN3dSk8vKB+F2M6rtsfP9sDkGUKN
-         HTbHTRM496p1VzTHOxu7t/a4B4UgW8xthoUKsdJbQMPVEmJIxbwaBUENwe8CJ7MABAkb
-         xpfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788850914; x=1789455714;
-        h=content-transfer-encoding:content-type:mime-version:message-id:date
-         :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+        d=redhat.com; s=google; t=1788854805; x=1789459605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=LwflIzcBWQAlCH5G1lHkwk2yyve824n1VD85Tvhgohg=;
-        b=BKHl/q9C/7QN3I2rZHB5kRkKDUqh+VpRR5QLbbkKWa7hXKkmtc6iZ0wFCfER4Sa+bd
-         L6T2utk2BLepmSSfPS5+CBOvZqAxV4MRe9BDf6Zbf1GHNXALkHU4IG0hmdhjh14sDzof
-         QnhuIUKrHu6IAJdlS2NA5B+8xyARyaXhvz0BroYGmPOTz/gB4MIwrPZlqr4itNNEvD0I
-         W/DpisY/qhBh+oJT2E1Ni1xnRZW5s+8/JkD0OM/ebFByIO8wuPPoLtTRvPDzytXCOEzj
-         eP9qMZkZbfdIFdVx6nsMNjPD7xKgIrjDzrHhCFVMoWJX7UtIDYduVnhb8jcBkXeiekQT
-         U1vA==
-X-Forwarded-Encrypted: i=1; AKwUvByfCGjqCiqWwmWZBwQ7lNOsxEdj1ZcnN4krIK22LtCRuXOc+opZ/6ftsQbgDfOG9NnL3K0NSbZd7XkTMqESgn7n@vger.kernel.org
-X-Gm-Message-State: AFuF++nh80xfhcykNd2wvA106/5SSAchu4j1gI+ohFlNz4HiyG+i1bSN
-	8HUrP/mZ34aINTolY6OPrrRhL0vI5gPR6IeR/i2ajrPI+NLDRB4CtBRX
-X-Gm-Gg: AYBFou2Xck46eP6lSp/VfEmhZvV3WWXX8hA1IDtIZwKnR0tbwTaj+mqHgdw90mkY+rT
-	drgE1mehD1VwfWvVhNjAnJZd/kHwuEPS7R3IdlQ1JaI7dnBuwJelez43FS34BUXSQOIvUQvuRvy
-	FCCRZLMWxKC50+AQJZCg5jcGlE9U+cOsPHUyfutm+1MAIT41w5WgnzzcQ9BvYnPMlSL0i8yUX8e
-	awNApL6tzu1peZd8j0uRsAgCh3DfhrUPw/8nPelu7qbEUqHBnOpimqc6KHdzk0giO5mCmDEBBCe
-	a6+/+rcs+kkK36k8ntHYIGugnfd6krtc/rUOVwLoaXXkU9HZnxrfXdJsYSjvF8YhbsuNaYaw+D1
-	d5zFLDwHW5p9uOGFJtc9h4b40ATOZ5h6lb+OA+NvMiNrqCdIgXYeAoRXWY4FMHAW5tQeuGTfR8B
-	XgFIMavVba9XU9hPAkmx3/au8vZHt8ij+/1Qd4pPja3yfAzSgPxLofh+HOyvHdzGfPut0snXc7v
-	rnV1tQ/eXHj4F5HLm6o21liKdC84Rgmakd7PAizpXXetP4rrs4ixQlPqIA3ZOXwTojPf2xW2fhS
-	lmwSwLXwH3n+gUwDQmJd6FRaGKgIX/zabpAiq0tk
-X-Received: by 2002:a05:600c:34c2:b0:49d:10d6:fd55 with SMTP id 5b1f17b1804b1-49d10d6fdeemr97830585e9.1.1788850913275;
-        Tue, 08 Sep 2026 00:01:53 -0700 (PDT)
-Received: from MacBook-Pro-von-Karl.localdomain (dynamic-095-117-170-066.95.117.pool.telefonica.de. [95.117.170.66])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49cee7febb4sm492402925e9.14.2026.09.08.00.01.51
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 08 Sep 2026 00:01:52 -0700 (PDT)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
+        bh=qlpA25HriXdx9v6T6FYmtvmjD7yzSHEf8Vv9SuYbJrQ=;
+        b=SbMqKPWXnzZ9gm+24v/NW9OSThf9QLKLRG2HDjF7RaTOJuDiedXP0CM985QD5CqHMF
+         m59SAiFH8rKerclNJCim+KtMsdfIxa3iAUtjRcBjhW04frYNpS7qARIFQ6kOxfoDXH66
+         XbXQKffei49hbSjqRcL1wCYEsfMRnL34xPLGmj6s58bNdJi55Hig2ARx8qC9mTRBjZwn
+         Kykyu8uKm0HOXBTmMsM06Pd8APNBKRPqzCl7R0yR0QR6jUzCzGWtN9XPe0dh363+f5QC
+         ZB2lSb7N5fJjS2XTduglItFeS7W+ijivHaKmOgqk1KlR4VDvUKGbX5k4akdx/Jk/HoI6
+         j0FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20251104; t=1788854805; x=1789459605;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=qlpA25HriXdx9v6T6FYmtvmjD7yzSHEf8Vv9SuYbJrQ=;
+        b=Jvb5uYzK21Jpr2MhNu9kHFvHY7K3CfIDOPPbKCUcYFT6ScQRJCEE9VWHKm4cLaYaGv
+         GAx+Ew2adQ/o2A9Z6f3hb9hp8gdrKNIN+hpsMr99BYy9IJbHn+ptVLi/qdq0xd5Etio9
+         jCO/bFCs+xgW62rKn6Fel3zAf5mhGM6NVsSpEpZIblpFI+X2GIg5PN6Wwis1n8rEP/OW
+         iAa7+1tqzMVPLUd9TxXC161KmbJ9WiWr/Ny6acWkXd6PycpU7BTXVGOnmVtpMRik5cGJ
+         O8IisX1tYSW/zDT1qH7udNs+MxITL6k6VYxT5GRqzILjpqjGihWdtx3GCe2MOsBx5ZJS
+         5wPA==
+X-Forwarded-Encrypted: i=1; AKwUvBwaLrIuEuL+ySITr1m85i+JI/tgjSE3HkKpLCawIRraMjHQ2UperO1sVHCfn/0kMHhVJOTXqLYpo0qINtdHVt7a@vger.kernel.org
+X-Gm-Message-State: AFuF++lvs6Fbc8WunXa0sH+vAtcvltsQflWb2KRC6qGnFr+XK4IrbTcR
+	58Dnb6Os2oEQ8KKJCVMoX+bSzs1ykKlxz4rdfZnTEILLcnaVb6YFts9V3byJfXw6fjYHhQNiihN
+	gDT3HcMLKYvED44xein9I11BiMyFz0M325q2AuamqVGiFHumm75mujD+EBpaFnoV960+ysL4=
+X-Gm-Gg: AYBFou1DYob7zVDhNs2+OiTUr9q3z42XdV/zTDrv7yrbPL7rp+k8JoMcMuKEzPjQrA5
+	Xo+ns68gHnz3zxDajMZJtA0uRGR8DzEa5Sx1/8GR/Ep6H+tsikXIwzzXojCJkPG18a+IxvRtziE
+	QmRfERU2IrVYjHrAoRZvHOBqYmQAD8EYK/mdMymn0tniz7DHLTGuEkkHjyyiGsmhG5UycwR1cWx
+	Y85V4tbgLav2TMRkMqpTVysmrIlZFZkwbjKv6q0VNX28+Swhq99af688/9dHh/lkyp5N1raczrU
+	G6DGyH5EQvFrsGkjvfMvtQ7RvtQ2UOK4xhtaeGgJshAmc/D2uJhKzDg/s01xpLVdrvUMolJtogS
+	kdexl0IyKW0mys39IY78YTOA=
+X-Received: by 2002:a05:600c:6209:b0:49c:fed6:cd3f with SMTP id 5b1f17b1804b1-49cfed6cd4dmr208433955e9.23.1788854804736;
+        Tue, 08 Sep 2026 01:06:44 -0700 (PDT)
+X-Received: by 2002:a05:600c:6209:b0:49c:fed6:cd3f with SMTP id 5b1f17b1804b1-49cfed6cd4dmr208433115e9.23.1788854804098;
+        Tue, 08 Sep 2026 01:06:44 -0700 (PDT)
+Received: from redhat.com (IGLD-80-230-79-236.inter.net.il. [80.230.79.236])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-49d08144037sm282102195e9.7.2026.09.08.01.06.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2026 01:06:43 -0700 (PDT)
+Date: Tue, 8 Sep 2026 04:06:39 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Karl Mehltretter <kmehltretter@gmail.com>
+Cc: Jason Wang <jasowangio@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rusty Russell <rusty@rustcorp.com.au>,
+	Pawel Moll <pawel.moll@arm.com>, Cornelia Huck <cohuck@redhat.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Hans de Goede <hansg@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Vadim Pasternak <vadimp@nvidia.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Alex Shi <alexs@kernel.org>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-pci@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v3] Documentation: Update after split of <linux/mod_devicetable.h>
-Date: Tue,  8 Sep 2026 09:00:31 +0200
-Message-Id: <20260908070031.32833-1-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	virtualization@lists.linux.dev, linux-input@vger.kernel.org,
+	linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+	linux-um@lists.infradead.org, platform-driver-x86@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>
+Subject: Re: [PATCH v3 0/6] virtio: fix and add callback synchronization hooks
+Message-ID: <20260908040141-mutt-send-email-mst@kernel.org>
+References: <20260908053817.26065-1-kmehltretter@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260908053817.26065-1-kmehltretter@gmail.com>
 
-From: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
+On Tue, Sep 08, 2026 at 07:38:11AM +0200, Karl Mehltretter wrote:
+> This is v3 of the callback synchronization series. It is based on
+> Michael S. Tsirkin's linux-next branch at f49e6cf91942 ("virtio:
+> synchronize callbacks after device reset"), which already contains the
+> core change and the virtio_input teardown reorder from v2.
 
-Most structs that were defined in <linux/mod_devicetable.h> before were
-moved to a bus specific header. Follow the movement to get the struct's
-documentation back.
 
-For the list of device ids in basics.rst use an explicit list of all the
-headers that have kernel-doc annotations and that are not described
-elsewhere (i.e. pci and mei_cl). <linux/device-id/acpi.h> is left out on
-purpose, ACPI_DEVICE_CLASS() is not a device id struct.
+Pls note I dropped the core change for now.
+That one needs more work:
 
-Also repair the referencing in the zh_CN translation of pci.rst and
-don't duplicate `struct mei_cl_device_id`.
+- transport changes should be separate patches from core
+  changes
 
-Fixes: ad428f5811bd ("mod_devicetable.h: Split into per subsystem headers")
-Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-[Karl Mehltretter: use the :file: role in pcmcia/driver.rst, say why
- acpi.h is left out]
-Assisted-by: LLM
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
----
-Changes since v2
-  https://lore.kernel.org/r/ede7ce64f20e10660ebf6bc1b41836dad750ae3b.1783349758.git.ukleinek@kernel.org/
-- use the :file: role for the header path in pcmcia/driver.rst (Randy)
-- say in the commit message that <linux/device-id/acpi.h> is left out on
-  purpose (question raised by the Sashiko review)
-- carried Randy's Reviewed-by and Tested-by from v2, the diff changed in
-  one line of markup only
-- Uwe asked me to take over the patch:
-  https://lore.kernel.org/r/apv6yQ1U-HhNglyV@monoceros/
-  It supersedes my PCI-only patch
-  https://lore.kernel.org/r/20260905084916.40196-1-kmehltretter@gmail.com/
+- shutdown generally needs more work, it should disable
+  config in particular just like remove does.
+ 
+- drivers that queue work must have a shutdown callback to
+  sync it - that part can be separate patchsets
 
-Randy's suggestion to add kernel-doc comments to <linux/mei_cl_bus.h> for
-struct mei_cl_driver and include those instead of the duplicated struct is
-left for a separate patch, it touches a header outside Documentation/.
 
- Documentation/PCI/pci.rst                     |  2 +-
- Documentation/driver-api/basics.rst           | 31 +++++++++++++++++--
- .../driver-api/mei/mei-client-bus.rst         | 12 ++-----
- Documentation/pcmcia/driver.rst               |  2 +-
- Documentation/staging/rpmsg.rst               |  2 +-
- Documentation/translations/zh_CN/PCI/pci.rst  |  8 ++---
- 6 files changed, 39 insertions(+), 18 deletions(-)
 
-diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
-index be35e9a1ee75..71c42b0bfa8b 100644
---- a/Documentation/PCI/pci.rst
-+++ b/Documentation/PCI/pci.rst
-@@ -84,7 +84,7 @@ initialization with a pointer to a structure describing the driver
- The ID table is an array of ``struct pci_device_id`` entries ending with an
- all-zero entry.  Definitions with static const are generally preferred.
- 
--.. kernel-doc:: include/linux/mod_devicetable.h
-+.. kernel-doc:: include/linux/device-id/pci.h
-    :functions: pci_device_id
- 
- Most drivers only need ``PCI_DEVICE()`` or ``PCI_DEVICE_CLASS()`` to set up
-diff --git a/Documentation/driver-api/basics.rst b/Documentation/driver-api/basics.rst
-index 3b182cfdf135..84f701b84e4f 100644
---- a/Documentation/driver-api/basics.rst
-+++ b/Documentation/driver-api/basics.rst
-@@ -10,9 +10,36 @@ Driver Entry and Exit points
- Driver device table
- -------------------
- 
--.. kernel-doc:: include/linux/mod_devicetable.h
-+.. kernel-doc:: include/linux/device-id/amba.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/cdx.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/coreboot.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/dfl.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/fsl_mc.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/ishtp.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/mdio.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/mhi.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/mips_cdmm.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/rio.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/tb.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/tee_client.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/typec.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/usb.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/wmi.h
-    :internal:
--   :no-identifiers: pci_device_id
- 
- 
- Delaying and scheduling routines
-diff --git a/Documentation/driver-api/mei/mei-client-bus.rst b/Documentation/driver-api/mei/mei-client-bus.rst
-index f242b3f8d6aa..d46c0d0b3540 100644
---- a/Documentation/driver-api/mei/mei-client-bus.rst
-+++ b/Documentation/driver-api/mei/mei-client-bus.rst
-@@ -41,17 +41,11 @@ the ``struct mei_cl_driver`` structure defined in :file:`include/linux/mei_cl_bu
- 
- 
- 
--The mei_cl_device_id structure defined in :file:`include/linux/mod_devicetable.h` allows a
-+The mei_cl_device_id structure defined in :file:`include/linux/device-id/mei_cl.h` allows a
- driver to bind itself against a device name.
- 
--.. code-block:: C
--
--        struct mei_cl_device_id {
--                char name[MEI_CL_NAME_SIZE];
--                uuid_le uuid;
--                __u8    version;
--                kernel_ulong_t driver_info;
--        };
-+.. kernel-doc:: include/linux/device-id/mei_cl.h
-+   :functions: mei_cl_device_id
- 
- To actually register a driver on the ME Client bus one must call the :c:func:`mei_cl_add_driver`
- API. This is typically called at module initialization time.
-diff --git a/Documentation/pcmcia/driver.rst b/Documentation/pcmcia/driver.rst
-index 5c4fe84d51c1..0b6370c1d525 100644
---- a/Documentation/pcmcia/driver.rst
-+++ b/Documentation/pcmcia/driver.rst
-@@ -15,7 +15,7 @@ runtime as shown below::
- All fields are passed in as hexadecimal values (no leading 0x).
- The meaning is described in the PCMCIA specification, the match_flags is
- a bitwise or-ed combination from PCMCIA_DEV_ID_MATCH_* constants
--defined in include/linux/mod_devicetable.h.
-+defined in :file:`include/linux/device-id/pcmcia.h`.
- 
- Once added, the driver probe routine will be invoked for any unclaimed
- PCMCIA device listed in its (newly updated) pcmcia_device_id list.
-diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-index 63612b7ee120..ea0eb1981124 100644
---- a/Documentation/staging/rpmsg.rst
-+++ b/Documentation/staging/rpmsg.rst
-@@ -224,7 +224,7 @@ content to the console.
- ::
- 
-   #include <linux/dev_printk.h>
--  #include <linux/mod_devicetable.h>
-+  #include <linux/device-id/rpmsg.h>
-   #include <linux/module.h>
-   #include <linux/printk.h>
-   #include <linux/rpmsg.h>
-diff --git a/Documentation/translations/zh_CN/PCI/pci.rst b/Documentation/translations/zh_CN/PCI/pci.rst
-index 347f5c3f5ce9..64372a16caf6 100644
---- a/Documentation/translations/zh_CN/PCI/pci.rst
-+++ b/Documentation/translations/zh_CN/PCI/pci.rst
-@@ -84,16 +84,16 @@ PCI设备驱动程序在初始化过程中调用 ``pci_register_driver()`` ，
- 
- 该API在以下内核代码中:
- 
--include/linux/pci.h
--pci_driver
-+.. kernel-doc:: include/linux/pci.h
-+   :functions: pci_driver
- 
- ID表是一个由 ``struct pci_device_id`` 结构体成员组成的数组，以一个全零的成员
- 结束。一般来说，带有静态常数的定义是首选。
- 
- 该API在以下内核代码中:
- 
--include/linux/mod_devicetable.h
--pci_device_id
-+.. kernel-doc:: include/linux/device-id/pci.h
-+   :functions: pci_device_id
- 
- 大多数驱动程序只需要 ``PCI_DEVICE()`` 或 ``PCI_DEVICE_CLASS()`` 来设置一个
- pci_device_id表。
 
-base-commit: 986c24e0fe44f844b44d365b71ce831947f50298
--- 
-2.53.0
+> Patches 1 and 2 fix two bugs in virtio-ccw's existing
+> synchronize_cbs() hook. After a fallback from adapter to classic
+> interrupts it selects the wrong lock, and the classic interrupt handler
+> only takes the matching lock when notification hardening is enabled.
+> Patch 3 adds SRCU tracking for remoteproc callbacks, which can sleep.
+> Patches 4 and 5 replace the RCU fallback with synchronization against
+> the UML IRQ and the TmFIFO callback locks. The fallback already covers
+> these IRQ handlers and spinlock sections. Patch 6 adds SRCU tracking
+> in virtio_vdpa so callback synchronization does not depend on the
+> context in which the vDPA driver invokes the callback.
+> 
+> The UML, TmFIFO and remoteproc reset paths do not themselves prevent
+> new virtqueue callbacks. UML and TmFIFO only clear a status field, and
+> remoteproc does not wait for the remote side to acknowledge the reset.
+> Without notification hardening or driver-specific teardown protection,
+> callbacks can still start after reset. The new synchronization hooks
+> do not fix that. The TmFIFO hook also does not synchronize with the
+> rest of the FIFO work item outside the callback locks.
+> 
+> The virtio_input loop change from v2 (continue instead of break, so
+> events the device already completed are still delivered) and the
+> event buffer leak are sent separately.
+> 
+> Changes in v3:
+> - Rebased on Michael's linux-next branch. Dropped the core change and
+>   the virtio_input patch, which are there already.
+> - Split the virtio-ccw fixes out of the core patch, one per bug, and
+>   the transport patch into one patch per transport. The CCW and TmFIFO
+>   changes are functionally unchanged from v2.
+> - Patch 2: added a Fixes tag and described the existing shutdown
+>   case. Removed the dependency note on the core reset change.
+> - remoteproc: read the queue pointer once in rproc_vq_interrupt(), and
+>   synchronize with callbacks in __rproc_virtio_del_vqs() before
+>   freeing the queues (Sashiko). Place vq_srcu next to rvdevs so the
+>   hunk also applies to mainline, which added attach_work after index.
+> - virtio_uml: compare against UM_IRQ_ALLOC instead of a bare negative
+>   check.
+> - virtio_vdpa: use SRCU instead of a per-device rwlock, so the
+>   callback tracking uses per-CPU counters, and cover the config
+>   callback (Sashiko).
+> - Rewrote the commit messages. Corrected the RCU fallback description
+>   for UML, TmFIFO and the vDPA simulators. Dropped the claimed simulator
+>   reset race: the simulators disable bottom halves around virtqueue
+>   callbacks and serialize reset with the worker's mutex.
+> 
+> Changes in v2:
+> - Moved callback synchronization from virtio-pci into the core, as
+>   Michael suggested, and added the missing synchronize_cbs() hooks.
+> 
+> Testing: the changed objects build with W=1 without warnings, with
+> clang on arm64, x86-64 and s390 and with gcc on SMP UML, and the
+> patches also apply to current mainline and linux-next. The runtime
+> tests from v2 were not repeated on this version: the input, rebind and
+> shutdown checks on arm64 MMIO and x86 PCI covered code that is
+> unchanged here, and the remoteproc and virtio_vdpa hooks have only
+> been build-tested. No remoteproc, TmFIFO or s390 hardware was
+> available.
+> 
+> v2: https://lore.kernel.org/r/20260905152059.89560-1-kmehltretter@gmail.com
+> v1: https://lore.kernel.org/r/20260818040433.66986-1-kmehltretter@gmail.com
+> 
+> Karl Mehltretter (6):
+>   virtio_ccw: fix synchronize_cbs() after interrupt fallback
+>   virtio_ccw: always take irq_lock in the classic interrupt handler
+>   remoteproc: implement synchronize_cbs() for virtio devices
+>   um: virtio_uml: implement synchronize_cbs()
+>   platform/mellanox: mlxbf-tmfifo: implement synchronize_cbs()
+>   virtio_vdpa: implement synchronize_cbs()
+> 
+>  arch/um/drivers/virtio_uml.c             | 10 +++++++
+>  drivers/platform/mellanox/mlxbf-tmfifo.c | 15 ++++++++++
+>  drivers/remoteproc/remoteproc_core.c     | 12 ++++++++
+>  drivers/remoteproc/remoteproc_virtio.c   | 37 +++++++++++++++++++-----
+>  drivers/s390/virtio/virtio_ccw.c         |  6 +---
+>  drivers/virtio/virtio_vdpa.c             | 34 ++++++++++++++++++++--
+>  include/linux/remoteproc.h               |  3 ++
+>  7 files changed, 102 insertions(+), 15 deletions(-)
+> 
+> 
+> base-commit: f49e6cf919425cc55f10fd7cda7e0fc895df4cc0
+> -- 
+> 2.39.5 (Apple Git-154)
 
