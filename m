@@ -1,177 +1,206 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D767F30567F
-	for <linux-remoteproc@vger.kernel.org>; Wed,  9 Sep 2026 06:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9B93BCD2C
+	for <linux-remoteproc@vger.kernel.org>; Wed,  9 Sep 2026 09:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1788935129; cv=none; b=kZN5P0y2+QUbfiuF08rhRgKgxw9a7sYfbmzSSk4fyJkrXKPawQbvnz9G7HQbelIOmDnkK2wikVgk8Z/cZpLseMBLDQfC2U7uqUo4KEhqsAok291brT/SIjSQboBJhB2C5X/PQY+9fnj6e06gUATkra6/QnLUpuwQvxtFJVXApx8=
+	t=1788945613; cv=none; b=NKBmWLzQbzX2NyqM4simBoAviDISSbPUyIKMGRns6CE/blmN3RvlLISyiiYBg++tmRwpbNXMboAVJJ/ouO3gKIFvu92sybMwbubnDBpMv6apKGlSSsO5KBaU3bHwkcix6FiFj6vsc3/jOnmecvAX2ZFk4r6sPH9YHDEEPkVGn8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1788935129; c=relaxed/simple;
-	bh=FDQ9oLvB/9iSSTVI500C2ZpyBJeQzPCDbocIK8dDvhI=;
+	s=arc-20240116; t=1788945613; c=relaxed/simple;
+	bh=PdnZQvO3+oKJZgPjnG+zbfgcH9UOhnj7jaju9sYgC4g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pC6C0GkvgpBKoQ2HlrRdwrT8oovTs53i6X5vmTenfwWAuXU6EYxo6xZn95H4weT1YrqYHoAujR8cwM5wrk5udjtDIXZLAxt3pQjhlR8bDSepEUxJTVmTxSNR4f5QnivlRhBGW/pDJc7bz/B30yKMpr8xjzjQ+JiqvHTp61Vo9Dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RqHBwc0m; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=JqH6mPw/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=m6FQ65+PnoCxHaAPkIJBSuwc2nW1io42BMVY82Hy+bfG1XI7VQ1tZGPHJ6ZtQdvtyQ3y+irSsnbcA2PD6jUQLgQal3tQBqGd3CrOu6qIdF8EOn06THyGDkETGpAYykXCOSdUUbKC1i0mCrQNjffpZ3YLzDYU7fJiDXwWfnaERvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=iMWTsOYm; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RqHBwc0m";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="JqH6mPw/"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6896MTjD129581
-	for <linux-remoteproc@vger.kernel.org>; Wed, 9 Sep 2026 06:25:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=0ix6p4PpyFStk4fVNnc9uhQH
-	KpowRpwa/lE/9HRH0oQ=; b=RqHBwc0me+EtdiXAUcxn/DYJuHnggAZZu/EF+ge9
-	LpqGj8JJm4SQ+PYNrUj8IrTskEQFFyPeGpJSH1ERl50gPCSEHXgPXN7QANAtVi9S
-	62DrXWF/myxYtEX5BeuH0pZIyrbVKe6pVTyh25wJyPpkXVkdmYhYE1/Ym7az2U1p
-	rf6ThAXzgyRFKweuw/1TbsbFnd1a+1M/8Uebq3nBOLaFvB0VNEn0xQOe4uk3Ho9y
-	Zp7U1ILH3swoEYRotG2PkWfjZl0RoMgWpXCLA7oMUacJyccdyuhJIJXoW9TEF4lE
-	Lns1LefHGv/6PUQawYCcogQqRE8tGkE5SuSEvfqRcXbSlQ==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gjntpk24p-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 09 Sep 2026 06:25:26 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-385d2703b64so6504534a91.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 08 Sep 2026 23:25:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="iMWTsOYm"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-49ccfae359fso48609185e9.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 09 Sep 2026 02:20:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1788935126; x=1789539926; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1788945606; x=1789550406; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=0ix6p4PpyFStk4fVNnc9uhQHKpowRpwa/lE/9HRH0oQ=;
-        b=JqH6mPw/WkULHQ0XnnN1nreRCnZi/ZSGE2iTzDICFefK7HNV5DDumhCsGmZEwG/4mk
-         sJLTiaXr93SSKN4zM4P0W9IRswhxRSut5e/DFEGD2ixRP6J/p27jZy7/Niky8wxVLtmB
-         3T7dAfMRewZRLKGxyLAnNl1HaoOQdKLvGoZTOJLyEzZ98wxxP/VmiXIFr1/RLlO4AVUA
-         Ulp0FvPO7WfMHIgPmdOuckvjqDdEKJl2VLYGiaoC1r38zu3h3Yungjm7W9lrZKMbmNPG
-         2Ho4Q9NKCAtka9NJmvNHqHE1OJltmmwZMY4J6FmQcC7lZH5K27Z/r8br+f5P57auvW5r
-         pcLA==
+        bh=tEerm9pyUvgRnZ+v5dhjRTsyRhn0zUMJ8+Fd7BMxvcE=;
+        b=iMWTsOYmB/Qh30BpKSrjQbq13s2Fmcdn7raP8fzbjdZHHuRf2kHk00dZwVy9b8J8eV
+         2j18MHd3zy6Q7uLr0sNHJKNcWH68h/EcUCfB3FCNAmeAWd2KnFSTOZLxLvUODuUWSkEF
+         DsWoRhboAB3pTKeFmEynnlN6W0npp6wrvMKOl70Pb1TzDFFsxsu2gwqE3nX85bntO7+g
+         CqGUuagNq9dwV04DXP2bolKtuLurF5K+JUW6PfHVTtj93nfvMOGFayHHU/OH5FlvhDqZ
+         LryJGAnWGay5nU4tbZP6dQIpz2VDlTT++pO56SlVnVS8WXmi3tixNy8RhZjs9SuN4gN+
+         Yuzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1788935126; x=1789539926;
+        d=1e100.net; s=20251104; t=1788945606; x=1789550406;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0ix6p4PpyFStk4fVNnc9uhQHKpowRpwa/lE/9HRH0oQ=;
-        b=hVnmjJs+oxJdb/XcKKJdJNxP+M/EoBV9OdHB2ehkmPAz2lRjqpoWqTQ8YAMLyLexTd
-         3HdGoUxU15dE1+fx7U3JjZP/wU/LkgcI/sVS/4hI5WC2C2SkhDsNaGLinhESitqZnFgn
-         KYk2lDXmQtMFFolr3LELiuhcE8+Cgr7WPPCa1vVsl8QwxRyiNoQIctXadN4Ao13A8A6+
-         R5BJbPUlUax2TSIQdvxEayqa+Y05GU+xl02UvF6GjUSb0Be2cA5pTZRCRCLhI1QApmc+
-         1i2wlp8yIG7hJT1IsZkko7hd+MD7LdYCdu7Snpk3kqKAbD/+dLs3+QUpWG1BniF7Qcue
-         kQ8Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzLkNi0zkaxS8CyX/PVBibnrf0JCwxBUlWaEEeg7Ri5h0D3mHU0GjvLXYoRbKpUXNFluIL+tYVdpoudhr27OLZL@vger.kernel.org
-X-Gm-Message-State: AFuF++llsw07WRMoqYemkyG9iPw1c1mYxqmNnhDXtY95VBni4WRMERfX
-	PXLoru2tyXjXAnRTUQYMDZJseMgswZltdNMn/5OX1JFjUNxTfcHuwmcjLPhXJvWG0Fhn84/KF9i
-	GCEJbf0MLOvGacZL+Sxlza8OHpAgzXD0ZLyWUbSK8Ge3B3kTupukW3arrTZHxf7aaJAZOxktB
-X-Gm-Gg: AYBFou0ZJBhY+XjGxGwtSCt0Uk14mztoHOK9lHGCX1UjTGn4nQN5tZyvW36Ygngkybb
-	OzaeM9COTVpPTbczck093tuf4YP/lRt175Xoj8TZQCIviq75Sd++pmkH7HqH5Ns+ozq0aOmIAfS
-	xrmZtBUk14RbmXP/F5CjZdui0wCkDWimgLCpaVT/4p4yP2m+xwmf/AUJZQ1qfQJ0xD8RP6iH+J+
-	irNofRM0sQmL4/Y+ypzjNQlRIy4aQIcPMrtboGnrzMXUuTLIa69nS6FXMgUNwiq/G8fzHE+SF3T
-	8Mi2ZT0oSATrWywu7OHbqplJVgzmuqf0O24hal91doV1CSKQQsrlAzs1UKUy+KQTe1fefjJYPS8
-	b+9uAkpHnwI2JcM3jSqImr4ce3Ko=
-X-Received: by 2002:a17:90b:28ce:b0:398:a649:8fa3 with SMTP id 98e67ed59e1d1-39b08799871mr40500086a91.23.1788935125570;
-        Tue, 08 Sep 2026 23:25:25 -0700 (PDT)
-X-Received: by 2002:a17:90b:28ce:b0:398:a649:8fa3 with SMTP id 98e67ed59e1d1-39b08799871mr40500048a91.23.1788935125089;
-        Tue, 08 Sep 2026 23:25:25 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3369856a9f7sm21872041eec.5.2026.09.08.23.25.20
+        bh=tEerm9pyUvgRnZ+v5dhjRTsyRhn0zUMJ8+Fd7BMxvcE=;
+        b=mNxND7uJmhkYGbBOcgyzt/BwZxrp4K0w9wGwrHjVrUh75cQa4KyHiv66HmMR+V3FWx
+         7nwvs93no2wg857zKZ+kwJ+KgUFB0Zz2PTw1UfD4P2ehSxglgliJfWdsE5qnMrBo6hId
+         jviDS5giJP2QTXa9H3Pxr2vaJbBQ5Mua7nI6Ml/O2dNIIYlMifxColen0sogJTxP2Ahl
+         iN9QH8vDEb+otl2DqK82f/FfLvNogP1bS1Ex7mh3Q0ae80wt6Szg5+AMn8h4wA8b/1LZ
+         np77NiiwdP+c9aOb8UCofKFKiwvuyxXKKm0AXDl/YKiaCijUazeQGXWCbapZ0fJcNmUr
+         hoCw==
+X-Forwarded-Encrypted: i=1; AKwUvByTXrYeSYOcXDqecKScFI2zo8TwIxnaRpdyuyfxY6u4hFP6a7B4Mb0yVDFOKPoN9080F4MsX3mv906+56xT2c4f@vger.kernel.org
+X-Gm-Message-State: AFuF++mThjfHFwKLMfSH52kj0jlgzGxYf0O6hhojnZH2m4qOmiQOBRX7
+	31Rv722P+Eiv+xMremik0OekrIHgQH5P/UI44VknnjI0bHZK8f0jOIyLsZ3WNtWmiDQ=
+X-Gm-Gg: AYBFou340ftTZn3r4QpUWE5LV7GjhW1xEiifVpYKmUQku3fWi/06tS7TkG/Z1/CmpaF
+	VsXW+FBjf3yo93QlgIv+bEsOL8NfORB4I9vYX7K7eExyu4IdnK0LCsvj7XSLQQoKfIe0Cbu67gg
+	nQ+39tC99Fj7fVjleLax7KMFymqaxOTKqxKJdrlWWfLpzEI0FFDVVkYwt4vqnTJP/r2CAMSCedL
+	gfaQHdn2TA5L9Q4yYj6mCUFYCSBUiOhn+0hQwaGxKctN4VPqmIB3NADAinbBGqjdd+Xvy/5L9fO
+	mZSABZGC9QRQ6d1d26utkFHaqPDOnFOVgiQBhOp9pEYEQ6hUruCsRguNlVlAc3eRS4RRCmsCsYg
+	fwxTU+tNYpM5OfuEfkU1mscP9gTZC+EAfy8okMCF9ugr1ZYJ2M2Fj9mEigIeIFG8KmErQvUjiXk
+	5o8NrW7UZfjGswpo5Cn1T61DbNupBOVjse/Wc+yIQa9qneGsHTL2UBDAr6FBYN5TRIKPu7DZ7aN
+	Y1+
+X-Received: by 2002:a05:600c:1914:b0:499:60bf:c6f7 with SMTP id 5b1f17b1804b1-49cf8269fdfmr332845835e9.13.1788945605501;
+        Wed, 09 Sep 2026 02:20:05 -0700 (PDT)
+Received: from localhost ([2a02:8071:56d1:2de0:1d24:d58d:2b65:c291])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49cfbdacc45sm430466665e9.11.2026.09.09.02.20.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2026 23:25:23 -0700 (PDT)
-Date: Wed, 9 Sep 2026 11:55:16 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] dt-bindings/dts: qcom: Consolidate
- SDX75/Hawi/Maili MPSS onto SM8650 fallback
-Message-ID: <20260909062516.4mtuca4jxxz4s26a@hu-mojha-hyd.qualcomm.com>
-References: <20260805132129.2713174-1-mukesh.ojha@oss.qualcomm.com>
+        Wed, 09 Sep 2026 02:20:03 -0700 (PDT)
+Date: Wed, 9 Sep 2026 11:19:58 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Karl Mehltretter <kmehltretter@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Alexander Usyskin <alexander.usyskin@intel.com>, Dominik Brodowski <linux@dominikbrodowski.net>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, 
+	Dongliang Mu <dzm91@hust.edu.cn>, Danilo Krummrich <dakr@kernel.org>, 
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v3] Documentation: Update after split of
+ <linux/mod_devicetable.h>
+Message-ID: <aqEWUBf1pewPP_K2@monoceros>
+References: <20260908070031.32833-1-kmehltretter@gmail.com>
+ <ap_HYy2IVZt-0mxN@ashevche-desk.local>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vttone5brkwdkpur"
 Content-Disposition: inline
-In-Reply-To: <20260805132129.2713174-1-mukesh.ojha@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTA5MDA3MCBTYWx0ZWRfX8h9kfXqj6P6u
- P/4B66154tkY8hDBS4UTplfNe6n/I/n6TCF7nePqZsIJu4CSdgCpcd+OpOo4Xnci7C4n4d09de2
- HeatbVFm042XxWjs/qfzzylSChnrCdAIIb0/ThyjYlVnl68yjoVFxTCqgwBIOnz+I+szI1Fpsfk
- Fv5moqObMh0ADpUlClwMe9UKrUwvAdJjOTs1ABDSIfrJxSJNXSzdOxgOOBfYouvKIQYgqNeWpUj
- 44FGTchqnRhyDGE2NHNBWtiGfUfYVd02dSoNLZFByrYcN0sam1gUxDRL02RLsb222LUDP49gKY4
- LwcAAMyqx9+zXKnkV/T3OhmPWpIN7HKHK6Dn/7MeUIFKU3t15ITcOULm+rc6UcrhAfh0pOjGesi
- 1br0V+J1LPWC280zxBy93bEqXSblxLWrDoe/OM5SPR96bB9eDBJoQNtUCnBpRXBmIYGJEnSMmy3
- QN7ULuNhia2yJq7zn3A==
-X-Authority-Analysis: v=2.4 cv=N+AZ0W9B c=1 sm=1 tr=0 ts=6aa0fbd6 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22
- a=Ze5UrtUNWv7jlsdZOrsA:9 a=CjuIK1q_8ugA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: VPQZsS-_luDxGWaKYmm_XYeORNuFKll_
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTA5MDA3MCBTYWx0ZWRfX/m3X/5jgE/oz
- By+G5GjYE0/T6qPPmKIqdNotVX74e+GTLSYa0VTxcVSwSekTxlQLVJx3h30Z1242g6aRndWLQhm
- 24BvgfubBOtpiOZ9MI/j3kueeZ5UsHc=
-X-Proofpoint-GUID: VPQZsS-_luDxGWaKYmm_XYeORNuFKll_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-08_03,2026-09-08_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- clxscore=1015 impostorscore=0 bulkscore=0 malwarescore=0 spamscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2606150000
- definitions=main-2609090070
-
-On Wed, Aug 05, 2026 at 06:51:26PM +0530, Mukesh Ojha wrote:
-> The MPSS remoteproc block on the SDX75, Hawi, and Maili SoCs is compatible
-> with the SM8650 MPSS - identical interrupts, memory-region layout, and
-> power-domain topology. Today SDX75 and SM8650 MPSS each carry their own
-> standalone compatible and are repeated in every "mpss" allOf conditional.
-> The duplication hides the hardware relationship and grows every time a new
-> SoC reuses the block.
-> 
-> Move the three SM8650-compatible MPSS variants into a fallback items
-> block and drop them from the mpss memory-region and power-domain enums,
-> letting 'contains:' on the fallback compatible qcom,sm8650-mpss-pas
-> keep the constraints firing for the array form. The binding change is
-> split into two patches so the SoCs with no in-tree DTS yet (Hawi,
-> Maili) can be introduced independently of the SDX75 move, and a third
-> patch switches the in-tree sdx75.dtsi to the fallback array form to
-> match the tightened binding.
-> 
-> Bisect note - patches 2 and 3 are intentionally split
-> ======================================================
-> 
-> Patch 2 removes qcom,sdx75-mpss-pas from the standalone MPSS enum, and
-> patch 3 updates sdx75.dtsi to use the fallback array form. The tree
-> state after patch 2 alone therefore fails dtbs_check on sdx75-idp.dtb:
-> 
->   sdx75-idp.dtb: remoteproc@4080000 (qcom,sdx75-mpss-pas):
->     compatible: 'oneOf' conditional failed [...]
->       ['qcom,sdx75-mpss-pas'] is too short
-> 
-> The split is deliberate so the dt-bindings change and the arm64/dts
-> change can flow through their respective maintainer trees without
-> cross-tree dependencies. Patch 2's commit log documents the temporary
-> breakage in-line, and patch 3 resolves it.
-> 
-> The driver keeps its standalone qcom,sdx75-mpss-pas of_match entry so
-> already-deployed DTBs continue to probe. The binding is intentionally
-> stricter than the driver; pruning the driver match is a separate
-> cleanup once the DTB rollout is complete.
->
-
-I have a series dependening on this, checking if this can be
-picked.
+In-Reply-To: <ap_HYy2IVZt-0mxN@ashevche-desk.local>
 
 
--- 
--Mukesh Ojha
+--vttone5brkwdkpur
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3] Documentation: Update after split of
+ <linux/mod_devicetable.h>
+MIME-Version: 1.0
+
+Hello Andy,
+
+On Tue, Sep 08, 2026 at 11:29:23AM +0300, Andy Shevchenko wrote:
+> On Tue, Sep 08, 2026 at 09:00:31AM +0200, Karl Mehltretter wrote:
+> > From: Uwe Kleine-K=F6nig (The Capable Hub) <u.kleine-koenig@baylibre.co=
+m>
+> >=20
+> > Most structs that were defined in <linux/mod_devicetable.h> before were
+> > moved to a bus specific header. Follow the movement to get the struct's
+> > documentation back.
+> >=20
+> > For the list of device ids in basics.rst use an explicit list of all the
+> > headers that have kernel-doc annotations and that are not described
+> > elsewhere (i.e. pci and mei_cl). <linux/device-id/acpi.h> is left out on
+> > purpose, ACPI_DEVICE_CLASS() is not a device id struct.
+>=20
+> Huh?! The device-id/acpi.h provides the ACPI device ID definition.
+
+<linux/device-id/acpi.h> provides both, struct acpi_device_id and the
+macro ACPI_DEVICE_CLASS. The latter has a kdoc comment, the former
+doesn't. So including <linux/device-id/acpi.h> in the patch makes
+ACPI_DEVICE_CLASS appear in the list of device-id structs, but
+acpi_device_id not.
+
+So while this patch doesn't implement the optimum to get acpi_device_id
+explicitly documented, but the purpose of the patch is to restore the
+=66rom before ad428f5811bd, which is accomplished.
+
+>=20
+> > Also repair the referencing in the zh_CN translation of pci.rst and
+> > don't duplicate `struct mei_cl_device_id`.
+>=20
+> > Fixes: ad428f5811bd ("mod_devicetable.h: Split into per subsystem heade=
+rs")
+> > Signed-off-by: Uwe Kleine-K=F6nig (The Capable Hub) <u.kleine-koenig@ba=
+ylibre.com>
+>=20
+> ...
+>=20
+> > Changes since v2
+> >   https://lore.kernel.org/r/ede7ce64f20e10660ebf6bc1b41836dad750ae3b.17=
+83349758.git.ukleinek@kernel.org/
+> > - use the :file: role for the header path in pcmcia/driver.rst (Randy)
+> > - say in the commit message that <linux/device-id/acpi.h> is left out on
+> >   purpose (question raised by the Sashiko review)
+>=20
+> I am unsatisfied with how the ACPI division was handled in the above ment=
+ioned
+> split. Id est the include/device-id/acpi.h is *the* header that has to be=
+ used
+> for the IDs, not the respective "include all" linux/acpi.h.
+> Hence the documentation has to allow the use of the device-id/*.h directl=
+y in
+> the drivers (most of the cases for ACPI).
+
+I don't care much if drivers include <linux/device-id/acpi.h>
+transitively via <linux/acpi.h> (or another header) or explicitly. My
+preference is the former, but I won't argue if it's done differently.
+
+> Alternatively the OF ID *and* ACPI ID must be included to the upper lever=
+ bus
+> headers. So, spi.h, i2c.h, platform_device.h and so on has to *always* pr=
+ovide
+> both.
+
+That is the case today and it's sensible. So without giving a guarantee
+for the next 20 years, I'd say keeping it as is is fine.
+=20
+> > - carried Randy's Reviewed-by and Tested-by from v2, the diff changed in
+> >   one line of markup only
+> > - Uwe asked me to take over the patch:
+> >   https://lore.kernel.org/r/apv6yQ1U-HhNglyV@monoceros/
+> >   It supersedes my PCI-only patch
+> >   https://lore.kernel.org/r/20260905084916.40196-1-kmehltretter@gmail.c=
+om/
+> >=20
+> > Randy's suggestion to add kernel-doc comments to <linux/mei_cl_bus.h> f=
+or
+> > struct mei_cl_driver and include those instead of the duplicated struct=
+ is
+> > left for a separate patch, it touches a header outside Documentation/.
+>=20
+> Uwe, can you fix that?
+
+It's on my idle-todo-list. So unless someone beats me to it, I will
+addresss that eventually.
+
+Best regards
+Uwe
+
+--vttone5brkwdkpur
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmqhJLQACgkQj4D7WH0S
+/k4CyggAtK1zDtK07mADDeDBynrhpncLSmcf8R0tSjv+Xk9TNGQ/6jg1KnpiwRJ8
+H7gft1ZYewjr67sx4HJUqIAvhu9a6XSuVFFCJL0qpfdnLCV5HB41Sr774yWBmdgL
+Ohg8uXSIiSxaWulydkjyqpAbMoO58YOFBqn9xH5ffXYsEGdjViQnISWry8jcojuO
+We7CP3HzAH8W2U/7U/SjWHExzFUG2EDHty0IkIkhbbsw0WxSnjKwzwadG/u44t+3
+kaCV6vKQ6pdYoUxazoWAU53UeLIg9QsXwcgEh5Jqyib7efudfyzAoMgK3I0PiQj8
+I4Uq5TLA9bE+cMGACDmAQhLm4cmM0A==
+=3eZW
+-----END PGP SIGNATURE-----
+
+--vttone5brkwdkpur--
