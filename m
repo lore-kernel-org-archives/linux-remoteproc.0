@@ -1,143 +1,82 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B011E371887;
-	Fri, 11 Sep 2026 05:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E523EA967;
+	Fri, 11 Sep 2026 06:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789103003; cv=none; b=mJVK67MNqxbUNKrwQ5F9ruBl8xBX/PaVxKSDdSbFV9gVU/8bwY9fb7+7/F5V1wQmAzFE+GM3UfesWQyu92F15Eq8Lg821KTTcjZ2UZbl8PYMQNz++zqvZtT6NfO0Nvc4exX8XoZaBRnEbHSR6ZHdKirbCsvg2RM18JDdfBBSE4Y=
+	t=1789106970; cv=none; b=FmUOvyaDXM1/U1XPve9yYvtRQJfReqn1Uo+8BhlA/4D1zxrWTqYDz4jV2hpw2QKJ9coyo9+ob8VmMA7kvq8BEsvFXcp8JA+jJbuAO0CVNbo0L9GgM2HphyMFC4o78IH5EQOxyS9IFGEsxVCjO8lQ2xhvU139rcHh+GCYTp+jjsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789103003; c=relaxed/simple;
-	bh=yojgajLT1MsSC3LDZi2bNyxUtnX0rB27ru+ZjVPCI8o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QsmyEHOscYDNTgQM3whqCTiVgfhz3fw+LZjAO/OXN7O+hqE0aWciDQvVxJCpANtEfW2yoRJJO9PBFa+aRvziMlylvHg4jpBkmZYapqW7mbAGjOUYYZb8lzpU25pR3IlACgMY4bn7jPmDCnkFNlRgMd4bOs+8+cMUCRfdsKOMZBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ENIXNsJY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1789106970; c=relaxed/simple;
+	bh=YUdpZszFTWkioRDlRd3pCO6922f+pcUGEYSKqXwb+nI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DRhbpBvD+2H6FvWDXYtiyJLEbCWQ1IlMGH8kY02kDJwpOECmh4qgQZlEC7kFgzGvYTtgfCsgSdwVYpR22Hp2QaK9AwQ7DD3QZKhQbnjo4lo3hR59+u/4HhWEtYUlY36/lb2SrOoJFu9w2mI2R54Afn4rrmT9x6zuftSCmuGK5G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=CrtOijhS; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ENIXNsJY"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68B4vv6d2987480;
-	Fri, 11 Sep 2026 05:03:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/GYfgh0dE3ijt+0Th+RMqpHJzDK9XPTORIqWGLCzPBs=; b=ENIXNsJYPPADg854
-	B1u3KcIPtqQ1xXTbU2W1/NjLqCdJAWgc+KMO+8J24ixYxoplDvC6u0VGYAyRtBoU
-	E004lzmPvKtjnTxzVNQT5M2hfpJCmJUqhvJIhT94OirC/72HPlPveGy8fKffJLWu
-	oN8hwNHvxWrUucwRzcS1sNwUhjOuf6frVIq965M9399lhChgzajSdMHZsApoRqmH
-	Qk7/3Yw6BKvlW5JylJnz7Uq2Cco1CuqemqhDAtfLD6uL/Y7BU2pHePOBwmuks75T
-	rtZ1MhGiWMx3Duo0BirXC9NWLwQ2jM/cQP3Wt1on7nCT1doSNZqCbNmLfeWjQ3Na
-	mM9O7w==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gm1k2a2h8-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 11 Sep 2026 05:03:17 +0000 (GMT)
-Received: from pps.filterd (apblrppmta02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.11/8.18.1.11) with ESMTP id 68B53E0b2535831;
-	Fri, 11 Sep 2026 05:03:14 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-dmantre-hyd.qualcomm.com [10.213.100.203])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 68B53ERr2535806
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 11 Sep 2026 05:03:14 +0000 (GMT)
-Received: from hu-dmantre-hyd.qualcomm.com (localhost [127.0.0.1])
-	by hu-devc-hyd-u22-c.qualcomm.com (Postfix) with ESMTP id B9EB4673;
-	Fri, 11 Sep 2026 10:33:13 +0530 (+0530)
-From: Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>
-Date: Fri, 11 Sep 2026 10:33:03 +0530
-Subject: [PATCH 1/2] remoteproc: qcom_q6v5_pas: Add QMI TMD cooling support
- for Shikra
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="CrtOijhS"
+Received: from seu.edu.cn (unknown [221.228.238.82])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4d62c4fb6;
+	Fri, 11 Sep 2026 14:09:21 +0800 (GMT+08:00)
+From: Slavin Liu <bolin.liu@seu.edu.cn>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bolin.liu@seu.edu.cn
+Subject: [PATCH RFC] rpmsg: qcom_smd: reject interrupted channel waits
+Date: Fri, 11 Sep 2026 14:09:20 +0800
+Message-Id: <20260911060920.94363-1-bolin.liu@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260911-shikra_qmi_tmd-v1-1-96c1cca82f30@oss.qualcomm.com>
-References: <20260911-shikra_qmi_tmd-v1-0-96c1cca82f30@oss.qualcomm.com>
-In-Reply-To: <20260911-shikra_qmi_tmd-v1-0-96c1cca82f30@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        gaurav.kohli@oss.qualcomm.com,
-        Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789102993; l=1161;
- i=dipa.mantre@oss.qualcomm.com; s=20260415; h=from:subject:message-id;
- bh=yojgajLT1MsSC3LDZi2bNyxUtnX0rB27ru+ZjVPCI8o=;
- b=jQPq9s6lQxzudw+TXwAlzYbjX1xTLULwqdMDiRXQnfioUGDVbg3WPCYg0crjkaS6dN3PaKK68
- l2q7eQSREZbC2oysWcd8uUSGlYuiyUeY9YyBNGIy34xntzLwBgQi/Li
-X-Developer-Key: i=dipa.mantre@oss.qualcomm.com; a=ed25519;
- pk=IcrgHu2jFHNILPVydQwFqCQq05WcA8wBixw5s+yRMVI=
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Authority-Analysis: v=2.4 cv=cM11IVeN c=1 sm=1 tr=0 ts=6aa38b95 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22 a=EUspDBNiAAAA:8
- a=lma1dDF5hPHvXXyS2tYA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: qZI40F88m19tpFNG49hOF6RGMrOvRhzU
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTExMDA2NyBTYWx0ZWRfXymlgFrTTKw+Z
- Li4ptehATZEpvrhp2wggc8/KjoV5ijOXp33N8ndWoEvs85xqV3WvK8LnhWcHTN8ACQZG1CjWZ+0
- LiJ9hTXfV482BK3SZDNqcwydqiFg5q0=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTExMDA2NyBTYWx0ZWRfX3j63bVUTfGvp
- M+ldZ3uJbQfazrmPlSQM84CLeFiiuctTynvCIhIpVIXS8oqgEenjpoBW3ixmHruWtkQG8MaCNPB
- VJ2ZjzR08hS99O96eg5ANyXNrrSRX6UNDpBxJ+IiOSgIq/jmqpwjj1vgKyNjb/Rwndpvn4hZMwd
- uNsFRV3ldlb2gu5UNLcAkbaW3oS9LIzWAbr5FOQ8ofYh9el5owrU0PrwTZSaDSZwHLVlL/FiijS
- iEfWHnk8XgCSKYauenTZwNRPDnaIgcWA05Dr/y9fLGyT0bAwpkSFHHFqXNiZnGGHnfCQ/ByA3gN
- tPpGSOBBdL/cjejoKwrod6+jkuu9RFU3vB7SW+WOkNxXqvinlba7PvNqFVib8RPLyl9xPmJNdQ8
- ysaWQ00pyLu8DsN9Oj4Ok0mtzDsKa9/UpNO7gWBT8CWo11PH9AmpWeSinOjTYI+GcqBJVWdIBHB
- Oks6/Dh2p48BmFoEGyQ==
-X-Proofpoint-ORIG-GUID: qZI40F88m19tpFNG49hOF6RGMrOvRhzU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-11_02,2026-09-09_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609110067
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0aa08f15bb3203a1kunmd78637c71c734c
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlDSB0dVh5PSBkYQhpCHhkaGFYeHw
+	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlJSUpVSUlDVUlIQ1VDSVlXWRYaDxIVHRRZQVlPS0hVSktJQk
+	NDTFVKS0tVS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=CrtOijhSBdA4a4uscJHjWW0tH1RyFtavJLQWiGfhWsIKkMo1joWopIZHiZOi4v4n9Uvi1eAxQffenfdV7A+PwT2x+edpSRV9/DoQDidRVLegaw7/4daTjbyzjdG6EBIm6cDEi1W6uJoaJ1CuPd7UW/Fv9XeYk+ujcypPuTRQNm4=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
+	bh=Dza5ixR1woqehY7UwxEtCkc1+9nTff5+Lpetly829Mg=;
+	h=date:mime-version:subject:message-id:from;
 
-Add QMI TMD instance IDs and cooling device name arrays for CDSP
-and MPSS subsystems on Shikra to enable thermal mitigation support.
+qcom_smd_create_ept() waits for a channel using
+wait_event_interruptible_timeout(). If a signal interrupts the wait
+before the named channel appears, the wait returns -ERESTARTSYS and
+channel is still NULL. The current zero-only test treats the negative
+return as success and then dereferences channel->state.
 
-Signed-off-by: Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>
+Require a positive wait result before using the channel. Return NULL for
+interruption as for a timeout, following the endpoint creation API's
+existing failure convention. No endpoint or channel resources have been
+acquired at this point, and the successful wait path is unchanged.
+
+Detected by static analysis and reviewed with AI-assisted source auditing.
+
+Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Assisted-by: LLM
+Signed-off-by: Slavin Liu <bolin.liu@seu.edu.cn>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/rpmsg/qcom_smd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index a005546c265d..3daaed6ca596 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1660,6 +1660,9 @@ static const struct qcom_pas_data shikra_cdsp_resource = {
- 	.sysmon_name = "cdsp",
- 	.ssctl_id = 0x17,
- 	.smem_host_id = 5,
-+	.tmd_instance_id = 0x43,
-+	.tmd_name = cdsp_tmd_name,
-+	.num_tmd = ARRAY_SIZE(cdsp_tmd_name),
- };
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 7dbe1c6efe41..7bbd29707f78 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -914,7 +914,7 @@ static struct rpmsg_endpoint *qcom_smd_create_ept(struct rpmsg_device *rpdev,
+ 	ret = wait_event_interruptible_timeout(edge->new_channel_event,
+ 			(channel = qcom_smd_find_channel(edge, name)) != NULL,
+ 			HZ);
+-	if (!ret)
++	if (ret <= 0)
+ 		return NULL;
  
- static const struct qcom_pas_data shikra_lpaicp_resource = {
-@@ -1688,6 +1691,9 @@ static const struct qcom_pas_data shikra_mpss_resource = {
- 	.ssr_name = "mpss",
- 	.sysmon_name = "modem",
- 	.ssctl_id = 0x12,
-+	.tmd_instance_id = 0x0,
-+	.tmd_name = modem_tmd_name,
-+	.num_tmd = ARRAY_SIZE(modem_tmd_name),
- };
- 
- static const struct qcom_pas_data sm8650_cdsp_resource = {
-
--- 
-2.34.1
-
+ 	if (channel->state != SMD_CHANNEL_CLOSED) {
