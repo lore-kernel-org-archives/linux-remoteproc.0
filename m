@@ -1,185 +1,147 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A370137F723
-	for <linux-remoteproc@vger.kernel.org>; Wed, 16 Sep 2026 08:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663794A2062
+	for <linux-remoteproc@vger.kernel.org>; Wed, 16 Sep 2026 14:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789546485; cv=none; b=d1XA5oHCuLDH/Jl35Rqf1VLiBvhAJbrc0oj4YpFvhcEvTUIYlcfU4Nr/d7ZXvmURIZpRcy8UM0x5Rs5GXnxUOe3SC+ItjEI8ejvyDw+ZqNwCxreblHcYWGxROEqQt/cCqGYBdHeKcbsPWfFcR7iMEtIPRu421oazOoX6sBlkgC0=
+	t=1789567299; cv=none; b=m5MMTd0eq2MH3Jspeeo2iHh/eYuDLmKOQ7H1nfpst0CZO/s+i4GoiEDHBf+czBYpiSxK0v2vGsEapoZgqqJfYA0KMZJXBqxgyfcKTv65ghOi4Imh70AJnply/bSH9r6AdhThbuwC3BNseXaOEJJ3bX0C6pYO2irJNpQ+EQyTa1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789546485; c=relaxed/simple;
-	bh=x1vhhVD+EuvAa4tTslqnDNk7SPeox8b2RX+e5N5FKM0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qY+CKZJKAgSK7vtMkUbccuaRDkdeaCb3Sh3PJ/VnOUFDdegk2Yf3A3MLBsekUxUQ6VMAbxY2xBprGglwPXzH1aIYeYNvzZ/hWFakVJPn6s//aNABsLKBGLepKyt3+kNpSn+pti2/S7RAjcrYtc6skYvyV8jtCCSE/FZatLkAMNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nfMLhjpz; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=NtJrmawF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nfMLhjpz";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="NtJrmawF"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68G68nrH2085101
-	for <linux-remoteproc@vger.kernel.org>; Wed, 16 Sep 2026 08:14:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=bHxC3t0bD0slbmkhbjDTNk
-	yF+TrRMkmAt/z97iqNV0o=; b=nfMLhjpzNLfHQB59gmW6t13cPpfIdEZlpoKtem
-	ZZaLxdcranDf5X3UUKsfF2kjvq2fIX2R9ZIwce4/x/GyrGEvLmRmqagz069pwXCE
-	dsfmKw1tR6/+wkoiAXwMiYT5TX0nDZgctytbSepmPOeIl9VFjrtWKXH9Zrz0r7kP
-	KTCETlDnResYygLt/nC+eCGmnqHq4dXKjqZ/y5g34o54NhVYlfbwL2MO1icvOs5P
-	9R/vb3kAhTeWsksLoZ1tuZwKOc8p+WEJQmDaL7fyhWvUN9/1OsIVwxDjtPis6ZHa
-	UZ1hgwiYszaIERFZzoyU5WZtMb6L/OOd7v4xwxJclJHV2qwA==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gqjcksa5p-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 16 Sep 2026 08:14:29 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-38f283baf1fso6227506a91.3
-        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Sep 2026 01:14:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1789546469; x=1790151269; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=bHxC3t0bD0slbmkhbjDTNkyF+TrRMkmAt/z97iqNV0o=;
-        b=NtJrmawFoEY2waT6mlxiNqBNwb9Oo/jMYFHoishLeRbTozT9jCdcxNlD6pWOH8T32m
-         8hsvx4XmWwiIqzuUju04VeJlnA1pROjTJtlyMiRyGVavKu5R9paWLYsaycnibdW5CREK
-         gKts8goo2FipulL0HssQ4ls4dKrmZcDBcXEW9qTncv0iRQ+7Ng2MY6103ubbrU76thKG
-         ds41Ra6gfZozAnwQWwZ1SE7+toaA5Th244F5wWpbEaeVhxg9IKNv1SjWrC7FKmSKwnua
-         PzESLlufLw3x3afJIvLJ4Yhmdv/nobGQJGcWa8uiZcR1JC8L7KfRMGImxqzz2ITT3TLB
-         16Pg==
+	s=arc-20240116; t=1789567299; c=relaxed/simple;
+	bh=LOZA1HywhSNmDK1UoZyyxVq3wzA5V9QKlib/CveDAJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q8eYqv6QzmI0/iOM6WarhJLAfTftXzNlRgflJkGumCOSPnMttLp8bqP/UkkLz6kVTj8CVOLL8ttsCaFvvFnHVe0zZZPW1n+6SoW6T39zJJ5+e14Gu4eqE9m5qrxhnpA53jteNeX54yW31RoGSWI5z6RqZAERAFgiwdDRldh7t5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6aa13a28848so1658944a12.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Sep 2026 07:01:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789546469; x=1790151269;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=bHxC3t0bD0slbmkhbjDTNkyF+TrRMkmAt/z97iqNV0o=;
-        b=DH8dKfsAsxraIpIKxlkXLNgymtZeEc5WMiadu7H4SlkGGEucWJ/Qyd/6/4PN2x9iML
-         gP+GJalO8KDPTQIkxcMuP3vBHdwjJLKc9t0yqZHgxKvqTDNJ1hp3HE0+6A5W7ZuwfIar
-         P/p5G2IY/E9/e8+cx/Ou27U1eEY/0+0brj3CmHgYpg61uspwEjGlb/NyvG9LrJp+26md
-         Hl1U8NDPzpaOiVDw1c0zIfGb6+LkC9l0wa4n+1rQ9LA8A9xDB/vflxfnBGrejPPcLwsz
-         V8Ahl9YJ9cyXzSrxMBv1UHrPfxXURH9H1kSJ0LyK/ShS9jdFbIxYcGLW+xuKCWNTe5Fs
-         tyJw==
-X-Forwarded-Encrypted: i=1; AKwUvBynO1cYcZcSZSnmDqN7ob20TX9NM1WOXvfP8kf7GBa4yRuqCK28hLIeNvYLCabcssmLCzBLzpLHOydEMKtVqIve@vger.kernel.org
-X-Gm-Message-State: AFuF++m8Sox6S0IieVwSWlP2gul+hieVC5aRViPmbW9nDqRKmRr9X1AK
-	GqBSS38lxAA1lPGdo7eI3SjN42F4ZTRadRD+22N2bJ2pb0aX6gu3nTQ2bnMS8KCTRcnbAq+x7Gv
-	+8JasoYR8WM88ew7IRBEihy7vfU9p8EBJW3WmJclEy1zFxk1yBL0qdvC/Lp5K8IZj65xzSTJm
-X-Gm-Gg: AYBFou3swJ78nl//QwVv9ot/JrkUZn9yAzYSDAyt1insloyK9z4nBBEcG/mcDqu3xJ3
-	V2bsJ6kYVX7VDtJ38MMR4d7G/5iynDbaz0iLh2YpSN9Jbbs+b+u4ommhux8mmEbpDDbUWZX5JFO
-	B0FtZzNNkal/gWHYq4X6UsNnifPO+PF6L5dL3iO727OSti2kmiY9N8RwtcySy/ZTnKdnXm7YjWL
-	5xYMEqbyKhkO9sPUy1w9rRIXTtb3p/yaDiz9BgF736wuvFYv1agZoRxbjpUCUbxeN+Y7uTY1oGv
-	zd/dScdXi7gm2PvIVw2a14/f0BFYod31OWJpk+Ql2e/uafv5hqk90MdAJP93SVoR+wgte8Q2fgc
-	FYN6K4aXuN4BWfb2pFtB6mIk3z/MSBKQROUBYlg==
-X-Received: by 2002:a17:90b:4cc8:b0:398:c292:ac80 with SMTP id 98e67ed59e1d1-39e1e330a2dmr4483266a91.10.1789546468765;
-        Wed, 16 Sep 2026 01:14:28 -0700 (PDT)
-X-Received: by 2002:a17:90b:4cc8:b0:398:c292:ac80 with SMTP id 98e67ed59e1d1-39e1e330a2dmr4483195a91.10.1789546468238;
-        Wed, 16 Sep 2026 01:14:28 -0700 (PDT)
-Received: from hu-anupvish-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33bf5b2753csm11734328eec.31.2026.09.16.01.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2026 01:14:27 -0700 (PDT)
-From: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
-Date: Wed, 16 Sep 2026 13:44:22 +0530
-Subject: [PATCH] remoteproc: qcom_q6v5_mss: Fix off-by-one in regulator
- enable error unwind
+        d=1e100.net; s=20260707; t=1789567295; x=1790172095;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=YB5wJdJp7iKTK9TemjyuyLSregIs6jY3r0wL3mFG0oc=;
+        b=Bc/KQh9YOnNXZjWvvhw6nNLPx54yid8VKfu/QYeWjoncrQ06ALh6YyJWQCd0qNWjxf
+         ZpmEtclEjmTSgWwc1xSo8ofZWNg5E9vW7iFiy/sR544+QFQr2x4LNqQJgcjarpFNvIb9
+         Q5qz0KstvtRGEPQXWiY85WI1h4ZkcYzq8uSYHo7j3Pqgf14KVQaHdDhC4DJ+3qbHVHjU
+         uzUl35c84pITvlgUsAO9tm+F5L12oPsYnwor4GEoHUmhn8NdqE5LWvbC5iO4eEutsgek
+         FQ7ucw3YEfQs7c8gof1GXFxeYrq2TYThfD3+X2Q/hmCFGr6pZBtXb6w1rp1c4KcpZIdI
+         56tQ==
+X-Forwarded-Encrypted: i=1; AKwUvByJwHt7y3hyOcB33SiaH/dvaYS+VHwYrqYXpFtsY3xCpgCSAuRGEDuj5IGshY5uZ29hpaE4IL3Uk+4pvy4BVbCZ@vger.kernel.org
+X-Gm-Message-State: AFuF++mb65cSXqv8iZB4Sppv8+YQIwuA6WrRxLaGdfyjIPY9tzcWCJqX
+	0myBc5S8a1Ai2rdrh0kBRhwYZiZc2en//MLA3JwOa0MrrxlA6ZAyNxun449KP6xkntQ=
+X-Gm-Gg: AYBFou122hLq0Fh9+xYWBS2qAAudDaY516ArgWSKWHz7DRuoFRgykCfed5WP8lhozOR
+	CiP5i5zIcoVPPpM/2aLKyF1E4Etbewkk9IMuuNSRdHi7a6Av3hVtkktz9SaXCic2DWSIxVk9Ccl
+	bJ/tmSwSpEqiKLMPH/KkhS5SqFTV+PET2JT9hbBOB7hM9LvARGxHY2jStPLtJborQi03v6/y5gj
+	BZs7U3TACW1fGZRKqm4LuuZCe+3SgDoatRKeB49AsLaXGJANeoYtR/9HZkTXdkl6PlJs2G93GZx
+	apLZD1dp5LB3MqmD5LmAaMMxDuGswUc5+ncOI2uBqgDUJ3eR+gyrCQ6GqavDVgxTJDmZQ63kcir
+	AbRU7/NXo8/0Hfo9P13oUkoT7FIGesUn/exgMJSOOKTVIeZ1UoLkPS7q+Cyt1o3JcAm92Dab6at
+	4AJWQjWPDIyQ414kU8LxVWwwzDx9k6QaIRQaanPHtN/EDzo56U4tBmSzC0kz0Ld63SPG2roKVIy
+	iuBz0DrReQ/D6+fLqrzXmX4QrKd5kJxAa2g
+X-Received: by 2002:a05:6402:5609:b0:6a6:b2b9:7667 with SMTP id 4fb4d7f45d1cf-6aa04039dfbmr4158303a12.20.1789567295219;
+        Wed, 16 Sep 2026 07:01:35 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6aa1d2406d6sm1685237a12.12.2026.09.16.07.01.33
+        for <linux-remoteproc@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Sep 2026 07:01:34 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-c294ad260fdso316517666b.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 16 Sep 2026 07:01:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwAF0y7D8Tqua8fsFlbWepRYycVOR9hyx3DbpjJTWolVbF9sjPOb1uwDSCCw90wZ8ChxLZvT94jGMeo7jxc+xZC@vger.kernel.org
+X-Received: by 2002:a17:907:9452:b0:c25:f7dc:2dc with SMTP id
+ a640c23a62f3a-c29c8bf56d3mr614247266b.29.1789567293068; Wed, 16 Sep 2026
+ 07:01:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20260916-b4-q6v5_mss_regulator_enable_unwind_upstream-v1-1-858e8fb0c279@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAN5PqmoC/yXNTQ6CMBBA4auQWduEAjbRqxjT9GfAMVCg06IJ4
- e5WXX6b93ZgjIQM12qHiBsxzaFAnipwDxMGFOSLoakbVV+kErYTq9rOemLWEYc8mjRHjcHYEXU
- OLwpe54VTRDMJp2TrW9s1DnsoySViT+/f7nb/m7N9okvfBxzHB1C+W5GQAAAA
-X-Change-ID: 20260916-b4-q6v5_mss_regulator_enable_unwind_upstream-c613d3b42cef
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1789546465; l=1782;
- i=anup.vishwakarma@oss.qualcomm.com; s=20260805; h=from:subject:message-id;
- bh=x1vhhVD+EuvAa4tTslqnDNk7SPeox8b2RX+e5N5FKM0=;
- b=/cvYCXeQ33IK95EIknj/fLHqdm4Wcbp76X5qJGdZcyxvEdg4SJ72QDSiZ3x9cDK3aCQFt++KL
- l2/90qQEEFuBmQ+aT6CvdARZotA4bJjlkhbhSzKdSYmp1Rf4B76HEY/
-X-Developer-Key: i=anup.vishwakarma@oss.qualcomm.com; a=ed25519;
- pk=Y9ilCu91UQrzHOM14SG2IjnmQ1QSroH5uVeBSWEmEDM=
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE2MDEwNiBTYWx0ZWRfX5pLFpundNucC
- n0+FhsLNTaDNoAyr74n/snS/Kxhkp7JeDsBEDsgc/XH/4tznzCNJMNAHhWXb5K4Daj4yQVKPOXR
- huFbUynrxn27AjrvAIt1EiJYQ2K2lbg=
-X-Authority-Analysis: v=2.4 cv=PsIG/AM3 c=1 sm=1 tr=0 ts=6aaa4fe5 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=gowsoOTTUOVcmtlkKump:22
- a=EUspDBNiAAAA:8 a=SFYdgmKYQZucr7GQzh0A:9 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: 4vex5mmav703k56SpPLG7VO6vONAJUwl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE2MDEwNiBTYWx0ZWRfX4Bduc7hNOVcr
- 3TQdPIctKecpxUA4eZX0QSorINLJJhbbXUfC7zryDt9kKpDU49V/hfY5e5xWXRIlIn6Ozat/ecy
- rNjQegcDOJNaffDdeAEE5ydKITLv6AMoNr0IF9/qJCQwmoyqzpWStT8M20AoqT30JouD1htrcUi
- Xvtl2gm3RmeLn4TVLR50015j/U+F4e/NcAq3ObMoNNDlACkwx8cZRcNb8bV2ezsa+E0VCUFzMfK
- rEbHIRKPjiFXtRAlsKpTop3vcRJO+O2ZN7GowuV+znfvVnqVPRXOR5y/7cJ77wHQj2isy22s4PG
- fLZcBMq93eqEbXXrk1XPIGf/iazcxRiNIVHDz5te35new3WtXZZnGthicvtRZmfJdA+wjt67TgQ
- neH7npaluB98f8AB30ndXzaunYJl3ts3C98C6YDmw2NqRZ4wwcD6NkRBFRgi18NxS/FAtjmCR8d
- UdlRZYeelv71FFvOBPA==
-X-Proofpoint-GUID: 4vex5mmav703k56SpPLG7VO6vONAJUwl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-15_05,2026-09-15_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- phishscore=0 spamscore=0 clxscore=1015 suspectscore=0 bulkscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2609040000
- definitions=main-2609160106
+References: <20260912191442.99453-1-wsa+renesas@sang-engineering.com> <20260912191442.99453-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20260912191442.99453-3-wsa+renesas@sang-engineering.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 16 Sep 2026 16:01:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
+X-Gm-Features: AcwNN1UfyJCOGSEjRjtYLZ4YGwDs-hH1sGh2EPXUqWFwEQpikBVlS7z89oufr3M
+Message-ID: <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] hwspinlock: add list of locks to debugfs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On failure inside q6v5_regulator_enable()'s enable loop, the err:
-label's unwind loop starts from the same index i that just failed,
-calling regulator_disable() on a regulator that was never
-successfully enabled by this call (and may not even have reached
-regulator_enable() if the failure was in regulator_set_voltage() or
-regulator_set_load()). This can trip the regulator core's unbalanced
-disable warning, or spuriously drop another consumer's vote on a
-shared rail.
+Hi Wolfram,
 
-Fix this by decrementing i before the unwind loop, so it only
-disables regulators that were actually enabled. The current index i
-may still have a voltage or load constraint applied from before the
-failure, so clear that explicitly ahead of the loop rather than
-dropping it along with the erroneous disable() call.
+On Sat, 12 Sept 2026 at 21:20, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> To help debugging, offer a list of registered hwspinlocks in debugfs. It
+> will also print the responsible hwspinlock_device and if the spinlock is
+> currently used. It does not show if the lock is taken because of
+> side-effects. Often, reading a lock means actually taking it.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Signed-off-by: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
----
- drivers/remoteproc/qcom_q6v5_mss.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Thanks for your patch!
 
-diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
-index 2f71ed2feff6..a40a8614758e 100644
---- a/drivers/remoteproc/qcom_q6v5_mss.c
-+++ b/drivers/remoteproc/qcom_q6v5_mss.c
-@@ -336,7 +336,13 @@ static int q6v5_regulator_enable(struct q6v5 *qproc,
- 
- 	return 0;
- err:
--	for (; i >= 0; i--) {
-+	if (regs[i].uV > 0)
-+		regulator_set_voltage(regs[i].reg, 0, INT_MAX);
-+
-+	if (regs[i].uA > 0)
-+		regulator_set_load(regs[i].reg, 0);
-+
-+	for (i--; i >= 0; i--) {
- 		if (regs[i].uV > 0)
- 			regulator_set_voltage(regs[i].reg, 0, INT_MAX);
- 
+> --- a/drivers/hwspinlock/hwspinlock_core.c
+> +++ b/drivers/hwspinlock/hwspinlock_core.c
+> @@ -860,5 +862,70 @@ struct hwspinlock *devm_hwspin_lock_request_specific(struct device *dev,
+>  }
+>  EXPORT_SYMBOL_GPL(devm_hwspin_lock_request_specific);
+>
+> +#ifdef CONFIG_DEBUG_FS
+> +static void *hwspin_lock_seq_start(struct seq_file *s, loff_t *ppos)
+> +{
+> +       unsigned long index = *ppos;
+> +       struct hwspinlock *hwlock;
+> +
+> +       rcu_read_lock();
+> +       hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
+> +       *ppos = index;
+> +
+> +       return hwlock;
+> +}
+> +
+> +static void *hwspin_lock_seq_next(struct seq_file *s, void *v, loff_t *ppos)
+> +{
+> +       /* Increase ppos here to avoid endless loops. Don't use xa_find_after() */
 
----
-base-commit: e6e35979777d646fe3c7c94dca7dd32fb25d45f4
-change-id: 20260916-b4-q6v5_mss_regulator_enable_unwind_upstream-c613d3b42cef
+Do you mean xa_find_after() may loop forever?
 
-Best regards,
---  
-Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
+> +       unsigned long index = *ppos + 1;
+> +       struct hwspinlock *hwlock;
+> +
+> +       hwlock = xa_find(&hwspinlocks, &index, ULONG_MAX, XA_PRESENT);
+> +       *ppos = index;
+> +
+> +       return hwlock;
+> +}
 
+> +static int hwspin_lock_seq_show(struct seq_file *s, void *v)
+> +{
+> +       struct hwspinlock *hwlock = v;
+> +       bool unused = xa_get_mark(&hwspinlocks, s->index, HWSPINLOCK_UNUSED);
+> +
+> +       seq_printf(s, "%4llu:\t%s\t%s\n", s->index, unused ? "free" : "in use",
+
+For easier parsing the output, you may want to use a string without
+spaces, e.g. "busy", "active", ...
+
+> +                  dev_name(hwlock->bank->dev));
+> +       return 0;
+> +}
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
