@@ -1,49 +1,48 @@
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09AF36B910
-	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 09:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2DD4A64C7
+	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 09:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789636121; cv=none; b=mDGmlsuMTI+3mH1XbwTIHXPNCedss3Z2D7ON83UizJs3oAWS1IbNufxUjZJoZZ8BVKR4bKpyka8rT5ZIdb2TV6kFn/A9YyChGOKscbTPkWlWV4kuHGzqEUd8Xw0WN1CHCfeddorTLdJjuOPb/KM5uBLzVFT3ZY+UJJgKvbgYwfo=
+	t=1789636228; cv=none; b=hShZ9r4+69o2KIgsc7Apyq2Tm4e4wq962hpwzcIDzg/DHKPNUyf6ut8igYofz4CyFruf3V6W5BysoF3ZBxuiKxiuTeSa/4jToB2bRQGjs6n2qHdCO1HtKd5qbFTR2CLIrn8Jp/hokEWTAE0BXbe9vmAiJ+rSqWsdGoLEtDDc/TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789636121; c=relaxed/simple;
-	bh=RqcwEE9Xx/564lN1a6EvV2mReIrkeBU5Ko+5a7oBOjk=;
+	s=arc-20240116; t=1789636228; c=relaxed/simple;
+	bh=RJjhdV9CwaoE74N1bNU0hY9BatQziexkypF2NItGJcE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HiKn0OIG/Q+1ppVuVnGrw0ZkBSNdWjHV+f95Id5JqTZe32D8g1mVEdjs/dcaT3ysBbXNJsPAbB7HgIldazbgKDF1ROlTr57ev7Qx4QyUc9ZoC3geshJFqFJaXEJi/A5CsgP6pd+Hw9UOBeGQH6VcOhKf4Y00xUQ3+AS1XPg9Q5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=f+suIXbN; arc=none smtp.client-ip=194.117.254.33
+	 Content-Type:Content-Disposition:In-Reply-To; b=dO25p096o0q6MlHqkjirzx7CC8+5Z9U8d+9pL9Lau39sBzXtA1nJIrMtt6JFTXlDI6SFiIdRUVLUi6VS8r5vXIzQfvxj2BEJwXt1/g/vz0Yy34ITb05sx+0haY7CJjL0ElnBdMpEo3Nb2uFE2TWaAx7OUtcKhYBDkLExaspryNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Gen9XyEX; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="f+suIXbN"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Gen9XyEX"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Rqcw
-	EE9Xx/564lN1a6EvV2mReIrkeBU5Ko+5a7oBOjk=; b=f+suIXbNAdvhsPSEGync
-	0NvYXoYNTdl2S20CFq6fFDbYf1zm+I7dkqyEiE3RVswil/5o4ET8V7hjyJvsGN7X
-	TNz/S08KlPsKeuNeU3lU6wCZoztI2LdqPAUxaSxGICa8YzGAU8H+o0uKOvA+b1ri
-	vGc7IkR/7YKBn69nYTyam5f0oWUdv/VilWWNpFGdVjz46YVNkb5Nty9dAcQAnZrR
-	WibkfUyq9dWWv7c06jxs/pT3y5O/QU1+yoiBIqWw86qWTYftx8BM3KgoVlK1IoKp
-	JnlR9xXqJunrdo/z/Djfs+R6re+CRTVkWoECoqvCr2E7Z3oPGP+aPjeoauxgZ29/
-	mA==
-Received: (qmail 1931465 invoked from network); 17 Sep 2026 11:08:35 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Sep 2026 11:08:35 +0200
-X-UD-Smtp-Session: l3s3148p1@M0n0IKpbRKEujnsL
-Date: Thu, 17 Sep 2026 11:08:35 +0200
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=I67L
+	oRiWtGV0qD+2zhDaad+CFeN3qsKkRGXxvceIiBY=; b=Gen9XyEXFJXDRb2NjW8f
+	XfvlVt/ZpgVXFYjRvF4d4yjO97TfsTgPisFOp+Ciw7KRfqUNy1ZGaaEIOzzhwUYd
+	6VrlCkckF5wL3Rzi9WM6hraJ+KfqIzwhbE30YbGCnwjYipiWEfavlfPOfu0d/tp0
+	TpXrXh2qsYGN4RRsysvk11O0t7UYiTP1y26nwglVuwPolmGOcC1Dnhb7JLArMF0D
+	qjTlzqssOyFrb4GV0xC2JvwcDKufyOCVtvMWnyD2rlz4mbtvuZqFspE0nmZuFe4M
+	bf1tVmfJT2XO1ON5Tw7Q0xcok6xJk0ewr48FAM4hWgUGW3CENp1MJmQva01Xfi1N
+	8w==
+Received: (qmail 1932189 invoked from network); 17 Sep 2026 11:10:23 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Sep 2026 11:10:23 +0200
+X-UD-Smtp-Session: l3s3148p1@yYxgJ6pbKLcujnsL
+Date: Thu, 17 Sep 2026 11:10:23 +0200
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Bjorn Andersson <andersson@kernel.org>,
 	Baolin Wang <baolin.wang@linux.alibaba.com>,
 	linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v7 2/3] hwspinlock: add list of locks to debugfs
-Message-ID: <aquuDy2Lspr4j7wn@ninjato>
+Subject: Re: [PATCH v7 3/3] hwspinlock: add low level debug capabilities
+Message-ID: <aquufy5JW2Z5Gmq8@ninjato>
 References: <20260912191442.99453-1-wsa+renesas@sang-engineering.com>
- <20260912191442.99453-3-wsa+renesas@sang-engineering.com>
- <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
- <CAMuHMdXcU3Eebhb3aS2PFoUdZsK=cmU6sjAFWhMRiPB9eczKhw@mail.gmail.com>
- <aqsMWn11lSgnNuVR@shikoro>
- <CAMuHMdXzyn2-bkky_wEC=5DdNFYo+QSroP3gEdmuZ6bhqQC0vA@mail.gmail.com>
+ <20260912191442.99453-4-wsa+renesas@sang-engineering.com>
+ <CAMuHMdX27+sdJYd06v3T9hj2=z3ADSKOVGvu+02-qe+Jp6R4Bw@mail.gmail.com>
+ <aqsNpEXjuZswCC9w@shikoro>
+ <CAMuHMdUPcBfFrLLW9_URM99S1jR-KhqUBQo1n7oHqX8qL4=1-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -51,40 +50,62 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cvva/6AwbSPr5Tlo"
+	protocol="application/pgp-signature"; boundary="uIs5o3p8zIYvQ1UP"
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXzyn2-bkky_wEC=5DdNFYo+QSroP3gEdmuZ6bhqQC0vA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUPcBfFrLLW9_URM99S1jR-KhqUBQo1n7oHqX8qL4=1-w@mail.gmail.com>
 
---cvva/6AwbSPr5Tlo
+--uIs5o3p8zIYvQ1UP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-> I don't think just booting on a system with a single spinlock
-> counts as a full Tested-by for such a complex conversion.
+> > You mean I should merge the two sentences into one?
+>=20
+> Yes, as the second "sentence" does not have a verb.
 
-Your choice. There would be, however, enough chances to break the
-conversion so that even a single lock would not work ;)
+Pfff, okay.
+
+> > > > +       debugfs_create_file("request", 0200, rootdir, NULL, &fops_r=
+equest);
+> > > > +       debugfs_create_file("free", 0200, rootdir, NULL, &fops_free=
+);
+> > > > +       debugfs_create_file("lock", 0200, rootdir, NULL, &fops_tryl=
+ock_raw);
+> > > > +       debugfs_create_file("unlock", 0200, rootdir, NULL, &fops_un=
+lock_raw);
+> > > > +       debugfs_create_file("test_lock", 0200, rootdir, NULL, &fops=
+_test);
+> > >
+> > > Perhaps just "test"?
+> >
+> > Hmm, too generic for my taste. In fact, I think I should maybe rename it
+> > to "test_single_lock" to make it more precise...
+>=20
+> "test_single"? All others don't have "lock" in their name.
+
+Hmm, I'd rather add 'lock' to request/free. Only lock_lock sounds
+strange :)
 
 
---cvva/6AwbSPr5Tlo
+--uIs5o3p8zIYvQ1UP
 Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqrrg8ACgkQFA3kzBSg
-KbZT/w/+OidAC6L3kb0fjd35PJutmUSkCaURTj1pRS6aNpAWF/dj0JA1V3Ub7coe
-5aVL96nGKyXUFPgztqsl0t+Vf5tlFIjmO+yTF9InlHRoS/Cd9keD124gaAM0v0oF
-TbX7xhHsbpvqO7QZvj/CDabiMGQVk3SappWnpuOQZOUno9XYN/GSjuT4S+58WoJv
-s5DKh+4PwBsKqIgB3TlSeLVHdLxcVdOW8M0LJEq6c+9dWarJn0C1jhEEMHcYXf87
-sGcoW+vHoxJolaDlW2NKAkJ2soWk5O3FJgR0F2E81F9SRnj8u4TGbS87SfRJ+sSF
-yM0isTq9Seas5gxklm6GbJ6Q2SIXJBV12g6H3BwLj99L7MEGKhivwnYh5ZJNxCPq
-8/mpdFRek3K1Jyt5H4roB9yDeqwLfI+QdyBzqF6Y1+VxoNM9jxOouQTx0QxVO41D
-SDqsjOgSaBT29HyQ1VEXgLbhvl5bMk3i8jHfPu7k9/00bjqxL/ToPbHVw7wh1qVO
-dY4sKeEMgFLw0Q1Elz3cXV8VIlfSJs3xPerQCjDIbDWiIsg7rsh6qX8LOlRe3ymk
-1HhhmXZQZlfFutcZchLNDEdzT/oZLsQ+Iz/XyseMaFnV7YFX7PFR9Qk8f6nJH+3z
-6wP4Qn4IWgINMFkl43Pz3yZcVG5u93ByXXx8I3INEP9/c7O4YBU=
-=85Rh
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmqrrn8ACgkQFA3kzBSg
+KbYClw/+I1c9z8xwfb5udO+V3fANqMX1zXeIG1c7zAo+f3tuAPccz/No5uAPqaON
+vg5/xSTMAQPpgvjUhQHg3dUOVZKZjp10inNjTD/pXSyNCDdHlBpPHgcwuC8xcoTA
+HxXNIwqS/yP/GbEt6flyo15sUk75HMRxYPJIauHc9iED/3zfdmg8bPPInU6zzI04
+CtyAKgotERAirsKQwu74JgDhduI3FIOyPZebXpWGpR0TbVunlYHDQacNQ6lJ6zCj
+tPSHI/ME++O/0SAKdCcpS5v1VkPytAAc4ShLn1gFGpnEEIj1L2sXZGDtac5zM29A
+ADfBw494pB/ORGZGfLOReQYBVP7Dp4VoYzLL3AFiAaPl6VPCOswK5qWqYYRBmh+z
+LLc/iH/sCz+odW+GZD06dpkrhgGFw+By6tZDV22ceZvYNo+FVbFci7FW94CmsyOF
+WkYCyZ/TYlNnYI3Fxg+5K6HUqm7rUCG7OcMYEP8XTvDKPqIcWAbqhz0YJiDBAbDW
+3vpTguqVuuyOA7Mg2+8RhEebHjFAtjI01jpJaH+gwSJ+KU2OOxqe0Oe8uDxC04I3
+5mnXxa05BvGp6eJDr1aooyI6EbLV0iIXf3t4+ihqPkAhvrbi7TP/rP3FZJiWGMBb
+thvnZgmcK0ALPVkWOBl0HBllLxRKAOceXBKCJFT8WgetEjrkLoc=
+=LKZ2
 -----END PGP SIGNATURE-----
 
---cvva/6AwbSPr5Tlo--
+--uIs5o3p8zIYvQ1UP--
