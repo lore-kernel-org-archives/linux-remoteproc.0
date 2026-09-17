@@ -1,57 +1,57 @@
 Received: from mail-vs2-f43.google.com (mail-vs2-f43.google.com [74.125.227.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EA23B71A2
-	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 07:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF1B2DC765
+	for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 07:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789630825; cv=none; b=kP99g9HZ5D5OklpMO6G7vf5ewbVjyk4UB3U+kNp9R/OUHAGRTYbzWi00NApU4IPD5vftymvvJNwN+IrTuk8KPImLuV77dAReUYfGwz3YNSP6KJQd30DEbQ8I/Gdr5CGXVCBGar54PgiaRC/zWjU7fz7F+bqzRxBEWqyGajNVvNg=
+	t=1789631084; cv=none; b=g2mUX7CmVpyRJzFQIl2kV6YHtSGh7wjPJM34Zb8+/pajMJJ91o8mkqKBhfiS2troizceusXXDv19S9ji4I50iyTAL81URVKIuSW/Zvbn6JpLFssRBlocO+h2vP2ohap19h4ijv0C8WRW4nQbwepLcf2mxRnIy3drdniMV5e/fe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789630825; c=relaxed/simple;
-	bh=Eae0L8mQX/HKRxUW9H1daR6Qu5pY1s+6r4QDDDv3MFw=;
+	s=arc-20240116; t=1789631084; c=relaxed/simple;
+	bh=8Hw80TAgKPDNBf0vWklNUbq3jAIqiU6weeac3Z8w6a4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6Xs/BhZF83ZjDbnXZQwCAhMUUbzMeUE+Oc3GiQdKvr9s/Xk2B0xk3Xc6g86tVljJmnhSOzBgtREunbSYmVhqHytcxp9aicPsaUIlbk1ATIYC4YFpBfoKNmDDr9ogOJr0mNW72EUmj0T6NHf0IJxwn6jKpJzPmkL3d9T8IbC6Rk=
+	 To:Cc:Content-Type; b=CpIFMNdSWYiWO+w4PPg4dnlt39gac/+Ztrwe6cuQamvTreJLA+mROSSt0lhsI5QRKhb0lrAb6eJhPDylBQhH2eXcD/cd4GYf7l2oE3O/nGHbo6ZV7JhkUMKfVYLt3j9L+Ikhkbt/AYpZ+APxQGpHPswB6Q7EYHxuOX0E9QmBU8M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.227.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs2-f43.google.com with SMTP id ada2fe7eead31-790ec94be85so194476137.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 00:40:23 -0700 (PDT)
+Received: by mail-vs2-f43.google.com with SMTP id ada2fe7eead31-790ec94be85so195553137.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 00:44:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789630822; x=1790235622;
+        d=1e100.net; s=20260707; t=1789631082; x=1790235882;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=gAuDoBRaqindrDQ1hoRg/L72SkatQaOp2VDi/OWJcsw=;
-        b=oIQuiVcjH5T6iCrVo1OyRR+LDtKbfD2TBD+AiGuEKoHxQM5Dc56NorHZiBskHGCGlG
-         jnAZBDspEuHEVJPlJkm5VmAPoGSbLJBbPviyp9fec7SNzq11FNCGY3daCbVsE8ccoP4d
-         nThHsPYoNusTOxTTi0UrADwzc93ocG9HMPWySz6PUQvgOCUClxpRl1xsBYRrhhKW0D1I
-         PbpmjSRsGMpB3Ww7GhebigedL9ZmiBboOzdlI9iGnINvlkvYkYyc18xrFEO+Jsa4CBhm
-         2l7SZpmmtGrNxyC1AIx6naaUXpiv/dSXSs6aEpgAWIR8l7ADPBMmVAjMEfrXt44CYmee
-         7qjw==
-X-Forwarded-Encrypted: i=1; AKwUvBynUsVIAQ8SSNqAXfROx/+IJsDSUAg9JqQjoulFzCAD6WmLfMXlpvhfc9xPws6ajN52HTGRoki7dyktFz4O7qWZ@vger.kernel.org
-X-Gm-Message-State: AFuF++kQkwJ+USUdbJrW5I563I90L/PA8xbC7pJaVrcWw0UmGos62ZzR
-	BSblYsQEejV7Tb6IAB+772Eza//YW2GQUxTUilMUAnshLEIAz2fc2YLTRxxmO+Ls7YE=
-X-Gm-Gg: AYBFou17cj4BfJLEPVy3uv5r+Nmc0G4eYv489wJMZzEbU3KQytDJh2wSE2s65fKZck7
-	1vpWEaphxEiUv+0NWlL00VrgpODJQsW2s8PPi2VVRJdWMa+vFPsa92Xsvg2GZCgqCddrpA4bXpF
-	MAUrD8qhLPMb21M49Sr2FWH08Zys3fpR4Jt9ycWZapSH8BxFVsvvauLeBEKj14wUfSUcD05CdH9
-	JNcUNnIxgUbaejdjHK9NW21fDvvR7rqWnI5B/7D9yH5BUVu75XNDzMC0IQasFqBEY+0sKnTYnCC
-	/cSlRnd4wil3HQ95JL+NmkNHST27Axhio/gbZoS8bk+lJYd41LqK4WfyUlcH/HtLUoVUD8agXJ2
-	ywWL2uISAq9O9Ci0vw0Y64nCjDNwTYfEgLHZmGxhTTuEUbOYmWfETuoE+YOW4QsjSzM2IsZDkIF
-	mcUtwDzJlTxaH/Yd5stAuYJAN5p6YRHl4Kxw7y4y4yGcQ5zuVjqfFN3U8Hvs2aJLLyUAGuqZzkI
-	mUqukbkIFMjs0gTo0A5RRDKapx8j0dSeedg
-X-Received: by 2002:a05:6102:548d:b0:7a1:f951:f302 with SMTP id ada2fe7eead31-7a1f951f55fmr1474534137.21.1789630822182;
-        Thu, 17 Sep 2026 00:40:22 -0700 (PDT)
-Received: from mail-vs2-f41.google.com (mail-vs2-f41.google.com. [74.125.227.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7a1e292ee59sm2481807137.6.2026.09.17.00.40.21
+        bh=TZYjUR6uq0wvJ7yfCunhZRC4s2XoZDscTLrj+tpsIdY=;
+        b=pLkX/o2MVXEnQUc216Q5ZUnqzEcxeOvyqvy6mdFgVL+pazIFqPZcXzG4yBbns+c6R+
+         eB6k25NJYgaqaxzcQC5ncxEssM9tuRqfQW0r6Zg8aXd6Ojveh5zkcSnyqFFLui4Q6Qs5
+         CiSp/0EQLbykWbuHkHwjhU8703zZSq5pP6kERP/8Fu3GS+w8uuuXcIXQa8iaP+YAQp3m
+         sX3n/uyJTgerixA1daGvI06jTnUsLLuHW8YcRP/LPEkXTPxJLWcM8UFyWk10+5uF3Nd8
+         zNa8kXtjkJVs28XSgitaZkI+V4r3W5qWOHvOlq8B0hjFnGIaLOlHBHVSWarJ7mXrQYPy
+         /g4Q==
+X-Forwarded-Encrypted: i=1; AKwUvBz8IExuW5N3mGsXZMGSOsEtlCKKvN9ilMq/tLsn21d8X3ZV+yN/CZ1xHK7YAp90B7gPLrYc8+ihcnm2+iwe46Nv@vger.kernel.org
+X-Gm-Message-State: AFuF++mznMHTfHAPoqZi5xXzM9dIiwH3znCCURjL6cXy2Fy7+tNMFy2X
+	mgs0Fk812KLkLVzXRmDMfNNgSb6uGTA8GxqoPNHkPGBd1i0nzBTX06rkHjcgCfE9hWU=
+X-Gm-Gg: AYBFou0WnqzLNtCSCHAO9ppm9qH+FqUXfoEelfx7at75Qikc8QeVbvhfVhDp/YDJfwf
+	m1AMaIPjYhlNeJt6iN0q4p8811+9XGolnuMCvTI2jxRu1YcdSFS39qH/pzP2mhR3kCj5ZEAbYjq
+	dRc05ObjpCDfbWfdAeZX2FMtvYulClt07hsHdhng9yY+aYfZFfwNhvKk5pDmR3Q9iEYZLybUNky
+	VgEiSrKyGWe0PssYvFexta9YseRtNlrhGZaBPiQssvKAdYHIp/+EYnNhsgNwW4KU0Jf8cCqMOdC
+	uS8NhZce6OWiU6GURjrxRDPdhAqP7F0bpZohn/AyMN6iFqUAmLDuaAxxjEbdmhte4FlHTqf1pnP
+	BR/3K4ywccFZRanrhuGHU8PaGcGSRrNAHllvRP4A37DDpw/hJIYgQJ2P00u8579M1iIftigU9Fm
+	U8FfnGKk6tP8MnL0Nx/YiKEnBWPs6HvLTNG9icd5zUVPytWSl8i4WYB8IsOIBFiWt+5ez1I3kpi
+	huY0jNDGMIOz35L6+BpPfF9ooJPAkhG+6l/
+X-Received: by 2002:a05:6102:144a:b0:7a2:2068:6b5e with SMTP id ada2fe7eead31-7a22068752bmr551646137.24.1789631082080;
+        Thu, 17 Sep 2026 00:44:42 -0700 (PDT)
+Received: from mail-vs2-f12.google.com (mail-vs2-f12.google.com. [74.125.227.12])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-7a1e334979asm2482999137.10.2026.09.17.00.44.41
         for <linux-remoteproc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2026 00:40:21 -0700 (PDT)
-Received: by mail-vs2-f41.google.com with SMTP id 71dfb90a1353d-5c9031e714dso151291e0c.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 00:40:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AKwUvBx6gfNECOn0XOEJarM2nLOtDk21oJJdCSsW1IK1eLHY24gR3W5+iIqizNbs9+LEZccYWvOyEpYW12MuMacUkc1P@vger.kernel.org
-X-Received: by 2002:a05:6102:a4e:b0:7a3:3d26:5c4c with SMTP id
- ada2fe7eead31-7a33d265f35mr120142137.22.1789630821198; Thu, 17 Sep 2026
- 00:40:21 -0700 (PDT)
+        Thu, 17 Sep 2026 00:44:41 -0700 (PDT)
+Received: by mail-vs2-f12.google.com with SMTP id ada2fe7eead31-78ffc0e2f23so189520137.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 17 Sep 2026 00:44:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AKwUvBwMwXZm9zYe4txIXbywtVJj3rCBJY6NcdGDH71zURJ+zKiGysRiNAl5tCFYiAekWSaUG3jM5nu+Ee6x7NS09eAj@vger.kernel.org
+X-Received: by 2002:a05:6102:3e0e:b0:79a:47f7:6cfb with SMTP id
+ ada2fe7eead31-7a029f141f5mr6828795137.12.1789631081396; Thu, 17 Sep 2026
+ 00:44:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -60,13 +60,13 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260912191442.99453-1-wsa+renesas@sang-engineering.com>
  <20260912191442.99453-3-wsa+renesas@sang-engineering.com> <CAMuHMdVbYaUXiW11j+LKSuSaLLF2PRR2kAFsaj-ZGsx7nNjK-w@mail.gmail.com>
- <CAMuHMdXcU3Eebhb3aS2PFoUdZsK=cmU6sjAFWhMRiPB9eczKhw@mail.gmail.com> <aqsMWn11lSgnNuVR@shikoro>
-In-Reply-To: <aqsMWn11lSgnNuVR@shikoro>
+ <aqsMzXQ__BsWXUqH@shikoro>
+In-Reply-To: <aqsMzXQ__BsWXUqH@shikoro>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Sep 2026 09:40:09 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXzyn2-bkky_wEC=5DdNFYo+QSroP3gEdmuZ6bhqQC0vA@mail.gmail.com>
-X-Gm-Features: AcwNN1Vf8usG3tBt9wHCjscRiFJe7JD7786vCcIJCLuucE8K5jh9OFuAaTGdfmI
-Message-ID: <CAMuHMdXzyn2-bkky_wEC=5DdNFYo+QSroP3gEdmuZ6bhqQC0vA@mail.gmail.com>
+Date: Thu, 17 Sep 2026 09:44:30 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXBHeRj2tjjqc82MKCm+Tpm4KakrvGwn4q5T7mkTOmrXQ@mail.gmail.com>
+X-Gm-Features: AcwNN1WFTEVxpdlneYZzV24ejd-9Z4yFFiZKF6ULft6pvA_51GkjVjhhS6OMQds
+Message-ID: <CAMuHMdXBHeRj2tjjqc82MKCm+Tpm4KakrvGwn4q5T7mkTOmrXQ@mail.gmail.com>
 Subject: Re: [PATCH v7 2/3] hwspinlock: add list of locks to debugfs
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -76,15 +76,33 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Wolfram,
 
-On Wed, 16 Sept 2026 at 23:38, Wolfram Sang
+On Wed, 16 Sept 2026 at 23:40, Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> > I have been using this since quite a while on R-Car X5H Ironhide:
-> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > +static void *hwspin_lock_seq_next(struct seq_file *s, void *v, loff_t *ppos)
+> > > +{
+> > > +       /* Increase ppos here to avoid endless loops. Don't use xa_find_after() */
+> >
+> > Do you mean xa_find_after() may loop forever?
 >
-> So, this applies for patch 1 as well then?
+> Ehrm, it's been a while, I need to look this up. Which means the comment
+> is not explanationary enough :/
 
-I don't think just booting on a system with a single spinlock
-counts as a full Tested-by for such a complex conversion.
+Yeah, I'd expect xa_find_after() to do exactly what you want...
+
+> > > +static int hwspin_lock_seq_show(struct seq_file *s, void *v)
+> > > +{
+> > > +       struct hwspinlock *hwlock = v;
+> > > +       bool unused = xa_get_mark(&hwspinlocks, s->index, HWSPINLOCK_UNUSED);
+> > > +
+> > > +       seq_printf(s, "%4llu:\t%s\t%s\n", s->index, unused ? "free" : "in use",
+> >
+> > For easier parsing the output, you may want to use a string without
+> > spaces, e.g. "busy", "active", ...
+>
+> I get the idea, but haven't found a nice word yet. "Busy" could be
+> interpreted as "lock taken". I'll think some more about it.
+
+"used", "bound", "unavailable", "occupied", "reserved", "in_use", "inuse", ...
 
 Gr{oetje,eeting}s,
 
