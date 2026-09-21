@@ -1,153 +1,133 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pz2-f20.google.com (mail-pz2-f20.google.com [74.125.228.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DED4973A5
-	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 12:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1D53BD24A
+	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 14:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1789993746; cv=none; b=cqaF2qxtNvTKqsB0FFBbDldu4xVRgm3ow4eKW4JQa4iNJcJiCaGHtPhGl2rcyDiBuAf6r/UUU7YELv/c6gUr+R/SrNg6Hz9NDwHIzZ1uDd0HhjHnoT88ry5yGcfZE95S4dxD7nWCFWEyl+13Dzg8kJQpTskQtiH30PyVseWWzw8=
+	t=1790001314; cv=none; b=VfrPFN9bHuNEYN3FbFs4m8YXRlAm4d4EgtWO5LBIO7dRbgIrJHVQG+FsvHA1XfsF/cDgOshGl89D6nPcc4lx0SZ/W1U1qM3fQ45T5gl//02QNBfxKjXkVkhnR+X70YDc/c0isjNAC1XMG3bpT90DBP5K5IY4VQh63njg2pgVP/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1789993746; c=relaxed/simple;
-	bh=OjmJ8SXu8xMfqjFBYQkETIoPpmfq9H6Ub7Xx9JvwWQc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CFqoD6tCU5oO++uZEAPvnq5VnDnZ8KpaS41O70jjn2K6iTBZH8+luL8GT3+Fn0U+jvhkYJpDccdhPC1LWIoRN67bYazd8mJGCCeQbsri8I0Xgr5Sbg630qMC/FP1qvCt1E9M2El2PBvF9iD8JXRgbEKOvSVd3G/k1t46hw7jgqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=K9GGWidx; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=XfiAlAqa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1790001314; c=relaxed/simple;
+	bh=sA4lI2lBGJ52fPSuUba4swVIpDFqTfeHw7dRAx0QfQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHQzUJn9OzAaicZ29DbpgwbvL5rBsCvby7WIfQSKpkg2yka/vG8T2PsrxzkvLNrXUG9uGnn1K7SmDel1gpfZLllJY4m4kMrvskkVYl9GstIM1dDchpTE3q/OrM7l9YELLGoUDxQ/+SIXSncJ5RxbRNTQFo2e74dh/2lbVuPWtKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xu8nStZZ; arc=none smtp.client-ip=74.125.228.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="K9GGWidx";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="XfiAlAqa"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68LB4mTw1129686
-	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 12:29:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Uc+TNfqvfLkCqO0IUPurd5yf0xD9kPfhoXSWPe2gtbA=; b=K9GGWidx9dPwSV95
-	GM4i9d34ZGYg8rtiqBH4HBPDcdi7/GJ16cDvfNJTMi5zHncH3PKLuVd+7oNFIFZh
-	p4y8Cj9gnLZCVKT/bdRRt8AW3EZtzaUPTiv+AhqEOVyyF8qPSxVCG1iXhe9hQ5N3
-	CIvoVg6oVyUtt+ZguhFMGXy/sX7oMuK1KhZ8WBwEjxkOOoseSdHserh7JdOwAXsR
-	R3lXOZgj/TgM35D+Yc4ejgi0ELzy//hncX/vKORQaZRVxduKVGv2Aw8gg8W8fyHn
-	5WXhyTRhCzJl9dtt14Z1GYOxoJne8RfJvFUwDsMA4TBJFy5Ra+CAliRA830s0fs6
-	1IKPzg==
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gu3csg9wk-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 12:29:00 +0000 (GMT)
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-5c82f9e26ebso98482e0c.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 05:29:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xu8nStZZ"
+Received: by mail-pz2-f20.google.com with SMTP id 41be03b00d2f7-cc1cebad4afso2166956a12.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 07:35:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1789993740; x=1790598540; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Uc+TNfqvfLkCqO0IUPurd5yf0xD9kPfhoXSWPe2gtbA=;
-        b=XfiAlAqajyi0ioEPDenx0FkdVcbqc3HirrZJCdj1xokpdmbLhwoYQqgmxWzB2ueRw5
-         4aqzD2Q3KKO11BEUBr6W1x1XHjtuUMO+cwB0GNqeW04LsRWgFmWrBC7PJFaylAfFpCTq
-         3ujHkQ/DnluKIv6ZcyYHEsKSuldS+ncDY+0yOIfAmPtId8yuJCRl3fa/r/bG86M9MOqa
-         jVwWjvk88izm/GqoQc4MsaZlmjrAXdZbgIDr0AAi1ZW3QleKaZRCiteqfbiInOJ5hMUo
-         Tb29dOGPAkViJPK6PV0OKYxOB5Slz2bsu/Q/1syWPKFhIDOw2ZaJpgH+2AGKl/CyUqd4
-         weFw==
+        d=linaro.org; s=google; t=1790001312; x=1790606112; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=hfZR9R0SCegSVDBBWPoNtONrcmPVVQ0j3HivTzcIiSo=;
+        b=Xu8nStZZyrvrnANFNuhltSd1tyVmcO14h+LI3z5mfEKugIkykwhxkG+5D3/YdoHfDm
+         HZhJen1JI/KSgR23nWGWDlZp7yXd0k/gHFQaOCy7SVt2QTDm0lJ6R38BkbBSzhpQTucp
+         k/sgel09DN3NGxj0wzF5kkDox+puB6gQqW2jQ3FUw5Rmxdnw5kC6EtfjWUeuv1BOh7Ax
+         7FAMzSEyck6w3OXE5a+uI13rlRCArwq0DfG2VLrEBise2wajPwvB5N6fvmg+zaNP4v90
+         L4ydRtF1wUJf5BcuH0hO+MwFNyfCKC6A3RMjcOvE+w3vh2p7tirMvzrgJ77BL8TxMN7x
+         h88Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1789993740; x=1790598540;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=Uc+TNfqvfLkCqO0IUPurd5yf0xD9kPfhoXSWPe2gtbA=;
-        b=FV9M3gojo2rDoe49iotcYbquX+svnIP+YUH7cVOjOduy1wy+Zhm3vj9N0bs5ZsEBk+
-         fxkJrUEswsBm4pefzBd22rUgP+a7CHWIho5tIaLFV1TrfI9l8Wb4rgdEc2KJczDKLbzY
-         eLYOhttvy8473S3bDWiD3E5EItPTgsaCplGFygZh82CQIZxZyFY1HO1hmbDhqTKP2OlA
-         YKf/ufEi8Fi8EKKu4eVsuTKlS3r8SrWqKMPBTm0/7g7S4z4WNHmkC3DwiHXbbY86enRI
-         npWOw0SjYjy2RyN9BJxsW+k70dQQv6Z+qdDrZqocIxDc78FH2YxD6E4j4ks60QID6g0x
-         c1Gw==
-X-Forwarded-Encrypted: i=1; AKwUvBxdvIUzayoboJ/6/v02bqiVxXixdm75b0KJQ9tja4F1FK84fTN1WwL8qjw8HxTdOvXekRuSYlC+sY2RRxpSUCVM@vger.kernel.org
-X-Gm-Message-State: AFuF++l4k9sThuSYQRcKei9xWtT+RBJxDNQf8nL9Ww7V+Puqe2dJhwfi
-	85K+/SfSS6rfba5x1HgGYVGfpVVgWlAkpGXC9ILZCBPuUgG5fIfgT4j8Ihp3BdXSl9W7PotlqcY
-	vT35aIkGSaer/CiGq+1dXRmyyh3ubZN/No6BX5M5D1hyUkYjRijubesWojcfosl0MWnXuV+FadQ
-	MpIw89
-X-Gm-Gg: AYBFou3HxQL9m0GvkYlxTKwEFyOG2vYzhe4GwvhP6G0Om5RRqxW1dN1yiHeHjlpD0Ce
-	fjNWvo7Rq0626vvrQ2Xo/MfrkxJtDZg47NZpn9NEUZ4vpFYOCwPV9o97nipdmFUdxSgMee+2Q85
-	b8PCkQvIXoetZCeOOEZqIpj2cyI0rqVJMa8d8U9XgTf3Z5Rq2P86ar4UX26r5E+iRT+/OQgcUaE
-	tvUuHFaKTeLHITMRnGTaR1AGPAiJrWM7Yif5HJTCbufpCv+KaQcwNW/DE+nZnolz5q+x0ksUUIG
-	tP3EvdoOP1EtF6rgwLiT9fswadrcA8opOr9nsMiVGsRo5fzL33231C16sEhHIUBQfvpKkJmh3el
-	3684Bo6jiecb3uB90vKsWgw==
-X-Received: by 2002:ac5:cdb2:0:b0:5c6:2128:7cf8 with SMTP id 71dfb90a1353d-5c9b8b8280amr3283575e0c.3.1789993739766;
-        Mon, 21 Sep 2026 05:28:59 -0700 (PDT)
-X-Received: by 2002:ac5:cdb2:0:b0:5c6:2128:7cf8 with SMTP id 71dfb90a1353d-5c9b8b8280amr3283541e0c.3.1789993739322;
-        Mon, 21 Sep 2026 05:28:59 -0700 (PDT)
-Received: from [192.168.202.12] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5b8cb41984asm1317676e87.81.2026.09.21.05.28.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2026 05:28:58 -0700 (PDT)
-Message-ID: <ec3e108c-72cd-4451-a0c0-0be14592e504@oss.qualcomm.com>
-Date: Mon, 21 Sep 2026 14:28:56 +0200
+        d=1e100.net; s=20260707; t=1790001312; x=1790606112;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=hfZR9R0SCegSVDBBWPoNtONrcmPVVQ0j3HivTzcIiSo=;
+        b=1gpFFljpX1feso4KyF6/OTR8eveIhqudsqsagtjbioVUFLAkfXZDFJMUqbN8FYpWA1
+         7C7/AfNEmFU0TxLceUR47h+fLuaOqxaYLJQr30NF/GJZSbHZXcURLthGjkQM5fyDNqXU
+         uI6X7ApKXjHsJwT/co9d42v8/Una49k9ewRYmEs5oZC8Q/aCe7y7qUYZISDS5Z/Abiw8
+         sy1KnP8OaQOTel2fLszv5GPcZ0TROY8XKuInUa2M4UCiZBEv/Tk2+qcmTaTVA8+Pkgu/
+         aE9wYHb4hOkA2ax9vIqxFsJYQacC0j0dv7s5IFJVS4rWIl/e6ZZIz2zp2kcgPLAQNtOs
+         yn1Q==
+X-Gm-Message-State: AFuF++mk5S2H4LqOYLfyKiMupzIpaty9aDo53m4qSvLEEhNcj6CZe53o
+	6M7mNPgTLh3BbE9fmmm/nKCQqDlm1CTpd7FIf7eHHyZtOZN2nIATEzhwgq3r/StJK9w=
+X-Gm-Gg: AYBFou1mlR5AdeFyU5aNAU1qs6n1Xjx49bz4BxODWInBeDiJlKaJvFG7VBzs39kUIxV
+	q7aLDLiMlcIOSC2t5cyCGZU1qxJuw5hN3YC82o5HmDZ+4oY0gti+yfa/tE8Pn9X3lovJkXT3z+Z
+	TlR1+n42ALBbvQd/PYe5megWMgRSArUhgdxU92TGQU1jgwMBTg6oozlbgoAf/kIfw8rT69PTHNR
+	5us8CwS8/jJuVfY9z3u6nHJb8NAggD+3RRdDhmbtgHdU9S+EVhhnH5MYxc4Vcb0+Gh6JCgjkVC8
+	Jn1UsUihMLs3fSpF2y1o9X3lfxN8vxv1idn2IsdpYrmIkOtzGCNObVROVd8+w3b3BU5V70Qrxrl
+	RdzfKobUNjxz7E3KzhHWZIULxzflrc3CgHJ8f7fcU5hfpqL7o1hYcZ2lspn5xcYP8tDxdxRvDq7
+	8kwUNE7b3710NoyIubZCHWeq3/VpIuapAnVKwm91lmmbOWcNz65NpeuX8tKJd7k+GOOKaI5/Q3/
+	g==
+X-Received: by 2002:a05:6a21:1398:b0:3bf:b182:94e with SMTP id adf61e73a8af0-3dd8c3f18d2mr16821649637.5.1790001311995;
+        Mon, 21 Sep 2026 07:35:11 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a714:d1ef:56ba:be47])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cc72a26d5casm3509727a12.0.2026.09.21.07.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 07:35:11 -0700 (PDT)
+Date: Mon, 21 Sep 2026 08:35:09 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-remoteproc@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH] remoteproc: Use %p for pointer formatting
+Message-ID: <arFAnRCt-TykCbt3@p14s>
+References: <20260918104628.jqQhAlF-@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] rpmsg: qcom_smd: reject interrupted channel waits
-To: Slavin Liu <bolin.liu@seu.edu.cn>, andersson@kernel.org,
-        mathieu.poirier@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20260911060920.94363-1-bolin.liu@seu.edu.cn>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20260911060920.94363-1-bolin.liu@seu.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTIxMDE4MCBTYWx0ZWRfX/3r6RdCWvbTK
- O9qEcuoICwhrhNZFMsw3iXJOzSOZACInNRPSwvuj2paEyendD5jSg0P5EZ5ZB+y0AmJyTWcGfbD
- B2PhS9gPA4az8Hu6sr2vfvul6EmBF04=
-X-Proofpoint-GUID: bHqQ2K_HEqXPX7OgDBSCbvDUK0Ya2q06
-X-Authority-Analysis: v=2.4 cv=QovLTlyd c=1 sm=1 tr=0 ts=6ab1230c cx=c_pps
- a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=EUspDBNiAAAA:8 a=s7OMwfEDKQn-nhOmWicA:9 a=QEXdDO2ut3YA:10
- a=tNoRWFLymzeba-QzToBc:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTIxMDE4MCBTYWx0ZWRfXwRdfRCjqNIul
- LG9LtWVtirWUwfhDyOpy9jcwdqyjViPh37hti0AIasa9vD2yEXKGTGTyIAM5QlH5+BgGlyYS4JS
- mf6Vr+WcWLMgIWG/tzU0HpENiV9u1J+aczhnocBgueCM5wV+mpfOzMlhdIzdtRK7g8xlumuti0m
- 5dky3h7v79iayib1E9tPMndMF0dOO1Z8ozixhrohDfxMpnxzrF1CsK6ni+rQYwDDkYyfuraDN/Q
- 2qx0ZJ2e7nR4DDxt1FwV5BzLcwr2Dxn2PyZiMVCzHxna/v2hB9q4m7WdZ9JJJoYHrtjAGDWknzx
- cf/gG6ouT/E8SQiJoMw6aA7X9jL9odBFZXy00koZGZzyrM+gP3VLaUsxy4NesKGAEPXS02SGoac
- JNZOXDpYFfYQcs+piM4s4brCC/b/+1Q5FEpytiXItqkUILLfwAJ2EiOeuV84VAKyxdYdzeI34Rp
- uWbPjBmt80iB7a0nvVA==
-X-Proofpoint-ORIG-GUID: bHqQ2K_HEqXPX7OgDBSCbvDUK0Ya2q06
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-21_04,2026-09-16_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- spamscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609210180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260918104628.jqQhAlF-@linutronix.de>
 
-On 9/11/26 8:09 AM, Slavin Liu wrote:
-> qcom_smd_create_ept() waits for a channel using
-> wait_event_interruptible_timeout(). If a signal interrupts the wait
-> before the named channel appears, the wait returns -ERESTARTSYS and
-> channel is still NULL. The current zero-only test treats the negative
-> return as success and then dereferences channel->state.
+On Fri, Sep 18, 2026 at 12:46:28PM +0200, Sebastian Andrzej Siewior wrote:
+> Commit 276ec9934231e ("remoteproc: replace "%p" with "%pK"") introduced
+> the %pK in order to not leak kernel pointers.
+> Since commit ad67b74d2469d ("printk: hash addresses printed with
+> %p") pointers are hashed by default and the behaviour can be controller
+> by `hash_pointers' boot argument.
+> The policy on %p is to not introduce new ones.
+> Removing %pK makes it possible to remove its handling from the library.
 > 
-> Require a positive wait result before using the channel. Return NULL for
-> interruption as for a timeout, following the endpoint creation API's
-> existing failure convention. No endpoint or channel resources have been
-> acquired at this point, and the successful wait path is unchanged.
+> I doubt printing the address of struct fw_rsc_hdr with an unknown type
+> brings any value. The va is printed already in debug output in other
+> places as %p so it makes probably no difference to remove it from
+> rproc_carveouts_show().
 > 
-> Detected by static analysis and reviewed with AI-assisted source auditing.
+> Use %p instead %pK for rproc_mem_entry::va, remove the address of the
+> unknown type.
 > 
-> Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
-> Assisted-by: LLM
-> Signed-off-by: Slavin Liu <bolin.liu@seu.edu.cn>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > ---
+>  drivers/remoteproc/remoteproc_debugfs.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Applied.
 
-Konrad
+Thanks,
+Mathieu
+ 
+> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
+> index b86c1d09c70c0..e8e7b6a3769b8 100644
+> --- a/drivers/remoteproc/remoteproc_debugfs.c
+> +++ b/drivers/remoteproc/remoteproc_debugfs.c
+> @@ -347,8 +347,8 @@ static int rproc_rsc_table_show(struct seq_file *seq, void *p)
+>  			}
+>  			break;
+>  		default:
+> -			seq_printf(seq, "Unknown resource type found: %d [hdr: %pK]\n",
+> -				   hdr->type, hdr);
+> +			seq_printf(seq, "Unknown resource type found: %d\n",
+> +				   hdr->type);
+>  			break;
+>  		}
+>  	}
+> @@ -367,7 +367,7 @@ static int rproc_carveouts_show(struct seq_file *seq, void *p)
+>  	list_for_each_entry(carveout, &rproc->carveouts, node) {
+>  		seq_puts(seq, "Carveout memory entry:\n");
+>  		seq_printf(seq, "\tName: %s\n", carveout->name);
+> -		seq_printf(seq, "\tVirtual address: %pK\n", carveout->va);
+> +		seq_printf(seq, "\tVirtual address: %p\n", carveout->va);
+>  		seq_printf(seq, "\tDMA address: %pad\n", &carveout->dma);
+>  		seq_printf(seq, "\tDevice address: 0x%x\n", carveout->da);
+>  		seq_printf(seq, "\tLength: 0x%zx Bytes\n\n", carveout->len);
+> -- 
+> 2.55.0
