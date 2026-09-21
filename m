@@ -1,276 +1,155 @@
-Received: from mail-vs2-f19.google.com (mail-vs2-f19.google.com [74.125.227.19])
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com [74.125.227.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9BC4A92DC
-	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 15:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.227.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790003715; cv=pass; b=Qo8BTvZdtX1MQtfymdQMDKFfTwlHVn0NOTI9oZaGFuoB8HNtCabM3tI2pd05DIpOHLZBgmbKzgm+oe9nwN3lN5XaOcGZZeLXftvuw1CrANFbeWdSTKZgjJiC9MpRDJPZyiWYLezRT6kUESt3+MXh4PCSluIB/rvXusedwOjWnn8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790003715; c=relaxed/simple;
-	bh=E1DA6eJVvIMFAljzS7SN9tcSVSmcyDpJjIEWFM1xV2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ml5TZhHx3+0Vgd0Q3gZ6V1X2xPSIk+u9MNLJIPAEbhhiQ5v3YEaxeusW1ele27YSo+769bSBE1MR2QBHM55EzqX/WvcPxr/5MFo54OvkXmvhwdyPZpWV7+geRACjO9nMUCR9cMMTUQX941VVy2/Ath57NCW/t01b6WGvkJuVw9g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYcejnEZ; arc=pass smtp.client-ip=74.125.227.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B234D179F
+	for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 15:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790005679; cv=none; b=sEgWtUPX6Z4jwk9/ClyyKeq9vORyWG82F9Zi2ASNBIUDM0CbPdqDPlAR3s+6kC7JKmY/CUuT7IauuR0iIN9zGSyDyZgNXSRrRymWb1z8WUaCN6kv1TUfkwhD7DhNlofuZM8uJ7NFtfj0sxP740Lq02SOnqEMwh+WCjAXmA6G6zo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790005679; c=relaxed/simple;
+	bh=xGLfA1m+bcd6cQO4yshQSi+ud4HVrdOAi+ou2Af706o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCjHpRbLUu1E+pKVHTIkTkbU1PNsC7kD+JAERP+I/tk3AB4XvSbFN1ybmAmP6fF19DmsdNTInl3EWbfjeNLdsFXq62x1NnFssoGnVQnUcCyoFABO5+qid4zZmI72e5tvdf2RhTo3ukavOOGIq3E9s2HD3iL4ZDupW444UaKyIyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ilcriJut; arc=none smtp.client-ip=74.125.227.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYcejnEZ"
-Received: by mail-vs2-f19.google.com with SMTP id 71dfb90a1353d-5c6560f7a72so105833e0c.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 08:15:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790003713; cv=none;
-        d=google.com; s=arc-20260327;
-        b=qc0gO53YjcGRMvHE4jTx4GjZEmwH2p/z11DMgG37FHOU9v9yFbrEiEw6tBv3KP4UzD
-         cilZouO7RhNMUei4ETVNaNrf88xbe71HyOoPujh6HwFpJbFpGPOVdc2/FDf+mL8j8c9o
-         d2RzL2zzhlEKxp6SU2pv3DKax2hMcD2HWSKHacqWUREdprNs3orTgCsDZdRLB0rvSwMj
-         /1Zmfa+RWgQndORtHXCOfDLUDK7UjI5kt1Xc2F7XP6fYXsnGyntxEbKULEA+Qgp2nT9O
-         Av/cYL/lwT3YXVaw1CZhlb99WjWpIde8rc9qOeKwF+h6ZMgFNK2LTFnnEFMjaSt3Fb4w
-         3AxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=z6taRN1yfrJhXingP4b7nQEv0S92qILvbAb+oYWwjHI=;
-        fh=/L0ivzf3+7flATeNpTMM/hzSRNfyT5UrCh65GSoE8Tc=;
-        b=lFN3gAQJPUygs10BAmjSWOrtyAhmZ6D6+aLX/NmZlNSg2iEgGN83y3S3if1uJSneza
-         YK/uARSICrTbdryGHKmCWyA1INn1tHI1ud1LZHqBvjDo3QMBkGbRB1pIrQGSw+EUTrCD
-         UmRwb4i0BiIUFWgVarsu9LYaUsOsfZ3TfV5vynPne/8R/5DyCpo/Y4lxsXeqEypbRJz7
-         xNyYzmhwP7BxC2g07RoOfQM1yJwf4PcksVqY6syBnBDXvQZ0DyUMmCYQakQwIEkoDESj
-         OrXTFGyRu4zOh0IknctB+xqdZMiXoz9GrZtM/jKoWaHhyJN2ADq37iAbR5HpYqj8/TIe
-         LsxA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ilcriJut"
+Received: by mail-pj2-f43.google.com with SMTP id 98e67ed59e1d1-396ccafb752so2604503a91.0
+        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 08:47:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790003713; x=1790608513; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=linaro.org; s=google; t=1790005678; x=1790610478; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=z6taRN1yfrJhXingP4b7nQEv0S92qILvbAb+oYWwjHI=;
-        b=YYcejnEZUgXmxS+DBiRdXO4VYJ3EkCmVURstwalAAXBeZyJcM53rKczeAGMIpyfnbE
-         lTZHz/YTf+kwkyuZ3lPn40CRhta35f1qzui/vUpObOnDKtNwJ2PBrHoxoavPvm2XaR17
-         pKGwpY44RO8uPDhkrOGkZ/28cPUegfJ5HQMqaKzA74G7Ze7sTRE3brsBgRgv5h8K7heq
-         Xwqiva/zVcyMZ8lDRpoYzwnr+99BS8CSZ/jDlTev+N7FVRBxaAFOTvsXzDEzRyFDkgiF
-         s7Djc5Gnd0xNDxiBkSO1MBJ0EArkcqMCU5PPeMZLL4B2P8NebjRm3o7FW9eU3eahZRvu
-         mYHw==
+        bh=NymQllFGW/d7T1ecbWk0XQBpiDM3En0PKGwwReZs9hI=;
+        b=ilcriJuteKpgJx9w4DIEzTEbyBEvAaCunudqidvu03k8m6NT+bwGHE2Bei4elDFfg0
+         Vb0+eqKHd0re1ADu81NZNHOR++DOPWnF3VNPWJIQh6ltQ8MXEDgyNo/Rf8I/KDYrFpJ9
+         X1O/6oMK34h6d5DjkPb1QZwaI7PzKn+TX5caDME7e1XhnvGy+1InDSbtz/lW7wi+GZOG
+         otPUvZwAZtKSFQ2uKUhpA3dvKGinJxk2ajAm7zI93Xg+pSxZf7HIeZkIXqQjDW8Zkucf
+         6ufxxoxRozBD80crQCLfh6iWAyAT6MajCYtEc9vwFFmDYq2jkITULatv3I3+jKtfna4b
+         qg9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790003713; x=1790608513;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1790005678; x=1790610478;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=z6taRN1yfrJhXingP4b7nQEv0S92qILvbAb+oYWwjHI=;
-        b=tBsXSW93JOlyUWaYm6yGKPxTUwKTpAMc2AA/50QwGMdfe5WH/nMe9+thm20RYWNzEg
-         dxchm5n9r9BpKD4p6Ed/x7oxjdl8K009/vs69CHv2MG7fOfd2LMhLVxiAxlYGHBlZ8/t
-         yF5jfovr5x5IYdbGEmjaajn+/z8XiEI0aMdS9j+Vjz0faFxC5K5u0NIg55KrsOk6mPAL
-         mixdECY/Izl01O2x4DmcbPUMHb5LsEbQwR+Ikrj1LjHTmc+y6qyGeGTGwpya51G0EB2e
-         gN/ZkB6MnqNg7Bg+WRsbrTea8jOuS6Orz2UYUDp2ZWMRLtHOJhjFmbv/zSqpvMsK/Edn
-         WFEA==
-X-Forwarded-Encrypted: i=1; AKwUvBwn48/eDXFwY4/qphw5J26nzD9sh7qNYTAtf/VEcgkN0ehKp//AubD22KZTiQzEIWYSvnAcJu9JfSMUkjx7RTr1@vger.kernel.org
-X-Gm-Message-State: AFuF++mlNxHBB54SBrWL9pQ9g0XufnAkqEUHFVvP8o+dYlwW6IQn+2eE
-	bQtOK8mBBCrCt+dJ/mxZhpanhCHX6KDd8VojKHFmOoInIyTY0CBSBY5tsIfEhR5z/uAHWPLiCdD
-	8ZdOB17E7A6PFNpBJ3HdY6Y425lBfFkI=
-X-Gm-Gg: AYBFou37rQtmAFuTtX216pyk0PvdiJC5YEm8tEf5jndDbYsaLxIOY4sjy2dbie2gNK7
-	q6J3cZRzIJGC3IVvwIHHJo3lP3ItIyMxT4nX9xUpA6IN7cyngnhcOKO/hpTQ2GGDNWtHpY2/v4w
-	w08FsdUlxOAoNt9sMxbdrkVbzvo4pAELjo0KKJ5zduTLUDszC6GFCaoD4ora7ZXY8Wc/G62Ll/F
-	ntiZOxEwLTw10mmPRLB6MT+kPl1+f4Noic+yD2eKYbBO+PdSjV08mT+J2SJKMQkL2U4KgV0gn/e
-	fEevpve20fx4efD3a7ovYBtpTMPBwseajFbLx2mPJwZDtYRiZ1DONny/dw==
-X-Received: by 2002:ac5:c802:0:b0:5c9:937a:4670 with SMTP id
- 71dfb90a1353d-5c9b89cddc0mr4130358e0c.1.1790003712920; Mon, 21 Sep 2026
- 08:15:12 -0700 (PDT)
+        bh=NymQllFGW/d7T1ecbWk0XQBpiDM3En0PKGwwReZs9hI=;
+        b=TVzvTpE1rjGoARA7ndrvcJ+eBUW/oC0AbuX7Yi/AQMYDaa3pjYR2EbkZLCDvwSQRIE
+         qq0IVsnrK37dAJBM6n0T0H8x0oW8+uTsv58KWqR3/w+U8oHFhT/4IVZv0boRtv9CeiEB
+         AIhm3DvW4dYxUSnBHzu14clEZ/7oIoKKEKs9+cQduwzSCyXElbHXFvP2y6kJ9a5usXHm
+         kQc3+OmQheBcepeDj1t9KdJZdcMM0Dnn9aPNJMdPZeKo3MV2Je3iBIdHM7Khil0ynhNB
+         O6PH6bK0FqhcmPqLvN5QOjYet/vTkemgBJp0poG6zEH4vxKytC5xIP6jpGO3LeAmYgC/
+         kxzA==
+X-Forwarded-Encrypted: i=1; AKwUvBw3U5lb4RezrdNBxHxByNjrDBb0iAPV2sSvlj25fAetdFugOXZHl7yEIuMF+Fb6Cp7+PZT9w6IHaJZ6nVAzMHTP@vger.kernel.org
+X-Gm-Message-State: AFuF++koCednUhl1FsUgl0LGKyH1rymswH8RLtICQGhHJLl0hpcj4REr
+	VHVaJI4u/WOShKu0ds+WF4doWn7/0AtKshRS8RUlkjhbSmwj/RqD/Z+ZzGEdeA/gosg=
+X-Gm-Gg: AYBFou3/KwdfLoDvdGkWo/rFIfhNNYHhb9AR6AwmiSZlfcHOr8xJpNX7YH1ZPZt2Klb
+	nDGDK3oShaKRrAEZq1IHCkFcIYUVNyGRe/G5Xx3NEXchHXT80voraoTqp+KtA7lYQO8kQC2TGJP
+	PNknvA4ByBxKk4+zgKQm9kNDSZ3hNsGR00+urjjW8ruXQQE8eMB17c3fpq0b3pJA1NMtzfG6ok8
+	lDvq3CkBFMYpUqVPxQLWcOQ1jbnujFV6ocba69DE8O4moTzDnMQOpUSKWCfOzaaJYlihfowfxnD
+	jNBds/QE56aZT2RSRdQcIUZYsFDvpKp8dvmKfvdHNQh2Pvfyw1g6MHkEGasAok3h+jUrfm74avN
+	yuywoof3yPeuuiYIIgL+3D7TliE5Xengd6L3NDnSHC8Rfbsarie5SG51jeUcGrEylOMrv0mTdNV
+	ZDpdbxDsQLh6QMe656zwZuYDR+mSeqowzV8TXyBn/2kDfYstSU58g6dfTUBLmEcMAYWv17Mq16i
+	Q==
+X-Received: by 2002:a17:90b:2750:b0:39e:6c69:776f with SMTP id 98e67ed59e1d1-39e6c697934mr11058030a91.24.1790005677565;
+        Mon, 21 Sep 2026 08:47:57 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a714:d1ef:56ba:be47])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-39e55c9cabdsm7471419a91.0.2026.09.21.08.47.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Sep 2026 08:47:57 -0700 (PDT)
+Date: Mon, 21 Sep 2026 09:47:54 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, virtualization@lists.linux.dev,
+	imx@lists.linux.dev, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC 05/12] remoteproc: always report VIRTIO_F_VERSION_1
+ feature
+Message-ID: <arFRqopkkJf7Nlq4@p14s>
+References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <20260916-remoteproc_virtio_map-v1-5-dac8c5eb4aa9@valla.it>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260804181951.5206-1-saileshnandanavanam@gmail.com>
-In-Reply-To: <20260804181951.5206-1-saileshnandanavanam@gmail.com>
-From: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-Date: Mon, 21 Sep 2026 20:45:01 +0530
-X-Gm-Features: AcwNN1UK3NxgU8L7a7p0OqKo7KlHJ1rZX_wdea6dW2DleRXUVx778GaLAT1KLDM
-Message-ID: <CAF+TLO1woWAd2WFKBV5T67OsmnV-7JbzAPyotRUz8azyn4+8Rg@mail.gmail.com>
-Subject: Re: [PATCH v4] remoteproc: qcom_q6v5_pas: Fix dtb firmware lifecycle
- and leak
-To: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	mukesh.ojha@oss.qualcomm.com
-Cc: neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260916-remoteproc_virtio_map-v1-5-dac8c5eb4aa9@valla.it>
 
-Hi Mukesh, Bjorn, Mathieu,
-
-Gentle ping on this v4. It moves the DTB firmware request/release
-into qcom_pas_start() as Mukesh suggested on v1, so the reference is
-released on every failure path after the request, including a failure
-in qcom_q6v5_prepare(), and on the success path.
-
-It still applies cleanly on next-20260918 and builds for arm64.
-Mukesh, could you take another look and let me know if this now
-matches what you had in mind?
-
-Thanks,
-Sailesh
-
-
-On Tue, Aug 4, 2026 at 11:50=E2=80=AFPM Sailesh Nandanavanam
-<saileshnandanavanam@gmail.com> wrote:
->
-> DTB co-firmware was previously requested and loaded in
-> qcom_pas_load(), but its lifetime did not match the actual
-> start/stop lifecycle of the remoteproc. As a result, the firmware
-> reference could be retained across restart cycles, leading to a
-> leak for each successful boot.
->
-> Additionally, if qcom_pas_start() failed after loading the DTB
-> firmware, the remoteproc core would not invoke .stop(), leaving
-> no opportunity to release the associated firmware reference.
->
-> Fix this by moving DTB firmware request and loading into
-> qcom_pas_start(), so that its lifetime is strictly tied to the
-> remoteproc start sequence.
->
-> Update qcom_pas_start() to ensure proper cleanup on all paths:
-> - release PAS metadata on failure
-> - release DTB firmware on both success and failure paths
-> - unmap DTB carveout where applicable
->
-> Remove DTB firmware handling from qcom_pas_load(), as it does not
-> match the correct ownership and lifecycle model.
->
-> With this change, request_firmware() and release_firmware() are
-> properly paired within the start path, avoiding leaks and ensuring
-> consistent behavior across restart and failure scenarios.
->
-> Fixes: 29814986b82e ("remoteproc: qcom_q6v5_pas: add support for dtb co-f=
-irmware loading")
-> Signed-off-by: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
+On Wed, Sep 16, 2026 at 11:10:50PM +0200, Francesco Valla wrote:
+> There is currently no way to report the VIRTIO_F_VERSION_1 using the
+> resource table alone, as the per-vdev feature array is limited to 32
+> bits.
+> 
+> Considering that the VirtIO 1.0 specification is now ~10 years old,
+> always report the VIRTIO_F_VERSION_1 feature, as some drivers depend on
+> it.
+> 
+> Signed-off-by: Francesco Valla <francesco@valla.it>
 > ---
-> v4:
-> - Rebase onto linux-next
-> - Remove unused int ret from qcom_pas_load()
->
-> v3:
-> - Remove the unused release_dtb_firmware label
-> - Release DTB firmware under the existing dtb_pas_id check
->
-> v2:
-> - Move DTB firmware request/load from qcom_pas_load() to qcom_pas_start()
-> - Fix firmware reference leak across restart cycles
-> - Handle start() failure paths where .stop() is not invoked
-> - Ensure firmware is released on all success and failure paths
-> - Remove DTB handling from load() and drop release from stop()
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 47 +++++++++++++++++-------------
->  1 file changed, 26 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom=
-_q6v5_pas.c
-> index ca8e61254c44..864446a484f1 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -231,7 +231,6 @@ static int qcom_pas_unprepare(struct rproc *rproc)
->  static int qcom_pas_load(struct rproc *rproc, const struct firmware *fw)
->  {
->         struct qcom_pas *pas =3D rproc->priv;
-> -       int ret;
->
->         /* Store firmware handle to be used in qcom_pas_start() */
->         pas->firmware =3D fw;
-> @@ -241,23 +240,6 @@ static int qcom_pas_load(struct rproc *rproc, const =
-struct firmware *fw)
->         if (pas->lite_dtb_pas_id)
->                 qcom_pas_shutdown(pas->lite_dtb_pas_id);
->
-> -       if (pas->dtb_pas_id) {
-> -               ret =3D request_firmware(&pas->dtb_firmware, pas->dtb_fir=
-mware_name, pas->dev);
-> -               if (ret) {
-> -                       dev_err(pas->dev, "request_firmware failed for %s=
-: %d\n",
-> -                               pas->dtb_firmware_name, ret);
-> -                       return ret;
-> -               }
-> -
-> -               ret =3D qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firm=
-ware,
-> -                                       pas->dtb_firmware_name, &pas->dtb=
-_mem_reloc);
-> -               if (ret) {
-> -                       qcom_pas_metadata_release(pas->dtb_pas_ctx);
-> -                       release_firmware(pas->dtb_firmware);
-> -                       return ret;
-> -               }
-> -       }
-> -
->         return 0;
+>  drivers/remoteproc/remoteproc_virtio.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index 74e0da970f1d..cfd66d9d1c9e 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -249,7 +249,7 @@ static u64 rproc_virtio_get_features(struct virtio_device *vdev)
+>  
+>  	rsc = (void *)rvdev->rproc->table_ptr + rvdev->rsc_offset;
+>  
+> -	return rsc->dfeatures;
+> +	return rsc->dfeatures | (1ULL << VIRTIO_F_VERSION_1);
+
+I understand this.
+
 >  }
->
-> @@ -282,9 +264,23 @@ static int qcom_pas_start(struct rproc *rproc)
->         struct qcom_pas *pas =3D rproc->priv;
->         int ret;
->
-> +       if (pas->dtb_pas_id) {
-> +               ret =3D request_firmware(&pas->dtb_firmware, pas->dtb_fir=
-mware_name, pas->dev);
-> +               if (ret) {
-> +                       dev_err(pas->dev, "request_firmware failed for %s=
-: %d\n",
-> +                               pas->dtb_firmware_name, ret);
-> +                       return ret;
-> +               }
-> +
-> +               ret =3D qcom_mdt_pas_load(pas->dtb_pas_ctx, pas->dtb_firm=
-ware,
-> +                               pas->dtb_firmware_name, &pas->dtb_mem_rel=
-oc);
-> +               if (ret)
-> +                       goto release_dtb_metadata;
-> +       }
-> +
->         ret =3D qcom_q6v5_prepare(&pas->q6v5);
->         if (ret)
-> -               return ret;
-> +               goto release_dtb_metadata;
->
->         ret =3D qcom_pas_pds_enable(pas, pas->proxy_pds, pas->proxy_pd_co=
-unt);
->         if (ret < 0)
-> @@ -352,6 +348,11 @@ static int qcom_pas_start(struct rproc *rproc)
->         if (pas->dtb_pas_id)
->                 qcom_pas_metadata_release(pas->dtb_pas_ctx);
->
-> +       if (pas->dtb_pas_id) {
-> +               release_firmware(pas->dtb_firmware);
-> +               pas->dtb_firmware =3D NULL;
-> +       }
-> +
->         /* firmware is used to pass reference from qcom_pas_start(), drop=
- it now */
->         pas->firmware =3D NULL;
->
-> @@ -361,8 +362,6 @@ static int qcom_pas_start(struct rproc *rproc)
->         qcom_pas_unmap_carveout(rproc, pas->mem_phys, pas->mem_size);
->  release_pas_metadata:
->         qcom_pas_metadata_release(pas->pas_ctx);
-> -       if (pas->dtb_pas_id)
-> -               qcom_pas_metadata_release(pas->dtb_pas_ctx);
->
->  unmap_dtb_carveout:
->         if (pas->dtb_pas_id)
-> @@ -381,6 +380,12 @@ static int qcom_pas_start(struct rproc *rproc)
->         qcom_pas_pds_disable(pas, pas->proxy_pds, pas->proxy_pd_count);
->  disable_irqs:
->         qcom_q6v5_unprepare(&pas->q6v5);
-> +release_dtb_metadata:
-> +       if (pas->dtb_pas_id) {
-> +               qcom_pas_metadata_release(pas->dtb_pas_ctx);
-> +               release_firmware(pas->dtb_firmware);
-> +               pas->dtb_firmware =3D NULL;
-> +       }
->
->         /* firmware is used to pass reference from qcom_pas_start(), drop=
- it now */
->         pas->firmware =3D NULL;
-> --
-> 2.34.1
->
+>  
+>  static void rproc_transport_features(struct virtio_device *vdev)
+> @@ -275,14 +275,16 @@ static int rproc_virtio_finalize_features(struct virtio_device *vdev)
+>  	/* Give virtio_rproc a chance to accept features. */
+>  	rproc_transport_features(vdev);
+>  
+> -	/* Make sure we don't have any features > 32 bits! */
+> -	BUG_ON((u32)vdev->features != vdev->features);
+> +	/* Make sure we don't have any features > 32 bits except VIRTIO_F_VERSION_1 */
+> +	if (WARN_ON_ONCE((u32)vdev->features !=
+> +			 (vdev->features & ~(1ULL << VIRTIO_F_VERSION_1))))
+> +		return -1;
+
+And this.
+
+>  
+>  	/*
+>  	 * Remember the finalized features of our vdev, and provide it
+>  	 * to the remote processor once it is powered on.
+>  	 */
+> -	rsc->gfeatures = vdev->features;
+> +	rsc->gfeatures = vdev->features & ~(1ULL << VIRTIO_F_VERSION_1);
+>  
+
+But I'm having trouble with this one.  
+
+First bit 32 of vdev->features gets cleared and then bit 0 to 31 are assigned to
+rsc->gfeatures.  Why bother with clearing bit 32?
+
+>  	return 0;
+>  }
+> 
+> -- 
+> 2.55.0
+> 
