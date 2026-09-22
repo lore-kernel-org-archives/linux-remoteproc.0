@@ -1,163 +1,138 @@
-Received: from mail-yx2-f42.google.com (mail-yx2-f42.google.com [74.125.224.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC9E3C9898
-	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 03:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790048863; cv=none; b=BUbm2NAZessHqxIA0PfFqqOtxn8yEyvX39VTSdOrpBRO1CYKATD6EZ1sDd4dz/8S1guuCfbOk57IUJK40YgFKg/wYukaxPHtVMYNhr0U7+cP70ARKD2xlb6jrcNPvhQu6Q+jl80AYT0IXEfLcQuo+ibyCy/7y0Vx//ckagzfyvw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790048863; c=relaxed/simple;
-	bh=vs0p7aKfRjm32/JARKxXOJKs9GaInGuJp6lBcXmuJBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o+7ov2MbmYmV4ZfHxxw9S50N953SfTIEOp2MtsVdY9eNcV/4oQuYL76o1TJ4NWKP9vpL3mrr0GXCU5SyHeLbiHogSF49GN2Qm7iPcQY2+Gs2CKzV5o+e811NM+/9g6PJOZ3jtwIMfVdFNVhjVsEvWtKmWGUkTkCATZvPWR8hoiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=qVUVX5ft; arc=none smtp.client-ip=74.125.224.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07684A1DE0;
+	Tue, 22 Sep 2026 06:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790058582; cv=pass; b=OYWEF3q26OsOKy8ZfPlGC0fBm7KbBfgJIJdyceNvLKESmCFUSAZQPqAFj2AkbY7PmCZb3IrOfDqUNzWgciRlNM1HqLxBp8czhNa/A11EUvBSfOhnboj32M1JUf103P6toEuXtMxibldlvtim4w9/QyFLnF8H6SXF3c4pcBsJi5M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790058582; c=relaxed/simple;
+	bh=0Y/NG4nMOalFGTSNp/BfF0N3WtHCZpwOLy9J6i30EqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQGaJ739ynzutSEAvZQ4rSOgqNwJIVtGx+OW9LW98M/P3jCdRmJh9LQ2dPXEZtRDD0G8Za8zAyUZE2o1zMuvHvEmkNhlGiYAwdrdoLLSA6SgZiZ9iVR4TEcS9GACqnacA0F3I71lczXrQQ2r5EXbfiJhpk0PH8ta9UCWv43JSF4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=naj3cZUl; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=T5UqOveD; arc=pass smtp.client-ip=185.56.87.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qVUVX5ft"
-Received: by mail-yx2-f42.google.com with SMTP id 00721157ae682-895fd505832so27761597b3.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 21 Sep 2026 20:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790048861; x=1790653661; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=4/zsDmJePgaslWzMD95723Em6EJMVLj62D0M57SSna4=;
-        b=qVUVX5ftJF5fLwjFoK8H2BnPZh1XrTMfdJbkP7eptBkB6j0sjxxVjtZqAI3VG3nJxe
-         Cnv2UvCVqaUC3NFw+aLiYrQciOLwrcYCR+MX/DKAZcF5SelXUeVzEes77wbbaIROLqje
-         /YKb8leEVc96mruQmgKrfZeipo0sx/lO1FYoRiWJEqPJWzzfHD6WkZafRdjLQgCbsKDS
-         5z/wyQOIn8F1GedCzQTvkLgKGpksXR5nORvgwWYX/nQEOL/PokZ+EHB/sAorALEFEL7+
-         DBPbnqbLq5V6Jma0iVtux+NTrZim5QLMruXPp1sGxjuME4TMu7GUhx9h4cPbRCejo7ED
-         vzzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790048861; x=1790653661;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=4/zsDmJePgaslWzMD95723Em6EJMVLj62D0M57SSna4=;
-        b=mimqGQNtuUHhzoYnVX63sL8lQVPSabe9pillz7VuTWBey9Fy5WOqWpxzI9GfTSnB9/
-         +aiIGnPDb7Cgx2cAx2ZCRYQ6SlXtlWpyEbGFxrU7gstwSb/guYVJnJtQS5EchicBQwuL
-         zyWrFomXea4WwsG0I4wKsyPyN4eCEh/4GBt8zJb0J/sCsX8CYzVvEIHv+DQG8t1szy05
-         znB9qszq7yLniMbQc5qsE4hBmPjX43HjmFm8g43BZw3if3iEn3vgv0yAWP+4hAotyfkN
-         oTAMZkew1NKeM7p1WuVzjQSb+Dykj4QA0PPPBkZRRn7cJTXtxHlw6KpNztrgdXBZbDo8
-         K+0A==
-X-Forwarded-Encrypted: i=1; AKwUvBwqUIe+0hlMO5P3LZv33/TwbH7+ebXs6iMJ+Nx+GxP6InnTCgvQsRUjSM8QKfGXC2fhIqyhd70j7XiQatit8bF+@vger.kernel.org
-X-Gm-Message-State: AFuF++k1/HDlW6IGQpm6epaPdDgtlTB+ItxzRzJkIL3n8KYj/BmH/Yms
-	SfsO461YapRVckpndfolAFpuVUMTmEzxxOT3yklertfBzfKXpci3+wUO
-X-Gm-Gg: AYBFou3eumiYBkxnn/HoWd/fVg+dyHsNMhxLyjEDRX3PZpoa6Vp6qcOt4PYV61KbOiw
-	ukeIK/e3SrQvtYdlwGpqQefB3TAm6SrLcsTHtZBMlveO0JHQTovIUKg+WqXs0Mo+AhJg/s05phH
-	rabsI7J2XOb+RKJ3pNXtXURO4xfW9fGd/9P3HZOXQS7DE52fWDQkuEXN7jUm+93oEpKpTj0vCNL
-	18tj+Ans53LjfgKLMUGiP5mm/vDJkTdXNP0/2jPkAb6kz6NQRdaQMTG2tyvawlVZ041p9rhco/s
-	oWYXmjZtcq3cWjpWJW7ENWV8MsBFyTiZ5edsKJ+25WdEhAh4bfAtEom1ZMoV6CQpEzLS4CMvaOL
-	cqDRy2DyBMnVUlnXdFRdJWcNBLYJqUJZk/VVdjx8+x8kY8buT1FTC3CbLx0+PjcW6I7NNX10Gb8
-	QhyuJhjnk99Y5gDd5CmJnM9WgCIQeEREzM4qEWI9sCzFDoW5Mhs0XAZJ3SB4VEXPU9jQ==
-X-Received: by 2002:a05:690c:e3cf:b0:88a:4770:c2e9 with SMTP id 00721157ae682-897308f88c2mr50874537b3.14.1790048861342;
-        Mon, 21 Sep 2026 20:47:41 -0700 (PDT)
-Received: from hp ([71.12.40.102])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-8a2bd79e82bsm1822337b3.5.2026.09.21.20.47.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2026 20:47:41 -0700 (PDT)
-From: Tim Michals <tcmichals@gmail.com>
-To: linux-sunxi@lists.linux.dev
-Cc: wens@kernel.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	Tim Michals <tcmichals@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="naj3cZUl";
+	dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b="T5UqOveD"
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-xhtg.prod.antispam.mailspamprotection.com; s=arckey; t=1790058580;
+	 b=FUWFoMrJvY5fEbNmPPdbXJv20IjNhXSRNUxH07KjiZae918M69LEcg/yjevNQ1CEM0dS0eJhz0
+	  WeCYc5PWthhbOXQMMBVdgBQlpEjdlrKAMuKlxi+vPLXpGUSs+mccd2eRgoaYVAmWNPMS/ly+WL
+	  HFUMSLb20Dzpp7ypW1L0S83ZQDJz4GmQrzAVA6XfphYpbnKH6Gat5dtRh1cy82v6ytLoi3B4Cl
+	  n7PAniL4PfzroKSVFRJN1siCpfuPuJRJCyEiWnw/twhCFHrowJa87SmpCi5rs+zUoQ57FZUNcj
+	  +yV5u6wyr8z8J7M9BA12SevEOTBfUs3juqE7/B5nbWfn/Q==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-xhtg.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-xhtg.prod.antispam.mailspamprotection.com; s=arckey; t=1790058580;
+	bh=0Y/NG4nMOalFGTSNp/BfF0N3WtHCZpwOLy9J6i30EqE=;
+	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
+	  From:Date:DKIM-Signature:DKIM-Signature;
+	b=jG49TKOOdrxlV6K7DMO3jxQd0+BwKiG/QhnxKL2D0F4dz7WaKfAL5JLvpzLi84tn2LBVHuHr74
+	  dBoPrnFJg64zlRjUqFTAeRMplkgqz0FhO/o4MFbMxDydttdz0xn5ohHeC56vd3q2p4jxCLuMaP
+	  eo8iu4e/fT13bsc6gIEp3uXU1yJkX3Gop+bvYiVodcyFEyi+zE1e2j/8oQCWEtAV9N5PsSn+TY
+	  NoMKLWzuMB4MFdn8NZ5kOlBvsB0Tj4881hY5KcSCH7u6wSJZGNLJ/6BNhX1ZlgMF7PSDK/QmC5
+	  qAQNLlbqrV86fBP/arPZeScOeJqRRx4UFrkVcP9UtVEeVg==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	List-Unsubscribe:Content-Transfer-Encoding;
+	bh=5TziHwaXDLNZErCA1Nv3YhRq2q9+6p4PN2Do0dxKr38=; b=naj3cZUl1uE5wOWIl4cQ31FhHw
+	K+Druf/im+iqpqdcWzNlCj+QBJORk+fkvMk9ZtztZJ1HeJ9oJTsY8tfN79Y6By5l1RizBgOCtq2KN
+	lRHzSEIE06sJXROQAqLqgRloq578qIxnvKya8it8Lyj3LkRZYek8Uwc9WWeVSw9xAEec=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-xhtg.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.5)
+	(envelope-from <francesco@valla.it>)
+	id 1x8u07-0000000H2up-22fH;
+	Tue, 22 Sep 2026 06:29:32 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=5TziHwaXDLNZErCA1Nv3YhRq2q9+6p4PN2Do0dxKr38=; b=T5UqOveDeSk52U3za0f9ytME7m
+	zSVTX1ALLKtdubMCZNXtEZz3wf/27Dn9KwpzimGgCV3BJ9XriUrJYEKbSc+CYOb6rZxWE4+/+xnTL
+	Vlfj3qwDvFZqXE45GDc0jKkhkeLenT+u4HxOrUuAXVusycaW9qvA1txxbpcC7QJPHlAM=;
+Received: from [79.43.46.244] (port=63244 helo=bywater)
+	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.99.5)
+	(envelope-from <francesco@valla.it>)
+	id 1x8tzG-00000000GBl-2f8i;
+	Tue, 22 Sep 2026 06:28:18 +0000
+Date: Tue, 22 Sep 2026 08:28:16 +0200
+From: Francesco Valla <francesco@valla.it>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	virtualization@lists.linux.dev, imx@lists.linux.dev, iommu@lists.linux.dev, 
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 7/7] arm64: dts: allwinner: add a523 msgbox and remoteproc nodes
-Date: Mon, 21 Sep 2026 22:47:11 -0500
-Message-ID: <20260922034711.190253-8-tcmichals@gmail.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260922034711.190253-1-tcmichals@gmail.com>
-References: <20260922034711.190253-1-tcmichals@gmail.com>
+Subject: Re: [PATCH RFC 00/12] remoteproc: add support for any virtio device
+Message-ID: <arIfj-1Ji6HEBHLJ@bywater>
+References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <aq1sooGCYUiWbhMH@p14s>
+ <aq453yukMHiNb1jp@bywater>
+ <CANLsYkySF+eF-FURnnT6UJv7P5Sg2HdfMSBZnZy_BLyCMvuofw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANLsYkySF+eF-FURnnT6UJv7P5Sg2HdfMSBZnZy_BLyCMvuofw@mail.gmail.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 3de4e25c723823d00761b3d2871eb9a2
+X-AntiAbuse: ID - 3de4e25c723823d00761b3d2871eb9a2
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1x8u07-0000000H2up-22fH-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-xhtg.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-Add the hardware mailbox (CPUX_MSGBOX) node and the XuanTie RISC-V
-remoteproc node for Allwinner A523/A527 SoCs. Connect the remoteproc
-node to the MCU CCU clocks (bus, core) and resets (cfg, core) to
-support remote processor lifecycle management and RPMsg IPC.
+On Sun, Sep 20, 2026 at 09:31:11PM -0600, Mathieu Poirier wrote:
+> On Sat, 19 Sept 2026 at 01:33, Francesco Valla <francesco@valla.it> wrote:
+> >
+> > Hi Mathieu,
+> >
+> > On Fri, Sep 18, 2026 at 10:53:54AM -0600, Mathieu Poirier wrote:
+> > > Hi Francesco,
+> > >
+> > > I have started reviewing this set but given the size and implications, it will
+> > > take me a few days to get through.
+> >
+> > I'm going through the review done by sashiko - would you prefer me
+> > sending a v2 with the trivial errors already ironed out before doing
+> > a complete review?
+> >
+> 
+> We can wait if the errors are trivial.
+> 
 
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Samuel Holland <samuel@sholland.org>
-Cc: Andre Przywara <andre.przywara@arm.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-sunxi@lists.linux.dev
-Signed-off-by: Tim Michals <tcmichals@gmail.com>
----
- .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 39 +++++++++++++++++++
- 1 file changed, 39 insertions(+)
+Not all of them are. I have been a bit to naive about the bounce buffer
+management w.r.t. what can happen if a memory area is not specified and
+I will need to rethink/rework that part.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-index 85ef492ffeae..7c5c39c56858 100644
---- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-@@ -1144,5 +1144,44 @@ npu: npu@7122000 {
- 			resets = <&mcu_ccu RST_BUS_MCU_NPU>;
- 			power-domains = <&ppu PD_NPU>;
- 		};
-+
-+		msgbox: mailbox@3003000 {
-+			compatible = "allwinner,sun55i-a523-msgbox";
-+			reg = <0x03003000 0x1000>,
-+			      <0x07094000 0x1000>,
-+			      <0x07120000 0x1000>,
-+			      <0x07136000 0x1000>;
-+			reg-names = "arm", "dsp", "cpus", "rv";
-+			clocks = <&ccu CLK_BUS_MSGBOX>;
-+			resets = <&ccu RST_BUS_MSGBOX>;
-+			interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			#mbox-cells = <1>;
-+		};
-+
-+		rproc: remoteproc@7130000 {
-+			compatible = "allwinner,sun55i-a523-rproc",
-+				     "allwinner,sun55i-a527-rproc";
-+			reg = <0x07130000 0x1000>,
-+			      <0x07280000 0x40000>,
-+			      <0x072c0000 0x40000>,
-+			      <0x07010364 0x4>;
-+			reg-names = "cfg", "r_sram", "r_sram1", "remap";
-+			clocks = <&mcu_ccu CLK_BUS_MCU_RISCV_CFG>,
-+				 <&mcu_ccu CLK_MCU_RISCV>,
-+				 <&mcu_ccu CLK_BUS_MCU_PUBSRAM>,
-+				 <&mcu_ccu CLK_BUS_MCU_RISCV_MSGBOX>;
-+			clock-names = "bus", "core", "sram", "msgbox";
-+			resets = <&mcu_ccu RST_BUS_MCU_RISCV_CFG>,
-+				 <&mcu_ccu RST_BUS_MCU_RISCV_CORE>,
-+				 <&mcu_ccu RST_BUS_MCU_PUBSRAM>,
-+				 <&mcu_ccu RST_BUS_MCU_RISCV_MSGBOX>;
-+			reset-names = "cfg", "core", "sram", "msgbox";
-+			mboxes = <&msgbox 8>, <&msgbox 9>;
-+			mbox-names = "rx", "tx";
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.53.0
+Regrads,
+Francesco
 
