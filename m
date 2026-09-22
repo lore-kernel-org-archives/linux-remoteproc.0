@@ -1,90 +1,70 @@
-Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com [74.125.228.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCE1535FD8
-	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 10:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186FB2EEE90;
+	Tue, 22 Sep 2026 11:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790074615; cv=none; b=QskZcRu9Qj7W1rdIW9xF7Lhwi0j1iTWA+6RLh/JSs5JGsE29fzJWTxxg+kCGulyCrrklfJdLZRR9KUb/8e1ISkhj3GPJn0l+7kCkoxz2qSIASSniqiyvQj+73xOpdyoBcXVCUw6X8VjmbQ4KWcCw3dF+4dqvnGjb8sAc0gb26Y0=
+	t=1790077507; cv=none; b=cmUuhVOd606KvbQygXJJCmx1/W/V34N0DCX9k9T51HxNSTPm450LLT1zUrTll7FP2zjUEJFRYHiBxDrMF/PNNZCRWZAgl8jBQKCito5hCKRED/bSyBqlmRgvKLg2bBMNqsO+4s3gK7Auc8tIxnXPI9kIcfmtfFx5qYgBqQJzg7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790074615; c=relaxed/simple;
-	bh=dPFDKwpLdYY6Xz8/aXlHfyZiX/t8VPMj0bgY4zGFzSQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Duuz3bgS4p9yHfuotWqGQlTZ8qYm7CABjBbDVWHSjC4N1xV98hi07TAB7GrujPd2VGodp6uxSz/PWTYsjfpv8rBIou/b2IPgjrKZsxYRiuEpLAAfosDzb3CUmiw8EcYXMV6TlufhGODTw1zabO/mpspYeH9AOdT/J6A8/6soJd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc5zusmJ; arc=none smtp.client-ip=74.125.228.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790077507; c=relaxed/simple;
+	bh=V3w3+8xXZ1Zb5lNKOebjguliwDwnSOWbcB2XO4qW0eI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YVpZIiNhwB8p/p7ei5443uZTRzQGK9Dp0JNACFSE7TKyfMZxVkhvI/y9LowvRpsiKTRZzQLEq6s6lbg1OLVlA0M2Z92RLznfzcF9BLIec2l+lLkjqRkVHmYYjbOM2eTXtUoo69B/UobLZWdAEl6A0TrLuW85thRFklKtZRvJ9iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MMdVKQMK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc5zusmJ"
-Received: by mail-pz2-f43.google.com with SMTP id d2e1a72fcca58-8631d0023daso2939234b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 03:56:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790074604; x=1790679404; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=dPFDKwpLdYY6Xz8/aXlHfyZiX/t8VPMj0bgY4zGFzSQ=;
-        b=Xc5zusmJ1eWaGLIjBC2u9R9gwo0INyOkC3WgJhsX25ETi0brFfnUbVvClI5XbqTJ1X
-         sZ8RtTrcdiENGehZOawo6b3Do8CPG7cJUTEsrlyNYEpurdXXVjg/6nSi/SVc2rpj+2uo
-         rKmVp1JaYLzmCg021O7GkcoOFHKjKsWgNRm2LEW0uVdgQWWv49Ov3R/Y3vIO+yGZE+to
-         Si3c+OMlWJ99apZqQFOq/JZP1Uoa5ffJUj7uPUSCWImiAgiZvQdUrF/mz/DEcslod/cY
-         QeEYS8JQNBs21uY9NRqS46YyZf+YAQSTCxZH4BIClIgcOHMtOplIW1T2OmY+iFVvO10v
-         aSmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790074604; x=1790679404;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=dPFDKwpLdYY6Xz8/aXlHfyZiX/t8VPMj0bgY4zGFzSQ=;
-        b=JJGiomIII7vHcD7IYvm1cJ8Xv6PEvA5kco32gxFGvgIAF/M2iqDxw150V7pTN39RYD
-         Jx+MGCUfquu3EEELkB7xJQy9vfMYPF6k28DNg3qj2Yr1/cjmN/ObAWLGW21KCYma3t6+
-         MTaPWb++jHYY+XIptYg70pKuNs2Y11NhZ8y6p7LXspOCr0sMYFv99pDyXa7kRDJhkRxV
-         gMksHEKZUhmg830B4G9eInJntUaig3XGLWgU2K3lkMjZoObDifkDgMKTUyPjq+5E5VcF
-         P6NDkjA8o/ebQbMaJbXQpAj23fttsBLAyDkBHx7OPi8XTC7ZwwfzoSoR9TlWm+3y57Tg
-         kznQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxbC2y/g4W4qzcLCRyKAZjh+S6L94f2nm0p8UwGGpcYEE1rB/Vhev8WM7scxy+OVWYPmOchvXyAAvmZ+zI+Lw5O@vger.kernel.org
-X-Gm-Message-State: AFuF++kZBcc5MGYPJduNxjPZiIsbWl5NNmvdO1J5jOgV+wwt7yYLGtFM
-	2YFnRRWc48tF9zdX5EOKd2Ghm//gdXK4KUUGfdqGL0NOj994b4G7GFGs
-X-Gm-Gg: AYBFou3lTwySZG5ktfm6LjERXGInWZ81sKovsupnPOh81xVh1QmNPby8vudGGFmr4Wc
-	q5BT1tORPWsHiF0+UAX3O1GLQK3phxlel/4UoxU6XUV76wUDgrYbLn2clgGtVQgCNHxpe9vgoGI
-	tUG6AlibAgj4pKkDdOMSTs+RZaboNgqqKcRMYCh6EznfLq17hSaq3OuLSfjUB+Ln+b2jE78gxqZ
-	iV+xYb7ZVBBrRjoUuLQfSxSpL5eUfNzBthWBxpZ22huW3C6Whl89JG9xCEJ6H+asjMDClcuNkYn
-	7gNk1P2Uk7bWgjCGyYMcQgqkGTTWwx63uDWbxRjT6Hy9TB0v8JTanQZI6XS/Om4pbT5x1h5sxj5
-	2EBtNYNYRSfIqqSSVMxaVn9H9q72fYfS6jETel7Dsj0ws3ezW7MMbWudVeh9v8eTXVOds867Ddm
-	S4FTzckdGAhT/m1a+mUsTCzM0Spxr0+W4LN9cqPiF+c8Gl49D+xydFLJfjMCVi/e5/+FNYLkTUb
-	Gi+eoUzAy1twvg5YEAzL0Si7mk=
-X-Received: by 2002:a05:6a00:3001:b0:872:cadc:bdf2 with SMTP id d2e1a72fcca58-87c81ec0039mr736727b3a.14.1790074603769;
-        Tue, 22 Sep 2026 03:56:43 -0700 (PDT)
-Received: from urmom ([1.54.70.106])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87c2fc4baf1sm653791b3a.6.2026.09.22.03.56.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 03:56:42 -0700 (PDT)
-From: Lucas Sproule <lucas.sproule.42@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: qcom_wcnss: Fix error check after devm_ioremap_wc() switch
-Date: Tue, 22 Sep 2026 17:56:36 +0700
-Message-ID: <20260922105637.1684691-1-lucas.sproule.42@gmail.com>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260831-wcnss-is-err-fix-v2-1-5520fd4c6b50@gmail.com>
-References: <20260831-wcnss-is-err-fix-v2-1-5520fd4c6b50@gmail.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MMdVKQMK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1790077504;
+	bh=V3w3+8xXZ1Zb5lNKOebjguliwDwnSOWbcB2XO4qW0eI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MMdVKQMK6le7LIAa3HshD4GMWPejT+FRMh+dZ0zBVRFX0atXjll/DsBVm57t9xTH2
+	 pmmbwqC/3zhTVafw97StE6baPzF9F68WJP4u9AdbZtFCQ80MEiykWRVI7Bas5rxcSc
+	 TGuPSzD4Q6gvZ9kAT/Dgfco1RKS5sDi9ddG9uQBFajN1Ya6mX5PhEnYqpcZdu4Qx4Q
+	 KvHqFwx/QBhZwTSWshJ0vhttboZKq+I4//xhkgRjSsxMOdyz0zDw0mBNAab3Nxgqw4
+	 ts057oZ1MEfsjSaQQHZoYihTq06nklIg+UIzRynlhdvMty68tVmtt561lJ3WkgpdNV
+	 idQcjvtK6foHw==
+Received: from [100.64.1.21] (unknown [100.64.1.21])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EE99917E06DB;
+	Tue, 22 Sep 2026 13:45:03 +0200 (CEST)
+Message-ID: <0982de65-9764-439e-bb4f-64034868aeb8@collabora.com>
+Date: Tue, 22 Sep 2026 13:45:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: remoteproc: Fix MT8188 SCP regs
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20260921232520.3127457-1-robh@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20260921232520.3127457-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Bjorn,
+On 9/22/26 01:25, Rob Herring (Arm) wrote:
+> Allow single-register MT8188 SCP dual nodes with only the cfg
+> region. Keep two-register and three-register requirements for the
+> other MediaTek SCP variants that need SRAM and L1TCM regions.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Gentle ping on this one. It's a small regression fix and already has
-Konrad's R-b. Happy to resend if that's easier.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Thanks,
-Lucas
