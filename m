@@ -1,70 +1,110 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186FB2EEE90;
-	Tue, 22 Sep 2026 11:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6D7544D74;
+	Tue, 22 Sep 2026 12:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790077507; cv=none; b=cmUuhVOd606KvbQygXJJCmx1/W/V34N0DCX9k9T51HxNSTPm450LLT1zUrTll7FP2zjUEJFRYHiBxDrMF/PNNZCRWZAgl8jBQKCito5hCKRED/bSyBqlmRgvKLg2bBMNqsO+4s3gK7Auc8tIxnXPI9kIcfmtfFx5qYgBqQJzg7k=
+	t=1790081205; cv=none; b=mmQ+lh3+1ykGKhMQms0G2RqtPeA4rUpL17ndoKgJZvUJlUi16YaQ7/6si8oGDqJ4Bj1cqG98bF/9RLOQ/shM02mbqr571j2FcfyYwBFkYuMTpPSBdzYZNnhy8Ne2WJt+6krtFacst5ZYvaI71Nici7o4A7TYwGp4Nkx9I8qzI9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790077507; c=relaxed/simple;
-	bh=V3w3+8xXZ1Zb5lNKOebjguliwDwnSOWbcB2XO4qW0eI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YVpZIiNhwB8p/p7ei5443uZTRzQGK9Dp0JNACFSE7TKyfMZxVkhvI/y9LowvRpsiKTRZzQLEq6s6lbg1OLVlA0M2Z92RLznfzcF9BLIec2l+lLkjqRkVHmYYjbOM2eTXtUoo69B/UobLZWdAEl6A0TrLuW85thRFklKtZRvJ9iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MMdVKQMK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1790081205; c=relaxed/simple;
+	bh=Gw6aJfDoYQxpcpJbIpH7MZEqUsXderoYhBMTr6z27s0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=Bl4hWJt5cbf8JfcKctGYpxaM7SalkA5Cqbi6ctKyjoiiWn34okkqAK3o7FEu5bzPSckRXLVZfbikyMkJY57HPVkAX11foS3qsJGzUIPFpFLkvIhGwn94dz7pF9oJb7e4MtqWRtS5rnCBqaTr2F2jZ+KKEk7r/vlOAGS5nhhPtYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqSwa+yQ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MMdVKQMK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1790077504;
-	bh=V3w3+8xXZ1Zb5lNKOebjguliwDwnSOWbcB2XO4qW0eI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MMdVKQMK6le7LIAa3HshD4GMWPejT+FRMh+dZ0zBVRFX0atXjll/DsBVm57t9xTH2
-	 pmmbwqC/3zhTVafw97StE6baPzF9F68WJP4u9AdbZtFCQ80MEiykWRVI7Bas5rxcSc
-	 TGuPSzD4Q6gvZ9kAT/Dgfco1RKS5sDi9ddG9uQBFajN1Ya6mX5PhEnYqpcZdu4Qx4Q
-	 KvHqFwx/QBhZwTSWshJ0vhttboZKq+I4//xhkgRjSsxMOdyz0zDw0mBNAab3Nxgqw4
-	 ts057oZ1MEfsjSaQQHZoYihTq06nklIg+UIzRynlhdvMty68tVmtt561lJ3WkgpdNV
-	 idQcjvtK6foHw==
-Received: from [100.64.1.21] (unknown [100.64.1.21])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id EE99917E06DB;
-	Tue, 22 Sep 2026 13:45:03 +0200 (CEST)
-Message-ID: <0982de65-9764-439e-bb4f-64034868aeb8@collabora.com>
-Date: Tue, 22 Sep 2026 13:45:03 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqSwa+yQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B62C71F00898;
+	Tue, 22 Sep 2026 12:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790081204;
+	bh=d0Dyf0O5qsd2O0wkwEV3APMOPZn9BpCHwoGyAkHKWSo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject;
+	b=JqSwa+yQbvWbjOBqQCLEP/8vpkYVdZSulDVVCVnruLKhhQYoiyqJMsuyObayafQX1
+	 IOStS6bCOQom7/8zyFAdXMtC++4yDoAjyvfvR+J4vTkYO5wwNYPk2a+JMAuBs1ZICc
+	 EIdHHq8tss+bleMbyPdb/wIcXEqN/wMnVg7UPrR/OMv9MSKBrMritfm801X1bDZofi
+	 rtTX5tbZ4T3I3BXmKXYKtDWeGcAFG5JsRwKhw25OJDu4KQK6nFIfUZOXiz0zecRBOI
+	 KsgRdPiyNMvDyj0yC4lInGJxfuTBLOiHUguWQCS0H3+Z6aZSb4F1uLJbqqJ1wXFRO3
+	 lsiCSkyVwTmQg==
+Date: Tue, 22 Sep 2026 07:46:42 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: remoteproc: Fix MT8188 SCP regs
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20260921232520.3127457-1-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20260921232520.3127457-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: samuel@sholland.org, Bjorn Andersson <andersson@kernel.org>, 
+ linux-remoteproc@vger.kernel.org, jernej.skrabec@gmail.com, wens@kernel.org, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-sunxi@lists.linux.dev
+To: Tim Michals <tcmichals@gmail.com>
+In-Reply-To: <20260922034711.190253-5-tcmichals@gmail.com>
+References: <20260922034711.190253-1-tcmichals@gmail.com>
+ <20260922034711.190253-5-tcmichals@gmail.com>
+Message-Id: <179008111726.3145450.12515884714286046202.robh@kernel.org>
+Subject: Re: [PATCH 4/7] dt-bindings: remoteproc: add allwinner sun55i
+ rproc binding
 
-On 9/22/26 01:25, Rob Herring (Arm) wrote:
-> Allow single-register MT8188 SCP dual nodes with only the cfg
-> region. Keep two-register and three-register requirements for the
-> other MediaTek SCP variants that need SRAM and L1TCM regions.
+
+On Mon, 21 Sep 2026 22:47:08 -0500, Tim Michals wrote:
+> Add Device Tree binding schema for the Allwinner XuanTie E906/E907
+> RISC-V remote processor found on A523, A527, and T527 SoCs.
 > 
-> Assisted-by: LLM
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> The remoteproc node manages the co-processor lifecycle (clocks, resets,
+> boot vector) and IPC (hardware mailbox). Memory regions are expressed
+> via reg entries named "cfg", "r_sram", "r_sram1", and "remap".
+> 
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Cc: Samuel Holland <samuel@sholland.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-sunxi@lists.linux.dev
+> Signed-off-by: Tim Michals <tcmichals@gmail.com>
+> ---
+>  .../remoteproc/allwinner,sun55i-rproc.yaml    | 152 ++++++++++++++++++
+>  1 file changed, 152 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
+> 
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:29.32-53 Unexpected 'CLK_BUS_MCU_RISCV_CFG'
+Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:30.32-45 Unexpected 'CLK_MCU_RISCV'
+Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:32.32-53 Unexpected 'RST_BUS_MCU_RISCV_CFG'
+Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:33.32-54 Unexpected 'RST_BUS_MCU_RISCV_CORE'
+Error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:40.3-41.1 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:140: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/linux-dt-review/Makefile:1714: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.kernel.org/project/devicetree/patch/20260922034711.190253-5-tcmichals@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
