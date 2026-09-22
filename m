@@ -1,65 +1,66 @@
-Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E87F560AAF
-	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 15:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2D2552955
+	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 15:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790091638; cv=none; b=IAMeGSR2JyV6Cpz1ErV2LZTbs0IqMF7A179H0Op6jfi9qeWmfbMyBH2FtUwdkUhEuFGcgYx5SdTWSKyiVL/zDttL92EuqYRgo4SIM2KERHmJu3VYJeKgoaoOoivWraj8H++V+3elAXjGF7R6PaNfEoRM4srgce58+64qEh1GrCc=
+	t=1790091840; cv=none; b=D7xxAJXoNSOZHvEYuLYzo5qxtEUtawCHqMzLjd9REaXlOOUtqHTAQvOAZPq+0TCE5ghfBq9wiTer2hzoPJxGvtPFkQIr94+0NVpGpIXUSORj2SbdTUnQB1bxhK3UBR4eVSHol3XIEOp+35JhGMuMga/CyCSsxEAIoocpCU38X/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790091638; c=relaxed/simple;
-	bh=983PoGRnItfbcGLq9/2KSAqK/+R/CY53c2rZGuZ7b1E=;
+	s=arc-20240116; t=1790091840; c=relaxed/simple;
+	bh=MPJa407hEU35uhm5nNbxl1o7nH1It+GZNahj267Ph9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hNoEVOkdyyhLwLsjr1HZPzFUOyJbBF1oI+Up4epKLvJk/uZi8sn2bXkS38IfH1rRwigssXvK29XfjMBPuB0CUCNOyWunQg+20aScSIgcTI0F58f9CnB6YWfcFMwYjc1EklztnRcoXXV3IirgtNbr79OLKMaZMLAiIHK3u3dcGzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TmSwgIDT; arc=none smtp.client-ip=74.125.228.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=a6t9MK1hOi2ACRZJmmcYQDnscJOJk7us/FR0b/jrvLl/j5H5gNLqHPUIXzVXfNjVNE8BS644nCNL3xCMdT/uOmIycb2l2N8IaG8Z/gQVs+gWPiOJDT3OIBHwpTf0Oteinvl76/1wwEoqE8kiXAtF9pEE/4vlFlRsanFJ0d06OCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fs3qkBd0; arc=none smtp.client-ip=74.125.227.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmSwgIDT"
-Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-868b2e5be4eso14701b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 08:40:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fs3qkBd0"
+Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-39b9184fa80so29116a91.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 08:43:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790091635; x=1790696435; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1790091836; x=1790696636; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=2HjM704yjUPc3oYEkUo0s9e3MpU0+mzXloxkK4JXLZM=;
-        b=TmSwgIDTNxrv/ArInFd1UDSm3liM+/JTtbsK9UCnhipd6SD3R6CHvF0GwJtfKYtFJ2
-         /YAqGrJhHkeiN/n+ZId9wZb8MVdg6JBhtX9RYnBUexHdQ99eA+tynxqcDfpMQscHNcPV
-         JtCujN4//PLKCsQEko5817TlF14iopig5ESjT+8xa+HEQBmPNwJ3I4+P8JxcDIpm6kKS
-         huMDplf+SR+qRF9OT0sqLAt9sqVOzwh8bETHKHIdnPjrEb8D0qRCVZDAAN2hNqVWi190
-         d82tzygq22iHwRTpK7BNKjjjn8AVAPSj8g/vynUl2nS1OBbJpIZWF/cRajQB2VQ1DB38
-         C/Bw==
+        bh=M3+7e8iXJEjn74p0MvD+DqdSnpalQ9TYucgtTBbjy+c=;
+        b=Fs3qkBd0zQ6ucr9QdRr/P75/EMkmrjSEbT5jRPu65SllB6psWZLuhEtIR8ipOit7A0
+         dziV0+nGwg7V2nN1BC5p4jSOI6JqlJ4VhDCy1D2782OiNTCjIigPmBH3i1XdNxdsmN8v
+         5TPnIzCBqfYbme/U6Y/AcKwZ8Pt2Rbu5OXLjLOQqF2vHaXs1YGGMYeaFIF4yHYcwiM6/
+         SRIu8soPC7WwSEWc5AhWiIfOVfx5gdDTpchEwtevZGmhoCWU85RyAF/G3fg11L+RGdzC
+         HZ9ky1Whz7rypN6AsszTu2oEE8qqHHmBZqmbfEUWLFH/fV/edyaoBSBbClCQBE+xiVbE
+         C8GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790091635; x=1790696435;
+        d=1e100.net; s=20260707; t=1790091836; x=1790696636;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=2HjM704yjUPc3oYEkUo0s9e3MpU0+mzXloxkK4JXLZM=;
-        b=EAqnGhojT9j0kWJA8+MegWhtogrtmntXPdl9KCKxuIPuvaf/b1cT+WE8/31IDzHMj8
-         N0Ah8tHe7S3Zwv4a1OS1TCRhC6tzaew2otNB22f2kkAfoWEnt3VScvK1v5+C3CjShPMA
-         iRsxrWNnVs+ihtDsRMiVk4bH3COCFFGjXrySNJ0dGnWCfrEVzwgx26+0xXrO5JGFCVgO
-         KI6oD96elXBiVfEOq1B+ZUFhf4e5Cixt5K+TeNx5PpNxdl6E0i46H3MGEa05/w1XZs16
-         e1Q5sms2KAWFVArDcKz+kHsXCwaTFJXgMNUIgSuv/mAAw66qbHbhDmMPks1hjmz4qkmE
-         7K6g==
-X-Forwarded-Encrypted: i=1; AKwUvBxgipa0cQRtAnNuYzbtEtXe07f363iJm7vaZFdXSlkW6cC/5vynWuGYGgjc9igfNRk89mtaYX0vvJsEpmll9ary@vger.kernel.org
-X-Gm-Message-State: AFuF++neSlXbatI0h98/33gnrPEVYVRtUpbPfPvh1THHAhKOuX6xzGMC
-	W0gXu+VcqhOej8j9VddXn93qaxFgG1K/GsadHnas6bR2xG9ijqjGnGsxRVpBwioeQPk=
-X-Gm-Gg: AYBFou3vBeqIKx3Qqw6UwaTYeu3zLpwSVoEf5Z8eP/3hS8N2rnTH/4gKHrcjgIbAklT
-	AeOligdZK2/IEt23fbrzN+jBSX0cQoLJFc5XJ3Eb9sW/jMs+071DWHdCazh5g2zp+8N0aEHv0z8
-	9Pjoy55Io0Tj3LD3MbyxrsRBHmxqctz2ePMaOyAV/L2QTHC6fbVcGOba82+ABODNEtZsZfUkIpA
-	EcN03G3bF9FJyw8cZmXcRUu/nuhsOhJgXab9jUK1Q7yQFSqv5/ROhflfS3m79fBfaDqsS2bQaha
-	B27bVa+R9XP92GB2zgwCSuNGGnemNtU5MPNXv+x3DYOVDLI9y+lztmdIn030QSvjw4jWu3pef3p
-	jz5xFe2hKLiuwMxD0c3aJq8Hgr3p8Dw/ysUZRjapUDLlSipw2A2UZjazGLmYPd0bWnfB5ddkN6a
-	t8rLfXqyaCmav2s9cSusV/V1CHw6yDIQldbLyaTrH3q8YVnVoTZhWpGlW/AeVPvsOWwAwYh6+Y
-X-Received: by 2002:a05:6a00:1393:b0:85b:8606:627f with SMTP id d2e1a72fcca58-87c82f7f151mr1827877b3a.26.1790091635190;
-        Tue, 22 Sep 2026 08:40:35 -0700 (PDT)
+        bh=M3+7e8iXJEjn74p0MvD+DqdSnpalQ9TYucgtTBbjy+c=;
+        b=yfBrFtw8aQIap4C/eOVpw//d+ajGUpjPYeiOp5LKbK6JVSW/eZqOv/QLnggozzeVId
+         QwE0fEhLuYt1uDCuZsdQUL5/G1WbUb91BxST6RGi0RF60xpASCymZ3rju94bw2aA9Uxh
+         kxwsAflHL9aX3sv+VGe7Gk6kiVvWlP9CEYUfkvNX2Vbochb2dvIu6Lqwm0oYJyffM2ZX
+         4OGjh3lFdkbLrVJVNxT6rwCPWyDVGEr3wqY+DHOWzWIM8mbYUB8AmgABS2jt5PkLrq3S
+         ACJumXLttIZAX5qAn1w/EhWR1gfuO+HN7mgHt4ksh7Q1ePoT04184wDjZjWhcZqiaoFy
+         GGTg==
+X-Forwarded-Encrypted: i=1; AKwUvBz26Ep6/vea1GdHUJ2Tvpnar2Y/qiR4Dm5VVWgCd14xfWnbNxhmcBKlD1mStdY+W2JgrUzgAkuVwSp7SoW5BJBr@vger.kernel.org
+X-Gm-Message-State: AFuF++mJIgzOcbhYVfNV7XZaZ3s4E4gcx0kRAZprvCVt9mXncqYsjBP5
+	iC0jRrEniIWAV8CxAJDhIKBIv7J0zraMWQ658ds1gNPaoinn/7opwDqA1l/l1lzONTo=
+X-Gm-Gg: AYBFou1fPTElhISOwtUYNA7Cm+TjloEWvkCdRKCktVPwxKVX6UoWWadTZ98CNhT6HCy
+	/5JBh4J+O+iaKyLqdzowcE/WifSEmHXhR7UYTqXAPzJJlGJdBIWmbEqwWGo+Z+QE4NxcVMAbHLK
+	ikhX/93azkirGub+vIr9o2mwh5GSDsubB+vEYZ0tXEcBFzv/kKeHGvciR/CSXH9BdrcaaAYU7Kk
+	lXNBg3ewJITKshJeEYB92M0JuMb6YyEc2VoCG6DzEtDECR7r4W18ks/z5plkYMfGSKVeMjDI7OB
+	ygjJaIotA4rt243EqcRko2iJWAmMPlTnGaiNhrOwyVPJglD7h37/DO0UnytP3/eKPSMnbjUVKGY
+	GXFZ7Te+ZlXfM/9yYsnAUOftmDe5TdC9Y+J2rwG4PP2VPjOFH7lRcZihhU/NBBIjmaAolOIfGnz
+	NtxlAo+2lv21Xi+Up2wSzbU1CjlW4k9E9NUMabl3ZItRPNoGwydHCrSSiOmhMFfcZcy0tKcxU9c
+	GW2m/M/28c=
+X-Received: by 2002:a17:90b:1d48:b0:39d:efa9:cd25 with SMTP id 98e67ed59e1d1-3a07306c5d9mr1633442a91.2.1790091835796;
+        Tue, 22 Sep 2026 08:43:55 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:1046:ab8:737c:d2e2])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87c2fc4b581sm1104255b3a.7.2026.09.22.08.40.32
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a07dbf69f0sm34882a91.8.2026.09.22.08.43.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 08:40:34 -0700 (PDT)
-Date: Tue, 22 Sep 2026 09:40:31 -0600
+        Tue, 22 Sep 2026 08:43:55 -0700 (PDT)
+Date: Tue, 22 Sep 2026 09:43:52 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 To: Francesco Valla <francesco@valla.it>
 Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
@@ -74,10 +75,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
 	devicetree@vger.kernel.org, virtualization@lists.linux.dev,
 	imx@lists.linux.dev, iommu@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC 08/12] dt-bindings: remoteproc: add remoteproc-virtio
-Message-ID: <arKhbxi3Snbt1_Mn@p14s>
+Subject: Re: [PATCH RFC 12/12] PoC: arm64: dts: imx93-11x11-frdm: add
+ multiple vdevs
+Message-ID: <arKiOCGrWAKyc-bc@p14s>
 References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
- <20260916-remoteproc_virtio_map-v1-8-dac8c5eb4aa9@valla.it>
+ <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -86,133 +88,191 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260916-remoteproc_virtio_map-v1-8-dac8c5eb4aa9@valla.it>
+In-Reply-To: <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
 
-On Wed, Sep 16, 2026 at 11:10:53PM +0200, Francesco Valla wrote:
-> Add a new binding to describe remoteproc-provided virtio devices; while
-> these are discovered through a resource table parsed by the remoteproc
-> infrastructure at runtime, their description can be needed to probe
-> non-discoverable buses (such as I2C) or to link consumers and suppliers.
+On Wed, Sep 16, 2026 at 11:10:57PM +0200, Francesco Valla wrote:
+> Add rings for multiple vdevs, as well as the required virtio nodes for
+> I2C, SPI and GPIO functionalities. On top of that, add example
+> peripherals using all of them.
 > 
-> Each vdev is described by a dedicated "group" node, which then includes
-> a virtio-device node, which binding is already existent and used by
-> virtio-mmio. Each vdev shall be stattically linked to a "group" node
-> using its index inside the resource table as the reg property of the
-> node; this permits to have multiple instances of the same type of
-> device.
-> 
-> The binding is intended to be generic and adopted by any remoteproc
-> provider.
+> NOTE: this is a Proof-Of-Concept, not meant to be integrated!
 > 
 > Signed-off-by: Francesco Valla <francesco@valla.it>
 > ---
->  .../bindings/remoteproc/remoteproc-virtio.yaml     | 89 ++++++++++++++++++++++
->  1 file changed, 89 insertions(+)
+>  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 128 +++++++++++++++++++--
+>  1 file changed, 119 insertions(+), 9 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/remoteproc-virtio.yaml b/Documentation/devicetree/bindings/remoteproc/remoteproc-virtio.yaml
-> new file mode 100644
-> index 000000000000..c4a0d84b1460
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/remoteproc-virtio.yaml
-> @@ -0,0 +1,89 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/remoteproc-virtio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> index bd14ba28690c..dfa3b122ac5f 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> @@ -53,6 +53,32 @@ button-k3 {
+>  		};
+>  	};
+>  
+> +	gpio-keys-virtio {
+> +		compatible = "gpio-keys-polled";
+> +		poll-interval = <100>;
 > +
-> +title: Virtio devices over remoteproc
+> +		button-v1 {
+> +			label = "Button V1";
+> +			linux,code = <BTN_3>;
+> +			gpios = <&v_gpio 23 GPIO_ACTIVE_LOW>;
+> +		};
 > +
-> +description: |
-> +  Virtio devices ("vdevs") can be exposed using the remoteproc infrastructure
-> +  and its resource table. For some of them, a device tree node might be needed
-> +  to describe remote undiscoverable hardware and/or connect consumers and
-> +  providers.
+> +		button-v2 {
+> +			label = "Button V2";
+> +			linux,code = <BTN_4>;
+> +			gpios = <&v_gpio 24 GPIO_ACTIVE_LOW>;
+> +		};
+> +	};
 > +
-> +maintainers:
-> +  - Francesco Valla <francesco@valla.it>
+> +	leds {
+> +		compatible = "gpio-leds";
 > +
-> +properties:
-> +  virtio:
-> +    description: Contains a group of Virtio devices exposed by the remoteproc.
+> +		led {
+> +			gpios = <&v_gpio 18 GPIO_ACTIVE_HIGH>;
+> +			label = "LED V";
+> +		};
+> +	};
 > +
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^vdev@[0-9a-f]+$":
-> +        type: object
-> +
-> +        properties:
-> +          reg:
-> +            description: Virtio device index inside the resource table.
-> +            maxItems: 1
-> +
-> +        additionalProperties:
-> +          type: object
-> +          $ref: /schemas/virtio/virtio-device.yaml
-> +          maxItems: 1
-> +
-> +        required:
-> +          - reg
-> +
-> +    additionalProperties: false
-> +
-> +    required:
-> +      - '#address-cells'
-> +      - '#size-cells'
-> +
-> +additionalProperties: true
-> +
-> +examples:
-> +  - |
-> +    remoteproc-cm33 {
-> +      virtio {
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          vdev@0 {
-> +              reg = <0>;
-> +
+>  	reg_usdhc2_vmmc: regulator-usdhc2 {
+>  		compatible = "regulator-fixed";
+>  		off-on-delay-us = <12000>;
+> @@ -89,11 +115,6 @@ linux,cma {
+>  			linux,cma-default;
+>  		};
+>  
+> -		rsc_table: rsc-table@2021e000 {
+> -			reg = <0 0x2021e000 0 0x1000>;
+> -			no-map;
+> -		};
+> -
 
-Do we need the 'reg' since we already have vdev@X?  I'll let the DT people
-provide their input on this.
+Why is the resource table removed?  There is no mention of that in the
+changelog...
 
-> +              gpio {
-> +                  compatible = "virtio,device29";
+>  		vdev0vring0: vdev0vring0@a4000000 {
+>  			reg = <0 0xa4000000 0 0x8000>;
+>  			no-map;
+> @@ -105,12 +126,42 @@ vdev0vring1: vdev0vring1@a4008000 {
+>  		};
+>  
+>  		vdev1vring0: vdev1vring0@a4010000 {
+> -			reg = <0 0xa4010000 0 0x8000>;
+> +			reg = <0 0xa4010000 0 0x1000>;
+> +			no-map;
+> +		};
 > +
-> +                  gpio-controller;
-> +                  #gpio-cells = <2>;
-> +              };
-> +          };
+> +		vdev2vring0: vdev2vring0@a4011000 {
+> +			reg = <0 0xa4011000 0 0x2000>;
+> +			no-map;
+> +		};
 > +
-> +          vdev@1 {
-> +              reg = <1>;
+> +		vdev2vring1: vdev2vring1@a4013000 {
+> +			reg = <0 0xa4013000 0 0x2000>;
+> +			no-map;
+> +		};
 > +
-> +              i2c {
-> +                  compatible = "virtio,device22";
+> +		vdev3vring0: vdev3vring0@a4015000 {
+> +			reg = <0 0xa4015000 0 0x2000>;
+> +			no-map;
+> +		};
 > +
-> +                  #address-cells = <1>;
-> +                  #size-cells = <0>;
+> +		vdev4vring0: vdev4vring0@a4017000 {
+> +			reg = <0 0xa4017000 0 0x4000>;
+> +			no-map;
+> +		};
 > +
-> +                  eeprom@50 {
-> +                      compatible = "atmel,24c1025";
-> +                      reg = <0x50>;
-> +                  };
+> +		vdev5vring0: vdev5vring0@a401B000 {
+> +			reg = <0 0xa401B000 0 0x2000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev5vring1: vdev5vring1@a401D000 {
+> +			reg = <0 0xa401D000 0 0x2000>;
+>  			no-map;
+>  		};
+>  
+> -		vdev1vring1: vdev1vring1@a4018000 {
+> -			reg = <0 0xa4018000 0 0x8000>;
+> +		vdev5vring2: vdev5vring2@a401F000 {
+> +			reg = <0 0xa401F000 0 0x1000>;
+>  			no-map;
+>  		};
+>  
+> @@ -149,8 +200,67 @@ &cm33 {
+>  		 <&mu1 3 1>;
+>  	mbox-names = "tx", "rx", "rxdb";
+>  	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+> -			<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
+> +			<&vdev1vring0>, <&vdev2vring0>, <&vdev2vring1>,
+> +			<&vdev3vring0>, <&vdev4vring0>,
+> +			<&vdev5vring0>, <&vdev5vring1>, <&vdev5vring2>;
 
-The previous patch introduced bindings for virtio SPI while the above two are
-for GPIO and I2c, which is very confusing.  I suggest you pick one and apply
-everywhere.
+Who is using vdev5 vrings?  
 
-> +              };
-> +          };
-> +      };
-> +    };
-> +...
+>  	status = "okay";
+> +
+> +	virtio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		vdev@2 {
+> +			reg = <2>;
+> +
+> +			v_gpio: gpio {
+> +				compatible = "virtio,device29";
+> +				gpio-controller;
+> +				#gpio-cells = <2>;
+> +				interrupt-controller;
+> +				#interrupt-cells = <2>;
+> +			};
+> +		};
+> +
+> +		vdev@3 {
+> +			reg = <3>;
+> +
+> +			i2c {
+> +				compatible = "virtio,device22";
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				eeprom@50 {
+> +					compatible = "atmel,24c1025";
+> +					reg = <0x50>;
+> +				};
+> +			};
+> +		};
+> +
+> +		vdev@4 {
+> +			reg = <4>;
+> +
+> +			spi {
+> +				compatible = "virtio,device2d";
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				sram@0 {
+> +					compatible = "microchip,mchp23k256";
+> +					reg = <0>;
+> +					spi-max-frequency = <20000000>;
+> +				};
+> +
+> +				lcd@1 {
+> +					compatible = "adafruit,yx240qv29", "ilitek,ili9341";
+> +					reg = <1>;
+> +					spi-max-frequency = <10000000>;
+> +					dc-gpios = <&v_gpio 21 GPIO_ACTIVE_HIGH>;
+> +					reset-gpios = <&v_gpio 20 GPIO_ACTIVE_HIGH>;
+> +					rotation = <90>;
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+>  
+>  &eqos {
 > 
 > -- 
 > 2.55.0
