@@ -1,63 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com [74.125.224.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E5E54DAE6;
-	Tue, 22 Sep 2026 17:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA76744F547
+	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 19:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790098613; cv=none; b=AafSb6mLh2pJjgmlEiuzpaRylbc4POx6CrJiTQAYaJQ5KzmmL7fAjqKC1uMyF3T35D7YKb1i2m59DQYnQIFkHTARJDjCFRmkiccqMXY5J3NjipKwNradNf/wzhm94z/Ve3gSxbJLm6EJJNX+yksx1l7C5+jlDR7ckNr5KLaZ+us=
+	t=1790103726; cv=none; b=dOV7YeucV8LL830LWoX0f73yVKcFYVIccDkx4RUqJitPxzUrLHPk8RvVkqqgzA5FKAqH9HJ0KwGk1E8WeIJa9A97jtSjoOPRe3yflP+lYd9yjjw/N2f5y6EVrxCbFnGsa3sz8dz7L1BgP2I+OHFqsjCpnC0vjyfCc0CZeyk6wG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790098613; c=relaxed/simple;
-	bh=qkopl1LmNrmknlznlDOKlSLOSpUFspeZRGI572gCRAs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EwgrMA/y/29VL674qM7GiEYoVqr7spwT5krXRPn6pqmy0hJu6zuuBqiTGJnBKFUbHEHP/6+daPemWLAs/iZ5Q0OvdZ4GUHUH+cflGvLAbUGWweVwDsK4XBbX3Oj+2zEIVsuerOKbGq/BUnLhVqe02tKI4LYFc0IZfqRONqAgiYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmsXgfRs; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790103726; c=relaxed/simple;
+	bh=fk5IGMlUmx2erYlv3iWAASgRYxopqVulZLvXRdcluOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c6XoGpbYQ3FWGf+EOkbo8zfaCdKQhb3SqMSECmMxtUGjKJc+wCiz0ImDjaM7BBncylGGxFVM2volv8QW4hpDQozJ57aIqh9IbExbBDUccwUZ5IdiTb1JGgnwmkM/RbVKRoduFkLIoWN7Svc8AUvrqEMqMz69o6MK1BAc4fDLnkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFEwd9VK; arc=none smtp.client-ip=74.125.224.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmsXgfRs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CAAD1F000FF;
-	Tue, 22 Sep 2026 17:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790098611;
-	bh=g+NnfGAreMlnWdPFKrc3Fs+66ktV/mC5/nzEN/1tuoU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc;
-	b=BmsXgfRsMx58sdMrXeiCRBz2C54ODC7ufIfzZjnFbCjcnlWi137aPDjvqgKVnYjXd
-	 V3HZo/NCEByKVRA6KOjr3I3LROo5/fbEILVPgvXpkdxIn0DjuG4w0n9yyeAQsMMn0h
-	 9t/UUNhjS0y+BRocbQdIt/ZPW2mBFlS6PM5dlEu2EtywpTJdykq+1t+/2vdveGRjfd
-	 QGA/dX2uZeNbIuSuPsyR4KnVJJd/3eN7yksOkDEhmjElEIg8RDhyxdSAx755jM0HFr
-	 v/SU1xZLeHP4CO40et733N053zC6ram7F5J6M97usGC2WDP2/bGGbDAoYslOkdVlqD
-	 dTeR+N3eKIQXA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 93FF73811A57;
-	Tue, 22 Sep 2026 17:35:43 +0000 (UTC)
-Subject: Re: [GIT PULL] remoteproc fixes for v7.3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20260922021622.321847-1-andersson@kernel.org>
-References: <20260922021622.321847-1-andersson@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20260922021622.321847-1-andersson@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v7.3-fixes
-X-PR-Tracked-Commit-Id: 9db31edf92dde1f3c98008bd5f88e859d14324cc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 34e34736ea9a685664f57586f6e293aaff308858
-Message-Id: <179009854225.10467.2142500951616451400.pr-tracker-bot@kernel.org>
-Date: Tue, 22 Sep 2026 17:35:42 +0000
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, Mostafa Saleh <smostafa@google.com>, Paul Hollinsky <phollinsky@holtechnik.com>, Shawn Guo <shengchao.guo@oss.qualcomm.com>, Vignesh Viswanathan <vignesh.viswanathan@oss.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFEwd9VK"
+Received: by mail-yx2-f13.google.com with SMTP id 00721157ae682-85d4ddd179eso4284837b3.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 12:02:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790103724; x=1790708524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=oJmvT8imiWD2jlinxDhTT/h6mjIMN5i048ei7lLYZQA=;
+        b=TFEwd9VKPrL73sT5m6JEhYNkOkk9XRQ4+7gtO3ZIykPiwUrRhTLV8H7WGlsGsgazrn
+         OWz3oRYSetUJMD5WKrAZVAGmMoZiz2DKsF5xsUaB6FkBHDXRgq5iiyXY60f4DFmh1EpJ
+         0jeVMM8AvUo50lYAw7xVG874Tv2Nh05YNHDj4T0WT9ETr/OH66UeZXTPKbCe59gNfK2Y
+         HtSh3Lt62qzi2YYb+wjUs7K0TSybCZu5Z9lc1CHobFX0TwSm2/A9bhU96iV7RNRZu8Mb
+         wnLxnweYka7W9pkS6QHxTYsxGLkPtd+3LzDLGAHmF+ucz4BciI9pSk01xY/iGIX0rhaM
+         9IBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790103724; x=1790708524;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=oJmvT8imiWD2jlinxDhTT/h6mjIMN5i048ei7lLYZQA=;
+        b=SHJNZSITM0xcImqafmJmQhtkqB+BlEV4i5DJQx3qm7PHR30l1EL7hxcEa+XWEAdps0
+         1Iw5NJs2rFqH/27xYkoi4yVfEMb4ebwTg5b+ClMjw2YR/v3E75vq+WUQn0xvGprMDwvD
+         h5NnlKOQfiKLUzjUIZH2iC4xbrBEVKTo6BQst/2EfJXPau64GSx5Fbaced/nWRYc5Owm
+         vp8Hk3atG4YQPmLhNTK0loLuKqQNK3Jf6FvmXSpiK9STdoTfFB92+wSeKGiznhDErki2
+         bFmNw5OI7K46jvRWGiO5/TNyLDDVVOkVCld/MkF9mVo6Kx1Bp4hf+H2ctlOPWcSoq5B7
+         MP7g==
+X-Gm-Message-State: AFuF++mgxvdm+Q5oJ7zVxaK9uhD0ucudse74NP1Pg9QzLEaRdcKCm7LR
+	SAS6WDPY9xoGNLIXMKMAf+P5DxWgDAe75OCWitr6+dbcT4hMv7A5uth5
+X-Gm-Gg: AYBFou1JzGJgF9MUtgvI2v9IIjuJIdaSPlXKOh/rUFWBVKZQZILejH0PuXL+T6Gb6rV
+	QBEQoHAhxGkHN5DOE4BGfKrHxVLHIC4VmKjaaI6X1Innjqz/ttEecHYqsoWygFZm7SeyOnSBiVY
+	WUCAN8LkSFwfRZF5J95e6ye/g5F6eA82/2kmoK1luyFFF+CQb4zt9kLud6YD0qkZ2Yb2rIngG9n
+	KLeBf+1ScS3Pknkaw+CDBXAfasV5kEXYJOT0yRyxuHRrUtpLzrHIUWGuWm5en/R+J6tdwj4ZoF1
+	GSvBxqsfrT81fKyXVIXZhYtlVl4JNOSY82pFYEFJijznkZ2O7PuoflrPZ3w8EErWqflVkEemwrB
+	Hs4KnHWx6psYwGGFsj3cEZIuIowhe7MGongH1jS5UiqquscSRQeVZG2+Hg8XiLL8ipzPqBBQksJ
+	ljI5dGjvwbC699h5sZX+i8XdkO3jp4UvAn078Xs0XPBmDQJakiW8IMFblU6TSTy7s9+TcmUYVnM
+	29hg5+QILYvW09WRpmf0A==
+X-Received: by 2002:a05:690c:f15:b0:87d:b776:c659 with SMTP id 00721157ae682-8a457891193mr4457297b3.11.1790103723656;
+        Tue, 22 Sep 2026 12:02:03 -0700 (PDT)
+Received: from i4-gl-tmk5904.ad.psu.edu ([130.203.156.186])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-532eb1e0196sm3449891cf.10.2026.09.22.12.02.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2026 12:02:03 -0700 (PDT)
+From: Yuho Choi <oss.patchbox@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yuho Choi <oss.patchbox@gmail.com>
+Subject: [PATCH v1] remoteproc: virtio: Load rvring->vq once in rproc_vq_interrupt()
+Date: Tue, 22 Sep 2026 15:01:40 -0400
+Message-ID: <20260922190159.509836-1-oss.patchbox@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Mon, 21 Sep 2026 21:16:21 -0500:
+rproc_vq_interrupt() loads rvring->vq twice: once to test it for NULL and
+once to pass it to vring_interrupt().  __rproc_virtio_del_vqs() clears the
+same field, so the second load can return NULL after the first one has
+passed the test, and vring_interrupt() dereferences its argument without
+checking it.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v7.3-fixes
+Load the pointer once into a local variable and test that, and pair the
+read with WRITE_ONCE() on the store that clears the field.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/34e34736ea9a685664f57586f6e293aaff308858
+Fixes: 7a186941626d ("remoteproc: remove the single rpmsg vdev limitation")
+Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
+---
+Found by code review; compile-tested only.
 
-Thank you!
+ drivers/remoteproc/remoteproc_virtio.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+index d5e9ff045a28a..fafd73e1368a0 100644
+--- a/drivers/remoteproc/remoteproc_virtio.c
++++ b/drivers/remoteproc/remoteproc_virtio.c
+@@ -89,14 +89,19 @@ static bool rproc_virtio_notify(struct virtqueue *vq)
+ irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int notifyid)
+ {
+ 	struct rproc_vring *rvring;
++	struct virtqueue *vq;
+ 
+ 	dev_dbg(&rproc->dev, "vq index %d is interrupted\n", notifyid);
+ 
+ 	rvring = idr_find(&rproc->notifyids, notifyid);
+-	if (!rvring || !rvring->vq)
++	if (!rvring)
++		return IRQ_NONE;
++
++	vq = READ_ONCE(rvring->vq);
++	if (!vq)
+ 		return IRQ_NONE;
+ 
+-	return vring_interrupt(0, rvring->vq);
++	return vring_interrupt(0, vq);
+ }
+ EXPORT_SYMBOL(rproc_vq_interrupt);
+ 
+@@ -170,7 +175,7 @@ static void __rproc_virtio_del_vqs(struct virtio_device *vdev)
+ 
+ 	list_for_each_entry_safe(vq, n, &vdev->vqs, list) {
+ 		rvring = vq->priv;
+-		rvring->vq = NULL;
++		WRITE_ONCE(rvring->vq, NULL);
+ 		vring_del_virtqueue(vq);
+ 	}
+ }
+
+base-commit: f0100363d8c374bd8e9ea7c9ba02744f0b802ca4
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
