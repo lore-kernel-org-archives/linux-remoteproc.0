@@ -1,71 +1,72 @@
-Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com [74.125.224.141])
+Received: from mail-dy2-f43.google.com (mail-dy2-f43.google.com [74.125.229.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA76744F547
-	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 19:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB874A2058
+	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 19:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790103726; cv=none; b=dOV7YeucV8LL830LWoX0f73yVKcFYVIccDkx4RUqJitPxzUrLHPk8RvVkqqgzA5FKAqH9HJ0KwGk1E8WeIJa9A97jtSjoOPRe3yflP+lYd9yjjw/N2f5y6EVrxCbFnGsa3sz8dz7L1BgP2I+OHFqsjCpnC0vjyfCc0CZeyk6wG4=
+	t=1790104510; cv=none; b=AuOFKIXYwzH3lfRe9UvpdYCQsK31ksjqBVi4CsRI1QxhF/BDWspAZqd+yw9mBVZqgzJldi7bEmGTw56oCnCj4Le1b4udsGke6tyhWZtjsJq1x+AAuPtRMaO+pygqNxoRXCcnmWtwUf1ncY4G0+5dMc0CeiBmRKKiKXGT5V2WyiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790103726; c=relaxed/simple;
-	bh=fk5IGMlUmx2erYlv3iWAASgRYxopqVulZLvXRdcluOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c6XoGpbYQ3FWGf+EOkbo8zfaCdKQhb3SqMSECmMxtUGjKJc+wCiz0ImDjaM7BBncylGGxFVM2volv8QW4hpDQozJ57aIqh9IbExbBDUccwUZ5IdiTb1JGgnwmkM/RbVKRoduFkLIoWN7Svc8AUvrqEMqMz69o6MK1BAc4fDLnkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFEwd9VK; arc=none smtp.client-ip=74.125.224.141
+	s=arc-20240116; t=1790104510; c=relaxed/simple;
+	bh=OpmXgWq8ZDTVoehX0GIhvuMbtExpE5nV+LxDCEWTwaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EAoxlbQq7NLkl7TXaFkhsnPY0z0tOEra82FTM6sF96oqxJ/fs6GqpvYQHngXd4Ir+DhDRbstiDSt5MfkV3wbYtJVbGlq0HjoKmvtxYOJ6BgiBCwKMUHSRJj3S+uk5ITV+Ic6OWwoHt4TZlj9aKCQSLcSbbED5pEgOUqKcEbL270=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=rmH4kUoA; arc=none smtp.client-ip=74.125.229.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFEwd9VK"
-Received: by mail-yx2-f13.google.com with SMTP id 00721157ae682-85d4ddd179eso4284837b3.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 12:02:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rmH4kUoA"
+Received: by mail-dy2-f43.google.com with SMTP id 5a478bee46e88-33e630052ebso163679eec.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 12:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790103724; x=1790708524; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790104508; x=1790709308; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=oJmvT8imiWD2jlinxDhTT/h6mjIMN5i048ei7lLYZQA=;
-        b=TFEwd9VKPrL73sT5m6JEhYNkOkk9XRQ4+7gtO3ZIykPiwUrRhTLV8H7WGlsGsgazrn
-         OWz3oRYSetUJMD5WKrAZVAGmMoZiz2DKsF5xsUaB6FkBHDXRgq5iiyXY60f4DFmh1EpJ
-         0jeVMM8AvUo50lYAw7xVG874Tv2Nh05YNHDj4T0WT9ETr/OH66UeZXTPKbCe59gNfK2Y
-         HtSh3Lt62qzi2YYb+wjUs7K0TSybCZu5Z9lc1CHobFX0TwSm2/A9bhU96iV7RNRZu8Mb
-         wnLxnweYka7W9pkS6QHxTYsxGLkPtd+3LzDLGAHmF+ucz4BciI9pSk01xY/iGIX0rhaM
-         9IBA==
+        bh=w4MMy3c11m09yYQkyC62fSxMbfPue+ahbcbfmx6F730=;
+        b=rmH4kUoAr0DdOPq1M1M8lTibZ9LABMVoSfAhSWzrf5cagUq0BVfdM4sl2SXfPIirm0
+         F3ZknxKr/D2iTA2Q7+UqxjkK8BIi70XcI13QxMxO/k1B1q1UUG7psWuz74NkEb8RRXUU
+         yvnrCaW7nCxXd+d4gdGfW2tN9kiFAX9WHZJqXZjrtkpD1LKxs9bUJgMcwW9V3ezC8Cv9
+         TuSgBjhppcjtn6nxrjeZEfEzwsBkIUk/OItvABy+p1x+Uj0OHpKKGhsrBxg/TLT3oi5q
+         zuBmbAv3S542TyQZSRbB9duV+hPvEq0ENOHGDb0dyIHLDo9QWyR3LmzSjBxxhdhws5hY
+         WWvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790103724; x=1790708524;
+        d=1e100.net; s=20260707; t=1790104508; x=1790709308;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=oJmvT8imiWD2jlinxDhTT/h6mjIMN5i048ei7lLYZQA=;
-        b=SHJNZSITM0xcImqafmJmQhtkqB+BlEV4i5DJQx3qm7PHR30l1EL7hxcEa+XWEAdps0
-         1Iw5NJs2rFqH/27xYkoi4yVfEMb4ebwTg5b+ClMjw2YR/v3E75vq+WUQn0xvGprMDwvD
-         h5NnlKOQfiKLUzjUIZH2iC4xbrBEVKTo6BQst/2EfJXPau64GSx5Fbaced/nWRYc5Owm
-         vp8Hk3atG4YQPmLhNTK0loLuKqQNK3Jf6FvmXSpiK9STdoTfFB92+wSeKGiznhDErki2
-         bFmNw5OI7K46jvRWGiO5/TNyLDDVVOkVCld/MkF9mVo6Kx1Bp4hf+H2ctlOPWcSoq5B7
-         MP7g==
-X-Gm-Message-State: AFuF++mgxvdm+Q5oJ7zVxaK9uhD0ucudse74NP1Pg9QzLEaRdcKCm7LR
-	SAS6WDPY9xoGNLIXMKMAf+P5DxWgDAe75OCWitr6+dbcT4hMv7A5uth5
-X-Gm-Gg: AYBFou1JzGJgF9MUtgvI2v9IIjuJIdaSPlXKOh/rUFWBVKZQZILejH0PuXL+T6Gb6rV
-	QBEQoHAhxGkHN5DOE4BGfKrHxVLHIC4VmKjaaI6X1Innjqz/ttEecHYqsoWygFZm7SeyOnSBiVY
-	WUCAN8LkSFwfRZF5J95e6ye/g5F6eA82/2kmoK1luyFFF+CQb4zt9kLud6YD0qkZ2Yb2rIngG9n
-	KLeBf+1ScS3Pknkaw+CDBXAfasV5kEXYJOT0yRyxuHRrUtpLzrHIUWGuWm5en/R+J6tdwj4ZoF1
-	GSvBxqsfrT81fKyXVIXZhYtlVl4JNOSY82pFYEFJijznkZ2O7PuoflrPZ3w8EErWqflVkEemwrB
-	Hs4KnHWx6psYwGGFsj3cEZIuIowhe7MGongH1jS5UiqquscSRQeVZG2+Hg8XiLL8ipzPqBBQksJ
-	ljI5dGjvwbC699h5sZX+i8XdkO3jp4UvAn078Xs0XPBmDQJakiW8IMFblU6TSTy7s9+TcmUYVnM
-	29hg5+QILYvW09WRpmf0A==
-X-Received: by 2002:a05:690c:f15:b0:87d:b776:c659 with SMTP id 00721157ae682-8a457891193mr4457297b3.11.1790103723656;
-        Tue, 22 Sep 2026 12:02:03 -0700 (PDT)
-Received: from i4-gl-tmk5904.ad.psu.edu ([130.203.156.186])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-532eb1e0196sm3449891cf.10.2026.09.22.12.02.03
+        bh=w4MMy3c11m09yYQkyC62fSxMbfPue+ahbcbfmx6F730=;
+        b=xEavwr9Aq8JaeFkiBwnDISZabvReNy32G/soKBGYGJO5LRLqTQevkWF+dqk575RlY0
+         7Y1D0aLwHzv8qV2zLUlHFUnReEjWi4g9dLVdKKNTSMsVSWJb0nCy9KqIAHlYRy+tOP9y
+         oJiazoMvl0/1jNOuAe/WEFiutRGmVho2LWYKfLtCEHdm+Y7VnPC8SjQZtHpLUWU/EclQ
+         4mGgR60R3S1YmN6gRovIOVRA81tHyWW7ylxFK8z+8QWih2HotSnrPmtdM9qlTTCz6zEE
+         mwHxpLxVP4BAU/KTn2MSEXFOd11I6R5qnCEdYhDMInMfNoBaAnHR/8Onlu3Bve08F9/M
+         oLUQ==
+X-Forwarded-Encrypted: i=1; AKwUvBxpLUjwBkQIZNoKE7LkCvAZ8xmTRlSkH8a+3UsPlupIUYkerPp+D8xRDN/p5XY1rgEo5q9hiprbUX48R9XvFJzE@vger.kernel.org
+X-Gm-Message-State: AFuF++m2+I0pgj7Y/ThrZnv6M5snJ7pnxmUZI4aWmomQKo66fl+ilmg+
+	W4RvFSI7DdHPodWT2Rg4XyFeSUm3l1AzqUN0ZxfDm2xlA7nzy/Y6AN8H
+X-Gm-Gg: AYBFou1QWgww5XKw7oFuTJYWzoLP6PsAcyoJinljzTrz33j9jnyXG/k8iIevpy9lvHy
+	TgCGIfngXm2MK/Ri1SrPEipz3IrxlG97kBdQNmauSNvyO5hGaBcj1/5Oc7T9QWqWkSE5DGb6xyX
+	Z4tb/lJVxI2+5evlVxDCyTv8aaF1Ngq+ApP3MeAvII75ku3QJlw+icxq0le87gokdhKasjV256w
+	hNAZNgRKa+OS00D/e2NV49dN6hVqTF6MMJXym1pkWHG6aUtgVOYDtjRG7ay+/PLcuJAtHpHGoV4
+	nhCt2ejp+/h26LL4BzujcD7Da/XRh0O2qW4EByzfJVNpT4lU0xHKJRdk5P0g+rWSsFYmplTQmrr
+	c8P5O+Lk3VgHo0Z0Q44IgceH4rXyO49INq/1cxVlLrR7fx+cq+r94oD4q29NNED4Auss2YDJ3F8
+	GNekLOgCju8N+Sbru3o3JQygIGwgSV7fmDusv9BC75oZQzbngua58xDilPrXgJvLKbo7371955d
+	DAwvCx5xA==
+X-Received: by 2002:a05:693c:4187:10b0:338:5bf5:d005 with SMTP id 5a478bee46e88-33e8ddc7604mr235823eec.28.1790104507377;
+        Tue, 22 Sep 2026 12:15:07 -0700 (PDT)
+Received: from nevers1dd ([118.95.161.132])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-33e96d497e1sm310518eec.25.2026.09.22.12.15.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 12:02:03 -0700 (PDT)
-From: Yuho Choi <oss.patchbox@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yuho Choi <oss.patchbox@gmail.com>
-Subject: [PATCH v1] remoteproc: virtio: Load rvring->vq once in rproc_vq_interrupt()
-Date: Tue, 22 Sep 2026 15:01:40 -0400
-Message-ID: <20260922190159.509836-1-oss.patchbox@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 22 Sep 2026 12:15:06 -0700 (PDT)
+From: Siddharth Karanam <sid9.karanam@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Siddharth Karanam <sid9.karanam@gmail.com>
+Subject: [PATCH 0/2] remoteproc: Add ti_sci_dev_ops abstraction
+Date: Wed, 23 Sep 2026 00:44:51 +0530
+Message-ID: <20260922191453.324983-1-sid9.karanam@gmail.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -74,60 +75,33 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-rproc_vq_interrupt() loads rvring->vq twice: once to test it for NULL and
-once to pass it to vring_interrupt().  __rproc_virtio_del_vqs() clears the
-same field, so the second load can return NULL after the first one has
-passed the test, and vring_interrupt() dereferences its argument without
-checking it.
+Instead of invoking ti_sci_handle's ti_sci_dev_ops member directly
+in the driver code, this abstracts the property read of
+"ti,sci-dev-id" and the function pointers supported by
+ti_sci_dev_ops such as is_on, get_device and put_device.
 
-Load the pointer once into a local variable and test that, and pair the
-read with WRITE_ONCE() on the store that clears the field.
+The goal of the patch is to maintain a single source
+of origin for all ti_sci_dev_ops call sites. Any stray calls
+to any dev_ops function pointer members in driver code should
+eventually be abstracted through this header.
 
-Fixes: 7a186941626d ("remoteproc: remove the single rpmsg vdev limitation")
-Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
----
-Found by code review; compile-tested only.
+The second patch abstracts certain device ops' firmware logic 
+even further (such as get_device/put_device) via pm_runtime.
 
- drivers/remoteproc/remoteproc_virtio.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Siddharth Karanam (2):
+  remoteproc: Add ti_sci_dev_ops abstraction
+  remoteproc: k3: Abstract ti_sci_handle's dev_ops calls through
+    pm_runtime
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index d5e9ff045a28a..fafd73e1368a0 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -89,14 +89,19 @@ static bool rproc_virtio_notify(struct virtqueue *vq)
- irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int notifyid)
- {
- 	struct rproc_vring *rvring;
-+	struct virtqueue *vq;
- 
- 	dev_dbg(&rproc->dev, "vq index %d is interrupted\n", notifyid);
- 
- 	rvring = idr_find(&rproc->notifyids, notifyid);
--	if (!rvring || !rvring->vq)
-+	if (!rvring)
-+		return IRQ_NONE;
-+
-+	vq = READ_ONCE(rvring->vq);
-+	if (!vq)
- 		return IRQ_NONE;
- 
--	return vring_interrupt(0, rvring->vq);
-+	return vring_interrupt(0, vq);
- }
- EXPORT_SYMBOL(rproc_vq_interrupt);
- 
-@@ -170,7 +175,7 @@ static void __rproc_virtio_del_vqs(struct virtio_device *vdev)
- 
- 	list_for_each_entry_safe(vq, n, &vdev->vqs, list) {
- 		rvring = vq->priv;
--		rvring->vq = NULL;
-+		WRITE_ONCE(rvring->vq, NULL);
- 		vring_del_virtqueue(vq);
- 	}
- }
+ drivers/remoteproc/ti_k3_common.c         | 16 ++--
+ drivers/remoteproc/ti_k3_common.h         |  4 +-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 14 ++--
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  | 13 ++--
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 40 ++++------
+ drivers/remoteproc/ti_sci_dev.h           | 89 +++++++++++++++++++++++
+ 6 files changed, 127 insertions(+), 49 deletions(-)
+ create mode 100644 drivers/remoteproc/ti_sci_dev.h
 
-base-commit: f0100363d8c374bd8e9ea7c9ba02744f0b802ca4
 -- 
-2.43.0
+2.55.0
 
