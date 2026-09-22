@@ -1,172 +1,219 @@
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com [74.125.228.12])
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37F5556B89
-	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 15:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E87F560AAF
+	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 15:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790090271; cv=none; b=CYx3AYl3b5lTEZTz3ybVKSHvndlz6FdXyNn9nJUzGguz7yCur0n5v2vZGL6NfI5VtvAZ53D6fJcNjApcMiP68nLZWemso6PjRg/whpRaALD9CHlMDgSz0Ax+JAOlDQdkUgpU93QsPpmY859RfZAHMRtK9GnvEimI0grJdG5RLRg=
+	t=1790091638; cv=none; b=IAMeGSR2JyV6Cpz1ErV2LZTbs0IqMF7A179H0Op6jfi9qeWmfbMyBH2FtUwdkUhEuFGcgYx5SdTWSKyiVL/zDttL92EuqYRgo4SIM2KERHmJu3VYJeKgoaoOoivWraj8H++V+3elAXjGF7R6PaNfEoRM4srgce58+64qEh1GrCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790090271; c=relaxed/simple;
-	bh=CGwfGX7tsRpqOKKJ0miq2JDg5a0dolCInmXOCA+qY6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PRJ3k9bD76CQrtQcHhYcn0zJCM6uyHiXwW4mpyl8fx4FMzLcLfhiOZvxZlze3T5+29Oy8gN2fd2lwUcYdpC45iwhBDrNWwFMz1o6Nk4UFKJhNSjdF88v9C+K64UVpQCmSOmwygmIkJQRK2UyTALitCvacU5hWxJL8FyYCsPnUAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qgh7EGsP; arc=none smtp.client-ip=74.125.228.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790091638; c=relaxed/simple;
+	bh=983PoGRnItfbcGLq9/2KSAqK/+R/CY53c2rZGuZ7b1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hNoEVOkdyyhLwLsjr1HZPzFUOyJbBF1oI+Up4epKLvJk/uZi8sn2bXkS38IfH1rRwigssXvK29XfjMBPuB0CUCNOyWunQg+20aScSIgcTI0F58f9CnB6YWfcFMwYjc1EklztnRcoXXV3IirgtNbr79OLKMaZMLAiIHK3u3dcGzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TmSwgIDT; arc=none smtp.client-ip=74.125.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qgh7EGsP"
-Received: by mail-pz2-f12.google.com with SMTP id d2e1a72fcca58-8633a38df87so2806796b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 08:17:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmSwgIDT"
+Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-868b2e5be4eso14701b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 08:40:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790090269; x=1790695069; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+        d=linaro.org; s=google; t=1790091635; x=1790696435; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=IHB9IxVUxavOjDPhu5rxEe8qPGJRa/948zvhQlxvPGI=;
-        b=Qgh7EGsPfWl55YdLntFwdw033arm4nQ/stwnQJmQ1/IJ5v2WtiK/YoZAKc394DCLiF
-         xwaAkhAkHgFHm2lPRSe/itOl8TXYrbOUQueGfcyvKIFNfOg6cqNN0wTH2qJJLU1a+7/7
-         jq1W7npN463MH5j+P9Z6PTWC9iSqbPcMps/EPxwj1MGHMGAoIfoYF0jqY0GsnyKPHk8C
-         lwI0XFztT4VPDOfIjWs6eVLkkSsZlsOwzZd09rNvuSZZr2jhSWSfw3OGMP6C15sasIXE
-         tTmp0Nk8BDfCHzMXNmoflLqx5jKEO/A/PlNWhRZwaScWzXzHbzCM0M8jlm1y1xK6+fG7
-         xRNw==
+        bh=2HjM704yjUPc3oYEkUo0s9e3MpU0+mzXloxkK4JXLZM=;
+        b=TmSwgIDTNxrv/ArInFd1UDSm3liM+/JTtbsK9UCnhipd6SD3R6CHvF0GwJtfKYtFJ2
+         /YAqGrJhHkeiN/n+ZId9wZb8MVdg6JBhtX9RYnBUexHdQ99eA+tynxqcDfpMQscHNcPV
+         JtCujN4//PLKCsQEko5817TlF14iopig5ESjT+8xa+HEQBmPNwJ3I4+P8JxcDIpm6kKS
+         huMDplf+SR+qRF9OT0sqLAt9sqVOzwh8bETHKHIdnPjrEb8D0qRCVZDAAN2hNqVWi190
+         d82tzygq22iHwRTpK7BNKjjjn8AVAPSj8g/vynUl2nS1OBbJpIZWF/cRajQB2VQ1DB38
+         C/Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790090269; x=1790695069;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+        d=1e100.net; s=20260707; t=1790091635; x=1790696435;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=IHB9IxVUxavOjDPhu5rxEe8qPGJRa/948zvhQlxvPGI=;
-        b=q5opWSYlE7X90DSSC/Kf3XFkVPkBqbGpa/zCdYiJIalRfBzPCc4mozDsLoqsoEtKVX
-         ntMfl1J8paVkd3ppHn06Y0TTWXvhS+FBztsajR55oaopLoiBRfQlE3llKU7o0QKDbLw/
-         l4nhGOgDdy7ij7jIdoSwz93D2nZbrjnN6NKW643UqMY5NuqavjB/yh16leEwJHRnTQIm
-         x5aRLB81+nK2r/ECQuW6Hp83zvd/DN5Fjwk2lyzJBSgDJEGBTCbB6tWaEzjNwS/lLF8p
-         GCA6QaIeQCJmjzdQg/sBJCvoumCI9BGD03h5EfQIgKNRH4H327mTOrwAxREzh3O/eFxE
-         ks7w==
-X-Forwarded-Encrypted: i=1; AKwUvByXCzP4FlTpMRd52CiPxEHCRfnyKKuJBB+qrHwljVSGS/8puAoQ9OKlnVl+cwCLRNJugihovK66kF5CXnat0eIW@vger.kernel.org
-X-Gm-Message-State: AFuF++l9WXetjY4Ouv8jjGtMDSjoI/DkvPDL/aTypEy2WoneyeK7A0d9
-	wP+cdXCStSBIYucUQtddwMwEKAHe4Xs8KYdMJcbHUvmWv61nO1Tu9eYM
-X-Gm-Gg: AYBFou1G9IATGGXrJ4AmF/gRkgPWXMrXnu3SBpTjkqaG/9IoXPQegVhF6rvw7TRVo25
-	axgDJpfm4ltOFUH3Trp5e+TKe7cws7E+DzsjkYQA2476wMr3T51n3ou5M2uRiRVMZWYVtvvGKoN
-	DoqdsWjc0aNxZkCtU3EtFw9DYe7FrTutKOGSMc8teXH15AceEYfksCqTGB5LYWqCxEbeUC4gg6b
-	v3ForzJYk0JM8kIfMvIDBMgbp4MQnnWxxudu2lJEOGlkbscQTkfT1m9qF3taDV+TyeuMY8klUpW
-	YIqg6OyTG/HH29lXD/v/bWRq5HWGVp8ZmQwuC7B8lxmisi6NxhAmB8Lmr+3DjMxK/aek5L13hup
-	QigRY6K98Sj5xRa6sR5s0GfNEEfkUhLKS+c8fBGuMn1zCwEMN8pMRoWPC5/6ELOwFO0xb+4EMcU
-	H0eVlwWwxZfom1FdW7M1d9GGfyTGWVODgx6qRk1M7+Mf6bMKTfjC+5OlVrhELpEr7UiBy8Ci7wR
-	jUBEwmdrvAkgbL5vaD6kDYnLyP33cvSr7KNL0NvcXxRgQ==
-X-Received: by 2002:a05:6a00:1496:b0:878:37e1:aa76 with SMTP id d2e1a72fcca58-87c855f6437mr1731047b3a.56.1790090268489;
-        Tue, 22 Sep 2026 08:17:48 -0700 (PDT)
-Received: from SANGHOON.tail18dcf4.ts.net ([1.220.132.212])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87c332aca11sm1074819b3a.54.2026.09.22.08.17.45
+        bh=2HjM704yjUPc3oYEkUo0s9e3MpU0+mzXloxkK4JXLZM=;
+        b=EAqnGhojT9j0kWJA8+MegWhtogrtmntXPdl9KCKxuIPuvaf/b1cT+WE8/31IDzHMj8
+         N0Ah8tHe7S3Zwv4a1OS1TCRhC6tzaew2otNB22f2kkAfoWEnt3VScvK1v5+C3CjShPMA
+         iRsxrWNnVs+ihtDsRMiVk4bH3COCFFGjXrySNJ0dGnWCfrEVzwgx26+0xXrO5JGFCVgO
+         KI6oD96elXBiVfEOq1B+ZUFhf4e5Cixt5K+TeNx5PpNxdl6E0i46H3MGEa05/w1XZs16
+         e1Q5sms2KAWFVArDcKz+kHsXCwaTFJXgMNUIgSuv/mAAw66qbHbhDmMPks1hjmz4qkmE
+         7K6g==
+X-Forwarded-Encrypted: i=1; AKwUvBxgipa0cQRtAnNuYzbtEtXe07f363iJm7vaZFdXSlkW6cC/5vynWuGYGgjc9igfNRk89mtaYX0vvJsEpmll9ary@vger.kernel.org
+X-Gm-Message-State: AFuF++neSlXbatI0h98/33gnrPEVYVRtUpbPfPvh1THHAhKOuX6xzGMC
+	W0gXu+VcqhOej8j9VddXn93qaxFgG1K/GsadHnas6bR2xG9ijqjGnGsxRVpBwioeQPk=
+X-Gm-Gg: AYBFou3vBeqIKx3Qqw6UwaTYeu3zLpwSVoEf5Z8eP/3hS8N2rnTH/4gKHrcjgIbAklT
+	AeOligdZK2/IEt23fbrzN+jBSX0cQoLJFc5XJ3Eb9sW/jMs+071DWHdCazh5g2zp+8N0aEHv0z8
+	9Pjoy55Io0Tj3LD3MbyxrsRBHmxqctz2ePMaOyAV/L2QTHC6fbVcGOba82+ABODNEtZsZfUkIpA
+	EcN03G3bF9FJyw8cZmXcRUu/nuhsOhJgXab9jUK1Q7yQFSqv5/ROhflfS3m79fBfaDqsS2bQaha
+	B27bVa+R9XP92GB2zgwCSuNGGnemNtU5MPNXv+x3DYOVDLI9y+lztmdIn030QSvjw4jWu3pef3p
+	jz5xFe2hKLiuwMxD0c3aJq8Hgr3p8Dw/ysUZRjapUDLlSipw2A2UZjazGLmYPd0bWnfB5ddkN6a
+	t8rLfXqyaCmav2s9cSusV/V1CHw6yDIQldbLyaTrH3q8YVnVoTZhWpGlW/AeVPvsOWwAwYh6+Y
+X-Received: by 2002:a05:6a00:1393:b0:85b:8606:627f with SMTP id d2e1a72fcca58-87c82f7f151mr1827877b3a.26.1790091635190;
+        Tue, 22 Sep 2026 08:40:35 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:1046:ab8:737c:d2e2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87c2fc4b581sm1104255b3a.7.2026.09.22.08.40.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2026 08:17:47 -0700 (PDT)
-From: Sang-Hoon Choi <csh0052@gmail.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Sang-Hoon Choi <csh0052@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	linux-remoteproc@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Changyul Lee <lcy8047@gmail.com>
-Subject: [PATCH] tty: rpmsg: close port lookup-to-get race
-Date: Wed, 23 Sep 2026 00:17:41 +0900
-Message-ID: <20260923001647.1337001-1-csh0052@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <2026092154-anger-sensually-aae8@gregkh>
-References: <179000811428.1227592.8003229121862460039.idr-bug-84@gmail.com> <2026092154-anger-sensually-aae8@gregkh>
+        Tue, 22 Sep 2026 08:40:34 -0700 (PDT)
+Date: Tue, 22 Sep 2026 09:40:31 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, virtualization@lists.linux.dev,
+	imx@lists.linux.dev, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC 08/12] dt-bindings: remoteproc: add remoteproc-virtio
+Message-ID: <arKhbxi3Snbt1_Mn@p14s>
+References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <20260916-remoteproc_virtio_map-v1-8-dac8c5eb4aa9@valla.it>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260916-remoteproc_virtio_map-v1-8-dac8c5eb4aa9@valla.it>
 
-rpmsg_tty_install() obtains cport from tty_idr before taking a port
-reference. rpmsg_tty_destruct_port() removes the entry under idr_lock
-and frees cport. If channel removal drops the last reference between
-idr_find() and tty_port_get(), the install path dereferences freed
-memory.
+On Wed, Sep 16, 2026 at 11:10:53PM +0200, Francesco Valla wrote:
+> Add a new binding to describe remoteproc-provided virtio devices; while
+> these are discovered through a resource table parsed by the remoteproc
+> infrastructure at runtime, their description can be needed to probe
+> non-discoverable buses (such as I2C) or to link consumers and suppliers.
+> 
+> Each vdev is described by a dedicated "group" node, which then includes
+> a virtio-device node, which binding is already existent and used by
+> virtio-mmio. Each vdev shall be stattically linked to a "group" node
+> using its index inside the resource table as the reg property of the
+> node; this permits to have multiple instances of the same type of
+> device.
+> 
+> The binding is intended to be generic and adopted by any remoteproc
+> provider.
+> 
+> Signed-off-by: Francesco Valla <francesco@valla.it>
+> ---
+>  .../bindings/remoteproc/remoteproc-virtio.yaml     | 89 ++++++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/remoteproc-virtio.yaml b/Documentation/devicetree/bindings/remoteproc/remoteproc-virtio.yaml
+> new file mode 100644
+> index 000000000000..c4a0d84b1460
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/remoteproc-virtio.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/remoteproc-virtio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Virtio devices over remoteproc
+> +
+> +description: |
+> +  Virtio devices ("vdevs") can be exposed using the remoteproc infrastructure
+> +  and its resource table. For some of them, a device tree node might be needed
+> +  to describe remote undiscoverable hardware and/or connect consumers and
+> +  providers.
+> +
+> +maintainers:
+> +  - Francesco Valla <francesco@valla.it>
+> +
+> +properties:
+> +  virtio:
+> +    description: Contains a group of Virtio devices exposed by the remoteproc.
+> +
+> +    properties:
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^vdev@[0-9a-f]+$":
+> +        type: object
+> +
+> +        properties:
+> +          reg:
+> +            description: Virtio device index inside the resource table.
+> +            maxItems: 1
+> +
+> +        additionalProperties:
+> +          type: object
+> +          $ref: /schemas/virtio/virtio-device.yaml
+> +          maxItems: 1
+> +
+> +        required:
+> +          - reg
+> +
+> +    additionalProperties: false
+> +
+> +    required:
+> +      - '#address-cells'
+> +      - '#size-cells'
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    remoteproc-cm33 {
+> +      virtio {
+> +          #address-cells = <1>;
+> +          #size-cells = <0>;
+> +
+> +          vdev@0 {
+> +              reg = <0>;
+> +
 
-The first-open path and channel removal can run concurrently. tty_mutex
-serializes TTY initialization, but rpmsg_tty_remove() does not take that
-mutex. tty_unregister_device() prevents later opens through cdev_del(),
-but cdev_del() does not wait for an open which has already entered the
-driver. Before rpmsg_tty_install() finishes, the port is not attached to
-the new TTY, so tty_port_tty_hangup() does not close this interval.
+Do we need the 'reg' since we already have vdev@X?  I'll let the DT people
+provide their input on this.
 
-RPMsg channel removal may be initiated asynchronously by the remote
-processor or transport. In the test, the local process only needs
-permission to open the TTY node; channel removal is initiated
-independently.
+> +              gpio {
+> +                  compatible = "virtio,device29";
+> +
+> +                  gpio-controller;
+> +                  #gpio-cells = <2>;
+> +              };
+> +          };
+> +
+> +          vdev@1 {
+> +              reg = <1>;
+> +
+> +              i2c {
+> +                  compatible = "virtio,device22";
+> +
+> +                  #address-cells = <1>;
+> +                  #size-cells = <0>;
+> +
+> +                  eeprom@50 {
+> +                      compatible = "atmel,24c1025";
+> +                      reg = <0x50>;
+> +                  };
 
-I reproduced this with a UML kernel built with KASAN and a synthetic
-RPMsg device using the real rpmsg_tty probe and remove paths. Test-only
-synchronization forces removal after idr_find() and before
-tty_port_get(). The opening process drops to UID 1000 and GID 1000 first.
-The unpatched kernel reports:
+The previous patch introduced bindings for virtio SPI while the above two are
+for GPIO and I2c, which is very confusing.  I suggest you pick one and apply
+everywhere.
 
-  BUG: KASAN: slab-use-after-free in rpmsg_tty_install
-  Read of size 4 ... by task init/23
-  CPU: 0 UID: 1000 PID: 23
-
-The allocation stack ends in rpmsg_tty_probe(). The free stack is
-rpmsg_tty_remove() -> tty_port_put() -> rpmsg_tty_destruct_port(), and
-the invalid read is in rpmsg_tty_install().
-
-Take idr_lock across idr_find() and tty_port_get(). If the entry is gone
-or its reference count has reached zero, fail the installation with
--ENODEV. With the same forced overlap, the UID 1000 open returns ENODEV
-and KASAN stays quiet.
-
-The test uses a synthetic transport and deliberately widens the race
-window. It demonstrates the lifetime bug and an unprivileged opener, but
-does not show that an unprivileged user can deliberately cause channel
-removal on every RPMsg platform. I am therefore reporting this as a
-normal lifetime bug.
-
-Fixes: 7c0408d80579 ("tty: add rpmsg driver")
-Reported-by: Changyul Lee <lcy8047@gmail.com>
-Link: https://lore.kernel.org/all/179000811428.1227592.8003229121862460039.idr-bug-84@gmail.com/
-Assisted-by: LLM
-Signed-off-by: Sang-Hoon Choi <csh0052@gmail.com>
----
-Greg, thanks for the feedback. I went back and reproduced the race under
-KASAN before preparing this patch. I can also provide the test-only
-instrumentation and the complete KASAN log if useful.
-
- drivers/tty/rpmsg_tty.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/tty/rpmsg_tty.c b/drivers/tty/rpmsg_tty.c
-index c5fd6d9b3..b2765bae2 100644
---- a/drivers/tty/rpmsg_tty.c
-+++ b/drivers/tty/rpmsg_tty.c
-@@ -49,12 +49,19 @@ static int rpmsg_tty_cb(struct rpmsg_device *rpdev, void *data, int len, void *p
- 
- static int rpmsg_tty_install(struct tty_driver *driver, struct tty_struct *tty)
- {
--	struct rpmsg_tty_port *cport = idr_find(&tty_idr, tty->index);
--	struct tty_port *port;
-+	struct rpmsg_tty_port *cport;
-+	struct tty_port *port = NULL;
- 
--	tty->driver_data = cport;
-+	mutex_lock(&idr_lock);
-+	cport = idr_find(&tty_idr, tty->index);
-+	if (cport)
-+		port = tty_port_get(&cport->port);
-+	mutex_unlock(&idr_lock);
-+
-+	if (!port)
-+		return -ENODEV;
- 
--	port = tty_port_get(&cport->port);
-+	tty->driver_data = cport;
- 	return tty_port_install(port, driver, tty);
- }
- 
--- 
-2.43.0
+> +              };
+> +          };
+> +      };
+> +    };
+> +...
+> 
+> -- 
+> 2.55.0
+> 
