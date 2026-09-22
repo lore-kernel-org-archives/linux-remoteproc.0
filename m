@@ -1,110 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6D7544D74;
-	Tue, 22 Sep 2026 12:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790081205; cv=none; b=mmQ+lh3+1ykGKhMQms0G2RqtPeA4rUpL17ndoKgJZvUJlUi16YaQ7/6si8oGDqJ4Bj1cqG98bF/9RLOQ/shM02mbqr571j2FcfyYwBFkYuMTpPSBdzYZNnhy8Ne2WJt+6krtFacst5ZYvaI71Nici7o4A7TYwGp4Nkx9I8qzI9c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790081205; c=relaxed/simple;
-	bh=Gw6aJfDoYQxpcpJbIpH7MZEqUsXderoYhBMTr6z27s0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=Bl4hWJt5cbf8JfcKctGYpxaM7SalkA5Cqbi6ctKyjoiiWn34okkqAK3o7FEu5bzPSckRXLVZfbikyMkJY57HPVkAX11foS3qsJGzUIPFpFLkvIhGwn94dz7pF9oJb7e4MtqWRtS5rnCBqaTr2F2jZ+KKEk7r/vlOAGS5nhhPtYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqSwa+yQ; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B35549389
+	for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 13:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790085203; cv=pass; b=gUY0pnnvmgUh7ERI01/Vawnj7Tt0R58jRSeXh8R1aUtoDY9IKl0Pcf5mHRs+A4bfgmxMoqYUrdz28fsnKpNXW+x9COlF/5qy/rI8cu0esCDlI9V1yC38plPils2gDow9NAuUMkltLz2hhHVdNNsfLerJvXl8COYKaPschRn11Sk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790085203; c=relaxed/simple;
+	bh=0hurBNTkrVz1B/9TW5ipWegr4/ZEEZE2GB3faJsOdT4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rveZ5qudHfNHc8PBETWiX+y3rAadG0G95jfJrv4JAmujlWEkQStxLeAu0M4wYv+6GPJY8Xjy4UrKnAFtmSj4H4uU8RSMPW9bnS3HQegkUl3VMWA/YZWkWF6CYywSCOvPZeTRpH/ImlvCgFohRUbX0V52SqvfmOo02tNWPRyIxng=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JBxsn/jR; arc=pass smtp.client-ip=74.125.228.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqSwa+yQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B62C71F00898;
-	Tue, 22 Sep 2026 12:46:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790081204;
-	bh=d0Dyf0O5qsd2O0wkwEV3APMOPZn9BpCHwoGyAkHKWSo=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject;
-	b=JqSwa+yQbvWbjOBqQCLEP/8vpkYVdZSulDVVCVnruLKhhQYoiyqJMsuyObayafQX1
-	 IOStS6bCOQom7/8zyFAdXMtC++4yDoAjyvfvR+J4vTkYO5wwNYPk2a+JMAuBs1ZICc
-	 EIdHHq8tss+bleMbyPdb/wIcXEqN/wMnVg7UPrR/OMv9MSKBrMritfm801X1bDZofi
-	 rtTX5tbZ4T3I3BXmKXYKtDWeGcAFG5JsRwKhw25OJDu4KQK6nFIfUZOXiz0zecRBOI
-	 KsgRdPiyNMvDyj0yC4lInGJxfuTBLOiHUguWQCS0H3+Z6aZSb4F1uLJbqqJ1wXFRO3
-	 lsiCSkyVwTmQg==
-Date: Tue, 22 Sep 2026 07:46:42 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBxsn/jR"
+Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a6056ac81fso7427990a12.2
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 06:53:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790085200; cv=none;
+        d=google.com; s=arc-20260327;
+        b=b4pmZPuvEKF11JYRai0wm0kl0wddfuBaTnwcb7df2Zx5fg17jS+hgtgpqK+gb52kh4
+         djivG02g77UOvbaew3dFW61LmoCY9HTlWCI0djctmFtpAIzVXZhVwFeSnhGnDkmaHl/q
+         vbvXWmyCcMkMbkD2oYnPvWq40Q42pyNcDKJ0oLR/kuwjQ411fNAkL5qONDocfvCdTIQd
+         oEGE7Rbdxeu6S0vg4V8mFnaQ5LcClHGbIXdP0JeXB+m94/Cm085VAS/L9TVoso8Fn3kO
+         6oAopf53Bo++EUroDj3rtNWOr2SJdzkhpz7zXanaXCLmjM6BJYDTODMUCt+JBmjM+bhy
+         HQMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=awCRBzfBSO0cm9zEvmZIeCCRXLT0QzBOpw1tpjmmlbQ=;
+        fh=Fovygw4qoeLghx5Qk1XEKVUwhtR3zxvNdbcmrfqjEE8=;
+        b=LONgN4pjjwFBOPS4+P6AbC16zOXgwC1d9s6CCn+Fm+91qCFLXVGmlYmEyI3eVKCx8x
+         hWS752Dk2ujjqPsYBsiFopMIpImo/T1t0yOs9+5reh3n7mWRHWRTukHGG7aekWGv9ImI
+         Ntxg1OWiln9wMqMB3/c3XOfHm6vmnhgEe85ruf77mKju9C1fc48x/a5eVt6ANRkZ6Yxg
+         pElPu3C2EjwT8Vs5T0OlMYLWm3LWPuLDKyGDs4StZU7jJhqjIgKhFO67W01Om6XB6JFU
+         GYZtg2FKj69CM3sfqW1oHPy3MEqMJAl+dc3APHxzgiTyBBRaCYsGZ9XC0q9uqgYspNaI
+         R0hQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1790085200; x=1790690000; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=awCRBzfBSO0cm9zEvmZIeCCRXLT0QzBOpw1tpjmmlbQ=;
+        b=JBxsn/jRsaGBMEy12y39mOfB9BBGyuwRxzlayFrew8tXeXkG9tehN7PlX/5mljzimw
+         gCF85PXhWZv+i20SnAc0zjcjbnclieOi7XMcA4UyVd2gSS39sSywN8UKdfFPHsmlEeuy
+         hxnX5VRNS1ZNkcUT2sApSfd2nMQdUSJ/ERnEiUM1UuuGJZtE/Yz3eJ1BO64q/4zPMqFK
+         R/TD9JAKZ3TCtSrybpiEG5nXpme8A9IVnYh6csgQFh6fXUxsVg/njZv4aBcrUHGYiRVl
+         0lZO+lKjaj4VRtThlQANUrs5E3fFFqC5I2kGvWb2I6fKCQ0MspGPYqI4FTrpbgb02EfK
+         EO3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790085200; x=1790690000;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=awCRBzfBSO0cm9zEvmZIeCCRXLT0QzBOpw1tpjmmlbQ=;
+        b=X8nbkHoXIVI0geokS/bWJ9q1Dk9FUu7pH85HRlVTmdcIiVxnTsmdqQEiovJJv881da
+         mwhPXhnKt0GpkJmiBZrC1XV0ENxcfu6NZROyxaDVqy7czXYTbTn7IACOijlkmvkrr2Qq
+         8bS3Es2t8+NqQflSFizsIqI813aL+UsP2/qtQA9o4StyiYKt7m4WoM0WbmSty3aqhnJW
+         DoAbgtAUVf7vzBx7eE9DDITHS0mdpNLVC8xCc1nVHgzlYuu4zUjB9gTt8TSMsVlcdOjO
+         1jwY4VawkMKj6nG/1imwNb+mXJaigziyMhiD0FFk0Kj7Ygph73n0UQ/Xx/BUjueiUB3p
+         2wWw==
+X-Forwarded-Encrypted: i=1; AKwUvBzYRMYAX1OCjzg5/ttvuaUj1EnvPXMQR6lCm7Boa0i802fVx3FnUL8mXg7lgTejQkQsbRRE+GOZnJD4uQB0mZbI@vger.kernel.org
+X-Gm-Message-State: AFuF++l2hCrg8dpGcXorOrh/m/JtbSyIZkIFQzpLJ+1HCUIzU/A9EaZ1
+	sL8wjuhkAt5TGqtVNL1aSIIUD+eI++QuXyJm1C3OJDcnW6MPNH9WV7i3G9oQ19UFpXm2AVMWDlr
+	P5GXc4tr1rHAJ6evFB5NZgTE2LTq3F1nDCenwi2ScVA==
+X-Gm-Gg: AYBFou0FvYCO2Ko57/pqGtTY8QUwh/xgkXNAHLPU3TMbieiNjPM319yJttxF1qH6/l8
+	niH73OKzgM7U1ADIGfFnO47iVI0F219r/OUogd7StvEBWd4cI698ab5/Az4HFz9UfIAr3Zutckt
+	bkxyp7CUG0Vx6fOqfCBMFK4wy+IVWDn7TA2suwmMT3ZTjOIywh/gPOlYX8ucCrs6aIlTFGN3+CC
+	EDzysFucPHF5ddQJ/lb9RE2UljawgmsPLmzDppLcFHEMMbPmT+TA5lDlSRtSeZPfyxZ6tyxH7Cn
+	K4Sy+ntW2XtqbK1EY4hIpF030Wsempj15fhEJYwHCTLjxr0YStd4eGvnaKmH8oANv4weh63DE+R
+	dujw64+XwslVD
+X-Received: by 2002:a05:6402:20c3:20b0:6aa:9210:262 with SMTP id
+ 4fb4d7f45d1cf-6aa92100342mr3351155a12.22.1790085199929; Tue, 22 Sep 2026
+ 06:53:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: samuel@sholland.org, Bjorn Andersson <andersson@kernel.org>, 
- linux-remoteproc@vger.kernel.org, jernej.skrabec@gmail.com, wens@kernel.org, 
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-sunxi@lists.linux.dev
-To: Tim Michals <tcmichals@gmail.com>
-In-Reply-To: <20260922034711.190253-5-tcmichals@gmail.com>
-References: <20260922034711.190253-1-tcmichals@gmail.com>
- <20260922034711.190253-5-tcmichals@gmail.com>
-Message-Id: <179008111726.3145450.12515884714286046202.robh@kernel.org>
-Subject: Re: [PATCH 4/7] dt-bindings: remoteproc: add allwinner sun55i
- rproc binding
+References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <aq1sooGCYUiWbhMH@p14s> <aq453yukMHiNb1jp@bywater> <CANLsYkySF+eF-FURnnT6UJv7P5Sg2HdfMSBZnZy_BLyCMvuofw@mail.gmail.com>
+ <arIfj-1Ji6HEBHLJ@bywater>
+In-Reply-To: <arIfj-1Ji6HEBHLJ@bywater>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 22 Sep 2026 07:53:08 -0600
+X-Gm-Features: AcwNN1V0zenE0U1QivuzVoqHQLJIIYIxl9SSuy2ocYOHZBqajP-1AfG4uh0OqKk
+Message-ID: <CANLsYkzaxwx8NJAOki_wkzauL68ourd12qF8PzzVKW++PJXZfw@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/12] remoteproc: add support for any virtio device
+To: Francesco Valla <francesco@valla.it>
+Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, virtualization@lists.linux.dev, 
+	imx@lists.linux.dev, iommu@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 22 Sept 2026 at 00:29, Francesco Valla <francesco@valla.it> wrote:
+>
+> On Sun, Sep 20, 2026 at 09:31:11PM -0600, Mathieu Poirier wrote:
+> > On Sat, 19 Sept 2026 at 01:33, Francesco Valla <francesco@valla.it> wrote:
+> > >
+> > > Hi Mathieu,
+> > >
+> > > On Fri, Sep 18, 2026 at 10:53:54AM -0600, Mathieu Poirier wrote:
+> > > > Hi Francesco,
+> > > >
+> > > > I have started reviewing this set but given the size and implications, it will
+> > > > take me a few days to get through.
+> > >
+> > > I'm going through the review done by sashiko - would you prefer me
+> > > sending a v2 with the trivial errors already ironed out before doing
+> > > a complete review?
+> > >
+> >
+> > We can wait if the errors are trivial.
+> >
+>
+> Not all of them are. I have been a bit to naive about the bounce buffer
+> management w.r.t. what can happen if a memory area is not specified and
+> I will need to rethink/rework that part.
+>
 
-On Mon, 21 Sep 2026 22:47:08 -0500, Tim Michals wrote:
-> Add Device Tree binding schema for the Allwinner XuanTie E906/E907
-> RISC-V remote processor found on A523, A527, and T527 SoCs.
-> 
-> The remoteproc node manages the co-processor lifecycle (clocks, resets,
-> boot vector) and IPC (hardware mailbox). Memory regions are expressed
-> via reg entries named "cfg", "r_sram", "r_sram1", and "remap".
-> 
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-sunxi@lists.linux.dev
-> Signed-off-by: Tim Michals <tcmichals@gmail.com>
-> ---
->  .../remoteproc/allwinner,sun55i-rproc.yaml    | 152 ++++++++++++++++++
->  1 file changed, 152 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
-> 
+Ok, I'll keep an eye out for that.  I'm already halfway through your
+work, so there's no need for a new version now.
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:29.32-53 Unexpected 'CLK_BUS_MCU_RISCV_CFG'
-Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:30.32-45 Unexpected 'CLK_MCU_RISCV'
-Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:32.32-53 Unexpected 'RST_BUS_MCU_RISCV_CFG'
-Lexical error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:33.32-54 Unexpected 'RST_BUS_MCU_RISCV_CORE'
-Error: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dts:40.3-41.1 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.dtbs:140: Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/linux-dt-review/Makefile:1714: dt_binding_check] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.kernel.org/project/devicetree/patch/20260922034711.190253-5-tcmichals@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> Regrads,
+> Francesco
+>
