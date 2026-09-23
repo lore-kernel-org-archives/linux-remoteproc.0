@@ -1,245 +1,172 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513B732B111;
-	Wed, 23 Sep 2026 15:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com [74.125.227.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB713562615
+	for <linux-remoteproc@vger.kernel.org>; Wed, 23 Sep 2026 15:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790176405; cv=none; b=Kup/fcb0IKcdEXNiHHrXG8EQebenUVFUKpt9wY3SDZEQ3jjESWkZdSNNBqxA1pD+bOKMJIZOhOshPhlVyrb6YjUKmKarudfBegoo0cT3m71y3oKScF0Prp6PRGrfXF8+r0VAfMnIDRERP+dog1mwmeXqrIpgNd/U+5InljzvC8c=
+	t=1790177451; cv=none; b=bk1MjM8XouOWkrdANNoopCAcb+k2cv6gU7MQAelsI7RjLLlopeHTT4IHVxAv9hSbK4o5R0Y32yC84ARwhAvUhI9PWyPUEGHeJp35RQwiM9NZ1gaHcuTL6mMdQPZP6HXD7Mvk2rtJp5NAAwbeWCvPbEeEhMg/pN6Bjw0fsYI0bkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790176405; c=relaxed/simple;
-	bh=phoCjmKpgbmmjwB/TcyzDXeAvmM89UaYWapuOmD6GO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kYeNImLrYqkyPwm/4q5qwSzJMIrD8UYp6Bfh9UEGGa7cZPVtwc6czJrM8FDPNpDaVoULui9MPzYI39qBAOlwhjD/8uWLQXaoB1hyrFpkWvuIRek0K2ur1zVcgTfbGwEE2TM+5235mNzfKvRiJQgnBNK7f6fPCsqLQbr6holg6Ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=lT0HrR7d; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+	s=arc-20240116; t=1790177451; c=relaxed/simple;
+	bh=1vmm0wkc2HkHONRH8pVcOgqdwW78+bTinZ2FzAKmk3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGyMtIU736kQlMFWobZkVBQpDbpQgDREUN+A7DdSuYnuYeAV4Ihkf8E1RtDlwfgU1FmUQ5swmxBu7vyQu/TnOcjPfalABWlLJkcUGt9JRKh2NqaPBuF9qnoZzPX1o4sosq7u2O5UVaVK7hd5668O5L9L5nffIRjl+QebaHLWHvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U+rRjNcm; arc=none smtp.client-ip=74.125.227.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="lT0HrR7d"
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2367F1A32;
-	Wed, 23 Sep 2026 08:13:20 -0700 (PDT)
-Received: from [10.2.212.23] (e121345-lin.cambridge.arm.com [10.2.212.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9DE43F86F;
-	Wed, 23 Sep 2026 08:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
-	t=1790176403; bh=phoCjmKpgbmmjwB/TcyzDXeAvmM89UaYWapuOmD6GO4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lT0HrR7dE1KrdfZA5B71p57+NqXyZadFCb7ajyLoJVdE7kZMh3rZ3Jd0t7uUp8jnW
-	 fLqDM7jtOQPyRFFDJI03lMKNhDcWBWt6MltdUDqXOiaZKTfjhdEkEyRFSF66Rbvbq/
-	 Yjv8PK7Ahg6Cgu2DicOgJTx/pdIes/7CME0K6SuM=
-Message-ID: <37174cd4-95c0-4350-aeb2-b1b6abaccbff@arm.com>
-Date: Wed, 23 Sep 2026 16:13:18 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U+rRjNcm"
+Received: by mail-pj2-f43.google.com with SMTP id 98e67ed59e1d1-39dacf053eeso613378a91.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 23 Sep 2026 08:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1790177437; x=1790782237; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=W4AqH3BG39Ccw9rat1s2LDjmKzSlLDWMcVufSeoX/Lk=;
+        b=U+rRjNcm7ugzc5Soz10jkunYElefyJ/mmDKlhLWKxx6z11zYyaHFhhSoYKfXPKWBFw
+         27xgR+M2sA6H2ZWxkjODi5uha64syM1YHfvjc6sczDTfgx/+9+bAmL/LLTQGX2im1r24
+         vnbBTToGn5eTvwUOy0ufX/Y9l8EbodyBTpgTAYpNBr8tNrl80i8S6OmUfpvYK9QXlPUZ
+         K40XB5d98svdxNzLOY1cjwqKXKjYZaYzBsmQx00jERdfe9HVzCgLQ6c4ydWL4cFWEZT2
+         3a3N22hOtj6qhEGw0unwpMeGCo2sSv68PYITFdMGaA174wdpTQhDtvyvnggx+37Z/bAW
+         7AsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790177437; x=1790782237;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=W4AqH3BG39Ccw9rat1s2LDjmKzSlLDWMcVufSeoX/Lk=;
+        b=d5KKU/N9wYfAEwXkZPiyW+MtU1R64cKCJ27cyBtc8DVQYxZFkLlHKKczlJcLVESZ8j
+         1vGLvE/suwGP1cAsSt8EE6n84XbkwPsjpjPvO6i4Cnc5jYA+BXcJQVM53HbnLz4wmuVz
+         3rVnN+GtSKF3qqcY9qyIRvuVAIf6zLK/Fmzsmvlaw2eZD9zE02zvEopTT8/c5nitD27I
+         Uhu7e6xdS8tmJbGlKQ7frytEcIMBP+BWHrrzf63BUGi4/ERl/yaJ4c/7AmOVeo0AcRFd
+         qAtfbkOPRj2ncGVgXGl3iQ2BnwFuKHCDrp/4ooBcgmkOBsWNb0kiWLhzwklKUKMmO6Te
+         joQA==
+X-Forwarded-Encrypted: i=1; AKwUvBwqatT/dKviyycBcr4zGjjwiGLFnwHGcRPUoiPZ+Ai2xQlQxj18I1XaFm4w46dPWVKZupTgpBbL9Pl3/Cuoilu5@vger.kernel.org
+X-Gm-Message-State: AFuF++mlFE0DU0T9sPKTjDmLjWvxdhGqwrDmVIXtyE0zmfL/UWcQMNKJ
+	pRe4+tFmx1Y2XtikPYWmcBOvCAhns5o4gPc3CCKx7fJ9CWCgxjLogKdhpudBAO5KvtU=
+X-Gm-Gg: AYBFou2fl2l3+J2tb8Jx0u/Tg6zI/PozYKnB8wOIfIHIwx3oL8nQTS++lG7wWECpMgK
+	g5wAwOcLO9zbveVMhgnfCZOYz1SzASQxgHc9RWK89gDK/05/aakDy8yWc/g9G+Y39J8C8SflW/S
+	OcqIJbv5opxsdiTiVa1tYxG/hWlr+Rc7hqy06SVK1ti5dtysyT8rvYFRTdpSNLTi7qI53CDdJyp
+	Em350X0fIxw6c3jA1JrkUjItTrfuxizxKCJo6iKgZd2nNFOqHO8lNtWM56ZxmoHfHQIZ1qHUaUu
+	q3li6LE3EbC9l6VPFF4ubnql6v8XhPVAbwEwZYdaUzsGtjkodlFdMBVNOaoNAgRv0mBX4hRDeb4
+	HU/m/Vv1Othugl9SttZTCCZaTuinr1St8eTGLIRQPGOwkM88iPO4G0FZ/aX3Doy995D85MGYsNu
+	eXaL8hIAlSaubPMT/tbe7V+vj5k9+/DQoL10Tqevu+z/MLhsef8FcB5bDwl1tbF2/Oa2dVRrc=
+X-Received: by 2002:a17:90b:4d0e:b0:39e:6a7e:ee19 with SMTP id 98e67ed59e1d1-3a07e6540e2mr2620920a91.37.1790177436748;
+        Wed, 23 Sep 2026 08:30:36 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:b4a:dc6a:68e:2592])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a07ddf1cf3sm5652074a91.9.2026.09.23.08.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Sep 2026 08:30:35 -0700 (PDT)
+Date: Wed, 23 Sep 2026 09:30:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: Fix MT8188 SCP regs
+Message-ID: <arPwmV6I6e2hCqo6@p14s>
+References: <20260921232520.3127457-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 00/12] remoteproc: add support for any virtio device
-To: Francesco Valla <francesco@valla.it>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown
- <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
- Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, virtualization@lists.linux.dev,
- imx@lists.linux.dev, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260921232520.3127457-1-robh@kernel.org>
 
-On 16/09/2026 10:10 pm, Francesco Valla wrote:
-> Hello,
+On Mon, Sep 21, 2026 at 06:25:19PM -0500, Rob Herring (Arm) wrote:
+> Allow single-register MT8188 SCP dual nodes with only the cfg
+> region. Keep two-register and three-register requirements for the
+> other MediaTek SCP variants that need SRAM and L1TCM regions.
 > 
-> this patch series introduces the possibility to support generic virtio
-> devices over the remotepoc transport, whereas today only rpmsg and
-> virtio-console are supported.
-> 
-> == Introduction ==
-> 
-> Support for devices other than rpmsg was originally planned [1] and is
-> declared inside the documentation [2], but is in practice not there for
-> the majority of (if not all) the platforms that provide remoteproc
-> capabilities due to memory allocation.
-> 
-> While vrings are pre-allocated in an area that is reachable by both the
-> local (i.e.; Linux) and remote processors, buffers produced by virtio
-> drivers aren't, since they typically get allocated through kmalloc.
-> The aforementioned rpmsg and virtio-console drivers instead use a trick
-> to overcome this limitation and allocate these buffers directly from
-> the remoteproc device's coherent memory area, somewhat breaking the
-> separation between the driver and the underlying transport.
+> Assisted-by: LLM
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/remoteproc/mtk,scp.yaml          | 22 ++++++++++++++++---
+>  1 file changed, 19 insertions(+), 3 deletions(-)
+>
 
-This sounds very much like needlessly reinventing restricted-dma-pool, 
-with even the same underlying motivation, more or less...
+Applied.
 
 Thanks,
-Robin.
-
+Mathieu
+ 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> index bdbb12118da4..2f0a28c7a24c 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/mtk,scp.yaml
+> @@ -28,11 +28,11 @@ properties:
+>      description:
+>        Should contain the address ranges for memory regions SRAM, CFG, and,
+>        on some platforms, L1TCM.
+> -    minItems: 2
+> +    minItems: 1
+>      maxItems: 3
+>  
+>    reg-names:
+> -    minItems: 2
+> +    minItems: 1
+>      maxItems: 3
+>  
+>    clocks:
+> @@ -171,6 +171,7 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> +          minItems: 2
+>            maxItems: 2
+>          reg-names:
+>            items:
+> @@ -185,6 +186,7 @@ allOf:
+>      then:
+>        properties:
+>          reg:
+> +          minItems: 3
+>            maxItems: 3
+>          reg-names:
+>            items:
+> @@ -195,17 +197,31 @@ allOf:
+>        properties:
+>          compatible:
+>            enum:
+> -            - mediatek,mt8188-scp-dual
+>              - mediatek,mt8195-scp-dual
+>      then:
+>        properties:
+>          reg:
+> +          minItems: 2
+>            maxItems: 2
+>          reg-names:
+>            items:
+>              - const: cfg
+>              - const: l1tcm
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - mediatek,mt8188-scp-dual
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 1
+> +          maxItems: 1
+> +        reg-names:
+> +          items:
+> +            - const: cfg
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> -- 
+> 2.53.0
 > 
-> == Well, nice, but why? ==
-> 
-> Main usecase is sharing/virtualization of devices in hypervisor-less
-> mixed-criticality contexts, where a subset of peripherals are controlled
-> by a "safety" real-time processor but still need to be used by the Linux
-> world. Several solutions have been / are being proposed [3] [4], but
-> none of them re-uses the existing, standardized virtio specifications.
-> 
-> == The proposal ==
-> 
-> The proposed approach is to introduce a bounce buffering mechanism that
-> is transparent to the drivers and can expose to remoteproc devices only
-> memory areas they can access. This is obtained by defining the .map
-> memeber of each registered vdev and use the map() and unmap() callback
-> to bounce data to and from the remote processor, just like the swiotlb
-> framework is doing in other contexts, using the device's coherent memory
-> area and the associated functions to allocate the bounce buffers.
-> 
-> During the map() callback the address of the incoming buffer is compared
-> against the coherent memory address base and size, to pass through
-> buffers already suitable for remoteproc usage (e.g.: the ones allocated
-> by the rpmsg framework).
-> 
-> == Status and open points ==
-> 
-> The series was tested against a custom Zephyr application [5] running on
-> the Cortex-M33 processor of an i.MX93 and exposing six different virtio
-> devices:
-> 
->    - rpmsg
->    - entropy (rng)
->    - gpio
->    - i2c
->    - spi
->    - can
-> 
-> On top of three of them (unsurprisingly: i2c, spi, and gpio) several
-> devices where declared inside Linux devicetree and successfully used
-> (well, technically I'm still experiencing difficulties with gpio
-> interrupts not firing on the M33, but that's not really related to the
-> series).
-> 
-> Several open points are still present, and needs to be either
-> investigated or discussed:
-> 
->    - for each bounce buffer an entire page is allocated from the coherent
->      memory pool; this is a waste for most of the allocations, which take
->      on average 32 to 64 bytes. An option can be to initialize a DMA pool
->      on one page and allocate small buffers from it?
-> 
->    - the support in its current form allocates more memory than before
->      (for bounce buffer tracking) also for existing usecases (i.e.,
->      mainly rpmsg).
-> 
->    - an additional issue still exist - and is not solved by this series -
->      for a subset of virtio devices: communication through the device's
->      config space. The remoteproc transport expects this config space to
->      be somewhat constant, and there is no provision to sync changes made
->      by the driver with the remote device. This prevents e.g.
->      virtio-input to work.
-> 
->    - device de-registration on remoteproc stop is causing oopses (under
->      investigation - might no be strictly tied to the series)
-> 
-> == Patches breakdown ==
-> 
-> Patches 1 and 2 are cleanups to the remoteproc-virtio driver and could
-> be applied independently of this series.
-> 
-> Patch 3 was submitted a couple of months ago [6] and paves the road for
-> the actual support of generic virtio devices, removing the fixed number
-> of 2 for the vrings associated to a vdev.
-> 
-> Patch 4 introduces two new APIs for coherent memory areas associated to
-> devices that are used later.
-> 
-> Patch 5 might somewhat be controversial, as it unconditionally defines
-> the VIRTIO_F_VERSION_1 feature for all vdevs. This is required to
-> support some virtio device types, and there is no other mean of
-> defining it, since the field reserved for features inside the resource
-> table is limited to 32 bits. Given that the 1.x virtio specifications
-> are ~10 years old this still seems reasonable.
-> 
-> Patch 6 is were the bounce buffering mechanism is introduced; another
-> feature (VIRTIO_F_ACCESS_PLATFORM) is there unconditionally defined to
-> force the virtio framework to use the new map APIs.
-> 
-> Patches 7 and 8 are new devicetree bindings, the first for spi-virtio
-> (modelled against the existing ones for gpio-virtio and i2c-virtio) and
-> the second for declaring virtio device inside a devicetree. This is not
-> required for some devices (e.g.: can, net, gpu), but for others is
-> necessary to declare child devices and link them.
-> 
-> Patch 9 is used to convince the remoteproc-virtio transport to parse the
-> bindings just defined; it is worth noting that the virtio framework
-> already has the support for devicetree declarations and this adds only
-> the glue between the existing support and remoteproc.
-> 
-> Patches 10 and 11 are i.MX-specific and enable the usage of the newly
-> introduced support on this family of platforms. The first one might
-> probably be sumbitted as-is independently of the series, as it aligns
-> the behavior of imx-rproc to the other platforms in relation to mailbox
-> usage.
-> 
-> Finally, patch 12 is the PoC that has been used to develop and test the
-> series and shall not be merged.
-> 
-> ======
-> 
-> Thank you in advance for any comment you may want to leave.
-> 
-> Regards,
-> Francesco
-> 
-> [1] https://lore.kernel.org/all/1330589497-4139-1-git-send-email-ohad@wizery.com/
-> [2] https://elixir.bootlin.com/linux/v7.2.5/source/Documentation/staging/remoteproc.rst#L26
-> [3] https://lore.kernel.org/linux-remoteproc/20260721204704.400781-1-shenwei.wang@oss.nxp.com/
-> [4] https://cfp.embedded-recipes.org/er2026/talk/PCYPJP/
-> [5] https://github.com/WallaceIT/zephyr/tree/multi_vdev
-> [6] https://lore.kernel.org/all/20260621-vring_flex-v1-1-c6c582fbe94b@valla.it/
-> 
-> Signed-off-by: Francesco Valla <francesco@valla.it>
-> ---
-> Francesco Valla (12):
->        remoteproc: virtio: cleanup rproc_add_virtio_dev error path
->        remoteproc: virtio: replace commas with semicolons
->        remoteproc: virtio: support dynamic number of vrings
->        dma-coherent: add base and size APIs
->        remoteproc: always report VIRTIO_F_VERSION_1 feature
->        remoteproc: virtio: add bounce buffering for data buffers
->        dt-bindings: spi: add bindings for spi-virtio
->        dt-bindings: remoteproc: add remoteproc-virtio
->        remoteproc: search for a fwnode during vdev registration
->        remoteproc: imx_rproc: always use non-blocking mailboxes
->        dt-bindings: remoteproc: imx-rproc: support virtio
->        PoC: arm64: dts: imx93-11x11-frdm: add multiple vdevs
-> 
->   .../bindings/remoteproc/fsl,imx-rproc.yaml         |   3 +-
->   .../bindings/remoteproc/remoteproc-virtio.yaml     |  89 +++++++++
->   .../devicetree/bindings/spi/spi-virtio.yaml        |  52 +++++
->   arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 128 +++++++++++-
->   drivers/remoteproc/imx_rproc.c                     |  49 +----
->   drivers/remoteproc/imx_rproc.h                     |   1 -
->   drivers/remoteproc/remoteproc_core.c               |  43 +++-
->   drivers/remoteproc/remoteproc_virtio.c             | 222 ++++++++++++++++++---
->   include/linux/dma-map-ops.h                        |  10 +
->   include/linux/remoteproc.h                         |  24 ++-
->   kernel/dma/coherent.c                              |  34 ++++
->   11 files changed, 562 insertions(+), 93 deletions(-)
-> ---
-> base-commit: 9b87fdc9af2fbfcdb5c24a64139685ef80f6573f
-> change-id: 20260915-remoteproc_virtio_map-bcf32a5fab54
-> 
-> Best regards,
-> --
-> Francesco Valla <francesco@valla.it>
-> 
-
