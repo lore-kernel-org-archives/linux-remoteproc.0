@@ -1,368 +1,252 @@
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com [74.125.227.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68954AC147;
-	Tue, 22 Sep 2026 20:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790108448; cv=pass; b=Ay/gSmEPqit+ZCfyEMBq5WiOkjAKAUsOOHRT/RJUiG53dE5r/D292zNUl/QrNYYh2NpJufZHwnXHZ/P1HKxFVU7MOMi6fdmEHPdsguaAU7MCpnzz2+gG1+VnazlLJBYMf5OgbuRc8dPVDFoSmeIwx4J4gQe1/4mb16gmoe74vTE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790108448; c=relaxed/simple;
-	bh=0WVIKbcOsdwoXz5omIyem/bJ7sFg+LvjnvYwgCd83rQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odlx3fty88MXMeTIcm3ItkOL3KUezXV4ZworW30MgyjP50LtitgTAcfJ2/XpB7KtK/IZJ6Mz9xD1kX1blLLc0iqsXL6FUH+r3M73dc2gL+PeMySmsmD8ap89ijmP4lXeAGGdVbMXTXvMdh1txL4P0EBlyDxxIWTR+cDIcld48gQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=fet/B7hj; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=EpfMWehE; arc=pass smtp.client-ip=185.56.87.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E1837F339
+	for <linux-remoteproc@vger.kernel.org>; Wed, 23 Sep 2026 02:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790132347; cv=none; b=Pk4AzKMpVBm3KirVly+6AJJG7FU0m2u/+Gep0MMZs2y1V+aHMeAmmPJwdbd6O4nsv8j857uLkmF7i/KUhpeVv8Mbuu8ZyQu0ncKK+HuWFchINhxCvhSaHlJw0vHdthtCjJEgF7W0CQEmNkFPFtbVlUp8p4kbQDiGhpDNqHFmaso=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790132347; c=relaxed/simple;
+	bh=t+yRG4hRS4ZAaXnLV3C/QL3qtZT6az1pzdaQSQdTXBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HZ5z6v3ZOlm8dHRYI5kxvTcKa8GaFHkNoVEqHrJwqIjG17yJirHmhjYF8EsDpzZrTsWCQAlco7RK7kXrGmTMbfIwxHItNU2/n0Hty34Xnre47XSVnPYqsUEjZZC0WjGV/3d8COLOcetVdebB4mK5/eWLiUlGOgOOk/sCV62M0+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lV3EqxWi; arc=none smtp.client-ip=74.125.227.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="fet/B7hj";
-	dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b="EpfMWehE"
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-n5kd.prod.antispam.mailspamprotection.com; s=arckey; t=1790108421;
-	 b=cPse/S3xDkd07mAfZPvXtPAsorFv2LgmHukRnYXfliEdRVHUF99DuZ9J1yx9ynEe+j+Ys4SOLR
-	  W5rIMXaU03qoRtbM23OI4K8VWRV9JM5BHMbaszrs9Y2p1/saZXBkCC23AdVU51/ITfZPlA7fQG
-	  7URGYkX4KJwDEXEZhX9wp9kB0DGBd5i1eqBdgALKs77/7UFXHk1WfMGYwea0Y2kRsulpLdcyGo
-	  GrAqW7E9P/LrgEs9Hm9Rp4ddnZeeCt3nd+i6MJszhWdy8GxigKNHNpsBXxtoSIhJhoTKFOJdYq
-	  29e/oAEwGXoHqAITmeAbHU9ZGts6KoVYrqkO6vlERmH2JA==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-n5kd.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-n5kd.prod.antispam.mailspamprotection.com; s=arckey; t=1790108421;
-	bh=0WVIKbcOsdwoXz5omIyem/bJ7sFg+LvjnvYwgCd83rQ=;
-	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
-	  From:Date:DKIM-Signature:DKIM-Signature;
-	b=gd9oBzEQPEE2pimIpAINaweeXoJ2ifKe6kJlD6q7Oo6/xQ4qxtAvGL6iHqNtL0XwtuTwEGLgha
-	  m2PviSHnUr93IDoNJLKyVNPXQjcv6eDzg/tcJvxdjd0PJ8uZBWnTPzEej3/dMYmZQjWuuaXqJ4
-	  mDqThMm9CF/pSRwxwu4iwlmZM5gK/bfCyUiKaQPLlbHrss7naID6DoD1L6myj5qmGJIU7JtmSh
-	  EdgCgVWU9VWBOi10HQwaSyE/xFA0pAz3ZLa9s9UTR0uv6Kom3HEjMkK2ZhGUzBS0/pxGQV5b6x
-	  9raCUTwcMmO+W+mE7qCwV2fVOetDOn+KYgD7jhc99DdhGA==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=eKnrLV23HgV/Tt/v6XD8WD1ByL0WlpYBpZXbv5lCaho=; b=fet/B7hjU0R9w+Q4nDHX0fyZlV
-	l2tnmad66tVwCARyKIFJYxaNQ1C2uTDJiIHZTC6+sl3YNsE55sTd1KQ+++cL6ReFBm/d8EWG1YyKA
-	EaN8AP0EMgGkPcmUq7KAWg85FcRO9iXy55U5pidDlOsgD7VQUyscdeeMZITdAo1PdtiQ=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-n5kd.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.99.5)
-	(envelope-from <francesco@valla.it>)
-	id 1x96yI-00000008GWM-1B7C;
-	Tue, 22 Sep 2026 20:20:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=eKnrLV23HgV/Tt/v6XD8WD1ByL0WlpYBpZXbv5lCaho=; b=EpfMWehEBuPf3r4MM/IaAgqfdL
-	vt5NbMHtSb89q+lrYJjXn+wXkZtPuUlklXIMYNDeID8m8kSGbs0RtfVQm5Fvy/JydWJpS6pmLQpUY
-	0UQBM3zyxD3O9XzFYG+D5rR24UPr2Wxf5g2AY0BoWJIIicCE4puC96gknCoAF51ur4Wk=;
-Received: from [79.43.46.244] (port=63142 helo=bywater)
-	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.99.5)
-	(envelope-from <francesco@valla.it>)
-	id 1x96xy-00000000NML-2uZM;
-	Tue, 22 Sep 2026 20:19:50 +0000
-Date: Tue, 22 Sep 2026 22:19:48 +0200
-From: Francesco Valla <francesco@valla.it>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	virtualization@lists.linux.dev, imx@lists.linux.dev, iommu@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC 12/12] PoC: arm64: dts: imx93-11x11-frdm: add
- multiple vdevs
-Message-ID: <arLawAw6kgFT2e0W@bywater>
-References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
- <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
- <arKiOCGrWAKyc-bc@p14s>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lV3EqxWi"
+Received: by mail-pj2-f43.google.com with SMTP id 98e67ed59e1d1-396ccd66bb4so268620a91.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 22 Sep 2026 19:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790132345; x=1790737145; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=heCNmTWhv5WWchkdhX55qRYTLaAxzJ4l+y2Pmd5y7go=;
+        b=lV3EqxWi6YpL9x/D/pprsW0lRnD2clpxPbltUiLE+D3p2blSSlR/M8xsuEf9gjGIC5
+         2mgB8zJM7mLEGaDTCQrT04q/IAsJaGOxOs4ixhZCyNdqX+rqOvSNnW0prwINQ/+fjJyH
+         wTAcBhOr4YQYlW0mGmiMmxRa/BhJ7h00gPZL1t3FF4bIcvi2E8TYdaCFgxSI05mV9xu4
+         2YOY+gqVQm6qn5Sqk7+TvkeK1CZHXo6RKydxxTOBmwzZPZV/HgdqD7BwGo+dqpwurkrE
+         QuNcU4CfwR0eFxokUtXK8p/1eCSYVnmop8vV8eAq05cUmAF89hxQtcdVkucdSwIE/W+9
+         H2zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790132345; x=1790737145;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=heCNmTWhv5WWchkdhX55qRYTLaAxzJ4l+y2Pmd5y7go=;
+        b=XGDIph8hgqC4scUV/GwtmqR7taCFQJ+EMJPVomCuAvPFluz1rlekrWn2E1Q/fZNhbS
+         MEqCm2O97s9PtoiMTLV+3B/lRUNXwHGUyFSqh6fu+MOx1pp5XKvPk7x6Osm5tM75b0jd
+         O8UrI1sjpIFJ5X0//HdrF06khm8/RGJonlO1vE5bN5N0Wct4FfQcq64fho/HBAWZlb9w
+         mAsWJxx6w48PXBeu+NARcijKLa27TveD82LhnDtDCz0+oK7Bs21M7/gavMN0HwEz5u8e
+         z9U9n9+r+PilQqmgl8JqXysAKYQVz+SR2I1ojzpMPTxVLyOgekpJ95+IZ/rHIuJ1w+Ke
+         rqlg==
+X-Gm-Message-State: AFuF++n/5q5tfHGfoxTM+NWM/C4U4i1lQRpte9BjZ67ZrEk4p6bz3z71
+	YO1sI4v4Ai8ilWfPRGEoPIoQZz0vhpi8sACe6FfOBUxRpkv8KlirtOAk
+X-Gm-Gg: AYBFou1XG2hxfselh681tHZIdrb/9IjxtlhJ1aSSZIIeLAq8wCxu84uRuMCQCwmSGZX
+	EhAonUkIM+4ojF/YRqKTQV+E13jdUWVgnUGvoU5iZ6ADl9lf8goZ1dZ9FBk3ic+acDz1SzIZLHJ
+	clCEmAxK1yU6dKJ1mFRt+EAMvy+13E4h4b88vI8qnZEqSnK5uialQfKci0godoSUUAy9TR6nwRH
+	M6cM8LIbEScEYdE/hrnj+6bnqY4BKp0B2kP2uRVABOG84XC+6iSDyY6EOEYvksQi+ROkh1eAC1+
+	pGz9KQ/MRTvyXVn0MdGgjBgUlpBt4RFV82TMk2cmRkM1jE2NWlN9dT9JtVK28tmSWCieXm2kkUU
+	oXVPCy9GEcURppjot//ISYmBjrfBzbrrgbrnJT6NLPNDDrjH5aKz5KEcTCHts8nRQe9oaPYueuT
+	HIRMbo/au+y5WnZC4MdCWyfusmBf5z+lHg2M9LEaxI/RzYPdO3MHyPbHZxZrL9HFN8GgKSOZ+DE
+	IAKe92vGpE01k/CDnlTvtvaEZk=
+X-Received: by 2002:a17:90b:38d2:b0:39e:6a81:5a92 with SMTP id 98e67ed59e1d1-3a07e716662mr1194436a91.38.1790132344850;
+        Tue, 22 Sep 2026 19:59:04 -0700 (PDT)
+Received: from embedsky001.tail6d6b2f.ts.net ([183.12.0.245])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a07dc802bcsm2210432a91.1.2026.09.22.19.59.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Sep 2026 19:59:04 -0700 (PDT)
+From: Yonghao Zhang <hyz3367@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yonghao Zhang <hyz3367@gmail.com>
+Subject: [PATCH] remoteproc: core: Fetch the auto-boot firmware only once
+Date: Wed, 23 Sep 2026 10:58:55 +0800
+Message-Id: <20260923025855.2523147-1-hyz3367@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <arKiOCGrWAKyc-bc@p14s>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: ce023167bcfef6e621d9827fd204f800
-X-AntiAbuse: ID - ce023167bcfef6e621d9827fd204f800
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1x96yI-00000008GWM-1B7C-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-n5kd.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 22, 2026 at 09:43:52AM -0600, Mathieu Poirier wrote:
-> On Wed, Sep 16, 2026 at 11:10:57PM +0200, Francesco Valla wrote:
-> > Add rings for multiple vdevs, as well as the required virtio nodes for
-> > I2C, SPI and GPIO functionalities. On top of that, add example
-> > peripherals using all of them.
-> > 
-> > NOTE: this is a Proof-Of-Concept, not meant to be integrated!
-> > 
-> > Signed-off-by: Francesco Valla <francesco@valla.it>
-> > ---
-> >  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 128 +++++++++++++++++++--
-> >  1 file changed, 119 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > index bd14ba28690c..dfa3b122ac5f 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > @@ -53,6 +53,32 @@ button-k3 {
-> >  		};
-> >  	};
-> >  
-> > +	gpio-keys-virtio {
-> > +		compatible = "gpio-keys-polled";
-> > +		poll-interval = <100>;
-> > +
-> > +		button-v1 {
-> > +			label = "Button V1";
-> > +			linux,code = <BTN_3>;
-> > +			gpios = <&v_gpio 23 GPIO_ACTIVE_LOW>;
-> > +		};
-> > +
-> > +		button-v2 {
-> > +			label = "Button V2";
-> > +			linux,code = <BTN_4>;
-> > +			gpios = <&v_gpio 24 GPIO_ACTIVE_LOW>;
-> > +		};
-> > +	};
-> > +
-> > +	leds {
-> > +		compatible = "gpio-leds";
-> > +
-> > +		led {
-> > +			gpios = <&v_gpio 18 GPIO_ACTIVE_HIGH>;
-> > +			label = "LED V";
-> > +		};
-> > +	};
-> > +
-> >  	reg_usdhc2_vmmc: regulator-usdhc2 {
-> >  		compatible = "regulator-fixed";
-> >  		off-on-delay-us = <12000>;
-> > @@ -89,11 +115,6 @@ linux,cma {
-> >  			linux,cma-default;
-> >  		};
-> >  
-> > -		rsc_table: rsc-table@2021e000 {
-> > -			reg = <0 0x2021e000 0 0x1000>;
-> > -			no-map;
-> > -		};
-> > -
-> 
-> Why is the resource table removed?  There is no mention of that in the
-> changelog...
->
+Auto-boot for an always-on remote processor registers an asynchronous
+request_firmware_nowait() whose callback discards the fetched image
+and calls rproc_boot().  rproc_boot() then fetches the very same image
+again with a synchronous request_firmware(), so every auto-boot reads
+the firmware image twice and allocates the buffer twice; on kernels
+with the sysfs fallback enabled, the uevent round-trip is repeated
+as well.
 
-You are obviously right, the commit message here should have been a
-poem, not a form of hermetic poetry. My bad.
+The asynchronous request exists only so that rproc_add() does not
+block on the filesystem read; the image it fetches is never used.
+The core already defers rproc_boot() to a worker for detached
+processors (attach_work).  Reuse that worker for offline processors
+too and drop the asynchronous firmware request: rproc_boot() fetches
+the image exactly once and dispatches between a firmware boot and
+an attach based on the proccessor state.  The work is renamed to
+boot_work to match its widened role.
 
-The resource table here is causing problems with how Zephyr is managing
-it at its side. If it is kept in a separate memory location and copied
-there at runtime by the remote processor firmware during its startup
-(which is the current Zephyr behavior), then there might be a race
-condition when the aforesaid firmware is loaded and started by Linux
-*and* at least one of the vdev drivers (here including rpmsg_bus) is
-built-in. In this case, the copy of the resource table done by the
-remote processor might - depending on the async execution of the two
-processors - overwrite the status bit set by the Linux driver:
+commit 400e64df6b23 ("remoteproc: add framework for controlling remote
+processors") noted back in 2011 that "we must wait until it completes
+before we try to unregister the device".  rproc_del() now does exactly
+that: it waits for the boot work with cancel_work_sync(), which also
+closes the theoretical window in which a pending attach work could
+outlive the rproc instance.
 
-  Firmware load and startup (echo start > /sys/.../state)
-                           |
-			   |
-			   V
-  The vdev devices get registered (by register_virtio_device())
-                           |
-			   |
-			   V
-  If a driver is built-in, it probes and sets the vdev status
-  inside the resource table @rsc-table.
-                           .
-			   . (in the mean time)
-			   .
-  The remote processor starts up and copies the resource table from its
-  dedicated section to @rsc-table.
+The changed fallback behaviour only matters for legacy
+configurations.  udev dropped its userspace firmware loader back in
+2014, as recorded in
+Documentation/driver-api/firmware/fallback-mechanisms.rst, and the
+kernel has documented since commit 02c399306826 ("firmware_loader:
+enhance Kconfig documentation over FW_LOADER") that "Linux no longer
+relies on or uses a fallback mechanism in userspace".  Auto-boot now
+uses the same synchronous fallback semantics as every other explicit
+boot source (sysfs, cdev).
 
-Depending on the system load and the complexity of the firmware, the two
-operations can happen in whatever sequence, causing a race condition.
+Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
+---
+ drivers/remoteproc/remoteproc_core.c | 65 ++++++++--------------------
+ include/linux/remoteproc.h           |  4 +-
+ 2 files changed, 21 insertions(+), 48 deletions(-)
 
-This is somewhat masked if vdev drivers are built as modules, as the
-devices does not probe immediately but only after the modules have been
-loaded, giving the remote processor time to start. Note that this is not
-a solution! but a workaround.
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 263e12f022ea..f329dc478170 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1662,49 +1662,26 @@ static int rproc_attach(struct rproc *rproc)
+ }
+ 
+ /*
+- * take a firmware and boot it up.
+- *
+- * Note: this function is called asynchronously upon registration of the
+- * remote processor (so we must wait until it completes before we try
+- * to unregister the device. one other option is just to use kref here,
+- * that might be cleaner).
++ * Boot or attach the remote processor in the background, on behalf of
++ * rproc_trigger_auto_boot(): rproc_add() runs in probe context and must
++ * not block while the firmware image is read from storage.  rproc_boot()
++ * dispatches on the processor state, so this covers both a firmware boot
++ * and an attach to a processor started by another entity.
++ *
++ * Note: rproc_del() waits for this work to complete with
++ * cancel_work_sync(), so the rproc instance remains valid for the
++ * entire lifetime of this function.
+  */
+-static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
++static void rproc_boot_work(struct work_struct *work)
+ {
+-	struct rproc *rproc = context;
++	struct rproc *rproc = container_of(work, struct rproc, boot_work);
+ 
+ 	rproc_boot(rproc);
+-
+-	release_firmware(fw);
+ }
+ 
+-static void rproc_attach_work(struct work_struct *work)
++static void rproc_trigger_auto_boot(struct rproc *rproc)
+ {
+-	struct rproc *rproc = container_of(work, struct rproc, attach_work);
+-
+-	rproc_boot(rproc);
+-}
+-
+-static int rproc_trigger_auto_boot(struct rproc *rproc)
+-{
+-	int ret;
+-
+-	if (rproc->state == RPROC_DETACHED) {
+-		schedule_work(&rproc->attach_work);
+-		return 0;
+-	}
+-
+-	/*
+-	 * We're initiating an asynchronous firmware loading, so we can
+-	 * be built-in kernel code, without hanging the boot process.
+-	 */
+-	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
+-				      rproc->firmware, &rproc->dev, GFP_KERNEL,
+-				      rproc, rproc_auto_boot_callback);
+-	if (ret < 0)
+-		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
+-
+-	return ret;
++	schedule_work(&rproc->boot_work);
+ }
+ 
+ static int rproc_stop(struct rproc *rproc, bool crashed)
+@@ -2348,11 +2325,8 @@ int rproc_add(struct rproc *rproc)
+ 	rproc_create_debug_dir(rproc);
+ 
+ 	/* if rproc is marked always-on, request it to boot */
+-	if (rproc->auto_boot) {
+-		ret = rproc_trigger_auto_boot(rproc);
+-		if (ret < 0)
+-			goto rproc_remove_dev;
+-	}
++	if (rproc->auto_boot)
++		rproc_trigger_auto_boot(rproc);
+ 
+ 	/* expose to rproc_get_by_phandle users */
+ 	mutex_lock(&rproc_list_mutex);
+@@ -2361,10 +2335,6 @@ int rproc_add(struct rproc *rproc)
+ 
+ 	return 0;
+ 
+-rproc_remove_dev:
+-	cancel_work_sync(&rproc->crash_handler);
+-	rproc_delete_debug_dir(rproc);
+-	device_del(dev);
+ rproc_remove_cdev:
+ 	rproc_char_device_remove(rproc);
+ 	return ret;
+@@ -2552,7 +2522,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->subdevs);
+ 	INIT_LIST_HEAD(&rproc->dump_segments);
+ 
+-	INIT_WORK(&rproc->attach_work, rproc_attach_work);
++	INIT_WORK(&rproc->boot_work, rproc_boot_work);
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+ 	spin_lock_init(&rproc->crash_handler_lock);
+ 
+@@ -2630,6 +2600,9 @@ int rproc_del(struct rproc *rproc)
+ 	if (cancel_work_sync(&rproc->crash_handler))
+ 		pm_relax(rproc->dev.parent);
+ 
++	/* auto-boot may still be fetching firmware: wait for it here */
++	cancel_work_sync(&rproc->boot_work);
++
+ 	__rproc_shutdown(rproc, true);
+ 
+ 	rproc_delete_debug_dir(rproc);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index a44368737b39..d77e24539133 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -231,7 +231,7 @@ enum rproc_features {
+  * @subdevs: list of subdevices, to following the running state
+  * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+  * @index: index of this rproc device
+- * @attach_work: workqueue for attaching rproc
++ * @boot_work: workqueue for booting rproc
+  * @crash_handler: workqueue for handling a crash
+  * @crash_handler_lock: serializes crash handler queueing and deletion
+  * @deleting: remoteproc deletion has begun
+@@ -277,7 +277,7 @@ struct rproc {
+ 	struct list_head subdevs;
+ 	struct idr notifyids;
+ 	int index;
+-	struct work_struct attach_work;
++	struct work_struct boot_work;
+ 	struct work_struct crash_handler;
+ 	spinlock_t crash_handler_lock;
+ 	bool deleting;
+-- 
+2.34.1
 
-If the rsc-table node is not there, the startup logic falls back to the
-classic rproc_elf_find_loaded_rsc_table().
-
-This is specific to i.MX platforms [1] and is probably not normally an
-issue because - as stated in [1] - the offical SDK from NXP seems not
-to check the status inside the resource table.
-
-> >  		vdev0vring0: vdev0vring0@a4000000 {
-> >  			reg = <0 0xa4000000 0 0x8000>;
-> >  			no-map;
-> > @@ -105,12 +126,42 @@ vdev0vring1: vdev0vring1@a4008000 {
-> >  		};
-> >  
-> >  		vdev1vring0: vdev1vring0@a4010000 {
-> > -			reg = <0 0xa4010000 0 0x8000>;
-> > +			reg = <0 0xa4010000 0 0x1000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev2vring0: vdev2vring0@a4011000 {
-> > +			reg = <0 0xa4011000 0 0x2000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev2vring1: vdev2vring1@a4013000 {
-> > +			reg = <0 0xa4013000 0 0x2000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev3vring0: vdev3vring0@a4015000 {
-> > +			reg = <0 0xa4015000 0 0x2000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev4vring0: vdev4vring0@a4017000 {
-> > +			reg = <0 0xa4017000 0 0x4000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev5vring0: vdev5vring0@a401B000 {
-> > +			reg = <0 0xa401B000 0 0x2000>;
-> > +			no-map;
-> > +		};
-> > +
-> > +		vdev5vring1: vdev5vring1@a401D000 {
-> > +			reg = <0 0xa401D000 0 0x2000>;
-> >  			no-map;
-> >  		};
-> >  
-> > -		vdev1vring1: vdev1vring1@a4018000 {
-> > -			reg = <0 0xa4018000 0 0x8000>;
-> > +		vdev5vring2: vdev5vring2@a401F000 {
-> > +			reg = <0 0xa401F000 0 0x1000>;
-> >  			no-map;
-> >  		};
-> >  
-> > @@ -149,8 +200,67 @@ &cm33 {
-> >  		 <&mu1 3 1>;
-> >  	mbox-names = "tx", "rx", "rxdb";
-> >  	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
-> > -			<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
-> > +			<&vdev1vring0>, <&vdev2vring0>, <&vdev2vring1>,
-> > +			<&vdev3vring0>, <&vdev4vring0>,
-> > +			<&vdev5vring0>, <&vdev5vring1>, <&vdev5vring2>;
-> 
-> Who is using vdev5 vrings?  
-> 
-
-Another thing that should have been in the commit message. Vdevs are
-defined, in the Zephyr application I am using as PoC, as follows:
-
- - vdev0: RPMSG (tx and rx vrings)
- - vdev1: entropy (single request vring)
- - vdev2: GPIO (request and event vrings)
- - vdev3: I2C (single request vring)
- - vdev4: SPI (single request vring)
- - vdev5: CAN (tx, rx and control vrings)
-
-vdev5 is not represented inside the devicetree because the can-virtio
-driver registers a single CAN network device and has thus no need for
-such representation.
-
-> >  	status = "okay";
-> > +
-> > +	virtio {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		vdev@2 {
-> > +			reg = <2>;
-> > +
-> > +			v_gpio: gpio {
-> > +				compatible = "virtio,device29";
-> > +				gpio-controller;
-> > +				#gpio-cells = <2>;
-> > +				interrupt-controller;
-> > +				#interrupt-cells = <2>;
-> > +			};
-> > +		};
-> > +
-> > +		vdev@3 {
-> > +			reg = <3>;
-> > +
-> > +			i2c {
-> > +				compatible = "virtio,device22";
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +
-> > +				eeprom@50 {
-> > +					compatible = "atmel,24c1025";
-> > +					reg = <0x50>;
-> > +				};
-> > +			};
-> > +		};
-> > +
-> > +		vdev@4 {
-> > +			reg = <4>;
-> > +
-> > +			spi {
-> > +				compatible = "virtio,device2d";
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +
-> > +				sram@0 {
-> > +					compatible = "microchip,mchp23k256";
-> > +					reg = <0>;
-> > +					spi-max-frequency = <20000000>;
-> > +				};
-> > +
-> > +				lcd@1 {
-> > +					compatible = "adafruit,yx240qv29", "ilitek,ili9341";
-> > +					reg = <1>;
-> > +					spi-max-frequency = <10000000>;
-> > +					dc-gpios = <&v_gpio 21 GPIO_ACTIVE_HIGH>;
-> > +					reset-gpios = <&v_gpio 20 GPIO_ACTIVE_HIGH>;
-> > +					rotation = <90>;
-> > +				};
-> > +			};
-> > +		};
-> > +	};
-> >  };
-> >  
-> >  &eqos {
-> > 
-> > -- 
-> > 2.55.0
-> >
-
-Thank you!
-
-Regards,
-Francesco
-
-
-[1] https://lore.kernel.org/all/20240719-imx_rproc-v2-2-10d0268c7eb1@nxp.com/
