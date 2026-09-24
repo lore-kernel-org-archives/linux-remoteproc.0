@@ -1,109 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3498C3C819B;
-	Wed, 23 Sep 2026 21:08:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B923BB57;
+	Thu, 24 Sep 2026 00:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790197717; cv=none; b=euNzqlAjg8khj+R2u3OZ1cO5TSzzA4PQ1zJaIcPZfc+R0qNevYTPRr0prIfzpIKIl9oiwdKwBBwiBafW7HfOf3u5hspD5KZH1rPLMzAGPksYYIfD61kGcmjfXiqw8Obk2M1VbmyQHKHe0dTCpK5tZXE5a62Bd+8DM8MvcyJRilo=
+	t=1790208077; cv=none; b=PXDcApwMO1Lj1Vf3uQggM4v4TkO2AwfakfVc5iNysr1pqNuunYFA84CmD2GAGIoGI48U0jhgMmWLGjjZB2RssLt4KaQ5EAEbgmsiDrvwnPxofgU1EqiwAQTedz9wvZFOKUXc5Sd2NhInEuNKVoc0soznSQMbqU7MTZKoTfRfw/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790197717; c=relaxed/simple;
-	bh=u9vyTnfDdTrmd9y7fzOYI9Chf27iTNx4Gu6KyxRoDT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RuXtoYZGpv/zZwNyyxNU0qkQCOvqjUWycU7RWBLbZp0hf7pq2/zW8B+53c+KU9xBZ3WuilBZ3G0Kg3ignOU6krv2kNiK5zZbTWZJaLExIr5dOO5wk5KzuAhPZOMYzGOlfuEVhCj2Ug7QVR89RTfJIl9MXbmgtXpuYNU72dkcZis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IFfLk5F+; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1790208077; c=relaxed/simple;
+	bh=GupVj96H8dz2QFcvfvHdFq7LSHLNcZzD9x2lDjkSwGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y7KwK0+wbr2x39hDQsM6E0zGN4pmKpA+WryE9CNT1g2NWtOID3VwUa587dp5aSGb+UYXLvIkJP6L9fzDsrN+1iHwVl7r+1muTpqS8mPbf9KdiYnutY/Mn06K7gewRJsUcrPhOnr4/4tZOZf/+AOU2GQhPVCZX5f64bWENpV6ePw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XMMv5Yrs; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IFfLk5F+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A16721F00893;
-	Wed, 23 Sep 2026 21:08:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMMv5Yrs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DBE1F000FF;
+	Thu, 24 Sep 2026 00:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790197711;
-	bh=oYRyYQ7jGFmso8AY6dUwDwpqY0QEPIOZBmqP3y/+Wjw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=IFfLk5F+vPh8IZNhqF0jC6aiB53HDZvSF2VK2z8f7otoMhT2JY81X0DRgu4kSZy1c
-	 joRyiJr0iXdIujrsXvmcilGrrlkhEL9YLIUEvmzKixvjEeFJ8vxgxkwXlAMImcgbz5
-	 ObT2M39E9XWkmhhoICbrZZTEJIdLs70sQZ7CLs85nDdlrYvQI58UEG0MV2Zli3ORfN
-	 qEGaY7uobvyPgkqQYN9MxRINi7FLvSkgqHtmHbwFsTDaPMYxN2sV8xdrPRQjkvGaFE
-	 AUROK5OvdNxX5Jpjfb4/VhakF9Jk6w7yYiqjrfNKsr4mXgTRJosRSZ3QC2bAL67QYd
-	 6F00ow4Wk2EBQ==
-Message-ID: <49153dff-b4e0-43ac-aa82-15175fea6445@kernel.org>
-Date: Wed, 23 Sep 2026 22:08:19 +0100
+	s=k20260515; t=1790208076;
+	bh=dZlzId3RS58Gzb7rS+WrfiYVKCUjniJG45GhMMYyUAA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=XMMv5Yrsl4aQD7dHYOUOmTpQomAT1s1PDxFXs1vjIu70NmsySFLJ/i/ZSzTWSB319
+	 FSCZspxDdtJIK7FjgbHKsT4gGKJqQhPmZfkfinJzMSBNo4ZIhftLdD/VL0fI2x80Or
+	 kIWy5bHCnab6pUkxU1HWm8SdLeqt/BmY/dugGVdeGM2RDEnDU/A/0I5MbDw+nRY4d7
+	 amnRDKn3k3D9RZGZ97iCklwT1iIZUCtLlPd8LE90YURe+CDnd195RXpXO00QvBnRA3
+	 9YLda4HsD6HyZ+oq1+ozRjpbH89RoTliIIQY7nLXAXL3hXUOZyZ8nK76YbQbS6R6cZ
+	 l5xysaXPH6Jnw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] dt-bindings/dts: qcom: Consolidate SDX75/Hawi/Maili MPSS onto SM8650 fallback
+Date: Wed, 23 Sep 2026 19:01:11 -0500
+Message-ID: <179020806086.529109.15678139725722719430.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260805132129.2713174-1-mukesh.ojha@oss.qualcomm.com>
+References: <20260805132129.2713174-1-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] firmware: qcom: scm: pass qcom_scm through the
- exported API
-To: Albert Esteve <aesteve@redhat.com>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Russell King
- <linux@armlinux.org.uk>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@kernel.org>,
- Christian Loehle <christian.loehle@arm.com>,
- Maximilian Luz <luzmaximilian@gmail.com>,
- Bartosz Golaszewski <brgl@kernel.org>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Akhil P Oommen <akhilpo@oss.qualcomm.com>,
- Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar
- <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- "Joerg Roedel (AMD)" <joro@8bytes.org>, Thomas Gleixner <tglx@kernel.org>,
- Radu Rendec <radu@rendec.net>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Srinivas Kandagatla <srini@kernel.org>,
- Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jeff Johnson <jjohnson@kernel.org>, Linus Walleij <linusw@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
- Jens Wiklander <jenswi@kernel.org>, Sumit Garg <sumit.garg@kernel.org>,
- Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Brian Norris <briannorris@chromium.org>,
- Govind Singh <govinds@codeaurora.org>,
- Niklas Cassel <niklas.cassel@linaro.org>, Kalle Valo <kvalo@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- iommu@lists.linux.dev, linux-media@vger.kernel.org,
- linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- op-tee@lists.trustedfirmware.org, Maxime Ripard <mripard@kernel.org>
-References: <20260914-scm-device-api-v1-0-3573e2596c51@redhat.com>
- <bRb6NzJiFvNGB0X3BeiVytgZNlRv88LFlcaBwwFIFa3GtVZhn5bh9EoRRDliRtgsnlQNMddvcIPK-5HK9x7z9Q==@protonmail.internalid>
- <20260914-scm-device-api-v1-2-3573e2596c51@redhat.com>
-From: Bryan O'Donoghue <bod@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20260914-scm-device-api-v1-2-3573e2596c51@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 14/09/2026 13:41, Albert Esteve wrote:
->   static int spm_cpuidle_drv_probe(struct platform_device *pdev)
->   {
-> +	struct qcom_scm *scm = qcom_scm_get();
->   	int cpu, ret;
+
+On Wed, 05 Aug 2026 18:51:26 +0530, Mukesh Ojha wrote:
+> The MPSS remoteproc block on the SDX75, Hawi, and Maili SoCs is compatible
+> with the SM8650 MPSS - identical interrupts, memory-region layout, and
+> power-domain topology. Today SDX75 and SM8650 MPSS each carry their own
+> standalone compatible and are repeated in every "mpss" allOf conditional.
+> The duplication hides the hardware relationship and grows every time a new
+> SoC reuses the block.
 > 
-> -	if (!qcom_scm_is_available())
-> +	if (!scm)
->   		return -EPROBE_DEFER;
+> [...]
 
-Is this equivalent code ?
+Applied, thanks!
 
-Its also a bit confusing to me that the next patch adds a .available 
-field to the qcom_scm struct.
+[1/3] dt-bindings: remoteproc: qcom,sm8550-pas: Add Hawi and Maili MPSS as SM8650 fallback
+      commit: bd79ab72b62c0e0f1466d3dca53dcb12d5a072d9
+[2/3] dt-bindings: remoteproc: qcom,sm8550-pas: Make SDX75 MPSS fallback to SM8650
+      commit: 96e47e798cd157d32face71551242d2b6fe42b89
+[3/3] arm64: dts: qcom: sdx75: Use SM8650 MPSS as fallback compatible
+      commit: 106aaacd18cdd0dc13d9e1a7d8cf8e1e5d965384
 
-I see where you do get drvdata but I haven't managed to find in the 
-series where the data gets set - haven't asked an LLM either - I think 
-the logic to associate the scm pointer and get it should live together 
-in one patch so that the logic is easier to find and reason about.
-
----
-bod
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
