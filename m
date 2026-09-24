@@ -1,99 +1,99 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3018C49F114
-	for <linux-remoteproc@vger.kernel.org>; Thu, 24 Sep 2026 15:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BA64A2A62
+	for <linux-remoteproc@vger.kernel.org>; Thu, 24 Sep 2026 15:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=170.10.133.124
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790262045; cv=pass; b=ODkGi3VpnW0aWxiYx71ZaB0HOyFKz7FkQz0ryEJ5nRa5Yuh7rt2VbUWzc8WHOZKNZzQ7M9fL34DZZr1Fz/ValFbtkAlvxI0zaanwAgtiqpJzGjbOOdbxfP8MCXguJNSMtVgLGyTZGHjnNVX4BjVgPpAKZiniLtLqyoil52RCN4g=
+	t=1790264544; cv=pass; b=sEgdskM6mUeQ+TkDKke2P2pu1mp7qgKeTS6GyRaPMPP9HnqFZgrUDni7kL2xlWABpVQeFHPNzpCdXp4EaoEjcUI/k4wnMnP7zz/UU8pkYtxUZHl0Isf28qt6mYPGn4M8CYFdXTnPC+nu0UzEsXbsw7A7gxr1NE9nAmjC7ZBTn5U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790262045; c=relaxed/simple;
-	bh=iuUfA02SH2tSSicml2K0I3xqm9pZO7ThoY25b+dKE6c=;
+	s=arc-20240116; t=1790264544; c=relaxed/simple;
+	bh=PyIrnipvkBWRV4hHOpoG3qPK65aPl0bzHYIyrKbgTzM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JnDJT+bVdTFFw6ztg4a38MoiN7SKcGPn5kJvSNp9eLJ2a9XLM70ntP6/M85KuUkh0ltg4qCw2x6GJCI0qSv62fjRsh8OA5RM366ZtfwhhJjr1Z4AVon2MhCealUNeWtnWwwzokXvcJXRmN9allR+JD6+N1+Z731hjmotK2VSny0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h/tUKF+G; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=MVDl+InI; arc=pass smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=Zji3/6zSns/Z1uG+1SGH3hQR3DY9JuB+7A6CwZHmuy2Do2b3b/SbOaudZ2M0VnUWDc1cR/xoLsWYSjMM1g97PC7at6QuJAImNesQLJJKx7e8ydEdJjaa6NOG7V1Cm+WJjviTg60WJptQNDRNkB3qQxKkuTZe71iddBY4hNBWjuI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N5nJqjG+; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UiSN36fQ; arc=pass smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h/tUKF+G";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="MVDl+InI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N5nJqjG+";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UiSN36fQ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1790262042;
+	s=mimecast20190719; t=1790264541;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YKTy1DV5Z8HP/0nQigR4wkQdWVD6m+LzXDtQhSwKE3c=;
-	b=h/tUKF+GjUa0Y1mVfe+yVQYzqWASfzm5/7k9EnciidAxox34sO54UF/voll/xmfgUGq8aH
-	2EuBMW79l/Z623eXVcIWgACtfc3pUpSLhU2X0CCIjiSoAnZNr0R9gBnRC0wKqcY3lHBoz7
-	YK/Z34l3bpo15gnKhX3liV6LGOef2uo=
+	bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
+	b=N5nJqjG+CCqiKOUMIy+cAq9Ow0QOH/g8y7qkqripLHY+xA52Ulvj6QjC4UgfhNAE8f/NTQ
+	ERP4l6jY5/34bDLO8j/YOXLeTbisjpqVsIkISSyPKLuKvnUmIF7dbd50s+oyMss6RvkYIO
+	Gvg68S8FqYiBPUh24USVfCB6mx3/9Ew=
 Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
  [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-225-Dw51-PiVMgCkKv2MGkuztA-1; Thu, 24 Sep 2026 11:00:40 -0400
-X-MC-Unique: Dw51-PiVMgCkKv2MGkuztA-1
-X-Mimecast-MFC-AGG-ID: Dw51-PiVMgCkKv2MGkuztA_1790262040
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-87014338e7aso20650457b3.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Sep 2026 08:00:40 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790262040; cv=none;
+ us-mta-298-_oC3t3SnMgyuwGUaYaAydA-1; Thu, 24 Sep 2026 11:42:19 -0400
+X-MC-Unique: _oC3t3SnMgyuwGUaYaAydA-1
+X-Mimecast-MFC-AGG-ID: _oC3t3SnMgyuwGUaYaAydA_1790264539
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-892be308686so41800737b3.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Sep 2026 08:42:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790264539; cv=none;
         d=google.com; s=arc-20260327;
-        b=e03Cf6o+YzsfEz7c5qPV5q+wnTsq0E0HtExjdjabqP4FUYxWffHI/6hr6SFEXK/Snn
-         xGc9vO4vtmDrU6Fd72K6bi0rHGbSbMJVHpVVb9qR67asaK+5Fg0TSTkyR8YPeXXWFk50
-         6yupaHkIgoBdyqlQdyw5QHvdsiiv3tgXzOFGzBqQ/L80klPv5A+B8XUphHC9dJj+WCbo
-         EaytDpwQsIO0Vaa8988hclrduvRnn1HRXdgKJWorTB6z7Pfgf/93fOlRVo6/z9ciXedc
-         +DA1MOekISbitl47S5kwKpcD/hQB4yMMJr0Xv2ommarkhbvODDs5Qdve11sMgZ0uGduK
-         tJOA==
+        b=VE/ePFQErec7oR7q60zWGNpqKvS2mtW/t09JBEj0DZYMceHK3/UpCeD/1EdT2sGL6n
+         FgBE4x+wGyV3i+RJ9ZhvmwJ0H9zKil/8+BHXwGUJXkfDAQkHETz2XZSdGWr2KSakKiUv
+         5Jf1yGUQx37LBH6BZF7/K2K9y4Ixo/3Rum9a19+h3Ogz0XOs0ZqPiw9qAcFeYlETYJWF
+         DdhwaWNoHxGCX9ojlAr2jYtjfpByWB5TxZ1yj5P4QSHvSCJy6uPdvtDsSEN28N9DkUpo
+         tjPcjyjfr57u0S1DvS3qf2nIq3yOLOYeYQWKKGOMOVuCMnjjobwWKV7JT7CSWI5RvSNL
+         DCag==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:dkim-signature;
-        bh=YKTy1DV5Z8HP/0nQigR4wkQdWVD6m+LzXDtQhSwKE3c=;
-        fh=3CSfIKz4AE3II4o3wh5tm2ej2axUVyMQWiJTGc1bfvE=;
-        b=NUTv3mIwnjiw62N8vjLlvl40sSdI6/41Qqpy2Vifw8zA/h3gN77gSs96Ci1jsWkgC6
-         IDwIsC76PQ1yQSiOdtqFr20rMuiLSanXKagqBF4jHWjcwcmnw32Bz4RFWolFwIJbw5MS
-         ozSla8PBd50jvoK6M8J+t1+5q18DCzOlxOhOI1QqsWkh2/klD66Awc8kwrSICAlaOl3d
-         xeMl92dXEopMKHc3/LV+fEhacbCsa6qpfK7XzaVnm1HD895rleaX5Rpj08p0MWO858yL
-         36VQiykPi+rn6qFq4PKHlpVlQvZVRMn6EAt9E0K4LgsgcWVQaQD2cZ1Nh8tBKsn5k64e
-         4/+w==;
+        bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
+        fh=WDWqmwbRNNMRRFSMO1mbHcX/wM8HTqw9mC9RBvLzBeM=;
+        b=WUR/47STxzoro0QJMGhnkkdrI8TapU/n8FKeNqEOrf648BIAZJ7185o9MmQ12+Nvm8
+         awFDLq/gnoAVBlcLpCQtrElSXnBihm26d0My6KKbzGdwPzEmvOe+VJPHYFc4HRvjxXR3
+         5UOQHqo0GnWpHzRtEFnKBd8bsnWsJEjSeXk0lFVEQfOqbMFIPeyFcPlLeqEzYMHL4Y1T
+         0xA0S1zqz91UPZbjI+PaIROd+j7j6hc2ddpkSQxxIwSTKO6oj99T+OXNzVFCfvJHGbn9
+         jVpTCz6NAw5krPvrbosaEuRp7tn2KP2E/YX1Rypou/J+4H5Pzq3UV8N+EAb1TaF0dArX
+         U9Lw==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1790262040; x=1790866840; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1790264539; x=1790869339; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=YKTy1DV5Z8HP/0nQigR4wkQdWVD6m+LzXDtQhSwKE3c=;
-        b=MVDl+InINlRiSWNoJ+zSo3dPDLpLFAx8rHOQcJPrFcrb0dFjn331QV2IRGTQ7mSLf2
-         FzOGnMoq9jW909FTyZADgpBVLgDHXWeUVGIDkPw+aeVry1O2IqecYbQhdHv53moD09Gd
-         M6/R10IHRh/oSqPNOZRSalRoelc2p/FUbgk8NWsvk10oj8K0P0i/+6Kb2SJNz7+VGtS3
-         EHiUnog1bSJUloT5Ezfcd6Fbhr/4NApXO579lYUqr0j5S8iaQ1FgRSVlUokp15A2kalc
-         H92GZLmjxY5Dvm/8H/oqzwnBKNx9aSsXGI80NbQvadYeVqffYhdBjfmMsucgQUH6nslq
-         hc9Q==
+        bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
+        b=UiSN36fQL6QI7gOFKIRAXpB32KZvpgTZ0bYV/KBNmlIN6qm7jax60KwKrEHg+eMqa9
+         udWcnbLBthounfjlspUNpVzA/a3M/L6qNzbO4BzIhnzqgD6x4PLAtrz7dbs16BVvHAlv
+         kRf0aJ8GyBaHFCXd5a/GnXw3AuBUbbSzs4kH5Omcg1UxWjIYTVTLXFzBfq911Hg0J1v4
+         jdF3NvIiJCHTWsgehT5JMOrPtI/KTgdCt2uGvHlNfNm1ZXHO0vFWZ9SJQXMWytDuNWZh
+         54MEXb0EiRLNWgTC8Fbnwm5byWnbinwmAgKv+DglBTsNlbOPHxpIWgvG4r8ffXv1kwBs
+         rFqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790262040; x=1790866840;
+        d=1e100.net; s=20260707; t=1790264539; x=1790869339;
         h=content-transfer-encoding:content-type:cc:to:subject:message-id
          :date:from:in-reply-to:references:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=YKTy1DV5Z8HP/0nQigR4wkQdWVD6m+LzXDtQhSwKE3c=;
-        b=kgxKG/FwCk9OW3P/y2uTqzYp6eBtdtheUDCOkR2t5IsNA234kJOVWbVib615U+BrzA
-         QsvdCO0tgCJ0YNQOC0oxot/H4tbL3N+EFAzLzD4qpLMaV5hocfqmRWv2Z3ciuDnHQT//
-         NFdFvavT868ooZrccdB6gmU1QzBvMfNHhPti23ProOxGYGFxdNUrvwLYdhpk0AFR8OkK
-         DoFx+BVVKgK04H0PGcFkasUIM7qNmdxSEHJYi0M5HwQYYD0i0dSe4QoYLK32FNxi0SSH
-         HaM80KH/ygH3Ni7SrRQ/V0sWP25Hoq+tjs99v11OLU/4V9DHSSLZHKSZhc6ztm1lDHdg
-         aHbw==
-X-Forwarded-Encrypted: i=1; AKwUvBwd8fBxx+iRbQTGRW4I2P4wwPiIN/x6Skk4NWohzpvwZEeDCFbjzGMFk4BkO4eGkO21AEe8bHh8Ftd25zJCiCfG@vger.kernel.org
-X-Gm-Message-State: AFuF++kqxP9IPbKNZnGbXW6ToZITD7FwB4rKfiRfERRD/+PTNFb7J4C0
-	HJxa1fivsOisAt/JbfG2QtZVW7rV4rPuALhG220St0o2sfQkjywhuL2CMKQ5ugqlsjk8aEeI/zi
-	9PMHf3YtslKc4wuB2u3iniDxCsv1SAbWI/+m+4KGELSn17tNtETz+zWkghpdHszOO/a3NMbO4h4
-	Dl2BM1fVIyDyIPAE82XCSASFz0QUCAf/2okHImgY/GMOojtA==
-X-Gm-Gg: AYBFou0gjTSeKj+V+T5NHLvs/tZ4nw8RZPu93zAucm4Bmy6MGH4wSiAZNseVxWnYR2G
-	/2d+MT072x5dxND6WiHz+EMCfeuEij1T5QYfekrb/9E5SqHEqlN8dL6sqnhuTejCIcjMnTIUr5C
-	26lOmBPb1h5hcraG4Ni0CF/r3TN4APp3LRYdTEB7oCG5P/gyt1qImpmA==
-X-Received: by 2002:a05:690c:f04:b0:8a4:af43:6941 with SMTP id 00721157ae682-8a64e5d7328mr16132197b3.20.1790262039545;
-        Thu, 24 Sep 2026 08:00:39 -0700 (PDT)
-X-Received: by 2002:a05:690c:f04:b0:8a4:af43:6941 with SMTP id
- 00721157ae682-8a64e5d7328mr16131377b3.20.1790262038827; Thu, 24 Sep 2026
- 08:00:38 -0700 (PDT)
+        bh=/64YUvNMf9EIe8aZXp3DzyY+LbONkg5uQf4LZYgGwC0=;
+        b=0tjZTK0m6/Edorm1oOTJF7H5/etMBCsVNAHGQC1k+RslIQ4mQFBS08UfK5pI1e4npP
+         FLkG8UIqQR+PTrg6IJgCsuCw2A+0D3XGPXktPpCc8y9YXilpvruHYtAAfqAOBYNikeft
+         kXIOIPK2isXlCeY+sARFPji+5wrL1a+YCTBj6pmQzNMwXHTQyDPkon2sNVvwk4xgn6KL
+         Zo4J81WS81o7I6scIMDUFAxqjK0Gpc5ui5/vjQwhdzbf/3GHBKAUlGAHu2LQbdCI6kXm
+         8hyEeIPp4+x5rGtHZds6jwpi2TQ6x2sduLl1jqZv+7cnQVJPXtymu2g9zz5x7M/5IJPT
+         KHtA==
+X-Forwarded-Encrypted: i=1; AKwUvBzKDQk6eD3Yg4kqiUU+HUD91UTIdDfsDo1naGBgwWBvtrPnX4/Y7tRnhbYqiQFB9QTTEOrHd/QT8rjaw0+Ju7/l@vger.kernel.org
+X-Gm-Message-State: AFuF++n1nw2a4ETdXUDO6k1Z/uUJtlj6vVU0vYJNncyMAHFomKGnMKeV
+	QcpUDrYf32U7K5z+DAtbDcfWWDyfNOxHNeYfWxWQ1ro7eJ7W9+WUH8Gi4cfrnrHmYYZQRQdCB2H
+	vq1rBm0G0Ug5s2uLTtyVqneoaBm0MzpXLkI0ZVbeYP/INCkHWFYXHOIIh9eYsKhlt9BNJuAzem+
+	nPKSm4uZDIJrfiRbw6MZPQcLx7kiwn9fbPH9YZ3mz7au5Gzw==
+X-Gm-Gg: AYBFou34C/vxUpRtJAQTzFVROpaiXQh/zQZ2zRT5sLtiNBcHA16ROQRlp5QC0Hreo2p
+	QEotgxxZwuC6IRrbMec0sklRlGQD9Dl1ZvGicx2inui9hVLCI6Sk9Id7KrMcyKvwzdDk7A5ftmQ
+	jjyICA/B4Rz+AqaQs9QBlALLKwRoz75CLkJ/XnUiLxckt6QDZOzfQUWQ==
+X-Received: by 2002:a05:690c:6e87:b0:8a7:91f8:1e8d with SMTP id 00721157ae682-8a791f82a3bmr9357287b3.53.1790264538829;
+        Thu, 24 Sep 2026 08:42:18 -0700 (PDT)
+X-Received: by 2002:a05:690c:6e87:b0:8a7:91f8:1e8d with SMTP id
+ 00721157ae682-8a791f82a3bmr9357067b3.53.1790264538368; Thu, 24 Sep 2026
+ 08:42:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -101,14 +101,15 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20260914-scm-device-api-v1-0-3573e2596c51@redhat.com>
- <EKwbCgCnxbNX4p95qJ3xoytzeNBBLc2L_HOVWr-S-y8n7pNOIToj37TyoXRcLyIK1gjq_IvbreQ331gw6jIK9Q==@protonmail.internalid>
- <20260914-scm-device-api-v1-1-3573e2596c51@redhat.com> <b1340496-1ff3-4ad7-87c3-36d2162efbfa@kernel.org>
-In-Reply-To: <b1340496-1ff3-4ad7-87c3-36d2162efbfa@kernel.org>
+ <bRb6NzJiFvNGB0X3BeiVytgZNlRv88LFlcaBwwFIFa3GtVZhn5bh9EoRRDliRtgsnlQNMddvcIPK-5HK9x7z9Q==@protonmail.internalid>
+ <20260914-scm-device-api-v1-2-3573e2596c51@redhat.com> <49153dff-b4e0-43ac-aa82-15175fea6445@kernel.org>
+In-Reply-To: <49153dff-b4e0-43ac-aa82-15175fea6445@kernel.org>
 From: Albert Esteve <aesteve@redhat.com>
-Date: Thu, 24 Sep 2026 17:00:27 +0200
-X-Gm-Features: AclHuK_S1nrFMWot6v8DC6klfULfaNk07isgmJtfP7BYAekyrR84kzWx2Uw9qhE
-Message-ID: <CADSE00JhFYhDV2cuVxZwVTX6LTe8zH0-BR=-Fhv+6UXeFxq_Zw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] firmware: qcom: scm: pass qcom_scm to internal helpers
+Date: Thu, 24 Sep 2026 17:42:05 +0200
+X-Gm-Features: AclHuK8NibWpN40MLtS8tk1TsaU8ZJKSI8cLr02zuHOUyaXDRMTCkw3xFezOa38
+Message-ID: <CADSE00JcFOY0r6doD1Qpc0xtZ6HKsa4kFGsV0_FsNbb+yemmKg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] firmware: qcom: scm: pass qcom_scm through the
+ exported API
 To: "Bryan O'Donoghue" <bod@kernel.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
 	Philipp Zabel <p.zabel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, 
@@ -143,29 +144,46 @@ Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.or
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 23, 2026 at 11:00=E2=80=AFPM Bryan O'Donoghue <bod@kernel.org> =
+On Wed, Sep 23, 2026 at 11:08=E2=80=AFPM Bryan O'Donoghue <bod@kernel.org> =
 wrote:
 >
 > On 14/09/2026 13:41, Albert Esteve wrote:
-> >   int qcom_scm_pas_auth_and_reset(u32 pas_id)
+> >   static int spm_cpuidle_drv_probe(struct platform_device *pdev)
 > >   {
-> > -     return __qcom_scm_pas_auth_and_reset(__scm->dev, pas_id);
-> > +     struct qcom_scm *scm =3D __scm;
-> > +
-> > +     return __qcom_scm_pas_auth_and_reset(scm->dev, pas_id);
-> >   }
-> >   EXPORT_SYMBOL_GPL(qcom_scm_pas_auth_and_reset);
+> > +     struct qcom_scm *scm =3D qcom_scm_get();
+> >       int cpu, ret;
+> >
+> > -     if (!qcom_scm_is_available())
+> > +     if (!scm)
+> >               return -EPROBE_DEFER;
 >
-> Why make this change at all though ?
+> Is this equivalent code ?
 >
-> It takes a pointer to the file static _scm
->
-> The reset of the patch looks straight-forward to me but this change
-> caught my eye.
+> Its also a bit confusing to me that the next patch adds a .available
+> field to the qcom_scm struct.
 
-Yeah, this change isn't useful. I aimed to avoid passing __scm to
-function calls but it does nothing in this patch, it'd be better to
-change it directly in the next patch that changes the signature.
+I can see how this can be confusing. The problem with
+qcom_scm_is_available(scm) is that callers did not have an SCM handle
+yet. So drivers needed to search for it beforehand. Once I had to
+repeat that a few times, I instead added qcom_scm_get(), which looks
+up the bound instance and returns NULL if it is not ready (and still
+uses qcom_scm_is_available() internally). So, !scm is the same check
+as before, while we obtain the pointer for the following calls.
+
+scm->available in the following patch replaces the __scm publication
+flag when the global is removed. Until then, readiness is still based
+on the static __scm validity.
+
+>
+> I see where you do get drvdata but I haven't managed to find in the
+> series where the data gets set - haven't asked an LLM either - I think
+> the logic to associate the scm pointer and get it should live together
+> in one patch so that the logic is easier to find and reason about.
+
+platform_set_drvdata() is already in qcom_scm_probe(); this series
+only adds the dev_get_drvdata() / qcom_scm_get() lookups. I can
+clarify this in the commit message so the set/get pairing is more
+obvious.
 
 BR,
 Albert
