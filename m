@@ -1,438 +1,249 @@
-Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com [74.125.228.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D824A2E20
-	for <linux-remoteproc@vger.kernel.org>; Thu, 24 Sep 2026 15:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.228.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790264966; cv=pass; b=qbfREy3LFjOMHRJbEuLWa8mLFCNpORtUkS0JI1AOGq4i96boe8SYYWU5/lisD/wKsnE1g4CgQz+aeFVfB9WPJQBfQqVqPCHW1l+Kvi2RXbgP8Qoord8rURGqBkbjMTdVOEXpOsEo4Q6CkyhZqoxiqLGFXyYIQSC/SNa1fsG6TxM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790264966; c=relaxed/simple;
-	bh=l1Q0IiZDk6Qcq0311vlsTK2bjC6s/OA42Brr4EFRw/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mzVLKjSfLLK2Li/9YKkK9ZiMiL6U9H3VHJ/KGvjyxiKs39xdO4LjLKYaqKzmYjtLlNq85zXrHJn4ve5KF0A93q8EP7HrWt9t8Wo67vnn2vztVnYma2uTamcZ90IUFC1qDA+azIxBuYnrbHU3c9ZdV4ISWgj3DtaMiWF4W6bJTJs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sSimxpSa; arc=pass smtp.client-ip=74.125.228.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8227E542EC1;
+	Thu, 24 Sep 2026 17:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790271324; cv=none; b=WvTy4oRjKHQPrYbQ+2+axCrim8EWC2PVuQUVy/lcEPiBor+e3igRnw8hFEaiRN4pWBcpOb+eXtwPEWNc9/sIPL4ZujZf/BQf4h6pqBLezM5LLgDKJjeC9Kvuy1DaU1CycwgG4qfn6FG8w1N5clc2eesKdIe5KlxETrsx/Ueg9+g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790271324; c=relaxed/simple;
+	bh=FyRJz4YMDl6mBag9t5YIg0D7B1oafB2JS5XVdDQ/FJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRFPz+9IGzH5+hIhCf4DAZjLq9M0hZXgFXRwc71lm67ZBnZFxq+S83ivuk1Fc/7AfucfuI0EsFcFCFGi/9CHao/fRWxmJc9oWy1nakZW5R504cu02JnCWozlf08NPk/eyMsGv7heop/k+H91RVIflbAODTrdlDQMI04cIHoQXrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVyqtnTF; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sSimxpSa"
-Received: by mail-ed2-f12.google.com with SMTP id 4fb4d7f45d1cf-6a98dfb8002so2997280a12.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 24 Sep 2026 08:49:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1790264961; cv=none;
-        d=google.com; s=arc-20260327;
-        b=EcTLt7K/JzBe3Zf/TvooimpiMm6R1bs9xbY4GiXHBrMD1nmE9oZ9hHiUWVFfnBoJjS
-         27yLkrvjffcqif5Vnm4ZUuQMOMTXRWgEIW74RyhzpjKA0c/6179N9f5EXdDI4LGROLJ+
-         JWo+5pnUeB7m7F62xkIOcktIsHVbOtmtIKIjQBZlvJefUUH+VI8bNndmk7W3zuJ61YMQ
-         zg62n+FcNh/OyIZ1aYB6k3wwWyqu4cVgUUND8Ry3rokBMadLO74jN56Lv2CCPRsEP73O
-         rEyeG42DbaIcwxHuGk8rT2IF4o5NBCW5/rjNn31Erkb8DAQxAfQ9o+328CcLzdiE8h1F
-         WBhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=ni9MwLgYZlL3v8+dEAMfhbtgbNrk2WDN56GHtl6Py64=;
-        fh=yh3ikHnxSvs1Qa3Cl0tpnFdTY2wFtULII7svlOm0mdY=;
-        b=LuLl24FjwcbVKu9Sd05A8LqrxrNAbC7DZ+kyo8U60QuDeRz0q9r3Pfgv+jxTZvci+h
-         xJ2qTTqlwJCknfPNclLiQXrxhbuPpQsfMeegTVB96Fy0n7U53Ax311REhbueSQtV9ag4
-         kyIpSqDDPq6SkL3UOD8EakikzG5F2DISi5XLNcRO0dOUYHC5izwQ5c6tZPcyW0vZ0CUX
-         2eB6ivXJlKN0x26LAXrlplqxIuzhh2UkLfhVem1VWcPwx2mOyIAEthky+snkqqUA/z2n
-         7/208hR9Hae4bfeE8sDJlc5CCmUIXHV8uY1LEh97Zaq8Xy9sVNy/1VSZjP00mi+eLMKl
-         o3Ag==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790264961; x=1790869761; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=ni9MwLgYZlL3v8+dEAMfhbtgbNrk2WDN56GHtl6Py64=;
-        b=sSimxpSaJFTOGdHBX9Elo3e0nuaPMQsCYW0eM9TaKHMj0dnbMVy8dflsrnRKKoqQZn
-         6DtPDze4y15Td6jKdom0M87HvsW9o3M+UYjWZWRsRerTmvMwuNygSI7ioyaA33KeOobY
-         vYQZqvgKVC7Zf2GZfAyoD91nJE+GkFITPZL5NnC5s5HWRTv3CiSYCdaMEWXWmIyCWuMF
-         13nE6VMEYAh1BtxNUoh+QtH7NxnoLZpzR2o+1pY0pAjzu21CuZ/u91ffzURdisJexwl7
-         V+AB84DQL4R117R/6WNsdmKf13dO/0NMF3MPUHtAbdN1LUFJlM3lePj8lRC0szBBnihQ
-         9loA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790264961; x=1790869761;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=ni9MwLgYZlL3v8+dEAMfhbtgbNrk2WDN56GHtl6Py64=;
-        b=DvrC0MvgpD5AZLVQcFCXrjdqqffrQe9R+k1K4bJkN9e6+cNCoN+oXvH2n69wuvnD4y
-         Vak4tJ9BQT+mqrOyu8T9ayZ988NC3Icfv7huDZKtQCgE+ed1iKgwnDQSkk/KPMR/EbZn
-         qNI21cstr6sbTyYYTkyYD6rvvGHwYZ8ayiIbCcT1RII0+40G9UBCdFG3Mnf4MTdjECuj
-         723d1pTYmjNENMRuhH/0lL2pgZAKm2n+FWIZzOZ2pcmzqHwL814FXd0UP0kKwY7FxXIM
-         SXCXtj4ajGTVSQAKwWGxt2v1v+2/xne3B6ubNNnrLyYq0E23rbwy4v+nrkz5N26LJOJb
-         CXPg==
-X-Forwarded-Encrypted: i=1; AKwUvByiVKy4jNfx/3fxMoQGa3ngQYJlieYRRo45uBtudw77CWM18ANReAGWvxDcceQ+L/MRLKAjjhX/P+GNh4hGLoQh@vger.kernel.org
-X-Gm-Message-State: AFuF++kXCV5v5tWO6uYYi9vFSAZ3Cf/aj/xyhNfQJOHnPfN2aiD50wuw
-	T1wWrULewE+q03OWEPe+dNcANN1yQXXKzZnufR7Vn7sUUXeL3eHOrIh3L1d7USLFtqd2Wz+Uh38
-	lhQH6WRqDvsyL3nJZYtoR7//gM2YKMVbzewvPDgHfGw==
-X-Gm-Gg: AYBFou1o4IB2Ztc8Wb/OE3FmPNpp0F6wHV5iF2TFyLgh7IXbev2nNC+eM7bnJLh2CqI
-	2JBm/O6IG25UwFEiWAo6al0dJaDIWHlWV0t54vQlwiZDb7jd4QyDXofunBkdUG+ny4zlCAkUfqo
-	j2rYveewu5ql3x+hB9gglaHp8ftYPyWac+E8RnxzYWrq2PyYX608xZgkiu2tCAPJKi65/Emmr6f
-	ujOVOk5zcI3RMArsKA+VMgcDHCYZzmiZFxVK+tJGvtoi9mSPI2wKyNVeipfpcM+FsEY1tPNRBse
-	Yt48V84V4G6ejWouTwyzeXsxwNX5iep+ZrywN5TVm1MKaybO9QIfyahPLjHvuxCp+oht5YRpWkN
-	iuHu11Nb8UdyQ69OG7u9ggQbg
-X-Received: by 2002:a05:6402:3548:b0:6a9:b549:701d with SMTP id
- 4fb4d7f45d1cf-6aacc508f6amr2199041a12.15.1790264960542; Thu, 24 Sep 2026
- 08:49:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVyqtnTF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F4951F000FF;
+	Thu, 24 Sep 2026 17:35:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1790271322;
+	bh=iB1GdzP+8thSPMeWIKodQA64CDM1Tul3nzGc9hJIyLg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=QVyqtnTFgJ1OrhUvXnt/50bN1+ev4REPE0V4chjSMh13CZFHvUBTT5udqrxIr2sY8
+	 sNsv0BtIkH9cZoYfmEQBe27Tw126iuARvLFcEaSAxrphRluLxrjP0IpR+8suOdUhG4
+	 8zo9ZasonLhEGey91Jt/Kpdk9ZWULkRnFoGb1mAVxQqSDhfg0+xoxxDMgastegnav2
+	 8P5nj0/wHesA9muawmp952KPVhNTLUVVwKy4MVje607sHePwR3KTIqg1rex39+j12h
+	 XLNUl3glZOsmG195yNaJ/gypajXXCZ+DWILZHIMOm6Tbx+vL6HFyMbOlyimvHankhJ
+	 f9VNlg0LCsRgA==
+Date: Thu, 24 Sep 2026 18:35:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Shenwei Wang <shenwei.wang@oss.nxp.com>
+Cc: Linus Walleij <linusw@kernel.org>,
+	Bartosz Golaszewski <brgl@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-imx@nxp.com, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v16 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
+ subnode support
+Message-ID: <20260924-bonding-chill-81ae9424c06d@spud>
+References: <20260923184255.299034-1-shenwei.wang@oss.nxp.com>
+ <20260923184255.299034-3-shenwei.wang@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
- <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
- <arKiOCGrWAKyc-bc@p14s> <arLawAw6kgFT2e0W@bywater> <arP06mWDehsIDh5s@p14s> <arP5AvA51GHrI8aN@bywater>
-In-Reply-To: <arP5AvA51GHrI8aN@bywater>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 24 Sep 2026 09:49:08 -0600
-X-Gm-Features: AclHuK9rmhqK1cH6j-fLQ3mp9InwiyRIAYoT3KXZouMAk75cYXsRA4d_MaQA2vI
-Message-ID: <CANLsYkyT3NopaQy8CpTUrD-MTbif1dvyjaUUcQUWLzcTL7GpcQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 12/12] PoC: arm64: dts: imx93-11x11-frdm: add multiple vdevs
-To: Francesco Valla <francesco@valla.it>
-Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, virtualization@lists.linux.dev, 
-	imx@lists.linux.dev, iommu@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="C56Zomom5CajsRz1"
+Content-Disposition: inline
+In-Reply-To: <20260923184255.299034-3-shenwei.wang@oss.nxp.com>
 
-On Wed, 23 Sept 2026 at 12:42, Francesco Valla <francesco@valla.it> wrote:
->
-> On Wed, Sep 23, 2026 at 09:48:58AM -0600, Mathieu Poirier wrote:
-> > On Tue, Sep 22, 2026 at 10:19:48PM +0200, Francesco Valla wrote:
-> > > On Tue, Sep 22, 2026 at 09:43:52AM -0600, Mathieu Poirier wrote:
-> > > > On Wed, Sep 16, 2026 at 11:10:57PM +0200, Francesco Valla wrote:
-> > > > > Add rings for multiple vdevs, as well as the required virtio nodes for
-> > > > > I2C, SPI and GPIO functionalities. On top of that, add example
-> > > > > peripherals using all of them.
-> > > > >
-> > > > > NOTE: this is a Proof-Of-Concept, not meant to be integrated!
-> > > > >
-> > > > > Signed-off-by: Francesco Valla <francesco@valla.it>
-> > > > > ---
-> > > > >  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 128 +++++++++++++++++++--
-> > > > >  1 file changed, 119 insertions(+), 9 deletions(-)
-> > > > >
-> > > > > diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > > > > index bd14ba28690c..dfa3b122ac5f 100644
-> > > > > --- a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > > > > +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
-> > > > > @@ -53,6 +53,32 @@ button-k3 {
-> > > > >                 };
-> > > > >         };
-> > > > >
-> > > > > +       gpio-keys-virtio {
-> > > > > +               compatible = "gpio-keys-polled";
-> > > > > +               poll-interval = <100>;
-> > > > > +
-> > > > > +               button-v1 {
-> > > > > +                       label = "Button V1";
-> > > > > +                       linux,code = <BTN_3>;
-> > > > > +                       gpios = <&v_gpio 23 GPIO_ACTIVE_LOW>;
-> > > > > +               };
-> > > > > +
-> > > > > +               button-v2 {
-> > > > > +                       label = "Button V2";
-> > > > > +                       linux,code = <BTN_4>;
-> > > > > +                       gpios = <&v_gpio 24 GPIO_ACTIVE_LOW>;
-> > > > > +               };
-> > > > > +       };
-> > > > > +
-> > > > > +       leds {
-> > > > > +               compatible = "gpio-leds";
-> > > > > +
-> > > > > +               led {
-> > > > > +                       gpios = <&v_gpio 18 GPIO_ACTIVE_HIGH>;
-> > > > > +                       label = "LED V";
-> > > > > +               };
-> > > > > +       };
-> > > > > +
-> > > > >         reg_usdhc2_vmmc: regulator-usdhc2 {
-> > > > >                 compatible = "regulator-fixed";
-> > > > >                 off-on-delay-us = <12000>;
-> > > > > @@ -89,11 +115,6 @@ linux,cma {
-> > > > >                         linux,cma-default;
-> > > > >                 };
-> > > > >
-> > > > > -               rsc_table: rsc-table@2021e000 {
-> > > > > -                       reg = <0 0x2021e000 0 0x1000>;
-> > > > > -                       no-map;
-> > > > > -               };
-> > > > > -
-> > > >
-> > > > Why is the resource table removed?  There is no mention of that in the
-> > > > changelog...
-> > > >
-> > >
-> > > You are obviously right, the commit message here should have been a
-> > > poem, not a form of hermetic poetry. My bad.
-> > >
-> > > The resource table here is causing problems with how Zephyr is managing
-> > > it at its side. If it is kept in a separate memory location and copied
-> > > there at runtime by the remote processor firmware during its startup
-> > > (which is the current Zephyr behavior), then there might be a race
-> > > condition when the aforesaid firmware is loaded and started by Linux
-> > > *and* at least one of the vdev drivers (here including rpmsg_bus) is
-> > > built-in. In this case, the copy of the resource table done by the
-> > > remote processor might - depending on the async execution of the two
-> > > processors - overwrite the status bit set by the Linux driver:
-> > >
-> > >   Firmware load and startup (echo start > /sys/.../state)
-> > >                            |
-> > >                        |
-> > >                        V
-> > >   The vdev devices get registered (by register_virtio_device())
-> > >                            |
-> > >                        |
-> > >                        V
-> > >   If a driver is built-in, it probes and sets the vdev status
-> > >   inside the resource table @rsc-table.
-> > >                            .
-> > >                        . (in the mean time)
-> > >                        .
-> > >   The remote processor starts up and copies the resource table from its
-> > >   dedicated section to @rsc-table.
-> > >
-> > > Depending on the system load and the complexity of the firmware, the two
-> > > operations can happen in whatever sequence, causing a race condition.
-> >
-> > This would happen regardless of this patchset.
-> >
->
-> Correct, *if* the remote processor is copying the resource table to a
-> specific location and expects the host to use that. On Zephyr (which is
-> clearly outside the scope here) this can be enabled through the
-> CONFIG_OPENAMP_COPY_RSC_TABLE option. I am keeping that disabled, and
-> removing the rsc-table node here.
->
-> I am planning to reason on this and propose a proper fix in a separate
-> patchset.
->
+--C56Zomom5CajsRz1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It seems like we need two solutions here, one for imx and another
-applicable to everyone.
+On Wed, Sep 23, 2026 at 01:42:29PM -0500, Shenwei Wang wrote:
+> From: Shenwei Wang <shenwei.wang@nxp.com>
+>=20
+> Remote processors may announce multiple GPIO controllers over an RPMSG
+> channel. These GPIO controllers may require corresponding device tree
+> nodes, especially when acting as providers, to supply phandles for their
+> consumers.
+>=20
+> Define an RPMSG node to work as a container for a group of RPMSG channels
+> under the imx_rproc node. Each subnode within "rpmsg" represents an
+> individual RPMSG channel. The name of each subnode corresponds to the
+> channel name as defined by the remote processor.
+>=20
+> All remote devices associated with a given channel are defined as child
+> nodes under the corresponding channel node.
+>=20
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio-rpmsg.yaml  | 55 +++++++++++++++++++
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 46 ++++++++++++++++
+>  2 files changed, 101 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml b/Doc=
+umentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
+> new file mode 100644
+> index 000000000000..41eb2e149942
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-rpmsg.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/gpio-rpmsg.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Generic RPMSG GPIO Controller
+> +
+> +maintainers:
+> +  - Shenwei Wang <shenwei.wang@nxp.com>
+> +
+> +description:
+> +  On an AMP platform, some GPIO controllers are exposed by the remote pr=
+ocessor
+> +  through the RPMSG bus. The RPMSG GPIO transport protocol defines the p=
+acket
+> +  structure and communication flow between Linux and the remote firmware=
+=2E Those
+> +  controllers are managed via this transport protocol. For more details =
+of the
+> +  protocol, check the document below.
+> +  Documentation/driver-api/gpio/gpio-rpmsg.rst
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - fsl,rpmsg-gpio
 
-> > >
-> > > This is somewhat masked if vdev drivers are built as modules, as the
-> > > devices does not probe immediately but only after the modules have been
-> > > loaded, giving the remote processor time to start. Note that this is not
-> > > a solution! but a workaround.
-> > >
-> > > If the rsc-table node is not there, the startup logic falls back to the
-> > > classic rproc_elf_find_loaded_rsc_table().
-> >
-> > We can't remove @rsc-table to make a problem go away.
-> >
->
-> I need to re-take a look at the NXP SDK to understand what's the real
-> purpose of having the rsc-table here. Judging from the commit message
-> that introduced support for such facility [1], it seems the SDK is not
-> really using it.
->
-> Maybe someone from NXP can comment on this?
->
-> > >
-> > > This is specific to i.MX platforms [1] and is probably not normally an
-> > > issue because - as stated in [1] - the offical SDK from NXP seems not
-> > > to check the status inside the resource table.
-> > >
-> > > > >                 vdev0vring0: vdev0vring0@a4000000 {
-> > > > >                         reg = <0 0xa4000000 0 0x8000>;
-> > > > >                         no-map;
-> > > > > @@ -105,12 +126,42 @@ vdev0vring1: vdev0vring1@a4008000 {
-> > > > >                 };
-> > > > >
-> > > > >                 vdev1vring0: vdev1vring0@a4010000 {
-> > > > > -                       reg = <0 0xa4010000 0 0x8000>;
-> > > > > +                       reg = <0 0xa4010000 0 0x1000>;
-> > > > > +                       no-map;
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev2vring0: vdev2vring0@a4011000 {
-> > > > > +                       reg = <0 0xa4011000 0 0x2000>;
-> > > > > +                       no-map;
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev2vring1: vdev2vring1@a4013000 {
-> > > > > +                       reg = <0 0xa4013000 0 0x2000>;
-> > > > > +                       no-map;
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev3vring0: vdev3vring0@a4015000 {
-> > > > > +                       reg = <0 0xa4015000 0 0x2000>;
-> > > > > +                       no-map;
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev4vring0: vdev4vring0@a4017000 {
-> > > > > +                       reg = <0 0xa4017000 0 0x4000>;
-> > > > > +                       no-map;
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev5vring0: vdev5vring0@a401B000 {
-> > > > > +                       reg = <0 0xa401B000 0 0x2000>;
-> > > > > +                       no-map;
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev5vring1: vdev5vring1@a401D000 {
-> > > > > +                       reg = <0 0xa401D000 0 0x2000>;
-> > > > >                         no-map;
-> > > > >                 };
-> > > > >
-> > > > > -               vdev1vring1: vdev1vring1@a4018000 {
-> > > > > -                       reg = <0 0xa4018000 0 0x8000>;
-> > > > > +               vdev5vring2: vdev5vring2@a401F000 {
-> > > > > +                       reg = <0 0xa401F000 0 0x1000>;
-> > > > >                         no-map;
-> > > > >                 };
-> > > > >
-> > > > > @@ -149,8 +200,67 @@ &cm33 {
-> > > > >                  <&mu1 3 1>;
-> > > > >         mbox-names = "tx", "rx", "rxdb";
-> > > > >         memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
-> > > > > -                       <&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
-> > > > > +                       <&vdev1vring0>, <&vdev2vring0>, <&vdev2vring1>,
-> > > > > +                       <&vdev3vring0>, <&vdev4vring0>,
-> > > > > +                       <&vdev5vring0>, <&vdev5vring1>, <&vdev5vring2>;
-> > > >
-> > > > Who is using vdev5 vrings?
-> > > >
-> > >
-> > > Another thing that should have been in the commit message. Vdevs are
-> > > defined, in the Zephyr application I am using as PoC, as follows:
-> > >
-> > >  - vdev0: RPMSG (tx and rx vrings)
-> >
-> > To be backward compatible, there has to be a way to make vdev0 defaulting to
-> > RPMSG.  It would also be nice if bindings were define for RPMSG so that it can
-> > show up in the list of remoteproc-virtio devices like i2c, gpio and others.
-> >
->
-> What vdev type is inside vdev0 is up to the resource table (i.e., to the
-> firmware running on the remote processor), not the remoteproc-virtio
-> framework.
->
+Is this even used? Your dts patch doesn't have it.
 
-We are of the same opinion.  Up to now vdev0 was automatically
-assigned to RPMSG but with this new feature, it can be anywhere in the
-list.  I see your point about RPMSG not requiring hardware
-description.
+> +          - const: rpmsg-gpio
+> +      - const: rpmsg-gpio
 
-> Defining bindings for rpmsg would today be... pointless? Since no
-> hardware needs to be described for it. The same goes for virtio-can and
-> virtio-entropy.
->
+Sounds like, if linux are the arbiters of what this protocol is,
+"linux," should be used as a vendor prefix.
 
-Just to make sure we understand each other, there are entries in the
-resource table for virtio-can and virtio-entropy.  Please confirm.
+> +
+> +  reg:
+> +    description:
+> +      The reg property represents the index of the GPIO controllers. Sin=
+ce
+> +      the driver manages controllers on a remote system, this index tells
+> +      the remote system which controller to operate.
+> +    maxItems: 1
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#gpio-cells"
+> +  - gpio-controller
+> +
+> +allOf:
+> +  - $ref: /schemas/gpio/gpio.yaml#
+> +
+> +unevaluatedProperties: false
+> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.y=
+aml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> index c18f71b64889..5c82255b92a5 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> @@ -88,6 +88,29 @@ properties:
+>        This property is to specify the resource id of the remote processo=
+r in SoC
+>        which supports SCFW
+> =20
+> +  rpmsg:
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      Represents the RPMSG bus between Linux and the remote system. Cont=
+ains
+> +      a group of RPMSG devices running on the bus.
+> +    properties:
+> +      '#address-cells':
+> +        const: 1
+> +
+> +      '#size-cells':
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^gpio@[0-9a-f]+$":
+> +        type: object
+> +        $ref: /schemas/gpio/gpio-rpmsg.yaml#
+> +        unevaluatedProperties: false
+> +
+> +    required:
+> +      - '#address-cells'
+> +      - '#size-cells'
+> +
+>  required:
+>    - compatible
+> =20
+> @@ -150,5 +173,28 @@ examples:
+>                  &mu 3 1>;
+>        memory-region =3D <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, =
+<&rsc_table>;
+>        syscon =3D <&src>;
+> +
+> +      rpmsg {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        gpio@0 {
+> +          compatible =3D "rpmsg-gpio";
+> +          reg =3D <0>;
+> +          gpio-controller;
+> +          #gpio-cells =3D <2>;
+> +          #interrupt-cells =3D <2>;
+> +          interrupt-controller;
+> +        };
+> +
+> +        gpio@1 {
+> +          compatible =3D "rpmsg-gpio";
+> +          reg =3D <1>;
+> +          gpio-controller;
+> +          #gpio-cells =3D <2>;
+> +          #interrupt-cells =3D <2>;
+> +          interrupt-controller;
+> +        };
+> +      };
+>      };
+>  ...
+> --=20
+> 2.43.0
+>=20
 
-> >
-> > >  - vdev1: entropy (single request vring)
-> > >  - vdev2: GPIO (request and event vrings)
-> > >  - vdev3: I2C (single request vring)
-> > >  - vdev4: SPI (single request vring)
-> > >  - vdev5: CAN (tx, rx and control vrings)
-> > >
-> > > vdev5 is not represented inside the devicetree because the can-virtio
-> > > driver registers a single CAN network device and has thus no need for
-> > > such representation.
-> >
-> > Then why is it part of the remoteproc's memory-regions?
-> >
->
-> Because a vring description needs to be present for it, or the
-> remoteproc-virtio won't be able to fill the entry inside the resource
-> table.
->
-> > >
-> > > > >         status = "okay";
-> > > > > +
-> > > > > +       virtio {
-> > > > > +               #address-cells = <1>;
-> > > > > +               #size-cells = <0>;
-> > > > > +
-> > > > > +               vdev@2 {
-> > > > > +                       reg = <2>;
-> > > > > +
-> > > > > +                       v_gpio: gpio {
-> > > > > +                               compatible = "virtio,device29";
-> > > > > +                               gpio-controller;
-> > > > > +                               #gpio-cells = <2>;
-> > > > > +                               interrupt-controller;
-> > > > > +                               #interrupt-cells = <2>;
-> > > > > +                       };
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev@3 {
-> > > > > +                       reg = <3>;
-> > > > > +
-> > > > > +                       i2c {
-> > > > > +                               compatible = "virtio,device22";
-> > > > > +                               #address-cells = <1>;
-> > > > > +                               #size-cells = <0>;
-> > > > > +
-> > > > > +                               eeprom@50 {
-> > > > > +                                       compatible = "atmel,24c1025";
-> > > > > +                                       reg = <0x50>;
-> > > > > +                               };
-> > > > > +                       };
-> > > > > +               };
-> > > > > +
-> > > > > +               vdev@4 {
-> > > > > +                       reg = <4>;
-> > > > > +
-> > > > > +                       spi {
-> > > > > +                               compatible = "virtio,device2d";
-> > > > > +                               #address-cells = <1>;
-> > > > > +                               #size-cells = <0>;
-> > > > > +
-> > > > > +                               sram@0 {
-> > > > > +                                       compatible = "microchip,mchp23k256";
-> > > > > +                                       reg = <0>;
-> > > > > +                                       spi-max-frequency = <20000000>;
-> > > > > +                               };
-> > > > > +
-> > > > > +                               lcd@1 {
-> > > > > +                                       compatible = "adafruit,yx240qv29", "ilitek,ili9341";
-> > > > > +                                       reg = <1>;
-> > > > > +                                       spi-max-frequency = <10000000>;
-> > > > > +                                       dc-gpios = <&v_gpio 21 GPIO_ACTIVE_HIGH>;
-> > > > > +                                       reset-gpios = <&v_gpio 20 GPIO_ACTIVE_HIGH>;
-> > > > > +                                       rotation = <90>;
-> > > > > +                               };
-> > > > > +                       };
-> > > > > +               };
-> > > > > +       };
-> > > > >  };
-> > > > >
-> > > > >  &eqos {
-> > > > >
-> > > > > --
-> > > > > 2.55.0
-> > > > >
-> > >
-> > > Thank you!
-> > >
-> > > Regards,
-> > > Francesco
-> > >
-> > >
->
-> Thank you for the discussion - is helping in defining further
-> requirements and constraints.
->
+--C56Zomom5CajsRz1
+Content-Type: application/pgp-signature; name=signature.asc
 
-Well, I certainly appreciate that you are willing to have a discussion.
+-----BEGIN PGP SIGNATURE-----
 
-> Regards,
-> Francesco
->
-> [1] https://lore.kernel.org/all/20240719-imx_rproc-v2-2-10d0268c7eb1@nxp.com/
->
->
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCarVfUwAKCRB4tDGHoIJi
+0i0GAP97j+i7FWor0B5kx0k5Y61hsIbG5rpgbILtHtQonkqb+gD+Jw/HBv1cg7JV
+KEqTudUMhBrAYU4Cx+DsgAN/vYAzRgU=
+=ljte
+-----END PGP SIGNATURE-----
+
+--C56Zomom5CajsRz1--
