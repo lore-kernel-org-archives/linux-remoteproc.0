@@ -1,153 +1,106 @@
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lr2-f34.google.com (mail-lr2-f34.google.com [74.125.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775003BED2D;
-	Fri, 25 Sep 2026 19:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E98E4E1C7F
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 22:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.230.98
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790364411; cv=pass; b=aOZG/RtSxg99e8yW+FhJ7KLM3m3NQM3MK/KtTh2XVGaPJMMQuUbuMHewLZZzKSFSbebwWiTbKwltNjuM0TYTcpkz/e7bnteTcODDlQ0NsdTkW8PEOQNPV/shqFUSQz7EkR3KjeOYcjl2N5pBzim/EE7vAwZH8TQVpZAyAQzBEFk=
+	t=1790373607; cv=pass; b=OlDnBdOizHx0A4w/oYJI3qbIebth7vHnpus+94IMmLTQGlY4Jf/RVfAS6gAnXFsDrZwJEsc00i75MMOS06LCIVs1xm6GYbTiNooCX9iRKOAqGbz7oS4UB/o/tGnTHzm4Abydd3uPlNCbeUKe1CBFJ1wyp6kFoSbvSJuL0WatP1M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790364411; c=relaxed/simple;
-	bh=xgwXF789iMFU1tHJBCYfohzF1FMXCUeFcBdG42GdAwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3fJcvi7Ow7928OdpIKEG3baVo1LvDaMBB12laL92bop+oMdtHw/g5KjdHwSHZWRPj+hKjyIqOVc1JK7IF9m4ZD5DKmagYHmMoBjP3IaGuQEhdr6yPIsRfa4dY3ciwRnpTXmHiMoVF+6iKItYCX/cwpt52rPpWWVNXk71WxQ238=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=2LEng0gb; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=TYJhyBN1; arc=pass smtp.client-ip=185.56.87.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+	s=arc-20240116; t=1790373607; c=relaxed/simple;
+	bh=MxdQLe7hyBl8hjFd/SN5xKlhnp38XIhnYsFcGcSz7cQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q/JsXWcSqKgFDTkpnBi1Zve0ZDxA37sG/bTrRC0JQarV9Xj72REL1Jw9AUFb2mvinMDmUA6jBxeUBh9U0v4p/WVUAwmyEiwqemsosnCgIYZ2o0fNUswEnG4LQHHiaqN37qUt2gYnQNG3DqKNK0HKmXYVjl/jURs2YZaw5h4RKyI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JuSrOq2o; arc=pass smtp.client-ip=74.125.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="2LEng0gb";
-	dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b="TYJhyBN1"
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-2q7f.prod.antispam.mailspamprotection.com; s=arckey; t=1790364409;
-	 b=aVzn60tlrD5vs7gbcx+m4ZdzfUaQpZyAftHtZd3bSwgEjVrut1lZ3uO8NSq1/+fyBcrgm1iA3S
-	  Z3d1663uhK7YGTzXagp1WVYIRqRmaCoNBxGzDsHru8C//19oehDh3binvWtejrKMxERZ4CsRh8
-	  tiCWVbxdfnCTsk6MfVFlSM3HigVAXcbjaHhu4dvSTcY1trCJNf3skbMNNLE591bwjObssZUyJF
-	  El7l/347JvdMER04wTqE/fUnoASEV/MGPsyYi202NAht/7JUax5RS0Qh+6Ce1fBdQfjF6JISv4
-	  oYokRrIKh0ThPp/vrxynLCpcPSkrkqOWhW71h5L+3ZDrXg==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-2q7f.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-2q7f.prod.antispam.mailspamprotection.com; s=arckey; t=1790364409;
-	bh=xgwXF789iMFU1tHJBCYfohzF1FMXCUeFcBdG42GdAwI=;
-	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
-	  From:Date:DKIM-Signature:DKIM-Signature;
-	b=yOMOUZHSpH1E+i2R5bkK/lw93R1cuiitgAIygll4meeMHX8LBq9oqb6ljzOv9JZcDR4miQ58vH
-	  m+N3Zn+wEZX98V6Rz8d+rYvJxaa0TTRhdm4fwhESnozH31aXv9wjIFPhSMkytDno5UuT/9KbXb
-	  hs86lrY161A409muhfJYcZBPN9mZmMcdeUuS+hoJf7mwrWpt5BQ0ANwWQmLwIPDqrJWrfK2R6W
-	  pn1r5bWSLq6LvtAbOOovdOeino//hRGI9BwPxpehIsKqBMOuroVyznAcbilR8S/tAQ0Hxgz44P
-	  lBN+gB4jxryKx2mHkbnceGM5ENLgeDzxOQQ/oCrFFHjhfg==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=pe3VO7IOUXW8W+2mymQNpuRLjGNQ7piBXOGa6ZWGAGA=; b=2LEng0gb+r1XlJ4s46SYtuAnk0
-	+hM+rAsIa2c48CkDmoeeThoOoIb4g7tUjrwDiGDT5ugMdETMeT29eWU9l8tlU1LYUfeR9wJFs7ZLD
-	GcfHkG7L5Oh/8Kk5fLb+hzWuSXenLtTG0a6p/clIo0GKe8xwtmvQ/TF/fG/lDg1dODVk=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-2q7f.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xABZA-00000006fTs-15dS;
-	Fri, 25 Sep 2026 19:26:41 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=pe3VO7IOUXW8W+2mymQNpuRLjGNQ7piBXOGa6ZWGAGA=; b=TYJhyBN1lLzM3j+8pakSQMWVuQ
-	t9mPBySmzyc3WNNnz8yxKZciuJ4xoz92WA8IDQ9Cf+qyAtkbvu2kdW9CFkJo1rvQUlA6QAnv+Os09
-	A/+p5mE4ALa7sex5tsF+sHPQqVKAeFRcuB359Jqm8Xwur31oJ9WFh59QQVbTtu6FCDtM=;
-Received: from [79.45.60.29] (port=62628 helo=bywater)
-	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xABYu-000000007dA-1S38;
-	Fri, 25 Sep 2026 19:26:24 +0000
-Date: Fri, 25 Sep 2026 21:26:22 +0200
-From: Francesco Valla <francesco@valla.it>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
-	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, virtualization@lists.linux.dev, imx@lists.linux.dev, 
-	iommu@lists.linux.dev
-Subject: Re: [PATCH RFC 12/12] PoC: arm64: dts: imx93-11x11-frdm: add
- multiple vdevs
-Message-ID: <arbILwxDF9lZZtd7@bywater>
-References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
- <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
- <3065678.e9J7NaK4W3@steina-w>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JuSrOq2o"
+Received: by mail-lr2-f34.google.com with SMTP id 38308e7fff4ca-3a65a351692so2246071fa.2
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 15:00:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1790373603; cv=none;
+        d=google.com; s=arc-20260327;
+        b=qGwnZIoThYtDtswfnyHq2XM2HxEp1cyssb3aAKy9m69LRe6NxSId+Ev0GX6DUjhTif
+         GNcOhhRRLlWweJCtCZ49t9cipLqpLxF1cG+isYUjEUzQJByYebipD9Eh1BsalJjW1xkr
+         Zp5cB6ZskvIaLWTRVnw2tk9upZaZbN4yCocOBK7AZzj1eRHGwqWgsVHiu/F8/NjKGxHJ
+         FeSAy13j5nBmhp/c7yNwrq4h/i728Gox7lTF4So3nFNt+KNHqCOeZeK5p9cDVR16PXtA
+         wBLtmQmfyLhDU4e0H/eh/NXs3FCeILFED/Z/7erU94BtjKharJx5ueRlH4gQhn+dRTrq
+         EnUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=Ovx48gw0JCa9z93E+yMUXGbpBD5xdcukSN06uG3r4cs=;
+        fh=satggXUsHY68+rAjyVjE81pm7MFUz0eDAbjOVDZuyl4=;
+        b=ZUGcicw6BCcivL2LnkCMqHf1aaL4WbPBUblvz2WkGd1TwEAXwLQnv/RFHF8sdQdiEH
+         SMgKBszGP6mcSocgZArt+i1MRXddwAcrzj1Noolh5CTGJADxThV09EmZLlTD2acawG9x
+         mMiWVH8MIy6cHcFzim6TsI2vDCo4Lfk0rrkFzCVaNWXmloOLWzS5/XG37KIL4jG/OkQU
+         P/LvQRvwRhI4wbQ2wKZb3KkdgOKzkqt3qwPmiwZa1TJpgc/rH524Af4ajHxmlsmS+hSS
+         p1Qic7ZivkO7ylGwxkp9JBPESu1zHwFJgVmZHDe7WF8RaSKZZqz9hUNaQ97OsJmCcgNt
+         Zb5g==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790373603; x=1790978403; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=Ovx48gw0JCa9z93E+yMUXGbpBD5xdcukSN06uG3r4cs=;
+        b=JuSrOq2oDdMoL9VsnN1SwpkxEtNJpCeefrXn6BfwF0xa5EsQPeyrKs+jYzJnmJoD+U
+         Dv17YBqlP/3BswyBDeC09Ue8VKeL+xrZjfua96AqNqd43vSNVzc/iteJzb7vLuecUx9o
+         KZlU8vZ74xBw3SF0hULtoYxAuS65+Yf/RQuURgmH1QmEh2bE6NPav26Z2TUkuSX9zIPM
+         GS2zHEigl+o0Lj8/PNOFAT7JdhY5W2yq+gJbNAx1IaMVUx+RzSsJtXw0B1zgCNtWwv+X
+         kVjIaRykmYtUjMR800flULPXy4EnyAwRVev9b9UjOYRp290iiNABYuypztEnobiLgE6G
+         FBRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790373603; x=1790978403;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=Ovx48gw0JCa9z93E+yMUXGbpBD5xdcukSN06uG3r4cs=;
+        b=cnuePF/yZDduPMwy4u7zZejSmAJgSiXH9ibNi079kOy4yyn6RZXrjS4UZ9LU42zE3e
+         5mWvEP7lHVVpUEdEnjY9c3pL0g89o+s9nuwVrICDGPUPPkeBHTQvW7SbLlyI/deEDtQn
+         wa1Ew5OmB96W+GY6lMjQ2G9p0e2s9U7S5R1DUBJzhPoEOxn6WmgKMccFUxe1aFPNe+pZ
+         bdHdj70sj5Kxm2mi/CoPwiX0n7vtzk353Kp9BsxM1GaL5G4btfMtYY1srY49K9WtRLux
+         UhhuB9WR2VDW9uoMFUnPVCXLHAbszlUux45Q5RpRPtIky4ab32lxhuDn3dZrmd2DK3ze
+         kZOA==
+X-Forwarded-Encrypted: i=1; AKwUvByBxK9P+sBy63NL2Dhhhd35JdbjT2eW3BUUlUfeL/9wanw88CnUqrSSgRz7pomzpmQWNzd9/yM8PZZxqBivhu4x@vger.kernel.org
+X-Gm-Message-State: AFuF++nG6EDh2aUKoxl703wkkTRm7fsHMjT5+TDz0n8r1CVuS5infVgL
+	mGASk909mrm+jAfhUa/J2FepgBo+oMTnbXoXTI8Yl+91VDodKcPBCZsdzCPQ3Dk92VztzXoGqqt
+	DSHIFk/aFu7dW5bTk+XT2jAKbnUZ79EE=
+X-Gm-Gg: AYBFou0FePYgQ26yyIwatQwc/Vxye/bDCtBSWvY7NJM2nc+nl18Qm9Nui+v689Ro1pe
+	CJa9T80bf5weXRCpZh5WvvqLpM3DA6pPw0CHXmi4UhfpCJje/I+MVGS8MNIFKO4uJTqrvDhHUFh
+	ZSKikPzfZJ/arSYo9SUQPd0cV0QeobWNcVG3NMWYVt3HMhoXPwKD28kJHMzQSgMu0OwQNs/ZvmY
+	jJOwt1Cvirz2C5oEzhqttusD7Y6d6ZZ8Fwfbp0QOLWhTCjzk42gEIdYWSP8XvegyoNeAm8TWpho
+	SRanLOth0s9YnVINQK5hFhpWo+a8QKfNEOyh5C/dwup3+l28egKFtoY=
+X-Received: by 2002:a2e:a9a5:0:b0:3a5:f911:12bf with SMTP id
+ 38308e7fff4ca-3a63c0b0486mr17043371fa.4.1790373603049; Fri, 25 Sep 2026
+ 15:00:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3065678.e9J7NaK4W3@steina-w>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 1c9dc338d8a14fb2ac9e92178055ff3e
-X-AntiAbuse: ID - 1c9dc338d8a14fb2ac9e92178055ff3e
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1xABZA-00000006fTs-15dS-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-2q7f.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+References: <20260922190159.509836-1-oss.patchbox@gmail.com> <araXBOapuzox1ljT@p14s>
+In-Reply-To: <araXBOapuzox1ljT@p14s>
+From: Yuho Choi <oss.patchbox@gmail.com>
+Date: Fri, 25 Sep 2026 17:59:51 -0400
+X-Gm-Features: AclHuK9yIriexrqyiVeocPPSkgwQzrfkJ626VWzsA0WLJe_KCr5Mt7oEw8zUrxk
+Message-ID: <CAGG=RgB0WAPJHGNYTw1W5TGcsykKgJT=yixq2L6hsCGVKhUThA@mail.gmail.com>
+Subject: Re: [PATCH v1] remoteproc: virtio: Load rvring->vq once in rproc_vq_interrupt()
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alexander,
+On Fri, 25 Sept 2026 at 11:45, Mathieu Poirier
+<mathieu.poirier@linaro.org> wrote:
 
-On Fri, Sep 25, 2026 at 10:39:46AM +0200, Alexander Stein wrote:
-> Am Mittwoch, 16. September 2026, 23:10:57 CEST schrieb Francesco Valla:
-> > Add rings for multiple vdevs, as well as the required virtio nodes for
-> > I2C, SPI and GPIO functionalities. On top of that, add example
-> > peripherals using all of them.
-> > 
-> > NOTE: this is a Proof-Of-Concept, not meant to be integrated!
-> > 
-> > Signed-off-by: Francesco Valla <francesco@valla.it>
-> 
-> Just a general question, unrelated to virtio, but related to AMP: How do you
-> manage the clocks, so that Linux doesn't disable clocks needed by the
-> Cortex-M?
-> 
-> Best regards
-> Alexander
->
+> We could lose the CPU right here and meanwhile, __rproc_virtio_del_vqs() deletes
+> @vq.  I don't see how READ_ONCE/WRITE_ONCE would change that.
 
-Clock management for remote processors on i.MX93 (and other i.MX parts)
-is... not really a management, AFAICT. If you want to use a remote
-processor, the mcore_booted argument shall be specified in the kernel
-cmdline; this forces the clock management driver to leave root clock
-gates enabled for *everything*, leaving the possibility for the remote
-processor to use anything it needs.
-
-While out of scope for the current patchset, some work in this field
-certainly is on my (long) TODO list.
-
-Current implementation can be seen in [1] and [2].
-
-
-Regards,
-Francesco
-
-
-[1] https://elixir.bootlin.com/linux/v7.2.7/source/drivers/clk/imx/clk-imx93.c
-[2] https://elixir.bootlin.com/linux/v7.2.7/source/drivers/clk/imx/clk-composite-93.c#L83
-
+You're right, the single load only closes the NULL window, not the
+use-after-free.
+I'll send a v2 that protects rvring->vq with SRCU, so that
+__rproc_virtio_del_vqs()
+waits for rproc_vq_interrupt() to finish before freeing the virtqueues.
