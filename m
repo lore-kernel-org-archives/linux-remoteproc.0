@@ -1,148 +1,190 @@
-Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com [74.125.227.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03C13815E8
-	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 15:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8774D9F83
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 15:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790351114; cv=none; b=fiwpdLznMsyKp0jzASXqhYuKO3ikPXrpgBCdVYvt23AxoXc2v1jMJPfin5iq4KE9irRWgRdndgR805+95Mklfl+h9JLcUW7UrrcMjTCbhrVl+EBlKGLk0tt5dZWRdGxkh/X9YVNfuqZ05R4ZP8suA0pJLO5E9J0celq2jCEY9lA=
+	t=1790351884; cv=none; b=p6iAfDq9reKvnUikojHv+unye0XySssad8auTQKIHb4x8MF4gir62uNWdS3btc+9PkcwGJEMb58elVEgyllcIYPcA57UKyz9nbtwUX/HRPIsi7BMXy9dlnRpE87bSfXc5fgW1i/3QRXeJxbKgLl92h6lbn418r3CB1bMGvcGsQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790351114; c=relaxed/simple;
-	bh=Vu1OEGJY0sfGYXqHMdYCr+ypEnanJIoLQdbho9+4MPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DGMnIqNNlzx3jOU5SbVkjXVs3qkn89aFXhYm83i7lEDKJZHnQVXiPoOoQiBZIjeSiUTRdYFsS2+pP3k6dbi9Y1GFiSTn1vwoWCTMzOtX5EGWpBUTkqgEPihuClvg3P7+3fLTn9DU2uvzRAjbD8CzG1EPiiuahRQos/gwPzuzG1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dwtjsdty; arc=none smtp.client-ip=74.125.227.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1790351884; c=relaxed/simple;
+	bh=6/aq0wXwPIukqmyIpiHgBaMAEwS3rqhWHEw9Ijrs0kA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uxUbieO87BUEA41w2ObmoYa9tRhN0cY8uoTyZ3uJnx0l7T5Cvy82Rbv/KtlKV+xmNxn8qq7//tI0RhBixZ7u1wNRlceP+38/97sqnEitJxPA3R+YYMbaN4QiDX53bxa2PHirY5eTOT9TPjUPOOwf7xDfXRyFeUEFXdXihzPPRmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o8AcaWl3; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=AfUUM5oa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dwtjsdty"
-Received: by mail-pj2-f13.google.com with SMTP id 98e67ed59e1d1-396ccd5cf02so596068a91.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 08:45:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o8AcaWl3";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="AfUUM5oa"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68PBLlDA900563
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 15:57:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=EBl2dFsWiMsFSqUAN5NQylf+8ZNg8zQAaPd
+	vj+WmO8o=; b=o8AcaWl3pzLm7MttTikh/ZzAMiyEqPkxid/F2lrgp/UB/VlvgSU
+	LfEQW+w+JPZ6ufnUF6kbgpilPCbo8SGf6zf/4VN4jV6HYSTdHbDjzIt5tcOkou/n
+	5z0aqkPkcHX2XuGrHSxzm2/dUpDduAet6l7J1aIYdU7kzbKuKYT2sMa9aAsKsqWa
+	/9ZqppQitZ4ALWqInj/J9j3lIRpr1HP/vl4rUzOWwyf1AYkB8mhd4qxOqHakYv3N
+	Ilon22rLMfQM8JUO1SzsSEvaicmV8JOLgGmeIcE/gC+tNJcwZsAbH/lLXJBlI6ST
+	ZOsRheDYR7yKt7UFMw4ty3uhPa7ukGPUjAA==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4gwr100x4s-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 15:57:56 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-88078ca8725so259716b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 08:57:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790351112; x=1790955912; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=L//QOJBSEUQCRGlQ7vfBAjq5WzB48vbfjOdL7wXVsS4=;
-        b=DwtjsdtyRp2asp26bHJqVenKdZ33zXv59BICMKPYVq/SW9a2JWfc5qVBv74zcz4n+h
-         lAF8hCtppr7/mvWYFDBH6KW7rYB+QKuasFMdNCeiIt64+SbljXIi9FFHXn1oYNpZ+te2
-         0wykMMsO8qhpHSbjGwBM1DCG+C53QWK7vtyyunwQznIhn81rahD+CNuyDZB/Qpc/2Tn9
-         iKSk78EKdu3mBBJFPCS0SfTSCt4fN+m2nFVZzGRW9B2KL40RZ9jovxZM721p411yS1e/
-         YZAt/YKA9cOwet/xm8Q+I6LtQupxLDWl/c4DnADpjGSuYj7ndedMSunqBeHne8wXJ0OG
-         OQiw==
+        d=oss.qualcomm.com; s=google; t=1790351875; x=1790956675; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=EBl2dFsWiMsFSqUAN5NQylf+8ZNg8zQAaPdvj+WmO8o=;
+        b=AfUUM5oaFNZEkxJ2iLCsP32iY90zDDQw9OYdPABe9lhtfHzEOA3Ro9SjuWT/srLUGb
+         xWi1sLyIE3NCNfp9bxXOQh9jASAHM4zvk8ysDkWAxe7bePXthAcKYIgrowK/wAI8M6eu
+         o+EsIXvNnkXQ4A5oZ3PnlZlvMKKUMkebQ0kSr8Fa+/84EYfKuaPMlqPoM6xyucYm0Tk7
+         /res64zv9GF6b+mKpl4GsBr8nWoZIpfGinsTIzO/Qio2SAUAwsFKnr/qvzgYNeXEBy33
+         FN3hXccLzVtttwd9D+Ifu6spD3jq6NmAuTBSQEVbToOcy4GLMFpUC7bqFXx1sqjuyO9N
+         iGtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790351112; x=1790955912;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=L//QOJBSEUQCRGlQ7vfBAjq5WzB48vbfjOdL7wXVsS4=;
-        b=RxbhFKs+xo55Nb3JLheWrVA6hnfk6RaCMp6fLyUU0BvjZgzOFptXzJGKop24zWooPQ
-         TNqpBcisonU2gy0LRK+2FGj9SR1d6bBfm8nm9grczfcOmdK82iCsvK6NKmVTYMNTJ1EF
-         zY3qA+4VBmPG+OqjrOdp6uOP21JyYYJ9vlVQBE3iKneuXJ6d+MvMc2DScReE8Z2S7LLl
-         a75dTgPYFOH+QOmx7ctF4FqL3pMNKsRX+R5YrSwqrGGrWiSOmPOfLFv90SdZhbRWVio3
-         MaSgoDIQA0VtF+etZ9EcRRHlwxMP1obhZOvDIJDXhP/EEcKDhTEZ2IVxgbJsNLf8U4cX
-         cXpQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzXKMFNZWirLYD3T63bwspJ+2BAE/vRh7SAE7J+jhe7ac9nm2bQrywqU0C9Fx0gHYYvwJFKB7d8Ya8WcRq/bd9N@vger.kernel.org
-X-Gm-Message-State: AFuF++llCHxM3loDybJEObipIYii3pEqhzHDwr0c3Edts7ddKUrthGOi
-	IP5vmAng92OVS/FBukT9rxk4fgj7D3nDo9KdC6bA07dwogwOM3OQtjdHLcCSN5j0eWE=
-X-Gm-Gg: AYBFou3WNGRYNCTTx9XmuhE7/Iqnba/NL+UbW3wQ3StUSU3M89cmMLeaLX/aPDJQmoE
-	BkcT40UJphqg74YVlNHpFNRpJX2Sw/Ni2Bqyp6XIgq/V1rWusJKLl1AtJykzBYpYEz18MqyvEWN
-	LFI6TwOhsB8FKKrNpoCz3WyXWUH7yZRKN0eZZiTj2PX/u+uqaRIQHd06XqZbCZ7npwFLWPi6HB4
-	TH+MqEJRmFs8G2zRsmhavQo10r//F2ayVKxmS8vVdvKnNSUEKQnt+phRbIxyOwRsigLGkhyXHtq
-	l/ZKh9EelffT4wajim9jffsnswxAzecmfE5QhA6AqYQ2utLVKB4mEkgUgJ9hFSONxUTcByRjsRZ
-	wo+s2O6rpxgle2njQLW5+EdzEIdACC97vEtDYAhkmXTchAC3/uX+R48KP+k+ICSBbUyZV9oDYH2
-	llsCzEEACFIyBJL6aDtjOgTvu7mJWt8lPKmF67lSqDOfNUmhuejIVgxqDVwFtsj1+Az0v/KrnCs
-	vBzNugis8q0Og==
-X-Received: by 2002:a17:90b:254e:b0:39e:6a81:f351 with SMTP id 98e67ed59e1d1-3a098bb66b0mr5149743a91.43.1790351111768;
-        Fri, 25 Sep 2026 08:45:11 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:448f:6909:f2ff:6dca])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3a0b8d31b4esm1874051a91.3.2026.09.25.08.45.10
+        d=1e100.net; s=20260707; t=1790351875; x=1790956675;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=EBl2dFsWiMsFSqUAN5NQylf+8ZNg8zQAaPdvj+WmO8o=;
+        b=ksaPj7E3KAAqLyYlIa69E2jfD1idyirV1Wa7vs3ItPCsxZhVYieA1rg1BYmtxO3lSZ
+         mCDzsprRu5f4E/11a6B/5E4QlRaHHXPxdX22vLC2WFqvZt4mxQdtjUmgtruQAjkvj0HZ
+         8PRn3sUsTaecBgTgPElvbARyBfRf8h3ACJWXwamzvvFpqAPntcghOBRjGD2IEmZpLrmK
+         YkOJ/4uujZPbx43nFAlB525tW91WDdU3lGiPoNdw32mYvEFM6TjrS301ee1xCnhw5lX0
+         gHZerRQQ9daMzoT3AIkAZ0eKRyJTvwloyuspUNJfj45mcqCJyZVwMiYkGPIqDFedmktI
+         hatw==
+X-Forwarded-Encrypted: i=1; AKwUvBz9Z6B72WvxfvI8t5n0ZJ3k3qZBuT4FHwQCDUbUWedsASKYF8gSth1D9EvfY4FRH+VawlGLfnUEump4sRU0T107@vger.kernel.org
+X-Gm-Message-State: AFuF++nKSIfrl/pitJH6/GPQduT/W4RVegMaJjdEehkRd61z28/0E/Ii
+	89/EULusQnsc07lBMYSRMlyLY/My8AEQLTI7AEOKvYhGHhmssqww6iwRq6nSwZXLHAalO8FO+jP
+	LiZsiWC8SjG9mzk1Yy+8otNho8o4STe1iEtC+FF/NBhDSBSciz8q9wfLN3+veak7QgtluU8/e
+X-Gm-Gg: AYBFou2+czxPyJtGsf/Y9fpyMyxaLqx5UJTnGHwiUQdEUyR57bJVC3Sv94C/dtT1QZz
+	EFMABmhqiEdhkrpQmMoRDCiuMkCj7YyARNk5gYpb1MJigvQYoAR5OptG4PLOZFhcWexhHCPZTmp
+	WeDMmynO8mHgk4orgjeOgz5lIBu99vUwEA2gkG3EzP2CqvQEjoOAUkKNhu+DfTgyBcRdrVLJXRm
+	ZWd7qW31h1uCtnPmwOqzDTJw1LBXFjK+SLpUGE8SMmUZoyHZNWp5qMDfdnBnU1drxju4aiMea6x
+	VMPXCCRghoY1um6bffsgxEciI9S4vJZ5Tb+o3d1mHHqRI4Vx5ABDLxuthn3Skl6uUg5288Q1wTm
+	/K+tImj/veikAFRbNYFN/tCGD3+4=
+X-Received: by 2002:a05:6a00:2d96:b0:880:d0d9:fece with SMTP id d2e1a72fcca58-880d0da1e8fmr852047b3a.36.1790351874763;
+        Fri, 25 Sep 2026 08:57:54 -0700 (PDT)
+X-Received: by 2002:a05:6a00:2d96:b0:880:d0d9:fece with SMTP id d2e1a72fcca58-880d0da1e8fmr852010b3a.36.1790351874126;
+        Fri, 25 Sep 2026 08:57:54 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-87ff354d854sm1361299b3a.2.2026.09.25.08.57.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 08:45:11 -0700 (PDT)
-Date: Fri, 25 Sep 2026 09:45:08 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Yuho Choi <oss.patchbox@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] remoteproc: virtio: Load rvring->vq once in
- rproc_vq_interrupt()
-Message-ID: <araXBOapuzox1ljT@p14s>
-References: <20260922190159.509836-1-oss.patchbox@gmail.com>
+        Fri, 25 Sep 2026 08:57:53 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Sumit Garg <sumit.garg@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, David Airlie <airlied@gmail.com>,
+        Simona Vetter <simona@ffwll.ch>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        "Bryan O'Donoghue" <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Alex Elder <elder@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Jeff Johnson <jjohnson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, Sean Paul <sean@poorly.run>,
+        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jesszhan0024@gmail.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-media@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-remoteproc@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH 0/8] Migrate PAS clients to qcom_mdt_pas_load() and qcom_pas_prepare_and_auth_reset()
+Date: Fri, 25 Sep 2026 21:27:29 +0530
+Message-ID: <20260925155737.4161358-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.55.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260922190159.509836-1-oss.patchbox@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTI1MDA2MyBTYWx0ZWRfX3Xy4F6Yyo1rC
+ 9kfkRTuvEfccQmRwyDRxEOXHovQKJHsKWIWdi/ad02NwQ04ndAnwux87IThrCDGeIgLpESi7dsr
+ uW6Q6g0cKVb41/D5MfgfHFnUl2m6rTsTtcaolqE3eN7hBQx7nk3/O0UymYZtbt59N9yEXBzFneY
+ 2AmM3uUEJ5EtVt9sDYiMKCq75q5EUJqoB0l/WGNoBQU/Q6PYe7GmaK4PnK7INkLTWUVRwQ+0pBN
+ hY3icVu2h7xEQVz7lhzLQBZLvTy59qCEwxeyFieDA9TopSrtAT3gLaxg70tjexorXdtaxwSFEF1
+ oL+ojt+cOEO5fsMm6UhtC/db68HJ4YkadtvtJDw2f4wPjAJFW6HwaYjVOWM+Kk7ty1DdLvs3Zfi
+ X/WyGdrorg827g+ummcSSWiZ0Nj3rmeK81p4StkbjanoyAzOCgxs8DV/XiNk4aytHxcIqQRQJIl
+ llTYGI4IIwvy8C3c+oQ==
+X-Authority-Analysis: v=2.4 cv=ZfKIpcVA c=1 sm=1 tr=0 ts=6ab69a04 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=u7WPNUs3qKkmUXheDGA7:22 a=rJkE3RaqiGZ5pbrm-msn:22 a=zG7KPAmT95cOeVn0dqYA:9
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-ORIG-GUID: of_H_PiBky682oFwvY8LluGoyk5bZY6o
+X-Proofpoint-GUID: of_H_PiBky682oFwvY8LluGoyk5bZY6o
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTI1MDA2MyBTYWx0ZWRfX4biotTUiU+IF
+ LWMOPPl8BOt4l/CKacpFxoXEIhvbdMgbn40T1+DM7KGI03Dsk4bpJ1/9Zx6ZxDGzijF5xTTB238
+ AMls0vneZdZgV8BAAZaGwoeu39ubtO4=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-25_02,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 impostorscore=0 clxscore=1015 malwarescore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 lowpriorityscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609250063
 
-Good day,
+In preparation to remove qcom_mdt_load() and qcom_pas_auth_and_reset()
+public function, migrate every user to the new PAS context-aware API
+qcom_mdt_pas_load() and qcom_pas_prepare_and_auth_reset().
 
-On Tue, Sep 22, 2026 at 03:01:40PM -0400, Yuho Choi wrote:
-> rproc_vq_interrupt() loads rvring->vq twice: once to test it for NULL and
-> once to pass it to vring_interrupt().  __rproc_virtio_del_vqs() clears the
-> same field, so the second load can return NULL after the first one has
-> passed the test, and vring_interrupt() dereferences its argument without
-> checking it.
-> 
-> Load the pointer once into a local variable and test that, and pair the
-> read with WRITE_ONCE() on the store that clears the field.
-> 
-> Fixes: 7a186941626d ("remoteproc: remove the single rpmsg vdev limitation")
-> Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
-> ---
-> Found by code review; compile-tested only.
-> 
->  drivers/remoteproc/remoteproc_virtio.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index d5e9ff045a28a..fafd73e1368a0 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -89,14 +89,19 @@ static bool rproc_virtio_notify(struct virtqueue *vq)
->  irqreturn_t rproc_vq_interrupt(struct rproc *rproc, int notifyid)
->  {
->  	struct rproc_vring *rvring;
-> +	struct virtqueue *vq;
->  
->  	dev_dbg(&rproc->dev, "vq index %d is interrupted\n", notifyid);
->  
->  	rvring = idr_find(&rproc->notifyids, notifyid);
-> -	if (!rvring || !rvring->vq)
-> +	if (!rvring)
-> +		return IRQ_NONE;
-> +
-> +	vq = READ_ONCE(rvring->vq);
-> +	if (!vq)
->  		return IRQ_NONE;
-> 
+This series migrates every remaining caller of the deprecated APIs
+(qcom_wcnss, adreno zap shader, iris, venus, IPA, ath12k) and then
+removes qcom_mdt_load() and qcom_pas_auth_and_reset() entirely.
 
-We could lose the CPU right here and meanwhile, __rproc_virtio_del_vqs() deletes
-@vq.  I don't see how READ_ONCE/WRITE_ONCE would change that.
+This series is based on top of although no dependency as such.
+  firmware: qcom: pas: Make MDT buffer retention explicit
 
-Thanks,
-Mathieu
 
-> -	return vring_interrupt(0, rvring->vq);
-> +	return vring_interrupt(0, vq);
->  }
->  EXPORT_SYMBOL(rproc_vq_interrupt);
->  
-> @@ -170,7 +175,7 @@ static void __rproc_virtio_del_vqs(struct virtio_device *vdev)
->  
->  	list_for_each_entry_safe(vq, n, &vdev->vqs, list) {
->  		rvring = vq->priv;
-> -		rvring->vq = NULL;
-> +		WRITE_ONCE(rvring->vq, NULL);
->  		vring_del_virtqueue(vq);
->  	}
->  }
-> 
-> base-commit: f0100363d8c374bd8e9ea7c9ba02744f0b802ca4
-> -- 
-> 2.43.0
-> 
+Mukesh Ojha (8):
+  remoteproc: qcom_wcnss: migrate to qcom_mdt_pas_load() and
+    qcom_pas_prepare_and_auth_reset()
+  drm/msm/adreno: migrate zap shader loading to qcom_mdt_pas_load() and
+    qcom_pas_prepare_and_auth_reset()
+  media: iris: migrate firmware loading to qcom_mdt_pas_load() and
+    qcom_pas_prepare_and_auth_reset()
+  media: venus: migrate firmware loading to qcom_mdt_pas_load() and
+    qcom_pas_prepare_and_auth_reset()
+  net: ipa: migrate firmware loading to qcom_mdt_pas_load() and
+    qcom_pas_prepare_and_auth_reset()
+  wifi: ath12k: migrate firmware loading to qcom_mdt_pas_load() and
+    qcom_pas_prepare_and_auth_reset()
+  soc: qcom: mdt_loader: remove qcom_mdt_load()
+  firmware: qcom: pas: remove qcom_pas_auth_and_reset()
+
+ drivers/firmware/qcom/qcom_pas.c              | 16 -----
+ drivers/firmware/qcom/qcom_pas.h              |  3 -
+ drivers/firmware/qcom/qcom_pas_tee.c          |  6 --
+ drivers/firmware/qcom/qcom_scm.c              |  7 +--
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c       | 21 +++----
+ drivers/media/platform/qcom/iris/iris_core.h  |  2 +
+ .../media/platform/qcom/iris/iris_firmware.c  | 20 +++----
+ drivers/media/platform/qcom/venus/core.h      |  2 +
+ drivers/media/platform/qcom/venus/firmware.c  | 29 ++++-----
+ drivers/net/ipa/ipa_main.c                    | 24 ++++----
+ drivers/net/wireless/ath/ath12k/ahb.c         | 31 +++++++---
+ drivers/remoteproc/qcom_wcnss.c               | 12 ++--
+ drivers/soc/qcom/mdt_loader.c                 | 59 ++++++-------------
+ include/linux/firmware/qcom/qcom_pas.h        |  1 -
+ include/linux/soc/qcom/mdt_loader.h           | 12 ----
+ 15 files changed, 96 insertions(+), 149 deletions(-)
+
+-- 
+2.55.0
+
