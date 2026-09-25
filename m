@@ -1,83 +1,90 @@
-Received: from mail-qk2-f42.google.com (mail-qk2-f42.google.com [74.125.230.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A0E46D0BD
-	for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 17:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.230.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790358528; cv=none; b=NgztSGi+gTEvXcWW8RVzhstCneF/8acU/k/hWa5p0ZQQY2Rc/78VvQHwoVplMCKps6kDzWyMev3zVjS27C/DMzW6jRnJIoOWRpmSk4RhKwyEh/PWtpFuTMiLuu8wujKEo3zLlSFBWLen48a+TpvnH22ljrzOfpkgUTu45d5SE+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790358528; c=relaxed/simple;
-	bh=hxV+qvTdQ/L5+QDF7jTM+x6xriCKo8Oss1Iah+M8rgI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C543BBFC5;
+	Fri, 25 Sep 2026 19:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790363174; cv=pass; b=o+GZux8i/8edkhMBZcNEaMcqg3JTxyzKXGTzsoR/1Ump3g+D+Iqxk84UUCkiOLFmUO3wnlrges8+OIcs3Jb6T40Ho3eEEewhMEcseFmZ+I2j+uhRfi2CU50PO7tk/GP9vzksaNxxGpDRUdeEa/ONC5HQa/OaJ3cI7Lu57Az5Oak=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790363174; c=relaxed/simple;
+	bh=pfEa9sDfSqmUqAkVSivfg+jwsPnAd7JEdfM7bR8Kono=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kGGCa/ZsOi4URmt7HQTqvhldFdm9gqvSw9mlEtSXpLzovRNz6WT98vtMuVUQ8xOIMyFDF2L6aTgPKK/aJz2BCU9cbmV60yCjHzNO4pfvLQxP6QtCAgZFytT+1IB5jbf6HtFjuvxcP1GVxMKC2Q0go8eMvf01bnAzErDKfjresDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9b6/SL8; arc=none smtp.client-ip=74.125.230.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=P2JzpDcCWsvnS7U/Ede3KCcevEOn6OAROWNf4zM42lBCvVOxRS0cdD2vaxCG2JE2Ou55v2I/mE37WMagVcv33JLhdFPtN87WCjTL80WIsiBkU2/9AGoWEvFEpcy8bIEyiroTun3bv/Pm8jsO9irAPjo/kKtTuh8BpLxjhlvIkK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=VWyNiif6; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=u7hR3YJo; arc=pass smtp.client-ip=185.56.87.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9b6/SL8"
-Received: by mail-qk2-f42.google.com with SMTP id af79cd13be357-93be29bb454so178858585a.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 25 Sep 2026 10:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790358525; x=1790963325; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=tqho0gYvfxFyUzakkOYHaCJ1K4YCibf7irTMVk2q1ig=;
-        b=C9b6/SL8Hxh8W2XbVAEGfL4p+IlWQ/QGVcyPWsOFRSDfRyiUzmQja9FLZPix2D/Ruj
-         6NwGX/Zu/SnuM+T+YN9sJ1fMWpDe7QMD1Yr85w3dllWqBCsQUTBrTChk/3D8NV3OrOJA
-         MsTFgtTWTch3gEdu0/cHBB0N9goWx/9Pbw5zuFfkDv7bvngxruwYH3rwJEMc+1zvbUIx
-         21H869tRHMBA/k/Rdh0MtpJAyuPAaQZmH3Qrv/zhLOoeGqURsBmvxcqEPnJAnLdWTfew
-         2ULWMrpQ7HhKwNI2K1xAjLXLWFCIqTY/AP0oxSimL+Q3boF8vDeekJ6et1wQIrk8rgMe
-         Ot0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790358525; x=1790963325;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=tqho0gYvfxFyUzakkOYHaCJ1K4YCibf7irTMVk2q1ig=;
-        b=BpbFrhy+r46+b5rU01kiTTSH+tsTyTmmnbXrnSX2Maq/OtPMLweMpNjShEvBEo6VuM
-         9CAYvpJzcBJG9UgPmCivcPTeSdUZGaJ3r7U8WTX1Zxn64S9+GJsDFGQFDMsbKuWpOSf1
-         ojWZrGGhbSTTUXQDPJFX8g0c92lxDsrDybNfFmZTuYksstLk0uMn7HFzQqHSC2tDpuCG
-         +bvaPHD0b1s3wRomlLKOoaKkiQ5fTHVva7T2PTYB1jwSsGqFzd1Rk0CY400pbgG7Ul5c
-         WpyycCEwO+EsKjF0T4/AxSTzYWhG6HMqUsn3NccbnlrsRaY299BUZre/wVqeMuhRRSJs
-         zdsA==
-X-Forwarded-Encrypted: i=1; AKwUvBzrGIr1gXxN/rYsSyNHMXlUa8ZWS6wuVEwNqhg/9aweROD2yGcO2yUQ3dGVV99MPltACaSNZUQ7g0TNCJb2kKyS@vger.kernel.org
-X-Gm-Message-State: AFuF++nRg5yPOBSXUA8pCR5btPEn53/Ie+y/YVE4sKq8fHkfN+i8aSLy
-	O/TsqQksnDVW1zP6/PZ9qr8c+JkgQhr9BQWqwqc5iShmhbL2FmwAd7mw
-X-Gm-Gg: AYBFou25Z0/rf2Xd+YRg6OGP9Qi0TAquk5LqWam5r+YtE0DesEa4K+raTH3NC7EJgxj
-	+FN+RW2z+UQgQbGtM4byb6ge+LTnmt2rA70dcOVP4DUcXWTJmPXeqS40uEauTH5+Ju0f69epniz
-	uNbg22QGyc3jG/GB2P4I7eLmxJspqcL1nNCWrsIyecckTSxvaiNS/0kO9oI6wakRduYZqJXlBW5
-	ykxi/+0RY6g9zGisR8ou/BPi46fGRGGJ74AGbzs2T30nqnF9L7Fc8oapQwBjoq3iCO6ebxk7YBO
-	4Lx5owkUPyVYKT7MrLgDVGVmLcvQzGqf2q1wYteyKTSzJBZzaB9jar8GJDQKwLwcJ8nDR3vFibK
-	csjSg5GzCn7WE2lEzgTouPNvnqOQEl2kACGzrxv18SbFdSDjnLYR32jlfhZOvOpDruvRZcOaeTc
-	ZC/7fPoagjrRtNilm6dZghr/VfyyguI+fksgz6K+nQBbgsO7m7Zakbvi/Rt154m/1LUnkvk+57
-X-Received: by 2002:a05:620a:1b8b:b0:939:9bcf:8d35 with SMTP id af79cd13be357-93c43cd2ff3mr580302985a.35.1790358525493;
-        Fri, 25 Sep 2026 10:48:45 -0700 (PDT)
-Received: from localhost ([2605:8d80:6a24:95:3113:1259:156f:f039])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-93c4499c06csm232636485a.46.2026.09.25.10.48.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Sep 2026 10:48:44 -0700 (PDT)
-Date: Fri, 25 Sep 2026 13:48:35 -0400
-From: Richard Acayan <mailingradian@gmail.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH 11/11] arm64: dts: qcom: sdm670-google: configure analog
- and digital codecs
-Message-ID: <araz8_AlFWLV3c3n@rdacayan>
-References: <20260922015801.32373-1-mailingradian@gmail.com>
- <20260922015801.32373-12-mailingradian@gmail.com>
- <f43ebaea-05c5-40a2-882b-3211e3590476@oss.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="VWyNiif6";
+	dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b="u7hR3YJo"
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-kb8j.prod.antispam.mailspamprotection.com; s=arckey; t=1790363171;
+	 b=LMguxS/fywjRGtzTSII8bdbE+UV3P8pk5dgdsWcshN++zUTG4u/e8nUzkPX3TF30+uOfMztibW
+	  7+M1O6/FT4aePl5h1zwMCWN1Q7YtliX+FT02EigoFKVToFgBAeKRRS464J5tSg5k8Jiyx53aT6
+	  fOd5CuEjk6ozGVTGXTILLXi0lEcH0+E2Qx9r9liq0g87PG9hMojhjtCsUr+RCY7gbTB7922Z/h
+	  BoDDAgftjidiUFUdpS0N7TOjWQuXmuXxkPWsvXHhRopHRTEZpKvUUyhebxmWBT4UsvLG6hexKZ
+	  2xkvpfRnoXDYRZUyHxaa7VMnYlpqqMuJAzOxPRTBRSC+BA==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-kb8j.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-kb8j.prod.antispam.mailspamprotection.com; s=arckey; t=1790363171;
+	bh=pfEa9sDfSqmUqAkVSivfg+jwsPnAd7JEdfM7bR8Kono=;
+	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
+	  From:Date:DKIM-Signature:DKIM-Signature;
+	b=IOYxq2OGGkLwTAitgxjCSXeyu7KCMyP4WV5mDvTumLBJAOPb5J+kZ54KLGnh0Yp40UynHCyIyx
+	  zlsay1JsL6oYF/40xXIjoLGWswpfnzjwwwGc1cNMTp8P1ACcCe+tGNfK0wxViVPch9R0H2hlmj
+	  mCT5MG3Mxpoo1G4n2ozHZ141O4sCRzuM0W9TP4Dyy6KIOmJCg9agnisWv0pjcuba+R3cCMnkZ8
+	  VrlD/c6P/U1oXal335l2ik5KS7AUkWTc3GjL8Qva/vEgWkgUTijcVyRzBOqbGKQbpgbDWItkBd
+	  535y5z43vZk0oibYnt6HFPxNFoHOB8QXtj+z6SrcGfeexQ==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	List-Unsubscribe:Content-Transfer-Encoding;
+	bh=jhm3OuOGKpGPipHzsmUmu5dKRRI8/O+LClIrmyA+BRg=; b=VWyNiif6GnydgngaaSTX+cF56t
+	faVcpkZ3F3LJzCqNgEnqwihAykbraAS2q9TQe4Btigf2vD0ALSeQ822Sl1phIX7riX/r4AqSbR4AK
+	CWmPFjpJ904b0hQllmrpy0WHNJV5iJdGYqfBxK/ImU9fPbl5OoUW0PsrrRpYEfQM1RdI=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-kb8j.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <francesco@valla.it>)
+	id 1xABFB-0000000449J-0WRq;
+	Fri, 25 Sep 2026 19:06:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=jhm3OuOGKpGPipHzsmUmu5dKRRI8/O+LClIrmyA+BRg=; b=u7hR3YJo8ZSr2SisSaLcNNA9di
+	zA3XUxiLlksid/DDe+DIdECQZUJAVZ8/bjoeEVS6W00sscP2aJdJg+YMk9CymkCki0s+B2TN9sXUw
+	6yvzhxIdhakmJQceVp/tAluydMOcnP4JJIpwNXm+4k/TQhLzQ89o8WJWqAP4miEIjMK0=;
+Received: from [79.45.60.29] (port=64306 helo=bywater)
+	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <francesco@valla.it>)
+	id 1xABEv-00000000KZm-1aVj;
+	Fri, 25 Sep 2026 19:05:45 +0000
+Date: Fri, 25 Sep 2026 21:05:43 +0200
+From: Francesco Valla <francesco@valla.it>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	virtualization@lists.linux.dev, imx@lists.linux.dev, iommu@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC 06/12] remoteproc: virtio: add bounce buffering for
+ data buffers
+Message-ID: <arbEmz1jy0V7gjrU@bywater>
+References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <20260916-remoteproc_virtio_map-v1-6-dac8c5eb4aa9@valla.it>
+ <arKlvZGqu2nt6Ci0@p14s>
+ <arLXthhYbKkwZ9zY@bywater>
+ <CANLsYkwNOukGX68=NVvwNP7iudP3EcKN6C2L2o9nVCTRxFVxFg@mail.gmail.com>
+ <arP38OEaabFFu8lJ@bywater>
+ <araOI_duKIAbphq6@p14s>
+ <1b55f680-2413-4db1-b928-ed5741696d07@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -86,42 +93,118 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f43ebaea-05c5-40a2-882b-3211e3590476@oss.qualcomm.com>
+In-Reply-To: <1b55f680-2413-4db1-b928-ed5741696d07@arm.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: d705c646b439b845f1aa0c978fb8c256
+X-AntiAbuse: ID - d705c646b439b845f1aa0c978fb8c256
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1xABFB-0000000449J-0WRq-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-kb8j.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-On Tue, Sep 22, 2026 at 12:47:43PM +0200, Konrad Dybcio wrote:
-> On 9/22/26 3:58 AM, Richard Acayan wrote:
-> > The SDM660 digital and PM660L analog audio codecs control the headphone
-> > jack on the Pixel 3a. Configure them for sound playback.
+Hi Robin, Mathieu,
+
+On Fri, Sep 25, 2026 at 05:48:25PM +0100, Robin Murphy wrote:
+> On 25/09/2026 4:07 pm, Mathieu Poirier wrote:
+> > On Wed, Sep 23, 2026 at 06:05:35PM +0200, Francesco Valla wrote:
+> > > On Wed, Sep 23, 2026 at 08:44:41AM -0600, Mathieu Poirier wrote:
+> > > > On Tue, 22 Sept 2026 at 13:39, Francesco Valla <francesco@valla.it> wrote:
+> > > > > 
+> > > > > On Tue, Sep 22, 2026 at 09:58:53AM -0600, Mathieu Poirier wrote:
+> > > > > > On Wed, Sep 16, 2026 at 11:10:51PM +0200, Francesco Valla wrote:
+> > > > > > > Depending on the driver originating them, data buffers used for virtio
+> > > > > > > communication can either:
+> > > > > > > 
+> > > > > > >    - already be allocated from the coherent memory area that is
+> > > > > > >      accessible by the remote processor; this is the case of rpmsg
+> > > > > > >      and the rproc flavor of virtio-console;
+> > > > > > >    - be allocated from generic kmem, and thus not accessible directly by
+> > > > > > >      the remote processor.
+> > > > > > > 
+> > > > > > > Exploiting the map operations, which are used by the virtio framework
+> > > > > > > when VIRTIO_F_ACCESS_PLATFORM is part of a vdev's feature flags, add
+> > > > > > > bounce buffering for the second case: when the map() callback is called
+> > > > > > > for a buffer, one or more pages of coherent memory are allocated and
+> > > > > > > data is copied to them, then they are exposed to the remote processor;
+> > > > > > > the data is  then bounced back on unmap().
+> > > > > > > 
+> > > > > > > The first case is not impacted, since buffers already suitable for
+> > > > > > > remote transmission are passed through.
+> > > > > > > 
+> > > > > > > With the bounce buffering in place, any kind of virtio device can be
+> > > > > > > supported through the remoteproc-virtio transport, at least from a
+> > > > > > > data exchange standpoint.
+> > > > > > 
+> > > > > > Is this _necessary_ for the imx93 platform you are implementing feature for?
+> > > > > > 
+> > > > > 
+> > > > > If I don't want to fundamentally change how the remoteproc integration
+> > > > > works (i.e.: using buffers only from a pre-shared area), yes. While in
+> > > > > my test environment the Cortex-M33 serving as remoteproc is able to
+> > > > > access the whole RAM space, that is not always the case.
+> > > > 
+> > > > The first sentence tells me it is mandatory while the second says it
+> > > > is not.  I understand the use case but don't want to bloat the
+> > > > subsystem with code that is trying to address a problem you currently
+> > > > don't have.
+> > > > 
+> > > 
+> > > Let me rephrase: while on i.MX93 the Cortex-M33 can theoretically access
+> > > the whole RAM space, that is not a good idea from a security point of
+> > > view and can be the source of a number of bugs. The target is to
+> > > statically define a static shared memory area (as I am doing on i.MX95)
+> > > and only use that.
 > > 
-> > Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-> > ---
+> > As Robin pointed out, have you looked at using a restricted-dma-pool for that?
+> > Note that I am not familiar with the concept but open to go that way if it can
+> > work for us.
+> > 
+> > Robin, can you point us to a simple example we could look at?
+> The only in-tree example is mt8192-asurada.dtsi, but even there the
+> fundamental principle seems exactly the same - the system interconnect is
+> locked down such that there's only a particular region of "shared" memory
+> that PCIe DMA can access, so the restricted pool is placed there, and in
+> that case can occupy the entire region since the wifi adapter only really
+> does streaming DMA - restricted pools have some limited ability to act as a
+> fallback for coherent allocations, which won't work for everything, but does
+> happen to be enough for that wifi driver.
 > 
-> I think it's better to squash it with patch 10
+> Here it would be a case of reserving some of the shared region for a
+> restricted pool alongside the "vdevbuffer" coherent pool, adding it to the
+> memory-region list of the relevant device(s), and usually that would then
+> just work, since the setup is all done automatically by the core DT code.
+> However I know remoteproc does some funky stuff with child devices, so it's
+> quite possible there might need to be something more done there. But still
+> far, far less than reimplementing a whole other bounce-buffering system.
+> 
+> Thanks,
+> Robin.
 
-Maybe it would be better to combine with patch 8 (same /^.*:/ prefix),
-if this is just about number of patches. Patch 9 is about as related as
-patch 10.
+I took a look at the restricted-memory-pool - with which I wasn't
+familiar - and seems exactly what is needed here.
 
-> [...]
-> 
-> 
-> > +		lpi-mi2s-rx-dai-link {
-> > +			link-name = "LPI MI2S Playback";
-> > +
-> > +			cpu {
-> > +				sound-dai = <&q6afedai LPI_MI2S_RX_0>;
-> > +			};
-> > +
-> > +			platform {
-> > +				sound-dai = <&q6routing>;
-> > +			};
-> > +
-> > +			codec {
-> > +				sound-dai = <&pm660l_codec 0>,
-> > +					    <&lpass_codec 0>;
-> > +			};
-> > +		};
-> 
-> nit: 'co'dec , 'cp'u < 'p'latform
+I am working on a new prototype with it - if everything works as
+expected (I still did not have time to try it) it should only need some
+very limited glue code, cutting the modifications in the
+remoteproc_virtio driver by 95%. I'll let you knwow.
 
-(will be done in v2)
+Thank you for the hint!
+
+Regards,
+Francesco
+
+
