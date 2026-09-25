@@ -1,130 +1,272 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011070.outbound.protection.outlook.com [52.101.52.70])
+Received: from www537.your-server.de (www537.your-server.de [188.40.3.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9E8207A20;
-	Thu, 24 Sep 2026 21:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790283633; cv=fail; b=G3tKRYRvZfrInTUZZ90M1BiaJAwXwpTx1r3Okvri4G4g1KjQt1PcdwlTh2OTBy0qfgDr7F1qy9SNW1JZp3aA6R4OtSHZ31zpWvvLXZMErsqpLJX+xXKJ9E/7Fd1NsWBh/aHpcuII30T87YGq+VbeFLurlApKZ0Tfcvb2Dk5ymOw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790283633; c=relaxed/simple;
-	bh=aBVi2INyyBS5ImaY4IY0ONxuTBNEktc4yivRxfyop/M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KoSb2qINDLOrU+q9RXKsCL5V7BmpNjwvbAll7SC6aL28mIEI2yXTmrSzoLfAdI/ioVSpGRTLhe3hobF2p6f5W44qJCm2SCL7jLx0j3Tq4I0wYr11lSTU4IOZ+Dtu/TPPep6dDCd1bUbg+pf5pgJNcSiCkzfVwfR1JDaeZhTIANk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=c3wr1vr8; arc=fail smtp.client-ip=52.101.52.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AC042122E;
+	Fri, 25 Sep 2026 08:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.3.216
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1790325601; cv=none; b=nxeHgqmzKSf8ucH6Bn4zLZebh1VxTrfZ2gCvB2mHFciM3klQMb6B4s1jSdlB4mUetMo548oIwUFYfbumOX8a6un0N1BvHeSwHr9Xyfqhqvw8RRoiKkl64eNpxUqFoge+b5gU31D3gL2wZCn2pfsTKZ774Yb0cBk9DZg+hCY8KNc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1790325601; c=relaxed/simple;
+	bh=pRxtOPD+wTV723hRSqUjEY+Db9xDhxf+jC0XKAhT/pg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OB9i0lIG0HkYs7N6dtIm/ppdk8F2YW+vM+ZQkolsLcOOl0EgSZMkYr801LORebk07kkacE+ZCc3jdtl1/VUWFXlGt+14CqVI6CQKZz1j4aOWwglfGUTyGeIeE1s7OEEqTSNXl7nHIHyFv08qEw+tecVcAddeo6VfLpP2qCxiIAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=jmfWB1hk; arc=none smtp.client-ip=188.40.3.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="c3wr1vr8"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g5g7B/WPTCMhIGN+fp9i3MU0FWCscwBl4ZFMpRmYZsgjL1AE5zHgpK+br36CkUDRZftgrKSKduI3G3VOWA2xUJceEzn/85MBjKiAqQdp1IJy1ncpCVU8ZWbWtIW0ibagmITRsExlM2srzQC1gCsJot6Cuk8noNzTu71YpcDEXnwNNLzsMZqohIzzC1OPywrkp61Hmp5Rz5KgVS/wcYlCUAPVxavsVf2fpmjt3U/dVzk3mBCuwGjlOThUTIjHTAJ/acOKblLQSqQwsDUzew//MvSK1vG921Wrs2S/oo+lPjOC6cQV1g3pmwc38UCLOniTNEi32AX/e1czhZIai2AZJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DWjfxy2zZgpydiVNlzZx++Tbzer7PdvDp0KvaNwy1vY=;
- b=WdbDJQjZQk7RWvndr0BWtunFD9CfdsNmxsi9p+kJQEquvLYX3Ndxw7jecDM4EmS2Puno9CyPZqSscrQ3S6Y+uJsRbi8pWyJXJydh9pLlmW5DXobmDUoPa3GBBaAzfhGB0C5t7POL2dfsjB52JGIGd/zOSC0oUF1POn78nQ5QVOmOKUEieDnV2TxnjPHyMsUUa12LFAIr97FDWDQ6LRYemAO5olLpDz2UV8yJQ9y9PQk+qkAnx4/3kUBB19jnbrpGa896J7fr0NFHH1nuPv+78YgTVrSaPZOcV1Y25NMse2gXbJ+rnWJBPzEid5uS84DDkqZ0ZEcnxdiMsEGWrmuAoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DWjfxy2zZgpydiVNlzZx++Tbzer7PdvDp0KvaNwy1vY=;
- b=c3wr1vr8acSw+YegEOExBZaPsqzFV7iaIqRHfsoPsP3YBo1qFvuCgJvn/S1QomZHkaSjzyRO93S+UKLRYXMeqfKcOlEdAdfIJyjEXXIiUs1Mf+IwgriDWEPvqxIeOA1iKpOFmgQf+R9VUNJMEVESjnYXbtST7sXnzCQ5nMq+6Uo=
-Received: from BN0PR04CA0007.namprd04.prod.outlook.com (2603:10b6:408:ee::12)
- by PH7PR12MB5758.namprd12.prod.outlook.com (2603:10b6:510:1d1::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.22; Thu, 24 Sep
- 2026 21:00:25 +0000
-Received: from BN6PEPF00000076.namprd03.prod.outlook.com
- (2603:10b6:408:ee:cafe::4c) by BN0PR04CA0007.outlook.office365.com
- (2603:10b6:408:ee::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.451.16 via Frontend Transport; Thu,
- 24 Sep 2026 21:00:24 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=pass (sender IP
- is 165.204.84.17) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- BN6PEPF00000076.mail.protection.outlook.com (10.167.248.203) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.451.8 via Frontend Transport; Thu, 24 Sep 2026 21:00:24 +0000
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Thu, 24 Sep
- 2026 16:00:14 -0500
-Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.49 via Frontend
- Transport; Thu, 24 Sep 2026 16:00:14 -0500
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>, <ohad@wizery.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	"Tanmay Shah" <tanmay.shah@amd.com>
-Subject: [PATCH] remoteproc: remoteproc_virtio: reset vdev before removing it
-Date: Thu, 24 Sep 2026 13:59:02 -0700
-Message-ID: <20260924205901.2505186-2-tanmay.shah@amd.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="jmfWB1hk"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=ew.tq-group.com; s=default2602; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=mnnEVurKsE39VK48mQRlSprYtzG3NdBD2JmMXmTnB9A=; b=jmfWB1hkHhyIf1MLqAlKpJjFjG
+	rmnnv+vQotGLnRkpPJh52dMym9rkzC6XYqlHzjlwIRg08yVmmNdLHFMCUxroFesYd8ge4/19dFnuN
+	9HjCYm0JH44xF8zk4699EQvaPbYkEMB+aycSf7u8M/rITLODvn/JYfoWuEeN3L0X0921LhuHSFJ9C
+	/332+AGH7lx+e/XCnGRBXN/eFIQ9IcqrudFH7SB7w6I1VahvisI3oOPp/UWgVecK55RTDee9GTCC8
+	FNigEuRr4aR9hDC6hioDoa60v9rNgzL0cAu8K4NMFWCWOdjGMLtP//A8aEHXCxwubtImSDlueMU7K
+	r82OMMxg==;
+Received: from sslproxy04.your-server.de ([78.46.152.42])
+	by www537.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1xA1TA-000Ccs-2S;
+	Fri, 25 Sep 2026 10:39:48 +0200
+Received: from localhost ([127.0.0.1])
+	by sslproxy04.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <alexander.stein@ew.tq-group.com>)
+	id 1xA1T9-000Dnx-2R;
+	Fri, 25 Sep 2026 10:39:48 +0200
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+ Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, virtualization@lists.linux.dev,
+ imx@lists.linux.dev, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, Francesco Valla <francesco@valla.it>,
+ Francesco Valla <francesco@valla.it>
+Subject:
+ Re: [PATCH RFC 12/12] PoC: arm64: dts: imx93-11x11-frdm: add multiple vdevs
+Date: Fri, 25 Sep 2026 10:39:46 +0200
+Message-ID: <3065678.e9J7NaK4W3@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
+References:
+ <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN6PEPF00000076:EE_|PH7PR12MB5758:EE_
-X-MS-Office365-Filtering-Correlation-Id: 604d1211-9892-45d2-4ea8-08df1a7edad6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|23010399003|36860700016|10067099003|11063799006|56012099006|18002099003;
-X-Microsoft-Antispam-Message-Info:
-	FKiASTeVJzbI3zcJ6BGpOJ8lID8s1IdEJQMUJmxWgpHfoDHBpmeD7x6+7uPW+mvtPUaxBi5SFJbgACozoH7GZN4rSDE7AcdSvCfj0X+bjt5GzIVGhzUfu4+i2NjcBl9jbN+C4tDI1PU0lDrIXiYakELC/Y1ZlNT50rPNmVmKSGhG6mzBzKQwRNJJh44qMOvb3D7TvCI/gMx83ejxlxoMPhHVmDdCPq21dfyCA5ilWRxDJgTkY0A6qLsqB6eIC4CiWGpfcqXSd1fMP4hbAECTXgwVPbiMRxKMyHHvC2Jm2V5xxIsXJD4YFHZ58zUibzvq4G2KzJOeGnYs2Ct68jp8XuOEsL80f/0a2XupIr/rUaW8IpqdySofko/8+9i2awEiCyykQd0ir5by8ZFBLmUzpBVmvJTCcOBZp43gp0iIxxL0ABPXcL3Mpxh2yQ+qRTF7t2KFf7sZqPMSNgB3h8PMB/4ZFq2cuxm6M0tqPgeES9Iu59fV/qd79IswoEwDclVe8R/AL7v9N0eHSPxOME2wll0Yv7Y19TFVFgovgxhCVuLdf4yqO4zlmK7SsnOifhkROu6Mf/AvquKt7lNxoYi9wO1t+V2G1b4HDPnYNWlmvdFA9gbtkcFg7iLHaRQc2lGmeEfxTTg3q3eJlilC1RhkViCdufYM4q1KsgXKosYp4nYebFzytstKQ5Ti7jl5XGcqscg4CDwzt/vxY2rewwRUEw==
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(23010399003)(36860700016)(10067099003)(11063799006)(56012099006)(18002099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	pjYKEhVuYGnQHhh5EuxxRdzp+mj/yZurQOfek/fJYwq7W+n5OU+p1JZDQdRq+JnchY3G+M2ObfbBwkNBR8eFp6HVeHzhkQ2DHJtBrc/vzSNCLendbaMjtOnoIeVaEK3GyZTGU57WG9Ff9N7XNRgBkTczPS+Poj8GtKNNUqdWsiS1/lJ+m8DDXOJFh2NOMVJI1VUpKKAniD7PLprPQC2OoTUniCyPJbkcJAgmeiSc75yB1hB/WBRGwE2IplXcCfN/kJt7qX2mGGDBkN4/oPeyP5hske2NWQNY3ts/JJ1l7OmF0TRop9AG3lTXx7jLHkiBS920EombD81PHdmvPdmd3pGPR4k3O20d5qPMQT4yH5MUt0e+2mOWBreyzD4bUP0Eq/JnQ62LgoOEB+ju7JwUE64vH8ogH+plKVVjRp/iJo8BFEj+52aoYhSYz9BZ4SZC
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Sep 2026 21:00:24.9150
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 604d1211-9892-45d2-4ea8-08df1a7edad6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN6PEPF00000076.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5758
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Virus-Scanned: Clear (ClamAV 1.4.3/28134/Fri Sep 25 08:25:58 2026)
 
-The virtio device is removed when the remoteproc device is removed. The
-driver should issue reset on the virtio device so the remote can do
-corresponding cleanup.
+Am Mittwoch, 16. September 2026, 23:10:57 CEST schrieb Francesco Valla:
+> Add rings for multiple vdevs, as well as the required virtio nodes for
+> I2C, SPI and GPIO functionalities. On top of that, add example
+> peripherals using all of them.
+>=20
+> NOTE: this is a Proof-Of-Concept, not meant to be integrated!
+>=20
+> Signed-off-by: Francesco Valla <francesco@valla.it>
 
-Fixes: 7a186941626d ("remoteproc: remove the single rpmsg vdev limitation")
-Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
----
- drivers/remoteproc/remoteproc_virtio.c | 2 ++
- 1 file changed, 2 insertions(+)
+Just a general question, unrelated to virtio, but related to AMP: How do you
+manage the clocks, so that Linux doesn't disable clocks needed by the
+Cortex-M?
 
-diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-index d5e9ff045a28..1cb0ee0ea656 100644
---- a/drivers/remoteproc/remoteproc_virtio.c
-+++ b/drivers/remoteproc/remoteproc_virtio.c
-@@ -469,6 +469,8 @@ static int rproc_remove_virtio_dev(struct device *dev, void *data)
- {
- 	struct virtio_device *vdev = dev_to_virtio(dev);
- 
-+	virtio_reset_device(vdev);
-+
- 	unregister_virtio_device(vdev);
- 	return 0;
- }
+Best regards
+Alexander
 
-base-commit: 5f639b3018c0026a5341949724b4b921cf3a3d5d
--- 
-2.43.0
+> ---
+>  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 128 +++++++++++++++=
+++++--
+>  1 file changed, 119 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/ar=
+m64/boot/dts/freescale/imx93-11x11-frdm.dts
+> index bd14ba28690c..dfa3b122ac5f 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> @@ -53,6 +53,32 @@ button-k3 {
+>  		};
+>  	};
+> =20
+> +	gpio-keys-virtio {
+> +		compatible =3D "gpio-keys-polled";
+> +		poll-interval =3D <100>;
+> +
+> +		button-v1 {
+> +			label =3D "Button V1";
+> +			linux,code =3D <BTN_3>;
+> +			gpios =3D <&v_gpio 23 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		button-v2 {
+> +			label =3D "Button V2";
+> +			linux,code =3D <BTN_4>;
+> +			gpios =3D <&v_gpio 24 GPIO_ACTIVE_LOW>;
+> +		};
+> +	};
+> +
+> +	leds {
+> +		compatible =3D "gpio-leds";
+> +
+> +		led {
+> +			gpios =3D <&v_gpio 18 GPIO_ACTIVE_HIGH>;
+> +			label =3D "LED V";
+> +		};
+> +	};
+> +
+>  	reg_usdhc2_vmmc: regulator-usdhc2 {
+>  		compatible =3D "regulator-fixed";
+>  		off-on-delay-us =3D <12000>;
+> @@ -89,11 +115,6 @@ linux,cma {
+>  			linux,cma-default;
+>  		};
+> =20
+> -		rsc_table: rsc-table@2021e000 {
+> -			reg =3D <0 0x2021e000 0 0x1000>;
+> -			no-map;
+> -		};
+> -
+>  		vdev0vring0: vdev0vring0@a4000000 {
+>  			reg =3D <0 0xa4000000 0 0x8000>;
+>  			no-map;
+> @@ -105,12 +126,42 @@ vdev0vring1: vdev0vring1@a4008000 {
+>  		};
+> =20
+>  		vdev1vring0: vdev1vring0@a4010000 {
+> -			reg =3D <0 0xa4010000 0 0x8000>;
+> +			reg =3D <0 0xa4010000 0 0x1000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev2vring0: vdev2vring0@a4011000 {
+> +			reg =3D <0 0xa4011000 0 0x2000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev2vring1: vdev2vring1@a4013000 {
+> +			reg =3D <0 0xa4013000 0 0x2000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev3vring0: vdev3vring0@a4015000 {
+> +			reg =3D <0 0xa4015000 0 0x2000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev4vring0: vdev4vring0@a4017000 {
+> +			reg =3D <0 0xa4017000 0 0x4000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev5vring0: vdev5vring0@a401B000 {
+> +			reg =3D <0 0xa401B000 0 0x2000>;
+> +			no-map;
+> +		};
+> +
+> +		vdev5vring1: vdev5vring1@a401D000 {
+> +			reg =3D <0 0xa401D000 0 0x2000>;
+>  			no-map;
+>  		};
+> =20
+> -		vdev1vring1: vdev1vring1@a4018000 {
+> -			reg =3D <0 0xa4018000 0 0x8000>;
+> +		vdev5vring2: vdev5vring2@a401F000 {
+> +			reg =3D <0 0xa401F000 0 0x1000>;
+>  			no-map;
+>  		};
+> =20
+> @@ -149,8 +200,67 @@ &cm33 {
+>  		 <&mu1 3 1>;
+>  	mbox-names =3D "tx", "rx", "rxdb";
+>  	memory-region =3D <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+> -			<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
+> +			<&vdev1vring0>, <&vdev2vring0>, <&vdev2vring1>,
+> +			<&vdev3vring0>, <&vdev4vring0>,
+> +			<&vdev5vring0>, <&vdev5vring1>, <&vdev5vring2>;
+>  	status =3D "okay";
+> +
+> +	virtio {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		vdev@2 {
+> +			reg =3D <2>;
+> +
+> +			v_gpio: gpio {
+> +				compatible =3D "virtio,device29";
+> +				gpio-controller;
+> +				#gpio-cells =3D <2>;
+> +				interrupt-controller;
+> +				#interrupt-cells =3D <2>;
+> +			};
+> +		};
+> +
+> +		vdev@3 {
+> +			reg =3D <3>;
+> +
+> +			i2c {
+> +				compatible =3D "virtio,device22";
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				eeprom@50 {
+> +					compatible =3D "atmel,24c1025";
+> +					reg =3D <0x50>;
+> +				};
+> +			};
+> +		};
+> +
+> +		vdev@4 {
+> +			reg =3D <4>;
+> +
+> +			spi {
+> +				compatible =3D "virtio,device2d";
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				sram@0 {
+> +					compatible =3D "microchip,mchp23k256";
+> +					reg =3D <0>;
+> +					spi-max-frequency =3D <20000000>;
+> +				};
+> +
+> +				lcd@1 {
+> +					compatible =3D "adafruit,yx240qv29", "ilitek,ili9341";
+> +					reg =3D <1>;
+> +					spi-max-frequency =3D <10000000>;
+> +					dc-gpios =3D <&v_gpio 21 GPIO_ACTIVE_HIGH>;
+> +					reset-gpios =3D <&v_gpio 20 GPIO_ACTIVE_HIGH>;
+> +					rotation =3D <90>;
+> +				};
+> +			};
+> +		};
+> +	};
+>  };
+> =20
+>  &eqos {
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
