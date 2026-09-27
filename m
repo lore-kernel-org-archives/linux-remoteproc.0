@@ -1,115 +1,284 @@
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy2-f43.google.com (mail-dy2-f43.google.com [74.125.229.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8AF364E9E
-	for <linux-remoteproc@vger.kernel.org>; Sun, 27 Sep 2026 11:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31EC2BEC55
+	for <linux-remoteproc@vger.kernel.org>; Sun, 27 Sep 2026 17:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790508445; cv=none; b=WahglUuLfUZBEAAur2xgdI8tTaJPvWmIj19/2C+A6bEVv9u3jTg2y3gMfhbTns7hYEo29R7qNl+KKMzonQPue0z9leU6DpZtR0yHIOY9YFnAOf3p+VjdMOuLHMVGP++25t0Vo/wNJ2E29uyCvtQeo0h0djVSEPEjXT2tg7tyZPE=
+	t=1790529898; cv=none; b=Iz+4eATs3eNpo5EwqKSVvQeOUcxhDgSeuNkQ2/5IF99+g9wlDGPZBT6YnvT1cVA2Pezc2xneqZeu0M0zRg5P17fb4WEaU33qMpMChS7MMwdv2DIJjoSwq4pD5Ng4jIphRgBWdr3ozABhtAI54bF/cOyBIexfRAi0ArTyDLz7SMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790508445; c=relaxed/simple;
-	bh=/jd6LhjvZzB3GrpgY3GTZItiW0r9hx23Ea5i9/zjsnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BE43A/EeflQi5nAF2AMXOSNTWo+LZzuEW8N0PPDqXMbM64lToVNRYnoYL4HfG10KUceHbNxs+/b7ktFsCRU86FDGuq26BgPipMGBtWqEyORK6ISmdq4hqJ8BKC2i0Yn1UhNMhPqGU84JmkZnPpzWPLMtZatN0HgvdChKwWgUxOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=FDKqYl2m; arc=none smtp.client-ip=185.67.36.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+	s=arc-20240116; t=1790529898; c=relaxed/simple;
+	bh=sL+Fkc3YLiNXq0MTjd0o+fOKOWhNQkCKgJvKW8XAgwY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tWfd5qQUUa4N6hRl2fGYy14+tz5d9kDOhX8Kes0xI2viimz7cNAGPDtjtmlTP678XY6QZu2aA7izg8tsXH7eQDQkuOPzirEjezuSMMMA0VYy0ZlWfCpQ2nJL6dW3idk5BOd+fHpPrKOOivuAjhYJmMCQWhzM9JT3GUob8pnynug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=p1HXwtS1; arc=none smtp.client-ip=74.125.229.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="FDKqYl2m"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id C32F3240103
-	for <linux-remoteproc@vger.kernel.org>; Sun, 27 Sep 2026 13:27:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
-	s=1984.8680eb; t=1790508433;
-	bh=HWuajKBzp5P29va8dZADm3KIQPoT99vey4Xoq4mmV6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:From;
-	b=FDKqYl2m9mgBMrcaQyDOw6uuRDzKZaAbEYIcvYmyKRN8YMH8VxaNmWINo/KxF4E1c
-	 jMolL98c40uz3uSA4R4YSar3nduTbBbjC9kwaUSYbxoHImr+1iHiZTW0sYlHctmmYZ
-	 38YwBJLxkKbdWsaTAGC3jjwobkf6wLXX6W9Jlv7Y3HRFOlVfYptrux0AEi7fRLCXsm
-	 N02+RP1BSxYzaiXS5J6KutQ1fPOFVLB2wSHjkFNNFmX5Ma+ywTH2ihEI6DzxKz+X91
-	 Ob/MCPng6t1dlgrNewOcUTxgGVh30PlDy/sIFtmcxizn2NZsmY8m8DnAc8U8fCzVQm
-	 Oi0BPfG1QDPqw==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4ht2GN34T4z9rxB;
-	Sun, 27 Sep 2026 13:27:08 +0200 (CEST)
-Date: Sun, 27 Sep 2026 11:27:12 +0000
-From: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-To: Nguyen Minh Tien <tien.nguyenminh@embeddedlinux.blog>
-Cc: Bjorn Andersson <andersson@kernel.org>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
- Tsai <wens@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Paul Walmsley <pjw@kernel.org>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Alexandre
- Ghiti <alex@ghiti.fr>, Philipp Zabel <p.zabel@pengutronix.de>, Andre
- Przywara <andre.przywara@arm.com>, Bastian Germann <bage@debian.org>,
- linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] riscv: dts: allwinner: d1-t113: Add the hardware
- spinlock
-Message-ID: <20260927132707.5f484946@posteo.net>
-In-Reply-To: <20260927025626.69614-4-tien.nguyenminh@embeddedlinux.blog>
-References: <20260927025626.69614-1-tien.nguyenminh@embeddedlinux.blog>
-	<20260927025626.69614-4-tien.nguyenminh@embeddedlinux.blog>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p1HXwtS1"
+Received: by mail-dy2-f43.google.com with SMTP id 5a478bee46e88-340d23b6a9eso152306eec.2
+        for <linux-remoteproc@vger.kernel.org>; Sun, 27 Sep 2026 10:24:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1790529896; x=1791134696; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=2Mrpap4vuw93yFpM2AvGPigU58bbN/HoM52OdmW2oTE=;
+        b=p1HXwtS1DFkqYJl9nyql3reZomhoV1eAQdTn5npZno7XfArZjF7OjOyRW0v6n98kPB
+         o34cr5ECXMIhYm949MKeCDJp0+0Yk35mEAsMiskMiRttyrTsAmL53A/FKnBwKDV5XGlm
+         X84+NV6Ad7vuNBZYPyfXtcrTLJimPNtxXJNnkTD2vUkF83u7UbrpVNqbcP85CkeqtOeU
+         rWWsbpeM1lotnc7dflsY3sUZUddhMZUBS+dDHLK63kZ7DlTxN77yhSgJyBRIGgx9V/u3
+         hTOirDTq2MroXmYVBGh1cb7fitL8PiouCzo/B0MwGanFIjZYfDllDx1dsqrRLxrZB1gR
+         hZIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790529896; x=1791134696;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=2Mrpap4vuw93yFpM2AvGPigU58bbN/HoM52OdmW2oTE=;
+        b=cBPNn3fAsjRUPYR/3+kPffFyDB3fjA1CtaaQ4IN2wqjDqhJWGuZ3sKqNONd1MxMUFH
+         bBXFUJlqCVDD2iAjiZqXG90LjEvei5qUaMGwx20mmoc8iKX1yL1B/uGkX60lspkULu2j
+         CAPCA4hufs+u7BKfOEtoZL6PYUTubvK419LoaXD1fkZhiynTWrsvXXugIzM271yCNcQd
+         k2sD123WzT+IV5yynMbrFbMcS5wPMsqVt8iklt58kVusXcbiSRqcTAMII2QhHhASlaSN
+         LPbxzuT6nk0zOtOFTpyp8YHn7j9brIzu+L2Q0ZWIH4ELGKFoQUEZmNtnNh2nXarJ7nMt
+         rEwQ==
+X-Gm-Message-State: AFq9FYJusmOQw0gkIbB0AxMWjnsTC2h24aUSxO62jE0Qhzdx5/WAQA6j
+	OfttOCajm/hhVBSAfv+y8bPB+5vQ4PsyOe8qBPgrSiPiQnSz6foMbFds
+X-Gm-Gg: AYBFou0AqaV4U+T86SYjbbYDvQsHsG0+NYlRmzqNOrPEVEFlD4veN6Flv3htVBefafS
+	dEKc/F0QdAbgQV+LkdMApJerXSgnXTmzWOC03NT/aWwWR+1TS4D9Q4FARdTMBTc/lin2owFhECz
+	ibbsFpMHbACNDuld1zXAO/JAMgQSsdBJszAOi0zcxzowHq2ML1Bdc3a6H5XLG1A68S4Rab9V3yD
+	TDXtUFR9Pgbg0ZehO2bChoWhlFDNLUvXhFQ6+cGOfchCSzgpbSKHIBmbqPjoNNw+BS4RG1zzzUt
+	4M0Dp8HL5NosxDaW9ystHTWGMVK+FoJzLyyWMYGAb0CX3WQ2TEgJlHWCAgDXb8WGGXaS+F724zs
+	W4d7RN/vuE022ePVmf4FBdunYst4pRsy7YkBgr86uaxuYRdMLL2COaFUfmCvFYb17xQKGJZBuMV
+	U5CeELdX/3TWza0HxIWKageaVOGqBezlwb2d44FkeGQthSuAt2rQCMsRfsowO1pKhvuhasX1KuP
+	Md7jZthdHzVoDD6zTk97w0=
+X-Received: by 2002:a05:693c:2589:b0:340:f698:fd56 with SMTP id 5a478bee46e88-34273249209mr11024375eec.2.1790529895897;
+        Sun, 27 Sep 2026 10:24:55 -0700 (PDT)
+Received: from localhost.localdomain ([60.243.188.223])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3433628f5basm13777515eec.18.2026.09.27.10.24.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Sep 2026 10:24:55 -0700 (PDT)
+From: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
+Subject: [RFC PATCH] remoteproc: core: add KUnit tests for rproc_check_carveout_da()
+Date: Sun, 27 Sep 2026 22:54:28 +0530
+Message-Id: <20260927172428.110718-1-saileshnandanavanam@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, 27 Sep 2026 09:56:26 +0700
-Nguyen Minh Tien <tien.nguyenminh@embeddedlinux.blog> wrote:
+Add a KUnit test suite covering rproc_check_carveout_da(), the
+internal helper that validates a resource-table-requested (da, len)
+pair against an already-allocated carveout's bounds.
 
-> Add the hardware spinlock of the D1 and T113. It goes in
-> sunxi-d1-t113.dtsi rather than sunxi-d1s-t113.dtsi, as the D1s manual
-> has no spinlock in its memory map.
-> 
-> Signed-off-by: Nguyen Minh Tien <tien.nguyenminh@embeddedlinux.blog>
-> ---
->  arch/riscv/boot/dts/allwinner/sunxi-d1-t113.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/allwinner/sunxi-d1-t113.dtsi
-> b/arch/riscv/boot/dts/allwinner/sunxi-d1-t113.dtsi index 3b077dc086..228cc5c074 100644
-> --- a/arch/riscv/boot/dts/allwinner/sunxi-d1-t113.dtsi
-> +++ b/arch/riscv/boot/dts/allwinner/sunxi-d1-t113.dtsi
-> @@ -11,5 +11,14 @@ dsp_wdt: watchdog@1700400 {
->  			clock-names = "hosc", "losc";
->  			status = "reserved";
->  		};
-> +
-> +		hwlock: hwlock@3005000 {
-> +			compatible = "allwinner,sun20i-d1-hwspinlock",
-> +				     "allwinner,sun6i-a31-hwspinlock";
-> +			reg = <0x3005000 0x1000>;
-> +			clocks = <&ccu CLK_BUS_SPINLOCK>;
-> +			resets = <&ccu RST_BUS_SPINLOCK>;
-> +			#hwlock-cells = <1>;
-> +		};
->  	};
->  };
+The test is #include'd directly into remoteproc_core.c (a pattern
+already used by mm/damon/) rather than built as a separate module,
+since rproc_check_carveout_da() is static and this avoids adding an
+exported symbol purely for test visibility.
 
-Wouldn't it make more sense to add the "allwinner,sun20i-d1-hwspinlock" line to
-the driver in the sun6i_hwspinlock_ids struct, drop
-"allwinner,sun6i-a31-hwspinlock" here in the D1 device tree and update the yaml
-file accordingly? Hmm, there are actually a lot more devices, which support that
-spinlock (H2, H2+, H3, H5, H6...). A31 was the first one introducing that IP
-core, but newer reference manuals removed the spinlock section completely.
-There it is an unnamed 4k block in the memory map.
+Six cases are included, exercising every branch of the function:
+requested length exceeding the carveout, a specific da requested
+against a carveout with none set, a da before the carveout's start,
+a (da + len) past the carveout's end, an exact boundary fit, and the
+FW_RSC_ADDR_ANY skip-check path.
 
-Bjorn, what do you think? Just stay with the "allwinner,sun6i-a31-hwspinlock"
-string or add all the possible combinations like
-"allwinner,sun8i-h2-plus-hwspinlock" or "allwinner,sun8i-a83t-hwspinlock".
-I mean, it is just a naming game and there are 10+ SoCs supporting this
-spinlock register file.
+Verified via:
+ - QEMU (x86_64), booting a kernel with CONFIG_REMOTEPROC_KUNIT_TEST=y
+ - tools/testing/kunit/kunit.py under UML
 
-Oh, and I may be able to test it against the D1, I own a Sipeed Nezha. Though,
-setting that one up for kernel + FreeRTOS testing is really, uhm, annoying.
+All 6 cases pass in both environments:
 
-greetings,
-Wilken
+    # remoteproc_core: pass:6 fail:0 skip:0 total:6
+
+This is posted as an RFC to check whether this structure (test
+headers embedded per-file, DAMON-style) is the preferred approach for
+remoteproc before expanding coverage to other files in the driver
+(remoteproc_virtio.c, remoteproc_sysfs.c, etc.).
+
+Signed-off-by: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
+---
+ drivers/remoteproc/Kconfig                    |  10 ++
+ drivers/remoteproc/remoteproc_core.c          |   4 +
+ .../remoteproc/tests/remoteproc_core-kunit.h  | 130 ++++++++++++++++++
+ 3 files changed, 144 insertions(+)
+ create mode 100644 drivers/remoteproc/tests/remoteproc_core-kunit.h
+
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 5b56b2dcc725..dc5a8f483693 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -390,6 +390,16 @@ config XLNX_R5_REMOTEPROC
+ 
+ 	  It's safe to say N if not interested in using RPU r5f cores.
+ 
++config REMOTEPROC_KUNIT_TEST
++	bool "KUnit tests for remoteproc core" if !KUNIT_ALL_TESTS
++	depends on REMOTEPROC && KUNIT=y
++	default KUNIT_ALL_TESTS
++	help
++	  Enable KUnit tests for the remoteproc core, covering internal
++	  helpers such as carveout/address-translation logic.
++
++	  If unsure, say N.
++
+ endif # REMOTEPROC
+ 
+ endmenu
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 1ed406714849..4f0ad28305d2 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2839,3 +2839,7 @@ static void __exit remoteproc_exit(void)
+ module_exit(remoteproc_exit);
+ 
+ MODULE_DESCRIPTION("Generic Remote Processor Framework");
++
++#if IS_ENABLED(CONFIG_REMOTEPROC_KUNIT_TEST)
++#include "tests/remoteproc_core-kunit.h"
++#endif
+diff --git a/drivers/remoteproc/tests/remoteproc_core-kunit.h b/drivers/remoteproc/tests/remoteproc_core-kunit.h
+new file mode 100644
+index 000000000000..615a854fffbf
+--- /dev/null
++++ b/drivers/remoteproc/tests/remoteproc_core-kunit.h
+@@ -0,0 +1,130 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _REMOTEPROC_CORE_KUNIT_H
++#define _REMOTEPROC_CORE_KUNIT_H
++
++#include <kunit/test.h>
++
++/*
++ * Tests for rproc_check_carveout_da().
++ *
++ * The function is static, so this header is #include'd directly at the
++ * bottom of remoteproc_core.c (see CONFIG_REMOTEPROC_KUNIT_TEST), giving
++ * it access to the symbol despite the lack of external linkage.
++ *
++ * rproc_check_carveout_da() only touches &rproc->dev for dev_err() on
++ * its failure paths, so a zeroed struct rproc is sufficient here -- no
++ * device registration needed. dev_err()'s formatting chain
++ * (dev_driver_string() -> "" on NULL driver/bus/class, dev_name() ->
++ * NULL on an unregistered device, and the kernel's own %s NULL guard
++ * in lib/vsprintf.c) is safe end-to-end against a bare zeroed device.
++ */
++
++static void rproc_test_check_carveout_len_exceeds(struct kunit *test)
++{
++	struct rproc rproc = { 0 };
++	struct rproc_mem_entry mem = { 0 };
++	int ret;
++
++	/* mem->len = 0x100; request len 0x200 with no da constraint */
++	mem.da = FW_RSC_ADDR_ANY;
++	mem.len = 0x100;
++
++	ret = rproc_check_carveout_da(&rproc, &mem, FW_RSC_ADDR_ANY, 0x200);
++	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
++}
++
++static void rproc_test_check_carveout_da_any_mismatch(struct kunit *test)
++{
++	struct rproc rproc = { 0 };
++	struct rproc_mem_entry mem = { 0 };
++	int ret;
++
++	/* caller wants a specific da, but the carveout itself has none set */
++	mem.da = FW_RSC_ADDR_ANY;
++	mem.len = 0x100;
++
++	ret = rproc_check_carveout_da(&rproc, &mem, 0x1000, 0x50);
++	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
++}
++
++static void rproc_test_check_carveout_da_negative_delta(struct kunit *test)
++{
++	struct rproc rproc = { 0 };
++	struct rproc_mem_entry mem = { 0 };
++	int ret;
++
++	/* requested da (0x1000) lies before the carveout's da (0x2000) */
++	mem.da = 0x2000;
++	mem.len = 0x100;
++
++	ret = rproc_check_carveout_da(&rproc, &mem, 0x1000, 0x10);
++	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
++}
++
++static void rproc_test_check_carveout_da_exceeds_end(struct kunit *test)
++{
++	struct rproc rproc = { 0 };
++	struct rproc_mem_entry mem = { 0 };
++	int ret;
++
++	/* delta (0x80) + len (0x100) = 0x180, one byte over mem->len (0x100) -> 0x180 > 0x100 */
++	mem.da = 0x1000;
++	mem.len = 0x100;
++
++	ret = rproc_check_carveout_da(&rproc, &mem, 0x1080, 0x100);
++	KUNIT_EXPECT_EQ(test, ret, -EINVAL);
++}
++
++static void rproc_test_check_carveout_da_exact_fit(struct kunit *test)
++{
++	struct rproc rproc = { 0 };
++	struct rproc_mem_entry mem = { 0 };
++	int ret;
++
++	/*
++	 * Boundary case: delta (0xf0) + len (0x10) == mem->len (0x100)
++	 * exactly. The check is "> mem->len", so this must pass -- this
++	 * is exactly the kind of edge an off-by-one would break.
++	 */
++	mem.da = 0x1000;
++	mem.len = 0x100;
++
++	ret = rproc_check_carveout_da(&rproc, &mem, 0x10f0, 0x10);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++}
++
++static void rproc_test_check_carveout_da_any_skip_check(struct kunit *test)
++{
++	struct rproc rproc = { 0 };
++	struct rproc_mem_entry mem = { 0 };
++	int ret;
++
++	/*
++	 * da == FW_RSC_ADDR_ANY -> address check is skipped entirely,
++	 * only len is validated against mem->len.
++	 */
++	mem.da = 0x1000;
++	mem.len = 0x100;
++
++	ret = rproc_check_carveout_da(&rproc, &mem, FW_RSC_ADDR_ANY, 0x50);
++	KUNIT_EXPECT_EQ(test, ret, 0);
++}
++
++static struct kunit_case rproc_core_test_cases[] = {
++	KUNIT_CASE(rproc_test_check_carveout_len_exceeds),
++	KUNIT_CASE(rproc_test_check_carveout_da_any_mismatch),
++	KUNIT_CASE(rproc_test_check_carveout_da_negative_delta),
++	KUNIT_CASE(rproc_test_check_carveout_da_exceeds_end),
++	KUNIT_CASE(rproc_test_check_carveout_da_exact_fit),
++	KUNIT_CASE(rproc_test_check_carveout_da_any_skip_check),
++	{}
++};
++
++static struct kunit_suite rproc_core_test_suite = {
++	.name = "remoteproc_core",
++	.test_cases = rproc_core_test_cases,
++};
++
++kunit_test_suite(rproc_core_test_suite);
++
++#endif /* _REMOTEPROC_CORE_KUNIT_H */
+-- 
+2.34.1
+
