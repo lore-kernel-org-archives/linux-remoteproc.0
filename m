@@ -1,64 +1,64 @@
 Received: from mail-oo2-f38.google.com (mail-oo2-f38.google.com [74.125.231.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19FA2459C5
-	for <linux-remoteproc@vger.kernel.org>; Sun, 27 Sep 2026 00:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1432512C8
+	for <linux-remoteproc@vger.kernel.org>; Sun, 27 Sep 2026 00:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.231.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790468459; cv=none; b=qwMSBn7FcxW+5VRv8goLAQ93qN8xrifN+1vphrXOXQfgmE6lprA5hydhlnY/4BQRz9RRCvO6Anl4DE1Mgxqc/dO6jLhIqH58QXNbkp3FVNzfBAZ8a4txHchTrau0RP79x+/injv7I+Uuc0jhfc7Yma4uMcqWhLXYkCG4AjvRlT4=
+	t=1790468464; cv=none; b=sE9wyB+UvB5nJUiMScNziJL5sV/pMOTPzKnuXLSqvb0W5qbfaqrmjEt+VSDnbB1mFT7pveWM20ZwdWoJfZIR7LboTZ37mBFz2Weemoh74sd1RNIN1/KqJhwGuzhiMy0sPy4GLXmscWsejS+IWtVl4h56StldFRLjcbYSEm8bSWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790468459; c=relaxed/simple;
-	bh=KWgjeJ/vpWyN9YwcSPtBL1y6nnXc/yhU4T0OpEjImlw=;
+	s=arc-20240116; t=1790468464; c=relaxed/simple;
+	bh=ZtBlmFmSnj28Jk63OVYJAXFxqrnHUz0ntmm01ON0lnA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f1tjAaYXKlhT9Y1Yi0MEw4e69Gs+tgwd2TBxarKwLjh4ykBTwTd7gCflb2O+en5kzsp1H963SK9FDkVfBnEIA+89sD90Q+RNDUGqo6hQ53LvDhWjhVWDDR2lgBSii524kG2FhXTO7+d1pDtvTIvQaA/5J18aDtrFP6NH+V31/H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aqCmAoAd; arc=none smtp.client-ip=74.125.231.166
+	 MIME-Version; b=eaUMyPWb24s/0OLPWKRBkWJ4T2ccWh9/Km23Rh8C4z1GUenft8aM7GX+J9YmU0Ru85+3Zt+89i30Godp1KXP1kH5ONtr+zMbyZuIdHOEzinpp47MEXrf/HXM+5V2marXzwKKlUZuZTkaJdNGLHBzCqzqCM3wZs8oUDCbjiqMn0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=atX/ezaW; arc=none smtp.client-ip=74.125.231.166
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aqCmAoAd"
-Received: by mail-oo2-f38.google.com with SMTP id 46e09a7af769-81be5042c56so50814a34.0
-        for <linux-remoteproc@vger.kernel.org>; Sat, 26 Sep 2026 17:20:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atX/ezaW"
+Received: by mail-oo2-f38.google.com with SMTP id 46e09a7af769-7f4f0d37f9dso894408a34.1
+        for <linux-remoteproc@vger.kernel.org>; Sat, 26 Sep 2026 17:21:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790468457; x=1791073257; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1790468459; x=1791073259; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=F7YAaa+JluQRvW+ay+L84vEKLXHaoKpKPtPkeIjCvyE=;
-        b=aqCmAoAdZS8dTheg5bpE6Fl9NaWftPYAeSWfj60xQBdyMF84p+qxhjhl8UpItIWhtA
-         nyFCC+1NOTByMg4OvazaFrlCWWVB2uDHLqnkwdaYSff/XnxOC05BTNGhkOl9Jbn9R8Aw
-         hQQ2bSC+RQTnsUp2/Dqcq1LAo0C6EBqIYploMHePcrGfx0MrCgm1pEIAjSohUWBCT2mc
-         CDZfvasKU6vsrjuoIp1iA3DhWpZTtxEpHfgNHjc0Km39q4dBo5hxU7JDTLSW49VgchwB
-         Fa39JpxVV8fn4OKmQz3eojvilWBKRAA9AHDpIv3NlnrYg/KTafCbKwZ/Zqyqk187EluC
-         xudw==
+        bh=vBi9g+SfhQ7cqd288lnow3V3UC8T2QuCG79k15FMCKU=;
+        b=atX/ezaWHBJwLGzWTaszAFwJrM7p7dcmfExnYr38S2n+h8fZ+sVPA0bu8/esNaH6sL
+         lRcBdqi0iO4pjLMCyEmg2Yjeb/N5uILHWr2sE+AKFOF0p8t1BkhRporFss0eDw+fff/J
+         XpdxLxp71VwIwI6Ca2oObbP2kgiCIyDDUyeMVPPwOECqFSf6oR0bvng9HTZMlHVkVQt9
+         naHvYZMGpukJB50LvB/7vaDqHYja2S+lFn1M7dA/NYNLQJ1cSRGs/QDzg/wW+Rx5eM/e
+         0NQ+/EQMs4DisIVpT26cqM0SutyvtKCO8kX0cosOr7d3P0JOVg0H5FZWtKhcaInkdjVy
+         dFlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790468457; x=1791073257;
+        d=1e100.net; s=20260707; t=1790468459; x=1791073259;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=F7YAaa+JluQRvW+ay+L84vEKLXHaoKpKPtPkeIjCvyE=;
-        b=swcO307WnAsXeB3w7D3dOPEiyq6fhPNgmn/OcMHw3pSWP1ySlUp0GWVCuGObKJynZ0
-         zrnbJ8D6EErCImgjFDRYeW6bJlbleHiO93hwShB2Pa3zN2QXCFLWFAjXrPuP4kQMpN+N
-         CouLv6yX0zfEaqz8slV9OBfhooKvx4r0BG99k3qC0ZV4EvrY3AiKnSnx6KmP455PfcyF
-         MLtzr9oUujj68fTMuA497jmnXvktLTU8RIf49xVnERaIQAL0XUsphunDmHwk/JACqSxP
-         9eYdcwf0mJeAuaS/yGHdxfN4W1n9pkApjJeyAoPQlIYnYPS4vxZm9ZG1Vpj8/BLe/fUF
-         oIgw==
-X-Forwarded-Encrypted: i=1; AKwUvBzpjsYShC4MBewRFYugQYcJX54CwVFj/fIEY8L2dPKXkUgnFr2HAQtEBPa05CuzNYTEghkNf2g4BBoewDm3jTRs@vger.kernel.org
-X-Gm-Message-State: AFuF++kJMG5ku5vX8GrPITJNeEJbEgcUakKOF3PigQBY0Ft/rg6ZaAxn
-	p3WrEpn9gprLLd7Xqta0NrpijkIOgj35i53Ml3Gn8F0FIvi1yczKyiXT
-X-Gm-Gg: AYBFou2pIE/9AJxCiVcIXXJ9Bs7KBtrJzLvyxwSIWgPNKMW6xLz9u+o3DNLjtbrsQkg
-	GUFrtABXpSi0qbbBlv0duQG/w/OKS8B69b3Gl9HF6h8tKBroFwy7camC+SlXvxXCUp0IJI7kPEB
-	bSTXhoelq2jWFvUJh+bJXpa7tkmn+GUkPP1qXi0QRXQpRJneBO5/qMZlLeK7R/Lp1TZ3JR3PhhA
-	beHvOZu+vFRuHU7u0aTIYO8nNut2Det7L9dI9oEUMzE3QKZTRDdTfL1NNFHzZyqYx8FGEFabuXk
-	YRyQ8dw81hCq3ceRZ/8LPe6GHh0YtMF+PcUKvVwlOFsHhTRMGRlgnVfO6XgJk5cW2la6sNp70CH
-	I/03GAxn+YdTK48RWhCgMu4Vq3hA3oEuO3jhPRtxPPFIPOXazEBB9JLjZ3xvyd5fI2ytEfhFpVB
-	+trPZfvHrYmegMET4o6ABQIhPgtq6Eg2Vv16biDj64E+p4H6TXzOTh7gy7+zi5HIZkPxeXgUWJw
-	pUYDDe10RAL3SeAKlMFcg==
-X-Received: by 2002:a05:6820:1c8e:b0:6cd:3ffc:64cb with SMTP id 006d021491bc7-6d5baa47035mr5699972eaf.70.1790468456774;
-        Sat, 26 Sep 2026 17:20:56 -0700 (PDT)
+        bh=vBi9g+SfhQ7cqd288lnow3V3UC8T2QuCG79k15FMCKU=;
+        b=g99fkbsu3CIbmw1geKZlPiuo4lGLUdWkgW8/xXGVb94arcFVJ4QQyOzOghdnqn4RSN
+         gPpz72BhW24uM9wLd/q3ML2TCEM/Jl4i4aV27hvH6/fzaCPwNDVbByUXewA8dG0GzHa+
+         qQneV3yjnFQ6y5nN6ek8dcT7vAF5s+kJNNuVZW/cDfxDoysM4gjeRLeFdZ8B/V8CXocM
+         2ABK8/EzIPqpc3AaGsvoSAnPjdUTuK3RtcDytiwsbe1AUiD2qLGoq9aNHYYfoyUnSjZ1
+         Flh38R3YNaAq73BpW3m7BiB+5ZcBExHlImFWZAWtolB9lrRTS5gwFyv+4d0zOSULDw7a
+         n5Iw==
+X-Forwarded-Encrypted: i=1; AKwUvByQmbQ6jshAmhGscTr+c/GvybsZZgXDq9JeC33ogBUnGOwe68tkvwNub6y5SfzCoMcXu2MNcsnnT0wBM+Cbc4AV@vger.kernel.org
+X-Gm-Message-State: AFuF++mAhAIhg8uXKz2coKawWoUHVLzl+W2Pvhdn1SMYkiLYh8NrNM3I
+	7NcpqPoboBxhBkp0xl++0Lr+eAvcTqF28cA+1wCy+u/jj0DKqwoROHLD
+X-Gm-Gg: AYBFou1lTEma4sjlo59Ben7E3wc9MLLHp1ZS+jl0DzsWnLh9EmG0tftgRHbEuQQufI2
+	pBJC+vjxD4m4hX/aVLUvs53krjWgo+GN/r6LvJhILSmpW55JXbA5rQ66qWoJO0GqpX9g4sjg4GG
+	eEf/e+s9T5fpjWDDuaKBLWs4O5qpbirbGIn8PZafhddNjeTxrxTGZP51/zoRJWV+NsHM2MXYsyK
+	HY9pyFK+EdRaYJCpr4Spo4s+iAfSE+z4Bzgwgg7BB+U2dL5G8h2bqglkFkDUpV4HQN63hTjtoKN
+	tB0M+/vfg4r+8prDIWWCf5gTJJ7T+/SpAI2ewz87G0qmHac57Xweovc+6h/Acapxx0mYWxnLkXy
+	KhKkQtHL+wylWY23Y3/tHpyKY4OPiIITEXGhe8l3KEkTpeArupSCyn6Xeqc27/PJfoOHGL3Fm2Y
+	jI1xvvplVxBH0MCBDUPqYvYMA/uNV5WwJuAZxtwrbsUUiGt8/nquyF+KfcT1G7q26vAl8IMQ3eF
+	vzROiwtggynRr7JQTtO2g==
+X-Received: by 2002:a05:6820:151d:b0:6cd:3ffc:ad02 with SMTP id 006d021491bc7-6d441c7e1b1mr9673126eaf.82.1790468459223;
+        Sat, 26 Sep 2026 17:20:59 -0700 (PDT)
 Received: from tcmichals-5759.lan ([2607:fb91:3584:35a9:66f8:2cb5:aa80:21fd])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6d8828e1ea0sm838989eaf.6.2026.09.26.17.20.54
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6d8828e1ea0sm838989eaf.6.2026.09.26.17.20.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Sep 2026 17:20:56 -0700 (PDT)
+        Sat, 26 Sep 2026 17:20:58 -0700 (PDT)
 From: Tim Michals <tcmichals@gmail.com>
 To: linux-sunxi@lists.linux.dev,
 	linux-remoteproc@vger.kernel.org
@@ -75,9 +75,9 @@ Cc: devicetree@vger.kernel.org,
 	krzk+dt@kernel.org,
 	conor+dt@kernel.org,
 	Tim Michals <tcmichals@gmail.com>
-Subject: [PATCH v2 4/7] dt-bindings: remoteproc: add Allwinner sun55i-rproc schema
-Date: Sat, 26 Sep 2026 19:20:13 -0500
-Message-ID: <20260927002021.797069-5-tcmichals@gmail.com>
+Subject: [PATCH v2 5/7] remoteproc: sunxi: add Allwinner XuanTie RISC-V remoteproc driver
+Date: Sat, 26 Sep 2026 19:20:14 -0500
+Message-ID: <20260927002021.797069-6-tcmichals@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260927002021.797069-1-tcmichals@gmail.com>
 References: <20260922034711.190253-1-tcmichals@gmail.com>
@@ -90,172 +90,1107 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Device Tree binding schema for the Allwinner XuanTie E907 RISC-V
-remote processor subsystem integrated into Allwinner A523, A527, and
-T527 (sun55i) SoCs.
+Add remoteproc driver for the auxiliary Alibaba T-Head XuanTie E907
+RISC-V co-processor found on Allwinner A523, A527, and T527 SoCs.
 
-The binding defines the memory resources (configuration registers,
-SRAM Space 0, SRAM Space 1, and optional remap controller), clocks,
-resets, reserved memory regions, and hardware mailbox channels.
+Features implemented:
+- SRAM Space 0 and Space 1 memory window translation via Address
+  Translation Table (ATT) architecture matching imx_rproc conventions.
+- Dynamic DRAM carveout and CMA buffer allocation for VirtIO RPMsg.
+- CCU reset and clock lifecycle management with boot address setup
+  prior to core reset de-assertion.
+- Dual-channel hardware Message Box integration for kick/vq signalling.
+- Workqueue-deferred RPMsg notification for Linux PREEMPT_RT safety.
+- Ring-buffer trace0 diagnostic endpoint via debugfs.
 
 Signed-off-by: Tim Michals <tcmichals@gmail.com>
 ---
- .../remoteproc/allwinner,sun55i-rproc.yaml    | 146 ++++++++++++++++++
- 1 file changed, 146 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
+ drivers/remoteproc/Kconfig       |   8 +
+ drivers/remoteproc/Makefile      |   1 +
+ drivers/remoteproc/sunxi_rproc.c | 922 +++++++++++++++++++++++++++++++
+ drivers/remoteproc/sunxi_rproc.h | 116 ++++
+ 4 files changed, 1047 insertions(+)
+ create mode 100644 drivers/remoteproc/sunxi_rproc.c
+ create mode 100644 drivers/remoteproc/sunxi_rproc.h
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
+diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+index 73500fdc227d..d35b033b9106 100644
+--- a/drivers/remoteproc/Kconfig
++++ b/drivers/remoteproc/Kconfig
+@@ -388,6 +388,14 @@ config XLNX_R5_REMOTEPROC
+ 
+ 	  It's safe to say N if not interested in using RPU r5f cores.
+ 
++config SUNXI_REMOTEPROC
++	tristate "Allwinner XuanTie RISC-V remoteproc support"
++	depends on (ARCH_SUNXI || COMPILE_TEST) && MAILBOX
++	help
++	  Say y or m here to support the Allwinner XuanTie E906/E907 RISC-V
++	  co-processor on Allwinner A523, A527, and T527 SoCs via the
++	  remote processor framework.
++
+ endif # REMOTEPROC
+ 
+ endmenu
+diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+index 689686de0d41..02acefa6d880 100644
+--- a/drivers/remoteproc/Makefile
++++ b/drivers/remoteproc/Makefile
+@@ -41,3 +41,4 @@ obj-$(CONFIG_TI_K3_DSP_REMOTEPROC)	+= ti_k3_dsp_remoteproc.o ti_k3_common.o
+ obj-$(CONFIG_TI_K3_M4_REMOTEPROC)	+= ti_k3_m4_remoteproc.o ti_k3_common.o
+ obj-$(CONFIG_TI_K3_R5_REMOTEPROC)	+= ti_k3_r5_remoteproc.o ti_k3_common.o
+ obj-$(CONFIG_XLNX_R5_REMOTEPROC)	+= xlnx_r5_remoteproc.o
++obj-$(CONFIG_SUNXI_REMOTEPROC)		+= sunxi_rproc.o
+diff --git a/drivers/remoteproc/sunxi_rproc.c b/drivers/remoteproc/sunxi_rproc.c
 new file mode 100644
-index 000000000000..53e3f4faaa76
+index 000000000000..fbb0ee8a9110
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
-@@ -0,0 +1,146 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/allwinner,sun55i-rproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/remoteproc/sunxi_rproc.c
+@@ -0,0 +1,922 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Allwinner XuanTie E906/E907 RISC-V Remote Processor Driver
++ *
++ * Copyright (C) 2024-2026 Allwinner Technology Co., Ltd.
++ * Copyright (C) 2026 Tim Michals <tcmichals@gmail.com>
++ *
++ * CCU-integrated remoteproc driver for XuanTie RISC-V co-processors on
++ * Allwinner SoCs (T527/A527/A523: E906/E907) supporting TCM, SRAM, and DRAM.
++ */
 +
-+title: Allwinner XuanTie E906/E907 RISC-V Remoteproc
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/mailbox_client.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_reserved_mem.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/remoteproc.h>
++#include <linux/reset.h>
 +
-+maintainers:
-+  - Jernej Skrabec <jernej.skrabec@gmail.com>
-+  - Samuel Holland <samuel@sholland.org>
-+  - Tim Michals <tcmichals@gmail.com>
++#include "remoteproc_internal.h"
++#include "sunxi_rproc.h"
 +
-+description:
-+  The Allwinner T527, A527, and A523 (sun55i) SoCs integrate a T-Head
-+  (XuanTie) E906 or E907 RISC-V co-processor alongside the ARM Cortex-A55
-+  cluster. The co-processor runs bare-metal firmware loaded and lifecycle-
-+  managed by the Linux remoteproc framework.
++#define DRIVER_NAME "sunxi-rproc"
 +
-+  The driver controls CCU-integrated clocks (bus, core) and resets
-+  (cfg, core), programs the hardware boot-vector register, maps
-+  internal SRAM (SRAM_A3) windows, and connects to the Allwinner
-+  hardware mailbox (CPUX_MSGBOX) for VirtIO RPMsg IPC.
++static const struct sunxi_rproc_att sun55i_rproc_att[] = {
++	/* dev addr (remote)    , sys addr (host PA)    , size                   , flags */
++	/* Space 0 Core Aliases -> Space 0 Host PA */
++	{ E907_SRAM_SPACE0_DA,     SUN55I_SRAM_SPACE0_SYS, SUN55I_SRAM_SPACE0_SIZE, ATT_IOMEM },
++	{ E907_SRAM_SPACE0_DA_ALT, SUN55I_SRAM_SPACE0_SYS, SUN55I_SRAM_SPACE0_SIZE, ATT_IOMEM },
++	{ E907_SRAM_C_DA,          SUN55I_SRAM_SPACE0_SYS, SUN55I_SRAM_SPACE0_SIZE, ATT_IOMEM },
++	{ SUN55I_SRAM_SPACE0_SYS,  SUN55I_SRAM_SPACE0_SYS, SUN55I_SRAM_SPACE0_SIZE, ATT_IOMEM },
 +
-+properties:
-+  compatible:
-+    const: allwinner,sun55i-a523-rproc
++	/* Space 1 Core Aliases -> Space 1 Host PA */
++	{ E907_SRAM_SPACE1_DA,     SUN55I_SRAM_SPACE1_SYS, SUN55I_SRAM_SPACE1_SIZE, ATT_IOMEM },
++	{ E907_SRAM_SPACE1_DA_ALT, SUN55I_SRAM_SPACE1_SYS, SUN55I_SRAM_SPACE1_SIZE, ATT_IOMEM },
++	{ SUN55I_SRAM_SPACE1_SYS,  SUN55I_SRAM_SPACE1_SYS, SUN55I_SRAM_SPACE1_SIZE, ATT_IOMEM },
++};
 +
-+  reg:
-+    minItems: 1
-+    maxItems: 4
-+    description:
-+      Memory-mapped register regions. The following named regions are
-+      supported (all optional except at least one of r_sram or r_sram1) -
-+      "cfg" for RISC-V core control and boot-vector registers,
-+      "r_sram" for dedicated MCU SRAM Space 0,
-+      "r_sram1" for switchable MCU SRAM Space 1,
-+      "remap" for the hardware remap control register.
++const struct sunxi_rproc_cfg sun55i_riscv_cfg = {
++	.name = "XuanTie E907 RISC-V",
++	.att = sun55i_rproc_att,
++	.att_size = ARRAY_SIZE(sun55i_rproc_att),
++	.has_remap_reg = true,
++	.boot_reg_offset = E906_STA_ADD_REG,
++};
 +
-+  reg-names:
-+    minItems: 1
-+    maxItems: 4
-+    items:
-+      enum:
-+        - cfg
-+        - r_sram
-+        - r_sram1
-+        - remap
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sun55i_riscv_cfg);
++#endif
 +
-+  clocks:
-+    minItems: 1
-+    maxItems: 5
++static void sunxi_rproc_vq_work(struct work_struct *work)
++{
++	struct sunxi_rproc *priv = container_of(work, struct sunxi_rproc, vq_work);
 +
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: bus
-+      - const: core
-+      - const: sram
-+      - const: msgbox
-+      - const: parent
++	rproc_vq_interrupt(priv->rproc, 0);
++	rproc_vq_interrupt(priv->rproc, 1);
++}
 +
-+  resets:
-+    minItems: 1
-+    maxItems: 4
++static void sunxi_rproc_mb_rx_callback(struct mbox_client *cl, void *data)
++{
++	struct sunxi_rproc *priv = container_of(cl, struct sunxi_rproc, cl);
 +
-+  reset-names:
-+    minItems: 1
-+    items:
-+      - const: cfg
-+      - const: core
-+      - const: sram
-+      - const: msgbox
++	schedule_work(&priv->vq_work);
++}
 +
-+  mboxes:
-+    maxItems: 2
-+    description:
-+      Exactly two mailbox channels from the Allwinner CPUX_MSGBOX controller,
-+      one receive channel (RISC-V-to-ARM) and one transmit channel
-+      (ARM-to-RISC-V), used for VirtIO RPMsg kick notifications.
++static irqreturn_t sunxi_rproc_crash_handler(int irq, void *data)
++{
++	struct sunxi_rproc *priv = data;
++	struct rproc *rproc = priv->rproc;
 +
-+  mbox-names:
-+    items:
-+      - const: rx
-+      - const: tx
++	dev_err(priv->dev, "Hardware crash event received from %s core!\n",
++		priv->cfg ? priv->cfg->name : "remote");
++	if (priv->crash_irq_enabled) {
++		disable_irq_nosync(irq);
++		priv->crash_irq_enabled = false;
++	}
++	rproc_report_crash(rproc, RPROC_FATAL_ERROR);
 +
-+  firmware-name:
-+    maxItems: 1
-+    description:
-+      Name of the ELF firmware image to load from /lib/firmware/.
-+      Defaults to "riscv-firmware.elf" if not specified.
++	return IRQ_HANDLED;
++}
 +
-+  memory-region:
-+    minItems: 1
-+    items:
-+      - description: VirtIO vring buffer region (DDR carveout)
-+      - description: DRAM firmware execution carveout
-+      - description: RemoteProc trace buffer carveout
++int sunxi_rproc_prepare(struct rproc *rproc)
++{
++	struct sunxi_rproc *priv = rproc->priv;
++	const struct sunxi_rproc_cfg *cfg = priv->cfg ? priv->cfg : &sun55i_riscv_cfg;
++	int ret;
 +
-+  memory-region-names:
-+    minItems: 1
-+    items:
-+      - const: vram
-+      - const: dram
-+      - const: trace
++	/* 1. Deassert configuration & SRAM bus resets */
++	if (priv->rst_cfg) {
++		ret = reset_control_deassert(priv->rst_cfg);
++		if (ret) {
++			dev_err(priv->dev, "failed to deassert cfg reset: %d\n", ret);
++			return ret;
++		}
++	}
 +
-+  interrupts:
-+    maxItems: 1
-+    description:
-+      Optional hardware crash-notification interrupt. When present the
-+      driver calls rproc_report_crash() on assertion.
++	if (priv->rst_sram) {
++		ret = reset_control_deassert(priv->rst_sram);
++		if (ret) {
++			dev_err(priv->dev, "failed to deassert sram reset: %d\n", ret);
++			goto err_assert_cfg;
++		}
++	}
 +
-+  interrupt-names:
-+    items:
-+      - const: crash
++	if (priv->rst_msgbox) {
++		ret = reset_control_deassert(priv->rst_msgbox);
++		if (ret) {
++			dev_err(priv->dev, "failed to deassert msgbox reset: %d\n", ret);
++			goto err_assert_sram;
++		}
++	}
 +
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - clocks
-+  - clock-names
-+  - resets
-+  - reset-names
-+  - mboxes
-+  - mbox-names
++	/* 2. Enable parent clock (PLL source) */
++	if (priv->clk_parent) {
++		ret = clk_prepare_enable(priv->clk_parent);
++		if (ret) {
++			dev_err(priv->dev, "failed to enable parent clock: %d\n", ret);
++			goto err_assert_msgbox;
++		}
++	}
 +
-+additionalProperties: false
++	/* 3. Enable interconnect bus and SRAM clocks */
++	if (priv->clk_bus) {
++		ret = clk_prepare_enable(priv->clk_bus);
++		if (ret) {
++			dev_err(priv->dev, "failed to enable bus clock: %d\n", ret);
++			goto err_disable_parent;
++		}
++	}
 +
-+examples:
-+  - |
-+    remoteproc@7130000 {
-+        compatible = "allwinner,sun55i-a523-rproc";
-+        reg = <0x07130000 0x1000>,
-+              <0x07280000 0x40000>,
-+              <0x072c0000 0x40000>,
-+              <0x07010364 0x4>;
-+        reg-names = "cfg", "r_sram", "r_sram1", "remap";
-+        clocks = <&mcu_ccu 3>, <&mcu_ccu 4>;
-+        clock-names = "bus", "core";
-+        resets = <&mcu_ccu 0>, <&mcu_ccu 1>;
-+        reset-names = "cfg", "core";
-+        mboxes = <&msgbox 8>, <&msgbox 9>;
-+        mbox-names = "rx", "tx";
-+        firmware-name = "riscv-firmware.elf";
-+    };
++	if (priv->clk_sram) {
++		ret = clk_prepare_enable(priv->clk_sram);
++		if (ret) {
++			dev_err(priv->dev, "failed to enable sram clock: %d\n", ret);
++			goto err_disable_bus;
++		}
++	}
++
++	if (priv->clk_msgbox) {
++		ret = clk_prepare_enable(priv->clk_msgbox);
++		if (ret) {
++			dev_err(priv->dev, "failed to enable msgbox clock: %d\n", ret);
++			goto err_disable_sram_clk;
++		}
++	}
++
++	/* 4. Enable core clock */
++	if (priv->clk_core) {
++		ret = clk_prepare_enable(priv->clk_core);
++		if (ret) {
++			dev_err(priv->dev, "failed to enable core clock: %d\n", ret);
++			goto err_disable_msgbox_clk;
++		}
++	}
++
++	/*
++	 * 4b. Enable SRAMA3_2 for MCU_SYS (RISC-V) via REMAP_CTRL_REG bit 1.
++	 */
++	if (cfg->has_remap_reg && priv->remap_va) {
++		u32 remap_val = readl(priv->remap_va);
++
++		remap_val |= SUNXI_REMAP_SRAMA3_2_BIT;
++		writel(remap_val, priv->remap_va);
++		dev_dbg(priv->dev, "REMAP_CTRL_REG set to 0x%08x (SRAMA3_2 enabled)\n",
++			readl(priv->remap_va));
++	}
++
++	/*
++	 * 5. Cleanly clear Dedicated Local SRAM and Switchable SRAM.
++	 * Only clears regions that are actually mapped from Device Tree.
++	 * Matches upstream patterns (e.g., imx_rproc / ti_k3_r5_remoteproc) to:
++	 *  - Prevent ECC/parity noise on uninitialized memory banks.
++	 *  - Ensure NOBITS / .bss sections start strictly at zero.
++	 *  - Clear stale trace0 logs/telemetry from previous runs.
++	 */
++	if (priv->r_sram_va && priv->r_sram_size)
++		memset_io(priv->r_sram_va, 0, priv->r_sram_size);
++
++	if (priv->r_sram1_va && priv->r_sram1_size)
++		memset_io(priv->r_sram1_va, 0, priv->r_sram1_size);
++
++	return 0;
++
++err_disable_msgbox_clk:
++	if (priv->clk_msgbox)
++		clk_disable_unprepare(priv->clk_msgbox);
++err_disable_sram_clk:
++	if (priv->clk_sram)
++		clk_disable_unprepare(priv->clk_sram);
++err_disable_bus:
++	if (priv->clk_bus)
++		clk_disable_unprepare(priv->clk_bus);
++err_disable_parent:
++	if (priv->clk_parent)
++		clk_disable_unprepare(priv->clk_parent);
++err_assert_msgbox:
++	if (priv->rst_msgbox)
++		reset_control_assert(priv->rst_msgbox);
++err_assert_sram:
++	if (priv->rst_sram)
++		reset_control_assert(priv->rst_sram);
++err_assert_cfg:
++	if (priv->rst_cfg)
++		reset_control_assert(priv->rst_cfg);
++	return ret;
++}
++
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sunxi_rproc_prepare);
++#endif
++
++int sunxi_rproc_unprepare(struct rproc *rproc)
++{
++	struct sunxi_rproc *priv = rproc->priv;
++	const struct sunxi_rproc_cfg *cfg = priv->cfg ? priv->cfg : &sun55i_riscv_cfg;
++
++	/* Symmetrical CCU unwinding */
++	if (cfg->has_remap_reg && priv->remap_va) {
++		u32 remap_val = readl(priv->remap_va);
++
++		remap_val &= ~SUNXI_REMAP_SRAMA3_2_BIT;
++		writel(remap_val, priv->remap_va);
++	}
++
++	if (priv->clk_core)
++		clk_disable_unprepare(priv->clk_core);
++
++	if (priv->clk_msgbox)
++		clk_disable_unprepare(priv->clk_msgbox);
++
++	if (priv->clk_sram)
++		clk_disable_unprepare(priv->clk_sram);
++
++	if (priv->clk_bus)
++		clk_disable_unprepare(priv->clk_bus);
++
++	if (priv->clk_parent)
++		clk_disable_unprepare(priv->clk_parent);
++
++	if (priv->rst_msgbox)
++		reset_control_assert(priv->rst_msgbox);
++
++	if (priv->rst_sram)
++		reset_control_assert(priv->rst_sram);
++
++	if (priv->rst_cfg)
++		reset_control_assert(priv->rst_cfg);
++
++	return 0;
++}
++
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sunxi_rproc_unprepare);
++#endif
++
++int sunxi_rproc_start(struct rproc *rproc)
++{
++	struct sunxi_rproc *priv = rproc->priv;
++	const struct sunxi_rproc_cfg *cfg = priv->cfg ? priv->cfg : &sun55i_riscv_cfg;
++	int ret;
++
++	dev_info(priv->dev, "Starting %s core at entry 0x%llx\n",
++		 cfg->name ? cfg->name : "remote", (u64)rproc->bootaddr);
++
++	if (rproc->bootaddr > U32_MAX)
++		return -EINVAL;
++
++	/* Enable crash IRQ now that core is executing */
++	if (priv->crash_irq > 0 && !priv->crash_irq_enabled) {
++		enable_irq(priv->crash_irq);
++		priv->crash_irq_enabled = true;
++	}
++
++	/*
++	 * Program boot vector while the core execution reset is held.
++	 * The CFG block bus was un-gated during prepare() via rst_cfg.
++	 */
++	if (priv->cfg_va) {
++		writel((u32)rproc->bootaddr, priv->cfg_va + cfg->boot_reg_offset);
++		dev_dbg(priv->dev, "STA_ADD set to 0x%08x\n", (u32)rproc->bootaddr);
++	}
++
++	/* Release core execution reset so the core begins execution at bootaddr */
++	if (priv->rst_core) {
++		ret = reset_control_deassert(priv->rst_core);
++		if (ret) {
++			dev_err(priv->dev, "failed to release core reset: %d\n", ret);
++			return ret;
++		}
++	} else if (priv->rst_cfg) {
++		ret = reset_control_deassert(priv->rst_cfg);
++		if (ret) {
++			dev_err(priv->dev, "failed to release cfg reset: %d\n", ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sunxi_rproc_start);
++#endif
++
++int sunxi_rproc_stop(struct rproc *rproc)
++{
++	struct sunxi_rproc *priv = rproc->priv;
++	const struct sunxi_rproc_cfg *cfg = priv->cfg ? priv->cfg : &sun55i_riscv_cfg;
++
++	dev_info(priv->dev, "Halting %s core...\n",
++		 cfg->name ? cfg->name : "remote");
++
++	/*
++	 * Assert reset first so the core stops generating mailbox interrupts,
++	 * then drain any work already queued. Reversing this order leaves a
++	 * window where a late IRQ re-queues vq_work after cancel_work_sync()
++	 * returns, executing on freed resources.
++	 */
++	if (priv->rst_core)
++		reset_control_assert(priv->rst_core);
++	else if (priv->rst_cfg)
++		reset_control_assert(priv->rst_cfg);
++
++	/* Disable crash IRQ while core is stopped */
++	if (priv->crash_irq > 0 && priv->crash_irq_enabled) {
++		disable_irq(priv->crash_irq);
++		priv->crash_irq_enabled = false;
++	}
++
++	cancel_work_sync(&priv->vq_work);
++
++	return 0;
++}
++
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sunxi_rproc_stop);
++#endif
++
++void sunxi_rproc_kick(struct rproc *rproc, int vqid)
++{
++	struct sunxi_rproc *priv = rproc->priv;
++	int ret;
++
++	if (!priv->tx_chan)
++		return;
++
++	/*
++	 * Use priv->kick_msg rather than a stack-local variable. The mailbox
++	 * controller runs with tx_block=false, so mbox_send_message() may
++	 * queue the pointer and return before the hardware reads the message.
++	 * A stack-local vqid would be a use-after-return at that point.
++	 */
++	priv->kick_msg = (u32)vqid;
++	ret = mbox_send_message(priv->tx_chan, &priv->kick_msg);
++	if (ret < 0)
++		dev_err_ratelimited(priv->dev, "failed to send mailbox kick: %d\n", ret);
++
++	mbox_client_txdone(priv->tx_chan, 0);
++}
++
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sunxi_rproc_kick);
++#endif
++
++static int sunxi_rproc_da_to_sys(struct sunxi_rproc *priv, u64 da,
++				 size_t len, u64 *sys, bool *is_iomem)
++{
++	const struct sunxi_rproc_cfg *cfg = priv->cfg ? priv->cfg : &sun55i_riscv_cfg;
++	size_t i;
++
++	if (len == 0 || da > U64_MAX - len)
++		return -EINVAL;
++
++	if (cfg->att) {
++		for (i = 0; i < cfg->att_size; i++) {
++			const struct sunxi_rproc_att *att = &cfg->att[i];
++
++			if (da >= att->da && (da + len) <= (att->da + att->size)) {
++				*sys = att->sa + (da - att->da);
++				if (is_iomem)
++					*is_iomem = !!(att->flags & ATT_IOMEM);
++				return 0;
++			}
++		}
++	}
++
++	return -ENOENT;
++}
++
++void *sunxi_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
++{
++	struct sunxi_rproc *priv = rproc->priv;
++	u64 sys;
++
++	/*
++	 * Reject zero length and any da+len combination that overflows u64.
++	 * A crafted ELF with da near U64_MAX could wrap da+len to a small value,
++	 * bypassing upper-bound checks and allowing arbitrary kernel memory
++	 * to be mapped during firmware loading.
++	 */
++	if (len == 0 || da > U64_MAX - len)
++		return NULL;
++
++	/*
++	 * 1. Translate core-local device addresses (DA) to system bus
++	 * addresses (Host PA) using the SoC address translation table (ATT).
++	 */
++	if (sunxi_rproc_da_to_sys(priv, da, len, &sys, is_iomem) == 0) {
++		if (priv->r_sram_va && sys >= priv->r_sram_phys &&
++		    (sys + len) <= (priv->r_sram_phys + priv->r_sram_size))
++			return (__force void *)(priv->r_sram_va + (sys - priv->r_sram_phys));
++
++		if (priv->r_sram1_va && sys >= priv->r_sram1_phys &&
++		    (sys + len) <= (priv->r_sram1_phys + priv->r_sram1_size))
++			return (__force void *)(priv->r_sram1_va + (sys - priv->r_sram1_phys));
++
++		if (priv->dram_va && sys >= priv->dram_phys &&
++		    (sys + len) <= (priv->dram_phys + priv->dram_size))
++			return (__force void *)(priv->dram_va + (sys - priv->dram_phys));
++
++		if (priv->trace_va && sys >= priv->trace_phys &&
++		    (sys + len) <= (priv->trace_phys + priv->trace_size))
++			return (__force void *)(priv->trace_va + (sys - priv->trace_phys));
++	}
++
++	/*
++	 * 2. Device Tree Memory Regions (Trace buffer, DRAM carveout, or
++	 * dynamically-assigned SRAM regions whose host PA is supplied via DT).
++	 */
++	if (priv->trace_va && da >= priv->trace_phys &&
++	    (da + len) <= (priv->trace_phys + priv->trace_size)) {
++		if (is_iomem)
++			*is_iomem = false;
++		return (__force void *)(priv->trace_va + (da - priv->trace_phys));
++	}
++
++	if (priv->dram_va && da >= priv->dram_phys &&
++	    (da + len) <= (priv->dram_phys + priv->dram_size)) {
++		if (is_iomem)
++			*is_iomem = false;
++		return (__force void *)(priv->dram_va + (da - priv->dram_phys));
++	}
++
++	if (priv->r_sram_va && da >= priv->r_sram_phys &&
++	    (da + len) <= (priv->r_sram_phys + priv->r_sram_size)) {
++		if (is_iomem)
++			*is_iomem = true;
++		return (__force void *)(priv->r_sram_va + (da - priv->r_sram_phys));
++	}
++
++	if (priv->r_sram1_va && da >= priv->r_sram1_phys &&
++	    (da + len) <= (priv->r_sram1_phys + priv->r_sram1_size)) {
++		if (is_iomem)
++			*is_iomem = true;
++		return (__force void *)(priv->r_sram1_va + (da - priv->r_sram1_phys));
++	}
++
++	/*
++	 * Return NULL to delegate all DRAM carveouts (vrings, buffers,
++	 * code/data placed in DDR) directly to the remoteproc core's
++	 * internal carveout table.
++	 */
++	return NULL;
++}
++
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sunxi_rproc_da_to_va);
++#endif
++
++static int sunxi_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
++{
++	int ret;
++
++	ret = rproc_elf_load_rsc_table(rproc, fw);
++	if (ret == -EINVAL) {
++		dev_dbg(rproc->dev.parent, "no resource table found in ELF\n");
++		return 0;
++	}
++	return ret;
++}
++
++const struct rproc_ops sunxi_rproc_ops = {
++	.prepare        = sunxi_rproc_prepare,
++	.unprepare      = sunxi_rproc_unprepare,
++	.start          = sunxi_rproc_start,
++	.stop           = sunxi_rproc_stop,
++	.kick           = sunxi_rproc_kick,
++	.da_to_va       = sunxi_rproc_da_to_va,
++	.get_boot_addr  = rproc_elf_get_boot_addr,
++	.load           = rproc_elf_load_segments,
++	.parse_fw       = sunxi_rproc_parse_fw,
++	.find_loaded_rsc_table = rproc_elf_find_loaded_rsc_table,
++	.sanity_check   = rproc_elf_sanity_check,
++	.coredump       = rproc_coredump,
++};
++
++#if IS_ENABLED(CONFIG_SUNXI_REMOTEPROC_KUNIT_TEST)
++EXPORT_SYMBOL_GPL(sunxi_rproc_ops);
++#endif
++
++static int sunxi_rproc_register_mem(struct platform_device *pdev, struct rproc *rproc)
++{
++	struct device *dev = &pdev->dev;
++	struct sunxi_rproc *priv = rproc->priv;
++	struct resource *res;
++
++	/* 1. Map Optional RISC-V CFG Block ("cfg") */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
++	if (res) {
++		priv->cfg_phys = res->start;
++		priv->cfg_va = devm_ioremap(dev, res->start, resource_size(res));
++		if (!priv->cfg_va)
++			dev_warn(dev, "failed to map 'cfg' registers\n");
++	}
++
++	/* 2. Map Dedicated RISC-V Local SRAM Space 0 ("r_sram" or "sram") */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "r_sram");
++	if (!res)
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram");
++	if (res) {
++		priv->r_sram_phys = res->start;
++		priv->r_sram_size = resource_size(res);
++		priv->r_sram_va = devm_ioremap_wc(dev, res->start, resource_size(res));
++		if (!priv->r_sram_va)
++			return -ENOMEM;
++	}
++
++	/* 3. Map Switchable RISC-V Local SRAM Space 1 ("r_sram1" / SRAMA3_2) - Optional */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "r_sram1");
++	if (res) {
++		priv->r_sram1_phys = res->start;
++		priv->r_sram1_size = resource_size(res);
++		priv->r_sram1_va = devm_ioremap_wc(dev, res->start, resource_size(res));
++		if (!priv->r_sram1_va)
++			dev_warn(dev, "failed to map 'r_sram1' resource\n");
++	}
++
++	/* 4. Map Remap Control Register ("remap" or "sram-for-cpux") - Optional */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "remap");
++	if (!res)
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "sram-for-cpux");
++	if (res) {
++		priv->remap_phys = res->start;
++		if (resource_size(res) > SUNXI_REMAP_CTRL_OFFSET &&
++		    IS_ALIGNED(res->start, PAGE_SIZE)) {
++			void __iomem *base = devm_ioremap(dev, res->start, resource_size(res));
++
++			if (base)
++				priv->remap_va = base + SUNXI_REMAP_CTRL_OFFSET;
++		} else {
++			priv->remap_va = devm_ioremap(dev, res->start, resource_size(res));
++		}
++		if (!priv->remap_va)
++			dev_warn(dev, "failed to map 'remap' register\n");
++	}
++
++	/* 4b. Map Boot DRAM Carveout (Resource "dram" if defined in reg) */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dram");
++	if (res) {
++		priv->dram_phys = res->start;
++		priv->dram_size = resource_size(res);
++		priv->dram_va = devm_memremap(dev, res->start, resource_size(res), MEMREMAP_WB);
++		if (!priv->dram_va)
++			priv->dram_va = (__force void *)devm_ioremap_wc(dev, res->start,
++									resource_size(res));
++		if (!priv->dram_va)
++			dev_warn(dev, "failed to map 'dram' resource\n");
++	}
++
++	dev_info(dev, "Memory resources: r_sram=%s, r_sram1=%s, remap=%s, cfg=%s, dram=%s\n",
++		 priv->r_sram_va ? "yes" : "no",
++		 priv->r_sram1_va ? "yes" : "no",
++		 priv->remap_va ? "yes" : "no",
++		 priv->cfg_va ? "yes" : "no",
++		 priv->dram_va ? "yes" : "no");
++
++	/* 5. Map Trace Buffer (Resource "trace" if defined in reg) */
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "trace");
++	if (res) {
++		priv->trace_phys = res->start;
++		priv->trace_size = resource_size(res);
++		priv->trace_va = devm_memremap(dev, res->start, resource_size(res), MEMREMAP_WB);
++		if (!priv->trace_va)
++			priv->trace_va = (__force void *)devm_ioremap_wc(dev, res->start,
++									 resource_size(res));
++		dev_info(dev, "mapped 'trace' mmio resource %pa+%zu\n",
++			 &priv->trace_phys, priv->trace_size);
++	}
++
++	return 0;
++}
++
++static int sunxi_rproc_parse_memory_regions(struct rproc *rproc)
++{
++	struct device *dev = rproc->dev.parent;
++	struct device_node *np = dev->of_node;
++	struct sunxi_rproc *priv = rproc->priv;
++	int num_rmems;
++	int i;
++
++	if (!np)
++		return 0;
++
++	num_rmems = of_count_phandle_with_args(np, "memory-region", NULL);
++	if (num_rmems <= 0)
++		return 0;
++
++	/* Bind default DMA pool for dynamic allocations (e.g. vdev0 vrings/buffers) */
++	if (of_reserved_mem_device_init(dev) == 0)
++		priv->has_reserved_mem = true;
++	else
++		dev_dbg(dev, "no dedicated DMA pool assigned from reserved-memory\n");
++
++	/* Register all reserved-memory regions as formal remoteproc carveouts */
++	for (i = 0; i < num_rmems; i++) {
++		struct device_node *rmem_np;
++		struct resource res;
++		const char *name = NULL;
++		struct rproc_mem_entry *mem;
++		void *va;
++
++		rmem_np = of_parse_phandle(np, "memory-region", i);
++		if (!rmem_np)
++			continue;
++
++		if (of_address_to_resource(rmem_np, 0, &res)) {
++			of_node_put(rmem_np);
++			continue;
++		}
++
++		of_property_read_string_index(np, "memory-region-names", i, &name);
++		if (!name)
++			name = rmem_np->name;
++
++		if (name && (strstr(name, "trace") || of_node_name_eq(rmem_np, "trace"))) {
++			priv->trace_phys = res.start;
++			priv->trace_size = resource_size(&res);
++			priv->trace_va = devm_memremap(dev, res.start, resource_size(&res),
++						       MEMREMAP_WB);
++			if (!priv->trace_va)
++				priv->trace_va = (__force void *)
++					devm_ioremap_wc(dev, res.start, resource_size(&res));
++			dev_info(dev, "registered trace carveout %pa+%zu (%s)\n",
++				 &priv->trace_phys, priv->trace_size, name);
++		} else if (name && (strstr(name, "dram") || strstr(name, "vram"))) {
++			priv->dram_phys = res.start;
++			priv->dram_size = resource_size(&res);
++			priv->dram_va = devm_memremap(dev, res.start, resource_size(&res),
++						      MEMREMAP_WB);
++			if (!priv->dram_va)
++				priv->dram_va = (__force void *)
++					devm_ioremap_wc(dev, res.start, resource_size(&res));
++			dev_info(dev, "registered dram carveout %pa+%zu (%s)\n",
++				 &priv->dram_phys, priv->dram_size, name);
++		}
++
++		/* Reuse existing SRAM mapping if region overlaps, else ioremap */
++		if (priv->r_sram1_va && res.start == priv->r_sram1_phys)
++			va = (__force void *)priv->r_sram1_va;
++		else if (priv->r_sram_va && res.start == priv->r_sram_phys)
++			va = (__force void *)priv->r_sram_va;
++		else
++			va = (__force void *)devm_ioremap_wc(dev, res.start, resource_size(&res));
++
++		if (va) {
++			mem = rproc_mem_entry_init(dev, va, (dma_addr_t)res.start,
++						   resource_size(&res), (u32)res.start,
++						   NULL, NULL, "%s", name);
++			if (mem) {
++				mem->is_iomem = true;
++				rproc_add_carveout(rproc, mem);
++			}
++		}
++		of_node_put(rmem_np);
++	}
++
++	return 0;
++}
++
++static int sunxi_rproc_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	const char *fw_name = "riscv-firmware.elf";
++	struct sunxi_rproc *priv;
++	struct rproc *rproc;
++	int crash_irq;
++	int ret;
++
++	of_property_read_string(dev->of_node, "firmware-name", &fw_name);
++
++	rproc = devm_rproc_alloc(dev, dev_name(dev), &sunxi_rproc_ops,
++				 fw_name, sizeof(*priv));
++	if (!rproc) {
++		dev_err(dev, "failed to allocate rproc context\n");
++		return -ENOMEM;
++	}
++
++	ret = dma_set_coherent_mask(dev, DMA_BIT_MASK(32));
++	if (ret) {
++		dev_err(dev, "failed to set 32-bit DMA coherent mask: %d\n", ret);
++		return ret;
++	}
++
++	priv = rproc->priv;
++	priv->rproc = rproc;
++	priv->dev = dev;
++	priv->cfg = of_device_get_match_data(dev);
++	if (!priv->cfg)
++		priv->cfg = &sun55i_riscv_cfg;
++
++	/* 1. Common Clock Framework (CCF) Clocks */
++	priv->clk_parent = devm_clk_get_optional(dev, "parent");
++	if (IS_ERR(priv->clk_parent))
++		return dev_err_probe(dev, PTR_ERR(priv->clk_parent),
++				     "failed to get 'parent' clock\n");
++
++	priv->clk_bus = devm_clk_get_optional(dev, "bus");
++	if (IS_ERR(priv->clk_bus))
++		return dev_err_probe(dev, PTR_ERR(priv->clk_bus), "failed to get 'bus' clock\n");
++
++	priv->clk_core = devm_clk_get_optional(dev, "core");
++	if (IS_ERR(priv->clk_core))
++		return dev_err_probe(dev, PTR_ERR(priv->clk_core), "failed to get 'core' clock\n");
++
++	priv->clk_sram = devm_clk_get_optional(dev, "sram");
++	if (IS_ERR(priv->clk_sram))
++		return dev_err_probe(dev, PTR_ERR(priv->clk_sram), "failed to get 'sram' clock\n");
++
++	priv->clk_msgbox = devm_clk_get_optional(dev, "msgbox");
++	if (IS_ERR(priv->clk_msgbox))
++		return dev_err_probe(dev, PTR_ERR(priv->clk_msgbox),
++				     "failed to get 'msgbox' clock\n");
++
++	/* 2. Resets */
++	priv->rst_core = devm_reset_control_get_optional_exclusive(dev, "core");
++	if (IS_ERR(priv->rst_core))
++		return dev_err_probe(dev, PTR_ERR(priv->rst_core), "failed to get 'core' reset\n");
++
++	priv->rst_cfg = devm_reset_control_get_optional_exclusive(dev, "cfg");
++	if (IS_ERR(priv->rst_cfg))
++		return dev_err_probe(dev, PTR_ERR(priv->rst_cfg), "failed to get 'cfg' reset\n");
++
++	priv->rst_sram = devm_reset_control_get_optional_exclusive(dev, "sram");
++	if (IS_ERR(priv->rst_sram))
++		return dev_err_probe(dev, PTR_ERR(priv->rst_sram), "failed to get 'sram' reset\n");
++
++	priv->rst_msgbox = devm_reset_control_get_optional_exclusive(dev, "msgbox");
++	if (IS_ERR(priv->rst_msgbox))
++		return dev_err_probe(dev, PTR_ERR(priv->rst_msgbox),
++				     "failed to get 'msgbox' reset\n");
++
++	/* 3. Memory Windows (TCM, SRAM, CFG) */
++	ret = sunxi_rproc_register_mem(pdev, rproc);
++	if (ret)
++		return ret;
++
++	/* 4. Dynamic Reserved Memory Carveouts & DMA Pools from Device Tree */
++	ret = sunxi_rproc_parse_memory_regions(rproc);
++	if (ret)
++		return ret;
++
++	/* 5. Optional Hardware Crash Notification IRQ */
++	crash_irq = platform_get_irq_byname_optional(pdev, "crash");
++	if (crash_irq > 0) {
++		ret = devm_request_threaded_irq(dev, crash_irq, NULL,
++						sunxi_rproc_crash_handler,
++						IRQF_ONESHOT | IRQF_NO_AUTOEN,
++						"sunxi-rproc-crash",
++						priv);
++		if (ret) {
++			dev_warn(dev, "failed to request crash IRQ %d: %d\n", crash_irq, ret);
++		} else {
++			priv->crash_irq = crash_irq;
++			priv->crash_irq_enabled = false;
++		}
++	}
++
++	/* 6. Mailbox IPC Client */
++	INIT_WORK(&priv->vq_work, sunxi_rproc_vq_work);
++
++	priv->cl.dev = dev;
++	priv->cl.rx_callback = sunxi_rproc_mb_rx_callback;
++	priv->cl.tx_block = false;
++	priv->cl.knows_txdone = true;
++
++	/*
++	 * If the hardware mailbox is assigned to userspace (generic-uio) or
++	 * lacks #mbox-cells, run RemoteProc in standalone mode.
++	 */
++	if (dev->of_node) {
++		struct device_node *mb_node = of_parse_phandle(dev->of_node, "mboxes", 0);
++
++		if (mb_node) {
++			if (of_device_is_compatible(mb_node, "generic-uio") ||
++			    !of_property_read_bool(mb_node, "#mbox-cells")) {
++				dev_info(dev, "Mailbox assigned to UIO; running standalone mode\n");
++				of_node_put(mb_node);
++				goto skip_mbox;
++			}
++			of_node_put(mb_node);
++		}
++	}
++
++	priv->tx_chan = mbox_request_channel_byname(&priv->cl, "tx");
++	if (IS_ERR(priv->tx_chan)) {
++		if (PTR_ERR(priv->tx_chan) == -EPROBE_DEFER) {
++			ret = -EPROBE_DEFER;
++			goto err_mem_release;
++		}
++		dev_info(dev, "no tx mailbox channel configured; running standalone mode\n");
++		priv->tx_chan = NULL;
++	}
++
++	if (priv->tx_chan) {
++		priv->rx_chan = mbox_request_channel_byname(&priv->cl, "rx");
++		if (IS_ERR(priv->rx_chan)) {
++			if (PTR_ERR(priv->rx_chan) == -EPROBE_DEFER) {
++				ret = -EPROBE_DEFER;
++				goto err_mbox_release;
++			}
++			dev_info(dev, "no rx mailbox channel configured\n");
++			priv->rx_chan = NULL;
++		}
++	}
++
++skip_mbox:
++	platform_set_drvdata(pdev, rproc);
++
++	ret = rproc_add(rproc);
++	if (ret) {
++		dev_err(dev, "failed to register rproc device: %d\n", ret);
++		goto err_mbox_release;
++	}
++
++	dev_info(dev, "Allwinner %s remoteproc registered (%s)\n",
++		 priv->cfg ? priv->cfg->name : "remote", fw_name);
++	return 0;
++
++err_mbox_release:
++	cancel_work_sync(&priv->vq_work);
++	/*
++	 * mbox_request_channel_byname() can return ERR_PTR on failure.
++	 * Guard with IS_ERR() to avoid calling mbox_free_channel() with
++	 * an invalid pointer, which would panic on the first dereference.
++	 */
++	if (priv->rx_chan && !IS_ERR(priv->rx_chan))
++		mbox_free_channel(priv->rx_chan);
++	if (priv->tx_chan && !IS_ERR(priv->tx_chan))
++		mbox_free_channel(priv->tx_chan);
++err_mem_release:
++	if (priv->has_reserved_mem)
++		of_reserved_mem_device_release(dev);
++	return ret;
++}
++
++static void sunxi_rproc_remove(struct platform_device *pdev)
++{
++	struct rproc *rproc = platform_get_drvdata(pdev);
++	struct sunxi_rproc *priv = rproc->priv;
++
++	/*
++	 * Teardown order is critical:
++	 * 1. Disable crash IRQ first so late hardware crash alerts cannot
++	 *    race against rproc_del() or report crashes on a deleted device.
++	 * 2. rproc_del() stops the remote core and tears down VirtIO/vring,
++	 *    which stops the hardware from generating further mailbox IRQs.
++	 * 3. cancel_work_sync() drains any in-flight vq_work. Calling this
++	 *    before rproc_del() risks a late RX IRQ re-queuing work after
++	 *    cancel_work_sync() returns, executing on freed priv->rx_chan.
++	 * 4. Free mailbox channels only after the workqueue is fully drained.
++	 */
++	if (priv->crash_irq > 0 && priv->crash_irq_enabled) {
++		disable_irq(priv->crash_irq);
++		priv->crash_irq_enabled = false;
++	}
++
++	rproc_del(rproc);
++
++	if (priv->rx_chan) {
++		mbox_free_channel(priv->rx_chan);
++		priv->rx_chan = NULL;
++	}
++	if (priv->tx_chan) {
++		mbox_free_channel(priv->tx_chan);
++		priv->tx_chan = NULL;
++	}
++
++	cancel_work_sync(&priv->vq_work);
++
++	if (priv->has_reserved_mem)
++		of_reserved_mem_device_release(&pdev->dev);
++}
++
++static const struct of_device_id sunxi_rproc_of_match[] = {
++	/*
++	 * A523, A527, and T527 are the same silicon die (sun55i family).
++	 * Use a single compatible string per upstream DT binding policy.
++	 */
++	{ .compatible = "allwinner,sun55i-a523-rproc", .data = &sun55i_riscv_cfg },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, sunxi_rproc_of_match);
++
++static struct platform_driver sunxi_rproc_driver = {
++	.probe = sunxi_rproc_probe,
++	.remove = sunxi_rproc_remove,
++	.driver = {
++		.name = DRIVER_NAME,
++		.of_match_table = sunxi_rproc_of_match,
++	},
++};
++module_platform_driver(sunxi_rproc_driver);
++
++MODULE_AUTHOR("Allwinner Technology Co., Ltd.");
++MODULE_AUTHOR("Tim Michals <tcmichals@gmail.com>");
++MODULE_DESCRIPTION("Allwinner XuanTie E906/E907 RISC-V Remoteproc Driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/remoteproc/sunxi_rproc.h b/drivers/remoteproc/sunxi_rproc.h
+new file mode 100644
+index 000000000000..5b516b5ac956
+--- /dev/null
++++ b/drivers/remoteproc/sunxi_rproc.h
+@@ -0,0 +1,116 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#ifndef _SUNXI_RPROC_H_
++#define _SUNXI_RPROC_H_
++
++#include <linux/clk.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/mailbox_client.h>
++#include <linux/remoteproc.h>
++#include <linux/reset.h>
++
++/* XuanTie E906/E907 core-local view of dedicated SRAM Spaces (Allwinner A523/A527/T527) */
++#define E907_SRAM_C_DA			0x00020000UL
++#define E907_SRAM_SPACE0_DA		0x3ff80000UL
++#define E907_SRAM_SPACE0_DA_ALT		0x3ffc0000UL
++#define E907_SRAM_SPACE1_DA		0x40000000UL
++#define E907_SRAM_SPACE1_DA_ALT		0x40040000UL
++
++/* Allwinner A523/A527/T527 System Bus (Host Physical) Addresses & Window Sizes */
++#define SUN55I_SRAM_SPACE0_SYS		0x07280000UL
++#define SUN55I_SRAM_SPACE0_SIZE		0x00040000UL /* 256 KB */
++#define SUN55I_SRAM_SPACE1_SYS		0x072c0000UL
++#define SUN55I_SRAM_SPACE1_SIZE		0x00040000UL /* 256 KB */
++
++/* Address Translation Table flags */
++#define ATT_IOMEM			BIT(30)
++
++struct sunxi_rproc_att {
++	u64 da;
++	u64 sa;
++	size_t size;
++	int flags;
++};
++
++/* XuanTie CFG Block Register Offsets */
++#define E906_CTRL_REG			0x0000
++#define E906_STA_ADD_REG		0x0204
++
++/* Remap Control Register (offset 0x364 in PRCM_R_CCU / MCU_CCU) */
++#define SUNXI_REMAP_CTRL_OFFSET		0x0364
++/* Bit 0: 0 = local RAM for MCU; 1 = share for system */
++#define SUNXI_REMAP_MCU_RAM_BIT		BIT(0)
++/* Bit 1: 0 = SRAMA3_2 not shared; 1 = share for MCU_SYS */
++#define SUNXI_REMAP_SRAMA3_2_BIT	BIT(1)
++
++struct sunxi_rproc_cfg {
++	const char *name;
++	const struct sunxi_rproc_att *att;
++	size_t att_size;
++	bool has_remap_reg;
++	u32 boot_reg_offset;
++};
++
++extern const struct sunxi_rproc_cfg sun55i_riscv_cfg;
++
++struct sunxi_rproc {
++	struct rproc *rproc;
++	struct device *dev;
++	const struct sunxi_rproc_cfg *cfg;
++
++	/* CCU Clocks & Resets */
++	struct clk *clk_parent;
++	struct clk *clk_bus;
++	struct clk *clk_core;
++	struct clk *clk_sram;
++	struct clk *clk_msgbox;
++	struct reset_control *rst_cfg;
++	struct reset_control *rst_core;
++	struct reset_control *rst_sram;
++	struct reset_control *rst_msgbox;
++
++	/* Hardware Memory Windows (Dedicated SRAM, Switchable SRAM, Remap) */
++	void __iomem *cfg_va;
++	phys_addr_t cfg_phys;
++
++	void __iomem *remap_va;
++	phys_addr_t remap_phys;
++
++	void __iomem *r_sram_va;
++	phys_addr_t r_sram_phys;
++	size_t r_sram_size;
++
++	void __iomem *r_sram1_va;
++	phys_addr_t r_sram1_phys;
++	size_t r_sram1_size;
++
++	void *dram_va;
++	phys_addr_t dram_phys;
++	size_t dram_size;
++
++	/* Trace / DDR Reserved Memory Window */
++	void *trace_va;
++	phys_addr_t trace_phys;
++	size_t trace_size;
++
++	/* Reserved Memory & Mailbox State */
++	bool has_reserved_mem;
++	int crash_irq;
++	bool crash_irq_enabled;
++	struct mbox_client cl;
++	struct mbox_chan *tx_chan;
++	struct mbox_chan *rx_chan;
++	struct work_struct vq_work;
++	u32 kick_msg;
++};
++
++extern const struct rproc_ops sunxi_rproc_ops;
++
++int sunxi_rproc_prepare(struct rproc *rproc);
++int sunxi_rproc_unprepare(struct rproc *rproc);
++int sunxi_rproc_start(struct rproc *rproc);
++int sunxi_rproc_stop(struct rproc *rproc);
++void sunxi_rproc_kick(struct rproc *rproc, int vqid);
++void *sunxi_rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
++
++#endif /* _SUNXI_RPROC_H_ */
 -- 
 2.43.0
 
