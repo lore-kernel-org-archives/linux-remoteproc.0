@@ -1,290 +1,164 @@
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com [74.125.227.140])
+Received: from mail-pz2-f41.google.com (mail-pz2-f41.google.com [74.125.228.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5C630F92E
-	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2026 04:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308313AAF69
+	for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2026 07:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790657001; cv=none; b=YNyAyrdXUIbmCue61jF+GaDWMY2OxBOK2agJtpPBh5SPEhVoq16puA4RaHYNpdYWOU5dTrQu1E29tvucMW1CaFBXHYQ5VUxxfO63A4qzJo5yON1hcFx9WxPXYl0F7jA2r17nMrpi2OaPkAhMLBWEjjkw8Yc4WS26VVsVBVqn3yI=
+	t=1790668502; cv=none; b=djcRTUsyXUA/WJi85Z65B+KW/Iz7SzueZS2yM7U6GjnXURwgNW+NQtXlIY2/0p2q9Niu5p6gukFjMiS4VhQ1KRR+n0rZPWBUqhwHP3A36Ev6qHqoai5UOTWvV4cCOMELwxViM9P/zu/mr2VK70/Tk4jQ/TnazPNr8JN2cxbmxtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790657001; c=relaxed/simple;
-	bh=gN5HHle4qZT9OTM09PmZCe55bkttySvPLex8eGl9hQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kF2cJkMU5MCwpc2lrjnQZrO26OiESdzbEnqOH04JsQto42oTgZyK9+xpltajfvKw3+EArs2P2rAUT8ZBMbbk0irohrem8Bo/CTKtz076igEtACJkhl2lmWwS62MQ8ajVrWqFvgdIerfD5xbWQE7iFHALQy3VRhpCs9/prw8ZbjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ruAO6wbY; arc=none smtp.client-ip=74.125.227.140
+	s=arc-20240116; t=1790668502; c=relaxed/simple;
+	bh=dkbdgQo2iGH3uRrOoNgwHElz5EaD8vx3Q+1mc9s1RGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jZ6MNP4y4v7Y6GLkYlob7I6zVLHrQe755A8kBjMOcewWV+kRA9aj/taHxEsAOWeaR4H+zRBZL6ZOhjg67XL78ivRe4bWWCvwG74LINwrK4/K4oPBL1wusQ5Xqvt2Zi7/AgnM+PUT2QRUgB9MDdc4olBgX33rQcbz23p71p8HsJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpt85CGM; arc=none smtp.client-ip=74.125.228.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ruAO6wbY"
-Received: by mail-pj2-f12.google.com with SMTP id d9443c01a7336-2d747f0b25dso23878365ad.2
-        for <linux-remoteproc@vger.kernel.org>; Mon, 28 Sep 2026 21:43:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpt85CGM"
+Received: by mail-pz2-f41.google.com with SMTP id d2e1a72fcca58-8693af0d7c4so2230739b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2026 00:55:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790657000; x=1791261800; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=MWVCbqxGfrFo7fMMSA0VxRpuXW7FVh+O7YcQyCOsfok=;
-        b=ruAO6wbYvBmELa9aRK8UWLOml4h+cqCNq1iz81YZA3LRuzqK8UXnBbbEPyqk5UIpnR
-         VG8TpHqY3lDNdVtQaaUviUMiTC7dKCLoekFYlOrYsBS4xG2TbqcuUVFWWbojt942/dbQ
-         1HxoWRxjlUnxqXPjpAdK92cnmbj6/n65mlUjI2YhEyn3bh0N4eKwHqGD6Pl8raclEqs6
-         dx3thXVsuloQ9H+QtfGQV3O5/op0mlPeugCVK+1vi/ooT6M66us+EwVO0JJL089eoT2t
-         TX+I4O4dbw0Vpf84cEOWMIxcgyJePpbBhpI1i4q8lhPhqEyIZ0O7yptUXi+Yz8BjSVJd
-         MG7g==
+        d=gmail.com; s=20251104; t=1790668500; x=1791273300; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=6RJ/FxYuCVKMvGANdB0chLAu261gG0sMypkNzN9JtA4=;
+        b=cpt85CGMBdvsVBpYJyP4KyvvVECr7evBC1k709yYzMCp1dY2rDI/XPjfWSLxeTfeB5
+         v74b1+RdFvrpMYFZ2EsiURU4+JUd3GtF/EocoW7XL3zHh/IzxDoS8XYXD1g5ue7j4pW0
+         4DjwQM+i59gP5NIBvDqwoHzjlcI5MKj1jgX38NVu9uL1R7QhkKYhucf2JnUTO+X6bFr4
+         g8cH4KtW8DoTYPAD9VbvWZ+ZECmYkgH/4eShdFiG8D0dI/cpS9c+1gK1POtWxpQFcMM3
+         kFGv9uZv1qlrXvSE0rKm3TKVII1+g7xxspbiue48K5HkaI+C7nofaoAf2bSdrw7ixyv2
+         CvNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790657000; x=1791261800;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=MWVCbqxGfrFo7fMMSA0VxRpuXW7FVh+O7YcQyCOsfok=;
-        b=fqq7oBJmX+rVROdoQhDe/etIrFN/WzuCosOAXz9Z4kqrP43r4Gm/WKHCd2fIWCaIav
-         1DqcB2nKgq8IPbni0q2n7sQB7Gm3/BKjpK5kc/I1/jNviLaYtKSLTqEva7JZB+g8rMkr
-         2qVOUE4SE8VHk76hmEMQroyySa3c4K1QMQr9dPTgS7QboVLmFWS6sazJigZ2gVCD5ch1
-         KjyT8LjyEC4nzId/XXggGYJSdupMEJWUzKqIApEyKl6wrQL6mwFImp+4mfpwkkRH5618
-         g5mngPZTD7pXExLfBanoyM1+LuUdEHwyCswhPp5EsdRwx0c9DXlFsZz73eHCRLE9TWCx
-         bh4w==
-X-Forwarded-Encrypted: i=1; AKwUvBxYximsqU6A7dtE6M4CHB0S9m5Hf+5X4rpVVSEqZn2YDzg0Uy3MS1ys7+ZETQG7rSpPs8A2Xam7UEOdVuFX+LdG@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ9zEqaUrTaFGipQ5x0QSBdud5bHMDh8/R+PF3ug6NNyVU5dPda
-	fd5+I7T+o9c2IHb1Ith75kJwhtSApa+7mas0rERgJ5TL2oBL17MMZCHUbZDQm1Y6
-X-Gm-Gg: AYBFou3tFrHMVqjHgxpdrN/Qo/JZx7f7RN7HkKMIdv2AbQq4WGIICgVZCmaY7S/uIqV
-	+rd98xWz4yXRCxiewQFOGN1CbFQhDb7JRAGzdsGNiiCcmRaxJNAF9ru3kDVm70TCYy0Lr68L88R
-	yFCYLKXmzTiRvzBEX+0IMIvZgeUuKo4juBHfjwaXnnQ0YjjHXjZ5R327T8BUV9CtsQj3t7lyP52
-	pc94cmPQAhVCfDgQJBBrF760liaiMA0CJNVeRk/T3Xm29tbzRMgvjkL4Ev96QUTntd5KuOUiVaP
-	ncls2/hRRLIzEfWaeSc3ZhJ+JXDW9G89/oFIctdhU/RUEuco663x0mSuXpnr5eHpDyOaRQ1g4D3
-	JfeLh4v1iV64aDkIfro/xYMW5Oi0g3OcnqIk0EBFBI/FXjDqKonT68ft8RQ2R/Iw+tZ019gH2Uw
-	JczHI7MfoM01JmXzUQJU7w5+6eHm1Gg7Mj8ZDqTbvgHv8qqiKYXDfxICtM2PBoWRGMxHXM5NqG7
-	FRo7Vt6Ufxki8RbcNMn6Wnet5BP
-X-Received: by 2002:a17:902:f60d:b0:2dd:c054:1983 with SMTP id d9443c01a7336-2df7e11e305mr117805645ad.40.1790656999583;
-        Mon, 28 Sep 2026 21:43:19 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1790668500; x=1791273300;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=6RJ/FxYuCVKMvGANdB0chLAu261gG0sMypkNzN9JtA4=;
+        b=ttXIyHY/8S5SD3WqsX7eF4u6PDb/yX0836p0Ohze+pSBT6amaLrDc0wGpAncGgYi6R
+         JdcYn4cRPVw58TZtNMrs3Ro8Ao7Yaa/ZkQHF6WZjjdxZyXjeUQojEyH76GmxcVSc9tOh
+         cmi1Gd6y7EJfBpyuzGfLpzQmOT9n9HNpHf7ADL9EBS7aB/bD1ZqNKPsukV6gNl6r1iGO
+         Q76Sslpp8gs5V7UHWPLszdqgO14/AWwX/1NHk3a8KpbYkpE7yC7ZgSxD8tSB1nN6Cs85
+         K5tP8Y77yiaG8neM+7wEbETl1pFnx3X40GWNWhwJZogvJWtp0TtDtXw0rlizDufLjHZe
+         pX6Q==
+X-Gm-Message-State: AFuF++khTp2MZPt/vgejN4gK4mD/Z8mHti8PD/3Z1BjDYhUNe87hM2/D
+	GkTZV/32Te/WXYrxs7APH2KLc/+2Ci5Ce+DdYZI9NFEtQZ7RuqK8V8+K
+X-Gm-Gg: AYBFou0CBHPikKFpvYOCD9kJJ1uc9+tyGpFXGxS1GNZEtD8nHHbWg21Y3yrJ7Q4C4Yb
+	Y9ZWWM7XhVj6rF5/A4zHfb0AV2gLQVTGJCYSh6fjdH0tQ34ti4A9A1/zSbIujGPEGat/SpthuuV
+	t1wctv2+h57kDRc6MJW9fz/SVnrbYCzGfcoCGjBEzf2F7eGE6/GDjtmeEyPJOlRLVh8/m2d8WGA
+	nrCr2Xd4ktJ9QPyc7ayFO9rPcMdvAKRzBNqi20t2HuRU7X1Smpb18P5w0F091R1w1Gk9sn/XgjX
+	79zAe02HeWxQrh43/ThF0iSbQzFtvzFHoMrR5vuoSNVEFDaZG/ki07Yx8nPkJxQ3OWBqvpGJxQq
+	kGmT0jcVCUB67O4MLRURXbv/+hUbEKQJKJKdR3PlQGIMQHhc19Pj09g2VPWoU1UQnpm0hEtTiqc
+	ijlzlhKQ3DJqXVuJOSQxhahAE24/O+/dTDyuEvj2I/dYTIkUVWQoEfAI5cs5vvwJbQVP5tC9opB
+	6qoCV6HArtQTgXVeA==
+X-Received: by 2002:a05:6a00:4514:b0:885:8472:16f2 with SMTP id d2e1a72fcca58-8858472238cmr1322638b3a.50.1790668500298;
+        Tue, 29 Sep 2026 00:55:00 -0700 (PDT)
 Received: from embedsky001.tail6d6b2f.ts.net ([183.12.106.39])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e2c9d06766sm2213975ad.54.2026.09.28.21.43.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-885e22ee338sm351772b3a.45.2026.09.29.00.54.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Sep 2026 21:43:19 -0700 (PDT)
-Date: Tue, 29 Sep 2026 12:43:12 +0800
+        Tue, 29 Sep 2026 00:54:59 -0700 (PDT)
 From: Yonghao Zhang <hyz3367@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: core: Fetch the auto-boot firmware only once
-Message-ID: <20260929044312.kkqnizsdtg2axg7c@embedsky001.tail6d6b2f.ts.net>
-References: <20260923025855.2523147-1-hyz3367@gmail.com>
- <arqlFtvlN2LI6cT2@p14s>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yonghao Zhang <hyz3367@gmail.com>
+Subject: [PATCH 0/4] remoteproc: core: Fix the error unwind paths
+Date: Tue, 29 Sep 2026 15:54:49 +0800
+Message-Id: <20260929075453.2324597-1-hyz3367@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <arqlFtvlN2LI6cT2@p14s>
+Content-Transfer-Encoding: 8bit
 
-Hi Mathieu,
+The remoteproc core unwinds failed boots, failed attaches and failed
+recoveries in a handful of places, and those paths have drifted over
+the years: an unconditional stop() here, a missing cleanup there, a
+reset value a running remote processor could misread.  This series
+fixes four of them.  The success paths are untouched, and no in-tree
+driver changes behaviour when nothing fails.
 
-Thanks for the review.
+The single-sided ops configuration that two of the patches guard
+against is not hypothetical.  Version 9 of the TI k3 refactor series
+briefly introduced it [1]: ti_k3_dsp registered in IPC-only mode
+with start() kept and stop() cleared, on the reasoning that
+rproc_attach() never invokes start().  The shape sat on the list for
+a month before the rework that finally landed removed the ops
+overrides altogether (commit 41d746b3423a ("remoteproc: k3-dsp: Don't
+override rproc ops in IPC-only mode")).  The point stands: nothing in
+the core would have caught the intermediate version, and a driver
+sent today with the same single-sided ops would pass rproc_validate()
+just the same.
 
-On Mon, Sep 28, 2026 at 11:34:14AM -0600, Mathieu Poirier wrote:
-> Good day,
-> 
-> On Wed, Sep 23, 2026 at 10:58:55AM +0800, Yonghao Zhang wrote:
-> > Auto-boot for an always-on remote processor registers an asynchronous
-> > request_firmware_nowait() whose callback discards the fetched image
-> 
-> The callback function is rproc_auto_boot_callback() but I don't see where the
-> image fetched by request_firmware_nowait() is discarded.
+Patch 3 mostly benefits the attach-on-recovery users (imx_rproc when
+the Mcore resource is owned by another partition, xlnx_r5 when the
+RPU is already running firmware): since attach recovery was introduced
+(commit ba194232edc0 ("remoteproc: Support attach recovery after rproc
+crash")), a failed re-attach was unwound with an unconditional
+ops->stop() -- powering off a processor which, per the feature's own
+contract, "does not need help from Linux to recover... Linux just needs
+to attach", and which zynqmp_r5_rproc_stop() would additionally flip out
+of attach recovery mode by clearing the feature bit.  With the unwind
+detaching instead, the processor keeps running under its original owner
+and the next attempt attaches again; attach()/detach() stay paired
+one-to-one with the attach() calls that succeeded.
 
-It is the release_firmware(fw) called at the end of this callback.
-The image fetched by request_firmware_nowait() is never consumed:
-rproc_boot() doesn't take it as an argument and fetches it's own copy
-with a synchronous request_firmware(). It is that second copy which
-rproc_fw_boot() parses and which is release at the end of rproc_boot().
-The asynchronous copy is only ever touched by the final
-release_firmware(fw) -- fetched, never read, freed.
+ - 1/4: rproc_free_vring() writes FW_RSC_ADDR_ANY rather than 0 into
+   a freed vring entry, for the callers that reach it while the
+   remote processor is running and the reset lands in the installed
+   resource table.
+ - 2/4: rproc_start() no longer calls stop() unguarded when it
+   unrolls a failed subdevice registration.
+ - 3/4: __rproc_attach() rolls a failed attach back with detach()
+   when available, keeping the resource table accounting and the
+   state consistent, instead of unconditionally stopping a processor
+   that was started by another entity.
+ - 4/4: a failed recovery releases the resources of the boot it was
+   trying to restore and voids the power count, which nothing else
+   can drain once the processor is offline or detached.
 
-"Discarded" in the commit message refers to exactly that. I can send
-a v2 that names this release_firmware() explicitly in the first
-paragraph if you want the message to be verifiable at a glance.
+Testing: on an Allwinner T153 (sun8iw22) with an E907 remote core,
+driven by an out-of-tree platform driver for the Allwinner remoteproc
+hardware.
 
-Thanks,
-Yonghao
+The error paths of patches 1 and 3 were hit on this hardware rather
+than constructed.  During development, a subdevice registration
+failure during rproc_attach(), unwound by an intermediate version
+that called detach() without the resource table reset, left the
+freed vring entries at da 0 in the installed table: the next
+rproc_attach() failed in rproc_check_carveout_da(), called from
+rproc_alloc_vring(), with "Registered carveout doesn't fit da request"
+That trace motivated the reset bookkeeping of patch 3 and the
+FW_RSC_ADDR_ANY reset value of patch 1; with the series applied, a
+failed attach can simply be retried.
 
-> 
-> Otherwise I agree with this patch.
-> 
-> Thanks,
-> Mathieu
-> 
-> > and calls rproc_boot().  rproc_boot() then fetches the very same image
-> > again with a synchronous request_firmware(), so every auto-boot reads
-> > the firmware image twice and allocates the buffer twice; on kernels
-> > with the sysfs fallback enabled, the uevent round-trip is repeated
-> > as well.
-> > 
-> > The asynchronous request exists only so that rproc_add() does not
-> > block on the filesystem read; the image it fetches is never used.
-> > The core already defers rproc_boot() to a worker for detached
-> > processors (attach_work).  Reuse that worker for offline processors
-> > too and drop the asynchronous firmware request: rproc_boot() fetches
-> > the image exactly once and dispatches between a firmware boot and
-> > an attach based on the proccessor state.  The work is renamed to
-> > boot_work to match its widened role.
-> > 
-> > commit 400e64df6b23 ("remoteproc: add framework for controlling remote
-> > processors") noted back in 2011 that "we must wait until it completes
-> > before we try to unregister the device".  rproc_del() now does exactly
-> > that: it waits for the boot work with cancel_work_sync(), which also
-> > closes the theoretical window in which a pending attach work could
-> > outlive the rproc instance.
-> > 
-> > The changed fallback behaviour only matters for legacy
-> > configurations.  udev dropped its userspace firmware loader back in
-> > 2014, as recorded in
-> > Documentation/driver-api/firmware/fallback-mechanisms.rst, and the
-> > kernel has documented since commit 02c399306826 ("firmware_loader:
-> > enhance Kconfig documentation over FW_LOADER") that "Linux no longer
-> > relies on or uses a fallback mechanism in userspace".  Auto-boot now
-> > uses the same synchronous fallback semantics as every other explicit
-> > boot source (sysfs, cdev).
-> > 
-> > Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 65 ++++++++--------------------
-> >  include/linux/remoteproc.h           |  4 +-
-> >  2 files changed, 21 insertions(+), 48 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index 263e12f022ea..f329dc478170 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1662,49 +1662,26 @@ static int rproc_attach(struct rproc *rproc)
-> >  }
-> >  
-> >  /*
-> > - * take a firmware and boot it up.
-> > - *
-> > - * Note: this function is called asynchronously upon registration of the
-> > - * remote processor (so we must wait until it completes before we try
-> > - * to unregister the device. one other option is just to use kref here,
-> > - * that might be cleaner).
-> > + * Boot or attach the remote processor in the background, on behalf of
-> > + * rproc_trigger_auto_boot(): rproc_add() runs in probe context and must
-> > + * not block while the firmware image is read from storage.  rproc_boot()
-> > + * dispatches on the processor state, so this covers both a firmware boot
-> > + * and an attach to a processor started by another entity.
-> > + *
-> > + * Note: rproc_del() waits for this work to complete with
-> > + * cancel_work_sync(), so the rproc instance remains valid for the
-> > + * entire lifetime of this function.
-> >   */
-> > -static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
-> > +static void rproc_boot_work(struct work_struct *work)
-> >  {
-> > -	struct rproc *rproc = context;
-> > +	struct rproc *rproc = container_of(work, struct rproc, boot_work);
-> >  
-> >  	rproc_boot(rproc);
-> > -
-> > -	release_firmware(fw);
-> >  }
-> >  
-> > -static void rproc_attach_work(struct work_struct *work)
-> > +static void rproc_trigger_auto_boot(struct rproc *rproc)
-> >  {
-> > -	struct rproc *rproc = container_of(work, struct rproc, attach_work);
-> > -
-> > -	rproc_boot(rproc);
-> > -}
-> > -
-> > -static int rproc_trigger_auto_boot(struct rproc *rproc)
-> > -{
-> > -	int ret;
-> > -
-> > -	if (rproc->state == RPROC_DETACHED) {
-> > -		schedule_work(&rproc->attach_work);
-> > -		return 0;
-> > -	}
-> > -
-> > -	/*
-> > -	 * We're initiating an asynchronous firmware loading, so we can
-> > -	 * be built-in kernel code, without hanging the boot process.
-> > -	 */
-> > -	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
-> > -				      rproc->firmware, &rproc->dev, GFP_KERNEL,
-> > -				      rproc, rproc_auto_boot_callback);
-> > -	if (ret < 0)
-> > -		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
-> > -
-> > -	return ret;
-> > +	schedule_work(&rproc->boot_work);
-> >  }
-> >  
-> >  static int rproc_stop(struct rproc *rproc, bool crashed)
-> > @@ -2348,11 +2325,8 @@ int rproc_add(struct rproc *rproc)
-> >  	rproc_create_debug_dir(rproc);
-> >  
-> >  	/* if rproc is marked always-on, request it to boot */
-> > -	if (rproc->auto_boot) {
-> > -		ret = rproc_trigger_auto_boot(rproc);
-> > -		if (ret < 0)
-> > -			goto rproc_remove_dev;
-> > -	}
-> > +	if (rproc->auto_boot)
-> > +		rproc_trigger_auto_boot(rproc);
-> >  
-> >  	/* expose to rproc_get_by_phandle users */
-> >  	mutex_lock(&rproc_list_mutex);
-> > @@ -2361,10 +2335,6 @@ int rproc_add(struct rproc *rproc)
-> >  
-> >  	return 0;
-> >  
-> > -rproc_remove_dev:
-> > -	cancel_work_sync(&rproc->crash_handler);
-> > -	rproc_delete_debug_dir(rproc);
-> > -	device_del(dev);
-> >  rproc_remove_cdev:
-> >  	rproc_char_device_remove(rproc);
-> >  	return ret;
-> > @@ -2552,7 +2522,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
-> >  	INIT_LIST_HEAD(&rproc->subdevs);
-> >  	INIT_LIST_HEAD(&rproc->dump_segments);
-> >  
-> > -	INIT_WORK(&rproc->attach_work, rproc_attach_work);
-> > +	INIT_WORK(&rproc->boot_work, rproc_boot_work);
-> >  	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
-> >  	spin_lock_init(&rproc->crash_handler_lock);
-> >  
-> > @@ -2630,6 +2600,9 @@ int rproc_del(struct rproc *rproc)
-> >  	if (cancel_work_sync(&rproc->crash_handler))
-> >  		pm_relax(rproc->dev.parent);
-> >  
-> > +	/* auto-boot may still be fetching firmware: wait for it here */
-> > +	cancel_work_sync(&rproc->boot_work);
-> > +
-> >  	__rproc_shutdown(rproc, true);
-> >  
-> >  	rproc_delete_debug_dir(rproc);
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index a44368737b39..d77e24539133 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -231,7 +231,7 @@ enum rproc_features {
-> >   * @subdevs: list of subdevices, to following the running state
-> >   * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
-> >   * @index: index of this rproc device
-> > - * @attach_work: workqueue for attaching rproc
-> > + * @boot_work: workqueue for booting rproc
-> >   * @crash_handler: workqueue for handling a crash
-> >   * @crash_handler_lock: serializes crash handler queueing and deletion
-> >   * @deleting: remoteproc deletion has begun
-> > @@ -277,7 +277,7 @@ struct rproc {
-> >  	struct list_head subdevs;
-> >  	struct idr notifyids;
-> >  	int index;
-> > -	struct work_struct attach_work;
-> > +	struct work_struct boot_work;
-> >  	struct work_struct crash_handler;
-> >  	spinlock_t crash_handler_lock;
-> >  	bool deleting;
-> > -- 
-> > 2.34.1
-> > 
+The failure path of patch 4 was exercised by renaming the firmware
+file once the processor was up and then crashing the remote core:
+recovery fails in request_firmware() as expected, and after the
+file is restored the next rproc_boot() performs a real new boot
+instead of silently returning success on the stale power count,
+with no "already associated to resource table" leftovers from the
+failed recovery.
+
+[1] [PATCH v9 17/26] remoteproc: k3: Refactor .start rproc ops into
+    common driver, 2025-03-17:
+    https://lore.kernel.org/all/20250317120622.1746415-18-b-padhi@ti.com/
+
+Yonghao Zhang (4):
+  remoteproc: core: Reset freed vring entries to FW_RSC_ADDR_ANY
+  remoteproc: core: Guard against a missing stop() in rproc_start()
+  remoteproc: core: Roll a failed attach back with detach() when
+    available
+  remoteproc: core: Clean up after a failed recovery
+
+ drivers/remoteproc/remoteproc_core.c | 144 +++++++++++++++++++++++----
+ 1 file changed, 127 insertions(+), 17 deletions(-)
+
+
+base-commit: 586a2fadadb160295a93e5d5d32db1a2558a4d3f
+-- 
+2.34.1
+
