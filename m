@@ -1,166 +1,149 @@
-Received: from mail-ed2-f33.google.com (mail-ed2-f33.google.com [74.125.228.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690A04F7CDE
-	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 15:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50924D1787;
+	Wed, 30 Sep 2026 15:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790781478; cv=none; b=AcsB3rWNj4VWCh/QRdzuITAuV9wNWZq99d5QU3nDFRUyMmGEqTX2HNjjIDQhI8BP9x/jcuSAeDQ3/H4nB4ZVPjP6wps6mim2B784qxUXx5edQGDxHk2YMefyvxKoX5XqEToax0ytRJ4Y2yQ89rLsHnm/N9HgvF3RNWOdHcsFGUQ=
+	t=1790783913; cv=none; b=FCX+nABzNWKSO2+2YQH2ZQikHMzBBQd7YMGvYTjVdjZsAT6QXP4uyUCK1SQJvxRzMptVsAaBc+YWK3AgYdhUK40cTkWcNzz2imYz05O6g+wt0aVjS1HdzK7R5jy1NtZnNtnnA00HRnhL2gJb8ni2rSIUk/2T/q0sJqleCD+NjzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790781478; c=relaxed/simple;
-	bh=uQgcjTanqpRbiFni0yHM5IL6li1Xtxu2ojp6ApqgDuE=;
+	s=arc-20240116; t=1790783913; c=relaxed/simple;
+	bh=7+uOAdwvRA5Phs71HOWvHd2WnABdLy2EzB8eI2nyFFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VEWsaISQNp3wsJG/4jbVVxqX/9rwucAHXBmZT3hx7gBu1ndB2H/iWrxXSYjlHkZ7Zx6Yww3QztdonDHlfeutNm9+JJBDIuETR+/y2Wa1Yfxkcp6yb8mdNO3uTAnI4YEACQ4UDuwZ0Cdvs+ELgj7tsfZD5koi9cCPdseaf5nGW2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hFfiljhe; arc=none smtp.client-ip=74.125.228.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqTI12H6q0H84KMyhlgT9gmEZn/iqjp61tDA5rFSJatvq8zU0nlK0U8uiX3Q5xqHh6PlSUnk8h6Yg1SDGRU91+5rrANOAeMjKSzexzdFe/2YegbpPcA8IjjdKnpkSeUCO9jwVR434AzJdX/lZ+enO2qW0fa6M9fnzZw9tD7hgak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=L2tfF9HC; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hFfiljhe"
-Received: by mail-ed2-f33.google.com with SMTP id 4fb4d7f45d1cf-6ac5ef2610aso2608612a12.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 08:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790781464; x=1791386264; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=RmXnhr9OmMiHHu4ZPDqUZWuFVaoLJmyXOyKcRvZyBZA=;
-        b=hFfiljhey0dlBlFqlHvDgbm1N+QR7BZe45jj4RyacbyL640QWYOXx3yt/ILPMyBH3/
-         jHDHk5QXgTVloN6aJDVdk6UK5hcSTSc4ZI+jEuzN0F+hfXKOvRwj15Ve27SInGEP7e/n
-         fEN+l7m6j6K9xfCsOfTosQxqMDMES416u+WzYFddZVXKNtn4TX1bQwv/TvFWUAuKI8BW
-         phQGVAT8LP99iofN3E1CyC9KRfsZ6ALAO0koEhnN+gUq9IkZdxC6Ni7d1rzA/CZ7yAUY
-         YjxjzpfqGP/A7+yQ9NVmruL7NXYjKW9BiL0LtBH9ox/IDi6yRmr09StpBUYtXCyk0olo
-         bv7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790781464; x=1791386264;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=RmXnhr9OmMiHHu4ZPDqUZWuFVaoLJmyXOyKcRvZyBZA=;
-        b=o7Z5bNBUwKZZ+w4b6+dlmQSWHfSZtt4Rw5e3monxR1O36l71lAD0imyeywf64Bq6I4
-         Pov4602UYp0B/A4NrOJiOlstSsdF00odYnZqFr6ALpse5AHdqVBKg/uXLl+7c3edQhnk
-         2w9Oqdss1LPYLZkpksQsKpe2eadc5WCadgGBgG2i8FqrOTMKkqjbzgsdvky0TPDuQFFu
-         /BWuZHzxmhTchdssoyGXyyxMh5/eGWbsqb3IpWOPNIZCVEhat0ZHXHiQySz4G1MGgcwZ
-         uj2cjX2SSIif6dERWXT0bWwUup0UUPTtUfsXyxDdPKpTjr3rfQha/JReSJQ+L6y3m8qc
-         OR8Q==
-X-Forwarded-Encrypted: i=1; AKwUvBzTgtJES+HSeeofzvjzATDRrgYNpt1SQYTJnytTcNzRLK86JfwWH1wsu0aMV3TXay63QJSRqREOQHJGS0D7WHHU@vger.kernel.org
-X-Gm-Message-State: AFq9FYICdvyTilWwViW6Z6jXFmo+5klDU5KHPv55wtdc4VS4m7FTabR4
-	Nf0IFrtB/btyrPidnasZjYzP67hcBT/G5WrcmU+bP5r0TBdnUIkMvF1VZb9yB8scjmY=
-X-Gm-Gg: AYBFou1PXIi0J7z6sGrKthjjRE43fCtJM2KqUdV+kUxDiOMBq5WxWqZjP680P7myjSM
-	MYWuQhGpGSqiAP17gdMuA7TPr4bg5XGAgwi70P7mqUGLUnvAhN6mj2jvK0Y7gKey5aQl0Oa/0iG
-	8LSjz67+Mw5wLOozQAgrY/2FYlph1XO70X8bY3GOysvPtpQQQ0bxWw+2GS+Zi+oRHzhwniVK9Pu
-	72F5IO1I454oE4biP9t/o/+H1UOjg3a9005PtfirPpQmsBFvcidoyJh7HRc8xYFO7YcytcLpvtN
-	mFXsLYb36OSJxXHnyhxSu0sHcqKS4DHvzcWEb2243SNDZPQU5HFqK9yy2IeNOeSLVZFWA0k8hi8
-	R1AF4w17PdSBynigIJ3f3tNkiTlgyw/R9Nl6hDk+KsVlYoE8BvzpLdmV266DjOeLs7DGkoy3yUx
-	2AQgFE2Ch9BnG6Jxp1enKYaCsGHArVf2H/K7p50INKRaIeMtQSdWnJI9aDhao9zlhw6JThmExV
-X-Received: by 2002:a05:6402:304b:b0:6ab:e30:c9a0 with SMTP id 4fb4d7f45d1cf-6ae19e365d2mr1038299a12.13.1790781464353;
-        Wed, 30 Sep 2026 08:17:44 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:f5b4:4d0e:70d:9fba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ae1558b289sm944038a12.15.2026.09.30.08.17.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 08:17:43 -0700 (PDT)
-Date: Wed, 30 Sep 2026 09:17:39 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Tanmay Shah <tanmay.shah@amd.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] remoteproc: xlnx: fix typecast warnings
-Message-ID: <ar0oE_M9sgEpJ0st@p14s>
-References: <20260828155846.2883035-1-tanmay.shah@amd.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L2tfF9HC"
+Received: from ideasonboard.com (unknown [93.65.100.155])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 34D4C34;
+	Wed, 30 Sep 2026 17:56:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1790783786;
+	bh=7+uOAdwvRA5Phs71HOWvHd2WnABdLy2EzB8eI2nyFFE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L2tfF9HC3qurjOKRXYDMqOKASmD+Fr11uViI6pruu4IK+X2gjb+Qrc0LPbo2ClC/i
+	 pQ50KvP2bVEDVqeebyd/BBPmVqkW68rD+oEjTdYgMuso89FKaU5zYqVN2gKEIaX8Kh
+	 049B+Gb1N/HvapsKch/NcZ4isnk/qWbGR2u6qN6Y=
+Date: Wed, 30 Sep 2026 17:58:14 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Paul Cercueil <paul@crapouillou.net>, 
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+	Linus Walleij <linusw@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Michal Simek <michal.simek@amd.com>, 
+	Daniel Scally <dan.scally@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Eddie James <eajames@linux.ibm.com>, 
+	Tiffany Lin <tiffany.lin@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, 
+	Yunfei Dong <yunfei.dong@mediatek.com>, Minghsiu Tsai <minghsiu.tsai@mediatek.com>, 
+	Houlong Wei <houlong.wei@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>, 
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Thierry Reding <thierry.reding@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Srinivas Kandagatla <srini@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ge Gordon <gordon.ge@bst.ai>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulfh@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
+	Bard Liao <yung-chuan.liao@linux.intel.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Peter Chen <peter.chen@cixtech.com>, Fugang Duan <fugang.duan@cixtech.com>, 
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>, BST Linux Kernel Upstream Group <bst-upstream@bstai.top>, 
+	Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, 
+	CIX Linux Kernel Upstream Group <cix-kernel-upstream@cixtech.com>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-aspeed@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-media@vger.kernel.org, openbmc@lists.ozlabs.org, linux-mediatek@lists.infradead.org, 
+	kernel@collabora.com, linux-tegra@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev, 
+	sound-open-firmware@alsa-project.org
+Subject: Re: [PATCH 21/42] media: arm: mali-c55: Use
+ devm_of_reserved_mem_device_init()
+Message-ID: <ar0xb9md8E76G5VI@zed>
+References: <20260703193855.110619-1-mukesh.ojha@oss.qualcomm.com>
+ <20260703193855.110619-22-mukesh.ojha@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260828155846.2883035-1-tanmay.shah@amd.com>
+In-Reply-To: <20260703193855.110619-22-mukesh.ojha@oss.qualcomm.com>
 
-On Fri, Aug 28, 2026 at 08:58:46AM -0700, Tanmay Shah wrote:
-> Fix following sparse warnings by using __force attribute:
-> 
-> sparse warnings: (new ones prefixed by >>)
->    drivers/remoteproc/xlnx_r5_remoteproc.c:571:20: sparse: sparse:
-> cast removes address space '__iomem' of expression
->    drivers/remoteproc/xlnx_r5_remoteproc.c:749:17: sparse: sparse:
-> cast removes address space '__iomem' of expression
->    drivers/remoteproc/xlnx_r5_remoteproc.c:773:24: sparse: sparse:
-> cast removes address space '__iomem' of expression
->    drivers/remoteproc/xlnx_r5_remoteproc.c:797:25: sparse: sparse:
-> cast removes address space '__iomem' of expression
-> 
-> >> drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse:
-> incorrect type in initializer (different address spaces) @@     expected
-> void *rsc_offset @@     got void [noderef] __iomem * @@
->    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:
-> expected void *rsc_offset
->    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:     got
-> void [noderef] __iomem *
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202608190009.uCbYi1Y5-lkp@intel.com/
-> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+Hi Mukesh
 
-I have applied this patch - apoligies for the delay, it got lost in the heap.
+On Sat, Jul 04, 2026 at 01:08:34AM +0530, Mukesh Ojha wrote:
+> Use the devres-managed devm_of_reserved_mem_device_init() instead of
+> the manual of_reserved_mem_device_init()/of_reserved_mem_device_release()
+> pair, letting the device resource manager handle cleanup automatically.
+>
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 
-Mathieu
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+I'll collect this single patch for the Mali-C55 PR for v7.4
 
 > ---
->  drivers/remoteproc/xlnx_r5_remoteproc.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> index c685bb5fa62c..f9cdd3c024dc 100644
-> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
-> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
-> @@ -568,7 +568,7 @@ static int tcm_mem_map(struct rproc *rproc,
->  		return -ENOMEM;
->  
->  	/* Update memory entry va */
-> -	mem->va = (void *)va;
-> +	mem->va = (__force void *)va;
->  
->  	/* clear TCMs */
->  	memset_io(va, 0, mem->len);
-> @@ -746,7 +746,7 @@ static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc
->  
->  	*size = r5_core->rsc_tbl_size;
->  
-> -	return (struct resource_table *)r5_core->rsc_tbl_va;
-> +	return (__force struct resource_table *)r5_core->rsc_tbl_va;
+>  drivers/media/platform/arm/mali-c55/mali-c55-core.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/media/platform/arm/mali-c55/mali-c55-core.c b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
+> index 94a389b3f833..afbec11f69f8 100644
+> --- a/drivers/media/platform/arm/mali-c55/mali-c55-core.c
+> +++ b/drivers/media/platform/arm/mali-c55/mali-c55-core.c
+> @@ -801,14 +801,12 @@ static int mali_c55_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return dev_err_probe(dev, ret, "failed to acquire resets\n");
+>
+> -	of_reserved_mem_device_init(dev);
+> +	devm_of_reserved_mem_device_init(dev);
+>  	vb2_dma_contig_set_max_seg_size(dev, UINT_MAX);
+>
+>  	ret = __mali_c55_power_on(mali_c55);
+> -	if (ret) {
+> -		dev_err_probe(dev, ret, "failed to power on\n");
+> -		goto err_release_mem;
+> -	}
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to power on\n");
+>
+>  	ret = mali_c55_check_hwcfg(mali_c55);
+>  	if (ret)
+> @@ -847,9 +845,6 @@ static int mali_c55_probe(struct platform_device *pdev)
+>  	kfree(mali_c55->context.registers);
+>  err_power_off:
+>  	__mali_c55_power_off(mali_c55);
+> -err_release_mem:
+> -	of_reserved_mem_device_release(dev);
+> -
+>  	return ret;
 >  }
->  
->  static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
-> @@ -770,7 +770,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->  		return -EINVAL;
+>
+> @@ -864,7 +859,6 @@ static void mali_c55_remove(struct platform_device *pdev)
 >  	}
->  
-> -	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
-> +	rsc_data_va = (__force struct rsc_tbl_data *)ioremap_wc(res_mem.start,
->  							sizeof(struct rsc_tbl_data));
->  	if (!rsc_data_va) {
->  		dev_err(dev, "failed to map resource table data address\n");
-> @@ -794,7 +794,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
->  		return -EINVAL;
->  	}
->  
-> -	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
-> +	rsc_tbl_addr = (__force struct resource_table *)r5_core->rsc_tbl_va;
->  
->  	/*
->  	 * As of now resource table version 1 is expected. Don't fail to attach
-> @@ -834,7 +834,7 @@ static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
->  				int offset, int avail)
->  {
->  	struct zynqmp_r5_core *r5_core = rproc->priv;
-> -	void *rsc_offset = (r5_core->rsc_tbl_va + offset);
-> +	void *rsc_offset = (__force void *)(r5_core->rsc_tbl_va + offset);
->  
->  	if (rsc_type != XLNX_RPROC_FW_CRASH_REPORT)
->  		return RSC_IGNORED;
-> 
-> base-commit: d4d61a4b0a52e8f3cdb3e1578602850a3452ec3e
-> -- 
-> 2.43.0
-> 
+>  	pm_runtime_disable(&pdev->dev);
+>  	kfree(mali_c55->context.registers);
+> -	of_reserved_mem_device_release(&pdev->dev);
+>  }
+>
+>  static const struct of_device_id mali_c55_of_match[] = {
+> --
+> 2.53.0
+>
