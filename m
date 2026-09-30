@@ -1,309 +1,187 @@
-Received: from mail-pj2-f39.google.com (mail-pj2-f39.google.com [74.125.227.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63DA39CD0F
-	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 07:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F1125B099
+	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 11:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790752706; cv=none; b=fTX432UEVrj7ILm6xLuOzvoOz7NwgsiLMM0F4SC9K6AMxsXI6ZmgGCdInixC04bhk7n5gHOD6O7HiuuLJOb/sdG5MMYX+hW1tO8qOauX+oFZWy1DJVitAEoT5ujDVejMR6bakRRPXuUgNPCF2enRvEkBZ5CuHk+kf2XC7aGRLb8=
+	t=1790768957; cv=none; b=qW7nr2uljLTjRqHLI5aM/ZnrwsYpKVBNPlqY1W8CMLY4bUs7uXNH4GjQuS//kIyIabHa7vYGPhsOzaX1oOGtMXbLwXyBsBW7wNgE/fBjdspiLeKNGwyIiCUB8YwvTd0TIKyNHqUQpNWkR59LiatOcE98qbE8BXI4DIGMMrs2dtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790752706; c=relaxed/simple;
-	bh=6wjP423QTF9B3utI0N0aSYizdz2qap+h7XWABKQTx3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g9Nk6GUP6ziaAJrY3y2SwmpY3erd7VhfS0tsfZMSTJp6jHaV+clVq1ZehwKMl1WGtSLkvUYeH2J2XibSSqAuV25f3JsRhKSxmDfyR/E80OrSHR058l7+Sroo7dO+5wF8tm9WLsUrz+3vSi/rDa8RcFMR58AYDcKLwKysk7xM2z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MH4kvZ6f; arc=none smtp.client-ip=74.125.227.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1790768957; c=relaxed/simple;
+	bh=6Hf8A/ibvYwSw2K6acFMvDfVvlwnZ2P8a7yJ3TSb5dg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OJMSJE3B3qKSRrvsqAOtKgmxfisd6RcVje+cpvf0eexB6k3sB+Mq54zy4oY+36ftjplsIzDz2WI/Wyj2T+wpvzBtjKVIEvqFjUxFklaK+bthkci4V+lHgusdnf0c3WpxWZkvZpOEX1OKF5z4sgARjFDsRBl2v8DRtsqf9lNyjEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DhDUGPbo; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CH3DLrPp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MH4kvZ6f"
-Received: by mail-pj2-f39.google.com with SMTP id d9443c01a7336-2e2d2bbcab2so4859575ad.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 00:18:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DhDUGPbo";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CH3DLrPp"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68UB8JXx2898174
+	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 11:49:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5Zu+NIHhBBeQIzNpCB+KAo
+	MZrGj5Ijoy9JyI8PUji8o=; b=DhDUGPboDAaFomNYC3akX7UGb0BaIytWe21LXC
+	HlDrCmBBIW+/Awz+dkbho7xmHAoJve8F9fiG/T5UiwsIF3mgYUvC9Jj19iWUh09g
+	2Gr3Qm5yKqnlNRLWqAHTrZEWhjp6p8rsAFSg8NylQX53xu+PkAf+Z/zI9Tv5uq0f
+	Y9+f1H6gs/w3uwm2nsEpc3nnFFzzvWa/b1/O6XJ8rwgm35eUQoYioF2VH0jExtaf
+	+jLSiJ5i9uyOsmjZD6VZw1vEkRuU/jW/AuEg7qb51eOODpsRclQVWkhXVWkNL0QM
+	7oKYmKx//FZHWstiJeMJpQ17n2bDOHtqYDDpgQBqi9RMT3eg==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h0tkn20vp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 11:49:15 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-cc435388657so6270290a12.3
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 04:49:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1790752704; x=1791357504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=L3CtCQSONkR2hFJ8XJZJB+FK0JQRnLp3oIZztRHfCoQ=;
-        b=MH4kvZ6fKDpXJbmniGUwwcWDxu4zzxsADMREMdbFdvm+dFsGZrc2kNyjXtBtPgf3FK
-         tsX3ZfcENh2lP4aF1NSgzciBqN2PYsmnB+6eHaIYMxKzjJNPrjf8jP112svCcqo9+igE
-         S1C7B56TQ/XKFltVPSQT3NpVyizTP+v1KCY9yOExabtUtVgOXwl1sQkPpWkbVJRz6vpp
-         iYVuaQq73pGHrDQcBzpA2zBNBmnd/LXwBvJC5NMIKuqgGlnrrtPBYgpEBLqY0PYo16wL
-         7b0o4AyWzDvcIQfkgAy4vgP6aWmV3V083wkAcjOrjyWSMTg5t6QiWO/Y4cDKFtCDsIHs
-         B8mA==
+        d=oss.qualcomm.com; s=google; t=1790768955; x=1791373755; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=5Zu+NIHhBBeQIzNpCB+KAoMZrGj5Ijoy9JyI8PUji8o=;
+        b=CH3DLrPpz2J3NevAuXV0AmOh/8xxe+ZB8G27jU1Kn09MPOQm7MUGj89FOL/vjNc/ku
+         loRtuoH9Tyw2oPPqNOM6spVB1DbxHWI4tiT0/uFC1f+aI+UG+hhAju59pXnxqRFZi1qf
+         AWuQJKqm2gaW2SQvVDKGzoGfAMuoRwbsU9k2zKzv4p8aM7UGTDzSm1199LIPHDRvQW6X
+         bmt3Xl523aaRTp6Bi3kuMReHmM5vC2rNyiUjnSkyYWRmhTf3IHSHYSCnAGCxexyKd4IH
+         BP4ZOTc9rEilJMCp6ebfaN+9e4KxPDy2i2HS6twDnbs1sqNJhkkVnmA3P1Wn3Yl1zP4H
+         d6Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790752704; x=1791357504;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=L3CtCQSONkR2hFJ8XJZJB+FK0JQRnLp3oIZztRHfCoQ=;
-        b=zfr+Dm0k3ul6ST2ycoCEoB1Tgp5F3z4rvtsoSp89YxHrBta+4B3djtR6JRE9fHKtOa
-         Fk3Tq3cWnMtoC1VoXjnq5NsMafVargiYnvUQRw/a5YHQfnoK0k+PYzsNdw++/fwt9PTY
-         uB/LDpr1/ppPCXKUK3bL68AJ4hkAj8y5tyDjA/2PZzI2s+fRYvlmWa6WZqe4VZpk7TUA
-         DEL9RtM105D/5dVTfgThi7QQLJWuTCu1M6wLuiUzQCe6BhoiBK0WdcChCbZ2mmWED1Y4
-         AbAJafU0WRbteZJ6cwUy92Et6I1RfzBvzrHXcx5rij+Yhawhl0ijZygT5+x45k0zyyei
-         70yQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwVDGD/7EXgN9xq1yPhyfhW8c2JIJj5USBy7eqmPVMP0pWEXOKngI/Z6weE5SAqsJF0vhmUDLn4CKkYUDbBCRHs@vger.kernel.org
-X-Gm-Message-State: AFq9FYL+DVxwIzLhZYKUG6XmecC6LYDpQQF3IFZxpq9qfYsIn1C+x5R1
-	0vGKNtUX7JTbCLdNG2+Ww4LwENLUEab7SRZP1VQ8Ukz0gr5BCAANfr7J
-X-Gm-Gg: AYBFou06C2fZ7WTiC7wmAHNMnBn1FQ30wtJoGSV1GesQPb/3HSP5OmdW8S6w7haWz1f
-	k3rrbdoCYa1AF3LcF0rgFtqAp1GK0SpfmkLJB3KBdYCV8/SMi39G1TgmpMzaMtZENLUUOWcsZxa
-	La+UOUGqdlzMuUt5mJ9f2v4izRvTVazcVc9KL9XJbrxsA2B5tXHN9nKC/NHtoC3jrnBZjtdWtVr
-	pNOhxhsmClnJSNwI1uDO17WTJ+Grsy8CLAcrDRT8FEyUSQmghoKiLlEAsUA+juKphW+MDKNrjCt
-	HMJ+9iJoh9ZphmOoWbVWzdVbU9et1CqRXgFHlEA64bQSQotUURcnIZNTHB6+OUncDPw19rLM2h7
-	l3chJMqomD2UkalHOFmBniAhP4uUfop8+TwnUGzilWcxNdTXXg+/+3WkOKnpOM1Lewvg8hdeF/9
-	jzSKRW5RmQtxVzsCVvAzQgxf3gFDA96wxxQjCgUdwLf6iOhiUXqQNbxSHX1SZGtBLAtZYZc5f4Y
-	KtZYR5t6fk1GIiBJQ==
-X-Received: by 2002:a17:903:2b06:b0:2e2:b624:54b7 with SMTP id d9443c01a7336-2e2e4b5afe6mr4769285ad.17.1790752703950;
-        Wed, 30 Sep 2026 00:18:23 -0700 (PDT)
-Received: from embedsky001.tail6d6b2f.ts.net ([183.12.106.39])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e2e5c38be1sm2384395ad.77.2026.09.30.00.18.22
+        d=1e100.net; s=20260707; t=1790768955; x=1791373755;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=5Zu+NIHhBBeQIzNpCB+KAoMZrGj5Ijoy9JyI8PUji8o=;
+        b=ve5w8mhSZhRa96A8FjZhqbXAG6jExhjVvN8HluHYZL52RFCSO2cgeXvOTu4uCRPvpT
+         uby1t4FTJPUWBE9W5wEY9uhblHvt5YYJJG/ZtMUePys24H+jrGOoc+3WPDQoQKM2OBDF
+         ljs6vEnoze0XMX1dDQkPXaFmPgKr0Gq893b+B6G54YC10/xB9e0SrqLS6ejdrGqHAcd/
+         kwtfG9Fl/FzjjWJq1Gq6y7kCjWAtimPXBjGU4AjQl+gQQuxvpVrCniBiagbjOa23k+8d
+         w4oyY5skgnKt73U+sZXXagZkjt4NIx8SFwekBJ+vJlh601pvyCZAUyL+xE43FP1sitEl
+         8TJg==
+X-Forwarded-Encrypted: i=1; AKwUvBz8ZzuYs5cd50v5UPMWCoRbHk40o0do9u2cHvs2rLwswzMYDaAwsw2MZa8cZRESDZxiF98Fdf50J7gd24CM/aoC@vger.kernel.org
+X-Gm-Message-State: AFuF++kkz2vaoNJbDaLdb30yEfXeBQw9g2uRJQQGvrEqiwgLyMRljtUV
+	U5q63DfgelrN/JzK3iwN4MmWye7YDyhnW5e+xQzcolLEHj5biOnbkkH83rYjZQpJ61SEJyaXrBz
+	rZ1nRHZmUm31R+UdZHYN0tbw0ViNeBsvnenZEBXZ5axbeeDMkCz2lp2kXT4Yxtnb0bRaexsEe
+X-Gm-Gg: AYBFou17wICoN2yTtGxGUWYsVYYu2gQVxvTDtFefjyQGn+1oTQpUU+6xOoIo9BGgCGc
+	ThBRLEafvJmX85mcr2zFHc3C/+xYHRNyGl04ZcRLPKWqGgZ/v//ip4T8TK96XjKzC4Iywf7Ym5H
+	Bjhj7ZAKqh4bDr6Q2Q1c9aSJeOHFmFVPQN/F2Bu0+lcang7AQ2cakPExtF6YScgtod4KzkVIBcN
+	CFNb751X52m3ZMap5thYQvmMjpUGTbroAZNjA4cOHkPDKNBC7Gwhm/NCaw6kVAv6phwVQRC0upq
+	dHrG9r4gUE917VR6NjuzmGqgLgyVLgTlT0TcmTxNFLrgmfSKVxem/nGOBXmdr+Kzw84beyc1Ahp
+	aOxF5Wskf6nPaOA==
+X-Received: by 2002:a05:6a20:9c86:b0:3de:137c:2bdb with SMTP id adf61e73a8af0-3de9ebc5c44mr1058461637.69.1790768955127;
+        Wed, 30 Sep 2026 04:49:15 -0700 (PDT)
+X-Received: by 2002:a05:6a20:9c86:b0:3de:137c:2bdb with SMTP id adf61e73a8af0-3de9ebc5c44mr1058443637.69.1790768954685;
+        Wed, 30 Sep 2026 04:49:14 -0700 (PDT)
+Received: from [10.213.101.118] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-887bc2bd404sm53163b3a.46.2026.09.30.04.49.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 00:18:23 -0700 (PDT)
-Date: Wed, 30 Sep 2026 15:18:19 +0800
-From: Yonghao Zhang <hyz3367@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: core: Fetch the auto-boot firmware only once
-Message-ID: <20260930071819.vse5i32snb744ay7@embedsky001.tail6d6b2f.ts.net>
-References: <20260923025855.2523147-1-hyz3367@gmail.com>
- <arqlFtvlN2LI6cT2@p14s>
- <20260929044312.kkqnizsdtg2axg7c@embedsky001.tail6d6b2f.ts.net>
- <CANLsYkx5VVWsmhaYfMe=gj7nO-8YpOknMvM7gKZ-xFEbGg=zMg@mail.gmail.com>
+        Wed, 30 Sep 2026 04:49:14 -0700 (PDT)
+From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+Subject: [PATCH v2 0/2] arm64: dts: qcom: shikra: Add EL2 overlay for EVK
+ variants
+Date: Wed, 30 Sep 2026 17:19:02 +0530
+Message-Id: <20260930-shikra-el2-v2-0-f0822be5aaee@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANLsYkx5VVWsmhaYfMe=gj7nO-8YpOknMvM7gKZ-xFEbGg=zMg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC73vGoC/22Myw6CMBBFf4XM2iF9RB6u/A/Doq2jTASqHSUaw
+ r9bWbu5ybnJOQsIJSaBQ7FAopmF45TB7AoIvZuuhHzODEaZSrW6Qen5lhzSYJBc01atbfbBBsj
+ CPdGF31vs1GXuWZ4xfbb2rH/v38ysUaOqvVe18c5ZfYwi5ePlhhDHscwD3bquX+XN6airAAAA
+X-Change-ID: 20260918-shikra-el2-ea8969385c3c
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Komal Bajaj <komal.bajaj@oss.qualcomm.com>,
+        Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>,
+        Abel Vesa <abel.vesa@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1790768950; l=1846;
+ i=komal.bajaj@oss.qualcomm.com; s=20250710; h=from:subject:message-id;
+ bh=6Hf8A/ibvYwSw2K6acFMvDfVvlwnZ2P8a7yJ3TSb5dg=;
+ b=8ey/RxiPhjOBes5cw13ricIfGhRA1qGBjR8Udpb5S5Z9myULY6o+RZ25Hfjk1uakhanS/vaHk
+ LnEim1kM+NQCtTA2toGL+2M4i0lyi4QEFEnhHqRs1QzYm2h2tCQqfJK
+X-Developer-Key: i=komal.bajaj@oss.qualcomm.com; a=ed25519;
+ pk=wKh8mgDh+ePUZ4IIvpBhQOqf16/KvuQHvSvHK20LXNU=
+X-Authority-Analysis: v=2.4 cv=CKy/zhrD c=1 sm=1 tr=0 ts=6abcf73b cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=_5sKuGRrJ7O-zHbQ9ngA:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-ORIG-GUID: 33FydR3CkRZunkERttzyKdFZ38Q8c2LK
+X-Proofpoint-GUID: 33FydR3CkRZunkERttzyKdFZ38Q8c2LK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTMwMDA0NyBTYWx0ZWRfX9nhMDNNZOrPk
+ nukdZV5NsFCLbmJrzkWebmecKevXCXOhFg3gyyzm02lnouLPbjkAj3djEKXe0GnJ4uJ3EKx6aX1
+ WfWTXHWZzsoW9wU1S/UO6aihKbmhDsc11E/+ztSuqLMTBBZe+9R19TxA7MUg8sNOk/+V8vz1886
+ vsG5ZegrH4zFCvXpPKSB8l1x97Vxiz0UeY3ch+ei5+YnaqnHbPxpRTs5n2JdvW0cxJyVVD+GcCM
+ zeKunqgcKpOTIyIbHYcHcX0PgDM9WpCY46MkVntj1PFEWTJyF8+d6o874/YQv1bkRUgEyfQok5f
+ 1uJeS/kyPczQ60sW++z+C4z1q7GcGTtguVGQTYor2OIORtvfBh6wtTZA1A+dWiZN1X/XqgVEeAI
+ yu1vxxY9mm3hRgZnPFmgyMN0ZNqAwxcu6EhQ5JY2dd0Gca+R4uuFod74bPRd1GNexVBnsIXVCD7
+ a2SyUIBbB+42znbjzcA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTMwMDA0NyBTYWx0ZWRfXwv6oa1DHKVEO
+ +f+WkNepaFMmv8uE3Pf4AkoX2Bcfs9IdreHjhYoTI3yM0Y3eHNQ0pQ1qbGYtlTdWIl4a6fDH8Zb
+ JCUzJEZfaNV1JozG5GIPRGxhbz6G6v4=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-30_02,2026-09-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1011
+ phishscore=0 spamscore=0 malwarescore=0 suspectscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609300047
 
-On Tue, Sep 29, 2026 at 09:06:35AM -0600, Mathieu Poirier wrote:
-> On Mon, 28 Sept 2026 at 22:43, Yonghao Zhang <hyz3367@gmail.com> wrote:
-> >
-> > Hi Mathieu,
-> >
-> > Thanks for the review.
-> >
-> > On Mon, Sep 28, 2026 at 11:34:14AM -0600, Mathieu Poirier wrote:
-> > > Good day,
-> > >
-> > > On Wed, Sep 23, 2026 at 10:58:55AM +0800, Yonghao Zhang wrote:
-> > > > Auto-boot for an always-on remote processor registers an asynchronous
-> > > > request_firmware_nowait() whose callback discards the fetched image
-> > >
-> > > The callback function is rproc_auto_boot_callback() but I don't see where the
-> > > image fetched by request_firmware_nowait() is discarded.
-> >
-> > It is the release_firmware(fw) called at the end of this callback.
-> 
-> Right, this is happening at the _end_ of the callback, but the
-> changelog says the firmware is discarded and then rproc_boot() called.
-> This is not accurate and needs to be fixed.
->
+All existing Shikra EVK board variants boot Linux under a hypervisor,
+which means Linux typically runs at EL1. For EL2 boot without the
+hypervisor, remote processor firmware IOMMU streams must be described in
+the DeviceTree consumed by Linux.
 
-The [PATCH v2] I sent earlier today carries a wrong In-Reply-To and
-won't show up in this thread on lore.  It is available here:
+Add a Shikra EL2-specific DT overlay and wire it up in the Makefile to
+produce -el2.dtb artifacts for the Shikra EVK variants alongside the
+regular dtbs.
 
-	https://lore.kernel.org/linux-remoteproc/20260930064144.645211-1-hyz3367@gmail.com/T/#u
+This series also relaxes the Qualcomm PAS remoteproc `iommus` item limit,
+needed for Shikra EL2 remoteproc SMMU mappings.
 
-Thanks,
-Yonghao
+Komal Bajaj (2):
+  dt-bindings: remoteproc: qcom: Relax PAS iommus item limit
+  arm64: dts: qcom: shikra: Add EL2 overlay for remoteproc SMMU mappings
 
-> > The image fetched by request_firmware_nowait() is never consumed:
-> > rproc_boot() doesn't take it as an argument and fetches it's own copy
-> > with a synchronous request_firmware(). It is that second copy which
-> > rproc_fw_boot() parses and which is release at the end of rproc_boot().
-> > The asynchronous copy is only ever touched by the final
-> > release_firmware(fw) -- fetched, never read, freed.
-> >
-> > "Discarded" in the commit message refers to exactly that. I can send
-> > a v2 that names this release_firmware() explicitly in the first
-> > paragraph if you want the message to be verifiable at a glance.
-> >
-> > Thanks,
-> > Yonghao
-> >
-> > >
-> > > Otherwise I agree with this patch.
-> > >
-> > > Thanks,
-> > > Mathieu
-> > >
-> > > > and calls rproc_boot().  rproc_boot() then fetches the very same image
-> > > > again with a synchronous request_firmware(), so every auto-boot reads
-> > > > the firmware image twice and allocates the buffer twice; on kernels
-> > > > with the sysfs fallback enabled, the uevent round-trip is repeated
-> > > > as well.
-> > > >
-> > > > The asynchronous request exists only so that rproc_add() does not
-> > > > block on the filesystem read; the image it fetches is never used.
-> > > > The core already defers rproc_boot() to a worker for detached
-> > > > processors (attach_work).  Reuse that worker for offline processors
-> > > > too and drop the asynchronous firmware request: rproc_boot() fetches
-> > > > the image exactly once and dispatches between a firmware boot and
-> > > > an attach based on the proccessor state.  The work is renamed to
-> > > > boot_work to match its widened role.
-> > > >
-> > > > commit 400e64df6b23 ("remoteproc: add framework for controlling remote
-> > > > processors") noted back in 2011 that "we must wait until it completes
-> > > > before we try to unregister the device".  rproc_del() now does exactly
-> > > > that: it waits for the boot work with cancel_work_sync(), which also
-> > > > closes the theoretical window in which a pending attach work could
-> > > > outlive the rproc instance.
-> > > >
-> > > > The changed fallback behaviour only matters for legacy
-> > > > configurations.  udev dropped its userspace firmware loader back in
-> > > > 2014, as recorded in
-> > > > Documentation/driver-api/firmware/fallback-mechanisms.rst, and the
-> > > > kernel has documented since commit 02c399306826 ("firmware_loader:
-> > > > enhance Kconfig documentation over FW_LOADER") that "Linux no longer
-> > > > relies on or uses a fallback mechanism in userspace".  Auto-boot now
-> > > > uses the same synchronous fallback semantics as every other explicit
-> > > > boot source (sysfs, cdev).
-> > > >
-> > > > Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
-> > > > ---
-> > > >  drivers/remoteproc/remoteproc_core.c | 65 ++++++++--------------------
-> > > >  include/linux/remoteproc.h           |  4 +-
-> > > >  2 files changed, 21 insertions(+), 48 deletions(-)
-> > > >
-> > > > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > > > index 263e12f022ea..f329dc478170 100644
-> > > > --- a/drivers/remoteproc/remoteproc_core.c
-> > > > +++ b/drivers/remoteproc/remoteproc_core.c
-> > > > @@ -1662,49 +1662,26 @@ static int rproc_attach(struct rproc *rproc)
-> > > >  }
-> > > >
-> > > >  /*
-> > > > - * take a firmware and boot it up.
-> > > > - *
-> > > > - * Note: this function is called asynchronously upon registration of the
-> > > > - * remote processor (so we must wait until it completes before we try
-> > > > - * to unregister the device. one other option is just to use kref here,
-> > > > - * that might be cleaner).
-> > > > + * Boot or attach the remote processor in the background, on behalf of
-> > > > + * rproc_trigger_auto_boot(): rproc_add() runs in probe context and must
-> > > > + * not block while the firmware image is read from storage.  rproc_boot()
-> > > > + * dispatches on the processor state, so this covers both a firmware boot
-> > > > + * and an attach to a processor started by another entity.
-> > > > + *
-> > > > + * Note: rproc_del() waits for this work to complete with
-> > > > + * cancel_work_sync(), so the rproc instance remains valid for the
-> > > > + * entire lifetime of this function.
-> > > >   */
-> > > > -static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
-> > > > +static void rproc_boot_work(struct work_struct *work)
-> > > >  {
-> > > > -   struct rproc *rproc = context;
-> > > > +   struct rproc *rproc = container_of(work, struct rproc, boot_work);
-> > > >
-> > > >     rproc_boot(rproc);
-> > > > -
-> > > > -   release_firmware(fw);
-> > > >  }
-> > > >
-> > > > -static void rproc_attach_work(struct work_struct *work)
-> > > > +static void rproc_trigger_auto_boot(struct rproc *rproc)
-> > > >  {
-> > > > -   struct rproc *rproc = container_of(work, struct rproc, attach_work);
-> > > > -
-> > > > -   rproc_boot(rproc);
-> > > > -}
-> > > > -
-> > > > -static int rproc_trigger_auto_boot(struct rproc *rproc)
-> > > > -{
-> > > > -   int ret;
-> > > > -
-> > > > -   if (rproc->state == RPROC_DETACHED) {
-> > > > -           schedule_work(&rproc->attach_work);
-> > > > -           return 0;
-> > > > -   }
-> > > > -
-> > > > -   /*
-> > > > -    * We're initiating an asynchronous firmware loading, so we can
-> > > > -    * be built-in kernel code, without hanging the boot process.
-> > > > -    */
-> > > > -   ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
-> > > > -                                 rproc->firmware, &rproc->dev, GFP_KERNEL,
-> > > > -                                 rproc, rproc_auto_boot_callback);
-> > > > -   if (ret < 0)
-> > > > -           dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
-> > > > -
-> > > > -   return ret;
-> > > > +   schedule_work(&rproc->boot_work);
-> > > >  }
-> > > >
-> > > >  static int rproc_stop(struct rproc *rproc, bool crashed)
-> > > > @@ -2348,11 +2325,8 @@ int rproc_add(struct rproc *rproc)
-> > > >     rproc_create_debug_dir(rproc);
-> > > >
-> > > >     /* if rproc is marked always-on, request it to boot */
-> > > > -   if (rproc->auto_boot) {
-> > > > -           ret = rproc_trigger_auto_boot(rproc);
-> > > > -           if (ret < 0)
-> > > > -                   goto rproc_remove_dev;
-> > > > -   }
-> > > > +   if (rproc->auto_boot)
-> > > > +           rproc_trigger_auto_boot(rproc);
-> > > >
-> > > >     /* expose to rproc_get_by_phandle users */
-> > > >     mutex_lock(&rproc_list_mutex);
-> > > > @@ -2361,10 +2335,6 @@ int rproc_add(struct rproc *rproc)
-> > > >
-> > > >     return 0;
-> > > >
-> > > > -rproc_remove_dev:
-> > > > -   cancel_work_sync(&rproc->crash_handler);
-> > > > -   rproc_delete_debug_dir(rproc);
-> > > > -   device_del(dev);
-> > > >  rproc_remove_cdev:
-> > > >     rproc_char_device_remove(rproc);
-> > > >     return ret;
-> > > > @@ -2552,7 +2522,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
-> > > >     INIT_LIST_HEAD(&rproc->subdevs);
-> > > >     INIT_LIST_HEAD(&rproc->dump_segments);
-> > > >
-> > > > -   INIT_WORK(&rproc->attach_work, rproc_attach_work);
-> > > > +   INIT_WORK(&rproc->boot_work, rproc_boot_work);
-> > > >     INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
-> > > >     spin_lock_init(&rproc->crash_handler_lock);
-> > > >
-> > > > @@ -2630,6 +2600,9 @@ int rproc_del(struct rproc *rproc)
-> > > >     if (cancel_work_sync(&rproc->crash_handler))
-> > > >             pm_relax(rproc->dev.parent);
-> > > >
-> > > > +   /* auto-boot may still be fetching firmware: wait for it here */
-> > > > +   cancel_work_sync(&rproc->boot_work);
-> > > > +
-> > > >     __rproc_shutdown(rproc, true);
-> > > >
-> > > >     rproc_delete_debug_dir(rproc);
-> > > > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > > > index a44368737b39..d77e24539133 100644
-> > > > --- a/include/linux/remoteproc.h
-> > > > +++ b/include/linux/remoteproc.h
-> > > > @@ -231,7 +231,7 @@ enum rproc_features {
-> > > >   * @subdevs: list of subdevices, to following the running state
-> > > >   * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
-> > > >   * @index: index of this rproc device
-> > > > - * @attach_work: workqueue for attaching rproc
-> > > > + * @boot_work: workqueue for booting rproc
-> > > >   * @crash_handler: workqueue for handling a crash
-> > > >   * @crash_handler_lock: serializes crash handler queueing and deletion
-> > > >   * @deleting: remoteproc deletion has begun
-> > > > @@ -277,7 +277,7 @@ struct rproc {
-> > > >     struct list_head subdevs;
-> > > >     struct idr notifyids;
-> > > >     int index;
-> > > > -   struct work_struct attach_work;
-> > > > +   struct work_struct boot_work;
-> > > >     struct work_struct crash_handler;
-> > > >     spinlock_t crash_handler_lock;
-> > > >     bool deleting;
-> > > > --
-> > > > 2.34.1
-> > > >
+ .../bindings/remoteproc/qcom,pas-common.yaml       |  3 ++-
+ arch/arm64/boot/dts/qcom/Makefile                  | 12 ++++++++++++
+ arch/arm64/boot/dts/qcom/shikra-el2.dtso           | 23 +++++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 1 deletion(-)
+
+Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+---
+Changes in v2:
+- Relax the Qualcomm PAS remoteproc `iommus` item limit, needed for Shikra EL2 remoteproc SMMU mappings.
+- Link to v1: https://lore.kernel.org/r/20260918-shikra-el2-v1-1-07bb072baa31@oss.qualcomm.com
+
+---
+Komal Bajaj (2):
+      dt-bindings: remoteproc: qcom: Relax PAS iommus item limit
+      arm64: dts: qcom: shikra: Add EL2 overlay for remoteproc SMMU mappings
+
+ .../bindings/remoteproc/qcom,pas-common.yaml       |  3 ++-
+ arch/arm64/boot/dts/qcom/Makefile                  | 12 +++++++++++
+ arch/arm64/boot/dts/qcom/shikra-el2.dtso           | 23 ++++++++++++++++++++++
+ 3 files changed, 37 insertions(+), 1 deletion(-)
+---
+base-commit: 6474fa070f2b8013b4b87350b775b8c3be6e8aac
+change-id: 20260918-shikra-el2-ea8969385c3c
+
+Best regards,
+-- 
+Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+
