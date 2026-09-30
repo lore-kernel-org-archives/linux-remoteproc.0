@@ -1,90 +1,76 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com [74.125.227.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0A136167E
-	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 02:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45EC3E49EB
+	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 06:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.227.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790734079; cv=none; b=b8inCl45MilHnvFm8SuR5mgEJUni6OtUoSqva0Jq3+v8d7/qN1BN5xLXD8q45nGiYs9Y0+39cd7JMqz+kZLwrXC18XZQHHObi1aqt3aOfSjLTxyGPyagslHFch9pjq+YYTET3tiWNqRMM8kPHx2YygsTCAh4CGxdtld6nO1zKmk=
+	t=1790750515; cv=none; b=QwZ2Eg8p36juVV5FH5SU1WV4zkhlUWhPnTTU+nRv0ilW2kxFS8WLC69Q7FE3JZgGIRUyEM6I1b4qpcNtb9xRpL0DuqmV5zsOLDxmUel/tMq/3ynKD50giKXViLcH+N+oYv3AquwwaijBilBb6EtYqZN/2QNCOIrtzzmgx0vtU+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790734079; c=relaxed/simple;
-	bh=j1Ni7tBKh1a7tkJJg9B48MG5RjW+DM36zVpSIvXS8uk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q8ZfyyB1ZU2xNspdGitj88qE3XyI1sPSPGZKkfUUhdRcMuzUQolb0kIjSZ78rrSDtBLd0LwuTsKWFQSvVFH9ZebOxIqTkJ7iqj3ySOytMkfEw72gkslghx5p5d+9Q4PKkkKB4cc9FrCcThBTlmjfJrp9xLT8UoSgmoC9SLxMzvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pewoM4yg; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SovKqDFO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1790750515; c=relaxed/simple;
+	bh=ZT4b1mTiSqoAVXHqmJ31DSLmQqQzVOTI/3bzySPQMHE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=S5g/Q2nLwoP9QlY0u8mou7wmwda29Mz+WMz0myA68duEEKYu0mA8t666dMGQ5G0dO21JUUQ3Grlmjb1n41znT21rVDr3MjceFXBRjK+avWtnB2PmHVQqQfo3iaxKCPacaLaV3vlOZW0i15Cq17rR2a8ukuyQdLqSVr4SH2nwjHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izv72nwD; arc=none smtp.client-ip=74.125.227.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pewoM4yg";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SovKqDFO"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 68TNProK1352973
-	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 02:07:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=WTItptXsNpsX0KmzqsHPB3FdHZtYdhRX31N
-	Ltm42Hns=; b=pewoM4ygPb/I45bHNgJYykTXzvNTWt5Zxt8UcyMTfJZFLWWii4Y
-	oy9gpfZC4P9ac3eBOQX6FHyvyrDt0yWJFMcme1L08sHeC9iwwAmmYQC7ICoNnk6x
-	ryLjo8MSNdnHfJJ+cTXVcewlrHfFMGjfwlvQXCBqmWr120zhRVPP+7Rbhi9rltgS
-	6M5YzNF2LePH3QR8swRYKPobgvPP6AlXrRY3Kk34qQimiOEshKlJ9hD/8EcssSsl
-	Hut64VYYhTI5Bn3Byd1f8JezYxuvYJKiP/HcmqE9xON9e3kEpuKH6+Tvn7AZ2h5v
-	OdmrxjLcAB2kAGoWpP76fwjIF5oUetxvS5g==
-Received: from mail-dy1-f197.google.com (mail-dy1-f197.google.com [74.125.82.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h0eswjtr2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 02:07:57 +0000 (GMT)
-Received: by mail-dy1-f197.google.com with SMTP id 5a478bee46e88-342138eeff2so1150891eec.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2026 19:07:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izv72nwD"
+Received: by mail-pj2-f43.google.com with SMTP id 98e67ed59e1d1-396ccc02279so2736173a91.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 29 Sep 2026 23:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1790734077; x=1791338877; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=WTItptXsNpsX0KmzqsHPB3FdHZtYdhRX31NLtm42Hns=;
-        b=SovKqDFOqsVsDY9adgUuKgA5CJ6JCoIpZfK7SVEowcVQdUZW9deMyLU1R17qsKRuM8
-         vYOthmDSe5e3eN66zolkr675EZqLTYln1hAKXPX4Pr7mlq7/FEoRIY7WcNTMI5fs7Wum
-         BWP+KOiK2RG3fT9BFYCUQvNeXgc9b5vEHGcnWQYh8iSWwdibhQlvcsC3GCGtp72E9ckU
-         21T0uuoHNTm+YCH7q3WpT3+74uOFDnfiL/22XqkWWQLpXjQ5BgQtVuQucYHugL4H16Ju
-         4IQOgqMJgMmuQmbjwS9ozpKxBJnOH9m85nnVI0WiQ4LenQXt0iZaEi9R+W6vZPTKZs5g
-         6s9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790734077; x=1791338877;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20251104; t=1790750513; x=1791355313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=WTItptXsNpsX0KmzqsHPB3FdHZtYdhRX31NLtm42Hns=;
-        b=zREUr8PQEBHj5Ps3rkrkErVCCqFmnaw1PX7yCwUp/yYT9LCPUSrAFXN02U+V9sVZf4
-         DsD10h+C8kKCEkeTSqr+FoSRdy45ch9zA8/tLVMNwsAL/HljYdziNORvQfNqGhI5ZSoA
-         LWp/RtjBIZQaFjjK8NYujnu6INcUeiBAyRzE5T0Y958cNO1MP1VBv2nv1PhgRnbPdK8Y
-         vtWX8Om5dZKp76bLGBkKFch4hKz9G0qWZDlNg6rf5DEgw4pY7OCHSAi07V9tqC+jpHy7
-         Ig/EXePkPzsLEkKumpbG0QtzjrV2Siqgq68LN0oNxfLsLucARUIqdOn8Mr2d7goBzk25
-         Z2Dw==
-X-Forwarded-Encrypted: i=1; AKwUvBwCvqBZmBjnxCXDnPE7xiz5nYKdR7TH2xve6QZTmw9OILBXOvVZvIuH64b3Lwiaefez1oPxzfjVlMprkLUqScjD@vger.kernel.org
-X-Gm-Message-State: AFq9FYKaaqCrYJ9Gs71I5yPVfBcL12QD7H/uFNH4uz+UKqY31lJjeKEI
-	+cYFu//Zhuz6kBP5HqcGVJjNs/EeSfDe/97XXoJR+5W4pofWppJuFArNdMBREUgn85cq1dAjX8o
-	Ak2QdnNDy9K9WSkgEEpqIARLussXLsuD7cLlMaRg5YddNtDAtv59dzrcl14fQVn8ThCZeWt9j
-X-Gm-Gg: AYBFou1ouOCOMh5VrzrlUIbyZptdJIPZS8dsJrJUTpgsjjGXY8U8NbiftnQsxvm0lqW
-	HbOqkN/+6q5AErgitA8wu7BX/PR6hbGI3PDBuioJK/x2AeLLav/6j+2B7yVvP04USF4g/f8tNFS
-	SyoSQ6Il/cydipii2mlK/25w2TRGO9as0oI2rr6TqsX1gMwrWc6MUUNCM8dOdCT+mngiQ1DTrtQ
-	jX2s5b3SHUf3Juc0zJwYXBm0wmowhvcSI7p1Y+82Xpmx43H+UhEZHdfi99/ErJsOi+l95UrVRjs
-	SZWiY6IWWd4FSNbpYc3fGH94oq+Yk/TEpr+ZouneWq5Q5x7+x9J6949cuodZmgc+sNOIEE9y9Nv
-	0X66vZV5efiUokudVu/L2iJvWpaBHN14gMU0AKwGw7H7qIpyrzIq2obLlES8=
-X-Received: by 2002:a05:7300:2143:b0:340:e422:fd3d with SMTP id 5a478bee46e88-34cdbad6906mr196173eec.17.1790734077112;
-        Tue, 29 Sep 2026 19:07:57 -0700 (PDT)
-X-Received: by 2002:a05:7300:2143:b0:340:e422:fd3d with SMTP id 5a478bee46e88-34cdbad6906mr196126eec.17.1790734076558;
-        Tue, 29 Sep 2026 19:07:56 -0700 (PDT)
-Received: from QCOM-aGQu4IUr3Y.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-34c386b6bd9sm2782812eec.16.2026.09.29.19.07.54
+        bh=s+x0l1pDtdlBXIcUINZg9WHh70Xa6FPgCY4I0Et1OKo=;
+        b=izv72nwDqUn9ZbOqQ/2IDBE0rI40wmtS5dOWiB14M+BZ89iVyEvOsvpKvyi5Q4og3t
+         owBN6ZtqFAi4DaVnJttfO/AGjrYPAR1LEJD5/mopGzK5v/cI0lyyPwMcAyV58qcr6B5Z
+         H10oaXFxcvkk37By0hyerIKF/LL7ul/ssYVEOdIEbmxrxI6141GknoHYM6xGMOarUoJM
+         VOwU0U01tRPBiPhqOOXUXg21yKEBOUX0U/uy36coircrisQKw9YV/ULIbhGd7cRoPawo
+         qBpUuDGaUb967wBhq4Cq2v8TH0ZT/+WzEIsFdCIUrcvgygBRb/QPy3SxeCyW+thfWhFO
+         kKUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1790750513; x=1791355313;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=s+x0l1pDtdlBXIcUINZg9WHh70Xa6FPgCY4I0Et1OKo=;
+        b=EUayqhz1hhuMIlxdmyHanv9pDHLJ+yw5wsaC/pV/v8tJ0KAWf2kqQErKb0f4WhX6DK
+         /Gl3GHEWqiit4exFypxxbmre7vMoqDhTD76ej1BAEftkvRcCX+qaQ/n+5XkBBgadw6Jx
+         3DfpooLxKajHsm9FIFJcRP42pb2MN1zkdx9pn/ntGVpKhYvsj2exla3pOf37PGeGaisK
+         gCLmtfjaV1yHNecUzkOY5g4xwPvFtkvcn5v6RMIJkrbCGCbWxYeo4Z7vKqtC0rAGQQbe
+         wqJiLRSK1PvtcNAN9L0mRx1I90l3U3rwXmqetS1T5AXlOBBZfVLL2yrQhtexI+JdFoZt
+         clTA==
+X-Forwarded-Encrypted: i=1; AKwUvBzMErbiEf9MmgF8Qpa5Dzv/VHeEhWHf1fe3Y/2XoHu9T1QC3jPM3RPblbF2sqVD/zdaVUMA9pRXiYKeDwYOiEyn@vger.kernel.org
+X-Gm-Message-State: AFq9FYIHYo/E8kpS0IyaGjltgwT01W/PzXLNjdlOQu9TMJnHlDYTF52R
+	g51V/ln70MO8iUQSBy7vnOanwffMdTwEwEsa8gy5OZeCYjc80+ZJAw/LBocjXxJQ
+X-Gm-Gg: AYBFou3DxMNhxgW1PbayjvDDC8wBoVHzG8/eJNq5ZUtw5Z495Fp7qKcNxA2dwLjweYv
+	Tzh1mhQ8SBuIUc8HAKyLw57ak4oVwCbEvPDvGi8PAj9x1jCHw0Ypv686LY0CKklM17i2kXqDkZg
+	nmwFwENmu39GsaEotD25RNPLsrO5Hpr6I7hd7eyIWTqmexyPgWLUAuqmip9lDLM/UCWcsBdfywr
+	eYitNTrdI5xFa3x1+yh98EdhtNAtCfLS2OimDdR2VsiyKH/IZmaGmpNSue0wXrBiX564IVNwF3X
+	NfWKawbskXR/07iMsnGDaXnfh//7cVu/WTtyXDhn/O2tT1FtGuMf3brHAoCjmvGDIvYDS4qjs0m
+	OX8UZwhY30+7ufTsagQ4j8fOGuZ7nEDvGf17pA9R1wQ4Esb38NAI6dHdWXzxyIggCNg6aR6yNKE
+	jGSeYM7iPA/hardL/kO8PHmeOq4oxIWPsrmCxnpi86+u0ZUn1Jn7mvjK+K/qElfA4EJXL//KuN8
+	6UjrVaU1n1dhbVjUeIIAD8R3chy
+X-Received: by 2002:a17:90b:1d0b:b0:3a0:2662:815a with SMTP id 98e67ed59e1d1-3a4d18c0f0emr421564a91.43.1790750513024;
+        Tue, 29 Sep 2026 23:41:53 -0700 (PDT)
+Received: from embedsky001.tail6d6b2f.ts.net ([183.12.106.39])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e2e5c52004sm1876155ad.83.2026.09.29.23.41.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Sep 2026 19:07:56 -0700 (PDT)
-From: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bartosz Golaszewski <brgl@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Subject: [PATCH] remoteproc: qcom_q6v5_pas: Drop early_boot flag for Nord ADSP
-Date: Wed, 30 Sep 2026 10:07:45 +0800
-Message-ID: <20260930020745.1940933-1-shengchao.guo@oss.qualcomm.com>
-X-Mailer: git-send-email 2.43.0
+        Tue, 29 Sep 2026 23:41:52 -0700 (PDT)
+From: Yonghao Zhang <hyz3367@gmail.com>
+To: mathieu.poirier@linaro.org
+Cc: andersson@kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yonghao Zhang <hyz3367@gmail.com>
+Subject: [PATCH v2] remoteproc: core: Fetch the auto-boot firmware only once
+Date: Wed, 30 Sep 2026 14:41:44 +0800
+Message-Id: <20260930064144.645211-1-hyz3367@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANLsYkx5VVWsmhaYfMe_gj7nO-8YpOknMvM7gKZ-xFEbGg_zMg@mail.gmail.com.mbx>
+References: <CANLsYkx5VVWsmhaYfMe_gj7nO-8YpOknMvM7gKZ-xFEbGg_zMg@mail.gmail.com.mbx>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -92,55 +78,187 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTMwMDAwOCBTYWx0ZWRfX/HWhf4j1fx3N
- Z3p9yUQZopEU1Z2TaeuwDmGOw2A2oj0m92SU0lwMwgR8QKsiVslRj3T5ZRK/ZN3l8NX45yMBDhZ
- IPfKmUv2DYfyV7PGJVyk0po6JAEvrmt66pNhiY4bZrAuYvlGkGkQCA7f7qIBPeXUXYVJ/jG8cMZ
- FY020K+iKEBljghcVjzMpm8gKCmTKHpNw4VnXKTkGw9Z70qZoViNRTCC4v/4h3QitCq5JwJVqUj
- 908iJISrAiO3uuCKqG1+Bpybrf38IhLTG+Vwg1RzUL5txtdB+S1m50f7WWqhy043JZtebFd6HbV
- G5aF7sGmpFYsC/rnibyOMgZA4b5iS+2B4dHD3mR/M4R00LRL+UIslIC8DDXdcebpG3ozr3NfiDt
- TUKL55bVf5+3Y4Q+lR8K2QushGlReNCEog5MAnXf4nH5FwdWGmQEq34TZVVnAW3lfMQKrupdoH8
- GGpkWuTLk0l33HKBgtw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTMwMDAwOCBTYWx0ZWRfX6j4jgfpiTAck
- yloILFOmsniuhFToKyEXJLFH4ARiBS2Z/nks6793jrgWfJnAIWxX10391a3pkWEhPNMDR4TipHZ
- Qt7LcQljZdD4YqL/nVU+S8zAUHatePg=
-X-Authority-Analysis: v=2.4 cv=LaWpeTfi c=1 sm=1 tr=0 ts=6abc6efd cx=c_pps
- a=Uww141gWH0fZj/3QKPojxA==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
- a=VdqzKS8jKosA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22 a=EUspDBNiAAAA:8
- a=sh0ooE54KQypwE_MK_IA:9 a=PxkB5W3o20Ba91AHUih5:22
-X-Proofpoint-GUID: pukro6r7AuBv0bJe5ZdZLjeaI6ozqFH1
-X-Proofpoint-ORIG-GUID: pukro6r7AuBv0bJe5ZdZLjeaI6ozqFH1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-29_05,2026-09-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- malwarescore=0 impostorscore=0 clxscore=1015 phishscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2609300008
 
-Qualcomm NHLOS team changes XBL for Nord IOT/Embedded variant, leaving
-ADSP to be powered up by Linux remoteproc, so that Nord IQ10 Qualcomm
-Linux (QLI) behavior gets aligned with IQ8/9. Drop early_boot flag from
-Nord ADSP for that purpose.
+Auto-boot for an always-on remote processor registers an asynchronous
+request_firmware_nowait() whose callback, rproc_auto_boot_callback(),
+calls rproc_boot() first and only releases the fetched image at the
+very end of the callback.  rproc_boot() does not take this image as an
+argument: it fetches the very same image again with a synchronous
+request_firmware(), so every auto-boot reads the firmware image twice
+and allocates the buffer twice; on kernels with the sysfs fallback
+enabled, the uevent round-trip is repeated as well.
 
-Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+The asynchronous request exists only so that rproc_add() does not
+block on the filesystem read; the image it fetches is never used.
+The core already defers rproc_boot() to a worker for detached
+processors (attach_work).  Reuse that worker for offline processors
+too and drop the asynchronous firmware request: rproc_boot() fetches
+the image exactly once and dispatches between a firmware boot and
+an attach based on the processor state.  The work is renamed to
+boot_work to match its widened role.
+
+commit 400e64df6b23 ("remoteproc: add framework for controlling remote
+processors") noted back in 2011 that "we must wait until it completes
+before we try to unregister the device".  rproc_del() now does exactly
+that: it waits for the boot work with cancel_work_sync(), which also
+closes the theoretical window in which a pending attach work could
+outlive the rproc instance.
+
+The changed fallback behaviour only matters for legacy
+configurations.  udev dropped its userspace firmware loader back in
+2014, as recorded in
+Documentation/driver-api/firmware/fallback-mechanisms.rst, and the
+kernel has documented since commit 02c399306826 ("firmware_loader:
+enhance Kconfig documentation over FW_LOADER") that "Linux no longer
+relies on or uses a fallback mechanism in userspace".  Auto-boot now
+uses the same synchronous fallback semantics as every other explicit
+boot source (sysfs, cdev).
+
+Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 1 -
- 1 file changed, 1 deletion(-)
+Changes in v2:
+- Fix the order described in the changelog: the callback calls
+  rproc_boot() first and releases the asynchronously fetched image at
+  the end of the callback (Mathieu).
+- Fix typo "proccessor".
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 2e1e39826ffa..9e7fb5c5610e 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -1582,7 +1582,6 @@ static const struct qcom_pas_data nord_adsp_resource = {
- 	.dtb_pas_id = 36,
- 	.minidump_id = 5,
- 	.auto_boot = true,
--	.early_boot = true,
- 	.proxy_pd_names = (char*[]){
- 		"cx",
- 		"mx",
+ drivers/remoteproc/remoteproc_core.c | 65 ++++++++--------------------
+ include/linux/remoteproc.h           |  4 +-
+ 2 files changed, 21 insertions(+), 48 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 263e12f022ea..f329dc478170 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1662,49 +1662,26 @@ static int rproc_attach(struct rproc *rproc)
+ }
+ 
+ /*
+- * take a firmware and boot it up.
+- *
+- * Note: this function is called asynchronously upon registration of the
+- * remote processor (so we must wait until it completes before we try
+- * to unregister the device. one other option is just to use kref here,
+- * that might be cleaner).
++ * Boot or attach the remote processor in the background, on behalf of
++ * rproc_trigger_auto_boot(): rproc_add() runs in probe context and must
++ * not block while the firmware image is read from storage.  rproc_boot()
++ * dispatches on the processor state, so this covers both a firmware boot
++ * and an attach to a processor started by another entity.
++ *
++ * Note: rproc_del() waits for this work to complete with
++ * cancel_work_sync(), so the rproc instance remains valid for the
++ * entire lifetime of this function.
+  */
+-static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
++static void rproc_boot_work(struct work_struct *work)
+ {
+-	struct rproc *rproc = context;
++	struct rproc *rproc = container_of(work, struct rproc, boot_work);
+ 
+ 	rproc_boot(rproc);
+-
+-	release_firmware(fw);
+ }
+ 
+-static void rproc_attach_work(struct work_struct *work)
++static void rproc_trigger_auto_boot(struct rproc *rproc)
+ {
+-	struct rproc *rproc = container_of(work, struct rproc, attach_work);
+-
+-	rproc_boot(rproc);
+-}
+-
+-static int rproc_trigger_auto_boot(struct rproc *rproc)
+-{
+-	int ret;
+-
+-	if (rproc->state == RPROC_DETACHED) {
+-		schedule_work(&rproc->attach_work);
+-		return 0;
+-	}
+-
+-	/*
+-	 * We're initiating an asynchronous firmware loading, so we can
+-	 * be built-in kernel code, without hanging the boot process.
+-	 */
+-	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
+-				      rproc->firmware, &rproc->dev, GFP_KERNEL,
+-				      rproc, rproc_auto_boot_callback);
+-	if (ret < 0)
+-		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
+-
+-	return ret;
++	schedule_work(&rproc->boot_work);
+ }
+ 
+ static int rproc_stop(struct rproc *rproc, bool crashed)
+@@ -2348,11 +2325,8 @@ int rproc_add(struct rproc *rproc)
+ 	rproc_create_debug_dir(rproc);
+ 
+ 	/* if rproc is marked always-on, request it to boot */
+-	if (rproc->auto_boot) {
+-		ret = rproc_trigger_auto_boot(rproc);
+-		if (ret < 0)
+-			goto rproc_remove_dev;
+-	}
++	if (rproc->auto_boot)
++		rproc_trigger_auto_boot(rproc);
+ 
+ 	/* expose to rproc_get_by_phandle users */
+ 	mutex_lock(&rproc_list_mutex);
+@@ -2361,10 +2335,6 @@ int rproc_add(struct rproc *rproc)
+ 
+ 	return 0;
+ 
+-rproc_remove_dev:
+-	cancel_work_sync(&rproc->crash_handler);
+-	rproc_delete_debug_dir(rproc);
+-	device_del(dev);
+ rproc_remove_cdev:
+ 	rproc_char_device_remove(rproc);
+ 	return ret;
+@@ -2552,7 +2522,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+ 	INIT_LIST_HEAD(&rproc->subdevs);
+ 	INIT_LIST_HEAD(&rproc->dump_segments);
+ 
+-	INIT_WORK(&rproc->attach_work, rproc_attach_work);
++	INIT_WORK(&rproc->boot_work, rproc_boot_work);
+ 	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+ 	spin_lock_init(&rproc->crash_handler_lock);
+ 
+@@ -2630,6 +2600,9 @@ int rproc_del(struct rproc *rproc)
+ 	if (cancel_work_sync(&rproc->crash_handler))
+ 		pm_relax(rproc->dev.parent);
+ 
++	/* auto-boot may still be fetching firmware: wait for it here */
++	cancel_work_sync(&rproc->boot_work);
++
+ 	__rproc_shutdown(rproc, true);
+ 
+ 	rproc_delete_debug_dir(rproc);
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index a44368737b39..d77e24539133 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -231,7 +231,7 @@ enum rproc_features {
+  * @subdevs: list of subdevices, to following the running state
+  * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+  * @index: index of this rproc device
+- * @attach_work: workqueue for attaching rproc
++ * @boot_work: workqueue for booting rproc
+  * @crash_handler: workqueue for handling a crash
+  * @crash_handler_lock: serializes crash handler queueing and deletion
+  * @deleting: remoteproc deletion has begun
+@@ -277,7 +277,7 @@ struct rproc {
+ 	struct list_head subdevs;
+ 	struct idr notifyids;
+ 	int index;
+-	struct work_struct attach_work;
++	struct work_struct boot_work;
+ 	struct work_struct crash_handler;
+ 	spinlock_t crash_handler_lock;
+ 	bool deleting;
 -- 
-2.43.0
+2.34.1
 
