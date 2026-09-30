@@ -1,74 +1,72 @@
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+Received: from mail-ed2-f33.google.com (mail-ed2-f33.google.com [74.125.228.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99644E235D
-	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 15:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690A04F7CDE
+	for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 15:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.228.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790780881; cv=none; b=LVfj9OQLP/wwVIMmeJHLJkFfDr0Vpw+SAvYTX5n28I7nf4A65SKieKARC4//PFUfgT06YLRCUvNKKMqZS39gRgsrQ6tsjTLna3mpp/BW+cocw/ki4+H3AWeggAAf6nJHQB0IHCON01FYQLPkBf5a2jh7JpjOB9YL4KpyQKadhsw=
+	t=1790781478; cv=none; b=AcsB3rWNj4VWCh/QRdzuITAuV9wNWZq99d5QU3nDFRUyMmGEqTX2HNjjIDQhI8BP9x/jcuSAeDQ3/H4nB4ZVPjP6wps6mim2B784qxUXx5edQGDxHk2YMefyvxKoX5XqEToax0ytRJ4Y2yQ89rLsHnm/N9HgvF3RNWOdHcsFGUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790780881; c=relaxed/simple;
-	bh=q8cCBm3pazBE/9+1p6k+VgCGqmHdDxdTeBk7Sj2qv1U=;
+	s=arc-20240116; t=1790781478; c=relaxed/simple;
+	bh=uQgcjTanqpRbiFni0yHM5IL6li1Xtxu2ojp6ApqgDuE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fk4k2q9s3XwmQtYW3dwiiZSeJ51hYD8iUledM9+PjGKHdgJJ8lz2GwyvupLftHUffAEPacm9Psx7cmf4Xep4RSrwSzvNeOL00v+j98SOWBaLbOUFrf9WX0vafHrRpJ0f2a4iFIL/OgsK4ZVqV4WcB07v4cXCBt+qRUkZbfjWRtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P2jYInEC; arc=none smtp.client-ip=209.85.161.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=VEWsaISQNp3wsJG/4jbVVxqX/9rwucAHXBmZT3hx7gBu1ndB2H/iWrxXSYjlHkZ7Zx6Yww3QztdonDHlfeutNm9+JJBDIuETR+/y2Wa1Yfxkcp6yb8mdNO3uTAnI4YEACQ4UDuwZ0Cdvs+ELgj7tsfZD5koi9cCPdseaf5nGW2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hFfiljhe; arc=none smtp.client-ip=74.125.228.97
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P2jYInEC"
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-6dd24f471c1so198284eaf.0
-        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 08:07:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hFfiljhe"
+Received: by mail-ed2-f33.google.com with SMTP id 4fb4d7f45d1cf-6ac5ef2610aso2608612a12.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 30 Sep 2026 08:17:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1790780866; x=1791385666; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1790781464; x=1791386264; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=CON0N6NONpyLMBENg2JzFAKGu3VQSsJRc7S3/nKioTU=;
-        b=P2jYInECOOLtuE4hSpciMtuqFPExypjnf5iynqXs1xNUj6rpbT9B99Qfgi8WtN87pl
-         BtzEkyzYphrxF0n01qX/QbghJI4P9P6mee2l7B7G6RfDAosLAiRwfJNjr2G5+L6J0XnE
-         xam+auqvN1MTE0KlsLaFeoKXiQzoJ0XUQSvfmZRUo+iFo9gLzjrwMJ7SCIa+gq1y4I9I
-         WBwWLTRArHKRU7/JXiVpn8AmgVgdhG8KpiXsG3LYXm04C0QTkoL6OqJ2GmYU4/q8Mkhq
-         xu2lhIGTDwPye4g3z/q5wceVl3vnYQpRDXI8vqNj8utU2+n48QEYrfnXgJaJ8KancMXL
-         fNMw==
+        bh=RmXnhr9OmMiHHu4ZPDqUZWuFVaoLJmyXOyKcRvZyBZA=;
+        b=hFfiljhey0dlBlFqlHvDgbm1N+QR7BZe45jj4RyacbyL640QWYOXx3yt/ILPMyBH3/
+         jHDHk5QXgTVloN6aJDVdk6UK5hcSTSc4ZI+jEuzN0F+hfXKOvRwj15Ve27SInGEP7e/n
+         fEN+l7m6j6K9xfCsOfTosQxqMDMES416u+WzYFddZVXKNtn4TX1bQwv/TvFWUAuKI8BW
+         phQGVAT8LP99iofN3E1CyC9KRfsZ6ALAO0koEhnN+gUq9IkZdxC6Ni7d1rzA/CZ7yAUY
+         YjxjzpfqGP/A7+yQ9NVmruL7NXYjKW9BiL0LtBH9ox/IDi6yRmr09StpBUYtXCyk0olo
+         bv7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1790780866; x=1791385666;
+        d=1e100.net; s=20260707; t=1790781464; x=1791386264;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=CON0N6NONpyLMBENg2JzFAKGu3VQSsJRc7S3/nKioTU=;
-        b=RL2JXZ/q1FLQR/egmW+GfG6P5SJnXkAAzrPzkFWbmRHGdZV8rENxjZbeTUDkNPW0mu
-         ScReEG9Nir0EUPkYixRA1lkT78lVU74L1XexIqoLx4fZKvxXlDMiAFlxL8/YPdc4KPvW
-         adG8DGkfsP1zzfALb/Fv17sC4I3UJ9CaG3iD/bXa2ksmlrvHz1uN2fMxNNjBNJpwQRxj
-         LXOx0hDssFmwO0fUXvaLMzNRMrvPqP/GPie7DhhOnqPGP0koSMTzzweZvztV5KYkxpA7
-         pO622HoDyz6xobxa55txxYgnozI8wvM3CT4Bku4W41brw7FaAkN6ac/DoFut78TyDmJF
-         lCRQ==
-X-Forwarded-Encrypted: i=1; AKwUvBxjoVBiaRsenB7GSGVKnGJ7LX5qDD8ef63V/aLTIZnSqDTmic82sgyTYG5X6otKbCKTFCoTgGTpRA0oRUcuTiWN@vger.kernel.org
-X-Gm-Message-State: AFuF++n2wXEwgHnFsPq2Ky2ZUI7+oydP41X5S1rxae6+9d71NRSStYog
-	0/K+vet+Pvryxg2WXk+XVcJRxufpMuRdXtqcbpATdM9s8zj933JqN2XA3hlJE6Tty6Q=
-X-Gm-Gg: AYBFou1SImVVEXLRN70QZczIIerCLyWdj/G2D6IMvj5BS6lLwL7OTT/Jba6302AJlLE
-	gdtlAf5KRFcQxVdeK/koO1smO2m/cafZd2lk5DoVNsZvcz7EKLr6BD0+ofw783mJ90Oo2VCqZKx
-	3f1JWVsEXUdPPYNhaqTyVQsXwAiGFFMgy9A9ctfCntOwDvhRURo3/B/XIGGWyqKKZRv7CgIGGqb
-	rxhjA2mSvGcjgdb8xD+rEPwQa7rxH+DwigJIzWe0VGu/xr/PQ9Xghql31MsVp8pKE+T7dgDGwVu
-	FHX4+FMAByCIjnhKWMiFoWHst4hrHM9g3MiPrqoHjbb+Z5BpGdtOJp/FDbsBZJbNjiNoAOH8F0R
-	YNo3idTFl7UWyAplOYu1+LGKI/g50zLqWukoiYQg2mTlaxWqh2b6h603WLROJUDvsFpYsVosQIT
-	ls6Wb4u2cu5h9k1cya1Nb7RIvNWG/eZR3JsTlxnqaE1jUqt0CPk2aKOTWc0l9xYcXI8n4S4JLt
-X-Received: by 2002:a05:6820:618:b0:6d3:abd1:9b90 with SMTP id 006d021491bc7-6dcf63278b7mr1172797eaf.54.1790780865875;
-        Wed, 30 Sep 2026 08:07:45 -0700 (PDT)
+        bh=RmXnhr9OmMiHHu4ZPDqUZWuFVaoLJmyXOyKcRvZyBZA=;
+        b=o7Z5bNBUwKZZ+w4b6+dlmQSWHfSZtt4Rw5e3monxR1O36l71lAD0imyeywf64Bq6I4
+         Pov4602UYp0B/A4NrOJiOlstSsdF00odYnZqFr6ALpse5AHdqVBKg/uXLl+7c3edQhnk
+         2w9Oqdss1LPYLZkpksQsKpe2eadc5WCadgGBgG2i8FqrOTMKkqjbzgsdvky0TPDuQFFu
+         /BWuZHzxmhTchdssoyGXyyxMh5/eGWbsqb3IpWOPNIZCVEhat0ZHXHiQySz4G1MGgcwZ
+         uj2cjX2SSIif6dERWXT0bWwUup0UUPTtUfsXyxDdPKpTjr3rfQha/JReSJQ+L6y3m8qc
+         OR8Q==
+X-Forwarded-Encrypted: i=1; AKwUvBzTgtJES+HSeeofzvjzATDRrgYNpt1SQYTJnytTcNzRLK86JfwWH1wsu0aMV3TXay63QJSRqREOQHJGS0D7WHHU@vger.kernel.org
+X-Gm-Message-State: AFq9FYICdvyTilWwViW6Z6jXFmo+5klDU5KHPv55wtdc4VS4m7FTabR4
+	Nf0IFrtB/btyrPidnasZjYzP67hcBT/G5WrcmU+bP5r0TBdnUIkMvF1VZb9yB8scjmY=
+X-Gm-Gg: AYBFou1PXIi0J7z6sGrKthjjRE43fCtJM2KqUdV+kUxDiOMBq5WxWqZjP680P7myjSM
+	MYWuQhGpGSqiAP17gdMuA7TPr4bg5XGAgwi70P7mqUGLUnvAhN6mj2jvK0Y7gKey5aQl0Oa/0iG
+	8LSjz67+Mw5wLOozQAgrY/2FYlph1XO70X8bY3GOysvPtpQQQ0bxWw+2GS+Zi+oRHzhwniVK9Pu
+	72F5IO1I454oE4biP9t/o/+H1UOjg3a9005PtfirPpQmsBFvcidoyJh7HRc8xYFO7YcytcLpvtN
+	mFXsLYb36OSJxXHnyhxSu0sHcqKS4DHvzcWEb2243SNDZPQU5HFqK9yy2IeNOeSLVZFWA0k8hi8
+	R1AF4w17PdSBynigIJ3f3tNkiTlgyw/R9Nl6hDk+KsVlYoE8BvzpLdmV266DjOeLs7DGkoy3yUx
+	2AQgFE2Ch9BnG6Jxp1enKYaCsGHArVf2H/K7p50INKRaIeMtQSdWnJI9aDhao9zlhw6JThmExV
+X-Received: by 2002:a05:6402:304b:b0:6ab:e30:c9a0 with SMTP id 4fb4d7f45d1cf-6ae19e365d2mr1038299a12.13.1790781464353;
+        Wed, 30 Sep 2026 08:17:44 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:f5b4:4d0e:70d:9fba])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-49ded1b53c0sm256295fac.8.2026.09.30.08.07.43
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ae1558b289sm944038a12.15.2026.09.30.08.17.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Sep 2026 08:07:45 -0700 (PDT)
-Date: Wed, 30 Sep 2026 09:07:42 -0600
+        Wed, 30 Sep 2026 08:17:43 -0700 (PDT)
+Date: Wed, 30 Sep 2026 09:17:39 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Yonghao Zhang <hyz3367@gmail.com>
+To: Tanmay Shah <tanmay.shah@amd.com>
 Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] remoteproc: core: Fetch the auto-boot firmware only
- once
-Message-ID: <ar0lvsu80miGJdGS@p14s>
-References: <CANLsYkx5VVWsmhaYfMe_gj7nO-8YpOknMvM7gKZ-xFEbGg_zMg@mail.gmail.com.mbx>
- <20260930064144.645211-1-hyz3367@gmail.com>
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] remoteproc: xlnx: fix typecast warnings
+Message-ID: <ar0oE_M9sgEpJ0st@p14s>
+References: <20260828155846.2883035-1-tanmay.shah@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -77,195 +75,92 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260930064144.645211-1-hyz3367@gmail.com>
+In-Reply-To: <20260828155846.2883035-1-tanmay.shah@amd.com>
 
-On Wed, Sep 30, 2026 at 02:41:44PM +0800, Yonghao Zhang wrote:
-> Auto-boot for an always-on remote processor registers an asynchronous
-> request_firmware_nowait() whose callback, rproc_auto_boot_callback(),
-> calls rproc_boot() first and only releases the fetched image at the
-> very end of the callback.  rproc_boot() does not take this image as an
-> argument: it fetches the very same image again with a synchronous
-> request_firmware(), so every auto-boot reads the firmware image twice
-> and allocates the buffer twice; on kernels with the sysfs fallback
-> enabled, the uevent round-trip is repeated as well.
+On Fri, Aug 28, 2026 at 08:58:46AM -0700, Tanmay Shah wrote:
+> Fix following sparse warnings by using __force attribute:
 > 
-> The asynchronous request exists only so that rproc_add() does not
-> block on the filesystem read; the image it fetches is never used.
-> The core already defers rproc_boot() to a worker for detached
-> processors (attach_work).  Reuse that worker for offline processors
-> too and drop the asynchronous firmware request: rproc_boot() fetches
-> the image exactly once and dispatches between a firmware boot and
-> an attach based on the processor state.  The work is renamed to
-> boot_work to match its widened role.
+> sparse warnings: (new ones prefixed by >>)
+>    drivers/remoteproc/xlnx_r5_remoteproc.c:571:20: sparse: sparse:
+> cast removes address space '__iomem' of expression
+>    drivers/remoteproc/xlnx_r5_remoteproc.c:749:17: sparse: sparse:
+> cast removes address space '__iomem' of expression
+>    drivers/remoteproc/xlnx_r5_remoteproc.c:773:24: sparse: sparse:
+> cast removes address space '__iomem' of expression
+>    drivers/remoteproc/xlnx_r5_remoteproc.c:797:25: sparse: sparse:
+> cast removes address space '__iomem' of expression
 > 
-> commit 400e64df6b23 ("remoteproc: add framework for controlling remote
-> processors") noted back in 2011 that "we must wait until it completes
-> before we try to unregister the device".  rproc_del() now does exactly
-> that: it waits for the boot work with cancel_work_sync(), which also
-> closes the theoretical window in which a pending attach work could
-> outlive the rproc instance.
+> >> drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse: sparse:
+> incorrect type in initializer (different address spaces) @@     expected
+> void *rsc_offset @@     got void [noderef] __iomem * @@
+>    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:
+> expected void *rsc_offset
+>    drivers/remoteproc/xlnx_r5_remoteproc.c:837:49: sparse:     got
+> void [noderef] __iomem *
 > 
-> The changed fallback behaviour only matters for legacy
-> configurations.  udev dropped its userspace firmware loader back in
-> 2014, as recorded in
-> Documentation/driver-api/firmware/fallback-mechanisms.rst, and the
-> kernel has documented since commit 02c399306826 ("firmware_loader:
-> enhance Kconfig documentation over FW_LOADER") that "Linux no longer
-> relies on or uses a fallback mechanism in userspace".  Auto-boot now
-> uses the same synchronous fallback semantics as every other explicit
-> boot source (sysfs, cdev).
-> 
-> Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
-> ---
-> Changes in v2:
-> - Fix the order described in the changelog: the callback calls
->   rproc_boot() first and releases the asynchronously fetched image at
->   the end of the callback (Mathieu).
-> - Fix typo "proccessor".
-> 
->  drivers/remoteproc/remoteproc_core.c | 65 ++++++++--------------------
->  include/linux/remoteproc.h           |  4 +-
->  2 files changed, 21 insertions(+), 48 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 263e12f022ea..f329dc478170 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1662,49 +1662,26 @@ static int rproc_attach(struct rproc *rproc)
->  }
->  
->  /*
-> - * take a firmware and boot it up.
-> - *
-> - * Note: this function is called asynchronously upon registration of the
-> - * remote processor (so we must wait until it completes before we try
-> - * to unregister the device. one other option is just to use kref here,
-> - * that might be cleaner).
-> + * Boot or attach the remote processor in the background, on behalf of
-> + * rproc_trigger_auto_boot(): rproc_add() runs in probe context and must
-> + * not block while the firmware image is read from storage.  rproc_boot()
-> + * dispatches on the processor state, so this covers both a firmware boot
-> + * and an attach to a processor started by another entity.
-> + *
-> + * Note: rproc_del() waits for this work to complete with
-> + * cancel_work_sync(), so the rproc instance remains valid for the
-> + * entire lifetime of this function.
->   */
-> -static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
-> +static void rproc_boot_work(struct work_struct *work)
->  {
-> -	struct rproc *rproc = context;
-> +	struct rproc *rproc = container_of(work, struct rproc, boot_work);
->  
->  	rproc_boot(rproc);
-> -
-> -	release_firmware(fw);
->  }
->  
-> -static void rproc_attach_work(struct work_struct *work)
-> +static void rproc_trigger_auto_boot(struct rproc *rproc)
->  {
-> -	struct rproc *rproc = container_of(work, struct rproc, attach_work);
-> -
-> -	rproc_boot(rproc);
-> -}
-> -
-> -static int rproc_trigger_auto_boot(struct rproc *rproc)
-> -{
-> -	int ret;
-> -
-> -	if (rproc->state == RPROC_DETACHED) {
-> -		schedule_work(&rproc->attach_work);
-> -		return 0;
-> -	}
-> -
-> -	/*
-> -	 * We're initiating an asynchronous firmware loading, so we can
-> -	 * be built-in kernel code, without hanging the boot process.
-> -	 */
-> -	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
-> -				      rproc->firmware, &rproc->dev, GFP_KERNEL,
-> -				      rproc, rproc_auto_boot_callback);
-> -	if (ret < 0)
-> -		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
-> -
-> -	return ret;
-> +	schedule_work(&rproc->boot_work);
->  }
->  
->  static int rproc_stop(struct rproc *rproc, bool crashed)
-> @@ -2348,11 +2325,8 @@ int rproc_add(struct rproc *rproc)
->  	rproc_create_debug_dir(rproc);
->  
->  	/* if rproc is marked always-on, request it to boot */
-> -	if (rproc->auto_boot) {
-> -		ret = rproc_trigger_auto_boot(rproc);
-> -		if (ret < 0)
-> -			goto rproc_remove_dev;
-> -	}
-> +	if (rproc->auto_boot)
-> +		rproc_trigger_auto_boot(rproc);
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202608190009.uCbYi1Y5-lkp@intel.com/
+> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
 
-Please get rid of rproc_trigger_auto_boot() and call schedule_work() here.
+I have applied this patch - apoligies for the delay, it got lost in the heap.
 
-Thanks,
 Mathieu
 
+> ---
+>  drivers/remoteproc/xlnx_r5_remoteproc.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/xlnx_r5_remoteproc.c b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> index c685bb5fa62c..f9cdd3c024dc 100644
+> --- a/drivers/remoteproc/xlnx_r5_remoteproc.c
+> +++ b/drivers/remoteproc/xlnx_r5_remoteproc.c
+> @@ -568,7 +568,7 @@ static int tcm_mem_map(struct rproc *rproc,
+>  		return -ENOMEM;
 >  
->  	/* expose to rproc_get_by_phandle users */
->  	mutex_lock(&rproc_list_mutex);
-> @@ -2361,10 +2335,6 @@ int rproc_add(struct rproc *rproc)
+>  	/* Update memory entry va */
+> -	mem->va = (void *)va;
+> +	mem->va = (__force void *)va;
 >  
->  	return 0;
+>  	/* clear TCMs */
+>  	memset_io(va, 0, mem->len);
+> @@ -746,7 +746,7 @@ static struct resource_table *zynqmp_r5_get_loaded_rsc_table(struct rproc *rproc
 >  
-> -rproc_remove_dev:
-> -	cancel_work_sync(&rproc->crash_handler);
-> -	rproc_delete_debug_dir(rproc);
-> -	device_del(dev);
->  rproc_remove_cdev:
->  	rproc_char_device_remove(rproc);
->  	return ret;
-> @@ -2552,7 +2522,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
->  	INIT_LIST_HEAD(&rproc->subdevs);
->  	INIT_LIST_HEAD(&rproc->dump_segments);
+>  	*size = r5_core->rsc_tbl_size;
 >  
-> -	INIT_WORK(&rproc->attach_work, rproc_attach_work);
-> +	INIT_WORK(&rproc->boot_work, rproc_boot_work);
->  	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
->  	spin_lock_init(&rproc->crash_handler_lock);
+> -	return (struct resource_table *)r5_core->rsc_tbl_va;
+> +	return (__force struct resource_table *)r5_core->rsc_tbl_va;
+>  }
 >  
-> @@ -2630,6 +2600,9 @@ int rproc_del(struct rproc *rproc)
->  	if (cancel_work_sync(&rproc->crash_handler))
->  		pm_relax(rproc->dev.parent);
+>  static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+> @@ -770,7 +770,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+>  		return -EINVAL;
+>  	}
 >  
-> +	/* auto-boot may still be fetching firmware: wait for it here */
-> +	cancel_work_sync(&rproc->boot_work);
-> +
->  	__rproc_shutdown(rproc, true);
+> -	rsc_data_va = (struct rsc_tbl_data *)ioremap_wc(res_mem.start,
+> +	rsc_data_va = (__force struct rsc_tbl_data *)ioremap_wc(res_mem.start,
+>  							sizeof(struct rsc_tbl_data));
+>  	if (!rsc_data_va) {
+>  		dev_err(dev, "failed to map resource table data address\n");
+> @@ -794,7 +794,7 @@ static int zynqmp_r5_get_rsc_table_va(struct zynqmp_r5_core *r5_core)
+>  		return -EINVAL;
+>  	}
 >  
->  	rproc_delete_debug_dir(rproc);
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index a44368737b39..d77e24539133 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -231,7 +231,7 @@ enum rproc_features {
->   * @subdevs: list of subdevices, to following the running state
->   * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
->   * @index: index of this rproc device
-> - * @attach_work: workqueue for attaching rproc
-> + * @boot_work: workqueue for booting rproc
->   * @crash_handler: workqueue for handling a crash
->   * @crash_handler_lock: serializes crash handler queueing and deletion
->   * @deleting: remoteproc deletion has begun
-> @@ -277,7 +277,7 @@ struct rproc {
->  	struct list_head subdevs;
->  	struct idr notifyids;
->  	int index;
-> -	struct work_struct attach_work;
-> +	struct work_struct boot_work;
->  	struct work_struct crash_handler;
->  	spinlock_t crash_handler_lock;
->  	bool deleting;
+> -	rsc_tbl_addr = (struct resource_table *)r5_core->rsc_tbl_va;
+> +	rsc_tbl_addr = (__force struct resource_table *)r5_core->rsc_tbl_va;
+>  
+>  	/*
+>  	 * As of now resource table version 1 is expected. Don't fail to attach
+> @@ -834,7 +834,7 @@ static int zynqmp_r5_handle_rsc(struct rproc *rproc, u32 rsc_type, void *rsc,
+>  				int offset, int avail)
+>  {
+>  	struct zynqmp_r5_core *r5_core = rproc->priv;
+> -	void *rsc_offset = (r5_core->rsc_tbl_va + offset);
+> +	void *rsc_offset = (__force void *)(r5_core->rsc_tbl_va + offset);
+>  
+>  	if (rsc_type != XLNX_RPROC_FW_CRASH_REPORT)
+>  		return RSC_IGNORED;
+> 
+> base-commit: d4d61a4b0a52e8f3cdb3e1578602850a3452ec3e
 > -- 
-> 2.34.1
+> 2.43.0
 > 
