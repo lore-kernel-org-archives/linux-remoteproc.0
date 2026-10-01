@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3DE4825B8;
-	Thu,  1 Oct 2026 06:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0BC34752E;
+	Thu,  1 Oct 2026 06:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1790835379; cv=none; b=nEo4uPDbojN+qGRi/jp7oeVqmGy6gvY2qyg7bLy2Y/1MfnTKN5yMlu0bFKjJCa2x3QXfG5tH3AGXs2VOTpwC47ZrtLP76JpadCeCsmFLF37RcMEs/IE5VqQd98JcpV2x4KS10n++y76SLlnrwe4B3JrcgT4iSJbA87B6gHcRLQk=
+	t=1790835435; cv=none; b=cANgAfq55aJXr3sFX/URpVdIPxiZgkKxXV7mUSiaREAPtH1PeZy7jBtE2xKbijsu67PFrOQONbv3wl7AZm1I+eL3WRSU1P9A0kwo1uHfrBi8QxaiN6Qdu3BI0/SsCXAsPwQcJHa3Z3iOhpxhBkE0s2Objot7pEIsLONqMJDWf20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1790835379; c=relaxed/simple;
-	bh=lweIQOL4n1g4o4yGHWV2xUH4wv0Tqd3X0T/pIj9nuKs=;
+	s=arc-20240116; t=1790835435; c=relaxed/simple;
+	bh=n+3z0xJa5JG4pA86dr6v8CGEo07+uUvnuqMftIe7JY0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nxe7oAMT38UuppIl8Rt6ZewMDmcEcijoSCGy/SqPY/aOOEdZECdQmLNrDYkGtH0XpbZVyWULlapOTyBjRXHgaEbhR11Pr41sFXQRBIX479GHptAQC0pLdGRWqp52Vl263cQ8ul7bXXPwHJXjvtT+KO7ARh/gtXwzu5FmuM0wNK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YthR/Bo+; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=USkTZ9Rynhp4AousjG0fiP3rO6U+WV+peyFaTCS5xsdzF7hEsQx8Pt47JT4eeorOM0IsPAD91125fy2vma68YEiPe9vsTyJQcArja+lY/HdAoF3sdouLO++zz9IdUZPtSfxS37taEH8U6bKlxg6TShLL5GPyh9JwbPADElljZwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SO/13ZUP; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YthR/Bo+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0571B1F0089C;
-	Thu,  1 Oct 2026 06:16:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SO/13ZUP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D0DB1F000FF;
+	Thu,  1 Oct 2026 06:17:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1790835373;
-	bh=Zc3A3cOKU+Yffs5eCndyKf9yY8nYExG370G9paaMrfQ=;
+	s=k20260515; t=1790835433;
+	bh=yvPInNVMUowwCsvJI/H0YVtLjuxYlHv6SPUDpD5X1Uc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=YthR/Bo+j9kwzCk3ljzbQRm4pdDgJBQrIXInI9Ynqwn6exu2r+KWCd0tb2PkjH0eu
-	 KR7hwVtff9yVAP9tvr9F7AegEtzw+QfIzUgkk+5PI1LOCkfpNy35Zmondav0RlR6XV
-	 yNd3ouFvV6A9KYrgV5SivAAagID1kgXc6cfRtV8hCCemRKZjoOBdyAvRX9boz/QIyj
-	 hloFXvsYmPl29hwYMtkDwJaXRD9aa1pX0uGGXHwRBFJdPPCivmHXHFC/bW/BywTbcR
-	 WIYbEpUCa4IuQy8Er5fYcdMobWW73CzAT812uLoARQ5ruYluuvFtCPrirKNC9flcUR
-	 7escPX77rd+BQ==
-Date: Thu, 1 Oct 2026 08:16:08 +0200
+	b=SO/13ZUPRnFCpA3vLkxwYxUXn9YBDekZZ131RC3yPAIu468TZOTuyfR9uaG/ngt5b
+	 yQHZJ/hAWCCNCtFpqF2aW35Da9Bx2s9GmsBx9z5cweqVQXTBTNOiefh8c0oPJNKpvQ
+	 XC8iuQ2+T5hXGib6JrZvKZfB6NU1bwDCVTTpDjif9qqvrSJw4CqHJkLF6l1jsHav0K
+	 1QD8D6j2UQZViiX3adhLjB7hcAfTl5vJUfHtNR7g/UoTVRQMUUY/nbc88AFs4GFemX
+	 9yOM+rIzNW3zvVfrpwJDIrqI4GqcrhbKjBViwUp47cdFibHl3YJA+ncN4aZiC9K93d
+	 ctFwKg6215aOg==
+Date: Thu, 1 Oct 2026 08:17:09 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Tim Michals <tcmichals@gmail.com>
 Cc: linux-sunxi@lists.linux.dev, linux-remoteproc@vger.kernel.org, 
@@ -34,12 +34,12 @@ Cc: linux-sunxi@lists.linux.dev, linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org, wens@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org, 
 	andersson@kernel.org, mathieu.poirier@linaro.org, jassisinghbrar@gmail.com, 
 	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: mailbox: add Allwinner sun55i msgbox
- schema
-Message-ID: <20261001-sensible-marvellous-porpoise-3a8350@quoll>
+Subject: Re: [PATCH v2 4/7] dt-bindings: remoteproc: add Allwinner
+ sun55i-rproc schema
+Message-ID: <20261001-armored-wild-saiga-c5c3ae@quoll>
 References: <20260922034711.190253-1-tcmichals@gmail.com>
  <20260927002021.797069-1-tcmichals@gmail.com>
- <20260927002021.797069-2-tcmichals@gmail.com>
+ <20260927002021.797069-5-tcmichals@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -48,44 +48,79 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20260927002021.797069-2-tcmichals@gmail.com>
+In-Reply-To: <20260927002021.797069-5-tcmichals@gmail.com>
 
-On Sat, Sep 26, 2026 at 07:20:10PM -0500, Tim Michals wrote:
-> Add Device Tree binding schema for the Allwinner 4-port hardware
-> Message Box controller found on sun55i (A523, A527, T527) and
-> sun60i (A733) SoCs.
+On Sat, Sep 26, 2026 at 07:20:13PM -0500, Tim Michals wrote:
+> Add Device Tree binding schema for the Allwinner XuanTie E907 RISC-V
+> remote processor subsystem integrated into Allwinner A523, A527, and
+> T527 (sun55i) SoCs.
 > 
-> The message box connects the ARM Cortex-A55 host cluster to the
-> HiFi4 Audio DSP, Power Management Unit (CPUS), and XuanTie RISC-V
-> co-processor across 12 logical channels with 8-entry hardware FIFOs.
+> The binding defines the memory resources (configuration registers,
+> SRAM Space 0, SRAM Space 1, and optional remap controller), clocks,
+> resets, reserved memory regions, and hardware mailbox channels.
 > 
 > Signed-off-by: Tim Michals <tcmichals@gmail.com>
 > ---
->  .../mailbox/allwinner,sun55i-a523-msgbox.yaml | 102 ++++++++++++++++++
->  1 file changed, 102 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sun55i-a523-msgbox.yaml
->
-
-Do not attach (thread) your patchsets to some other threads (unrelated
-or older versions). This buries them deep in the mailbox and might
-interfere with applying entire sets. See also:
-https://elixir.bootlin.com/linux/v6.16-rc2/source/Documentation/process/submitting-patches.rst#L830
-
-...
-
-> +  interrupts:
+>  .../remoteproc/allwinner,sun55i-rproc.yaml    | 146 ++++++++++++++++++
+>  1 file changed, 146 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
+> new file mode 100644
+> index 000000000000..53e3f4faaa76
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/allwinner,sun55i-rproc.yaml
+> @@ -0,0 +1,146 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/allwinner,sun55i-rproc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Allwinner XuanTie E906/E907 RISC-V Remoteproc
+> +
+> +maintainers:
+> +  - Jernej Skrabec <jernej.skrabec@gmail.com>
+> +  - Samuel Holland <samuel@sholland.org>
+> +  - Tim Michals <tcmichals@gmail.com>
+> +
+> +description:
+> +  The Allwinner T527, A527, and A523 (sun55i) SoCs integrate a T-Head
+> +  (XuanTie) E906 or E907 RISC-V co-processor alongside the ARM Cortex-A55
+> +  cluster. The co-processor runs bare-metal firmware loaded and lifecycle-
+> +  managed by the Linux remoteproc framework.
+> +
+> +  The driver controls CCU-integrated clocks (bus, core) and resets
+> +  (cfg, core), programs the hardware boot-vector register, maps
+> +  internal SRAM (SRAM_A3) windows, and connects to the Allwinner
+> +  hardware mailbox (CPUX_MSGBOX) for VirtIO RPMsg IPC.
+> +
+> +properties:
+> +  compatible:
+> +    const: allwinner,sun55i-a523-rproc
+> +
+> +  reg:
 > +    minItems: 1
 > +    maxItems: 4
 > +    description:
-> +      One interrupt per processor port in port order (arm, dsp, cpus, rv).
-> +      The ARM host port interrupt is required; remote port interrupts are
-> +      optional. Use interrupt-names to identify which ports are present when
-> +      providing a partial list.
+> +      Memory-mapped register regions. The following named regions are
+> +      supported (all optional except at least one of r_sram or r_sram1) -
+> +      "cfg" for RISC-V core control and boot-vector registers,
+> +      "r_sram" for dedicated MCU SRAM Space 0,
+> +      "r_sram1" for switchable MCU SRAM Space 1,
+> +      "remap" for the hardware remap control register.
+> +
+> +  reg-names:
+> +    minItems: 1
+> +    maxItems: 4
+> +    items:
+> +      enum:
+> +        - cfg
+> +        - r_sram
+> +        - r_sram1
+> +        - remap
 
-No, this has to be constrained/specific. See writing bindings and any
-existing examples. Also, just list the interrupts with minItems, instead
-of free form text.
-
+So you completely ignored my feedback and sent exactly the same.
 
 Best regards,
 Krzysztof
