@@ -1,212 +1,444 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-dy2-f43.google.com (mail-dy2-f43.google.com [74.125.229.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507064CE69F
-	for <linux-remoteproc@vger.kernel.org>; Mon,  5 Oct 2026 16:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A13A4AF9D4
+	for <linux-remoteproc@vger.kernel.org>; Mon,  5 Oct 2026 19:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.229.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791216765; cv=none; b=gj8CxaVnd4Ab2iDUuS6h4QOaThxLQDD5y7F88aFUblqdKZ/nj2b//vU4+o36swdq2GjdrZdzQpK/InmwZyoYAPDYL476UYn2WiXJw7KHwtZnKAIRqGKpL/dnLuAT5ggJ/Ol8/Wyjds8F5oz6Rj3wBYCySUzBTmz7H92qRy4YVaE=
+	t=1791227447; cv=none; b=kgAaNqnqZBv14kBLbnaEozY1U7Mbtv5YYc+gfePH5JJMJe+Nal9guJ//J2M2Z+OMM+7asZQ9MqKtfvBwF4hXICNt26f1eeMMF6DF9ArcXiEHqxEto+OkVM84eebq0EauSUSUB8AeiSm+s+RaPXUfUwdGq0I4KpZVqdm9frT9RVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791216765; c=relaxed/simple;
-	bh=pGL7OPUTou100s2Ao9RAWlBCSCF6/32S03caCjf9SXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2iYLjHxMCFE90hnZ+PWdGLg+zmvjFPB7EkrbuyZ3RH/28YZTGq5erQQzOMAlEbswgMwbkWinEy3xnR6aV+tC7pQAfkHabNBmMflinGLWZSgHO6L/Z+f/CcnWLNXZgiZDmakPIzxqVnIP4Vp+xJ0kbYgVl9Tnt6Wh0/8dLRXyX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YhxtBiJE; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eGQZBudJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1791227447; c=relaxed/simple;
+	bh=TN5pLnk4ylfuQCDcPJKk8WYph9lKab8Uf7A34Sv6vbU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KKXTR/ngY0b8AkZvqcXdrBv1uTUUrdUMoU3RDl5N9bQikAL2b86rFCRELF7hwuy4CYsBgm5w3dQk0YrQGbbUMWDUPdpB3D7mwREaRW/T54S8QTGLKUbYLGSNqIkvEvp0Ptm/MGrghKi22UJFZgheIQm21AHKY0r+RwSeFW0DEPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A8BNIdom; arc=none smtp.client-ip=74.125.229.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YhxtBiJE";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eGQZBudJ"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 695EP7TW2651596
-	for <linux-remoteproc@vger.kernel.org>; Mon, 5 Oct 2026 16:12:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=pZuZ1lDBf+lhAoCkovyGqzsT
-	No9dAJ7sm4hyDqgMjos=; b=YhxtBiJE0PD7HIsh8JT09+Svv9Ve9wJcUsbOrLFK
-	rxSegQ286TGsSG4AaArzLQGDRQUMXcIB2pB5oDvrJQljFZH6SUAdLNPkouCwtYjB
-	Cx1QNRSbq2sS0YlisU50NqaGTcqVXHqEryO2bnV6QVlTH2Z+TC1A1N7eA8e2RWir
-	un7DNEyZDH0MAxPO0WrE8swC3qjZ7/o2PzCSZiEsdLfx4uGSAaEygn3QgRoQVe2j
-	6zXzPIYt/IFhmpeupcJhKk0GJTM1fb2ybtAIcY/gWcjkrE0FGFWS3jGR1nRy2y74
-	0uJ2JPOHs4sbCDWcdJCfx1OZMTPOt1/v4Uyfcv4B8yhEbg==
-Received: from mail-dy1-f200.google.com (mail-dy1-f200.google.com [74.125.82.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h49tvs97h-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Mon, 05 Oct 2026 16:12:33 +0000 (GMT)
-Received: by mail-dy1-f200.google.com with SMTP id 5a478bee46e88-34d62bb27a1so8091819eec.0
-        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Oct 2026 09:12:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8BNIdom"
+Received: by mail-dy2-f43.google.com with SMTP id 5a478bee46e88-33e4e75342aso175577eec.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 05 Oct 2026 12:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1791216752; x=1791821552; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=pZuZ1lDBf+lhAoCkovyGqzsTNo9dAJ7sm4hyDqgMjos=;
-        b=eGQZBudJNvB4yKmFbmWQPJO62nSFhmu+t5TSSf4m409ohKJtQVmvIiei/MordFwLvL
-         s7FXM44eRgCZU98OVZtNFNxIeOmnJjozUqRTG5arpMf/U7oLFgjMoSvEq4luWz55FsEF
-         45h1rf9kzZvBFZSLCHOoc6rcnua9RKnbL3wyUr8VY9PDTgAZPANFy02UrqwE2c8DAzd0
-         oXm+XnD/fqTBsB8Ny7SkWgo5yHz6O9/ivKIBQ1MxbjnUsu3l4e5d3p7mz2C6WcTpwd+T
-         Qx6YiK9y2+e/B/QXCg9qlSIUpqYLZcNdjWoHIQBO5qjp8yeiiVc3KzAo78rqKbXqSTJX
-         hcuQ==
+        d=gmail.com; s=20251104; t=1791227445; x=1791832245; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=GSbhrt/lgKepV2a1GBS3lg8xwzm8vGysOirgZ5JBTUA=;
+        b=A8BNIdomSof02GpFF0Y9+EJi6154tf8KxvORbVzA7OBDbTqjGzS/BrK4nfCOnLDHhk
+         E1OSIUtStRIrJJZ1byo8R31j52xsJkPklYYFK1QXmlTl/xSla2QR//tg3EUcJR+xFac3
+         lE2iIkcvCAlG8X4yBNX5ifw0TNamTUtxhePEpi30Y/GRRZ4VsNBAUs2UeLamJlv+go9y
+         W+YtKh3n8trwbNvV/K9oxiYzBN+xsJ7/pCgNdmi5YBa1wcESYF26W0W2fD0w+iHR0/Bg
+         F0JIhzryf2+x3intj89dgcvlxinmRoKExpOvzP1KiHlkaNgt8T2KN922M9HO3q6hBq8g
+         MGGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791216752; x=1791821552;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=pZuZ1lDBf+lhAoCkovyGqzsTNo9dAJ7sm4hyDqgMjos=;
-        b=0kfeJzFo68R5p6357MUt306P4ldMMMoCLj3e5349mLAofYF467E+SrU6pydttIR7ez
-         vEjRPNOvi29Orr6dJSckkwLSE69Vri1hsDTpOdYeux8Kf4I/mFZrmmHW4pQGgS96Xe9g
-         +BXTjRASa/UHYrVztCCkOSuZl6E07uyXHGat7ckQo5hhywL8CIJzCUiMMKjWLvsJV5U3
-         oneAQt0vNM1d2PTYNMXMG34IP63uVbrgyP8wXo+XYOTdqoRdxxrDYKsDw8DdlR/PTJC9
-         WR3WMuyJ2WiAJmhMVoVcYIhO9UNFKR1D5+lV9inaNtAQNnmbZ88H6qPI1fraUWqfyHw7
-         sA6w==
-X-Forwarded-Encrypted: i=1; AKwUvByfwTQnYfX/QmoNmlCFQt8CKkLIsmO01xRrzEnZm5EzVkfrFUhfedfKikMAdxVIGeW448UdLZluY1ZADbxgCPsm@vger.kernel.org
-X-Gm-Message-State: AFuF++lePQ8Os6q1Dqnru5EywAjL8c2yyd33v9er02dENlug9fxX4YVu
-	rupttowYpzya9UEED1atvmQG+6JDgqiMJThsk7mtJERNl7gp+8DvkE5MG1L42LiF8VRWt6XwTHU
-	OZqzugLSXkBfPAPNy55fhkAKE50P20HmWmNth465Pc/jObGtN2N4B7YkFheb/vwf1wxb+nl/R
-X-Gm-Gg: AYBFou0GSoPR6uvPaeF9BJsPakyvvF8As9I8uRP2K2OlP2BC1ymxsmxV2i0k4XD3xiN
-	UDsb5JsKPcMbHHnpv7ZB4dl9G668QueRkDaLRdar79u6BJzguoxJyicJsAm+dyizXuVRgvAoFNX
-	vK4fIHk/gLVDs2pkirk8pplSMZ7d2hAtF+QOe+EnDCn9yQ09XsY1uLh9V+gNzJ+2PyU9RJPqSp3
-	iKeJtNvMOGAgxLTT+hE8HHG+o+36sRAecKYGPWgshGccX1STEuKxHixwwojcXMa4oWD14eJMEBy
-	efDtro3rcuI+O0S3FzXrQXzPCzL9RpbmNkcNv7KvHes9gZSc2gyzNtpQadRcCqfQxJGUABkoRm6
-	wHUnp4o3wdqWR6URWcVfvjiuPMw==
-X-Received: by 2002:a05:7023:889:b0:144:f096:4dd1 with SMTP id a92af1059eb24-151c492533cmr11482399c88.41.1791216751907;
-        Mon, 05 Oct 2026 09:12:31 -0700 (PDT)
-X-Received: by 2002:a05:7023:889:b0:144:f096:4dd1 with SMTP id a92af1059eb24-151c492533cmr11482362c88.41.1791216751113;
-        Mon, 05 Oct 2026 09:12:31 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-35127021d1esm15885013eec.4.2026.10.05.09.12.27
+        d=1e100.net; s=20260707; t=1791227445; x=1791832245;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=GSbhrt/lgKepV2a1GBS3lg8xwzm8vGysOirgZ5JBTUA=;
+        b=JCHE4zrTltTzXJwW4xLV1dPx2N/q8fZtlPRu/7usmPSxr9FE/HZMSbRPJJVJPNZM5i
+         6unsN6UY2qdfJi1WBGmpsCH90IU4ui0NjQdrcOPi9+/q5dv2qTb1L/Z7wK5Eud/ePSzk
+         CyCf3EtIODxPqSg3qQHD1lX8r3mXKXX+tYlH+1aR86mWryJvtuYLBpPGdYSY2H7QIcpI
+         ANrlHv9mAtub11eWaFzSXLYKsjHMBvXa0PJoAfMLOOBsZB2eTJKktqhQIJ4hwbyKhC+y
+         XRoHhw7iTcFnuK4NPmF/aSXTqhBvZIe4rVXWlbab7EldklJ5iuMfjVgaEjf7973pjZ1I
+         hhGg==
+X-Gm-Message-State: AFuF++k/1u9cYlbon1RUsJH1AVUJ8/J7A0lf6y6XcZF87bqDzZhYFNWw
+	w5CzqMl82fxPF4MM1Q4r9PEmNS2gmVnUn5K9RTkoENF3reRMq/QwgpVQ
+X-Gm-Gg: AYBFou03cRSjuXjRnVLdD4A0uuaG6oVRXwB/q0gSZjd6AnFO+G1x3OIDb9BIeaZbpRU
+	R43UMLGJrAMzzcyrLl72RjNcjRcr9eQAtB1JvxVbBIoUHWNk/0mF21foPcqVlyW7/EAZeK5GJAu
+	iZvbRk6pIYtGInoprkASrt7xki7LSZcmiNS3DKy/venuLIImCnVvvKzwRt7/HhJcbqc6y8L01EL
+	GSKCgXOeFIaG0FpYcMIGtGOqE6zZv50kIggGmS9v5fsHhWB3SIhGWDPU2Cau+mPdGjtL6QJLe+6
+	Hnf/UX4hYUwCYSqVpbbT+DDAKSoRaZxHyEr4ua8vVJ+lYZF40ScdYZT7xExjcwQHWHn3WO5NWel
+	Nmvp9DiP3RZgEojmkM/55wgVEUDOndTPS0xnRY+b+zgsQujiMbzE5HjARDvtH78q4mJw6QF1LoE
+	uBG9tUC2mad5sdhOiZizxyr8ParvGJHN5HK/W99aIIhzgwMlo64627aVpSxBlRw1ue4ujWAigkX
+	1XbLKGs2Tk=
+X-Received: by 2002:a05:7301:9a83:b0:34c:f181:85e4 with SMTP id 5a478bee46e88-34f14ffa69cmr21314485eec.1.1791227444450;
+        Mon, 05 Oct 2026 12:10:44 -0700 (PDT)
+Received: from [10.211.86.252] ([2409:40c2:5007:c960:23fb:5e63:6976:fa4f])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-35146b5ee6bsm475408eec.30.2026.10.05.12.10.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Oct 2026 09:12:30 -0700 (PDT)
-Date: Mon, 5 Oct 2026 21:42:24 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
-        konrad.dybcio@oss.qualcomm.com, sumit.garg@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: pas: pass no resource table when the
- firmware has none
-Message-ID: <20261005161224.umj6zzov57tifv7v@hu-mojha-hyd.qualcomm.com>
-References: <20261005125411.2151326-1-jorge.ramirez@oss.qualcomm.com>
+        Mon, 05 Oct 2026 12:10:43 -0700 (PDT)
+From: Bhargav Joshi <j.bhargav.u@gmail.com>
+Date: Tue, 06 Oct 2026 00:40:26 +0530
+Subject: [PATCH] dt-bindings: remoteproc: ti,keystone-rproc: Convert to DT
+ schema
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261005125411.2151326-1-jorge.ramirez@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=aN9lOr9m c=1 sm=1 tr=0 ts=6ac3cc71 cx=c_pps
- a=PfFC4Oe2JQzmKTvty2cRDw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=kj9zAlcOel0A:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=3WHJM1ZQz_JShphwDgj5:22
- a=EUspDBNiAAAA:8 a=nURcFc7YoTJHLg9ZjdYA:9 a=CjuIK1q_8ugA:10
- a=6Ab_bkdmUrQuMsNx7PHu:22
-X-Proofpoint-GUID: 8C8QTP5bXsPbMpn1ZmU-AJqpPN74pD_Z
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDA1MDA2MyBTYWx0ZWRfX6CmYYU2+cbfz
- LCw08cdoBAwjxFo9pBR8Dc0oaESyrhTrMgvYuSh7Mi5GGj73F6pxw0+Fn5aZqd+w4G4Zul8byIU
- zynji6dkqUUaIrqMP/vZ5SsFJaHZn6nBLUfXF/RkEN83G+B6a8f77JWRHl6vxx0vW9axqMF7Fwa
- FytK5cXu1PCVbDZH4uWkaieSShuaPeBUojH7z3jIqBhcWoIgfif1a1wcG5AdbIAvbDFQ+a4zldM
- T2ZR5QiXi0QxMPHnkzJ4WAo1IiFaFmxE4gsZtSpQ9mz2FPL93hwGuJ60GIRfH1WhCwaWfey3C7e
- /3cE97tdLwCAv45OhOw+u7TZEDiK20LWiuKOpINylXZNdZSa7/IdXfzViN/ST/Y889NEOH9rulH
- qrVy/oD2BhS8BhNlhEhD3cb1Y0dZ7F/qklOoeHTsGf6Hhab31HTWbyXqjXU/j6C+JfWFeN7a42P
- P76l31FmrMYOB4Djexw==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDA1MDA2MyBTYWx0ZWRfX/+d7YGmOjO9+
- hOIfQqDJbuLJt0rLQgCUS0HzOb2AxT4FyyY20tP1IDpaLZYStALiGjmlZNlNPyy89fr/GTNq5Qe
- nD9gSDTqa0wrd6xmZe1xe4vm0TLwuSk=
-X-Proofpoint-ORIG-GUID: 8C8QTP5bXsPbMpn1ZmU-AJqpPN74pD_Z
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-10-05_04,2026-10-05_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 clxscore=1015 spamscore=0 phishscore=0
- malwarescore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2609040000 definitions=main-2610050063
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261006-ti-keystone-rproc-v1-1-41f7f078b44e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/x3MQQqAIBBA0avErBswDYmuEi3KxhoCjTGikO6et
+ HyL/zMkEqYEfZVB6OLEMRQ0dQVum8JKyEsxaKVto5TFk3GnJ50xEMoh0WFLZu680Z21Gkp3CHm
+ +/+cwvu8HaiMGh2MAAAA=
+X-Change-ID: 20261006-ti-keystone-rproc-4e3b8f328662
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Suman Anna <s-anna@ti.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, goledhruva@gmail.com, m-chawdhry@ti.com, 
+ daniel.baluta@gmail.com, simona.toaca@nxp.com, j.bhargav.u@gmail.com
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1791227434; l=11715;
+ i=j.bhargav.u@gmail.com; h=from:subject:message-id;
+ bh=TN5pLnk4ylfuQCDcPJKk8WYph9lKab8Uf7A34Sv6vbU=;
+ b=fJmAv24dBO753NanC9n00n0anTt7+DDNR1XmL4EKn4AQav3pxnvQUYccAfycHtmfOb4U/r6d5
+ ps+C1DnoznIBnfmgUndWYceI6jijGoUCB5sVn1MuLwJIphn2qQk81xn
+X-Developer-Key: i=j.bhargav.u@gmail.com; a=ed25519;
+ pk=IqNDwUZKECEA+n8wXctFLBbYL9NhFstZNbOznm/nX1k=
 
-On Mon, Oct 05, 2026 at 02:54:00PM +0200, Jorge Ramirez-Ortiz wrote:
-> The firmware resource table is passed to the PAS backend even when the
-> firmware carries none. This only works on the first boot, while the
-> cached pointer and its size are both zero.
-> 
-> Stopping the remote processor, or failing to start it, frees the cached
-> table and clears the pointer but leaves the size set. The next start
-> then pairs a NULL table with a non-zero size.
-> 
-> The SCM backend substitutes an empty table and hides the problem. The
-> TEE backend copies from the NULL pointer:
-> 
->   remoteproc remoteproc2: powering up cdsp
->   pc : __pi_memcpy_generic+0x110/0x22c
->   lr : qcom_pas_tee_get_rsc_table+0xf4/0x25c
->   Call trace:
->    __pi_memcpy_generic+0x110/0x22c (P)
->    qcom_pas_get_rsc_table+0x38/0x60
->    qcom_pas_parse_firmware+0xa0/0x100
->    rproc_boot+0x2d4/0x380
->    state_store+0x40/0x100
-> 
-> Fixes: a4584bff63c8 ("remoteproc: pas: Extend parse_fw callback to fetch resources via SMC call")
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
-> ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index a005546c265d..e871e03ba794 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -463,7 +463,7 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
->  	struct resource_table *table = NULL;
->  	size_t output_rt_size;
->  	void *output_rt;
-> -	size_t table_sz;
-> +	size_t table_sz = 0;
->  	int ret;
->  
->  	ret = qcom_register_dump_segments(rproc, fw);
-> @@ -476,11 +476,12 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
->  		return 0;
->  
->  	ret = rproc_elf_load_rsc_table(rproc, fw);
-> -	if (ret)
-> +	if (ret) {
->  		dev_dbg(&rproc->dev, "Failed to load resource table from firmware\n");
-> -
-> -	table = rproc->table_ptr;
-> -	table_sz = rproc->table_sz;
-> +	} else {
-> +		table = rproc->table_ptr;
-> +		table_sz = rproc->table_sz;
-> +	}
+Convert TI Keystone DSP remoteproc binding from legacy text format to DT
+schema. No functional changes are introduced during conversion.
 
+Signed-off-by: Bhargav Joshi <j.bhargav.u@gmail.com>
+---
+ .../bindings/remoteproc/ti,keystone-rproc.txt      | 182 ---------------------
+ .../bindings/remoteproc/ti,keystone-rproc.yaml     | 140 ++++++++++++++++
+ 2 files changed, 140 insertions(+), 182 deletions(-)
 
-Earlier code was intentional please read the comment below.. /**...*/
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+deleted file mode 100644
+index 8475521336333..0000000000000
+--- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
++++ /dev/null
+@@ -1,182 +0,0 @@
+-TI Keystone DSP devices
+-=======================
+-
+-The TI Keystone 2 family of SoCs usually have one or more (upto 8) TI DSP Core
+-sub-systems that are used to offload some of the processor-intensive tasks or
+-algorithms, for achieving various system level goals.
+-
+-These processor sub-systems usually contain additional sub-modules like L1
+-and/or L2 caches/SRAMs, an Interrupt Controller, an external memory controller,
+-a dedicated local power/sleep controller etc. The DSP processor core in
+-Keystone 2 SoCs is usually a TMS320C66x CorePac processor.
+-
+-DSP Device Node:
+-================
+-Each DSP Core sub-system is represented as a single DT node, and should also
+-have an alias with the stem 'rproc' defined. Each node has a number of required
+-or optional properties that enable the OS running on the host processor (ARM
+-CorePac) to perform the device management of the remote processor and to
+-communicate with the remote processor.
+-
+-Required properties:
+---------------------
+-The following are the mandatory properties:
+-
+-- compatible:		Should be one of the following,
+-			    "ti,k2hk-dsp" for DSPs on Keystone 2 66AK2H/K SoCs
+-			    "ti,k2l-dsp" for DSPs on Keystone 2 66AK2L SoCs
+-			    "ti,k2e-dsp" for DSPs on Keystone 2 66AK2E SoCs
+-			    "ti,k2g-dsp" for DSPs on Keystone 2 66AK2G SoCs
+-
+-- reg:			Should contain an entry for each value in 'reg-names'.
+-			Each entry should have the memory region's start address
+-			and the size of the region, the representation matching
+-			the parent node's '#address-cells' and '#size-cells' values.
+-
+-- reg-names:		Should contain strings with the following names, each
+-			representing a specific internal memory region, and
+-			should be defined in this order,
+-			     "l2sram", "l1pram", "l1dram"
+-
+-- ti,syscon-dev:	Should be a pair of the phandle to the Keystone Device
+-			State Control node, and the register offset of the DSP
+-			boot address register within that node's address space.
+-
+-- resets:		Should contain the phandle to the reset controller node
+-			managing the resets for this device, and a reset
+-			specifier. Please refer to either of the following reset
+-			bindings for the reset argument specifier as per SoC,
+-			Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
+-			    for 66AK2HK/66AK2L/66AK2E SoCs or,
+-			Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
+-			    for 66AK2G SoCs
+-
+-- interrupts: 		Should contain an entry for each value in 'interrupt-names'.
+-			Each entry should have the interrupt source number used by
+-			the remote processor to the host processor. The values should
+-			follow the interrupt-specifier format as dictated by the
+-			'interrupt-parent' node. The purpose of each is as per the
+-			description in the 'interrupt-names' property.
+-
+-- interrupt-names:	Should contain strings with the following names, each
+-			representing a specific interrupt,
+-			    "vring" - interrupt for virtio based IPC
+-			    "exception" - interrupt for exception notification
+-
+-- kick-gpios: 		Should specify the gpio device needed for the virtio IPC
+-			stack. This will be used to interrupt the remote processor.
+-			The gpio device to be used is as per the bindings in,
+-			Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
+-
+-SoC-specific Required properties:
+----------------------------------
+-The following are mandatory properties for Keystone 2 66AK2HK, 66AK2L and 66AK2E
+-SoCs only:
+-
+-- clocks: 		Should contain the device's input clock, and should be
+-			defined as per the bindings in,
+-			Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
+-
+-The following are mandatory properties for Keystone 2 66AK2G SoCs only:
+-
+-- power-domains:	Should contain a phandle to a PM domain provider node
+-			and an args specifier containing the DSP device id
+-			value. This property is as per the binding,
+-			Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
+-
+-Optional properties:
+---------------------
+-
+-- memory-region:	phandle to the reserved memory node to be associated
+-			with the remoteproc device. The reserved memory node
+-			can be a CMA memory node, and should be defined as
+-			per the bindings in
+-			Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
+-
+-
+-Examples:
+----------
+-
+-1.
+-	/* 66AK2H/K DSP aliases */
+-	aliases {
+-		rproc0 = &dsp0;
+-		rproc1 = &dsp1;
+-		rproc2 = &dsp2;
+-		rproc3 = &dsp3;
+-		rproc4 = &dsp4;
+-		rproc5 = &dsp5;
+-		rproc6 = &dsp6;
+-		rproc7 = &dsp7;
+-	};
+-
+-	/* 66AK2H/K DSP memory node */
+-	reserved-memory {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		dsp_common_memory: dsp-common-memory@81f800000 {
+-			compatible = "shared-dma-pool";
+-			reg = <0x00000008 0x1f800000 0x00000000 0x800000>;
+-			reusable;
+-		};
+-	};
+-
+-	/* 66AK2H/K DSP node */
+-	soc {
+-		dsp0: dsp@10800000 {
+-			compatible = "ti,k2hk-dsp";
+-			reg = <0x10800000 0x00100000>,
+-			      <0x10e00000 0x00008000>,
+-			      <0x10f00000 0x00008000>;
+-			reg-names = "l2sram", "l1pram", "l1dram";
+-			clocks = <&clkgem0>;
+-			ti,syscon-dev = <&devctrl 0x40>;
+-			resets = <&pscrst 0>;
+-			interrupt-parent = <&kirq0>;
+-			interrupts = <0 8>;
+-			interrupt-names = "vring", "exception";
+-			kick-gpios = <&dspgpio0 27 0>;
+-			memory-region = <&dsp_common_memory>;
+-		};
+-
+-	};
+-
+-2.
+-	/* 66AK2G DSP alias */
+-	aliases {
+-		rproc0 = &dsp0;
+-	};
+-
+-	/* 66AK2G DSP memory node */
+-	reserved-memory {
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		ranges;
+-
+-		dsp_common_memory: dsp-common-memory@81f800000 {
+-			compatible = "shared-dma-pool";
+-			reg = <0x00000008 0x1f800000 0x00000000 0x800000>;
+-			reusable;
+-		};
+-	};
+-
+-	/* 66AK2G DSP node */
+-	soc {
+-		dsp0: dsp@10800000 {
+-			compatible = "ti,k2g-dsp";
+-			reg = <0x10800000 0x00100000>,
+-			      <0x10e00000 0x00008000>,
+-			      <0x10f00000 0x00008000>;
+-			reg-names = "l2sram", "l1pram", "l1dram";
+-			power-domains = <&k2g_pds 0x0046>;
+-			ti,syscon-dev = <&devctrl 0x40>;
+-			resets = <&k2g_reset 0x0046 0x1>;
+-			interrupt-parent = <&kirq0>;
+-			interrupts = <0 8>;
+-			interrupt-names = "vring", "exception";
+-			kick-gpios = <&dspgpio0 27 0>;
+-			memory-region = <&dsp_common_memory>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.yaml
+new file mode 100644
+index 0000000000000..3117cfb2b3e07
+--- /dev/null
++++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.yaml
+@@ -0,0 +1,140 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/remoteproc/ti,keystone-rproc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI Keystone DSP devices
++
++maintainers:
++  - Suman Anna <s-anna@ti.com>
++
++description: >
++  The TI Keystone 2 family of SoCs usually have one or more (up to 8) TI DSP
++  Core sub-systems that are used to offload some of the processor-intensive
++  tasks or algorithms, for achieving various system level goals.
++
++  These processor sub-systems usually contain additional sub-modules like L1
++  and/or L2 caches/SRAMs, an Interrupt Controller, an external memory
++  controller, a dedicated local power/sleep controller etc. The DSP processor
++  core in Keystone 2 SoCs is usually a TMS320C66x CorePac processor.
++
++  Each DSP Core sub-system is represented as a single DT node, and should also
++  have an alias with the stem 'rproc' defined. Each node has a number of
++  required or optional properties that enable the OS running on the host
++  processor (ARM CorePac) to perform the device management of the remote
++  processor and to communicate with the remote processor.
++
++properties:
++  compatible:
++    enum:
++      - ti,k2hk-dsp
++      - ti,k2l-dsp
++      - ti,k2e-dsp
++      - ti,k2g-dsp
++
++  reg:
++    minItems: 3
++    maxItems: 3
++
++  reg-names:
++    items:
++      - const: l2sram
++      - const: l1pram
++      - const: l1dram
++
++  interrupts:
++    minItems: 2
++    maxItems: 2
++
++  interrupt-names:
++    items:
++      - const: vring
++      - const: exception
++
++  ti,syscon-dev:
++    description: Phandle and offset to syscon device
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    items:
++      - items:
++          - description: Phandle to Keystone Device State Control node
++          - description: offset of the DSP boot address register
++
++  resets:
++    maxItems: 1
++    description:
++      refer to either of the following reset bindings for the reset argument
++      specifier as per SoC,
++      Documentation/devicetree/bindings/reset/ti-syscon-reset.txt for
++      66AK2HK/66AK2L/66AK2E SoCs or,
++      Documentation/devicetree/bindings/reset/ti,sci-reset.yaml for 66AK2G SoCs
++
++  kick-gpios:
++    maxItems: 1
++    description:
++      GPIO used by the virtio IPC stack to interrupt the remote processor. See
++      Documentation/devicetree/bindings/gpio/ti,keystone-dsp-gpio.yaml
++
++  memory-region:
++    maxItems: 1
++    description:
++      Reserved memory node can be CMA memory node, and should be defined as per
++      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++
++  clocks:
++    maxItems: 1
++    description:
++      Input clock (66AK2HK/66AK2L/66AK2E only), see
++      Documentation/devicetree/bindings/clock/ti,keystone,psc-clock.yaml
++
++  power-domains:
++    maxItems: 1
++    description:
++      PM domain provider phandle and DSP device id (66AK2G only), see
++      Documentation/devicetree/bindings/soc/ti/sci-pm-domain.yaml
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - interrupt-names
++  - ti,syscon-dev
++  - resets
++  - kick-gpios
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: ti,k2g-dsp
++    then:
++      properties:
++        clocks: false
++      required:
++        - power-domains
++    else:
++      properties:
++        power-domains: false
++      required:
++        - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    dsp@10800000 {
++      compatible = "ti,k2g-dsp";
++      reg = <0x10800000 0x00100000>,
++            <0x10e00000 0x00008000>,
++            <0x10f00000 0x00008000>;
++      reg-names = "l2sram", "l1pram", "l1dram";
++      power-domains = <&k2g_pds 0x0046>;
++      ti,syscon-dev = <&devctrl 0x844>;
++      resets = <&k2g_reset 0x0046 0x1>;
++      interrupts = <0>, <8>;
++      interrupt-names = "vring", "exception";
++      kick-gpios = <&dspgpio0 27 0>;
++      memory-region = <&dsp_common_memory>;
++    };
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 2e1e39826ffa..5edb39ad5277 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -504,8 +504,11 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
-                return 0;
+---
+base-commit: 67f0943b394d920b6c142aad8c6af94340342ae7
+change-id: 20261006-ti-keystone-rproc-4e3b8f328662
 
-        ret = rproc_elf_load_rsc_table(rproc, fw);
--       if (ret)
-+       if (ret) {
-                dev_dbg(&rproc->dev, "Failed to load resource table from firmware\n");
-+               rproc->table_ptr =  NULL;
-+               rproc->table_sz = 0;
-+       }
-
-
->  
->  	/*
->  	 * The resources consumed by Qualcomm remote processors fall into two categories:
-> -- 
-> 2.54.0
-> 
-
+Best regards,
 -- 
--Mukesh Ojha
+Bhargav
+
