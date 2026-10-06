@@ -1,104 +1,130 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7D93DDDD9;
-	Tue,  6 Oct 2026 18:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB0C49CF40;
+	Tue,  6 Oct 2026 18:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791309754; cv=none; b=aQowH6wbuTUyA4AAmAeAZm1hawGvSqOfWLgKeQrywUNfIiKkMGhpX0KjpzEKivAQe6YNf1IfLRaxfFhGYwcLEcyQL0KaN2BSnFOud76Ct4h+xUxp0ozRmFBOpS/mdgpi34PdAIgpKhGK1UFDE0WzYATH64KC5aQOSjE5fYf+vfo=
+	t=1791310750; cv=none; b=Xcl2tzXEnbrTnordYsZHdG9Tq0qEBkKJnLB2nOPZXbKPtINzgInLxoKjCdLEBl7YqIDOOkOS+swnsw01Jox3988bVh+SVtIxkrcb0WMPAzGv60XSyikFmPujlusnGlnwgUOxHaRec3gtKXcZo9aTDNetHIq9r8fTtfgXPFmvr64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791309754; c=relaxed/simple;
-	bh=goVd4gDkeawuFXTB2jfoClWl7lU2fnOknBCv008N5b8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gafSVUoWO7gyTR1kIxsSg0ZK9CHcy4k4jFLlpAWN8FOtRSmO47JmKrDuvIa5qfiHCwjn0uuB/qflxrBN2ivXqNvYolbFoJKQgklDFHKjUyPhw6VhQb3t2EIUXJOMjo1mwiyCm9lVztVL0lS4Z1MjGgRDbZSg/vn+HTUjmp79IQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BA52giKo; arc=none smtp.client-ip=100.103.45.18
+	s=arc-20240116; t=1791310750; c=relaxed/simple;
+	bh=x76PvVJzfUXADtn2/WiHhUwGRC79PKnl4XVrhi+LP4w=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Rai7glIRmT0AJHkt6Kt3t3wUlSCjM+kOoHbgVkoQgmu0GOFviQmwLpjq0e4+xtXOOGCfWPu/D2v/Ua3HElHGKvFImSR50WAK0YrAl+FLCWGRZgTUrmLALEWRm+kTlibm0b98/VCpyoj6k2lb6uoju8sU2fd5oLcocb63+6emEls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=UCNmTmEp; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=V3xtN956; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BA52giKo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE90D1F0089C;
-	Tue,  6 Oct 2026 18:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791309753;
-	bh=zn1cf/2G1XAfRKst7JuV3s2fqRbOiLvk8GIPBUJjUtg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=BA52giKoyHfyhpCln4903eug87nhQVCKX/PDe97zkg8DEB4R5rpHLlYnmv0t2GvBO
-	 14OnGPEbXZhitW8AiOs3NBNAXGkyrR3coRIEnc9SJ9CL52M1rpG/OexOUUbFfjTF7M
-	 3z+i8ewsimtJ/aThbzYtD00P/7xe8Vb4qgOJNLjZjG/NomsjxRgUtG2D+OlJja2ZAx
-	 KGncZp8F7gyG/kHT3iRDTjhTlPGI0Y7sj6yUCdHMqc0llXONhqGoNJtO+GApmyFKKW
-	 3uCKz6TB/SYBLBZj8q/8KQD+X9vdXVzmmO3fm0gq3BPnNKV7ssoeJBLfwlfUtDXc5K
-	 5gxBj0lUizHKw==
-Date: Tue, 6 Oct 2026 13:02:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Shenwei Wang <shenwei.wang@oss.nxp.com>,
-	Linus Walleij <linusw@kernel.org>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shuah Khan <skhan@linuxfoundation.org>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-imx@nxp.com, Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	b-padhi@ti.com, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v16 2/5] dt-bindings: remoteproc: imx_rproc: Add "rpmsg"
- subnode support
-Message-ID: <20261006180047.GD2194299-robh@kernel.org>
-References: <20260923184255.299034-1-shenwei.wang@oss.nxp.com>
- <20260923184255.299034-3-shenwei.wang@oss.nxp.com>
- <20261006030739.GA3457522-robh@kernel.org>
- <CANLsYkzcqapDYvKAEa2ZjA=q07iO=RM4TVNUbSqDrB0EmjeKyQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="UCNmTmEp";
+	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="V3xtN956"
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1791310737; bh=CZCUObdnJ57eIky+7KGcAKV
+	PQRaMYagrlpGzJWR6MYg=; b=UCNmTmEp0bba8Tf9ce6AkcBbruE9xvAZaBWzPsAzYk+me7GIek
+	WzoEFy0l6RPGRyQow5kci4vd+IQEagXiYDx3RH/LZDsBaMNr3Zwydpwc7htqclxQqBqIWYI+jeT
+	kbGr0fY5MA+Ewt4/HxslHFvIu+VYJqeN7xqRvA+UhtOrxZ/tqVnbr9jqA1B+5sNNepChEvIEbz8
+	vbBwLce450cfkm6DEKcggWbew3ytMuxcKCHGXdNcLLERbKkOVoA9pIGpZF3QPLCOX3jBfWrY3Ca
+	Rf0dLgClXmNpEK9M1QxjBqG/tsThDV4Ke1gKiDfrh0bu8y2Ydbl/XnXYZ5PbwY38fiQ==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1791310737; bh=CZCUObdnJ57eIky+7KGcAKV
+	PQRaMYagrlpGzJWR6MYg=; b=V3xtN956c1Hk0aHpnqOA0CRPdXdpTBC0Nau9wHAh5qknvK0sCi
+	x+5fSIEmz72ssEH1gcN7xZ0Qv7DpQNzvuLCw==;
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANLsYkzcqapDYvKAEa2ZjA=q07iO=RM4TVNUbSqDrB0EmjeKyQ@mail.gmail.com>
+Date: Tue, 06 Oct 2026 20:18:57 +0200
+From: =?UTF-8?Q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?=
+ <barnabas.czeman@mainlining.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Konrad Dybcio
+ <konradybcio@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Ulf Hansson
+ <ulfh@kernel.org>, Abel Vesa <abelvesa@kernel.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v3 4/7] remoteproc: qcom_q6v5_mss: Use mss as regulator
+ for MSM8953
+In-Reply-To: <7smt722arn43gwpfhbgagevi3ut6gdxalgfre3mzm4rb25fkkq@ftsucipakelm>
+References: <20261002-sdm632-rpmpd-v3-0-95c47d0f26cf@mainlining.org>
+ <20261002-sdm632-rpmpd-v3-4-95c47d0f26cf@mainlining.org>
+ <7smt722arn43gwpfhbgagevi3ut6gdxalgfre3mzm4rb25fkkq@ftsucipakelm>
+Message-ID: <f5af0cf39d3cf20b52e1d268ef418a88@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 06, 2026 at 09:18:23AM -0600, Mathieu Poirier wrote:
-> On Mon, 5 Oct 2026 at 21:07, Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Wed, Sep 23, 2026 at 01:42:29PM -0500, Shenwei Wang wrote:
-> > > From: Shenwei Wang <shenwei.wang@nxp.com>
-> > >
-> > > Remote processors may announce multiple GPIO controllers over an RPMSG
-> > > channel. These GPIO controllers may require corresponding device tree
-> > > nodes, especially when acting as providers, to supply phandles for their
-> > > consumers.
-> > >
-> > > Define an RPMSG node to work as a container for a group of RPMSG channels
-> > > under the imx_rproc node. Each subnode within "rpmsg" represents an
-> > > individual RPMSG channel. The name of each subnode corresponds to the
-> > > channel name as defined by the remote processor.
-> >
-> > Sorry, but DT defines the names of nodes. If it's a gpio-controller,
-> > then 'gpio'.
-> >
-> > I still don't understand where the unit address gets defined. 0 and 1
-> > look a bit made up. I'm sure you explained it before, but *this patch*
-> > needs to explain it. When you define a second protocol, the 0 and 1
-> > addresses are taken already, so you can't have 'clock-controller@0' for
-> > example.
-> >
+On 2026-10-05 09:06, Dmitry Baryshkov wrote:
+> On Fri, Oct 02, 2026 at 12:38:32AM +0200, Barnabás Czémán wrote:
+>> On MSM8953 MSS regulators is controlled using the voltages rather than
+>> performance levels. Correct DT definition and model the MSS as a
+>> regulator rather than a power domain
+>> 
+>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/msm8953.dtsi | 5 ++---
+>>  drivers/remoteproc/qcom_q6v5_mss.c    | 9 ++++++++-
 > 
-> I had a conversation with Krzysztof about this here in Prague.  We
-> have decided to adopt the bindings proposed by Francesco in this
-> thread [1].
-
-Same question applies there. Where do the 0 and 1 addresses come from?  
-Will reply on that thread.
-
-Rob
-
+> Two separate patches. Yes, one will be broken without another. Write
+In the first revisions i was asked to squash it.
+> this in the commit message and explain why you can't provide backwards
+> compatibility. Don't forget Fixes tags (or explain the lack of them).
+> But I think it applies to the rest of the series too.
 > 
-> [1].  https://lore.kernel.org/all/20260916-remoteproc_virtio_map-v1-8-dac8c5eb4aa9@valla.it/
-> 
-> > Rob
+>>  2 files changed, 10 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi 
+>> b/arch/arm64/boot/dts/qcom/msm8953.dtsi
+>> index 753167c3f861..c7dc08858d54 100644
+>> --- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
+>> @@ -1451,9 +1451,8 @@ mpss: remoteproc@4080000 {
+>>  					  "handover", "stop-ack";
+>> 
+>>  			power-domains = <&rpmpd MSM8953_VDDCX>,
+>> -					<&rpmpd MSM8953_VDDMX>,
+>> -					<&rpmpd MSM8953_VDDMD>;
+>> -			power-domain-names = "cx", "mx","mss";
+>> +					<&rpmpd MSM8953_VDDMX>;
+>> +			power-domain-names = "cx", "mx";
+>> 
+>>  			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
+>>  				 <&gcc GCC_MSS_Q6_BIMC_AXI_CLK>,
+>> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
+>> b/drivers/remoteproc/qcom_q6v5_mss.c
+>> index 2f71ed2feff6..8f6312213e1a 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+>> @@ -2728,6 +2728,14 @@ static const struct rproc_hexagon_res 
+>> msm8953_mss = {
+>>  		},
+>>  		{}
+>>  	},
+>> +	.active_supply = (struct qcom_mss_reg_res[]) {
+>> +		{
+>> +			.supply = "mss",
+>> +			.uV = 1050000,
+>> +			.uA = 100000,
+>> +		},
+>> +		{}
+>> +	},
+>>  	.proxy_clk_names = (char*[]){
+>>  		"xo",
+>>  		NULL
+>> @@ -2741,7 +2749,6 @@ static const struct rproc_hexagon_res 
+>> msm8953_mss = {
+>>  	.proxy_pd_names = (char*[]) {
+>>  		"cx",
+>>  		"mx",
+>> -		"mss",
+>>  		NULL
+>>  	},
+>>  	.need_mem_protection = false,
+>> 
+>> --
+>> 2.56.0
+>> 
