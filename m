@@ -1,73 +1,77 @@
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013047.outbound.protection.outlook.com [52.101.72.47])
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013066.outbound.protection.outlook.com [52.101.83.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1DE3783C4;
-	Fri,  9 Oct 2026 03:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF623C4563;
+	Fri,  9 Oct 2026 04:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.66
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791515813; cv=fail; b=QAjGUf1IBq8rrlLikktig5E6gKcxta90kERoOSDExjZvw+Ht4oDpe89oabANRBolbt9FZpVJaDnnsovBZACY2ncFHgBOPtPRzQoBAS9fFuAoSraR8uznxmVl1Y+ZRDWLyNEyf76w3aDvN/oUmoPlPmXnZX8cn2kVebGWEEYrQkg=
+	t=1791519801; cv=fail; b=P1bcIrMjAYa5KsbfHFe8lDjBJQkqQF+Dv0PU1n9rH6FTnCr+LSFhjqx/33xKijcNXCP2ALTMg22Z+KBzLXgEd2jfZUd9h0rR9MMGmdZ6qLzu8YdKjnON8xi3XKSibftbArRNDYpNOKxwm+5uYfTJGYVxpbMF5VOG40k4HKCLLo4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791515813; c=relaxed/simple;
-	bh=ZUYJuZU4gBbuspikZoJQoTncu1r9CiPU2DByGvo/bCo=;
+	s=arc-20240116; t=1791519801; c=relaxed/simple;
+	bh=/teaRfJ0FQJ8HCBKuXaC4e7CIPnRxWk88MtjZPT1gmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aCyqjgVieUcCxD5cK/8XjNFC/F7QjUABLc7Ahn+UZLX3/KmeXzMTnEuPLZ/iv13zXut2AoDNeGS1f/whTYjZEbOM+J8IkLoerRnBD9sUN7Amr4NUaf5Q3b9VCEWY1qBiKHqtQtBW1BB1As8McQobw2gAhRkVvSjX+2I7FP5D/xU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=dGV5ZtJ5; arc=fail smtp.client-ip=52.101.72.47
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QsDhCH7pgZAVSXzzv8SC3YLGXEHXCkhfd7froPeLy0EwNpX7lPjRx/mlBzMvuhtx5BsZPxqPdFKwyUPFLTpn0h6uVvxGH/iaKxfKVGJHaqPGbjBuIrMx8BtObqAXM45FhFSqEU9/2maGj6qy7Y0jLpj/O7gquAs00/3jXGDCDbc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=b9AEOfPm; arc=fail smtp.client-ip=52.101.83.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="dGV5ZtJ5"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="b9AEOfPm"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dn2GRn8qPoNxxfimPUpu7mC6tWmgiSuTlyddhc2mLxm1YvB6J4AV4FpOV+0xjxRMn3J6c87hg5bOZXtzRxIG4rTTL4755aXXVZF5p06mt3bjfurKqLh73y1S8dpMZsQNQRF39umQTRO+CNyjEL8vCZcXj3JgEu2SVXD8WSL3/CJw+Ddo+0rNop7nTWvc8WJ1EjA1d6S39oUq+j4H+2dzRp+7SCX2vUVIG7ooPSn/C7VgSFchR70BMtt65X77os/HpWnpIaA0TLZH6V4xbL+Rcm5/eKl8BRBkavo5Ep+/NTZbHUTUcax1ImQ+Uj0RPm+SGnHHnIfuETm+/ceSNvdqQg==
+ b=w5eMruy/wHNjH4EDNrPakYnFiJ1sFIhtXECOiCGMDTYvj8RIYQUKabkJisD+QXIwrVXBy4akAdIaQsyMFJbbSvIAkXV0OeNxZMe50rFUTB2hdshzSCOQsf4cTTZFV9nj1f4UIFuILd37UHcu0lkA25uoUPzxx8Rdms3YbZ+EAPH0RT7TfGJSTyCYGlwSP/q+Z3qNUEbh9VdL8KhGwEWU5XRaJb2cN8eXFZ+S6t2tk1H1VL1bsoiAZi57mCqYTKimv9E9iJ+H3oL4IdzD2US/eafvHVFaa+V5jlNaMao62B0rtuzA0huZXmRzdrRHQnurnb9S5B5xQ2nYVePRg5/Cbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nFcWsMGnyzZcim5ifgI+pmlqEw9dogtANHw1V1+0CIs=;
- b=a30GH5OW/EGF24U2zyoEsV4xzDEmMI0fRPgEDNTHlM+W/UzXz2Owji+5Bg1Dw20PEzfkUtrPUG62xDlzdcvB1yYb4Io/GA/8Hgk5O4iuLh1v/lpqOp0rjIOOWi8+IuERrVu8o9DZT02devQLbl+IvU4CxGWYx9ww9pnMBVci/nnGe/4ZoedMqUkM1tuNzB8NQk4ayzpA1bzungKjrc3pUd+66WmmO8XINqBF9m5bMRNIGctlQv4b5dGn2VAxNQM9r7C3SIuyP221zuy4CCq01GT6j9A/pJUNkGZfF2DGyQUcwuBXmdZiqhN8mnMa2o2JCZGmzeaZPB/WuJES7gE7Hg==
+ bh=TQCpNshqSh0LAzFaaWerENiJo+pM83yCqyLNpgaXzHM=;
+ b=JOJEm4lMzn5mQ5Fk/XM4988zWLo6YY1FsKghcX36USipYmAIWLBp4dOmXET2OdLpfyZ+KPKm0DEWKya/Ikd1egxk+T/2Q/f3uK6/3HsWKCEnB8v6zo78/g1tkix6oH8EX2IU+Xa8lPAYDAyvDrvRYSuRjZ4mu/qpugK/M4jClQz2PMyPWcoGS/txgxrJwHzlmbvQWWhWOCoStvN4ENpk8H9JVxgTJPPbF3VNFD771JO6cM7LUQR72yVozRJh+S7Gj8P645YJJa3vV2OLRYh50FuchH4N7VL12xHRXh/cJLacPerB8FJE1xsPs38DHqATtOpmaGy6fEAx4VeX3jZNiQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nFcWsMGnyzZcim5ifgI+pmlqEw9dogtANHw1V1+0CIs=;
- b=dGV5ZtJ5rgYpxT0Ka74V3yiDjixWqR8q9m/L1zz0gk2Ypl85WI8BGbvsuuCdbvUSih8vJwfoMV9pJWIDOflfIfYhC3lFe/eAm+zDW8gL2oxadRXXGC1seWduNSdnp6uoR0wmeyysGmoVIVuhwj8ALlMkcjEYXgdYyv33rMNdr7NQJ6CILLzxEe1iyyHLjru4d9BR1K6qLcCt3kVYald7BWq2FjxYTyuMKwY9EHOFJPwpWtzz/wMFRAEf5iiYczrNkr1WBvj1SXrXpSZOenKefBP2dfkqwyWjgohAazBC3mF3I/9O8rvnNDMZKUlsmPgzNy5Ht4IFGglAQrZrLZtRkQ==
+ bh=TQCpNshqSh0LAzFaaWerENiJo+pM83yCqyLNpgaXzHM=;
+ b=b9AEOfPmEFBInq0DDdpiureMDJrijlsNBBxXFYRqS0h2JZ62suSpmZrP4nsVKATubPuCHRjetbyq6vmWj0ritpS2A2LnzMnkcSxSABL8has7bqMPHRnTJf6j9XT1/Q0zZL+EB1Evz/OaP+PwysVGc1klQ65LuTS/AGn+5604iHpMCR2fmLowuMD7aOaFIagVJu1VMDgZM8Xymhk0gcjfl/vkp43vpX2QaO7sFm+zRo2CUm8wcotTNogVd7A15KgsUZVxEyly8NQWfQowaj48jE25ZYoN2cQM0ek5NwFK7osWV9GkZuTmJPlbxqbL3CG1ZKt8S7Uujkr9OeuV2bd8MQ==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
- by DU2PR04MB8645.eurprd04.prod.outlook.com (2603:10a6:10:2dc::21) with
+ by GV4PR04MB206370.eurprd04.prod.outlook.com (2603:10a6:150:401::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.496.17; Fri, 9 Oct
- 2026 03:16:40 +0000
+ 2026 04:23:05 +0000
 Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
  ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
  ([fe80::ac38:1699:6f18:c5d9%6]) with mapi id 15.21.0496.010; Fri, 9 Oct 2026
- 03:16:40 +0000
-Date: Fri, 9 Oct 2026 11:21:14 +0800
+ 04:23:04 +0000
+Date: Fri, 9 Oct 2026 12:27:37 +0800
 From: Peng Fan <peng.fan@oss.nxp.com>
-To: Frank.Li@oss.nxp.com
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
+To: Francesco Valla <francesco@valla.it>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
-Subject: Re: [PATCH v4 4/4] arm64: dts: freescale: add DT overlay for
- MX95-15x15-FRDM RPMSG usage
-Message-ID: <ashdqkzRdM74N4n/@shlinux89>
-References: <20260917-memory-region-name-v4-0-260755920ebf@nxp.com>
- <20260917-memory-region-name-v4-4-260755920ebf@nxp.com>
+	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, virtualization@lists.linux.dev,
+	imx@lists.linux.dev, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC 12/12] PoC: arm64: dts: imx93-11x11-frdm: add
+ multiple vdevs
+Message-ID: <ashtOTx/xhTsMnQ3@shlinux89>
+References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
+ <arKiOCGrWAKyc-bc@p14s>
+ <arLawAw6kgFT2e0W@bywater>
+ <arP06mWDehsIDh5s@p14s>
+ <arP5AvA51GHrI8aN@bywater>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260917-memory-region-name-v4-4-260755920ebf@nxp.com>
-X-ClientProxiedBy: SI3PR02CA0007.apcprd02.prod.outlook.com
- (2603:1096:4:295::9) To AM8PR04MB7874.eurprd04.prod.outlook.com
+In-Reply-To: <arP5AvA51GHrI8aN@bywater>
+X-ClientProxiedBy: SI2PR06CA0014.apcprd06.prod.outlook.com
+ (2603:1096:4:186::11) To AM8PR04MB7874.eurprd04.prod.outlook.com
  (2603:10a6:20b:24d::9)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -76,177 +80,395 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|DU2PR04MB8645:EE_
-X-MS-Office365-Filtering-Correlation-Id: 501d8f67-fc63-4b96-6d6e-08df25b3bcb8
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|GV4PR04MB206370:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e0ec283-7a50-41b1-aaa2-08df25bd0338
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|23010399003|7416014|19092799006|4143699003|11063799006|6133799003|10067099003|56012099006|18002099003|22082099003;
+	BCL:0;ARA:13230040|1800799024|366016|23010399003|7416014|376014|19092799006|56012099006|4143699003|11063799006|10067099003|18002099003|22082099003|3023799007;
 X-Microsoft-Antispam-Message-Info:
-	K/2KJVNrIFLufnovY/+pYMYmfI3Z6cHadZQDpuA53fSWWED29QS9OS0BCVXYBu0oWnHMWqtXuEagZ6qzw7czzT1g3afDGtSefBHbhF2oICWkqS2epwqF8+1c6puDlUOVkMoyVyEH98kQAYgvQtBviCk0oUjtYF0ShxTlT+lsE2uYemWW2kiN18uEcnyy5o2Nq4WP2WVIpC0hKILaSyTsrTrg4BMB+HwlYAIfX2kkhuiULgLM3FDesKZPSIqCswCKfadsbQA6wIBSCrK8UTtAxduMkVOSmof9z3T69rxOOLkzpNktYU5gDmJwarVkc18Iruw47j2LDPyA7X3869yhdYT/JObXyXevFcHX1UHhUookRniuTdnx9AeChFNiBHfYAzTVu5zt/zuITKHCRLM52lqUNMBYn9G64xXjnDn5anpKaaI/9hp9eNt5rJ/XRinRHe944Ksi+hCXVwfPn0zZW8JVZp3ulk/MUHpcb0ob4YCAw+Steguu2mJr+vQwGBnY3qcRSXaEhsyzrYu/yyMSm/MBbALnXQe3H/CXmtDbRFY0je2qKFMhWMS8ziHmWW50i8cS3V+lxiTQ0Hgw6rFRHlTBxjC45/0zm1xN5JRJ6L2ponk4fSUEiVuUOuY0HrE4KEC7zIGTUNmJQ40YZ6WlWjEGZC66I+wpSHFPUJddWf0=
+	DreUnbXauPvsIOTtxnw08ffuSDpOMuRerxy3ipceHJSWlOhqP8EJqilwq7h58oDfjA91W+tPDKEFbIxDAo/3y4y2xnHKRotopFCA5soo7znon2Nnj1N8hhmrcM3FLvBgLj/QMudIEm78zyikORTFxJfmSAE5bqRm+3aepqTtYVFrd4ATHR8V7mD/AwjMZ0pUEQzuSsOj656llxy0xbt5/+lk9cNV68gEfYfvS+AxP0SaX4mh2fyfwfr2RzqFo7e6U4RXD11ijSaYeZGJK/mxyKfOiNhMc4AfOT5pge6YAaXXIyzU709c6fuPTIUxIMko9txCGU1FcOuuikaa/tApVvgCTxMVP+7Z8zh8PmWdHJ9fz4ybceJTJIpU26zMmscaFdKadHT2dgnTtC6JqD7Zyam0GmCdv3pzyo4IySx5wxmWAvbILC833EJsrWr4aKpg5+WUZ5AmAK8FqtFgm8dvAYfhbdX4KvqdsWH1jOuNmf00quUZ6PqCywLshIFeIklocLpPe911k07RCG0KEXp/oKTYlxMkbsLEwaVIrX5mGP1lDNC/3utg9f9xL7iCwWEwi/dWtyqu1mIhh9ttTqJdb5I6nV476ldJ5negbju/xQSnwAVFMdO0k/4TPVY/0cYQ
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(23010399003)(7416014)(19092799006)(4143699003)(11063799006)(6133799003)(10067099003)(56012099006)(18002099003)(22082099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(23010399003)(7416014)(376014)(19092799006)(56012099006)(4143699003)(11063799006)(10067099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qFY8bvLdxy5a4NsiUbMHre1FiF1gGg5WRGj3t451lFJMCyrBArBjOBHCMILI?=
- =?us-ascii?Q?DOBgKk1BcnNgDJNLwmSfKnzofZ7N4CstRJejLjs3vnGtWyB3WqSJeNeumCPk?=
- =?us-ascii?Q?d8oDRnAWkpLmNG1nvPZzzHfuwOzn954uWOAZrfnstKUDR9tvVcJ+i24XSCXx?=
- =?us-ascii?Q?6TKcmXOpjcOCtDWWC2BstAiaQdsc9jNQ5j/ps56EEXt3PRbHn3gPgG2f6yiE?=
- =?us-ascii?Q?6HhcUSBtvoeMX5jSayvpg8JQJkjLQz80RMdyIIFXXdCpqZSCaHVHCGLrz2Ip?=
- =?us-ascii?Q?M+Q/di5SoWWgfqCSMrNxhDKR/gJP8GBfyNAI+4wsw1pn48VT0HUHEp4gbXYb?=
- =?us-ascii?Q?xRH6SldvmTHXK6LNjtXdK4bjRj4BMwMhngU3fItsxUsIUVQ7irBp/VWYMrev?=
- =?us-ascii?Q?6vunbVgN9P20+TP/pIIKuxLF72fFb/PkOWc29Bw1TwbI9hu9WYQK+uRaUqJU?=
- =?us-ascii?Q?RVBXaIu6SEJV6ZtWM5WndEcu3pmB2HFfkg7OWrdZbql9tH8+S7ZAvUC7stv9?=
- =?us-ascii?Q?LEoMXrEXWm60iHyuMat4EVdhPRTdxsIqH7QgEuTW/HJGeVZ0Y+9Ol0clv9aN?=
- =?us-ascii?Q?aFHUIxnsBWQY16xTYSzZVzrxFWXrqI0pODO/HcTg2DjQFe1MZu3gLxIyuXSx?=
- =?us-ascii?Q?YGlgbLo2VD++a3bB1/n1Zb05R1FcyQFjnwM199BSZeYdZjG0cVxw2tJRpQWa?=
- =?us-ascii?Q?5idqu4AL31QzFedYFjdJUaHRke8wDcDu27F+PV0osdeNFMQ/uywbLKxQn9U+?=
- =?us-ascii?Q?LiglmJX2skxCGcFCV3N3Tlaw9os4vEmjqDE22nm3SxOlGDDqhgNyTFc+Y0M3?=
- =?us-ascii?Q?xDK5q4HXbaKMv6jqercvkhUVVHLVs0mUOUpRMMz9OjY3Lk4032IvWYh8kp0D?=
- =?us-ascii?Q?IUfRjvRcvD4flt1lNb1tAZC7K1auHRWQ5sOMUVJDQTOW4ynlrSnjP8ICQqyv?=
- =?us-ascii?Q?39e5+4r7RDtxbIZ1M0+SXE1Dw6jtTvq6vCa3W7EhFk/IpnfyI9beMfVzZXmH?=
- =?us-ascii?Q?lxWTbehRBZl1hi6sU+QEVMRA7sbhHdhN0wDCPNLyo8oHvEJXjz5ErBprilDz?=
- =?us-ascii?Q?ZcS5AgxC48sucRsVd73v30C/uQDJ/n3kP3J6TXVDQdFA0eloko5cEvjulIJV?=
- =?us-ascii?Q?TSMpomSwokwj2Btbp0JMp7enYS7m3XH8y7FmN6wwQh3CpoCYhtFB69YSUQg+?=
- =?us-ascii?Q?sPcm8nnGWBudrrN3SgMi2P9FG3pcBOdivN6Ooj0oyNaCs9tHZxHizlqx7c7G?=
- =?us-ascii?Q?waCLdtU5/ArF4gtklg6fOdhyIRdGb7O26ploHdlT1JUg5wXmfvcSAd+s+1k0?=
- =?us-ascii?Q?kusMHRdgvRHm7ZX2CVRz0pXLVcv9nhEyo7sAvFx53uP6F0Uz6712KqD3o8Rm?=
- =?us-ascii?Q?Sal5taQmYKXVjV7Dx3I8dOFdjfw2AKcPsIKut6ccCYn53yuZ+y8znRJl3+kQ?=
- =?us-ascii?Q?TqD5JS/LPlahUunxrAmvjjEtunTRGAzmQMm7j1iowj5DrB3vPSLALZ5XBfs2?=
- =?us-ascii?Q?vSmu04/wVWDcVipa26XMw8+YZ+9e2VPc2lx8lWZRQXsZ+0s+vrlqhSUOJjVq?=
- =?us-ascii?Q?G0me6XverFqFXBUnwsnbY82mVSNXFuoRQ6uaepmReHVLAzi2MmsajmkMfl/P?=
- =?us-ascii?Q?eijMbd3huXGQhKuaAKQuKyGULMf7m28mC0uAhSvskd//hqln2G8A5Wg82QSB?=
- =?us-ascii?Q?g+gZmIh/o71CZFdbAXuvYi4LufeVDFQykaGyU5EmqHw5STDZGl1VamEtE8fs?=
- =?us-ascii?Q?OAuUYA78RO6mNG7Zboq5l4lVsgn4XhyZ9x2S4M8F4NpjXrs7iCMW?=
+	=?us-ascii?Q?p16KU7KyOuELt+VFp9QACACg0WFvXZ0uRlZY4g9CpTgAXDLic0KYmP1g5CWv?=
+ =?us-ascii?Q?ePmVS+Ei7CuNMUqrbjTpfNlGZMSo0xu6Aku9LTt+wRCFqJM6uXF83a/a7lOS?=
+ =?us-ascii?Q?Gg5/r9cmtSYuOmq3AJ6+mZ/hyHYWXASCqV5GBmwJm7TLpBN+63a4pOKrSMnI?=
+ =?us-ascii?Q?FlkqSZOK8pIdGZrYxtgVbLkmcpr9CtA31xI8yCVQR0OJlqCUUx2lOic9cSLj?=
+ =?us-ascii?Q?zIEGDsVUGyM4olMyjMRUA79e9wsbkPEwcSJnUWDm9Se00xaw0NzXyx5hRPO6?=
+ =?us-ascii?Q?XhtptwYHtiUSvVbLyj2MNVAm5Paow3CbQo7S+qRRO1wpnBtboiH/Fa88P4rf?=
+ =?us-ascii?Q?a8czQc87oECJJOATAZDWhpJGqUIp/L9hOta8OPVKhIoVvvPo9dhpI8Dg1Vw5?=
+ =?us-ascii?Q?u+GfY0GT4rlygdFxTSWd+3P+jlE14g1ssf8rXudCa3Aks/c9xXjQ7Y9WV9cH?=
+ =?us-ascii?Q?/QSR2ciY+tcKS3b1XN3weiVb2J/YHp1xxrmyBF9uuW7GqHBf66dVNUjQwiOw?=
+ =?us-ascii?Q?wfRNNj23AvLbqAygcuxWu7DmsljVlfLeWOfFBDK+YPuY8o1GYPxm3H/TV6bm?=
+ =?us-ascii?Q?YC4xEBR2b81aZQqTX+8abOaI76QXQO1UFvV5V/NfVh4svboXYDVDHbzODqrr?=
+ =?us-ascii?Q?NXU5XidyqhVUuGhB5KfHuXoj7g/zyXfDFTqKotmhEkoyjt/6LbqjCJrbSPfv?=
+ =?us-ascii?Q?YGFhpzNKK543bloknzTf54OYOh068DcXgI7UoX46f5QhxUuEEN1XxclgwSE/?=
+ =?us-ascii?Q?WtspJLo/5nyeQtpEb+4vCaguTXl3/kmSRanNqCfqwYGOc+V6P3thkj5HkX8R?=
+ =?us-ascii?Q?kp7ufMtPBvgiqr/ZwrtqzLnntUshMYEg9mP9O/q6LLc5SHLTgjMxkzmpaAEM?=
+ =?us-ascii?Q?3bdY9Uvl6gQfB4Ki4ZUqzG9mxD9DDsXbrc885O8QsJkkr8/Y9GNxsGaJ+6EG?=
+ =?us-ascii?Q?CMam3+cXaZZkzxYQ7j3sjvV8WKS8xebUMQ1D6kQaCjgIkMxTznaHqd05wxf5?=
+ =?us-ascii?Q?Rg6xhM+FCV5kWg28TIUIGH3VBfkigDJzh9ID003NKYzvfBUNpgkTKPIvCO/y?=
+ =?us-ascii?Q?zZL3NvOM1r64MkVDSv8/cWoAfFQK33Z+vwPVp73KXhH389sUfUlYzb8li5gP?=
+ =?us-ascii?Q?2iOYd9RtbZh+KjHMLsYIy8S7bBwOP8AfUitJwO0DKwcW4iyc6OOKNbbbRHbt?=
+ =?us-ascii?Q?Aw1Z3/4NeWpt1ITWhcprCk9k1ZTSK84JlIE0K5POZHdBPcTQvwqs0/7OwGZO?=
+ =?us-ascii?Q?ne/SZIzvBXc6JTzY2t1A8BySA78xhjCoSGHAqXGMScX/8NzzDv+Ev6bteD6J?=
+ =?us-ascii?Q?/LJE3ypWs+AHBZFFdxoLRhX5V3WSF0dY2+dLW+at/q7buinueBxLFguegpgr?=
+ =?us-ascii?Q?7bjr3gv5+HsI25++rpsHlOXjKmaXyAYSAc6KVXGmG1xQOWRa2DU+QOJC1KQm?=
+ =?us-ascii?Q?NX6H23pGeKMzadeVECJpp9UvnCvJicB64T9Ji93W3ydQL2xrFzW4qPYXdOFf?=
+ =?us-ascii?Q?dpQtnklo72DFDiuR30xXoYCdFUywq2whVg03k6HzqDC3t43WMiCxYTE7Spnf?=
+ =?us-ascii?Q?FsxdP+t6Ikn2Vtw25KhCyB/1x74Nghu7QpTpN+8+7fVEUgo8XgAvrt9Yf9nc?=
+ =?us-ascii?Q?wi/7vYUwmXy0b0qbcv8ruqNlE3pWdvXLKNPbN363mGB3bK+AyvyoDjFgKt77?=
+ =?us-ascii?Q?GIn2np7wIgLopnZtcqC6TYvIrQoi0vsgp/SuRjHE7762pMBng0dRPwbGXtPp?=
+ =?us-ascii?Q?6fykMyqX+bC/htdl+23U2+1ETjRzLwIu6dQsgaG/Sf5mWy4CUb6o?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 501d8f67-fc63-4b96-6d6e-08df25b3bcb8
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e0ec283-7a50-41b1-aaa2-08df25bd0338
 X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2026 03:16:40.8261
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2026 04:23:04.6323
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BEC90GPgigQVlx8DE0K5h7jGdXBPw2xug5Yz6Mp2uwj38ffrUo0fCe4JKUbA8biPN6rmHNEXYGtZCwb317LvDJKyQL6rOAXKCq2ZeNTfrCobMmj21PnGx0nVSIAz+c3i
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8645
+X-MS-Exchange-CrossTenant-UserPrincipalName: LGy7XcJQZ5ZiWpJOGL557XCcZVwXUdGzqQQGy86SGHSkjc0hAdluAJyfCgZt5mhbrYIOsSFRrWzgzLUobebH1domIm5EWfL0Rjplj5YkqZ2ROMNlBXqlgSN9KeqPNNoF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV4PR04MB206370
 
-On Thu, Sep 17, 2026 at 02:19:45PM -0400, Frank.Li@oss.nxp.com wrote:
->From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Wed, Sep 23, 2026 at 08:42:23PM +0200, Francesco Valla wrote:
+>On Wed, Sep 23, 2026 at 09:48:58AM -0600, Mathieu Poirier wrote:
+>> On Tue, Sep 22, 2026 at 10:19:48PM +0200, Francesco Valla wrote:
+>> > On Tue, Sep 22, 2026 at 09:43:52AM -0600, Mathieu Poirier wrote:
+>> > > On Wed, Sep 16, 2026 at 11:10:57PM +0200, Francesco Valla wrote:
+>> > > > Add rings for multiple vdevs, as well as the required virtio nodes for
+>> > > > I2C, SPI and GPIO functionalities. On top of that, add example
+>> > > > peripherals using all of them.
+>> > > > 
+>> > > > NOTE: this is a Proof-Of-Concept, not meant to be integrated!
+>> > > > 
+>> > > > Signed-off-by: Francesco Valla <francesco@valla.it>
+>> > > > ---
+>> > > >  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 128 +++++++++++++++++++--
+>> > > >  1 file changed, 119 insertions(+), 9 deletions(-)
+>> > > > 
+>> > > > diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+>> > > > index bd14ba28690c..dfa3b122ac5f 100644
+>> > > > --- a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+>> > > > +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+>> > > > @@ -53,6 +53,32 @@ button-k3 {
+>> > > >  		};
+>> > > >  	};
+>> > > >  
+>> > > > +	gpio-keys-virtio {
+>> > > > +		compatible = "gpio-keys-polled";
+>> > > > +		poll-interval = <100>;
+>> > > > +
+>> > > > +		button-v1 {
+>> > > > +			label = "Button V1";
+>> > > > +			linux,code = <BTN_3>;
+>> > > > +			gpios = <&v_gpio 23 GPIO_ACTIVE_LOW>;
+>> > > > +		};
+>> > > > +
+>> > > > +		button-v2 {
+>> > > > +			label = "Button V2";
+>> > > > +			linux,code = <BTN_4>;
+>> > > > +			gpios = <&v_gpio 24 GPIO_ACTIVE_LOW>;
+>> > > > +		};
+>> > > > +	};
+>> > > > +
+>> > > > +	leds {
+>> > > > +		compatible = "gpio-leds";
+>> > > > +
+>> > > > +		led {
+>> > > > +			gpios = <&v_gpio 18 GPIO_ACTIVE_HIGH>;
+>> > > > +			label = "LED V";
+>> > > > +		};
+>> > > > +	};
+>> > > > +
+>> > > >  	reg_usdhc2_vmmc: regulator-usdhc2 {
+>> > > >  		compatible = "regulator-fixed";
+>> > > >  		off-on-delay-us = <12000>;
+>> > > > @@ -89,11 +115,6 @@ linux,cma {
+>> > > >  			linux,cma-default;
+>> > > >  		};
+>> > > >  
+>> > > > -		rsc_table: rsc-table@2021e000 {
+>> > > > -			reg = <0 0x2021e000 0 0x1000>;
+>> > > > -			no-map;
+>> > > > -		};
+>> > > > -
+>> > > 
+>> > > Why is the resource table removed?  There is no mention of that in the
+>> > > changelog...
+>> > >
+>> > 
+>> > You are obviously right, the commit message here should have been a
+>> > poem, not a form of hermetic poetry. My bad.
+>> > 
+>> > The resource table here is causing problems with how Zephyr is managing
+>> > it at its side. If it is kept in a separate memory location and copied
+>> > there at runtime by the remote processor firmware during its startup
+>> > (which is the current Zephyr behavior), then there might be a race
+>> > condition when the aforesaid firmware is loaded and started by Linux
+>> > *and* at least one of the vdev drivers (here including rpmsg_bus) is
+>> > built-in. In this case, the copy of the resource table done by the
+>> > remote processor might - depending on the async execution of the two
+>> > processors - overwrite the status bit set by the Linux driver:
+>> > 
+>> >   Firmware load and startup (echo start > /sys/.../state)
+>> >                            |
+>> > 			   |
+>> > 			   V
+>> >   The vdev devices get registered (by register_virtio_device())
+>> >                            |
+>> > 			   |
+>> > 			   V
+>> >   If a driver is built-in, it probes and sets the vdev status
+>> >   inside the resource table @rsc-table.
+>> >                            .
+>> > 			   . (in the mean time)
+>> > 			   .
+>> >   The remote processor starts up and copies the resource table from its
+>> >   dedicated section to @rsc-table.
+>> > 
+>> > Depending on the system load and the complexity of the firmware, the two
+>> > operations can happen in whatever sequence, causing a race condition.
+>> 
+>> This would happen regardless of this patchset.
+>>
 >
->Add RPMSG DT overlay for the MX95-15x15-FRDM board. This overlay is meant
->to be used with the mx95evkrpmsg system manager configuration for
->remoteproc and audio over rpmsg-usecases.
+>Correct, *if* the remote processor is copying the resource table to a
+>specific location and expects the host to use that. On Zephyr (which is
+>clearly outside the scope here) this can be enabled through the
+>CONFIG_OPENAMP_COPY_RSC_TABLE option. I am keeping that disabled, and
+>removing the rsc-table node here.
 >
->Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
->Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->Signed-off-by: Frank Li <Frank.Li@nxp.com>
->---
-> arch/arm64/boot/dts/freescale/Makefile             |  3 +
-> .../boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso | 67 ++++++++++++++++++++++
-> 2 files changed, 70 insertions(+)
->
->diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
->index 95ae85ab4adf5..3f98132f5a32f 100644
->--- a/arch/arm64/boot/dts/freescale/Makefile
->+++ b/arch/arm64/boot/dts/freescale/Makefile
->@@ -707,6 +707,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx943-evk-sdwifi.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-ab2.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-frdm.dtb
->+dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-frdm-rpmsg.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-sof.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-frdm-pro.dtb
->@@ -729,6 +730,8 @@ dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-mallow.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-yavia.dtb
-> dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-zinnia.dtb
-> 
->+imx95-15x15-frdm-rpmsg-dtbs = imx95-15x15-frdm.dtb imx95-15x15-frdm-rpmsg.dtbo
->+
-> imx95-15x15-evk-pcie-dtbs += imx95-15x15-evk.dtb imx-m2-pcie.dtbo
-> dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk-pcie.dtb
-> 
->diff --git a/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso
->new file mode 100644
->index 0000000000000..bc02864c6f88e
->--- /dev/null
->+++ b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso
->@@ -0,0 +1,67 @@
->+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->+/*
->+ * Copyright 2026 NXP
->+ *
->+ * This DT overlay is meant to be used alongside the mx95evkrpmsg SM
->+ * configuration for remoteproc and audio over rpmsg.
->+ */
->+
->+/dts-v1/;
->+/plugin/;
->+
->+&{/} {
->+	remoteproc-cm7 {
->+		compatible = "fsl,imx95-cm7";
->+		mboxes = <&mu7 0 1>, <&mu7 1 1>, <&mu7 3 1>;
->+		mbox-names = "tx", "rx", "rxdb";
->+		memory-region = <&vdev0buffer>, <&vdev0vring0>,
->+				<&vdev0vring1>, <&rsc_table>;
->+		memory-region-names = "vdev0buffer", "vdev0vring0",
->+				      "vdev0vring1", "rsc-table";
->+	};
->+
->+	reserved-memory {
->+		#address-cells = <2>;
->+		#size-cells = <2>;
->+
->+		vdev0vring0: memory@88000000 {
->+			reg = <0 0x88000000 0 0x8000>;
->+			no-map;
->+		};
->+
->+		vdev0vring1: memory@88008000 {
->+			reg = <0 0x88008000 0 0x8000>;
->+			no-map;
->+		};
+>I am planning to reason on this and propose a proper fix in a separate
+>patchset.
 
-vdev1 should be put here, I think.
+The previous workaround for this was to add a delay in start function.
+
+https://lore.kernel.org/all/20221102112451.128110-1-peng.fan@oss.nxp.com/
+https://lore.kernel.org/linux-remoteproc/20230707232444.374431-1-marex@denx.de/
+
+>
+>> > 
+>> > This is somewhat masked if vdev drivers are built as modules, as the
+>> > devices does not probe immediately but only after the modules have been
+>> > loaded, giving the remote processor time to start. Note that this is not
+>> > a solution! but a workaround.
+>> > 
+>> > If the rsc-table node is not there, the startup logic falls back to the
+>> > classic rproc_elf_find_loaded_rsc_table().
+>> 
+>> We can't remove @rsc-table to make a problem go away.  
+>> 
+>
+>I need to re-take a look at the NXP SDK to understand what's the real
+>purpose of having the rsc-table here. Judging from the commit message
+>that introduced support for such facility [1], it seems the SDK is not
+>really using it.
+>
+>Maybe someone from NXP can comment on this?
+
+Linux needs to parse resource table to setup vring. When RPROC(remote processor)
+is booted by ROM or System Manager, there is no elf for Linux to use, so a
+pre-defined address is used rsc-table.
+
+
+If RPROC is booted by Linux using remoteproc, rsc-table in DT is not needed.
+But RPROC is not aware it is booted by ROM, U-Boot, Linux. So it will always
+publish the resource table to rsc-table address.
+
+And we need one DTB/Image to support mutiple boot cases.
+
+Hope this explains.
 
 Regards
 Peng
-
->+
->+		vdev0buffer: memory@88020000 {
->+			compatible = "shared-dma-pool";
->+			reg = <0 0x88020000 0 0x100000>;
->+			no-map;
->+		};
->+
->+		rsc_table: memory@88220000 {
->+			reg = <0 0x88220000 0 0x1000>;
->+			no-map;
->+		};
->+	};
->+
->+	sound-micfil {
->+		status = "disabled";
->+	};
->+};
->+
->+&edma1 {
->+	/* reserved for M7 */
->+	dma-channel-mask = <0x40>;
->+};
->+
->+&edma2 {
->+	/* reserved for M7 and V2X */
->+	dma-channel-mask = <0xf>;
->+};
->+
->+&micfil {
->+	/* reserved for M7 */
->+	status = "reserved";
->+};
 >
->-- 
->2.43.0
+>> > 
+>> > This is specific to i.MX platforms [1] and is probably not normally an
+>> > issue because - as stated in [1] - the offical SDK from NXP seems not
+>> > to check the status inside the resource table.
+>> > 
+>> > > >  		vdev0vring0: vdev0vring0@a4000000 {
+>> > > >  			reg = <0 0xa4000000 0 0x8000>;
+>> > > >  			no-map;
+>> > > > @@ -105,12 +126,42 @@ vdev0vring1: vdev0vring1@a4008000 {
+>> > > >  		};
+>> > > >  
+>> > > >  		vdev1vring0: vdev1vring0@a4010000 {
+>> > > > -			reg = <0 0xa4010000 0 0x8000>;
+>> > > > +			reg = <0 0xa4010000 0 0x1000>;
+>> > > > +			no-map;
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev2vring0: vdev2vring0@a4011000 {
+>> > > > +			reg = <0 0xa4011000 0 0x2000>;
+>> > > > +			no-map;
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev2vring1: vdev2vring1@a4013000 {
+>> > > > +			reg = <0 0xa4013000 0 0x2000>;
+>> > > > +			no-map;
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev3vring0: vdev3vring0@a4015000 {
+>> > > > +			reg = <0 0xa4015000 0 0x2000>;
+>> > > > +			no-map;
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev4vring0: vdev4vring0@a4017000 {
+>> > > > +			reg = <0 0xa4017000 0 0x4000>;
+>> > > > +			no-map;
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev5vring0: vdev5vring0@a401B000 {
+>> > > > +			reg = <0 0xa401B000 0 0x2000>;
+>> > > > +			no-map;
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev5vring1: vdev5vring1@a401D000 {
+>> > > > +			reg = <0 0xa401D000 0 0x2000>;
+>> > > >  			no-map;
+>> > > >  		};
+>> > > >  
+>> > > > -		vdev1vring1: vdev1vring1@a4018000 {
+>> > > > -			reg = <0 0xa4018000 0 0x8000>;
+>> > > > +		vdev5vring2: vdev5vring2@a401F000 {
+>> > > > +			reg = <0 0xa401F000 0 0x1000>;
+>> > > >  			no-map;
+>> > > >  		};
+>> > > >  
+>> > > > @@ -149,8 +200,67 @@ &cm33 {
+>> > > >  		 <&mu1 3 1>;
+>> > > >  	mbox-names = "tx", "rx", "rxdb";
+>> > > >  	memory-region = <&vdevbuffer>, <&vdev0vring0>, <&vdev0vring1>,
+>> > > > -			<&vdev1vring0>, <&vdev1vring1>, <&rsc_table>;
+>> > > > +			<&vdev1vring0>, <&vdev2vring0>, <&vdev2vring1>,
+>> > > > +			<&vdev3vring0>, <&vdev4vring0>,
+>> > > > +			<&vdev5vring0>, <&vdev5vring1>, <&vdev5vring2>;
+>> > > 
+>> > > Who is using vdev5 vrings?  
+>> > > 
+>> > 
+>> > Another thing that should have been in the commit message. Vdevs are
+>> > defined, in the Zephyr application I am using as PoC, as follows:
+>> > 
+>> >  - vdev0: RPMSG (tx and rx vrings)
+>> 
+>> To be backward compatible, there has to be a way to make vdev0 defaulting to
+>> RPMSG.  It would also be nice if bindings were define for RPMSG so that it can
+>> show up in the list of remoteproc-virtio devices like i2c, gpio and others.
+>>
+>
+>What vdev type is inside vdev0 is up to the resource table (i.e., to the
+>firmware running on the remote processor), not the remoteproc-virtio
+>framework.
+>
+>Defining bindings for rpmsg would today be... pointless? Since no
+>hardware needs to be described for it. The same goes for virtio-can and
+>virtio-entropy.
+>
+>> 
+>> >  - vdev1: entropy (single request vring)
+>> >  - vdev2: GPIO (request and event vrings)
+>> >  - vdev3: I2C (single request vring)
+>> >  - vdev4: SPI (single request vring)
+>> >  - vdev5: CAN (tx, rx and control vrings)
+>> > 
+>> > vdev5 is not represented inside the devicetree because the can-virtio
+>> > driver registers a single CAN network device and has thus no need for
+>> > such representation.
+>> 
+>> Then why is it part of the remoteproc's memory-regions?
+>> 
+>
+>Because a vring description needs to be present for it, or the
+>remoteproc-virtio won't be able to fill the entry inside the resource
+>table.
+>
+>> > 
+>> > > >  	status = "okay";
+>> > > > +
+>> > > > +	virtio {
+>> > > > +		#address-cells = <1>;
+>> > > > +		#size-cells = <0>;
+>> > > > +
+>> > > > +		vdev@2 {
+>> > > > +			reg = <2>;
+>> > > > +
+>> > > > +			v_gpio: gpio {
+>> > > > +				compatible = "virtio,device29";
+>> > > > +				gpio-controller;
+>> > > > +				#gpio-cells = <2>;
+>> > > > +				interrupt-controller;
+>> > > > +				#interrupt-cells = <2>;
+>> > > > +			};
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev@3 {
+>> > > > +			reg = <3>;
+>> > > > +
+>> > > > +			i2c {
+>> > > > +				compatible = "virtio,device22";
+>> > > > +				#address-cells = <1>;
+>> > > > +				#size-cells = <0>;
+>> > > > +
+>> > > > +				eeprom@50 {
+>> > > > +					compatible = "atmel,24c1025";
+>> > > > +					reg = <0x50>;
+>> > > > +				};
+>> > > > +			};
+>> > > > +		};
+>> > > > +
+>> > > > +		vdev@4 {
+>> > > > +			reg = <4>;
+>> > > > +
+>> > > > +			spi {
+>> > > > +				compatible = "virtio,device2d";
+>> > > > +				#address-cells = <1>;
+>> > > > +				#size-cells = <0>;
+>> > > > +
+>> > > > +				sram@0 {
+>> > > > +					compatible = "microchip,mchp23k256";
+>> > > > +					reg = <0>;
+>> > > > +					spi-max-frequency = <20000000>;
+>> > > > +				};
+>> > > > +
+>> > > > +				lcd@1 {
+>> > > > +					compatible = "adafruit,yx240qv29", "ilitek,ili9341";
+>> > > > +					reg = <1>;
+>> > > > +					spi-max-frequency = <10000000>;
+>> > > > +					dc-gpios = <&v_gpio 21 GPIO_ACTIVE_HIGH>;
+>> > > > +					reset-gpios = <&v_gpio 20 GPIO_ACTIVE_HIGH>;
+>> > > > +					rotation = <90>;
+>> > > > +				};
+>> > > > +			};
+>> > > > +		};
+>> > > > +	};
+>> > > >  };
+>> > > >  
+>> > > >  &eqos {
+>> > > > 
+>> > > > -- 
+>> > > > 2.55.0
+>> > > >
+>> > 
+>> > Thank you!
+>> > 
+>> > Regards,
+>> > Francesco
+>> > 
+>> > 
+>
+>Thank you for the discussion - is helping in defining further
+>requirements and constraints.
+>
+>Regards,
+>Francesco
+>
+>[1] https://lore.kernel.org/all/20240719-imx_rproc-v2-2-10d0268c7eb1@nxp.com/
+>
 >
 >
