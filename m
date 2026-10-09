@@ -1,109 +1,200 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B353A3D5C31
-	for <linux-remoteproc@vger.kernel.org>; Fri,  9 Oct 2026 21:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791581038; cv=pass; b=txiD1/H2UpX9fYkUIb9XQ/VE+tcMXvepMDCHzkLmK9TmkJRB1CGAfU4L2G9iemy9T6wLCnuYO8RJLsi8SuYqs+Wx/k5zMD1OZGAhiu1uY61+8MzPHDXq/B8xLWt64e5FI3VoYp7AYtc7tuWM9UVmRqvkSYBjpAVXsod7YwhwM3E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791581038; c=relaxed/simple;
-	bh=QJQ4NjCwE66XT02iioTKX32pf9F/+INr+LqpJhuBU4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p2ORh4S2J0Mjj0yP/XIBZ2TMcfuiHXoc2yS6lqkSUKoxiKm3WmljVQ2toPvsc/EOdG25CI6xszssVLYEw/vKyOtSGeqpRfu3u/o6/gV4aGDJyFpfArAfSNrhInyfTVuUD7JJgpvGqLS0TmXtJ3ZjFasegdwgCDYtykMm3wit2PU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=r+34F8Vv; arc=pass smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCF73CB55C;
+	Fri,  9 Oct 2026 21:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791581288; cv=none; b=qeqM5ixkLspGPmfyQPORpek8PgCle9mkpqp/CS+90oqVXQfduvH327vxChzu/+s3qc194rTfmzHuI4zf181Xct6iNerb580bxCel+sIkkU7Qui8i0VQIrVSiZ64iLowOvGLJIG4312Qnkk4kMAyFxVrWYVUBnn0wu/olhknwrz0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791581288; c=relaxed/simple;
+	bh=TACQqvV+ua0Ane64B0qJzthFbEE3k5JIyMZs9Zy+/eA=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=D03QR2BnW1JFu4ZbcykWI3jyzbf9gjo2tP0PX128U6Xfch3ae7qGC/Dl6cCYm1JMa2lIBcTFO86oLg9hz/X2suix/63/OvnmxSL6utJ4cF7sbrj+/4mdmd0SYW5Jop5AqCGXkL1hOrid3pE1f0We575QOXgO7RopakrURqpGrvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=UoCNIA21; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r+34F8Vv"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3a980c1153bso2225951fa.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Oct 2026 14:23:56 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791581034; cv=none;
-        d=google.com; s=arc-20260327;
-        b=oCnpw69tsj/Lsom0QbfmK0az2EvFaYnc+JpPogs5RKbF6u58v1CRbVvWfCq3xX6pbR
-         3uVugrCJx8EhbaPuRS4j6ww+3Orhp2rkRGnh0EWE54Kz6udYAVJgw9xe6pNGmr3cBjkx
-         0Ai6AfRD3VbG8iK5GHhLpOGIYrDOCCrMbrIAdtr6LEb8sdHy9iinRFK55RoPWVfpgxfh
-         kInkejqtVTWBN0GgqwY2OnU1NK2Jq9j0ua37bPtuiq8VWepEIn0cd0KjKGMY2YsaKAew
-         9Qrf2JdVaFzFB+RV/sbDZLOIK34X9RldBZAgWSlZI9eXJPsvcgSA0CHpQmeEEiCixgeA
-         oWvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=0WSRCUE49PDYeX1lwnIRvdxVfyb7jQkBCqEh4RPFRb8=;
-        fh=IEsN4cuQR+d9g2S05vgZXN8ey1KzliuqkO7oFgoWE3k=;
-        b=VBe33PtYDF5G2SLN2G018FZrhM3r2XVOGV9rY8qYU2vwOB1YqOxFyXNoDVsqTSqCm+
-         dcM+J3kkfE/2GdHGUklrACcUwsH9Y4WnuDV7e3Rt321s3xNowQWnRDaPYITaGK5zCw+N
-         wU0TBWrI5NXGsv6vyBpFX7zt0dLuSzSVfvwoi1ZUFP9atwX8Rz3tn6NQ9zaByf6po09r
-         mxJwoBbuknHRi7FEplp9vjjWQkWLmtZNyZveX2pKWUS1p70A8CUWfEB9xtlUfamXFt4I
-         liWNvYlq7Og3jXlTryYL/93pNQWIRTTXTsUVwQ6O1evNed6dk4yDTQ3JB9QOYdhN+KJ0
-         NbgA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791581034; x=1792185834; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=0WSRCUE49PDYeX1lwnIRvdxVfyb7jQkBCqEh4RPFRb8=;
-        b=r+34F8VvigRXQh2KB16ngQx2oQhmF1RTz1OyuX5X6c68cWdzzrolW/H/mMCUQXlj2z
-         oBUz6hURy3qTX7Jm2MUjzpNoWD7q0kba270s4MPZushLkd1kuRLgH7VFOBqvvFImPS4j
-         +6Jsb6Z4lx/Sn6yChRVwhmAO3DeBBZLm+iZqctn4L7LT8KhvJKvgK4BgztAEVSCv+XFb
-         4yptLdRUaQJGwbyn6KIE9iactb81TFGqhMsLmgQJV2HzpD/wmViu0CsQ5+bic9mP3pYy
-         KMqvBwVa53u9wHRZIDPEaLxzU6iYoI/rTNgu4vGJ1XGAud2ebm37Tb0HZu9jFL/hiHom
-         ZbnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791581034; x=1792185834;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=0WSRCUE49PDYeX1lwnIRvdxVfyb7jQkBCqEh4RPFRb8=;
-        b=qJudHwZSHMhuzaoSPPlxznSefCzHQnpB8zflo6LTQhSt4SPragShTtZErPMYSi+hVX
-         EF5TWjz86h3IrKShtiGrdM3VWBfYzlaqfWUrsMFLuEyKbru1kaSf14/RLtVr++/51pA+
-         CTscb6KSXhq9MeGFzYNLs1H030aSX1jJ6NAF2fWMMRh4A1zj5OScL0fe8JG89IZ+jmG/
-         yEVCLqeO9opAvOfFjP26C2V7VIaFNwP00K2R1uY167GpzvmzHHXHxebjjE/ZYpufbZP0
-         RYYrJj9tqYxaeyFgerjjqLp2MNhOwXOJAiFuGRhyrxyg5yPZhJ0NYtTEgC44OGFbKf5+
-         71TA==
-X-Forwarded-Encrypted: i=1; AKwUvBx35D9TYwURpq/YpcrjZp9Qk+ZginQSfLEjUu1KgU06oKTO7VhBj4zMsD1x1mQRFrWbWqP9LX4gC3PjQZk9KL1E@vger.kernel.org
-X-Gm-Message-State: AFq9FYIZDWDzyQmhehxJW9NlS8e0ml7Kn6nT/uH46BZ3O8NcRMYACvxX
-	Uv+Aodj9o/D7F7aYs7KBsuBhaxfsaTOCKKuZjEyEsYQTpb7nWAiOJOmrpHvXxY1a/u3aKaYNRyL
-	gMzzVZ4W+OOhV/S18dHSeG5eNLZlk9UMhutJPWjh41w==
-X-Gm-Gg: AYBFou1Z7ubsu7i8s6InSQE7n7neuLeeBw2QpMw99F+oPVS2dDBk27XQqWGZyZgTGL3
-	q17KDT5VGChEHxIaUCKUoZstToXjEpBTJ5PUmOGUaNkH3/rCNK2Ogk25T9zgkb5zPyx82ch/7mz
-	BGjn6n/BA2qLeUOWGeVVdMXuiA60YpL6fhSEZaMe8QHsmtqXX/a+w1yg+w61W+CsYKaWrjmayBa
-	Tn7m2O7JZQQbLUouKBOZTHpVFCE6lvzIJeFL7dr7G8vBTeXgNoWya8il37lnqhchBxa4HC90JQt
-	lQZ1VSst1Owz5qhLHwBw8hKt0IYy/Xr5Sc58wpuhjyHYqoeOro+RvJ5bv5NMpPjf
-X-Received: by 2002:a05:651c:b0d:b0:3a9:9856:aa8f with SMTP id
- 38308e7fff4ca-3a9c55db18fmr9884551fa.7.1791581034241; Fri, 09 Oct 2026
- 14:23:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="UoCNIA21"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1791581278; x=1791840478;
+	bh=QXf4hTjVvhY++R7+vZFN3cZjPxa0QWrUt5Tsecb70U8=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=UoCNIA217633Q8zxxTQNQThjgyxxAtGSn29CAP+rTJf6hoWjQW/mHznQ8EANqGhhu
+	 dFTOkeVfQjB1o0PeXvc9y5wJkbHlDMd6BjGp/hMBJMBjHBHYSpqu2zcHtR3IPHdmGQ
+	 0HyiYrFTmdrIv6+4WK9uA1CPOjK+AUSueY87g3qF7L1QKVY/rdNDJQRutSa8hW3QWr
+	 FcBlBpVBPKC7c3NSh1NZ4/739hZq5VvsDEaYCgOK/7iZVGfi4RGJGeLAsjqoYuXTmW
+	 C9NTozV5Av/cexVnDIdKc7q3NlPJ4kBaA+8FWSZS5sOuv277HAqfI2ahaRmwiEYvIP
+	 JnMrZxMFAArPQ==
+Date: Fri, 09 Oct 2026 21:27:54 +0000
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+From: Birk Skyum <birk.skyum@pm.me>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] soc: qcom: smp2p: Start over after a restore from hibernation
+Message-ID: <179158127177.70185.5691100900886332545@pm.me>
+Feedback-ID: 21326998:user:proton
+X-Pm-Message-ID: 356a7d20711be57c357883af5010b18ee31e6f11
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260926041943.1124650-1-oss.patchbox@gmail.com> <askjD1DxFvrV5ND3@p14s>
-In-Reply-To: <askjD1DxFvrV5ND3@p14s>
-From: Yuho Choi <oss.patchbox@gmail.com>
-Date: Fri, 9 Oct 2026 17:23:42 -0400
-X-Gm-Features: AclHuK9Oo9BEgQkUPo5pIErQItBppE_Ru1rb7SmpvCfvBKSwmVbbZBnq9jbCxTw
-Message-ID: <CAGG=RgA04aBS1QkTWoW-yjMZ0MxB0x3bTM47_MZr-yK04DPDVg@mail.gmail.com>
-Subject: Re: [PATCH v2] remoteproc: virtio: Synchronize virtqueue teardown
- with rproc_vq_interrupt()
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 9 Oct 2026 at 13:23, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> > -     list_for_each_entry_safe(vq, n, &vdev->vqs, list) {
-> > +     list_for_each_entry(vq, &vdev->vqs, list) {
->
-> How is list_for_each_entry_safe() no longer needed?
+smp2p remembers what it has negotiated with the remote processor: where
+the remote's item is, which of its entries are matched, that version
+and features are agreed, and whether the remote's last restart has been
+acknowledged.
 
-The first loop only clears the pointers with RCU_INIT_POINTER(). It does not
-modify the list, so the 'safe' variant is not needed there.
-synchronize_srcu() is
-then called once, after that loop, to wait for in-flight readers. The
-actual removal
-still happens in the second loop, which keeps list_for_each_entry_safe().
+None of that holds when a hibernation image is restored. The machine
+has been through a power cycle, shared memory has been set up again,
+the kernel that loaded the image has created a fresh item for us, and
+the remote starts from nothing.
+
+On a Lenovo Yoga Slim 7x (X1E80100) a remote processor that is started
+after a resume from hibernation never comes up:
+
+  remoteproc remoteproc0: Booting fw image qcom/x1e80100/LENOVO/83ED/qcadsp=
+8380.mbn, size 21592504
+  qcom_q6v5_pas 6800000.remoteproc: start timed out
+  remoteproc remoteproc0: can't start rproc adsp: -110
+
+For the ADSP the driver still has ssr_ack set while the fresh item has
+RESTART_ACK clear. When the remote sets RESTART_DONE,
+qcom_smp2p_check_ssr() sees no restart, and the acknowledgement the
+remote waits for is never written. For the CDSP the driver believes the
+negotiation is done, so the fresh item is left at version 2 while the
+remote uses version 1.
+
+Forget all of it in restore_noirq and build our item again, the way
+probe does. If the remote is still running, as after test_resume,
+qcom_smp2p_start_in() finds its item again and the next interrupt
+redoes the negotiation.
+
+Signed-off-by: Birk Skyum <birk.skyum@pm.me>
+---
+Tested on a Lenovo Yoga Slim 7x with Arch Linux ARM's v7.2 kernel, where
+this file differs from qcom/for-next only in the __iomem annotations and
+two small cleanups.
+
+- After a hibernation with a real power-off both the ADSP and the CDSP
+  start again, in under half a second each, and the battery manager
+  answers. Without the patch both starts time out.
+- test_resume with both remote processors running passes, and they keep
+  running.
+
+Two things to know about the test:
+
+- Resuming at all on this machine needs the PCI change in [1], and I
+  closed the Bluetooth UART and unloaded ath12k for the hibernation.
+- I stopped the remote processors before the hibernation and started
+  them after it by hand. remoteproc does not do that itself, so a
+  remote that was running when the image was taken is still shown as
+  running after the resume and cannot be stopped ("failed to shutdown:
+  -22"). That is a separate problem and still open.
+
+[1] https://lore.kernel.org/r/179157746908.73485.2343672865542690797@pm.me
+
+ drivers/soc/qcom/smp2p.c | 53 +++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 50 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index 01b8580c9..64fc1ce3c 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -510,9 +510,8 @@ static const struct qcom_smem_state_ops smp2p_state_ops=
+ =3D {
+ =09.update_bits =3D smp2p_update_bits,
+ };
+=20
+-static int qcom_smp2p_outbound_entry(struct qcom_smp2p *smp2p,
+-=09=09=09=09     struct smp2p_entry *entry,
+-=09=09=09=09     struct device_node *node)
++static void qcom_smp2p_claim_outbound_entry(struct qcom_smp2p *smp2p,
++=09=09=09=09=09    struct smp2p_entry *entry)
+ {
+ =09struct smp2p_smem_item *out =3D smp2p->out;
+ =09char buf[SMP2P_MAX_ENTRY_NAME] =3D {};
+@@ -525,6 +524,13 @@ static int qcom_smp2p_outbound_entry(struct qcom_smp2p=
+ *smp2p,
+ =09entry->value =3D (u32 __iomem *)&out->entries[out->valid_entries].value=
+;
+=20
+ =09out->valid_entries++;
++}
++
++static int qcom_smp2p_outbound_entry(struct qcom_smp2p *smp2p,
++=09=09=09=09     struct smp2p_entry *entry,
++=09=09=09=09     struct device_node *node)
++{
++=09qcom_smp2p_claim_outbound_entry(smp2p, entry);
+=20
+ =09entry->state =3D qcom_smem_state_register(node, &smp2p_state_ops, entry=
+);
+ =09if (IS_ERR(entry->state)) {
+@@ -774,6 +780,46 @@ static void qcom_smp2p_remove(struct platform_device *=
+pdev)
+ =09smp2p->out->valid_entries =3D 0;
+ }
+=20
++/*
++ * A hibernation image is restored after a power cycle. Shared memory has =
+been
++ * set up anew since and the remote starts from nothing, so forget what wa=
+s
++ * negotiated with it and build our item again.
++ */
++static int qcom_smp2p_restore_noirq(struct device *dev)
++{
++=09struct qcom_smp2p *smp2p =3D dev_get_drvdata(dev);
++=09struct smp2p_entry *entry;
++=09int ret;
++
++=09smp2p->in =3D NULL;
++=09smp2p->valid_entries =3D 0;
++=09smp2p->negotiation_done =3D false;
++=09smp2p->ssr_ack_enabled =3D false;
++=09smp2p->ssr_ack =3D false;
++
++=09list_for_each_entry(entry, &smp2p->inbound, node) {
++=09=09entry->value =3D NULL;
++=09=09entry->last_value =3D 0;
++=09}
++
++=09ret =3D qcom_smp2p_alloc_outbound_item(smp2p);
++=09if (ret < 0)
++=09=09return ret;
++
++=09/* Entries were added at the head of the list, so walk it backwards. */
++=09list_for_each_entry_reverse(entry, &smp2p->outbound, node)
++=09=09qcom_smp2p_claim_outbound_entry(smp2p, entry);
++
++=09qcom_smp2p_start_in(smp2p);
++=09qcom_smp2p_kick(smp2p);
++
++=09return 0;
++}
++
++static const struct dev_pm_ops qcom_smp2p_pm_ops =3D {
++=09.restore_noirq =3D pm_sleep_ptr(qcom_smp2p_restore_noirq),
++};
++
+ static const struct of_device_id qcom_smp2p_of_match[] =3D {
+ =09{ .compatible =3D "qcom,smp2p" },
+ =09{}
+@@ -786,6 +832,7 @@ static struct platform_driver qcom_smp2p_driver =3D {
+ =09.driver  =3D {
+ =09=09.name  =3D "qcom_smp2p",
+ =09=09.of_match_table =3D qcom_smp2p_of_match,
++=09=09.pm =3D &qcom_smp2p_pm_ops,
+ =09},
+ };
+ module_platform_driver(qcom_smp2p_driver);
+
+base-commit: 705529dab1fa872d8b53b09c95e1b03a95573376
+--=20
+2.53.0
+
+
