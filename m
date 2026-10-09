@@ -1,80 +1,76 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A9C3C9893
-	for <linux-remoteproc@vger.kernel.org>; Fri,  9 Oct 2026 14:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19456283FE5
+	for <linux-remoteproc@vger.kernel.org>; Fri,  9 Oct 2026 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791556701; cv=none; b=p14zW8DKymuS25t8DaIqAifGDuFtJuVuSj3p5S2lEp2r9P/IAndA/k/pU/ffESgN8gUbshSymtpdpfVemET4V/bceu26sdZa0PpjM14/hmFN/PSPlVNKp+53q80H7u1GLgAKELV78W6hhYEc80Go3d1Cxr50ppnIDGnlHtfYpgU=
+	t=1791558691; cv=none; b=i7+zYE0fN9ALAsHOx6bkouj+D7GF9nY4ZujTwEXwkUkxBHD6b/e2J6rRWHsqXBMpVwDa3VqvpNx0LM4ADT2dNT+wYMcOKjeVCJ2ZRlDDXvk+kLzTY5AncTXfqgn28RIke8lpAyV7GLPEtN0PkE0hl2d9nKzvJYzqWbUB9rTcnR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791556701; c=relaxed/simple;
-	bh=WVChwmzOJXlx/K3vTVPxtUdHIg/2GuvU3lzTNBEWicI=;
+	s=arc-20240116; t=1791558691; c=relaxed/simple;
+	bh=CWQ8/i2hnWz9mwtHhRbUBlfXDq/qLQBYT+2/sqfdVJE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HmaecMVsWPF318IPvO3rxlIrd2L0S0zFlIt+X/zBY1IVPwoLtdtVshhMfz5G9gGYOQ/ifh/3Hmh+Xi60370jwpfZFeAPOn9C7ME7cf97C+5bnp9qZ1SXvJuwCtEVsSnu0tOJ93qSoq21kw3raVPP3WzI+sByc9zo0KubUro5X/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DNYGoQ3H; arc=none smtp.client-ip=209.85.128.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTgOfK4dq1qKXrefgKzVjN97XhjCsqnMkuSLEk8BF+qIBH4G8MqvN25VOMjel61wNFXVXzZL3pQUKhZgl3cXlX0Xis//OUxn5KPDjUdZG9WcC7E6YWD1UbzIJtZ3k2azeUCEq7vC4QS3xG5BqgrT+11+imT9ECwQKWAlZIYCEK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ADL/kRLg; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DNYGoQ3H"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4a018dc1f98so36267715e9.3
-        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Oct 2026 07:38:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ADL/kRLg"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-cc4aa18f9afso3230436a12.3
+        for <linux-remoteproc@vger.kernel.org>; Fri, 09 Oct 2026 08:11:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1791556697; x=1792161497; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1791558689; x=1792163489; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=ADsYu9bd8YELZpguZOm7XXP0fQTzNLazolnLueW7QDs=;
-        b=DNYGoQ3HwemgVjPZ1pV85u9okaoHl6GT3EsHfdc+REIfB8KII5U74w8h0FwTnrGkDh
-         DM9uCC5p4UcKVqxbN4OuLa1dwl5oYDTmJ7lW826RYTTqnM4ydsv+2EyYNVCOzTqDxKMR
-         xDvxeGJ/CRFgSkNqQrz0lrssx/of2WLn1TU3RSkUU3Q8p7T2KIVMBrXE6QgzDpMs9yYv
-         LQ5UQVgGeEYB0zqShHaXLU1yMOsjcGPAQOvjmeMHsfWMmxGRtBpjh0B6+dLhmT+cbJnV
-         gsAiDXn5C1ncnbO5P+8iAkAL4UEW4U2pDg4p50XJtp8EDAh59J+4AmBupVdCXaDXdVli
-         JkZw==
+        bh=tI0FBjJw5y4gdtGFwBDX98lJORYRvSjv3jiqMKoW3vI=;
+        b=ADL/kRLgxYvb2vmXo6ektfonSXfo7q/3fQUxvDoRarNQ4Oqmeh8QJOrtr81/+RPgm7
+         YbYhy1Hd6+j87jiY/kmVXa10jfutcD92Q2RvNsZRQZysXSRiDVcvwlwB98eqLtkY1y5I
+         D8TnLlCop7nowO5BRce68uOb09VVp/GBa1GXpoPccej9QdrqynrqoDSH9geCx+0XB94Z
+         fY5hVDWQj0LRxPAxZCm894J2RgirkZUaSSqC6Q2GwUpZBt0zn7JCZ8QFcYfA9N1DO71x
+         Qz7BtOranTwMhmGqWzItlsFp7mU6yKCuEhk/nfIQS7+k8Aya7wZC0ltJmc3LFUAABTcz
+         46Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791556697; x=1792161497;
+        d=1e100.net; s=20260707; t=1791558689; x=1792163489;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ADsYu9bd8YELZpguZOm7XXP0fQTzNLazolnLueW7QDs=;
-        b=W9e+bHFvgQ+O88oX4enzZ+NGiN/aEZv5QMRunYj75NDVt1LJ7NgS4+1XHS0l6N8rnC
-         ONYCp3SgIPCGBoZxUMZLi+MLdhGNDr5g1gC109vJ+q4SvWfbeMjPfw4PCxcvyiR3wX6X
-         PgX14bcXRuxHShgGH2YpH3gN4gP9LNkV3dY4e3/ZGtv+VWCg0GIqWfg2CyRDRay7fO0+
-         fTPd9fINE0Gx8Q0fVXoIfbpde0EUaiDyDYIce29lvXTJ/2bOH60vmCv6jU3Op6FFQBm2
-         O8RK9/wcgcl4OungJ2YO4HZNRDF/ajfwJCADDYYvfHvt4dgw6zYIhvovpP073tsB4q+/
-         UUIw==
-X-Forwarded-Encrypted: i=1; AKwUvByI1VzZrOf3qVC9CYQU63R3ktXM0jsPKvq0nGFU3nj/n4IQ5od6vuGyDGdJ+1a8jJlITNh/jdBQwFVTCgZcjUi+@vger.kernel.org
-X-Gm-Message-State: AFuF++lhKLhWD59aAIbpnYnpdwSNsisKslz0e94HoTFk/G8PEaJT4xR0
-	wo2mWKgiJdU+0Y+nVHVFtkW6EfxpIxvpyJUvYVKSiS41J5eUje+1LubRc7DgX8KU2as=
-X-Gm-Gg: AYBFou13Tq6nYiG2bYwT83VeZC76dJ6ofAPVK7DIw1Ag8OFKHBg+RIzo2pWrXJArpvb
-	Li+pgoLi1U+rrNhqxNXrhrcJVlGCgRY+GMNfLqH5hBFVVE9tSJK5Wv3T9MQdX3CIx1MWeRQZIHf
-	c0GaDJle89v3KxqrSTCovBe9t3bRm47GwoDDN08gIadaAsdhz4r4DFFr5p00M0+2kqVZFRRcEEH
-	NyVw2pw7U/7xUqosJfG/SgzDrHfQ5oSBPwnyGDimosA1kW77JIYTs1uEhQVcpABeqYOuH0PiWBx
-	YgBFQtNq4wwXs8npR46BcLz/5CVCFdzHwvW2yDweWy1cvogu5dyEfh0p62s3J9ofJxOPq6ZsCHz
-	r+PnPUxf4SWP/9nfY8OZVfeeZvq0a9NPrrVLRB1HFkIR6mPogJmcTg1K/5/XCmoH2naeJfeW2Xm
-	/fVNFK9M8Rg4dz4F1+nPgNnqLOTWxRmmxDvuI3Iec1Uhgky0kZmZCKuDXuS0msKTi+Qtrg9qLy1
-	cuZl8Z0VdY=
-X-Received: by 2002:a05:600c:c176:b0:4a0:c2a:485e with SMTP id 5b1f17b1804b1-4a18e4dce0cmr41026305e9.33.1791556696563;
-        Fri, 09 Oct 2026 07:38:16 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff25:4f41:8f61:e8db:b29a:c15a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18e4225f4sm72506615e9.0.2026.10.09.07.38.15
+        bh=tI0FBjJw5y4gdtGFwBDX98lJORYRvSjv3jiqMKoW3vI=;
+        b=ELCDzhcW0nfTi+8dUpvl5vP+Goqs8z1h8n0GhYDfYUtgZ+PaR2hT9rjFQztM5g82dj
+         Sy2Ur9TlOlxoKFvm888ERim3GVrjKiin9wh0CnrOPx/wnyuy550Qvfl0IxxoYqs13C9h
+         JZ52k7tuZmR4jd1c43ueqPTC+LwJfUgCMHQJICsFyH3uGyRb2X7kpIQSfAtHzOFBsMtr
+         c9EG8gdCmnlj8QyqP9ZT4AWTdoXbOTzI1ZRxBECQ+oDvRI+DeKmdWmKF9QRzbh4Bp+t7
+         Ui9n5D8TYXJZW8ADLgSb5B6re/V5dtmx1pePWhFwpg9SdoT3oZXoGvmkw4j1orimjTf3
+         0KrQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzSA7t/r5Hxf3VIJnXgu5X/9iUl4vsuymAatSTgb3AReaI7p5hQXSrCAT59faHOPnxb4ZBD4VgMqij6g3uXPo3k@vger.kernel.org
+X-Gm-Message-State: AFq9FYKdoRWng5//pUcvvoJ4KMVR5egQUobKlR5oR6MGRPQqcaRnxFz9
+	NYucOtnAPlAwhW0RK0A5bsX/S23SHFnRO8tIts+bwutTscNUBn6ULnEd1SLMov8JX1Ql2ozN2ZE
+	opfZV
+X-Gm-Gg: AYBFou08DbHR0BVXokgXF/JadrZKzDGSNS6mmPEVnMSOqYg3jgWGbuFzX/qnsyg8WxO
+	1S8wXsw2oQEmGb8+BN6IxdY+MqCKYy5/XwApMfSgmjhmy36uB8riz/fQirQl1o+TZ3ozHIE4CD2
+	FR8G3DuyweWbx2xJDT8gopvGb8w0xXzLlBGjzbYoWOOyGwmuTQnI/X0lqf6NvZHibpVE6tAR7UK
+	XiXWZTSQ3twwEC6W/IajzirEWnPW7aZKkaGAjylZj6lbQ3cnOZ2WbSs3xSeMjS3MR3zrqNJg2VX
+	Rv/p+OTVQ9pkA+B0llhclBQQa9OR77hFrZyVrtvjL7zhS+t/T5g0NKvjRw3pbqpLzhcelScLnKL
+	SsBROAuJlV8wxJdjerTCurP5XgaSSX/A6aU/olybMO8OnOJD+NRz2hNYL6G1ExLokKdmoQeOCUk
+	ITS8zt+3RdXMBcjzo3Se2tiWDyPx2f/IccebkQxA9jBAgjiqA6hplHOy13VEMdZvK2W7j2WYdk6
+	w==
+X-Received: by 2002:a17:90b:3145:b0:3a8:86d6:aab2 with SMTP id 98e67ed59e1d1-3ab3a99b883mr2053681a91.63.1791558689150;
+        Fri, 09 Oct 2026 08:11:29 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:9f78:f82f:d05e:99a4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd3da05caaesm1117345a12.32.2026.10.09.08.11.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2026 07:38:16 -0700 (PDT)
-Date: Fri, 9 Oct 2026 16:38:14 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-	Bartosz Golaszewski <brgl@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] remoteproc: qcom: pas: Don't fail attach if the
- remote has crashed
-Message-ID: <asj8VnSmKBF3nA79@linaro.org>
-References: <20261006033550.2726451-1-shengchao.guo@oss.qualcomm.com>
- <20261006033550.2726451-3-shengchao.guo@oss.qualcomm.com>
+        Fri, 09 Oct 2026 08:11:28 -0700 (PDT)
+Date: Fri, 9 Oct 2026 09:11:26 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Yonghao Zhang <hyz3367@gmail.com>
+Cc: andersson@kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v3] remoteproc: core: Fetch the auto-boot firmware only
+ once
+Message-ID: <askEHoKkTrrmG46N@p14s>
+References: <ar0lvsu80miGJdGS@p14s>
+ <20261001081056.38293-1-hyz3367@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -83,83 +79,199 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261006033550.2726451-3-shengchao.guo@oss.qualcomm.com>
+In-Reply-To: <20261001081056.38293-1-hyz3367@gmail.com>
 
-On Tue, Oct 06, 2026 at 11:35:50AM +0800, Shawn Guo wrote:
-> When qcom_pas_attach() finds the fatal SMP2P bit already set, it reports
-> a crash and then fails the attach. The core unwinds the attach while the
-> crash work is queued: rproc_boot() drops the power refcount back to 0,
-> and __rproc_attach()/rproc_attach() unprepare the subdevices, clean up
-> the resource table and disable the IOMMU. Once rproc_boot() releases
-> rproc->lock, the crash handler finds the rproc still RPROC_DETACHED,
-> marks it RPROC_CRASHED and runs rproc_boot_recovery() on top of that
-> torn-down state:
+On Thu, Oct 01, 2026 at 04:10:56PM +0800, Yonghao Zhang wrote:
+> Auto-boot for an always-on remote processor registers an asynchronous
+> request_firmware_nowait() whose callback, rproc_auto_boot_callback(),
+> calls rproc_boot() first and only releases the fetched image at the
+> very end of the callback.  rproc_boot() does not take this image as an
+> argument: it fetches the very same image again with a synchronous
+> request_firmware(), so every auto-boot reads the firmware image twice
+> and allocates the buffer twice; on kernels with the sysfs fallback
+> enabled, the uevent round-trip is repeated as well.
 > 
->  - the subdevices are unprepared a second time by rproc_stop(), so SSR
->    and sysmon notifiers see a duplicate shutdown;
->  - qcom_pas_stop() and the subsequent rproc_start() operate on resources
->    that rproc_attach() already released, e.g. iommu_unmap() on a
->    disabled domain for rproc->has_iommu;
->  - recovery leaves the rproc RPROC_RUNNING with power == 0. A later
->    "stop" via sysfs takes power to -1 and returns success without
->    stopping anything, so the remote stays running. A following "start"
->    then boots the firmware again on the running remote and fails to
->    re-add the still registered subdevices:
+> The asynchronous request exists only so that rproc_add() does not
+> block on the filesystem read; the image it fetches is never used.
+> The core already defers rproc_boot() to a worker for detached
+> processors (attach_work).  Reuse that worker for offline processors
+> too and drop the asynchronous firmware request: rproc_boot() fetches
+> the image exactly once and dispatches between a firmware boot and
+> an attach based on the processor state.  The work is renamed to
+> boot_work to match its widened role.
 > 
->   sysfs: cannot create duplicate filename '.../qcom_common.pd-mapper.0'
->   remoteproc remoteproc0: failed to prepare subdevices for adsp: -17
->   remoteproc remoteproc0: Boot failed: -17
+> commit 400e64df6b23 ("remoteproc: add framework for controlling remote
+> processors") noted back in 2011 that "we must wait until it completes
+> before we try to unregister the device".  rproc_del() now does exactly
+> that: it waits for the boot work with cancel_work_sync(), which also
+> closes the theoretical window in which a pending attach work could
+> outlive the rproc instance.
 > 
-> A crash found at attach time is no different from one reported by the
-> fatal interrupt right after attaching. Treat it the same way as
-> q6v5_fatal_interrupt() does: clear q6v5.running, report the crash and
-> let the attach succeed. The core completes the attach with balanced
-> bookkeeping, and the crash handler then recovers the subsystem through
-> the regular RPROC_ATTACHED -> RPROC_CRASHED path.  With running cleared,
-> qcom_q6v5_request_stop() does not wait for a stop ack the dead remote
-> cannot send, and handover_issued already prevents a spurious handover
-> on stop.
+> The changed fallback behaviour only matters for legacy
+> configurations.  udev dropped its userspace firmware loader back in
+> 2014, as recorded in
+> Documentation/driver-api/firmware/fallback-mechanisms.rst, and the
+> kernel has documented since commit 02c399306826 ("firmware_loader:
+> enhance Kconfig documentation over FW_LOADER") that "Linux no longer
+> relies on or uses a fallback mechanism in userspace".  Auto-boot now
+> uses the same synchronous fallback semantics as every other explicit
+> boot source (sysfs, cdev).
 > 
-
-Hmmmm okay, I have never thought of this option, but reusing the
-existing crash path as-is by making the attach succeed feels actually
-quite clever! I suppose starting all the subdevs is really redundant in
-this case, but the crash case is also nothing worth optimizing for.
-
-> Assisted-by: LLM
-> Signed-off-by: Shawn Guo <shengchao.guo@oss.qualcomm.com>
+> Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
 > ---
->  drivers/remoteproc/qcom_q6v5_pas.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> Changes in v3:
+> - Drop rproc_trigger_auto_boot() wrapper and schedule boot_work
+>   directly in rproc_add() (Mathieu).
 > 
-> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> index 8f3d45c604c9..0ecd7688a54d 100644
-> --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> @@ -562,10 +562,14 @@ static int qcom_pas_attach(struct rproc *rproc)
->  		goto disable_running;
->  
->  	if (crash_state) {
-> +		/*
-> +		 * Complete the attach and let the crash handler recover the
-> +		 * subsystem from the attached state, as for a crash reported
-> +		 * by the fatal interrupt.
-> +		 */
->  		dev_err(pas->dev, "Subsystem has crashed before driver probe\n");
-> +		pas->q6v5.running = false;
->  		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
-> -		ret = -EINVAL;
-> -		goto disable_running;
->  	}
+> Changes in v2:
+> - Fix the order described in the changelog: the callback calls
+>   rproc_boot() first and releases the asynchronously fetched image at
+>   the end of the callback (Mathieu).
+> - Fix typo "proccessor".
+> 
+>  drivers/remoteproc/remoteproc_core.c | 66 +++++++---------------------
+>  include/linux/remoteproc.h           |  4 +-
+>  2 files changed, 19 insertions(+), 51 deletions(-)
+>
 
-My only nitpick is that it would be nice to fully reuse the normal crash
-handling in this case, in particular the crash_reason logging inside
-q6v5_fatal_interrupt(). Can you extract that part into a common function
-and call it from here?
-
-(I guess you could also call the existing q6v5_fatal_interrupt()
-function since it should work as-is, but externally calling an interrupt
-handler might be a bit weird...)
+Applied.
 
 Thanks,
-Stephan
+Mathieu
+ 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 263e12f022ea..b88bf179507d 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1662,51 +1662,23 @@ static int rproc_attach(struct rproc *rproc)
+>  }
+>  
+>  /*
+> - * take a firmware and boot it up.
+> - *
+> - * Note: this function is called asynchronously upon registration of the
+> - * remote processor (so we must wait until it completes before we try
+> - * to unregister the device. one other option is just to use kref here,
+> - * that might be cleaner).
+> + * Boot or attach the remote processor in the background: rproc_add()
+> + * runs in probe context and must not block while the firmware image is
+> + * read from storage.  rproc_boot() dispatches on the processor state,
+> + * so this covers both a firmware boot and an attach to a processor
+> + * started by another entity.
+> + *
+> + * Note: rproc_del() waits for this work to complete with
+> + * cancel_work_sync(), so the rproc instance remains valid for the
+> + * entire lifetime of this function.
+>   */
+> -static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
+> -{
+> -	struct rproc *rproc = context;
+> -
+> -	rproc_boot(rproc);
+> -
+> -	release_firmware(fw);
+> -}
+> -
+> -static void rproc_attach_work(struct work_struct *work)
+> +static void rproc_boot_work(struct work_struct *work)
+>  {
+> -	struct rproc *rproc = container_of(work, struct rproc, attach_work);
+> +	struct rproc *rproc = container_of(work, struct rproc, boot_work);
+>  
+>  	rproc_boot(rproc);
+>  }
+>  
+> -static int rproc_trigger_auto_boot(struct rproc *rproc)
+> -{
+> -	int ret;
+> -
+> -	if (rproc->state == RPROC_DETACHED) {
+> -		schedule_work(&rproc->attach_work);
+> -		return 0;
+> -	}
+> -
+> -	/*
+> -	 * We're initiating an asynchronous firmware loading, so we can
+> -	 * be built-in kernel code, without hanging the boot process.
+> -	 */
+> -	ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
+> -				      rproc->firmware, &rproc->dev, GFP_KERNEL,
+> -				      rproc, rproc_auto_boot_callback);
+> -	if (ret < 0)
+> -		dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
+> -
+> -	return ret;
+> -}
+> -
+>  static int rproc_stop(struct rproc *rproc, bool crashed)
+>  {
+>  	struct device *dev = &rproc->dev;
+> @@ -2348,11 +2320,8 @@ int rproc_add(struct rproc *rproc)
+>  	rproc_create_debug_dir(rproc);
+>  
+>  	/* if rproc is marked always-on, request it to boot */
+> -	if (rproc->auto_boot) {
+> -		ret = rproc_trigger_auto_boot(rproc);
+> -		if (ret < 0)
+> -			goto rproc_remove_dev;
+> -	}
+> +	if (rproc->auto_boot)
+> +		schedule_work(&rproc->boot_work);
+>  
+>  	/* expose to rproc_get_by_phandle users */
+>  	mutex_lock(&rproc_list_mutex);
+> @@ -2361,10 +2330,6 @@ int rproc_add(struct rproc *rproc)
+>  
+>  	return 0;
+>  
+> -rproc_remove_dev:
+> -	cancel_work_sync(&rproc->crash_handler);
+> -	rproc_delete_debug_dir(rproc);
+> -	device_del(dev);
+>  rproc_remove_cdev:
+>  	rproc_char_device_remove(rproc);
+>  	return ret;
+> @@ -2552,7 +2517,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	INIT_LIST_HEAD(&rproc->subdevs);
+>  	INIT_LIST_HEAD(&rproc->dump_segments);
+>  
+> -	INIT_WORK(&rproc->attach_work, rproc_attach_work);
+> +	INIT_WORK(&rproc->boot_work, rproc_boot_work);
+>  	INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+>  	spin_lock_init(&rproc->crash_handler_lock);
+>  
+> @@ -2630,6 +2595,9 @@ int rproc_del(struct rproc *rproc)
+>  	if (cancel_work_sync(&rproc->crash_handler))
+>  		pm_relax(rproc->dev.parent);
+>  
+> +	/* auto-boot may still be fetching firmware: wait for it here */
+> +	cancel_work_sync(&rproc->boot_work);
+> +
+>  	__rproc_shutdown(rproc, true);
+>  
+>  	rproc_delete_debug_dir(rproc);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index a44368737b39..d77e24539133 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -231,7 +231,7 @@ enum rproc_features {
+>   * @subdevs: list of subdevices, to following the running state
+>   * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+>   * @index: index of this rproc device
+> - * @attach_work: workqueue for attaching rproc
+> + * @boot_work: workqueue for booting rproc
+>   * @crash_handler: workqueue for handling a crash
+>   * @crash_handler_lock: serializes crash handler queueing and deletion
+>   * @deleting: remoteproc deletion has begun
+> @@ -277,7 +277,7 @@ struct rproc {
+>  	struct list_head subdevs;
+>  	struct idr notifyids;
+>  	int index;
+> -	struct work_struct attach_work;
+> +	struct work_struct boot_work;
+>  	struct work_struct crash_handler;
+>  	spinlock_t crash_handler_lock;
+>  	bool deleting;
+> -- 
+> 2.34.1
+> 
