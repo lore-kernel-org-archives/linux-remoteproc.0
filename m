@@ -1,144 +1,312 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA455455607;
-	Sat, 10 Oct 2026 11:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791631540; cv=none; b=DfEHEZP5koNoSgcTXKGIBq8cBUHoV4d4z7AuxxFyRaU5voE1iykq9DBDjBh34kicxynDr5NFHtwuhVJhpa/XG00jVj6+Tmr97g3SuHPM7hoQetNIkhuy3DUw16PEEtLzQpA90XLIGJMAcC9gXpSTuGdhSF5zaVHKQ4fc5cGWF7w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791631540; c=relaxed/simple;
-	bh=YzqLPw7XgcjHjtBA3K7qVaKgKH+F5SwiMXFMpixd7WE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1692547059;
+	Sat, 10 Oct 2026 12:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1791636821; cv=pass; b=c5EIld6Y5YZvveX2WDR+jVcPXNnvxiVMJ1neOYt1l5gsfdvx4+l1qFTBIaboBKQIloZir34AgYariUwzkpL+WUDdtNRkOHB832esJR9TovVuJVJzEoXT9FI1EVsIxUCmwl1Ho7qp5WseQmJKrbYGWAlxREpX9nhzec8MD0wJfNU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1791636821; c=relaxed/simple;
+	bh=TloiGb9LcjiPJPFSG2XTLgeNMAlw0y3F26oR4V/bRq0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XyMU6GDkgIej78WKbwQmUU6Oy4T5mt1S0Uw1GOFRjoqHtAfBAMGEmO5uvTYoGfTRlJVx4IfCEmztgQf+7/Ne5DlDASsmTs0h54MJrrqoQGZnBPGj8W/wHy5FpYf0bhG80sLOGEoJx/BKAq0Flt8jTjhje+T/6mDMtLEVGwGCAVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkWDQV81; arc=none smtp.client-ip=100.103.45.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCdYJb4cnvVb47LElVYoHR7hStqMh39ah0t+HtD0Bfy9aFB/w8euAWLhd88tSjJVlJi8sFUSWhNLwhab2zToOjC07Py5GnmEODp0f9QXqcYcHhzDO+oR4VlHmjZ0H29OTjR5Ttp2bWdkVtZSmiAGreUrg9AroJXYv7k3eap0WEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=sMWlFLyG; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=GX50AT9r; arc=pass smtp.client-ip=185.56.87.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkWDQV81"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 534C41F000FF;
-	Sat, 10 Oct 2026 11:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791631534;
-	bh=sfY+uRPXEdWtjLqcJybNaXUFUCXdQfre4GQZmBn9q+I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EkWDQV81ES1DiWJ9wSkZqMiad1XbLcb+RmAxG+yGosD++Z9VE7utgqi/C0E6ywBAb
-	 4catZUSGzeCgoVPyQxCr6pCW8wEivmFgEFnU035MinLtih4EeRS3rhtEHLj8r7GnUc
-	 om7VFblNFyKl6KXVPSi7bnEDwAESnVlGDHzQ0hMipKXbGPcC1Y36uU7lleuYL8q6ch
-	 WjNs05xmUrZLhGxQCDsigiACvl1BEyM6Ld0FCd8LPxOeyCAfHioObUjaTlpk0ODQ/5
-	 1rZYzzexcGr+N53mcDK0zUSwYpc4X/nEUhaLuMAhpJhLrzh4rbOpaKwFLesIriJ6Po
-	 c1a0Y2R5sJ2Yw==
-Date: Sat, 10 Oct 2026 16:55:28 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, andersson@kernel.org,
-	mathieu.poirier@linaro.org, konrad.dybcio@oss.qualcomm.com,
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: qcom: pas: pass no resource table when the
- firmware has none
-Message-ID: <asogqMMvsGTTmHr1@sumit-xelite>
-Mail-Followup-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
-	andersson@kernel.org, mathieu.poirier@linaro.org,
-	konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20261005125411.2151326-1-jorge.ramirez@oss.qualcomm.com>
- <20261005161224.umj6zzov57tifv7v@hu-mojha-hyd.qualcomm.com>
- <asQQJNOd_p9acgT1@RAMIREZO.na.qualcomm.com>
- <20261006100344.piyiffp6rwvt3w2s@hu-mojha-hyd.qualcomm.com>
+	dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="sMWlFLyG";
+	dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b="GX50AT9r"
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-jgww.prod.antispam.mailspamprotection.com; s=arckey; t=1791636819;
+	 b=YaexAuqCzz+M9u9gNO0ReKutIufsNgFCEf1b+UCm8rO7zkV3yAu+dnNhw+txp9RgAUpm8GxDmr
+	  lbyAgmM2bwKmM2ianps8B/6boLHY9HMJJ4THXHVV+8Kk4N3zevdWnxYJYzykpVZONcQ+HYQ7PB
+	  FJ7IRQxjofyVpV5E1xkDLS1fkJ9MZNF21tRKONOBOp0smolu2/yYGn/Mz6958q6RgtaJqbBIVI
+	  nIcriKfsoJGvRGWcqKkWAKidCycr9UYXSGHDH+JXKcUqG5imMUpdV221gukj8ZIkaQtIpxC0O7
+	  gzkSy1+rJox7EZp277VdIFkqg+3KHqdIv2c86Bfl+wR2QQ==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-jgww.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-jgww.prod.antispam.mailspamprotection.com; s=arckey; t=1791636819;
+	bh=TloiGb9LcjiPJPFSG2XTLgeNMAlw0y3F26oR4V/bRq0=;
+	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
+	  From:Date:DKIM-Signature:DKIM-Signature;
+	b=XMJJJuUUZLq3S5ayy7hrzuXgefA70Qm0iBVV9skTSTSxdD1+QdjYyf24xiWMo/MNxHAAEZC+15
+	  Tu6I/+nSwQmiSIPBNbvLrNHbo5JbAbwQZVtPhI0kW/4kd82m3+fi6gOAH77KXukF94EmD7dks9
+	  nTwNe3horK54GgPWL1Kt2vEqFgseelTpwgB2rmuT0T3HAKxBC7E8YQATA/PAaXM+Iszyn9FbQH
+	  JpwskSv86wqupQowOTHxCqwG4DIm2zCbEuCTs606MakKefnMEb9fK1l4P//Wf7j/X6MnBPYmz5
+	  5bhAtnMHzgCrP/EO7VzjhuBns2VphoiWNwi7bKmD7gV3uA==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	List-Unsubscribe:Content-Transfer-Encoding;
+	bh=0nDbcmvw++nIvZl2eKTAuF6jIVwbx2iXREQ2mn7C9RI=; b=sMWlFLyG1VSRiPqaS5Nihz+ALM
+	lkxuJjNiB9fKSddGo9vN28Ri4HL1brS7fPDCgsxvqG/wuTGreGX+ehYVKRkH0NccY6IXR49NBGku6
+	wAfCyaW6D9c/Gfo8flZdc/o/3PHNUx0gZ23HTRrGzVuxFrMPnD9Ssb8RYqwca0YBNpCA=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-jgww.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <francesco@valla.it>)
+	id 1xFW8i-0000000HA0X-2yRc;
+	Sat, 10 Oct 2026 12:25:25 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=0nDbcmvw++nIvZl2eKTAuF6jIVwbx2iXREQ2mn7C9RI=; b=GX50AT9rmahSgmb1EoN0MuGfp2
+	VwjzweppWraRBrFEsxLy0KNiD/JhU02ZkQQDjp+iVeJB60AIIWJ843/trGpC8rREWvkdhyIRLqh4G
+	svhWp4Y9ks7lQ6+9njx1T73eTYqqWpNAhAf9ziuqNZh2hValmvdS9mp2xrD+p1wMp3X0=;
+Received: from [79.22.26.204] (port=60194 helo=bywater)
+	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <francesco@valla.it>)
+	id 1xFW8Q-000000004lR-2XJG;
+	Sat, 10 Oct 2026 12:25:06 +0000
+Date: Sat, 10 Oct 2026 14:25:04 +0200
+From: Francesco Valla <francesco@valla.it>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Peng Fan <peng.fan@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	virtualization@lists.linux.dev, imx@lists.linux.dev, iommu@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC 12/12] PoC: arm64: dts: imx93-11x11-frdm: add
+ multiple vdevs
+Message-ID: <asonWC5ENWZJ1-3B@bywater>
+References: <20260916-remoteproc_virtio_map-v1-0-dac8c5eb4aa9@valla.it>
+ <20260916-remoteproc_virtio_map-v1-12-dac8c5eb4aa9@valla.it>
+ <arKiOCGrWAKyc-bc@p14s>
+ <arLawAw6kgFT2e0W@bywater>
+ <arP06mWDehsIDh5s@p14s>
+ <arP5AvA51GHrI8aN@bywater>
+ <ashtOTx/xhTsMnQ3@shlinux89>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261006100344.piyiffp6rwvt3w2s@hu-mojha-hyd.qualcomm.com>
+In-Reply-To: <ashtOTx/xhTsMnQ3@shlinux89>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 3b1a822e156a60a577a97f3ff3c5b731
+X-AntiAbuse: ID - 3b1a822e156a60a577a97f3ff3c5b731
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1xFW8i-0000000HA0X-2yRc-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-jgww.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-Hey Mukesh,
+Hello Peng,
 
-On Tue, 06 Oct 2026 at 15:33:44 +0530, Mukesh Ojha wrote:
->On Mon, Oct 05, 2026 at 11:01:24PM +0200, Jorge Ramirez wrote:
->> On 05/10/26 21:42:24, Mukesh Ojha wrote:
->> > On Mon, Oct 05, 2026 at 02:54:00PM +0200, Jorge Ramirez-Ortiz wrote:
->> > > The firmware resource table is passed to the PAS backend even when the
->> > > firmware carries none. This only works on the first boot, while the
->> > > cached pointer and its size are both zero.
->> > >
->> > > Stopping the remote processor, or failing to start it, frees the cached
->> > > table and clears the pointer but leaves the size set. The next start
->> > > then pairs a NULL table with a non-zero size.
->> > >
->> > > The SCM backend substitutes an empty table and hides the problem. The
->> > > TEE backend copies from the NULL pointer:
->> > >
->> > >   remoteproc remoteproc2: powering up cdsp
->> > >   pc : __pi_memcpy_generic+0x110/0x22c
->> > >   lr : qcom_pas_tee_get_rsc_table+0xf4/0x25c
->> > >   Call trace:
->> > >    __pi_memcpy_generic+0x110/0x22c (P)
->> > >    qcom_pas_get_rsc_table+0x38/0x60
->> > >    qcom_pas_parse_firmware+0xa0/0x100
->> > >    rproc_boot+0x2d4/0x380
->> > >    state_store+0x40/0x100
->> > >
->> > > Fixes: a4584bff63c8 ("remoteproc: pas: Extend parse_fw callback to fetch resources via SMC call")
->> > > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
->> > > ---
->> > >  drivers/remoteproc/qcom_q6v5_pas.c | 11 ++++++-----
->> > >  1 file changed, 6 insertions(+), 5 deletions(-)
->> > >
->> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
->> > > index a005546c265d..e871e03ba794 100644
->> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> > > @@ -463,7 +463,7 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
->> > >  	struct resource_table *table = NULL;
->> > >  	size_t output_rt_size;
->> > >  	void *output_rt;
->> > > -	size_t table_sz;
->> > > +	size_t table_sz = 0;
->> > >  	int ret;
->> > >
->> > >  	ret = qcom_register_dump_segments(rproc, fw);
->> > > @@ -476,11 +476,12 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
->> > >  		return 0;
->> > >
->> > >  	ret = rproc_elf_load_rsc_table(rproc, fw);
->> > > -	if (ret)
->> > > +	if (ret) {
->> > >  		dev_dbg(&rproc->dev, "Failed to load resource table from firmware\n");
->> > > -
->> > > -	table = rproc->table_ptr;
->> > > -	table_sz = rproc->table_sz;
->> > > +	} else {
->> > > +		table = rproc->table_ptr;
->> > > +		table_sz = rproc->table_sz;
->> > > +	}
->> >
->> >
->> > Earlier code was intentional please read the comment below.. /**...*/
->> >
->>
->> AFAICS the comments say that the call might pass NULL and zero as input
->> resources. And this patch does exactly that - it doesnt allow NULL and
->> non-zero.
->>
->> did I miss something?
+On Fri, Oct 09, 2026 at 12:27:37PM +0800, Peng Fan wrote:
+> On Wed, Sep 23, 2026 at 08:42:23PM +0200, Francesco Valla wrote:
+> >On Wed, Sep 23, 2026 at 09:48:58AM -0600, Mathieu Poirier wrote:
+> >> On Tue, Sep 22, 2026 at 10:19:48PM +0200, Francesco Valla wrote:
+> >> > On Tue, Sep 22, 2026 at 09:43:52AM -0600, Mathieu Poirier wrote:
+> >> > > On Wed, Sep 16, 2026 at 11:10:57PM +0200, Francesco Valla wrote:
+> >> > > > Add rings for multiple vdevs, as well as the required virtio nodes for
+> >> > > > I2C, SPI and GPIO functionalities. On top of that, add example
+> >> > > > peripherals using all of them.
+> >> > > > 
+> >> > > > NOTE: this is a Proof-Of-Concept, not meant to be integrated!
+> >> > > > 
+> >> > > > Signed-off-by: Francesco Valla <francesco@valla.it>
+> >> > > > ---
+> >> > > >  arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts | 128 +++++++++++++++++++--
+> >> > > >  1 file changed, 119 insertions(+), 9 deletions(-)
+> >> > > > 
+> >> > > > diff --git a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> >> > > > index bd14ba28690c..dfa3b122ac5f 100644
+> >> > > > --- a/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> >> > > > +++ b/arch/arm64/boot/dts/freescale/imx93-11x11-frdm.dts
+> >> > > > @@ -53,6 +53,32 @@ button-k3 {
+> >> > > >  		};
+> >> > > >  	};
+> >> > > >  
+> >> > > > +	gpio-keys-virtio {
+> >> > > > +		compatible = "gpio-keys-polled";
+> >> > > > +		poll-interval = <100>;
+> >> > > > +
+> >> > > > +		button-v1 {
+> >> > > > +			label = "Button V1";
+> >> > > > +			linux,code = <BTN_3>;
+> >> > > > +			gpios = <&v_gpio 23 GPIO_ACTIVE_LOW>;
+> >> > > > +		};
+> >> > > > +
+> >> > > > +		button-v2 {
+> >> > > > +			label = "Button V2";
+> >> > > > +			linux,code = <BTN_4>;
+> >> > > > +			gpios = <&v_gpio 24 GPIO_ACTIVE_LOW>;
+> >> > > > +		};
+> >> > > > +	};
+> >> > > > +
+> >> > > > +	leds {
+> >> > > > +		compatible = "gpio-leds";
+> >> > > > +
+> >> > > > +		led {
+> >> > > > +			gpios = <&v_gpio 18 GPIO_ACTIVE_HIGH>;
+> >> > > > +			label = "LED V";
+> >> > > > +		};
+> >> > > > +	};
+> >> > > > +
+> >> > > >  	reg_usdhc2_vmmc: regulator-usdhc2 {
+> >> > > >  		compatible = "regulator-fixed";
+> >> > > >  		off-on-delay-us = <12000>;
+> >> > > > @@ -89,11 +115,6 @@ linux,cma {
+> >> > > >  			linux,cma-default;
+> >> > > >  		};
+> >> > > >  
+> >> > > > -		rsc_table: rsc-table@2021e000 {
+> >> > > > -			reg = <0 0x2021e000 0 0x1000>;
+> >> > > > -			no-map;
+> >> > > > -		};
+> >> > > > -
+> >> > > 
+> >> > > Why is the resource table removed?  There is no mention of that in the
+> >> > > changelog...
+> >> > >
+> >> > 
+> >> > You are obviously right, the commit message here should have been a
+> >> > poem, not a form of hermetic poetry. My bad.
+> >> > 
+> >> > The resource table here is causing problems with how Zephyr is managing
+> >> > it at its side. If it is kept in a separate memory location and copied
+> >> > there at runtime by the remote processor firmware during its startup
+> >> > (which is the current Zephyr behavior), then there might be a race
+> >> > condition when the aforesaid firmware is loaded and started by Linux
+> >> > *and* at least one of the vdev drivers (here including rpmsg_bus) is
+> >> > built-in. In this case, the copy of the resource table done by the
+> >> > remote processor might - depending on the async execution of the two
+> >> > processors - overwrite the status bit set by the Linux driver:
+> >> > 
+> >> >   Firmware load and startup (echo start > /sys/.../state)
+> >> >                            |
+> >> > 			   |
+> >> > 			   V
+> >> >   The vdev devices get registered (by register_virtio_device())
+> >> >                            |
+> >> > 			   |
+> >> > 			   V
+> >> >   If a driver is built-in, it probes and sets the vdev status
+> >> >   inside the resource table @rsc-table.
+> >> >                            .
+> >> > 			   . (in the mean time)
+> >> > 			   .
+> >> >   The remote processor starts up and copies the resource table from its
+> >> >   dedicated section to @rsc-table.
+> >> > 
+> >> > Depending on the system load and the complexity of the firmware, the two
+> >> > operations can happen in whatever sequence, causing a race condition.
+> >> 
+> >> This would happen regardless of this patchset.
+> >>
+> >
+> >Correct, *if* the remote processor is copying the resource table to a
+> >specific location and expects the host to use that. On Zephyr (which is
+> >clearly outside the scope here) this can be enabled through the
+> >CONFIG_OPENAMP_COPY_RSC_TABLE option. I am keeping that disabled, and
+> >removing the rsc-table node here.
+> >
+> >I am planning to reason on this and propose a proper fix in a separate
+> >patchset.
+> 
+> The previous workaround for this was to add a delay in start function.
+> 
+> https://lore.kernel.org/all/20221102112451.128110-1-peng.fan@oss.nxp.com/
+> https://lore.kernel.org/linux-remoteproc/20230707232444.374431-1-marex@denx.de/
 >
->No, you did not miss anything.. I just wanted to highlight that I
->did not keep else statement in my initial implementation
->intentionally and relied table_ptr and size will be NULL on
->failure of rproc_elf_load_rsc_table()..
 
-Looks like you still haven't understood the problem this patch is trying
-to solve. It's the PIL restart sequence where the table_ptr is NULL and
-size being passed as non-zero which is incorrect from caller point of
-view.
+That would *kind of* work, but it's clearly unfit for upstream.
 
-The backend will surely error out in this case. On a restart you again
-have to pass the table_ptr as NULL with size as 0 to fetch the resource
-table again. Surely we don't want the backend to hide errors on client
-part here.
+> >
+> >> > 
+> >> > This is somewhat masked if vdev drivers are built as modules, as the
+> >> > devices does not probe immediately but only after the modules have been
+> >> > loaded, giving the remote processor time to start. Note that this is not
+> >> > a solution! but a workaround.
+> >> > 
+> >> > If the rsc-table node is not there, the startup logic falls back to the
+> >> > classic rproc_elf_find_loaded_rsc_table().
+> >> 
+> >> We can't remove @rsc-table to make a problem go away.  
+> >> 
+> >
+> >I need to re-take a look at the NXP SDK to understand what's the real
+> >purpose of having the rsc-table here. Judging from the commit message
+> >that introduced support for such facility [1], it seems the SDK is not
+> >really using it.
+> >
+> >Maybe someone from NXP can comment on this?
+> 
+> Linux needs to parse resource table to setup vring. When RPROC(remote processor)
+> is booted by ROM or System Manager, there is no elf for Linux to use, so a
+> pre-defined address is used rsc-table.
+> 
 
--Sumit
+Yes, that's clear, or it wouldn't know where to find the resource table. 
+
+> 
+> If RPROC is booted by Linux using remoteproc, rsc-table in DT is not needed.
+> But RPROC is not aware it is booted by ROM, U-Boot, Linux. So it will always
+> publish the resource table to rsc-table address.
+> 
+> And we need one DTB/Image to support mutiple boot cases.
+> 
+
+That's also clear. However, current setup for i.MX93 platforms is not
+really working for the Linux+Zephyr case, or at least not in all
+conditions.
+
+If the firmware is loaded and started by the Linux kernel, the resource
+table is copied to the rsc-table address before the CM33 is started.
+However, at the beginning of its boot process, the CM33 itself will
+clear its DTCM memory [1] to avoid ECC failures, actually overriding the
+resource table the Linux kernel just wrote there. (Note that I linked
+only the Zephyr case, but the official NXP SDK has a similar routine).
+
+Regardless of what the CM33 does after (i.e., even if it copies the
+resource table to the same location), it will lose any update the Linux
+kernel did in the mean time to the resource table. If e.g. the
+virtio_rpmsg_bus module is built-in, the readiness of the rpmsg
+stack at Linux side will be lost most of the times.
+
+This is probably working fine for firmwares based on the rpmsg-lite
+library by NXP, which AFAICT doesn't use the status bits found inside
+the resource table, but it's interfering with the way the OpenAMP stack
+works.
+
+ATM I do not have a solution to propose. I'm still thinking about it.
+In the mean time, I decided to load and boot the CM33 firmware before
+the Linux kernel starts.
+
+> Hope this explains.
+> 
+> Regards
+> Peng
+
+Thank you!
+
+Regards,
+Francesco
+
+[1] https://github.com/zephyrproject-rtos/zephyr/blob/main/soc/nxp/imx/imx9/imx93/m33/imx93_m33_startup.S#L18
+
