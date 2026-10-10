@@ -1,200 +1,144 @@
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCF73CB55C;
-	Fri,  9 Oct 2026 21:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA455455607;
+	Sat, 10 Oct 2026 11:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791581288; cv=none; b=qeqM5ixkLspGPmfyQPORpek8PgCle9mkpqp/CS+90oqVXQfduvH327vxChzu/+s3qc194rTfmzHuI4zf181Xct6iNerb580bxCel+sIkkU7Qui8i0VQIrVSiZ64iLowOvGLJIG4312Qnkk4kMAyFxVrWYVUBnn0wu/olhknwrz0=
+	t=1791631540; cv=none; b=DfEHEZP5koNoSgcTXKGIBq8cBUHoV4d4z7AuxxFyRaU5voE1iykq9DBDjBh34kicxynDr5NFHtwuhVJhpa/XG00jVj6+Tmr97g3SuHPM7hoQetNIkhuy3DUw16PEEtLzQpA90XLIGJMAcC9gXpSTuGdhSF5zaVHKQ4fc5cGWF7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791581288; c=relaxed/simple;
-	bh=TACQqvV+ua0Ane64B0qJzthFbEE3k5JIyMZs9Zy+/eA=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=D03QR2BnW1JFu4ZbcykWI3jyzbf9gjo2tP0PX128U6Xfch3ae7qGC/Dl6cCYm1JMa2lIBcTFO86oLg9hz/X2suix/63/OvnmxSL6utJ4cF7sbrj+/4mdmd0SYW5Jop5AqCGXkL1hOrid3pE1f0We575QOXgO7RopakrURqpGrvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=UoCNIA21; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+	s=arc-20240116; t=1791631540; c=relaxed/simple;
+	bh=YzqLPw7XgcjHjtBA3K7qVaKgKH+F5SwiMXFMpixd7WE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XyMU6GDkgIej78WKbwQmUU6Oy4T5mt1S0Uw1GOFRjoqHtAfBAMGEmO5uvTYoGfTRlJVx4IfCEmztgQf+7/Ne5DlDASsmTs0h54MJrrqoQGZnBPGj8W/wHy5FpYf0bhG80sLOGEoJx/BKAq0Flt8jTjhje+T/6mDMtLEVGwGCAVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EkWDQV81; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="UoCNIA21"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1791581278; x=1791840478;
-	bh=QXf4hTjVvhY++R7+vZFN3cZjPxa0QWrUt5Tsecb70U8=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=UoCNIA217633Q8zxxTQNQThjgyxxAtGSn29CAP+rTJf6hoWjQW/mHznQ8EANqGhhu
-	 dFTOkeVfQjB1o0PeXvc9y5wJkbHlDMd6BjGp/hMBJMBjHBHYSpqu2zcHtR3IPHdmGQ
-	 0HyiYrFTmdrIv6+4WK9uA1CPOjK+AUSueY87g3qF7L1QKVY/rdNDJQRutSa8hW3QWr
-	 FcBlBpVBPKC7c3NSh1NZ4/739hZq5VvsDEaYCgOK/7iZVGfi4RGJGeLAsjqoYuXTmW
-	 C9NTozV5Av/cexVnDIdKc7q3NlPJ4kBaA+8FWSZS5sOuv277HAqfI2ahaRmwiEYvIP
-	 JnMrZxMFAArPQ==
-Date: Fri, 09 Oct 2026 21:27:54 +0000
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-From: Birk Skyum <birk.skyum@pm.me>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] soc: qcom: smp2p: Start over after a restore from hibernation
-Message-ID: <179158127177.70185.5691100900886332545@pm.me>
-Feedback-ID: 21326998:user:proton
-X-Pm-Message-ID: 356a7d20711be57c357883af5010b18ee31e6f11
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EkWDQV81"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 534C41F000FF;
+	Sat, 10 Oct 2026 11:25:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1791631534;
+	bh=sfY+uRPXEdWtjLqcJybNaXUFUCXdQfre4GQZmBn9q+I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EkWDQV81ES1DiWJ9wSkZqMiad1XbLcb+RmAxG+yGosD++Z9VE7utgqi/C0E6ywBAb
+	 4catZUSGzeCgoVPyQxCr6pCW8wEivmFgEFnU035MinLtih4EeRS3rhtEHLj8r7GnUc
+	 om7VFblNFyKl6KXVPSi7bnEDwAESnVlGDHzQ0hMipKXbGPcC1Y36uU7lleuYL8q6ch
+	 WjNs05xmUrZLhGxQCDsigiACvl1BEyM6Ld0FCd8LPxOeyCAfHioObUjaTlpk0ODQ/5
+	 1rZYzzexcGr+N53mcDK0zUSwYpc4X/nEUhaLuMAhpJhLrzh4rbOpaKwFLesIriJ6Po
+	 c1a0Y2R5sJ2Yw==
+Date: Sat, 10 Oct 2026 16:55:28 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>, andersson@kernel.org,
+	mathieu.poirier@linaro.org, konrad.dybcio@oss.qualcomm.com,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] remoteproc: qcom: pas: pass no resource table when the
+ firmware has none
+Message-ID: <asogqMMvsGTTmHr1@sumit-xelite>
+Mail-Followup-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+	Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
+	andersson@kernel.org, mathieu.poirier@linaro.org,
+	konrad.dybcio@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261005125411.2151326-1-jorge.ramirez@oss.qualcomm.com>
+ <20261005161224.umj6zzov57tifv7v@hu-mojha-hyd.qualcomm.com>
+ <asQQJNOd_p9acgT1@RAMIREZO.na.qualcomm.com>
+ <20261006100344.piyiffp6rwvt3w2s@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20261006100344.piyiffp6rwvt3w2s@hu-mojha-hyd.qualcomm.com>
 
-smp2p remembers what it has negotiated with the remote processor: where
-the remote's item is, which of its entries are matched, that version
-and features are agreed, and whether the remote's last restart has been
-acknowledged.
+Hey Mukesh,
 
-None of that holds when a hibernation image is restored. The machine
-has been through a power cycle, shared memory has been set up again,
-the kernel that loaded the image has created a fresh item for us, and
-the remote starts from nothing.
+On Tue, 06 Oct 2026 at 15:33:44 +0530, Mukesh Ojha wrote:
+>On Mon, Oct 05, 2026 at 11:01:24PM +0200, Jorge Ramirez wrote:
+>> On 05/10/26 21:42:24, Mukesh Ojha wrote:
+>> > On Mon, Oct 05, 2026 at 02:54:00PM +0200, Jorge Ramirez-Ortiz wrote:
+>> > > The firmware resource table is passed to the PAS backend even when the
+>> > > firmware carries none. This only works on the first boot, while the
+>> > > cached pointer and its size are both zero.
+>> > >
+>> > > Stopping the remote processor, or failing to start it, frees the cached
+>> > > table and clears the pointer but leaves the size set. The next start
+>> > > then pairs a NULL table with a non-zero size.
+>> > >
+>> > > The SCM backend substitutes an empty table and hides the problem. The
+>> > > TEE backend copies from the NULL pointer:
+>> > >
+>> > >   remoteproc remoteproc2: powering up cdsp
+>> > >   pc : __pi_memcpy_generic+0x110/0x22c
+>> > >   lr : qcom_pas_tee_get_rsc_table+0xf4/0x25c
+>> > >   Call trace:
+>> > >    __pi_memcpy_generic+0x110/0x22c (P)
+>> > >    qcom_pas_get_rsc_table+0x38/0x60
+>> > >    qcom_pas_parse_firmware+0xa0/0x100
+>> > >    rproc_boot+0x2d4/0x380
+>> > >    state_store+0x40/0x100
+>> > >
+>> > > Fixes: a4584bff63c8 ("remoteproc: pas: Extend parse_fw callback to fetch resources via SMC call")
+>> > > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez@oss.qualcomm.com>
+>> > > ---
+>> > >  drivers/remoteproc/qcom_q6v5_pas.c | 11 ++++++-----
+>> > >  1 file changed, 6 insertions(+), 5 deletions(-)
+>> > >
+>> > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+>> > > index a005546c265d..e871e03ba794 100644
+>> > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+>> > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+>> > > @@ -463,7 +463,7 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
+>> > >  	struct resource_table *table = NULL;
+>> > >  	size_t output_rt_size;
+>> > >  	void *output_rt;
+>> > > -	size_t table_sz;
+>> > > +	size_t table_sz = 0;
+>> > >  	int ret;
+>> > >
+>> > >  	ret = qcom_register_dump_segments(rproc, fw);
+>> > > @@ -476,11 +476,12 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
+>> > >  		return 0;
+>> > >
+>> > >  	ret = rproc_elf_load_rsc_table(rproc, fw);
+>> > > -	if (ret)
+>> > > +	if (ret) {
+>> > >  		dev_dbg(&rproc->dev, "Failed to load resource table from firmware\n");
+>> > > -
+>> > > -	table = rproc->table_ptr;
+>> > > -	table_sz = rproc->table_sz;
+>> > > +	} else {
+>> > > +		table = rproc->table_ptr;
+>> > > +		table_sz = rproc->table_sz;
+>> > > +	}
+>> >
+>> >
+>> > Earlier code was intentional please read the comment below.. /**...*/
+>> >
+>>
+>> AFAICS the comments say that the call might pass NULL and zero as input
+>> resources. And this patch does exactly that - it doesnt allow NULL and
+>> non-zero.
+>>
+>> did I miss something?
+>
+>No, you did not miss anything.. I just wanted to highlight that I
+>did not keep else statement in my initial implementation
+>intentionally and relied table_ptr and size will be NULL on
+>failure of rproc_elf_load_rsc_table()..
 
-On a Lenovo Yoga Slim 7x (X1E80100) a remote processor that is started
-after a resume from hibernation never comes up:
+Looks like you still haven't understood the problem this patch is trying
+to solve. It's the PIL restart sequence where the table_ptr is NULL and
+size being passed as non-zero which is incorrect from caller point of
+view.
 
-  remoteproc remoteproc0: Booting fw image qcom/x1e80100/LENOVO/83ED/qcadsp=
-8380.mbn, size 21592504
-  qcom_q6v5_pas 6800000.remoteproc: start timed out
-  remoteproc remoteproc0: can't start rproc adsp: -110
+The backend will surely error out in this case. On a restart you again
+have to pass the table_ptr as NULL with size as 0 to fetch the resource
+table again. Surely we don't want the backend to hide errors on client
+part here.
 
-For the ADSP the driver still has ssr_ack set while the fresh item has
-RESTART_ACK clear. When the remote sets RESTART_DONE,
-qcom_smp2p_check_ssr() sees no restart, and the acknowledgement the
-remote waits for is never written. For the CDSP the driver believes the
-negotiation is done, so the fresh item is left at version 2 while the
-remote uses version 1.
-
-Forget all of it in restore_noirq and build our item again, the way
-probe does. If the remote is still running, as after test_resume,
-qcom_smp2p_start_in() finds its item again and the next interrupt
-redoes the negotiation.
-
-Signed-off-by: Birk Skyum <birk.skyum@pm.me>
----
-Tested on a Lenovo Yoga Slim 7x with Arch Linux ARM's v7.2 kernel, where
-this file differs from qcom/for-next only in the __iomem annotations and
-two small cleanups.
-
-- After a hibernation with a real power-off both the ADSP and the CDSP
-  start again, in under half a second each, and the battery manager
-  answers. Without the patch both starts time out.
-- test_resume with both remote processors running passes, and they keep
-  running.
-
-Two things to know about the test:
-
-- Resuming at all on this machine needs the PCI change in [1], and I
-  closed the Bluetooth UART and unloaded ath12k for the hibernation.
-- I stopped the remote processors before the hibernation and started
-  them after it by hand. remoteproc does not do that itself, so a
-  remote that was running when the image was taken is still shown as
-  running after the resume and cannot be stopped ("failed to shutdown:
-  -22"). That is a separate problem and still open.
-
-[1] https://lore.kernel.org/r/179157746908.73485.2343672865542690797@pm.me
-
- drivers/soc/qcom/smp2p.c | 53 +++++++++++++++++++++++++++++++++++++---
- 1 file changed, 50 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-index 01b8580c9..64fc1ce3c 100644
---- a/drivers/soc/qcom/smp2p.c
-+++ b/drivers/soc/qcom/smp2p.c
-@@ -510,9 +510,8 @@ static const struct qcom_smem_state_ops smp2p_state_ops=
- =3D {
- =09.update_bits =3D smp2p_update_bits,
- };
-=20
--static int qcom_smp2p_outbound_entry(struct qcom_smp2p *smp2p,
--=09=09=09=09     struct smp2p_entry *entry,
--=09=09=09=09     struct device_node *node)
-+static void qcom_smp2p_claim_outbound_entry(struct qcom_smp2p *smp2p,
-+=09=09=09=09=09    struct smp2p_entry *entry)
- {
- =09struct smp2p_smem_item *out =3D smp2p->out;
- =09char buf[SMP2P_MAX_ENTRY_NAME] =3D {};
-@@ -525,6 +524,13 @@ static int qcom_smp2p_outbound_entry(struct qcom_smp2p=
- *smp2p,
- =09entry->value =3D (u32 __iomem *)&out->entries[out->valid_entries].value=
-;
-=20
- =09out->valid_entries++;
-+}
-+
-+static int qcom_smp2p_outbound_entry(struct qcom_smp2p *smp2p,
-+=09=09=09=09     struct smp2p_entry *entry,
-+=09=09=09=09     struct device_node *node)
-+{
-+=09qcom_smp2p_claim_outbound_entry(smp2p, entry);
-=20
- =09entry->state =3D qcom_smem_state_register(node, &smp2p_state_ops, entry=
-);
- =09if (IS_ERR(entry->state)) {
-@@ -774,6 +780,46 @@ static void qcom_smp2p_remove(struct platform_device *=
-pdev)
- =09smp2p->out->valid_entries =3D 0;
- }
-=20
-+/*
-+ * A hibernation image is restored after a power cycle. Shared memory has =
-been
-+ * set up anew since and the remote starts from nothing, so forget what wa=
-s
-+ * negotiated with it and build our item again.
-+ */
-+static int qcom_smp2p_restore_noirq(struct device *dev)
-+{
-+=09struct qcom_smp2p *smp2p =3D dev_get_drvdata(dev);
-+=09struct smp2p_entry *entry;
-+=09int ret;
-+
-+=09smp2p->in =3D NULL;
-+=09smp2p->valid_entries =3D 0;
-+=09smp2p->negotiation_done =3D false;
-+=09smp2p->ssr_ack_enabled =3D false;
-+=09smp2p->ssr_ack =3D false;
-+
-+=09list_for_each_entry(entry, &smp2p->inbound, node) {
-+=09=09entry->value =3D NULL;
-+=09=09entry->last_value =3D 0;
-+=09}
-+
-+=09ret =3D qcom_smp2p_alloc_outbound_item(smp2p);
-+=09if (ret < 0)
-+=09=09return ret;
-+
-+=09/* Entries were added at the head of the list, so walk it backwards. */
-+=09list_for_each_entry_reverse(entry, &smp2p->outbound, node)
-+=09=09qcom_smp2p_claim_outbound_entry(smp2p, entry);
-+
-+=09qcom_smp2p_start_in(smp2p);
-+=09qcom_smp2p_kick(smp2p);
-+
-+=09return 0;
-+}
-+
-+static const struct dev_pm_ops qcom_smp2p_pm_ops =3D {
-+=09.restore_noirq =3D pm_sleep_ptr(qcom_smp2p_restore_noirq),
-+};
-+
- static const struct of_device_id qcom_smp2p_of_match[] =3D {
- =09{ .compatible =3D "qcom,smp2p" },
- =09{}
-@@ -786,6 +832,7 @@ static struct platform_driver qcom_smp2p_driver =3D {
- =09.driver  =3D {
- =09=09.name  =3D "qcom_smp2p",
- =09=09.of_match_table =3D qcom_smp2p_of_match,
-+=09=09.pm =3D &qcom_smp2p_pm_ops,
- =09},
- };
- module_platform_driver(qcom_smp2p_driver);
-
-base-commit: 705529dab1fa872d8b53b09c95e1b03a95573376
---=20
-2.53.0
-
-
+-Sumit
