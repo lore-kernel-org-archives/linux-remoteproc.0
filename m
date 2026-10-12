@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A3A40DB45;
-	Mon, 12 Oct 2026 10:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FEA3E51C6;
+	Mon, 12 Oct 2026 10:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791800842; cv=none; b=SsxkuBWdCC6yOoVz6xzPyOydWShggX5973xCOJgyF+9d4KWb2EoZukkiDtxRXnJD1be+nyfTFhul7QeK6IgGHB5YA9Vn3ivHAbAh7qg8yQ4MGGKFsBweUe5osyZoRdIHP3J/Z/LFHBBXhCzhQtAff2iySrpMKLdEfa/e8T/W0pY=
+	t=1791800906; cv=none; b=WLpVUJ+BrY6KL9exoQF1pClesYVZ199OYUrqX0EjKc9efg31otqsAo7UjorfzAkYZCKC2K9BIsvPHREZoiQZa/sCiCEByE++y307mzkDO7tk4/fuxAhgWrNsFTMrwsl3LxbDhKuhSMnFBIkX7B7KrQCcNvJU3QFbvS0uUb2beto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791800842; c=relaxed/simple;
-	bh=Jbf7HnRmEIUduz6t9EQf/Z/Img7hwigrncgE/MWXmzg=;
+	s=arc-20240116; t=1791800906; c=relaxed/simple;
+	bh=7Lwu8eDw/CAEOlumV4d51eX3KfjAp+5G4m1lqBmgK24=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qNUoH4MsptzLyVm8BLeyqLlkWnt0SE0MClaEHvM0CsHlDmH/9azNWgVMV/zS+HfFyrxBEK0I1/iXyqLPkACagTCsF8DS3B/mPTmce0dLySoeZ95VGAZNZfk83OiNgDZiwzpq90Tmwzj09AM3tG0Zx4fKsS2418xLysg8ohRupAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SpCD9wUi; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=cSg9cuE2qcCbdo5ImK38s0hFkA6Yn+3LiIupYXGUcxbN5PXNoChA3Ap7W5Kb5+JK8y7hls3rgTyZ+DcoZ/Usy6Iy2utbKRzhTnqFwZZrfYyTSDGXpV7vgZWXT1k0uU0Hmek+KSCKHOto47XvZ5y17Fe1FCJ9rzWkH14taDCTlis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPRCUWRZ; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SpCD9wUi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C731F0089B;
-	Mon, 12 Oct 2026 10:27:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPRCUWRZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC5A1F0089B;
+	Mon, 12 Oct 2026 10:28:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1791800835;
-	bh=Er9jD37K+0R0e73BLBu/ptCMesH1k+206p+86slfCKU=;
+	s=k20260515; t=1791800895;
+	bh=0YqBRKb0ObUg0+hrK8GDSsQ1q0SgoVYIDfraEjTC9jk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=SpCD9wUisdJyDHNGFNNbiTh1i5InVCf7T2xdluyx7qt1eITHdFJ67LiembOJzdNYJ
-	 r1P0dJCWjNdOW4x4cOmJ8sgURSyJmlH4rU/AaMNoKQaQt/CGSJ2Q0MquU+uWw6iqzk
-	 /vxCbcwXRRucYV9+4wE03pave9t/fduZV36lrTCBH5vcb1wA6T3U4t0tkehVh39OO4
-	 9UAlhJPIPaNn2H0JAtDXCYgTlo1JkP16lz6VZX3xW4iogI0G3fuwc1Oht2JaaVqIl7
-	 Eo/MITQImsTpKpOFTsv/nxY7clfLV3CO1VClcfU2gOwPSNliLBihE+5W6+3u0/cyzc
-	 Ppw2ZeN3CwtwQ==
-Message-ID: <2183ffa6-040a-4c3f-86fd-5c317b850171@kernel.org>
-Date: Mon, 12 Oct 2026 12:27:08 +0200
+	b=IPRCUWRZfz8BSKqWooZaQHFZJ2ShpxmsqRivuPXL/wVCHdujvObFvZicgBv3VZt8X
+	 crUd0OgfR9BjU9ZjWxyT6smChc0UwO9+fYWDdgaiUDDeGcJapyeRGiV7rN21JywMwP
+	 hB67aQNWTlsgj96o2o0i08BbQYJZMmoSg2+w/VqF+zbkVDzbpvSB0RT5gIwdmqI6/e
+	 Z/i0uutML3+bLqhfO7hAtXEpIKVSLDTT3VAmr9YuBoxvd9fpQOBIZnFHzfCKK3VOpE
+	 2Kz9gLX3j9TfnU6nC75ehZWbx7blJNVongnSzJuMWutM/p1fZICfcESPH4xKtQ84y3
+	 GJZXx9PAMrJ/Q==
+Message-ID: <7759e73f-58ab-4a9f-b3ad-2e8a42abc843@kernel.org>
+Date: Mon, 12 Oct 2026 12:28:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: qcom: Add Glymur OOBMSS PAS
- binding
+Subject: Re: [PATCH 4/4] remoteproc: qcom: pas: Add Glymur OOBMSS coredump
+ support
 To: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
  Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
@@ -46,9 +46,9 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  Sibi Sankar <sibi.sankar@oss.qualcomm.com>
 References: <20261009-oob-support-glymur-v1-0-96cc8ffcced3@oss.qualcomm.com>
- <20261009-oob-support-glymur-v1-1-96cc8ffcced3@oss.qualcomm.com>
- <20261012-impossible-illustrious-dog-702afc@quoll>
- <7a091ebe-86d7-4edb-9fa3-9026d2c44176@oss.qualcomm.com>
+ <20261009-oob-support-glymur-v1-4-96cc8ffcced3@oss.qualcomm.com>
+ <20261012-burrowing-tarsier-of-serenity-3bd5da@quoll>
+ <bc6440b9-0226-47ae-9e33-594ab6b92004@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,27 +94,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <7a091ebe-86d7-4edb-9fa3-9026d2c44176@oss.qualcomm.com>
+In-Reply-To: <bc6440b9-0226-47ae-9e33-594ab6b92004@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/10/2026 11:36, Anvesh Jain P wrote:
->>> +required:
->>> +  - compatible
->>> +  - reg
->>> +  - power-domains
->>> +  - power-domain-names
->>> +  - memory-region
->>
->> firmware-name as well, I guess?
->>
->>
+On 12/10/2026 11:50, Anvesh Jain P wrote:
 > 
-> I think firmware-name should remain optional. The driver provides
-> defaults when loading images, and attach-only operation does not request
-> firmware.
+> 
+> On 10/12/2026 2:26 PM, Krzysztof Kozlowski wrote:
+>> On Fri, Oct 09, 2026 at 12:47:42PM +0530, Anvesh Jain P wrote:
+>>> Add coredump support for the secure and non-secure OOBMSS carveouts.
+>>> Register fixed dump segments at probe time for attached-state recovery.
+>>>
+>>> Signed-off-by: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
+>>> ---
+>>>  drivers/remoteproc/qcom_q6v5_pas.c | 85 ++++++++++++++++++++++++++++++++++----
+>>>  1 file changed, 77 insertions(+), 8 deletions(-)
+>>
+>> Why is this separate from Glymur support? How is your device suppose to
+>> work without this patch?
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> This patch is diagnostic-only and is not required for OOBMSS boot or SSR
+> recovery; without it, the device works but no OOB coredump is collected.
+> 
+> I kept it separate to isolate the optional coredump support. I will make
+> the subject and description generic for coredump support on PAS
+> subsystems with secondary processors, rather than limiting it to
+> Glymur/OOBMSS.
+> 
 
-ack
+Commit msg probably should mention that "recovery" is here for
+debugging, not proper device operation. Otherwise single commit, if
+moderately small, is usually bringing entire support for a device.
 
 Best regards,
 Krzysztof
