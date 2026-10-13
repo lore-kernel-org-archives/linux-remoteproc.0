@@ -1,180 +1,166 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB5C3F58E8
-	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 14:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B785013B0
+	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 15:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791900589; cv=none; b=GfTwk/TBmf4CiY18nufN1K949D5ybnzCtVbhnHfntQwgEWaqcwbukgahCywtM8ihXGxzRdGI6WuRVXiE8o5EX1MGNHDxEtsfgNqbXL8QsNTZzYgMp24Mt8KBxPYLezL2bc8GN9sdN0OrH6QBbGq7Xk+525o3A2kUOqBGEfyx/MQ=
+	t=1791903879; cv=none; b=NhLn++Jw1onGFaU5zAUWCuD8Xq9j/7IONX24+dwKmplRfTs62o6Ivss9fShQ008BWmZFdnFBM+57JiQxfW9nRfXyE8NtlTB/OI65KztW7niyvSFSJyMrxX6JI/QbIV10ixeERDm4wh0s2YGT/uUKpyxqjwiXGma2v3xPOx/2Q1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791900589; c=relaxed/simple;
-	bh=owMijsIp74FmdN5ni11gCTZYts5QncbUEPKxaSS5ctc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDid7CPFcJg7u21HFsCrXiQHXEK+1r2wEEWGob/qBp7XKmROuUUGoAFiJQmN+Y2jIEpOVSBioAk/tDgAuA2cEaYVSVaNtZGaqaFeGDMewF9/O5iEEYzRdUQRN7Nil47s++dH88zFNPt2o0xIBrATYSvMknhKHiciQzdMByvCBNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAF1Ryta; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1791903879; c=relaxed/simple;
+	bh=YwJ/4Kh8dgIbqE3SXVnIlum34oAB97j1aaSxvl4JjT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LrwL8588XSa/R0Gg5apg2qdFDLJPhESII8uRS641S61Qfvm5jMCIv7LKu6MuKHxpRzEvkkPDByPUH+Buwpvtmq+DLqINwu1a07nJqXekxy0XrBSwZQY9tKZO2Nu9cuhk7HWeEGWbvJH5NuQVuIw6xBIlwP/Hs2tbm0mBkxTiPxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bc9TZcGX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=HctcgWR9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAF1Ryta"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2e6038cebefso22915805ad.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 07:09:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bc9TZcGX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="HctcgWR9"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69DE41tn900255
+	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 15:04:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TPK3uPVCdiplnO240T4BT5juz8bHcffFNDKBRzJrh6M=; b=bc9TZcGXX0RUVy6/
+	RlvZU14waSJxX9UDqnxpiQhwDw/UrzN2l5KqwUbMnKN0XU4Uov9spoCzfv3xfS0y
+	P/84TpmlCIusv1RJlvpYOfVs7/wFQ1AHOgVIoFy1E7nys48XBdqoJHJMx3FIpFOe
+	Xzg9mWDk16PB9Dj6YTrjWOQGE7GsHf36tUVxL+z8C/z0qzY9dNzlzXxCe9O8DFqu
+	uXlKG1u6XTbQnyczpJ8eYBBWK3qNa0WjBAye85R0oAqvhnx0pfgujaQ5PPiO/mU2
+	+nv/hIl2dX1gD4wDJCfmmWJWx4DyPbQmYSqaKi1d+3Z86rpkHNJMM8MAWYqdKxea
+	vQK3eg==
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4h9g7uhwgp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 15:04:37 +0000 (GMT)
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-5c97957d83bso81422e0c.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 08:04:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791900587; x=1792505387; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4TUuZT1wFoqbpc7B/LNd/6pZfnJKi059fMqGVzqoVyA=;
-        b=HAF1RytaC3wsjGApoKFWtMyAKh9w0agxUdBJzrYVAKrXryP3Q+Yq3kDitIAHGU/BrS
-         Rt6CkBHEgDR/ai+apaNS9LuNA1u4q8xVJMYVVuvIdx5wDvTPB/Zg6fW5C2DoBu5r9B1G
-         xoFkAzZ9bDe2uYT7eISqw1Q2uvh0O7fQl0VryaL1y9JtPym1prleNbFWuWOZ6iA5AmjY
-         n4E3l6+aaeRRAUXIe1R02pAU1Huw/an006GwYDsVY9v/BxCwWaQTsxETNor4W5WMhXa2
-         fiyEeWNbiNZlVcMTX62PvxdATS4nJUgvaIAh4oPLdyhPuqGWFIo8ik1E0sjzUDVJVIiW
-         MFYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791900587; x=1792505387;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1791903877; x=1792508677; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4TUuZT1wFoqbpc7B/LNd/6pZfnJKi059fMqGVzqoVyA=;
-        b=PGa39hU6TXQJyFjziyNumGaOh5kN7ScURh1vIlplTQb2BiE0Adzagkg8kx/MrGOVzx
-         Tab+c1v+QS0h4kcjF3yMI2Yy7Puae0GYnLNft9zY5m5m4X6DcBhkr5EJz56CSOWH1HuV
-         0ynTiRgBkWMrToLG/54qVumoEQ/l9SULGU3RIjHGzqsFpkPwquHL/qXQjwnaQEtFEERy
-         GpyclcMGy4t+HdTIjHlD2e5Zc+UJmYRHfZQxN3eV9swiLpxqApNK7VTAzdteolbH/2N5
-         xkdBF6cQ04Q10JwendNO0snhUuLPl/yxHR6DN7RcLTUvDEPugNLR3JZffgQTuKuHBTHR
-         5i6w==
-X-Gm-Message-State: AFq9FYJsQn0D5u0nv6QZyUc6TBx2xV5Jl1UbK1thv+A9W7KXZp+zPFRU
-	gSwBDkWBmd/VkqKns59Cb+Oqj1UZd0fufHBLuY1FW6DTlMaD4cdbYm2e
-X-Gm-Gg: AYBFou1pnNJ6mGDwS5UBxokGMXSqaT7xSZ5JXsHP429YCYj9COPQUgjYGWMiCdFNAiw
-	YY9/vafozS5VBqSjr9ZdToG86zzLe8fkerQfoDNXyn06LTPXA2WoOkh/qWlqB+zJ/t1va6vGO9q
-	B8tK8Ld47eJooQU7MQcZZr7YZS3uPeTkCNjdwbsxNJ/EbXI4kYcpslLl3NJxe4/5/Sisp3nCwyc
-	l9/PUu90CKB70z7S3d930ymCUjccQwnamAAFXpR0svOo4SuVdaMyivpXv2Jfhp3cy1LmMJ0J/nQ
-	lLHQ5z5U4691gmH0AFTE8HF5wYajYiDCqpR79+aFoNYgUKrhtQGzC8LjcjCP30okFeIL8FVlPJn
-	dS96spZ9N1RYSnu8agdkB1oH+WkvicDMivBh8hxPcQv5UIPcEt2ljCJ3qx0h0DFT/1iq3uDB3iF
-	Jh4Me5TX9d0Dkn8D4Do9SjFwVwJszGPDJITdGMFXG+PIJzQsCT29EYmIWBACTIxag=
-X-Received: by 2002:a17:902:e884:b0:2e8:b4a:43a4 with SMTP id d9443c01a7336-2e842ac3d95mr116552135ad.34.1791900586736;
-        Tue, 13 Oct 2026 07:09:46 -0700 (PDT)
-Received: from gmail.com ([183.34.68.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2e8422b8c6esm54023525ad.61.2026.10.13.07.09.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Oct 2026 07:09:46 -0700 (PDT)
-Date: Tue, 13 Oct 2026 22:09:36 +0800
-From: Yonghao Zhang <hyz3367@gmail.com>
-To: andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] remoteproc: core: Fix the error unwind paths
-Message-ID: <20261013140721.fbmsl2xn4xi5ljn6@gmail.com>
-References: <20260929075453.2324597-1-hyz3367@gmail.com>
+        bh=TPK3uPVCdiplnO240T4BT5juz8bHcffFNDKBRzJrh6M=;
+        b=HctcgWR9+HtTlmKJZeKe9tINLcgVpZCn3TBN0n74FOroc/C0WX1R7T7hX3S1RXIdyb
+         6ujh9jWnXzKl4aVR3/2kDe+y69qReyWrZaUnREPdhAgCCuhlfhkH3ox4In0+BypnMwp8
+         kqHBlJQunNpYBH7kVUcaelr688OxsGQO7lpkLZAiVUSgXmZqpCOC+9I2z881OUlXCTy7
+         qVa2QdM468noaVXJPYSQRg9ApiAUQaqjYR2cUZPWI5ynGXP8oPImmHuXO1ltfI4URDF+
+         siqGlmpt8mW4v9jZGYXl4H4ESF6ndcRV8UZHNRWrMgsaoRMZAW6ECtu3W3zHik9co/7M
+         4W8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1791903877; x=1792508677;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=TPK3uPVCdiplnO240T4BT5juz8bHcffFNDKBRzJrh6M=;
+        b=CvCabarz8nO+jrijoKsqqDPLW3+xJVplW4qchQJswxhnSwzfirSsl3QrwKdjSrEsJe
+         NH8JlJmSfs9ckzthO/TA4T7VspkIAjSzanvjj7JsboDSJ6Rj4+Z9Ogx+3vCx3r0pCE4a
+         L+nMXkugMsmFwe9qWYGYzC2uAPMTeAXrfTz2QnTtuITZru3HV6Yl6kCv5aA05+1y8ARN
+         LnvX4iSB2mLhaPx2eQNX57NKmGLDrPtcdOBkHBR+aeM/wVOyC12g/mqXpDAzTxJXfMxe
+         EJs3zSoabaTiv9W6umEFhgQFWjNSXsSMHLyNksIWPx47FlWNre9H9nnnCYtIHPK423mC
+         HSVQ==
+X-Forwarded-Encrypted: i=1; AKwUvBwgJ+533SEhifZqnJ/1Rh+Ue5q/lsaIOYu6dPdIxSs/EZcOg2UbLjxbPv9j1ofOsOSm1ypNWjTQ0JJkZnNJlNNf@vger.kernel.org
+X-Gm-Message-State: AFq9FYIwSN6RepP5+V1VBJ10MsAZJxkC89AILgQTZ6K4vhf+yrPN52t1
+	p6XTgPVH27jkyW5hIC/4Kk/r4sYB1TNaL44CXb66YNsdCvkZC5BkPMcMNm/jtvOVBrEEiA/XlPs
+	GLZ8IAIqAxf2nYlwrrbjsJhljyTigQptNfEd2U63KnPVbvDot1wvrV1uDAwYV1tXY7A5H2axX
+X-Gm-Gg: AYBFou2aa+sn7H8LmLm1T4f/DIOMlv418E58UZKEziT7AQBXN0wzcjhQSEuOvYIs1IM
+	HbxfT9qI1eJjlo/a89mp5T1A/7FYmcDB6sBkqaSAHpi5a3xLf0kTaiSvrxeFLigLCWSO9glbCqY
+	nFeY28r7O5+ZCYnC0cYE2SW1MT6ylPuXEE8+CmUrsmwtYFrmUtqVmNJTBRvRf/97jIsLuYR0IJt
+	ltp2vDAuHuYBEBEmBpWmmErvsLJfkEoC3l9r2tACcOP/cYnKg9Y+gCD/BpGFUIhHx/9/mjBRpCn
+	4Kqj/YHJxHVdtFflq7oDpXUQCRYeg4vg1RQyGWRMTevwXvolaUe9eH4grEGSA84V4+7JiIp1OJT
+	Pb037pWKKATECKrQZEfPPNQ==
+X-Received: by 2002:ac5:c001:0:20b0:5e9:4e2b:4c9f with SMTP id 71dfb90a1353d-5e94e2b4d71mr1052079e0c.4.1791903876730;
+        Tue, 13 Oct 2026 08:04:36 -0700 (PDT)
+X-Received: by 2002:ac5:c001:0:20b0:5e9:4e2b:4c9f with SMTP id 71dfb90a1353d-5e94e2b4d71mr1052049e0c.4.1791903876180;
+        Tue, 13 Oct 2026 08:04:36 -0700 (PDT)
+Received: from [192.168.226.26] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c31a9a9f776sm595740966b.48.2026.10.13.08.04.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Oct 2026 08:04:35 -0700 (PDT)
+Message-ID: <0c195d46-64fe-4d27-9147-678ccd561329@oss.qualcomm.com>
+Date: Tue, 13 Oct 2026 17:04:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260929075453.2324597-1-hyz3367@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rpmsg: glink: smem: preserve IRQ acquisition errors
+To: Avi Weiss <thnkslprpt@gmail.com>, Bjorn Andersson <andersson@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Arun Kumar Neelakantam <quic_aneela@quicinc.com>,
+        linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20261013124328.1273340-1-thnkslprpt@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261013124328.1273340-1-thnkslprpt@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDEzMDA2MCBTYWx0ZWRfX0uu/NgM7bskt
+ 3uvsF6gcRXouiYzxH9Gn86WrhwFX40iz/NhkQX+qO6ySOQDcSmR67id4R+f4oju4eyazwh7xivn
+ ZKc0/QHJP4nLVPJ1AZyYxp/Y2sGv0ivFTkfo5BbAaYPK4pQLdTiwx7nG8XwLlCF0GF6fkBLD8Uk
+ WJCLTAVcFlu3YlyYya0pIS9KLf5v7FRtrVYH/NH2DmUKqF8tdRE3hAk/YeZ1wuUdIAEYp0ygvzK
+ CJLIHQEsiJr2mZJm1EuhsWadzknAmdsl2gvK9WODAwDRB1II6e4dRAyPbV75SLqKPbplw4/DJGw
+ yKFmuzn92WM+uQKQ6572xsPJOlEbKffeWd8b2WSMnOkdYWC9Wy1H5P3D7Swrj0Y5xLLnKqmoEJI
+ 2BagfSt3Eum5FJwabaaKutgJThRfillq7ClXiNyJEgX+6Kq6R4JbpCjhIjr8tQg8CzypQqErUHP
+ gPFRb9kUIca2B+H+4NQ==
+X-Authority-Analysis: v=2.4 cv=Z495j3RA c=1 sm=1 tr=0 ts=6ace4885 cx=c_pps
+ a=+D9SDfe9YZWTjADjLiQY5g==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_K5XuSEh1TEqbUxoQ0s3:22
+ a=pGLkceISAAAA:8 a=RAclOZT44kLJCt7_HWsA:9 a=QEXdDO2ut3YA:10
+ a=vmgOmaN-Xu0dpDh8OwbV:22
+X-Proofpoint-ORIG-GUID: wNvpoMcnsZj8534DMfZXlHJDu9e9Iu1c
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDEzMDA2MCBTYWx0ZWRfX995lRJOISvje
+ BTihJYBHUPrL5IdaBN4FzEBqezO6q8OlFTAeCGpRDZflwC2E5PRXbuD0UtYCHCp89fkw+3LwxnE
+ KkKw4qa32hyMDOxChIC41AjD5X9Uppk=
+X-Proofpoint-GUID: wNvpoMcnsZj8534DMfZXlHJDu9e9Iu1c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-13_01,2026-10-09_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ malwarescore=0 priorityscore=1501 phishscore=0 suspectscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2610080000 definitions=main-2610130060
 
-On Tue, Sep 29, 2026 at 03:54:49PM +0800, Yonghao Zhang wrote:
+On 10/13/26 2:43 PM, Avi Weiss wrote:
+> qcom_glink_smem_register() passes the result of of_irq_get() directly
+> to devm_request_irq(). Negative errors are converted to unsigned IRQ
+> numbers, causing the IRQ request to return -EINVAL instead of the
+> original error.
+> 
+> Check the IRQ before requesting it. Preserve negative errors and
+> return -EINVAL if the IRQ mapping fails.
+> 
+> Fixes: caf989c350e8e ("rpmsg: glink: Introduce glink smem based transport")
+> Signed-off-by: Avi Weiss <thnkslprpt@gmail.com>
+> ---
+> A dev_err_probe() diagnostic can be added for IRQ acquisition failures
+> if preferred.
+> 
+>  drivers/rpmsg/qcom_glink_smem.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+> index 35bb03e67ae8..010a7da64906 100644
+> --- a/drivers/rpmsg/qcom_glink_smem.c
+> +++ b/drivers/rpmsg/qcom_glink_smem.c
+> @@ -312,6 +312,11 @@ struct qcom_glink_smem *qcom_glink_smem_register(struct device *parent,
+>  	}
+>  
+>  	smem->irq = of_irq_get(smem->dev.of_node, 0);
+> +	if (smem->irq <= 0) {
+> +		ret = smem->irq ?: -EINVAL;
+> +		goto err_put_dev;
+> +	}
 
-Hi Mathieu,
+platform_get_irq() lets us drop the zero-dance
 
-Gentle ping on this series: it makes rproc_free_vring() reset freed
-vring entries to FW_RSC_ADDR_ANY, guards the error-path stop() call
-in rproc_start() against implementations without stop(), rolls a
-failed attach back with detach() when available, and releases the
-resources and power references left behind by a failed recovery.
-
-Happy to provide anything else you need.
-
-Thanks,
-Yonghao
-
-> The remoteproc core unwinds failed boots, failed attaches and failed
-> recoveries in a handful of places, and those paths have drifted over
-> the years: an unconditional stop() here, a missing cleanup there, a
-> reset value a running remote processor could misread.  This series
-> fixes four of them.  The success paths are untouched, and no in-tree
-> driver changes behaviour when nothing fails.
-> 
-> The single-sided ops configuration that two of the patches guard
-> against is not hypothetical.  Version 9 of the TI k3 refactor series
-> briefly introduced it [1]: ti_k3_dsp registered in IPC-only mode
-> with start() kept and stop() cleared, on the reasoning that
-> rproc_attach() never invokes start().  The shape sat on the list for
-> a month before the rework that finally landed removed the ops
-> overrides altogether (commit 41d746b3423a ("remoteproc: k3-dsp: Don't
-> override rproc ops in IPC-only mode")).  The point stands: nothing in
-> the core would have caught the intermediate version, and a driver
-> sent today with the same single-sided ops would pass rproc_validate()
-> just the same.
-> 
-> Patch 3 mostly benefits the attach-on-recovery users (imx_rproc when
-> the Mcore resource is owned by another partition, xlnx_r5 when the
-> RPU is already running firmware): since attach recovery was introduced
-> (commit ba194232edc0 ("remoteproc: Support attach recovery after rproc
-> crash")), a failed re-attach was unwound with an unconditional
-> ops->stop() -- powering off a processor which, per the feature's own
-> contract, "does not need help from Linux to recover... Linux just needs
-> to attach", and which zynqmp_r5_rproc_stop() would additionally flip out
-> of attach recovery mode by clearing the feature bit.  With the unwind
-> detaching instead, the processor keeps running under its original owner
-> and the next attempt attaches again; attach()/detach() stay paired
-> one-to-one with the attach() calls that succeeded.
-> 
->  - 1/4: rproc_free_vring() writes FW_RSC_ADDR_ANY rather than 0 into
->    a freed vring entry, for the callers that reach it while the
->    remote processor is running and the reset lands in the installed
->    resource table.
->  - 2/4: rproc_start() no longer calls stop() unguarded when it
->    unrolls a failed subdevice registration.
->  - 3/4: __rproc_attach() rolls a failed attach back with detach()
->    when available, keeping the resource table accounting and the
->    state consistent, instead of unconditionally stopping a processor
->    that was started by another entity.
->  - 4/4: a failed recovery releases the resources of the boot it was
->    trying to restore and voids the power count, which nothing else
->    can drain once the processor is offline or detached.
-> 
-> Testing: on an Allwinner T153 (sun8iw22) with an E907 remote core,
-> driven by an out-of-tree platform driver for the Allwinner remoteproc
-> hardware.
-> 
-> The error paths of patches 1 and 3 were hit on this hardware rather
-> than constructed.  During development, a subdevice registration
-> failure during rproc_attach(), unwound by an intermediate version
-> that called detach() without the resource table reset, left the
-> freed vring entries at da 0 in the installed table: the next
-> rproc_attach() failed in rproc_check_carveout_da(), called from
-> rproc_alloc_vring(), with "Registered carveout doesn't fit da request"
-> That trace motivated the reset bookkeeping of patch 3 and the
-> FW_RSC_ADDR_ANY reset value of patch 1; with the series applied, a
-> failed attach can simply be retried.
-> 
-> The failure path of patch 4 was exercised by renaming the firmware
-> file once the processor was up and then crashing the remote core:
-> recovery fails in request_firmware() as expected, and after the
-> file is restored the next rproc_boot() performs a real new boot
-> instead of silently returning success on the stale power count,
-> with no "already associated to resource table" leftovers from the
-> failed recovery.
-> 
-> [1] [PATCH v9 17/26] remoteproc: k3: Refactor .start rproc ops into
->     common driver, 2025-03-17:
->     https://lore.kernel.org/all/20250317120622.1746415-18-b-padhi@ti.com/
-> 
-> Yonghao Zhang (4):
->   remoteproc: core: Reset freed vring entries to FW_RSC_ADDR_ANY
->   remoteproc: core: Guard against a missing stop() in rproc_start()
->   remoteproc: core: Roll a failed attach back with detach() when
->     available
->   remoteproc: core: Clean up after a failed recovery
-> 
->  drivers/remoteproc/remoteproc_core.c | 144 +++++++++++++++++++++++----
->  1 file changed, 127 insertions(+), 17 deletions(-)
-> 
-> 
-> base-commit: 586a2fadadb160295a93e5d5d32db1a2558a4d3f
-> -- 
-> 2.34.1
-> 
+Konrad
