@@ -1,313 +1,288 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70C45326DD
-	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 15:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D685172FA
+	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 15:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=209.85.208.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791906670; cv=pass; b=FyUhzIC0T0VjSPQsifbXBxGJv6o5ydKu2tOeDNwacN6+KVpmSW6oaT8LdG03oKGM3Q0/+MnARtSAVYmdlAgkICK9XhH9H/lquKc9ZqsnpUn0ss7AYCoPr4q9Wdz5OH+jcBEOdgtNDG7DtzmJoXlURXzwwWxQk8His/vIL4oLPCk=
+	t=1791906953; cv=pass; b=USjROtlkho7PxWRWPsJ4/Uh8Qofih6qzs42TmpzgXIt3A11fg7fv0VBsurGhAqDXXpVIa3ekPwIZtqTq75LwVBsIYi4zL8qHLYdmzFemc90PKBB2DMZxW697W32Gy+h3CFBkqZCkTZYu1YkKbzPnO1GKfHRRytxrkcLWJh9JpHQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791906670; c=relaxed/simple;
-	bh=Q4UBMAGWhhEVRnP3zqrfXfr3Ih1PNjg6Ld/IKdYbwko=;
+	s=arc-20240116; t=1791906953; c=relaxed/simple;
+	bh=Fl+I6QVmx6SGoeU7QJN/faQtgRpSfWj+gi8dO4AbAF4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HuUOVh4knAm4fnVV/vl7ZcV+4Roa9WW/XUSW+JanCS64Zc+3G9GMzPLz7NN03TVaq13d61mXBdm1Jfm7kR7u82UK+kuCgWznVPjXej45dUVsqH+/7UeBLVVNpdtICpuO1NT2SlYsClrBJFBpXVR9T5BUiinO4j3M+QX8Kr52yeQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yEhDuHqc; arc=pass smtp.client-ip=209.85.208.47
+	 To:Cc:Content-Type; b=CIWv82MwV+NldECLpSE8pilHseKKKYZ0wEtMhWcy+LE6MsSsCnv8jsZYq0+UCQw6O1FzhHJ0bCbGYz3apT313tuSCH4Zz3CNr2GVh1QGeqo3Jc/rSSaDX6L643m6/JAtkEdbLIPpG1yXt51zhUOpNMZzt+YjMZxS0fB+TN7zb1s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u198AWQi; arc=pass smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yEhDuHqc"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6b1afcd2d23so3046839a12.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 08:51:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1791906667; cv=none;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u198AWQi"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6b203527bceso106147a12.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 08:55:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1791906949; cv=none;
         d=google.com; s=arc-20260327;
-        b=iCow9DQiOm1X+TuGvyJT+jBLKtTQuaIUhcGo23g/AOUX64U2bLAtIxVXvePZqtKlZc
-         wSeMNZmdg5EmBu1rDUeDNMKwwHmvbC/HvrSSc3tyq0k9h9Y5+SVz7V4hw3YrNeREzsQc
-         wKQsLyTs8Mb+4Vobje7Xc3BE5lPlGvMG+f3H6pPdMklSVN7fXrafH7yTZuH9+bREXWZi
-         rrjEsV9lDHsPsWEtrU4hoY5fI3MzKatk1l+D0LU3dbtxl4W649uUdfmhLzz0QEtWC6U9
-         qWfIW3WMY8jO6j8eFF+jua2sQS7Kqtqvs7eWv7e0j4i6ZTohc0rlu2DVV1zlTU+dPHDi
-         u/IQ==
+        b=NOD+Mq2IpwcVzLtOLRSVQCzMYOUcJtR9WSDOuFyqNrlj3bOnY1A1k4qStLVPN+tx1x
+         whDE3NrGz8Y7bPQ2AWFk5z8lq+vysNJaZr51QV29YyvifHrN2QyRdrWDkiaf0wt0blvq
+         Ph45OdxQ0roczalOBYtGz2aMVOIypR8Z+emBc4jy+fwtQNYU5L5G6cuXO11KYU5EzYGZ
+         i3hzEHiFKpS27HP/KR6KEK21uJYTiUx0/GIrHli/2ey51qiANOg+ZD5pwdJJVjI/15Gr
+         n6XI5P/RELgJ6XGNogwDRC0hNhg3NvZXQKpMmfNjK3e/WrofBZKfCF7xoZhEtfD6xWQL
+         sCdg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:dkim-signature;
-        bh=hI07ZP6ZXwusJOkVivRK7QwgdEDXZj4ua4bdxFOQrYY=;
-        fh=K8KFq4J7JmUo/S5rOoz+oP57CtSCjgK2qYPRgk7aMLg=;
-        b=L8pD9TID8CykS+MvE53SUlM2tLL+S6HV6aHJ2XngQEl1P6WGyaZKgqpauYSsuLXgmf
-         txbJjj+pYqPy67uI4VK7vy2gDtUXye/zh4e3FwiJ4esykcBgR2ssRNaY09RozffFsAsN
-         yH+ZEljMdLcA6vfTQWM/mlhkMZW+Lo/tTs03sagMs39nhVGkl2ewFOcXQT0uiJsEQQh/
-         5Wrut/bYo0higAbGVJeKjQCDkPrdN60sUE8vn4Vgo72L0rWsiwRgI8SxzdhSH4aDQemz
-         dISBrMkJ27Dl9Z3JUzE6eH6pfmOBYOlGbH1Y2p1MphtrxbJbgKI8OuRwcxO0KkFHohox
-         7VeQ==;
+        bh=z8gOX9MZoG0nwlbKtzFc0ROF710/exmQ1whe7/AMGWw=;
+        fh=qkkRCM8SiAOcGFqSwtxZ1mk9Ix73v41+jgaXne6840g=;
+        b=bYCnkxnvjJFUSrhLhDnhjKQxC1DK1Tg+8SXRFLdYdHzabpxuaR9mI2p60IIm6y9VcL
+         iYxuZf/x2+rFRtIZ51u9J4PdvsK+HIEduqAXxUImqJ8cnwtkqDWtShPDjVFv2RTvRhra
+         ovK+q1nsK2XiCuXPY0L3ruShkq28cjyn1MOe07rNIFsrX8RTaVTIKGK7sJ7v/y/cMDhl
+         af/cI2HdjTG+brwxhkZf/yUH9a5Jwgc5fXOMk7JKjyBN9geer0x/5Kr9nVCbUlyCWzUa
+         CeHxShW4dA6xS9ipNDZN0zEs0+8KeXv3zryfhngzDLjHeu1DRgYk8k1W/wUPs7FliGB/
+         vCKg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1791906667; x=1792511467; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1791906949; x=1792511749; darn=vger.kernel.org;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=hI07ZP6ZXwusJOkVivRK7QwgdEDXZj4ua4bdxFOQrYY=;
-        b=yEhDuHqc02rY4uLwaq2K96RrAl2+7oZEuxZpvExsEVeTlLk2O25NCF8GUuDsiUP0oU
-         aS/9jv2+HGXvGZq9+lrANV4Dmt1OZrjU0uBrE73OxCQXEVrGKz6aFopaZ53MsvnUrU97
-         O8TnzyvZ6LvADtV1eyMkgtLB8NukJIqvbAvbEDkfrl1UOqNeWtg5hujxYEolq6dyxlYr
-         8zxYRtbm5iCxGGGr+lpGvPqN4m/8YHAOZ/qdmRZAnKVeJpd33ShCDNt9PWa4hCJGjsV/
-         nb5qW3Q1V5/W0nSIyJcoI6YYFYpRCrM0JjuE1OpOAXqWS6JBpCitN4/d7erP3JAKs0IF
-         Kxjw==
+        bh=z8gOX9MZoG0nwlbKtzFc0ROF710/exmQ1whe7/AMGWw=;
+        b=u198AWQim7aWA09f3k8kbTwG0Wo3C4/pR3A+sobGku7Wc/MBV5+b1q/8RuUx6gVg94
+         aXSf1R9wQw3dYOr8/eL8we/Ml2bjlmULz+5lhiBb9cyn0Tw/sToIIgkniAPMgXfaYAgm
+         LXDSZTLOw8+dKQr7n9mmrLeM9ZoQziWTyMGegeiX3wB9/OLsQWSaLaSnM3543ZSPGURD
+         JvDrQQd1suRPyKkPFArza0l3MuXjWUC+nM7c8gWHQHMHpoKhv+yH5Ko8QCsrRPvcRbSJ
+         kNZctb5FGfVNV1HKsJHRs3iA2gu+frPhdK3iotRmy08MK+4OBIVwTEnWt+3ykqQ1ky1q
+         Fjfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791906667; x=1792511467;
+        d=1e100.net; s=20260707; t=1791906949; x=1792511749;
         h=content-type:cc:to:subject:message-id:date:from:in-reply-to
          :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=hI07ZP6ZXwusJOkVivRK7QwgdEDXZj4ua4bdxFOQrYY=;
-        b=wa+NIrUTGrfOVA0AiKeutJLRNXIZQOhMTl0x5K0VaiD4vQebsGLyLdsiFz20nPWG8Z
-         ZctzeD4NpWy2dugfDfCEyO+pofZiesQraVUSH7v3SqBVf9HqfXUyOdy+ca+Zp1zzS0Ny
-         qEKgNGT+O3SVHRNALzJQVJGHeWBRu0uUyiKnwOKqGxu+y9phDLd3STMSNg0U7sJzqHCy
-         El213A1m8q6U/YrODQci3mK3JjWiM2nmCb8EtoX2nPYr3Yg0BwYlaEuKlo14t9aseCnb
-         cyWI/NGHIJib7SB3bpSFTw7TTq+slH8hlf2Rtolfk1ufUy6yxeWnL8i16QIrpPz0mxwC
-         n8cg==
-X-Forwarded-Encrypted: i=1; AKwUvBzaf0NkCt+V6rQDDnFvpA31CGXN2Mel7RphH86t98GE7RSJ8S7YHA3qD2zoTbx0QV4tlXrb9iah6T15M2s6HFU2@vger.kernel.org
-X-Gm-Message-State: AFq9FYKo5kJG6GofZbeJLM9IO8ZY4PWjGoEvumoieI+3nHoVVZmn1lik
-	6Iwud6IPnGm12gyd0W4mec6agEWR9RwgdeerE3miFsIEIZjfW9WOcItNAQGpFjIuT30MGYvhpeO
-	ESQ890rBPe7i1uv4ns/U0uEDuXCzBVnJfd86A8WLhSg==
-X-Gm-Gg: AYBFou1TAVm5pSoLFRbFvuIB8Q3DxNXBOw8XFIBTR3uS8RIwZSS5Tl4STqrOslTnYIr
-	dmV2qulyo1mfGdLWTEtnnokwYqdVVraOBJj+DG+zOdn2Vv6glXqzSmYaPtqjfWrzlUUTyqEYCIV
-	byPAq8ElSmuqJmJoMgFBCPOiDCj8ZIxfUaywIfEntVb3TVxZXBk6zGHbYqHFpFDX+fFUO5pAKIw
-	nSUKxN1F2Hn+b8e6Hgf5mQqgSvUh25JAXcRWRrgZgKFYbLe6jRcbj37pqTN6wEbZ5OG/4iMRdiS
-	srMdihdowOO+TJdGlFs5ph71GkZct5QUIqnGNZo1GQxGtItZlqZVl19w2yLBL765z0Q92NeVatz
-	38l9iWrPwVBunGQ==
-X-Received: by 2002:a05:6402:a0d6:b0:6ac:94cf:9f2e with SMTP id
- 4fb4d7f45d1cf-6b17c237c33mr9912940a12.13.1791906666943; Tue, 13 Oct 2026
- 08:51:06 -0700 (PDT)
+        bh=z8gOX9MZoG0nwlbKtzFc0ROF710/exmQ1whe7/AMGWw=;
+        b=ANtc29IoXwJ/dqwP/X3cLDd32fZF0Hd15eAyhld1YzGo6ql4XwXssoi4LHC5LZHtR5
+         NP9bSahLenfHBHcD2nfKsNul1CB6Ubu8/2na6wDzMFc6GUxGUVGKlR2SXxpWJNamzoiH
+         1pUC/pGKADgpH6qPdzbUyusEl5SJaanroCl4ErEw1MjLxCulKLHCUqxJHbUSRob3uKdN
+         1d5I9JBlZxzTwfPaL4G0N2fbR9YO7wSQFHxXmBQfjM82PZea19xelf7NspQUHSKYJwJA
+         8w9W0KzbiB4R7ftvgxs/pOr0AcVQJ2X8lAmD/NNZPWurRLMDytQI7yttmPQJZjrmgcN5
+         WTnw==
+X-Forwarded-Encrypted: i=1; AKwUvByEp8QAJk4RUpHWbqU1qmorZwnfvv1XiiVxts+SR2wIow4nrk8ShHgTvktp6Ek33VHIoYROORNbKfjvvrlapss6@vger.kernel.org
+X-Gm-Message-State: AFq9FYK8CL8uKysArqI6DvIAsmqt4z8nkzLJr1RWmhqfNNz0Clil0Fj2
+	eJWWibINteA+OWzNbUjPA5i5Y1JlvQ+6KlyXFPqEns1Na4H2nIyYi5x/AqlHaS+ESC6oa/7CQBU
+	R6JEcREUuYfVVuq5IMBNedynvPqWDxJCIho2qs3CKBA==
+X-Gm-Gg: AYBFou25NJKAItWJVmiMxyu9WC+CRVpObn6bYY8w3olMYB6ov2VovBQD9yvTPqVFlzj
+	GLeXql9tgXJUmyOAPWHGzUAB0NXliNB7pxoEjAfEZZhd2QLIghQBa+92vZZlXL3tRNfFBs8LE/v
+	MG5uyWum7DklQS/Do8fG9j37O5AwYZ4ZUIeUt5zy6S9iyvkRa+Iv7e88lbfLM4K3aHY3ilV9Tvp
+	ciUSBvqy8eCtOVGnm4WvxKAtIx8x6CGi++DmmXtSrJKzkNcPyBh3DBjUF5Q3AQbYtqgQiJgjMjn
+	57rV3RW+nBs6vLbM3Jcpn9eEwg1JjzDdNYDjMbjga1btsBdZ53M8uxpLrhxPZtKipB5OHRzjTbq
+	z39zSEjD74MLAcQ==
+X-Received: by 2002:a05:6402:52c6:b0:6b1:d8e4:f93 with SMTP id
+ 4fb4d7f45d1cf-6b1d8e42e76mr3731578a12.33.1791906949171; Tue, 13 Oct 2026
+ 08:55:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260927172428.110718-1-saileshnandanavanam@gmail.com>
-In-Reply-To: <20260927172428.110718-1-saileshnandanavanam@gmail.com>
+References: <ar0lvsu80miGJdGS@p14s> <20261001081056.38293-1-hyz3367@gmail.com>
+In-Reply-To: <20261001081056.38293-1-hyz3367@gmail.com>
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Tue, 13 Oct 2026 09:50:55 -0600
-X-Gm-Features: AclHuK_YwVU186w8Jrj9q5z-jVTTxDtnLd64spTZ-oYlvApDkqCGECWJiLiypDQ
-Message-ID: <CANLsYkwDMdsoxNcYPH7TS=AQV4a=R6HN=Vmx7WOWyh9GTrsQVg@mail.gmail.com>
-Subject: Re: [RFC PATCH] remoteproc: core: add KUnit tests for rproc_check_carveout_da()
-To: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Tue, 13 Oct 2026 09:55:37 -0600
+X-Gm-Features: AclHuK9k6982zEoNoGluocWt9T3eTL3nhoi7JX355Oac8ApeVuUVqsbrnakim8I
+Message-ID: <CANLsYkxz2vNE1rsc_sRQVC7YJHw5hyB8YD-zFi1DujUd5b02cQ@mail.gmail.com>
+Subject: Re: [PATCH v3] remoteproc: core: Fetch the auto-boot firmware only once
+To: Yonghao Zhang <hyz3367@gmail.com>
+Cc: andersson@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 27 Sept 2026 at 11:24, Sailesh Nandanavanam
-<saileshnandanavanam@gmail.com> wrote:
+On Thu, 1 Oct 2026 at 02:11, Yonghao Zhang <hyz3367@gmail.com> wrote:
 >
-> Add a KUnit test suite covering rproc_check_carveout_da(), the
-> internal helper that validates a resource-table-requested (da, len)
-> pair against an already-allocated carveout's bounds.
+> Auto-boot for an always-on remote processor registers an asynchronous
+> request_firmware_nowait() whose callback, rproc_auto_boot_callback(),
+> calls rproc_boot() first and only releases the fetched image at the
+> very end of the callback.  rproc_boot() does not take this image as an
+> argument: it fetches the very same image again with a synchronous
+> request_firmware(), so every auto-boot reads the firmware image twice
+> and allocates the buffer twice; on kernels with the sysfs fallback
+> enabled, the uevent round-trip is repeated as well.
 >
-> The test is #include'd directly into remoteproc_core.c (a pattern
-> already used by mm/damon/) rather than built as a separate module,
-> since rproc_check_carveout_da() is static and this avoids adding an
-> exported symbol purely for test visibility.
+> The asynchronous request exists only so that rproc_add() does not
+> block on the filesystem read; the image it fetches is never used.
+> The core already defers rproc_boot() to a worker for detached
+> processors (attach_work).  Reuse that worker for offline processors
+> too and drop the asynchronous firmware request: rproc_boot() fetches
+> the image exactly once and dispatches between a firmware boot and
+> an attach based on the processor state.  The work is renamed to
+> boot_work to match its widened role.
 >
-> Six cases are included, exercising every branch of the function:
-> requested length exceeding the carveout, a specific da requested
-> against a carveout with none set, a da before the carveout's start,
-> a (da + len) past the carveout's end, an exact boundary fit, and the
-> FW_RSC_ADDR_ANY skip-check path.
+> commit 400e64df6b23 ("remoteproc: add framework for controlling remote
+> processors") noted back in 2011 that "we must wait until it completes
+> before we try to unregister the device".  rproc_del() now does exactly
+> that: it waits for the boot work with cancel_work_sync(), which also
+> closes the theoretical window in which a pending attach work could
+> outlive the rproc instance.
 >
-
-I will look at this patch when I have reviewed other patches in my backlog.
-
-Thanks,
-Mathieu
-
-> Verified via:
->  - QEMU (x86_64), booting a kernel with CONFIG_REMOTEPROC_KUNIT_TEST=y
->  - tools/testing/kunit/kunit.py under UML
+> The changed fallback behaviour only matters for legacy
+> configurations.  udev dropped its userspace firmware loader back in
+> 2014, as recorded in
+> Documentation/driver-api/firmware/fallback-mechanisms.rst, and the
+> kernel has documented since commit 02c399306826 ("firmware_loader:
+> enhance Kconfig documentation over FW_LOADER") that "Linux no longer
+> relies on or uses a fallback mechanism in userspace".  Auto-boot now
+> uses the same synchronous fallback semantics as every other explicit
+> boot source (sysfs, cdev).
 >
-> All 6 cases pass in both environments:
->
->     # remoteproc_core: pass:6 fail:0 skip:0 total:6
->
-> This is posted as an RFC to check whether this structure (test
-> headers embedded per-file, DAMON-style) is the preferred approach for
-> remoteproc before expanding coverage to other files in the driver
-> (remoteproc_virtio.c, remoteproc_sysfs.c, etc.).
->
-> Signed-off-by: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
+> Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
 > ---
->  drivers/remoteproc/Kconfig                    |  10 ++
->  drivers/remoteproc/remoteproc_core.c          |   4 +
->  .../remoteproc/tests/remoteproc_core-kunit.h  | 130 ++++++++++++++++++
->  3 files changed, 144 insertions(+)
->  create mode 100644 drivers/remoteproc/tests/remoteproc_core-kunit.h
+> Changes in v3:
+> - Drop rproc_trigger_auto_boot() wrapper and schedule boot_work
+>   directly in rproc_add() (Mathieu).
 >
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 5b56b2dcc725..dc5a8f483693 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -390,6 +390,16 @@ config XLNX_R5_REMOTEPROC
+> Changes in v2:
+> - Fix the order described in the changelog: the callback calls
+>   rproc_boot() first and releases the asynchronously fetched image at
+>   the end of the callback (Mathieu).
+> - Fix typo "proccessor".
 >
->           It's safe to say N if not interested in using RPU r5f cores.
+>  drivers/remoteproc/remoteproc_core.c | 66 +++++++---------------------
+>  include/linux/remoteproc.h           |  4 +-
+>  2 files changed, 19 insertions(+), 51 deletions(-)
 >
-> +config REMOTEPROC_KUNIT_TEST
-> +       bool "KUnit tests for remoteproc core" if !KUNIT_ALL_TESTS
-> +       depends on REMOTEPROC && KUNIT=y
-> +       default KUNIT_ALL_TESTS
-> +       help
-> +         Enable KUnit tests for the remoteproc core, covering internal
-> +         helpers such as carveout/address-translation logic.
-> +
-> +         If unsure, say N.
-> +
->  endif # REMOTEPROC
->
->  endmenu
+
+I will apply this patch when 7.4-rc1 comes out.
+
 > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 1ed406714849..4f0ad28305d2 100644
+> index 263e12f022ea..b88bf179507d 100644
 > --- a/drivers/remoteproc/remoteproc_core.c
 > +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -2839,3 +2839,7 @@ static void __exit remoteproc_exit(void)
->  module_exit(remoteproc_exit);
+> @@ -1662,51 +1662,23 @@ static int rproc_attach(struct rproc *rproc)
+>  }
 >
->  MODULE_DESCRIPTION("Generic Remote Processor Framework");
-> +
-> +#if IS_ENABLED(CONFIG_REMOTEPROC_KUNIT_TEST)
-> +#include "tests/remoteproc_core-kunit.h"
-> +#endif
-> diff --git a/drivers/remoteproc/tests/remoteproc_core-kunit.h b/drivers/remoteproc/tests/remoteproc_core-kunit.h
-> new file mode 100644
-> index 000000000000..615a854fffbf
-> --- /dev/null
-> +++ b/drivers/remoteproc/tests/remoteproc_core-kunit.h
-> @@ -0,0 +1,130 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _REMOTEPROC_CORE_KUNIT_H
-> +#define _REMOTEPROC_CORE_KUNIT_H
-> +
-> +#include <kunit/test.h>
-> +
-> +/*
-> + * Tests for rproc_check_carveout_da().
+>  /*
+> - * take a firmware and boot it up.
+> - *
+> - * Note: this function is called asynchronously upon registration of the
+> - * remote processor (so we must wait until it completes before we try
+> - * to unregister the device. one other option is just to use kref here,
+> - * that might be cleaner).
+> + * Boot or attach the remote processor in the background: rproc_add()
+> + * runs in probe context and must not block while the firmware image is
+> + * read from storage.  rproc_boot() dispatches on the processor state,
+> + * so this covers both a firmware boot and an attach to a processor
+> + * started by another entity.
 > + *
-> + * The function is static, so this header is #include'd directly at the
-> + * bottom of remoteproc_core.c (see CONFIG_REMOTEPROC_KUNIT_TEST), giving
-> + * it access to the symbol despite the lack of external linkage.
-> + *
-> + * rproc_check_carveout_da() only touches &rproc->dev for dev_err() on
-> + * its failure paths, so a zeroed struct rproc is sufficient here -- no
-> + * device registration needed. dev_err()'s formatting chain
-> + * (dev_driver_string() -> "" on NULL driver/bus/class, dev_name() ->
-> + * NULL on an unregistered device, and the kernel's own %s NULL guard
-> + * in lib/vsprintf.c) is safe end-to-end against a bare zeroed device.
-> + */
+> + * Note: rproc_del() waits for this work to complete with
+> + * cancel_work_sync(), so the rproc instance remains valid for the
+> + * entire lifetime of this function.
+>   */
+> -static void rproc_auto_boot_callback(const struct firmware *fw, void *context)
+> -{
+> -       struct rproc *rproc = context;
+> -
+> -       rproc_boot(rproc);
+> -
+> -       release_firmware(fw);
+> -}
+> -
+> -static void rproc_attach_work(struct work_struct *work)
+> +static void rproc_boot_work(struct work_struct *work)
+>  {
+> -       struct rproc *rproc = container_of(work, struct rproc, attach_work);
+> +       struct rproc *rproc = container_of(work, struct rproc, boot_work);
+>
+>         rproc_boot(rproc);
+>  }
+>
+> -static int rproc_trigger_auto_boot(struct rproc *rproc)
+> -{
+> -       int ret;
+> -
+> -       if (rproc->state == RPROC_DETACHED) {
+> -               schedule_work(&rproc->attach_work);
+> -               return 0;
+> -       }
+> -
+> -       /*
+> -        * We're initiating an asynchronous firmware loading, so we can
+> -        * be built-in kernel code, without hanging the boot process.
+> -        */
+> -       ret = request_firmware_nowait(THIS_MODULE, FW_ACTION_UEVENT,
+> -                                     rproc->firmware, &rproc->dev, GFP_KERNEL,
+> -                                     rproc, rproc_auto_boot_callback);
+> -       if (ret < 0)
+> -               dev_err(&rproc->dev, "request_firmware_nowait err: %d\n", ret);
+> -
+> -       return ret;
+> -}
+> -
+>  static int rproc_stop(struct rproc *rproc, bool crashed)
+>  {
+>         struct device *dev = &rproc->dev;
+> @@ -2348,11 +2320,8 @@ int rproc_add(struct rproc *rproc)
+>         rproc_create_debug_dir(rproc);
+>
+>         /* if rproc is marked always-on, request it to boot */
+> -       if (rproc->auto_boot) {
+> -               ret = rproc_trigger_auto_boot(rproc);
+> -               if (ret < 0)
+> -                       goto rproc_remove_dev;
+> -       }
+> +       if (rproc->auto_boot)
+> +               schedule_work(&rproc->boot_work);
+>
+>         /* expose to rproc_get_by_phandle users */
+>         mutex_lock(&rproc_list_mutex);
+> @@ -2361,10 +2330,6 @@ int rproc_add(struct rproc *rproc)
+>
+>         return 0;
+>
+> -rproc_remove_dev:
+> -       cancel_work_sync(&rproc->crash_handler);
+> -       rproc_delete_debug_dir(rproc);
+> -       device_del(dev);
+>  rproc_remove_cdev:
+>         rproc_char_device_remove(rproc);
+>         return ret;
+> @@ -2552,7 +2517,7 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>         INIT_LIST_HEAD(&rproc->subdevs);
+>         INIT_LIST_HEAD(&rproc->dump_segments);
+>
+> -       INIT_WORK(&rproc->attach_work, rproc_attach_work);
+> +       INIT_WORK(&rproc->boot_work, rproc_boot_work);
+>         INIT_WORK(&rproc->crash_handler, rproc_crash_handler_work);
+>         spin_lock_init(&rproc->crash_handler_lock);
+>
+> @@ -2630,6 +2595,9 @@ int rproc_del(struct rproc *rproc)
+>         if (cancel_work_sync(&rproc->crash_handler))
+>                 pm_relax(rproc->dev.parent);
+>
+> +       /* auto-boot may still be fetching firmware: wait for it here */
+> +       cancel_work_sync(&rproc->boot_work);
 > +
-> +static void rproc_test_check_carveout_len_exceeds(struct kunit *test)
-> +{
-> +       struct rproc rproc = { 0 };
-> +       struct rproc_mem_entry mem = { 0 };
-> +       int ret;
-> +
-> +       /* mem->len = 0x100; request len 0x200 with no da constraint */
-> +       mem.da = FW_RSC_ADDR_ANY;
-> +       mem.len = 0x100;
-> +
-> +       ret = rproc_check_carveout_da(&rproc, &mem, FW_RSC_ADDR_ANY, 0x200);
-> +       KUNIT_EXPECT_EQ(test, ret, -EINVAL);
-> +}
-> +
-> +static void rproc_test_check_carveout_da_any_mismatch(struct kunit *test)
-> +{
-> +       struct rproc rproc = { 0 };
-> +       struct rproc_mem_entry mem = { 0 };
-> +       int ret;
-> +
-> +       /* caller wants a specific da, but the carveout itself has none set */
-> +       mem.da = FW_RSC_ADDR_ANY;
-> +       mem.len = 0x100;
-> +
-> +       ret = rproc_check_carveout_da(&rproc, &mem, 0x1000, 0x50);
-> +       KUNIT_EXPECT_EQ(test, ret, -EINVAL);
-> +}
-> +
-> +static void rproc_test_check_carveout_da_negative_delta(struct kunit *test)
-> +{
-> +       struct rproc rproc = { 0 };
-> +       struct rproc_mem_entry mem = { 0 };
-> +       int ret;
-> +
-> +       /* requested da (0x1000) lies before the carveout's da (0x2000) */
-> +       mem.da = 0x2000;
-> +       mem.len = 0x100;
-> +
-> +       ret = rproc_check_carveout_da(&rproc, &mem, 0x1000, 0x10);
-> +       KUNIT_EXPECT_EQ(test, ret, -EINVAL);
-> +}
-> +
-> +static void rproc_test_check_carveout_da_exceeds_end(struct kunit *test)
-> +{
-> +       struct rproc rproc = { 0 };
-> +       struct rproc_mem_entry mem = { 0 };
-> +       int ret;
-> +
-> +       /* delta (0x80) + len (0x100) = 0x180, one byte over mem->len (0x100) -> 0x180 > 0x100 */
-> +       mem.da = 0x1000;
-> +       mem.len = 0x100;
-> +
-> +       ret = rproc_check_carveout_da(&rproc, &mem, 0x1080, 0x100);
-> +       KUNIT_EXPECT_EQ(test, ret, -EINVAL);
-> +}
-> +
-> +static void rproc_test_check_carveout_da_exact_fit(struct kunit *test)
-> +{
-> +       struct rproc rproc = { 0 };
-> +       struct rproc_mem_entry mem = { 0 };
-> +       int ret;
-> +
-> +       /*
-> +        * Boundary case: delta (0xf0) + len (0x10) == mem->len (0x100)
-> +        * exactly. The check is "> mem->len", so this must pass -- this
-> +        * is exactly the kind of edge an off-by-one would break.
-> +        */
-> +       mem.da = 0x1000;
-> +       mem.len = 0x100;
-> +
-> +       ret = rproc_check_carveout_da(&rproc, &mem, 0x10f0, 0x10);
-> +       KUNIT_EXPECT_EQ(test, ret, 0);
-> +}
-> +
-> +static void rproc_test_check_carveout_da_any_skip_check(struct kunit *test)
-> +{
-> +       struct rproc rproc = { 0 };
-> +       struct rproc_mem_entry mem = { 0 };
-> +       int ret;
-> +
-> +       /*
-> +        * da == FW_RSC_ADDR_ANY -> address check is skipped entirely,
-> +        * only len is validated against mem->len.
-> +        */
-> +       mem.da = 0x1000;
-> +       mem.len = 0x100;
-> +
-> +       ret = rproc_check_carveout_da(&rproc, &mem, FW_RSC_ADDR_ANY, 0x50);
-> +       KUNIT_EXPECT_EQ(test, ret, 0);
-> +}
-> +
-> +static struct kunit_case rproc_core_test_cases[] = {
-> +       KUNIT_CASE(rproc_test_check_carveout_len_exceeds),
-> +       KUNIT_CASE(rproc_test_check_carveout_da_any_mismatch),
-> +       KUNIT_CASE(rproc_test_check_carveout_da_negative_delta),
-> +       KUNIT_CASE(rproc_test_check_carveout_da_exceeds_end),
-> +       KUNIT_CASE(rproc_test_check_carveout_da_exact_fit),
-> +       KUNIT_CASE(rproc_test_check_carveout_da_any_skip_check),
-> +       {}
-> +};
-> +
-> +static struct kunit_suite rproc_core_test_suite = {
-> +       .name = "remoteproc_core",
-> +       .test_cases = rproc_core_test_cases,
-> +};
-> +
-> +kunit_test_suite(rproc_core_test_suite);
-> +
-> +#endif /* _REMOTEPROC_CORE_KUNIT_H */
+>         __rproc_shutdown(rproc, true);
+>
+>         rproc_delete_debug_dir(rproc);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index a44368737b39..d77e24539133 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -231,7 +231,7 @@ enum rproc_features {
+>   * @subdevs: list of subdevices, to following the running state
+>   * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+>   * @index: index of this rproc device
+> - * @attach_work: workqueue for attaching rproc
+> + * @boot_work: workqueue for booting rproc
+>   * @crash_handler: workqueue for handling a crash
+>   * @crash_handler_lock: serializes crash handler queueing and deletion
+>   * @deleting: remoteproc deletion has begun
+> @@ -277,7 +277,7 @@ struct rproc {
+>         struct list_head subdevs;
+>         struct idr notifyids;
+>         int index;
+> -       struct work_struct attach_work;
+> +       struct work_struct boot_work;
+>         struct work_struct crash_handler;
+>         spinlock_t crash_handler_lock;
+>         bool deleting;
 > --
 > 2.34.1
 >
