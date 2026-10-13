@@ -1,72 +1,76 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49DD3F4139
-	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 05:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E8F376BD5
+	for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 07:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791871013; cv=none; b=bj6iwvDcsFI5rz+sdmZEfqLy2wGPGXtlIXf3DnWbWQsjhskCI0TJfXWKuIVtWQkVpRZdlpHsL0P5+36d8sRl2h8zm+kwX3OF3QAjXHat6x1PH38cLseI5ujpLHB7n4hXSEFJf1IC5zKPTf4tup8vpjWYhozBHDIfTEjreCqizf8=
+	t=1791877672; cv=none; b=O6WXtmQffD3P04iNNCMercvzqWvyJI4A8T5egRlZ5E9MH4ZfZX9PlqoUdyXrPrV7IezrZRKamFIcuizq8hGULZ6nAUdgp3IbX5zUtURfqeLlUz8cEXcAy1gzGu8M7V/dmrnYg447OKjRXr9lTSteEVU5ii3tMxZ4cma/QeTexEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791871013; c=relaxed/simple;
-	bh=3pCOcqKf7T9wJyZUmZLGcII0V6IWGjvH8jpDvckklck=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PjPUBbluYK2CkvFG7Hb6MskLHh7reXfX0jgk3Am9p6GNV78vOJXSe7nhyc9hwtOyDIxsFExBp/vzrm9Mtf/pNt5VYRYUwwgJRfWpPXPsWKEirWHvqkyjMBl3wVF4yxvschs2iaVLJzc6Y/ShVkmMOhr66qv4X5kn5a6PaJZ2UII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=sSx6Be3d; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1791877672; c=relaxed/simple;
+	bh=fM/EPSJnhQXQN54E1lhVsHA1GPVlzhP1IEC/erQBVv0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o/wwki9onqeKH1rGpdNIKSkVSK+L2UNRTRxTrUEPjxqUdDG0a6t0goXJLwPvuHT6AXtAMXdk0hNMDGsUBXFF/T/qGbtAz/54HGttB0Tq7eD9QesJpK3bxHYy3i7CEf7PCyEoYQiiAc2aAHZ/OL777YWLWZAGAPatp8KaznIWtMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UGLSS4n+; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sSx6Be3d"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a1af482519so364365e9.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 12 Oct 2026 22:56:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGLSS4n+"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4a022fee0caso23663225e9.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 13 Oct 2026 00:47:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791871009; x=1792475809; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791877668; x=1792482468; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=edPFNMluEF6s6sLCanSOFhEfk5IKgfxAjXociYy8RQU=;
-        b=sSx6Be3d8rXaMlKRX3sy6Fa9oI+qKKmAUE/8C+bOSvCQ42dNOK/zcjgShIzu7j1rcV
-         /jj5zxQRjXMS/3kPcgHG/G2QR4subIlihnIcY9LNQq1HTYF9q4EmTYVxsdqCQ1T85pXl
-         Jyga9Lunvsd+qx4awFOipxkgG7Ml+VNaZEeX1DDrenDrSn3++FQ1/PFPQMcacNmRnRoV
-         twfcvLB7sm31Ko5HyYb4utcjZm3wTtRNP3tX5JH2pScvzuG5yUGobcYT3uw71PHWuS5b
-         RP/lgUl/6v8KaCn5H4hWkPQP3AcPAaxAhC4IyeckkpJwm+vzoXF3UwaHjLSAFiVWpsA6
-         UO4w==
+        bh=98Qa2o/S1XoEMPrlowsac7BQiNC+nqGa1kAsrr8UqXY=;
+        b=UGLSS4n+q9WR0nvpar/icwEKrYiTUwrsoFgLot7JOvU/1RQgF37r2KzS+IkSoWAJxD
+         QKQBtQIXUz235XOjje+wZR39Y4fQOWoWnAk1whew5LLMeYnKOr+rE9ymkPhkddZGIr8u
+         OVbOch2AfzetY9UmBSNU+UhP/1Zy1ID0RNYEFOCBbartvkMZmAhmKF7yg5ns7ZlZXmxX
+         4pJ9Vg66IMCuTbM6VtL2AnpPtbXJ9ruZrGpJSNj9HqrlcCro/hiTxa2nLVwQJj2fDrjN
+         Uh+WZNvpjyD2rIJV0uUGX56VZG4O9AquW4DWnSd17G1bc5WuJVSphnR043dv0qOcr8hf
+         k+Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791871009; x=1792475809;
+        d=1e100.net; s=20260707; t=1791877668; x=1792482468;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=edPFNMluEF6s6sLCanSOFhEfk5IKgfxAjXociYy8RQU=;
-        b=by59BiiAC75/ODuXRHBDfvIs/Kce+yFtdYQb7adUU/CMhKSPaxht14y5uRrs+PljZp
-         LR9rL/yCe7QSi5kst71AOfrNXxxQr5zpoEIT9CDfr86EpcFwA3o5308ERaxSY2B5YCN6
-         JdAYwSvvN2Jh/nazuRll0icceny1QRp+OckuqMdZK/idnscKz/Xn9bYvVQ+XSCYt8t/N
-         Z6cjtKwnmQC45tftmis2hm/eK0RG/OVy7qoT1AamCgxQmSd19L8nv6ITQIN89jOf54j+
-         UBdQiDX83J7A0p5W2wpkNDqDK79NlETLOqgpaSScNertxmuCPIxGx1BJecWBd4yZ99hV
-         4YXg==
-X-Forwarded-Encrypted: i=1; AKwUvBzhJT/2Uf73fuzjv0RuVnV8hePvtZQVj3j+kgRh5T37RXbOpQgduud1ddE9A7o4VWw2t69Bxw5QUjIhOpYsOfEa@vger.kernel.org
-X-Gm-Message-State: AFq9FYLTtnk70wqoKxoPN84sTxzAGCU90Ttr/tVwwtkDBlnfhyAxHEW8
-	r2XsEJYDoQI9zUlGJ/STS5UOr5lxNzRz05UM6H6F7CQcPmW3sBHKmKDi
-X-Gm-Gg: AYBFou09s8Ffkplgh2BCLwI9SjZknmnCplbL0XkE339Jl4rsPOx7chQqqoPNuage5bC
-	Tsvy5R838IVIV6dKFLUdtU/vTGnxMbu1B5JKP8Usvr2918bgsyjVjHRAaVzltFSmKcd7bLaFn0t
-	S8Cbo8PqQHNvemojm5oE3Rcq8Cg45afBHFqDT50ugOmzMuR04eE5fqrAsGkBQGRQQrN2Yn/vfKH
-	K9UoChx39DgQGX4H2gUknI1hlw2TBPdzjiotV6Fu4NvCcxpyGpCXp5jG4i+1RMXUm7JALqTOZz8
-	2idbt/Ywn/IcHIajOwa7zqqPzGhXDYtyiSEv8dAhDPUQinsdbQgiTJqBo9VIsxhyiuxJ4L98K8L
-	pOP5WwowyQzQza8P5tNs/Y3BBLUIn4QOYg3NyMoc77EZq4N0PD/DOuztKxUJfnShr7cTJinDE9N
-	V14UcPxuUybceydR+UA2LoV7G334GHqWKmSziBwvkuMT0lVbDMo0tHPyZOQP/+BVquw7JDMCvco
-	Ng3DA==
-X-Received: by 2002:a05:600c:154e:b0:49f:ffa2:1c72 with SMTP id 5b1f17b1804b1-4a18e49ad83mr221940565e9.11.1791871008947;
-        Mon, 12 Oct 2026 22:56:48 -0700 (PDT)
-Received: from LAPTOP-AVI.lan ([2a06:c701:4778:c500:ee4c:dd08:4e0b:2855])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a18bb6b3cbsm271369505e9.0.2026.10.12.22.56.46
+        bh=98Qa2o/S1XoEMPrlowsac7BQiNC+nqGa1kAsrr8UqXY=;
+        b=B3fi/yI4nGzP7/9KOa7tc8cwLHpoH4Pd+fV4q9dpKlue4pr1Pdq8iCOosWfji/hNDa
+         ViqklCXJvRNm4rMfs5XJ4kL0asBtUFj0XD0LtrrsLg8XzZtBRka5ijrDBxbJCtAtrrAN
+         NAGfO1hdcNsjMrDgh7muhxLcEUxLZJIAQ/OVEh9NmCy1Z5O4VRgidrVOExYsbcQ7mmwv
+         9MVS7ukfsjus8wUWCmL+Mz6KCHt4+aTDndkP5tjuWjG4VJBsNyGDEVUfur5EmYBDV4uS
+         qwCltFEpoPIx+H4zsIq4V0xkDB3ODMA0YTSu9hRoZ7iNPu3+wczLX+yEWR8VpHxettlF
+         d8Rg==
+X-Forwarded-Encrypted: i=1; AKwUvBzEHENKNVHFYN2HwTJK45YXFFSoacC6zBeB88vIbQyJPX0rHMitT4hlJvO2BYbMldUkCdhKlns+7kqbF7tZ4uoN@vger.kernel.org
+X-Gm-Message-State: AFq9FYII1/ZJy+XR8/QRZNv9kfKysE20txdJ4YHDBbZp6BN9HQ+BTkNx
+	eEunssSx9VgjkTPl9mx4C5PEQFZ9/85Gp0Oqd5fG/0Vix6GpQAR78/bz
+X-Gm-Gg: AYBFou3SAufr0hpmt7kIjYAep6mRvG15kM8jBaKKhhF5zXtTq5MSjKhJcCfwYh8XLDC
+	cpHrInLdfQ9k07x8P8+4xNKfLyLrOhp/9Lni17uYbHrEAvloOJ08BBrgETm2jy0tBouuh2mqxxH
+	ywT8l1CIlSXz1aMyWYLV2Jsu6aMWmmPcsqHt3APrhQCoI3oD60bT4ZcHmTMDeBAJebVoPp7U2l3
+	peHGJa3gWbV6KslOKwWzs9C90p2oosoP0hhX2qPhI2rn0JbCJpQTiQge0aVQxH3TMZQkvZhHylS
+	P0zPzxsTf68RaNw2SD3NUJfhJTQBBkcB4SV9ZtQ5j/lZDorkZPMPoPl8Qo28WeQsrLImI1Uq65E
+	wxLayqZJtSUVU36N42FNhgVX84u0Cq4bZPlG0LCJ4AO0cf/Icptutc0gXvnqV0JTL/4ye8Xywoc
+	Ia3jx4vGn37VNKTOYOEfBlJyHvDFT6Zd7TkgkCjnGP5LPa1zA/eq5jJ3pAwl4IzNKiM1WSdwyfJ
+	SJiKQ==
+X-Received: by 2002:a05:600c:1c21:b0:49c:cee0:f383 with SMTP id 5b1f17b1804b1-4a18e4b6241mr274887295e9.16.1791877668407;
+        Tue, 13 Oct 2026 00:47:48 -0700 (PDT)
+Received: from LAPTOP-AVI.lan ([2a06:c701:4778:c500:c7f5:a913:e714:a9c3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4a19f249692sm274850085e9.3.2026.10.13.00.47.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Oct 2026 22:56:47 -0700 (PDT)
+        Tue, 13 Oct 2026 00:47:48 -0700 (PDT)
 From: Avi Weiss <thnkslprpt@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Pi-Hsun Shih <pihsun@chromium.org>,
 	linux-remoteproc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Avi Weiss <thnkslprpt@gmail.com>
-Subject: [PATCH] rpmsg: qcom_smd: release channel OF node on device destruction
-Date: Tue, 13 Oct 2026 08:56:42 +0300
-Message-ID: <20261013055642.793161-1-thnkslprpt@gmail.com>
+Subject: [PATCH] rpmsg: mtk: release channel OF node on device teardown
+Date: Tue, 13 Oct 2026 10:47:44 +0300
+Message-ID: <20261013074744.942560-1-thnkslprpt@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
@@ -76,29 +80,30 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-qcom_smd_match_channel() returns a referenced OF child node,
-which is stored in rpdev->dev.of_node. qcom_smd_release_device()
-frees the device without dropping that reference, leaking it
-when the channel device is released.
+mtk_rpmsg_match_device_subnode() returns a referenced OF child
+node, which is stored in rpdev->dev.of_node.
 
-Release the OF node reference in the device release callback.
+mtk_rpmsg_release_device() later frees the containing allocation
+without dropping that ref.
 
-Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+Release the OF node when the RPMsg device is destroyed.
+
+Fixes: 7017996951fd ("rpmsg: add rpmsg support for mt8183 SCP.")
 Signed-off-by: Avi Weiss <thnkslprpt@gmail.com>
 ---
- drivers/rpmsg/qcom_smd.c | 1 +
+ drivers/rpmsg/mtk_rpmsg.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 7dbe1c6efe41..6c1cb66528e7 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -1065,6 +1065,7 @@ static void qcom_smd_release_device(struct device *dev)
+diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+index 1b670ed54cfa2..430a9b2aa7bb9 100644
+--- a/drivers/rpmsg/mtk_rpmsg.c
++++ b/drivers/rpmsg/mtk_rpmsg.c
+@@ -168,6 +168,7 @@ static void mtk_rpmsg_release_device(struct device *dev)
  	struct rpmsg_device *rpdev = to_rpmsg_device(dev);
- 	struct qcom_smd_device *qsdev = to_smd_device(rpdev);
+ 	struct mtk_rpmsg_device *mdev = to_mtk_rpmsg_device(rpdev);
  
 +	of_node_put(dev->of_node);
- 	kfree(qsdev);
+ 	kfree(mdev);
  }
  
 
