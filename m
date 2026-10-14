@@ -1,72 +1,72 @@
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com [74.125.82.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7DC240611
-	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Oct 2026 10:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9D94D09F8
+	for <linux-remoteproc@vger.kernel.org>; Wed, 14 Oct 2026 10:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1791973984; cv=none; b=REbom5m4PQF2whc+gry1iPvpSKC0QjAow1N18FIL22ArcGaVOKRxngvBOU5Tn3/AONaCHhKN0tsGVt35tpmrv/7gmhySzzc2MSlsAuDu/bcE/aQqPg6PD46j+lX8sB/SrIoszXaLY/aSxs63NzbgM5ucqqqXt1ly+u9SReY9Isg=
+	t=1791973989; cv=none; b=FYK1cyXNFkmpK7TM6VB20FPSaHLkCyXaVxZeTIjDCr09ZeJ0ihVtGc8NdHQB1MCNS4z7YXDc/mfCIkTNTbetWW3W4VE8EBzj6DIx+I3TZ/pjxV7kPYDYsacgpEZXlquxtyaNPIXrRfWyYfld5CRnuxLdMvVjiTYcoPNjtYiuZqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1791973984; c=relaxed/simple;
-	bh=k5Qyor29tzBsTWmwWdVh29APqoc4vh744onEzj9T7Mo=;
+	s=arc-20240116; t=1791973989; c=relaxed/simple;
+	bh=YPiafXX1neRHmZgS2I33U3gLX80MclAkugt0DJqP/Tk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=M0niQkP+PXmFIJ/lRy+Ut10wl9pZWJWZcuZne4QR/Dlz4Rp+CKWzaGT3evAVWxyD0BO8LiMMbyShB3mfYpLSCbTe4IyEl4Xb9HmY0w1bs/tXogXyLbPiAR16M7c12VNcQodN6K4ut5YAaObEuY4iOBJ7kTDozoOv79gIH5eZlqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=oYDovd2P; arc=none smtp.client-ip=74.125.82.179
+	 MIME-Version; b=UfptfKcT91D07pv8oNRoY1chsQGuFBtUoWd9NKGcGrV+NOW4uk3jLIVs7QGpakgrWCnGmvbFadgkQx5dR+cvsp8VUF7DWrE0cuXLlOw1Tej13h3JDSAeWakn85dkmlqgjpCLsyyhZghy2BhYOWgGoW3IpUkn3QuqNg/XhZGcNKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O4Bg9V5y; arc=none smtp.client-ip=74.125.82.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oYDovd2P"
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-354ba08cfd1so6662731eec.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Oct 2026 03:33:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O4Bg9V5y"
+Received: by mail-dy1-f170.google.com with SMTP id 5a478bee46e88-354ba08cfd1so6662816eec.1
+        for <linux-remoteproc@vger.kernel.org>; Wed, 14 Oct 2026 03:33:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1791973981; x=1792578781; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1791973986; x=1792578786; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=wpfV3RKytzyGrgL5fJq8xvrdmnsOtkjkjFMt1Pl1qgk=;
-        b=oYDovd2PCfDR8BaNpcm+T6U9FpMai1MyaDZY3pIe5/R/ubfpQ2VunZ0GSrdIiu7TH9
-         7zGaME1TaAl+3AKEhh+8h5JpsdL7Z7xSOX/lZrVe8Aln/25EpyYgNaRCY5v0iw5paxwR
-         GePgorxLD2MhP6vPD/L0cK2fUkPTXrzpL6Oe1IJoUlwwTYsZjafvREg/tYm1ovi1Skr8
-         KB8jIGgwWcwG6bBJFxeVXSJ2HYdjzMA3KnoQSNxYLUPz/sab4JpHg6XXExYpNelGXXnS
-         c1NsdSzSeZ0bBFQwRqksDc5qq7IJSaJxTEf2Ysm8XWG3hLDKSzkeIMvsyFBbfO3oSXBK
-         0/PA==
+        bh=GbTpK13BE+gSPxE+FJjdjgUJr/YW1bm7yl3u7boBhdA=;
+        b=O4Bg9V5yVWePBX7gt9BfuDggB+r2EAf4spE3Vf0P4GlfAzqK05R9t/8kEPdrNbkM6n
+         tZllgbMZf8NubHAzIENrpjWcy++Jip9L6pk7fD9PkWO1GTLE+gXLsOdKiXlNiiVJYeTS
+         +nflsKZuwZrZrI0PHyJpCXu3Nk02yIe5Xl3iPonOq1RSTObQIhdiJDSPHhBGkDNr5752
+         Lof++PMFs+qznoHNkvJj1kbPUyvmnnXFOUczW279b+EMXoTODvEA0tWl2EMxrdjobLjP
+         wOvepHOY6Qf8EmvnDeec7o+ha0SNdK0r6otA9N2sBY/Gus3F5T/EgpSV2wZTuHHXvu+U
+         gPqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1791973981; x=1792578781;
+        d=1e100.net; s=20260707; t=1791973986; x=1792578786;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=wpfV3RKytzyGrgL5fJq8xvrdmnsOtkjkjFMt1Pl1qgk=;
-        b=Xz3qzrnlN//vZBzpu4N8j61ByU2yYQVUTiVAjN02MMCD1ovq82OB2LaZ58LSnL/8gH
-         VM6kYSXFl47HWbsISMwCZKJCWryl4Pmhzwsw9ULLq9wzMLVdmfqwSPXJHv7OUOTwbDmk
-         PuDE33v7kKuOIOcOWpuS6L125oj1UIkhMJpafFeDhwmE/rCLM9H5GPpcs1rn+CzHQakp
-         uIW5vPQR5WFEWgKEse3Wchxtl+x3gkA7zFRZD89n5uXR5xjAx8amEM7SkSQ3ZuFQOGU+
-         uVsTu7/5ux8R446F1C/gWjVTGEh7Xal9mETk6K/Kyu+rfXzwwoY7IvZRzHDKtm4NMVjC
-         2V7w==
-X-Forwarded-Encrypted: i=1; AKwUvBwCxu9ASN3G366BEvQU3izM8VWv7LWJv7Gcm8A9l2GDb94SP8WdIQiGfAB980/p4GqB1Cni5XohW2GnUYiJ4fKx@vger.kernel.org
-X-Gm-Message-State: AFq9FYKHGoVd3/yWUtSaSitSQPnoL/KhqTtlu2q0BJSN/CBCJfMjBeVI
-	vhOn66NZAJeuylwxhnkbpS7QsvMuQNg/wQF7xG3L5yiEtKU3A0gBTNXy
-X-Gm-Gg: AYBFou1lPVw8NeyIctiRRRXOK6K61PdC8VoK0jxlo930m4hFKz9HyNgqgY1AgWxvXYR
-	JdQFpP1BRtWX/A1YqumupQNzM9/PKT51t3LLGVShhudRIWjyi616IdnQGmpAEt1IuQbpA1wCzLE
-	5k/mgk1PXtjVa9g52tAjlulmxkc5dk7D2GvKFebNk/zYD9+5KbFwSp6MTFsDfMqBOPwHLRz1lLq
-	LOPg2BAryAxOzLnKrfUH4ooWapeLXqPL+GDDKgvH8RLNmgEaWfaU9I8lwdsPfdo9lnjMcZZ/3uS
-	szHCzta+eXfWLoFw6D8OOSwHZwiJYceLmugpJr56EVdptqpoRDzIWy/UL9A4/4oqT7SWOEyHtjO
-	md0WYUnpXUMz+kBmtxSsr4lelAUdosLPnt9J+eqbw1jsYtSoqJWmgpjAaLrQyeypieTjEYwWStY
-	lU3r97YZMo5gyUFxP+CAf1DR3tNxTDXOhPvIUVpFRPSYmttQmoU9xd76+BS+TY3oNmEGq14a8=
-X-Received: by 2002:a05:7300:8819:b0:351:657e:a426 with SMTP id 5a478bee46e88-3537dc8b4a4mr23572868eec.0.1791973980433;
-        Wed, 14 Oct 2026 03:33:00 -0700 (PDT)
+        bh=GbTpK13BE+gSPxE+FJjdjgUJr/YW1bm7yl3u7boBhdA=;
+        b=MWjNqdt4NKbTGN/3z2ZXKBhrAIR6wZscHI9plkHpGjmaFRX67IQZwbkXEQPYh081aA
+         M2sKwehbg6dCudXKfRccv8QNBwqteaNWur8dTC3xA2pwT6jePLi85S2/+/zwUnaaG7fq
+         W3K6Rh0ZdtPTlahgetF1RiNylOlyKg8BH2DW4TDsfavvb4nYfBzHEWMW3p+bNa4A+vhI
+         kb4w6ta6OSgWfZW1qNZ58Bz/evSpQcnUJdx9sMh4y9AqlV90e9VibCSVsyMgw7lt8Rdd
+         LcKpS42glTlgu1Xecj3D88IeR69yKXaFdvucrO3dGCyF6957QuSVo8vbZVOBaJzVRbWy
+         o8vQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzF8EV370/Xt98NsevANPkuF6CEHQbzf3LyPkH3fEOuJlYuZho5gd7ZcvZ+aKeOmU9uynjYmI+36GhVa8PpDY9B@vger.kernel.org
+X-Gm-Message-State: AFq9FYLWVri5/oQq7ZyhpApCSpttJgVDrlreRrwnrQa5XpIEFQ9PIDIi
+	zkZGDjyXTDhyiZ7PlfcGvSwEUjA/KgyvFUpI1oG1oDWhx4dj7eQG8YcB
+X-Gm-Gg: AYBFou204jjxs81kj3jAjGe8gP6o7ChYqoy+fT0OJyBa/klcfJNtBXyTL/MsViqjyFf
+	8nURA0mxHfmkJUovgTF6CDOp0OlfeXGq50KjOibLvEsnqkT/7bIfeymKyrA8DxI7CHmn7KDA6Wg
+	87scyjjcWFEhw+ijxn4d6suWHWMwqxiKgwSJW1w1g7ZO4EOyXD1gI7p38HDyPJ7f7jAHGCsuKkX
+	jKD9+mSZFBDSUd7Bt4V77Z2twQCH3YStJEsf91cxdmlrnxsFaNMe6bI5i0w74QtGLHSXR+Cmfv2
+	czigIejipNgWXEZyUfbeiIJvvuHcYoZWSb2Xhy86bBEpBcxxEM/37EHTzyCx8TeidCVSkiUROOf
+	q98Tao2OPUI9mNrSUr4JWzETGCigkTBavzXeTpJOCguQJAjxbnCvM2Owg/XT5Bq2/kF++phONHL
+	SPv9FDwjltv2ZCawEEdN7w9KYI418tkge1BdtOZQWEqvO3cpMkHMOaHMV1V/wNEU5f0BT+B8s=
+X-Received: by 2002:a05:693c:8951:20b0:35b:782c:aa31 with SMTP id 5a478bee46e88-35b783bf575mr9419120eec.28.1791973985605;
+        Wed, 14 Oct 2026 03:33:05 -0700 (PDT)
 Received: from nevers1dd ([118.95.161.132])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-358ee8a3387sm42371533eec.15.2026.10.14.03.32.57
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-358ee8a3387sm42371533eec.15.2026.10.14.03.33.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Oct 2026 03:33:00 -0700 (PDT)
+        Wed, 14 Oct 2026 03:33:05 -0700 (PDT)
 From: Siddharth Karanam <sid9.karanam@gmail.com>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org
 Cc: linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	Siddharth Karanam <sid9.karanam@gmail.com>
-Subject: [PATCH v2 1/2] remoteproc: Add ti_sci_dev_ops abstraction
-Date: Wed, 14 Oct 2026 16:02:40 +0530
-Message-ID: <20261014103241.3847-2-sid9.karanam@gmail.com>
+Subject: [PATCH v2 2/2] remoteproc: Merge ti_sci_dev and ti_sci_proc abstraction
+Date: Wed, 14 Oct 2026 16:02:41 +0530
+Message-ID: <20261014103241.3847-3-sid9.karanam@gmail.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20261014103241.3847-1-sid9.karanam@gmail.com>
 References: <20261014103241.3847-1-sid9.karanam@gmail.com>
@@ -78,430 +78,866 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Instead of invoking ti_sci_handle's ti_sci_dev_ops member directly
-in the driver code, this abstracts the property read of
-"ti,sci-dev-id" and the function pointers supported by
-ti_sci_dev_ops such as is_on, get_device and put_device.
+The previous version of the patch had a new header ti_sci_dev.h,
+that mirrors ti_sci_proc.h in terms of the struct decl and
+its helper function structure, with the goal of abstracting
+all ti_sci_handle's members like ti_sci_dev_ops from being
+invoked directly in the driver code.
+
+Upon discussing in the original patch thread, it seemed
+better to combine ti_sci_proc.h and ti_sci_dev.h's structs
+and merge all their helpers into a single header. That is
+what ti_sci_ctrl.h aims to do: It has the union of tsd
+(ti_sci_dev) and tsp (ti_sci_proc) and both their helper
+functions are prefixed with ti_sci_ctrl_dev and
+ti_sci_ctrl_proc respectively.
 
 The goal of the patch is to maintain a single source
-of origin for all ti_sci_dev_ops call sites. Any stray calls
-to any dev_ops function pointer members in driver code should
+of origin for all ti_sci_dev/proc_ops call sites. Any stray calls
+to dev_ops/proc_ops function pointer members in driver code should
 eventually be abstracted through this header.
+
+In the future we can try to abstract tsd's dev_ops even further
+through pm_runtime, but there are some roadblocks that
+I am unaware of, so that warranties a different patch.
 
 Signed-off-by: Siddharth Karanam <sid9.karanam@gmail.com>
 ---
- drivers/remoteproc/ti_k3_common.c         | 16 ++---
- drivers/remoteproc/ti_k3_common.h         |  4 +-
- drivers/remoteproc/ti_k3_dsp_remoteproc.c | 14 ++--
- drivers/remoteproc/ti_k3_m4_remoteproc.c  | 13 ++--
- drivers/remoteproc/ti_k3_r5_remoteproc.c  | 40 +++++------
- drivers/remoteproc/ti_sci_dev.h           | 82 +++++++++++++++++++++++
- 6 files changed, 120 insertions(+), 49 deletions(-)
- create mode 100644 drivers/remoteproc/ti_sci_dev.h
+ drivers/remoteproc/ti_k3_common.c         |  17 +--
+ drivers/remoteproc/ti_k3_common.h         |   6 +-
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c |  26 ++--
+ drivers/remoteproc/ti_k3_m4_remoteproc.c  |  24 ++-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  |  58 +++----
+ drivers/remoteproc/ti_sci_ctrl.h          | 177 ++++++++++++++++++++++
+ drivers/remoteproc/ti_sci_dev.h           |  82 ----------
+ drivers/remoteproc/ti_sci_proc.h          | 130 ----------------
+ 8 files changed, 231 insertions(+), 289 deletions(-)
+ create mode 100644 drivers/remoteproc/ti_sci_ctrl.h
+ delete mode 100644 drivers/remoteproc/ti_sci_dev.h
+ delete mode 100644 drivers/remoteproc/ti_sci_proc.h
 
 diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index 3cb8ae5d72f6..befa9a9bea3a 100644
+index befa9a9bea3a..f778ae545bde 100644
 --- a/drivers/remoteproc/ti_k3_common.c
 +++ b/drivers/remoteproc/ti_k3_common.c
-@@ -32,6 +32,7 @@
+@@ -32,8 +32,7 @@
  
  #include "omap_remoteproc.h"
  #include "remoteproc_internal.h"
-+#include "ti_sci_dev.h"
- #include "ti_sci_proc.h"
+-#include "ti_sci_dev.h"
+-#include "ti_sci_proc.h"
++#include "ti_sci_ctrl.h"
  #include "ti_k3_common.h"
  
-@@ -120,8 +121,7 @@ int k3_rproc_reset(struct k3_rproc *kproc)
+ /**
+@@ -121,7 +120,7 @@ int k3_rproc_reset(struct k3_rproc *kproc)
  		if (ret)
  			dev_err(dev, "local-reset assert failed (%pe)\n", ERR_PTR(ret));
  	} else {
--		ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--							    kproc->ti_sci_id);
-+		ret = ti_sci_dev_put_device(kproc->tsd);
+-		ret = ti_sci_dev_put_device(kproc->tsd);
++		ret = ti_sci_ctrl_dev_put_device(kproc->tsc);
  		if (ret)
  			dev_err(dev, "module-reset assert failed (%pe)\n", ERR_PTR(ret));
  	}
-@@ -140,13 +140,11 @@ int k3_rproc_release(struct k3_rproc *kproc)
+@@ -140,11 +139,11 @@ int k3_rproc_release(struct k3_rproc *kproc)
  		ret = reset_control_deassert(kproc->reset);
  		if (ret) {
  			dev_err(dev, "local-reset deassert failed, (%pe)\n", ERR_PTR(ret));
--			if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--								  kproc->ti_sci_id))
-+			if (ti_sci_dev_put_device(kproc->tsd))
+-			if (ti_sci_dev_put_device(kproc->tsd))
++			if (ti_sci_ctrl_dev_put_device(kproc->tsc))
  				dev_warn(dev, "module-reset assert back failed\n");
  		}
  	} else {
--		ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
--							    kproc->ti_sci_id);
-+		ret = ti_sci_dev_get_device(kproc->tsd);
+-		ret = ti_sci_dev_get_device(kproc->tsd);
++		ret = ti_sci_ctrl_dev_get_device(kproc->tsc);
  		if (ret)
  			dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
  	}
-@@ -223,8 +221,7 @@ int k3_rproc_prepare(struct rproc *rproc)
+@@ -221,7 +220,7 @@ int k3_rproc_prepare(struct rproc *rproc)
  		}
  	}
  
--	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
--						    kproc->ti_sci_id);
-+	ret = ti_sci_dev_get_device(kproc->tsd);
+-	ret = ti_sci_dev_get_device(kproc->tsd);
++	ret = ti_sci_ctrl_dev_get_device(kproc->tsc);
  	if (ret) {
  		dev_err(dev, "could not deassert module-reset for internal RAM loading\n");
  		return ret;
-@@ -253,8 +250,7 @@ int k3_rproc_unprepare(struct rproc *rproc)
+@@ -250,7 +249,7 @@ int k3_rproc_unprepare(struct rproc *rproc)
  	if (rproc->state == RPROC_DETACHED)
  		return 0;
  
--	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--						    kproc->ti_sci_id);
-+	ret = ti_sci_dev_put_device(kproc->tsd);
+-	ret = ti_sci_dev_put_device(kproc->tsd);
++	ret = ti_sci_ctrl_dev_put_device(kproc->tsc);
  	if (ret) {
  		dev_err(dev, "module-reset assert failed\n");
  		return ret;
+@@ -528,9 +527,9 @@ EXPORT_SYMBOL_GPL(k3_reserved_mem_init);
+ 
+ void k3_release_tsp(void *data)
+ {
+-	struct ti_sci_proc *tsp = data;
++	struct ti_sci_ctrl *tsc = data;
+ 
+-	ti_sci_proc_release(tsp);
++	ti_sci_ctrl_proc_release(tsc);
+ }
+ EXPORT_SYMBOL_GPL(k3_release_tsp);
+ 
 diff --git a/drivers/remoteproc/ti_k3_common.h b/drivers/remoteproc/ti_k3_common.h
-index aee3c28dbe51..7ba0903ebe0a 100644
+index 7ba0903ebe0a..f4b9bb0fa0f0 100644
 --- a/drivers/remoteproc/ti_k3_common.h
 +++ b/drivers/remoteproc/ti_k3_common.h
-@@ -72,8 +72,8 @@ struct k3_rproc_dev_data {
+@@ -71,8 +71,7 @@ struct k3_rproc_dev_data {
+  * @num_rmems: number of reserved memory regions
   * @reset: reset control handle
   * @data: pointer to DSP-specific device data
-  * @tsp: TI-SCI processor control handle
-+ * @tsd: TI-SCI device control handle
+- * @tsp: TI-SCI processor control handle
+- * @tsd: TI-SCI device control handle
++ * @tsc: TI-SCI control handle
   * @ti_sci: TI-SCI handle
-- * @ti_sci_id: TI-SCI device identifier
   * @mbox: mailbox channel handle
   * @client: mailbox client to request the mailbox channel
-  * @priv: void pointer to carry any private data
-@@ -88,8 +88,8 @@ struct k3_rproc {
+@@ -87,8 +86,7 @@ struct k3_rproc {
+ 	int num_rmems;
  	struct reset_control *reset;
  	const struct k3_rproc_dev_data *data;
- 	struct ti_sci_proc *tsp;
-+	struct ti_sci_dev *tsd;
+-	struct ti_sci_proc *tsp;
+-	struct ti_sci_dev *tsd;
++	struct ti_sci_ctrl *tsc;
  	const struct ti_sci_handle *ti_sci;
--	u32 ti_sci_id;
  	struct mbox_chan *mbox;
  	struct mbox_client client;
- 	void *priv;
 diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-index d6ceea6dc920..b6042fe7bae7 100644
+index b6042fe7bae7..6cbf21c82e85 100644
 --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
-@@ -19,6 +19,7 @@
+@@ -19,8 +19,7 @@
  
  #include "omap_remoteproc.h"
  #include "remoteproc_internal.h"
-+#include "ti_sci_dev.h"
- #include "ti_sci_proc.h"
+-#include "ti_sci_dev.h"
+-#include "ti_sci_proc.h"
++#include "ti_sci_ctrl.h"
  #include "ti_k3_common.h"
  
-@@ -69,7 +70,6 @@ static const struct rproc_ops k3_dsp_rproc_ops = {
- static int k3_dsp_rproc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *np = dev->of_node;
- 	const struct k3_rproc_dev_data *data;
- 	struct k3_rproc *kproc;
- 	struct rproc *rproc;
-@@ -110,10 +110,6 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
- 				     "failed to get ti-sci handle\n");
+ /*
+@@ -45,7 +44,7 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
+ 	}
  
--	ret = of_property_read_u32(np, "ti,sci-dev-id", &kproc->ti_sci_id);
--	if (ret)
--		return dev_err_probe(dev, ret, "missing 'ti,sci-dev-id' property\n");
--
- 	kproc->reset = devm_reset_control_get_exclusive(dev, NULL);
- 	if (IS_ERR(kproc->reset))
+ 	dev_dbg(dev, "booting DSP core using boot addr = 0x%x\n", boot_addr);
+-	ret = ti_sci_proc_set_config(kproc->tsp, boot_addr, 0, 0);
++	ret = ti_sci_ctrl_proc_set_config(kproc->tsc, boot_addr, 0, 0);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -115,22 +114,17 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
  		return dev_err_probe(dev, PTR_ERR(kproc->reset),
-@@ -124,6 +120,11 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
- 				     "failed to construct ti-sci proc control\n");
+ 				     "failed to get reset\n");
  
-+	kproc->tsd = ti_sci_dev_of_get_tsd(dev, kproc->ti_sci);
-+	if (IS_ERR(kproc->tsd))
-+		return dev_err_probe(dev, PTR_ERR(kproc->tsd),
-+				     "failed to construct ti-sci dev control\n");
-+
- 	ret = ti_sci_proc_request(kproc->tsp);
+-	kproc->tsp = ti_sci_proc_of_get_tsp(dev, kproc->ti_sci);
+-	if (IS_ERR(kproc->tsp))
+-		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
+-				     "failed to construct ti-sci proc control\n");
++	kproc->tsc = ti_sci_ctrl_of_get(dev, kproc->ti_sci);
++	if (IS_ERR(kproc->tsc))
++		return dev_err_probe(dev, PTR_ERR(kproc->tsc),
++				     "failed to get construct ti-sci control\n");
+ 
+-	kproc->tsd = ti_sci_dev_of_get_tsd(dev, kproc->ti_sci);
+-	if (IS_ERR(kproc->tsd))
+-		return dev_err_probe(dev, PTR_ERR(kproc->tsd),
+-				     "failed to construct ti-sci dev control\n");
+-
+-	ret = ti_sci_proc_request(kproc->tsp);
++	ret = ti_sci_ctrl_proc_request(kproc->tsc);
  	if (ret < 0) {
- 		dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
-@@ -141,8 +142,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+-		dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
++		dev_err_probe(dev, ret, "ti_sci_ctrl_proc_request failed\n");
+ 		return ret;
+ 	}
+-	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsp);
++	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsc);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -142,7 +136,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
  	if (ret)
  		return dev_err_probe(dev, ret, "reserved memory init failed\n");
  
--	ret = kproc->ti_sci->ops.dev_ops.is_on(kproc->ti_sci, kproc->ti_sci_id,
--					       NULL, &p_state);
-+	ret = ti_sci_dev_is_on(kproc->tsd, NULL, &p_state);
+-	ret = ti_sci_dev_is_on(kproc->tsd, NULL, &p_state);
++	ret = ti_sci_ctrl_dev_is_on(kproc->tsc, NULL, &p_state);
  	if (ret)
  		return dev_err_probe(dev, ret, "failed to get initial state, mode cannot be determined\n");
  
 diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-index 3a11fd24eb52..ddf8cb9974ca 100644
+index ddf8cb9974ca..9c789a92d083 100644
 --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
-@@ -18,6 +18,7 @@
+@@ -18,8 +18,7 @@
  
  #include "omap_remoteproc.h"
  #include "remoteproc_internal.h"
-+#include "ti_sci_dev.h"
- #include "ti_sci_proc.h"
+-#include "ti_sci_dev.h"
+-#include "ti_sci_proc.h"
++#include "ti_sci_ctrl.h"
  #include "ti_k3_common.h"
  
-@@ -70,10 +71,6 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(kproc->ti_sci),
- 				     "failed to get ti-sci handle\n");
- 
--	ret = of_property_read_u32(dev->of_node, "ti,sci-dev-id", &kproc->ti_sci_id);
--	if (ret)
--		return dev_err_probe(dev, ret, "missing 'ti,sci-dev-id' property\n");
--
- 	kproc->reset = devm_reset_control_get_exclusive(dev, NULL);
+ static const struct rproc_ops k3_m4_rproc_ops = {
+@@ -75,20 +74,15 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
  	if (IS_ERR(kproc->reset))
  		return dev_err_probe(dev, PTR_ERR(kproc->reset), "failed to get reset\n");
-@@ -83,6 +80,11 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
- 				     "failed to construct ti-sci proc control\n");
  
-+	kproc->tsd = ti_sci_dev_of_get_tsd(dev, kproc->ti_sci);
-+	if (IS_ERR(kproc->tsd))
-+		return dev_err_probe(dev, PTR_ERR(kproc->tsd),
-+				     "failed to construct ti-sci dev control\n");
-+
- 	ret = ti_sci_proc_request(kproc->tsp);
+-	kproc->tsp = ti_sci_proc_of_get_tsp(dev, kproc->ti_sci);
+-	if (IS_ERR(kproc->tsp))
+-		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
+-				     "failed to construct ti-sci proc control\n");
++	kproc->tsc = ti_sci_ctrl_of_get(dev, kproc->ti_sci);
++	if (IS_ERR(kproc->tsc))
++		return dev_err_probe(dev, PTR_ERR(kproc->tsc),
++				     "failed to construct ti-sci control\n");
+ 
+-	kproc->tsd = ti_sci_dev_of_get_tsd(dev, kproc->ti_sci);
+-	if (IS_ERR(kproc->tsd))
+-		return dev_err_probe(dev, PTR_ERR(kproc->tsd),
+-				     "failed to construct ti-sci dev control\n");
+-
+-	ret = ti_sci_proc_request(kproc->tsp);
++	ret = ti_sci_ctrl_proc_request(kproc->tsc);
  	if (ret < 0)
- 		return dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
-@@ -98,8 +100,7 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
+-		return dev_err_probe(dev, ret, "ti_sci_proc_request failed\n");
+-	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsp);
++		return dev_err_probe(dev, ret, "ti_sci_ctrl_proc_request failed\n");
++	ret = devm_add_action_or_reset(dev, k3_release_tsp, kproc->tsc);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -100,7 +94,7 @@ static int k3_m4_rproc_probe(struct platform_device *pdev)
  	if (ret)
  		return dev_err_probe(dev, ret, "reserved memory init failed\n");
  
--	ret = kproc->ti_sci->ops.dev_ops.is_on(kproc->ti_sci, kproc->ti_sci_id,
--					       &r_state, &p_state);
-+	ret = ti_sci_dev_is_on(kproc->tsd, &r_state, &p_state);
+-	ret = ti_sci_dev_is_on(kproc->tsd, &r_state, &p_state);
++	ret = ti_sci_ctrl_dev_is_on(kproc->tsc, &r_state, &p_state);
  	if (ret)
  		return dev_err_probe(dev, ret,
  				     "failed to get initial state, mode cannot be determined\n");
 diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-index b1d04d082e44..a387848ac400 100644
+index a387848ac400..caeeb18581d0 100644
 --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
 +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
-@@ -25,6 +25,7 @@
+@@ -25,8 +25,7 @@
  
  #include "omap_remoteproc.h"
  #include "remoteproc_internal.h"
-+#include "ti_sci_dev.h"
- #include "ti_sci_proc.h"
+-#include "ti_sci_dev.h"
+-#include "ti_sci_proc.h"
++#include "ti_sci_ctrl.h"
  #include "ti_k3_common.h"
  
-@@ -140,8 +141,7 @@ static int k3_r5_split_reset(struct k3_rproc *kproc)
+ /* This address can either be for ATCM or BTCM with the other at address 0x0 */
+@@ -141,7 +140,7 @@ static int k3_r5_split_reset(struct k3_rproc *kproc)
  		return ret;
  	}
  
--	ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--						    kproc->ti_sci_id);
-+	ret = ti_sci_dev_put_device(kproc->tsd);
+-	ret = ti_sci_dev_put_device(kproc->tsd);
++	ret = ti_sci_ctrl_dev_put_device(kproc->tsc);
  	if (ret) {
  		dev_err(kproc->dev, "module-reset assert failed, ret = %d\n",
  			ret);
-@@ -156,8 +156,7 @@ static int k3_r5_split_release(struct k3_rproc *kproc)
+@@ -156,7 +155,7 @@ static int k3_r5_split_release(struct k3_rproc *kproc)
  {
  	int ret;
  
--	ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
--						    kproc->ti_sci_id);
-+	ret = ti_sci_dev_get_device(kproc->tsd);
+-	ret = ti_sci_dev_get_device(kproc->tsd);
++	ret = ti_sci_ctrl_dev_get_device(kproc->tsc);
  	if (ret) {
  		dev_err(kproc->dev, "module-reset deassert failed, ret = %d\n",
  			ret);
-@@ -168,8 +167,7 @@ static int k3_r5_split_release(struct k3_rproc *kproc)
+@@ -167,7 +166,7 @@ static int k3_r5_split_release(struct k3_rproc *kproc)
  	if (ret) {
  		dev_err(kproc->dev, "local-reset deassert failed, ret = %d\n",
  			ret);
--		if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--							  kproc->ti_sci_id))
-+		if (ti_sci_dev_put_device(kproc->tsd))
+-		if (ti_sci_dev_put_device(kproc->tsd))
++		if (ti_sci_ctrl_dev_put_device(kproc->tsc))
  			dev_warn(kproc->dev, "module-reset assert back failed\n");
  	}
  
-@@ -196,8 +194,7 @@ static int k3_r5_lockstep_reset(struct k3_r5_cluster *cluster)
+@@ -194,7 +193,7 @@ static int k3_r5_lockstep_reset(struct k3_r5_cluster *cluster)
  	/* disable PSC modules on all applicable cores */
  	list_for_each_entry(core, &cluster->cores, elem) {
  		kproc = core->kproc;
--		ret = kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--							    kproc->ti_sci_id);
-+		ret = ti_sci_dev_put_device(kproc->tsd);
+-		ret = ti_sci_dev_put_device(kproc->tsd);
++		ret = ti_sci_ctrl_dev_put_device(kproc->tsc);
  		if (ret) {
  			dev_err(core->dev, "module-reset assert failed, ret = %d\n",
  				ret);
-@@ -210,8 +207,7 @@ static int k3_r5_lockstep_reset(struct k3_r5_cluster *cluster)
+@@ -207,7 +206,7 @@ static int k3_r5_lockstep_reset(struct k3_r5_cluster *cluster)
  unroll_module_reset:
  	list_for_each_entry_continue_reverse(core, &cluster->cores, elem) {
  		kproc = core->kproc;
--		if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--							  kproc->ti_sci_id))
-+		if (ti_sci_dev_put_device(kproc->tsd))
+-		if (ti_sci_dev_put_device(kproc->tsd))
++		if (ti_sci_ctrl_dev_put_device(kproc->tsc))
  			dev_warn(core->dev, "module-reset assert back failed\n");
  	}
  	core = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
-@@ -233,8 +229,7 @@ static int k3_r5_lockstep_release(struct k3_r5_cluster *cluster)
+@@ -229,7 +228,7 @@ static int k3_r5_lockstep_release(struct k3_r5_cluster *cluster)
  	/* enable PSC modules on all applicable cores */
  	list_for_each_entry_reverse(core, &cluster->cores, elem) {
  		kproc = core->kproc;
--		ret = kproc->ti_sci->ops.dev_ops.get_device(kproc->ti_sci,
--							    kproc->ti_sci_id);
-+		ret = ti_sci_dev_get_device(kproc->tsd);
+-		ret = ti_sci_dev_get_device(kproc->tsd);
++		ret = ti_sci_ctrl_dev_get_device(kproc->tsc);
  		if (ret) {
  			dev_err(core->dev, "module-reset deassert failed, ret = %d\n",
  				ret);
-@@ -264,8 +259,7 @@ static int k3_r5_lockstep_release(struct k3_r5_cluster *cluster)
+@@ -259,7 +258,7 @@ static int k3_r5_lockstep_release(struct k3_r5_cluster *cluster)
  unroll_module_reset:
  	list_for_each_entry_from(core, &cluster->cores, elem) {
  		kproc = core->kproc;
--		if (kproc->ti_sci->ops.dev_ops.put_device(kproc->ti_sci,
--							  kproc->ti_sci_id))
-+		if (ti_sci_dev_put_device(kproc->tsd))
+-		if (ti_sci_dev_put_device(kproc->tsd))
++		if (ti_sci_ctrl_dev_put_device(kproc->tsc))
  			dev_warn(core->dev, "module-reset assert back failed\n");
  	}
  
-@@ -827,8 +821,7 @@ static int k3_r5_rproc_configure_mode(struct k3_rproc *kproc)
+@@ -268,13 +267,13 @@ static int k3_r5_lockstep_release(struct k3_r5_cluster *cluster)
+ 
+ static inline int k3_r5_core_halt(struct k3_rproc *kproc)
+ {
+-	return ti_sci_proc_set_control(kproc->tsp,
++	return ti_sci_ctrl_proc_set_control(kproc->tsc,
+ 				       PROC_BOOT_CTRL_FLAG_R5_CORE_HALT, 0);
+ }
+ 
+ static inline int k3_r5_core_run(struct k3_rproc *kproc)
+ {
+-	return ti_sci_proc_set_control(kproc->tsp,
++	return ti_sci_ctrl_proc_set_control(kproc->tsc,
+ 				       0, PROC_BOOT_CTRL_FLAG_R5_CORE_HALT);
+ }
+ 
+@@ -328,7 +327,7 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+ 		}
+ 	}
+ 
+-	ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl, &stat);
++	ret = ti_sci_ctrl_proc_get_status(kproc->tsc, &boot_vec, &cfg, &ctrl, &stat);
+ 	if (ret < 0)
+ 		return ret;
+ 	mem_init_dis = !!(cfg & PROC_BOOT_CFG_FLAG_R5_MEM_INIT_DIS);
+@@ -469,7 +468,7 @@ static int k3_r5_rproc_start(struct rproc *rproc)
+ 	dev_dbg(dev, "booting R5F core using boot addr = 0x%x\n", boot_addr);
+ 
+ 	/* boot vector need not be programmed for Core1 in LockStep mode */
+-	ret = ti_sci_proc_set_config(kproc->tsp, boot_addr, 0, 0);
++	ret = ti_sci_ctrl_proc_set_config(kproc->tsc, boot_addr, 0, 0);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -612,7 +611,7 @@ static const struct rproc_ops k3_r5_rproc_ops = {
+  * by the System Processor.
+  *
+  * This function is used to pre-configure these settings for each R5F core, and
+- * the configuration is all done through various ti_sci_proc functions that
++ * the configuration is all done through various ti_sci_ctrl functions that
+  * communicate with the System Processor. The function also ensures that both
+  * the cores are halted before the .prepare() step.
+  *
+@@ -654,7 +653,7 @@ static int k3_r5_rproc_configure(struct k3_rproc *kproc)
+ 		core = kproc->priv;
+ 	}
+ 
+-	ret = ti_sci_proc_get_status(core->kproc->tsp, &boot_vec, &cfg, &ctrl,
++	ret = ti_sci_ctrl_proc_get_status(core->kproc->tsc, &boot_vec, &cfg, &ctrl,
+ 				     &stat);
+ 	if (ret < 0)
+ 		return ret;
+@@ -732,7 +731,7 @@ static int k3_r5_rproc_configure(struct k3_rproc *kproc)
+ 				clr_cfg &= ~PROC_BOOT_CFG_FLAG_R5_LOCKSTEP;
+ 				clr_cfg &= ~PROC_BOOT_CFG_FLAG_R5_TEINIT;
+ 			}
+-			ret = ti_sci_proc_set_config(temp->kproc->tsp, boot_vec,
++			ret = ti_sci_ctrl_proc_set_config(temp->kproc->tsc, boot_vec,
+ 						     set_cfg, clr_cfg);
+ 			if (ret)
+ 				goto out;
+@@ -740,14 +739,14 @@ static int k3_r5_rproc_configure(struct k3_rproc *kproc)
+ 
+ 		set_cfg = PROC_BOOT_CFG_FLAG_R5_LOCKSTEP;
+ 		clr_cfg = 0;
+-		ret = ti_sci_proc_set_config(core->kproc->tsp, boot_vec,
++		ret = ti_sci_ctrl_proc_set_config(core->kproc->tsc, boot_vec,
+ 					     set_cfg, clr_cfg);
+ 	} else {
+ 		ret = k3_r5_core_halt(core->kproc);
+ 		if (ret)
+ 			goto out;
+ 
+-		ret = ti_sci_proc_set_config(core->kproc->tsp, boot_vec,
++		ret = ti_sci_ctrl_proc_set_config(core->kproc->tsc, boot_vec,
+ 					     set_cfg, clr_cfg);
+ 	}
+ 
+@@ -821,7 +820,7 @@ static int k3_r5_rproc_configure_mode(struct k3_rproc *kproc)
  
  	core0 = list_first_entry(&cluster->cores, struct k3_r5_core, elem);
  
--	ret = kproc->ti_sci->ops.dev_ops.is_on(kproc->ti_sci, kproc->ti_sci_id,
--					       &r_state, &c_state);
-+	ret = ti_sci_dev_is_on(kproc->tsd, &r_state, &c_state);
+-	ret = ti_sci_dev_is_on(kproc->tsd, &r_state, &c_state);
++	ret = ti_sci_ctrl_dev_is_on(kproc->tsc, &r_state, &c_state);
  	if (ret) {
  		dev_err(cdev, "failed to get initial state, mode cannot be determined, ret = %d\n",
  			ret);
-@@ -1023,7 +1016,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct k3_rproc *kproc;
- 	struct k3_r5_core *core, *core1;
--	struct device_node *np;
- 	struct device *cdev;
- 	const char *fw_name;
- 	struct rproc *rproc;
-@@ -1032,7 +1024,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
- 	core1 = list_last_entry(&cluster->cores, struct k3_r5_core, elem);
- 	list_for_each_entry(core, &cluster->cores, elem) {
- 		cdev = core->dev;
--		np = dev_of_node(cdev);
- 		ret = rproc_of_parse_firmware(cdev, 0, &fw_name);
- 		if (ret) {
- 			dev_err(dev, "failed to parse firmware-name property, ret = %d\n",
-@@ -1067,12 +1058,6 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+@@ -845,7 +844,7 @@ static int k3_r5_rproc_configure_mode(struct k3_rproc *kproc)
+ 	 */
+ 	core->released_from_reset = c_state;
+ 
+-	ret = ti_sci_proc_get_status(kproc->tsp, &boot_vec, &cfg, &ctrl,
++	ret = ti_sci_ctrl_proc_get_status(kproc->tsc, &boot_vec, &cfg, &ctrl,
+ 				     &stat);
+ 	if (ret < 0) {
+ 		dev_err(cdev, "failed to get initial processor status, ret = %d\n",
+@@ -1065,17 +1064,10 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
  			goto out;
  		}
  
--		ret = of_property_read_u32(np, "ti,sci-dev-id", &kproc->ti_sci_id);
--		if (ret) {
--			dev_err(cdev, "missing 'ti,sci-dev-id' property\n");
+-		kproc->tsp = ti_sci_proc_of_get_tsp(cdev, kproc->ti_sci);
+-		if (IS_ERR(kproc->tsp)) {
+-			ret = dev_err_probe(cdev, PTR_ERR(kproc->tsp),
+-					    "failed to construct ti-sci proc control\n");
 -			goto out;
 -		}
 -
- 		kproc->reset = devm_reset_control_get_exclusive(cdev, NULL);
- 		if (IS_ERR(kproc->reset)) {
- 			ret = dev_err_probe(cdev, PTR_ERR(kproc->reset),
-@@ -1087,6 +1072,13 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+-		kproc->tsd = ti_sci_dev_of_get_tsd(cdev, kproc->ti_sci);
+-		if (IS_ERR(kproc->tsd)) {
+-			ret = dev_err_probe(cdev, PTR_ERR(kproc->tsd),
+-					    "failed to construct ti-sci dev control\n");
++		kproc->tsc = ti_sci_ctrl_of_get(cdev, kproc->ti_sci);
++		if (IS_ERR(kproc->tsc)) {
++			ret = dev_err_probe(cdev, PTR_ERR(kproc->tsc),
++					    "failed to construct ti-sci control\n");
  			goto out;
  		}
  
-+		kproc->tsd = ti_sci_dev_of_get_tsd(cdev, kproc->ti_sci);
-+		if (IS_ERR(kproc->tsd)) {
-+			ret = dev_err_probe(cdev, PTR_ERR(kproc->tsd),
-+					    "failed to construct ti-sci dev control\n");
-+			goto out;
-+		}
-+
- 		ret = k3_r5_core_of_get_internal_memories(to_platform_device(cdev), kproc);
- 		if (ret) {
- 			dev_err(cdev, "failed to get internal memories, ret = %d\n",
-diff --git a/drivers/remoteproc/ti_sci_dev.h b/drivers/remoteproc/ti_sci_dev.h
+@@ -1086,13 +1078,13 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+ 			goto out;
+ 		}
+ 
+-		ret = ti_sci_proc_request(kproc->tsp);
++		ret = ti_sci_ctrl_proc_request(kproc->tsc);
+ 		if (ret < 0) {
+ 			dev_err(cdev, "ti_sci_proc_request failed, ret = %d\n", ret);
+ 			goto out;
+ 		}
+ 
+-		ret = devm_add_action_or_reset(cdev, k3_release_tsp, kproc->tsp);
++		ret = devm_add_action_or_reset(cdev, k3_release_tsp, kproc->tsc);
+ 		if (ret)
+ 			goto out;
+ 	}
+diff --git a/drivers/remoteproc/ti_sci_ctrl.h b/drivers/remoteproc/ti_sci_ctrl.h
 new file mode 100644
-index 000000000000..897998a97d7f
+index 000000000000..76aee8c5317a
 --- /dev/null
-+++ b/drivers/remoteproc/ti_sci_dev.h
-@@ -0,0 +1,82 @@
++++ b/drivers/remoteproc/ti_sci_ctrl.h
+@@ -0,0 +1,177 @@
 +/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * Texas Instruments TI-SCI Device Controller Helper Functions
++ * Texas Instruments TI-SCI Processor Controller Helper Functions
 + *
-+ * Copyright (C) 2026 Texas Instruments Incorporated - https://www.ti.com/
++ * Copyright (C) 2018-2026 Texas Instruments Incorporated - https://www.ti.com/
++ *	Suman Anna <s-anna@ti.com>
 + */
 +
-+#ifndef REMOTEPROC_TI_SCI_DEV_H
-+#define REMOTEPROC_TI_SCI_DEV_H
++#ifndef REMOTEPROC_TI_SCI_CTRL_H
++#define REMOTEPROC_TI_SCI_CTRL_H
 +
++#include <linux/of.h>
 +#include <linux/soc/ti/ti_sci_protocol.h>
-+#include <linux/pm_runtime.h>
 +
 +/**
-+ * struct ti_sci_dev - structure representing a device control client
++ * struct ti_sci_ctrl - structure representing a remoteproc control client
 + * @sci: cached TI-SCI protocol handle
-+ * @ops: cached TI-SCI device ops
 + * @dev: cached client device pointer
++ * @dev_ops: cached TI-SCI device ops
++ * @proc_ops: cached TI-SCI proc ops
 + * @dev_id: TI-SCI device id for the consumer remoteproc device
++ * @proc_id: processor id for the consumer remoteproc device
++ * @host_id: host id to pass the control over for this consumer remoteproc
++ *	     device
 + */
-+struct ti_sci_dev {
++struct ti_sci_ctrl {
 +	const struct ti_sci_handle *sci;
-+	const struct ti_sci_dev_ops *ops;
 +	struct device *dev;
++	const struct ti_sci_dev_ops *dev_ops;
++	const struct ti_sci_proc_ops *proc_ops;
 +	u32 dev_id;
++	u8 proc_id;
++	u8 host_id;
 +};
 +
 +static inline
-+struct ti_sci_dev *ti_sci_dev_of_get_tsd(struct device *dev,
-+					 const struct ti_sci_handle *sci)
++struct ti_sci_ctrl *ti_sci_ctrl_of_get(struct device *dev,
++				       const struct ti_sci_handle *sci)
 +{
-+	struct ti_sci_dev *tsd;
++	struct ti_sci_ctrl *tsc;
++	u32 proc_ids[2];
 +	int ret;
 +
-+	tsd = devm_kzalloc(dev, sizeof(*tsd), GFP_KERNEL);
-+	if (!tsd)
++	tsc = devm_kzalloc(dev, sizeof(*tsc), GFP_KERNEL);
++	if (!tsc)
 +		return ERR_PTR(-ENOMEM);
 +
 +	ret = of_property_read_u32(dev_of_node(dev), "ti,sci-dev-id",
-+				   &tsd->dev_id);
++				   &tsc->dev_id);
 +	if (ret < 0)
 +		return ERR_PTR(ret);
 +
-+	tsd->dev = dev;
-+	tsd->sci = sci;
-+	tsd->ops = &sci->ops.dev_ops;
++	ret = of_property_read_u32_array(dev_of_node(dev), "ti,sci-proc-ids",
++					 proc_ids, 2);
++	if (ret < 0)
++		return ERR_PTR(ret);
 +
-+	return tsd;
++	tsc->dev = dev;
++	tsc->sci = sci;
++	tsc->dev_ops = &sci->ops.dev_ops;
++	tsc->proc_ops = &sci->ops.proc_ops;
++	tsc->proc_id = proc_ids[0];
++	tsc->host_id = proc_ids[1];
++
++	return tsc;
 +}
 +
-+static inline int ti_sci_dev_is_on(struct ti_sci_dev *tsd, bool *r_state,
-+				   bool *c_state)
++/* Power-management helper functions */
++static inline int ti_sci_ctrl_dev_is_on(struct ti_sci_ctrl *tsc, bool *r_state,
++				    bool *c_state)
 +{
 +	int ret;
 +
-+	ret = tsd->ops->is_on(tsd->sci, tsd->dev_id, r_state, c_state);
++	ret = tsc->dev_ops->is_on(tsc->sci, tsc->dev_id, r_state, c_state);
 +	if (ret)
-+		dev_err(tsd->dev, "ti-sci device is_on failed: %d\n", ret);
++		dev_err(tsc->dev, "ti-sci device is_on failed: %d\n", ret);
 +	return ret;
 +}
 +
-+static inline int ti_sci_dev_get_device(struct ti_sci_dev *tsd)
++/* Request power on to rproc */
++static inline int ti_sci_ctrl_dev_get_device(struct ti_sci_ctrl *tsc)
++{
++	int ret = 0;
++
++	ret = tsc->dev_ops->get_device(tsc->sci, tsc->dev_id);
++	if (ret)
++		dev_err(tsc->dev, "ti-sci device get failed: %d\n", ret);
++	return ret;
++}
++
++/* Request power off to a rproc */
++static inline int ti_sci_ctrl_dev_put_device(struct ti_sci_ctrl *tsc)
++{
++	int ret = 0;
++
++	ret = tsc->dev_ops->put_device(tsc->sci, tsc->dev_id);
++	if (ret)
++		dev_err(tsc->dev, "ti-sci device put failed: %d\n", ret);
++	return ret;
++}
++
++/* Processor control helper functions */
++static inline int ti_sci_ctrl_proc_request(struct ti_sci_ctrl *tsc)
 +{
 +	int ret;
 +
-+	ret = tsd->ops->get_device(tsd->sci, tsd->dev_id);
++	ret = tsc->proc_ops->request(tsc->sci, tsc->proc_id);
 +	if (ret)
-+		dev_err(tsd->dev, "ti-sci device get failed: %d\n", ret);
++		dev_err(tsc->dev, "ti-sci processor request failed: %d\n",
++			ret);
 +	return ret;
 +}
 +
-+static inline int ti_sci_dev_put_device(struct ti_sci_dev *tsd)
++static inline int ti_sci_ctrl_proc_release(struct ti_sci_ctrl *tsc)
 +{
 +	int ret;
 +
-+	ret = tsd->ops->put_device(tsd->sci, tsd->dev_id);
++	ret = tsc->proc_ops->release(tsc->sci, tsc->proc_id);
 +	if (ret)
-+		dev_err(tsd->dev, "ti-sci device put failed: %d\n", ret);
++		dev_err(tsc->dev, "ti-sci processor release failed: %d\n",
++			ret);
 +	return ret;
 +}
 +
-+#endif /* REMOTEPROC_TI_SCI_DEV_H */
++static inline int ti_sci_ctrl_proc_handover(struct ti_sci_ctrl *tsc)
++{
++	int ret;
++
++	ret = tsc->proc_ops->handover(tsc->sci, tsc->proc_id, tsc->host_id);
++	if (ret)
++		dev_err(tsc->dev, "ti-sci processor handover of %d to %d failed: %d\n",
++			tsc->proc_id, tsc->host_id, ret);
++	return ret;
++}
++
++static inline int ti_sci_ctrl_proc_set_config(struct ti_sci_ctrl *tsc,
++					 u64 boot_vector,
++					 u32 cfg_set, u32 cfg_clr)
++{
++	int ret;
++
++	ret = tsc->proc_ops->set_config(tsc->sci, tsc->proc_id, boot_vector,
++					cfg_set, cfg_clr);
++	if (ret)
++		dev_err(tsc->dev, "ti-sci processor set_config failed: %d\n",
++			ret);
++	return ret;
++}
++
++static inline int ti_sci_ctrl_proc_set_control(struct ti_sci_ctrl *tsc,
++					  u32 ctrl_set, u32 ctrl_clr)
++{
++	int ret;
++
++	ret = tsc->proc_ops->set_control(tsc->sci, tsc->proc_id, ctrl_set,
++					 ctrl_clr);
++	if (ret)
++		dev_err(tsc->dev, "ti-sci processor set_control failed: %d\n",
++			ret);
++	return ret;
++}
++
++static inline int ti_sci_ctrl_proc_get_status(struct ti_sci_ctrl *tsc,
++					 u64 *boot_vector, u32 *cfg_flags,
++					 u32 *ctrl_flags, u32 *status_flags)
++{
++	int ret;
++
++	ret = tsc->proc_ops->get_status(tsc->sci, tsc->proc_id, boot_vector,
++					cfg_flags, ctrl_flags, status_flags);
++	if (ret)
++		dev_err(tsc->dev, "ti-sci processor get_status failed: %d\n",
++			ret);
++	return ret;
++}
++
++#endif /* REMOTEPROC_TI_SCI_CTRL_H */
+diff --git a/drivers/remoteproc/ti_sci_dev.h b/drivers/remoteproc/ti_sci_dev.h
+deleted file mode 100644
+index 897998a97d7f..000000000000
+--- a/drivers/remoteproc/ti_sci_dev.h
++++ /dev/null
+@@ -1,82 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Texas Instruments TI-SCI Device Controller Helper Functions
+- *
+- * Copyright (C) 2026 Texas Instruments Incorporated - https://www.ti.com/
+- */
+-
+-#ifndef REMOTEPROC_TI_SCI_DEV_H
+-#define REMOTEPROC_TI_SCI_DEV_H
+-
+-#include <linux/soc/ti/ti_sci_protocol.h>
+-#include <linux/pm_runtime.h>
+-
+-/**
+- * struct ti_sci_dev - structure representing a device control client
+- * @sci: cached TI-SCI protocol handle
+- * @ops: cached TI-SCI device ops
+- * @dev: cached client device pointer
+- * @dev_id: TI-SCI device id for the consumer remoteproc device
+- */
+-struct ti_sci_dev {
+-	const struct ti_sci_handle *sci;
+-	const struct ti_sci_dev_ops *ops;
+-	struct device *dev;
+-	u32 dev_id;
+-};
+-
+-static inline
+-struct ti_sci_dev *ti_sci_dev_of_get_tsd(struct device *dev,
+-					 const struct ti_sci_handle *sci)
+-{
+-	struct ti_sci_dev *tsd;
+-	int ret;
+-
+-	tsd = devm_kzalloc(dev, sizeof(*tsd), GFP_KERNEL);
+-	if (!tsd)
+-		return ERR_PTR(-ENOMEM);
+-
+-	ret = of_property_read_u32(dev_of_node(dev), "ti,sci-dev-id",
+-				   &tsd->dev_id);
+-	if (ret < 0)
+-		return ERR_PTR(ret);
+-
+-	tsd->dev = dev;
+-	tsd->sci = sci;
+-	tsd->ops = &sci->ops.dev_ops;
+-
+-	return tsd;
+-}
+-
+-static inline int ti_sci_dev_is_on(struct ti_sci_dev *tsd, bool *r_state,
+-				   bool *c_state)
+-{
+-	int ret;
+-
+-	ret = tsd->ops->is_on(tsd->sci, tsd->dev_id, r_state, c_state);
+-	if (ret)
+-		dev_err(tsd->dev, "ti-sci device is_on failed: %d\n", ret);
+-	return ret;
+-}
+-
+-static inline int ti_sci_dev_get_device(struct ti_sci_dev *tsd)
+-{
+-	int ret;
+-
+-	ret = tsd->ops->get_device(tsd->sci, tsd->dev_id);
+-	if (ret)
+-		dev_err(tsd->dev, "ti-sci device get failed: %d\n", ret);
+-	return ret;
+-}
+-
+-static inline int ti_sci_dev_put_device(struct ti_sci_dev *tsd)
+-{
+-	int ret;
+-
+-	ret = tsd->ops->put_device(tsd->sci, tsd->dev_id);
+-	if (ret)
+-		dev_err(tsd->dev, "ti-sci device put failed: %d\n", ret);
+-	return ret;
+-}
+-
+-#endif /* REMOTEPROC_TI_SCI_DEV_H */
+diff --git a/drivers/remoteproc/ti_sci_proc.h b/drivers/remoteproc/ti_sci_proc.h
+deleted file mode 100644
+index f3911ce75252..000000000000
+--- a/drivers/remoteproc/ti_sci_proc.h
++++ /dev/null
+@@ -1,130 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Texas Instruments TI-SCI Processor Controller Helper Functions
+- *
+- * Copyright (C) 2018-2020 Texas Instruments Incorporated - https://www.ti.com/
+- *	Suman Anna <s-anna@ti.com>
+- */
+-
+-#ifndef REMOTEPROC_TI_SCI_PROC_H
+-#define REMOTEPROC_TI_SCI_PROC_H
+-
+-#include <linux/soc/ti/ti_sci_protocol.h>
+-
+-/**
+- * struct ti_sci_proc - structure representing a processor control client
+- * @sci: cached TI-SCI protocol handle
+- * @ops: cached TI-SCI proc ops
+- * @dev: cached client device pointer
+- * @proc_id: processor id for the consumer remoteproc device
+- * @host_id: host id to pass the control over for this consumer remoteproc
+- *	     device
+- */
+-struct ti_sci_proc {
+-	const struct ti_sci_handle *sci;
+-	const struct ti_sci_proc_ops *ops;
+-	struct device *dev;
+-	u8 proc_id;
+-	u8 host_id;
+-};
+-
+-static inline
+-struct ti_sci_proc *ti_sci_proc_of_get_tsp(struct device *dev,
+-					   const struct ti_sci_handle *sci)
+-{
+-	struct ti_sci_proc *tsp;
+-	u32 temp[2];
+-	int ret;
+-
+-	ret = of_property_read_u32_array(dev_of_node(dev), "ti,sci-proc-ids",
+-					 temp, 2);
+-	if (ret < 0)
+-		return ERR_PTR(ret);
+-
+-	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
+-	if (!tsp)
+-		return ERR_PTR(-ENOMEM);
+-
+-	tsp->dev = dev;
+-	tsp->sci = sci;
+-	tsp->ops = &sci->ops.proc_ops;
+-	tsp->proc_id = temp[0];
+-	tsp->host_id = temp[1];
+-
+-	return tsp;
+-}
+-
+-static inline int ti_sci_proc_request(struct ti_sci_proc *tsp)
+-{
+-	int ret;
+-
+-	ret = tsp->ops->request(tsp->sci, tsp->proc_id);
+-	if (ret)
+-		dev_err(tsp->dev, "ti-sci processor request failed: %d\n",
+-			ret);
+-	return ret;
+-}
+-
+-static inline int ti_sci_proc_release(struct ti_sci_proc *tsp)
+-{
+-	int ret;
+-
+-	ret = tsp->ops->release(tsp->sci, tsp->proc_id);
+-	if (ret)
+-		dev_err(tsp->dev, "ti-sci processor release failed: %d\n",
+-			ret);
+-	return ret;
+-}
+-
+-static inline int ti_sci_proc_handover(struct ti_sci_proc *tsp)
+-{
+-	int ret;
+-
+-	ret = tsp->ops->handover(tsp->sci, tsp->proc_id, tsp->host_id);
+-	if (ret)
+-		dev_err(tsp->dev, "ti-sci processor handover of %d to %d failed: %d\n",
+-			tsp->proc_id, tsp->host_id, ret);
+-	return ret;
+-}
+-
+-static inline int ti_sci_proc_set_config(struct ti_sci_proc *tsp,
+-					 u64 boot_vector,
+-					 u32 cfg_set, u32 cfg_clr)
+-{
+-	int ret;
+-
+-	ret = tsp->ops->set_config(tsp->sci, tsp->proc_id, boot_vector,
+-				   cfg_set, cfg_clr);
+-	if (ret)
+-		dev_err(tsp->dev, "ti-sci processor set_config failed: %d\n",
+-			ret);
+-	return ret;
+-}
+-
+-static inline int ti_sci_proc_set_control(struct ti_sci_proc *tsp,
+-					  u32 ctrl_set, u32 ctrl_clr)
+-{
+-	int ret;
+-
+-	ret = tsp->ops->set_control(tsp->sci, tsp->proc_id, ctrl_set, ctrl_clr);
+-	if (ret)
+-		dev_err(tsp->dev, "ti-sci processor set_control failed: %d\n",
+-			ret);
+-	return ret;
+-}
+-
+-static inline int ti_sci_proc_get_status(struct ti_sci_proc *tsp,
+-					 u64 *boot_vector, u32 *cfg_flags,
+-					 u32 *ctrl_flags, u32 *status_flags)
+-{
+-	int ret;
+-
+-	ret = tsp->ops->get_status(tsp->sci, tsp->proc_id, boot_vector,
+-				   cfg_flags, ctrl_flags, status_flags);
+-	if (ret)
+-		dev_err(tsp->dev, "ti-sci processor get_status failed: %d\n",
+-			ret);
+-	return ret;
+-}
+-
+-#endif /* REMOTEPROC_TI_SCI_PROC_H */
 -- 
 2.55.0
 
