@@ -1,76 +1,80 @@
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012023.outbound.protection.outlook.com [52.101.53.23])
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013026.outbound.protection.outlook.com [52.101.72.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579C53B71B7;
-	Thu, 15 Oct 2026 14:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84ADB38E8D0;
+	Thu, 15 Oct 2026 14:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.26
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792074811; cv=fail; b=bTN0PFK2xFcqFpshlt+Sxn021ceCKgg4VuordO3Vsif9I7Fd/WOF28DZoR9CZ1h7QoIPROuArNEuYOrQMHCvvwr7k84M+oMCvs0SsUfxUJHXU/gq4OglPQC7ypcJY3GasqX7Yx47srhULWL/uKRkBk6S/0Ac7oNWuzPvSaFBj+E=
+	t=1792075176; cv=fail; b=dker6c2veVoFX+HunupgBHsJ2KeUVZmgKUwM1yDS3xL2ln2ZaEsVmSEik6dEwvpUHe/073caMzVBvhexmf9XsUI+qNNT6zVAJLOQcBs5zZ3n8yRpOLK9zlykb66bOYDSehwgfUIM81aXynHkNkDCIDSt2lza4WMqdUWkktvqyLE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792074811; c=relaxed/simple;
-	bh=gTBNhNg+xXaD6ns0DB9Igc2epfgE9el0Cs535lvpo78=;
-	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=j5e01nM65FmiJcAQTnTmnrb3wtlxvqFWhWi2QY+IBatry18DELP22v/OABvuQpVFpuE+NG+qO1JWGbMN6UWLCLhauKfu+c4QLYEP6vEK72J+9K6bJEen16XFclbdspIX+pAuLBtI3nbNV4uUyOx6/ZQyXTorDQ6aFlMPm41g6no=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=EZ87gUix; arc=fail smtp.client-ip=52.101.53.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1792075176; c=relaxed/simple;
+	bh=q5xGx+tn23zBqcJ9hlTBG0wRKneYkrFas7q40HFZ2p8=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=nmAtmB7Sx1EP142h+Od23mpdmCJIm2o6+L2mdtPapxstLsWGVnIy4vH0jqkxUVV8OdRaYn3tdSer4rzBeZ+h3DteVcm7fd+nGZLMI5h46KvdAxUCuXEq7ECSoSVvW7/h9ZDIe9VX+nL/SEZpc2JPk8mhoYGMRXpCHF7qiAOtmEk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=vu0snf6F; arc=fail smtp.client-ip=52.101.72.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="EZ87gUix"
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="vu0snf6F"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C2Xko3TyhVIph2PmH9Gd8xxcSUQ7bf0NqhfI1+W7Aazu7FcR6OLoCQAFOBE+H7WCxZOSVJ83lb5VOjv3sJ9twhNRPajmBEj1DxbOwHz4NGITvvETcagxoSWXTiGF9XhteQM89pM6XPhSlnStnpSKgpq9bivPXbAUcF+T5TcX4lt+8saQ4/XdUJgpKgSA54Dv+5lPXN5nurhAFCIhAN8fgoJrmnL6Hqj1tom7tCbioDHym/f6G0QJq+ieMoyhl7pe4q4bTPIBq4mKrUjnH7Ty75YZ9CVbSyxjMUE0vixX/q07XvGiUgIpzkBLzAChbG7mdBpIj1Jb94v1/kamJH994A==
+ b=wR3Ef0Lz6X76w3ZGYpMp2vYiEkOPQizt//v+wCfXmNm5n3E6G0JAN31M6E5vh0hZ3wHWkxX1zHj5DUFdwKP2wn7kQzYTKLgfpg8QTHxn6ZmSsNH5T9GjEGbb0qDgl4V63UMlsEquk7NCr3AosCphNJWlPvcRQLonu0PCbDjQz+guKsgpbycbSwqToXuCBSXP1W8t/6SWmBSrG2LOzjeFbhaZPg3TU1bajdaAYOQRVlZ1u3S+nXa3wE+wq7nNLMWaiD2dxV4b5SuHSplg7MqakusaBwDA4GyT7I1rsxBsriM60EelEX7zIE8f4o3Dh7FLdmFnIijofypwPk9SlpEhYA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=McxygcdXzrl0BstR6g+LSSFHsNxVGiVrH8GioE1lxgw=;
- b=ysuZSimeY+ysTEbNDZI0XQkUjiFFyrn3P9DValdpiLzI+s3vveTdPmFIuw28co/jC1pMS1bmmXLQOrpjULKVQudLD0asirT+7dcIJ62cN/0B+JOkG7uJ5TySmVYiFtTxitaRpBainBKpWs1q3OSCyGUuHHeXwBNgwOOaCEKfsaS7eAiHt4V0VKSyVIjf1RdqwmdYFQaJEA4pfHnGLl/XRMmZFYcwTbXcee96NLdtvunde2LEQR8Phl+BKlbeyohIY/ex/7ZwS3sYwWpvkRsGzuPNZLNVJ56UXdTtZMWX60E05GfnmLGiD1vvBmk+9V95tXhS8tnvL5KCMswU+J+MCw==
+ bh=MEb2Ph0vd+OANpH0/6hBcRYs6jC6LiXNsqQkv2LF4u0=;
+ b=LUyl6BKdRHml1sat1/ABayoXFRJEk6QX3BCeN4u5J75/drpMgcjoZDtH5qGTJ0P/GNBaaJHztSXANuSg/hNof6uKxhMocEhRg8hPaoYK9lzkceJFpjTe4SBdeEAETp+egyiSEVR2iukeyvQcJlGOFncBKaDr52E+kDt9NS7a2g432GBSf3vLGwV0UHGtt9NdxlKUOhalRyxdJdE4FhH1FcJD/HMgagh2uGgALuYWJcQzJDstVVgMLYra5ohP4EgOe5EUV4URck8FgViM1PJomx6Bwj1g7wFp2GQsOmP0eoTsCWB5KPVTeEPtCHEbpOqnQP82p0h1wb0Ujn/PVd7QDg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=McxygcdXzrl0BstR6g+LSSFHsNxVGiVrH8GioE1lxgw=;
- b=EZ87gUixVRhaOjp/0leFzVDS0zHfMgHUbHL+HDJukyuhctXruo1uKbU/Iu9bmZUIWRG11g489Pc5lxHpvnXEnR6l279w8mqjSMnuM8VgscyxoXY9gjSD4aHvfg2AZbC6m4C/0fTwpBjEHdigbyyYEe24nCgmt4tGvLOrogVXu4A=
+ bh=MEb2Ph0vd+OANpH0/6hBcRYs6jC6LiXNsqQkv2LF4u0=;
+ b=vu0snf6F3NvVkCiGF4l9ir38UlKDY2Px54XVIXqWtor9wWrqCYY4lgEx98u/skxhGCLupmEoI2kjxzfdcSJZjq6LFD/Q9Nc0yhGGag0a9OcxdNaAbSO8DQqItVCFyIjBQfSTnLtchwEkC1QayoW7DtHm3vT4YVyG5TEDtmO6uJHRj0djV6NSG0kCkIyhBUrOBVbRLxFohpLyw+x+VuIHtVyMZwxWw3wJvl2GJpr1YbrMJUmIv67dXIvn/gopj1romu3JflgM3gM3aT15e6CLYhzBd6fAhCmTMLtCub0LPAP9qQn32x7jii6AoK+JXEutgoylO/V3Kytph+pCdg2ytw==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6448.namprd12.prod.outlook.com (2603:10b6:8:8a::7) by
- MN2PR12MB4286.namprd12.prod.outlook.com (2603:10b6:208:199::22) with
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com (2603:10a6:150:2cf::9)
+ by AM0PR04MB6881.eurprd04.prod.outlook.com (2603:10a6:208:18b::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.14; Thu, 15 Oct
- 2026 14:33:27 +0000
-Received: from DM4PR12MB6448.namprd12.prod.outlook.com
- ([fe80::62c2:71cd:7fdc:987a]) by DM4PR12MB6448.namprd12.prod.outlook.com
- ([fe80::62c2:71cd:7fdc:987a%4]) with mapi id 15.21.0496.021; Thu, 15 Oct 2026
- 14:33:27 +0000
-Message-ID: <ccbcd4b6-9a4d-476f-89b9-02441c29c8db@amd.com>
-Date: Thu, 15 Oct 2026 07:33:24 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] remoteproc: amd_mbv_bram: Add RPMsg support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-References: <20261014213426.2957480-1-ben.levinsky@amd.com>
- <20261014213426.2957480-7-ben.levinsky@amd.com>
- <20261015-amusing-private-hyena-65b1e8@quoll>
- <DM4PR12MB6448FDE3208DB753A37EF3F9839C2@DM4PR12MB6448.namprd12.prod.outlook.com>
-Content-Language: en-US
-Cc: "Levinsky, Ben" <ben.levinsky@amd.com>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- "andersson@kernel.org" <andersson@kernel.org>,
- "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "Simek, Michal" <michal.simek@amd.com>,
- "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Shah, Tanmay" <tanmay.shah@amd.com>
-From: Ben Levinsky <blevinsk@amd.com>
-In-Reply-To: <DM4PR12MB6448FDE3208DB753A37EF3F9839C2@DM4PR12MB6448.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PH5P220CA0010.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:510:34a::13) To DM4PR12MB6448.namprd12.prod.outlook.com
- (2603:10b6:8:8a::7)
+ 2026 14:39:31 +0000
+Received: from GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c]) by GV2PR04MB11799.eurprd04.prod.outlook.com
+ ([fe80::2146:83a2:5329:b7c%7]) with mapi id 15.21.0522.012; Thu, 15 Oct 2026
+ 14:39:31 +0000
+From: Frank.Li@oss.nxp.com
+Subject: [PATCH v5 0/3] remoteproc: imx_rpoc: use memory-region-names to
+ avoid hidden ABI.
+Date: Thu, 15 Oct 2026 10:39:21 -0400
+Message-Id: <20261015-memory-region-name-v5-0-abc358b39a96@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJnl0GoC/22NQQ6CMBBFr0Jm7ZjaUCuuuIdhUcoANWkhLTYYw
+ t1tMe5cvsyb/zYI5A0FuBcbeIommMklEKcC9KjcQGi6xMAZv7LqItCSnfwbPQ3JRKcsYV8JRqR
+ 4K28dpMfZU2/WY/TRfDm82ifpJS9lYzRhSStHNZbZ+wXkv0AskWE6SyEqzqjta7fOZz1ZaPZ9/
+ wD7r+7pxAAAAA==
+X-Change-ID: 20260915-memory-region-name-f950eea2b78d
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792075166; l=2748;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=q5xGx+tn23zBqcJ9hlTBG0wRKneYkrFas7q40HFZ2p8=;
+ b=cGxitOq1XQkze3PM1zpGspRzx1JPNH1nvXbCwuLOEY681R+fTVnacAN38SG3KqCqYNVnF9sey
+ e0iT4JGl2AYD8YHREklvg1BhDhkwelsW4y4/CV4s6N+VzTVnM8os+fu
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: DM6PR03CA0083.namprd03.prod.outlook.com
+ (2603:10b6:5:333::16) To GV2PR04MB11799.eurprd04.prod.outlook.com
+ (2603:10a6:150:2cf::9)
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -78,152 +82,145 @@ List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6448:EE_|MN2PR12MB4286:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9ec5dcd-8eab-4c7c-6d0f-08df2ac94695
+X-MS-TrafficTypeDiagnostic: GV2PR04MB11799:EE_|AM0PR04MB6881:EE_
+X-MS-Office365-Filtering-Correlation-Id: 622efe12-ce62-46cb-4d2d-08df2aca1fa3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|366016|7416014|23010399003|56012099006|11063799006|4143699003|261009221727099003|261009221227099003|261009220027099003|261009223027099003|261009223327099003|10067099003|18002099003|22082099003|6133799003;
+	BCL:0;ARA:13230040|376014|23010399003|1800799024|7416014|19092799006|366016|5023799004|56012099006|11063799006|261009223027099003|10067099003|18002099003;
 X-Microsoft-Antispam-Message-Info:
-	iTYgMGbZw6U/hVFu+quc5XMrsvENB8nnh1ONuqQFSr+4/52LoIbTMZVwbU4jp5ZdKEyyYEKMgUxdCur9NKJgasHAho4aYwAh0QBYAYopTAz/92cfxFIfRn0GhLOgzEgJtRUVswXOGQkqjBNPa0PQk+NXbVOG9gWt5tcNJGwcUYuR5veMSfj3NvU6CLUTPvdY4AoTHEAnmoRfFi3wr8ep+z+V6LshZqYx6sE2vyiaz+QhUKsn0A3cwRnymPzqB44+jlp9xyv+CoCyD82gDpBH2vA+/SAvD4cca3NBa4Smo0YpcmI8F+jwYILnYvPoiwcnoFyD/t4aEH/DM6GdZDQ7bfRg8HziTEZDDc0+pPcYSX7CvqlEcMxkhQQcErc/hx0rlDYgP6pDw66yQkme+rIJ/gf1xIQwOkuFiML3iDy4Yo/JO1Jhy9GKvKlVfN8mYxBvQUkPLmlDa/whivbBfMoD+NKaybNT27MrSYmOpw/VwGOR7nHXZwU0TdHONpBqcTfTFdWktTzq/yeI7h8CxRmmOw/2cD8b5vhrvvNacmxgEK5VDBg1AyqYsHgZEgDwNjZiG/a6eZoEixzDS2h9Bx5dl09u+LjXu1yGDo+D+G2kmu0osXkmENzXx4XzodanTmX1LpbOpWqDoVhJf0kdOvckJWNNQM8mT5+SxELgjmzYBdM=
+	kF/Q+hD8Z4bXDnCmnBwjSNzTXE9Saa9z9GCJL4rvY3ZIrb0rhIQ90U7JnpcN/YLQNgtDpTnxmFnLSlvzVtjoPK6M1p9P7ItnzlRyMaaYAbNMemisRem5bRdmnXP3XOSDlDIWOM32yTpXOTROLEsShLQeYiuVl92okdr3EF1LxDEC1rO73DCQx4eVZkkw+dYh1IYidI5reFGxT/z5nE4FnB3TOGpLBu5iT/8YI181V8I6WDs9j2PwoI7IKgAPUEGM1/p3dPUMAe9CE3TuLGwzUvXww+MIjYBeFZq/9txqkA6vlrlaekYMts+pIXtbCETAff8q8UYOcB55skY+piaKHsXGd+kh4usPtljv3PZgd7xamGT9Zg5M/MBThMmJDJoaL2jmOdLUM6KGXfBhc6YmJ/CVEG1JbC8GWd4tYeJbUqPHyKvlJsK515ZnLdBCTATr81aD4ykxmaOVHhtdhG2EpKOTqzO6HDrgXqFfOzsiEFU2RTjAz2evOpjzkVodtfHZkJU2BkXzMwHWdahtFzosE4+BOFgBT6qU6IE+jvSBYSMuubLl3xdgVAdjf1q9A+C1jnJE0aJyuGtvp5Yd/qaDSTtsINiHvPsh9BxRg2bxOPBa14dj1Wurv/99AMc5WLfs
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6448.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(23010399003)(56012099006)(11063799006)(4143699003)(261009221727099003)(261009221227099003)(261009220027099003)(261009223027099003)(261009223327099003)(10067099003)(18002099003)(22082099003)(6133799003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB11799.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(23010399003)(1800799024)(7416014)(19092799006)(366016)(5023799004)(56012099006)(11063799006)(261009223027099003)(10067099003)(18002099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S1pIUmhTSjdFakFhaWRyeHhTNUlqaGtyenhDc2h6SElEellOS2NjZzhzQXlx?=
- =?utf-8?B?dTZWbWxGb0lXak01dm5sUDJmNTNhQ0ZCVC9JUjZTZm9uQjMzQURwZVU5QU1L?=
- =?utf-8?B?K3M0elV6dTFVSEZwUkhqWFVvMTVYditheGdWNWkvUWxpU2tBc1p6YTRsWm1i?=
- =?utf-8?B?d1JnUXp5YmVTTThhTDFIOHk5N3pTeVZqRHNnVUZhRzQ0eUVndXBGUFBhTnJQ?=
- =?utf-8?B?ait0dUhsYWIxRG9UM2RKWDllSSsvZ2ZJbzdCT0Vvb2l3b1BWdTFiS2VDTzNj?=
- =?utf-8?B?U1ovTm9Qdlh2cHJrb1U2SkhJd1M2WWYxVk9mVVNaSkovL0RkdlJHbVBsalhD?=
- =?utf-8?B?U2FPeWUzMTQxbmFGWVVvczRKbkpWNk4rK2RSRkJXZE1odmRweWtMYlFqdmhN?=
- =?utf-8?B?enJ1QXdDUWhPOGsyUEU2VjN1VFpoc1pCVzlxZEpMZ1hQSW1yUzFPd0FuMGx6?=
- =?utf-8?B?cHdidFVXVEFBZWY2Rm4xa3g5L1lGNlhUb0xva1VVdVZ3Z3J3VzVrWmpmT1Aw?=
- =?utf-8?B?bXZYQ2pIdWhhR2NsVjBvcWd2QTczaTAxVTVZL1E3UllqcmJhOHVXNlpjZ2JI?=
- =?utf-8?B?ZTVmYW16K3hYQWVVZGxZQUtoWTNkMnVZZG1LUU5XeTRuOU1UMFNzYzlxbTdp?=
- =?utf-8?B?TnprODdCTVcvSXpzak90ZzR0RjhmVjBZeUJxR1RxT3pQWWxoZGp3ZlFMVUh1?=
- =?utf-8?B?eVF5ejY1TGJLYWFlMVJkdys1NWlUVjdJMzVBbjIyajlNcjBHME5sZmJhbWMz?=
- =?utf-8?B?Ym1zaWpDZzFjaTFFZ1RBUzFtUGhIMjlDOXhoVlNQYnlOVnd5d1kzSis1OERK?=
- =?utf-8?B?akFPUWVrb3pleTRTZ05INDF3aHAzSVhsWWhzaGVoWVhFYWd2K3duaUI0VE0y?=
- =?utf-8?B?YTVJcjhMRkowRXRPZVM1N3RYUGF3azBJdWZZb25sN2Q1TkdMNEMrUTkydytI?=
- =?utf-8?B?OUt1cXVmTmZudmsremJMMzI2STlMSVNOeW1ldGIwcFZ1emlwMVpkZkY4bXBO?=
- =?utf-8?B?ZmQreGZnTzV3Ymc5aEdGYUxkTEI1RENSUVNoK2xQSFJWVW9KS3I3QTBsUVI2?=
- =?utf-8?B?b0tpc3JTTnBRYU0wMTRVODNqUUNNbGlvTWtwNVA5akl5RUFXV3liRFBuQVBC?=
- =?utf-8?B?aFFOa1c0TWVtN3pEU3JmZEY5U1RLVTB3akhCYWNVTkdodTQyWENrZ3VKSndT?=
- =?utf-8?B?d1IwamxiNlF5bDd2ckhSNHA0L2xkRzlaRy9ySkVUZURqc3VkQXV4NTZFMkpR?=
- =?utf-8?B?WWxxaUU3aWhwWElXeVhxdW4vdEhzVDZ6Tkdsc2R3OVl5UWRjNS9FajJjazQ2?=
- =?utf-8?B?N01PS0NJUEY1Z0UyQXRWNEg4VC9meEFiYnpQanJhNFZPYy9acTJwbGFnTFlI?=
- =?utf-8?B?bGxLd0pBdFkzUjBLTUNHWHV1dGhabW1kNG9HOTU1WWVSendpOEFoVTVKMUlT?=
- =?utf-8?B?eVNGV3pRdXU1TGtKN2wwVXp0QjhUekJ6VVBNemFlWE4xMXJoMkdreXpNTkNx?=
- =?utf-8?B?YTJ4L1lodStydHRqWEFZY3dQeHdwVE5uaGVZWGVWOExGZEJBUEVtWGVYd3V0?=
- =?utf-8?B?d3hZRzFtdFkwOHlZVXlZbEZnSWdqbW1jQ0pXeFhQWWVDU3JaUFN2MFd6YWVF?=
- =?utf-8?B?dkdKbmtKNllnYTM3VU92ZEY2QUV5d1ZjMUJuaktKZ2JFYW4vLy9zK2RNUCs0?=
- =?utf-8?B?NnlkL1YwU0VCR05iZml3L0R0VjJRVDJyNjhoMmh2a2xpVUlCQ1RBSjE1d0s5?=
- =?utf-8?B?alpIYUEyaHRkMGNNcFBEdUpJeFh6ZXFnSGJ1TFdNNzZOLzh3akRSZ2pYcHpj?=
- =?utf-8?B?Mldad1ZlWHQ0dy91VlFLYk1zbmNtQXBVNEdsM1duSUlPWG5ZQzE0Z21rQVNv?=
- =?utf-8?B?SWl5SG5vV1hxbGgzcXR6M1RDblZiL3VweUZlQkU1aVN5K1RIUjBmMXcvRko1?=
- =?utf-8?B?YUxPZHArajcrbEJManZKYmNTSEIyVUcyVmhWR3JMbjJTeDN3Y0JJSzVBMDhy?=
- =?utf-8?B?cE5WakRERkFmTThXb0tKZ29ERytkTVZvc1gxY1lqVko1R001T2JXdUsyMTRv?=
- =?utf-8?B?ZGlMUWVMUmNtdXBza2tXelh6ZFNQWlA5N0swQnFjaU1Bd2l2VmR3ZkRPVmZS?=
- =?utf-8?B?RWVWK1ovT2pNYUtsQXUzWTg0aWFra2plV2tvcTc1RjQvRE5oaVlvN3QzSjRT?=
- =?utf-8?B?VzRBd1c3c24rLzVwbk03M1VWdGZ1SmJxQWNhbkRNeW0zUVVwWnRQaS9NV0FF?=
- =?utf-8?B?aisvWUptQkFXL3V0Z1ZaUFVwYzNpejhIeEk0d2NlTUxaWkp3R294NVkxNDYz?=
- =?utf-8?B?eEtuQkJ6RFlPR0dlcHBRME04VWg4M0ZVUGZ3ZmJOYmFrNFRiWnovZz09?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9ec5dcd-8eab-4c7c-6d0f-08df2ac94695
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6448.namprd12.prod.outlook.com
+	=?utf-8?B?OXIyNG9JaUYwNnNWUFlOU1dPeVhMS09KRXR2RTVtV2o2bUZUOE5oSzhsdzZR?=
+ =?utf-8?B?ODV2TkVnTmRWeXBXU3BjTkhKVWZQNEJMWkVoV0FhT2dUUEk1SFpJRnhVRU55?=
+ =?utf-8?B?ZmJEaDh1cHRHcmZRM0xhNzlQNWw0TXFaYnNrZkRmRTN4N0toQ01LZDdhR0Va?=
+ =?utf-8?B?U0NHMFk2a1JFVWVXWUpNcUEwRXRIdXkvVWM1NTBaZ2dVU0o3V1ZSbHU1RFZq?=
+ =?utf-8?B?TEt1bFZhakFQZzVDalNSaG4xVTVKVjM4MXhVa2FzMXkrQXZEUHBEYWJZS2p5?=
+ =?utf-8?B?Nit1TENVaXc1TUgwTXlwejlpZDhvUVlPRjl1Y0NERHN2ZVNpZEpSSWRkaXRD?=
+ =?utf-8?B?L3NSbmlqR0J0aGNmUnNGRklLQlNYQkQvY3ZmL21PejhiV0ptVkFwRUdxUUt0?=
+ =?utf-8?B?dVJ0dCtCNm9MbXVuQVBEZzJpSlNKQzdZQnRLd3hpL0d0L041SHNyOUpCRzg1?=
+ =?utf-8?B?cVVTVlhmSHdOWkJpVzdTcEtNYXgrRjZEVVBYb0xiaEQvcnNWOVBXeTB3Y25a?=
+ =?utf-8?B?OWtpVExvOU1Rek5YREtJR1l2dHFZaEdCeUdaUnB1ZGZVbW9ac3MrbjBwQUdt?=
+ =?utf-8?B?Z1M1RXBaQVIxUjVQbVFmQm15VS9xaG9ML21BZFNYd3MyWW0zd0RyMXVTbmM2?=
+ =?utf-8?B?QjZHMnpLZUt4RzVwcUd0QVF0MVFkUXhIa0pIT0VNYXIwY3pBcWxmSnBUUjNB?=
+ =?utf-8?B?blI0YjVPTnQ2a1oxNXZKTFl1QnN1RGVSVGl2ZXkycjlORHhkUkVrcThKQTV2?=
+ =?utf-8?B?TnJ0dkRFalhZMWVyLzZ0YUxFZ2JOWkNHaGxheFd1SnBaZkYzSElMV3c4QXNn?=
+ =?utf-8?B?aEM1M0xTbHVpTmlCQWU1WVAxeFY4ZXdtTHBYTUN1QklIeFBxNno1NzFjL296?=
+ =?utf-8?B?dmlGY0FsMHpxVHAybDdlSlVJdkp1dDZZVGdFMUV2UUk5S2JzdUZVaVNuZjU2?=
+ =?utf-8?B?MkVBVUV5cTJKVnZuN3JtSVZ1UWdWUlFBSUNGMHE2N3JlaU5majRjWTN0RFlF?=
+ =?utf-8?B?WTh5ck1Xbk9ydEJhYlpHNnVZTys1bGtRaE1DdFRXeHpjV2NpdlBWOWdpbUhr?=
+ =?utf-8?B?YnlHYU9qWGRZN1dNQnhBdWo4Zkk0UkFTb0M5c3lZNEhQb3JZeEt5Y2NpRHZl?=
+ =?utf-8?B?TXNNRDRxNHIzdzdFM0Q2UUdueS92MjMvM2VIUDFEeXBFdUVxSDFZRnRtZ0k1?=
+ =?utf-8?B?Q3Yra2VpWUxWa0NaSWtEOUJVeThrQzBVSTlXc2RndXdObEVkSGk5dmRVUHFY?=
+ =?utf-8?B?MFJPcmgvWFVYME5tUUxFMGUvWGdYMUpqQ05Ga05RSkhEVUtPb1FRdnhNQ29a?=
+ =?utf-8?B?M1lxVmN1cmMwSjdhd1lUMnZYczdVRkUwZTN1d1F5ajRydllSN09MZHFsdkla?=
+ =?utf-8?B?QTMzNnpxTjZrbmpKT1pSLzRrRlYvbVNPWGhWQWU5L1A2T0h6eFBKTCt0QThs?=
+ =?utf-8?B?bktJYUtnUUQ0bWpPZUU3M2xQQzIwTk1FRTdEVWZiOFJWZFhUckNpNFhLVjBE?=
+ =?utf-8?B?MVh3VUcxeUZ2YnhYeC90M3N2Y0c2N3VWeWxiK05GUjg4bHJLOGJqQnlaT2dE?=
+ =?utf-8?B?MzRqbHFrSlczc3VnU3o1TUtLd2dmbEwyRDNoUEJlbEJEeXhpOFRWbFp5ZlFF?=
+ =?utf-8?B?dUl4RENWck81MXA3eVhqbGZMMGcrd015Q0taR1d4N1NTeUpXckR4SXZFN0pa?=
+ =?utf-8?B?V1RwNU02Y3hLL3RUR3RiaU5SRzNuaGZlNHd3ZFl4L0pEaXVtNlF4NGRkVGFR?=
+ =?utf-8?B?d1ltZWVJblIvMzl1RmtXOGQybWVuQlloWmw1djJ4TVB3Rk1ndjVqdEpNK3p0?=
+ =?utf-8?B?Rml4TXY4V01Cb3RMZDZIYmZ5Z1ZZc2pyMkptbFU3YjFJQXJtVjNYYm1XaXJq?=
+ =?utf-8?B?NkRWdkVWbks0QlB5MmZ3Q3Z3Rk4vdUdDTk1WaFp0aHlBUzdlZkJVODJqMXQv?=
+ =?utf-8?B?Q3FEb05IZEtHOVdFSmV0SDV4Z3RCKzY1SWhBaW1Zc0ZnOGxFY1NJRXNmeGg4?=
+ =?utf-8?B?Ymk4YS9FSGxHQnJyUTNPOTFsTGFUSEc0Wm9xanpsdTNSUTV5RFJUR0pZWUkz?=
+ =?utf-8?B?bHdST1VKT3VPTVB2SHlzY0xaK2xJeXNZd0I3eXoweXdOWDdPVTUxckd3UFVr?=
+ =?utf-8?B?eEVXd1BXaEhWaVFFdjFpM1FGcFFxVG5WeDEzaitOWUVMaHlVc1BSUSsxSm9O?=
+ =?utf-8?B?VjJlWi9YNlJ5NW5zT2tRM3BzSmU5SkxQdUxibTVUVDVrTGtvRHFtVFFqQWgy?=
+ =?utf-8?B?R09QMzluY0dwejRXS1lRNDdkdVpEMXBveVNTOWEybTNZVVVLZmMvWml0eVYw?=
+ =?utf-8?B?UW1hZC8vOTdMaGJtb2lrci9JcitkQzYyRzJuM3NqaW5UNDRMUjArbzlwS0xa?=
+ =?utf-8?Q?wVf8xR+HdeG4xMT8v90fAEVBZC1auKh0X9IAT?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 622efe12-ce62-46cb-4d2d-08df2aca1fa3
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB11799.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 14:33:27.2040
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Oct 2026 14:39:31.4324
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pPCdpiqrEcQN+/KFSvP0p7V56vttxukMkLOYPCSnt6+J8PA3hhAR7lnBrsEracgBYZUBpb9m9VRYfxE8wpFlCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4286
+X-MS-Exchange-CrossTenant-UserPrincipalName: kp7N81n1OTbtf2HP10OQg4KSb+mxH8d8s9ZfMS29NWMCoitn25MZh5EGxQ8OPdV2x4sfY75eIY95vNKKXOTbsn9B7A0nHLnBnV7FCdFdxPiLbWZe2XLEeiwBEwaFbMMA
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6881
 
+The driver currently derives the memory region type from the referenced
+memory node name, creating a hidden DT ABI.
 
-> 
-> 
-> *From: *Krzysztof Kozlowski <krzk@kernel.org>
-> *Date: *Thursday, October 15, 2026 at 2:51 AM
-> *To: *Levinsky, Ben <ben.levinsky@amd.com>
-> *Cc: *jassisinghbrar@gmail.com <jassisinghbrar@gmail.com>; andersson@kernel.org 
-> <andersson@kernel.org>; mathieu.poirier@linaro.org <mathieu.poirier@linaro.org>; 
-> robh@kernel.org <robh@kernel.org>; krzk+dt@kernel.org <krzk+dt@kernel.org>; 
-> conor+dt@kernel.org <conor+dt@kernel.org>; Simek, Michal <michal.simek@amd.com>; 
-> linux-remoteproc@vger.kernel.org <linux-remoteproc@vger.kernel.org>; 
-> devicetree@vger.kernel.org <devicetree@vger.kernel.org>; linux-arm- 
-> kernel@lists.infradead.org <linux-arm-kernel@lists.infradead.org>; linux- 
-> kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; Shah, Tanmay 
-> <tanmay.shah@amd.com>
-> *Subject: *Re: [PATCH 6/6] remoteproc: amd_mbv_bram: Add RPMsg support
-> 
-> On Wed, Oct 14, 2026 at 02:34:26PM -0700, Ben Levinsky wrote:
->  > Register named reserved-memory carveouts and expose the firmware
->  > resource table after it has been loaded into BRAM. This lets remoteproc
->  > create virtqueues backed by reserved shared DDR without deriving
->  > carveout roles from DT node names. Map the shared-memory carveouts with
->  > the common rproc_mem_entry_ioremap_wc() and rproc_mem_entry_iounmap()
->  > callbacks.
->  >
->  > Use the mailbox framework to send virtqueue notification IDs. Defer
->  > received notifications to process context before dispatching them to
->  > the remoteproc virtqueues. Keep mailbox payload storage valid until
->  > transmit completion and order write-combined vring updates before each
->  > kick.
->  >
->  > For designs where the mailbox and remote processor share a clock, request
->  > the mailbox channels only after enabling that clock, while the processor
->  > is still held in reset. Release the channels before disabling the clock
->  > during stop.
->  >
->  > The mailboxes are optional. Without them the driver keeps supporting
->  > load, start, and stop only.
->  >
->  > Select the mailbox framework, the AMD PL Mailbox controller and the
->  > virtio RPMsg bus, which the driver uses for notifications and RPMsg
->  > channels. Selecting MAILBOX while depending on GPIOLIB creates a
->  > Kconfig recursive dependency, because GPIOLIB is selected by drivers
->  > that are reachable from MAILBOX, so select GPIOLIB as well instead of
->  > depending on it. The driver always needs GPIO for the reset line.
->  > Depend on HAS_IOMEM, which the selected mailbox controller and the
->  > write-combined carveout mappings require.
->  >
->  > Assisted-by: LLM sparse
->  > Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
->  > ---
->  >  drivers/remoteproc/Kconfig              |   6 +-
->  >  drivers/remoteproc/amd_mbv_bram_rproc.c | 231 +++++++++++++++++++++++-
->  >  2 files changed, 235 insertions(+), 2 deletions(-)
->  >
->  > diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
->  > index 5b56b2dcc725..9ebbbf76289f 100644
->  > --- a/drivers/remoteproc/Kconfig
->  > +++ b/drivers/remoteproc/Kconfig
->  > @@ -25,7 +25,11 @@ config REMOTEPROC_CDEV
->  >
->  >  config AMD_MBV_BRAM_REMOTEPROC
->  >        tristate "AMD MicroBlaze/V BRAM-based remoteproc support"
->  > -     depends on OF && COMMON_CLK && (GPIOLIB || COMPILE_TEST)
->  > +     depends on OF && COMMON_CLK && HAS_IOMEM
->  > +     select GPIOLIB
->  > +     select MAILBOX
->  > +     select AMD_PL_MAILBOX
-> 
-> You should not select user-visible symbols.
-> 
-> Best regards,
-> Krzysztof
-> 
+rsc_table: rsc-table@90000000
+           ^^^^^^^^
+{	ret  = <0x90000000>;
+	no-map;
+}
 
-  Hi Krzysztof,
+m4 {
+	...
+	memory-region = <&rsc_table>;
+}
 
-  Understood, thank you. In v2 I will keep the driver's existing
-  dependencies and add "depends on MAILBOX", since the driver calls the
-  mailbox client API, and drop all the selects. The PL mailbox controller
-  and the virtio RPMsg bus are only needed at run time; I will mention
-  them in the Kconfig help text rather than selecting them.
+Current require node name have to be rsc-table, but no any binding doc
+to restrict it.
 
-  Thanks,
-  Ben
+Since memory node names are not constrained by the binding, incorrect names
+can silently pass DT validation, as seen in examples using "vdevbuffer"
+instead of "vdev0buffer" ([1] and [2]).
+
+Add optional memory-region-names property to define such ABI. To keep
+back compactiblity, use "optional".
+
+Link: https://lore.kernel.org/imx/a3602ef8-2b77-4cc3-adef-2c4cba08a5d9@nabladev.com/ [1]
+Link: https://lore.kernel.org/imx/alexXTYQHUs76J7v@SMW015318/T/#mb9dc709ff3adc24d9db6d30c973f37b580f6f1f9 [2]
+
+Prevous version
+https://lore.kernel.org/imx/ail0sH1UhnQBPRkr@SMW015318/
+
+---
+Changes in v5:
+- fix binding region-memory-names's pattern
+- add vdev1vring0 and vdev1vring1 at dts
+- collect pan peng's review by tags
+- Link to v4: https://patch.msgid.link/20260917-memory-region-name-v4-0-260755920ebf@nxp.com
+
+Change in v3
+- rephrase commit message and cover letter to correct descritpion and
+reasons.
+
+To: Bjorn Andersson <andersson@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pengutronix Kernel Team <kernel@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: linux-remoteproc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+
+---
+Laurentiu Mihalcea (3):
+      dt-bindings: remoteproc: imx_rproc: document memory-region-names to avoid hidden ABI
+      remoteproc: imx_rpoc: use memory-region-names to avoid hidden ABI
+      arm64: dts: freescale: add DT overlay for MX95-15x15-FRDM RPMSG usage
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml         | 11 +++
+ arch/arm64/boot/dts/freescale/Makefile             |  3 +
+ .../boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso | 81 ++++++++++++++++++++++
+ drivers/remoteproc/imx_rproc.c                     | 13 +++-
+ drivers/remoteproc/imx_rproc.h                     | 21 ++++++
+ 5 files changed, 127 insertions(+), 2 deletions(-)
+---
+base-commit: d419d682257d813f6cb7a28e42b35d0edf4ad038
+change-id: 20260915-memory-region-name-f950eea2b78d
+
+Best regards,
+--  
+Frank Li <Frank.Li@nxp.com>
 
