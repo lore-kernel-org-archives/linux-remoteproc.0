@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FE73DFC7B;
-	Fri, 16 Oct 2026 13:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C472E481247;
+	Fri, 16 Oct 2026 13:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792159056; cv=none; b=RraVhGJLx/RyDL6i8pV8fwkFlfrmljQM6Zm3vzrgadJDrR96CanXyrWim8MVziWatljGSCQe/8uptTPzB0WO8nPkvP9uf6nNipiseU8A/C/CMNwSUVkavM+TyGUBTlJ9pXT7W7w6WqN2BJHD//neHCHlQjVRvIpqLeXfvp7DIzE=
+	t=1792159157; cv=none; b=uEJ5LxUcLIyrQMapsoMf3IXwI1g49WjjtsvjtYO55pottinxO0QYfKgqIGsCDnr1zUP938UWoKVmWZrXoDbSkz1IExJwS5AU/uYnflp58ICAuqAWwpmcm7jFO3izEAIY0ltF7JU8j/EuzaKEsSt9MkFPvbgCVR1gVKMspZLCnOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792159056; c=relaxed/simple;
-	bh=ETa1RDVtBiJ+rVRNbECOazML+umgUAf6OecbHc87jXs=;
+	s=arc-20240116; t=1792159157; c=relaxed/simple;
+	bh=eZPqeJfpi3ovuHOluOXJ5mxMfpcbJmMz0/xRVbNrIxw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j/a9Vz7wLjrpsER+H3YB8XDFF6IE94yCOV8AA/OzQLV4l9GZ9K+2v036v6SEPeZXPc9aE/QuNlyVb2opLwzJOmiTXQl3zBXCatS8QlPulixUa42G35SFen5FNlGVqZ02nFFiMEXE5pjGtpeBucWMfZBKzdiGVxzRNfpQ/Q2T8mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6TAxUxC; arc=none smtp.client-ip=100.103.45.18
+	 In-Reply-To:Content-Type; b=ArcMc71jKcpip762vtVvZAs8oGybVL00f/VbyGGF1TJ8CgDvI8ABrhX9bzYhy4yO7nKc/pWiLxMBsO9es5860hqlHwmBF+kBduv9SeWbTUaSsfS6Yc5yM1JHWa+jlgXSSfH64r8plh9UMbm1QITJswzUMFiMPLMe1drR7aA12PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1WXb2fT; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6TAxUxC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49E5D1F000C4;
-	Fri, 16 Oct 2026 13:57:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1WXb2fT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AED81F000C4;
+	Fri, 16 Oct 2026 13:59:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792159054;
-	bh=bc5PopMUZG6tewygth6c6ikLmGZALIPiVeD4sThuW2Q=;
+	s=k20260515; t=1792159156;
+	bh=XudIlMQarFNL2FAQqpi5gXL30E9A2qim7k2VgfG8EnQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=B6TAxUxCFtfqiUtHjkgAFQnS9/isrMyZPAL7Lt5C+MOfj4CpDRP/e9Vqy4E6vn3IL
-	 cWa7yPz+5SUKhTVt7+Cqr0Y5Sj/vhdrh5PKdFz+Byq8QDfdhZLIorRiFYqW5YgqvKe
-	 JfjJUmWdYZvXSeIgYjBKeusMRRZWiWEB6R6yhVqh6J43ibmQZ+qteVl3e97ArsDZFJ
-	 e5TCPfNZkvF473ALRavuuJDupoP6Zx/vXijK6qHHlGsx+5AQQVrFFRnDjFeJke/NoH
-	 PIreMB7h9VpHuvK1KY+f3YwuUTQGCpFpusLoqN3vRsRScqz2OVP3uGuljh2kNruQ67
-	 o9wTy12nin0tw==
-Message-ID: <4e7eb12e-f932-4262-a3c9-2c6620b9354d@kernel.org>
-Date: Fri, 16 Oct 2026 15:57:29 +0200
+	b=W1WXb2fTmVR3zVJNx7GxIYboMlWYP5bbxA91PRZU+92wg4hu56LPpwe0hOQzDpRqP
+	 Z0YTuzWo0zcambD7i3qrpKjR6CnD7cl//UVJpS6AxdMeENA+gKVizlM3uBEQAt2k4H
+	 6ZFn9Rk+fLZO+5ABk7UjrYof+iYkc8ktGOs+5jpzyDq5E35wrn6QUnDJ5ltLczVqFD
+	 W3VDzv+lMCavA/Ek9bz09RbW9GLb45pIzyuNEVa17OBnVAp36fHcjS9pq8Qx5sTlqD
+	 Z/KypTUG3LzjTMwRjXr9XyTW1GcWZ3U/LNchdm0QV45DEPpV2aOUBO4SImm5xFJ8aA
+	 zFrvFhG45SWvw==
+Message-ID: <cbd2e370-c8f1-46c1-87a8-fa25fdf6ea97@kernel.org>
+Date: Fri, 16 Oct 2026 15:59:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -36,7 +36,7 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 3/6] dt-bindings: mailbox: Add AMD PL Mailbox IP
-To: Ben Levinsky <blevinsk@amd.com>
+To: tanmay.shah@amd.com, Ben Levinsky <blevinsk@amd.com>
 Cc: "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
  "andersson@kernel.org" <andersson@kernel.org>,
  "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
@@ -48,12 +48,13 @@ Cc: "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
  "linux-arm-kernel@lists.infradead.org"
  <linux-arm-kernel@lists.infradead.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Shah, Tanmay" <tanmay.shah@amd.com>, "Levinsky, Ben" <ben.levinsky@amd.com>
+ "Levinsky, Ben" <ben.levinsky@amd.com>
 References: <20261014213426.2957480-1-ben.levinsky@amd.com>
  <20261014213426.2957480-4-ben.levinsky@amd.com>
  <20261015-humble-eager-mushroom-9db4aa@quoll>
  <DM4PR12MB644859F1CA3A936684A3338B839C2@DM4PR12MB6448.namprd12.prod.outlook.com>
  <7067e343-24b9-4e3e-8e5e-42c98239ccae@amd.com>
+ <0df4bfd4-2bcc-42fd-a22d-e704e4b41d5f@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -99,116 +100,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
  n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
  qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
-In-Reply-To: <7067e343-24b9-4e3e-8e5e-42c98239ccae@amd.com>
+In-Reply-To: <0df4bfd4-2bcc-42fd-a22d-e704e4b41d5f@amd.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 15/10/2026 16:29, Ben Levinsky wrote:
+On 15/10/2026 17:31, Shah, Tanmay wrote:
+> We use 'amd' vendor prefix for all new drivers & bindings. Also, there
+> is dedicated IPI hardware which can be used as mailbox too, and we
+> should distinguish it with this PL mailbox. So I that is included in the
+> compatible string. (pl-mbox).
 > 
->>
->>
->> *From: *Krzysztof Kozlowski <krzk@kernel.org>
->> *Date: *Thursday, October 15, 2026 at 2:46 AM
->> *To: *Levinsky, Ben <ben.levinsky@amd.com>
->> *Cc: *jassisinghbrar@gmail.com <jassisinghbrar@gmail.com>; andersson@kernel.org 
->> <andersson@kernel.org>; mathieu.poirier@linaro.org <mathieu.poirier@linaro.org>; 
->> robh@kernel.org <robh@kernel.org>; krzk+dt@kernel.org <krzk+dt@kernel.org>; 
->> conor+dt@kernel.org <conor+dt@kernel.org>; Simek, Michal <michal.simek@amd.com>; 
->> linux-remoteproc@vger.kernel.org <linux-remoteproc@vger.kernel.org>; 
->> devicetree@vger.kernel.org <devicetree@vger.kernel.org>; linux-arm- 
->> kernel@lists.infradead.org <linux-arm-kernel@lists.infradead.org>; linux- 
->> kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; Shah, Tanmay 
->> <tanmay.shah@amd.com>
->> *Subject: *Re: [PATCH 3/6] dt-bindings: mailbox: Add AMD PL Mailbox IP
->>
->> On Wed, Oct 14, 2026 at 02:34:23PM -0700, Ben Levinsky wrote:
->>  > Document the AMD programmable-logic Mailbox IP used for bidirectional
->>  > FIFO communication between two processor-facing interfaces.
->>  >
->>  > The same IP is used on ZynqMP, Versal, Versal NET and Versal Gen 2.
->>  > Name each SoC in its compatible, and use amd,zynqmp-pl-mbox-2.1 as the
->>  > fallback that drivers match.
->>  >
->>  > Define the transmit and receive channel indices together with the register
->>  > aperture, interrupt, and interface clock. Describe the FIFO depth chosen
->>  > when the IP is configured, so that the driver can size received messages
->>  > to it.
->>  >
->>  > Assisted-by: LLM sparse
->>
->> How sparse assists here? It's something new. Since when does it parse
->> yaml code?
+> If we are also to include SOC name as well (per compatible property
+> guideline), then we should include one of the SOC name as well:
 > 
->   Hi Krzysztof,
+> So, I think 'amd,zynqmp-pl-mbox-2.1' is good.
 > 
->   Thank you for the review.
-> 
->   You are right, sparse was not used for this patch. It was only run on
->   the C patches of the series, and I applied the same trailer to the
->   whole series by mistake. In v2 the binding patches will name only the
->   model, and the tool list will match what was actually used on each
->   patch.
-> 
->>
->>  > Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
->>  > ---
->>  >  .../mailbox/amd,zynqmp-pl-mbox-2.1.yaml       | 74 +++++++++++++++++++
->>  >  1 file changed, 74 insertions(+)
->>  >  create mode 100644 Documentation/devicetree/bindings/mailbox/amd,zynqmp-pl- 
->> mbox-2.1.yaml
->>  >
->>  > diff --git a/Documentation/devicetree/bindings/mailbox/amd,zynqmp-pl- 
->> mbox-2.1.yaml b/Documentation/devicetree/bindings/mailbox/amd,zynqmp-pl- 
->> mbox-2.1.yaml
->>  > new file mode 100644
->>  > index 000000000000..2cc0d106b888
->>  > --- /dev/null
->>  > +++ b/Documentation/devicetree/bindings/mailbox/amd,zynqmp-pl-mbox-2.1.yaml
->>  > @@ -0,0 +1,74 @@
->>  > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>  > +%YAML 1.2
->>  > +---
->>  > +$id: http://devicetree.org/schemas/mailbox/amd,zynqmp-pl-mbox-2.1.yaml# 
->> <http://devicetree.org/schemas/mailbox/amd,zynqmp-pl-mbox-2.1.yaml#>
->>  > +$schema: http://devicetree.org/meta-schemas/core.yaml# <http:// 
->> devicetree.org/meta-schemas/core.yaml#>
->>  > +
->>  > +title: AMD Programmable Logic Mailbox IP
->>  > +
->>  > +maintainers:
->>  > +  - Ben Levinsky <ben.levinsky@amd.com>
->>  > +
->>  > +description: |
->>  > +  The AMD Programmable Logic Mailbox IP provides bidirectional message passing
->>  > +  between two processor-facing interfaces. Each interface writes messages to
->>  > +  a send FIFO and reads messages from a receive FIFO. The register aperture,
->>  > +  interrupt, and clock described by a node belong to one processor-facing
->>  > +  interface. Channel 0 represents transmit and channel 1 represents receive
->>  > +  for that interface.
->>  > +
->>  > +properties:
->>  > +  compatible:
->>  > +    oneOf:
->>  > +      - const: amd,zynqmp-pl-mbox-2.1
->>
->> What is 2.1? Your SoC has different versions?
-> 
->   2.1 is the version of the Mailbox IP core in the Xilinx IP catalog
->   (Mailbox v2.1). It is not a SoC version. The IP is synthesized into the
->   programmable logic, so the same core is used on every SoC, and the SoC
->   names in the compatibles do not add information.
+> Krzysztof, are you okay with above name? The 2.1 is FPGA IP design
+> version number and not the SOC version number. So in future let's say
+> that FPGA IP design is improved then the name (pl-mbox) will remain
+> same, but only version number will be updated i.e. (from 2.1 to 3.0). Is
+> it okay if we explicitly mention this in the binding description?
 
-Heh? This is in contrast to writing bindings.
-
-> 
->   In v2 I will use a single IP-versioned compatible, "xlnx,mailbox-2.1",
->   and drop the SoC-specific ones. This is also the compatible the Xilinx
->   device tree generator already emits for this IP.
-
-No, use SoC naming. Just like every other vendor. Remember: before doing
-something completely different, first find arguments why your
-vendor/patchset should be special.
-
+So you will release the same SoC with different versions of the block?
 
 Best regards,
 Krzysztof
