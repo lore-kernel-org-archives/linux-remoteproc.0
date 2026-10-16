@@ -1,171 +1,212 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011029.outbound.protection.outlook.com [52.101.52.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE8A485CF9;
-	Fri, 16 Oct 2026 15:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792162978; cv=fail; b=dVcmfFqbrmFnvzgaHfUa+IhICxcs5xSRwE22gGep02KCTfRgMEOiLflaNbEdIRSOeeB8f0zVDnj9wD/pM1QY33+jpXtOsYWaKVqb4TdSQ/mEz8pKgToDP24x3RfoaqfEkAfMTcJnpDJ6J0kAW1iLktVojER60oe8T449m7wIG8s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792162978; c=relaxed/simple;
-	bh=F+OwiLm6nf//+Of18Jv7LVwJTz3XfZ88idyRqdBiCQ4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZE8IYLN1ZiCBEfKE2SMLh6eQdRSPemDx5So2Wg+eag6q6jmIKN9C1bFReaJf+np0SQitwx8bRuYIf6GDL3Dz4zlQwYNfLUvng7xOKrDXCWewqkoBOhYwFmejAMbJHrChdwGDfEAXjBp31qF/Ft3Nmx1ptTlp39loVAwzsicxJSg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vJIlPuc2; arc=fail smtp.client-ip=52.101.52.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C012DEA8F
+	for <linux-remoteproc@vger.kernel.org>; Fri, 16 Oct 2026 15:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1792164857; cv=none; b=BaWnnTkXhDJXPY+8EFtjmmpNEH8jCE7s1lgI8thlwVCumheZJGPFu5BZE4YUDW6QUYsixT6vWxvpbKxjiYyltr+zRJOTDP9Yez+/D4WMeyHyN67fvu66qNDfENvHvCbV6wnqkkbCYixNNelniFeaIRoZ4YBPRLmsNsJ55yKiz9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1792164857; c=relaxed/simple;
+	bh=D0hVL3u+P+DKgbc0k33AbvhNVDj3aw4G1RtdJ+Joxrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rZXYozKoYiAr04djdCUFEN5HVCckvhor15bumg3w1w6AAARBGA6def3Yyv/DlWhLD3Uh1HMwPS9tISV4P3dB2k8pJ46zbgUp92aAW4mv00p83gatd7sIyb7LG/d0b0GpeXnAsMOysuPbH88i95Ww1PUdS2z4QAFGmXoKJlalSvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DA/9cvxI; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vJIlPuc2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EqcA0luBhJvbglQMoRCdUFntkncQQ+47KkmozDF42rqNJu+K94vCchjhxwQn2KfN2lDgR3A322+CRIMjE8sNWPCrS9HJDlIRQZfrZGPguvu0etYBVQY4L1QvAKQ6emwDn5Cbu1VViedjDkc4R3pd1yAO1mgcjzyUEgEvmMuz9dkzyPAz6LX9USGaBzhh7WNyt4ylEqBpzwDs8d9JFnBy5UUhJSqK5WrRPfhP9yQQDB+HROBF7+qWBlgcOIM4yodmZsHU7rnR73sdntwuQvFpPwLkT0Xx2e1kkxYPKCOdH73tR01veCrW7qGN0gNnqM3xUshJ89j5/4Ug7WO3p85Apg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qc22DhCR5XedJweYazdf3YRWylHrbaJAaVnfeNECM14=;
- b=d4Sjm7EV1n08vg1yGC5U0r/ScKJbhRXhh36YVMgOGFOiTsWhmAAdhQDlpUpYXC//L3I72B85i+e4VC8XzOUj6hlwHL53gH7RfxsVsfP4Nks/yugD7Y3pNSdnWFX99OY7jAGk6xS1GkiGwMa4p6a0u1XYbvOtyZM/NJiNvSxd5F2sEzfn824hPgJjFOMU0sr4vlbU7eQ60Jn/gcjb0H/C3TB+cD0fyOexD9F82GolEDj/opPHyM4vlgh/QFJY3J79CYnTEe7mSEiQipbDrVN6TaUftAgR7UpxOcBphtMDcfbVhCFZL6Weck/hUxwB0o4IHAA7eObNtQV481i7Qs8rBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qc22DhCR5XedJweYazdf3YRWylHrbaJAaVnfeNECM14=;
- b=vJIlPuc26BViMeubaFGc5KAwSJHbgDUWAej5lkGUAzzXkzSsaF3m5aLMidwah/5B8kQD94/Hu6QRDLSkAJMAqBECBvHcWmk6K2p4HQRQUa2vzMquhW4WJhcpvCdo32hcoMhtALwy4oO1/X/au0Ypez3zdEPHUUVfK34yJqqW87g=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6448.namprd12.prod.outlook.com (2603:10b6:8:8a::7) by
- DS7PR12MB6192.namprd12.prod.outlook.com (2603:10b6:8:97::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.496.23; Fri, 16 Oct 2026 15:02:52 +0000
-Received: from DM4PR12MB6448.namprd12.prod.outlook.com
- ([fe80::62c2:71cd:7fdc:987a]) by DM4PR12MB6448.namprd12.prod.outlook.com
- ([fe80::62c2:71cd:7fdc:987a%4]) with mapi id 15.21.0496.021; Fri, 16 Oct 2026
- 15:02:52 +0000
-Message-ID: <9c95afa2-d580-4a24-999d-fc0ff8d46038@amd.com>
-Date: Fri, 16 Oct 2026 08:02:47 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] mailbox: Add AMD PL Mailbox soft IP controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, tanmay.shah@amd.com,
- Ben Levinsky <ben.levinsky@amd.com>
-Cc: jassisinghbrar@gmail.com, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, michal.simek@amd.com, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20261014213426.2957480-1-ben.levinsky@amd.com>
- <20261014213426.2957480-5-ben.levinsky@amd.com>
- <20261015-aromatic-ibex-of-opposition-dafb43@quoll>
- <0ad96f34-97d6-4998-9cf3-4b09ab6c94a2@amd.com>
- <48ac1f6a-3de8-401b-a348-502178f7ff1c@kernel.org>
-Content-Language: en-US
-From: Ben Levinsky <blevinsk@amd.com>
-In-Reply-To: <48ac1f6a-3de8-401b-a348-502178f7ff1c@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0147.namprd13.prod.outlook.com
- (2603:10b6:a03:2c6::32) To DM4PR12MB6448.namprd12.prod.outlook.com
- (2603:10b6:8:8a::7)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DA/9cvxI"
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-53506b44151so557791cf.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 16 Oct 2026 08:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1792164855; x=1792769655; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=wCPy2TJXUd/051khMbJz0nmRExXjWEjeWV3Tkd6L+Uc=;
+        b=DA/9cvxI819TeM6yExsvZ2GyMWM8BOBEY8jGDsCqYiFRTRmeSsHwrQvPSa0SCnzmR6
+         1KdNSBEevfh8IttK19VxfXGEYpckJ36Fud9x2sLI5J+mrRrdLLpS0jRRUE31iEyGT9w0
+         oSuefA5TVZDwcL2Hz6LTPOClP1PPIp+72PFemc6e8X1pdsN2PCjTz9AITNungH1CICsG
+         PyY/lQ5JpMd6FDCpz5DpZH1GA6KcyshxmqkBMOANSKZVFzcMobRpuNZKZsX7qhYScE7h
+         NLoUjwikar4IJZAZ1k2slKYXMfq5/Ouxqp6pRdSbExx5ekn05LHTJAejP+Rzd67OdV/a
+         kBcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792164855; x=1792769655;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=wCPy2TJXUd/051khMbJz0nmRExXjWEjeWV3Tkd6L+Uc=;
+        b=lG6pG15FT6cc+7tlk1zhEG6CnTOM/SBkb6EffyECn1Yt0Ab0pyC0uOhFKQir3UEhMC
+         u2NgSITDZ6r8pK8JTpfu97zvzQDDywcKtfRXWhetzjZCSvz3P6fYlBDQcA9v7TG9sNI7
+         vnbuZrHBB0PHTGze90ewxxl2Ub7sYMafK/Guvf2YRqfZ/nIbDo3Bsu+EZ9jRWbPkZH9C
+         lhFZPSsUajfWZUPRXwSiqmTOf1smi5v9A6JfQTJwsdkPEUYBx2kk8lYCVw2F4OSttl3t
+         z68TGeQoatQtewGf8NY5a1TXGQ4+3xTsug9qfc54r0mmYZvhVJqxP2NnqrBUwjI16SwW
+         i3Cg==
+X-Forwarded-Encrypted: i=1; AKwUvBxqxudFuKaC+7lfpI+v7LtkfQ5qc8zU5sY7l47D4HfUVtij7YsNZKbw8b3mPDfBTbT6dRJ/+SQBPGaeMqqcCF/Q@vger.kernel.org
+X-Gm-Message-State: AFq9FYJMMDYyMGHkUREJT0LrQDltMmOsTvMdBskfhB14be68W9SXvDSr
+	GDxNi9MykEDYEQV2EQJc393zWXSJNIouwv8ccFeVJhpqeGrEI0wEmbvWEqlUzw4lRNA=
+X-Gm-Gg: AYBFou2IyIHQKBKoe0sNjk3scxz94wgR3bnc7TNL0US4RmQ6hhvaxh+v3FFKN4cjX85
+	5vmlq/y+TDBGPhlMt0o9bZNH6w6frsOPBaSoU1Jhrw3MDQPZi1IagBZlGDrT9blMH2DecXyCsif
+	uUmhUuD7M7SCikWf2+RHTBK8+/XJELzlm4GfqpQMOmOeFMx1jF4aavy0mY5+zb2VzMA/A6PmyMX
+	fw6kZjRQR5eb1uQEJyIGev3EmwjpV3rOYxO8Yfr4oQRi/xzlKgW46JvqEOWQEep+j70QzGiNvPf
+	2zUPZmeW897MRqQjP8rpwHHkGSbpa4oMAtqnY1AVJdanXuI7RKjEdmTHS1eYhcvfaqgcL+rzfKI
+	A1FQbbv9zpoK9mU1KynzBy+QSk7piKsVHfLB9OexWgwpkdkJFHOm9TYUFApGOrCrY1bFsI7Hf2g
+	AyleA2IxOjFQ6w5myrEsiK16UNze2PSXJHgK9fNiOhHgqogYMWWRX0e9k4XD+hZetZPTr2/f2Rw
+	A==
+X-Received: by 2002:a05:620a:880f:b0:93e:c12c:f13f with SMTP id af79cd13be357-93f29df893emr29655085a.73.1792164854385;
+        Fri, 16 Oct 2026 08:34:14 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:ff2f:8a9c:5623:f753])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-93f1a16b5e4sm236439085a.14.2026.10.16.08.34.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Oct 2026 08:34:13 -0700 (PDT)
+Date: Fri, 16 Oct 2026 09:34:10 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Yonghao Zhang <hyz3367@gmail.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] remoteproc: core: Reset freed vring entries to
+ FW_RSC_ADDR_ANY
+Message-ID: <atJD8lUISK6yblmy@p14s>
+References: <20260929075453.2324597-1-hyz3367@gmail.com>
+ <20260929075453.2324597-2-hyz3367@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Subscribe: <mailto:linux-remoteproc+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6448:EE_|DS7PR12MB6192:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06360f9b-21d4-41cc-1b22-08df2b968d1d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|23010399003|376014|366016|1800799024|56012099006|11063799006|4143699003|18002099003|10067099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	YQ806f1KmUqtuxZyZAgbrQ39CxJfjpWKF58US5QltjA5gZumgyHzIQQ8K9feKJBGYxNuJp/R4zDxtX6JaP+WjjsS9D4MLgkWlaHR8yCeBxsC+ID3buIY3A80d2an2Sx/3x4QMD1+yjilUtVlmdGbvyPgj8wuAWueI73c/icELD17WKiX71s9ePKbOkWUn5xIzUoPo0AtyH6+oyMHDjDx9ZRWBOeSj1o96ZQXcGAvIgkXVZBkV0VIhFL7sCqqEGUklcYX2Of5YRsw48dtfmWUAqovYv1vhC5NmGZL8161bmvRXsh+DzS4S2RFgSkKIkcWydVZosf0gHXvQrLPCTjUbmj4C3Hs1hRjs0ttqJDmodvj3WnzjB7M8aY2ur0XrlzTAwHo7hl0nPwATuiMkIjPzaUQFbs6mGkBC9j4v58Xi7fx0q3+lBuLX5xbomJEsCcbQkCEvcZ5SwE16wGyLMWKWVE/DgszqhVOKwpi1sh2GUsepWis8nkR3R+5fZkR5KvH5tJvaTsFyJ00tOAUIgKCfT5zrfolzM6ydseJjfhUts7xrCObBZkwYxfQBlo7iiHFVcbK/spyRN7/Jzhw/AU5rm711AESBFDw4UyUu+iMJsUcs1Geui0xGQPFEyCmHNQtIr3liIsocDVqTj1dQgpTedF0n8kyF3GOMyVOtRestHo=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6448.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(23010399003)(376014)(366016)(1800799024)(56012099006)(11063799006)(4143699003)(18002099003)(10067099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cXIzbmMrZlNRbDg0ekNUandCVmVqbkVCS0VYT1Y5dWZtZkU2R01OTEhHekVJ?=
- =?utf-8?B?eStoVkx4ckx1SUJ2czhENUxTNWQwMEJqMXc3dHl4bmJHdHQ1QXZyaGtlVkUv?=
- =?utf-8?B?T1NLMHRjblY1U00zZjJaeTVkQ0pmbkd5TVBuU21YV2NhWDNXZkxJWks2aFRx?=
- =?utf-8?B?N2JrN2Z1Unp6YjBUcXJKRG05V0pad1lJcXpiOTI2RXhuSXhjbkh5UVFmbFJs?=
- =?utf-8?B?UjJZSmJZcUlUWlY5QzhCTmZQbUZlbTZWdWNRNUdIZGJRWmYreDBtam5Ua2FO?=
- =?utf-8?B?RlRYdUpaTVJvLzkrcC9YYzltYVZBQ0JZaGgvaFovcitvSmpHTjlwZVMwWmkx?=
- =?utf-8?B?Z3RGYWdIQ3JvWXVSOWZzMGx1MGFZTEVqNEUwdW5uNnJMSjlSRVphT1NSY2Ry?=
- =?utf-8?B?RDV0M0E0RGxNREMweXVJYnljVXJ0N052OUsxNGc4THZwWlBTbi9wTjcvVXMw?=
- =?utf-8?B?MThZRXA4QkFaS3FQWnNucm13MFdPc0tjT3pHMXRnUmJzb09OeWhvKzhYU2Vm?=
- =?utf-8?B?TllESHpSWXFtNHEyaTBVQmZGRFhtNHZOK3ZyTytmZldYNXU2RFNTbWJtWUZZ?=
- =?utf-8?B?aTFKVkpHSGpUaDRzdldHd0pML21NWFJCa3VpbEF6UWh1TkgrTFRkU1hJNjFw?=
- =?utf-8?B?VkJacFhMNlhwTEdxVnpIOEREU1BVNnR0NEtXYmlWNC8vUGJiaFN6MVgwYVU1?=
- =?utf-8?B?eXNVQTJSZWVmdmovaEVQUkpmYWtLb2RJS1VGQ0pRSTA5ZmtHeHZrZ1NINi9P?=
- =?utf-8?B?bXYrMDJJZmN4bHhsY1JzVXJBakxYVnAzTkd5YnJyM1o1dXFNRzIzUm5kK0hG?=
- =?utf-8?B?YncwUXIvY1VSVXBJNm1uanJuMW5WNEQvZERXVjNZN2YrZm8zTW9zWDk0NHNs?=
- =?utf-8?B?d21qU0tBV3RjbXhnZW5RZHV3bGh4Q2JiSzdLblkxQTA2UU41bDhGV0ZhMCs4?=
- =?utf-8?B?RjRva3d6eks2bytZbDZ4dFVBbnM3RjVJNzYvQW5aOEdSTldacTJwNEZHeVcz?=
- =?utf-8?B?aW1nZXpwUndaeXdIMy9tN3hFTkJLd2lPOG1iUTAvdlIyVWxvamFkT3d3Vzk4?=
- =?utf-8?B?cW9NMHNYaFJTY09RdStteCtBOEJyL0ZFY3VBMjUrN1h1U0RjTDNYV3FERlVp?=
- =?utf-8?B?RjhSamsydEZRSjErZm9MVFU1djdBUmhBUGFjeWZISVZjOERGeUJoTkswdWVJ?=
- =?utf-8?B?NTh4aGRla3FTZlF0TmY4YkRMZDg1aVRLMUFvY0JwdEN3UjNBNmdqVHN6SEM5?=
- =?utf-8?B?ZU1BdDU5TWxIWUlGRFdlTXIxUUxLVUtNOG5idzJteTcvSHZjZWlPWGsyYWdW?=
- =?utf-8?B?emsvaXZnV1hTU3BmZEp1S1NWbHgvaFo1amhGL2p1MVQzbWluVVJCaWdEUEs1?=
- =?utf-8?B?YkswYzhvSnUzU2J1NHpCQk9aVG5zRXp2QXJ3bmVWa2FuSUhPRFU3ZWtERE1z?=
- =?utf-8?B?YmFLNW5vTWlDTU4yS0ZJUWV6WEE3RUwvbGpkUHlxZDk0cWtBRWR1d0VtZnVZ?=
- =?utf-8?B?d2JQUG43VUdySDhUbjNHRFVIeElvR3NKOTBRTU9jYnRaNXEyeVhrTGVtSlUz?=
- =?utf-8?B?THNhWXlNaU9xam1ITzBjUU9IQzRwdFFiWWxaMDRFNFVsSmdmOHRhdCs5K3pG?=
- =?utf-8?B?ZGthc01ZWjA1Y0RUazFRbjdCbFZlNVhRdGc5TEVHZHk5ZmdUS3kzY2V5MGhq?=
- =?utf-8?B?MlVobUhJc3VyQUVGU25DOGFkcGJDd3NkK09Ua2pGRkRNVTAwV2lwVHhJT3o2?=
- =?utf-8?B?WllsTzZKeEJ4ekZYbEFrbWxCVTFhNXFRbm5xdmZuUFoxWFBDQzQxNFVBc3J6?=
- =?utf-8?B?M2svRTNwdnhKdGtRSXRNRG14K3FLMTNtQ3IzOG52ZEdFa0o0cXk1K0s4Vzd5?=
- =?utf-8?B?bjFRM0IwS0s5RkliSVhVVjhzS1JvWlNCV001M2VjVmJSbWY3ckRqWmhlZnBa?=
- =?utf-8?B?cHJxQjBVU1QrYjNZbm5Ic05qN1Y0bUVsNHFnTjF0YXByN0RRcFBGT1IxaVBB?=
- =?utf-8?B?VmxaaXY0UnNRU2VoeUJ2Zks4ZHAzS0llc2V4V1YvVmVTKzBaZXNaM0JuUUNX?=
- =?utf-8?B?VitPaUxrUE1WVHRQb0JRV3haZ3JxUjd3UkVPWVJESXl1SjZhaDZucHZWMEpF?=
- =?utf-8?B?TlBVSmtBd0MxK1Q4RWtmR1U1Y3ZVOG5PTTlKMk91NVpXdU9CS3ExOWFXL2pF?=
- =?utf-8?B?a1VrRTFMVE41dTRPaDJzYzZyQ3MyQmRXWUZWMmErU2IxZEx6NlVMRDkvdkJD?=
- =?utf-8?B?Q2dnaEdOSUxtRTE1WDk3Y0pBNjhVSzA0ZTc0Q3gyQXY1VnlDNE5scG5Ia0F0?=
- =?utf-8?B?c1hzbnVyUG1NdFJCMk5tbzcwRnJ3a1NJRlVWUGxGTlFMWWNublRadz09?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06360f9b-21d4-41cc-1b22-08df2b968d1d
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6448.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2026 15:02:52.4178
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3mi5Igm0U0pkwjz89h/JjTNQyNvKRMzEyMt6bAx0mI7ROhGHBiwvF7Ty1+7Nye6UvfezAucnO6n6C0tL1kmuKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6192
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260929075453.2324597-2-hyz3367@gmail.com>
 
-
-
-On 10/16/26 7:56 AM, Krzysztof Kozlowski wrote:
-> On 16/10/2026 16:54, Shah, Tanmay wrote:
->>>> +static const struct of_device_id amd_pl_mbox_of_match[] = {
->>>> +	{ .compatible = "amd,zynqmp-pl-mbox-2.1" },
->>>> +	{ .compatible = "amd,versal-pl-mbox-2.1" },
->>>> +	{ .compatible = "amd,versal-net-pl-mbox-2.1" },
->>>> +	{ .compatible = "amd,versal2-pl-mbox-2.1" },
->>>
->>> So all of them are compatible? Then why do you need all this?
->>>
->>
->> Hi Krzysztof,
->>
->> This block will be used on 4 SoC - zynqmp, versal, versal-net & versal2.
->> IIRC we should list each SoC where the device/hw block is available.
+On Tue, Sep 29, 2026 at 03:54:50PM +0800, Yonghao Zhang wrote:
+> rproc_free_vring() resets a vring entry in the resource table as it
+> releases it.  Resetting da to 0 leaves the entry looking like a vring
+> at device address 0; write FW_RSC_ADDR_ANY instead, the marker for an
+> unallocated address, which is what the entry means from then on.
 > 
-> No, you do not list here every compatible device. You only list
-> fallbacks. Please open other drivers to see how this is done. Only hwmon
-> is an exception here with its own reason.
+
+The above is enough to describe what this patch does.  An additional line will
+also be enough to justify the modifiation of the comment (see below).
+
+> That matters on the error paths of rproc_start() and rproc_attach(),
+> where rproc_free_vring() runs while the remote processor is already
+> running: the failure originates in rp_find_vq(), called through
+> virtio_find_vqs() from e.g. rpmsg_probe(), which the core only
+> reaches through rproc_start_subdevices(), after ops->start() or
+> ops->attach() have completed.  At that point table_ptr is the
+> resource table installed in remote processor memory, and whatever
+> the reset writes is visible to the remote side.  Whether and when a
+> running processor reads the entry cannot be known, so the value must
+> be safe for one: 0 is a plausible device address, FW_RSC_ADDR_ANY is
+> not.  On the teardown paths, stop and detach, the write lands in the
+> cached table or in a copy of the installed one and reaches no one.
 > 
+> The comment replaced along with it was written for a call graph that
+> no longer exists.  It described the teardown callers only:
+> rproc_stop() has run, table_ptr points at the cached table, and that
+> table is NULL for a processor started by another entity, so there is
+> nothing to clear.  Two facts have overtaken it:
 > 
-> Best regards,
-> Krzysztof
+> - rp_find_vq() has been calling rproc_free_vring() when
+>   vring_new_virtqueue() fails since commit 6db20ea8d850 ("remoteproc:
+>   allocate vrings on demand, free when not needed"), and that call
+>   was present, unchanged, when commit 9dc9507f1880 ("remoteproc:
+>   Properly deal with the resource table when detaching") landed: it
+>   runs from rproc_start_subdevices(), after ops->start() or
+>   ops->attach() have completed, with table_ptr at the table installed
+>   in remote processor memory and the processor running.  The comment
+>   never described this caller, not on the day it was written.
 
-Hi Krzysztof,
+Are comments supposed to describe all the paths that lead to a function?
 
-Thanks, understood. In v2 the binding keeps the SoC-specific compatibles
-with amd,zynqmp-pl-mbox-2.1 as the fallback, and the driver matches only
-the fallback. I also withdraw the xlnx,mailbox-2.1 proposal from my
-earlier reply.
+> 
+> - commit 9dc9507f1880 ("remoteproc: Properly deal with the resource
+>   table when detaching") and commit 8088dd4d9316 ("remoteproc: Properly
+>   deal with the resource table when stopping") later taught the
+>   detach/stop paths to take a kmemdup() copy of the installed table for
+>   processors started by another entity, so the NULL case the guard was
+>   deciding between is gone: table_ptr is always valid where the teardown
+>   callers run.  (Those callers have since moved to the rproc-virtio
+>   platform driver, 9c31255ce5fe.)
+> 
+> Fixes: c0d631570ad5 ("remoteproc: set vring addresses in resource table")
+> Fixes: 4d3ebb3b9990 ("remoteproc: Refactor function rproc_free_vring()")
+> Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 40 +++++++++++++++++++---------
+>  1 file changed, 28 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 263e12f022ea..123aadb467a0 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -403,6 +403,33 @@ rproc_parse_vring(struct rproc_vdev *rvdev, struct fw_rsc_vdev *rsc, int i)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * rproc_free_vring() runs while a remote processor is being torn down
+> + * (rproc_stop()/rproc_detach() paths) or while a boot or attach attempt
+> + * is failing.  Whether the reset below can reach the remote processor
+> + * depends on what rproc->table_ptr refers to at that point:
+> + *
+> + * - teardown paths: the call comes from the rvdev cleanup in
+> + *   rproc_resource_cleanup(), by which time rproc_stop()/__rproc_detach()
+> + *   have switched table_ptr to the table the core was booted with, or
+> + *   to a copy of the installed table when the remote processor was
+> + *   started by another entity (rproc_reset_rsc_table_on_{stop,detach}()),
+> + *   so the write cannot reach the remote processor.
+> + *
+> + * - error paths of rproc_start()/rproc_attach(): the failure originates
+> + *   in rp_find_vq() (virtio_find_vqs() failing in e.g. rpmsg_probe()),
+> + *   which rproc_start_subdevices() calls only once ops->start() or
+> + *   ops->attach() have completed.  table_ptr still points at the
+> + *   resource table installed in remote processor memory and the remote
+> + *   processor is already running.
+> + *
+> + * Especially in the last case the reset has to tell the remote
+> + * processor that the vring entry is not usable: with da set to the
+> + * invalid FW_RSC_ADDR_ANY a running remote processor sees the address
+> + * as unallocated, and notifyid is invalidated along with it.
 
-Thanks,
-Ben
+Why is there a need to describe all that?
+
+> + *
+> + * Reset the virtio device section only if there is a table to work with.
+> + */
+>  void rproc_free_vring(struct rproc_vring *rvring)
+>  {
+>  	struct rproc *rproc = rvring->rvdev->rproc;
+> @@ -411,20 +438,9 @@ void rproc_free_vring(struct rproc_vring *rvring)
+>  
+>  	idr_remove(&rproc->notifyids, rvring->notifyid);
+>  
+> -	/*
+> -	 * At this point rproc_stop() has been called and the installed resource
+> -	 * table in the remote processor memory may no longer be accessible. As
+> -	 * such and as per rproc_stop(), rproc->table_ptr points to the cached
+> -	 * resource table (rproc->cached_table).  The cached resource table is
+> -	 * only available when a remote processor has been booted by the
+> -	 * remoteproc core, otherwise it is NULL.
+
+Just remove the last sentence if it has become obsolete.   
+
+> -	 *
+> -	 * Based on the above, reset the virtio device section in the cached
+> -	 * resource table only if there is one to work with.
+> -	 */
+>  	if (rproc->table_ptr) {
+>  		rsc = (void *)rproc->table_ptr + rvring->rvdev->rsc_offset;
+> -		rsc->vring[idx].da = 0;
+> +		rsc->vring[idx].da = FW_RSC_ADDR_ANY;
+
+I agree with this change.
+
+>  		rsc->vring[idx].notifyid = -1;
+>  	}
+>  }
+> -- 
+> 2.34.1
+> 
