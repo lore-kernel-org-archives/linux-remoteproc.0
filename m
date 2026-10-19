@@ -1,44 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-alma10-1.taild15c8.ts.net [100.103.45.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846E25CDB7F;
-	Mon, 19 Oct 2026 14:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598186167DA;
+	Mon, 19 Oct 2026 14:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=100.103.45.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1792418476; cv=none; b=rofrOf2p+Y3f7pz63Hkbr5UzZRY0JUVMhspNwofDYkgZOOo8TyQoZ8Z2MKoeQgq3zDtX23Rpw9u44FveBXdceDonpv0TgarH+/c1pDkwzAa5p30SDnAP7lLPXT4gVDSeON7jx8ngqyF72eXegIK9oTXIo2BuKAIsBqR3NEptaWU=
+	t=1792418652; cv=none; b=S5PK3Ew98I5/gIfnzsC3M5C7qeR4S82WLfr4Z7LNFWLEzuXpZlyQ9wf8MsiebEB1K19Ht03ouXCdvurtVjMw0PrE369D+2cbYXoerkfv4GhhzwL6FqkNABfyFiYCQW2f5YmWEytWLns/FNg35LZM/zaiqIuYGowrl4TN16+BM9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1792418476; c=relaxed/simple;
-	bh=2vNjjOL4BVHS72l3hrXYOnFW5T4XsSjcJReEj0tWiR8=;
+	s=arc-20240116; t=1792418652; c=relaxed/simple;
+	bh=wDD6ykyvNysEJCQGddu/mV4rkV7sWkPwIGFxEL1jFy8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aV54V+tR0otq6BQVrRzzepeAyaCuqumcvekbZ7IDManhMfyxaEwFdHJy891iJdl3aVXH/yNn0JZY8LUjoYwPx5S3HlRtYGejp+17yeUWtC4rTe53Vvckf2Ic38DYZq3W/l5nP5MDhpDM/u7eHMtEc74lQljpExMAtACM/WcfUIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5pBQBrG; arc=none smtp.client-ip=100.103.45.18
+	 MIME-Version:Content-Type; b=MpjlEQC9vli5V0S5bLjjnYjrvSFh2ECT0KqcmY2Ao31n5qCxAlVUNfoWnqPrMWgH91geonl7+vt6lLkPcbFTIea6jEA96vpZQxGJO+qRMyDnCavP107qOP3f2A/P1sUSV082EVkWfyWpEtjsTUVdXAGM0JObvyTkfGSYFnWtdSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3qVumw8; arc=none smtp.client-ip=100.103.45.18
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5pBQBrG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9C21F000C6;
-	Mon, 19 Oct 2026 14:01:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3qVumw8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689831F000C4;
+	Mon, 19 Oct 2026 14:04:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1792418474;
-	bh=+2pbJ771we+h3ohOnYuS+F6Sr49YChib6X+vHKw7WIQ=;
+	s=k20260515; t=1792418649;
+	bh=eiCuBGcaIe6xncLEZgKUCnZLcZudMZJRvrxN0BDTpbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=M5pBQBrGymByiOzgpqERs39DLLuZ8WAOy9jwhMrVdmEF/B9TXFIglOrV2PvcdIcOF
-	 km3ZhY9ox29eWGAE3mxOxOukGua8LJj7dg1vwbGNruU3Owle9U3iuXXB+VvjvN9knT
-	 XI/xUHAgJ6b5RQ2hRZkBqpczj0f9xDmBZ4KRkbRUOMV2MH314/oPwLWQBK3wUaUfeO
-	 6uvMCLPCu9Hg0MlZMvkeuDPHju948Q4tIklUK5PszAOOv8FH9c4M58+/jt5aATbqDT
-	 k5zoTCb6jphlm6WoTC8DDFZndP2TCnYuhyO2sgMRskxUeiCFFjnwHp4OCMFiQHTuoe
-	 W7JT/NA47L4Hw==
+	b=H3qVumw8ytV3PbOfXFiAiZGnE2nx8UJ2am6Fn6LTIpfIF+F1+7yk2JyPeBGPo9/j1
+	 W4B7daEevc2YA9ipUdTQtuVQJ82lncknkqfbBB4m0xGMQzu5emyXyNffbc3TzVW7Ud
+	 z2Hen9OgxuAY4BQcDMe7TXsZcRhTxWlQM4XsVVVVMumKGW3AgXTKitddYPL/dZ+v/j
+	 7UwBA1z2Y1YUmLxdpaVqQjWhahm6dJAEyBpws8SNnTigxdbXW9EZP9HH5lz1XKiDe9
+	 d0AN/DOuAZKskWec4g3/PBUW7hSg3nSfoIC5VCERKcvJIjKAO3BMA4e5zaxeN0z+06
+	 Uv7/bQ2NnVvng==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Chris Lew <christopher.lew@oss.qualcomm.com>,
-	Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>,
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
 	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mathieu.poirier@linaro.org,
 	linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.18-6.1] rpmsg: char: Check for ongoing chrdev destroy
-Date: Mon, 19 Oct 2026 09:49:25 -0400
-Message-ID: <20261019135441.1420968-274-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.18-5.15] remoteproc: core: cancel crash_handler work in rproc_add() error path
+Date: Mon, 19 Oct 2026 09:51:30 -0400
+Message-ID: <20261019135441.1420968-399-sashal@kernel.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261019135441.1420968-1-sashal@kernel.org>
 References: <20261019135441.1420968-1-sashal@kernel.org>
@@ -54,317 +53,409 @@ X-stable-base: Linux 6.18.57
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chris Lew <christopher.lew@oss.qualcomm.com>
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
-[ Upstream commit 1f9c2897afb0fe86c1fdf4f5e23c5fb8f7442f6d ]
+[ Upstream commit 0ec167625b4fea30b26da33c188e853ff25d5583 ]
 
-A null pointer panic is observed when stopping a remoteproc and closing
-a character device using the RPMSG_DESTROY_EPT_IOCTL. There is a race
-where each context calls rpmsg_chrdev_eptdev_destroy(). The thread that
-runs second will call cdev_device_del() for a second time, which fails
-because the first call already removed the device from sysfs. Add a
-check at the beginning of destroy and exit early if the destroy call
-has already been done.
+Ensure crash_handler work is cancelled before tearing down rproc resources
+to avoid accessing freed memory.
 
-[ 26.654130] Call trace
-[ 26.656658] kernfs_find_and_get_ns+0x28/0x8
-[ 26.661140] sysfs_unmerge_group+0x2c/0x7
-[ 26.665357] dpm_sysfs_remove+0x38/0x8
-[ 26.669305] device_del+0xa4/0x3e
-[ 26.672811] cdev_device_del+0x28/0x7
-[ 26.676675] rpmsg_chrdev_eptdev_destroy+0x68/0x98
-[ 26.682765] rpmsg_eptdev_ioctl+0x130/0x11c8
-[ 26.688318] __arm64_sys_ioctl+0xb4/0x10
-[ 26.692448] invoke_syscall+0x50/0x12
-[ 26.696312] el0_svc_common.constprop.0+0xc8/0xf
-[ 26.701151] do_el0_svc+0x24/0x3
-[ 26.704570] el0_svc+0x40/0x17
-[ 26.707810] el0t_64_sync_handler+0x120/0x13
-[ 26.712288] el0t_64_sync+0x1a0/0x1a
-
-Signed-off-by: Chris Lew <christopher.lew@oss.qualcomm.com>
-Signed-off-by: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
-Link: https://lore.kernel.org/r/20260406-rpmsg-char-fix-chrdev-destroy-race-v1-1-7317434fa246@oss.qualcomm.com
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Link: https://lore.kernel.org/r/20260623-rproc-attach-issue-v3-3-8e24310707ce@oss.qualcomm.com
 Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-I have the race, callers, prerequisites, and mailing-list thread.
-Compiling the full 9-phase verdict for this 7.3-rc4 tree.
+The local tree is **7.3-rc4**. This is a one-line UAF guard:
+`rproc_add()` must cancel `crash_handler` before it tears the device
+down, and that error path exists here.
 
-## Phase 1: Commit message forensics
+===============================================================
+PHASE 1: COMMIT MESSAGE FORENSICS
+===============================================================
 
-**Step 1.1: Subject line**
-Record: `[rpmsg: char:]` `[Check]` Check for ongoing chrdev destroy —
-serialize/idempotent-ize `rpmsg_chrdev_eptdev_destroy()` so a second
-destroy does not run `cdev_device_del()` again.
+**Step 1.1: PARSE THE SUBJECT LINE**
+Record: **[remoteproc/core] [cancel] cancel `crash_handler` work in
+`rproc_add()` error path** — “cancel” here is a safety action (flush
+pending work before teardown), not a feature.
 
-**Step 1.2: Tags**
+**Step 1.2: PARSE ALL COMMIT MESSAGE TAGS**
 Record:
-- `Signed-off-by: Chris Lew <christopher.lew@oss.qualcomm.com>` (author)
-- `Signed-off-by: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>`
-  (submitter)
-- `Link: https://lore.kernel.org/r/20260406-rpmsg-char-fix-chrdev-
-  destroy-race-v1-1-7317434fa246@oss.qualcomm.com`
-- `Signed-off-by: Bjorn Andersson <andersson@kernel.org>`
-  (remoteproc/rpmsg maintainer)
+- **Link:** `https://lore.kernel.org/r/20260623-rproc-attach-
+  issue-v3-3-8e24310707ce@oss.qualcomm.com` (patch 3/3 of v3 series)
+- **Signed-off-by:** Jingyi Wang (author); Bjorn Andersson (remoteproc
+  maintainer)
 - No `Fixes:`, `Reported-by:`, `Tested-by:`, `Reviewed-by:`, `Acked-
-  by:`, or `Cc: stable` (absence expected)
-- SHA: `1f9c2897afb0fe86c1fdf4f5e23c5fb8f7442f6d`
+  by:`, or `Cc: stable` (absence is expected for this review)
+- Ignore any pipeline SOBs
 
-**Step 1.3: Body**
+Notable: this is **v3 3/3**, titled on-list as “improve robustness for
+rproc_attach fail cases”.
+
+**Step 1.3: ANALYZE THE COMMIT BODY TEXT**
 Record:
-[Bug] Concurrent `rpmsg_chrdev_eptdev_destroy()` from remoteproc
-teardown and `RPMSG_DESTROY_EPT_IOCTL`.
-[Symptom] NULL-pointer panic in `kernfs_find_and_get_ns` via
-`device_del`/`cdev_device_del` (arm64 ioctl stack provided).
-[Root cause] Second destroy calls `cdev_device_del()` after the first
-already removed the device from sysfs.
-[Fix] Under `ept_lock`, if `eptdev->rpdev` is already NULL, return 0.
-[Versions] None stated.
+- **Bug:** `crash_handler` can still be pending/running when
+  `rproc_add()` unwinds.
+- **Symptom:** use of rproc state after debugfs/`device_del`/char-dev
+  teardown, and after the caller drops the last ref
+  (`rproc_type_release()` does `kfree(rproc)` with no work cancel).
+- **Failure mode:** use-after-free / use of a half-destroyed rproc from
+  `rproc_crash_handler_work()`.
+- **Version info in the message:** none.
+- **Root cause (author):** teardown without
+  `cancel_work_sync(&rproc->crash_handler)`.
 
-**Step 1.4: Hidden bug fix?**
-Record: No — this is an explicit race/panic fix, not cleanup disguised
-as a fix.
+Cover letter (verified in mbox): *“Failure in rproc_attach() path can
+cause issues like NULL pointer dereference when doing recovery and
+rproc_add() fail.”*
 
----
+**Step 1.4: DETECT HIDDEN BUG FIXES**
+Record: Not disguised. One-line UAF/lifetime fix. “Ensure … cancelled
+before tearing down” is explicit.
 
-## Phase 2: Diff analysis
+===============================================================
+PHASE 2: DIFF ANALYSIS - LINE BY LINE
+===============================================================
 
-**Step 2.1: Inventory**
-Record: `drivers/rpmsg/rpmsg_char.c` only, **+5 / -0**. Function:
-`rpmsg_chrdev_eptdev_destroy()`. Single-file surgical fix.
-
-**Step 2.2: Flow change**
-Record: Before: every caller locked, set `rpdev = NULL`, tore down the
-endpoint, unlocked, woke readers, then always `cdev_device_del()` +
-`put_device()`. After: if `rpdev` is already NULL, unlock and return;
-only the first destroy does sysfs/cdev teardown.
-
-**Step 2.3: Bug mechanism**
-Record: **Race / double `device_del`**. First destroy clears `rpdev`
-under `ept_lock` then deletes the device. Second destroy used to delete
-again → NULL deref in sysfs. Guard reuses the existing `rpdev == NULL`
-“already released” flag from `17b88a2050e9d`.
-
-**Step 2.4: Fix quality**
-Record: Minimal and consistent with `rpmsg_eptdev_open()` (`!rpdev` →
-`-ENETRESET`). Mutex serializes the check/set. Second path also skips a
-second `put_device()`, which is correct (only one destroy should drop
-the register/init ref). Regression risk is low; remaining window is
-“second thread still takes `ept_lock` after teardown started,” which is
-safe while the ioctl file or `device_for_each_child()` holds a device
-ref.
-
----
-
-## Phase 3: Git history
-
-**Step 3.1: Blame**
-Record: Destroy body dates to `c0cdc19f84a471` (“rpmsg: Driver for user
-space endpoint interface”, **v4.11-rc1**). `eptdev->rpdev = NULL` from
-`17b88a2050e9d` (**v6.3-rc1**). `cdev_device_del` from `7a534ae89e34e`
-(v5.17 era). This 5-line guard is `1f9c2897afb0fe` (v7.3-rc1).
-
-**Step 3.2: Fixes: tag**
-Record: None. Implicitly completes the v6.3 `rpdev = NULL` locking,
-which did not make destroy idempotent.
-
-**Step 3.3: Related commits (path-limited)**
+**Step 2.1: INVENTORY THE CHANGES**
 Record:
-- `17b88a2050e9d` — lock + `rpdev = NULL` (prerequisite for this check)
-- `c23965b7f7d99` — `ctrl_lock` in `rpmsg_ctrldev_remove` (CREATE vs
-  remove only; does **not** cover endpoint DESTROY ioctl)
-- `467233a4ac29b` — avoid double destroy of default endpoint
-- `7a534ae89e34e` — switch to `cdev_device_del`
-- Standalone v1 patch, not `n/m`
+- **File:** `drivers/remoteproc/remoteproc_core.c` (+1, −0)
+- **Function:** `rproc_add()`
+- **Scope:** single-file, one-line surgical fix
 
-**Step 3.4: Author**
-Record: Chris Lew is a regular Qualcomm rpmsg/glink contributor; Vishnu
-submitted; Bjorn Andersson (maintainer) applied it.
+**Step 2.2: UNDERSTAND THE CODE FLOW CHANGE**
+Record: On `rproc_trigger_auto_boot()` failure, `rproc_add()` jumps to
+`rproc_remove_dev`, which used to `rproc_delete_debug_dir()` →
+`device_del()` → `rproc_char_device_remove()` and return. After the
+change, it **`cancel_work_sync(&rproc->crash_handler)` first**, then the
+same teardown. Success path is unchanged.
 
-**Step 3.5: Dependencies**
-Record: Needs `ept_lock` and `eptdev->rpdev = NULL` in destroy
-(`17b88a2050e9d`). Both are in this tree (`git merge-base --is-ancestor`
-exit 0). Applies standalone here.
+**Step 2.3: IDENTIFY THE BUG MECHANISM**
+Record:
+- **Category:** use-after-free / lifetime (work vs teardown); also a
+  resource-lifetime race.
+- **Mechanism:** `INIT_WORK(&rproc->crash_handler, …)` happens in
+  `rproc_alloc()`. `rproc_report_crash()` can
+  `queue_work(rproc_recovery_wq, &rproc->crash_handler)` from IRQ/atomic
+  context. `rproc_crash_handler_work()` then uses `rproc` (`dev`,
+  `lock`, `state`, recovery). The `rproc_add()` error path unregisters
+  the device but never waited for that work; callers then
+  `rproc_free()`/`put_device()`, and `rproc_type_release()` kfree’s
+  `rproc` with no cancel. Sibling patch 2’s stack shows
+  `rproc_crash_handler_work` running because `rproc_report_crash()`
+  fired during attach — so the work is not hypothetical.
 
----
+**Step 2.4: ASSESS THE FIX QUALITY**
+Record: Obviously correct: `cancel_work_sync` is the standard “don’t
+free while work may run” pattern. Later `rproc_del()` uses the same
+cancel (plus `deleting` + `pm_relax`). Regression risk is very low:
+cancel on idle work is a no-op. Minor incompleteness: this path does not
+`pm_relax()` if cancel returns true (unlike `rproc_del()`). That is a
+wakeup-source leak only if the work was actually queued, which is still
+far better than UAF. No API/data-structure change.
 
-## Phase 4: Mailing list
+===============================================================
+PHASE 3: GIT HISTORY INVESTIGATION
+===============================================================
 
-**Step 4.1:** `b4 dig -c 1f9c2897afb0fe` →
-https://lore.kernel.org/r/20260406-rpmsg-char-fix-chrdev-destroy-
-race-v1-1-7317434fa246@oss.qualcomm.com
-`b4 dig -a`: **v1 only**. Thread: submission + Bjorn “Applied, thanks!”
-(`1f9c2897afb0fe`). No NAK, no review comments, no reviewer `Cc:
-stable`.
+**Step 3.1: BLAME THE CHANGED LINES**
+Record:
+- `rproc_remove_dev` teardown: **7dbdb8bd7c028** (“Cleanup device in
+  case of failure”, 2021-06-14, in **v5.14-rc1**).
+- Auto-boot error `goto`: same era; auto_boot itself from
+  **7a20c64ddb3dee** (2017).
+- `crash_handler`: **8afd519c3470f** (2012).
+- DETACHED sync attach in `rproc_trigger_auto_boot()`: **e3d2193959824**
+  (2020-07-14).
+Buggy combination (error-path teardown without cancelling crash work)
+has been present for years.
 
-**Step 4.2:** `b4 dig -w`: To/Cc Bjorn Andersson, Mathieu Poirier,
-`linux-remoteproc`, `linux-kernel`, Deepak Singh, Chris Lew.
+**Step 3.2: FOLLOW THE FIXES: TAG**
+Record: No `Fixes:` tag. Not applicable beyond that.
 
-**Step 4.3:** Bug report is the in-message crash trace (Qualcomm
-remoteproc + DESTROY ioctl). No syzbot/bugzilla.
+**Step 3.3: CHECK FILE HISTORY FOR RELATED CHANGES**
+Record: Same series, same author/date, landed together in v7.3-rc1:
+1. **026a3fada4326** (v3-1): async attach via `attach_work` so attach
+   failure no longer fails `rproc_add()`.
+2. **f44ae8ce156a3** (v3-2): `subdevs_started` — real NULL deref in
+   glink stop during crash recovery (stack trace).
+3. **0ec167625b4fe** (this, v3-3): cancel crash work on `rproc_add()`
+   error.
 
-**Step 4.4:** Single-patch series; no sibling patches required.
+Later related: **74ee3b2f57674** “Prevent crash handling to race with
+`rproc_del()`” (Fixes: 8afd519c3470) — same class of bug on **remove**,
+not a substitute for this add-error-path cancel.
 
-**Step 4.5:** lore.kernel.org WebFetch returned 403. `b4 dig -m` got the
-full thread (2 messages). No stable-list discussion found in that
-thread.
+This line does **not** need patches 1–2 to compile or be correct. Patch
+1 **shrinks** the window on this tree (DETACHED attach no longer takes
+`rproc_remove_dev`).
 
----
+**Step 3.4: CHECK THE AUTHOR'S OTHER COMMITS**
+Record: Jingyi Wang is a Qualcomm remoteproc contributor (this series +
+PAS/attach work). Maintainer **Bjorn Andersson** applied the series. Co-
+maintainer **Mathieu Poirier** was on the original To/Cc.
 
-## Phase 5: Semantic / call-path analysis
+**Step 3.5: CHECK FOR DEPENDENT/PREREQUISITE COMMITS**
+Record: None for this hunk. It only needs `rproc->crash_handler` and the
+`rproc_remove_dev` label, both present. Standalone 1-line apply.
 
-**Step 5.1:** Modified: `rpmsg_chrdev_eptdev_destroy()`.
+===============================================================
+PHASE 4: MAILING LIST AND EXTERNAL RESEARCH
+===============================================================
 
-**Step 5.2: Callers** (verified with grep):
-1. `rpmsg_eptdev_ioctl()` / `RPMSG_DESTROY_EPT_IOCTL` — userspace ioctl
-   (stack in the commit)
-2. `rpmsg_chrdev_remove()` — `device_for_each_child(...,
-   rpmsg_chrdev_eptdev_destroy)` on rpmsg device removal
-3. `rpmsg_ctrldev_remove()` — same for the control device when
-   remoteproc/rpmsg device goes away
+**Step 4.1: FIND THE ORIGINAL PATCH DISCUSSION**
+Record:
+- **b4 dig -c 0ec167625b4fe:** `https://patch.msgid.link/20260623-rproc-
+  attach-issue-v3-3-8e24310707ce@oss.qualcomm.com`
+- **b4 dig -a:** v2 (2026-05-19) and v3 (2026-06-23). Patch 3 was
+  **added in v2** (“Add change to cancel crash_handler work”). v3 kept
+  it; v3 review comments were about patch 2’s flag placement, not this
+  line.
+- Applied version is latest (v3 3/3).
+- Bjorn: “Applied, thanks!” — no NAK, no stable discussion in the
+  thread.
+- No reviewer `Cc: stable` on this specific patch.
 
-**Step 5.3:** Callees: `mutex_lock/unlock`, `rpmsg_destroy_ept`,
-`wake_up_interruptible`, `cdev_device_del` → `device_del` →
-`dpm_sysfs_remove`, `put_device`.
+**Step 4.2: CHECK WHO REVIEWED THE PATCH**
+Record: **b4 dig -w** recipients: Jingyi Wang; Bjorn Andersson; Mathieu
+Poirier; Qualcomm colleagues; `linux-remoteproc@vger.kernel.org`. Right
+maintainers were on the patch. No extra Reviewed-by on 3/3; maintainer
+still merged it.
 
-**Step 5.4:** Reachable from userspace ioctl while firmware is stopped.
-`ctrl_lock` only wraps CREATE/RELEASE on the **ctrl** fd, not DESTROY on
-the **endpoint** fd — so the race is real.
+**Step 4.3: SEARCH FOR THE BUG REPORT**
+Record: No syzbot/bugzilla for *this* line. The series cover letter and
+patch 2 document a real Qualcomm attach-crash NULL deref with a full
+stack through `rproc_crash_handler_work`. That is the same window this
+cancel is meant to close if `rproc_add()` then fails.
 
-**Step 5.5:** Same `!rpdev` pattern already used in
-`rpmsg_eptdev_open()`. No other copy of this exact double-destroy bug
-in-tree.
+**Step 4.4: CHECK FOR RELATED PATCHES AND SERIES**
+Record: 3-patch robustness series. Patch 1 is a behavior change (async
+attach). Patch 2 is the NULL-deref fix. Patch 3 is independent UAF
+hygiene on the add error path. Not a “2/3 without 1/3 won’t build”
+situation.
 
----
+**Step 4.5: CHECK STABLE MAILING LIST HISTORY**
+Record: **UNVERIFIED** — `lore.kernel.org/stable/` fetch returned HTTP
+403. No local evidence this was rejected for stable.
 
-## Phase 6: This checkout
+===============================================================
+PHASE 5: CODE SEMANTIC ANALYSIS
+===============================================================
 
-**Step 6.1:** Local tree: **`v7.3-rc4-27-gf0100363d8c37`**, `VERSION=7
-PATCHLEVEL=3` (`7.3.0-rc4`).
-Buggy function exists at `drivers/rpmsg/rpmsg_char.c`. Dual call paths
-exist. Commit is already an ancestor (`git merge-base --is-ancestor
-1f9c2897afb0fe HEAD` → 0) because it landed in **v7.3-rc1**. That is the
-mainline landing, not a reason to reject on technical merit. Parent of
-the commit still has the unguarded destroy.
+**Step 5.1: IDENTIFY KEY FUNCTIONS IN THE DIFF**
+Record: `rproc_add()` only. Related: `rproc_crash_handler_work()`,
+`rproc_report_crash()`, `rproc_trigger_auto_boot()`, `rproc_del()`,
+`rproc_type_release()`.
 
-**Step 6.2:** Parent destroy matches this tree aside from the 5-line
-guard. Backport difficulty: **clean apply** onto any tree that already
-has `17b88a2050e9d`.
+**Step 5.2: TRACE CALLERS**
+Record: `rproc_add()` / `devm_rproc_add()` are the register path for
+every remoteproc driver (qcom PAS/ADSP/MSS/WCSS/WCNSS, imx, omap, stm32,
+mtk, pru, k3, etc.). Called from probe. `rproc_report_crash()` is
+exported and used from IRQs (e.g. `qcom_q6v5` wdog/fatal, requested in
+`qcom_q6v5_init()` **before** `rproc_add()`).
 
-**Step 6.3:** No later follow-up on this file after `1f9c2897afb0fe`. No
-alternate fix for this double-`cdev_device_del` race.
+**Step 5.3: TRACE CALLEES**
+Record: Error path: `cancel_work_sync` → `rproc_delete_debug_dir` →
+`device_del` → `rproc_char_device_remove`. Crash work: mutex, state,
+`rproc_trigger_recovery()`, `pm_relax()`.
 
----
+**Step 5.4: FOLLOW THE CALL CHAIN**
+Record: Reachable from driver probe (`auto_boot`). On this 7.3 tree,
+after 026a3fada4326, DETACHED attach is async and **does not** fail
+`rproc_add()`. The remaining `goto rproc_remove_dev` is
+`request_firmware_nowait()` failure. Crash work is still initialized;
+IRQs may already be requested. Userspace does not trigger this directly
+except via device probe/firmware-request failure. Severity if it hits:
+UAF in workqueue context.
 
-## Phase 7: Subsystem
+**Step 5.5: SEARCH FOR SIMILAR PATTERNS**
+Record: Same cancel later in `rproc_del()` (74ee3b2f57674).
+`rproc_type_release()` still does not cancel works — so add-error-path
+cancel (and del cancel) are the actual guards.
 
-**Step 7.1:** `drivers/rpmsg/` — IMPORTANT for Android/embedded
-remoteproc (Qualcomm, TI, ST), not core mm/VFS. Panic on a user ioctl
-still matters.
+===============================================================
+PHASE 6: CROSS-REFERENCING AGAINST THE LOCAL TREE
+===============================================================
 
-**Step 7.2:** Mature driver (since v4.11), ongoing Qualcomm/Linaro
-fixes. This is a long-standing race, not a brand-new API.
+**Step 6.1: DOES THE BUGGY CODE EXIST IN THIS TREE?**
+Record: Yes. Tree is **v7.3-rc4-27-gf0100363d8c37** / **7.3.0-rc4**.
+`rproc_add()` error path and `crash_handler` are here. Candidate
+**0ec167625b4fe** is in **v7.3-rc1** (`git describe --contains` →
+`v7.3-rc1~46^2~27`). Evaluating merit as if selecting it for this tree:
+the code it touches is present; the bug was **not** introduced after 7.3
+branched.
 
----
+**Step 6.2: CHECK FOR BACKPORT COMPLICATIONS**
+Record: Clean apply. One line at a stable label. No structural conflict
+in this file’s `rproc_add()`.
 
-## Phase 8: Impact and risk
+**Step 6.3: CHECK IF RELATED FIXES ARE ALREADY HERE**
+Record: 74ee3b2f57674 fixes `rproc_del()`, not this add-error path. No
+earlier equivalent cancel on `rproc_remove_dev` (git log -S shows this
+commit as the first).
 
-**Step 8.1:** Users with `CONFIG_RPMSG_CHAR` who stop a remote processor
-while userspace DESTROYs an endpoint (typical Qualcomm/Android rpmsg).
+===============================================================
+PHASE 7: SUBSYSTEM AND MAINTAINER CONTEXT
+===============================================================
 
-**Step 8.2:** Trigger: remoteproc stop **and**
-`RPMSG_DESTROY_EPT_IOCTL`. Timing-dependent but demonstrated.
-Unprivileged userspace with the endpoint fd can be one side of the race.
+**Step 7.1: IDENTIFY THE SUBSYSTEM AND ITS CRITICALITY**
+Record: **drivers/remoteproc** — **IMPORTANT** on Qualcomm/embedded
+(modems, ADSP, CDSP, Wi-Fi firmware). Not CORE mm/VFS, but crash during
+probe/recovery is a host kernel oops, not “DSP-only.”
 
-**Step 8.3:** Failure: kernel NULL deref / oops in `device_del`.
-**Severity: CRITICAL**.
+**Step 7.2: ASSESS SUBSYSTEM ACTIVITY**
+Record: Active (qcom PAS, crash/remove races, new platforms). Mature
+core with long-lived `rproc_add`/`crash_handler`.
 
-**Step 8.4:** Benefit high (prevents oops). Risk very low (5 lines,
-existing lock/flag). Ratio strongly favors backport.
+===============================================================
+PHASE 8: IMPACT AND RISK ASSESSMENT
+===============================================================
 
----
+**Step 8.1: DETERMINE WHO IS AFFECTED**
+Record: **driver-specific / config-specific** (`CONFIG_REMOTEPROC`,
+especially `auto_boot` and attach/early-boot Qualcomm PAS). Not
+universal desktop, but common on phones and embedded SoCs.
 
-## Phase 9: Synthesis
+**Step 8.2: DETERMINE THE TRIGGER CONDITIONS**
+Record: `auto_boot` + `rproc_trigger_auto_boot()` failure, with
+`crash_handler` already queued. On **this** tree, patch 1 removed the
+attach-fail → `rproc_add()`-fail path, so the remaining trigger is
+firmware-nowait failure (and any crash queued around probe).
+Unprivileged userspace does not have a clean repro; probe/firmware error
++ IRQ crash is the window. Sibling patch proves crash work **does** run
+during attach.
 
-**For:** Real oops with stack; userspace-reachable race; 5-line
-idempotent destroy; maintainer-applied; prereqs present; matches stable
-rules.
+**Step 8.3: DETERMINE THE FAILURE MODE SEVERITY**
+Record: **UAF / oops in workqueue** if work runs after teardown/free.
+**Severity: HIGH** (crash; possible memory corruption). Not a guaranteed
+panic on every boot.
 
-**Against:** No `Fixes:`/`Cc: stable`; no extra `Reviewed-by`; rpmsg-
-char not universal on desktops; uses `rpdev` as a destroyed flag
-(already established in v6.3).
+**Step 8.4: CALCULATE RISK-BENEFIT RATIO**
+Record:
+- **Benefit:** medium–high if the race hits (UAF); on this tree the
+  attach-fail window is smaller, so benefit is more “correct teardown”
+  than “every Qualcomm boot.”
+- **Risk:** very low (1 line, idle cancel is harmless).
+- **Ratio:** favorable. Missing a 1-line UAF cancel is worse than
+  applying it.
 
-**Unresolved:** Direct lore HTTP 403 (thread recovered via `b4`). No
-independent stable@ discussion.
+===============================================================
+PHASE 9: FINAL SYNTHESIS
+===============================================================
 
-**Stable rules:**
-1. Obviously correct and tested? **PASS** — lock + existing flag; crash
-   reproduced by author.
-2. Real user bug? **PASS** — oops on remoteproc stop + ioctl.
-3. Important? **PASS** — kernel panic.
-4. Small/contained? **PASS** — +5 lines, one function.
-5. No new features/APIs? **PASS**.
-6. Applies to this tree? **PASS** — same function/callers; prereq
-   `17b88a2050e9d` present.
+**Step 9.1: COMPILE THE EVIDENCE**
 
-**Exception category:** None needed; this is a normal crash fix.
+FOR:
+- Explicit UAF/lifetime fix; author states freed-memory access.
+- 1 line, obviously correct, same primitive later required in
+  `rproc_del()`.
+- `rproc_type_release()` kfree’s without cancelling work — error-path
+  cancel is necessary.
+- Series documents real attach-time crash handling (NULL deref stack in
+  2/3).
+- Maintainer merged; no NAKs.
+- Code and error path exist in this 7.3 tree; applies cleanly; no new
+  API.
+- Independently correct without the rest of the series.
 
-This is a textbook stable candidate: a small, obviously correct guard
-that stops a double `cdev_device_del()` oops when remoteproc teardown
-races `RPMSG_DESTROY_EPT_IOCTL`. The affected code and the `rpdev =
-NULL` flag it depends on are in this tree.
+AGAINST:
+- After 026a3fada4326 (already in this tree), DETACHED attach no longer
+  fails `rproc_add()`, so the original attach-fail UAF is largely gone
+  here; remaining trigger is `request_firmware_nowait()` failure.
+- No `Fixes:`/`Reported-by`/syzbot for this exact line; commit body is
+  one sentence.
+- Incomplete vs `rproc_del()` (no `pm_relax` / `deleting`).
+- Patch 3/3 of a robustness series, not a stand-alone user report.
 
-Verification:
-- [Phase 1] Parsed tags: Chris Lew/Vishnu SOB, Bjorn SOB, lore Link; no
-  Fixes/Reported-by/Cc stable
-- [Phase 2] Diff: +5 lines in `rpmsg_chrdev_eptdev_destroy()` after
-  `mutex_lock(&eptdev->ept_lock)`
-- [Phase 2] Confirmed `cdev_device_del()` always calls `device_del()`
-  (`fs/char_dev.c`); second `device_del` matches the
-  `dpm_sysfs_remove`/`kernfs_find_and_get_ns` stack
-- [Phase 3] `git blame`: `rpdev = NULL` from `17b88a2050e9d` (v6.3-rc1);
-  function from `c0cdc19f84a471` (v4.11-rc1)
-- [Phase 3] `git merge-base --is-ancestor 17b88a2050e9d HEAD` → present;
-  `1f9c2897afb0fe` also ancestor (landed v7.3-rc1)
-- [Phase 3] Parent of `1f9c2897afb0fe` still does unconditional
-  `cdev_device_del`
-- [Phase 4] `b4 dig -c/-a/-w/-m`: v1 only; Bjorn applied; maintainers
-  CC’d; no NAK
-- [Phase 4] WebFetch lore/stable: 403; thread contents verified from
-  `/tmp/rpmsg-destroy-thread.mbox`
-- [Phase 5] Callers: ioctl DESTROY, `rpmsg_chrdev_remove`,
-  `rpmsg_ctrldev_remove`; `ctrl_lock` does not cover DESTROY
-- [Phase 6] `git describe HEAD` → `v7.3-rc4-27-gf0100363d8c37`; `make
-  kernelversion` → 7.3.0-rc4
-- [Phase 8] Failure mode: NULL deref oops, CRITICAL
-- UNVERIFIED: public lore HTML (403); whether a given older LTS lacks
-  `17b88a2050e9d` (this tree has it)
+UNRESOLVED:
+- Stable list discussion (lore 403).
+- Could not prove a live crash IRQ on the firmware-nowait-only error
+  path on this tree.
+
+**Step 9.2: APPLY THE STABLE RULES CHECKLIST**
+1. Obviously correct and tested? **PASS** — 1-line `cancel_work_sync`;
+   merged by maintainer after v2/v3.
+2. Fixes a real bug that affects users? **PASS** — UAF if crash work
+   outlives `rproc_add()` failure teardown; work is known to run during
+   attach (patch 2 stack).
+3. Important issue? **PASS** — UAF/oops, HIGH; window on this tree is
+   narrower than pre-async-attach but still the right fix for that error
+   path.
+4. Small and contained? **PASS** — +1 line, one function.
+5. No new features or APIs? **PASS**
+6. Can apply to the local tree? **PASS** — `rproc_add()` /
+   `crash_handler` / `rproc_remove_dev` all present.
+
+**Step 9.3: CHECK FOR EXCEPTION CATEGORIES**
+Record: None (not an ID/quirk/DT/build/doc exception). It is a normal
+small bugfix.
+
+**Step 9.4: MAKE YOUR DECISION**
+This belongs in this tree: a one-line, obviously correct cancel before
+teardown, preventing crash-handler UAF on the `rproc_add()` error path.
+Patch 1 reduced how often that path is taken for attach, but it did not
+make the cancel wrong or unnecessary, and it does not depend on the
+other series patches.
+
+What it solves for users: if auto-boot registration fails after
+`crash_handler` was queued, the work can run against a deleted device
+and a soon-to-be-freed `rproc`. That is a host oops, not a DSP-only
+glitch.
+
+Risk vs benefit: near-zero risk, real UAF class. Incomplete `pm_relax`
+is not a reason to drop the cancel.
+
+### Verification
+- [Phase 1] Tags: Link to v3-3 lore; SOBs Jingyi Wang, Bjorn Andersson;
+  no Fixes/Reported-by/Cc stable.
+- [Phase 1] Cover letter (mbox): attach-fail NULL deref **and**
+  `rproc_add()` fail.
+- [Phase 2] Diff: +1 `cancel_work_sync(&rproc->crash_handler)` at
+  `rproc_remove_dev` in `rproc_add()`.
+- [Phase 2] Current `rproc_add()`/`rproc_crash_handler_work()`/`rproc_re
+  port_crash()`/`rproc_type_release()` read in-tree.
+- [Phase 3] `git describe HEAD` → v7.3-rc4-27-gf0100363d8c37; `make
+  kernelversion` → 7.3.0-rc4.
+- [Phase 3] Blame: teardown from 7dbdb8bd7c028 (v5.14-rc1); this cancel
+  is 0ec167625b4fe.
+- [Phase 3] `git merge-base --is-ancestor` 0ec167625b4fe, 026a3fada4326,
+  7dbdb8bd7c028, e3d2193959824 vs HEAD: all yes.
+- [Phase 3] `git describe --contains 0ec167625b4fe` → v7.3-rc1~46^2~27.
+- [Phase 3] `git log -S cancel_work_sync(&rproc->crash_handler)`: only
+  this commit and later 74ee3b2f57674 (`rproc_del`).
+- [Phase 4] `b4 dig -c/-a/-w/-m`: v2+v3 series; patch 3 added in v2;
+  Bjorn applied; no NAK on 3/3; Stephan Gerhold reviewed **patch 2**
+  only.
+- [Phase 4] lore WebFetch 403; stable list **UNVERIFIED**.
+- [Phase 5] Callers: many `rproc_add`/`devm_rproc_add` probe sites;
+  `qcom_q6v5_init()` requests wdog/fatal IRQs before `rproc_add()`.
+- [Phase 6] Buggy error path exists; apply would be clean; no other fix
+  on this label.
+- [Phase 8] Failure mode: workqueue UAF/oops, HIGH; trigger rarer here
+  because of async attach.
+
+The patch is small, correct, and closes a real lifetime hole on a path
+this tree still has.
 
 **YES**
 
- drivers/rpmsg/rpmsg_char.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/remoteproc/remoteproc_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-index d918cb30db9b0..3edc95f48967b 100644
---- a/drivers/rpmsg/rpmsg_char.c
-+++ b/drivers/rpmsg/rpmsg_char.c
-@@ -79,6 +79,11 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
- 	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 068a3ef467f78..70c990c3a5d76 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2358,6 +2358,7 @@ int rproc_add(struct rproc *rproc)
+ 	return 0;
  
- 	mutex_lock(&eptdev->ept_lock);
-+	if (!eptdev->rpdev) {
-+		mutex_unlock(&eptdev->ept_lock);
-+		return 0;
-+	}
-+
- 	eptdev->rpdev = NULL;
- 	if (eptdev->ept) {
- 		/* The default endpoint is released by the rpmsg core */
+ rproc_remove_dev:
++	cancel_work_sync(&rproc->crash_handler);
+ 	rproc_delete_debug_dir(rproc);
+ 	device_del(dev);
+ rproc_remove_cdev:
 -- 
 2.53.0
 
