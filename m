@@ -1,92 +1,109 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.181
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792430104;
-	b=t7n1ch43lGEdzDQgn6JIfmdds+5QIzkRWTCFbf5zl0SzZP+HDKGkaygqBsGiDra3zdqp
-	 gIBMgvHcLqlfYQESS+ExvNmP9OpGrt/G4H0YKe1kp/c7ixujrhm+IZ3aoyv2MvYq2wvWN
-	 hwePnKxt4p8lLpEvKEbPYuZodzQOuTKoc/QkLTbOuOsPMUV5w1cFkS9GoJ4EMOwSg4F/G
-	 TqjealdFVGUOGvdpH88uavcJnjZYk4Z/LojsecfK6YYix63dSF+u6C8NN0uoxzQ5lbexP
-	 jrVkgRWltI+qhhgBc9VtLiLgAMn+X9Tlm8DXVWNx4s3QkgkXRVb8oA+eFsZfyP4BUIQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792430104;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=u80h7r29Ghnr+vYGuleV7rteVTs1uqS7VM0+MTj++3g=;
-	b=VpNg0Vl8FtLpoSH90A+siaWV6nNu62m47H+ZSGvLnpFM5qDhNfvc9GIi88BJqkxjTcpa
-	 Bfn7rQ5SxaCgy4I1OxwDwqnlqJZgkV4fhpyHYkYCEr9xm4kb3khAH5ihUWwYgmMoo8cVt
-	 2IepEawj8cnK9/ga37l1uv4ld3Xqvc2O6ZauaiowXNM6oHa/DGJtFHangJAaMiI1aVtlq
-	 WBw8Ur5szHbxoeUwyxDc8eEkssQmBeo5iipaYHWVfK0W/6unKBQxp3da9XzeBgqo694LK
-	 6IzGxllAs9jpWCfNeP1efCDOhXepqMnYOb6YmJmae5TwtFe5yBppTFH6RWudRZrPqGA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=EbSKHF4F;
-	arc=none smtp.remote-ip=209.85.215.181
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.26
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792436164;
+	b=WJXUJldONdd7Y5gcRTy2NcTtv6I3+Iseq/GAt3PFCeVBQsxU4nUcLAnDnPHdeZLs1V4i
+	 GHIVDPmIRpaLq8j0SVqe12n24+ADSMjZVv7qn8jA8k4twX68RyHdB2HxJuztL+WvJO3eH
+	 ytlJ7Q0ddHhrRZxTHNSbK+Qm5y4mo3a0iGEz7XcZ9mLJCl2dycgZtX0FW1H0N4CKXOjQy
+	 0uy1BHdMJGjPri4IafVKVPZHOtbG/RF31VYjqFo6/42yhKJJcuKEagGy9am55pe2aeiJv
+	 HMRNL2AD/f8BFWhSv6JuzdoKffBfjycHa/jwTZdeUQUrt+X0G3f/OKXGU87yZssTyJg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792436164;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
+	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
+	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
+	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=5SiJjbthzEoN7p4x0pljo76HDhBNX/AzEQ3LMR0Ev5k=;
+	b=GR9hmA3/lxnDpFBloY+rkypwjz3uGrDjb/6f4GK+sA9iJ75p4m+lHZJlD6nZw8mFpixp
+	 8ZAkuJ8wa9jT7q4vX9Rp3kCO5Yjl+GLVwSgVJJBR2iv1KvWnOZd1WkaRmWZICU8cr7AVo
+	 twBD06arKyaOY/WH5qDDu6UhvrlzO8cd8/FXuVybiHnMraRdipfxUKlkCy/qruP/UepuC
+	 sIVnV3a2a50Y08+ZGY83cc5h4dWs2eHgVwYivPne8XHblIlDJyngW1t1RGu6isQCA3zRJ
+	 GUH9knQdXYN4VPMjMGdan/mgfSJKs2Od3VVK8Z+J7Em+xTGV/Sr7qnA7xF/5+UateuQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=Mzte5hWl;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.26
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013026.outbound.protection.outlook.com [52.101.72.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25FFE606A31B
-	for <linux-remoteproc@vger.kernel.org>; Mon, 19 Oct 2026 17:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 25FFE606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8BE606A321;
+	Mon, 19 Oct 2026 18:56:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0E8BE606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=EbSKHF4F
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-ccca948203aso861536a12.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 19 Oct 2026 10:15:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1792430102; x=1793034902; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=u80h7r29Ghnr+vYGuleV7rteVTs1uqS7VM0+MTj++3g=;
-        b=EbSKHF4FBi6Gw+HdwmCL9x60cXnlqyYitVKN4L3pyMtprMmREDDBIzBG66tMtCwYqp
-         4UWLpM2JD4dQ1FMWGSXIdwqpgL/FUlAHYQsLGIVq1pqQziVAA/ZI2m10KDdiaCc8LqJk
-         +OVM0KKpNMxy2FK7jibs7HzP7jivBBwgaxhGRKFb84H/YrC0iM2u4bXeWYkzuh3uPnR9
-         ot38svkI9O/siFVxmp3V321s42UPEQCUqUHkf6I/kIGrZeRlifFKsBkCk7c8kLU5bsCj
-         vDNMthUAa6UA5DryUOuiJjRwigqu5xiYDx6PHZc7uSxKLQ6/4pq+9fdUZ2Or28YB9gmy
-         90XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792430102; x=1793034902;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=u80h7r29Ghnr+vYGuleV7rteVTs1uqS7VM0+MTj++3g=;
-        b=t22CZVrFWT5it15rGQpctnq2RWxCQuvjfYftj3RcP6+tsrdJlg7Ehe4Dhh34ljKnLf
-         xEq8as2L7CDKUKpn9QpCpORKUZjMPUJqg39F5lU4B9VUIkPNGlNlWd5Nejdj+YLqbAX2
-         Z5Y70FQXcUuzn+80kX+ICmSYYWBi1GPf2hwhIEwSOMEy3ytRFeMoBMhLAlQ5sAlqKll6
-         QCpUzluJA55nsn6dOHHlYHAwK6iy/8oLFmbFqFK2y/sx6Q47HNnZBHhxk9ajXrTSWTkU
-         PBS6SaHxHeEoRw9pUrRY7fCFIO/vB5TmP9l4/6P3kX5pP6v8BT8X5otQIGp7XAKmw9oI
-         assQ==
-X-Forwarded-Encrypted: i=1; AKwUvBwiCB+y19Tm3tWofdEQiJ6F/xF5kKOc/22+FogG9mVVZ+mLboacCOJySjpRbtXpi3bh9kLkA7HCr42+U9h4IpRM@vger.kernel.org
-X-Gm-Message-State: AFq9FYIFR/jMMLc+6JgcEh9dF2czgS3ut34CrOJfpNq/KL698rYrzBh7
-	gnRGgpiM7bVtzztge2m+MXfw7G/6yXoB2a5+OCMToCyIM2PvBGTagk483EQKDPtwK8Q=
-X-Gm-Gg: AYBFou2Y4cSmEYYKmtFtk+Q/7KWv0x/z81kt61EbgDC3k27OYLNDIOurUNvQtEwMR55
-	XcYhe083FjWEIjyOwyLKgXmbiwzH/5u2hSdPGYegHokrLHnuDQcwh3EE3idFsC/Gdis9vqTyFJD
-	MjpIjpSnjAcRQR+i18wZbG47yfoUnaSpcS7X5HwAQJDM9pGDzBVAv/h79eYMyV6g5iDydF6TP9q
-	XQNAuOnEvqOnw9G/x1LOdtEIQvjOMjYfLi93/vFsYr9p5r0w/PkQkkNrHwSih9Bu87LsShlRsdZ
-	F3IdBwtIQmHTa+gjwtzwYM6MRoM9RAsnyeN2bA3/0HDOg/DweGdYFokRYUFHwwFwz9fHEYIkkHT
-	QqLMTBLZ6B2KSlBEVEzwXys5LY2449Ug1aq72trSpeJ+j8kzt9fo25dFOkKx05lG6idzV+n4o1v
-	uKjNBPe2j2jywhakF2rJTNrsODc6K6dQmbB2nifT0nLVLKPJuab73A9NRrvLl2qh6y6pRKGxU=
-X-Received: by 2002:a17:90b:2c90:b0:3ac:a521:953 with SMTP id 98e67ed59e1d1-3acef0ff0cdmr7098929a91.46.1792430102161;
-        Mon, 19 Oct 2026 10:15:02 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:76fe:654:667:da52])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3acc9e47588sm9453824a91.1.2026.10.19.10.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Oct 2026 10:15:01 -0700 (PDT)
-Date: Mon, 19 Oct 2026 11:14:58 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Yonghao Zhang <hyz3367@gmail.com>, arnaud.pouliquen@foss.st.com
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] remoteproc: core: Roll a failed attach back with
- detach() when available
-Message-ID: <atZQEuXMwMpvmoBz@p14s>
-References: <20260929075453.2324597-1-hyz3367@gmail.com>
- <20260929075453.2324597-4-hyz3367@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=Mzte5hWl
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K1eAuh6v9DzBLB1GncvpSrCWReazMjm6PFlcuqDC6HORJ7wNZe+V/6qUSPOE5GAfVcFAu4f7OEmqK4MPT+ibQzBLUK4XT9kiq3vLmnzT1c6GgSjcGww5E0XyP3AJwtADPNmxeglW+wCqc8pEJ8BBHAU69DG81Nj+d4NNJnxLD+owta1XoSVDGA/hT0bkGCYfn17nTEQRqeW8victkBF5CvmlQDu5wvKGw+ZPPKATgCPdZtk8kL+MFhV5s9fb3HDVmn9rF9FtURMEZdV3j31thi/+cxSgYTvLM6E+pXneSKwVfddTdP6uPcgOkAqeNt+DNAEpvo5gbnXFzxXZ2GZPOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5SiJjbthzEoN7p4x0pljo76HDhBNX/AzEQ3LMR0Ev5k=;
+ b=ZQ77fQ529mt5ayQdtYa+Qn8PBONt45NpcDPZFi7hgk/wanndkyv5C2TlJpqrxhoQ++u7OmUwM/3+UpwhsamzNmejrNgcBLE5OXlzSBnF1/bpG472S7BoAJ/AyGLlFf2l5CoTqSJoJ50ur7j7wrC5E0lXNk2xESnhk3NkgOYsdbK0Bp9cGQ60F49ikH2CetVHxBZkKW/+JXi9FbnXkXkf5od4/Sljftz2njEiV6M32fISijgnNzQYu8rn4Wy0ftReuGdOZz2bDTCfdYj4btzFCej0Gp7Dqfe92E7WL0GTBWtfZJRep5fHtBgTaqbYB2VOQtB/OFxn3qc6j9AnZd3NJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5SiJjbthzEoN7p4x0pljo76HDhBNX/AzEQ3LMR0Ev5k=;
+ b=Mzte5hWl0JWYXZFbOFx1KW+bXvoWc0x3T8VgfBvbqcpTKITDeQwVvMvCYsjD/igA0+QUtrGu03pGoHDuArkOziBJOxOh6pEyh+CDTJZe0agRhnD/t/X+78tLLjOoX5U0qanRWDX3JB+000p26Y02sWMRNC8TNXcGk/LIDZ7Q+f2IbOnvxTJg1QnBiPsUJQkVo99Fhk0cE6goHcJLvWu6CW/e2pau0Oc++MXK9WvMkM4cN+yQ7kPAwi7Hmb1ER5fHLKTMRiLUZL9ZUYbFc7FqbMFPpu3q/hwMu+JLE0hatfiqkCiZ7JRqPhW59pOPWkNnB+jd9uAwxxy2bQjp129uog==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
+ by AS1PR04MB9287.eurprd04.prod.outlook.com (2603:10a6:20b:4dd::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Mon, 19 Oct
+ 2026 18:56:00 +0000
+Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
+ ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0522.017; Mon, 19 Oct 2026
+ 18:56:00 +0000
+From: Frank.Li@oss.nxp.com
+Date: Mon, 19 Oct 2026 14:55:48 -0400
+Subject: [PATCH v6 1/3] dt-bindings: remoteproc: imx_rproc: document
+ memory-region-names to avoid hidden ABI
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20261019-memory-region-name-v6-1-2e46b2e7d667@nxp.com>
+References: <20261019-memory-region-name-v6-0-2e46b2e7d667@nxp.com>
+In-Reply-To: <20261019-memory-region-name-v6-0-2e46b2e7d667@nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
+ Frank Li <Frank.Li@nxp.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1792436151; l=2416;
+ i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
+ bh=JNU9WHCwkH7lc8AwC+4LA2Tu1omzJo4a1dOXGwqAiGo=;
+ b=vYQ+EvRSz3RUJ8hkWSM/m+547Rh5OwVTVzlR/bJvi3B859yCvVdsZYeCGrtPtm6TuBSzS/fJU
+ Sre7w6mpknxBW3vEcl9guqaTiFp7nP0dOblQ3p7oGTnwaV2SJjlbZIM
+X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
+ pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
+X-ClientProxiedBy: PH8PR07CA0020.namprd07.prod.outlook.com
+ (2603:10b6:510:2cd::12) To MI3PR04MB12438.eurprd04.prod.outlook.com
+ (2603:10a6:290:76::14)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -96,198 +113,133 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260929075453.2324597-4-hyz3367@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|AS1PR04MB9287:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5451ac74-ff06-412b-0c85-08df2e129dec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|19092799006|23010399003|56012099006|5023799004|11063799006|261009223027099003|10067099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info:
+	4L+IozFBG+4bTw0A0DoTL74srVvXQWX+IMmZnROWiu7y2EE7fPkP2apcV2ZUx2ctkyjQzLAwOCPxDra2vcZZ4565GCaLdxkgHRs8QvLaHKY23oS6RVSXb/HFk/tsNc9k8gKJWye9E//Gko/2RH6jjF+3F82r8USvKlTU3baAwkZZDXWehoc0/bVcYX4+OnoktfkY9eAi6VCnu77mEgRtYLGaC+H5HR9760fF3SPDah9L4BGSz4puV0OgNXt4bOP+my82RwAmKEXAIJAq+632bFkC/19FdF7UcastBmM//dkLpWZe/HT46Ns835l2iOh5TetwujFl90ci9OA++47mjn9qmLghc1bhMaPFAwh8N+6uaRVWHjesaMLzaRV+QysmKxsRLfDzKVlCVTIdhkAoZ/Ef2msZLgsfneh3WUuVpZpFPuD4MsEHOtbjjtdsBTEcT2h2UnH47C0YvZbO5pdvuCVFggVQSfWIrwDgSu0iODjgf61w7/D6Lc0HaSPXEIJ0cRGSen0bAbal8ijcmrVBP4RbRrdipORbXeFQailXEzqSB4Fj28yqYG5WqyCkacM4Dv/sTMeojRdfjtMN5CwlzQ4WEHUAWmuyqjrgjHvfqs/S92MuHQp76s/fGPLlNNj+
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(19092799006)(23010399003)(56012099006)(5023799004)(11063799006)(261009223027099003)(10067099003)(22082099003)(18002099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S1NVQ3gvdmxSRk1PSmhLWWxsbjFXbU5pRFQram5ZeFl1VjdhazdtR2RWKzFu?=
+ =?utf-8?B?M2ZLdU1ucEFGMUczN3RmaWtWSnNuSDdrWmhCSWtPdEd4YWhTSWlYTkp4N1Fv?=
+ =?utf-8?B?QUwvci81eGdHbjd0TWhQT3NsQmxBRkN3b1dKWnJJUGpXaXNGQVJnN3hzbHhi?=
+ =?utf-8?B?TmpUSDdhWFM5NG5QL2JBZXV1RDZLNVNCTTN4djdyZzRraXR6S2RYZVhRSEha?=
+ =?utf-8?B?Q0NxVEk5ZUs0VWtUOGtzTVhFTERLV1o0aStJVWRML3pEWnRpUmF0SG1uTlRo?=
+ =?utf-8?B?SEVSL24rSzBPSEFVb2ttdFRGUGx0R1A2TkkzcVpwSHlkU2ZtYW9VY2tQWk9u?=
+ =?utf-8?B?ZjNyam45MDVnTWx6MXcxR3I4VDhQREJTK1JJRk9xelRPTGN6aE5JaStndUw3?=
+ =?utf-8?B?UDQ4S0xmcFZlYjFCZDVyTnRNQVk3K0hQbVJ0UTEzN0dMM2dUbm1OQ1U4RFhk?=
+ =?utf-8?B?SnFHSVlpNGxKcERhN2tZcEpuQnBDUzE3ZWVjYjVnalJsOHZNQmpDOWJnazRT?=
+ =?utf-8?B?enpyNjFrMC9qSnVwT3lFU0NmTmNBWjV0Z01SR2tmOFZtZG5nM1dxS0lzcUln?=
+ =?utf-8?B?cXNpR01rOHVYaFpTSmFFbHpqZFVZc3V5aWxOcTgvMDJnT3FuTlBqa0pJa0VC?=
+ =?utf-8?B?MDM0Ykd5amoxa21EN3VMMVU2VmQrNTR4R2hvQzg2TFBBTXg2djFBOFVURHph?=
+ =?utf-8?B?aTFqVUNiRTU5akMzWHh4dFcyb29MT1JMOTM2cVRKSW4ydFd4UVhQWTltT0Nj?=
+ =?utf-8?B?TC82QStVWExkdWhicUIxUzFkeUVsc25VQ2orL090bzV0eW8yZUpnNG03UW00?=
+ =?utf-8?B?S3lURFJVS3N1emYrTjJncmZCSkJLU0paUW9SUG4vclJCN3pXcmNicW40alZn?=
+ =?utf-8?B?cHNFYlNKSXFUQnlCdWVNUk82aFJkMzV3Y0N2ZmV2d3Y1ZmptSTJRZWxuT0dJ?=
+ =?utf-8?B?NEoxQlVMWFUrcUZvTmxOcEo5c1pRTGdxbTdQREhNQ3pOSlFMd1lPNlJIOThR?=
+ =?utf-8?B?UFc1N201SDFDRjFnUThYZFFsT2thcWVxZThZeXVlbzVZeGlydXNtekF4Y0VI?=
+ =?utf-8?B?b1dpa05BNnFyTTFXVXNzUVE1RUZZTVNLMlFxMmc4eUd2R0NQMFJoMUV6SzFw?=
+ =?utf-8?B?c1pTekRsMTRsc3dYT0ljZnJ1K0pHU2xFTmhteXJOV2EvdDVQMG5WT0pyY2xr?=
+ =?utf-8?B?VmkyNkdoN0RIQkk5Z054OWFBYkdCRzN3Qk0xTkdDMEVOYmcrdGZhcmJmcG9V?=
+ =?utf-8?B?d0hUUUFhV2J1U1BIdndjTFpOTkxNc2RkcFFLbmhnQktpZi9pcGJ6dlFPb3Ez?=
+ =?utf-8?B?clZJSWU0b3c5UXU2OVJaOGdDYmJCTDNBc3dnTXZGcE94dVMvdi9LT3plbkZr?=
+ =?utf-8?B?bm1kMDA2YXRFdUxSbnVEQ21RQjQvS0VVYnBwVTBvSXlta0VFUW1QenZ3NEJp?=
+ =?utf-8?B?andLSitCTk9IZFUwcU10WWtYNWtjd3dCZ1F2L3pFRmllamc1S2JST0VDWFQx?=
+ =?utf-8?B?SW1GMVhLMnFJaDM2ei9CdXVLeXkwcTlQNEJGcFlpaVp1VjF4MkRLdnphUFVx?=
+ =?utf-8?B?WFlYcTN3VUgrNFFBcjdqYmVRWktkRFdyWUZRYWl3L2tXVzl2VUpkWWJVdlJY?=
+ =?utf-8?B?RWFGaW9mZnBlVXBnUys5NWphcVo0b2Y0bGhvNU5yMFUrL1Fwa3Ira05nS2cr?=
+ =?utf-8?B?WnhpWWNNOGFvU1VsZ0dBOHNkVytMY0Q2bEQycTVVMmZYYlV2VVI2WmlVbGpK?=
+ =?utf-8?B?Umc4QXVKUlRqL1kvSGNUNXlpOUYrQXhjSnhkb0tPN013SVpOWkVoSkcySFVa?=
+ =?utf-8?B?bm5ndlpsWFJYK0pLNnozVVg0WVdldTlPMEdkTWdsQnBERVpjVFVMb0pMQkNK?=
+ =?utf-8?B?NGNqWTVLQWRuc0E3akcybDVnNXU2cVgvODNhVEI3RWhnQmxqL0xQVWNkcVJ3?=
+ =?utf-8?B?R1JPRTdzb2lqMkE0cnlEOW9ySXBpYVJvNkZOQXkxa3FrR0FFNnRkdlpaT2Qv?=
+ =?utf-8?B?d2RDZ0djLzhyWUNuZDlianFZNU5NbFFTdExQbWhxTk9zZ29EUnk1amY2cHdT?=
+ =?utf-8?B?a3RQNnpxZHU2NldHekw5UVlYeW5TRHBFWGhnZnZHS055VURseVBvOTJFTWFr?=
+ =?utf-8?B?UFRRMFdyU0hnajFwNjRpNVlqd2drVTY0REVIT1FZM2p6MGJyLzh3M0NYWTVy?=
+ =?utf-8?B?ZzBKOWJKK3RYN1YyZExzdVg0QWdpaWJ6SzFFMEJZRUEzWktNT3lpK3dNY2FR?=
+ =?utf-8?B?d1VsbHlRbFNzenA2TFNSUFh0MS81ZkpVT1l2bGlMR3BlalJSQUpKMjdwS3J5?=
+ =?utf-8?B?akxXY2hNcUZwVFRZM3FaaE9tL3hYcTZDSklBejd5eHVTanR0L3lrQVQwbEhW?=
+ =?utf-8?Q?JL+Fn0JJR1SP27z/Wf1yIoiBdJ7a5gYWWFuP2?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5451ac74-ff06-412b-0c85-08df2e129dec
+X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Oct 2026 18:56:00.4363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o7Eb/W+lTIM4W0DZRtmYIqiuG+5Qo/u/+fiZckOrtmxKlETPK5lIIYagTBGkWf2ux7kke5HZQP4hWYPNqN17xZuVFhTbH6h5z+jAgXxTQ2tvBxyy/vVK9KUxklP/kCgi
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9287
 
-@Arnaud Pouliquen - please review this patch to make sure it doesn't break
-STM32.
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-On Tue, Sep 29, 2026 at 03:54:52PM +0800, Yonghao Zhang wrote:
-> When the subdevice registration that follows ops->attach() fails,
-> __rproc_attach() rolls back with an unconditional ops->stop() call.
-> That is wrong on three counts.
->
+Document the optional memory-region-names property.
+ 
+The driver currently derives the memory region type from the referenced
+memory node name, creating a hidden DT ABI. Since memory node names are
+not constrained by the binding, incorrect names can silently pass DT
+validation, as seen in examples using "vdevbuffer" instead of
+"vdev0buffer" ([1] and [2]).
 
-It isn't wrong, simply implemented during a time where any kind of fault in the
-attach()/detach() scenario called for a stop().  I would certainly appreciate a
-less reproachful tone.
+Add memory-region-names to explicitly identify the expected memory regions
+and avoid relying on memory node names as ABI.
 
+Link: https://lore.kernel.org/imx/a3602ef8-2b77-4cc3-adef-2c4cba08a5d9@nabladev.com/ [1]
+Link: https://lore.kernel.org/imx/alexXTYQHUs76J7v@SMW015318/T/#mb9dc709ff3adc24d9db6d30c973f37b580f6f1f9 [2]
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Use optional property to keep back compatible with old platform.
+New platform should use memory-region-names.
+---
+ .../devicetree/bindings/remoteproc/fsl,imx-rproc.yaml         | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+index c18f71b648890..f87036299a7b6 100644
+--- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+@@ -62,6 +62,15 @@ properties:
+     minItems: 1
+     maxItems: 32
  
-> An attach-only implementation, one without stop() such as
-> commit 1168af40b1ad ("remoteproc: k3-r5: Add support for IPC-only
-> mode for all R5Fs"), dereferences NULL right there.  A processor that
-> is being attached to was started by another entity and is not ours to
-> power off: detach() is the matching undo of attach(), and stop()
-> should only be used as a last resort, when there is no detach() or
-> it fails.  This is reachable today: when the re-attach of an
-> RPROC_FEAT_ATTACH_ON_RECOVERY processor fails (imx_rproc and
-> xlnx_r5 use the feature), the unwind stops a processor which,
-> per the feature's own contract, "does not need help from Linux to
-> recover... Linux just needs to attach".  And the unwind leaves
-> the accounting inconsistent -- no resource table bookkeeping
-> is done, unlike on the rproc_stop() and __rproc_detach() paths,
-> and a processor powered off through the fallback keeps its
-> RPROC_DETACHED state, so the next rproc_boot() tries to attach to a
-> core that is no longer running.
-> 
++  memory-region-names:
++    minItems: 1
++    maxItems: 32
++    items:
++      anyOf:
++        - const: rsc-table
++        - pattern: "^vdev[0-9]+(buffer|vring[0-9]+)$"
++        - pattern: "^m(4|7|33)-reserved(-[a-z0-9-]+)+$"
++
+   power-domains:
+     minItems: 2
+     maxItems: 8
+@@ -134,6 +143,7 @@ examples:
+     imx7d-cm4 {
+       compatible = "fsl,imx7d-cm4";
+       memory-region = <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
++      memory-region-names = "m4-reserved-sysmem1", "m4-reserved-sysmem2";
+       syscon = <&src>;
+       clocks = <&clks IMX7D_ARM_M4_ROOT_CLK>;
+     };
+@@ -149,6 +159,7 @@ examples:
+                 &mu 1 1
+                 &mu 3 1>;
+       memory-region = <&vdev0buffer>, <&vdev0vring0>, <&vdev0vring1>, <&rsc_table>;
++      memory-region-names = "vdev0buffer", "vdev0vring0", "vdev0vring1", "rsc-table";
+       syscon = <&src>;
+     };
+ ...
 
-Remove the above paragraph.
+-- 
+2.43.0
 
-> Roll the attach back with detach() first, along with the same
-> rproc_reset_rsc_table_on_detach() bookkeeping __rproc_detach() does,
-> and fall back to stop() only when detach() is unavailable or failed.
-> A failed resource table reset does not abort the unwind: this is an
-> error path, and detaching from the remote processor, or powering it
-> off as the last resort, takes precedence over the bookkeeping.  A
-> successful fallback moves the processor to RPROC_OFFLINE so the next
-> boot reloads firmware instead of attaching to a dead core;
-> implementations with neither handler keep the processor running and
-> untouched, which is all an attach-only core needs.  The rollback is
-> factored into rproc_unwind_attach().
-> 
-> The unwind runs the same resource table resets as the detach and
-> stop paths, which free clean_table and leave a cached copy of the
-> installed table in rproc->cached_table.  Make rproc_attach()'s error
-> cleanup, which runs right after, null clean_table after freeing it
-> and release that copy along with table_ptr, or a failed attach
-> double-frees clean_table and leaks the copy.
-> 
-> Fixes: d848a4819d85 ("remoteproc: Introducing function rproc_attach()")
-> Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c | 65 ++++++++++++++++++++++++++--
->  1 file changed, 62 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 19e0ea3e7240..c52212a1d180 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1348,6 +1348,59 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->  	return ret;
->  }
->  
-> +static int rproc_reset_rsc_table_on_detach(struct rproc *rproc);
-> +static int rproc_reset_rsc_table_on_stop(struct rproc *rproc);
-> +
-> +/*
-> + * Undo an attach whose subdevice registration failed.  The remote
-> + * processor was started by another entity and is not ours to power
-> + * off, so roll back with detach() when available and fall back to
-> + * stop() when there is no detach() or when it failed.  stop() is
-> + * the only rollback that does not rely on the remote side.  A
-> + * processor powered off through the fallback is marked RPROC_OFFLINE,
-> + * so the next boot reloads firmware instead of attaching to a dead
-> + * core; with neither handler there is nothing to roll back with and
-> + * the processor is left running.
-> + *
-> + * The resource table resets are best-effort: when one fails, the
-> + * unwind carries on with detach()/stop() anyway.  Unlike
-> + * __rproc_detach() and rproc_stop(), which bail out before touching
-> + * the processor when their reset fails, this is already an error
-> + * path, and detaching the remote processor -- or, failing that,
-> + * powering it off -- is the minimum it must still deliver.
-> + */
-> +static void rproc_unwind_attach(struct rproc *rproc)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	int ret;
-> +
-> +	if (rproc->ops->detach) {
-> +		ret = rproc_reset_rsc_table_on_detach(rproc);
-> +		if (ret)
-> +			dev_err(dev, "can't reset rsc table on detach: %d\n",
-> +				ret);
-> +
-> +		ret = rproc->ops->detach(rproc);
-> +		if (!ret)
-> +			return;
-> +
-> +		dev_err(dev, "can't detach from rproc %s: %d\n",
-> +			rproc->name, ret);
-> +	}
-> +
-> +	if (rproc->ops->stop) {
-> +		ret = rproc_reset_rsc_table_on_stop(rproc);
-> +		if (ret)
-> +			dev_err(dev, "can't reset rsc table on stop: %d\n",
-> +				ret);
-> +
-> +		if (rproc->ops->stop(rproc))
-> +			dev_err(dev, "can't stop rproc %s\n", rproc->name);
-> +		else
-> +			rproc->state = RPROC_OFFLINE;
-> +	}
-> +}
-
-
-Please remove all the dev_err() above.  An error messages are already generate
-in __rproc_attach() when something goes wrong.
-
-> +
->  static int __rproc_attach(struct rproc *rproc)
->  {
->  	struct device *dev = &rproc->dev;
-> @@ -1373,7 +1426,7 @@ static int __rproc_attach(struct rproc *rproc)
->  	if (ret) {
->  		dev_err(dev, "failed to probe subdevices for %s: %d\n",
->  			rproc->name, ret);
-> -		goto stop_rproc;
-> +		goto unwind_attach;
->  	}
->  
->  	rproc->state = RPROC_ATTACHED;
-> @@ -1382,8 +1435,8 @@ static int __rproc_attach(struct rproc *rproc)
->  
->  	return 0;
->  
-> -stop_rproc:
-> -	rproc->ops->stop(rproc);
-> +unwind_attach:
-> +	rproc_unwind_attach(rproc);
->  unprepare_subdevices:
->  	rproc_unprepare_subdevices(rproc);
->  out:
-> @@ -1562,6 +1615,7 @@ static int rproc_reset_rsc_table_on_detach(struct rproc *rproc)
->  	 * rproc_set_rsc_table().
->  	 */
->  	kfree(rproc->clean_table);
-> +	rproc->clean_table = NULL;
-
-This change is not needed.
-
->  
->  	return 0;
->  }
-> @@ -1597,6 +1651,7 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
->  	 * won't be needed.  Allocated in rproc_set_rsc_table().
->  	 */
->  	kfree(rproc->clean_table);
-> +	rproc->clean_table = NULL;
-
-
-This change is not needed.
-
->  
->  out:
->  	/*
-> @@ -1675,6 +1730,10 @@ static int rproc_attach(struct rproc *rproc)
->  	/* release HW resources if needed */
->  	rproc_unprepare_device(rproc);
->  	kfree(rproc->clean_table);
-> +	rproc->clean_table = NULL;
-> +	kfree(rproc->cached_table);
-> +	rproc->cached_table = NULL;
-> +	rproc->table_ptr = NULL;
-
-->table_ptr doesn't need to be set to NULL.
-
-Thanks,
-Mathieu
-
->  disable_iommu:
->  	rproc_disable_iommu(rproc);
->  	return ret;
-> -- 
-> 2.34.1
-> 
