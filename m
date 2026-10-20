@@ -1,109 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.2
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1792515046;
-	b=44mUJkhepHOp+daYvkGERbsv7kwgJQzqBcwIt5nXRkcpCJcZ9W46NKkd3pJWnMtyL5JW
-	 2qOgWmkoXkhVTCNiHa/67gDh2da/LjH42hS/8jj1fahCNNuNqC+xZhPxO8RiM6GmrySQT
-	 Y5XcIyK6q2KQajzl0XEI3477qMSa8S1w3xl+L5Qs8SW+bq0pWgmud9yqtonKMraUHIWi3
-	 w1InqbQweYAJkyhlm9QH6spGxboPLRRoezeol8yAM9LEZSQG5b440eaKIq5SESoDqcdm0
-	 e2JDtmkajpgO8o/9p+dNHwG+IvcackVizMlch/6CnxN2e8T2YCKXV3fW/imjjWMcylA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792515046;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:Date:Subject:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
-	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=fBLG0k2pzlrByEjHSUrj5ObpXIigdGzenZSiJU3oNc8=;
-	b=Xzk3qdK9PXaVcL7iszaabQ8NAOVOo8Sn6VUpbKPO90syMb94yjwq88lkA/q6fUBRPKEM
-	 kZEjr0nvlRV3/2R8htaQGqCijDH37p4/mARqj/trLCxnL65D/GyxNim+2Rga6yE6d9d21
-	 7Oxc8kMYQ3gsKuj0xxvgc4IVYqnu/DWAS0nwqc5IJu4n8WMe8djKHyaHzXvuRL+Pwa+Ql
-	 M0KLDxN6m7xS+id7wW3kFqAe/PD8nZAqHNxbeEdvR/vhhIRyVf5ZTx0XF252NS7FqWFAo
-	 D3/BAMpddmQ1YRGxw6Q2reFvWbJh9/HIYmkBmWesMZpRtU+kmMSKcEL5Ekz85OvFn2A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=nAlUQ8kZ;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.2
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013002.outbound.protection.outlook.com [52.101.83.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.175
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1792524485;
+	b=duH3gkPi3hGrltB5T5iTqU31dT61Aa8aj5/nxT+zbIXhuYtiSRxMS7BjvI9iUOkPQOs4
+	 eRhV4zJUPBXPdHfsLXVh6F+CB07M4Jeo3WZGcfFV67PcFP5eu6QakjuG67HF8NQDuMOxc
+	 HCQqTO6VeVGSq/QVCqC0qpKrpW7v8DN/oCyoY3ZPEHnfYWCwrdBx/LvfMYBiejwF01Pq6
+	 wnz2niDwZ4nDOQJlSyMbC/m6ice2XmaoUSfQF0Gmh7RF9UeG+KEjLXQuWgZWpyEmsvJy0
+	 dvCAznajxSRiAURX8F4O5JqP0+FvjW5fKU/8ZWKZBglNzFmwk0lg3q0tabj1qBwNKHQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792524485;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=4Oum7bllURz1Icez86sPHFIClyN9kbXqs/qBQKatBzo=;
+	b=e+8VKwSX76tdsphfpesaUFWx/9deOdM5ixT2eAbQUVVRU8sYzf1gDhIzGLh0MLJvbxAk
+	 B4zQMhWzmizFN146+LzQCxBTvgcgvc7CieBQa0CB/9GUhCvrwmnTuGInPbLHyOpYJ20k5
+	 1grwn5YQTKcglHsr3+X9Cx5BCuUAdlIAEgfVzNwwLf7fEaWZFdr/hLvhfHDoOyY7uwuoL
+	 nZyVQUHMdnhjWl82f8W6zg3VjtZUWw9ZLVcNdZCyeI8aUUUU2s8BNjzMLKw25LwdeuqPi
+	 CdHrt7prkugbTR/9SVzME6YPTW01zlh5uf4N0YUGE+0SvVgMrOX4c5Rgl/lSThUCDwQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=lxAjn5hU;
+	arc=none smtp.remote-ip=209.85.215.175
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4568060A261C;
-	Tue, 20 Oct 2026 16:50:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4568060A261C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6820B606A31A
+	for <linux-remoteproc@vger.kernel.org>; Tue, 20 Oct 2026 19:28:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6820B606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=nAlUQ8kZ
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T+OjUH9m9MTOLPj3n7Sa2bU0P+okGBs7SDogxPPj+wyf2CrndNlxphMtunEHd4yjrtptm/fh3/GLbW8OD9XRY86UEMxQI0/9tb8XBPmSNIUIWGSP4HuEMrM7PInA44y4bZKb3juBBn0vQtHKg1fOOV0Mq0y9SmhFlxnxdBcEv1CH5ggC/cYgWO8uFkX0xe//srFM3tZHKkeHgN56+z656/SgjkQcKE8/K8tZBddphigGUSlZcHTbox0oBFl0IEpNXtnyKXMrVKE6O1TBW50V25DGTtFqyhSsyHSvJ0zzjHqWjMq4ZsQrObGS01S0BHVjn7D567iCfADcZTsrIIPxXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fBLG0k2pzlrByEjHSUrj5ObpXIigdGzenZSiJU3oNc8=;
- b=Q8Dty4/s2FkDNEQDBDqlhQs6MF19yuunj0XPvPjE56dS6GwPajj8p/xQxEX81aulp7WRO2pmKmtd+P9u4dysQOsmPZn/bO63vilg9EWzLRr4bEhb10ENrjQdi93GE10wkcH9a0C7ge8AEur4QDSPV83I/vm6fNfH7HHeRjIVfdZrGRfXn5JKOhv92mPOL+Vod2eU2kSkkJqUoDLIQyUxJqMKWMi7bUDCVOp98CEaAxNpKRIHON5vwF0+dhitW0GTB3A4HZdLYzNvUzcEOLlAha2kJYuoCSKk7BUw1G9d06UfcemKvb1g2GyAhqH+xoMhZwSP5556vDxx8dqsn5W86w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fBLG0k2pzlrByEjHSUrj5ObpXIigdGzenZSiJU3oNc8=;
- b=nAlUQ8kZRtUdleUm9XmFjke664ZAn2GFgIdJ09OFW0Nf4lXfn1fItMVxrURcCc2DcksPYE5hT8gXIPK2DZRpUw0miJMvioHudUwjnfob0LuFE0u7fe5Vgm9077amsffjGkXkd66o8q2bDXprsOGei5a1ImQuKJlGg66iKXBqOH8Cc2McY+j05OjnnNABgdmKxI3unAgZjOB/JWEn6TDqb45FcxB+Vi3N/U7ctH/NeuHwj089ccN1USCPg021Q9wcc0b0Cjwpdkf8GlXhP9HwKjvR8WY6lfA7wny4rDEreaQZeR7l2iANe+rLhflRAyRzYXaHVHUWbrHLotredyhAIw==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
- by MI9PR04MB787466.eurprd04.prod.outlook.com (2603:10a6:290:86::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.522.19; Tue, 20 Oct
- 2026 16:50:43 +0000
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b%6]) with mapi id 15.21.0522.017; Tue, 20 Oct 2026
- 16:50:43 +0000
-From: Frank.Li@oss.nxp.com
-Date: Tue, 20 Oct 2026 12:50:23 -0400
-Subject: [PATCH v7 3/3] arm64: dts: freescale: add DT overlay for
- MX95-15x15-FRDM RPMSG usage
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261020-memory-region-name-v7-3-1413d5928340@nxp.com>
-References: <20261020-memory-region-name-v7-0-1413d5928340@nxp.com>
-In-Reply-To: <20261020-memory-region-name-v7-0-1413d5928340@nxp.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
- Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1792515024; l=4768;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=FJBJF5Gng7ZW/QfibZr+BNRtv7UEa0EQZgF5WVuT4TU=;
- b=udrXM5SUdLKh8Ff/q3WLXNdRpsEh/KxT4nvWOLhAMiUGo7HLIuah5nwcgxBXW4/I9CYlVOdoA
- ashLrNBvJm7D4VearohH3z2ha4XHfygGicgXYjfZR/I89M3ucwKO0ql
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: DS1PR04CA0011.namprd04.prod.outlook.com
- (2603:10b6:8:44f::14) To MI3PR04MB12438.eurprd04.prod.outlook.com
- (2603:10a6:290:76::14)
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=lxAjn5hU
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-cd61cef87f1so1195450a12.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Oct 2026 12:28:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1792524483; x=1793129283; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=4Oum7bllURz1Icez86sPHFIClyN9kbXqs/qBQKatBzo=;
+        b=lxAjn5hUni/1Q2zG2C1AbrXWO/JlFOUm3UVxgSN7I9O3uBFKalnFS3wPH07ZI10PSh
+         Ebf0QHycv98aYoaO4Hx0gYcXsByC1zKWOhhAL5f0ssQFbtnFzlz0X0Cd3Xawsp2FTVI/
+         JA5G7qRcvBF/hlUotTpirAphceodprwxSAJ6BAm28nYvpYxPbPr1eEoM3t+ZHNFvd9fx
+         0gSq9KeX1HIdpJjUwl8N1qm4ObK5f6mwItX5dYjVpSE8ybwAQ36NSdIz1RApcrXlfle1
+         hTOnf56UZQEq0al7KIVGN2Zh7xxwSTLHsxpwWl/JMzsrWyfUxVS167aGJeHzyRfSaIJ/
+         k5Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792524483; x=1793129283;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4Oum7bllURz1Icez86sPHFIClyN9kbXqs/qBQKatBzo=;
+        b=C/GPhTzI1s1J7TRbBRyPcu+x9a2nIWkbiabqLE4bKztVFW/DKvuBAsCyyJJYYBVqNU
+         Xd1rmF5es5xXnm1mfwdJjHS809NJAQ8Rbn9x2heAPkKNIuTZcHe32n342ERHRQAsoSLS
+         Xf7WhplXUDdlwV91RxQ+ZeC8TCUgZYnCqbFuBjOSi0t90R7p1jVCg3q/1CgUPoUivyZI
+         7R03CuS5vlgZ9pdcx9FobEVJnuVuISdc/v4aMxB9H5sy+gW3s7ov6tt8p554iE83RKTa
+         jEm6r5RiDuUQaQ8PNmZyqWks+i/S5m5Y77IozCpOLJbssPkIfXINHtg1UaH0BO8JBJen
+         +j4w==
+X-Forwarded-Encrypted: i=1; AKwUvBxmL0pMHgGSkeOO9NJSSqjuxr1juG2DckjgIRR1uNISMMMSWC2WYA7P0oxzLxWHbqZjOS3tYI1IUTn0hv26Mg7A@vger.kernel.org
+X-Gm-Message-State: AFq9FYLJYPjUwwveUyNssNk9LkrgZ1pZz9kDNvRJIFdK9WGSSVlmMWvs
+	mHj6KDVzhqKgF86oCjzEWkyUwXhl0wDh4s32DYTrGzqqN+XcjzmJE0nrIGVChlBZ7Nc8DKC4rHt
+	8Dpy3
+X-Gm-Gg: AYBFou2JZLl5JfEEH98oD4JGcii1jTscuwp+RL/qepDKSD3/2bG3RIfi/NRVLNHXbsy
+	iEf4BWZ2x0WLNw82HWpXVAQZER5PJp9d5CI6U+rB1b9jMs+4MMwMVwlD/nhE0cIftvHarUeyBGP
+	ffxQqoFwOc7aIEOLAlbKhuUVuqu5Nl9ZAlvdDmwFjOQMqkbMLFdIV3Ii5JKM7VwccuLJ3A/uVNv
+	qAZPSmRfW/sjqFZCs32/rSARZgjornr+9ZyYiw/R3zvMAcqTHsgvNOzYn7lV1WCs78g/vL+iJTw
+	T9gLH0aGkJfiwFjxBgbaPOJa2PYOlryx7QN5KGUbRm482WtuutEaL+zDcd0iy/S6YUgLaA8i0s6
+	tMnZBzifmy1cK66tY1aPEi+fcoAShwyb5pVddOe1i+3kgRZ1PuirvAAzgr1eWHvhmBRbENq2cqV
+	ehpKrK75FKyPF3958Kj7hIOGHEd+oX3gdqD0WLZIBZ7VbgW3eMOYSuU1mqOZtdt5BRxW2TyEzIA
+	TAWN/IEIvZNlJ69eX1Mep5+/BnLJbSnZkTaOkRsBVegv1IKwj2SxkxCnrw=
+X-Received: by 2002:a05:6300:2786:20b0:3e2:325f:578e with SMTP id adf61e73a8af0-3e2325f58d6mr4982382637.66.1792524483323;
+        Tue, 20 Oct 2026 12:28:03 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:1567:1f94:7104:b613])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a0895f8ca3sm26422b3a.46.2026.10.20.12.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Oct 2026 12:28:02 -0700 (PDT)
+Date: Tue, 20 Oct 2026 13:27:59 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Yonghao Zhang <hyz3367@gmail.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] remoteproc: core: Clean up after a failed recovery
+Message-ID: <atfAv4kekczalp6V@p14s>
+References: <20260929075453.2324597-1-hyz3367@gmail.com>
+ <20260929075453.2324597-5-hyz3367@gmail.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -113,240 +97,137 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|MI9PR04MB787466:EE_
-X-MS-Office365-Filtering-Correlation-Id: b930a052-2fbb-4634-2422-08df2eca47ca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|376014|23010399003|366016|7416014|1800799024|6133799003|18002099003|22082099003|11063799006|261009223027099003|10067099003|56012099006;
-X-Microsoft-Antispam-Message-Info:
-	KPJ7y/rCqzxb8+qPgZNQjwGq0zlHX8djkbsIp2XFG13AVIxh2a5ZcPP0ONO5l8yxjA8teC+6B1rXkYiR5C0cl5pPhVlNrtFKqoNyfDmi+Jz3X6gCFHDSsiXAzR5TnJq9s1/0G9yAdl8KyUGID8zU+Dgiamy1/066FGJ66YW4tE48lWcsLTxOEkXq9mpkIOJ3AwwZk+JORCFpLZWenA7z+aN5q3daTz3vwbgdep6GdQ6NK0n5S+ABaO6FQ7HvGDQug/JUk0F0jUATlOTXEOwvMjUI5zG1dQMU9XU9qqNdYQtpqwPS2pWBFdp2lGVLwInmN5MmmtRNYg8jPH8kUyy1/BO14DaaydoqJOuFdT4U37EOhWZUfgMjtDrosxPchX81j4XerlaRoLbRRNwI1Fm1NS7m4ukY0HWm5E8PKVsgmaHmXlGLVTjr+ePoggKz7F7sYNyS1IUNQDDzhohiw0JHUx6iCKHkQTcLn+VXs2FMZISaDmLyKWwLwKnQMkGZSufzLIWS8mkmdYAQ0JbrITgWCwS4c0CJY1ECX0eDa16uEI6/GhC4gXFugltZ6GK8Ji99emY3RkpRLfqbpOe6Rj1dFafWLOc0pIMF1uqZDnMZ5WbsBtQHrIJOu22tUUjgZ6okM5oSW+/0kb78H5bO9JcJjvJBKFQCwkPF24+33086Bj0=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(23010399003)(366016)(7416014)(1800799024)(6133799003)(18002099003)(22082099003)(11063799006)(261009223027099003)(10067099003)(56012099006);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bWNHTThsUVpyRy9GSTRsajVFMWdqK2I4OXlTRWpkdFRzUjB3dmp2TjNIMTB6?=
- =?utf-8?B?c0JHNUY2RUQwZ1k2Ti91TFZXVGhRVVNJbW1UMlhJQVJaQUxrNVlhY0llazFI?=
- =?utf-8?B?V2s0Z0s2cDIvZC9KZEVaZ1JpN0liNCtFUTNRTGpvY3ZUeWl3alRDcFhZU29M?=
- =?utf-8?B?ajZpYm8zRWZiU1pGVjYwRHAxT3h1eVU2eEpoelhYUTY3dmsyU1hhOWV6Vm9i?=
- =?utf-8?B?VGt3Ym9VcDRLaFYvSmZBck9uTk9Remk2a01mMjhHYml6UEZINWNseVJsVzhK?=
- =?utf-8?B?QXY3MnFJYXg0dTVMWWRWQ0JCYk1zNlA4eS9kSEhjSnBpU2Rib2hkTHJhK3VZ?=
- =?utf-8?B?dFNYamN2QjdaaSs4QldjaGFJdEJITEZvL05rN2FVS05NVUZCN3NiMHhOZU1u?=
- =?utf-8?B?WVZnSkFOWSs0WERLN2lERnBDaDFJNEJqNTFWazBNZGpINis0ZnRDaUFjSkRx?=
- =?utf-8?B?Q0Z4ZnJsZnNkRnA0L2drVDZnRW9ETWY1RnIvYytnbFdObU1jSDN0d3BzRER3?=
- =?utf-8?B?eDJZNzJYWkJNOFp3UC9IemhqTlh6c1pKUHBOWXZJeSswVkZXZUxBbGJFbkVG?=
- =?utf-8?B?T2drUVR6YmF6MWN3ZzZoQXUxWHVTWUV6ZldPZTZJbWo0Y1dMbnMvSXNHOGdU?=
- =?utf-8?B?bmhnYW1XSjRQalVjSFJ4bmlwaUkzU3pIZ0M4QWZyT2ltbTI3b2EzTDlDckJD?=
- =?utf-8?B?SHY1N2J0ZnJUcW1scjkraUlJblVZLzExYStLNlRSZGJOOWIrRGZWK0s2blZD?=
- =?utf-8?B?YkFsWTl1aGtBcXJocisrc0lMejB0d3EwMkFBZnNQT1gxK3pMMzNLM1lUL0lF?=
- =?utf-8?B?YnF6SGMvOVBadmp6SmkrQStIL2xLZk96cUY5Qjh3RTBVeDdnS0FocnJrY1ZQ?=
- =?utf-8?B?blVDQ2NVL0J4YXh5U3ZOTmswK0JqN0lNWWJTS3NSVWpVNFNMNDZFc0tqTndK?=
- =?utf-8?B?M0tnS2RocUZ6UFNyMm5SQndhWU10OEdxVEpuWjhaWEVPVmw0REdtOWphdENP?=
- =?utf-8?B?a3lGbW45YmJxeUVqRVZoeVVlaVUraHhvU1Z0WGtNbGlyQzE2bUVBUUExSDlq?=
- =?utf-8?B?OGJtTVpONTlPZUhTRUIzdnBmZDZDT1NSSTRaT1lkTURUd2hkMXF3SURnS09r?=
- =?utf-8?B?YzRJZ3NsK0JzeXlsZ25DejdwMnpDWnREQVF5TU5EaDV0azN4MHJuUmJhUGlm?=
- =?utf-8?B?REZxaUNiRm5rZXJ5a3p3Wlkrdy9pa0RWdGp5SVBScklVd3ZqSmtKM2I3aFpT?=
- =?utf-8?B?eS9NbHBtZHgyK2UrODk1Tm9DNzdWaXdjQWVoVDhhSU00bXJITUlYMTg0TmVk?=
- =?utf-8?B?c1VXa3FLeWlZTjZQL3VxQUJ5QUlDTWU1RW1kTVlkaHdtbWQyOS9nYXNyM1Np?=
- =?utf-8?B?eTZyY28ra1p4cytQcTNzNWxpcEhRUUdYcUZORUYxV244UWd4UUdjc05JT0tK?=
- =?utf-8?B?Y3kyOGVzbkNtMHFNSUNiNGZwQnY0QmdSMmNDZE1CZHBzRFN4cUxYeXJkNEtT?=
- =?utf-8?B?Z1NmeG53clIvRGlpRThWTWd1b1I5YnRDZ01RYkNRVm4wUjN2TFEzaU1SUUMx?=
- =?utf-8?B?OUZjekxhSVVTK20wODVnYjFveUZ4ZUJLNWVab1IwOExmUVArd2JsTzcrSmFK?=
- =?utf-8?B?VCtub1cweXNVaUhrVVI2a29vemlkSWRuR2Zib0JzSDJXWjlpVmxpVGJHUW9P?=
- =?utf-8?B?QUVNMUpCTmhCbWd0amdEVmZqQUVOM1NUSFp0cElwRnAyc2lvUWNOZFpJdk5S?=
- =?utf-8?B?NkhXSTFJWTZValpJdTFiU0U4a2RZU3RlVGlid2hZVTVRU3AxMFprWUtMZHo1?=
- =?utf-8?B?eHdOMnU3eVRac0ZhbmVRRHdYWjhudTd4LzliWlFiSGNqUnhIS3JCNjhtaWRH?=
- =?utf-8?B?VWdYWDJaU1VtbjlzTkMzdUNSVmFrZHQvZVk1NkFjN0ZTM3F1UGIveHBHTkx4?=
- =?utf-8?B?MUZERTJnWjY4K2V3L3VEUmlDbVVuNkxicnVNVUI5OFdIdHgzSzdLdW1mUW5V?=
- =?utf-8?B?Vlp5NzBtV2x4eXpwTms3T2FYRk1MbUhTdnRSOXlDSFZ4STgwZEQvMGZtdjh3?=
- =?utf-8?B?WGhlendaM251TEVHS0RvTTlJd0FWT3ltZ3RUNXZna1QrMld0WE1EZXNkejJX?=
- =?utf-8?B?a3U4N25QVUM2K2d2TmkxVmo2T1Ftc0MydFZ6b05LOTBxZldQR1hCK3l3SGpF?=
- =?utf-8?B?akpwYlFoTmFhWlFDeTdvUVRBNGZLc3Z0K2hMNWZ3dDdJbDREUmRuSUdMTVRP?=
- =?utf-8?B?ejFQWVIwTzNSK0xmVjBONnBYZWtsamh3bnJ4NmJjRnhCV3A3bjRMSGFKQldX?=
- =?utf-8?B?N3lCaE5sVWJPbjltVFZtdms3R2p2ckc3RzFTNUZBNzQ1bUtJcmZsS0VUZUdr?=
- =?utf-8?Q?bpL3LWNTtuZ0b4wlw27g02rfmf7DPYpZQ4GKA?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b930a052-2fbb-4634-2422-08df2eca47ca
-X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2026 16:50:43.3332
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IVJUS81TyhADThq0JrzSvLbanRTZbb1kMagytus2kT023FVQUPpenXt+SArqsSsnfqFytQ7vsZ/Di/754bNjF8J+ev/wHb3GEzI/ZCeLHQVLDc1DbavA5sY3y1sZm1WF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MI9PR04MB787466
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260929075453.2324597-5-hyz3367@gmail.com>
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Tue, Sep 29, 2026 at 03:54:53PM +0800, Yonghao Zhang wrote:
+> When rproc_boot_recovery() fails to bring a crashed processor back
+> (the firmware request fails, or rproc_start() fails), it returns
+> with the processor stopped but two kinds of state still held.
+> 
+> The resources of the boot the recovery was trying to restore are
+> never released: rproc_stop() does not clean them up, and unlike
+> rproc_attach_recovery(), which releases everything when its
+> re-attach fails, boot_recovery just returned.  Stale carveout
+> entries then fail every later firmware boot at "already associated
+> to resource table", until one of those failing boots happens to run
+> the cleanup of rproc_fw_boot().
+> 
+> The power references fare worse: nothing can release them anymore.
+> Take a processor with two outstanding rproc_boot() references whose
+> recovery stops it and then fails to restart it -- RPROC_OFFLINE,
+> with the count still at two.  rproc_shutdown() drops exactly one
+> reference per call, and only once past its state gate; the gate
+> admits RPROC_RUNNING, RPROC_ATTACHED and RPROC_CRASHED, so an
+> offline processor never passes and no amount of shutdown() calls
+> releases anything.  With the count still above zero, rproc_boot()
+> then short-circuits on atomic_inc_return(&rproc->power) > 1 and
+> returns success without doing anything: the users of a dead
+> processor are told it is running.  The reference count and the
+> state machine are misaligned for good.
 
-Move related memory region to overlay files.
+Please remove the above 3 paragraphs.
 
-Add RPMSG DT overlay for the MX95-15x15-FRDM board. This overlay is meant
-to be used with the mx95evkrpmsg system manager configuration for
-remoteproc and audio over rpmsg-usecases.
+> 
+> Release the resources on the failure paths of rproc_boot_recovery(),
+> the same way rproc_shutdown() does, and void the power count in
+> rproc_trigger_recovery() when the recovery failed without leaving
+> the processor crashed, offline or detached.  The service the count
+> was tracking is gone, so every outstanding reference is dead, which
+> decrementing instead would leave the survivors stranded exactly as
+> above.  A processor that is still crashed keeps its references, as
+> rproc_shutdown() can still drain them in that state.
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- arch/arm64/boot/dts/freescale/Makefile             |  3 +
- .../boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso | 81 ++++++++++++++++++++++
- arch/arm64/boot/dts/freescale/imx95-15x15-frdm.dts | 31 ---------
- 3 files changed, 84 insertions(+), 31 deletions(-)
+Remove the last sentence, starting at "The service the...".
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index a80cccf34eb56..f3b19f3b1488e 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -960,6 +960,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx943-evk-mqs.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-ab2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-frdm.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-frdm-rpmsg.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-evk-sof.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-19x19-frdm-pro.dtb
-@@ -984,6 +985,8 @@ dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-mallow.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-yavia.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx95-verdin-wifi-zinnia.dtb
- 
-+imx95-15x15-frdm-rpmsg-dtbs = imx95-15x15-frdm.dtb imx95-15x15-frdm-rpmsg.dtbo
-+
- imx95-15x15-evk-pcie-dtbs += imx95-15x15-evk.dtb imx-m2-pcie.dtbo
- dtb-$(CONFIG_ARCH_MXC) += imx95-15x15-evk-pcie.dtb
- 
-diff --git a/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso
-new file mode 100644
-index 0000000000000..c3deb277edabf
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm-rpmsg.dtso
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright 2026 NXP
-+ *
-+ * This DT overlay is meant to be used alongside the mx95evkrpmsg SM
-+ * configuration for remoteproc and audio over rpmsg.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&{/} {
-+	remoteproc-cm7 {
-+		compatible = "fsl,imx95-cm7";
-+		mboxes = <&mu7 0 1>, <&mu7 1 1>, <&mu7 3 1>;
-+		mbox-names = "tx", "rx", "rxdb";
-+		memory-region = <&vdev0buffer>,
-+				<&vdev0vring0>, <&vdev0vring1>,
-+				<&vdev1vring0>, <&vdev1vring1>,
-+				<&rsc_table>;
-+		memory-region-names = "vdev0buffer",
-+				      "vdev0vring0", "vdev0vring1",
-+				      "vdev1vring0", "vdev1vring1",
-+				      "rsc-table";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		vdev0vring0: memory@88000000 {
-+			reg = <0 0x88000000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdev0vring1: memory@88008000 {
-+			reg = <0 0x88008000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdev1vring0: memory@88010000 {
-+			reg = <0 0x88010000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdev1vring1: memory@88018000 {
-+			reg = <0 0x88018000 0 0x8000>;
-+			no-map;
-+		};
-+
-+		vdev0buffer: memory@88020000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0 0x88020000 0 0x100000>;
-+			no-map;
-+		};
-+
-+		rsc_table: memory@88220000 {
-+			reg = <0 0x88220000 0 0x1000>;
-+			no-map;
-+		};
-+	};
-+
-+	sound-micfil {
-+		status = "disabled";
-+	};
-+};
-+
-+&edma1 {
-+	/* reserved for M7 */
-+	dma-channel-mask = <0x40>;
-+};
-+
-+&edma2 {
-+	/* reserved for M7 and V2X */
-+	dma-channel-mask = <0xf>;
-+};
-+
-+&micfil {
-+	/* reserved for M7 */
-+	status = "reserved";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx95-15x15-frdm.dts b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm.dts
-index f82e149323d34..3ab679e5a4740 100644
---- a/arch/arm64/boot/dts/freescale/imx95-15x15-frdm.dts
-+++ b/arch/arm64/boot/dts/freescale/imx95-15x15-frdm.dts
-@@ -189,37 +189,6 @@ linux_cma: linux,cma {
- 			linux,cma-default;
- 		};
- 
--		vdev0vring0: vdev0vring0@88000000 {
--			reg = <0 0x88000000 0 0x8000>;
--			no-map;
--		};
--
--		vdev0vring1: vdev0vring1@88008000 {
--			reg = <0 0x88008000 0 0x8000>;
--			no-map;
--		};
--
--		vdev1vring0: vdev1vring0@88010000 {
--			reg = <0 0x88010000 0 0x8000>;
--			no-map;
--		};
--
--		vdev1vring1: vdev1vring1@88018000 {
--			reg = <0 0x88018000 0 0x8000>;
--			no-map;
--		};
--
--		vdev0buffer: vdev0buffer@88020000 {
--			compatible = "shared-dma-pool";
--			reg = <0 0x88020000 0 0x100000>;
--			no-map;
--		};
--
--		rsc_table: rsc-table@88220000 {
--			reg = <0 0x88220000 0 0x1000>;
--			no-map;
--		};
--
- 		vpu_boot: memory@a0000000 {
- 			reg = <0 0xa0000000 0 0x100000>;
- 			no-map;
+> 
+> Fixes: ba194232edc0 ("remoteproc: Support attach recovery after rproc crash")
+> Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
+> ---
+>  drivers/remoteproc/remoteproc_core.c | 34 +++++++++++++++++++++++++++-
+>  1 file changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index c52212a1d180..b138680b1905 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1900,7 +1900,7 @@ static int rproc_boot_recovery(struct rproc *rproc)
+>  	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+>  	if (ret < 0) {
+>  		dev_err(dev, "request_firmware failed: %d\n", ret);
+> -		return ret;
+> +		goto clean_up_resources;
+>  	}
+>  
+>  	/* boot the remote processor up again */
+> @@ -1908,6 +1908,24 @@ static int rproc_boot_recovery(struct rproc *rproc)
+>  
+>  	release_firmware(firmware_p);
+>  
+> +	if (ret < 0)
+> +		goto clean_up_resources;
+> +
+> +	return 0;
+> +
+> +clean_up_resources:
+> +	/*
+> +	 * rproc_stop() has already switched the remote processor off, but
+> +	 * unlike rproc_shutdown() nothing releases the resources of the
+> +	 * boot this recovery was trying to restore.
+> +	 */
 
--- 
-2.43.0
+Describe the situation as it will be when your patch is applied, not the
+situation you are fixing.
 
+> +	rproc_resource_cleanup(rproc);
+> +	kfree(rproc->cached_table);
+> +	rproc->cached_table = NULL;
+> +	rproc->table_ptr = NULL;
+> +	/* release HW resources if needed */
+> +	rproc_unprepare_device(rproc);
+> +	rproc_disable_iommu(rproc);
+
+Use the same sequence as in __rproc_shutdown().
+
+>  	return ret;
+>  }
+>  
+> @@ -1948,6 +1966,20 @@ int rproc_trigger_recovery(struct rproc *rproc)
+>  	else
+>  		ret = rproc_boot_recovery(rproc);
+>  
+> +	/*
+> +	 * A failed recovery leaves the remote processor in a state from which
+> +	 * rproc_shutdown() refuses to release the outstanding power references
+> +	 * (RPROC_OFFLINE or RPROC_DETACHED), so every rproc_boot() would
+> +	 * free-ride on them and silently do nothing. The service those
+> +	 * references were tracking is gone: void them all.  Failures that
+> +	 * leave the processor crashed keep the references, as rproc_shutdown()
+> +	 * can still drain them in that state.
+> +	 */
+
+Again, don't describe the situation you're fixing, describe the situatio once
+the fix has been applied.
+
+> +	if (ret && rproc->state != RPROC_CRASHED) {
+
+The only possible states we can be in at this point is either RPROC_OFFLINE or
+RPROC_DETACHED.  Make that explicit rather than anything that isn't
+RPROC_CRASHED.
+
+I am done reviewing this set.
+
+Thanks,
+Mathieu
+
+> +		dev_err(dev, "failed to recover %s: %d\n", rproc->name, ret);
+> +		atomic_set(&rproc->power, 0);
+> +	}
+> +
+>  unlock_mutex:
+>  	mutex_unlock(&rproc->lock);
+>  	return ret;
+> -- 
+> 2.34.1
+> 
