@@ -1,93 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792524485;
-	b=duH3gkPi3hGrltB5T5iTqU31dT61Aa8aj5/nxT+zbIXhuYtiSRxMS7BjvI9iUOkPQOs4
-	 eRhV4zJUPBXPdHfsLXVh6F+CB07M4Jeo3WZGcfFV67PcFP5eu6QakjuG67HF8NQDuMOxc
-	 HCQqTO6VeVGSq/QVCqC0qpKrpW7v8DN/oCyoY3ZPEHnfYWCwrdBx/LvfMYBiejwF01Pq6
-	 wnz2niDwZ4nDOQJlSyMbC/m6ice2XmaoUSfQF0Gmh7RF9UeG+KEjLXQuWgZWpyEmsvJy0
-	 dvCAznajxSRiAURX8F4O5JqP0+FvjW5fKU/8ZWKZBglNzFmwk0lg3q0tabj1qBwNKHQ==
+	t=1792576795;
+	b=Rhoo5s7Oau2HZ/fgZokdTOosJEF8PfP4ShGQXDX7WRsVqwPJMYl5fNp+/t4MSFihcbGc
+	 wPHE2pey3QEz6hNhN//6wyIG+FyK4Zys1/UdF+8yojfyPp509khQL/cCxChw/qU1/5Egk
+	 Hj6+N1Hi2FA91S22ZL1Ak3yenKdnJ+4C2WmoVdAOb6bD4nGlfPioEJ0rbbdsildcos21a
+	 L2Kz4j0fnlZWc+Jcs2iKC4sd038wncU0W5BloxgwUe+MRU3zSa4dvLPlARw9zalehkJS9
+	 NXtaWS0wNqMXphJmiqp44f0waFepUwHGBa5ku5cIjoAJXJP06FhhDI8HdHNs3ZriA3A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792524485;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=4Oum7bllURz1Icez86sPHFIClyN9kbXqs/qBQKatBzo=;
-	b=e+8VKwSX76tdsphfpesaUFWx/9deOdM5ixT2eAbQUVVRU8sYzf1gDhIzGLh0MLJvbxAk
-	 B4zQMhWzmizFN146+LzQCxBTvgcgvc7CieBQa0CB/9GUhCvrwmnTuGInPbLHyOpYJ20k5
-	 1grwn5YQTKcglHsr3+X9Cx5BCuUAdlIAEgfVzNwwLf7fEaWZFdr/hLvhfHDoOyY7uwuoL
-	 nZyVQUHMdnhjWl82f8W6zg3VjtZUWw9ZLVcNdZCyeI8aUUUU2s8BNjzMLKw25LwdeuqPi
-	 CdHrt7prkugbTR/9SVzME6YPTW01zlh5uf4N0YUGE+0SvVgMrOX4c5Rgl/lSThUCDwQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1792576795;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Info:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=4yP8ttg+rpEQYuH19+9KQM8ac15FE7RfLZpDf2VWAhg=;
+	b=vBGVHM7KJ+d05Ar21/63AazkA9+FT80VofiDEXMkMsNN2FmPUc4U0mp+xN9AEfQLHswz
+	 WO6OPzFYSGLQ1d8wD05kS6hD0uWUi4RO81gyA7MB09C9xpXdfePMsYAsFRCj5p59oQuw/
+	 eMOcccBI1ItjISv5dSSzUN9sRVJSrnOl9qQRcBKHbMldk/20x5wPjtVs4JQ7TdhLgfq27
+	 nTfnHadxdvUnVW6IDdsOyY2+7EFx2bAIdRKFPPl0zc9fS8/1dn+iBe92zK2Ev9ktV7QZf
+	 DJIC7MaUud4StB5MhUU+4lvgi7Pqm/0i+Kxt2yYn/I2WyUoIX5NQFQ4UwBC7oIHu8YQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=lxAjn5hU;
-	arc=none smtp.remote-ip=209.85.215.175
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jOQ7rFJf;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=N8ngMJpD;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6820B606A31A
-	for <linux-remoteproc@vger.kernel.org>; Tue, 20 Oct 2026 19:28:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6820B606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53694606A31A
+	for <linux-remoteproc@vger.kernel.org>; Wed, 21 Oct 2026 09:59:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53694606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=lxAjn5hU
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-cd61cef87f1so1195450a12.0
-        for <linux-remoteproc@vger.kernel.org>; Tue, 20 Oct 2026 12:28:03 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jOQ7rFJf;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=N8ngMJpD
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69L5j0co756340
+	for <linux-remoteproc@vger.kernel.org>; Wed, 21 Oct 2026 09:59:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4yP8ttg+rpEQYuH19+9KQM8ac15FE7RfLZpDf2VWAhg=; b=jOQ7rFJfoJnRqvLp
+	cZvlaCpXNpC2EV4vALOwIWs/r7eZLrNflrlH8fVX0JFAG2qr/4gsdlmRRVlJRWdK
+	hIBYEDPVmQdcwtn/ZOjUg4jq0jU+WNez1YfLxGfflCiQLE9Ck63dacgTeyzEysak
+	MFoY50OMV9UT7tcYk0UNEIM1YbQvNPS2sRr3eUxebEzeOciBHhrMSPTDIVt+jT0Q
+	DBM5nfnUVakz23nftf8OAO45caF6prRog8cfaXbX5B7Bhv0e8eJL7nUiZd0CRbJm
+	53SNRckMdyrr3Q2h4BGHt+C1pP5ALpysqOkwGBvxvk+7wLLO/BRN5CEtk1MbRFfq
+	d2qvAA==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4heda4ubav-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 21 Oct 2026 09:59:53 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-93df7a9466bso5100085a.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 21 Oct 2026 02:59:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1792524483; x=1793129283; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=4Oum7bllURz1Icez86sPHFIClyN9kbXqs/qBQKatBzo=;
-        b=lxAjn5hUni/1Q2zG2C1AbrXWO/JlFOUm3UVxgSN7I9O3uBFKalnFS3wPH07ZI10PSh
-         Ebf0QHycv98aYoaO4Hx0gYcXsByC1zKWOhhAL5f0ssQFbtnFzlz0X0Cd3Xawsp2FTVI/
-         JA5G7qRcvBF/hlUotTpirAphceodprwxSAJ6BAm28nYvpYxPbPr1eEoM3t+ZHNFvd9fx
-         0gSq9KeX1HIdpJjUwl8N1qm4ObK5f6mwItX5dYjVpSE8ybwAQ36NSdIz1RApcrXlfle1
-         hTOnf56UZQEq0al7KIVGN2Zh7xxwSTLHsxpwWl/JMzsrWyfUxVS167aGJeHzyRfSaIJ/
-         k5Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792524483; x=1793129283;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1792576792; x=1793181592; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=4Oum7bllURz1Icez86sPHFIClyN9kbXqs/qBQKatBzo=;
-        b=C/GPhTzI1s1J7TRbBRyPcu+x9a2nIWkbiabqLE4bKztVFW/DKvuBAsCyyJJYYBVqNU
-         Xd1rmF5es5xXnm1mfwdJjHS809NJAQ8Rbn9x2heAPkKNIuTZcHe32n342ERHRQAsoSLS
-         Xf7WhplXUDdlwV91RxQ+ZeC8TCUgZYnCqbFuBjOSi0t90R7p1jVCg3q/1CgUPoUivyZI
-         7R03CuS5vlgZ9pdcx9FobEVJnuVuISdc/v4aMxB9H5sy+gW3s7ov6tt8p554iE83RKTa
-         jEm6r5RiDuUQaQ8PNmZyqWks+i/S5m5Y77IozCpOLJbssPkIfXINHtg1UaH0BO8JBJen
-         +j4w==
-X-Forwarded-Encrypted: i=1; AKwUvBxmL0pMHgGSkeOO9NJSSqjuxr1juG2DckjgIRR1uNISMMMSWC2WYA7P0oxzLxWHbqZjOS3tYI1IUTn0hv26Mg7A@vger.kernel.org
-X-Gm-Message-State: AFq9FYLJYPjUwwveUyNssNk9LkrgZ1pZz9kDNvRJIFdK9WGSSVlmMWvs
-	mHj6KDVzhqKgF86oCjzEWkyUwXhl0wDh4s32DYTrGzqqN+XcjzmJE0nrIGVChlBZ7Nc8DKC4rHt
-	8Dpy3
-X-Gm-Gg: AYBFou2JZLl5JfEEH98oD4JGcii1jTscuwp+RL/qepDKSD3/2bG3RIfi/NRVLNHXbsy
-	iEf4BWZ2x0WLNw82HWpXVAQZER5PJp9d5CI6U+rB1b9jMs+4MMwMVwlD/nhE0cIftvHarUeyBGP
-	ffxQqoFwOc7aIEOLAlbKhuUVuqu5Nl9ZAlvdDmwFjOQMqkbMLFdIV3Ii5JKM7VwccuLJ3A/uVNv
-	qAZPSmRfW/sjqFZCs32/rSARZgjornr+9ZyYiw/R3zvMAcqTHsgvNOzYn7lV1WCs78g/vL+iJTw
-	T9gLH0aGkJfiwFjxBgbaPOJa2PYOlryx7QN5KGUbRm482WtuutEaL+zDcd0iy/S6YUgLaA8i0s6
-	tMnZBzifmy1cK66tY1aPEi+fcoAShwyb5pVddOe1i+3kgRZ1PuirvAAzgr1eWHvhmBRbENq2cqV
-	ehpKrK75FKyPF3958Kj7hIOGHEd+oX3gdqD0WLZIBZ7VbgW3eMOYSuU1mqOZtdt5BRxW2TyEzIA
-	TAWN/IEIvZNlJ69eX1Mep5+/BnLJbSnZkTaOkRsBVegv1IKwj2SxkxCnrw=
-X-Received: by 2002:a05:6300:2786:20b0:3e2:325f:578e with SMTP id adf61e73a8af0-3e2325f58d6mr4982382637.66.1792524483323;
-        Tue, 20 Oct 2026 12:28:03 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:1567:1f94:7104:b613])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8a0895f8ca3sm26422b3a.46.2026.10.20.12.28.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Oct 2026 12:28:02 -0700 (PDT)
-Date: Tue, 20 Oct 2026 13:27:59 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Yonghao Zhang <hyz3367@gmail.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] remoteproc: core: Clean up after a failed recovery
-Message-ID: <atfAv4kekczalp6V@p14s>
-References: <20260929075453.2324597-1-hyz3367@gmail.com>
- <20260929075453.2324597-5-hyz3367@gmail.com>
+        bh=4yP8ttg+rpEQYuH19+9KQM8ac15FE7RfLZpDf2VWAhg=;
+        b=N8ngMJpDpmqvmCXL7svp5vq14+su31741tUruWUGMusXuozXYSFIuY3PqL76btaMWc
+         BQex0rHp424rgZlu1KTNAiQPLealRv6tJtQBSl7hY/15kEq1a1ZX4IBoH9MQOlmPpk3r
+         viXd1Nm6VKqmznIPZON3x8uEXJIjWAJdgUGb7u9dyZpwyr4amjBKX1+Cwe3HeQBBdi14
+         8Dio6Zwix8rYxf/Js/0SElRUn6qWAlDH1qyG0PJaGGTGvM5t5tCMSLVZA3ARUFBBqPa6
+         i3EepNwoNhop+iZUuQep+nAj/+KYmd/DYG6HdgOiX9uvgMooOEc5FsnI8p7Kdj29WaXH
+         OFuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792576792; x=1793181592;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4yP8ttg+rpEQYuH19+9KQM8ac15FE7RfLZpDf2VWAhg=;
+        b=K1gRxxlgPjc6C/XGIMgaRRBhGOk3evCDbqpVH9El1N59jqjLsd/mBTR4LJ1hQXqAjj
+         T12vSzSjNlWc/6e9mQ9dVIvj7F01LPOsn2h0ajgUtFeKZQ2AVLlZI0fmxn3OmVmGwmVp
+         otGTmh6f+uYyMMBIjHN7hKsO2WaPtAko2iW1CMHZoW1w7orMehpLwfZTZr9RM7IOhbpN
+         vCIQpaGKs/2N8iVVY4IXYvmm9vFBS/d/I/hnviRIawhbr15BUwvvLObJjabwyXcQcY8n
+         WqeFPxXWHwDtno44fVFz0RGlYgkdy2OD9JsKTSothD8DHHqS46ZPatdTZ/CrMA81o7Vs
+         Yqvg==
+X-Forwarded-Encrypted: i=1; AKwUvBwZcOJguu7z54iUg7BV+FVlk9cGB/UZ+SK+/nfI3BOWvKaCwOmcprOu17Vx7i/DycLYKMsbIu91wKQ/r3gK+39q@vger.kernel.org
+X-Gm-Message-State: AFq9FYKGB3UtzfWFuiY4IwdYb/aK720rnMrGWlu3kKp0DzloHFCmeZRB
+	UcAc0RH7c6cedUEedrCcVeXHjdMCOnOe58FG2XfUifocbQ7FYXgkhkhFCVqCecU0UR7v1sY3bw/
+	woSFpeRqLUS0DzYLNo4hOzRVw29Olx0W1XgwTkdK36/Q2evnkH0dnWU4APvSKYJBrvKsLhtec
+X-Gm-Gg: AYBFou2Qd/5wfa4CYBgFokLENDaide8R/52ttNZBDWnqV8pdZAKl5ctI70IvqSXGIXW
+	+3eqRDMPejGSeb6gflU1K8G5EbL9KqUUpNQ2I3Wf/T7b1KozhaXMZ5gGbVsiWykEnrlgg923FGj
+	n26ObjU1ncZbjpIZelap4P9xEW+zMeFWU/juO5Iq7VqGELyUeYett1MBpQ/V7OakVfNx6qRjPmW
+	to44tLeJN02WRqb7hqMNpIVpr5agZWFUVvH6A0yLPCSZ5sLugYcdN4p7BrKfXW9fhAPkIaKEbrU
+	qKI0hBobQYIoZWv2G4Q0y2PSQubxF+iI5Ie+tgoBJepPJaGEFBiojZujSYv48eboweMRc/gLey8
+	mE1l5JZMgO108pXMFx899Tw==
+X-Received: by 2002:a05:620a:172b:b0:939:8bc:8826 with SMTP id af79cd13be357-93f57e897a9mr364454185a.2.1792576792384;
+        Wed, 21 Oct 2026 02:59:52 -0700 (PDT)
+X-Received: by 2002:a05:620a:172b:b0:939:8bc:8826 with SMTP id af79cd13be357-93f57e897a9mr364451285a.2.1792576791929;
+        Wed, 21 Oct 2026 02:59:51 -0700 (PDT)
+Received: from [192.168.226.26] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6b40315506bsm685930a12.29.2026.10.21.02.59.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Oct 2026 02:59:51 -0700 (PDT)
+Message-ID: <f09674f9-5336-4e0a-bd68-cd9572c8d0b7@oss.qualcomm.com>
+Date: Wed, 21 Oct 2026 11:59:48 +0200
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -97,137 +115,74 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260929075453.2324597-5-hyz3367@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_wcss: Fix missing subdev cleanup in
+ q6v5_wcss_remove()
+To: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20261006-b4-q6v5_wcss_remove_subdev_cleanup-v1-1-307f58667679@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261006-b4-q6v5_wcss_remove_subdev_cleanup-v1-1-307f58667679@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: 4VCKNBBK4i2JmnDtj9RphPaYRDzWBjeM
+X-Proofpoint-GUID: 4VCKNBBK4i2JmnDtj9RphPaYRDzWBjeM
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIxMDAzOSBTYWx0ZWRfX20d6gIQqz3BU
+ E5l7K+kBz0UxKtT/G56evWLZWLC0dufTMqsG1eRPA9V2TKMy1p1LNiegROhmFZSGSFeudzTz/g3
+ XUc5542/q8TiQi1jmqAihjuyOslFZeI=
+X-Authority-Analysis: v=2.4 cv=R7aWitRX c=1 sm=1 tr=0 ts=6ad88d19 cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
+ a=EUspDBNiAAAA:8 a=o47FBeiU2xnD7M33FAIA:9 a=QEXdDO2ut3YA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIxMDAzOSBTYWx0ZWRfX7fstusXDs79y
+ fulptMMSDkshGgGJ8lzJiMOqk5GdV491osTLFjBsg1T2UHlx3haf9swS7UDAtuI3BjE83sw8dmc
+ eXTgI6OSkTmmYvmycZlCBAycINSN4/EKb+IlY6ZXW76PSwbAejL2HpAxZ+QQFjrOCXMMMIdEX3M
+ 8mwbN3GmOhxZDOBjKc+m+HgeJSJQBm77le6ygOmYVjHPOG4jeMLjr97LCiOtBF406MUAN4qBnCr
+ uk2ALduTX8Y3jsDvL3T7dS3VbgoEGe2l7/2D4TztbPnf0qyEyVyE4ezuT0rzyo+gj9z65dOZgXV
+ G/kGi6nBgDYHnA1tQjyN/wvJ7hxJIIOvFCpSORIp8e/QG4uvliju4uc6eX+bRVNcoWFqugS7y7X
+ ac1VsU2ATjs57OoTCrEiOx5GqHgl3UhKpMNyhL9M6p9TchDP6XiK+tJevQDz/+ZuPRjEJR2AupP
+ DZhpfc+23LyioanChOQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-10-21_02,2026-10-19_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 spamscore=0 suspectscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610190000
+ definitions=main-2610210039
 
-On Tue, Sep 29, 2026 at 03:54:53PM +0800, Yonghao Zhang wrote:
-> When rproc_boot_recovery() fails to bring a crashed processor back
-> (the firmware request fails, or rproc_start() fails), it returns
-> with the processor stopped but two kinds of state still held.
+On 10/6/26 9:29 AM, Anup Vishwakarma wrote:
+> q6v5_wcss_remove() omits the cleanup for the sysmon, glink, and ssr
+> subdevices that are registered in q6v5_wcss_probe(). This leaves these
+> subdevices registered in the rproc subdev list after driver unbind,
+> which can cause use-after-free if the rproc framework subsequently
+> accesses them.
 > 
-> The resources of the boot the recovery was trying to restore are
-> never released: rproc_stop() does not clean them up, and unlike
-> rproc_attach_recovery(), which releases everything when its
-> re-attach fails, boot_recovery just returned.  Stale carveout
-> entries then fail every later firmware boot at "already associated
-> to resource table", until one of those failing boots happens to run
-> the cleanup of rproc_fw_boot().
+> Additionally, rproc_del() is currently called after the subdev cleanup,
+> but it must be called first. rproc_del() internally calls rproc_stop(),
+> which invokes rproc_stop_subdevices() and rproc_unprepare_subdevices()
+> to run each subdev's stop/unprepare callbacks. If subdevices are removed
+> from the list before rproc_del(), those callbacks are never invoked.
+> The correct order, as used in sibling drivers such as adsp_remove() and
+> wcnss_remove(), is to call rproc_del() first, then remove the subdevices.
 > 
-> The power references fare worse: nothing can release them anymore.
-> Take a processor with two outstanding rproc_boot() references whose
-> recovery stops it and then fails to restart it -- RPROC_OFFLINE,
-> with the count still at two.  rproc_shutdown() drops exactly one
-> reference per call, and only once past its state gate; the gate
-> admits RPROC_RUNNING, RPROC_ATTACHED and RPROC_CRASHED, so an
-> offline processor never passes and no amount of shutdown() calls
-> releases anything.  With the count still above zero, rproc_boot()
-> then short-circuits on atomic_inc_return(&rproc->power) > 1 and
-> returns success without doing anything: the users of a dead
-> processor are told it is running.  The reference count and the
-> state machine are misaligned for good.
-
-Please remove the above 3 paragraphs.
-
+> Fix both issues by calling rproc_del() first, then removing all
+> registered subdevices. qcom_remove_sysmon_subdev() already handles a
+> NULL argument gracefully, so it can be called unconditionally for
+> platforms where the sysmon subdev is not registered.
 > 
-> Release the resources on the failure paths of rproc_boot_recovery(),
-> the same way rproc_shutdown() does, and void the power count in
-> rproc_trigger_recovery() when the recovery failed without leaving
-> the processor crashed, offline or detached.  The service the count
-> was tracking is gone, so every outstanding reference is dead, which
-> decrementing instead would leave the survivors stranded exactly as
-> above.  A processor that is still crashed keeps its references, as
-> rproc_shutdown() can still drain them in that state.
-
-Remove the last sentence, starting at "The service the...".
-
-> 
-> Fixes: ba194232edc0 ("remoteproc: Support attach recovery after rproc crash")
-> Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
+> Fixes: 8a226e2c71bb ("remoteproc: wcss: add support for rpmsg communication")
+> Signed-off-by: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 34 +++++++++++++++++++++++++++-
->  1 file changed, 33 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c52212a1d180..b138680b1905 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -1900,7 +1900,7 @@ static int rproc_boot_recovery(struct rproc *rproc)
->  	ret = request_firmware(&firmware_p, rproc->firmware, dev);
->  	if (ret < 0) {
->  		dev_err(dev, "request_firmware failed: %d\n", ret);
-> -		return ret;
-> +		goto clean_up_resources;
->  	}
->  
->  	/* boot the remote processor up again */
-> @@ -1908,6 +1908,24 @@ static int rproc_boot_recovery(struct rproc *rproc)
->  
->  	release_firmware(firmware_p);
->  
-> +	if (ret < 0)
-> +		goto clean_up_resources;
-> +
-> +	return 0;
-> +
-> +clean_up_resources:
-> +	/*
-> +	 * rproc_stop() has already switched the remote processor off, but
-> +	 * unlike rproc_shutdown() nothing releases the resources of the
-> +	 * boot this recovery was trying to restore.
-> +	 */
 
-Describe the situation as it will be when your patch is applied, not the
-situation you are fixing.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> +	rproc_resource_cleanup(rproc);
-> +	kfree(rproc->cached_table);
-> +	rproc->cached_table = NULL;
-> +	rproc->table_ptr = NULL;
-> +	/* release HW resources if needed */
-> +	rproc_unprepare_device(rproc);
-> +	rproc_disable_iommu(rproc);
-
-Use the same sequence as in __rproc_shutdown().
-
->  	return ret;
->  }
->  
-> @@ -1948,6 +1966,20 @@ int rproc_trigger_recovery(struct rproc *rproc)
->  	else
->  		ret = rproc_boot_recovery(rproc);
->  
-> +	/*
-> +	 * A failed recovery leaves the remote processor in a state from which
-> +	 * rproc_shutdown() refuses to release the outstanding power references
-> +	 * (RPROC_OFFLINE or RPROC_DETACHED), so every rproc_boot() would
-> +	 * free-ride on them and silently do nothing. The service those
-> +	 * references were tracking is gone: void them all.  Failures that
-> +	 * leave the processor crashed keep the references, as rproc_shutdown()
-> +	 * can still drain them in that state.
-> +	 */
-
-Again, don't describe the situation you're fixing, describe the situatio once
-the fix has been applied.
-
-> +	if (ret && rproc->state != RPROC_CRASHED) {
-
-The only possible states we can be in at this point is either RPROC_OFFLINE or
-RPROC_DETACHED.  Make that explicit rather than anything that isn't
-RPROC_CRASHED.
-
-I am done reviewing this set.
-
-Thanks,
-Mathieu
-
-> +		dev_err(dev, "failed to recover %s: %d\n", rproc->name, ret);
-> +		atomic_set(&rproc->power, 0);
-> +	}
-> +
->  unlock_mutex:
->  	mutex_unlock(&rproc->lock);
->  	return ret;
-> -- 
-> 2.34.1
-> 
+Konrad
