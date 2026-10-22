@@ -1,68 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.229.6
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792696804;
-	b=Gdd5sBaaQ+AwYeQTVw07bgeJSShX4Dig7Re1d3bOm1XszeXAmPOfCd6PTxmLxrhhYxPX
-	 4r1BzVXjzmDoRMmEuCGj0W7go79lYr5dzBFIFV1VwZNG8gnaJhWG0jJtlkSZSRVuHwSjj
-	 2EN21Sb5UXd5o1NS4GNdT15aooGgE8UAVRbmqxjlpBAh8E8KZ/NLcw7FRbLi/12Dp8d6O
-	 kxRhPDlDD0wmBkL3p/ES+WE0pvl6+wEsvObUJgmaYx23v24Z08eOJW/Wnd0S7tEKIosWT
-	 5+bGJ2w/O2QwMEmQlfrvXKIh1vAfrDsOoJOQVpFcBkxAiS5zmmf0u9vIUu2a2HesYHA==
+	t=1792698094;
+	b=zaqEjOrjx+uk6Cv4P6QIivfe/PZY8A5WgOljtLldCJWM9gZrZzO6DHOFlDXK6BANIQtu
+	 jFUT9ixdRyE1rt6MaOBDWt/mTDWreige49j5V6LND4jMmLblU9KY2gxGd6434T885M+II
+	 28WNz4NwZdSLngsZ4wR0BfaeXFqhrKJajWm6NnFjTgKb/AZtruBC2sbnb75zp3GvGksax
+	 260Bo7lZ+yNda382ZVr6ZIwC+8iW6+nNhyhjqoD8g8yb4Prq4j35l3C30Iotb4HO0sd6H
+	 H3bFWYDjOU/MuiuN6dl0a9xRkCnCqHTCDKF/4LasPD4APRK3wg/XWG0JDWIsTzgLcqQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792696804;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Date:From:To:Cc:
-	 Subject:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:
+	a=rsa-sha256; c=relaxed/relaxed; t=1792698094;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=VnTlvi9w4vT9PX72wgTL9hevlcfdOn/hzgPWC/rBkk8=;
-	b=mxC2YIMaZe+XjQCRaELgIsJmfHn3V04evvgQ1oq4dOcWvVKuy+lK3/TA/IZ8AciV56pc
-	 ehlcuYoiAszoxTT6rRrS+PkT0UqSQUk1wc6vpEWkUnr7vZ3Kn1g0R3pVpDfWh+/gsZ0tC
-	 ilN4JfHqPf9sO6eyQYQfhfx2+roebU/1weKNgPRqQJ80gWUFFOjI20n89cSzQvZx916RK
-	 ZIz8FzJHBYOfqi+XYwaIaim79G9Rp8Mwuu9cuyY5S/Y3YI8D4emP2n9BL0O/xuiUiQqf8
-	 LT70s3mv5IWiNcB9GndCh4QmIZAU43A5TcedkFBNY6iQqKLhmxekx3oOmh5jMFWD/xw==
+	bh=61er9QeVPVsW8SmLWAXAoZHj/tiPoV/UqELvGm40fKM=;
+	b=VhCPbkB+p6xXcJ9KJj8lXupFMd9ygQyf1ydjKn189infZuCGKChBEqXvNsNMxg7mjmlS
+	 KOq/Mzmf98e2LqWjJusbiDdEuUtLHl6Qro4nvjQAgfH91A+zypbEHGDYXf7hTrax1h9pI
+	 UZNZDTK/N029N5WExZeyCOq6YKYyoVdswJW+BudFIrm6kXEkljUAyZTD8lyq3PHrPdRl3
+	 DaLIQDG1JGGn5JS95lFvz1ULRcIdrJVcLIggRn3hhpG3+L8AQOQ/u567J5oC/pkcqf8XD
+	 1KKMDe0VZw7o2StY9v2CLqW8nA2s2Bk36RUaZ0EbaZQYbHISKllRMQ8upbJUx7i2BLg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=posteo.net;
-	spf=pass smtp.mailfrom=posteo.net;
-	dkim=pass header.d=posteo.net header.i=@posteo.net header.a=rsa-sha256 header.s=1984.8680eb header.b=TQiBgo0u;
-	arc=none smtp.remote-ip=185.67.36.66
-Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=aHLfiiOu;
+	arc=none smtp.remote-ip=74.125.229.6
+Received: from mail-dy2-f6.google.com (mail-dy2-f6.google.com [74.125.229.6])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F3D606A319
-	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 19:20:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 44F3D606A319
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8181A606A31A
+	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 19:41:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8181A606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=posteo.net header.i=@posteo.net header.a=rsa-sha256 header.s=1984.8680eb header.b=TQiBgo0u
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout02.posteo.de (Postfix) with ESMTPS id EBE91240101
-	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 21:19:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
-	s=1984.8680eb; t=1792696794;
-	bh=VnTlvi9w4vT9PX72wgTL9hevlcfdOn/hzgPWC/rBkk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:From;
-	b=TQiBgo0uZVZLGp7Smlio7yGqhVc9wPVGGNjXQLmWN2auIzFyh/cKWSW2S0VeqYGDA
-	 ojjrjZggsoou5RcmdOB2dff5yh/5wwc/08md2TrAFJpC/RMFdhOFjbXAZ2MpuI7jAT
-	 LQd8GAGqILk5U8R+9Cclurf3ppcY+xayz/9Beh2FXpb0sXRrhZ5tDcB9WGlAhCYKiR
-	 waZbW/LRrHpID6ik4Got++k4aNe1JKwYf6S46jk6H83Kv+oNvG8YJkHfibAVbJ8VH9
-	 r2Nz88A3AgFBUfnHFVDkJbXu2KPWviLj9LQ73qnEJO1LtkrpYY/cl5WE735qjf6AbQ
-	 24MWorRQ0OO8Q==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4j9bZK2njSz9rxD;
-	Thu, 22 Oct 2026 21:19:53 +0200 (CEST)
-Date: Thu, 22 Oct 2026 19:19:54 +0000
-From: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-To: Indrek Kruusa <indrek.kruusa@gmail.com>
-Cc: Nguyen Minh Tien <tien.nguyenminh@embeddedlinux.blog>, Bjorn Andersson
- <andersson@kernel.org>, Chen-Yu Tsai <wens@kernel.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- linux-remoteproc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] hwspinlock: sun6i: Allwinner D1 and T113 support
-Message-ID: <20261022211952.7293f8b6@posteo.net>
-In-Reply-To: <20261022190203.1998156-1-indrek.kruusa@gmail.com>
-References: <20260927025626.69614-1-tien.nguyenminh@embeddedlinux.blog>
-	<20261022190203.1998156-1-indrek.kruusa@gmail.com>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=aHLfiiOu
+Received: by mail-dy2-f6.google.com with SMTP id 5a478bee46e88-3537f63c9e6so45163eec.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 12:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20251104; t=1792698093; x=1793302893; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=61er9QeVPVsW8SmLWAXAoZHj/tiPoV/UqELvGm40fKM=;
+        b=aHLfiiOuW9JEd9Fjw6HHing3S240DPgGc0eY8xOZdCBUF9aJklbrxX1LreWy0PNtmD
+         DcOGynTziQz8IAAmCXDC8WlrtLPAycEX39VhIqDK6iYis1VypEAefBa0I1maDYe40OKI
+         DzO3lLXq6Lx5iIdUUpXBNNotRHcNOkCQUrFIaQLtUDboieeWr2m/4QbaxOpxyl0dqH3j
+         o9VM2X3VQko/mte2hH1hVE1s138Li88yvvKXxV4e7Wi1ABIlEj6Cak2EPruBCNOUEQUO
+         IoaMOFBDr/ZT/zn0pCY8Bx1dcnnWqys4AmE50fbnnl+SC2stzwe7/b9zSrjlw+iQxz0/
+         lVlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1792698093; x=1793302893;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=61er9QeVPVsW8SmLWAXAoZHj/tiPoV/UqELvGm40fKM=;
+        b=Labm5PbFwQqDre5Fsf+tyHf4XC68aJmaSclkv5wHWZqPWm/efk2ZuSCszRR+hnbY/H
+         eFRsmU3smiI2ALNpX0/y4XbtmoGp4K0uvx2fc/5aNZKjkSbQTJXNiUIowQeKovkA5IsV
+         oPMZYI6EqZzKEXN70LkhznHaz77BOzVgiBQgXWgd5f0D/jYedUjfc28k8dQe80Q2sCgV
+         KPpl2pzJ4fc1C3evIVE9Kag8O9t0J1pNV2VOp1BuhcVD3bpevyVdZeHsbALWcf3x3ygK
+         TGjkE+1FRKGRcbV87LcvTu/frPiS3p+i2QGjg+5smqDTMmQyIh/ei0kt0Pkliio+dwB4
+         AQKQ==
+X-Forwarded-Encrypted: i=1; AKwUvByLNITwBDYyfRoLUuVbY9xX0ADMHOPtagWKX9myEpv0lbFGwNH6TRMze4AdG7dhuqOAsHpP5yZNQZLF7c89A4jg@vger.kernel.org
+X-Gm-Message-State: AFq9FYJ5/l/GT8at2KY+9xWGSR/bUlcDBGZpzwm3e0WeYLhHVXFmrPeN
+	zNshH7kdSraT3wZPz2w9xIv49kT5L+rjvRY839MPG/NR/2l5XTjtq/+N
+X-Gm-Gg: AYBFou2kEa3I/jPDSqXhn81h0Ps6VhHngukd/+R6mIsOwp0KbxygIeWrBcw90qE33A1
+	7H9ek8wOPnl3Z/6MWLb9+zdHf3zVN8atzguutcIoWXWaAZZXpItDMeqgsT4WlK9+1D/OoBVEreh
+	+FBjZ5/8B+ResrjmukpXUec8ogbJ2DocwHoGuCFKPM0mR1XYzf6c4KDc/orFpu42N3EJ3hhZJrH
+	4sQQC36pJ/lXJMapOOowHOgxKS2DDG7Ks+RsSoFq/5DWwqO6EEg/eILZ3zjEMVLCm5iv97hPoOy
+	WYm0mmpjeyick9vnhfJUFcu+nbD6i7zpKbikawdrRadB92+rrYnMi1dGpEOTxjBygvRiPCuau8q
+	sRQOzy0uhmZg19qU/YEugaN6U9swGtBez6zzzi7vQ+nGefHXILDGvzljLIoWBM1EI7+PC/5kko+
+	pUokqY3Tj1ifHqr5MiR4mW461eNppNLg5dXtoG8F+RckD+KR4TbSY+TEszzPmbGWCkLQQ/mLNkQ
+	1Fy96uaAeFT9RImoMPeJG82sRkL1gAxtKOsgCr+DKp3++tG53tv5qQprmEWmsvi2i55EarpLkWw
+	DfhCOML6b6/crTM5znK4kc/Bqpa8UwAAL04h1KM+WEf6gTfjAxqFJNypeSBloRSjzf+31K4wSQs
+	UkNqJTSxobMRmW7WRXZ1OL0WnlftOLVZLDdhT
+X-Received: by 2002:a05:693c:4187:20b0:33c:16f1:2e11 with SMTP id 5a478bee46e88-369d97c9a34mr172851eec.7.1792698093229;
+        Thu, 22 Oct 2026 12:41:33 -0700 (PDT)
+Received: from wang0.shina-lab.internal ([133.11.33.33])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-369d9d5ea18sm96845eec.6.2026.10.22.12.41.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2026 12:41:32 -0700 (PDT)
+From: Lianjie Wang <karin0.zst@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Lianjie Wang <karin0.zst@gmail.com>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] rpmsg: virtio: bound the buffer sizes read from config space
+Date: Fri, 23 Oct 2026 04:41:29 +0900
+Message-ID: <20261022194129.2233880-1-karin0.zst@gmail.com>
+X-Mailer: git-send-email 2.56.0
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -72,56 +99,67 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 22 Oct 2026 22:01:15 +0300
-Indrek Kruusa <indrek.kruusa@gmail.com> wrote:
+With VIRTIO_RPMSG_F_BUFSZ, rpmsg_virtio_get_buf_size() reads the rx and
+tx buffer sizes from the config space as u32 values and checks only that
+each can hold the message header. The probe multiplies them by the
+buffer counts in unsigned int arithmetic to size the buffer area. An rx
+buffer size of 0x1000000 with 256 rx buffers wraps the rx part to zero,
+so the allocation covers only the tx buffers, and the driver posts the
+rx buffers at offsets up to 4 GiB past its start for the device to
+write.
 
-> Hi,
-> 
-> I managed to run this patch series on a Sipeed Lichee RV Dock (Allwinner D1),
-> in this setup:
-> 
->   - FreeRTOS on the HiFi4 DSP, running a task that contends for the lock
->   - a test kernel module touching the same shared memory, with and without
->     taking the lock
-> 
-> The series is applied on top of v7.3-rc7.
-> 
-> What I ran:
-> 
->   - probe: 3005000.hwlock binds and the driver reports 32 locks
-> 
->   - mutual exclusion: lock 0, taken alternately by the C906 and the HiFi4.
->     Each side added 1 to a shared counter under the lock, 1,000,000 times:
-> 
->       counter=2000000 expected=2000000 -> EXACT
->       tripwire linux=0 dsp=0 -> no overlap
-> 
->     A tripwire field is set while inside the critical section and read by the
->     other side, so overlap is caught independently of the counter.
-> 
->   - negative control, identical loop with the lock not taken:
-> 
->       counter=1885761 expected=2000000 -> LOST UPDATES   (5.7% lost)
->       tripwire linux=100302 dsp=674915 -> OVERLAP DETECTED
-> 
-> The loss rate in the negative control varies between runs (5-19% observed);
-> the log linked below is one sample.
-> 
-> Tested-by: Indrek Kruusa <indrek.kruusa@gmail.com>
-> 
-> I put this test setup together with AI assistance. Sources, build
-> instructions, ready-to-use images (DSP firmware included) for the RV Dock
-> and for the Nezha (untested), and the captured console logs are here:
-> 
->   https://github.com/ikruusa/d1-hwspinlock-test
+Reject a buffer larger than the header plus U16_MAX, since the 16-bit
+msg->len cannot describe a longer payload. With at most 256 buffers in
+each direction, this bound also keeps the size of the buffer area from
+wrapping.
 
-Just out of curiousity, did you also had the impression, that the spinlocks
-are quite slow? I did quite similar tests back then using a H5 SoC.
+This patch is assisted by Claude Opus 5.5.
 
-https://lore.kernel.org/lkml/cover.1615713499.git.wilken.gottwalt@posteo.net/T/
+Fixes: ca96ea25e51a ("rpmsg: virtio_rpmsg_bus: Get buffer size from config space")
+Signed-off-by: Lianjie Wang <karin0.zst@gmail.com>
+---
+The patch is tested against a virtio-rpmsg device added to QEMU. With
+buffer sizes in config space that wrap the size of the buffer area, the
+unpatched driver probes and warns in rpmsg_sg_init() while posting
+buffers past its allocation. With the patch, the probe fails with "bad
+vdev config".
 
-greetings,
-Wilken
+ drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+index 23ff6c8b7a20b..de4af75ee1620 100644
+--- a/drivers/rpmsg/virtio_rpmsg_bus.c
++++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+@@ -91,6 +91,7 @@ struct rpmsg_hdr {
+ 	u8 data[];
+ } __packed;
+ 
++#define MAX_RPMSG_BUF_SIZE	(sizeof(struct rpmsg_hdr) + U16_MAX)
+ 
+ /**
+  * struct virtio_rpmsg_channel - rpmsg channel descriptor
+@@ -851,9 +852,14 @@ static int rpmsg_virtio_get_buf_size(struct virtproc_info *vrp)
+ 		virtio_cread(vdev, struct virtio_rpmsg_config,
+ 			     rxbuf_size, &vrp->tx_buf_size);
+ 
+-		/* The buffers must hold at least the rpmsg header */
++		/*
++		 * The buffers must hold at least the rpmsg header, and at most
++		 * the header and the largest payload its 16-bit len describes.
++		 */
+ 		if (vrp->rx_buf_size < sizeof(struct rpmsg_hdr) ||
+-		    vrp->tx_buf_size < sizeof(struct rpmsg_hdr)) {
++		    vrp->tx_buf_size < sizeof(struct rpmsg_hdr) ||
++		    vrp->rx_buf_size > MAX_RPMSG_BUF_SIZE ||
++		    vrp->tx_buf_size > MAX_RPMSG_BUF_SIZE) {
+ 			dev_err(&vdev->dev,
+ 				"bad vdev config: rx buf sz = %u, tx buf sz = %u\n",
+ 				vrp->rx_buf_size, vrp->tx_buf_size);
+
+base-commit: bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
+-- 
+2.56.0
+
