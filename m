@@ -1,95 +1,101 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.229.6
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.167.54
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792698094;
-	b=zaqEjOrjx+uk6Cv4P6QIivfe/PZY8A5WgOljtLldCJWM9gZrZzO6DHOFlDXK6BANIQtu
-	 jFUT9ixdRyE1rt6MaOBDWt/mTDWreige49j5V6LND4jMmLblU9KY2gxGd6434T885M+II
-	 28WNz4NwZdSLngsZ4wR0BfaeXFqhrKJajWm6NnFjTgKb/AZtruBC2sbnb75zp3GvGksax
-	 260Bo7lZ+yNda382ZVr6ZIwC+8iW6+nNhyhjqoD8g8yb4Prq4j35l3C30Iotb4HO0sd6H
-	 H3bFWYDjOU/MuiuN6dl0a9xRkCnCqHTCDKF/4LasPD4APRK3wg/XWG0JDWIsTzgLcqQ==
+	t=1792698922;
+	b=HapwqcgpbEakoT62rqiF2QCBFZTe96F3LlkPS7pvs1ZgBkJEG2aMAauykZQtgWDaZLvu
+	 A6Miep4sJMWN4Tkk8RJMNMdVwDUAfj8HGBEFEn5Cl0feH0oblcCmpDtNLhBGF48q44yEt
+	 tCFX1Df6LkOSAPqtHLVbFCm13KiJUkbw0p/cKii+4VlW6HfOUJgzk3YP5bNRVsxRUno0C
+	 ioH3MgQal/BY6Cj/dYxkRgPRjLyGCJnsyQUPa8C93ta7dS9LfIlmgSwaa4TSNtOlxdV8S
+	 YLTohi5LomHroUqOM75+rwaArxkSblT2zqoj2YURDiSNdu6MGoBWzZbRGJjDrRdCcOQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792698094;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792698922;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=61er9QeVPVsW8SmLWAXAoZHj/tiPoV/UqELvGm40fKM=;
-	b=VhCPbkB+p6xXcJ9KJj8lXupFMd9ygQyf1ydjKn189infZuCGKChBEqXvNsNMxg7mjmlS
-	 KOq/Mzmf98e2LqWjJusbiDdEuUtLHl6Qro4nvjQAgfH91A+zypbEHGDYXf7hTrax1h9pI
-	 UZNZDTK/N029N5WExZeyCOq6YKYyoVdswJW+BudFIrm6kXEkljUAyZTD8lyq3PHrPdRl3
-	 DaLIQDG1JGGn5JS95lFvz1ULRcIdrJVcLIggRn3hhpG3+L8AQOQ/u567J5oC/pkcqf8XD
-	 1KKMDe0VZw7o2StY9v2CLqW8nA2s2Bk36RUaZ0EbaZQYbHISKllRMQ8upbJUx7i2BLg==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding;
+	bh=9qxA+mjmpSVOmeaS7bsX0MCILV1F3DEdINdxxq5gFnc=;
+	b=Ixq6lUFxU9z68B2vgz2uRmdJwApR9VPrZirOH9cU4MdcfaOVUGrVUosZtWAmAf3mGxs0
+	 h0LuDw5NGXm0p26+jXfEJltk94VaHMVTSDQw+xui3ddNLRvIwY5HWVN5h3xA8oUVOifl1
+	 t/8X7oUvn0PPfKXPjobziMlyuusxWvV8bbX6UCbTGjsN+Dz+AoRyGZaoQ/EFBsgLbhV6r
+	 zvpw6uzY82IOz5vf1tW8G/ZDAFIkcN4mwVr/LUBMoD8Nj/lCm0sURxE8QI+wRov73EYbd
+	 Ybt9rqjqodo+uuW3ZrTOXsI5PkImCyWfkH+j6PkFI1is6/ncym8pkGvBJqR9+hnA1PA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=aHLfiiOu;
-	arc=none smtp.remote-ip=74.125.229.6
-Received: from mail-dy2-f6.google.com (mail-dy2-f6.google.com [74.125.229.6])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=XXlGzFaV;
+	arc=none smtp.remote-ip=209.85.167.54
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8181A606A31A
-	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 19:41:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8181A606A31A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037F3606A31A
+	for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 19:55:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 037F3606A31A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=aHLfiiOu
-Received: by mail-dy2-f6.google.com with SMTP id 5a478bee46e88-3537f63c9e6so45163eec.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 12:41:34 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=XXlGzFaV
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5bcb1f1358aso63300e87.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 12:55:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792698093; x=1793302893; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=61er9QeVPVsW8SmLWAXAoZHj/tiPoV/UqELvGm40fKM=;
-        b=aHLfiiOuW9JEd9Fjw6HHing3S240DPgGc0eY8xOZdCBUF9aJklbrxX1LreWy0PNtmD
-         DcOGynTziQz8IAAmCXDC8WlrtLPAycEX39VhIqDK6iYis1VypEAefBa0I1maDYe40OKI
-         DzO3lLXq6Lx5iIdUUpXBNNotRHcNOkCQUrFIaQLtUDboieeWr2m/4QbaxOpxyl0dqH3j
-         o9VM2X3VQko/mte2hH1hVE1s138Li88yvvKXxV4e7Wi1ABIlEj6Cak2EPruBCNOUEQUO
-         IoaMOFBDr/ZT/zn0pCY8Bx1dcnnWqys4AmE50fbnnl+SC2stzwe7/b9zSrjlw+iQxz0/
-         lVlw==
+        d=gmail.com; s=20251104; t=1792698920; x=1793303720; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=9qxA+mjmpSVOmeaS7bsX0MCILV1F3DEdINdxxq5gFnc=;
+        b=XXlGzFaVyYoP9OdV2Trb4gGb/5VHk3kGNDwHOuyx8hbNCvPaz03c45DX19OEfH05FO
+         cno4yykPUZ6r1Lqx1OeU3hVe38Q2sCPNnE5AVeh8SQWSY6IqMlOOaEdERbK7tOZTGCrx
+         y+/tbDobOSeSgPsUsTpEL7Bqmb80LfRHMGVxbyHP7tcwfjcwBsh+7grXSTEZRLLBElx0
+         VT/qAZNkaZl80MT96PdYpo8s14sJJcpwlYgK5VUHqQXPUh4nH25tehH+JhSPgyUDh8p8
+         l/ftTF0sIV8jp0WR7VFy6m1qDPn4RHL3wApfsTUNcBvjZQbNx1UjBEDVaH6deYtJh9Yi
+         A5lQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792698093; x=1793302893;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=61er9QeVPVsW8SmLWAXAoZHj/tiPoV/UqELvGm40fKM=;
-        b=Labm5PbFwQqDre5Fsf+tyHf4XC68aJmaSclkv5wHWZqPWm/efk2ZuSCszRR+hnbY/H
-         eFRsmU3smiI2ALNpX0/y4XbtmoGp4K0uvx2fc/5aNZKjkSbQTJXNiUIowQeKovkA5IsV
-         oPMZYI6EqZzKEXN70LkhznHaz77BOzVgiBQgXWgd5f0D/jYedUjfc28k8dQe80Q2sCgV
-         KPpl2pzJ4fc1C3evIVE9Kag8O9t0J1pNV2VOp1BuhcVD3bpevyVdZeHsbALWcf3x3ygK
-         TGjkE+1FRKGRcbV87LcvTu/frPiS3p+i2QGjg+5smqDTMmQyIh/ei0kt0Pkliio+dwB4
-         AQKQ==
-X-Forwarded-Encrypted: i=1; AKwUvByLNITwBDYyfRoLUuVbY9xX0ADMHOPtagWKX9myEpv0lbFGwNH6TRMze4AdG7dhuqOAsHpP5yZNQZLF7c89A4jg@vger.kernel.org
-X-Gm-Message-State: AFq9FYJ5/l/GT8at2KY+9xWGSR/bUlcDBGZpzwm3e0WeYLhHVXFmrPeN
-	zNshH7kdSraT3wZPz2w9xIv49kT5L+rjvRY839MPG/NR/2l5XTjtq/+N
-X-Gm-Gg: AYBFou2kEa3I/jPDSqXhn81h0Ps6VhHngukd/+R6mIsOwp0KbxygIeWrBcw90qE33A1
-	7H9ek8wOPnl3Z/6MWLb9+zdHf3zVN8atzguutcIoWXWaAZZXpItDMeqgsT4WlK9+1D/OoBVEreh
-	+FBjZ5/8B+ResrjmukpXUec8ogbJ2DocwHoGuCFKPM0mR1XYzf6c4KDc/orFpu42N3EJ3hhZJrH
-	4sQQC36pJ/lXJMapOOowHOgxKS2DDG7Ks+RsSoFq/5DWwqO6EEg/eILZ3zjEMVLCm5iv97hPoOy
-	WYm0mmpjeyick9vnhfJUFcu+nbD6i7zpKbikawdrRadB92+rrYnMi1dGpEOTxjBygvRiPCuau8q
-	sRQOzy0uhmZg19qU/YEugaN6U9swGtBez6zzzi7vQ+nGefHXILDGvzljLIoWBM1EI7+PC/5kko+
-	pUokqY3Tj1ifHqr5MiR4mW461eNppNLg5dXtoG8F+RckD+KR4TbSY+TEszzPmbGWCkLQQ/mLNkQ
-	1Fy96uaAeFT9RImoMPeJG82sRkL1gAxtKOsgCr+DKp3++tG53tv5qQprmEWmsvi2i55EarpLkWw
-	DfhCOML6b6/crTM5znK4kc/Bqpa8UwAAL04h1KM+WEf6gTfjAxqFJNypeSBloRSjzf+31K4wSQs
-	UkNqJTSxobMRmW7WRXZ1OL0WnlftOLVZLDdhT
-X-Received: by 2002:a05:693c:4187:20b0:33c:16f1:2e11 with SMTP id 5a478bee46e88-369d97c9a34mr172851eec.7.1792698093229;
-        Thu, 22 Oct 2026 12:41:33 -0700 (PDT)
-Received: from wang0.shina-lab.internal ([133.11.33.33])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-369d9d5ea18sm96845eec.6.2026.10.22.12.41.31
+        d=1e100.net; s=20260707; t=1792698920; x=1793303720;
+        h=content-transfer-encoding:content-type:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=9qxA+mjmpSVOmeaS7bsX0MCILV1F3DEdINdxxq5gFnc=;
+        b=P12Jt7iEwCWBsqtIKiZHaNusEhnzfWwfussU2v20RGSS0JmEIyGjQ7lpDcvX+vU5C9
+         DtlO40gMtKsECiri+hilH79Yjpj6sY15hbWQStewo9nSYFH1cEzOapLhdD53a1W3BDpE
+         SYoVVai79SNVuKp1HZUnRVdwtJFk4aTmh4JTbF+x0zOIb6D2Nxv1h8VxAAUUGjfOG1ee
+         KDKi6o0p3DlqHwvLWj+PL0K9N6msRsOY3U/NtNZg92YpFF4EiegTm4fqJOM9RQdegAyd
+         TXH0Ida/7Dnm5YyT+iv6ecZSkQxGRPZQdqJ1yN56bVomnIbNCKSQUkrwjkC5TVKd0Ek9
+         n2hQ==
+X-Forwarded-Encrypted: i=1; AKwUvBzjaZPtYwwNB+fdtQcLHSs/yTRPF/sKHzh3J7/wXnvIIVYlpdyUFUchpJyRhAqPtCaegGf6NBT48PsEkZxP5pZG@vger.kernel.org
+X-Gm-Message-State: AFq9FYKxSedKQRAOs2VDGayH26YiiIa+ie0Rr/aGokXBXLVJ5xHDqNey
+	HBHkGu2j9r9tfodpTTizTwqN4hwJ5DG2uAo9TVThty9GJQQrD8ANUWxQ
+X-Gm-Gg: AYBFou3HTOIeEThnQE1lbV5ujgW9YxQHpienj8RDDv7JXqKuXNeGX2+xn9303yg25uQ
+	NyOn4dBeIjtof+J1kABWbkFO/wHpEAKTG/Wfs+9quanNGQ2pF5T+eyxY75kS/FHLVu3NPRfOTAv
+	NOYAK2aR/6RJQw4r57qkO4ECAo+T3L7Wn8MbJfBURM7pgiuHQTT2GXH5aBMU65Xf05T1Ct+XLZJ
+	18m4uTi81bhmETJ/MmQ7b0auVS3iiX7AkepTVlcXm1MtXfxIq37QD+SttX9V6FpQKicQtUPwA9q
+	RAj2d9tj7aS9orxAd6a+crzAVU+jp9LPVz92suMO0SYZ2Ct3vJC4cPfCoRvN4esxT+dLcmSRq69
+	jQ6GC18vQOFSS02/v0KKHxF4W2690nsbEpjwM6idzcTc5bB9fPl3WDlWDadyha0TSqxXnD7c8Wd
+	76+uapH1MegSaFxXNSPvPtW5XcM3+I7QidlO87dYI06H6uhsgQdU3dgmntw9/mUCapPNBtFs4OB
+	PfuqlBSXE1+1n4sqnH83ju5IkRCP3edpJXJ8KP8arochGlE4SuWv2r6MT4JuJ+8kUOsZJAZ7non
+	PwThE/2X2cHNipOyag==
+X-Received: by 2002:a05:6512:a83:b0:5bf:af5a:cf26 with SMTP id 2adb3069b0e04-5bfb06cbcbfmr4297e87.2.1792698919896;
+        Thu, 22 Oct 2026 12:55:19 -0700 (PDT)
+Received: from ik5070.localdomain (82-131-69-225.ip.elisa.ee. [82.131.69.225])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-5bfb027d0a2sm30503e87.36.2026.10.22.12.55.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 12:41:32 -0700 (PDT)
-From: Lianjie Wang <karin0.zst@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Lianjie Wang <karin0.zst@gmail.com>,
-	Tanmay Shah <tanmay.shah@amd.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Thu, 22 Oct 2026 12:55:18 -0700 (PDT)
+From: Indrek Kruusa <indrek.kruusa@gmail.com>
+To: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+Cc: Nguyen Minh Tien <tien.nguyenminh@embeddedlinux.blog>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
 	linux-remoteproc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] rpmsg: virtio: bound the buffer sizes read from config space
-Date: Fri, 23 Oct 2026 04:41:29 +0900
-Message-ID: <20261022194129.2233880-1-karin0.zst@gmail.com>
-X-Mailer: git-send-email 2.56.0
+Subject: Re: [PATCH 0/3] hwspinlock: sun6i: Allwinner D1 and T113 support
+Date: Thu, 22 Oct 2026 22:54:26 +0300
+Message-ID: <20261022195447.2007440-1-indrek.kruusa@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20261022211952.7293f8b6@posteo.net>
+References: <20260927025626.69614-1-tien.nguyenminh@embeddedlinux.blog> <20261022190203.1998156-1-indrek.kruusa@gmail.com> <20261022211952.7293f8b6@posteo.net>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,67 +105,16 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-With VIRTIO_RPMSG_F_BUFSZ, rpmsg_virtio_get_buf_size() reads the rx and
-tx buffer sizes from the config space as u32 values and checks only that
-each can hold the message header. The probe multiplies them by the
-buffer counts in unsigned int arithmetic to size the buffer area. An rx
-buffer size of 0x1000000 with 256 rx buffers wraps the rx part to zero,
-so the allocation covers only the tx buffers, and the driver posts the
-rx buffers at offsets up to 4 GiB past its start for the device to
-write.
+Hi Wilken,
 
-Reject a buffer larger than the header plus U16_MAX, since the 16-bit
-msg->len cannot describe a longer payload. With at most 256 buffers in
-each direction, this bound also keeps the size of the buffer area from
-wrapping.
+I observed something like a 4.5x slowdown - around 12 us per take/free on
+the C906: the loop with the lock runs at ~14.7 us/iteration, the same loop
+without it at ~3.3 us.
 
-This patch is assisted by Claude Opus 5.5.
+So yes, the effect is material.
 
-Fixes: ca96ea25e51a ("rpmsg: virtio_rpmsg_bus: Get buffer size from config space")
-Signed-off-by: Lianjie Wang <karin0.zst@gmail.com>
----
-The patch is tested against a virtio-rpmsg device added to QEMU. With
-buffer sizes in config space that wrap the size of the buffer area, the
-unpatched driver probes and warns in rpmsg_sg_init() while posting
-buffers past its allocation. With the patch, the probe fails with "bad
-vdev config".
-
- drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 23ff6c8b7a20b..de4af75ee1620 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -91,6 +91,7 @@ struct rpmsg_hdr {
- 	u8 data[];
- } __packed;
- 
-+#define MAX_RPMSG_BUF_SIZE	(sizeof(struct rpmsg_hdr) + U16_MAX)
- 
- /**
-  * struct virtio_rpmsg_channel - rpmsg channel descriptor
-@@ -851,9 +852,14 @@ static int rpmsg_virtio_get_buf_size(struct virtproc_info *vrp)
- 		virtio_cread(vdev, struct virtio_rpmsg_config,
- 			     rxbuf_size, &vrp->tx_buf_size);
- 
--		/* The buffers must hold at least the rpmsg header */
-+		/*
-+		 * The buffers must hold at least the rpmsg header, and at most
-+		 * the header and the largest payload its 16-bit len describes.
-+		 */
- 		if (vrp->rx_buf_size < sizeof(struct rpmsg_hdr) ||
--		    vrp->tx_buf_size < sizeof(struct rpmsg_hdr)) {
-+		    vrp->tx_buf_size < sizeof(struct rpmsg_hdr) ||
-+		    vrp->rx_buf_size > MAX_RPMSG_BUF_SIZE ||
-+		    vrp->tx_buf_size > MAX_RPMSG_BUF_SIZE) {
- 			dev_err(&vdev->dev,
- 				"bad vdev config: rx buf sz = %u, tx buf sz = %u\n",
- 				vrp->rx_buf_size, vrp->tx_buf_size);
-
-base-commit: bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
--- 
-2.56.0
-
+Greetings,
+Indrek
