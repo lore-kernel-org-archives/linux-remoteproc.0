@@ -1,111 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792742763;
-	b=Zvl/PeAqW5Tth/Bmyvzx0MYT66L4EWRviA8xjdLDRu9fSchzpN2OuGLDRMoH53OCLrjw
-	 xZn3lqm1w6ZaUScZQ390awZj6tm+LhcMTRLC/aBWfBSK6bL0FD8x2AgVUZGT4VRViSqh7
-	 +edQ5yEto2F6MMGXaULsUsgKzTQcbl3KcLzIKZFNJVBI3fv77NkO2oSc1WCe/T/ABqE3J
-	 PUQlLB0UvKuPGNRomC4R2NRxFGXHEK+ztB6O8Eolj6RU4DhoXjVujba4hYOD6eDXzZAt9
-	 AzFUUwBMJhqp5Rs7+iopa+E939RQsC/45EBzvyu2wzbRlEJ2RuO9SteU3K0+1Y1uuEg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792742763;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
-	 X-Authority-Analysis:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=uU8ryexn0I7UdpzqrHG4lhMSHCO1ccEarOJ2Ag6hyaE=;
-	b=5d1Is57UhkB+/p8fIbBNNcp8VNUuHka6xfosXesiWJSuZyDzTnzpmb5XVc7q9FsNWCgA
-	 8s0FeUPhThB9KhrYTUpDc+Yz7umOKoTKOm1g03bnmazGXAM4uEW5brp66IYBkWuC6dTAX
-	 wLT/Iv4ED91w9MuElf7Vbc5tJYBgdXwKKw774gC0AtgIcjfY3jaRw4+446OdQv8PepR6H
-	 wu//QgoLDvunDpEKWEnbVAWUlP/fTduweSRUVLuiXl8Mv3CiqAnt9Jy2mwx/0UVHN7Tjv
-	 Q08GlivPUimfK0nj+mntFRWmOLyl03oPytm2JTAN745zg5OIQ/ZHFe87jQCvpp6VGXg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=kG4s0kT2;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Z6tUCf1Q;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.42
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1792776981;
+	b=w15tMPyO1maWoxZn+oUvANj6ChsNupaOIWkaVcCIOBW8UMLqqDNT/bu06JbtNogyeDML
+	 Iu0VBL2ari9D2TchmToySPMQ/OvaLNV5cr0xZ1y85UaKh7zSSHzsdMD1/MpK7IAN2K2PT
+	 /BTncvgHEsdA4/BZ/LEVQdRfxsOIShyQgGSzVnpeQhqt/TwVCPwPoiN0GM5Q4Bn5h7YIf
+	 67+xIntJq7iVAl2HGKVh0LzEe+3LdltKKvvwOtwY9nfpMUxyIfGaB9RHDw4/US2tG6bmU
+	 IIWHWuB1rff+urKd00HF+v513k2yqFl/aV/5yalTe9DjBzWPBfzk22TAeVtVoPS5CWg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792776981;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=398i7swro6PJLXPpoR67HfherBBRioA523hZUdTLh8k=;
+	b=3acIJa8Xa3lkp5K+6xpf/sCTZQ/YyZlbgxhL44rTia06oQrBhv3GfRpmgDrBlzcRaQZX
+	 uzHMJ2xCSE9MpDbaYLmuxELPf4skvG8EL8TqAfaQJ3pU/T+8NchB0/abINbrGv0jI/Ua9
+	 K3WmAU7KTFmn3H4NZl6Qbqz0BJKoOz90TVKCbA0Pu7NN7ZhAWxem+jxQxhYhYzI3cVKyx
+	 QVT0f5NHZEMjptdRqWSAYgQUrzMabrbaTjZBuMSbxwCR2dr5HAkVY5Z6hNQ7hB26vu7mi
+	 heCD11j78QbaUpl6UOuY8tZhygkth9XwHttNuMPglN/NB9CDaQ722HKOFK3UWSSS5Cw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=rPwbjHBH;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.218.42
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB86606A31B
-	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 08:06:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EFB86606A31B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6EB606A31D
+	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 17:36:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8C6EB606A31D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=kG4s0kT2;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Z6tUCf1Q
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69N7F9Kw2112148
-	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 08:06:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uU8ryexn0I7UdpzqrHG4lhMSHCO1ccEarOJ2Ag6hyaE=; b=kG4s0kT21uYk+jbh
-	LbLcYMsll56FYoJQubZo/rQGOLrE0wF/AQXBWTQkW6AdTUcdAF/brlzuqJ2XpfSq
-	J+D62aeNuNhkSWH5/iKjWcFRuTet9tibPVDZ2JYrJjCinplz1eKGzbMbrdyM5iY/
-	7v0ord5ZH6FjxN+bdcylNfBatEDB8ne/GzCQaRe4mPW9jTGnKOe3ND4N3iFmN3rw
-	RGzsM36qpKChaDjdhZyFfv+Oe1Vue+/1SXYOSgIiQ0m0Ok6XfW5uzRmRmQfTQy+V
-	ZuI/cPo9MQZhRV3edOrsdDcnFE9YPVcMFuU9u0R8QBZR4VbuU4Cj+5gugdKSUTwm
-	/5PFmg==
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com [209.85.222.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hfsyka2w2-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 08:06:02 +0000 (GMT)
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-9906ce36960so34735241.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 01:06:01 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=rPwbjHBH
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-c4395d31228so175808366b.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 10:36:20 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1792776979; cv=none;
+        d=google.com; s=arc-20260327;
+        b=ewDfhgkFDjtvmzyJx/3X7fj/utb7e5V77KrLI3EI6k27zE1X+giap9+MeIHWK3SVMs
+         5NHNMl2Dhxt7hPJWrqDzfr/3pjuuUdS4rqXzasDyidD8Q3H9WB4uJILtJrsJUNg8Aaik
+         QprA7SN5gvsB28zkpZ/On0VIIPjuMh4oEK7WXZzCnLtFP9C7vPK0eWi73C7h9uPVOfaX
+         VkyFXO30ff9TSqSpfv4DZIS9lJzooRCRk1RCTZ6zVugwft3HsWbSkjncYqiOicRbo8cm
+         Qr/tFzE7BzAEJRaWKeTP4C9oj+prwu0U2ac663u+Rw8kGWMDKHPKuvmIZcpbBxXvmplU
+         +S5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=398i7swro6PJLXPpoR67HfherBBRioA523hZUdTLh8k=;
+        fh=6JCPDTscpTB7iB9wJ4V6ZacEdSR9c82YBaI1D8zKmf8=;
+        b=Fk0A+bVjecCH906a1kmgtaR+++R8dq456XZP+1AXCmukn27Dh/Y3azbyCRzg1gjhUo
+         W0dgHWAPwS61hrhmEY8NIvPt3BEmNC+wO2wB2nYevOCx5/AdhH3rXgVWmtIhgE8KOWBQ
+         Ng9CZ0E5+w1+tBL+BaE9NWmRRi5N/oALaH2l5f3NtpdXQp3dcmqktN/+jCOWtvYiSIg1
+         C3vEYYY0GVY94CrXV5Ezoj5rQV67lxZLJ9wAjq/D0rx65cKDwOb77yBz5kj3c5SFx7Mj
+         UoO8E4T8poRfBSFEZs2eW1tesg1amUVxSycaSUfaiOYG0TlkWxnK4zmMTckUd+P2vbez
+         OqbQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1792742761; x=1793347561; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+        d=linaro.org; s=google; t=1792776979; x=1793381779; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=uU8ryexn0I7UdpzqrHG4lhMSHCO1ccEarOJ2Ag6hyaE=;
-        b=Z6tUCf1Qe24S/l9pnoOdyW27NgnQyScVvOVOuK/yhYyCyeTdSh2aoaZuHNwnsHB2AY
-         JJDmH9hTmd8XwIbT4zvVGkpqKQAWh+pyXsdyaIlC0cqFD3P0DjNodLfVEYNOmNA9Aua3
-         9f7UqEZ9RhUtkFESTNWAasmIYLc+wcOw5WhcI5OHpmJt+51TbKL7cQqLHrO2JjE2KNr+
-         e+4S3LzIGn0VbiC29qE/JOk1swoorSluN2XBVS2mQcC9BKgDAwIDz9qiKyqWYRj84BZ2
-         y5Iyikq/cfhCsvGp/gJaYk7K6KNSnjPWOl/p9vWU7v4xKj/eTqIkfNtlypC6btb50npf
-         3+fw==
+        bh=398i7swro6PJLXPpoR67HfherBBRioA523hZUdTLh8k=;
+        b=rPwbjHBH0HP2C0bMtsJOmjM0xJz8dkGbOzrImfDEBhvfVvxo4oi6BTMnynTl86WfVe
+         tHFnQYjVPDO4cImnkMGI8H78rv2mxoUYrxiM7dl4wpJ6WB5b65ANTRBK3GKGQB4nX4MI
+         6R0taHSx2qctLB2pSGrqvuEql5Mt/6hqC1e7kM5F5FQQaa6YHw2Y9MrPv//VzZwYAMb+
+         VBTblEd+sl9M6yiKhbMZ8A7074jPOb1xuPMdEjJjNXWjBCAXU0mgobhdd4+R9EsGvJDt
+         UnGGeuuIXWdUvG9FQeUILhQmVp9Za3k50Tlg5KNCzw4tJUCKz4HNf/Fh0S4At6GhClIe
+         ztBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792742761; x=1793347561;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=uU8ryexn0I7UdpzqrHG4lhMSHCO1ccEarOJ2Ag6hyaE=;
-        b=PMJZH2/ZjeanNviYn1gS7XtyF747+q0oPn+OfMYwPsnbnaUJR/lKlfHDNyJFg2pB8k
-         /rkrBz6dyKrFIpIvmlcAhUYnP/ug41cChiA/Y0CSjeKUtrY6SeL6SsfgnMNpUwxzn5QL
-         ++Z3RQjJkoY0z7G+hiRfrmqbOnzzfabN/nv3e37GWYd2FnI/V5IAdwTmtqFGxH3h4sNR
-         7pPNt3SjzL58srDhxhc6z89JXn/FAd2IbDaaCKzfQ0LnxyJUKUk6O7LgbINgacWP2MAE
-         Bz1+Ii+HPsSVOeF50Xy6vQRm9QX7fEvxmf0dLusBc2dUBVUzlr3j3XbMtNp/+pZX2wOu
-         GGXA==
-X-Forwarded-Encrypted: i=1; AKwUvBwxcl8PCH2fJWYsBb5HDb4NsDTq/NV6vOqJrsBrU/qsJPr86aK1+M+ZVbf3IUf/z/orKzK1iKnHDv6Nxw3k2W2d@vger.kernel.org
-X-Gm-Message-State: AFq9FYLuVU6vH8YFFKdOKEmQ+P/P0CATtxr2YPF5ohVG61dmGJKW8KSF
-	x74XJLOR2Nsf7ACJ4gVOn2+0q8MbIy6fS10UPRt3lQyL6BKT6VEdImzwcB0M2DLnAu00i2avbyh
-	EnSEdcJawDOWsYIKWxmu/IpH+DsHt8sGkxsanF/7GQ3BoBfDubvtY+810B8V34xCqXRrkuxgc
-X-Gm-Gg: AYBFou07BDvHM8JbADeufgf+afpN45+uAjzjQFE1R+ganfczXisyh5VK6WO5IiOsenX
-	Rxwg4EMdK9VDMXsxtfJtNgUj3qm2EaHQ33O86PjaYgVj7T2toT2KA5vUz0ydJQGc3p1xmMq1JKV
-	mXzRJtmywXu4Els8is25WANnVCXKfVzmyP0wrFTaMPuvAREgbSYh9TAEk9iMFjrSWcI2k0JDL0V
-	2bZWAZppULLDM8oj3PZxi1N5QpKOI1rtJCMTCLcUB95U3t5sWpv+t3Yf/EZQsxoiH9QFHqNorFZ
-	mmjiLPL2Ie+dDOyF+E5EmCgUD5MtDnpQfOzaWgbx/ZuUlJH5gaO2zEglqS+EolzVrhnqZaQldv1
-	+DXj1zZgD7CPRqUniAI5alw==
-X-Received: by 2002:a05:6102:a189:20b0:7c8:3b8c:82ae with SMTP id ada2fe7eead31-7ccc32bcf6fmr479054137.2.1792742761087;
-        Fri, 23 Oct 2026 01:06:01 -0700 (PDT)
-X-Received: by 2002:a05:6102:a189:20b0:7c8:3b8c:82ae with SMTP id ada2fe7eead31-7ccc32bcf6fmr479044137.2.1792742760678;
-        Fri, 23 Oct 2026 01:06:00 -0700 (PDT)
-Received: from [192.168.226.26] ([178.235.128.140])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c46a5cfba36sm74805266b.79.2026.10.23.01.05.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Oct 2026 01:05:59 -0700 (PDT)
-Message-ID: <fea00cb9-3ade-44ca-8eff-e2a387074b4a@oss.qualcomm.com>
-Date: Fri, 23 Oct 2026 10:05:57 +0200
+        d=1e100.net; s=20260707; t=1792776979; x=1793381779;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=398i7swro6PJLXPpoR67HfherBBRioA523hZUdTLh8k=;
+        b=ebQdOGprG8Mb78FEpV9gWlgEH3PFd3XjeoYGSfHl/dVs6q3Ljk1FBMar7js+N9D8NY
+         q2ots0Ev+9/lxjwcC1/BP9KXacl8ezr2KxKwxTm2vvm29trAm7AJk5gqnA31UYVUdiOm
+         Vgc0L9At47TQQNVMpaAltxYIA/iDKxSOMIHQot04zUXfBvIBU+wk/FbhCr1pvfWD2Gmb
+         NNNcXqBp6RCFNA6xnR671I51jtu87sNEOaxE2fpbeeglFhXz6+qeliF7UpWoQy27dHPF
+         n62LIN7L2YXmgK8rktOzdf/1JBnv6vwirBrYfkJjrBdT5IEo4vlWI9s4ijAl6qGjpUu8
+         fhuA==
+X-Forwarded-Encrypted: i=1; AKwUvBzR3TvaUmxVjG7Lzd7DXd2PXY+x/rnGAOHm0sjkL++DCKIANJOD0zMVETw9iSY7TAadig2OWfmu/QBNj3b/xwwk@vger.kernel.org
+X-Gm-Message-State: AFq9FYLROt7lxXEJNhq5gjczsmnD6wQjN2tsETVZT2VNb9ufSgkJT0Mt
+	wupgRUFUR5NpBwv5BJjVV91PYrLCCY7Nbb4/BqC7mylhNnoisq8zPcZZ9sONNdXIHhkBosHw4ey
+	prmRqqn33zFqJChH2FTKmfzrTl52smyuLNNNdUyXg1Q==
+X-Gm-Gg: AYBFou3hj7pYibfRWF+M+fGsJCSmFoP08mcLnkzzFhu3OC3T1cd0MrQaD3bTLVEEBsN
+	c06HwU92ZUbjkexRUHH/IZzSqPspsD3phhALooCzyEbmLhZ9Dgkmtj4XXbMV8C3Xrxy5d7mK4IN
+	KwMk+FHnBdr5lDTdGfQaqBeCPdIfI9CkFcVixzHi91v4W9hW3ITbhDaGaCsitmjNk3pHGe6nQPZ
+	z0wxw69+qbeYVDJWSNo3fQtt20ln+1AuVvwLnLHXfCWjaQazgOjy9S2GGGUJbOscCj/guZgM/sh
+	cENAcMnRNHVm9X6P+/7s5wmtYrQGg8YSdGpP/hGAILHq7J8if5pVSPb4P86//ZZzCM1EcB2z4Xf
+	5LhtFRZR0RrmJBiQiCDNZ8uq73HX5MH8+6SztElx+AeUmZM5ar6Pc/bMgTrMxhvQ+MMhcKo0=
+X-Received: by 2002:a17:906:f595:b0:c46:7ec3:fdfd with SMTP id
+ a640c23a62f3a-c46a8fd5c3amr423797666b.14.1792776978822; Fri, 23 Oct 2026
+ 10:36:18 -0700 (PDT)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -115,65 +103,117 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] remoteproc: qcom: pas: Release DTB firmware after load
-To: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20261022-b4-qcom_pas_dtb_fw_release-v1-1-d92d84a05544@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20261022-b4-qcom_pas_dtb_fw_release-v1-1-d92d84a05544@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDIzMDAzMiBTYWx0ZWRfXw3FaX+EsAJbY
- 92oe6PMAJ3FQWkPgGO2d5Fo6q9B44KL9VU5kTniLbaBRMuZHlB2R2VTUWLZDbCsUPKs8+0gYxMH
- iDyRccAFS9iWRgXc3CP3SUQTEOYwUtmIIRoupQEPiR+PzzkrksWqdpWUUow1kMclwaHJPG7rmMn
- c3o8hf6iptDT2UavDN1tzEPh2Zb0RrYLaLddcTpBEnDAC887R+4zl1ABUr8Hn4IlA5yzSLN3Mrn
- FMNfatdAHy1QioXC+2nWdbo85dqlVNUv+rQLxM6/+pvCatUPNiJD+ihb36uJ27sA2pn4NqKaO+u
- f4S7GklTZ8387os3RdSsbghx6Zx7kdWaGm/YqrZOmNl9TiiNEbZIsYu8pj7BqXaiA+GfGSKnn4R
- 0jlGXPwh1racnJPu29x79J/udtsWzF+Ts9tIu7MuQSyP5rFvFGVJ8B8CpLASbL3u3rP3tigcsA9
- cRMhQHGNlOwgs1Z10Bw==
-X-Proofpoint-ORIG-GUID: -7R5Y5rjrg8xclAx6_F-PXUlzx5iIToz
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDIzMDAzMiBTYWx0ZWRfX5RcZmNiKrpyY
- tEBxklST7B4Z2mFjaKHlsaxPaCmVK+copTfHhR9glWrcEY7b1yrJSK4y0OpBdTSheno2Y7iSNuW
- ulBnUfh9vI0BnGxkWMJwNVZou04E+2Y=
-X-Proofpoint-GUID: -7R5Y5rjrg8xclAx6_F-PXUlzx5iIToz
-X-Authority-Analysis: v=2.4 cv=GLKdgeNK c=1 sm=1 tr=0 ts=6adb156a cx=c_pps
- a=UbhLPJ621ZpgOD2l3yZY1w==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=yOCtJkima9RkubShWh1s:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=OpgpJtwNEdfdaaOfhYsA:9 a=QEXdDO2ut3YA:10
- a=TOPH6uDL9cOC6tEoww4z:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-23_02,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 suspectscore=0 malwarescore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610230032
+References: <20261022-memory-region-name-v8-0-ce5ce514a550@nxp.com>
+In-Reply-To: <20261022-memory-region-name-v8-0-ce5ce514a550@nxp.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 23 Oct 2026 11:36:06 -0600
+X-Gm-Features: AclHuK9m_F_bGO076TSrsT-kULx7SuWcQOcLAgoXUR-ZcTiSb4Ix0VHIuC5OZJE
+Message-ID: <CANLsYkwTaeuoKWvCuK-4ctLa9n+7xCJe_yo_E9mDZL8ddY83DQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/2] remoteproc: imx_rpoc: use memory-region-names to
+ avoid hidden ABI.
+To: Frank.Li@oss.nxp.com
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
+	Francesco Valla <francesco@valla.it>
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/22/26 4:54 PM, Anup Vishwakarma wrote:
-> qcom_pas_load() releases the DTB firmware only when
-> qcom_mdt_pas_load() fails. On success the firmware is never released,
-> so the DTB image stays allocated, and each later load leaks another
-> struct firmware and an extra reference to the shared firmware buffer.
-> 
-> The firmware is not needed once qcom_mdt_pas_load() returns, since the
-> metadata and segments have already been copied. Release it right after
-> the call, on both paths, and clear the pointer.
-> 
-> Fixes: 29814986b82e ("remoteproc: qcom_q6v5_pas: add support for dtb co-firmware loading")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
+On Thu, 22 Oct 2026 at 13:05, <Frank.Li@oss.nxp.com> wrote:
+>
+> The driver currently derives the memory region type from the referenced
+> memory node name, creating a hidden DT ABI.
+>
+> rsc_table: rsc-table@90000000
+>            ^^^^^^^^
+> {       ret  = <0x90000000>;
+>         no-map;
+> }
+>
+> m4 {
+>         ...
+>         memory-region = <&rsc_table>;
+> }
+>
+> Current require node name have to be rsc-table, but no any binding doc
+> to restrict it.
+>
+> Since memory node names are not constrained by the binding, incorrect names
+> can silently pass DT validation, as seen in examples using "vdevbuffer"
+> instead of "vdev0buffer" ([1] and [2]).
+>
+> Add optional memory-region-names property to define such ABI. To keep
+> back compactiblity, use "optional".
+>
+> Link: https://lore.kernel.org/imx/a3602ef8-2b77-4cc3-adef-2c4cba08a5d9@nabladev.com/ [1]
+> Link: https://lore.kernel.org/imx/alexXTYQHUs76J7v@SMW015318/T/#mb9dc709ff3adc24d9db6d30c973f37b580f6f1f9 [2]
+>
+> Prevous version
+> https://lore.kernel.org/imx/ail0sH1UhnQBPRkr@SMW015318/
+>
 > ---
+> Changes in v8:
+> - remove dev_warning
+> - remove dts patches
+> - Link to v7: https://patch.msgid.link/20261020-memory-region-name-v7-0-1413d5928340@nxp.com
+>
 
-nice!
+You have ignored my comment from [PATCH v7 0/3] so I'm ignoring your patchset.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
-Konrad
+> Changes in v7:
+> - move imx_rproc_rmem_to_resource() close to caller
+> - collect Francesco and peng fan's review tag
+> - Link to v6: https://patch.msgid.link/20261019-memory-region-name-v6-0-2e46b2e7d667@nxp.com
+>
+> Changes in v6:
+> - collect rob's review-by tags for binding
+> - move imx_rproc_rmem_to_resource to c file
+> - dts move related memory region node into overlay file
+> - Link to v5: https://patch.msgid.link/20261015-memory-region-name-v5-0-abc358b39a96@nxp.com
+>
+> Changes in v5:
+> - fix binding region-memory-names's pattern
+> - add vdev1vring0 and vdev1vring1 at dts
+> - collect pan peng's review by tags
+> - Link to v4: https://patch.msgid.link/20260917-memory-region-name-v4-0-260755920ebf@nxp.com
+>
+> Change in v3
+> - rephrase commit message and cover letter to correct descritpion and
+> reasons.
+>
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Mathieu Poirier <mathieu.poirier@linaro.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Sascha Hauer <s.hauer@pengutronix.de>
+> To: Pengutronix Kernel Team <kernel@pengutronix.de>
+> To: Fabio Estevam <festevam@gmail.com>
+> To: Peng Fan <peng.fan@nxp.com>
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: imx@lists.linux.dev
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>
+> ---
+> Laurentiu Mihalcea (2):
+>       dt-bindings: remoteproc: imx_rproc: document memory-region-names to avoid hidden ABI
+>       remoteproc: imx_rpoc: use memory-region-names to avoid hidden ABI
+>
+>  .../bindings/remoteproc/fsl,imx-rproc.yaml         | 11 ++++++++
+>  drivers/remoteproc/imx_rproc.c                     | 29 ++++++++++++++++++++--
+>  2 files changed, 38 insertions(+), 2 deletions(-)
+> ---
+> base-commit: d419d682257d813f6cb7a28e42b35d0edf4ad038
+> change-id: 20260915-memory-region-name-f950eea2b78d
+>
+> Best regards,
+> --
+> Frank Li <Frank.Li@nxp.com>
+>
