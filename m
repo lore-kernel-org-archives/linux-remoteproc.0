@@ -1,91 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792737582;
-	b=P14yD63VhxkZVzFIlIEuicl9PQ9POjElMNy6bkJYEraHORCZpfJwmIzpjom0xcurfSwR
-	 F0Lqh/Sx7/QC9h6ELpF5v9nxl5kz8/jX0wTuaJaZK9JMZ8wx8dI+bqbkco8zUdlDgZ2CT
-	 pmZmvErATSR907Eao/iH5P7yCprzuH+cJc+EVNNpu6NAHVBlJSd9sOfEF/LfT0xKuXMOm
-	 9FgJEE6khanPY5ecPposVe+RB0TNdCaTzFy7y1Tg2C/hLa/Qoelm66x/at5Y+SPOdo7H9
-	 TmnBY0gOoItZmd1HG2P294JBWSxprTJimjyGgpd3TfhxNBAxmEQiOdJKzwPS3zyyg/w==
+	t=1792737585;
+	b=nVtVpItLOXJprB1xgVM7ZNeBlm1Id+kS5ITT06KGCizlmy7qZDNVN0lq8XNc0idI76jn
+	 e60Ni1t0vgnxONeCTlegCvIk96fykRzNWkh9rVh6Zf5+ZznN7zyFLkU1/4vmkCk7Lzb2n
+	 QEDCK4ji1gRV7ZCxaf6rGancbeF0VBpGq55HyUalTOdSq5dW6F/WYSVsdFpnilybU8eTr
+	 I5ijFBX7yCscxLcLrf3OIuZtSalSRoJk2abC2TJn+olyv5EGJ6flPjT5fXctCVboDINDB
+	 RfAPm0iTeOieBEPk/FrY4lMkirPGM2fq67r/yizso/bxvJDctFc646sepuYoJwA1NCQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792737582;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792737585;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:X-Google-Original-From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=e9iXPCmoOhpVXWg91psYHS0PCZjsptq0x3nugAHkv9M=;
-	b=Fj/TWVehtXLBAqoE8rdynMVMhYa66Ftgp67uzCswE5hVr/5De6Ye+79Jf0EA0D4fk3VI
-	 LKm3bP6mhD48yOQ3/LA3BbG9u7dbmJudSPZv2WDlaPohLmQremCqTn2ZfUx7Z9Wq14/RH
-	 F15S/tLLUrR0O9q9ZyVIB7b9kgab29SQTqFntLIGQ+1uy37Zh0UeWuVywnYCDfoYwbg0T
-	 R5ZrS89EaA5vdoyTJTJQgHU2z7EV/vBHgqRwzqL6qcQfYpj8fceMJ21ufeXspHsh8MOvc
-	 tMqH+CFPSpLvb3gY1mGue+8Nxl4huxY0Gm7jFY/6oAN8hlOknTV10EUTNUqbY40HINw==
+	bh=zCs0TMoU/xtdfW2o//Qc3w2kO9KE9uGMF0SrdJknZZc=;
+	b=gmxsP8p1xfU7t9TPLzxYo7Y8VTclc+8fNHjjeJKSykvQ+bQHshYFvxmshnsXbLWTw6jP
+	 5H1IQOEaSBURQ6QTTseyIws0+wkAG9gPiBba56hnYthETSzBK7Wfa2b55N+2Jaxc+b5oZ
+	 1+jG1ofbmuUc47rdc7pwvcpzWJif/xLZNSAMIaMBQaRexTs0aqzO6rTfDglU9q+rAq0gc
+	 OhKVUf0pbz5tc1lfyz7Ae98iNKp7DVz/6NdlDdCn5teWYLDHNoRlH/IAJguKW1zZe5TsW
+	 2Lk7iBQHSukuKCmxOKQBQ+Hh7Lf8G2td0PV9z6VaGAsD+67ATIBVYWKVd+iu1vC2Yaw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=UQBmNYbY;
-	arc=none smtp.remote-ip=209.85.128.43
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=K5gmrOYj;
+	arc=none smtp.remote-ip=209.85.221.49
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED50606A322
-	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 06:39:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2ED50606A322
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F583606A321
+	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 06:39:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4F583606A321
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=UQBmNYbY
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a214c5c4c0so1902915e9.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 23:39:41 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=K5gmrOYj
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-48afcd7ba9bso252323f8f.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 23:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792737580; x=1793342380; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792737584; x=1793342384; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=e9iXPCmoOhpVXWg91psYHS0PCZjsptq0x3nugAHkv9M=;
-        b=UQBmNYbYzunSxlqefzQwlfzStDGIZ+9O+P4YzFq567SYqEcPNcMq8eNnih7hPjpmBr
-         L8WJT1AH4QjhoiQQMwDxZpUja1QV5Z9Ndg3UInkU3QqkE0YIp5iop6LEpyVEeZg4/YBl
-         tXWfus1Qe7w0Sl4ZfuPeTnaMSaaqm+V6iO9niRnGMaxDhAClo/ysPfkoj5EZTd4LVDWa
-         4gnW+muQvuA7dEkA0uG5vZtwvTfZqtrmbYW44dkV+3KdX/fyWsQlPG42WUq0sMmn6Zsn
-         hDCsNHwA+T+Sd8M84FGeOgCphhp32Qe7uNCO/Tggh7L4eqFsqZvaJvekyhQhS0RrFsL6
-         t3ww==
+        bh=zCs0TMoU/xtdfW2o//Qc3w2kO9KE9uGMF0SrdJknZZc=;
+        b=K5gmrOYj3tl5gpqCrSw9ozcnETPEC4k8tihxf6zDQDJzO6W1ugLAFbGbsv9Cz/MxUB
+         quIUfAE6oCPFSLcX8P+JtzAwqC/EvVQVqVldkQtMgEtTOx+hyvg8NvWOS4XYCf7ud8/o
+         Gzc0esoT6mvjMChNOgbAm9m7/Zm3rnihd7W0X1kADDuHzZZYih0caal6tQPHJOejfhVK
+         K2BbjC/G+1p6cfFAnupiIBsCBTQOgMBNzgIf/8rwbqnvo+qua43tmcZ9lsB9uE0vJbXz
+         TBLYu0YNtvQan1lTxqxqkmOEetHMR1uVhpgkfELL7ASKGJziVeEfwDGBOoqAdY7h9Fsl
+         950g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792737580; x=1793342380;
+        d=1e100.net; s=20260707; t=1792737584; x=1793342384;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=e9iXPCmoOhpVXWg91psYHS0PCZjsptq0x3nugAHkv9M=;
-        b=v4jcjgaNAXl1lb9/vpogPCzFKu4Rl9r21vPlDXKddzCHRcvUNrZr3/PaFDtTbbYC5f
-         3jHaltdiPBfyLFnC/G3xF9VoL0zQWbCvCq41n73NmpHNCc06GNpjrXOVSgB8yQKnjSss
-         QTQtwlp5N/N74W/bsozhnuVbxPu5aZmZCLgNx8Xb4n0XUwvvXqs4L0tQp4HhNIeXiuRn
-         uEFRzwZM1RpRz++QWMOIvv0y/oYGmS59o/pItldJw1OUPduJUkji4gLoO1TxoerO0e1S
-         LDlSf8xE1ibymSoKjK+aS5Lj8bNVOaZ9ASkCUoaqMLr5cplMQ3fRsjJhoil5E2coPAMl
-         eABQ==
-X-Forwarded-Encrypted: i=1; AKwUvBx8A354WXUpeuq/BEnVYp2+LACHb1nDxYRPRJyY6uQ4UVVJVzUC0wy0QLf0ckDf3XtxUp1UNaubBIUs8z7PW+WY@vger.kernel.org
-X-Gm-Message-State: AFq9FYIcggQCcEjnn7K5AsWGfWobSY72U9wn0rpC3XDbS8KBZbWi+PG+
-	1wcQCqjDcbom+SBz3a3Xp7IgpV1TI1HQKMYGyrdyKMqWLZexDK9gqbSg
-X-Gm-Gg: AYBFou0THtKlHOojp6ltsNWkbczstHayOuIMhm69FA9MBnSh7oOGuAdtaPVufWbK9dh
-	F6Rnldz1CeHpmdxR6ctnHpXumdKf3hTJliib2Eq95h+HRsQNlgAgKgVn4rBJs2gBlIFSsoOSVbj
-	LTVxSIXLV0DAQdjkzey01m1rMt7P0wDxOqQaKoofb6stSNj8jajZ3t/3VDog2nAlF4SJTT+zGwH
-	x7MvHvCjdZZr8m1I07lGLHjbPhrPcIL3ukk0/Ll405Gtrt+EIbVBEoLe8LceSeu2mfflkgwlJPF
-	CXE9bySU4v3Khx36pnYK8o/F8HQZzBKe2DF+JJnl9S18leCYbeWEsm3jTPafUMaXsDzdVR+J6I3
-	6u74Haxx9Twlq+T7ANd/l5PyA84VZQc856ePdmrOMTbgc/HCbWE0ByFHGTQXF/LhbFHxzsslRLW
-	/5KL9yWCqMh9SwrLZFzQvgXHTdlMjVPzVjIPpKGY5GFruNa5ZDtSSgkrs4ZaFAJUT0tDRp0ZB9r
-	QjHX5UXlQ/TLdXxdBfF5kvcTHyqfgsRubpxgwYlrKO/8m2dqabHFk1YlRbWI4Kx7iR/ATpw8Wyb
-	cT6OgtOg8CCzp+kGfpqez2nI4h+BVFEnZJnVBgP0kEOxln+QqTvv9J49IumImhHfq31x7R4cQDd
-	Ea6c=
-X-Received: by 2002:a05:600c:a46:b0:4a1:db17:c7e6 with SMTP id 5b1f17b1804b1-4a211c50e30mr19135615e9.2.1792737580211;
-        Thu, 22 Oct 2026 23:39:40 -0700 (PDT)
+        bh=zCs0TMoU/xtdfW2o//Qc3w2kO9KE9uGMF0SrdJknZZc=;
+        b=atEIRJ7CPbN5eqErDSja9uONFPr4GvWjZxksmZHBjOp0eLFuQwZZcDG/9RvowzU+2a
+         n8EP3GZ3cKyTkN5y0Q1D3QW7/jLxFu99qQzJgb3Vwtsy4zFgELT+yzl5Bul6JS/VLgmY
+         J5j8EbAgriZLkkTly6iSuL0AnPGhMkDi8RXaaTywFA3om/lwchaR7N6eKB5+IsF+K9ei
+         hIjq/8n1ZMZksflQaG9alYid036AQjvAJ00fLeJA7a/dfD8vGhfbVIN2qD+PUj4ksDQM
+         w8q9YHl1zf4Sq/gFWzKVvrH9Rde7FC/ohGN/V2Wk6SH0GAc3p9qOua4SHMnMFdXQFGRu
+         62gg==
+X-Forwarded-Encrypted: i=1; AKwUvBwcqzJ+UIBJCsCtIj08IcXtWWg6/+gEYdo8Rn/yfcpGghXrTKxSaOsHoaYzynaz97CTwtR4BRCbMUwWoMhCbntZ@vger.kernel.org
+X-Gm-Message-State: AFq9FYJfkizi62ohM6xICrN7ySy1GWu8bohiHHI/Wqg3q5Yc4hj+ts/I
+	eRDkgZkiRw0dUL0Tg3HlXDwim3010sfZ+BYb7VXD45GZdFh2jKjxHAtCEQT212YNBQs=
+X-Gm-Gg: AYBFou3zD2ANSeoAwAOamOxXmEILfMAQmJqSJU0sYlSeFN0dUstUu41Wlr1Dih9moYU
+	7+p2CexSGsN55mwjELnEqaI7uK3EyFtrvHCwSsaGnSDTapQmV5IeljDmc/LKO3ubaENguxWDPCc
+	y2zH/zeUbxDWnawwvY9N6Ky9z0i/MW0l1jPsAQtYMABnsNjqPa+Osb44KfPWv7uStPaawTqojn/
+	nMTkci7nsMGL2m2+fQRowvU8jsjRflGQlroz2G3AeWgXwZYUlEmLhIwYJCESR7q7TQfxZUD2uqP
+	Wn6N47PGfjbxrFZtiyHpGKlKGUOCPHvStTwlVxRcqLHb+/QAMyPkqbCiZumjBZzu9jFW2/dvgIr
+	1Xoo2QSA0o3JjvxppeWn80jXSFWRcOdKFxYPUI/zSIdi3IyT9DdJxG+7DcEGnyoA67N7zn6Rsae
+	sZ0DhXmoZGgkCluyiCKuWrkXYOp5u738Ag/ahUo413hZJAqwCwMEBIYAoxbohq8z9z0U8Kv5nen
+	XFKtdxWmXpzUPnaoqKg3PcuWlYomrZeJ88EiGFBiQMfzVCElIrB8Fznn5aCHwj7B/nRtrQLICvT
+	ki2p9cLMn1D3x1A+IJU5Aq++R9jBEz6gWLBiROQAAGk0QXUrcUm1VyvzbsI+Rt9Q2AOjfhgYInm
+	NEqE=
+X-Received: by 2002:a05:6000:15d9:b0:48d:ff0d:cfa5 with SMTP id ffacd0b85a97d-48e385b9322mr977703f8f.47.1792737583628;
+        Thu, 22 Oct 2026 23:39:43 -0700 (PDT)
 Received: from [192.168.1.22] (cst-prg-49-173.cust.vodafone.cz. [46.135.49.173])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e38030c47sm3104782f8f.21.2026.10.22.23.39.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e38030c47sm3104782f8f.21.2026.10.22.23.39.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 23:39:39 -0700 (PDT)
+        Thu, 22 Oct 2026 23:39:42 -0700 (PDT)
 From: Tomeu Vizoso <tomeu.vizoso@gmail.com>
 X-Google-Original-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Fri, 23 Oct 2026 08:39:26 +0200
-Subject: [PATCH v3 01/16] dt-bindings: remoteproc: k3-dsp: Add the L2
- auxiliary and DRU regions
+Date: Fri, 23 Oct 2026 08:39:27 +0200
+Subject: [PATCH v3 02/16] dt-bindings: remoteproc: k3-dsp: Allow a second
+ sub-mailbox
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -97,7 +97,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261023-thames-v3-1-3ab40aa17157@tomeuvizoso.net>
+Message-Id: <20261023-thames-v3-2-3ab40aa17157@tomeuvizoso.net>
 References: <20261023-thames-v3-0-3ab40aa17157@tomeuvizoso.net>
 In-Reply-To: <20261023-thames-v3-0-3ab40aa17157@tomeuvizoso.net>
 To: Nishanth Menon <nm@ti.com>, "Andrew F. Davis" <afd@ti.com>, 
@@ -128,17 +128,11 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-remoteproc@vger.kernel.org, linux-hardening@vger.kernel.org
 X-Mailer: b4 0.15.2
 
-Besides the existing L2 SRAM region, at least some C7x DSPs in K3 SoCs
-have an additional region called in the documentation "AUX L2 SRAM".
-This is just some more SRAM that is accessed separately.
+Allow specifying a second sub-mailbox that could be used by the firmware
+in addition to the first one, which is taken by remoteproc.
 
-Also add the memory region for the control registers of the DRU (Data
-Routing Unit), which allow starting DMA transactions and polling for
-their completion.
-
-The two entries are optional, so existing device trees still validate,
-and are allowed only for the ti,am62a-c7xv-dsp compatible, the C7x
-generation that has them.
+This is required by firmware that doesn't use rpmsg for their
+communication with the Linux kernel.
 
 Assisted-by: LLM
 Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
@@ -148,31 +142,30 @@ Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 v3:
 - Initial version
 ---
- Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml        | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-index 8b1ed384ef22..278b88b7f906 100644
+index 278b88b7f906..d6319c8e96f8 100644
 --- a/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
 +++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-dsp-rproc.yaml
-@@ -122,11 +122,17 @@ allOf:
-     then:
-       properties:
-         reg:
-+          minItems: 1
-           items:
-             - description: Address and Size of the L2 SRAM internal memory region
-+            - description: Address and Size of the auxiliary L2 SRAM aperture
-+            - description: Address and Size of the DRU real-time register page
-         reg-names:
-+          minItems: 1
-           items:
-             - const: l2sram
-+            - const: l2aux
-+            - const: dru
+@@ -51,10 +51,12 @@ properties:
  
-   - $ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
+   mboxes:
+     description: |
+-      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
+-      communication with the remote processor. This property should match
+-      with the sub-mailbox node used in the firmware image.
+-    maxItems: 1
++      OMAP Mailbox specifiers denoting the sub-mailboxes allotted to
++      communication with the remote processor. The first is the one the
++      remoteproc core uses and should match the sub-mailbox node used in the
++      firmware image. The second is optional.
++    minItems: 1
++    maxItems: 2
  
+   memory-region:
+     minItems: 2
 
 -- 
 2.54.0
