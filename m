@@ -1,91 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792737624;
-	b=kLNORbRrZc7/dME4TF9UuXITSigb7d/B3qClkp2i5J5cJsAzcdYeOWEB3JrObysOofQL
-	 zUaikQBi+pMBhZLbuO+G4/f0eC/GOW38bLuR+PdHME6wY54TFbXltsRaFy4wB6g0utktx
-	 eecFJwfbS3CKhuMJauZhZfvNmELJmPYlxBxGwfOWElY+sMoN6GDd/orh8r5MAfPVDcIcw
-	 eH+0YfBnHtKmcXnsKMSou4lPb7JZYsuP6rAylEBqsVO7gcIGELax4I+An2s+TCyBMtmjL
-	 kxJ8IVUmrvHHpe8f9cAxqrvMgRsuVmUVilG5C0xfBOhbkqd+7bRo3FDUG26x4ls3Jbg==
+	t=1792737626;
+	b=B5K2kZNUCU69m9JHtV13EUSL48IBdCNOhXOJDsw5b2S/gKKgiM83MF/qqQ3yyfRdmAG6
+	 qVc80fIjHBqpMwcMqSzBW9gJU+l6Q+tbUGE+xgJJi9R3Xj+/fIvWvpgfpvuK39A4CsVsL
+	 nhpPMyu2jjcOm8xKAH/NDlDus2Gkm7+zRcCJ+o26C95Xn031IeTMVSgAtx/u8FzkmKE7Z
+	 ukQk66RGmYxidz6pvXItJUF0emutuCCDQh9GNbQQdMndgpiIBqbQqASLpSL0peu41hfll
+	 tJc35idf7A4MG53+sIqy8x2oiqT1Z6yE21yot3q3nBVqGOTrgTvuAbV1uhzKvBLjsaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792737624;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792737626;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:X-Google-Original-From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=ZJFWHzliBTc3+ANTD4MSj5zAkBWI2RhH31jFlttP6lk=;
-	b=ftNczILqODAB6csuvKOzWpF+2YtSkiiuCLyyNojKHU1AZavNvI0auT0r7p+qVYSWzCTC
-	 w34X3Y6dJPYPJY4RTokP/fwQrwGe/ntlvYlTTduy1YpeJFXH0tP1+nZnLjP2PBs5m0yHY
-	 +jHWc/SNHGUc2s5V1FhlTnTwjkPLt0V8scjnSoV9QjuzalRq8bGiEQa3fJBpOC4ic9DWK
-	 Zgq2r+oJETAYMax/uoc9ipEmrQiBh9HzLu3Mqi3tqKuCD7E9xxIdEDJsptS37YYYsNa7Y
-	 do7B8GbV0TCPcdnQIOy7Wu1mnQQBtscA55bBZSYKZiF/D9bm/mJSdDZgj7akg1iC6BQ==
+	bh=4UoeFHsO2E1Dm3EPGxkpKrzw1COi+rNj0JGJlw6wJw8=;
+	b=2s+BmRU9ePnqCkoQP/v79pBO9aM7FvPoIIB+Jc3UnRg9zP2jklWbVrQ3qMVmYJ9KCfZ/
+	 KqM3dggk43/iMFqWGE/d9BvP++LKwFNPi7wS7WQ8/ZRd1lClW9LmpxTtOWYP2D9i8RPD1
+	 amq1rFa9vFOKhT2E1V+0Zxryj63aFfwWQR0TJv3JG1hPZ+1S2FqKo6IExiaOrKekFtc3w
+	 2TTWYgkKLcvSYVkT90qb35eko5czJylm0RsV6I7Bn8a6bmn0shk/5vnhnOpEvjIyQVKKY
+	 XBTj9UGnBsq+qBvG6pbp48lDSi5qiTvd9bCTuprKklGxYp0ZD/Od67HIbBPhkmEPb0A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DN2UseK5;
-	arc=none smtp.remote-ip=209.85.221.41
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=nFvP+We7;
+	arc=none smtp.remote-ip=209.85.221.45
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1690460A381F
-	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 06:40:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1690460A381F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AB3606A32F
+	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 06:40:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 91AB3606A32F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=DN2UseK5
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-48e3b22e971so39043f8f.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 23:40:22 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=nFvP+We7
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-48df54150dfso228340f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 23:40:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792737621; x=1793342421; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792737624; x=1793342424; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=ZJFWHzliBTc3+ANTD4MSj5zAkBWI2RhH31jFlttP6lk=;
-        b=DN2UseK5Tk7tpK0k0ilAvJ5iPN1z1bIqKoeOYiSmWhwr8mI2ztOOKWIv6vg3YA5Kc/
-         ZpD2z9k1omHwf27KRlVTolgVSfCJ3WIAYx3SmBWp66BvUXoog22YH6DsxvULX1+5mXzx
-         TXbAO1qIW+DoMhi0O+rPs81IsXVgOMGTbDiulAY1hgmdH+NE9yCgqsex3kOgMJ43Ccds
-         oNVnLwj91daLr4UcGCYKRI3esNiZDspUFFJgoGOibch4yQIevKCDAoygMs7xerCQiI4o
-         zMsOf0vzZuINYvfijCfKlE4shlnhuQP3zJhJ5HAhIlR9i2sBJVXn72szUIQk/Vt9OO20
-         +S/g==
+        bh=4UoeFHsO2E1Dm3EPGxkpKrzw1COi+rNj0JGJlw6wJw8=;
+        b=nFvP+We7XiupT2noLK/fzdphPCutvS5h9ja53Rm7jDjlMjuga21PPGPfl3QjU/ECb7
+         vJXjzgQQeHxBnTcpUCcDz9Mkzk1J149NiWxkGB4xjLLXKDnJufFFaCU+5G3nko0GgXB0
+         p4oO49kFqiWVFd2j4tcut2GOmsdVA4DYdJYWI0HSTZX2HY1wTTai3F7dSrdaqCV3ZQ7R
+         sxqKvZlsc7pcylJJ4PVh82aybrbqrD4CanpDTI8g79zfZb0x4tUAx9b9dY8phosjMRNf
+         zP7C1OdO/tgqr/6IKB5+tnOqKqj13NexQpJdHS14JPGE4cAzw6Y1th+arl9wwks5uVeg
+         Gc1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792737621; x=1793342421;
+        d=1e100.net; s=20260707; t=1792737624; x=1793342424;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=ZJFWHzliBTc3+ANTD4MSj5zAkBWI2RhH31jFlttP6lk=;
-        b=2wSlXdKMHVcRBLZTHVcIw0lP0F+qX7sWg3ChAy1+J9sOoLs//uu7Bve6erDVdPsTUw
-         ndjkS4CxppGg0qEF9Echn+hbWK6ulOsCdxqqp9hvGbUPa0BsOd0SsymdmLVqrPYR4hSZ
-         crhog5LrrHfDjfwFemNE38Hdus1DxP/y+d3lne5O45dyBZk/24ixC7YOExdpDnq1tQMm
-         /o0oXgGoYel3fTzypbDphKc4QHAu7NepT5iczusPfIIuY5nRZCKM0NFkL9Tt/3+ltUTc
-         geaXqjz0D4j3IuqwyKeNJH3gxElkAyrh6dMeoHowYwWFwRBg8b/rKoBMfPXkZcjunVwW
-         Idqg==
-X-Forwarded-Encrypted: i=1; AKwUvBywStg59KYxI+76xKzWe0dNB6ca5bExS5B9ltZtpPUqVz4x073kyzMxcTXOEXx9CUH8/pxoaaeaWF3NvWS/61a3@vger.kernel.org
-X-Gm-Message-State: AFq9FYKUuDU/FAAEg03cRdNdIdtUfMx8GhsvJe2ASEhNKvxhZWgmZSTt
-	wBbZ88jqPbpvmYTQ3P2Rrzcseq0iGNeTmRS1g+mYbUnRQrat5Vlvzcbq
-X-Gm-Gg: AYBFou0gP9WN42Hq1tuPoKTlgx05hDwBDQd+b4vUL2RRGzIkXmH35jtetlfxpVuC2J+
-	7gGBIJ6seAVPzbRMoWiPARVOkOXw+3CV5Q2FjlCHocMlSH8M4Rjg4ZPR18oSsGtCtuFi8eFSTPo
-	d1l4BgR/i+F6tgJfh9mhL1k8mahIKc0Yf8npc/rnsyFA8Se4OrtbMAtR5FzWTKblyAS5o4pKNVP
-	pSV2uOXjnKbpQy3jzIK/zr4YyNKuv2bSJmuKReJnYsEeyYI/wYfnbfJpXm+pdsPBfHyI8G7lYKv
-	u1rwpDeAuHLuuwoKRBovZKMkT1epL3ivkC00TP0Zw/ElzUoa2QsLr3dI12jPJzH+ryCLbvLISI/
-	A4/wO7foy/64psz1gLzDoiwX0IBpS9yLUENkjJzTRkZLrghjl+FJPhhz6LnzQNwAOh5ZEPLmZfb
-	3FVZaPn/K0NlrUD6YaFi/1ANpE3If/JcZn70Zy1NcK+Wl2ABrP6T5Pdh2pnvW/XtxWSJGHAVE9w
-	tx0bw18N9DC8lEUiI1ed5hYDLCJXWmzRulregXDAIZfCZZa06WZpnrQXTsL+fDeYAofN0AL4xxU
-	voAlxFp+09INTzAKITsuOln7ONgAUZ+jYq1Du7J0k80SIFE9t40Mfd+NNMPW4Tl3jzKC85biSml
-	X5S0=
-X-Received: by 2002:a05:6000:310e:b0:48e:f14:61bd with SMTP id ffacd0b85a97d-48e38588967mr1965340f8f.14.1792737621324;
-        Thu, 22 Oct 2026 23:40:21 -0700 (PDT)
+        bh=4UoeFHsO2E1Dm3EPGxkpKrzw1COi+rNj0JGJlw6wJw8=;
+        b=v/e7kw4hXL9VLWpvX4Z2EADGwgTi1fVrHiMpXrxQ86MeYln7ruYIy/xOKpG0vk8mTw
+         Bdw6XBpGrcXfEaXuIFT7Sedwwoe7SEITpwKCZZnkBjOfAnu1+lM9T4gHQNo2wNQKTYrW
+         /BKK0Qu5Kvxrjt3g/mf01QOiYRfwt6fpvhZG00/rFz/3Sny+q+A1xr9NIPSjjRz6thXj
+         uxNhOmn02Hd22h0f/8ZjcMyFpcQnaOL+Y+qwJBLKn+3wQTXy6qI+PHNqe4Udi7Uj560L
+         +3t+9eLZbffTQ6LrKuyyndGpPARYksaNKu3yFCaV9ijxcQEABGH/OmJt3RRDGi9lJXnV
+         XP7A==
+X-Forwarded-Encrypted: i=1; AKwUvBzkpLUlc8dCr/hdbu+YIn/nsRkvtfjkjkGKeOAyAaDoHm37n1Z+PAafap/o35N4m8AVq7q/7oPpbuTu4DLfKykY@vger.kernel.org
+X-Gm-Message-State: AFq9FYLz3Vqk6ji1wpWswNccADGHv+1oDcfi0NecR3yiOdVjo/1vgB2v
+	ZOybMf1Q0qNP6fKKFSGSrWZMKfeyZBwAqQymrS9Jxrvb0VQ0wSezCk+m
+X-Gm-Gg: AYBFou1OWa8gfotoEOSbuvn9Ijcl2LW3Vp/QlHiKIW8XFimtJ52MFMbsa5LTAoljJJ9
+	IEOejCjMbxaXiLayQ+VXaqolxdwbL6jh5pfv8oviMYblipigto2/TljKY1zZjktpIBZWhpXEYTA
+	4KJDhubUUI0TSSdMsre9ioLrXxdYAUnvIBnSzEMryRMzmx92H24sGuf+2IkXmn39/YKmVHrc4dc
+	Bal14TGeBUqMn9WauRaerZt6qz5LPR+4vIrXeeetthxUHOw6KM1V5YzHryIHG/mayE2MLjw0U1u
+	YgpPp/SYYLO5/aIm4i5awr0rXgIy4k9JY/t526EEoS7+OMcJAvgNUUvMsyFnWgMtxCnBYhXUcQh
+	1EVYqLZAYUxZpaC3VQ3O8QyUnt8jTahkh5lbdPekViEHmheXSQSTPVn3dHybHhBcCD7q9SkDX2y
+	8YRmdJfNErfSDk96sku6X1INW1LAbGO0P+PemkKzRviVoT0HsPMPQLmJDhTDtXZpvPaLZLaSLNF
+	p85QLLTb36Zf8Qqbg/cp7Ll6j5zi8nz/JwXiesO2YEGLHzIrmdAbAHUlYMpZntzi0Qu2bnklAW4
+	e02PYcNeuqrb/n8fVvGAifnI4yaaVOPuLdV0riMc+Q4VQhR8OCoe9H8KOVj/niQfjzd5YTgAVqw
+	p7SPJQD7hTzWAuIkBd1oQ4K4v
+X-Received: by 2002:a05:6000:4910:b0:48e:1c2:55a1 with SMTP id ffacd0b85a97d-48e385c0867mr1563144f8f.52.1792737623908;
+        Thu, 22 Oct 2026 23:40:23 -0700 (PDT)
 Received: from [192.168.1.22] (cst-prg-49-173.cust.vodafone.cz. [46.135.49.173])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e38030c47sm3104782f8f.21.2026.10.22.23.40.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e38030c47sm3104782f8f.21.2026.10.22.23.40.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 23:40:20 -0700 (PDT)
+        Thu, 22 Oct 2026 23:40:23 -0700 (PDT)
 From: Tomeu Vizoso <tomeu.vizoso@gmail.com>
 X-Google-Original-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Fri, 23 Oct 2026 08:39:39 +0200
-Subject: [PATCH v3 14/16] arm64: dts: ti: k3-j722s: Add the AUX L2 SRAM and
- DRU regions
+Date: Fri, 23 Oct 2026 08:39:40 +0200
+Subject: [PATCH v3 15/16] arm64: dts: ti: k3-j722s: Add second submailbox
+ to the C7x cores
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -97,7 +97,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20261023-thames-v3-14-3ab40aa17157@tomeuvizoso.net>
+Message-Id: <20261023-thames-v3-15-3ab40aa17157@tomeuvizoso.net>
 References: <20261023-thames-v3-0-3ab40aa17157@tomeuvizoso.net>
 In-Reply-To: <20261023-thames-v3-0-3ab40aa17157@tomeuvizoso.net>
 To: Nishanth Menon <nm@ti.com>, "Andrew F. Davis" <afd@ti.com>, 
@@ -128,70 +128,62 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-remoteproc@vger.kernel.org, linux-hardening@vger.kernel.org
 X-Mailer: b4 0.15.2
 
-The DRM accel Thames driver maps each core's auxiliary L2 SRAM and the
-DRU's channel registers into the Contexts it creates, so the DSP nodes
-carry these two regions besides the L2 SRAM, and the bus gains ranges
-for them. The auxiliary L2 is 256 KiB of SRAM in a 512 KiB aperture; a
-read past it faults, so the reg entry covers the SRAM only.
+For firmware that uses something other than RPMsg for communication with
+the Linux kernel.
 
 Assisted-by: LLM
 Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
 ---
- arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 16 ++++++++++++----
- arch/arm64/boot/dts/ti/k3-j722s.dtsi      |  4 ++++
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-index 5a5b9a1bfd9e..b6c951a1dd74 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-@@ -385,10 +385,16 @@ main_r5fss0_core0: r5f@78400000 {
- 		};
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi
+index a59c3648d805..611220ff2655 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j722s-ti-ipc-firmware.dtsi
+@@ -86,6 +86,11 @@ mbox_c7x_0: mbox-c7x-0 {
+ 		ti,mbox-rx = <0 0 0>;
+ 		ti,mbox-tx = <1 0 0>;
  	};
++
++	mbox_c7x_0_client: mbox-c7x-0-client {
++		ti,mbox-rx = <3 0 0>;
++		ti,mbox-tx = <2 0 0>;
++	};
+ };
  
-+	/*
-+	 * The auxiliary L2 is 256 KiB of SRAM in a 512 KiB aperture; a read
-+	 * past it faults.
-+	 */
- 	c7x_0: dsp@7e000000 {
- 		compatible = "ti,am62a-c7xv-dsp";
--		reg = <0x00 0x7e000000 0x00 0x00200000>;
--		reg-names = "l2sram";
-+		reg = <0x00 0x7e000000 0x00 0x00200000>,
-+		      <0x00 0x7f000000 0x00 0x00040000>,
-+		      <0x00 0x7c460000 0x00 0x00020000>;
-+		reg-names = "l2sram", "l2aux", "dru";
- 		resets = <&k3_reset 208 1>;
- 		firmware-name = "j722s-c71_0-fw";
- 		ti,sci = <&dmsc>;
-@@ -399,8 +405,10 @@ c7x_0: dsp@7e000000 {
+ &mailbox0_cluster3 {
+@@ -100,6 +105,11 @@ mbox_c7x_1: mbox-c7x-1 {
+ 		ti,mbox-rx = <2 0 0>;
+ 		ti,mbox-tx = <3 0 0>;
+ 	};
++
++	mbox_c7x_1_client: mbox-c7x-1-client {
++		ti,mbox-rx = <5 0 0>;
++		ti,mbox-tx = <4 0 0>;
++	};
+ };
  
- 	c7x_1: dsp@7e200000 {
- 		compatible = "ti,am62a-c7xv-dsp";
--		reg = <0x00 0x7e200000 0x00 0x00200000>;
--		reg-names = "l2sram";
-+		reg = <0x00 0x7e200000 0x00 0x00200000>,
-+		      <0x00 0x7f800000 0x00 0x00040000>,
-+		      <0x00 0x7d460000 0x00 0x00020000>;
-+		reg-names = "l2sram", "l2aux", "dru";
- 		resets = <&k3_reset 268 1>;
- 		firmware-name = "j722s-c71_1-fw";
- 		ti,sci = <&dmsc>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-index ca10c6904b69..6c0d2ee94290 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-@@ -185,6 +185,10 @@ cbass_main: bus@f0000 {
- 			 <0x00 0x78500000 0x00 0x78500000 0x00 0x00008000>, /* MAIN R5FSS0 BTCM */
- 			 <0x00 0x7e000000 0x00 0x7e000000 0x00 0x00200000>, /* C7X_0 L2SRAM */
- 			 <0x00 0x7e200000 0x00 0x7e200000 0x00 0x00200000>, /* C7X_1 L2SRAM */
-+			 <0x00 0x7f000000 0x00 0x7f000000 0x00 0x00080000>, /* C7X_0 L2 aux */
-+			 <0x00 0x7f800000 0x00 0x7f800000 0x00 0x00080000>, /* C7X_1 L2 aux */
-+			 <0x00 0x7c460000 0x00 0x7c460000 0x00 0x00020000>, /* C7X_0 DRU */
-+			 <0x00 0x7d460000 0x00 0x7d460000 0x00 0x00020000>, /* C7X_1 DRU */
- 			 <0x01 0x00000000 0x01 0x00000000 0x00 0x00310000>, /* A53 PERIPHBASE */
- 			 <0x05 0x00000000 0x05 0x00000000 0x01 0x00000000>, /* FSS0 DAT3 */
- 			 <0x06 0x00000000 0x06 0x00000000 0x01 0x00000000>, /* PCIe0 DAT1 */
+ /* Timers are used by Remoteproc firmware */
+@@ -152,14 +162,16 @@ &main_r5fss0_core0 {
+ };
+ 
+ &c7x_0 {
+-	mboxes = <&mailbox0_cluster2 &mbox_c7x_0>;
++	mboxes = <&mailbox0_cluster2 &mbox_c7x_0>,
++		 <&mailbox0_cluster2 &mbox_c7x_0_client>;
+ 	memory-region = <&c7x_0_dma_memory_region>,
+ 			<&c7x_0_memory_region>;
+ 	status = "okay";
+ };
+ 
+ &c7x_1 {
+-	mboxes = <&mailbox0_cluster3 &mbox_c7x_1>;
++	mboxes = <&mailbox0_cluster3 &mbox_c7x_1>,
++		 <&mailbox0_cluster3 &mbox_c7x_1_client>;
+ 	memory-region = <&c7x_1_dma_memory_region>,
+ 			<&c7x_1_memory_region>;
+ 	status = "okay";
 
 -- 
 2.54.0
