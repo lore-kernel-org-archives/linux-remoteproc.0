@@ -1,91 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792737611;
-	b=zI5PdnGsy8dDk/ZtFos2qX5VVxjWDC9B6oPVJ3DFyw8YgesiSRSZcPzWsXl5gzv2Cty5
-	 kQYcXidFqOnKOKGkB5tLzSPo9t86GQtVc0pt46X45/5jG6vBJsv5G1UrHiXfHrBemT4J/
-	 gznmK9BNuksqS9cdkCd4725pBJj9DcOA9BzknHB4p+BG5E95HFmYV7yZ0oH+jwIi+vGDl
-	 A7a66wKHhOdHKck3P1F5+iWAJ43KyWFJ7w4YWAbxJ/3ts50hSu0ouDjvm5eiROlDqZktv
-	 kVzJERhfgA84qFKJghRjv7yW3IzrK6/jqTtSlcH6iLcQpc6XtT1NF7mVYoFCKEDGEUg==
+	t=1792737613;
+	b=ANSR9f1hIgM2xFn1AP7PixGh4SJVoUtEUav5rgseO2M1fR93bNS83pJZ3s2KSRR+sx5d
+	 7KjWQ4c/1Blx2LF4BoD5EDEwm2fd4rhNonTlqgEomQHW53XUpRAkIhOmGXOsDv2S6BjrM
+	 sAK1dKKor6Rm5ci+bBIrdaq2FFXgKpJOSGqgiAVXh/qY2bfPn/4V7bXiWGloRve6QfXEb
+	 L2bkMZNVc5L7bZ62CzJZPfrK63vwObOYOCJ55tJFJLj3ajXVOVqx5GHfKK6ZPPmqdHd0B
+	 E/Nf43HZMAqow/vGSMahPNptMpO5pONvMpA9z5jQPI69HkE3x3/6VquNgEbqLatEvXg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792737611;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792737613;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:X-Google-Original-From:Date:Subject:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding:Message-Id:References:In-Reply-To:To:Cc:
 	 X-Mailer;
-	bh=UxKHtqowBQPd24OHuF9xVbg5IMh6WJV/dO3hmNbEk4M=;
-	b=nBWKW6GiaIjQQ0nPozR51K/u6N/4OJ0rjxrdPfomLat7H4sG1iv5bvZWnQbfqSumMEJ9
-	 vuvkJfuVMCAVG8D8StbrGtqNlrND9HCE+tnHdOs7OrNjMDi3UStMGT18wM4g/ob2YjCSQ
-	 7ToYEYRVTzEQDOle0fjhcF7zyIOYVh2NJFF8QyRmPLs3wTnC9d3wHYYVTrC1vtmgCVwwo
-	 svEurWtWPsJ8hAZ/U0qhtl17OGs6h44hROtWH4veOhgjOudOENPK/ERHANv7MUoUYQp/t
-	 TEu4qP0rVHxnQMZcTPZfZRHwMWiS8UBfpTDmJcKfT9mxdW07CrM2wqHUdHbMGMy6Jzg==
+	bh=JL+6FnUEXojGRmPuV+pQ9Io/1b7HqqhVfuwu3G8N4CM=;
+	b=PYi8WiuHTRXV+FziWnFWQbiuUEQvAkizUhcWjhqEUfPpz8W66HRdVNj/twFU9Xon0+fm
+	 yD8pEtYC51KkVtv46+yoYVHjkOguFuyyJ82HUyuVX1Eo5G1EyU+CMfL8/rCHZrf1+jtFT
+	 RIia7zKOVbDN7xkaVfEcYSasX5Yxzr34Niykh2Xga2JiLuRfPme/KxUR2zoJ6RJ5kOD3D
+	 4DeTuEWohTUcPavv7v1C38uLdyMN1QlEjCW3fBmVmqIZxdiyQldWLptvSCarezJSAc4Mf
+	 zICz9uWtoruJ1qkziOhuTH38zEtVdvJBc70yeAEk9fo7iAxbbW5upS/XQZ/doAnf8KA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=hfRGchWg;
-	arc=none smtp.remote-ip=209.85.221.41
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=nEW2AntI;
+	arc=none smtp.remote-ip=209.85.221.52
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397B560A261E
-	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 06:40:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 397B560A261E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4883C60A262B
+	for <linux-remoteproc@vger.kernel.org>; Fri, 23 Oct 2026 06:40:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4883C60A262B
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=hfRGchWg
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-48df8fe8513so439909f8f.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 23:40:09 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=nEW2AntI
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-48afcd7ba9bso252623f8f.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 22 Oct 2026 23:40:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792737607; x=1793342407; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792737611; x=1793342411; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=UxKHtqowBQPd24OHuF9xVbg5IMh6WJV/dO3hmNbEk4M=;
-        b=hfRGchWgenSXkjI6ECcwHyC1O9lbhvu4U9KRovdgIfolLPeDuxy925d6mBhnuMZVp2
-         7zifjdpXRgmjKda5VA0gAC0IqUYOwkYvnqxSjCjVrZnMG+nvUbXqF9bTub9isX96C4Nn
-         vBTPROgej6EB35WMNPN1wciLnfCMJBdAwddRJTcO/jXOTDmcP+9rdwVGf5rgwh9c55Ll
-         eBoyTiIHcfgWA5DOM9eey/5z0tF8m+LGf1r+UbzT+gtbmJcx3nxvxL1a5RcxS8PxCsIK
-         lBiX/3ZRkNyUozG8URWbp17/i+WNEp2nM05EkW24o+veeQ2Z3P6zkr6w+qivJVok8bmX
-         s5Aw==
+        bh=JL+6FnUEXojGRmPuV+pQ9Io/1b7HqqhVfuwu3G8N4CM=;
+        b=nEW2AntIpbUP7KUOgI7J8XrRpoFyehx+x+YjIQA4XjBG68uFG0OnT/IWTAeZaCTqZU
+         z/6FoAo1KNb7IY1Dwd02fHF9diwEYoh2VUxOw5JnHapjIrGy0fEyIz/tmS9+kpHPMGYd
+         DduGVkFtzhvIYWQobIIMlnZJGp1oFTWX+0+iUSsUArC2akGs+L1bU90DUUTVJppCiCIs
+         WWLHG9sL6FEBYqQ1a2wM+nj9v0H0G0jy1ecDybBjGdAL4atS02yiLRnjS8W9k8zlmHZ+
+         G6eEnBiNqJm2Nr7AbARgDffx3wOR8J9yO5SD6x2NU1pDP/jemuyDzB31yn5uKA0PnM3y
+         9cOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792737607; x=1793342407;
+        d=1e100.net; s=20260707; t=1792737611; x=1793342411;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :content-type:mime-version:subject:date:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=UxKHtqowBQPd24OHuF9xVbg5IMh6WJV/dO3hmNbEk4M=;
-        b=r+tg8orIA3vLmFOC9u5X9NsKjhGLqo2YlqzJ8a3ClNywtqkQ7fNp5+XhkKOPJL55t3
-         6TY8DcFz0e1/EKFsq3gedLR8T9y8mjJxLOAHzb+SBu8oQbXV+YrRJEU5Sbj06AgL6JLV
-         zHV4KDEDYbkH2+7yQgYT0+fH00Q9kNxT9wpixcZbgPLS9RHMMFZaaE1hMafZc8N8oy9y
-         U5AFM77N/ItWyy5AaFPH/8n5JBZq03iGwCw5LbayfTwMVOloLWkP8MJznjz2+E61Ch2y
-         VrHtr+viKSNa5WIgsGWcCLVnXiNIoIMdpZRRIQvSkRAZx7PtD8Soeiq5sVmK8EQqQFls
-         JRrQ==
-X-Forwarded-Encrypted: i=1; AKwUvByELEkon3RmM9Od0lfVPBDekFTuzj1oRl0zM991S8TF2TOUMckxW2QKCgxHuse/pai5YnCkZoj51c/G2v72jugP@vger.kernel.org
-X-Gm-Message-State: AFq9FYK6zTN8J3EnK7mv4tXEfsF9+svnVnorTorFr+NAsjmdMl5PuZfG
-	fUxk+LaD3VlFFqOiwAN9RBIcTNrVwt2Bryk3L4WHhzkbGkj5mSAogzH6
-X-Gm-Gg: AYBFou0KVc8FkpCKy53aUl5zJeJel4VjpM7+MR/TTibCUAoyQ511FuhskQrba+ea6/0
-	x6dinZS7L/j9hfhYmjd5KWF4oSwLf/O24U2OFcc08uefmpzBcuWJwXZqF0Q6pcQX37ZrcE4OtCd
-	zlvUKyANPPjrFIM71mD2S+4JC+UjQSLotuFsjYcNpuhuAoUYyvxaOXQnXf5/UTmAs2rkNzx1rN2
-	NAgOohVZb0NAcHNSOGTkJpVtFwpB4tF3rTr0E1eJr2jWzPWNrgDA/5w+5AhRb9QMhNFA9Ga95ok
-	StnjJGxzwSzGMfESwuCyNrGAvnVSSfe/4nwru0QO7k83oUVDS3ecA9mpunatogv/b02tBH/499y
-	Whez4wjzExrgSTIoJMSQhWSirq048kx8fQAGcXDoZlgpIMYOQFqCpWtII9jTurB9QY5atJnkY6y
-	6LtEu1cvmCdppp3vrpjy5oeNXATWCpwpZzj2kiyLiYb2GR4g29Ak9HOt7zTWlFQwIF6lAMieGrA
-	zz0Dtp38X1AZmV1vftjpju/BYXkSztB+oK8sAQ03I47SV95D6Aw6i9wcEBAty4RT0C9urNd6dee
-	w/bGY2E7NCjx7oxNCnZd8c+T57oRO1YbB5BpKJRCU+aJZKa4uS19jDjJ9UWqAazrlKyMTar4IZf
-	GGHI=
-X-Received: by 2002:a05:6000:200d:b0:48a:eeef:b4a7 with SMTP id ffacd0b85a97d-48e385bad94mr1750090f8f.48.1792737607075;
-        Thu, 22 Oct 2026 23:40:07 -0700 (PDT)
+        bh=JL+6FnUEXojGRmPuV+pQ9Io/1b7HqqhVfuwu3G8N4CM=;
+        b=xKwVVCqKEPOAuqKbuyv+EzTOVrQ55KExQ3nSAvbdkQlYmz3S1S9d8yRj38UlUDzNLV
+         bvIciNU29pFqZ7oJU6u5Uv6nw9qu3BRnnCQu9IWgI71apnygz7nBgV7+rlYEkNjfgiT7
+         L24nsEtDtFcV7wezGdZ50YkOtrJh2SK6w3nlWp8K98Lt1m6u2CTdZSxo8cNbPB0615TT
+         hh+5xx0tafKAMYWgKawiqpTT0Yr+0QVcs/4bEwN9rIKFhU/eN3krU0mF9j/Q9mQmwiep
+         LODvkJjpzQYDBrJnXovJWiSJrpwW8U1LLgk+BcoBGS5xw2t8cdDZm2NykGBzPwZc7n2T
+         lkAQ==
+X-Forwarded-Encrypted: i=1; AKwUvByO2pWfYzyUBhcSx0bk46ARi2s1uO4yonO86DrCHg6go+wATrn+ekJeH1MVfq16pWFOZqCjxVimzqit2xE62vri@vger.kernel.org
+X-Gm-Message-State: AFq9FYKNqefeKUiXU10ySfASFh1dLFbmO2Dif3HjL3SG2A1XtiG6fMEQ
+	kK2dIewQI+TPl6ABhtxEyy9Am2LZY95WgxF3TqQ7Bc3RJKjuNqLSCMAL
+X-Gm-Gg: AYBFou3J3Zc0AhCPunYUIE9J2iYN53Xu1HCAqANEnaBOiAjBCyIuSAfvC74gEsg/z+U
+	25E8iIgE2mJ4H7Mw0Iarv+d0gNjopOg4I/4LsR5l60a0Q+cSdsIxt5Ne+kpW7xpjv+hmU4BvIpk
+	xCkO5hwTT8RZBqnlubPZtwi0zQdl6VDY1GX9eT5edGTHKK0xFpIhMlqeali9tvBgTTpnAsK/wNq
+	JbgEIohIW3xmM2KtYwMlSA1O3PWBny6GjB2D3duDPHzsezhatjMNhYYFaeGyGQdtgAHk5xINK9F
+	N/uDgXzgTPxmhIisdGcrOjnWUno0m7Fj5WDORV/Pfjw2yopAm1Ofi0h+annSl39uwXi8N0NsdU6
+	Lr6DXuSMubzkvDrs5FkMi2eLNmSbNFgcjOwVhRcNpugQs96qC2HkZNqPwTUMEYVxMEOuaJRXpmG
+	+ymByDDsatytvC2tF3V2DZSxPgbd0HKRNPL/fRczySwk9y75zubDCoZdAy+TU88tr1sNQjElfct
+	iZiPxLsR6sxlWNF3sd1TXx9Q5E1BZG8n4Mv1GDMO6vWXBkVB76T0vb8ULqHBQakFVdjEi6X8Cv+
+	8dl1k4Vqzo/9PTJw7CdQ+JZ3Trd2nVX+jGOon/rGB0bZcjHiBm6zsqIMiwI9huavOVXcJEoIeSS
+	/Tuo=
+X-Received: by 2002:a05:6000:41cb:b0:485:8c17:9764 with SMTP id ffacd0b85a97d-48e385aee25mr1691514f8f.38.1792737610377;
+        Thu, 22 Oct 2026 23:40:10 -0700 (PDT)
 Received: from [192.168.1.22] (cst-prg-49-173.cust.vodafone.cz. [46.135.49.173])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e38030c47sm3104782f8f.21.2026.10.22.23.40.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e38030c47sm3104782f8f.21.2026.10.22.23.40.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Oct 2026 23:40:04 -0700 (PDT)
+        Thu, 22 Oct 2026 23:40:09 -0700 (PDT)
 From: Tomeu Vizoso <tomeu.vizoso@gmail.com>
 X-Google-Original-From: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Date: Fri, 23 Oct 2026 08:39:34 +0200
-Subject: [PATCH v3 09/16] accel/thames: Add IOCTLs for job creation and
- submission
+Date: Fri, 23 Oct 2026 08:39:35 +0200
+Subject: [PATCH v3 10/16] accel/thames: Recover from faults and timeouts
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -96,8 +95,8 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20261023-thames-v3-9-3ab40aa17157@tomeuvizoso.net>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261023-thames-v3-10-3ab40aa17157@tomeuvizoso.net>
 References: <20261023-thames-v3-0-3ab40aa17157@tomeuvizoso.net>
 In-Reply-To: <20261023-thames-v3-0-3ab40aa17157@tomeuvizoso.net>
 To: Nishanth Menon <nm@ti.com>, "Andrew F. Davis" <afd@ti.com>, 
@@ -128,1744 +127,1182 @@ Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-remoteproc@vger.kernel.org, linux-hardening@vger.kernel.org
 X-Mailer: b4 0.15.2
 
-A Job is created once from a program, its parameters and its transfers,
-checked then, and submitted any number of times; the params buffer's
-contents may change between submissions. A submission pushes the Job
-onto a core's Ring and rings the doorbell; the firmware moves the Fence
-when the Job is done. Each core has a drm-gpu-scheduler instance, with
-one credit per Ring entry. A submit call takes an array of Jobs, the
-buffers they use for implicit synchronisation, and sync objects to
-signal; it waits on none.
+A Kernel that faults, or runs past the 500 ms device timeout the kernel
+writes in every Ring entry, ends in its own fault record, which the
+firmware fills and userspace reads through the existing query IOCTL; the
+Context continues.
 
-The job submission code was initially based on Panfrost.
+The host's timeout, 2000 ms, is longer than the device's: a Job still on
+the Ring when it fires is on a core that stalled. The kernel moves the
+Ring's head past the failed Job, stops and starts the core through
+remoteproc, reads the handshake again and pushes the Ring's other Jobs
+again on their same fences, so a Kernel may run twice; the uAPI says so.
+A core someone else stops through remoteproc goes offline, and a
+remoteproc subdevice attaches to it again when remoteproc starts it.
+
+A Context with 3 faults among its last 10 Jobs is banned: its Jobs not
+yet run are cancelled with -ECANCELED and its later submits refused.
+The thresholds let a client survive a stray fault and stop one that
+faults repeatedly, each fault costing the core a fault path and, on a
+timeout, a reset.
 
 Assisted-by: LLM
 Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-
 ---
+ drivers/accel/thames/thames_core.c   | 191 ++++++++++++++-
+ drivers/accel/thames/thames_core.h   |  19 ++
+ drivers/accel/thames/thames_device.h |   2 +
+ drivers/accel/thames/thames_drv.c    |  33 +++
+ drivers/accel/thames/thames_drv.h    |   5 +
+ drivers/accel/thames/thames_job.c    | 452 ++++++++++++++++++++++++++++++++++-
+ drivers/accel/thames/thames_job.h    |   8 +
+ include/uapi/drm/thames_accel.h      |  98 ++++++++
+ 8 files changed, 806 insertions(+), 2 deletions(-)
 
-v3:
-- Add Job create/destroy, for validating transfers.
-- Add sync objects to the submission IOCTL.
-- Allocate the done fence with the Job; run_job allocates nothing
-  (Christian König).
-v2:
-- Add thames_accel.h UAPI header (Robert Nelson).
----
- drivers/accel/thames/Kconfig         |   1 +
- drivers/accel/thames/Makefile        |   3 +
- drivers/accel/thames/thames_core.c   |  36 +-
- drivers/accel/thames/thames_core.h   |  14 +
- drivers/accel/thames/thames_device.h |   6 +
- drivers/accel/thames/thames_drv.c    |  43 ++
- drivers/accel/thames/thames_drv.h    |   7 +
- drivers/accel/thames/thames_job.c    | 869 +++++++++++++++++++++++++++++++++++
- drivers/accel/thames/thames_job.h    |  73 +++
- drivers/accel/thames/thames_trace.h  |  77 ++++
- include/uapi/drm/thames_accel.h      | 259 ++++++++++-
- 11 files changed, 1381 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/accel/thames/Kconfig b/drivers/accel/thames/Kconfig
-index 47a2986fcabd..f2c32ce8d228 100644
---- a/drivers/accel/thames/Kconfig
-+++ b/drivers/accel/thames/Kconfig
-@@ -6,6 +6,7 @@ config DRM_ACCEL_THAMES
- 	depends on TI_K3_DSP_REMOTEPROC
- 	depends on REMOTEPROC
- 	depends on MAILBOX
-+	select DRM_SCHED
- 	select DRM_GEM_DMA_HELPER
- 	select DRM_GEM_SHMEM_HELPER
- 	select IOMMU_IO_PGTABLE_LPAE
-diff --git a/drivers/accel/thames/Makefile b/drivers/accel/thames/Makefile
-index 143a829f24cf..7bd652795cf5 100644
---- a/drivers/accel/thames/Makefile
-+++ b/drivers/accel/thames/Makefile
-@@ -6,4 +6,7 @@ thames-y := \
- 	thames_core.o \
- 	thames_drv.o \
- 	thames_gem.o \
-+	thames_job.o \
- 	thames_transfers.o
-+
-+CFLAGS_thames_job.o := -I$(src)
 diff --git a/drivers/accel/thames/thames_core.c b/drivers/accel/thames/thames_core.c
-index dff76abd8951..85e8f48aec60 100644
+index 85e8f48aec60..2a50fb62fe1e 100644
 --- a/drivers/accel/thames/thames_core.c
 +++ b/drivers/accel/thames/thames_core.c
-@@ -25,6 +25,7 @@
- #include "thames_core.h"
- #include "thames_device.h"
- #include "thames_gem.h"
-+#include "thames_job.h"
- #include "thames_transfers.h"
+@@ -30,6 +30,8 @@
  
  #define THAMES_RESTART_TIMEOUT_MS	5000
-@@ -327,6 +328,7 @@ static void thames_mbox_rx(struct mbox_client *cl, void *mssg)
  
- 	dev_dbg(core->dev, "Doorbell on " THAMES_CORE_FMT ": 0x%x\n", THAMES_CORE_ARG(core),
- 		(u32)(uintptr_t)mssg);
-+	thames_job_complete(core);
++#define THAMES_IDLE_TIMEOUT_MS		2000
++
+ /*
+  * The IPC memory is the core's first memory-region, which remoteproc allocates
+  * from only for virtio rings and carveouts this firmware does not have.
+@@ -383,6 +385,38 @@ static void thames_core_free_doorbell(struct thames_core *core)
+ 	put_device(&core->mbox_dev);
  }
  
- /* Embedded in struct thames_core: nothing to free. */
-@@ -515,10 +517,18 @@ int thames_core_init(struct thames_core *core)
- 	if (err)
- 		goto err_timers;
- 
--	err = thames_core_request_doorbell(core);
-+	/*
-+	 * Before the doorbell: requesting it delivers at once a word the core
-+	 * wrote while no driver was loaded.
-+	 */
-+	err = thames_job_init(core);
- 	if (err)
- 		goto err_unmap;
- 
-+	err = thames_core_request_doorbell(core);
-+	if (err)
-+		goto err_job;
++/* With every core offline all stay ready, so an entity keeps a run queue. */
++static void thames_core_update_sched_ready(struct thames_device *tdev)
++{
++	bool any_online = false;
++	unsigned int i;
 +
- 	if (rproc->state == RPROC_OFFLINE) {
- 		err = rproc_boot(rproc);
- 		if (err)
-@@ -540,6 +550,8 @@ int thames_core_init(struct thames_core *core)
++	guard(mutex)(&tdev->sched_lock);
++
++	for (i = 0; i < tdev->num_cores; i++)
++		any_online |= !thames_core_is_dead(&tdev->cores[i]);
++
++	for (i = 0; i < tdev->num_cores; i++)
++		tdev->cores[i].sched.ready = !any_online ||
++					     !thames_core_is_dead(&tdev->cores[i]);
++}
++
++bool thames_core_test_and_set_offline(struct thames_core *core)
++{
++	bool was_online = !atomic_xchg(&core->dead, 1);
++
++	thames_core_update_sched_ready(core->tdev);
++
++	return was_online;
++}
++
++void thames_core_set_online(struct thames_core *core)
++{
++	atomic_set(&core->dead, 0);
++
++	thames_core_update_sched_ready(core->tdev);
++}
++
+ static int thames_core_rproc_boot(struct thames_core *core)
+ {
+ 	int err;
+@@ -405,6 +439,91 @@ static int thames_core_rproc_shutdown(struct thames_core *core)
+ 	return err;
+ }
+ 
++static bool thames_core_rproc_is_ours(struct thames_core *core)
++{
++	return READ_ONCE(core->rproc_caller) == current;
++}
++
++/* The stop cannot be refused from here; the core is taken offline before it. */
++static void thames_core_subdev_stop(struct rproc_subdev *subdev, bool crashed)
++{
++	struct thames_core *core = container_of(subdev, struct thames_core, subdev);
++	bool idle;
++
++	if (thames_core_rproc_is_ours(core))
++		return;
++
++	if (thames_core_test_and_set_offline(core))
++		dev_warn(core->dev, THAMES_CORE_FMT
++			 " is stopped through remoteproc; it is offline until remoteproc starts it again\n",
++			 THAMES_CORE_ARG(core));
++
++	/* Its fence lock may be held by a thread that never returns. */
++	if (core->completion_stuck)
++		return;
++
++	if (!crashed &&
++	    read_poll_timeout(thames_core_idles, idle, idle, USEC_PER_MSEC,
++			      THAMES_IDLE_TIMEOUT_MS * USEC_PER_MSEC, false, core))
++		dev_crit(core->dev, THAMES_CORE_FMT " is not known to idle; remoteproc stops it all the same\n",
++			 THAMES_CORE_ARG(core));
++
++	thames_job_complete(core);
++	thames_job_fail_submitted(core);
++}
++
++static int thames_core_subdev_start(struct rproc_subdev *subdev)
++{
++	struct thames_core *core = container_of(subdev, struct thames_core, subdev);
++	struct thames_caps caps = {};
++	u32 head, tail;
++	int err;
++
++	if (thames_core_rproc_is_ours(core))
++		return 0;
++
++	if (core->completion_stuck) {
++		dev_crit(core->dev, THAMES_CORE_FMT
++			 " stays offline: a completion of its never finished, a reboot is needed to use it again\n",
++			 THAMES_CORE_ARG(core));
++		return 0;
++	}
++
++	err = thames_core_wait_handshake(core);
++	if (!err)
++		err = thames_core_read_handshake(core, &caps);
++	if (!err) {
++		head = READ_ONCE(core->ipc->ring.head);
++		tail = READ_ONCE(core->ipc->ring.tail);
++		if (head != tail) {
++			dev_err(core->dev, "Ring on " THAMES_CORE_FMT
++				" is not empty after its boot (tail %u, head %u)\n",
++				THAMES_CORE_ARG(core), tail, head);
++			err = -EIO;
++		}
++	}
++	if (err) {
++		dev_crit(core->dev, THAMES_CORE_FMT
++			 " started through remoteproc did not attach (%d); it stays offline, left running\n",
++			 THAMES_CORE_ARG(core), err);
++		return 0;
++	}
++
++	core->ring_tail = head;
++	thames_context_rewrite_entries(core);
++	thames_transfers_rewrite(core);
++	thames_job_release_held(core);
++
++	core->suspended = false;
++	core->unfinished_seqno = 0;
++	thames_core_set_online(core);
++
++	dev_info(core->dev, THAMES_CORE_FMT " started through remoteproc; it is online again\n",
++		 THAMES_CORE_ARG(core));
++
++	return 0;
++}
++
+ /*
+  * The firmware drives these timers with no power request and the device tree
+  * reserves them for it, so the driver holds their power domains on.
+@@ -546,6 +665,15 @@ int thames_core_init(struct thames_core *core)
+ 	if (!core->tdev->num_cores)
+ 		core->tdev->caps = caps;
+ 
++	/*
++	 * Under the rproc lock: unlike rpmsg's, this subdevice joins an rproc
++	 * already registered and maybe running.
++	 */
++	core->subdev.start = thames_core_subdev_start;
++	core->subdev.stop = thames_core_subdev_stop;
++	scoped_guard(mutex, &rproc->lock)
++		rproc_add_subdev(rproc, &core->subdev);
++
+ 	return 0;
  
  err_doorbell:
- 	thames_core_free_doorbell(core);
-+err_job:
-+	thames_job_fini(core);
- err_unmap:
- 	thames_core_unmap_ipc(core);
- err_timers:
-@@ -554,6 +566,7 @@ void thames_core_fini(struct thames_core *core)
+@@ -564,6 +692,10 @@ int thames_core_init(struct thames_core *core)
+ 
+ void thames_core_fini(struct thames_core *core)
  {
++	scoped_guard(mutex, &core->rproc->lock)
++		rproc_remove_subdev(core->rproc, &core->subdev);
++
++	thames_job_drain(core);
  	if (core->mbox_chan)
  		thames_core_free_doorbell(core);
-+	thames_job_fini(core);
- 	/*
- 	 * Drop only our reference and keep the boot count: the core runs on
- 	 * for the next load to reattach to; only a reset or a suspend, which
-@@ -567,6 +580,21 @@ void thames_core_fini(struct thames_core *core)
- 	core->of_node = NULL;
+ 	thames_job_fini(core);
+@@ -595,6 +727,53 @@ bool thames_core_idles(struct thames_core *core)
+ 	return READ_ONCE(record->kind) == DRM_THAMES_FAULT_FIRMWARE;
  }
  
-+/* The system firmware accepts a stop only of a core in IDLE. */
-+bool thames_core_idles(struct thames_core *core)
++/* Runs on reset_wq, the ordered queue the timeout handler runs on. */
++int thames_core_reset(struct thames_core *core)
 +{
-+	u32 head = READ_ONCE(core->ipc->ring.head);
-+	u32 slot = head % THAMES_RING_DEPTH;
-+	struct thames_fault_record *record = &core->ipc->fault_records[slot];
++	struct thames_caps caps = {};
++	struct rproc *rproc = core->rproc;
++	bool idle;
++	int err;
 +
-+	if (head == core->ring_tail)
-+		return true;
++	err = read_poll_timeout(thames_core_idles, idle, idle, USEC_PER_MSEC,
++				THAMES_IDLE_TIMEOUT_MS * USEC_PER_MSEC, false, core);
++	if (err) {
++		dev_crit(core->dev, THAMES_CORE_FMT " is not known to idle; not stopping it\n",
++			 THAMES_CORE_ARG(core));
++		return -EBUSY;
++	}
 +
-+	/* Read the fault record after the head that says it is there. */
-+	rmb();
-+	return READ_ONCE(record->kind) == DRM_THAMES_FAULT_FIRMWARE;
++	dev_warn(core->dev, "Resetting " THAMES_CORE_FMT "\n", THAMES_CORE_ARG(core));
++
++	/*
++	 * So the restarted firmware does not run the entries left on the Ring
++	 * again.
++	 */
++	WRITE_ONCE(core->ipc->ring.head, core->ring_tail);
++	/* Order the head before the stop. */
++	wmb();
++
++	err = thames_core_rproc_shutdown(core);
++	if (!err && rproc->state != RPROC_OFFLINE) {
++		dev_err(core->dev, THAMES_CORE_FMT " is kept running by another power count; not resetting it\n",
++			THAMES_CORE_ARG(core));
++		thames_core_rproc_boot(core);
++		return -EBUSY;
++	}
++	if (err)
++		return err;
++
++	err = thames_core_rproc_boot(core);
++	if (err)
++		return err;
++
++	err = thames_core_wait_handshake(core);
++	if (err)
++		return err;
++
++	return thames_core_read_handshake(core, &caps);
 +}
 +
  /*
   * rproc_shutdown() reaches the system firmware because the core has one power
   * count, remoteproc's auto-boot or this driver's boot: the probe defers while
-@@ -577,6 +605,10 @@ int thames_core_suspend(struct thames_core *core)
- 	struct rproc *rproc = core->rproc;
- 	int err;
- 
-+	err = thames_job_suspend(core);
-+	if (err)
-+		return err;
-+
+@@ -612,6 +791,12 @@ int thames_core_suspend(struct thames_core *core)
  	if (core->suspended)
  		return 0;
  
-@@ -589,6 +621,7 @@ int thames_core_suspend(struct thames_core *core)
- 		err = -EBUSY;
- 	}
- 	if (err) {
-+		thames_job_resume(core);
- 		return err;
- 	}
++	if (thames_core_is_dead(core)) {
++		dev_warn(core->dev, THAMES_CORE_FMT " is offline; leaving it as it is across the suspend\n",
++			 THAMES_CORE_ARG(core));
++		return 0;
++	}
++
+ 	err = thames_core_rproc_shutdown(core);
+ 	if (!err && rproc->state != RPROC_OFFLINE) {
+ 		dev_err(core->dev, THAMES_CORE_FMT
+@@ -639,7 +824,7 @@ int thames_core_resume(struct thames_core *core)
+ 	u32 head, tail;
+ 	int err = 0;
  
-@@ -640,5 +673,6 @@ int thames_core_resume(struct thames_core *core)
+-	if (!core->suspended)
++	if (!core->suspended || thames_core_is_dead(core))
+ 		goto restart;
+ 
+ 	err = thames_core_rproc_boot(core);
+@@ -672,6 +857,10 @@ int thames_core_resume(struct thames_core *core)
+ 	goto restart;
  
  offline:
++	thames_core_test_and_set_offline(core);
++	dev_crit(core->dev, THAMES_CORE_FMT
++		 " did not come back from the suspend (%d); it is offline until it is stopped and started again through remoteproc\n",
++		 THAMES_CORE_ARG(core), err);
  restart:
-+	thames_job_resume(core);
+ 	thames_job_resume(core);
  	return err;
- }
 diff --git a/drivers/accel/thames/thames_core.h b/drivers/accel/thames/thames_core.h
-index 590c5716f7f5..a78414d18ad3 100644
+index a78414d18ad3..aa607d22064c 100644
 --- a/drivers/accel/thames/thames_core.h
 +++ b/drivers/accel/thames/thames_core.h
-@@ -10,6 +10,7 @@
- #include <linux/mutex_types.h>
- #include <linux/remoteproc.h>
+@@ -52,12 +52,23 @@ struct thames_core {
  
-+#include <drm/gpu_scheduler.h>
+ 	spinlock_t fence_lock;
  
- #include "thames_abi.h"
- 
-@@ -44,13 +45,25 @@ struct thames_core {
- 	struct mbox_chan *mbox_chan;
- 
- 	u32 ring_tail;
-+	struct list_head submitted;
-+	struct list_head held;
-+
-+	struct mutex job_lock;
-+
-+	spinlock_t fence_lock;
++	/* Cleared only when remoteproc boots the core again. */
++	atomic_t dead;
 +
  	/*
  	 * @rproc_caller is the task inside the driver's own rproc_boot() or
  	 * rproc_shutdown(), whose subdevice callbacks then do nothing.
  	 */
++	struct rproc_subdev subdev;
  	struct task_struct *rproc_caller;
  
-+	struct drm_gpu_scheduler sched;
-+	u64 fence_context;
-+	u64 emit_seqno;
++	/*
++	 * @completion_stuck: the same Job found unfinished at two timeouts in a
++	 * row.
++	 */
++	u64 unfinished_seqno;
++	bool completion_stuck;
 +
- 	bool suspended;
-+	unsigned long timeout_left;
+ 	struct drm_gpu_scheduler sched;
+ 	u64 fence_context;
+ 	u64 emit_seqno;
+@@ -92,8 +103,16 @@ static inline const struct resource *thames_core_window(const struct thames_core
+ #define THAMES_CORE_FMT "%s"
+ #define THAMES_CORE_ARG(core) ((core)->name)
  
- 	struct resource l2sram;
- 	struct resource l2aux;
-@@ -81,6 +94,7 @@ static inline const struct resource *thames_core_window(const struct thames_core
- 
++static inline bool thames_core_is_dead(struct thames_core *core)
++{
++	return atomic_read(&core->dead);
++}
++
++bool thames_core_test_and_set_offline(struct thames_core *core);
++void thames_core_set_online(struct thames_core *core);
  int thames_core_init(struct thames_core *core);
  void thames_core_fini(struct thames_core *core);
-+bool thames_core_idles(struct thames_core *core);
++int thames_core_reset(struct thames_core *core);
+ bool thames_core_idles(struct thames_core *core);
  int thames_core_suspend(struct thames_core *core);
  int thames_core_resume(struct thames_core *core);
- 
 diff --git a/drivers/accel/thames/thames_device.h b/drivers/accel/thames/thames_device.h
-index e183c78e2acf..0a34764885df 100644
+index 0a34764885df..f87c78a5f512 100644
 --- a/drivers/accel/thames/thames_device.h
 +++ b/drivers/accel/thames/thames_device.h
-@@ -36,7 +36,10 @@ struct thames_caps {
- struct thames_device {
- 	struct drm_device ddev;
+@@ -46,6 +46,8 @@ struct thames_device {
  
-+	struct mutex sched_lock;
+ 	struct ida ctx_ida;
+ 
++	struct workqueue_struct *reset_wq;
 +
- 	struct thames_core cores[THAMES_MAX_CORES];
-+	struct drm_gpu_scheduler *sched_list[THAMES_MAX_CORES];
- 	unsigned int num_cores;
- 
- 	struct thames_caps caps;
-@@ -72,6 +75,9 @@ struct thames_device {
- 	 */
- 	struct mutex bindings_lock;
- 
-+	/* Whoever takes a file off the list closes its Jobs. */
-+	struct mutex files_lock;
-+	struct list_head files;
- };
- 
- #define to_thames_device(drm_dev) \
+ 	/*
+ 	 * Seeded from the boot clock at load, so no serial repeats an earlier
+ 	 * load's.
 diff --git a/drivers/accel/thames/thames_drv.c b/drivers/accel/thames/thames_drv.c
-index 030c60963a0a..fc3328834162 100644
+index fc3328834162..5f704cbfe1d0 100644
 --- a/drivers/accel/thames/thames_drv.c
 +++ b/drivers/accel/thames/thames_drv.c
-@@ -23,6 +23,7 @@
- #include "thames_core.h"
- #include "thames_drv.h"
- #include "thames_gem.h"
-+#include "thames_job.h"
- #include "thames_transfers.h"
- 
- static struct platform_device *drm_dev;
-@@ -54,14 +55,23 @@ static int thames_open(struct drm_device *dev, struct drm_file *file)
+@@ -52,6 +52,7 @@ static int thames_open(struct drm_device *dev, struct drm_file *file)
+ 	thames_priv->tdev = tdev;
+ 	kref_init(&thames_priv->refcount);
+ 	mutex_init(&thames_priv->mm_lock);
++	spin_lock_init(&thames_priv->fault_lock);
  
  	file->driver_priv = thames_priv;
  
-+	ret = thames_job_open(thames_priv);
-+	if (ret)
-+		goto err_free;
-+
- 	ret = thames_context_create(thames_priv);
- 	if (ret)
- 		goto err_close_job;
- 
-+	scoped_guard(mutex, &tdev->files_lock)
-+		list_add_tail(&thames_priv->file_node, &tdev->files);
-+
- 	drm_dev_exit(idx);
+@@ -163,6 +164,25 @@ static int thames_query_copy_out(struct drm_thames_dev_query *args, const void *
  	return 0;
+ }
  
- err_close_job:
-+	thames_job_close(thames_priv);
-+err_free:
- 	kfree(thames_priv);
- err_exit:
- 	drm_dev_exit(idx);
-@@ -87,6 +97,14 @@ void thames_file_priv_put(struct thames_file_priv *priv)
- static void thames_postclose(struct drm_device *dev, struct drm_file *file)
- {
- 	struct thames_file_priv *thames_priv = file->driver_priv;
-+	struct thames_device *tdev = thames_priv->tdev;
-+
-+	scoped_guard(mutex, &tdev->files_lock) {
-+		if (!list_empty(&thames_priv->file_node)) {
-+			list_del_init(&thames_priv->file_node);
-+			thames_job_close(thames_priv);
-+		}
-+	}
- 
- 	dev_dbg(dev->dev, "Context %u: file closed, %u references left\n",
- 		thames_priv->context_id, kref_read(&thames_priv->refcount) - 1);
-@@ -208,6 +226,9 @@ static int thames_ioctl_##func##_entered(struct drm_device *dev, void *data,	\
- THAMES_IOCTL_ENTERED(bo_create)
- THAMES_IOCTL_ENTERED(bo_mmap_offset)
- THAMES_IOCTL_ENTERED(dev_query)
-+THAMES_IOCTL_ENTERED(job_create)
-+THAMES_IOCTL_ENTERED(job_submit)
-+THAMES_IOCTL_ENTERED(job_destroy)
- THAMES_IOCTL_ENTERED(bo_bind)
- 
- static const struct drm_ioctl_desc thames_drm_driver_ioctls[] = {
-@@ -215,6 +236,9 @@ static const struct drm_ioctl_desc thames_drm_driver_ioctls[] = {
- 	THAMES_IOCTL(BO_CREATE, bo_create_entered),
- 	THAMES_IOCTL(BO_MMAP_OFFSET, bo_mmap_offset_entered),
- 	THAMES_IOCTL(DEV_QUERY, dev_query_entered),
-+	THAMES_IOCTL(JOB_CREATE, job_create_entered),
-+	THAMES_IOCTL(JOB_SUBMIT, job_submit_entered),
-+	THAMES_IOCTL(JOB_DESTROY, job_destroy_entered),
- 	THAMES_IOCTL(BO_BIND, bo_bind_entered),
- };
- 
-@@ -272,6 +296,10 @@ static struct thames_device *thames_device_init(struct platform_device *pdev,
- 	if (err)
- 		return ERR_PTR(err);
- 
-+	err = drmm_mutex_init(&tdev->ddev, &tdev->sched_lock);
-+	if (err)
-+		return ERR_PTR(err);
-+
- 	err = drmm_mutex_init(&tdev->ddev, &tdev->transfer_table_pool_lock);
- 	if (err)
- 		return ERR_PTR(err);
-@@ -288,8 +316,13 @@ static struct thames_device *thames_device_init(struct platform_device *pdev,
- 	if (err)
- 		return ERR_PTR(err);
- 
-+	err = drmm_mutex_init(&tdev->ddev, &tdev->files_lock);
-+	if (err)
-+		return ERR_PTR(err);
-+
- 	INIT_LIST_HEAD(&tdev->transfer_tables);
- 	INIT_LIST_HEAD(&tdev->contexts);
-+	INIT_LIST_HEAD(&tdev->files);
- 
- 	tdev->asid_next = 1;
- 	/*
-@@ -347,6 +380,7 @@ static int thames_platform_probe(struct platform_device *pdev)
- 			continue;
- 		}
- 
-+		tdev->sched_list[core] = &tdev->cores[core].sched;
- 		tdev->num_cores++;
- 		core++;
- 	}
-@@ -391,6 +425,15 @@ static void thames_platform_remove(struct platform_device *pdev)
- 
- 	drm_dev_unplug(&tdev->ddev);
- 
-+	scoped_guard(mutex, &tdev->files_lock) {
-+		struct thames_file_priv *priv, *tmp;
-+
-+		list_for_each_entry_safe(priv, tmp, &tdev->files, file_node) {
-+			list_del_init(&priv->file_node);
-+			thames_job_close(priv);
-+		}
-+	}
-+
- 	for (core = 0; core < tdev->num_cores; core++)
- 		thames_core_fini(&tdev->cores[core]);
- 	tdev->num_cores = 0;
-diff --git a/drivers/accel/thames/thames_drv.h b/drivers/accel/thames/thames_drv.h
-index 7f9031b63780..2115f7eae589 100644
---- a/drivers/accel/thames/thames_drv.h
-+++ b/drivers/accel/thames/thames_drv.h
-@@ -11,6 +11,7 @@
- #include <linux/xarray.h>
- 
- #include <drm/drm_mm.h>
-+#include <drm/gpu_scheduler.h>
- 
- #include "thames_device.h"
- 
-@@ -26,6 +27,12 @@ struct thames_file_priv {
- 	 */
- 	struct kref refcount;
- 
-+	struct list_head file_node;
-+
-+	struct drm_sched_entity sched_entity;
-+
-+	struct xarray jobs;
-+
- 	struct io_pgtable_ops *pgtbl_ops[THAMES_MAX_CORES];
- 	u64 page_table_base[THAMES_MAX_CORES];
- 	u32 asid;
-diff --git a/drivers/accel/thames/thames_job.c b/drivers/accel/thames/thames_job.c
-new file mode 100644
-index 000000000000..6560106d47a8
---- /dev/null
-+++ b/drivers/accel/thames/thames_job.c
-@@ -0,0 +1,869 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
-+/* Copyright 2019 Collabora ltd. */
-+/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
-+/* Copyright 2026 Texas Instruments Incorporated - https://www.ti.com/ */
-+
-+#include <clocksource/arm_arch_timer.h>
-+#include <linux/dev_printk.h>
-+#include <linux/dma-fence-chain.h>
-+#include <linux/iopoll.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/platform_device.h>
-+#include <linux/xarray.h>
-+
-+#include <drm/drm_drv.h>
-+#include <drm/drm_file.h>
-+#include <drm/drm_gem.h>
-+#include <drm/drm_print.h>
-+#include <drm/drm_syncobj.h>
-+#include <drm/thames_accel.h>
-+
-+#include "thames_core.h"
-+#include "thames_device.h"
-+#include "thames_drv.h"
-+#include "thames_gem.h"
-+#include "thames_job.h"
-+
-+#define CREATE_TRACE_POINTS
-+#include "thames_trace.h"
-+
-+static struct thames_sched_job *to_thames_sched_job(struct drm_sched_job *sched_job)
++static int thames_query_job_fault(struct thames_file_priv *file_priv,
++				  struct drm_thames_dev_query *args)
 +{
-+	return container_of(sched_job, struct thames_sched_job, base);
-+}
-+
-+static void thames_sched_job_put(struct thames_sched_job *job);
-+static void thames_job_put(struct thames_job *job);
-+
-+#define THAMES_MAX_JOBS_PER_SUBMIT 256
-+#define THAMES_MAX_SUBMIT_BOS 4096
-+#define THAMES_MAX_SUBMIT_SYNCS 64
-+
-+/*
-+ * The host's timeout is longer than the device's: a Job still on the Ring when
-+ * it fires is on a stalled core.
-+ */
-+#define THAMES_DEVICE_TIMEOUT_MS 500
-+
-+struct thames_submit_bos {
-+	struct kref refcount;
-+	u32 read_count;
-+	u32 count;
-+	struct drm_gem_object *bos[] __counted_by(count);
-+};
-+
-+static void thames_submit_bos_free(struct kref *ref)
-+{
-+	struct thames_submit_bos *bos = container_of(ref, struct thames_submit_bos, refcount);
-+	u32 i;
-+
-+	for (i = 0; i < bos->count; i++) {
-+		if (bos->bos[i])
-+			drm_gem_object_put(bos->bos[i]);
-+	}
-+
-+	kvfree(bos);
-+}
-+
-+static void thames_submit_bos_put(struct thames_submit_bos *bos)
-+{
-+	if (bos)
-+		kref_put(&bos->refcount, thames_submit_bos_free);
-+}
-+
-+static const char *thames_fence_get_driver_name(struct dma_fence *fence)
-+{
-+	return "thames";
-+}
-+
-+static const char *thames_fence_get_timeline_name(struct dma_fence *fence)
-+{
-+	return "thames";
-+}
-+
-+static const struct dma_fence_ops thames_fence_ops = {
-+	.get_driver_name = thames_fence_get_driver_name,
-+	.get_timeline_name = thames_fence_get_timeline_name,
-+};
-+
-+static void thames_job_fail_done_fence(struct thames_sched_job *job, int error)
-+{
-+	if (!dma_fence_was_initialized(job->done_fence) || dma_fence_is_signaled(job->done_fence))
-+		return;
-+
-+	dma_fence_set_error(job->done_fence, error);
-+	dma_fence_signal(job->done_fence);
-+}
-+
-+static int thames_job_hw_submit(struct thames_core *core, struct thames_sched_job *sched_job)
-+{
-+	struct thames_ring *ring = &core->ipc->ring;
-+	struct thames_ring_host *host;
-+	u32 tail = core->ring_tail;
-+	u32 index = tail % THAMES_RING_DEPTH;
++	struct drm_thames_job_fault fault = {};
 +	int ret;
 +
-+	if (tail - READ_ONCE(ring->head) >= THAMES_RING_DEPTH) {
-+		dev_err(core->dev, "Ring full on " THAMES_CORE_FMT "\n", THAMES_CORE_ARG(core));
-+		return -ENOSPC;
-+	}
++	if (args->size < offsetofend(struct drm_thames_job_fault, job))
++		return -EINVAL;
 +
-+	sched_job->stamps[0] = arch_timer_read_counter();
-+	sched_job->ring_index = index;
++	if (get_user(fault.job, (u32 __user *)u64_to_user_ptr(args->pointer)))
++		return -EFAULT;
 +
-+	host = &ring->entries[index].host;
-+	host->context_id = sched_job->file_priv->context_id;
-+	host->transfer_count = sched_job->job->transfers.count;
-+	host->transfer_group_count = sched_job->job->transfers.group_count;
-+	host->transfer_table_offset = sched_job->job->transfers.offset;
-+	host->seqno = sched_job->seqno;
-+	host->program_dsp_va = sched_job->job->program_dsp_va;
-+	host->params_dsp_va = sched_job->job->params_dsp_va;
-+	host->context_serial = sched_job->file_priv->context_serial;
-+	host->timeout_ms = THAMES_DEVICE_TIMEOUT_MS;
++	ret = thames_job_query_fault(file_priv, &fault);
++	if (ret)
++		return ret;
 +
-+	scoped_guard(mutex, &core->job_lock) {
-+		kref_get(&sched_job->refcount); /* Put by thames_job_complete(). */
-+		list_add_tail(&sched_job->node, &core->submitted);
-+
-+		/* Order the host half before the tail. */
-+		wmb();
-+		WRITE_ONCE(ring->tail, tail + 1);
-+		core->ring_tail = tail + 1;
-+		/* Order the tail before the doorbell. */
-+		wmb();
-+	}
-+
-+	/*
-+	 * The Job is on the Ring whatever the send returns; it completes
-+	 * through the Fence or the timeout.
-+	 */
-+	ret = mbox_send_message(core->mbox_chan, (void *)(uintptr_t)THAMES_DOORBELL);
-+	if (ret < 0)
-+		dev_warn_ratelimited(core->dev, "Doorbell not sent: %d\n", ret);
-+
-+	return 0;
++	return thames_query_copy_out(args, &fault, sizeof(fault));
 +}
 +
-+void thames_job_complete(struct thames_core *core)
+ static int thames_query_caps(struct drm_device *dev, struct drm_thames_dev_query *args)
+ {
+ 	struct thames_device *tdev = to_thames_device(dev);
+@@ -190,6 +210,7 @@ static int thames_query_caps(struct drm_device *dev, struct drm_thames_dev_query
+ 
+ static int thames_ioctl_dev_query(struct drm_device *dev, void *data, struct drm_file *file)
+ {
++	struct thames_file_priv *file_priv = file->driver_priv;
+ 	struct drm_thames_dev_query *args = data;
+ 
+ 	switch (args->type) {
+@@ -199,6 +220,12 @@ static int thames_ioctl_dev_query(struct drm_device *dev, void *data, struct drm
+ 			return 0;
+ 		}
+ 		return thames_query_caps(dev, args);
++	case DRM_THAMES_DEV_QUERY_JOB_FAULT:
++		if (!args->pointer) {
++			args->size = sizeof(struct drm_thames_job_fault);
++			return 0;
++		}
++		return thames_query_job_fault(file_priv, args);
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -333,12 +360,18 @@ static struct thames_device *thames_device_init(struct platform_device *pdev,
+ 	atomic64_set(&tdev->last_context_serial, seed);
+ 	atomic64_set(&tdev->mapping_generation, seed);
+ 
++	tdev->reset_wq = alloc_ordered_workqueue("thames-reset", 0);
++	if (!tdev->reset_wq)
++		return ERR_PTR(-ENOMEM);
++
+ 	return tdev;
+ }
+ 
+ static void thames_device_fini(struct thames_device *tdev)
+ {
+ 	WARN_ON(tdev->num_cores > 0);
++
++	destroy_workqueue(tdev->reset_wq);
+ }
+ 
+ static int thames_platform_probe(struct platform_device *pdev)
+diff --git a/drivers/accel/thames/thames_drv.h b/drivers/accel/thames/thames_drv.h
+index 2115f7eae589..65e5c900313d 100644
+--- a/drivers/accel/thames/thames_drv.h
++++ b/drivers/accel/thames/thames_drv.h
+@@ -53,6 +53,11 @@ struct thames_file_priv {
+ 
+ 	struct drm_gem_dma_object *user_stack;
+ 	struct drm_gem_dma_object *save_area;
++
++	/* Bit 0 is the newest completed Job, set when it faulted. */
++	spinlock_t fault_lock;
++	u16 fault_history;
++	bool banned;
+ };
+ 
+ void thames_file_priv_put(struct thames_file_priv *priv);
+diff --git a/drivers/accel/thames/thames_job.c b/drivers/accel/thames/thames_job.c
+index 6560106d47a8..1f1a00eb8c63 100644
+--- a/drivers/accel/thames/thames_job.c
++++ b/drivers/accel/thames/thames_job.c
+@@ -9,7 +9,9 @@
+ #include <linux/dma-fence-chain.h>
+ #include <linux/iopoll.h>
+ #include <linux/mailbox_client.h>
++#include <linux/math64.h>
+ #include <linux/platform_device.h>
++#include <linux/time64.h>
+ #include <linux/xarray.h>
+ 
+ #include <drm/drm_drv.h>
+@@ -45,6 +47,8 @@ static void thames_job_put(struct thames_job *job);
+  * it fires is on a stalled core.
+  */
+ #define THAMES_DEVICE_TIMEOUT_MS 500
++#define THAMES_HOST_TIMEOUT_MS 2000
++static_assert(THAMES_HOST_TIMEOUT_MS > THAMES_DEVICE_TIMEOUT_MS);
+ 
+ struct thames_submit_bos {
+ 	struct kref refcount;
+@@ -72,6 +76,24 @@ static void thames_submit_bos_put(struct thames_submit_bos *bos)
+ 		kref_put(&bos->refcount, thames_submit_bos_free);
+ }
+ 
++#define THAMES_BAN_FAULTS 3
++#define THAMES_BAN_SPAN 10
++static_assert(THAMES_BAN_SPAN <= 16);
++
++static_assert(THAMES_FAULT_KIND_KERNEL == DRM_THAMES_FAULT_KERNEL);
++static_assert(THAMES_FAULT_KIND_FIRMWARE == DRM_THAMES_FAULT_FIRMWARE);
++static_assert(THAMES_FAULT_KIND_TIMEOUT == DRM_THAMES_FAULT_TIMEOUT);
++static_assert(THAMES_FAULT_REG_IERR == DRM_THAMES_REG_IERR);
++static_assert(THAMES_FAULT_REG_IEAR == DRM_THAMES_REG_IEAR);
++static_assert(THAMES_FAULT_REG_IESR == DRM_THAMES_REG_IESR);
++static_assert(THAMES_FAULT_REG_NRP == DRM_THAMES_REG_NRP);
++static_assert(THAMES_FAULT_REG_NTSR == DRM_THAMES_REG_NTSR);
++static_assert(THAMES_FAULT_REG_SE0_FAR == DRM_THAMES_REG_SE0_FAR);
++static_assert(THAMES_FAULT_REG_SE0_FSR == DRM_THAMES_REG_SE0_FSR);
++static_assert(THAMES_FAULT_REG_SE1_FAR == DRM_THAMES_REG_SE1_FAR);
++static_assert(THAMES_FAULT_REG_SE1_FSR == DRM_THAMES_REG_SE1_FSR);
++static_assert(THAMES_FAULT_REGISTERS == DRM_THAMES_FAULT_REGISTERS);
++
+ static const char *thames_fence_get_driver_name(struct dma_fence *fence)
+ {
+ 	return "thames";
+@@ -146,11 +168,96 @@ static int thames_job_hw_submit(struct thames_core *core, struct thames_sched_jo
+ 	return 0;
+ }
+ 
++/*
++ * Copied once: the record is the Job's only if its seqno matches, since a later
++ * Job's slot keeps an earlier record.
++ */
++static bool thames_job_read_fault(struct thames_core *core, struct thames_sched_job *job,
++				  struct thames_fault_record *record)
 +{
-+	struct thames_sched_job *job, *tmp;
-+	LIST_HEAD(done);
-+	u64 completed, signalled;
++	memcpy(record, &core->ipc->fault_records[job->ring_index], sizeof(*record));
 +
-+	completed = READ_ONCE(core->ipc->fence.seqno);
-+	/* Read the entries after the Fence that covers them. */
++	if (record->seqno != job->seqno)
++		return false;
++
++	if (record->kind < DRM_THAMES_FAULT_KERNEL || record->kind > DRM_THAMES_FAULT_TIMEOUT) {
++		dev_warn_ratelimited(core->dev,
++				     "Job seqno %llu: fault record of unknown kind %u refused\n",
++				     job->seqno, record->kind);
++		return false;
++	}
++
++	return true;
++}
++
++/*
++ * The firmware faulted with its Ring empty: it writes the record at its head's
++ * slot under that slot's stale seqno and takes no doorbell after.
++ */
++static bool thames_job_read_empty_ring_fault(struct thames_core *core, struct thames_sched_job *job,
++					     struct thames_fault_record *record)
++{
++	u32 head = READ_ONCE(core->ipc->ring.head);
++
++	if (head % THAMES_RING_DEPTH != job->ring_index)
++		return false;
++
++	/* Read the fault record after the head that says it is there. */
 +	rmb();
++	memcpy(record, &core->ipc->fault_records[job->ring_index], sizeof(*record));
 +
-+	scoped_guard(mutex, &core->job_lock) {
-+		list_for_each_entry_safe(job, tmp, &core->submitted, node) {
-+			if (job->seqno > completed)
-+				break;
-+			list_move_tail(&job->node, &done);
++	return record->kind == DRM_THAMES_FAULT_FIRMWARE;
++}
++
++static void thames_job_set_fault(struct thames_sched_job *sched_job,
++				 const struct thames_fault_record *record)
++{
++	struct thames_job *job = sched_job->job;
++
++	guard(mutex)(&job->lock);
++
++	job->fault_kind = record->kind;
++	memcpy(job->fault_registers, record->registers, sizeof(job->fault_registers));
++	job->fault_valid = true;
++}
++
++static void thames_context_count_job(struct thames_core *core, struct thames_sched_job *job,
++				     bool faulted)
++{
++	struct thames_file_priv *priv = job->file_priv;
++	bool ban = false;
++	u16 history;
++
++	scoped_guard(spinlock, &priv->fault_lock) {
++		history = (priv->fault_history << 1) | faulted;
++		history &= GENMASK(THAMES_BAN_SPAN - 1, 0);
++		priv->fault_history = history;
++
++		if (!priv->banned && hweight16(history) >= THAMES_BAN_FAULTS) {
++			WRITE_ONCE(priv->banned, true);
++			ban = true;
 +		}
 +	}
 +
-+	list_for_each_entry_safe(job, tmp, &done, node) {
-+		struct thames_ring_fw *fw = &core->ipc->ring.entries[job->ring_index].fw;
++	if (ban)
++		dev_warn(core->dev,
++			 "Context %u banned: %u of its last %u Jobs faulted (Job seqno %llu)\n",
++			 priv->context_id, hweight16(history), THAMES_BAN_SPAN, job->seqno);
++}
 +
-+		job->stamps[1] = fw->doorbell_seen_stamp;
-+		job->stamps[2] = fw->run_start_stamp;
-+		job->stamps[3] = fw->run_end_stamp;
-+		job->stamps[4] = fw->kernel_entry_stamp;
-+		job->stamps[5] = fw->kernel_exit_stamp;
++static bool thames_context_banned(struct thames_file_priv *priv)
++{
++	return READ_ONCE(priv->banned);
++}
 +
-+		if (fw->fence_value == THAMES_FENCE_ERROR) {
-+			dma_fence_set_error(job->done_fence, -EIO);
-+		}
+ void thames_job_complete(struct thames_core *core)
+ {
+ 	struct thames_sched_job *job, *tmp;
++	struct thames_fault_record record;
+ 	LIST_HEAD(done);
++	u32 hz = core->tdev->caps.timestamp_hz;
+ 	u64 completed, signalled;
++	bool faulted, firmware_fault = false;
+ 
+ 	completed = READ_ONCE(core->ipc->fence.seqno);
+ 	/* Read the entries after the Fence that covers them. */
+@@ -173,16 +280,52 @@ void thames_job_complete(struct thames_core *core)
+ 		job->stamps[4] = fw->kernel_entry_stamp;
+ 		job->stamps[5] = fw->kernel_exit_stamp;
+ 
++		faulted = false;
+ 		if (fw->fence_value == THAMES_FENCE_ERROR) {
++			if (thames_job_read_fault(core, job, &record)) {
++				thames_job_set_fault(job, &record);
++				faulted = record.kind == DRM_THAMES_FAULT_KERNEL ||
++					  record.kind == DRM_THAMES_FAULT_TIMEOUT;
++			}
++			if (faulted && record.kind == DRM_THAMES_FAULT_TIMEOUT)
++				dev_warn_ratelimited(core->dev,
++						     "Job seqno %llu of Context %u: its Kernel ran past the device's timeout (entry to exit %llu us)\n",
++						     job->seqno, job->file_priv->context_id,
++						     mul_u64_u32_div(job->stamps[3] -
++								     job->stamps[2],
++								     USEC_PER_SEC, hz));
++			else if (faulted)
++				dev_warn_ratelimited(core->dev,
++						     "Job seqno %llu of Context %u: its Kernel faulted\n",
++						     job->seqno, job->file_priv->context_id);
++			else
++				dev_warn_ratelimited(core->dev,
++						     "Job seqno %llu: firmware could not honour the entry\n",
++						     job->seqno);
+ 			dma_fence_set_error(job->done_fence, -EIO);
+ 		}
+ 
++		thames_context_count_job(core, job, faulted);
 +
+ 		list_del_init(&job->node);
+ 		signalled = arch_timer_read_counter();
+ 		dma_fence_signal(job->done_fence);
+ 		trace_thames_job_done(core, job, signalled);
+ 		thames_sched_job_put(job);
+ 	}
++
++	/*
++	 * The firmware's own fault moves neither the Fence nor the head: it
++	 * rings the doorbell and parks in IDLE.
++	 */
++	scoped_guard(mutex, &core->job_lock) {
++		job = list_first_entry_or_null(&core->submitted, struct thames_sched_job, node);
++		if (job && !thames_core_is_dead(core) && thames_job_read_fault(core, job, &record))
++			firmware_fault = record.kind == DRM_THAMES_FAULT_FIRMWARE;
++	}
++
++	if (firmware_fault)
++		drm_sched_fault(&core->sched);
+ }
+ 
+ static int thames_acquire_object_fences(struct drm_gem_object **bos, int bo_count,
+@@ -215,6 +358,12 @@ static void thames_attach_object_fences(struct drm_gem_object **bos, int bo_coun
+ /* Nothing here fails, so a submit call pushes every Job or none. */
+ static void thames_job_push(struct thames_sched_job *sched_job)
+ {
++	struct thames_job *job = sched_job->job;
++
++	/* Before the push, so the submission's own record cannot be lost. */
++	scoped_guard(mutex, &job->lock)
++		job->fault_valid = false;
++
+ 	scoped_guard(mutex, &sched_job->tdev->sched_lock) {
+ 		drm_sched_job_arm(&sched_job->base);
+ 
+@@ -270,6 +419,12 @@ static struct dma_fence *thames_job_run(struct drm_sched_job *sched_job)
+ 	if (unlikely(job->base.s_fence->finished.error))
+ 		return NULL;
+ 
++	if (thames_core_is_dead(core))
++		return ERR_PTR(-ENODEV);
++
++	if (thames_context_banned(job->file_priv))
++		return ERR_PTR(-ECANCELED);
++
+ 	/* The done fence keeps the seqno of the Job's first push. */
+ 	job->seqno = ++core->emit_seqno;
+ 	if (!dma_fence_was_initialized(job->done_fence))
+@@ -285,6 +440,223 @@ static struct dma_fence *thames_job_run(struct drm_sched_job *sched_job)
+ 	return dma_fence_get(job->done_fence);
+ }
+ 
++void thames_job_release_held(struct thames_core *core)
++{
++	struct thames_sched_job *job, *tmp;
++	LIST_HEAD(held);
++
++	scoped_guard(mutex, &core->job_lock)
++		list_splice_init(&core->held, &held);
++
++	list_for_each_entry_safe(job, tmp, &held, node) {
 +		list_del_init(&job->node);
-+		signalled = arch_timer_read_counter();
-+		dma_fence_signal(job->done_fence);
-+		trace_thames_job_done(core, job, signalled);
 +		thames_sched_job_put(job);
 +	}
 +}
 +
-+static int thames_acquire_object_fences(struct drm_gem_object **bos, int bo_count,
-+					struct drm_sched_job *job, bool is_write)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < bo_count; i++) {
-+		ret = dma_resv_reserve_fences(bos[i]->resv, 1);
-+		if (ret)
-+			return ret;
-+
-+		ret = drm_sched_job_add_implicit_dependencies(job, bos[i], is_write);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void thames_attach_object_fences(struct drm_gem_object **bos, int bo_count,
-+					struct dma_fence *fence, enum dma_resv_usage usage)
-+{
-+	int i;
-+
-+	for (i = 0; i < bo_count; i++)
-+		dma_resv_add_fence(bos[i]->resv, fence, usage);
-+}
-+
-+/* Nothing here fails, so a submit call pushes every Job or none. */
-+static void thames_job_push(struct thames_sched_job *sched_job)
-+{
-+	scoped_guard(mutex, &sched_job->tdev->sched_lock) {
-+		drm_sched_job_arm(&sched_job->base);
-+
-+		sched_job->inference_done_fence = dma_fence_get(&sched_job->base.s_fence->finished);
-+
-+		kref_get(&sched_job->refcount); /* put by scheduler job completion */
-+
-+		drm_sched_entity_push_job(&sched_job->base);
-+	}
-+}
-+
-+static void thames_sched_job_cleanup(struct kref *ref)
-+{
-+	struct thames_sched_job *sched_job = container_of(ref, struct thames_sched_job, refcount);
-+
-+	if (dma_fence_was_initialized(sched_job->done_fence))
-+		dma_fence_put(sched_job->done_fence);
-+	else
-+		dma_fence_free(sched_job->done_fence);
-+	dma_fence_put(sched_job->inference_done_fence);
-+
-+	thames_submit_bos_put(sched_job->bos);
-+
-+	if (sched_job->file_priv)
-+		thames_file_priv_put(sched_job->file_priv);
-+
-+	if (sched_job->job)
-+		thames_job_put(sched_job->job);
-+
-+	kfree(sched_job);
-+}
-+
-+static void thames_sched_job_put(struct thames_sched_job *job)
-+{
-+	kref_put(&job->refcount, thames_sched_job_cleanup);
-+}
-+
-+static void thames_sched_job_free(struct drm_sched_job *sched_job)
-+{
-+	struct thames_sched_job *job = to_thames_sched_job(sched_job);
-+
-+	drm_sched_job_cleanup(sched_job);
-+
-+	thames_sched_job_put(job);
-+}
-+
-+static struct dma_fence *thames_job_run(struct drm_sched_job *sched_job)
-+{
-+	struct thames_sched_job *job = to_thames_sched_job(sched_job);
-+	struct thames_core *core = container_of(sched_job->sched, struct thames_core, sched);
-+	int ret;
-+
-+	if (unlikely(job->base.s_fence->finished.error))
-+		return NULL;
-+
-+	/* The done fence keeps the seqno of the Job's first push. */
-+	job->seqno = ++core->emit_seqno;
-+	if (!dma_fence_was_initialized(job->done_fence))
-+		dma_fence_init(job->done_fence, &thames_fence_ops, &core->fence_lock,
-+			       core->fence_context, job->seqno);
-+
-+	ret = thames_job_hw_submit(core, job);
-+	if (ret) {
-+		thames_job_fail_done_fence(job, ret);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return dma_fence_get(job->done_fence);
-+}
-+
 +/*
-+ * A done fence not signalled here is a Job on a live core's Ring that may still
-+ * run.
++ * Held, not freed: the system firmware may refuse the stop and the core run on.
 + */
-+static void thames_job_cancel(struct drm_sched_job *sched_job)
-+{
-+	struct thames_sched_job *job = to_thames_sched_job(sched_job);
-+	struct thames_core *core = container_of(sched_job->sched, struct thames_core, sched);
-+
-+	if (!dma_fence_was_initialized(job->done_fence) || dma_fence_is_signaled(job->done_fence))
-+		return;
-+
-+	scoped_guard(mutex, &core->job_lock)
-+		list_move_tail(&job->node, &core->held);
-+
-+	thames_job_fail_done_fence(job, -ECANCELED);
-+}
-+
-+static const struct drm_sched_backend_ops thames_sched_ops = {
-+	.run_job = thames_job_run,
-+	.free_job = thames_sched_job_free,
-+	.cancel_job = thames_job_cancel,
-+};
-+
-+int thames_job_init(struct thames_core *core)
-+{
-+	/* One credit per Ring entry, so the tail never overruns the head. */
-+	struct drm_sched_init_args args = {
-+		.ops = &thames_sched_ops,
-+		.num_rqs = 1,
-+		.credit_limit = THAMES_RING_DEPTH,
-+		.timeout = MAX_SCHEDULE_TIMEOUT,
-+		.name = dev_name(core->dev),
-+		.dev = core->dev,
-+	};
-+	u32 head, tail, before;
-+	u64 fence, before_seqno, last;
-+	int ret;
-+
-+	spin_lock_init(&core->fence_lock);
-+	mutex_init(&core->job_lock);
-+
-+	INIT_LIST_HEAD(&core->submitted);
-+	INIT_LIST_HEAD(&core->held);
-+
-+	/*
-+	 * Both indices run free, so only a tail not at the head is wrong: the
-+	 * previous instance's entries are still pending.  The Fence may trail
-+	 * the head by one entry, the firmware moving the head first.
-+	 */
-+	head = READ_ONCE(core->ipc->ring.head);
-+	tail = READ_ONCE(core->ipc->ring.tail);
-+	before = (head - 1) % THAMES_RING_DEPTH;
-+
-+	if (tail != head) {
-+		dev_err(core->dev, "Ring on " THAMES_CORE_FMT
-+			" has %u pending entries (tail %u, head %u); not attaching\n",
-+			THAMES_CORE_ARG(core), tail - head, tail, head);
-+		return -EBUSY;
-+	}
-+
-+	/* Read the Fence and the entry after the head and the tail. */
-+	rmb();
-+	fence = READ_ONCE(core->ipc->fence.seqno);
-+	before_seqno = core->ipc->ring.entries[before].host.seqno;
-+	last = max(fence, before_seqno);
-+
-+	core->ring_tail = head;
-+	core->emit_seqno = last;
-+
-+	core->fence_context = dma_fence_context_alloc(1);
-+
-+	ret = drm_sched_init(&core->sched, &args);
-+	if (ret) {
-+		dev_err(core->dev, "Failed to create scheduler: %d.", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * These Jobs' core may still run their Kernels: the Jobs, Contexts and buffers
-+ * stay allocated.
-+ */
-+void thames_job_fini(struct thames_core *core)
++void thames_job_fail_submitted(struct thames_core *core)
 +{
 +	struct thames_sched_job *job;
-+	u64 first = U64_MAX, last = 0;
-+	size_t kept;
++	LIST_HEAD(lost);
 +
-+	drm_sched_fini(&core->sched);
++	scoped_guard(mutex, &core->job_lock)
++		list_splice_init(&core->submitted, &lost);
 +
-+	guard(mutex)(&core->job_lock);
++	list_for_each_entry(job, &lost, node)
++		thames_job_fail_done_fence(job, -ENODEV);
 +
-+	kept = list_count_nodes(&core->held);
-+	if (!kept)
-+		return;
-+
-+	list_for_each_entry(job, &core->held, node) {
-+		first = min(first, job->seqno);
-+		last = max(last, job->seqno);
-+	}
-+
-+	drm_dev_get(&core->tdev->ddev);
-+	dev_warn(core->dev, THAMES_CORE_FMT
-+		 " may still run %zu Jobs (seqno %llu to %llu); keeping them and their buffers until reboot\n",
-+		 THAMES_CORE_ARG(core), kept, first, last);
++	scoped_guard(mutex, &core->job_lock)
++		list_splice_tail_init(&lost, &core->held);
 +}
 +
-+/*
-+ * Above the device's timeout, so the firmware ends a runaway Kernel within the
-+ * wait.
-+ */
-+#define THAMES_SUSPEND_TIMEOUT_MS (THAMES_DEVICE_TIMEOUT_MS + 100)
-+
-+int thames_job_suspend(struct thames_core *core)
++static void thames_job_recover(struct thames_core *core, struct drm_sched_job *sched_job,
++			       struct thames_sched_job *bad,
++			       const struct thames_fault_record *record)
 +{
 +	struct drm_gpu_scheduler *sched = &core->sched;
-+	unsigned int wait_ms;
-+	size_t pending;
-+	bool idle;
++	struct thames_sched_job *job;
++	struct drm_sched_job *s_job;
++	unsigned int resubmitted = 0;
++	LIST_HEAD(lost);
 +	int err;
 +
 +	drm_sched_wqueue_stop(sched);
-+	core->timeout_left = drm_sched_suspend_timeout(sched);
-+	cancel_delayed_work_sync(&sched->work_tdr);
-+	drm_sched_wqueue_stop(sched);
++
++	/* Failed before drm_sched_stop(), so the stop finds it complete. */
++	if (bad) {
++		scoped_guard(mutex, &core->job_lock)
++			list_del_init(&bad->node);
++
++		dev_warn(core->dev, "Job seqno %llu of Context %u: the firmware faulted\n",
++			 bad->seqno, bad->file_priv->context_id);
++		thames_job_set_fault(bad, record);
++		thames_context_count_job(core, bad, true);
++		dma_fence_set_error(bad->done_fence, -EIO);
++		dma_fence_signal(bad->done_fence);
++		thames_sched_job_put(bad);
++	} else {
++		dev_warn(core->dev, THAMES_CORE_FMT
++			 ": the firmware faulted with its Ring empty (IERR 0x%llx, NRP 0x%llx)\n",
++			 THAMES_CORE_ARG(core), record->registers[THAMES_FAULT_REG_IERR],
++			 record->registers[THAMES_FAULT_REG_NRP]);
++	}
++
++	drm_sched_stop(sched, sched_job);
 +
 +	scoped_guard(mutex, &core->job_lock)
-+		pending = list_count_nodes(&core->submitted);
-+	wait_ms = max_t(unsigned int, pending, 1) * THAMES_SUSPEND_TIMEOUT_MS;
++		list_splice_init(&core->submitted, &lost);
 +
-+	err = read_poll_timeout(thames_core_idles, idle, idle, USEC_PER_MSEC,
-+				wait_ms * USEC_PER_MSEC, false, core);
++	/*
++	 * Kept until the reset has stopped the core, which may still run one of
++	 * their Kernels.
++	 */
++	err = thames_core_reset(core);
++	if (err) {
++		thames_core_test_and_set_offline(core);
++		dev_crit(core->dev, THAMES_CORE_FMT
++			 " could not be reset (%d); it is offline until it is stopped and started again through remoteproc\n",
++			 THAMES_CORE_ARG(core), err);
 +
-+	if (!err) {
-+		thames_job_complete(core);
-+		scoped_guard(mutex, &core->job_lock) {
-+			if (!list_empty(&core->submitted))
-+				err = -EBUSY;
++		list_for_each_entry(job, &lost, node)
++			thames_job_fail_done_fence(job, -ENODEV);
++
++		scoped_guard(mutex, &core->job_lock)
++			list_splice_tail_init(&lost, &core->held);
++
++		drm_sched_start(sched, -ENODEV);
++		return;
++	}
++
++	scoped_guard(mutex, &core->job_lock)
++		list_splice_tail_init(&lost, &core->held);
++
++	thames_job_release_held(core);
++
++	drm_sched_for_each_pending_job(s_job, sched, NULL) {
++		struct dma_fence *fence = thames_job_run(s_job);
++
++		if (IS_ERR_OR_NULL(fence)) {
++			thames_job_fail_done_fence(to_thames_sched_job(s_job),
++						   fence ? PTR_ERR(fence) : -ECANCELED);
++			continue;
++		}
++
++		s_job->s_fence->parent = fence;
++		resubmitted++;
++	}
++
++	dev_info(core->dev, THAMES_CORE_FMT " restarted, %u Jobs resubmitted\n",
++		 THAMES_CORE_ARG(core), resubmitted);
++
++	drm_sched_start(sched, 0);
++}
++
++/*
++ * Only job_lock: the core's fence lock may be held by a completion thread that
++ * died.
++ */
++static bool thames_job_in_completion(struct thames_core *core, struct thames_sched_job *job)
++{
++	struct thames_sched_job *pending;
++
++	if (dma_fence_is_signaled(&job->base.s_fence->finished))
++		return false;
++
++	guard(mutex)(&core->job_lock);
++	list_for_each_entry(pending, &core->submitted, node) {
++		if (pending == job)
++			return false;
++	}
++
++	return true;
++}
++
++static enum drm_gpu_sched_stat thames_job_timedout(struct drm_sched_job *sched_job)
++{
++	struct thames_sched_job *job = to_thames_sched_job(sched_job);
++	struct thames_sched_job *pending, *oldest = NULL;
++	struct thames_core *core = container_of(sched_job->sched, struct thames_core, sched);
++	struct thames_fault_record record;
++	LIST_HEAD(dead_jobs);
++	bool found = false;
++
++	if (core->completion_stuck)
++		return DRM_GPU_SCHED_STAT_ENODEV;
++
++	if (thames_job_in_completion(core, job)) {
++		if (core->unfinished_seqno != job->seqno) {
++			core->unfinished_seqno = job->seqno;
++			return DRM_GPU_SCHED_STAT_NO_HANG;
++		}
++
++		core->completion_stuck = true;
++		thames_core_test_and_set_offline(core);
++		dev_crit(core->dev, "Job seqno %llu on " THAMES_CORE_FMT
++			 ": its completion never finished; taking the core offline, a reboot is needed to use it again\n",
++			 job->seqno, THAMES_CORE_ARG(core));
++		return DRM_GPU_SCHED_STAT_ENODEV;
++	}
++
++	thames_job_complete(core);
++
++	scoped_guard(mutex, &core->job_lock) {
++		oldest = list_first_entry_or_null(&core->submitted, struct thames_sched_job, node);
++		list_for_each_entry(pending, &core->submitted, node) {
++			if (pending == job) {
++				found = true;
++				break;
++			}
 +		}
 +	}
 +
-+	if (err) {
-+		dev_err(core->dev, THAMES_CORE_FMT
-+			" is not idle with its Jobs completed after %u ms; refusing the suspend\n",
-+			THAMES_CORE_ARG(core), wait_ms);
-+		thames_job_resume(core);
-+		return -EBUSY;
++	if (!found)
++		return DRM_GPU_SCHED_STAT_NO_HANG;
++
++	/*
++	 * Any other timeout is a core that may still run: it is taken offline,
++	 * never stopped.
++	 */
++	if (!thames_core_is_dead(core) && thames_job_read_fault(core, oldest, &record) &&
++	    record.kind == DRM_THAMES_FAULT_FIRMWARE) {
++		thames_job_recover(core, sched_job, oldest, &record);
++		return DRM_GPU_SCHED_STAT_RESET;
 +	}
 +
-+	return 0;
++	if (!thames_core_is_dead(core) && thames_job_read_empty_ring_fault(core, oldest, &record)) {
++		thames_job_recover(core, sched_job, NULL, &record);
++		return DRM_GPU_SCHED_STAT_RESET;
++	}
++
++	if (thames_core_test_and_set_offline(core))
++		dev_crit(core->dev, "Job seqno %llu timed out on " THAMES_CORE_FMT
++			 "; taking the core offline until it is stopped and started again through remoteproc\n",
++			 job->seqno, THAMES_CORE_ARG(core));
++
++	drm_sched_stop(&core->sched, sched_job);
++
++	/*
++	 * The core may still run their Kernels: it keeps the push's reference,
++	 * and with it the Context and the buffers.
++	 */
++	scoped_guard(mutex, &core->job_lock)
++		list_splice_init(&core->submitted, &dead_jobs);
++
++	list_for_each_entry(pending, &dead_jobs, node) {
++		dma_fence_set_error(pending->done_fence, -ENODEV);
++		dma_fence_signal(pending->done_fence);
++	}
++
++	scoped_guard(mutex, &core->job_lock)
++		list_splice_tail_init(&dead_jobs, &core->held);
++
++	drm_sched_start(&core->sched, -ENODEV);
++
++	return DRM_GPU_SCHED_STAT_RESET;
 +}
 +
-+void thames_job_resume(struct thames_core *core)
+ /*
+  * A done fence not signalled here is a Job on a live core's Ring that may still
+  * run.
+@@ -305,6 +677,7 @@ static void thames_job_cancel(struct drm_sched_job *sched_job)
+ 
+ static const struct drm_sched_backend_ops thames_sched_ops = {
+ 	.run_job = thames_job_run,
++	.timedout_job = thames_job_timedout,
+ 	.free_job = thames_sched_job_free,
+ 	.cancel_job = thames_job_cancel,
+ };
+@@ -316,7 +689,8 @@ int thames_job_init(struct thames_core *core)
+ 		.ops = &thames_sched_ops,
+ 		.num_rqs = 1,
+ 		.credit_limit = THAMES_RING_DEPTH,
+-		.timeout = MAX_SCHEDULE_TIMEOUT,
++		.timeout = msecs_to_jiffies(THAMES_HOST_TIMEOUT_MS),
++		.timeout_wq = core->tdev->reset_wq,
+ 		.name = dev_name(core->dev),
+ 		.dev = core->dev,
+ 	};
+@@ -326,6 +700,9 @@ int thames_job_init(struct thames_core *core)
+ 
+ 	spin_lock_init(&core->fence_lock);
+ 	mutex_init(&core->job_lock);
++	atomic_set(&core->dead, 0);
++	core->unfinished_seqno = 0;
++	core->completion_stuck = false;
+ 
+ 	INIT_LIST_HEAD(&core->submitted);
+ 	INIT_LIST_HEAD(&core->held);
+@@ -414,6 +791,9 @@ int thames_job_suspend(struct thames_core *core)
+ 	cancel_delayed_work_sync(&sched->work_tdr);
+ 	drm_sched_wqueue_stop(sched);
+ 
++	if (thames_core_is_dead(core))
++		return 0;
++
+ 	scoped_guard(mutex, &core->job_lock)
+ 		pending = list_count_nodes(&core->submitted);
+ 	wait_ms = max_t(unsigned int, pending, 1) * THAMES_SUSPEND_TIMEOUT_MS;
+@@ -446,6 +826,40 @@ void thames_job_resume(struct thames_core *core)
+ 	drm_sched_wqueue_start(&core->sched);
+ }
+ 
++static bool thames_job_ring_drained(struct thames_core *core)
 +{
-+	drm_sched_resume_timeout(&core->sched, core->timeout_left);
-+	drm_sched_wqueue_start(&core->sched);
++	thames_job_complete(core);
++
++	guard(mutex)(&core->job_lock);
++	return list_empty(&core->submitted);
 +}
 +
-+int thames_job_open(struct thames_file_priv *thames_priv)
++void thames_job_drain(struct thames_core *core)
 +{
-+	struct thames_device *tdev = thames_priv->tdev;
-+	int ret;
++	struct drm_gpu_scheduler *sched = &core->sched;
++	size_t pending;
++	bool drained;
 +
-+	ret = drm_sched_entity_init(&thames_priv->sched_entity, 0, tdev->sched_list,
-+				    tdev->num_cores, NULL);
-+	if (WARN_ON(ret))
-+		return ret;
++	drm_sched_wqueue_stop(sched);
++	cancel_delayed_work_sync(&sched->work_tdr);
++	drm_sched_wqueue_stop(sched);
 +
-+	xa_init_flags(&thames_priv->jobs, XA_FLAGS_ALLOC1);
++	if (thames_core_is_dead(core))
++		return;
 +
-+	return 0;
++	scoped_guard(mutex, &core->job_lock)
++		pending = list_count_nodes(&core->submitted);
++
++	if (!pending)
++		return;
++
++	read_poll_timeout(thames_job_ring_drained, drained, drained, USEC_PER_MSEC,
++			  pending * THAMES_SUSPEND_TIMEOUT_MS * USEC_PER_MSEC, false, core);
++
++	cancel_delayed_work_sync(&sched->work_tdr);
++	drm_sched_wqueue_stop(sched);
 +}
 +
-+void thames_job_close(struct thames_file_priv *thames_priv)
-+{
-+	struct thames_job *job;
-+	unsigned long handle;
-+
-+	drm_sched_entity_destroy(&thames_priv->sched_entity);
-+
-+	xa_for_each(&thames_priv->jobs, handle, job)
-+		thames_job_put(job);
-+	xa_destroy(&thames_priv->jobs);
-+}
-+
-+static void thames_job_free(struct kref *ref)
-+{
-+	struct thames_job *job = container_of(ref, struct thames_job, refcount);
-+
-+	if (job->program)
-+		drm_gem_object_put(job->program);
-+	if (job->params)
-+		drm_gem_object_put(job->params);
-+
-+	thames_transfers_free(job->tdev, &job->transfers);
-+	mutex_destroy(&job->lock);
-+	kfree(job);
-+}
-+
-+static void thames_job_put(struct thames_job *job)
-+{
-+	kref_put(&job->refcount, thames_job_free);
-+}
-+
-+int thames_ioctl_job_create(struct drm_device *dev, void *data, struct drm_file *file)
-+{
-+	struct drm_thames_job_create *args = data;
+ int thames_job_open(struct thames_file_priv *thames_priv)
+ {
+ 	struct thames_device *tdev = thames_priv->tdev;
+@@ -759,6 +1173,7 @@ static void thames_submit_syncs_signal(struct thames_submit_syncs *syncs, struct
+ int thames_ioctl_job_submit(struct drm_device *dev, void *data, struct drm_file *file)
+ {
+ 	struct drm_thames_job_submit *args = data;
 +	struct thames_file_priv *file_priv = file->driver_priv;
-+	struct thames_device *tdev = to_thames_device(dev);
-+	struct thames_job *job;
-+	u32 handle;
-+	int ret;
-+
-+	if (args->flags || args->pad)
-+		return -EINVAL;
-+
-+	if (args->type != DRM_THAMES_JOB_DISPATCH)
-+		return -EINVAL;
-+
-+	if (!args->program || !args->params)
-+		return -EINVAL;
-+
-+	job = kzalloc_obj(*job, GFP_KERNEL);
-+	if (!job)
-+		return -ENOMEM;
-+
-+	kref_init(&job->refcount);
-+	mutex_init(&job->lock);
-+	job->tdev = tdev;
-+
-+	job->program = drm_gem_object_lookup(file, args->program);
-+	if (!job->program) {
-+		ret = -ENOENT;
-+		goto err_put;
+ 	struct thames_submit_syncs syncs = {};
+ 	struct thames_submit_bos *bos = NULL;
+ 	struct ww_acquire_ctx acquire_ctx;
+@@ -780,6 +1195,13 @@ int thames_ioctl_job_submit(struct drm_device *dev, void *data, struct drm_file
+ 	if (IS_ERR(handles))
+ 		return PTR_ERR(handles);
+ 
++	if (thames_context_banned(file_priv)) {
++		dev_warn_ratelimited(dev->dev, "Context %u is banned; submission refused\n",
++				     file_priv->context_id);
++		ret = -ECANCELED;
++		goto out_free;
 +	}
 +
-+	if (!(to_thames_bo(job->program)->flags & DRM_THAMES_BO_EXECUTABLE)) {
-+		ret = -EINVAL;
-+		goto err_put;
-+	}
-+
-+	job->program_dsp_va = thames_bo_dsp_va(to_thames_bo(job->program), file_priv);
-+	if (!job->program_dsp_va) {
-+		ret = -EINVAL;
-+		goto err_put;
-+	}
-+
-+	job->params = drm_gem_object_lookup(file, args->params);
-+	if (!job->params) {
-+		ret = -ENOENT;
-+		goto err_put;
-+	}
-+
-+	job->params_dsp_va = thames_bo_dsp_va(to_thames_bo(job->params), file_priv);
-+	if (!job->params_dsp_va) {
-+		ret = -EINVAL;
-+		goto err_put;
-+	}
-+
-+	ret = thames_transfers_build(file, &args->transfers, &job->transfers);
-+	if (ret)
-+		goto err_put;
-+
-+	ret = xa_alloc(&file_priv->jobs, &handle, job, xa_limit_32b, GFP_KERNEL);
-+	if (ret)
-+		goto err_put;
-+
-+	job->handle = handle;
-+	args->handle = handle;
-+
-+	return 0;
-+
-+err_put:
-+	thames_job_put(job);
-+	return ret;
-+}
-+
-+static struct thames_sched_job *thames_sched_job_new(struct drm_file *file, u32 handle,
-+						     struct thames_submit_bos *bos)
+ 	ret = thames_submit_syncs_get(file, &args->syncs, &syncs);
+ 	if (ret)
+ 		goto out_syncs;
+@@ -844,6 +1266,7 @@ int thames_ioctl_job_submit(struct drm_device *dev, void *data, struct drm_file
+ 	thames_submit_bos_put(bos);
+ out_syncs:
+ 	thames_submit_syncs_free(&syncs);
++out_free:
+ 	kvfree(handles);
+ 	return ret;
+ }
+@@ -867,3 +1290,30 @@ int thames_ioctl_job_destroy(struct drm_device *dev, void *data, struct drm_file
+ 	return 0;
+ }
+ 
++int thames_job_query_fault(struct thames_file_priv *file_priv, struct drm_thames_job_fault *fault)
 +{
-+	struct thames_file_priv *file_priv = file->driver_priv;
 +	struct thames_job *job;
-+	struct thames_sched_job *sched_job;
-+	int ret;
++	int ret = 0;
 +
 +	xa_lock(&file_priv->jobs);
-+	job = xa_load(&file_priv->jobs, handle);
++	job = xa_load(&file_priv->jobs, fault->job);
 +	if (job)
 +		kref_get(&job->refcount);
 +	xa_unlock(&file_priv->jobs);
 +
 +	if (!job)
-+		return ERR_PTR(-ENOENT);
-+
-+	sched_job = kzalloc_obj(*sched_job, GFP_KERNEL);
-+	if (!sched_job) {
-+		thames_job_put(job);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	kref_init(&sched_job->refcount);
-+	INIT_LIST_HEAD(&sched_job->node);
-+	sched_job->tdev = job->tdev;
-+	sched_job->job = job; /* The lookup's reference. */
-+	/* Put by the completion path once it has counted the Job for the ban. */
-+	kref_get(&file_priv->refcount);
-+	sched_job->file_priv = file_priv;
-+	kref_get(&bos->refcount);
-+	sched_job->bos = bos;
-+
-+	sched_job->done_fence = kzalloc_obj(*sched_job->done_fence);
-+	if (!sched_job->done_fence) {
-+		thames_sched_job_put(sched_job);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	ret = drm_sched_job_init(&sched_job->base, &file_priv->sched_entity, 1, NULL,
-+				 file->client_id);
-+	if (ret) {
-+		thames_sched_job_put(sched_job);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return sched_job;
-+}
-+
-+static int thames_submit_bos_lookup(struct drm_file *file,
-+				    const struct drm_thames_job_submit *args,
-+				    struct thames_submit_bos **out)
-+{
-+	const struct drm_thames_obj_array *lists[2] = { &args->read_handles,
-+							&args->write_handles };
-+	struct thames_submit_bos *bos;
-+	u32 total = 0, n = 0, l, i;
-+
-+	for (l = 0; l < ARRAY_SIZE(lists); l++) {
-+		if (lists[l]->count > THAMES_MAX_SUBMIT_BOS - total)
-+			return -EINVAL;
-+		total += lists[l]->count;
-+	}
-+
-+	bos = kvzalloc(struct_size(bos, bos, total), GFP_KERNEL);
-+	if (!bos)
-+		return -ENOMEM;
-+
-+	kref_init(&bos->refcount);
-+	bos->count = total;
-+	bos->read_count = args->read_handles.count;
-+
-+	for (l = 0; l < ARRAY_SIZE(lists); l++) {
-+		u32 *handles;
-+
-+		if (!lists[l]->count)
-+			continue;
-+
-+		handles = thames_get_uobj_array(lists[l], sizeof(*handles), sizeof(*handles));
-+		if (IS_ERR(handles)) {
-+			thames_submit_bos_put(bos);
-+			return PTR_ERR(handles);
-+		}
-+
-+		for (i = 0; i < lists[l]->count; i++, n++) {
-+			bos->bos[n] = drm_gem_object_lookup(file, handles[i]);
-+			if (!bos->bos[n]) {
-+				kvfree(handles);
-+				thames_submit_bos_put(bos);
-+				return -ENOENT;
-+			}
-+		}
-+
-+		kvfree(handles);
-+	}
-+
-+	*out = bos;
-+	return 0;
-+}
-+
-+/*
-+ * Allocated before the first push, so signalling cannot fail once the Jobs run.
-+ */
-+struct thames_submit_syncs {
-+	u32 count;
-+	struct drm_thames_sync_op *ops;
-+	struct thames_sync_signal {
-+		struct drm_syncobj *syncobj;
-+		struct dma_fence_chain *chain;
-+	} *signals;
-+};
-+
-+static int thames_sync_op_check(const struct drm_thames_sync_op *op)
-+{
-+	if (op->flags != (DRM_THAMES_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ |
-+			  DRM_THAMES_SYNC_OP_SIGNAL))
-+		return -EINVAL;
-+
-+	return op->timeline_value ? 0 : -EINVAL;
-+}
-+
-+static void thames_submit_syncs_free(struct thames_submit_syncs *syncs)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < syncs->count; i++) {
-+		if (syncs->signals[i].syncobj)
-+			drm_syncobj_put(syncs->signals[i].syncobj);
-+		dma_fence_chain_free(syncs->signals[i].chain);
-+	}
-+
-+	kvfree(syncs->signals);
-+	kvfree(syncs->ops);
-+}
-+
-+static int thames_submit_syncs_get(struct drm_file *file, const struct drm_thames_obj_array *in,
-+				   struct thames_submit_syncs *syncs)
-+{
-+	struct drm_thames_sync_op *ops;
-+	u32 i;
-+	int ret;
-+
-+	if (!in->count)
-+		return 0;
-+
-+	if (in->count > THAMES_MAX_SUBMIT_SYNCS)
-+		return -EINVAL;
-+
-+	ops = thames_get_uobj_array(in, offsetofend(struct drm_thames_sync_op, timeline_value),
-+				    sizeof(*ops));
-+	if (IS_ERR(ops))
-+		return PTR_ERR(ops);
-+	syncs->ops = ops;
-+
-+	syncs->signals = kvcalloc(in->count, sizeof(*syncs->signals), GFP_KERNEL);
-+	if (!syncs->signals)
-+		return -ENOMEM;
-+	syncs->count = in->count;
-+
-+	for (i = 0; i < syncs->count; i++) {
-+		struct thames_sync_signal *signal = &syncs->signals[i];
-+
-+		ret = thames_sync_op_check(&ops[i]);
-+		if (ret)
-+			return ret;
-+
-+		signal->syncobj = drm_syncobj_find(file, ops[i].handle);
-+		if (!signal->syncobj)
-+			return -ENOENT;
-+
-+		signal->chain = dma_fence_chain_alloc();
-+		if (!signal->chain)
-+			return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static void thames_submit_syncs_signal(struct thames_submit_syncs *syncs, struct dma_fence *fence)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < syncs->count; i++) {
-+		struct thames_sync_signal *signal = &syncs->signals[i];
-+
-+		drm_syncobj_add_point(signal->syncobj, signal->chain, fence,
-+				      syncs->ops[i].timeline_value);
-+		signal->chain = NULL;
-+	}
-+}
-+
-+int thames_ioctl_job_submit(struct drm_device *dev, void *data, struct drm_file *file)
-+{
-+	struct drm_thames_job_submit *args = data;
-+	struct thames_submit_syncs syncs = {};
-+	struct thames_submit_bos *bos = NULL;
-+	struct ww_acquire_ctx acquire_ctx;
-+	struct thames_sched_job **subs = NULL;
-+	struct dma_fence *last;
-+	u32 count = args->jobs.count;
-+	u32 pushed = 0;
-+	u32 *handles;
-+	unsigned int i;
-+	int ret = 0;
-+
-+	if (args->flags || args->pad)
-+		return -EINVAL;
-+
-+	if (!count || count > THAMES_MAX_JOBS_PER_SUBMIT)
-+		return -EINVAL;
-+
-+	handles = thames_get_uobj_array(&args->jobs, sizeof(u32), sizeof(u32));
-+	if (IS_ERR(handles))
-+		return PTR_ERR(handles);
-+
-+	ret = thames_submit_syncs_get(file, &args->syncs, &syncs);
-+	if (ret)
-+		goto out_syncs;
-+
-+	ret = thames_submit_bos_lookup(file, args, &bos);
-+	if (ret)
-+		goto out_syncs;
-+
-+	subs = kvcalloc(count, sizeof(*subs), GFP_KERNEL);
-+	if (!subs) {
-+		ret = -ENOMEM;
-+		goto out_put;
-+	}
-+
-+	for (i = 0; i < count; i++) {
-+		subs[i] = thames_sched_job_new(file, handles[i], bos);
-+		if (IS_ERR(subs[i])) {
-+			ret = PTR_ERR(subs[i]);
-+			subs[i] = NULL;
-+			goto out_subs;
-+		}
-+	}
-+
-+	ret = drm_gem_lock_reservations(bos->bos, bos->count, &acquire_ctx);
-+	if (ret)
-+		goto out_subs;
-+
-+	/*
-+	 * Only the first Job waits: the entity runs the call's Jobs in order.
-+	 */
-+	ret = thames_acquire_object_fences(bos->bos, bos->read_count, &subs[0]->base, false);
-+	if (ret)
-+		goto out_unlock;
-+
-+	ret = thames_acquire_object_fences(&bos->bos[bos->read_count], bos->count - bos->read_count,
-+					   &subs[0]->base, true);
-+	if (ret)
-+		goto out_unlock;
-+
-+	for (pushed = 0; pushed < count; pushed++)
-+		thames_job_push(subs[pushed]);
-+
-+	last = subs[count - 1]->inference_done_fence;
-+	thames_attach_object_fences(bos->bos, bos->read_count, last, DMA_RESV_USAGE_READ);
-+	thames_attach_object_fences(&bos->bos[bos->read_count], bos->count - bos->read_count, last,
-+				    DMA_RESV_USAGE_WRITE);
-+	thames_submit_syncs_signal(&syncs, last);
-+
-+out_unlock:
-+	drm_gem_unlock_reservations(bos->bos, bos->count, &acquire_ctx);
-+out_subs:
-+	for (i = 0; i < count; i++) {
-+		if (!subs[i])
-+			continue;
-+		if (i >= pushed)
-+			drm_sched_job_cleanup(&subs[i]->base);
-+		/* The creation reference; the scheduler holds its own. */
-+		thames_sched_job_put(subs[i]);
-+	}
-+	kvfree(subs);
-+out_put:
-+	thames_submit_bos_put(bos);
-+out_syncs:
-+	thames_submit_syncs_free(&syncs);
-+	kvfree(handles);
-+	return ret;
-+}
-+
-+int thames_ioctl_job_destroy(struct drm_device *dev, void *data, struct drm_file *file)
-+{
-+	struct drm_thames_job_destroy *args = data;
-+	struct thames_file_priv *file_priv = file->driver_priv;
-+	struct thames_job *job;
-+
-+	if (args->pad)
-+		return -EINVAL;
-+
-+	job = xa_erase(&file_priv->jobs, args->handle);
-+	if (!job)
 +		return -ENOENT;
 +
-+	/* A submission still running holds its own reference. */
++	scoped_guard(mutex, &job->lock) {
++		if (job->fault_valid) {
++			fault->kind = job->fault_kind;
++			memcpy(fault->registers, job->fault_registers, sizeof(fault->registers));
++		} else {
++			ret = -ENOENT;
++		}
++	}
++
 +	thames_job_put(job);
 +
-+	return 0;
++	return ret;
 +}
-+
 diff --git a/drivers/accel/thames/thames_job.h b/drivers/accel/thames/thames_job.h
-new file mode 100644
-index 000000000000..a851febe8f98
---- /dev/null
+index a851febe8f98..c9aaed79fe82 100644
+--- a/drivers/accel/thames/thames_job.h
 +++ b/drivers/accel/thames/thames_job.h
-@@ -0,0 +1,73 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright 2024-2025 Tomeu Vizoso <tomeu@tomeuvizoso.net> */
-+/* Copyright 2026 Texas Instruments Incorporated - https://www.ti.com/ */
+@@ -55,17 +55,25 @@ struct thames_job {
+ 	struct thames_transfer_table transfers;
+ 
+ 	struct mutex lock;
 +
-+#ifndef __THAMES_JOB_H__
-+#define __THAMES_JOB_H__
-+
-+#include <drm/drm_drv.h>
-+#include <drm/gpu_scheduler.h>
-+#include <drm/thames_accel.h>
-+
-+#include "thames_core.h"
-+#include "thames_drv.h"
-+#include "thames_transfers.h"
-+
-+struct thames_submit_bos;
-+
-+struct thames_sched_job {
-+	struct drm_sched_job base;
-+
-+	struct thames_device *tdev;
-+	struct thames_file_priv *file_priv;
-+
-+	struct dma_fence *inference_done_fence;
-+	struct dma_fence *done_fence;
-+
-+	/* @seqno moves at every push; the done fence keeps the first push's. */
-+	u64 seqno;
-+	u32 ring_index;
-+	u64 stamps[6];
-+	struct list_head node;
-+
-+	struct thames_job *job;
-+
-+	struct thames_submit_bos *bos;
-+
-+	struct kref refcount;
-+};
-+
-+struct thames_job {
-+	struct kref refcount;
-+	struct thames_device *tdev;
-+	u32 handle;
-+
-+	struct drm_gem_object *program;
-+	struct drm_gem_object *params;
-+
-+	/*
-+	 * Taken at create: after an unbind the Job faults in its Context rather
-+	 * than read a binding that is gone.
-+	 */
-+	u64 program_dsp_va;
-+	u64 params_dsp_va;
-+
-+	struct thames_transfer_table transfers;
-+
-+	struct mutex lock;
-+};
-+
-+int thames_ioctl_job_create(struct drm_device *dev, void *data, struct drm_file *file);
-+int thames_ioctl_job_submit(struct drm_device *dev, void *data, struct drm_file *file);
-+int thames_ioctl_job_destroy(struct drm_device *dev, void *data, struct drm_file *file);
-+
-+void thames_job_complete(struct thames_core *core);
-+
-+int thames_job_init(struct thames_core *core);
-+int thames_job_suspend(struct thames_core *core);
-+void thames_job_resume(struct thames_core *core);
-+void thames_job_fini(struct thames_core *core);
-+int thames_job_open(struct thames_file_priv *thames_priv);
-+void thames_job_close(struct thames_file_priv *thames_priv);
-+
-+#endif
-diff --git a/drivers/accel/thames/thames_trace.h b/drivers/accel/thames/thames_trace.h
-new file mode 100644
-index 000000000000..3d1e59708869
---- /dev/null
-+++ b/drivers/accel/thames/thames_trace.h
-@@ -0,0 +1,77 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright 2026 Texas Instruments Incorporated - https://www.ti.com/ */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM thames
-+
-+#if !defined(__THAMES_TRACE_H__) || defined(TRACE_HEADER_MULTI_READ)
-+#define __THAMES_TRACE_H__
-+
-+#include <linux/math64.h>
-+#include <linux/time64.h>
-+#include <linux/tracepoint.h>
-+#include <linux/types.h>
-+
-+#include "thames_core.h"
-+#include "thames_device.h"
-+#include "thames_drv.h"
-+#include "thames_job.h"
-+
-+/* Every stamp is the SoC's system counter in microseconds, so any two subtract. */
-+TRACE_EVENT(thames_job_done,
-+	    TP_PROTO(const struct thames_core *core, const struct thames_sched_job *job,
-+		     u64 signalled),
-+
-+	    TP_ARGS(core, job, signalled),
-+
-+	    TP_STRUCT__entry(__string(dev_name, dev_name(core->dev))
-+			     __field(u32, core)
-+			     __field(u32, context)
-+			     __field(u64, seqno)
-+			     __field(int, error)
-+			     __field(u64, submit_us)
-+			     __field(u64, doorbell_seen_us)
-+			     __field(u64, run_start_us)
-+			     __field(u64, kernel_entry_us)
-+			     __field(u64, kernel_exit_us)
-+			     __field(u64, run_end_us)
-+			     __field(u64, signalled_us)),
-+
-+	    TP_fast_assign(u32 hz = core->tdev->caps.timestamp_hz;
-+
-+			   __assign_str(dev_name);
-+			   __entry->core = core->index;
-+			   __entry->context = job->file_priv->context_id;
-+			   __entry->seqno = job->seqno;
-+			   __entry->error = job->done_fence->error;
-+			   __entry->submit_us =
-+				mul_u64_u32_div(job->stamps[0], USEC_PER_SEC, hz);
-+			   __entry->doorbell_seen_us =
-+				mul_u64_u32_div(job->stamps[1], USEC_PER_SEC, hz);
-+			   __entry->run_start_us =
-+				mul_u64_u32_div(job->stamps[2], USEC_PER_SEC, hz);
-+			   __entry->run_end_us =
-+				mul_u64_u32_div(job->stamps[3], USEC_PER_SEC, hz);
-+			   __entry->kernel_entry_us =
-+				mul_u64_u32_div(job->stamps[4], USEC_PER_SEC, hz);
-+			   __entry->kernel_exit_us =
-+				mul_u64_u32_div(job->stamps[5], USEC_PER_SEC, hz);
-+			   __entry->signalled_us =
-+				mul_u64_u32_div(signalled, USEC_PER_SEC, hz);),
-+
-+	    TP_printk("%s: core=%u context=%u seqno=%llu error=%d submit_us=%llu doorbell_seen_us=%llu run_start_us=%llu kernel_entry_us=%llu kernel_exit_us=%llu run_end_us=%llu signalled_us=%llu",
-+		      __get_str(dev_name), __entry->core, __entry->context,
-+		      __entry->seqno, __entry->error, __entry->submit_us,
-+		      __entry->doorbell_seen_us, __entry->run_start_us,
-+		      __entry->kernel_entry_us, __entry->kernel_exit_us,
-+		      __entry->run_end_us, __entry->signalled_us)
-+);
-+
-+#endif /* __THAMES_TRACE_H__ */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH .
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE thames_trace
-+
-+#include <trace/define_trace.h>
++	bool fault_valid;
++	u32 fault_kind;
++	u64 fault_registers[DRM_THAMES_FAULT_REGISTERS];
+ };
+ 
+ int thames_ioctl_job_create(struct drm_device *dev, void *data, struct drm_file *file);
+ int thames_ioctl_job_submit(struct drm_device *dev, void *data, struct drm_file *file);
+ int thames_ioctl_job_destroy(struct drm_device *dev, void *data, struct drm_file *file);
++int thames_job_query_fault(struct thames_file_priv *file_priv, struct drm_thames_job_fault *fault);
+ 
+ void thames_job_complete(struct thames_core *core);
++void thames_job_fail_submitted(struct thames_core *core);
++void thames_job_release_held(struct thames_core *core);
+ 
+ int thames_job_init(struct thames_core *core);
+ int thames_job_suspend(struct thames_core *core);
+ void thames_job_resume(struct thames_core *core);
++void thames_job_drain(struct thames_core *core);
+ void thames_job_fini(struct thames_core *core);
+ int thames_job_open(struct thames_file_priv *thames_priv);
+ void thames_job_close(struct thames_file_priv *thames_priv);
 diff --git a/include/uapi/drm/thames_accel.h b/include/uapi/drm/thames_accel.h
-index 5671cffaf8f9..bd2b4271b896 100644
+index bd2b4271b896..d193967485cb 100644
 --- a/include/uapi/drm/thames_accel.h
 +++ b/include/uapi/drm/thames_accel.h
-@@ -57,6 +57,15 @@ enum drm_thames_ioctl_id {
- 	/** @DRM_THAMES_DEV_QUERY: Query the device's capabilities. */
- 	DRM_THAMES_DEV_QUERY,
+@@ -251,6 +251,11 @@ enum drm_thames_dev_query_type {
+ 	/** @DRM_THAMES_DEV_QUERY_CAPS: The capability query, &drm_thames_caps. */
+ 	DRM_THAMES_DEV_QUERY_CAPS = 0,
  
-+	/** @DRM_THAMES_JOB_CREATE: Validate a Dispatch once into a Job. */
-+	DRM_THAMES_JOB_CREATE,
-+
-+	/** @DRM_THAMES_JOB_SUBMIT: Run created Jobs once, in order. */
-+	DRM_THAMES_JOB_SUBMIT,
-+
-+	/** @DRM_THAMES_JOB_DESTROY: Release a Job and the buffers it holds. */
-+	DRM_THAMES_JOB_DESTROY,
-+
- 	/**
- 	 * @DRM_THAMES_BO_BIND: Bind buffers into the file's Context at the
- 	 * addresses the client chooses, or unbind them.
-@@ -244,6 +253,21 @@ enum drm_thames_dev_query_type {
++	/**
++	 * @DRM_THAMES_DEV_QUERY_JOB_FAULT: The fault record of a failed Job,
++	 * &drm_thames_job_fault.
++	 */
++	DRM_THAMES_DEV_QUERY_JOB_FAULT,
+ };
  
+ /**
+@@ -382,6 +387,99 @@ enum drm_thames_fault_kind {
+ 	DRM_THAMES_FAULT_TIMEOUT,
  };
  
 +/**
-+ * enum drm_thames_job_type - What a Job is
++ * enum drm_thames_fault_register - Index into &drm_thames_job_fault.registers
 + *
-+ * A Job is one Dispatch, and a submission is an ordered array of Jobs.  A Job
-+ * whose transfers are not K3 DMA records would be a new type, not a new
-+ * operation, and so are the copies, fills, timestamps and the list-carrying
-+ * command buffer a Vulkan compute driver will add.  The query grows a field
-+ * naming the types beyond the Dispatch when the first one comes; an absent type
-+ * is refused at Job creation.
++ * The control registers the fault handler saves, by the names SPRUIP0 gives
++ * them.  A register another core generation reports is appended here and at the
++ * end of &drm_thames_job_fault.registers, which the query's size convention
++ * lets grow; a register the firmware did not save reads 0.
 + */
-+enum drm_thames_job_type {
-+	/** @DRM_THAMES_JOB_DISPATCH: Run a Kernel with its transfers. */
-+	DRM_THAMES_JOB_DISPATCH = 0,
++enum drm_thames_fault_register {
++	/** @DRM_THAMES_REG_IERR: Internal exception report register. */
++	DRM_THAMES_REG_IERR = 0,
++
++	/** @DRM_THAMES_REG_IEAR: Internal exception address register. */
++	DRM_THAMES_REG_IEAR,
++
++	/** @DRM_THAMES_REG_IESR: Internal exception status register. */
++	DRM_THAMES_REG_IESR,
++
++	/** @DRM_THAMES_REG_NRP: The return pointer saved at the exception, the faulting PC. */
++	DRM_THAMES_REG_NRP,
++
++	/** @DRM_THAMES_REG_NTSR: The task state register saved at the exception. */
++	DRM_THAMES_REG_NTSR,
++
++	/**
++	 * @DRM_THAMES_REG_SE0_FAR: Streaming engine 0's fault address register:
++	 * the virtual address of the earliest fault on stream 0, 128-byte
++	 * aligned; 0 when no stream has faulted since one last closed, or the
++	 * engine could not capture the address.
++	 */
++	DRM_THAMES_REG_SE0_FAR,
++
++	/**
++	 * @DRM_THAMES_REG_SE0_FSR: Streaming engine 0's fault status register:
++	 * bit 12 ERROR and a 12-bit syndrome below it, SPRUIP0 figures 3-139 to
++	 * 3-144.
++	 */
++	DRM_THAMES_REG_SE0_FSR,
++
++	/**
++	 * @DRM_THAMES_REG_SE1_FAR: Streaming engine 1's fault address register:
++	 * the virtual address of the earliest fault on stream 1, 128-byte
++	 * aligned; 0 when no stream has faulted since one last closed, or the
++	 * engine could not capture the address.
++	 */
++	DRM_THAMES_REG_SE1_FAR,
++
++	/**
++	 * @DRM_THAMES_REG_SE1_FSR: Streaming engine 1's fault status register:
++	 * bit 12 ERROR and a 12-bit syndrome below it, SPRUIP0 figures 3-139 to
++	 * 3-144.
++	 */
++	DRM_THAMES_REG_SE1_FSR,
 +};
 +
- /**
-  * enum drm_thames_hardware_id - &drm_thames_caps.hardware_id
-  */
-@@ -255,8 +279,9 @@ enum drm_thames_hardware_id {
- /**
-  * struct drm_thames_caps - The capability query
-  *
-- * Each window sits at one address whatever core runs the Job and reaches that
-- * core's own memory.
-+ * The submit's limits are stated on &struct drm_thames_job_submit.  Each window
-+ * sits at one address whatever core runs the Job and reaches that core's own
-+ * memory.
-  */
- struct drm_thames_caps {
- 	/** @l2_size: Size in bytes of each core's L2 SRAM. */
-@@ -328,6 +353,35 @@ struct drm_thames_caps {
- 	__u64 dru_capabilities;
- };
- 
++#define DRM_THAMES_FAULT_REGISTERS	9
++
 +/**
-+ * enum drm_thames_fault_kind - The kind of a Job's fault
++ * struct drm_thames_job_fault - Argument of DRM_THAMES_DEV_QUERY_JOB_FAULT
 + *
-+ * The kind is what the firmware knows without decoding a register: what stopped
-+ * the Job and whose mode it stopped in.
++ * What the device reported for the Job's last failed submission, filled by the
++ * firmware before it signalled the Fence, read by the host on bounded fields
++ * and never trusted beyond them; the registers raw, decoded by userspace.
++ * Every kind counts towards the Context's ban; the kernel resets the core for
++ * %DRM_THAMES_FAULT_FIRMWARE.  The record is cleared whenever the Job is
++ * submitted, a refused submit call not counting, and set when a submission of
++ * it fails with one; the query returns -ENOENT while it is clear.  A client
++ * that submits a Job again before its last submission completed may read the
++ * earlier one's record.
++ *
++ * When the kernel resets a core, the Jobs on its Ring other than the one that
++ * failed are pushed again after the reset, on the same fences.  Such a Job may
++ * have started before the reset, so its Kernel may run twice, the second time
++ * from its start: a Kernel whose outputs depend on running once, one that reads
++ * what it wrote in place, must not rely on a single run.
 + */
-+enum drm_thames_fault_kind {
-+	/**
-+	 * @DRM_THAMES_FAULT_KERNEL: A Kernel took an exception in user mode.
-+	 * The Context continues; the registers say why.
-+	 */
-+	DRM_THAMES_FAULT_KERNEL = 1,
++struct drm_thames_job_fault {
++	/** @job: Handle of the Job, input. */
++	__u32 job;
++
++	/** @kind: One of &enum drm_thames_fault_kind. */
++	__u32 kind;
 +
 +	/**
-+	 * @DRM_THAMES_FAULT_FIRMWARE: The firmware took an exception in
-+	 * supervisor mode while running this Job.  The core was reset.
++	 * @registers: The saved control registers, indexed by
++	 * &enum drm_thames_fault_register.  For a timeout only NRP, NTSR and the
++	 * four stream registers, the Kernel's PC and TSR and the streams' state
++	 * when the timer interrupted it; every register is 0 when the timeout
++	 * is transfers that did not drain after the Kernel returned.
 +	 */
-+	DRM_THAMES_FAULT_FIRMWARE,
-+
-+	/**
-+	 * @DRM_THAMES_FAULT_TIMEOUT: The device's Job timeout fired: the Kernel
-+	 * ran longer than the driver lets a Kernel run and the device ended it,
-+	 * or the Kernel returned with transfers still running and they did not
-+	 * drain. The Context continues; NRP and NTSR say where the Kernel was,
-+	 * and are 0 for transfers that did not drain.
-+	 */
-+	DRM_THAMES_FAULT_TIMEOUT,
++	__u64 registers[DRM_THAMES_FAULT_REGISTERS];
 +};
 +
  /**
   * struct drm_thames_dev_query - Arguments passed to DRM_IOCTL_THAMES_DEV_QUERY
   */
-@@ -353,9 +407,9 @@ struct drm_thames_dev_query {
-  * order: the first group starts at the first transfer, each later group at a
-  * transfer carrying this flag.  The firmware submits the first group before it
-  * enters the Kernel, and each later group, whole, when the Kernel asks for it
-- * with system call 2.  No group may hold more transfers on one channel than
-- * &drm_thames_caps.dru_queue_depth.  Never on the first transfer.  A Job
-- * without the flag is one group.
-+ * with system call 2 (see &struct drm_thames_job_create).  No group may hold
-+ * more transfers on one channel than &drm_thames_caps.dru_queue_depth.  Never
-+ * on the first transfer.  A Job without the flag is one group.
-  */
- #define DRM_THAMES_TRANSFER_GROUP	(1 << 0)
- 
-@@ -393,7 +447,9 @@ struct drm_thames_dev_query {
-  * auxiliary aperture, at &drm_thames_caps.l2_main_dsp_va and l2_aux, which the
-  * kernel translates to the physical aperture of the core the Job runs on.  The
-  * Job holds a reference on each buffer a transfer resolves to until it is
-- * destroyed and its last submission has completed.
-+ * destroyed and its last submission has completed.  No list names these
-+ * buffers: the read and write lists of &drm_thames_job_submit are for
-+ * synchronisation alone.
-  */
- struct drm_thames_transfer {
- 	/**
-@@ -409,6 +465,191 @@ struct drm_thames_transfer {
- 	__u32 words[16];
- };
- 
-+/**
-+ * struct drm_thames_job_create - Arguments passed to DRM_IOCTL_THAMES_JOB_CREATE
-+ *
-+ * Once per Dispatch: the transfers are copied, each checked and translated, a
-+ * reference taken on the program, the params and every buffer a transfer
-+ * resolves to so the translation holds for the Job's life, and a handle
-+ * returned.  The buffers the Kernel reads and writes are named at each
-+ * submit, in &drm_thames_job_submit.
-+ *
-+ * The firmware enters the Kernel at the program's start as a C function
-+ * taking one argument, the params' address, and returning a status word:
-+ *
-+ *	int kernel(void *params);
-+ *
-+ * That is the whole of what the kernel and the firmware know.  The Kernel finds
-+ * everything else, its inputs, outputs, constants, grid and status buffer,
-+ * through params, whose layout is private to the userspace driver that emitted
-+ * the Kernel.  The program must have been created DRM_THAMES_BO_EXECUTABLE.
-+ * The program and the params must be bound in the Context.
-+ * The Job keeps the two addresses they are bound at when it is created, and
-+ * every submission runs the Kernel at them.
-+ *
-+ * A Kernel asks for its Job's next transfer group with system call 2 (the
-+ * SYSCALL instruction with 2, no argument).  The call returns to the
-+ * instruction after it with every register kept but A0-A3 and RP.  The firmware
-+ * submits the group only if the Job has one left and every channel the group
-+ * uses has no transfer queued or running; otherwise it fails the Job, writing
-+ * none of the group's transfers.  A Kernel waits for the tile event of its
-+ * channels' DRU records with system call 3.
-+ */
-+struct drm_thames_job_create {
-+	/** @type: One of &enum drm_thames_job_type. */
-+	__u32 type;
-+
-+	/** @flags: MBZ. */
-+	__u32 flags;
-+
-+	/** @program: Handle of the buffer holding the Kernel. */
-+	__u32 program;
-+
-+	/** @params: Handle of the params buffer. */
-+	__u32 params;
-+
-+	/**
-+	 * @transfers: Array of &struct drm_thames_transfer, the DRU records
-+	 * the compiler scheduled for this Kernel; may be empty.
-+	 */
-+	struct drm_thames_obj_array transfers;
-+
-+	/** @handle: Returned handle of the Job.  Job handles are nonzero. */
-+	__u32 handle;
-+
-+	/** @pad: MBZ. */
-+	__u32 pad;
-+};
-+
-+/**
-+ * DOC: Sync operation flags
-+ *
-+ * The low byte of &drm_thames_sync_op.flags is the handle type, bit 31 the
-+ * direction; every other bit is MBZ.
-+ *
-+ * The one op accepted is a timeline sync object signalled,
-+ * %DRM_THAMES_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ |
-+ * %DRM_THAMES_SYNC_OP_SIGNAL.  Handle type 0 and a clear bit 31, a binary sync
-+ * object and a wait, are left for the client that will use them.
-+ *
-+ * - %DRM_THAMES_SYNC_OP_HANDLE_TYPE_MASK: The bits of the handle type.
-+ * - %DRM_THAMES_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ: A timeline sync
-+ *   object, at the point &drm_thames_sync_op.timeline_value.
-+ * - %DRM_THAMES_SYNC_OP_SIGNAL: The call's last Job's finished fence is
-+ *   added to the timeline at the point.
-+ */
-+#define DRM_THAMES_SYNC_OP_HANDLE_TYPE_MASK		0xff
-+#define DRM_THAMES_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ	1
-+#define DRM_THAMES_SYNC_OP_SIGNAL			(1u << 31)
-+
-+/**
-+ * struct drm_thames_sync_op - One signal of a submit call
-+ */
-+struct drm_thames_sync_op {
-+	/**
-+	 * @flags: %DRM_THAMES_SYNC_OP_HANDLE_TYPE_TIMELINE_SYNCOBJ |
-+	 * %DRM_THAMES_SYNC_OP_SIGNAL.
-+	 */
-+	__u32 flags;
-+
-+	/** @handle: A timeline sync object of the client. */
-+	__u32 handle;
-+
-+	/**
-+	 * @timeline_value: The point on the timeline sync object, nonzero.
-+	 */
-+	__u64 timeline_value;
-+};
-+
-+/**
-+ * struct drm_thames_job_submit - Arguments passed to DRM_IOCTL_THAMES_JOB_SUBMIT
-+ *
-+ * A submission is an ordered array of Jobs, one Ring entry each, so a sequence
-+ * of Dispatches is one call.  Per run the kernel re-checks only the Context's
-+ * current state, waits on the implicit fences of the buffers the call names and
-+ * pushes the Ring entries.  A submission of a Job while an earlier
-+ * submission of the same Job is in flight waits for it, which the Ring's order
-+ * gives on its own.  One Ring completes its Jobs in submission order; there is
-+ * no order between the two cores' Rings, but the Jobs of one call run in the
-+ * order named.
-+ *
-+ * The buffers the call's Jobs read and write are named here, one pair of lists
-+ * per call.  They are for synchronisation alone: the first Job waits on the
-+ * fences already on them, and the last Job's fence is set on them once the Jobs
-+ * are pushed, for read usage on @read_handles and write usage on
-+ * @write_handles, so DRM_IOCTL_THAMES_BO_PREP on a written buffer waits for the
-+ * call's Jobs.  No flag turns either side off.  The call holds a reference on
-+ * each buffer named until its last Job completes.  A buffer may be named once
-+ * in the two lists together.
-+ *
-+ * The sync objects the call signals are named in @syncs.  Every op receives the
-+ * call's last Job's finished fence, the same fence the listed buffers get; the
-+ * call waits on no sync object.  The call is all or nothing: every Job handle
-+ * is looked up and every sync op resolved before the first Job is pushed, so a
-+ * call that fails has submitted nothing and signals nothing.  An opt-out of the
-+ * implicit synchronisation would be a bit of @flags, appended under a minor
-+ * bump.
-+ *
-+ * Every Job the call submits has its fault record cleared; a refused call
-+ * clears none.
-+ *
-+ * A Job of the call that fails does not stop the ones after it: each later Job
-+ * runs, and completes or fails on its own merits.  Only a Context banned after
-+ * its faults has its Jobs not yet run cancelled, their fences signalled with
-+ * -ECANCELED, and its later submit calls refused with -ECANCELED.
-+ */
-+struct drm_thames_job_submit {
-+	/** @flags: MBZ. */
-+	__u32 flags;
-+
-+	/** @pad: MBZ. */
-+	__u32 pad;
-+
-+	/**
-+	 * @jobs: Array of __u32 Job handles, run in order.
-+	 *
-+	 * At least 1 and at most 256 Jobs.
-+	 */
-+	struct drm_thames_obj_array jobs;
-+
-+	/**
-+	 * @read_handles: Array of __u32 handles of the buffers the Jobs read;
-+	 * may be empty.
-+	 *
-+	 * At most 4096 handles in @read_handles and @write_handles together.
-+	 */
-+	struct drm_thames_obj_array read_handles;
-+
-+	/**
-+	 * @write_handles: Array of __u32 handles of the buffers the Jobs write;
-+	 * may be empty.  Counted with @read_handles.
-+	 */
-+	struct drm_thames_obj_array write_handles;
-+
-+	/**
-+	 * @syncs: Array of &struct drm_thames_sync_op; may be empty.
-+	 *
-+	 * At most 64 ops.
-+	 */
-+	struct drm_thames_obj_array syncs;
-+};
-+
-+/**
-+ * struct drm_thames_job_destroy - Arguments passed to DRM_IOCTL_THAMES_JOB_DESTROY
-+ *
-+ * Releases the handle and returns at once; it does not wait for the Job's
-+ * submissions.  A submission still in flight keeps the Job, its validated copy
-+ * and the references on its buffers until it completes, and its fence signals
-+ * as it would have.  The handle names nothing afterwards.
-+ */
-+struct drm_thames_job_destroy {
-+	/** @handle: The Job. */
-+	__u32 handle;
-+
-+	/** @pad: MBZ. */
-+	__u32 pad;
-+};
-+
- /**
-  * DRM_IOCTL_THAMES() - Build a thames IOCTL number
-  * @__access: Access type. Must be R, W or RW.
-@@ -431,6 +672,12 @@ enum {
- 		DRM_IOCTL_THAMES(WR, BO_MMAP_OFFSET, bo_mmap_offset),
- 	DRM_IOCTL_THAMES_DEV_QUERY =
- 		DRM_IOCTL_THAMES(WR, DEV_QUERY, dev_query),
-+	DRM_IOCTL_THAMES_JOB_CREATE =
-+		DRM_IOCTL_THAMES(WR, JOB_CREATE, job_create),
-+	DRM_IOCTL_THAMES_JOB_SUBMIT =
-+		DRM_IOCTL_THAMES(WR, JOB_SUBMIT, job_submit),
-+	DRM_IOCTL_THAMES_JOB_DESTROY =
-+		DRM_IOCTL_THAMES(WR, JOB_DESTROY, job_destroy),
- 	DRM_IOCTL_THAMES_BO_BIND =
- 		DRM_IOCTL_THAMES(WR, BO_BIND, bo_bind),
- };
 
 -- 
 2.54.0
