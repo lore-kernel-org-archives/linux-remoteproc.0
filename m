@@ -1,82 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.50
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1792902101;
-	b=MAe4UZeIF7qWhpwo1LoskdqnzNAp8oGHMSB05VcV7C/xIt3kUjxbHBrqPipD/4tzZIIW
-	 sCDXOjiDirZehphH/wVrxcQdUL7KTSKwhRo0J+wfV9MD82JWAGt+F9LqTS/zN4jkblsf6
-	 YER+5piCFSBDE5QkPKXskW7gnyEgy4gSnhUDSsrA7PvSUdGjp7Rze6uQmvl20ZMQRoS/t
-	 +1eHKHrbAhBXibyjNruqh3w0xzaMZ4LrbEzSEm0o57dV368W1Uc3L3JucDt/KxMX2bv0a
-	 npiZ0PmiRWNrYqM9z5kRx3sxBg0sIKZGNQyhTsOrvdJ6NyjGAxy9jSot+a5SWME0C5w==
+	t=1792902102;
+	b=dc9c1QSVASBkQV+P2kOypa822ZU0xMDssreEHib0/MQ2ptZ6HZEWqb/1OlUwsaJCEWgj
+	 AtB2XgVvBIBPSanMr4VGqwkYaTnkYrnQEpVWY2YpncehG8mjKayt8WrewmENHOT2gicsD
+	 /m5XlVEWAkASk4x5t9S5A2twStkHiopHRZZNQ1g29M3z7lk3IAy8cP6kSHv5otJ9/BrqA
+	 GTU8qRKrH6qSlMHyRxlPdtulGWlQ4nX+VLjz2gnW6SL520Ai9mirPVsuQqFj2HcJh/jJp
+	 3C3daAzn5oBJUEGAeImSyY9Xp1EQtZ2PCnDL6Fno5tqX4g+L/4h2t+we/lMUA3inIVg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1792902101;
+	a=rsa-sha256; c=relaxed/relaxed; t=1792902102;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=045OPuJjBnPf9EV6Lqby1VMt/pxJDKJfo2sjPGVdf0E=;
-	b=rovakmpKYTUbtncxhJwUY+JCrAU9z4CrGAegfi9NcjGQHmU1jkV3IDMRM7iZd+N0ojiz
-	 53np4l0DcZNqR3Ou3BaA72r3IyUPILY/Jl8ah3ktBIpSZOMAGHB7Usdqv0iphIsbtSs+Z
-	 P8B4q11LicAUoBrD0jBqZMOl75Pjk3OY4hSrrn78K3whXdmFKYr+j+nO2dRSLYan0egpk
-	 CPp3buY2B5c3yGHv0Z3ZJ2h0cZwN7WVCXt4Ywoxl9evTExTxYGitd7Qno97PlG8P7ICz0
-	 VSSLcuVFsrIV1V1WgWug4ed87ED88NFIhW3x0HThMlHDWK5DaHtOyWvK2sAQAz22v8A==
+	bh=Gqe9/wURKqdOT1UabYNdxAv4jjOqbP4c8eLmyHIJEnI=;
+	b=b0dnzdxdoUgNQqNgYYwJ1QyiF7bCsmbn5DVfK32doq0Q9ctIiTbgN8wML+a3NnT5AdED
+	 KrOYk62pQenYuxFhsIu6gaKkvb+Xaz0u07QCL58rwcWeqJwaP5pJflC3bjOtMxds4UiYQ
+	 lAAc6g8Xwj6tiMaCsJ06cDaUTQb5crWPhBBiYXPyldt0vS9NiUyi2MSRGwyiVtHYDVc3n
+	 sZKf5YcpUlQUlFtV3c7IxLTjRfzmbybZW7cgeKgAfjGYhAo75ClkMg3VN4X/Rx54gEZfz
+	 jMo59UEBVrELOFqgrogZNsgnEVg6Rz6O3KmKe9SnIvUlURk0mOXjdkbMESUdpYd5UOA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=BHLb+cEW;
-	arc=none smtp.remote-ip=74.125.82.45
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=VadF36wZ;
+	arc=none smtp.remote-ip=74.125.82.50
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C57B606A32C
-	for <linux-remoteproc@vger.kernel.org>; Sun, 25 Oct 2026 04:21:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4C57B606A32C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48864606A33F
+	for <linux-remoteproc@vger.kernel.org>; Sun, 25 Oct 2026 04:21:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 48864606A33F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=BHLb+cEW
-Received: by mail-dl1-f45.google.com with SMTP id a92af1059eb24-188406bb948so1567497c88.1
-        for <linux-remoteproc@vger.kernel.org>; Sat, 24 Oct 2026 21:21:41 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20251104 header.b=VadF36wZ
+Received: by mail-dl1-f50.google.com with SMTP id a92af1059eb24-14fd9dafb0dso1665203c88.0
+        for <linux-remoteproc@vger.kernel.org>; Sat, 24 Oct 2026 21:21:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1792902100; x=1793506900; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1792902101; x=1793506901; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=045OPuJjBnPf9EV6Lqby1VMt/pxJDKJfo2sjPGVdf0E=;
-        b=BHLb+cEWu7S58l6WotEAQxIpsfqsh0vcSVVpdn6nuJYlFfQdrJo/fqo6f5czmjqvw0
-         RjAlErbj3kWyHzEyFxr2Bij/lxy1/8rnOzWi5hc26OqH2lAI95Z04/PMRc3lCYEJo6TR
-         7EqgF4Ac3ahPMbStHJsvcCZad4jvEdXd4paKrmdeVxcUxIVmpnL2yPoaPzbKhavtY3ob
-         yVJDRMK+hLUTiLS3dgHhfwOGZVfY+4qV11DwrRz2Wki+7Eqk7+TVx+T+/9jjYowqpLtf
-         9CAWteu30VEDt6gq9+vrqldYd6/6np/JVpf9BU837gL454A26MIFm3AfGFTOJs2yPJ2T
-         2TxA==
+        bh=Gqe9/wURKqdOT1UabYNdxAv4jjOqbP4c8eLmyHIJEnI=;
+        b=VadF36wZPk9pirZHFomcGHWeLccH/EfN2avZYdf3Ew9s8Jnq8ypKZd2X2PY3Npuhqa
+         PQdCIsUetHJxJIHdN9pepuVGECZjjtu+9cVJ6GLlSp3Jy4Uf0KKXB7YkaWm6UONOCcrW
+         Z6BTrIwCyc715BPpljaU7uve370iWU7NkTHDWZhFVympH4aUbaB4ZTIe3hwzstKKDe94
+         sf202CUy6Et+clqkYWCLsoW0wC/oYmSD9+USPrWgUyAbrb1HdJi+3diliVsPrmScyMel
+         EOTP8gkZyPD9zGUkdlFyAt5567hPRiYhJlzmilq9V702mLFGbX6nNgqXZ4PAbEjgjdBG
+         SE5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1792902100; x=1793506900;
+        d=1e100.net; s=20260707; t=1792902101; x=1793506901;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=045OPuJjBnPf9EV6Lqby1VMt/pxJDKJfo2sjPGVdf0E=;
-        b=oCozjgTO27ibmbXbburD61LCn5YmCxwrbt9Nbqn5onl4zLJryZOQnAYz3L8DuA8fTk
-         T4qx12u2BXmYxLT20EQyXPHepxzKFShA6wg1dF5oHHiNXR6ZvVaS0rTIT7lfxWqj16ZA
-         NOS4/JNVXDf0Ad7LvRwXo5VX0HREAHs3iMxTmR5ykEWJZfYfW4v76NoQ8rIbOFXen4fU
-         cBTA+XGJBHxWIJ9NBukPe+kGUcOxxxgoZl7iRGpAHLRdgoreyEJWQbIbNva+WqE3H+lb
-         bbPaXHAQP5FdS9aOQfflMoV6T94d/YvZg04OWyYtkUcahfqv34+9piBnk0lq7hCmBifq
-         R0IA==
-X-Forwarded-Encrypted: i=1; AKwUvBwYYCmv1NCXIIU09gq3SG3FuL86NVKq0wHp5Zhe2M266fD8U92DVRNM/225EUCtpmwvT6/JmE2xrgsikeDzzWDR@vger.kernel.org
-X-Gm-Message-State: AFq9FYIKFHvol6NTWnqiDAamYsL84OjsRI28mUtKr0wHVRlNMcBswioC
-	WRu+xv0mviY0AuceG3fZzVsYKnMiuhmnLtHQPPk+UyCFgDT+tBd6/obfSJfi5eKrFvM=
-X-Gm-Gg: AYBFou1DxQ9g0FNsxOVYrz1fxzkrS0XjeHxbR2IepKzC4MK0qngoDEnq21oqrC9EVht
-	DO8WNfqMgoQ/ZAVfTatzfKmr1IEyx9JAqI97618c470rGLqLFWGuUw7x1trRkgzvirnaMv+Alni
-	HQ0S8z8iOgaNl5h6VJdboDh1fd9hX98xv28fHLpEEvD3X2c4PlvgaCyuvT1YZNQskq4z+yU9EAW
-	LSNpZ9ziXdx+SI8HrZhLK2flnZ/3JvNfAiN40i92dO7/XV5+VK9wkfSffMuqHNwZUfE5Q3zljie
-	+cAW3AbaZ0e8DFQItxo3uLuRSGeNrdsP4rxGim3ab9y4wkOkbJScb1LBv0koPd4qhl6HzP2HD6M
-	HSYRpVlcVDsyyG26y+uYHUhqVFZEyNeGK5CQL5e7b0cFf2BuTbMHKYx+G3/RAXr6NTzY5PusJIf
-	LtwPZObr0HCaDfE1GcYeNhUF9DKWntdkA8NvtDFnk5pX0lBjqdorabs7qdLKGhSTXOg8ziLQBYG
-	oPGuB9OFH0gwhx/dbCy31v17ODSEU62RvTWac+m3/7Rcge043tJmm8+wO9hwPobeSRUKSchOwDe
-X-Received: by 2002:a05:7022:7f06:b0:166:3e26:c4b5 with SMTP id a92af1059eb24-19935be7e56mr5156571c88.18.1792902100329;
-        Sat, 24 Oct 2026 21:21:40 -0700 (PDT)
+        bh=Gqe9/wURKqdOT1UabYNdxAv4jjOqbP4c8eLmyHIJEnI=;
+        b=ynm/d9TNDp84YBq5Ta/s09u1Vbm9Q7zNnyrvK98ZsK9y/xy97HKMOa3FkfRR1yVxg1
+         4fySYw/du0dC7BK7EWxDnKYIIrCP0j8azd7D3SvIhp60ndtCprAD9MqPQ9F5ARwSy1AJ
+         epiP0qV81JhqOJC84rMJae736M4anvwG9vfXUkwGdhQ1CcDIU7fmzN06C8KMowhBQ0xJ
+         2K17PAI/6gRiLLhdTxAdbV+ZDVdrUoKZliQM1w5pwNyBrnVepTVN4wjhWCOQ3gRlqEYR
+         /E1hODNIa1xmyICVP+y/EJBJrGY2zN81oqR20jkuFhsSdNDozo+nV53HCv6B4Qh4cE/x
+         r5kw==
+X-Forwarded-Encrypted: i=1; AKwUvBzZUa0XVCcIBXW94g4agWsZcmkg91D4bdhbHWN5Jqzwx38Je3mNkcKBqebdaqzfwIJavV71ph0mgXl35uepsjku@vger.kernel.org
+X-Gm-Message-State: AFq9FYK9BAwcE29zo6e5kRf8l7x6s4Ni9xJuvffd7KjBvjEx9/2hINmt
+	yXwRtb4vDGJDn7ddp2UnEBuDHp/I9KoAtgMOOKeYPiqTKBANAM9qZCnJ
+X-Gm-Gg: AYBFou2iiY2+zcKdvjokaqB2+8wTqpOjbT3/v6r1NOGSVzLRheC8FnQW8imweVAVl7H
+	i2rrvdLun/WcK/DCOI9OISZL/DotLtHzMIpCR2Kq/VhhCUoiVBvX1qiafq2wnhgaxESCjE3qA/7
+	ltNIYCnOAPpyUsjbonhGumQm9pUst096Wx8+KaK++PJZZeVKMhpb/oO5m3NvCsHx3SGPwBSE7Ah
+	+1jI2pkOyAgtxPeadBWRsheiJDMI4pAFnEx9uFcKYUzcqDUBsxF8qbkP7apGY/l/zdJPJI+oozn
+	9DXaovCFzLm0oEucUy7ybWcnT9P5D/K7rvIhsymPF1u8YEK58XnAFmXbKh3eFqguBPd9t2xwZkY
+	SKSDYRw8G2asp4Ub3906g/mhi+Uj+RxD99+iga3YOXweU77KZha1rcA96NGFPA0ahBkEHcawOOJ
+	7WH9zVMjkOWf6+VmA8lTchDzD/rTIBYA932CHeexSlvwidv9RAhxHUBYPEW7aWBqrPhZgxxC0Dk
+	97OehB2TRqtJAYzMyMdf5D9mS/G2ctpev+XhOpTtHtNVVDj1/QUkQzdwsuBsXXNtAVrBtP0TCky
+X-Received: by 2002:a05:701b:4587:b0:184:5f2e:aa52 with SMTP id a92af1059eb24-1993499dc8amr4576394c88.16.1792902101335;
+        Sat, 24 Oct 2026 21:21:41 -0700 (PDT)
 Received: from ZephyrLabServer.internal ([165.162.64.148])
-        by smtp.gmail.com with ESMTPSA id a92af1059eb24-198a0f81ea9sm14037825c88.11.2026.10.24.21.21.39
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-198a0f81ea9sm14037825c88.11.2026.10.24.21.21.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Oct 2026 21:21:39 -0700 (PDT)
+        Sat, 24 Oct 2026 21:21:40 -0700 (PDT)
 From: John Macias <dencity7@gmail.com>
 To: andersson@kernel.org,
 	mathieu.poirier@linaro.org
@@ -89,9 +89,9 @@ Cc: robh@kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 1/2] dt-bindings: remoteproc: qcom: wcss-sec: add IPQ8074
-Date: Sat, 24 Oct 2026 21:20:59 -0700
-Message-ID: <20261025042100.1356088-2-dencity7@gmail.com>
+Subject: [PATCH RFC 2/2] remoteproc: qcom: wcss-sec: add IPQ8074 support
+Date: Sat, 24 Oct 2026 21:21:00 -0700
+Message-ID: <20261025042100.1356088-3-dencity7@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20261025042100.1356088-1-dencity7@gmail.com>
 References: <20261025042100.1356088-1-dencity7@gmail.com>
@@ -106,166 +106,207 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document the IPQ8074 WCSS secure PIL. It needs the PRNG AHB clock, so
-move the clock names from the top level into the per-compatible rules;
-IPQ5018, IPQ5332 and IPQ9574 keep the same clock constraints.
+Add IPQ8074, which uses PAS ID 6 and needs the PRNG AHB clock enabled.
 
-IPQ8074 firmware ships the M3 image separately from Q6, with its own
-load address, and some boards place it in its own reserved region with
-board data between the two. Allow IPQ8074 to name its regions "q6" and
-"m3" and to give the M3 firmware name as a second firmware-name entry.
-Without memory-region-names a single region holds the firmware, as for
-the other compatibles, which keep their existing constraints.
+IPQ8074 firmware ships M3 as a separate image whose load address differs
+from Q6's. When the node names its regions "q6" and "m3" and gives a
+second firmware name, map the M3 region and load the M3 image into it
+before the authenticated Q6 image, keeping the order the firmware has
+been used with. Load M3 without updating the Q6 relocation base so
+da_to_va() keeps translating Q6 addresses. A missing or failed M3 load
+stops the Q6 load. Probe fails for a malformed named configuration
+(wrong names or counts, a compatible without separate M3 support, or
+overlapping regions) instead of picking a different loading policy.
+
+Without memory-region-names nothing changes: extra regions remain
+coredump-only.
+
+Tested on a Netgear RAX120 v1 (IPQ8074 hw1.0, WLAN.HK.2.0-01792) only
+with the equivalent change on OpenWrt's earlier copy of this driver.
 
 Assisted-by: LLM
 Signed-off-by: John Macias <dencity7@gmail.com>
 ---
- .../remoteproc/qcom,ipq5018-wcss-sec-pil.yaml | 96 +++++++++++++++++--
- 1 file changed, 88 insertions(+), 8 deletions(-)
+ drivers/remoteproc/qcom_q6v5_wcss_sec.c | 97 ++++++++++++++++++++++++-
+ 1 file changed, 96 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,ipq5018-wcss-sec-pil.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,ipq5018-wcss-sec-pil.yaml
-index 1ec8df60d..89d648769 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,ipq5018-wcss-sec-pil.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,ipq5018-wcss-sec-pil.yaml
-@@ -18,14 +18,17 @@ properties:
-     enum:
-       - qcom,ipq5018-wcss-sec-pil
-       - qcom,ipq5332-wcss-sec-pil
-+      - qcom,ipq8074-wcss-sec-pil
-       - qcom,ipq9574-wcss-sec-pil
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss_sec.c b/drivers/remoteproc/qcom_q6v5_wcss_sec.c
+index 4837825d1..a4ebb79d0 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss_sec.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss_sec.c
+@@ -7,6 +7,7 @@
+ #include <linux/io.h>
+ #include <linux/mailbox_client.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/overflow.h>
+ #include <linux/platform_device.h>
+ #include <linux/soc/qcom/mdt_loader.h>
  
-   reg:
-     maxItems: 1
+@@ -30,6 +31,10 @@ struct wcss_sec {
+ 	phys_addr_t mem_reloc;
+ 	void *mem_region;
+ 	size_t mem_size;
++	phys_addr_t m3_phys;
++	void *m3_region;
++	size_t m3_size;
++	const char *m3_fw_name;
+ 	const struct wcss_data *desc;
+ };
  
-   firmware-name:
--    maxItems: 1
--    description: Firmware name for the Hexagon core
-+    minItems: 1
-+    items:
-+      - description: Firmware name for the Hexagon core
-+      - description: Firmware name for the M3 core, loaded separately
+@@ -37,6 +42,7 @@ struct wcss_data {
+ 	u32 pasid;
+ 	const char *ss_name;
+ 	bool auto_boot;
++	bool separate_m3;
+ };
  
-   interrupts:
-     items:
-@@ -45,15 +48,11 @@ properties:
+ static int wcss_sec_start(struct rproc *rproc)
+@@ -106,12 +112,43 @@ static void *wcss_sec_da_to_va(struct rproc *rproc, u64 da, size_t len,
+ 	return wcss->mem_region + offset;
+ }
  
-   clocks:
-     minItems: 1
--    items:
--      - description: sleep clock
--      - description: AHB interconnect clock
-+    maxItems: 2
- 
-   clock-names:
-     minItems: 1
--    items:
--      - const: sleep
--      - const: interconnect
-+    maxItems: 2
- 
-   mboxes:
-     items:
-@@ -74,8 +73,18 @@ properties:
-       - const: shutdown
- 
-   memory-region:
-+    minItems: 1
-     items:
-       - description: Q6 reserved region
-+      - description: M3 reserved region
++/*
++ * IPQ8074 firmware ships M3 as a separate image with its own load address.
++ * Load it into its own reserved region before the authenticated Q6 image.
++ */
++static int wcss_sec_load_m3(struct wcss_sec *wcss)
++{
++	const struct firmware *fw;
++	int ret;
 +
-+  memory-region-names:
-+    description:
-+      Present only when the M3 firmware is loaded into its own reserved
-+      region. Without it, a single region holds the firmware.
-+    items:
-+      - const: q6
-+      - const: m3
++	ret = request_firmware(&fw, wcss->m3_fw_name, wcss->dev);
++	if (ret)
++		return ret;
++
++	/* M3 relocation must not overwrite Q6's da_to_va translation base. */
++	ret = qcom_mdt_load_no_init(wcss->dev, fw, wcss->m3_fw_name,
++				    wcss->m3_region, wcss->m3_phys,
++				    wcss->m3_size, NULL);
++	release_firmware(fw);
++
++	return ret;
++}
++
+ static int wcss_sec_load(struct rproc *rproc, const struct firmware *fw)
+ {
+ 	struct wcss_sec *wcss = rproc->priv;
+ 	struct device *dev = wcss->dev;
+ 	int ret;
  
-   glink-edge:
-     $ref: /schemas/remoteproc/qcom,glink-edge.yaml#
-@@ -131,6 +140,40 @@ allOf:
-         - clocks
-         - clock-names
++	if (wcss->m3_region) {
++		ret = wcss_sec_load_m3(wcss);
++		if (ret) {
++			dev_err(dev, "unable to load M3 firmware: %pe\n",
++				ERR_PTR(ret));
++			return ret;
++		}
++	}
++
+ 	ret = qcom_mdt_load(dev, fw, rproc->firmware, wcss->desc->pasid, wcss->mem_region,
+ 			    wcss->mem_phys, wcss->mem_size, &wcss->mem_reloc);
+ 	if (ret)
+@@ -206,6 +243,51 @@ static const struct rproc_ops wcss_sec_ops = {
+ 	.parse_fw = wcss_sec_dump_segments,
+ };
  
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: qcom,ipq8074-wcss-sec-pil
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: PRNG AHB clock
-+        clock-names:
-+          items:
-+            - const: prng
-+      required:
-+        - clocks
-+        - clock-names
-+    else:
-+      properties:
-+        firmware-name:
-+          maxItems: 1
-+        memory-region:
-+          maxItems: 1
-+        memory-region-names: false
++static int wcss_sec_alloc_m3_region(struct wcss_sec *wcss)
++{
++	struct device *dev = wcss->dev;
++	struct device_node *np = dev->of_node;
++	phys_addr_t q6_end, m3_end;
++	struct resource res;
++	int ret;
 +
-+  - if:
-+      required:
-+        - memory-region-names
-+    then:
-+      properties:
-+        firmware-name:
-+          minItems: 2
-+        memory-region:
-+          minItems: 2
++	/* Unnamed extra regions keep their existing coredump-only meaning. */
++	if (!of_property_present(np, "memory-region-names"))
++		return 0;
 +
-   - if:
-       properties:
-         compatible:
-@@ -176,3 +219,40 @@ examples:
-             mboxes = <&apcs_glb 8>;
-         };
-     };
++	if (!wcss->desc->separate_m3 ||
++	    of_property_count_strings(np, "memory-region-names") != 2 ||
++	    of_property_match_string(np, "memory-region-names", "q6") != 0 ||
++	    of_property_match_string(np, "memory-region-names", "m3") != 1 ||
++	    of_reserved_mem_region_count(np) != 2 ||
++	    of_property_read_string_index(np, "firmware-name", 1,
++					  &wcss->m3_fw_name))
++		return dev_err_probe(dev, -EINVAL,
++				     "invalid separate M3 configuration\n");
 +
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
++	ret = of_reserved_mem_region_to_resource(np, 1, &res);
++	if (ret)
++		return dev_err_probe(dev, ret, "unable to acquire M3 region\n");
 +
-+    remoteproc@cd00000 {
-+        compatible = "qcom,ipq8074-wcss-sec-pil";
-+        reg = <0x0cd00000 0x4040>;
-+        firmware-name = "ath11k/IPQ8074/hw1.0/q6_fw.mdt",
-+                        "ath11k/IPQ8074/hw1.0/m3_fw.mdt";
-+        interrupts-extended = <&intc GIC_SPI 325 IRQ_TYPE_EDGE_RISING>,
-+                              <&wcss_smp2p_in 0 IRQ_TYPE_NONE>,
-+                              <&wcss_smp2p_in 1 IRQ_TYPE_NONE>,
-+                              <&wcss_smp2p_in 2 IRQ_TYPE_NONE>,
-+                              <&wcss_smp2p_in 3 IRQ_TYPE_NONE>;
-+        interrupt-names = "wdog",
-+                          "fatal",
-+                          "ready",
-+                          "handover",
-+                          "stop-ack";
++	if (!wcss->mem_size || !resource_size(&res) ||
++	    check_add_overflow(wcss->mem_phys, (phys_addr_t)wcss->mem_size,
++			       &q6_end) ||
++	    check_add_overflow((phys_addr_t)res.start,
++			       (phys_addr_t)resource_size(&res), &m3_end) ||
++	    (wcss->mem_phys < m3_end && res.start < q6_end))
++		return dev_err_probe(dev, -EINVAL,
++				     "invalid or overlapping Q6/M3 regions\n");
 +
-+        clocks = <&gcc 50>;
-+        clock-names = "prng";
++	wcss->m3_phys = res.start;
++	wcss->m3_size = resource_size(&res);
++	wcss->m3_region = devm_ioremap_resource_wc(dev, &res);
++	if (IS_ERR(wcss->m3_region))
++		return dev_err_probe(dev, PTR_ERR(wcss->m3_region),
++				     "unable to map M3 region %pR\n", &res);
 +
-+        qcom,smem-states = <&wcss_smp2p_out 1>,
-+                           <&wcss_smp2p_out 0>;
-+        qcom,smem-state-names = "stop",
-+                                "shutdown";
-+        memory-region = <&q6_region>, <&m3_region>;
-+        memory-region-names = "q6", "m3";
++	return 0;
++}
 +
-+        glink-edge {
-+            interrupts = <GIC_SPI 321 IRQ_TYPE_EDGE_RISING>;
-+            label = "rtr";
-+            qcom,remote-pid = <1>;
-+            mboxes = <&apcs_glb 8>;
-+        };
-+    };
+ static int wcss_sec_alloc_memory_region(struct wcss_sec *wcss)
+ {
+ 	struct device *dev = wcss->dev;
+@@ -227,7 +309,7 @@ static int wcss_sec_alloc_memory_region(struct wcss_sec *wcss)
+ 		return PTR_ERR(wcss->mem_region);
+ 	}
+ 
+-	return 0;
++	return wcss_sec_alloc_m3_region(wcss);
+ }
+ 
+ static int wcss_sec_probe(struct platform_device *pdev)
+@@ -237,6 +319,7 @@ static int wcss_sec_probe(struct platform_device *pdev)
+ 	struct wcss_sec *wcss;
+ 	struct clk *sleep_clk;
+ 	struct clk *int_clk;
++	struct clk *prng_clk;
+ 	struct rproc *rproc;
+ 	int ret;
+ 
+@@ -270,6 +353,11 @@ static int wcss_sec_probe(struct platform_device *pdev)
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(int_clk),
+ 				     "Failed to get interconnect clock\n");
+ 
++	prng_clk = devm_clk_get_optional_enabled(&pdev->dev, "prng");
++	if (IS_ERR(prng_clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(prng_clk),
++				     "Failed to get prng clock\n");
++
+ 	ret = qcom_q6v5_init(&wcss->q6, pdev, rproc,
+ 			     WCSS_CRASH_REASON, NULL, NULL);
+ 	if (ret)
+@@ -310,6 +398,12 @@ static const struct wcss_data wcss_sec_ipq5332_res_init = {
+ 	.ss_name = "q6wcss",
+ };
+ 
++static const struct wcss_data wcss_sec_ipq8074_res_init = {
++	.pasid = WCSS_PAS_ID,
++	.ss_name = "q6wcss",
++	.separate_m3 = true,
++};
++
+ static const struct wcss_data wcss_sec_ipq9574_res_init = {
+ 	.pasid = WCSS_PAS_ID,
+ 	.ss_name = "q6wcss",
+@@ -318,6 +412,7 @@ static const struct wcss_data wcss_sec_ipq9574_res_init = {
+ static const struct of_device_id wcss_sec_of_match[] = {
+ 	{ .compatible = "qcom,ipq5018-wcss-sec-pil", .data = &wcss_sec_ipq5332_res_init },
+ 	{ .compatible = "qcom,ipq5332-wcss-sec-pil", .data = &wcss_sec_ipq5332_res_init },
++	{ .compatible = "qcom,ipq8074-wcss-sec-pil", .data = &wcss_sec_ipq8074_res_init },
+ 	{ .compatible = "qcom,ipq9574-wcss-sec-pil", .data = &wcss_sec_ipq9574_res_init },
+ 	{ },
+ };
 -- 
 2.47.3
 
