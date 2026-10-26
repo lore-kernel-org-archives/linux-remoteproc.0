@@ -1,103 +1,114 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793009391;
-	b=s31L/exacY8w8+M3fhyCPieAXQZfOOI7HKpff0gV5k23M/umk9abG2Bj0po5wOjSAlhR
-	 EjCdqCYKAoA2pTqaG1NK5uuWk1s2XvXzQTMzEg+HIjUEWmzi9U7IoKxcVYPUugW+/0eRw
-	 0etUhL4glPU7vuFi3yL5QelE575aJdL/cYdrZpN7aL4K1b/nr+Upgt/gatX40fBKRZR2F
-	 oYfipY760uB7o/gxBv3bFMB907dJgvo/vwB6HubZeqrNB2VTTL+lA9LAbr26GjYdA4dkI
-	 1FtiPONCqzQGuUl8JZBDSKh1XpJPaE1IlbyVcTUXeerr/pnd7o1MKMf3/n/rr21vVAw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793009391;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Type:X-Developer-Signature:X-Developer-Key:
-	 Content-Transfer-Encoding;
-	bh=DA1a6/jz2LWscq7d/CNTikpsrr1vkgOPB56H0ypHpFU=;
-	b=fxvKdsZePl/On/UhjzxTvxJ+yjYyR0kZaXdYW+UvU7bhLznY8ok97aR/95SIcvJSuB7Z
-	 F0gNmYEXIV1EVUza+uuu51Ya0s+GCXTwNdlmSYmhe5mp/sFInqoBFvpSLtDhIdHm0yBYL
-	 iuClIVX14+AYgRQh05sPNC+82v8U5VsFnesJ8RUNlUY9yHgmTJ4Gbbe92y47TvYr668U/
-	 0hmki/7YEvR87/5jyGc/tMnlcIICy1pxR6sk6G9mXpiPIasvo4HqP2Dx+nQEysmWd2I3Z
-	 YpB/XGnVRDEJ+lngRAba8vE9bQDzIhDxQpD88fXRemLSWyltghQfoYIvFZv7k8edBiA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=D9PtB5qb;
-	arc=none smtp.remote-ip=209.85.128.45
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.45
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793009399;
+	b=WQAtunZ8m1I0oJgW0YTwes0iiGf8gMOSrBMpGyVHAxnvjR/9A1K+S7Ycd9lO6LZXOm60
+	 f2iK0PtFxXVrMLeBv0zWMCvvH196//Rs/0l1KRTWF9r0jj6eawyEFDr+gU7lhrUm9Sl08
+	 iOhHnJiGOuJVKafI0lgxSNY2o870K1RjOoeTzEblbI72TbsVJ7VxeSRep1ydxvgYaiTRt
+	 qvu6Jsk+M2R9Io/mm+DFtWkmQ9Sw8OXOqTabYIRDYSk5ZmTpPP4+Wn/1NW4w7YxpFx8kc
+	 NqIfZ7XHzYTATrENiZPejpdudmGwZIk8K6pljvarpNK0snZLn7zuSVI+ZhSK1lvr7Gw==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793009399;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=UZWVVvTJbsLnHtCinLThofoDPd2yx2mtt3iM/fbOoHI=;
+	b=f79Bt8sfD0mj2ZBT/Pdmc/S0lIDGcd5oqR5ozd+XNY1X/E1+490wHM9Yg/mWDIEYF8Vu
+	 IjQo4iNarzZEDrWgpWvXcFvV9BPDx+jUy8WlMuZT3RaCZZjsckMgQuPqxSVN+qH7mT9uM
+	 y/vr+97sei3OZ6Raxy81wgrGkB/gX+fIA1bGMxXvg3/sDcncCnDtOR2CiLwAkr2DZtBEI
+	 PRL3bzb6Sfz2Zh4yII708e4WHLGqaiG71S+mYkGOkK9uvTKwMm0YtZ7ZEi5AzXV95hFq8
+	 zlXKUGW4oi719/xOpm2eTZvLi37o8fpGU3uZzAuztr0Cg/ojAkWkjA+EmmRXxDU2EBw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=amd.com;
+	spf=fail smtp.mailfrom=amd.com;
+	dkim=pass header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=NuAWlkjW;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.62.45
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011045.outbound.protection.outlook.com [52.101.62.45])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08A1606A33E
-	for <linux-remoteproc@vger.kernel.org>; Mon, 26 Oct 2026 10:09:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E08A1606A33E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CA260A2601;
+	Mon, 26 Oct 2026 10:09:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 70CA260A2601
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=D9PtB5qb
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a214c5c4c0so20913915e9.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 26 Oct 2026 03:09:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793009389; x=1793614189; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=DA1a6/jz2LWscq7d/CNTikpsrr1vkgOPB56H0ypHpFU=;
-        b=D9PtB5qbDk4URdXJa/HNbUTeISRSVAHwmfhTQTd2HQ6EG9XmpNM0QXO0S65wblAG0H
-         QmHS19foZY9FbfPFdGBYz2p+BsRT686JyLEy3sXc/LZd1/UUURsJYWy9qHhJJbu6fjED
-         X6DZzwILjAMqDdTaHu08nPX0ZbDh410++mWMMeIOzk5UXqrSnzF5U1AfyjiooNcSIjKg
-         Vbq+EzF87Z7Le3vpI74TkXtC+qpgCc2YzbwAiqrn70L3cmMaIYbvKRNIu4FeVxltudon
-         6TPtPYsUj4whdbjkNvV3e5/lTMaAwX0Hmk59noS0WUcQUWYLQDciOTFvu8QMuSVVV+oi
-         Ahyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793009389; x=1793614189;
-        h=content-transfer-encoding:content-type:mime-version:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=DA1a6/jz2LWscq7d/CNTikpsrr1vkgOPB56H0ypHpFU=;
-        b=nFIicr1NuuEPCqCEWqGIsknxT2lPyWj0azjdgj5ebcn5b9hBdEk2FSKy2WilOo2Tx3
-         WJf2kFXlHcFUpOUIrRn8Kh7LVSlD6CZ2EWhEkNEWAKWaiAl4yXiOs2WZw+0KfTmJsIW4
-         35a9omdDXlaQUuPnmeJCGywWoOwV+xdHpsFNJsDnlp8jpAzO4H0D4HnF+0zU8vfSPcQ5
-         1cLF7rPSgaMoh9BrKA9JyDYGBQV0ow2rOJvmjxmFvZaCJIxh+j744jEugaY1Y247u88X
-         EF+nbNMvbv6t6aroBO6tdkrJU3SwiplLI+ANuYsjhk6Ow+I7TmxfXfeLvXsPDI8ZskpV
-         FFsg==
-X-Forwarded-Encrypted: i=1; AKwUvBzsxwkTAIIl0w/JBlSLtGf/qkNDF5rVoJHlO76cp+b04Uzu4VDsBOVB2uvkl+nvdgzdhIyT90tKJPl0spN81y3x@vger.kernel.org
-X-Gm-Message-State: AFq9FYJOKeF48yY/+JbdUkkocHKYEoY0ciyGPzHauLwQ8fbXTQL6DX8H
-	thhYFOWQgudxgD3hN8fJTaJ1WVAbgIRpgUg/xVr6qiwjUcbxR+sUXUU7L7/5wS4zVlY=
-X-Gm-Gg: AYBFou2p8XVxDomAiB/8XNqnZiPBrbLMRNLPvjEBrImNn78tDz6jUgdycMSFiVHDnin
-	joSB8c5LMmHqJTI2pD8lC7RQqDiM0NGwvnP3CymcWwsinbD1dwwGpxviNdChgHkcWisizBlegpV
-	WEaz8+PQIEinfBtT07nvxXjE1SjwGgnoKg7/M8XShb3QGoQgb/ZcNjDsBrfTiooAR9v42K8PqJd
-	DeAVkqBB8T7ufppcl4so2Ss3RG752nB76Qt2pdElR9vGY7shexraId3imdmnYM5E5WuFL0RXypL
-	jN0kNkH/9WHtFjXcocMy3c0xILYMb9Vg3dVh6Ev0wmvBtZwrrx3yT7lD06FFY8K9raRqTA8Bneu
-	TNEvppDmyOVX7oyEjt1JR00+1WJISG1ZVJq3Q+G/mCNBYFPzy8Rhq9Yt1quYbley/WxzP0I4wKh
-	eFlL4Y4PZy6f1GI/MUaInHvI/ZN0iURN/dm2AwbsMqKGDCImw58IZ90CEPgoEGIewUqHqVok6A3
-	tlsYKDXDTIfwCo2XsbyRoAb2g991Bx408dATOTLIUGFhHafCOYeKXS2nBu41uWJ8H0UkU9ixezF
-	wE0/LabDABkZVSQg0pn/m5iltGrWtlGHEmvc8yWOokzY2Q88fxfoJ/E8lbVvSgll
-X-Received: by 2002:a05:600c:1987:b0:4a1:db17:c7e6 with SMTP id 5b1f17b1804b1-4a35ac3a7b1mr105329285e9.2.1793009389330;
-        Mon, 26 Oct 2026 03:09:49 -0700 (PDT)
-Received: from localhost (p200300f65f19a904bf765b6740c3076b.dip0.t-ipconnect.de. [2003:f6:5f19:a904:bf76:5b67:40c3:76b])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48e3ebc3bdbsm12723417f8f.19.2026.10.26.03.09.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Oct 2026 03:09:48 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] remoteproc: imx_dsp_rproc: Implement .memcpy_tova()
-Date: Mon, 26 Oct 2026 11:09:31 +0100
-Message-ID:  <951ff0c2bad8709b77b5ac7086b70cc7d37ce51c.1793008847.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1793008847.git.u.kleine-koenig@baylibre.com>
-References: <cover.1793008847.git.u.kleine-koenig@baylibre.com>
+	dkim=pass (1024-bit key, unprotected) header.d=amd.com header.i=@amd.com header.a=rsa-sha256 header.s=selector1 header.b=NuAWlkjW
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bh0xeAaq4rj4sqzf7BydAcKBJy7ynsznokKEGXEWyrZot90husQMU7GZnO2znMe+b49kXiOcql0QRSUaKi2D2RjrK/sqpEup9i22akNRAzpLmRp4JpDk7rbrJfyuHcl764/jdJ1zgxgdVvYM61+q13CJHW7u7aCLVr3TmjvbDzH3AxGPbfhflwxgLwzAI+2YivsJzRiu2/eTCaevkKfVLMZXKPSsiB3ieQQk7H7Jkx1e0xfTEr+RpuooqcLOKhAvBcQP40JL9f9qDPHYv2uMD/T4zBggV9ygIp2DM28JZSyFZm9bWs43vyL/6QJS2MoT9+Pp8A+7AGaKNUFj4Glwtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UZWVVvTJbsLnHtCinLThofoDPd2yx2mtt3iM/fbOoHI=;
+ b=DO9E/Ym1yET7tJ4sezlsSP7QIbiGWCVaCwl8fmq8EBa4M787c72aLT/iGBejpmpDRgVmr8m3vr2beQeO+1CP6+nqqBcqHLK/w3O5w7yHmJkvyJElyWoxGIgD6/LDEbSS7ELwFb/JFBUkWIMO6T2c8Y043ojbFBfR6DikNNtqnz39wEvG4mk4l2zgypKKHSRNoBQFlVrHd3ZsDY05HVJA7iXTrjLemgecrdUsVgA7jIDu+w012+0jKGX1kITTJBudEqhvNHQDluHnZj18sQfsoBicqeeYBewYBK483RYE5fzYzZ3Z/0bHybhFtDN+Fmt/fJEqv/5rIwVX+3rANuVX3A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UZWVVvTJbsLnHtCinLThofoDPd2yx2mtt3iM/fbOoHI=;
+ b=NuAWlkjWAE/ajedSOLiGFjksuVK7UYny1T+OFzp+KbwIxYkgxkPKn67PJO18LQo07XKlf2du9Hh5PyVibS8MghTQWygDGCcW68i8+z2ohDNuzxAtfg8YlWWJJncUb+pVMGsp3UnYqyr2Ki9v5eprxepS1UUgwZv4A6fJA+BMfZg=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by PH0PR12MB8030.namprd12.prod.outlook.com (2603:10b6:510:28d::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.546.22; Mon, 26 Oct
+ 2026 10:07:17 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::ce69:cfae:774d:a65c]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::ce69:cfae:774d:a65c%3]) with mapi id 15.21.0546.021; Mon, 26 Oct 2026
+ 10:07:11 +0000
+Message-ID: <93a8d4f5-fcbb-4fb1-a601-9503c215dfa6@amd.com>
+Date: Mon, 26 Oct 2026 11:07:02 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/16] accel/thames: Add IOCTLs for BO creation and
+ mapping
+To: Tomeu Vizoso <tomeu.vizoso@gmail.com>, Nishanth Menon <nm@ti.com>,
+ "Andrew F. Davis" <afd@ti.com>, Randolph Sapp <rs@ti.com>,
+ Jonathan Humphreys <j-humphreys@ti.com>, Andrei Aldea <a-aldea@ti.com>,
+ Chirag Shilwant <c-shilwant@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Beleswar Padhi <b-padhi@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Robert Nelson <robertcnelson@gmail.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Markus Elfring
+ <Markus.Elfring@web.de>, Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+ linux-remoteproc@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20261023-thames-v3-0-3ab40aa17157@tomeuvizoso.net>
+ <20261023-thames-v3-7-3ab40aa17157@tomeuvizoso.net>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20261023-thames-v3-7-3ab40aa17157@tomeuvizoso.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR5P281CA0033.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f3::10) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -107,178 +118,1035 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5255; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=hxruU5Qpi7r2EJrNeBqarI1YguCnlDks2WjPOZVNhtc=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq3ybhCmBylIiFeQF6JYkVphxgdtR4trriGdeKV WyMVHE5hfGJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCat8m4QAKCRCPgPtYfRL+ TqZQB/469uqHF0RQ3p1EtU5kkJhZgfZbqHOiHj9dcj/QjmbMJRgCsw+/wIgRYW0IRiO/++pMNVX 2sQYzZnumvdt3pS9qoAvqTO+EdxGaFirLJxoABx1CDduUP1JpAsbpKaYNyEoJqt+5lQh3TMQcMq DlM1PL/u9DAx7b54WXxvPhB6vOWX0eptEk7qYWjz8vQ9Q4g2gmHL2RQKwWGE0GZ1yweUJQmCn+K qyD+Vbdi7el6bO9pv5+VP2gX9rLg+BFoCH2h2iQxTfeaCOXBqThL5xuza0JA19i0j+J+li58Fr7 TlwpNM4Dn/jozhd/xBFmZTToNdVIK2FJRuURwqTWCZtgSzTh
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH0PR12MB8030:EE_
+X-MS-Office365-Filtering-Correlation-Id: 856001ef-66d6-467e-ba48-08df3348e699
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|23010399003|366016|1800799024|6133799003|18002099003|22082099003|3023799007|921020|56012099006|4143699003|11063799006|5023799004|261021121427099003|261021123027099003|261022105027099003|10067099003|261009223027099003|261022075727099003;
+X-Microsoft-Antispam-Message-Info:
+	NXR3mCehgykDRrYoNNiD8OujLBZDQatUNouS1G33ScM0iUWtH3QqKvSPATVFuiVQPfXYIjH9CEf0U5YBH65DlwRpFjjay30FW7QofHV+TjtZ81nQV2EjgR1eGQYdRKC+NVQfFCWVnuQ1mW58yh0/yRCrDtXhhmIL96TAkVvyTjsE/4AVZG8fhmdD3bZ8RRi/zC73OdLtytxjn1224VHUzA+G3WJIkZrrDq/MOuytZPbgRKRI0ALbm7nZGepVgN7L5sdHstTpWU2YcN1sfnZZ+GfEcvJjj2AzLj2mMISTDI96Nijaaow39naUkqJ6oBpdVSfYgiD1KO5mb2Wb45G0h8VLih+eo60Aurkjm8yepu4C+GI7g+bGqwD6x+EWEsDi2mgWCKJzT0ppvTTOfIPAI5NAHVMA6rlAm1BYot5l+NuRAfcSuMJi5pCeJhE1oaMZnOSLMYdT3dJh35kGhs79tm9FqdY//pif0aW2Izc1MslYbrs6fo6ZWLLSfK3o6jLw1HZ3iYcrht1+wLbvL1yMmT5DuXjPMULRHY5QD7oZMnyq/fWm4hy7G6m1jnebETRlEozJbtT6b3hpjbodqIw/jCIiLuUVpi+ts/r9BSolHeFDKzOjvLhydQM7bapwnYaLO9uvk/Yt38wjVxOp2esBBUqXh7sQQTTuK9vAMDbUiaaIUIOdfm3s/yKNxnZiUUfdZBVgUMbPbD9dpNHeFP6kEA==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(23010399003)(366016)(1800799024)(6133799003)(18002099003)(22082099003)(3023799007)(921020)(56012099006)(4143699003)(11063799006)(5023799004)(261021121427099003)(261021123027099003)(261022105027099003)(10067099003)(261009223027099003)(261022075727099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cEVOMmdVcitMeEw3eUkwOXpmb3dSYjk3R05ydE5FSnE3dWRnRjhvSXkrZ2w1?=
+ =?utf-8?B?b0V2NXd3L2Z4MzBYTndrb0s3QWlEaFJuaVZRUVI0d2F2OUwxaXRCMStrYXRS?=
+ =?utf-8?B?d0J5NFBqcVZYcTVXRHF2Z2lSd0ZVMHgwOHd3V3JwcWRqQlZ2UW55REg1alFl?=
+ =?utf-8?B?bmlaUW1xZTFjN2JIb3lnem50a1FESnRia0JyMWtodGNZaFpUYk5jMHZqUzhI?=
+ =?utf-8?B?SkFXc0ZBWHNseUFJYWZQQm9CbGt6ZjFkNFlMVUtDbGEwNzR4YXh5N1ZVb2RT?=
+ =?utf-8?B?eUQ0L3lCMXMybjBJcWg0RGR5dHZpVEQ3R1NkT3gram5SWVNIeTRkYkM4RHZM?=
+ =?utf-8?B?L3RrM0dCWE9TczdkZGcwSU50cmxOZk42anJSbkNNMjVlbzgxRzA4ZkxnOUNE?=
+ =?utf-8?B?Y1V1MmZKQ3o0QVBESUFsUko4eVBUWWt4anJaQkI1WkM1eWlvZ1R6eE5UWHJu?=
+ =?utf-8?B?M0t4aEs4d0xDckFhdTBjNC82TnFMdmZQT212TDIwNXpzeXZzUXZtKzBmWXV4?=
+ =?utf-8?B?MktXdlZJNXNZS3ljcXlZeGtudWRaTDgzSElNblQrQ3dLY1JvcHVvbkRDdlkw?=
+ =?utf-8?B?ZmFIeXBUN0V3WEVrWXozaG9tNU5mM0VhSHdPV0MrYU9jZ0pDNk9kcG9mRHJQ?=
+ =?utf-8?B?bnRnbk1XYUJiN3FQdCsxMnlocXZJZGluc1crWGVNSUhRQUgrMDRMUXI1WURS?=
+ =?utf-8?B?U0ZjaUJtWStzV2h0TTdvK2hBeTQ0VUxMYWpRTk0xMExwSlBOWVg5Z3NONmxC?=
+ =?utf-8?B?TVFpTTlIZ2hNaDg0cjdRU3lSajRpWUdsTjhTNTlYOUdpODlyMHBwbWU0Rlk1?=
+ =?utf-8?B?U0FMaytPVkE4R3lER3lla2NpampURGpweDMrQXcvbTB2UWNxNTBPRDByUWhX?=
+ =?utf-8?B?WXZFemtpaVV4Wko5Y1dndlNUY1A4Q0xaNWJaQUhWaGdRSFR2eU1MTXdmL2hz?=
+ =?utf-8?B?ZlZOT3hLQ3hkVGcwVnhqVlQ3ZjkrVlhXVnduc04wTHp1d1BBcm5HZnE2QVZQ?=
+ =?utf-8?B?Vi9TNzZOUkhJdFZvUlYvTTMreThGT2J0VVFlUkpFTHArOGlUNWp2a05DdzdL?=
+ =?utf-8?B?dUNWLzVBemFhUlhsTWsyZVAwcHk3T0k4azd2SVdKQVlDZG40SzQxeXE2RzA0?=
+ =?utf-8?B?TlVxcTRudHNiUTVIVVV4cVFOUVI1SHRJVFQ0YXlTQ0ErK2JvTEdIVENWbldM?=
+ =?utf-8?B?Q096akY2Tm5ncm96ckhXQWRJRGFBQ3RhK3pRSWszRURWajVWU1MvUEk4Y1pr?=
+ =?utf-8?B?d3lIdHVtc1BUc0piTGhHWUZSRFVUa0VOaTZRUDhidTJKNFFwV2M3dDN6Uk8z?=
+ =?utf-8?B?am1oOHRUR3hDY3NnUzQ0V09Fb1kvNlQ0ejJacFJYOTJGV2ZTZmcxcE5LYnJB?=
+ =?utf-8?B?N1JKN2lUcHBmdFVFWnMwVUNSaVh1djN4OUdKMHlKaTdocWVWSmdseE9DTmVr?=
+ =?utf-8?B?VlBoWVdhMkQxWGFwSm5FaHpQaFZSMWRzRXZEQ2dDRExpZUZYeWkxd0pUUzIz?=
+ =?utf-8?B?T091bnptRHN1Nkk3THJqUEhMNG0zVVFNSWdLNG9RWnVnOTdBbWY3azBoN1JV?=
+ =?utf-8?B?WFBxQVp2cy9CUW41UWNSWmZ0am8rbFliRlVrR3c5bkhhS1dxNUlqOWsvYlZN?=
+ =?utf-8?B?U2JiTXh6UmVPTklscWJtU09ZNlZqZ2xMYWs4QnRjR2M4ZCtFZGZZdzU1QnZD?=
+ =?utf-8?B?SEVCUnhaRWViYjlRZjlxUUJWWk1TbU1oQzBYZmJWdE1YaWwwaWlXNEozVUww?=
+ =?utf-8?B?Yk1Ic2toRE9acksxVzlwNkM4clNyeG1wNWYzcTR2V25IQ2JyaU11VkFsa2xK?=
+ =?utf-8?B?bWZpUUtRVG55Z0VLOVpQZFNWbHdvbmFzWTVNcFBLbFUrR0xDbXo1WGtYbWJ6?=
+ =?utf-8?B?dXVhTjR2SEFCSWJUZVVFNnpCbnVvanFOUng3TGlqQlNFdHpuSVQ1VzZYdU81?=
+ =?utf-8?B?VHhJWGI0NlFjQUlJSlB2dSttdXFoV1JaVDF6UGlhRE9uUWRicU1kTXczemhr?=
+ =?utf-8?B?N3FUNC9uN3AvZkVUNmRFbjR5MFA4MEZOTDFzZThFMk1LL0NpY3FOMU55ZHlO?=
+ =?utf-8?B?c3NjTllIcnZybHBqYy9sQ2J1NTIxS1psUVE1dFNmblVwZ3BVMEJaSDd5QTQ5?=
+ =?utf-8?B?MTVFRnEzL0E2Z0diaE9iblF1RHlQek9YL3RVOWYxcCtYaVhTRS9FOExqSVB3?=
+ =?utf-8?B?UUYvb0x1T2ZmQVZaOFE2TCtoRi9TUG15ZVUrNjZ1Q2JUZmJyTVJMeXlETkN6?=
+ =?utf-8?B?RmdTRHNWS25zQXJVT3Q5RllZMDRXUHY0d0UzZjd3R0ozaFJ1aVgrZC8xMUQy?=
+ =?utf-8?Q?rkDnUuQRXU6pIknIXS?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 856001ef-66d6-467e-ba48-08df3348e699
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Oct 2026 10:07:11.2072
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GPI5kYjpnsrYoq3Cp9M+1CPtxamnegwYyETVZp36dgRnBs7TMkKAbylTRffHywLJ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8030
 
-This callback allows to use the core's rproc_elf_load_segments()
-function instead of reimplementing it for very minor changes.
+On 10/23/26 08:39, Tomeu Vizoso wrote:
+> Creation returns a handle and maps nothing. The client maps a buffer
+> with DRM_IOCTL_THAMES_BO_BIND at a DSP address of its choice, as a
+> Vulkan driver would; the kernel enters the mapping in the page table
+> of every core, because we cannot know upfront which core will run a
+> given job.
+> 
+> We use the SHMEM helpers for non-contiguous memory. Contiguous memory
+> comes from the driver's own allocator, which aligns a buffer of 2 MiB or
+> more to 2 MiB so it can be mapped as blocks; only the GEM DMA object
+> and its mmap and vmap helpers are used for it.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/remoteproc/imx_dsp_rproc.c | 120 ++++++++---------------------
- 1 file changed, 30 insertions(+), 90 deletions(-)
+How exactly do you do that? IIRC the SHMEM helpers can only do 2MiB allocations on a best effort basis.
 
-diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-index 96d619daf3f5..324c10f18507 100644
---- a/drivers/remoteproc/imx_dsp_rproc.c
-+++ b/drivers/remoteproc/imx_dsp_rproc.c
-@@ -864,97 +864,41 @@ static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
- 	return 0;
- }
- 
--/*
-- * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
-- * @rproc: remote processor which will be booted using these fw segments
-- * @fw: the ELF firmware image
-- *
-- * This function loads the firmware segments to memory, where the remote
-- * processor expects them.
-- *
-- * Return: 0 on success and an appropriate error code otherwise
-- */
--static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
-+static int imx_dsp_rproc_memcpy_tova(struct rproc *rproc, u64 da, const void *src,
-+				     size_t filesz, size_t memsz)
- {
- 	struct device *dev = &rproc->dev;
--	const void *ehdr, *phdr;
--	int i, ret = 0;
--	u16 phnum;
--	const u8 *elf_data = fw->data;
--	u8 class = fw_elf_get_class(fw);
--	u32 elf_phdr_get_size = elf_size_of_phdr(class);
-+	void *ptr;
-+	int ret;
- 
--	ehdr = elf_data;
--	phnum = elf_hdr_get_e_phnum(class, ehdr);
--	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
-+	/* grab the kernel address for this device address */
-+	ptr = rproc_da_to_va(rproc, da, memsz, NULL);
-+	if (!ptr) {
-+		dev_err(dev, "bad phdr da 0x%llx mem 0x%zx\n", da, memsz);
-+		return -EINVAL;
-+	}
- 
--	/* go through the available ELF segments */
--	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
--		u64 da = elf_phdr_get_p_paddr(class, phdr);
--		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
--		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
--		u64 offset = elf_phdr_get_p_offset(class, phdr);
--		u32 type = elf_phdr_get_p_type(class, phdr);
--		void *ptr;
--
--		if (type != PT_LOAD || !memsz)
--			continue;
--
--		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
--			type, da, memsz, filesz);
--
--		if (filesz > memsz) {
--			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
--				filesz, memsz);
--			ret = -EINVAL;
--			break;
--		}
--
--		if (offset + filesz > fw->size) {
--			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
--				offset + filesz, fw->size);
--			ret = -EINVAL;
--			break;
--		}
--
--		if (!rproc_u64_fit_in_size_t(memsz)) {
--			dev_err(dev, "size (%llx) does not fit in size_t type\n",
--				memsz);
--			ret = -EOVERFLOW;
--			break;
--		}
--
--		/* grab the kernel address for this device address */
--		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
--		if (!ptr) {
--			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
--				memsz);
--			ret = -EINVAL;
--			break;
--		}
--
--		/* put the segment where the remote processor expects it */
--		if (filesz) {
--			ret = imx_dsp_rproc_memcpy(ptr, elf_data + offset, filesz);
--			if (ret) {
--				dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%llx\n",
--					da, memsz);
--				break;
--			}
--		}
--
--		/* zero out remaining memory for this segment */
--		if (memsz > filesz) {
--			ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
--			if (ret) {
--				dev_err(dev, "memset failed for da 0x%llx memsz 0x%llx\n",
--					da, memsz);
--				break;
--			}
-+	/* put the segment where the remote processor expects it */
-+	if (filesz) {
-+		ret = imx_dsp_rproc_memcpy(ptr, src, filesz);
-+		if (ret) {
-+			dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%zx\n",
-+				da, memsz);
-+			return ret;
- 		}
- 	}
- 
--	return ret;
-+	/* zero out remaining memory for this segment */
-+	if (memsz > filesz) {
-+		ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
-+		if (ret) {
-+			dev_err(dev, "memset failed for da 0x%llx memsz 0x%zx\n",
-+				da, memsz);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
- }
- 
- static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
-@@ -969,7 +913,6 @@ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
- 	struct imx_dsp_rproc *priv = rproc->priv;
- 	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
- 	struct rproc_mem_entry *carveout;
--	int ret;
- 
- 	/* Reset DSP if needed */
- 	if (dsp_dcfg->reset)
-@@ -985,11 +928,7 @@ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
- 		}
- 	}
- 
--	ret = imx_dsp_rproc_elf_load_segments(rproc, fw);
--	if (ret)
--		return ret;
--
--	return 0;
-+	return rproc_elf_load_segments(rproc, fw);
- }
- 
- static const struct rproc_ops imx_dsp_rproc_ops = {
-@@ -998,6 +937,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
- 	.start		= imx_dsp_rproc_start,
- 	.stop		= imx_dsp_rproc_stop,
- 	.kick		= imx_dsp_rproc_kick,
-+	.memcpy_tova	= imx_dsp_rproc_memcpy_tova,
- 	.load		= imx_dsp_rproc_load,
- 	.parse_fw	= imx_dsp_rproc_parse_fw,
- 	.handle_rsc	= imx_dsp_rproc_handle_rsc,
--- 
-2.47.3
+In other words you don't get a guarantee that this always works and when memory is fragmented the 4k fallback must work as well.
+
+Regards,
+Christian.
+
+> 
+> Contiguous memory is needed for buffers that are going to be read from
+> or written into by the DRU, as it doesn't resolve addresses via the MMU.
+> 
+> Binding at an address the client chooses lets a program be compiled,
+> with its addresses fixed, on a machine without the hardware, and is what
+> a Vulkan driver needs.
+> 
+> A buffer is bound anywhere from 4 GiB up to the user region at 1 TiB; a
+> buffer shared through a dma-buf may be bound in several Contexts, so
+> the bindings are kept under one device-wide lock. The IOCTLs take their
+> arrays as versioned objects whose stride is the size userspace was
+> built against, so a structure can grow under a minor bump.
+> 
+> Assisted-by: LLM
+> Signed-off-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
+> 
+> ---
+> 
+> v3:
+> - Added read-only, executable and contiguous flags.
+> - Added BO_BIND IOCTL.
+> - Copy the IOCTLs' arrays with vmemdup_array_user(), through one helper
+>   for versioned arrays (Tvrtko Ursulin).
+> 
+> v2:
+> - Add thames_accel.h UAPI header (Robert Nelson).
+> ---
+>  drivers/accel/thames/Kconfig         |   2 +
+>  drivers/accel/thames/thames_device.h |   6 +
+>  drivers/accel/thames/thames_drv.c    |  47 +++++
+>  drivers/accel/thames/thames_drv.h    |   5 +
+>  drivers/accel/thames/thames_gem.c    | 398 +++++++++++++++++++++++++++++++++++
+>  drivers/accel/thames/thames_gem.h    |  21 ++
+>  include/uapi/drm/thames_accel.h      | 183 +++++++++++++++-
+>  7 files changed, 661 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/accel/thames/Kconfig b/drivers/accel/thames/Kconfig
+> index 9362b9274075..47a2986fcabd 100644
+> --- a/drivers/accel/thames/Kconfig
+> +++ b/drivers/accel/thames/Kconfig
+> @@ -6,6 +6,8 @@ config DRM_ACCEL_THAMES
+>         depends on TI_K3_DSP_REMOTEPROC
+>         depends on REMOTEPROC
+>         depends on MAILBOX
+> +       select DRM_GEM_DMA_HELPER
+> +       select DRM_GEM_SHMEM_HELPER
+>         select IOMMU_IO_PGTABLE_LPAE
+>         help
+>           Choose this option if you have a Texas Instruments J722S and want to
+> diff --git a/drivers/accel/thames/thames_device.h b/drivers/accel/thames/thames_device.h
+> index e89e0dfd89b8..a1a54d974359 100644
+> --- a/drivers/accel/thames/thames_device.h
+> +++ b/drivers/accel/thames/thames_device.h
+> @@ -58,6 +58,12 @@ struct thames_device {
+>         struct list_head contexts;
+>         struct mutex contexts_lock;
+> 
+> +       /*
+> +        * One lock for the device: a dma-buf shared buffer is bound from
+> +        * several files.
+> +        */
+> +       struct mutex bindings_lock;
+> +
+>  };
+> 
+>  #define to_thames_device(drm_dev) \
+> diff --git a/drivers/accel/thames/thames_drv.c b/drivers/accel/thames/thames_drv.c
+> index cb0287430d25..a17e7a90f7c1 100644
+> --- a/drivers/accel/thames/thames_drv.c
+> +++ b/drivers/accel/thames/thames_drv.c
+> @@ -93,6 +93,41 @@ static void thames_postclose(struct drm_device *dev, struct drm_file *file)
+>         thames_file_priv_put(thames_priv);
+>  }
+> 
+> +void *thames_get_uobj_array(const struct drm_thames_obj_array *in, u32 min_stride, u32 obj_size)
+> +{
+> +       void __user *in_ptr = u64_to_user_ptr(in->array);
+> +       void *out, *out_ptr;
+> +       int ret;
+> +       u32 i;
+> +
+> +       if (!in->count)
+> +               return NULL;
+> +
+> +       if (in->stride < min_stride)
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       if (in->stride == obj_size)
+> +               return vmemdup_array_user(in_ptr, in->count, obj_size);
+> +
+> +       out = kvmalloc_array(in->count, obj_size, GFP_KERNEL);
+> +       if (!out)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       out_ptr = out;
+> +       for (i = 0; i < in->count; i++) {
+> +               ret = copy_struct_from_user(out_ptr, obj_size, in_ptr, in->stride);
+> +               if (ret) {
+> +                       kvfree(out);
+> +                       return ERR_PTR(ret);
+> +               }
+> +
+> +               out_ptr += obj_size;
+> +               in_ptr += in->stride;
+> +       }
+> +
+> +       return out;
+> +}
+> +
+>  #define THAMES_DRIVER_MAJOR 1
+>  #define THAMES_DRIVER_MINOR 0
+> 
+> @@ -121,6 +156,8 @@ static int thames_query_caps(struct drm_device *dev, struct drm_thames_dev_query
+>                 .l2_aux.dsp_va = thames_window_va(tdev, THAMES_WINDOW_L2AUX),
+>                 .l2_aux.size = reported->window_sizes[THAMES_WINDOW_L2AUX],
+>                 .dru_realtime_dsp_va = thames_window_va(tdev, THAMES_WINDOW_DRU),
+> +               .dsp_va_range.dsp_va = THAMES_BIND_VA_START,
+> +               .dsp_va_range.size = THAMES_BIND_VA_END - THAMES_BIND_VA_START,
+>                 .user_region.dsp_va = THAMES_USER_REGION_BASE,
+>                 .user_region.size = THAMES_USER_REGION_SIZE,
+>                 .hardware_id = reported->hardware_id,
+> @@ -165,11 +202,17 @@ static int thames_ioctl_##func##_entered(struct drm_device *dev, void *data,      \
+>         return ret;                                                             \
+>  }
+> 
+> +THAMES_IOCTL_ENTERED(bo_create)
+> +THAMES_IOCTL_ENTERED(bo_mmap_offset)
+>  THAMES_IOCTL_ENTERED(dev_query)
+> +THAMES_IOCTL_ENTERED(bo_bind)
+> 
+>  static const struct drm_ioctl_desc thames_drm_driver_ioctls[] = {
+>  #define THAMES_IOCTL(n, func) DRM_IOCTL_DEF_DRV(THAMES_##n, thames_ioctl_##func, 0)
+> +       THAMES_IOCTL(BO_CREATE, bo_create_entered),
+> +       THAMES_IOCTL(BO_MMAP_OFFSET, bo_mmap_offset_entered),
+>         THAMES_IOCTL(DEV_QUERY, dev_query_entered),
+> +       THAMES_IOCTL(BO_BIND, bo_bind_entered),
+>  };
+> 
+>  DEFINE_DRM_ACCEL_FOPS(thames_accel_driver_fops);
+> @@ -234,6 +277,10 @@ static struct thames_device *thames_device_init(struct platform_device *pdev,
+>         if (err)
+>                 return ERR_PTR(err);
+> 
+> +       err = drmm_mutex_init(&tdev->ddev, &tdev->bindings_lock);
+> +       if (err)
+> +               return ERR_PTR(err);
+> +
+>         INIT_LIST_HEAD(&tdev->contexts);
+> 
+>         tdev->asid_next = 1;
+> diff --git a/drivers/accel/thames/thames_drv.h b/drivers/accel/thames/thames_drv.h
+> index f4536078e02f..7f9031b63780 100644
+> --- a/drivers/accel/thames/thames_drv.h
+> +++ b/drivers/accel/thames/thames_drv.h
+> @@ -15,6 +15,7 @@
+>  #include "thames_device.h"
+> 
+>  struct drm_gem_dma_object;
+> +struct drm_thames_obj_array;
+> 
+>  struct thames_file_priv {
+>         struct thames_device *tdev;
+> @@ -37,6 +38,8 @@ struct thames_file_priv {
+>         struct drm_mm_node user_region;
+>         struct drm_mm_node window_nodes[THAMES_NUM_WINDOWS];
+> 
+> +       struct list_head bindings;
+> +
+>         u32 context_id;
+> 
+>         u64 context_serial;
+> @@ -47,4 +50,6 @@ struct thames_file_priv {
+> 
+>  void thames_file_priv_put(struct thames_file_priv *priv);
+> 
+> +void *thames_get_uobj_array(const struct drm_thames_obj_array *in, u32 min_stride, u32 obj_size);
+> +
+>  #endif
+> diff --git a/drivers/accel/thames/thames_gem.c b/drivers/accel/thames/thames_gem.c
+> index b98e0fe203b0..c9fd08c7aaf4 100644
+> --- a/drivers/accel/thames/thames_gem.c
+> +++ b/drivers/accel/thames/thames_gem.c
+> @@ -14,6 +14,7 @@
+>  #include <drm/drm_device.h>
+>  #include <drm/drm_drv.h>
+>  #include <drm/drm_gem_dma_helper.h>
+> +#include <drm/drm_gem_shmem_helper.h>
+>  #include <drm/drm_print.h>
+>  #include <drm/drm_timeout.h>
+>  #include <drm/thames_accel.h>
+> @@ -23,6 +24,30 @@
+>  #include "thames_drv.h"
+>  #include "thames_gem.h"
+> 
+> +/*
+> + * References neither the buffer nor the Context: whichever goes first removes
+> + * it.
+> + */
+> +struct thames_binding {
+> +       struct thames_gem_object *bo;
+> +       struct thames_file_priv *priv;
+> +       struct drm_mm_node mm;
+> +       struct list_head bo_link;
+> +       struct list_head context_link;
+> +};
+> +
+> +static int thames_bo_flags_to_prot(u32 flags)
+> +{
+> +       int prot = IOMMU_READ | IOMMU_CACHE;
+> +
+> +       if (!(flags & DRM_THAMES_BO_EXECUTABLE))
+> +               prot |= IOMMU_NOEXEC;
+> +       if (!(flags & (DRM_THAMES_BO_READ_ONLY | DRM_THAMES_BO_EXECUTABLE)))
+> +               prot |= IOMMU_WRITE;
+> +
+> +       return prot;
+> +}
+> +
+>  static size_t thames_pgsize(u64 addr, size_t size, size_t *count)
+>  {
+>         size_t blk_offset = -addr % SZ_2M;
+> @@ -95,6 +120,72 @@ static int thames_context_map(struct thames_file_priv *priv, u64 dsp_va, int pro
+>         return 0;
+>  }
+> 
+> +static void thames_context_unmap(struct thames_file_priv *priv, u64 dsp_va, u64 size)
+> +{
+> +       unsigned int c;
+> +
+> +       for (c = 0; c < priv->tdev->num_cores; c++)
+> +               thames_pgtable_unmap(priv->pgtbl_ops[c], dsp_va, size);
+> +}
+> +
+> +struct thames_gem_object *thames_context_find_bo(struct thames_file_priv *priv, u64 start,
+> +                                                u64 end, u64 *offset)
+> +{
+> +       struct thames_binding *binding;
+> +       struct thames_gem_object *bo;
+> +       struct drm_mm_node *node;
+> +       unsigned int i;
+> +
+> +       guard(mutex)(&priv->mm_lock);
+> +
+> +       node = __drm_mm_interval_first(&priv->mm, start, start);
+> +       if (node == &priv->mm.head_node || node == &priv->first_page ||
+> +           node == &priv->user_region)
+> +               return NULL;
+> +
+> +       for (i = 0; i < THAMES_NUM_WINDOWS; i++) {
+> +               if (node == &priv->window_nodes[i])
+> +                       return NULL;
+> +       }
+> +
+> +       binding = container_of(node, struct thames_binding, mm);
+> +       bo = binding->bo;
+> +       if (end > node->start + bo->base.base.size)
+> +               return NULL;
+> +
+> +       if (!kref_get_unless_zero(&bo->base.base.refcount))
+> +               return NULL;
+> +
+> +       *offset = start - node->start;
+> +
+> +       return bo;
+> +}
+> +
+> +static struct thames_binding *thames_bo_find_binding(struct thames_gem_object *bo,
+> +                                                    struct thames_file_priv *priv)
+> +{
+> +       struct thames_binding *binding;
+> +
+> +       lockdep_assert_held(&priv->tdev->bindings_lock);
+> +
+> +       list_for_each_entry(binding, &bo->bindings, bo_link) {
+> +               if (binding->priv == priv)
+> +                       return binding;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +u64 thames_bo_dsp_va(struct thames_gem_object *bo, struct thames_file_priv *priv)
+> +{
+> +       struct thames_binding *binding;
+> +
+> +       guard(mutex)(&priv->tdev->bindings_lock);
+> +       binding = thames_bo_find_binding(bo, priv);
+> +
+> +       return binding ? binding->mm.start : 0;
+> +}
+> +
+>  /* Cyclic, so a freed ASID is not handed out again at once. */
+>  static int thames_asid_alloc(struct thames_device *tdev)
+>  {
+> @@ -215,6 +306,7 @@ static int thames_context_map_core_regions(struct thames_file_priv *priv)
+>  }
+> 
+>  static const struct drm_gem_object_funcs thames_gem_funcs;
+> +static const struct drm_gem_object_funcs thames_gem_shmem_funcs;
+> 
+>  /*
+>   * The allocator zeroes through the cache: clean it before the DSP can reach the
+> @@ -234,6 +326,7 @@ static struct drm_gem_dma_object *thames_gem_create(struct drm_device *ddev, siz
+>         if (!bo)
+>                 return ERR_PTR(-ENOMEM);
+> 
+> +       INIT_LIST_HEAD(&bo->bindings);
+>         obj = &bo->base.base;
+>         obj->funcs = &thames_gem_funcs;
+>         bo->base.map_noncoherent = true;
+> @@ -271,6 +364,38 @@ static struct drm_gem_dma_object *thames_gem_create(struct drm_device *ddev, siz
+>         return ERR_PTR(ret);
+>  }
+> 
+> +/*
+> + * The DSP reaches these pages only through the page tables, never by a DRU
+> + * transfer.
+> + */
+> +static struct thames_gem_object *thames_gem_create_shmem(struct drm_device *ddev, size_t size)
+> +{
+> +       struct thames_gem_object *bo;
+> +       struct sg_table *sgt;
+> +       int ret;
+> +
+> +       bo = kzalloc_obj(*bo, GFP_KERNEL);
+> +       if (!bo)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       INIT_LIST_HEAD(&bo->bindings);
+> +       bo->shmem.base.funcs = &thames_gem_shmem_funcs;
+> +
+> +       ret = drm_gem_shmem_init(ddev, &bo->shmem, PAGE_ALIGN(size));
+> +       if (ret) {
+> +               kfree(bo);
+> +               return ERR_PTR(ret);
+> +       }
+> +
+> +       sgt = drm_gem_shmem_get_pages_sgt(&bo->shmem);
+> +       if (IS_ERR(sgt)) {
+> +               drm_gem_object_put(&bo->shmem.base);
+> +               return ERR_CAST(sgt);
+> +       }
+> +
+> +       return bo;
+> +}
+> +
+>  static struct drm_gem_dma_object *thames_context_alloc_user_pages(struct thames_file_priv *priv,
+>                                                                   u64 dsp_va, size_t size)
+>  {
+> @@ -459,6 +584,7 @@ int thames_context_create(struct thames_file_priv *priv)
+> 
+>         priv->context_id = ret;
+>         priv->context_serial = atomic64_inc_return(&tdev->last_context_serial);
+> +       INIT_LIST_HEAD(&priv->bindings);
+> 
+>         ret = thames_context_va_init(priv);
+>         if (ret)
+> @@ -500,14 +626,37 @@ int thames_context_create(struct thames_file_priv *priv)
+>         return ret;
+>  }
+> 
+> +static void thames_binding_remove(struct thames_binding *binding)
+> +{
+> +       struct thames_file_priv *priv = binding->priv;
+> +
+> +       lockdep_assert_held(&priv->tdev->bindings_lock);
+> +
+> +       thames_context_unmap(priv, binding->mm.start, binding->mm.size);
+> +       thames_context_bump_generation(priv);
+> +
+> +       scoped_guard(mutex, &priv->mm_lock)
+> +               drm_mm_remove_node(&binding->mm);
+> +
+> +       list_del(&binding->bo_link);
+> +       list_del(&binding->context_link);
+> +       kfree(binding);
+> +}
+> +
+>  void thames_context_destroy(struct thames_file_priv *priv)
+>  {
+>         struct thames_device *tdev = priv->tdev;
+> +       struct thames_binding *binding, *tmp;
+> 
+>         /*
+>          * The Context goes after its last pushed Job completed, so no Job runs
+>          * on mappings removed here.
+>          */
+> +       scoped_guard(mutex, &tdev->bindings_lock) {
+> +               list_for_each_entry_safe(binding, tmp, &priv->bindings, context_link)
+> +                       thames_binding_remove(binding);
+> +       }
+> +
+>         scoped_guard(mutex, &tdev->contexts_lock)
+>                 list_del(&priv->context_node);
+> 
+> @@ -522,10 +671,124 @@ void thames_context_destroy(struct thames_file_priv *priv)
+>                 priv->context_id, priv->asid);
+>  }
+> 
+> +static int thames_context_map_sgt(struct thames_file_priv *priv, u64 dsp_va, int prot,
+> +                                 struct sg_table *sgt)
+> +{
+> +       struct scatterlist *sg;
+> +       u64 offset = 0;
+> +       unsigned int i;
+> +       int ret;
+> +
+> +       for_each_sgtable_dma_sg(sgt, sg, i) {
+> +               ret = thames_context_map(priv, dsp_va + offset, prot, sg_dma_address(sg),
+> +                                        sg_dma_len(sg));
+> +               if (ret) {
+> +                       thames_context_unmap(priv, dsp_va, offset);
+> +                       return ret;
+> +               }
+> +
+> +               offset += sg_dma_len(sg);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int thames_bo_bind(struct thames_file_priv *priv, struct thames_gem_object *bo,
+> +                         u64 dsp_va)
+> +{
+> +       size_t size = bo->base.base.size;
+> +       int prot = thames_bo_flags_to_prot(bo->flags);
+> +       struct thames_binding *binding;
+> +       int ret;
+> +
+> +       if (!IS_ALIGNED(dsp_va, PAGE_SIZE))
+> +               return -EINVAL;
+> +
+> +       if (dsp_va < THAMES_BIND_VA_START || dsp_va > THAMES_BIND_VA_END ||
+> +           size > THAMES_BIND_VA_END - dsp_va)
+> +               return -EINVAL;
+> +
+> +       binding = kzalloc_obj(*binding);
+> +       if (!binding)
+> +               return -ENOMEM;
+> +
+> +       binding->bo = bo;
+> +       binding->priv = priv;
+> +       binding->mm.start = dsp_va;
+> +       binding->mm.size = size;
+> +
+> +       ret = mutex_lock_interruptible(&priv->tdev->bindings_lock);
+> +       if (ret)
+> +               goto err_free;
+> +
+> +       if (thames_bo_find_binding(bo, priv)) {
+> +               ret = -EBUSY;
+> +               goto err_unlock;
+> +       }
+> +
+> +       scoped_guard(mutex, &priv->mm_lock)
+> +               ret = drm_mm_reserve_node(&priv->mm, &binding->mm);
+> +       if (ret)
+> +               goto err_unlock;
+> +
+> +       if (bo->flags & DRM_THAMES_BO_CONTIGUOUS)
+> +               ret = thames_context_map(priv, dsp_va, prot, bo->base.dma_addr, size);
+> +       else
+> +               ret = thames_context_map_sgt(priv, dsp_va, prot, bo->shmem.sgt);
+> +       if (ret) {
+> +               scoped_guard(mutex, &priv->mm_lock)
+> +                       drm_mm_remove_node(&binding->mm);
+> +               goto err_unlock;
+> +       }
+> +
+> +       list_add_tail(&binding->bo_link, &bo->bindings);
+> +       list_add_tail(&binding->context_link, &priv->bindings);
+> +       mutex_unlock(&priv->tdev->bindings_lock);
+> +
+> +       return 0;
+> +
+> +err_unlock:
+> +       mutex_unlock(&priv->tdev->bindings_lock);
+> +err_free:
+> +       kfree(binding);
+> +       return ret;
+> +}
+> +
+> +static int thames_bo_unbind(struct thames_file_priv *priv, struct thames_gem_object *bo)
+> +{
+> +       struct thames_binding *binding;
+> +       int ret;
+> +
+> +       ret = mutex_lock_interruptible(&priv->tdev->bindings_lock);
+> +       if (ret)
+> +               return ret;
+> +
+> +       binding = thames_bo_find_binding(bo, priv);
+> +       if (binding)
+> +               thames_binding_remove(binding);
+> +       else
+> +               ret = -EINVAL;
+> +
+> +       mutex_unlock(&priv->tdev->bindings_lock);
+> +       return ret;
+> +}
+> +
+> +static void thames_bo_unmap_from_device(struct thames_gem_object *bo)
+> +{
+> +       struct thames_device *tdev = to_thames_device(bo->base.base.dev);
+> +       struct thames_binding *binding, *tmp;
+> +
+> +       guard(mutex)(&tdev->bindings_lock);
+> +       list_for_each_entry_safe(binding, tmp, &bo->bindings, bo_link)
+> +               thames_binding_remove(binding);
+> +}
+> +
+>  static void thames_gem_bo_free(struct drm_gem_object *obj)
+>  {
+>         struct thames_gem_object *bo = to_thames_bo(obj);
+> 
+> +       thames_bo_unmap_from_device(bo);
+> +
+>         if (bo->alloc_vaddr)
+>                 dma_free_noncoherent(drm_dev_dma_dev(obj->dev), bo->alloc_size, bo->alloc_vaddr,
+>                                      bo->alloc_dma, DMA_TO_DEVICE);
+> @@ -535,6 +798,16 @@ static void thames_gem_bo_free(struct drm_gem_object *obj)
+>         kfree(bo);
+>  }
+> 
+> +static void thames_gem_shmem_bo_free(struct drm_gem_object *obj)
+> +{
+> +       struct thames_gem_object *bo = to_thames_bo(obj);
+> +
+> +       thames_bo_unmap_from_device(bo);
+> +
+> +       drm_gem_free_mmap_offset(obj);
+> +       drm_gem_shmem_free(&bo->shmem);
+> +}
+> +
+>  static const struct drm_gem_object_funcs thames_gem_funcs = {
+>         .free = thames_gem_bo_free,
+>         .print_info = drm_gem_dma_object_print_info,
+> @@ -544,3 +817,128 @@ static const struct drm_gem_object_funcs thames_gem_funcs = {
+>         .vm_ops = &drm_gem_dma_vm_ops,
+>  };
+> 
+> +static const struct drm_gem_object_funcs thames_gem_shmem_funcs = {
+> +       .free = thames_gem_shmem_bo_free,
+> +       .print_info = drm_gem_shmem_object_print_info,
+> +       .pin = drm_gem_shmem_object_pin,
+> +       .unpin = drm_gem_shmem_object_unpin,
+> +       .get_sg_table = drm_gem_shmem_object_get_sg_table,
+> +       .vmap = drm_gem_shmem_object_vmap,
+> +       .vunmap = drm_gem_shmem_object_vunmap,
+> +       .mmap = drm_gem_shmem_object_mmap,
+> +       .vm_ops = &drm_gem_shmem_vm_ops,
+> +};
+> +
+> +int thames_ioctl_bo_create(struct drm_device *ddev, void *data, struct drm_file *file)
+> +{
+> +       struct drm_thames_bo_create *args = data;
+> +       struct thames_gem_object *bo;
+> +       struct drm_gem_dma_object *mem;
+> +       int ret;
+> +
+> +       if (args->handle)
+> +               return -EINVAL;
+> +
+> +       if (!args->size)
+> +               return -EINVAL;
+> +
+> +       if (args->flags & ~(DRM_THAMES_BO_READ_ONLY | DRM_THAMES_BO_EXECUTABLE |
+> +                           DRM_THAMES_BO_CONTIGUOUS))
+> +               return -EINVAL;
+> +
+> +       if (args->flags & DRM_THAMES_BO_CONTIGUOUS) {
+> +               mem = thames_gem_create(ddev, args->size);
+> +               if (IS_ERR(mem))
+> +                       return PTR_ERR(mem);
+> +               bo = to_thames_bo(&mem->base);
+> +       } else {
+> +               bo = thames_gem_create_shmem(ddev, args->size);
+> +               if (IS_ERR(bo))
+> +                       return PTR_ERR(bo);
+> +       }
+> +
+> +       bo->flags = args->flags;
+> +
+> +       ret = drm_gem_handle_create(file, &bo->base.base, &args->handle);
+> +       drm_gem_object_put(&bo->base.base);
+> +       if (ret) {
+> +               dev_err(ddev->dev, "Failed to create gem handle: %d", ret);
+> +               return ret;
+> +       }
+> +
+> +       args->size = bo->base.base.size;
+> +
+> +       return 0;
+> +}
+> +
+> +static int thames_bind_exec_op(struct drm_file *file, const struct drm_thames_bind_op *op)
+> +{
+> +       struct thames_file_priv *priv = file->driver_priv;
+> +       struct drm_gem_object *obj;
+> +       int ret;
+> +
+> +       if (op->flags & ~DRM_THAMES_BIND_OP_UNBIND)
+> +               return -EINVAL;
+> +
+> +       if ((op->flags & DRM_THAMES_BIND_OP_UNBIND) && op->dsp_va)
+> +               return -EINVAL;
+> +
+> +       obj = drm_gem_object_lookup(file, op->handle);
+> +       if (!obj)
+> +               return -ENOENT;
+> +
+> +       if (op->flags & DRM_THAMES_BIND_OP_UNBIND)
+> +               ret = thames_bo_unbind(priv, to_thames_bo(obj));
+> +       else
+> +               ret = thames_bo_bind(priv, to_thames_bo(obj), op->dsp_va);
+> +
+> +       drm_gem_object_put(obj);
+> +
+> +       return ret;
+> +}
+> +
+> +int thames_ioctl_bo_bind(struct drm_device *ddev, void *data, struct drm_file *file)
+> +{
+> +       struct drm_thames_bo_bind *args = data;
+> +       struct drm_thames_bind_op *ops;
+> +       int ret = 0;
+> +       u32 i;
+> +
+> +       if (args->flags || args->pad)
+> +               return -EINVAL;
+> +
+> +       ops = thames_get_uobj_array(&args->ops, sizeof(*ops), sizeof(*ops));
+> +       if (IS_ERR(ops))
+> +               return PTR_ERR(ops);
+> +
+> +       for (i = 0; i < args->ops.count; i++) {
+> +               ret = thames_bind_exec_op(file, &ops[i]);
+> +               if (ret) {
+> +                       args->ops.count = i;
+> +                       break;
+> +               }
+> +       }
+> +
+> +       kvfree(ops);
+> +
+> +       return ret;
+> +}
+> +
+> +int thames_ioctl_bo_mmap_offset(struct drm_device *ddev, void *data, struct drm_file *file)
+> +{
+> +       struct drm_thames_bo_mmap_offset *args = data;
+> +       struct drm_gem_object *obj;
+> +
+> +       if (args->pad)
+> +               return -EINVAL;
+> +
+> +       obj = drm_gem_object_lookup(file, args->handle);
+> +       if (!obj)
+> +               return -ENOENT;
+> +
+> +       args->offset = drm_vma_node_offset_addr(&obj->vma_node);
+> +       drm_gem_object_put(obj);
+> +
+> +       return 0;
+> +}
+> +
+> diff --git a/drivers/accel/thames/thames_gem.h b/drivers/accel/thames/thames_gem.h
+> index 09ac1b50d21a..c9d0e170dad3 100644
+> --- a/drivers/accel/thames/thames_gem.h
+> +++ b/drivers/accel/thames/thames_gem.h
+> @@ -12,6 +12,13 @@
+> 
+>  #include "thames_abi.h"
+> 
+> +/*
+> + * The windows sit below 4 GiB because Kernels load their addresses with 32-bit
+> + * moves.
+> + */
+> +#define THAMES_BIND_VA_START   SZ_4G
+> +#define THAMES_BIND_VA_END     THAMES_USER_REGION_BASE
+> +
+>  struct thames_core;
+>  struct thames_device;
+>  struct thames_file_priv;
+> @@ -34,9 +41,18 @@ struct thames_gem_object {
+>         dma_addr_t alloc_dma;
+>         size_t alloc_size;
+> 
+> +       struct list_head bindings;
+> +
+> +       u32 flags;
+>  };
+> 
+> 
+> +int thames_ioctl_bo_create(struct drm_device *ddev, void *data, struct drm_file *file);
+> +
+> +int thames_ioctl_bo_mmap_offset(struct drm_device *ddev, void *data, struct drm_file *file);
+> +
+> +int thames_ioctl_bo_bind(struct drm_device *ddev, void *data, struct drm_file *file);
+> +
+>  int thames_context_create(struct thames_file_priv *priv);
+> 
+>  void thames_context_destroy(struct thames_file_priv *priv);
+> @@ -44,6 +60,11 @@ void thames_context_rewrite_entries(struct thames_core *core);
+> 
+>  void thames_context_va_fini(struct thames_file_priv *priv);
+> 
+> +struct thames_gem_object *thames_context_find_bo(struct thames_file_priv *priv, u64 start,
+> +                                                u64 end, u64 *offset);
+> +
+> +u64 thames_bo_dsp_va(struct thames_gem_object *bo, struct thames_file_priv *priv);
+> +
+>  static inline struct thames_gem_object *to_thames_bo(struct drm_gem_object *obj)
+>  {
+>         return container_of(obj, struct thames_gem_object, base.base);
+> diff --git a/include/uapi/drm/thames_accel.h b/include/uapi/drm/thames_accel.h
+> index af427a29b585..ea556b48f1d7 100644
+> --- a/include/uapi/drm/thames_accel.h
+> +++ b/include/uapi/drm/thames_accel.h
+> @@ -45,15 +45,116 @@ extern "C" {
+>   * definitions instead.
+>   */
+>  enum drm_thames_ioctl_id {
+> +       /** @DRM_THAMES_BO_CREATE: Create a buffer object. */
+> +       DRM_THAMES_BO_CREATE,
+> +
+> +       /**
+> +        * @DRM_THAMES_BO_MMAP_OFFSET: Get the file offset to pass to
+> +        * mmap to map a GEM object.
+> +        */
+> +       DRM_THAMES_BO_MMAP_OFFSET,
+> +
+>         /** @DRM_THAMES_DEV_QUERY: Query the device's capabilities. */
+>         DRM_THAMES_DEV_QUERY,
+> 
+> +       /**
+> +        * @DRM_THAMES_BO_BIND: Bind buffers into the file's Context at the
+> +        * addresses the client chooses, or unbind them.
+> +        */
+> +       DRM_THAMES_BO_BIND,
+>  };
+> 
+>  /**
+>   * DOC: IOCTL arguments
+>   */
+> 
+> +/**
+> + * enum drm_thames_bo_flags - Buffer object flags, passed at creation time.
+> + *
+> + * A buffer with neither permission flag is user read-write and execute-never;
+> + * DRM_THAMES_BO_CONTIGUOUS chooses the backing, not the permissions.
+> + */
+> +enum drm_thames_bo_flags {
+> +       /**
+> +        * @DRM_THAMES_BO_READ_ONLY: Mapped user read-only in the Context.  For
+> +        * the params, the coefficients and the constants, so that a Kernel
+> +        * cannot alter the inputs of a Job's next run.
+> +        */
+> +       DRM_THAMES_BO_READ_ONLY = 1 << 0,
+> +
+> +       /**
+> +        * @DRM_THAMES_BO_EXECUTABLE: Mapped user read-execute and not
+> +        * writable.  Required of a Job's program.
+> +        */
+> +       DRM_THAMES_BO_EXECUTABLE = 1 << 1,
+> +
+> +       /**
+> +        * @DRM_THAMES_BO_CONTIGUOUS: Backed by one physically contiguous
+> +        * allocation, so that a transfer of a Job can name it.  For the buffers
+> +        * a DRU transfer reads or writes; any other buffer is backed page by
+> +        * page.
+> +        */
+> +       DRM_THAMES_BO_CONTIGUOUS = 1 << 2,
+> +};
+> +
+> +/**
+> + * struct drm_thames_bo_create - Arguments passed to DRM_IOCTL_THAMES_BO_CREATE.
+> + *
+> + * Returns a handle and no address; the buffer is bound in no Context until
+> + * DRM_IOCTL_THAMES_BO_BIND.
+> + */
+> +struct drm_thames_bo_create {
+> +       /**
+> +        * @size: Requested size for the object
+> +        *
+> +        * The (page-aligned) allocated size for the object will be returned.
+> +        */
+> +       __u64 size;
+> +
+> +       /**
+> +        * @handle: MBZ on input; returns the object's handle, which is nonzero.
+> +        */
+> +       __u32 handle;
+> +
+> +       /** @flags: Combination of &enum drm_thames_bo_flags. */
+> +       __u32 flags;
+> +};
+> +
+> +/**
+> + * struct drm_thames_bo_mmap_offset - Arguments passed to DRM_IOCTL_THAMES_BO_MMAP_OFFSET.
+> + */
+> +struct drm_thames_bo_mmap_offset {
+> +       /** @handle: Handle of the object we want an mmap offset for. */
+> +       __u32 handle;
+> +
+> +       /** @pad: MBZ. */
+> +       __u32 pad;
+> +
+> +       /** @offset: The fake offset to use for subsequent mmap calls. */
+> +       __u64 offset;
+> +};
+> +
+> +/**
+> + * struct drm_thames_obj_array - An array of versioned objects passed by pointer.
+> + *
+> + * The stride is the size of the object userspace was built against, so a
+> + * structure can grow at its end under a minor bump.
+> + * The kernel reads each element with copy_struct_from_user(): a stride smaller
+> + * than its own size has the rest read as zero, down to the size the structure
+> + * had when it entered the uAPI and no smaller; a larger stride is accepted only
+> + * if the bytes the kernel does not know are zero.
+> + */
+> +struct drm_thames_obj_array {
+> +       /** @stride: Size of one element in bytes. */
+> +       __u32 stride;
+> +
+> +       /** @count: Number of elements. */
+> +       __u32 count;
+> +
+> +       /** @array: User pointer to the first element. */
+> +       __u64 array;
+> +};
+> +
+>  /**
+>   * struct drm_thames_range - A range of the Context's address space.
+>   */
+> @@ -65,6 +166,73 @@ struct drm_thames_range {
+>         __u64 size;
+>  };
+> 
+> +/**
+> + * DOC: Bind operation flags
+> + *
+> + * - %DRM_THAMES_BIND_OP_UNBIND: Unbind the buffer from the Context instead
+> + *   of binding it; &drm_thames_bind_op.dsp_va must be 0.
+> + */
+> +#define DRM_THAMES_BIND_OP_UNBIND      (1 << 0)
+> +
+> +/**
+> + * struct drm_thames_bind_op - One operation of DRM_IOCTL_THAMES_BO_BIND
+> + *
+> + * A bind maps the whole buffer at @dsp_va in every page table of the file's
+> + * Context, with the permissions of its creation flags; an unbind removes the
+> + * mapping.  A buffer is bound at most once in a Context, at one address, over
+> + * no range another buffer is bound in.  A buffer shared through a dma-buf may
+> + * be bound in each importing file's Context, each at its own address.  The
+> + * kernel maps 2 MiB blocks where both the address and the buffer's pages are
+> + * 2 MiB aligned, so a client aligns a buffer of 2 MiB or more to 2 MiB.
+> + *
+> + * Unbinding a buffer a submitted Job still reaches through the MMU is the
+> + * client's error: the mapping goes at once, and the Job faults in the client's
+> + * own Context as on any other fault.  A Job's transfers keep the buffers they
+> + * reach, whether bound or not, until the Job is destroyed.  Freeing a bound
+> + * buffer unbinds it.
+> + */
+> +struct drm_thames_bind_op {
+> +       /** @handle: The buffer. */
+> +       __u32 handle;
+> +
+> +       /**
+> +        * @flags: 0 to bind the buffer at @dsp_va,
+> +        * %DRM_THAMES_BIND_OP_UNBIND to unbind it.
+> +        */
+> +       __u32 flags;
+> +
+> +       /**
+> +        * @dsp_va: Where the buffer is bound in the DSP's address space,
+> +        * page-aligned, the buffer wholly inside
+> +        * &drm_thames_caps.dsp_va_range; 0 for an unbind.
+> +        *
+> +        * The address the core's MMU translates through the Context's page
+> +        * table, the same on every core.  It is the number userspace embeds
+> +        * in params and Kernel code.  It is neither the bus address the page
+> +        * table entries hold nor the CPU address mmap returns.
+> +        */
+> +       __u64 dsp_va;
+> +};
+> +
+> +/**
+> + * struct drm_thames_bo_bind - Arguments passed to DRM_IOCTL_THAMES_BO_BIND
+> + *
+> + * The operations are applied in order and each is done when the call
+> + * returns.  The call stops at the first operation that fails and returns its
+> + * error; the operations before it hold, and @ops.count is set to their
+> + * number.
+> + */
+> +struct drm_thames_bo_bind {
+> +       /** @flags: MBZ. */
+> +       __u32 flags;
+> +
+> +       /** @pad: MBZ. */
+> +       __u32 pad;
+> +
+> +       /** @ops: Array of &struct drm_thames_bind_op, applied in order. */
+> +       struct drm_thames_obj_array ops;
+> +};
+> +
+>  /**
+>   * enum drm_thames_dev_query_type - Query type
+>   *
+> @@ -126,9 +294,16 @@ struct drm_thames_caps {
+>          */
+>         __u64 dru_realtime_dsp_va;
+> 
+> +       /**
+> +        * @dsp_va_range: The span of the Context's address space the client
+> +        * binds its buffers in with DRM_IOCTL_THAMES_BO_BIND.  The windows
+> +        * above sit below it and @user_region above it.
+> +        */
+> +       struct drm_thames_range dsp_va_range;
+> +
+>         /**
+>          * @user_region: Where the kernel driver maps the Context's user stack
+> -        * and save page.
+> +        * and save page, outside @dsp_va_range.
+>          */
+>         struct drm_thames_range user_region;
+> 
+> @@ -189,8 +364,14 @@ struct drm_thames_dev_query {
+>                            struct drm_thames_ ## __type)
+> 
+>  enum {
+> +       DRM_IOCTL_THAMES_BO_CREATE =
+> +               DRM_IOCTL_THAMES(WR, BO_CREATE, bo_create),
+> +       DRM_IOCTL_THAMES_BO_MMAP_OFFSET =
+> +               DRM_IOCTL_THAMES(WR, BO_MMAP_OFFSET, bo_mmap_offset),
+>         DRM_IOCTL_THAMES_DEV_QUERY =
+>                 DRM_IOCTL_THAMES(WR, DEV_QUERY, dev_query),
+> +       DRM_IOCTL_THAMES_BO_BIND =
+> +               DRM_IOCTL_THAMES(WR, BO_BIND, bo_bind),
+>  };
+> 
+>  #if defined(__cplusplus)
+> 
+> --
+> 2.54.0
+> 
 
