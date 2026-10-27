@@ -1,102 +1,98 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.170
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793116245;
-	b=TgaBBoTq0xMocKhG7Z7xk0rPNJsp/jYWc6NOWoEZhrzjx1GAwPPsSRO4SkP5p/SGJujH
-	 Eaz1sfIkwXM4MXEzZTlr4SfAIZQKqY/rkplyUUdvRKkfdLeT6yjQ6RMm/+6j6YTnhM5JA
-	 U+HIclPYLoys3GuNvRd6efQRXFOSgZnjm6d8CkSLzDHCMuFHDJwTLxi9tZRY7+mRJwdAp
-	 nIbXL0W+Ip9SPaTJHnGv6/ScLSXLE/R2fTSae5j7XzNTWrfLgGJT5mMoPYJmkSXN5xG6L
-	 qHVbnmfOYSJnUEFxDMqzzFkJDv/xr9h8IRxmShHdhrULbHsNlefdR7Q2tNc0+f4faMA==
+	t=1793116525;
+	b=au3mY0kyjEndKqADB/7Yhi9z02GjuK9njeM6M2/btzuKXsV5iouWzWBzQ/e96RtsJlkg
+	 zcUAkiiYE3qkVkY25TfxwOZW7AnKTzgskMB+MeKXlabV66uZgDX4vNw5dgljx7SwnW22A
+	 WJ+XcG/uSiMY9FmSLQczOLFVwCsqpmoNv9WLIrCsNXeKB3QpbKWDe/OcbBKY6IzFpsAxR
+	 Qu7XafOlZ3oEz2hpKIa/8XDIOuXWoKxEqJFJbomCer4wRJKqIrBUhSzYeymT3JvjO0rrj
+	 zpMKpt1UFqsC4bY5PKEfaZSO2h2sqStjbNpsH2xnz328wPZMGBHgC56omqVv5Cf89Sg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793116245;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793116525;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=3EmMXFW21R4wDDI6QCAxEHbuFnBmRN+vpQa5TJPrlWU=;
-	b=lCvIP+j/UBnLVZR4HTwqnGTTs0xCeFiDoxV/qF+96sU6brqm1BuOuoUSoNl4PaFlOY45
-	 TyGY2sWgKvM8+8GVdYmhWKFO1AJt+eUVa2JXjcnxEF5e5FIJIvWOA/YP4KjH+4u1/BrjT
-	 /6GUS6UgRIhbXzNbMWJ82luHI2Ytgi62H0s7E8M6sQzd4HkynbY3+zHr43uzN65cVLQWr
-	 7UW5LwWsewKjVfawpuIMt//bNnhjOa4c4VYVhjzc0AAT3zwKdUaJi5OvLRL2C0WY/zRn0
-	 Rrrq7ITPns5SXc6DVVClskaHyBqcUJIJqpTA4WJw4JrucMNF87M7dmYUMyPLw2/nqvg==
+	 Content-Type:Content-Disposition:Content-Transfer-Encoding:
+	 In-Reply-To;
+	bh=nHp1TENsueutwPVZ6BBxO5cqRx7uVSB0t4XvedskQ9Q=;
+	b=1oqmnqGAv0vjDf9NmF0lNNWwW8htbZ+A4LqmYTUoK4KEBYj89vwTy2f8ENao1uz5q26f
+	 JAFNrm8fHvklJeGqtq2nKpVXwdpP6LocxI+XLHc/AsM7k5h1ZcLK2EExW/ueEmWsLTY/O
+	 hoZRFzqsSG/TgaLWGar6nBxrEtwxdDUeXpHYWJT4Ixfu6w7cmkz6KwnrWlA4wkdHs8Ye/
+	 nMC8y2fWPS1FTz7M9l1nVrqTlmHSITHtcFMrL0VeGjghQYR15mgi6KznTWYeQrdvqHsL5
+	 2tErPU7Z5u0LZEiPiBkGk0jzMXWzAW9LZ5XA5ErYkOTd7X4L6DNmw/YOek4/d2hgAXg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=AsxhCWZq;
-	arc=none smtp.remote-ip=209.85.210.170
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=YYAtO14g;
+	arc=none smtp.remote-ip=209.85.214.170
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23668606A336
-	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 15:50:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 23668606A336
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBF8606A31D
+	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 15:55:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EBBF8606A31D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=AsxhCWZq
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-8a06c60065fso63262b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 08:50:45 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=YYAtO14g
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2e8b20a899fso28273975ad.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 08:55:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1793116244; x=1793721044; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=3EmMXFW21R4wDDI6QCAxEHbuFnBmRN+vpQa5TJPrlWU=;
-        b=AsxhCWZq4ZpcjmjJGMxqpyEK2EsT/+re+Mm5/ZKOT+XhURYz/lucLDPINHDCt4pSHL
-         y8vMTuF0oIMUgaGtY7yiuudiOzaAgHrFgXCrk5P6NzZl3LzOLzqGTlOAIQ2+YnuJIQNc
-         Xp3e3MKxrOO60WCzQqu1OeIEx8gMlfyi6L5EK7Rpu/239CtGex8R+8WcFOEnHkpkMa6T
-         d3jaM76tPpdmntjDZw6fpUGWke91YLa8SkbG1jeIe2IrJHqqgwZwDc38NrBJETdlJfw+
-         OR8ISkqd9VP65z0a6z05FEJMEophVw1z/CA93fvhXE13Tch/CsLuM/djhuadgAj74nHt
-         iktw==
+        d=linaro.org; s=google; t=1793116523; x=1793721323; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=nHp1TENsueutwPVZ6BBxO5cqRx7uVSB0t4XvedskQ9Q=;
+        b=YYAtO14g6YyipYU7Xy23qUcfcDgX1naqq2UP38OzSC6pbPNZ1WBHPCgKsXfFidmHct
+         oEExOd0frDeV5bshZkEldn67Co4G5mLW1orBx7QKN/kCyiTWjNXoP9tGmaCNUGcu1ung
+         PIDUkv/K4opp7kJgggzIcZCJrAXyXv3g3IQkuJB3/sLo77jcdg3Op8g+OhxXATeKPSlq
+         e/lr4nec5SHCWqzDi9GVhueAp1h6Rk++2rng8S5GHOXMyG0+Mvi3nY35+N5k/zJJvDkG
+         PJ7dwvU9ubNQARd6CGAS3glOAcJa2tNw+awYAdqONi3sgaHaeLl6Fo5p7gKzOialWq3a
+         WZ4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793116244; x=1793721044;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=3EmMXFW21R4wDDI6QCAxEHbuFnBmRN+vpQa5TJPrlWU=;
-        b=KxMGIpfHxrCJmr1CdfcCaOj1Bt3vieaMnbWKLtxL/41ktwLU4ZOA8Zdt1ZpPIpr4pW
-         SQ20mQ4QmNQtnHUeMQHMTFzo3JYppmSGQe7t0nlf2pNq0Kp6PBvVM8wLEwBqAvuIPyI1
-         YIxl6VVBfojoh+hnRR9FwCINK8+K/E3MTA+8hmtVidyfBEat4nACRi0K4qoXvHYaMoS8
-         2OymCFfmbJDmUPzkmnAXYMLIh9ixpBAdz6Ws+c9KupiTDAGgTz6pGvvwizMJNEDbdmWf
-         xBv2i+7t6/sRouCdZJQ6ZWUQGH7yYzH3C5R9ACunx1e2YcI3hR+1LgwkS/lmnaAq8Z9Y
-         La9g==
-X-Forwarded-Encrypted: i=1; AKwUvByMbYHVQLar13WBHeYUMkpWzvIztCXzIIbfCJWgJFLjM04Q1k8rcZdzD0xxVgEa2t+m00pfNgZP9rUUzsSnygu7@vger.kernel.org
-X-Gm-Message-State: AFq9FYITFybQWuyrug5o17wb8gvun7mp8SvSLWL8TILrNS6eBXPoADiY
-	BK2f4qF6O56XC/tcza+cNKpPzgoMhf9nIZdMA7bSSgA+ZRETEdrOPrZl7GaaNj7yPTAluA4K0H2
-	THqNU
-X-Gm-Gg: AYBFou0/Atc5Ra8WyID+Fu7ZjdysdFRcfBJf85leBz7uMh1/+XmVanYAQVDAEJAxv6J
-	d+vxJKXzrebVUMecvD3P1Eoj6lRaKRXaL2/lavsJbN0vxK1HrPMwKXIVdJDuPhWscQBcAYCGZgm
-	q4DXoHc/aMhILZBAezR71u05ipvtWHhIADf54yT7sYfOtanF9grfGJM7wwkGB8iL7S+C6oLgX/q
-	3qd9UOCYZyxayIhT3ElNP904hc75Sc9ZorvdF36bLI06kYzaWHYQbvPK2v+UL8/XrTEMVenagXO
-	Bc+LFW1gUPoz7tcnZX97s0xKM/tGDQF/TIPgGdbL0ZAuFrrx8pxDM3qC6WmYRTD3iPSBcSjq54r
-	VrU79KeapJllONpb0l+UuQfWDYV6WiPZtcVkzzc0nEpC+an8THXM+erWA6bHlPBA7W4qVKwVTwI
-	UOVzvs20DPpyQwNs7oyXJnEFt9kwLihnT8TdQIwiyd0HrCOulXb88bUc0ST4ytrCEwG00jxtuBM
-	8bzL6Sh/t8iZm6jbWAHeYngdLNtSbES+s89TQqY7zhl5KBy1ENXS9VT74o=
-X-Received: by 2002:a05:6300:6bc9:b0:3e1:bd77:2c92 with SMTP id adf61e73a8af0-3e7cd4cbe1bmr6742323637.68.1793116244485;
-        Tue, 27 Oct 2026 08:50:44 -0700 (PDT)
+        d=1e100.net; s=20260707; t=1793116523; x=1793721323;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :content-type:mime-version:references:message-id:subject:cc:to:from
+         :date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=nHp1TENsueutwPVZ6BBxO5cqRx7uVSB0t4XvedskQ9Q=;
+        b=c5ohP6hvPtOCJOYxDA3dwzhsLSt7MK5wcV7muCz/1ZRCIT1SIdwZE4+Tp635yaC2o6
+         YS07uITg4zYRG6PRUNxmKNI1Rlpc+Oduo8gsOpapAeNhaAL0bpYGmUfsiPhvR9ZyUs8b
+         pCqraf/XTWyiU1Th9zsQyLQMPg1hr3YMsv69/HeGsKMlX2WI3ilb6rmxONwhYyifSdzO
+         cuOpZUGofPXs6A3+5tJNT+ets6Zd6U82yUUefiMedMUwpTS+pFodPN5Xz6pV7xxdThju
+         hw62yYmXFU0u1oAM388qGCcFomF6Eun7RqgJM/LlnIEkh33t9+P2AuZS0FP/mcPSRDT+
+         lkKA==
+X-Forwarded-Encrypted: i=1; AKwUvBw6NXNt1YpbtyQDJf2lzKF5A7zj0qK84UN2IYX4oMExB0P1gLtPxkBl7lgftR/K7UEu6LrU5hLf5FNtQjwYi9VH@vger.kernel.org
+X-Gm-Message-State: AFq9FYIXqRV15tSMV6MStIFn7jcI5LkgB1AAFK6mwZNNhR6wb+MRC67P
+	bQsPbUAj09mbU+W9kASpsnviekYaadiGX49OdljhtfFtrltLExUSHIrwbD6Z428jDAs=
+X-Gm-Gg: AYBFou06a9hDbQfPf3iNOyDDySIfHYAKvbk5flySzBz3Fs1voAowhv3EpsClWU9XC+n
+	KzlwHVmTEkOMgFTZpV/1+EslFdk/oK1/J52ZASvWjWKSWEzDjDWXA1Grd8WdsDwM6/qvtNN4lCO
+	sJlUgux70jVcuw3Rel7/3E9LrDkWHAls454eWtXNVjclyPBfOp3WLI/9Zs6zdwYCgNIBQbgR4oX
+	syYef5pQ1w2MVgK2twOYihXkz+I914FoQDTtw3nwL6jmXj/SSnmJccJg9K3DiW2Xej2/me1MMDv
+	RjMrCvnljQ4OmeSF2hr/g0MkjAt6NZi6z0U2YXr+FNqyFiD7n09iMCekzlgviw3U22b0ZDWKIRx
+	P5A63e5XlxdnOMsoJT9s5bhaQ1VQR3YIRwHifwD9OdJ4/VlpF+2mu+z8pqUoklShRMyS6FIauxY
+	vcR3jKHX4mAQhkgQKWYCrexQtUW2sruFVQgiQSPnuYL+Ozjh1UctfD5ZD+vgceKtjRi4L1vRFsa
+	WQVsyZDNS4zDic8VCDwXIdTPkjWsse4M9dKwRffYWaUQS0KNLR0cCjnmqo=
+X-Received: by 2002:a17:902:ce0d:b0:2e9:851a:7188 with SMTP id d9443c01a7336-2ea9c7f6e25mr84880745ad.23.1793116523155;
+        Tue, 27 Oct 2026 08:55:23 -0700 (PDT)
 Received: from p14s ([2604:3d09:148c:c800:c0a5:5d28:58c5:eac9])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cd8ccc666d1sm2943517a12.16.2026.10.27.08.50.43
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eaeeda3f66sm9720725ad.8.2026.10.27.08.55.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Oct 2026 08:50:43 -0700 (PDT)
-Date: Tue, 27 Oct 2026 09:50:41 -0600
+        Tue, 27 Oct 2026 08:55:22 -0700 (PDT)
+Date: Tue, 27 Oct 2026 09:55:20 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Frank.Li@oss.nxp.com
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Frank Li <Frank.Li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>,
-	Frank Li <Frank.Li@nxp.com>, Francesco Valla <francesco@valla.it>
-Subject: Re: [PATCH v9 0/2] remoteproc: imx_rpoc: use memory-region-names to
- avoid implicit ABI.
-Message-ID: <auDIUf6Vx3VdeXcz@p14s>
-References: <20261023-memory-region-name-v9-0-ad597887dfe9@nxp.com>
+	Fabio Estevam <festevam@gmail.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] remoteproc: elf_loader: Make
+ rproc_elf_load_segments() more generic
+Message-ID: <auDJaIHqoBSOxGHK@p14s>
+References: <cover.1793008847.git.u.kleine-koenig@baylibre.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -106,107 +102,69 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20261023-memory-region-name-v9-0-ad597887dfe9@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1793008847.git.u.kleine-koenig@baylibre.com>
 
-I will apply this patchset when 7.4-rc1 comes out.
+On Mon, Oct 26, 2026 at 11:09:29AM +0100, Uwe Kleine-König wrote:
+> Hello,
+> 
+> I'm currently working on remoteproc for ADI's ADSP SoC family (SC598 +
+> SC846 and others). On at least SC846 the memory of the remote processor
+> isn't directly accessible by the main cpu. (The memory is mapped into
+> the cpu's memory space, but cannot be accessed directly from non-secure
+> EL2.)
+> 
+> Instead of creating another near-copy of rproc_elf_load_segments() that
+> just differs by the memory access functions, generalize this function
+> and make the driver that already has such a copy benefit from it.
+> 
+> This is only compile tested.
+> 
+> Uwe Kleine-König (2):
+>   remoteproc: elf_loader: Create new callback for copying segments to
+>     remote cpu
+>   remoteproc: imx_dsp_rproc: Implement .memcpy_tova()
+> 
+>  drivers/remoteproc/imx_dsp_rproc.c         | 120 ++++++---------------
+>  drivers/remoteproc/remoteproc_elf_loader.c |  63 ++++++-----
+>  include/linux/remoteproc.h                 |   3 +
+>  3 files changed, 69 insertions(+), 117 deletions(-)
+>
 
-Thanks,
-Mathieu
+$ ./scripts/checkpatch.pl *.patch
+----------------------------------------------------------------------------
+_PATCH_1-2_remoteproc_elf_loader_Create_new_callback_for_copying_segme.patch
+----------------------------------------------------------------------------
+WARNING: 'addres' may be misspelled - perhaps 'address'?
+#56: FILE: drivers/remoteproc/remoteproc_elf_loader.c:233:
++                               dev_err(dev, "Failed to copy segment %d to device addres 0x%llx: %pe\n",
+                                                                                  ^^^^^^
 
-On Fri, Oct 23, 2026 at 03:52:48PM -0400, Frank.Li@oss.nxp.com wrote:
-> The driver currently derives the memory region type from the referenced
-> memory node name, creating a implicit DT ABI.
+WARNING: line length of 101 exceeds 100 columns
+#106: FILE: drivers/remoteproc/remoteproc_elf_loader.c:264:
++                                       memset_io((void __iomem *)(ptr + filesz), 0, memsz - filesz);
+
+WARNING: line length of 102 exceeds 100 columns
+#129: FILE: include/linux/remoteproc.h:103:
++       int (*memcpy_tova)(struct rproc *rproc, u64 da, const void *src, size_t filesz, size_t memsz);
+
+total: 0 errors, 3 warnings, 86 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+      mechanically convert to the typical style using --fix or --fix-inplace.
+
+_PATCH_1-2_remoteproc_elf_loader_Create_new_callback_for_copying_segme.patch has style problems, please review.
+-----------------------------------------------------------------
+_PATCH_2-2_remoteproc_imx_dsp_rproc_Implement_.memcpy_tova_.patch
+-----------------------------------------------------------------
+total: 0 errors, 0 warnings, 151 lines checked
+
+_PATCH_2-2_remoteproc_imx_dsp_rproc_Implement_.memcpy_tova_.patch has no obvious style problems and is ready for submission.
+
 > 
-> rsc_table: rsc-table@90000000
->            ^^^^^^^^
-> {	ret  = <0x90000000>;
-> 	no-map;
-> }
-> 
-> m4 {
-> 	...
-> 	memory-region = <&rsc_table>;
-> }
-> 
-> Current require node name have to be rsc-table, but no any binding doc
-> to restrict it.
-> 
-> Since memory node names are not constrained by the binding, incorrect names
-> can silently pass DT validation, as seen in examples using "vdevbuffer"
-> instead of "vdev0buffer" ([1] and [2]).
-> 
-> Add optional memory-region-names property to define such ABI. To keep
-> back compactiblity, use "optional".
-> 
-> Link: https://lore.kernel.org/imx/a3602ef8-2b77-4cc3-adef-2c4cba08a5d9@nabladev.com/ [1]
-> Link: https://lore.kernel.org/imx/alexXTYQHUs76J7v@SMW015318/T/#mb9dc709ff3adc24d9db6d30c973f37b580f6f1f9 [2]
-> 
-> Prevous version
-> https://lore.kernel.org/imx/ail0sH1UhnQBPRkr@SMW015318/
-> 
-> ---
-> Changes in v9:
-> - s/hidden/implicit/g, sorry, missed at v8
-> - Link to v8: https://patch.msgid.link/20261022-memory-region-name-v8-0-ce5ce514a550@nxp.com
-> 
-> Changes in v8:
-> - remove dev_warning
-> - remove dts patches
-> - Link to v7: https://patch.msgid.link/20261020-memory-region-name-v7-0-1413d5928340@nxp.com
-> 
-> Changes in v7:
-> - move imx_rproc_rmem_to_resource() close to caller
-> - collect Francesco and peng fan's review tag
-> - Link to v6: https://patch.msgid.link/20261019-memory-region-name-v6-0-2e46b2e7d667@nxp.com
-> 
-> Changes in v6:
-> - collect rob's review-by tags for binding
-> - move imx_rproc_rmem_to_resource to c file
-> - dts move related memory region node into overlay file
-> - Link to v5: https://patch.msgid.link/20261015-memory-region-name-v5-0-abc358b39a96@nxp.com
-> 
-> Changes in v5:
-> - fix binding region-memory-names's pattern
-> - add vdev1vring0 and vdev1vring1 at dts
-> - collect pan peng's review by tags
-> - Link to v4: https://patch.msgid.link/20260917-memory-region-name-v4-0-260755920ebf@nxp.com
-> 
-> Change in v3
-> - rephrase commit message and cover letter to correct descritpion and
-> reasons.
-> 
-> To: Bjorn Andersson <andersson@kernel.org>
-> To: Mathieu Poirier <mathieu.poirier@linaro.org>
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> To: Sascha Hauer <s.hauer@pengutronix.de>
-> To: Pengutronix Kernel Team <kernel@pengutronix.de>
-> To: Fabio Estevam <festevam@gmail.com>
-> To: Peng Fan <peng.fan@nxp.com>
-> Cc: linux-remoteproc@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Cc: imx@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> ---
-> Laurentiu Mihalcea (2):
->       dt-bindings: remoteproc: imx_rproc: document memory-region-names to avoid implicit ABI
->       remoteproc: imx_rpoc: use memory-region-names to avoid implicit ABI
-> 
->  .../bindings/remoteproc/fsl,imx-rproc.yaml         | 11 ++++++++
->  drivers/remoteproc/imx_rproc.c                     | 29 ++++++++++++++++++++--
->  2 files changed, 38 insertions(+), 2 deletions(-)
-> ---
-> base-commit: d419d682257d813f6cb7a28e42b35d0edf4ad038
-> change-id: 20260915-memory-region-name-f950eea2b78d
-> 
-> Best regards,
-> --  
-> Frank Li <Frank.Li@nxp.com>
+> base-commit: bd1ecbb61afefc6a8b876ccbc31e9228b44e9eab
+> -- 
+> 2.47.3
 > 
