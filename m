@@ -1,111 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.174
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793102716;
-	b=u1ZidAz1lYPd9k1xgW1IEMfMNNE3XDJVU4ZxhroLZ212WNkxNiBkSaZbNKPDl0WH3Amu
-	 jM3amJNLRlYcTtjWtX0qmxLrXY7M3ol4rGc+Yxh514bXetG8AerpPsTtRyYEvviZBRjb4
-	 r2mVcnHiX2zRdL85l0r9QNbMPelZHCtRxrCdC3BxjyhxU68Im5Qg0FusdJLEmaE3qeqIN
-	 /0i/JQ8n3iTSFNOh6gluDM0Po8yi9LWByetL/ZxILbcoqTcZssl1JRIPpFaha3AsFTdFY
-	 u+Y4D3M3lcHNhkzi2wO5dcpK8E4wI9mb+3/lIn5Jw2Q/XQb2E6NdW/3rB6XRa86U5ow==
+	t=1793105350;
+	b=UL26iuz9u+1Vx4SuO+RXFm6lpzKOowk/OXIwy8mQnNSQuN/k2Qn1Ewq5346ZWPo9cmGc
+	 NG+XgCHwIfyKTy2Z19DtU0Qq7NIOX++VosLHDuL1B4oLXV8fhRiCIgIgrIShM8CDJZZJ7
+	 6Yi6YjGoN5ZBl5HHrEFAyfAq2Jhka5nBzwqRsNbtIml6ySlFwXE9fKNCb4YDSQ/yMXKYp
+	 WP6+5yqE9FfE9Uzwj7jkhqOn+ZV2sUxGnNIQ90Q6dyf1cBb56s/CoGfwpdKNa+Ctxzg7M
+	 vNzgw6rvpmhSw0mvVtT+gaILrZE01bxSWpubpWZtdihQ6hl76MF/6gabFl/aLRNUwgg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793102716;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	a=rsa-sha256; c=relaxed/relaxed; t=1793105350;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Authority-Analysis:X-Proofpoint-GUID:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=/nGrw5+P3Y0pEQR3QfmVNANaa580jD8MzWmdSsoabTc=;
-	b=Xu8A2mOcTYqZaV8ha3/GO8O4FcB9Sk8U3SRs4uw5anMr256Z6s5JlkhS4bj3AYOa+0ak
-	 7lQ+PZJJqKmHI/v7h7HmXzJ5svaqRQDv5n4QJgdi58a7DFXmh/W2iID0zj89DnUHiCElI
-	 ++ZOcE+5Am7eAWwYFWu1H8fKHiP6bIVMeJXHNef7/zZHvoZE6XJwqOeSOf92nCJBn3giV
-	 VI/YYYTGfxWqkF3bLuwzmQRLl5vktwcKOKkN+bkKQM4DxciwEqb9zxdruIuQK98gZsWa7
-	 Yx98KrxDtHwkFKVK3gpaDh+zUwQnWzJoC/6N09L3BTpX0hteQWucjEq8WYpL5lbuBSg==
+	 Content-Transfer-Encoding;
+	bh=Fk4tWvtlQqWKIFqJ5KSuzG0MEcWeW6IEPLtAR2pn3Ag=;
+	b=FH39Qmzz+y7fsdEQG3ekh8JUgpUcuftEQfB+VcrUNZpjX5XItFp4tqtzHuYun22lC+nJ
+	 /nB30SBqTl9Kjt8BIDioBVyQlddES/IwB0UJzhH9iglNkbXxBFQsk0QbhK6q4yzvYS53W
+	 gc/StXiRYUnGzqZaqgtSB0Y2Os3bG8ecLIWnXn+99F9XLM8vHBBHQCTiaxMCQfr1eDduI
+	 BWXRHJ+IumwYR9leqwGDtFzCmcVgpapFQzDqrgwtSyvKFnyelRP9TA3uy4pEY3qFbCscF
+	 VNqtmsGIt/vwEKZwuasXgbOTiQO72AQ40YqwIO8CodFscppd5BjAvicQ29CNDyLh/Ig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=dNk+1EAY;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ISzfUwdn;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=ieee.org;
+	spf=pass smtp.mailfrom=ieee.org;
+	dkim=pass header.d=ieee.org header.i=@ieee.org header.a=rsa-sha256 header.s=google header.b=WiLlRCPE;
+	arc=none smtp.remote-ip=209.85.222.174
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB69606A31A
-	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 12:05:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1DB69606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1167A606A33C
+	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 12:49:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1167A606A33C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ieee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=dNk+1EAY;
-	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ISzfUwdn
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 69RAeUtn1063061
-	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 12:05:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/nGrw5+P3Y0pEQR3QfmVNANaa580jD8MzWmdSsoabTc=; b=dNk+1EAYHKu1SkT5
-	NZaJqZrSsebaw/pG8/B8UGFtpN04c7sFTDsnVYp8VJeNtOAFONCavKky3Jw49gyZ
-	HgiALa8r0pqhmWwL45lfha85g7MsIGCUCbSFjxZeCp+Bf/N+nnBY8TAy7eKl60om
-	TA7lSbQt5wScaYf01w6pRO4jth1T1b+/rBPyGUwBzErUIhoFQVzjHViiLdJ6hNLN
-	xE9B83B8TojrqLhC50iJvii9sJ3v3bd9NnasTdvctEL3eR+GyIlEi6rtyex92rs5
-	fmjhwM082dn9r20UfvaQEvC4yKiaGn4M2aF8JO4Pl7UOhLMkw/6q+JtnLxw5zI5I
-	YCr/GQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hjp2t9d8s-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 12:05:15 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-3ac8f449d1bso3772072a91.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 05:05:15 -0700 (PDT)
+	dkim=pass (1024-bit key, unprotected) header.d=ieee.org header.i=@ieee.org header.a=rsa-sha256 header.s=google header.b=WiLlRCPE
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-93efc0452b5so267987685a.0
+        for <linux-remoteproc@vger.kernel.org>; Tue, 27 Oct 2026 05:49:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1793102715; x=1793707515; darn=vger.kernel.org;
+        d=ieee.org; s=google; t=1793105348; x=1793710148; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=/nGrw5+P3Y0pEQR3QfmVNANaa580jD8MzWmdSsoabTc=;
-        b=ISzfUwdniHXo22vGXYz2Qu+ItSDxGTHnKxPUmJlORFI82kHcgadQM3PZT1euYdBEIH
-         YeVxH/ehtdCWM8xQbi0qoEltQuyNzqkw8FLq2esDtlFGGZU9GCPJ9F+yjDITgjjaw+kP
-         wFUt8jrJzmR+2Ife5sOrgwzJAv35z4IbtV9XwVMC/4ZGVZf6PjCuuvwhNWiEj24qfdAl
-         FtR0N+Drqf8PWVHQsGEY0can1dfsZLyTbzd+rb1XxLjAowyjNYRkQQHoUN/cP1M7wUnt
-         d1FadP9vCAOIIybjW7uRO/rJAVKurHsSjSU20G4dCEqaGNRXy8rK4e3PwusseEpOGe0H
-         gHbQ==
+        bh=Fk4tWvtlQqWKIFqJ5KSuzG0MEcWeW6IEPLtAR2pn3Ag=;
+        b=WiLlRCPEdcKxVRkxZZqDI0Of8j/YUHQ6LS4ozirUJJdpxPXPdnzPLdYFRcQOvo4/Qh
+         kaM1KrVlcAdeEQlKG7Dp5+1ZbNXqS8mP0v8jn7zOVZpb+/XX4ik2Un0lMLbRgcwUhbOk
+         ZgM7HTwfGtUGBuxb1l3NzKDURXoUGn6pOrbic=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793102715; x=1793707515;
+        d=1e100.net; s=20260707; t=1793105348; x=1793710148;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=/nGrw5+P3Y0pEQR3QfmVNANaa580jD8MzWmdSsoabTc=;
-        b=Aqf1V6UT9pBz5LuoRrxfjTJNNUmUvlBulbSq6aNBDsq04B0yHLouzqcWk7IAJ3kiCD
-         /7BkCfm0Ipl9KK7xRgFx5UE8p+g2xV1/CNK1PditwfgnjiIMaIl3DsNimDK8O7ky2pL3
-         4CN45cAtRO9pEv3FhhuLRoVQt4bMpQ8IYsf8lQ2Iaf64nO6vqJ4ss4d8+MafRm8pa9aW
-         4GeoKXgAU3RN/oPrUAMfYBKQoIDGovCC/9KSfayXZcsIW0JGmlE54CMIu3HsUdMIwsuB
-         Z8yRZfjkIxHbSIj5UrfrHziu5HxjzUzYcxrCzClTa+KLXMBj46YTtHZ4iDaBke57Z1qZ
-         uGEA==
-X-Forwarded-Encrypted: i=1; AKwUvByd7WycOycZIKLW+6PNig726qVFyzEFnC3eWYKKSWiA1tFcBJKtRd1iMHwS6Sl2OGKc1KUU3j/OZLnVTzTCFfl3@vger.kernel.org
-X-Gm-Message-State: AFq9FYIAv1s/oQ+xh3ab/og5XUe7XIdOzv7iH3mbPu+i7+9B7kcXiw5l
-	stT3l4TZCxCO5JSMb4SF5J10cWA4pVKJrjpVxQBkwkVyNTWZHQsT8dyp+4F3QE3J0tuKyyfxCcp
-	1i9YCRy8940H+a3+rScy1jy9MLqeaZhSXws9s+RaRqOyOY4ZjA/rMi/QEBLRWBjbj8DdWs/vs
-X-Gm-Gg: AYBFou32wrptLDfvSOulP6G88b+JDQScxwKOhse6KsfHkUrJj9Je2KDK+A7mEknYYYI
-	Sz0kJu9+YTLcg/o+PWmCAg2oCmLJUf7JuePavvolsImaYwgl546YOhFw4r6+ba7ixNNF+K3HIYA
-	N+GYwZ6ry6G/jL/ZOB+Ai9bS2D9+uGQcU+5ZDoVg4/tKqbvbjx6XWyi0aty4cxjgJiciTDHnBiD
-	49luow7evger1mH3lOzh+WdmQE+1pLHYJCsNnjC1iLfCYyCk15avQh/vVkczERLElUcgckK8xye
-	P32ULEFlbG0UQK2X7nZg8qYivdNSLvnAfgOdWQ6o+3Y7EK2l3MRzLktpeEC5lWB1UYdoBjbrgN+
-	JEMZzLoo5DcgoaMKpOabFmJWjKMiwKmY=
-X-Received: by 2002:a17:90b:57e3:b0:3ab:17b6:9a93 with SMTP id 98e67ed59e1d1-3adeb0fc65emr8055382a91.52.1793102714672;
-        Tue, 27 Oct 2026 05:05:14 -0700 (PDT)
-X-Received: by 2002:a17:90b:57e3:b0:3ab:17b6:9a93 with SMTP id 98e67ed59e1d1-3adeb0fc65emr8055353a91.52.1793102714216;
-        Tue, 27 Oct 2026 05:05:14 -0700 (PDT)
-Received: from [10.204.101.238] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3ae404746b3sm3697041a91.17.2026.10.27.05.04.58
+        bh=Fk4tWvtlQqWKIFqJ5KSuzG0MEcWeW6IEPLtAR2pn3Ag=;
+        b=2oBWbROr/dnSisvqNOCb3uowvt5we5H43oLqIjw9V4LnmxfGSN+z1JEAwysJo4rZ92
+         V1pLNAN/dJ/PJ5UM1gQ9GFgyCd2o+/HGmGtRHAHsW265Te3Oqd/IbrN3b0ioo9saIAzF
+         LDSv4dhchJsMAD4JRSkPuwnyTNNFFVK7aP5hrKa9FvaoT+Lnp0NPAEGIsPvIUvj9cniP
+         EkHj15ztacqzc89CfabS1oZ55ekaU/JzZvygkR85V+zBL4tYqyEDFpTcqdKWw7NWZWLB
+         sAyR+dh5W4Jg5ZvGyMvJG+nXYGycS2x30VyN0MJne2o0WkrdB2aTyU9G2o2DPyOFfWdD
+         vOOw==
+X-Forwarded-Encrypted: i=1; AKwUvBz1r8L0mnsqO+kBEKrQ6y33KZg2vVkaO91fGdMaoNxw8uKB4slO6bD9OsDF9Zy/r8V6fiBSJHh8LEDosRCkb04I@vger.kernel.org
+X-Gm-Message-State: AFq9FYI0ehy6hF67xJAXSQpRQSIsiS/o1b2eBAar0AApezARUl4d9dcy
+	9h1ezow2Cf/6WOEKtTxUA9hoKkGilQkGGnw3VTjyZifY1tJErrnpguz95nIPlm0nng==
+X-Gm-Gg: AYBFou0MKXcrhHuGgeNRnzdOEDHQiDA66hw+e4JIX7Bar4IzqIWFkaeCftpn8d/Zr45
+	ItmZ2LAlxhLF2eAjblu73i1YbYJGgblukOwa4IoSHwiek15LJE1/KSCLu9RysXtTDzPWCQRj7BB
+	U8XqSYPPLAYUY5EjTMAeCyCVgWHeYMDFEdDdIPNxHRdNQ5pckDPAHOD4aB/dg9e0ZJN83zukF8p
+	Hl4hovx5p1moprAj4ShnUYTevTq5OGnGAJxfzSDbcrPBHe9FA98myFrc+qs9Y1FdeW3LW7KSGuV
+	j4+m3jW2U2dxiFcWfJDk16rTkk6VbocXePeTmPVaTulXATW0kd5cHAOsivuhgykM0gcM0rh1Uqq
+	22n9/dVhBsR2TKJjKq8/7FtHF5KJuQGhCyx48Ywz/no36gCD+dl7fpmzfM9KcrdOBKYibaHb2PF
+	tznMS6PVfyM1pd58TPsiQyDvMMWIeSobC8WgT1UxWLM7nHXXEzw3etrzmI8ImFRIs4rDntf9yaZ
+	AQGFAOqHDvBrhNUDmG2wETSc5b3T86ifUbThO/aH7cp0VIHJSM=
+X-Received: by 2002:a05:620a:801c:b0:93e:7944:b874 with SMTP id af79cd13be357-940ef93a596mr1396495185a.33.1793105347945;
+        Tue, 27 Oct 2026 05:49:07 -0700 (PDT)
+Received: from [172.22.22.28] ([73.62.185.64])
+        by smtp.googlemail.com with ESMTPSA id af79cd13be357-940f0a8549fsm956941085a.39.2026.10.27.05.49.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Oct 2026 05:05:13 -0700 (PDT)
-Message-ID: <1c24fbfd-bc88-41d9-8632-76c5dad9f2c8@oss.qualcomm.com>
-Date: Tue, 27 Oct 2026 17:34:57 +0530
+        Tue, 27 Oct 2026 05:49:06 -0700 (PDT)
+Message-ID: <ccf0300c-80e8-41a5-a394-6ec55fddc913@ieee.org>
+Date: Tue, 27 Oct 2026 07:49:03 -0500
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -116,120 +89,130 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10] media: qcom: Pass proper PAS ID to set_remote_state
- API
-To: Sumit Garg <sumit.garg@kernel.org>,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, bod@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-media@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
-        linux-remoteproc@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, robin.clark@oss.qualcomm.com, sean@poorly.run,
-        akhilpo@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
-        jesszhan0024@gmail.com, marijn.suijten@somainline.org,
-        airlied@gmail.com, simona@ffwll.ch, vikash.garodia@oss.qualcomm.com,
-        mchehab@kernel.org, elder@kernel.org, andrew+netdev@lunn.ch,
-        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-        jjohnson@kernel.org, mathieu.poirier@linaro.org,
-        trilokkumar.soni@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
-        pavan.kondeti@oss.qualcomm.com, jorge.ramirez@oss.qualcomm.com,
-        tonyh@qti.qualcomm.com, vignesh.viswanathan@oss.qualcomm.com,
-        srinivas.kandagatla@oss.qualcomm.com,
-        amirreza.zarrabi@oss.qualcomm.com, jenswi@kernel.org,
-        op-tee@lists.trustedfirmware.org, apurupa@qti.qualcomm.com,
-        skare@qti.qualcomm.com, linux-kernel@vger.kernel.org,
-        Eric Dumazet <edumazet@kernel.org>,
-        Sumit Garg
- <sumit.garg@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20261027-pas-id-media-v10-1-8a5312d3050e@oss.qualcomm.com>
+Subject: Re: [PATCH 5/8] net: ipa: migrate firmware loading to
+ qcom_mdt_pas_load() and qcom_pas_prepare_and_auth_reset()
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
+ Sumit Garg <sumit.garg@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod@kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Alex Elder <elder@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jeff Johnson <jjohnson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Abel Vesa <abelvesa@kernel.org>, Sean Paul <sean@poorly.run>,
+ Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jesszhan0024@gmail.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-media@vger.kernel.org, netdev@vger.kernel.org,
+ linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+ linux-remoteproc@vger.kernel.org
+References: <20260925155737.4161358-1-mukesh.ojha@oss.qualcomm.com>
+ <20260925155737.4161358-6-mukesh.ojha@oss.qualcomm.com>
 Content-Language: en-US
-From: Gourav Kumar <gourav.kumar@oss.qualcomm.com>
-In-Reply-To: <20261027-pas-id-media-v10-1-8a5312d3050e@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Alex Elder <elder@ieee.org>
+In-Reply-To: <20260925155737.4161358-6-mukesh.ojha@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=AJjzCM5L c=1 sm=1 tr=0 ts=6ae0937b cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=660iZSQnnn4A:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=rTiepDLV5_WpOwre6ukA:9 a=QEXdDO2ut3YA:10
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-GUID: w0AQ_Wp5w7zGAeLYQy-1eCQspVt-ICCf
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMDI3MDA0OCBTYWx0ZWRfX/sCrDh7gT6LD
- QVsf00dGLa7VUmcnolEott9p8iM93la86zKeLyWi600xATAilyew1xqW/GKQP5O1w/kZq5FBcvV
- t2KgUk7M4d1aGYpjxed/O0OSgN6JZoc=
-X-Proofpoint-ORIG-GUID: w0AQ_Wp5w7zGAeLYQy-1eCQspVt-ICCf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMDI3MDA0OCBTYWx0ZWRfX3kc9jPZtYqZq
- maEAQ9aKGde2ehdzEKRv5R+Wz7TKrE6PI/222x9LfFURJKkziWy7/iwb9jb11G887l1mXj5nAcd
- rgSF44XSOHgb8fhrANPZAOw/YOvDjXDQSHk7OWjWHdnuU1evMzGph3AJyXimd7RmNtOgCSVmak1
- nAvwIiROdGd5PjJIXzhl6Vh3d9SKR0QKYzXBanrrkdePKapS9nVU4ffiEmF1xjntDyW0H2t1POq
- +N7PJqQ5JCAbHgA9nXg2kAT8GJvBhrCsegal0l1yONEALedg+DfLywtufV3j36CwiJjiqod8jqN
- X8nlX/ftIDQwWxOB22HrGB0UesVUz9iVelyJunuEMMe4q1Wwl8jdOmlOqASYs9opj6eaaGB6XTB
- Pyx1M8df2tL9eKy/IAg8V4CLeQLvpjPta1sFm3EgnQqCF8kZpTwWgF4/Z063UQlcOdB2zWpZucA
- 6P0QMPdc35JlUHzuiOg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-10-27_02,2026-10-21_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 bulkscore=0 malwarescore=0 spamscore=0
- clxscore=1015 priorityscore=1501 adultscore=0 lowpriorityscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2610190000 definitions=main-2610270048
 
-
-
-On 10/27/2026 5:32 PM, Sumit Garg wrote:
-> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
+On 9/25/26 10:57 AM, Mukesh Ojha wrote:
+> ipa_firmware_load() calls qcom_mdt_load() which bundles metadata init,
+> memory setup, and segment loading with no PAS context, then calls
+> qcom_pas_auth_and_reset() which skips the shmbridge prepare step required
+> before TrustZone authentication.
 > 
-> As per testing the SCM backend just ignores it while OP-TEE makes
-> use of it to for proper book keeping purpose.
+> Replace the open-coded memremap()/qcom_mdt_load()/memunmap() sequence
+> with devm_qcom_pas_context_alloc() and qcom_mdt_pas_load(), then pass
+> the same context to qcom_pas_prepare_and_auth_reset().
 > 
-> Reviewed-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> Tested-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com> # Lemans
-> Reviewed-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+
+I think this does the right thing, however the IPA driver does
+not use resource-managed (devm) interfaces, and this would be
+a first.
+
+Why does "qcom_pas.c" not offer an interface that can be used
+without devm_kzalloc()?  What if someone wanted to pass in a
+preallocated structure to be initialized with the (publicly
+defined) PAS context?
+
+I was going to suggest that you just rework the code to use
+gotos and the cleanup path as used everywhere else in this
+driver, but it looks like that's not easy.
+
+I'm willing to ack this but I would have preferred to preserve
+consistency.
+
+Reluctantly:
+
+Acked-by: Alex Elder <elder@riscstar.com>
+
+
 > ---
-> Changes in v10:
-> - Resent standalone, as all the earlier patches of the series are merged.
-> - Link to v9: https://lore.kernel.org/all/20260702115835.167602-11-sumit.garg@kernel.org/
-> ---
->  drivers/media/platform/qcom/iris/iris_firmware.c | 2 +-
->  drivers/media/platform/qcom/venus/firmware.c     | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>   drivers/net/ipa/ipa_main.c | 24 +++++++++++-------------
+>   1 file changed, 11 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
-> index 21f57d37da18..ed2bd0e83797 100644
-> --- a/drivers/media/platform/qcom/iris/iris_firmware.c
-> +++ b/drivers/media/platform/qcom/iris/iris_firmware.c
-> @@ -262,5 +262,5 @@ int iris_fw_unload(struct iris_core *core)
->  
->  int iris_set_hw_state(struct iris_core *core, bool resume)
->  {
-> -	return qcom_pas_set_remote_state(resume, 0);
-> +	return qcom_pas_set_remote_state(resume, IRIS_PAS_ID);
->  }
-> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
-> index 3a38ff985822..3c0727ea137d 100644
-> --- a/drivers/media/platform/qcom/venus/firmware.c
-> +++ b/drivers/media/platform/qcom/venus/firmware.c
-> @@ -59,7 +59,7 @@ int venus_set_hw_state(struct venus_core *core, bool resume)
->  	int ret;
->  
->  	if (core->use_tz) {
-> -		ret = qcom_pas_set_remote_state(resume, 0);
-> +		ret = qcom_pas_set_remote_state(resume, VENUS_PAS_ID);
->  		if (resume && ret == -EINVAL)
->  			ret = 0;
->  		return ret;
-> 
-> ---
-> base-commit: d135ab453a7400a34930bdda1ef4bdc8acfac80e
-> change-id: 20261027-pas-id-media-7cc70fc5716f
-> 
-> Best regards,
+> diff --git a/drivers/net/ipa/ipa_main.c b/drivers/net/ipa/ipa_main.c
+> index 14ac2d2faf7c..6964395caedd 100644
+> --- a/drivers/net/ipa/ipa_main.c
+> +++ b/drivers/net/ipa/ipa_main.c
+> @@ -585,12 +585,11 @@ static void ipa_deconfig(struct ipa *ipa)
+>   
+>   static int ipa_firmware_load(struct device *dev)
+>   {
+> +	struct qcom_pas_context *ctx;
+>   	const struct firmware *fw;
+>   	struct resource res;
+>   	phys_addr_t phys;
+>   	const char *path;
+> -	ssize_t size;
+> -	void *virt;
+>   	int ret;
+>   
+>   	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &res);
+> @@ -615,24 +614,23 @@ static int ipa_firmware_load(struct device *dev)
+>   	}
+>   
+>   	phys = res.start;
+> -	size = (size_t)resource_size(&res);
+> -	virt = memremap(phys, size, MEMREMAP_WC);
+> -	if (!virt) {
+> -		dev_err(dev, "unable to remap firmware memory\n");
+> -		ret = -ENOMEM;
+> +	ctx = devm_qcom_pas_context_alloc(dev, IPA_PAS_ID, phys,
+> +					  resource_size(&res));
+> +	if (IS_ERR(ctx)) {
+> +		ret = PTR_ERR(ctx);
+>   		goto out_release_firmware;
+>   	}
+>   
+> -	ret = qcom_mdt_load(dev, fw, path, IPA_PAS_ID, virt, phys, size, NULL);
+> +	ret = qcom_mdt_pas_load(ctx, fw, path, NULL);
+>   	if (ret) {
+>   		dev_err(dev, "error %d loading \"%s\"\n", ret, path);
+> -	} else {
+> -		ret = qcom_pas_auth_and_reset(IPA_PAS_ID);
+> -		if (ret)
+> -			dev_err(dev, "error %d authenticating \"%s\"\n", ret, path);
+> +		goto out_release_firmware;
+>   	}
+>   
+> -	memunmap(virt);
+> +	ret = qcom_pas_prepare_and_auth_reset(ctx);
+> +	if (ret)
+> +		dev_err(dev, "error %d authenticating \"%s\"\n", ret, path);
+> +
+>   out_release_firmware:
+>   	release_firmware(fw);
+>   
 
-Reviewed-by: Gourav Kumar <gourav.kumar@oss.qualcomm.com>
