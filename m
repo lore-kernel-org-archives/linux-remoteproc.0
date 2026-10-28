@@ -1,99 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793174650;
-	b=Vy2hqI5othvSxroQA0f0JBzK2DRNKGZcvN5Ry1vqhkx9TMZb9v0Uc08RTHWZr82RkEGH
-	 xpO7n8QWgRTFKOFMQLpefHWw+C5wHQsiAFyyLYJqQch6cfHNPyMWV8XWhIrsAbpehfIbs
-	 DsKEoryZiGrscon41GrlI6htEP448rgnZsSgCjEfJ+Cqx76hGvvnlJvmc5hOdsYlxmsR5
-	 H//dTKWGM20XkLBs9oIYOFVcr3Mka3tCkMohoopsGMDmsSrG5F7Km/7hppoA59XTj/x3w
-	 RAzPczr3LlIBa1MqmSSKo1WZ0fe9oFtGuEP5eFoybQ5+0uwYAUq46q8KUeFRXY22oGQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793174650;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=cmUygOtzVQYGYmoDrp60NTGZ/egBDRJwiYY9TeXBYAA=;
-	b=qUixZvGOPfiA6U+6mAnDMriPeggX0LVjkVcPACtktBVRFINXsM4VWRGF1j1R19YHnVIy
-	 UgRWOWIa7iWnAhUvS1HBiV8nSCYSNVA7pXs3AlB3Gz01s/adFj9jdk8fwNAXkF2wWjR+S
-	 N86FMIgsqPSG9r5aOJ0KIxJh/088Ro2Dna2MuH03MZV9l3gR93b4f19jjXZRX3Fx7PGgD
-	 QvF3eeFO+L5b4N6GJEFCgP6bnsQ4Cef5y6BjXI3iyJ38r6FJAusdwkE/10vvgWFXLrOWR
-	 QJdwLAvTLuJGYf52gYAf2RmGS85Ft07hWdakDHXwjE0skwPv5apCmhD/8nPUnYAxysg==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	arc=none smtp.remote-ip=209.85.128.42
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793186356;
+	b=4C/5y7YXelbxTfkksErLEXHp2hDF2sOOJuv1czJ+YOZHS8t/nmZuzASNFq+oaQg8KeMj
+	 aBBRubhDb1Dt5vqPLTO/i1Fp10hjaUxQFnpctZGIDzF790/NH7hNuAcjsYGKI0BdmYKA4
+	 /XXYKZ75XIQxiCJer1b3A2kdDijjtlVqAIZq4/ckkWQNcep9hONNaqRViNUnA4wDgPR5K
+	 P1Enqhu60yJypZzuCJSkiVX/htNZAEJ8QT5FacCvCYjZmBKHa/KvTDmKB3F/I2m8W+HA9
+	 1Elbpc5eHgltzySsJcTlvv6Bs9vGgXBC+XnieYVm1JmZJOK3bD0akXa2ST8rEKXEIbQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793186356;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=siDHJNCTopPCSRKzCL5cJLzJZg1AuYQ0QITbIwpTbio=;
+	b=nRQpgY6jMYTA121QbbGrIMw9tYcery1rzzZZfdam4GkIqqFxcNCKcJmr4K+2+WA+8Ypv
+	 TG5QmIHba5Lt4p50IREYWt7ruzRBg4saDmkoEPFOmcmCFvfx3Tyef77yTJ1XHC3/aXRz0
+	 zl4uHS34Jw1vuH1dCBbliZxdDU+tQQfB3ED81XHEbyJThLgAqUgL9ooIZl5dFJiD5rfrZ
+	 lOE058nZj+xKHTElsZoFXpDIYXoWLhmGHRvGVfmyY1g/naAidu2FcTPGdoaln7Jqs4xUx
+	 yiNGOoVnQeSMC4wXRU/eSQf+aLps/TeTOfzk9crcV8ppidXaOTevK61sUZ1Yn1KY5Eg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VmO8pI+9;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305CC606A323;
+	Wed, 28 Oct 2026 11:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=VmO8pI+9
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1793186355;
+	b=ijaMYTEFGzK2f4TER2x+LHt8z8+I9z0IHeKO+OMeMBEg7+wLUGuJP6CALOse6S1QG1Le
+	 RGy43wErfV+jU2KtBd3z8MoZrXCT7nCVntU/AntDtg5OANSGXSq+8p6Beo+mZ4tSzT+QK
+	 Y2UZ+2PZABZvxPjkCfdYED0xT7qoGCXro6h2U6k0M6iXVoR4J8copSHN//W2EEZxOkk1/
+	 IwALQ4TJznWUrHuw50ybjsnNexC/D+2TY+0ff0AMeTgYkiKZZ1p9ncPLpc0Z2xVN9JROY
+	 HVLUIU/EkHP4kbnsiw8+veuPDbw2L07AYKospztrWz3zhz/cP7uZvfydgwYOhNqd+pw==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1793186355;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=siDHJNCTopPCSRKzCL5cJLzJZg1AuYQ0QITbIwpTbio=;
+	b=1Jsz7Wu/69sOSKwBBejDC6dqzlPlvovdBBC+MVCgR+b4zPjQKxcE+NtexQMWrXPcPoEj
+	 L0Tx+EkDWseEKgfSJxbuws466CJxtvAZ7N/RZORVCYjDJ2i+WMc97jzAcUhPGjBwvWfGQ
+	 +3SRFSX86bDNLwvzSxgjyVdUK+qIoP6sLsh24zfZgnVlvZQJ00U3SvBA4JivbKJjZf73n
+	 Wake/HAO6M+mGLyJvWSE2pCUYim4sHKHkLJ+pfDvlio+tqdWtd6N5IPj/UxmVNHRSPF6P
+	 0+bPU7elUmETco6M8WPWc7nb7IwZt4idnMkwMu2LR8Wd4Ye13xRX/nc0+nwzOyza8MA==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F115606A325
-	for <linux-remoteproc@vger.kernel.org>; Wed, 28 Oct 2026 08:03:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2F115606A325
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so5942175e9.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Oct 2026 01:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793174637; x=1793779437; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=cmUygOtzVQYGYmoDrp60NTGZ/egBDRJwiYY9TeXBYAA=;
-        b=VeacjZeXZ2H13/shN5QKdF0Sxcnm9lpHBcpJfpiq/VZZCzVqilfmiMnO6yd9HPmtP8
-         TlP7YPN/+pGErIJoG9jZhviV59zAjTP3slB4ZYlffC2y4ybUKnDtr8VDEBowp1/236dz
-         41VKts/axq7MozBdQ1YY2hKuPYsWiXs8pAQof3scRBNPlVaD+qoHb8JXzNRQjfvCr75b
-         eBgkGWDxzyyYqgqqf32SsbL+4S69QKep2J7ckixHRyauW04C4j2WRVVeZugAz2hZXeqh
-         j/n/IfrenSmA+1cUAixL8t72OKzbOqwY1WpyqJttvkxGfBv2p0MVLHQftbPotHpD4HrN
-         s3dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793174637; x=1793779437;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=cmUygOtzVQYGYmoDrp60NTGZ/egBDRJwiYY9TeXBYAA=;
-        b=TmyF8wWcae1Su+TdjBjq0yylf9dl+/HhWiO3eYUX7ApMWsIPRb9tdvwv5mLSsMlmcP
-         qH2oQQ0vnwIKyNK4qX76baHczy/s8K7wtayhVIda4D79nB5QayG57IWVwJFJyD2I6jTc
-         8LGPNXuKCIylzqKXmhHfWD29YPh4s0K6EUHtzTMq3By6kjvoLTz3RIWUZtwKEjHZ97p2
-         yAyJEgn/hEKBNZT6endvhlCWb2rrP7Gt1zKcK2ylHHzSun6EjK4dmQoUt53wxQtb+h/P
-         tcC4DP51qrjhrv9JTurOnEC93k7ejX413QD9M677mwBr0JA6ettNPGYeH18q3Vws6FX8
-         FzKg==
-X-Forwarded-Encrypted: i=1; AKwUvBz57iYkbXTUDmbXB7YTTLHAY52U3Cd7Yt396VAkzCmVc+wfdlw68B1xoCQT87mAVCmRXWSAE6iUOvQz2TebuTgQ@vger.kernel.org
-X-Gm-Message-State: AFq9FYKp8MtKW/cF2dH9Tp55AL33oyYnU+HHN4euaEx3UXMF/wf0+pK5
-	eQNZnHiqzOzC/uWvgmlseXVmX5pixFw7VRFDtjHifYKN0IUekkKba85OFVDTeA8lqfg=
-X-Gm-Gg: AYBFou1gEhmYMgEryecXh51jbmc0mHYpFn0V5BYBTqNvG4zk7YP2iPSthshhscBFe4M
-	lOXNVwCPtTyFhUb7u8HljbQuL6iWxsPGmlGUhfEfmIHYD2MNdkWvzqm22pIO/dFk27jBszBtPNp
-	sCXpyahE8gjzviAbNA5Ifz/trQKzwDXd3qLi+ChxRNySk5rkHwZfDImSxwIqylITJdypjObgJ4b
-	hwJcWfbMKhDngzWvm1biX46xG4lCuq/Hzo+ag9biyxvluo2XPNnjdE0j8VS2LXXQt5/nj9Dd4V0
-	Wgjm2eHg273xTeOJCE4eLpnVamecvesUnTMXKt8fPsVx45hGhoyURftOOerLh+HDtbYmYTyfCGu
-	jpZ3H8bFXYVSlSuoTcKPSBTMxG3QioPu3VMmDk9E+jhHzVAprAStXa/tGKitBJxB2fvecDcRAGM
-	qv2//Mm3Cr0raZN8sUN69s3Rla8wIQH18POQerkE0rD++Wh+y2wf9YlBB1gJEnH8DDJeoYVccl5
-	CpMF9F5GILe3HLznfhFploQzbAiUoqWmI6cUmldChxI0da1ZXdagBYH6XwMEsElgJZHzxd3CTmv
-	YxZ/m2xHV+OniYo8kUHKsfXOQ2F2vfCO82oodIil/enSZ8XxpqqnK/g5qQFLJL9wx1nhpVZnH0m
-	nwaGCEgWwloD2KC0=
-X-Received: by 2002:a05:600c:c117:b0:4a1:e69d:90e8 with SMTP id 5b1f17b1804b1-4a9672030cbmr23350005e9.22.1793174637584;
-        Wed, 28 Oct 2026 01:03:57 -0700 (PDT)
-Received: from localhost (p200300f65f19a904c16506b94501b867.dip0.t-ipconnect.de. [2003:f6:5f19:a904:c165:6b9:4501:b867])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4a97bf5d6besm25792835e9.4.2026.10.28.01.03.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2026 01:03:56 -0700 (PDT)
-Date: Wed, 28 Oct 2026 09:03:55 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Karl Mehltretter <kmehltretter@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Alexander Usyskin <alexander.usyskin@intel.com>, Dominik Brodowski <linux@dominikbrodowski.net>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, 
-	Dongliang Mu <dzm91@hust.edu.cn>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v3] Documentation: Update after split of
- <linux/mod_devicetable.h>
-Message-ID: <auGsNgw50hDIdm3R@monoceros>
-References: <20260908070031.32833-1-kmehltretter@gmail.com>
- <87h5jq8gia.fsf@trenco.lwn.net>
+	by smtp.kernel.org (Postfix) with ESMTPS id 659EF1F031E4;
+	Wed, 28 Oct 2026 11:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793186355;
+	bh=siDHJNCTopPCSRKzCL5cJLzJZg1AuYQ0QITbIwpTbio=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=VmO8pI+9XEysYnVPcbvvMQ3zwQX0Mrijloscy0v+EgLCb04WLWiit3y2yn3hY3gjB
+	 xiFyCyjb3AMhoRxX/8EAU5KG357rhVcaQKsqtN58KY8k+7DL5d44mbanGrHmTHntf4
+	 8dQqp0eyvJ06UdkVyOBIfNJikoyqOmu7hVNJvDmKtaRpdk8x01pKMqVLzTMObav/bN
+	 +UCqd//ZEAavEiloGr93lbgyyp6JaH3VfJm2smL9a2qqYG9CzpHPi2tzjhlFBTWsFh
+	 O5nlcd/DoinnkRxTPX/PM+lvrn0BsbJ/27QuDU9zRYsH4sYOfob0rTUvNfVVYrVhSq
+	 zmLtCeEOouOGQ==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id DF6D345427;
+	Wed, 28 Oct 2026 11:19:12 +0000 (UTC)
+From: Muzaffer Kadir via B4 Relay <devnull+muzafferkadir.mainlining.org@kernel.org>
+Date: Wed, 28 Oct 2026 14:17:25 +0300
+Subject: [PATCH v6 06/11] dt-bindings: clock: qcom,a53pll: Add MSM8952
+ compatible
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -103,64 +83,104 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oh5zvfs3ycvvg6bf"
-Content-Disposition: inline
-In-Reply-To: <87h5jq8gia.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261028-msm8952-initial-support-v6-6-e07ddd8bcf4c@mainlining.org>
+References: <20261028-msm8952-initial-support-v6-0-e07ddd8bcf4c@mainlining.org>
+In-Reply-To: <20261028-msm8952-initial-support-v6-0-e07ddd8bcf4c@mainlining.org>
+To: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Abel Vesa <abelvesa@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+ linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-remoteproc@vger.kernel.org, linux-input@vger.kernel.org, 
+ Muzaffer Kadir <muzafferkadir@mainlining.org>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793186351; l=1385;
+ i=muzafferkadir@mainlining.org; s=20260816; h=from:subject:message-id;
+ bh=BrzMm8QIgqROsRwWhO5mUK+pBiKnEr9sw/uWcqoVjmc=;
+ b=wJUCS0E1QC//bgwIhJ3rv8QS6QJhatBac3eV4Z4kJIhHk3lq1qq8Wv76ghgEB0Mch99FNWQ52
+ fC2U63mJeS7CQN+r9MsE/3AZPX50PJ88XHH6JWDM1dfngE7vz67tdY3
+X-Developer-Key: i=muzafferkadir@mainlining.org; a=ed25519;
+ pk=4zkv4suQ3cYcO4Z7CrV8JSSjEGLBGepUtvQCFjgnYIU=
+X-Endpoint-Received: by B4 Relay for muzafferkadir@mainlining.org/20260816
+ with auth_id=954
+X-Original-From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Reply-To: muzafferkadir@mainlining.org
+Content-Transfer-Encoding: 7bit
+
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+
+Document the a53pll found on MSM8952.
+
+Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
+---
+ .../devicetree/bindings/clock/qcom,a53pll.yaml     | 25 +++++++++++++---------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
+index 1eec77e75a0a..4abfaa24bc71 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
+@@ -15,16 +15,21 @@ description:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - qcom,ipq5018-a53pll
+-      - qcom,ipq5210-a53pll
+-      - qcom,ipq5332-a53pll
+-      - qcom,ipq6018-a53pll
+-      - qcom,ipq8074-a53pll
+-      - qcom,ipq9574-a73pll
+-      - qcom,msm8226-a7pll
+-      - qcom,msm8916-a53pll
+-      - qcom,msm8939-a53pll
++    oneOf:
++      - enum:
++          - qcom,ipq5018-a53pll
++          - qcom,ipq5210-a53pll
++          - qcom,ipq5332-a53pll
++          - qcom,ipq6018-a53pll
++          - qcom,ipq8074-a53pll
++          - qcom,ipq9574-a73pll
++          - qcom,msm8226-a7pll
++          - qcom,msm8916-a53pll
++          - qcom,msm8939-a53pll
++      - items:
++          - enum:
++              - qcom,msm8952-a53pll
++          - const: qcom,msm8939-a53pll
+ 
+   reg:
+     maxItems: 1
+
+-- 
+2.55.0
 
 
---oh5zvfs3ycvvg6bf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] Documentation: Update after split of
- <linux/mod_devicetable.h>
-MIME-Version: 1.0
-
-Hello Karl,
-
-On Tue, Sep 15, 2026 at 01:24:29PM -0600, Jonathan Corbet wrote:
-> Karl Mehltretter <kmehltretter@gmail.com> writes:
-> > Most structs that were defined in <linux/mod_devicetable.h> before were
-> > moved to a bus specific header. Follow the movement to get the struct's
-> > documentation back.
-> >
-> > For the list of device ids in basics.rst use an explicit list of all the
-> > headers that have kernel-doc annotations and that are not described
-> > elsewhere (i.e. pci and mei_cl). <linux/device-id/acpi.h> is left out on
-> > purpose, ACPI_DEVICE_CLASS() is not a device id struct.
-> >
-> > Also repair the referencing in the zh_CN translation of pci.rst and
-> > don't duplicate `struct mei_cl_device_id`.
->=20
-> This one adds some new build warnings:
->=20
->   Documentation/translations/zh_CN/PCI/pci:98: ./include/linux/pci.h:3: W=
-ARNING: Duplicate C declaration, also defined at PCI/pci:3.
->   Declaration is '.. c:struct:: pci_driver'. [duplicate_declaration.c]
->   kernel/Documentation/translations/zh_CN/PCI/pci:106: ./include/linux/de=
-vice-id/pci.h:3: WARNING: Duplicate C declaration, also defined at PCI/pci:=
-3.
->   Declaration is '.. c:struct:: pci_device_id'. [duplicate_declaration.c]
-
-Do you intend to address this?
-
-Best regards
-Uwe
-
---oh5zvfs3ycvvg6bf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrhrGcACgkQj4D7WH0S
-/k77+AgAlbsTSlbn2W+qPf7ANkGol57boWPL2S0I72TOezIPXND8DYud1c7YRtKB
-PhpKb65OvxBNMec8fqyAFR6akXoak+b0LjgivWXWCOLrQOVwd96tYscMz9T9Zo5a
-iRhWUg++SffuMe29/9xFDsjM8JgReW0CUhMfsySfbQm/TSFEl5H+4cCJJsGGtfL3
-D1yiIWAQh24ef4OCHJjVjXkWufmtZitqRhecerzr0XU23WE5HyloUqa5j9rMKkiL
-0zhPpQMkyPgmas+RNzxq8PVExFJdmjzr8D2BSNitOhQYuzUl762KznuCur+bCurI
-6r+fdfpC0jZ68DsEx6a7fNVLvdalZg==
-=tz1o
------END PGP SIGNATURE-----
-
---oh5zvfs3ycvvg6bf--
