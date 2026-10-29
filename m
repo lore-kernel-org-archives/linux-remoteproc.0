@@ -1,95 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793300505;
-	b=W0ofdJB6hKCb99WNAbTUJqMqBJLfaG68dX0j5YwqwQqGR2smNKqtA36RRftYHwzQZQmK
-	 IWUB85GVdCfs6h39eN/5QwrfsgwupbfYfkfWQ7/ODmB2THxEHvqt94u+4omxdLA2rnAcW
-	 QyuljBysQDZByU6iJnNh4scFCXSlXW4nu5z4NLF+czNC7/gTLaY9r+JHM23B0gToN/7WT
-	 R1ih4TX46hGziH50nDF1mFKBCBzpkCasr7PbuklEkMc9Kh5afb+/RSo2Ode5jVHNBeiGw
-	 3bvjllx/lXPtGIJWXPrMgq9JX9OXsjwfl/Q9QNgMquSkhWxBFBJUkrr3/8zCG2L1K0Q==
+	t=1793307759;
+	b=vDtnvJxUa1+QAumo5OMvvpn1UIqQAszFsULEEkmVC5tXB6fHKs5ketBJju4M1EQLeBOL
+	 FruaCXWf3BFvQ1U6rWoDWxpgWKK74AP1a4q/u5nHM8nDrsgre2yTEDxVJrbwXhRxPdSxI
+	 DSpQ7niznzg9xla58h26ahJxERpxL8r6fUMmGhVfhQG2vxo1SGRGh1kxuXn1eCzeVOoMr
+	 W348KYIAM8fHxUlwVe7+BvvfwjA397dxWTsiUswuVb5mQbmLumMdk4Td1NwTA1VhDpvT9
+	 882OHBsKh35A7Szhl7Hr4LRrubeiCW3KKfkltW2C0HiqDe0dVlRVos24wEr83/TROzQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793300505;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:From:Date:
-	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
-	bh=OyRG2U/nfr5SKigCKODDocSbzRjedm2EI/bWSrZ9Jlw=;
-	b=B2N3izpnAi4+HGRmLSIhVBpWVwsSGukPmV5qLLbLZ4oQ+d6ILrIS2ydgTKVXpACQc4w5
-	 u75j6jU1XSFBTG+WspeVG4d4yi5EJcheyltGfgENn+8sJAqJAUu2U80/wxqs6tte6g1Gu
-	 uVftXsgg2UU8WCssvVaVHW1kg1SjRlBNS9zLo6Rx0d29mZcQxh6HyOW0kfUMHYwAOle+G
-	 OrwDXEl+Xe7RLOOR+tGWz8wSbk3ohyuCNb+refYLAC02VSmmx4NCUvPtjZ5V2dwFuIrd2
-	 OYGihjeHh4nqlF260oSLGnFOn1bK7kgiouOOVuti2rmTAzJNjSWXDRZf8VcK4LJy2vw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793307759;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=J1+OrXgrK2+f4Fq1WvJ/kjh6om47z7wamLYA4BYVuWc=;
+	b=klVFUBlI4wlLi6fsTV67LRFhzaoiwPUs27AUhOL7dk4rPI4icVvVeO8W+Ek0X+uGq2F7
+	 JEavwPhFVrkrT87J1YursyI/1IV3q4Dt0Jyl1YNqkJIgNbFTWrsfxg3tFqLezG2dS7oMK
+	 RGE7vu9yJU/i7WlQIwh46Fw7K9c6UfzD+sfGMQyFSwBHlJ4aOgMzPb6ZwLtF3da3Tju53
+	 R3md705vPt1IZNwbr3DxU4sg9EAu9dkrZlHQI1Fb14ndEi3Rolsp307l55u7JkhDjJ432
+	 vNp4Zz1QJVY7LsAF2R9SRPM4bTWaJ+Ke21+pN9nXs2J+uEeo/eslbG5e/n8T2kUjsxA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oigccN+s;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.46
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NOAcI3j7;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C93606A31F;
+	Thu, 29 Oct 2026 21:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=NOAcI3j7
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1793307759;
+	b=gHsC2U1FimaqU7VFBPyHatux/oE4jGHuJeEKwpsmJtci1PXfMFHnpZSMo5HjWNVjHNNa
+	 rvLW1q2Ka+qZLLPKMCaY6hOCriuVhm7cZOBQ7ez/2TyFuESWLqSUVBBQDnGhDvapF9m8i
+	 ycOxTkCoazdLT4ipVNRWCRcmV20Z+q5w6vL2xTcmfxwQtH5dWnU3MjC7prSQydD5bJtRm
+	 7SMIY+aH4XEKahNomYUEX7ieNoWJayjdxwvT8AR3WHbwup83DjgXcBDb3vGKuGgyhZ7hY
+	 XGDCQ8Z4QqSfGL9CvC9aV/3A0LqX8q5aX75pzFhXhd/CeKTBmChLIvvRq1gvm6Kfk+w==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1793307759;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=J1+OrXgrK2+f4Fq1WvJ/kjh6om47z7wamLYA4BYVuWc=;
+	b=KH79yAZWGaJ8JWB6UtVs1r6w4D8LG9RqGdi34uafO45t3AgHmsRBpEbxtIl0IIsrmFDk
+	 YJqtO+TpGtdPo2I2ViGmdHXgGvCc66syMXpmQR63Gz70DI0OIdTXkRyhGeaTzEYFOrv5B
+	 MRVU0V1uR83RX30WCZnL6o0SNx4jTt86uRi02EKtFLxWixclLQCIkoCOP9Bs82WPWU5x/
+	 O2wEapq78tqR3bTzQlGM1lujZSr9cy3QkRJzCggu3iUmmVK21GbjENEhUJzQUEIJ+rHK+
+	 FSMuQcr9LL4x2r7BEyl824XELImaDaPLIaehLT0ZWa8TY0ei66SQ/PcbdlytcamXAfg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEED2606A32E
-	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Oct 2026 19:01:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CEED2606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=oigccN+s
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6ae305e3bd9so4541643a12.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 29 Oct 2026 12:01:44 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1793300503; cv=none;
-        d=google.com; s=arc-20260327;
-        b=CRMGPg8NOXyyP8h7gaLkr9HvTezI/JElW7/Slz8SYF8u3HN9uZeQVIy5rVxSvTG2X7
-         GaAYLY1rIDioPIv0Q6qWobY901mn/9LbhoKL1DuIJsgDO7m7SyV265KR1+cVn187ErlL
-         70PT1wkwFPs5qcV/pU1u8szIQJXiddCV8Du3jGiEFg+oArpBQlDeVyu6q/BMrh8hEZnD
-         50ZzML/yZjqJ0KdXbZYv8OtuyCne+Ldre2MAxbLbNzz08BH/cpy08bxeKy7lhHo3/UWS
-         LdTDN7lJadeaFPj9WP9iSI1Qgskdorz84NnCgmAyUIzZ2k4e+m5WvMf0upQCa/iC5TVS
-         MMdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
-        bh=OyRG2U/nfr5SKigCKODDocSbzRjedm2EI/bWSrZ9Jlw=;
-        fh=eMjrs77kHbGnCUbGJ7FU1lOGqv8Twc5UI+ffQ1h7HJQ=;
-        b=eUdRJcNVsnSUG7vfR/AWyprLSdLfYUgcjOXVLNkCNFAFluMcu/SRl+SDXdwIv3nBEB
-         sso6RfOtlucTLZ3ZUGTEzeu9ASUmT3upqvQqEYXqKcXsWjE4rnM1+cjCKQ7NXLY49Oie
-         2XL3dncKO61guPGmKArY1yzPgNvrDoxw9+bc2sG/oNlJj/zoBIVgtOwbEN2yIDlq++I9
-         Y0qV26ynfacbh7mERkN/wgsQkZT/KsQ+FjV4FM0Ljicgr7QND22S0o4sb8SrDrRmXMfy
-         p4t3VPvERaGV3Cxu659nGgvmfab+YfwMWxcm42J91CfzBf/fwyl4znhTPF6W2bVsMLCm
-         05Fw==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793300503; x=1793905303; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=OyRG2U/nfr5SKigCKODDocSbzRjedm2EI/bWSrZ9Jlw=;
-        b=oigccN+sYHLJeY6hruVBua3jp4nlfpt2nr4UkzAQhjnfzJ/qMEBfgFM2qVZgFWlhMu
-         O/LOvNxpTB5qACT9i2VNT809T2uu4bS920Z0Ekm8hKYBukwFDUNgZJj9ZiHQC+SpK+hM
-         Or8trP+3g+xhU83Q+9HZRasFom0sBMUQHlC34Q8Ug1rh+QH8DVcZwND5GFPpVxxWWL9/
-         iaiZ7jHBBTV/QSzeaxOVgIDavs4tPOBmU8Q3/W/soQmi3np7qgx+fRG9NJ72HKfxzhP1
-         v6vJCThkLFA5D/6HryFCQZD+QPsI8T98ltIlsxiw9nuNPDS9/B5Uxa5kFougpBQruBgd
-         2CYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793300503; x=1793905303;
-        h=content-type:cc:to:subject:message-id:date:from:mime-version
-         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=OyRG2U/nfr5SKigCKODDocSbzRjedm2EI/bWSrZ9Jlw=;
-        b=hxv/QsRWnjUzCJruy76sCjcygOhZrCo9o3Ju5L+rYq8RLuqNRmsJ0Vq5zEbFYGzCLt
-         QLUL2dGA4kMePBTd6J7eMrbxwP4ygvJHcwZNAQChSFoaKfrDZ75Weq/AX8M6OA3UgWNn
-         tBhOqTXT9GiR8ZxTdd2tNy6cZSgVXH/XQGLRakGtYIVJDA2dVfOM+OifwFGKApg5MZ4F
-         y8Y/ZkkVdSy1tA8hZOU3giHoUXFzP+3petw3OG7+uerLZuINnDw6phM0vlIMxVVtbkad
-         vT1YiAz+CgLlWFipmYWNHXUDD9fyeJagvNZ6jRBPsGr5XmfFby6sL5CAqNsAqN9RqV/Y
-         unjA==
-X-Gm-Message-State: AFq9FYIU0fQP4C37EpQLBOhNLmKgrWRZGJVR2CoEiE7Cep+Y5qchw6jS
-	+f8vgs76MNC498Kt0TzgClorBr+4FXFwXqH/H9A5LWiD5wvSnCvSijLEC0Po8Hb+2cy2GlMSW/I
-	+4t8TdRSUyxOFa2EnWjQFtIlg+GrxhKg2F+v9
-X-Gm-Gg: AYBFou1antYPBs7jFXPG1a0fncHqORJnStAmstwTfs4gyYVdzO5Lp++maeNn7KAsZhc
-	Cs2LvNLVY7X/YOmDFowya3H3ZTH2ZxQ2wOs8QR47XNMbhDYVKmDD7jXqLrRttFeozMjsovsrS4W
-	N1NS1kSJtd60OlD7PDzfFKIVVN3t0PLSYwsIFvZ4nyP0A0aNTz7gEk4cWenjvAp032bsce5cXmj
-	AxKSyRBLZ7mVn6nuLtwl+2rkeD7B0FAGUmmTEHD5J97XiFE76dCRh2w0O9LOntMDj34b94gTe9w
-	VW0gjuM68cZpVwNCNYfslOQubq7ZBLtqfd6F0WKNOurA0SCcivVFX6wWUmx/cLloisWCjF51IhQ
-	+B6+JGeDGCnv/zaWUHZdqTi3nyaa6S7FQKiLh/Fw=
-X-Received: by 2002:a05:6402:528f:b0:6ac:686f:91db with SMTP id
- 4fb4d7f45d1cf-6b49cb52d2bmr4711051a12.11.1793300503030; Thu, 29 Oct 2026
- 12:01:43 -0700 (PDT)
+	by smtp.kernel.org (Postfix) with ESMTPS id 347C51F01825;
+	Thu, 29 Oct 2026 21:02:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793307759;
+	bh=J1+OrXgrK2+f4Fq1WvJ/kjh6om47z7wamLYA4BYVuWc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=NOAcI3j7Pjd6CqCeeEek8By8XRTez2mvUqu+LEx8iL+G7ZC6h9z4nOiEvoYJLMsop
+	 eY33qzxM5pVJA41cNp8NU/qWaLFtso+QzoqrJqObyKiClso+r4ks3lOOkq4nGDyf2q
+	 Eq7RU7CwPpccjcJV16pxh6COuDBJ7VlKQQw+RzyVwKScHds8PE1VPGhFunkQyIITqT
+	 LhYEyBN4G8T99FfLaBeSy4N35+iUGTRLBhY3LgsEB5lqyek5EynVcJ/Y4b8zJ1qYW/
+	 nqGmv5w+vZeSBWwy4WCBq+djwdov7Utm7Q8FmrHpdzRsD+WJwPE06oaOAgT3FlfgcD
+	 8DlEv01nFwz2w==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id 9C87A45986;
+	Thu, 29 Oct 2026 21:02:37 +0000 (UTC)
+From: Muzaffer Kadir via B4 Relay <devnull+muzafferkadir.mainlining.org@kernel.org>
+Date: Fri, 30 Oct 2026 00:02:32 +0300
+Subject: [PATCH v7 01/11] dt-bindings: nvmem: Add compatible for MSM8952
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,63 +82,82 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-From: Atul Akella <atul.akella@gmail.com>
-Date: Fri, 30 Oct 2026 00:31:06 +0530
-X-Gm-Features: AclHuK-11B3cHhBbVamGuTGsVCL5PMv-gw8iE2UPDeSFC8rhtlzgGr3ENn8eKnQ
-Message-ID: <CAKGVfCBR_syQ2hVpa8hn124opab=V3aYmwqtC4AE2GghfL+eUw@mail.gmail.com>
-Subject: [RFC] rpmsg: virtio: reclaim TX buffer after enqueue failure
-To: Mathieu Poirier <mathieu.poirier@linaro.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, Atul Akella <atul.akella@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261030-msm8952-initial-support-v7-1-ad748ace375d@mainlining.org>
+References: <20261030-msm8952-initial-support-v7-0-ad748ace375d@mainlining.org>
+In-Reply-To: <20261030-msm8952-initial-support-v7-0-ad748ace375d@mainlining.org>
+To: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, "Joerg Roedel (AMD)" <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Abel Vesa <abelvesa@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Manivannan Sadhasivam <mani@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+ linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ linux-remoteproc@vger.kernel.org, linux-input@vger.kernel.org, 
+ Muzaffer Kadir <muzafferkadir@mainlining.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1793307755; l=867;
+ i=muzafferkadir@mainlining.org; s=20260816; h=from:subject:message-id;
+ bh=6JMvRgvxX2he4PG9Fo4mqxxQVXCwNkBZtmdxWuS+a1o=;
+ b=Ho5sN1dY1oUffDS6VQODMFlBjBFh3wgB50BCyY6vcZPV2AsevVqMFA8lPuOFykbPm18FX2kev
+ yeCggMCpEKICCAmefW194BWAcmjpSfDIiZ46pImTu1Wm8CZEqdvP0GA
+X-Developer-Key: i=muzafferkadir@mainlining.org; a=ed25519;
+ pk=4zkv4suQ3cYcO4Z7CrV8JSSjEGLBGepUtvQCFjgnYIU=
+X-Endpoint-Received: by B4 Relay for muzafferkadir@mainlining.org/20260816
+ with auth_id=954
+X-Original-From: Muzaffer Kadir <muzafferkadir@mainlining.org>
+Reply-To: muzafferkadir@mainlining.org
+Content-Transfer-Encoding: 7bit
 
-Hi,
+From: Muzaffer Kadir <muzafferkadir@mainlining.org>
 
-While looking at drivers/rpmsg/virtio_rpmsg_bus.c, I noticed that
-rpmsg_send_offchannel_raw() obtains a TX buffer with get_a_tx_buf() and
-then submits it with virtqueue_add_outbuf().
+Document the QFPROM block found on MSM8952.
 
-If virtqueue_add_outbuf() fails, msg is not reclaimed:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
+---
+ Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-    err = virtqueue_add_outbuf(vrp->svq, &sg, 1, msg, GFP_KERNEL);
-    if (err) {
-        /*
-         * need to reclaim the buffer here, otherwise it's lost
-         * (memory won't leak, but rpmsg won't use it again for TX).
-         */
-        dev_err(dev, "virtqueue_add_outbuf failed: %d\n", err);
-        goto out;
-    }
-
-The allocation itself is not leaked, but the individual TX buffer is
-removed from the allocator's usable set. It will not be returned through
-the virtqueue used ring because it was never successfully enqueued.
-
-Conceptually, I think the failure path needs a helper along these lines:
-
-    err = virtqueue_add_outbuf(vrp->svq, &sg, 1, msg, GFP_KERNEL);
-    if (err) {
-        dev_err(dev, "virtqueue_add_outbuf failed: %d\n", err);
-        return_tx_buf(vrp, msg);
-        goto out;
-    }
-
-where return_tx_buf() returns msg to the same pool used by get_a_tx_buf()
-and wakes senders waiting on vrp->sendq.
-
-I haven't implemented this yet because the current allocator tracks
-buffers through last_sbuf and the virtqueue used ring. Reclaiming
-buffers would require deciding how to represent and track them, which
-might be an architectural decision worth discussing before
-implementing a fix.
-
-Would this be considered a real issue worth fixing? And is there an
-existing preferred approach for representing reclaimed TX buffers, or
-should the allocator be extended with an explicit free list/bitmap?
-
-This RFC is intended to get feedback on the ownership and allocator
-design before I attempt an implementation.
-
+diff --git a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
+index 566304ed4c78..646f2e8dcf4d 100644
+--- a/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
++++ b/Documentation/devicetree/bindings/nvmem/qcom,qfprom.yaml
+@@ -37,6 +37,7 @@ properties:
+           - qcom,msm8916-qfprom
+           - qcom,msm8917-qfprom
+           - qcom,msm8937-qfprom
++          - qcom,msm8952-qfprom
+           - qcom,msm8960-qfprom
+           - qcom,msm8974-qfprom
+           - qcom,msm8976-qfprom
 
 -- 
-Thank you,
-Atul Akella
+2.55.0
+
+
