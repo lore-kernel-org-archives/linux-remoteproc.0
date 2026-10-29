@@ -1,20 +1,20 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.162.27
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.30
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793259065;
-	b=lSSR4oNwVkTQjpDkddFKxxaGhmLs8GLzcz4W42e75Xozhx3h9D4DRbDk0Q5HCWAvRd/a
-	 ZsbTg26nEuLACuIVJkZWxxWgreRkz6YuMXnyRrSzNbUt5ypAUg7VsNh3Bt88NdDzbLbZG
-	 kRo9eJImDzthyuzF2Z55xjcWeHWuKEZKez95nPuKqrL4l6thvKAjlkjs8W/XbS89Yv37+
-	 rjR7MN167BZNg/EGGkRvXJqxcaeQfdFFyOYl+3ERGdXFA/rMa7XjkfH1wF4/qCxjG26r3
-	 S+kq4Zp/5CZ5fzRgPrXGzMxR9N/VI23g/LQP7KBo/XSeyYd/azD4V/ug+pN2B0ssQMQ==
+	t=1793259071;
+	b=elo+PQaqN/8igDsX5rVkcNLXNsuzXki/NtkxBXXzQdDW3lJO6+0JRjaLKAB1GrwRO1OI
+	 jtFnxj6FDvYY5QxsvZBuLFAjktuIcd1EEVWURF91ny/eTZGn3CCkDz0Kx0DQvvZL73Xil
+	 3s18i1MAPqF+tk7ZYEeHUjWd7u4iDbpp01/F/6hprzq7DdgoPsZWn5uMFILe+lDkKVwME
+	 5evVjHwJ3yTbxlbUw33BHP4Lwf6nK1kx2/LLNCFhFZxWMP7fkPuKNnzKhm5EW7rDAvdbi
+	 etC3FHXVP/PVjsyEbS9SJ5WR6K/DULKDZYwahPdzQYbF7xDsCMEkxQ6UkrKBr5BSsGQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793259065;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793259071;
 	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Subject:Date:
-	 Message-Id:X-Mailer:In-Reply-To:References:Content-Transfer-Encoding:
-	 Content-Type:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
+	 Message-Id:X-Mailer:In-Reply-To:References:Content-Type:
+	 Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
 	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
 	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
 	 X-MS-Exchange-CrossTenant-Network-Message-Id:
@@ -24,54 +24,54 @@ ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
 	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
 	 X-MS-Exchange-CrossTenant-UserPrincipalName:
 	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=lfdLt1KS7ylWnzDuifdYyS/a8uqWpl7D00iPO+bCULA=;
-	b=4HfOAvylskvY1GdrJfOAWhG0eClimULhaZqfPURp3by/p3KvF4UL889QKgRf4eozrIU7
-	 bc1CGpWOZS6kLvVijIFl/gOfRj82NI0WmNslogqfIwyAE1OLVGkXXWgPnZcO6a8UjHwH5
-	 FrAatuLnEXAHK9lHBTb2MdiQz2I+/CHJVXZKcXg53hRMaeOCDjzllaiV5gGD+9RBKb21E
-	 IiNTw6Uf8f3B8SPZ8BwnLSEMToTpjzEnfDaPNb8rijX0HvgiYSxEfemXrLWD8GqoOVtY/
-	 9zr9pzP4IeDQ/Bm7wtQvHWL7Jw10keE84omNriljQoaGCe3i7+KkikvaPP81DOdbfNw==
+	bh=XAWhEJML+RbEBI4jXuUcCxL4p75C3Yo2iH9Bw5OmzdM=;
+	b=jbXO4bTwk2FjmuaWX2ms1RNfXv8wcDdSlp9edEBgd5BtK9lzylin7rnBKB+k9lV3WrgO
+	 6pRrYxYzlKN6SSaZzB7AMUbqRvFdCdvr2Gi0mHDVoQJpOQN4Qpu/iDzFndjJRcy1zcOeJ
+	 w3SFx9r/ulC2p5C4fa8GAEvYRjIbgSa3uRThbgFzaF4OPUjtd90g347g5oTn2Y++AdzH6
+	 YmJi1QJzPt2ieoHCkBI0ApPzEGclf1f97/18dpab61fRNg8jeN8nDLzZT4g9B00XsVu5b
+	 TC07lHUPvR2NFTFMFsSu3WobZtkmoFMt76lclJ3ECQVHeCmGzokp9Yy31rEuMfeiEaw==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.nxp.com;
 	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=Y9+SLxzv;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.162.27
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013027.outbound.protection.outlook.com [40.107.162.27])
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=qZoKhg2X;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.66.30
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012030.outbound.protection.outlook.com [52.101.66.30])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D78606A32D;
-	Thu, 29 Oct 2026 07:31:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E9D78606A32D
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132FA606A322;
+	Thu, 29 Oct 2026 07:31:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 132FA606A322
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=Y9+SLxzv
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=qZoKhg2X
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oy9IUie840tfweQ83rVC6FTG7aGesL0OVxjzW4w55gm0JCp7rDWue6IcyVh7MLHrTbd0RmafkM7CrBN/5HMXMLCsYoADFJQkQRvzpjBS3u9+CJUqOfkWoIRwvMKDiBxmbHRbZv5H0EhLI9y/BkxJ7SOQbpQq7IvyF6f3Qa5puZX4bbTOVOaEfCSwmb6I+Si7AHINBSHPiMzpfHKC8zkCPza9FsvfrGy0K+eOp/4Ckx5us7TurhTpzaRRo8ntISiOd/K9h0uzdszWoJHYQKlCQvqnKrILyMuiiPIgKrSh0fGkKgq9k+uxRli2zOh4A4uEvcIl6wC1tbmVdY3lf77Hcw==
+ b=VpdOB5fjaLcwE8Yq/9H+NnGpVVR1Fa+fDQyCTALTLRarWZLBFLXYHgb2d0GgspOHHMNNqH8Gqf2YRtqTbh2jgEVwLw1NH0Tr0VngihOp49XXFdIW4n+A5RicAlqfqVyLVzxP8utwUtI3bzMXHj8fQSjBAccgfOL3BgGmYZtVh6Ym16v/zm0onJ5Z/MGQzaTGSb9FhvB8Nnnex/mpcWK3rLPm3RdEg+W6NPzCGOk6xYd5idqv9fC+4Y7bKXu/4o/00KZajjcHhzITLCzm1SRnmzC4ROB+2pC0hkLpx6uLizlCUWngAc7+iCUymqHSeWcH2vsxdIkZxXrMBqMgLjUxfg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lfdLt1KS7ylWnzDuifdYyS/a8uqWpl7D00iPO+bCULA=;
- b=VSpc2WkBeMV2I4PbsTP5slkadCKdCpSpJZeRFpeBr9bJf1BTm6PUHwFXKQ11gyDP6GYNupTOEbiRGKCJBA4XGGJkbYJARPAo7EOLvTL2yp5TMOtg4NDjlGf9BA21LB92Y1LpBAFgaz8YCJl4sEm2bAGYaaY7sfJMCFAwqYaxDJlieZLY71YuQobFl47G48RqNP3TNRFwQvDpnJihBuTfV50eLv/iIQxmXp7jsC5gqNQhCuapwHSS+XD8HQYFNAZz9QHSHgxjcpwRWTCHwidJ7MPBLXHlA9ozux1lk12AQYNvjWDhNWknA/O+0bw4zMpkae0uNXPrDyGKx0Qzn5Jnkw==
+ bh=XAWhEJML+RbEBI4jXuUcCxL4p75C3Yo2iH9Bw5OmzdM=;
+ b=qLvWGspSquaBtsJW9EH6gEKYvFzNJa392Npp6xq78YdLJQfMhYZmJ9j/NanCtCqbMotONdNb3S7AKrsbtQkQZPZs5wETqi1rwRUGfKmsKlkRchVeJJuluThSaUhLOiHSi4a0EO3pQhEikXthstX2NXknbfNOjOPY3Vl/reDMFZ0a4FgNhg/bnC9Wzvt3y5ixvrXf9Fue44wSmyZqRrnOmkX7EYqDC8t0IbyKs4WqP5YhH64VHwY0T3DUSxxnrS9c/mtpVR5hwT51z+2xen2bkCaH0kZ33eKNTcCjqf3AIEP92H0nJ/5x/Z13uQKxzjse7UWSLzzu+yyYmwVILa43vw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lfdLt1KS7ylWnzDuifdYyS/a8uqWpl7D00iPO+bCULA=;
- b=Y9+SLxzvzB4HU63fQOZcHabU+qzHgWqyFUPVSe42YZ4iFagICSm//MtOWfAznDSsIW0ewcRxcDCIIhvSzTa6H/Km3akdwcFrASrJQ9fzPIeF4SzcW/TBtdsuhAhKqLpNGQq7MlxG75v+I6+wWeUY0pjjntA3nQrTb3DtKDYn3glqSWxtvQCqpwIEKb1R4xYlFp8w6zy5kisSFq/2dtvnzEjGXJwQzZMbKsHXuR9GMsj+yjlZi7VuMCd+PrHmnlfyk0tZFG8ZCET+4EDN8PzAZd6DJkgHZQwWX8BCqVABtuNk/lZeD5PlbmaN9UoanBcgaYAv4/2QLnd/MkqrWcqU4Q==
+ bh=XAWhEJML+RbEBI4jXuUcCxL4p75C3Yo2iH9Bw5OmzdM=;
+ b=qZoKhg2Xwo/1GppH1TYF2q4NWLtjvNLajSnT/TFU/tjOulRSFwcEPkxgKazLxoeZD2wr0fGLauIN57Sqy+91ZEIbEuX/L5zQtZ0AY4i5FOJ51dgxw84GRrqvprO6A6bpZrWaqe+2JYSfu97Zf05AwB7Oio1R3jb/+dVgYduaz+u01qzVq6Zp6d2mG9K5jWuMbijuU9CYsIyqLW67dlxXl4kJd4MzrRM0KFlJo15YET4sNz38op6ZRYxVmtEljofo7VwU1FwXzAQQ32Dvam3hL7zTsVt+XWOWv9YcgJ1E1VlwZwbCH3xKfmVDkvqn3vixCI2Wp+LC4GBMyJq5dBglmA==
 Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from PAXPR04MB9351.eurprd04.prod.outlook.com (2603:10a6:102:2b6::17)
  by AMBPR04MB639722.eurprd04.prod.outlook.com (2603:10a6:20b:789::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.569.9; Thu, 29 Oct
- 2026 07:31:02 +0000
+ 2026 07:31:08 +0000
 Received: from PAXPR04MB9351.eurprd04.prod.outlook.com
  ([fe80::1058:a430:52c1:5aa]) by PAXPR04MB9351.eurprd04.prod.outlook.com
  ([fe80::1058:a430:52c1:5aa%6]) with mapi id 15.21.0569.008; Thu, 29 Oct 2026
- 07:31:02 +0000
+ 07:31:08 +0000
 From: shengjiu.wang@oss.nxp.com
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -90,16 +90,16 @@ To: robh@kernel.org,
 	linux-remoteproc@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/4] dt-bindings: dsp: fsl,dsp: document debug reset control
-Date: Thu, 29 Oct 2026 15:32:54 +0800
-Message-Id: <20261029073257.84594-2-shengjiu.wang@oss.nxp.com>
+Subject: [PATCH 2/4] remoteproc: imx_dsp_rproc: Add softreset and dbgreset handling
+Date: Thu, 29 Oct 2026 15:32:55 +0800
+Message-Id: <20261029073257.84594-3-shengjiu.wang@oss.nxp.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261029073257.84594-1-shengjiu.wang@oss.nxp.com>
 References: <20261029073257.84594-1-shengjiu.wang@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0032.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::18) To PAXPR04MB9351.eurprd04.prod.outlook.com
+X-ClientProxiedBy: SI3PR02CA0009.apcprd02.prod.outlook.com
+ (2603:1096:4:295::14) To PAXPR04MB9351.eurprd04.prod.outlook.com
  (2603:10a6:102:2b6::17)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
@@ -112,90 +112,244 @@ Precedence: list
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB9351:EE_|AMBPR04MB639722:EE_
-X-MS-Office365-Filtering-Correlation-Id: ed0ffad1-5da6-49dc-9729-08df358e958c
+X-MS-Office365-Filtering-Correlation-Id: a783964d-b2ee-4034-536d-08df358e997e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|1800799024|23010399003|376014|7416014|22082099003|18002099003|921020|56012099006|11063799006|10067099003|261021121427099003|261009223027099003|261026121527099003;
+	BCL:0;ARA:13230040|19092799006|366016|1800799024|23010399003|376014|7416014|6133799003|22082099003|18002099003|921020|56012099006|11063799006|261028144727099003|10067099003|261022075727099003|261022105027099003|261021123027099003|261021121427099003|261009223027099003|261026121527099003|261026140227099003;
 X-Microsoft-Antispam-Message-Info:
-	soovBmzA4J8M+NCIgugVpgsTklzHV3KqnsG6vD1MR0UQM9u8L4MtTip8cXMNj3i1dtQCVf0OF33+iqeei/S7Lqa+qx/46In5ddLu+OrdE1pVYpGmLCmzPKQQ72jAq8BxI18Kj2YTE+BlU8orWPAXfx4ks+kTWbVl/3rzxhQlxZtqkYXZeloQGUfgM6RHcwhs581Gldmaxa1a3sQ4TxWNXELPMcM9GS7OeLTNdlLJsGroPFuMTZmlFgzHwEw0XQCxJ83YvWco4iCJfb4YJGwF9vjLwg4NhYFM+9rnKCSt5vMoJ2G92lrRFR+vzMlPPcMZB8xBuokIUeqw7orD6ZtauNICQ2VxDvZuImPSkzuu9TuaQdtwY2+JhYclQISNbcPyIJPk0O2v2JwCN91iu+Xnlo2nYakbKCzzGZzdoxzXN3EuAHDwGPQC6Tbv83kUEuSXL4PSf67Uag7KVVjI2YS+uwtbqPuSlLSOi6DjNu+QQdCrLDfKECORJamfYsuvpFOP6LwLVvMmestuMUDXb8uveFNy2TQwLQLNnoquc8wJZwsA9HqdUrPH71hhLYj0R41ARa8wUiG6CjFEy4RftJUZXEAufiTvxWeRfM2n+Z5bUyvPUjStZUL0WgNVaXZLBlYpj9fotv+VE4QgoP1lGEJkSx8fRbJb2wr/zLgc1PzSj2UajmI6il+KwD92gW6C6pDWl3UupmGguJZJ/lhMcsdvJQ==
+	oS3ounf0R6LgJNNUVQiU8Uud+K2/jjFu89/LjCsYzG7iDNGcuz25YPzp/Pi4TfkaiEB4llbQ7cfrKp/hyrtzOLOD38sgBQ1ym/uL5glWH5GVI+NERykzEQbC4SrT2TbH8Vjn8LLwtTSDxQk42quxofxfn/4W56tzfCTM758cO0EMHmpNdd41jzZMvfL12xA4yaVzeSZ8fzUqDhZOn0W9aWm0cGx34kKJgyZnh+B19DH5EA27PiVK0uPmVrl01RMX6G9u5yR9hSsd8r9kfNjcf+Nw+BmcYRPK2NHgMcQhNPo9Y1Xu5SNs95sD211yhOQ5eDYUBCnEhkOJcFySmRJlmNPlqWrfwzFjHbreE1GKhy+2oHfgj1dUrpxx53fm/HUQoOyt76xQ3SQsY0tCY9FIxGWiLRQZc51RqYOCyHDDj+G5cnlK6svu7tQaKm5WmgskV/WlMwljMIFVwdn2T4+3dKKHJhzJlzAQGjPKqGzTVYDS3cYV1Z6vmNMvONPSpEn7ZQsnvUtH2wgS2Y7f6FarYqf7ccQ7FZ5QGw72pp+rzEqvBvDrOhzZO03gxyMfyKsNXJGjyHQbzgfKSsl4/WzjIkpIHp7knHaXr0I6zXyJIkM6UijjgcmvKRaaqNO4zZBPyIVOeWtc4Jl1FBrX2mPn8HHp9O5xffiRdMKHMSTqVa/+JN3jfM/IjH4D2nqrdRI/ss6mT4mY6HZBwoJtZ5DqmA==
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9351.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(23010399003)(376014)(7416014)(22082099003)(18002099003)(921020)(56012099006)(11063799006)(10067099003)(261021121427099003)(261009223027099003)(261026121527099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9351.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(23010399003)(376014)(7416014)(6133799003)(22082099003)(18002099003)(921020)(56012099006)(11063799006)(261028144727099003)(10067099003)(261022075727099003)(261022105027099003)(261021123027099003)(261021121427099003)(261009223027099003)(261026121527099003)(261026140227099003);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tRt3wg5U/oFqvqGbCRZFxom14sWbLcpbu+X0RWAEqX+2GuArbF56p3FVdRY6?=
- =?us-ascii?Q?ISS3m/JNmwxihPV51nfY34G4o5HXbdOhpoJKMcX+1C6iqxtWsvV6Hrh0Qi/L?=
- =?us-ascii?Q?D9G8qpAriPXf4igVFv8xFGEBcwb6KQ7lACKAj5OUMec6a95/ZEwPWahnJ+2J?=
- =?us-ascii?Q?K8a+5gaG2OhKKWQsGrmuNpG6pmaK1bRI7wj78rbkwh6vEhKXttf9dBKQQmKq?=
- =?us-ascii?Q?CDEqmMNYY850n+uVfEm+uMI/QCCtRKkpNB7D9C451BQhonoA7EWQFrvDmuJ+?=
- =?us-ascii?Q?cEXquE1NH8To33/RELaIE+aChRXi8YHyTcoQM09nZDGTqUs+5YvPV9pCN2lk?=
- =?us-ascii?Q?4iZmhkgNAsvS8wqgzpKVNrKkHJc5WVswvHCZ3BYKcdULQFRyBs6NBOvwAAQ2?=
- =?us-ascii?Q?VM+RWoM+RW5JJYG3+Irlb58Dd++TK5tDMHpg0KThvg6fXnByd+Cisn0FeDa+?=
- =?us-ascii?Q?U6+IKU9Acwkw9/swLa8vKQvnH0H5BxivPCacR2bNRoLQpjPP2Z6zZ6pQHEf7?=
- =?us-ascii?Q?yXttn81yXpwVMOw12imwTtyaPseZS2Vhl8Hd+Z3RX88CTtD7ri352EmrDLnI?=
- =?us-ascii?Q?ICJh5c00Bh+wI8BsKqYp6+mzJFn9RrQhKi9LUmP5jY5dRwgp5fN44KTzR1am?=
- =?us-ascii?Q?ZXrozStqEYZaVAlOGrC+kvkV2heYPnJiU78DKrEMyn2yq1RqmVSvy8T3ZMWL?=
- =?us-ascii?Q?8TJf3Z3MY3QnJ9IqAnve/o6JuqtxzPe3NCeH1XCn2bEddVnFwR/YNQ7QABQ5?=
- =?us-ascii?Q?R73gt92Abmd8z2t2FBUTUvChuWHx5kHPNw5I7E/7qNNDiPxtNW+YZy+F+q/K?=
- =?us-ascii?Q?8Xi+t4/jhrW0WTIudqDfPV/D9zhHMHn/A51As1O3oedJJyaUORdzykoPAPS2?=
- =?us-ascii?Q?ZAr9ZhOocL2S6iMrfU9A0Yk+oOOjFBmh+GN3eNrxvpoBQP6yINbJO1cRRLED?=
- =?us-ascii?Q?RTswpKEDl30vvQ/9m+1sUr2Du1i7StXD2+EQc0xdLG9mK2jr9TO3GTXvztbn?=
- =?us-ascii?Q?4j4MpSR5GzzuQZOmzZ4MWexrUl8P6iJ9NYproXeYHvf2s0hUacKAhiQ/b9/x?=
- =?us-ascii?Q?jTiqH1/mmLUKvsUxnzYVdPbmuZKD9hmh5rymcn1cwD1l6gie+u0LAbBqDta2?=
- =?us-ascii?Q?gl5WAWrTswxzDdYlWDZaujuDot3EjUr/yRBgJuU2zDStBzO+SMsasV8L9iSK?=
- =?us-ascii?Q?3CIKIsacUY5ASMdSQa2SvFaHnuumGrJTEau4R5JnSMnWc5urBgqSNMBOXO+/?=
- =?us-ascii?Q?j6zl6+TyxUugUkkdaHnqhP/iFhnyGFtSrAukGpRn5YgFY+keekjMSPpGTXF5?=
- =?us-ascii?Q?F8wZ/U0Ew2PPNyBivz+qjmUEWEngtzxrV+SwWUl3FfGKWu+YmHjJiUn18fCJ?=
- =?us-ascii?Q?Nl2/JSlgCBtmcugfoKgdhFRYSxqxzyB3ZMQovE0jGtIkvsF4PJDIA5ZjZuif?=
- =?us-ascii?Q?VfcgFIGMXRuFpITpVub6r1g7S6CekZ1GQDW5JZI2JvpxXKhtAegfBZiHCEOx?=
- =?us-ascii?Q?hZa92d/DrHxEK0nkfrAW3++owmHcXlzf7kHJj9E+QEzeFS2Cgfg2TKCbrza5?=
- =?us-ascii?Q?vaSzfQ1GoDdYj1OaNW0LUG5JinYjmlXBZKdUMb4mtW38MwPQnQ5hCvnNljzi?=
- =?us-ascii?Q?0R2eVmtld8i1hwC8igB0A7yVAyoFDLM/Raxp7FgiV5tFRky/N1GGpujOq3W1?=
- =?us-ascii?Q?OKbO1aipBkS/vRk7KJFFAWplzjIP+zF4+JuELjSo+K3lgOgJY5RN0FyVjP1n?=
- =?us-ascii?Q?7JDghtmwfawBzkd3yEbF7T6iFTP+uOINc1bNHG5HWMTnmcRLiJ2Z?=
+	=?utf-8?B?b21CeGtWaEp1NVBRd2FVRVVPVEh2VS9YRFUxN1dXdVVQeXErOWIyQnJPLzFk?=
+ =?utf-8?B?SkhLRGloQkpFYXgyRkxWRy84bUZMUjYvTlZEbkptL2dTTmhHUkVyZjZ0QXor?=
+ =?utf-8?B?S0dMalRiNm9Xbzd4Sy9adUxQZDdZNnZ0UGp4RWtVbnVnTWlvcWhzV3J4Zkd0?=
+ =?utf-8?B?eDNIaEFLczl3NFZhWlZTMDJDa2VSMlllUmJGMFBtbmRXQkVQQ3BNREkzaTIz?=
+ =?utf-8?B?M09hUCtYM001cFptYWI0NzNmNjBFQ3QzRnQwUlU5YnBwNVErTjJWZmJwNEVQ?=
+ =?utf-8?B?MnBwSHkra0ZjcVNWNFJ1bDRqZGhKSG9rNWFnY1pjYndvbEhKTjEvK1FkK3hm?=
+ =?utf-8?B?RmlYdkpqcmorVWF1YTB1cng0R1pnTkwxL3ZBK01JdEk3cXllbUdPeDU4aVpB?=
+ =?utf-8?B?Mm5Qc2RCaTNGUXBZbUFqK0dPSFk3ZjlwUWVFSXhpbWQ4T3dKRlVDOWkzb1R1?=
+ =?utf-8?B?WDNmMEJCYUFFWVREcVdSYlkrRkZNUjlEM0lmZVBjWmhQUzRDcXdyZ1pOQlVD?=
+ =?utf-8?B?S0ZkZGZDN0FQeVNIUmpIbm9XdDZ3bkNjdHUwY3ZadHcraWI0dHZNaElCcU5O?=
+ =?utf-8?B?MGVaZTB3VWRJUE1mNHF4Mi96WmNSU1VySzdmazlYTHRzUWV2ekNpTGdSUFd2?=
+ =?utf-8?B?Zm9raXJkK1hCVVpaZ0hqdyt5Z3dhMG9lMlVkUXloZFQ1T0dKd1Q2RFRtSTV3?=
+ =?utf-8?B?MlhEeXY4OFRPN0NiQlBuV201a1BEUmtnUW1sVGN0S3pmTmRvL3BEaWRyWXFp?=
+ =?utf-8?B?T1JDb29CbVB1RGtrdHA1SUs0Ti9MVUhXVnlMQm5LN25wNU11RnZMQ1hCL09t?=
+ =?utf-8?B?KzFYTCt0UEs3L3VNSU00ZjV0cGcyekh0UmxsS1dTY2FWeStpaFlZMDVHdWpn?=
+ =?utf-8?B?b1M5YlE3LysyRFhkckJKYXo5aVdIT3I3SjZZcm0xMzBUbU9Cd0UwY0IySlN2?=
+ =?utf-8?B?bE9XcDhmcmhyU3VQNWFWRENrSHI1MCtMVXpvL3NUeVBsc0dXbHBvODhBdVdW?=
+ =?utf-8?B?NFJlcFM3QlZZbzlRTmRHQS95UlFvdERiMFN3NGNNdVdkV2dveUhxcUxYWXlq?=
+ =?utf-8?B?WVlqYmlnaURVQlNQYWczVFNUbjZ2N2hwMjNHTmtPMjF5dXRhdmNlZlJibHEz?=
+ =?utf-8?B?L3FyaTJrMlFtVVBVcnFRSlJ1TmZUWDdqNW55STc0bCtlS2UvMzlPRGI0c1FU?=
+ =?utf-8?B?ekdudHl2R3JEQUJJSWsrQWtZUWs3ejZoUDYzWWtsUUtaWGJ4am0ya3NucE1I?=
+ =?utf-8?B?WHdyYTJYbXZHYmwyLzJrNnVvaStIRmZBUllNY1czYTMwWWV3WktVOWN0N092?=
+ =?utf-8?B?STkyMlNXT1VPUHB5NnRxdXFhdEQxTXc2SitxbENua2U1eEdTMUR0WEp0SEo3?=
+ =?utf-8?B?VVZyUWtKUldRVmRQbDN2aWZYOGZhVUovR29KVklrVWhuL3dUdkttRHVycWEr?=
+ =?utf-8?B?VFBpalpNSk9JaHhleUNtMWV3L2hOb2dzUm9mOTZBYm1VNktOUUwwM2YwbDN4?=
+ =?utf-8?B?a3duQVN1ZEUwc2xQWFBwRmtBMDhTK3BKVTZYYjlOVkgrSm5WbDlCS0NNRW56?=
+ =?utf-8?B?L2RMb0MwMXIyYmZHT2VyMFh1bDdpVFd4MWF6WTFzMUtMZWhZaTB0NDN2TC9T?=
+ =?utf-8?B?bTRkcnhDT2ozNFJHNktOMWFZV3p2bVNpMGFwYUtUNW9xZmRXQndqNDIvYis4?=
+ =?utf-8?B?NkxvejlyWEo2d1RYemtNcFdxNXhNZGhOczZLQTdOQi9DOWtBbGpIZm5vOGk2?=
+ =?utf-8?B?MHo2emtJMFhWODREQk1QNkhWWDIybWpaS21BSlRWUGZxVWdsV3gvSXJ5OXph?=
+ =?utf-8?B?eXhvYmMrUGFYbFRVLzAzYkFUTUNYV0pzR2JZWHpMOEh1V3BCcUJBdmVoaDV1?=
+ =?utf-8?B?Z0RNdEUxZ3dCY2VNQ3lFY2hmek5qUmM3RVFmSFdvb0FBQUNTVG9DUDl0ZHZS?=
+ =?utf-8?B?TlhabDRnM2lqdWJlVXZIaXhDQ0pmdWc0YWdaLy9Gb0ozTitMYy9kSG56WFdJ?=
+ =?utf-8?B?SHFDQjhNTVQxQ05sc0c0b3c1d3ZZWnFSdk13d29mRjBQdVRlWWpCd2RiS0dT?=
+ =?utf-8?B?UHkyUUVIV3VWNjRVK0VhOTFjNDhPamZrU01hZ1IwQTkydUhqRlhQS2JEK2ZU?=
+ =?utf-8?B?MHptZzZ2aE43ODZFVWtiV3JrZGdTSmIrWmw5c0FRM1djNTBaUG1DWjJVSTYz?=
+ =?utf-8?B?ZE80Y3pHVUUzcXE3WTl2ZFlWQ2pSbkI1SmlHY0Q5TTBFR3QreXhiSnl4YUVV?=
+ =?utf-8?B?UFlXdzAxR2RSWnF3WHVlKzkzbXdNeFN0czBMUlNWaHFwOTJhaHBVTGx6U1Bh?=
+ =?utf-8?B?TXZCMFYxaXZkTmdpbHlCWDROc21uVzlGNy9XcllTaS83UGw5VGRDTDgrYXJh?=
+ =?utf-8?Q?XQ67a5KiE44Y61e01m3ZEoeZXFy4k+kP4vI5Q?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed0ffad1-5da6-49dc-9729-08df358e958c
+X-MS-Exchange-CrossTenant-Network-Message-Id: a783964d-b2ee-4034-536d-08df358e997e
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9351.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2026 07:31:02.1714
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2026 07:31:08.7975
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PPZgiIqdxu8P4QFMgCXaQpfgvNPiUMhAH+HULGXEtzLFOo44nJemV5jb+ShRJ9avnBxTVNi/qb6Zlh3Y8YyGvC3dIDjY0msWy+qayoRPOxndA0dUoaz14ZOvuOXzF5p+
+X-MS-Exchange-CrossTenant-UserPrincipalName: QO98T0lFDtSbsGARWn6Ism6Gd5AlSXYMO9HBUVQdmda9emsUTGCqsLn7ew6NR8Twj+/s+bhDRp7tTmhCYjozmhPidp3/ZONQP6rIfQ+ZxJNnTqcUQF6wYJhxNLN/tTcX
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR04MB639722
 
 From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-The HIFI4 DSP provides an additional debug reset control that can be
-used by the debug interface.  This patch adds the `dbgreset` entry to
-the `reset-names` property and expands the `resets` array to allow up to
-three entries (runstall, softreset, dbgreset) by setting `maxItems: 3`.
+Add `soft_rst` and `dbg_rst` members to `struct imx_dsp_rproc` as defined
+in the DSP binding (they correspond to the softreset and dbgreset
+controls).
+
+In `imx_dsp_rproc_reset_ctrl_detect_mode` acquire the three reset controls
+— runstall, softreset, and dbgreset, the latter two are optional.
+
+Rewrite `imx8ulp_dsp_reset` to use the generic reset controller API
+(`reset_control_assert` / `reset_control_deassert`) instead of direct
+register writes. This change relies on the reset controller implementation
+added in commit 5aac7afc752b ("reset: imx8mp-audiomix: Support i.MX8ULP SIM
+LPAV").
+
+With this new implementation the legacy `imx_dsp_rproc_mmio_*` functions
+are no longer needed and can be removed.
 
 Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 ---
- Documentation/devicetree/bindings/dsp/fsl,dsp.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/remoteproc/imx_dsp_rproc.c | 76 +++++++++---------------------
+ 1 file changed, 21 insertions(+), 55 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-index e610b7636a08..4a75a271b7fa 100644
---- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-+++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-@@ -84,12 +84,14 @@ properties:
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index 96d619daf3f5..0b0042525ea2 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -108,8 +108,9 @@ enum imx_dsp_rp_mbox_messages {
  
-   resets:
-     minItems: 1
-+    maxItems: 3
+ /**
+  * struct imx_dsp_rproc - DSP remote processor state
+- * @regmap: regmap handler
+  * @run_stall: reset control handle used for Run/Stall operation
++ * @soft_rst: reset control handle used for DSP core reset
++ * @dbg_rst: reset control handle used for DSP debug logic
+  * @rproc: rproc handler
+  * @dsp_dcfg: device configuration pointer
+  * @clks: clocks needed by this device
+@@ -125,8 +126,9 @@ enum imx_dsp_rp_mbox_messages {
+  * @flags: control flags
+  */
+ struct imx_dsp_rproc {
+-	struct regmap				*regmap;
+ 	struct reset_control			*run_stall;
++	struct reset_control			*soft_rst;
++	struct reset_control			*dbg_rst;
+ 	struct rproc				*rproc;
+ 	const struct imx_dsp_rproc_dcfg		*dsp_dcfg;
+ 	struct clk_bulk_data			clks[DSP_RPROC_CLK_MAX];
+@@ -243,20 +245,15 @@ static int imx8ulp_dsp_reset(struct imx_dsp_rproc *priv)
+ 	struct arm_smccc_res res;
  
-   reset-names:
-     minItems: 1
-     items:
-       - const: runstall
-       - const: softreset
-+      - const: dbgreset
+ 	/* Put DSP into reset and stall */
+-	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
+-			   IMX8ULP_SYSCTRL0_DSP_RST, IMX8ULP_SYSCTRL0_DSP_RST);
+-	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
+-			   IMX8ULP_SYSCTRL0_DSP_STALL,
+-			   IMX8ULP_SYSCTRL0_DSP_STALL);
++	reset_control_assert(priv->soft_rst);
++	reset_control_assert(priv->run_stall);
  
-   access-controllers:
-     maxItems: 1
+ 	/* Configure resources of DSP through TFA */
+ 	arm_smccc_smc(IMX8ULP_SIP_HIFI_XRDC, 0, 0, 0, 0, 0, 0, 0, &res);
+ 
+ 	/* Take the DSP out of reset and keep stalled for FW loading */
+-	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
+-			   IMX8ULP_SYSCTRL0_DSP_RST, 0);
+-	regmap_update_bits(priv->regmap, IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
+-			   IMX8ULP_SYSCTRL0_DSP_DBG_RST, 0);
++	reset_control_deassert(priv->soft_rst);
++	reset_control_deassert(priv->dbg_rst);
+ 
+ 	return 0;
+ }
+@@ -338,14 +335,6 @@ static int imx_dsp_rproc_handle_rsc(struct rproc *rproc, u32 rsc_type,
+ 	return RSC_HANDLED;
+ }
+ 
+-static int imx_dsp_rproc_mmio_start(struct rproc *rproc)
+-{
+-	struct imx_dsp_rproc *priv = rproc->priv;
+-	const struct imx_rproc_dcfg *dcfg = priv->dsp_dcfg->dcfg;
+-
+-	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_start);
+-}
+-
+ static int imx_dsp_rproc_reset_ctrl_start(struct rproc *rproc)
+ {
+ 	struct imx_dsp_rproc *priv = rproc->priv;
+@@ -391,14 +380,6 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+ 	return 0;
+ }
+ 
+-static int imx_dsp_rproc_mmio_stop(struct rproc *rproc)
+-{
+-	struct imx_dsp_rproc *priv = rproc->priv;
+-	const struct imx_rproc_dcfg *dcfg = priv->dsp_dcfg->dcfg;
+-
+-	return regmap_update_bits(priv->regmap, dcfg->src_reg, dcfg->src_mask, dcfg->src_stop);
+-}
+-
+ static int imx_dsp_rproc_reset_ctrl_stop(struct rproc *rproc)
+ {
+ 	struct imx_dsp_rproc *priv = rproc->priv;
+@@ -1024,23 +1005,6 @@ static int imx_dsp_attach_pm_domains(struct imx_dsp_rproc *priv)
+ 	return devm_pm_domain_attach_list(dev, NULL, &priv->pd_list);
+ }
+ 
+-static int imx_dsp_rproc_mmio_detect_mode(struct rproc *rproc)
+-{
+-	struct imx_dsp_rproc *priv = rproc->priv;
+-	struct device *dev = rproc->dev.parent;
+-	struct regmap *regmap;
+-
+-	regmap = syscon_regmap_lookup_by_phandle(dev->of_node, "fsl,dsp-ctrl");
+-	if (IS_ERR(regmap)) {
+-		dev_err(dev, "failed to find syscon\n");
+-		return PTR_ERR(regmap);
+-	}
+-
+-	priv->regmap = regmap;
+-
+-	return 0;
+-}
+-
+ static int imx_dsp_rproc_reset_ctrl_detect_mode(struct rproc *rproc)
+ {
+ 	struct imx_dsp_rproc *priv = rproc->priv;
+@@ -1052,6 +1016,18 @@ static int imx_dsp_rproc_reset_ctrl_detect_mode(struct rproc *rproc)
+ 		return PTR_ERR(priv->run_stall);
+ 	}
+ 
++	priv->soft_rst = devm_reset_control_get_optional_exclusive(dev, "softreset");
++	if (IS_ERR(priv->soft_rst)) {
++		dev_err(dev, "Failed to get DSP soft reset control\n");
++		return PTR_ERR(priv->soft_rst);
++	}
++
++	priv->dbg_rst = devm_reset_control_get_optional_exclusive(dev, "dbgreset");
++	if (IS_ERR(priv->dbg_rst)) {
++		dev_err(dev, "Failed to get DSP debug reset control\n");
++		return PTR_ERR(priv->dbg_rst);
++	}
++
+ 	return 0;
+ }
+ 
+@@ -1316,12 +1292,6 @@ static const struct dev_pm_ops imx_dsp_rproc_pm_ops = {
+ 	RUNTIME_PM_OPS(imx_dsp_runtime_suspend, imx_dsp_runtime_resume, NULL)
+ };
+ 
+-static const struct imx_rproc_plat_ops imx_dsp_rproc_ops_mmio = {
+-	.start		= imx_dsp_rproc_mmio_start,
+-	.stop		= imx_dsp_rproc_mmio_stop,
+-	.detect_mode	= imx_dsp_rproc_mmio_detect_mode,
+-};
+-
+ static const struct imx_rproc_plat_ops imx_dsp_rproc_ops_reset_ctrl = {
+ 	.start		= imx_dsp_rproc_reset_ctrl_start,
+ 	.stop		= imx_dsp_rproc_reset_ctrl_stop,
+@@ -1348,13 +1318,9 @@ static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8mp = {
+ 
+ /* Specific configuration for i.MX8ULP */
+ static const struct imx_rproc_dcfg dsp_rproc_cfg_imx8ulp = {
+-	.src_reg	= IMX8ULP_SIM_LPAV_REG_SYSCTRL0,
+-	.src_mask	= IMX8ULP_SYSCTRL0_DSP_STALL,
+-	.src_start	= 0,
+-	.src_stop	= IMX8ULP_SYSCTRL0_DSP_STALL,
+ 	.att		= imx_dsp_rproc_att_imx8ulp,
+ 	.att_size	= ARRAY_SIZE(imx_dsp_rproc_att_imx8ulp),
+-	.ops		= &imx_dsp_rproc_ops_mmio,
++	.ops		= &imx_dsp_rproc_ops_reset_ctrl,
+ };
+ 
+ static const struct imx_dsp_rproc_dcfg imx_dsp_rproc_cfg_imx8ulp = {
 -- 
 2.34.1
 
