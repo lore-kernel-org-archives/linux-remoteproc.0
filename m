@@ -1,86 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.47
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793237931;
-	b=uAKOGThHO/PeVuX9oA2oN2xTrH3KsO1p1DCksHKb1yAqLSZU4N9MWSqx8lWVoSRnjzj2
-	 O0jWCdvPfY+BUho8jT6aZgShVOb15VAmqk35L2MZ/0NQiDNL/2ZQuMDZ/Ymwoi7qRinF3
-	 1Zp+yAr7nOMvCj2mTd3INbgZYT+QaXHuUcEQFuCXGxs9zHSZ6BbkImAW7WyqC281n5kl8
-	 wC2QH0l1JXf9Y5d1/K1N2PkBm1xXMLdwZi+io6rKORgySCkUcrHPG6zh+gRVAvhQ4tJtE
-	 ePJkySV1MdD65eAgRJwrbRrxezOuXBe5wIeqcqkRd6dncSJWbL5h4/7UfmHKY6dvjlg==
+	t=1793237933;
+	b=YRT54KqvPL4EHCbXmkrighZEGF7KY9PoYQeIR4KQIgbsIqExDo33ak+9eQecXEUQ4lwJ
+	 gpXvVTXtSMqG9y7o40yWwu+J/zOvvYYEBUMXfs9UtLgG1TxrGJJ8Tip8NYFFqm7BgG2su
+	 r3Plx+BMuyrZYPkHEI6XjcdRXRnLq/zYtUmMnaVyKrnmrRpsvTwLfSnolRms9d3/vHHHn
+	 vQ34jdaE6wI+iOA7fFEjHfPSl4+CwrUG2h5iS9sTto2nWYzTjQJihViXjcDrL+lhnn4Sq
+	 Hr7BpSAcL3bHT/LidqAwYbHxLvUS+c4RApWsHlzsuxAO3FP0mECcuRknIjFMWwZvELQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793237931;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793237933;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	bh=0KsyXXIFVna264wri09byyhn1O+wxVThq4z4asXfPT4=;
-	b=NnGRCoyC4yFJh8CfgI71kUk82iBI0KUrGryQQVlD7LLAcAfgmLPKUnGjUOXnvSTbuUc3
-	 8bBc74/B3j126M0Xi7dh9n2D7qt9Sg9EKrdFt8vYiFMOvBmlsu4YOn7O10CLXGgCJ3TTk
-	 FdZHKVXI9QqeiNMS3B7igKBLU0jcceEN9Adm7IvIPzEHODYv0rqcVn9/HakoLUgzNSR4C
-	 reKWwOCp9ToiFHu7SwPCoqDCCCSWPgHi/ccwRcnEqlM6p6PUscvJa+pt/neKKW+GfrZFS
-	 DFVhabxAVHAHtSpftkHE3oCGsDjm/qVl1NCtswuUXmghXUn/uP45MGFXEplEsp6HWJA==
+	bh=/cTHNomGdMzdwGOEPd/Mb+9dZ6EWwM9vGNpl5GZyT/s=;
+	b=5hfr1aKyqb9MCKemdwxKolegtOeRVHMKgHXIoyN1HsNp+ELcCwyHrdAH5R/4LIu3AP8H
+	 t2PqbMuL9oFzQiiFQHRK5d1J/UGjcZLJTiJ2Sj8ON3fzRf1o8Yl9UDiLSnJbFs/9lu9Zt
+	 lWzGgqlixeMyGUnBpAofcBfmXY2/kAkg3je3mXkiOKychslNQdu5ERdIsN3bxFtQp+Orl
+	 9uDB92s/Ozm9K4NyQGdU7IDyvoXZdCiZFXRsV7fc0C3DCO+FGSd25f4nopULWatLKrCAv
+	 ngo4mDTWmWXJ0swqFVGe59Eo1/q1NuC7e3KEXfCDVk4K+EESfy8j2No7tVv5Bjl8sag==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=n7XoVKul;
-	arc=none smtp.remote-ip=209.85.128.48
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L6c+IPE+;
+	arc=none smtp.remote-ip=209.85.221.47
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DAC606A321
-	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Oct 2026 01:38:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B8DAC606A321
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DC1606A33D
+	for <linux-remoteproc@vger.kernel.org>; Thu, 29 Oct 2026 01:38:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7DC1606A33D
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=n7XoVKul
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a5177d78c7so15476485e9.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Oct 2026 18:38:50 -0700 (PDT)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=L6c+IPE+
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-48dfaa3fa12so122010f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 28 Oct 2026 18:38:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793237929; x=1793842729; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1793237931; x=1793842731; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=0KsyXXIFVna264wri09byyhn1O+wxVThq4z4asXfPT4=;
-        b=n7XoVKul3KL3Ojs/PWKNAvh4PJguO9+D+Osf7JERMdiK3/5cyLV+vIUzyaRYZrpy8n
-         qFbMmLYuUNodhwV0Pa+WDQMCf528Ezj6VJWmthXRGg8SnIJuamtfJwsyglLOrqptwn4X
-         dDjpWZD6QkW42TzHWea4dtE8He6kBF5/PO1c+7eu/CDWiWFms3wynh1GAufNyh71Pw7p
-         exQSWYMStjedYKSm9nZfAI2ralkHSIajUb7uMhZMtkONvSSKiJJ61nOInyQsPT14OxHn
-         MgVKuGqWqwo0lg3CxzUVYEM3pSCdfK0xT5vplYzXNphfPiyEruta4BoI8t6iJzcM6Lsc
-         gO6Q==
+        bh=/cTHNomGdMzdwGOEPd/Mb+9dZ6EWwM9vGNpl5GZyT/s=;
+        b=L6c+IPE+TusQzbodaS4Y8bDimeOge0wsfqMCW09n1Xz70yNq0U95vP2JdsERw5EuIU
+         Aq9f9+D7DXAqUux6+m96MwkWa6k9MknozLsKMTQJHXERZo0mT+larlyUAIvXjTkFVuYm
+         Cn0coLa4xlTb1kcTnZPWBvbr+evtFxizLmVV6BbCrrv/oswQl3iBu47c1Fk9XiNW7SEi
+         R40Hc4C6LQEKRyArjcAeR7UtoinslXuLkB0cOe16olQBRR+6gmYAqVZ7v1tCeT/TE2s0
+         dgVEM1YAG71RjPDbaDQJDAJMUv/nQAdazE4UpVLZLkjjwyzi56d1fX/Iupz7HP7mPYwO
+         OlwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793237929; x=1793842729;
+        d=1e100.net; s=20260707; t=1793237931; x=1793842731;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0KsyXXIFVna264wri09byyhn1O+wxVThq4z4asXfPT4=;
-        b=A9FKb0Oywj4KBMBgBNDYZdQHIG0nu/PJSjLhuLpgyp+si/vQSZUD69Cp/Q/4K5AjVB
-         dQ6ILd7/wCUFtN/wGTian8MODoR7v6Jyrk7u1YnPc4t8VlsEptkEbMJ6pYyESIdf3aYy
-         5uLZQ+yt3gccrDY1AE63zQCJst45v1Iod7TwbFDmpKaXx3O3ioIgNfZ57gWGURqB7bhx
-         CcO7bB0nzsKSbEjyWfHbqJvq7SJnLO86UnF0+TajHHj3MGqjjYKJ8LiFrfMyKtwzh+gd
-         MQEHek4lJxsjGjrPAY6gYXweHnB9DGAS1XyVjiFWXRLkLijNx0q1buEOJP3nkRMfYpS1
-         F3bA==
-X-Forwarded-Encrypted: i=1; AKwUvBzAedUFAs439tGsWmUHXa2NbW7eWxG5IYdHqHpwmSy/eoOlptvFALvdVEzaD2XYkk6lJG+Sbgi7owbzi27V3tP4@vger.kernel.org
-X-Gm-Message-State: AFq9FYKDmBPYn36BV1nfcc5nPVc5va5esO7IbZZNWotoXLuFRaQ4xvjc
-	TUQFR7jfJIb9VXVh+t7vcH1cErTcb65JmsL+fQ97dA5KgNdK1stXi//v
-X-Gm-Gg: AYBFou0I42G1yZPPMeViAayVy683/80V5/hdbI9WmQthSSt+h/A16EumgWPkmPqJb2C
-	ZvBSZM3H64KKVsUMHkumiO4JbbKsa+wpEA78GQB6yif8xVP7eE8p5tsE/klcnMPQSo782DonDmU
-	ZQmqolSsEuuc7ZkMrFmDs5O0ZpiwlWgAwt0DwPfjAooondqNzdLb4i5DTZAXYaljgY6iikh2w+P
-	2kA9HTeVetzWcnkuqMxFV3S3ZOogEbYohI59KVzMY0jSIshCZ++vuUf5GNdFesc7xGj4+NffHZs
-	14AHyaOfnPpbSUcTp0OpeaDZYXmQ1uR6l8+VPErcjr+3j/IRRDZnjoTSVGUrqymRsH5buUbpFs7
-	Vht+FMCLhTnMUL7m2tQbHZondOR7RHq/TjaEoA+LBIs5CmCQfxjpSF1J+Snj3k4CRNooGSItID4
-	6c1JpVTiIljCPXdW2RgXa2v3YgDIZ1ucuID2Fqm0Tt1QzyeT5eZaiVM7tyhbVdKYgIuzXK3ZS98
-	7nOhv2ZmkbmL5v0OLjW9QYSZy1GYG706NTAij901u/KNWT7UkE9HHU7wxgwvtq2+KBdtHaZLpGA
-	6CHYyU95Oc68psXMIvzdz0RucKw455u4xlWaI0mGo6ESel/DiD0feX14WuDxAdXlL6T1VZqrxbn
-	sxslnZR/iaEeQHZmZKBhGvV6cBqK3LvEcIn34JMJM12WeAKdIPhQZdPrAN48/lzXedKGsCigHhk
-	pQIj3oG/tj49ZDfirOulMsOgk=
-X-Received: by 2002:a05:600c:1c17:b0:4a3:59c9:a756 with SMTP id 5b1f17b1804b1-4a965dd3247mr94503715e9.6.1793237928948;
-        Wed, 28 Oct 2026 18:38:48 -0700 (PDT)
+        bh=/cTHNomGdMzdwGOEPd/Mb+9dZ6EWwM9vGNpl5GZyT/s=;
+        b=B5qXBGXBP7mlFWUxZhDfT+cAKTthzI2RQtqBWJEm/q8Ve48MR8/ZBX8ohfua56O/Nd
+         SZy9jjzEkvzwyyWZ4pMOWSSlc1PyTIsYUjjHEAThhvWviLn5iF0Aynff43WzgLoyfDLS
+         uQM3Cdld8HiXEctJWcASkDIRyfduPBF0ez2d2NKrFqaKQppcSnUO6Npgt30fI6SuAJue
+         mxrDdLqyCgmT+QpVQJPJXO72GqSavFYxi9pGDfQ8OhISFhL6PWHAOGl8tylMJ2t3PuI/
+         bmw+OQ3panNJRV5vM+QUL/gdbOsGNH9OJIeYfLDHT+1qwamVqp/geMMXpVM+CGd1rKx0
+         TmGA==
+X-Forwarded-Encrypted: i=1; AKwUvByTBEHD2Jmpxe8p/x0kfv6yPBvSfREUaCAkrYSFRYXpmeoEkd5xD4KNDoipYPn7YLqIaknAPGVAKzQgNfxJkhyQ@vger.kernel.org
+X-Gm-Message-State: AFq9FYJFJPkfgE3S3RXQHlSZTCT/yMSginzZqQ3OlCp+IDTdhA9Kvr12
+	7WB44mFLQ8eJ7280svVswooRfIAzN4tFtkorwvZF+WhR5/tl5xtbjDy7
+X-Gm-Gg: AYBFou3PVcEZarrB7IAc0pBenPQy+Swng2S2zmBrEnnbLZj+xxOKwj9tsMtG5rc1lyk
+	rHJzqQAfGZ/WZxBFc2VUkUFUf+oYg22i/nFRZQeFbaoqEvY/Q+MUcgn6bptNjkgZkDWoKGL0/qF
+	PYIhfWR4/o0vLUjwwE4OTxJgSDDd9OLjaXx8EAhjDc7IRhvaRXWCQW2iJckPkjOzGUcZNT9rs64
+	kr9yXqEM+4dUjQ5J4fg9pYpORG3AY4HltJm+r32PBRbvljznBUv7EnhX4YFoHD2cGiqqB7yh5z4
+	uyqEpGnqFSQyAhfWD/1zCJAsipJ9ioDBpGboIX+VE877k+LgZPNTidBQPx5fEQsYxj88gXYJK+Z
+	dfWkg6kjnEtGqB+b3jAC/6maLcr/Pnu6EAh9f1h0xiZ+bWuE/LGLpYXknFlob48ne82s2oxXrJm
+	wAZJ52g8xTpdAljvSvxUdR3E4xWfPbklnWKvgqP2+LHrxtj1V3Iu1fizNZVQyB1uf+srxVc5rAH
+	QRZm1vpx8IfmxjvWzN1pntF+mhad2MAGEy17gr8Q1sC43iGUiLyRnnGQkMHHLDkvUJMHke0HK7J
+	350Je1ktrheQnpvHkEftgv75hkTVj1w2N4SHzXgzkQ5xAuh0iSaqAVvzEKXiFKZLTwpFgIdreRc
+	oqXHJyx6xG6sCXXnO45LSOz/dBeP3p7rBMMHXIxqy+qrqR2qBTJfI4xM8FNTI0XenOOPzr2vgjk
+	0Auleq0h4RjCGOXak1CqusqFU=
+X-Received: by 2002:a5d:540c:0:b0:48a:fad8:52a2 with SMTP id ffacd0b85a97d-48e64ba60d3mr2291450f8f.23.1793237931074;
+        Wed, 28 Oct 2026 18:38:51 -0700 (PDT)
 Received: from MacBook-Pro-von-Karl.localdomain (dynamic-077-007-226-156.77.7.pool.telefonica.de. [77.7.226.156])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd8ddasm34154098f8f.48.2026.10.28.18.38.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-48e3ecd8ddasm34154098f8f.48.2026.10.28.18.38.49
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 28 Oct 2026 18:38:48 -0700 (PDT)
+        Wed, 28 Oct 2026 18:38:49 -0700 (PDT)
 From: Karl Mehltretter <kmehltretter@gmail.com>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Karl Mehltretter <kmehltretter@gmail.com>,
@@ -103,9 +103,9 @@ Cc: Karl Mehltretter <kmehltretter@gmail.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-remoteproc@vger.kernel.org
-Subject: [PATCH v4 1/2] Documentation: Update after split of <linux/mod_devicetable.h>
-Date: Thu, 29 Oct 2026 02:37:16 +0100
-Message-Id: <006464b404e9836e64c22689a8cdb4c34f43c87e.1793221199.git.kmehltretter@gmail.com>
+Subject: [PATCH v4 2/2] docs/zh_CN: PCI: Update the pci_device_id header reference
+Date: Thu, 29 Oct 2026 02:37:17 +0100
+Message-Id: <203f4407e5ed5335cda17a74fa6aeac311a572d5.1793221199.git.kmehltretter@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <cover.1793221199.git.kmehltretter@gmail.com>
 References: <cover.1793221199.git.kmehltretter@gmail.com>
@@ -121,143 +121,27 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
-
-Most structs that were defined in <linux/mod_devicetable.h> before were
-moved to a bus specific header. Follow the movement to get the struct's
-documentation back.
-
-For the list of device ids in basics.rst use an explicit list of all the
-headers that have kernel-doc annotations and that are not described
-elsewhere (i.e. pci and mei_cl). Leave <linux/device-id/acpi.h> out:
-only ACPI_DEVICE_CLASS() has kernel-doc there, so including it would
-document that macro rather than struct acpi_device_id.
-
-Generate mei_cl_device_id from its header instead of keeping a copy in
-the MEI client bus documentation.
+struct pci_device_id moved from <linux/mod_devicetable.h> to
+<linux/device-id/pci.h>. Update the header reference in the Chinese PCI
+guide to match its new location.
 
 Fixes: ad428f5811bd ("mod_devicetable.h: Split into per subsystem headers")
-Signed-off-by: Uwe Kleine-König (The Capable Hub) <u.kleine-koenig@baylibre.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-[Karl Mehltretter: use the :file: role in pcmcia/driver.rst, explain why
- acpi.h is left out]
 Assisted-by: LLM
 Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
 ---
- Documentation/PCI/pci.rst                     |  2 +-
- Documentation/driver-api/basics.rst           | 31 +++++++++++++++++--
- .../driver-api/mei/mei-client-bus.rst         | 12 ++-----
- Documentation/pcmcia/driver.rst               |  2 +-
- Documentation/staging/rpmsg.rst               |  2 +-
- 5 files changed, 35 insertions(+), 14 deletions(-)
+ Documentation/translations/zh_CN/PCI/pci.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/PCI/pci.rst b/Documentation/PCI/pci.rst
-index be35e9a1ee75f7038539a5f162f621086cc3f495..71c42b0bfa8b3b30b63935b7f4d96e56e9bfb302 100644
---- a/Documentation/PCI/pci.rst
-+++ b/Documentation/PCI/pci.rst
-@@ -84,7 +84,7 @@ initialization with a pointer to a structure describing the driver
- The ID table is an array of ``struct pci_device_id`` entries ending with an
- all-zero entry.  Definitions with static const are generally preferred.
+diff --git a/Documentation/translations/zh_CN/PCI/pci.rst b/Documentation/translations/zh_CN/PCI/pci.rst
+index 347f5c3f5ce99bade1221f083b208972baf102ec..452e073b8c067ce16c76d9a5a5883532ebce3296 100644
+--- a/Documentation/translations/zh_CN/PCI/pci.rst
++++ b/Documentation/translations/zh_CN/PCI/pci.rst
+@@ -92,7 +92,7 @@ ID表是一个由 ``struct pci_device_id`` 结构体成员组成的数组，以
  
--.. kernel-doc:: include/linux/mod_devicetable.h
-+.. kernel-doc:: include/linux/device-id/pci.h
-    :functions: pci_device_id
+ 该API在以下内核代码中:
  
- Most drivers only need ``PCI_DEVICE()`` or ``PCI_DEVICE_CLASS()`` to set up
-diff --git a/Documentation/driver-api/basics.rst b/Documentation/driver-api/basics.rst
-index 3b182cfdf13509f1ee8306cffaaf8c99c337270f..84f701b84e4fc517ed12fcb7001fd1f90252784b 100644
---- a/Documentation/driver-api/basics.rst
-+++ b/Documentation/driver-api/basics.rst
-@@ -10,9 +10,36 @@ Driver Entry and Exit points
- Driver device table
- -------------------
+-include/linux/mod_devicetable.h
++include/linux/device-id/pci.h
+ pci_device_id
  
--.. kernel-doc:: include/linux/mod_devicetable.h
-+.. kernel-doc:: include/linux/device-id/amba.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/cdx.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/coreboot.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/dfl.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/fsl_mc.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/ishtp.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/mdio.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/mhi.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/mips_cdmm.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/rio.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/tb.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/tee_client.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/typec.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/usb.h
-+   :internal:
-+.. kernel-doc:: include/linux/device-id/wmi.h
-    :internal:
--   :no-identifiers: pci_device_id
- 
- 
- Delaying and scheduling routines
-diff --git a/Documentation/driver-api/mei/mei-client-bus.rst b/Documentation/driver-api/mei/mei-client-bus.rst
-index f242b3f8d6aa5754b6064411be360442bf443678..d46c0d0b3540afd6fb85baf0ee51ae5032b6e5f7 100644
---- a/Documentation/driver-api/mei/mei-client-bus.rst
-+++ b/Documentation/driver-api/mei/mei-client-bus.rst
-@@ -41,17 +41,11 @@ the ``struct mei_cl_driver`` structure defined in :file:`include/linux/mei_cl_bu
- 
- 
- 
--The mei_cl_device_id structure defined in :file:`include/linux/mod_devicetable.h` allows a
-+The mei_cl_device_id structure defined in :file:`include/linux/device-id/mei_cl.h` allows a
- driver to bind itself against a device name.
- 
--.. code-block:: C
--
--        struct mei_cl_device_id {
--                char name[MEI_CL_NAME_SIZE];
--                uuid_le uuid;
--                __u8    version;
--                kernel_ulong_t driver_info;
--        };
-+.. kernel-doc:: include/linux/device-id/mei_cl.h
-+   :functions: mei_cl_device_id
- 
- To actually register a driver on the ME Client bus one must call the :c:func:`mei_cl_add_driver`
- API. This is typically called at module initialization time.
-diff --git a/Documentation/pcmcia/driver.rst b/Documentation/pcmcia/driver.rst
-index 5c4fe84d51c14caed1fba614934b37bdc51b4420..0b6370c1d52573c5b48eb8d7d577a6f363997e4d 100644
---- a/Documentation/pcmcia/driver.rst
-+++ b/Documentation/pcmcia/driver.rst
-@@ -15,7 +15,7 @@ runtime as shown below::
- All fields are passed in as hexadecimal values (no leading 0x).
- The meaning is described in the PCMCIA specification, the match_flags is
- a bitwise or-ed combination from PCMCIA_DEV_ID_MATCH_* constants
--defined in include/linux/mod_devicetable.h.
-+defined in :file:`include/linux/device-id/pcmcia.h`.
- 
- Once added, the driver probe routine will be invoked for any unclaimed
- PCMCIA device listed in its (newly updated) pcmcia_device_id list.
-diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-index 63612b7ee120ad230e6f38983758a5a35ece3b0d..ea0eb19811248132f9a221dd49f421f80fcbba06 100644
---- a/Documentation/staging/rpmsg.rst
-+++ b/Documentation/staging/rpmsg.rst
-@@ -224,7 +224,7 @@ content to the console.
- ::
- 
-   #include <linux/dev_printk.h>
--  #include <linux/mod_devicetable.h>
-+  #include <linux/device-id/rpmsg.h>
-   #include <linux/module.h>
-   #include <linux/printk.h>
-   #include <linux/rpmsg.h>
-
-base-commit: 5b0764a53235d3c77e1ed674e836e1b3fe1a4b1f
+ 大多数驱动程序只需要 ``PCI_DEVICE()`` 或 ``PCI_DEVICE_CLASS()`` 来设置一个
