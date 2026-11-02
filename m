@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793614664;
-	b=zxCdHAR4gWsBEJiEYzOjIqrDTkNwWXkzNTzvvaHPFwFyjsAUeS+XzJIcsnz4tpB3TpMf
-	 OTYGJ+1RmowM5XjYK/zhfRQdwOIB/N51cHO0qiOpF2AxOTayWqCTyOpHcnBMEcMJVAa8F
-	 vdjj5/l67evkx0wBf8OdHRMDZ+Y6x6pPTWwx4El/YoOCTuyfjQ9EM4IAnAxs9Mh47YMzi
-	 9s3TDc03hvxQ+NVDhrKc+kYPFW0E3wxkydpmzgOwn2cTH1xeJkJjvdeneBpV4D2g2zRoe
-	 o1sQBohyAWzms6qQBBfRXvno4IGfWKdQuABLsWvJsAsVxts3l1/IHpcDRukWJmSVfTg==
+	t=1793614798;
+	b=P4HsoGxDKBPJg74bWJiKYE/5ob4uSa2cXRbGQdUVBRNe3Nh6yavZL+X+hiw5znGu7G40
+	 cF/VJk9q/XXkoP4Bc4y+iNl3155eXna6gBpGMEZU4Ya4NGSEpJaekEyv+TXNJLvaZDwod
+	 e8cuuy6Vb6sZ47Z3ERRIsKu4XGbUC6rYNEBo+GG+BUiD8UEfofFt4vrXYxPbqu69aw748
+	 pQpy5nAHl/GuqSPNDoTWK2Yj1d+XjRxm3u5U6gjyIhATZRBWaOuTeOWO/kLmbaaicNgjl
+	 WH1rG//0gSxg6VlBZlP+32mwf9/jkfUppshYmT5qTfQKpwgdEdOj2vcMJZ5ksho1wjw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793614664;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793614798;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=ZOywiX5vpz/9Vgi/VZ95rgQ3MSCKGsbX1Q854mIZ2y0=;
-	b=L/vhWUwEHdTiyCiX5dc6OU6NaeWxU05TsTHnEXeCKgZy1iiUB4swk6dVS/N/09d7RGPn
-	 Cp7pRgykWuYR/V52o8dm01Vd14FO0R8SVxl5Qv9yZbnqclR3Lll9k6UR8DdErGjn2Vyb9
-	 ZKsoPqh412VckEpzWryXgot+4UR6Dvv0A8bpLiPfS6HeJbh6GdftPLMTu23lcxDYr+xFx
-	 LR+Ye+rbLUNqrFE6TuJFwJAEBjvjds139iIzwiEST9ZLiDQoL/NG9hqzZjn6gAzb2PVty
-	 aTL0svLKyd88mffb2CpYPSMGfMQN4R827X3c1CskgxUBZgRpjSARrfneFi3+ClQ0J5g==
+	bh=Tl3iLmTid8/VrS6d3Y95ShDoORoeWrX++btEogTfWQQ=;
+	b=LE8UTLkPLgn/VJpsTJbEOOuu+fy/J2sKTiaWgcT8tjcl3ihPI8h1r19/PMKeyPtzdsjx
+	 KEujVY2tBjf6ZL8Fuz0bZDYo+j6cS6g/iwwyypgotqMvRgFF2XYVyKRVMC/NW6/ZqghQO
+	 /gB6UtImKEhPhgkANXBTt2Ajf6F6pEZAojRnvzr3GLHmahoCmeKxhWEriKzPt7YeJfeO8
+	 p3z7LqBFviujLuyIi9RnfkL3HGArUpc21vW+FrevXqoriVVk7aiE+DS1JeiYw95dK6P6P
+	 03R/YT6QBA+3KUJv16iZ/Po0XcT5TXguUdrlG+G02UlNVOWogCQiJpZDBgRM3I0psug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zm9qlG7A;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZUwko7vp;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC80B606A329;
-	Mon,  2 Nov 2026 10:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21242606A339;
+	Mon,  2 Nov 2026 10:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zm9qlG7A
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC34B1F00919;
-	Mon,  2 Nov 2026 10:17:42 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZUwko7vp
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E3741F00A02;
+	Mon,  2 Nov 2026 10:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793614663;
-	bh=ZOywiX5vpz/9Vgi/VZ95rgQ3MSCKGsbX1Q854mIZ2y0=;
+	s=k20260515; t=1793614798;
+	bh=Tl3iLmTid8/VrS6d3Y95ShDoORoeWrX++btEogTfWQQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Zm9qlG7ApWRNOEArVSRiymIwIZuyctseHPwOsfkpKF+7z61/onmtRhN0xCACQKdap
-	 1VKmFJ5xkP905Ul1navWQXMt5ak9NPLoGhwZ4xfZaZmHVaCSymM/rcecTsvctDGdT5
-	 s2ugYropnuxjqnWgIjWzbe1iP61d6NMFjVNBQ73JlbMW0P8nIWKURIiKyd8TPA2Rcj
-	 Jg+sQpKYk9PDQafQhs6ZwC3JMVcMuawV4SqSwGpVNC1KipFBSn6v50lnGfEtlusyY3
-	 fkvnAAJFsCsAwbk/2hh7jyia0eN52OvSQReunIandJ0RPszFOwFd2o9pFVYj+l8/LN
-	 iJgXTLcSQG2aQ==
-Date: Mon, 2 Nov 2026 11:17:39 +0100
+	b=ZUwko7vpee2/H6UhO5p2zvjf20y6adM38N3S906E+Yq8W46IW5DGmOGx7iS83Q7u6
+	 fWK9u9aHAZITM6kTGz6wWjxWVe9gdnJLYHA8teLCfrbnjjM9ELw+1lcT1nCKWEsik6
+	 EdDTFFMmmFhG7/RQcsyg76AaqA3VVoOJm5DstPqCHHIeTKgBWESPyMEsM/VimLOq96
+	 dIsBNZ6EtmgZoN7Fqxf1FvWyu+Ess0C+p66ZnVFbqSWQLzyUWco40WZqhj/r3IweTm
+	 eKqTR0JqFWpxenT5G/PNIU9fzBavR2cKzkidz7NXXXj4TkPsIlNoyG3+N44ysN/r4N
+	 t/TG0ygxEe3GA==
+Date: Mon, 2 Nov 2026 11:19:54 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Tim Michals <tcmichals@gmail.com>
 Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
@@ -49,11 +49,11 @@ Cc: Jassi Brar <jassisinghbrar@gmail.com>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
 	linux-sunxi@lists.linux.dev, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] dt-bindings: mailbox: Add Allwinner A523 message
- box
-Message-ID: <20261102-hot-glistening-cassowary-c1da4e@quoll>
+Subject: Re: [PATCH v3 3/7] dt-bindings: remoteproc: Add Allwinner A523
+ RISC-V remote processor
+Message-ID: <20261102-warping-victorious-shrew-7cee1e@quoll>
 References: <20261101185735.762559-1-tcmichals@gmail.com>
- <20261101185735.762559-2-tcmichals@gmail.com>
+ <20261101185735.762559-4-tcmichals@gmail.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -65,26 +65,48 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261101185735.762559-2-tcmichals@gmail.com>
+In-Reply-To: <20261101185735.762559-4-tcmichals@gmail.com>
 
-On Sun, Nov 01, 2026 at 12:57:29PM -0600, Tim Michals wrote:
-> The Allwinner A523, A527 and T527 (sun55i) message box connects the
-> Cortex-A55 host with the HiFi4 DSP, the CPUS power management core and
-> the XuanTie E906 RISC-V core. Each processor has its own register bank.
-> A sender writes a message into the receiving processor's bank, and a
-> channel has an 8-entry FIFO in each direction.
-> 
-> The host bank has 12 channels, four for each remote processor. The
-> binding lists all four banks, since the host writes to and reads the
-> FIFO status of the remote banks, and lists the bank interrupts in the
-> same order: the host bank read interrupt and the write interrupts of
-> the three remote banks, which every A523 has. Each bank has its own bus
-> clock and reset, and an unclocked bank drops writes, so all four are
-> described. The optional allwinner,tx-done-irq property selects TX
-> completion by the receiver bank's write interrupt instead of polling.
->
+On Sun, Nov 01, 2026 at 12:57:31PM -0600, Tim Michals wrote:
+> +  mboxes:
+> +    description:
+> +      Message box channel to the RISC-V core. Each channel has a FIFO in
+> +      each direction, so it carries notifications both ways.
+> +    maxItems: 1
+> +
+> +  firmware-name:
+> +    maxItems: 1
+> +
+> +  memory-region:
+> +    minItems: 1
 
-Sashiko comment looks valid, rest seems ok.
+
+Here
+
+> +    items:
+> +      - description: Virtio vring and buffer pool, a shared-dma-pool
+> +      - description: Firmware code and data in DRAM
+> +      - description: Trace buffer
+> +
+> +  memory-region-names:
+> +    minItems: 1
+
+here
+
+> +    items:
+> +      - const: vram
+> +      - const: dram
+> +      - const: trace
+> +
+> +  interrupts:
+> +    maxItems: 1
+
+and here, same comments as for v2.
+
+> +    description:
+> +      Interrupt the RISC-V core raises on a fatal error. The A523 has no
+> +      dedicated line for this, so it is present only where the system
+> +      integration provides one.
 
 Best regards,
 Krzysztof
