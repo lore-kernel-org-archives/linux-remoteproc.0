@@ -1,73 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793605716;
-	b=JET6WWxU6rDYomU3/bTRCgT7rVxYNe7wScb59ygu0fHSc5CYNs1uuhnZWObRHmeaWa3e
-	 fJa6E81YWzceSRg5tH8iRYhNJr1C1Syf3sAhn1IYVez2malBuW5ElpMXjgYdGzjEJwdqD
-	 gw3eKhbCshe/N90iMZdRf5KOCbr8aGvyUkduSSc5k8vj5iBOJSE/HEk/l8UyJcqIvA8tW
-	 IMM/eSZOZkW70+tllR74BefMTdx0xHyO5RVAXmO3+rMsQAHQRtWWlvWqyYpbsuEGr2+c1
-	 T0piAuDw8nOThWSPdnJC94V47fvYArQjBUeYeCoJI57EgHSgx0qR/egsAXyI6GzqgIg==
+	t=1793614664;
+	b=zxCdHAR4gWsBEJiEYzOjIqrDTkNwWXkzNTzvvaHPFwFyjsAUeS+XzJIcsnz4tpB3TpMf
+	 OTYGJ+1RmowM5XjYK/zhfRQdwOIB/N51cHO0qiOpF2AxOTayWqCTyOpHcnBMEcMJVAa8F
+	 vdjj5/l67evkx0wBf8OdHRMDZ+Y6x6pPTWwx4El/YoOCTuyfjQ9EM4IAnAxs9Mh47YMzi
+	 9s3TDc03hvxQ+NVDhrKc+kYPFW0E3wxkydpmzgOwn2cTH1xeJkJjvdeneBpV4D2g2zRoe
+	 o1sQBohyAWzms6qQBBfRXvno4IGfWKdQuABLsWvJsAsVxts3l1/IHpcDRukWJmSVfTg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793605716;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793614664;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=nVQ8uQ8EBtB66FVkdkeahhd5McyzCUW6GqWt7KinKNs=;
-	b=Sg/WBaHlCsPEHvtXfLmJ+U3Ku469wfO+03y2DZzD4CtjAeRR9SCU3/MpCzgaN3EO6SKJ
-	 e9Ur2kQcrO/2CmwccKnZQBB+bLtIlbTT7EAIiiCoAPj+hNTt352/XGNZMDIKH7q3R3Z1x
-	 wKXrRyKSVhhoxIX+BwlL1y7ytXzxUyInsM9pRMYjy2Q6gJpUuE2PA+v+3+GXc1oBoKYD2
-	 IZBlMeKZY06tLYSl1bTnfMND5Pt9bxgz+kQTc0pEqfEzMY3AE3a9xKsYACc74mEUtZbFa
-	 YCm3xsWArv5LAc3jt/msxok3k8KsCyyAsI5yWbqBIwwCSnzRusd/D0Q8zgPeQGH4Hog==
+	bh=ZOywiX5vpz/9Vgi/VZ95rgQ3MSCKGsbX1Q854mIZ2y0=;
+	b=L/vhWUwEHdTiyCiX5dc6OU6NaeWxU05TsTHnEXeCKgZy1iiUB4swk6dVS/N/09d7RGPn
+	 Cp7pRgykWuYR/V52o8dm01Vd14FO0R8SVxl5Qv9yZbnqclR3Lll9k6UR8DdErGjn2Vyb9
+	 ZKsoPqh412VckEpzWryXgot+4UR6Dvv0A8bpLiPfS6HeJbh6GdftPLMTu23lcxDYr+xFx
+	 LR+Ye+rbLUNqrFE6TuJFwJAEBjvjds139iIzwiEST9ZLiDQoL/NG9hqzZjn6gAzb2PVty
+	 aTL0svLKyd88mffb2CpYPSMGfMQN4R827X3c1CskgxUBZgRpjSARrfneFi3+ClQ0J5g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pklyxlag;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zm9qlG7A;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79251606A326;
-	Mon,  2 Nov 2026 07:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC80B606A329;
+	Mon,  2 Nov 2026 10:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Pklyxlag
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 619C51F00A17;
-	Mon,  2 Nov 2026 07:48:34 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Zm9qlG7A
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC34B1F00919;
+	Mon,  2 Nov 2026 10:17:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793605715;
-	bh=nVQ8uQ8EBtB66FVkdkeahhd5McyzCUW6GqWt7KinKNs=;
+	s=k20260515; t=1793614663;
+	bh=ZOywiX5vpz/9Vgi/VZ95rgQ3MSCKGsbX1Q854mIZ2y0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PklyxlagO6tQm2cVGswU8nU4eOuTBHos/OweD9u3f/ca41Lm4iCyJbL9U0qxRikrv
-	 yWIzLO0cmC0d3VFz7QKkFx/ZpZyze+NuakSCqqTiQncEkJzAYycdkwXah3+Ak6jbLn
-	 ydjJSC/rhs+gzXiXIlcAT2zsnnqDq5A6KF54Bzm1Yjt5j7Z3I4Gh0vwikrkrcafJ+m
-	 vGIV+APXdN+V5kbITNlGnC2StM2e37BY/UJ1Hv3oC2jCUQJgnIr3tsubFPEdwx9kYi
-	 THAeVc7SUobHqUdx9NYyAUxKfaMB31YgcEPaxZxODLGkzafDxC82RdKtEwT8Sw3lzs
-	 B8rW6g7YgU4Og==
-Date: Mon, 2 Nov 2026 08:48:31 +0100
+	b=Zm9qlG7ApWRNOEArVSRiymIwIZuyctseHPwOsfkpKF+7z61/onmtRhN0xCACQKdap
+	 1VKmFJ5xkP905Ul1navWQXMt5ak9NPLoGhwZ4xfZaZmHVaCSymM/rcecTsvctDGdT5
+	 s2ugYropnuxjqnWgIjWzbe1iP61d6NMFjVNBQ73JlbMW0P8nIWKURIiKyd8TPA2Rcj
+	 Jg+sQpKYk9PDQafQhs6ZwC3JMVcMuawV4SqSwGpVNC1KipFBSn6v50lnGfEtlusyY3
+	 fkvnAAJFsCsAwbk/2hh7jyia0eN52OvSQReunIandJ0RPszFOwFd2o9pFVYj+l8/LN
+	 iJgXTLcSQG2aQ==
+Date: Mon, 2 Nov 2026 11:17:39 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Muzaffer Kadir <muzafferkadir@mainlining.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"Joerg Roedel (AMD)" <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Rajendra Nayak <quic_rjendra@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, 
-	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jesszhan0024@gmail.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-remoteproc@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v7 07/11] dt-bindings: display: msm: dsi-controller-main:
- Add MSM8952 compatible
-Message-ID: <20261102-blazing-tortoise-of-vitality-6f92cf@quoll>
-References: <20261030-msm8952-initial-support-v7-0-ad748ace375d@mainlining.org>
- <20261030-msm8952-initial-support-v7-7-ad748ace375d@mainlining.org>
+To: Tim Michals <tcmichals@gmail.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-sunxi@lists.linux.dev, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] dt-bindings: mailbox: Add Allwinner A523 message
+ box
+Message-ID: <20261102-hot-glistening-cassowary-c1da4e@quoll>
+References: <20261101185735.762559-1-tcmichals@gmail.com>
+ <20261101185735.762559-2-tcmichals@gmail.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -79,17 +65,26 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261030-msm8952-initial-support-v7-7-ad748ace375d@mainlining.org>
+In-Reply-To: <20261101185735.762559-2-tcmichals@gmail.com>
 
-On Fri, Oct 30, 2026 at 12:02:38AM +0300, Muzaffer Kadir wrote:
-> Document the DSI Controller found on the MSM8952.
+On Sun, Nov 01, 2026 at 12:57:29PM -0600, Tim Michals wrote:
+> The Allwinner A523, A527 and T527 (sun55i) message box connects the
+> Cortex-A55 host with the HiFi4 DSP, the CPUS power management core and
+> the XuanTie E906 RISC-V core. Each processor has its own register bank.
+> A sender writes a message into the receiving processor's bank, and a
+> channel has an 8-entry FIFO in each direction.
 > 
-> Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
-> ---
->  Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> The host bank has 12 channels, four for each remote processor. The
+> binding lists all four banks, since the host writes to and reads the
+> FIFO status of the remote banks, and lists the bank interrupts in the
+> same order: the host bank read interrupt and the write interrupts of
+> the three remote banks, which every A523 has. Each bank has its own bus
+> clock and reset, and an unclocked bank drops writes, so all four are
+> described. The optional allwinner,tx-done-irq property selects TX
+> completion by the receiver bank's write interrupt instead of polling.
+>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Sashiko comment looks valid, rest seems ok.
 
 Best regards,
 Krzysztof
