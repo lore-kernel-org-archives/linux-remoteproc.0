@@ -1,100 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.43
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1793728076;
-	b=KYpSR/fU3boxBjVTwzPVvO1Za5WmroDTDNcGy68y++AxH4QJ8dRE5uoyT4HVfsceutGE
-	 7TNQJ+ww/xwRPEuBFl12le/kpMO9MYHULl3zIZBL9pit4VZ98xK28G1+Ue6OLP1sHSrPJ
-	 YWwpEShnWwP+NNk8rGP5We4p74e5JSdoyqB5ydSAb6s69dos+ZSWheLRpE6qwpjzXhPbn
-	 xFpFK8M4U1xldQEtjdXXwaLrqsDV5Clkae5Ou8GgrMncQdNliEK7LtdhOEvQ0oqpFPrv0
-	 0s/0xiRqtmDs0mJm9MeuXTxdjOhMZUasaAjZSiPYG1vhYzwIrb8gyTpWx5nLbDZXYLA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793728076;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1793728204;
+	b=dqELFVpXzEIEbPionh7WTVwm2yWFmdf/Mdjgb2+PnqwLd8r0xdZlW/+XxnwidjPEFRuQ
+	 MH1p+8DiPCZ3mQTLK3CdAJ1GwcSElhOZoCaCu74qfrHaCQR2cebGn8IGACme8L6QAOBWX
+	 o8Ld3hs2koSGy8UkELX/ZXWNdIify085w6PZXyzbqVjPEKft3C7TZNYmhw0JU09Ct/qv0
+	 Rp99/Je15aHGpgDiaK/+oDlr6IGJwoy6U/XbUOkgfIe4iToniWSQpVwVIPhmasuULVwaL
+	 STAz0fPOGjZf8Gmq9yoa3PiKHZpNgQpvgEt0glNco+WeboREyvgryR1Nn3NmR4wX6qg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793728204;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=n99mPQj1ZJP498NFAs6mVC9Ln+V99W5mU+3ATj0pCRE=;
-	b=tfWoBHwiPMVBXnBrKquFqNHMdC0KBhzfrSv3scJZYwkkdO829FpmjCNH7O+tBGszEigm
-	 0c/JgxL7sazjwSuvLsixZ/ALDjO5lWYJYZ7blsQXv7MiCQcRxD9vuzUDc7PUW+JZDpgAy
-	 f3vMtoXundJTOhvdskLFE7q93J3bie0MW3h+3/YNpbXnwr/3rrBEtm7/rC/9kF97KqdjF
-	 1PKLLvC0cCuzc21rZOusoAjkIdy1fGlyqsiY489Zm42VCQv5iPNBFdVzq3mX9YWgFMd9r
-	 zP6KxWysn2HigqJvHWehwE7xEj9kCdbVi8dk/OSs6IfZ5B7KxR9R1y5xO/V2OxuK0HQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=J3KIFfY5;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.43
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=EvBKZYbsyPjC/KbvTWeWl/x1jiG+4Pze5t2xnn/ZrCU=;
+	b=kW/FNm+Cejh0jMl7wb91N33K1gkjXQNGd5HLGM5d2uA3hJqNJ+8MsykbqInXizUk2FGD
+	 yQZ1jOfT8JHIhe0sJUT7wQTTo55Kb5qCluMoRO+Wq9L3jUw9ftg3fe+r0FOEnRSdCwzeJ
+	 byOb33CXfLEEonEhc8pdd4RE8WDrAgqmeO0TvwG43aoyUP+Qp+6byvp/M52SfgM277lQ7
+	 Vtj/nE0vw5+kBLo1HTtTSBq3tgRZAiUYdgi1T1xTitZWnBIJgX8WAP4pBb3IgAKMeU7Iq
+	 M6MzK6GelIWN0W6LFsZ211JwRdUOdQiVAWECbMTku89/tkbZniyvhqz0wLH5Yhbq19w==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=none header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="b/IyMV2b";
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BB4606A324
-	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Nov 2026 17:47:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 70BB4606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FE3606A32C
+	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Nov 2026 17:50:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C6FE3606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=J3KIFfY5
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4a207b02a2cso30124935e9.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Nov 2026 09:47:56 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1793728075; cv=none;
-        d=google.com; s=arc-20260327;
-        b=JdXdNVFqybv9Bph1JrdNWRmUe8YAxejooHDhWxGgiwxWnlukzL+0MCdmk4bPw99rvD
-         rNdV7eXj6c5n4rI+uBwxRpv4RJqnN1TvGtOtaYwab06A4nG1Gpc5puFMODvuXUqRDQnW
-         uyFnNU9NMcjnS/syGRkLMaAPnM7b/UnEAZzXSsSdmEiiIqRmTcQjK5aUgktDwsL2VBL0
-         Ubs2NxYCbMXRRIQh9OJRsapjAgTsuLDT5bIy+hG3XTxF/Tc1sP5DBSv2WCuoK6L5NDKl
-         GTljA7i7rouDa1wQvUp/5BWRhzv/rYmlSr/y2uk4LaBkhTYdX4rUVgEUJ37uNPkWKKkZ
-         rDHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=n99mPQj1ZJP498NFAs6mVC9Ln+V99W5mU+3ATj0pCRE=;
-        fh=e9FMAJMBkAJa2ISXCocPptil3jRM91WURcrVN90cHKw=;
-        b=cJgwCIlfYdLij1fMQoLUlk0de61flrwn8ArcxBfgCYPgp07zTWpFdBlp2tsK4hOE4K
-         0QwuVjGbdur8ZhN8sUhiB7YMZw2x/QI8QCRbaAfwi6YMzsvKTv6DoOWks9eE13rQR9Em
-         c3Jnesa6tKz2USXly4HkkMP21foItlM6nSvuWHiXLha6HiKPdDOqFSZhaZf0wOikaHXe
-         C8fNKwOtIiebPG6AYa/uU50o9y/98tGj6e+ljoRmiMQZFlRDz0t47rcAqeMm96zcy919
-         GBEYWHkzE2Nbw+ZZLoIMWvtxAKj+9t2a/forvxKaG18XesFOg7NDwV/2DeNPh8rJSV3+
-         p1LQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=b/IyMV2b
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a2167bd087so38271245e9.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Nov 2026 09:50:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793728075; x=1794332875; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+        d=baylibre.com; s=google; t=1793728201; x=1794333001; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=n99mPQj1ZJP498NFAs6mVC9Ln+V99W5mU+3ATj0pCRE=;
-        b=J3KIFfY59hOhjhOy0qmIXAJZ5B3hDT1mclNiZP6MSPOzRvAjY0eVXa1YJW0/JfzBks
-         FP26H3hNgp3zyn1JC3hWXg4OrqjeWmqB1gHwRiKAJDR1NmklcLKqp5Eu6V6CYlUV33A4
-         tf+0lhOq4TEPUBLDHXvCWvrAs6QWZxH0hm4qIM3+RsgH3T8zZB6hjoI5wQvVm9HCM6ix
-         d8bSnsIvySZtgyN8kb6hdxkUtc42aN49P3jYjt/dGkQPFJWKU4Pi83ByNcxupUrYhbMV
-         chEVda0Ayamp7ZFx91m4X4b1QEQuuaK0IWNg4QGTFdVhyqERSUvzflAellxIWFES8kRB
-         /xxQ==
+        bh=EvBKZYbsyPjC/KbvTWeWl/x1jiG+4Pze5t2xnn/ZrCU=;
+        b=b/IyMV2bpaMVswQSzeQ1PZsZb2CjE54ozGqexHU8bBXqD0JQSLXMR2/ti16UV5NNr/
+         TkCp/RRKQ+et3iOkt7F9Lcmm+kzMAdAdwfXYEPIGXYifNQNsT6zo1s9sEj2bXgHNOLBz
+         z3E0FdH+CGHbPw5xzqc2TgyXastiegaTK7bvhEnrZNEpuxw0WJOE9+UPC6en3jn3FzPK
+         hYJm9KYs539y/Qc88zeBN51oct/UcaOrtO/cekHyUj2nQm9jJAoneGqQIyXqtxn611wn
+         1MoTbH5CD2JfN/+LIzLYRSrzDZfLjIJA5L4V2uJPecLnmUIZDYDjB8L7eH63+TAxK7qI
+         sw6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793728075; x=1794332875;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1793728201; x=1794333001;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=n99mPQj1ZJP498NFAs6mVC9Ln+V99W5mU+3ATj0pCRE=;
-        b=0nje3YaYlGRX6DxJFxbBP3Mll3fFONlIax1zoEObkhvdWDqwSCDobIxkFb+i2BKVAL
-         LSYITHPUml0YB60gWrigzM/a+TQC+ujyIXhkLDTEZRTJg/+nMOOJ+8z6wD9qOZqCGFNO
-         37xc09/LCQLHnJjjW/0QT3yyFAm/wd58pmIdnbULFLDabEscuz7w/qetv7/ZgVVjGiv/
-         AXNusz55TOByqiuxaPfg0q5uIy6t+VUdZQvPtKEejBidwuWUhnBh0d7JLcVTrtXYhrRQ
-         ah64ZfhxUznc1e8QY4a2dB0ijWiU8n7emM1k5PuELL+8aRbBmHx2KsVKwKc1jVQXRr5k
-         F8oQ==
-X-Forwarded-Encrypted: i=1; AKwUvBzB3tFGN30B4m2JTfzna51zPF581+TKGEkeZj4IqIrtYXzTRZ0yqPYOGilQqC5Mzk64I3eTm58o82HcyLm374OI@vger.kernel.org
-X-Gm-Message-State: APuU4Z8C7Y/5SsKAui6Rwca0fGrcKj5AtpDr/0CGisJH+0y/rZx9CsmJ
-	WRh3JCy8IfKZs8z+/80Latr7ZVHpE1o7QP5IheJJIHT5bJxRVfPc1bvN6goEFh/3JNVMWtu9gL7
-	yM4AzrAjG052yhAJoqKQ1Y3e8oCip7b4=
-X-Gm-Gg: AYBFou2MmBYJzw104zbBNeHu7ZNGL70PzOB3ZrzQGexu/E0ucYXiElNaTw0RJn+J7/k
-	JWCqVHlI0P4m0FhVOqYq32JboDywPgBlRpoloP78Z54ciyKnsfsiWh2mQjt2YP8NxOmHPxQAjm1
-	owmH4v9kq30SQ1FrwFn4fPJo0LqxJEIZIBkDzWVvHTSLQ3NkHrvDd7h6k1KPnXM1g2ZZg7gyMjr
-	jr+jvZ1VfMhveVRAgv+Fzsh+mUtPYRtiyRBm1sDtcQevaid69ShDgpBf/B8Bz34WqPjcPOUKFS9
-	SUINFCUetReBmI52SDQ+fjaWczTWHvq+jgr1yHdsHQlpNq9CYiF7YuZnsyEe5+XaT1GKmE2S7w8
-	9x+HHEHaB+9Tr+nO6NVUYcZCU+IOf9wP2X9/SmZXyvkg5ZMuACBTsDNoopVZ0vI1Abd+7
-X-Received: by 2002:a05:600c:871a:b0:4a7:d9b1:b684 with SMTP id
- 5b1f17b1804b1-4ac14ec7947mr323859765e9.2.1793728074629; Tue, 03 Nov 2026
- 09:47:54 -0800 (PST)
+        bh=EvBKZYbsyPjC/KbvTWeWl/x1jiG+4Pze5t2xnn/ZrCU=;
+        b=1rEO5bW79rZm5/pN9CcSrIYt3vgIvTDkY1qj7Udn4OPdbSxamoqVu5ohLp62wQBYmb
+         VCOx5h87izGvcaeJRaBtRT+0mFKpWq/rqDhigPd/mMFGUiadv1G1k9LMhFiLeNYPjmvd
+         RHm7Qvkn09tnMl445kvsKbSEJTM7fFX6xc+1DDnGBEGOZswNpnuprzZajnY50NcxFSz5
+         HuXQfI97a+dxtgOmtakLygbbbMAUfZBoN0nEeiiE2oG4xUVEk43fGkjrQiwPfZ1xC6uJ
+         BQ3FDZaHv2U9a8+L5ROz9RNUx5jM1pKBcppk7c4SJhUk/Rt0HS9UcV/FUwYt2LZ1y/N2
+         Bktw==
+X-Forwarded-Encrypted: i=1; AKwUvBzXDC3seO+QHcfM5qaRfIUjhPu7Sa6vFWf5ZOzyO3nF+AtWimSyV86wwiBfFYjaJTxShcPRHyQk9uBmNdWrFWQj@vger.kernel.org
+X-Gm-Message-State: APuU4Z/s9YUVJTQVD/bVLTHjn/10YkZgZrTiq9pi6x2wUKIP5Iomt4Fb
+	85o78mDXhRfXs8qIsDRzKNh51ui8jZJE6AHEdOv7B1cQZBsTPcwltI3YkJKCWb3csqMKkPNL2KN
+	hrFwGCKk=
+X-Gm-Gg: AYBFou0KVTid7GAiJ2eV9wMiRwwGEUmOuuF0dzUDAokOmOPmT+yxYF0zznrlFWBvYWd
+	zs6MIBMlxyjop3277s/pFuxTouzafJYobeEh60SYj1D/V6bRsuFqdfu67WTgkX10jlU8/04920c
+	B4gyGy35/M0KO14Fm0dsP55mipwH5WCKWvv0WFwPj6UADiUOEA4UuyDVYUszjKKc4J2wS/gZo1/
+	/J+MUC2g6Pu/cZMHUy1u9AG6M3vw7QkSpQN36iq17LDNyq6g6mHz2kQtFX56tN1u7u3n+DMwFsw
+	/2wotG0xlJ8ej+e1aRsCZ8cygoyLrDZdrCX3gQiCK1qiPWvgxye29Tm1RpC4+pv+hAEkOnHA1Ad
+	8EIgX2EwVrUSA71/1mg3DH8F4sFtEH/WhPOaUib0VWqnx6fZ8/SH2l/yoqjzj2ei3fw/BXl00uA
+	90Z07vEzzTAJuPkv54ry0pCxI7zuoWv6uEyXLaRSjsFpHxaIQkteBcZHfzjF9O3VxyUN4wSjdxT
+	RoAe/Veb0lMxZZFpe0lNsgfec/0VMf/j9M2CMC4RtKu5eHn/S+LeBUGrZoVI5UskGcA1ntbh+O9
+	BGPR98U3g5AGj/XUjxr/dt77iqQLZtbCSd0blXT9e4MjOxqPg1cNJRtZ5CN+kDzQPBRnb/xmzbZ
+	UQBeBesMwZDE47g==
+X-Received: by 2002:a05:600c:674a:b0:4a1:fb23:68f0 with SMTP id 5b1f17b1804b1-4ac14ec788emr319488995e9.3.1793728201219;
+        Tue, 03 Nov 2026 09:50:01 -0800 (PST)
+Received: from localhost (p200300f65f19a9048e0e65dd41210f6d.dip0.t-ipconnect.de. [2003:f6:5f19:a904:8e0e:65dd:4121:f6d])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48e71b80333sm28497156f8f.32.2026.11.03.09.50.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Nov 2026 09:50:00 -0800 (PST)
+Date: Tue, 3 Nov 2026 18:49:59 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 1/2] remoteproc: elf_loader: Create new callback for
+ copying segments to remote cpu
+Message-ID: <auod0uYPow76TEb8@monoceros>
+References: <cover.1793117996.git.u.kleine-koenig@baylibre.com>
+ <15d90126debc21c116c9e862a007afa4d81f704c.1793117996.git.u.kleine-koenig@baylibre.com>
+ <auoAZs66RA5OYjJo@p14s>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -104,154 +104,79 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261029130037.5505-1-izaiahsun@gmail.com> <auoLrJPq9eRAbeQa@p14s>
-In-Reply-To: <auoLrJPq9eRAbeQa@p14s>
-From: Yuqiang Sun <izaiahsun@gmail.com>
-Date: Wed, 4 Nov 2026 01:47:41 +0800
-X-Gm-Features: AclHuK_glufPx3VPzKUbs-tqY6RCK_e-0Xc3jXhDCTseeM-7NDt0oT0ktRFS9Mc
-Message-ID: <CACdDPuwmyAjC3kje+nYJ3yz7RePg8JzXsKGkzx-Ksxb=-_CZ8A@mail.gmail.com>
-Subject: Re: [PATCH] remoteproc: core: Do not put the device when device_add() fails
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tqt42yzt45wmalce"
+Content-Disposition: inline
+In-Reply-To: <auoAZs66RA5OYjJo@p14s>
+
+
+--tqt42yzt45wmalce
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/2] remoteproc: elf_loader: Create new callback for
+ copying segments to remote cpu
+MIME-Version: 1.0
 
-> Unfortunately I do not have the time to read through and digest what Clau=
-de has
-> generated in the changelog.
+Hello Mathieu,
 
-Sorry for the long content.
-There is a human-written summary about the bug.
+On Tue, Nov 03, 2026 at 09:40:22AM -0600, Mathieu Poirier wrote:
+> On Tue, Oct 27, 2026 at 05:25:20PM +0100, Uwe Kleine-K=F6nig wrote:
+> > diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remot=
+eproc/remoteproc_elf_loader.c
+> > index da3cddbe7d4c..3c749a39e5da 100644
+> > --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> > +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> > @@ -227,35 +227,45 @@ int rproc_elf_load_segments(struct rproc *rproc, =
+const struct firmware *fw)
+> >  			break;
+> >  		}
+> > =20
+> > -		/* grab the kernel address for this device address */
+> > -		ptr =3D rproc_da_to_va(rproc, da, memsz, &is_iomem);
+> > -		if (!ptr) {
+> > -			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
+> > -				memsz);
+> > -			ret =3D -EINVAL;
+> > -			break;
+> > -		}
+> > +		if (rproc->ops->memcpy_tova) {
+> > +			ret =3D rproc->ops->memcpy_tova(rproc, da, elf_data + offset, files=
+z, memsz);
+> > +			if (ret) {
+> > +				dev_err(dev, "Failed to copy segment %d to device address 0x%llx: =
+%pe\n",
+> > +					i, da, ERR_PTR(ret));
+> > +				break;
+> > +			}
+>=20
+> I really like your patch, but I'm wondering why you decided to move
+> rproc_da_to_va() in ops->memcpy_tova().  Right now it is called in both p=
+ath,
+> i.e with and without ops->memcpy_tova().  Wouldn't it be better to
+> unconditionally leave rproc_da_to_va() in rproc_elf_load_segments()?
 
-> The documentation for device_add() is clear, and looking at the implement=
-ation
-> of device_add(), I understand why put_device() needs to be called here.
+The reason is that on ADI's SC846 the memory for the remote processor
+isn't directly accessible by Linux. So there is no virtual address for
+the given device address and thus the implementation of .memcpy_tova()
+on that machine won't use rproc_da_to_va().=20
 
-I agree that as documented in device_add, the put_device must be called
-if it fails.
+Best regards
+Uwe
 
-But in st_slim_rproc_alloc() (drivers/remoteproc/st_slim_rproc.c), when
-rproc_add() returns the error, the driver calls rproc_free() at its err
-label, which is put_device(&rproc->dev). With the put_device() in
-rproc_add(), that reference is dropped twice, and the driver uses the
-rproc after it is freed.
+--tqt42yzt45wmalce
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The same happens in every other caller: xlnx_r5_remoteproc calls
-rproc_free() too, and the other 23 use devm_rproc_alloc(), whose
-devm_rproc_free() does it.
+-----BEGIN PGP SIGNATURE-----
 
-That is why I did not change device_add() or one caller, but
-rproc_add().
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrqHsQACgkQj4D7WH0S
+/k4sjAf/W9Wh/o2zfPqQyyyOgx0wwKDVNUCFZ3gnMmbmk4VZdCin6ZavZplg6T+x
+coNDAgnxOftZnuWR1SpiFa6XCTmAE5ZxvNLbwzw6DF+G4Bq+z2ifELs9uZh/U0eo
+HrJFd/MaHMCnZdw7Hr1emJPiegROrwq5psibMrjJItAbtrvyFUFKXQ+YKYY128Pi
+8945jUEVVmAFRQ3nCV50qJW8+KPt36ZWnBRt8TjZHMMaHWuhLDuXsqUsCiYDkFnf
+MeO9tFp+Aw2Nk78rkgmSg9kOauIt2+3ievOTOCN2haO43CYNx+In6f7GwLzSq2R2
+Iffz8Diu7OmLg5+j4A7mG6jW7l/4RQ==
+=MoF6
+-----END PGP SIGNATURE-----
 
-If necessary, I can send out the full document and PoC on
-how to trigger the KASAN.
-
-Thanks,
-Yuqiang
-
-Mathieu Poirier <mathieu.poirier@linaro.org> =E4=BA=8E2026=E5=B9=B411=E6=9C=
-=884=E6=97=A5=E5=91=A8=E4=B8=89 00:28=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Thu, Oct 29, 2026 at 09:00:37PM +0800, Yuqiang Sun wrote:
-> > When device_add() fails, rproc_add() calls put_device() and then
-> > removes the character device.  The reference it drops is the one
-> > rproc_alloc() took with device_initialize(), which belongs to the
-> > caller: after a failed rproc_add(), every driver frees the rproc,
-> > either with rproc_free() or through devm_rproc_alloc(), and both drop
-> > that reference again.
-> >
-> > So the rproc is freed inside rproc_add(): by the put_device() itself,
-> > or, with CONFIG_REMOTEPROC_CDEV, by the cdev_del() that follows, when
-> > the character device drops its reference on the parent device.  The
-> > caller then uses the freed rproc and puts it a second time.
-> >
-> > With one allocation failure injected into device_add() (failslab
-> > restricted to rproc_add) while st_fdma probes, KASAN reports:
-> >
-> >   BUG: KASAN: slab-use-after-free in slim_clk_disable+0x38/0xf4 [st_sli=
-m_rproc]
-> >   Read of size 8 by task insmod/69
-> >   Call trace:
-> >    slim_clk_disable
-> >    st_slim_rproc_alloc
-> >    st_fdma_probe
-> >   Freed by task 69:
-> >    kfree
-> >    rproc_type_release
-> >    device_release
-> >    kobject_put
-> >    cdev_default_release
-> >    kobject_put
-> >    cdev_del
-> >    rproc_char_device_remove
-> >    rproc_add
-> >    st_slim_rproc_alloc
-> >
-> > followed by use-after-free reports in kobject_put() and
-> > refcount_warn_saturate() from the rproc_free() in
-> > st_slim_rproc_alloc().
-> >
-> > Remove the put_device(): the caller's rproc_free() drops the reference
-> > and releases the rproc, as it does for the other failures in
-> > rproc_add().
-> >
-> > The problem was found with kbound, a static analysis prototype that
-> > checks whether callers rely on an object after a callee returns a value
-> > for which the callee may have released it, on v7.2.12; it is present
-> > in rproc-next.
-> >
-> > Build-tested with x86_64 and arm64 allmodconfig (W=3D1, sparse): no new
-> > warnings.  Run-tested on QEMU's arm64 virt machine (TCG) with KASAN,
-> > using a device tree node for an ST FDMA with a SLIM core, so that
-> > st_fdma_probe() reaches rproc_add() without the hardware (no clocks,
-> > MMIO windows only mapped), and failing each allocation in rproc_add()
-> > in turn with failslab: before this patch every failure in device_add()
-> > (9 of 9) gives the reports above; with it nothing is reported, and the
-> > rproc is released once, by rproc_free().  Not tested on remoteproc
-> > hardware.
-> >
-> > Fixes: 7dbdb8bd7c02 ("remoteproc: core: Cleanup device in case of failu=
-re")
-> > Cc: stable@vger.kernel.org
-> > Assisted-by: Claude:claude-opus-5-5 kbound
-> > Signed-off-by: Yuqiang Sun <izaiahsun@gmail.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 4 +---
-> >  1 file changed, 1 insertion(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/=
-remoteproc_core.c
-> > index b88bf179507d..e4f44a3c8b4d 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -2309,10 +2309,8 @@ int rproc_add(struct rproc *rproc)
-> >               return ret;
-> >
-> >       ret =3D device_add(dev);
-> > -     if (ret < 0) {
-> > -             put_device(dev);
->
-> The documentation for device_add() is clear, and looking at the implement=
-ation
-> of device_add(), I understand why put_device() needs to be called here.
->
-> Unfortunately I do not have the time to read through and digest what Clau=
-de has
-> generated in the changelog.
->
-> Thanks,
-> Mathieu
->
->
-> > +     if (ret < 0)
-> >               goto rproc_remove_cdev;
-> > -     }
-> >
-> >       dev_info(dev, "%s is available\n", rproc->name);
-> >
-> >
-> > base-commit: 82d0bbd67c42a44f0e18b0b7b0da0f3ace0c9527
-> > --
-> > 2.53.0
-> >
+--tqt42yzt45wmalce--
