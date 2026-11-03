@@ -1,95 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.43
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793657713;
-	b=OW+Q6w1sv/BIq5LGEhH2QJkGc06qsLIS4clELWaJIrt98KVZLhLf7XP7Z+vwRcwm57Gj
-	 N9xrt1cLXBbqa1fth+1om/ZBkJq0M4cMormNLFnlMojGceDq5dYlLRwdoMCR150HXIfEe
-	 aNb8I8+QoounlnH8gnty2rYFN6pyCLFhxDzz11b1l1qiz98vXpv31UfEnWS2+D7LTfRI8
-	 Id0fWkfYReeqKSEbgAA0/Z1k5TwZtjqJjVKW0a0F06TdNF4n5nVtr65UEf7MYxM1pZ4Ro
-	 9qQixw5VEDVQZlaLDeJAZMkMG2Dk/oEELLNW08JzwROxRxXIgDBfjIN/2RntxILQwHQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793657713;
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.remote-ip=209.85.208.175
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=fail;
+	t=1793678976;
+	b=Gw77btdr+uN3Vk6tF3r5h94vOeoquumijeZad+bb+uwq3ij32Hc/qF3GQrsi2XJTlzEv
+	 L9gKcQRK5F+ChC0k1Kbcv6y9ppcuXUrz5jomv9Jg9JciTTELw1mpHQBVVSfc90WsUZjc1
+	 lb2V4GPDW/8U+qifhtSBAm1yMR8beHxfvFaJnChUyxGSHjq6jeRkjdmj8Q6kZIt3nKZpR
+	 Bi89ju4BFeN2F/Rwb+4aQbIpbcVTvVZ/tsN35SWocpZwBARHjepYOFXSk7+QDbZ3fI9kQ
+	 WgKL7TS+HZrRP2uB4UCHYBrFA1wjwLKYRqoHZhAiKGkdZxbEbPp5+TylyNVZp2VK2UA==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793678976;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=DDDq9vrORSWbnT/BmB95bS2gOj2xanzImuHp41SDLD8=;
-	b=o8Khk5mYWRa3i6uyByh5/92GZIUGdRK+sjPHuMu9zcG1UvFxC210vOZaqQXvYARurPaW
-	 xdIOiC6zAPqXz1nrVBIETKkRtymYEbiGlM7ooUuRCVuaXpB/BNiI4rtrVCBlm8Ygldo1C
-	 4Yxyyemi4U5plNBq2c9u/piyJR914LaXU7jq2vMhCD+U0eaCTKJRILCnd2d4Lw5HExYAQ
-	 rz/yIoQuT47Q3qp65Vlt3ms6Ny0qu+s3pJkIs57rX542BMpdm2/XBTfsGH0qB5QiDcSLz
-	 LP8z96EzhM1aNhQPDRDywTgKPr5vOz2ODrdWU0/JMfdfVAzbG7507j7rQFyfxcVzO/A==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=is.s.u-tokyo.ac.jp;
-	spf=pass smtp.mailfrom=g.ecc.u-tokyo.ac.jp;
-	dkim=pass header.d=is.s.u-tokyo.ac.jp header.i=@is.s.u-tokyo.ac.jp header.a=rsa-sha256 header.s=google header.b=TokvcMKc;
-	arc=none smtp.remote-ip=209.85.216.43
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=4iC8L9iLkA3pQkFSYs2y6EQR6cAV4OUXqfYAj5Wz1OA=;
+	b=PKOy/lMwqsGhPdAreqAD0nhT7563UJO1tSAM/z+75ybcr1rGYviDP2QXLJyn+yAoF3zh
+	 s1sAPB2c/lr3eNqgFeZYh28bU0/cgjkdnQdJx5ESDAfJ2k0kVy9c3IQjOq+2lcJFpqRGc
+	 0x+kpTNoZcTCaNRbKAIECfD9fYcSBEjIZZMts3t4Cx0lNsEBCOLuJxSeGZjmGBn6aPrZB
+	 TmSGORCJRjKWEhOyk4K97oBeVzpoEFh7TY0g/7D0Ozd4Mk4b0mGUGi9FpK7Ok33DJ/gfK
+	 iEnpE0nMQTZ5peIB12BFeX+tRr6XsigtDkCVBZVPHTt4ONckCZxf7Ag8VsP41azd7YQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=O9Oe40HC;
+	arc=fail smtp.remote-ip=209.85.208.175
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9F0606A32D
-	for <linux-remoteproc@vger.kernel.org>; Mon,  2 Nov 2026 22:15:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1A9F0606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=is.s.u-tokyo.ac.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.ecc.u-tokyo.ac.jp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D06606A327
+	for <linux-remoteproc@vger.kernel.org>; Tue,  3 Nov 2026 04:09:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 06D06606A327
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=is.s.u-tokyo.ac.jp header.i=@is.s.u-tokyo.ac.jp header.a=rsa-sha256 header.s=google header.b=TokvcMKc
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3ad787e0593so1673238a91.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 02 Nov 2026 14:15:11 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=O9Oe40HC
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3ac65e845a8so2945011fa.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 02 Nov 2026 20:09:35 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1793678974; cv=none;
+        d=google.com; s=arc-20260327;
+        b=RQ9iLUr2XucjWSwlE5FlpZU7ywIEAG1zrRlA5aJZqhwFL7Yp/mX2gRQIOKDpEgwwOL
+         KD6VWPMm8aI+Vx+icRCYuSJ9et5XnwjdqweDmGvqHAQlxcggD5rrYcR+VsXkgTHf0G/l
+         qXjt/O59pBds5u8Sv+g/RQPZCLMBJJOQnHK2IPwMabYGwJ2PM08cD4KdkKZaPQ6bbVNm
+         rpMQYERzRrV7+MzHFZ9H4WT4EOSRU5VAeP7nM260Nbmv3Upd6GqnXWvp1E1NOmTKPQLi
+         X2G2/kVX2V8+SixHc3Ihm5ufuS91Ce5njSYpouVcRBpCC+b+XI0FYBhBMrLVwzDEeKS3
+         aR7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=4iC8L9iLkA3pQkFSYs2y6EQR6cAV4OUXqfYAj5Wz1OA=;
+        fh=8PTqJh0nQpDpzy1f/w70R5m3gbEw7PSSL8B//mIzT+E=;
+        b=WRVV67vgDn46xtjmEEfnqafBMtXwTQe51dnSNOHHcZlHCcYej+gFOD9MTnWVEe0FME
+         whElf94OGFdnM39thz6Cxiw8dCXyJXMzpaXafXbSgAAi2w7asnOi/rfx5qiyX8gicrmu
+         Ug2wVOfxNLa97BQKNDGJSMt4C80XFeP8ac6tlfthM1oClV6z6Y5q1CGdGm76wfqza65z
+         5d8QTroP84LpE6ENAZHUJenCTt93jaWbIx8aLHh4UPGqnc22a2bnD3engGtW0+iet2N4
+         UBGGlZo23OWHZUNN/oNEQVudy1fcYFVtqto6sJwGabLlP9pw8hUKqbwVNsNb+PTNdAJA
+         c/UA==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=is.s.u-tokyo.ac.jp; s=google; t=1793657711; x=1794262511; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=DDDq9vrORSWbnT/BmB95bS2gOj2xanzImuHp41SDLD8=;
-        b=TokvcMKc+KYIST87Mai260x4nopeORdiWMi79Bv4kzPWRQ+VEYVkBgKM7J7ubgfMct
-         EAUHAd4PTv1r8+90sVT307xC2pRCL993JZJfQlLMk2O6IzZh1NLpuneUl+BUTtg8XxYx
-         /QTo1JyjHQrs21R11/IBFyP5jg0n9Iy6VouHwlbd7HPaMecsZ/Wd/mOSzz0t9MTSXdHE
-         aLOuN4vTnqJnwHQIzjkLQ3OlWd9efODyiNk9U0HJfXWPInLzKqDV8kugDOiez/o1io2s
-         hF/KO9aruPizc94q+0RDxqUUSB5RHH4v19BLqwrotuv1CHCNEUPHBmPNWoT2ul3T99/0
-         V06g==
+        d=gmail.com; s=20260707; t=1793678974; x=1794283774; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=4iC8L9iLkA3pQkFSYs2y6EQR6cAV4OUXqfYAj5Wz1OA=;
+        b=O9Oe40HCGOmRZfS9ArojsTOkWRogCLAA8RxP7OvgGHe4QdWC8+f/a/UhQiCIqrzFSR
+         Zf9+JCBgW0u3La0oKPOF3Rm3Uo1kkRh986BsRwuHjs0+kuh89j5xdGlurOo3gPMyc4DT
+         eQdNNZj8ulP6qpC2nI68ljZ9XYYIret2oD+U6FvbOdoNw4JucvZaChg+qPE+GY08uTXo
+         8vZK1h0MpZlpqlwQFPeytDtE1nuBIwwFY62FfSeZ7gLvq4m72c3Q2bpGaL04KSlALTTo
+         j7SvmBVy23rklLq9v5dKeZwEDM7ar4hvp+hQ03ssTzFhdy5tOEZDivhWCTrB87kxpjK2
+         K5aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793657711; x=1794262511;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=DDDq9vrORSWbnT/BmB95bS2gOj2xanzImuHp41SDLD8=;
-        b=Luoc+0MGvS+L9HFyIG/B4Mq+PapsgJLPUI2xnJOUkNBz7+rJtfZEXBemyRHez7ZDib
-         M6tpaQQ2a+TCJQYIxTqo0L3ZZm6aoQ9XcPadEpDfZz2WIg6vQgZruLX0Da6OAB/SxhdJ
-         fNsS5gY1wz1q3OJD+8f5K9diV3JrOUdKXs33wiGKzAI4f+mCucMWjatMPOPktBYI881b
-         OJevqaeJRcCAvA7yIxQjlFuW1+5a4QW5PY6UG6L1bDdnNV+RkKQ3UmN90OuAKnlIAT0E
-         EjeFiMpJWc/f+j9jTtuk7R9uxq+DrOF7bPcHZe3YU8h9Don0WPSNgcjxXArEHY652f7X
-         XoZA==
-X-Forwarded-Encrypted: i=1; AKwUvBwNU7GPEKLE+Oref46S2U50O2qJle0MySMk2CtVyjS0+xR7sRZENdCmToG//dXURdwTJgrPvmxeccH/ELoySNx8@vger.kernel.org
-X-Gm-Message-State: APuU4Z+CF1duZADA6AkZgwxa3CdPzd4534N5Qi9C2bJFitqaT/y+fouG
-	jpnESVi4qhqOAgtgf91IoZmLyNvmJYBaFu7/VNMNLIrXSHUTz8Mi9fDdzahbXCKhEg==
-X-Gm-Gg: AYBFou0/FFJ3YNlCsQkLV6D4DIkNZz6M81K3r4IyjoKXNMKHyzTK52btmx/ohEamQ4T
-	v3EI54oRCk2ZjN+XN5XMCwaClBJRncnqQBId2sOOM6rJ7oPnuPp20KYpsZqtRwlNGo2VjeVOzTf
-	9A2MJgF92m9His7eB15XKQiMmEuiY7iREiqv+YFYbGvjmefToHxSuflKwNp5L8h0TLcW8XQMrvm
-	20ZRtbPjOuaOuxmDH/EziyXSS5tr3BYkLv8mhy8JzeDgBukXmJGU/ehPE15nXxVi6j6j+PPlkSD
-	N/bS8Pvj+fXzAp5NFdaz4EHWzjUih385gSZBgKUIWrZ+4xb0HEARa/3Fol++WZKLluFHh1dYd9M
-	OgiIzPWjXcWJALOpgrWCtwPq6JPvum/bZPDIacd4fV+SerqmWyAkYvYFNcQAsa0JylMIdvtozgP
-	OrSmKwaSTPimWca6ohzsqSsPT+85w5pNVyEXZ9/xGPuhcfeGl7d1Y+7fp3+oTebQupA83EKgFTO
-	W+VpIAz9O71xLtCWB6IoNDLj6LOJ6C1VWjVlsb9Si0AdLlPFWyuY5oXbpiuk+6Jon8GH3YLPkCE
-	pp7T3M+BzGH/VAoflTfMHun+C6dceqlltKbIhH0=
-X-Received: by 2002:a17:90a:fc4b:b0:3ab:b64:5893 with SMTP id 98e67ed59e1d1-3ae8981bf35mr8240104a91.53.1793657711239;
-        Mon, 02 Nov 2026 14:15:11 -0800 (PST)
-Received: from wang0.localdomain ([133.11.33.33])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b07c8b1913sm984336a91.10.2026.11.02.14.15.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Nov 2026 14:15:10 -0800 (PST)
-From: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Takahiro Shinagawa <shina@is.s.u-tokyo.ac.jp>,
-	stable@vger.kernel.org
-Subject: [PATCH] rpmsg: virtio: Reject a message shorter than its header
-Date: Tue,  3 Nov 2026 07:15:04 +0900
-Message-ID: <20261102221504.175116-1-lian@is.s.u-tokyo.ac.jp>
-X-Mailer: git-send-email 2.56.0
+        d=1e100.net; s=20260707; t=1793678974; x=1794283774;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=4iC8L9iLkA3pQkFSYs2y6EQR6cAV4OUXqfYAj5Wz1OA=;
+        b=XZtSqwtn4sQLRcghvKIqR80qnM8j8RUMzvDUBaeGlCZ6OTMC5hovcOcr2Jx99HVvGb
+         FzPBvwJ5HMM5U5GF8U6RCbeK06Vi8XIqOPmvn6Q4RdQNGr20Izs6op+Nw1VvLM/PihmG
+         lLhsXNlBEJMyfaiDbHhK9XoVycFvcP/sgTtF3kzZydvNtHnbkjQCnNSayaveEJ+ut/jx
+         rg0hUqVUGxRgwHKYRHP4YOQFvoSWESUnhizozdoNdpc7lGcnI2b7XDt2pbYyqyAhXZme
+         95s3bfKOP5L/lzqb7ezXqWP2Fmd1hGzzNA00d9Y+XopBavFEeSmbjAFoht4u9PAV/Lii
+         mPOw==
+X-Forwarded-Encrypted: i=1; AKwUvBx/+ow8LipX4Ocl/+IQVtiMqz5KNSduFvFGSkcI/SzrxxrWZVI+TSrhzM17mGRjBVEwL3mt9/j2AvF71awJuInO@vger.kernel.org
+X-Gm-Message-State: APuU4Z/czQ43ktffIlWN3++JX7U05nyGE+RLcLRybVZwS52qqDND+Oq1
+	60BOAP/rNxSzo4uePWAmXPXAIX4QLJ/cG8fS047d6AR//nfWWb+bftGxsf75UIaTpNrSePDWTLD
+	FJ0uJyoAn2RdfDiOBBbU1ZTEOetTCpps=
+X-Gm-Gg: AYBFou3x/bclBK1rQuo7Xz8KA7aKL1/OOwtMJpn0xdKAMRBgPw1soLaVyWdee5KSJHM
+	8TuIYuKHhPIS+lY5Ry6MmhVtE4u8cDKS5YrqxVVL4DDQRkWZa+aMIDva1k2B9ZO0c0vOFGUhicG
+	imsnJSHWswN1Vha5Xm211XHlbOMFuKNY4lIPm4lIspBvOhMbK/gGGARpQKvI2imPBdxotTcUZ+H
+	KX6dt0vw9MRptDU9XNKtg4rExQ2rkanqJCQfQ/hIIRD43jfZ6GWbB0a1Nb5eLUIqZ2RQITu7gps
+	I5H+Ayr84Kc01ff4OUVXgXDa5Wn8i0RMKONGeUgENEc4v67ZhyFbqaubIe7b2+dIfUclbLUMh5k
+	+PVSFbJpLXM26v51p2mxFD//ncNIWLQVS9AQb
+X-Received: by 2002:a2e:a99e:0:b0:3ab:40b1:c4a4 with SMTP id
+ 38308e7fff4ca-3aca57eb24cmr35150011fa.14.1793678973932; Mon, 02 Nov 2026
+ 20:09:33 -0800 (PST)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,81 +103,26 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260926041943.1124650-1-oss.patchbox@gmail.com> <aujDcTjvpWbIJ8wm@p14s>
+In-Reply-To: <aujDcTjvpWbIJ8wm@p14s>
+From: Yuho Choi <oss.patchbox@gmail.com>
+Date: Mon, 2 Nov 2026 23:09:21 -0500
+X-Gm-Features: AclHuK_exdT8gjqeTXLCJXxzkdg7czt6b3ePUopm67pTCoxxb-Of6GIPUcH4Ph8
+Message-ID: <CAGG=RgBW9O7PfwaDPY_jYkE876EALQ5JsSnP4=7YubZg1XvwJw@mail.gmail.com>
+Subject: Re: [PATCH v2] remoteproc: virtio: Synchronize virtqueue teardown
+ with rproc_vq_interrupt()
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-rpmsg_recv_single() rejects a message whose msg_len exceeds len -
-sizeof(struct rpmsg_hdr), where len is the used length the device
-reported. Since len is an unsigned int, a used length shorter than the
-header wraps the difference, and every msg_len passes. The endpoint
-callback receives up to 65535 bytes from a receive buffer of 512 bytes
-by default, and rpmsg_char copies them into an skb that userspace reads.
-The receive and transmit buffers share one DMA allocation, so the copy
-can run through the following buffers and, with small vrings, past the
-end of the allocation. With vrings of 16 buffers and a header claiming
-65535 bytes, KASAN reports:
+On Mon, 2 Nov 2026 at 12:08, Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
+> This patch doesn't apply on rproc-next - please rebase and resent.
 
-  BUG: KASAN: slab-out-of-bounds in rpmsg_ept_cb+0x4d/0xb0
-  Read of size 65535 at addr ffff888002484010 by task rpmsg_echo/140
-  Call Trace:
-   rpmsg_ept_cb+0x4d/0xb0
-   rpmsg_recv_done+0x29f/0x840
-   vring_interrupt+0x32a/0x540
-   vp_interrupt+0x146/0x180
+Thanks for checking, Mathieu. It no longer applies because the same
+race has already been fixed by commit ffe14d610cb0 ("remoteproc:
+implement synchronize_cbs() for virtio devices"), which is in v7.4-rc1.
+Therefore, this patch should be dropped.
 
-Compare the sum of the header size and msg_len with len. The sum cannot
-overflow, since msg_len has 16 bits. Move the check ahead of the debug
-output, since dynamic_hex_dump() reads sizeof(*msg) + msg_len bytes
-when its dynamic debug site is enabled.
-
-This patch is assisted by Claude Opus 5.5.
-
-Fixes: 9648224e564a ("rpmsg: validate incoming message length before propagating")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>
----
- drivers/rpmsg/virtio_rpmsg_bus.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 23ff6c8b7a20b..a9125e81cb150 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -661,6 +661,16 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 	unsigned int msg_len = __rpmsg16_to_cpu(little_endian, msg->len);
- 	int err;
- 
-+	/*
-+	 * We currently use fixed-sized buffers, so trivially sanitize
-+	 * the reported payload length.
-+	 */
-+	if (len > vrp->rx_buf_size ||
-+	    sizeof(struct rpmsg_hdr) + msg_len > len) {
-+		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
-+		return -EINVAL;
-+	}
-+
- 	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
- 		__rpmsg32_to_cpu(little_endian, msg->src),
- 		__rpmsg32_to_cpu(little_endian, msg->dst), msg_len,
-@@ -671,16 +681,6 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 			 msg, sizeof(*msg) + msg_len, true);
- #endif
- 
--	/*
--	 * We currently use fixed-sized buffers, so trivially sanitize
--	 * the reported payload length.
--	 */
--	if (len > vrp->rx_buf_size ||
--	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
--		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
--		return -EINVAL;
--	}
--
- 	/* use the dst addr to fetch the callback of the appropriate user */
- 	mutex_lock(&vrp->endpoints_lock);
- 
-
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
--- 
-2.56.0
-
+Thanks,
+Yuho
