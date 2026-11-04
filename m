@@ -1,95 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793764925;
-	b=PglJ/3rGtegEmRPtB6XNllh0dtLJ7AF2V2923oNcPn/Oc3bz3jB/wfJKUtIHRtVkMC07
-	 Kw01uht9SEuhw4Bu93yv1WVs9yHFwplPsEwgu8+AXfi/mSeGwFKkxCmqeiTNE0hidBHrh
-	 Bw/YkUPQ18VJndaymi1mkNiE0qEf41Koq6SAiVPpXrBKH1Fv+C1MnnfInASgrO0FidaPW
-	 qbwFeY6W2a4adFwlFF4mStWpC452e0fODkkiHUX78DmvkQ5UNkGwDEbldvGHL/+4KjM42
-	 3z3te5P5Cks7R4Zop6CMtFBiuP68qnIVkCtTgTXmT0L8cdfF3CVyfamTo60Aa1Pai+Q==
+	t=1793776395;
+	b=Ej6Q9nd2dXuo4GfY2vew9bktAdQZYzlJKzczSEDXuZogDLAqx0HPETFOOAy4oBgFcecl
+	 CywUcG4Z25w05xWnBpGtt3YnmfAHcX1JVz1airYKTLm1l9nmwzIweWClmJ7Ik85symk4j
+	 pFx+fkABk/wyNmkAWfv6mfo0vWCdasRHp3alpSdDbTcoXk8+vzaRk6blMB+BacmoCSuG3
+	 pCijr2KSJ0MOUixTphcoe/ZWC6ERVr9Ij4P34NuUvG4tAV1h3ZsBYyj/VVXFDu7sYcUgi
+	 +7kGoF2gGrpXlTeoNL6f8P/f4OQrfSdQ8yBu4uqbq2CRKSSbfqOaLRFqAYNIttdrRpQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793764925;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=lZNKZ1iGqEzwGtaZav+D5kkPTnq7sCsxBbTcImnHm48=;
-	b=Tr9s7ypgHGkTY/FzmtI+TRNtOH+N4yT91bepIX/f5/dZcfeNvP0W0IzpWRgFri/N78Pj
-	 bnA+dviyTLV6BJfqIe7pgrtYTUUqv3lqxqafA1JEYf48KXf6nA9sihDTvpuLxn3SSrwSi
-	 i5x8KY3pq5mOO6MIsRU3LmbOtAaDJm/Ue016MbPRBjBCsBoH5E2nOHr61+1v+yOJfz1sd
-	 OHz+U3tTG7Cw/WxYJ/TITIpa8mkaLoWRQ3z8ONP8OHY1u0vQMWjpKc4SAk0ls+xBXjroM
-	 YpOkqZ8BkISGnetEKm0QK6l4Htyt4dcL7lOZSGFxB09DdaDEqiwEU3qO8wLGad8+33A==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793776395;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=fJTSNxSnioFP9GATpW5sCxSNt1pcTEf7ht/AsyK118c=;
+	b=zzfuRtIuGZvgWy+8opoOoxPnU31a6ZG9FlbKl0WsHURmo5xw+0NHNV9pX2hazMJxz8Cy
+	 tSMZ3JgNhhWVpEnK1R0tlqHlpyGDcU4Bc1HMSfMB3APxct64rZCyhxL88/IpeeLlYGgym
+	 xZZBtI68kWhMQr1JP/urwayNiHlqhV6veS8LGyjWCXbhZ5ZWHiefMpZhbkQvqZuZTdDai
+	 ZyVhR2h0WytPW6cbKC+YWstDhIXn77KqE+ahNt0/NiT17E9Z4Sj2Ga8Fr5U5AaYO5aYNs
+	 oK99/HoiReHFORJx9ho3X3L22gPdouVb/oznwrfpqpHQufPBBBV73xXIxj9QY02gABA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="DT/PzmJz";
-	arc=none smtp.remote-ip=209.85.210.175
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J0GzdtnC;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7105606A326
-	for <linux-remoteproc@vger.kernel.org>; Wed,  4 Nov 2026 04:02:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C7105606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23760606A329;
+	Wed,  4 Nov 2026 07:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=DT/PzmJz
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-8a06b436dffso112209b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 03 Nov 2026 20:02:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1793764924; x=1794369724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=lZNKZ1iGqEzwGtaZav+D5kkPTnq7sCsxBbTcImnHm48=;
-        b=DT/PzmJz6iXTIH3eH8qxmQYGC3torY5BgNYOYU21FHiVW3Uy0FtH3+f0Ia+5pvGBGp
-         GgoOfDe9HPYslzeoTHFIBXCLRGpeEMWjGVVP2mVg8bJgB3duhgumzyrVN+S3Q6Se0TrX
-         L2b3/F9JWmq0v4Wlp5dvl7+D2K7Pry5WeknEyMjLIBHElJOfXXDl1EoJbWve6ND67/Ho
-         yR0Yo2VlGZLjAL9MI/9pekxiFuyB2dQudGg/U+zixjE3rJgCo8hGOK57S7B1lFsU9pyC
-         GouToCPHRmae+NOO9QoLyahtLyISHqj6OVVJ7V+FZRreYowc9w3Wo5g3v+TrSthZRSmR
-         haEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793764924; x=1794369724;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=lZNKZ1iGqEzwGtaZav+D5kkPTnq7sCsxBbTcImnHm48=;
-        b=GrO4reTLrqurVbhkgrUaR5ZdUsfMTRBW8qoxstgoWGjhZGsx3wjtFjQaHSMeQ34Eon
-         m+xfm5/uLEjdfW6DT9UES2iMUhiWeP8UhX4NSJcIX1AN4E5fJOiewcvOFM80alS4eOAz
-         MuifIsr9A+PRFMla0QB6P+JqzSaV/z+Y9AOM1AnINjEQ7dTd1wk1k5Jxpfp76KmYKI0i
-         KC9OAUFFsvVjVKSy2mu9HmkucBuJBh01gBjStrqu+n0cVrOUiEkkGDCC//5pLFSEus3F
-         rfd4czLJeNlaHtHoPck3AJV7W/x6h/EsUfTzb7yv/sQCs0ifcJL0C/E1Rcn82r2kwVYz
-         o/8w==
-X-Forwarded-Encrypted: i=1; AKwUvBy9gDhKLevH42JUlzG573quqfgyqof5qNSEORfBvfRonquKblfitmjtNTTMeAb7SJsmVJkg5AQg1LSSto5qaorw@vger.kernel.org
-X-Gm-Message-State: APuU4Z8MaG0tp0Wo+8kZAIua7u2QmaN7RhFdA67sqJ2LRgSdh3KW8EwH
-	CJ28znVhx/QIwBk79jUtOhjFm8GmDnino9tMjHtVVac3gYLVXg+T3QsV
-X-Gm-Gg: AYBFou0RiVxcRe/X2Qq3YVQVZETb59duvW8d/N1xp839rUQon2JCuTLtpgJntnFnU6D
-	fF+xyZMcRItdqB8Eie3rEK2g73BStsEWi/UDSLv8B+8sm5aja+8dlqCGAjYj99auz3BpwFPIuHU
-	SdIJmx5FzEYnxU26StNVGkJVcQw3yJMk2M8gbFmDWh1RpT19dO5VfMyMKQe/gyZxPqKXf5tHCCP
-	+GYrykVKYhqmNhMo6qTOUZ1ogJRsAgBXq6p4w/AVXujMQZ2DT3JUWpqB8+lmQJPc5a9gpeoyPKa
-	fNwITqgQZyYP515dJIdFjSIk96kuVyePsgzSkK64pWtgd18Ia1Brp5ung5lLHuBh6KtddfhkL+T
-	pOSCccCPN/mpTYm132bntZGHdDIe4MeLKypgwVFTLOPn339vB6B4C3nzpaKmT9MntveoE+n/INM
-	FlekUAfyO8mqrliJHZeqvNDN3rcaRVbxVjuYwPh802mH8knX8CGAMXzH0WUgJJZhAaFaJNHjnQN
-	0pZwAlxeH+2ksCge5ZLhunXP08UAcggoSZG3SiMzpHiwlGs3GONflWZzoqeLuMolKzfrmaqSNEV
-	XsRS6A3R6DjpCsE8al5R95hX/Kp1qA2KMr87/SeDwYg=
-X-Received: by 2002:a05:6a21:7309:b0:3e2:490d:5127 with SMTP id adf61e73a8af0-3e928a86e51mr13327063637.2.1793764923903;
-        Tue, 03 Nov 2026 20:02:03 -0800 (PST)
-Received: from gmail.com ([183.13.19.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8b09ba4f45esm292653b3a.45.2026.11.03.20.02.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Nov 2026 20:02:03 -0800 (PST)
-Date: Wed, 4 Nov 2026 12:01:58 +0800
-From: Yonghao Zhang <hyz3367@gmail.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: arnaud.pouliquen@foss.st.com, andersson@kernel.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] remoteproc: core: Roll a failed attach back with
- detach() when available
-Message-ID: <20261104040158.ddydw7d5smp7vope@gmail.com>
-References: <20260929075453.2324597-1-hyz3367@gmail.com>
- <20260929075453.2324597-4-hyz3367@gmail.com>
- <atZQEuXMwMpvmoBz@p14s>
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=J0GzdtnC
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395831F000C1;
+	Wed,  4 Nov 2026 07:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1793776395;
+	bh=fJTSNxSnioFP9GATpW5sCxSNt1pcTEf7ht/AsyK118c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=J0GzdtnCM16sGjWwYhpzdYDVmZ3Rk27l4Pmlk/xvMCFmwHX81s2OcMduhzLAWX1nT
+	 N244fDZA5ygY3wO/ZekpU0FKqj7JOd4TCC4xnY/es/4YMeXaVKXEAuaBBu7LEDf5HK
+	 R8nz6p1C3Sxf6SdlSl18HFEPQEwx+gTQI3SBZS+Sn9zj5PMhDuMSpyd7OLsGyk9jd6
+	 0iUdOpYL8t2RFqmH16qn2UadpAVFMkngZmvnhTLBU+89ir/ZOfdtJb/6hvFSyQspaE
+	 mKZj1xJDQ9SYN03a7ncYTaXJ9LjbWWjMKGZDcKd9UihIOe5UPDaA53xk0+k1aEVwBG
+	 FVAPzYydSD45g==
+Date: Wed, 4 Nov 2026 08:13:12 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Wentao Liang <vulab@iscas.ac.cn>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH] rpmsg: qcom_smd: drop the OF node reference on edge
+ release
+Message-ID: <20261104-lovely-smiling-malkoha-5b6abf@quoll>
+References: <20261104021357.1467778-1-vulab@iscas.ac.cn>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,242 +58,70 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <atZQEuXMwMpvmoBz@p14s>
+In-Reply-To: <20261104021357.1467778-1-vulab@iscas.ac.cn>
 
-On Mon, Oct 19, 2026 at 11:14:58AM -0600, Mathieu Poirier wrote:
-> @Arnaud Pouliquen - please review this patch to make sure it doesn't break
-> STM32.
 
-Hi Arnaud,
+On Wed, 04 Nov 2026 02:13:57 +0000, Wentao Liang wrote:
+> qcom_smd_parse_edge() takes a reference on the edge's device node with
+> of_node_get() and stores it in edge->of_node.  The error path drops that
+> reference again, but on success it stays in edge->of_node for the
+> lifetime of the edge and qcom_smd_edge_release() only frees the
+> channels and the edge itself.  Every registered edge therefore leaks
+> one OF node reference, and so does the qcom_smd_create_chrdev() failure
+> path, which also releases the edge through the same callback.
+> 
+> Drop the reference in qcom_smd_edge_release(), where the edge is
+> destroyed.
+> 
+> Fixes: 53e2822e56c7 ("rpmsg: Introduce Qualcomm SMD backend")
+> Cc: stable@vger.kernel.org
+> Assisted-by: DeepSeek-V4.1-Flash and OpenAI Codex
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/rpmsg/qcom_smd.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Mathieu asked for a STM32 point of view on 3/4. The patch does not touch
-stm32_rporc.c, but it changes which callbacks the __rproc_attach()
-calls when the subdevice registration fails after attach() succeeded.
-On STM32 that unwind currently runs:
+Multiple things here:
+1. Your team ignored completely previous feedback. Multiple times.
 
-    stm32_rproc_stop():
-      mbox_send_message(STM32_MBX_SHUTDOWN, "detach")
-      stm32_rproc_set_holdboot(true)
-      reset_control_assert()                  -> the core is reset
+2. You use multiple identities with this email address, thus I doubt that we
+   speak with an actual person.
 
-and with the patch it would run:
+3. Your bot does not even bother running checkpatch, right?
 
-    rproc_reset_rsc_table_on_detach():
-      restore the pristine resource table in remote memory
-    stm32_rproc_detach():
-      mbox_send_message(STM32_MBX_DETACH, "stop")
-      stm32_rproc_set_holdboot(false)         -> the core keeps running,
-                                                 auto-reboot allowed
+4. Nothing of this was reproduced nor tested.
 
-with the rproc left in RPROC_DETACHED, so the next rproc_boot() attaches
-again instead of reloading firmware.
+5. Finally, the same feedback:
+You sent multiple independent patches, to multiple independent
+subsystems. The amount of these patches clearly suggest this was
+AI generated and most likely not tested.
 
-I have two things that can't verify from here:
+More importantly, you sent all this work without properly organizing
+relevant patches into patchsets. This makes reviewing difficult
+and might cause multiple reviewers to address the same issue.
+Replying to the entire set is impossible and requires handling each
+patch independently, instead of applying or discarding the set.
+Maintainers also won't see the bigger picture of your work. Quite
+worrying.
 
-- whether the firmware copes with the detach notification at a point
-  where the virtio devices were only half-registered, and 
-- whether releasing holdboot, allowing the remote to auto-reboot, is the
-  desired outcome of a failed attach on STM32.
+This is on the verge of hostile patch: bomb us with so many
+contributions, we won't be able to handle them in efficient manner,
+like responding ONCE to ask you to slow down.  Considering all this
+is untested and LLM generated, I have even more doubts whether this
+should be considered for review.
 
-For reference, the sequence was exercised on an Allwinner T153 with an
-E907 core: a failed attach unwinds through detach(), the processor is
-re-attached and rpmsg traffic resumes.
+Please read kernel documentation BEFORE posting more work. It will
+explain you how to identify subsystems, how to organize your work per
+subsystem (so a patchset grouping multiple patches with a short cover
+letter), how to document the issue discovery method and what was
+or was not tested.
 
-The other .detach implementations in tree (ti_k3 dsp/m4, xlnx_r5,
-imx_rproc) are no-ops or plain dispatchers, which is why the question is
-really about STM32's holdboot/mailbox semantics.
+Best regards,
+Krzysztof
 
-Thanks,
-Yonghao
 
-> 
-> On Tue, Sep 29, 2026 at 03:54:52PM +0800, Yonghao Zhang wrote:
-> > When the subdevice registration that follows ops->attach() fails,
-> > __rproc_attach() rolls back with an unconditional ops->stop() call.
-> > That is wrong on three counts.
-> >
-> 
-> It isn't wrong, simply implemented during a time where any kind of fault in the
-> attach()/detach() scenario called for a stop().  I would certainly appreciate a
-> less reproachful tone.
-> 
->  
-> > An attach-only implementation, one without stop() such as
-> > commit 1168af40b1ad ("remoteproc: k3-r5: Add support for IPC-only
-> > mode for all R5Fs"), dereferences NULL right there.  A processor that
-> > is being attached to was started by another entity and is not ours to
-> > power off: detach() is the matching undo of attach(), and stop()
-> > should only be used as a last resort, when there is no detach() or
-> > it fails.  This is reachable today: when the re-attach of an
-> > RPROC_FEAT_ATTACH_ON_RECOVERY processor fails (imx_rproc and
-> > xlnx_r5 use the feature), the unwind stops a processor which,
-> > per the feature's own contract, "does not need help from Linux to
-> > recover... Linux just needs to attach".  And the unwind leaves
-> > the accounting inconsistent -- no resource table bookkeeping
-> > is done, unlike on the rproc_stop() and __rproc_detach() paths,
-> > and a processor powered off through the fallback keeps its
-> > RPROC_DETACHED state, so the next rproc_boot() tries to attach to a
-> > core that is no longer running.
-> > 
-> 
-> Remove the above paragraph.
-> 
-> > Roll the attach back with detach() first, along with the same
-> > rproc_reset_rsc_table_on_detach() bookkeeping __rproc_detach() does,
-> > and fall back to stop() only when detach() is unavailable or failed.
-> > A failed resource table reset does not abort the unwind: this is an
-> > error path, and detaching from the remote processor, or powering it
-> > off as the last resort, takes precedence over the bookkeeping.  A
-> > successful fallback moves the processor to RPROC_OFFLINE so the next
-> > boot reloads firmware instead of attaching to a dead core;
-> > implementations with neither handler keep the processor running and
-> > untouched, which is all an attach-only core needs.  The rollback is
-> > factored into rproc_unwind_attach().
-> > 
-> > The unwind runs the same resource table resets as the detach and
-> > stop paths, which free clean_table and leave a cached copy of the
-> > installed table in rproc->cached_table.  Make rproc_attach()'s error
-> > cleanup, which runs right after, null clean_table after freeing it
-> > and release that copy along with table_ptr, or a failed attach
-> > double-frees clean_table and leaks the copy.
-> > 
-> > Fixes: d848a4819d85 ("remoteproc: Introducing function rproc_attach()")
-> > Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
-> > ---
-> >  drivers/remoteproc/remoteproc_core.c | 65 ++++++++++++++++++++++++++--
-> >  1 file changed, 62 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> > index 19e0ea3e7240..c52212a1d180 100644
-> > --- a/drivers/remoteproc/remoteproc_core.c
-> > +++ b/drivers/remoteproc/remoteproc_core.c
-> > @@ -1348,6 +1348,59 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> >  	return ret;
-> >  }
-> >  
-> > +static int rproc_reset_rsc_table_on_detach(struct rproc *rproc);
-> > +static int rproc_reset_rsc_table_on_stop(struct rproc *rproc);
-> > +
-> > +/*
-> > + * Undo an attach whose subdevice registration failed.  The remote
-> > + * processor was started by another entity and is not ours to power
-> > + * off, so roll back with detach() when available and fall back to
-> > + * stop() when there is no detach() or when it failed.  stop() is
-> > + * the only rollback that does not rely on the remote side.  A
-> > + * processor powered off through the fallback is marked RPROC_OFFLINE,
-> > + * so the next boot reloads firmware instead of attaching to a dead
-> > + * core; with neither handler there is nothing to roll back with and
-> > + * the processor is left running.
-> > + *
-> > + * The resource table resets are best-effort: when one fails, the
-> > + * unwind carries on with detach()/stop() anyway.  Unlike
-> > + * __rproc_detach() and rproc_stop(), which bail out before touching
-> > + * the processor when their reset fails, this is already an error
-> > + * path, and detaching the remote processor -- or, failing that,
-> > + * powering it off -- is the minimum it must still deliver.
-> > + */
-> > +static void rproc_unwind_attach(struct rproc *rproc)
-> > +{
-> > +	struct device *dev = &rproc->dev;
-> > +	int ret;
-> > +
-> > +	if (rproc->ops->detach) {
-> > +		ret = rproc_reset_rsc_table_on_detach(rproc);
-> > +		if (ret)
-> > +			dev_err(dev, "can't reset rsc table on detach: %d\n",
-> > +				ret);
-> > +
-> > +		ret = rproc->ops->detach(rproc);
-> > +		if (!ret)
-> > +			return;
-> > +
-> > +		dev_err(dev, "can't detach from rproc %s: %d\n",
-> > +			rproc->name, ret);
-> > +	}
-> > +
-> > +	if (rproc->ops->stop) {
-> > +		ret = rproc_reset_rsc_table_on_stop(rproc);
-> > +		if (ret)
-> > +			dev_err(dev, "can't reset rsc table on stop: %d\n",
-> > +				ret);
-> > +
-> > +		if (rproc->ops->stop(rproc))
-> > +			dev_err(dev, "can't stop rproc %s\n", rproc->name);
-> > +		else
-> > +			rproc->state = RPROC_OFFLINE;
-> > +	}
-> > +}
-> 
-> 
-> Please remove all the dev_err() above.  An error messages are already generate
-> in __rproc_attach() when something goes wrong.
-> 
-> > +
-> >  static int __rproc_attach(struct rproc *rproc)
-> >  {
-> >  	struct device *dev = &rproc->dev;
-> > @@ -1373,7 +1426,7 @@ static int __rproc_attach(struct rproc *rproc)
-> >  	if (ret) {
-> >  		dev_err(dev, "failed to probe subdevices for %s: %d\n",
-> >  			rproc->name, ret);
-> > -		goto stop_rproc;
-> > +		goto unwind_attach;
-> >  	}
-> >  
-> >  	rproc->state = RPROC_ATTACHED;
-> > @@ -1382,8 +1435,8 @@ static int __rproc_attach(struct rproc *rproc)
-> >  
-> >  	return 0;
-> >  
-> > -stop_rproc:
-> > -	rproc->ops->stop(rproc);
-> > +unwind_attach:
-> > +	rproc_unwind_attach(rproc);
-> >  unprepare_subdevices:
-> >  	rproc_unprepare_subdevices(rproc);
-> >  out:
-> > @@ -1562,6 +1615,7 @@ static int rproc_reset_rsc_table_on_detach(struct rproc *rproc)
-> >  	 * rproc_set_rsc_table().
-> >  	 */
-> >  	kfree(rproc->clean_table);
-> > +	rproc->clean_table = NULL;
-> 
-> This change is not needed.
-> 
-> >  
-> >  	return 0;
-> >  }
-> > @@ -1597,6 +1651,7 @@ static int rproc_reset_rsc_table_on_stop(struct rproc *rproc)
-> >  	 * won't be needed.  Allocated in rproc_set_rsc_table().
-> >  	 */
-> >  	kfree(rproc->clean_table);
-> > +	rproc->clean_table = NULL;
-> 
-> 
-> This change is not needed.
-> 
-> >  
-> >  out:
-> >  	/*
-> > @@ -1675,6 +1730,10 @@ static int rproc_attach(struct rproc *rproc)
-> >  	/* release HW resources if needed */
-> >  	rproc_unprepare_device(rproc);
-> >  	kfree(rproc->clean_table);
-> > +	rproc->clean_table = NULL;
-> > +	kfree(rproc->cached_table);
-> > +	rproc->cached_table = NULL;
-> > +	rproc->table_ptr = NULL;
-> 
-> ->table_ptr doesn't need to be set to NULL.
-> 
-> Thanks,
-> Mathieu
-> 
-> >  disable_iommu:
-> >  	rproc_disable_iommu(rproc);
-> >  	return ret;
-> > -- 
-> > 2.34.1
-> > 
+
+
