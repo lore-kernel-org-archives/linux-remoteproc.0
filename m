@@ -1,93 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.169
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793896804;
-	b=LpMYIV8nCbBwMTrK8KxQiXrDMkScvV5Ws6525Q6GhXwYNnDZqoHcjrNhrsQ/eaD88FoQ
-	 upewo7WRbVPZWliuga1hKQ8N2nQIUxqneFW4B7+2ON3QBryrb4diB5FBvVTNUuJosYDIH
-	 huPf6Mdkk6jJHipU9PirKC3GnevpWILw/99Xe1N4YfK+nA5ImHuog9Gu9SMKdVPyWd1bM
-	 Tgw+lB8aFv7D/B3jLiia8qpL41mHeIBWzK5ER0ZMmFOimRuDsI6Gn6vS7ID7qGDe1kR+s
-	 6jjZjkb9Jg+I/eC9JigGTdCDr6cP7pR/sEmFrONp1We9I7Omire+8uz/SaxK7zsR/ZA==
+	t=1793897783;
+	b=qPMEMN52ZNEflY775a/2HMUkhCglQt6EWalgbiD5sO3CvibXo17sl5g0Oe5nlFGA4dkX
+	 /6MzamIsApHERwSpjlTbgn5kWpOCWb3DGuLkMYXJsIUdapIv402mfFD+ox+U/IqWypoC2
+	 5+CffXO8JnsPv7kHJiiMQsG+0lUUeyZHTqpnA5JFs4Qs120e+OtUX5cOIGkGw9sOfBMTL
+	 NudcA+STBLvzMaGKPuMc2YviiQvU8wI0nWWNJY+30WinPpMFCzTy5GoBNOI9rJ9WgSqQl
+	 rZdux5gSKrdknj1ZQtU3yKEO9HHr6/O2nmDcVxm28udq6It5N3oypnulB7Ls1Zbb7qg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793896804;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793897783;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=OHxjdRTl2ayBechFrqmEx31ZUG4z0ezErTIz2onp4OM=;
-	b=z7uYLcjvHCkVBVp15orVPpvCSqJD42t5m7gMsiCSE8khRbS0KY8gHk21RoQ4FCjk9zGL
-	 qQaB55TQzpAP/NJgbk6xhDuTAwCpGUqBGaRRqLKEzai4ZEKe+mW/CxCh8l7SJzsOySwUm
-	 V6c/jomueblAaPdxMe0f0LTNcUw3VIO6UK6muVJCgByRXsdrZB4kEXNXp13uZ+QZx0T+h
-	 AFulyOCfcnKjY7vBGZE+jjCxlvVxQHLG4Httn/DSwL3r2D7Uoz3yaDPGP8e61VlTEJgD+
-	 dZXH1MYWsk+O/+oJOR8a1uvEJXAiItLqMF/ayx5PV1DOnmMAj5YgdWUSOiTpTnPPjXw==
+	bh=sXd2orHtvS28hhtBKOplUBavOCjio3xkwlj67EhnJWU=;
+	b=VgzHr9QNI+MKsVt0W8mQUXKGm63UlnQGzSAp34JlwoL5dQW3hUn5+uifEI011+4l70zW
+	 iuiV6nS/721+krayO8qfot76z8b1dphZPuNnvV6ddL61XFpOo99jzOObNujN9hpplBWOI
+	 OfYgFC9dKPEUN3uYJsI1rtnCvNtiwFl8Gd6KE9ViKehvporDwsTlA/gBIdrrr6aiqJtjH
+	 7BXsEzldS4aKoaUUDIHocN/UN+IF9ix1wQW6E6m3yxmu2nfJqea3hDYQo11HIm6HlTj4z
+	 D2oRfl6U8eK5AFW3vKnnySqqCnytzc+1OXnpdmpLzh/Ba5mky/HHu/kHv//gZRIjVTw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=RMRGUHJw;
-	arc=none smtp.remote-ip=209.85.216.50
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Ogmv7BG4;
+	arc=none smtp.remote-ip=209.85.214.169
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2B7606D827
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 16:40:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0D2B7606D827
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C778E606A326
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 16:56:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C778E606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=RMRGUHJw
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3b0960fdde9so1110826a91.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 08:40:03 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Ogmv7BG4
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2ed408b0d9dso418245ad.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 08:56:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1793896803; x=1794501603; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1793897782; x=1794502582; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=OHxjdRTl2ayBechFrqmEx31ZUG4z0ezErTIz2onp4OM=;
-        b=RMRGUHJwuly7k/nYdMK/tDheHbVep575I/d+FuUvw1H+/Ls6BRh3jvpn67XXRYKtAm
-         AFu1oejlF4zzXVFmF8aW+0gU9JvB1xu3exO3RcmSCXtEyAyPdHYYzDd3IslRo094m4vS
-         NUY4Kbxmhmq9HOMcyzwruVY1vMphvYFvMdW0PvkcSX7m7tdaD1hItNYdZMBrHabyUnV5
-         BmTucVNDitms2kR605P2eLkJlL40xPFBp+SlBoD05fxyoLmktnZEyQlN7q6bJyxMaX38
-         +FPQGs1KIMnkf+wnJp43WWjNixB8CI7nW8oIoNXCFE4n+DmKHzTJUPKS+FYgkb3HAuOK
-         21VQ==
+        bh=sXd2orHtvS28hhtBKOplUBavOCjio3xkwlj67EhnJWU=;
+        b=Ogmv7BG4r7uuYCYpQN4niqDJbGkvLKQFENVq0R4ZDqv8WEJDpk9oXeQLiFTF0VDwVh
+         ZW3dRsM8vxcktUqR8BLPtebX//inW1Bfn+BdikoT2ufnSbeXAlawBDAqYnbaT3ve01DM
+         3G8UuPv4JjwWiGSABW/YQ7BK3i6IWEMQ9LScK6uM0QnBbM5NUX9L6hePyG/VFQGhGVwp
+         yrutnEdo+lMbKqhRElOL/guTxtCUcJSmflLE54qW0EGDnf7gaUt6sZCWETWxTFMS2xBC
+         qsOyvOrwd2F/C+7CAIc8Ue3hnsor2FaZUI+4GfsKHJuF0Q/sB7GfEwgbcbMAkxaqgHXu
+         eEJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793896803; x=1794501603;
+        d=1e100.net; s=20260707; t=1793897782; x=1794502582;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=OHxjdRTl2ayBechFrqmEx31ZUG4z0ezErTIz2onp4OM=;
-        b=a3j59XdaO6I8t4Icz5hP4W/yPuGuIm3T+B5RrRUqQgITA/+DF25V8Zf7SlHE/hMHcW
-         /joW5FvodxP2jtrqHukQfrBTRdkHoNkO/k5tAZ8gw6DfkjZzyXIPXOUTTMpxE2DbxCJO
-         bCCvR40SmTgjmtmhDoyemtE+ffOjSTut/4wdF8M03qFfMQ/UqRSFI6mHwFFUYJU83QU8
-         9ce8gohHh541FFJvQkEGNIa867xWaOWAs30GLNnTIEwpmZDG8REO9XkuWwndb/dStJC1
-         LQeNJqtmxMYmZ0IeDB4uSZE4n/rp0wijPyl1liVP0fwoOpzP3wLqPRFQsbK+Q9kIAwhQ
-         yQgg==
-X-Forwarded-Encrypted: i=1; AKwUvBxBy6oyLTMCOzcvFErKyhpkALZUbvs1IH4H+2dj/t+na87YeWT1zXZJrZdxyaR9odkaw55/ebjbIzvIWXC+hkA9@vger.kernel.org
-X-Gm-Message-State: APuU4Z+V9S1IfPQOjHgCGcxEXJaevdvQrUSSbT/be4E0IUyDi3Z7ZgqS
-	giB9AIECiuyl5sVdf7I32MnpOVxq/0HPU5jyKeCycorlN9RAHglXXPzgX8E6qcqoQFI=
-X-Gm-Gg: AYBFou1D3gGm5nYOX49kiW2FlWiMSpvhg4ZK5lyyZ6ttQpGNTm6dY6g0U2R8w6zAdFi
-	/xk8i/Ew0vigb1XDuJWovuFZuuAH6MeFJr5GA136mIGComhfVF2KWJiFNDoTV9a76ymVWzE7oWV
-	iID3hvIWVgfMwgWVhRZ1ITzwwg2pIYlHHWn/DJtDbzdTlWeNJcdYAFy/UrSnCTZN3gG9K78L1Hm
-	io+7y1X4iW5r3fRIpDAet8GvyFkx+YQmFJ7Gj/wC4tc93EpNXGxQ8vne2Lac3msrKFpysYzok1V
-	tdmNmKpAOkAZwiiip+0NKLPuyXbqa+ZAWPLKXmXo72okkyC1xdi0cww0jz/1eDE+MElbx2QIAv3
-	VRotxhFWxGcb6iPyVY5hu5G9ERgZKRaZpMOGa68u9+3vXyglayqHCl7yF5/tCJJOe80KcwcYl2n
-	dBnFE4TzNycBLle4oBHPiDwegkxKF8pc3+fPIA4vLF7s4KT7x+M7IJwi1Pa53AuNtzkI1gph3er
-	PyctYLASrMECmMpUXhuGr6jdA/rR1HEvOUPAOgocuto8cGn6S3zlOFHjkEYpJG8JKwUhG6TusnR
-	01FbVGUqn5wrtwiFb+vNdHczAe7VuSs=
-X-Received: by 2002:a17:90b:2745:b0:3a4:b0a1:c7ed with SMTP id 98e67ed59e1d1-3ae89776d99mr16769973a91.13.1793896803139;
-        Thu, 05 Nov 2026 08:40:03 -0800 (PST)
+        bh=sXd2orHtvS28hhtBKOplUBavOCjio3xkwlj67EhnJWU=;
+        b=N7v35v0kzNp5drPt3aGTxJng09I9v0R8bSAE91g5Awvh4GKqxYR7H8Ht7NP2lrADa/
+         /uGvLB5jePHHnGRQBhoQRSvlMZ+3EO1eGc8OhZdQgn2uV/B5vB6DtzBVQ2T/O2jRFhRv
+         ezpP2MfJ3CBSMixb3Eo2Lauks4ejNzKLnJe/rwoUoOuPEc3dcQVIw7u30tkSXmZWJqoh
+         n2NlfKwFtEU5M3ZkpFlgOhOW5kYTYOOIumFYFyMctePMhKxDMwnwkEpGiFbd0Ijrnv4W
+         nB/xBTkfvw2MwrZSmUjvkh3nx2OQ1HKZFaOnZ0jLGCe9vcVS/Gy9Ejr2TVn4lbEXUiZ3
+         kMjA==
+X-Forwarded-Encrypted: i=1; AKwUvBzwZQdUo152d3NaGev9FvxN1P6witWp0ktE8irmI8epN1unhERch9Da3n+7PUKxFVNNci0WY8s4QmQAPCAOz/T/@vger.kernel.org
+X-Gm-Message-State: APuU4Z8LPCPvXQAa527xKY+7OkSEg5Fd6l/j9Gl6j0yqqCDwisWI2+mL
+	Usdxi/gVo4Vfs+Lgn+5ACqISvDAL0A/JMwZlPI24AR8AaQdi9EwPmxCJZIu2QK2WBS0=
+X-Gm-Gg: AYBFou3P6yi9zG3ZRQssLBM0Cuu+UFVBfq2yj/cX+HD59Wh147fbKAIz97OnWr1PNce
+	v4df2sHB0XALS4ekFksHRUS2xRhxWvjoLtERx6OaZhXDJO2XErrdBnzvgqSUB675tlHmbEMneRk
+	c0hKzhUJvM6sGtoLp5ouaGgph/hX0YXPHVSynORLU3OfiacnmQq1GC2qSJDidhA0jJ12cE4fWO6
+	gWNUUhuyx5Km2NIj7y12q8MGkAKC4v0xdjUo9hENj8a8JWp+Z0AkxN0t9BaquXBrcObt0Itl8ap
+	IA9ZU10l8TVkkCWUsvUcnCYMk957CUQF2XbNnTdDIV23DyFDhYtX0zfF1JgcvMzTxO8J89FxE3z
+	X4kDhXcZ8WRUcSmu2OE3mZ8Dd1BCd3B4A7RfwTG0QlfapqmH3JRM/lz6oQMi08I4Bh4p45vg1ik
+	onTc9oJGkNxpH4LgRCwu9k5R1PwzZ6St7XW4zHdm9u2JHCNIMTDEMsS9aed5zbFh/AM7Eg1EFGB
+	i/l/bawWp0YAmgLIIcgyCifbj4E3ViRUGcS00mMNoJqZnzTElhnPlljV2pZL6wgw6VlBTd58+EE
+	As2FouBKAnAl+EZTCK0lOiHxR2bEKPE=
+X-Received: by 2002:a17:903:2290:b0:2e8:3d48:4d8d with SMTP id d9443c01a7336-2ed40ee5387mr1933055ad.0.1793897781997;
+        Thu, 05 Nov 2026 08:56:21 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:c7a9:fa1d:b267:7419])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b0969eeacdsm4764364a91.4.2026.11.05.08.40.02
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ed09127905sm20286145ad.48.2026.11.05.08.56.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 08:40:02 -0800 (PST)
-Date: Thu, 5 Nov 2026 10:40:00 -0600
+        Thu, 05 Nov 2026 08:56:21 -0800 (PST)
+Date: Thu, 5 Nov 2026 10:56:19 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Atul Akella <atul.akella@gmail.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: core: fix integer overflow in
- rproc_da_to_va() bounds check
-Message-ID: <auyxYDRg1QbIrKNo@p14s>
-References: <20261031161131.1647-1-atul.akella@gmail.com>
+To: Yu Zhang <yuz08559@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] rpmsg: char: take ept_lock in the
+ SET_INCOMING_FLOWCONTROL ioctl
+Message-ID: <auy1M1b4-ymv0OyD@p14s>
+References: <20261026100306.68019-1-yuz08559@gmail.com>
+ <20261031090650.23701-1-yuz08559@gmail.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,26 +101,42 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261031161131.1647-1-atul.akella@gmail.com>
+In-Reply-To: <20261031090650.23701-1-yuz08559@gmail.com>
 
-On Sat, Oct 31, 2026 at 09:41:30PM +0530, Atul Akella wrote:
-> offset is calculated as da - carveout->da and stored in a 32 bit
-> signed int, while da and carveout->da are both u64. For a
-> sufficiently small da, the 64bit difference is truncated into the
-> 32 bit int, bypassing the offset < 0 underflow check with a small
-> positive value. Additionally, offset + len > carveout->len can
-> itself overflow when offset and len are both large, providing a
-> second bypass.
+On Sat, Oct 31, 2026 at 07:06:50PM +1000, Yu Zhang wrote:
+> rpmsg_eptdev_ioctl() handles RPMSG_SET_INCOMING_FLOWCONTROL by calling
+> rpmsg_set_flow_control(eptdev->ept, ...) without holding eptdev->ept_lock
+> and without checking eptdev->ept for NULL. rpmsg_set_flow_control()
+> dereferences ept->ops, so this is the only eptdev->ept user that does not
+> honour the ept_lock discipline.
 > 
-> Rewrite the bounds check entirely in u64 arithmetic. Reject
-> underflow before computing offset (da < carveout->da). Replace the
-> addition-based overflow check with a subtraction-based one
-> (len > carveout->len - offset) so no intermediate sum can wrap.
+> eptdev->ept is torn down under ept_lock: rpmsg_chrdev_eptdev_destroy()
+> (reached via RPMSG_DESTROY_EPT_IOCTL on a second fd, or when the rpmsg
+> device is removed) and rpmsg_eptdev_release() both do
 > 
-> Signed-off-by: Atul Akella <atul.akella@gmail.com>
+> 	mutex_lock(&eptdev->ept_lock);
+> 	rpmsg_destroy_ept(eptdev->ept);
+> 	eptdev->ept = NULL;
+> 	mutex_unlock(&eptdev->ept_lock);
+> 
+> and rpmsg_destroy_ept() drops the endpoint's last reference and frees it.
+> A SET_INCOMING_FLOWCONTROL ioctl running concurrently can therefore read
+> eptdev->ept just as it is freed and dereference ept->ops -> use-after-free
+> (or a NULL dereference once ept has been cleared).
+> 
+> Fixes: 5550201c0fe2 ("rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Yu Zhang <yuz08559@gmail.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+> v2:
+>  - Drop the paragraph about the other ept_lock users from the commit
+>    message (Mathieu).
+>  - Bail out early when the endpoint is already gone instead of an
+>    if/else around the call (Mathieu).
+> v1: https://lore.kernel.org/all/20261026100306.68019-1-yuz08559@gmail.com/
+> ---
+>  drivers/rpmsg/rpmsg_char.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
 >
 
 Applied.
@@ -126,35 +144,32 @@ Applied.
 Thanks,
 Mathieu
  
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 23f8539a99bd..d5fa9d23bd5c 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -198,18 +198,20 @@ void *rproc_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->  	}
->  
->  	list_for_each_entry(carveout, &rproc->carveouts, node) {
-> -		int offset = da - carveout->da;
-> +		u64 offset;
->  
->  		/*  Verify that carveout is allocated */
->  		if (!carveout->va)
->  			continue;
->  
->  		/* try next carveout if da is too small */
-> -		if (offset < 0)
-> +		if (da < carveout->da)
->  			continue;
->  
-> -		/* try next carveout if da is too large */
-> -		if (offset + len > carveout->len)
-> +		offset = da - carveout->da;
+> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+> index 550fda2..d8868fa 100644
+> --- a/drivers/rpmsg/rpmsg_char.c
+> +++ b/drivers/rpmsg/rpmsg_char.c
+> @@ -343,7 +343,20 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
+>  			break;
+>  		}
+>  		set = !!arg;
+> -		ret = rpmsg_set_flow_control(eptdev->ept, set, eptdev->chinfo.dst);
 > +
-> +		/* try next carveout if da or len is too large */
-> +		if (offset > carveout->len || len > carveout->len - offset)
->  			continue;
->  
->  		ptr = carveout->va + offset;
+> +		ret = mutex_lock_interruptible(&eptdev->ept_lock);
+> +		if (ret)
+> +			break;
+> +
+> +		if (!eptdev->ept) {
+> +			mutex_unlock(&eptdev->ept_lock);
+> +			ret = -EPIPE;
+> +			break;
+> +		}
+> +
+> +		ret = rpmsg_set_flow_control(eptdev->ept, set,
+> +					     eptdev->chinfo.dst);
+> +		mutex_unlock(&eptdev->ept_lock);
+>  		break;
+>  	case RPMSG_DESTROY_EPT_IOCTL:
+>  		/* Don't allow to destroy a default endpoint. */
 > -- 
 > 2.43.0
 > 
