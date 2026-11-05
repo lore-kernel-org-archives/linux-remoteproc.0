@@ -1,99 +1,112 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793887196;
-	b=IdgsJ2sK8DX9iKbGYmLXbNkj69fn6LOR1imicnWmetOBlH8za5BUr5l4DpvKnxAxyyhN
-	 RdrTUocR9cP8TryfgkVFUaYwJEEoTBHqLVMcPfP9XFTCwggIDmzdu2tb6DY2otiPWTznt
-	 0T8JwaH1J/6gYmybEPeEhwhWQ3u21kZzNfpqH5Unt4zN2Tc2Km0hohV95VOJlpmLN4H3J
-	 0yD/q3soClVfPOzAC/qyhhfKb27vRmMiKsyzHSh0kg8bvA8WkhtTj8sII9Weq3Td0RMv/
-	 FxQH6jW3k+hDiWq1kibmVF66YVq33wqbHJINSVsbpcCmRqouNimpURbd83ke/MQDP3Q==
+	t=1793894177;
+	b=zt03ddphAyrP/cVXWDi/UGskf9HnGmHTvTRQeb3XZAtJvpgbZhHPkTtHYr4jhkJzq2tM
+	 q9rvdZEexD+9OmR30Xu0h7VArjTrypEuWKCGlNb+S7/JDTOiVfxtST4FceJpEudS1TyZD
+	 2vp3EVDYz6OITrjwwW7J1HzVufrmrij21n0wjtynJ/3L2FqaLR5NNl3PQYUiO25ghIukg
+	 O/sosXhvH5bWIhYJlkDooSLOmAv11U52+wTsDAvaAhZgX5QR8s6D7vsi0YUBpYR2TjtbZ
+	 fjAxNQHrwnkA0peZBCDXnS4SSW1JVnb9Ndrb6GfufK5ru5U7mcJdMqRIHb+oc1Eie+Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793887196;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=0bb3vYa61fFM02QV8RwA3NSPnIkcy66WcHx7ncn336Y=;
-	b=eLXAd+yM2ItDPxhJ+p246WzaWUb+tRYoh8HQPQ7QhlHhJM/6Z3ploMRrkDwItTPZ5k3o
-	 jZWJYcwO5Y7+ukkYrGRzUCmq4rjjq3HvAZKvJ53miODL21pOubDAt4sLXfkdfa5/sXirE
-	 4GlvVKDaWmFtSpmStpDoOh07FZDl6YzIQhYInt7QBWwejjk4ILuxvevlSJ9mz3vXfG7E4
-	 nQyyhsr9S4R+npshmmj6YpWFOgQ0jzr3DOSsM2zR4IraUMPMSSRjdf4RU+tLEDJvlMd4F
-	 xqgg0Wy4U5KY5DKu0RXeWvnA3atVJ6vIqUZj/6sVFf1E5v3G0oyxZA3EnFg+8VN20fQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793894177;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:X-Authority-Analysis:
+	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=ki7aOO6TrYV5ON9Wr6DiwhdoVkN/dGBtKK68o1BM+SI=;
+	b=HONtKh7nVT0Rru3j61pVqqQ7HJBISIW1y0746wl39LqrwcI4P9h5mBEQ/JRAZnTw8Bur
+	 692F6P8n77zr7zkMlQVyxM8sD+aSy5GUWqhVf96oIeL0FlTqujLoVNVi80Pdqu6oEe6D6
+	 f//rpZYhQznSFkbQwVNsIzWqUyuCXAQlzcTRHISvOM4Ozu9tpAHVMJLzYA+uwH933mddY
+	 GIsKbvtCyxzWgOKvp0GTREY2rej0uiJR8l+Yw4aZS8QCbSNp1ArSdAtUXk/CkZydsvBYK
+	 cY+jxDpgLKIJDqFR5Svo1KUJYWvWuH/HioEJsRy95X52Ss0Q3otq7kcq/NVCVbsA6kg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b="SU8EB/5l";
-	arc=none smtp.remote-ip=209.85.128.47
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=VGBnFV2r;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Kj1QSodU;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84D4606A328
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 13:59:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C84D4606A328
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8436606E57B
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 15:56:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B8436606E57B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=SU8EB/5l
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4a35ac4475dso13112445e9.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 05:59:55 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=VGBnFV2r;
+	dkim=pass (2048-bit key, unprotected) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Kj1QSodU
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6A5EQ8R2094492
+	for <linux-remoteproc@vger.kernel.org>; Thu, 5 Nov 2026 15:56:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ki7aOO6TrYV5ON9Wr6DiwhdoVkN/dGBtKK68o1BM+SI=; b=VGBnFV2rEK4ucWip
+	EowChD/fmUTCxMEcHGvovQsTFk/mw6GNfzfQyRCq3ob0jai2N79faah9M3C5FvNu
+	AuT3kNRGuRprGpL/VWoPaeW4WruB02+oul12V1KxW3ZpAlSGw3qGA0cfOApRb4eK
+	7XtD2EJYplGqjKpQWhG7Uab5DaXq6wGZA4XPaTa6i5D85uXZZTden856MxEJH1c/
+	uNzRD6nZam5vz7rrEvkbjEiaHSDSQdnV+43cahZkERYBdSfQIMeKGqwMnn3delAm
+	aL2EKUsPvxmwvPizsvDTj0dSsoKF0qvBAK2a6gsMCKOo2goLbAWQE16hSxJTZ+sA
+	9CZAIQ==
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com [209.85.221.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hrj43jx9e-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 15:56:15 +0000 (GMT)
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-5eab0ea26afso96942e0c.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 07:56:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793887194; x=1794491994; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=0bb3vYa61fFM02QV8RwA3NSPnIkcy66WcHx7ncn336Y=;
-        b=SU8EB/5l1TjO4SR/ZHfVurcBTZbviwe8Nvokm+g3goN3ssYVBwEQd1KNYBghk+IBAn
-         UPgYM/9MOmdy3MZFzi5hffeEWAoioYQmvG1eAggddRsJr8jpml5MMp1fiKg3poEuB4Op
-         PsAUqk8Ee4I6Nq1jS4e9CNkIX9bRl8Ww3+m3TfE5LyxzdAXAFyzXytTwQnSixgCrZxtJ
-         BbSj40LqKDs3RHuqIj6pJIEfXncRWmKOW8LujwPQd8dbB5OG/P5E/BzrM5xR0xfCrRm/
-         m5eAxF4mvBYJy0ku96BAEmJJX4mGG/cr/w+eYHTpPCieMbwLOQknvWORhQKErWQOeQak
-         aKcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793887194; x=1794491994;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1793894175; x=1794498975; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=0bb3vYa61fFM02QV8RwA3NSPnIkcy66WcHx7ncn336Y=;
-        b=WuMk9VNYJtpc3sqql9o/Fj8QdaslYRSbNzmY454EiW8CY0c/LLzFQ1G7XqxWpt0BiO
-         tlTlMURFJhHnddxPsYCDSeFc13p/zylyg8RBK+Uv6Y2YPL2ciTuBqO0vaIpFV1/dogQm
-         C2MaJxtIqvTHaoHdQChCBS1HqQGJoj8e1bH4OiBjZvhXtwcJWPZ6EFAplD3yqKTChsm8
-         NiTtiJvh0Xf/YkIiL1KatmKV5Ms1e4iMenkhGc8CfgvxmsgD2BMCIKDgLSCcT24teZRd
-         XizL6NlhXtjy3rLHmDLOgXiusyPd8VRIS8qgnTf9s9j6GXkM4cwsM0v03LDuNY4QB3Lq
-         KUSw==
-X-Forwarded-Encrypted: i=1; AKwUvByaCE8YRMAXMyIkwkzzZaIzuORivQY/32i6z3MfWJCvcbM5mlkNUV36ALEeRh7m8mZ/meHCK4Lf04Tlw75Qyx70@vger.kernel.org
-X-Gm-Message-State: APuU4Z+VwqtpUk0REsDR0y1SsrlpOeC43xsRLEVa17Q7hXiTSOjVJ5gM
-	pdEzO9uW3SHYArWgbSfxiqi1EBJzZ7CMpVkAqdMZJEYXqLbs+A/cunCyG/V9mbYqG2Y=
-X-Gm-Gg: AYBFou1tApWN0eKdJKBJgO4sp+OzqptljFPHLTcoT2XdOWsysHN8gV8Yb6IhE5it+VR
-	dOW6IiJbTRSVmrcbASckkoqMYrWTlw39gnRAeuEWbfW3dS9YnbcHjl/XxNg1LVqSWsBNPuPdXYj
-	ezoZ5QlgxMs4FmczI5xmzPUrNYp6b402TLmZKtCp6atYdZPM7WEQUgtYKR7MCotgiQwPJg022oI
-	qksujycaf0Z31vsxZ3wZIUO+hJYuE1d/T8ac6d5uHrVntTxqXM+isJXY4hxis1xEmTX+5UXJq3J
-	2ikQY8X8JW4TWwbR7jJYPH4Xo64IRxrIdBYcPT6RdYQ4yzdtrqkDzjinKfLsGGo2oN5jIpe1PWc
-	Iwk/uO7kE7zzh1Myi7wdJw3raLY8WMW4gOHaoJbVycY11YXh6C1Fw91BJLgaVb60pJ7D19YU04K
-	wrb+hVjSl/8IlczyIGbrd8gQHoBNx2Q+HU6l7yIN2QPBsRF/H/kME5y/SS3WjP9/L3I/noTspmu
-	xf8lVFaZ70IoJoFt3I8ksRYpBkVdBqVaegJh9Za30bSHnbXAY6gQ8dfv5VijXh6uNF6pGittGHX
-	UfPFn/sPXJzGATcLQDZWo//6wW0=
-X-Received: by 2002:a05:600d:c:b0:4af:83ad:8f70 with SMTP id 5b1f17b1804b1-4af83ad8fa7mr259029715e9.35.1793887194037;
-        Thu, 05 Nov 2026 05:59:54 -0800 (PST)
-Received: from localhost ([194.213.108.9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4b56e2ae73csm69855805e9.1.2026.11.05.05.59.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 05:59:53 -0800 (PST)
-Date: Thu, 5 Nov 2026 14:59:49 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Tim Michals <tcmichals@gmail.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-sunxi@lists.linux.dev, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/7] remoteproc: sunxi: Add Allwinner A523 XuanTie
- E906 driver
-Message-ID: <auyLnRhPv0jz1roG@monoceros>
-References: <20261101185735.762559-1-tcmichals@gmail.com>
- <20261101185735.762559-5-tcmichals@gmail.com>
+        bh=ki7aOO6TrYV5ON9Wr6DiwhdoVkN/dGBtKK68o1BM+SI=;
+        b=Kj1QSodUVuTeyhUZgfsuUeWfint1bplIhadjKIpAlGtCE2AQcM4jpmV0PWh01tQJJI
+         DxxhuQLPdbXAXyc4Y873hqE+1uudhOPuoSa+Xd9+nOg63LvlsYUW+3w9MeQ3J35lY5PB
+         lyVYr4iH5YEx/kmy4Za912OP8Gr6D9Ms2RmVTFTZ+tshLaE9jZuj9N/e7jJ9WT5WtW6c
+         1+mHSv7sbRievhtVpHfn0Mkpfc7zqIc+TGeOOOqdMXNhPC0okJvtBranXgT6xY1Akl8q
+         lTNCfDpzGu5JZnBflddrHhM0dSHkphNgRjB2PFjFC0ZehfmiZe5AkdJHqfsN1lXRgai3
+         Etng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793894175; x=1794498975;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=ki7aOO6TrYV5ON9Wr6DiwhdoVkN/dGBtKK68o1BM+SI=;
+        b=mu2KTvdm1RokfAqhAhiz7f7Q6uUyijp7rgSFeWJtKJbH14emRnDemLuusjg6mxw/xB
+         6icPqHsQ3pj4w90S5BY5PjtpKKhDz2K1uGD2dAnDTaiMpayaJRnbojiayIfsRC8gwzS5
+         Zxz/U2ME4OZNZea9VLejubitdjwYF6ADvNYeepg1rT0YGAX74JorqavSn1Eez9cj/Rsy
+         oHnisFwrRlTX89GkvUm7eXL0Yd+gqTFLfE0mQ2l4s6mWieVhgrwNyF3dSfRkHK6ZCXzF
+         HJ/Lps5T/VyVxkqkieQxV5ppBsK8SS0GEBWM9lZ2YxAglOTH7xb9y9BpyAhzD8m9cv6X
+         sczQ==
+X-Forwarded-Encrypted: i=1; AKwUvByXwAUUI4Bccw2epXFwa3l9StkmH9aSCjz/PStLrtWHmijzWfTPBC3MaiYsDWnP7uLPMeiGtj1k6CsdAvengSjP@vger.kernel.org
+X-Gm-Message-State: APuU4Z8RmtWMI0Y82rXWQ943p11homkeAHxUIxRA0IuAXHTJRgRZG3G3
+	G/d4KjTAJ82EGl6L6Fikhr8nEUeY9vih2B8WdELyQwRiyW+EICZCuY0oNNa3E4YSeEP+3q8VAdp
+	ZHa1q2DA2m6F/VhJ4GaVD3WiY/KR6n2NjT8p4/u4HomaCXDUWdmVLZf8oetSoS73E6huIFkyOzi
+	tsHEQt
+X-Gm-Gg: AYBFou2HNn37dFViCpTC6BcO+oSlglYYU3zenMDaDdx4H3X9mCWzpW0DYHtlHbiOmI3
+	cJd+/TZdr5SO/Akj85KoQ+CYbyD+MaCAmjTDx2ftG2/+0I9KV+AETM5zrO9rYrVrXH1dBJpSG7I
+	mMRJEOZjA4D41cWs60n200WoB0L1vCubP90CI66mPS3OORw5leVUL/50jPQYahY4uugORS2VN5o
+	kmeBhDphFeje50xAzVRR0jaegkOkERCOFenwcSAOY8Z8ygOiiyI+rYhwjByxfNvn5hgqV6LTc1F
+	k8Ve6I1xBteXg5piVNOoK4VrY3Aswr/AX6+QPs99b+9D2NNRFDlnInUzbArrTQAozl8WKPpyiuJ
+	PcnYi27WEw3o9DffERRPuVW8XbaZv7wFL2gBq8KBKmtI5C4pQ82lKFrORqlHEDIKnvk7+
+X-Received: by 2002:ac5:cdb8:0:b0:5ce:23fe:84d8 with SMTP id 71dfb90a1353d-5ec7562c7c4mr8492613e0c.0.1793894174927;
+        Thu, 05 Nov 2026 07:56:14 -0800 (PST)
+X-Received: by 2002:ac5:cdb8:0:b0:5ce:23fe:84d8 with SMTP id 71dfb90a1353d-5ec7562c7c4mr8492581e0c.0.1793894174381;
+        Thu, 05 Nov 2026 07:56:14 -0800 (PST)
+Received: from [192.168.226.1] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c4d0e4422d1sm186151966b.39.2026.11.05.07.56.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 05 Nov 2026 07:56:13 -0800 (PST)
+Message-ID: <076f0e7b-8fe6-4e9e-a0bc-a80ee83f879d@oss.qualcomm.com>
+Date: Thu, 5 Nov 2026 16:56:11 +0100
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -103,45 +116,65 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bvyb3kuhcvop66ue"
-Content-Disposition: inline
-In-Reply-To: <20261101185735.762559-5-tcmichals@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: qcom_wcnss: Clean up subdevices on probe
+ failure
+To: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20261105-b4-wcnss_unwind_send-v1-1-ad94209143da@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261105-b4-wcnss_unwind_send-v1-1-ad94209143da@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: GP73v26yE7FSFBKQCuZ9PI71MuCC2WRf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTA1MDA2MyBTYWx0ZWRfX/f/FqR6IZcOW
+ 9l0Ar1AZPXJNYusCE4x9RMe9gZoNqlPE9OJpaMJ94bdp6VyMYxtoLz597h7d7b20W58we5pb17C
+ mkt2XFQ2OdfEtdOxdPWZ0w19q3I6R6tMIfH6rPNQBa4IrO/o1GOcQ5P9OJedTEF2ZxUQFBY8ont
+ RkKCeRk7vbZGABT4/zsBNG8HIAm4dMHJ38NMahrAq8TLCXBqJseVdbKh9/GLuFBC/Tda9tTo6h1
+ b+efXg3ao6+GXzBuEIor7XuHFRULvy3xuUcM2reaBTeP2UuOUXXIKwpcgG7x7mEXW2nqdjICCzY
+ EADrPRX08JIWDl0GjBWi1w/ygNeRYGWKxj4W4rN8tmd+2WdQaTD8ghW2WzLlVvA2eetuJ8A4JcK
+ uaeT5oCgHwYtGtni8L+zkokNQQF2R7vfnCxdn2KaySzWSSFwpbEnFgtsgH8yh/bv+c0HQ3Junhz
+ buozWOYrJF4VOWP8EUg==
+X-Proofpoint-GUID: GP73v26yE7FSFBKQCuZ9PI71MuCC2WRf
+X-Authority-Analysis: v=2.4 cv=SZdi5fRu c=1 sm=1 tr=0 ts=6aeca71f cx=c_pps
+ a=wuOIiItHwq1biOnFUQQHKA==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=EUspDBNiAAAA:8 a=xmF1v6_2wodPUg2ca20A:9 a=QEXdDO2ut3YA:10
+ a=XD7yVLdPMpWraOa8Un9W:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTA1MDA2MyBTYWx0ZWRfX1z9OQHYrNuuE
+ C+5hHLpzeGVo1BqSAEhdqMu3Zzlq09pllq8sQBxRVoNKq4YhEaH+VdRkQmoxhjdEM6PB0ZlHWvc
+ Jkz4KLgBzQAYJwn/bRdkm1JxNC+Elm0=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-05_04,2026-11-04_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 spamscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2610300000
+ definitions=main-2611050063
 
+On 11/5/26 1:31 PM, Anup Vishwakarma wrote:
+> wcnss_probe() registers the SMD and sysmon subdevices before the iris
+> probe and rproc_add(), but the error paths after them only release the
+> power domains. A failure there, such as a deferred probe of the iris
+> clock or regulators, leaves the SMD subdevice registered with its
+> smd-edge node reference held, and leaves the sysmon instance on the
+> global sysmon list.
+> 
+> Unwind in reverse order of registration. The sysmon failure path skips
+> qcom_remove_sysmon_subdev(), as wcnss->sysmon is an error pointer there.
+> 
+> Fixes: 5a856bc63ce9 ("remoteproc: wcnss: Bond SMD edge to remoteproc")
+> Fixes: 1fb82ee806d1 ("remoteproc: qcom: Introduce sysmon")
+> Signed-off-by: Anup Vishwakarma <anup.vishwakarma@oss.qualcomm.com>
+> ---
 
---bvyb3kuhcvop66ue
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v3 4/7] remoteproc: sunxi: Add Allwinner A523 XuanTie
- E906 driver
-MIME-Version: 1.0
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Hello,
-
-On Sun, Nov 01, 2026 at 12:57:32PM -0600, Tim Michals wrote:
-> +#include <linux/mod_devicetable.h>
-> [...]
-> +#include <linux/platform_device.h>
-
-As for patch 2: Please don't use <linux/mod_devicetable.h> and rely on
-<linux/platform_device.h> to provide of_device_id.
-
-Best regards
-Uwe
-
---bvyb3kuhcvop66ue
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrsi9IACgkQj4D7WH0S
-/k5Wggf/YfIQ7WHmvvey+xjJQnqBBC6pD6WMGs1N8zOjBs47xKTlmoiTy704ncA/
-SHYjg0IkCpwOICXXvfiXJZFK8h5M7+y5jrB6VR4gKwnHKcUzaD8baV2tzCTRxFzk
-q7fKaeI3n7fNH1aRrXWMimidD77eQ9VgIocGQaE05rZOFLWYznwN1IejorHjVYp/
-vlaPrjtYabWXJydNPSHUrC4QQNwhhpon6qjxkgmEXkcW4zWORnfjI58d7MJv7jNd
-i46zZKPpVOXafx2kCKmbSiggE5i1cPr6O3e+3Muw64B0kJenSgxjkPD0kzt1TMDL
-MrWyYaGIU8+0pgKPYFIeJQiOoD98Ww==
-=7Net
------END PGP SIGNATURE-----
-
---bvyb3kuhcvop66ue--
+Konrad
