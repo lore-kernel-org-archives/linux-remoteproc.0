@@ -1,99 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793886104;
-	b=vO4H1ur1EGcAVGg8VxOT3pVLeBNe1pKrbQXXTXRuRJ6WQqkfO5C7rbMSUSKK2xPIrTfS
-	 EzbDZyLqq3XcYNNbFsiP/Go2YghIgWy1RZ5dXlRBR8F/DLuYDeUnU838X9NpkcwGRct1u
-	 MeR/YdVxmOMXbGukE4CwXG+52FqlPYk10PMxiL/2Ci+lsLJW3xgms8ph7uXZt/IHBl/HZ
-	 sr+hgdQGQrTkwd3VZC+lEcmYaG/ApE36yMdMaJMreqvQIwkKOK84RT7OHGcldbdcUkiVZ
-	 N4HAZedBMTIVmoACCN2f81HLbN0rv1kir2sH+ZjwrymBSarmC4q88IdJEbYb3fxodzg==
+	t=1793887137;
+	b=4oKFK9mWi1kmVIsI9+OlaSZ0Jp1niYdVWgHApeQ89Lqa0lBkn6noyR1PtQOv4r+iwmyO
+	 Lwf09ZMQCflIJJncYQ7Z87eUbixdm+zeMsw1NX6Yn9zFFwNxL4AgJ+NulQfVevls28t1Z
+	 b0yMbruanLzJsB8qKVLy8ZJdpvxUTv2f33xYSof1oa84f3w7SKKLoF/2K2+p4G7Klb+50
+	 ir2b2nbvm31T8/lCPG+n+dGT33iR6aFahZEnd10l8qZRJsq550RjM1odY+SqSoDR5nlzC
+	 +kq6dp37xo0qSq8DekKB+2IyGsR6dzGu6A1PWglFlmCy0XlyqLeqrJcfy15tTfnPgMg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793886104;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793887137;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=5/GsPw6ysr3Xvdnr+TigErWLMubZI7BxQjWx0TCjmMM=;
-	b=g9ehkq4NTksQAcak0KBMt276JWHbyH8RVnTLpTFookTo23QIUOyb5fTUYagxSRl6Llw9
-	 B7bLdFaZA9saKEMFGQ1ITNllb0ZPVZrA4OJ0d/+7UusmP/ipI1kPS0Hqh401+9bxrbUti
-	 SLBC6ZVZLB9rek/fw6trBmndDzk8RrBijASh50wplZyrYnf5I5e1lRaxyeqVkRPIbZEkE
-	 UZE/1UUEYh5hmkXs/eXwo8fKzOhu+x0fKRlQLeIgDJl/xIi85BAnGdNNuLRJISWwnLhJf
-	 aOHcJ+aB/iN8YOAjOuMde018slLFYPVRs9vggUO49EnswNzB1dRNfeuB/ImJ2Zcj8yQ==
+	bh=XP2sPyfb4drUGyU1lXjbZR0XesYSs81x4qP77e4f+vA=;
+	b=DMN1jD6BnHVGlKZeqZUKwF8bDYtWi8x0UdhefBmkyveJsSekHJk26al9TFMkoF2ODTjM
+	 El/RIY60E4NtXgdazm12gDt5czleAeSl/vgWHKJlXSxNC3UOn2hL8fAgW/+QkwGlP8WSu
+	 W9Y5ARQqn0ETUQeUpLP5c3VTABYSVhtIr1aGWVlEFkmuXpwDfpvFJeELwEZj2qLuKkV5y
+	 2BoZUGhCjShi9XeXgd7lvkkqmWlWTLySbSJ5iHWB5FMLgpPlPQ8MvbcxA3KjUBbRVsGQb
+	 F9VLoO44OHcr2lc793wNuMuG7zL7LR/L1aD31of3KtLF8s3iyQ9M67iwMh+/wTY3GNg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=none header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Hr+5+VmY;
-	arc=none smtp.remote-ip=209.85.221.49
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	arc=none smtp.remote-ip=209.85.128.48
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664CF606A329
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 13:41:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 664CF606A329
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9C2606A332
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 13:58:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2F9C2606A332
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Hr+5+VmY
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-490d59c3f0aso502678f8f.1
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 05:41:43 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4ac95761c85so13770775e9.2
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 05:58:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1793886102; x=1794490902; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1793887129; x=1794491929; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=5/GsPw6ysr3Xvdnr+TigErWLMubZI7BxQjWx0TCjmMM=;
-        b=Hr+5+VmYwlvXWWmnx8xC/o+Rk/3DN396WTfJJ8axuTDipMHcCljTfd+46AhY27xyRg
-         J2mE6RVfiV8B/7RU6gn19BfadVmWzZ3Mevy0z6BaIGpLpl2V0gOTASpf8XtBcwWxMCfi
-         XLCwkK2KbrcObYOwNpnuvF+9DTBaU/KVxNRv0dS/2nDkvsU8s3CMCT9QAcydehJW/trv
-         GsAVZ6erkHBKsboC3h3/KYS3DmC0HM6JbwdFQKw7FFjiSmA/Py8r5SERm/klEONZ44C2
-         o9qCkFk8bKIXH1DxDa5GqqUaCO0FCLW/ZkpGYck1lzoEVfK5gYw6O1tcIv7C4qX8s7E1
-         aESQ==
+        bh=XP2sPyfb4drUGyU1lXjbZR0XesYSs81x4qP77e4f+vA=;
+        b=E0ibYapTp+snHAaLfFV5C5kwF9bCnW48/3xjOj38X1Awn0rWjO2IHMNwe2sdoJi2Xi
+         NhkIaFCvlExF3CunDrqNLZ1BIIvnetZfKieCryQ2Gy3j1wqLADFAsc8CshWNWk7uQ1dY
+         XyvQB++g1KA08c/s3njsnCmi0inrSKlArTCe0sVwQzLJ5fNVX8WT6EtdW/qCLhpgoyNy
+         jgSQen9y+B0oSNAZJ1B5Zu9ziznXalyeQ4KZi/a0IJmncqqhwgt+mlLGB+bGU7OtYhsa
+         Ew4E1J9yz69l37hI/lMxYXUih5vde6EJMuEZAPgxqAMGaH4LX+L1pnUe0fTkPNPLDxuh
+         CU3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793886102; x=1794490902;
+        d=1e100.net; s=20260707; t=1793887129; x=1794491929;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=5/GsPw6ysr3Xvdnr+TigErWLMubZI7BxQjWx0TCjmMM=;
-        b=xOeERTsnS2q5bVuFR6mY06DHsKDlfi33/1doGmrUnXZLHVsvdcP0JwutzZ8sa/GSio
-         Yl/nLTTu5uDaLcBC5yzflBkvKgmg3cikI55AtHTLdz1cVxj55HyjZr3mV9pTk6rAyF5X
-         jKAxuZPa75KOEtL2+vmlXyKGu0gdIyCDQ6PI/l/89ceXE5eJ5m290umlfpY9JLX+K6ju
-         LG+iFXaIg9WYxYvX7AIBkHbq6Qps8Rn/Dowm8qYRV+R7M1Duxs7+SY8F8vOng+nrZbOD
-         JcuLB6xcjs9qRV3GpPo0eocCByVH76ZxQrrEjaxy56HsDZrpPRGdOo7LPiM1tcPtB9iP
-         Bh1w==
-X-Forwarded-Encrypted: i=1; AKwUvBz0++7LMYkZjS//NpJPt3kOrI2nI5AqTSLCLpBzWOT7igXevNE76etuxkZZBsBMZL6Os8SY98HMfdn4dtKFGgd2@vger.kernel.org
-X-Gm-Message-State: APuU4Z+/K0xr2uxMTF0eOL9BX4kulvksYeqJAhE/zJQJxLQ8r3frBh4w
-	m8fIqLMqAAqdsHQr3+05LxGz6scArhwVunCpdxx8eOElJe+n94Gq6lm4yD2b4oMX8NM=
-X-Gm-Gg: AYBFou13/T3zhva1X8ge56ihDzW6SgeJSlJe0oRv/FhUCOHdPPqSuZpWoVsx8pDcMCv
-	vak754W3vT3sCP1XPu9rYz/2bhWY5iyaV4nMh8+L67E75+MpS2U4xKH0HqQHzG9gd5yujZBu5Cb
-	xhYjmw3yXDiVthRaTvxscECjPEI3Dg90XB7uCSzjt35jGPFss232PDAM0GyuXuQ0VfvywtRge5c
-	jSuOdfxRx0q+7H4RGv6001Foo3rAbhPvllRVd0R2vtchMXD2wA8CkplmTlhYYB3KyJjU3SAdZAD
-	6rXa9Udy7PNQesrJwz1KXYV8BXaon2CORn89DAJBxIw5EzQocuwKVJfBx+ckOpZxFxIrLRkSr6c
-	j4CdRlkOfYJ0W2bf/vnCkAKUTcviRzT6UdwNSmcn9pjMfFGYSCfZIzD4CG4B4w8mH2KAMrOBS4H
-	5JrDGB0QHFMt9Z9vt8RolehtGzGlkNbYmBZckswcwwpiUQp0j8tPpZpdW2Q4e3OZ9nZYEwrngya
-	i8fO1weBDpF2mZFPxTPjSKhD5onSJjVAIRnvIYEBdZ547752dbZQjssaxxLrYACmFg44hCVLN6h
-	n5zpbSg17p6dDebrUwxfcIDS7uXMQtJUnUmFWx1Fk67ZmTYT
-X-Received: by 2002:a05:6000:25c3:b0:48b:451:4f19 with SMTP id ffacd0b85a97d-48e6e5182bemr39618525f8f.51.1793886101892;
-        Thu, 05 Nov 2026 05:41:41 -0800 (PST)
+        bh=XP2sPyfb4drUGyU1lXjbZR0XesYSs81x4qP77e4f+vA=;
+        b=JvQ1SKTyFZlYIN06HEAb6geTKNGSDhq/NNGJGwrocpn8XYTWC0hgPUnBlxZIHimF4I
+         CWx06x3/jrbDJ+gYZose3FXyy1ZsFnlYPodU03SLZAlGWXInIH91M36Po2qPN05X3XAB
+         qFStYlgoD2QOfDwQcJGdRbYO2EF4W1kWehefGaSXxu12YYXPn/j5h4WQH9U7Sy3dYkBX
+         /8meLJDfFBPSVO/6/jR4xiuEfZxHDQHqURhvA6VArPJiUYSzXZRlLs8IHKSJfBA/ggy/
+         zFd6aWnyKViG9VCMliaILZUQCMu512Qxe3nd2dXvAIYxElFtDb8XCNldCzjkBP5XydYg
+         DVHA==
+X-Forwarded-Encrypted: i=1; AKwUvBwqoYJl/b+zI1bMufgx6Bd91KrNgnbxW+LXIOJodJ5j4G6P0xZEU+8uYrjIila+dGzBdlZUypJmj7niDUGSaUai@vger.kernel.org
+X-Gm-Message-State: APuU4Z+yh3SEDjFmguW22Roe+JamHu3jgh6vGfMkd+egyz4NLxDwsKuK
+	QuHbwtRWNiGYjqrVtReEnmIk7RMOQqYdZILRiCJQoacpVNTQV/G15zjgz8v+Eq0sA6w=
+X-Gm-Gg: AYBFou0EQl+fnZlmnbVquQRlf9qrWt/pCSQRO3+PSHCAqat9qGw6RsotXgjE42LxZae
+	ZO+GGQWS6IF+5ftt2kEPZ8AzXu5TjWObi5TI+VTTO5JHAzqb1VQaD6fV1ZzA2KMduO50QxJj66Y
+	rEhfqzCGW4qaO1u+vIHANcRgwn1axZLnakjCQjf88/b87qipnJLMiM2RhxrNCAMKQA535qwmqWw
+	XKoMmzPJu8a5vrREVlsYZOg4eSxldg21MhB/X5lswmhU5Scd27ej4y2GBbd2hMl++yBzu14SLWA
+	xqVauUg7LWbma7BzSnoLqjjTgNYZFawBDHXk3nOlFB9C3HyqxWE/ld1pAThJkg5Vap4jqiX5EHn
+	0WxrP/lBC+wHDAoOq7xUnktKW5Fi/lyS4GXTMVdEy9fqIaHw0FaWrAZV8Q0YrXbD8iLqmg6qvJ/
+	09HEln+4T6nOrpetx6wxDNXZhK1bb8szEyoU9ZWZcREylZgvvCPMLruviJvsecCYEC+qQfhuznR
+	RXP2us2EHAaYMupENZxvEh8HcEDQFkayvHntC5GvVFFVToTXYSmKi7yMQ12X4bU3ic9ItREIneT
+	Lnz9lwsXpjimGlFfi9zWqF8IZ9vf
+X-Received: by 2002:a05:600c:6095:b0:49e:7c8c:361d with SMTP id 5b1f17b1804b1-4ac182dc30fmr375702725e9.22.1793887129505;
+        Thu, 05 Nov 2026 05:58:49 -0800 (PST)
 Received: from localhost ([194.213.108.8])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-48fea1811c4sm10123361f8f.3.2026.11.05.05.41.40
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4b56ba6bc36sm75097435e9.0.2026.11.05.05.58.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 05:41:41 -0800 (PST)
-Date: Thu, 5 Nov 2026 14:41:37 +0100
+        Thu, 05 Nov 2026 05:58:48 -0800 (PST)
+Date: Thu, 5 Nov 2026 14:58:45 +0100
 From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: sashiko-reviews@lists.linux.dev, 
+To: Tim Michals <tcmichals@gmail.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, 
 	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Frank Li <Frank.Li@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v3 1/2] remoteproc: elf_loader: Create new callback for
- copying segments to remote cpu
-Message-ID: <auyGiW91Ir0JcuxG@monoceros>
-References: <cover.1793879714.git.u.kleine-koenig@baylibre.com>
- <50647b7d731fa54fdc3e2869f02de2096acdcff2.1793879714.git.u.kleine-koenig@baylibre.com>
- <sashiko-outbox-198999@kernel.org>
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	linux-sunxi@lists.linux.dev, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/7] mailbox: sun55i: Add Allwinner A523 message box
+ driver
+Message-ID: <auyLOc4djmm29Bnz@monoceros>
+References: <20261101185735.762559-1-tcmichals@gmail.com>
+ <20261101185735.762559-3-tcmichals@gmail.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -104,88 +101,46 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cwyxkko7vmbusv5v"
+	protocol="application/pgp-signature"; boundary="6jfoalgweekh6k4p"
 Content-Disposition: inline
-In-Reply-To: <sashiko-outbox-198999@kernel.org>
+In-Reply-To: <20261101185735.762559-3-tcmichals@gmail.com>
 
 
---cwyxkko7vmbusv5v
+--6jfoalgweekh6k4p
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/2] remoteproc: elf_loader: Create new callback for
- copying segments to remote cpu
+Subject: Re: [PATCH v3 2/7] mailbox: sun55i: Add Allwinner A523 message box
+ driver
 MIME-Version: 1.0
 
-Hello,
+On Sun, Nov 01, 2026 at 12:57:30PM -0600, Tim Michals wrote:
+> +#include <linux/mod_devicetable.h>
+> [...]
+> +#include <linux/platform_device.h>
 
-On Thu, Nov 05, 2026 at 12:10:05PM +0000, sashiko-bot@kernel.org wrote:
-> > diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> > index 00019b1895e6e..e750a127cbc4a 100644
-> > --- a/include/linux/remoteproc.h
-> > +++ b/include/linux/remoteproc.h
-> > @@ -75,6 +75,7 @@ enum rsc_handling_status {
-> >   * @detach:	detach from a device, leaving it powered up
-> >   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-> >   * @da_to_va:	optional platform hook to perform address translations
-> > + * @memcpy_tova:optional platform hook to copy data into remote memory=
- range
-> >   * @parse_fw:	parse firmware to extract information (e.g. resource tab=
-le)
-> >   * @handle_rsc:	optional platform hook to handle vendor resources. Sho=
-uld return
-> >   *		RSC_HANDLED if resource was handled, RSC_IGNORED if not handled
-> > @@ -99,6 +100,9 @@ struct rproc_ops {
-> >  	int (*detach)(struct rproc *rproc);
-> >  	void (*kick)(struct rproc *rproc, int vqid);
-> >  	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len, bool *is_=
-iomem);
-> > +	int (*memcpy_tova)(struct rproc *rproc, u64 da, const void *src,
-> > +			   size_t filesz, size_t memsz);
->=20
-> [Severity: Low]
-> This isn't a bug, but is memcpy_tova the best name for this callback in
-> struct rproc_ops?
->=20
-> Across the remoteproc subsystem (such as in struct rproc_mem_entry and
-> ops->da_to_va), da denotes a remote processor device address while va den=
-otes
-> a kernel virtual address. Since rproc_elf_load_segments() passes the
-> untranslated device address da directly to this callback (including for
-> devices where remote memory is not mapped into CPU virtual address space =
-at
-> all), calling it memcpy_tova seems somewhat misleading.
->=20
-> In addition, when rproc->ops->memcpy_tova is provided,
-> rproc_elf_load_segments() skips both the filesz copy and the trailing
-> memsz - filesz zeroing step. Should the kernel-doc comment for @memcpy_to=
-va in
-> include/linux/remoteproc.h document that implementations must copy filesz
-> bytes to da and zero-fill the remaining memsz - filesz bytes when
-> memsz > filesz?
+Please don't include <linux/mod_devicetable.h> as this pulls in a lot of
+unneeded build dependencies.
 
-That's a valid concern. Maybe `populate_segment` would be a better name?
-I considered being more verbose in the kdoc entry, but all the other
-entries are very sparse, too, so didn't want to add a 5 line comment for
-the new callback among all the one-liners. But I can if you tell me your
-preferences.
+<linux/platform_device.h> already provides of_device_id which is all you
+seem to use here. If you want full iwyu include <linux/device-id/of.h>
+instead.
 
 Best regards
 Uwe
 
---cwyxkko7vmbusv5v
+--6jfoalgweekh6k4p
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrsh4YACgkQj4D7WH0S
-/k4IJggAu4L1Wed3i0W4vuPU7pAQ2mQJvf3FezMAeGDQffUtpvt+zlonpWqYwV7r
-HK8tL4z8k28POxQlGKhkCLJS0JLSFnZpN2S0YQ7Kh2gQyzfxq6sUkwUkHKGNtYSX
-0kI4wqKgdURieKMj4hFmGKeX9o/yXSX3F9W+uF+FwTl78oOZAK6YWgoZLjSbiagt
-M40PJrmpoCTPln1ZcWc66RLVoA9IBR8TELu2VNA536pV3RSAGaCbHHmECAQMrBMY
-IfGrXrxhI7fCIhMC5OT/hBBRB140ekbyW0PC1kdVqu1iT4j1WI7f+2wMV3e5ba2D
-Yl1Q7lDlQ/qxjmKRlfF1oyzKWeAl8Q==
-=axH4
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmrsi5EACgkQj4D7WH0S
+/k5vhQf+JI5oqB8wirr4Mfq53+EuIcbqVBMYKSJ4VvYsL5NgmUbk5OmelFsyFXLh
+1cTpKfp/pSXjaY74bSTdw8Wzj26UAD6h5WcL7M+Y0R76ERavh1U/j83g7GfDBxJr
+eHota1nXeLkRvpDqW7tWDBWn66eu0IeVsO8nlokpZTVhmLk/uFlIIITHp+IbJSUS
+oBmB5o0SK31zlNe1wrqwI8jCXjAUPyVcVouZEhNQ5mtIja4FE782+wlnw7agZe69
+vl3MG/TIihE7J63RC8U2iKs7BsfN9oB5xF5H8YMQYZ8/3uAj4eNkgFSjpbU8xXtp
+IDWe63lnv5ShurGsD35Z20wJbKGEKA==
+=hD40
 -----END PGP SIGNATURE-----
 
---cwyxkko7vmbusv5v--
+--6jfoalgweekh6k4p--
