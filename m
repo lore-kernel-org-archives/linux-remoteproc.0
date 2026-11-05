@@ -1,95 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.179
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793897783;
-	b=qPMEMN52ZNEflY775a/2HMUkhCglQt6EWalgbiD5sO3CvibXo17sl5g0Oe5nlFGA4dkX
-	 /6MzamIsApHERwSpjlTbgn5kWpOCWb3DGuLkMYXJsIUdapIv402mfFD+ox+U/IqWypoC2
-	 5+CffXO8JnsPv7kHJiiMQsG+0lUUeyZHTqpnA5JFs4Qs120e+OtUX5cOIGkGw9sOfBMTL
-	 NudcA+STBLvzMaGKPuMc2YviiQvU8wI0nWWNJY+30WinPpMFCzTy5GoBNOI9rJ9WgSqQl
-	 rZdux5gSKrdknj1ZQtU3yKEO9HHr6/O2nmDcVxm28udq6It5N3oypnulB7Ls1Zbb7qg==
+	t=1793900022;
+	b=P+NVlesl0/KVrZwTEpOKNdGEN0NS/T28XEvjjuY6V7NNPh17XypUvpOhNDms2GO1jz4g
+	 ZtNqLuFqE7/fa6UtOYfH2NkAJB0ku8Fq1GFvaau4V1XK1J79i5EKvVHQoUacpuGE+F+yl
+	 XrX2OJ+fOJvBycnzp2XyFjp4hP7O8+RAGtOyhT1UHCoPpLwiDu+AI2YKZQma6wY4/Ckur
+	 qCG5tbP0+R5GF8LwFGZ9tiDhfFey1rPu2c0sOo4CXe6atfAmfqvndJ6B5izN81Tdxya54
+	 vyOI6gLdhl74vrmtt1YnsdITgHaxdrsa8/3vuIaQrVwD2jgW3E6LxespzUaMFsCp5Eg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793897783;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793900022;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=sXd2orHtvS28hhtBKOplUBavOCjio3xkwlj67EhnJWU=;
-	b=VgzHr9QNI+MKsVt0W8mQUXKGm63UlnQGzSAp34JlwoL5dQW3hUn5+uifEI011+4l70zW
-	 iuiV6nS/721+krayO8qfot76z8b1dphZPuNnvV6ddL61XFpOo99jzOObNujN9hpplBWOI
-	 OfYgFC9dKPEUN3uYJsI1rtnCvNtiwFl8Gd6KE9ViKehvporDwsTlA/gBIdrrr6aiqJtjH
-	 7BXsEzldS4aKoaUUDIHocN/UN+IF9ix1wQW6E6m3yxmu2nfJqea3hDYQo11HIm6HlTj4z
-	 D2oRfl6U8eK5AFW3vKnnySqqCnytzc+1OXnpdmpLzh/Ba5mky/HHu/kHv//gZRIjVTw==
+	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
+	 Content-Transfer-Encoding;
+	bh=FJNy2Ck1RWiBBtfKia9ky+RnixbUgCX5yahdUPGgwzE=;
+	b=YacDmR6z5u4GFH3ecRrnCIxB0K18C/dgrZKCHT3ORZIvu8PSJ4vqXKATdLGnkQM6p4Vf
+	 C/HHFTJBmS0Ri1NJMSPTBjo+Ul7JjgrZhIU911GBSykENvZ8UxMEnzCwlZVVkZAFl0WmV
+	 MWmE5etNe4BviIpexrIvIOs/gj8Gl+A2NtBi7r/vkz9tsiytQAM17HPEfSOte3MZxq4MH
+	 TzY1cmHCIuSo/EmA5BmfDPNrUS4n7RiLrcvOYV4HmQEpZpWgF47E4dwfs4lYPclsTQFu6
+	 2r4ECUOBHwo+p0P25BDrj1jCjSerWiVf0rQrp18zIVDuAh2jOOHCJcwwIh95J717hCw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Ogmv7BG4;
-	arc=none smtp.remote-ip=209.85.214.169
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GyF6YzYk;
+	arc=none smtp.remote-ip=209.85.160.179
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C778E606A326
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 16:56:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C778E606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C649606A329
+	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 17:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2C649606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Ogmv7BG4
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2ed408b0d9dso418245ad.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 08:56:22 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=GyF6YzYk
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-5363c8de563so22250641cf.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 09:33:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1793897782; x=1794502582; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=sXd2orHtvS28hhtBKOplUBavOCjio3xkwlj67EhnJWU=;
-        b=Ogmv7BG4r7uuYCYpQN4niqDJbGkvLKQFENVq0R4ZDqv8WEJDpk9oXeQLiFTF0VDwVh
-         ZW3dRsM8vxcktUqR8BLPtebX//inW1Bfn+BdikoT2ufnSbeXAlawBDAqYnbaT3ve01DM
-         3G8UuPv4JjwWiGSABW/YQ7BK3i6IWEMQ9LScK6uM0QnBbM5NUX9L6hePyG/VFQGhGVwp
-         yrutnEdo+lMbKqhRElOL/guTxtCUcJSmflLE54qW0EGDnf7gaUt6sZCWETWxTFMS2xBC
-         qsOyvOrwd2F/C+7CAIc8Ue3hnsor2FaZUI+4GfsKHJuF0Q/sB7GfEwgbcbMAkxaqgHXu
-         eEJA==
+        d=gmail.com; s=20260707; t=1793900021; x=1794504821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=FJNy2Ck1RWiBBtfKia9ky+RnixbUgCX5yahdUPGgwzE=;
+        b=GyF6YzYkwcfyfHnKibw8IIeooBvfyNHxkcAV1jJMTNU5vjvpnqKowG+uY7aet8ZC56
+         bCDc2TnFAVbFHLSslzTWYowdMjW9xyNPrtFSHUJNrfVjj2Bsk3nohMzVdvyKoOYPPbZ5
+         fwxFHNggWViaS7BwqCT9siMysvEgTFAEn4DvfwkkQVBZgF/vUg65F4lj6qmojUVRFazq
+         uhYeVWakNOtCHxzescl7opm5E84JIE63yBwP4U0mcwPb64hN/pNzEIiT4TULT6rpcnL2
+         8VcjlFTJGWMaSO0GV14/qZ3d7w9AaogkU7FRwen8DJg/A3vWBMWTeKi9pM40ixb97G+b
+         Vvew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793897782; x=1794502582;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=sXd2orHtvS28hhtBKOplUBavOCjio3xkwlj67EhnJWU=;
-        b=N7v35v0kzNp5drPt3aGTxJng09I9v0R8bSAE91g5Awvh4GKqxYR7H8Ht7NP2lrADa/
-         /uGvLB5jePHHnGRQBhoQRSvlMZ+3EO1eGc8OhZdQgn2uV/B5vB6DtzBVQ2T/O2jRFhRv
-         ezpP2MfJ3CBSMixb3Eo2Lauks4ejNzKLnJe/rwoUoOuPEc3dcQVIw7u30tkSXmZWJqoh
-         n2NlfKwFtEU5M3ZkpFlgOhOW5kYTYOOIumFYFyMctePMhKxDMwnwkEpGiFbd0Ijrnv4W
-         nB/xBTkfvw2MwrZSmUjvkh3nx2OQ1HKZFaOnZ0jLGCe9vcVS/Gy9Ejr2TVn4lbEXUiZ3
-         kMjA==
-X-Forwarded-Encrypted: i=1; AKwUvBzwZQdUo152d3NaGev9FvxN1P6witWp0ktE8irmI8epN1unhERch9Da3n+7PUKxFVNNci0WY8s4QmQAPCAOz/T/@vger.kernel.org
-X-Gm-Message-State: APuU4Z8LPCPvXQAa527xKY+7OkSEg5Fd6l/j9Gl6j0yqqCDwisWI2+mL
-	Usdxi/gVo4Vfs+Lgn+5ACqISvDAL0A/JMwZlPI24AR8AaQdi9EwPmxCJZIu2QK2WBS0=
-X-Gm-Gg: AYBFou3P6yi9zG3ZRQssLBM0Cuu+UFVBfq2yj/cX+HD59Wh147fbKAIz97OnWr1PNce
-	v4df2sHB0XALS4ekFksHRUS2xRhxWvjoLtERx6OaZhXDJO2XErrdBnzvgqSUB675tlHmbEMneRk
-	c0hKzhUJvM6sGtoLp5ouaGgph/hX0YXPHVSynORLU3OfiacnmQq1GC2qSJDidhA0jJ12cE4fWO6
-	gWNUUhuyx5Km2NIj7y12q8MGkAKC4v0xdjUo9hENj8a8JWp+Z0AkxN0t9BaquXBrcObt0Itl8ap
-	IA9ZU10l8TVkkCWUsvUcnCYMk957CUQF2XbNnTdDIV23DyFDhYtX0zfF1JgcvMzTxO8J89FxE3z
-	X4kDhXcZ8WRUcSmu2OE3mZ8Dd1BCd3B4A7RfwTG0QlfapqmH3JRM/lz6oQMi08I4Bh4p45vg1ik
-	onTc9oJGkNxpH4LgRCwu9k5R1PwzZ6St7XW4zHdm9u2JHCNIMTDEMsS9aed5zbFh/AM7Eg1EFGB
-	i/l/bawWp0YAmgLIIcgyCifbj4E3ViRUGcS00mMNoJqZnzTElhnPlljV2pZL6wgw6VlBTd58+EE
-	As2FouBKAnAl+EZTCK0lOiHxR2bEKPE=
-X-Received: by 2002:a17:903:2290:b0:2e8:3d48:4d8d with SMTP id d9443c01a7336-2ed40ee5387mr1933055ad.0.1793897781997;
-        Thu, 05 Nov 2026 08:56:21 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:c7a9:fa1d:b267:7419])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2ed09127905sm20286145ad.48.2026.11.05.08.56.20
+        d=1e100.net; s=20260707; t=1793900021; x=1794504821;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=FJNy2Ck1RWiBBtfKia9ky+RnixbUgCX5yahdUPGgwzE=;
+        b=H9QM8w4XGzFN2OMjwbm1DMLbrqUNNC3vF+ntF2bzKAJianr2ELCTaC3qQATDklRorS
+         MjrGS3YLikK/RTdkGDBolPbWrbq54jB47JLAtjY/lTAY1WH1cm90kQI3ZcHJ0TC9y0Nk
+         EHLyZLT2M2Qw4S/K6dsZK0UNGzEvd1ycYM09gVjD8Kdy62Em2/BDnxJvi57JHQYYxX1B
+         tcfjQYDY+ezd4arBE9apGcod33m+XTrZDWBG2gDP+WFkA19o5Aefz05gehgHxlpeZAVS
+         CBBmw122+x1sparO9Nb/aRLD1OKl+ocsKimkraxgFXcHKy/ldkj7uXU3at6lIcnK0Max
+         RyFA==
+X-Forwarded-Encrypted: i=1; AKwUvBwUsCsuh5aVbCSy6UN0edGMogK+FMGBllofMXermY5l806VR0b+GY9TlO+2lbeN6zBlsQd4KeYkZxIuvRyYNvcX@vger.kernel.org
+X-Gm-Message-State: APuU4Z+8Wa8UmSjRquFSBkUw8ILn6xTUbzkvXac6l3ZMOgbXSJL/OizH
+	RVIfFMFxeOPbkwLCrq19+WW5zWpXjeYomYHc9elPslANd2IlEPt3mEs/
+X-Gm-Gg: AYBFou0qO0nQdf8b34fxF+s/m9XJKSAUEm3D6zyNao27HyC+BnmYTSZkphC893UceXw
+	7gG2QKOJsHwEQOIChb4k0ogrXqk0XJKDOEMm1uy0fblCWba2bFx9L6R/aP5yxFjAimQmMtKGwGd
+	YGksfXfStW2y+0mRab209QaW8YAuYL3CiqwdZ6zBn1JG8z+IbipnDKg1CHB6qk5AQ4bzm4dYC5s
+	0UgSYy6+U5YWJn/Uu7Zg3355+RURfQc2y3/xqg2D9H0I0uRmnXP4fOtunVApKpnUQSbPRpHuiQE
+	9824Lo/urEIxzdVpyn1A/oJQWHBfj5fpTxk1A9B+CtgNJdnZsignKgSKLvT9OOoapOj+RVbaKzw
+	RA4L9jvoJSqzbWsON8JvXDzrqYDPqT+gnft3Hgjtazm1Y56EVWj1eQgqWBs9zFn83GXjvnsxMBx
+	1E/+svgKW5W+4Th4MWEkqbWKZMGeJAvSbycfskZiwUhaHxPL4kDzAQ35Vs4jOHGw8tMm5a2LMbm
+	d/xRoYCy7CwwEMnt0aNC+TANk5zt0enVtF5T37C+4IUEDENLX85AO4MkGSjKEilEgMOS64lBcOO
+	uMMcTSALEoFbgdoNAl88Ah1E0NkNwVZrLOgxO4QAXGKhYPDKbEd7
+X-Received: by 2002:a05:622a:5c8:b0:535:87c3:79e5 with SMTP id d75a77b69052e-542b7141181mr318589391cf.39.1793900021149;
+        Thu, 05 Nov 2026 09:33:41 -0800 (PST)
+Received: from i4-gl-tmk5904.ad.psu.edu ([130.203.156.186])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-54b10ff4bcdsm55937041cf.29.2026.11.05.09.33.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2026 08:56:21 -0800 (PST)
-Date: Thu, 5 Nov 2026 10:56:19 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Yu Zhang <yuz08559@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] rpmsg: char: take ept_lock in the
- SET_INCOMING_FLOWCONTROL ioctl
-Message-ID: <auy1M1b4-ymv0OyD@p14s>
-References: <20261026100306.68019-1-yuz08559@gmail.com>
- <20261031090650.23701-1-yuz08559@gmail.com>
+        Thu, 05 Nov 2026 09:33:40 -0800 (PST)
+From: Yuho Choi <oss.patchbox@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yuho Choi <oss.patchbox@gmail.com>
+Subject: [PATCH v1] remoteproc: qcom_q6v5_mss: Leak metadata buffer if reclaim fails
+Date: Thu,  5 Nov 2026 12:32:24 -0500
+Message-ID: <20261105173336.32359-2-oss.patchbox@gmail.com>
+X-Mailer: git-send-email 2.43.0
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,77 +97,56 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261031090650.23701-1-yuz08559@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 31, 2026 at 07:06:50PM +1000, Yu Zhang wrote:
-> rpmsg_eptdev_ioctl() handles RPMSG_SET_INCOMING_FLOWCONTROL by calling
-> rpmsg_set_flow_control(eptdev->ept, ...) without holding eptdev->ept_lock
-> and without checking eptdev->ept for NULL. rpmsg_set_flow_control()
-> dereferences ept->ops, so this is the only eptdev->ept user that does not
-> honour the ept_lock discipline.
-> 
-> eptdev->ept is torn down under ept_lock: rpmsg_chrdev_eptdev_destroy()
-> (reached via RPMSG_DESTROY_EPT_IOCTL on a second fd, or when the rpmsg
-> device is removed) and rpmsg_eptdev_release() both do
-> 
-> 	mutex_lock(&eptdev->ept_lock);
-> 	rpmsg_destroy_ept(eptdev->ept);
-> 	eptdev->ept = NULL;
-> 	mutex_unlock(&eptdev->ept_lock);
-> 
-> and rpmsg_destroy_ept() drops the endpoint's last reference and frees it.
-> A SET_INCOMING_FLOWCONTROL ioctl running concurrently can therefore read
-> eptdev->ept just as it is freed and dereference ept->ops -> use-after-free
-> (or a NULL dereference once ept has been cleared).
-> 
-> Fixes: 5550201c0fe2 ("rpmsg: char: Add RPMSG GET/SET FLOWCONTROL IOCTL support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Yu Zhang <yuz08559@gmail.com>
-> ---
-> v2:
->  - Drop the paragraph about the other ept_lock users from the commit
->    message (Mathieu).
->  - Bail out early when the endpoint is already gone instead of an
->    if/else around the call (Mathieu).
-> v1: https://lore.kernel.org/all/20261026100306.68019-1-yuz08559@gmail.com/
-> ---
->  drivers/rpmsg/rpmsg_char.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
->
+When the device tree describes no "metadata" memory region,
+q6v5_mpss_init_image() allocates the MPSS metadata buffer with
+dma_alloc_attrs(), assigns it to the modem and asks the MBA to
+authenticate it. It then calls q6v5_xfer_mem_ownership() again to
+assign the buffer back to HLOS.
 
-Applied.
+If that second call fails, the buffer is still assigned to the modem,
+but the function only warns and then returns the buffer to the DMA
+allocator. The pages can then be reused by another part of the kernel
+while the modem can still access them.
 
-Thanks,
-Mathieu
+Leak the buffer in that case instead. The driver has no later point at
+which it could retry the reassignment. The MBA and MPSS regions and a
+"metadata" region from the device tree are never freed, so this is the
+only place where a buffer that failed to be reclaimed goes back to the
+allocator.
+
+Fixes: 6c5a9dc2481b ("remoteproc: qcom: Make secure world call for mem ownership switch")
+Signed-off-by: Yuho Choi <oss.patchbox@gmail.com>
+---
+This was found with a static analysis tool from ongoing, not yet
+published research, and confirmed by code inspection. Compile-tested
+only (arm64 defconfig, W=1); I have no Qualcomm board with a modem to
+test it on.
+
+ drivers/remoteproc/qcom_q6v5_mss.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index 2f71ed2feff6..1a5afce4e6c1 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -1128,9 +1128,12 @@ static int q6v5_mpss_init_image(struct q6v5 *qproc, const struct firmware *fw,
+ 	/* Metadata authentication done, remove modem access */
+ 	xferop_ret = q6v5_xfer_mem_ownership(qproc, &mdata_perm, true, false,
+ 					     phys, size);
+-	if (xferop_ret)
++	if (xferop_ret) {
+ 		dev_warn(qproc->dev,
+ 			 "mdt buffer not reclaimed system may become unstable\n");
++		/* The modem may still have access to the buffer, so leak it */
++		goto free_metadata;
++	}
  
-> diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
-> index 550fda2..d8868fa 100644
-> --- a/drivers/rpmsg/rpmsg_char.c
-> +++ b/drivers/rpmsg/rpmsg_char.c
-> @@ -343,7 +343,20 @@ static long rpmsg_eptdev_ioctl(struct file *fp, unsigned int cmd,
->  			break;
->  		}
->  		set = !!arg;
-> -		ret = rpmsg_set_flow_control(eptdev->ept, set, eptdev->chinfo.dst);
-> +
-> +		ret = mutex_lock_interruptible(&eptdev->ept_lock);
-> +		if (ret)
-> +			break;
-> +
-> +		if (!eptdev->ept) {
-> +			mutex_unlock(&eptdev->ept_lock);
-> +			ret = -EPIPE;
-> +			break;
-> +		}
-> +
-> +		ret = rpmsg_set_flow_control(eptdev->ept, set,
-> +					     eptdev->chinfo.dst);
-> +		mutex_unlock(&eptdev->ept_lock);
->  		break;
->  	case RPMSG_DESTROY_EPT_IOCTL:
->  		/* Don't allow to destroy a default endpoint. */
-> -- 
-> 2.43.0
-> 
+ free_dma_attrs:
+ 	if (!qproc->mdata_phys)
+
+base-commit: 8396089f91fa07dd77b580e045334e670f782ff8
+-- 
+2.43.0
+
