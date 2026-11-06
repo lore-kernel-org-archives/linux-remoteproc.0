@@ -1,58 +1,82 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793969543;
-	b=JlxxAXtZtqYpVfzRjROxdMDUoxubmVoiCtoNUr7ab0nBe6fYZG5zmv4LIsNFjyU/I1Nj
-	 qbI+4hlj+zRLWOSCgRc2Ecyn4pMt/ZmiOLkPrkJIFoigOX48ZqnAeYUqURYsH2p11soad
-	 PiwkkzTiovr2F47//jzdWSmcQOTfBlxYCcQqB/VnU8ohen09HAAmqdYUj/JfWHeu/FLHd
-	 39f/UYwca7034x6mTT/7a8SEtFtxr3oC0MpZ+9HVRxRarxz7mkfJsSoyclZmFlzltXTN4
-	 UW5Ycn0ALx4IfzssIrqvzPtV2cbc//k2jkPyBPlhM/0iJP1t0IDGmgzBcGwpI157LCw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793969543;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=JjNTyIpsD0vhIknxm9oFvMY1a10mRNqNJaX39V1v6Vk=;
-	b=fEGSm7IiyWdWbdkFngVme3GTxrZ/Lh1yJAAp0gzzqJNSetzP4SxRbd61l+DtREv/YfT8
-	 cuaEjMabDTsLdV5qbvyhWgil6lo0zxhPOr4mo3+1tcI/643ooQ5w3/MF9S0WaEXGzWbNS
-	 h8Spmq6PScoIFyYoZwA+DKo++GoGoVnBh7XvwaV9i9JXxYmo8fMnbDx9R0SRL9PVsUi94
-	 Tj1Ctgf3csRK7RB9C33FpnYgO6jnlWr0eZj+BZrGwdIzWi6uSHvZjRTW2gwWttkEtC1EU
-	 6LCW7mMc2lKcbWegOXI/Bc3gwy9P0qgZQQmu0smUjv2cWFP7DJzWWHiGjjngo91wNhQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TuVLNIC1;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1793979993;
+	b=HNx6kvAmHOhU8u3sKD97zAwHKd3D6bzrTJ3lsDLB28Z84kFvb6BaoJQojH8ug0MO0O3M
+	 zUJMb7fPYLrC3K3kO+nWTFfO5blZURPa0xaPDZyCk+sjzywZpQ4IMXIv2AJ+9JHLCQFgX
+	 mMK26z1Tsh3PBKJtjP+6yByEtV6aQM7aqwlKxPZENqVSukV9bvD4lYXrSysTbmd3JGBWg
+	 YBoQrnytjeWdwqKavIbu9PBlx81HTiIuXOubBm4frE9rQoNP/juU7YUVI0nBIsa4Le7br
+	 6fHeovhO+GiGNf5R/yOAiWEGMdTxgZC4MgCxMcF+vi62YTlc3eZTV+eYKCkIsMrO2XQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793979993;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:From:Date:Subject:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:
+	 X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer;
+	bh=dQxWsk9tD+W0rC/Z3zWfzCTEEa3rqox9nlVNEL9xNjs=;
+	b=BLc7OaZqNcal9VHHYAqDaTW2uG6Krx3yT5YIQZkncKEPJVcYH6AM5e2VJIJgiSG2Z+uG
+	 V23FRt7jj4bHdn0fkKSzCzQ3O9MiM7cq995xSGm4Cz4p7s8Yens5KJ3XLBg6Cc+Qe0EUG
+	 g1U+e7oMhzU8RpiV93eOuvttlGScEwmvEc98c7BGnl9dsZekqS8qQkavPeFeI5CeKa+ny
+	 NDzhCIyL5/gQZb71nM4JXyoMGznjjreEf8T92w6Ru3XIiaW1nBQZl8PfTR8OPnq6UVUvp
+	 Y/CBtfvYM/t6s2knWKKiu1HVQ92Mv1vzRze6X691Pz4jFAI936rMJAVigr9hy1ZhSjg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=none header.from=pengutronix.de;
+	spf=pass smtp.mailfrom=pengutronix.de;
+	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b="Sp/JpgQX";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
+Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEF0606A326;
-	Fri,  6 Nov 2026 12:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEB2606A330;
+	Fri,  6 Nov 2026 15:46:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1CEB2606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=TuVLNIC1
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 920ED1F0089F;
-	Fri,  6 Nov 2026 12:52:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1793969543;
-	bh=JjNTyIpsD0vhIknxm9oFvMY1a10mRNqNJaX39V1v6Vk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=TuVLNIC1x2sGzEiOW04ml49LmDYKCUXm/jkGVvvwEwL+eXgnMtZ92Hb9JFrne/uA1
-	 DpXhM7nm7swma0juSd2QrxPTER665+mTSoIbL9g+UbDLyyNOdZ4efXmYTMDAHbOA4p
-	 7W7TzD/tbeFNwZQWfPIC0zWgVbENvtdxX+FLZQ036BSrNnzp/RcZ0yV38jgIOCG7Pf
-	 c34KFovB9A5CWsy2JX00dAD1LZIyjHjd+QHAeLMTvrwnOO1uFvaW9yRXxRNdzTa3lP
-	 NPEpMNqGEabe1o6AQbP2S/+eiOgUivPB2tKxFlHSxIs6N/zUKqXAosZMTPwXhxz98w
-	 3xVKyyYGt9Eag==
-Date: Fri, 6 Nov 2026 13:52:20 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: shengjiu.wang@oss.nxp.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shengjiu.wang@nxp.com, daniel.baluta@nxp.com, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org, 
-	Frank.Li@nxp.com, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: dsp: fsl,dsp: document debug reset
- control
-Message-ID: <20261106-savvy-invaluable-gaur-7af1b6@quoll>
-References: <20261105024106.338791-1-shengjiu.wang@oss.nxp.com>
- <20261105024106.338791-2-shengjiu.wang@oss.nxp.com>
+	dkim=pass (2048-bit key, unprotected) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=Sp/JpgQX
+Received: from drehscheibe.grey.stw.pengutronix.de (drehscheibe.grey.stw.pengutronix.de [IPv6:2a0a:edc0:0:c01:1d::a2])
+	(Authenticated sender: relay-from-drehscheibe.grey.stw.pengutronix.de)
+	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 5AA9F202AA2;
+	Fri, 06 Nov 2026 16:46:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793979986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dQxWsk9tD+W0rC/Z3zWfzCTEEa3rqox9nlVNEL9xNjs=;
+	b=Sp/JpgQXhr+nR259tgROCK66kbPxBRRhQyRqDv79wzPzEd1HnV3NEBZav5AuQprur9G6lm
+	wXxjtFo4UMTWckSktdHFs4qgt1WY9UrVWZt3mLW18Yb83XZ2Bex67fMv18+dlOIM/M4MzQ
+	OAChgFA5ONzT4TNaz7/TYU+uQ40ZF8tflbWO5G0RtJ1vZP9ZdUf4AKIkOQao+qOsx9mzHE
+	1qNs8GtmyBBbBEI05jOThq3hBvq91vEwSnqkitw5f3nsOJanpNa8qGt6j//EXeIHTcPxOc
+	kVFHFLoTmS3EWc1VRMtxd9hp3FM7m5daiv5OTyhKDPDAxAruFa++dbcvYjn43g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
+	s=20260414; t=1793979986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dQxWsk9tD+W0rC/Z3zWfzCTEEa3rqox9nlVNEL9xNjs=;
+	b=elygiWiaFCrYJ6qHiJfHR/G9HnJlkwBEwz6WZjXxxlIROt9cdFMD8jg1wXaR1Qr8kkZHic
+	6AR4h5Vbmd8jDRoZj5n0njDfiqHnYIgPj5s0pXxl0z2PbqKkgrQ561EemZa1es9g63cnlZ
+	A2WCZKdBvZwf4UCD65r0k3eflLMc79R+ELzR8BekQY1TderszKbjWmrLrQyL7eqIJ3DGz/
+	77YdSNjb9UYDf2UyjBrK02dPood+TMK5YvX/gNqsbqZ+shqU8os9jMS93V6GVZahd+L1sK
+	gtBpGmnBklQMvZ+AN8+QFA3M1gZ6kahyszJGD2TnKcBuBMc1udMAA4EsaFwGRA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=relay-from-drehscheibe.grey.stw.pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
+ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1793979986; a=rsa-sha256;
+	cv=none;
+	b=EespJsucjuk+1V30MTNlXQz8ldN+LyJ7mfkN9pgw4ifyqppT8w+fYNXVPXTIQYRAgl52Bg
+	1FZC68CXwKbWZVLKCph4uQh6ABJVMmgyDTOsUOiL+9y12g74wesPuOj1cnkLjIUNLJdCnd
+	0twYlyZGvJzHHCKQOzXKHjk9VzF6YvAom/GvrHh2JUWIzAr5InGVfHvfO/8RHOVkNRvOfR
+	3+bJZTlUppKLmiDQAUA936M1V8qiQzl3lU15Qd46eNUnpJU47QRnNnjhItt5GFy1IgUm04
+	0FF4V8MEviGWH7sELpWTdDE+im++ihj3j18qwqEQQerEqWWZQpmvgPNIGnuW2Q==
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1xPM94-002vNF-0r;
+	Fri, 06 Nov 2026 16:46:26 +0100
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Date: Fri, 06 Nov 2026 16:46:15 +0100
+Subject: [PATCH] remoteproc: stm32_rproc: Do not request reset by index
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -62,21 +86,53 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261105024106.338791-2-shengjiu.wang@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261106-reset-deindex-rproc-v1-1-41a03fcc8496@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAEb27WoC/yXMQQqDMBBG4avIrDtgIgr2KqWLNPmt00WUGVsE8
+ e5Gu/wW721kUIHRvdpI8ROTKRe4W0VxDPkNllRMvvadc3XHCsPCCZITVtZZp8hNdCF49I1vByr
+ lrBhkva6P59/2fX0Ql3NF+34AL2AJoXcAAAA=
+X-Change-ID: 20261106-reset-deindex-rproc-3c1aa2e9325f
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: linux-remoteproc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Philipp Zabel <p.zabel@pengutronix.de>
+X-Mailer: b4 0.15.2
 
-On Thu, Nov 05, 2026 at 10:41:03AM +0800, shengjiu.wang@oss.nxp.com wrote:
-> From: Shengjiu Wang <shengjiu.wang@nxp.com>
-> 
-> The HiFi4 DSP provides a separate reset control for its debug logic.
-> Keep this reset deasserted so that an external debug agent can access
-> the DSP and perform debug operations.
-> 
-> Also require the reset properties for the i.MX8ULP HiFi4 DSP.
+There is no need to request a single reset by index.
+Use devm_reset_control_get_exclusive() to request the first and only
+reset.
 
-That's ABI break without explanation.
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/remoteproc/stm32_rproc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index a47e040c6db8..1443a4013d6c 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -696,8 +696,8 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
+ 
+ 	ddata->rst = devm_reset_control_get_optional(dev, "mcu_rst");
+ 	if (!ddata->rst) {
+-		/* Try legacy fallback method: get it by index */
+-		ddata->rst = devm_reset_control_get_by_index(dev, 0);
++		/* Try legacy fallback method: get the first reset */
++		ddata->rst = devm_reset_control_get_exclusive(dev, NULL);
+ 	}
+ 	if (IS_ERR(ddata->rst))
+ 		return dev_err_probe(dev, PTR_ERR(ddata->rst),
+
+---
+base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
+change-id: 20261106-reset-deindex-rproc-3c1aa2e9325f
 
 Best regards,
-Krzysztof
+--  
+Philipp Zabel <p.zabel@pengutronix.de>
 
