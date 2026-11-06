@@ -1,113 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.169
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793922886;
-	b=a8bsm0uAJSV74nN/QsHO6qI3BdULNBGQUmG1FeNmvweQBm51udrW3fcLuE1CE4suNRgC
-	 owcQkf5jnNFkgGr3bp5qQ5sN6W0p03HCjQAU/gsol7f8eabIo0DElxs+WKv5DQAJbjBYA
-	 +xi3bgz/NC4AsLENNHoSQnfpzJl43hd/AIvpYp/SWWcVZ6IGp+W4VsjIQwMmDylAsdn++
-	 zsDB8HrXUTpolc6KUMcPWsrV7nkIkF1PEr1R7HVWss924NLVZvg1dw7CwyodPJKtBmyc9
-	 bNUge5NSHSw1vPvulZPNc47t94JCmDfBwELkZ727QnG4FwFz50AEx1ozs3DNhaRGTMQ==
+	t=1793947869;
+	b=PDEKKfrR8squesBjVK+AjOTp30Ur9rviTXdp2LFJSvLOwniHbw+b1WehUfPOcbMv7E40
+	 YMk++iNiX3Pp0TuI/1tLp/vqJuoAgzebJa49soExq9DjLblxuoSiNfsmhCE7/ouWUC8Op
+	 wM/HMcirog45QTDs0Aj8F938PN6ZV4UQm7RAYbUUibGmbApOb/DP4lqewdTsZRC+VRUYg
+	 0l7FWtEyid7P1bEOMrJtAsOKTuSWHsG9dEtXt5VBiCvSTI6qMvsXQ33GeT17cgAqcvxgc
+	 RbZY206o1YyO5B29/+nKdd5JRALSiXlnbqdiIrYygXoW9NTJPUBT14asPPhy33Z/ubg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793922886;
-	h=DMARC-Filter:Received:Received:X-Authority-Analysis:DKIM-Signature:
-	 Received:Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-BWhitelist:X-Source-IP:
-	 X-Source-L:X-Exim-ID:X-Source:X-Source-Args:X-Source-Dir:
-	 X-Source-Sender:X-Source-Auth:X-Email-Count:X-Org:X-Source-Cap:
-	 X-Local-Domain:X-CMAE-Envelope;
-	bh=gVqx0nYfuSEJ0GdcgxyreyG7706GoUCJZ8KOhEimfQ8=;
-	b=was9StkzRlYmBXCvyO9aydhzNhADvHLQ0GkiBrURrcztrZP2E1DMLhDqmoV5yFIEU7Ig
-	 kNgp3k1o2T6gPK8w5nRAuNUTob/jQdFHcHMBXEJ3tve/aoxVL9i3/5fSD1eXxiK2Yjvs7
-	 Rvo7Ol9qlC4hFJ57YnIRRcNwFYObwgB9DIjt9h4giDrrgVmbky/Xxf5wvw3YVxKY3+Iru
-	 Lx9+NtuUGlzMSjsjpvuhhE7w2qCZjVEE8QTrTWGgBp9zv3KDfRl6dVDeApE38bNsObyP3
-	 5KLUcYhlLN2g45JgtkagtnLeyauS9RiyA8CflTERX4sbScdIhbIthTj2+3RexP6R8Kg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1793947869;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=HY6NyKTM8r0x5O+rVjJnGBZO/BpAxBcqOXQFhbzKwHQ=;
+	b=TJc4e/8/hMGOGJEYDeEP3mphKOkgjxn3y1Ui11tnAILPV88CWPiHFzrZm6LixCsA77N4
+	 Uek9BcMQbJdwAb0zakkJz5g64SnCCANDgH9LY8m9Y4ZVjRWcr60vMPoNSanA7wDpUpzCf
+	 CtFGtaTO989ZXTv+sGjdvxxdavnQWXoDTi3ziJwll4GP0s/A0K46trNjIxXu6yUx6aid9
+	 Erx5M5HY//ofHV7TJJ6uNHSXJ+QVrfoHnHuPnU9S+dW4mO+SVqIMmTcJ2SADZUvnIegao
+	 ba3igrhL+NqQkd7+yBlKfTUNDfR+56PzXv4wshx0/h71+1wjZMOTyTpnAl2Zw7ebsMw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=none header.from=roeck-us.net;
-	spf=fail smtp.mailfrom=roeck-us.net;
-	dkim=pass header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=PZgyvCP+;
-	arc=none smtp.remote-ip=35.89.44.39
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OWtVX+9y;
+	arc=none smtp.remote-ip=74.125.82.169
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com [74.125.82.169])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FD6606A32E
-	for <linux-remoteproc@vger.kernel.org>; Thu,  5 Nov 2026 23:54:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 01FD6606A32E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=roeck-us.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6BF606A33F
+	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Nov 2026 06:51:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5E6BF606A33F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=roeck-us.net header.i=@roeck-us.net header.a=rsa-sha256 header.s=default header.b=PZgyvCP+
-Received: from eig-obgw-5003b.ext.cloudfilter.net ([10.0.29.155])
-	by cmsmtp with ESMTPS
-	id Ow8UxwV2wyb4YP7I5xNhlg; Thu, 05 Nov 2026 23:54:45 +0000
-Received: from 162-215-252-36.unifiedlayer.com ([208.91.199.152])
-	by cmsmtp with ESMTPS
-	id P7I5xyyvsbtpUP7I5xII9F; Thu, 05 Nov 2026 23:54:45 +0000
-X-Authority-Analysis: v=2.4 cv=dIqmmPZb c=1 sm=1 tr=0 ts=6aed1745
- a=QNED+QcLUkoL9qulTODnwA==:117 a=2cfIYNtKkjgZNaOwnGXpGw==:17
- a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=M0FbrtG7MMAA:10 a=OuZLqq7tAAAA:8
- a=EUspDBNiAAAA:8 a=pYUB3rPNxVkG2UVf4jEA:9 a=CjuIK1q_8ugA:10
- a=AKGiAy9iJ-JzxKVHQNES:22 a=KPbNTLLc3YvdawN95zVk:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-	:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-	:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Unsubscribe-Post:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gVqx0nYfuSEJ0GdcgxyreyG7706GoUCJZ8KOhEimfQ8=; b=PZgyvCP+eIup2LALOsc1El6qhX
-	BpiSGOeVoHC2LKTSnFsH2qjCv++Q57E0cKLuYoRslbciG/VerYtXhrcuLu1iQUDlnCkWjaWtbDrrx
-	RCgrwwIlXJaHXe7c/G/u3uP2rz3Xx7V7sH+/rzip2tA/90KtrTMgb2+8oF5wQHF8TDcMFbmaaaLd7
-	JZsTVXOKJ9j2MpzTZU3R8RXdjeRZ1t7tEnvvh8cFihXHNVBUmVxxLkmzUsFkM2I9ijxyWf8HoN/AX
-	H1EfrwSIpaqSRJ3fSTLcklPmkgRjlPgCM5N5R9J+ALX+ConkfP2eURYPl5qimFEBtAKnTcwZdPc5R
-	9AwVujhg==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:60104 helo=server.roeck-us.net)
-	by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <linux@roeck-us.net>)
-	id 1xP7Hz-000000019Yr-1Hb2;
-	Fri, 06 Nov 2026 05:24:39 +0530
-Date: Thu, 5 Nov 2026 15:54:37 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Muzaffer Kadir <muzafferkadir@mainlining.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Joerg Roedel (AMD)" <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krishna Manikandan <quic_mkrishn@quicinc.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	David Heidelberg <david@ixit.cz>, phone-devel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-remoteproc@vger.kernel.org, linux-input@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-Subject: Re: [PATCH v8 03/11] dt-bindings: watchdog: qcom-wdt: Document
- MSM8952 watchdog
-Message-ID: <f6bee82d-3e64-4e93-90f0-9470a166626f@roeck-us.net>
-References: <20261105-msm8952-initial-support-v8-0-311ae8e8f14b@mainlining.org>
- <20261105-msm8952-initial-support-v8-3-311ae8e8f14b@mainlining.org>
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=OWtVX+9y
+Received: by mail-dy1-f169.google.com with SMTP id 5a478bee46e88-36e99cf7bb3so528840eec.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 05 Nov 2026 22:51:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1793947868; x=1794552668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=HY6NyKTM8r0x5O+rVjJnGBZO/BpAxBcqOXQFhbzKwHQ=;
+        b=OWtVX+9yJiDrq0rs2SpBd1em1ofisUH7B0auKEjhCJaJR29DjdEYtxDQlX+Dw88AH3
+         3scUaZMgYjvdWP6yejXOIoQTt8JFDEsneRU6k+BjRU/wXaYOyANu40T81x914lb0M4Nc
+         kfIa1BRPkCDHu3LsYSyKL+1kN9OrruoODUS3W8BbQEXCjrd7RE5Dy7LlKw5LElg8OlLU
+         ScnnOIekOhEoMnGJBQP1n6VtNynZ/4Gro8USt/QjLxFhILpJVqWByAJy5ma6NlqIpFgj
+         w7TbiXpwxmWNXntPnIEsFqSIcgVSfqHazGSBIyGTO3R7L6GuTCTxsE7wuFbJOVVFcnai
+         NfwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1793947868; x=1794552668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=HY6NyKTM8r0x5O+rVjJnGBZO/BpAxBcqOXQFhbzKwHQ=;
+        b=GsEnGEsq/1dh5ZwnbGfK6mdk0rB8Il6EKF7fUiZ567e/pzg9ISOr5VnjuciPZpLnqs
+         aA+F0e+AuG77wHAxjW3PO62yE/b/TPyMtoezqg1JsXRmA9MOHf14SaFg4DdshgEIxS6C
+         WJxK1so/svT3tMpP21HTsRCDzjLrfxyrXwpR9413qVrTBcQwsZD9nrvxpyMGnno1QRsq
+         wByM0XWG79ZhbExIRfqstIdL2aAwYQsFmGapgVJ857TRuetp3fvCFLuVxMenHWLzxP81
+         k7e3w5PaV6lVHarsAMoD1i5RWgf97cvfohfefin9kF3/VZI2gtoQk+4MH6cwXuLhF9vi
+         t35A==
+X-Gm-Message-State: APuU4Z9BiDxJz4BumLMnHVfJZvQw46fTTA9pWWF30gYIoWY3ecoT//ZE
+	gK/JI8jcNMayDQWw8Z/ohsxiNoTMkoa1UB/iSW6yjSSa+lG/GANmqlUAuxT4N7fCdmc=
+X-Gm-Gg: AYBFou1PMmPtjH/TqhCH09ZgRlM9NhRdPuHNxgz0wcceno57NK5fgLckexEdSdSNu9J
+	IyMI2H3OXI2sMBRPEiHMZhdxxyS8WH7/YKXXpx2YVaezxLkKxcV/r4M5TXteeor+T4ZxSCKaehi
+	NfcNXbZ/rdaI0stSzqaxPC3EGrZreT//NwG3btQ7ZOtcIsUbXUz3TiBt4tz7/Df6JGq5MW4CIl5
+	u8LQEW+wQBP2LLf5sxiS9vRdrrrn0SAOhTp9BVvM1oiDEPUAVtNYSrLYmT8N7k62ETD/HIikTn0
+	MUOtXrTtYOpk1jHC6XOQUvEbE03yjP6W1Sb7OUTD7upuZBg4y9I2rRUOtYQYUChoUPJ+dpoR4eY
+	HvljLBE96edAZ/dq0K2psAwca6UBdXiWIrj45mfYoVAFvEy4GVEkOnzGsQrqZz7ulPhKXc1lp/3
+	AWNQIrbNGI9SKe3Z+6fM3EiCqvWF0l4loeX4P9Pa0mFVtihiQDveTmUi0N1to4dHfs65FOhvA4b
+	JawYH9D257rz3SD4mvrY0BlRmj8To4VymU70G85hfGjZ20sq0u8GTUnm6EuLDEKu1kbbUJSrUmI
+	l/ocA4oIVZ9C65GIMj5kuBq2VRGCEyL2U23ZFySXME0ig7jk3MiT
+X-Received: by 2002:a05:7022:3b83:b0:1b2:4cc7:7db2 with SMTP id a92af1059eb24-1b25d34ed54mr2078977c88.47.1793947868395;
+        Thu, 05 Nov 2026 22:51:08 -0800 (PST)
+Received: from localhost.localdomain ([117.20.154.48])
+        by smtp.gmail.com with ESMTPSA id a92af1059eb24-1b25e4d22cesm3196906c88.16.2026.11.05.22.51.05
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 05 Nov 2026 22:51:07 -0800 (PST)
+From: Yuqiang Sun <izaiahsun@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] remoteproc: core: Do not put the device when device_add() fails
+Date: Fri,  6 Nov 2026 14:51:00 +0800
+Message-ID: <20261106065100.44269-1-izaiahsun@gmail.com>
+X-Mailer: git-send-email 2.54.0
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -117,39 +94,54 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261105-msm8952-initial-support-v8-3-311ae8e8f14b@mainlining.org>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-BWhitelist: no
-X-Source-IP: 108.223.40.66
-X-Source-L: No
-X-Exim-ID: 1xP7Hz-000000019Yr-1Hb2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (server.roeck-us.net) [108.223.40.66]:60104
-X-Source-Auth: guenter@roeck-us.net
-X-Email-Count: 3
-X-Org: HG=direseller_whb_net_legacy;ORG=directi;
-X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHhmpPUeH5iiR6Bya5sZNsP0UCwtr1ac7o3D4gPw/CnlI1TrgMCfYITd7i9c3QtMEdO8yc9n5lJeSFm9u5PWB7RchG6hb5vPMGdX4vJMnKahbiYD5+eW
- lOS93c2rbOQJo0vhdrk7/UpCXZY5fFtCY7KeIjMzLuk/1XnPzPMrdy3kvVwE4bhnuPPwQa4/Mef5PgDwJhNYHEFoH/T3P7e1XKso3ndD7/swp7krmTVgXENM
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 05, 2026 at 01:54:07PM +0300, Muzaffer Kadir wrote:
-> From: Muzaffer Kadir <muzafferkadir@mainlining.org>
-> 
-> Document the watchdog found on MSM8952.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
-> Signed-off-by: Muzaffer Kadir <muzafferkadir@mainlining.org>
+In rproc_add(), put_device() is called when device_add() fails.
+But st_slim_rproc_alloc(), xlnx_r5_remoteproc and the other 23
+drivers (which use devm_rproc_alloc() and so devm_rproc_free()) then
+call rproc_free(), which puts the device again. The reference is
+dropped twice, and st_slim_rproc_alloc() uses the rproc after it is
+freed.
 
-Applied.
+Remove the put_device() in rproc_add() and add a comment saying why.
 
-Thanks,
-Guenter
+Fixes: 7dbdb8bd7c02 ("remoteproc: core: Cleanup device in case of failure")
+Cc: stable@vger.kernel.org
+Signed-off-by: Yuqiang Sun <izaiahsun@gmail.com>
+---
+
+Notes:
+    Changes in v2:
+    - Comment in the device_add() failure branch (Mathieu).
+    - Shorter changelog.
+    - Rebased on rproc-next.
+    
+    Bug was found by kbound, an internal static analysis prototype.
+    The reproduction was assisted by Claude Opus 5.5.
+    
+    v1: https://lore.kernel.org/linux-remoteproc/20261029130037.5505-1-izaiahsun@gmail.com/
+
+ drivers/remoteproc/remoteproc_core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index d5fa9d23bd5c..d0b1f6ee49d3 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -2312,7 +2312,10 @@ int rproc_add(struct rproc *rproc)
+ 
+ 	ret = device_add(dev);
+ 	if (ret < 0) {
+-		put_device(dev);
++		/*
++		 * Do not put_device() here: the caller's rproc_free() does
++		 * it, and the reference would be dropped twice.
++		 */
+ 		goto rproc_remove_cdev;
+ 	}
+ 
+
+base-commit: b16b5a4fdf7d1f4ec15a53622d9b66081325fbf9
+-- 
+2.53.0
+
