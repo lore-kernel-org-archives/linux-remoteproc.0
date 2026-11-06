@@ -1,95 +1,93 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.180
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1793987730;
-	b=b5tS1SfnpJ+WQFlHfaCrnWEaCTLLI2+IQ/5iZaxDjcHNSvepG+7Spw5YQ950Q6JPdWnk
-	 BsX22gE3rH15uovXPPcnFgA6Qc2LNAZyCV4sNZ3a9dcNWKOnmZW0wqLMNqR1sOl7Vp3/b
-	 HUYSltY/u74GI4eOkCHlrMwnNgR65l6WXn3TE2h+jt+pR/xIGBS0heCjoDr7rAuEdiNAz
-	 iIsm3Bfw9tSERs6yD8wbrKucoxH5zpYNoCVWMVtw75Z0MhHAhQ1kP5/r4RTRYnaxcYjwU
-	 h1yTPVHB8y7rZgCNTSihrJ0nbewUuivYettOpBrsf7n16U7Fs5KDFivOK0BHX2Rz7qQ==
+	t=1793990605;
+	b=uWWEn87uWDc2Ohz7HZiTRbgiUURUk5D7GzvQOLt5t/wDDMbLAQgY0+WweDPh4D9RLpVP
+	 QGxKr4KxLlzSb8OdLymYHs6q11gRW/dB1oRYe0o2rtcUkp7cWfC1vsYC6JeahdvNVPv4b
+	 /XI1+vGaO5QoIdvsptyTAYr9rmIlgT82s8Z4BSSsz1v4bqrlY13jZTlA3CO4G2L2Y2Swx
+	 JIqMWsftCm5azUktxlZlcqjYJ5tgQkeDxN0VjmzRb8ncbol0kXkMJJREXQL3OuTLPUPHX
+	 dale/S2W9xErKtzU7xTJCCFTWpswidKSZ6VPj6irrEc7282h9/1wJasVGguP4YP4gNA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1793987730;
+	a=rsa-sha256; c=relaxed/relaxed; t=1793990605;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=mr8GCRAOmajdICVG5OcvHing6H+KXq+hdcv7TT8Lw4E=;
-	b=BoG8orOqlKJc8MmgYitMu4mYhPocnCkJME0rAHqNZQGbQa5UdX+6vN+1GZi/x6fnfks2
-	 kfyY7TD+3wgV6mbEoygE/4TZ+zeGgdpJgjgo2xfJtT78gNlNyXzKGptxrRwpqWszraRiy
-	 JRwZlvSfoQ3Wk0TvF9acmtIqYJyXUGeD5Ijp2eANExnUXGsFSshDfOdZnnIKbZ9SPHp5i
-	 AKl4OQC0Pq228Z3NQeeUFtCK4NKforO9V5anPzvzaLgJagJGZWc11q+SjnUIMKSusBnJb
-	 Abx5BnYe6ZE3ZdrYVILOBap7fUratTpcowq+2tktk82gT5pKl9xVaM0xZcFcOY0cPOA==
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=fj9qCzoz3f+xnhhJ4C/ud2J0v2Gz6A5yTqsQ9J2hXWk=;
+	b=PUYIf6tT3Wh93lr6CarRfCFuDVFcGPnrIjtj1YfLSCjJoMcqg9gcxn7HZBq9CmQ0D35z
+	 iJlB9B5TSkEvPkmJ7vd5TO+fZPZJwVG+FsO0ZWdX+dxhM4FvDBUkZDWxwx6kxId95L9ZU
+	 3DUE0H/no5JKi0o3uZacu5gorcKjnSCr8SVR56CT7vFwBTZzT4k9KGPVrU8ZKa5Lfi8UI
+	 Lzdz4dzEvw+CcEifudLrR3vMSBg4C09/bmT0HbKVpvW19dn34aULGtVBvF9kNqDvBZM4+
+	 WIWdIog9dLJcbAjoXB6jle1mcMf9Vi7owVJInzmHQAornHYztxRyUt2889PKPy92r9w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=dBhIDylT;
-	arc=none smtp.remote-ip=209.85.210.172
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ALdpfCJN;
+	arc=none smtp.remote-ip=74.125.82.180
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com [74.125.82.180])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50082606A334
-	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Nov 2026 17:55:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 50082606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6546606A329
+	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Nov 2026 18:43:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E6546606A329
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=dBhIDylT
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-89d6bd67045so475343b3a.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2026 09:55:30 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=ALdpfCJN
+Received: by mail-dy1-f180.google.com with SMTP id 5a478bee46e88-36f8cdd30beso1331694eec.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2026 10:43:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1793987730; x=1794592530; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=mr8GCRAOmajdICVG5OcvHing6H+KXq+hdcv7TT8Lw4E=;
-        b=dBhIDylT/qvwXP8fIUl4kmmy4r+PqQddze5z3d6HGGftNMDhpZVdKxP4mdiE5hfeh6
-         icFwF7vsZR+milGnnJUQkMNBlOP92rUCeeWYg1p/qjZoDVPIg/L2oGtKDzflrMSXy6tT
-         hTF+fIHofeUqCDUZ69zp73yPVPJm4JNkwByGTu/6KkkJT3YOuC6pr/LKgOUq8Z3bZo/B
-         kYpeuSSTVFdZQBgtR1AMFSP5TR2AavvKyvXbAJQJeumzh9iXBh7ke9ISQK3QTlnjjcZR
-         Dhp1RC/8KEXfNHYyGc9gjqdg1QxqTSMomDu1ZM2lSP0P0Qj4cHGHWg9Rf8t/fzu2W3z8
-         0/rA==
+        d=gmail.com; s=20260707; t=1793990604; x=1794595404; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=fj9qCzoz3f+xnhhJ4C/ud2J0v2Gz6A5yTqsQ9J2hXWk=;
+        b=ALdpfCJNPx/mXbaQBrqXDAxCA4aSS1RIH+Wy1UveDNxBxcB+3TKfupyaGDOHtHYtCB
+         guVedBf11daK1VGrd4ZnKQxX27CGa+GzihR4LywB2BB2dMQXNXtXgMj4iVVrnJOSIbgK
+         SSEI8TiOfuRC37kjSo9Ru/gvxhNPLVg8jGx+TWKB8wyBABRh0vTfL0SB7K1yV0IUyzd/
+         GRBmAO2FfAxZM8Uq2b6A6TfLHn5/h4wC6+e9PktoUr2V6NDzLe+J2rdx1+LiqUMX+QU9
+         7LdTHD+T5Zln4TlvFpZ7dRKOqlOjqRVR0bd7y8kDe7UB39yFqRYBGx4VA1RH+QQbPa6A
+         HhOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1793987730; x=1794592530;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=mr8GCRAOmajdICVG5OcvHing6H+KXq+hdcv7TT8Lw4E=;
-        b=Uh1CHmxVMlp0LKWQhIfqqk7E2uC9XBTPAxzlYW9xT9HuK1AZTh4jePtOHTdk1EU9JI
-         814GxaNPMQXhnp4expk91f4P1HXU3JfXnNA2oTi3G7qVWmjAQ0inhLY9Zi4TOkFwQV8e
-         93VXi37EZGmDtyt8WY3Pmmn6KDxAVy+5GtGaYTEaCJTV7Ln8Nmpjf/fKoXy3Jz1Hp16A
-         tZmSW3ogmFappgxwJ8c5AnaYA/MF4iLI8BYMAkQOxz6LtpaTsg0QD4oLKIoNmVnpMIz6
-         21fY19y8MN0mCFG9IGN54e6uJPqOCvvHpxSi3ZxgNtD+CE5IG0o4U89aFHY13r0DO/Cl
-         O7xw==
-X-Forwarded-Encrypted: i=1; AKwUvBzfQPNhc+vKMdAO2IEHIydTuizo2ILE15PXVlVtRH1rlqfqTWKAl0zYsJDHTtFqP1lTPfwnAEAfMJ32PyQN/WOh@vger.kernel.org
-X-Gm-Message-State: APuU4Z9GpX5NqDcyMoRTS6ZgfWIrQsLU2ziXRpqgp1v5qXd834TFUMui
-	RbUO2Wpze7I1jBOu7ZcB4sRtTIwdGbFk+ypTNAOcT5NxbdJht3K1qNMLsizxuvbk5UY=
-X-Gm-Gg: AYBFou3Q9qzul1yHTCSuiBL8bu0hm4hTd99z8wBbP8upPVhOSSXEpuJTHDeOAd3cHaX
-	G5ZEnFX4XRI4f8VWx3sEEm0V1t+7RD5ckxfhdY01gR+qStQFor0Qy+IRgQh/2VtZMTDd6kifF3X
-	aqVCbyGGR9GPJEi6XrjwlPhntHWRaoJSWV5A6PKpYyuy2mvmQG4EEMKqbRh7zefwGvbk/UVGNNN
-	RoDzgIaPqWXEZo3Kio1RcJa1sWS5TDYAvlYlmfnL4bTFHVSpExY8ybceyCF9fjftcV5ixh9K6HY
-	ltUGd8j6JdoS5Sd7+VzLHENcA0h9/mVP1EE55yWcZjKEalSI9kxUjCn3xwJG2qvVS7MXvhzNd7E
-	/94eKwSvDeAoMTJpH4rEh17+XshSpUcUSVReYHLfDtFx68+JG+CsZWS489t14lEjaNUtz7XuZOK
-	K63udFahGthrWq4JdXxntPExeWVJAgsNOP0lNeGEFxWIRO8rKySbGx8eJhY96RH8QsXkEZOnB9E
-	ss+bcrMRMd1Ba0XjPbGhBVuLy3YUr++jVnFeLUZQCeN1OCsqtFdaC+an6dCXe15FUqNq583Lkih
-	iQVYmJtCREefu1xYd3e8mAJFkXV8h1TN
-X-Received: by 2002:a05:6a00:3a20:b0:8a0:652e:95eb with SMTP id d2e1a72fcca58-8b1e50a34dbmr4767646b3a.8.1793987729411;
-        Fri, 06 Nov 2026 09:55:29 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:b47c:40a0:a4eb:29ee])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8b356c2c5a5sm847951b3a.7.2026.11.06.09.55.28
+        d=1e100.net; s=20260707; t=1793990604; x=1794595404;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=fj9qCzoz3f+xnhhJ4C/ud2J0v2Gz6A5yTqsQ9J2hXWk=;
+        b=Oy3vglGccYp3Qqms7TaMokS81xIUfQQMq1P+a6Xzr5IbcePHLIiHkyYDwNm7g6GAKn
+         LocImWtyuqxp4BYjlbE4jnY1+Lfto+rjtG5n/PWU7KwGncMzX+Q8Z3RseMcH+NcM9dTw
+         sxgnB8I7pZoxQBo624n+YC68eDDt9n1T8T9zhfPjbJLltyCha1tDRJTJb0BktpQdRuDT
+         G3fuA/ty7d3xF62qDobJ6q1TGMFO6Qx4Q5ffyQ6KCERcwx6f2gDq7z6CpooHD52Sn8dB
+         ttuo/fJiybNHLCLXZ481Vjg4SXfjaCWu7qqXZTKfx8nv62mwH+5usPLzofBQX/Bb4AED
+         EIhQ==
+X-Gm-Message-State: APuU4Z9dvRf6b2YnMWA7mZ1y+LlBo70cmxC+pGcVyMLaaboa7MoxKLW2
+	Re5WrCun+L8CsVJ6U4ek5oDldYWyMhLhv0hmyfkPo8wT/8as4Ht+myPk
+X-Gm-Gg: AYBFou0p1I55JuEkrahvRGlq4I6I3yJGVzoRCwh/2thXsJiOM6vWayuWcnT9sQhthDI
+	1OTzsSNMAjEVYEYkEuCE6x5in83rdKt0O+VaD6AhYLl5+r6N9mcqN07TQOEng+Zlwwnwuou3KD6
+	9L094HtsdD7Cbdt9p3YA7bPkuwgp9LOvYhwf3h3CjmYa11EFvRbF4BPSCeVITzyWoDnEUlpRKxC
+	hr2/Wz/xa9UqduoyuYtX3QZ44F/I/hUk9TecV3QV3bRazSlWpWVurmScoDRE4xxmUJKuyFTxb8R
+	2WPZzK6AVw2ugCKSuRWzg9h7w8N2up3QAIzdirr4jRZgViBJRhALMUKEdkDZSiZMIb7GEyCYBeA
+	H8C7naWHjzM0pX1vecuFWO54BLLYOqfiRtgvaXjIfCnIBE7c4yXGl009713pHVYaZXZq4wK5cEb
+	4Add6VLpIuqn82yOu1wi01vwTgy9rjwq3VzF9pcPBjk01OiOVLUfOLYjOSgg1lBQmKY+0IJZCLe
+	gC/pS6FhpjJhGialHnPYz/9WEAL0y4Ua4BVwxFyaYWtEAv7RzVeGsAgjVEmayuudaTubjX46GRn
+	qteN54LVloVfD1Yc7nGSOmEPbLTFUA==
+X-Received: by 2002:a05:7300:10d:b0:36c:c434:b6b5 with SMTP id 5a478bee46e88-36f76621095mr5197718eec.17.1793990603771;
+        Fri, 06 Nov 2026 10:43:23 -0800 (PST)
+Received: from JMD ([2405:201:d028:10ff:eceb:5028:6b10:da7c])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-36fa9aea414sm8278073eec.16.2026.11.06.10.43.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 09:55:28 -0800 (PST)
-Date: Fri, 6 Nov 2026 11:55:26 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        Fri, 06 Nov 2026 10:43:23 -0800 (PST)
+From: Atul Akella <atul.akella@gmail.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	sibi.sankar@oss.qualcomm.com,
+	quic_srichara@quicinc.com
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Takahiro Shinagawa <shina@is.s.u-tokyo.ac.jp>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: virtio: Reject a message shorter than its header
-Message-ID: <au4Ujm6W4Oq53WgO@p14s>
-References: <20261102221504.175116-1-lian@is.s.u-tokyo.ac.jp>
+	Atul Akella <atul.akella@gmail.com>
+Subject: [PATCH 0/4] remoteproc: qcom: Fix DA-to-VA bounds checks
+Date: Sat,  7 Nov 2026 00:13:07 +0530
+Message-ID: <20261106184312.100-1-atul.akella@gmail.com>
+X-Mailer: git-send-email 2.51.0.windows.1
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,92 +97,40 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261102221504.175116-1-lian@is.s.u-tokyo.ac.jp>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 03, 2026 at 07:15:04AM +0900, Lianjie Wang wrote:
-> rpmsg_recv_single() rejects a message whose msg_len exceeds len -
-> sizeof(struct rpmsg_hdr), where len is the used length the device
-> reported. Since len is an unsigned int, a used length shorter than the
-> header wraps the difference, and every msg_len passes. The endpoint
-> callback receives up to 65535 bytes from a receive buffer of 512 bytes
-> by default, and rpmsg_char copies them into an skb that userspace reads.
-> The receive and transmit buffers share one DMA allocation, so the copy
-> can run through the following buffers and, with small vrings, past the
-> end of the allocation. With vrings of 16 buffers and a header claiming
-> 65535 bytes, KASAN reports:
-> 
->   BUG: KASAN: slab-out-of-bounds in rpmsg_ept_cb+0x4d/0xb0
->   Read of size 65535 at addr ffff888002484010 by task rpmsg_echo/140
->   Call Trace:
->    rpmsg_ept_cb+0x4d/0xb0
->    rpmsg_recv_done+0x29f/0x840
->    vring_interrupt+0x32a/0x540
->    vp_interrupt+0x146/0x180
-> 
-> Compare the sum of the header size and msg_len with len. The sum cannot
-> overflow, since msg_len has 16 bits. Move the check ahead of the debug
-> output, since dynamic_hex_dump() reads sizeof(*msg) + msg_len bytes
-> when its dynamic debug site is enabled.
+This series fixes the same bounds check bug in da_to_va() across four
+Qualcomm remoteproc PIL drivers: qcom_q6v5_adsp, qcom_q6v5_pas,
+qcom_q6v5_wcss, and qcom_wcnss.
 
-I don't understand why the check is moved ahead of the debug output and the
-robot generated changelog isn't helpful at all.
+In each driver, offset is a signed 32bit integer assigned from
+the 64 bit difference da - <base>, where both operands are u64.
+If da is smaller than <base>, the subtraction underflows before
+the result is truncated on assignment. This can produce a small
+positive offset and bypass the existing underflow check.
+Separately, the offset + len bounds check can overflow.
 
-I agree with this fix if we don't move the check ahead of the dev_dbg()
-statement.  For this patch and any future ones you may send, write your own
-changelog rather than simply dumping what the robot says.  
+da and len originate from firmware ELF program headers
+(p_paddr and p_memsz) via rproc_da_to_va(). The returned
+address is used by the ELF loader to write firmware segments, so a
+malformed firmware image can cause writes outside the carveout.
 
-> 
-> This patch is assisted by Claude Opus 5.5.
-> 
-> Fixes: 9648224e564a ("rpmsg: validate incoming message length before propagating")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>
-> ---
->  drivers/rpmsg/virtio_rpmsg_bus.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 23ff6c8b7a20b..a9125e81cb150 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -661,6 +661,16 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  	unsigned int msg_len = __rpmsg16_to_cpu(little_endian, msg->len);
->  	int err;
->  
-> +	/*
-> +	 * We currently use fixed-sized buffers, so trivially sanitize
-> +	 * the reported payload length.
-> +	 */
-> +	if (len > vrp->rx_buf_size ||
-> +	    sizeof(struct rpmsg_hdr) + msg_len > len) {
-> +		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
-> +		return -EINVAL;
-> +	}
-> +
->  	dev_dbg(dev, "From: 0x%x, To: 0x%x, Len: %d, Flags: %d, Reserved: %d\n",
->  		__rpmsg32_to_cpu(little_endian, msg->src),
->  		__rpmsg32_to_cpu(little_endian, msg->dst), msg_len,
-> @@ -671,16 +681,6 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
->  			 msg, sizeof(*msg) + msg_len, true);
->  #endif
->  
-> -	/*
-> -	 * We currently use fixed-sized buffers, so trivially sanitize
-> -	 * the reported payload length.
-> -	 */
-> -	if (len > vrp->rx_buf_size ||
-> -	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
-> -		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
-> -		return -EINVAL;
-> -	}
-> -
->  	/* use the dst addr to fetch the callback of the appropriate user */
->  	mutex_lock(&vrp->endpoints_lock);
->  
-> 
-> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-> -- 
-> 2.56.0
-> 
+Each patch keeps offset in u64, rejects addresses below the
+relocation base before subtraction, and uses a subtraction based
+bounds check to avoid overflow.
+
+Atul Akella (4):
+  remoteproc: qcom: Fix bounds check in adsp_da_to_va()
+  remoteproc: qcom: Fix bounds check in qcom_pas_da_to_va()
+  remoteproc: qcom: Fix bounds check in q6v5_wcss_da_to_va()
+  remoteproc: qcom: Fix bounds check in wcnss_da_to_va()
+
+ drivers/remoteproc/qcom_q6v5_adsp.c | 6 ++++--
+ drivers/remoteproc/qcom_q6v5_pas.c  | 6 ++++--
+ drivers/remoteproc/qcom_q6v5_wcss.c | 6 ++++--
+ drivers/remoteproc/qcom_wcnss.c     | 6 ++++--
+ 4 files changed, 16 insertions(+), 8 deletions(-)
+
+-- 
+2.43.0
+
