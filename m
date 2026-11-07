@@ -1,95 +1,106 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=170.10.133.124
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794007409;
-	b=h3A/fBgVsq4dSg/5aON0SuZCNWabdTejtQ+hc2rYVAlzC3ea7A0tSMpLtbTJjjGaRKzj
-	 PnR1WIv04nlQhzSwZ2CtM2G10qOX+/VxT7FNrukJlmLAMMWwunLePdrCDtr9JyVPiOpKR
-	 Tiz5N4tJJSASPGYYgXq2sCvQYDvaHzzfYVN9j9sLUz2WQN4mBQ17tqC8l3e2N9C1PnVfI
-	 7Bmn2sZhD7eHT0URnI9l0+XCj4ZWJBcJKJfJjcRPgCu8EiMZM0nC0u+i/XCkAFgH/BNwX
-	 cXkq0znMNw1ps0wZEfHIQK4jNIBsaRMQkMu16vWeOZdnhkYQ6JMpCt1RENpEyLJ4dUA==
+	t=1794011485;
+	b=oby5bn+oo3A/IjT2fbv1NT9ffO6isvHrs799RJ2Hn68yhlJh01aoGyo6YYE1DOAMPiNc
+	 7wjP4quxRuxzUMLIr0QNLBIkYPIhmIr2EJhXQWypwQVsbQOckg/OoXPgW/QNd4bnHf0nJ
+	 1HLic6CB7/BTSghdKgxdTfzTXjHPX+RACo1U/6+d5OWIz93i1Uj8TqLtOb1Cy3TBuJPpt
+	 JS/C45FH0FDBf3og+hrLid83JvZ+i+zUvMAtT7lhTdMD1Ww179Q7uzXX0CGkzme8PNCGS
+	 EkX/Soqg2wJorra11K5TWDg1yBp1OYMAEy0lbmRfUHdyuAuW1lHghDq7X9Z8SB7D5Ig==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794007409;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=HFolVHsdlQxrFn7oJcUktRPcmpRgRmH6vLNq3RWKHsU=;
-	b=fJK4nA/nezsm+6H/+CIj+J00i0lTVAhOnNIgvvRVtS7Wc1Wc486P0GCQ0h+MiKEg4SFL
-	 DsfYat1l3pfawS4WVM5aoyfO8jOa8yNtrygjf9YEzPjYstrkV5ja+SaavkMBQb/rSDNFb
-	 LB4AGWgDOEMWm0Dq6dj7jP4xyew8znRnt+2hqPDqYkda584gS5KnXj5VLkdTmWGFqIDIq
-	 V1FXluMy5oY6byXNcz6pkbYnYwkSPZF8zxbSbWZPjVLHtQGIoE2cTz3WFS4TSY38rIQS6
-	 QaldeFh5a+uipggWx0ReOrdTFpdTwiWdxh3Vg0s04hLEl2BqL9+FHVs5goyDRofb7qg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794011485;
+	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
+	 X-Mimecast-MFC-AGG-ID:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 X-Received:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
+	 X-Mailer:X-Developer-Signature:X-Developer-Key;
+	bh=B0lhdTIv2RJ0Nk7yZOY6c6n/tT6BIBcM8LFtVJo3BXw=;
+	b=2mBw6IJ2bvdj/D9s9pV3yR5w4d45iMiqllCs0y3Aemj3ujdIvns/XWDEkS5mlxFY5ODK
+	 a4AIK5RvQ0eQAzVYZ5Nc0QC7s0fMtYtnd6f3kTL/F6jjJabwGQO9nwHjtbtA3WIEfoD6p
+	 K29cOWtiOKtdSwQ0DV5YbfiGUXA7MlYxpwNB9Tx4G2a54THkzTYI7N3+0ev1lcqrsGhTL
+	 XOvQxDmMyvdkRTyiZTl9yqstruQKNgneLNFu5AWvKjX+tf5GZz/J0gABJkRaWU6fYiPFH
+	 QjYNugHzkeUcm3DMNK6ZlkmFjs8z4MntJphnRAbQYsb6ndWaq/W/UIvvE/B9mzNl/5Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=is.s.u-tokyo.ac.jp;
-	spf=pass smtp.mailfrom=g.ecc.u-tokyo.ac.jp;
-	dkim=pass header.d=is.s.u-tokyo.ac.jp header.i=@is.s.u-tokyo.ac.jp header.a=rsa-sha256 header.s=google header.b=beLxm6Tc;
-	arc=none smtp.remote-ip=209.85.210.179
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=redhat.com;
+	spf=pass smtp.mailfrom=redhat.com;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TZzOiPwd;
+	dkim=pass header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b="s/PvKbQj";
+	arc=none smtp.remote-ip=170.10.133.124
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB0D606D80C
-	for <linux-remoteproc@vger.kernel.org>; Fri,  6 Nov 2026 23:23:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1FB0D606D80C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=is.s.u-tokyo.ac.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.ecc.u-tokyo.ac.jp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9A0606A32C
+	for <linux-remoteproc@vger.kernel.org>; Sat,  7 Nov 2026 00:31:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8A9A0606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=is.s.u-tokyo.ac.jp header.i=@is.s.u-tokyo.ac.jp header.a=rsa-sha256 header.s=google header.b=beLxm6Tc
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-8a058f74a54so522725b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2026 15:23:27 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=mimecast20190719 header.b=TZzOiPwd;
+	dkim=pass (2048-bit key, unprotected) header.d=redhat.com header.i=@redhat.com header.a=rsa-sha256 header.s=google header.b=s/PvKbQj
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1794011483;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=B0lhdTIv2RJ0Nk7yZOY6c6n/tT6BIBcM8LFtVJo3BXw=;
+	b=TZzOiPwdIXrA7gtycvMSfD7/SRcQGWY1v289opOJc5BfMg8v5bJ8A8NBt724JpePOcdUAO
+	78d/oXmbScNobJsSfZ2muYYHfXP8nOvJxvuuo0scJr9B+FyfkcERoQiSz2WKbCtQoZNHR1
+	rqnuLYwk6y5GtBhxxuh/IHRe0wpFRuk=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-180-JwDb3PwFNLy2SE8azxudLQ-1; Fri, 06 Nov 2026 19:31:22 -0500
+X-MC-Unique: JwDb3PwFNLy2SE8azxudLQ-1
+X-Mimecast-MFC-AGG-ID: JwDb3PwFNLy2SE8azxudLQ_1794011482
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-91ea71789d8so32243426d6.0
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2026 16:31:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=is.s.u-tokyo.ac.jp; s=google; t=1794007407; x=1794612207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=HFolVHsdlQxrFn7oJcUktRPcmpRgRmH6vLNq3RWKHsU=;
-        b=beLxm6Tc+6Bxsxoeh2ubotiYZME2+AaKr51XOjMpuAM+32lbdM0ERjIFNpsP6laipI
-         wOCiy8RKV3rp5a8r2vBwM7Ko2yk7VBEQ21t9H1AWid9L9lq/Cv3SucgAN+DSkr4alx2O
-         PQKAmsj3j5iYVD4RlkwnO/ClKhDu3DaG0mcYwgaZYlJ2NxXBZgxEtIy1HKJj9s5AreV8
-         L49LkACX8K5T8lCSK6843GjGBjqxDTZcEhqVu3GtqFba8zdK60w4zgOaeUgcsqSON2ha
-         hpPFXsPo7rqDqh1v8Bgx1Nf5f8c+eqFMpEPjWiU3w8cUJfheHpNa05ny8zTBNzIMtS7r
-         LJ+Q==
+        d=redhat.com; s=google; t=1794011482; x=1794616282; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=B0lhdTIv2RJ0Nk7yZOY6c6n/tT6BIBcM8LFtVJo3BXw=;
+        b=s/PvKbQjIaCmL1s+Kf7r70RsE+aF31+Oo+18MylQgu1oPJnN47l9rvUJ9v34BD9W+G
+         7laXGU2QnAxKa8OVRu643xNemdc2egLlUW1Ks4/NMCN6mSAfxnuDmOg4GlOeKQ9SoFDH
+         UWDesJVkMoVzaLwakWza687fnpwEPaELY0tGNeluEQ1AfC7q+Z79qP+kjdKv3kyBKZb+
+         3w4IEzbLKWhFQjglCaKzES6n9slR09YDN9h8/aLt8ozqmyqIG5z6agyJo45IylgV4oh1
+         GGe5RAVx6Hf3QMXDR/XA/rirQFaR0kyhca4d7HLoTOUzv+ruwT+Uo6WKuTIITUVsVov1
+         PBkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794007407; x=1794612207;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=HFolVHsdlQxrFn7oJcUktRPcmpRgRmH6vLNq3RWKHsU=;
-        b=GiHZGUT2JjhtCdPruJizStMRB+DVQi3KZaE0JBcvwfa5C8pS0Sbp9TAcu2g4JtU4tD
-         SVg1SQBZXplmdWj4SXN+qSdzcRmAMG4y0z/UWdEdPhfTBYXcMKYNVu43dkdHl6SPtAo6
-         F/a38s9aj9PAlVUO71rYfgCMYrelJmv7a/V5nef09MLX7buH2ZmzkW0+2boVIyjXcnI0
-         uGlSxSZWe0RpxJXdp2UZWjgE+zXfMWSjycFZI9vYi+PYWVPWrP1q/+NUSTe68o/25aQY
-         v+kE4+NzawNAB43Z6EIR0tT6PgBQ8wNMUQMH5MxEVMKoxY0BJjs1aYH3TCBE7I76KlYz
-         15nA==
-X-Forwarded-Encrypted: i=1; AKwUvBz4dbF8ET7MuTMJmS+unIH1ROQ3IGJmpk9btL2ghESalF8EsV3gw5TzfB0oPUm4N8HpXRUyd/gW8ShWtcZCdnoh@vger.kernel.org
-X-Gm-Message-State: APuU4Z+5I+e3E38tHdGYH6NWL/ZpOQMYjbAdVx8kLjhvpw3v7hlWsyC/
-	cloKlU3FTJFKKhx2xQfIz0FSFNlnnGtaZqlbHX/kO+izpjYvgwHdszHZKzP5IJpyLQ==
-X-Gm-Gg: AYBFou1vnm3HO391c0RddqmpJSQ5ag1Zu+YLdUIIzPXRttoYxTZTfOOTXGb5KceQZch
-	lpKLF07hQpEuIn8FT+C0KRuUINt9Y9ywJvOr1PJiVF3C4TiYUceav51jJx7k6ZGuX4zQJomNoDT
-	EHt9TvDPOoB6PHXzmBc+arW/jsstHQlzQ9tIjcbA85fzFGB9hFaGZerUmt38JuD8dn7lQa6dDmy
-	uAyTxWs1zym2AoW7Pfo+ykrVXrJeMMP/XzHNGI8XLzW5ef6FCOysNg0Qic1JaFHK3NHQEc/YlbR
-	4Lpv9EjGWNipjzzqZHa8Dhig0apsKnVYg1NYStqpx0Or7JwVBotaqgXN7i4Syzi/qwF4oPuGjI6
-	aVHp4ME96HkQytjejLk03aOvIq3TWI074VWJNSlDoZh2TCyXxhXzlRmO6KySvRvIhlSpDfv9cAa
-	uN2J3mAKv+0hvFWFIrW4iASIT9N1iN9Ygg4l7S1JQ4crJlA/AAx2sIVdXWNHChjmZrmf7I+Ilom
-	SIiZnp2WSFOw3SGmpvF/aZp/v9d23S/Zyqr0chboa2o5q/EZZfUNLlifhrsHMLRgYoFWDPUy4FX
-	GR354qtCi6RGY60F8aHNEJpeyXs58wi120oqTstx0RVyOBrj7XYnd1g3p2c=
-X-Received: by 2002:a05:6a00:4515:b0:89f:e1e7:e7e8 with SMTP id d2e1a72fcca58-8b37aaa7740mr3885857b3a.18.1794007407226;
-        Fri, 06 Nov 2026 15:23:27 -0800 (PST)
-Received: from wang0.localdomain ([133.11.33.33])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8b356c2c5a5sm973657b3a.7.2026.11.06.15.23.24
+        d=1e100.net; s=20260707; t=1794011482; x=1794616282;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=B0lhdTIv2RJ0Nk7yZOY6c6n/tT6BIBcM8LFtVJo3BXw=;
+        b=fqOpRp7mpwjObXsNE7kZC9CGa/uY2rwSHgIaXm4shrxGxQXEajRGuVoDVHjm8OedjZ
+         hPDDzw6Q2hK1zXcW7f8lqDanCgtFV38j84v3B8a51yaSqa+VxAsEs0IXUfWzP7eyiLQZ
+         tZKmI+2CHiglftLG94XVB6YdNoJhrPocqvFAqeFSv6MZLOxXWAAKrjS7jLzpXOFrhlex
+         Qi0yolOqzniPdoxMEZ3TgRzbMmS3WTLYpeFwpCxbj+uCAagbgfr5cZH7saeYfRpXkvfc
+         xXWYvOQhhgtAA6RK3+Qu3/N/UftvNQBCc8N8ApTZD8txaJoDl9pdZ1Nk02wzisH8LG1W
+         dnWA==
+X-Forwarded-Encrypted: i=1; AL+hErHBl6f8FyfvoKm+53zX+bXIzSEr09JYhLKIClLC+2RiRuEybRa6kVHOXFD+x8CzBFIwgxOFFBpP1sf2BfWw/IML@vger.kernel.org
+X-Gm-Message-State: APuU4Z9Ax7vH6HqsmWxHU5t2zMQRpW57/DQVGweFa2E2Nw18bepVY5GV
+	iD9uhCMZVuSZNzbFGW+lAOfkPFdeYbpJPfS+2CnsIk06lY4omCo7dqFiye1QPRyLYdlqfwFphcY
+	APOqyr/rJGf053bvdjj4jabjGN/38GtSJvcLsSPEsqKIxvORpnumwui2xC2u7pzdLJV5+zNA=
+X-Gm-Gg: AYBFou0l+bOxJOupuhxd9JH9BEo4asA2uH6zNhq4RNcCWQ7lx/ka6RvokQZJrPC4BMP
+	CC07b48EFIy1P5+4wTDvptIHSlIVbKn/j9aUTDxKgamir8meRSvoGvon58mii+IlnE1Xd6YWDfD
+	SFdn9m4LJkqUp1HcYIbD+CQDdhmO+eZ7/tRb3PgkE8oLxyRX84IPVMCQIaWwccwhD7L95OvQsOH
+	2jIDfk7qm2DlXJa3t4CjOzaWkrIsXX6lwnSspIAFy1iSQY2Vr63XZn1/MC4mPPgr3W7Q4m9b39m
+	Of8MQg37CaPg+tH3Uem9ydO5Hfli7rM/6Vrep15gfdGEQD+0xo3lUcGFD/VIQNol1YU3xLG2rsI
+	0NsU/9EwnuKceIuie+Ue5NfP4Gpktu64Dth44Ez8ho7UDBs1Z0upzxj0Gbdv9SEiYDrSD8s2ARR
+	36CSr2BbD2Sz82altk
+X-Received: by 2002:a05:6214:3016:b0:91e:9b7a:7f12 with SMTP id 6a1803df08f44-91ea96a599bmr57139666d6.9.1794011481725;
+        Fri, 06 Nov 2026 16:31:21 -0800 (PST)
+X-Received: by 2002:a05:6214:3016:b0:91e:9b7a:7f12 with SMTP id 6a1803df08f44-91ea96a599bmr57139336d6.9.1794011481139;
+        Fri, 06 Nov 2026 16:31:21 -0800 (PST)
+Received: from bmasney-x1.rmtuswv.csb ([69.43.42.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-91ea6a2c5cesm32490556d6.14.2026.11.06.16.31.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 15:23:26 -0800 (PST)
-From: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>,
-	Ohad Ben-Cohen <ohad@wizery.com>,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Takahiro Shinagawa <shina@is.s.u-tokyo.ac.jp>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] rpmsg: virtio: Reject a message shorter than its header
-Date: Sat,  7 Nov 2026 08:23:22 +0900
-Message-ID: <20261106232322.1093165-1-lian@is.s.u-tokyo.ac.jp>
-X-Mailer: git-send-email 2.56.0
+        Fri, 06 Nov 2026 16:31:20 -0800 (PST)
+From: Brian Masney <bmasney@redhat.com>
+Date: Fri, 06 Nov 2026 19:31:12 -0500
+Subject: [PATCH] rpmsg: qcom_glink_rpm: convert to subsys_platform_driver()
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -99,54 +110,66 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261106-rpmsg-subsys-v1-1-c13666cf5678@redhat.com>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMyw5AMBCF4VeRWWvSqcvCq4iF1mAkLukgRLy7Y
+ vkl5/wXCHkmgSK6wNPOwvMUgHEErq+njhQ3wWC0yRF1rvwySqdks3KKQmNtozOT6gQhXBZPLR9
+ frqx+h+VAbn0bcN8PMb0YgXAAAAA=
+X-Change-ID: 20261106-rpmsg-subsys-12bbd0524031
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Brian Masney <bmasney@redhat.com>
+X-Mailer: b4 0.17-dev-d96cb
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1234; i=bmasney@redhat.com;
+ s=20250903; h=from:subject:message-id;
+ bh=zDSabrd/5Mwlu683aLMSHp+YFB2DVM8Y3Ir2NXH8Zw0=;
+ b=owGbwMvMwCW2/dJd9di6A+2Mp9WSGLLeFYZwXJjtcnDNzaSH70tfenM+ODn7fJD3rdYfGqE+t
+ m6v/72X7yhlYRDjYpAVU2RZkmtUEJG6yvbeHU0WmDmsTCBDGLg4BWAiDUmMDKdv2maZXDzZM71N
+ surpkSeij53ExG9lWK10cj/UOp1j2hZGhtOLwk7euq0UaLVo4V+Zh92Nu3wsD/b7SbGkOogf+xG
+ wkRkA
+X-Developer-Key: i=bmasney@redhat.com; a=openpgp;
+ fpr=A46D32705865AA3DDEDC2904B7D2DD275D7EC087
 
-rpmsg_recv_single() checks the msg_len field of a message header against
-the used length with an unsigned subtraction, so every msg_len passes
-the check with a used length shorter than the header. The rx callback of
-the destination endpoint can receive a message of up to 65535 bytes,
-longer than the default receive buffer of 512 bytes, so rpmsg_char can
-copy the whole message into an skb and read past the buffer:
+Reduce boilerplate code in this driver and convert it over to use
+the macro subsys_platform_driver().
 
-  BUG: KASAN: slab-out-of-bounds in rpmsg_ept_cb+0x4d/0xb0
-  Read of size 65535 at addr ffff888002484010 by task rpmsg_echo/140
-  Call Trace:
-   rpmsg_ept_cb+0x4d/0xb0
-   rpmsg_recv_done+0x29f/0x840
-   vring_interrupt+0x32a/0x540
-   vp_interrupt+0x146/0x180
-
-Compare the sum of the header size and msg_len with the used length, so
-no subtraction wraps.
-
-This patch is assisted by Claude Opus 5.5.
-
-Fixes: 9648224e564a ("rpmsg: validate incoming message length before propagating")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lianjie Wang <lian@is.s.u-tokyo.ac.jp>
+Signed-off-by: Brian Masney <bmasney@redhat.com>
 ---
-v2:
-- Leave the check after the dynamic_hex_dump statement.
-v1: https://lore.kernel.org/all/20261102221504.175116-1-lian@is.s.u-tokyo.ac.jp/
+ drivers/rpmsg/qcom_glink_rpm.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
- drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/drivers/rpmsg/qcom_glink_rpm.c b/drivers/rpmsg/qcom_glink_rpm.c
+index e3ba2c63a5fc..5e60d5cf97e6 100644
+--- a/drivers/rpmsg/qcom_glink_rpm.c
++++ b/drivers/rpmsg/qcom_glink_rpm.c
+@@ -388,17 +388,7 @@ static struct platform_driver glink_rpm_driver = {
+ 	},
+ };
+ 
+-static int __init glink_rpm_init(void)
+-{
+-	return platform_driver_register(&glink_rpm_driver);
+-}
+-subsys_initcall(glink_rpm_init);
+-
+-static void __exit glink_rpm_exit(void)
+-{
+-	platform_driver_unregister(&glink_rpm_driver);
+-}
+-module_exit(glink_rpm_exit);
++subsys_platform_driver(glink_rpm_driver);
+ 
+ MODULE_AUTHOR("Bjorn Andersson <bjorn.andersson@linaro.org>");
+ MODULE_DESCRIPTION("Qualcomm GLINK RPM driver");
 
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 23ff6c8b7a20b..3d58bb19e9297 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -676,7 +676,7 @@ static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
- 	 * the reported payload length.
- 	 */
- 	if (len > vrp->rx_buf_size ||
--	    msg_len > (len - sizeof(struct rpmsg_hdr))) {
-+	    sizeof(struct rpmsg_hdr) + msg_len > len) {
- 		dev_warn(dev, "inbound msg too big: (%d, %d)\n", len, msg_len);
- 		return -EINVAL;
- 	}
+---
+base-commit: ddfe51b0a0f5dc9e415cc2c8ad8db17532dd426b
+base-tree: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+change-id: 20261106-rpmsg-subsys-12bbd0524031
 
-base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
--- 
-2.56.0
+Best regards,
+--  
+Brian Masney <bmasney@redhat.com>
 
