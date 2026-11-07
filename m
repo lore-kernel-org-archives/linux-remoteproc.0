@@ -1,83 +1,83 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.176
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794018345;
-	b=yrh4gJjXe65y4M/cIVvWuqrjayVUfLBXkjBK/5n1tQ8h1R3HfeG/Y9G35NPb+RXXBIyr
-	 bovaVJ1FOii54SWMVSrfZhja/iXAFnOPV2br3q6HRBqkKn4Udo/Sbbe4CLkTCJlXLF2Cg
-	 h3h9o7D90T4kIBGYfPSUSwmfG/Yi61ZVsNytkP/xpfar74Kz7jnpDrkSTX/jY6Wo7jNW3
-	 h1LUgCO9zMDkq4dOg71LykkZoSz2bEO+b0fLlzaxr4mHsSa7+RHLndivly0PlOi9O2UyO
-	 lxuLRFBHX/4dabZwfjyxqGCcecHZeAO6M+aum/gkcxaB4VSYbRFy6IRrCrITD3SrexA==
+	t=1794018357;
+	b=EouNqsPZX+9WEzlX/OtWp0iTfnud8JVN6Ftr0kcpK4dRdJipnba/kzKW4Kuxmq1hV4mJ
+	 6+aEINOR+fiGB3XuohCS9XFRorZGCl8mIB8iYw6h5TAN2bgFT84UMhnqGq33XnTB4IdiA
+	 EfS37SuG+KBAh9LE03e4ks+qHwZibyo1XCVHfhAOrNSyicbTBI6atFxuuc3ZjoaQdCeoD
+	 n7ZK7XGY+D4sFK2jGDr9T/R7JEeoRsCcgXniO5lZRDFwk0EzGdP/ZhKFlnfrtQpKaQrGz
+	 nDL/LRcOzOzCNOTSYFkIuJ7lvW8cggnLeNIeo+rnwp7wrWORg6JKtbkZb/6zO1y1PhQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794018345;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794018357;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=HFL+js96RhWUKHNhY7ivcgh9lYpkZ9o/IpqO+CIG0rY=;
-	b=4C2oqs1OvmXD4KaylliiFjAwjcElXSkJC6WrqX6tIu9TrimeYERNtscthpJlNb4z1kZM
-	 BKwRkut9TTsGaSfHfI+VGwcDinfmA3/uApZ9EQdmG33+mxMzb4hbkXaG0xDYPkP2VHyZ4
-	 iSbPsvJEHwiGZ15lfIB146S/oX+HBaJMHGiWAlJu3CbfyKjr1lW00+UbG/jr70g1UVNNF
-	 xKQtRNVNnZrUkmmW1+XSgLPG8/xY8cNf7g2ctf3qRxtAmLGGr2dQpwvvqlK72iajt2TIE
-	 p3mRsP9ug3myXN0g/uMTbaGhNSfA99QyGHg5KC5CL+hYp5kN8y3q7aQxhOsWCfgsSfg==
+	bh=B3SGzHlgY8odIPc0vKXo4UyX1GU/XLl2ljqE7iQ/a28=;
+	b=B+mE+aUNhdcf2TIQHlwRG5NDntowc2v5JUYFmfxeP4Hr7b1iphPl0ucz1kVs4VNZiDZn
+	 hgeHg77vBgAqPuvzKjk2xf2vwgy1lEDjQwyLvz/UAz7jLtdsdyaiiSrl5Wl9I3o2t1kBZ
+	 5Zf90OXwA8Rsh8f39QhPKhDE+5kL8TfrICVtlz4dLH5mK4X8uatFl8ED/z/m4dbOwPMfK
+	 ENMJzhxfkLhbFABYnORY1ZJjTWXieMvy0LU66HDnXcBbkqtx9qnDeEJ5iBYJAcAnGk+EQ
+	 B3mqSbeAFk+zX/1RA5+CXrMxrrVRY+s7MtsuFZLTW1wLxk5rDormctiuky4HlPTh6og==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RS1WIsuF;
-	arc=none smtp.remote-ip=209.85.222.46
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lTeLhHPm;
+	arc=none smtp.remote-ip=209.85.221.176
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A68B606A333
-	for <linux-remoteproc@vger.kernel.org>; Sat,  7 Nov 2026 02:25:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3A68B606A333
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E487C606A330
+	for <linux-remoteproc@vger.kernel.org>; Sat,  7 Nov 2026 02:25:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E487C606A330
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RS1WIsuF
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-9851592ada1so350616241.0
-        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2026 18:25:44 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=lTeLhHPm
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5eac4855401so462890e0c.1
+        for <linux-remoteproc@vger.kernel.org>; Fri, 06 Nov 2026 18:25:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794018343; x=1794623143; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794018356; x=1794623156; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=HFL+js96RhWUKHNhY7ivcgh9lYpkZ9o/IpqO+CIG0rY=;
-        b=RS1WIsuFV3Zo+JJfQ0Nq1LTxl8pMNv56SomsNARfTMz4rFTCcWpWobBqR7e2nJgfz+
-         1WiBN8YHGaI+QlQ2RJtYTxsrZHFqXl7OTDCzOB4To789OgmGhznV64Kw5V6IsoYKfpix
-         yu+ja344GTQaER/9Iuc2cfGGyO6XJ3c0PzznQAj97VqoNhCC2rD83yXDvgMLAH5FGz+R
-         syInVSEcd0arJNNUXM9/gENtx9JvFBMIgrBYJVoq7R4LtyeGa/pBL/6DVOdDWsqjWraS
-         k+IDxbuflUSRrM2GZB211GqttPaz018AtkdU6cy8kZqchGA8cuoDGhDfxv5iUQQGrLr+
-         eUoQ==
+        bh=B3SGzHlgY8odIPc0vKXo4UyX1GU/XLl2ljqE7iQ/a28=;
+        b=lTeLhHPmBNApRqmkaGG8d9jRp+H2mIbSGZn1OPdnd/OK8qL5F4IM8rppC2adeTD/b0
+         FRKNJBT/jErzUjnpfmJaZeeV6QKbZYRaXB5k0ubAn01Nxvl2t4Wa8RbFQ3AdhhJY2Fzo
+         Pg94g9hSwiJ5QVI7W583jGP1/fX6n0pTJ0MHLJSuIL5n4rCFRxBIF6yfYlFThAotdsiu
+         NWqFRJ1YXzHNhFmSl7PvogYjMvNT3rVXoank8ZD2VKfe2BlUGI6pWsVTJ6lQ+Ff+JNk7
+         Pxwm0vz+VynGt9wAWiWqyFh70PxDG59wWV1ntpiR+FJI0ygrAjDwV2oF3B4zMB4z43Zc
+         5mIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794018343; x=1794623143;
+        d=1e100.net; s=20260707; t=1794018356; x=1794623156;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=HFL+js96RhWUKHNhY7ivcgh9lYpkZ9o/IpqO+CIG0rY=;
-        b=HqRB32pbTjqVK0dozcM1oTDwiWOaojXNcdRh4U6jhYpwnUFRd+D/zCLQ03W7w2ic6K
-         XTq24ohkDWRmDxnMhbK2nMqtj3eF0KOyuI4Qn0xbvXeEkvrkE0g/azrU+nvo23fJU8lc
-         +arlBpDVqCvrmObn9yeQt+uj6Qx94RFhcYrI0R0HZUFnBCk3ldfwKJcBlG4to5mv2CCb
-         eAEc0m+Mb/vD9r57TFzqnDAvNeoOZBaUomtZvfnhwmOkParCTZZDw3ATJDfsKnrDGYu4
-         eqQ4AJiNb8iKYFNDVv/Hgs0/zBqJ8Y2MUbX9OcXWftrRzdb8cPaO4I3onwVNgjE8eKl4
-         dONA==
-X-Forwarded-Encrypted: i=1; AL+hErG7FN6AO0sH13QWj8nLW3N5dh4vZ3q8nvMMdBnby18AmmlR6/anML6FDBgjFy06H+ziTFlA2lCS3aL+ZaqJkrO1@vger.kernel.org
-X-Gm-Message-State: APuU4Z/5okDhlwlxqz3GmyJKkX8va0ocbeGa4ovfyV6wurqG+icG2ErM
-	FWy9mS2UAudJDOA1QaiCGCUaO1jQR/i9b4gi+zR8pB0llBABsZf3nHMu
-X-Gm-Gg: AYBFou07UWKo60jVzEZoRh5VK9U9VoucmUpm2tkZkS7a7wEHm+g5eoJbW5WtmZxWpON
-	IqwRgVbw8sUc0gZ8yObPc2PEbtr2f7wgaBk/GJqFIgEgaX+fexI1WDYJ6m266DKAFI7kDcU6/Ja
-	o0CPWHuZwYnrJeG+3OJdpKAvJCIS0D+jKrIswFKijaJA2QeBcTsmRoNTJQz/4PD5YIAkXKOLlcH
-	CmBqcfQXeiC+MbMu9dvebVU0tRHVxhRNmMr0E0YLfa9TXko6Joom0KEJaURGBTmy95EyhIC5taB
-	HSu6EnDoAdtoRu/z95niyyRds4IAYq+y/bMneluNIY37rizBCXOebQYEUygb1cy6nv0d+vbM1BX
-	dtMBaPWMMHh8qN/LzN6YipBaS2+iHtcGXWBdiwfYQAhIypUDOwuhuHMnvBENkKGaDIrP1sq48sI
-	T69+eMccCwy0oP8de0A7/9dlvMn+i6lb3iHVA/sWdHUqWn8AD3NDr8cUHyV7yScOwWqzmgBZdfZ
-	sNZWuyniKd80NwTHBtMVBU2q3gmxf00yuj5SVtFHZ/4Dpq2CrBL1kWA5iSL7KbKYDOcfJsWUXAi
-	RSPewlSiltUl9Ex1NJcDbjeKqHw3
-X-Received: by 2002:a05:6102:61d6:10b0:7cc:2bb7:1321 with SMTP id ada2fe7eead31-7d2a526b9c0mr1163316137.31.1794018343229;
-        Fri, 06 Nov 2026 18:25:43 -0800 (PST)
+        bh=B3SGzHlgY8odIPc0vKXo4UyX1GU/XLl2ljqE7iQ/a28=;
+        b=Lh2noQDG/mRjnOFURqrvgOkHLoV1+epGg5m/CarbZsX4ghcI2wvcG8FceU8dK7yo5W
+         xQQ6ru/NpSTVsRsxqLvPF8pok0io4ybi8s4s+wxfMOAoSLIFTiZJ5lAtfMK1zR7yCmaO
+         gEkRDAwML26aOauLLF3W0ubVlAyX28addaA1b/ZzeyidzMUWe8vycrwuY5G4TwIHQMW7
+         KuSwGK6WwottqlhijI9aRnY07mXV2sjGXJSh/4guDdbRSRFcr173HK/9LwQNy5G9/I4f
+         H0HSKjgFYNmeD0zc/bXW+hCpW6zqkb9Vco+vAIM08zzD0vqeffziteMts2akygrOTTdh
+         w8mw==
+X-Forwarded-Encrypted: i=1; AL+hErFaan95RfUCL1SAOR0T8fCm0aTCkQ8Jn2Y/TRQss/BSBk5vpDnpmdsj+cXe1eEW59GkTTjJ/PNGgIaknMqUHgMH@vger.kernel.org
+X-Gm-Message-State: APuU4Z9J4efrpmywPlnWVIYo1gbcCJTp2roskX+JZomXV81Mj4cU1pAN
+	b5589sJbjVSV7RmAg57KrC2hOM/ZmmQWhXbBJqPp8ZKhvDoab0losQiq
+X-Gm-Gg: AYBFou31xmswORnhBPpV1STyp+aR/Y9hL2XXWQzj+tlYGClkZwsFTECziAyXhkY7rpc
+	KjtqJmF3fORsYoJQIhQDyWSUim9ACOSV3uBUaApejCI13JtPH3ch73cmOWXAFgXS4PBT1JfrtL+
+	PeJ8pqYmeVOaI6B3YLHygq9DCnrKcnZhg3sZw2QfLqC5HiTidWXUCieBn11uoUwZ642O+MRdCtG
+	Nr7OKHWUCNcsNQvC93sv0JIe5sCFK6WI0jZQ25u1/63/Y9ShKqLEKiivFsG2oWqK+KwzePXPi5P
+	VXOdOCA9e0i5FIvAPLmg45vfzbThrZt0sWxpeACo7xk6CZIJw4NV2ganQujGbdzFMC0UyU37hO/
+	MU8sFRjHSKArUCAxu1SgRtORmiSaJN9Q6ZbAWxzE3YOy7sIPAre96pzaFRRsaXkGog1h/Y8p17C
+	9NpNnYFqcwPz/KI3UOnYeT/pYTM4N25w0JcgaDoVs2JoCtlKnpwPYbRwQ4vqvMkmpVkmVqCnFWm
+	GHWE8akIW3B+1H43s5BFEPoXk4nLzBhUg2bXynsi0gHbcw+otkH70TbXgqXWJDsfZ7PrYDwhPrj
+	Pk4hPjTBN5BUyoHR2xRkenF7M6KJ
+X-Received: by 2002:a05:6102:15a2:b0:7cc:2fd1:7143 with SMTP id ada2fe7eead31-7d2a1593194mr1895441137.17.1794018355909;
+        Fri, 06 Nov 2026 18:25:55 -0800 (PST)
 Received: from localhost ([174.93.36.89])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99bae2a7ea9sm3221365241.7.2026.11.06.18.25.41
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-99bab48acb7sm3106680241.1.2026.11.06.18.25.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Nov 2026 18:25:41 -0800 (PST)
+        Fri, 06 Nov 2026 18:25:54 -0800 (PST)
 From: Richard Acayan <mailingradian@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -92,9 +92,9 @@ To: Bjorn Andersson <andersson@kernel.org>,
 	linux-remoteproc@vger.kernel.org,
 	devicetree@vger.kernel.org
 Cc: Richard Acayan <mailingradian@gmail.com>
-Subject: [PATCH v3 3/9] dt-bindings: remoteproc: qcom: adsp: Add SDM670 ADSP compatible
-Date: Fri,  6 Nov 2026 21:24:47 -0500
-Message-ID: <20261107022453.159341-4-mailingradian@gmail.com>
+Subject: [PATCH v3 4/9] remoteproc: qcom: pas: Add SDM670 ADSP support
+Date: Fri,  6 Nov 2026 21:24:48 -0500
+Message-ID: <20261107022453.159341-5-mailingradian@gmail.com>
 X-Mailer: git-send-email 2.56.0
 In-Reply-To: <20261107022453.159341-1-mailingradian@gmail.com>
 References: <20261107022453.159341-1-mailingradian@gmail.com>
@@ -109,46 +109,49 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the compatible for the Audio DSP on SDM670.
+The ADSP is used to control audio and sensors on the SDM670 SoC. Add the
+compatible for it, with the same data as SDM845 except for the LCX power
+domain.
 
 Signed-off-by: Richard Acayan <mailingradian@gmail.com>
 ---
- .../devicetree/bindings/remoteproc/qcom,adsp.yaml | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-index 7e8ecae8e6cb..6cac1f77993b 100644
---- a/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-+++ b/Documentation/devicetree/bindings/remoteproc/qcom,adsp.yaml
-@@ -25,6 +25,7 @@ properties:
-       - qcom,msm8998-slpi-pas
-       - qcom,sdm660-adsp-pas
-       - qcom,sdm660-cdsp-pas
-+      - qcom,sdm670-adsp-pas
-       - qcom,sdm845-adsp-pas
-       - qcom,sdm845-cdsp-pas
-       - qcom,sdm845-slpi-pas
-@@ -128,6 +129,20 @@ allOf:
-       required:
-         - px-supply
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index f37b77ae187e..57a111a0d75e 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -1122,6 +1122,21 @@ static const struct qcom_pas_data sa8775p_adsp_resource = {
+ 	.ssctl_id = 0x14,
+ };
  
-+  - if:
-+      properties:
-+        compatible:
-+          enum:
-+            - qcom,sdm670-adsp-pas
-+    then:
-+      properties:
-+        power-domains:
-+          items:
-+            - description: LCX power domain
-+        power-domain-names:
-+          items:
-+            - const: lcx
++static const struct qcom_pas_data sdm670_adsp_resource_init = {
++	.crash_reason_smem = 423,
++	.firmware_name = "adsp.mdt",
++	.pas_id = 1,
++	.auto_boot = true,
++	.proxy_pd_names = (char*[]){
++		"lcx",
++		NULL
++	},
++	.load_state = "adsp",
++	.ssr_name = "lpass",
++	.sysmon_name = "adsp",
++	.ssctl_id = 0x14,
++};
 +
-   - if:
-       properties:
-         compatible:
+ static const struct qcom_pas_data sdm845_adsp_resource_init = {
+ 	.crash_reason_smem = 423,
+ 	.firmware_name = "adsp.mdt",
+@@ -2035,6 +2050,7 @@ static const struct of_device_id qcom_pas_of_match[] = {
+ 	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource },
+ 	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init },
+ 	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init },
++	{ .compatible = "qcom,sdm670-adsp-pas", .data = &sdm670_adsp_resource_init },
+ 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init },
+ 	{ .compatible = "qcom,sdm845-cdsp-pas", .data = &sdm845_cdsp_resource_init },
+ 	{ .compatible = "qcom,sdm845-slpi-pas", .data = &sdm845_slpi_resource_init },
 -- 
 2.56.0
 
