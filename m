@@ -1,80 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794169366;
-	b=ee3+M5WxkWNGd68gMjGSRYgmKlP6VEcm1zPaMIm9G0MsE+qRZEid66Lnzt+K8bYe6Lfs
-	 nhEdRpzYeagkelFyMAjcSFiNP+0U7mTkCDBybGBVM1EtFuA99sxhmklW/qPhvIlW1Ewym
-	 1Jg49kEvCzy0JMV8URUgEKbFC+fxGTHvh+2CT4VbQR0Z4tQBRW9co2jPm2hqo20UAzrl8
-	 jv61H0Wnc+8HdaFvmQvLSjVfCofZX0k2V/Fs1JsSVH7T4Y7crw3nFv5k/hnzBXngsNOZI
-	 A9zDjSISYsrlOTc5mtGy/KX23J2tq3imAeQSu2I8d/hr6bMRftOBpYAVW0YGu9WGpNA==
+	t=1794169456;
+	b=TlFeheaP/dbnZTHnfAWEbtx4oyHmMjDJwJQ9IUXL9ZjN6u7i7K7EMZrN4HoSTFdg3S6s
+	 iqzph/K7K/WkoqYQZI6ihj2uT+GZhTAuJip2LVh5Y0Gs3TiUDMdeA/mKt/MZmnEnEox4X
+	 1K6bk4NK17tVKnPOkqstX4fSdGUGYPoeJK7TT1unxV337DL1F7rA1obaSjMX2dBX6UD9C
+	 A/jpV4PbAztfz1cpTUAnslxPyIn+MpszpEEGkfkuGPH6Pyo67BCmgp2RcpwoCUGy0HpJt
+	 V0KoMov8Xe0irPBYfoc956Ll7rEU6duJMtEXy4GediwEYz7Z0uO1T1ZExVJdtws7weQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794169366;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794169456;
 	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
 	 In-Reply-To:References:MIME-Version:Content-Type:
 	 Content-Transfer-Encoding;
-	bh=YpvmXan4lbBMaRPxIka8UXE77WvsxJ91tdRQfWX0O/k=;
-	b=N3Od7d9v420V5Y3d+ysE3NP6Sn/YVSRbtI1wsYpUr5i9iUtIWlR0NjCPIgRV3i6yGvE3
-	 ItP0wjdeLNV0TYZgCErgvGMq7lR5tAIoMueSywMMzQO+kLYnlEJoNYaeAbqiqQ5yCFT4y
-	 RHdgRBHVYquwcbIn6dGEtLkKorGQR792Ot+xEKJJplC0GfPHvtmVYMlcRNSaTlHiG45Pq
-	 w+hbU75pIN34+G+8htKjKPH1IosLaFLmWPaW0t9MqxDkFi6F2UtrLWQg3Cxa5cTObbtdS
-	 a9YPfLYJFKRhA7l1SH3LsakgaL1gYPDje90WE6z8nILclU7XfJEjv+ILpRn7RFeSkPg==
+	bh=uLXYqIKsn+Njyb6tZRijrbk0jj/DcdRQpxrsLcPaeUo=;
+	b=wqz704nBJHILAIsOOHTOlsM/rp+OeX/FUUE38P5BhKzFycOchWmKGXXio0wu2LGpj4Fu
+	 0lTznD/NoMsCgtZd/sEVEtyr86LC8s7qU//jLY34PBiBrb/h+k7enIQ38o0vctle3dy0+
+	 wzbnN/EFjpCI16hQNDU0RiV0rGE0iwSCkrGa4UcQFqvaVjUzWZmhwERsPo6aGyeLT94AA
+	 VpNuquRgvX9GyMUNdfmMZ2Ykbb9/Cu5UJW6xDVGHfSM8+QA/BN8WsatTY6AmvQfBts4vg
+	 aXfo0AAVcGvSsSjoFz347EtsvhEUSKwjZdYQZGUBxYQIvJOLkQtIDwOjPHssNrLmw0w==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PerGWQ6c;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=np3L+2XH;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A955606B121;
-	Sun,  8 Nov 2026 20:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0C96078A93;
+	Sun,  8 Nov 2026 20:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PerGWQ6c
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48E021F008A3;
-	Sun,  8 Nov 2026 20:22:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=np3L+2XH
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6773A1F008AB;
+	Sun,  8 Nov 2026 20:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1794169366;
-	bh=YpvmXan4lbBMaRPxIka8UXE77WvsxJ91tdRQfWX0O/k=;
+	s=k20260515; t=1794169456;
+	bh=uLXYqIKsn+Njyb6tZRijrbk0jj/DcdRQpxrsLcPaeUo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=PerGWQ6cfPhU4g26hwZ/wCmdAxN4fYQu7aYlQSSylD1DhcxBB4tOhLOdblHXR7/v8
-	 2a2xRsrTpLigpJ7aboomYvObTDCFXmhFS0Q1BolkHfoCJKxii2wm6H9pBBk9eZAlj1
-	 bYtxrPorCA01PGrqEql52GChNY8B7WW7D0rg/Ex/WBhBBttbsFJdLbnhegS1fdfyZ7
-	 ZBmq1/8Nek8stD9VdSvbDA3bboyO7/R5THnorDEpk2MfyE3hciCV79n0AfJzbcJede
-	 5sncrHyTTJRyq+fhdAtM/le4wnEhH5x2mvKL2gpOr6Fd7wNOSuDBz/j7vUuTNHAzga
-	 atJLuCs38rnKg==
+	b=np3L+2XHqkSo/OOKHGvjMMXuQYhpwSxdI4rUv6PVFKaNfAgTu4Bo51RCrXbHoQ4zO
+	 s37Rg45drEc32sxVF+Kq6WUz4QvOrKMR0zzoKO9rVfNOnMOQdR+tvUhWvOVO0GCDN2
+	 9iSRRaCco6UXtbZi3ecIbWytm2xYgJ1ZqScEJzHsArrnmNLxdbQ7R33HlamOKd5U5S
+	 rXQRfosFKdHiVdv8vjd65h7IEehPDmMV+aKsVNL7jM1KoEy6j5eUdvdVUpKsABwZIT
+	 SaR00PLp9PDAmnP972uA/pwrOnfOsVxj3qiEmhqBlkqZf/4TkFO33pk3EnbXO+uxet
+	 xKa0ktL42tTDQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@oss.qualcomm.com>,
-	Amit Kucheria <amit.kucheria@oss.qualcomm.com>,
+To: Sumit Garg <sumit.garg@oss.qualcomm.com>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Gaurav Kohli <gaurav.kohli@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Abel Vesa <abelvesa@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	manaf.pallikunhi@oss.qualcomm.com,
-	Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
-	Casey Connolly <casey.connolly@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Dipa Ramesh Mantre <dipa.mantre@oss.qualcomm.com>,
-	Abel Vesa <abel.vesa@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v8 0/9] Add support for Qualcomm remoteproc subsystem cooling
-Date: Sun,  8 Nov 2026 14:19:46 -0600
-Message-ID: <179416929226.628393.17390672415084673437.b4-ty@b4>
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v8] firmware: qcom: pas: Make MDT buffer retention explicit
+Date: Sun,  8 Nov 2026 14:20:52 -0600
+Message-ID: <179416929266.628393.16013651259190404756.b4-ty@b4>
 X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260809-b4-qmi-tmd-v8-0-b15d47adc379@oss.qualcomm.com>
-References: <20260809-b4-qmi-tmd-v8-0-b15d47adc379@oss.qualcomm.com>
+In-Reply-To: <20260925165231.10722-1-mukesh.ojha@oss.qualcomm.com>
+References: <20260925165231.10722-1-mukesh.ojha@oss.qualcomm.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -88,30 +68,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 09 Aug 2026 17:58:56 +0530, Gaurav Kohli wrote:
-> This series introduces Qualcomm Messaging Interface based Thermal
-> Mitigation Device (QMI TMD) support to control thermal mitigation
-> on remote subsystems such as the Modem and CDSP.
+On Fri, 25 Sep 2026 22:22:31 +0530, Mukesh Ojha wrote:
+> The PAS image initialization path retains metadata whenever a valid
+> qcom_pas_context is supplied, although callers may not need the metadata
+> after initialization. This leaves ownership implicit and causes unused
+> metadata buffers to remain allocated.
 > 
-> The QMI TMD is an interface that instructs a remote subsystem to adjust
-> the performance level of the devices it manages, reducing power consumption
-> in response to critically low battery charge, overcurrent alerts, or
-> overheating conditions.
+> Add keep_mdt_buf to struct qcom_pas_context and have the generic PAS
+> wrapper release metadata unless the caller requests retention. This applies
+> uniformly to SCM and OP-TEE backends, while qcom_q6v5_pas keeps metadata
+> for subsequent PAS operations.
 > 
 > [...]
 
 Applied, thanks!
 
-[5/9] arm64: dts: qcom: kodiak: Enable CDSP & Modem cooling
-      commit: aaef1df06a7b65778498801995997c42b7b33ee9
-[6/9] arm64: dts: qcom: lemans: Enable CDSP cooling
-      commit: 49b2314dc280fbb4b316676d83a0f03ea44b954e
-[7/9] arm64: dts: qcom: talos: Enable CDSP cooling
-      commit: 0ae7c4dd65f2b7fdab267eb021daec5fcde8cf34
-[8/9] arm64: dts: qcom: monaco: Enable CDSP cooling
-      commit: 59e3a973584a8ff3d8867f352df092c796d3ee7c
-[9/9] arm64: dts: qcom: hamoa: Enable CDSP cooling
-      commit: 682fc950ce3daf460164be075e445e6ea66b40c9
+[1/1] firmware: qcom: pas: Make MDT buffer retention explicit
+      commit: 2aa8fafc08e777e9da356307c1a0117e7f4277cf
 
 Best regards,
 -- 
