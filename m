@@ -1,56 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=95.215.58.149
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794260414;
-	b=p0agbkLDd3C+mJmb54n4ItNMdeR9YrL15XkC1Wqd/EOlH2aSyREmxmFXM1IZs4TwrIIS
-	 r97UZYbOWfG0OexVwbUpEuESDu0uO11U6WI9FjYVCEyybhoh1iZDaedhs9Aw4B109TJFw
-	 Sfq1fazlkCHHGO1fZK5CodD1PIEq4giUl4ApTQKBydodgTW9NJr3YZ31tCU7r1U94Amv7
-	 8Y5IyPUTF69CBL6fg2zTQFFzSPHwN0vMKSw0ZrWtVNdPG9eo6s0MukEPg2k44/h4+wKN1
-	 rPVA1l9oxDFD+PxZ1Kwag7YPbBN0xxHbg9liR55s7zrjHxFfaRgmeZC8IuFMaiP2mvg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794260414;
-	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
-	 X-Mizu-Trace-ID:X-Migadu-Flow:Message-ID:Date:MIME-Version:User-Agent:
-	 Subject:To:Cc:References:Content-Language:From:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding;
-	bh=eUnUJ6fMsa+SK3hUNyUAZu2gmdqYdOP/pDefbHCAe7Q=;
-	b=syCIwlrDXzZ48KcnuL1qz+M1GgnvC02cdzdtvd+fovA1rXQ12Ww5b4M2hoThQ4BkG4+W
-	 oYKslVISJBrbqWC4NLvETIfKGQ28cQgtU4BuXryUUlRjZq4VH8dtEIzZ0BR71CfhUDou1
-	 6oFHULmtX6gpvlWzn+wEgwmKR4FRua1OyvWfcgXchbGou6wfeFiKf5wzYl0+yv60LgLtY
-	 Hxp8i36gkeicI2kGG7GlVcWDT7ZAcb1cmFcSN45O+KCsPg0RQz45esOqYorMu0RnvVxsA
-	 bNJUPRjSmcC6wTXF3VeRKQrLorkrBil0+qV1OUbuqnRxqGLdNKe16tm26xCbY15Q1nw==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=packett.cool;
-	spf=pass smtp.mailfrom=packett.cool;
-	dkim=pass header.d=packett.cool header.i=@packett.cool header.a=rsa-sha256 header.s=key1 header.b=OPqp04Ow;
-	arc=none smtp.remote-ip=95.215.58.149
-Received: from mta1.migadu.com (out-149.mta1.migadu.com [95.215.58.149])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.46
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794261782;
+	b=PWs+OsZQrO9V2gv4Ahj9bNAV5r8nBSTokDOOZtYBtY+83P+XsAUg1xWqlkmNInPFpfNd
+	 Jn3+sVeh9TI32oRjDH7RYviIGscBRTj2A6yaQRJsKYhNrXsgm5x7q97WDOBEIQAJe9XCG
+	 rI22RDJrRqEZ4g8+zWpVw+PM+H7+MtUQTpJNns1SaHMLT7UnH3fNTKt71pbjq1bzHfs+U
+	 JJjolLAJtL334OAncZSlQm6e1SsGtW2OzSMf4o4tuJrz5V5eJhbPK23XW+hFgSAPDyXPZ
+	 uGMNZo6tavWvIgF0W+xB9FZGTTEI/XnA/9Cq159SMFJVBQngZP0w3Zt3lrI4kw1z39w==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794261782;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=/4B+HMYQGdeNoawaC8nb2MBw5WMuUhGF+veGWpIt95w=;
+	b=X2OCGp+8mfxD6tOwXjJLK0/w/uQLciMfQn850GzuQr8zoqUb0/mEjmZwFT/84HtJj6xP
+	 a7e4fKdyLUDuXlv5/8FZtARv5GGQwyo1YIYA/NZCk46o6FnaywTTBA7GJEsai1s1o7HWK
+	 CvXAeF7FhbmTN3Sx2qS1vubKdiSKwzGBIs90lMgtNWIt9E5GCr6Ca/cG1dDozDDANeQov
+	 KtH+jswnvsZLLXBxpOz0jrOHhRIzRLvGJTi0L5dsRJ4Pb4NUbEHd4+2NoCA23Y7AcGKA6
+	 nse5ojpok4PxmeqCN7ASqOAmXoSeGY4w5JbqAN5X7/+7cUKA5LntAO19vCUJqhlyYdA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=luxonis.com;
+	spf=pass smtp.mailfrom=luxonis.com;
+	dkim=pass header.d=luxonis.com header.i=@luxonis.com header.a=rsa-sha256 header.s=google header.b=BSUTlFht;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.208.46
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503AE606A334
-	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2026 21:40:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 503AE606A334
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D16C606A33B
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2026 22:03:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D16C606A33B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=luxonis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=luxonis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=packett.cool header.i=@packett.cool header.a=rsa-sha256 header.s=key1 header.b=OPqp04Ow
-X-Envelope-To: linux-remoteproc@vger.kernel.org
-DKIM-Signature: a=rsa-sha256; bh=Y3CmxKJ4TKlJACzMuZuQE+pA/o7Ia4zpMq+sD48qZJQ=;
- c=simple/simple; d=packett.cool;
- h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
- t=1794260410; v=1; x=1794865210;
- b=OPqp04Ow+nGkU4H3wdzMQJYJ1i0HXBJhM4d4BfU/OALgyVQwKiZZJUcu1ezWpxq60AqP4Z82
- uikpnksGCnsChu1duGAn40lKtYhYHT6hkLnHNinDgxqcP5GcTIJoppYynNHhqHunBUnpnExfjWV
- qqJR7F6Kd4UThpAwVUD2xWBaezjCzAEqp/1Zzg+iX323vdNZ2NvcOYQdC7Gi9KOfjeG5/f7SgwB
- FM9B2jdZxTqxb7XG419jtCYl51ur2SA9yq+IR9ZUNqXpecvJJ0SOc7Logbopl9iYY0+YcqwQdAi
- yRQ5N5IOSwU5iO5LovA+PS7TIWkTckYvhi45yI7QC3Log==
-X-Envelope-To: linux-remoteproc@vger.kernel.org
-Received: by smtp.migadu.com with ESMTPS id 91629022a1c960c4;
-	Mon, 09 Nov 2026 21:40:06 +0000
-X-Mizu-Trace-ID: 91629022a1c960c4
-X-Migadu-Flow: FLOW_OUT
-Message-ID: <25204208-5fcc-4b00-b359-86fc5f124700@packett.cool>
-Date: Mon, 9 Nov 2026 18:40:00 -0300
+	dkim=pass (2048-bit key) header.d=luxonis.com header.i=@luxonis.com header.a=rsa-sha256 header.s=google header.b=BSUTlFht
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6b581b6b0e9so139515a12.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Nov 2026 14:03:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794261781; cv=none;
+        d=google.com; s=arc-20260327;
+        b=EHbrHQL+pv3gMG+DwNs2GiEQRJM76mvNoGsiJiz+/QzbGGqM2E5gQISjqXsH2QSLFH
+         pcLbh/3L9rgOADTCBrhaNych8CjAe8u0XNy7rQP3VJAqGZ2vdooWtmpDWWCyLBlpj1+t
+         8XTWl/mwyWLP106hHw4TTkc4f+lw81Rr2IjhGUBbg/SE65sp+G/TKodyHfAMzcxGITA1
+         oTSWJsSmkJ1cWu9QpxMi2WL9II875eypqQtHNP7W4Grzg8GL6hGoW9TJ8+AywY/yZ6XQ
+         yu3lnXS/ZxTGLGeFwDkndj8at2JN8sq8bUqHjcQGDdOfSNxBsgGjXeW2zPZ+/vbAL5Qk
+         ocGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=/4B+HMYQGdeNoawaC8nb2MBw5WMuUhGF+veGWpIt95w=;
+        fh=88MKjTgR/x6MOG8pLtIvGwcyARqRn3pHlXXGWKFrHnY=;
+        b=QVmC4BSSMCGQohQyfbOxHn/8wMmhHKK3Dd9JJX0aWbRcUBdMz5JSDlGTUDzYNF314S
+         0F7N2U4uGfq1Dqr7XgZQtr1oyXWpFib0IBCZGcytvxNFcZ40o7bC7Pgs+Mq/LUYstcO0
+         l9GoirmVFE0ZJ+Y73amwY1yVZ7rWUEcw+HHhX5M5FOFWr/WxXPuKrIQFQN2aaTj0/t8t
+         XxZiMsfvI1JhPc7F0wOknydCfTgNp53Xf7jldiZIN37TU1dH2H/5spaeZOeiItVR0Ldl
+         ZAh+3mcCP2IIMV/JiCxA1aJfvrNTnIG+pNKzLIjbSrlT+nYtbptEIDriMFbyi55XEbGP
+         fAvw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=luxonis.com; s=google; t=1794261781; x=1794866581; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=/4B+HMYQGdeNoawaC8nb2MBw5WMuUhGF+veGWpIt95w=;
+        b=BSUTlFht39VNuJ/f2J56X1s7bZ7V2SNgiXfLZnVcGiL1jIU4NznY9fE2HkjZmULok1
+         x60Vf3QAfEuCA1jvHmnHu1CC9AcJp08kuvVT8l5qpx4T4NU4ylgNZf25JIwR3YHhAKQd
+         Qn0z40snzSs1+K11hpetvZMTri1kDGLdQ9Pmb6pGGbbcBhaE0eUIspki2qJK0xwomhJY
+         Rq/8cEG+xuhEWuV8g+0jDwvIqDpq26NFGtV+XemcHnqOwpN6iQVJ7qI59pGoQpyzGKeA
+         +f14gx25gOszOrAfXaYBcvorgkduohNMqwnYMIgQYPwprPWNiBPoveI/vOSv0NZUaed7
+         dfiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794261781; x=1794866581;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=/4B+HMYQGdeNoawaC8nb2MBw5WMuUhGF+veGWpIt95w=;
+        b=SF1UAOs1iT0XS1am0zkbRAcbK8iPPRaD1dhPrhkcuAqR5Z1NmU7sndpxTu3Hv9n7vx
+         LurI4fuQa8HDNHKm/C2ZAvhmhfFWkQ77sZrtPWx21Lt4jWqSRTnE55uDl2pIrOu/Sv9r
+         bkNbNYXtsNz9dl/14hQMCQvDhxbkJqfrbJrWulz/ofzk020lLuy6AbP2HVbnoLinfB8W
+         wNP1/z8wtnQwTzH2qM8ELnechwY9MipYT2oeQFrzIOJtsPvV0zwzTnAYHfOgVoBHh3wb
+         9Q0b0kyp/700xEDsA7asko13w3Jc83t+AxiWZHPSZPRbPFlCXfub1ZsLs/MgIYfiEuDA
+         EiCA==
+X-Forwarded-Encrypted: i=1; AL+hErG9kL2IsB5KyapzubQCYB3w67qWcpaUMT1wcaIq2x0zEyq7X5yuY5y2ACmBXuziDdNJrVPQFLAPgfcDNSEkSFdE@vger.kernel.org
+X-Gm-Message-State: APuU4Z/YG9Kp16gQ/SrfhfoE43dTP158L/kMshgyk4126IcOGgsSolqq
+	y4KDxTZtHX2hCy+xgxirGwpPYBGYEaQXYKi5/eRQ2l28QxqHOE6TPfHK3ynpyc4FIdNRDkykAzA
+	E2MWbwxARLsx3LjfemTrjUfkBGloTNvnA23qNH99D+Mr0sB/eXLgP1ys=
+X-Gm-Gg: AYBFou2A6M4c59LwEAQzirOeEkhR71TgYdLz23SZ/27SdyF7N9af6tPKpYnll81S53w
+	zBO5Xkll3OnTVYIo2782Ru43/l2KxDoqeP5aGHnAayToWmc2AOSp3/HeJ397B8Zpwdr+c/wAx7k
+	BBtCptr1t7qNbKUjlDjjPTiU9uUYIAvQ1aIhjOGqEQS+M7HMIhl23F3UUXDf0Fsx69/jfu2IqZB
+	7vaxPLiHgn2qkl5+dQ8zYyzrNh2N11HzXXlZ/kgKkNsSLCZyIAKrQupGIXUBFr1s90iP8pyxdHr
+	2VBuZ5+X9ZukhgNQxMsJ2fbbvMinj/TdLrwv2r3HudeHsyylMBl3fdi0Za0tlbPHdzfLKbkpFCh
+	/BGA3t+gi6TcPZF/CJu3KrxVoNgwEX7+mgGg=
+X-Received: by 2002:a05:6402:c45:b0:6b3:e89b:126a with SMTP id
+ 4fb4d7f45d1cf-6b7565f7d6dmr640342a12.12.1794261780736; Mon, 09 Nov 2026
+ 14:03:00 -0800 (PST)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -60,91 +103,67 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20261109175752.793130-1-jure.rebernik@luxonis.com> <25204208-5fcc-4b00-b359-86fc5f124700@packett.cool>
+In-Reply-To: <25204208-5fcc-4b00-b359-86fc5f124700@packett.cool>
+From: Jure Rebernik <jure.rebernik@luxonis.com>
+Date: Mon, 9 Nov 2026 23:02:49 +0100
+X-Gm-Features: AclHuK-cvftGYpN4mqto5HWIYSl8oeGTMovdxZCsAtUy9fF3sq2BZncPc5FuUyM
+Message-ID: <CAD9jT+r2gBSbcO7CVu_YLhiJja4PDs6O=7v5g-VM_RYx07=4Jw@mail.gmail.com>
 Subject: Re: [PATCH] remoteproc: qcom: pas: Request stop before tearing down
  GLINK and SMD
-To: Jure Rebernik <jure.rebernik@luxonis.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org
-Cc: konrad.dybcio@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com,
- linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20261109175752.793130-1-jure.rebernik@luxonis.com>
-Content-Language: en-US
-From: Val Packett <val@packett.cool>
-In-Reply-To: <20261109175752.793130-1-jure.rebernik@luxonis.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Val Packett <val@packett.cool>
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
+	konrad.dybcio@oss.qualcomm.com, mukesh.ojha@oss.qualcomm.com, 
+	linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+Hi Val,
 
-On 11/9/26 2:57 PM, Jure Rebernik wrote:
-> A crash of the ADSP that the host reports, for example through the
-> remoteproc debugfs crash file, can reset the whole SoC on QCS8550
-> instead of restarting the ADSP. The reset was most frequent shortly
-> after the ADSP had started: on two QCS8550-based boards, crashing it
-> about 4.5 seconds after it was started reset the SoC in 19 of 42
-> tries. The serial console showed that the system stopped right after
-> the recovery started. Nothing more was logged, and the SoC was reset 6
-> to 7 seconds later.
+Thank you for looking at the patch and for offering to test it.
 
-I've been seeing crashes in sensorspd like
-
-qcom_q6v5_pas 3700000.remoteproc: fatal error received: 
-EX:kernel:0x1:SNS_SEE_I_0:0x10000025:PC=0xf00280b8:LR=0xf001f>
-
-on a Kodiak device (sm7325-motorola-dubai) also cause a whole-SoC reset 
-right after logging that, when trying to restart the ADSP.
-
-Those are somewhat random and not too frequent, like once every couple days.
-
-I'll test this patch and see if I no longer end up with my phone 
-randomly showing the u-boot menu when I pull it out of my pocket :D
-
-> Since commit 0ea50486978f ("remoteproc: qcom: q6v5: Request shutdown if
-> crash is triggered host-side"), qcom_q6v5_request_stop() also sets the
-> SMP2P stop bit for a crash that the host reports, so that the firmware
-> takes part in its shutdown. The stop is requested from qcom_pas_stop(),
-> which rproc_stop() calls only after all subdevices have stopped. By
-> then the GLINK and SMD edges to the DSP have been unregistered and
-> their client devices, such as FastRPC, torn down. On QCS8550 the ADSP
-> firmware treats the stop bit as a fatal error and runs its error
-> handler after these links have gone away.
+On 11/9/26 10:40 PM, Val Packett wrote:
+> I've been seeing crashes in sensorspd like
 >
-> Add a subdevice whose .stop callback requests the stop, and add it
-> before sysmon. Subdevices stop in the reverse order of addition, so the
-> callback runs after the SSR BEFORE_SHUTDOWN notification and
-> sysmon_stop(), and before SMD and GLINK are torn down. The firmware
-> then handles the stop request while its GLINK and SMD edges are still
-> registered. qcom_q6v5_request_stop() still skips the request when
-> sysmon got a shutdown ack, or when the firmware reported the crash
-> itself and the fatal or watchdog interrupt has cleared the running
-> flag. It also clears the running flag, so the call in qcom_pas_stop()
-> now only sends a request when the subdevices were not started.
+> qcom_q6v5_pas 3700000.remoteproc: fatal error received:
+> EX:kernel:0x1:SNS_SEE_I_0:0x10000025:PC=0xf00280b8:LR=0xf001f>
 >
-> With this change, none of 104 host-reported crashes on the same boards
-> reset the SoC: 40 ADSP crashes at 4.5 seconds, 20 at 4 to 15 seconds,
-> 20 while the ADSP was streaming IMU sensor data and 24 CDSP crashes.
-> The ADSP or CDSP restarted each time.
+> on a Kodiak device (sm7325-motorola-dubai) also cause a whole-SoC reset
+> right after logging that, when trying to restart the ADSP.
 >
-> The problem was found, and this change was written and tested, with
-> the help of an AI coding assistant (Claude Code, by Anthropic). I
-> reviewed the change and the test results.
-Try not to provide the free advertisement right in the commit msg btw, 
-and to make it sliiightly less verbose.
-> [..]
-> +	 * Subdevices stop in the reverse order of addition. Request the stop
-> +	 * after sysmon has asked for a graceful shutdown and before smd and
-> +	 * glink are torn down.
-> +	 */
-> +	pas->stop_subdev.stop = qcom_pas_stop_subdev;
-> +	rproc_add_subdev(rproc, &pas->stop_subdev);
-> +
-> [..]
+> Those are somewhat random and not too frequent, like once every couple days.
+>
+> I'll test this patch and see if I no longer end up with my phone
+> randomly showing the u-boot menu when I pull it out of my pocket :D
 
-It looks a bit funny that "stop is a device" but well, it's not like I 
-can think of a more elegant solution…
+A test on Kodiak would be very welcome, thank you. I should say up
+front that I don't expect this patch to change that case, though. Your
+log shows a crash that the firmware reported itself:
+q6v5_fatal_interrupt() clears the running flag before it reports the
+crash, so qcom_q6v5_request_stop() does not send a stop request, with
+or without this patch. The patch only moves the request that is sent
+for a crash the host reports, such as one triggered through the
+debugfs crash file. I could not inject a firmware-reported crash on my
+boards, so I would be glad to hear how it behaves on your device
+either way.
 
+> Try not to provide the free advertisement right in the commit msg btw,
+> and to make it sliiightly less verbose.
 
-Thanks,
-~val
+Thanks for the feedback, that's fair. I added the note because
+generated-content.rst asks for tool use to be noted in the changelog.
+I'll wait for comments from Bjorn and Mathieu, and then send a v2 that
+cuts it down to one short sentence, moves the details below the ---,
+and tightens the rest of the message.
 
+> It looks a bit funny that "stop is a device" but well, it's not like I
+> can think of a more elegant solution...
+
+Agreed, it does read a bit oddly. The alternative I could see is a hook
+in the remoteproc core that runs before rproc_stop() stops the
+subdevices. That would change the core for every driver to fix an
+ordering problem inside the qcom drivers, so I kept the change local.
+I'm happy to rework it that way if Bjorn or Mathieu prefer it.
+
+Thanks again,
+Jure
