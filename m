@@ -1,94 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.5
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.172
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794177178;
-	b=r3P4mCbnsxppRPjG+dFXRqrpH3Fja5XNTammv4iRr1mLjZLGVEXBQfafI+EBI4Q6BIhs
-	 xi8Er0Xafx641VTq/YviY+ytgDM0F0bJj26LUPH2TXc0Row1DtuZFbgxh3g6x9xcOTcBn
-	 RppdcZZI4xEpI6fZWuqLdGFElm9MI2FpyWs/qdX8FNbp0+lIhOK8GoSIgCUmk6qcqC+al
-	 2vryc+4RUSwttiQjS7zeU/91GceJ92496vsy4Kkc+7/NzZdCqw2lNi6Jp5dKLdMXeQP24
-	 h9spntREwl0V+E9D5uiM3seuAPEA6piDutKALGKi9uxOMhECVK2XKOV92AuZKsYUrXQ==
+	t=1794190985;
+	b=12cFtAOj9YLLz6Kv71WfuoFdPN73LqjZeqAhSK3FQkPoYCJMz/dlTaZTtA7a5Cz9g6wA
+	 2qld9It/VqpJ47evaaHgqfFmH8HuDzHm7Mk9E4wQK5iPAd7ZC+18o9DQgATfhd3j3exQL
+	 uWDdier1angkxWK/8onIIGtKZyXnf9bILya3uYVK5qV/Uk0L47J3MNaJcy8ClhYZkS4rz
+	 e12zuF3BWSln8Ps8Xe8NpOgDpGPltsUaolP3gEbJRkyDpRBrNQ7AxUx2H2tkFkENfezAi
+	 efX207HnCeDPzGA/FyXcNFAx9tDQ71bb5qiVP7P4RGrW4+4gZ2Ix233hXJ8INac2pnA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794177178;
-	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:From:
-	 Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-Source:X-Source-Args:
-	 X-Source-Dir:X-SGantispam-id:X-AntiAbuse:AntiSpam-DLS:AntiSpam-DLSP:
-	 AntiSpam-DLSRS:AntiSpam-TS:CFBL-Address:CFBL-Feedback-ID;
-	bh=aXVyoiqEpaNTMlwRHez5VdDgVFbibsjLjBT9cHLdlCI=;
-	b=4/gVl1dI2O9ch67lqZiq7Yiun5W+G2CKWYVFnfkl2jRZE+yZYLLDV+PRodIPUW/9nW/z
-	 m5p+VRFztXlwuLe5hccXRNZ3+eEY4XXsCO4n3L85iwe01hBmawfbhHOtqnq/dIYxuLyCL
-	 dYiNIhHGf4gKnyJ0R31k9LGsjjrolnxLGvNPs//h5qxsIes/G7rJaoNug04+TLAVK1g0D
-	 fiDg8wfl5w3GUrDPG6kkVGRNJdtNK3Y3N3gHXKZf1BoCn5XPkcfKQEARi1xEl8ik5Z1TT
-	 1Yqjqf2N70nmAYjgglQPBPspJROJXxM+Xh9vzkluiHiN7jwN+907usgD8yhPkY+A8nQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794190985;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=+ltUm63Ka8/fIiMKORBqPHL/abasOjV2ks0cibiXpcc=;
+	b=PuBUHbdDqoj6MIHpkroOmREec/6svVR5YfScbhD4iDQksH9O40t1uuIcXP+s5C4y58AV
+	 80C33ap/IQgiUogaVcQOLS/UOrOprzktjV5nwzI5r+NG04MFHA6TcEeefnHkYor40aGIA
+	 Imgers8Cnlux8mSIR7CPOSXOV2K3BzWu48lcC7WbqaMqny2/75pWd5UEl//J0gY9QHHS9
+	 FuGOBfoL64KaQ05SM2iMrR1SHg/6nK12lUeqSvECNxxb0dWdm/ncvWo8ctZTDjWrl/Dnb
+	 nNCdmW8Q8NGr//rIrRoGZDui6qQ60L3Rzy0yMKPbty6u/76YB1oO49FbK4ne110rM5g==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valla.it;
-	spf=pass smtp.mailfrom=valla.it;
-	dkim=pass header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=WcqtD1nc;
-	dkim=pass header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=kwQduhJs;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.5
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=BCMkFxKX;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.215.172
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4393606A320;
-	Sun,  8 Nov 2026 22:32:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org E4393606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EBC606A321
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2026 02:23:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 99EBC606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=WcqtD1nc;
-	dkim=pass (1024-bit key, unprotected) header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=kwQduhJs
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-qv6g.prod.antispam.mailspamprotection.com; s=arckey; t=1794177176;
-	 b=yAykkhFdy3v3mTr5O/I++gp7jlfB2zEJ24rr9s4Cf6ByqunW8Mxxyf6ZZhcDTvfO/sggEztYff
-	  wRnKHr//ph8qDwBPE/1URdXFfFyNDMWG5ZbEsq67yDR2xuCXEWM/m2DKsNx1ZtjFgSqgQ5OMXm
-	  OD4udL3+bT8N4gsoJY5ntzEFzyFownD+9HDNojSWhHTVsswgdcngTbnxcw0O1lCAoGjm/TX1Xm
-	  ZqKYqV1Y7iEPcLsD1pynTsjdiqnljApJ1n1J4zSYlvOpGlWsDFONRpDTjsIcNLYD83z6H9PXPf
-	  UHxZXG9Yudu6ofCv6rYd9nhozzkCDYY4UzbU9bIHY+Lr4A==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-qv6g.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-qv6g.prod.antispam.mailspamprotection.com; s=arckey; t=1794177176;
-	bh=010V8IGaZ6Y8fPqruXV73V407p+sdABk1/LYEKBJdWo=;
-	h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:
-	  Subject:From:DKIM-Signature:DKIM-Signature;
-	b=JN17J1pmvKmwlc7W5IKl3oMyvIEudbsYzXuWsBkv0/0YskaYhi1NQZ9hkjx+VZY08RI77AJqJs
-	  Zurb8SXnL/O9O+xz1EKn708duU3AWUoN5fJE7arH1YX7kngsWv/BNASQfLo2r8hAwFz/f3zEUD
-	  JXFG/nb6eLBdeZQUAJpIBzoZ/OTNe2OXH+PtqIQd7OgSDbOOQWWQrAeoc9EaT5TQluka7+urDH
-	  z11c3nw6EKvNLBEek4YXf+pAPI4ErQ197RWxO/RY6LCV1DOwa2kndXacOulvEhKOBu7HkCRbKi
-	  h4Xgj85VuH6581xR8vTQfU2dp5RURSph9PyukCZu3QQfvQ==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:Message-Id:Date:
-	Subject:From:Reply-To:List-Unsubscribe;
-	bh=aXVyoiqEpaNTMlwRHez5VdDgVFbibsjLjBT9cHLdlCI=; b=WcqtD1ncItlO31l8Q0iISpPYbN
-	/GZdsTMKLXLkRs5gHOUyuWMtohNaE/PrWYvm+d2BeNHMOAR7n+VldDRhgBuWt4mdWR/ZyKhiBEcMU
-	qtxzQnjORL3jAjcGURW3HIJ9cqnxeQXs8MTsGqjB5vHVLDpDmfa1M3UMhYZD7Wfykhqc=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-qv6g.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xQBRW-00000008Tg3-1qq1;
-	Sun, 08 Nov 2026 22:32:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Cc:To:Date:Subject:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=aXVyoiqEpaNTMlwRHez5VdDgVFbibsjLjBT9cHLdlCI=; b=kwQduhJsKvvHpdFAkJEjOFIcQk
-	Yg8p2dcsNiiioekjsRKKgNjQqHaZXbBliDzVDI0DbRIlBso4jhUKWJkorVQnaAmPwaqYs1ttMNA4F
-	3ExAfmNaCupM3au3/cdRH9VmJnFE2KTCanXVaNrdGpqJqK4QS1l2uitODTN7UfhlB8Xw=;
-Received: from [79.17.15.196] (port=64784 helo=[192.168.178.158])
-	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xQBRR-000000006ZR-2cEW;
-	Sun, 08 Nov 2026 22:32:49 +0000
-From: Francesco Valla <francesco@valla.it>
-Subject: [PATCH 0/4] remoteproc: virtio: Fixes and cleanups in the
- vdev<->pdev relationship
-Date: Sun, 08 Nov 2026 23:32:36 +0100
-Message-Id: <20261108-remoteproc_pdev_decouple-v1-0-3dc2fad4951d@valla.it>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=BCMkFxKX
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-cc147d86bebso171619a12.0
+        for <linux-remoteproc@vger.kernel.org>; Sun, 08 Nov 2026 18:23:04 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1794190984; cv=none;
+        d=google.com; s=arc-20260327;
+        b=eSAtfXWNK8EL6QZ4o1yFR+o6m772jbNPgxKBB1qvRaBV0Si2zZFBFgWLtoi/bwAwIC
+         76kUzUdZXOBthmtpd1nDHyf/QESkt24sfkocivbfRIvfLWj7CxCFbSrEiiafQVeqV6DU
+         9l5b2Vg6os9Pgf5HCsPKn0NgvMXaKa7qEfClb+8N5SMplxYpOAXhka0YUWwzmXFDUC0n
+         P0iQ/dFF/h3+Qigqz7HXC0FE//mJ+uxfiyrCMChLNBeadcPY3Fc7oLMg/o/8Lq2gLRKE
+         4xxuPVbfCcAfItKLLYkJNni3+YgbBv+4L9lJPaxQyjuGqy6IKk3EqG6XaihtyDulDl6I
+         VkWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:dkim-signature;
+        bh=+ltUm63Ka8/fIiMKORBqPHL/abasOjV2ks0cibiXpcc=;
+        fh=pkd5XhOvoVJeaE8R8KB5UdIwH+n+VmykXi+EweI7rhg=;
+        b=avYYsaEOb+2I7nwZz85Ka3id/IsKTe19t18gYAca7iL7Y6x/bojXIqgbCHQyTHbajF
+         yz/jo89nSVM+SGdnLbxLtFN2YAg/W+fhpwzU/VUkTs1/CEnWHKns9V5JzGqWtrFAwg6s
+         oPhRq+Gss1YnjAmz56jiBt++7urevG2ZPAk0K39E456p7Kr3ymiNGTjgeTFNYq/Vfr6l
+         jxrjmFljaE9ss/GRsnaAx8INduiQS6RhPfvU2VAM7NTwb1U0XIBl6qrqEw4J7JJqN6D/
+         VE7Ht1E9d5hPtvt0XSthcRDlevT5uDDpxymbuFlCOv7Ya8a2rWeaTnrD1Dr1J6Unnga5
+         oOdw==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1794190984; x=1794795784; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=+ltUm63Ka8/fIiMKORBqPHL/abasOjV2ks0cibiXpcc=;
+        b=BCMkFxKXZilOqS5qGGm3zfzewgjNuwk+ApN5Tn6q039iGQMx1tnYeShFlkP5g0aptX
+         mtRlkVraq2DkEaDbMUdpfZlR4BXbFSXTkySnLKRQ/I2NTWggzuAcHySDasGW70gDDyXC
+         Aqo2aKPslSKIN5QMxdI8XFw4SYLYSEM01xtE7ZmKHWPG4sx+He6tS5xMNihqgp0cYgwM
+         w3h2wLk8afqVpScQ//Tb2pAJlIhsDzOiRCpNTon0U8VjNvzGLDtg/ma9pJ3HLTKB17VO
+         m8GaGRFacLDudVzNYAglpjAhNc354xwCpvv36Beh6ZTSvi+wbXTbC0lz60vF62ALlC0w
+         UmuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1794190984; x=1794795784;
+        h=content-transfer-encoding:content-type:cc:to:subject:message-id
+         :date:from:in-reply-to:references:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=+ltUm63Ka8/fIiMKORBqPHL/abasOjV2ks0cibiXpcc=;
+        b=SYsS6YDJi85nll2zvIRoy7q0ITvcaE32fS0OUOUpWJ7xcYLxNAVRFpfUBl2DsS9ovN
+         1IDDmG/U1jXzdsv/X0tlntzAoddn5jgyjRJ2WxO9X9hbLU+L+EeIx8XVgPwZZQxXU7p6
+         pCVckrDv7/wJ1Em02l5/gNqkX1kWcRAFMdiMClOGSoLsLettcfvhKwv+SA8MFNtl8ujO
+         oqJGhAvakOPv7ORog0078Ad28wllDwgX2L1xiwHWSnGzN/goSMdmMJcHX8EtRXNa2EqW
+         iZ+RFWp8rVUR1bMaIML3i2Jaqnf03n4xrf3Z97Hgzb2jPxyNaZycvWEbbBWjJa5RDphS
+         CWgw==
+X-Forwarded-Encrypted: i=1; AL+hErGThqY4suq9XyhKXqKqVEaDxa7Tk87UWRwmyXRwh1y5SPOOb0HRyTLQs1Q0wsMLj5X9pIGpZQJOYO8v4qiEF1WB@vger.kernel.org
+X-Gm-Message-State: APuU4Z8kSl/9soqB0U4UDCQgtfhyqNlwfCLFYr54UFqG8Qz4qXROKlW8
+	sxR/a1hEFw6CRjqr7ML13dgghQ0vpYbcyF7Im4nmMjfnLz72bElVQMLsMQvSyCmGRnmX9SuU9O9
+	1FrBQrLeAzkClOUnxEsfwRXRdcGK2XAw=
+X-Gm-Gg: AYBFou3FuGCnqyn5+hbN4aVXbPBqsyQ5mrKi3+QIYTLoMPmQPv/DebscnXYHgk6gBsC
+	/XfZQk/rMiNE7aWjzzmFh4dVIk57xbtWeGVdbINZwfj16Lc3mkNY6/d0PgMOAs25VnBxfgKLw9q
+	y6RoeEZRUlcLCgVjw66sB2eXKLODY7AkEMTAbxZWDUH9h3Txrs9cpz6aWbgfBC9vzUppPeHNK54
+	BvqQIvIoQshyHjiBLIwf5E/g/eD/x5tauuTRu1UGVgOzjvHpxXzdeU6dSzze2+l36KzlvbHBfku
+	YSBIk+JeF56NR3luTpeX9l3/G41EGsv5IqupQA4t0Oh/IaKzXG1LWSj7TqD/wVFXd8fGNTK76aU
+	KSwY/Ult5ZWowOoomnCr2hjuJTZBJUwEhptDAZV97AzVEhvrjsXnyvuN/Aw==
+X-Received: by 2002:a17:90b:4d07:b0:3a4:7195:ecba with SMTP id
+ 98e67ed59e1d1-3b12d488e88mr1529576a91.20.1794190983895; Sun, 08 Nov 2026
+ 18:23:03 -0800 (PST)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -98,97 +104,47 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMQQ6CMBBG4auQWdOE0qjUqxBCoP2VMUqbKRATw
- t2tuvwW7+2UIIxE12InwcaJw5yhy4LcNMx3KPbZVFf1WevqogSvsCBKcH302HoPF9b4hLLWGIx
- mOFnbUM6j4Mbv37rt/k7r+IBbvj86jg/X3S6cfAAAAA==
-X-Change-ID: 20261107-remoteproc_pdev_decouple-9933eb3a5998
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Joakim Zhang <joakim.zhang@cixtech.com>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Francesco Valla <francesco@valla.it>
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2012; i=francesco@valla.it;
- h=from:subject:message-id; bh=010V8IGaZ6Y8fPqruXV73V407p+sdABk1/LYEKBJdWo=;
- b=owGbwMvMwCX2aH1OUIzHTgbG02pJDFkffnQLbmeNYLpfwX2TfdHbZLngFv476564OqVW7uKuD
- W25sntDRykLgxgXg6yYIkvIuhv39sw1/5a2gfERzBxWJpAhDFycAjARjihGhv+1F4P/OCSxHhHf
- 3aCd1CXz8EHjo7LQ+Fbe7bdLunJ/XWVkOL4if953l/p0e9MVSqb7yzeXb3LVDf878d4v16qvaX2
- PGQE=
-X-Developer-Key: i=francesco@valla.it; a=openpgp;
- fpr=CC70CBC9AA13257C6CCED8669601767CA07CA0EA
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 19cc6a6b0abfb7b146ef4ab38f0d48c9
-X-AntiAbuse: ID - 19cc6a6b0abfb7b146ef4ab38f0d48c9
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1xQBRW-00000008Tg3-1qq1-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-qv6g.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+References: <20261105024106.338791-1-shengjiu.wang@oss.nxp.com>
+ <20261105024106.338791-2-shengjiu.wang@oss.nxp.com> <20261106-savvy-invaluable-gaur-7af1b6@quoll>
+In-Reply-To: <20261106-savvy-invaluable-gaur-7af1b6@quoll>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Mon, 9 Nov 2026 10:22:31 +0800
+X-Gm-Features: AclHuK-so4ygy7ZQpiwiv8L7y68F48OdPR-9-HT6EDLnbJ3aW8Kx7LpzrpeA0Ho
+Message-ID: <CAA+D8AMxrUb-Pj74wrRn=vEyRUFKWWsR4Eq1LZ2ErsX=rRq=rA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: dsp: fsl,dsp: document debug reset control
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: shengjiu.wang@oss.nxp.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, shengjiu.wang@nxp.com, daniel.baluta@nxp.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	andersson@kernel.org, mathieu.poirier@linaro.org, Frank.Li@nxp.com, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Nov 6, 2026 at 8:57=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Thu, Nov 05, 2026 at 10:41:03AM +0800, shengjiu.wang@oss.nxp.com wrote=
+:
+> > From: Shengjiu Wang <shengjiu.wang@nxp.com>
+> >
+> > The HiFi4 DSP provides a separate reset control for its debug logic.
+> > Keep this reset deasserted so that an external debug agent can access
+> > the DSP and perform debug operations.
+> >
+> > Also require the reset properties for the i.MX8ULP HiFi4 DSP.
+>
+> That's ABI break without explanation.
+>
 
-while proceeding on [1] I noticed a possible simplification on the
-rproc-virtio registration and tracking path, which led to the discovery
-of a couple of bugs. This series is the result of the work that followed
-and thus contains both (proposed) fixes for the bugs and the
-aforementioned simplification, which consists in less poking the backing
-pdev from the vdev side.
+The i.MX8ULP HiFi4 DSP has not been enabled upstream before. This series
+adds the DSP node for the first time, so there should be no existing upstre=
+am
+DT relying on this compatible without the reset properties.
 
-Patches 1 and 2 can be collapsed into one, but I preferred to leave them
-separate to show the reasoning behind (and to allow cherry-picking, if
-that's the case).
+I will add this explanation to the commit message.
 
-If anyone is reviewing [1], or plans to: please consider this series
-first. I'm in no rush to have that accepted, and some (critical, in the
-case of iommu) details need to be squared out, while this series fixes
-what I think to be real bugs. I would have preferred to spot them
-before, but...
-
-AI disclosure: an LLM was used to review the work, but all code is my
-own, as well as the commit messages (I'll be happy to fix the english,
-don't hesitate to correct me also on that).
-
-Thank you!
-
-Regards,
-Francesco
-
-[1] https://lore.kernel.org/linux-remoteproc/20261102-remoteproc_virtio_map-v2-0-26b300e01c62@valla.it/
-
-Signed-off-by: Francesco Valla <francesco@valla.it>
----
-Francesco Valla (4):
-      remoteproc: virtio: Decouple vdev from the parent pdev
-      remoteproc: virtio: Rework memory release
-      remoteproc: virtio: Drop rvdevs list and associated functions
-      remoteproc: virtio: Stop de-referencing pdev from its children
-
- drivers/remoteproc/remoteproc_core.c     | 34 ++++++++++----------
- drivers/remoteproc/remoteproc_internal.h |  4 +--
- drivers/remoteproc/remoteproc_virtio.c   | 53 +++++++++++++-------------------
- include/linux/remoteproc.h               | 10 ++----
- 4 files changed, 43 insertions(+), 58 deletions(-)
----
-base-commit: ec1f9ba57b02fe12a6fa5f141206d439ba3d044e
-change-id: 20261107-remoteproc_pdev_decouple-9933eb3a5998
-
-Best regards,
---  
-Francesco Valla <francesco@valla.it>
-
+Best regards
+Shengjiu Wang
