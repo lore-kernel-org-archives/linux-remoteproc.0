@@ -1,67 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.177.127.221
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794240307;
-	b=cPGHxI4+7Gc7BKBlqSq5zfRDQuPle34LPphOLFpL3sXE+f/13JuopiGViE440Dr453yB
-	 VUF2BCfbPh+z+RAHjvmosyefECAiBx+/RyDbqmaC8H/IzC43/u5ATaHiKqKI+u0sWaAdS
-	 Ol0S5b1MQFuU++I9ddwFrNBnh1UX93fdZXJJcSXqMN9nNsHnZDQMyrRlcpnFl3IR9iFJL
-	 ezKl1mOgm8yZw9sOPFQF9EQtFN1LF3MuXHzlodpc29CeS3WmJQ/ukMj4YKytgnwIvEM3b
-	 RvjtxmMKxWxC18/18tU42+yHeBEoSlWWi127g+FT5fSeY5GR6SbEASwgvb9dTyX+9tA==
+	t=1794245483;
+	b=yWVTDonRFq41qdmHNQy+BYSHUUXmuZHNKUgLpBO3/6so6XDJZB8NXZ5eKdCsFQLADSCb
+	 J38RNYLqLrVmZcJ2Czci81BZ5mV1DgLH4zrfSNgkG/FDlz3/bPg1Aa6JZr5U8/NTYjWuS
+	 P5l22PkPsSuuQcJbWtmzeEAR6O096LFt4Vb4stpzas/0ReDTC/09fXS1FhClRcXI8CRSz
+	 BYoRyigO+C2et31OBO5DbjFFzAKb3sVZJ9R2J2RVieGeA5C2AS9OWbKhlU3cz5F5H2HBz
+	 lSgc+f+les7QYzRhm+/dyI0zItsP3tc9KTQ2miDEEm+R6mcxpbZNFJ3g29r1rNhrlVA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794240307;
-	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-Envelope-From;
-	bh=HMybIJ+NL5B4al0WkPk2fEXktLZGmJluZwLVZ3h+rsA=;
-	b=n4T0tTroShoDJ5khMrCFRbfx+3X7qxHqlqCHdoviGerMGaA4Fyw3qukThYH6pJzvntPQ
-	 u+WBdV0YZR3YGDj72zhZBWdVvac8E1nr3mgzGEWD+kK72hrjVZYNjdTMzKO3818c6bFZz
-	 ZNvACdrRf2HWHUc+hDmWq7lEr7jy+fF5O9xZjDEzTLsDNWIBs2RJmBROfDFh3aPXqyijb
-	 jeT25iZRDMX/ZfaFK4GRpyahPRgW3CY73hEoBqe3384nBgbuYs4auFqGuiANsD/zdHfo2
-	 vJ4Tz2pMQgjs5n9VaipJIln3Z6gdyj7eE3jLeOy0NlVe4plV85GTSHDxsUtq22Ku4YQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794245483;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
+	 MIME-Version:Content-Transfer-Encoding;
+	bh=ZL3nYrPsqqItt2tFVj+sUMiuLO1InqAzv3kT3Gptqeo=;
+	b=dAl/Lxjz+7W6dVaakdnlFTKpsE4LDQ/FCWq3wp56pmYqokFevRtyZJE7Cna5p5S5MZwd
+	 kSWyR5GO1XWW2y7u7pKHYCa6BNP2UM+RaflwzsmOZTwfl6lbdxu4SOnL0qgIPxg4JIsUO
+	 zy3kPh+cPAY0LF8FbH/7RjRoHH2zswiGiTKh4W+AOik1/wiSxggCUckdrIB+6118mk/QW
+	 dyaVCeeaYT0IL5ibyoXvdkawkteiryUYcJftWQqlNgewN/WdEPFj+WHXzN0s7vo+8Zw2I
+	 c7WlPDuSlKWVTWqlJNi0ySM5uzO0LtASVI9HgELX7NYoE1yZQ+hHQRtalYf1+QQrzYQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=chrispinetinega.com;
-	spf=pass smtp.mailfrom=chrispinetinega.com;
-	dkim=pass header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=Pyon9Ymi;
-	arc=none smtp.remote-ip=198.177.127.221
-Received: from out-utut-a221.jellyfish.systems (out-utut-a221.jellyfish.systems [198.177.127.221])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YIsPyMz5;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53443606EE9F
-	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2026 16:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53443606EE9F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chrispinetinega.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrispinetinega.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA74606A335;
+	Mon,  9 Nov 2026 17:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=Pyon9Ymi
-Received: from mail.privateemail.com (unknown [62.8.90.37])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.privateemail.com (Postfix) with ESMTPSA id 4jNZNp0PWdz8sWX;
-	Mon, 09 Nov 2026 16:04:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chrispinetinega.com;
-	s=default; t=1794240285;
-	bh=HMybIJ+NL5B4al0WkPk2fEXktLZGmJluZwLVZ3h+rsA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Pyon9YmiYOEFxzsXWAmI+PtkdwWauWMu9o1R0NCoZ/Svvvz9sI9TtJ12ammZA22N8
-	 +e+2UYVyFgXTgNcaZRAggozswAF8ohtJxi3v0SXwvHUZLXH4vEydZ4q+1G91hwzh3X
-	 fVC3bftvi+iYiz1TqbHGlPKgq5weC3bY6gUNgcDtNhBnyoDdv7+AdlaZWt/kaX+/US
-	 nlqlITrSODOpN7EFA3Pj/o8hmGVhYVXNUkiRTEIicEHE/fL4LnPP1/agU06+Z5jvUT
-	 lgtbURcVQ8eK2qh+uQOgvBXlnZphT66vxQ3LGFRzH/0JpJ4QeSDzWo0CuRfdTexd0w
-	 oAwIz/B4QywQA==
-From: Chrispine Tinega <dev@chrispinetinega.com>
-To: francesco@valla.it
-Cc: andersson@kernel.org,
-	mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chrispine Tinega <dev@chrispinetinega.com>
-Subject: Re: [PATCH 0/2] remoteproc: k3: Recover a crashed remote core
-Date: Mon,  9 Nov 2026 19:04:30 +0300
-Message-ID: <20261109160431.720498-1-dev@chrispinetinega.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=YIsPyMz5
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44FEC1F0089F;
+	Mon,  9 Nov 2026 17:31:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794245482;
+	bh=ZL3nYrPsqqItt2tFVj+sUMiuLO1InqAzv3kT3Gptqeo=;
+	h=From:To:Cc:Subject:Date;
+	b=YIsPyMz5BjpR0loCF6GQUpImEM7Ihg/LZWf66GyRNC9HRmemr23EWJnuQCXBACpVk
+	 1y0L8GV13Z8mBcGL5f/sBMvloJTcia72Pc3XKf+lEFI3vYLa9M02rKn29xVJjCvPd+
+	 9lmPXMZUej69U7KvyUjuGLJEXfuavnUgBo1jAav9jne0uAroFWmRZBrLa1pCc3hpa5
+	 uWwK5wJGlPNXYDKRgz+uoBqY3MoJo3tD29ZJ1IrQsuQ1vPfKyqnT29q8bHZdL+/Nio
+	 IbsTUy150rUfnDEWQWo8wyqPIg3YbdzE/uN2cETj4wCqPZn45YPDSQPmGufF+JVauT
+	 rA8wsuRps6LFg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Nishanth Menon <nm@ti.com>
+Cc: linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: reset: Convert the ti,syscon-reset binding to DT schema
+Date: Mon,  9 Nov 2026 11:31:11 -0600
+Message-ID: <20261109173112.4111810-1-robh@kernel.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <d22a1ffd-cfbc-4122-b11a-7b680985defd@valla.it>
-References: <d22a1ffd-cfbc-4122-b11a-7b680985defd@valla.it>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -72,97 +63,193 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Envelope-From: dev@chrispinetinega.com
 
-Hi Francesco,
+Convert the ti,syscon-reset binding to DT schema format. It's a straight
+forward conversion.
 
-On Mon, 9 Nov 2026, Francesco Valla wrote:
-> If you share details on the Zephyr side of things, I can test this
-> against rproc-next on a AM67A (BeagleY-AI).
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/remoteproc/ti,keystone-rproc.txt |  2 +-
+ .../bindings/reset/ti,syscon-reset.yaml       | 58 ++++++++++++
+ .../bindings/reset/ti-syscon-reset.txt        | 91 -------------------
+ 3 files changed, 59 insertions(+), 92 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
+ delete mode 100644 Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
 
-Thank you, that would help. The AM67A has no M4F, so patch 2 does not
-apply there. Patch 1 does: the R5F driver uses the same mailbox
-callback, and it keeps recovery disabled. So on the main R5F I would
-expect this:
+diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+index 847552133633..94f4508c8b0c 100644
+--- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
++++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
+@@ -46,7 +46,7 @@ The following are the mandatory properties:
+ 			managing the resets for this device, and a reset
+ 			specifier. Please refer to either of the following reset
+ 			bindings for the reset argument specifier as per SoC,
+-			Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
++			Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
+ 			    for 66AK2HK/66AK2L/66AK2E SoCs or,
+ 			Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
+ 			    for 66AK2G SoCs
+diff --git a/Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml b/Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
+new file mode 100644
+index 000000000000..1cbb2bf88716
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/ti,syscon-reset.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI Syscon Reset Controller
++
++maintainers:
++  - Nishanth Menon <nm@ti.com>
++
++description:
++  Reset controller implemented by registers in the parent syscon.
++
++properties:
++  compatible:
++    oneOf:
++      - const: ti,syscon-reset
++      - items:
++          - enum:
++              - ti,k2e-pscrst
++              - ti,k2l-pscrst
++              - ti,k2hk-pscrst
++          - const: ti,syscon-reset
++
++  '#reset-cells':
++    const: 1
++
++  ti,reset-bits:
++    description: >
++      Seven cells per reset, indexed by the reset specifier:
++
++        Cell #1 : offset of the reset assert control register
++        Cell #2 : bit position of the reset in the reset assert control register
++        Cell #3 : offset of the reset deassert control register
++        Cell #4 : bit position of the reset in the reset deassert control register
++        Cell #5 : offset of the reset status register
++        Cell #6 : bit position of the reset in the reset status register
++        Cell #7 : Flags used to control reset behavior, available flags defined
++                  in the DT include file <dt-bindings/reset/ti-syscon.h>
++
++required:
++  - compatible
++  - '#reset-cells'
++  - ti,reset-bits
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/reset/ti-syscon.h>
++
++    reset-controller {
++        compatible = "ti,k2e-pscrst", "ti,syscon-reset";
++        #reset-cells = <1>;
++        ti,reset-bits = <0xa3c 8 0xa3c 8 0x83c 8
++                          (ASSERT_CLEAR | DEASSERT_SET | STATUS_CLEAR)>;
++    };
+diff --git a/Documentation/devicetree/bindings/reset/ti-syscon-reset.txt b/Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
+deleted file mode 100644
+index 61a0ff33e89f..000000000000
+--- a/Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
++++ /dev/null
+@@ -1,91 +0,0 @@
+-TI SysCon Reset Controller
+-=======================
+-
+-Almost all SoCs have hardware modules that require reset control in addition
+-to clock and power control for their functionality. The reset control is
+-typically provided by means of memory-mapped I/O registers. These registers are
+-sometimes a part of a larger register space region implementing various
+-functionalities. This register range is best represented as a syscon node to
+-allow multiple entities to access their relevant registers in the common
+-register space.
+-
+-A SysCon Reset Controller node defines a device that uses a syscon node
+-and provides reset management functionality for various hardware modules
+-present on the SoC.
+-
+-SysCon Reset Controller Node
+-============================
+-Each of the reset provider/controller nodes should be a child of a syscon
+-node and have the following properties.
+-
+-Required properties:
+---------------------
+- - compatible		: Should be,
+-			    "ti,k2e-pscrst"
+-			    "ti,k2l-pscrst"
+-			    "ti,k2hk-pscrst"
+-			    "ti,syscon-reset"
+- - #reset-cells		: Should be 1. Please see the reset consumer node below
+-			  for usage details
+- - ti,reset-bits	: Contains the reset control register information
+-			  Should contain 7 cells for each reset exposed to
+-			  consumers, defined as:
+-			    Cell #1 : offset of the reset assert control
+-			              register from the syscon register base
+-			    Cell #2 : bit position of the reset in the reset
+-			              assert control register
+-			    Cell #3 : offset of the reset deassert control
+-			              register from the syscon register base
+-			    Cell #4 : bit position of the reset in the reset
+-			              deassert control register
+-			    Cell #5 : offset of the reset status register
+-			              from the syscon register base
+-			    Cell #6 : bit position of the reset in the
+-			              reset status register
+-			    Cell #7 : Flags used to control reset behavior,
+-			              available flags defined in the DT include
+-			              file <dt-bindings/reset/ti-syscon.h>
+-
+-SysCon Reset Consumer Nodes
+-===========================
+-Each of the reset consumer nodes should have the following properties,
+-in addition to their own properties.
+-
+-Required properties:
+---------------------
+- - resets	: A phandle to the reset controller node and an index number
+-		  to a reset specifier as defined above.
+-
+-Please also refer to Documentation/devicetree/bindings/reset/reset.txt for
+-common reset controller usage by consumers.
+-
+-Example:
+---------
+-The following example demonstrates a syscon node, the reset controller node
+-using the syscon node, and a consumer (a DSP device) on the TI Keystone 2
+-66AK2E SoC.
+-
+-/ {
+-	soc {
+-		psc: power-sleep-controller@2350000 {
+-			compatible = "syscon", "simple-mfd";
+-			reg = <0x02350000 0x1000>;
+-
+-			pscrst: reset-controller {
+-				compatible = "ti,k2e-pscrst", "ti,syscon-reset";
+-				#reset-cells = <1>;
+-
+-				ti,reset-bits = <
+-					0xa3c 8 0xa3c 8 0x83c 8 (ASSERT_CLEAR | DEASSERT_SET   | STATUS_CLEAR) /* 0: dsp0 */
+-					0xa40 5 0xa44 3 0     0 (ASSERT_SET   | DEASSERT_CLEAR | STATUS_NONE)  /* 1: example */
+-				>;
+-			};
+-		};
+-
+-		dsp0: dsp0 {
+-			...
+-			resets = <&pscrst 0>;
+-			...
+-		};
+-	};
+-};
+-- 
+2.53.0
 
-- Without the series, the crash is only logged, and the core stays in
-  "running" until the next boot.
-- With the series, the core moves to "crashed", the crash is counted,
-  and it can be stopped and started again through sysfs.
-
-The Zephyr side is upstream's openamp_rsc_table sample with one file
-added. The handler sends RP_MBOX_CRASH over the mailbox before it
-halts, and a thread forces a fault 20 s after boot. This builds on
-Zephyr v4.5.0 for beagley_ai/j722s/main_r5f0_0, but I have not run it
-on that board.
-
-Copy samples/subsys/ipc/openamp_rsc_table, add src/crash.c below, and
-list it in CMakeLists.txt:
-
-  target_sources(app PRIVATE src/main_remote.c src/crash.c)
-
-Build it:
-
-  west build -b beagley_ai/j722s/main_r5f0_0 path/to/the/copy
-
-Load build/zephyr/zephyr_openamp_rsc_table.elf as the main R5F's
-firmware. After 20 s, check the state:
-
-  cat /sys/class/remoteproc/remoteprocN/state
-  dmesg | grep -i crash
-
-To bring the core back:
-
-  echo stop > /sys/class/remoteproc/remoteprocN/state
-  echo start > /sys/class/remoteproc/remoteprocN/state
-
-It will crash again 20 s after each start. That is a quick way to check
-that a second crash is handled as well.
-
---- src/crash.c ---
-/*
- * Report a fatal error to Linux as RP_MBOX_CRASH, then force one.
- */
-#include <zephyr/kernel.h>
-#include <zephyr/drivers/ipm.h>
-#include <zephyr/fatal.h>
-#include <zephyr/logging/log_ctrl.h>
-
-#define RP_MBOX_CRASH 0xFFFFFF02U
-#define CRASH_AFTER_S 20
-
-static const struct device *const crash_ipm =
-	DEVICE_DT_GET(DT_CHOSEN(zephyr_ipc));
-
-void k_sys_fatal_error_handler(unsigned int reason,
-			       const struct arch_esf *esf)
-{
-	uint32_t crash = RP_MBOX_CRASH;
-
-	ARG_UNUSED(reason);
-	ARG_UNUSED(esf);
-
-	LOG_PANIC();
-	/* The FIFO can be briefly full of vring kicks. */
-	for (int i = 0; i < 100; i++) {
-		if (ipm_send(crash_ipm, 0, 0, &crash, sizeof(crash)) != -EBUSY)
-			break;
-		k_busy_wait(100);
-	}
-	(void)arch_irq_lock();
-	for (;;)
-		arch_cpu_idle();
-}
-
-static void crash_thread(void *a, void *b, void *c)
-{
-	k_sleep(K_SECONDS(CRASH_AFTER_S));
-	k_oops();
-}
-
-K_THREAD_DEFINE(crash_tid, 1024, crash_thread, NULL, NULL, NULL,
-		K_PRIO_PREEMPT(10), 0, 0);
---- end ---
-
-Regards,
-Chrispine
