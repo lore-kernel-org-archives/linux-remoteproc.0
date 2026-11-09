@@ -1,98 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.2
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794207568;
-	b=QR9DQWvrjs/tz21HtUNSw+1P7vUcy7m+5Xgm3SatZpqATdfoAf/iZVeRcSJ6dPgIuUQN
-	 MAGyfk78lrd7wGVILOAIXyI+5JSvBVLOna3D7YsnFaB+Deh9SWIlAgC7SbywRVMjM9KDj
-	 yPKhLtNUY28lRMwPBSPNVpxSCoiQbU8UDwtyfLRl0SxDjYJuG5bNc7ScvVRucF34+HaWF
-	 IuGs7kyAVChutQD/cVk5dIPAD7vjF1G0PecB7DTYdW6Z6ZoMs/L66qNeVRIoIOR/UG6Yt
-	 TOU30ta8OXhK3XhXThZ9cCkGP4mrIxMmiy1AAEBJ1lEoa44xpXU28/2VVwtT+XCTNAA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794207568;
-	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:Date:
-	 From:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Correlation-ID:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-Source:
-	 X-Source-Args:X-Source-Dir:X-SGantispam-id:X-AntiAbuse:AntiSpam-DLS:
-	 AntiSpam-DLSP:AntiSpam-DLSRS:AntiSpam-TS:CFBL-Address:
-	 CFBL-Feedback-ID;
-	bh=b8cLnxhDiZYpmP/ADHVp7/WF+ZwYqLYBkjCWPt9JZuA=;
-	b=4AyySxbjhOmU3docTjdisxxkqJGYG1uDn36Bo5RNpqzi/tWcK2kS/E9fuhEU2fJNDhZY
-	 qJh3019SXkEPjoqfYZc9Tddk+63HZusea8Kmdz785+tl/ifwirAj9FRsQeCgwdbGobL1z
-	 850wUxe2l2kOZnH5sPeIvZ07l2n9Uyq2Hn4n3Xlf6EOgb/ybuwSb+tsljp+jk324q1x7C
-	 KvQDzpLreM8aiEtZfVtdZXCXN3EOmmTWrCg/Cdl5Nrsdgd/ZavGf+LjLKsxiwdf9mBbn3
-	 WIC2sqYqopbiDy5mLJgBcWLEm8HJGrTUMVTcCblrDHbS7gLNhY7bQP4GCySuvoZ7CjA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valla.it;
-	spf=pass smtp.mailfrom=valla.it;
-	dkim=pass header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=IyAIgQvD;
-	dkim=pass header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=tDVrf0cF;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.2
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.2])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1794209375;
+	b=1+SmIuKXGBlpyECJ+1u753YF/OGVNN4VmbwvUwbmvEpQ7rgJs4RzjiChl6G8W0MD8muM
+	 o0DchuUkZyr+UvHtHUsU2crMfgkD0rwzNIpf0FL/AeZYMxqzX5+4nZS7aH/3JJip1h560
+	 aZu/3btPcxmjZ1RsJoTXyqGnqtYQWTnvaLM5iAPX4iyfyGDJAE8aNUA5ABzR6Si1pgmaq
+	 n3/w7pw/PKq8u/ICjqyCEiYK0qZAaGxeZzmZh48BWKoh92Q1lCEjzx5wzlHQFX0MRygw3
+	 5xzyfJm3kqRiK+70y4Ehih9j7Om26WfFgDuYtoevpGAtx9s+CnBFOB3Ki2CRS/9McjQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794209375;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=lPe+9nTj86U4VmyBT29yr8pYap7kZ2kWsN2cIll7KGM=;
+	b=SY70TNQDL0n/pqkvB89o8bcQDfjNzKSmJ6GwzR/9NL02dgOP7gt154VF1INo1e556rnA
+	 nefyrBDXcaSIJv6orQjGLgwTOsDAMES+vuTl5/mlmgLxTlG8/Ht5tlM88U+wTR/oSF9Bd
+	 OYEsLnJsf5TtR6SaqtApt2uEeDJWgU8v778VpnVeHYRrw8K18FuPs6qR9UU0q6AT9JbV3
+	 foVBXKN6jcXKwtl9BrGFlC9kK/SDOFzur95NBl3YDz6HBdV7GVbEM97dl4nC1kd21Hp/+
+	 eJ7R2p5P4B791dFSnBKkyK1H+fQPuEe1kTBx7bVFAL9izJq53/40J0anK71WXlz5/Ag==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PYyZ4rjo;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535E0606A31C;
-	Mon,  9 Nov 2026 06:59:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 535E0606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA08606A31C;
+	Mon,  9 Nov 2026 07:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=IyAIgQvD;
-	dkim=pass (1024-bit key, unprotected) header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=tDVrf0cF
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-4zq2.prod.antispam.mailspamprotection.com; s=arckey; t=1794207567;
-	 b=OXHUnkl+CZYuw6xfhFeuOyEZcg1Ai4rRxHeASg0bIZtnS/FYiIB119DPDEqpK7t9NoEUsmrmaI
-	  gJZF/qPZVc5+WNG01oCUV0s40NBjAbQ7K8gvoQGEMxDLWmGqsTsQdweACdNiBg6u6gNYyps6eZ
-	  CGb0S0fw9D/JuZgN5057/8mR2XCm36LgB5EcLHI29AOEBoQb3SUeIK9VdRrH9AQVVnkHqb0dwZ
-	  fGDvYBFF/wJQT+LOEFhUZ4ilsxCRoa2lfduxK284yEyf4r11AZlEoKvUtHFTReicq6rfPrCWWE
-	  LvBXGwLAbhrWs3bN8cvtCrDU8RtmpgtW/L0hdThZXkHMSA==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-4zq2.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-4zq2.prod.antispam.mailspamprotection.com; s=arckey; t=1794207567;
-	bh=b8cLnxhDiZYpmP/ADHVp7/WF+ZwYqLYBkjCWPt9JZuA=;
-	h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:References:
-	  In-Reply-To:Message-ID:Cc:To:From:Date:DKIM-Signature:DKIM-Signature;
-	b=ICr3YTIEGMM+gGGcpTD48dHV2Z2u5A/dyHeIQ+yrQP1I1x0p/Ao5q6fl6Oj9KXu6hnFlHSCKZX
-	  OzYXGU0aSl2er+i0NiHTJMKPetALQ3HFmvWlA1EUFw7HtJZaeD3HiafgUgh/Sx4iGgxLfKLVHg
-	  w0R5MleMEv2X32ZrP3dyPD2+XBT8cwgyu1hr61FrzTx+c6g3EYfP9OYlIHs58OskXj7PGTREaS
-	  i7arr4a50xhuWlzfVhBxsF2pKcgY9uvhnw6bMcJ6j5za6HvIMJrfSw22NxR7EZ5HOzBYkNAJ7H
-	  iFiJ8SccUf9jPf6kIyP638I+JSxOESJB1j/FiaTilUVP/Q==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Message-ID:Cc:To
-	:From:Date:Reply-To:List-Unsubscribe;
-	bh=b8cLnxhDiZYpmP/ADHVp7/WF+ZwYqLYBkjCWPt9JZuA=; b=IyAIgQvD94Hv6WMibgaSudaFEp
-	Jw6ZF25bAFS94k4Y4gkECpQUMJ7fIT/5alpMRjS5yaMFX+6HnNxMh080j2OOYEgdPHw7Zqcucxt14
-	cVKCQgA01u53tIcf0qMeMAEGQGpHwF0quPfas3LIk3IeT3v1bp3AXUAZDq5AnNnom8Dg=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-4zq2.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xQJLZ-0000000GhbZ-3tPu;
-	Mon, 09 Nov 2026 06:59:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=b8cLnxhDiZYpmP/ADHVp7/WF+ZwYqLYBkjCWPt9JZuA=; b=tDVrf0cFeRfrPsEl7kp2pxKO2P
-	Nd+g/ubmBLQ/CJK13Boh92yehjHtAYMKGPn6MLjDdHb23YPga1R2BqplGhFBOjcv1JYByGEkEuejj
-	V1DSvfWbf46Yz7a1Q24er4+VY1fl3RnvLKN6nWmFn12BJXON6+9rsOFLqUFFo85oNDu4=;
-Received: from [109.54.113.250] (port=16152 helo=dummy.faircode.eu)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xQJLV-00000000CVI-0K1l;
-	Mon, 09 Nov 2026 06:59:13 +0000
-Date: Mon, 9 Nov 2026 07:59:11 +0100
-From: Francesco Valla <francesco@valla.it>
-To: Chrispine Tinega <dev@chrispinetinega.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <d22a1ffd-cfbc-4122-b11a-7b680985defd@valla.it>
-In-Reply-To: <20261109054830.42715-1-dev@chrispinetinega.com>
-References: <20261109054830.42715-1-dev@chrispinetinega.com>
-Subject: Re: [PATCH 0/2] remoteproc: k3: Recover a crashed remote core
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=PYyZ4rjo
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18D061F0089F;
+	Mon,  9 Nov 2026 07:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794209374;
+	bh=lPe+9nTj86U4VmyBT29yr8pYap7kZ2kWsN2cIll7KGM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=PYyZ4rjo75FHIVLNEw31B2S9SrJ/I1fC0KvCx+ZKI09m3u0kdl16cT2NqjaBzdGd6
+	 PI52Xa0vb4XoxojyxRnRVmPuLXg+/LsBrpRBLpL59IbGFUKDrkDNoQIYFeOC096KHW
+	 dvKDNIgek8PG5QddQcihl1g3EOjqfFPkZ7mSZLpQWWSoNuDP2yT2sjDIqDSduk3Zai
+	 PwPTK8+yQfXNpVusJmb5foQt6iZWbfcHc+LuZK6XkJMy+qyNXi762Q70h0kFvhF3qk
+	 6nJ3YsufEZ8Z9yGGMuWuOocJa1/7/keeoBnv1byYm71zoL/yyGvBcUe7v0aR5TYhhZ
+	 Tm904DuJI2kEg==
+Message-ID: <80990ab6-5072-43a2-b829-177c956080c6@kernel.org>
+Date: Mon, 9 Nov 2026 08:29:26 +0100
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -102,72 +51,90 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: dsp: fsl,dsp: document debug reset
+ control
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: shengjiu.wang@oss.nxp.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, shengjiu.wang@nxp.com, daniel.baluta@nxp.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ andersson@kernel.org, mathieu.poirier@linaro.org, Frank.Li@nxp.com,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ p.zabel@pengutronix.de, linux-remoteproc@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20261105024106.338791-1-shengjiu.wang@oss.nxp.com>
+ <20261105024106.338791-2-shengjiu.wang@oss.nxp.com>
+ <20261106-savvy-invaluable-gaur-7af1b6@quoll>
+ <CAA+D8AMxrUb-Pj74wrRn=vEyRUFKWWsR4Eq1LZ2ErsX=rRq=rA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGPBBMBCgA5AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJp2mE8AAoJEBuTQ307QWKbeaIP
+ /ihHTkTW4KsN/DQ945JJbyu5tI0J80Wue7QyyLPglyKfhgb5cLLNPpOC8cCIJsc7+W3i2P38
+ s2c1cOH6CYGE7E9ur3Vfme8NW2S2I/Z8VC7bZnzyS23wT17LrsdS/qCpx4o8U+pt/xdXDKph
+ EGRYrIEmMpUWvyYzyYKGIe25FtaayIIKpq8eZYyFcp2f/sG5IkOW5uZzHPMPdcm87jU7fyuQ
+ rAU2vx9r+ulUfQ/q9Z2roC/ode3l7t2pN7BCBCsUDp6JCrUyZrtT1e7EbA0ZRP3aOBNk2P2E
+ DQOgJGjGdO5Yx2Y9LFtltu6JbsBJHi1syGRX3AtQYOMc4Y1WGoeZJmMlvKj2ZqqXNkcWi2DS
+ IQEWB0uW6CqFsBBIMGDa+6OzdaVO/uAVXWDWml02Men3CILdI1MbVjoh8ECqYUY7OQ+JJvNN
+ vnliuq5WM3Ghd3jg/LZZrxXjdIginRHFQCjIJYLKpLZWm1/iDFedcfzqRNYmTtqscdCNHW41
+ oT3Z7BmO9xwdjuwBS6nmS6JJwkbf5Ot2QR4pB/DRU7ZwjT1qHe+9r9gF32wXVQatHNGK/VVu
+ sfwOnkdxCWkp/qb2gdQRmZh+SedStWshigH6sNfuHBloF/q+hjMRc8b2m326OZdrbSHwY1Sz
+ vti8Hn7n8NjdHO9LKB7BIdjkA9DA5WsqOuVCzsFNBFVDXDQBEADNkrQYSREUL4D3Gws46JEo
+ Z9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLueMNsWLJBv
+ BaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6eiOMheesVS
+ 5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wAGldWsRxb
+ f3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA6z6lBZn0
+ WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9YegxWKvX
+ XHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt91pFzBSO
+ IpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gUBLHFTg2h
+ YnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/JoFzZ4B0
+ p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu4vXVFBYI
+ GmpyNPYzRm0QPwARAQABwsF2BBgBCgAgAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmna
+ YUkACgkQG5NDfTtBYptX+BAApg32CkxwNucNEi8WfWA8oKkW0y8YDuY6ORMo9FWNGiT/OTy0
+ vyJrLocrpn86zwfjVp+eCrssPYh8eqJfnWqmYv6ACQtHPYzPZQ3mSo8H97Z01oUxITzCxpXm
+ ZkLgPIqtDPcC2E3dPM/fVxcyowM8XsaMA9wcsaUYrta8toOq2b9tKcjleKMfMrm0gQ9u7wUc
+ QbLkwj6TCLOwucb07GXzLTNF9PZmaDUpKAZjMjmrW+le+SFvQbhamx0rxLWPR0NWntXpbCn+
+ +ACch03p/JyTBVktxFsFyCt7pTPE1kEaeuXBTe/a2D9iQvRxRW19LvuO2e59/u1wYUiH/orz
+ wbIC2S4dBsPAPihL3ztOU1yE86GPyQtSE0kU+/7snnLt4QGi6PChf3t5gnNjAzjUUovO8rgI
+ c+5yN5heq5loYHgK6OQ9OlHzsPHO9e9MOQcKlFycs1pyijFGzDwdNUm/SchK8iWT2QApTx4A
+ K9bCVaboTA2T77QYkRcRJYSsO1alGX0ome/hMLD1daXlkrNUp1HWa3K4iytLRXjCSIorWiGs
+ n+q3krnpXu3TFkA8qtOFZMdnIiFuiq1yLT8hptsV5xh1TA2nsVvSYiaCr3q4s4BKjS/KrLDb
+ qoxzw8ISjdUp4pA85vb6YLCmb39NgidD+7PmAr65lBNveIFynTgsja1rRQ4=
+In-Reply-To: <CAA+D8AMxrUb-Pj74wrRn=vEyRUFKWWsR4Eq1LZ2ErsX=rRq=rA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <d22a1ffd-cfbc-4122-b11a-7b680985defd@valla.it>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 5a0ae1900ddef715660ced805af6af67
-X-AntiAbuse: ID - 5a0ae1900ddef715660ced805af6af67
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1xQJLZ-0000000GhbZ-3tPu-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-4zq2.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+Content-Transfer-Encoding: 8bit
 
-Hello Chrispine,
+On 09/11/2026 03:22, Shengjiu Wang wrote:
+> On Fri, Nov 6, 2026 at 8:57 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On Thu, Nov 05, 2026 at 10:41:03AM +0800, shengjiu.wang@oss.nxp.com wrote:
+>>> From: Shengjiu Wang <shengjiu.wang@nxp.com>
+>>>
+>>> The HiFi4 DSP provides a separate reset control for its debug logic.
+>>> Keep this reset deasserted so that an external debug agent can access
+>>> the DSP and perform debug operations.
+>>>
+>>> Also require the reset properties for the i.MX8ULP HiFi4 DSP.
+>>
+>> That's ABI break without explanation.
+>>
+> 
+> The i.MX8ULP HiFi4 DSP has not been enabled upstream before. This series
+> adds the DSP node for the first time, so there should be no existing upstream
+> DT relying on this compatible without the reset properties.
 
-9 Nov 2026 06:49:26 Chrispine Tinega <dev@chrispinetinega.com>:
+That does not change the fact that you break ABI, does it?
 
-> A K3 remote core can tell Linux it has crashed by sending RP_MBOX_CRASH,
-> but the K3 drivers only log it. Nothing reaches the remoteproc core, so
-> the crash is not counted and recovery never runs. The core stays halted
-> until the next boot, with its rpmsg channels dead.
->
-> Patch 1 reports the crash with rproc_report_crash(). This applies to
-> every K3 remote that uses the common mailbox callback.
->
-> Patch 2 leaves recovery enabled on the M4F. Its stop is a plain reset,
-> so recovery does not need the crashed core to answer. The R5F and DSP
-> drivers keep recovery disabled. A crashed core there moves to
-> RPROC_CRASHED, and can be stopped and started again through sysfs.
->
-> Tested on an AM625 board (BLIIoT BL350) running TI's 6.12 kernel with
-> the equivalent change. The M4F runs Zephyr, whose fatal-error handler
-> sends RP_MBOX_CRASH. After a forced fault, recovery reset and rebooted
-> the M4F in 71 ms, and Linux kept running. Mainline's M4F stop is the
-> same plain reset that this test used for a crashed core.
->
-
-If you share details on the Zephyr side of things, I can test this against =
-rproc-next on a AM67A (BeagleY-AI).
-
-Regards,
-Francesco
-
-> Chrispine Tinega (2):
-> =C2=A0 remoteproc: k3: Report a remote crash to the remoteproc core
-> =C2=A0 remoteproc: k3-m4: Leave crash recovery enabled
->
-> drivers/remoteproc/ti_k3_common.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 | 5 +----
-> drivers/remoteproc/ti_k3_m4_remoteproc.c | 1 -
-> 2 files changed, 1 insertion(+), 5 deletions(-)
->
->
-> base-commit: ec1f9ba57b02fe12a6fa5f141206d439ba3d044e
-> --
-> 2.53.0
-
+Best regards,
+Krzysztof
