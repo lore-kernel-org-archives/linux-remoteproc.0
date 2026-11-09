@@ -1,97 +1,67 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.177.127.221
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794238367;
-	b=RJRSXGC7uZ7afVVojfPi93rGPiSMg3opwHBJH7HbqFKDd9d9U0P9QEQ2necs4HBb82aq
-	 B7Zr8hdeLVl5PpfLNUV6VFcQbYhQkiYoQ2Fmt5eDSz7bW0O8z6bKqg5PW2pSruozGg3Dm
-	 X/M2xqiagQBlOeKcoahGKu9ob1fGo6XiNA7sjo4FrmkupMSamtw4Hu1j/yKVaQuq7OPda
-	 A6w6PhhsrNFc4oOeC4RUufJyV4hJKq0Chz6n2Fh2fzyeHuDqC2xTRWZrXRhHj/OZMI8eu
-	 wCjZ9lIUE/zH45O2VBLulQs+gak7EVHKr98kTkE2p2DIYIL2CBByzjXiPqBLLQXso2g==
+	t=1794240307;
+	b=cPGHxI4+7Gc7BKBlqSq5zfRDQuPle34LPphOLFpL3sXE+f/13JuopiGViE440Dr453yB
+	 VUF2BCfbPh+z+RAHjvmosyefECAiBx+/RyDbqmaC8H/IzC43/u5ATaHiKqKI+u0sWaAdS
+	 Ol0S5b1MQFuU++I9ddwFrNBnh1UX93fdZXJJcSXqMN9nNsHnZDQMyrRlcpnFl3IR9iFJL
+	 ezKl1mOgm8yZw9sOPFQF9EQtFN1LF3MuXHzlodpc29CeS3WmJQ/ukMj4YKytgnwIvEM3b
+	 RvjtxmMKxWxC18/18tU42+yHeBEoSlWWi127g+FT5fSeY5GR6SbEASwgvb9dTyX+9tA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794238367;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=JRRwWfbameCVHtptgrmOT/aq7z3ehbGnOR3u7VnEKf8=;
-	b=NDMuoC4yhqcJCjVhNYs9PkQBLUxMqFD6Bz8cjc9/T0ojC6fsK0YoBq6u93V9ppvH5Nwv
-	 mM0AJ1N8eA+VI8z1Z0wLzaWGM83K2MQ0t8NYl6cxpYWEzKT73ps3z1MQBysepkUyofStT
-	 75emiDH3fXaBSilmkoX2VMdODkcDGAOMvCcTVcjy9x/nZYeoF+tt6JYbbKTyaShlf0BDu
-	 ip2UUwD6WHkVo0R1mCYvxlrQVm+HMOMMpHJ6MU8xYkJJ7S8TzuTrlXrQdKD6FZrjDu00c
-	 2uz+wX4k5zPS9oI9ah23x2Wcoix01C5oeKE68U5yHa6CV1ZD7cja8SH9NFIdYQpx5Aw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794240307;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
+	 Content-Transfer-Encoding:X-Envelope-From;
+	bh=HMybIJ+NL5B4al0WkPk2fEXktLZGmJluZwLVZ3h+rsA=;
+	b=n4T0tTroShoDJ5khMrCFRbfx+3X7qxHqlqCHdoviGerMGaA4Fyw3qukThYH6pJzvntPQ
+	 u+WBdV0YZR3YGDj72zhZBWdVvac8E1nr3mgzGEWD+kK72hrjVZYNjdTMzKO3818c6bFZz
+	 ZNvACdrRf2HWHUc+hDmWq7lEr7jy+fF5O9xZjDEzTLsDNWIBs2RJmBROfDFh3aPXqyijb
+	 jeT25iZRDMX/ZfaFK4GRpyahPRgW3CY73hEoBqe3384nBgbuYs4auFqGuiANsD/zdHfo2
+	 vJ4Tz2pMQgjs5n9VaipJIln3Z6gdyj7eE3jLeOy0NlVe4plV85GTSHDxsUtq22Ku4YQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=baN5DaMG;
-	arc=none smtp.remote-ip=209.85.216.42
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=chrispinetinega.com;
+	spf=pass smtp.mailfrom=chrispinetinega.com;
+	dkim=pass header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=Pyon9Ymi;
+	arc=none smtp.remote-ip=198.177.127.221
+Received: from out-utut-a221.jellyfish.systems (out-utut-a221.jellyfish.systems [198.177.127.221])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BD7606A31C
-	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2026 15:32:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53BD7606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53443606EE9F
+	for <linux-remoteproc@vger.kernel.org>; Mon,  9 Nov 2026 16:05:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53443606EE9F
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chrispinetinega.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrispinetinega.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=baN5DaMG
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3acb11973c3so822810a91.3
-        for <linux-remoteproc@vger.kernel.org>; Mon, 09 Nov 2026 07:32:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794238367; x=1794843167; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=JRRwWfbameCVHtptgrmOT/aq7z3ehbGnOR3u7VnEKf8=;
-        b=baN5DaMGiM6qHSdYHDSDoyHaIJOhVwf7Vg4GJegxyqtcXwtspqftwSfIh9oM3oo/ZX
-         Qa0SRA2E9jlqw7hJb24zdbidMde+uXRfeH1b1ZN37+r6Z2DRQC10Qa/wR3n4Tlkefpw+
-         nKHi38g9Ivlvpq1MdFCR9ACJD3Gy/80Nq8vUcutlAVjFzUCtucSoxeXY90hbJ2EdTaB1
-         JQ0WqT547HRVbNWSXh7KTT7b0KL5ybEGVoWDdS4K54v0Ki5sKV5nTwfzc1aiOnfs5JCB
-         8j+HnxD5sq+1t//BA5devnwABKBbQ6gU0Vp9rcEGDTk833oo6MLKSsEzYDIvFV+Pt3X3
-         mGug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794238367; x=1794843167;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=JRRwWfbameCVHtptgrmOT/aq7z3ehbGnOR3u7VnEKf8=;
-        b=eaMb7BPbYlP7/sg81xpM0hZFffkHGJjxtrxozw9GgBU1qKyqIaOY7fRzyUFa2kZ0Fi
-         4y86KK0by0usu6wjhi4Qsouy54ylAXERi470xGovaocgTGlF/Wf3aljA8PuH0K4KPRx1
-         edUcA7/cItnycnadmCihoWXAvFx+sLORn8E/Pyc82ejRGqpHzRQZoNt/9Z5sm3k3+y0U
-         TIkJ+jeAOqBoaYROXe25PpnMgpQX7Ga9rW4YX0eeQZSeV8j0vyF9HPQKJ6EpmRz+X6Fb
-         9ohHtwLx17Y55bKa3jh7hD+g6nJbSGtK/zLzWMvNpwBTHnAY3Jvr0e0tMnOM6mHs0NL0
-         HQMw==
-X-Forwarded-Encrypted: i=1; AL+hErGi/kn/aI8z6ANof7/X8uy6iXfu0C//cYm73oE7wXIkwllX6IjMZpaFYgnmfbg+6xLro6m1NAygXleg041ZF23e@vger.kernel.org
-X-Gm-Message-State: APuU4Z82giAiv8NGrZ7zT9TcHuR62pESHPaFhyiXq+7G3zdFMRjZJAX9
-	ptrq2AvjRSGJPT8RsZ9l/b3+mQLSgjftyUzXN7oB4DKOUmlNsren6/AzKCUJoL6udS8YUGjLLkK
-	th0CC
-X-Gm-Gg: AYBFou19OwYaOsjzbxbE7Jsg3bEdoX7U4JbpbHl4bt9dB1sC25UhOXN3QmAVSoPOsl9
-	b9MsM9GI1Mqh9p8e48W9fDw2GpAjFffHjVvAaWPXahv3CV962nOHxuAsyzYL5HWkXwkBqZBlYlA
-	et64Emkc61z43yxJ8zYrmOJXnVZQ3Bzlq2vCW9gF3yZaNrmLlwJxu9UdVBHbzy8LIr157Vauj6k
-	fTJYFkI3cE51zvFWnw8JsG2JJEtFeHLnOmCgesQSAlT7hZFt9Oshqm7AMMXcnyy7GavrTITXv/Z
-	YiUg42bt2Jl/rP+tU5gPAT2MinimSTSBL3F3+FmS48C5lcvfnArIWIvIdtek9moJXQ7sZXfqwf6
-	HhjcWFe/mi5vj9M8XaTHsF+SNn+69oT4KRezDjTjzsbR1CG1TIrcGKO6goszpAo3eFuNNG/yHLt
-	bJaksKJB9+BG3PPGtk83muS+EsZFHRGsjs4gIYND2HL34Q5Jb98LTfx8JQIkMaaut+33deKpKrY
-	kHUv6ZZxH2obWQlcPXtIRZyyo9o6HK5J954BIllxo+JIDNskgW+WHG5MHq4TCNp3ctGuhuqSuqr
-	8A0EevQoggvqkORzdBMQ1P/YRd88vsLpY043L1rS8JvN/zVZU+w=
-X-Received: by 2002:a17:90b:5307:b0:3ab:e789:ce84 with SMTP id 98e67ed59e1d1-3b12d51ee2emr4031188a91.65.1794238366553;
-        Mon, 09 Nov 2026 07:32:46 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:54d7:1b5:4356:16fb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cdd88e5fed3sm315273a12.8.2026.11.09.07.32.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Nov 2026 07:32:46 -0800 (PST)
-Date: Mon, 9 Nov 2026 09:32:44 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	dkim=pass (2048-bit key) header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=Pyon9Ymi
+Received: from mail.privateemail.com (unknown [62.8.90.37])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.privateemail.com (Postfix) with ESMTPSA id 4jNZNp0PWdz8sWX;
+	Mon, 09 Nov 2026 16:04:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chrispinetinega.com;
+	s=default; t=1794240285;
+	bh=HMybIJ+NL5B4al0WkPk2fEXktLZGmJluZwLVZ3h+rsA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Pyon9YmiYOEFxzsXWAmI+PtkdwWauWMu9o1R0NCoZ/Svvvz9sI9TtJ12ammZA22N8
+	 +e+2UYVyFgXTgNcaZRAggozswAF8ohtJxi3v0SXwvHUZLXH4vEydZ4q+1G91hwzh3X
+	 fVC3bftvi+iYiz1TqbHGlPKgq5weC3bY6gUNgcDtNhBnyoDdv7+AdlaZWt/kaX+/US
+	 nlqlITrSODOpN7EFA3Pj/o8hmGVhYVXNUkiRTEIicEHE/fL4LnPP1/agU06+Z5jvUT
+	 lgtbURcVQ8eK2qh+uQOgvBXlnZphT66vxQ3LGFRzH/0JpJ4QeSDzWo0CuRfdTexd0w
+	 oAwIz/B4QywQA==
+From: Chrispine Tinega <dev@chrispinetinega.com>
+To: francesco@valla.it
+Cc: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
 	linux-remoteproc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: stm32_rproc: Do not request reset by index
-Message-ID: <avHnnBUiH-kLOrCU@p14s>
-References: <20261106-reset-deindex-rproc-v1-1-41a03fcc8496@pengutronix.de>
+	linux-kernel@vger.kernel.org,
+	Chrispine Tinega <dev@chrispinetinega.com>
+Subject: Re: [PATCH 0/2] remoteproc: k3: Recover a crashed remote core
+Date: Mon,  9 Nov 2026 19:04:30 +0300
+Message-ID: <20261109160431.720498-1-dev@chrispinetinega.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <d22a1ffd-cfbc-4122-b11a-7b680985defd@valla.it>
+References: <d22a1ffd-cfbc-4122-b11a-7b680985defd@valla.it>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -101,47 +71,98 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261106-reset-deindex-rproc-v1-1-41a03fcc8496@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+X-Envelope-From: dev@chrispinetinega.com
 
-On Fri, Nov 06, 2026 at 04:46:15PM +0100, Philipp Zabel wrote:
-> There is no need to request a single reset by index.
-> Use devm_reset_control_get_exclusive() to request the first and only
-> reset.
-> 
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-> ---
->  drivers/remoteproc/stm32_rproc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Francesco,
 
-Applied.
+On Mon, 9 Nov 2026, Francesco Valla wrote:
+> If you share details on the Zephyr side of things, I can test this
+> against rproc-next on a AM67A (BeagleY-AI).
 
-Thanks,
-Mathieu
+Thank you, that would help. The AM67A has no M4F, so patch 2 does not
+apply there. Patch 1 does: the R5F driver uses the same mailbox
+callback, and it keeps recovery disabled. So on the main R5F I would
+expect this:
 
-> 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index a47e040c6db8..1443a4013d6c 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -696,8 +696,8 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev,
->  
->  	ddata->rst = devm_reset_control_get_optional(dev, "mcu_rst");
->  	if (!ddata->rst) {
-> -		/* Try legacy fallback method: get it by index */
-> -		ddata->rst = devm_reset_control_get_by_index(dev, 0);
-> +		/* Try legacy fallback method: get the first reset */
-> +		ddata->rst = devm_reset_control_get_exclusive(dev, NULL);
->  	}
->  	if (IS_ERR(ddata->rst))
->  		return dev_err_probe(dev, PTR_ERR(ddata->rst),
-> 
-> ---
-> base-commit: 6628e7d4c6b25c8d18f1345e3a20d21829aae7e4
-> change-id: 20261106-reset-deindex-rproc-3c1aa2e9325f
-> 
-> Best regards,
-> --  
-> Philipp Zabel <p.zabel@pengutronix.de>
-> 
+- Without the series, the crash is only logged, and the core stays in
+  "running" until the next boot.
+- With the series, the core moves to "crashed", the crash is counted,
+  and it can be stopped and started again through sysfs.
+
+The Zephyr side is upstream's openamp_rsc_table sample with one file
+added. The handler sends RP_MBOX_CRASH over the mailbox before it
+halts, and a thread forces a fault 20 s after boot. This builds on
+Zephyr v4.5.0 for beagley_ai/j722s/main_r5f0_0, but I have not run it
+on that board.
+
+Copy samples/subsys/ipc/openamp_rsc_table, add src/crash.c below, and
+list it in CMakeLists.txt:
+
+  target_sources(app PRIVATE src/main_remote.c src/crash.c)
+
+Build it:
+
+  west build -b beagley_ai/j722s/main_r5f0_0 path/to/the/copy
+
+Load build/zephyr/zephyr_openamp_rsc_table.elf as the main R5F's
+firmware. After 20 s, check the state:
+
+  cat /sys/class/remoteproc/remoteprocN/state
+  dmesg | grep -i crash
+
+To bring the core back:
+
+  echo stop > /sys/class/remoteproc/remoteprocN/state
+  echo start > /sys/class/remoteproc/remoteprocN/state
+
+It will crash again 20 s after each start. That is a quick way to check
+that a second crash is handled as well.
+
+--- src/crash.c ---
+/*
+ * Report a fatal error to Linux as RP_MBOX_CRASH, then force one.
+ */
+#include <zephyr/kernel.h>
+#include <zephyr/drivers/ipm.h>
+#include <zephyr/fatal.h>
+#include <zephyr/logging/log_ctrl.h>
+
+#define RP_MBOX_CRASH 0xFFFFFF02U
+#define CRASH_AFTER_S 20
+
+static const struct device *const crash_ipm =
+	DEVICE_DT_GET(DT_CHOSEN(zephyr_ipc));
+
+void k_sys_fatal_error_handler(unsigned int reason,
+			       const struct arch_esf *esf)
+{
+	uint32_t crash = RP_MBOX_CRASH;
+
+	ARG_UNUSED(reason);
+	ARG_UNUSED(esf);
+
+	LOG_PANIC();
+	/* The FIFO can be briefly full of vring kicks. */
+	for (int i = 0; i < 100; i++) {
+		if (ipm_send(crash_ipm, 0, 0, &crash, sizeof(crash)) != -EBUSY)
+			break;
+		k_busy_wait(100);
+	}
+	(void)arch_irq_lock();
+	for (;;)
+		arch_cpu_idle();
+}
+
+static void crash_thread(void *a, void *b, void *c)
+{
+	k_sleep(K_SECONDS(CRASH_AFTER_S));
+	k_oops();
+}
+
+K_THREAD_DEFINE(crash_tid, 1024, crash_thread, NULL, NULL, NULL,
+		K_PRIO_PREEMPT(10), 0, 0);
+--- end ---
+
+Regards,
+Chrispine
