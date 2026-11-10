@@ -1,97 +1,108 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.216.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794321506;
-	b=pAcskY0oKhqKynYubWtOatz0M4JwbfNueZ5KbTBL1cAnJGuagptMY08yj6r/RFEu83Fc
-	 ef77+mpYUwTz3koFt3AU00VNtmg8LcdISGQz54I5gSwxQGLbTYX0NCb+4wuqIMF3A/pUB
-	 jnPRkFIQJWlp43xhRi4UCDoIZoZi10voVe5wVUR5jgX3qMTyiYIygLSHRbzzbee8asWc0
-	 rnefoQvXYMm/M1ppk8fIExcmaKfF+/LzWSxjeHfhk1uVIMyMqxI5ZNj0eSGNBWrlmIRZa
-	 U8uJhGox9iFjhim9c1PDYL3GzW3NWhHDORuECpsV8E4e6AQt5LR7LDMLl8eG3qScIYA==
+	t=1794325566;
+	b=yenRLnwX0Ljp10NQNy4UZ8nGTnc3w5r05sEvP5YMKKB145o9vRvEVFGzcTVR979O/B26
+	 2EBw6Cgg4FKAyAHKlWFRe0Or5AuOtpGJETnrLReI6D1LDPQwx/lxDs7mb9BUWfsxtHlFt
+	 roVIjKQIawSxDe8POSliDUdlHlS2Qr4LSh59Oisjx/L8hovBxLOM3sLL8mQ7BLNEhyWIG
+	 8TpYTxaNy3nnnI71C5UZh7F+IYM7JymX0pToIJ2/xdMsXNw117wJe1AxXQeO3eMbH3kqx
+	 L1JGiJB91ONLijY/7n6H+UOhEq9dsSx/9An9gaFogoPjWsFoQtUoEml/yb6qiPAOlzw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794321506;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794325566;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=+IqBot1PtwDYqDn5RWRuc5xaq4SMIIwOUN97ZyFcYvk=;
-	b=QJb+WPXMDbEy+RSPUbCRVJlWm8gDmHn47OW/T/Y1y8fqtBO7GRDVamQcXpRhjxolysyf
-	 bNGgWjNmAcxqQT3GCTL5G51XSZ9DUEnnFbO178oJcYbaIIMYw2bJAPFInDFgRUEr739a6
-	 Bh4XsP6uhDNsBTldxXZ4MlqSYuP1HhOdgKJueTMOB6y3u7w5Arp0p2xH+ac8jcgWZrhls
-	 YA6FAGb8SjkcK9CuWktAbjyEOzis16Lz1TxgEl821U/UewpI+IL6pwZXc12TmjjpcdQm+
-	 ySVJAXy6qgNxFRsXT80UDCZgodDpNEofaxhNFKXmn/ePqlADgtktRspTfwpXX3FCPGg==
+	bh=I6jvLVTJ6/L/P1TOo+cN1ccJTZcH95Jo/fx+GgYHa7w=;
+	b=C3TCwtZ+wzp9j/K3gsHVbqYpjNb+1joHBUD/lTup9q6MEsCVLvx53NfF/8jFLNvBa8gX
+	 zE+g505xXTDW5aJr2qRcdo2BpwKQ+FqqhpvUCwFo4PSEmdhM3aYWhbcIQrlXOkERiAB7a
+	 BU1jXl3Gapf0qaWlxNnxop069GZgJR6tK2VGgJFS3uU04tHbhHQFqfUiDgAvUFFo3Cax+
+	 BuDnQi7xFipeDm74RX56ybLNR4ItQhg9CEX+OnxxKy6ltEfTV0S7xC12Cj7v+bNF4V/ae
+	 IgGDnztuKHRXdfm+Sw2c9Xb6sgjakEiCToxrDOq/d+d91tNPaKENHnRIB39/X4WvzAA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=hrJve89P;
-	arc=none smtp.remote-ip=209.85.216.47
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b="TxW0Z/LW";
+	arc=none smtp.remote-ip=209.85.216.45
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DB460A3806
-	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2026 14:38:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C6DB460A3806
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA044606AB63
+	for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2026 15:46:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CA044606AB63
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=hrJve89P
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3b15e46698aso888312a91.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2026 06:38:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=TxW0Z/LW
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-3b09c07b3d2so1365713a91.3
+        for <linux-remoteproc@vger.kernel.org>; Tue, 10 Nov 2026 07:46:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794321504; x=1794926304; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1794325565; x=1794930365; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=+IqBot1PtwDYqDn5RWRuc5xaq4SMIIwOUN97ZyFcYvk=;
-        b=hrJve89P30ZZYGbe0BJQdAnnZFrGUVIhrkrfu+XymLOuVqkHijsWcVWhZqP+Kraafb
-         xr0ZXuYsI6GU200X0y4+GdOyPWsw8+7UYT6BPHVdgrvBqty31OcYgQMhVqABZdQtu8JX
-         Gz0gon8/PXNxLHaMa/IhkUZr6hFE0I7UmlrJY2Vm7uiWm/9KXLgNOoSKgzNLI+rynwPl
-         q/zC9vsCS5b8d6rZmvpXV945VruWAKAzrH4wVaQ/YNieNoVnbqLh3yCwf1vL3srgAXAN
-         L0GkYN5gIa/JkzEUkA2KpmAiP+f3v71mbj30VaLZ0aNbmoQ6cRJfZf+at3UDB5IYkMNn
-         sHhg==
+        bh=I6jvLVTJ6/L/P1TOo+cN1ccJTZcH95Jo/fx+GgYHa7w=;
+        b=TxW0Z/LWuMJ4ao/uG9mGPMndIv5WC3u70B6uIi8rUgqnmcROMdn9Sl0bVRAXmI59M4
+         /AycfUqZ0pFWfuRkTZyWmAmLqaPNQXOX5W9WGgBiOlmkKsTPL6Sx1k0opbLsIDTni2XS
+         CRCzdKwHbXTTEcJCNQ5liJoYpkajPt4r8MVPmNjLlZYQOPAEQggPHOCuZQDTNChULRor
+         ahABAHl81KNf9V3L/ToxTodxcpB8GsRxYtHCwuYwsc7ex1IYkms0uwl7+Lwe9BoYdtc9
+         NtM3Jj9BI3qZC1OcYx1l9fBWEsd7CSF0dm4d6iGz7gQehCPciPKJyH5cn18rcMALAOQT
+         k2AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794321504; x=1794926304;
+        d=1e100.net; s=20260707; t=1794325565; x=1794930365;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=+IqBot1PtwDYqDn5RWRuc5xaq4SMIIwOUN97ZyFcYvk=;
-        b=D690Lnilb9D9jkjndUPQ/qIsWi6TO9XKBEoT9IzM+4S7m2WJZWlS1FXPaiHxSoSbLr
-         FSJvgAjQmwf2SCEo2Ctr3YWRfs0uDQaLWATm6HrXNfE7HSJmV7iWTrKHsqUsW6c1/tPg
-         c24a8b7UmuPps+sCOlmGPMZgIU3nRfnhfkUM7LQIFlh73qyAcIQ3n5QSXTuOQQ9Q4DyI
-         3ZWK7uIxkV12T3zm/WtPWRu+qH8mJRpd8x3LOcGQhJne//YlvAQLxDTiaobE4cyt14vA
-         tpPnaGQESKJNwPNQcZwhnL+Vu8XSjVR4CtXQE473HmejzOBhrFwkIzVAYLv+5WNUcyGC
-         n2Ng==
-X-Forwarded-Encrypted: i=1; AL+hErGc1woJfqwy7C8BQ0KsgkfLeQ2qDARQkUfGthw8CzywV8UXFWDY4W152WvAObJB6z0oi9CapVzFhahFK+VP58xs@vger.kernel.org
-X-Gm-Message-State: APuU4Z8mx922CrtqM+uo6s+GO5Us5NHqv92JTvu5b6xSzNCfQOwczU5b
-	+40manXsflj4USEwBLKqMGw4KYxxmlaukP+M4PClxP0Tku37XRkbQbyPLEGBTalEq/w=
-X-Gm-Gg: AYBFou3V8PrHxhqYDxCddvdklNyxztSjBxS1TVBgiU7s+qMTLpBpGUlX7+w09P4wFzJ
-	YesYBESZ/H/X9YrK/U8Uvg+eFVdKZmPUuqEnUeLpRgYE7scSBSEV5LbLd0HgEVAUwtv3WRXP4sh
-	puXyqP50wXqDTzwy/uv1cGbR9WoY9+xAc9LF0yPOFIr5i0NtREYQSyTM7EyuxHF8R8GVeK8W8Ne
-	hi8uzR3T1iZMO1lq1UXIs4evlRSUzlbzZZQAIemp4RZ+lgwTwLXPAAD0W6xZY4ftyjrAu89QHw3
-	/5O+Uc8UiKA0X76/BnAvC5ntGfcXUz3XkLvuf48cCA1PznJrU+Nz7ero+E/8//R8LsaH/X7XT1h
-	B3f4lT0kMpgudbuQssFWGh8u4LCu4oIPRHRgpyp5vIf1PZAeCb8UNSmQr63yGHdXiva/YzVLP3a
-	z7kNX0sZnb+P4cBCPB4UN1TlL4tejjyCTo7RDisKDlN4ZS3uh1AArzwuenXoPGyvFEkswTkWMv1
-	MLPvaivjckl25YScIadsFsyQmCOnwYcywXpw14XFNsb+fqEjLOA01NUwvwjuYZV00LA/4c1JDo+
-	P9ywe3N+BGBjx/LJrdFCo2JsDSTAuy2L
-X-Received: by 2002:a17:90b:55cd:b0:3ac:9925:72ae with SMTP id 98e67ed59e1d1-3b166cddadbmr2410116a91.31.1794321503970;
-        Tue, 10 Nov 2026 06:38:23 -0800 (PST)
+        bh=I6jvLVTJ6/L/P1TOo+cN1ccJTZcH95Jo/fx+GgYHa7w=;
+        b=aPPNsKbE7RROyyjnCi0ZyIbcC8vMZnAmXp/3bG1v6LyAV1C51BHDHjIf3TDeSGe0YW
+         GTqgv0B2nQP0T8cHmt4CEHom7TM1418LAWeNTXKo16YJdHPX4u7MSNh3kApy7KKWim1h
+         ucU53gJmLGLgdV00MQy5pGmcUZgLAOCh5HcK70gG8Mn7ywYpw19pOTnjwaKNcAheaycd
+         EPy10K4tdhx030ebyJRISESa8oLoR5o/TbybR7lxnXwfaNnLPzsl69R586DZ1JV01zSR
+         C9RrxQljsfAtqPjcnBoCdQRe2dLRXja3epJ0NXT/+HrUPWR0wwFk85XzVDbKB7n+EWUF
+         YWtg==
+X-Forwarded-Encrypted: i=1; AL+hErFbK8a5H5DycaYon9v6syY1PMPwZz0s8rneqCOQacV1j91Olv5ABaXd0zqiLhnXcTALFvo+bjyp+j2RjMxozJTm@vger.kernel.org
+X-Gm-Message-State: APuU4Z81R9VsA97RxtKK8cLPRfR2usyRQewKrWVQ7hm2+LTNuDdYVgX5
+	jDSoh1i42ghYBindm5FShZtZwJOaL31UnwnFHS8/5Rx7roOBaxX4cT+4yBvBojSccMI=
+X-Gm-Gg: AYBFou2kG1UqF78Cb/wsGwAZeKH4PZWoNqHqMRBEoBDwozQVG7f1aJatIqeLJcJVVB6
+	+ybUvL4eW/Ej7lnS/e+1zhfOfKYXwP5BkeTEN7IgZQIIUPrSctIQprHpkxplOnZWK1YRUF4RVoP
+	KN2vr2TQ0yoGZC+2OJ6rgs+iWs6qkHsvIMwN9n2Lc69xWWhWV6pCLUZQosgWZGLDHU+KGKFiXpm
+	JURRmji5psxGjRtrUi+6BdOA6+hrqY3WZJyiA7RJou8SxK7t0kBNfiS3zr0FDnErqS3A2zJalLI
+	bWqzb/u1SqSKIEoklSc8Q99HDlSiwR7kcVIaVHKnSM0a6AInzn5YS4x5Ncd02z7oQ9fvI8HCynt
+	2llvmtsXVx60Enegr4q4h0u/ql/mqZpRtntKYo8FbSqY8cQEiOIrnZG0JtYsujG/MpofhAbGf7Y
+	9Lj8fHnqoa+rVikW4qRoFZCbyfNJdeGJf4hjXkJ6aMMO72ft53jI4lUMgFb/PvQVNDmC1aUkBcU
+	cK8ltOxjlIssVK1+DKDiCb2S/D++TUqHPS0paB4fys4tC+xOQDLWlipVtDoCnNpbg9V20i2nmTl
+	VYwTAvG+zPJeqsU/cZxN2uUeJjI1eaEIgIYTe+tGQVNC+hMD5N4oDg==
+X-Received: by 2002:a17:90b:57cf:b0:3b0:b64e:1e34 with SMTP id 98e67ed59e1d1-3b166ce8e72mr3333472a91.51.1794325564896;
+        Tue, 10 Nov 2026 07:46:04 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:a917:5683:7f92:9eda])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b1690eb517sm1867517a91.4.2026.11.10.06.38.22
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b17db2fcfesm325724a91.4.2026.11.10.07.46.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2026 06:38:23 -0800 (PST)
-Date: Tue, 10 Nov 2026 08:38:21 -0600
+        Tue, 10 Nov 2026 07:46:04 -0800 (PST)
+Date: Tue, 10 Nov 2026 09:46:01 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+To: Francesco Valla <francesco@valla.it>
+Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Nishanth Menon <nm@ti.com>,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: reset: Convert the ti,syscon-reset binding
- to DT schema
-Message-ID: <avMsXdwyw4FsQtZG@p14s>
-References: <20261109173112.4111810-1-robh@kernel.org>
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v2 04/11] remoteproc: report VIRTIO_F_VERSION_1 for
+ non-rproc-specific vdevs
+Message-ID: <avM8OYHxB4nAKCnb@p14s>
+References: <20261102-remoteproc_virtio_map-v2-0-26b300e01c62@valla.it>
+ <20261102-remoteproc_virtio_map-v2-4-26b300e01c62@valla.it>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -103,201 +114,108 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261109173112.4111810-1-robh@kernel.org>
+In-Reply-To: <20261102-remoteproc_virtio_map-v2-4-26b300e01c62@valla.it>
 
-On Mon, Nov 09, 2026 at 11:31:11AM -0600, Rob Herring (Arm) wrote:
-> Convert the ti,syscon-reset binding to DT schema format. It's a straight
-> forward conversion.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../bindings/remoteproc/ti,keystone-rproc.txt |  2 +-
->  .../bindings/reset/ti,syscon-reset.yaml       | 58 ++++++++++++
->  .../bindings/reset/ti-syscon-reset.txt        | 91 -------------------
->  3 files changed, 59 insertions(+), 92 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
->  delete mode 100644 Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
+Hi,
 
-Applied.
+I started reviewing this set, making it to this patch.  I will continue tomorrow
+but due to the KVM forum later this week, I may not finish before next week.
+That said, I applied the first 2 patches so no need to include them in the next
+revision.
 
 Thanks,
 Mathieu
 
+On Mon, Nov 02, 2026 at 12:26:41AM +0100, Francesco Valla wrote:
+> There is currently no way to report the VIRTIO_F_VERSION_1 using the
+> resource table alone, as the per-vdev feature array is limited to 32
+> bits.
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-> index 847552133633..94f4508c8b0c 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-> +++ b/Documentation/devicetree/bindings/remoteproc/ti,keystone-rproc.txt
-> @@ -46,7 +46,7 @@ The following are the mandatory properties:
->  			managing the resets for this device, and a reset
->  			specifier. Please refer to either of the following reset
->  			bindings for the reset argument specifier as per SoC,
-> -			Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
-> +			Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
->  			    for 66AK2HK/66AK2L/66AK2E SoCs or,
->  			Documentation/devicetree/bindings/reset/ti,sci-reset.yaml
->  			    for 66AK2G SoCs
-> diff --git a/Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml b/Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
-> new file mode 100644
-> index 000000000000..1cbb2bf88716
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/ti,syscon-reset.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reset/ti,syscon-reset.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> Considering that the VIRTIO 1.0 specification is now ~10 years old,
+> always report the VIRTIO_F_VERSION_1 feature for virtio devices that
+> are not specific for remoteproc usage. These latter, which as of today
+> are rpmsg and rproc-serial, are excluded to avoid impacting the existing
+> usecases, since VIRTIO_F_VERSION_1 changes the semantics of the
+> communication (e.g., the configuration space is assumed to be
+> little-endian rather than follow the device's endianness).
+> 
+> While at it, replace BUG_ON() with WARN_ON() and return an appropriate
+> error in case of features that would overflow the 32 bits limit.
+> 
+> Signed-off-by: Francesco Valla <francesco@valla.it>
+> ---
+>  drivers/remoteproc/remoteproc_virtio.c | 28 +++++++++++++++++++++++++---
+>  1 file changed, 25 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index c56d3330adfe..f1b362158a9c 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/of_reserved_mem.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/remoteproc.h>
+> +#include <linux/rsc_table.h>
+>  #include <linux/virtio.h>
+>  #include <linux/virtio_config.h>
+>  #include <linux/virtio_ids.h>
+> @@ -27,6 +28,11 @@
+>  
+>  #include "remoteproc_internal.h"
+>  
+> +static bool rproc_virtio_rsc_vdev_rproc_specific(struct fw_rsc_vdev *rsc)
+> +{
+> +	return (rsc->id == VIRTIO_ID_RPMSG || rsc->id == VIRTIO_ID_RPROC_SERIAL);
+> +}
 > +
-> +title: TI Syscon Reset Controller
+>  static int copy_dma_range_map(struct device *to, struct device *from)
+>  {
+>  	const struct bus_dma_region *map = from->dma_range_map, *new_map, *r;
+> @@ -268,8 +274,17 @@ static void rproc_virtio_synchronize_cbs(struct virtio_device *vdev)
+>  static u64 rproc_virtio_get_features(struct virtio_device *vdev)
+>  {
+>  	struct fw_rsc_vdev *rsc = vdev_to_rsc(vdev);
+> +	u64 features = (u64)rsc->dfeatures;
+>  
+> -	return rsc->dfeatures;
+> +	/*
+> +	 * All non-remoteproc-specific virtio devices are assumed to be
+> +	 * compliant with virtio specifications 1.x; there is no other method
+> +	 * to transmit this capability from the remote processor to the host.
+> +	 */
+> +	if (!rproc_virtio_rsc_vdev_rproc_specific(rsc))
+> +		features |= (1ULL << VIRTIO_F_VERSION_1);
 > +
-> +maintainers:
-> +  - Nishanth Menon <nm@ti.com>
+> +	return features;
+>  }
+>  
+>  static void rproc_transport_features(struct virtio_device *vdev)
+> @@ -285,6 +300,7 @@ static void rproc_transport_features(struct virtio_device *vdev)
+>  static int rproc_virtio_finalize_features(struct virtio_device *vdev)
+>  {
+>  	struct fw_rsc_vdev *rsc = vdev_to_rsc(vdev);
+> +	u64 features;
+>  
+>  	/* Give virtio_ring a chance to accept features */
+>  	vring_transport_features(vdev);
+> @@ -292,8 +308,14 @@ static int rproc_virtio_finalize_features(struct virtio_device *vdev)
+>  	/* Give virtio_rproc a chance to accept features. */
+>  	rproc_transport_features(vdev);
+>  
+> -	/* Make sure we don't have any features > 32 bits! */
+> -	BUG_ON((u32)vdev->features != vdev->features);
+> +	/* Make sure we don't have any features > 32 bits except the expected ones. */
+> +	features = vdev->features;
 > +
-> +description:
-> +  Reset controller implemented by registers in the parent syscon.
+> +	if (!rproc_virtio_rsc_vdev_rproc_specific(rsc))
+> +		features &= ~(1ULL << VIRTIO_F_VERSION_1);
 > +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: ti,syscon-reset
-> +      - items:
-> +          - enum:
-> +              - ti,k2e-pscrst
-> +              - ti,k2l-pscrst
-> +              - ti,k2hk-pscrst
-> +          - const: ti,syscon-reset
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  ti,reset-bits:
-> +    description: >
-> +      Seven cells per reset, indexed by the reset specifier:
-> +
-> +        Cell #1 : offset of the reset assert control register
-> +        Cell #2 : bit position of the reset in the reset assert control register
-> +        Cell #3 : offset of the reset deassert control register
-> +        Cell #4 : bit position of the reset in the reset deassert control register
-> +        Cell #5 : offset of the reset status register
-> +        Cell #6 : bit position of the reset in the reset status register
-> +        Cell #7 : Flags used to control reset behavior, available flags defined
-> +                  in the DT include file <dt-bindings/reset/ti-syscon.h>
-> +
-> +required:
-> +  - compatible
-> +  - '#reset-cells'
-> +  - ti,reset-bits
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/reset/ti-syscon.h>
-> +
-> +    reset-controller {
-> +        compatible = "ti,k2e-pscrst", "ti,syscon-reset";
-> +        #reset-cells = <1>;
-> +        ti,reset-bits = <0xa3c 8 0xa3c 8 0x83c 8
-> +                          (ASSERT_CLEAR | DEASSERT_SET | STATUS_CLEAR)>;
-> +    };
-> diff --git a/Documentation/devicetree/bindings/reset/ti-syscon-reset.txt b/Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
-> deleted file mode 100644
-> index 61a0ff33e89f..000000000000
-> --- a/Documentation/devicetree/bindings/reset/ti-syscon-reset.txt
-> +++ /dev/null
-> @@ -1,91 +0,0 @@
-> -TI SysCon Reset Controller
-> -=======================
-> -
-> -Almost all SoCs have hardware modules that require reset control in addition
-> -to clock and power control for their functionality. The reset control is
-> -typically provided by means of memory-mapped I/O registers. These registers are
-> -sometimes a part of a larger register space region implementing various
-> -functionalities. This register range is best represented as a syscon node to
-> -allow multiple entities to access their relevant registers in the common
-> -register space.
-> -
-> -A SysCon Reset Controller node defines a device that uses a syscon node
-> -and provides reset management functionality for various hardware modules
-> -present on the SoC.
-> -
-> -SysCon Reset Controller Node
-> -============================
-> -Each of the reset provider/controller nodes should be a child of a syscon
-> -node and have the following properties.
-> -
-> -Required properties:
-> ---------------------
-> - - compatible		: Should be,
-> -			    "ti,k2e-pscrst"
-> -			    "ti,k2l-pscrst"
-> -			    "ti,k2hk-pscrst"
-> -			    "ti,syscon-reset"
-> - - #reset-cells		: Should be 1. Please see the reset consumer node below
-> -			  for usage details
-> - - ti,reset-bits	: Contains the reset control register information
-> -			  Should contain 7 cells for each reset exposed to
-> -			  consumers, defined as:
-> -			    Cell #1 : offset of the reset assert control
-> -			              register from the syscon register base
-> -			    Cell #2 : bit position of the reset in the reset
-> -			              assert control register
-> -			    Cell #3 : offset of the reset deassert control
-> -			              register from the syscon register base
-> -			    Cell #4 : bit position of the reset in the reset
-> -			              deassert control register
-> -			    Cell #5 : offset of the reset status register
-> -			              from the syscon register base
-> -			    Cell #6 : bit position of the reset in the
-> -			              reset status register
-> -			    Cell #7 : Flags used to control reset behavior,
-> -			              available flags defined in the DT include
-> -			              file <dt-bindings/reset/ti-syscon.h>
-> -
-> -SysCon Reset Consumer Nodes
-> -===========================
-> -Each of the reset consumer nodes should have the following properties,
-> -in addition to their own properties.
-> -
-> -Required properties:
-> ---------------------
-> - - resets	: A phandle to the reset controller node and an index number
-> -		  to a reset specifier as defined above.
-> -
-> -Please also refer to Documentation/devicetree/bindings/reset/reset.txt for
-> -common reset controller usage by consumers.
-> -
-> -Example:
-> ---------
-> -The following example demonstrates a syscon node, the reset controller node
-> -using the syscon node, and a consumer (a DSP device) on the TI Keystone 2
-> -66AK2E SoC.
-> -
-> -/ {
-> -	soc {
-> -		psc: power-sleep-controller@2350000 {
-> -			compatible = "syscon", "simple-mfd";
-> -			reg = <0x02350000 0x1000>;
-> -
-> -			pscrst: reset-controller {
-> -				compatible = "ti,k2e-pscrst", "ti,syscon-reset";
-> -				#reset-cells = <1>;
-> -
-> -				ti,reset-bits = <
-> -					0xa3c 8 0xa3c 8 0x83c 8 (ASSERT_CLEAR | DEASSERT_SET   | STATUS_CLEAR) /* 0: dsp0 */
-> -					0xa40 5 0xa44 3 0     0 (ASSERT_SET   | DEASSERT_CLEAR | STATUS_NONE)  /* 1: example */
-> -				>;
-> -			};
-> -		};
-> -
-> -		dsp0: dsp0 {
-> -			...
-> -			resets = <&pscrst 0>;
-> -			...
-> -		};
-> -	};
-> -};
+> +	if (WARN_ON((u32)vdev->features != features))
+> +		return -EINVAL;
+>  
+>  	/*
+>  	 * Remember the finalized features of our vdev, and provide it
+> 
 > -- 
-> 2.53.0
+> 2.56.0
 > 
