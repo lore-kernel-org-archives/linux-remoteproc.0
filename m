@@ -1,98 +1,78 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.5
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1794435733;
-	b=XfB9P4+0DZMIPFDyP4odmEY1kYq5Vcd4JED+panC7UYGdTiE0dM92tE8ALmrIagi5vV7
-	 XbywWhIc14taBqEM/5FVWXMltk+GsMEvrroUcj2AwbfmVyU1rSMGVG9UWTqpLPoRXfnmZ
-	 3VHc07pHnLqrdyTfof58uWwcxDzCRvT0S5rzB4JdlNhu7DiRVgtJoNu1dMUsruoJfmo3V
-	 GYOFoHodf9cRgNvl/VVJkBB4cPRr1s0YgJOkhSDTq/7HqSIT9B6rkPzbZBQWGPJZLQZDe
-	 gfyqvpIPZVaRBMnOnx0id0uEx07qln5SpizBoiDZTxuR470Eud9UE4NFVY7e7NjyT3g==
+	t=1794461452;
+	b=QZT3LYgYqb2ytzt67lY7Lcj6yl/4O4U9mNzDIjt6Xw3xEqD+oJEiCckwJ03IUuVny73E
+	 ZPEF9n6kxsfj8IHzy03bInA8LIac/umDy+RloZ3eR/2ZtF7LWBAOsdVNjy625pmFOkAYB
+	 j8d0ZdQ8pUFnG1amamVfngnsWvmCP74ex9k4feP2p3mzm/qdf14AQ4CPxgG2+CmDKz65S
+	 i3OgQwAWIdzSkOOqK+TSoBr2kmKG/9CG1LKQjdM//LQv9wKClB5OqRd2FEwYckZUOYxt9
+	 yENQzQR0AobTVNO/avoqZPZXrnHf45xIzpKHRUBchl/Vgx2nVY3CDDINZQXJxgfBXrw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794435733;
-	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-Source:X-Source-Args:X-Source-Dir:
-	 X-SGantispam-id:X-AntiAbuse:AntiSpam-DLS:AntiSpam-DLSP:AntiSpam-DLSRS:
-	 AntiSpam-TS:CFBL-Address:CFBL-Feedback-ID;
-	bh=7cTCcGXBezpytdcayghG2BH5NlVzbXA8KkJRrmoLFxA=;
-	b=EptnLuptREKgenBpTPhvyrykEk0B5/VRfuKz9up27W4ECgc410f4ihOSBwfaWAsv/bxp
-	 4XYQxQlVLXWgJVcsfLSWqgH+R4eQJAumNALguBP4PgLPpjdS3Rva8rPx/tVy0VMIfCfKx
-	 oisaVcBvTky7AD1KKSIHdgI75KQqrct1vbtecXgcHAfH9HknIXhAZDMeRfoROYRIuthgb
-	 A/dn31/xVrgDyIXS1Xp2HPUVdQSOCcfAxay5YtLweOYTuUVnEvxgmcZGn5gz0FhEAojND
-	 1mfGAMJjhhV0Jlx+zIuLYUzEEsK7A2at7xzLHl/tY+yfPAZudZqH80gVdAQIkHbeCmw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794461452;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=UviLEzCi5yC1tk6oTyIn9YBlv7xdwXYD5u/ePdmahAQ=;
+	b=2bnSy1LCBNQdRHIhjuzPeJIgq6jBwXFgut+geJqtwZrMx2G7zHnIqZpSK1c7+hntqGRn
+	 1Pj6og44tH9QoBdDx7VK1i43bF62fOvlO9xxE2JgSdd8wvBkSdNWQ7Zue0nlgRMjHKYz2
+	 n1e6QKgPV056yqNW8Ll37NcFh3Iqd/y5tLFLbKHgVk1tY2MgYELkzi/CmVDY+yB75+FlE
+	 2CRWClq5xgyryGWLAdHpAcjoANDhgWJ6MSqgk/gK+YRFsCjaPkH0yCIAHpVCSDwMrTz1b
+	 Z+VHSjq5dS9OJs28lLWI4E415k1Z48Ii68dQF4ZgN/XXDeoB/oYTVPdJiQgsi/Sk7OA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valla.it;
-	spf=pass smtp.mailfrom=valla.it;
-	dkim=pass header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=GHFZR35R;
-	dkim=pass header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=R3S3IJB3;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.5
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.5])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GUwBi8wW;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42250606A327;
+	Thu, 12 Nov 2026 05:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GUwBi8wW
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794461451;
+	b=v/3TwPWeNUyph4m0gCDNy3iW2M1clrGxw1u+Q/sFZma27MQQj4+aQUfkW8ZWocqT+qzc
+	 12JFny53rcSZyhvRYfs4/dZa7l5hIhLT4zbjVQtf7GMxdMxskByUBlnTjg3eXMyk/Y+FC
+	 0Z3gd2sWzAx8n1nrEAucrgzbXuj7l7yi8xn/mdY70VaC6bD+A55bmLaG+surZruJ9OW99
+	 rd4oCRn7u10/Kg2RUby3NBelE2rYmG47xR0mD+CaUU7qSd1FBYzRBIQzePCnWHlcKAc9J
+	 PtsbuWr81xO//OBb+dCsR94bP5w/VSCq2ncQbgiWgoe+MSfhPnRKiyhX9nglunl4gCA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794461451;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=UviLEzCi5yC1tk6oTyIn9YBlv7xdwXYD5u/ePdmahAQ=;
+	b=qEwYb9dkwAidr8WX3GxdXdYJ0M2ZM6Fkg0UhGpsxw0NUCI2ICq2BzJBnndbiVYpBhjMg
+	 WowGroQD9CZ0GPJ/cbFNde5aCoqfYwt1M2mv6u+a1xasMGRobJ8nwNctjDqhGXVo9aPvF
+	 pRTDrdKbmn13BCOz1G8niQIfU6KCoys9sHwirjRl9oJGUVzgdnd4wDl8AjITrRtRptw8O
+	 D0YPGxLuyU1DF5iV+893NGpPLyM4+6UQjPnkLZLKX5h0xFnfdk4J4MxFcHEJjdsMyjauG
+	 GS4x3p74IoEiZVMrr8X7opiJOWpN/FEnYHjsphRSHdk6oVB//2Sc5Xzx5DYbcgVr0tw==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661F7606A326;
-	Wed, 11 Nov 2026 22:22:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 661F7606A326
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=GHFZR35R;
-	dkim=pass (1024-bit key, unprotected) header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=R3S3IJB3
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-ssp3.prod.antispam.mailspamprotection.com; s=arckey; t=1794435732;
-	 b=M43IQTNYik6rMgAT/EJDZl5wL/5nR/WJAfvOYLbt5jFhNlwcPk3ksY0VUV6feuSEiwZ2YHku4j
-	  F9X+f5Lx/JaCqQbiJhp+xvEKz/STUQfk+5frZvKCnpcoNXYv5DNrH3v6Q9IbRVIYj9ZCh/lwPv
-	  jiFFlHuXH4rE7+gx+DkmiQ0l6+HRgZEc/Fq6+q0YNlTrMjjBbvJ/nM5r6eIHJ8bClwiqZHhKLv
-	  7K56xghtOE3TL7VWBAxfX/vNy2D2EFyLRptfq5xyv29hyYe9b9dDFaI2mGDfTT7hIw2kZrgBVi
-	  2exX+FHxx99G8bgsCJLsdIueInqrmbwYpC8+iINrsvHXQw==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-ssp3.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-ssp3.prod.antispam.mailspamprotection.com; s=arckey; t=1794435732;
-	bh=bkn+2okFpyouLkYg2+qrterp2SbLwOmfFBx9UZfdWr4=;
-	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
-	  From:Date:DKIM-Signature:DKIM-Signature;
-	b=Ho810c0eUFW/GG1Mtg1lvLNEF1/wy257KRrJcK8iKOg1g3CStIeeyYzpsFRUSFizXnITmWO8GZ
-	  Qv/VawtfeqcHlp/yLNikA8EaOfTfaUKkdfqWK8kT0b7fXS0vhID++rZLtIc5L6DzHg0xZ9HoGd
-	  o4RI7MZ/ZfgKFh+WEB1gi0Fwjau9My0MFOENDpVcqnusDowKAH8J7WJ+58xiQdHJE3uCVQE0yc
-	  y+m2d81hYpp3IXhYZaY74FcUBd1RJ6wv9g0kZdavUBD83SeY3jgzfMX490+P3QSyGOtru2qiUq
-	  gYkV1O+wtEWiRdCYDB+XO9GIsS5HnkM3+ZscfFM8ZpydPw==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=7cTCcGXBezpytdcayghG2BH5NlVzbXA8KkJRrmoLFxA=; b=GHFZR35RnY7rpM5S7MB7Gt8zS8
-	LNKOYuAQQlbLTBggoVxJBpNCf685bXbrqJOrhX7ClAYjnSlLWUYIMVkaod93wKRlHVr2RT+OoXlxe
-	FNy1FN4t4X2d7zKp5Aff0VKqO2cN/1+Ah7e96vPVQ8V1DU0IRc4vYUxPHRtS9DKyPkaA=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-ssp3.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xRGhg-00000000j0F-1oHa;
-	Wed, 11 Nov 2026 22:22:04 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=7cTCcGXBezpytdcayghG2BH5NlVzbXA8KkJRrmoLFxA=; b=R3S3IJB3I6btqMRM8mm1EGkQxg
-	N9y5sBN0y4W4MEGboAte5dC8ZYtvj7D/tKe+BMbgfBnVZKAgrDAE1gXYwpkl0F4pps0uf9rfV2q6b
-	0NTo/QLMfx5IJQwEnrcmvyooSOZ/BTke5tEABNJMB5RobHUPBQwNJd2pJIMDxsnxCNv8=;
-Received: from [79.17.15.196] (port=64037 helo=bywater)
-	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xRGhc-000000009rf-0dJR;
-	Wed, 11 Nov 2026 22:22:00 +0000
-Date: Wed, 11 Nov 2026 23:21:58 +0100
-From: Francesco Valla <francesco@valla.it>
-To: Chrispine Tinega <dev@chrispinetinega.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] remoteproc: k3: Report a remote crash to the
- remoteproc core
-Message-ID: <avTnp6EDSU-0BL_u@bywater>
-References: <20261109054830.42715-1-dev@chrispinetinega.com>
- <20261109054830.42715-2-dev@chrispinetinega.com>
+	by smtp.kernel.org (Postfix) with ESMTPS id 436771F00A05;
+	Thu, 12 Nov 2026 05:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794461451;
+	bh=UviLEzCi5yC1tk6oTyIn9YBlv7xdwXYD5u/ePdmahAQ=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=GUwBi8wWY6wQbdgsyweWdRlorWzWUgdE9Op5xsZSzz4gQ6RIFYWbGWSrgj3T9rMpT
+	 2nHH5jKx1WuUn1k54RCx2VEhUB/dPXvSGnckZwUf3cROvckFVAoNs2DgNrGZEOoWWN
+	 +X4PROSX8CpJGPN2Szej/gNqRocFWcrsSVoAczPj3MQpXoxH2cK4+PdZDM8nc9MROk
+	 nZmJBiI3nZcqwJF0da4XP63wSWI5JnhKbBREAkTxKEwLBvdypV+twMWZ3GK1g1wCoM
+	 LgXqheck3lo7zpfopgdZOsRjawDoaL26IW2J9mdEtDqxo1FA8QLPp3Ib69QnJO94PR
+	 +bEosHAgaT0KA==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id B52AA49191;
+	Thu, 12 Nov 2026 05:30:50 +0000 (UTC)
+From: Weidong Wang via B4 Relay <devnull+weidongw.illinois.edu@kernel.org>
+Date: Wed, 11 Nov 2026 23:30:25 -0600
+Subject: [PATCH] remoteproc: elf_loader: Bound the program header table
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -102,79 +82,124 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261109054830.42715-2-dev@chrispinetinega.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: b4ffac9a1755688dd7a5fd2e58e67c94
-X-AntiAbuse: ID - b4ffac9a1755688dd7a5fd2e58e67c94
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1xRGhg-00000000j0F-1oHa-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-ssp3.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261111-c3-n021-v1-1-17c9151d0245@illinois.edu>
+X-B4-Tracking: v=1; b=H4sIAPBO9WoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzNDINBNNtbNMzAy1DU3MzC3NDFJNbJINFMCqi4oSk3LrACbFB0L4ReXJmW
+ lJpeAtCvV1gIAFv8ZXWsAAAA=
+X-Change-ID: 20261111-c3-n021-7607944e28a6
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Zijie Zhao <zijie4@illinois.edu>, 
+ Weidong Wang <weidongw@illinois.edu>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1794461450; l=3782;
+ i=weidongw@illinois.edu; s=20261108; h=from:subject:message-id;
+ bh=1+dxp4TSkvo99vpszS33ptcnuh7ZLO8mxAuiCbEJZ2s=;
+ b=bVPFLFW4TgQVG01rb6iT1GKoLw3UEMEXZT1PQ1ti01+uV1i5KUnacemlHqoDQKt+eKN/EjRiQ
+ AdOjFspT8u7BJPxCdT1GZ+ecwgUOIhE8YRUWHLAIt+jqJQKGZCwSdUX
+X-Developer-Key: i=weidongw@illinois.edu; a=ed25519;
+ pk=DR2S1xPEa5sELrWPfOpvUphJQ2VHC+MDc/wJavE/ifg=
+X-Endpoint-Received: by B4 Relay for weidongw@illinois.edu/20261108 with
+ auth_id=1449
+X-Original-From: Weidong Wang <weidongw@illinois.edu>
+Reply-To: weidongw@illinois.edu
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 09, 2026 at 08:48:29AM +0300, Chrispine Tinega wrote:
-> A K3 remote core that faults can send RP_MBOX_CRASH over the mailbox,
-> but k3_rproc_mbox_callback() only logs it. The remoteproc core never
-> learns of the crash, so its recovery never runs, the crash is not
-> counted, and the core stays halted with every rpmsg channel to it dead.
-> 
-> Call rproc_report_crash(), which may be called from atomic context. The
-> core then moves to RPROC_CRASHED and the crash is counted. Where the
-> driver leaves recovery enabled, recovery stops the core and boots it
-> again. Where recovery is disabled, the core can still be stopped and
-> started again through sysfs.
-> 
-> Signed-off-by: Chrispine Tinega <dev@chrispinetinega.com>
-> ---
->  drivers/remoteproc/ti_k3_common.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-> index 4b6da3363..d799f377b 100644
-> --- a/drivers/remoteproc/ti_k3_common.c
-> +++ b/drivers/remoteproc/ti_k3_common.c
-> @@ -60,11 +60,8 @@ void k3_rproc_mbox_callback(struct mbox_client *client, void *data)
->  
->  	switch (msg) {
->  	case RP_MBOX_CRASH:
-> -		/*
-> -		 * remoteproc detected an exception, but error recovery is not
-> -		 * supported. So, just log this for now
-> -		 */
->  		dev_err(dev, "K3 rproc %s crashed\n", rproc->name);
+From: Weidong Wang <weidongw@illinois.edu>
 
-Since rproc_report_crash() is already logging the crash detection (also
-printing the name of the rproc), maybe this print can be removed?
-On the AM67A (MCU R5F remoteproc) the following prints appear on crash:
+rproc_elf_sanity_check() checks that e_phoff lies inside the image, but
+not that the e_phnum program headers after it do.
+rproc_elf_load_segments() then walks all of them, so an image that
+declares more program headers than it contains is read past the end of
+the firmware buffer. Both fields come from the image.
 
-  [   29.107991] platform 79000000.r5f: K3 rproc 79000000.r5f crashed
-  [   29.108025] remoteproc remoteproc2: crash detected in 79000000.r5f: type fatal error
-  [   29.108032] remoteproc remoteproc2: handling crash #1 in 79000000.r5f
+Commit b32177ead5f8 ("remoteproc: elf_loader: Bound the section header
+table") added the same bound for section headers. Do the same for the
+program header table.
 
-> +		rproc_report_crash(rproc, RPROC_FATAL_ERROR);
->  		break;
->  	case RP_MBOX_ECHO_REPLY:
->  		dev_info(dev, "received echo reply from %s\n", rproc->name);
-> -- 
-> 2.53.0
-> 
-> 
+Found by an AI code review agent (an LLM-based bug-finding tool
+developed by Zijie Zhao and the submitter) and confirmed on an
+unmodified kernel, without error injection, on x86_64 under QEMU with
+KASAN, using an out-of-tree test module that registers a remote
+processor with the stock ELF helpers (rproc_elf_sanity_check,
+rproc_elf_load_segments, rproc_elf_get_boot_addr) and a da_to_va backed
+by a kernel buffer. Booting it with a 120-byte ELF64 image whose header
+claims 64 program headers at e_phoff 64 gives
 
-Regards,
-Francesco
+  BUG: KASAN: vmalloc-out-of-bounds in rproc_elf_load_segments+0x4e5/0x6a0
+  Read of size 4 at addr ffffc90000035078 by task run/72
+
+i.e. the first byte past the image, in the buffer allocated by
+kernel_read_file(). The same image with e_phnum 1 boots cleanly.
+
+With this patch the oversized image is rejected with "Program headers
+are out of bounds", and the e_phnum 1 image still boots.
+
+The reproducer, fix and changelog were drafted with AI assistance
+(Claude), then reviewed and tested by the submitter.
+
+Fixes: 400e64df6b23 ("remoteproc: add framework for controlling remote processors")
+Cc: stable@vger.kernel.org
+Cc: Zijie Zhao <zijie4@illinois.edu>
+Signed-off-by: Weidong Wang <weidongw@illinois.edu>
+---
+Tested on v7.4-rc1 (05441d697f7f), x86_64, KASAN, QEMU/KVM, with an
+out-of-tree test module that registers a remote processor using the
+stock ELF helpers and a da_to_va backed by a kernel buffer. Firmware
+is a 120-byte ELF64 image, program headers at e_phoff 64:
+
+               e_phnum 64                      e_phnum 1 (control)
+  unpatched    KASAN vmalloc-out-of-bounds     boots
+               read in rproc_elf_load_segments,
+               first byte past the image
+  patched      "Program headers are out of     boots
+               bounds", -EINVAL
+
+No KASAN/UBSAN reports on the patched kernel. The code is unchanged in
+mainline, linux-next (next-20261111) and rproc-next.
+
+The reproducer is not attached (AI-found issue, see security-bugs.rst)
+and can be shared on request.
+---
+ drivers/remoteproc/remoteproc_elf_loader.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+index da3cddbe7..54e1fd4bd 100644
+--- a/drivers/remoteproc/remoteproc_elf_loader.c
++++ b/drivers/remoteproc/remoteproc_elf_loader.c
+@@ -46,7 +46,7 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ 	struct elf32_hdr *ehdr;
+ 	u32 elf_shdr_get_size;
+ 	u64 phoff, shoff;
+-	size_t shend;
++	size_t shend, phend;
+ 	char class;
+ 	u16 phnum, shnum, shstrndx;
+ 
+@@ -126,6 +126,13 @@ int rproc_elf_sanity_check(struct rproc *rproc, const struct firmware *fw)
+ 		return -EINVAL;
+ 	}
+ 
++	/* rproc_elf_load_segments() walks all e_phnum program headers */
++	phend = size_add(size_mul(elf_size_of_phdr(class), phnum), phoff);
++	if (phend > fw->size) {
++		dev_err(dev, "Program headers are out of bounds\n");
++		return -EINVAL;
++	}
++
+ 	dev_dbg(dev, "Firmware is an elf%d file\n",
+ 		class == ELFCLASS32 ? 32 : 64);
+ 
+
+---
+base-commit: 05441d697f7f9a927264f4058cbbc6a03dfcac9d
+change-id: 20261111-c3-n021-7607944e28a6
+
+Best regards,
+--  
+Weidong Wang <weidongw@illinois.edu>
+
 
