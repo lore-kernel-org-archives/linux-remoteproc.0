@@ -1,84 +1,84 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.45
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794498579;
-	b=RTuHBt7dqwKMGIjCDM2olgcHirk4/Hdyn8D/ShBslgKCvn1qpLpgzOIf41aZelCR/cio
-	 Tpv3SElhBE8Wx+86riyh2JkKkZzbVKjdZYJ1KGY9pj4d3optOX7Ms+Dk3xyGOLvMOYVH+
-	 vmwDIpIU6oTtmk909L47KX8i33N9n8B5RS7j8et06KDAzRKvGJyLIk1J41J++nrDahfmg
-	 LNxB1sGKYzthQon4CO485RF6RE15gZSrI84BUJw3SuemqAjPvHbSX2H0WEGcsGZb5D1sV
-	 r49jANhIInXIGbHBrOrJzEwerbwRO3fhmb/PGFQ4zmPXqcRXFhk8SvWdjEj2+uLfqHw==
+	t=1794498583;
+	b=pLH8S2rGaU5u1+1xdDJ8UJpMfZQfUqui0f8FrD2/D2eilPrOMOMJ1CwaU7qd/d7NmKKz
+	 2uwmapy6VThBwBF4RxwixKUAW2WEcwze/k2FAk2BMmyZSzA7KHLCg4xEUvctflgQ+gY8d
+	 dV8QtMDoY157vjdzk8yV8kU94fkkTZS4G2t3m9HPbtcSuCx1aZEx/hnY7PJhQ+hqJoWG+
+	 jYvGqcq2G4qyofNPngmFHh9sdrvwA58n7cf+i8qZv7mrMhKgVEpfd6KEKeYUwBOe78VTA
+	 YMIJQ73vcJFqDkpt0E+Z2NlsmbSxdnOcgaECu4Lmfy7h7WRYp+ufmZQAF1l56W7EA2A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794498579;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794498583;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Transfer-Encoding;
-	bh=Ve1FkPgDNt0jdst6TwlwSyNCOB8aJhkSUavfhKtflTs=;
-	b=H9aZ+FRZQR0j0bxBK1133PcpX7pEy98wFWVN1HAwVAMEPJhRYUMK6lceALKeFFPq/miG
-	 K1/o85lEG1t3JyziI2H/ERU4QbgLIlPvgg/ej4UfFeAtNEDjwNDbnGqaQFd7JZIYoiU6A
-	 o9V7a/vygbX5cOv1rnnffe1mpUtgrE9wt2bjmABqNzc+Lj5NUEjtTCGM/St2VJhOf9NfO
-	 X9IEPpP1L6eNLN9QoNPtu5MATIKtZjEL5Cey4ncetchW8IXToN7YJxNvvn+T/yF0zyZIh
-	 4nrJajE6acQWeFYjLWVF04Ry3orcTP8KYwfq0C3C5Ex9XRZh5yp6H54zJMO+9PIZSYA==
+	bh=CxFoK2bKFif4r5nTuXcKQcoyXDPnIP5aTxYirQtgrTk=;
+	b=M+pUibJTV6R37LbUHGvIjKgGqxMgsG2Nx/+7HS8L1B2rXYX0LBMToWkK8RWqQ8hJ32b/
+	 5Dazk5B0shPArJI5SEZNqY7nuNls0GCFI9qWdOu6fZiIG66VgZDQi67Xrdh1rHGbVSRA0
+	 gMhngwg2JPH1a6Un4A7Or+4hlSSUNNKRx0d6Jjj4oJ5TtKT7l53zq4d2C80HIGs42xRcr
+	 lac4QS2Xu1aozDAirRaH55lM/rdVMfpN2rZIsKmPvYC9A6z73zM2dbetjXS3fx2tebf0X
+	 WUIOY4sauTZP77LYpc/m/xeQY9w2MC9wPxZYwapBQWSgIXBCL45lhKj5gP42pQtllWw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=k+1yPzPS;
-	arc=none smtp.remote-ip=209.85.128.48
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yfKRugOW;
+	arc=none smtp.remote-ip=209.85.128.45
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0654D606A890
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 15:49:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0654D606A890
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74557606A8AD
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 15:49:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 74557606A8AD
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=k+1yPzPS
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4a5720b0a57so6660665e9.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 07:49:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yfKRugOW
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4a2000d5fb1so26450245e9.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 07:49:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1794498577; x=1795103377; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1794498581; x=1795103381; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=Ve1FkPgDNt0jdst6TwlwSyNCOB8aJhkSUavfhKtflTs=;
-        b=k+1yPzPSmnde0506t7WZ54MUMqLuvgWsL+VtyeRmw1OmzDr9tDzPYMbpPhBDKfCYfE
-         kAboTZ8nO++NdeKzP++4oxNiQ3yKhcR3PvdgOE6j+3kiatcrthX2Vw40UX0GCtrCp1q1
-         6mHr1khSGQJi2aCODY5f5GCbGPgT+lQ10YeHh0f9ovn9wTZQPOgVK422ymdOJnw6AjS6
-         8Olf+KTa8jtYFGFVxCrGH+8Vu1poVqLv7PEF3dzSAI2NzA+bGw7MY8cWhnUDDGC1DBg5
-         wreWr8A3WwFA1sGExh44od1EJvUCg8WdnEKaa+EI2ClqHuByGBM9UgQnpUG4Y2GPReG5
-         9YAQ==
+        bh=CxFoK2bKFif4r5nTuXcKQcoyXDPnIP5aTxYirQtgrTk=;
+        b=yfKRugOWfcfaIv6xP1t5aR7F/giQtXW7S6EIguozBBemQNiM0fVWzVLqUK6OaXmQsF
+         iDvbnC/g1w6KufcFXi893HkN9mtaOgotq3QlyHfkf6o/t/3iF9dNb07YxO/xYmqlUBfn
+         gjupDXlhxlSTlL/KRv6AzN6mBWqrpWLIBu9nMF33r/gbWwnFIaMBjrkGT1SMrv80Fzv1
+         NoBH55GLomb1ycxpKxTjRX2a8YAQv3vIc9oplTc0ji1+AXrDShpOuStMvwZA+ZAVr3lL
+         AuQi6hjaYxQ49niKOUc3dUihin2HgykQeyo5tdVA4rURwYj+rJFKZm/9YL1qUcFhq7s+
+         RS0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794498577; x=1795103377;
+        d=1e100.net; s=20260707; t=1794498581; x=1795103381;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=Ve1FkPgDNt0jdst6TwlwSyNCOB8aJhkSUavfhKtflTs=;
-        b=iWk9f2U2OK+vQrL01Gab3A5z1XCBPC4gHknACRr7PpfqMxTrx657rI1JZSqLjqt0BW
-         bF4hwDLaLynKzTIbcWogLP3FjUzTNxv6w2bUF5y4BdQRONKBErQ6r/jojAvoXY0CT0HK
-         xWXoZlDZTS3AcB+8VuAdJ5yFMOpvRrWWllinb9khEoHrShoQqmlIVycOxV1NAHzWjMsK
-         M3mBHPFGwnGmvRjbTmeWndAmEPiLtkHnjT/wZpstXkH/snVyWS/rJ2bYJggvdD3lDQMr
-         OjwGx+OMYTSiF3jVouRLT2skkx/AzXSKQcDhoNR8U5U5VwVekWDmEBKYg2aJ2bs/N9TB
-         l1TQ==
-X-Forwarded-Encrypted: i=1; AL+hErF5Tco3zKK2+hQwToNEbxu8BNSbrYKcLlktwa/0nDMqHqwArNv0N5f/8mOEDS87+xe9rZwhCCTvsmB/wKa4aUUN@vger.kernel.org
-X-Gm-Message-State: APuU4Z8tWx9mp/7F7irj+FSD0dkWkiKplE6Om1gnNfXZ3xvBgPv1jNf1
-	+aZu0pcHJR/bUTolrbr2l/emveEnjp+zMSbvqGXQJZvnOtb9bIUJf2wB
-X-Gm-Gg: AYBFou03VJlr+yvONQtgyKtNwW/mmbmkxW4LHwf2MduH6zpUWE8KjKPTwNWeNYcxaNW
-	sCOPuwN7VZQT0IFTx/ROPbNHQOjOcUw7mhCsKBuzGznvJRzycb7MdabRYgo0kisiBkhRLzgnC10
-	kkW4749nv0jps14EbCz0BV/zBVaXp93h9Rq+JQcqNOrkcMtx+RKSQZme8T5oiOtC+VG98MFIWyG
-	VDVwLJOjKoGXpoF4VgY9isnIcZR80tONMjOwyva+CWOc+60Z+y0kfVhoUiDJt6A61uY3kJKBKWA
-	eV7xYFYoybKa5L3reVExX6lvcgfTNVa2MXA2EY5rlwc7XNOtyyhBV2WmhLQIBdVKVuF1jkwwLPE
-	5Q9sjIDXb0SmpQJSbnOSzr3uL+N81Ylt3leVCGD9HIe6O/MTUcsvBe1lOgBWmsmJK/lzrk/F+EY
-	QGBCUDsKE5//Z20cNS6kJ8QzOHl+noKl32okfzjJ9MQPJhTP62rncsEuFTbSkVQTZmTfVMtaLVM
-	NGLi01r+Y4YnwMMNeoloi+nsdOT5PTvhGAn76DVIhp8t5THSx72i/5DpqdUvxQRJvgVvgMRXYBr
-	sFUn/W9xQm/8einmS2udxEJNKwu2OYiPYzPCJ2cMbmFgouQ0Ban79SZt4tgyK9h7M662vU+sxmB
-	I
-X-Received: by 2002:a05:600c:19cd:b0:4b5:d95c:2380 with SMTP id 5b1f17b1804b1-4bb4e28d076mr63675105e9.11.1794498577427;
-        Thu, 12 Nov 2026 07:49:37 -0800 (PST)
+        bh=CxFoK2bKFif4r5nTuXcKQcoyXDPnIP5aTxYirQtgrTk=;
+        b=SSnHdtYXzH9J97UuW1VqVHssGyBkW63TkAhZh0sXdpMTypdh+4t0czPcsoyGfVrsZd
+         x9xR8f0FXKs7QVnmhXXFr7wbZFhJyPqyeBqJicfP6wWxyTcWjrlmuTxitwSBHCI89tj5
+         MXSC+2DYzY1sobXCys2d3YsuaHiGPDxAvxwUbd2gPvMyEUW+lAvc9reIzNrZ0PHFcJAw
+         y+nPXOzzmJ8zFkfj0QfrmvRAoYITUfZLPRoVAU1uZFUwLdfQDHdtynqd90b/kvLAdkAE
+         6xMfhGozaZUcqkQgPs2eJ2Uw+6Z8c6YIG5OIvof0x7pYbnHxYkJkiPy/nxZN+REWk4Kg
+         Ko1w==
+X-Forwarded-Encrypted: i=1; AL+hErHldGl03dwNy/RGxdtzW+X4iEwHzCulsx/8ipDUURTRzOl0oDVn7TDJFc9r/I7qQdLNStcU/Iao4KKIZcuPejWK@vger.kernel.org
+X-Gm-Message-State: APuU4Z/N5ABUvB3MYNpCEYOvdd8AOPzOjh85yHmg7kkG1uHIUZpCmxnZ
+	jpf8WL1q21bBhHOue2qPf7CBXUT/DEjAPHH88/2oLUwfgFGlfuO79NRf
+X-Gm-Gg: AYBFou0hvtPn0LohUJ/l5tosLMOSm/r0C2aYT/wJg1R3PUSVjnUmY0NlebdzNsPyVNa
+	X9r4DWpA9kQ7hnMbNSXPj8BVAzUzHu4dLYtBqUYE3j1mI85iAgfGx5TG7w8+5E8KMDshAmR6HcK
+	RUdWJ2NJHF/Mk4w6vsd3FN3AvEqn25A0R0aViJx5j/xXiDVC40sA179Q1R/H+5OHrmPa+htLFmh
+	+f1/v/PNI7XKqzmObaY/z6cumUgi9OX3giKfWNeDV+trvs3i0tWPrD0HTya6o7NwuRl/is7+wVD
+	2+jakEGIprQnzzrl1PELkNQcFkqJdFP+6b+cNef/IoQUAIwMw/daOnVm5AZb6yd5QaAgZcYc8ef
+	LqKrWu5D0q43SoXBHOVehb14x8UHKNXgBvJjU7kdPANJT4Y9h2Tq23DaIcZCpITrYJPr0Ol8M39
+	9J/Ac/TLFLJfrDgkTYfJJIPYKrRH1Q31LtEQptBL0Dd1wSm0ok50bgoibdmGORZ2V9lM/7AFHhU
+	C3J4u5hlPicG6dTrRzaIkRHdojYQwjDeAMOgbJnJvRx2h+AJqVmvjloKDdVWeKr1ERU/awFR85p
+	iPY8w0cvl4OKQGVa5o423PIsUvh5FWDHY7vbUHiYFWxupWL7j/ae61ZB3xI3xKe7xQHEQaKqgz0
+	=
+X-Received: by 2002:a05:600c:34c7:b0:4a1:992f:d0e7 with SMTP id 5b1f17b1804b1-4ba09391696mr107327305e9.16.1794498580905;
+        Thu, 12 Nov 2026 07:49:40 -0800 (PST)
 Received: from stjepan-Aspire-F5-573G.tailc0f20e.ts.net ([2a00:1bb8:118:d39e:4868:f22e:b51d:7cb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb4e2538b9sm139337155e9.1.2026.11.12.07.49.36
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb4e2538b9sm139337155e9.1.2026.11.12.07.49.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 07:49:37 -0800 (PST)
+        Thu, 12 Nov 2026 07:49:40 -0800 (PST)
 From: Stjepan Poljak <stjepan.poljak@gmail.com>
 To: "Michael S. Tsirkin" <mst@redhat.com>,
 	Jason Wang <jasowangio@gmail.com>
@@ -91,9 +91,9 @@ Cc: Francesco Valla <francesco@valla.it>,
 	virtualization@lists.linux.dev,
 	linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] virtio_ring: reject a split ring size that is not a power of two again
-Date: Thu, 12 Nov 2026 16:49:16 +0100
-Message-ID: <20261112154927.4004184-2-stjepan.poljak@gmail.com>
+Subject: [PATCH v2 2/2] tools/virtio: vringh_test: check that a split ring must be a power of two
+Date: Thu, 12 Nov 2026 16:49:17 +0100
+Message-ID: <20261112154927.4004184-3-stjepan.poljak@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261112154927.4004184-1-stjepan.poljak@gmail.com>
 References: <20261112154927.4004184-1-stjepan.poljak@gmail.com>
@@ -108,54 +108,47 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The split ring indexes its avail and used rings with num - 1 as a mask,
-so its size must be a power of two. Commit 2a2d1382fe9d ("virtio: Add
-improved queue allocation API") moved that check from
-vring_new_virtqueue() into the new allocation path, which
-vring_new_virtqueue() does not use.
+vring_new_virtqueue() used to accept a split ring of any size, although
+the ring is indexed with num - 1 as a mask. Check that it now refuses
+one size short of RINGSIZE.
 
-remoteproc calls vring_new_virtqueue() with a ring size from the
-firmware, checked only to be non-zero. With 100 entries, for example,
-the driver would put buffers 4 and 8 in avail slot 0. The device would
-look for them at slots 4 and 8, possibly reading the wrong data.
+Without the preceding fix, vringh_test fails with:
 
-Put the check back for the split ring; the packed ring has no such
-restriction.
+  vringh_test: vring_new_virtqueue accepted size 255
 
-Fixes: 2a2d1382fe9d ("virtio: Add improved queue allocation API")
+With it, vring_new_virtqueue() prints:
+
+  Bad virtqueue length 255 (not a power of two)
+
+and the rest of the test runs as before.
+
 Signed-off-by: Stjepan Poljak <stjepan.poljak@gmail.com>
 ---
-remoteproc still reports this as -ENOMEM, although the "Bad virtqueue
-length" error names the cause. Returning an error pointer from
-vring_new_virtqueue() is left for later; the same change for
-vring_create_virtqueue() is here:
-https://lore.kernel.org/r/20261106055635.3019889-1-stjepan.poljak@gmail.com
+ tools/virtio/vringh_test.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-v2:
-- Log with dev_err() rather than dev_warn(), and say in the message why
-  the length is bad (Francesco)
----
- drivers/virtio/virtio_ring.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index f683a2d6a200..f855b8d41575 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -3513,6 +3513,13 @@ struct virtqueue *vring_new_virtqueue(unsigned int index,
- 						    name, map);
- 	}
+diff --git a/tools/virtio/vringh_test.c b/tools/virtio/vringh_test.c
+index 2a5d7f7d2d6c..75c66385502d 100644
+--- a/tools/virtio/vringh_test.c
++++ b/tools/virtio/vringh_test.c
+@@ -494,6 +494,17 @@ int main(int argc, char *argv[])
+ 	__user_addr_max = __user_addr_min + USER_MEM;
+ 	memset(__user_addr_min, 0, vring_size(RINGSIZE, ALIGN));
  
-+	/* The split ring indexes its rings with num - 1 as a mask. */
-+	if (!is_power_of_2(num)) {
-+		dev_err(&vdev->dev,
-+			"Bad virtqueue length %u (not a power of two)\n", num);
-+		return NULL;
-+	}
++	/*
++	 * The split ring indexes its rings with num - 1 as a mask, so a
++	 * size that is not a power of two must be refused.
++	 */
++	vq = vring_new_virtqueue(0, RINGSIZE - 1, ALIGN, &vdev, true, false,
++				 __user_addr_min,
++				 never_notify_host, never_callback_guest,
++				 "guest vq");
++	if (vq)
++		errx(1, "vring_new_virtqueue accepted size %u", RINGSIZE - 1);
 +
- 	vring_init(&vring_split.vring, num, pages, vring_align);
- 	return __vring_new_virtqueue_split(index, &vring_split, vdev, weak_barriers,
- 				     context, notify, callback, name,
+ 	/* Set up guest side. */
+ 	vq = vring_new_virtqueue(0, RINGSIZE, ALIGN, &vdev, true, false,
+ 				 __user_addr_min,
 -- 
 2.53.0
 
