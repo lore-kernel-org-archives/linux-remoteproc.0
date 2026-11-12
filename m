@@ -1,86 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.221.41
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794483603;
-	b=cOx3D1itMGQK9tbnVZWmMvKg+WxRz4JB2GjTExgxsjiqGIeWmvitvywynETU/QfBqAhZ
-	 obIRKD5oFrCOUyN9UrwT6bT8Sc8yPt2upOLy2eLdXae37qW6HRZl8u1Y2I7lbSliocgAk
-	 0XF39dh0pKzzOlSt6UP6sTa4U+x5nOsu4ys/MRQm/c0eQtY50hxya5ROhbp4AcC8Fupy1
-	 zbeoNxqqRPQN8kKKz+ZJFaG9SEZWA7Y9ExeGyN7/GORso9+4sLsYNVgHersJJ3JSdu3bh
-	 iS7nZFVjuR8lk9AjOy1wiPXhBZ0uBy+Fnp7rg5kLn5DHf8Bc4M+YWZcOBMuhSi1NgmQ==
+	t=1794483604;
+	b=jzxtWPt6VyosG+dlJkT58zyN3edTAY565DDjEip3M8f+1xunRZzl9xQUyZmxe8dcOVqL
+	 E2ZgJVb12CjD6bzCiV85LHwvZuhgZGl1oo5HiVHKr2NCRQwaiFnFaOPlrjYcwk4xVUgjc
+	 0Jbw690FBpzG82zBDFBlX42OtF+7qd2JJ5lZ0MQtERH98eQ8N47A021L70P+ewyhoWbsH
+	 YRyWUJPLP2bUEhyXokXgA45lGcx0Ccsbi7Ka+k0KSJrtlrgX+MxL8o8yFPt+q0Brr4C9g
+	 TG3HUF2QlcWbu+B+qNhpJ2Rxs+4M+tN1S48IJsjx7NjJ0nFljagl2dGIPl+eaPKfvcg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794483603;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794483604;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
 	 MIME-Version:Content-Type:X-Developer-Signature:X-Developer-Key:
 	 Content-Transfer-Encoding;
-	bh=B/LK2W9tMRY5x8wpA2h9YuUMfckHvhSfaFlgBZU2Y7c=;
-	b=It8EtlQPkTOFLKbm3hPRvb21aw5S5Rc+YeeKTiK/2o7Worj9YgrtPGtMgQnQWJEgxm8Z
-	 6p7t9ZokGdE+G4NV9RuOve24D6aaXfmG/3594EhHRMc6yFLeLpdTF2i+iNfgPv9qSU+bQ
-	 SjLgLPoCc6SWh8o+HHsCUTUz7llOZYhDOjOFRkiqp0y4CEcjJJ+JEFw3akBUmcXbCxXTA
-	 KgZsk81phNDb5kNXIyWUsUOea+QR2iOkxIXbgtW4hj08V8kd191TjUbXIPf7LfBze14KX
-	 a2byzM9VdsP0Fjd0XJGE0arDuOphoYEv7mnkTPFzSjFwU1sw0aLFy8wrN3k1OWWZg0A==
+	bh=WZHCTs4f986cWxYB4Wn0WoeFqnSR+ysmF/iaTpKX2P0=;
+	b=PRJ6JM6dUAeFnfbMJANSeu6FzOzsHvohQcDClNs5q9InoT4JBncrcNimec0Lz17Mi+Op
+	 MELMPxtEPaCmNpntiL0prS94sHgeU/GHnkyF0f3mV+z8cOPRxS3x9m+2o6zY2dGoUnVRD
+	 eg8Xs/KgXvxVUITJE9JJAweE6lnX8kvQcZa33ZA2sTF83hvKYP7lV3mYvmemfiKiaqCls
+	 8i+XOxKoV8Xy11V+tN2fN8P5+BivE1vj85wFs59Ri5vfUzwgUnzrFptl3nzeLXCW5xiZT
+	 60aRMy4oUkGuXA8Nn7jse2iDRChildiP9xcji7vHPzAS56puzwyN5U6FUkBQ/NVc+ng==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=FNsAWrtR;
-	arc=none smtp.remote-ip=209.85.221.54
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=c2AhZaTb;
+	arc=none smtp.remote-ip=209.85.221.41
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20E9606A88B
-	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 11:40:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F20E9606A88B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFD1606A8A5
+	for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 11:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8AFD1606A8A5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=FNsAWrtR
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-48e09aa5264so2389417f8f.2
-        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 03:40:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=c2AhZaTb
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-492f0a1b685so2839095f8f.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 12 Nov 2026 03:40:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1794483601; x=1795088401; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1794483602; x=1795088402; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=B/LK2W9tMRY5x8wpA2h9YuUMfckHvhSfaFlgBZU2Y7c=;
-        b=FNsAWrtRx1l04zhrn2VFFerBVJdYlz6fHuvxZ34YaX+EQkhbOu2BcJ+tKlPnmDAD/l
-         jFOWkOr44xOlh/vPpEvUpeib0bshVPalquusRI3Ot/az8lIJlwB9SWXCPKlvhDvWddrJ
-         UlU4dEPog2mpIVmzCQ9Rsgq5bNx0Zv4vnx4RhbWgv5IxN53prxESm2e6mmERnQY7m55k
-         fohxVCD6D47hXbU8NqAepLtG+sub92u+2Vs0FKlmcAd06jLInMedsK7BjWGFEVLBx2uj
-         QEbUoo67RJpXq5HnFHxI/o2AvbhzbXRLoiXD24TGQvu2Rxt7VTCTX5xVs+EZZGPyaTdw
-         2emw==
+        bh=WZHCTs4f986cWxYB4Wn0WoeFqnSR+ysmF/iaTpKX2P0=;
+        b=c2AhZaTbCdnYRd8voQJoF8xSxPolL3evNgZMzuaG9HMJB72hliv7dhzc3R43qdChx7
+         kXj7eE5Mj8iIsv9a41YJv9ykUJLyImW9slTqGRVVc0KOXcxs5vvNXIJEjTFv3jfd/+fJ
+         H982fItzIrfXmIBbBkUhWHYwcbtM4HkqkPbsMo3MOgakMyisy4W8yB4WHX0lAqw+2REk
+         zyl0QDYzQ+QkJxGP3KTQqKEk1RcI/CHUK/afm3p3F5Czvufjf2jkXYzeE2ZDaX+dNaZ1
+         lGT8Kc8vPah9Rfvk+i64WCmLCu3PhG09oayA6iupxLJ0+viG/QbzCr89mK923lAJcgwF
+         TUgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794483601; x=1795088401;
+        d=1e100.net; s=20260707; t=1794483602; x=1795088402;
         h=content-transfer-encoding:content-type:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=B/LK2W9tMRY5x8wpA2h9YuUMfckHvhSfaFlgBZU2Y7c=;
-        b=SctQHZSJ1K+ffyr351wmWRUk/50ed0rQo39d9WUp4oAdLOKqdTbpKxwcsjUv5ZO+IN
-         tJm3Xb0Fcg/aOKmHjxjPIs0IHrFoeKZFLKV6BFRVjxQOLW434BsPLXG2cY+dIGDbmn0d
-         cqJvAK+RvxzaJ1uZkmcgz6v4iD44cJtiJSZKJ9ZE7qErANcK2cCAhk+Ftgu8wZ7To8FH
-         8ssElKyBYruAk4xn3Z7p/79spyu1f4f+5MYA3N0gQexT61DEB4AADgJKM2QeLyltSibL
-         YNrQb4xSfk91+Umk7FfC0NvbBOtHVhJpD3yh93/YOKKqEtUvM0jCZ/WPxQ8n+92Wuxpd
-         2Pxw==
-X-Forwarded-Encrypted: i=1; AL+hErET1kvcwkokRcDQVpC53n7sGq6PxN8e1Of2XcK2xgHbHZ96G7v3ujk/MsBncPtgi0DH5S5XeB5FQgwdaEVzJsyZ@vger.kernel.org
-X-Gm-Message-State: APuU4Z/8QLiKHP1s9BeJ0TCOARoXCgu/CDLYgL3MUjyaEU0J8UYCfSw+
-	pZuwg/cshb5zTLmNxQAWxD+hKFtdAVopv2GuQZpw8faK4kwNVcDM3SXzVSeKhhbiCAc=
-X-Gm-Gg: AYBFou3EjB2wFV+m6W8MoE5/yzZMeHBsivJfNzty7OQ1lECz0C+TO5KoC+suhrWL98d
-	uRE6owiFRizEEgydDBx5hYR+wfCC2iKXppzozQ3F4XBPMfVCenjKEvyfSAgTf8UZb7weelJsRKc
-	gxwefXYBXqf0OJWgKLhV4sTe9WkvRCFbEnH0uu2jorTV4QL1d/Uh4d/vRs+x84QAxFDJdQskSCR
-	Vn7efGQPJUba100mEFZuBk5i1GZiJ3e9lcUMT++QZsDFW71mYDzckJdTeoLn76503J7V+tRdwiL
-	Jw3j0bcwbq9O3EBn7GuB7dG94Q9lJczEiUfMRDHLsQsy8KgEABO98VUB+g7WPlW1i7FsF2DjyG7
-	gMGQ19fERykmJCLr0NakWi16wM/GZQ40s57pPgJJJ8G3dfsNgMPYhukdU6sa62f08bj4va/aZbu
-	5zXEFtiCF54WQGatm2jYs510RWef9trnvVeDBmOF/K5n/bDvoBAh85gNDhQHiY0ikvA9i0UkSPU
-	QbLtNTviDIVfNldznLTiCxXDpDzpFxhugkoL9kD2LUL34WI9lqw8bOthTEJZslTbB+OeHhjA2zk
-	mG0Mg171BtF56XfvyCyQf3WjswT0F42853ckO/jhaSxICeQDze0Qz8T1j4fv/aI3nA5vkiSYj/F
-	PxNad81VNHhb+wEgQ
-X-Received: by 2002:a05:6000:40c9:b0:491:8462:20b6 with SMTP id ffacd0b85a97d-499c83c0d12mr9610739f8f.38.1794483600775;
-        Thu, 12 Nov 2026 03:40:00 -0800 (PST)
+        bh=WZHCTs4f986cWxYB4Wn0WoeFqnSR+ysmF/iaTpKX2P0=;
+        b=W1z8IPOc2SuCfuCRikZEg24q/xZCde9zNWeXNshu0KKdkMp3ZWedFW5rKTf2wzqOWc
+         Jvh2mo/x1eFAJd8SO5+51VWywoGRQqK4jttm3jFkbAUvSi5q9UZP5J9WHDLs7J4CE7U3
+         fcUBRb2JpvlAFuxnMhA0mYFduzIFRBs5Vh1WTIGxR1zxsa8OKt24dPkh3beeKlXOposI
+         OV6lKLA+7Qvx3mx7pyCiV0hn7YnUKjNBHC+zA7cN8VJT+c0KXBRuaji0ZWXTVhVkkDao
+         UAfXOK/7CR11RsmmZFDoBYUfPZ9BUJ0XxT+f0GBJohpruj16tnQO7LFTyqqR21BBX74T
+         VzXQ==
+X-Forwarded-Encrypted: i=1; AL+hErHwp2+XnnBU+vz8jtPz9O5xxHvTXhuhNP3vCfIeKZy3vzyAnwKA3m7UtROlguNh6k4NkArRMMlrdfzZ0it/yIKb@vger.kernel.org
+X-Gm-Message-State: APuU4Z+fHLxJJNN/7INVnystM0k/X2hdIIhUeIdFCxs2IVbg4Bk0s7+C
+	oorU0BNgA3A1VTsbM7pwaPpDMmCQtsP4OC2ux1rp2Qmzn5B6Qjt34WyfRSaeXvEh6H4=
+X-Gm-Gg: AYBFou0HNZxw9HuPnoh+J4ayzJctrcuRLMc1nsGvPFz3uhZ93zQX/+1No3d2r9x1psa
+	wUcrm3mLxAmWHO8XgCcASLm+IR4xnAA07GC6xc4FvqvT2e3sriIIRurySZdROq8WfELYrxPMGwl
+	AuG2sipaMhtYsvSGRlo8EliWH9zLtXd9NN4CDKj5Il7YsbEtcPDl46gHn+VZsT3jsRSpUAKU1dN
+	0SF7F6DAYpcfdjVr4ydxVzu9M2XcytDX/XDzg4KMKLvttw1VkGoWq1NphB0f+OEcKEn2bOoZFq4
+	+lEpX3jJRS/uYoHFxdM9gj+OkH2Aqn8kwdf/Ex76e9tCgdxioQgEr79rMDf98kh9/uohstZ0kFM
+	a/R2hZlFuxSoTa2aQEfCvRtc+DQjwbByhnHtjzHySx0hwjNQZFj9/ZiRz1sX1E1eTnlvkeomB5A
+	tbm6ae/TtssKa57SVK6aqx9FVvoG3xabdU1ePwM82ogELhmjV0ZvvFMypozhcWsEalY06srO5US
+	R5wizHOYzQSU5gJLu3oxG9LojC5W4QbIfBrutC4tDyC+e8TMcE71vxGD83QdgiJpDqnZA7NYpui
+	2lVSMzNKD8zfuD5WivlEb0kFxW8dosB54PmhcE6MSQFPzpwzwPGk7el/pgr5X/300n5vS02zZZW
+	Dp3ind3mllNRewrNu
+X-Received: by 2002:a05:6000:248a:b0:493:1477:cdd7 with SMTP id ffacd0b85a97d-499c7271d72mr9671131f8f.45.1794483602143;
+        Thu, 12 Nov 2026 03:40:02 -0800 (PST)
 Received: from localhost (p200300f65f19a904528996c8ea0fadad.dip0.t-ipconnect.de. [2003:f6:5f19:a904:5289:96c8:ea0f:adad])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-49836b8eb11sm17512463f8f.57.2026.11.12.03.40.00
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-498366c43f4sm19115427f8f.47.2026.11.12.03.40.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Nov 2026 03:40:00 -0800 (PST)
+        Thu, 12 Nov 2026 03:40:01 -0800 (PST)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -94,9 +94,9 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH v4 1/2] remoteproc: elf_loader: Create new callback for copying segments to remote cpu
-Date: Thu, 12 Nov 2026 12:39:50 +0100
-Message-ID:  <a6e3206a90f3be915a57a7497a34ef97f914b340.1794483181.git.u.kleine-koenig@baylibre.com>
+Subject: [PATCH v4 2/2] remoteproc: imx_dsp_rproc: Implement .memcpy_tova()
+Date: Thu, 12 Nov 2026 12:39:51 +0100
+Message-ID:  <922f685493e615b450c913b77cf33022c9cda8a3.1794483181.git.u.kleine-koenig@baylibre.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1794483181.git.u.kleine-koenig@baylibre.com>
 References: <cover.1794483181.git.u.kleine-koenig@baylibre.com>
@@ -110,135 +110,178 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4986; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=N+9MpIEOMHu+xlJxUw2mD/JXqfJF1eqVB7nMk5Eh7D8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq9aV2s8sFfFVOC95VOupA+IXP3fdYI2xxC6vn/ iHUWQY7n6qJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCavWldgAKCRCPgPtYfRL+ TvLzB/9SAwbizeNpaG5VX8F40ZM0gqXMvkPFUjPd5fWsSsgflHW37D6qTZi0Hy6tMwfOBRx5FL9 z9329gZpkYZ2BO9TlrhlDR0n4EHawZPES1yyLw3utlF3vt2kGtlaUK2UPYWUFabDCoXF/9FBRb3 4IuKrl8TTSvOT2JiVFtlLWqK3J9S1obd1J1frD66oRhf4+AwrFC5uXbxHGRqvPMAfyT5/fAYp8l QCzAhRxPHgvizEmswaldebcNk1c93h9lEFeNniN2Da5oG/C/O49s6x1CymDFlrkjuOO/9yRaICZ GRGNSBNYed0GgnudxNHtbGspOPm7C2RXZURJEsbgywCXCkfZ
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5301; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=RohBdpkH8TSHsnslkd4R654KBrqmv882JRSoJjjuoBA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBq9aV5PpSrVGWZ6id8gqP3pN3LFSP2HbKY5hyhn ejyAuxXlg2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCavWleQAKCRCPgPtYfRL+ TugHB/4zsoFIUiu1rOAe+sEMu7U7+oNyHE4Z35KbOqRblj73O+ECqOwmAw1N3/wOf3BVIlj3ntN eex6WkpCriW/JsOvPr8ZRnPIJhvy01Bv/J9xk2UsjjMSghOyUBT7sv5MrDbDezDI9F6eUgUrOR/ 3HafN1OrkN+mT6dTNMqyV71+ymkrO6T/2PAGgcZ1+7dMAt0lA/EeiXJ16jIma/ma/4jjQXeviOE 9LQc7EihvT1ZykXMQEV+hRqi9ADMe/Agq8a462/Xs2SHlzcpQXyS9jERrXgv3QGooTnaT9Po739 B9QXPhoILPe4UbTm8i4R6TN4eR8M1q5R5uAH0JKEW32fWVed
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-Some devices have special needs about how an Elf segment is copied to
-the remote cpu's memory space where the default implementation using
-da_to_va() + memcpy_toio/memcpy and memset_io/memset isn't suitable. An
-affected mainline driver is imx-dsp-rproc which includes a near-copy of
-rproc_elf_load_segments() just to handle the IRAM only allowing 32 bit
-accesses. On (not-yet-mainline) ADI SC846 the respective memory isn't
-directly accessible at all and DMA must be used to copy the data. To
-cover that usecase don't keep rproc_da_to_va() in
-rproc_elf_load_segments() and let the new callback operate on the device
-address.
-
-The new callback can be used to implement just the driver specific
-memory mapping + memcpy() + memset() to increase code reuse.
-
-The patch only appears big because of indentation changes.
+This callback allows to use the core's rproc_elf_load_segments()
+function instead of reimplementing it for very minor changes.
 
 Reviewed-by: Peng Fan <peng.fan@nxp.com>
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- drivers/remoteproc/remoteproc_elf_loader.c | 64 +++++++++++++---------
- include/linux/remoteproc.h                 |  7 +++
- 2 files changed, 44 insertions(+), 27 deletions(-)
+ drivers/remoteproc/imx_dsp_rproc.c | 120 ++++++++---------------------
+ 1 file changed, 30 insertions(+), 90 deletions(-)
 
-diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-index da3cddbe7d4c..3c749a39e5da 100644
---- a/drivers/remoteproc/remoteproc_elf_loader.c
-+++ b/drivers/remoteproc/remoteproc_elf_loader.c
-@@ -227,35 +227,45 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
- 			break;
- 		}
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index 96d619daf3f5..324c10f18507 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -864,97 +864,41 @@ static int imx_dsp_rproc_memset(void *addr, u8 value, size_t size)
+ 	return 0;
+ }
  
+-/*
+- * imx_dsp_rproc_elf_load_segments() - load firmware segments to memory
+- * @rproc: remote processor which will be booted using these fw segments
+- * @fw: the ELF firmware image
+- *
+- * This function loads the firmware segments to memory, where the remote
+- * processor expects them.
+- *
+- * Return: 0 on success and an appropriate error code otherwise
+- */
+-static int imx_dsp_rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
++static int imx_dsp_rproc_memcpy_tova(struct rproc *rproc, u64 da, const void *src,
++				     size_t filesz, size_t memsz)
+ {
+ 	struct device *dev = &rproc->dev;
+-	const void *ehdr, *phdr;
+-	int i, ret = 0;
+-	u16 phnum;
+-	const u8 *elf_data = fw->data;
+-	u8 class = fw_elf_get_class(fw);
+-	u32 elf_phdr_get_size = elf_size_of_phdr(class);
++	void *ptr;
++	int ret;
+ 
+-	ehdr = elf_data;
+-	phnum = elf_hdr_get_e_phnum(class, ehdr);
+-	phdr = elf_data + elf_hdr_get_e_phoff(class, ehdr);
++	/* grab the kernel address for this device address */
++	ptr = rproc_da_to_va(rproc, da, memsz, NULL);
++	if (!ptr) {
++		dev_err(dev, "bad phdr da 0x%llx mem 0x%zx\n", da, memsz);
++		return -EINVAL;
++	}
+ 
+-	/* go through the available ELF segments */
+-	for (i = 0; i < phnum; i++, phdr += elf_phdr_get_size) {
+-		u64 da = elf_phdr_get_p_paddr(class, phdr);
+-		u64 memsz = elf_phdr_get_p_memsz(class, phdr);
+-		u64 filesz = elf_phdr_get_p_filesz(class, phdr);
+-		u64 offset = elf_phdr_get_p_offset(class, phdr);
+-		u32 type = elf_phdr_get_p_type(class, phdr);
+-		void *ptr;
+-
+-		if (type != PT_LOAD || !memsz)
+-			continue;
+-
+-		dev_dbg(dev, "phdr: type %d da 0x%llx memsz 0x%llx filesz 0x%llx\n",
+-			type, da, memsz, filesz);
+-
+-		if (filesz > memsz) {
+-			dev_err(dev, "bad phdr filesz 0x%llx memsz 0x%llx\n",
+-				filesz, memsz);
+-			ret = -EINVAL;
+-			break;
+-		}
+-
+-		if (offset + filesz > fw->size) {
+-			dev_err(dev, "truncated fw: need 0x%llx avail 0x%zx\n",
+-				offset + filesz, fw->size);
+-			ret = -EINVAL;
+-			break;
+-		}
+-
+-		if (!rproc_u64_fit_in_size_t(memsz)) {
+-			dev_err(dev, "size (%llx) does not fit in size_t type\n",
+-				memsz);
+-			ret = -EOVERFLOW;
+-			break;
+-		}
+-
 -		/* grab the kernel address for this device address */
--		ptr = rproc_da_to_va(rproc, da, memsz, &is_iomem);
+-		ptr = rproc_da_to_va(rproc, da, memsz, NULL);
 -		if (!ptr) {
 -			dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
 -				memsz);
 -			ret = -EINVAL;
 -			break;
 -		}
-+		if (rproc->ops->memcpy_tova) {
-+			ret = rproc->ops->memcpy_tova(rproc, da, elf_data + offset, filesz, memsz);
-+			if (ret) {
-+				dev_err(dev, "Failed to copy segment %d to device address 0x%llx: %pe\n",
-+					i, da, ERR_PTR(ret));
-+				break;
-+			}
-+		} else {
-+			/* grab the kernel address for this device address */
-+			ptr = rproc_da_to_va(rproc, da, memsz, &is_iomem);
-+			if (!ptr) {
-+				dev_err(dev, "bad phdr da 0x%llx mem 0x%llx\n", da,
-+					memsz);
-+				ret = -EINVAL;
-+				break;
-+			}
- 
+-
 -		/* put the segment where the remote processor expects it */
 -		if (filesz) {
--			if (is_iomem)
--				memcpy_toio((void __iomem *)ptr, elf_data + offset, filesz);
--			else
--				memcpy(ptr, elf_data + offset, filesz);
+-			ret = imx_dsp_rproc_memcpy(ptr, elf_data + offset, filesz);
+-			if (ret) {
+-				dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%llx\n",
+-					da, memsz);
+-				break;
+-			}
 -		}
-+			/* put the segment where the remote processor expects it */
-+			if (filesz) {
-+				if (is_iomem)
-+					memcpy_toio((void __iomem *)ptr, elf_data + offset, filesz);
-+				else
-+					memcpy(ptr, elf_data + offset, filesz);
-+			}
- 
--		/*
--		 * Zero out remaining memory for this segment.
--		 *
--		 * This isn't strictly required since dma_alloc_coherent already
--		 * did this for us. albeit harmless, we may consider removing
--		 * this.
--		 */
+-
+-		/* zero out remaining memory for this segment */
 -		if (memsz > filesz) {
--			if (is_iomem)
--				memset_io((void __iomem *)(ptr + filesz), 0, memsz - filesz);
--			else
--				memset(ptr + filesz, 0, memsz - filesz);
-+			/*
-+			 * Zero out remaining memory for this segment.
-+			 *
-+			 * This isn't strictly required since dma_alloc_coherent already
-+			 * did this for us. albeit harmless, we may consider removing
-+			 * this.
-+			 */
-+			if (memsz > filesz) {
-+				if (is_iomem)
-+					memset_io((void __iomem *)(ptr + filesz),
-+						  0, memsz - filesz);
-+				else
-+					memset(ptr + filesz, 0, memsz - filesz);
-+			}
+-			ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
+-			if (ret) {
+-				dev_err(dev, "memset failed for da 0x%llx memsz 0x%llx\n",
+-					da, memsz);
+-				break;
+-			}
++	/* put the segment where the remote processor expects it */
++	if (filesz) {
++		ret = imx_dsp_rproc_memcpy(ptr, src, filesz);
++		if (ret) {
++			dev_err(dev, "memory copy failed for da 0x%llx memsz 0x%zx\n",
++				da, memsz);
++			return ret;
  		}
  	}
  
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index 00019b1895e6..165ba8fc1d88 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -75,6 +75,10 @@ enum rsc_handling_status {
-  * @detach:	detach from a device, leaving it powered up
-  * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-  * @da_to_va:	optional platform hook to perform address translations
-+ * @memcpy_tova:optional platform hook to copy data into remote memory range
-+ *              The objective is to copy [src...src+filesz] to the remote
-+ *              processor's address da and set the remainder of the memory range
-+ *              (i.e. [da+filesz...da+memsz]) to zero.
-  * @parse_fw:	parse firmware to extract information (e.g. resource table)
-  * @handle_rsc:	optional platform hook to handle vendor resources. Should return
-  *		RSC_HANDLED if resource was handled, RSC_IGNORED if not handled
-@@ -99,6 +103,9 @@ struct rproc_ops {
- 	int (*detach)(struct rproc *rproc);
- 	void (*kick)(struct rproc *rproc, int vqid);
- 	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len, bool *is_iomem);
-+	int (*memcpy_tova)(struct rproc *rproc, u64 da, const void *src,
-+			   size_t filesz, size_t memsz);
+-	return ret;
++	/* zero out remaining memory for this segment */
++	if (memsz > filesz) {
++		ret = imx_dsp_rproc_memset(ptr + filesz, 0, memsz - filesz);
++		if (ret) {
++			dev_err(dev, "memset failed for da 0x%llx memsz 0x%zx\n",
++				da, memsz);
++			return ret;
++		}
++	}
 +
- 	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
- 	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
- 			  int offset, int avail);
++	return 0;
+ }
+ 
+ static int imx_dsp_rproc_parse_fw(struct rproc *rproc, const struct firmware *fw)
+@@ -969,7 +913,6 @@ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
+ 	struct imx_dsp_rproc *priv = rproc->priv;
+ 	const struct imx_dsp_rproc_dcfg *dsp_dcfg = priv->dsp_dcfg;
+ 	struct rproc_mem_entry *carveout;
+-	int ret;
+ 
+ 	/* Reset DSP if needed */
+ 	if (dsp_dcfg->reset)
+@@ -985,11 +928,7 @@ static int imx_dsp_rproc_load(struct rproc *rproc, const struct firmware *fw)
+ 		}
+ 	}
+ 
+-	ret = imx_dsp_rproc_elf_load_segments(rproc, fw);
+-	if (ret)
+-		return ret;
+-
+-	return 0;
++	return rproc_elf_load_segments(rproc, fw);
+ }
+ 
+ static const struct rproc_ops imx_dsp_rproc_ops = {
+@@ -998,6 +937,7 @@ static const struct rproc_ops imx_dsp_rproc_ops = {
+ 	.start		= imx_dsp_rproc_start,
+ 	.stop		= imx_dsp_rproc_stop,
+ 	.kick		= imx_dsp_rproc_kick,
++	.memcpy_tova	= imx_dsp_rproc_memcpy_tova,
+ 	.load		= imx_dsp_rproc_load,
+ 	.parse_fw	= imx_dsp_rproc_parse_fw,
+ 	.handle_rsc	= imx_dsp_rproc_handle_rsc,
 -- 
 2.56.0.rc1
 
