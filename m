@@ -1,108 +1,124 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794849377;
-	b=tIs1Cnz9aUuf88erJ1lx6icHVGqjaNbX82ZdOR0Q4u4I96fLtS93zPzWCNFC9U7msIlW
-	 5ACwWQpCPhhzYHHc8oKIXNv2f0kpoUA71h2zoa/unUdtsMqhZD/okfQuwXrl5515JD9V9
-	 bDIZK/z8VXrTGrsfdkthTJ+jptJRznWs9Kqc7h7IqyDLYA8UwFqjBaTIfqQQIbySlGrA/
-	 Ri2uYySHDQeL7LEMmCd3pkeYiRPGwGnHTxrz9BnqOLU6K5OjWa0xua1prWIejSLVkuC1c
-	 +LYFNMhoXw92dL0vJ8v8gRKenOSkVL8yKpaZ+Xapb1vWl9luFJld5zyGi2cZbLx+qqA==
+	t=1794852158;
+	b=gjoXLLnwDI+JMY1eYvXzRNynGRXK6aAcbQ5Zj9gEvubTzHcFcozFZ8fv2bWyewd0arq3
+	 KvKwAbRT7DQ2krvfTy6KRdM5dp3znPjRVV7zk+GYu3zlRIQiKeFe0jutzk/R24u6PzLzN
+	 7fsOuUghcB8oRWZJNx57D3cd6KeJ6wBd97Ixyohu5+NVsxygpUvzsV/dWIP+qbczxvUcz
+	 QMX671VS/q/t6x8oWLqOJ0o+FmreffxCxsdG6WpSOGNROmh9fnaM0ps6XbUEe506FziWt
+	 qAJx+ZelrY/CGEclpBr8Ma5tAIARMuBH8W7FYMlZ+nUvUO6CO2uJqIgxh9lP3X/Yl/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794849377;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=Bd5KkZtIi9hEU9aTOnohsJP4GtQbznYQgq/LOm2c1XM=;
-	b=3NcHqK2x3GlayzdOMOpyBSVKXEXtFWsjZXpYFNW7ucAmINsSB2k4jd3xfQ+RiVJWwril
-	 4hN5LmDtHySYL/TQ59f/27eR/CRFMLqPR8npuJWAH7+NR+HcM/+VHMpQSaTvhfOd6PjjA
-	 K/72muMWM32ufq6V0hVPMDuyXrOOaFvRchaammO/o32B8xFfxxe3sKOUgzan2VwAri04L
-	 px9/+QhULqXlYWMNHisidZ9bPU64OhxDhKHO3cUUt9GWySAJyP12XYHGL7ul/ZYCHxeer
-	 ZtfRdB4HRmeAsE5P1+l9Gxyu4shWYSNvrD2LJoAnBAOSaKH6ouAjiSh837qw14Pyomw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1794852158;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Date:From:
+	 To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-Proofpoint-Spam-Info:
+	 X-Authority-Analysis:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-GUID:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=7H5gZDQnZLUnQwufsW/B7B2I+KRZ29ox1TdgnxIuLws=;
+	b=avAe7sAH59on3m90FKnq5B1z0Gs9yxBnPXkP+u5EldBO40uvvVenw5Ldk6UFWva1YvC7
+	 4LLC3/tZX/uXL58BB6JtdMV3/kYMevLQ25+XlPgtnJ2x7fb6NmhZ5Wa+m6hfTSLSvjTkC
+	 5U46Yen801/sCeMVnUvn9vPsbXpkStGT2yXjS1UQTFmrm6EKB2vWQzG0IwPBIHUSPwixA
+	 up9Lj33ZYxm6r39UKKuTXwikWgT2bp8UheaXHu6bTXAJBxDnVhkOZrs5PY3PQoC6WNnrk
+	 xi6clKxaBq6oWVh+75jQfYmzdkqq67gJXjFswfB7Au4HYAr5eD6mrCRRsZqPkG94XQQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=HkMSiR+d;
-	arc=none smtp.remote-ip=209.85.210.177
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=RboJqHis;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Vhd4b2+7;
+	arc=none smtp.remote-ip=205.220.168.131
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B218606A32C
-	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2026 17:16:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5B218606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12DE606A33B
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2026 18:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C12DE606A33B
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=HkMSiR+d
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-8b5efadd183so27199b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2026 09:16:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=RboJqHis;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=Vhd4b2+7
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AGGI9RY1110235
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2026 18:02:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7H5gZDQnZLUnQwufsW/B7B2I
+	+KRZ29ox1TdgnxIuLws=; b=RboJqHisBqVUiZ1AvmU46OU4UNBEEi6vareCc3oK
+	elkrdUEaR+XsNuP5qbqSZsF3AezTZV3v1qcEMub5GnGMfWfWRTjSGztuQkUrCkWD
+	8UYuula+I+Kl48mWQJAtCynHFFB9Ze8r1dLoRG2a5yusU5FNeCQczlViqJKEBHzC
+	GAjYKzUX2+uSrV4l+DqbXUyMCdujkkXoIbsHhVC+4JPCCSeh6sDyidshWfAjlqmC
+	h15fKEUp+LPjux+pAl7++1pLZQp0KyVB0Ug5yJFSqpICRsgEimodo0GDvYIIPiP8
+	9iEzmOqCm5VKwCJ2P+yC6dWLCMew/6PxYXPt6AMTIAeivg==
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4hyyqghutd-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2026 18:02:34 +0000 (GMT)
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-36efb506f29so3581258eec.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 16 Nov 2026 10:02:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794849376; x=1795454176; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1794852154; x=1795456954; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=Bd5KkZtIi9hEU9aTOnohsJP4GtQbznYQgq/LOm2c1XM=;
-        b=HkMSiR+dksGlcwGZWXhn8RdtxqBYdJQtbxVMvbLI96Ikx2BxI3kJdM8SEHvcYMuweq
-         Mg3EHEZsItCRb824lZUmdTkkxwc2OpLow4+0NsHeKkxKzP6xOXIY59In7u3SCoBtPfqY
-         BJZM4/S1UARezX28Zhx/rN944CAeFFzwvXAXf0YdLsW6fmthJG+3kSv7zhsrNw6xnVr7
-         IJsBWKe+bcNa1RisuddA3+9M9p14aEOUNjmYrYHbT3epecNIi+eb132pbV75ve6d780Q
-         PSoRo+KCZDtD9ZU+3rUiMM71agE0dNDUtfWgY4kZCgotc3BWLs8iYy3Abq959FUkwprJ
-         9vSg==
+        bh=7H5gZDQnZLUnQwufsW/B7B2I+KRZ29ox1TdgnxIuLws=;
+        b=Vhd4b2+7dPOc18AQpBiC6F+VnXFRarszxmc+AbR8QXOpYswfotunWZHJLBMmHrQb7m
+         QBSyRBwxStThYGs0xIwd/T94+LWJmBYakpEI7aTDwmaE8HSZMYTJv3WAMUp6gETRm3nY
+         Xsd12ON26OsTme1f2Gkb4vmLYleEYmBZPu2RnhlxLzTu5ijBhfhLuys/2PiaSEMw83fj
+         KzDLgBzFFABAmOPY6UjXAGXzc6pNyAnx5Z2S1ijxc54hsYYprzMXhEIXCwOylqW9lCEm
+         YWyrJO2kQFoS+4myFOpfaxPe2pwBw0GJkOyfr4u3TmCZ2I/tuebifi3Lg9TlZITM7ai/
+         LvKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794849376; x=1795454176;
+        d=1e100.net; s=20260707; t=1794852154; x=1795456954;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=Bd5KkZtIi9hEU9aTOnohsJP4GtQbznYQgq/LOm2c1XM=;
-        b=zvEixaXANaP9bwQAPvKKorR8JxRDYm5Z4QLpzW2dewu85+8FsK9CxHuCCgy+Gb3yQM
-         cyCyjzITdU9KsEmBNadYF+5++SvQsgiC7zoVKiI7gZW5CbHlnYKwoRGP5JjgOwjYJQPq
-         gPnqMXICs2gUZJvCR/jSbwPMCcQH0ZWe+Ugnp3v/fE18V991MJO6q4IxTV/SRhcJkpC7
-         uWW5cvn6x5VNcXWrSe/Elzm+Dxpp59guQ4YVJoV+QEa5Cb+bo5Rxx0dKBSKojTrq4P12
-         gtBTvhTRypDRxqY7kHdDCacpSCfE53HUq5jFsGD2peRrakxxRE3aUh8H2F4L6stpHCT0
-         9ITg==
-X-Forwarded-Encrypted: i=1; AL+hErHM3y4y133g83aXD8QM8waogJw8GUY9NICbCEIH/hBHecHjs4BVLDiEW0wJgpVcOMpjFZOkMBZmSvmungI5ZyeF@vger.kernel.org
-X-Gm-Message-State: APuU4Z+PgbMzst32isi0y48aGKdyJTIdbU3C8wVBtCdmuyXwJIlrxL/h
-	wUlZA73MGLeP4SXEbnZP/WainGzFJtSKiuOc8QLSVIA86yBVrUigM30c55viouNitP4=
-X-Gm-Gg: AYBFou0bIR3mflL5NFqEjzWua2l2UQe7ECO00N50p6itOZwXH3+WmDwk/LmCz9janTN
-	ExhMSa/8gMpMsJhsmQQTwRKxiZbHIP5TBwEjGsgrnBtvpdZIvcc0EQFJCIsskHZFIEY9IW59hqA
-	Xuu2hQxizF4z9FE9kzcvmwLEZ3oamhXCJIDT+AwaWB2kPNxnNkUkRUHVW5lPFOWjntNPsMsQIzL
-	aX8Mt8bUdT6osVA3sWAyhCiqWm20bJVgeVxOaOWD4ejItOTpaJ4iMTAp9f7qhFf5veAFTP/eP31
-	Sm2bqnYkrDhSKZhGUaNl+GefbmQciMoTVqj5wzej5mO4UVU6/QZKl29mikO6DfPHTU/VsBqoV+8
-	iff2KnuZUnSsZPx5yTcRdKk4vN8r6hwa1Ek1YXVM18ByQgMxPzqlXcMPdW2BBBEyg+m7A9A3nPy
-	qUutwxq3miTIW3qT68s3nW42CFm+iEqeqP2RKXIyj6QAkIELyLwsrOgY8sPT8YcgJXmxXqSli3m
-	PLWBGwKUNZYiCnZTcjEvEA6hwvwlBJwYUhCFlAGmCdk531MSL9La76veKz6JBOI7gRnaZyZMQTR
-	ASoRcrAKI7nfFzKFsP9P6TEMWmTCz62W
-X-Received: by 2002:a05:6a21:7a46:b0:3de:71c4:a22b with SMTP id adf61e73a8af0-3fd29c153b2mr84093637.1.1794849376336;
-        Mon, 16 Nov 2026 09:16:16 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:ea6f:45e1:c614:f10f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8bed12a97f9sm3778408b3a.14.2026.11.16.09.16.14
+        bh=7H5gZDQnZLUnQwufsW/B7B2I+KRZ29ox1TdgnxIuLws=;
+        b=SbPfRICULRCNe6fPehcCRqNKRMkexv2zOZ1DQliydZN8r7pz/2yP7B5WCx8AmgNoWr
+         FIEh9yBUHZatIXkJn6OM05E6rZpPpWIZvo2rJ9MPIRvKF8PELEPROcUl4CNjNgHygRmN
+         sFj2u5xWC7LCmKi98RDAmeRSicJ8nSRJ05bLoOkg4MeozClavYW7QNmpMJKno9qWxUCI
+         XT/uKjZ0kyUKIKhQZwNi0NwHauJEihZuKEoatgv3vrRUFokpoMHEjIyRTrLoDi4HkZDQ
+         wJZxVk3wDl3iBFNDTdmkSdpa4eN4mF3CoOsTNxDMMst8sHk2NJfL/T2C4/HD5crJZxM/
+         kuEg==
+X-Forwarded-Encrypted: i=1; AL+hErGmxbJEKLK5+MmaQdGvgzTGw2dDhGVv77XFQk45CdflU0WJJd8lGAHwIU0U50ACDRWtuJ4ej1dhVp3IS8/WgXc3@vger.kernel.org
+X-Gm-Message-State: APuU4Z/d5iFKywtP2YX3D7bkOqNFjwgDdHwAI6FXo3+Fpq+/CETLYH3M
+	+Y7yAcZ1GrihD3wnZ855GYQqnaMMgTRSk3QMIDP0h7jKkYaEhz+0CZoSNZzwuW+Ld60FxEf+9p/
+	0Bl+6ePI8nDIg1u4CmDWxo4Tvx0oWNC0cyeN9f+xaaoKxgSDGwDqEClbmC5IK6kiuTEA0rDm3
+X-Gm-Gg: AZFdTZfHHkZO2wux3oIqKqpvwXk1PJRJvgmBdlfvghUSltROnfzGEfUZATIl99hYgWs
+	KA7WVH97slxSidME23NUF0178fI3pUSlP10JNy9XdTXk55hcaoaK+L0Ic22iuX51+BUjPRC6scS
+	gbXekXXkDd9BQ/qGeLattWw71JqaStVvO9ooTSbv0+cTCtpwyuO9sD0hQJwR6zP/X7GZqYJv8YE
+	Q59irlZqYDtRUNc6Nbt/d5TAicZwFHN4QC4sqcph4UHfdaPpwFNw1T8/tabfsFFQSe4kH8TlkpH
+	gY6NOpxEA6aO57Col1QZy+d+ho+hTPtZldj8qJs6dtYtoJC7sKl/d3K+77gaCok3sJ0nmDQxmvc
+	nnGr2DrO62eTZlt1O0I960r/MoEjA0XsU24dPG8WLOtAJae0s2KcFk5kGeFblTu2EHD57D8gruv
+	Y1
+X-Received: by 2002:a05:7301:5086:b0:36a:5042:85b1 with SMTP id 5a478bee46e88-37963376ef2mr11357641eec.2.1794852153716;
+        Mon, 16 Nov 2026 10:02:33 -0800 (PST)
+X-Received: by 2002:a05:7301:5086:b0:36a:5042:85b1 with SMTP id 5a478bee46e88-37963376ef2mr11357595eec.2.1794852152910;
+        Mon, 16 Nov 2026 10:02:32 -0800 (PST)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-3795533170csm36470150eec.7.2026.11.16.10.02.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Nov 2026 09:16:15 -0800 (PST)
-Date: Mon, 16 Nov 2026 11:16:13 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Francesco Valla <francesco@valla.it>
-Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v2 05/11] remoteproc: virtio: report
- VIRTIO_F_ACCESS_PLATFORM when required
-Message-ID: <avs6XQpoQmY_MNYx@p14s>
-References: <20261102-remoteproc_virtio_map-v2-0-26b300e01c62@valla.it>
- <20261102-remoteproc_virtio_map-v2-5-26b300e01c62@valla.it>
+        Mon, 16 Nov 2026 10:02:31 -0800 (PST)
+Date: Mon, 16 Nov 2026 23:32:23 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: qcom: Add Glymur OOBMSS
+ PAS
+Message-ID: <20261116180223.qk2k4zabk6tp6ihx@hu-mojha-hyd.qualcomm.com>
+References: <20261015-oob-support-glymur-v2-0-715435f52dd7@oss.qualcomm.com>
+ <20261015-oob-support-glymur-v2-1-715435f52dd7@oss.qualcomm.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -114,82 +130,213 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261102-remoteproc_virtio_map-v2-5-26b300e01c62@valla.it>
+In-Reply-To: <20261015-oob-support-glymur-v2-1-715435f52dd7@oss.qualcomm.com>
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE2MDA3MSBTYWx0ZWRfX0pOsBxYhr1MG
+ jpapGx/Nh1FBTYPwbI/9yFSxRAzYM6dDzgY+76c/WSkA1VsECrqSSS/tDtRxUKuI5ikIVxmPDq5
+ odr5RaLJw2H826rwo9suzip73FeB7/E=
+X-Authority-Analysis: v=2.4 cv=epRKXYpX c=1 sm=1 tr=0 ts=6afb453a cx=c_pps
+ a=wEP8DlPgTf/vqF+yE6f9lg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8 a=ZE97AlTrE_lL4XMxLYgA:9 a=CjuIK1q_8ugA:10
+ a=bBxd6f-gb0O0v-kibOvt:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-ORIG-GUID: HqnWmseCCj27_sQv4a_uyRvxu4_jv9vE
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE2MDA3MSBTYWx0ZWRfX+kG8bdwV112Z
+ fwGHDQxluJw7mTTCLpfBXJd7WivypWdszeWyqNkrp9zFnQ8wHixNclIA1r25c0N9KROnubPcuRp
+ k7o5ljtJXLm+zDN3S/VxjOozzr8HOnWY+w4oXO1hwbuiPypvh888WsyBNULQebCySAWV47WL1EW
+ dmrz+xnZmexzZTdBKnUgInCZbSRptMoWmoZlHbfV/2T4rs3LBB6oS7DBT4D++kpV+f9EnuoM5y/
+ QbCY2yktifOFkZ2EbON1HxvV/+yoMuCgnanWG8USfM8IWzyp0WAewfHCHagro55ygQXOgraSELi
+ j9UF7xosvpQ8P6Ch7kuHgXgSmtPvPpStQ8FOO303IB3HlYcDGrunw9s2Zr6FKyZjjPVmZ2uA2ej
+ jP4gPCMb8azoefa9AMCn7mi24hCyZjRB17a2X7DsBifWgllhdJkA5lzbkfFla0RWYBxDzvMQ9Pe
+ S2s1COZnT5U4vlhOvMg==
+X-Proofpoint-GUID: HqnWmseCCj27_sQv4a_uyRvxu4_jv9vE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-16_05,2026-11-16_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611160071
 
-On Mon, Nov 02, 2026 at 12:26:42AM +0100, Francesco Valla wrote:
-> Depending on the driver originating them, data buffers used for virtio
-> communication can either:
+On Thu, Oct 15, 2026 at 11:25:49AM +0530, Anvesh Jain P wrote:
+> Document the Glymur OOBMSS PAS node with its secure GLink edge,
+> shared-memory signaling, firmware carveouts, and power resources.
 > 
->   - already be allocated from the coherent memory area that is
->     accessible by the remote processor; this is the case of
->     remoteproc-specific virtio devices, i.e., rpmsg and rproc-serial;
->   - be allocated from generic kmem, and thus not necessarily accessible
->     directly by the remote processor.
-> 
-> In the second case, the DMA APIs can be exploited to obtain a
-> functional communication, since they will take care of cache maintenance
-> and - if required - bounce buffering. The VIRTIO_F_ACCESS_PLATFORM
-> feature flag can be used for this purpose: with it set, the virtio
-> framework will use the aforementioned DMA APIs to map and unmap buffers.
-> 
-> Bounce buffering will be transparently used in two cases:
-> 
->   - if the buffer address supplied by the virtio driver is not suitable
->     for DMA transfers, or
->   - if the reserved memory associated to the vdev is a
->     restricted-dma-pool; in this case, *all* buffers will be bounced to
->     and from this pool.
-> 
-> With this support in place, any kind of virtio device can be supported
-> through the remoteproc-virtio transport, at least from a data exchange
-> standpoint.
-> 
-> Note that remote processors behind an IOMMU need da == pa for the memory
-> region(s) the buffers are allocated from.
-
-I'm not sure to understand the da == pa requirement - can you expand more on
-that?
-
-> 
-> Existing use cases (e.g., rpmsg and virtio-console) are not impacted as
-> they are explicitly excluded.
-> 
-> Signed-off-by: Francesco Valla <francesco@valla.it>
+> Signed-off-by: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
 > ---
->  drivers/remoteproc/remoteproc_virtio.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+>  .../remoteproc/qcom,glymur-oobmss-pas.yaml         | 154 +++++++++++++++++++++
+>  1 file changed, 154 insertions(+)
 > 
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index f1b362158a9c..1496659ddff9 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -280,9 +280,14 @@ static u64 rproc_virtio_get_features(struct virtio_device *vdev)
->  	 * All non-remoteproc-specific virtio devices are assumed to be
->  	 * compliant with virtio specifications 1.x; there is no other method
->  	 * to transmit this capability from the remote processor to the host.
-> +	 *
-> +	 * Virtio devices that are specific for remoteproc usage take care on
-> +	 * their own to allocate memory from the device's coherent pool; use
-> +	 * the DMA APIs for the others through VIRTIO_F_ACCESS_PLATFORM.
->  	 */
->  	if (!rproc_virtio_rsc_vdev_rproc_specific(rsc))
-> -		features |= (1ULL << VIRTIO_F_VERSION_1);
-> +		features |= ((1ULL << VIRTIO_F_VERSION_1) |
-> +			     (1ULL << VIRTIO_F_ACCESS_PLATFORM));
->  
->  	return features;
->  }
-> @@ -312,7 +317,8 @@ static int rproc_virtio_finalize_features(struct virtio_device *vdev)
->  	features = vdev->features;
->  
->  	if (!rproc_virtio_rsc_vdev_rproc_specific(rsc))
-> -		features &= ~(1ULL << VIRTIO_F_VERSION_1);
-> +		features &= ~((1ULL << VIRTIO_F_VERSION_1) |
-> +			      (1ULL << VIRTIO_F_ACCESS_PLATFORM));
->  
->  	if (WARN_ON((u32)vdev->features != features))
->  		return -EINVAL;
+> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,glymur-oobmss-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,glymur-oobmss-pas.yaml
+> new file mode 100644
+> index 000000000000..3aa96d2262f1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,glymur-oobmss-pas.yaml
+> @@ -0,0 +1,154 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/remoteproc/qcom,glymur-oobmss-pas.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Glymur Out-of-Band Management Subsystem (OOBMSS) PAS
+> +
+> +maintainers:
+> +  - Anvesh Jain P <anvesh.p@oss.qualcomm.com>
+> +
+> +description: |
+> +  Qualcomm Glymur Out-of-Band Management Subsystem (OOBMSS) contains two
+> +  processors running Zephyr, managed together as one remoteproc instance.
+> +  The Out-of-Band Trusted Execution Environment (OOB-TEE) is the primary
+> +  processor. The OOB-Non-Secure processor is an auxiliary processor that
+> +  depends on the primary processor and cannot function independently.
+> +
+> +  The primary processor runs the primary image, while the auxiliary
+> +  processor runs the secondary image. Each processor has its own DTB.
+> +  The two images and their DTBs have separate PAS identifiers for
+> +  authentication and dedicated reserved-memory carveouts.
+> +
+> +  OOBMSS is booted by earlier-stage firmware and uses an XO clock and the
+> +  CX and MX power domains. Shared Memory Point-to-Point (SMP2P) provides
+> +  boot, shutdown, handover and ping/pong signaling, as well as fatal error
+> +  notifications. The subsystem exposes a secure GLink edge to the host,
+> +  with doorbell interrupts provided by the Inter-Processor Communication
+> +  Controller (IPCC).
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,glymur-oobmss-pas
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Watchdog interrupt
+> +      - description: Fatal interrupt
+> +      - description: Ready interrupt
+> +      - description: Handover interrupt
+> +      - description: Stop acknowledge interrupt
+> +      - description: Pong interrupt
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: wdog
+> +      - const: fatal
+> +      - const: ready
+> +      - const: handover
+> +      - const: stop-ack
+> +      - const: pong
+> +
+> +  clocks:
+> +    items:
+> +      - description: XO clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +
+> +  power-domains:
+> +    items:
+> +      - description: CX power domain
+> +      - description: MX power domain
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: cx
+> +      - const: mx
+> +
+> +  memory-region:
+> +    items:
+> +      - description: Secure firmware carveout
+> +      - description: Secure device tree carveout
+> +      - description: Non-secure firmware carveout
+> +      - description: Non-secure device tree carveout
+> +
+> +  firmware-name:
+> +    items:
+> +      - description: Secure firmware
+> +      - description: Secure device tree firmware
+> +      - description: Non-secure firmware
+> +      - description: Non-secure device tree firmware
+> +
+> +  qcom,smem-states:
+> +    minItems: 2
+> +    description: States used by the AP to signal OOBMSS
+> +
+> +  qcom,smem-state-names:
+> +    minItems: 2
+> +    description: The names of the state bits used for SMP2P output
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - power-domains
+> +  - power-domain-names
+> +  - memory-region
+> +
+> +allOf:
+> +  - $ref: /schemas/remoteproc/qcom,pas-common.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/mailbox/qcom-ipcc.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+> +
+> +    remoteproc@1f000000 {
+> +        compatible = "qcom,glymur-oobmss-pas";
+> +        reg = <0x1f000000 0x30000>;
+> +
+> +        interrupts-extended = <&intc GIC_SPI 86 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_oobmss_in 0 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_oobmss_in 1 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_oobmss_in 2 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_oobmss_in 3 IRQ_TYPE_EDGE_RISING>,
+> +                              <&smp2p_oobmss_in 9 IRQ_TYPE_EDGE_RISING>;
+> +        interrupt-names = "wdog", "fatal", "ready", "handover", "stop-ack", "pong";
+> +
+> +        clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +        clock-names = "xo";
+> +        power-domains = <&rpmhpd RPMHPD_CX>,
+> +                        <&rpmhpd RPMHPD_MX>;
+> +        power-domain-names = "cx", "mx";
+> +
+> +        memory-region = <&oob_secure_mem>, <&oobdtbqc_mem>,
+> +                        <&oob_nonsecure_mem>, <&oobdtboem_mem>;
+> +        firmware-name = "qcom/glymur/oobmss_tee.mbn",
+> +                        "qcom/glymur/oobmss_qc_dtb.mbn",
+> +                        "qcom/glymur/oobmss_ns.mbn",
+> +                        "qcom/glymur/oobmss_oem_dtb.mbn";
+> +        qcom,smem-states = <&smp2p_oobmss_out 1>,
+                                                 ^
+Normally, it is                                  0 ?
+
+is it different here ?
+
+> +                           <&smp2p_oobmss_out 8>;
+> +        qcom,smem-state-names = "stop", "ping";
+> +
+> +        glink-edge {
+> +            interrupts-extended = <&ipcc 56
+> +                                         IPCC_MPROC_SIGNAL_GLINK_QMP
+> +                                         IRQ_TYPE_EDGE_RISING>;
+> +            mboxes = <&ipcc 56 IPCC_MPROC_SIGNAL_GLINK_QMP>;
+> +            label = "oobmss";
+> +            qcom,remote-pid = <20>;
+> +        };
+> +
+> +    };
 > 
-> -- 
-> 2.56.0
-> 
+
+
+-Mukesh
+
+-- 
+-Mukesh Ojha
