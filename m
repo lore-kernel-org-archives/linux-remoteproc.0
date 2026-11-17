@@ -1,108 +1,79 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.169
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794936688;
-	b=Wr71UkTOfiXEkvNzyx2YQ8bLbv73VMqv6isweeNSky+WoyaoQYHO4Pyi1vlyf1BINU5t
-	 iM89g58z6VUn86hdNw0hOnq286Pi6CdT9rrDpdzMmmJrUO+Eiqw7NYJZ0Z/XKJqIKNJMF
-	 Ep2TV3h1lEql06zmxEzjmuVupv6ZeRCIOejtcvAANq2X35SEQcVa5kmOBm/XaEEPm8K1X
-	 8q1jFvmvBZ5UErcnw0E+/JVllbEuhYnFacJbeOBPJ/bTka0nO8kXEz56OcgBD1QN3VZ7o
-	 2KNz2FvD8OKrjqddXHW9HznRUtC7baQBx3dO5JcJ2L6IzuUvV9tYjbMe8J0dcv/E4IQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794936688;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=5cYrB3RoftR9+ZJufZSneOA3rg0mkVzJBEfjOWndr34=;
-	b=l7HNz//u7+WjA2K/t/3zNU3Ytd6nfZbq0EIO1cY9DJ4aTZ69PefaFTIuoHRQunnKvnMx
-	 BdMCbme2HVhbkJtBd/s1prLPXCIno/6qKMSfJ/SkYktlF7sVUTibpshIA/LZokPPZdbpI
-	 JJ26OzsN8bjL2ou/RNBSqmNIZaQofE273sHnuiczmjsMN67sI8ninVA93eng0VUJYY3rZ
-	 KbFp3A/JRO+Zr5Ij/FbkA8nEnOoCuFrfE3oMLvcF0gd2NZTAl4PjOS7tUB038IOnYxlgB
-	 QW77eTpkgfbiCjtgo5yPJyujI1tDaqC3bU+lBQdxOr1euQGMi8lg7WWNcEt4ttXdVuA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=e5Zp8ZAy;
-	arc=none smtp.remote-ip=209.85.215.169
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1794945082;
+	b=LkDLxYZEwzmMnD3iyy3xeYuIc14bCq6+KzvFo9P9mvbJKHioik68mJereV3XQ0/MP6ev
+	 A7w2c9nNQsTExaik5Te2qLk0PtV8Uh6aziOVOdSNoHIG9b/DpNzI80w9UPgMKbCoV9Nta
+	 4LnBZL4WDMYS1e9t9BlyKyV7AG7LcsY+S65sVKH6ExD+kAhD/s4QHVb0Cnh5jeRuZ8JHe
+	 OLdSnRAmo9+KdofZKa412zLYCm46o/NN+ZzQr9arxK4Yw2k47nXzUtggrlOmy98nqVb4J
+	 oWJdz4+xl7vhCq7RM/68by6zEffArDYtki4MnGJTpC0gSBEGZEcZNLsKkTEu8kWQF9w==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794945082;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=uTjaLi5dj9XDX4pgv1s2Of5x2i3A/PnJrfra9kxBKIE=;
+	b=qj7uehRLPzCK1KV5eK6DgH5krN4Da09BSciTAb1+R8Zfv0kRug5HaYVs3zqREXvxnrnW
+	 li3ZAFpYIzb2fduRzntOi2MYbwX0j6Fs9xvN9Gc9ahypNXrVTSldRsUWB2DA4TDG2dsUM
+	 k28UlfwW+WzMHSnrdw2GJxZgKSxVJeIC5HbRPrpwTWdGpp+GwydqqNZUd9u90Rets/17I
+	 yCT8XS6yoi+THOkAl6AF2nk5gWyYqPwW/AYlpxCSvtaUxjZPI9JKesE2hrMf8dL3tdpBm
+	 4AwwW5PjLotQh9AVt1cz9s1CwX297VjiobrLOAt/eR+9hz2TY7MXurCIrgft2ZEcVJg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iS8pT7eQ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9008E606A31C;
+	Tue, 17 Nov 2026 19:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=iS8pT7eQ
+Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
+ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
+	t=1794945082;
+	b=XBV0ctg6YF8DlgKBsLSEpbRs0NIyTQJo4T3+fvUGkDoP+bun8t7MAKH1ec4jLqzyd21p
+	 escnFU5Zwbin4WU/K890NOp14p8//zeIAlLfI9sQgtXNpJoNl+Ae1J2nTaPELB0DqXCgS
+	 1e5bN49OnWdYjzEDrPo4bCA2PbccW5IUzj/TRxMQy/f8ozvKYGIpNQ39K9hZHFwRL7Nmi
+	 54yXzdo6B/LP6seVQW5xrxB7Bt9Ttd+37eni5/R3NbJOHLWBJnID7rB1Q03TL7PXhkEoK
+	 wj1ZErJ22dpcs2QSxADfdE3nsdYY76LNIpnu8ZX839wFmWaAvbAtVeJBCf25Bre3PFA==
+ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
+	c=relaxed/relaxed; t=1794945082;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=uTjaLi5dj9XDX4pgv1s2Of5x2i3A/PnJrfra9kxBKIE=;
+	b=xUJJPQkSm/l8CUnPnQriwkG7JGJjyCSz9kUclQQQSwSNffMxEJxN5fUhAFbzLNpeX/Bz
+	 MWLiq00f8iEM2uCUz6iof5BlhmbkmA6emUJ9dTSV84ZJ2GqTPwv3OI4k+6/lRSZmOjtxS
+	 SMo7ZT2TuJ+vb5SdGkTQw5E3SPVTOycH+/2938RoHnEFDTUGCH/85ENxv0LnnHeL8H0/u
+	 Oa7hDzbKGuIEJWUJtRgTuMnE/fdAl2pmwMQsFtU5ipSSoSuY++5sbbC0C7GW9z5bgH3wm
+	 vw9X9IxX7a08p7jE1JyyB+/p0rsDswFzvpyLqyGWCj6aYfylbgO88oZYkNOx7ePMGgg==
+ARC-Authentication-Results: i=1; smtp.kernel.org; 
+	arc=none smtp.remote-ip=100.80.115.77
+Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC977606A32F
-	for <linux-remoteproc@vger.kernel.org>; Tue, 17 Nov 2026 17:31:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BC977606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=e5Zp8ZAy
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-cddc597d062so69927a12.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Nov 2026 09:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1794936687; x=1795541487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=5cYrB3RoftR9+ZJufZSneOA3rg0mkVzJBEfjOWndr34=;
-        b=e5Zp8ZAytFfxgwA1egXYSHtX5reKgsfJ9Yi8rapzShoui1aILV3DByS1TjDMzLv4QD
-         lT7xAdJd6OhO49AB3wpGJtkRzAPmLynrM3S4a8HP4r9BLCLH57FaKmub6533kkM2+vmC
-         pip7BlKK6g+frBZnTZqQQa+C+9epFUILmgZNm/jyrumxPDWTO/qYUOa/u/AJX3haQPA9
-         paLLOHVRuff7J5v5d34M8QcyelhR9WuHvUr4blvROXbt1pavYmgWo9VVxHVJ5qJGpDiC
-         7I7qMLYH0yPJtZD80GBIJ18hbthI/+QCFL7Lf9cJWiVFnhWPUCb7Udaan5GrzXrInloi
-         Y24g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794936687; x=1795541487;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=5cYrB3RoftR9+ZJufZSneOA3rg0mkVzJBEfjOWndr34=;
-        b=V2lSPiZtWLmNdCljJWxK8uhQ7G3DKVehWgqPtaj3a2Zatuei7/3b4kOjuUKcTFXp5e
-         Qdipyjb/WnU1wHn4U/0dWgFQqFQrO3a+Qlw9Pk3kt9sV8UZGv1thGI7RGu3rnJ0+DiJp
-         l9JfHzbUAZYsPtKotFgdw70ON3/Q3dgxbWTy2/e4ZYokx5SlUWhnh2BI4yVaac6vwItP
-         l9QSPrd6bakxgHZgSDDPmGQRj5tk7jwy9kmTN8Td8aI+xVE8mKsHkgCNi5AZAeUGSqrM
-         HnTyg7asH7VAfFZ6aWJurNaefgVuxV26gh77GBlfblwcQZKbqsy7lP+KHn2DIQQucL7P
-         HW9A==
-X-Forwarded-Encrypted: i=1; AL+hErFYl2cXVE24r1r0SMUswCqO4gjbmWfPR9B1PjSxussNsPkh8ku9ztIuqMtNxzPLMfuWxVQJh3lAu/ZfFjEVe3PT@vger.kernel.org
-X-Gm-Message-State: APuU4Z9hj4xFSEpXhpoJ5p7O97homPJtmkRFzIh4QoM8Kcle7G6O/jyl
-	NutChEzPY+Xg+L7zPGue/tW5HODfjxAcHr2Xz9MK2796Q1zhMV03HfZr95BRrf1LGAA=
-X-Gm-Gg: AZFdTZcDMdQQKwQV1fz3wq+mtfVyZhMA8IrKKPuE37FX2yOgAzAEyCfnWPaSWrrXL3Q
-	PrQjBS6WbVRgvd+hEcL1itxynxU8iIEh+LzlRhrG63ivb1gPFbVOeFK4pBsKQLAl4Uclw2aWPxi
-	UlET+VxrtqgvhBiY7Os0HCEF6E3ybyEQOMSirlBBM7dG3HhOs4pCMIfidkggkfx3dpknk7sK0Hw
-	K2DZ3NOt0K0O225ZJQfwHeXXDffXpT6dQmSSa2SSut/2oalj9/8Y6vXz1iwD6VsiPPOepus4jo3
-	Qxzw8bWAn5mQGnhxgcGRykqaB66wSgZ0cJh1qGkn/tnHrfNX/PMzEOBZp3XBICfibkprVQTorQW
-	8T4sEb1XE9arYvOoBSCqvhM3d2RB9sukJaf8llKwKlzcMJwfLBuOZuMbi6TF8Xz55YzZ/f66TI9
-	kmG4Y2LgkMJMg3SmkBUzuCy86IFhw7zGTUdMPtrHKjGpjynLl1o9ZuooLkZzfHM//7sT+gV3CLN
-	Rfd+eSrs54V/gTiKXEdgtd1Jy3cgv4J7BSzO6igVmopCMtq+hKnHyUOUVmOC0FUzHsNJc7BZo/A
-	aSaKQYzGsJ5tPbSd6TdkLvCD4off9lZ1Zy051RGjXmugEuJPVpIOfA==
-X-Received: by 2002:a17:90b:3892:b0:3ac:9f24:44be with SMTP id 98e67ed59e1d1-3b3d07becb8mr123850a91.29.1794936686801;
-        Tue, 17 Nov 2026 09:31:26 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:61f7:13ac:b599:b52c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b3abeaf532sm4936578a91.14.2026.11.17.09.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Nov 2026 09:31:26 -0800 (PST)
-Date: Tue, 17 Nov 2026 11:31:23 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Francesco Valla <francesco@valla.it>
-Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RFC v2 08/11] Documentation: remoteproc: expand virtio
- support section
-Message-ID: <avyPa5rSx9rhf9yO@p14s>
-References: <20261102-remoteproc_virtio_map-v2-0-26b300e01c62@valla.it>
- <20261102-remoteproc_virtio_map-v2-8-26b300e01c62@valla.it>
+	by smtp.kernel.org (Postfix) with ESMTPS id 83A341F000C4;
+	Tue, 17 Nov 2026 19:51:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1794945082;
+	bh=uTjaLi5dj9XDX4pgv1s2Of5x2i3A/PnJrfra9kxBKIE=;
+	h=From:Date:Subject:To:Cc:Reply-To;
+	b=iS8pT7eQ5DHtCbyKLzbCp8LSHZ+2+Zj5mlb6vrgqxWnhC3J+1zZMgkMArkU7MYoCu
+	 7NM4pHebSvj/MTtInaCxwKAJKj8kuO1hQSIGHMU9q+rCBcGtIIkCaRLGzU3w8VwNSs
+	 PmgydUnWgDFZ2YUzForbe9f07eI69HiCVpyqOFiawrsrj7LRAxhjqHRHtsqUl5fWgS
+	 h/Xr9Se3cqS/nVGgsp3HedAfkEN12pBV/Q0TRS7rd/FYV6Nej54TJoORXuswBnJqNp
+	 2kM0TofASVEJRJ16xxi01id/E1dQ6y9l//LL/f/RqqUykRorB6I9T8oKGLwsQEo/Ni
+	 /wwUWBVTNbdag==
+Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
+	by lkml.kernel.org (Postfix) with ESMTP id C561D4AA6A;
+	Tue, 17 Nov 2026 19:51:20 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Date: Tue, 17 Nov 2026 20:51:18 +0100
+Subject: [PATCH] remoteproc: qcom_q6v5_mss: Save the need_pas_mem_setup
+ into qproc
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -112,140 +83,90 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261102-remoteproc_virtio_map-v2-8-26b300e01c62@valla.it>
+Content-Type: text/plain; charset="utf-8"
+Message-Id: <20261117-qcom_q6v5_mss_msm8953-v1-1-0fdaea2855ff@ixit.cz>
+X-B4-Tracking: v=1; b=H4sIAAAAAAAC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIzNDQ0Nz3cLk/Nz4QrMy0/jc4mIgzrWwNDXWTUxKtDA0NTI2MjJOUgLqLSh
+ KTcusAJsbHQvhF5cmZaUml4AMU6qtBQAZG3wJeQAAAA==
+X-Change-ID: 20261117-qcom_q6v5_mss_msm8953-aba81523223b
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>, 
+ David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.16.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1721; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=YXA0PBEQxG7y3KQPuhFsjnj3v8mXJmuKIs88QrqT56o=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBq/LA3t4wTRLmCJRD8Rbmf1F2YC+5aKN1QBaJ6W
+ Vf6R+LYyPaJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCavywNwAKCRBgAj/E00kg
+ cjKFEACm4UVdY1Sc6btYgmxzmBtq/95vt8znRQ2e5Uebw9/R6eOFohV3r1xnfyYTQquxU8NDuqm
+ f3gAvlhpM4fw7aA2QZ73jD3CfXZR1NOP3aBJ7T17H/KKNnuHVsg/uW4iRxFc1G3MsAOYwpafMRH
+ isoj0sY2qMgKKP6QWnQZRVy+aR53VmfXaSKk1HGWazqj19BF6qyXK9hF5WVvk9QkaVgymiqR8w6
+ FedoyuHicdvmrM76j23H5hISpGU9OgX1/Sp7cEwXlNDHTRXxE3v6TlL2MnFXJyWu/1BGR1Z0l6T
+ Nw2nPPmgheWJFQVABOXMsCugpffHN8A/Ag61BDxvMnkcB0RxUrouf+77BgLUUd3g5Cr59N2llTM
+ rB5Fg4LK8t9gDAfCSZ249VeoxihlgBDd0kvElH3x+DCx9hAEWaWsP7cj4cXfrJwqzihoGfHdrR4
+ e5kqvkGqiYpJsZghgiRwWAg5pqimQfAsSd8zp+oh2bokXNtRoX9jpUwW41wBrP8uRBgJ1iUg4mk
+ 5jpqaOWYxzYkKKc9/3Lbjw3vq2NLkXOD8bpnF3KOu76k8NT20mdgrPnQbk1s3fM+HMfzla2jdZQ
+ AjptKnUD869OLIZTNvczaQgDj4OynEQB/jgDFAc2bMIW7R1gOcZqEwk9eOI2Q7JehRNABEl4jkL
+ jQnvLHzHaSteBmw==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 02, 2026 at 12:26:45AM +0100, Francesco Valla wrote:
-> Expand the section on virtio support over remoteproc with details on
-> memory allocation setup and constraints.
-> 
-> Signed-off-by: Francesco Valla <francesco@valla.it>
-> ---
->  Documentation/staging/remoteproc.rst | 99 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 98 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/remoteproc.rst
-> index c117b060e76c..4b42ed582fb4 100644
-> --- a/Documentation/staging/remoteproc.rst
-> +++ b/Documentation/staging/remoteproc.rst
-> @@ -354,7 +354,104 @@ it supports. A firmware may support any number of virtio devices, and
->  of any type (a single remote processor can also easily support several
->  rpmsg virtio devices this way, if desired).
->  
-> +Memory carveouts
-> +----------------
-> +
-> +For a virtio device at position ``X`` among the RSC_VDEV resources declared by
-> +the resource table, the remoteproc framework will search for memory carveouts
-> +for:
-> +
-> +* all the vrings the specific virtio device requires (as ``vdevXvringY``);
-> +* the memory area to allocate communication buffers from (as ``vdevXbuffer``).
-> +
-> +The carveouts can be provided by the remote processor itself as RSC_CARVEOUT
-> +resources inside the resource table and/or supplied by the remoteproc driver
-> +and will be indexed by their name.
+From: David Heidelberg <david@ixit.cz>
 
-The remoteproce driver doesn't supply carvouts, it gets them from the device
-tree.
+On hardware requiring Peripheral Authentication Service (PAS) for modem
+memory setup (e.g., SDM632), the remoteproc subsystem skips hardware memory
+authentication because q6v5_probe() fails to copy the need_pas_mem_setup
+flag to the allocated device instance.
 
-> +If a carveout with the same name is provided through both means, the one
-> +supplied by the remote processor should be marked as dynamically allocable,
-> +i.e., with the device address set to ``FW_RSC_ADDR_ANY`` (-1).
-> +
+Original commit didn't save the value into the structure thus quietly
+skipping if (qproc->need_pas_mem_setup) condition.
 
-Right, as per my comment in the previous patch, carveouts at the virtio level
-should be distinct from those declared at the remote processor level.  Hopefully
-this will keep the remoteproc core simple and make it easy to differentiate
-between code paths that handle legacy and authentic rproc-virtio devices.
+Reported-by: Sashiko <sashiko-bot@kernel.org>
+Closes: https://sashiko.dev/#/bug/linux-83fcbc28-236c-48e4-a6bd-731f4361f9ae
+Fixes: f56052f4d87c ("remoteproc: qcom_q6v5_mss: Introduce need_pas_mem_setup")
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+ drivers/remoteproc/qcom_q6v5_mss.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +If a ``vdevXvringY`` carveout is not provided, the remoteproc framework will
-> +try to allocate it using dma_alloc_coherent(), which will resort to allocate it
-> +either from the first ``restricted-dma-pool`` region associated to the virtio
-> +device's parent (i.e., the remote processor device), if present, or the global
-> +DMA pool.
-> +
-> +.. WARNING::
-> +
-> +    This fallback mechanism can result in a vring being allocated using a
-> +    ``vdevXbuffer`` area meant for another vdev, so a particular care shall be
-> +    adopted when defining the carveouts. In particular, ``restricted-dma-pool``
-> +    memory regions should be specified inside the virtio device's devicetree
-> +    nodes and not attached to the parent remote processor.
-> +
-> +If a ``vdevXbuffer`` carveout is not provided, the remoteproc framework will
-> +use the memory region declared by the virtio device's own devicetree node (see
-> +Documentation/devicetree/bindings/remoteproc/remoteproc-virtio.yaml), if any.
-> +Otherwise, it will try to replace it with the first memory region (of any type)
-> +associated to the virtio device's parent (i.e., the remote processor device);
-> +if no such memory region is present, it will be replaced with the global DMA
-> +pool.
-> +
-> +If both a ``vdevXbuffer`` carveout and a memory region inside the virtio
-> +device's devicetree node are present, the carveout takes precedence and the
-> +memory region is ignored.
-> +
-> +Declaring the memory region inside the virtio device's devicetree node is the
-> +preferred method for ``restricted-dma-pool`` regions, since listing them among
-> +the memory regions of the remote processor device would make the first of them
-> +the (forced) bounce buffer for the remote processor device itself as well.
-> +
-> +Buffer allocation
-> +-----------------
-> +
-> +There are different kinds of buffer allocation scenarios:
-> +
-> +* if the remote processor can access the whole DMA memory area of the host, no
-> +  special arrangement needs to be performed, since either the drivers (in case
-> +  of rpmsg and rproc-serial devices) or the DMA APIs (in case of any other
-> +  virtio device type) will take care of any necessary translation;
-> +* if the remote processor has limited access to the host memory space, for
-> +  example because of a different addressing scheme or for memory isolation
-> +  constraints, the memory reserved for buffer allocation shall be selected
-> +  depending on the virtio device type:
-> +
-> +  - for rpmsg and rproc-serial devices, a simple contiguous memory region
-> +    (e.g.: one declared in devicetree as ``shared-dma-pool``) is sufficient and
-> +    should be preferred, since it allows zero-copy message transmission between
-> +    the host and the remote processor;
-> +  - for any other virtio device type, a swiotlb-enabled memory region (e.g.:
-> +    one declared in devicetree as ``restricted-dma-pool``) is required, because
-> +    such devices need bounce buffering to work correctly.
-> +
-> +For virtio devices other than rpmsg and rproc-serial, the remoteproc framework
-> +offers the ``VIRTIO_F_ACCESS_PLATFORM`` feature, so the buffer addresses written
-> +in the vring descriptors are the DMA addresses returned by the DMA APIs for the
-> +virtio device. The virtio device inherits the DMA mask and the DMA range map
-> +(i.e., the translation described by the ``dma-ranges`` devicetree property) of
-> +the remote processor device, and is never attached to an IOMMU: these DMA
-> +addresses are therefore host physical addresses, translated only through the
-> +DMA range map. The remote processor must be able to access the buffers at
-> +these addresses.
-> +
-> +.. WARNING::
-> +
-> +    For remote processors that access memory through an IOMMU managed by the
-> +    remoteproc framework (i.e., with ``has_iommu`` set), the IOMMU domain only
-> +    contains the mappings created for the RSC_CARVEOUT and RSC_DEVMEM entries
-> +    of the resource table, at the device addresses they specify; no mapping is
-> +    created for the buffers of the virtio devices. Such remote processors are
-> +    supported only if all the memory that can hold virtio buffers (e.g., the
-> +    ``restricted-dma-pool`` region associated to the virtio device) is mapped
-> +    with its device address equal to its physical address, for example through
-> +    an RSC_DEVMEM entry. The same constraint applies to any fixed address
-> +    translation applied by the remote processor that is not described by the
-> +    DMA range map of the remote processor device.
-> +
-> +Allocation of virtio devices
-> +----------------------------
-> +
->  Of course, RSC_VDEV resource entries are only good enough for static
->  allocation of virtio devices. Dynamic allocations will also be made possible
->  using the rpmsg bus (similar to how we already do dynamic allocations of
-> -rpmsg channels; read more about it in rpmsg.txt).
-> +rpmsg channels; read more about it in Documentation/staging/rpmsg.rst).
-> 
-> -- 
-> 2.56.0
-> 
+diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+index dd052a62b8583..5d084aa2eac36 100644
+--- a/drivers/remoteproc/qcom_q6v5_mss.c
++++ b/drivers/remoteproc/qcom_q6v5_mss.c
+@@ -2189,16 +2189,17 @@ static int q6v5_probe(struct platform_device *pdev)
+ 
+ 	qproc->has_alt_reset = desc->has_alt_reset;
+ 	ret = q6v5_init_reset(qproc);
+ 	if (ret)
+ 		goto detach_proxy_pds;
+ 
+ 	qproc->version = desc->version;
+ 	qproc->need_mem_protection = desc->need_mem_protection;
++	qproc->need_pas_mem_setup = desc->need_pas_mem_setup;
+ 	qproc->has_mba_logs = desc->has_mba_logs;
+ 
+ 	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, MPSS_CRASH_REASON_SMEM, "modem",
+ 			     qcom_msa_handover);
+ 	if (ret)
+ 		goto detach_proxy_pds;
+ 
+ 	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+
+---
+base-commit: aaa2f954c21b205a0bcd0961e5b2be4e82e58455
+change-id: 20261117-qcom_q6v5_mss_msm8953-aba81523223b
+
+Best regards,
+--  
+David Heidelberg <david@ixit.cz>
+
+
