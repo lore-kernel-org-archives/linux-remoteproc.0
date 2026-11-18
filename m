@@ -1,78 +1,110 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795016306;
-	b=lIFH0yDZzme/fdLv6N9HJHSaV1AEkMThUga8ha3JGelFOW1QXeD4b8Bd4nY1dJY2Eqwr
-	 ANZhhifrDndiM0w9XaLwsZe7Kq84X6RZf6+JueIvQgrKVoEK5+2GWg4r2w6eRPnNqFY0Z
-	 ZMtEb/g6BREnS6O2yfZZArrTk4NKrU07/nK61KQQp0TGd41MLO8PWSqp4TpkgIBaPXxg8
-	 d6fWB/KELoJuDeacSLWFeMGnv3x/8DooOJu8Gu69S9+S4EyG3vBPZRyTeEqtRk3mL+efC
-	 Amz++plecTbwrSRE5GDyQ/Q8WZ0GqIWuxXpu1ZmRrc7T4n/pk61O+Pu3b/sBBXeSKmA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795016306;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:Message-Id:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=bHHVOuQhXd2ftrd1exjrxSrMuavmtXgqywzFbhTqz/4=;
-	b=gnc1Kx3axVmNcwx0B4DyWP/6zgQ9dparrUuxJFYXq+aIDd+Ni4tdxtrN09Y0cQM6i+n6
-	 yA3SWa83d3Z4ViCc0iE4+j8Khq6+s6WwdtbKZId6SDiagCfpT0Z8bMdQjpZBX9ffSWFiT
-	 rQOPfI7M/zInbdnJsnYmfaixdFq+UANhMacI96XJbTHoNxEoEXEVaUGod2sOD8Z1//5Ss
-	 EckIsGMz4FFbSMVxyx0PfDH9R806U1XxI+NXeR0862qZ4+FTSeM2ipZqA0c4TGYD8jmgb
-	 1Cxx9coT39e2BQgwInm0+5a4Jg7qnGHu46POPSuBI1KnbU9nLxzAp8DWpBToQKUGb+A==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O7rnvuqX;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFFC60A2634;
-	Wed, 18 Nov 2026 15:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=O7rnvuqX
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795016306;
-	b=MdJY2baT6iZnY7puw01Jy4BBNDvGnek34p+fb3MJlSRoLgEcusnwaed6NBTtctrnYLX8
-	 Spf3Xcsdfrzvl9fEsCLhCclkD+vtG92jodoIFBcFwgQwnJsRq4CzLiycq9bDrIg92Wsm0
-	 5YFw/uKwv78v5cPZZlybXPbrCxcbkiV+JBvebPH8WdWdBoefLapXg/cz5m4+C+aKjql8f
-	 YUsin/D3vZkMy7AjZr+PbHSoH1jolR0nOevPLwc/vGg+f0xrQGclU+AfOALtWvvqSYoOg
-	 na2EXHBsCnAwYiIwTtC+U+6KNoXYT1tOIkLs3sIfjsEKGYz9IL/vwvbJRquO3KA9zwA==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795016306;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:
-	 X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=bHHVOuQhXd2ftrd1exjrxSrMuavmtXgqywzFbhTqz/4=;
-	b=uROoFuNvBo3qNIIiKYkb0T2n0ukr1kUiwMCzNYw3tUIgR+duSkGPjRawKzd4uQEmHEiD
-	 z3YvxHyKFufJGp67T3hExZ8Q/0jiBjOqQ3Qb8z5cbNF1OyZe0ksaudGabGO29yLHhG/q/
-	 udoWa7sQ5OrSe5oCeDVShjsZvsaEZ+mZJqqjP6ZGB56trwbTuLxXFbw5gjDpmOmdPgsUk
-	 3vj22e3ksWV4Pt2qdS3nxKVKxLlukcozKn6MkbqHMomorv5BMA8VUdpS9Wpr8Cjl2ZY7q
-	 0oSfk4YGCOrZW/4Y5sKI7M43ZPoyyUwfLJKH7Aab1UL/LfMRUWv4UqCpm1BpD8c0q6w==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.170
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795016539;
+	b=w3JEA4oIr2dfgQ2e/uf1OZpAtAYubZg7NHmevjxYp6O0kj16mh+KY9k+fo/XwFfVe50L
+	 d30Riy/8Gw1wrwM3HQmWAtQQYps3VGci04r3IaR8NKGmE7Ttewej6I/N6fJvJo6nVabMb
+	 hOeokzMwfN3MdwGdcmakbLWbCySKD7lKsAhqTo6K3TsOzz5iZMPi2uIxgLoq4T6StrfOX
+	 32BpGRTEt6K9/Xkth16bcmcYS4a+RNwF9agB4ivQqFoDzxKAvy7ixYGqt1LXBQc7SAVh+
+	 Jd7GSr+gUXnhypJBcnKTLuz8eSEnQM2FJyk4XdetD+/9R/+d3j8MRenCiVXZcgFcJIg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795016539;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=CN3uhxZTJ97ugRoC/mFf/rnGzVK4gaQ4Bs/xHJQaLBY=;
+	b=b0LxyBYGzaD2YbqMjr913P5BOQhC5g+FzdKUA7zEBYAvEm7TYttNdVgFCfOaF+0C8EZH
+	 H9G51eh2aGW/LRcPcLip/OfU5xeH/wr22cBwain/xogsE/kiE62uKuoopMmlKpGdPxQBb
+	 CfiESfgcVkkSxbRpAYjfZhLyIC1iCFearRjhz8u1+7Fba4qbU/QmqcBs+WNrb0EyDF4u5
+	 c1RKQ0VYFFVjSYrjs38v8h+HRVNHuV0p3QO8nKGcXK1nvP9Dli8Mk2iQTbq6bZSdG6XaJ
+	 3WAtCSMx5GtggCygby+kw3hJje8mSZpP28NDvoqXtS5cO8Bwt7xcOU2E4Falu8Br2TA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Qo9LytuP;
+	arc=none smtp.remote-ip=209.85.215.170
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 3FFE71F000C5;
-	Wed, 18 Nov 2026 15:38:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795016306;
-	bh=bHHVOuQhXd2ftrd1exjrxSrMuavmtXgqywzFbhTqz/4=;
-	h=From:Date:Subject:To:Cc:Reply-To;
-	b=O7rnvuqXzHz+ETSgq5/PGM8HSAhNsxhg+Psf+RDyJCP/IIcnrl8EMuHhLtgZErWDX
-	 d8RnEp8FE1pAECfbYe6gePdQgqE+HhrZqWZ5l2z8eZzbUZMg23pQ6qQ1WkLyuDiH8v
-	 M0mFuhQYsbR3oJ6QqnkZlA6n5jrI/JvupDP+CxjIqoto2XtuQjVelNC5ZpXtwpA9O7
-	 bTcM6p76mKoe/X3VpBGmL6rNpVIUbNX2PGLWjAHagGsAt79XSr1RY6NFG/PIaCTU6R
-	 FbbqQG/FUfHYYYVm4eYTMKp3Y7NgRtnH65tpQE7QBE5/2I00pVzOIhCd2IQ8vHbKYG
-	 G3YOkH1T6qL+A==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 956E74AE12;
-	Wed, 18 Nov 2026 15:38:25 +0000 (UTC)
-From: Suyuan Wang via B4 Relay <devnull+shyckless.gmail.com@kernel.org>
-Date: Wed, 18 Nov 2026 15:38:25 +0000
-Subject: [PATCH] remoteproc: omap: Fix cleanup after timer start failure
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC092606A332
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 15:42:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EC092606A332
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Qo9LytuP
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-cdb628232d2so693923a12.0
+        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 07:42:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795016538; x=1795621338; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=CN3uhxZTJ97ugRoC/mFf/rnGzVK4gaQ4Bs/xHJQaLBY=;
+        b=Qo9LytuPq3LOx+0z54BQ8PjbGvhnxuvWOVMI0R3WU9/LEMeouwZFqUZAsAXweRSyh8
+         mctaTRMV0HrYwcaNg7z6/vI0LlLIR7vEdKFvaZvbaeZThLqT6m/j82KI2NOvZP9SWqfi
+         kYc4AgVgaZeNPX+vBh7K8zi+oQAuoCkCRto34GxnIV1HYRNIyemmT6O6R954ZbOJC6Hm
+         Qe2OTJFv+9wtAamYJPIb0psqwYmxQVLFNOQiW05xm4H5xv3Stq3HtBWw/Nu2PVn+F8CO
+         RI4RZdAAlDyFEBdssGgII6E856TDWHYWc1CwhNVNpm1odhgJL0Zkiym3R2nuC092CRjo
+         RBZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795016538; x=1795621338;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=CN3uhxZTJ97ugRoC/mFf/rnGzVK4gaQ4Bs/xHJQaLBY=;
+        b=st9HAmnn/T1Hwu6RQN27DEHiOazCNR4nXNmHuOk8UyetGUHoAzVtb/2l9kZy3M7+cz
+         vnnfNr896vSGC/uOz9VdXMd66ThDFlPQwxFHcsJkFntoEW9DsF4+yGhwIG++u4/CfTKs
+         xXQBFMvR+AlAUoO7n0c2CN+E4AKidLApcJaubQ5nPT/2X6OMf3+lKeO/IExMFaoW3+mH
+         ZibmlBh4ZtbxRXbQDk0uAE1YR0gYCpeML1ZmnojxluvqsZrbFKFHqD6Ngb4WXoHGZbBh
+         2/8I6w8Uuuep9ta1v5QldVJigdKKzf0oL/OAURVN/4QOy19oz4PLl84KGbfFAdKWLMay
+         TqAQ==
+X-Forwarded-Encrypted: i=1; AL+hErHoi6LCZ4v7HG+JrOJTpZPFAE1URSiUsYEi+LWy3X5BgZrE/OGXy1pA5SekL0q7JMxCp+9eq3jpGf31Ikx3aO0+@vger.kernel.org
+X-Gm-Message-State: APuU4Z8fjRe4THDx8IhZlSVACD3Dh+OzPodphpv91yVtcCDuKabOezDJ
+	qpJ0jToQCp+4QnDSKWVGmAP0TtFnPnYa16Vjd/o+TNF85d9iuJbGf+nJnu6RuVRW3Qg=
+X-Gm-Gg: AZFdTZfzjOs58xTsPb431PMe2DyFt+WM+bPaf/gSx0BlYWuhuLqy9GoAWAqoSqPRFA8
+	dljyoBgYcacf6Mj2g/qGsFsHulR+qu0iKHQzQDQbziXJqePDXta7xVF4Q2M2FHdNRuVIO8J3XAX
+	CXhLQSF4xAnFvf1/afVjvjsTihdbj80x9s2KpVp+JDFExrewY+Y3QkDiPRdwpbxL9qVjF651szL
+	UH0HWg1B256LEhf/O1m4LpAth0sw2hy67wlHUnyMMdujKmTXStIqTpPb4ew7JwgKwencnWPRXO/
+	j1gJ+PtjYs854pQmEzOHVNbI0WttafXcQdKI9pIUuKSTuxJZZG0pHHgv4VLgwpj+rbX+8qZAly5
+	6YI8sGIc3mAWIiQBjznIrYBXf942VSZECygryW8XupxPBni+hfZQ9mosgH54K/3lii6p9xCjgrk
+	OuytNdOv9/O/5Pmfubrv6VwyoUxb9ZWOpExv4FzDVkgt0t13inCWZrTJUbDb66EJj6pPCIZvn8P
+	BKhwIL9TMuAQ3W+KJECJ5Q/4JCoWTVFtAw5XeBFOg5ETfpYczoRR89/NYrWUN86YyHCmX8JZBx2
+	2h+sCCqiNxf/OrZlJh1g0rTDXcWTKSTw1g==
+X-Received: by 2002:a17:902:d2cf:b0:2ef:e06c:38d2 with SMTP id d9443c01a7336-2eff756587bmr30526375ad.54.1795016538193;
+        Wed, 18 Nov 2026 07:42:18 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:9f37:bd39:7f19:3b3c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eff6246213sm16061995ad.56.2026.11.18.07.42.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 07:42:17 -0800 (PST)
+Date: Wed, 18 Nov 2026 09:42:14 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Bjorn Andersson <andersson@kernel.org>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>, Frank Li <Frank.Li@nxp.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC v2 05/11] remoteproc: virtio: report
+ VIRTIO_F_ACCESS_PLATFORM when required
+Message-ID: <av3HVh5jlMsyaiq7@p14s>
+References: <20261102-remoteproc_virtio_map-v2-0-26b300e01c62@valla.it>
+ <20261102-remoteproc_virtio_map-v2-5-26b300e01c62@valla.it>
+ <avs6XQpoQmY_MNYx@p14s>
+ <avzQI6R9LubGP7-d@bywater>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -82,103 +114,129 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261118-omap-rproc-v1-1-c2824060fd10@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAHDG/WoC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIzNDQ0ML3fzcxALdooKi/GTdJGNjQxNLcxMz40RzJaCGgqLUtMwKsGHRsRB
- +cWlSVmpyCcgEpdpaAJiaNWRuAAAA
-X-Change-ID: 20261118-omap-rproc-b331497463a7
-To: andersson@kernel.org, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-omap@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795016304; l=2382;
- i=shyckless@gmail.com; s=default; h=from:subject:message-id;
- bh=5CaSvn4PiRTxlXy+sXlFYuB0nwYQd2B6binwsJAROTE=;
- b=FcG4ouxfwBkbl5ONLABK/xpQ+rRul8yhXniLdOWoNT8bFvI26PaqOSNpexnFmOP/rfMFO+J4b
- 5Gf2XbdaEynCI8NGMVOIpSqhIRgMOtP1hPyuDi+YwMMuV4ViuefbaiX
-X-Developer-Key: i=shyckless@gmail.com; a=ed25519;
- pk=pMtccVGiWES3bV+7YBFuBclkvq2n2HBHQ5azaBrK2lY=
-X-Endpoint-Received: by B4 Relay for shyckless@gmail.com/default with
- auth_id=1498
-X-Original-From: Suyuan Wang <shyckless@gmail.com>
-Reply-To: shyckless@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <avzQI6R9LubGP7-d@bywater>
 
-From: Suyuan Wang <stevewong@hust.edu.cn>
+On Tue, Nov 17, 2026 at 11:18:03PM +0100, Francesco Valla wrote:
+> On Mon, Nov 16, 2026 at 11:16:13AM -0600, Mathieu Poirier wrote:
+> > On Mon, Nov 02, 2026 at 12:26:42AM +0100, Francesco Valla wrote:
+> > > Depending on the driver originating them, data buffers used for virtio
+> > > communication can either:
+> > > 
+> > >   - already be allocated from the coherent memory area that is
+> > >     accessible by the remote processor; this is the case of
+> > >     remoteproc-specific virtio devices, i.e., rpmsg and rproc-serial;
+> > >   - be allocated from generic kmem, and thus not necessarily accessible
+> > >     directly by the remote processor.
+> > > 
+> > > In the second case, the DMA APIs can be exploited to obtain a
+> > > functional communication, since they will take care of cache maintenance
+> > > and - if required - bounce buffering. The VIRTIO_F_ACCESS_PLATFORM
+> > > feature flag can be used for this purpose: with it set, the virtio
+> > > framework will use the aforementioned DMA APIs to map and unmap buffers.
+> > > 
+> > > Bounce buffering will be transparently used in two cases:
+> > > 
+> > >   - if the buffer address supplied by the virtio driver is not suitable
+> > >     for DMA transfers, or
+> > >   - if the reserved memory associated to the vdev is a
+> > >     restricted-dma-pool; in this case, *all* buffers will be bounced to
+> > >     and from this pool.
+> > > 
+> > > With this support in place, any kind of virtio device can be supported
+> > > through the remoteproc-virtio transport, at least from a data exchange
+> > > standpoint.
+> > > 
+> > > Note that remote processors behind an IOMMU need da == pa for the memory
+> > > region(s) the buffers are allocated from.
+> > 
+> > I'm not sure to understand the da == pa requirement - can you expand more on
+> > that?
+> > 
+> 
+> Yes! With a caveat: the IOMMU usage by the remoteproc framework and how
+> it can integrate with this work is the main reason this is an RFC, as
+> stated in the cover letter, because I'm not sure I understand all of it.
+> See for example the dma-to-da conversion in [1] or the comment in [2].
+>
 
-When omap_rproc_start_timer() fails in omap_rproc_enable_timers(), the
-error handling has three problems.
-
-First, the stop loop also stops the timer that failed to start:
-
-	while (i >= 0) {
-		omap_rproc_stop_timer(&timers[i]);
-		i--;
-	}
-
-omap_dm_timer_start() drops its runtime PM reference when
-pm_runtime_resume_and_get() fails, so stopping that timer calls
-pm_runtime_put_sync() once more than it should.
-
-Second, the loop leaves i at -1 and then jumps to put_node, which falls
-through to free_timers:
-
-	while (i--) {
-		...
-		omap_rproc_release_timer(&timers[i]);
-
-With i == -1 the condition is true and the first iteration uses
-timers[-2]. The loop then keeps going through negative indexes.
-
-Third, when configure is true, put_node puts np again. The parse loop
-already put every node it got, and np still points at the last one, so
-that reference is dropped twice.
-
-Only stop the timers that were started. On resume (configure == false)
-return the error and keep the timers: they still belong to the driver
-and are released later by omap_rproc_disable_timers(rproc, true). On the
-first start (configure == true) release all the timers that were set up
-and skip put_node, since no node reference is held at this point.
-
-Found with a static analysis tool and checked by hand.
-
-Fixes: e28edc571925 ("remoteproc/omap: Request a timer(s) for remoteproc usage")
-Cc: stable@vger.kernel.org
-Co-developed-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-Signed-off-by: Kaixuan Li <kaixuan.li@ntu.edu.sg>
-Signed-off-by: Suyuan Wang <stevewong@hust.edu.cn>
----
-Compile tested on arm with clang (W=1, no new warnings). I don't have
-the hardware, so the failure path hasn't been run.
----
- drivers/remoteproc/omap_remoteproc.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index f52a531877ae..d50f2e993c4e 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -418,11 +418,14 @@ static int omap_rproc_enable_timers(struct rproc *rproc, bool configure)
- 		}
- 	}
- 	if (ret) {
--		while (i >= 0) {
-+		while (i--)
- 			omap_rproc_stop_timer(&timers[i]);
--			i--;
--		}
--		goto put_node;
-+
-+		if (!configure)
-+			return ret;
-+
-+		i = num_timers;
-+		goto free_timers;
- 	}
- 	return 0;
+The remoteproc subsystem was written a _very_ long time ago and the context of
+some artefacts, such as [1] and [2], is long lost.
  
+> That said: all the IOMMU setup that is done today by the remoteproc core
+> is linked to the *remoteproc* device, not to the rproc_vdev (i.e., the
+> device backing the virtio device). For that reason, the DMA subsystem
+> should not be able to know that setup even exists, in particular while
+> performing swiotlb operations. Hence, the requirement to have a 1:1
+> mapping between da (i.e., the address the device uses) and pa (the
+> physical memory map).
 
+I would like to reserve the current remoteproc IOMMU design for handling legacy
+rproc-virtio devices, i.e rpmsg and serial, and only use the modern
+virtio/swiotlb API to handle authentic rproc-virtio devices.
 
+Based on what I see here [3], I think above sentence:
 
+"Note that remote processors behind an IOMMU need da == pa for the memory..."
 
+should be replaced with:
+
+"Note that remote processors not behind an IOMMU need da == pa for the memory..."
+
+[3]. https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/remoteproc/remoteproc_core.c#L703 
+
+> 
+> > > 
+> > > Existing use cases (e.g., rpmsg and virtio-console) are not impacted as
+> > > they are explicitly excluded.
+> > > 
+> > > Signed-off-by: Francesco Valla <francesco@valla.it>
+> > > ---
+> > >  drivers/remoteproc/remoteproc_virtio.c | 10 ++++++++--
+> > >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> > > index f1b362158a9c..1496659ddff9 100644
+> > > --- a/drivers/remoteproc/remoteproc_virtio.c
+> > > +++ b/drivers/remoteproc/remoteproc_virtio.c
+> > > @@ -280,9 +280,14 @@ static u64 rproc_virtio_get_features(struct virtio_device *vdev)
+> > >  	 * All non-remoteproc-specific virtio devices are assumed to be
+> > >  	 * compliant with virtio specifications 1.x; there is no other method
+> > >  	 * to transmit this capability from the remote processor to the host.
+> > > +	 *
+> > > +	 * Virtio devices that are specific for remoteproc usage take care on
+> > > +	 * their own to allocate memory from the device's coherent pool; use
+> > > +	 * the DMA APIs for the others through VIRTIO_F_ACCESS_PLATFORM.
+> > >  	 */
+> > >  	if (!rproc_virtio_rsc_vdev_rproc_specific(rsc))
+> > > -		features |= (1ULL << VIRTIO_F_VERSION_1);
+> > > +		features |= ((1ULL << VIRTIO_F_VERSION_1) |
+> > > +			     (1ULL << VIRTIO_F_ACCESS_PLATFORM));
+> > >  
+> > >  	return features;
+> > >  }
+> > > @@ -312,7 +317,8 @@ static int rproc_virtio_finalize_features(struct virtio_device *vdev)
+> > >  	features = vdev->features;
+> > >  
+> > >  	if (!rproc_virtio_rsc_vdev_rproc_specific(rsc))
+> > > -		features &= ~(1ULL << VIRTIO_F_VERSION_1);
+> > > +		features &= ~((1ULL << VIRTIO_F_VERSION_1) |
+> > > +			      (1ULL << VIRTIO_F_ACCESS_PLATFORM));
+> > >  
+> > >  	if (WARN_ON((u32)vdev->features != features))
+> > >  		return -EINVAL;
+> > > 
+> > > -- 
+> > > 2.56.0
+> > > 
+> > 
+> 
+> Thank you!
+> 
+> Reagrds,
+> Francesco
+> 
+> [1] https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/remoteproc/remoteproc_core.c#L716
+> [2] https://elixir.bootlin.com/linux/v7.4-rc1/source/drivers/remoteproc/remoteproc_core.c#L461
+> 
