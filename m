@@ -1,102 +1,63 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795034284;
-	b=mS0OQ5BCYl41jXV6dAkdx/A2YwUglCQK8ll318oHZjbQJKap3mEr6E7RQIr+vW9nQhxY
-	 IVRmy+Z4H62K5XVydBOqPP8Mex7BL1lOoRELIConeo5Oc61GEtQIhrQ/Q9uHpq8ZgQFP9
-	 x5uq+D9Iq4EA9tzpxw7zNbY5aisPCYh3R+ltUUEANBTawUvdf7kWMETpaMQppxH8Sb07W
-	 s9EJc3f6AqmTJPYYSpm/szp7gFRX2+mHnvMz/4yegeuCmxrNrHXZr1LlfZZWEifuwH33D
-	 Hez+rF/tIq25qOVGeWZZy6bDQRCGyrKPAbTKkK8qYnDqwb8oH0719PYSMgAqT5AolIw==
+	t=1795037505;
+	b=Lt9kIDRBS6BzuHr2TOT2fXBZxJugrnd51WKaJQBT8O+IYFfZJa7tBMDuu2mDCKHhwHV2
+	 6s3L9VCQn20tMViHogAv3R600dNvMZd9fCM+WZzrQvt47iP+/BozQMEYKaN5ZDbSNZdG1
+	 dlb3dKXzSJl4gXBgWJCMr3z8A3clH6ROxVJrDbhpUCQ3CchqDauInB5+OdQ+xJDTY/VAV
+	 /PtS4TyUo3Z0Z8ILlI/OpTMcXcjwG/YvSF+6Z6WWTji2TM4Xy2y9eZEMLhDCNPjBy/jue
+	 djPfZjGKLatkLPNv2P+45cIu+fAdsxzXohgiyTwKLSVPlZoFCHSrrFSyewdz3C0ei0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795034284;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=YoDhXeC9eAY7IXgT8Ctr9LEdWE8O3Jm6he0UDGeXJ/c=;
-	b=rMMnIXO3ZPiloDwldf8l729H0vQr1FXTHmI0cEoXIQC6OZsZvETjMbA0BfoFfGc5Sefh
-	 tKMzvI7MjoOg7yQfrDG+oIyzojBu5aKO3NNBr8n4aTXvngp4KepbKn9AjqhpU+GTWNZ7L
-	 aElNrd6H61Y0fM+yTiyjOxy7IDQSE6HsasHNIQIskyB12BnbfBM8Hv+zo6aSBPFQuuKYH
-	 Zbe6oGFXPpsJTwELbSVAjgrYtnSxTTBdA92zSlamPAlAOMSrTDVaXy4iBpzXSIQwjm4Ox
-	 YsRzEa5YAE0mYRVJ9FsTPXyGMsbE4KBgI/7H6s8y29MzI4VvKdhsb2CNxbcoIAf0ZHw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795037505;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=mdkhViCmxHPHXtPAzeJjBMbiylUhANODZG9eH04+n2k=;
+	b=db6oSK9S0laOyHzcQ5ht6KKdQbvPrFbTbtZ6uwhJ1s3mH+kefgBh8mgNtnKYEkOdqUG5
+	 uPg/F7kA4ARmHJnT+oC7GUmwj7gG/4ljZLdmy5cmTJa+E7RupenyA/MasNtXRt0NTZjzs
+	 RjKCp8Nc9vnwq9J5057G52vL+ljUoCh4lbkQe8qZEWyKNAefE7l2cYh8oTVcMbzRL6rWu
+	 WQ7gcusifWp+NGqnyMYl0t4pcxt6km7uPowQZFx5+hCEgvDUJeGxYSK1FCCnxTcvwjnSL
+	 Cyaj+l5/ipsLdns82ED3EA/oqUlzcVxXJ0dr3A1nKDufMfaphkx5xLGlpFe/JxvpOvg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LTYMQlHE;
-	arc=none smtp.remote-ip=209.85.160.170
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f1fT7cjh;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9D8606A320
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 20:38:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4D9D8606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC2A606A32A;
+	Wed, 18 Nov 2026 21:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=LTYMQlHE
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-5495d549924so16014091cf.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 12:38:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795034283; x=1795639083; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=YoDhXeC9eAY7IXgT8Ctr9LEdWE8O3Jm6he0UDGeXJ/c=;
-        b=LTYMQlHEbQdTlKUxPBuAzs7VvXrbF1oiYVatGoqHremn64qVP2+VtOWCtRF5qWcysZ
-         l5agRzunf1PTVH+OhcBmq9jYrHAzemjz4WyV3wBLt36wZrQ0x7fPwVhjlRLFVGESKxPf
-         +/4B6655MaEsnAyT5EMT3L3L+5LMMNqr7/S/RSS3WUY0tltxdQDvgW5sBwl/iDgiaEIt
-         NlvV7HMBuHOAHp6Gijb+5GONLMQZNPRG9xI4O5mYqn0+7y/TECNF/vOwxcJscQJ/bRbn
-         Vlqk5jktTZtNoIyio7RbDVQL5gsV3UILZXv8IJLnDskLLzk55xz7abbhpMmUb8SqWpqp
-         A9cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795034283; x=1795639083;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=YoDhXeC9eAY7IXgT8Ctr9LEdWE8O3Jm6he0UDGeXJ/c=;
-        b=kwZYk1qqo8Hpo137wT82yXrZlEAd4sZI2Bb20976dzDOZFQ6uptTQSY4YkQKE3m88w
-         GG7q81MvUisimo20rIlzLwUOmyLV3iN32yHI/hxgjeugtlUAF9wU4PfGaIeM6qgjPhVD
-         VzxlApmdbOkJgDbBxTw42uXIhz3yZZk0qHUnH2CnMOAr8OTgvRgbCfAq3RONkjBJLJbh
-         O0uJq8gv0OZPec8IKxZg5r8OJ8fMYXgdKyRBZleV9Mxzpa/Pf6LuboK0VFuymGS2AdGZ
-         mSBvjSWuDcP3nicuaTjOfQpGJTocDrNjdatNTmBBS7rxoAhw467V2syJeC/U6EOjPBj2
-         aY3g==
-X-Forwarded-Encrypted: i=1; AL+hErGFNyq1OAvUjxANF7f2akWnMNilo//b7LSuJDjg7so4KKQ5EuMN503BS8ZFiUOtLuuRu8TJr+1cY0BIg2XCENzQ@vger.kernel.org
-X-Gm-Message-State: APuU4Z8P30xRg9zcbViihGraiX6pyvQyPZh+qeT3k29gZ3W+xrBf9lJs
-	67i+4s5kUzgQ6PjT5wCcADRX+nDeies9u3fxbt0pV3OGzRaBgH7lXJN5
-X-Gm-Gg: AYBFou1mbej3ckYrcpElJDgfLOKjqqZPnrOVpV3Og88ShccCtlPZOImV67aQkG2nclV
-	ECD6QXDs+LSSiluB98nR5hlD9bcfyBFT7AVDx6qnrYCL4LrNX58KG1N7dcZ7fM7z/4uCxa4jdvR
-	y83cLMvWGlRpHHbqcweC6LMmIEsPrlmNgqizeQBnBHEJqhAosSKJOZItFyyJdIJYCi/Epgci9dj
-	RTFRog7lLO9MoqEvYVNnN3Y6B7K2h73EZ62J86Lr5Csq0A+VfIdhrNjmcc91uAZu7EOw0NbWgqa
-	x5sNIWi0BD3DawqXIBkca+2Av6q4ei4kEpR4EV3/zHwbXl2Sodqo39ZzaRDW45yWl1kJ/cCxWn5
-	kiDDqsJMQnQawpFZv7VDLnxXXxcq8keOD9v8AcTMfHOu+XzhqKMkKCtJ6jpaL3Su1we/Lalrzki
-	r8Qky2WkYakRYylc72i5AVXCkMCqnZ8joraRZGH3ij1O3gL7+3F5CsQEIJCrOUtNTXVrdqIighR
-	V+r1ZtSUtUMnqotgGH/Xe12NGRZhuKLTnR7938x/aGsk4oTqqppDiDAeW+vQhO+ivk3VmPF9ZrD
-	amqziUYNbQFu1NeEG0fT2dtGGKXWcg9ksfvwkX5Rg8nIAfHM0Nx7nXNEFmALmmZDsvIIBr8sCR7
-	HRd3CPUKOyhw9MlM=
-X-Received: by 2002:ac8:5d4a:0:b0:533:370c:7600 with SMTP id d75a77b69052e-55d5a57da20mr64973751cf.27.1795034282998;
-        Wed, 18 Nov 2026 12:38:02 -0800 (PST)
-Received: from localhost (bras-base-toroon2176w-grc-63-174-93-36-89.dsl.bell.ca. [174.93.36.89])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-921149f58dbsm30837106d6.6.2026.11.18.12.38.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 12:38:02 -0800 (PST)
-Date: Wed, 18 Nov 2026 15:38:01 -0500
-From: Richard Acayan <mailingradian@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=f1fT7cjh
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0961F000C6;
+	Wed, 18 Nov 2026 21:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795037505;
+	bh=mdkhViCmxHPHXtPAzeJjBMbiylUhANODZG9eH04+n2k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=f1fT7cjhk+5dNPB0HxhpbrfQFDRbFCM/NQnTblXNfdI1K7GSA1cQT7O1dE4OtyynP
+	 p3uF3KdgGG51lale/hPw1glbT2Ail6zoLLAcl2PDMQGibHDa+xLxlryyRkT6XRFL2I
+	 Z+4pyCGA/sPI2Wln20kXmD8WUCeWSWQtux/2ksJuAdG0loaRgyYi/wwhrItj/0ppu5
+	 4UX1TWtgXU3ruGPaYJT0w53X/X6A0la6V38Hg4P/HsKFVtkOyYN8B94t13AdcrWAxt
+	 G914L6OoQydGHLnAWCi7zYau88yuvfTxW3Vdn8fxhADJw3BOdweUIeeJND4rz3frcn
+	 5i8KNXFE3lMgQ==
+Date: Wed, 18 Nov 2026 15:31:42 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: David Heidelberg <david@ixit.cz>
+Cc: Sibi Sankar <sibi.sankar@oss.qualcomm.com>, phone-devel@vger.kernel.org,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Richard Acayan <mailingradian@gmail.com>,
+	linux-arm-msm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
+	devicetree@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-remoteproc@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 7/9] arm64: dts: qcom: pm660l: add analog audio codec
-Message-ID: <av4MqUrrZ0OgMjlI@rdacayan>
-References: <20261107022453.159341-1-mailingradian@gmail.com>
- <20261107022453.159341-8-mailingradian@gmail.com>
- <avubHsbu-zkf5Uqc@zenbook>
+	linux-kernel@vger.kernel.org, Miro Mraz <mraz.miro@seznam.cz>,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: remoteproc: qcom,msm8996-mss-pil:
+ Document google,require-socinfo
+Message-ID: <179503750248.1112860.10353200603959842423.robh@kernel.org>
+References: <20261116-modemsmem-v3-0-24ebc7ed6eb9@ixit.cz>
+ <20261116-modemsmem-v3-1-24ebc7ed6eb9@ixit.cz>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -108,22 +69,25 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <avubHsbu-zkf5Uqc@zenbook>
+In-Reply-To: <20261116-modemsmem-v3-1-24ebc7ed6eb9@ixit.cz>
 
-On Mon, Nov 16, 2026 at 06:10:25PM -0600, Bjorn Andersson wrote:
-> On Fri, Nov 06, 2026 at 09:24:51PM -0500, Richard Acayan wrote:
-> > The PM660L analog audio codec (PMIC revision 4) controls the headphone
-> > jack, and optionally the earpiece and speaker, at the vendor's decision.
-> > Add the analog audio codec.
-> > 
+
+On Mon, 16 Nov 2026 16:50:43 +0100, David Heidelberg wrote:
+> The modem firmware on Google Pixel boards (Pixel 3 through Pixel 5a)
+> expects the application processor to publish the SoC platform type,
+> subtype and revision in the first vendor-reserved SMEM item before the
+> modem is started. Represent that requirement as a boolean property on
+> the MSS remoteproc node so the MSS driver can publish the data before
+> booting the modem, instead of carrying a separate node and driver for
+> it.
 > 
-> Trying to merge this on top of linux-next gives me a number of
-> DeviceTree validation warnings related to "sound-name-prefix". There's
-> also a number of warnings from the later "arm64: dts: qcom:
-> sdm670-google: add sound card".
+> This patch was written with assistance from a large language model.
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  .../devicetree/bindings/remoteproc/qcom,msm8996-mss-pil.yaml     | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
 
-Oh, sound-name-prefix can be removed from the digital codec and the
-sound subsystem can just overwrite "PDM_RX1", "PDM_RX2", etc.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-I hope overwriting the analog codec "PDM_RX*" doesn't break more than
-what we have now.
