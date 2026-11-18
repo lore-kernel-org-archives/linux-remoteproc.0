@@ -1,112 +1,112 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794985233;
-	b=fq7pAUnEQoyUGjkG4Rie/+93q1r08855sdCAa6e9jsovSf6HQkkludMmGXppKAItRuxQ
-	 jMG0E6OLZ9jH0EsTo6wPpaRifTHsEK3ZENkB+CisHHa037N2IrfPrEQZHlExrlyXeGRYt
-	 4ssp2uKFtPH7buEgGVTD8HwmlrNihELIvbFUAks5SjjTba4YHyi5hvisO5fKhTHmhVyiY
-	 N8Nb7X/KRzvovyE8LmRA/tCZEkaEVI78+5kXGc9yWYo+5RGYTyeAjyfJ81Vxn1u4U8ZNs
-	 RAgJJdv2kP+IUcfDIFA3OTBVKokZsIGBPLcXzaQpY/b0LlHVHb32PpI/JMDWfYBtrBQ==
+	t=1794997767;
+	b=xTa6aZhSX1OE3KAqlYCv8pauXW9ZnhsvFHuaQdYmDacZnp71cEUZFpCsXbaukZcOuPZx
+	 5mnTy8J9U8aRMtTq6IoyscFzB7xQ7tz94hJzcdxvgDqwVAeIpo1uObpr6egyHKAT8Uqcj
+	 J7hrQXg0gTLx1Xnk+gC7WM2tf0EVKfTMDP9QvYXuf8+emwRjOVKB6VdbXcROIWv5c9nD8
+	 paqs+j1OWZmo+e4Czms5xQqLpoL6tTkQT6wZNHMbNYtml1VPLvrQNf79Q97CMOP2Utifw
+	 kbsJwpsZu/+csWD8c8tnAEEGI+zcM8D//NoDBj2d0CTDVGiK3h2Y4eKOAZ7zAYvIv3Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794985233;
+	a=rsa-sha256; c=relaxed/relaxed; t=1794997767;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
 	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
 	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Authority-Analysis:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
+	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
+	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Authority-Analysis:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
 	 X-Proofpoint-Spam-Details;
-	bh=De+BTaf7aeCgv75XUtP4o6wsleP3pF94u5PLmYp02pw=;
-	b=mfUHN8SynLN2NUqNBgI6OXrBOFbgh+mp1FcM70591WNnDszHsnHM+xrummL50laiytC+
-	 XJZ3NC6tKmAx1sd1XLOac6PdoVlM2FCXso/u3V8N0mJQvEdaZW88djMua5lkBzhoWwvOE
-	 ZuoyScsoa8x48gdaBDKa2HfU6NCBuP5vlrQZhFJoXBNSkd9KBA+NAzEpgwKjw9mQwULIp
-	 hBIsuVdwWPxZARMi1xuXPZuzhe981KWN48qmYMyuaAd1jXiQYzxyuaNGHFEvMclqG9a7P
-	 Iec5lsm5IBP51iKPF67tBiIE35R+kiGeJj8PF6QEZjqIY4b8c+p65HwChqxQw+fkXLA==
+	bh=F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=;
+	b=Qny9zr4rJd9GROiOJMDReTHr9FrWjxKXDUFazQF+d8s07I5DeQz0zMPT4cXgJTXU52+K
+	 iFnJLeVovbXD9MhcJ2JsZAsxRFxxNbSoZ9+9jqxKwLrD8MRW08YmNx56O1iRjTvx/K9YD
+	 c4eGllgzS0DhCvN6fZtAbBvSU7j16QItEz0AXARmSGloDs5eASikM8fnq+QayRjRZy7ka
+	 MVknObnmvukACq5UT5B3s/AcY0eEaYK0zfqCwh5qp7Y9CGetD4HsM7sq0hly5/xdmYKrT
+	 KPGl4WCVF3dXwUZVeKwd8fPH4ZvA/lK2VcfjCCd4Fnhib95y5Tgy/ggaLa1T1yrx3VQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=kIDje7Qr;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=LCJK82BT;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=D4Nn3l1f;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=J18DB677;
 	arc=none smtp.remote-ip=205.220.168.131
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CE6606A332
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 07:00:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 60CE6606A332
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9562B606A32A
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 10:29:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9562B606A32A
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=kIDje7Qr;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=LCJK82BT
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AI2UmSA3371230
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 07:00:32 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=D4Nn3l1f;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=J18DB677
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AI9k8p62398688
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 10:29:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	De+BTaf7aeCgv75XUtP4o6wsleP3pF94u5PLmYp02pw=; b=kIDje7QregJFgM/K
-	Vlno+kRlQDCQc68TygLDKkCUqpmCkyK0JEtom1fH7nkRtHMZChev8oaayHBZayRo
-	mLk7YoXKzDybydjcwSOfykAJV1ScpR5iNP1uakoxbMjKyEOkX1y0FoN7RA005DEv
-	hwnePs18MtCjnRbaWbcZkdXEJsZ8N7RnTzhg/Rf45pM2sA1xLyWkkI4Y5icRn79E
-	/qrLQU3oT2kF2TzQeth/5xkpYHOUJyfeO4lkJExMAOkTS5for4HAjnhPwm0Osks+
-	SQ5UrUTpTy9kuKAbVybppKb2jG5lNsj1UTvsgZ2GPhngytdBnVzAB7WTccxup2Jm
-	Rt3TjA==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv8sp6u-1
+	F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=; b=D4Nn3l1febtFyFRi
+	pjY89QCokUB76gdIDWbw/Jlk2J2fk/Lkphk6iJW4JJRmCCtq8eTHfdWy464JwlwC
+	s5eclJPHNEJKDxXMGplCyXEQU39bmxmXJSNVBlSa4AVZzm4/PVzI4vHFgqbBfsDK
+	rLMg9Zqo9CMqcOxWOMuLeFVokEVcp0JenBm8AEy0nuQODmRZrOfYn/psrGUvZgbz
+	ZL/uP+nYACkMN94hCrPb1eaPeqbMcmv5gO7VNgsTnh1WkREz76uVbpaxhSvOeKkd
+	gTNyzgDL4qmmqYe9JrGgrPHK2ER5BbLtDG6K/p7H38mWQx3ROy7ajCI9nVh+WmNg
+	eks9sQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv92jme-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 07:00:32 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-8a05b68f851so1414207b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Tue, 17 Nov 2026 23:00:32 -0800 (PST)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 10:29:25 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2ee04c49451so11063505ad.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 02:29:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794985232; x=1795590032; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1794997765; x=1795602565; darn=vger.kernel.org;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=De+BTaf7aeCgv75XUtP4o6wsleP3pF94u5PLmYp02pw=;
-        b=LCJK82BTWxikFICBULBc5O3ZLz/gW/tjnFiMd9c6NGB37QYWQw/iJ7d8MC02mVKgIC
-         TwUwixXLU/CiETtmVXVyumcwiseGJGZpr9bID1akqFExMvcYEdzEOdSKUZ3Wchhulwy4
-         Jtigpqm8PRUuOXnM8blq/6htCq6Y+RRrxwQWpU5+U1t4WLhYZ7AuT1gA4Fygu0Fkff7j
-         f6rOkDO/pxUbDon/B+idb2c7n0Fz1x+SsK0/wz+pGoUAGbqbt3JkeVvueMdPFMRSqD27
-         uSkUp9qJvV3XIWWGPST18vH07jqv4z+Zy4EnDSSQY99aJmB0KfDScJxhqfrGpOi/JmZA
-         wlQg==
+        bh=F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=;
+        b=J18DB677osKq2zpxOq6sSxfpANEcR08Tjnl0NrdRgo9kAa2dEz8aHjUrneXm78uz1d
+         r0rVORWgAnPIE7/avsfqAqbihLb1ZfFwBtr3GNKBUuOqERwnyd/sWtxy9sJGNQugB7yp
+         moOF4o4QC3VBL/qslMIAk4VRwhmvLVjGsKzghsxHqXgX/ATZ6X4IAaoB0LikXfZpisG+
+         p4SDN/JuPNneZfy1siQFrDNbvLRtsRD+BV22zHLMNNCpW16Pty+sYnzuuqzlH0qJqkSJ
+         JL263jJ38IqlaHk6gkj0eXjUDnSzs/KM/9NWhdmEcWPi7dcZLBSSYSPjIAobGGc7Emd6
+         EDdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794985232; x=1795590032;
+        d=1e100.net; s=20260707; t=1794997765; x=1795602565;
         h=content-transfer-encoding:content-type:in-reply-to:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=De+BTaf7aeCgv75XUtP4o6wsleP3pF94u5PLmYp02pw=;
-        b=I4oSJPQgoCbpHt6v3T73ze3IKnbVg3xRUKE8T48OrgbuqMb5ieVxvgmhJdFAnligkb
-         ihoXY4CQ3xjod+Xa+XEhwj0xNxHMAGR422f+gIPOJFipO1u+u8t/tUod4HWv9k5/ZBU5
-         SpcpKLKyUGIZ4xfouF5EQEr3enz4ndbTH4S7fT6j5ZJdnejtm2tbs/7e5/KleTXht3zc
-         4yijpxpn/FCCwGez7T61BiW/spfhHA4J5Ps16lhunmt+H3rkVFTjgT1gdEwqxkWv/N2a
-         OM53gKRwsRuSwDz41AfPywrJJp9xWIvH8cjcjCDQ+SrnV+pRwLEquP01NHrCfaznZ5jQ
-         0ajw==
-X-Forwarded-Encrypted: i=1; AL+hErFC8uwAjlTw0ZQU+dNfzNyf2rVlzsX2t9DSBWUE5wodGfb9U3kFOpcl/BlgUSoLlDcKn0BPWITmR3/R+OknjuSH@vger.kernel.org
-X-Gm-Message-State: APuU4Z+DdXqETKkFQksY/bSEoLgjR2tv1oJecwXbgr83vkxMKt4DjHEr
-	jBy+yI2aqqJBIoK5p+Zh+z9r0LAm/WWLYltZSDFKLwyKhAozM2JYH6obZU8NQ24zwBv5y4u9bly
-	BaFHF+7hlqqBlpWVkkCxkfqwRy4gy5W25Vg7RvjWYtQieuPXOsi7nkZ2jiGZZdWbCFrssybLP
-X-Gm-Gg: AYBFou3bffs8WvrR6qTVvTahvPvobOiSDSkNo3SwgRqc0ygqNlRiXmOjnHhQnG3wRB5
-	5qfzfwk2QTOpYBA7SczcWiQF+BLKP6sVP39khlEJQayY1mtzQbCYVSXC+1kheS86OlbkJAWGm1P
-	c3Z79ECkiwDZoBuRnosSUupYJwN84vin/5i/QG6H9rgbDqItLGl1qXTDpZ+k8B2qxKHVoZ3B5vh
-	oSkiSHSjjKSZuIpcb3Q5+XBJ0CNvt7rdf657JeXsgI7Z/bAhRUzulMfHpA+nMEffgLI2K9Mr+LI
-	nT9DSsrNZpl6cHB9oHMNln7iHdcbdwpKFKyxa1Yal7+nl3OqqTavPj5LCa7Ln8uwDsLoRSWlef6
-	22tERgZzAFsHBh8AWzeYuiRorg3Rpc7F/Or3HShd/lpOV7oXOSJX4Y8hWKu9pk5HJN/ejCbfTUp
-	BI+Q==
-X-Received: by 2002:a05:6a21:2c03:b0:3eb:50c9:b3c6 with SMTP id adf61e73a8af0-3fd2e2bb06bmr4030555637.22.1794985231642;
-        Tue, 17 Nov 2026 23:00:31 -0800 (PST)
-X-Received: by 2002:a05:6a21:2c03:b0:3eb:50c9:b3c6 with SMTP id adf61e73a8af0-3fd2e2bb06bmr4030496637.22.1794985230778;
-        Tue, 17 Nov 2026 23:00:30 -0800 (PST)
-Received: from [10.218.30.203] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde3bfa898bsm624181a12.17.2026.11.17.23.00.25
+        bh=F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=;
+        b=UCYnnSJjnUsbpNdrIA0Za2PN8IbTVcb/voubycQ7OZyLP8szI/4jdJK+FhJQcuztCx
+         OlCPaJVt0VWiZH2UEPtTg8n2KT1xnIM0NMMeR5Ab94OGuPQKwtG/eqK4njSR1zlngnlE
+         dM5xN9agKFld1AanUA81FkCvLbF5cFvBT+23Ji4Hty6mk+XweXBYhrVGoeiHAac0prE1
+         ZJwMo/XUmn6xeehvhhyqfZ/Yu/h24MzYKJNxrY43tEtepoyyowxnxsrBKKTKsYkjIBkJ
+         zP91MJJ6+9PqUrYemHE2RZG+U097wd5ntutfih6UeNF6AvntPET6cFAuSvTh9MZhG5Vs
+         MoQw==
+X-Forwarded-Encrypted: i=1; AL+hErGAqM63OyuGpDNwsUdA7YiqTnxKbxFp+2d5dFtLZWSErSYEA89azF0XEeF+07P5mIt0G9+Bqq2d6/Asj3LzVgyB@vger.kernel.org
+X-Gm-Message-State: APuU4Z8VrdVf7wVG4gCnEHpK6QXCTscZ0P8/R5uulmQhnxvDqYlscCic
+	9MO3EIEyzG0B9wyFKW06pGpzGlWMnmyGE2I+TYoNFyG7WHbHGRTIaL1xA1n6VYre3b8grzHIYgm
+	j8bcqAdqB1jSoyQvspSjkaO5dF+ys+IeZYe8BoTWhBM30J2QAKugrbCT2RL0hV6efUQQeHz1n
+X-Gm-Gg: AZFdTZepQoxQbHG7Fp+kE4oHxqULrSp+6CdOzRNbrYe02M606jRsNJxQznLrisYkVg3
+	xqKLcgYp3kTTxbN4oEa9JQRVTNYVqIfy0aKJMCH3US9W6imBn76AkISD+IOp9jCXULOzn57EEzn
+	nrpYPBchXdEPtEviqj4Xc3zyJLOAsohgqWZOoeEa1SWhecD+zsPjJu6VlvYdTK34gbeJE3BOGed
+	wrnc/UrIpVfEjk7XCsMQkAlMPQhgBKpJomO+Kw2RGDetuUB/4y15BARp/p7/SbrcJ4++ptRsa8M
+	2sgV0JioMyZDnqL8zaTh8YmeaiFPxeesfcdtLwD/c9kiYptsxbZTxnxhUJOcDaj5rR4oAS6Oufi
+	1I87k6LeG3kxB/JIlTz3MMqo0/UoyrH0/GMj0dSbcVvwWepy/LDsmoFXtXxqXTTokmkXaCSsWAm
+	slbYh6m4b8R6SxNMc9WIrrQ+buGn1/TTPXoZQeXCe4+/OWpW9pNdAK7RulEN6HPg==
+X-Received: by 2002:a17:903:244f:b0:2ed:379:158d with SMTP id d9443c01a7336-2eff73f1eefmr24169885ad.9.1794997764930;
+        Wed, 18 Nov 2026 02:29:24 -0800 (PST)
+X-Received: by 2002:a17:903:244f:b0:2ed:379:158d with SMTP id d9443c01a7336-2eff73f1eefmr24169625ad.9.1794997764427;
+        Wed, 18 Nov 2026 02:29:24 -0800 (PST)
+Received: from [10.149.122.146] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eff6115452sm11186825ad.16.2026.11.18.02.29.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Nov 2026 23:00:30 -0800 (PST)
-Message-ID: <761bd59f-4ac2-4e62-896c-57d15fedc6f9@oss.qualcomm.com>
-Date: Wed, 18 Nov 2026 12:30:24 +0530
+        Wed, 18 Nov 2026 02:29:23 -0800 (PST)
+Message-ID: <cc64e5f0-fb82-41eb-8f26-6dfab7cd0791@oss.qualcomm.com>
+Date: Wed, 18 Nov 2026 15:59:18 +0530
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -117,154 +117,278 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] dt-bindings: remoteproc: Move iommus constraint to
- SoC-specific bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/4] remoteproc: qcom: pas: Add coredump support for
+ secondary processors
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Kumar Patro <bibek.patro@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-References: <20261113-shikra-el2-v5-0-8aca743de97f@oss.qualcomm.com>
- <20261113-shikra-el2-v5-1-8aca743de97f@oss.qualcomm.com>
- <20261116-boisterous-ancient-macaw-8cc00e@quoll>
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+References: <20261015-oob-support-glymur-v2-0-715435f52dd7@oss.qualcomm.com>
+ <20261015-oob-support-glymur-v2-3-715435f52dd7@oss.qualcomm.com>
+ <20261117081011.jcuxog7ixwbfbyce@hu-mojha-hyd.qualcomm.com>
 Content-Language: en-US
-From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-In-Reply-To: <20261116-boisterous-ancient-macaw-8cc00e@quoll>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Eu1HPicA c=1 sm=1 tr=0 ts=6afd4d10 cx=c_pps
- a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+From: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
+In-Reply-To: <20261117081011.jcuxog7ixwbfbyce@hu-mojha-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA0MSBTYWx0ZWRfXxRx2w9JP8XG/
+ fE446LXODPIFzeliA63zRkXqubpeRuAy+RhBM/6tczssvdD/jO4jxMAK5iMExadeyW5RnQ/1lDN
+ mkbyQQgSrQXyBtTsfeO0y7zOXZEj2h4oXLMsIVS60y/CJAN0Ji8bJdmZyFWjG4StvvORuDpuZQG
+ Ur4QGxsmG1e0HoAsjLBj3DUNWcVXeTXBrpU+p06rRhJtF2tUj5/goBwBU5zHMi3AMuXEKthA/ss
+ LSEdO1QBP1LlfN771drFU3P19uDLk9pGRjKfe5NlUSgO013ZtXLw1o/RfrIWLt+mJiag2o1vtw0
+ joHk/qP20A43HUen1sOBacaW7a+zQ1UQPj/9+NPL+gO1Qvf6mr9tx2xSXF9w6m+KpCaiSoqFU+q
+ 4CLK9gsynIIfIoOFhcEkjIH8kO96NdktW5xVDrplRXUcsjHUItH0pHu0uu7E1ywwedYW3Pwd0Lz
+ gUssECIdzBNDGUpTyBA==
+X-Proofpoint-GUID: DBEeDPUJb_xucG4uf3YFGeQI9TT0lbMz
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA0MSBTYWx0ZWRfX8LZLTy0FYozd
+ cfuWgtN9BTJFu5aKjSISN9AhnQriRV2OiF+GbmL7og/cxA/yvDX9hhm8UWJPEGkWjP8cswiwgkf
+ 8mv/gxee9sqeIjBJ8d5elfgJah1K25Y=
+X-Authority-Analysis: v=2.4 cv=LuQHWXdc c=1 sm=1 tr=0 ts=6afd7e05 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
- a=EUspDBNiAAAA:8 a=u9YKjPMZU3T7gHYh_q8A:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22
-X-Proofpoint-GUID: Cdn7mX9ZkdwYRxDbmbiaSMPUn4qXQXMO
-X-Proofpoint-ORIG-GUID: Cdn7mX9ZkdwYRxDbmbiaSMPUn4qXQXMO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDAyNyBTYWx0ZWRfX5eZF6j4eUh5u
- oS4M9wgAWrDQI8SGuwqRqT4ywzGkWtBi2P/MNNu1NAXJRYRgFizy21Nqqdwkz7KyNmFnbEdYtz0
- 3rT32aUVeH+aDAMr/qd9DxQVCNfBG25x8x2OwANtPiAk44gpkzXLCYXHu0ZdgkAceExHHmYzQSd
- CKTrTC3wYlWHpDBPCToNBlU846S5/8j5UKKiEP4lzPbl1gNjN2tMOgBAxu1Fvlm6KOMovAh/ocy
- FPecbNNEHiiZRGeVEoP40tmVsxTkRdMaHJM7NhC/TWBJkY71CjkQVCMGttiMjIpMqgvxdBBLvxj
- Fh3buvjwkJjp56BJ2Ls4LZcYehWt4ibo2t8N3p+Ek207PLf/Zo69c22Miyp8Qdl7AE334O4jO81
- W2cPoNfAEiqapitOAr3+isKVu35mqzWC/uuLbZcdRe8OUxsVtGEv/0lh9HjWrGcn5gVLDyZh6m/
- E635r7/YxQHTyW9K70A==
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDAyNyBTYWx0ZWRfXxvDGaSR5TrSU
- Vgty655zmSr2SjWjgPUFPjwfd91ud8l0q/+NmhA3+Qca6r05KGymDCUN8TohEpbUzT3ghAQL9PH
- IzCwCj2ATpx1hsGnsk3d0OkwW80njWM=
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
+ a=EUspDBNiAAAA:8 a=xb-HvuPonZpJoasvX4gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-ORIG-GUID: DBEeDPUJb_xucG4uf3YFGeQI9TT0lbMz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-18_01,2026-11-16_01,2025-10-01_01
+ definitions=2026-11-18_02,2026-11-16_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 spamscore=0 suspectscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 priorityscore=1501 adultscore=0
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611180027
+ phishscore=0 impostorscore=0 malwarescore=0 suspectscore=0 clxscore=1015
+ adultscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611180041
 
-On 11/16/2026 4:28 PM, Krzysztof Kozlowski wrote:
-> On Fri, Nov 13, 2026 at 08:02:20PM +0530, Komal Bajaj wrote:
->> qcom,pas-common.yaml limits iommus to a single entry for every PAS
->> remoteproc, which is too restrictive for SoCs whose firmware uses
->> multiple IOMMU streams.
+
+
+On 11/17/2026 1:40 PM, Mukesh Ojha wrote:
+> On Thu, Oct 15, 2026 at 11:25:51AM +0530, Anvesh Jain P wrote:
+>> Add coredump support for PAS remoteproc instances with a secondary
+>> processor by registering fixed dump segments for both primary and
+>> secondary carveouts at probe time and mapping them during collection.
+>> The attached-state path is for debug dump collection and does not
+>> provide operational device recovery.
 >>
->> Drop iommus from common binding and let each SoC-specific binding declare
->> it with its own limits. These bindings set unevaluatedProperties: false,
->> so a compatible that does not declare iommus rejects it. Declare it for
-> I do not understand this sentence. Compatible cannot declare iommus, but
-> anyway the bindings do not reject it.
-
-Right. Wording was incorrect, compatible does not declare property but 
-schema does. I will reword this in next revision.
-
-What I meant was that these bindings set unevaluatedProperties: false. 
-Therefore, once iommus is removed from qcom,pas-common.yaml, any schema 
-that does not define iommus itself will reject a node containing it with -
-"Unevaluated properties are not allowed ('iommus' was unexpected)"
-
->
->> every compatible whose nodes use it.
->>
->> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+>> Signed-off-by: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
 >> ---
->>   .../devicetree/bindings/remoteproc/qcom,pas-common.yaml   |  3 ---
->>   .../devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml  |  4 ++++
->>   .../devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml   | 12 ++++++++++++
->>   .../devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml   | 13 +++++++++++++
->>   .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml   | 15 +++++++++++++++
->>   5 files changed, 44 insertions(+), 3 deletions(-)
+>>  drivers/remoteproc/qcom_q6v5_pas.c | 102 +++++++++++++++++++++++++++++++++----
+>>  1 file changed, 91 insertions(+), 11 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
->> index f75cab6b4ed9..4662fe4cff62 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
->> @@ -32,9 +32,6 @@ properties:
->>       minItems: 5
->>       maxItems: 6
->>   
->> -  iommus:
->> -    maxItems: 1
->> -
->>     power-domains:
->>       minItems: 1
->>       maxItems: 3
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->> index dda2d144b720..3c35da52204d 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sa8775p-pas.yaml
->> @@ -38,6 +38,10 @@ properties:
->>     reg:
->>       maxItems: 1
->>   
->> +  iommus:
->> +    maxItems: 1
->> +    description: Firmware Stream
+>> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+>> index 0bce2f0d5b4a..374cafd04b62 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+>> @@ -117,6 +117,7 @@ struct qcom_pas {
+>>  	phys_addr_t region_assign_phys[MAX_ASSIGN_COUNT];
+>>  
+>>  	void __iomem *mem_region;
+>> +	void __iomem *secondary_mem_region;
+>>  
+>>  	size_t mem_size;
+>>  	size_t dtb_mem_size;
+>> @@ -162,6 +163,28 @@ static void qcom_pas_segment_dump(struct rproc *rproc,
+>>  	memcpy_fromio(dest, pas->mem_region + total_offset, size);
+>>  }
+>>  
+>> +static bool qcom_pas_has_secondary(const struct qcom_pas *pas)
+>> +{
+>> +	return pas->secondary_pas_id && pas->secondary_dtb_pas_id;
+>> +}
 >> +
->>     clocks:
->>       items:
->>         - description: XO clock
->> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
->> index b20780e5e26b..8aebc785f212 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sc7180-pas.yaml
->> @@ -169,6 +169,18 @@ allOf:
->>               - const: cx
->>               - const: mx
->>   
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - qcom,sc7280-adsp-pas
->> +            - qcom,sc7280-cdsp-pas
->> +    then:
->> +      properties:
->> +        iommus:
->> +          maxItems: 1
-> Same comments as before - missing property definition. Properties should
-> not be defined in conditional blocks. If you remove property from common
-> schema, then you remove it from every device referencing it. Nothing in
-> commit msg explains such intention and reason why.
+>> +static int qcom_pas_register_dump_segments(struct rproc *rproc,
+>> +					   struct qcom_pas *pas)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = rproc_coredump_add_segment(rproc, pas->mem_phys, pas->mem_size);
+>> +	if (ret)
+>> +		return ret;
+> 
+> Why qcom_register_dump_segments() already does this ? why need to
+> add entire region ? please modify qcom_register_dump_segments()
+> according to your need.
+>
 
-I will update this and keep it as a no-functional-change.
-> Either iommus is valid or is not. If it is not, then need mentioning in
-> commit msg for example and then you drop it from common schema and add
-> it to the bindings where it is valid.
+Ack, I will remove the whole-carveout segment and use
+qcom_register_dump_segments() for the firmware segments.
 
-I will cover this in a separate commit.
-
-Thanks
-Komal
-
+>> +
+>> +	ret = rproc_coredump_add_segment(rproc, pas->secondary_mem_phys,
+>> +					 pas->secondary_mem_size);
+>> +	if (ret)
+>> +		rproc_coredump_cleanup(rproc);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static void qcom_pas_minidump(struct rproc *rproc)
+>>  {
+>>  	struct qcom_pas *pas = rproc->priv;
+>> @@ -577,16 +600,38 @@ static int qcom_pas_stop(struct rproc *rproc)
+>>  static void *qcom_pas_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
+>>  {
+>>  	struct qcom_pas *pas = rproc->priv;
+>> -	int offset;
+>> +	phys_addr_t base;
+>> +	void __iomem *region;
+>> +
+>> +	if (da >= pas->mem_reloc && len <= pas->mem_size &&
+>> +	    da - pas->mem_reloc <= pas->mem_size - len) {
+>> +		base = pas->mem_reloc;
+>> +		region = pas->mem_region;
+>> +	} else if (da >= pas->mem_phys && len <= pas->mem_size &&
+>> +		   da - pas->mem_phys <= pas->mem_size - len) {
+>> +		base = pas->mem_phys;
+>> +		region = pas->mem_region;
+>> +	} else if (da >= pas->secondary_mem_reloc &&
+>> +		   len <= pas->secondary_mem_size &&
+>> +		   da - pas->secondary_mem_reloc <= pas->secondary_mem_size - len) {
+>> +		base = pas->secondary_mem_reloc;
+>> +		region = pas->secondary_mem_region;
+>> +	} else if (da >= pas->secondary_mem_phys &&
+>> +		   len <= pas->secondary_mem_size &&
+>> +		   da - pas->secondary_mem_phys <= pas->secondary_mem_size - len) {
+>> +		base = pas->secondary_mem_phys;
+>> +		region = pas->secondary_mem_region;
+>> +	} else {
+>> +		return NULL;
+>> +	}
+>>  
+>> -	offset = da - pas->mem_reloc;
+>> -	if (offset < 0 || offset + len > pas->mem_size)
+>> +	if (!region)
+>>  		return NULL;
+>>  
+>>  	if (is_iomem)
+>>  		*is_iomem = true;
+>>  
+>> -	return (__force void *)pas->mem_region + offset;
+>> +	return (__force void *)region + (da - base);
+>>  }
+>>  
+>>  static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *fw)
+>> @@ -598,10 +643,21 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
+>>  	size_t table_sz;
+>>  	int ret;
+>>  
+>> -	ret = qcom_register_dump_segments(rproc, fw);
+>> -	if (ret) {
+>> -		dev_err(pas->dev, "Error in registering dump segments\n");
+>> -		return ret;
+>> +	if (qcom_pas_has_secondary(pas)) {
+>> +		if (list_empty(&rproc->dump_segments)) {
+>> +			ret = qcom_pas_register_dump_segments(rproc, pas);
+>> +			if (ret) {
+>> +				dev_err(pas->dev,
+>> +					"failed to register dump segments: %d\n", ret);
+>> +				return ret;
+>> +			}
+>> +		}
+>> +	} else {
+>> +		ret = qcom_register_dump_segments(rproc, fw);
+>> +		if (ret) {
+>> +			dev_err(pas->dev, "Error in registering dump segments\n");
+>> +			return ret;
+>> +		}
+>>  	}
+>>  
+>>  	if (!rproc->has_iommu)
+>> @@ -716,13 +772,21 @@ static void qcom_pas_coredump(struct rproc *rproc)
+>>  {
+>>  	struct qcom_pas *pas = rproc->priv;
+>>  
+>> -	pas->mem_region = qcom_pas_ctx_map(pas->pas_ctx);
+>> +	if (!pas->mem_region)
+>> +		pas->mem_region = qcom_pas_ctx_map(pas->pas_ctx);
+>>  	if (!pas->mem_region)
+>>  		return;
+>>  
+>> +	if (qcom_pas_has_secondary(pas) && !pas->secondary_mem_region) {
+>> +		pas->secondary_mem_region =
+>> +			qcom_pas_ctx_map(pas->secondary_pas_ctx);
+>> +		if (!pas->secondary_mem_region) {
+>> +			dev_err(pas->dev, "unable to map secondary memory for coredump\n");
+>> +			return;
+>> +		}
+>> +	}
+>> +
+>>  	rproc_coredump(rproc);
+>> -	iounmap(pas->mem_region);
+> 
+> There was a region it was unmapped once done to avoid speculative fetch access.. we can't keep
+> it mapped all the time..
 >
 >
-> Best regards,
-> Krzysztof
+
+Ack, I’ll unmap the PAS region after coredump collection.
+
+>> -	pas->mem_region = NULL;
+>>  }
+>>  
+>>  static const struct rproc_ops qcom_pas_ops = {
+>> @@ -1133,6 +1197,12 @@ static int qcom_pas_probe(struct platform_device *pdev)
+>>  	if (desc->early_boot)
+>>  		pas->rproc->state = RPROC_DETACHED;
+>>  
+>> +	if (qcom_pas_has_secondary(pas)) {
+>> +		ret = qcom_pas_register_dump_segments(rproc, pas);
+>> +		if (ret)
+>> +			goto remove_ssr_sysmon;
+>> +	}
+> 
+> For early boot, we don't even have support for the primary image
+> itself for the first crash as we did not load for its first boot
+> up. So, this is new and you don't have check why do we need it in
+> probe whether it is early booted subsystem or loaded by linux
+> Also, not sure if it is right to dump entire memory region.
 >
+
+
+Ack, I will remove probe-time registration and add only firmware-derived
+dump segments when the firmware is available.
+
+>> +
+>>  	ret = rproc_add(rproc);
+>>  	if (ret)
+>>  		goto remove_ssr_sysmon;
+>> @@ -1144,6 +1214,7 @@ static int qcom_pas_probe(struct platform_device *pdev)
+>>  	return 0;
+>>  
+>>  remove_ssr_sysmon:
+>> +	rproc_coredump_cleanup(rproc);
+>>  	qcom_remove_ssr_subdev(rproc, &pas->ssr_subdev);
+>>  	qcom_remove_sysmon_subdev(pas->sysmon);
+>>  deinit_remove_pdm_smd_glink:
+>> @@ -1169,6 +1240,15 @@ static void qcom_pas_remove(struct platform_device *pdev)
+>>  		of_platform_device_destroy(&pas->bam_dmux->dev, NULL);
+>>  
+>>  	rproc_del(pas->rproc);
+>> +	rproc_coredump_cleanup(pas->rproc);
+>> +	if (pas->secondary_mem_region) {
+>> +		iounmap(pas->secondary_mem_region);
+>> +		pas->secondary_mem_region = NULL;
+>> +	}
+>> +	if (pas->mem_region) {
+>> +		iounmap(pas->mem_region);
+>> +		pas->mem_region = NULL;
+>> +	}
+>>  
+>>  	qcom_q6v5_deinit(&pas->q6v5);
+>>  	qcom_pas_unassign_memory_region(pas);
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
+
+-- 
+Best Regards,
+Anvesh
 
