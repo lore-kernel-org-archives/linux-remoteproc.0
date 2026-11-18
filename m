@@ -1,112 +1,112 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1794997767;
-	b=xTa6aZhSX1OE3KAqlYCv8pauXW9ZnhsvFHuaQdYmDacZnp71cEUZFpCsXbaukZcOuPZx
-	 5mnTy8J9U8aRMtTq6IoyscFzB7xQ7tz94hJzcdxvgDqwVAeIpo1uObpr6egyHKAT8Uqcj
-	 J7hrQXg0gTLx1Xnk+gC7WM2tf0EVKfTMDP9QvYXuf8+emwRjOVKB6VdbXcROIWv5c9nD8
-	 paqs+j1OWZmo+e4Czms5xQqLpoL6tTkQT6wZNHMbNYtml1VPLvrQNf79Q97CMOP2Utifw
-	 kbsJwpsZu/+csWD8c8tnAEEGI+zcM8D//NoDBj2d0CTDVGiK3h2Y4eKOAZ7zAYvIv3Q==
+	t=1795016257;
+	b=du7RDLXEEzqcuaEOi7EmqnNHgK0f4TzaAoCOSE4akXe/5JuVQeojVJgZh1Wz+H0nzTS4
+	 +fzWLv9+16SZ2oAJGg9ME+XssWy7ULJ3KBim14sA2VksIGgDhnWoyJz44BwlPDx8Apg63
+	 0MCaSBU/zLaxP6jEUJdaB9iVJZDqvtQb7CNZFf+fkZzUEqUwIWQtnHdaVTMBKo8IcqCGP
+	 C0Gevd4Wl1Z7qSDS8WxNGdAxySOnkERrnFDtrDAQ8MeCCDrMUBMaITnkigkqBxm1dLbpl
+	 ochTzeZsEFP8BvP1l7721k47HGGvMRyUi01kjrPO7G4HmBp061R0fjPURwR61qnj1jQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1794997767;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795016257;
 	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
 	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
-	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	 Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Proofpoint-Spam-Details-Enc:
-	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Authority-Analysis:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=;
-	b=Qny9zr4rJd9GROiOJMDReTHr9FrWjxKXDUFazQF+d8s07I5DeQz0zMPT4cXgJTXU52+K
-	 iFnJLeVovbXD9MhcJ2JsZAsxRFxxNbSoZ9+9jqxKwLrD8MRW08YmNx56O1iRjTvx/K9YD
-	 c4eGllgzS0DhCvN6fZtAbBvSU7j16QItEz0AXARmSGloDs5eASikM8fnq+QayRjRZy7ka
-	 MVknObnmvukACq5UT5B3s/AcY0eEaYK0zfqCwh5qp7Y9CGetD4HsM7sq0hly5/xdmYKrT
-	 KPGl4WCVF3dXwUZVeKwd8fPH4ZvA/lK2VcfjCCd4Fnhib95y5Tgy/ggaLa1T1yrx3VQ==
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:
+	 Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Authority-Analysis:
+	 X-Proofpoint-GUID:X-Proofpoint-ORIG-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-Spam-Info:
+	 X-Proofpoint-Virus-Version:X-Proofpoint-Spam-Details;
+	bh=E3TVw8XJ6Rg5jWJLudhPiQZ/2xLyIljqKLMLiG7k+vI=;
+	b=qblia3/GxYW8ou2bokcsEWz9Qb/4ahZ+owgqaOxr+BOeCQ9/fhNkHvUnOPNzMwJeOZ2A
+	 rMgbvuNonZR7qNnKFTw/cpx9d8OvemppbfdXwE77l8AYhSinmKkPdgDTPUrO05q/cwzbP
+	 gwRW1z+CFptYYCCWCw7SVYAam0c5IFafAJ2jRrQhZBv6wzQAob26+gQERvu4dPHxN1aOl
+	 fJt6OkqjqS6natTiELYMlMT6B1nCCGLBYMIiSgjJ1IOL1rIeeP4PCft9l5BHtyM+/LzX6
+	 +KF7OdaAJFWJUcPo/n+JZ5mIzsGhCoZoUxo7RJKnzJJvI4bRt0sjoAdRfPgNDTgaFSg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=oss.qualcomm.com;
 	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=D4Nn3l1f;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=J18DB677;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="X/CR0GMr";
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gMcXPcL0;
 	arc=none smtp.remote-ip=205.220.168.131
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9562B606A32A
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 10:29:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 9562B606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AEC606A320
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 15:37:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 88AEC606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=D4Nn3l1f;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=J18DB677
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AI9k8p62398688
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 10:29:26 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=X/CR0GMr;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=gMcXPcL0
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AIDQMv4633499
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 15:37:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=; b=D4Nn3l1febtFyFRi
-	pjY89QCokUB76gdIDWbw/Jlk2J2fk/Lkphk6iJW4JJRmCCtq8eTHfdWy464JwlwC
-	s5eclJPHNEJKDxXMGplCyXEQU39bmxmXJSNVBlSa4AVZzm4/PVzI4vHFgqbBfsDK
-	rLMg9Zqo9CMqcOxWOMuLeFVokEVcp0JenBm8AEy0nuQODmRZrOfYn/psrGUvZgbz
-	ZL/uP+nYACkMN94hCrPb1eaPeqbMcmv5gO7VNgsTnh1WkREz76uVbpaxhSvOeKkd
-	gTNyzgDL4qmmqYe9JrGgrPHK2ER5BbLtDG6K/p7H38mWQx3ROy7ajCI9nVh+WmNg
-	eks9sQ==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv92jme-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=E3TVw8XJ6Rg5jWJLudhPiQ
+	Z/2xLyIljqKLMLiG7k+vI=; b=X/CR0GMro5+Da6Ax6Osuc6gXXRvITTq8xDucFC
+	YBi4kZsTDQUiMgT/0m3sbVbCajChLRpA4N7lD1WN+dkVVPXlF+m0vTZQem6XbMXB
+	yUmAB7mnmcWS8INQhLVigfxHU9oW97PbdSWxFgO+5X5p8CO+3FTHmIU/Ytqd/P/R
+	ZbCsyCHwtGWiAqqy3U7uDgeLIEabFjLrxiQuWKEPSWrq7ipwCgJTWghD5kmFJQmp
+	QNZheCfc8ofLgOJgudyNvCno4ExJsBSjxxSQ8Wfe/hkLZYa1605kvaBFMB0L2lOi
+	KRYK/GJqVK8aJO0mEXquzIcb7LCMBVjS93XjOiykPxy9LKTA==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j0yv8upxr-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 10:29:25 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2ee04c49451so11063505ad.2
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 02:29:25 -0800 (PST)
+	for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 15:37:36 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-91256a7b7b3so14980896d6.2
+        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 07:37:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1794997765; x=1795602565; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=;
-        b=J18DB677osKq2zpxOq6sSxfpANEcR08Tjnl0NrdRgo9kAa2dEz8aHjUrneXm78uz1d
-         r0rVORWgAnPIE7/avsfqAqbihLb1ZfFwBtr3GNKBUuOqERwnyd/sWtxy9sJGNQugB7yp
-         moOF4o4QC3VBL/qslMIAk4VRwhmvLVjGsKzghsxHqXgX/ATZ6X4IAaoB0LikXfZpisG+
-         p4SDN/JuPNneZfy1siQFrDNbvLRtsRD+BV22zHLMNNCpW16Pty+sYnzuuqzlH0qJqkSJ
-         JL263jJ38IqlaHk6gkj0eXjUDnSzs/KM/9NWhdmEcWPi7dcZLBSSYSPjIAobGGc7Emd6
-         EDdA==
+        d=oss.qualcomm.com; s=google; t=1795016255; x=1795621055; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=E3TVw8XJ6Rg5jWJLudhPiQZ/2xLyIljqKLMLiG7k+vI=;
+        b=gMcXPcL0AbAkUDKCs5qkEaRp0EVX6Jzau8tQuK+p89HDqQYRmhwlJpZ0fEQIK8jd1x
+         RS1wsKEHyPVw4u4kWYPFHURmnh0Geq0YjVBvYiymG0j2dGOEYdQTmZphKi+vegkT/LZ7
+         ZG5AybP+GdWsSngcjXdQgwdoxC3yjhXdNxonRX6nAadk6csKdwVS/Ur+3Ls8up9d8fYW
+         YaV3X3C7R7OpXaOVJTZIv2gBT2FT7SDZl51kK+Sroz9IJ6KirJor6jUG7HzzvsGYtLxw
+         yM1SQn7xHE8wT2stzd2SCHw/+KXUZqTiNlNi2T/fbeauvTzWh6S830a4kR4+b6hLDtBd
+         HgcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1794997765; x=1795602565;
-        h=content-transfer-encoding:content-type:in-reply-to:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=F7HShi/pVHNTYdg2FinqmbYKeZfV6jrr8hz1Nm2p0Qw=;
-        b=UCYnnSJjnUsbpNdrIA0Za2PN8IbTVcb/voubycQ7OZyLP8szI/4jdJK+FhJQcuztCx
-         OlCPaJVt0VWiZH2UEPtTg8n2KT1xnIM0NMMeR5Ab94OGuPQKwtG/eqK4njSR1zlngnlE
-         dM5xN9agKFld1AanUA81FkCvLbF5cFvBT+23Ji4Hty6mk+XweXBYhrVGoeiHAac0prE1
-         ZJwMo/XUmn6xeehvhhyqfZ/Yu/h24MzYKJNxrY43tEtepoyyowxnxsrBKKTKsYkjIBkJ
-         zP91MJJ6+9PqUrYemHE2RZG+U097wd5ntutfih6UeNF6AvntPET6cFAuSvTh9MZhG5Vs
-         MoQw==
-X-Forwarded-Encrypted: i=1; AL+hErGAqM63OyuGpDNwsUdA7YiqTnxKbxFp+2d5dFtLZWSErSYEA89azF0XEeF+07P5mIt0G9+Bqq2d6/Asj3LzVgyB@vger.kernel.org
-X-Gm-Message-State: APuU4Z8VrdVf7wVG4gCnEHpK6QXCTscZ0P8/R5uulmQhnxvDqYlscCic
-	9MO3EIEyzG0B9wyFKW06pGpzGlWMnmyGE2I+TYoNFyG7WHbHGRTIaL1xA1n6VYre3b8grzHIYgm
-	j8bcqAdqB1jSoyQvspSjkaO5dF+ys+IeZYe8BoTWhBM30J2QAKugrbCT2RL0hV6efUQQeHz1n
-X-Gm-Gg: AZFdTZepQoxQbHG7Fp+kE4oHxqULrSp+6CdOzRNbrYe02M606jRsNJxQznLrisYkVg3
-	xqKLcgYp3kTTxbN4oEa9JQRVTNYVqIfy0aKJMCH3US9W6imBn76AkISD+IOp9jCXULOzn57EEzn
-	nrpYPBchXdEPtEviqj4Xc3zyJLOAsohgqWZOoeEa1SWhecD+zsPjJu6VlvYdTK34gbeJE3BOGed
-	wrnc/UrIpVfEjk7XCsMQkAlMPQhgBKpJomO+Kw2RGDetuUB/4y15BARp/p7/SbrcJ4++ptRsa8M
-	2sgV0JioMyZDnqL8zaTh8YmeaiFPxeesfcdtLwD/c9kiYptsxbZTxnxhUJOcDaj5rR4oAS6Oufi
-	1I87k6LeG3kxB/JIlTz3MMqo0/UoyrH0/GMj0dSbcVvwWepy/LDsmoFXtXxqXTTokmkXaCSsWAm
-	slbYh6m4b8R6SxNMc9WIrrQ+buGn1/TTPXoZQeXCe4+/OWpW9pNdAK7RulEN6HPg==
-X-Received: by 2002:a17:903:244f:b0:2ed:379:158d with SMTP id d9443c01a7336-2eff73f1eefmr24169885ad.9.1794997764930;
-        Wed, 18 Nov 2026 02:29:24 -0800 (PST)
-X-Received: by 2002:a17:903:244f:b0:2ed:379:158d with SMTP id d9443c01a7336-2eff73f1eefmr24169625ad.9.1794997764427;
-        Wed, 18 Nov 2026 02:29:24 -0800 (PST)
-Received: from [10.149.122.146] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2eff6115452sm11186825ad.16.2026.11.18.02.29.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Nov 2026 02:29:23 -0800 (PST)
-Message-ID: <cc64e5f0-fb82-41eb-8f26-6dfab7cd0791@oss.qualcomm.com>
-Date: Wed, 18 Nov 2026 15:59:18 +0530
+        d=1e100.net; s=20260707; t=1795016255; x=1795621055;
+        h=cc:to:content-transfer-encoding:content-type:mime-version
+         :message-id:date:subject:from:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=E3TVw8XJ6Rg5jWJLudhPiQZ/2xLyIljqKLMLiG7k+vI=;
+        b=0jnGbpNASnwxpTOYhwy2Z3h3rc00+6uz90QXTrH3tIww6pqWLvkRDhNtLsgUzxDBWm
+         GTT0vVu6xN9ffP/1SLW38Q42lmYX3MfjpnhHGrmY2oHpsU/OAqqs8rbOygJCR38Sg6j9
+         jETndx3t1y+QBsR88zkuh2K6eYk0VnYFcSGio7VAw531e18k2nihMuDmR4seuNFydQG8
+         XfOrM73bxU5X+7VM1jIccDaTpYq82W8oaUVpBJCk/yBferce63N4gGg+uMKVuyd6UnkD
+         We54Wdc6f8b9aobImeB5BATNzi9bYjxN/D4hjTmiOmWOjkTt6ohTOTiRAwJDlp14GRaf
+         iHpw==
+X-Forwarded-Encrypted: i=1; AL+hErFIvqBAS+gTm+LJg0aepjrlV6b1VLruTsoWG8f28oQWUpg+fR00GYcLJkEc21LvmxSibFk9KRdbG18kd89pWXYh@vger.kernel.org
+X-Gm-Message-State: APuU4Z8rqFlUYfqytf6D7850MVywZRMs0oSs+IlxgDgCd4zDlzwBXSvT
+	HRXf4lmIGv4tNTagxCo7Q7vFEzBMwGgGKm8rQ3udR5MA/40wDR4PM69wJmuNdNbMn681MiMzWus
+	eVF/gM9Vvje/XM49v+wodPvGKo0bu384rTg4Gc+qL16y29OPgSETOMNeHf/zYB2VvtwwM7byOCc
+	XhuPoF
+X-Gm-Gg: AZFdTZdYZh++CxzxYM5DyXMEtqbIGDQWJNdaDq0jQzF2oO5yF1JZjITrb4kP0nWu3n8
+	ondLxdIh/P/aNf0v36Va4HlSh7OOXWuAwg9yEYVzqY/AwBXvWHNMMmlI9tGHwYD44bc2Y7Xis29
+	dthwCDbnf322okRf7xcCeiq3q9jZJJLMplioYFml2FHz3PCu5KH7nR1JCE1eJgLoARV0NtlSgxy
+	ohosUWqtYjwC8pKdsBAxsqPjRJNzOxc+EXtrDylndERNIM+GzTcC3VrcM6IVFkB+hYtLZM3YLzl
+	R650l5KPyZGmgvjt2UTkTi3WHHNmNiGXzo896kEEUVv2fb+ExP8A8QsWDAENjBQ9dhZwOlCLjTM
+	vxBLnmDmwE9IpGIiuKVJAOt1P+CmGAXmxDmGEsva6t/sVbAqglW1vkovjgFkdy7JlkbNaLHOTpR
+	7YXyk1V1/fNfQk5tBH0ABWCxGraqNdTs11on6jV05g1yn8m0JR+y8OIiTcZ341
+X-Received: by 2002:ad4:5de3:0:b0:91c:5fd1:b334 with SMTP id 6a1803df08f44-92114e9e201mr45357876d6.54.1795016255353;
+        Wed, 18 Nov 2026 07:37:35 -0800 (PST)
+X-Received: by 2002:ad4:5de3:0:b0:91c:5fd1:b334 with SMTP id 6a1803df08f44-92114e9e201mr45357196d6.54.1795016254790;
+        Wed, 18 Nov 2026 07:37:34 -0800 (PST)
+Received: from hu-ajainp-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-92114d0d879sm24569676d6.12.2026.11.18.07.37.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Nov 2026 07:37:34 -0800 (PST)
+From: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
+Subject: [PATCH v3 0/4] Add Glymur OOBMSS support
+Date: Wed, 18 Nov 2026 21:06:41 +0530
+Message-Id: <20261118-oob-support-glymur-v3-0-2cbdfe208d56@oss.qualcomm.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -116,279 +116,149 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] remoteproc: qcom: pas: Add coredump support for
- secondary processors
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAAnG/WoC/22Nyw6DIBQFf6VhXQwPUemq/9F0gTyURsWCkhrjv
+ xftpgs3N5nk3JkVBO2tDuB2WYHX0QbrhgT0egGyFUOjoVWJAUGkQJxQ6FwNwzyOzk+w6ZZ+9lB
+ wnjPBKKlqCdLj6LWxn0P6eP44zPVLy2k37YvWhsn55ahGvO+OAEaInwUihgjyQsrKGCm1oncXQ
+ vaeRSdd32fpgL0TyZ8Js1MTSaYSs5wyw4hS5Ylp27YvcjrRIRcBAAA=
+X-Change-ID: 20260923-oob-support-glymur-a9945a5328bc
+To: Bjorn Andersson <andersson@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Rob Herring <robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-References: <20261015-oob-support-glymur-v2-0-715435f52dd7@oss.qualcomm.com>
- <20261015-oob-support-glymur-v2-3-715435f52dd7@oss.qualcomm.com>
- <20261117081011.jcuxog7ixwbfbyce@hu-mojha-hyd.qualcomm.com>
-Content-Language: en-US
-From: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
-In-Reply-To: <20261117081011.jcuxog7ixwbfbyce@hu-mojha-hyd.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA0MSBTYWx0ZWRfXxRx2w9JP8XG/
- fE446LXODPIFzeliA63zRkXqubpeRuAy+RhBM/6tczssvdD/jO4jxMAK5iMExadeyW5RnQ/1lDN
- mkbyQQgSrQXyBtTsfeO0y7zOXZEj2h4oXLMsIVS60y/CJAN0Ji8bJdmZyFWjG4StvvORuDpuZQG
- Ur4QGxsmG1e0HoAsjLBj3DUNWcVXeTXBrpU+p06rRhJtF2tUj5/goBwBU5zHMi3AMuXEKthA/ss
- LSEdO1QBP1LlfN771drFU3P19uDLk9pGRjKfe5NlUSgO013ZtXLw1o/RfrIWLt+mJiag2o1vtw0
- joHk/qP20A43HUen1sOBacaW7a+zQ1UQPj/9+NPL+gO1Qvf6mr9tx2xSXF9w6m+KpCaiSoqFU+q
- 4CLK9gsynIIfIoOFhcEkjIH8kO96NdktW5xVDrplRXUcsjHUItH0pHu0uu7E1ywwedYW3Pwd0Lz
- gUssECIdzBNDGUpTyBA==
-X-Proofpoint-GUID: DBEeDPUJb_xucG4uf3YFGeQI9TT0lbMz
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA0MSBTYWx0ZWRfX8LZLTy0FYozd
- cfuWgtN9BTJFu5aKjSISN9AhnQriRV2OiF+GbmL7og/cxA/yvDX9hhm8UWJPEGkWjP8cswiwgkf
- 8mv/gxee9sqeIjBJ8d5elfgJah1K25Y=
-X-Authority-Analysis: v=2.4 cv=LuQHWXdc c=1 sm=1 tr=0 ts=6afd7e05 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+        Conor Dooley <conor+dt@kernel.org>, Jain P <anvesh.p@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+X-Mailer: b4 0.15.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795016249; l=4276;
+ i=anvesh.p@oss.qualcomm.com; s=20260313; h=from:subject:message-id;
+ bh=sFemIgyzO9lvPSe4UIL08ftNFBoZLUN3QQqRlbQQp5Y=;
+ b=1ozoYVmO6bY6Fs5ARJ2bx6yNupGqbXe3ZChbQtawMvzHdate8Qoq2G9NXzPPzUhKVBuSETj1W
+ xHSEBnMjKtxB5Dn3azS9pgjEhQ+mQZRin/da7Gghg90WhXw2L2XU9Ep
+X-Developer-Key: i=anvesh.p@oss.qualcomm.com; a=ed25519;
+ pk=8o9EG7gkPe2Er9y9UVCx8MTdcFCwU8Pa54hBZPuduXE=
+X-Authority-Analysis: v=2.4 cv=Eu1HPicA c=1 sm=1 tr=0 ts=6afdc640 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
  a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=YMgV9FUhrdKAYTUUvYB2:22
- a=EUspDBNiAAAA:8 a=xb-HvuPonZpJoasvX4gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: DBEeDPUJb_xucG4uf3YFGeQI9TT0lbMz
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=eoimf2acIAo5FJnRuUoq:22
+ a=NEAV23lmAAAA:8 a=bC-a23v3AAAA:8 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
+ a=KKAkSRfTAAAA:8 a=cAW_sDYG8GF9HDSd8bgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22 a=FO4_E8m0qiDe52t0p3_H:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: V985txd4evkDjAls70eSf0qTlMRVz_rr
+X-Proofpoint-ORIG-GUID: V985txd4evkDjAls70eSf0qTlMRVz_rr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE4MDA2MiBTYWx0ZWRfX2ErR7NyEhc59
+ hAfv0vpQcCyvdYuiFGeDPVgF/ML64PS9qKbfnrnFS24HcJ3bzbyo1QeQjMKNNuqolpd2jNqk+OZ
+ o5cuPSkYnwwlTqw02Ltaod5SL3hPl4DhoseIPjYHiljPLEJBXOxafStM8Cm0YAZt55cobHdi/uj
+ Ce2L6J9n541vTcnhLWclKg/IvUK53RUyo9tygGjwRNSPO2EBBRNJxWdDhp1faPKOJOnXAmBFc9u
+ qHpeF/+LX5l07He8qDuLGPG+TnixQyM+Fb5fV8T+aqkAMoA2JaJglcxCO+0IwUc2tAM4gY4bJAO
+ rdg7GcSwrxQW0DlJ1quyb1q5+8AI9xexMTIW0sBY4eBYmW/Yy9CWksYxNJUD/diHRtAbz5u3gku
+ T4QI5TpVJZuhK+DUvDv0Jo4JR/BnBQLEzOy/uD21i1XFiDw1XEJjVHkuSSGcTpBm6DE5560ZwEX
+ 9nBgBjUZRCZJzMaKsgA==
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE4MDA2MiBTYWx0ZWRfXxIqDTF2ujXH5
+ ykDgUtH5KBSiG5VYbtYpslEeABwaxFSNsTT6R5zOUcnHLm1PG6ZeaYJw9anIZ4Y1ICDPHZb1H40
+ gg212YRLTm1VrieLh31MsKXZ4xfJCFc=
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-18_02,2026-11-16_01,2025-10-01_01
+ definitions=2026-11-18_04,2026-11-16_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 malwarescore=0 suspectscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611180041
+ clxscore=1015 impostorscore=0 spamscore=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 adultscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611180062
 
+Out-of-Band Management Subsystem (OOBMSS) is managed by a common remote
+processor and consists of two Zephyr subsystems:
 
++----------------------------------------------------------+
+|                         OOBMSS                           |
+|                                                          |
+|  +------------------------+  +------------------------+  |
+|  | OOB-TEE                |  | OOB-Non-Secure         |  |
+|  | Primary processor      |  | Auxiliary processor    |  |
+|  | Primary image and DTB  |  | Secondary image and DTB|  |
+|  +------------------------+  +------------------------+  |
++----------------------------------------------------------+
 
-On 11/17/2026 1:40 PM, Mukesh Ojha wrote:
-> On Thu, Oct 15, 2026 at 11:25:51AM +0530, Anvesh Jain P wrote:
->> Add coredump support for PAS remoteproc instances with a secondary
->> processor by registering fixed dump segments for both primary and
->> secondary carveouts at probe time and mapping them during collection.
->> The attached-state path is for debug dump collection and does not
->> provide operational device recovery.
->>
->> Signed-off-by: Anvesh Jain P <anvesh.p@oss.qualcomm.com>
->> ---
->>  drivers/remoteproc/qcom_q6v5_pas.c | 102 +++++++++++++++++++++++++++++++++----
->>  1 file changed, 91 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
->> index 0bce2f0d5b4a..374cafd04b62 100644
->> --- a/drivers/remoteproc/qcom_q6v5_pas.c
->> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
->> @@ -117,6 +117,7 @@ struct qcom_pas {
->>  	phys_addr_t region_assign_phys[MAX_ASSIGN_COUNT];
->>  
->>  	void __iomem *mem_region;
->> +	void __iomem *secondary_mem_region;
->>  
->>  	size_t mem_size;
->>  	size_t dtb_mem_size;
->> @@ -162,6 +163,28 @@ static void qcom_pas_segment_dump(struct rproc *rproc,
->>  	memcpy_fromio(dest, pas->mem_region + total_offset, size);
->>  }
->>  
->> +static bool qcom_pas_has_secondary(const struct qcom_pas *pas)
->> +{
->> +	return pas->secondary_pas_id && pas->secondary_dtb_pas_id;
->> +}
->> +
->> +static int qcom_pas_register_dump_segments(struct rproc *rproc,
->> +					   struct qcom_pas *pas)
->> +{
->> +	int ret;
->> +
->> +	ret = rproc_coredump_add_segment(rproc, pas->mem_phys, pas->mem_size);
->> +	if (ret)
->> +		return ret;
-> 
-> Why qcom_register_dump_segments() already does this ? why need to
-> add entire region ? please modify qcom_register_dump_segments()
-> according to your need.
->
+The primary processor is the Out-of-Band Trusted Execution Environment
+(OOB-TEE) processor. The OOB-Non-Secure processor is an auxiliary processor
+that depends on the primary processor and cannot function independently.
 
-Ack, I will remove the whole-carveout segment and use
-qcom_register_dump_segments() for the firmware segments.
+The PAS remoteproc driver currently supports one primary image and its
+optional DTB. OOBMSS additionally requires the secondary image and DTB
+to be loaded, authenticated, mapped, shut down, and released through
+their own PAS identifiers and carveouts.
 
->> +
->> +	ret = rproc_coredump_add_segment(rproc, pas->secondary_mem_phys,
->> +					 pas->secondary_mem_size);
->> +	if (ret)
->> +		rproc_coredump_cleanup(rproc);
->> +
->> +	return ret;
->> +}
->> +
->>  static void qcom_pas_minidump(struct rproc *rproc)
->>  {
->>  	struct qcom_pas *pas = rproc->priv;
->> @@ -577,16 +600,38 @@ static int qcom_pas_stop(struct rproc *rproc)
->>  static void *qcom_pas_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is_iomem)
->>  {
->>  	struct qcom_pas *pas = rproc->priv;
->> -	int offset;
->> +	phys_addr_t base;
->> +	void __iomem *region;
->> +
->> +	if (da >= pas->mem_reloc && len <= pas->mem_size &&
->> +	    da - pas->mem_reloc <= pas->mem_size - len) {
->> +		base = pas->mem_reloc;
->> +		region = pas->mem_region;
->> +	} else if (da >= pas->mem_phys && len <= pas->mem_size &&
->> +		   da - pas->mem_phys <= pas->mem_size - len) {
->> +		base = pas->mem_phys;
->> +		region = pas->mem_region;
->> +	} else if (da >= pas->secondary_mem_reloc &&
->> +		   len <= pas->secondary_mem_size &&
->> +		   da - pas->secondary_mem_reloc <= pas->secondary_mem_size - len) {
->> +		base = pas->secondary_mem_reloc;
->> +		region = pas->secondary_mem_region;
->> +	} else if (da >= pas->secondary_mem_phys &&
->> +		   len <= pas->secondary_mem_size &&
->> +		   da - pas->secondary_mem_phys <= pas->secondary_mem_size - len) {
->> +		base = pas->secondary_mem_phys;
->> +		region = pas->secondary_mem_region;
->> +	} else {
->> +		return NULL;
->> +	}
->>  
->> -	offset = da - pas->mem_reloc;
->> -	if (offset < 0 || offset + len > pas->mem_size)
->> +	if (!region)
->>  		return NULL;
->>  
->>  	if (is_iomem)
->>  		*is_iomem = true;
->>  
->> -	return (__force void *)pas->mem_region + offset;
->> +	return (__force void *)region + (da - base);
->>  }
->>  
->>  static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *fw)
->> @@ -598,10 +643,21 @@ static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *f
->>  	size_t table_sz;
->>  	int ret;
->>  
->> -	ret = qcom_register_dump_segments(rproc, fw);
->> -	if (ret) {
->> -		dev_err(pas->dev, "Error in registering dump segments\n");
->> -		return ret;
->> +	if (qcom_pas_has_secondary(pas)) {
->> +		if (list_empty(&rproc->dump_segments)) {
->> +			ret = qcom_pas_register_dump_segments(rproc, pas);
->> +			if (ret) {
->> +				dev_err(pas->dev,
->> +					"failed to register dump segments: %d\n", ret);
->> +				return ret;
->> +			}
->> +		}
->> +	} else {
->> +		ret = qcom_register_dump_segments(rproc, fw);
->> +		if (ret) {
->> +			dev_err(pas->dev, "Error in registering dump segments\n");
->> +			return ret;
->> +		}
->>  	}
->>  
->>  	if (!rproc->has_iommu)
->> @@ -716,13 +772,21 @@ static void qcom_pas_coredump(struct rproc *rproc)
->>  {
->>  	struct qcom_pas *pas = rproc->priv;
->>  
->> -	pas->mem_region = qcom_pas_ctx_map(pas->pas_ctx);
->> +	if (!pas->mem_region)
->> +		pas->mem_region = qcom_pas_ctx_map(pas->pas_ctx);
->>  	if (!pas->mem_region)
->>  		return;
->>  
->> +	if (qcom_pas_has_secondary(pas) && !pas->secondary_mem_region) {
->> +		pas->secondary_mem_region =
->> +			qcom_pas_ctx_map(pas->secondary_pas_ctx);
->> +		if (!pas->secondary_mem_region) {
->> +			dev_err(pas->dev, "unable to map secondary memory for coredump\n");
->> +			return;
->> +		}
->> +	}
->> +
->>  	rproc_coredump(rproc);
->> -	iounmap(pas->mem_region);
-> 
-> There was a region it was unmapped once done to avoid speculative fetch access.. we can't keep
-> it mapped all the time..
->
->
+The series adds the OOBMSS device-tree binding, generic support for
+secondary images, Glymur-specific PAS parameters, and coredump support
+for PAS remoteprocs with secondary processors.
 
-Ack, I’ll unmap the PAS region after coredump collection.
+The OOB diagnostic path also requires Diag Router support in userspace.
+The related open-source work is available at:
+https://github.com/linux-msm/diag/pull/26
 
->> -	pas->mem_region = NULL;
->>  }
->>  
->>  static const struct rproc_ops qcom_pas_ops = {
->> @@ -1133,6 +1197,12 @@ static int qcom_pas_probe(struct platform_device *pdev)
->>  	if (desc->early_boot)
->>  		pas->rproc->state = RPROC_DETACHED;
->>  
->> +	if (qcom_pas_has_secondary(pas)) {
->> +		ret = qcom_pas_register_dump_segments(rproc, pas);
->> +		if (ret)
->> +			goto remove_ssr_sysmon;
->> +	}
-> 
-> For early boot, we don't even have support for the primary image
-> itself for the first crash as we did not load for its first boot
-> up. So, this is new and you don't have check why do we need it in
-> probe whether it is early booted subsystem or loaded by linux
-> Also, not sure if it is right to dump entire memory region.
->
+---
+Changes in v3:
+- Release auxiliary firmware after loading and on start failure paths.
+- Shut down the secondary firmware and DTB before the primary firmware and DTB.
+- Allocate DTB and secondary PAS contexts independently.
+- Continue primary coredump collection if secondary mapping fails.
+- Register dump segments from firmware images instead of whole
+  carveouts.
+- Move secondary dump-segment registration from probe to firmware loading.
+- Map PAS regions only during collection and unmap them afterward.
+- Place the Glymur OOBMSS PAS entry before the Glymur SOCCP entry.
+- Add Reviewed-by tags.
+- Rebase on v7.4-rc3
+- Link to v2: https://patch.msgid.link/20261015-oob-support-glymur-v2-0-715435f52dd7@oss.qualcomm.com
 
+Changes in v2:
+- Drop the redundant “binding” from the subject.
+- Rename the binding file to match the compatible.
+- Remove the IPCC definitions and invocation from the example.
+- Make the coredump commit generic for PAS remoteprocs with secondary
+  processors.
+- Shut down authenticated auxiliary processors before unmapping carveouts
+  on start failure.
+- Release TrustZone metadata on all MDT load failure paths.
+- Assign secondary PAS IDs only when the corresponding firmware names are
+  available.
+- Keep PAS carveout mappings active while coredump and debugfs trace
+  readers access remoteproc memory, avoiding a use-after-unmap race.
+- Support coredumps for relocatable PAS firmware.
+- Free registered dump segments when removing the remoteproc.
+- Move the Glymur OOBMSS PAS parameters patch to the end of the series.
+- Link to v1: https://patch.msgid.link/20261009-oob-support-glymur-v1-0-96cc8ffcced3@oss.qualcomm.com
 
-Ack, I will remove probe-time registration and add only firmware-derived
-dump segments when the firmware is available.
+To: Bjorn Andersson <andersson@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Jain P <anvesh.p@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-remoteproc@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
->> +
->>  	ret = rproc_add(rproc);
->>  	if (ret)
->>  		goto remove_ssr_sysmon;
->> @@ -1144,6 +1214,7 @@ static int qcom_pas_probe(struct platform_device *pdev)
->>  	return 0;
->>  
->>  remove_ssr_sysmon:
->> +	rproc_coredump_cleanup(rproc);
->>  	qcom_remove_ssr_subdev(rproc, &pas->ssr_subdev);
->>  	qcom_remove_sysmon_subdev(pas->sysmon);
->>  deinit_remove_pdm_smd_glink:
->> @@ -1169,6 +1240,15 @@ static void qcom_pas_remove(struct platform_device *pdev)
->>  		of_platform_device_destroy(&pas->bam_dmux->dev, NULL);
->>  
->>  	rproc_del(pas->rproc);
->> +	rproc_coredump_cleanup(pas->rproc);
->> +	if (pas->secondary_mem_region) {
->> +		iounmap(pas->secondary_mem_region);
->> +		pas->secondary_mem_region = NULL;
->> +	}
->> +	if (pas->mem_region) {
->> +		iounmap(pas->mem_region);
->> +		pas->mem_region = NULL;
->> +	}
->>  
->>  	qcom_q6v5_deinit(&pas->q6v5);
->>  	qcom_pas_unassign_memory_region(pas);
->>
->> -- 
->> 2.34.1
->>
-> 
+---
+Anvesh Jain P (4):
+      dt-bindings: remoteproc: qcom: Add Glymur OOBMSS PAS
+      remoteproc: qcom: pas: Support secondary images
+      remoteproc: qcom: pas: Add coredump support for secondary processors
+      remoteproc: qcom: pas: Add Glymur OOBMSS PAS parameters
 
--- 
-Best Regards,
-Anvesh
+ .../remoteproc/qcom,glymur-oobmss-pas.yaml         | 154 +++++++++
+ drivers/remoteproc/qcom_q6v5_pas.c                 | 358 +++++++++++++++++++--
+ 2 files changed, 477 insertions(+), 35 deletions(-)
+---
+base-commit: aebb7274476403040d582c61478df8f4a7bf9cd3
+change-id: 20260923-oob-support-glymur-a9945a5328bc
+
+Best regards,
+--  
+Anvesh Jain P <anvesh.p@oss.qualcomm.com>
 
