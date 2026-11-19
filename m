@@ -1,107 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=194.104.109.113
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.181
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795099474;
-	b=1tn0VmtsC2hLwX9hOpOEtvjcpxuG5kst66f6W8xPl4p8VWU2ZB0wcEGQJ7ZbKQ4sauis
-	 3oy82I3/6OjslCz97iTO7PrCdF21JwotVCX9qJ2FnAlnsp1+u6iHwklaH0Pabgc25L/ao
-	 U6MTX1wXNBkt7hgLsEKpC+0C2jkHV+4XfOqIc/9uKPpzgk3ihFdaxgUF+QE5OHSpyAzB3
-	 AgiOhHX3vhyFjiVGVVLbv1RoEdpCOWQMuYoG1byqZsW718LRVyvTiSJs4MNcYkfnoaimq
-	 nc8KKKDOfpuolkHdJDXLJ9yXxKCd/FA4IHGsiX/hGTCNbeCXK7p63Lqsjs5tMCLcoSQ==
+	t=1795102172;
+	b=UmSmh/A6H9EwYuc2amKIw6GhYL6WhaV24MoHp2QK4LgzmH1OA3Cq5t8Pn4eaCF9M1YtD
+	 bfvOSDJzkuoi8BA9Q9qp8XHscvgCT+IWpD4vzaOIwSrog7MRrvuPOCj2jFnUMbp4+ji0Q
+	 MkYsUuOo/oCcWoi2IhpESfjguH3FcQ5Zf2+JoT6EMWzC5uFpDYMMUo5GW8G+eub15/vgx
+	 1wgz1RNjS7ur1ktrMw6Wc65t41cU0nxmFOvmXhIaCk87TRBNRSmSaq8inLF+saiC8mtqW
+	 vGi/cQnlyYo3hWBIJxjjM6ifDCUKEVs2IErpIso0I9ZS2aoeBkJHWWpJIvxGdAqIN0g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795099474;
-	h=DMARC-Filter:DKIM-Signature:Received:X-MC-Unique:
-	 X-Mimecast-MFC-AGG-ID:Received:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:In-Reply-To:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-Exchange-RoutingPolicyChecked:
-	 X-OriginatorOrg:X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped:
-	 X-Mimecast-Spam-Score:X-Mimecast-MFC-PROC-ID:X-Mimecast-Originator:
-	 Content-Type:Content-Disposition:Content-Transfer-Encoding;
-	bh=ddl+5wLd7JrcYCQu/tKnUPSlPM9wcUjbTD7xT0J9hdE=;
-	b=Tzk4h35xLTObffQJfSWP12el22+r0ryycSw89wiQJEnnzH8iKIFB4b8Vyl+DPcpdFWcH
-	 vziD6OzQwxGnQx/PPsWFpCNCVEbJMNVsyjzr2rkufdFyQDz6GIBkrq7NCBMhUdzDJYYlZ
-	 8bkCcA9UzH+iOdHrrriQjHAvqlO0odsH3DuFUFcGGaU/3v/dyB4tLzSNnXOLjmEt8DJqI
-	 s6B85m2HgjTzF2qjK3xlSlMlIuDaAof3QadHyZ5Rdh5StHVvuBCyPpYcspeIzAKj24HZU
-	 BC4lLkfIr9JN3hi9o1MBfiMTxKFsOW29GrdbKMXuVviXaKYOZ8fsfEvCjBvlTXunLiQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795102172;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=aJBKwBt8iXnZSzkxcMNqzRBSFron06bNz2kQZO6DnuU=;
+	b=dNfnxRmJz72tjcrGEPzR9R80DbQv9rqUrzqnRDRT8sgzPPuGmuGMYtZ6C9serZh43NLr
+	 AoAedch+9CaN1eraqk1hVXsDd+M88RH6Q+jsgv4LvONKMSkrD9LkuilAZVDIBDpy61OhJ
+	 BZiQg9arHWvNVm5AxFC0yDl2UKlOvv7TBc4iC15c5QKeKRs0FzDhmAaimOF0cvdi0byhY
+	 +8Q/4BA7ac79urbtkJYUrJKgnqh/m+q0fbDzpxABjieeHdFfMDkKo3Uyf0nUXdAVs88ZP
+	 j8y7anrFe4I2zsChp5yFfIkRog8ev66ExrpHFiUf7vXmGjxeJwSuNISNNN/ZWCrwlCw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=toradex.com;
-	spf=pass smtp.mailfrom=toradex.com;
-	dkim=pass header.d=toradex.com header.i=@toradex.com header.a=rsa-sha256 header.s=toradex-com header.b=eJ4tpTPZ;
-	arc=none smtp.remote-ip=194.104.109.113
-Received: from de-smtp-delivery-113.mimecast.com (de-smtp-delivery-113.mimecast.com [194.104.109.113])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=gsRQY8jG;
+	arc=none smtp.remote-ip=209.85.215.181
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF337606A320
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 14:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org CF337606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=toradex.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toradex.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E266606A325
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 15:29:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E266606A325
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=toradex.com header.i=@toradex.com header.a=rsa-sha256 header.s=toradex-com header.b=eJ4tpTPZ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com; s=toradex-com;
-	t=1795099465;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ddl+5wLd7JrcYCQu/tKnUPSlPM9wcUjbTD7xT0J9hdE=;
-	b=eJ4tpTPZhJwDsdCCyqWdjR/WwHp8lQx3iULJQXFszPlZsRgxfm1QJ1CYrhAlC8WT1ZByAZ
-	lAQOCb8FyVp3Q/vrwi/fDD0dApBH/6VVmzDZZxiRY0FZgOfBzyPx6WTyokozUeJ9A8GYwi
-	7tX1vDakIZ6UDIsOuA9U2X6zvDq9U2c=
-Received: from ZR1P278CU001.outbound.protection.outlook.com
- (mail-switzerlandnorthazon11022117.outbound.protection.outlook.com
- [40.107.168.117]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- de-mta-73-tCU5VljqO6OmdbQnImAZ3A-1; Thu, 19 Nov 2026 14:44:22 +0000
-X-MC-Unique: tCU5VljqO6OmdbQnImAZ3A-1
-X-Mimecast-MFC-AGG-ID: tCU5VljqO6OmdbQnImAZ3A_1795099462
-Received: from ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:2e::8) by
- ZR2P278MB927271.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:202::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.10; Thu, 19 Nov
- 2026 14:44:19 +0000
-Received: from ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
- ([fe80::88:6821:13f5:a5b2]) by ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
- ([fe80::88:6821:13f5:a5b2%3]) with mapi id 15.21.0615.013; Thu, 19 Nov 2026
- 14:44:19 +0000
-Date: Thu, 19 Nov 2026 15:44:17 +0100
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
-To: Peng Fan <peng.fan@linux.dev>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Peng Fan <peng.fan@oss.nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rt-devel@lists.linux.dev,
-	Bjorn Andersson <andersson@kernel.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 00/10] mailbox: imx: Use threaded handler to avoid
- kworker in imx's remoteproc
-Message-ID: <av8LQa77SbshHmZD@francesco-nb>
-References: <av6Wc+kHFKqwFHAR@shlinux89>
- <20261116102331.K8Sc86V9@linutronix.de>
- <20261119114041.GA166708@francesco-nb>
- <av8H7l6C8fmiHdbV@fedora>
-In-Reply-To: <av8H7l6C8fmiHdbV@fedora>
-X-ClientProxiedBy: FR2P281CA0052.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:93::15) To ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:2e::8)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=gsRQY8jG
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cde0daf3a2aso1335436a12.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 07:29:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795102170; x=1795706970; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=aJBKwBt8iXnZSzkxcMNqzRBSFron06bNz2kQZO6DnuU=;
+        b=gsRQY8jG4Jij4ik+prsRTH+CLrrlVHqOXKsdOWeoBXyHCf00hlRP8SUU+0Fl2DyZpl
+         C52NdgZ0U8ntHxsOkLcq2J4GfbaeLHIzxu0VaYXel/SDdO+YCxE2q2yEI9g7kX5DLkHd
+         lR08nCVSGG3K9VN2h681WANzvCUsA5g0Yc7h/QEa+HpLOM0JxTRpOiLr7Eze50nte8ZV
+         rpaZIdaJZdJEXlE0d5f/GgVCJJZlZ1DmGZullQvwSjvhRC9YZMjOjRGFOZVRxeHKB/Pu
+         RC8mKho3Ap/L1NRRDLAHBgM/0onIXeSsILJ9pSn6QXOg0g0aoGWaB08OxaFwAqugPxR4
+         3Tlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795102170; x=1795706970;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=aJBKwBt8iXnZSzkxcMNqzRBSFron06bNz2kQZO6DnuU=;
+        b=rPntycaVZ2OWV+daAJ4/UbmHIivYTmA08aFYJ/FHJgzxfrBvoyBHg1SuI21pzSRmKV
+         xARWt3P9utSYObjm3u3FUKK9rRoLb94DMPNPlr4iepwY1iWlW0opplU2gs1wTjVO9pCF
+         vgUboMYwuLOlcJGevUAVRkeFSar+03kKkMKFzb/chumK1qclEzfW3uL3KlAUpgZLEHXx
+         trEW5I9jM1XKlzwdUbSPMppmwwoweIHug136ddJ4PVQZhJKxR7Wi/H5gtHEZDuqfhS8Z
+         +mcoy3/J7GUwfbEfPbEDPpcMkpkvo1MCvMip0Rp4FrNc1tV3Io7W/CUFmCsEiTH9VEyA
+         u9Og==
+X-Forwarded-Encrypted: i=1; AL+hErHzn2P3AQjcio0CquKnKPA+SWq6YOj/ASFVZUbSoS0hgMAclP1RhB3jlvUQzc8HnK9gz64TuTa1rEBOhBtl+abm@vger.kernel.org
+X-Gm-Message-State: APuU4Z+euLtdmL1hBj5+CeFrgiiBJKHr7PAHHUrfoug18EH6xJrFwZo8
+	+EJS+HNsWoKtZAAlHN2KaSCXjuWooOE9ehSVcAe2jjgt/7RIgig319+mKcM+JYrcIOQ=
+X-Gm-Gg: AZFdTZdRjZN96Tmve3QFflD627enVqB4atPVdY1LTPzRhpAlNhp5KIjKyeOOp1eVeLV
+	tt73b7ByR/gRimkH+5+hDQQqcGYhriFPOC/JJjwczKLWbR456soHtOZP5fg/icRUPkHkLRRqqTC
+	9Nh7Hw4NgGK+Tx+yc7XMXO3Xsike9l+OkYqkrEoRW4gP29GzvwOQB/odg1gmLFjopnqFXsmLb5p
+	JVqUz50sTvVQOM6lfK30CeFb7xzE+ky/MRVK+wIz5lcmH07M0CTHjh4iV55bBynuEHXjTGh5k8U
+	cSzQ0ExAEcPfHFIh1UDteGdjk8FXPTmhNNYQRqr7zJTSPiymz1axLIbUoPp1McxU1cVSRcPCMqc
+	ECjGJJy2LJ78xYxN/m8IAe+EYW6zvj4/UNXmGirCOKUjzStsvcKWWF/PHuAjz84uV9rNP4e88Fu
+	Q/0qaELaFhJZvyTCl6RwzPC0mfIGnrGTwdqpvecgoaFaZzy6RPa4beyKD0rOOetZWnpjYN3z0/P
+	JiwOFeCSW4kJSAbb0+tiZaMHII8h2XYLcH8qpz3qu6SqaNaK5XNBBk/uujdbz08iObhLaA4XCFc
+	xY9rcpt4W5JDUZSmGuLz4k7zY1C2VTod
+X-Received: by 2002:a17:90b:250f:b0:3b4:1336:4f53 with SMTP id 98e67ed59e1d1-3b413365299mr462810a91.1.1795102170322;
+        Thu, 19 Nov 2026 07:29:30 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:9bd7:226d:1022:f6ef])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b402e75223sm1442633a91.4.2026.11.19.07.29.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Nov 2026 07:29:29 -0800 (PST)
+Date: Thu, 19 Nov 2026 09:29:27 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Francesco Valla <francesco@valla.it>,
+	openamp-rp@lists.openampproject.org
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtio_rpmsg: fix config space alignment
+Message-ID: <av8V18TntRP2U6hQ@p14s>
+References: <20261101-rpmsg-config-size-v1-1-65686b445b22@valla.it>
+ <au4QVFyk7Zzc6y2u@p14s>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -111,157 +100,82 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZRAP278MB0495:EE_|ZR2P278MB927271:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31e16043-56cf-4f3c-39b5-08df464b97c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|23010399003|10067099003|4143699003|5023799004|56012099006|261021121427099003|261022105027099003|261022075727099003|261009223027099003|261102123227099003|261026140227099003|261026121527099003|261028144727099003|22082099003|18002099003
-X-Microsoft-Antispam-Message-Info: KTup7N2qzdFVzEW0/Qp75792bpJzo033s++7ck+QIEwiil3/laugym1uWuRPmXP3oCItjhArrDcwafBzXHVfUE3hjuN+hdPdrWMY7gPs0jwbkRVS2V1mv4RYhuRVAdTGJG8SH6nCwgz9GcI9j0LMKLnhuCYFLpI5ZgGiUvWUKI8PSbvLx0eIQH+q+J2FzcGhR555aFDDDnu+fj9G1iicfa4JIuuFey9VH/Sp8fGHr5+D2KHIE5xYBmLxEoaqcBU+6cITPBVbcgZaZM3RVp7/b665WjM+jxLdg5oeWXKPi9AJ1y6I0zYuhm6WXUebwYMuRECq+1hPz/6ZmPgIZGEk7fBVOkqwhfOsEPgJyEiTdqafFGHWOWqvEBABlIWbSoPHEpOiTEcCQyXbqexmBj8nO84rZ/yrC/Zzt5YJmncMu2BWgruUusb8XgEklmLtXhBrto6JMg6IjDEU48aF3RNHSwi/Yq+DWGD6U2dYZwPABdMVmN/tSpaffUrqeG1urOZjTaaicBbMTQ/AajXurGmNCmbHjs/uK2tJXSe7/RlwPEyPSt8EQ0rSuNkYBxbwslb89XCDvP8a6sx4efycL3WDo3deacL/tTWPsr5Fj2PbCpPfU1SJgKGqd9r23pK3JPjgclkan/Y5pu8nyiERAWrL9NUwfLYvVqadzgcXH767xDc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(23010399003)(10067099003)(4143699003)(5023799004)(56012099006)(261021121427099003)(261022105027099003)(261022075727099003)(261009223027099003)(261102123227099003)(261026140227099003)(261026121527099003)(261028144727099003)(22082099003)(18002099003);DIR:OUT;SFP:1102
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?B2suc6pvRuFum8hj40BSqdFPK4ELHsFCLiBhYgRFhT/ravCNgrhnM9T8ro1C?=
- =?us-ascii?Q?iiJ/tv6tkYLAkw7xJnTT/JQPujJEQa7r38qnfIku575Rm/oQLchfIbqxhNRD?=
- =?us-ascii?Q?JKQTZTF4FWrDmBM0jSmpXryLtWeeQ9qRTQflMZl5GMw8bb6Ok/Q4pwRZyBnY?=
- =?us-ascii?Q?KGslF2vftVkU2bC6izWkdv4g9KohkSAg5FHf59g/P1lKUzvT6g3Bd2rX8RO9?=
- =?us-ascii?Q?4jsrc/ecohWS/yw+WujuGPhIV/r7g3pkQw07xSaoH7ok6l2g2qFl7e/DhkTA?=
- =?us-ascii?Q?dMDQuGiu/XmbbbrkG0k38kmQza1L+lzqafW8iUQT+HCOFl6MrWwQvvCPoINT?=
- =?us-ascii?Q?l8H1k2Qz2Tu6apSw3+yezSZQ64mpVaXH1Go+3deRMsJ4Ca3vLitZWDlBI2bR?=
- =?us-ascii?Q?0/XpJ+9KD27K+d7zZ5D338VASYt7qowvxvsTFWxXMsFzxT3QwONi1NAhCPBG?=
- =?us-ascii?Q?QW/csj7ETHukQEfLLTkIiOcdfxxEQNaYxzeoXmENrKUjE5xYrjKpekUEOeGO?=
- =?us-ascii?Q?BdgqRMzIV+1vjMtLSfEwBRmkipTRydEJA+6B153ZjaQp8lDK6MLAV3/Y7H8o?=
- =?us-ascii?Q?Kizn3fDQOUeji/h/Y+dCZNcJEr8geMyKWU1u6AZBQxNf+qRYxEcPIa3JKHsI?=
- =?us-ascii?Q?PqmiOaNCRXZR/5sTHcoMPdFxaHGXn4HVAu6qUnN054fWOtl9C26Mg3/64oKi?=
- =?us-ascii?Q?pObalA80JkcrBw+yTJMOU7YXKjwLrm/HP8kjO71Di883mE9KDRs+sQ2HKvO0?=
- =?us-ascii?Q?t4lo+dJJXJyG0VaKYk+pQ6CyYXgT7d5+a1WV0syyVs32+fz6aC6d3vA5Cu3a?=
- =?us-ascii?Q?3GRN/l7u4vsT4kfzki9li12uBzfdJqvrUJ87L0O6nNI3Vv3hswWAEMk2JMtj?=
- =?us-ascii?Q?wyAVFAbHYtqLToQnhsAGB2s3KP6uqhGbEYT3htbjrHPP+Z68EboBiNdRAydE?=
- =?us-ascii?Q?dSfaxTofJQJ/VLugtgmNRDSFXMzmHye6YntbsVjwQ07FLUfvxjWa4l43z6Ui?=
- =?us-ascii?Q?ji8AgHnU+WWritsVZdIMLJ06MqKrXyiY5a2foAcP5aAGqTsh9w/BBOo1aWLc?=
- =?us-ascii?Q?zl4YULK+EEP7DQTY2hsxCFTlX+Ewp9zv+Nqedrs8e7m8bQUvqUbBObI19CRJ?=
- =?us-ascii?Q?ZITgMy6MNC9qWU3667MWFETm/8CQDMrzAJEZZN/IuUWuR8bhj/T2UZ3L2/s5?=
- =?us-ascii?Q?n/QBI/0UiG+FKd2zEYaoZGYEN8FlKjI7ZlRK7AmJrVPqSVmRCcMW/Kc6rY1E?=
- =?us-ascii?Q?xAGXOehPP8/6v40RBnePoxiN39nFBEiIeYYVP6AG1SLDfQrZk0xvwaWB9Nwb?=
- =?us-ascii?Q?Fm4QMLNNgmWpiTApYncErpNsxcart8yg4q0zGc8fDPFxFVRvqfht3A7HTM7R?=
- =?us-ascii?Q?Ej4J5ooifPIkvWDKSks0+XekoreNIMGiskA+AgdGTFXGREzELxozLzjS6cxa?=
- =?us-ascii?Q?9AmyaK/obfDEQqXVYbIvAqVr8I4LaMI2skOSILCSSg2PYXwZvkxnO2IPlhlc?=
- =?us-ascii?Q?e5LXPyrrEg/I9nLUJQKHgMI/5Z0hmXhJoEj0nnkehXffadheRq9Yc5nMGvtB?=
- =?us-ascii?Q?nRArSHz+L2rxmQGNQRXv086gceSSVc1GQND4QIqFDNMqPVuv3Eq7gQyc5GUb?=
- =?us-ascii?Q?3qOmGHZSh5Jto3kOaTIloBLPg6W3Hqdu1tGN8Z0KrewxAy/xyO0GK/Cx1o7U?=
- =?us-ascii?Q?UVWQpree7WD0VjNMWH2GC1vhIO8qZ4CPAoCVCYFWpYsB+rPrd2SwIu3iFEvt?=
- =?us-ascii?Q?IQeHbDRzwq+ld/MCGizOT04EB0H56j0=3D?=
-X-Exchange-RoutingPolicyChecked: 2ydbplWztFh1bXcdiXlYPNPhFqJJuzUw1a9ejvQKni9MNLTLgm3SEPbgr63cgpRoVXzlRveQZVtoyQpvsatGDxpsIc8f3GDBV8D8DYl6yFLSVTuwEr1zKWKGPVETHwjJMp7LHZAMyEXhXJVt9KBzOwPVeQh7u4e1waeewPckRVlg+CzSiGPD2z143fMz5lPX4ySGZSit0lkTDWu2LH/nPYBBHEcG/js9nFAIVJUPCNJi+r9umNNHEsxc4hW0N8IzNoIGdXoH6OuHPJPuHsoreHuo1sfe+6IFn3Dww7wzmoaZhBraj2ySYiknFT/zNVkfqeIf7AGWp6bVHgscNOqVDQ==
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31e16043-56cf-4f3c-39b5-08df464b97c2
-X-MS-Exchange-CrossTenant-AuthSource: ZRAP278MB0495.CHEP278.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2026 14:44:19.3924
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NIzCX8ee/GL51WUBrC09g2SdaH2PbTCV5CsIWfjkdoSars4PNnfH4D4qx1IWW7z0d3xyAUkszUp7ODVyyK08PU7F5Md/d0kcFJsyTbK3tzU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZR2P278MB927271
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ouVe-9o9lDgqWNC2qOyRgq1I3wAoOxbzFISr_aomBrQ_1795099462
-X-Mimecast-Originator: toradex.com
-Content-Type: text/plain; charset=WINDOWS-1252
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <au4QVFyk7Zzc6y2u@p14s>
 
-On Thu, Nov 19, 2026 at 10:30:06PM +0800, Peng Fan wrote:
-> On Thu, Nov 19, 2026 at 12:40:41PM +0100, Francesco Dolcini wrote:
-> >Hello Peng, Sebastian
+[Adding openAMP mailing list]
+
+Heads up OpenAMP people, I will merge this patch in a week.
+
+Thanks,
+Mathieu
+
+On Fri, Nov 06, 2026 at 11:37:24AM -0600, Mathieu Poirier wrote:
+> On Sun, Nov 01, 2026 at 02:54:03PM +0100, Francesco Valla wrote:
+> > The comment for virtio_rpmsg_config says that this structure is
+> > naturally aligned to 32 bits, and this is desirable by some
+> > architectures that don't get along with unaligned accesses.
+> > The content of the structure itself however isn't aligned, and the
+> > __packed attribute prevent the compiler to add this alignment.
+> > 
+> > Fix this by adding a padding byte.
+> > 
+> > Fixes: ca96ea25e51a ("rpmsg: virtio_rpmsg_bus: Get buffer size from config space")
+> > Signed-off-by: Francesco Valla <francesco@valla.it>
+> > ---
+> > Hello,
+> > 
+> > unfortunately I missed this when the original patch set was sent, but I
+> > think it's worth fixing (or at least discussing) this now before it
+> > enters a stable kernel.
+> > 
+> > The same support in open-amp has already been merged [1], but maybe it
+> > can be fixed before the next release there too?
+> > 
+> > Another, lower-impact solution would be to fix the comment, but that can
+> > then led to issues on architectures that does not support unaligned
+> > accesses (e.g.: AMR Cortex-M0).
 > >
-> >On Mon, Nov 16, 2026 at 11:23:31AM +0100, Sebastian Andrzej Siewior wrot=
-e:
-> >> On 2026-11-16 10:23:41 [+0100], Francesco Dolcini wrote:
-> >> > Our CI shows a ~10-15% eMMC sequential read throughput drop on i.MX8=
-QXP
-> >> > and i.MX8DX (Colibri iMX8X, Cortex-A35), starting with v7.2-rc1 and
-> >> > still present in v7.4-rc3 (hdparm --direct -t: ~129 MB/s -> 105-120
-> >> > MB/s on i.MX8DX). i.MX8QM, i.MX8M and i.MX9 are not affected.
-> >> >=20
-> >> > 5d1c0000.mailbox interrupt count before the test went from ~8k on v6=
-.18
-> >> > to 60k+ on v7.3/v7.4.
-> >> >=20
-> >> > Peng: any idea/suggestion? Does it makes any sense to you?
-> >>=20
-> >> Can you pin point it to a patch in this series? My guess is that
-> >> something with the masking/ unmasking went wrong. The increase might b=
-e
-> >> result of the interrupt keeping firing while the threaded interrupt di=
-d
-> >> not have a chance to run.
-> >
-> >Reverting 36cac4b5101f, 3225a745f517, e55bea377d49 and 692e1bc96a5d
-> >restores 149 MB/s with schedutil.
-> >
-> >
-> >On Thu, Nov 19, 2026 at 02:25:55PM +0800, Peng Fan wrote:
-> >> On Mon, Nov 16, 2026 at 10:23:41AM +0100, Francesco Dolcini wrote:
-> >> >Peng: any idea/suggestion? Does it makes any sense to you?
-> >>=20
-> >> Please help test whether this helps:
-> >>=20
-> >> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailb=
-ox.c
-> >> index 683ccea6f2ba..e29044cf4b92 100644
-> >> --- a/drivers/mailbox/imx-mailbox.c
-> >> +++ b/drivers/mailbox/imx-mailbox.c
-> >> @@ -635,7 +635,7 @@ static int imx_mu_startup(struct mbox_chan *chan)
-> >>  {
-> >>         struct imx_mu_priv *priv =3D to_imx_mu_priv(chan->mbox);
-> >>         struct imx_mu_con_priv *cp =3D chan->con_priv;
-> >> -       unsigned long irq_flag =3D IRQF_NO_THREAD;
-> >> +       unsigned long irq_flag =3D IRQF_NO_THREAD | IRQF_ONESHOT;
-> >>         int ret;
-> >>=20
-> >>         pm_runtime_get_sync(priv->dev);
-> >
-> >It does not help.
-> >=09
-> >The analysis below was done with Claude help, on measurements I took on =
-a
-> >Colibri iMX8QXP. I hope you can pick it up from there, this is not my
-> >area of expertise, and the best I can do is to send a revert for those 4
-> >commits.
-> >
-> >Every SCU RPC now wakes the SCHED_FIFO irq thread (TX done and RX), and
-> >while an RT task is runnable schedutil requests the maximum CPU frequenc=
-y.
-> >The A35 clock is CLK_GET_RATE_NOCACHE, so each frequency change is
-> >followed by an SCU RPC reading the rate back, which wakes the irq thread
-> >again. The loop never settles, even when idle, and the transitions (ATF =
-+
-> >SCU) are what costs the eMMC throughput (and I assume there is more
-> >impact on performance than just this).
->=20
-> Not sure whether this is root cause, per my understanding, cpu freq updat=
-e
-> is not that high frequency call.
-
-Moving to `performance` from `schedutil` or reverting those 4 patches
-solve the issue. And the significant increase on ctx switches and irq
-count is real even on idle without any emmc test running.
-
-> Let me setup a i.MX8QXP board and see what's going on there.
-Thanks!
-
-> BTW, i.MX8QM should
-> also have same issue, but seems not impact in your report, a bit werid,
-> might be because i.MX8QM has more cores :)
-
-I agree, I did not run any kind of extensive performance test. What
-happened is just that our emmc test started to fail, and this lead to
-this series.=20
-
-> Have you tried pin your emmc test thread to core3, or core2, just not cor=
-e0.
-
-It was never pinned to any core, so the scheduler decided on its own.
-And multiple runs of the test all lead to the same results.
-
-Francesco
-
+> 
+> Thanks for bringing this to my attention.  I agree with this patch.  I will give
+> Arnaud a couple of weeks to reply to this email though.
+>  
+> > Thank you
+> > 
+> > Francesco
+> > 
+> > [1] https://github.com/OpenAMP/open-amp/commit/744376f566c3ec7e06a7d093d785295b78aa486f
+> > ---
+> >  include/linux/rpmsg/virtio_rpmsg.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
+> > index 0872cbca4593..d24fedb63023 100644
+> > --- a/include/linux/rpmsg/virtio_rpmsg.h
+> > +++ b/include/linux/rpmsg/virtio_rpmsg.h
+> > @@ -23,6 +23,7 @@
+> >   *
+> >   * @version:	version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
+> >   * @size:	size of this structure in bytes.
+> > + * @reserved:	padding, reserved for future usage.
+> >   * @txbuf_size:	Tx buf size from remote's view. For Linux this is rx buf size.
+> >   * @rxbuf_size:	Rx buf size from remote's view. For Linux this is tx buf size.
+> >   *
+> > @@ -33,6 +34,7 @@
+> >  struct virtio_rpmsg_config {
+> >  	u8 version;
+> >  	__virtio16 size;
+> > +	u8 reserved;
+> >  	/* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
+> >  	__virtio32 txbuf_size;
+> >  	__virtio32 rxbuf_size;
+> > 
+> > ---
+> > base-commit: cbbddb6b08cc9900a87cccaa9b22bbe06aa4f50a
+> > change-id: 20261101-rpmsg-config-size-0dbe9ea63c6d
+> > 
+> > Best regards,
+> > --  
+> > Francesco Valla <francesco@valla.it>
+> > 
