@@ -1,99 +1,74 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.177
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795097643;
-	b=YNBUc3r5yQOqDBcr2STym2fx+kY4dMg6MbA5VNUD2i9RfpmsYbAdy4NHlKjh5NMgCrxv
-	 5V2euZdLm0Bf0dFXAlQ6IyNjzHSYC7CsAjt3oKm0hXDZRv5qO4RE54dgRDd5pcoz0SQkq
-	 m5aIC2dcSyfvxPE8YHZtMrrb72+HhIDJct47eaKX3gaLPIzdQSZzkT1vAkkn7laekh3v8
-	 p15+X5LGHdAz7JDQAZvqXAD5rts7hVndKDUE/XKK/gnsBRGEaCCYi46mTmFLF7MUAf1ae
-	 LoEYywd2hGTri+3bXl0aqQHnWXHqk/EASL1VxH2shxE2tQeR4abM+Wji54Hk5F0u8Eg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795097643;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
-	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type;
-	bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
-	b=CwLA9XfzZzuk6WUqyXg1S3G1H50Kdh8m0UeoDMZAV7DaLaAlUV6/CgQvciW8N+Y+0SMk
-	 f6OCRL2TZrLMd10Yz7O+HDZ+bwtgArgUPjwqvNds7JaFAeUmwDfzai+9Uav2HhBG3POex
-	 6zCYdbVNt8jwHB94qrnb3QTPovi+jP5nmIspT6nZEZDe1szXIvzh5P6gvEJ1h2TB1LusZ
-	 DIR4ONEuPNyeXFegiXyM9/RAPXjbZ3jUye96CvLnG0hVhzRv2aAJZOODdEQ3btex2r0Pj
-	 qxc0bltnIt1pr2XMBVat1h1Ydq6J1UgCDx6Vpeys9w8YXVkJRY6yC6o0FQrTttLNymg==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=M6JD7yIi;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.177
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=91.218.175.197
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795098624;
+	b=ww367unVGQ60WOa2oh+W8bvhOiak87GosZ7IuZw2mJIQw/U7qGYpAw73LRMt2ZgMchnR
+	 oJTFW6OsoQpwQiO1OHSF3lEPf78e1uG4m1SHCdOmO8M5hI9hRR0YzQVrNA2fvT8U1w7rb
+	 5jc5dlfXjujrJ9qVFZOzWQVv8acJHC0RomGlxJvq6h+tp5f9a66V85ShUU2ZxWG6WE841
+	 uZY4ZxHWQpGNIdLQriVK7lwa9RUcdlCDNDpgtQxe16F1jVIvJ2paGvCZP/PQfTX3Zo/GM
+	 RtAxD/iVeWkEYOX00T+yT67X+u3UXf07zikNzn+4SEhX+R5w0A4n0IyppurinhQnDRA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795098624;
+	h=DMARC-Filter:X-Envelope-To:DKIM-Signature:X-Envelope-To:Received:
+	 X-Mizu-Trace-ID:X-Migadu-Flow:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=FEcK1VASWBIoUCoyKyCFXja3r1A/FxKQfO0b3GK01/Q=;
+	b=pGgi3xbBPIQr18+gvj0wS0i32FXQT16tThokvz2qZihVdm9WoUu5BFxxc3o9Dv40d9Vl
+	 wUCxtCuA/Digo/0u9o+GbZj0uEmWy9qKgA1Vh1pcRiRRucM0QgVOVvhNntdcNfvZNcKLZ
+	 UOSnYbae5PS2yP6e2Cvwxwa3mGsHwKy7omRpuPycvLvetyhu595kctiy2v+IXwp2g6/kG
+	 DLkV3p+dyQQfBzcExSCdt3b+YqAcBKaaryl5XY5fuGhJmIN2IkuVb3vvk27aDhI2amKoW
+	 QLyopdBes939vzsI/YS1dmpGuqPp3b9n+C8FJO8RtOW11Z+7xgakNXw6hcZxoK3Phnw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linux.dev;
+	spf=pass smtp.mailfrom=linux.dev;
+	dkim=pass header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=MCO2f6aQ;
+	arc=none smtp.remote-ip=91.218.175.197
+Received: from mta0.migadu.com (out-197.mta0.migadu.com [91.218.175.197])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7245A606A320
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 14:14:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7245A606A320
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AF7606A330
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 14:30:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 62AF7606A330
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=M6JD7yIi
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-8b4d07494b0so11075367b3.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 06:14:02 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795097641; cv=none;
-        d=google.com; s=arc-20260327;
-        b=VHP0KsUkaIhTA+zULJv4/lqwcDY3Z1kiJQzEF2Ub1CtefGaYdNbMP5vcCWesXrtBNE
-         5y1dMwxeA2szqpV9YN1OAx0/IRtrtvfHUihQTVDzgSyL1Nvzv6Xce+1nhpcnC5g3mtzB
-         dBGkDo4rnOgwOmOk57T1eN9yt1226236csXDJ4ICRDXjb7qBeAqAC4p80SiSdxeuKUwO
-         o5WEwdX5DZkA1lLvJpSo21uvtuI9SHHQpdgfOxdMak01ZVEZqE7LzF7AVe2X9RRSts+T
-         y+9s3rEpQ4fxrA2B5AVXQ906EtilzgxECLdi836IUMNyk7omYaxNBxjRfZjCDJceo1IW
-         KwSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
-        fh=+KUuDetXQScDaXgnmdSL7z6pJmad0NRerNAVKxzcM60=;
-        b=LtNf1W2Yk8rhKZgEwFn7mbrCUvzIT23dDii2ZiOx9zmWjUw3MTVisv8wASscIZuV5E
-         mc+7+Gu18u0IyRoR3yaEYqrg3/oQEKlWjW9NKlo4hITshyawRtqrlVROpklT6kc69rW0
-         8D3e5bfhQHP5UaRzNehbEkpoPoPHbED6ti8FY14bg9WTTTrFVHj4fwdwZuEof7rpysRJ
-         BdErlVl/3DOl+8Y5MCUF+gsiVNCnM1DzqABw12R6TsBlwvCwA+nL9hKaTyuMHNMiL3KR
-         4hcbYDD1zsbD5ysHCve3Vebzcoqo1Ls8HKKLl4rKJRlu+Ib80N1Il3AtVs+DC67TjTgr
-         GiZQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795097641; x=1795702441; darn=vger.kernel.org;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
-        b=M6JD7yIiLwpgTYQRF736tEiVJkbxKXpefBTLQ/TPElWA+3xFBi1CbRuRD5sEXL8sVX
-         eWctIC3evmi5DEgicOgHKiD1vizsS70PFSLOlq4PQPQCXV5I4yQqPE7IgiV9JvOPW5Zl
-         S+G3nT0God8TS3nXhDsSbj31xT6FsXIEbqm4Z9+zmZuExCfyYwc3jH/x7RBqFF49jTS5
-         Wl2kbFkRrZnLyG9S52VbOxUR0xHgsGV/KHb5pXV//6OViwlLEh+4XBxn6IgBWYY6qjIU
-         yiRYGxtk2j9d1+iuqK/yr9IOA0arda3MDhPu2ixip8c2AfQVyInnbSabm4HzieYC/YVW
-         KEng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795097641; x=1795702441;
-        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
-         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
-        b=IQGxdC0ofDAvQMfJ8tfhPdV9AFl62+y9TiSRxwdOEKx3GpTK7/D/3pOh2dlluVy3xy
-         /ZLEYf1TXnZSo5eEvMvE5MSl+WDRLtfHDVQefPxKVvi3IDdgl8BPJwSq9DMCqhKi+SJ/
-         GrGKLqgd/kk4ldf0ux0Q9GO3VmOXd/ZrwY8CS11M6ynQUGhs/1qBIMGd+8H6Hrkja/xH
-         rkDQaphHYZpwdBMXaa9+C0BCGtpn+MtIMC7soTYbw7NztyuGdqslp+NNIkTA/+Lkfs9J
-         n4Oges8GJDrGoHrr859FYAi+f/thtZrMowRDDPNMwQBArohQVqe3ENAuEjx/FmcyZ1ku
-         WeKw==
-X-Forwarded-Encrypted: i=1; AL+hErGEW9p4SoNOb4iOxg2uni2g29qM5LUiccef9jKQ30Rmp8dYVfuxsbWxInbjZNGGARrLKL2TodEoSJ9XAXZYu2js@vger.kernel.org
-X-Gm-Message-State: APuU4Z9jQX/pBLNWcLm5FvopO1GU6wkhscu/SfGEqbYbCzaz7Xx2sdnW
-	oOGgxI3PZ0wix/+k0gQQmhQGj/S8aBWcLX2zU0coUeVvPaC8UiT8OxwbTZQEFSLvCcTrgT24SFT
-	ucztRvJPseaWjg7EfordKkO+5tNziBrGHfnf5oNY52Q==
-X-Gm-Gg: AZFdTZd/35RJ3se3KAx3dJ2Si8zYQcgDC4xgqvLwKyOzyW7q2fXqIX+cuoItE5bFTW4
-	/nXWq/NIJp/L5HOA1CEyDjBODcE1dhhwkdVz2Mmd/Zx+2CPNddfoilW0O23MrDFUqnJ1XESlDEY
-	E8Zbhv6IRDUbuk3xy0cyjMRNtirX9snzTcoYpZN6dcrN9y8pcitANZiGDt4fWpWYxfg/GPDF4Qk
-	ODNuoTl8ctjTtHYOz7oXiMRZZ849QbV3YGhovjct+g2Gv3Yl/jlViEnzyW9AYlPcITRcU/SQTz7
-	/VjH7nAjCLh62k/whFKobsCTaYU5k5uqL39SFJaRsddKSDq3JM+HPpMEnm+j2tC6JqI9cgRxLsZ
-	WrpVL+JYXpMuGnyDjJptp2faAmi2sHDkvygF58C+kbSapQr8Zp1MF2XRp9dAMzLZaJLX2UMM=
-X-Received: by 2002:a05:690c:680c:b0:8b1:60a0:c311 with SMTP id
- 00721157ae682-8b518e20cecmr4131297b3.33.1795097640986; Thu, 19 Nov 2026
- 06:14:00 -0800 (PST)
+	dkim=pass (1024-bit key, unprotected) header.d=linux.dev header.i=@linux.dev header.a=rsa-sha256 header.s=key1 header.b=MCO2f6aQ
+X-Envelope-To: linux-remoteproc@vger.kernel.org
+DKIM-Signature: a=rsa-sha256; bh=FFz3gGYp69FcAIj4l0Zmahf+dyqjlU9rmv2m5wrHIas=;
+ c=simple/simple; d=linux.dev;
+ h=from:to:subject:date:message-id:mime-version:content-type; s=key1;
+ t=1795098621; v=1; x=1795703421;
+ b=MCO2f6aQ7MENRTRxOZSuXhCIHs0kP4m/P2pSRGN0KQ5QH5QW9nTGPRbKwmFOQM7R2mVxlLHu
+ 1+NV82S/YGKgNpIXHn8kOlbhKVQKPBcpnZ1/0San3lfWbHiPdY5TVoRBf6wcw3h1yFF9hIA8WX5
+ V4Wjn83e6XhdRbq82s+Jk5/Q=
+X-Envelope-To: linux-remoteproc@vger.kernel.org
+Received: by smtp.migadu.com with ESMTPS id 650b3532e440f0d6;
+	Thu, 19 Nov 2026 14:30:20 +0000
+X-Mizu-Trace-ID: 650b3532e440f0d6
+X-Migadu-Flow: FLOW_OUT
+Date: Thu, 19 Nov 2026 22:30:06 +0800
+From: Peng Fan <peng.fan@linux.dev>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Peng Fan <peng.fan@oss.nxp.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Peng Fan <peng.fan@nxp.com>, linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-rt-devel@lists.linux.dev,
+	Bjorn Andersson <andersson@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 00/10] mailbox: imx: Use threaded handler to avoid
+ kworker in imx's remoteproc
+Message-ID: <av8H7l6C8fmiHdbV@fedora>
+References: <av6Wc+kHFKqwFHAR@shlinux89>
+ <20261116102331.K8Sc86V9@linutronix.de>
+ <20261119114041.GA166708@francesco-nb>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -103,338 +78,98 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261119024248.1497433-1-shunsheng1218@gmail.com>
-In-Reply-To: <20261119024248.1497433-1-shunsheng1218@gmail.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 19 Nov 2026 08:13:48 -0600
-X-Gm-Features: AclHuK9wcV_UV7jBIFkxeKjWTloKYfPaF6HMGgpxuYK0Xl4oC2cyrHzQdAH7w4g
-Message-ID: <CANLsYkzoUF12sQX-pi8Ee-iZvVScVOeUkzhkWhnam56=9NkXkg@mail.gmail.com>
-Subject: Re: [RFC PATCH] rpmsg: stop the inbound callbacks before the driver
- is removed
-To: Yaohan Li <shunsheng1218@gmail.com>
-Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261119114041.GA166708@francesco-nb>
 
-Please note that I give priority to patches written by humans.  AI
-generated patches such as this one end up in a secondary queue that I
-look at only when the primary queue is empty.
+On Thu, Nov 19, 2026 at 12:40:41PM +0100, Francesco Dolcini wrote:
+>Hello Peng, Sebastian
+>
+>On Mon, Nov 16, 2026 at 11:23:31AM +0100, Sebastian Andrzej Siewior wrote:
+>> On 2026-11-16 10:23:41 [+0100], Francesco Dolcini wrote:
+>> > Our CI shows a ~10-15% eMMC sequential read throughput drop on i.MX8QXP
+>> > and i.MX8DX (Colibri iMX8X, Cortex-A35), starting with v7.2-rc1 and
+>> > still present in v7.4-rc3 (hdparm --direct -t: ~129 MB/s -> 105-120
+>> > MB/s on i.MX8DX). i.MX8QM, i.MX8M and i.MX9 are not affected.
+>> > 
+>> > 5d1c0000.mailbox interrupt count before the test went from ~8k on v6.18
+>> > to 60k+ on v7.3/v7.4.
+>> > 
+>> > Peng: any idea/suggestion? Does it makes any sense to you?
+>> 
+>> Can you pin point it to a patch in this series? My guess is that
+>> something with the masking/ unmasking went wrong. The increase might be
+>> result of the interrupt keeping firing while the threaded interrupt did
+>> not have a chance to run.
+>
+>Reverting 36cac4b5101f, 3225a745f517, e55bea377d49 and 692e1bc96a5d
+>restores 149 MB/s with schedutil.
+>
+>
+>On Thu, Nov 19, 2026 at 02:25:55PM +0800, Peng Fan wrote:
+>> On Mon, Nov 16, 2026 at 10:23:41AM +0100, Francesco Dolcini wrote:
+>> >Peng: any idea/suggestion? Does it makes any sense to you?
+>> 
+>> Please help test whether this helps:
+>> 
+>> diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+>> index 683ccea6f2ba..e29044cf4b92 100644
+>> --- a/drivers/mailbox/imx-mailbox.c
+>> +++ b/drivers/mailbox/imx-mailbox.c
+>> @@ -635,7 +635,7 @@ static int imx_mu_startup(struct mbox_chan *chan)
+>>  {
+>>         struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
+>>         struct imx_mu_con_priv *cp = chan->con_priv;
+>> -       unsigned long irq_flag = IRQF_NO_THREAD;
+>> +       unsigned long irq_flag = IRQF_NO_THREAD | IRQF_ONESHOT;
+>>         int ret;
+>> 
+>>         pm_runtime_get_sync(priv->dev);
+>
+>It does not help.
+>	
+>The analysis below was done with Claude help, on measurements I took on a
+>Colibri iMX8QXP. I hope you can pick it up from there, this is not my
+>area of expertise, and the best I can do is to send a revert for those 4
+>commits.
+>
+>Every SCU RPC now wakes the SCHED_FIFO irq thread (TX done and RX), and
+>while an RT task is runnable schedutil requests the maximum CPU frequency.
+>The A35 clock is CLK_GET_RATE_NOCACHE, so each frequency change is
+>followed by an SCU RPC reading the rate back, which wakes the irq thread
+>again. The loop never settles, even when idle, and the transitions (ATF +
+>SCU) are what costs the eMMC throughput (and I assume there is more
+>impact on performance than just this).
 
-On Wed, 18 Nov 2026 at 20:42, Yaohan Li <shunsheng1218@gmail.com> wrote:
+Not sure whether this is root cause, per my understanding, cpu freq update
+is not that high frequency call.
+
+Let me setup a i.MX8QXP board and see what's going on there. BTW, i.MX8QM should
+also have same issue, but seems not impact in your report, a bit werid,
+might be because i.MX8QM has more cores :)
+
+Have you tried pin your emmc test thread to core3, or core2, just not core0.
+
+Regards
+Peng
+
 >
-> rpmsg_dev_remove() calls rpdrv->remove() and destroys the default
-> endpoint only afterwards.  Until the endpoint is destroyed it keeps
-> delivering inbound messages to rpmsg_ept_cb() and flow control
-> notifications to rpmsg_ept_flow_cb(), both with ept->priv pointing to the
-> per-endpoint data that the driver releases during its remove.  For the
-> default endpoint of rpmsg_chrdev that data is the rpmsg_eptdev that is
-> freed as soon as the channel goes away.
+>v7.4-rc3, 4 CPUs, idle irq/cpufreq transitions per 10s, hdparm --direct -t:
 >
-> Add an optional quiesce_ept operation that stops the inbound callbacks
-> without releasing the endpoint, and call it from rpmsg_dev_remove()
-> before rpdrv->remove(), and from the probe failure path which calls the
-> driver remove callback as well.  The endpoint itself is still destroyed
-> after the driver remove() returns, so drivers that want to send a last
-> message keep working.  No in-tree RPMsg driver sends on the endpoint
-> from its remove callback.
+>                               irq    trans  schedutil  performance
+>  v6.18                          -      -    149.7 MB/s     -
+>  v7.4-rc3                   16203  10800    113 MB/s   150 MB/s
+>  v7.4-rc3 + IRQF_ONESHOT     7832   7813    113 MB/s   150 MB/s
+>  v7.4-rc3 + revert 4 commits   60     36    149 MB/s   150 MB/s
 >
-> The operation runs in process context; it is not an atomic one.  Virtio
-> takes the mutex it already holds around the callbacks, mtk_rpmsg waits
-> for an RCU grace period, and qcom_smd and qcom_glink take their receive
-> spinlock.  Callback execution context is transport specific: a callback
-> invoked under a spinlock or an RCU read side section must not sleep, and
-> the operation preserves the context each transport already used.  Glink
-> also takes recv_lock around the flow control callback, whose only
-> in-tree implementation, rpmsg_ept_flow_cb(), sets two flags and wakes
-> the read queue; glink is also the only transport that delivers that
-> callback today.
+>The 4 commits are 36cac4b5101f, 3225a745f517, e55bea377d49 and
+>692e1bc96a5d; reverting only the RX part (e55bea377d49) is not enough.
 >
-> qcom_smd skips the callback once it is gone and mtk_rpmsg switches the
-> callback pointer to RCU because its IPI handler runs without a lock.  The
-> warning that mtk_rpmsg_ipi_handler() prints for a failing callback has to
-> be inside the RCU read side section: quiesce_ept() waits for the readers
-> with synchronize_rcu(), and afterwards the endpoint and the device it
-> names may be gone.
 >
-> quiesce_ept is optional, so the guarantee is per transport: only a
-> transport that implements it can promise that no inbound callback is
-> left when the driver remove callback returns.  All four in-tree
-> transports do.
+>#regzbot introduced: 692e1bc96a5d^..36cac4b5101f
+>#regzbot title: mailbox: imx: threaded IRQ handling causes a cpufreq transition storm on SCU-based i.MX8
 >
-> Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
-> ---
->  drivers/rpmsg/mtk_rpmsg.c         | 28 +++++++++++++++++++++++-----
->  drivers/rpmsg/qcom_glink_native.c | 17 ++++++++++++++---
->  drivers/rpmsg/qcom_smd.c          | 20 +++++++++++++++++---
->  drivers/rpmsg/rpmsg_core.c        | 11 +++++++++++
->  drivers/rpmsg/rpmsg_internal.h    | 18 ++++++++++++++++++
->  drivers/rpmsg/virtio_rpmsg_bus.c  | 16 ++++++++++++----
->  6 files changed, 95 insertions(+), 15 deletions(-)
+>Thanks,
+>Francesco
 >
-> diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-> index 430a9b2aa7bb..37d573287ced 100644
-> --- a/drivers/rpmsg/mtk_rpmsg.c
-> +++ b/drivers/rpmsg/mtk_rpmsg.c
-> @@ -73,12 +73,23 @@ static void mtk_rpmsg_ipi_handler(void *data, unsigned int len, void *priv)
->  {
->         struct mtk_rpmsg_endpoint *mept = priv;
->         struct rpmsg_endpoint *ept = &mept->ept;
-> +       rpmsg_rx_cb_t cb;
->         int ret;
->
-> -       ret = (*ept->cb)(ept->rpdev, data, len, ept->priv, ept->addr);
-> -       if (ret)
-> -               dev_warn(&ept->rpdev->dev, "rpmsg handler return error = %d",
-> -                        ret);
-> +       /*
-> +        * The warning has to be inside the read side section as well: @ept and
-> +        * the device it points to are released once quiesce_ept() has waited
-> +        * for the readers, and that wait would be over right after the unlock.
-> +        */
-> +       rcu_read_lock();
-> +       cb = rcu_dereference(ept->cb);
-> +       if (cb) {
-> +               ret = cb(ept->rpdev, data, len, ept->priv, ept->addr);
-> +               if (ret)
-> +                       dev_warn(&ept->rpdev->dev,
-> +                                "rpmsg handler return error = %d", ret);
-> +       }
-> +       rcu_read_unlock();
->  }
->
->  static struct rpmsg_endpoint *
-> @@ -100,7 +111,7 @@ __mtk_create_ept(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
->         kref_init(&ept->refcount);
->
->         ept->rpdev = rpdev;
-> -       ept->cb = cb;
-> +       RCU_INIT_POINTER(ept->cb, cb);
->         ept->priv = priv;
->         ept->ops = &mtk_rpmsg_endpoint_ops;
->         ept->addr = id;
-> @@ -126,6 +137,12 @@ mtk_rpmsg_create_ept(struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
->         return __mtk_create_ept(mtk_subdev, rpdev, cb, priv, chinfo.src);
->  }
->
-> +static void mtk_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept)
-> +{
-> +       rcu_assign_pointer(ept->cb, NULL);
-> +       synchronize_rcu();
-> +}
-> +
->  static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
->  {
->         struct mtk_rpmsg_rproc_subdev *mtk_subdev =
-> @@ -158,6 +175,7 @@ static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data, int l
->  }
->
->  static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops = {
-> +       .quiesce_ept = mtk_rpmsg_quiesce_ept,
->         .destroy_ept = mtk_rpmsg_destroy_ept,
->         .send = mtk_rpmsg_send,
->         .trysend = mtk_rpmsg_trysend,
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index f848ab46161d..5b88a70ed08c 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -1165,8 +1165,11 @@ static void qcom_glink_handle_signals(struct qcom_glink *glink,
->
->         enable = sigs & NATIVE_DSR_SIG || sigs & NATIVE_CTS_SIG;
->
-> +       spin_lock_irqsave(&channel->recv_lock, flags);
->         if (channel->ept.flow_cb)
-> -               channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
-> +               channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv,
-> +                                    enable);
-> +       spin_unlock_irqrestore(&channel->recv_lock, flags);
->  }
->
->  void qcom_glink_native_rx(struct qcom_glink *glink)
-> @@ -1408,16 +1411,23 @@ static void qcom_glink_remove_rpmsg_device(struct qcom_glink *glink, struct glin
->         channel->rpdev = NULL;
->  }
->
-> -static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
-> +static void qcom_glink_quiesce_ept(struct rpmsg_endpoint *ept)
->  {
->         struct glink_channel *channel = to_glink_channel(ept);
-> -       struct qcom_glink *glink = channel->glink;
->         unsigned long flags;
->
->         spin_lock_irqsave(&channel->recv_lock, flags);
->         channel->ept.cb = NULL;
-> +       channel->ept.flow_cb = NULL;
->         spin_unlock_irqrestore(&channel->recv_lock, flags);
-> +}
-> +
-> +static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
-> +{
-> +       struct glink_channel *channel = to_glink_channel(ept);
-> +       struct qcom_glink *glink = channel->glink;
->
-> +       qcom_glink_quiesce_ept(ept);
->         qcom_glink_send_close_req(glink, channel);
->  }
->
-> @@ -1611,6 +1621,7 @@ static const struct rpmsg_device_ops glink_device_ops = {
->  };
->
->  static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
-> +       .quiesce_ept = qcom_glink_quiesce_ept,
->         .destroy_ept = qcom_glink_destroy_ept,
->         .send = qcom_glink_send,
->         .sendto = qcom_glink_sendto,
-> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-> index 7dbe1c6efe41..a27964c757ca 100644
-> --- a/drivers/rpmsg/qcom_smd.c
-> +++ b/drivers/rpmsg/qcom_smd.c
-> @@ -558,9 +558,11 @@ static int qcom_smd_channel_recv_single(struct qcom_smd_channel *channel)
->                 len = channel->pkt_size;
->         }
->
-> -       ret = ept->cb(ept->rpdev, ptr, len, ept->priv, RPMSG_ADDR_ANY);
-> -       if (ret < 0)
-> -               return ret;
-> +       if (ept->cb) {
-> +               ret = ept->cb(ept->rpdev, ptr, len, ept->priv, RPMSG_ADDR_ANY);
-> +               if (ret < 0)
-> +                       return ret;
-> +       }
->
->         /* Only forward the tail if the client consumed the data */
->         qcom_smd_channel_advance(channel, len);
-> @@ -950,6 +952,17 @@ static struct rpmsg_endpoint *qcom_smd_create_ept(struct rpmsg_device *rpdev,
->         return NULL;
->  }
->
-> +static void qcom_smd_quiesce_ept(struct rpmsg_endpoint *ept)
-> +{
-> +       struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-> +       struct qcom_smd_channel *channel = qsept->qsch;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&channel->recv_lock, flags);
-> +       ept->cb = NULL;
-> +       spin_unlock_irqrestore(&channel->recv_lock, flags);
-> +}
-> +
->  static void qcom_smd_destroy_ept(struct rpmsg_endpoint *ept)
->  {
->         struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-> @@ -1052,6 +1065,7 @@ static const struct rpmsg_device_ops qcom_smd_device_ops = {
->  };
->
->  static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
-> +       .quiesce_ept = qcom_smd_quiesce_ept,
->         .destroy_ept = qcom_smd_destroy_ept,
->         .send = qcom_smd_send,
->         .sendto = qcom_smd_sendto,
-> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-> index 04bfcc75f05b..b832345ca262 100644
-> --- a/drivers/rpmsg/rpmsg_core.c
-> +++ b/drivers/rpmsg/rpmsg_core.c
-> @@ -481,6 +481,9 @@ static int rpmsg_dev_probe(struct device *dev)
->         return 0;
->
->  remove_rpdev:
-> +       if (ept && ept->ops->quiesce_ept)
-> +               ept->ops->quiesce_ept(ept);
-> +
->         if (rpdrv->remove)
->                 rpdrv->remove(rpdev);
->  destroy_ept:
-> @@ -498,6 +501,14 @@ static void rpmsg_dev_remove(struct device *dev)
->         if (rpdev->ops->announce_destroy)
->                 rpdev->ops->announce_destroy(rpdev);
->
-> +       /*
-> +        * Stop the inbound callbacks before the driver releases the data
-> +        * reachable through @ept->priv.  The endpoint itself is destroyed
-> +        * below, once the driver does not need it anymore.
-> +        */
-> +       if (rpdev->ept && rpdev->ept->ops->quiesce_ept)
-> +               rpdev->ept->ops->quiesce_ept(rpdev->ept);
-> +
->         if (rpdrv->remove)
->                 rpdrv->remove(rpdev);
->
-> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-> index a8b7065fd165..02dda4b6809b 100644
-> --- a/drivers/rpmsg/rpmsg_internal.h
-> +++ b/drivers/rpmsg/rpmsg_internal.h
-> @@ -61,6 +61,24 @@ struct rpmsg_device_ops {
->   * @trysend, while the variants sending data off-channel are optional.
->   */
->  struct rpmsg_endpoint_ops {
-> +       /*
-> +        * Stop the inbound callbacks of the endpoint without releasing it.
-> +        * Optional: a transport that does not implement it keeps delivering
-> +        * messages until the endpoint is destroyed, so only the transports
-> +        * that do can promise that no callback is left when the driver
-> +        * remove callback returns.
-> +        *
-> +        * Called from a sleepable context.  An implementation must wait for
-> +        * the endpoint callbacks that are in flight before it returns, with
-> +        * whatever lock already serializes them with its receive path.
-> +        *
-> +        * The context the callbacks themselves run in is transport
-> +        * specific: a callback invoked under a spinlock or an RCU read side
-> +        * section must not sleep.  A transport keeps the context it already
-> +        * used for its callbacks.
-> +        */
-> +       void (*quiesce_ept)(struct rpmsg_endpoint *ept);
-> +
->         void (*destroy_ept)(struct rpmsg_endpoint *ept);
->
->         int (*send)(struct rpmsg_endpoint *ept, const void *data, int len);
-> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> index 23ff6c8b7a20..c8a15bb63841 100644
-> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> @@ -137,6 +137,7 @@ struct virtio_rpmsg_channel {
->   */
->  #define RPMSG_RESERVED_ADDRESSES       (1024)
->
-> +static void virtio_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept);
->  static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
->  static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len);
->  static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data,
-> @@ -152,6 +153,7 @@ static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
->                                                    struct rpmsg_channel_info *chinfo);
->
->  static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
-> +       .quiesce_ept = virtio_rpmsg_quiesce_ept,
->         .destroy_ept = virtio_rpmsg_destroy_ept,
->         .send = virtio_rpmsg_send,
->         .sendto = virtio_rpmsg_sendto,
-> @@ -292,6 +294,15 @@ static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev
->   * name service endpoint, which isn't bound to an rpmsg channel.
->   * See also __rpmsg_create_ept().
->   */
-> +static void virtio_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept)
-> +{
-> +       /* make sure in-flight inbound messages won't invoke cb anymore */
-> +       mutex_lock(&ept->cb_lock);
-> +       ept->cb = NULL;
-> +       ept->flow_cb = NULL;
-> +       mutex_unlock(&ept->cb_lock);
-> +}
-> +
->  static void
->  __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
->  {
-> @@ -300,10 +311,7 @@ __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
->         idr_remove(&vrp->endpoints, ept->addr);
->         mutex_unlock(&vrp->endpoints_lock);
->
-> -       /* make sure in-flight inbound messages won't invoke cb anymore */
-> -       mutex_lock(&ept->cb_lock);
-> -       ept->cb = NULL;
-> -       mutex_unlock(&ept->cb_lock);
-> +       virtio_rpmsg_quiesce_ept(ept);
->
->         kref_put(&ept->refcount, __ept_release);
->  }
-> --
-> 2.34.1
 >
