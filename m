@@ -1,113 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.168.131
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795088665;
-	b=L3gRxCNDzOP+HnLxTXv0Hmlax3kyeNDk+5mRcI4en+wp8OdL/3YAdTSiqD2ECD9YsP0S
-	 ACeLjxKUaaRwYebUqZ6cnRS0BUCSCofrGherEk9DsHiFmGxRBloXAlNUlWyUZXCatsqLW
-	 Iig4+z3e5hRhwnLO5Us9SXHnH0O1qeBWeJ6MnmKdQ1K38Wd3NE0wBk0aMPZDEBXkfY4vp
-	 WDj0Tv9w7v4mWtvg2izq4v353A3Eb9mWqWsDgKbYL7HHi5Z3XEsOnMWWy1zjFNfCOCaUZ
-	 /yREdY7W/CjK+9wRt6/OsgPatzkcCmJ2Fj946MyAUJXTG3ogN5AbkZ+hu8vK6LYYy1Q==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795088665;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
-	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Authority-Analysis:
-	 X-Proofpoint-Spam-Details-Enc:X-Proofpoint-ORIG-GUID:
-	 X-Proofpoint-GUID:X-Proofpoint-Spam-Info:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=IfFdAMhjQtLnFWprbbUSqJpRJtwKttnG9dXYD0iFDfA=;
-	b=XLWxnrlThBovuEJ9dBkOJcQPgpFN5/lT6TekoVGdvEwfXDaXsVP+urxhzIlfpt+lwH0E
-	 87aTXkdKjlIW8gIH+lIZavuglgw7rmP9fqtmrOHowb3C7zr56c2DG2629O2arypCsHTXT
-	 zAJUecQXyvOol0okMYZnc/NyAj2uvfgo1zyo5Oczig4JfAb1SSpEK+7hWf2/k2rtJ+gV9
-	 F2IRemi+jwSNIe94dB0caYa8I7imZ0tLMgPwMvuJl3IppjC50xac5SatX2WzCH71HtPyb
-	 GNmQOYAiFrshMHviEqfbweZ4bvK7aDugWAw+XzFp64BR/ebUdBoBiwuJ/ojVo3wKyFQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b="aMoDgYO/";
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ceiKnBT2;
-	arc=none smtp.remote-ip=205.220.168.131
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.177
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795097643;
+	b=YNBUc3r5yQOqDBcr2STym2fx+kY4dMg6MbA5VNUD2i9RfpmsYbAdy4NHlKjh5NMgCrxv
+	 5V2euZdLm0Bf0dFXAlQ6IyNjzHSYC7CsAjt3oKm0hXDZRv5qO4RE54dgRDd5pcoz0SQkq
+	 m5aIC2dcSyfvxPE8YHZtMrrb72+HhIDJct47eaKX3gaLPIzdQSZzkT1vAkkn7laekh3v8
+	 p15+X5LGHdAz7JDQAZvqXAD5rts7hVndKDUE/XKK/gnsBRGEaCCYi46mTmFLF7MUAf1ae
+	 LoEYywd2hGTri+3bXl0aqQHnWXHqk/EASL1VxH2shxE2tQeR4abM+Wji54Hk5F0u8Eg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795097643;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
+	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
+	b=CwLA9XfzZzuk6WUqyXg1S3G1H50Kdh8m0UeoDMZAV7DaLaAlUV6/CgQvciW8N+Y+0SMk
+	 f6OCRL2TZrLMd10Yz7O+HDZ+bwtgArgUPjwqvNds7JaFAeUmwDfzai+9Uav2HhBG3POex
+	 6zCYdbVNt8jwHB94qrnb3QTPovi+jP5nmIspT6nZEZDe1szXIvzh5P6gvEJ1h2TB1LusZ
+	 DIR4ONEuPNyeXFegiXyM9/RAPXjbZ3jUye96CvLnG0hVhzRv2aAJZOODdEQ3btex2r0Pj
+	 qxc0bltnIt1pr2XMBVat1h1Ydq6J1UgCDx6Vpeys9w8YXVkJRY6yC6o0FQrTttLNymg==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=M6JD7yIi;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.177
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D384606A337
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 11:44:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2D384606A337
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7245A606A320
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 14:14:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7245A606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=aMoDgYO/;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=ceiKnBT2
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AJAuV4F2736512
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 11:44:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IfFdAMhjQtLnFWprbbUSqJpRJtwKttnG9dXYD0iFDfA=; b=aMoDgYO/l1598XdP
-	6f7MJRcspIucjKkINstmWxBQ8QTTV9Wnro73aAOYvvEYR2f+H0YE7qkcrO4azlSU
-	eed7+0CAwsC/zVVyVi6As5Cx4CMikNua0Afc6/xvwTmf56byzKQqsI/+tjWG+3cV
-	RAJLBzm3BWspwSW5fvpVxkkcZIO+0y6ytihjeLfc5T+Mixg0OuGdVWp8fdHsYU1t
-	CrOeYVmBvUOsdVv/ILoRr8oaXO9A9OlN8LFujaqgoDM4H2lbzsaLxzvDYR15EpgY
-	nLy3HASoHzJkoxTX289AYsBqT+Xc9qZoBonBobV5/P+i+BcIHH124kmedZnT21m0
-	toxcwA==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j1xc6rjhs-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 11:44:23 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-cdaf2073b0cso1225976a12.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 03:44:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=M6JD7yIi
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-8b4d07494b0so11075367b3.0
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 06:14:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795097641; cv=none;
+        d=google.com; s=arc-20260327;
+        b=VHP0KsUkaIhTA+zULJv4/lqwcDY3Z1kiJQzEF2Ub1CtefGaYdNbMP5vcCWesXrtBNE
+         5y1dMwxeA2szqpV9YN1OAx0/IRtrtvfHUihQTVDzgSyL1Nvzv6Xce+1nhpcnC5g3mtzB
+         dBGkDo4rnOgwOmOk57T1eN9yt1226236csXDJ4ICRDXjb7qBeAqAC4p80SiSdxeuKUwO
+         o5WEwdX5DZkA1lLvJpSo21uvtuI9SHHQpdgfOxdMak01ZVEZqE7LzF7AVe2X9RRSts+T
+         y+9s3rEpQ4fxrA2B5AVXQ906EtilzgxECLdi836IUMNyk7omYaxNBxjRfZjCDJceo1IW
+         KwSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
+        fh=+KUuDetXQScDaXgnmdSL7z6pJmad0NRerNAVKxzcM60=;
+        b=LtNf1W2Yk8rhKZgEwFn7mbrCUvzIT23dDii2ZiOx9zmWjUw3MTVisv8wASscIZuV5E
+         mc+7+Gu18u0IyRoR3yaEYqrg3/oQEKlWjW9NKlo4hITshyawRtqrlVROpklT6kc69rW0
+         8D3e5bfhQHP5UaRzNehbEkpoPoPHbED6ti8FY14bg9WTTTrFVHj4fwdwZuEof7rpysRJ
+         BdErlVl/3DOl+8Y5MCUF+gsiVNCnM1DzqABw12R6TsBlwvCwA+nL9hKaTyuMHNMiL3KR
+         4hcbYDD1zsbD5ysHCve3Vebzcoqo1Ls8HKKLl4rKJRlu+Ib80N1Il3AtVs+DC67TjTgr
+         GiZQ==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795088663; x=1795693463; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=IfFdAMhjQtLnFWprbbUSqJpRJtwKttnG9dXYD0iFDfA=;
-        b=ceiKnBT2M/zkyJQNOPB2npoyfM8FjCnSZoj3hg4adBMzr+v5zByg1aUThCq7vCmaP3
-         vJe+89TJml0bu4yjjTqwr8QUeu+g52mPrj7zbp+965pAI7nRyVZGd7qOJcmCX9/MTmmV
-         jICJKDF9st7fZC4+YIIRP32IBx4GHjDlHbKD09T2G8PbS+LXEjZUd1boipGLvPwt9dhb
-         1f0tU+JLB5wofsX2jHJRN9WK2nG2bj1giOmyFleuVw+Wm1eIhii/KPMLCeSiqLi1hQZn
-         DVLn8aiaRj9EV3CVGULr44a5PiQYOh9BSvOAUrvg4Qe8SP0Ci/VG9qPdora2pzPSr9o3
-         8ZPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795088663; x=1795693463;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :content-type:mime-version:subject:date:from:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=linaro.org; s=google; t=1795097641; x=1795702441; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=IfFdAMhjQtLnFWprbbUSqJpRJtwKttnG9dXYD0iFDfA=;
-        b=N7H2I978kKmv/ve/ekPGO0R8XmoDIvPkCBAJv6tCNn7No7Lm3ArsLNHzRPpY4CxiTn
-         8X9PxXhHFmvhBX+SoluKPFPHg7SfGTBbjkHQoxb1F8ZSujytr7mQwxm2paad8i3P4ljk
-         JE2pHP4i64KLKqr1iv47U+KWo3soNX6VS5dOmi2t526ek9Y4qZ0O2FonXyyDSHBFeFb6
-         QL+I0BqlOjChXqUuRYAsYo4Hqj01ccigz5UCjm5qhUij2Kaw6magf22jIKdeuPzmagKf
-         Yc8bV+Y5ggBPn7oq3tP7JRh8v/UQclBj271I8zksrWfGaA4uQM74VJJZR/Hqa0slW5g1
-         bc1A==
-X-Forwarded-Encrypted: i=1; AL+hErFRkAzUxTJR4yy7AnjEHxvep3ohGFvyM+WqfT8XaXXj5/5LkLwXU8OZ3ZVknm8B1F7UwEo6eMh/zrRJk/0Qhcew@vger.kernel.org
-X-Gm-Message-State: APuU4Z9H7l5LEt4ELPEtlfOIVJcCKLFWB+yj7gdp7reARWvgkyFsi2Ng
-	Wov5I62NY2AgXuk9+kcxcOythbtKw9tUk3yIGwhGpDFUc6cCk+ZisHz/UKxvV5wdxJm9FuZBkAP
-	LuWZHaDgzsmjp9qL7eiKJHc0wjOWBrLvU/TwP2PMc+zPJ4KYgIEoA4KYj6pl7dMF0m5CYK/R9LC
-	Xjppjl
-X-Gm-Gg: AYBFou0laQXpde3YzOnj/P7liVD6ZU1xVsP5bG76jkpWxjV4J5yz0OUSor3sGTw4d5D
-	7nHFRXuSVl1tLRcYElw15gPCd6KoHpTOoZ+IkTTYEUlhGWSRMFlxs8PD8tZCjzAn/zuHSnvBRdO
-	dSDR3pPx5PP6292Eqz55CQJS7ztiv3ia6f0jWYIVMiArE+JHG8IJ7/axU35PBTIOP0b8O9m0vzh
-	m17NkHbYkdesSq2WOFU9KfGuJWxGkbl42oGJxwgv+SoyZMshPOfq5FgEVZz7ToRz8wgQOtg2qS5
-	bYbfl3i0M3fBXxLZ7zoe4w3W/vCbZ6YpDTuw1B5/OC94zzqFFiVn6ecvuNjHE1zENTBxXCeBjAU
-	Q/wCvFOFEyu5zXOPKYpwOOZGv9iS8LQ8LIJnIoCS/YVFW+EP4Eh/u9+YFQXK7Yxqu
-X-Received: by 2002:a05:6a20:1730:b0:400:9acd:e3eb with SMTP id adf61e73a8af0-4009acdf7bamr908458637.37.1795088662628;
-        Thu, 19 Nov 2026 03:44:22 -0800 (PST)
-X-Received: by 2002:a05:6a20:1730:b0:400:9acd:e3eb with SMTP id adf61e73a8af0-4009acdf7bamr908440637.37.1795088662158;
-        Thu, 19 Nov 2026 03:44:22 -0800 (PST)
-Received: from [10.213.101.118] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde534854b1sm1613960a12.12.2026.11.19.03.44.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 03:44:21 -0800 (PST)
-From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Date: Thu, 19 Nov 2026 17:13:48 +0530
-Subject: [PATCH v6 5/5] arm64: dts: qcom: sm8750: Add EL2 overlay for
- remoteproc SMMU mappings
+        bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
+        b=M6JD7yIiLwpgTYQRF736tEiVJkbxKXpefBTLQ/TPElWA+3xFBi1CbRuRD5sEXL8sVX
+         eWctIC3evmi5DEgicOgHKiD1vizsS70PFSLOlq4PQPQCXV5I4yQqPE7IgiV9JvOPW5Zl
+         S+G3nT0God8TS3nXhDsSbj31xT6FsXIEbqm4Z9+zmZuExCfyYwc3jH/x7RBqFF49jTS5
+         Wl2kbFkRrZnLyG9S52VbOxUR0xHgsGV/KHb5pXV//6OViwlLEh+4XBxn6IgBWYY6qjIU
+         yiRYGxtk2j9d1+iuqK/yr9IOA0arda3MDhPu2ixip8c2AfQVyInnbSabm4HzieYC/YVW
+         KEng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795097641; x=1795702441;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=gG4kM32mzN3LthzLbRfQBBSxIfuJWjOzBoKoTt6zAKY=;
+        b=IQGxdC0ofDAvQMfJ8tfhPdV9AFl62+y9TiSRxwdOEKx3GpTK7/D/3pOh2dlluVy3xy
+         /ZLEYf1TXnZSo5eEvMvE5MSl+WDRLtfHDVQefPxKVvi3IDdgl8BPJwSq9DMCqhKi+SJ/
+         GrGKLqgd/kk4ldf0ux0Q9GO3VmOXd/ZrwY8CS11M6ynQUGhs/1qBIMGd+8H6Hrkja/xH
+         rkDQaphHYZpwdBMXaa9+C0BCGtpn+MtIMC7soTYbw7NztyuGdqslp+NNIkTA/+Lkfs9J
+         n4Oges8GJDrGoHrr859FYAi+f/thtZrMowRDDPNMwQBArohQVqe3ENAuEjx/FmcyZ1ku
+         WeKw==
+X-Forwarded-Encrypted: i=1; AL+hErGEW9p4SoNOb4iOxg2uni2g29qM5LUiccef9jKQ30Rmp8dYVfuxsbWxInbjZNGGARrLKL2TodEoSJ9XAXZYu2js@vger.kernel.org
+X-Gm-Message-State: APuU4Z9jQX/pBLNWcLm5FvopO1GU6wkhscu/SfGEqbYbCzaz7Xx2sdnW
+	oOGgxI3PZ0wix/+k0gQQmhQGj/S8aBWcLX2zU0coUeVvPaC8UiT8OxwbTZQEFSLvCcTrgT24SFT
+	ucztRvJPseaWjg7EfordKkO+5tNziBrGHfnf5oNY52Q==
+X-Gm-Gg: AZFdTZd/35RJ3se3KAx3dJ2Si8zYQcgDC4xgqvLwKyOzyW7q2fXqIX+cuoItE5bFTW4
+	/nXWq/NIJp/L5HOA1CEyDjBODcE1dhhwkdVz2Mmd/Zx+2CPNddfoilW0O23MrDFUqnJ1XESlDEY
+	E8Zbhv6IRDUbuk3xy0cyjMRNtirX9snzTcoYpZN6dcrN9y8pcitANZiGDt4fWpWYxfg/GPDF4Qk
+	ODNuoTl8ctjTtHYOz7oXiMRZZ849QbV3YGhovjct+g2Gv3Yl/jlViEnzyW9AYlPcITRcU/SQTz7
+	/VjH7nAjCLh62k/whFKobsCTaYU5k5uqL39SFJaRsddKSDq3JM+HPpMEnm+j2tC6JqI9cgRxLsZ
+	WrpVL+JYXpMuGnyDjJptp2faAmi2sHDkvygF58C+kbSapQr8Zp1MF2XRp9dAMzLZaJLX2UMM=
+X-Received: by 2002:a05:690c:680c:b0:8b1:60a0:c311 with SMTP id
+ 00721157ae682-8b518e20cecmr4131297b3.33.1795097640986; Thu, 19 Nov 2026
+ 06:14:00 -0800 (PST)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -117,129 +103,338 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261119-shikra-el2-v6-5-0e91a1467e79@oss.qualcomm.com>
-References: <20261119-shikra-el2-v6-0-0e91a1467e79@oss.qualcomm.com>
-In-Reply-To: <20261119-shikra-el2-v6-0-0e91a1467e79@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Bartosz Golaszewski <brgl@kernel.org>,
-        Kumar Patro <bibek.patro@oss.qualcomm.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        Shawn Guo <shengchao.guo@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795088627; l=2086;
- i=komal.bajaj@oss.qualcomm.com; s=20250710; h=from:subject:message-id;
- bh=JrdnVqD6CnT0x/3ft5oP3Dv2O1gST+oALTVm7nsli3w=;
- b=emGhpBfESpxzmoZn1AAoBVv3/LJ6QEpQwOWAFgh9QkoJHeL+ELLlwq+M+t/cJfZgBjuSYwOgP
- aVOnn99gj5/AT/ussmF9dTs3V7WqhocW0fog3/Y4DB4KTVWozbaZmVz
-X-Developer-Key: i=komal.bajaj@oss.qualcomm.com; a=ed25519;
- pk=wKh8mgDh+ePUZ4IIvpBhQOqf16/KvuQHvSvHK20LXNU=
-X-Authority-Analysis: v=2.4 cv=ef+o7LEH c=1 sm=1 tr=0 ts=6afee117 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=Um2Pa8k9VHT-vaBCBUpS:22
- a=EUspDBNiAAAA:8 a=r1478T_rJjGiy3RGUEAA:9 a=QEXdDO2ut3YA:10
- a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTE5MDA0NiBTYWx0ZWRfX4l8sG+cFqct0
- ceBLCU6WXoKTSxISaC2OMmociBDI6Eh8tccGVHqemWvmFdUm5l75LzFTAZGC3dFTVwMsMCGiptE
- iiwEgu3Clpv/OQL3pEFgcTwC3ei0SRG0RNR6OA17/NhKNYBy38HbqwJey1DZzkrUY9ujayq6adT
- NF+bK2bbwL89vDc79OmN61S4B3U9j2ig+1ACzwLkgXFHTGdVaGHJvW/h8AQCgKzcKagZQPi9D8p
- odUOwqX8gZPVf77qq+dcvx2SgOonOWqkYZ5AA0dvjerqL1ZsnxF3TtEVAgZbMiwtOF+NFronP06
- KtFJYy9j8jxbX8F9ktQGhz72ffgnRI2M+LH8nwWJ+/JUJSCKovfnJ3XpNO8G8DU6pkXK0m7NnvX
- OlsJiLTlHfkbbC/+41VR0lX2/iY/12spDKCrbJR+pEIundxZoFiRSa5Knn72dE2rVos6KO5ibH1
- P38W+LC1LzznFudjI2Q==
-X-Proofpoint-ORIG-GUID: pyd2VYJAI7UUup8eGJmrLtVaGIVsJvlL
-X-Proofpoint-GUID: pyd2VYJAI7UUup8eGJmrLtVaGIVsJvlL
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTE5MDA0NiBTYWx0ZWRfX2pWI4gaAqRl7
- z9YCiFhXc4NxN/I3tUF6JkkgIAKgD8jH0BNAkfA8ZaUy5Moiond3wUuEq6uI9K3X2X/bMfIXruP
- 0UNfQWdGpOGng0eJSB/YQc3+FZ97LEc=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-19_03,2026-11-16_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
- malwarescore=0 clxscore=1015 impostorscore=0 bulkscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2611040001 definitions=main-2611190046
+References: <20261119024248.1497433-1-shunsheng1218@gmail.com>
+In-Reply-To: <20261119024248.1497433-1-shunsheng1218@gmail.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Thu, 19 Nov 2026 08:13:48 -0600
+X-Gm-Features: AclHuK9wcV_UV7jBIFkxeKjWTloKYfPaF6HMGgpxuYK0Xl4oC2cyrHzQdAH7w4g
+Message-ID: <CANLsYkzoUF12sQX-pi8Ee-iZvVScVOeUkzhkWhnam56=9NkXkg@mail.gmail.com>
+Subject: Re: [RFC PATCH] rpmsg: stop the inbound callbacks before the driver
+ is removed
+To: Yaohan Li <shunsheng1218@gmail.com>
+Cc: andersson@kernel.org, linux-remoteproc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-SM8750 board boot Linux under the Gunyah hypervisor, with Linux running
-at EL1. Linux can also be booted directly at EL2 on these devices.
+Please note that I give priority to patches written by humans.  AI
+generated patches such as this one end up in a secondary queue that I
+look at only when the primary queue is empty.
 
-For EL2 boot, describe the IOMMU streams used by the remote processor
-firmware in the DeviceTree consumed by Linux.
-
-Add an EL2-specific DT overlay and apply it to the Shikra IoT variants
-to produce -el2.dtb artifacts alongside the standard DTBs.
-
-Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/Makefile        |  4 ++++
- arch/arm64/boot/dts/qcom/sm8750-el2.dtso | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 5c8d179f2792..60f627a469e9 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -511,6 +511,10 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-valve-deckard.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
-+
-+sm8750-mtp-el2-dtbs	:= sm8750-mtp.dtb sm8750-el2.dtbo
-+dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp-el2.dtb
-+
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk.dtb
- 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750-el2.dtso b/arch/arm64/boot/dts/qcom/sm8750-el2.dtso
-new file mode 100644
-index 000000000000..3e50c50e82dc
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sm8750-el2.dtso
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-+
-+ * Pakala specific modifications required to boot in EL2.
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+&gpu_zap_shader {
-+	status = "disabled";
-+};
-+
-+&iris {
-+	status = "disabled";
-+};
-+
-+&remoteproc_adsp {
-+	iommus = <&apps_smmu 0x1000 0x0>,
-+		 <&apps_smmu 0x10a0 0x0>,
-+		 <&apps_smmu 0x00a5 0x0>,
-+		 <&apps_smmu 0x0425 0x0>,
-+		 <&apps_smmu 0x0525 0x0>,
-+		 <&apps_smmu 0x0125 0x0>;
-+};
-+
-+&remoteproc_cdsp {
-+	iommus = <&apps_smmu 0x0c00 0x0>;
-+};
-
--- 
-2.34.1
-
+On Wed, 18 Nov 2026 at 20:42, Yaohan Li <shunsheng1218@gmail.com> wrote:
+>
+> rpmsg_dev_remove() calls rpdrv->remove() and destroys the default
+> endpoint only afterwards.  Until the endpoint is destroyed it keeps
+> delivering inbound messages to rpmsg_ept_cb() and flow control
+> notifications to rpmsg_ept_flow_cb(), both with ept->priv pointing to the
+> per-endpoint data that the driver releases during its remove.  For the
+> default endpoint of rpmsg_chrdev that data is the rpmsg_eptdev that is
+> freed as soon as the channel goes away.
+>
+> Add an optional quiesce_ept operation that stops the inbound callbacks
+> without releasing the endpoint, and call it from rpmsg_dev_remove()
+> before rpdrv->remove(), and from the probe failure path which calls the
+> driver remove callback as well.  The endpoint itself is still destroyed
+> after the driver remove() returns, so drivers that want to send a last
+> message keep working.  No in-tree RPMsg driver sends on the endpoint
+> from its remove callback.
+>
+> The operation runs in process context; it is not an atomic one.  Virtio
+> takes the mutex it already holds around the callbacks, mtk_rpmsg waits
+> for an RCU grace period, and qcom_smd and qcom_glink take their receive
+> spinlock.  Callback execution context is transport specific: a callback
+> invoked under a spinlock or an RCU read side section must not sleep, and
+> the operation preserves the context each transport already used.  Glink
+> also takes recv_lock around the flow control callback, whose only
+> in-tree implementation, rpmsg_ept_flow_cb(), sets two flags and wakes
+> the read queue; glink is also the only transport that delivers that
+> callback today.
+>
+> qcom_smd skips the callback once it is gone and mtk_rpmsg switches the
+> callback pointer to RCU because its IPI handler runs without a lock.  The
+> warning that mtk_rpmsg_ipi_handler() prints for a failing callback has to
+> be inside the RCU read side section: quiesce_ept() waits for the readers
+> with synchronize_rcu(), and afterwards the endpoint and the device it
+> names may be gone.
+>
+> quiesce_ept is optional, so the guarantee is per transport: only a
+> transport that implements it can promise that no inbound callback is
+> left when the driver remove callback returns.  All four in-tree
+> transports do.
+>
+> Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
+> ---
+>  drivers/rpmsg/mtk_rpmsg.c         | 28 +++++++++++++++++++++++-----
+>  drivers/rpmsg/qcom_glink_native.c | 17 ++++++++++++++---
+>  drivers/rpmsg/qcom_smd.c          | 20 +++++++++++++++++---
+>  drivers/rpmsg/rpmsg_core.c        | 11 +++++++++++
+>  drivers/rpmsg/rpmsg_internal.h    | 18 ++++++++++++++++++
+>  drivers/rpmsg/virtio_rpmsg_bus.c  | 16 ++++++++++++----
+>  6 files changed, 95 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
+> index 430a9b2aa7bb..37d573287ced 100644
+> --- a/drivers/rpmsg/mtk_rpmsg.c
+> +++ b/drivers/rpmsg/mtk_rpmsg.c
+> @@ -73,12 +73,23 @@ static void mtk_rpmsg_ipi_handler(void *data, unsigned int len, void *priv)
+>  {
+>         struct mtk_rpmsg_endpoint *mept = priv;
+>         struct rpmsg_endpoint *ept = &mept->ept;
+> +       rpmsg_rx_cb_t cb;
+>         int ret;
+>
+> -       ret = (*ept->cb)(ept->rpdev, data, len, ept->priv, ept->addr);
+> -       if (ret)
+> -               dev_warn(&ept->rpdev->dev, "rpmsg handler return error = %d",
+> -                        ret);
+> +       /*
+> +        * The warning has to be inside the read side section as well: @ept and
+> +        * the device it points to are released once quiesce_ept() has waited
+> +        * for the readers, and that wait would be over right after the unlock.
+> +        */
+> +       rcu_read_lock();
+> +       cb = rcu_dereference(ept->cb);
+> +       if (cb) {
+> +               ret = cb(ept->rpdev, data, len, ept->priv, ept->addr);
+> +               if (ret)
+> +                       dev_warn(&ept->rpdev->dev,
+> +                                "rpmsg handler return error = %d", ret);
+> +       }
+> +       rcu_read_unlock();
+>  }
+>
+>  static struct rpmsg_endpoint *
+> @@ -100,7 +111,7 @@ __mtk_create_ept(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
+>         kref_init(&ept->refcount);
+>
+>         ept->rpdev = rpdev;
+> -       ept->cb = cb;
+> +       RCU_INIT_POINTER(ept->cb, cb);
+>         ept->priv = priv;
+>         ept->ops = &mtk_rpmsg_endpoint_ops;
+>         ept->addr = id;
+> @@ -126,6 +137,12 @@ mtk_rpmsg_create_ept(struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
+>         return __mtk_create_ept(mtk_subdev, rpdev, cb, priv, chinfo.src);
+>  }
+>
+> +static void mtk_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept)
+> +{
+> +       rcu_assign_pointer(ept->cb, NULL);
+> +       synchronize_rcu();
+> +}
+> +
+>  static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
+>  {
+>         struct mtk_rpmsg_rproc_subdev *mtk_subdev =
+> @@ -158,6 +175,7 @@ static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data, int l
+>  }
+>
+>  static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops = {
+> +       .quiesce_ept = mtk_rpmsg_quiesce_ept,
+>         .destroy_ept = mtk_rpmsg_destroy_ept,
+>         .send = mtk_rpmsg_send,
+>         .trysend = mtk_rpmsg_trysend,
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index f848ab46161d..5b88a70ed08c 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -1165,8 +1165,11 @@ static void qcom_glink_handle_signals(struct qcom_glink *glink,
+>
+>         enable = sigs & NATIVE_DSR_SIG || sigs & NATIVE_CTS_SIG;
+>
+> +       spin_lock_irqsave(&channel->recv_lock, flags);
+>         if (channel->ept.flow_cb)
+> -               channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
+> +               channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv,
+> +                                    enable);
+> +       spin_unlock_irqrestore(&channel->recv_lock, flags);
+>  }
+>
+>  void qcom_glink_native_rx(struct qcom_glink *glink)
+> @@ -1408,16 +1411,23 @@ static void qcom_glink_remove_rpmsg_device(struct qcom_glink *glink, struct glin
+>         channel->rpdev = NULL;
+>  }
+>
+> -static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
+> +static void qcom_glink_quiesce_ept(struct rpmsg_endpoint *ept)
+>  {
+>         struct glink_channel *channel = to_glink_channel(ept);
+> -       struct qcom_glink *glink = channel->glink;
+>         unsigned long flags;
+>
+>         spin_lock_irqsave(&channel->recv_lock, flags);
+>         channel->ept.cb = NULL;
+> +       channel->ept.flow_cb = NULL;
+>         spin_unlock_irqrestore(&channel->recv_lock, flags);
+> +}
+> +
+> +static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
+> +{
+> +       struct glink_channel *channel = to_glink_channel(ept);
+> +       struct qcom_glink *glink = channel->glink;
+>
+> +       qcom_glink_quiesce_ept(ept);
+>         qcom_glink_send_close_req(glink, channel);
+>  }
+>
+> @@ -1611,6 +1621,7 @@ static const struct rpmsg_device_ops glink_device_ops = {
+>  };
+>
+>  static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
+> +       .quiesce_ept = qcom_glink_quiesce_ept,
+>         .destroy_ept = qcom_glink_destroy_ept,
+>         .send = qcom_glink_send,
+>         .sendto = qcom_glink_sendto,
+> diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+> index 7dbe1c6efe41..a27964c757ca 100644
+> --- a/drivers/rpmsg/qcom_smd.c
+> +++ b/drivers/rpmsg/qcom_smd.c
+> @@ -558,9 +558,11 @@ static int qcom_smd_channel_recv_single(struct qcom_smd_channel *channel)
+>                 len = channel->pkt_size;
+>         }
+>
+> -       ret = ept->cb(ept->rpdev, ptr, len, ept->priv, RPMSG_ADDR_ANY);
+> -       if (ret < 0)
+> -               return ret;
+> +       if (ept->cb) {
+> +               ret = ept->cb(ept->rpdev, ptr, len, ept->priv, RPMSG_ADDR_ANY);
+> +               if (ret < 0)
+> +                       return ret;
+> +       }
+>
+>         /* Only forward the tail if the client consumed the data */
+>         qcom_smd_channel_advance(channel, len);
+> @@ -950,6 +952,17 @@ static struct rpmsg_endpoint *qcom_smd_create_ept(struct rpmsg_device *rpdev,
+>         return NULL;
+>  }
+>
+> +static void qcom_smd_quiesce_ept(struct rpmsg_endpoint *ept)
+> +{
+> +       struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
+> +       struct qcom_smd_channel *channel = qsept->qsch;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&channel->recv_lock, flags);
+> +       ept->cb = NULL;
+> +       spin_unlock_irqrestore(&channel->recv_lock, flags);
+> +}
+> +
+>  static void qcom_smd_destroy_ept(struct rpmsg_endpoint *ept)
+>  {
+>         struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
+> @@ -1052,6 +1065,7 @@ static const struct rpmsg_device_ops qcom_smd_device_ops = {
+>  };
+>
+>  static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
+> +       .quiesce_ept = qcom_smd_quiesce_ept,
+>         .destroy_ept = qcom_smd_destroy_ept,
+>         .send = qcom_smd_send,
+>         .sendto = qcom_smd_sendto,
+> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+> index 04bfcc75f05b..b832345ca262 100644
+> --- a/drivers/rpmsg/rpmsg_core.c
+> +++ b/drivers/rpmsg/rpmsg_core.c
+> @@ -481,6 +481,9 @@ static int rpmsg_dev_probe(struct device *dev)
+>         return 0;
+>
+>  remove_rpdev:
+> +       if (ept && ept->ops->quiesce_ept)
+> +               ept->ops->quiesce_ept(ept);
+> +
+>         if (rpdrv->remove)
+>                 rpdrv->remove(rpdev);
+>  destroy_ept:
+> @@ -498,6 +501,14 @@ static void rpmsg_dev_remove(struct device *dev)
+>         if (rpdev->ops->announce_destroy)
+>                 rpdev->ops->announce_destroy(rpdev);
+>
+> +       /*
+> +        * Stop the inbound callbacks before the driver releases the data
+> +        * reachable through @ept->priv.  The endpoint itself is destroyed
+> +        * below, once the driver does not need it anymore.
+> +        */
+> +       if (rpdev->ept && rpdev->ept->ops->quiesce_ept)
+> +               rpdev->ept->ops->quiesce_ept(rpdev->ept);
+> +
+>         if (rpdrv->remove)
+>                 rpdrv->remove(rpdev);
+>
+> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+> index a8b7065fd165..02dda4b6809b 100644
+> --- a/drivers/rpmsg/rpmsg_internal.h
+> +++ b/drivers/rpmsg/rpmsg_internal.h
+> @@ -61,6 +61,24 @@ struct rpmsg_device_ops {
+>   * @trysend, while the variants sending data off-channel are optional.
+>   */
+>  struct rpmsg_endpoint_ops {
+> +       /*
+> +        * Stop the inbound callbacks of the endpoint without releasing it.
+> +        * Optional: a transport that does not implement it keeps delivering
+> +        * messages until the endpoint is destroyed, so only the transports
+> +        * that do can promise that no callback is left when the driver
+> +        * remove callback returns.
+> +        *
+> +        * Called from a sleepable context.  An implementation must wait for
+> +        * the endpoint callbacks that are in flight before it returns, with
+> +        * whatever lock already serializes them with its receive path.
+> +        *
+> +        * The context the callbacks themselves run in is transport
+> +        * specific: a callback invoked under a spinlock or an RCU read side
+> +        * section must not sleep.  A transport keeps the context it already
+> +        * used for its callbacks.
+> +        */
+> +       void (*quiesce_ept)(struct rpmsg_endpoint *ept);
+> +
+>         void (*destroy_ept)(struct rpmsg_endpoint *ept);
+>
+>         int (*send)(struct rpmsg_endpoint *ept, const void *data, int len);
+> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+> index 23ff6c8b7a20..c8a15bb63841 100644
+> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+> @@ -137,6 +137,7 @@ struct virtio_rpmsg_channel {
+>   */
+>  #define RPMSG_RESERVED_ADDRESSES       (1024)
+>
+> +static void virtio_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept);
+>  static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
+>  static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len);
+>  static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data,
+> @@ -152,6 +153,7 @@ static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
+>                                                    struct rpmsg_channel_info *chinfo);
+>
+>  static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+> +       .quiesce_ept = virtio_rpmsg_quiesce_ept,
+>         .destroy_ept = virtio_rpmsg_destroy_ept,
+>         .send = virtio_rpmsg_send,
+>         .sendto = virtio_rpmsg_sendto,
+> @@ -292,6 +294,15 @@ static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev
+>   * name service endpoint, which isn't bound to an rpmsg channel.
+>   * See also __rpmsg_create_ept().
+>   */
+> +static void virtio_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept)
+> +{
+> +       /* make sure in-flight inbound messages won't invoke cb anymore */
+> +       mutex_lock(&ept->cb_lock);
+> +       ept->cb = NULL;
+> +       ept->flow_cb = NULL;
+> +       mutex_unlock(&ept->cb_lock);
+> +}
+> +
+>  static void
+>  __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
+>  {
+> @@ -300,10 +311,7 @@ __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
+>         idr_remove(&vrp->endpoints, ept->addr);
+>         mutex_unlock(&vrp->endpoints_lock);
+>
+> -       /* make sure in-flight inbound messages won't invoke cb anymore */
+> -       mutex_lock(&ept->cb_lock);
+> -       ept->cb = NULL;
+> -       mutex_unlock(&ept->cb_lock);
+> +       virtio_rpmsg_quiesce_ept(ept);
+>
+>         kref_put(&ept->refcount, __ept_release);
+>  }
+> --
+> 2.34.1
+>
