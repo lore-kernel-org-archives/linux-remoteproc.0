@@ -1,90 +1,103 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=74.125.82.179
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795056176;
-	b=i45BnAT/zzwxBnkwp49X2ItNYLg/rVhSCXbZGEaa9LszBnfS0XLC8HPM5CXMS3qhLWp8
-	 B3KRPwLQEZ+LZF1XpOPUWoiKbpyYwz025oNYQyasNGjofMAsJZlQnTo+6d7qq2lpIfTDj
-	 pb0M8RnGbye6iZYuXJeUN7wTnew6zN79x48TFrot2GdR+5fD/eEVDxOyuz0u2h+ybqkLe
-	 j6V7PQEGmJN6VheA+I5YTO2/7wX0x8jLSh1Z2sd7uJENSdct3HKhV1TOy5d4KwC3L78yV
-	 9vDztdHzxW5DF1DM0uRTE3iTRt+2Xc0yhfP59c648w8uWUp36KOa3pOSajtzHAnMvyQ==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795056176;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
-	 Date:Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding;
-	bh=gvwBtBtWBTyL0msAk1+Yh/BrQynyxbXAePg5UyBFNd4=;
-	b=2A/jFuePMwreQC7wfWpub8EwEhIkjv/1eLg3aIeDBgtzQ3uGjUPN3vcYF7tnD1VuDMwj
-	 9zijAzynzSd1DmvOvGM/OmlTk2VFU8Yzk7WZxj2dfFUpZgIvrRfJ8h/sskx98ly5g3NrM
-	 Y7XkvC9xgw7B8K/y963xFswA0phieQuzjU0jtPcS/0Y5BX7srzUqj9IBfgcKso0TJxzZD
-	 FFDgvoKS7Z5p2Mz5FbsLflIpSzuQKQ3YeEIIG0a21RZqZq4wm8ceu04ppj8CPSHJH48yT
-	 T/Uw5x0apyRMs9cfIIEXPxAF+XXf+xDk8zkFx7wucT0b/BfEQIN44VHbii42q6+43PA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yeHru24W;
-	arc=none smtp.remote-ip=74.125.82.179
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.159.20
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795069262;
+	b=q4jm1QS/ATz1PwKL7MMTKtBpVEAjLyexT+pHI+9M13TfXTvumPztfe3KkT/Nf69vZh9/
+	 gBqiqHUZazGg+CRy71hlg3YhKTO7ya2cguoI3KNAug8Znk7jIEAySNAYexNwCBxi7ZUD+
+	 /yz3QMqBPSryNwbTmbIhKhbk/5SYrXOgKjzebNlfKZSXjgbtvECtDJRiWd3yOBtx+iCYv
+	 etu46MNLADkVlxm9QoFS6hjhEuHKS+FDUnXEPiEihwRtpFKZX6WVKi8EI2XyvIWrJUf8Q
+	 ghf+WppvommdFdYkcZ0F0POqYrKNKeermuzAyTNRHqOu+NbtMGhWDf8RViW5rkWDDeQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795069262;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-LD-Processed:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=rCjeiacuUpZ/vyNwbk4Tm084Y06xMs9behKISfu6BUc=;
+	b=YXoDnnBJF7WAhjjrGDQSdSGfB+xDEGTujPC56uNtynn9PCjIBUxOI6pxEdqL88byesnX
+	 LFFNCCCn1GLX87G1OPn5N9Z3AaaBoiGA/9XTCt6rk/pRpPtdxejD7boUCOMB0vq2TeJWU
+	 iY7EJCzPdyD8uCR44pMgzM7nWmNqN9o3Puan+PcUGT2DpE4jziDnmq0Vcq3y81Gt23h5u
+	 OwV76EhzY2vewspnskWyEDuVUOAj43TvRPpiuLh/zgntsKF73GXdSq4Z4YVbxn9nHHAvT
+	 RuS1j8/sn4nOkliEa/Y3e+2MLHYxNheO6gBe4s76XMrsyQRFaqhMHXTBYP8L+Tb14Vw==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=GImiJJmB;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.159.20
+Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013020.outbound.protection.outlook.com [40.107.159.20])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C048F606A31C
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 02:42:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C048F606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C65606A320
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 06:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B1C65606A320
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=yeHru24W
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-36f8cdd30beso2171492eec.1
-        for <linux-remoteproc@vger.kernel.org>; Wed, 18 Nov 2026 18:42:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795056175; x=1795660975; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=gvwBtBtWBTyL0msAk1+Yh/BrQynyxbXAePg5UyBFNd4=;
-        b=yeHru24WluSVKY9k9VhARxYpYnMSoiH5ZI1e6/pkXXzV3qiUPfPwXLa9m20NGvkbk9
-         V7mtEg3xjzPGswLwnA4Trrqo8iqrFxbfFCAcv8fXlZHIV3PvH6gO/biVuTtqBCo93Le7
-         lomypd8XlWyJsraBh5kGmmgbgSpLLtCecamQ/25Pykoc8j2HQPvNz9XY9GZJEGEHCfFE
-         F5EWpKJG2TZHv+K2WNaS56JLEOwkXbkHdCpYvJ4ypBMTEBgErVvkOfFU1or5+4gQvdiq
-         zp3wvFcKJHAyFgY6fgSTf4cKyu8oxvBi/oLVYUMD1OivSh35Mn8jv7C62hyGYNU1XxeS
-         275Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795056175; x=1795660975;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=gvwBtBtWBTyL0msAk1+Yh/BrQynyxbXAePg5UyBFNd4=;
-        b=i28xFeOrrpYizUkmlA80NJ//DaMVlo13XQ+Bick+7EXcOvCKARpfe31Q+6qUT8tVDs
-         SxNms22TJNchbyErb6RXAYOLAKjZqtqc+lJz5ynP37sbM5J5YDhJBdSuMCzoB3E/4Hql
-         9jqSx7LLkgaKM3cnetnK8HsN8+5Bmyb7Qtkpl4+gfn3VD5o8EeYG0OPsGxvmWcbSmu9m
-         aWItzViuMSkTim2PTrgOILd4SQc/NA/a3qFXss9A4Op7SiZKQD22NZR8uamKtZztyJ6m
-         0CLgfCLp1I0bPuXxyhEPtfVctcY0LpfzEhyWpSFdnUgTyPf5awIsjRT0NrfpoSsOsZP5
-         TCwg==
-X-Gm-Message-State: APuU4Z8J0eQzSlN/Cn2bI3JvJdNQHRbcMMKrOtXu9w5Gkj1yWkFgSkmV
-	49PFg4qmtlBRKE7RbxKi2ZrD1DRuaSduqhXzJmk9VZXp3Fu9HDhNScIJViS3wrn8U4o=
-X-Gm-Gg: AZFdTZccxM3TGfnqSkpcbXCtI+NeK+yuAdXEFbdCwFMOmWxKSMaZtdeu3ETl9VGebcO
-	QqzCqkc+oNXKxOpt7yzLcaelhGO+ncGkXfVwGXouGsaF++3XuNw3pC+D48479TR0OkIA6O3Ac/G
-	0/VlL+Y3k5dK8BqIixhjvE0J/BswoMkQxb63XDxNGrmPIFCFlCSryAMrLmdVVutOmtX4M+Ez/DE
-	AKBPKhQPRNxxdaixEf2dA+3ChKm0lxxoX8SWYN+Ka/9R+Tbm1pUEk31Rkrsy/9xdd/1EZx5a41Q
-	Sad8XjMk2267W7UfuSuipo1ncopvNhUHswTmP5JYZsYqkR6xVyxG5+4l5FHLCAYxv/JVtENwMdi
-	v/xZtk7ldAk0QwS4NyCJThwkHWhIYLjzJQ+fj2dG+g7mSLzMAa0lAsj7DjTkEfgasej2EE3bo4J
-	ystAy1mZ0rzrIMTN8ZvLct96ZRu27Kj6vvPg73LwahqFkzJHJKefNLWCgqY/ATCL7UN3nYCHGh7
-	XWwmiiXy/OlIoAceIKzcwj3ev/vsWyOgGnq6ppw5UfAFg/Lznnu3L0FPrETSv7EMwoHaVRSMM5V
-	TLZLN5jY/7GU+/pJiX0ueNS/2zOxeZBDxqC6LPAsrwm0G6v9TZNw2vqTs0+EqCpxD3uTavhlpoP
-	q9Gxf/Bt+OwRlCLtbwerunXG0jJb5ZkjIvRaMm6pv
-X-Received: by 2002:a05:7301:18aa:b0:36c:9afe:fcd8 with SMTP id 5a478bee46e88-38281813bc6mr3906712eec.30.1795056174453;
-        Wed, 18 Nov 2026 18:42:54 -0800 (PST)
-Received: from lwq-System-Product-Name.. ([2602:feda:30:cafe:ec49:38a8:0:f6])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-382a79c96b2sm13276451eec.24.2026.11.18.18.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Nov 2026 18:42:53 -0800 (PST)
-From: Yaohan Li <shunsheng1218@gmail.com>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] rpmsg: stop the inbound callbacks before the driver is removed
-Date: Thu, 19 Nov 2026 10:42:48 +0800
-Message-Id: <20261119024248.1497433-1-shunsheng1218@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=GImiJJmB
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BsG7YU9Nxbn3ka1iK0z7eLt8Puft+Il8ylar4RtdO62qcP3d6neBobkghOGACvUnbCTzxtRaN339GGsVKsUcMWiU3eCj7BUkX923Wu+MKPlHMzUIflixFoCStHi3HEMZanzzSOGcyzK0x1D3Dc1CD5/7TakWb2zVDAixKW0TFgU4iQ+LlAdyIFU2uhkzA0tio8jcxe3UVfmBDZ8kNXoPBtGn9qLdzEJwkKunOvLytURJXVB+QXKahzAQHxYoWZkG+xv6whJKBQQ/RShRG1ptnG/w1eQZ9kLKZb+hxjSUY9f5ZberQWmKLeaLha9DyFbkag3epgvn+FxVkCLrqtobFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rCjeiacuUpZ/vyNwbk4Tm084Y06xMs9behKISfu6BUc=;
+ b=BlgiZFYDa7RjsvGsAQ+MgoCCWrRbOc7SJ5NfV3X2KGUrECdGz8hWUVdQVWjVstADlyB4TVxQB85ZEolqJWkO21c3WAsj6JHTbJf/fiXCQaO0sGeWNXIQYMWamYlaN+diOEtKHJ+iamP9THdnFDBfDzN58f7A/3tS77ZJ4ZqaQ3oEF+nQnzRlPmn83GY2el4K6qY4XW5r8Iwy/WrnIK5xOAlQyJX7ELQzcKI9hY//6ck1lHCiwt4jzBAImBfQ9jCCKJLPDRYMR5MZIIXGTdjZ6yeoyLgn7Iz8FdzFjmB9VnSuiUT5a54UV2D3n6xjunvjZxLPDkdGHswAUabSG+0fiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rCjeiacuUpZ/vyNwbk4Tm084Y06xMs9behKISfu6BUc=;
+ b=GImiJJmBd1iV50DE9Fw++sP0uXwNluOst2GqjeUz/3V5Lx96wnqt6BPnjdJGy8B9Ni9ux7RlioPWqgQLaJ/jdQM85NRSPcm7GwMGsB/73EsUQuKZl4fz5nnGGGAa1RXMRiljVywBXCuzzz+U6Dx2pOXt3/+j+59qJZPxUtnOLi7SnkhVSWK3dzqlw85mw+V3vFLp+qRiWusqFd1LMqsHwq0zI2mF9jnOkCB9XwyvvB9tmkUbU3ijuoV9ul4bU00l/0wRRl+hbkFzFXUzBApZ2xc7xwEwJskTcKYTlDrVL76ZNOV54IYNybSMIMOgu3BclOwdjtpGXtdD5Tex57+MNA==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DBBPR04MB7883.eurprd04.prod.outlook.com (2603:10a6:10:1e9::23)
+ by BR0PR04MB263363.eurprd04.prod.outlook.com (2603:10a6:2c8:4c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.10; Thu, 19 Nov
+ 2026 06:20:58 +0000
+Received: from DBBPR04MB7883.eurprd04.prod.outlook.com
+ ([fe80::3a91:cf25:36c9:c3bb]) by DBBPR04MB7883.eurprd04.prod.outlook.com
+ ([fe80::3a91:cf25:36c9:c3bb%7]) with mapi id 15.21.0615.009; Thu, 19 Nov 2026
+ 06:20:58 +0000
+Date: Thu, 19 Nov 2026 14:25:55 +0800
+From: Peng Fan <peng.fan@oss.nxp.com>
+To: Francesco Dolcini <francesco.dolcini@toradex.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Peng Fan <peng.fan@nxp.com>, linux-remoteproc@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-rt-devel@lists.linux.dev,
+	Bjorn Andersson <andersson@kernel.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 00/10] mailbox: imx: Use threaded handler to avoid
+ kworker in imx's remoteproc
+Message-ID: <av6Wc+kHFKqwFHAR@shlinux89>
+References: <20260617-imx_mbox_rproc-v3-0-77948112defc@linutronix.de>
+ <avrLnVFtgobyTwN1@francesco-nb>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <avrLnVFtgobyTwN1@francesco-nb>
+X-ClientProxiedBy: JH0PR03CA0027.apcprd03.prod.outlook.com
+ (2603:1096:990:74::10) To PA4PR04MB7885.eurprd04.prod.outlook.com
+ (2603:10a6:102:ce::14)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -94,321 +107,126 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DBBPR04MB7883:EE_|BR0PR04MB263363:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1500e1db-242b-4802-c09e-08df46054497
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|23010399003|7416014|376014|366016|1800799024|6133799003|18002099003|22082099003|4143699003|11063799006|5023799004|10067099003|56012099006|261022075727099003|261026140227099003|261022105027099003|261026121527099003|261028144727099003|261021123027099003|261021121427099003|261009223027099003|261102123227099003;
+X-Microsoft-Antispam-Message-Info:
+	0QMFVA2a9/m/6GGo8RarPteYt+jx7hYgEL1sYSjmoyMBlasnbOe5c8KP7TUhia6PSTMKk25S/obgF5mXqZz44Ecw2hZcz8tIvYzmG0GT5ChU3C+TcEC13MRF0pWSFQEg50eYivqG8bDgIbHct9ufw03A1ZJGpbpHmRkizAPVZ9ORpXRVvMbGHqa4jv4DjOADL6eFwonW7xzFgBMfpjY3vFgoy3Bh0ujTowTzKfAZgNFdbkC9Nogl7vLZaxPZa7313Oaer5mCyKCOrZ/yksByyPrEK8ZHbXpfOUKq6n8MEvfyDuhJj/tT3p8z4QW4pfxcj3b+PTeI9unt3ez1uBwgsRcSW1EqwqoMOu9XyWvR8e2ZKDoALfcFIpDiOFadsR7VGlMbZV8G8kiYy3QA0sj+mFRRsUoC9qxFb9Dc+jhmz1rpny2uSL4AWqkjgnF6Fsm73c45ygZvDEEN+RrNr+ZRA1zSii0nidILMYl6FYh5oTcq6TSAnz+8ydqLAxOb7/52tXG2Rp+518NH/LKTk36cgcJoEIzu8606YnkjcnbudjjGoF5G0lLty831LJzuB+qcecDfApJMCHVe6eRAFu0dtnY6DRR0akNF+f0kGvTHrGMvbVquSRQbPf862g86lF9FdmNvdbQUyZsKIbzNIAgLzloutDoLT+rbEIbn6pT6cfE=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7883.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(23010399003)(7416014)(376014)(366016)(1800799024)(6133799003)(18002099003)(22082099003)(4143699003)(11063799006)(5023799004)(10067099003)(56012099006)(261022075727099003)(261026140227099003)(261022105027099003)(261026121527099003)(261028144727099003)(261021123027099003)(261021121427099003)(261009223027099003)(261102123227099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/Ltx5NgroBLOm1F2jT2VCVcBw5GirLG6dZbgg4i6tgc6EMJGUuZ6+wpZUjCm?=
+ =?us-ascii?Q?6jM75Vmu98XVChck1GXU1NkpG0STx5erCtM5EUTydh4caai08K7tRkUJoRTU?=
+ =?us-ascii?Q?BZmWhwAngZUwciuorfQ9bV6UxYdqBUStmTDi1PrvK5j8QAjTGjmapDIgeXTe?=
+ =?us-ascii?Q?RD3HuAx1iH38x5p2qK4HktTW8+hyvHFDQU1NJ7SLfFkLm6sMX+BMlUHoL67V?=
+ =?us-ascii?Q?jTzKSCPJD0i2mshq/zmfFWVCapum7lhfpGO9C9LiFUAgg3gRwCPmG6PiIOxN?=
+ =?us-ascii?Q?ueiOj4GlJkCzsucrXqKmUU7tuFwAdft3dHAebv1QXJF2SsyweARM3KXY5NuM?=
+ =?us-ascii?Q?XZDShfi8muLvuJY7fga6bGWJdbTH4yXi2UYfZO9EfEW8ZBQcyA7VEAb0e8Jm?=
+ =?us-ascii?Q?T5OHI/mzsG1TyixRH8y5XOCAyfdZkt98xOTAAKkfPYbtHMuGF9cTN9zlmWaX?=
+ =?us-ascii?Q?v1KPsi/VZSGUKljBn5TApgOrfI8MBmdHhWD3HuVNk1o4Wf278SdnX/Qs9+9u?=
+ =?us-ascii?Q?+SgzaDVBQCkEEhU1TSVplLrzMSlZWk6GrkGWAFCEk0ttMGb2l/Wv0MQoOlyl?=
+ =?us-ascii?Q?gEV0+8Bm70OIAC6nVU8/JFQMJnhhF2VrMm9OiAOkZTA6qDjLTIZpZQrXaSbh?=
+ =?us-ascii?Q?jxuYYU5LAWo9d29NGjz+C+LCt/iKh+XUC3vvtGPPe1Y3EYntzMKYM36+TmtR?=
+ =?us-ascii?Q?uo/n2D6ObQy/+Z/bu70UnZ4b13eSrFDlwlNYrw9qO281Y/hz+I90AufieUMw?=
+ =?us-ascii?Q?xvSZ++aBI4LCJplyEz2RWhL8ZEAhDcBTFkraBzXAICZwzRU0ZN8q2nOJY3SN?=
+ =?us-ascii?Q?1IOUPKCsVMtbr+A3srB0eL6+NPu05DTVQS6EulpF0atse++W1Jh5lOsn9CZW?=
+ =?us-ascii?Q?hhMmgh0rLLLQ9JJu+gPYG1spKBan2hpiuwBtGCC8Zxujazmg7lWLEGGevw5m?=
+ =?us-ascii?Q?/6jxVgxRganSQd2Vj+teJicMjygR6/SIEffjgkK5Fd1kVRv7fY2fdh5JmHO+?=
+ =?us-ascii?Q?2odiHKso0ROch08nMOtQL0t2X9EmfABlQkAkHXC11mujZYvyK8kqsmdGcTSt?=
+ =?us-ascii?Q?LAd9luyzD/w5RDqiRhng9ryTIGdvlwWCsFM2clHS4Eevdt22w7tEms/emHwR?=
+ =?us-ascii?Q?XGSsNXmKCwtGpF8q8XsMV5hFb/4eIA/QZzHfJ8oVW6cvw7ZNUzlKGjRzcl+a?=
+ =?us-ascii?Q?VRj1lIuxS27t0r2o53sqNFBxPdBssr+glCxGBJpPP6+FHHspj2aZppj4enrq?=
+ =?us-ascii?Q?RU5lUw3p3zSPHjKQPbJlhDcmGev4mnIqZjsWzA1UnElBzPaR0tKQtKIkh+iJ?=
+ =?us-ascii?Q?aX+IhuB5b84XnSoeLbKZbboBdHccTES7Baz2e1d3greJgD19hxwJLK8mEetu?=
+ =?us-ascii?Q?9tq2R9yzEYgD+enI16tnvSqXGzNtUIZRYk70I+msXVz1jbLnxbtnmVtXKsBz?=
+ =?us-ascii?Q?K4W1dt8ObD3i/bPPOTTrsdKDYGu2/ZDxFwL3bjeyxoS1/alQgc8+oylS07yz?=
+ =?us-ascii?Q?yHSAMu2vYqJTbmWKQJN5/076L8ooKQkd3OMElTqxcTMPlhw6bcKfYxWmdX9x?=
+ =?us-ascii?Q?aCvPF/aXo+hhHArGBqVROBwplqjr/bF3xrSIapXA77t+8iZP3JwXQ7IPeATG?=
+ =?us-ascii?Q?cXV8EjL1oX85P8ZmuvSj7XdQDQik57w9cfEcNwS/UJTwyuLfn+UIKXio8MAg?=
+ =?us-ascii?Q?/x0bb5HUm1eep8dMc8GeFns1Rw0nhvATTo30/P09HJNsESzBQ80ZdstNlIS4?=
+ =?us-ascii?Q?m6G7b7Cly5RiqCNambt6YqrepNp1YOOQOwCW3Kb+At3tFQmaNKyZ?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1500e1db-242b-4802-c09e-08df46054497
+X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7885.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2026 06:20:58.0923
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GVScRHXigI6yy2bLI9TCpDIzFBLMyOJgKqGODHrlHVWlaFbDkSboBZKOnImFynjoFPxNgUHOFzjzE0sUPfAFOxfxKCf5hcHuz1H850xOrNd4gcZOA64rydQi/uKaiTni
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BR0PR04MB263363
 
-rpmsg_dev_remove() calls rpdrv->remove() and destroys the default
-endpoint only afterwards.  Until the endpoint is destroyed it keeps
-delivering inbound messages to rpmsg_ept_cb() and flow control
-notifications to rpmsg_ept_flow_cb(), both with ept->priv pointing to the
-per-endpoint data that the driver releases during its remove.  For the
-default endpoint of rpmsg_chrdev that data is the rpmsg_eptdev that is
-freed as soon as the channel goes away.
+Hi Francesco,
 
-Add an optional quiesce_ept operation that stops the inbound callbacks
-without releasing the endpoint, and call it from rpmsg_dev_remove()
-before rpdrv->remove(), and from the probe failure path which calls the
-driver remove callback as well.  The endpoint itself is still destroyed
-after the driver remove() returns, so drivers that want to send a last
-message keep working.  No in-tree RPMsg driver sends on the endpoint
-from its remove callback.
+On Mon, Nov 16, 2026 at 10:23:41AM +0100, Francesco Dolcini wrote:
+>Hello Sebastian, Peng
+>
+>On Wed, Jun 17, 2026 at 08:55:25AM +0200, Sebastian Andrzej Siewior wrote:
+>> The imx's remoteproc driver uses a kworker from its mailbox callback to
+>> complete the request. The reason is that the imx mailbox driver invokes
+>> the callback from its interrupt handler and the remoteproc callback (at
+>> least the rpmsg-tty) requires a preemptible context.
+>> 
+>> This works but is problematic in a PREEMPT_RT environment where the
+>> latency of the invocation is important. By scheduling a kworker the
+>> high task priority from the threaded handler is lost and the kworker
+>> competes for CPU ressources with every SCHED_OTHER task in the system.
+>> This can lead to long delays on a busy system with other RT threads
+>> which are less important than the completion of this request.
+>> 
+>> Looking over other mailbox driver, like the arm_mhu for instance, they
+>> use a threaded interrupt handler to invoke the callback. This avoids the
+>> kworker detour.
+>> 
+>> The here suggested change utilises a threaded interrupt to invoke the
+>> callback. The primary handler mask the interrupt source so that the
+>> handler can run without getting interrupted by the interrupt again.
+>> Doing so avoids marking the interrupt IRQF_ONESHOT so that in a
+>> shared-interrupt environment the other interrupt can still fire while
+>> the first is masked.
+>> 
+>> The first four patches are result of the sashiko review. Does not look
+>> critical.
+>> 
+>> This change was tested on a im93 board with rpmsg-tty driver.
+>
+>Our CI shows a ~10-15% eMMC sequential read throughput drop on i.MX8QXP
+>and i.MX8DX (Colibri iMX8X, Cortex-A35), starting with v7.2-rc1 and
+>still present in v7.4-rc3 (hdparm --direct -t: ~129 MB/s -> 105-120
+>MB/s on i.MX8DX). i.MX8QM, i.MX8M and i.MX9 are not affected.
+>
+>5d1c0000.mailbox interrupt count before the test went from ~8k on v6.18
+>to 60k+ on v7.3/v7.4.
+>
+>Peng: any idea/suggestion? Does it makes any sense to you?
 
-The operation runs in process context; it is not an atomic one.  Virtio
-takes the mutex it already holds around the callbacks, mtk_rpmsg waits
-for an RCU grace period, and qcom_smd and qcom_glink take their receive
-spinlock.  Callback execution context is transport specific: a callback
-invoked under a spinlock or an RCU read side section must not sleep, and
-the operation preserves the context each transport already used.  Glink
-also takes recv_lock around the flow control callback, whose only
-in-tree implementation, rpmsg_ept_flow_cb(), sets two flags and wakes
-the read queue; glink is also the only transport that delivers that
-callback today.
+Please help test whether this helps:
 
-qcom_smd skips the callback once it is gone and mtk_rpmsg switches the
-callback pointer to RCU because its IPI handler runs without a lock.  The
-warning that mtk_rpmsg_ipi_handler() prints for a failing callback has to
-be inside the RCU read side section: quiesce_ept() waits for the readers
-with synchronize_rcu(), and afterwards the endpoint and the device it
-names may be gone.
-
-quiesce_ept is optional, so the guarantee is per transport: only a
-transport that implements it can promise that no inbound callback is
-left when the driver remove callback returns.  All four in-tree
-transports do.
-
-Signed-off-by: Yaohan Li <shunsheng1218@gmail.com>
----
- drivers/rpmsg/mtk_rpmsg.c         | 28 +++++++++++++++++++++++-----
- drivers/rpmsg/qcom_glink_native.c | 17 ++++++++++++++---
- drivers/rpmsg/qcom_smd.c          | 20 +++++++++++++++++---
- drivers/rpmsg/rpmsg_core.c        | 11 +++++++++++
- drivers/rpmsg/rpmsg_internal.h    | 18 ++++++++++++++++++
- drivers/rpmsg/virtio_rpmsg_bus.c  | 16 ++++++++++++----
- 6 files changed, 95 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/rpmsg/mtk_rpmsg.c b/drivers/rpmsg/mtk_rpmsg.c
-index 430a9b2aa7bb..37d573287ced 100644
---- a/drivers/rpmsg/mtk_rpmsg.c
-+++ b/drivers/rpmsg/mtk_rpmsg.c
-@@ -73,12 +73,23 @@ static void mtk_rpmsg_ipi_handler(void *data, unsigned int len, void *priv)
+diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+index 683ccea6f2ba..e29044cf4b92 100644
+--- a/drivers/mailbox/imx-mailbox.c
++++ b/drivers/mailbox/imx-mailbox.c
+@@ -635,7 +635,7 @@ static int imx_mu_startup(struct mbox_chan *chan)
  {
- 	struct mtk_rpmsg_endpoint *mept = priv;
- 	struct rpmsg_endpoint *ept = &mept->ept;
-+	rpmsg_rx_cb_t cb;
- 	int ret;
- 
--	ret = (*ept->cb)(ept->rpdev, data, len, ept->priv, ept->addr);
--	if (ret)
--		dev_warn(&ept->rpdev->dev, "rpmsg handler return error = %d",
--			 ret);
-+	/*
-+	 * The warning has to be inside the read side section as well: @ept and
-+	 * the device it points to are released once quiesce_ept() has waited
-+	 * for the readers, and that wait would be over right after the unlock.
-+	 */
-+	rcu_read_lock();
-+	cb = rcu_dereference(ept->cb);
-+	if (cb) {
-+		ret = cb(ept->rpdev, data, len, ept->priv, ept->addr);
-+		if (ret)
-+			dev_warn(&ept->rpdev->dev,
-+				 "rpmsg handler return error = %d", ret);
-+	}
-+	rcu_read_unlock();
- }
- 
- static struct rpmsg_endpoint *
-@@ -100,7 +111,7 @@ __mtk_create_ept(struct mtk_rpmsg_rproc_subdev *mtk_subdev,
- 	kref_init(&ept->refcount);
- 
- 	ept->rpdev = rpdev;
--	ept->cb = cb;
-+	RCU_INIT_POINTER(ept->cb, cb);
- 	ept->priv = priv;
- 	ept->ops = &mtk_rpmsg_endpoint_ops;
- 	ept->addr = id;
-@@ -126,6 +137,12 @@ mtk_rpmsg_create_ept(struct rpmsg_device *rpdev, rpmsg_rx_cb_t cb, void *priv,
- 	return __mtk_create_ept(mtk_subdev, rpdev, cb, priv, chinfo.src);
- }
- 
-+static void mtk_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept)
-+{
-+	rcu_assign_pointer(ept->cb, NULL);
-+	synchronize_rcu();
-+}
-+
- static void mtk_rpmsg_destroy_ept(struct rpmsg_endpoint *ept)
- {
- 	struct mtk_rpmsg_rproc_subdev *mtk_subdev =
-@@ -158,6 +175,7 @@ static int mtk_rpmsg_trysend(struct rpmsg_endpoint *ept, const void *data, int l
- }
- 
- static const struct rpmsg_endpoint_ops mtk_rpmsg_endpoint_ops = {
-+	.quiesce_ept = mtk_rpmsg_quiesce_ept,
- 	.destroy_ept = mtk_rpmsg_destroy_ept,
- 	.send = mtk_rpmsg_send,
- 	.trysend = mtk_rpmsg_trysend,
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index f848ab46161d..5b88a70ed08c 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1165,8 +1165,11 @@ static void qcom_glink_handle_signals(struct qcom_glink *glink,
- 
- 	enable = sigs & NATIVE_DSR_SIG || sigs & NATIVE_CTS_SIG;
- 
-+	spin_lock_irqsave(&channel->recv_lock, flags);
- 	if (channel->ept.flow_cb)
--		channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv, enable);
-+		channel->ept.flow_cb(channel->ept.rpdev, channel->ept.priv,
-+				     enable);
-+	spin_unlock_irqrestore(&channel->recv_lock, flags);
- }
- 
- void qcom_glink_native_rx(struct qcom_glink *glink)
-@@ -1408,16 +1411,23 @@ static void qcom_glink_remove_rpmsg_device(struct qcom_glink *glink, struct glin
- 	channel->rpdev = NULL;
- }
- 
--static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
-+static void qcom_glink_quiesce_ept(struct rpmsg_endpoint *ept)
- {
- 	struct glink_channel *channel = to_glink_channel(ept);
--	struct qcom_glink *glink = channel->glink;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&channel->recv_lock, flags);
- 	channel->ept.cb = NULL;
-+	channel->ept.flow_cb = NULL;
- 	spin_unlock_irqrestore(&channel->recv_lock, flags);
-+}
-+
-+static void qcom_glink_destroy_ept(struct rpmsg_endpoint *ept)
-+{
-+	struct glink_channel *channel = to_glink_channel(ept);
-+	struct qcom_glink *glink = channel->glink;
- 
-+	qcom_glink_quiesce_ept(ept);
- 	qcom_glink_send_close_req(glink, channel);
- }
- 
-@@ -1611,6 +1621,7 @@ static const struct rpmsg_device_ops glink_device_ops = {
- };
- 
- static const struct rpmsg_endpoint_ops glink_endpoint_ops = {
-+	.quiesce_ept = qcom_glink_quiesce_ept,
- 	.destroy_ept = qcom_glink_destroy_ept,
- 	.send = qcom_glink_send,
- 	.sendto = qcom_glink_sendto,
-diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
-index 7dbe1c6efe41..a27964c757ca 100644
---- a/drivers/rpmsg/qcom_smd.c
-+++ b/drivers/rpmsg/qcom_smd.c
-@@ -558,9 +558,11 @@ static int qcom_smd_channel_recv_single(struct qcom_smd_channel *channel)
- 		len = channel->pkt_size;
- 	}
- 
--	ret = ept->cb(ept->rpdev, ptr, len, ept->priv, RPMSG_ADDR_ANY);
--	if (ret < 0)
--		return ret;
-+	if (ept->cb) {
-+		ret = ept->cb(ept->rpdev, ptr, len, ept->priv, RPMSG_ADDR_ANY);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
- 	/* Only forward the tail if the client consumed the data */
- 	qcom_smd_channel_advance(channel, len);
-@@ -950,6 +952,17 @@ static struct rpmsg_endpoint *qcom_smd_create_ept(struct rpmsg_device *rpdev,
- 	return NULL;
- }
- 
-+static void qcom_smd_quiesce_ept(struct rpmsg_endpoint *ept)
-+{
-+	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-+	struct qcom_smd_channel *channel = qsept->qsch;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&channel->recv_lock, flags);
-+	ept->cb = NULL;
-+	spin_unlock_irqrestore(&channel->recv_lock, flags);
-+}
-+
- static void qcom_smd_destroy_ept(struct rpmsg_endpoint *ept)
- {
- 	struct qcom_smd_endpoint *qsept = to_smd_endpoint(ept);
-@@ -1052,6 +1065,7 @@ static const struct rpmsg_device_ops qcom_smd_device_ops = {
- };
- 
- static const struct rpmsg_endpoint_ops qcom_smd_endpoint_ops = {
-+	.quiesce_ept = qcom_smd_quiesce_ept,
- 	.destroy_ept = qcom_smd_destroy_ept,
- 	.send = qcom_smd_send,
- 	.sendto = qcom_smd_sendto,
-diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
-index 04bfcc75f05b..b832345ca262 100644
---- a/drivers/rpmsg/rpmsg_core.c
-+++ b/drivers/rpmsg/rpmsg_core.c
-@@ -481,6 +481,9 @@ static int rpmsg_dev_probe(struct device *dev)
- 	return 0;
- 
- remove_rpdev:
-+	if (ept && ept->ops->quiesce_ept)
-+		ept->ops->quiesce_ept(ept);
-+
- 	if (rpdrv->remove)
- 		rpdrv->remove(rpdev);
- destroy_ept:
-@@ -498,6 +501,14 @@ static void rpmsg_dev_remove(struct device *dev)
- 	if (rpdev->ops->announce_destroy)
- 		rpdev->ops->announce_destroy(rpdev);
- 
-+	/*
-+	 * Stop the inbound callbacks before the driver releases the data
-+	 * reachable through @ept->priv.  The endpoint itself is destroyed
-+	 * below, once the driver does not need it anymore.
-+	 */
-+	if (rpdev->ept && rpdev->ept->ops->quiesce_ept)
-+		rpdev->ept->ops->quiesce_ept(rpdev->ept);
-+
- 	if (rpdrv->remove)
- 		rpdrv->remove(rpdev);
- 
-diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
-index a8b7065fd165..02dda4b6809b 100644
---- a/drivers/rpmsg/rpmsg_internal.h
-+++ b/drivers/rpmsg/rpmsg_internal.h
-@@ -61,6 +61,24 @@ struct rpmsg_device_ops {
-  * @trysend, while the variants sending data off-channel are optional.
-  */
- struct rpmsg_endpoint_ops {
-+	/*
-+	 * Stop the inbound callbacks of the endpoint without releasing it.
-+	 * Optional: a transport that does not implement it keeps delivering
-+	 * messages until the endpoint is destroyed, so only the transports
-+	 * that do can promise that no callback is left when the driver
-+	 * remove callback returns.
-+	 *
-+	 * Called from a sleepable context.  An implementation must wait for
-+	 * the endpoint callbacks that are in flight before it returns, with
-+	 * whatever lock already serializes them with its receive path.
-+	 *
-+	 * The context the callbacks themselves run in is transport
-+	 * specific: a callback invoked under a spinlock or an RCU read side
-+	 * section must not sleep.  A transport keeps the context it already
-+	 * used for its callbacks.
-+	 */
-+	void (*quiesce_ept)(struct rpmsg_endpoint *ept);
-+
- 	void (*destroy_ept)(struct rpmsg_endpoint *ept);
- 
- 	int (*send)(struct rpmsg_endpoint *ept, const void *data, int len);
-diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-index 23ff6c8b7a20..c8a15bb63841 100644
---- a/drivers/rpmsg/virtio_rpmsg_bus.c
-+++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-@@ -137,6 +137,7 @@ struct virtio_rpmsg_channel {
-  */
- #define RPMSG_RESERVED_ADDRESSES	(1024)
- 
-+static void virtio_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept);
- static void virtio_rpmsg_destroy_ept(struct rpmsg_endpoint *ept);
- static int virtio_rpmsg_send(struct rpmsg_endpoint *ept, const void *data, int len);
- static int virtio_rpmsg_sendto(struct rpmsg_endpoint *ept, const void *data,
-@@ -152,6 +153,7 @@ static struct rpmsg_device *__rpmsg_create_channel(struct virtproc_info *vrp,
- 						   struct rpmsg_channel_info *chinfo);
- 
- static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
-+	.quiesce_ept = virtio_rpmsg_quiesce_ept,
- 	.destroy_ept = virtio_rpmsg_destroy_ept,
- 	.send = virtio_rpmsg_send,
- 	.sendto = virtio_rpmsg_sendto,
-@@ -292,6 +294,15 @@ static struct rpmsg_endpoint *virtio_rpmsg_create_ept(struct rpmsg_device *rpdev
-  * name service endpoint, which isn't bound to an rpmsg channel.
-  * See also __rpmsg_create_ept().
-  */
-+static void virtio_rpmsg_quiesce_ept(struct rpmsg_endpoint *ept)
-+{
-+	/* make sure in-flight inbound messages won't invoke cb anymore */
-+	mutex_lock(&ept->cb_lock);
-+	ept->cb = NULL;
-+	ept->flow_cb = NULL;
-+	mutex_unlock(&ept->cb_lock);
-+}
-+
- static void
- __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
- {
-@@ -300,10 +311,7 @@ __rpmsg_destroy_ept(struct virtproc_info *vrp, struct rpmsg_endpoint *ept)
- 	idr_remove(&vrp->endpoints, ept->addr);
- 	mutex_unlock(&vrp->endpoints_lock);
- 
--	/* make sure in-flight inbound messages won't invoke cb anymore */
--	mutex_lock(&ept->cb_lock);
--	ept->cb = NULL;
--	mutex_unlock(&ept->cb_lock);
-+	virtio_rpmsg_quiesce_ept(ept);
- 
- 	kref_put(&ept->refcount, __ept_release);
- }
--- 
-2.34.1
+        struct imx_mu_priv *priv = to_imx_mu_priv(chan->mbox);
+        struct imx_mu_con_priv *cp = chan->con_priv;
+-       unsigned long irq_flag = IRQF_NO_THREAD;
++       unsigned long irq_flag = IRQF_NO_THREAD | IRQF_ONESHOT;
+        int ret;
 
+        pm_runtime_get_sync(priv->dev);
+
+Regards
+Peng
+
+>
+>Francesco
+>
+>
