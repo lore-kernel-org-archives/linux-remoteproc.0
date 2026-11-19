@@ -1,96 +1,97 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795102172;
-	b=UmSmh/A6H9EwYuc2amKIw6GhYL6WhaV24MoHp2QK4LgzmH1OA3Cq5t8Pn4eaCF9M1YtD
-	 bfvOSDJzkuoi8BA9Q9qp8XHscvgCT+IWpD4vzaOIwSrog7MRrvuPOCj2jFnUMbp4+ji0Q
-	 MkYsUuOo/oCcWoi2IhpESfjguH3FcQ5Zf2+JoT6EMWzC5uFpDYMMUo5GW8G+eub15/vgx
-	 1wgz1RNjS7ur1ktrMw6Wc65t41cU0nxmFOvmXhIaCk87TRBNRSmSaq8inLF+saiC8mtqW
-	 vGi/cQnlyYo3hWBIJxjjM6ifDCUKEVs2IErpIso0I9ZS2aoeBkJHWWpJIvxGdAqIN0g==
+	t=1795104909;
+	b=A/aGO6G0GGNvBB4KXRks5aalXp3Lllbs+OK7xWJ1cLWRS76rU8g6zOgYLHgruN86/AUz
+	 bfmdyJduqWvbkFDkTMMtEuQ5GpubfjbmGL7ktVQco0mRnGsRXqNEjuciS+PV/aiCuv8RO
+	 ssmhV2LvssOoMeBvaWA9mUiYwm/l4Ff3kh80UZpX1XrdAbqqvEjI7z0D4TXJdbkzBupsp
+	 wgfiRA+fPma1rDqF2katCI2naR1RQY2GRJzMc0S5szePSZZawDz0Ao95sdvL5IJD8UFjw
+	 mWs7Qn0cxPPjVrjDhU40vFzBSraGidTMictdURPX1mtir2hDRCuWZuV7gNcHUQeiS5A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795102172;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795104909;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
 	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=aJBKwBt8iXnZSzkxcMNqzRBSFron06bNz2kQZO6DnuU=;
-	b=dNfnxRmJz72tjcrGEPzR9R80DbQv9rqUrzqnRDRT8sgzPPuGmuGMYtZ6C9serZh43NLr
-	 AoAedch+9CaN1eraqk1hVXsDd+M88RH6Q+jsgv4LvONKMSkrD9LkuilAZVDIBDpy61OhJ
-	 BZiQg9arHWvNVm5AxFC0yDl2UKlOvv7TBc4iC15c5QKeKRs0FzDhmAaimOF0cvdi0byhY
-	 +8Q/4BA7ac79urbtkJYUrJKgnqh/m+q0fbDzpxABjieeHdFfMDkKo3Uyf0nUXdAVs88ZP
-	 j8y7anrFe4I2zsChp5yFfIkRog8ev66ExrpHFiUf7vXmGjxeJwSuNISNNN/ZWCrwlCw==
+	bh=T4XXFlbULQ2nlQDKlkc6yvG+h6ov3GlTKxgkovItaYM=;
+	b=iwXs2SrGILXQPrWGtlw8H1r78V6EtD2lwkVdTrO3ExP6Kp/tMyv6kUhYY/3fq+VqZfRp
+	 +j0K/lAQrvICvEj9m7JQKxEG9Xedz3gy3uXxuSD31CtAncAl6E5tH1+e6riHadW4xIpMO
+	 ZU7FftlJOdijlF+vzpYiFBx3w/XixYkb+t+NFCPq76QVa98jraUDdbfz17kc43LuEZAOW
+	 lf20yYUTWFathcdShOMAodcvtmAAfxmcU1kKs1PLpOEogVN1rwRMJ7JZfun/jFMiC+DAI
+	 2U4sUMR/ws/xragJr0j7yBL08i464FS0bJrXgFvDiUIEX9fayZ03ayA3pWGzntrBLCg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=linaro.org;
 	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=gsRQY8jG;
-	arc=none smtp.remote-ip=209.85.215.181
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=nF7KCEXV;
+	arc=none smtp.remote-ip=209.85.218.43
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E266606A325
-	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 15:29:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3E266606A325
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9F5606A331
+	for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 16:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 8B9F5606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=gsRQY8jG
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-cde0daf3a2aso1335436a12.3
-        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 07:29:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=nF7KCEXV
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-c4d427836e9so335121666b.1
+        for <linux-remoteproc@vger.kernel.org>; Thu, 19 Nov 2026 08:15:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795102170; x=1795706970; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1795104907; x=1795709707; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:from:to:cc:subject
          :date:message-id:reply-to:content-type;
-        bh=aJBKwBt8iXnZSzkxcMNqzRBSFron06bNz2kQZO6DnuU=;
-        b=gsRQY8jG4Jij4ik+prsRTH+CLrrlVHqOXKsdOWeoBXyHCf00hlRP8SUU+0Fl2DyZpl
-         C52NdgZ0U8ntHxsOkLcq2J4GfbaeLHIzxu0VaYXel/SDdO+YCxE2q2yEI9g7kX5DLkHd
-         lR08nCVSGG3K9VN2h681WANzvCUsA5g0Yc7h/QEa+HpLOM0JxTRpOiLr7Eze50nte8ZV
-         rpaZIdaJZdJEXlE0d5f/GgVCJJZlZ1DmGZullQvwSjvhRC9YZMjOjRGFOZVRxeHKB/Pu
-         RC8mKho3Ap/L1NRRDLAHBgM/0onIXeSsILJ9pSn6QXOg0g0aoGWaB08OxaFwAqugPxR4
-         3Tlg==
+        bh=T4XXFlbULQ2nlQDKlkc6yvG+h6ov3GlTKxgkovItaYM=;
+        b=nF7KCEXVOJWPVyLiyh9gH7j6TgFIshYrCfF9a0YLidBgWbQthopZ8X2XxlMIy8y/oh
+         9+jAjo+uOTQbxl82APPj/R/l/JgRavu7yB80ikV6WLGXUkO27NLpZT5H4KvwdrWjt67l
+         HUrS3WJWRDgnZyG9KpvACEv13gKwz+ei6ER/NSpbtsLskMyMUfQnE28bjGigM0I2udwV
+         9P4R4DsKCnsb5aZ3ap4ZGUxyY4+05QCyB6d24j0haA+9Oe2HRNFd8+9hg9qmsqBFX3md
+         le7PeMLrelKN+cLHMOWq++P81fcQgGCR3SwpuRA6gAhF7Y62xOg6PfzZW20Hlx1IdSIY
+         CvSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795102170; x=1795706970;
+        d=1e100.net; s=20260707; t=1795104907; x=1795709707;
         h=in-reply-to:content-disposition:content-type:mime-version
          :references:message-id:subject:cc:to:from:date:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=aJBKwBt8iXnZSzkxcMNqzRBSFron06bNz2kQZO6DnuU=;
-        b=rPntycaVZ2OWV+daAJ4/UbmHIivYTmA08aFYJ/FHJgzxfrBvoyBHg1SuI21pzSRmKV
-         xARWt3P9utSYObjm3u3FUKK9rRoLb94DMPNPlr4iepwY1iWlW0opplU2gs1wTjVO9pCF
-         vgUboMYwuLOlcJGevUAVRkeFSar+03kKkMKFzb/chumK1qclEzfW3uL3KlAUpgZLEHXx
-         trEW5I9jM1XKlzwdUbSPMppmwwoweIHug136ddJ4PVQZhJKxR7Wi/H5gtHEZDuqfhS8Z
-         +mcoy3/J7GUwfbEfPbEDPpcMkpkvo1MCvMip0Rp4FrNc1tV3Io7W/CUFmCsEiTH9VEyA
-         u9Og==
-X-Forwarded-Encrypted: i=1; AL+hErHzn2P3AQjcio0CquKnKPA+SWq6YOj/ASFVZUbSoS0hgMAclP1RhB3jlvUQzc8HnK9gz64TuTa1rEBOhBtl+abm@vger.kernel.org
-X-Gm-Message-State: APuU4Z+euLtdmL1hBj5+CeFrgiiBJKHr7PAHHUrfoug18EH6xJrFwZo8
-	+EJS+HNsWoKtZAAlHN2KaSCXjuWooOE9ehSVcAe2jjgt/7RIgig319+mKcM+JYrcIOQ=
-X-Gm-Gg: AZFdTZdRjZN96Tmve3QFflD627enVqB4atPVdY1LTPzRhpAlNhp5KIjKyeOOp1eVeLV
-	tt73b7ByR/gRimkH+5+hDQQqcGYhriFPOC/JJjwczKLWbR456soHtOZP5fg/icRUPkHkLRRqqTC
-	9Nh7Hw4NgGK+Tx+yc7XMXO3Xsike9l+OkYqkrEoRW4gP29GzvwOQB/odg1gmLFjopnqFXsmLb5p
-	JVqUz50sTvVQOM6lfK30CeFb7xzE+ky/MRVK+wIz5lcmH07M0CTHjh4iV55bBynuEHXjTGh5k8U
-	cSzQ0ExAEcPfHFIh1UDteGdjk8FXPTmhNNYQRqr7zJTSPiymz1axLIbUoPp1McxU1cVSRcPCMqc
-	ECjGJJy2LJ78xYxN/m8IAe+EYW6zvj4/UNXmGirCOKUjzStsvcKWWF/PHuAjz84uV9rNP4e88Fu
-	Q/0qaELaFhJZvyTCl6RwzPC0mfIGnrGTwdqpvecgoaFaZzy6RPa4beyKD0rOOetZWnpjYN3z0/P
-	JiwOFeCSW4kJSAbb0+tiZaMHII8h2XYLcH8qpz3qu6SqaNaK5XNBBk/uujdbz08iObhLaA4XCFc
-	xY9rcpt4W5JDUZSmGuLz4k7zY1C2VTod
-X-Received: by 2002:a17:90b:250f:b0:3b4:1336:4f53 with SMTP id 98e67ed59e1d1-3b413365299mr462810a91.1.1795102170322;
-        Thu, 19 Nov 2026 07:29:30 -0800 (PST)
+        bh=T4XXFlbULQ2nlQDKlkc6yvG+h6ov3GlTKxgkovItaYM=;
+        b=aOEqXr0EfkGFNBOXiosRN4xa4cgEjVMmFjZ9xjflY3GBSyu9ewp+jn7hCAIFQJzXPu
+         ahChJwoAItbPWx8Zyx73LBA317h7fJ4wxL4Q3PhRmxWbFJtbkDLxoBHWWebC0GwSY/bT
+         RXh7Pp8PoSdB77yk8ZsQxNOs+6szUntPYyvDgcCW8Iw6LaPePiIoCutpaxQZZkhhvlQD
+         fObXaviWSntBKeRI0C/0QO1YUugO6yWfIxjox+Go18R67LTxS+7ykTP+381nzYjhxUqB
+         kRmnudEyCKMi29lpv2FapPXBIbA2sGA71qL9F3x4x2Y7z4DWBLAFgJKuyQ+pYjs4WzWw
+         +SaA==
+X-Forwarded-Encrypted: i=1; AL+hErGGXzQXEWXUcmULqB/xZQvIJSW4SjD6njcK9+lRDJ/gVylA4UOi1lE86RmZK2zswBLg0BF44vPnwQyyeZvoj2nA@vger.kernel.org
+X-Gm-Message-State: APuU4Z/xs8eFpY0f3Eo7NVJOUlwyHmuz5APkUF2Zt0kQU5hxU7UdbuKy
+	pDlaymLRtpW3sKVELdUNYtqdtvfegeRZPURY+hKMyiLUFWKJ3vzZ7idpM216sb/poms=
+X-Gm-Gg: AYBFou0UJV0xK326vl0VLJnWOK0pj/HF1isTUfE14sHOo2/WmHGIl+dmZ65Hq3Woc8a
+	rzmcLYHlcgiFgfOzF6209QrlGlr9m9/mIcjyE9UPKyhRw1xDE03020cQhV7HuctUnwYdDSYwtgi
+	8tajGxuN7xEhk0863WttyT+3Rsy2l2xCyDOhlCcisD1Je9t1xQmmiD2OnLZSHSD+T9tmT83xraq
+	yNtKkLbQ7O2Qp2ggAsTfOLYxD4Da3SKXgYhWCVZwRBXyeVDxCq7mpOl3fohfxP5BemAKVoRlhEW
+	3z8S9nSPFotv77U+ZABDw+k92g0HKeJbkOgwK3fMLdWrNMFuU7enpyyQ8P2ZDfCQMfFbX8gTCn9
+	OHPaeohUSWDowgAHUI45UMGmEhLWycXKCHlhvDNe7lCW9zzsfFFeZWkgodJOwJddAPPXVhWjlsi
+	buWUiOFiVgBpi29UKaba+xRVwRtb8kEzafd8KyWY+Dt0C+vPrDckcw2Xbgb+RgyGOLH9DR3HD7R
+	01WdthzLHOIK52e1DnDC9ZGiTkLJX+hnUVogBogLZfOrt0bfmlO/AeG2qSQh8EA0x6DQcE0Fszq
+	hVpBIABoRzHJlh/T7b+T+Vp2PvGohy+f
+X-Received: by 2002:a17:907:2d13:b0:c41:21ef:26ef with SMTP id a640c23a62f3a-c513aac43a9mr40174166b.20.1795104906817;
+        Thu, 19 Nov 2026 08:15:06 -0800 (PST)
 Received: from p14s ([2604:3d09:148c:c800:9bd7:226d:1022:f6ef])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3b402e75223sm1442633a91.4.2026.11.19.07.29.29
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513acff65bsm16082866b.4.2026.11.19.08.15.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Nov 2026 07:29:29 -0800 (PST)
-Date: Thu, 19 Nov 2026 09:29:27 -0600
+        Thu, 19 Nov 2026 08:15:06 -0800 (PST)
+Date: Thu, 19 Nov 2026 10:14:59 -0600
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Francesco Valla <francesco@valla.it>,
-	openamp-rp@lists.openampproject.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Tanmay Shah <tanmay.shah@amd.com>,
-	Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio_rpmsg: fix config space alignment
-Message-ID: <av8V18TntRP2U6hQ@p14s>
-References: <20261101-rpmsg-config-size-v1-1-65686b445b22@valla.it>
- <au4QVFyk7Zzc6y2u@p14s>
+To: Ben Levinsky <ben.levinsky@amd.com>
+Cc: jassisinghbrar@gmail.com, andersson@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, michal.simek@amd.com,
+	tanmay.shah@amd.com, linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] remoteproc: amd_mbv_bram: Bound device name
+ formatting
+Message-ID: <av8gg6d7eKwpfcTQ@p14s>
+References: <20261105051902.1646651-1-ben.levinsky@amd.com>
+ <20261105051902.1646651-2-ben.levinsky@amd.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -102,80 +103,49 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <au4QVFyk7Zzc6y2u@p14s>
+In-Reply-To: <20261105051902.1646651-2-ben.levinsky@amd.com>
 
-[Adding openAMP mailing list]
+On Wed, Nov 04, 2026 at 09:18:57PM -0800, Ben Levinsky wrote:
+> rproc_mem_entry_init() interprets its name argument as a printf format
+> string. Passing the device name directly allows percent conversions in a
+> DT-derived platform device name to consume nonexistent variadic arguments.
+>
 
-Heads up OpenAMP people, I will merge this patch in a week.
+I read the last sentence of the above paragraph 6 times and I still don't
+understand the problem you are describing.  I'm guessing it was generated
+by an AI.  Please refactor.
 
-Thanks,
-Mathieu
+ 
+> Pass the device name through a constant format so it is always handled as
+> data. Limit the formatted name to 31 characters to match the space
+> available in rproc_mem_entry::name while leaving room for its terminating
+> null byte.
 
-On Fri, Nov 06, 2026 at 11:37:24AM -0600, Mathieu Poirier wrote:
-> On Sun, Nov 01, 2026 at 02:54:03PM +0100, Francesco Valla wrote:
-> > The comment for virtio_rpmsg_config says that this structure is
-> > naturally aligned to 32 bits, and this is desirable by some
-> > architectures that don't get along with unaligned accesses.
-> > The content of the structure itself however isn't aligned, and the
-> > __packed attribute prevent the compiler to add this alignment.
-> > 
-> > Fix this by adding a padding byte.
-> > 
-> > Fixes: ca96ea25e51a ("rpmsg: virtio_rpmsg_bus: Get buffer size from config space")
-> > Signed-off-by: Francesco Valla <francesco@valla.it>
-> > ---
-> > Hello,
-> > 
-> > unfortunately I missed this when the original patch set was sent, but I
-> > think it's worth fixing (or at least discussing) this now before it
-> > enters a stable kernel.
-> > 
-> > The same support in open-amp has already been merged [1], but maybe it
-> > can be fixed before the next release there too?
-> > 
-> > Another, lower-impact solution would be to fix the comment, but that can
-> > then led to issues on architectures that does not support unaligned
-> > accesses (e.g.: AMR Cortex-M0).
-> >
+What to you mean by "handled as data"?  Moreover, the size of
+rproc_mem_entry::name is handled properly in rproc_mem_entry_init().  What am I
+missing?  I also suspect this was AI generated.
+
 > 
-> Thanks for bringing this to my attention.  I agree with this patch.  I will give
-> Arnaud a couple of weeks to reply to this email though.
+> Fixes: f87b4998994e ("remoteproc: Add AMD MicroBlaze/V BRAM-based remote processor driver")
+> Reviewed-by: Tanmay Shah <tanmay.shah@amd.com>
+> Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+> ---
+>  drivers/remoteproc/amd_mbv_bram_rproc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/amd_mbv_bram_rproc.c b/drivers/remoteproc/amd_mbv_bram_rproc.c
+> index e4a103cf8455..6cf33c7b7e64 100644
+> --- a/drivers/remoteproc/amd_mbv_bram_rproc.c
+> +++ b/drivers/remoteproc/amd_mbv_bram_rproc.c
+> @@ -72,7 +72,7 @@ static int amd_bram_rproc_prepare(struct rproc *rproc)
+>  				   resource_size(&res), da,
+>  				   rproc_mem_entry_ioremap_wc,
+>  				   rproc_mem_entry_iounmap,
+> -				   dev_name(priv->dev));
+> +				   "%.31s", dev_name(priv->dev));
+>  	if (!mem)
+>  		return -ENOMEM;
 >  
-> > Thank you
-> > 
-> > Francesco
-> > 
-> > [1] https://github.com/OpenAMP/open-amp/commit/744376f566c3ec7e06a7d093d785295b78aa486f
-> > ---
-> >  include/linux/rpmsg/virtio_rpmsg.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
-> > index 0872cbca4593..d24fedb63023 100644
-> > --- a/include/linux/rpmsg/virtio_rpmsg.h
-> > +++ b/include/linux/rpmsg/virtio_rpmsg.h
-> > @@ -23,6 +23,7 @@
-> >   *
-> >   * @version:	version of this structure, currently %RPMSG_VDEV_CONFIG_V1.
-> >   * @size:	size of this structure in bytes.
-> > + * @reserved:	padding, reserved for future usage.
-> >   * @txbuf_size:	Tx buf size from remote's view. For Linux this is rx buf size.
-> >   * @rxbuf_size:	Rx buf size from remote's view. For Linux this is tx buf size.
-> >   *
-> > @@ -33,6 +34,7 @@
-> >  struct virtio_rpmsg_config {
-> >  	u8 version;
-> >  	__virtio16 size;
-> > +	u8 reserved;
-> >  	/* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
-> >  	__virtio32 txbuf_size;
-> >  	__virtio32 rxbuf_size;
-> > 
-> > ---
-> > base-commit: cbbddb6b08cc9900a87cccaa9b22bbe06aa4f50a
-> > change-id: 20261101-rpmsg-config-size-0dbe9ea63c6d
-> > 
-> > Best regards,
-> > --  
-> > Francesco Valla <francesco@valla.it>
-> > 
+> -- 
+> 2.34.1
+> 
