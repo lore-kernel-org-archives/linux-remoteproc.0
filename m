@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795253330;
-	b=fjbvkSjzdPycWQOeXAKkdFJD8LCQ8uwDhRhWpuc5JiZeEALwi67C/3Tn6CrQyjJ0giMN
-	 tgRZX58y2F0jyLJOX9VPaKs89TQKsHXQNVc4j3cagp1wFE/pFKKBOwzIoI6peOEpDbZHp
-	 kDkBnPwn5YSQRRPRuxI4/KHXxMGrbTNeIL3EVQJiAVxMatl2oYzNC+s/939p5Xwn6++6d
-	 UMrHtNPExq7qWrUL97nSJSv7yoinZvYdOLLVaU/ECxe8yS3iWUn04zdHOoEsySrN02org
-	 KGwpmbNogwpCpD2gax+rdMu2AStunzlEKbMG444I37zAj3t6bQY7MI6QY77BteiWoVA==
+	t=1795253360;
+	b=lkgZmqw2/xglcczc/c93Ved/Gw50PzYTyr4h1Oa3hgWv3dF+I8OACEt+gnx0AANPfLWX
+	 JdKeWzGqWY9erT5JBGnoWwslUSZFbvacpqVA27HbxcHvvI+Ufi3dYGbtMf6UpoqvoY8hE
+	 vycyJiwZ86/e8Y19qeE5SNpgzhLxcKQ2UhotPK5rLkdNRLN8nG/glhNrJruHShfb0Vwj1
+	 MmgyunjP/xmCZx1A5gCEPfvZ3e/qAgd62GT+CD8Xr2FhGHJxlh2SyO9WM87MoJ0YNeBcG
+	 l6rmicBax5tALxQEKNIhHCc5StFyXfpHWuKNGdgS7BLiBZfq3winICtjWU/rAF9tDRA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795253330;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795253360;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=7vaVE5R3JyV2mQ2BOautC269qRl1DkTsxMCsCqhSDMM=;
-	b=xZJkG4apcgDPZ11RvQz6txs/sI54lMqUNnLszTUQz+gRELmMaGe/XsL/+iVshArvhmbI
-	 vmQT9ZAfAVPuVwq3dbQbA6cU7/xxpFokN08SczNzH8kEbvijded137Myz6gy8n2gBB3BZ
-	 fVQdUOK4xt0p3NaV/mC3oua5pnnK/Dl5EeEeV3xXLb4e+GyEwpVzmoyyGPY0sUzBmErGg
-	 vd1vnE8EMLbrG7szgNw8QwCftm0jGVA3gw7HUqGYlGxmyTGGIWyX8lNxGdqMZfvqMhCBq
-	 URowC0h22QSWxiqk37GvUdduZRPvALkeSFQ9pA9/64a7ayBflHixM86YAdbeDmn+Ypw==
+	bh=GI8ZyhomkX9SOeGQbwiQtxurzIX+mIK3iMVEipRdsds=;
+	b=ceLG+l3Ok+TEQJBGkPVZP9HKSSEAS45H9HHI/WThgRERbbAMvWczpk922hoKo5Czy3IT
+	 +QeA+RS/fvv9bFcCjeKRgDArn4uOzdRxgFopsU/tiHAeW31c+mZoQQz4JZE6E4QBtMj3f
+	 hKVeHcpADFEMMvereMwPST/KHfp4kIDu0H/R8efUA2J2cTFBpRL23A62vS6zwIXUJkcPQ
+	 Sv8mJFaEdNvE4UgofjfQ7m/s3u3V5N+/RwYl/xJtuOxERW3YnkQpDc25mECfhRDOzAgvJ
+	 hgpqBI1J8zhloa1DWpe38/X1mgTUpbIcyTh77+olOtLjVHrTMWE1zJ1CTcx6XZ1mGaw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Hgre5y/t";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N6zhZg3Z;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EEB606A320;
-	Sat, 21 Nov 2026 09:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C47606A320;
+	Sat, 21 Nov 2026 09:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hgre5y/t
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BA211F000C0;
-	Sat, 21 Nov 2026 09:28:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N6zhZg3Z
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E011F000C0;
+	Sat, 21 Nov 2026 09:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795253330;
-	bh=7vaVE5R3JyV2mQ2BOautC269qRl1DkTsxMCsCqhSDMM=;
+	s=k20260515; t=1795253359;
+	bh=GI8ZyhomkX9SOeGQbwiQtxurzIX+mIK3iMVEipRdsds=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Hgre5y/tBeFd/P829wsbVTqlPJNw9yZ++APcuXFBaaXy2CwV7wu86EovOUNSUX6gc
-	 w8eqZeUWzH6tUrjsiYBzOnJxdNgkZ3QkwPUJDji8Ot2jU5xhruPcS6fdbUChFRTgiL
-	 4Nwn3US6gEXDvSi9jlH/PwH/5MhpdYTec9prMHGB+/10pCQxn4uvIyxtrPAPzHwBED
-	 tjJk/TS4ukD9Opo4D96JUx8LV+3VN1DtNkoWpc3eczPhxhDZIdwNrs02NFj5WbDdqx
-	 M2zlA6Ewf3O1L8uwbJVFrFwpXTwlCBx+A4xTGbndeX/Bd+swKc4V/uwA6xKzfUHqjS
-	 FJDxYCWO+HjjA==
-Date: Sat, 21 Nov 2026 10:28:46 +0100
+	b=N6zhZg3Z2HWGOKpGsfXYQ3AdVCWwWieaTg7I2IIlvKKafxXeP51oZm/FMzZbRzuMk
+	 +OM63TlpcsZF2DbNpL7nKdAAxKmQoWJ1FfYmIxku1p9fWlaplhAfaG4jKp+iP8VPiw
+	 B/p5G6KAIKEPSmL/AcEmbkEj+MbIc3G/GpbOmuuDIu4m42DyhrWAOaVdznxnm69zf8
+	 JFg1T3PCB4AJ/3gCYuw62i6cjJakLBM+51q1FJXYE/tRqqe8Nti87f4zfzKNHKxmLq
+	 EViOzfcDqjXitpY4DCzzF49pK+KblL25aSlfoFqKQ/XaPgmoxL33wjVamimVPv+3Xd
+	 kkUGa8F48oFYA==
+Date: Sat, 21 Nov 2026 10:29:15 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -50,12 +50,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Luca Weiss <luca.weiss@fairphone.com>, 
 	Shawn Guo <shengchao.guo@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v7 2/5] dt-bindings: remoteproc: qcom,shikra-pas: Add
- iommus constraints
-Message-ID: <20261121-flawless-responsible-cheetah-0c3d87@quoll>
+Subject: Re: [PATCH v7 3/5] dt-bindings: remoteproc: qcom,sm8550-pas: Allow 6
+ iommus for SM8750 ADSP
+Message-ID: <20261121-berserk-likable-chowchow-e29c9a@quoll>
 References: <20261120-shikra-el2-v7-0-9d9000eb50d4@oss.qualcomm.com>
- <20261120-shikra-el2-v7-2-9d9000eb50d4@oss.qualcomm.com>
- <20261121-red-chachalaca-of-essence-1ccb7c@quoll>
+ <20261120-shikra-el2-v7-3-9d9000eb50d4@oss.qualcomm.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -67,42 +66,22 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261121-red-chachalaca-of-essence-1ccb7c@quoll>
+In-Reply-To: <20261120-shikra-el2-v7-3-9d9000eb50d4@oss.qualcomm.com>
 
-On Sat, Nov 21, 2026 at 10:25:55AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Nov 20, 2026 at 06:50:50PM +0530, Komal Bajaj wrote:
-> > The number of IOMMU streams used by a remote processor is not necessarily
-> > limited to one. On Shikra, LPAICP uses three streams, while CDSP uses one
-> > and MPSS does not use any. The existing single-entry limit therefore cannot
-> > describe the LPAICP firmware streams.
-> > 
-> > Increase the maximum number of iommus entries to three and constrain it per
-> > compatible: require three entries for qcom,shikra-lpaicp-pas, allow only
-> > one for qcom,shikra-cdsp-pas, and disallow the property for
-> > qcom,shikra-mpss-pas.
-> > 
-> > Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-> > ---
-> >  .../bindings/remoteproc/qcom,shikra-pas.yaml       | 24 +++++++++++++++++++++-
-> >  1 file changed, 23 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml
-> > index 74f83b7ce08d..3b827f2aadb4 100644
-> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml
-> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml
-> > @@ -92,7 +92,8 @@ properties:
-> >      description:
-> >        IOMMU specifiers of the streams used by the remote processor
-> >        firmware for its memory accesses.
-> > -    maxItems: 1
-> > +    minItems: 1
-> > +    maxItems: 3
+On Fri, Nov 20, 2026 at 06:50:51PM +0530, Komal Bajaj wrote:
+> Remote processors behind an IOMMU may use multiple firmware streams. On
+> SM8750, ADSP uses six IOMMU streams, which exceeds the single entry
+> currently allowed by the binding. CDSP uses a single stream, while MPSS
+> does not require any.
 > 
-> Review from v4 still applies, you need to list the items, either here
-> (if devices share the list) or in if:then: part.
-
-Although if the device does not differentiate them and this is not
-flexible, then its fine.
+> Allow up to six iommus entries in the binding. Require six entries for
+> qcom,sm8750-adsp-pas, disallow the property for qcom,sm8750-mpss-pas,
+> and retain the single-entry limit for the other compatibles.
+> 
+> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> ---
+>  .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 26 +++++++++++++++++++++-
+>  1 file changed, 25 insertions(+), 1 deletion(-)
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
