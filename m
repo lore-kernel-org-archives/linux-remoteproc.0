@@ -1,60 +1,51 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=5.75.144.95
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795253360;
-	b=lkgZmqw2/xglcczc/c93Ved/Gw50PzYTyr4h1Oa3hgWv3dF+I8OACEt+gnx0AANPfLWX
-	 JdKeWzGqWY9erT5JBGnoWwslUSZFbvacpqVA27HbxcHvvI+Ufi3dYGbtMf6UpoqvoY8hE
-	 vycyJiwZ86/e8Y19qeE5SNpgzhLxcKQ2UhotPK5rLkdNRLN8nG/glhNrJruHShfb0Vwj1
-	 MmgyunjP/xmCZx1A5gCEPfvZ3e/qAgd62GT+CD8Xr2FhGHJxlh2SyO9WM87MoJ0YNeBcG
-	 l6rmicBax5tALxQEKNIhHCc5StFyXfpHWuKNGdgS7BLiBZfq3winICtjWU/rAF9tDRA==
+	t=1795266279;
+	b=RT22YbZhFR/Xc4yBD/IYzArZvgcIYIx3BYcZTKUd0KktL2v+FPw9rmESBwzmC4eKUPEq
+	 Bfl1blNAkS2khDUUgXQv8NX1StunXOaLT2C6iO0NlZXbnOuqsR7wjYGs340WOhZq4njp4
+	 2qMmHr0SxrqCd5Uu6f2vNyAWQOGSaNDPRD9py7BwXVT5YGx3M1scMmL9w9QghQGQRW9PP
+	 qZUbFJjYP0HbV28Lp5OD4O/N4Zg6BEnOY2Nf1HKJiM51PRMHgsv2qGglbKEEOd73z9jUi
+	 EjETyhd13COaUBMwSm1kbz3sxZrOTh6oLdNwOA7si/0ZP5QWf3Txy3GNAejhLicysMA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795253360;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=GI8ZyhomkX9SOeGQbwiQtxurzIX+mIK3iMVEipRdsds=;
-	b=ceLG+l3Ok+TEQJBGkPVZP9HKSSEAS45H9HHI/WThgRERbbAMvWczpk922hoKo5Czy3IT
-	 +QeA+RS/fvv9bFcCjeKRgDArn4uOzdRxgFopsU/tiHAeW31c+mZoQQz4JZE6E4QBtMj3f
-	 hKVeHcpADFEMMvereMwPST/KHfp4kIDu0H/R8efUA2J2cTFBpRL23A62vS6zwIXUJkcPQ
-	 Sv8mJFaEdNvE4UgofjfQ7m/s3u3V5N+/RwYl/xJtuOxERW3YnkQpDc25mECfhRDOzAgvJ
-	 hgpqBI1J8zhloa1DWpe38/X1mgTUpbIcyTh77+olOtLjVHrTMWE1zJ1CTcx6XZ1mGaw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795266279;
+	h=DMARC-Filter:DKIM-Signature:DKIM-Signature:MIME-Version:Date:From:To:
+	 Cc:Subject:In-Reply-To:References:Message-ID:X-Sender:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=VRKpYW8QrBp27bcN8LkOSgbQ+XcLXzwp3gfUtGX3I1Y=;
+	b=GYbGN2UMng6Xjm/3miMVBuobgmKY12Bt5ysy1Qc+KBXJzunY5Z0efbJr3+dJwgUz9y7h
+	 0gjaWzxyw42oZ11OJnWmgKke5fVkYHwAaefv2UbvosGjQOrMpwruAIZui/TSBd5JrQCki
+	 rfLYmTj/PAvCVfdvwLaNTaUR+S1fDuYrYI5/llH54Fd722hBNkA8VWvI3f3bu2TJgrLgb
+	 GpKZ9yIq4UnfzssZaPx8P6OVT9p0kRlBmupa58ldWMGig744dtzltuZqYm9BAbxHRh/+5
+	 SaGxaWPQhGB5iSHuOFnbt7KAsDrsMXgr+pOe9Nf2IgorvVLzQ+mfO6KVgrtvCrnvJeQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N6zhZg3Z;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mainlining.org;
+	spf=pass smtp.mailfrom=mainlining.org;
+	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=IQ5S173g;
+	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b="xfD/3ECA";
+	arc=none smtp.remote-ip=5.75.144.95
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C47606A320;
-	Sat, 21 Nov 2026 09:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF591606A32A;
+	Sat, 21 Nov 2026 13:04:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AF591606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=N6zhZg3Z
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5E011F000C0;
-	Sat, 21 Nov 2026 09:29:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795253359;
-	bh=GI8ZyhomkX9SOeGQbwiQtxurzIX+mIK3iMVEipRdsds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=N6zhZg3Z2HWGOKpGsfXYQ3AdVCWwWieaTg7I2IIlvKKafxXeP51oZm/FMzZbRzuMk
-	 +OM63TlpcsZF2DbNpL7nKdAAxKmQoWJ1FfYmIxku1p9fWlaplhAfaG4jKp+iP8VPiw
-	 B/p5G6KAIKEPSmL/AcEmbkEj+MbIc3G/GpbOmuuDIu4m42DyhrWAOaVdznxnm69zf8
-	 JFg1T3PCB4AJ/3gCYuw62i6cjJakLBM+51q1FJXYE/tRqqe8Nti87f4zfzKNHKxmLq
-	 EViOzfcDqjXitpY4DCzzF49pK+KblL25aSlfoFqKQ/XaPgmoxL33wjVamimVPv+3Xd
-	 kkUGa8F48oFYA==
-Date: Sat, 21 Nov 2026 10:29:15 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Bartosz Golaszewski <brgl@kernel.org>, Kumar Patro <bibek.patro@oss.qualcomm.com>, 
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Luca Weiss <luca.weiss@fairphone.com>, 
-	Shawn Guo <shengchao.guo@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v7 3/5] dt-bindings: remoteproc: qcom,sm8550-pas: Allow 6
- iommus for SM8750 ADSP
-Message-ID: <20261121-berserk-likable-chowchow-e29c9a@quoll>
-References: <20261120-shikra-el2-v7-0-9d9000eb50d4@oss.qualcomm.com>
- <20261120-shikra-el2-v7-3-9d9000eb50d4@oss.qualcomm.com>
+	dkim=pass (2048-bit key, unprotected) header.d=mainlining.org header.i=@mainlining.org header.a=rsa-sha256 header.s=202507r header.b=IQ5S173g;
+	dkim=pass header.d=mainlining.org header.i=@mainlining.org header.a=ed25519-sha256 header.s=202507e header.b=xfD/3ECA
+DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1795266267; bh=VRKpYW8QrBp27bcN8LkOSgb
+	Q+XcLXzwp3gfUtGX3I1Y=; b=IQ5S173gVSHPRxsYONXx2Ivuzqga75mNflODxaHa0ZRwOfqlWf
+	O6WGD3c4CXQ3wU2/R8PtfTvxXzIDF/CRLKtVe/l6T9D2+lKVkz1y51DwwR5DqZx36CCNnUIfZ3Y
+	Bp90FXtCgg+8ZvdrV5aUKjKzUlyR0c7aUJPtK4ZAEsfBoCnXvksBQ5VqVaP08PTEerAiNHEDf+P
+	4oUI4zOgub6aiFCNJz0B87L0tCsMXs5+WpZxEsLMvz5JE/GEmpZiDmBu1RGWbwW0GpN+XjTH4k7
+	7HtRSPraHsnHOF1e1aakBKBderiMA/nevs7Pa9EzeUlTh/KgprmwnVbJrKCGkEsFMxA==;
+DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
+	h=Message-ID:Subject:To:From:Date; t=1795266267; bh=VRKpYW8QrBp27bcN8LkOSgb
+	Q+XcLXzwp3gfUtGX3I1Y=; b=xfD/3ECAS0+mo9Oml06xqCboa5tPxmg03DtUHpBilXDZAYADZ4
+	0U+51YKk1/8iXlGAmqH1Asyh4h1ySkfPiCAA==;
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -64,27 +55,82 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20261120-shikra-el2-v7-3-9d9000eb50d4@oss.qualcomm.com>
+Date: Sat, 21 Nov 2026 14:04:26 +0100
+From: =?UTF-8?Q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?=
+ <barnabas.czeman@mainlining.org>
+To: david@ixit.cz
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+ <mathieu.poirier@linaro.org>, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>, Bryan O'Donoghue <bod@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sashiko <sashiko-bot@kernel.org>
+Subject: Re: [PATCH] remoteproc: qcom_q6v5_mss: Save the need_pas_mem_setup
+ into qproc
+In-Reply-To: <20261117-qcom_q6v5_mss_msm8953-v1-1-0fdaea2855ff@ixit.cz>
+References: <20261117-qcom_q6v5_mss_msm8953-v1-1-0fdaea2855ff@ixit.cz>
+Message-ID: <bca16109c94e7bd5fc057cca895ec50f@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 20, 2026 at 06:50:51PM +0530, Komal Bajaj wrote:
-> Remote processors behind an IOMMU may use multiple firmware streams. On
-> SM8750, ADSP uses six IOMMU streams, which exceeds the single entry
-> currently allowed by the binding. CDSP uses a single stream, while MPSS
-> does not require any.
+On 2026-11-17 20:51, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
 > 
-> Allow up to six iommus entries in the binding. Require six entries for
-> qcom,sm8750-adsp-pas, disallow the property for qcom,sm8750-mpss-pas,
-> and retain the single-entry limit for the other compatibles.
+> On hardware requiring Peripheral Authentication Service (PAS) for modem
+> memory setup (e.g., SDM632), the remoteproc subsystem skips hardware 
+> memory
+> authentication because q6v5_probe() fails to copy the 
+> need_pas_mem_setup
+> flag to the allocated device instance.
 > 
-> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> Original commit didn't save the value into the structure thus quietly
+> skipping if (qproc->need_pas_mem_setup) condition.
+> 
+> Reported-by: Sashiko <sashiko-bot@kernel.org>
+> Closes: 
+> https://sashiko.dev/#/bug/linux-83fcbc28-236c-48e4-a6bd-731f4361f9ae
+> Fixes: f56052f4d87c ("remoteproc: qcom_q6v5_mss: Introduce 
+> need_pas_mem_setup")
+> Signed-off-by: David Heidelberg <david@ixit.cz>
 > ---
->  .../bindings/remoteproc/qcom,sm8550-pas.yaml       | 26 +++++++++++++++++++++-
->  1 file changed, 25 insertions(+), 1 deletion(-)
+>  drivers/remoteproc/qcom_q6v5_mss.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c 
+> b/drivers/remoteproc/qcom_q6v5_mss.c
+> index dd052a62b8583..5d084aa2eac36 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -2189,16 +2189,17 @@ static int q6v5_probe(struct platform_device 
+> *pdev)
+> 
+>  	qproc->has_alt_reset = desc->has_alt_reset;
+>  	ret = q6v5_init_reset(qproc);
+>  	if (ret)
+>  		goto detach_proxy_pds;
+> 
+>  	qproc->version = desc->version;
+>  	qproc->need_mem_protection = desc->need_mem_protection;
+> +	qproc->need_pas_mem_setup = desc->need_pas_mem_setup;
+>  	qproc->has_mba_logs = desc->has_mba_logs;
+> 
+>  	ret = qcom_q6v5_init(&qproc->q6v5, pdev, rproc, 
+> MPSS_CRASH_REASON_SMEM, "modem",
+>  			     qcom_msa_handover);
+>  	if (ret)
+>  		goto detach_proxy_pds;
+> 
+>  	qproc->mpss_perm = BIT(QCOM_SCM_VMID_HLOS);
+> 
+> ---
+> base-commit: aaa2f954c21b205a0bcd0961e5b2be4e82e58455
+> change-id: 20261117-qcom_q6v5_mss_msm8953-aba81523223b
+> 
+> Best regards,
+> --
+> David Heidelberg <david@ixit.cz>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
+Thanks, i have tested the patch on Redmi S2 (MSM8953).
 
-Best regards,
-Krzysztof
-
+Tested-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
