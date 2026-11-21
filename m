@@ -1,45 +1,45 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795253232;
-	b=1cmYRhk5HbNV0rUoyOvpC9J0uUwVH4V3RkKHlNmd3LpR0f6UdY02aDAc4en/X/t9FOt2
-	 LzWhU4A3VKatUcjJRcdK93nzteSm/zSdqQ0ONcMufd7wCYSg8VmV2qN5a7cgOpM3XcBjL
-	 NlhM+rh3+4gnGlXEYnvuCP6pXxXeMJOaKPw8hriIBX7DS6DGe/PAJzJd6rA0Fcf+ZzBZn
-	 AtY6zot78BaaFV3Aft1o8ALAct5XF7Dd0Svq9WDcTnIL64aS0ukaJ0luFc6rtgCtSzc4m
-	 UbcHe/UheKqpt67EToHUTtTqvfSQL3aBgm6DW9KwhWSWRKODq+qzLyFWf3vpZCcdD5g==
+	t=1795253330;
+	b=fjbvkSjzdPycWQOeXAKkdFJD8LCQ8uwDhRhWpuc5JiZeEALwi67C/3Tn6CrQyjJ0giMN
+	 tgRZX58y2F0jyLJOX9VPaKs89TQKsHXQNVc4j3cagp1wFE/pFKKBOwzIoI6peOEpDbZHp
+	 kDkBnPwn5YSQRRPRuxI4/KHXxMGrbTNeIL3EVQJiAVxMatl2oYzNC+s/939p5Xwn6++6d
+	 UMrHtNPExq7qWrUL97nSJSv7yoinZvYdOLLVaU/ECxe8yS3iWUn04zdHOoEsySrN02org
+	 KGwpmbNogwpCpD2gax+rdMu2AStunzlEKbMG444I37zAj3t6bQY7MI6QY77BteiWoVA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795253232;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795253330;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=rET3kefZAMMGm5z84Ogk5S979dN/zqnTQfW5Uun5HJ0=;
-	b=qjbTNYGbUvEIT6XuLz/0aBrnWQ5TCLkpZYQbFiO9VztzdfeF0yMpsOKor9X71ygsqjap
-	 KT8Sishb7z6v0LC2gb7lTgyBQM59Xg1Gqqnvozbu1nUMM0VW/SnopnqIC/8qO4zZvaUVO
-	 T2KjDtu67/1RE3I1nYF7a0xgy2ntonSaJ2sL8sML7FvhvJm9FucbnCCXINDGXDe7wboZl
-	 42L7Y1U0zzH8swoI86Z67C0aFSi0eVhWwJL5Pn9oE3olwpARbq8zu0hSunyUXbCG04pf1
-	 II4ONJTsgGZUPtdA3Wz9xBcrlRede3zevO0Isk1/QmyngwPNs0x3xgyCda6Oz6mKqDQ==
+	bh=7vaVE5R3JyV2mQ2BOautC269qRl1DkTsxMCsCqhSDMM=;
+	b=xZJkG4apcgDPZ11RvQz6txs/sI54lMqUNnLszTUQz+gRELmMaGe/XsL/+iVshArvhmbI
+	 vmQT9ZAfAVPuVwq3dbQbA6cU7/xxpFokN08SczNzH8kEbvijded137Myz6gy8n2gBB3BZ
+	 fVQdUOK4xt0p3NaV/mC3oua5pnnK/Dl5EeEeV3xXLb4e+GyEwpVzmoyyGPY0sUzBmErGg
+	 vd1vnE8EMLbrG7szgNw8QwCftm0jGVA3gw7HUqGYlGxmyTGGIWyX8lNxGdqMZfvqMhCBq
+	 URowC0h22QSWxiqk37GvUdduZRPvALkeSFQ9pA9/64a7ayBflHixM86YAdbeDmn+Ypw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kSEFpXo6;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="Hgre5y/t";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90861606A320;
-	Sat, 21 Nov 2026 09:27:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EEB606A320;
+	Sat, 21 Nov 2026 09:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=kSEFpXo6
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227781F000C6;
-	Sat, 21 Nov 2026 09:27:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Hgre5y/t
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BA211F000C0;
+	Sat, 21 Nov 2026 09:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795253232;
-	bh=rET3kefZAMMGm5z84Ogk5S979dN/zqnTQfW5Uun5HJ0=;
+	s=k20260515; t=1795253330;
+	bh=7vaVE5R3JyV2mQ2BOautC269qRl1DkTsxMCsCqhSDMM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=kSEFpXo6P+shEey8EWvZJFJ18UYQC/D1nxHXCtEQ5uJtSiAHu/N0UMT64xtAqOZmv
-	 w/DKjJ/4d4+M0hTOO74jYKlO0cspFCdflFCgmfGBEI4G27CWM2oBvoogwYzGX3cG9w
-	 zc2IHo83QddTHay4eD7rLY/Yukq/C4D6uQE1rqmx2a3a1KpAwbxv9DJne6Z3keWlze
-	 093nS+ug3Rn3ifSFhX4ngSloHstA9Ev9RiOkehqyQn5hoN4iq1ZIhmIoa9YufnEOEp
-	 ryQqxXxITGRO8FAU7+gs2BmcVT0Q3wenkLQiDaJvRF6inJFOUibQw39JaRG3fnS2ZZ
-	 6usW6lXDzY+Jg==
-Date: Sat, 21 Nov 2026 10:27:07 +0100
+	b=Hgre5y/tBeFd/P829wsbVTqlPJNw9yZ++APcuXFBaaXy2CwV7wu86EovOUNSUX6gc
+	 w8eqZeUWzH6tUrjsiYBzOnJxdNgkZ3QkwPUJDji8Ot2jU5xhruPcS6fdbUChFRTgiL
+	 4Nwn3US6gEXDvSi9jlH/PwH/5MhpdYTec9prMHGB+/10pCQxn4uvIyxtrPAPzHwBED
+	 tjJk/TS4ukD9Opo4D96JUx8LV+3VN1DtNkoWpc3eczPhxhDZIdwNrs02NFj5WbDdqx
+	 M2zlA6Ewf3O1L8uwbJVFrFwpXTwlCBx+A4xTGbndeX/Bd+swKc4V/uwA6xKzfUHqjS
+	 FJDxYCWO+HjjA==
+Date: Sat, 21 Nov 2026 10:28:46 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -50,11 +50,12 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Luca Weiss <luca.weiss@fairphone.com>, 
 	Shawn Guo <shengchao.guo@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Subject: Re: [PATCH v7 1/5] dt-bindings: remoteproc: Move iommus constraint
- to SoC-specific bindings
-Message-ID: <20261121-spectral-terrier-of-whirlwind-aee5b2@quoll>
+Subject: Re: [PATCH v7 2/5] dt-bindings: remoteproc: qcom,shikra-pas: Add
+ iommus constraints
+Message-ID: <20261121-flawless-responsible-cheetah-0c3d87@quoll>
 References: <20261120-shikra-el2-v7-0-9d9000eb50d4@oss.qualcomm.com>
- <20261120-shikra-el2-v7-1-9d9000eb50d4@oss.qualcomm.com>
+ <20261120-shikra-el2-v7-2-9d9000eb50d4@oss.qualcomm.com>
+ <20261121-red-chachalaca-of-essence-1ccb7c@quoll>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -66,23 +67,42 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20261120-shikra-el2-v7-1-9d9000eb50d4@oss.qualcomm.com>
+In-Reply-To: <20261121-red-chachalaca-of-essence-1ccb7c@quoll>
 
-On Fri, Nov 20, 2026 at 06:50:49PM +0530, Komal Bajaj wrote:
-> qcom,pas-common.yaml limits iommus to a single entry for every PAS
-> remoteproc binding referencing it. This is too restrictive for SoCs
-> whose firmware uses multiple IOMMU streams, and a schema referencing
-> the common one cannot relax the inherited limit.
+On Sat, Nov 21, 2026 at 10:25:55AM +0100, Krzysztof Kozlowski wrote:
+> On Fri, Nov 20, 2026 at 06:50:50PM +0530, Komal Bajaj wrote:
+> > The number of IOMMU streams used by a remote processor is not necessarily
+> > limited to one. On Shikra, LPAICP uses three streams, while CDSP uses one
+> > and MPSS does not use any. The existing single-entry limit therefore cannot
+> > describe the LPAICP firmware streams.
+> > 
+> > Increase the maximum number of iommus entries to three and constrain it per
+> > compatible: require three entries for qcom,shikra-lpaicp-pas, allow only
+> > one for qcom,shikra-cdsp-pas, and disallow the property for
+> > qcom,shikra-mpss-pas.
+> > 
+> > Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> > ---
+> >  .../bindings/remoteproc/qcom,shikra-pas.yaml       | 24 +++++++++++++++++++++-
+> >  1 file changed, 23 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml
+> > index 74f83b7ce08d..3b827f2aadb4 100644
+> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml
+> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,shikra-pas.yaml
+> > @@ -92,7 +92,8 @@ properties:
+> >      description:
+> >        IOMMU specifiers of the streams used by the remote processor
+> >        firmware for its memory accesses.
+> > -    maxItems: 1
+> > +    minItems: 1
+> > +    maxItems: 3
 > 
-> Drop iommus from qcom,pas-common.yaml. As this removes the property
-> from every binding referencing it, define it in the top-level
-> properties of each of them, with a description and the same
-> maxItems: 1 limit, so that SoCs needing a different limit can override
-> it in their own binding.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
+> Review from v4 still applies, you need to list the items, either here
+> (if devices share the list) or in if:then: part.
+
+Although if the device does not differentiate them and this is not
+flexible, then its fine.
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
