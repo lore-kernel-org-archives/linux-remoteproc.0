@@ -1,79 +1,78 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795354595;
-	b=QlNuwiba0E72bcL0tPsH8yIgvdOM2yzulIVMwOtuGLz6Vm+4zlH2HgAVk7YY2exW/Avu
-	 ZBiYfZzkXJ0g6hyo5MmVxok9XU6UBpZGyYFxtGyiEhpEWzp0WnMmfoT9Nwbqo3D2RjnQI
-	 LXKeIHRoS9MK4mJYFE+uRuL7VUJ+J7neMjCnu5bbww8wLcllnLexF163xmH2x+Cj5bA9+
-	 yfMfAcw7bLv7vUqnZ0I/zlkQEeBv0VajPKr8gUJXrTZyAqzyVDIUOMJs+LqCNFIuQu/cQ
-	 ib6M51SbsYiKK/VFKTcnWujPyHftm31hKI94njOu6VhPO8HzNUKu5rG7fiKCji7Q3fw==
+	t=1795354597;
+	b=HLv3uFHef5cKG+KfMCu9qwzcCyMeRi1KFSWD8T5S85MdS8DpgxGVN7Ioc/HJ/DU0hIHa
+	 1d5s2Zs8OySqBxtnTrcAIVAh1TcqgqRgwO7iiC4Cs8B0g2QC8NiMm4Af+qJsam7huDlfP
+	 yht6jNvzGzSWuzL882iz4XEzuhpK8/RAJYvOowFlFYua2dr2omy8bq2/sP53kYpJfxsEm
+	 jSGDZgse3l4xs6X3Zbb0h0RG1LGEf2E8suvGvIxImI3RfkwHrOQDG+OllUdGSLg6/9WEN
+	 ssuB4vUuF6rSniyB9eH3ojQ0zKQQaMm1pw7PPgQONtkiYrv8KSd7vVDzD+YK7uuBGVQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795354595;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795354597;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=uw2pJFn22ilr7DOpqaXGDTxehtM73Kc4/1QC1DjlTDA=;
-	b=uZgDuy7YOPaixfP8/8LOEnJko0eNvIz6VOd2Qu5f9uq0x3clpfEM1RGKS449sYf5jtgp
-	 lY8EVhBO6shd37RzABqzMufTJHfyNeF3Gvo3E7V6SR0xpmHk8LhwAFfF3xzMgAuT2DrxZ
-	 CdgXwjiF16cZEQX/0o3BQRDygeyThmonMf2l16lPh1KSGWZc15GjNffIrA/XsYXKYkTyB
-	 WoAhWQX6k37i/Ji2SUSKCMufdmJXrwFZvdyfbIns/XQcFvnfq+bHMTocaDrA0MTeHGLhZ
-	 R19wpPUHHFrv9msqmqX0IZpFa3pkCCrIb68iDMmyjtGF/r3yyPuW12xTn5uxLKT9+Sg==
+	bh=gSrY2znnUbX/BQQhtLE0UHmVPEjfpEtvIoqty3TSWXU=;
+	b=gfsu42uVm3ZhcL2HwtEZZRvmLrUDP/vHQkvELJ4l3dB0gcnNv7M+BBvsOJBfVk9ssrQM
+	 zD/pptHvHQ18oWWaTNLS45iHJyKnm0O/Pv0nic5aObBM/8RA4FvNWX/YTlovVHlho7qam
+	 Y5nqNHhb5FdKwvcgkaEHWDj66VWXjbyN+2VAUEPQAIQKV7FqhSQDKDPo0JIIkMdm/sNQb
+	 5vqaj5164Bmq/Hi8dwFQExv3sYL50sWlAmYLTJZQ4TEyCYcn9Wpwb432VhSEtz7j2gzA1
+	 YXysFruJMSBejqKj869kWYbhKFI/JivdSQXNW86PZrQfJAwW3fQLiRXItXA6ib0Q4QA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OpX+dWhM;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="IB7v/xZp";
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1E8606A332;
-	Sun, 22 Nov 2026 13:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9F4606A32C;
+	Sun, 22 Nov 2026 13:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=OpX+dWhM
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=IB7v/xZp
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795354594;
-	b=MTFuSKfp7gehwOloBRyRPYUhWqO/ddJ1iQSoYt0NuWUGznCauaPvfswCf7B/8kYDCUxf
-	 AlMYZKgVl3OtyadAKxBcaxNVAoUkzRvTUV7QZijBLZYS/SD2itPO6k7jXbXrH2u6KeGzK
-	 ZPeX6mpr+sLoS+SutSBb9B4qFo9EOcsOvR5qJJPmtXDGKbwo1xSqj+d95e/05mSHLukNm
-	 J0TrksAAYEw5BtDfivyb+JB0VOI1Th0JYEZVIaPbzj1uRX2y05Bzf6s09Uw8NCh6dX9A0
-	 9cLrKLqpct9xfh+UPwa+s9gEFyQCf0r4Rd0DOQBdEtzdJeRu3vYYhx2jIE0Mq6A8Esw==
+	t=1795354597;
+	b=b4EqdxSBDrJxw9dRhn88BAX7vm2hAk5NTbslb5umQ/MFsC/KJf7O63h/c6BWLSrPVhLG
+	 UHZtJzY5I3e5xjkhtmHcB8xvrXCyP+HswfuV5MetR6KfTHBqXNSruOy+1uMoFUvq2oCe7
+	 rc2mgMBbhzvzIFB8Ck+crndobRxIxGJkbfoJ4vYv8OL7c3+IlsiVvkpIBpm2yclVu7xic
+	 6pZ9BMn5dwUrofVS+CyYlgD0nzUjvuEumQjA0wkR4vhPSJOm5IaXvqvfxX6/YnDUVr9UH
+	 5z+asLexrOZ9QIsY5djVaAguAlZ9bvy2F/zcnNBpiDfyY9PKKJYZXLMZwx+AR/QQRXQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795354594;
+	c=relaxed/relaxed; t=1795354597;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=uw2pJFn22ilr7DOpqaXGDTxehtM73Kc4/1QC1DjlTDA=;
-	b=z4skemVXZs0/8qKv6DwA0WMtLjp8fiSGH6VGCsIBCIBq6/zbns6CSgx4NhZ2T7alha7L
-	 c8IRIKiN/zcZRkNIOI7kCZgHryoymPDaYN7w/nNDXdHAKQOIwZhT5jlx0L04XNZ6XCNSb
-	 fhBOAvUV9/DZShiFA9eOus8vn+71A03Af0axLvYnUmxcrMX32ZlB94W5GGaFkoq46FWl9
-	 XnqqNGrKWlHFaZdPZweH/N7wOVAsid8L5WaHixtE4IrnVP8t9hHNuX4TnThhZwfWJjrEr
-	 wk/zKOk5nuShpHZ79aWneEdpwFZoxADmXx9XDqiE5POF7IsC8F8A2y1L+37xzzLQwNg==
+	bh=gSrY2znnUbX/BQQhtLE0UHmVPEjfpEtvIoqty3TSWXU=;
+	b=XEIjwRRJ8OgEPOfBDx/iiwNlII74H/EYOdpkr3ZSi+ySKB5CDv4EwZxC8p3GKYOl8YRz
+	 UDfaJ3W8FC5mvBrHKGMakOsN7D21OwpGd5o3yVBcnWh68ot74+fdXKwfKscUZFo/atDH/
+	 rgDXCehRb3U5ddn3QISi80r2vI8Uon844ELwdrRCUBAzXBNMFt0Zrr5T/+/77yxZqeL8L
+	 UdJHgNZNNtq3rDm4GSs9oqmgtpYTcfGo74t0X53sF+O83GKzI5xkzi4+4DmLEES9+0a4F
+	 B0r7//KwC6F0ly7ovbm0GSGNtGbbBwaogeBHneZhb9X5k7or+Xy4kxh6zEI6E9iJT6A==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 9FECA1F000C4;
+	by smtp.kernel.org (Postfix) with ESMTPS id 842F61F000CA;
 	Sun, 22 Nov 2026 13:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795354594;
-	bh=uw2pJFn22ilr7DOpqaXGDTxehtM73Kc4/1QC1DjlTDA=;
+	s=k20260515; t=1795354597;
+	bh=gSrY2znnUbX/BQQhtLE0UHmVPEjfpEtvIoqty3TSWXU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=OpX+dWhMtaUNpuXE9ryjLnEY+cwlzQ2urIS2eMDHKX/fgiHWS1Q+0qcLq8Sb5ASC1
-	 VVmugJdsrjYZrnpDw0UH+XzbJokXRgOGxI5aB2MACMz8nCYLYWlX1kgZPov2KSCVBo
-	 04K77WDmGl0PA/aDpRUvbTbEk7TIJlW6yXZHUPvHq6Xub9Dwceh/q/ExqbLJnALkXR
-	 TftW94yIZ1QALwtbY79EBMe1nwtUwkbPYNuX+gxqQpZVdaN4o6MhMCjX8SMr4LzpvN
-	 NZaLsd0ytggi1KF4wyQ8YNOhwy3cRkysMZ2q/saCMM8AwBD4emvrBAivrbqMvP+0xL
-	 jT+28GcF05bkg==
+	b=IB7v/xZpANWSabAKf83Gbr8VI+wQN6CWYclBpYxIm26WEQhk/h5K0HD//1/qRIQ4b
+	 F1DwhguvpQkpi9zC+7ybtxfs6wjiuiZq3LlVK4kRe5lKqVeprMcyablGbv+1gVEZS0
+	 pqaA1Dh4BHLvLXPLw60j8HELxrHf1RmAX7Cc7//3kTAUCCHO8Pom+iFlynGo0eq3Lj
+	 /l0kxBoUW6Xgj3ZTt0RlPQ840MccQdgYS6VPDUF8XluxMj2gSR/a4FY4Ejd/Qg1ChQ
+	 Eq15FvPnQsTSsdQu6RWvKTwGFtyAA6/aEyfZQedqAn2kQU+XVJt3/fAB/BEslDMAvg
+	 zuMQDCEnoZmsA==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 2F2684C0AD;
+	by lkml.kernel.org (Postfix) with ESMTP id 1595F4C0B1;
 	Sun, 22 Nov 2026 13:36:23 +0000 (UTC)
 From: Robert Ijtsma via B4 Relay <devnull+robertijtsma.gmail.com@kernel.org>
-Date: Sun, 22 Nov 2026 14:36:22 +0100
-Subject: [PATCH 2/2] arm64: dts: qcom: sc8180x: add SLPI remoteproc and
- FastRPC SDSP node
+Date: Sun, 22 Nov 2026 14:36:21 +0100
+Subject: [PATCH 1/2] remoteproc: qcom: pas: add SC8180X SLPI compatible
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -84,7 +83,7 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261122-sc8180x-slpi-v1-2-345903fafc96@gmail.com>
+Message-Id: <20261122-sc8180x-slpi-v1-1-345903fafc96@gmail.com>
 References: <20261122-sc8180x-slpi-v1-0-345903fafc96@gmail.com>
 In-Reply-To: <20261122-sc8180x-slpi-v1-0-345903fafc96@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -95,11 +94,11 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
  devicetree@vger.kernel.org, Robert Ijtsma <robertijtsma@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795354582; l=2608;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795354582; l=1360;
  i=robertijtsma@gmail.com; s=20261122; h=from:subject:message-id;
- bh=yGUHcnX9Uv3hxuQWDVbWZHXscLvJSjDoTVLl8oDv5rQ=;
- b=hi2hKlJqNVaqU5rmtYtziyt9DuDiRlztwT5VP3X106C26MbZWZKMqa3552oXie0W9CG6AKQRB
- aBLFKRmf5FrCe+18SWZyRD4U3UDEstQhyDcS+kPDblClz42LZlcoWGa
+ bh=SeluMMGriinjyNsgC4NIGONS30tI/MuFdGdGq+5z5kM=;
+ b=5gk+Vr/ojxgoPSgYD9SuROAunRDBbgWCQ3kVW9T5WEBUMuyAcnoyPS+FnEdqXYpnI+FwVJuLm
+ O4/KAD779iPChYwlU5TtOrf1Wj2ZI6oHe+ZaO2FQBdC789zXmjH0RZ2
 X-Developer-Key: i=robertijtsma@gmail.com; a=ed25519;
  pk=qiDyKVqFicxFIR5sB5m+p9SWPKL2/+mMoiQnUx0C9P0=
 X-Endpoint-Received: by B4 Relay for robertijtsma@gmail.com/20261122 with
@@ -110,91 +109,31 @@ Content-Transfer-Encoding: 7bit
 
 From: Robert Ijtsma <robertijtsma@gmail.com>
 
-Add the disabled SLPI (Sensors Low-Power Island) remoteproc node at
-0x2400000 to sc8180x.dtsi along with its GLINK edge (dsps) and FastRPC
-SDSP compute context banks (SMMU SIDs 0x05a1..0x05a3), matching SM8150.
+The SC8180X SLPI (Sensors Low-Power Island) shares the same PAS ID (12),
+LCX/LMX power domains, and resource layout as SDM845 and SM8150, and
+the compatible string "qcom,sc8180x-slpi-pas" is already documented in
+Documentation/devicetree/bindings/remoteproc/qcom,sm8150-pas.yaml.
 
-Boards that reserve an SLPI memory region and ship SLPI firmware can
-enable remoteproc_slpi to expose SLPI-attached sensors over FastRPC and
-QMI SSC.
+Add the OF match entry for qcom,sc8180x-slpi-pas reusing
+sdm845_slpi_resource_init.
 
 Signed-off-by: Robert Ijtsma <robertijtsma@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 61 +++++++++++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ drivers/remoteproc/qcom_q6v5_pas.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index a85e321..ee1a83a 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -2259,6 +2259,67 @@ tcsr_mutex: hwlock@1f40000 {
- 			#hwlock-cells = <1>;
- 		};
- 
-+		remoteproc_slpi: remoteproc@2400000 {
-+			compatible = "qcom,sc8180x-slpi-pas";
-+			reg = <0x0 0x02400000 0x0 0x4040>;
-+
-+			interrupts-extended = <&intc GIC_SPI 494 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "xo";
-+
-+			power-domains = <&rpmhpd SC8180X_LCX>,
-+					<&rpmhpd SC8180X_LMX>;
-+			power-domain-names = "lcx", "lmx";
-+
-+			qcom,qmp = <&aoss_qmp>;
-+
-+			qcom,smem-states = <&slpi_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 170 IRQ_TYPE_EDGE_RISING>;
-+				label = "dsps";
-+				qcom,remote-pid = <3>;
-+				mboxes = <&apss_shared 24>;
-+
-+				fastrpc {
-+					compatible = "qcom,fastrpc";
-+					qcom,glink-channels = "fastrpcglink-apps-dsp";
-+					label = "sdsp";
-+					qcom,non-secure-domain;
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					compute-cb@1 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <1>;
-+						iommus = <&apps_smmu 0x05a1 0x0>;
-+					};
-+
-+					compute-cb@2 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <2>;
-+						iommus = <&apps_smmu 0x05a2 0x0>;
-+					};
-+
-+					compute-cb@3 {
-+						compatible = "qcom,fastrpc-compute-cb";
-+						reg = <3>;
-+						iommus = <&apps_smmu 0x05a3 0x0>;
-+					};
-+				};
-+			};
-+		};
-+
- 		gpu: gpu@2c00000 {
- 			compatible = "qcom,adreno-680.1", "qcom,adreno";
- 
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index e7dfad2..21587a9 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -2029,6 +2029,7 @@ static const struct of_device_id qcom_pas_of_match[] = {
+ 	{ .compatible = "qcom,sc8180x-adsp-pas", .data = &sm8150_adsp_resource },
+ 	{ .compatible = "qcom,sc8180x-cdsp-pas", .data = &sm8150_cdsp_resource },
+ 	{ .compatible = "qcom,sc8180x-mpss-pas", .data = &sc8180x_mpss_resource },
++	{ .compatible = "qcom,sc8180x-slpi-pas", .data = &sdm845_slpi_resource_init },
+ 	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8250_adsp_resource },
+ 	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource },
+ 	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource },
 
 -- 
 2.56.0
