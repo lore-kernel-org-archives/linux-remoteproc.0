@@ -1,54 +1,54 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.54.127.87
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.54.127.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
 	t=1795385922;
-	b=aoULaBn7vLJur8aFzNrG7xMkJZjBM5TEDf/ktD/pG1+z0uqGyu5SI7Df36bRFrxlW1Hb
-	 PQcxRuH4Hvy/6viKMvsM+juLBXLV0nNPO2zKYFf/VcwxA0N4MOCLk4gw39rmz697VFLpc
-	 DYRflHR+Eo36lFIcirwkvctdBnsU9jy8aLV9SUAwTq/7AJT2XJLz54CIuAag+9u2rRPfY
-	 74dE3EJX9oinvEp4FWiUPSOEfg5zEwgTgJW6H5ALWWkNe5eupFCNg/yHGXR7y+it/Mus0
-	 XVfwVaCneNby/CPy5+Vv7xPOXZAplcZmCafLyU97d5Q6hjTHUZuz1bPpsT/ax2raKfQ==
+	b=CLdHQnajprg9H75sRdWLRWD0yTKMKNssZ+cWoxmsuv2novJY4pJCvu5WqIWOg7G0QMUg
+	 XjDnvZseiCk3+MOONdVscbXMcNqmNBS0ui5LfujcOXM6OwpPEnhWTZgghwsf9ARKp+y3L
+	 EA+7VcuTwCxv9f/YEdpOriRxOyp4ThkHt25AtY9pX/HbAvtwTHgwr6I5QRKLfavtn+LQr
+	 kmqlu/DLfbQQZMSHncl0SSBpvQayNxOgAnMvmcmWUFI0wAYYPjxerxAuOEwXdZtHA7J9T
+	 mTGuOFnhih91BkW5iI+tTvU/SxOHaS/MQcCrE/5ZWasgxQGzc5ErJPTcmOOw4wUZyxg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
 	a=rsa-sha256; c=relaxed/relaxed; t=1795385922;
 	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
-	 Content-Transfer-Encoding:X-Envelope-From;
-	bh=k5LjoGaNZQ67mdl0htfbMa2Xp93tcUEF/ZOF14J2AHE=;
-	b=5PFR2Jt2waaQVt4anwmm5siLlqe+/DpPMXfI6G/1QS5tk0J0CsAVDO4oHKQ7uDB9sz+x
-	 41PlurUp2Uw0btEI+SXt+fNga10xmksNAWRDep51aTU8KUERnnIh8dovgvKimBr5pYAFq
-	 9/cvcsrl70Nqcwm7cglfbLwqKWAuAsjy/7ksYavSKI4s46nphky7TdUL1yVWjDAuPAUxu
-	 26Y96hBJA8Z+vktQ336Vb5s6oLkgUkYd7rjwK/5LedaDWmo54DZapKsbB5roFKCqiDDL9
-	 eRgaR7hd9XhnGYAIu+375auzr+ifCkPTGUMAu79F0mjzLY23aJvT78tiGhobn2cmbXQ==
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-Envelope-From;
+	bh=2K0hOPSzFGlyM04CdMKPAxpodJ/pAGufjNXPansEHxM=;
+	b=sibYTZI1G9XO3mUVsOyUI9qeWfgX86CKKXP23bTaaqJcqmSUA+KP79KrToTe3KatBEdV
+	 WEUrzsMk9HbkV/uu1/yQwiEDjWENsraEA5rx9qi2bzgb9bIDBDjyyggYZbd3bEHXofdZm
+	 CsZ7IqhUoh3eHU+DxHUZfDh9Lhzm8isP2+UbFVZmGNxtpsFhKB/ovw8c73++nsIgIhck3
+	 HJWaEknHkN57zqcJ5iN0n2z9Q11JMj/XYlVV6jnpykDXYr+/z8vNh/1cupB+iRtE1bYgp
+	 5ozJmlohULYpvt3oDD0dde5fBSjKDisPa96tCCn1VAUBd1Xf723XmZFyprMP2DfIaog==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=chrispinetinega.com;
 	spf=pass smtp.mailfrom=chrispinetinega.com;
-	dkim=pass header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=kp8FJCxX;
-	arc=none smtp.remote-ip=198.54.127.87
-Received: from out-zbxj-a87.jellyfish.systems (out-zbxj-a87.jellyfish.systems [198.54.127.87])
+	dkim=pass header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=N1QzcWBm;
+	arc=none smtp.remote-ip=198.54.127.131
+Received: from out-2z4y-a131.jellyfish.systems (out-2z4y-a131.jellyfish.systems [198.54.127.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D5C606A32A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E830606A320
 	for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 22:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 88D5C606A32A
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7E830606A320
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chrispinetinega.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrispinetinega.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=kp8FJCxX
+	dkim=pass (2048-bit key) header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=N1QzcWBm
 Received: from mail.privateemail.com (unknown [62.8.90.37])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.privateemail.com (Postfix) with ESMTPSA id 4jXk3v64ysz2x9G;
-	Sun, 22 Nov 2026 22:18:19 +0000 (UTC)
+	by mail.privateemail.com (Postfix) with ESMTPSA id 4jXk3q6Cltz2x9G;
+	Sun, 22 Nov 2026 22:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chrispinetinega.com;
-	s=default; t=1795385904;
-	bh=k5LjoGaNZQ67mdl0htfbMa2Xp93tcUEF/ZOF14J2AHE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kp8FJCxXmz1yoFCDsNPizvZK9OvcBZfWo1xz7Ru4ipuRaPT8ErsHbXIrelfytJc/C
-	 akn5uCr9DHkF2IWJN8WZg132oslL8W88CwG+5bpDKNBg7/EVBUUh4HdHeUs4uVtbMe
-	 ub1ZZQqJ7bUtpSjOuE/mDWo/KdI8ohClIrz5dWp5G4e03L+J0hCCTqqBYaKB4bc1jf
-	 A+f75w4zbST0Dll3ZxQAsc6HLpdsZpSgAHSMBTaeus4k79rDdbIpG9oTkjEMMZ0va9
-	 sfLTm7KRo8GxdG0tSR+xu6I2U4dC/Ne81ukDLO5UL8hMizF3UYPO/hpTWpV2luoYS1
-	 tR5LY1rcaLnpg==
+	s=default; t=1795385899;
+	bh=2K0hOPSzFGlyM04CdMKPAxpodJ/pAGufjNXPansEHxM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N1QzcWBmzPyWOGjluk39AQR/WEOuRkUfhZVtVspzTJhc+AjfJ5S1Mzo6mnchsEl8M
+	 tyRk3CdRNYmd520eqNSYf+i0E8LhgNo9pdWoVrUwcaZUtDfFLU3tFLtVhWHb18tBpU
+	 By+xMSrjz1uEURNpIP+oxZAYEIK9xQ8cE6IQzHlEN0hK5z94fN+DmPLMsJrb0kcJyh
+	 EmbwRKccXZ9Z8vNI5CbFQXM79qW2wLfSAyVeCUtNSJDOPrkDgXYHKPxMo1A3tpSFHR
+	 pjsvnVCAH1v9XksEEfZfRDej0ZyvSu9Mnz53Qj4IK5VEZkjRvQaE8q774CgJMcDx1Y
+	 PZYJmi793DZXg==
 From: Chrispine Tinega <dev@chrispinetinega.com>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Mathieu Poirier <mathieu.poirier@linaro.org>
@@ -56,12 +56,10 @@ Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Francesco Valla <francesco@valla.it>,
 	Chrispine Tinega <dev@chrispinetinega.com>
-Subject: [PATCH v3 1/2] remoteproc: k3: Report a remote crash to the remoteproc core
-Date: Mon, 23 Nov 2026 01:17:53 +0300
-Message-ID: <20261122221755.88160-2-dev@chrispinetinega.com>
+Subject: [PATCH v3 0/2] remoteproc: k3: Recover a crashed remote core
+Date: Mon, 23 Nov 2026 01:17:52 +0300
+Message-ID: <20261122221755.88160-1-dev@chrispinetinega.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261122221755.88160-1-dev@chrispinetinega.com>
-References: <20261122221755.88160-1-dev@chrispinetinega.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -74,74 +72,59 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Envelope-From: dev@chrispinetinega.com
 
-A K3 remote core that faults can send RP_MBOX_CRASH over the mailbox,
-but k3_rproc_mbox_callback() only logs it. The remoteproc core never
-learns of the crash, so its recovery never runs, the crash is not
-counted, and the core stays halted with every rpmsg channel to it dead.
+A K3 remote core can tell Linux it has crashed by sending RP_MBOX_CRASH,
+but the K3 drivers only log it. Nothing reaches the remoteproc core, so
+the crash is not counted and recovery never runs. The core stays halted
+until the next boot, with its rpmsg channels dead.
 
-Call rproc_report_crash(), which may be called from atomic context, when
-the core is RPROC_RUNNING, that is when Linux booted it. The core then
-moves to RPROC_CRASHED and the crash is counted. Where the driver leaves
-recovery enabled, recovery stops the core and boots it again. Where
-recovery is disabled, the core can still be stopped and started again
-through sysfs.
+Patch 1 reports the crash with rproc_report_crash() when the core is
+RPROC_RUNNING, and keeps logging it otherwise. This applies to every K3
+remote that uses the common mailbox callback, while leaving IPC-only
+cores and the probe window untouched.
 
-In any other state, keep only logging the crash:
+Patch 2 enables recovery on the M4F when Linux booted it. Its stop is a
+plain reset, so recovery does not need the crashed core to answer. In
+IPC-only mode recovery stays disabled, because it would boot the
+firmware Linux has, which need not be the one started before Linux.
+The R5F and DSP drivers keep recovery disabled. A crashed core there
+moves to RPROC_CRASHED, and can be stopped and started again through
+sysfs. On the R5F, recovery itself would not restart the core yet: the
+reset it needs is applied in unprepare(), which recovery does not call.
 
-- An IPC-only core, RPROC_DETACHED or RPROC_ATTACHED, was not booted
-  by Linux. Once marked crashed, rproc_detach() refuses it, and the
-  drivers' remove paths skip the detach and leak its resources. The R5F
-  has no start or stop ops in this mode at all.
-- Each K3 driver requests its mailbox before devm_rproc_add(). A crash
-  queued then would not be cancelled if probe failed, and the work
-  would run on a freed rproc. The state is never RPROC_RUNNING there.
+Tested on an AM625 board (BLIIoT BL350) running TI's 6.12 kernel with
+the equivalent change. The M4F runs Zephyr, whose fatal-error handler
+sends RP_MBOX_CRASH. After a forced fault, recovery reset and rebooted
+the M4F in 71 ms, and Linux kept running. Mainline's M4F stop is the
+same plain reset that this test used for a crashed core. The Zephyr
+side is https://github.com/zephyrproject-rtos/zephyr/pull/125770.
 
-Recovery on its own cannot yet restart an R5F: the reset the R5F needs
-before it starts again is applied in its unprepare() op, which sysfs
-stop calls and recovery does not. The R5F driver keeps recovery
-disabled, so this does not change what happens there.
-
-Signed-off-by: Chrispine Tinega <dev@chrispinetinega.com>
----
 Changes in v3:
-- Guard rproc_report_crash() with rproc->state == RPROC_RUNNING and keep
-  the dev_err() print in other states, so IPC-only cores do not lose
-  detach and a crash queued before devm_rproc_add() cannot run after a
-  failed probe. (Sashiko review, pointed out by Francesco)
+- Patch 1: report the crash only when rproc->state == RPROC_RUNNING, and
+  keep logging it otherwise, so IPC-only cores can still detach cleanly
+  and a crash queued during probe cannot outlive a failed probe.
+  (Sashiko review, pointed out by Francesco)
+- Patch 2: unchanged.
+- Rebased onto rproc-next.
 
 Changes in v2:
-- Drop the dev_err(). rproc_report_crash() already logs the crash
-  and names the core. (Francesco)
-- Say in the commit message that recovery cannot yet restart an R5F.
-  (Francesco)
+- Patch 1: drop the duplicate crash print, and note the R5F limit in
+  the commit message. (Francesco)
+- Patch 2: keep recovery disabled in IPC-only mode. (Francesco)
+- Rebased onto rproc-next.
 
- drivers/remoteproc/ti_k3_common.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+v2: https://lore.kernel.org/all/20261116184146.1897281-1-dev@chrispinetinega.com/
+v1: https://lore.kernel.org/all/20261109054830.42715-1-dev@chrispinetinega.com/
 
-diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-index 4b6da3363..29ca51861 100644
---- a/drivers/remoteproc/ti_k3_common.c
-+++ b/drivers/remoteproc/ti_k3_common.c
-@@ -61,10 +61,16 @@ void k3_rproc_mbox_callback(struct mbox_client *client, void *data)
- 	switch (msg) {
- 	case RP_MBOX_CRASH:
- 		/*
--		 * remoteproc detected an exception, but error recovery is not
--		 * supported. So, just log this for now
-+		 * Report only a crash of a core that Linux booted. Once the
-+		 * remoteproc core marks an IPC-only core crashed, it can no
-+		 * longer detach from it. The state is never RPROC_RUNNING
-+		 * before devm_rproc_add(), so a failed probe cannot leave
-+		 * crash work queued.
- 		 */
--		dev_err(dev, "K3 rproc %s crashed\n", rproc->name);
-+		if (rproc->state == RPROC_RUNNING)
-+			rproc_report_crash(rproc, RPROC_FATAL_ERROR);
-+		else
-+			dev_err(dev, "K3 rproc %s crashed\n", rproc->name);
- 		break;
- 	case RP_MBOX_ECHO_REPLY:
- 		dev_info(dev, "received echo reply from %s\n", rproc->name);
+Chrispine Tinega (2):
+  remoteproc: k3: Report a remote crash to the remoteproc core
+  remoteproc: k3-m4: Enable crash recovery for a core Linux booted
+
+ drivers/remoteproc/ti_k3_common.c        | 12 +++++++++---
+ drivers/remoteproc/ti_k3_m4_remoteproc.c |  6 +++++-
+ 2 files changed, 14 insertions(+), 4 deletions(-)
+
+
+base-commit: f39ba58941efa63e6c7d10d53d183d6077524bdb
 -- 
 2.53.0
 
