@@ -1,110 +1,57 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795361963;
-	b=zBFEonmhJIJkSPy59zl/hppGYkUOBH/Ig0GZnQDqvT/oU3frGIH6K+iYCYtp0fOASrtM
-	 yuWuiAlpPZa+oE9+nt6MtDL7pxI0/Sdi+xASodcurMVRv069UtZAUTrH5C71oDcobJgxa
-	 neXClGMkyJUdRLE+XWwLd+e3Tax8g6fWXvDg5ptv6xhq3Y67zF28FpS+aL0cGOLzvXyl+
-	 Dly5BLi6v6BKtGSAdBhjDUBAw032qT1x2YG6nUseJFAPysnPlnqbUKZSWWpXN5ayxKJVI
-	 vgppOElqkYnthwgOf+7jO+DzG0aeCOAwzAPRQMjrWdqNfXw3LKE4lIrn14c9oqmAW4Q==
+	t=1795367324;
+	b=qU1db8AB8GXEyzKeJAwUvYXr7e9tFdNNFJTT1giQhFGLlOn6h6yCA4A34VqjBGDMRXcE
+	 rVNrMvqdqeUHmXXO5kPMwVfBmGsl2OCJ9fs76k5EaXNwE2h9F2UbSahL6Cp2BUYl19fPR
+	 VL/7VVoIZzZmIu7O2yMyyHPMKATUnL1ku2Ua5N5EgldC95wGlzUv4V9fcU42i1whniZMT
+	 g/tTietZsE7MbtAA6+6LAInrgEfSHFRFDo7J4E4sXiili2XvcPF7d3pGoXP5ZgRvS8Dhf
+	 JLANTThJdTkUMwlE+qrfHVD74Sp0RLXJ9hDEd7eCpEViEJQAzRiCXK6oYqDtHBZedhA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795361963;
-	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
-	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
-	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
-	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Details-Enc:
-	 X-Authority-Analysis:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
-	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
-	 X-Proofpoint-Spam-Details;
-	bh=MhWnJ4+yNVf79wR6D1VGPPl7WznIwx6HJxt/TazmJ4M=;
-	b=Z0BYX5HcF4J9iiBvM5Mp93cYQdWyz5GNy2Zg5TM1AswvBegX8wN+bwH8zie0ZwW1VA4P
-	 NqF+siXKE/LEvqf35MITG6h0uBZIpFM5uaObJ+yHKMpx2/28pkRfnQu5msyNADLRe3KUo
-	 FFaYijRHXrPHzSTd5luKa7+I/rpJrx+pMXKvA0mdFrFRQz5fT1O1a0F/2jI2dNLWlCYDI
-	 bs/luLI2sukfRfXrrm+wfBs7zQ3ShpP2ZtyT7x4qTNdKiFH7Pzdum+XbxX3IW95sP0mTK
-	 zE2WAjyGfO19DinIg/iRJ7s4HTPcUa/bJaKOCtz3eYSqoWERssGeM+PXVjOPVfAP5lg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795367324;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
+	bh=PNh8YN4lO0/xfHtYOrOb/Cy+IoC6FYA0GOT8T94Fmb0=;
+	b=xyJjl3BiCzQS8oecXxzD2o+bBiLpC5l7QUUdkbzM9rt30NEGeO9FlU3SpUG8rEJoOoX8
+	 SIfZMMWxI29Bx52emyYgAei2CuL2iRq1ewpCQ9RP+XYoFvqxTSlyFCqfWQ7eBn3KnaCH/
+	 VWbRN8D3ewxuoDM+n5w9l3ynPZOpMzXJPX/mZh7uHRUV7Ppw0cF0NbISlAvaJ+srEMOpV
+	 DuqHIKhy6pTKtKE7sDEd5lR+ZvfoDmjCiXvQy9AT3luqJivDNJ5RrDvDT8c4qj9g9AO1y
+	 BPrPbLGQzjJOHvh884YUGpDYRB+PJ0GQPhz5VMs6B1z8S6gmOwueXSOatAZUSKMw3qQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.qualcomm.com;
-	spf=pass smtp.mailfrom=oss.qualcomm.com;
-	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jCleHAtn;
-	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jTkaFyaf;
-	arc=none smtp.remote-ip=205.220.180.131
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ihNWaeW2;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6BC606A32C
-	for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 15:39:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6F6BC606A32C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CE2606A320;
+	Sun, 22 Nov 2026 17:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jCleHAtn;
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jTkaFyaf
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AMFQPv93495153
-	for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 15:39:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=MhWnJ4+yNVf79wR6D1VGPP
-	l7WznIwx6HJxt/TazmJ4M=; b=jCleHAtnRT+F+7BtLeC/6TjgIWvzHFkJnpS5Vb
-	ihXisJVwLRLGXsJw6r7G9FvmwW951pgN+vRrj6DUeAlvhngscJgAdHUdIHKw7q2v
-	LQ/KoOu3LWZ+JD8SlMGArBJjnTRrzp2M+uYRWzYToIcm8LYM4VIi7W5+vzQrl16E
-	Q1x/OFjA+TdUP/f8m+ZPtx5sj7u4l0+4fLGZa9KORzkwtvOcNCDVJktvSfvpugoQ
-	XNcbOKW2/i7pw998rgjZpMRkkJ1L69VwzPThqDicjm8UtWtyFKZSWS9yyuWXIrwe
-	cVVaMvFpQzb6rs/sE1ENZBxczWpkOxd9OqkZAleErGLhe7Lg==
-Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j32mgbrkf-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 15:39:22 +0000 (GMT)
-Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-3817a0ffd5eso3545576eec.1
-        for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 07:39:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1795361961; x=1795966761; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to:content-type;
-        bh=MhWnJ4+yNVf79wR6D1VGPPl7WznIwx6HJxt/TazmJ4M=;
-        b=jTkaFyaflGEA9p5n7+vaQy2NsBNY3g7PPxub5LZz2dvSvDapWpoXGmuHzhO9iCQ6Is
-         uYGQfXDx4GrZg+VD/RUEn00Usz+Vk97aCFLMFbkd0+ZI09WmBYV/TU163ZOc/MFUQIRs
-         GOsPSvsqhmxFefw2TtqSITx1MTo1k9IlNa65ydFcnya8eN4DkC47+y16Ica3lxwTUxbC
-         dK3y0ajxzUWh0jhfDsuxo6oj70SRxA/qB1mwee1WbUwqwyAwdCbAts0fGS4UxmYMI8td
-         JgS4/JwvmIfwWqbJJO5+l6nsbaIPQbdkHErSR8j+nENNtnrZw2THSmqxlmkmJQjvzW5Z
-         zNWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795361961; x=1795966761;
-        h=cc:to:message-id:content-transfer-encoding:content-type
-         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to:content-type;
-        bh=MhWnJ4+yNVf79wR6D1VGPPl7WznIwx6HJxt/TazmJ4M=;
-        b=n6W4kIHna12hkguNV04ACuHeA5ngyY3MLn1qX1SG5W4SyOirNMFmBM5QcpBKV2E9wK
-         Oih6OYIyYUfjpZ5j6Z/UnnMicOaTV6E/CVskUCRy1dLY+Hz39VtsschDLIIXqOHxw1yO
-         IP4XgJNOIuPy0x2B675wObMdlK/4KEXGDCt/Br0zpOq6bLAkMTOy13S5H+Om7AAebI1L
-         DxGXZ0gjPg71YOCsvEGcWC0lU4fQZ8xHTXGboUduvtSY6+z74F2hbk8n8anZG88iwlH/
-         hK0DWeA9odwrU0Tioa6Vyr9p+iY3SJ9yxj17PJ4O0900U0IhQyuXhLOgr5lgwJUrXOwt
-         hlxg==
-X-Forwarded-Encrypted: i=1; AL+hErHeSFtAJ5M2hXgH9Q9FeO3Yj14vIFqtI7ffZ20PAQUwNePghhBtQsaWeI/11HjiP5ueE5E7Gh5gk65nPssCgTxs@vger.kernel.org
-X-Gm-Message-State: APuU4Z/oYu7lcerLgcBE0NKCSXCDkjBShcY75tUmjB5ek/rsEKQscsSO
-	0miQYBNd5J38YEb7825Z7GZc9rtK5NCM1FnDCHqGlZoPLDCbw94S+rm+z5/sCxgQPVW0BqZaOfN
-	ptvBclnjSD2jJVtrnix038+fZED/Wns13OdE1ioBlsav0oWwYiqoc3Qsl0WkVVUmJEettv0IW
-X-Gm-Gg: AZFdTZdxXdPyEiGOsagscEQHUaAGdFc1H/4Ok4LUAtuXBYB4hgWdk/0M/ogkBlVynva
-	mNxSAEwxUQTLb2A+8iL9Vka7QnT9mdrTMgwhdJw8lSYk95i8U7TgXrl5EyN5EuhLGLrfQzVgH+A
-	43ry+zTBJ1FtzSzLQHEHVGsjbsbkTlI47nF3s8WM6wJfGfrmToI4p60mEh2OxXahkFAFYbh20ZF
-	P1k6i7J5j1BU3MjV47uO3UPf04lBf0MbzhDfpysnFSseP1OALCeKqez4aVppZfvlCPPWCgYsuRX
-	jHzocHQh5B4Gaa3Dmwa/UE3TujC/SUcj9AmjnzKqz3lI6amfKL2mP3PCTs+PkgegHUS/eQWcpRx
-	hL4WhFnqZC5GJXBSEcSMXOpgqsuBkmCns6Nl+rHCFQra0M+OZirsXqoujhZbiCiyAw3XVLa0eFx
-	tC82AgJ0jFig==
-X-Received: by 2002:a05:693c:408b:b0:377:82e:2d79 with SMTP id 5a478bee46e88-384b39896edmr11417698eec.9.1795361960958;
-        Sun, 22 Nov 2026 07:39:20 -0800 (PST)
-X-Received: by 2002:a05:693c:408b:b0:377:82e:2d79 with SMTP id 5a478bee46e88-384b39896edmr11417676eec.9.1795361960347;
-        Sun, 22 Nov 2026 07:39:20 -0800 (PST)
-Received: from hu-vishsant-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-38566fdce48sm30354900eec.14.2026.11.22.07.39.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Nov 2026 07:39:19 -0800 (PST)
-From: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
-Date: Sun, 22 Nov 2026 21:09:13 +0530
-Subject: [PATCH] rpmsg: glink: Don't reuse a channel that is still closing
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ihNWaeW2
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84D11F000C0;
+	Sun, 22 Nov 2026 17:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795367323;
+	bh=PNh8YN4lO0/xfHtYOrOb/Cy+IoC6FYA0GOT8T94Fmb0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=ihNWaeW2Ry4FyKYjKi/lepkAgonGFOQE+zw06+ykkfcgEZAW3HbZEOzTHAWyN2FAq
+	 m8hbn6uW+BTMyvcCmIhdktJDtpR9FwM1L851EsytE7dblccgtsuWSte7lzz2ddBArX
+	 C83NEWu8lp2i3KIYiRQdXGxBEt2ZiLfAItaJkub36XiYFwd/9BLmE3nUiVrdiab3qi
+	 HUEfyRAfP1EkVSs/GUABxdNm/QsbGOTpep93x6RD2qHNm175AKNP1+Yyk+l981RlQ5
+	 QZ4TsbbirfRbpA6VlLloZXb6z62QFSchPGB5csJiNFX/iz4FDbm5wHMIQ2uQP3ynXV
+	 RsTSjB2BtHRxA==
+Date: Sun, 22 Nov 2026 18:08:40 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ben Levinsky <ben.levinsky@amd.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, michal.simek@amd.com, tanmay.shah@amd.com, 
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: mailbox: Add AMD PL Mailbox IP
+Message-ID: <20261122-gainful-bloodhound-of-apotheosis-baf5f9@quoll>
+References: <20261119220405.2838553-1-ben.levinsky@amd.com>
+ <20261119220405.2838553-2-ben.levinsky@amd.com>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -114,145 +61,131 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20261122-rpmsg-glink-dont-reuse-closing-channel-v1-1-363d90d7e481@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAKAMA2sC/x2NQQoCMQwAv7LkbMAGuge/Ih5Km+0Ga7okKsKyf
- 7d6nMPM7OBswg6XaQfjt7h0HRBOE+Q1aWWUMhjoTHMIRGjbwyvWJnrH0vWJxi9nzK27aMWfpNy
- wUEpLpJgjJxixzXiRz390vR3HF+EtSPh4AAAA
-X-Change-ID: 20261122-rpmsg-glink-dont-reuse-closing-channel-d2aaf525c5ea
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        bjorn.andersson@oss.qualcomm.com, chris.lew@oss.qualcomm.com,
-        Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>,
-        Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795361957; l=3880;
- i=vishnu.santhosh@oss.qualcomm.com; s=20251203; h=from:subject:message-id;
- bh=bzjkglRWWIZIs5pK+2OezJTD1Sz6g4JZ9UMkqb6Z4gw=;
- b=zY2qGpnxXY08rKg4Hk/zXN19cJHiCfGrhAH7Dvyohdfw3hLrJijf4p/DUMj1miYmBqGHKE8S8
- ICzGXTTlx+hCOJqTvz3yonvqP3/gqys/YmYbT4ieDdL2D7PybNsUes0
-X-Developer-Key: i=vishnu.santhosh@oss.qualcomm.com; a=ed25519;
- pk=G8/AJPecB1feGI7wxArGWGN0PPGQS0GUaD4THQCbdis=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIyMDA2MiBTYWx0ZWRfX+eIbQijOkEKe
- Aw4RrweWlSa3mYypirGZSQyWtuBLcjkbhKznNYlBEG9TdMlycEE1/D4CsJV99AC+pmwYYYJ9vjS
- xIcqDUO7bfkZMAKOeUN1AwHN0M9IrPMaPid2Todi8dhL2QNcdGCaIWnUQtbUm3VxskIvvRD3m1f
- FH+3Ayn0B6IGGLOtVINC05B15UbClsqLmab6YOFd8aBOZz5TV8nJLVxI3ClbBA9hvPdXcUV0Aez
- UGpxLP2GTEFQyMsu4xkWKveoG93smHCI+LcptyEtJtWW7nnApjQ54a0zReCEa6ySRYnu0sJ96xz
- KmgCHG32AfZ5Bd+m6BOmq9x4q3iWDQouFyGocJ2OSXfnuQedF4u3lY2CHX0zSPrKTYAY5jP+E6H
- vZn5nvGVZa2Q7q6t4lg590wPg7NpOj7qes68qMQyB8zq/pTlxcpiPUCpDAifC4fwBbtVe3eam9P
- Fjv6BQme6A+q2TOkC9g==
-X-Authority-Analysis: v=2.4 cv=OM+yTiaB c=1 sm=1 tr=0 ts=6b030caa cx=c_pps
- a=wEP8DlPgTf/vqF+yE6f9lg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
- a=EUspDBNiAAAA:8 a=2YlJufyw7Tv86nj3aO4A:9 a=QEXdDO2ut3YA:10
- a=bBxd6f-gb0O0v-kibOvt:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIyMDA2MiBTYWx0ZWRfX+zUzFSSqC0jr
- UMNZJbBN9d9m1GIf8CmWcKKTq/y9+4A05pvUycA38o8veJ6BJBj7wXMcVIloDAIuLKxEpnyr0+P
- zF0aIzgMRIykqbmWvNOf3g5jP7Ex+/A=
-X-Proofpoint-GUID: xVH3Qu_Mtk32L5JIt9DGMVRY1TPDEn09
-X-Proofpoint-ORIG-GUID: xVH3Qu_Mtk32L5JIt9DGMVRY1TPDEn09
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
- definitions=2026-11-22_03,2026-11-22_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 adultscore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 lowpriorityscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
- definitions=main-2611220062
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20261119220405.2838553-2-ben.levinsky@amd.com>
 
-qcom_glink_destroy_ept() sends CLOSE, but the channel stays in rcids
-until the remote's CLOSE arrives. If the same name is opened again in
-that window, qcom_glink_create_ept() finds the old channel and joins it
-a second time, sending another OPEN_ACK for the old rcid. open_ack is
-already completed from the previous session, so the open returns at once,
-but the old remote intents are still marked in use and every
-non-blocking send fails with -EBUSY.
+On Thu, Nov 19, 2026 at 02:04:02PM -0800, Ben Levinsky wrote:
+> Add a binding for the AMD PL Mailbox, a soft IP used to exchange 32-bit
+> words between two processors through a pair of FIFOs.
+> 
+> The IP lives in programmable logic and isn't tied to a SoC, so the
+> compatible names the IP and its version.  The FIFO depth is set when the
+> design is synthesized and can't be read from the hardware, hence
+> property amd,pl-mailbox-depth.
+> 
+> Assisted-by: Claude:claude-opus-5.5
 
-When the remote then closes the old rcid and opens a new one,
-qcom_glink_rx_open() finds the reused channel in lcids and adds it to
-rcids without taking a reference, relying on the allocation reference
-that qcom_glink_rx_close() has already dropped. Closing the endpoint
-drops the last reference on CLOSE_ACK and frees the channel while it is
-still in rcids. The remote's CLOSE then works on the freed channel, and
-the next open walks the stale rcids entry:
+Drop, wasn't even here before, so you must have added it.
+https://lore.kernel.org/all/20261014213426.2957480-6-ben.levinsky@amd.com/
 
-  refcount_t: underflow; use-after-free.
-  WARNING: lib/refcount.c:28 at refcount_warn_saturate+0xf4/0x148
-  Call trace:
-   refcount_warn_saturate+0xf4/0x148 (P)
-   qcom_glink_work+0x318/0x10b8
-  ...
-  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-  pc : __pi_strcmp+0x24/0x140
-  lr : qcom_glink_create_ept+0x78/0x2a8
-  Call trace:
-   __pi_strcmp+0x24/0x140 (P)
-   rpmsg_create_ept+0x40/0x60
-   rpmsg_eptdev_open+0xcc/0x128 [rpmsg_char]
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-This is seen on Qualcomm Shikra SoC with an rpmsg_char client that
-closes a channel on the LPAICP edge and opens it again right away.
+> Signed-off-by: Ben Levinsky <ben.levinsky@amd.com>
+> ---
+>  .../bindings/mailbox/amd,pl-mailbox-2.1.yaml  | 71 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 ++
+>  2 files changed, 77 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/amd,pl-mailbox-2.1.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/amd,pl-mailbox-2.1.yaml b/Documentation/devicetree/bindings/mailbox/amd,pl-mailbox-2.1.yaml
+> new file mode 100644
+> index 000000000000..50ac14a4cbac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/amd,pl-mailbox-2.1.yaml
+> @@ -0,0 +1,71 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/amd,pl-mailbox-2.1.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: AMD Programmable Logic Mailbox IP
+> +
+> +maintainers:
+> +  - Ben Levinsky <ben.levinsky@amd.com>
+> +
+> +description: |
+> +  The AMD Programmable Logic Mailbox IP passes messages between two
+> +  processors through a pair of FIFOs. Each side of the IP has its own
+> +  registers, interrupt and clock, and is described by its own node.
+> +  Channel 0 is used to transmit and channel 1 to receive.
+> +
+> +  The Mailbox is a soft IP core instantiated in programmable logic, not a
+> +  SoC block, so the compatible names the IP core and its version (2.1).
+> +  The "pl" part distinguishes it from the IPI hardware that can also be
+> +  used as a mailbox.
+> +
+> +properties:
+> +  compatible:
+> +    const: amd,pl-mailbox-2.1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  amd,pl-mailbox-depth:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 16
+> +    maximum: 8192
+> +    default: 16
+> +    description:
+> +      Depth of the send and receive FIFOs in 32-bit words. The depth is the
+> +      C_MAILBOX_DEPTH parameter chosen for each IP instance when the design
+> +      is synthesized, so instances in one design can differ, and it cannot
+> +      be read from the registers. Must match the synthesized depth.
+> +
+> +  '#mbox-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - '#mbox-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    mailbox@b2060000 {
+> +        compatible = "amd,pl-mailbox-2.1";
+> +        reg = <0xb2060000 0x10000>;
+> +        interrupts = <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&pl_clk>;
+> +        amd,pl-mailbox-depth = <16>;
+> +        #mbox-cells = <1>;
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index ca1c59e1fc59..dc6a835f7bbc 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1315,6 +1315,12 @@ S:	Supported
+>  T:	git https://gitlab.freedesktop.org/agd5f/linux.git
+>  F:	drivers/gpu/drm/amd/pm/
+>  
+> +AMD PROGRAMMABLE LOGIC MAILBOX DRIVER
+> +M:	Ben Levinsky <ben.levinsky@amd.com>
+> +L:	linux-kernel@vger.kernel.org
 
-open_ack and open_req are never reinitialized, so a completed one
-marks a channel from a previous session. Fix this by skipping such
-channels in both lookups. A new local channel gets allocated instead,
-and the old one is released as before when the remote CLOSE and
-CLOSE_ACK arrive.
+Drop list, there is no point in mentioning lkml for every driver. lkml
+is standard list, catch all.
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Co-developed-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-Signed-off-by: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
----
- drivers/rpmsg/qcom_glink_native.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index f848ab46161d170ac82d906782ff473d3e63f490..b23db2b90fcdbf3592bd73aa24486f592f7189aa 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1331,9 +1331,14 @@ static struct rpmsg_endpoint *qcom_glink_create_ept(struct rpmsg_device *rpdev,
- 	int ret;
- 	unsigned long flags;
- 
-+	/*
-+	 * open_ack is never reinitialized, so a completed open_ack means a
-+	 * previous local endpoint used this channel. Don't reuse it.
-+	 */
- 	spin_lock_irqsave(&glink->idr_lock, flags);
- 	idr_for_each_entry(&glink->rcids, channel, cid) {
--		if (!strcmp(channel->name, name))
-+		if (!strcmp(channel->name, name) &&
-+		    !completion_done(&channel->open_ack))
- 			break;
- 	}
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
-@@ -1637,9 +1642,14 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
- 	int ret;
- 	unsigned long flags;
- 
-+	/*
-+	 * open_req is never reinitialized, so a completed open_req means this
-+	 * channel was already paired with a remote open. Don't reuse it.
-+	 */
- 	spin_lock_irqsave(&glink->idr_lock, flags);
- 	idr_for_each_entry(&glink->lcids, channel, lcid) {
--		if (!strcmp(channel->name, name))
-+		if (!strcmp(channel->name, name) &&
-+		    !completion_done(&channel->open_req))
- 			break;
- 	}
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
-
----
-base-commit: 4843f6873f7c4835e62f2c73ba0fd538e57a2f22
-change-id: 20261122-rpmsg-glink-dont-reuse-closing-channel-d2aaf525c5ea
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>
 
 Best regards,
--- 
-Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+Krzysztof
 
