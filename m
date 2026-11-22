@@ -1,100 +1,110 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.11
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795355839;
-	b=Uf7ECexuQoXbMthlhmenVA+6XS8AGTpCjTKuhvT00lRLKcJDDPZDoOeOoRjPaT5aP4Uw
-	 16HMaT/PMtx93+bu4R/Adv+DK6lgX9bef1qGg6bTrIf7nd8kPuzSqWXhNP6YcRZz8TBZi
-	 +EZT6LDg7Pi3DsxE2jklvuN9B+zBj06mVACnbN0fO9muojmNfvra4/sADRYbwI/580A2b
-	 RILjL/EUTUafyRYwFFsTO5FTv0/oXSxN92uZlnZbrYeUmhz9EjmgTIbBfhFzdE5dZVYr/
-	 6S9QgjvP6Kc+Sjqe9cWvc32lxvO/hSiv23AyqgSSFZ9mIQOjYZleF1fFE149UnIAB+A==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795355839;
-	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-Source:X-Source-Args:X-Source-Dir:
-	 X-SGantispam-id:X-AntiAbuse:AntiSpam-DLS:AntiSpam-DLSP:AntiSpam-DLSRS:
-	 AntiSpam-TS:CFBL-Address:CFBL-Feedback-ID;
-	bh=4fF2AdPLovlTgrv05trEI+vu3qJWwMCKLq0FCu8Va2U=;
-	b=baq5iHz9ejyG3FxwA/IFVHShEx+LUtwYd5QnwyilM0+ugx0IlNWIQ3K4yAjAdsABrM/a
-	 yRLhyNLhF7RzT32bjSACijLWEKe6GLM8th97U6wAoN1ZebpYV9av6wJZ2glBbIqFccw+Y
-	 X1Zq/7IkNoNmEJnRvaZVFcuikGecOHaNcRAcrDaY59E2hEjIEdyG2iKsv0MyxYDqA8Q3e
-	 Q2k5S3PrQ+u2UysH/c+1BIdp0X8+mUolZ1UWOkvQSyO0to4nVyTxYLdoKp59qoADkUvrC
-	 1s2coqX5ZotnepnayaLCxoWWQak/OSMg01q76XU/HDtrESWKo79EORyp/QL8I8KZMCA==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valla.it;
-	spf=pass smtp.mailfrom=valla.it;
-	dkim=pass header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=y2XebCiq;
-	dkim=pass header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=WMNkyZZH;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.11
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.11])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795361963;
+	b=zBFEonmhJIJkSPy59zl/hppGYkUOBH/Ig0GZnQDqvT/oU3frGIH6K+iYCYtp0fOASrtM
+	 yuWuiAlpPZa+oE9+nt6MtDL7pxI0/Sdi+xASodcurMVRv069UtZAUTrH5C71oDcobJgxa
+	 neXClGMkyJUdRLE+XWwLd+e3Tax8g6fWXvDg5ptv6xhq3Y67zF28FpS+aL0cGOLzvXyl+
+	 Dly5BLi6v6BKtGSAdBhjDUBAw032qT1x2YG6nUseJFAPysnPlnqbUKZSWWpXN5ayxKJVI
+	 vgppOElqkYnthwgOf+7jO+DzG0aeCOAwzAPRQMjrWdqNfXw3LKE4lIrn14c9oqmAW4Q==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795361963;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:From:Date:
+	 Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	 Message-Id:X-B4-Tracking:X-Change-ID:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Proofpoint-Spam-Details-Enc:
+	 X-Authority-Analysis:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=MhWnJ4+yNVf79wR6D1VGPPl7WznIwx6HJxt/TazmJ4M=;
+	b=Z0BYX5HcF4J9iiBvM5Mp93cYQdWyz5GNy2Zg5TM1AswvBegX8wN+bwH8zie0ZwW1VA4P
+	 NqF+siXKE/LEvqf35MITG6h0uBZIpFM5uaObJ+yHKMpx2/28pkRfnQu5msyNADLRe3KUo
+	 FFaYijRHXrPHzSTd5luKa7+I/rpJrx+pMXKvA0mdFrFRQz5fT1O1a0F/2jI2dNLWlCYDI
+	 bs/luLI2sukfRfXrrm+wfBs7zQ3ShpP2ZtyT7x4qTNdKiFH7Pzdum+XbxX3IW95sP0mTK
+	 zE2WAjyGfO19DinIg/iRJ7s4HTPcUa/bJaKOCtz3eYSqoWERssGeM+PXVjOPVfAP5lg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jCleHAtn;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jTkaFyaf;
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1FB606A32A;
-	Sun, 22 Nov 2026 13:57:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6C1FB606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6BC606A32C
+	for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 15:39:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 6F6BC606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=y2XebCiq;
-	dkim=pass (1024-bit key, unprotected) header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=WMNkyZZH
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com; s=arckey; t=1795355838;
-	 b=AmEItTvXS4+KrNMIOjISqmNlGG7hF+8yg6a/TRGqrPXQeRJc2UGvtncyHi0w9ilqB2i72J0qWa
-	  U6kob6OdBxKHfAOcd+LwbE71RJhkBcEG4iIyLfHHJ2/ZMyw6zh12x5YA2qFg+y3l5jzmkpfyur
-	  R5ZXfgpsZYXrG6RCqaERzibGL2fbfN28DbZWTmKpKYl7HEbPsv2a2/q07YmBRp4W/xgwKePdyw
-	  BHvJ+phU3HC+xdrwAuvtADbqO7+FUT8hpCpGOkE++HbLaSX29CqFWuUkYMY4iNZGrLYhyifXeR
-	  4jfpouJeohH/aW72+T+jTo9xaryuKRr8IFFFO/dBe/MKug==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com; s=arckey; t=1795355838;
-	bh=0tt+1GrW3Cr3vSd9mkATI6vv0PXUTsO59asYsLZbmig=;
-	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
-	  From:Date:DKIM-Signature:DKIM-Signature;
-	b=sXn3exswb/fUBSx55AeVx2L352+JeRk8sN+YAXWISAanzlCc7PE+p8421+VbDkUMhrzw2zZRAH
-	  PXDqetb5P38KTKhzSsiRoQN4qYi8BqTFuFIM2Ii9PGlyc3h8gRBXMz0hCyqd0IFiadEpkdtnOQ
-	  AmBxhP9Z0XCMpQA5XIKfGG47r9WyA/FfCVbQGHOubQ87t3yfoiip4eakorYpzijJR+oYJ0oMsE
-	  +KVPYuvZ4V59W9ylbE/5RUaG2WKb0UH9TO3pb6rHo4T0YePjZBDvvtgDkTFrOlAIserZag2vi8
-	  j/qiPEHHMP7vDIv6feqHZi2t3kDBcp5l7V4TbFXqT2j58w==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=4fF2AdPLovlTgrv05trEI+vu3qJWwMCKLq0FCu8Va2U=; b=y2XebCiqjUwsMTth3h7VOWsSC0
-	nKkgH6fKLuU70pxFZq6d3gpHky2NbsaIgxSgdtXvaaKcNTl2D+7cCXVqwS6jsxVmUWRcpTYuBl9yA
-	UM83zQY+t8kPoL44Q6lrdJSb+f+h0uei3vdJSPVB7WmQa+IebexZijN92GkNRLYRSRG8=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xV846-00000003O8S-2pDi;
-	Sun, 22 Nov 2026 13:57:11 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=4fF2AdPLovlTgrv05trEI+vu3qJWwMCKLq0FCu8Va2U=; b=WMNkyZZH9YrP14Drz/T+oZ78tY
-	ik2ECOgkZCWiIrZuZfdSCNDrLUGAEpLv8pY+wnlrsYRRBUBay6+DOXWrGdRzRJxcQ1VLjcbk70naH
-	CUtLKB89cMvfg/TJ+ciFW+a1ovu5aFX3tH5+rhFSgqh4VfckXaH3uBCUh5J4aX5kVqak=;
-Received: from [95.251.96.187] (port=62753 helo=bywater)
-	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xV841-00000000HFI-3yXI;
-	Sun, 22 Nov 2026 13:57:06 +0000
-Date: Sun, 22 Nov 2026 14:57:04 +0100
-From: Francesco Valla <francesco@valla.it>
-To: Chrispine Tinega <dev@chrispinetinega.com>
-Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] remoteproc: k3: Report a remote crash to the
- remoteproc core
-Message-ID: <awL0dXRy62aSnEEt@bywater>
-References: <20261116184146.1897281-1-dev@chrispinetinega.com>
- <20261116184146.1897281-2-dev@chrispinetinega.com>
- <av3YQ1tKSABEha9o@bywater>
- <20261118194415.1757945-1-dev@chrispinetinega.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=jCleHAtn;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=jTkaFyaf
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6AMFQPv93495153
+	for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 15:39:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=MhWnJ4+yNVf79wR6D1VGPP
+	l7WznIwx6HJxt/TazmJ4M=; b=jCleHAtnRT+F+7BtLeC/6TjgIWvzHFkJnpS5Vb
+	ihXisJVwLRLGXsJw6r7G9FvmwW951pgN+vRrj6DUeAlvhngscJgAdHUdIHKw7q2v
+	LQ/KoOu3LWZ+JD8SlMGArBJjnTRrzp2M+uYRWzYToIcm8LYM4VIi7W5+vzQrl16E
+	Q1x/OFjA+TdUP/f8m+ZPtx5sj7u4l0+4fLGZa9KORzkwtvOcNCDVJktvSfvpugoQ
+	XNcbOKW2/i7pw998rgjZpMRkkJ1L69VwzPThqDicjm8UtWtyFKZSWS9yyuWXIrwe
+	cVVaMvFpQzb6rs/sE1ENZBxczWpkOxd9OqkZAleErGLhe7Lg==
+Received: from mail-dy1-f198.google.com (mail-dy1-f198.google.com [74.125.82.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j32mgbrkf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 15:39:22 +0000 (GMT)
+Received: by mail-dy1-f198.google.com with SMTP id 5a478bee46e88-3817a0ffd5eso3545576eec.1
+        for <linux-remoteproc@vger.kernel.org>; Sun, 22 Nov 2026 07:39:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1795361961; x=1795966761; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=MhWnJ4+yNVf79wR6D1VGPPl7WznIwx6HJxt/TazmJ4M=;
+        b=jTkaFyaflGEA9p5n7+vaQy2NsBNY3g7PPxub5LZz2dvSvDapWpoXGmuHzhO9iCQ6Is
+         uYGQfXDx4GrZg+VD/RUEn00Usz+Vk97aCFLMFbkd0+ZI09WmBYV/TU163ZOc/MFUQIRs
+         GOsPSvsqhmxFefw2TtqSITx1MTo1k9IlNa65ydFcnya8eN4DkC47+y16Ica3lxwTUxbC
+         dK3y0ajxzUWh0jhfDsuxo6oj70SRxA/qB1mwee1WbUwqwyAwdCbAts0fGS4UxmYMI8td
+         JgS4/JwvmIfwWqbJJO5+l6nsbaIPQbdkHErSR8j+nENNtnrZw2THSmqxlmkmJQjvzW5Z
+         zNWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795361961; x=1795966761;
+        h=cc:to:message-id:content-transfer-encoding:content-type
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to:content-type;
+        bh=MhWnJ4+yNVf79wR6D1VGPPl7WznIwx6HJxt/TazmJ4M=;
+        b=n6W4kIHna12hkguNV04ACuHeA5ngyY3MLn1qX1SG5W4SyOirNMFmBM5QcpBKV2E9wK
+         Oih6OYIyYUfjpZ5j6Z/UnnMicOaTV6E/CVskUCRy1dLY+Hz39VtsschDLIIXqOHxw1yO
+         IP4XgJNOIuPy0x2B675wObMdlK/4KEXGDCt/Br0zpOq6bLAkMTOy13S5H+Om7AAebI1L
+         DxGXZ0gjPg71YOCsvEGcWC0lU4fQZ8xHTXGboUduvtSY6+z74F2hbk8n8anZG88iwlH/
+         hK0DWeA9odwrU0Tioa6Vyr9p+iY3SJ9yxj17PJ4O0900U0IhQyuXhLOgr5lgwJUrXOwt
+         hlxg==
+X-Forwarded-Encrypted: i=1; AL+hErHeSFtAJ5M2hXgH9Q9FeO3Yj14vIFqtI7ffZ20PAQUwNePghhBtQsaWeI/11HjiP5ueE5E7Gh5gk65nPssCgTxs@vger.kernel.org
+X-Gm-Message-State: APuU4Z/oYu7lcerLgcBE0NKCSXCDkjBShcY75tUmjB5ek/rsEKQscsSO
+	0miQYBNd5J38YEb7825Z7GZc9rtK5NCM1FnDCHqGlZoPLDCbw94S+rm+z5/sCxgQPVW0BqZaOfN
+	ptvBclnjSD2jJVtrnix038+fZED/Wns13OdE1ioBlsav0oWwYiqoc3Qsl0WkVVUmJEettv0IW
+X-Gm-Gg: AZFdTZdxXdPyEiGOsagscEQHUaAGdFc1H/4Ok4LUAtuXBYB4hgWdk/0M/ogkBlVynva
+	mNxSAEwxUQTLb2A+8iL9Vka7QnT9mdrTMgwhdJw8lSYk95i8U7TgXrl5EyN5EuhLGLrfQzVgH+A
+	43ry+zTBJ1FtzSzLQHEHVGsjbsbkTlI47nF3s8WM6wJfGfrmToI4p60mEh2OxXahkFAFYbh20ZF
+	P1k6i7J5j1BU3MjV47uO3UPf04lBf0MbzhDfpysnFSseP1OALCeKqez4aVppZfvlCPPWCgYsuRX
+	jHzocHQh5B4Gaa3Dmwa/UE3TujC/SUcj9AmjnzKqz3lI6amfKL2mP3PCTs+PkgegHUS/eQWcpRx
+	hL4WhFnqZC5GJXBSEcSMXOpgqsuBkmCns6Nl+rHCFQra0M+OZirsXqoujhZbiCiyAw3XVLa0eFx
+	tC82AgJ0jFig==
+X-Received: by 2002:a05:693c:408b:b0:377:82e:2d79 with SMTP id 5a478bee46e88-384b39896edmr11417698eec.9.1795361960958;
+        Sun, 22 Nov 2026 07:39:20 -0800 (PST)
+X-Received: by 2002:a05:693c:408b:b0:377:82e:2d79 with SMTP id 5a478bee46e88-384b39896edmr11417676eec.9.1795361960347;
+        Sun, 22 Nov 2026 07:39:20 -0800 (PST)
+Received: from hu-vishsant-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-38566fdce48sm30354900eec.14.2026.11.22.07.39.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Nov 2026 07:39:19 -0800 (PST)
+From: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+Date: Sun, 22 Nov 2026 21:09:13 +0530
+Subject: [PATCH] rpmsg: glink: Don't reuse a channel that is still closing
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -104,92 +114,145 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261118194415.1757945-1-dev@chrispinetinega.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 0c955b43a78436a3441504e7b26b9c53
-X-AntiAbuse: ID - 0c955b43a78436a3441504e7b26b9c53
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1xV846-00000003O8S-2pDi-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20261122-rpmsg-glink-dont-reuse-closing-channel-v1-1-363d90d7e481@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAKAMA2sC/x2NQQoCMQwAv7LkbMAGuge/Ih5Km+0Ga7okKsKyf
+ 7d6nMPM7OBswg6XaQfjt7h0HRBOE+Q1aWWUMhjoTHMIRGjbwyvWJnrH0vWJxi9nzK27aMWfpNy
+ wUEpLpJgjJxixzXiRz390vR3HF+EtSPh4AAAA
+X-Change-ID: 20261122-rpmsg-glink-dont-reuse-closing-channel-d2aaf525c5ea
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        bjorn.andersson@oss.qualcomm.com, chris.lew@oss.qualcomm.com,
+        Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>,
+        Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795361957; l=3880;
+ i=vishnu.santhosh@oss.qualcomm.com; s=20251203; h=from:subject:message-id;
+ bh=bzjkglRWWIZIs5pK+2OezJTD1Sz6g4JZ9UMkqb6Z4gw=;
+ b=zY2qGpnxXY08rKg4Hk/zXN19cJHiCfGrhAH7Dvyohdfw3hLrJijf4p/DUMj1miYmBqGHKE8S8
+ ICzGXTTlx+hCOJqTvz3yonvqP3/gqys/YmYbT4ieDdL2D7PybNsUes0
+X-Developer-Key: i=vishnu.santhosh@oss.qualcomm.com; a=ed25519;
+ pk=G8/AJPecB1feGI7wxArGWGN0PPGQS0GUaD4THQCbdis=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTIyMDA2MiBTYWx0ZWRfX+eIbQijOkEKe
+ Aw4RrweWlSa3mYypirGZSQyWtuBLcjkbhKznNYlBEG9TdMlycEE1/D4CsJV99AC+pmwYYYJ9vjS
+ xIcqDUO7bfkZMAKOeUN1AwHN0M9IrPMaPid2Todi8dhL2QNcdGCaIWnUQtbUm3VxskIvvRD3m1f
+ FH+3Ayn0B6IGGLOtVINC05B15UbClsqLmab6YOFd8aBOZz5TV8nJLVxI3ClbBA9hvPdXcUV0Aez
+ UGpxLP2GTEFQyMsu4xkWKveoG93smHCI+LcptyEtJtWW7nnApjQ54a0zReCEa6ySRYnu0sJ96xz
+ KmgCHG32AfZ5Bd+m6BOmq9x4q3iWDQouFyGocJ2OSXfnuQedF4u3lY2CHX0zSPrKTYAY5jP+E6H
+ vZn5nvGVZa2Q7q6t4lg590wPg7NpOj7qes68qMQyB8zq/pTlxcpiPUCpDAifC4fwBbtVe3eam9P
+ Fjv6BQme6A+q2TOkC9g==
+X-Authority-Analysis: v=2.4 cv=OM+yTiaB c=1 sm=1 tr=0 ts=6b030caa cx=c_pps
+ a=wEP8DlPgTf/vqF+yE6f9lg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=ZpdpYltYx_vBUK5n70dp:22
+ a=EUspDBNiAAAA:8 a=2YlJufyw7Tv86nj3aO4A:9 a=QEXdDO2ut3YA:10
+ a=bBxd6f-gb0O0v-kibOvt:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTIyMDA2MiBTYWx0ZWRfX+zUzFSSqC0jr
+ UMNZJbBN9d9m1GIf8CmWcKKTq/y9+4A05pvUycA38o8veJ6BJBj7wXMcVIloDAIuLKxEpnyr0+P
+ zF0aIzgMRIykqbmWvNOf3g5jP7Ex+/A=
+X-Proofpoint-GUID: xVH3Qu_Mtk32L5JIt9DGMVRY1TPDEn09
+X-Proofpoint-ORIG-GUID: xVH3Qu_Mtk32L5JIt9DGMVRY1TPDEn09
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-22_03,2026-11-22_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 spamscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611220062
 
-Hi Chrispine,
+qcom_glink_destroy_ept() sends CLOSE, but the channel stays in rcids
+until the remote's CLOSE arrives. If the same name is opened again in
+that window, qcom_glink_create_ept() finds the old channel and joins it
+a second time, sending another OPEN_ACK for the old rcid. open_ack is
+already completed from the previous session, so the open returns at once,
+but the old remote intents are still marked in use and every
+non-blocking send fails with -EBUSY.
 
-On Wed, Nov 18, 2026 at 10:44:03PM +0300, Chrispine Tinega wrote:
-> Hi Francesco,
-> 
-> On Wed, Nov 18, 2026 at 05:57:10PM +0100, Francesco Valla wrote:
-> > Did you have the chance to take a look at the review sashiko did?
-> > I think the points about the leaks in IPC mode make sense and are worth
-> > an investigation, both for the M4 and R5F cases.
-> 
-> I had not, thanks. Both of its points on patch 1 hold, and they have
-> one cause: v2 reports a crash for a core that Linux did not boot.
-> 
-> 1. IPC-only mode. Once a DETACHED or ATTACHED core is RPROC_CRASHED,
->    rproc_detach() refuses it with -EINVAL. The DSP and R5F remove paths
->    only detach an RPROC_ATTACHED core, so they skip it and leak its
->    carveouts and subdevices. The R5F also has no start or stop ops in
->    this mode. On the M4F and DSP, a shutdown would reset a core that
->    Linux never started.
-> 
-> 2. Probe. All three drivers request the mailbox before
->    devm_rproc_add(), so a crash queued during probe is never cancelled
->    if probe then fails. In IPC-only mode the crash work can itself
->    cause the failure, by setting RPROC_CRASHED before rproc_validate()
->    runs. A crash the core sent before Linux probed is enough, since it
->    waits in the mailbox until the channel is opened.
-> 
-> For v3 I report the crash only when the core is RPROC_RUNNING, and keep
-> the log line otherwise:
-> 
-> 	case RP_MBOX_CRASH:
-> 		if (rproc->state == RPROC_RUNNING)
-> 			rproc_report_crash(rproc, RPROC_FATAL_ERROR);
-> 		else
-> 			dev_err(dev, "K3 rproc %s crashed\n", rproc->name);
-> 		break;
-> 
-> An IPC-only core is never RPROC_RUNNING, and no core is before
-> devm_rproc_add(). A core that Linux booted takes the same path as in
-> v2, so your stress test still covers it. Patch 2 is unchanged.
-> 
-> Recovering an IPC-only core needs the core to handle a crashed attached
-> core, for instance as RPROC_FEAT_ATTACH_ON_RECOVERY does. I would leave
-> that for a separate series.
-> 
-> The review also points at an unbalanced put_device() in
-> k3_rproc_unprepare(). I think that one is older than this series:
-> stopping an attached M4F or DSP through sysfs reaches it with no crash
-> at all. I will check it on a board and send it separately.
-> 
-> v3 builds with W=1 and checkpatch is clean. I will post it once your
-> stress test is done, unless you would rather have it now.
-> 
+When the remote then closes the old rcid and opens a new one,
+qcom_glink_rx_open() finds the reused channel in lcids and adds it to
+rcids without taking a reference, relying on the allocation reference
+that qcom_glink_rx_close() has already dropped. Closing the endpoint
+drops the last reference on CLOSE_ACK and frees the channel while it is
+still in rcids. The remote's CLOSE then works on the freed channel, and
+the next open walks the stale rcids entry:
 
-I'd prefer not to declare a Tested-by against a known buggy patch.
-Please send a V3, and I'll reply there.
+  refcount_t: underflow; use-after-free.
+  WARNING: lib/refcount.c:28 at refcount_warn_saturate+0xf4/0x148
+  Call trace:
+   refcount_warn_saturate+0xf4/0x148 (P)
+   qcom_glink_work+0x318/0x10b8
+  ...
+  Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+  pc : __pi_strcmp+0x24/0x140
+  lr : qcom_glink_create_ept+0x78/0x2a8
+  Call trace:
+   __pi_strcmp+0x24/0x140 (P)
+   rpmsg_create_ept+0x40/0x60
+   rpmsg_eptdev_open+0xcc/0x128 [rpmsg_char]
 
-> Regards,
-> Chrispine
-> 
+This is seen on Qualcomm Shikra SoC with an rpmsg_char client that
+closes a channel on the LPAICP edge and opens it again right away.
 
-Reagrds,
-Francesco
+open_ack and open_req are never reinitialized, so a completed one
+marks a channel from a previous session. Fix this by skipping such
+channels in both lookups. A new local channel gets allocated instead,
+and the old one is released as before when the remote CLOSE and
+CLOSE_ACK arrive.
+
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Co-developed-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+Signed-off-by: Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
+---
+ drivers/rpmsg/qcom_glink_native.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+index f848ab46161d170ac82d906782ff473d3e63f490..b23db2b90fcdbf3592bd73aa24486f592f7189aa 100644
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1331,9 +1331,14 @@ static struct rpmsg_endpoint *qcom_glink_create_ept(struct rpmsg_device *rpdev,
+ 	int ret;
+ 	unsigned long flags;
+ 
++	/*
++	 * open_ack is never reinitialized, so a completed open_ack means a
++	 * previous local endpoint used this channel. Don't reuse it.
++	 */
+ 	spin_lock_irqsave(&glink->idr_lock, flags);
+ 	idr_for_each_entry(&glink->rcids, channel, cid) {
+-		if (!strcmp(channel->name, name))
++		if (!strcmp(channel->name, name) &&
++		    !completion_done(&channel->open_ack))
+ 			break;
+ 	}
+ 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+@@ -1637,9 +1642,14 @@ static int qcom_glink_rx_open(struct qcom_glink *glink, unsigned int rcid,
+ 	int ret;
+ 	unsigned long flags;
+ 
++	/*
++	 * open_req is never reinitialized, so a completed open_req means this
++	 * channel was already paired with a remote open. Don't reuse it.
++	 */
+ 	spin_lock_irqsave(&glink->idr_lock, flags);
+ 	idr_for_each_entry(&glink->lcids, channel, lcid) {
+-		if (!strcmp(channel->name, name))
++		if (!strcmp(channel->name, name) &&
++		    !completion_done(&channel->open_req))
+ 			break;
+ 	}
+ 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+
+---
+base-commit: 4843f6873f7c4835e62f2c73ba0fd538e57a2f22
+change-id: 20261122-rpmsg-glink-dont-reuse-closing-channel-d2aaf525c5ea
+
+Best regards,
+-- 
+Vishnu Santhosh <vishnu.santhosh@oss.qualcomm.com>
 
