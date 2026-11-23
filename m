@@ -1,101 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.4
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.13
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795456489;
-	b=1ItcJVggPGN15tfQ47gZBKaslBTpADQg2dvkRAnAm1L526hH0LMjTfcb6SfC/lCurQxB
-	 RVepsp5tWj5RrRa+PlFk8SEwgCdAqrtH3swH1hmIFi9Bw0RrZrLYLWLfLepGPro9UUJ+Q
-	 F59ahtO0uooPHgRtG34G2HK4jSaYTsHblywZ7LrwzOwZxTO0A1EQU7vSUM0gw9lYkkelU
-	 KE/jXVtOly/YkfieDAIMtZN1OdSbWMnKwBd5LMxNdl8edYKJLQ+7zyzNzhjTzYpk5+LHl
-	 Ap2xqTDx1YEKyu2Ck8w+XWT8BiC9IZz76e1a3R6wCg/TQETGXYEq0wY6yvKNl+xcDog==
+	t=1795457804;
+	b=h3dnyGHXXWXjfYRbw0icvREbHCqT81hQUIgsvylv7MfIM7t3dLHiTjz0Qb1Vqy8NKP5A
+	 gNug37D08CTex9uk7zdJJYQ9blUQOPe/4kLWpDhIbUiC/P/4gCAoSp6jqPiCDze6xicHU
+	 nNBY+mdt2tC3BF2cxgBzSCaVK6lGMD+OHgGhysQV02hCe+5gOxJ+9l4InX6qCq8AEM4wl
+	 dYNFjPnKeiCGabR2n6de+mYVpvo4i8cZNdPaUF4qtWq4yQwEaD8+Hw7/P5+bzJd5YSZHj
+	 EaS3pl38+nY8gSiYRmd/hG9ylWpXlRfwcMxCtAsxJ7t0fxYTWxuDw4fft5d+XmvurmA==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795456489;
-	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:Date:
-	 From:To:Cc:Message-ID:In-Reply-To:References:Subject:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-Correlation-ID:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:X-Source:
-	 X-Source-Args:X-Source-Dir:X-SGantispam-id:X-AntiAbuse:AntiSpam-DLS:
-	 AntiSpam-DLSP:AntiSpam-DLSRS:AntiSpam-TS:CFBL-Address:
-	 CFBL-Feedback-ID;
-	bh=hsHYRS9OInffpGq5oiUzbknaI7qM/TYlqpXmRUYxTj0=;
-	b=YTLtR50DaNvB6lmAYeJ/yuY+GDMbisqagZJTWJ4cH71TxLcRk1pdNNJfc2CgQrUmdOaT
-	 JdUCP9SWnQz6mrLJ1tsQj1c0Nq2ymKIh9PJ7k/60GwQcNNUW7wVE8Jk7JTU4e/h1yMlO7
-	 KtkmXqq9mtlh4zT2Eh5gzsFVT/JdFtTk0XbpU/kDcUucNdTRZsqtghYYu3p+7SVskUsnf
-	 +jraBCkhf7jSOp9M3EgFsezhTP5D2u0GWndHthCozTI6HdGWgGzQlXUwwbeSj3FvMGux1
-	 Q+5Dv6VPr3tQr8f481hv/aDqHq7JMtT7hMYJjXptB7VmjmVSI6yev6WU2qSGTUACRYQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795457804;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
+	 Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:CC:
+	 References:Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy:
+	 X-EOPAttributedMessage:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-Id:
+	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=9uGgK8NzYvXtfeVuJcCGKElIDL6vsqxiFYGxJrLxNqg=;
+	b=3NE9eCTwVMQBQnBxSyTjp3Fb+UNwQjUww7kMzvMO9GMvf46v4RGtZIqSHgQYE+I0YIVG
+	 WC+GXaJHAtbJ9oZStXXs60JhRglyd56KXdDBWrao4+bwhmQGC+piM0eSWdg4PHi3MEpZc
+	 Iv4U99IWIHPNDEqA5WZAxJnCSZLvkHPrNnCg7OMB0pHOS0ynKtp3rvIbvVAvGJKkauz5x
+	 lgiNcJHkiDjJW0SF1iaolVzd5i1gMw/2jg3r+guXtxecCnpOHwZ5U0Xfssj968F4jTDei
+	 ouOF1DaCv1pSuVvkqeQ6N/xhswa4wLxZe6EcEEfGj4ob3oeFc0oXGMLjBnr+fMW67+Q==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valla.it;
-	spf=pass smtp.mailfrom=valla.it;
-	dkim=pass header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=Hcqg+rtC;
-	dkim=pass header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=abC0vOow;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.4
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.4])
+	dmarc=pass header.from=foss.st.com;
+	spf=pass smtp.mailfrom=foss.st.com;
+	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=nVj10bW7;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.13
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013013.outbound.protection.outlook.com [52.101.83.13])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7F6606A31A;
-	Mon, 23 Nov 2026 17:54:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3A7F6606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF8B606A31A;
+	Mon, 23 Nov 2026 18:16:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3BF8B606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=Hcqg+rtC;
-	dkim=pass (1024-bit key, unprotected) header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=abC0vOow
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com; s=arckey; t=1795456487;
-	 b=YkxXisX8xqvr/aj6i0eS8W87R5x22gC9/jKmDp7VAuW7U+pTPMPHlYwpvnFz7iG0sdmlp8aDef
-	  7xwMUjkDOEPVO/PSArEAgaD1Xz39VUEKXNt0RrulYRfOyud9ePnGVZSfZ8Py36VftFL06ZIyLf
-	  8QNgyn7MDXd1R0OBAz9uTSWpntAmvbyHT6MRWqPRD/tA9Mxrkms+zaB6aHWiM6eLe+kXwUsgRC
-	  mnXYXVkcEQRwQvBA4BT5Zeanx3WjZsD8ZOer3sd+Yo9GadtuIQ4HoJDvB4cyemF+JPieg/DcKp
-	  pdbKgsrRYUfkVfVGnVJYs84FuxcjeiJ91HVbfzltcTh/6w==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com; s=arckey; t=1795456487;
-	bh=hsHYRS9OInffpGq5oiUzbknaI7qM/TYlqpXmRUYxTj0=;
-	h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:References:
-	  In-Reply-To:Message-ID:Cc:To:From:Date:DKIM-Signature:DKIM-Signature;
-	b=ePUwX89EZds4xc8EFWRDypuxGTsQJMkedWV2quJROpgr3RDQOlFDdbTX69qATYGt68+v397JKB
-	  7lHlInTD3yS+pFIQyE44c6tSfslJvrzbfbhC0ZmkCAyEeNKUtp7MpcrZ/lJRlUdpuyVKNcCpSp
-	  Cu+4Qs6FE/2RebQWYp+3Exfq2/+YdO502AZv9e2BjnzuNnzSGvdvyiKKJOXwNHIeHz9mDjE6mz
-	  c+XJhcUEq+FPOyJOf4ucfyNBraSIPxPRMVa4bprukpiKo6haw+S1sv7hMiBoqr+V0YZF2pjtWC
-	  MOyxp9kpkxtabYFTspmL3u0iIUwzMfYAGv2x+Vd9d8/G+w==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Message-ID:Cc:To
-	:From:Date:Reply-To:List-Unsubscribe;
-	bh=hsHYRS9OInffpGq5oiUzbknaI7qM/TYlqpXmRUYxTj0=; b=Hcqg+rtC0eoLrhGa0CkAp9DAaa
-	+sXaHHHLomz2M7HZbmBR/LEOAB0WSh1EFFX1KvGFrg7Yq/Ujp/n6p87cEe+TahEAlQ5wZTl2LtSis
-	KJ8j4ddzfzb7Fykn0N61zdsQBpxtlKQVT5rrf/U3ZQCSW43Vn1ZdmxaMDxIGqg8jmE0g=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xVYFU-00000008AWF-0C2G;
-	Mon, 23 Nov 2026 17:54:40 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=hsHYRS9OInffpGq5oiUzbknaI7qM/TYlqpXmRUYxTj0=; b=abC0vOow+Y9kNK3I2iSY1udxsr
-	xN6eFBjDut49jNx+dlWMJpl23X/I+cTMfsLv6yFpGTy+H+zR2yuG2JhoEHOtuzqQkD/9L9UlrJkai
-	kYWwUxD0dVNs30OdakX+87l3PgDLx9xf6l4797602jNVJAgKI5/pEFQSQ7gMKLgvgg7M=;
-Received: from [79.28.115.6] (port=60568 helo=dummy.faircode.eu)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xVYFL-000000001L1-0AuF;
-	Mon, 23 Nov 2026 17:54:31 +0000
-Date: Mon, 23 Nov 2026 18:54:27 +0100
-From: Francesco Valla <francesco@valla.it>
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>,
-	openamp-rp@lists.openampproject.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Tanmay Shah <tanmay.shah@amd.com>, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Message-ID: <78b33a86-6637-47e3-8987-853076e6183b@valla.it>
-In-Reply-To: <1ad4d213-9494-4a46-8f4e-39efe8c8fa6c@foss.st.com>
-References: <20261101-rpmsg-config-size-v1-1-65686b445b22@valla.it> <au4QVFyk7Zzc6y2u@p14s> <av8V18TntRP2U6hQ@p14s> <4c542301-a80d-4f14-8651-1307ac783794@foss.st.com> <awDI4B8yYDB6h3H9@bywater> <1ad4d213-9494-4a46-8f4e-39efe8c8fa6c@foss.st.com>
-Subject: Re: [PATCH] virtio_rpmsg: fix config space alignment
+	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=nVj10bW7
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fL3ofrzJCgItYay/9fqRE0vJloInneLa16cDC1PYT5Zm3LMjNTrnD9hpgi1EbRPZye/LKgFmFvuQXSzn9Vw5Ar5py1QxEfFtIee8Ha7jLx+eF+izm5MUgHCcRT1p2cdDY90fiUkzPmLR5+CJXB4vANoTyAG5uKz9fBLT/W+qk0/l5qCXNB6/d3Hd4wkDv1rLBTFGUyDH9Rgu2HjTJoCCKR0012OIHEVwTtTjGglhp2u0kSdjHoqiZ+opFdc336GPj7BdTiHekPibvXQN/xdPsZlalVi2KKLxQ1gsJy6NWKCzOBI3ud+WkjSSptOwkWwJ73DaE+fgUtoNcSTgvZElMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9uGgK8NzYvXtfeVuJcCGKElIDL6vsqxiFYGxJrLxNqg=;
+ b=zHA3pZkNW9u1R2NxCjxTPfdFkS3eUlawGhQlodLbkP1osxKDPbXR+QvdHfPhXxtUo8sDoJ5t8r7CmyB8nNxwkMeisGjKha3epAoSo8RR5i8ibCVEjGc1iP5NZXUwPiDFM1sg1T6YnJGpxVtX7tMQE4xIih9fM9w3sbQIe3Cy1qaS5K2C4Yqs94ckTVWEpB6oznUAKNgrtL3snMR7qk3gyXiqQoLp5XBiCAoTDAha52bfhqYoyLJAJl830rIo/yRWm8IV0pMk8Q7H+EXs0nHRJjliHekhph5LQBDq+jcCDx7jzkBUj4khtphqgmK7pnFtB7Rw18nYgK4mCpACIngO+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 164.130.1.59) smtp.rcpttodomain=linaro.org smtp.mailfrom=foss.st.com;
+ dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9uGgK8NzYvXtfeVuJcCGKElIDL6vsqxiFYGxJrLxNqg=;
+ b=nVj10bW7RkXRUrNc02krdgZaK+y3OXxJn9WgTDv9dyzcJTsHf4ZddEDPq+WVpu7jHJIqBKLBg16tOcii1fi/zS2XXhhli8YoeVowe5MAhWgt6w4xqL+i+ao4EXApPhgUwJ7rCZA9VYpKyv8fTXALdmhU10hD6oJwcN5Sw+UKsUEB/T49CpviZbsNNLjWfuaQUb6DQpOhyXRFRpq92DPgNB6QSHHrT9iW/LikR8KxqkCYyz/Vb+NboIfmy9TcshdcBGveWVe1zOqC/V3+usJYtUK45f+Cr8Zxs3YrE9f5HOaQHE34zgAi+MeJEmV3zhjcJjT3N9VTT2586NWwutw8vw==
+Received: from DUZPR01CA0157.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bd::21) by DB8PR10MB3705.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:132::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.3; Mon, 23 Nov
+ 2026 18:16:39 +0000
+Received: from MA3PEPF00000406.eurprd04.prod.outlook.com
+ (2603:10a6:10:4bd:cafe::2c) by DUZPR01CA0157.outlook.office365.com
+ (2603:10a6:10:4bd::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.14 via Frontend Transport; Mon,
+ 23 Nov 2026 18:16:39 +0000
+X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
+ is 164.130.1.59) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=foss.st.com;
+Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
+ designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
+ client-ip=164.130.1.59; helo=smtpO365.st.com;
+Received: from smtpO365.st.com (164.130.1.59) by
+ MA3PEPF00000406.mail.protection.outlook.com (10.167.241.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.639.5 via Frontend Transport; Mon, 23 Nov 2026 18:16:38 +0000
+Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
+ (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 23 Nov
+ 2026 19:17:26 +0100
+Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
+ (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Mon, 23 Nov
+ 2026 19:16:37 +0100
+Message-ID: <49f11bcc-9a21-4181-929d-2a45448435a0@foss.st.com>
+Date: Mon, 23 Nov 2026 19:16:36 +0100
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -105,153 +104,138 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <78b33a86-6637-47e3-8987-853076e6183b@valla.it>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 2df38b731ae5c6e2a03bcb6d98b2c158
-X-AntiAbuse: ID - 2df38b731ae5c6e2a03bcb6d98b2c158
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1xVYFU-00000008AWF-0C2G-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-lgmz.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] virtio_rpmsg: Fix config space alignment
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Francesco Valla <francesco@valla.it>, Bjorn Andersson
+	<andersson@kernel.org>, Tanmay Shah <tanmay.shah@amd.com>,
+	<openamp-rp@lists.openampproject.org>, <linux-remoteproc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20261121-rpmsg-config-size-v2-1-d2fd698b6f76@valla.it>
+ <26795897-ccdb-42db-9433-2ecc341fb311@foss.st.com>
+ <CANLsYkwG-C_CRDr401zZB912U07tQHJHNa+LWd2mgPM9YRgcNQ@mail.gmail.com>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+In-Reply-To: <CANLsYkwG-C_CRDr401zZB912U07tQHJHNa+LWd2mgPM9YRgcNQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
+ (10.75.128.133)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA3PEPF00000406:EE_|DB8PR10MB3705:EE_
+X-MS-Office365-Filtering-Correlation-Id: d70bd11d-8803-40a7-e2ab-08df498deaca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|23010399003|22082099003|18002099003|13003099007|260925021911599003|260925021311599003|56012099006|260925022911599003|4143699003|261028144727099003|261026140227099003|261022075727099003|261026121527099003|261021123027099003|261021121427099003|261022105027099003|261102123227099003|261009223027099003|11063799006|10067099003;
+X-Microsoft-Antispam-Message-Info:
+	jOcktZU+IjpicPP74YGRnABqHoSK6XvLQtTRchAJ6oH7pjDJzG5dieye4nfxk8+rhhGMcfJUnGbnhnZw0N3c28kZyhW5GpP1ElAdO54xaBYMzu3/VP2UMWCyCmHO406IHQGMU0rOVcE+m1E7Q0+KgMVVqK91tCGu9TbRx4pdY6tMw4YnEJ5+6YyQZkCXENy6pbXs+rM0meRR44KQ/S/VQTEOlrmwwqnUs4AvXtzVKV1IfHXx+6F3KwfUIi28Q2j0isWabkhpwWKz6vuDMLOP6R+REsK15BD+l8Vk//k00CTdIdI5jUEdiP+bqAACy+nMb+nijRYucyS994jhY83ZJtXzoloHvO5ryQOFJ7rSJMLGtYJ3D8p7rtmVJZwAh5t2u+/KVS4FVDxSkiJFI/QXQ6wbqXLvl4PEGCMEU6fqfUBxobNJvlvbr+NfWyQByy/kQcM1OwIG8B8Khnj2VLvrRyGDRgISx2Ayy8APQWneG9EYviDn/ILP91Uak1MXwYr2Mn4HVlA9sdTPYuU5wijcVnADcZ549WE4mMNggsz4yLWDtKMJc+VsHV7suiOZdoZz8kk+1+RgMAbKpJkYVQ5hpBEELN3sck7oBZSGrqlXlotwxLets7pvKApmusZEip5sIteva9yhJtuoKP56hmTUww==
+X-Forefront-Antispam-Report:
+	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(23010399003)(22082099003)(18002099003)(13003099007)(260925021911599003)(260925021311599003)(56012099006)(260925022911599003)(4143699003)(261028144727099003)(261026140227099003)(261022075727099003)(261026121527099003)(261021123027099003)(261021121427099003)(261022105027099003)(261102123227099003)(261009223027099003)(11063799006)(10067099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	W/ytHqVipwi6cCtrUbk147GVy9siDROGEsotI9YXW2c50VHfLgQHlScGUMH1hVsh5NsnG7HXN/StFZkT8B0iRN+obNqy+Dkh8gkwxgb17KMm5a+YnfgW+M+ypqA+nmP1HIU37OU8WShELW9Xt3hwKLIo3UyL2ybfrKZU6gl9hm/rn3olGtPBquO9B/yvsk2MtemMAvqyXVYhRF/uishqBAn5fwPzmDLjt7oNTsIbhCWQetu1DOdjBzRrn18cKGb6IUZSoXV6GLp/BOPKEMLxW6gnOvuQDAbfOep72dbO8YyABTfdr9ryTFS5MouREdN/oOAxgN7mx2fKu37c4oY78FFKQMcxu64eUJUA7GLXGexPQLMbXk1ffQcN6/SS8q8PGppAj/oFPoz96eF99arksOJ69z7EFGxt9GPPq81O9y3SLcZHEzM6n2AF9Z9I2+dq
+X-OriginatorOrg: foss.st.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2026 18:16:38.7209
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d70bd11d-8803-40a7-e2ab-08df498deaca
+X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MA3PEPF00000406.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3705
 
-Hello Arnaud,
+Hello Mathieu
 
-23 Nov 2026 09:12:41 Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>:
-
-> Hello Francesco,
->
-> On 11/20/26 23:29, Francesco Valla wrote:
->> Hello Arnaud,
->> On Fri, Nov 20, 2026 at 06:50:47PM +0100, Arnaud POULIQUEN wrote:
->>> Hello,
+On 11/23/26 15:12, Mathieu Poirier wrote:
+> On Mon, 23 Nov 2026 at 02:12, Arnaud POULIQUEN
+> <arnaud.pouliquen@foss.st.com> wrote:
+>>
+>>
+>>
+>> On 11/21/26 00:01, Francesco Valla wrote:
+>>> The comment for virtio_rpmsg_config says that this structure is
+>>> naturally aligned to 32 bits, and this is desirable by some
+>>> architectures that don't get along with unaligned accesses.
+>>> The content of the structure itself however isn't aligned, and the
+>>> __packed attribute prevent the compiler to add this alignment.
 >>>
->>> Sorry it goes out of my radar.
+>>> Fix this by extending the version field to 16 bits.
 >>>
->>> On 11/19/26 16:29, Mathieu Poirier wrote:
->>>> [Adding openAMP mailing list]
->>>>
->>>> Heads up OpenAMP people, I will merge this patch in a week.
->>>>
->>>> Thanks,
->>>> Mathieu
->>>>
->>>> On Fri, Nov 06, 2026 at 11:37:24AM -0600, Mathieu Poirier wrote:
->>>>> On Sun, Nov 01, 2026 at 02:54:03PM +0100, Francesco Valla wrote:
->>>>>> The comment for virtio_rpmsg_config says that this structure is
->>>>>> naturally aligned to 32 bits, and this is desirable by some
->>>>>> architectures that don't get along with unaligned accesses.
->>>>>> The content of the structure itself however isn't aligned, and the
->>>>>> __packed attribute prevent the compiler to add this alignment.
->>>>>>
->>>>>> Fix this by adding a padding byte.
->>>>>>
->>>>>> Fixes: ca96ea25e51a ("rpmsg: virtio_rpmsg_bus: Get buffer size from =
-config space")
->>>>>> Signed-off-by: Francesco Valla <francesco@valla.it>
->>>>>> ---
->>>>>> Hello,
->>>>>>
->>>>>> unfortunately I missed this when the original patch set was sent, bu=
-t I
->>>>>> think it's worth fixing (or at least discussing) this now before it
->>>>>> enters a stable kernel.
->>>>>>
->>>>>> The same support in open-amp has already been merged [1], but maybe =
-it
->>>>>> can be fixed before the next release there too?
->>>>>>
->>>>>> Another, lower-impact solution would be to fix the comment, but that=
- can
->>>>>> then led to issues on architectures that does not support unaligned
->>>>>> accesses (e.g.: AMR Cortex-M0).
->>>>>>
->>>>>
->>>>> Thanks for bringing this to my attention.=C2=A0 I agree with this pat=
-ch.=C2=A0 I will give
->>>>> Arnaud a couple of weeks to reply to this email though.
->>>>>> Thank you
->>>>>>
->>>>>> Francesco
->>>>>>
->>>>>> [1] https://github.com/OpenAMP/open-amp/commit/744376f566c3ec7e06a7d=
-093d785295b78aa486f
->>>>>> ---
->>>>>> =C2=A0=C2=A0 include/linux/rpmsg/virtio_rpmsg.h | 2 ++
->>>>>> =C2=A0=C2=A0 1 file changed, 2 insertions(+)
->>>>>>
->>>>>> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpms=
-g/virtio_rpmsg.h
->>>>>> index 0872cbca4593..d24fedb63023 100644
->>>>>> --- a/include/linux/rpmsg/virtio_rpmsg.h
->>>>>> +++ b/include/linux/rpmsg/virtio_rpmsg.h
->>>>>> @@ -23,6 +23,7 @@
->>>>>> =C2=A0=C2=A0=C2=A0 *
->>>>>> =C2=A0=C2=A0=C2=A0 * @version: version of this structure, currently =
-%RPMSG_VDEV_CONFIG_V1.
->>>>>> =C2=A0=C2=A0=C2=A0 * @size:=C2=A0=C2=A0=C2=A0 size of this structure=
- in bytes.
->>>>>> + * @reserved:=C2=A0 padding, reserved for future usage.
->>>>>> =C2=A0=C2=A0=C2=A0 * @txbuf_size:=C2=A0 Tx buf size from remote's vi=
-ew. For Linux this is rx buf size.
->>>>>> =C2=A0=C2=A0=C2=A0 * @rxbuf_size:=C2=A0 Rx buf size from remote's vi=
-ew. For Linux this is tx buf size.
->>>>>> =C2=A0=C2=A0=C2=A0 *
->>>>>> @@ -33,6 +34,7 @@
->>>>>> =C2=A0=C2=A0 struct virtio_rpmsg_config {
->>>>>> =C2=A0=C2=A0=C2=A0 u8 version;
->>>>>> =C2=A0=C2=A0=C2=A0 __virtio16 size;
->>>>>> +=C2=A0=C2=A0 u8 reserved;
->>>>>> =C2=A0=C2=A0=C2=A0 /* The tx/rx individual buffer size (if VIRTIO_RP=
-MSG_F_BUFSZ) */
->>>>>> =C2=A0=C2=A0=C2=A0 __virtio32 txbuf_size;
->>>>>> =C2=A0=C2=A0=C2=A0 __virtio32 rxbuf_size;
+>>> Fixes: ca96ea25e51a ("rpmsg: virtio_rpmsg_bus: Get buffer size from config space")
+>>> Signed-off-by: Francesco Valla <francesco@valla.it>
+>>> ---
+>>> Changes in v2:
+>>> - version field extended to 16 bits instead of adding a reserved byte.
+>>> - Rebased on current master.
+>>> - Link to v1: https://patch.msgid.link/20261101-rpmsg-config-size-v1-1-65686b445b22@valla.it
+>>> ---
+>>>    drivers/rpmsg/virtio_rpmsg_bus.c   | 2 +-
+>>>    include/linux/rpmsg/virtio_rpmsg.h | 2 +-
+>>>    2 files changed, 2 insertions(+), 2 deletions(-)
 >>>
+>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> index 23ff6c8b7a20..27282475a732 100644
+>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>>> @@ -815,7 +815,7 @@ static void rpmsg_virtio_del_ctrl_dev(struct rpmsg_device *rpdev_ctrl)
+>>>    static int rpmsg_virtio_get_buf_size(struct virtproc_info *vrp)
+>>>    {
+>>>        struct virtio_device *vdev;
+>>> -     u8 version;
+>>> +     u16 version;
+>>>        u16 size;
 >>>
->>> What about using a u16 for the version instead?
->>> Even if we never use the MSB of the field, it seems cleaner to me than
->>> adding a reserved field.
->>> Indeed, we can consider the config space header as containing the
->>> version and the size. The rest is version-dependent, including the
->>> reserved part.
->>>
->> Between the two options, I prefer the u16 version, to keep the
->> version-dependent "payload" aligned to 32 bits. I'll send a V2 with this
->> modification.
->> Shall I send also the corresponding modification for open-amp, or you'll
->> take care of that?
->
->
-> As you want, I have already sent a fix related to this structure in open-=
-amp [1],
-> so I can also add this update if/when it is applied by Mathieu
->
-> [1] https://github.com/OpenAMP/open-amp/pull/714
->
+>>>        vdev = vrp->vdev;
+>>> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
+>>> index 0872cbca4593..57f48d537de9 100644
+>>> --- a/include/linux/rpmsg/virtio_rpmsg.h
+>>> +++ b/include/linux/rpmsg/virtio_rpmsg.h
+>>> @@ -31,7 +31,7 @@
+>>>     * the structure is naturally 32-bit aligned.
+>>>     */
+>>>    struct virtio_rpmsg_config {
+>>> -     u8 version;
+>>> +     __virtio16 version;
+>>>        __virtio16 size;
+>>>        /* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
+>>>        __virtio32 txbuf_size;
+>>
+>>
+>> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>
+> 
+> Applied.
 
-Then I'll leave it to you, it's way more efficient.
+Could you tell me whether this fix will be included in 7.4 or integrated
+into 7.5?
 
-> Thanks,
-> Arnaud
->
+Or perhaps both, if 7.4 becomes the LTS release?
 
-
-Thank you!
-
+I would need this information to manage the compatibility details
+properly in OpenAMP.
 Regards,
-Francesco
+Arnaud
+
+> 
+> Thanks,
+> Mathieu
+> 
+>> Thanks,
+>>
+>> Arnaud
+>>
+>>>
+>>> ---
+>>> base-commit: 5f22fb20497f4983094131f00a734362300d22d2
+>>> change-id: 20261101-rpmsg-config-size-0dbe9ea63c6d
+>>>
+>>> Best regards,
+>>> --
+>>> Francesco Valla <francesco@valla.it>
+>>>
+>>
+
