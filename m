@@ -1,100 +1,64 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795457804;
-	b=h3dnyGHXXWXjfYRbw0icvREbHCqT81hQUIgsvylv7MfIM7t3dLHiTjz0Qb1Vqy8NKP5A
-	 gNug37D08CTex9uk7zdJJYQ9blUQOPe/4kLWpDhIbUiC/P/4gCAoSp6jqPiCDze6xicHU
-	 nNBY+mdt2tC3BF2cxgBzSCaVK6lGMD+OHgGhysQV02hCe+5gOxJ+9l4InX6qCq8AEM4wl
-	 dYNFjPnKeiCGabR2n6de+mYVpvo4i8cZNdPaUF4qtWq4yQwEaD8+Hw7/P5+bzJd5YSZHj
-	 EaS3pl38+nY8gSiYRmd/hG9ylWpXlRfwcMxCtAsxJ7t0fxYTWxuDw4fft5d+XmvurmA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795457804;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 X-MS-Exchange-Authentication-Results:Received-SPF:Received:Received:
-	 Received:Message-ID:Date:MIME-Version:User-Agent:Subject:To:CC:
-	 References:Content-Language:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-Originating-IP:X-ClientProxiedBy:
-	 X-EOPAttributedMessage:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-Id:
-	 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=9uGgK8NzYvXtfeVuJcCGKElIDL6vsqxiFYGxJrLxNqg=;
-	b=3NE9eCTwVMQBQnBxSyTjp3Fb+UNwQjUww7kMzvMO9GMvf46v4RGtZIqSHgQYE+I0YIVG
-	 WC+GXaJHAtbJ9oZStXXs60JhRglyd56KXdDBWrao4+bwhmQGC+piM0eSWdg4PHi3MEpZc
-	 Iv4U99IWIHPNDEqA5WZAxJnCSZLvkHPrNnCg7OMB0pHOS0ynKtp3rvIbvVAvGJKkauz5x
-	 lgiNcJHkiDjJW0SF1iaolVzd5i1gMw/2jg3r+guXtxecCnpOHwZ5U0Xfssj968F4jTDei
-	 ouOF1DaCv1pSuVvkqeQ6N/xhswa4wLxZe6EcEEfGj4ob3oeFc0oXGMLjBnr+fMW67+Q==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=foss.st.com;
-	spf=pass smtp.mailfrom=foss.st.com;
-	dkim=pass header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=nVj10bW7;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.13
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013013.outbound.protection.outlook.com [52.101.83.13])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=198.177.127.193
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795461332;
+	b=zs6FqQ+KESSJDxxZavpZArLGhubsgDhv2zH+2QMHEkngTu9xw3WJDqCPn22jb6F9/hur
+	 u9gVd2xN5y04ZG2JejHNyndpyUO/I9VALnw7Uw3jXjTtuxqAv8Jed1bzpaC5BZBjXWhPP
+	 XcMM8gfvtgIcohSdVQgTt0amtn5cZaAXux93Y22mcfXFD7I0IW46/XhH5w6QhadDmgZ2w
+	 m4ufhOe3OEm80SiLaGf8GqdV+wi14QMkp4Jrtu8Rqztbk2CnLyu5EYw2Sv5L+arjI3F55
+	 Ku0Jj7xVHpCJ7gnLsCYs6MuPWvYXOvphF2TgMPC5/2ot6NE4yMF8b8ZDIWFCc3BamHA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795461332;
+	h=DMARC-Filter:Received:DKIM-Signature:From:To:Cc:Subject:Date:
+	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
+	 X-Envelope-From;
+	bh=ZGoQIJfWER74Lse2hNucFJ7/DwQhKg86bX5l6vAf1lY=;
+	b=3m6EN8GYN/A6+URcH/afdUxEmXVKOZgQoJ04bUpjcTm+JkVNJYJFg51jJmq9nFHbUcHK
+	 ZHcOU1OPM76XX5aQixhdkdyG/kdFNN1s9adYZyzunTuYLnDlLV3o8gOhkp1kM4hytGSmF
+	 oV+QVR0bNftJGUTxi1iEOC81QGRFqX9cnDYuyaXoJyOGTCcKW3QQKW+ViZ9A7Uz8/F6Lw
+	 qDVZ2PxbPoIbMfTTF2Z1I0ylnvXLcnHAXgIE+5SPulSffekZR0GhyPKnQzrfodnCjbJ4k
+	 ietyFJhj9Ids08Z2ezETKOGPMSCGn9exmWhxckwo/8i5Ykk0vGnGtN7uY3fvP2uRIhw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=chrispinetinega.com;
+	spf=pass smtp.mailfrom=chrispinetinega.com;
+	dkim=pass header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=CMlWzdIG;
+	arc=none smtp.remote-ip=198.177.127.193
+Received: from out-utut-a193.jellyfish.systems (out-utut-a193.jellyfish.systems [198.177.127.193])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF8B606A31A;
-	Mon, 23 Nov 2026 18:16:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 3BF8B606A31A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53446606A31A
+	for <linux-remoteproc@vger.kernel.org>; Mon, 23 Nov 2026 19:15:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 53446606A31A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chrispinetinega.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrispinetinega.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=foss.st.com header.i=@foss.st.com header.a=rsa-sha256 header.s=selector2 header.b=nVj10bW7
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fL3ofrzJCgItYay/9fqRE0vJloInneLa16cDC1PYT5Zm3LMjNTrnD9hpgi1EbRPZye/LKgFmFvuQXSzn9Vw5Ar5py1QxEfFtIee8Ha7jLx+eF+izm5MUgHCcRT1p2cdDY90fiUkzPmLR5+CJXB4vANoTyAG5uKz9fBLT/W+qk0/l5qCXNB6/d3Hd4wkDv1rLBTFGUyDH9Rgu2HjTJoCCKR0012OIHEVwTtTjGglhp2u0kSdjHoqiZ+opFdc336GPj7BdTiHekPibvXQN/xdPsZlalVi2KKLxQ1gsJy6NWKCzOBI3ud+WkjSSptOwkWwJ73DaE+fgUtoNcSTgvZElMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9uGgK8NzYvXtfeVuJcCGKElIDL6vsqxiFYGxJrLxNqg=;
- b=zHA3pZkNW9u1R2NxCjxTPfdFkS3eUlawGhQlodLbkP1osxKDPbXR+QvdHfPhXxtUo8sDoJ5t8r7CmyB8nNxwkMeisGjKha3epAoSo8RR5i8ibCVEjGc1iP5NZXUwPiDFM1sg1T6YnJGpxVtX7tMQE4xIih9fM9w3sbQIe3Cy1qaS5K2C4Yqs94ckTVWEpB6oznUAKNgrtL3snMR7qk3gyXiqQoLp5XBiCAoTDAha52bfhqYoyLJAJl830rIo/yRWm8IV0pMk8Q7H+EXs0nHRJjliHekhph5LQBDq+jcCDx7jzkBUj4khtphqgmK7pnFtB7Rw18nYgK4mCpACIngO+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 164.130.1.59) smtp.rcpttodomain=linaro.org smtp.mailfrom=foss.st.com;
- dmarc=fail (p=none sp=none pct=100) action=none header.from=foss.st.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9uGgK8NzYvXtfeVuJcCGKElIDL6vsqxiFYGxJrLxNqg=;
- b=nVj10bW7RkXRUrNc02krdgZaK+y3OXxJn9WgTDv9dyzcJTsHf4ZddEDPq+WVpu7jHJIqBKLBg16tOcii1fi/zS2XXhhli8YoeVowe5MAhWgt6w4xqL+i+ao4EXApPhgUwJ7rCZA9VYpKyv8fTXALdmhU10hD6oJwcN5Sw+UKsUEB/T49CpviZbsNNLjWfuaQUb6DQpOhyXRFRpq92DPgNB6QSHHrT9iW/LikR8KxqkCYyz/Vb+NboIfmy9TcshdcBGveWVe1zOqC/V3+usJYtUK45f+Cr8Zxs3YrE9f5HOaQHE34zgAi+MeJEmV3zhjcJjT3N9VTT2586NWwutw8vw==
-Received: from DUZPR01CA0157.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bd::21) by DB8PR10MB3705.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:132::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.3; Mon, 23 Nov
- 2026 18:16:39 +0000
-Received: from MA3PEPF00000406.eurprd04.prod.outlook.com
- (2603:10a6:10:4bd:cafe::2c) by DUZPR01CA0157.outlook.office365.com
- (2603:10a6:10:4bd::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.639.14 via Frontend Transport; Mon,
- 23 Nov 2026 18:16:39 +0000
-X-MS-Exchange-Authentication-Results: mx.microsoft.com 1; spf=fail (sender IP
- is 164.130.1.59) smtp.mailfrom=foss.st.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=foss.st.com;
-Received-SPF: Fail (protection.outlook.com: domain of foss.st.com does not
- designate 164.130.1.59 as permitted sender) receiver=protection.outlook.com;
- client-ip=164.130.1.59; helo=smtpO365.st.com;
-Received: from smtpO365.st.com (164.130.1.59) by
- MA3PEPF00000406.mail.protection.outlook.com (10.167.241.151) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.639.5 via Frontend Transport; Mon, 23 Nov 2026 18:16:38 +0000
-Received: from STKDAG1NODE2.st.com (10.75.128.133) by smtpo365.st.com
- (10.250.44.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.56; Mon, 23 Nov
- 2026 19:17:26 +0100
-Received: from [10.48.87.127] (10.48.87.127) by STKDAG1NODE2.st.com
- (10.75.128.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Mon, 23 Nov
- 2026 19:16:37 +0100
-Message-ID: <49f11bcc-9a21-4181-929d-2a45448435a0@foss.st.com>
-Date: Mon, 23 Nov 2026 19:16:36 +0100
+	dkim=pass (2048-bit key, unprotected) header.d=chrispinetinega.com header.i=@chrispinetinega.com header.a=rsa-sha256 header.s=default header.b=CMlWzdIG
+Received: from mail.privateemail.com (unknown [62.8.90.37])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.privateemail.com (Postfix) with ESMTPSA id 4jYFy44Qqxz2x9V;
+	Mon, 23 Nov 2026 19:15:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chrispinetinega.com;
+	s=default; t=1795461311;
+	bh=ZGoQIJfWER74Lse2hNucFJ7/DwQhKg86bX5l6vAf1lY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CMlWzdIGl7oKUumU5vBvLW8Tu2NprrIBUvXKfkPfBf4UGrHN4nUYkx7pbhtkaSQKY
+	 mzd3yFx7WTu5D7ZzDyuJo1yu3EFi51zyh4u3RLazbJlIvZP++hJbzehudj5n1ly8lc
+	 U7nokRS+6ND0t/C4p5VL0hBbwllc6zFKz2EauPV6BiWCNVvweiU2Zbv4yr2wbLzs3t
+	 zYmW3tcjbEWJP8Nv5eP/Q5jZZ6quY60l0z7MSyvyc78PxJMlX83iTT0VjzWeTaIDgL
+	 yiiQqyyamLLOHSaBq2fbRW+UgyD1PW8/t0gRn4Ln6QVOqr6gviZ0fMlyzuCHgPjYd3
+	 yPKwaq9OI8xzw==
+From: Chrispine Tinega <dev@chrispinetinega.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chrispine Tinega <dev@chrispinetinega.com>
+Subject: [PATCH v2] rpmsg: char: Drop messages that arrive while the device is closed
+Date: Mon, 23 Nov 2026 22:14:53 +0300
+Message-ID: <20261123191453.1172967-1-dev@chrispinetinega.com>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -104,138 +68,157 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] virtio_rpmsg: Fix config space alignment
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Francesco Valla <francesco@valla.it>, Bjorn Andersson
-	<andersson@kernel.org>, Tanmay Shah <tanmay.shah@amd.com>,
-	<openamp-rp@lists.openampproject.org>, <linux-remoteproc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20261121-rpmsg-config-size-v2-1-d2fd698b6f76@valla.it>
- <26795897-ccdb-42db-9433-2ecc341fb311@foss.st.com>
- <CANLsYkwG-C_CRDr401zZB912U07tQHJHNa+LWd2mgPM9YRgcNQ@mail.gmail.com>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-In-Reply-To: <CANLsYkwG-C_CRDr401zZB912U07tQHJHNa+LWd2mgPM9YRgcNQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ENXCAS1NODE2.st.com (10.75.128.138) To STKDAG1NODE2.st.com
- (10.75.128.133)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA3PEPF00000406:EE_|DB8PR10MB3705:EE_
-X-MS-Office365-Filtering-Correlation-Id: d70bd11d-8803-40a7-e2ab-08df498deaca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700016|376014|1800799024|23010399003|22082099003|18002099003|13003099007|260925021911599003|260925021311599003|56012099006|260925022911599003|4143699003|261028144727099003|261026140227099003|261022075727099003|261026121527099003|261021123027099003|261021121427099003|261022105027099003|261102123227099003|261009223027099003|11063799006|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	jOcktZU+IjpicPP74YGRnABqHoSK6XvLQtTRchAJ6oH7pjDJzG5dieye4nfxk8+rhhGMcfJUnGbnhnZw0N3c28kZyhW5GpP1ElAdO54xaBYMzu3/VP2UMWCyCmHO406IHQGMU0rOVcE+m1E7Q0+KgMVVqK91tCGu9TbRx4pdY6tMw4YnEJ5+6YyQZkCXENy6pbXs+rM0meRR44KQ/S/VQTEOlrmwwqnUs4AvXtzVKV1IfHXx+6F3KwfUIi28Q2j0isWabkhpwWKz6vuDMLOP6R+REsK15BD+l8Vk//k00CTdIdI5jUEdiP+bqAACy+nMb+nijRYucyS994jhY83ZJtXzoloHvO5ryQOFJ7rSJMLGtYJ3D8p7rtmVJZwAh5t2u+/KVS4FVDxSkiJFI/QXQ6wbqXLvl4PEGCMEU6fqfUBxobNJvlvbr+NfWyQByy/kQcM1OwIG8B8Khnj2VLvrRyGDRgISx2Ayy8APQWneG9EYviDn/ILP91Uak1MXwYr2Mn4HVlA9sdTPYuU5wijcVnADcZ549WE4mMNggsz4yLWDtKMJc+VsHV7suiOZdoZz8kk+1+RgMAbKpJkYVQ5hpBEELN3sck7oBZSGrqlXlotwxLets7pvKApmusZEip5sIteva9yhJtuoKP56hmTUww==
-X-Forefront-Antispam-Report:
-	CIP:164.130.1.59;CTRY:IT;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:smtpO365.st.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(23010399003)(22082099003)(18002099003)(13003099007)(260925021911599003)(260925021311599003)(56012099006)(260925022911599003)(4143699003)(261028144727099003)(261026140227099003)(261022075727099003)(261026121527099003)(261021123027099003)(261021121427099003)(261022105027099003)(261102123227099003)(261009223027099003)(11063799006)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	W/ytHqVipwi6cCtrUbk147GVy9siDROGEsotI9YXW2c50VHfLgQHlScGUMH1hVsh5NsnG7HXN/StFZkT8B0iRN+obNqy+Dkh8gkwxgb17KMm5a+YnfgW+M+ypqA+nmP1HIU37OU8WShELW9Xt3hwKLIo3UyL2ybfrKZU6gl9hm/rn3olGtPBquO9B/yvsk2MtemMAvqyXVYhRF/uishqBAn5fwPzmDLjt7oNTsIbhCWQetu1DOdjBzRrn18cKGb6IUZSoXV6GLp/BOPKEMLxW6gnOvuQDAbfOep72dbO8YyABTfdr9ryTFS5MouREdN/oOAxgN7mx2fKu37c4oY78FFKQMcxu64eUJUA7GLXGexPQLMbXk1ffQcN6/SS8q8PGppAj/oFPoz96eF99arksOJ69z7EFGxt9GPPq81O9y3SLcZHEzM6n2AF9Z9I2+dq
-X-OriginatorOrg: foss.st.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2026 18:16:38.7209
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d70bd11d-8803-40a7-e2ab-08df498deaca
-X-MS-Exchange-CrossTenant-Id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;Ip=[164.130.1.59];Helo=[smtpO365.st.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MA3PEPF00000406.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR10MB3705
+Content-Transfer-Encoding: 8bit
+X-Envelope-From: dev@chrispinetinega.com
 
-Hello Mathieu
+A char device bound to an rpmsg channel reuses the channel's default
+endpoint, and that endpoint stays bound when the last file is closed.
+rpmsg_ept_cb() keeps running and appends an skb to eptdev->queue for
+every message, with no limit. The queue is purged only on release, so
+nothing frees it while the device stays closed.
 
-On 11/23/26 15:12, Mathieu Poirier wrote:
-> On Mon, 23 Nov 2026 at 02:12, Arnaud POULIQUEN
-> <arnaud.pouliquen@foss.st.com> wrote:
->>
->>
->>
->> On 11/21/26 00:01, Francesco Valla wrote:
->>> The comment for virtio_rpmsg_config says that this structure is
->>> naturally aligned to 32 bits, and this is desirable by some
->>> architectures that don't get along with unaligned accesses.
->>> The content of the structure itself however isn't aligned, and the
->>> __packed attribute prevent the compiler to add this alignment.
->>>
->>> Fix this by extending the version field to 16 bits.
->>>
->>> Fixes: ca96ea25e51a ("rpmsg: virtio_rpmsg_bus: Get buffer size from config space")
->>> Signed-off-by: Francesco Valla <francesco@valla.it>
->>> ---
->>> Changes in v2:
->>> - version field extended to 16 bits instead of adding a reserved byte.
->>> - Rebased on current master.
->>> - Link to v1: https://patch.msgid.link/20261101-rpmsg-config-size-v1-1-65686b445b22@valla.it
->>> ---
->>>    drivers/rpmsg/virtio_rpmsg_bus.c   | 2 +-
->>>    include/linux/rpmsg/virtio_rpmsg.h | 2 +-
->>>    2 files changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> index 23ff6c8b7a20..27282475a732 100644
->>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
->>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
->>> @@ -815,7 +815,7 @@ static void rpmsg_virtio_del_ctrl_dev(struct rpmsg_device *rpdev_ctrl)
->>>    static int rpmsg_virtio_get_buf_size(struct virtproc_info *vrp)
->>>    {
->>>        struct virtio_device *vdev;
->>> -     u8 version;
->>> +     u16 version;
->>>        u16 size;
->>>
->>>        vdev = vrp->vdev;
->>> diff --git a/include/linux/rpmsg/virtio_rpmsg.h b/include/linux/rpmsg/virtio_rpmsg.h
->>> index 0872cbca4593..57f48d537de9 100644
->>> --- a/include/linux/rpmsg/virtio_rpmsg.h
->>> +++ b/include/linux/rpmsg/virtio_rpmsg.h
->>> @@ -31,7 +31,7 @@
->>>     * the structure is naturally 32-bit aligned.
->>>     */
->>>    struct virtio_rpmsg_config {
->>> -     u8 version;
->>> +     __virtio16 version;
->>>        __virtio16 size;
->>>        /* The tx/rx individual buffer size (if VIRTIO_RPMSG_F_BUFSZ) */
->>>        __virtio32 txbuf_size;
->>
->>
->> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>
-> 
-> Applied.
+An endpoint created through RPMSG_CREATE_EPT_IOCTL does not have this
+problem: it is destroyed on release, and messages sent to it while the
+device is closed are dropped by the bus.
 
-Could you tell me whether this fix will be included in 7.4 or integrated
-into 7.5?
+On a TI AM62x whose M4F core sends about four 64-byte messages a
+second, kernel memory that cannot be reclaimed grew by 2.2 MB in the
+10 minutes the reading process was stopped, about 850 bytes a message.
+At that rate a reader that is down for a day holds about 320 MB.
 
-Or perhaps both, if 7.4 becomes the LTS release?
+Drop messages for a default endpoint while eptdev->ept is NULL, as the
+bus already does for an endpoint that does not exist. Non-default
+endpoints are not checked here because a transport may invoke
+rpmsg_ept_cb() from rpmsg_create_ept() before rpmsg_eptdev_open() sets
+eptdev->ept.
 
-I would need this information to manage the compatibility details
-properly in OpenAMP.
-Regards,
-Arnaud
+Hold eptdev->queue_lock (irqsave) around the check and enqueue in
+rpmsg_ept_cb() and around updates to eptdev->ept, and purge the queue
+in rpmsg_eptdev_release() before releasing eptdev->ept_lock. This
+prevents an in-flight callback from enqueuing an skb after release has
+purged the queue, and prevents a concurrent open from racing with the
+purge. Release already discards whatever the last reader left unread,
+so delivery across a close is not something a reader can depend on
+today.
 
-> 
-> Thanks,
-> Mathieu
-> 
->> Thanks,
->>
->> Arnaud
->>
->>>
->>> ---
->>> base-commit: 5f22fb20497f4983094131f00a734362300d22d2
->>> change-id: 20261101-rpmsg-config-size-0dbe9ea63c6d
->>>
->>> Best regards,
->>> --
->>> Francesco Valla <francesco@valla.it>
->>>
->>
+Fixes: bc69d1066569 ("rpmsg: char: Introduce the "rpmsg-raw" channel")
+Signed-off-by: Chrispine Tinega <dev@chrispinetinega.com>
+---
+Changes in v2:
+- Scope the drop check to default endpoints (eptdev->default_ept),
+  so initial messages arriving during rpmsg_create_ept() for a
+  non-default endpoint are not dropped before eptdev->ept is set.
+- Synchronize eptdev->ept updates and the rpmsg_ept_cb() check/enqueue
+  under eptdev->queue_lock (irqsave), and purge eptdev->queue in
+  rpmsg_eptdev_release() while still holding eptdev->ept_lock, so an
+  in-flight callback cannot queue a stale or leaked skb after purge.
+- Rebased onto rpmsg-next (965089d20).
+
+v1: https://lore.kernel.org/all/20261115110040.363306-1-dev@chrispinetinega.com/
+
+ drivers/rpmsg/rpmsg_char.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/rpmsg/rpmsg_char.c b/drivers/rpmsg/rpmsg_char.c
+index d8868faac..c03b7a424 100644
+--- a/drivers/rpmsg/rpmsg_char.c
++++ b/drivers/rpmsg/rpmsg_char.c
+@@ -77,6 +77,7 @@ struct rpmsg_eptdev {
+ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+ {
+ 	struct rpmsg_eptdev *eptdev = dev_to_eptdev(dev);
++	unsigned long flags;
+ 
+ 	mutex_lock(&eptdev->ept_lock);
+ 	if (!eptdev->rpdev) {
+@@ -89,7 +90,9 @@ int rpmsg_chrdev_eptdev_destroy(struct device *dev, void *data)
+ 		/* The default endpoint is released by the rpmsg core */
+ 		if (!eptdev->default_ept)
+ 			rpmsg_destroy_ept(eptdev->ept);
++		spin_lock_irqsave(&eptdev->queue_lock, flags);
+ 		eptdev->ept = NULL;
++		spin_unlock_irqrestore(&eptdev->queue_lock, flags);
+ 	}
+ 	mutex_unlock(&eptdev->ept_lock);
+ 
+@@ -108,19 +111,31 @@ static int rpmsg_ept_cb(struct rpmsg_device *rpdev, void *buf, int len,
+ {
+ 	struct rpmsg_eptdev *eptdev = priv;
+ 	struct sk_buff *skb;
++	unsigned long flags;
+ 
+ 	if (!eptdev)
+ 		return 0;
+ 
++	spin_lock_irqsave(&eptdev->queue_lock, flags);
++	/*
++	 * A channel's default endpoint stays bound while the device is closed,
++	 * so this callback keeps running. Queuing now would grow the queue
++	 * without limit until the device is opened again. Drop the message.
++	 */
++	if (eptdev->default_ept && !eptdev->ept) {
++		spin_unlock_irqrestore(&eptdev->queue_lock, flags);
++		return 0;
++	}
++
+ 	skb = alloc_skb(len, GFP_ATOMIC);
+-	if (!skb)
++	if (!skb) {
++		spin_unlock_irqrestore(&eptdev->queue_lock, flags);
+ 		return -ENOMEM;
++	}
+ 
+ 	skb_put_data(skb, buf, len);
+-
+-	spin_lock(&eptdev->queue_lock);
+ 	skb_queue_tail(&eptdev->queue, skb);
+-	spin_unlock(&eptdev->queue_lock);
++	spin_unlock_irqrestore(&eptdev->queue_lock, flags);
+ 
+ 	/* wake up any blocking processes, waiting for new data */
+ 	wake_up_interruptible(&eptdev->readq);
+@@ -149,6 +164,7 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ 	struct rpmsg_endpoint *ept;
+ 	struct rpmsg_device *rpdev = eptdev->rpdev;
+ 	struct device *dev = &eptdev->dev;
++	unsigned long flags;
+ 
+ 	mutex_lock(&eptdev->ept_lock);
+ 	if (eptdev->ept) {
+@@ -180,7 +196,9 @@ static int rpmsg_eptdev_open(struct inode *inode, struct file *filp)
+ 	}
+ 
+ 	ept->flow_cb = rpmsg_ept_flow_cb;
++	spin_lock_irqsave(&eptdev->queue_lock, flags);
+ 	eptdev->ept = ept;
++	spin_unlock_irqrestore(&eptdev->queue_lock, flags);
+ 	filp->private_data = eptdev;
+ 	mutex_unlock(&eptdev->ept_lock);
+ 
+@@ -191,19 +209,22 @@ static int rpmsg_eptdev_release(struct inode *inode, struct file *filp)
+ {
+ 	struct rpmsg_eptdev *eptdev = cdev_to_eptdev(inode->i_cdev);
+ 	struct device *dev = &eptdev->dev;
++	unsigned long flags;
+ 
+ 	/* Close the endpoint, if it's not already destroyed by the parent */
+ 	mutex_lock(&eptdev->ept_lock);
+ 	if (eptdev->ept) {
+ 		if (!eptdev->default_ept)
+ 			rpmsg_destroy_ept(eptdev->ept);
++		spin_lock_irqsave(&eptdev->queue_lock, flags);
+ 		eptdev->ept = NULL;
++		spin_unlock_irqrestore(&eptdev->queue_lock, flags);
+ 	}
+-	mutex_unlock(&eptdev->ept_lock);
+ 	eptdev->remote_flow_updated = false;
+ 
+ 	/* Discard all SKBs */
+ 	skb_queue_purge(&eptdev->queue);
++	mutex_unlock(&eptdev->ept_lock);
+ 
+ 	put_device(dev);
+ 
+-- 
+2.53.0
 
