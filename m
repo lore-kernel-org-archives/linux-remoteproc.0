@@ -1,105 +1,90 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.53
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795490975;
-	b=VCCcmFJCGlMa0IZWNShqMWVLl8qLK0CyQmrOc9RJTUcaJLff3ShEfOBRyTdjtDVqWq1O
-	 MxuzlzIr73GLvBEhtX89Z9h3EG+RYWV8k5vb2jkGrMKnEHNAEKk1iontF8HVWxT866auN
-	 p5HrtWELgvT3OfTAjZs+PhB5OSYGcYGvcEBtYcd11Nbtma64bjs3LkDW+zV5/CQRImkL4
-	 H6YgKLMMTkhZnumnS6NFDzH2YJAhXrcPnTtGOy9AXKusc75nwXmi8nEE4sQA1IzKocb7C
-	 MvqPlunLGwBStE99OEnSFBPAkEtvafYuWhGTV1l65xizVL4pJA7ewrGX3rasZBeTwiQ==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795490975;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:From:To:Cc:Subject:
-	 Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 Content-Transfer-Encoding:Content-Type:X-ClientProxiedBy:MIME-Version:
-	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=9u58MWnUPBv+wpIoHoqA+g4jSEnmA4T+QSzu9v1QMbk=;
-	b=iERW4IJkFCsj35OwmH4z+EzxsGh3NusTGh+kE5gqRxZmYGPysA/ynNts+U5uJ8KwSDuC
-	 RS/7OWGTv7PnHyZLiT/m95O5KdSm3FMb+gV9JrqvceZCdZ8yEfRfDZnc0d6kFH8HT+N6Z
-	 LA8Qb9A3Vx4qY/solvDc1iyLW0W6nQ9Sd2AS8Gw3me63wUlpIrwgNDoIVb6nT7kF9FPtD
-	 421KVMU0z+Qb7rFcitlR5aK+wAaiv8iYT26KidlBZDiJJOm3DIzKsO/3BAy8WG3awMo9c
-	 IFC/WLwy82+d+PG9ysOgOPUEq0wfUxCZZz6uHAeyNutff6ArLB+fq6RZ4YeWrzIHJWw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b="hZRf/p/X";
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.83.53
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013053.outbound.protection.outlook.com [52.101.83.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.175
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795504474;
+	b=x/f/b/aNBvJxvVSCTAIFf/+8hsm/617U06NWdaUmTiAgudyHS2lGKDNmocLdKkeDw03E
+	 OTDSmZKST4M4fOIf5IWyj1Pugidf6jGyX6e1/OVWefwYQiZK4OQjqzeLc6wVqiddr7Fbp
+	 pFcM/FRmWKocCvMhQc0EZIwGwDC46ldA90yCeLG/KOBPtfbL4HkVjKjrQ6blhWuJ8rsaS
+	 /YnK7GqNkzhKtIcrGJjKqXL+R6zrLcDt9p6TC3BGKJ2GQ7Hlo4KOjgYijFu9Vl85JdVDK
+	 MmAtFdodjuZJxBpklZku1QOcM9KEVVXy2+TlMnheuEGyasNzhjVc66cVUPyGHyzm/tg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795504474;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
+	 Date:Message-Id:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=LAq2DbxeZILLxvhcSwaRL4Dj4tgtiHKeHZHk2yK0WuY=;
+	b=QsChyvztx1EXsOP1qHkrOnyhUMlAq5G6yX1Ne7gmVI+rzCNFswjhFWrwqIcMUHJiBRba
+	 1VNwuNDEPzk7G1TKZnvap0ixPeABudgZjMLBjUBA3jPA4Hv91XfB5GYB7zNR7jnZYXh/K
+	 ollzyUGrKGcEEfnoy1lCgdN/Roe/roA8hVz4ZrJG1FtsoRSbh+TqLk+j3iOLC1uMnkJMq
+	 JjmJSz65qoQR4Fk6/mbmYL/lgYZgxyAMtl28lzYe4UgLIOKKE9ei67mLatB/bdo2s0V5H
+	 bv5hNUpdmgEVw05eWVw+ADXGlhhUQCEQr6omN1GEdZrkNVGlz8kvn4wOKR+C1YGffIA==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=gmail.com;
+	spf=pass smtp.mailfrom=gmail.com;
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Cno1UpEe;
+	arc=none smtp.remote-ip=209.85.210.175
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4247E606A32A;
-	Tue, 24 Nov 2026 03:29:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4247E606A32A
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19C2606A31E
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 07:14:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B19C2606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=hZRf/p/X
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EZQwMZZxb3pR6mqN1dRiIqUcpmhTPPJcHyziSxP6Mfh4c0LRmdftinG7FeDwsxHROjcR+T3s0vyvHS00WhZm3nd5hSxPLJkhos9aBRV0ZcVYFH5pQVaTNJJ0DEHUdSJM2k+Ro2QVIQmISs5Y63w3Hz4I1OwlU725XVT6cFmFESpZ1Mrr49+UW8FgBWDr/3W2myofC13bHCkbs+9gjW1EbGVNZtsD2lFcgEyMBqzcj2dHp+dVQJzmR7ZW7VUDRXSVtyPFH6aNCUN2om1wjRyXiAzeqdjfBFj5eW2qmz1U7aOdzdEXcLlMVO/Vx08VopyI7JJ683SqQYqXxXkxVOTrww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9u58MWnUPBv+wpIoHoqA+g4jSEnmA4T+QSzu9v1QMbk=;
- b=MZmbMCqvRZTUcscY4DaNHuQ1phI8HAJNVonjmO7kBx4XMypZbztHEOs3slaBf5pC5LWNBQrpCRmHyYMckJFT1iGRYELwBmyjPMPnq8zgsyX3JEcDZVkdHkVlIsoSPuKxucDGUhb51uswL8eq548aqTbm3NM1oZMZeMtifVDz7Liz/wk6UsQ21YvwjzEkCBXSKgv54yuD2//gVW2x1ULA4BzGpGZO2p3zYnn5Li9A7c8F2CXe7Yxjy9el6a6EhFqMfCrJ6uRbA6ugiRRat4Cp0TPEtbTXcyhlZkI7h+q040FNhg1a1fCtnEFihy6JvEHSXnMeE/byfMSQ+9YpyTMmnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9u58MWnUPBv+wpIoHoqA+g4jSEnmA4T+QSzu9v1QMbk=;
- b=hZRf/p/X2FvcxyHiuwVf4aOF9F9gWXSKoBc5xqi7tyUkyfYRLg+DXaugUaQG1k0YaUq0nj4INLGfA3ZBsWwgKZmXCrQHVihgNqg9F9yuqDa3r8+Y3di08OXkyyLAR8xI5qOwuNJK5euqmyjWbbM5OJUwLa5OERLRC6MKvstCIYRl/JHDOyrcCAS3602rM4EqqW3exgfKgkIBnyfbPJzwS0LGsO1kPdBChrVLGTFBWBohyrBP3l2J3W0xhNIGEQU6kvJxkXvRVd1Y/Hwc4AeWadR6Ov0isFHJIHrZ3nPSQ7mtwRhUCucL55NgNrbZt4NNLu8lifOkIsQJsIoGaThJrA==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com (2603:10a6:20b:24d::9)
- by DB9PR04MB8393.eurprd04.prod.outlook.com (2603:10a6:10:25f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.639.14; Tue, 24 Nov
- 2026 03:29:32 +0000
-Received: from AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9]) by AM8PR04MB7874.eurprd04.prod.outlook.com
- ([fe80::ac38:1699:6f18:c5d9%5]) with mapi id 15.21.0639.012; Tue, 24 Nov 2026
- 03:29:32 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Peng Fan <peng.fan@oss.nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>,
-	linux-remoteproc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=Cno1UpEe
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-8b29b83fdf1so2110534b3a.2
+        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Nov 2026 23:14:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20260707; t=1795504473; x=1796109273; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=LAq2DbxeZILLxvhcSwaRL4Dj4tgtiHKeHZHk2yK0WuY=;
+        b=Cno1UpEeosAC6mD+3etNspr12WHfikJ8O5g72jn7q7WIx1rNlK0Ay/v/tN2cPWAxl1
+         0aZPfNjZsXo20YmHdrfp7YTqHdvesiM/HQKqvdituSFEQuxeonbpnDzXOHw8SYnHM1qd
+         YDhO5UkO1qDQMb/WQH+bsqTbF3bRx134MFGc/3zC/dfeU0c4xc0Z2aVcw6gqBw1U0HfH
+         TXs+yRFw2IPmaHDArU28Xeo3+TK9C+T57FpB2Y3SEo7pzOm2SvSVmoS32DaBnHG/sW2K
+         AAPrPfpKA9BPmOy3LwVoayeMvvjtznaHF5whoP9oE+mP/aTx18sglY9j66dMw/tyO1kw
+         RSuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795504473; x=1796109273;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=LAq2DbxeZILLxvhcSwaRL4Dj4tgtiHKeHZHk2yK0WuY=;
+        b=F931PZpDlgndnsjdYXNSUESTqipmNLM+dQgmZWQUmE31nt4/bpuzQhZCn7lTVtyB5g
+         rV1D/LiLskQ2SSSVZEuM/E+Aa4WtfWCAupqB6AfBRjPzhIC1SC8g9lnFBOcHJQKS6P/W
+         lCNf2nF3QP3dTFrJo2hEnTB0Qjtl6/4nvRhxbnEsegXtRveQwDYPOxgjxwefFSNBrlu5
+         +rOWiBkT8H4o7R1Mg5xbe5PI7e9sb/BjaGrqcUVwakOD5yos+lN81DaqVZGRseMlxDGv
+         BJy/BJbU/XzNod75P+Xoc7hEIUAu119FlfHOGhtzyGFA+pTwoxj9pjicUOpMty4wMQ8d
+         Wh8Q==
+X-Gm-Message-State: APuU4Z+K5B/SSzxwGu73PbScs5FowjXl8WqdZQRPLMSHEIts0y+JCcUm
+	rqfMfmOk84NnUAJRmU3GjR2Xh/3qXwePaHn63na85crNeeeMMG6/IwSH
+X-Gm-Gg: AZFdTZdgrW68S2wqBr9cHwXau99hNBLuFkbe7AOKfUXefTZqWDOoO1AqcF66FzZ8Y4T
+	PQ3dq21EBoZ2yyxXyX+ioWSOCU1jBIc53KhOKS0x1kTSUjZYnBBexu/wzRzOq3FlFVi4b13huff
+	0qRvin355E1aH5Uzkq6MBfoq6YOnmP3HliMkCJCMlscOFZbgx346bThtgpygd9SzPAHi02ci71h
+	R/xjnL1jocP2HhozJ5CJnXC1VMJhwV6UZhrbJYTgKVNh7LBU9D6RaKmcIAJrumqTRFGT9FeovV7
+	Rs9HsPRiFfyAdZy29c8erktr1dLtrJGeq60YpZ66DwaxvG5tT+u3e4QU/1bNtCeXfAWNPrmtTzY
+	twXJkSLC0qGBuxFNgwrTumyKIDw6rodwX7WXOEMh1BbxniDLEjkCxTDmHHm6plZZORN8Kw5faWx
+	b/Q2SF9kzfjdwkpT59YwzoypGJIJUFlRko+n343zkfafpZdpN4k0ddIoblpSilN3469uVqB1aNJ
+	Lz5/plTeB1O+AGxg/11xs1PnvIB2ErpgfDI2yGbzFGRajL+zzgMSFWNUzUjwAPWtGzbLQ3keEnO
+	GLPucNEFw8pvqVKeG3QbEjSVOHyPgLfk174F58kwKEIDfgNo
+X-Received: by 2002:a05:6a21:4cc1:b0:3e0:dbf5:59f1 with SMTP id adf61e73a8af0-4014e6565eemr12593150637.91.1795504472734;
+        Mon, 23 Nov 2026 23:14:32 -0800 (PST)
+Received: from embedsky001.tail6d6b2f.ts.net ([183.13.19.200])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde6cfcadffsm6475836a12.9.2026.11.23.23.14.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Nov 2026 23:14:32 -0800 (PST)
+From: Yonghao Zhang <hyz3367@gmail.com>
+To: mathieu.poirier@linaro.org,
+	andersson@kernel.org
+Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 10/10] remoteproc: imx_dsp_rproc: Fix off-by-one bitmask for trailing bytes
-Date: Tue, 24 Nov 2026 11:26:34 +0800
-Message-ID: <20261124032636.5382-1-peng.fan@oss.nxp.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20261123172140.3547896-11-lee@kernel.org>
-References:
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI6PR03CA0005.apcprd03.prod.outlook.com
- (2603:1096:4:285::21) To AM8PR04MB7874.eurprd04.prod.outlook.com
- (2603:10a6:20b:24d::9)
+	Yonghao Zhang <hyz3367@gmail.com>
+Subject: [PATCH v2 0/4] remoteproc: core: Fix the error unwind paths
+Date: Tue, 24 Nov 2026 15:14:05 +0800
+Message-Id: <20261124071409.972-1-hyz3367@gmail.com>
+X-Mailer: git-send-email 2.34.1
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -109,75 +94,71 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7874:EE_|DB9PR04MB8393:EE_
-X-MS-Office365-Filtering-Correlation-Id: b111646f-c19d-41f5-558c-08df49db27c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|23010399003|19092799006|1800799024|376014|7416014|366016|261026135527099003|261022115727099003|261102123227099003|261026121527099003|261022113327099003|261022075727099003|261022105027099003|261026130827099003|261026140227099003|261028144727099003|261021121427099003|261021123027099003|261021130227099003|261021133027099003|261021135927099003|10067099003|11063799006|56012099006|261009223027099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info:
-	BRBXsAu5QPjhmYmu6Lvt3fuxJQTSACJf3C+vmnjXA+yuozGAi8Szd8SQmDIBzWMmlDBjsEnGDXw/ZaXWp+mIF4zcgZisijBi41IPJyWP6rXnUfRQhq9tiJTx31ST4IYmZndPEDiaPgUzcZNsDIcQynD3c6xguREH7BCcomwxPBDMTi14ddHpYUBylvbtuY0BmMSwHm5AOjlxe6R0XIo4JIoLexjett02GdnrMEycj5wfUZLiON8qvFaHFop+Hmi9gS13E0Zn8lUnj/Os8pt/ZSFtp8BIG4d3AvPbfIBfYTNVdStK48YdnGe+uaBfRiOCaOmVpSUAA8UVLqd+QnmgwQi4M/6N4lIXwCRroR1psWyQ3G8+tsRMbBU6nM+eO76uLBN8YMRyXRRGUUZtMerB5+4f4EH8cc30Is1GAbsQsHc8AusYbwDxZRfFL1E3PuD2UxPvlVzzcmU5LRjNkAuzHgvrdBufUv2UwWAzBI6S3SM/2jzxB52WyUzbgrZSP6FNF9OF04SDQe21HI20xs/DCd6DBCssaGhsMyjgGJldSbHQiNQ0rou6JgKvBFRZWegW/TWqazNou3jgriFsyFaKLpPWtc6ABmTU8qyY/lpKj78=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7874.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(19092799006)(1800799024)(376014)(7416014)(366016)(261026135527099003)(261022115727099003)(261102123227099003)(261026121527099003)(261022113327099003)(261022075727099003)(261022105027099003)(261026130827099003)(261026140227099003)(261028144727099003)(261021121427099003)(261021123027099003)(261021130227099003)(261021133027099003)(261021135927099003)(10067099003)(11063799006)(56012099006)(261009223027099003)(18002099003)(22082099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SFTqWOkvjHdhboCUqPGtVgzjcJxAaW8UA4fjt3RsO2wIZCBSLd1cR5i3MLoo?=
- =?us-ascii?Q?WpcfnwIi1XzW4gvChyT3cccCJHdeUU6fYg8J8szZDk/By2riIGSu/1jg+pVY?=
- =?us-ascii?Q?M8cttzFIYEEbIIxYje2lUwYcWVJDE72IiaxOkxH3NJcHZ2hSDx7EqME/8Tb8?=
- =?us-ascii?Q?Pnbl3mkR3uhWPNR6G923XJ8UB53kqJoX3jhgbTiHb53LMMvMpTPzVe5ZnP2Q?=
- =?us-ascii?Q?K95euG6z/tzCbBQpD6u/BP42CS7Fq9fDQxHG+cI/DDW6O/ZDkmShkbJRumxA?=
- =?us-ascii?Q?u1fLLSWBXOn1ohyIoTzUHAhIW8cOI/Lh0ZjLJBN0+ZEgKwwqxZaSGPW/IJUS?=
- =?us-ascii?Q?kEQXpROPp9KqzxfszOmmxOhLJpZgMC0JnYmoghwKYTN8rrCJn8v67qv7GC9a?=
- =?us-ascii?Q?RDc8iK60kJjXfpQueqpDgNhcKOlmZaFsd1erT4cdj1t5aRjW3rOrnbDJZwYl?=
- =?us-ascii?Q?0e9haTSh3Qie3RgZUrM9nNftiVwuNF+hEGTww+TP4A4vrcm2Ewdx8qai3gT+?=
- =?us-ascii?Q?Z73JRtj2lxK5ApLJdOMqgo1pbKCj8RiB2QWAD81BL/Mi+Fv0Eg4NaI3hFUr8?=
- =?us-ascii?Q?eIXFjLUgPhou9f8EoOZE+DGZXdPpZRE1tU9fpYir//RGM3ZSluMDouv5loQO?=
- =?us-ascii?Q?yFReXqQX7Qwdv9tVBx50eEAILWxxeNtYklHBDF+NQvbUqfj5dX+FS4K834mL?=
- =?us-ascii?Q?jJqcbOPjH5nfareJZU1w2rACt5ciuy6OzfRvpQnv9mwbFiOp3BHoFkAvvr3z?=
- =?us-ascii?Q?uxaY+FoHWUQ2G88yWbefSNzjPcQSvt5kosx/nWFDggrMUGni6Oy+XYPp6sR+?=
- =?us-ascii?Q?xJWSksneoF5MDyQBczqIj/tzoaXUWq7JHniAmXNnEmDHBmAy0PeDDpnM1Wy2?=
- =?us-ascii?Q?sMx/LBATsdIcbZkirOFAetJooXSRZSwmDoiRi69NHwgsGULCuc105YYWezKN?=
- =?us-ascii?Q?ilHDEcpM/4jDAFvicQ0WfYhG1Dp8SSrDGyHXENbZe6IXVUFO7WGVxVqr4g2M?=
- =?us-ascii?Q?RrHuuNAyOiCc/iRn8AUZeNmRUoaluBlKU7scAxprqXG3L7P4JsEx6Xc7r1q/?=
- =?us-ascii?Q?SS4UvIe2LRftc3saaqKNRKatap6BxVpgCsbOoxxWGEytkIZwcz+fODjXL0LH?=
- =?us-ascii?Q?SUBVB3T5roTwetT+R2F4vxyyiFUjBe5sYnTlFLMfv1CwiB4QhluS3KKrPWRJ?=
- =?us-ascii?Q?1C9BxRCSaWGYm1xMeEcJ1nUpy5SIB0WbhBBdINNHf2rgOVi6HJHdtWC2z2b2?=
- =?us-ascii?Q?uD9ck8E9TRcoilsUgRMyvi+Tb3psGKK/jTHt6l+iLMW9GYc+xTfOJj7fvxTz?=
- =?us-ascii?Q?v5kevKiUWCpzhC3XdMZqNJsvrjlfqi5sx8spw6Y11jcylSm9v1NtfVKUC6RD?=
- =?us-ascii?Q?G+KNekjUcs4Szh2VUjCGfVsctcLuBknpL6Mq2npfiCT79AR88Un5RhAn+GED?=
- =?us-ascii?Q?hbU8fAE/PkmmqKdNZ4EIyKAh+Op8MRhv1qV/iAwyhRS6xAx4PsWMA4J29XLw?=
- =?us-ascii?Q?YvLlXsdxaKpr3tAMBgm/ghWDmPOnp2wRs1bPrdvWdMW4h4MxHUjvirejUZRo?=
- =?us-ascii?Q?bg70zYUpjYjLkcNoMGpU3nkkoAdVgyKSoB/fDMC7cT1VzKADNLfXmZCsy69N?=
- =?us-ascii?Q?unRceADVsqbME1jVbqs9MRzcmdq9FaPMG+L457mUN7VlVaIsUrmSOtJmeGP4?=
- =?us-ascii?Q?FmvVh1Ij1nlhz8z7nlTNcKnmRzpA4MvrktgM1EEkgmi7xqZMQoQWzRW7lf91?=
- =?us-ascii?Q?+hyS6OABFTGBWe5w/VO6g1/H7OoMY4nghNZylyckAenhURf/ZznB?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b111646f-c19d-41f5-558c-08df49db27c3
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7874.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Nov 2026 03:29:32.4990
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UhhHm3opsYnSehmAoOvYkWHVENShG/0Fta6OaZt72nP0GwTaYw7Zpt559bdeyx9XXL8GGl6J7ePhjhHjcKEFHun23i8Z6dRTvLPY2ZAevXGGQODdCP0NEpZZe1RUSYGw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8393
+Content-Transfer-Encoding: 8bit
 
-On Mon, 23 Nov 2026 17:20:54 +0000 Lee Jones <lee@kernel.org> wrote:
+This series fixes four problems in the error unwind paths of the
+remoteproc core.
 
-> When size is not a multiple of 4, both imx_dsp_rproc_memcpy() and
-> imx_dsp_rproc_memset() compute affected_mask as GENMASK(8 * r, 0) for
-> the remaining r bytes (1 <= r <= 3).  Because GENMASK(h, l) is inclusive
-> of bit h, GENMASK(8 * r, 0) sets 8 * r + 1 bits and clears or overwrites
-> the least-significant bit of the first byte past the end of the target
-> region during the 32-bit read-modify-write.
-> 
-> Use GENMASK(8 * r - 1, 0) to mask exclusively the r trailing bytes.
-> 
-> Fixes: 408ec1ff0caa ("remoteproc: imx_dsp_rproc: Add custom memory copy implementation for i.MX DSP Cores")
-> Closes: https://sashiko.dev/#/bug/linux-2e407b68-a7e9-42ff-a613-e61b47a4461b
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Lee Jones <lee@kernel.org>
+The most visible change in v2 is 3/4.  It no longer reworks the attach
+unwind to prefer detach() over stop(): without the STM32 review that
+behaviour change required, it could not be justified.  The patch now
+only guards the unconditional ops->stop() call against an
+implementation that does not provide it, exactly as 2/4 does in
+rproc_start().  Implementations that provide stop() keep the existing
+unwind, so the STM32 detach() path is not affected.  The detach()-first
+semantics can be revisited separately with the platform maintainers.
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+The patches:
+
+ - 1/4 resets a freed vring entry to FW_RSC_ADDR_ANY instead of 0.
+   0 is a valid device address, so a remote processor that reads the
+   entry while it is still running could mistake it for a real vring.
+   The sentence in the comment above the reset that is no longer true
+   is dropped at the same time.
+
+ - 2/4 skips the stop() rollback in rproc_start() when the
+   implementation does not provide it, instead of dereferencing NULL.
+
+ - 3/4 adds the same guard to the attach unwind in __rproc_attach().
+
+ - 4/4 releases the resources of a boot that a failed recovery was
+   trying to restore, following the cleanup sequence of
+   rproc_shutdown(), and voids the power references when the failure
+   leaves the processor offline or detached.
+
+Testing: on an Allwinner T153 (sun8iw22) with an E907 remote core,
+driven by an out-of-tree platform driver.  The vring reset of 1/4 and
+the recovery failure of 4/4 were exercised on this hardware.  The
+guards in 2/4 and 3/4 cover configurations that the in-tree drivers do
+not exercise today.
+
+---
+Changes in v2:
+- 1/4: Keep the existing comment and drop only the sentence that
+  became obsolete; trim the changelog (Mathieu).
+- 2/4: Select between stop_rproc and unprepare_subdevices at the
+  rproc_start_subdevices() error path instead of branching in the
+  shared unwind path (Mathieu).
+- 3/4: Replace the detach()-first rework with a guard against a
+  missing stop(), so no existing driver changes behaviour.  The
+  STM32 detach() path is not affected anymore.
+- 4/4: Describe the code as applied, follow the __rproc_shutdown()
+  cleanup sequence, and check for RPROC_OFFLINE/RPROC_DETACHED
+  explicitly; trim the changelog (Mathieu).
+
+v1: https://lore.kernel.org/all/20260929075453.2324597-1-hyz3367@gmail.com
+
+Yonghao Zhang (4):
+  remoteproc: core: Reset freed vring entries to FW_RSC_ADDR_ANY
+  remoteproc: core: Guard against a missing stop() in rproc_start()
+  remoteproc: core: Guard against a missing stop() in the attach unwind
+  remoteproc: core: Clean up after a failed recovery
+
+ drivers/remoteproc/remoteproc_core.c | 47 +++++++++++++++++++++++-----
+ 1 file changed, 40 insertions(+), 7 deletions(-)
+
+
+base-commit: f39ba58941efa63e6c7d10d53d183d6077524bdb
+-- 
+2.34.1
+
