@@ -1,94 +1,95 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.171
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795535128;
-	b=orgXsGRdxAnLmnl/t9uz3TEBHPnyNV9yPc1dZJqjYn8OgZBh47Ru7KFibQgSkyaBkPZc
-	 2PybV3QVNm21U77DLFnVgKlSo2pOXKlC3kybn739zJ1+Sq/QdiEkS4tG9vRHW/0JmyW0g
-	 Os/uIf14FeUeovcjJcSo1jFXGV3qhyA7lJRms3tLsS+V49AEUDEQ6v3A2OSv5ErRzBZ4m
-	 /wiErMTEKVmNZ9WwYSZo64qUMaWF5eCoQa4uOyEjfKxO60mrGaiM4NHWFjw0OtU/+KIIo
-	 Vgjn/yaTGjF5UjoSXLFDyKMFcshMRuQ62awp/MgXSV/CAx2NZyR9IF/+hmku/eh3hpg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795535128;
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.171
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795537076;
+	b=TB1crIVyC9ncKsdS8eclDOMArQAVqX96KqUbLTsX1rynlzdp0f7y4NH2Nw0E07EmbHYc
+	 gzobW5vFcP78OoTwXKhLSaXBtNVQAHTvdW6+6/jLtKzcvgyINvc/0vvmRxrNBUfRdTsEV
+	 gcgfvSAFkro0Lwhds6YnyGe+aty977ZIbfr0s/vd8ip4Foxtpzp2b9T6HBUeLzc9GkANK
+	 y19sS46ZvrmW+NHrfVcOP4nATGo1OACMFb0y6Rv7A4ZWonABmPRm14jfBtzgWwz3vSSVO
+	 uzwws+0GqIykDRQh/6S1lWXRGPYrb79R2luY0ohTJnAnKSR39Y77/JD8seHAKcsKkZg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795537076;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=3hkJat/Gg3boX44Q1mafJG1F0JYnnq/y7sAswGXXbDI=;
-	b=5P5qdrOca3LgoXm/kZ3/hpBM+6M1nlRPSCFW3XuEKDf+nBxnly0fOTxzyeinzbRxVNe9
-	 GUDBIpGGthWdkKnJ1xm4JkzeBsf4SrKps3BcF2wLNK5/Y+TL/bDIrw3B71uGB4HHSI3oI
-	 pg+Q+eijhox3gxizhQQh3gBcx1syYvNfz+0PVnFLcNgs4nHMYFCCOSZqZ40VPCi/SLi4t
-	 R7Vddga7KBJmw0FGVy6RM5lthD6W5xIXeWvLRFDjaWmIrFHpavUpa3jcxI4X5TNWgw4Fv
-	 E1IpBjKnOLvUBNxqvGddFxRqy3AGv+RG/xMUhtaR4rcn0xWI3cvePf5Vv6IHxWlozRA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=T08HQVU+;
-	arc=none smtp.remote-ip=209.85.210.171
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:MIME-Version:From:Date:
+	 X-Gm-Features:Message-ID:Subject:To:Cc:Content-Type;
+	bh=q4E8NUwXseLszZ1OmnUd/Ct4ARQ8CaQkHgxGtTj7bqY=;
+	b=tak5cX8IuJxjdwR3HokkvH9T9Hq2aHkCw12PjCmnLqmMPjgixwdxJLTCu9QnJpNoRVaw
+	 dQuRmBiKq58Wp3WeDHeGVM4WA9EHLfeXf2zHK2U47gSCgTvs+9MQxFDYGNnKtzLlXZPf/
+	 BmArWlhMVL9ao5CEqRou1TRLu+JR3RcMuWf80JILVKSl0U/Un5tnbN7CuviYYzgZvnRPs
+	 pdiSyeoxL7o4cBoW2J+/ElSwqtfpShVf507WBi/rQpHXJu/PT0FcYKfyhBXek1Z0usOs9
+	 OSMsPY9RD03jXR6eq3AVismVRf8kDTGuTo3AY1rwd+EDm+DTlS05QfeVLb+eDA2i8wA==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=ZbKnVzYZ;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.128.171
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8FC606A323
-	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 15:45:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F8FC606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828A6606A321
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 16:17:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 828A6606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=T08HQVU+
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-8b29b83fdf1so2432561b3a.2
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 07:45:28 -0800 (PST)
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=ZbKnVzYZ
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-8b4efdc8c20so28555757b3.1
+        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 08:17:56 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795537075; cv=none;
+        d=google.com; s=arc-20260327;
+        b=a/OeUlhUJ9taGX7+PUcEDb2qdxGqfyL5Ita4pZGvgENszfpFMsdPNHyH77OZ3xpHdK
+         Q/fq8pNAzIMIGji1BLljbAhICLQQZFSA+FpRRYacbmPwAAQrypbd4ePDWV0k91u7Lo53
+         nNMKFW7b9JN58iQL/0abFCmK97mRwmXWk1xCxjFiry6vQm/Pr7ztc7ePb3TnJ9qAY5R+
+         /lvS4/90O0HsmZJDZ6XUni3WapL33slhaPJHJGLU+4tb5H9c18oRdeljQFdsuZLoTda7
+         /hrP6uveUWP9U9+FnPmEc3CgNjNbIwsFcH89h/H1XvZNFHORP2Zx2wEmkcHS0TABjt/h
+         On/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=cc:to:subject:message-id:date:from:mime-version:dkim-signature;
+        bh=q4E8NUwXseLszZ1OmnUd/Ct4ARQ8CaQkHgxGtTj7bqY=;
+        fh=bON0WUfa9cWaxcteCCRlL+Wu/68tH7r4eR0F1laQMSI=;
+        b=Guhly5MOJgiy4TYtW3uxd00VFgMGoPuSCpDdVySUQHNNJ8B0ORonG3bPvrjd/M9QzP
+         rxjaw96NjIYgMhJV5KAn7HBrK46C2suKSVuf562iv3D7h8agOfSp1rf7eKw7AQbbJLz+
+         Oy1DDh1+BDyIo2tbo4IZDLiwr5/TcgSqfzjY/jWA0yxUS6K3X+tOnNgR6g57EFvBitN3
+         vICS85EPZydQQnIOcQRCoIzzU0SzrIZFyZ4Qht0Q4NBr9daGqFbHSwsLU7YGNQ/A0xcK
+         B+9vhKRE92D0iTxXQxx21Se4PKK/6lm0XyT9XJ0y7PIE0BwT7rHfqGlhlWD6N2vLfOmS
+         R28Q==;
+        darn=vger.kernel.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795535128; x=1796139928; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3hkJat/Gg3boX44Q1mafJG1F0JYnnq/y7sAswGXXbDI=;
-        b=T08HQVU+RG0vW7CTZSiFCGrFWeD1QNQWCYFAfRXlUt8EbYsylC69ARNtHNoxccWMgD
-         0XjlKPgKy6YFYTO2xeVhl23Czdkzs2g5Gs4osvH3SV5fLBB1heBG7EhNQZ0cFx7h8Bq1
-         XgqV7tZGT1QDqN0WU4wXZEUjXOrJBiiaL9EyKV7FvrSHQrIcFNGVHOsMGDrh6Yg5EY1U
-         ltbUUwQDEFYLjWxPd3dR8NUujAmPorV+/4c4O806ocsqOL/CUw6EoS1YP9j+wYiTPy1o
-         kJLTi7Q/TzRRISTM2ICkPs77NSR1cQjIjGCAYd+YPEv4LbtnYhznhnBmlvXUbn6MZ81q
-         GYsQ==
+        d=linaro.org; s=google; t=1795537075; x=1796141875; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:mime-version:from
+         :to:cc:subject:date:message-id:reply-to:content-type;
+        bh=q4E8NUwXseLszZ1OmnUd/Ct4ARQ8CaQkHgxGtTj7bqY=;
+        b=ZbKnVzYZGjFHhy75Mv16O8wj0+2XdNPsfY//66WBcHqvrQlqTox1xuNfIb83EvAxDi
+         JSCklr+cT2+2FCdaS7KxJzWeBSePgb9Vc9krfgjUK/36YsPWViu3lD4gy44Emfs7vLCG
+         KHBriGMj0RWCiukNmxTrUL7HMwrDfZjJX11iqLUj4lRHJlk3GQE5oM3DMMLsjUMIVHhg
+         +RiYHFuxC5VMQHcxt3dfq8g806vh8ejGIhumJR+8SuhkSZyOuFVVMpy7NGp6R5/4Vifz
+         IOpTgAQ9SCPrkMDQ4GRJxPV7hccyHniv2QQW2E4GL4Cn28NwJOeQ6tUmWGczBmFi6gnb
+         URvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795535128; x=1796139928;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=3hkJat/Gg3boX44Q1mafJG1F0JYnnq/y7sAswGXXbDI=;
-        b=kvakmnB9Z25gESr8eMxqPn5mdBB2xzeO/rG6zqUOBpjCi9t7mF04uZaIkIh1boZM5N
-         OWvJFpFefRs1jQxCJacONxnV9suTG0G67GLwk2CIvOnxh/gL7blBOnSJKF0cZQqfIn9j
-         LuSDPE+t29TfO+Opijw5ex0D6demDwOZY/ciMKSOEZVuRy25vvxMEDt22oevyXehlNg7
-         w4c1szH0oRd9sba0SY+PF281uWRf822B4yebR3Qwp05dc3veypotanfgeXRzElcKDL1a
-         KbLbSoKOXmGL5MBVlG7/vmvXY7vXohjzgL4eERUVk/s6MR7WGM/26QmZI0/uKxyEZlQK
-         3b5w==
-X-Forwarded-Encrypted: i=1; AL+hErEtghTZFJscrJCTYwS5Aw3NLor8Z7YWywzfeP4C46ZXu6gXYG30bxRjCRbTgyT3yE2atqnLyroh/NWirFKA+TDQ@vger.kernel.org
-X-Gm-Message-State: APuU4Z8SSKA1pXump04Oh1KSomwu68yoNsCVOWVWS3TnetS4iLHtF4VT
-	gYJSfgK8OkbyuVm7LcSbrI87b5Wde822dHgOC94nwfdQJpvYNFwSjsk=
-X-Gm-Gg: AZFdTZd/SJLieZT14tatlyrS5FTAZ5r8Ax9Ls6kfLDievWf1AUbpLzpCmzv4+RtemKW
-	gKPpg94rlgZt6rftneY9dEtg/3I7TIZcxuo/eL8RjEUgUp5yI0/93/znOb3xHEQVWaFdCtZwft2
-	XuHEMog6+gBjRR1VMgOPVU4e3rwdWxX5s89DjbcaX8QGiUKur6OtiNd6mIUoA/9u3dFGOAmZPtz
-	9CDbcOMnX+l81XOuOncANEFK5lU0XkEUyV9qj1VvVckT96NpPwiV7szwVy1AvS/LOdyhJRcc5tW
-	fmrnWQU/n4sVXBVW9Rs2it0jgdXMtzQebM+/YmLJm/h4aPkP5CQFx7GeX5Us0mzH8ygyRhJ3KAW
-	+7uucSG9msKjjN5lIRnf/z6nVeVKEx4iGjYZEYRdrWHTiIFWBfBp73qVDgtratxy7ecIcBK0pVf
-	PmFrUwJUqKx1ChPIkmtfs09D/luLNveG1q1aMCrYy1mFSm7goPHCszCR1V2c32nRRWJHtxMGGY9
-	P9AcWHy9N1wIWce5hngPN5JVBKqkS+TongQ10wzUnSf6I67nGnyXBPF1NExmszOA6mpOH21DuHN
-	FtM0md9P6hbKTFKCsLjHpLawzko6Amd+LLfU5LvalwVXuK4Iji4H+GrA3zrDqSRvitTq
-X-Received: by 2002:a05:6a00:1f17:b0:8a0:f375:d1c0 with SMTP id d2e1a72fcca58-8c87c57b5fcmr12396223b3a.33.1795535127699;
-        Tue, 24 Nov 2026 07:45:27 -0800 (PST)
-Received: from localhost.localdomain ([2406:3003:2002:639c:5da8:85f0:b5f6:2eae])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8c873f11da2sm7136132b3a.55.2026.11.24.07.45.25
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 24 Nov 2026 07:45:27 -0800 (PST)
-From: Yige Jiang <yigejiang86@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Yige Jiang <yigejiang86@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] remoteproc: qcom: Clear the GLINK node after name allocation failure
-Date: Tue, 24 Nov 2026 23:45:21 +0800
-Message-ID: <confirmed-20261105-37-9a8d5cd59eb0@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        d=1e100.net; s=20260707; t=1795537075; x=1796141875;
+        h=content-type:cc:to:subject:message-id:date:from:mime-version
+         :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to:content-type;
+        bh=q4E8NUwXseLszZ1OmnUd/Ct4ARQ8CaQkHgxGtTj7bqY=;
+        b=qkmvaL8Pbnuyz5SDVileaaeuN00z0QRqgzcBcVGAvCHbQzXG0zZBuYejLLQXYGJFoL
+         BDqqUlzcfWOtxqx41WYUCtbGs82kjHdfv3wQlpwcE7jFdnamkuH+8XOZjmpi4aL2jAIn
+         eH9NtBBR7KrSh5XHT7sFwegaJKcGI1Muo5CnREYRZnvXEnNyWA1kGK1R6SxpzixDQRl3
+         0nVvSyfmrroxnm0bDsDdd7SaK8losROXdWBhAUM+KPKRMZ8YUZOSAC5Zcjz7rdRxTpUc
+         +swTQhVpbdY2oHZm5N5vyhBfwRYavxvbvpMiiiX4ixqeC8cTZ6CuDWm8CVsQNz1vTSK9
+         L7Fw==
+X-Gm-Message-State: APuU4Z95BZqP1IhM8BECFkMGppAcZOyUuiR9XyKRgK/js1D7xOgxXsah
+	WaqdfwDpfw308BgGS4yqjmWa77RJjvACwXlIX4adlJGeF/2annlfFLgQJMMSFRkl0l7P1do+46f
+	bOEK3Md+WEEBSnsuiN9OIcONVVqe0PVJBI8XzF5ck3X34ScUz1mNGmXM=
+X-Gm-Gg: AZFdTZdzBvg1JsslINEPqgKDeFoTb40Y1iCveo6INCJl7PGl8RG7G14DXQBHM+gtos+
+	g3XWcB3kwYADsGkQ9qKExJ5QA+KCuGtGvHGLDZMvuOa6UKJyovvR0BOfKW46JlImfnOyamUhvQq
+	viY36r9MRm2w0cpek7A2n1HQonCmoqQVpsDkpXOo8IjaaHCEa2X7wDVkBXwPvquy5jGnf9cyjJy
+	VRhph02G1XSrsA3Ejg0bVs1PNbjh9fXDPGmQjkAnqvgEogBuuG6ud33DpESaNiXSyxTQAybh2jq
+	aimsZ9CU+UycHuO4MlGXqJrR7sfD++C2Rfz3SBpMBhOmvslL6cQsCvlrYUzaFsy81ARjX4T9UDz
+	9FhT7uFQQhW8VizHdcu9Abbgi8hVrFRr9Urc/epR2Hya0c2w/ZjkUlqZukFl86s46qQNmQg==
+X-Received: by 2002:a05:690c:886:b0:8b4:d9d2:df93 with SMTP id
+ 00721157ae682-8b52045ef9amr67879477b3.24.1795537075089; Tue, 24 Nov 2026
+ 08:17:55 -0800 (PST)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -98,41 +99,38 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 24 Nov 2026 10:17:43 -0600
+X-Gm-Features: Aa3M54rkYA0QciL5RtdBSzPJvb50sXoKLYTMSpI4s22vlnvO_QzptPnWQuPqZHg
+Message-ID: <CANLsYkzffWooSxVK0HWxbukU_X-HF1ZtVGsFhNAt7iUXdKW_Uw@mail.gmail.com>
+Subject: [UPDATE] Patch review update for November 24th 2026
+To: linux-remoteproc <linux-remoteproc@vger.kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-If kstrdup_const() fails, qcom_add_glink_subdev() puts the acquired node
-reference and returns without adding the subdevice. However, glink->node
-remains set, so qcom_remove_glink_subdev() later treats the subdevice as
-registered. It attempts to remove an uninitialized list entry and can
-also drop the node reference a second time.
+Good day to all,
 
-Clear glink->node after the error-path put so that the existing guard in
-qcom_remove_glink_subdev() skips a subdevice that was never added.
+As you may have noticed, the remoteproc/rpmsg subsystem mailing list
+is flooded with AI-generated patches.  Many of these are complex to
+understand and require a significant amount of time to review.  I will
+prioritise reviewing submissions written by humans, AI-generated
+patches will be addressed in time.  This does _not_ cover patches
+patches targeting Qualcomm support.
 
-Fixes: 44f4911ab8e6 ("remoteproc: qcom: Fix glink->node reference leak in qcom_add_glink_subdev")
-Cc: stable@vger.kernel.org
-Signed-off-by: Yige Jiang <yigejiang86@gmail.com>
----
-AI assistance was used for analysis and patch preparation.
+From hereon and until things quiet down, I will send a semi-regular
+update of what is currently in my queue.  Here is today's snapshot:
 
-Based on next-20261104 (8b7179210b22).
-Compile-tested: arm64, GCC 14.2.0, W=1, drivers/remoteproc/qcom_common.o;
-baseline and patched objects built with no warnings.
-Static source review; no hardware, boot, or KASAN test was performed.
+[PATCH v2 0/4] remoteproc: virtio: Fixes and cleanups in the
+vdev<->pdev relationship (currently reviewing)
+[PATCH v2] rpmsg: char: Drop messages that arrive while the device is closed
+[PATCH] remoteproc: core: Format firmware carveout rsc->name with %.*s
+[PATCH v3 0/1] remoteproc: k3: Merge ti_sci_dev and ti_sci_proc
+[PATCH v3 0/2] remoteproc: k3: Recover a crashed remote core
+[RFC PATCH] remoteproc: core: add KUnit tests for rproc_check_carveout_da()
 
- drivers/remoteproc/qcom_common.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/remoteproc/qcom_common.c b/drivers/remoteproc/qcom_common.c
-index 5294e327f1587efc917eb01dde59bd1e723c225e..cb3f6f93c6da85010f89244a6991f4d74ae57dc1 100644
---- a/drivers/remoteproc/qcom_common.c
-+++ b/drivers/remoteproc/qcom_common.c
-@@ -255,6 +255,7 @@ void qcom_add_glink_subdev(struct rproc *rproc, struct qcom_rproc_glink *glink,
- 	glink->ssr_name = kstrdup_const(ssr_name, GFP_KERNEL);
- 	if (!glink->ssr_name) {
- 		of_node_put(glink->node);
-+		glink->node = NULL;
- 		return;
- 	}
-
-base-commit: 8b7179210b22f8e48a82c5ceacb9d56a9c4cfec4
+Backlog (AI generated patches):
+[PATCH 00/10] remoteproc: Assorted bug fixes across remoteproc core and drivers
+[PATCH] remoteproc: imx_dsp_rproc: drain the vq work before freeing the mailbox
+[PATCH] remoteproc: debugfs: use sysfs_streq() for write parsing
+[PATCH] remoteproc: omap: Fix cleanup after timer start failure
+[PATCH v2 0/4] remoteproc: core: Fix the error unwind paths
