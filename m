@@ -1,97 +1,100 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.176
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795539346;
-	b=gSVDhnjWycG1Xs1V/yWXdfPU1ea3WWxPvBruavF2H7wyRtQM1jU1BLHFxDAqFAfmnsUu
-	 JdtL755oLC9YVzz4Ncss75j1mOdyE1GxpRCBzpHokVzYgTEII0tpDGcJZs6T/m5zIgkuo
-	 wBcPXAYz35p36ELnSDwD/703nYkbfV5FPKqMC3vA9Pwu00/HQV36KgcvN+KNZ19ex1eSQ
-	 sakzWf4dhniMruPZ0M5Nwv2QHDqVN/+6M1K/8WbSzmlEJ61zq9U6zpnuFB+hy+1ZBRePh
-	 7R+wQwX3g8UXxkpqfTn2u5sr7LuuGhFHVIDPCtz+UQ31Y0Eob1L2aRlDaWYLuAkdfDg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795539346;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To;
-	bh=Eidq/u0B0uHPbaz+QN/RsKm5aUjYoNx3Hsqs43GeY5k=;
-	b=AkWrPEu8GxiFJrlKSZzy+RLYQCRvx6sRS9uVu6ny7+9kfxGpkLKZCYKJopqiACEVRaRp
-	 QOxtM5UGTpZzzMJFKGUMbylQdmXaoJ6W3Reymb8cxBorWaNQpBn01CGEtYy1b6FOdHPpa
-	 YrVscxNajRAxaxuQUKecFBNPK5oRawUA8H1fMDoupoh2sctR+w5XQWZZz1AqwrCKs7/Bw
-	 LXaZvbnixdXASmUQwKI4QlywoLgqS7Iz3nW2W1yuB9kHv37ZexcN1qeeBOjCPh676Dftj
-	 hPyKoPf2BW9ZjkIz+NwIFAKUy75ztZ2sKQJf5hagbI2Qwq0E8WbwPrCjFxeSYy+JpqQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=sbPhVwUu;
-	arc=none smtp.remote-ip=209.85.210.176
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.5
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795550466;
+	b=3i/2UlMLF1QHrjz5RV1/FedPXrSo1scWZx6AsI+7X1ssYhvAyOCYDd4qDGrBjDryAmlS
+	 dv1hD68xr8F1BAi/TnJp46tqsfGGNAmg0fyqe+/L+Kqi0usC2txABRsi3+yAvBiGEuykY
+	 FJTOm2wfw00GDIjCMRcH3lM73DdAMPIoFFRKTyg0rUri26T8yM0yk8DTr+RWFZ+OKIVrY
+	 B3cU19Vs+uOP9Ud0fS3euXZ8ndqgQncmmc2zR3rCJciX/rFHLlSC9jW6QILaZSIOvCCQQ
+	 ln1CBCeoRYhToK++KCp3lKw1IK1ESwLxXOXfHBur9B7WhjhPvyhoDhk8o6e3jttqyeQ==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795550466;
+	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:Date:
+	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
+	 X-AntiAbuse:X-AntiAbuse:X-Source:X-Source-Args:X-Source-Dir:
+	 X-SGantispam-id:X-AntiAbuse:AntiSpam-DLS:AntiSpam-DLSP:AntiSpam-DLSRS:
+	 AntiSpam-TS:CFBL-Address:CFBL-Feedback-ID;
+	bh=97oeh3WPjQB4M9l6gs/79PWPCWdQ8B5MEn8g4V43w0g=;
+	b=1S1rPExNq1UHjKzIpVIkpDLIlXPQUhiOSNb/QVcl3HZ7JJgz/ZDkv+b3fYV3CGwinn0G
+	 ASRhUTC7Ep6Zi6hkeMzd4UB7fkikUSWgobN+FaquwSTgEurVg/h1bkj2DXhJd4rx65cWX
+	 vQUp3mycHP0axvThDwLu1WO2ptVXASLCbe1H9wDr1RklrJYz7V6ySyaGc8XLJWXtttJDE
+	 n8wSyckJbwO/bS3BLvyhvaQ3bKd9IaBG5P0tMKjOiI6uLbschYZlZA+H14MJmvPI4tHlt
+	 rzmstZ6kReegfyhUnSwOA8PxPNJwnTtBaRblmPTqxPqOYotkYjG6DVC6iN/p9zZbkSQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=valla.it;
+	spf=pass smtp.mailfrom=valla.it;
+	dkim=pass header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=sIuciU24;
+	dkim=pass header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=rylYaQ7v;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.5
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6114606A33B
-	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 16:55:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B6114606A33B
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB982606A32A;
+	Tue, 24 Nov 2026 20:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BB982606A32A
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=sbPhVwUu
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-8c6c06b3321so3692002b3a.3
-        for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 08:55:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795539345; x=1796144145; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=Eidq/u0B0uHPbaz+QN/RsKm5aUjYoNx3Hsqs43GeY5k=;
-        b=sbPhVwUuMo0ML11i6dL/aAmKDlDuMNtHoHPStcBow7//qphCTOL57iFhZdSYFOTTdR
-         qdBTwWrbkzorPSH+kjcwvqhV2FB2fZnrrYV5g6onstPrEXI91BwubWFP7vcYN6vBWXZf
-         /6uAr1Jhdhhbf2ZnXfXHlCI9x6MUbwFDhXc/bP+xtyaoG3KegCgDE82r/ZTig5QRm0cn
-         rqpexyaev1GbA+8D4T5Rz63DVWTMr6b0GnRvzKXIw33aPh5T79w6SOpNnot+aVgNQovB
-         eBoaw+XfCsLiLImg75guBApuACOXGtYdJA/mcDgBWikZkAVHNsJsXzDcw7rbZw40hlI7
-         WNDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795539345; x=1796144145;
-        h=in-reply-to:content-disposition:content-type:mime-version
-         :references:message-id:subject:cc:to:from:date:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
-         :content-type;
-        bh=Eidq/u0B0uHPbaz+QN/RsKm5aUjYoNx3Hsqs43GeY5k=;
-        b=Vnfcvv0tewAr4uPVSZxgNbHvt2iUUYLzf1Y09lAMu+4SZFVU+FYz6edMTpKD65ISFl
-         D32kfZ12nrZil8ManG5ZvPD6tcmUXSRMZJYHy5lBTOn9TinthoRFZAH7nUeM/K2OcTFT
-         f+bj8XxYRReqNqa7SQG0WwGQwuFzvxjuW5QbE8qvIloZyi9WVHswlRhDQzBCUAKOrlrx
-         8CYL5USDS1x+IE/aV3Ym5j5sGgqyaTo97zbspjbSRfwnLzp5HSAmiOM8sHen1EBDhgFu
-         PkvSAbZRTFC7JTeMBTjDhyTS0HX1QyPKpa0eqYNdlxKuvsqNcocQHQrRkEwyOzpm9gvb
-         B+UA==
-X-Forwarded-Encrypted: i=1; AL+hErGMl7UB/LfQSGY3MbkKqkI1k4jAcZwq0lbUA6617RwDsigGuQ6qV1ZHSc7qYxWJ/OtV9wSU8B86p3vVdvsPrQR5@vger.kernel.org
-X-Gm-Message-State: APuU4Z+ODttsfhPGg7C7S0S7c/5vppnRXkT0kcgOl3/UNZ/I6Q1g3zA6
-	wvIbl9gpAnJ/b3W/9LXwpYk9Efc6IvGXES9zu4lySY2GADiUj2tKm1QZi93wj42UBP+f3vLNNzb
-	gpyJc
-X-Gm-Gg: AZFdTZdvoW7f1k0Gy6n30hXT2tFLeAyY2DZnE7qPeykGq8gRdu85ZqCZp/y7TuyzhVD
-	z6FwlFG9VNwU0HB67GkQ1oyanZFcbTQILAiaI4/TXVhXgxyDUFmubLJIgYbFjnNFgrA/eKYDIpN
-	oX75rn7mY+1b1BtBfUsJAAwPteCiBxF/sY5rD8HsmrDTa8NgZxQxxsvwx/3oQRR+HQztYOIdh2I
-	09WyJQqq8X+MBkku5vsqZiy3fFVrQ+JFmY48RrlHW1svP+uUw+q491rUMn+dHxlm2i1fRQCxzQ1
-	krJCfU//nPGNJd3v72rJT0VzINWZGKXujvvMFAvTO36x/rpbvMYK5+RbVTRep6kS4CDOnS6y/jY
-	SSwU9LuQAiZxeTRiUw12cbXSQlsZAsxjvsYWTrUCe3BphWvUOI5+MyIHYkiznwK/xRXdnYUKdjy
-	DfGyI5rB4bK5d1Qdp6HK9tu/fLWg1iPnC2F+kZw/UrYQKJYnRg1Jvq3LxI1CSt0YigNKwMBjYbo
-	sHwjCPiUojvwG0IN4ViXJ+yIPM0jI89Q4y4W29ZcrcaWTXBCIDpLthcbiB5nxkgWGGvXMjrAURg
-	YMXP+6Vuk04NBhYavObOoEI26rSqNIA=
-X-Received: by 2002:a05:6a00:bb8c:b0:89e:2a91:4fd1 with SMTP id d2e1a72fcca58-8c8794b8c20mr13015434b3a.6.1795539344765;
-        Tue, 24 Nov 2026 08:55:44 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:5349:b6fc:237c:41e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8c87353b889sm7546809b3a.42.2026.11.24.08.55.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Nov 2026 08:55:44 -0800 (PST)
-Date: Tue, 24 Nov 2026 10:55:41 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Francesco Valla <francesco@valla.it>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Joakim Zhang <joakim.zhang@cixtech.com>,
+	dkim=pass (1024-bit key, unprotected) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=sIuciU24;
+	dkim=pass (1024-bit key, unprotected) header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=rylYaQ7v
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-h034.prod.antispam.mailspamprotection.com; s=arckey; t=1795550464;
+	 b=dkfKljufGjeClcPQ3zqpvK+60Hgkf62FY1lkQa6eUA8nCq8nx+LG1ASwRwUpN40RPUYn0oarSV
+	  aqPh6CgQMTsd3rBDkzVzbEKU5NKikAhUDKhq/Y0RvQuU3cJ/bP8LzId3QRUPqXX66f4kXGjFO6
+	  P13lp4yvk35ZRm17XmloQ4XgoD4Yt566iFX9KR1+k6u4AZj+Z1oPqGSo5F2p/K9w28QCUQoyrh
+	  0WWGl8a9tGoxQddHZUr1iaYN/luV298kPgtdCWtWyE2KKazXkrdmkW6rH497L9vwZ+7EtYRhjW
+	  TOR/jeAaTOGrESwHX02Ci9P3BHN9CeRMSrBFBSA7vubIyA==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-h034.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-h034.prod.antispam.mailspamprotection.com; s=arckey; t=1795550464;
+	bh=S8EvdfoIn88NFG1rfIS+4LDzcigel+ukTMuhC8UQRvc=;
+	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
+	  From:Date:DKIM-Signature:DKIM-Signature;
+	b=DOW4P/PHN2o3LZ31bNJli714ec3zgM5UbaDFjuIRp1uK763uxaKa4PJOn8VLj2cksDTL9krus3
+	  /xFgz6fRvTuv7zazROV/84iyJJxC+GAQukARIAkGV4kvbrbSmos69z35yJdqhxS432Gm1l3nNx
+	  eWHKEBICqtYTFLmr0rnJVllwXBx/0Hj24jdgWMVfrsTWML0d1nqFIGDMrAp4Ohf9CyNhg4Sbvk
+	  rgY+6HpaDglVlYVJs2k6A7MKzakLGoX3Qku8X1tbe941WrnLub7NmY3p2aM2QG1H9Uo7jrGNg1
+	  oOJjUVIBSAjM6yhphUqbAzckICm/4pa80owslkBRC0on9g==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	List-Unsubscribe:Content-Transfer-Encoding;
+	bh=97oeh3WPjQB4M9l6gs/79PWPCWdQ8B5MEn8g4V43w0g=; b=sIuciU24OCMy63IeCkstMam3At
+	NYB80gDsodHpcj6tl3n86QW4HPzryvcrr+rFbuzu2fWbErKYEeqiytTUY+3HHdxCafwIoY3HO7psd
+	5yPgtf869/lIyO7UMwVrxm354294bwYZVqk4CRt0VQtP5nhtc7TJStnQUUQh+FZrPo/o=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-h034.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <francesco@valla.it>)
+	id 1xVwhE-0000000DPS9-0m9E;
+	Tue, 24 Nov 2026 20:00:56 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=97oeh3WPjQB4M9l6gs/79PWPCWdQ8B5MEn8g4V43w0g=; b=rylYaQ7vruKoLNsAcbVWzJuDCA
+	GLFfqK2jBD9kQNjHlG9ykE70nrlfD4l01iVTKILSJ0A9vUO+ch8JHEMq5NSg29AzpzWIvmaPCu/EH
+	Xldm0McavAlvmO6FUzFD8srTq2RZCqCg9YL5FDe+seOGgCMY59ZjnB4QcmB+JIdu8uCA=;
+Received: from [79.28.115.6] (port=59733 helo=bywater)
+	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.100.1)
+	(envelope-from <francesco@valla.it>)
+	id 1xVwh4-0000000083F-1WbN;
+	Tue, 24 Nov 2026 20:00:46 +0000
+Date: Tue, 24 Nov 2026 21:00:44 +0100
+From: Francesco Valla <francesco@valla.it>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Joakim Zhang <joakim.zhang@cixtech.com>, 
 	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2 1/4] remoteproc: virtio: Decouple vdev from the parent
  pdev
-Message-ID: <awXBjZ9jqXW1ETNZ@p14s>
+Message-ID: <awXq4WK1_HLSPVeB@bywater>
 References: <20261114-remoteproc_pdev_decouple-v2-0-95235dd056aa@valla.it>
  <20261114-remoteproc_pdev_decouple-v2-1-95235dd056aa@valla.it>
+ <awXBjZ9jqXW1ETNZ@p14s>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -103,104 +106,115 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20261114-remoteproc_pdev_decouple-v2-1-95235dd056aa@valla.it>
+In-Reply-To: <awXBjZ9jqXW1ETNZ@p14s>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 306b02710da0b043ae26ecd8375a2e5c
+X-AntiAbuse: ID - 306b02710da0b043ae26ecd8375a2e5c
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1xVwhE-0000000DPS9-0m9E-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-h034.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-On Sat, Nov 14, 2026 at 09:06:33AM +0100, Francesco Valla wrote:
-> The rproc-virtio platform device can have a lifetime different from the
-> virtio_device it registers. During cleanup (e.g.: when a remoteproc is
-> stopped) the platform device is de-registered by the remoteproc core,
-> but the related virtio_device might be released later; if this happens,
-> rproc_virtio_dev_release() will try to de-reference a NULL pointer as
-> part of vdev_to_rvdev(). This can easily be reproduced with
-> CONFIG_DEBUG_KOBJECT_RELEASE.
+Hi Mathieu,
 
-Can you provide steps to reproduce this problem?  Otherwise I'm good with the
-simplifications provided by this patch.
+On Tue, Nov 24, 2026 at 10:55:41AM -0600, Mathieu Poirier wrote:
+> On Sat, Nov 14, 2026 at 09:06:33AM +0100, Francesco Valla wrote:
+> > The rproc-virtio platform device can have a lifetime different from the
+> > virtio_device it registers. During cleanup (e.g.: when a remoteproc is
+> > stopped) the platform device is de-registered by the remoteproc core,
+> > but the related virtio_device might be released later; if this happens,
+> > rproc_virtio_dev_release() will try to de-reference a NULL pointer as
+> > part of vdev_to_rvdev(). This can easily be reproduced with
+> > CONFIG_DEBUG_KOBJECT_RELEASE.
+> 
+> Can you provide steps to reproduce this problem?  Otherwise I'm good with the
+> simplifications provided by this patch.
+>
 
-Thanks,
-Mathieu
+This is actually very simple to reproduce, at least on the platforms I am
+working on this (i.MX93 and BeagleY-AI's AM67A).
+
+With CONFIG_DEBUG_KOBJECT_RELEASE defined and a rpmsg-enabled firmware
+(I am using Zephyr's openamp_rsc_table sample, but anything would work),
+stopping the remoteproc will trigger the NULL dereference.
+
+On the BeagleY-AI:
+
+[   73.051869] kobject: 'rpmsg' (0000000058d91be6): kobject_release, parent 0000000000000000 (delayed 250)
+[   73.051906] kobject: '(null)' (00000000ee88117f): kobject_release, parent 00000000eb0302a3 (delayed 250)
+[   73.051959] kobject: 'virtio1.rpmsg_ctrl.0.0' (000000007eeaaf42): kobject_release, parent 0000000000000000 (delayed 750)
+[   73.052079] kobject: 'virtio1.rpmsg_ns.53.53' (000000004cd28f83): kobject_release, parent 0000000000000000 (delayed 250)
+[   73.052175] kobject: 'virtio1.rpmsg-tty.-1.1024' (00000000a54df55b): kobject_release, parent 0000000000000000 (delayed 500)
+[   73.052265] kobject: 'virtio1.rpmsg-client-sample.-1.1025' (00000000bf62fa8b): kobject_release, parent 0000000000000000 (delayed 750)
+[   73.052420] kobject: 'virtio1.rpmsg-tty.-1.1026' (00000000063ab658): kobject_release, parent 0000000000000000 (delayed 1000)
+[   73.053420] kobject: 'virtio1' (00000000a3047c6c): kobject_release, parent 0000000000000000 (delayed 1000)
+[   73.053548] remoteproc remoteproc1: stopped remote processor 79000000.r5f
+[   74.076813] kobject: 'rpmsg_ctrl1' (00000000eb0302a3): kobject_release, parent 0000000000000000 (delayed 750)
+[   77.276843] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000030
+[   77.276865] Mem abort info:
+[   77.276867]   ESR = 0x0000000096000004
+[   77.276870]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   77.276875]   SET = 0, FnV = 0
+[   77.276878]   EA = 0, S1PTW = 0
+[   77.276880]   FSC = 0x04: level 0 translation fault
+[   77.276884] Data abort info:
+[   77.276886]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[   77.276889]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[   77.276892]   GCS = 0, Overlay = 0, DirtyBit = 0
+[   77.276896] user pgtable: 4k pages, 48-bit VAs, pgdp=00000008815c6000
+[   77.276901] [0000000000000030] pgd=0000000000000000, p4d=0000000000000000
+[   77.276915] Internal error: Oops: 0000000096000004 [#1]  SMP
+[   77.345309] Modules linked in: <snip>
+[   77.391027] CPU: 3 UID: 0 PID: 34 Comm: kworker/3:0 Not tainted 7.4.0-rc4-00002-gd6d63eabb07e #1 PREEMPT(full)
+[   77.401095] Hardware name: beagle BeagleBoard.org BeagleY-AI/BeagleBoard.org BeagleY-AI, BIOS 2027.01-rc3 01/01/2027
+[   77.411593] Workqueue: events kobject_delayed_cleanup
+[   77.416644] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   77.423589] pc : rproc_virtio_dev_release+0x20/0x5c
+[   77.428459] lr : rproc_virtio_dev_release+0x20/0x5c
+[   77.433325] sp : ffff80008025bd20
+[   77.436627] x29: ffff80008025bd20 x28: 0000000000000000 x27: 0000000000000000
+[   77.443750] x26: ffff00087f763980 x25: 0000000000000000 x24: ffff000800044805
+[   77.450874] x23: ffff0008002e7000 x22: ffff00087f763980 x21: ffff000809f8cc50
+[   77.457997] x20: ffff000808920600 x19: 0000000000000000 x18: ffffa2019d699248
+[   77.465120] x17: ffff000800068f80 x16: ffffa2019c2fdecc x15: 0000000000000284
+[   77.472243] x14: ffff0008002e7080 x13: 0000000000000000 x12: 0000000000000011
+[   77.479366] x11: 00000000000000c0 x10: 0000000000000b60 x9 : 000000000000000c
+[   77.486488] x8 : ffff80008025bcc0 x7 : ffff000800002dc0 x6 : fffffdffe027e300
+[   77.493611] x5 : ffffa2019cbe6e64 x4 : ffff000802654400 x3 : ffff000809f8cc00
+[   77.500735] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0008002e7000
+[   77.507858] Call trace:
+[   77.510295]  rproc_virtio_dev_release+0x20/0x5c (P)
+[   77.515162]  device_release+0x3c/0xe0
+[   77.518818]  kobject_delayed_cleanup+0x40/0x88
+[   77.523250]  process_one_work+0x188/0x2e4
+[   77.527253]  worker_thread+0x18c/0x2e0
+[   77.530994]  kthread+0x110/0x12c
+[   77.534216]  ret_from_fork+0x10/0x20
+[   77.537787] Code: f9000bf3 f9405401 f9406833 97dc5c1b (f9401a60)
+[   77.543866] ---[ end trace 0000000000000000 ]---
+
 
 > 
-> Remove the access to the platform device structure from the cleanup path
-> and interact instead with its backing device, whose refcount was
-> explicitly increased during rproc_add_virtio_dev() and will be
-> decremented as part of rproc_virtio_dev_release(). The same is done for
-> the pdev de-reference inside vdev_to_rvdev(), even if no more used
-> during cleanup, to maintain the same access pattern.
-> 
-> While at it, fix the comments on the specific matter.
-> 
-> Fixes: 1d7b61c06dc3 ("remoteproc: virtio: Create platform device for the remoteproc_virtio")
-> Signed-off-by: Francesco Valla <francesco@valla.it>
-> ---
->  drivers/remoteproc/remoteproc_virtio.c | 22 ++++++++--------------
->  1 file changed, 8 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index 29a3a4c18097..b59f4acbb630 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -49,11 +49,7 @@ static int copy_dma_range_map(struct device *to, struct device *from)
->  
->  static struct rproc_vdev *vdev_to_rvdev(struct virtio_device *vdev)
->  {
-> -	struct platform_device *pdev;
-> -
-> -	pdev = container_of(vdev->dev.parent, struct platform_device, dev);
-> -
-> -	return platform_get_drvdata(pdev);
-> +	return dev_get_drvdata(vdev->dev.parent);
->  }
->  
->  static struct rproc *vdev_to_rproc(struct virtio_device *vdev)
-> @@ -348,7 +344,7 @@ static const struct virtio_config_ops rproc_virtio_config_ops = {
->  
->  /*
->   * This function is called whenever vdev is released, and is responsible
-> - * to decrement the remote processor's refcount which was taken when vdev was
-> + * to decrement the platform device's refcount which was taken when vdev was
->   * added.
->   *
->   * Never call this function directly; it will be called by the driver
-> @@ -357,14 +353,13 @@ static const struct virtio_config_ops rproc_virtio_config_ops = {
->  static void rproc_virtio_dev_release(struct device *dev)
->  {
->  	struct virtio_device *vdev = dev_to_virtio(dev);
-> -	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
->  
-> -	kfree(vdev);
-> +	of_reserved_mem_device_release(dev->parent);
-> +	dma_release_coherent_memory(dev->parent);
->  
-> -	of_reserved_mem_device_release(&rvdev->pdev->dev);
-> -	dma_release_coherent_memory(&rvdev->pdev->dev);
-> +	put_device(dev->parent);
->  
-> -	put_device(&rvdev->pdev->dev);
-> +	kfree(vdev);
->  }
->  
->  /**
-> @@ -372,8 +367,7 @@ static void rproc_virtio_dev_release(struct device *dev)
->   * @rvdev: the remote vdev
->   * @id: the device type identification (used to match it with a driver).
->   *
-> - * This function registers a virtio device. This vdev's partent is
-> - * the rproc device.
-> + * This function registers a virtio device with the platform device as parent.
->   *
->   * Return: 0 on success or an appropriate error value otherwise
->   */
-> @@ -448,7 +442,7 @@ static int rproc_add_virtio_dev(struct rproc_vdev *rvdev, int id)
->  	vdev->dev.parent = dev;
->  	vdev->dev.release = rproc_virtio_dev_release;
->  
-> -	/* Reference the vdev and vring allocations */
-> +	/* Reference the parent device, which will be used during teardown. */
->  	get_device(dev);
->  
->  	ret = register_virtio_device(vdev);
-> 
-> -- 
-> 2.56.0
-> 
+> Thanks,
+> Mathieu
+>
+
+Thank you
+
+Regards,
+Francesco
+
