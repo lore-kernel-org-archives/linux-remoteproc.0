@@ -1,91 +1,91 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.176
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795504494;
-	b=T2mQJL8uDNIqXSJBSXzeLlTB2cNPqfQ3pWBjrjK/hvXJ6VD09zNMYYaGuy+zyOcGwnoo
-	 9lt1EKk2fc7513DygFzX2K5/6TpOPrVNVwZG7coWNuRFlmK6+vQaPqxX0K9nrWOhPqC2H
-	 +PRxIMFbCma5v1rmo8miMNKB2yKDmxoKndo4Pp6XM798XFH8LccLCIAndmDN36RiSxBja
-	 CzA6TB3nuB7EurXVjsDIsKPgZJ7hWw6srBDcrErjGyREIamZb1YGefpzL0Lki8gu/Ixw2
-	 R1FpIMhOXdFyK3WQpqYnj3lIuXSLr3b/tQQTaTCUbNEDwBkutZY1hOVlnBLFn+8vXxQ==
+	t=1795504501;
+	b=04YSq+GjnxxWSaDgeQNyl8IY3DSVZjM/D3XoXPU/mD93pt42rc07VKvU02XUkTh62MPD
+	 L7s+JTPFOxx2Kh0GV7kRVyv8kT4/HRJFg4AdKPe7j3IVv27iVy/nnJ7Gjbfrxv41TuIV4
+	 8yJ/iR5INonzXAHgL8aZ7jQ6Wfvx6k5sKfm6XpAxyFN2clypL40rdPmHs/zkcUuQtNpxF
+	 IEfH2XCwSYRwROZz9G1xu31gGG7j6NwRoTO+CBwQCQt1wGKYXmPHRTS3aBJlkm9bnM3/H
+	 +4wo1b40l1AUZ3F8gIwg97Bh/GJh2Hfm8USbo4TDB9lm6RaQbNLTXZArWADjF7u1zAw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795504494;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795504501;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Gm-Message-State:X-Gm-Gg:X-Received:Received:From:To:Cc:Subject:
 	 Date:Message-Id:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=r92WySJltCbzAIQSkhCxDUxd/ppTsO+Gy6IJ0fgBl+I=;
-	b=byoWBfqAyefU9Pd8VQ4PuxTysVYVQoFF9j9w6xNKKcnDGfdRAdfIqsK4Z/JbrsYfuvzR
-	 3MbhzFNPhsuShkg7b6EdJR5WdUs0QQ2XtE63HnY516bGJm4sWwaw4GuBXndJXcEJtwMu7
-	 10rAOIb56r5+5DEBmx9ij9Jvogp/mpqEz+lVNdAbl+H4OulrzPZCRUiepoNIKacqkot7N
-	 912kMpIsAQuhODktxI3X1e699onNFNAiCAX7AsNTQRBnyOtkuLhhgwX2BKiVA9Fof/8Kk
-	 VHlB86aQx7zBE2T4Nk9D5nLKSW1e9PjtYnrgdjTiE1oRQ0w+LoG3IDkKOKjOwCnaiiw==
+	bh=XBwqhR3m8bOQBJNfF/ebktnsPnOGA6K0nJo6XELezxM=;
+	b=Cep6tXPoCNLOnA4RVrEUX5w1U29uVA/PXNXXGiqKYyAtsrXhYBYLilli/D2QGegSLRa3
+	 BQ0kt/4lMOFFW+DSMjw2LcSY1r7UhrLXm8XdU8gLRtl/TjQ4j1cKHlxoj4tzSaAyRbnEy
+	 pRKjvanEA+sJ2ayNufgCtmH1CM8V+CIkQmMUH+F4I+eimsHN2JjZnZcLWIhbH+in63tTJ
+	 Y2CYVauElJ9nb1Ss45QL10toFS7Grc0IXjL+tiSPe6g3/fVnbJz0Tt3JmdEJqoAqwBVnP
+	 2QNsrpuE5310DN+5EjhyeDPf8KZJJTeRnNXHD/EuNsACOH6p3e2yddefFkpkJhXIy9A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RQOe79FH;
-	arc=none smtp.remote-ip=209.85.210.171
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rWSU83+X;
+	arc=none smtp.remote-ip=209.85.210.176
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2254E606A334
-	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 07:14:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2254E606A334
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BC7606A326
+	for <linux-remoteproc@vger.kernel.org>; Tue, 24 Nov 2026 07:15:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C1BC7606A326
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=RQOe79FH
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-8c700d6cc0bso2612009b3a.1
-        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Nov 2026 23:14:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=rWSU83+X
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-8a070781f63so1885666b3a.1
+        for <linux-remoteproc@vger.kernel.org>; Mon, 23 Nov 2026 23:15:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795504493; x=1796109293; darn=vger.kernel.org;
+        d=gmail.com; s=20260707; t=1795504500; x=1796109300; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to:content-type;
-        bh=r92WySJltCbzAIQSkhCxDUxd/ppTsO+Gy6IJ0fgBl+I=;
-        b=RQOe79FHMOX81GjJpMtYnYPXVbf+elJ5fnF6NYa6DYl81ZKmLKrf60ZN/PxnkilUXF
-         v0FArxdhFIHyVMa9HnCRjpY3a+XwsUapCYSsw/hqT9vSOP5HYiU70pCIwPJB1Zhhzn6C
-         xo/+/Ck7EIL7pq6cQT8iBIVlhoFOJ8IHVDcx7rcotzXfmJOurZZ0oX5xPdn5MsMdnRBg
-         PFgp7KeqJqnu1jryuFzI9jCJ2lqelIFbYDK9ouoWszngql2Uknst0II0dDCmddV+mA42
-         2YzgwkXM+lfyfVkQuNHtxGaMplw6PxVkkGXvdD5uMW7dHsIOHNvLF9US2Yb3RUHkpG3y
-         Fo3Q==
+        bh=XBwqhR3m8bOQBJNfF/ebktnsPnOGA6K0nJo6XELezxM=;
+        b=rWSU83+XdpmiYHL38jImZxk8bZbvq4qxdfof1BKQAKv/drMh9RfLj+hG7//4KHbTsI
+         2k9L/f19anOKfkVoYAUTKKpYCi5Rclm4WPIG6QzY3gQ+p33qtF/LPX4SrFW4ZGDATuoT
+         IAuopI/okore7UPXFsmGws9fEvaucv+vylrDJPELK0JY41EdYYYTuw+XvuErdvHl/WDV
+         MP9DzUxIarlv/MNLOppnefOTZLT+n07SBAOihH0JYWUfHjT7H32JNsvuEOA1ceIvA1wX
+         5LiULY414lUvh3otAUp8NlhxuKkxxx2RmaDBdEW+PMgvG8EqweR1QcUO8l8STXwMGljq
+         szOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795504493; x=1796109293;
+        d=1e100.net; s=20260707; t=1795504500; x=1796109300;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=r92WySJltCbzAIQSkhCxDUxd/ppTsO+Gy6IJ0fgBl+I=;
-        b=h704aPGaydMZ1IY4ofFDKRupzyH9fNIhF6jLSxxXT38qPQeZHNDiucsp+eZ0TujC3F
-         s6nqwbcAjnvpsrix9xNru2OO9m4F8l8Q6EfXe3nQ2TGL8f5amEs78BAc6MK9Z/ML8OQ4
-         80R4/QzeXH2JrPr0cLiMNQKe64tIbSvP2cP0Elo3NFicLJeEmXiHbWP7e22zyUaGGUa6
-         5HTmKcjb9hh2sHnFYWFEUe0KBSjs16J9oWDlUOen/pheyhtW+DEa7Zl4k4n8ZN5jmSQt
-         HWkcXtA9KZz1l0rDYCTrkNV2ItohwrKu4Ro/PTlyiXSWJCT8b3ZLHmhaHb275DlpqstE
-         kkqg==
-X-Gm-Message-State: APuU4Z93BsqUppyfeH01+k0BtzbYdRHZsS6/ksoh4m4YR+xegRy6TYIJ
-	2ZOy3pZbE9hXBYjTqpYEOhKmA8zvHGQWv2izqRWtLUbMZs2DWkty2VLI
-X-Gm-Gg: AZFdTZcdECtwUIXlXmOkLJi63ijBJUZ8gs6YH3GNw4bfPcSmWXGqYfd4K+9z69R4LqU
-	ii/jkeK1C0sl18nfEhgzDRLX6JxCrqXcWWlbbgx6jnZk6LaBq+PSie0855j83r+sS1wExREkQbL
-	KfEtqmNHrsgiocxHrVI3pLr7eJfKPusaF5J9/VHc7yyVOSBq0R2kIOUagyld6fT1UqRh0Aen2S8
-	4RuELjNtEs3oFKF9di2ALvu+KzaoG8dSh+hK84kgJoDVYQKCi0KzMSO7HUaQLWNY83qjKBPR+9E
-	ZzZf5/M4WUsHi4vfnBafL77mxpmsQAXR4kSn8xluL3O+VhI80Gvm+c/HyUkFl/Ps/+LTr1WUb72
-	qWDVkA3xezErSng4s2jzg6ERb34k4Ac7WEDz9cyKjip81oBs3IS5jJwVJtODFhZ4nSAHwKIuHJe
-	lKt4iA5JJVQESwRypAXUFr2rJE3jryQehz/GnIcaHf4ESPufoErfco93pnChQGp8rXV+SO/fr3j
-	1v2LxS2l2a2rSHpm9CrZmtpWzls29BN7RmRrLDljZV4QhgeSwHPJDXlFwrRMpH+zRjRgCNYDpF/
-	JY2BSZEL3dPiVl3BOLBTFljVLfEhDcG+oTmYyADsDn5XQWfv
-X-Received: by 2002:a05:6a21:3296:b0:3e1:a27e:304f with SMTP id adf61e73a8af0-400ae433054mr11434270637.35.1795504493317;
-        Mon, 23 Nov 2026 23:14:53 -0800 (PST)
+        bh=XBwqhR3m8bOQBJNfF/ebktnsPnOGA6K0nJo6XELezxM=;
+        b=sCScjkHIo6aP9HISC2l2Zb1GG7+qIeXG/PRNs4Ay/awv9s9t4sJH0JeL093WtCj+1i
+         Mzh4q/07osE6kaMWvB2RE7woEmOFlEEQ46DsD3C0n4OySbd0VL+SrRiGzOzPVTBcRIoH
+         OPuyQd0XotjxMB9Oa9QhWsB5nziHVCfANzYBE4cFzwCUpQzmOpeWVJCmsd0oI87lup18
+         VJiQXXcSRLRzz5liTYLj+5TkYJrduuyBSVgLl9uscX6nkGDeR6sRfRWVNYag4/MBdg8U
+         LWuIaubXs8AT0VsVCpzhMM360ux1HswN0P0wm14bFlG2rUw8yyELnpVyltcBPQyy0Itw
+         7nzw==
+X-Gm-Message-State: APuU4Z9k1n9qGeEOdK0HKCkB9cCo1Qsgp9doUuykb/RzJj4WXxgPlm/y
+	bNtpCj/WIavpbksL3yVVQSPuW6M1pO5upZw42oTDUim04LxgGE7wrGd3
+X-Gm-Gg: AZFdTZcacDypE99DnNxBiP9gssqEAAyoQ+Wba22+HCgdD1ijske0GoUn/a8ZphU6j04
+	IeeZk3dU+neeRLErXLSRLriYYz1qMoqVhhFlO2V2nt0DmGsoioig97o+yzessbz3uvm/aj4F7pn
+	OZkxk12pLjkV8eGnWFS3OLIbGxVvvwjFEYiCKBV5nI2V6l3OOR0Adc1zW3a6MUDMQNcc5Okd6F8
+	KOFZXvJzoSDXNyxn/1qDI/CmRXUska0zg3kB/yCqzMqi7UP7ZxJX40Tb90dTglngGeVrQV6u4PO
+	R485oDeuC4+cA+okr7BjT2GhPmhmvoUDwIp/gHGSsdemHb7EPofoe6VHT3K9WnoYvCHQCaQnpgY
+	TXA00blVMTMx2hXs1rwrp0R42qS2Hqd2jijOJpKP+enQjBN07FE3XE3gwRVmyqm3TICME2lr3kt
+	SiIm+KxKu4fx7cPP/PtL4hWKHAK3LPqJhk4DE8EJqpVeqsA0BJioWYtNfn/PHWjKYgAtJNiEnSh
+	F8l5Goe3u09ohQvohuaJIWt/nO467t/7AMTjeMxlXKxH/Q066VkbIdCPGn8O/vpl/kF8bm5oh5o
+	vZ+wVKHpmgnnrVEUb3P6l7XOt8bkGGX28UL74pjkwXjAPrHiV+WRMjocTr0Nke1kxVPa1w==
+X-Received: by 2002:a05:6a21:798c:b0:3e2:117a:62ff with SMTP id adf61e73a8af0-4014c2573d3mr11960703637.61.1795504499863;
+        Mon, 23 Nov 2026 23:14:59 -0800 (PST)
 Received: from embedsky001.tail6d6b2f.ts.net ([183.13.19.200])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde6cfcadffsm6475836a12.9.2026.11.23.23.14.51
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-cde6cfcadffsm6475836a12.9.2026.11.23.23.14.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Nov 2026 23:14:53 -0800 (PST)
+        Mon, 23 Nov 2026 23:14:59 -0800 (PST)
 From: Yonghao Zhang <hyz3367@gmail.com>
 To: mathieu.poirier@linaro.org,
 	andersson@kernel.org
 Cc: linux-remoteproc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Yonghao Zhang <hyz3367@gmail.com>
-Subject: [PATCH v2 3/4] remoteproc: core: Guard against a missing stop() in the attach unwind
-Date: Tue, 24 Nov 2026 15:14:08 +0800
-Message-Id: <20261124071409.972-4-hyz3367@gmail.com>
+Subject: [PATCH v2 4/4] remoteproc: core: Clean up after a failed recovery
+Date: Tue, 24 Nov 2026 15:14:09 +0800
+Message-Id: <20261124071409.972-5-hyz3367@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20261124071409.972-1-hyz3367@gmail.com>
 References: <20261124071409.972-1-hyz3367@gmail.com>
@@ -100,39 +100,73 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When the subdevice registration fails after a successful ops->attach(),
-__rproc_attach() unrolls with an unconditional ops->stop() call: an
-implementation without stop() turns that error path into a NULL
-dereference.
+Release the resources on the failure paths of rproc_boot_recovery(),
+the same way rproc_shutdown() does, and void the power count in
+rproc_trigger_recovery() when a failed recovery leaves the processor
+offline or detached.
 
-An attach-only implementation, such as commit 1168af40b1ad ("remoteproc:
-k3-r5: Add support for IPC-only mode for all R5Fs"), has no stop() and
-can reach that path.  Skip the rollback call when there is no stop():
-with nothing to roll the attach back with, the processor stays running
-and the failure is reported by the attach attempt itself.
-
-Fixes: d848a4819d85 ("remoteproc: Introducing function rproc_attach()")
+Fixes: ba194232edc0 ("remoteproc: Support attach recovery after rproc crash")
 Signed-off-by: Yonghao Zhang <hyz3367@gmail.com>
 ---
- drivers/remoteproc/remoteproc_core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/remoteproc/remoteproc_core.c | 31 +++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index e44b45510b4e..8c3fc85b8f04 100644
+index 8c3fc85b8f04..3e700c94110d 100644
 --- a/drivers/remoteproc/remoteproc_core.c
 +++ b/drivers/remoteproc/remoteproc_core.c
-@@ -1357,7 +1357,10 @@ static int __rproc_attach(struct rproc *rproc)
- 	if (ret) {
- 		dev_err(dev, "failed to probe subdevices for %s: %d\n",
- 			rproc->name, ret);
--		goto stop_rproc;
-+		if (rproc->ops->stop)
-+			goto stop_rproc;
-+		dev_err(dev, "can't roll %s back: no stop()\n", rproc->name);
-+		goto unprepare_subdevices;
+@@ -1800,7 +1800,7 @@ static int rproc_boot_recovery(struct rproc *rproc)
+ 	ret = request_firmware(&firmware_p, rproc->firmware, dev);
+ 	if (ret < 0) {
+ 		dev_err(dev, "request_firmware failed: %d\n", ret);
+-		return ret;
++		goto clean_up_resources;
  	}
  
- 	rproc->state = RPROC_ATTACHED;
+ 	/* boot the remote processor up again */
+@@ -1808,6 +1808,24 @@ static int rproc_boot_recovery(struct rproc *rproc)
+ 
+ 	release_firmware(firmware_p);
+ 
++	if (ret < 0)
++		goto clean_up_resources;
++
++	return 0;
++
++clean_up_resources:
++	/*
++	 * rproc_stop() has already switched the remote processor off;
++	 * release the resources of the boot this recovery was trying to
++	 * restore.
++	 */
++	rproc_resource_cleanup(rproc);
++	/* release HW resources if needed */
++	rproc_unprepare_device(rproc);
++	rproc_disable_iommu(rproc);
++	kfree(rproc->cached_table);
++	rproc->cached_table = NULL;
++	rproc->table_ptr = NULL;
+ 	return ret;
+ }
+ 
+@@ -1848,6 +1866,17 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 	else
+ 		ret = rproc_boot_recovery(rproc);
+ 
++	/*
++	 * A failed recovery leaves the remote processor offline or
++	 * detached, where rproc_shutdown() cannot release the power
++	 * references: void them.
++	 */
++	if (ret && (rproc->state == RPROC_OFFLINE ||
++		    rproc->state == RPROC_DETACHED)) {
++		dev_err(dev, "failed to recover %s: %d\n", rproc->name, ret);
++		atomic_set(&rproc->power, 0);
++	}
++
+ unlock_mutex:
+ 	mutex_unlock(&rproc->lock);
+ 	return ret;
 -- 
 2.34.1
 
