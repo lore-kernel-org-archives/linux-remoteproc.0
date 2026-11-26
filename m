@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795659642;
-	b=cagt8R7obg8J5TbXFTGusFv2KZC7Vk/aQKGMz/aX0eB5gVwbfFOegMME6ezFLEm3xRmq
-	 6HbzPJpU03ywisMA2Ewu13j8BGL5V3VPOtMihX6ClrH1y71+iY/QRk6VIPzC7QJwkETqH
-	 gCJCmqPmueN7fwTj4n8MQd2Y4rJGGudWXPFLeZ68rrB+spNAkda2LQdSrXKhM4bskj5dV
-	 8y5T/W5v9PQM//eKyC6a7OvHpuLJIVo0lSX233XeFgbJRtuzibyhY9nP+9AKv+tiHU+7/
-	 fmKNWKQ3DtqYAnAqq/VpMn93AmVokCx9VsClWqSbtzsMRlowkY79ycgaCN+R9GIQAkQ==
+	t=1795659650;
+	b=jK7Ksd49gLxKGjMXwon4KSWM6dg5RFR77qyUiYL8dha0koChEingnn0xpqCD18+s82FL
+	 NN4pQQAMriyelfLvA9yT6R19K4hPEDlH6qGxeYF/pgLe/YtmIMuAZNj8GPttf7K5+6mjS
+	 bHwtyQR2J/Ad29Nj2mqZu64ENCaqoGkTPSwy6fA3dCfqMTQ67oldcTeL1k1CZSX9okY4X
+	 hPDO/rUEzAuIDVczS9s22Zj0hBFg28/SjUrV429AczcCoZNHVl+HXJ6wqWCzESISQjPd9
+	 tkdlE/5nMNx7QU7q+Ei4GHNGc3RGs1nVBRVxWO9wy6G1mVoUvcCxASLfvMVXQMT4e0Q==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795659642;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795659650;
 	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
 	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Pm+/UvfCAYSPyEjNgqW0Y9FuL/rPb1heMpydqsCNqUc=;
-	b=Vg5xQdPR+voyoeILZug5ew4jhU3hyB5S0XiVd8xry/3hDcSu7757Z5D99xFtY6mpjBdJ
-	 +qL5uHkiP4alL847uMxXoDyG02RnufX09w5q7r8pXRCcTUQirGsFPeS3M8r4WmOd1gmYV
-	 U7CspE6Jy1e8JwHymuU+rFXTctn+6Bbtf6zATm66yCZIae8NFWXPzGFTaXEUqfQTEbkMM
-	 E/t0iPIDpRNR+wID7cYoFiB+W/x5FBnEj7ju6NA6N39mbhcNzy3yapylLIkjEyLDeaea/
-	 18EAwfd1sGNQYhNQwp3gqidvh0+NYr/YtMRGBZEQGbcZ/hoht+Eo1PxUGxk8nT4bpxg==
+	bh=9ICH6jzRveYr7sN98Pm6PxuRLL1mzTItpfOnDtcHUic=;
+	b=Y5+c7rDE7rQKImy5zrXJDAXr1BA5OqMIoPM/AO2Dqpx5oF0ppvXdcsqBzwzZ5o6o0DQ/
+	 ZoR6Ys+wtrjQqQqGhbFVDhK/ruUhFYniAy3RIuVwE69iiLZz5MzEx+YeuFhCfSWTfubjV
+	 Na4cofOCAz2L3HfZRPdaAwDXZoEwoFJjtaKvECT/owe5ZKMGl7vpGPfe/ze1pRzWsYDiu
+	 R+vBHLBAAaXnXeDu4xAO4KIjzynYO6W92z+UQgYiN7lBzxMw878N2vvNC6EMKmBCij6pW
+	 GMXJNtqA7VRdBL/yfCKLRbJYBuyod2PZbtHVPmwkxizCbehEmAxGCTgGSM7/1wx31YQ==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="n4/aiVpO";
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A79PxVxb;
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E2C606A323;
-	Thu, 26 Nov 2026 02:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F80606A321;
+	Thu, 26 Nov 2026 02:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n4/aiVpO
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=A79PxVxb
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795659641;
-	b=YKeVlIfJUBPpdgvp+72sxEH++vk4Ya7n2Zot3sM4c8A3jV22rmkhlkgKs50S9L8mDs9y
-	 M8Ys0Vfm9+IG88A06r3BTdW1VAp/mBDXceyZqbW+LJor0pnAuZabJdQiWS8pOY3gkaZS1
-	 wiunaZ3D+6+C2eIG2aerL5T4VMjmRPWoHgeNupuR2P6yn0Gq7mscNLCg5LFCCQEW7V+YC
-	 /otxIzulqmZBrcU7+ewKfM7YP1N85E8ZJaS94tK+zBnPWGCrKgESdrruQCldHOQSJpDrg
-	 u6bVLV0lsATeaAabkXZqkztei8qq3azzrTrUytJR7F4ajrLNXl9iA+c8MQ8rNeGSnUA==
+	t=1795659650;
+	b=PMxGB/VL0tWxqujylA4U2Hsj8dQrIHM8p0nl1YCL1x+nyhq6GvEm21jyU3ijjUVs3x7I
+	 EGV9lqGtjpdpF21nHiN7HFCFaG3rqSxFCXHr2HwdnL+mOoMonMLzK/01aKL9eIaU6WmPW
+	 Rn7CiqMUZJfwWTxv2S88znFbQGlLDe3rRGBiRK6mxdBEczZcYcdWomehpPAeNwFlCiB1k
+	 sS5yiIa4UBf1i6eu635WG3jk9AZ0wo3DlzyHp4Fa8SX5XUNmYNYMqezANXSmDs21Hbox5
+	 V3ft8zQcmOLbUpHnblTuY2Up5q2hYNlh+LkLOa9f+inFMsh7xCwtCtusWanoWfD91NQ==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795659641;
+	c=relaxed/relaxed; t=1795659650;
 	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
 	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
 	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=Pm+/UvfCAYSPyEjNgqW0Y9FuL/rPb1heMpydqsCNqUc=;
-	b=abmYt00zX/T4RKRq4EUDtYGxX46KnVKQa31w007BChyLTopg4P54ALNIWYhGUvOsSicm
-	 6Dj9E7r+h3gDXVD9hGv3vEIxCmDvSaZ95Fll/c4SFLQ1wROODDO5fTCkZ01pC4afi6Z+M
-	 7tUibKivSm67id7lv3yr7gLqlfg3rKNUXGCC56v5/oOTxlvVt8vXUGq40LTGdssyrqIg1
-	 1b8gbn1/wKAOLwxoBzS6pNgzOnreCBR+rsgmdyFd/DEMGiqj0IXxy3WIztzYvi52UTR+t
-	 iFvedJ5RXuOUvYJhgrSlidGmYHEnpTbYI2sc70fIyXWhRZDzAJr0RRWRCBk+mCVWkkw==
+	bh=9ICH6jzRveYr7sN98Pm6PxuRLL1mzTItpfOnDtcHUic=;
+	b=RSH9CxmBfMdweTU3q9/5cSwPUlWmeWD5c/j3RsDxJ0m/39yRKgydsXZ+ih4nkrVqOWVC
+	 cpsjmytVahMzwURS6xK2hv8veHVaQv7UDk4NUvHXGaW3slyi/bymSJSmVPmhe522HmHQj
+	 YdyZ+C47+WnNHJHc+QU1ItibuftfevMHfEbkNLCes7+lxVPtm5QrXvgEp03jqT9O+SlBb
+	 8EYRNWlUOc209ZCUVqhUWHMKcCksDYJGSUTLryUheMIMHSmdl4NzWPvBhwoutmZkL55c7
+	 X6CyQbj5OEQa+vmPa1JiOHz986xbHFBXBUMANIhjlwLvAq/JM/TX0dRuhj4S1l+Tk8w==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E02571F000C0;
-	Thu, 26 Nov 2026 02:20:35 +0000 (UTC)
+	by smtp.kernel.org (Postfix) with ESMTPS id 066DF1F000CA;
+	Thu, 26 Nov 2026 02:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795659641;
-	bh=Pm+/UvfCAYSPyEjNgqW0Y9FuL/rPb1heMpydqsCNqUc=;
+	s=k20260515; t=1795659650;
+	bh=9ICH6jzRveYr7sN98Pm6PxuRLL1mzTItpfOnDtcHUic=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=n4/aiVpOJIYiHUHbAGXCOnKJ2p3vO5uHg4I7E7Zl6KX9dFsVuhAi4oJvZ5/yJ+YwO
-	 isiXz5/2AOIxW1/MPf8w9PeYFkC0MXJKRVPCoFRQmbuGuLq19wcpaOgXqQmwidgUWg
-	 pmfBUI+kQIs+5HGqm4HN0zZhktNOqHpCLAnMtnS/JGANhFUv6W+epaUSIZo0RJzKUn
-	 Td5XvA4gUIEJMyeB43Fca8jQ7s1ZpAaOKW7tglBpM4DF2Wfzm2tjO4fTy/h3+Cm1Mp
-	 FCazPutqFsrFJKRLRIhhbZrD0gmiS/RVpqZmax00AaGlJnVx5kNa/aSaDaTjhAfCgz
-	 JGE7HEuqhn8Tw==
+	b=A79PxVxbUqBeZe/Exidqlh0p/iQrfTuyRD/bM0J2f9kz77qZDHp7GE38QT65Uxltn
+	 JtusuiBJ48xXbCPAdbuatz7cchqBDpNToD7wKgk9ASGpDcmGy+TjqRRMFOcmAuwhyX
+	 iyFE06/VxBXkF+S0mzPDpPV0Nvb8mxlLU6fCAYzNdCVpcScbpoNkrSfoILD2tZvCZq
+	 J6RSRIm5LNRvEZI6qSfCHMK+1ZcltQHp5AAlu255BYCpY/16JFj7cn5R0UgIynD2qA
+	 iA0z6irR3kvJWgOnmQnyNDHIut9sZiDJTyONAtv1Kg7EHtuVyLvcONRC6+lc3Vzxh9
+	 JzNC6o1XdkoFg==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 652ED4D198;
+	by lkml.kernel.org (Postfix) with ESMTP id 852D34D1A0;
 	Thu, 26 Nov 2026 02:20:35 +0000 (UTC)
 From: Fabricio Akio via B4 Relay <devnull+fabricioakio.gmail.com@kernel.org>
-Date: Wed, 25 Nov 2026 23:20:34 -0300
-Subject: [PATCH 1/2] remoteproc: qcom: pas: Vote the SDM660 ADSP's power
- domain while it boots
+Date: Wed, 25 Nov 2026 23:20:35 -0300
+Subject: [PATCH 2/2] arm64: dts: qcom: sdm630: Power the ADSP from the SSC
+ CX rail
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -84,7 +84,7 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261125-sdm660-adsp-proxy-rail-v1-1-b91784c69623@gmail.com>
+Message-Id: <20261125-sdm660-adsp-proxy-rail-v1-2-b91784c69623@gmail.com>
 References: <20261125-sdm660-adsp-proxy-rail-v1-0-b91784c69623@gmail.com>
 In-Reply-To: <20261125-sdm660-adsp-proxy-rail-v1-0-b91784c69623@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -98,11 +98,11 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  Alexey Minnekhanov <alexeymin@minlexx.ru>, 
  Fabricio Akio <fabricioakio@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795659634; l=1546;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795659634; l=1000;
  i=fabricioakio@gmail.com; s=20260928; h=from:subject:message-id;
- bh=zkoyiWmiLPqXph/5+tayJyD7KHTTIW/Ma10fRXwCfwY=;
- b=GG2gnXZ+nJmYpXxqhPCe5aXn2j6T28oYiN5PTPpZJIpYF3Nba4cMfp3BwSNnXAp3p36jotJ8K
- d0cUJBkDqpEBjtpjtoU+NXpO+omUFbymMp3YQ0xCAI/n8KqTyFnEMGv
+ bh=vvfBXxukbqq5MzPAqDR7snLRrnKmtOIK0SM+DFfx3eA=;
+ b=u3Y2Dg68BstIxRMFXbdZlmBYQ3q3sTD2+AUVxj2nF8Tsw+O8m0+wKMHZEWJEvLrnHQm0SIl4T
+ D/zyfT2Z6msCcuxCSF2o6847kL75znTjoLpGQtnpppgGZAAcJ0ZcwZX
 X-Developer-Key: i=fabricioakio@gmail.com; a=ed25519;
  pk=TlMUT8bPI/ZQzp2q24BIQTb2qSx/jdUTBlGEXIRCm54=
 X-Endpoint-Received: by B4 Relay for fabricioakio@gmail.com/20260928 with
@@ -113,33 +113,30 @@ Content-Transfer-Encoding: 7bit
 
 From: Fabricio Akio <fabricioakio@gmail.com>
 
-The SDM660 ADSP uses adsp_resource_init, which names no proxy power
-domain, so the driver votes no rail for the DSP while it boots. On an
-SDM630 phone the first start after boot succeeds without one; after a
-stop, every later start times out waiting for the DSP.
+The ADSP node names RPMPD_VDDCX as its power domain. The rail the ADSP
+needs to boot is the RPM's "rwlc" resource, PM660L LDO9, which is
+RPMPD_SSCCX: with it voted the DSP starts again after a stop, and with
+VDDCX voted it does not.
 
-Use msm8996_adsp_resource, which differs only in voting the "cx" power
-domain until the DSP signals handover.
-
-Fixes: a0a77028c85a ("remoteproc: q6v5_pas: Add sdm660 ADSP PIL compatible")
+Fixes: 7ca2ebc90a46 ("arm64: dts: qcom: sdm630: Add ADSP remoteproc configuration")
 Signed-off-by: Fabricio Akio <fabricioakio@gmail.com>
 ---
- drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
+ arch/arm64/boot/dts/qcom/sdm630.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index ff2483529d73..d5b03a433a6d 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -2050,7 +2050,7 @@ static const struct of_device_id qcom_pas_of_match[] = {
- 	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8250_adsp_resource },
- 	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource },
- 	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource },
--	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init },
-+	{ .compatible = "qcom,sdm660-adsp-pas", .data = &msm8996_adsp_resource },
- 	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init },
- 	{ .compatible = "qcom,sdm670-adsp-pas", .data = &sdm670_adsp_resource_init },
- 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init },
+diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+index 20225732e4a8..90990dc36b01 100644
+--- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
+@@ -2414,7 +2414,7 @@ adsp_pil: remoteproc@15700000 {
+ 			clock-names = "xo";
+ 
+ 			memory-region = <&adsp_region>;
+-			power-domains = <&rpmpd RPMPD_VDDCX>;
++			power-domains = <&rpmpd RPMPD_SSCCX>;
+ 			power-domain-names = "cx";
+ 
+ 			qcom,smem-states = <&adsp_smp2p_out 0>;
 
 -- 
 2.56.1
