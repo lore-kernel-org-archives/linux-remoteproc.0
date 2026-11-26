@@ -1,97 +1,96 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.210.173
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795696939;
-	b=wcumvyP3GJ9HkocKd4flGiESOwRR7HB+F4uAJw+bLhgbSIW5EzBOpt4h2wCe4/xlCxs3
-	 MABD6tFF64PUGFWpnmeVrhb/WomdjPFOYfLiDKiE76/neDXlFYLVqGWFEXs8hbq3tNCWE
-	 zSwt8HN9xBMIWu0G3tIh/eoX64AB3P1SNv3MqliIsSYP6PWGyoOQzSUkLQ9zLuwBw8GXq
-	 FvPzoKd2dRQLaUy4QXPYQZlP5yzT3DtM67+Zz2sw2qK/6D/vuVDEnZcTyx132+GDPzSbc
-	 elAV+X+U+GuNn+7vYuCaLaGCxikAiw7L4cC0tYc3KgLVPYA0pqJptaa87DZNwQ/oI7Q==
+	t=1795711321;
+	b=NKRYmNZsPtz+aVBgfECutb4sjm+TcDxueLVeyupTC5mYWT/KgFRTsE6HK2aA7r/1Sih5
+	 ApVTaueSyQIUn9h58e9RpXITxncBOP+fsFAaG+0NAc4flEPkCEbH7ev7/CAJsx5lpzG+h
+	 rsqHZP4aXER56yMmfkwWSrYQLsjydixJGxHA8ggzjrmiiierDcKdzAwFodbqbWSYuwXdT
+	 /707HNEtkFLdfGKQaOoc2GSQnPkw4VjHdIMzIkbhUElZfb22RzrrO3AQ1wpY9PHFSiKKk
+	 XS49qZukTWLC9KjfnolFpeb7PV9i0YffU/aNh3nFGL1ircELgeeuezxDisrDAVO3EyA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795696939;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795711321;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=buMeQQDfJsDcXVlRtFz7hMPHQNqj9L9yHfXuPxjS13o=;
-	b=iphsHdqSmHlSUOocLCgQH/CaTTItBYK7F6fvotMhFPBL1loZujPp0qPoFMpqsXAiFe4l
-	 VRLk7m+1iNZ73008fY9CWT9RG0UF7XPNse5RsLtyGW/fH4pq4kwfYxW3ItpaVnBu2u+YQ
-	 XVZ4fa6mK2HNh2bsAp3BvSuL33icOS3wphp/Z4y0yMfHVYKXyn1m5vqGRBUb7adHPOnG/
-	 AHuiy85Yb1/NejGoJjERASzvozcNeDGafHkdYWHyaH/ehlu1uYZvKkum7vNmDP1NIO5ld
-	 7bRszVq0+7h6LKx6XTDOosQpYyM3wC1yxLVUv6Xx4Vgzy89hdlVifDutlc1nCtmGwIw==
+	 Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To;
+	bh=DFx8uLlfH38O1wM08TWFx3spSB+MhB3V2u/GmquIAZ4=;
+	b=cFScqRdqWjCP40xej1bM5/653qlKBnLgbWTC9LmHJ1MsY9Kg5r0hQVFyIBpzYOnd1gMr
+	 7ogk+uLq5I5vJqAPGgQbbU5Z2tY5f26OYLX+UOlbu/mJFpjVMWs3LWjsWhOmnuO7xO0m/
+	 d8hLn+y/YcCEQFgbiIweKEQNtC2ByKo5qHVKGyBbKpdseHLuMG4COhU5otBJaXKPZNdsx
+	 jd9wAs0XeVt698taeh55sKOmCZRbOgzn8Gpq2E15G66Ui5e0/jEsz04QUKbdal3EYF0RU
+	 z2vfsEq4qydouHuFKwu30g9dH84hFLJP41aPWb+rMeP/XC9Rq98PffRXo33iwQqfwgQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=luxonis.com;
-	spf=pass smtp.mailfrom=luxonis.com;
-	dkim=pass header.d=luxonis.com header.i=@luxonis.com header.a=rsa-sha256 header.s=google header.b=OL0iv+DM;
-	arc=none smtp.remote-ip=209.85.128.47
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Ym0pG+Bc;
+	arc=none smtp.remote-ip=209.85.210.173
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD416606A321
-	for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2026 12:42:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org AD416606A321
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=luxonis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=luxonis.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E1A606A6AD
+	for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2026 16:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 16E1A606A6AD
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=luxonis.com header.i=@luxonis.com header.a=rsa-sha256 header.s=google header.b=OL0iv+DM
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4bb70074ab2so74299455e9.0
-        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2026 04:42:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=Ym0pG+Bc
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-8d1aec63541so292618b3a.3
+        for <linux-remoteproc@vger.kernel.org>; Thu, 26 Nov 2026 08:42:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=luxonis.com; s=google; t=1795696937; x=1796301737; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=buMeQQDfJsDcXVlRtFz7hMPHQNqj9L9yHfXuPxjS13o=;
-        b=OL0iv+DMJtRYNrKRLTgwyzvZiNBVu+BWNFIAfYe+IKgR0EZaoGmpN3LiYHfjG+tVMP
-         jSe/aO5M7YDNLxTllDcGo3AvlABhGT2r3CmP3GaYqHf7/9O1T292d9sFhMlyZtOvCWjA
-         YhLwEuOz176lrq7NvXEDNZqECY1LbeJGdSp7sRhu6XsbCOap1KtJBEJw6ckl90DtiuUO
-         Ajn66NTPyTYn/7bBkivQ8az3R1aNAjhBOlZS3mVbhRyxdC1pm2mXdTuz/w11LXrxmsoa
-         f/Wiqp2vGnSpDCOzYGdf2h9SEqtuLrwE5BLqfVd1QmpKmvxg1grJ1/2Jp2GhyjKJwo/c
-         NZgQ==
+        d=linaro.org; s=google; t=1795711320; x=1796316120; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to:content-type;
+        bh=DFx8uLlfH38O1wM08TWFx3spSB+MhB3V2u/GmquIAZ4=;
+        b=Ym0pG+BcFynmcz8B2d4N6OfByGIpmzmiPdbaS9dWXroPgtGcZp55zqnFaCgjBR7xjA
+         BZjE7sAgyb8bVxYfPIYJgZwXoEj4F/Fnl0f7Te5WNT3IBFd1a9ypYM7R2egWuZ2qLZd0
+         60WjOd6UvqV9tdsxowg7RoNs2gt+UvjMCNr/OCQb4xxoNhO1BjzCr+9gmIteYmbzLC1z
+         K+drecOscsEdGt2lJ9J4jiD/YJgTRIALCTTkDEc9PM0sCC2LQqqUzdQNJL73CiKYRthk
+         9cYtRw4sqxr74by+lojDytgDUOS6iZcx5+5KXKEmRGANdpICQ16ZmFvymDqw4eCUS0WF
+         kTLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795696937; x=1796301737;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=buMeQQDfJsDcXVlRtFz7hMPHQNqj9L9yHfXuPxjS13o=;
-        b=O0aDlPdrpxzOPYIcm0OhbYu1wpNa/pGYoUwGJ8k4qm5isUy0OObw6iKtZmxeRYDSOZ
-         Me6/uqb7L4bvOkqo0m/p7wWcH+zPUr/LuYr4HHh7llkmsZAuVoD7/ybs4yEMRjreD9PV
-         HsqcYmjGxqFqHG3bXAw/rm4VcjnZOq4sK4e5w1rEAig/VEz011NAqulGIzI+w4jxwkSE
-         SjJlVJoWOXXCn3fAr9+oWGPU5CJnJwqqVyTyiV+99+byXpI+xRseLQlKYNZD1DNY+oE+
-         oOcyOs9lMDSpC5+VmZfD7ksd8TGb2jKKAjBdCfolpSsRgtGRfyCsrWUleTJozR5njlno
-         gVHQ==
-X-Forwarded-Encrypted: i=1; AL+hErE7PVge1jmXpv2DH2SJZDBVvfu4tZ8Lg4YbFougBDDBjmszGW1NtsLKPcgXaFg7Gbm+4T1DYs13X7ycc0hwz1oZ@vger.kernel.org
-X-Gm-Message-State: APuU4Z9L83xWso+PI0hugPkF1t1IJ7wDdyrqsAoxajT5OUdV0UvdxVgh
-	3wGwjsr4tInQstSBiE1/I+SZx5HMA8JooiwJfLM4NK4BDzl92vlznLgQ0TgLR/8Hzqw=
-X-Gm-Gg: AZFdTZf/EIIHddGF/dDXuFXLLkmUrUgSB4sv96hB+SWou0jBfP8v3diA1Eh1kza9jLo
-	POBXiy++05laJncp0D5hrx5Grpq8AAR0e/poDjAqD3ECyJkK2Re26bzvEOGn27SEv1A7Cp9T1aQ
-	+I04KVWd8wwSa2dpN4f2JIXJqcw3llo1+zmwKuCpjW4sK5z9Qnc/C/Rqq7D9ED0I6WBiyJDr4Wq
-	vAgwRVkYbDmp53CZzaR62P10QRELAwwqFs/QpJuSGKmyDmQB0TnUCSOQ9hh0iAEdx29YRTpOKZb
-	nhpe7uB58MZjKnALMRndEgrGcEWG4Y8JLFj7ux/tHnvVMeqUFvXNFUYMLTFqTVbm8FHO2lAPkNO
-	bg5JY0UYwfYjmsoNY9SEL3eq16CQTozQMRZ6FTARrG3F9Zg5bCfYejRGmTW02zoYOxXxPs8BALy
-	t1CrWEsbUvudQeEvyMJ1+KHTK4ei4cIuJyU2G4Ztg/HN/KCZDYWAzdDD5S4NdR7dymAyC0B9GBZ
-	FLcmFGFynQ6E6PVHdSIzg6ZmZwIFNs8gmn6ompjIqt5yF7emLn5k6T0dIFLg/ES3UZa0I6IYM4E
-	JrilVbBmQkUdq/zawqOUmSbiHAvmnWkLUWnT1eH2SWdzWfASSe12lmWoh7qDu0wo0gUVEQ==
-X-Received: by 2002:a05:600c:64c8:b0:4bb:68e5:b952 with SMTP id 5b1f17b1804b1-4bb88819be1mr398470945e9.16.1795696936947;
-        Thu, 26 Nov 2026 04:42:16 -0800 (PST)
-Received: from JureBuildPC (46-150-36-237.static.telemach.net. [46.150.36.237])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb8849e598sm577708965e9.8.2026.11.26.04.42.16
+        d=1e100.net; s=20260707; t=1795711320; x=1796316120;
+        h=in-reply-to:content-disposition:content-type:mime-version
+         :references:message-id:subject:cc:to:from:date:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=DFx8uLlfH38O1wM08TWFx3spSB+MhB3V2u/GmquIAZ4=;
+        b=TRAcXzwkXk6WVhefnS4owAIW+TPZCCSZ9e3r2tIj8ghQmlGMn8WHm2PVDzODV7DD3D
+         kKTxbK7i6p3OXIHOqGCKwA6n/7a/vhMbJyiRYykHUF6DAl9YdcDz/cbKaXm+ZUyNPYMl
+         vHuH7s4bmtREv1zbp3TQ11n8L3qGBlAZVIm72a/tkfoZZsyHDVPL6+yNk0iFsI4XilIe
+         6Jgm9dHZwqVAgrj0e+1AXLodUGcDQjutpGqwHV0TD8zsUSRJ8baOCPi6D7uYHgnV/STx
+         CQNFHOIZH6I9LMH3iLyG4Z8sI//fAIkkwnHDVF5ziQCUkQOW42x+ecG70qDRiNt7OHSE
+         qmvg==
+X-Forwarded-Encrypted: i=1; AL+hErGiSWcdHBQ16R+1k7wgGdtIMSAIZGR+2OpTuLYSHq5Yr5PcpgpfUHoLNE95GGg94EGvA5ytxPRJVL1uAzWwT1f4@vger.kernel.org
+X-Gm-Message-State: APuU4Z8IAktOqVPaM4pBFpvdWNtIuAaCQsBn8gZV1LWHOTmA/Kxfu3fd
+	bZZST6Po/PcpN3tIACehHjyOAZHx9FTUe/rYl7tXLdBIKxM3gHXBzIdlszHzY8Q7jnI=
+X-Gm-Gg: AZFdTZfDYHi/X5+F0r9bQTjMkE4PqQZXjtCoMvG+b8GiiNol/CF6ASLZm5XtYxQHV+x
+	BQFg7eoXdzJq8z+fvSShmOG7dW6AJiDFxrYljm1vbbqkefD17Y2uNndjbabdLJpBSc6set90BFP
+	Brb3RPEWW1wVfaFcsIXfDKO2MrVY3CwvbbombTqR+9FtsIWk747n+y+r+z1GIFEPjiyYHPSXwWO
+	2dTy6sja3T7qC2n64QcGk1HX+jA3Z8UQ9C4XH8vHclSzD27dSYU1IbhcSNn/jMTbmq2T6MtWTXV
+	MRGClYTYYtmbw2nTo0xXPM6+irie0E9jYqd4joIKchv77WRIuarC9MoBOw5CDhJpD2nUD4HV3rU
+	dRd2hZdh20wtuylHYOnQMjuhxZR4MNWmmh7smq+ro1ozFxfrqIm62qSWnxjslhLvtnvQJ6oQeHF
+	x/7n14S+YTo6p082IaGFhdyWpQpngK9fzqqPMYqJ2g19BHu+anMgqc6WakNBdo18dHypXMJcs03
+	IWFLXOgugNIFEclFeLKUoDTUtVJitq7Rg3PuWCYzK41m8Bukv6eCFQDCkdSIPhNcmubzPYj3DyG
+	VF5ozXdKU8zkwYQiYjKocStZyZj+2uqsGTUdp6kFtZ8325N3Y0eTEw==
+X-Received: by 2002:a05:6a00:27a2:b0:8bc:686a:a54b with SMTP id d2e1a72fcca58-8c87daf2a2amr19220157b3a.56.1795711320184;
+        Thu, 26 Nov 2026 08:42:00 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:ce00:143c:88b9:bd58])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-8c8707792e8sm11312174b3a.7.2026.11.26.08.41.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Nov 2026 04:42:16 -0800 (PST)
-From: Jure Rebernik <jure.rebernik@luxonis.com>
-To: andersson@kernel.org,
-	mathieu.poirier@linaro.org
-Cc: konrad.dybcio@oss.qualcomm.com,
-	mukesh.ojha@oss.qualcomm.com,
-	val@packett.cool,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jure Rebernik <jure.rebernik@luxonis.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] remoteproc: qcom: pas: Request stop before tearing down GLINK and SMD
-Date: Thu, 26 Nov 2026 13:42:07 +0100
-Message-ID: <20261126124207.2665762-1-jure.rebernik@luxonis.com>
-X-Mailer: git-send-email 2.56.0
+        Thu, 26 Nov 2026 08:41:59 -0800 (PST)
+Date: Thu, 26 Nov 2026 10:41:57 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Francesco Valla <francesco@valla.it>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Joakim Zhang <joakim.zhang@cixtech.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] remoteproc: virtio: Drop rvdevs list and
+ associated functions
+Message-ID: <awhhVRBokzbdPJB2@p14s>
+References: <20261114-remoteproc_pdev_decouple-v2-0-95235dd056aa@valla.it>
+ <20261114-remoteproc_pdev_decouple-v2-3-95235dd056aa@valla.it>
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -101,143 +100,210 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261114-remoteproc_pdev_decouple-v2-3-95235dd056aa@valla.it>
 
-On QCS8550, a crash of the ADSP that the host reports, for example
-through the remoteproc debugfs crash file, can reset the whole SoC
-instead of restarting the ADSP. On two QCS8550-based boards, crashing
-the ADSP about 4.5 seconds after it had started reset the SoC in 19 of
-42 tries. The system stopped right after the recovery started, nothing
-more was logged, and the SoC was reset 6 to 7 seconds later.
+On Sat, Nov 14, 2026 at 09:06:35AM +0100, Francesco Valla wrote:
+> The rvdevs linked list is kept at rproc side to track the rproc_vdev
+> devices registered at runtime and de-register them during cleanup, but
+> the same information can be obtained from the driver core using
+> parent-child relationships coupled with driver name.
+> 
+> Drop the list and all associated functions and de-register the virtio
+> children of a remoteproc using device_for_each_child(), with the
+> following benefits:
+> 
+>  - increased separation between the core and virtio parts of remoteproc;
+>  - reduction in code and occupied memory;
+>  - the platform devices whose probe fail are now de-registered correctly
+>    during remoteproc cleanup.
+> 
+> A dedicated macro is used to register rproc-virtio platform devices to
+> avoid duplication (in code, not in memory) of the same string.
+> 
+> Signed-off-by: Francesco Valla <francesco@valla.it>
+> ---
+>  drivers/remoteproc/remoteproc_core.c     | 34 ++++++++++++++++----------------
+>  drivers/remoteproc/remoteproc_internal.h |  4 ++--
+>  drivers/remoteproc/remoteproc_virtio.c   |  5 +----
+>  include/linux/remoteproc.h               |  6 +-----
+>  4 files changed, 21 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index d5fa9d23bd5c..296b955f415f 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -431,17 +431,6 @@ void rproc_free_vring(struct rproc_vring *rvring)
+>  	}
+>  }
+>  
+> -void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev)
+> -{
+> -	if (rvdev && rproc)
+> -		list_add_tail(&rvdev->node, &rproc->rvdevs);
+> -}
+> -
+> -void rproc_remove_rvdev(struct rproc_vdev *rvdev)
+> -{
+> -	if (rvdev)
+> -		list_del(&rvdev->node);
+> -}
+>  /**
+>   * rproc_handle_vdev() - handle a vdev fw resource
+>   * @rproc: the remote processor
+> @@ -513,7 +502,8 @@ static int rproc_handle_vdev(struct rproc *rproc, void *ptr,
+>  	 * as device id, then we get duplication in sysfs, so need to use
+>  	 * PLATFORM_DEVID_AUTO to auto select device id.
+>  	 */
+> -	pdev = platform_device_register_data(dev, "rproc-virtio", PLATFORM_DEVID_AUTO, &rvdev_data,
+> +	pdev = platform_device_register_data(dev, RPROC_VIRTIO_DRV_NAME,
+> +					     PLATFORM_DEVID_AUTO, &rvdev_data,
+>  					     sizeof(rvdev_data));
+>  	if (IS_ERR(pdev)) {
+>  		dev_err(dev, "failed to create rproc-virtio device\n");
+> @@ -1212,6 +1202,19 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+>  	return 0;
+>  }
+>  
+> +static int rproc_unregister_vdev_pdev(struct device *dev, void *data)
+> +{
+> +	struct platform_device *pdev;
+> +
+> +	if (!dev_is_platform(dev))
+> +		return 0;
 
-Since commit 0ea50486978f ("remoteproc: qcom: q6v5: Request shutdown if
-crash is triggered host-side"), qcom_q6v5_request_stop() sets the SMP2P
-stop bit also for a crash that the host reports. It is called from
-qcom_pas_stop(), which runs after rproc_stop() has stopped all
-subdevices, so the GLINK and SMD edges to the DSP are already gone. The
-QCS8550 ADSP firmware treats the stop bit as a fatal error and runs its
-error handler without those links.
+What other child of a remoteproc do you expect isn't a platform driver?
 
-Request the stop from a new subdevice that is added before sysmon, so
-that it stops after sysmon and before SMD and GLINK. The firmware then
-handles the stop request while its edges are still registered. Crashes
-that the firmware reports and graceful stops that sysmon completed are
-not affected, as qcom_q6v5_request_stop() still skips the request for
-them. The call in qcom_pas_stop() stays for a stop without subdevices.
-
-With this change, none of 104 host-reported crashes on the same boards
-reset the SoC, 24 of them CDSP crashes.
-
-The problem was found and this change was written with the help of an
-AI coding assistant. The change was tested on QCS8550 hardware, and I
-reviewed it and the test results.
-
-Fixes: 0ea50486978f ("remoteproc: qcom: q6v5: Request shutdown if crash is triggered host-side")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jure Rebernik <jure.rebernik@luxonis.com>
----
-
-Notes:
-    Changes in v2:
-    - Shorten the changelog and move the test details and the tool-use
-      note below the --- (Val Packett).
-    - Rebase on rproc-next f39ba58941ef. No code changes.
-    
-    v1: https://lore.kernel.org/r/20261109175752.793130-1-jure.rebernik@luxonis.com
-    
-    Testing: Luxonis OAK4-S boards (QCS8550) with a kernel based on v7.2.6,
-    which has 0ea50486978f as stable commit 0dc9e289bbb5. Crashes were
-    triggered through the debugfs crash file. Without this patch, 19 of 42
-    ADSP crashes 4.5 s after start reset the SoC. With it, none of 104 did:
-    40 ADSP crashes at 4.5 s, 20 at 4 to 15 s, 20 while the ADSP was
-    streaming IMU sensor data, and 24 CDSP crashes. A crash that the
-    firmware reports could not be injected.
-    
-    On v1, Val noted that a subdevice for the stop reads a bit oddly. The
-    alternative is a hook in the remoteproc core that runs before
-    rproc_stop() stops the subdevices. That changes the core for every
-    driver, so I kept the change in the PAS driver, but I'm happy to rework
-    it if you prefer the core hook.
-    
-    qcom_q6v5_adsp and qcom_q6v5_mss also call qcom_q6v5_request_stop()
-    from their .stop callbacks, after the subdevices have stopped, and
-    qcom_q6v5_wcss does when requires_force_stop is set. I have no hardware
-    for them and left them unchanged.
-    
-    Built for arm64 (defconfig, drivers/remoteproc/, W=1) on rproc-next
-    f39ba58941ef, without warnings. Not done: sparse and runtime tests with
-    lockdep and the other debug options.
-    
-    Tool use: Claude Code (Anthropic) ran the investigation and the tests
-    on our boards, found the ordering problem, and wrote the code and the
-    changelog. Its first fix skipped the stop request for a crashed DSP; I
-    asked for the request to be sent before the teardown instead, which is
-    this patch. I reviewed the code and the results.
-
- drivers/remoteproc/qcom_q6v5_pas.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-index 57a111a0d7..ddbffe45d9 100644
---- a/drivers/remoteproc/qcom_q6v5_pas.c
-+++ b/drivers/remoteproc/qcom_q6v5_pas.c
-@@ -138,6 +138,7 @@ struct qcom_pas {
- 	struct qcom_rproc_glink glink_subdev;
- 	struct qcom_rproc_subdev smd_subdev;
- 	struct qcom_rproc_pdm pdm_subdev;
-+	struct rproc_subdev stop_subdev;
- 	struct qcom_rproc_ssr ssr_subdev;
- 	struct qcom_sysmon *sysmon;
- 	struct platform_device *bam_dmux;
-@@ -429,6 +430,14 @@ static void qcom_pas_handover(struct qcom_q6v5 *q6v5)
- 	qcom_pas_pds_disable(pas, pas->proxy_pds, pas->proxy_pd_count);
- }
- 
-+static void qcom_pas_stop_subdev(struct rproc_subdev *subdev, bool crashed)
-+{
-+	struct qcom_pas *pas = container_of(subdev, struct qcom_pas, stop_subdev);
-+
-+	if (qcom_q6v5_request_stop(&pas->q6v5, pas->sysmon) == -ETIMEDOUT)
-+		dev_err(pas->dev, "timed out on wait\n");
-+}
-+
- static int qcom_pas_stop(struct rproc *rproc)
- {
- 	struct qcom_pas *pas = rproc->priv;
-@@ -1012,6 +1021,15 @@ static int qcom_pas_probe(struct platform_device *pdev)
- 	qcom_add_glink_subdev(rproc, &pas->glink_subdev, desc->ssr_name);
- 	qcom_add_smd_subdev(rproc, &pas->smd_subdev);
- 	qcom_add_pdm_subdev(rproc, &pas->pdm_subdev);
-+
-+	/*
-+	 * Subdevices stop in the reverse order of addition. Request the stop
-+	 * after sysmon has asked for a graceful shutdown and before smd and
-+	 * glink are torn down.
-+	 */
-+	pas->stop_subdev.stop = qcom_pas_stop_subdev;
-+	rproc_add_subdev(rproc, &pas->stop_subdev);
-+
- 	pas->sysmon = qcom_add_sysmon_subdev(rproc, desc->sysmon_name, desc->ssctl_id);
- 	if (IS_ERR(pas->sysmon)) {
- 		ret = PTR_ERR(pas->sysmon);
-@@ -1049,6 +1067,7 @@ static int qcom_pas_probe(struct platform_device *pdev)
- 	qcom_remove_ssr_subdev(rproc, &pas->ssr_subdev);
- 	qcom_remove_sysmon_subdev(pas->sysmon);
- deinit_remove_pdm_smd_glink:
-+	rproc_remove_subdev(rproc, &pas->stop_subdev);
- 	qcom_remove_pdm_subdev(rproc, &pas->pdm_subdev);
- 	qcom_remove_smd_subdev(rproc, &pas->smd_subdev);
- 	qcom_remove_glink_subdev(rproc, &pas->glink_subdev);
-@@ -1081,6 +1100,7 @@ static void qcom_pas_remove(struct platform_device *pdev)
- 	qcom_remove_sysmon_subdev(pas->sysmon);
- 	qcom_remove_smd_subdev(pas->rproc, &pas->smd_subdev);
- 	qcom_remove_pdm_subdev(pas->rproc, &pas->pdm_subdev);
-+	rproc_remove_subdev(pas->rproc, &pas->stop_subdev);
- 	qcom_remove_ssr_subdev(pas->rproc, &pas->ssr_subdev);
- 	qcom_pas_pds_detach(pas, pas->proxy_pds, pas->proxy_pd_count);
- 	device_init_wakeup(pas->dev, false);
-
-base-commit: f39ba58941efa63e6c7d10d53d183d6077524bdb
--- 
-2.56.0
-
+> +
+> +	pdev = to_platform_device(dev);
+> +	if (!strcmp(pdev->name, RPROC_VIRTIO_DRV_NAME))
+> +		platform_device_unregister(pdev);
+> +
+> +	return 0;
+> +}
+>  
+>  /**
+>   * rproc_resource_cleanup() - clean up and free all acquired resources
+> @@ -1224,7 +1227,6 @@ void rproc_resource_cleanup(struct rproc *rproc)
+>  {
+>  	struct rproc_mem_entry *entry, *tmp;
+>  	struct rproc_debug_trace *trace, *ttmp;
+> -	struct rproc_vdev *rvdev, *rvtmp;
+>  	struct device *dev = &rproc->dev;
+>  
+>  	/* clean up debugfs trace entries */
+> @@ -1258,9 +1260,8 @@ void rproc_resource_cleanup(struct rproc *rproc)
+>  		kfree(entry);
+>  	}
+>  
+> -	/* clean up remote vdev entries */
+> -	list_for_each_entry_safe(rvdev, rvtmp, &rproc->rvdevs, node)
+> -		platform_device_unregister(rvdev->pdev);
+> +	/* unregister platform devices */
+> +	device_for_each_child(&rproc->dev, NULL, rproc_unregister_vdev_pdev);
+>  
+>  	rproc_coredump_cleanup(rproc);
+>  }
+> @@ -2521,7 +2522,6 @@ struct rproc *rproc_alloc(struct device *dev, const char *name,
+>  	INIT_LIST_HEAD(&rproc->carveouts);
+>  	INIT_LIST_HEAD(&rproc->mappings);
+>  	INIT_LIST_HEAD(&rproc->traces);
+> -	INIT_LIST_HEAD(&rproc->rvdevs);
+>  	INIT_LIST_HEAD(&rproc->subdevs);
+>  	INIT_LIST_HEAD(&rproc->dump_segments);
+>  
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 3a742ef6ef60..d587a3301811 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -18,6 +18,8 @@
+>  #include <linux/io.h>
+>  #endif
+>  
+> +#define RPROC_VIRTIO_DRV_NAME	"rproc-virtio"
+> +
+>  struct rproc;
+>  
+>  struct rproc_debug_trace {
+> @@ -122,8 +124,6 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+>  						       const struct firmware *fw);
+>  struct rproc_mem_entry *
+>  rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
+> -void rproc_add_rvdev(struct rproc *rproc, struct rproc_vdev *rvdev);
+> -void rproc_remove_rvdev(struct rproc_vdev *rvdev);
+>  
+>  #ifdef CONFIG_HAS_IOMEM
+>  static inline int rproc_mem_entry_ioremap_wc(struct rproc *rproc,
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index 6cfdab831185..403519e78ee3 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -549,8 +549,6 @@ static int rproc_virtio_probe(struct platform_device *pdev)
+>  			goto unwind_vring_allocations;
+>  	}
+>  
+> -	rproc_add_rvdev(rproc, rvdev);
+> -
+>  	rvdev->subdev.start = rproc_vdev_do_start;
+>  	rvdev->subdev.stop = rproc_vdev_do_stop;
+>  
+> @@ -588,7 +586,6 @@ static void rproc_virtio_remove(struct platform_device *pdev)
+>  	}
+>  
+>  	rproc_remove_subdev(rproc, &rvdev->subdev);
+> -	rproc_remove_rvdev(rvdev);
+>  
+>  	put_device(&rproc->dev);
+>  }
+> @@ -598,7 +595,7 @@ static struct platform_driver rproc_virtio_driver = {
+>  	.probe		= rproc_virtio_probe,
+>  	.remove		= rproc_virtio_remove,
+>  	.driver		= {
+> -		.name	= "rproc-virtio",
+> +		.name	= RPROC_VIRTIO_DRV_NAME,
+>  	},
+>  };
+>  builtin_platform_driver(rproc_virtio_driver);
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 00019b1895e6..77ea0e1067e0 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -228,8 +228,7 @@ enum rproc_features {
+>   * @carveouts: list of physically contiguous memory allocations
+>   * @mappings: list of iommu mappings we initiated, needed on shutdown
+>   * @bootaddr: address of first instruction to boot rproc with (optional)
+> - * @rvdevs: list of remote virtio devices
+> - * @vq_srcu: SRCU domain for the virtqueue callbacks of @rvdevs
+> + * @vq_srcu: SRCU domain for the virtqueue callbacks of the virtio devices
+>   * @subdevs: list of subdevices, to following the running state
+>   * @notifyids: idr for dynamically assigning rproc-wide unique notify ids
+>   * @index: index of this rproc device
+> @@ -275,7 +274,6 @@ struct rproc {
+>  	struct list_head carveouts;
+>  	struct list_head mappings;
+>  	u64 bootaddr;
+> -	struct list_head rvdevs;
+>  	struct srcu_struct vq_srcu;
+>  	struct list_head subdevs;
+>  	struct idr notifyids;
+> @@ -351,7 +349,6 @@ struct rproc_vring {
+>   * @subdev: handle for registering the vdev as a rproc subdevice
+>   * @pdev: remoteproc virtio platform device
+>   * @id: virtio device id (as in virtio_ids.h)
+> - * @node: list node
+>   * @rproc: the rproc handle
+>   * @vring: the vrings for this vdev
+>   * @rsc_offset: offset of the vdev's resource entry
+> @@ -362,7 +359,6 @@ struct rproc_vdev {
+>  	struct platform_device *pdev;
+>  
+>  	unsigned int id;
+> -	struct list_head node;
+>  	struct rproc *rproc;
+>  	struct rproc_vring vring[RVDEV_NUM_VRINGS];
+>  	u32 rsc_offset;
+> 
+> -- 
+> 2.56.0
+> 
