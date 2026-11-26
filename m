@@ -1,96 +1,131 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.11
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.95.74
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795647855;
-	b=RFaMOE0LmK0jMfc2gXM3i+YZPnEtPDdgRWBZLE3Hg8HaCwgGVWVoagauLpOeTkoE7Lt3
-	 qeZUqb+JuKX+sqY6oKGVlbHIAmjXp7xQdHMJMG/LlpieMmHjjWovBLS0HYNpHQR6cvA4M
-	 XJxTLht3BKIYJC8hf8st0yVYn3SCFN0nnJY/Jquaua/w5h7Tp3RpDqQYsfB5Bg8VngsyQ
-	 OXnVaecBdwXDlmDihE+Q8EA3h9cRMk+uxoVo+aX7ZmsFSMqSUgpgqAaD9sYM02lYpgD8E
-	 R4cGzZcz5NdJ/xO8E3n1TyIShiAYzEh6a0efE8ZdOFXEbOYpiy296tXqXrgk43TpySw==
+	t=1795658243;
+	b=B5OI/S9TGoqNEhVRmVNXDGMK6v0JQbA+XY1qyzdSWlFa4A1q2PF4cDu8IX2hklomTS7M
+	 X5soeIMeXHrs1qi3jdsnhXVfYWVzhj/G9h0vOQ44tfjmLeoDK9tzCOHBQe3amNMttgRLU
+	 Vgr476/uNLb8xaJu+V18q0lg9ww4z4zw2UZQFqZXymg0AN0+Qk8d4uyx9tM3w7J5iZKYC
+	 U5Za5/1AS8YNYh8wY7Q5YJeiJLf4Rfo6WVTP+rDwNGC3Ma//ILw6bhAFx89a1tDPJt72i
+	 UWvFZic7ubsTlOwNyGy5Cul4ffoJgx54Gv49ws7OG2ZB5yqz2maEqvMhFYlE9BqYkcg==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795647855;
-	h=DMARC-Filter:DKIM-Signature:Received:DKIM-Signature:Received:Date:
-	 From:To:Cc:Subject:Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-AntiAbuse:X-AntiAbuse:X-AntiAbuse:
-	 X-AntiAbuse:X-AntiAbuse:X-Source:X-Source-Args:X-Source-Dir:
-	 X-SGantispam-id:X-AntiAbuse:AntiSpam-DLS:AntiSpam-DLSP:AntiSpam-DLSRS:
-	 AntiSpam-TS:CFBL-Address:CFBL-Feedback-ID;
-	bh=AMJchA9cehfGCW4JI5tP3dw+wnJqj4Q62yttfiUDjts=;
-	b=m3RlQBTel+szAEeIuSwSUQcPClMcd+Yq1+FsxqxrQIDGvyuriS22ac0OAk8/mHof3oq8
-	 38qVS6bZHzn72UFTxlQexeheqEwWHM6jZkqrOOXUP8l8I7bXik2lKin+TKAiGsKLXOnAJ
-	 k+TgofSgF9jcK9YEIXtbnAeJz3gX83FZq4QmqBhzABmgnHfMk38Y1L//FKmcaCK2G4SZA
-	 sPRp7MSjWs0osX4WNq3aetc0G6+ngUNFiWp1WY2QHGW9AlP4gHTSINtVrTMouN/6xQWBN
-	 WVLvBSrEm9KNwjtINA0YvHBxJIRgecDgdYqJOeGBdPQmKhI8ur4I7licrVrWGPQlSQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795658243;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:
+	 Content-Transfer-Encoding:Content-Type:Date:Message-Id:Cc:Subject:
+	 From:To:X-Mailer:References:In-Reply-To:X-ClientProxiedBy:
+	 MIME-Version:X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
+	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
+	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=wQwwexXKfYFWLv1n/CIfr1L3KdteJx8RrqGgVwMsGMs=;
+	b=wxf38g1PKcsppfl1XyZIWb3Tt0DJl3ZdSiKVWqsZB/cDIe8y17bE1ai+hPAsvf5Vxu58
+	 YT5ZyhtaiCsIiVZdAShKhf688SF8AAZHs2Dam7diTD3w2zNCW4HZoiUn8o1y/eDWQWCkG
+	 BGY41CaUYkmPe9Vejih+23tuCj7rr9IIbcI4VzpLVbm5zMe0JbbBrD5uJyf6TLR9Ztno2
+	 EVt0Xhq/aocGVoFIJw293fXI7/k8PwXgvZjGvPVTYAU0wYro1Cx66N0LO6SQ4RlUEW58i
+	 ilOICWxIsj+hCWlmUS+/yajcIfZ7ohPKRgLnkfuMursTcJvI6fnaGR+wh2yBBR+3PAA==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=valla.it;
-	spf=pass smtp.mailfrom=valla.it;
-	dkim=pass header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=1Nl9Wff+;
-	dkim=pass header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=XMzbIqji;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.56.87.11
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.11])
+	dmarc=pass header.from=garyguo.net;
+	spf=pass smtp.mailfrom=garyguo.net;
+	dkim=pass header.d=garyguo.net header.i=@garyguo.net header.a=rsa-sha256 header.s=selector1 header.b=LDPMac3Y;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.95.74
+Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021074.outbound.protection.outlook.com [52.101.95.74])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5B7606A31E;
-	Wed, 25 Nov 2026 23:04:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org DC5B7606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA945606A323;
+	Thu, 26 Nov 2026 01:57:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BA945606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.a=rsa-sha256 header.s=default header.b=1Nl9Wff+;
-	dkim=pass (1024-bit key, unprotected) header.d=valla.it header.i=@valla.it header.a=rsa-sha256 header.s=default header.b=XMzbIqji
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-c9nw.prod.antispam.mailspamprotection.com; s=arckey; t=1795647854;
-	 b=EHHJ0pZ+66xd2/KTwjaJWG7mQkaEB+eWzY8diWxYyCkvVbPBG/e0+H5U3US/7cQ6ge42b5Yg3y
-	  glsnjB4hLxvnGl0q/yLADdum7KCspA36J+2Gr/CKahmk6RANQdqClaQrF2wb8mgknniE+XBxKj
-	  gXJJqaYGuca07an4T9KRN5nWeCcFCznSTuWgsdnFdVF8Uo8b0Jwd7HHnGmfmRTfbpEak957XK8
-	  0wNZdo3GuHx9AU6ZQQqQ9+2LBHsd6ePauIRk/wcRIjPmx2HfQBxSI7y3TwQ2ZNGoRc3QH48IoO
-	  48LS0RjMPvAt2YrcwvkyiHC4tdW0wm8Pryqx2Mm7noKAmg==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-c9nw.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-c9nw.prod.antispam.mailspamprotection.com; s=arckey; t=1795647854;
-	bh=+RIMyKG9kmMdd7WbaQwJFRdHDVSR7Qlcbw8pUb55dOQ=;
-	h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:
-	  From:Date:DKIM-Signature:DKIM-Signature;
-	b=b2zHt0qu7skt/WqltGDYuJNn9ackhWsFEK/g7CSTT/oYlm/982+RX/TyxhdVTexDWY/3V2m/DI
-	  XhR7j8H1v9v3Hc4BzSZyCoq0zFDp5Ogh4pPN/AQSbv1KWXn1DlD2zr13jboLup+H2Kr/JzZio+
-	  391MrHTtGsNcZf2fheI7kly5FVQd4YluqXb9u0MRyIv+4sjtJ/rFAox0teRzba7gAX/1KwbF2i
-	  iewF7KDP4L9SHSkmCJv+eXjHfpRVB2xnh3ppxROdcXGOXYV4LY8JvArwH9+kHfWhcY3CuFc8l1
-	  rvG+KgfxSedHGxs/0wQfynNuiEXL/MXMa6g2jrnMtkqzEw==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=AMJchA9cehfGCW4JI5tP3dw+wnJqj4Q62yttfiUDjts=; b=1Nl9Wff+/fNQCB14hB/KId4ByZ
-	rDzm6tMfLgcIL3kpDz8jw3kVKQnZ35b1w9NVKuXKkdea04qWSPy+CvJ0d/fWnkSf5/4sYBzVx5MhA
-	lY5yJiBpN0wCj59k/rQo1DyhMtV+zECAOY7vlIgwU5Dt2UVHliPauFpDXKC0vijlYGmE=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-c9nw.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xWM22-00000003HZv-37Hj;
-	Wed, 25 Nov 2026 23:04:07 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Subject:Cc:To:From:Date:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=AMJchA9cehfGCW4JI5tP3dw+wnJqj4Q62yttfiUDjts=; b=XMzbIqjiYMssI8t3r2yOAfgyoA
-	Gdj10e7aEFF1CEgGrDK24njO4BK/G0czfFDH+E08+hBugbxXQXfQrzI9bB0S1KTRF/WB4nkYLZcro
-	qccKMiW/uaY/Tn4lOHjvq2Wsd/eOTYgooTv4RUQ1oRsaCpjpjLWqnI8tf66SXrv5GRgU=;
-Received: from [79.28.115.6] (port=61654 helo=bywater)
-	by esm19.siteground.biz with essmtpa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.100.1)
-	(envelope-from <francesco@valla.it>)
-	id 1xWM1y-000000007e2-0Ejv;
-	Wed, 25 Nov 2026 23:04:02 +0000
-Date: Thu, 26 Nov 2026 00:04:00 +0100
-From: Francesco Valla <francesco@valla.it>
-To: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: debugfs: use sysfs_streq() for write parsing
-Message-ID: <awdov1J8T9W08fML@bywater>
-References: <20261116184230.1885-1-saileshnandanavanam@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=garyguo.net header.i=@garyguo.net header.a=rsa-sha256 header.s=selector1 header.b=LDPMac3Y
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ugfqusank+TP8RlvX3IDp3uNNlNYMgA/pGtZlpT6ERo0HOeSiz7JowvWrPwd6pqreGz8kGZDPTiEN98Simxg/kFBG+xuxLG6rK5wtouDZSqroquswv8HD30WudB0OkXmq+aohbqbkNSG3ILeQCscdShWpOwsG0/DvMa56FImzZhCpV42vqbEG7FQEKVPxvQm/T/9uc3RhrCpjnDISZfTdfAUiLX3FWskMbho/8ZXXPfsdHfYj5xHypIUrCr5/YJnEU7CO7Q6Y85z9YwWQymkLjMX06tCDavMP8Fb2FKT3I5/27rgskDpemRPz1eUMMFmlpTit/uwmteF93jqxged1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wQwwexXKfYFWLv1n/CIfr1L3KdteJx8RrqGgVwMsGMs=;
+ b=MyvVld5HyWosyAlQ4eNIATC2OJNSNr4sqSl5izwZxj2nXlXXHeV8jyVSphViBzVv7tSSZ3QSDtN9M9hniRFjDpkfMG+D5OY/TK9H1UoWRxmUa7QFnw1pzd+SZfMFylUzUm9cHuFYIcnwRahLHvEM5O+e3mP8fVGOMstDZzQRoocgvHH2dOClYqzAltdtdWXLkvx0KiHKOP/zrCMvaqjJKTQ4Np+Vz++fF4Dx+goh5fwe6cNWPlozr+6GjNwHyByxCuoPBiJC/njpLZ1Ayx1zkD+PK8UI6lUhoyWoZ2v5/hlj0KGx9fD7538mkjN2q41yJKWvImgrxvKWnlixNucrmA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wQwwexXKfYFWLv1n/CIfr1L3KdteJx8RrqGgVwMsGMs=;
+ b=LDPMac3Y6lLbY06bE/y9PXx8ip7DqHVV7X4+qs+V+Noy8Iy1yRt3Cx6jgWMi5bHlYQc7UoiTx45FasGzBeHv4dF9VA5Vj7OMLmoNnGt56TU9e/4rY0LRxRWHI4/w/nuK2ijlsm1xh0mebNcwIg5Tp9SunCFxmqM4rGw64A9CRwA=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1cb::9)
+ by CW1P265MB440877.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:302::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.7; Thu, 26 Nov
+ 2026 01:57:18 +0000
+Received: from CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::55f6:f98b:7fad:c6e3]) by CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::55f6:f98b:7fad:c6e3%2]) with mapi id 15.21.0662.004; Thu, 26 Nov 2026
+ 01:57:18 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Nov 2026 01:57:17 +0000
+Message-Id: <DN4RPY231N71.1XDIB9HKGBU0O@garyguo.net>
+Cc: "Jonathan Corbet" <corbet@lwn.net>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Steven Rostedt" <rostedt@goodmis.org>, "Bradley
+ Morgan" <bradley.morgan@linux.dev>, "Armin Wolf" <W_Armin@gmx.de>, "Masami
+ Hiramatsu" <mhiramat@kernel.org>, <linux-doc@vger.kernel.org>,
+ <driver-core@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>, "Alex
+ Williamson" <alex@shazbot.org>, "Mostafa Saleh" <smostafa@google.com>,
+ <kvm@vger.kernel.org>, <qat-linux@intel.com>,
+ <virtualization@lists.linux.dev>, <intel-xe@lists.freedesktop.org>,
+ "Vineeth Vijayan" <vneethv@linux.ibm.com>, "Peter Oberparleiter"
+ <oberpar@linux.ibm.com>, "Heiko Carstens" <hca@linux.ibm.com>, "Vasily
+ Gorbik" <gor@linux.ibm.com>, "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ <linux-s390@vger.kernel.org>, <linux-hyperv@vger.kernel.org>,
+ <linux-spi@vger.kernel.org>, "Frank Li" <Frank.Li@nxp.com>, "Sascha Hauer"
+ <s.hauer@pengutronix.de>, <linux-clk@vger.kernel.org>,
+ <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-remoteproc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, "Takashi Iwai" <tiwai@suse.com>
+Subject: Re: [PATCH v2 00/10] driver core: Disable driver overriding by
+ default
+From: "Gary Guo" <gary@garyguo.net>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Danilo Krummrich"
+ <dakr@kernel.org>, "Johan Hovold" <johan@kernel.org>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, "Nipun Gupta" <nipun.gupta@amd.com>, "Nikhil
+ Agarwal" <nikhil.agarwal@amd.com>, "Ioana Ciornei" <ioana.ciornei@nxp.com>,
+ "Longfang Liu" <liulongfang@huawei.com>, "Julian Ruess"
+ <julianr@linux.ibm.com>, "Ankit Agrawal" <ankita@nvidia.com>, "Brett
+ Creeley" <brett.creeley@amd.com>, "Giovanni Cabiddu"
+ <giovanni.cabiddu@intel.com>, =?utf-8?q?Micha=C5=82_Winiarski?=
+ <michal.winiarski@intel.com>, "Eric Auger" <eric.auger@redhat.com>, "Eric
+ Farman" <farman@linux.ibm.com>, "Matthew Rosato" <mjrosato@linux.ibm.com>,
+ "Tony Krowiak" <akrowiak@linux.ibm.com>, "Jason Herne"
+ <jjherne@linux.ibm.com>, "Harald Freudenberger" <freude@linux.ibm.com>,
+ "Holger Dengler" <dengler@linux.ibm.com>, "Haiyang Zhang"
+ <haiyangz@microsoft.com>, "Wei Liu" <wei.liu@kernel.org>, "Dexuan Cui"
+ <decui@microsoft.com>, "Michael S. Tsirkin" <mst@redhat.com>, "Mark Brown"
+ <broonie@kernel.org>, "Abel Vesa" <abelvesa@kernel.org>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Brian Masney" <bmasney+clk@redhat.com>, "Jerome
+ Brunet" <jbrunet+clk@baylibre.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Mathieu Poirier" <mathieu.poirier@linaro.org>,
+ "Srinivas Kandagatla" <srini@kernel.org>, "Sylwester Nawrocki"
+ <s.nawrocki@samsung.com>, "Liam Girdwood" <lgirdwood@gmail.com>, "Jaroslav
+ Kysela" <perex@perex.cz>
+X-Mailer: aerc 0.22.0
+References: <cover.1795171088.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <cover.1795171088.git.u.kleine-koenig@baylibre.com>
+X-ClientProxiedBy: LO4P123CA0280.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:195::15) To CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:400:1cb::9)
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -100,135 +135,138 @@ List-Unsubscribe: <mailto:linux-remoteproc+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20261116184230.1885-1-saileshnandanavanam@gmail.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: fd2eae93dd0d2f2624514a3150680304
-X-AntiAbuse: ID - fd2eae93dd0d2f2624514a3150680304
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1xWM22-00000003HZv-37Hj-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-c9nw.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLP265MB6051:EE_|CW1P265MB440877:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9b6b3e52-7308-474c-3d8d-08df4b609a1c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|23010399003|376014|7416014|366016|1800799024|921020|10067099003|56012099006|261028144727099003|261022105027099003|261022075727099003|261022115727099003|261022113327099003|261026130827099003|261026121527099003|261026135527099003|261021135927099003|261021123027099003|261026140227099003|261021121427099003|261021130227099003|261102123227099003|261021133027099003|261009223027099003|18002099003|22082099003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	8V8vcfFOw3oTrfc5RNxlZ5r0UkjYbCTU8eeisaf9JPjmuGWUs6rUGsW54CbWqsDGswx0m88s9bF37FBMRApCiYCcEY4owfPaM5HyBlKOnm/tviHhAzOofE/ITqM53k6oZ355aKBKCIuljeBvojZq1IQk1oRcK/bfPgNKbPaB+IQabbSWHPfbZJBe/WLAyx27ynBmbxqzhADC1Azk6Gi2sUuvYxCkH5rBxBr9GusLXf49TeP/kY0fAxhnH6I3yDrNLwXMc2s6fIyOrykAJH2LxCux4bOWcHHB1TdY7P+++OD/U5ybfgf0dDmXoPYt1DHqoZQssSJtNO3iqNHBUdpHLW2KlahyudHxNwj/c09SmDj90wycSVMzB7kNwrKaro74J+IJ27AX8zdQezVwhebAJ//FJcCmisGzK8qwLezvNj2ZwY6xwCVEhljaIEMBe4YwnoMB3jqwOvn3/jDCzvkbLr/w/UlZwF0yu8ya0LmsvlD65/CJvkZo5yivCAOctyYBdQULFzCjr3BNtOWz27oV5d9Suto6DURERR1hQ+zaZ0ji/Vw9dO6thGjdfrAoWZy2fc79LUU8ge2TiqwLUrGFCPGuUSUzv2wdwRqdFSC0ldUddjm3P4GoaTj3iIAHngRZegpDFawCRB6870XfYrYR0fqfrT/yeTZmm0SGOP40A94=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(23010399003)(376014)(7416014)(366016)(1800799024)(921020)(10067099003)(56012099006)(261028144727099003)(261022105027099003)(261022075727099003)(261022115727099003)(261022113327099003)(261026130827099003)(261026121527099003)(261026135527099003)(261021135927099003)(261021123027099003)(261026140227099003)(261021121427099003)(261021130227099003)(261102123227099003)(261021133027099003)(261009223027099003)(18002099003)(22082099003)(3023799007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TlE0dHFLNmVlMit5NSt0aCtqVHJrS2dTaGN5WDFsSXlIckIweDJiWlZURDFN?=
+ =?utf-8?B?cVZucDR5SG54YTR3NXNUdlZ2VUw0TDdRdVR0Tzc0Ulc1YmFvTWFMRHU0TW15?=
+ =?utf-8?B?em1xd3lRaCszUDZqZUVFc0hzdjdCN25SZ3ptbHhPMnEzK2w1ajArbjFCM2Ns?=
+ =?utf-8?B?RmFSOFNYc2Zna2kwZHlkVDZzQVcvbVoxcFZYYVYvODYzMDhMNC9rVDdydGcr?=
+ =?utf-8?B?cGZpaUQ1RUJMaS9TdjlRTFRRTE1YZTY1Mytwbm14cWJvK0Nydjc5NU1aSVpu?=
+ =?utf-8?B?dThobzhQdzNhYXdPWWprVlF2amlLUTBDNzgzdzIyaEN3RU1GR1ZzVUpMc05q?=
+ =?utf-8?B?UzhWUk5jSW9nMnIxNHp0Y1NGNXM3UU5Fd2xMNEttQU5jcnJQZ3VaOFFPTktW?=
+ =?utf-8?B?dGtoVXI0UlVQT3IxemFlU3hFbXVJd3VIOG53Mm5LN0NhWWFwY0J6bk5SNGxH?=
+ =?utf-8?B?SzlNOEdCQWVwZU9zNmJiUTJyeElDYUtCUXVYdWYxa2k3aWI2Q01wa0paWURv?=
+ =?utf-8?B?S1B4OEpkMjZwME9wZUlObU44UXVJM2pKbVFVa1UrQ2FYakozeDFGbXlJaGZH?=
+ =?utf-8?B?bWNMWGtoZGhkdkl0V3pGVmZwZlJibjBDNlkzeGt6dk56cW5OelMrMzluYzBZ?=
+ =?utf-8?B?TlREOW1rMU9tOEQ0WXVTT2YwdVlybnRVVnAraE8rbEFVRmtCdG5oL2NYbGh0?=
+ =?utf-8?B?ZzUzaGJScy9ZUmhhYW1kSGJndUttM29HaC9ZTjNKcmc4akxYbXc2T1dFT3Jh?=
+ =?utf-8?B?T2dzR1ZLRXBUajhOTlMxR3F0SE04eE1xWG1QYkN2TVdnZjU3TjZYcm9uZTZa?=
+ =?utf-8?B?Vk5kSVRJRHFNZGlUYld2RHJVaHgwcXJQblA0ZENVVjk4cVpxdHF0Tms2N1dS?=
+ =?utf-8?B?TGZiZXk1REtYWHdZQWlLV2Jrd01IalNaM1dCQzc4RUh4U3hqYVl3b0tIR2l1?=
+ =?utf-8?B?VW93QW5BVndNbzVRdFg4SERweXE2TDRFcFF2bDBqakplOWFTV1FCdmVLaGRw?=
+ =?utf-8?B?Tm5XNW9BNHZhdHF4T1FwV1BteERaWUNJTWdBZEhBVWFFaVNRNzR3LzFaUjNF?=
+ =?utf-8?B?ZW9PdWRJcW1wK1E1b0FrRTk0T3pXU29aZThyN0JranVWSnN5WmY1eFVZbk9k?=
+ =?utf-8?B?QlZNNGRFTlhReGdJaXBNUkVpQ29tejNZT292UkZOYXh3aHRGZlV6TVFkdHQ5?=
+ =?utf-8?B?UGtNNlNQTEtDNVNZaFJZcUdNcDlDczJacnRsMmVtMW1XcFAxQW8rcXBNWnN2?=
+ =?utf-8?B?dFcwdHdGOTJva0h0dnlkMlE3VU5QMXdtMmY5ays4Y1lucXlYdzNMNDdUTUNW?=
+ =?utf-8?B?N2lVSy83RjdTNGVyZmNqTnJ1STBKOFNLNkNCY2lOamRRdnBnSElySEU5VjVx?=
+ =?utf-8?B?VzRpSVlBTkIyWkF0U1NnQmxKajVhU3dyYi8vYmtsK0xVTHRUQkhuL3hmUjB6?=
+ =?utf-8?B?RUJVVEpuTHJ5Sk1rU3pVUVZNZncvYmhHczkxNC9yWUNrZHpVN2xLSmd0Lyt3?=
+ =?utf-8?B?VnpFTXdlb3I4RDJ5MHRPTHhWTmsydUhwVDhNVW1BSlQrR3FJN2d4YmpOLzNh?=
+ =?utf-8?B?Sm9tdFI3clQ4SSs4ZlNxeTJvTDhsbk1maFRmOWRxaVpDNUNVcjlLaU4vREt5?=
+ =?utf-8?B?SVptc1BVU0FwY21Jb29iUm83bUpDTUxwUDYxUExiSzRGOWV4UXc2cXQ5b1pm?=
+ =?utf-8?B?WnJiZTJHSzd3Sms0b3pkWnk2L1orNGlTcldpQ3g0SGtxa3VIam1leDlIeUtX?=
+ =?utf-8?B?REdWQ3EwTHAraE8xekRBdmRlZGZUY2V6VFJsZVpSNUpMRXNTbUZCMTdrcEhG?=
+ =?utf-8?B?OS8wSDNJa3Q0Si9hak5PSHlPUnFqSHFCcWFOTStybHIzYm9kRTRjbUM3Ukhl?=
+ =?utf-8?B?RnpPUUxNbDRLVmNpd0t1UktvbmowaDZCU0dZWG83YjFjbkZzQkU2cTFuSWps?=
+ =?utf-8?B?S1B6MTdGdGc3VE80anVxTjMxQ2g1Q090ZS9iTk5nVVlkQUFKQkZnVzVaUVd0?=
+ =?utf-8?B?ZTFXR1lVblRlME54SFNqU3lpdzNJekNoSXJLcWRqalVmSkxnZC9VL1MwSVN0?=
+ =?utf-8?B?bVh6MS9HOG1XendIS00xbmZoTmxoQVViTXlyVFBVZVVWVEJsZG54bzFydlc5?=
+ =?utf-8?B?YkMrL1pNUjh5Vlk0VmRXMnk0bjRPVFZIdE5oVGo4UkY5TE9IT3hWNVhCZURP?=
+ =?utf-8?B?U1c4M01QV0MvVkU1SEc5QlBURVlJYjllMDB1dWFGZTUwK1oyVEJMK2lnT1FB?=
+ =?utf-8?B?Y1ErVVgxdzBjdlZueXpmZnpKbEtMc2hEbnQ5OVMzNXE2a0NyQzFwLy96R1Ur?=
+ =?utf-8?B?MlpwUjRiVDA0VDFrTXpNSkE3Y0R0YjliRzAyR1pYdDAzSlB1aERWQT09?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b6b3e52-7308-474c-3d8d-08df4b609a1c
+X-MS-Exchange-CrossTenant-AuthSource: CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2026 01:57:18.5838
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U5UFEh+CYdQxw1WOmqNHFXtH2C08DBwEU0PoDb2ICDRigteYFynBMSa6mCshbH9bRHtvHuhtyHKtqrrkb13sag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CW1P265MB440877
 
-On Tue, Nov 17, 2026 at 12:12:30AM +0530, Sailesh Nandanavanam wrote:
-> The debugfs coredump and recovery write handlers compare input with
-> strncmp() bounded by the write length, which accepts any prefix of a
-> valid command (e.g. "e" matches "enabled"). The sysfs counterparts in
-> remoteproc_sysfs.c already use sysfs_streq(), which requires an exact
-> match and tolerates a single trailing newline.
-> 
-> Switch the debugfs handlers to sysfs_streq() for consistent parsing
-> between the two interfaces, and explicitly NUL-terminate the copied
-> buffer since sysfs_streq() expects a string. Tighten the length check
-> to leave room for the terminator.
-> 
-> Truncated commands that were previously accepted by prefix match are
-> now rejected with -EINVAL.
-> 
-> Signed-off-by: Sailesh Nandanavanam <saileshnandanavanam@gmail.com>
-> ---
->  drivers/remoteproc/remoteproc_debugfs.c | 33 ++++++++++---------------
->  1 file changed, 13 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_debugfs.c b/drivers/remoteproc/remoteproc_debugfs.c
-> index e8e7b6a3769b..ef6761a13c6c 100644
-> --- a/drivers/remoteproc/remoteproc_debugfs.c
-> +++ b/drivers/remoteproc/remoteproc_debugfs.c
-> @@ -73,19 +73,16 @@ static ssize_t rproc_coredump_write(struct file *filp,
->  				    loff_t *ppos)
->  {
->  	struct rproc *rproc = filp->private_data;
-> -	int ret, err = 0;
-> +	int err = 0;
->  	char buf[20];
->  
-> -	if (count < 1 || count > sizeof(buf))
-> +	if (count < 1 || count >= sizeof(buf))
->  		return -EINVAL;
->  
-> -	ret = copy_from_user(buf, user_buf, count);
-> -	if (ret)
-> +	if (copy_from_user(buf, user_buf, count))
->  		return -EFAULT;
->  
-> -	/* remove end of line */
-> -	if (buf[count - 1] == '\n')
-> -		buf[count - 1] = '\0';
-> +	buf[count] = '\0';
->  
->  	if (rproc->state == RPROC_CRASHED) {
->  		dev_err(&rproc->dev, "can't change coredump configuration\n");
-> @@ -93,11 +90,11 @@ static ssize_t rproc_coredump_write(struct file *filp,
->  		goto out;
->  	}
->  
-> -	if (!strncmp(buf, "disabled", count)) {
-> +	if (sysfs_streq(buf, "disabled")) {
->  		rproc->dump_conf = RPROC_COREDUMP_DISABLED;
-> -	} else if (!strncmp(buf, "enabled", count)) {
-> +	} else if (sysfs_streq(buf, "enabled")) {
->  		rproc->dump_conf = RPROC_COREDUMP_ENABLED;
-> -	} else if (!strncmp(buf, "inline", count)) {
-> +	} else if (sysfs_streq(buf, "inline")) {
->  		rproc->dump_conf = RPROC_COREDUMP_INLINE;
->  	} else {
->  		dev_err(&rproc->dev, "Invalid coredump configuration\n");
-> @@ -211,26 +208,22 @@ rproc_recovery_write(struct file *filp, const char __user *user_buf,
->  {
->  	struct rproc *rproc = filp->private_data;
->  	char buf[10];
-> -	int ret;
->  
-> -	if (count < 1 || count > sizeof(buf))
-> +	if (count < 1 || count >= sizeof(buf))
->  		return -EINVAL;
->  
-> -	ret = copy_from_user(buf, user_buf, count);
-> -	if (ret)
-> +	if (copy_from_user(buf, user_buf, count))
->  		return -EFAULT;
->  
-> -	/* remove end of line */
-> -	if (buf[count - 1] == '\n')
-> -		buf[count - 1] = '\0';
-> +	buf[count] = '\0';
->  
-> -	if (!strncmp(buf, "enabled", count)) {
-> +	if (sysfs_streq(buf, "enabled")) {
->  		/* change the flag and begin the recovery process if needed */
->  		rproc->recovery_disabled = false;
->  		rproc_trigger_recovery(rproc);
-> -	} else if (!strncmp(buf, "disabled", count)) {
-> +	} else if (sysfs_streq(buf, "disabled")) {
->  		rproc->recovery_disabled = true;
-> -	} else if (!strncmp(buf, "recover", count)) {
-> +	} else if (sysfs_streq(buf, "recover")) {
->  		/* begin the recovery process without changing the flag */
->  		rproc_trigger_recovery(rproc);
->  	} else {
-> -- 
-> 2.34.1
-> 
+On Fri Nov 20, 2026 at 11:11 AM GMT, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
 >
+> here comes v2 which addresses the review feedback I got for (implicit)
+> v1. See https://lore.kernel.org/linux-kernel/20261116110853.3418077-2-u.k=
+leine-koenig@baylibre.com
+> for the discussion about that previous submission.
+> =20
+> The objective is to deny force binding a device to a driver that isn't
+> prepared for that. There are many drivers that run in a null pointer
+> exception when this happens and only very few drivers are supposed to be
+> used like that. So the first patch implements an explicit opt-in for
+> drivers and denies other matches; the remaining patches implement the
+> opt-in for drivers that rely on it. This makes it unnecessary to fix
+> individual drivers to explicitly refuse such bindings. See commit
+> 1e50a0349012 ("iio: adc: mcp3564: reject devices without match data")
+> for an example of such a driver-specific fix.
 
-Reviewed-by: Francesco Valla <francesco@valla.it>
-Tested-by: Francesco Valla <francesco@valla.it>
+For PCI, there is actually already a mechanism for it -- override_only. VFI=
+O
+devices already have that annotation. I think it's a better mechanism. In
+addition to providing a useful id_info, you can also say what IDs you want =
+the
+override match to become possible.
 
-Regards,
-Francesco
+We can do something like this?
 
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index 2398f03a77c1..2cf4659b36a4 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -218,8 +218,8 @@ static const struct pci_device_id *pci_match_device(str=
+uct pci_driver *drv,
+ 	if (found_id)
+ 		return found_id;
+=20
+-	/* driver_override will always match, send a dummy id */
+-	if (ret > 0)
++	/* For a forced driver override, send a dummy id */
++	if (ret > 0 && device_forced_driver_override(dev))
+ 		return &pci_device_id_any;
+ 	return NULL;
+ }
+
+Where device_forced_driver_override your added logic about parameter and
+tainting/warning logic.
+
+I suppose the issue is that only CDX and PCI have this mechanism via ID tab=
+le.
+That said, other buses can gain a bus-specific allow_override field and you=
+ just
+do
+
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 720a72ecd174..7539b43961e6 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -563,7 +563,8 @@ static int spi_match_device(struct device *dev, const s=
+truct device_driver *drv)
+=20
+ 	/* Check override first, and if set, only use the named driver */
+ 	ret =3D device_match_driver_override(dev, drv);
+-	if (ret >=3D 0)
++	if (ret >=3D 0 && (sdrv->support_driver_override ||
++			 device_force_driver_override(dev, drv)))
+ 		return ret;
+=20
+Thoughts?
+
+Best,
+Gary
