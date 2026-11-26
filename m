@@ -1,79 +1,79 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795659639;
-	b=Z/uO+MZt3jIYl86hObvNKp52oFbRtXt4NQvYjMoRKpmPzfBX7Ffs4AqjDoeSn19Re/JJ
-	 6Seh2vgIMv1o0sg3SORy99cSnmYTniYJIwUVZtT5/WKMW6MP6E9rfeKMFc6zfdZvFQPHT
-	 RMGYd56rPGokRpY5ZeLm6WxXYYeZQu6ER861r1qZBJqkzBpeYy7fmcUx6LGB7/MwYigeo
-	 wUo7Eqil+QlC9UkMI6vzLSoeiB/pQdM7q8LEBQM4oXmJW3QkZTxvWq9oDwFsY+u88ZNWW
-	 5hJlDGu1+Pgp82Xojjlo2dgLwouGEmpD2CU/zrbMR0CG56fR7OaRLKlQdVduReajBNQ==
+	t=1795659642;
+	b=cagt8R7obg8J5TbXFTGusFv2KZC7Vk/aQKGMz/aX0eB5gVwbfFOegMME6ezFLEm3xRmq
+	 6HbzPJpU03ywisMA2Ewu13j8BGL5V3VPOtMihX6ClrH1y71+iY/QRk6VIPzC7QJwkETqH
+	 gCJCmqPmueN7fwTj4n8MQd2Y4rJGGudWXPFLeZ68rrB+spNAkda2LQdSrXKhM4bskj5dV
+	 8y5T/W5v9PQM//eKyC6a7OvHpuLJIVo0lSX233XeFgbJRtuzibyhY9nP+9AKv+tiHU+7/
+	 fmKNWKQ3DtqYAnAqq/VpMn93AmVokCx9VsClWqSbtzsMRlowkY79ycgaCN+R9GIQAkQ==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795659639;
-	h=Received:DKIM-Signature:Received:From:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-B4-Tracking:
-	 X-Change-ID:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:
-	 X-Endpoint-Received:X-Original-From:Reply-To;
-	bh=WnePcuwevgV26kVkAvmfJCbG/76NPHcQYJa7Bah0gyw=;
-	b=aCIneyBFX8BfaVBpErFCUpGeN2EgDA9k3ORhuazBQCS9rChIDaw7DN/zB9mSvyZdaT42
-	 XYrOpMoSeMHWD0J3zRtbcGejGX0BvVA9dyDup1b5zoJvn+o61NMQZikEOH4RFXIYnfDaU
-	 nShnyTLyGRJ8YydLbTR+BxlsvnKLacFP8+LW04sTqNd4yCLaWoHd8FNaIBrXsFbRgfiqD
-	 05IwQx8TY8eUh7YVBb1tXoXDuJw6g8zF3QLuGYwFbhkBJXiFZ+r9LnStcb5M7CGgDQ8f7
-	 lP0uzuZ9ND8PikYSjPH7k9P+ZojVKc2jca9IDUEcI7ExTj0glbkKXZ0ZLSoMOT0Xd/g==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795659642;
+	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
+	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=Pm+/UvfCAYSPyEjNgqW0Y9FuL/rPb1heMpydqsCNqUc=;
+	b=Vg5xQdPR+voyoeILZug5ew4jhU3hyB5S0XiVd8xry/3hDcSu7757Z5D99xFtY6mpjBdJ
+	 +qL5uHkiP4alL847uMxXoDyG02RnufX09w5q7r8pXRCcTUQirGsFPeS3M8r4WmOd1gmYV
+	 U7CspE6Jy1e8JwHymuU+rFXTctn+6Bbtf6zATm66yCZIae8NFWXPzGFTaXEUqfQTEbkMM
+	 E/t0iPIDpRNR+wID7cYoFiB+W/x5FBnEj7ju6NA6N39mbhcNzy3yapylLIkjEyLDeaea/
+	 18EAwfd1sGNQYhNQwp3gqidvh0+NYr/YtMRGBZEQGbcZ/hoht+Eo1PxUGxk8nT4bpxg==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l78BYZaK;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="n4/aiVpO";
 	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6174C606A31E;
-	Thu, 26 Nov 2026 02:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E2C606A323;
+	Thu, 26 Nov 2026 02:20:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l78BYZaK
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=n4/aiVpO
 Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
 ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795659639;
-	b=RyCl8qhYh3ZLq5pGt0uNpS4HkeqXxYZQRPNrNeiHgw+YbIHB02WimGRMAwZ/X325UQfV
-	 7L4kv2KIDL8IOfjQYxbEzCHmunzeY1VC3UytUZAH7kI2Z2igdC1MgM6tVZtNd0vRaorrz
-	 Kq51bvh46NqmlfmTef/25UZTIEIzVIu3N4PZF4f5WDs4ExHLfP+6NBuMhgEDp4oUhdoBP
-	 xb4EXV29d6a0htzUz++EymTpFpKnB+ADU3186bxbgVTklXzWmzi2paO90M9dOB366sMhf
-	 jVB2rqTIdW/n0CaejO1fCEJbDrnWiu06nAr6pdAH02u3/QEOkyWtVyBgzK5iRSdQ5JQ==
+	t=1795659641;
+	b=YKeVlIfJUBPpdgvp+72sxEH++vk4Ya7n2Zot3sM4c8A3jV22rmkhlkgKs50S9L8mDs9y
+	 M8Ys0Vfm9+IG88A06r3BTdW1VAp/mBDXceyZqbW+LJor0pnAuZabJdQiWS8pOY3gkaZS1
+	 wiunaZ3D+6+C2eIG2aerL5T4VMjmRPWoHgeNupuR2P6yn0Gq7mscNLCg5LFCCQEW7V+YC
+	 /otxIzulqmZBrcU7+ewKfM7YP1N85E8ZJaS94tK+zBnPWGCrKgESdrruQCldHOQSJpDrg
+	 u6bVLV0lsATeaAabkXZqkztei8qq3azzrTrUytJR7F4ajrLNXl9iA+c8MQ8rNeGSnUA==
 ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795659639;
-	h=DKIM-Signature:Received:From:Subject:Date:Message-Id:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:X-B4-Tracking:X-Change-ID:To:
-	 Cc:X-Mailer:X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To;
-	bh=WnePcuwevgV26kVkAvmfJCbG/76NPHcQYJa7Bah0gyw=;
-	b=2UL548w8VfajNmI6CuhFf19N6HI6FLfXnHrej1u58xm2XXRMUp8DBXWgP3BKFiPrCzZP
-	 xKf3F4CuJvBbkstljEm33UW8QNdZDe74lkMqIwGbuHLpHLM4zimlb9fQsauNJ8EPjWkBv
-	 YUrIJphW8o5WNHRF+O4lWI46HXggx7zdRxTAi5JNMKfQAFAQ5YUPyl/Xw1MJvQkJ3Kn0D
-	 efsgVSQWY0cDdjoKaHqBFRd5JKgyEI0eEsIp6vVUA+aU0FbMl9DApzXLcTmct76krkO8J
-	 iyW3H1X6EBml7UCdcDRe8K90q/xmbGc0sRn2tzzA9gDIBeMC+5UvTSNwGA11JVg5F9w==
+	c=relaxed/relaxed; t=1795659641;
+	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
+	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
+	 X-Original-From:Reply-To:Content-Transfer-Encoding;
+	bh=Pm+/UvfCAYSPyEjNgqW0Y9FuL/rPb1heMpydqsCNqUc=;
+	b=abmYt00zX/T4RKRq4EUDtYGxX46KnVKQa31w007BChyLTopg4P54ALNIWYhGUvOsSicm
+	 6Dj9E7r+h3gDXVD9hGv3vEIxCmDvSaZ95Fll/c4SFLQ1wROODDO5fTCkZ01pC4afi6Z+M
+	 7tUibKivSm67id7lv3yr7gLqlfg3rKNUXGCC56v5/oOTxlvVt8vXUGq40LTGdssyrqIg1
+	 1b8gbn1/wKAOLwxoBzS6pNgzOnreCBR+rsgmdyFd/DEMGiqj0IXxy3WIztzYvi52UTR+t
+	 iFvedJ5RXuOUvYJhgrSlidGmYHEnpTbYI2sc70fIyXWhRZDzAJr0RRWRCBk+mCVWkkw==
 ARC-Authentication-Results: i=1; smtp.kernel.org; 
 	arc=none smtp.remote-ip=100.80.115.77
 Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id E030C1F000C4;
+	by smtp.kernel.org (Postfix) with ESMTPS id E02571F000C0;
 	Thu, 26 Nov 2026 02:20:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795659638;
-	bh=WnePcuwevgV26kVkAvmfJCbG/76NPHcQYJa7Bah0gyw=;
-	h=From:Subject:Date:To:Cc:Reply-To;
-	b=l78BYZaKmsD9kQceAxVfKRgMvd8Xijj0erXzE+Sl8PMD33S0q1Et18D1SeH7Uqp/b
-	 h4TENEPhiMLTa3tWTYxAd3rk1W8ytrI4F4MhCLFA0oP4c9MUMR6rR+nm5VWX7y/4n5
-	 /hcFfOj8BYijR+IuTlJZ+6bLOfmkwNaFTiuEQ/UBiqC6CJhhaJYgG3vlmbvQeuHc2v
-	 EyOls/BMCwqm0pOAr4+26YhV6DoEARmgbBvAAsyK1BPgYMmF3KtsZZlF2RB0BDQ7nY
-	 NYM30LdXOcrVTUX3Bpk05TFrevPse1mkhnMNeahzDQX/Ss7YuFAwv6D/bvUIp6EGPi
-	 2s/x1yQwSwFVw==
+	s=k20260515; t=1795659641;
+	bh=Pm+/UvfCAYSPyEjNgqW0Y9FuL/rPb1heMpydqsCNqUc=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
+	b=n4/aiVpOJIYiHUHbAGXCOnKJ2p3vO5uHg4I7E7Zl6KX9dFsVuhAi4oJvZ5/yJ+YwO
+	 isiXz5/2AOIxW1/MPf8w9PeYFkC0MXJKRVPCoFRQmbuGuLq19wcpaOgXqQmwidgUWg
+	 pmfBUI+kQIs+5HGqm4HN0zZhktNOqHpCLAnMtnS/JGANhFUv6W+epaUSIZo0RJzKUn
+	 Td5XvA4gUIEJMyeB43Fca8jQ7s1ZpAaOKW7tglBpM4DF2Wfzm2tjO4fTy/h3+Cm1Mp
+	 FCazPutqFsrFJKRLRIhhbZrD0gmiS/RVpqZmax00AaGlJnVx5kNa/aSaDaTjhAfCgz
+	 JGE7HEuqhn8Tw==
 Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 3ED554D178;
+	by lkml.kernel.org (Postfix) with ESMTP id 652ED4D198;
 	Thu, 26 Nov 2026 02:20:35 +0000 (UTC)
 From: Fabricio Akio via B4 Relay <devnull+fabricioakio.gmail.com@kernel.org>
-Subject: [PATCH 0/2] SDM660 ADSP: vote the DSP's rail while it boots
-Date: Wed, 25 Nov 2026 23:20:33 -0300
-Message-Id: <20261125-sdm660-adsp-proxy-rail-v1-0-b91784c69623@gmail.com>
+Date: Wed, 25 Nov 2026 23:20:34 -0300
+Subject: [PATCH 1/2] remoteproc: qcom: pas: Vote the SDM660 ADSP's power
+ domain while it boots
 X-Mailing-List: linux-remoteproc@vger.kernel.org
 List-Id: <linux-remoteproc.vger.kernel.org>
 List-Post: <mailto:linux-remoteproc@vger.kernel.org>
@@ -84,11 +84,9 @@ List-Owner: <mailto:linux-remoteproc+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAAAAAAC/yXMwQ6CMAyA4VchPduELVkRX8V4mKxojcLSosEQ3
- p2hx+/w/wsYq7DBqVpA+SMm41DgDhV09zjcGCUVg689OecDWnoR1RiTZcw6zl/UKE8M3ISmbY8
- 9UYQSZ+Ve5t/4fPnb3tcHd9N+g3XdAJYvCo16AAAA
-X-Change-ID: 20261125-sdm660-adsp-proxy-rail-5e757998f66a
+Message-Id: <20261125-sdm660-adsp-proxy-rail-v1-1-b91784c69623@gmail.com>
+References: <20261125-sdm660-adsp-proxy-rail-v1-0-b91784c69623@gmail.com>
+In-Reply-To: <20261125-sdm660-adsp-proxy-rail-v1-0-b91784c69623@gmail.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Mathieu Poirier <mathieu.poirier@linaro.org>, 
  Konrad Dybcio <konradybcio@kernel.org>, Abel Vesa <abelvesa@kernel.org>, 
@@ -100,62 +98,50 @@ Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
  Alexey Minnekhanov <alexeymin@minlexx.ru>, 
  Fabricio Akio <fabricioakio@gmail.com>
 X-Mailer: b4 0.15.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795659634; l=2228;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1795659634; l=1546;
  i=fabricioakio@gmail.com; s=20260928; h=from:subject:message-id;
- bh=SC6vWKcK3HXEfRgQN0qt9mObuOdi9RmiKKXpA6CHRXg=;
- b=q36PbOxzt50UA6rVsCtatmP0aF4LvZpFqnEefswkoGom6OldgPv0RlFUG9gLdviBec8fVuwh9
- eG/lhlhGp0YBX4AxKiqTbowJ6QU2mBxwVv6eLrd0cblQkCFbCQJtzOs
+ bh=zkoyiWmiLPqXph/5+tayJyD7KHTTIW/Ma10fRXwCfwY=;
+ b=GG2gnXZ+nJmYpXxqhPCe5aXn2j6T28oYiN5PTPpZJIpYF3Nba4cMfp3BwSNnXAp3p36jotJ8K
+ d0cUJBkDqpEBjtpjtoU+NXpO+omUFbymMp3YQ0xCAI/n8KqTyFnEMGv
 X-Developer-Key: i=fabricioakio@gmail.com; a=ed25519;
  pk=TlMUT8bPI/ZQzp2q24BIQTb2qSx/jdUTBlGEXIRCm54=
 X-Endpoint-Received: by B4 Relay for fabricioakio@gmail.com/20260928 with
  auth_id=1076
 X-Original-From: Fabricio Akio <fabricioakio@gmail.com>
 Reply-To: fabricioakio@gmail.com
+Content-Transfer-Encoding: 7bit
 
-On SDM630 the ADSP starts once per boot. After a stop or a crash, the
-next start times out waiting for the DSP:
+From: Fabricio Akio <fabricioakio@gmail.com>
 
-  qcom_q6v5_pas 15700000.remoteproc: start timed out
-  remoteproc remoteproc0: can't start rproc adsp: -110
+The SDM660 ADSP uses adsp_resource_init, which names no proxy power
+domain, so the driver votes no rail for the DSP while it boots. On an
+SDM630 phone the first start after boot succeeds without one; after a
+stop, every later start times out waiting for the DSP.
 
-The driver votes no power domain for this compatible while the DSP
-boots, and sdm630.dtsi gives the node the SoC's CX. Downstream votes the
-RPM's "rwlc" resource, PM660L LDO9, as the ADSP's supply while it boots,
-on SDM630 and SDM660:
-https://github.com/LineageOS/android_kernel_motorola_msm8998/blob/ce9ea8f125c7302ae9b2fec84f23a69271e957c3/arch/arm/boot/dts/qcom/sdm630.dtsi#L1737
-https://github.com/LineageOS/android_kernel_motorola_msm8998/blob/ce9ea8f125c7302ae9b2fec84f23a69271e957c3/arch/arm/boot/dts/qcom/sdm660.dtsi#L2008
-https://github.com/LineageOS/android_kernel_motorola_msm8998/blob/ce9ea8f125c7302ae9b2fec84f23a69271e957c3/arch/arm/boot/dts/qcom/msm-pm660l-rpm-regulator.dtsi#L194
+Use msm8996_adsp_resource, which differs only in voting the "cx" power
+domain until the DSP signals handover.
 
-Patch 1 makes the driver vote the node's "cx" power domain until
-handover, as it does for MSM8998. Patch 2 points that domain at
-RPMPD_SSCCX, which is "rwlc". With either patch alone the start after a
-stop still times out.
-
-With patch 1 the driver does not probe a node without the power domain,
-as for the other users of msm8996_adsp_resource. The binding does not
-require the property; sdm630.dtsi has had it since the node was added.
-
-Tested on a Motorola Moto X4 (SDM630), whose board file is not in
-mainline yet, on sdm660-mainline's 7.2 kernel: the ADSP stopped and
-started five times, and a fatal error and a watchdog timeout injected
-into the DSP both recovered. The SDM636, SDM660 and SDA660 boards are
-not tested.
-
+Fixes: a0a77028c85a ("remoteproc: q6v5_pas: Add sdm660 ADSP PIL compatible")
 Signed-off-by: Fabricio Akio <fabricioakio@gmail.com>
 ---
-Fabricio Akio (2):
-      remoteproc: qcom: pas: Vote the SDM660 ADSP's power domain while it boots
-      arm64: dts: qcom: sdm630: Power the ADSP from the SSC CX rail
+ drivers/remoteproc/qcom_q6v5_pas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm64/boot/dts/qcom/sdm630.dtsi | 2 +-
- drivers/remoteproc/qcom_q6v5_pas.c   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
----
-base-commit: 909ef7a9a30fa139e69e555e3606680f5cca7726
-change-id: 20261125-sdm660-adsp-proxy-rail-5e757998f66a
+diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+index ff2483529d73..d5b03a433a6d 100644
+--- a/drivers/remoteproc/qcom_q6v5_pas.c
++++ b/drivers/remoteproc/qcom_q6v5_pas.c
+@@ -2050,7 +2050,7 @@ static const struct of_device_id qcom_pas_of_match[] = {
+ 	{ .compatible = "qcom,sc8280xp-adsp-pas", .data = &sm8250_adsp_resource },
+ 	{ .compatible = "qcom,sc8280xp-nsp0-pas", .data = &sc8280xp_nsp0_resource },
+ 	{ .compatible = "qcom,sc8280xp-nsp1-pas", .data = &sc8280xp_nsp1_resource },
+-	{ .compatible = "qcom,sdm660-adsp-pas", .data = &adsp_resource_init },
++	{ .compatible = "qcom,sdm660-adsp-pas", .data = &msm8996_adsp_resource },
+ 	{ .compatible = "qcom,sdm660-cdsp-pas", .data = &cdsp_resource_init },
+ 	{ .compatible = "qcom,sdm670-adsp-pas", .data = &sdm670_adsp_resource_init },
+ 	{ .compatible = "qcom,sdm845-adsp-pas", .data = &sdm845_adsp_resource_init },
 
-Best regards,
---  
-Fabricio Akio <fabricioakio@gmail.com>
+-- 
+2.56.1
 
 
